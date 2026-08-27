@@ -3,6 +3,7 @@ import Linglib.Syntax.Case.Order
 import Linglib.Morphology.Paradigm.Case
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.OptimalityTheory.Stratal
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Data.Examples.Aitha2026
@@ -277,47 +278,26 @@ inductive StemCandidate where
   | unparsedFinal
   | degenerate
   | trochees
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype, Inhabited
 
 def StemCandidate.toFooting : StemCandidate → Footing Syllable.Weight
   | .unparsedFinal => [.inl ⟨[.light, .light], 0⟩, .inr .heavy]
   | .degenerate => [.inl ⟨[.light], 0⟩, .inl ⟨[.light], 0⟩, .inl ⟨[.heavy], 0⟩]
   | .trochees => [.inl ⟨[.light, .light], 0⟩, .inl ⟨[.heavy], 0⟩]
 
-/-- ALL-FT-LEFT ((48)): per foot, the syllables between the left edge of the domain and the
-foot. -/
-def allFtLeftOf (fc : Footing Syllable.Weight) : Nat :=
-  let rec go : Footing Syllable.Weight → Nat → Nat
-    | [], _ => 0
-    | .inl f :: rest, pos => pos + go rest (pos + f.syllables.length)
-    | .inr _ :: rest, pos => go rest (pos + 1)
-  go fc 0
-
-/-- FT-BIN(μ) ((46)). -/
-def ftBin : Constraint StemCandidate :=
-  fun c => (c.toFooting.feet.filter fun f => decide (Foot.moraCount id f ≠ 2)).length
-
-/-- PARSE-SYL ((47)). -/
-def parseSyl : Constraint StemCandidate := fun c => c.toFooting.strays.length
-
-def allFtLeft : Constraint StemCandidate := fun c => allFtLeftOf c.toFooting
-
-/-- FT-BIN ≫ PARSE-SYL ≫ ALL-FT-LEFT. -/
-def stemRanking : List (Constraint StemCandidate) := [ftBin, parseSyl, allFtLeft]
-
-def stemCandidates : List StemCandidate := [.unparsedFinal, .degenerate, .trochees]
-
-theorem stemCandidates_ne : stemCandidates ≠ [] := by decide
+/-- FT-BIN(μ) ≫ PARSE-SYL ≫ ALL-FT-LEFT ((46)–(48)), read off each parse's footing: the
+non-bimoraic feet, the stray syllables, and the feet's distances from the left edge. -/
+def stemRanking : List (Constraint StemCandidate) :=
+  [fun c => (c.toFooting.nonBimoraicFeet id).length, fun c => c.toFooting.strays.length,
+    fun c => c.toFooting.footOffsets.sum]
 
 /-- (49): the Stem parses as two moraic trochees, (ˈsa.mu)(ˌdram). -/
-theorem stem_optimal :
-    (Tableau.ofRanking stemCandidates stemRanking stemCandidates_ne).optimal = {.trochees} := by
-  decide
+theorem stem_optimal : (Tableau.ofFintype stemRanking).optimal = {.trochees} := by decide
 
 /-! ### Word- and Phrase-level rankings (§5.2–5.3)
 
 The constraints of the two strata are shared by label; each stratum fixes one order, and
-each tableau supplies only its candidates' violation marks. -/
+each tableau supplies only its candidates' violation marks (`Tableau.ofOrder`). -/
 
 /-- The constraints of (64) and (68). -/
 inductive Con where
@@ -333,17 +313,13 @@ def wordOrder : List Con :=
 def phraseOrder : List Con :=
   [.ftBin, .onset, .identLength, .max, .identStress, .distZero, .alignR, .maxMora]
 
-/-- A stratum's ranked constraints over a candidate type, from its order and marks. -/
-def ranking {C : Type*} (order : List Con) (marks : C → Con → ℕ) : List (Con × Constraint C) :=
-  order.map fun l => (l, fun c => marks c l)
-
 /-! ### Word-level phonology (§5.2) -/
 
 /-- The candidates for dative *samudr-am-ní-ki* ((59)): keep /mn/; delete /n/ or /m/ with the
 mora; delete /m/ or /n/ with compensatory lengthening. -/
 inductive WordCandDat where
   | faithful | deleteN | deleteM | deleteMLengthen | deleteNLengthen
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype, Inhabited
 
 /-- The marks of (59). -/
 def WordCandDat.marks : WordCandDat → Con → ℕ
@@ -356,23 +332,17 @@ def WordCandDat.marks : WordCandDat → Con → ℕ
   | .deleteNLengthen, .max => 2
   | _, _ => 0
 
-def wordDatCands : List WordCandDat :=
-  [.faithful, .deleteN, .deleteM, .deleteMLengthen, .deleteNLengthen]
-
-theorem wordDatCands_ne : wordDatCands ≠ [] := by decide
-
 /-- (59): the /mn/ contact is repaired by deleting /m/ and lengthening /a/ — the long form
 *samudrāniki*. -/
 theorem wordDat_optimal :
-    (Tableau.ofRanking wordDatCands ((ranking wordOrder WordCandDat.marks).map (·.2))
-      wordDatCands_ne).optimal = {.deleteMLengthen} := by
+    (Tableau.ofOrder wordOrder WordCandDat.marks).optimal = {.deleteMLengthen} := by
   decide
 
 /-- The candidates for nominative *samudr-am-ní* ((62)): destress *-ni*; foot it alone; delete
 /i/ into a coda cluster; delete /i/ and /m/; or delete /ni/. -/
 inductive WordCandNom where
   | destress | degenerateFoot | deleteI | deleteIM | deleteNi
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype, Inhabited
 
 /-- The marks of (62). -/
 def WordCandNom.marks : WordCandNom → Con → ℕ
@@ -385,15 +355,10 @@ def WordCandNom.marks : WordCandNom → Con → ℕ
   | .deleteNi, .max => 2
   | _, _ => 0
 
-def wordNomCands : List WordCandNom := [.destress, .degenerateFoot, .deleteI, .deleteIM, .deleteNi]
-
-theorem wordNomCands_ne : wordNomCands ≠ [] := by decide
-
 /-- (62): word-final stressed *-ni*, unable to head a binary foot, is deleted — the short form
 *samudram*. -/
 theorem wordNom_optimal :
-    (Tableau.ofRanking wordNomCands ((ranking wordOrder WordCandNom.marks).map (·.2))
-      wordNomCands_ne).optimal = {.deleteNi} := by
+    (Tableau.ofOrder wordOrder WordCandNom.marks).optimal = {.deleteNi} := by
   decide
 
 /-- The candidates for *samudr-am-ní-antaṭi-ni* with a postposed quantifier ((63)): destress
@@ -401,7 +366,7 @@ theorem wordNom_optimal :
 or delete /i/ and /m/ with /n/ resyllabified as onset. -/
 inductive WordCandQ where
   | destress | degenerateFoot | deleteI | deleteIM | deleteNi | deleteIMResyllabify
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype, Inhabited
 
 /-- The marks of (63), with ONSET marked on every candidate whose *an* lacks an onset. -/
 def WordCandQ.marks : WordCandQ → Con → ℕ
@@ -416,16 +381,10 @@ def WordCandQ.marks : WordCandQ → Con → ℕ
   | .deleteIMResyllabify, .max => 2
   | _, _ => 0
 
-def wordQCands : List WordCandQ :=
-  [.destress, .degenerateFoot, .deleteI, .deleteIM, .deleteNi, .deleteIMResyllabify]
-
-theorem wordQCands_ne : wordQCands ≠ [] := by decide
-
 /-- (63): before the heavy *an* the stressed *-ni* is again deleted, leaving the coda /m/
 before an onsetless syllable. -/
 theorem wordQ_optimal :
-    (Tableau.ofRanking wordQCands ((ranking wordOrder WordCandQ.marks).map (·.2))
-      wordQCands_ne).optimal = {.deleteNi} := by
+    (Tableau.ofOrder wordOrder WordCandQ.marks).optimal = {.deleteNi} := by
   decide
 
 /-- The n exponent each Word-level output leaves. -/
@@ -456,7 +415,7 @@ theorem word_level_derives_weakN :
 lengthening, delete the postposition's /n/, or keep the /mn/ contact. -/
 inductive PhraseCandP where
   | deleteMLengthen | deleteM | deleteN | faithful
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype, Inhabited
 
 /-- The marks of (66), as printed. -/
 def PhraseCandP.marks : PhraseCandP → Con → ℕ
@@ -467,14 +426,9 @@ def PhraseCandP.marks : PhraseCandP → Con → ℕ
   | .faithful, .alignR => 2
   | _, _ => 0
 
-def phrasePCands : List PhraseCandP := [.deleteMLengthen, .deleteM, .deleteN, .faithful]
-
-theorem phrasePCands_ne : phrasePCands ≠ [] := by decide
-
 /-- (66): across the postposition boundary the /mn/ contact is kept. -/
 theorem phraseP_optimal :
-    (Tableau.ofRanking phrasePCands ((ranking phraseOrder PhraseCandP.marks).map (·.2))
-      phrasePCands_ne).optimal = {.faithful} := by
+    (Tableau.ofOrder phraseOrder PhraseCandP.marks).optimal = {.faithful} := by
   decide
 
 /-- The candidates for the Word-level output of (63) at the Phrase level ((67)): keep the
@@ -482,7 +436,7 @@ onsetless *an*; resyllabify /m/ as its onset; lengthen /a/ and resyllabify; or f
 shortened *dra* alone. -/
 inductive PhraseCandQ where
   | faithful | resyllabify | lengthen | degenerateFoot
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype, Inhabited
 
 /-- The marks of (67). -/
 def PhraseCandQ.marks : PhraseCandQ → Con → ℕ
@@ -493,15 +447,10 @@ def PhraseCandQ.marks : PhraseCandQ → Con → ℕ
   | .degenerateFoot, .maxMora => 1
   | _, _ => 0
 
-def phraseQCands : List PhraseCandQ := [.faithful, .resyllabify, .lengthen, .degenerateFoot]
-
-theorem phraseQCands_ne : phraseQCands ≠ [] := by decide
-
 /-- (67): the coda /m/ resyllabifies as the onset of *an*, shifting stress — *samudra.man.ta.ṭi.ni*
 without compensatory lengthening. -/
 theorem phraseQ_optimal :
-    (Tableau.ofRanking phraseQCands ((ranking phraseOrder PhraseCandQ.marks).map (·.2))
-      phraseQCands_ne).optimal = {.resyllabify} := by
+    (Tableau.ofOrder phraseOrder PhraseCandQ.marks).optimal = {.resyllabify} := by
   decide
 
 /-! ### Rerankings (68) -/
@@ -512,26 +461,20 @@ open OptimalityTheory.Stratal
 Phrase level: consonant deletion at the Word level, retention and resyllabification at the
 Phrase level. -/
 theorem distZero_alignR_max_reranked :
-    Reranked Con.distZero .max (ranking wordOrder WordCandDat.marks)
-        (ranking phraseOrder PhraseCandP.marks) ∧
-      Reranked Con.alignR .max (ranking wordOrder WordCandDat.marks)
-        (ranking phraseOrder PhraseCandP.marks) := by
+    Reranked Con.distZero .max wordOrder phraseOrder ∧
+      Reranked Con.alignR .max wordOrder phraseOrder := by
   decide
 
 /-- Prosodic faithfulness (IDENT-STRESS, MAX-μ) outranks segmental faithfulness (MAX,
 IDENT-LENGTH) at the Word level and is outranked by it at the Phrase level. -/
 theorem prosodic_segmental_reranked :
-    Reranked Con.identStress .max (ranking wordOrder WordCandQ.marks)
-        (ranking phraseOrder PhraseCandQ.marks) ∧
-      Reranked Con.maxMora .identLength (ranking wordOrder WordCandQ.marks)
-        (ranking phraseOrder PhraseCandQ.marks) := by
+    Reranked Con.identStress .max wordOrder phraseOrder ∧
+      Reranked Con.maxMora .identLength wordOrder phraseOrder := by
   decide
 
 /-- IDENT-STRESS outranks ONSET at the Word level and ONSET outranks it at the Phrase level:
 the onsetless *an* of (63) is resyllabified only in (67). -/
-theorem identStress_onset_reranked :
-    Reranked Con.identStress .onset (ranking wordOrder WordCandQ.marks)
-      (ranking phraseOrder PhraseCandQ.marks) := by
+theorem identStress_onset_reranked : Reranked Con.identStress .onset wordOrder phraseOrder := by
   decide
 
 end Aitha2026

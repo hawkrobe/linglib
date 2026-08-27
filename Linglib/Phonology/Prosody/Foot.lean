@@ -25,6 +25,8 @@ are *functions* that recover the same head.
   (the prosodic tree, its metrical grid, and its head-flag row).
 * `footMorae` — mora count of a `Tree`-extracted weight-list foot (the flat metrical
   parse is now `Prosody.Footing`).
+* `Footing.footOffsets` / `Footing.nonBimoraicFeet` — each foot's left-edge position and
+  the feet failing bimoraicity: what the alignment and binarity constraints count.
 
 ## Main results
 
@@ -226,6 +228,23 @@ def size : Nat := (fc.map (Sum.elim Foot.length (fun _ => 1))).sum
 
 /-- The `Parse(σ)` violation profile ([lamont-2022c]): `1` at each stray σ, `0` at each footed. -/
 def strayMarks : List Nat := fc.flatMap (Sum.elim (List.replicate ·.length 0) (fun _ => [1]))
+
+/-! ### Foot positions and quantity
+
+The structural readings the metrical alignment and binarity constraints count
+([kager-2007]): ALL-FT-LEFT is `footOffsets.sum`, ALL-FT-RIGHT the same on the reversed
+footing, FT-BIN(μ) the length of `nonBimoraicFeet`, and PARSE-SYL the length of `strays`. -/
+
+/-- The left-edge position of each foot, in syllables from the left edge of the footing. -/
+def footOffsets : List ℕ :=
+  (fc.foldl (fun (acc : List ℕ × ℕ) x =>
+    Sum.elim (fun f => (acc.1 ++ [acc.2], acc.2 + f.length)) (fun _ => (acc.1, acc.2 + 1)) x)
+    ([], 0)).1
+
+/-- The feet that are not bimoraic under the weight reading `w` (for the syllabic reading,
+read every syllable as one mora). -/
+def nonBimoraicFeet (w : S → ℕ) (fc : Footing S) : List (Foot S) :=
+  fc.feet.filter fun f => f.moraCount w ≠ 2
 
 end Footing
 

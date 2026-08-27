@@ -302,15 +302,13 @@ def candF : MwaghavulForm :=
 
 def candidates : List MwaghavulForm := [candA, candB, candC, candD, candE, candF]
 
-theorem candidates_ne : candidates ≠ [] := by decide
-
 /-- Ranking from paper §4.3 + p. 26: `INTEG-Mᵥ ≫ L-ANCH-Mᵥ ≫
     R-ANCH-Mᵥ ≫ MAX-Tone`. -/
 def ranking : List (Constraint MwaghavulForm) :=
   [integMv, lAnchMv, rAnchMv, maxToneC]
 
 def tableau : Tableau MwaghavulForm ranking.length :=
-  Tableau.ofRanking candidates ranking candidates_ne
+  Tableau.ofRanking candidates ranking
 
 /-- (24a) profile `[INTEG-Mᵥ, L-ANCH-Mᵥ, R-ANCH-Mᵥ, MAX-T] = [0, 2, 2, 0]`:
     M floating, both anchors fail (no gram-M TBU), no deletions. -/
@@ -407,15 +405,13 @@ def candG : MwaghavulForm :=
 def candidates : List MwaghavulForm :=
   [candA, candB, candC, candD, candE, candF, candG]
 
-theorem candidates_ne : candidates ≠ [] := by decide
-
 /-- Ranking from paper Tableau 25 (p. 27):
     `L-ANCH-Mᵥ ≫ R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ ≫ MAX-Tone`. -/
 def ranking : List (Constraint MwaghavulForm) :=
   [lAnchMv, rAnchHv, rAnchMv, lAnchHv, maxToneC]
 
 def tableau : Tableau MwaghavulForm ranking.length :=
-  Tableau.ofRanking candidates ranking candidates_ne
+  Tableau.ofRanking candidates ranking
 
 /-- (25a) profile `[3, 3, 3, 3, 2]`: no verbaliser realised. -/
 theorem candA_profile :
@@ -534,15 +530,13 @@ def candG : MwaghavulForm :=
 def candidates : List MwaghavulForm :=
   [candA, candB, candC, candD, candE, candF, candG]
 
-theorem candidates_ne : candidates ≠ [] := by decide
-
 /-- Ranking, same shape as Tableau 25 but with per-root anchors:
     `L-ANCH-Mᵥ ≫ R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ ≫ MAX-Tone`. -/
 def ranking : List (Constraint MwaghavulForm) :=
   [lAnchMv26, rAnchHv26, rAnchMv26, lAnchHv26, maxToneC]
 
 def tableau : Tableau MwaghavulForm ranking.length :=
-  Tableau.ofRanking candidates ranking candidates_ne
+  Tableau.ofRanking candidates ranking
 
 /-- (26d) profile `[0, 0, 0, 0, 2]`: perfect realisation — vbz M on
     every TBU of RED, vbz H on every TBU of BASE. Both lex Ls deleted
