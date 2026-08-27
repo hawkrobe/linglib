@@ -1,368 +1,305 @@
-/-
-# Allocutive Agreement as Agree
-[chomsky-2000] [portner-pak-zanuttini-2019]
-
-Minimalist analysis of allocutive agreement (AA) following [alok-bhalla-2026].
-AA is not special machinery — it IS phi-agreement (Agree) between a functional
-head (Fin or SA) and a null addressee DP.
-
-## Key Claims
-
-1. AA reduces to standard Agree
-2. Probe locus (SA vs Fin) predicts embeddability:
-   - SA-based AA → root-only (SAP does not embed; [dayal-2025])
-   - Fin-based AA → freely embeddable (FinP embeds under C)
-3. [iHON] is a relational feature: ⟦iHON⟧ = λx. S_i ≺ x
-
-## Crosslinguistic survey (§0)
-
-Typological data on AA — where verbs encode addressee features — and the
-morphosyntactic expression of honorifics ([alok-bhalla-2026], Table 1;
-distinctions following [portner-pak-zanuttini-2019]): how the allocutive
-marker is realized (`AMType`), where it can appear (`Embeddability`), and
-where honorification surfaces (`HonDomain`).
-
-## Connections
-
-- **Agree/Basic.lean**: allocutive [uHON] valuation is `applyAgree`
-  (`hon_agree_values`) — AA is ordinary phi-style agreement
-- **Phase.lean**: `isPhaseHeadOf .SA` — SAP as the highest phase
-- **Studies/Dayal2025.lean**: `particle_layer_predicts_embedding`
-  — SAP unembeddability parallels allocutive root-only restriction
-- **RSA/YoonEtAl2020**: Social utility (φ weighting) is the pragmatic analogue
-  of syntactic [iHON] — both encode social relations between discourse
-  participants
-
--/
-
-import Linglib.Syntax.Minimalist.Agree.Basic
+import Linglib.Syntax.Minimalist.Features
 import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Magahi.Pronouns
-import Linglib.Fragments.Korean.Pronouns
-import Linglib.Fragments.Japanese.Pronouns
 import Linglib.Fragments.Tamil.Pronouns
 import Linglib.Fragments.Romance.Galician.Pronouns
-import Linglib.Fragments.Hindi.Pronouns
-import Linglib.Fragments.Maithili.Pronouns
-import Linglib.Fragments.Punjabi.Pronouns
+import Linglib.Data.Examples.AlokBhalla2026
+
+/-!
+# Alok and Bhalla (2026): allocutivity and the syntax of honorifics
+
+A review of allocutive marking — verbal encoding of the addressee's features —
+and of honorifics as syntactic features. Allocutive markers come in three
+morphosyntactic kinds (agreement morphemes, addressee-hosting heads, clitic
+pronouns), distribute over clause types in three ways (root only, embedded-root
+contexts, freely in finite clauses), and are sourced from three loci where the
+discourse participants are represented (the speech-act phrase, the finiteness
+phrase, an applicative-like addressee phrase). Honorific features are
+relational: [iHON] on a nominal phrase orders the speaker against the referent,
+so every phrase in a clause sets its own level.
+
+The marker kinds, distributions and loci are recorded per language as the
+review reports them, and the example rows check the distributional claims
+through each language's assignment. The Magahi rows check the fused
+subject/addressee suffixes against the Fragment's paradigm, the matching of
+second-person pronouns with the marker, and the independence of third-person
+levels; the Hindi rows check the plural-agreement route to subject
+honorification. The old survey table this file used to carry was not the
+paper's Table 1, which is Tamil number marking.
+
+## References
+
+* [alok-bhalla-2026]
+* [alok-2020]
+* [portner-pak-zanuttini-2019]
+* [speas-tenny-2003]
+* [dayal-2025]
+* [wang-r-2023]
+-/
 
 namespace AlokBhalla2026
 
-open Minimalist
+open Minimalist Data.Examples
 
--- ============================================================================
--- Section 0: Crosslinguistic Survey ([alok-bhalla-2026], Table 1)
--- ============================================================================
+/-! ### Languages -/
 
-/-- Morphosyntactic type of allocutive marker
-    ([portner-pak-zanuttini-2019] §2). -/
-inductive AMType where
-  | agreeMorpheme    -- verbal inflectional morpheme (Magahi, Basque)
-  | particle         -- free-standing particle (Korean, Japanese)
-  | cliticPronoun    -- clitic pronoun attached to verb (Galician)
-  deriving Repr, DecidableEq
+/-- The allocutive languages the review discusses at the level of marker type
+    and distribution. -/
+inductive Language where
+  | souletinBasque
+  | innovativeSouthernBasque
+  | magahi
+  | tamil
+  | korean
+  | japanese
+  | galician
+  deriving DecidableEq, Repr
 
-/-- Distribution across clause types ([portner-pak-zanuttini-2019] §3.1). -/
-inductive Embeddability where
-  | rootOnly       -- allocutive marking restricted to root clauses
-  | limitedEmbed   -- can embed under some predicates (e.g., speech/thought)
-  | freelyEmbed    -- no embedding restriction
-  deriving Repr, DecidableEq
+def Language.glottocode : Language → String
+  | .souletinBasque => "soul1243"
+  | .innovativeSouthernBasque => "basq1248"
+  | .magahi => "maga1260"
+  | .tamil => "tami1289"
+  | .korean => "kore1280"
+  | .japanese => "nucl1643"
+  | .galician => "gali1258"
 
-/-- Where honorification surfaces. -/
-inductive HonDomain where
-  | verbal   -- verbal agreement only
-  | nominal  -- nominal morphology only (e.g., Japanese -san)
-  | both     -- verbal and nominal
-  deriving Repr, DecidableEq
+/-- The language of a row, for the languages with a profile. -/
+def languageOf : String → Option Language
+  | "soul1243" => some .souletinBasque
+  | "maga1260" => some .magahi
+  | "tami1289" => some .tamil
+  | "kore1280" => some .korean
+  | "nucl1643" => some .japanese
+  | "gali1258" => some .galician
+  | _ => none
 
-/-- A single allocutive datum: one language's profile. -/
-structure AllocDatum where
-  language : String
-  amType : AMType
-  embeddability : Embeddability
-  /-- Whether the language has a T/V pronoun distinction -/
-  hasTV : Bool
-  /-- Whether 3rd person honorifics exist -/
-  has3PHon : Bool
-  /-- Where honorification is realized -/
-  domain : HonDomain
-  deriving Repr, DecidableEq
+/-! ### The morphosyntax of the marker -/
 
-def basque : AllocDatum :=
-  ⟨"Souletian Basque", .agreeMorpheme, .rootOnly, true, false, .verbal⟩
+/-- The three kinds of allocutive marker: an agreement reflex on a functional
+    head, a head that itself hosts the addressee, a clitic spelling out the
+    addressee. -/
+inductive MarkerType where
+  | agreement
+  | head
+  | clitic
+  deriving DecidableEq, Repr
 
-def magahi : AllocDatum :=
-  ⟨"Magahi", .agreeMorpheme, .freelyEmbed, true, true, .both⟩
+/-- The analyses the review reports for each language; Basque and Japanese are
+    contested. -/
+def analyses : Language → List MarkerType
+  | .souletinBasque | .innovativeSouthernBasque => [.agreement, .clitic]
+  | .magahi | .tamil => [.agreement]
+  | .korean => [.head]
+  | .japanese => [.agreement, .head]
+  | .galician => [.clitic]
 
-def korean : AllocDatum :=
-  ⟨"Korean", .particle, .rootOnly, true, true, .both⟩
+/-- Register level named by a row's honorific feature. -/
+def levelOf : String → Option Features.Register.Level
+  | "nh" => some .informal
+  | "h" => some .neutral
+  | "hh" => some .formal
+  | _ => none
 
-def japanese : AllocDatum :=
-  ⟨"Japanese", .particle, .rootOnly, true, true, .both⟩
+/-- Magahi's suffixes are composites of the subject's and the addressee's
+    honorific features (exx 2–6, 42–43): every row's marker is the Fragment's
+    fused form for its two levels. -/
+theorem magahi_fusion_rows :
+    ∀ row ∈ Examples.all, row.language = "maga1260" → ∀ m ∈ row.feature? "marker",
+      ∀ s ∈ (row.feature? "subject").bind levelOf, ∀ a ∈ (row.feature? "addressee").bind levelOf,
+        Magahi.Pronouns.allocutive s a = some m := by
+  decide +kernel
 
-def tamil : AllocDatum :=
-  ⟨"Tamil", .agreeMorpheme, .limitedEmbed, true, true, .verbal⟩
+/-- The Souletin markers of ex 1 and the Galician clitics are the Fragments'. -/
+theorem marker_rows :
+    ∀ row ∈ Examples.all, ∀ m ∈ row.feature? "marker",
+      (row.language = "soul1243" → m ∈ Basque.Pronouns.allAllocMarkers.map (·.form)) ∧
+      (row.language = "gali1258" → m ∈ Galician.Pronouns.allAllocClitics.map (·.form)) ∧
+      (row.language = "tami1289" → m = Tamil.Pronouns.pluralSuffix) := by
+  decide +kernel
 
-def galician : AllocDatum :=
-  ⟨"Galician", .cliticPronoun, .freelyEmbed, true, false, .verbal⟩
+/-! ### Distribution and loci -/
 
-def hindi : AllocDatum :=
-  ⟨"Hindi", .agreeMorpheme, .freelyEmbed, true, true, .both⟩
+/-- The three distributional types: root clauses only; also embedded-root
+    contexts (complements of saying, reason clauses); freely in finite embedded
+    clauses. -/
+inductive Distribution where
+  | rootOnly
+  | embeddedRoot
+  | free
+  deriving DecidableEq, Repr
 
-def maithili : AllocDatum :=
-  ⟨"Maithili", .agreeMorpheme, .freelyEmbed, true, true, .both⟩
+def distribution : Language → Distribution
+  | .souletinBasque | .korean => .rootOnly
+  | .japanese | .tamil => .embeddedRoot
+  | .magahi | .innovativeSouthernBasque | .galician => .free
 
-def punjabi : AllocDatum :=
-  ⟨"Punjabi", .agreeMorpheme, .limitedEmbed, true, true, .verbal⟩
+/-- Where the discourse participants are represented: the speech-act phrase,
+    the finiteness phrase, or an applicative-like addressee phrase whose
+    licensing is language-specific. -/
+inductive Locus where
+  | sa
+  | fin
+  | addr
+  deriving DecidableEq, Repr
 
-def allAllocData : List AllocDatum :=
-  [basque, magahi, korean, japanese, tamil, galician, hindi, maithili, punjabi]
+/-- The loci the review's sources assign; Tamil's two marker positions support
+    two loci, Japanese's complementizer-sensitive embedding an addressee
+    phrase. -/
+def loci : Language → List Locus
+  | .souletinBasque | .korean => [.sa]
+  | .magahi => [.fin]
+  | .tamil => [.sa, .fin]
+  | .japanese => [.sa, .addr]
+  | .innovativeSouthernBasque | .galician => [.addr]
 
-/-- At least one language restricts allocutive marking to root clauses. -/
-theorem rootOnly_languages_exist :
-    ∃ d ∈ allAllocData, d.embeddability = .rootOnly :=
-  ⟨basque, by simp [allAllocData], rfl⟩
+/-- A clause context. -/
+inductive Context where
+  | root
+  | embeddedRoot
+  | finiteNonRoot
+  | nonfinite
+  deriving DecidableEq, Repr
 
-/-- At least one language freely embeds allocutive marking. -/
-theorem freelyEmbed_languages_exist :
-    ∃ d ∈ allAllocData, d.embeddability = .freelyEmbed :=
-  ⟨magahi, by simp [allAllocData], rfl⟩
+/-- The contexts each distributional type admits. -/
+def Distribution.Admits : Distribution → Context → Prop
+  | .rootOnly, c => c = .root
+  | .embeddedRoot, c => c = .root ∨ c = .embeddedRoot
+  | .free, c => c ≠ .nonfinite
 
-/-- All allocutive languages in the survey mark the verbal domain
-    (verbal or both). -/
-theorem all_have_verbal :
-    allAllocData.all (λ d => d.domain == .verbal || d.domain == .both) = true := by
-  native_decide
+instance : DecidableRel Distribution.Admits := λ d c ↦ by
+  cases d <;> simp [Distribution.Admits] <;> infer_instance
 
-/-- All surveyed allocutive languages have a T/V pronoun distinction. -/
-theorem all_have_tv :
-    allAllocData.all (λ d => d.hasTV) = true := by native_decide
+/-- The speech-act phrase is available only in root and embedded-root contexts;
+    languages sourced from it alone are at most of the embedded-root type. -/
+theorem sa_only_restricted (l : Language) (h : loci l = [.sa]) :
+    distribution l ≠ .free := by
+  cases l <;> simp_all [loci, distribution]
 
--- ============================================================================
--- Section A: Allocutive Agree
--- ============================================================================
+/-- The context an embedding feature names. -/
+def contextOf : String → Option Context
+  | "saying" | "reason" => some .embeddedRoot
+  | "complement" | "believe" | "perceptual" | "relative" | "nounComplement" | "factive"
+  | "wh" => some .finiteNonRoot
+  | "nonfinite" => some .nonfinite
+  | _ => none
 
-/-- An allocutive Agree configuration: a probe (Fin or SA head) enters Agree
-    with a null addressee DP bearing valued [iHON] and [person:2]. -/
-structure AllocAgree where
-  /-- The probe (Fin or SA head) -/
-  probe : SyntacticObject
-  /-- Feature bundle on the probe (contains unvalued [uHON]) -/
-  probeFeatures : FeatureBundle
-  /-- The null addressee DP -/
-  addressee : SyntacticObject
-  /-- Feature bundle on the addressee (valued [iHON], [person:2]) -/
-  addresseeFeatures : FeatureBundle
-  /-- Category of the probe: Fin or SA -/
-  probeCat : Cat
+/-- Embedded rows: a marker in the embedded clause is grammatical exactly where
+    the language's distributional type admits the context (exx 12–18, 21,
+    30–31); rows whose alternatives add the marker are read through those
+    alternatives. -/
+theorem distribution_rows :
+    ∀ row ∈ Examples.all, ∀ l ∈ languageOf row.language,
+      ∀ ctx ∈ (row.feature? "embedding").bind contextOf, ctx ≠ .nonfinite →
+        (row.judgment = .acceptable ↔ (distribution l).Admits ctx) := by
+  decide +kernel
 
-/-- Probe features for allocutive agreement: unvalued [uHON]. -/
-def allocProbeFeatures (level : HonLevel) : FeatureBundle :=
-  .ofGramFeatures [.unvalued (.hon level)]
+/-- Nonfinite complements carry the marker exactly in languages with an
+    addressee phrase below the finiteness phrase: Galician's infinitives (ex 32)
+    against Magahi's nonfinite clauses (ex 30), where the finiteness locus
+    demands a finite clause. -/
+theorem nonfinite_rows :
+    ∀ row ∈ Examples.all, ∀ l ∈ languageOf row.language,
+      row.feature? "embedding" = some "nonfinite" →
+        (row.judgment = .acceptable ∧ row.alternatives = [] ↔ .addr ∈ loci l) ∧
+        (∀ alt ∈ row.alternatives, alt.2 = .acceptable ↔ .addr ∈ loci l) := by
+  decide +kernel
 
-/-- Addressee DP features: valued [iHON] and [person:2].
-    The addressee is always 2nd person. -/
-def addresseeDPFeatures (level : HonLevel) : FeatureBundle :=
-  .ofGramFeatures [.valued (.hon level), .valued (.phi (.person .second))]
+/-- Japanese *-mas-* in nonroot complements is sensitive to the complementizer:
+    licensed under *koto* and *yooni*, not under *to* (ex 33). -/
+theorem japanese_complementizer_rows :
+    ∀ row ∈ Examples.all, row.language = "nucl1643" →
+      ∀ c ∈ row.feature? "embedding", c ∈ ["koto", "yooni", "to"] →
+        (row.judgment = .acceptable ↔ c ≠ "to") := by
+  decide +kernel
 
--- ============================================================================
--- Section B: Embeddability from Probe Location
--- ============================================================================
+/-! ### Honorific features -/
 
-/-- Predict embeddability from the category of the allocutive probe.
-    SA → root-only (SAP does not embed), Fin → freely embeddable. -/
-def predictEmbeddability : Cat → Embeddability
-  | .SA  => .rootOnly
-  | .Fin => .freelyEmbed
-  | _    => .limitedEmbed  -- other categories: theoretically unexpected
+/-- The social ordering [iHON] establishes between the speaker and a referent:
+    ⟦iHON⟧ = λx. S ≺ x with ≺ one of ≥, <, <<. -/
+inductive SocialOrder where
+  | ge
+  | lt
+  | ll
+  deriving DecidableEq, Repr
 
-theorem sa_probe_root_only : predictEmbeddability .SA = .rootOnly := rfl
+/-- The honorific level a social ordering determines. -/
+def levelOfOrder : SocialOrder → HonLevel
+  | .ge => .nh
+  | .lt => .h
+  | .ll => .hh
 
-theorem fin_probe_embeddable : predictEmbeddability .Fin = .freelyEmbed := rfl
+/-- The ordering a level encodes. -/
+def orderOfLevel : HonLevel → SocialOrder
+  | .nh => .ge
+  | .h => .lt
+  | .hh => .ll
 
-/-- Probe-locus assignment for each language in the survey. -/
-def probeLocus : String → Cat
-  | "Souletian Basque" => .SA    -- [oyharabal-1993]
-  | "Korean"           => .SA    -- particle-based, SAP layer
-  | "Japanese"         => .SA    -- particle-based, SAP layer
-  | "Magahi"           => .Fin   -- [alok-2020]
-  | "Galician"         => .Fin   -- clitic pronoun on Fin
-  | "Hindi"            => .Fin   -- agreement morpheme in FinP
-  | "Maithili"         => .Fin   -- agreement morpheme in FinP
-  | "Tamil"            => .Fin   -- limited embedding via Fin
-  | "Punjabi"          => .Fin   -- limited embedding via Fin
-  | _                  => .C     -- default
+@[simp] theorem levelOfOrder_orderOfLevel (l : HonLevel) : levelOfOrder (orderOfLevel l) = l := by
+  cases l <;> rfl
 
-/-- Check that the predicted embeddability matches the observed data
-    (modulo limited-embed, which Fin subsumes). -/
-def correctlyPredicts (d : AllocDatum) : Bool :=
-  let predicted := predictEmbeddability (probeLocus d.language)
-  match predicted, d.embeddability with
-  | .rootOnly,    .rootOnly    => true
-  | .freelyEmbed, .freelyEmbed => true
-  | .freelyEmbed, .limitedEmbed => true   -- Fin-based can also limit-embed
-  | _, _ => false
+@[simp] theorem orderOfLevel_levelOfOrder (o : SocialOrder) :
+    orderOfLevel (levelOfOrder o) = o := by
+  cases o <;> rfl
 
-/-- All languages in the survey are correctly predicted by probe locus. -/
-theorem all_correctly_predicted :
-    ∀ d ∈ allAllocData, correctlyPredicts d = true := by
-  intro d hd
-  simp [allAllocData] at hd
-  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    native_decide
+/-- [portner-pak-zanuttini-2019]'s Korean speech-style particles as bundles of
+    the speaker–addressee status and discourse formality (ex 34). -/
+def portnerParticle : SocialOrder → Bool → Option String
+  | .lt, true => some "supnita"
+  | .lt, false => some "eyo"
+  | .ge, false => some "e"
+  | _, _ => none
 
--- ============================================================================
--- Section C: iHON and HonP
--- ============================================================================
+/-- The status a row's feature names. -/
+def orderOf : String → Option SocialOrder
+  | "ge" => some .ge
+  | "lt" => some .lt
+  | "ll" => some .ll
+  | _ => none
 
-/-- The [iHON] relation: encodes social hierarchy between speaker and referent.
-    ⟦iHON⟧ = λx. S_i ≺ x, where ≺ is social ordering. -/
-structure HonRelation (E : Type*) where
-  /-- The speaker -/
-  speaker : E
-  /-- The referent (target of honorification) -/
-  referent : E
-  /-- The honorific level determined by the relation -/
-  level : HonLevel
+/-- The Korean rows with status and formality features carry the particle the
+    bundle realizes (exx 8a, 8b, 8d). -/
+theorem korean_particle_rows :
+    ∀ row ∈ Examples.all, ∀ o ∈ (row.feature? "status").bind orderOf,
+      ∀ f ∈ row.feature? "formal",
+        portnerParticle o (f = "+") = row.feature? "particle" := by
+  decide +kernel
 
-/-- HonP: a functional projection in the nominal spine that hosts [iHON].
-    Wraps a DP's SyntacticObject with an honorific feature. -/
-structure HonP where
-  /-- The underlying DP -/
-  dp : SyntacticObject
-  /-- The honorific feature on HonP -/
-  honFeature : GramFeature
-  /-- The feature must be a valued [iHON] -/
-  isHon : ∃ l, honFeature = .valued (.hon l)
+/-- Second-person pronouns in a Magahi clause share one level, and match the
+    allocutive marker's addressee level (exx 41–43). -/
+theorem magahi_second_person_rows :
+    ∀ row ∈ Examples.all, row.language = "maga1260" → row.judgment = .acceptable →
+      ∀ p ∈ row.feature? "pronoun2",
+        (∀ q ∈ row.feature? "pronoun2Other", q = p) ∧
+        ∀ a ∈ row.feature? "addressee", a = p := by
+  decide +kernel
 
-/-- Extract the honorific level from a HonP. -/
-def HonP.level (hp : HonP) : HonLevel :=
-  match hp.honFeature with
-  | .valued (.hon l) => l
-  | _ => .nh  -- unreachable by isHon
+/-- A mismatch between two second-person pronouns is out (ex 41). -/
+theorem magahi_mismatch_row :
+    ∀ row ∈ Examples.all, ∀ p ∈ row.feature? "pronoun2", ∀ q ∈ row.feature? "pronoun2Other",
+      q ≠ p → row.judgment = .unacceptable := by
+  decide +kernel
 
--- ============================================================================
--- Section D: Bridge Theorems
--- ============================================================================
+/-- Third-person levels are set independently: the same nonhonorific-subject
+    verb hosts a nonhonorific and an honorific object pronoun (ex 44), and one
+    clause carries three distinct levels (ex 45) — the case for [iHON] on every
+    nominal phrase rather than one status feature per clause. -/
+theorem third_person_independent :
+    (∃ r ∈ Examples.all, ∃ s ∈ Examples.all,
+      r.feature? "pronoun3" = some "nh" ∧ s.feature? "pronoun3" = some "h" ∧
+      r.feature? "subject" = s.feature? "subject" ∧
+      r.judgment = .acceptable ∧ s.judgment = .acceptable) ∧
+    ∃ r ∈ Examples.all, r.feature? "pronoun2" = some "hh" ∧
+      r.feature? "pronoun3" = some "nh" ∧ r.feature? "pronoun3Other" = some "h" ∧
+      r.judgment = .acceptable := by
+  decide +kernel
 
-/-- SA-based allocutive agreement is root-only.
-    Follows directly from SAP being the highest phase. -/
-theorem sa_based_aa_root_only :
-    predictEmbeddability .SA = .rootOnly := rfl
-
-/-- Fin-based allocutive agreement is freely embeddable.
-    FinP is below CP and embeds normally. -/
-theorem fin_based_aa_embeddable :
-    predictEmbeddability .Fin = .freelyEmbed := rfl
-
-/-- Basque prediction: probe = SA → root-only. -/
-theorem basque_prediction :
-    predictEmbeddability (probeLocus "Souletian Basque") = .rootOnly := rfl
-
-/-- Magahi prediction: probe = Fin → freely embeddable. -/
-theorem magahi_prediction :
-    predictEmbeddability (probeLocus "Magahi") = .freelyEmbed := rfl
-
-/-- Korean prediction: probe = SA (particle-based) → root-only. -/
-theorem korean_prediction :
-    predictEmbeddability (probeLocus "Korean") = .rootOnly := rfl
-
-/-- [iHON] features match under Agree: probe [uHON] can be valued by
-    goal [iHON], paralleling standard phi-agreement. -/
-theorem hon_features_match (level : HonLevel) :
-    featuresMatch (.unvalued (.hon level)) (.valued (.hon level)) = true := rfl
-
-/-- Honorific valuation via Agree: applying Agree to an allocutive probe
-    with [uHON] against an addressee with [iHON] values the probe. -/
-theorem hon_agree_values (level : HonLevel) :
-    applyAgree (allocProbeFeatures level) (addresseeDPFeatures level) .hon
-      = some (.ofGramFeatures [.valued (.hon level)]) := by
-  cases level <;> native_decide
-
-/-- Bridge to Studies/Dayal2025: SAP unembeddability parallels the SAP
-    clause of `Dayal2025.particle_layer_predicts_embedding`. Both follow
-    from SAP being the speech-act layer that does not embed.
-
-    Connection: SA-based allocutive markers (particles) pattern with
-    SAP-layer question particles — neither appears in quasi-subordination.
-    This is a structural parallel, not an identity theorem. -/
-theorem sa_alloc_parallels_sa_questions :
-    predictEmbeddability .SA = .rootOnly ∧
-    allAllocData.all (λ d =>
-      if probeLocus d.language == .SA then d.embeddability == .rootOnly else true) = true := by
-  constructor
-  · rfl
-  · native_decide
-
-/-- Bridge to [yoon-etal-2020] politeness: social utility (φ weighting
-    informational vs social goals) is the pragmatic analogue of syntactic
-    [iHON]. Both encode social relations between discourse participants.
-
-    [iHON] is syntactic: speaker ≺ referent in the grammar.
-    Social utility is pragmatic: speaker optimizes face preservation.
-    The parallel: honorific level increases ↔ social weight φ increases. -/
-theorem hon_levels_ordered :
-    ∀ l : HonLevel, l = .nh ∨ l = .h ∨ l = .hh := by
-  intro l; cases l <;> simp
-
--- ============================================================================
--- Section E: Fragment Bridges
--- ============================================================================
-
-/-- Convert register level to theory HonLevel.
-    informal → non-honorific, neutral → honorific, formal → high-honorific. -/
-def levelToHonLevel : Features.Register.Level → HonLevel
-  | .informal => .nh
-  | .neutral  => .h
-  | .formal   => .hh
-
-/-- Basque fragment has 2nd-person pronouns. -/
-theorem basque_fragment_has_2p :
-    Basque.Pronouns.secondPersonPronouns.all (·.person == some .second) = true := rfl
-
-/-- Magahi fragment has three honorific levels. -/
-theorem magahi_fragment_three_levels :
-    Magahi.Pronouns.secondPersonPronouns.map (·.register) =
-    [.informal, .neutral, .formal] := rfl
-
-/-- Korean fragment has 2nd-person pronouns. -/
-theorem korean_fragment_has_2p :
-    Korean.Pronouns.secondPersonPronouns.all (·.person == some .second) = true := rfl
-
-/-- Japanese fragment has 2nd-person pronouns. -/
-theorem japanese_fragment_has_2p :
-    Japanese.Pronouns.secondPersonPronouns.all (·.person == some .second) = true := rfl
-
-/-- Tamil fragment has 2nd-person pronouns. -/
-theorem tamil_fragment_has_2p :
-    Tamil.Pronouns.secondPersonPronouns.all (·.person == some .second) = true := rfl
-
-/-- Galician fragment has 2nd-person pronouns. -/
-theorem galician_fragment_has_2p :
-    Galician.Pronouns.secondPersonPronouns.all (·.person == some .second) = true := rfl
-
-/-- Hindi fragment has three honorific levels. -/
-theorem hindi_fragment_three_levels :
-    Hindi.Pronouns.secondPersonPronouns.map (·.register) =
-    [.informal, .neutral, .formal] := rfl
-
-/-- Maithili fragment has three honorific levels. -/
-theorem maithili_fragment_three_levels :
-    Maithili.Pronouns.secondPersonPronouns.map (·.register) =
-    [.informal, .neutral, .formal] := rfl
-
-/-- Punjabi fragment has 2nd-person pronouns. -/
-theorem punjabi_fragment_has_2p :
-    Punjabi.Pronouns.secondPersonPronouns.all (·.person == some .second) = true := rfl
-
-/-- Register bridge: informal maps to non-honorific. -/
-theorem informal_nh : levelToHonLevel .informal = .nh := rfl
-
-/-- Register bridge: neutral maps to honorific. -/
-theorem neutral_h : levelToHonLevel .neutral = .h := rfl
-
-/-- Register bridge: formal maps to high-honorific. -/
-theorem formal_hh : levelToHonLevel .formal = .hh := rfl
+/-- Hindi has no allocutive marking; an honorific subject co-opts plural
+    agreement (ex 48). -/
+theorem hindi_plural_rows :
+    ∀ row ∈ Examples.all, row.language = "hind1269" →
+      (row.feature? "agreement" = some "pl" ↔
+        row.feature? "subjectNumber" = some "pl" ∨ row.feature? "subjectHon" = some "h") := by
+  decide +kernel
 
 end AlokBhalla2026

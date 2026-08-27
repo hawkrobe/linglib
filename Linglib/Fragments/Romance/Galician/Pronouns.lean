@@ -86,7 +86,10 @@ def allPronouns : List PersonalPronoun :=
 def che : AllocutiveEntry :=
   { form := "che", register := .informal, gloss := "2sg.DAT.fam" }
 
-def allAllocClitics : List AllocutiveEntry := [che]
+/-- *vos* — familiar dative clitic, plural addressee ([alok-bhalla-2026] (9a)). -/
+def vos : AllocutiveEntry := { form := "vos", register := .informal, gloss := "2pl.DAT.fam" }
+
+def allAllocClitics : List AllocutiveEntry := [che, vos]
 
 -- ============================================================================
 -- Verb Agreement Examples

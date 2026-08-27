@@ -5,8 +5,9 @@ Personal pronouns and allocutive verbal morphology in Tamil (Dravidian).
 Tamil has a two-level honorific system (non-hon / hon) realized as verbal
 agreement suffixes. 1st person plural distinguishes inclusive (*naam*) vs
 exclusive (*naangaL*). 3rd person distinguishes masculine (*avan*), feminine
-(*avaL*), and honorific (*avar*). AA is Fin-based with limited embeddability
-(under speech/thought predicates).
+(*avaL*), and honorific (*avar*). The allocutive marker *-ŋgæ* is the plural
+suffix; it appears twice in root clauses and only below the complementizer
+when embedded ([alok-bhalla-2026]).
 
 -/
 
@@ -74,18 +75,22 @@ def allPronouns : List PersonalPronoun :=
   [naan, naam, naangaL] ++ secondPersonPronouns ++ [avan, avaL, avar, avarkaL]
 
 -- ============================================================================
--- Allocutive Markers (verbal agreement suffixes)
+-- Allocutive Marker ([alok-bhalla-2026] (7), Table 1; McFadden 2020)
 -- ============================================================================
 
-/-- *-aay* non-honorific suffix. -/
-def suffNH : AllocutiveEntry :=
-  { form := "-aay", register := .informal, gloss := "2sg.NH" }
+/-- *-ŋgæ* — politeness to the addressee. -/
+def alloc : AllocutiveEntry := { form := "-ŋgæ", register := .formal, gloss := "ALLOC" }
 
-/-- *-iingaL* honorific suffix. -/
-def suffH : AllocutiveEntry :=
-  { form := "-iingaL", register := .formal, gloss := "2sg.H" }
+def allAllocMarkers : List AllocutiveEntry := [alloc]
 
-def allAllocMarkers : List AllocutiveEntry := [suffNH, suffH]
+/-- The nominal plural suffix, homophonous with the allocutive marker. -/
+def pluralSuffix : String := "-ŋgæ"
+
+/-- Number marking on nominals (Table 1 of [alok-bhalla-2026], after McFadden
+    2020): singular and plural forms. -/
+def numberPairs : List (String × String) :=
+  [("naan", "naan-ŋgæ"), ("nii", "nii-ŋgæ"), ("avan", "avan-ŋgæ"), ("poɳɳǔ", "poɳɳǔ-ŋgæ"),
+   ("maram", "maram-ŋgæ")]
 
 -- ============================================================================
 -- Verification
@@ -117,8 +122,7 @@ theorem tv_distinction :
     secondPersonPronouns.any (·.register == .informal) = true ∧
     secondPersonPronouns.any (·.register == .formal) = true := ⟨rfl, rfl⟩
 
-/-- Allocutive markers match 2nd person pronoun register levels. -/
-theorem markers_match_2p :
-    allAllocMarkers.map (·.register) = secondPersonPronouns.map (·.register) := rfl
+/-- The allocutive marker is the plural suffix. -/
+theorem alloc_eq_pluralSuffix : alloc.form = pluralSuffix := rfl
 
 end Tamil.Pronouns

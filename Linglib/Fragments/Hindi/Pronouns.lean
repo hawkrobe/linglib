@@ -1,11 +1,11 @@
 /-
-# Hindi Pronoun & Allocutive Fragment
+# Hindi Pronoun Fragment
 
-Personal pronouns and allocutive verbal morphology in Hindi (Indo-Aryan).
-Hindi has a three-level honorific system for 2nd person (non-hon *tuu* / hon
-*tum* / high-hon *aap*) realized as imperative agreement suffixes. 3rd person
-uses distal demonstrative forms (*vah* sg / *ve* pl). AA is Fin-based and
-freely embeddable.
+Personal pronouns of Hindi (Indo-Aryan): a three-level honorific system for
+2nd person (non-hon *tuu* / hon *tum* / high-hon *aap*); 3rd person uses
+distal demonstrative forms (*vah* sg / *ve* pl). Hindi has no allocutive
+agreement; an honorific subject co-opts plural verb agreement
+([alok-bhalla-2026] (48), after Bhatt & Davis 2023).
 
 -/
 
@@ -65,24 +65,6 @@ def allPronouns : List PersonalPronoun :=
   [maiN, ham] ++ secondPersonPronouns ++ [vah, ve]
 
 -- ============================================================================
--- Allocutive Markers (imperative agreement suffixes)
--- ============================================================================
-
-/-- *-aa* non-honorific imperative suffix (e.g., *jaa* "go!"). -/
-def suffNH : AllocutiveEntry :=
-  { form := "-aa", register := .informal, gloss := "IMP.NH" }
-
-/-- *-e* honorific imperative suffix (e.g., *jao* "go"). -/
-def suffH : AllocutiveEntry :=
-  { form := "-e", register := .neutral, gloss := "IMP.H" }
-
-/-- *-iye* high-honorific imperative suffix (e.g., *jaaiye* "please go"). -/
-def suffHH : AllocutiveEntry :=
-  { form := "-iye", register := .formal, gloss := "IMP.HH" }
-
-def allAllocMarkers : List AllocutiveEntry := [suffNH, suffH, suffHH]
-
--- ============================================================================
 -- Verification
 -- ============================================================================
 
@@ -105,8 +87,5 @@ theorem second_person_all_2p :
 theorem three_levels :
     secondPersonPronouns.map (·.register) = [.informal, .neutral, .formal] := rfl
 
-/-- Allocutive markers have three levels matching 2nd person pronouns. -/
-theorem markers_three_levels :
-    allAllocMarkers.map (·.register) = [.informal, .neutral, .formal] := rfl
 
 end Hindi.Pronouns
