@@ -32,11 +32,7 @@ variants, and leave Horn's strong-adjective prediction unsupported.
 
 namespace AlexandropoulouGotzner2024a
 
-open Degree (AntonymForm GradableAdjective InformationalStrength)
-open Features (Asymmetry)
-open Krifka2007 (Region krifkaQuadruplet)
-open Data.Examples (LinguisticExample)
-open English.Predicates.Adjectival (large small clean dirty gigantic tiny pristine filthy)
+open Degree Features Krifka2007 Data.Examples English.Predicates.Adjectival
 
 /-! ### Design cells -/
 

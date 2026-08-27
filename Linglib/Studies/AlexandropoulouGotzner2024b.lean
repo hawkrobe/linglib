@@ -31,8 +31,7 @@ whereas at a single threshold neither distinction exists
 
 namespace AlexandropoulouGotzner2024b
 
-open Degree (Bounded ThresholdPair AntonymForm inGapRegion)
-open AlexandropoulouGotzner2024a (entryOf formOf hornRanges)
+open Degree AlexandropoulouGotzner2024a
 
 /-! ### Precision-level gap -/
 
