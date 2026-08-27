@@ -337,6 +337,12 @@ theorem familyListener_apply_singleton (L : Λ → Kernel U W) (α : ℝ) (cost 
       = μ {p} * speaker α cost (L p.2) p.1 {u} / (familySpeaker L α cost ∘ₘ μ) {u} := by
   rw [familyListener, posterior_apply_singleton _ _ hu, familySpeaker_apply]
 
+/-- A pair at which the utterance is never produced receives no posterior mass. -/
+theorem familyListener_apply_singleton_eq_zero (L : Λ → Kernel U W) (α : ℝ) (cost : U → ℝ≥0∞)
+    {u : U} (hu : (familySpeaker L α cost ∘ₘ μ) {u} ≠ 0) {p : W × Λ}
+    (hp : speaker α cost (L p.2) p.1 {u} = 0) : familyListener L α cost μ u {p} = 0 := by
+  rw [familyListener_apply_singleton L α cost hu, hp, mul_zero, ENNReal.zero_div]
+
 /-- Event comparison for the family listener reduces to prior-weighted member speaker
 sums. -/
 theorem familyListener_real_lt_iff (L : Λ → Kernel U W) (α : ℝ) (cost : U → ℝ≥0∞) {u : U}

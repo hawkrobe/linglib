@@ -361,20 +361,9 @@ noncomputable abbrev negListener (α : ℝ) : Kernel NegUtterance (NegState × I
 /-- **No free choice under negation** (Table 9): hearing *you may not take an apple or a
 pear*, the listener assigns no mass to any state other than Neither — in particular none to
 Only A and Only B, where a free-choice reading of the negated disjunction would be true. -/
-theorem no_fci_under_negation {α : ℝ} (hα : 0 < α) (p : NegState × Interp)
-    (hp : p.1 ≠ .neither) : negListener α .notOr {p} = 0 := by
-  have hu : (familySpeaker (fun i => uniformListener (negSem i)) α 1
-      ∘ₘ uniformOn (Set.univ : Set (NegState × Interp))) {NegUtterance.notOr} ≠ 0 :=
-    comp_familySpeaker_ne_zero (L := fun i => uniformListener (negSem i)) (α := α) (cost := 1)
-      (μ := uniformOn Set.univ) (w := .neither) (l := .literal) (u := .notOr)
-      (uniformOn_univ_singleton_ne_zero (NegState.neither, Interp.literal))
-      (uniformSpeaker_apply_singleton_ne_zero (negSem .literal) hα.le (t := .neither)
-        (c := .notOr) (mem_negSem.mpr trivial))
-  have hp' : p.1 ∉ negSem p.2 .notOr := by
-    rw [mem_negSem]
-    obtain ⟨w, i⟩ := p
-    cases w <;> cases i <;> first | exact absurd rfl hp | exact id
-  rw [negListener, familyListener_apply_singleton _ _ _ hu,
-    uniformSpeaker_apply_singleton_eq_zero (negSem p.2) hα hp', mul_zero, ENNReal.zero_div]
+theorem no_fci_under_negation {α : ℝ} (hα : 0 < α) {p : NegState × Interp}
+    (hp : p.1 ≠ .neither) : negListener α .notOr {p} = 0 :=
+  familyListener_uniform_apply_singleton_eq_zero negSem hα ⟨.literal, .neither, by decide⟩
+    (by rw [negSem_notOr, Finset.mem_singleton]; exact hp)
 
 end ChampollionAlsopGrosu2019
