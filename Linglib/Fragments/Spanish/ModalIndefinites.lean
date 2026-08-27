@@ -1,44 +1,37 @@
-import Linglib.Features.ModalIndefinite
+import Linglib.Syntax.Category.Determiner.ModalIndefinite
 
 /-!
-# Spanish Modal Indefinite Fragment
+# Spanish modal indefinites
 
-Lexical entries for Spanish modal indefinites *algún*
-([alonso-ovalle-menendez-benito-2010]: epistemic, with an
-anti-singleton domain constraint) and *uno cualquiera*
-([alonso-ovalle-menendez-benito-2018]: random choice).
+Lexical entries for *algún* ([alonso-ovalle-menendez-benito-2010]: epistemic, an
+implicature derived from an anti-singleton domain constraint) and *uno cualquiera*
+([alonso-ovalle-menendez-benito-2018]: at-issue random choice, projected from the
+decision of a volitional event).
 -/
 
 namespace Spanish.ModalIndefinites
 
-open Features.ModalIndefinite
-
-/-- *algún*: not-at-issue, epistemic only, upper-bounded. The modal
-    component is a conversational implicature derived from the
-    anti-singleton constraint on the domain
-    ([alonso-ovalle-menendez-benito-2010], §4). -/
-def algúnEntry : ModalIndefiniteEntry where
+/-- *algún*: epistemic only, upper-bounded; the modal component is a conversational
+implicature ([alonso-ovalle-menendez-benito-2010], §4). -/
+def algún : ModalIndefinite where
   form := "algún"
-  status := .notAtIssue
-  flavors := [.epistemic]
+  status := .implicature
+  flavors := {.epistemic}
   upperBounded := true
-  hasUnremarkableReading := false
-  canBePredicate := false
 
-/-- *uno cualquiera*: at-issue, random choice only, upper-bounded. The
-    random-choice interpretation requires a volitional predicate; with
-    non-volitional predicates only the unremarkable reading is
-    available ([alonso-ovalle-menendez-benito-2018], §1.1). -/
-def unoCualquieraEntry : ModalIndefiniteEntry where
+/-- *uno cualquiera*: at-issue random choice, upper-bounded, with an unremarkable reading in
+predicative position; its anchor must be a volitional event
+([alonso-ovalle-menendez-benito-2018], §1.1). -/
+def unoCualquiera : ModalIndefinite where
   form := "uno cualquiera"
   status := .atIssue
-  flavors := [.circumstantial]
+  flavors := {.circumstantial}
   upperBounded := true
   hasUnremarkableReading := true
   canBePredicate := true
   anchorConstraint := some .volitionalOnly
 
 /-- The Spanish modal indefinite paradigm. -/
-def paradigm : List ModalIndefiniteEntry := [algúnEntry, unoCualquieraEntry]
+def paradigm : List ModalIndefinite := [algún, unoCualquiera]
 
 end Spanish.ModalIndefinites

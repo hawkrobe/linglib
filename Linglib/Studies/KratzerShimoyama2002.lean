@@ -586,7 +586,7 @@ theorem beck_generalization :
 -- ════════════════════════════════════════════════════════════════
 
 open Japanese.Determiners (dare_ka dare_mo)
-open German.ModalIndefinites (irgendeinEntry)
+open German.ModalIndefinites (irgendein)
 
 /-- Same base (*dare*), different force via particle alternation. -/
 theorem same_base_different_force :
@@ -609,7 +609,7 @@ theorem dare_mo_universal_from_paradigm :
 /-- *irgendein* is existential-only + not-at-issue (domain widening). -/
 theorem irgendein_existential_only :
     germanParadigm.associatesWith = [.exists_] ∧
-    irgendeinEntry.status = .notAtIssue :=
+    irgendein.status = .implicature :=
   ⟨rfl, rfl⟩
 
 

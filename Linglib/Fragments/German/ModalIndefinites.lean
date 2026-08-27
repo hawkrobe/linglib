@@ -1,29 +1,26 @@
-import Linglib.Features.ModalIndefinite
+import Linglib.Syntax.Category.Determiner.ModalIndefinite
 
 /-!
-# German Modal Indefinite Fragment
+# German modal indefinites
 
-Lexical entry for German modal indefinite *irgendein*, the prototypical
-domain-widening indefinite ([kratzer-shimoyama-2002]).
+Lexical entry for *irgendein*, the prototypical domain-widening indefinite
+([kratzer-shimoyama-2002]).
 -/
 
 namespace German.ModalIndefinites
 
-open Features.ModalIndefinite
-
-/-- *irgendein*: not-at-issue, epistemic + random choice, not
-    upper-bounded. Epistemic in episodic assertions; free choice under
-    deontic modals. Domain widening is the core mechanism
-    ([kratzer-shimoyama-2002]). -/
-def irgendeinEntry : ModalIndefiniteEntry where
+/-- *irgendein*: epistemic or random choice, not upper-bounded, with an unremarkable reading
+in predicative position; the modal component is an implicature of domain widening
+([kratzer-shimoyama-2002]). -/
+def irgendein : ModalIndefinite where
   form := "irgendein"
-  status := .notAtIssue
-  flavors := [.epistemic, .circumstantial]
+  status := .implicature
+  flavors := {.epistemic, .circumstantial}
   upperBounded := false
   hasUnremarkableReading := true
   canBePredicate := true
 
 /-- The German modal indefinite paradigm. -/
-def paradigm : List ModalIndefiniteEntry := [irgendeinEntry]
+def paradigm : List ModalIndefinite := [irgendein]
 
 end German.ModalIndefinites

@@ -685,7 +685,6 @@ import Linglib.Features.Logophoricity
 import Linglib.Features.MassCount
 import Linglib.Features.MinimalPairs
 import Linglib.Features.Mirativity
-import Linglib.Features.ModalIndefinite
 import Linglib.Features.NegativeConcord
 import Linglib.Features.Number.Basic
 import Linglib.Features.Number.Capabilities
@@ -2974,3 +2973,6 @@ import Linglib.Data.Examples.AlonsoOvalleMenendezBenito2010
 import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025a
 import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
 import Linglib.Data.Examples.AlonsoOvalleRoyer2024
+import Linglib.Semantics.Modality.Anchor
+import Linglib.Semantics.Modality.IndefiniteDenotation
+import Linglib.Syntax.Category.Determiner.ModalIndefinite

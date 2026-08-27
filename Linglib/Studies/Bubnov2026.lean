@@ -297,9 +297,9 @@ theorem aadaruu_matches_nonSpecific :
     path (iii) → (iv) ([aloni-port-2015]). -/
 theorem irgend_compatible_classifications :
     irgendEntry.surfaceDAType = some DAType.epistemic ∧
-    irgendeinEntry.status = .notAtIssue ∧
-    irgendeinEntry.hasFlavor Modality.ModalFlavor.epistemic = true := by
-  exact ⟨by decide, rfl, rfl⟩
+    irgendein.status = .implicature ∧
+    Modality.ModalFlavor.epistemic ∈ irgendein.flavors := by
+  exact ⟨by decide, rfl, by decide⟩
 
 -- ============================================================================
 -- §8. The broader claim: coexpression ≠ syncretism
@@ -373,7 +373,7 @@ theorem fragment_polarity_disagree_on_some :
 /-- **German *irgend-*/*irgendein-*: cross-framework consistency check.**
     `Fragments/German/Indefinites.lean:33`'s `irgendEntry.functions` ({SU,
     irrealis}, matching D&A type-iv epistemic) and `Fragments/German/
-    ModalIndefinites.lean:27`'s `irgendeinEntry.flavors` (which includes
+    ModalIndefinites.lean`'s `irgendein.flavors` (which includes
     `.epistemic`, matching Aloni-BSML's epistemic-modal classification) line
     up: both attribute epistemic semantics to the same morphological root.
 
@@ -384,7 +384,7 @@ theorem fragment_polarity_disagree_on_some :
     this breaks. Real value: catches drift between the two Fragments. -/
 theorem irgend_irgendein_agree_on_epistemic :
     German.Indefinites.irgendEntry.surfaceDAType = some .epistemic ∧
-    German.ModalIndefinites.irgendeinEntry.hasFlavor .epistemic = true := by
-  exact ⟨by decide, rfl⟩
+    .epistemic ∈ German.ModalIndefinites.irgendein.flavors := by
+  exact ⟨by decide, by decide⟩
 
 end Bubnov2026
