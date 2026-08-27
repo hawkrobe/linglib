@@ -1,0 +1,2316 @@
+[
+  {
+    "id": "ahnkocabdavidson2026_ex9",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "(9)"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY ENTER CLUB. MUSIC ON. DANCE.",
+    "discourseSegments": [
+      "BOY ENTER CLUB.",
+      "MUSIC ON.",
+      "DANCE."
+    ],
+    "glossedTokens": [],
+    "translation": "A boy entered a club. Music went on. He danced.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "consultant"
+      ],
+      [
+        "verb",
+        "DANCE"
+      ]
+    ],
+    "comment": "Accepted by all three signers (3/3). One referent; the final verb is unmodified."
+  },
+  {
+    "id": "ahnkocabdavidson2026_ex10a",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "(10a)"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY ENTER CLUB. MUSIC ON. SEE GIRL READ. DANCE.",
+    "discourseSegments": [
+      "BOY ENTER CLUB.",
+      "MUSIC ON.",
+      "SEE GIRL READ.",
+      "DANCE."
+    ],
+    "glossedTokens": [],
+    "translation": "Intended: A boy entered a club. Music went on. He saw a girl reading. He danced.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "consultant"
+      ],
+      [
+        "verb",
+        "DANCE"
+      ]
+    ],
+    "comment": "Accepted by one of three signers (1/3). Two referents, no loci established, unmodified verb."
+  },
+  {
+    "id": "ahnkocabdavidson2026_ex10b",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "(10b)"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY IXA ENTER CLUB. SEE GIRL IXB READ. MUSIC ON. (IXA) DANCEA.",
+    "discourseSegments": [
+      "BOY IXA ENTER CLUB.",
+      "SEE GIRL IXB READ.",
+      "MUSIC ON.",
+      "(IXA) DANCEA."
+    ],
+    "glossedTokens": [],
+    "translation": "A boy entered a club. Music went on. He saw a girl reading. He danced.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "consultant"
+      ],
+      [
+        "verb",
+        "DANCE"
+      ]
+    ],
+    "comment": "3/3. Two referents established in loci; the verb is signed at the agent's locus."
+  },
+  {
+    "id": "ahnkocabdavidson2026_ex11a",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "(11a)"
+    },
+    "language": "amer1248",
+    "primaryText": "SUE HANG-OUT MARY. PUSH.",
+    "discourseSegments": [
+      "SUE HANG-OUT MARY.",
+      "PUSH."
+    ],
+    "glossedTokens": [],
+    "translation": "Intended: Sue and Mary were hanging out. Then she pushed her.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "consultant"
+      ],
+      [
+        "verb",
+        "PUSH"
+      ]
+    ],
+    "comment": "Rejected by all three signers (0/3). No loci and no context making the agent salient."
+  },
+  {
+    "id": "ahnkocabdavidson2026_ex11b",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "(11b)"
+    },
+    "language": "amer1248",
+    "primaryText": "SUE IXA HANG-OUT MARY IXB. (IXA) PUSHB (IXB).",
+    "discourseSegments": [
+      "SUE IXA HANG-OUT MARY IXB.",
+      "(IXA) PUSHB (IXB)."
+    ],
+    "glossedTokens": [],
+    "translation": "Sue and Mary were hanging out. Then she pushed her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "consultant"
+      ],
+      [
+        "verb",
+        "PUSH"
+      ]
+    ],
+    "comment": "3/3. Loci marked and the verb moves between them."
+  },
+  {
+    "id": "ahnkocabdavidson2026_ex11c",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "(11c)"
+    },
+    "language": "amer1248",
+    "primaryText": "SUE HANG-OUT MARY. MARY SAY SOMETHING BAD. SUE ANGRY. PUSH.",
+    "discourseSegments": [
+      "SUE HANG-OUT MARY.",
+      "MARY SAY SOMETHING BAD.",
+      "SUE ANGRY.",
+      "PUSH."
+    ],
+    "glossedTokens": [],
+    "translation": "Sue was hanging out with Mary. Mary said something bad. Sue got angry. She pushed her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "consultant"
+      ],
+      [
+        "verb",
+        "PUSH"
+      ]
+    ],
+    "comment": "3/3: context suffices. The surrounding context renders the agent salient; the same unmodified verb as in (11a)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_ex18",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "(18)"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY ENTER CLUB. MUSIC ON. BOY DANCE.",
+    "discourseSegments": [
+      "BOY ENTER CLUB.",
+      "MUSIC ON.",
+      "BOY DANCE."
+    ],
+    "glossedTokens": [],
+    "translation": "A boy entered a club. Music went on. He danced.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "BOY ENTER CLUB. MUSIC ON. ∅ DANCE.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "consultant"
+      ],
+      [
+        "verb",
+        "DANCE"
+      ]
+    ],
+    "comment": "3/3 for both the null argument and the bare noun. One referent; a null argument and a bare noun are both accepted."
+  },
+  {
+    "id": "ahnkocabdavidson2026_ex19",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "(19)"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY IXA ENTER CLUB. MUSIC ON. IXA DANCE.",
+    "discourseSegments": [
+      "BOY IXA ENTER CLUB.",
+      "MUSIC ON.",
+      "IXA DANCE."
+    ],
+    "glossedTokens": [],
+    "translation": "A boy entered a club. Music went on. He danced.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "consultant"
+      ],
+      [
+        "verb",
+        "DANCE"
+      ]
+    ],
+    "comment": "3/3, but considered redundant and dispreferred relative to the null argument. One referent with locus marking."
+  },
+  {
+    "id": "ahnkocabdavidson2026_ex20",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "(20)"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY ENTER CLUB. MUSIC ON. SEE GIRL READ. BOY DANCE.",
+    "discourseSegments": [
+      "BOY ENTER CLUB.",
+      "MUSIC ON.",
+      "SEE GIRL READ.",
+      "BOY DANCE."
+    ],
+    "glossedTokens": [],
+    "translation": "A boy entered a club. Music went on. He saw a girl reading. He danced.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "BOY ENTER CLUB. MUSIC ON. SEE GIRL READ. ∅ DANCE.",
+        "judgment": "questionable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "consultant"
+      ],
+      [
+        "verb",
+        "DANCE"
+      ]
+    ],
+    "comment": "Bare noun accepted 3/3; the null-argument version was rejected by two of three signers. Two referents; the bare noun BOY disambiguates without a locus, the null argument does not."
+  },
+  {
+    "id": "ahnkocabdavidson2026_ex20null",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "(20), null argument"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY ENTER CLUB. MUSIC ON. SEE GIRL READ. DANCE.",
+    "discourseSegments": [
+      "BOY ENTER CLUB.",
+      "MUSIC ON.",
+      "SEE GIRL READ.",
+      "DANCE."
+    ],
+    "glossedTokens": [],
+    "translation": "Intended: A boy entered a club. Music went on. He saw a girl reading. He danced.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "consultant"
+      ],
+      [
+        "verb",
+        "DANCE"
+      ]
+    ],
+    "comment": "Rejected by two of three signers. Two referents, null argument, no loci."
+  },
+  {
+    "id": "ahnkocabdavidson2026_ex21",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "(21)"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY IXA ENTER CLUB. MUSIC ON. SEE GIRL IXB READ. IXA DANCE.",
+    "discourseSegments": [
+      "BOY IXA ENTER CLUB.",
+      "MUSIC ON.",
+      "SEE GIRL IXB READ.",
+      "IXA DANCE."
+    ],
+    "glossedTokens": [],
+    "translation": "A boy entered a club. Music went on. He saw a girl reading. He danced.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "consultant"
+      ],
+      [
+        "verb",
+        "DANCE"
+      ]
+    ],
+    "comment": "3/3, with no dispreference for marking the loci. Two referents established in different loci."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_1_one_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 1. DANCE [1,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY SIT CLASS. CLASS FINISH, DANCE.",
+    "discourseSegments": [
+      "BOY SIT CLASS.",
+      "CLASS FINISH, DANCE."
+    ],
+    "glossedTokens": [],
+    "translation": "A boy sat in class. When class finished, he danced.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "DANCE"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_1_one_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 1. DANCE [1,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY IXA SIT CLASS. CLASS FINISH, IXA DANCEA.",
+    "discourseSegments": [
+      "BOY IXA SIT CLASS.",
+      "CLASS FINISH, IXA DANCEA."
+    ],
+    "glossedTokens": [],
+    "translation": "A boy sat in class. When class finished, he danced.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "DANCE"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_1_two_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 1. DANCE [2,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY SIT CLASS. GIRL READ. CLASS FINISH, DANCE.",
+    "discourseSegments": [
+      "BOY SIT CLASS.",
+      "GIRL READ.",
+      "CLASS FINISH, DANCE."
+    ],
+    "glossedTokens": [],
+    "translation": "A boy sat in class. A girl read. When class finished, he danced.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "DANCE"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_1_two_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 1. DANCE [2,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY IXA SIT-IN CLASS. GIRL IXB READ. CLASS FINISH, IXA DANCE.",
+    "discourseSegments": [
+      "BOY IXA SIT-IN CLASS.",
+      "GIRL IXB READ.",
+      "CLASS FINISH, IXA DANCE."
+    ],
+    "glossedTokens": [],
+    "translation": "A boy sat in class. A girl read. When class finished, he danced.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "DANCE"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_2_one_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 2. FALL [1,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "LINDA GO-TO BEACH. LINDA WALK NEAR WATER. FALL.",
+    "discourseSegments": [
+      "LINDA GO-TO BEACH.",
+      "LINDA WALK NEAR WATER.",
+      "FALL."
+    ],
+    "glossedTokens": [],
+    "translation": "Linda went to the beach. She walked near the water. She fell.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "FALL"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_2_one_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 2. FALL [1,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "LINDA IXA GO-TO BEACH. IXA WALK NEAR WATER. IXA FALLA.",
+    "discourseSegments": [
+      "LINDA IXA GO-TO BEACH.",
+      "IXA WALK NEAR WATER.",
+      "IXA FALLA."
+    ],
+    "glossedTokens": [],
+    "translation": "Linda went to the beach. She walked near the water. She fell.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "FALL"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_2_two_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 2. FALL [2,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "LINDA GO-TO BEACH. WILL WALK NEAR WATER. FALL.",
+    "discourseSegments": [
+      "LINDA GO-TO BEACH.",
+      "WILL WALK NEAR WATER.",
+      "FALL."
+    ],
+    "glossedTokens": [],
+    "translation": "Linda went to the beach. Will walked near the water. She fell.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "FALL"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_2_two_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 2. FALL [2,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "LINDA IXA GO-TO BEACH. WILL IXB WALK NEAR WATER. IXA FALLA.",
+    "discourseSegments": [
+      "LINDA IXA GO-TO BEACH.",
+      "WILL IXB WALK NEAR WATER.",
+      "IXA FALLA."
+    ],
+    "glossedTokens": [],
+    "translation": "Linda went to the beach. Will walked near the water. She fell.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "FALL"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_3_one_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 3. JUMP [1,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "GIRL GO-TO MALL. GIRL WALK. JUMP.",
+    "discourseSegments": [
+      "GIRL GO-TO MALL.",
+      "GIRL WALK.",
+      "JUMP."
+    ],
+    "glossedTokens": [],
+    "translation": "A girl went to the mall. She walked. She jumped.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "JUMP"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_3_one_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 3. JUMP [1,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "GIRL IXA GO-TO MALL. IXA WALK. IXA JUMPA.",
+    "discourseSegments": [
+      "GIRL IXA GO-TO MALL.",
+      "IXA WALK.",
+      "IXA JUMPA."
+    ],
+    "glossedTokens": [],
+    "translation": "A girl went to the mall. She walked. She jumped.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "JUMP"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_3_two_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 3. JUMP [2,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "GIRL GO-TO MALL. BOY WALK. JUMP.",
+    "discourseSegments": [
+      "GIRL GO-TO MALL.",
+      "BOY WALK.",
+      "JUMP."
+    ],
+    "glossedTokens": [],
+    "translation": "A girl went to the mall. A boy walked. She jumped.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "JUMP"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_3_two_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 3. JUMP [2,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "GIRL IXA GO-TO MALL. BOY IXB WALK. IXA JUMPA.",
+    "discourseSegments": [
+      "GIRL IXA GO-TO MALL.",
+      "BOY IXB WALK.",
+      "IXA JUMPA."
+    ],
+    "glossedTokens": [],
+    "translation": "A girl went to the mall. A boy walked. She jumped.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "JUMP"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_4_one_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 4. RUN [1,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "DOCTOR GO-TO PARK. DOCTOR DRINK WATER.",
+    "discourseSegments": [
+      "DOCTOR GO-TO PARK.",
+      "DOCTOR DRINK WATER."
+    ],
+    "glossedTokens": [],
+    "translation": "A doctor went to the park. The doctor drank water. (The final verb is missing from the printed appendix line.)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "RUN"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_4_one_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 4. RUN [1,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "DOCTOR IXA GO-TO PARK. IXA DRINK WATER. IXA RUNA.",
+    "discourseSegments": [
+      "DOCTOR IXA GO-TO PARK.",
+      "IXA DRINK WATER.",
+      "IXA RUNA."
+    ],
+    "glossedTokens": [],
+    "translation": "A doctor went to the park. She drank water. She ran.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "RUN"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_4_two_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 4. RUN [2,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "DOCTOR GO-TO PARK. POLICE-OFFICER DRINK WATER. RUN.",
+    "discourseSegments": [
+      "DOCTOR GO-TO PARK.",
+      "POLICE-OFFICER DRINK WATER.",
+      "RUN."
+    ],
+    "glossedTokens": [],
+    "translation": "A doctor went to the park. A police officer drank water. She ran.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "RUN"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_4_two_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 4. RUN [2,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "DOCTOR IXA GO-TO PARK. POLICE-OFFICER IXB DRINK WATER. IXA RUNA.",
+    "discourseSegments": [
+      "DOCTOR IXA GO-TO PARK.",
+      "POLICE-OFFICER IXB DRINK WATER.",
+      "IXA RUNA."
+    ],
+    "glossedTokens": [],
+    "translation": "A doctor went to the park. A police officer drank water. She ran.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "number"
+      ],
+      [
+        "verb",
+        "RUN"
+      ]
+    ],
+    "comment": "Number condition: one vs. two referents."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_5_narr_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 5. VISIT [+narr,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "LISA GO-TO PARK. DONNA NEED HELP MOVE COUCH. TOMORROW VISIT.",
+    "discourseSegments": [
+      "LISA GO-TO PARK.",
+      "DONNA NEED HELP MOVE COUCH.",
+      "TOMORROW VISIT."
+    ],
+    "glossedTokens": [],
+    "translation": "Lisa went to the park. Donna needed help moving a couch. Tomorrow she will visit her.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "VISIT"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_5_noNarr_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 5. VISIT [-narr,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "LISA GO-TO PARK. DONNA READ. TOMORROW VISIT.",
+    "discourseSegments": [
+      "LISA GO-TO PARK.",
+      "DONNA READ.",
+      "TOMORROW VISIT."
+    ],
+    "glossedTokens": [],
+    "translation": "Lisa went to the park. Donna read. Tomorrow she will visit her.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "VISIT"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_5_narr_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 5. VISIT [+narr,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "LISA IXA GO-TO PARK. DONNA IXB NEED HELP MOVE COUCH. TOMORROW IXA AVISITB IXB.",
+    "discourseSegments": [
+      "LISA IXA GO-TO PARK.",
+      "DONNA IXB NEED HELP MOVE COUCH.",
+      "TOMORROW IXA AVISITB IXB."
+    ],
+    "glossedTokens": [],
+    "translation": "Lisa went to the park. Donna needed help moving a couch. Tomorrow she will visit her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "VISIT"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_5_noNarr_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 5. VISIT [-narr,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "LISA IXA GO-TO PARK. DONNA IXB READ. TOMORROW IXA AVISITB IXB.",
+    "discourseSegments": [
+      "LISA IXA GO-TO PARK.",
+      "DONNA IXB READ.",
+      "TOMORROW IXA AVISITB IXB."
+    ],
+    "glossedTokens": [],
+    "translation": "Lisa went to the park. Donna read. Tomorrow she will visit her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "VISIT"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_6_narr_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 6. YELL [+narr,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "SUE GO-TO SCHOOL. MARY SAY SOMETHING BAD. YELL.",
+    "discourseSegments": [
+      "SUE GO-TO SCHOOL.",
+      "MARY SAY SOMETHING BAD.",
+      "YELL."
+    ],
+    "glossedTokens": [],
+    "translation": "Sue went to school. Mary said something bad. She yelled at her.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "YELL"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_6_narr_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 6. YELL [+narr,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "SUE IXA GO-TO SCHOOL. MARY IXB SAY SOMETHING BAD. IXA AYELLB IXB.",
+    "discourseSegments": [
+      "SUE IXA GO-TO SCHOOL.",
+      "MARY IXB SAY SOMETHING BAD.",
+      "IXA AYELLB IXB."
+    ],
+    "glossedTokens": [],
+    "translation": "Sue went to school. Mary said something bad. She yelled at her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "YELL"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_6_noNarr_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 6. YELL [-narr,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "SUE GO-TO SCHOOL. MARY READ. YELL.",
+    "discourseSegments": [
+      "SUE GO-TO SCHOOL.",
+      "MARY READ.",
+      "YELL."
+    ],
+    "glossedTokens": [],
+    "translation": "Sue went to school. Mary read. She yelled at her.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "YELL"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_6_noNarr_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 6. YELL [-narr,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "SUE IXA GO-TO SCHOOL. MARY IXB READ. IXA AYELLB IXB.",
+    "discourseSegments": [
+      "SUE IXA GO-TO SCHOOL.",
+      "MARY IXB READ.",
+      "IXA AYELLB IXB."
+    ],
+    "glossedTokens": [],
+    "translation": "Sue went to school. Mary read. She yelled at her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "YELL"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_7_narr_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 7. HELP [+narr,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "JAMES DAVID GO-TO WORK. DAVID NEED HELP LIFT HEAVY BOX. HELP.",
+    "discourseSegments": [
+      "JAMES DAVID GO-TO WORK.",
+      "DAVID NEED HELP LIFT HEAVY BOX.",
+      "HELP."
+    ],
+    "glossedTokens": [],
+    "translation": "James and David went to work. David needed help lifting a heavy box. He helped him.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "HELP"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_7_narr_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 7. HELP [+narr,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "JAMES IXA DAVID IXB GO-TO WORK. IXB NEED HELP LIFT HEAVY BOX. IXA AHELPB IXB.",
+    "discourseSegments": [
+      "JAMES IXA DAVID IXB GO-TO WORK.",
+      "IXB NEED HELP LIFT HEAVY BOX.",
+      "IXA AHELPB IXB."
+    ],
+    "glossedTokens": [],
+    "translation": "James and David went to work. David needed help lifting a heavy box. He helped him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "HELP"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_7_noNarr_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 7. HELP [-narr,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "JAMES DAVID GO-TO WORK. HELP.",
+    "discourseSegments": [
+      "JAMES DAVID GO-TO WORK.",
+      "HELP."
+    ],
+    "glossedTokens": [],
+    "translation": "James and David went to work. He helped him.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "HELP"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_7_noNarr_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 7. HELP [-narr,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "JAMES IXA DAVID IXB GO-TO WORK. IXA AHELPB IXB.",
+    "discourseSegments": [
+      "JAMES IXA DAVID IXB GO-TO WORK.",
+      "IXA AHELPB IXB."
+    ],
+    "glossedTokens": [],
+    "translation": "James and David went to work. He helped him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "HELP"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_8_narr_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 8. ASK [+narr,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "GIRL TRAVEL. GIRL LOST. WOMAN SIT. ASK DIRECTION.",
+    "discourseSegments": [
+      "GIRL TRAVEL.",
+      "GIRL LOST.",
+      "WOMAN SIT.",
+      "ASK DIRECTION."
+    ],
+    "glossedTokens": [],
+    "translation": "A girl went traveling. The girl was lost, and a woman was sitting. She asked her for directions.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "ASK"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_8_narr_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 8. ASK [+narr,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "GIRL IXA TRAVEL. IXA LOST. WOMAN IXB SIT. IXA AASKB IXB DIRECTION.",
+    "discourseSegments": [
+      "GIRL IXA TRAVEL.",
+      "IXA LOST.",
+      "WOMAN IXB SIT.",
+      "IXA AASKB IXB DIRECTION."
+    ],
+    "glossedTokens": [],
+    "translation": "A girl went traveling. The girl was lost, and a woman was sitting. She asked her for directions.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "ASK"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_8_noNarr_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 8. ASK [-narr,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "GIRL TRAVEL. GIRL READ. WOMAN SIT. ASK DIRECTION.",
+    "discourseSegments": [
+      "GIRL TRAVEL.",
+      "GIRL READ.",
+      "WOMAN SIT.",
+      "ASK DIRECTION."
+    ],
+    "glossedTokens": [],
+    "translation": "A girl went traveling. The girl was reading, and a woman was sitting. She asked her for directions.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "ASK"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_8_noNarr_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 8. ASK [-narr,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "GIRL IXA TRAVEL. IXA READ. WOMAN IXB SIT. IXA AASKB IXB DIRECTION.",
+    "discourseSegments": [
+      "GIRL IXA TRAVEL.",
+      "IXA READ.",
+      "WOMAN IXB SIT.",
+      "IXA AASKB IXB DIRECTION."
+    ],
+    "glossedTokens": [],
+    "translation": "A girl went traveling. The girl was reading, and a woman was sitting. She asked her for directions.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "narrative"
+      ],
+      [
+        "verb",
+        "ASK"
+      ]
+    ],
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_9_inanimate_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 9. PUNCH [-animate,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "JANE VISIT PARK. JANE SEE TREE. PUNCH.",
+    "discourseSegments": [
+      "JANE VISIT PARK.",
+      "JANE SEE TREE.",
+      "PUNCH."
+    ],
+    "glossedTokens": [],
+    "translation": "Jane visited the park. She saw a tree. She punched it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "PUNCH"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_9_inanimate_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 9. PUNCH [-animate,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "JANE IXA VISIT PARK. IXA SEE TREE IXB. IXA APUNCHB IXB.",
+    "discourseSegments": [
+      "JANE IXA VISIT PARK.",
+      "IXA SEE TREE IXB.",
+      "IXA APUNCHB IXB."
+    ],
+    "glossedTokens": [],
+    "translation": "Jane visited the park. She saw a tree. She punched it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "PUNCH"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_9_animate_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 9. PUNCH [+animate,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "JANE VISIT PARK. JANE SEE ANA. PUNCH.",
+    "discourseSegments": [
+      "JANE VISIT PARK.",
+      "JANE SEE ANA.",
+      "PUNCH."
+    ],
+    "glossedTokens": [],
+    "translation": "Jane visited the park. She saw Ana. She punched her.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "PUNCH"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_9_animate_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 9. PUNCH [+animate,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "JANE IXA VISIT PARK. IXA SEE ANA IXB. IXA APUNCHB IXB.",
+    "discourseSegments": [
+      "JANE IXA VISIT PARK.",
+      "IXA SEE ANA IXB.",
+      "IXA APUNCHB IXB."
+    ],
+    "glossedTokens": [],
+    "translation": "Jane visited the park. She saw Ana. She punched her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "PUNCH"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_10_inanimate_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 10. KICK [-animate,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "JOHN SIT CLASS. JOHN SEE CABINET. CLASS FINISH, KICK.",
+    "discourseSegments": [
+      "JOHN SIT CLASS.",
+      "JOHN SEE CABINET.",
+      "CLASS FINISH, KICK."
+    ],
+    "glossedTokens": [],
+    "translation": "John sat in class. He saw a cabinet. When class finished, he kicked it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "KICK"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_10_inanimate_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 10. KICK [-animate,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "JOHN IXA SIT CLASS. IXA SEE CABINET IXB. CLASS FINISH, IXA AKICKB IXB.",
+    "discourseSegments": [
+      "JOHN IXA SIT CLASS.",
+      "IXA SEE CABINET IXB.",
+      "CLASS FINISH, IXA AKICKB IXB."
+    ],
+    "glossedTokens": [],
+    "translation": "John sat in class. He saw a cabinet. When class finished, he kicked it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "KICK"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_10_animate_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 10. KICK [+animate,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "JOHN SIT CLASS. JOHN SEE BILL. CLASS FINISH, KICK.",
+    "discourseSegments": [
+      "JOHN SIT CLASS.",
+      "JOHN SEE BILL.",
+      "CLASS FINISH, KICK."
+    ],
+    "glossedTokens": [],
+    "translation": "John sat in class. He saw Bill. When class finished, he kicked him.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "KICK"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_10_animate_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 10. KICK [+animate,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "JOHN IXA SIT CLASS. IXA SEE BILL IXB. CLASS FINISH, IXA AKICKB IXB.",
+    "discourseSegments": [
+      "JOHN IXA SIT CLASS.",
+      "IXA SEE BILL IXB.",
+      "CLASS FINISH, IXA AKICKB IXB."
+    ],
+    "glossedTokens": [],
+    "translation": "John sat in class. He saw Bill. When class finished, he kicked him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "KICK"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_11_inanimate_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 11. PUSH [-animate,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "MIKE ENTER LIVING-ROOM. MIKE SEE TV. PUSH.",
+    "discourseSegments": [
+      "MIKE ENTER LIVING-ROOM.",
+      "MIKE SEE TV.",
+      "PUSH."
+    ],
+    "glossedTokens": [],
+    "translation": "Mike entered the living room. He saw a TV. He pushed it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "PUSH"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_11_inanimate_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 11. PUSH [-animate,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "MIKE IXA ENTER LIVING-ROOM. IXA SEE TV IXB. IXA APUSHB IXB.",
+    "discourseSegments": [
+      "MIKE IXA ENTER LIVING-ROOM.",
+      "IXA SEE TV IXB.",
+      "IXA APUSHB IXB."
+    ],
+    "glossedTokens": [],
+    "translation": "Mike entered the living room. He saw a TV. He pushed it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "PUSH"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_11_animate_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 11. PUSH [+animate,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "MIKE ENTER LIVING-ROOM. MIKE SEE BOB. PUSH.",
+    "discourseSegments": [
+      "MIKE ENTER LIVING-ROOM.",
+      "MIKE SEE BOB.",
+      "PUSH."
+    ],
+    "glossedTokens": [],
+    "translation": "Mike entered the living room. He saw Bob. He pushed him.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "PUSH"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_11_animate_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 11. PUSH [+animate,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "MIKE IXA ENTER LIVING-ROOM. IXA SEE BOB IXB. IXA APUSHB IXB.",
+    "discourseSegments": [
+      "MIKE IXA ENTER LIVING-ROOM.",
+      "IXA SEE BOB IXB.",
+      "IXA APUSHB IXB."
+    ],
+    "glossedTokens": [],
+    "translation": "Mike entered the living room. He saw Bob. He pushed him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "PUSH"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_12_inanimate_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 12. TAKE-PICTURE [-animate,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY ENTER STORE. BOY SEE FLOWER. TAKE PICTURE.",
+    "discourseSegments": [
+      "BOY ENTER STORE.",
+      "BOY SEE FLOWER.",
+      "TAKE PICTURE."
+    ],
+    "glossedTokens": [],
+    "translation": "A boy entered a store. He saw a flower. He took a picture of it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "TAKE-PICTURE"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_12_inanimate_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 12. TAKE-PICTURE [-animate,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY IXA ENTER STORE. IXA SEE FLOWER IXB. IXA BTAKE-PICTUREA IXB.",
+    "discourseSegments": [
+      "BOY IXA ENTER STORE.",
+      "IXA SEE FLOWER IXB.",
+      "IXA BTAKE-PICTUREA IXB."
+    ],
+    "glossedTokens": [],
+    "translation": "A boy entered a store. He saw a flower. He took a picture of it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "true"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "TAKE-PICTURE"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_12_animate_noLocus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 12. TAKE-PICTURE [+animate,-locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY ENTER STORE. BOY SEE MAN. TAKE-PICTURE.",
+    "discourseSegments": [
+      "BOY ENTER STORE.",
+      "BOY SEE MAN.",
+      "TAKE-PICTURE."
+    ],
+    "glossedTokens": [],
+    "translation": "A boy entered a store. He saw a man. He took a picture of him.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "false"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "TAKE-PICTURE"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  },
+  {
+    "id": "ahnkocabdavidson2026_a1_12_animate_locus",
+    "source": {
+      "bibkey": "ahn-kocab-davidson-2026",
+      "paperLabel": "Appendix A1, 12. TAKE-PICTURE [+animate,+locus]"
+    },
+    "language": "amer1248",
+    "primaryText": "BOY IXA ENTER STORE. IXA SEE MAN IXB. IXA BTAKE-PICTUREA IXB.",
+    "discourseSegments": [
+      "BOY IXA ENTER STORE.",
+      "IXA SEE MAN IXB.",
+      "IXA BTAKE-PICTUREA IXB."
+    ],
+    "glossedTokens": [],
+    "translation": "A boy entered a store. He saw a man. He took a picture of him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "locus",
+        "true"
+      ],
+      [
+        "resolved",
+        "false"
+      ],
+      [
+        "condition",
+        "animacy"
+      ],
+      [
+        "verb",
+        "TAKE-PICTURE"
+      ]
+    ],
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+  }
+]
