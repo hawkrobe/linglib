@@ -12,9 +12,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "A-XP"],
-      ["head", "proud"]
+      ["head", "proud"],
+      ["dependent", "of"]
     ],
     "comment": "",
     "lgrConformance": "NONE"
@@ -32,10 +31,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "proud"],
-      ["position", "prenominal"]
+      ["noun", "mother"],
+      ["dependent", "of"]
     ],
     "comment": "",
     "lgrConformance": "NONE"
@@ -56,9 +54,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "A-XP"],
-      ["head", "perifanos"]
+      ["head", "perifanos"],
+      ["dependent", "gia"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -79,10 +76,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "perifanos"],
-      ["position", "prenominal"]
+      ["noun", "pateras"],
+      ["dependent", "gia"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -102,9 +98,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "XP-A"],
-      ["head", "harro"]
+      ["head", "harro-a"],
+      ["dependent", "Bere"]
     ],
     "comment": "Hualde and Ortiz de Urbina (2003:138); repeated as (28a).",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -124,10 +119,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "N-XP-A"],
-      ["head", "harro"],
-      ["position", "postnominal"]
+      ["head", "harro-a"],
+      ["noun", "emakume"],
+      ["dependent", "bere"]
     ],
     "comment": "Repeated as (28c).",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -148,9 +142,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "XP-A"],
-      ["head", "moftaxar"]
+      ["head", "moftaxar-∅-and"],
+      ["dependent", "be"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -171,11 +164,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "N-XP-A"],
       ["head", "moftaxar"],
-      ["position", "postnominal"],
-      ["attributivizer", "clitic"]
+      ["attributivizer", "clitic"],
+      ["noun", "madar-an=e"],
+      ["dependent", "be"]
     ],
     "comment": "Repeated as (33); the ezafe linker cliticizes to the noun.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -193,10 +185,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "XP-A-N"],
       ["head", "running"],
-      ["position", "prenominal"]
+      ["noun", "meeting"],
+      ["dependent", "smoothly"]
     ],
     "comment": "From Sheehan (2017a:136).",
     "lgrConformance": "NONE"
@@ -214,10 +205,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "running"],
-      ["position", "prenominal"]
+      ["noun", "meeting"],
+      ["dependent", "smoothly"]
     ],
     "comment": "From Sheehan (2017a:136).",
     "lgrConformance": "NONE"
@@ -235,10 +225,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "proud"],
-      ["position", "prenominal"]
+      ["noun", "man"],
+      ["dependent", "of"]
     ],
     "comment": "Williams (1982:160); the PP is a complement of proud.",
     "lgrConformance": "NONE"
@@ -256,10 +245,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "proud"],
-      ["position", "prenominal"]
+      ["noun", "woman"],
+      ["dependent", "that"]
     ],
     "comment": "",
     "lgrConformance": "NONE"
@@ -277,10 +265,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "wearing"],
-      ["position", "prenominal"]
+      ["noun", "person"],
+      ["dependent", "a"]
     ],
     "comment": "",
     "lgrConformance": "NONE"
@@ -298,10 +285,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "P-XP-N"],
       ["head", "to"],
-      ["position", "prenominal"]
+      ["noun", "letter"],
+      ["dependent", "Bill"]
     ],
     "comment": "Williams (1982:160); prenominal PP.",
     "lgrConformance": "NONE"
@@ -319,10 +305,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "C-XP-N"],
       ["head", "which"],
-      ["position", "prenominal"]
+      ["noun", "book"],
+      ["dependent", "I"]
     ],
     "comment": "Escribano (2004:2); prenominal relative clause.",
     "lgrConformance": "NONE"
@@ -340,11 +325,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-Deg-N"],
       ["head", "tall"],
-      ["position", "prenominal"],
-      ["attributivizer", "null"]
+      ["attributivizer", "null"],
+      ["noun", "guy"],
+      ["degree", "enough"]
     ],
     "comment": "Sheehan (2017a:125); enough follows the adjective and immediately precedes the noun.",
     "lgrConformance": "NONE"
@@ -362,10 +346,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "tall"],
-      ["position", "prenominal"]
+      ["noun", "guy"],
+      ["dependent", "to"],
+      ["degree", "enough"]
     ],
     "comment": "Sheehan (2017a:125).",
     "lgrConformance": "NONE"
@@ -386,9 +370,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "A-XP"],
-      ["head", "damok'idebuli"]
+      ["head", "damok'ideb-ul-i"],
+      ["dependent", "tavis"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -409,10 +392,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
-      ["head", "damok'idebuli"],
-      ["position", "prenominal"]
+      ["head", "damok'ideb-ul-i"],
+      ["noun", "bič'-i"],
+      ["dependent", "tavis"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -433,9 +415,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "A-XP"],
-      ["head", "független"]
+      ["head", "független"],
+      ["dependent", "a"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -456,10 +437,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "független"],
-      ["position", "prenominal"]
+      ["noun", "fiú"],
+      ["dependent", "a"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -480,9 +460,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "A-XP"],
-      ["head", "stoltur"]
+      ["head", "stolt-ur"],
+      ["dependent", "af"]
     ],
     "comment": "Repeated as (40a).",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -503,10 +482,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
-      ["head", "stoltur"],
-      ["position", "prenominal"]
+      ["head", "stolt-ur"],
+      ["noun", "faðir"],
+      ["dependent", "af"]
     ],
     "comment": "Repeated as (41a).",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -527,9 +505,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "A-XP"],
-      ["head", "hpart"]
+      ["head", "hpart"],
+      ["dependent", "ir"]
     ],
     "comment": "The subject pronoun is optional.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -549,10 +526,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "hpart"],
-      ["position", "prenominal"]
+      ["noun", "hayr"],
+      ["dependent", "ir"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -573,9 +549,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "A-XP"],
-      ["head", "ponosan"]
+      ["head", "ponosan"],
+      ["dependent", "na"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -596,10 +571,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "ponosan"],
-      ["position", "prenominal"]
+      ["noun", "otac"],
+      ["dependent", "na"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -621,10 +595,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "filikes"],
-      ["position", "prenominal"]
+      ["noun", "xores"],
+      ["dependent", "pros"]
     ],
     "comment": "Corpus of Modern Greek.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -646,10 +619,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "ustavšyje"],
-      ["position", "prenominal"]
+      ["noun", "glaza"],
+      ["dependent", "ot"]
     ],
     "comment": "Russian National Corpus.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -670,11 +642,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "dúlì"],
-      ["position", "prenominal"],
-      ["attributivizer", "clitic"]
+      ["attributivizer", "clitic"],
+      ["noun", "qīngshàonián"],
+      ["dependent", "yú"]
     ],
     "comment": "The attributivizer de cliticizes to the AP.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -695,11 +666,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "bagay"],
-      ["position", "prenominal"],
-      ["attributivizer", "clitic"]
+      ["attributivizer", "clitic"],
+      ["noun", "damit"],
+      ["dependent", "para"]
     ],
     "comment": "Schachter and Otanes (1972:246), gloss the authors'; para is optional.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -719,10 +689,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "N-A"],
-      ["head", "harro"],
-      ["position", "postnominal"]
+      ["head", "harro-a"],
+      ["noun", "emakume"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -743,9 +711,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "relative"],
-      ["order", "XP-A-C-N"],
-      ["head", "harro"]
+      ["head", "harro-a"],
+      ["noun", "emakume-a"],
+      ["dependent", "bere"],
+      ["construction", "relative"]
     ],
     "comment": "Prenominal relative clause containing the complex predicative AP.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -768,9 +737,8 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "A-XP"],
-      ["head", "yói"]
+      ["head", "yói"],
+      ["dependent", "karetera"]
     ],
     "comment": "The XP-A order is the less neutral option.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -793,10 +761,9 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "N-A-XP"],
       ["head", "yói"],
-      ["position", "postnominal"]
+      ["noun", "motó"],
+      ["dependent", "karetera"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -817,9 +784,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "relative"],
-      ["order", "N-XP-A-REL"],
-      ["head", "yói"]
+      ["head", "yói=ka"],
+      ["noun", "motó"],
+      ["dependent", "karetera"],
+      ["construction", "relative"]
     ],
     "comment": "With the linker =ka(to), analyzed as a relative clause marker.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -840,9 +808,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "XP-A"],
-      ["head", "boonaa"]
+      ["head", "boon-aa-ɗa"],
+      ["dependent", "dureys-umma=tti"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -862,10 +829,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "N-A"],
-      ["head", "boonaa"],
-      ["position", "postnominal"]
+      ["head", "boon-aa-ɗa"],
+      ["noun", "nama"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -886,10 +851,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "N-XP-A"],
-      ["head", "boonaa"],
-      ["position", "postnominal"]
+      ["head", "boon-aa-ɗa"],
+      ["noun", "nama"],
+      ["dependent", "dureys-umma=tti"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -910,9 +874,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "relative"],
-      ["order", "N-XP-A-DPT"],
-      ["head", "boon"]
+      ["head", "boon-∅-u"],
+      ["noun", "nama"],
+      ["dependent", "dureys-umma=tti"],
+      ["construction", "relative"]
     ],
     "comment": "Relativization with the dependent clause marker.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -933,10 +898,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "N-XP-A"],
-      ["head", "kiisittup"],
-      ["position", "postnominal"]
+      ["head", "kii-sit-tu-p"],
+      ["noun", "nukappiaqqa-p"],
+      ["dependent", "qimmi-mut"]
     ],
     "comment": "Fortescue (1984:52); the participle carries the same case/number affix as the noun.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -957,11 +921,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "N-XP-A"],
-      ["head", "rakkhal"],
-      ["position", "postnominal"],
-      ["attributivizer", "clitic"]
+      ["head", "rak-khal"],
+      ["attributivizer", "clitic"],
+      ["noun", "gore"],
+      ["dependent", "jal=na"]
     ],
     "comment": "Van Breugel (2010:518).",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -982,10 +945,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "praestantibus"],
-      ["position", "prenominal"]
+      ["noun", "viris"],
+      ["dependent", "re"]
     ],
     "comment": "Cic. Fam. 1.9.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1006,10 +968,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "bravi"],
-      ["position", "prenominal"]
+      ["noun", "studenti"],
+      ["dependent", "in"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1030,10 +991,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "N-A-XP"],
       ["head", "bravi"],
-      ["position", "postnominal"]
+      ["noun", "studenti"],
+      ["dependent", "in"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1051,10 +1011,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-N"],
       ["head", "bravi"],
-      ["position", "prenominal"]
+      ["noun", "studenti"]
     ],
     "comment": "",
     "lgrConformance": "NONE"
@@ -1072,10 +1030,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "N-A"],
       ["head", "bravi"],
-      ["position", "postnominal"]
+      ["noun", "studenti"]
     ],
     "comment": "bravi belongs to the restricted prenominal class.",
     "lgrConformance": "NONE"
@@ -1097,9 +1053,7 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "A"],
-      ["head", "perifanos"],
+      ["head", "perifan-os"],
       ["marker", "agreement"]
     ],
     "comment": "The subject pronoun is optional.",
@@ -1122,11 +1076,9 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-N"],
-      ["head", "perifanos"],
-      ["position", "prenominal"],
-      ["marker", "agreement"]
+      ["head", "perifan-os"],
+      ["marker", "agreement"],
+      ["noun", "pateras"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1148,8 +1100,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "A"],
       ["head", "stolz"],
       ["marker", "bare"]
     ],
@@ -1173,11 +1123,9 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-N"],
-      ["head", "stolz"],
-      ["position", "prenominal"],
-      ["marker", "agreement"]
+      ["head", "stolz-er"],
+      ["marker", "agreement"],
+      ["noun", "Vater"]
     ],
     "comment": "Repeated as (60b).",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1199,9 +1147,7 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "A"],
-      ["head", "umnaja"],
+      ["head", "umn-aja"],
       ["form", "long"]
     ],
     "comment": "Short form umn-a: SHORT.F.SG, no case.",
@@ -1224,11 +1170,9 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-N"],
-      ["head", "umnaja"],
-      ["position", "prenominal"],
-      ["form", "long"]
+      ["head", "umn-aja"],
+      ["form", "long"],
+      ["noun", "d'evočka"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1249,9 +1193,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "XP-A"],
-      ["head", "stoltur"]
+      ["head", "stolt-ur"],
+      ["dependent", "af"]
     ],
     "comment": "The more marked option.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1272,10 +1215,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "XP-A-N"],
-      ["head", "stoltur"],
-      ["position", "prenominal"]
+      ["head", "stolt-ur"],
+      ["noun", "faðir"],
+      ["dependent", "af"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1297,9 +1239,7 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "A"],
-      ["head", "stoltur"],
+      ["head", "stolt-ur"],
       ["form", "strong"]
     ],
     "comment": "",
@@ -1322,12 +1262,10 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-N"],
-      ["head", "stoltur"],
-      ["position", "prenominal"],
+      ["head", "stolt-ur"],
       ["form", "strong"],
-      ["definiteness", "indefinite"]
+      ["definiteness", "indefinite"],
+      ["noun", "faðir"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1347,12 +1285,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-N"],
-      ["head", "stolti"],
-      ["position", "prenominal"],
+      ["head", "stolt-i"],
       ["form", "weak"],
-      ["definiteness", "definite"]
+      ["definiteness", "definite"],
+      ["noun", "faðir-inn"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1372,13 +1308,11 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-N"],
-      ["head", "stoltur"],
-      ["position", "prenominal"],
+      ["head", "stolt-ur"],
       ["form", "strong"],
       ["definiteness", "definite"],
-      ["reading", "nonrestrictive"]
+      ["reading", "nonrestrictive"],
+      ["noun", "faðir-inn"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1400,8 +1334,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "A"],
       ["head", "lijep"],
       ["form", "short"]
     ],
@@ -1423,12 +1355,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-N"],
       ["head", "lijep"],
-      ["position", "prenominal"],
       ["form", "short"],
-      ["definiteness", "indefinite"]
+      ["definiteness", "indefinite"],
+      ["noun", "momak"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1448,12 +1378,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-N"],
       ["head", "lijepi"],
-      ["position", "prenominal"],
       ["form", "long"],
-      ["definiteness", "definite"]
+      ["definiteness", "definite"],
+      ["noun", "momak"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1476,9 +1404,8 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["use", "predicative"],
-      ["order", "A-XP"],
-      ["head", "stolz"]
+      ["head", "stolz"],
+      ["dependent", "auf"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1499,11 +1426,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "stolz"],
-      ["position", "prenominal"],
-      ["attributivizer", "affix"]
+      ["attributivizer", "affix"],
+      ["noun", "Mutter"],
+      ["dependent", "auf"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1524,11 +1450,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "XP-A-N"],
-      ["head", "stolz"],
-      ["position", "prenominal"],
-      ["attributivizer", "affix"]
+      ["head", "stolz-e"],
+      ["attributivizer", "affix"],
+      ["noun", "Mutter"],
+      ["dependent", "auf"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1549,11 +1474,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "XP-A-N"],
-      ["head", "trots"],
-      ["position", "prenominal"],
-      ["attributivizer", "affix"]
+      ["head", "trots-e"],
+      ["attributivizer", "affix"],
+      ["noun", "vrouw"],
+      ["dependent", "op"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1574,11 +1498,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "trots"],
-      ["position", "prenominal"],
-      ["attributivizer", "affix"]
+      ["attributivizer", "affix"],
+      ["noun", "vrouw"],
+      ["dependent", "op"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1599,11 +1522,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
-      ["head", "trots"],
-      ["position", "prenominal"],
-      ["attributivizer", "affix"]
+      ["head", "trots-e"],
+      ["attributivizer", "affix"],
+      ["noun", "vrouw"],
+      ["dependent", "op"]
     ],
     "comment": "The affix is adjacent to the adjective but not to the noun.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1624,11 +1546,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "XP-A-N"],
-      ["head", "trots"],
-      ["position", "prenominal"],
-      ["attributivizer", "null"]
+      ["head", "trots-∅"],
+      ["attributivizer", "null"],
+      ["noun", "kind"],
+      ["dependent", "op"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1649,11 +1570,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "trots"],
-      ["position", "prenominal"],
-      ["attributivizer", "null"]
+      ["attributivizer", "null"],
+      ["noun", "kind"],
+      ["dependent", "op"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1674,11 +1594,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
-      ["head", "trots"],
-      ["position", "prenominal"],
-      ["attributivizer", "null"]
+      ["head", "trots-∅"],
+      ["attributivizer", "null"],
+      ["noun", "kind"],
+      ["dependent", "op"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1698,11 +1617,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-Deg-N"],
       ["head", "groot"],
-      ["position", "prenominal"],
-      ["attributivizer", "null"]
+      ["attributivizer", "null"],
+      ["noun", "kind"],
+      ["degree", "genoeg-∅"]
     ],
     "comment": "Van Riemsdijk (1998); some speaker variation is reported.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1722,11 +1640,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-Deg-N"],
       ["head", "groot"],
-      ["position", "prenominal"],
-      ["attributivizer", "affix"]
+      ["attributivizer", "affix"],
+      ["noun", "vrouw"],
+      ["degree", "genoeg-e"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1746,10 +1663,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-Deg-N"],
-      ["head", "groot"],
-      ["position", "prenominal"]
+      ["head", "groot-e"],
+      ["noun", "vrouw"],
+      ["degree", "genoeg"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1769,10 +1685,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-Deg-N"],
       ["head", "groot"],
-      ["position", "prenominal"]
+      ["noun", "vrouw"],
+      ["degree", "genoeg"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1790,11 +1705,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-N"],
       ["head", "proud"],
-      ["position", "prenominal"],
-      ["attributivizer", "null"]
+      ["attributivizer", "null"],
+      ["noun", "child"]
     ],
     "comment": "",
     "lgrConformance": "NONE"
@@ -1812,11 +1725,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-XP-N"],
       ["head", "proud"],
-      ["position", "prenominal"],
-      ["attributivizer", "null"]
+      ["attributivizer", "null"],
+      ["noun", "child"],
+      ["dependent", "of"]
     ],
     "comment": "",
     "lgrConformance": "NONE"
@@ -1834,11 +1746,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["use", "attributive"],
-      ["order", "A-Deg-N"],
       ["head", "proud"],
-      ["position", "prenominal"],
-      ["attributivizer", "null"]
+      ["attributivizer", "null"],
+      ["noun", "child"],
+      ["degree", "enough"]
     ],
     "comment": "",
     "lgrConformance": "NONE"

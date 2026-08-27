@@ -23,8 +23,9 @@ attributive targets and covers every feature of the DP, case included
 adjacency exactly when it is an adjectival affix, overt or null, under the
 Input Correspondence Principle (`AttrStatus.Adjacent`). The resulting
 `Possible` encodes the decision trees and agrees with the sample of Table 3 on
-every language the paper profiles; the example rows ground the AP-internal
-orders and the attributive judgments.
+every language the paper profiles. The example rows carry only their lexical
+anchors (adjective, noun, dependent); the linear orders are computed from token
+positions (`orderOf`) and checked against the profiles and the judgments.
 
 ## References
 
@@ -310,20 +311,80 @@ def attributivizerOf (row : LinguisticExample) : Option AttrStatus :=
   | some "clitic" => some .clitic
   | _ => none
 
-/-- Every predicative order attested in the rows is in the profile, and every
-    attributive judgment on an intervening order is the generalization's. -/
+/-- Split on spaces. -/
+private def words : List Char → List (List Char)
+  | [] => []
+  | ' ' :: cs => words cs
+  | c :: cs =>
+    match words cs with
+    | [] => [[c]]
+    | w :: ws => if cs.head? = some ' ' then [c] :: w :: ws else (c :: w) :: ws
+
+/-- A row's tokens, punctuation dropped. -/
+def tokens (row : LinguisticExample) : List (List Char) :=
+  (if row.glossedTokens = [] then words row.primaryText.toList
+    else row.surfaceTokens.map String.toList).map (·.filter (· ∉ ['.', ',']))
+
+/-- Position of the token a feature names. -/
+def anchor (row : LinguisticExample) (key : String) : Option ℕ :=
+  (row.feature? key).bind λ t ↦ (tokens row).findIdx? (· = t.toList)
+
+/-- Linear order of adjective, dependent and noun, read off token positions. -/
+inductive Order
+  | bare
+  | aXp
+  | xpA
+  | aN
+  | nA
+  | aXpN
+  | xpAN
+  | aNXp
+  | nAXp
+  | nXpA
+  | aDegN
+  deriving DecidableEq
+
+/-- The order of a row from its anchors: the adjective, the modified noun (absent in
+    predicative use), the first word of the adjective's dependent, and a degree
+    word. -/
+def orderOf (row : LinguisticExample) : Option Order :=
+  match anchor row "head", anchor row "noun", anchor row "dependent", anchor row "degree" with
+  | some _, none, none, _ => some .bare
+  | some h, none, some d, _ => some (if h < d then .aXp else .xpA)
+  | some h, some n, some d, _ =>
+    if h < n then some (if d < h then .xpAN else if d < n then .aXpN else .aNXp)
+    else if d < n then none else some (if d < h then .nXpA else .nAXp)
+  | some h, some n, none, deg =>
+    if h < n then some (if ∃ g ∈ deg, h < g ∧ g < n then .aDegN else .aN) else some .nA
+  | none, _, _, _ => none
+
+example : orderOf Examples.az2025_1b = some .aXpN := by decide +kernel
+example : orderOf Examples.az2025_2a = some .aXp := by decide +kernel
+example : orderOf Examples.az2025_3a = some .xpA := by decide +kernel
+example : orderOf Examples.az2025_4b = some .nXpA := by decide +kernel
+example : orderOf Examples.az2025_36b = some .nAXp := by decide +kernel
+example : orderOf Examples.az2025_41b = some .xpAN := by decide +kernel
+example : orderOf Examples.az2025_71c = some .aDegN := by decide +kernel
+
+/-- Every attributive row stands on a side of the noun the profile allows, every
+    predicative order attested is in the profile, and every judgment on an
+    intervening order is the generalization's; relative-clause paraphrases are
+    outside the generalization. -/
 theorem rows_agree :
-    ∀ row ∈ Examples.all, ∀ p ∈ profileOf row.language, ∀ o ∈ row.feature? "order",
-      (o = "A-XP" → row.judgment = .acceptable → .headInitial ∈ p.apOrders) ∧
-      (o = "XP-A" → row.judgment = .acceptable → .headFinal ∈ p.apOrders) ∧
-      (o = "A-XP-N" → (row.judgment = .acceptable ↔ Possible p .prenominal)) ∧
-      (o = "N-XP-A" → (row.judgment = .acceptable ↔ Possible p .postnominal)) := by
+    ∀ row ∈ Examples.all, ∀ p ∈ profileOf row.language, row.feature? "construction" = none →
+      ∀ o ∈ orderOf row,
+        (o ∈ [.aN, .aXpN, .xpAN, .aDegN] → .prenominal ∈ p.positions) ∧
+        (o ∈ [.nA, .nAXp, .nXpA] → .postnominal ∈ p.positions) ∧
+        (o = .aXp → row.judgment = .acceptable → .headInitial ∈ p.apOrders) ∧
+        (o = .xpA → row.judgment = .acceptable → .headFinal ∈ p.apOrders) ∧
+        (o = .aXpN → (row.judgment = .acceptable ↔ Possible p .prenominal)) ∧
+        (o = .nXpA → (row.judgment = .acceptable ↔ Possible p .postnominal)) := by
   decide +kernel
 
 /-- A degree word between adjective and noun is tolerated exactly by a null
     attributivizer. -/
 theorem degree_rows :
-    ∀ row ∈ Examples.all, row.feature? "order" = some "A-Deg-N" →
+    ∀ row ∈ Examples.all, orderOf row = some .aDegN →
       ∀ s ∈ attributivizerOf row, (row.judgment = .acceptable ↔ s.MayHost .degreeWord) := by
   decide +kernel
 
