@@ -2963,3 +2963,4 @@ import Linglib.Data.Examples.AhnKocabDavidson2026
 import Linglib.Data.Examples.AkinboFwangwar2026
 import Linglib.Data.Examples.AksenovaEtAl2024
 import Linglib.Data.Examples.AlbrightHayes2003
+import Linglib.Data.Examples.Alderete2001
