@@ -25,6 +25,8 @@ are *functions* that recover the same head.
   (the prosodic tree, its metrical grid, and its head-flag row).
 * `footMorae` — mora count of a `Tree`-extracted weight-list foot (the flat metrical
   parse is now `Prosody.Footing`).
+* `Footing.ftBin` / `parseSyl` / `allFtLeft` / `allFtRight` — the metrical constraints of
+  [kager-2007] as violation counts on a footing.
 
 ## Main results
 
@@ -226,6 +228,29 @@ def size : Nat := (fc.map (Sum.elim Foot.length (fun _ => 1))).sum
 
 /-- The `Parse(σ)` violation profile ([lamont-2022c]): `1` at each stray σ, `0` at each footed. -/
 def strayMarks : List Nat := fc.flatMap (Sum.elim (List.replicate ·.length 0) (fun _ => [1]))
+
+/-! ### Metrical constraints
+[kager-2007]
+
+Violation counts on a footing; each is a `Constraint (Footing S)`. -/
+
+/-- FT-BIN: one mark per foot that is not bimoraic under the weight reading `w` (for the
+syllabic version, read every syllable as one mora). -/
+def ftBin (w : S → ℕ) (fc : Footing S) : ℕ := (fc.feet.filter fun f => f.moraCount w ≠ 2).length
+
+/-- PARSE-SYL: one mark per stray syllable. -/
+def parseSyl : ℕ := fc.strays.length
+
+/-- ALL-FT-LEFT: for each foot, one mark per syllable between the left edge of the domain
+and the foot. -/
+def allFtLeft : ℕ :=
+  (fc.foldl (fun (acc : ℕ × ℕ) x =>
+    Sum.elim (fun f => (acc.1 + acc.2, acc.2 + f.length)) (fun _ => (acc.1, acc.2 + 1)) x)
+    (0, 0)).1
+
+/-- ALL-FT-RIGHT: for each foot, one mark per syllable between the foot and the right edge
+of the domain. -/
+def allFtRight : ℕ := allFtLeft fc.reverse
 
 end Footing
 

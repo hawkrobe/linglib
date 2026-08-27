@@ -1,5 +1,6 @@
 import Linglib.Phonology.Prosody.Grid
 import Linglib.Phonology.OptimalityTheory.Tableau
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The incoherent stress of Kuikuro
@@ -111,7 +112,7 @@ inductive FootingCand where
   | iambStrays
   /-- `(σ́σ:)(´σσ)` — an iamb and a final **trochee** (the optimum). -/
   | iambTrochee
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype, Inhabited
 
 /-- Each candidate as a footed tree (rightmost foot the head). -/
 def FootingCand.toTree : FootingCand → Tree
@@ -139,7 +140,6 @@ def cStarV : Constraint FootingCand := fun c =>
   | none      => 0
 
 def candidates : List FootingCand := [.twoIambs, .iambStrays, .iambTrochee]
-theorem candidates_ne : candidates ≠ [] := by decide
 
 /-- The ranking `*V:]φ ≫ Parse-σ ≫ Iamb` ([becker-etal-2025] Table 2). -/
 def footingRanking : List (Constraint FootingCand) := [cStarV, cParse, cIamb]
@@ -162,6 +162,6 @@ theorem iamb_violations  : candidates.map cIamb  = [0, 0, 1] := by decide
     optimal footing of `/σσσσ/` is the iamb + final **trochee** — no final long vowel, no unparsed
     σ, at the cost of one (low-ranked) non-right-headed foot. -/
 theorem footing_optimal :
-    (Tableau.ofRanking candidates footingRanking candidates_ne).optimal = {.iambTrochee} := by decide
+    (Tableau.ofFintype footingRanking).optimal = {.iambTrochee} := by decide
 
 end BeckerEtAl2025

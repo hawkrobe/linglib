@@ -782,15 +782,13 @@ open Constraints OptimalityTheory
 def kljCandidates : List (TemplateMatch String) :=
   [hebrewKlj_kalal, hebrewKlj_kala]
 
-theorem kljCandidates_ne : kljCandidates ≠ [] := by decide
-
 /-- **The empirical ranking** \*Misalign >> FILL selects [kala]: the
     surface form, with an unfilled template-final C-slot, wins because
     \*Misalignment outranks FILL. The verdict follows from the
     `isMisaligned`/`allCSlotsFilled` computations on the `TemplateMatch`
     values — no stipulated violation tables. -/
 theorem kala_wins_under_misalign_over_fill :
-    (Tableau.ofRanking kljCandidates [starMisalign, fill] kljCandidates_ne).optimal
+    (Tableau.ofRanking kljCandidates [starMisalign, fill]).optimal
     = {hebrewKlj_kala} := by decide
 
 /-- **Reversed ranking** FILL >> \*Misalign predicts the spreading
@@ -799,7 +797,7 @@ theorem kala_wins_under_misalign_over_fill :
     dominance is doing the empirical work; without it, template
     satisfaction would force the wrong winner. -/
 theorem kalal_predicted_under_reversed_ranking :
-    (Tableau.ofRanking kljCandidates [fill, starMisalign] kljCandidates_ne).optimal
+    (Tableau.ofRanking kljCandidates [fill, starMisalign]).optimal
     = {hebrewKlj_kalal} := by decide
 
 /-- **Factorial typology over {\*Misalign, FILL}**: the two rankings
@@ -809,8 +807,7 @@ theorem kalal_predicted_under_reversed_ranking :
     type, with empty C-slots tolerated) and a hypothetical mirror
     (kalal-type, where spreading wins). -/
 theorem klj_factorial_typology_size_two :
-    (factorialOptima kljCandidates [starMisalign, fill]
-      kljCandidates_ne).length = 2 := by decide
+    (factorialOptima kljCandidates [starMisalign, fill]).length = 2 := by decide
 
 /-! ### The (3) three-way contrast as a tableau
 
@@ -858,23 +855,19 @@ def hebrewDmj_empty : TemplateMatch String :=
 def taqtilCandidates : List (TemplateMatch String) :=
   [hebrewDmj_illicit, hebrewDmj_empty, hebrewDmj_tadmit]
 
-theorem taqtilCandidates_ne : taqtilCandidates ≠ [] := by decide
-
 /-- The intrusion candidate [tadmit] is *strictly better* than both
     alternatives: it has 0 violations on \*Misalign AND 0 violations
     on FILL. So under any ranking of these two constraints, [tadmit]
     wins. This is [faust-2026]'s core analytical point about (10):
     intrusion lets the grammar "have it both ways". -/
 theorem tadmit_wins_under_misalign_over_fill :
-    (Tableau.ofRanking taqtilCandidates [starMisalign, fill]
-      taqtilCandidates_ne).optimal = {hebrewDmj_tadmit} := by decide
+    (Tableau.ofRanking taqtilCandidates [starMisalign, fill]).optimal = {hebrewDmj_tadmit} := by decide
 
 /-- And it wins under the reversed ranking too — because intrusion
     satisfies *both* constraints, the ranking between them is irrelevant
     once the intrusion candidate is in the candidate set. -/
 theorem tadmit_wins_under_fill_over_misalign :
-    (Tableau.ofRanking taqtilCandidates [fill, starMisalign]
-      taqtilCandidates_ne).optimal = {hebrewDmj_tadmit} := by decide
+    (Tableau.ofRanking taqtilCandidates [fill, starMisalign]).optimal = {hebrewDmj_tadmit} := by decide
 
 /-- The taQTiL factorial typology collapses to **one** language: when an
     intrusion strategy is in the candidate set, both rankings of
@@ -883,8 +876,7 @@ theorem tadmit_wins_under_fill_over_misalign :
     sense in which [faust-2026] (10b–c) makes intrusion the
     grammar's optimal escape from the misalignment dilemma. -/
 theorem taqtil_factorial_typology_size_one :
-    (factorialOptima taqtilCandidates [starMisalign, fill]
-      taqtilCandidates_ne).length = 1 := by decide
+    (factorialOptima taqtilCandidates [starMisalign, fill]).length = 1 := by decide
 
 /-! ### The verbal/nominal asymmetry, derived from Kramer 2020 -/
 

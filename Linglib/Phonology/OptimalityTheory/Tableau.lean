@@ -25,6 +25,9 @@ computation.
   `r : Ranking n` (priority position `p` reads constraint `r p`).
 * `Tableau.ofRanking` — the list form: ranked constraint list, list order = priority
   (position `0` most dominant); `Tableau.ofPerm` under the identity ranking.
+* `Tableau.ofFintype` — the same over every candidate of a finite type.
+* `Tableau.ofOrder` — a tableau from a constraint *order* (labels, most dominant first)
+  and the candidates' violation marks by label: the paper-tableau form.
 * `factorialOptima` / `factorialTypologySize` — the distinct optimal sets predicted
   across all rankings, and their count.
 
@@ -113,6 +116,22 @@ identity ranking. Study files use this as
 def ofRanking (h : candidates ≠ [] := by decide) : Tableau C ranking.length :=
   ofPerm ranking.get (Equiv.refl _) candidates h
 
+/-- Build a `Tableau C ranking.length` whose candidates are every inhabitant of the finite
+type `C` — the form for a candidate type that enumerates exactly the candidate set. -/
+def ofFintype [Fintype C] [Nonempty C] : Tableau C ranking.length where
+  candidates := Finset.univ
+  profile c := buildViolationProfile ranking.get c
+  nonempty := Finset.univ_nonempty
+
+/-- Build a tableau from a constraint order — labels `L`, most dominant first — and each
+candidate's violation marks by label, as a paper's tableau is printed: `order` is its column
+order and `marks c l` the cell. Candidates are every inhabitant of `C`. -/
+def ofOrder {L : Type*} (order : List L) (marks : C → L → ℕ) [Fintype C] [Nonempty C] :
+    Tableau C order.length where
+  candidates := Finset.univ
+  profile c := buildViolationProfile (fun p _ => marks c (order.get p)) c
+  nonempty := Finset.univ_nonempty
+
 @[simp] theorem ofPerm_candidates :
     (ofPerm con r candidates h).candidates = candidates.toFinset := rfl
 
@@ -124,6 +143,19 @@ def ofRanking (h : candidates ≠ [] := by decide) : Tableau C ranking.length :=
 
 @[simp] theorem ofRanking_profile (c : C) :
     (ofRanking candidates ranking h).profile c = buildViolationProfile ranking.get c := rfl
+
+@[simp] theorem ofFintype_candidates [Fintype C] [Nonempty C] :
+    (ofFintype ranking).candidates = (Finset.univ : Finset C) := rfl
+
+@[simp] theorem ofFintype_profile [Fintype C] [Nonempty C] (c : C) :
+    (ofFintype ranking).profile c = buildViolationProfile ranking.get c := rfl
+
+@[simp] theorem ofOrder_candidates {L : Type*} (order : List L) (marks : C → L → ℕ)
+    [Fintype C] [Nonempty C] : (ofOrder order marks).candidates = (Finset.univ : Finset C) := rfl
+
+@[simp] theorem ofOrder_profile {L : Type*} (order : List L) (marks : C → L → ℕ)
+    [Fintype C] [Nonempty C] (c : C) (p : Fin order.length) :
+    (ofOrder order marks).profile c p = marks c (order.get p) := rfl
 
 variable {con r candidates ranking h}
 
