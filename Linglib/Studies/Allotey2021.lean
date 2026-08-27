@@ -1,51 +1,62 @@
-/-
-Copyright (c) 2026 Robert Hawkins. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Robert Hawkins
--/
 import Linglib.Fragments.Ga.Predicates
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Control.Head
-import Linglib.Semantics.Composition.TypeShifting
-import Linglib.Studies.Landau2015
-import Linglib.Syntax.Control.Basic
-import Linglib.Syntax.Control.Diagnostics
 import Linglib.Studies.Landau2013
-import Linglib.Syntax.Minimalist.Probe.Profile
-import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Syntax.Clause.Complementation
+import Linglib.Data.Examples.Allotey2021
 
 /-!
-# Allotey (2021): Overt Pronouns of Infinitival Predicates of Gã
+# Allotey (2021): overt pronouns of infinitival predicates of Gã
 
-Formalizes [allotey-2021]: obligatory control into Gã irrealis
-`ni`-clauses requires an overt subject proclitic — null PRO is
-ungrammatical. The controlled clause is non-finite irrealis, not
-subjunctive (against [dakubu-2004], [campbell-2017], [korsah-2017]);
-the pronoun is a Spec-TP subject valued by Long Distance Agree across
-the weak C head `ni` ([szabolcsi-2009], [rizzi-1997]) and pronounced to
-host the obligatory irrealis high tone. The Movement Theory of Control
-([hornstein-1999]) does not extend to Gã, and [satik-2019]'s
-left-periphery-bound pronoun only partly does. The
-verb-movement/negation diagnostics (§§5.5.5, 6.2, after [pollock-1989])
-need phrase-structure substrate and are not formalized.
+Obligatory control into Gã irrealis `ni`-clauses requires an overt subject
+proclitic: null PRO is ungrammatical, a lexical subject is ungrammatical, and
+the proclitic shows the whole OC signature (Table 2). The controlled clause is
+non-finite and irrealis rather than subjunctive — it bars tense and aspect,
+focus fronting and obviation, licenses NPIs across its boundary, negates
+preverbally, and carries the irrealis marker only as a high tone on its
+subject (Table 4). The pronoun is overt because that tone needs a segmental
+host.
+
+The OC signature is read off the Fragment's clause typology through
+[landau-2013]'s profile, the complement frames off the Fragment's verb
+inventory, and the finiteness diagnostics off the Fragment's clause
+properties; the example rows check each claim, including the implicative
+contrast of (89) against the verbs' Karttunen classes. The Movement Theory of
+Control is refuted by the lexical-subject rows, and the tone-hosting
+requirement derives the overt pronoun from the minimal-pronoun inventory.
 
 ## References
 
-* [D. Allotey, *Overt Pronouns of Infinitival Predicates of Gã*][allotey-2021]
+* [allotey-2021]
+* [landau-2013]
+* [landau-2004]
+* [szabolcsi-2009]
+* [hornstein-1999]
+* [satik-2019]
+* [karttunen-1971]
+* [noonan-2007]
 -/
 
 namespace Allotey2021
 
-open Minimalist Minimalist.MinimalPronoun Control Ga
-open scoped DistributedMorphology.VocabularyItem
-open Landau2015 (Tier)
-open Semantics.Composition.TypeShifting (ComplementDenotation)
+open Minimalist.MinimalPronoun Control Ga Data.Examples
+
+/-! ### Pronouns (Table 3) -/
+
+/-- Only second and third person singular distinguish a subjective from an
+    objective form. -/
+theorem objective_distinct_iff (p : Person) (n : Number) :
+    pronoun p n .objective ≠ pronoun p n .subjective ↔
+      n = .singular ∧ (p = .second ∨ p = .third) := by
+  cases p <;> cases n <;> decide
+
+/-- The possessive always matches the subjective form. -/
+theorem possessive_eq_subjective (p : Person) (n : Number) :
+    pronoun p n .possessive = pronoun p n .subjective := by
+  cases p <;> cases n <;> rfl
 
 /-! ### OC by clause type -/
 
-/-- The control profile of a Gã clause type, from its noncoreference
-    flag (the derivation `Ostrove2026.smpmProfile` also uses). -/
+/-- The control profile of a Gã clause type, from its noncoreference flag. -/
 def gaProfile (c : EmbeddedClauseType) : Profile Landau2013.Clause74 :=
   Landau2013.ofNoncoreferential (clauseProperties c).noncoreferentialSubject
 
@@ -54,222 +65,215 @@ theorem obligatory_iff_not_isFinite (c : EmbeddedClauseType) :
     (gaProfile c).IsObligatory ↔ (clauseComplementizer c).isFinite = false := by
   cases c <;> decide
 
-/-- A verb has a `ni`-frame exactly when it is a control verb (§§3.4–3.5,
-    5.5.1). -/
+/-- A verb has a `ni`-frame exactly when it is a control verb. -/
 theorem control_iff_selects_ni :
     ∀ v ∈ gaCTPs, .irrealisNi ∈ v.selects ↔ v.control ≠ .none := by
   decide
 
-/-! ### Table 2: the overt pronoun has the OC signature -/
+/-! ### Table 2 -/
 
-/-- The eight rows of [allotey-2021]'s Table 2 ([landau-2013]'s OC
-    criteria, §§3.3–3.4). -/
+/-- The rows of Table 2: [landau-2013]'s OC criteria and the paper's further
+    properties of the overt pronoun. -/
 inductive Table2Row where
-  /-- Must be c-commanded by its antecedent (exx 45–46) -/
   | cCommandedByAntecedent
-  /-- Allows a long-distance antecedent (exx 47–49) -/
   | longDistanceAntecedent
-  /-- Sloppy reading only under ellipsis (exx 50–52) -/
   | sloppyOnly
-  /-- Interpreted as a bound variable -/
   | boundVariable
-  /-- Bears φ-features -/
   | hasPhiFeatures
-  /-- Must be read *de se* (ex 53; [chierchia-1990]'s diagnostic) -/
   | obligatoryDeSe
-  /-- Occurs under subject control (exx 34–43) -/
   | subjectControl
-  /-- Occurs under object control (exx 54–59) -/
   | objectControl
   deriving DecidableEq, Repr
 
-/-- The Table 2 column predicted by a control signature, a tier, and a
-    control-verb inventory: the antecedence and reading rows are the
-    criteria the profile excludes (`Profile.admits`); *de se* is a
-    tier property, not signature content ([landau-2013] §1.3;
-    [chierchia-1990]) — the attitude-tier reading in the paper's
-    subject-control test configuration (ex 53; communicative object
-    control would give *de te* instead); φ-covariance is feature
-    transmission under binding; the two control rows read the
-    inventory. -/
-def predictedColumn (prof : Profile Landau2013.Clause74) (tier : Tier)
-    (verbs : List CTP) : Table2Row → Bool
-  | .cCommandedByAntecedent =>
-      !decide (Diagnostic.nonCCommandingControl ∈ prof.admits)
-  | .longDistanceAntecedent =>
-      decide (Diagnostic.longDistanceControl ∈ prof.admits)
-  | .sloppyOnly => !decide (Diagnostic.strictEllipsis ∈ prof.admits)
-  | .boundVariable => !decide (Diagnostic.strictUnderOnly ∈ prof.admits)
-  | .hasPhiFeatures         => prof .boundVariable
-  | .obligatoryDeSe         => tier.isAttitude
-  | .subjectControl         => verbs.any (·.control == .subjectControl)
-  | .objectControl          => verbs.any (·.control == .objectControl)
+/-- Table 2's overt-pronoun column, identical to its PRO column. -/
+def overtPronoun (r : Table2Row) : Bool := r != .longDistanceAntecedent
 
-/-- Table 2's observed overt-pronoun column (§§3.3.1–3.3.7, 3.4). -/
-def overtPronoun (d : Table2Row) : Bool :=
-  d != .longDistanceAntecedent
-
-/-- The observed column is what the `ni`-clause signature predicts over
-    the attested inventory, on the logophoric tier of the attitude
-    verbs the *de se* test uses (ex 53 'expect'). -/
-theorem overt_pronoun_matches_pro :
-    overtPronoun = predictedColumn (gaProfile .irrealisNi) .logophoric gaCTPs := by
-  funext d; cases d <;> decide
-
-/-! ### The irrealis marker across complement frames
-
-Within the `ni`-frame the subject's irrealis tone is constant (exx 43,
-89c–d, 100–103, 117a). Implicativity governs frame choice: an
-affirmative positive implicative entails its complement realized and
-alternates into a realis frame (exx 89a–b), where the marker is
-impossible (§§5.2.3, 5.3.5). -/
-
-/-- An attested complement configuration: matrix verb, complementizer
-    (`none` for the bare frame of ex 89b), matrix polarity, marker. -/
-structure MarkerDatum where
-  verb : CTP
-  comp : Option Complementizer
-  matrixAffirmative : Bool
-  markerPresent : Bool
-  deriving DecidableEq, Repr
-
-/-- Whether the datum's frame is the irrealis `ni`-clause. -/
-def MarkerDatum.irrealisFrame (d : MarkerDatum) : Bool :=
-  d.comp == some .ni
-
-/-- The attested marker data (exx 89a–d, 100, 102–103, 117a). -/
-def irrealisMarkerData : List MarkerDatum :=
-  [ ⟨kai,      some .ake, true,  false⟩   -- 89a  realis 'remember that'
-  , ⟨nye,      none,      true,  false⟩   -- 89b  bare realis complement
-  , ⟨kpleno,   some .ni,  true,  true⟩    -- 89c  *mi/má
-  , ⟨kpang,    some .ni,  true,  true⟩    -- 89d  *mi/má
-  , ⟨tao,      some .ni,  true,  true⟩    -- 100  má (also exx 34, 88)
-  , ⟨hiekpano, some .ni,  true,  true⟩    -- 102–103  ó, é
-  , ⟨kai,      some .ni,  false, true⟩ ]  -- 117a é under matrix negation
-
-/-- The marker tracks the clause frame, not the verb. -/
-theorem marker_iff_irrealis_frame :
-    ∀ d ∈ irrealisMarkerData, d.markerPresent = d.irrealisFrame := by
+/-- The antecedence and reading rows are what the `ni`-clause profile admits
+    under [landau-2013]'s signature: nothing. -/
+theorem signature_rows :
+    (overtPronoun .cCommandedByAntecedent ↔
+      Diagnostic.nonCCommandingControl ∉ (gaProfile .irrealisNi).admits) ∧
+    (overtPronoun .longDistanceAntecedent ↔
+      Diagnostic.longDistanceControl ∈ (gaProfile .irrealisNi).admits) ∧
+    (overtPronoun .sloppyOnly ↔ Diagnostic.strictEllipsis ∉ (gaProfile .irrealisNi).admits) ∧
+    (overtPronoun .boundVariable ↔
+      Diagnostic.strictUnderOnly ∉ (gaProfile .irrealisNi).admits) := by
   decide
 
-/-- A realis frame occurs only where the complement is entailed
-    realized: under an affirmative positive implicative (§5.2.3). -/
-theorem realis_frame_only_under_realization :
-    ∀ d ∈ irrealisMarkerData, d.irrealisFrame = false →
-      d.verb.implicative = some .positive ∧ d.matrixAffirmative = true := by
+/-- The two control rows are the verb inventory. -/
+theorem control_rows :
+    (overtPronoun .subjectControl ↔ ∃ v ∈ gaCTPs, v.control = .subjectControl) ∧
+    (overtPronoun .objectControl ↔ ∃ v ∈ gaCTPs, v.control = .objectControl) := by
   decide
 
-/-! ### Landau bridge -/
+/-- The controlled form φ-covaries with its controller (exx 37–39), unlike
+    [satik-2019]'s form-invariant Ewe *yè*. -/
+theorem controlled_form_covaries :
+    overtPronoun .hasPhiFeatures ↔
+      subjectProclitic .second .singular ≠ subjectProclitic .second .plural := by
+  decide
 
-/-- Gã clause types on [landau-2004]'s finiteness scale, via
-    `ClauseClass.ofFiniteness` — a scale position, not a mood claim:
-    §5.2 argues these clauses are not subjunctives. -/
-def gaToLandau (c : EmbeddedClauseType) : Control.ClauseClass :=
-  .ofFiniteness (clauseProperties c).unrestrictedTAM
-    (clauseProperties c).independentTense
+/-! ### Minimal-pronoun inventory -/
 
-/-- No Gã clause type is a tensed-but-controlled F-subjunctive
-    (contrast `Studies/Ostrove2026.lean`). -/
-theorem ga_no_fSubjunctive (c : EmbeddedClauseType) :
-    gaToLandau c ≠ .fSubjunctive := by
+/-- Gã vocabulary items for minimal pronouns: no context-specific item, so the
+    elsewhere pronoun realizes every context. -/
+def gaInventory : MinPronInventory PronForm where
+  items := []
+  elsewhere := .pronoun
+
+/-! ### Rows -/
+
+/-- The Fragment entry for a row's matrix verb. -/
+def ctpOf (row : LinguisticExample) : Option CTP :=
+  (row.feature? "verb").bind λ v ↦ gaCTPs.find? (·.form = v)
+
+/-- The clause type a complementizer feature names. -/
+def clauseOf : String → Option EmbeddedClauseType
+  | "ni" => some .irrealisNi
+  | "ake" => some .finiteAke
+  | "keji" => some .finiteKeji
+  | _ => none
+
+/-- The clause type of a row: its complement's, or the finite type for a
+    matrix clause the paper labels finite. -/
+def clauseTypeOf (row : LinguisticExample) : Option EmbeddedClauseType :=
+  match row.feature? "complementizer", row.feature? "clauseType" with
+  | some c, _ => clauseOf c
+  | none, some "finite" => some .finiteAke
+  | _, _ => none
+
+/-- The complementizer inside an alternative form. -/
+def clauseOfForm (s : String) : Option EmbeddedClauseType :=
+  if " ni ".toList <:+: s.toList then some .irrealisNi
+  else if " akɛ ".toList <:+: s.toList then some .finiteAke
+  else if " kɛji ".toList <:+: s.toList then some .finiteKeji
+  else none
+
+/-- The realized form of a row's embedded subject. -/
+def formOf (row : LinguisticExample) : Option PronForm :=
+  match row.feature? "embeddedSubject" with
+  | some "pronoun" => some .pronoun
+  | some "null" => some .null
+  | _ => none
+
+/-- Rows whose only point is the shape of the controlled subject: the
+    control frame is grammatical exactly with the inventory's control form
+    (exx 2–3, 34–44, 54–59 vs 40–41). -/
+theorem controlled_subject_rows :
+    ∀ row ∈ Examples.all, row.feature? "diagnostic" ∈ [none, some "nullSubject"] →
+      ∀ f ∈ formOf row, (row.judgment = .acceptable ↔ f = gaInventory.controlForm) := by
+  decide +kernel
+
+/-- A lexical subject in the control frame is out (exx 42b–c, 64) — the copy the
+    Movement Theory of Control ([hornstein-1999]) would pronounce. -/
+theorem lexical_subject_rows :
+    ∀ row ∈ Examples.all, row.feature? "embeddedSubject" = some "lexical" →
+      row.feature? "clauseContext" = none → row.judgment = .unacceptable := by
+  decide +kernel
+
+/-- Complementizer selection (exx 104–106), over each row and its alternatives:
+    grammatical exactly when the Fragment records the frame for the verb. -/
+theorem c_selection_rows :
+    ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "cSelection" →
+      ∀ v ∈ ctpOf row,
+        (∀ c ∈ clauseTypeOf row, (row.judgment = .acceptable ↔ c ∈ v.selects)) ∧
+        ∀ alt ∈ row.alternatives, ∀ c ∈ clauseOfForm alt.1,
+          (alt.2 = .acceptable ↔ c ∈ v.selects) := by
+  decide +kernel
+
+/-- Overt tense or aspect in the complement is grammatical exactly in the
+    clause types with unrestricted TAM (exx 101, 111). -/
+theorem tam_rows :
+    ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row, ∀ t ∈ row.feature? "embeddedTAM",
+      t ≠ "none" → (row.judgment = .acceptable ↔ (clauseProperties c).unrestrictedTAM) := by
+  decide +kernel
+
+/-- Focus fronting (exx 107–108) and NPI licensing by matrix negation (exx
+    116–117) follow the clause properties. -/
+theorem focus_npi_rows :
+    ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row,
+      (row.feature? "diagnostic" = some "focus" →
+        (row.judgment = .acceptable ↔ (clauseProperties c).focusFronting)) ∧
+      (row.feature? "diagnostic" = some "npi" → row.feature? "negation" = some "matrix" →
+        (row.judgment = .acceptable ↔ (clauseProperties c).npiTransparent)) := by
+  decide +kernel
+
+/-- Negation precedes the verb exactly in the irrealis clause (exx 121–122,
+    124). -/
+theorem negation_rows :
+    ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row, ∀ p ∈ row.feature? "negationPosition",
+      (p = "preverbal") = (clauseProperties c).preverbalNegation := by
+  decide +kernel
+
+/-- The embedded subject bears the irrealis high tone exactly in the `ni`-clause
+    (exx 110–112, 118). -/
+theorem subject_tone_rows :
+    ∀ row ∈ Examples.all, row.judgment = .acceptable → ∀ c ∈ clauseTypeOf row,
+      ∀ t ∈ row.feature? "subjectTone", (t = "high") = (c = .irrealisNi) := by
+  decide +kernel
+
+/-! ### The irrealis marker -/
+
+/-- The marker appears on the subject of the control frame and nowhere else in
+    the complement data (exx 34, 88–89, 92, 100–103, 106, 109, 112, 117–119,
+    122); it tracks the frame, not the verb — *kai* 'remember' takes it in its
+    `ni`-frame (exx 43, 117a) and lacks it in its realis `akɛ`-frame (ex 89a). -/
+theorem marker_rows :
+    ∀ row ∈ Examples.all, row.feature? "clauseContext" ∈ [none, some "control"] →
+      ∀ m ∈ row.feature? "irrealisMarker",
+        (m = "present" ↔ (row.feature? "control").isSome) := by
+  decide +kernel
+
+/-- The paper's implicative contrast (ex 89): the marker is absent exactly under
+    the positive implicatives of the Fragment, whose complements are entailed
+    realized ([karttunen-1971]). -/
+theorem implicative_rows :
+    ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "implicative" →
+      ∀ v ∈ ctpOf row,
+        (row.feature? "irrealisMarker" = some "absent" ↔ v.implicative = some .positive) := by
+  decide +kernel
+
+/-! ### Landau's scale -/
+
+/-- Gã clause types on [landau-2004]'s finiteness scale — a scale position, not
+    a mood claim. -/
+def gaToLandau (c : EmbeddedClauseType) : ClauseClass :=
+  .ofFiniteness (clauseProperties c).unrestrictedTAM (clauseProperties c).independentTense
+
+/-- No Gã clause type is a tensed-but-controlled F-subjunctive. -/
+theorem ga_no_fSubjunctive (c : EmbeddedClauseType) : gaToLandau c ≠ .fSubjunctive := by
   cases c <;> decide
 
-/-- The scale predicts the control facts for any Agr value: Gã lacks
-    the one position that reads Agr, and has no φ-agreement anyway
-    (§4.4, exx 79–81; §6.1). -/
+/-- The scale predicts the control facts at any Agr value: Gã has no
+    φ-agreement (exx 79–81, 123) and lacks the one position that reads Agr. -/
 theorem landau_predicts_control (c : EmbeddedClauseType) (agr : Bool) :
     (gaProfile c).IsObligatory ↔ (gaToLandau c).HasOC agr := by
   cases c <;> cases agr <;> decide
 
-/-! ### Long-Distance Agree and CP strength
+/-! ### CP strength -/
 
-`akɛ`/`kɛji` head strong CPs, `ni` a weak CP ([rizzi-1997], §5.5.1).
-Blocking is a [keine-2020]-style horizon at the strong C head — clause
-size, not intervention (contrast `Studies/Halpert2019.lean`, whose
-blocking CP is a φ-goal). -/
+/-- A strong CP in [rizzi-1997]'s sense: focus features and independent tense. -/
+def StrongCP (c : EmbeddedClauseType) : Prop :=
+  (clauseProperties c).focusFronting ∧ (clauseProperties c).independentTense
 
-/-- Projected heads of a `c`-headed complement: strong CPs project the
-    full C-domain, the weak CP `ni` only Fin. -/
-def clauseSpine (c : Complementizer) : List Cat :=
-  if c.isFinite then [.V, .v, .T, .Fin, .Foc, .C] else [.V, .v, .T, .Fin]
+instance : DecidablePred StrongCP :=
+  λ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The matrix φ-probe: a T-probe whose horizon is the strong C head. -/
-def ldaProbe : Probe.Profile := ⟨.T, some .C⟩
-
-/-- LDA reaches into a `c`-headed complement. -/
-def ldaReaches (c : Complementizer) : Bool :=
-  ldaProbe.transparentToLabel (clauseSpine c)
-
-/-- LDA crosses `ni` and is blocked by `akɛ`/`kɛji`. -/
-theorem ldaReaches_eq_not_isFinite (c : Complementizer) :
-    ldaReaches c = !c.isFinite := by
-  cases c <;> rfl
-
-/-- The probe reaches the embedded subject in exactly the OC clause types. -/
-theorem ldaReaches_iff_obligatory (c : EmbeddedClauseType) :
-    ldaReaches (clauseComplementizer c) = true ↔ (gaProfile c).IsObligatory := by
+/-- `akɛ` and `kɛji` head strong CPs, `ni` a weak one. -/
+theorem strongCP_iff_isFinite (c : EmbeddedClauseType) :
+    StrongCP c ↔ (clauseComplementizer c).isFinite := by
   cases c <;> decide
 
-/-- `ni` projects no focus field; the finite complementizers do
-    (exx 107–108). -/
-theorem ni_projects_no_focus :
-    Cat.Foc ∉ clauseSpine .ni ∧ Cat.Foc ∈ clauseSpine .ake := by
-  decide
+/-- Long-distance Agree ([szabolcsi-2009]) reaches the embedded subject across
+    the weak CP only: the controlled clauses are the weak ones, and they are
+    the NPI-transparent ones. -/
+theorem weakCP_iff_obligatory (c : EmbeddedClauseType) :
+    ¬ StrongCP c ↔ (gaProfile c).IsObligatory ∧ (clauseProperties c).npiTransparent := by
+  cases c <;> decide
 
-/-- NPI licensing patterns with LDA (§5.5.3, exx 115–117). -/
-theorem npi_patterns_with_lda (c : EmbeddedClauseType) :
-    (clauseProperties c).npiTransparent = ldaReaches (clauseComplementizer c) := by
-  cases c <;> rfl
+/-! ### Table 4 -/
 
-/-! ### Against the rival derivations -/
-
-/-- Gã forbids embedded lexical-DP copies (exx 42b, 64). -/
-def gaEmbeddedLexicalCopyAvailable : Bool := false
-
-/-- The occupants of ex 42b's two positions. -/
-inductive Ex42Item where
-  /-- the lexical matrix subject *Ameele* -/
-  | ameele
-  /-- the obligatory embedded proclitic -/
-  | pronoun
-  deriving DecidableEq, Repr
-
-/-- Ex 42b's control dependency: matrix controller position `0` to
-    embedded subject position `1`. -/
-def ex42Dependency : SetRel (Fin 2) (Fin 2) := {(0, 1)}
-
-/-- The attested occupants: lexical *Ameele* controls the obligatory
-    proclitic — never a lexical copy (exx 42b, 64). -/
-def ex42Occupant : Fin 2 → Ex42Item :=
-  fun p => if p = 0 then .ameele else .pronoun
-
-/-- Movement is token identity, and ex 42b's occupants differ across
-    the dependency — the Movement Theory of Control ([hornstein-1999])
-    is refuted on the Gã configuration (§3.6.2): control is
-    base-generated. -/
-theorem ga_refutes_movement : ¬ IsExhaustive ex42Occupant ex42Dependency :=
-  not_isExhaustive_of_mismatch (P := (· = .ameele)) rfl rfl (by decide)
-
-/-- The lexical-copy ban is what [landau-2024]'s (72) predicts (the
-    lexical-subject generalization originates with [grano-2015]): the
-    ex 42b/64 matrix verb *kai* is an implicative — nonattitude,
-    predicative tier — so its complement is property-denoting, and only
-    propositional complements license a lexical subject. (The attitude
-    verbs' `ni`-frame aligns too: *kplɛnɔ* 'agree' takes the
-    lexical-subject subjunctive of ex 105.) -/
-theorem lexical_copy_ban_predicted :
-    gaEmbeddedLexicalCopyAvailable
-      = (ComplementDenotation.property == ComplementDenotation.proposition) := rfl
-
-/-- The controlled form φ-covaries with its controller (exx 37–39),
-    unlike [satik-2019]'s form-invariant Ewe *yè* (§3.6.3). -/
-theorem controlled_form_covaries :
-    subjectProclitic .first .singular ≠ subjectProclitic .second .singular := by
-  decide
-
-/-! ### Table 4: the irrealis marker's realization sites -/
-
-/-- The five `[−REALIS]` contexts of Table 4. -/
+/-- The five irrealis contexts of Table 4. -/
 inductive IrrealisContext where
   | subjunctive
   | imperative
@@ -278,99 +282,93 @@ inductive IrrealisContext where
   | embeddedControl
   deriving DecidableEq, Repr
 
-/-- Realization sites of the irrealis marker: high tone on the subject,
-    high tone on the verb, the vowel segment `a`. -/
+/-- Where the irrealis marker is realized: high tone on the subject, high tone
+    on the verb, the vowel segment *a*. -/
 structure IrrealisRealization where
   subjectTone : Bool
   verbTone : Bool
   vowelSegment : Bool
   deriving DecidableEq, Repr
 
-/-- Table 4 (exx 85–87 subjunctive; 93–94 imperative; 97 conditional;
-    95–96 future; 100–103 embedded control). -/
+/-- Table 4. -/
 def irrealisRealization : IrrealisContext → IrrealisRealization
-  | .subjunctive     => ⟨true,  true,  true⟩
-  | .imperative      => ⟨true,  true,  true⟩
-  | .conditional     => ⟨false, false, true⟩
-  | .future          => ⟨false, false, true⟩
-  | .embeddedControl => ⟨true,  false, false⟩
+  | .subjunctive => ⟨true, true, true⟩
+  | .imperative => ⟨true, true, true⟩
+  | .conditional => ⟨false, false, true⟩
+  | .future => ⟨false, false, true⟩
+  | .embeddedControl => ⟨true, false, false⟩
 
-/-- The embedded-control realization profile is unique among the five
-    irrealis contexts. -/
+/-- The context a row's `clauseContext` names. -/
+def contextOf : String → Option IrrealisContext
+  | "subjunctive" => some .subjunctive
+  | "imperative" => some .imperative
+  | "conditional" => some .conditional
+  | "future" => some .future
+  | "control" => some .embeddedControl
+  | _ => none
+
+/-- Each tone or segment a grammatical row reports is the table's value for its
+    context (exx 85–86, 93–94, 96–97, 100–103). -/
+theorem table4_rows :
+    ∀ row ∈ Examples.all, row.judgment = .acceptable →
+      ∀ ctx ∈ (row.feature? "clauseContext").bind contextOf,
+        (∀ t ∈ row.feature? "subjectTone", t ≠ "none" →
+          (t = "high") = (irrealisRealization ctx).subjectTone) ∧
+        (∀ t ∈ row.feature? "verbTone", (t = "high") = (irrealisRealization ctx).verbTone) ∧
+        ∀ v ∈ row.feature? "irrealisVowel",
+          (v = "present") = (irrealisRealization ctx).vowelSegment := by
+  decide +kernel
+
+/-- The embedded-control realization is unique among the five contexts; in
+    particular it lacks the subjunctive's doubled high tone (ex 88). -/
 theorem control_realization_unique (c : IrrealisContext) :
-    irrealisRealization c = irrealisRealization .embeddedControl →
-      c = .embeddedControl := by
+    irrealisRealization c = irrealisRealization .embeddedControl → c = .embeddedControl := by
   cases c <;> decide
 
-/-- The control clause lacks the subjunctive's doubled realization
-    (§5.2.2, ex 88: *ná). -/
-theorem control_not_subjunctive :
-    irrealisRealization .embeddedControl ≠ irrealisRealization .subjunctive := by
-  decide
-
-/-! ### Deriving overt PRO
-
-The control clause obligatorily realizes the irrealis tone on its
-subject, and a tone needs a segmental host (pp. 28, 45) — so the
-controlled subject cannot be silent. -/
+/-! ### Deriving the overt pronoun -/
 
 /-- A tonal exponent needs a segmental host; the null form has none. -/
-def _root_.Minimalist.MinimalPronoun.PronForm.hostsTone : PronForm → Bool
-  | .null      => false
-  | .pronoun   => true
+def hostsTone : PronForm → Bool
+  | .null => false
+  | .pronoun => true
   | .reflexive => true
 
-/-- The controlled-subject form must host the obligatory irrealis tone
-    (Table 4's embedded-control row). -/
+/-- The controlled-subject form must host the obligatory irrealis tone of
+    Table 4's embedded-control row. -/
 def HostsControlTone (inv : MinPronInventory PronForm) : Prop :=
-  (irrealisRealization .embeddedControl).subjectTone = true →
-    inv.controlForm.hostsTone = true
+  (irrealisRealization .embeddedControl).subjectTone = true → hostsTone inv.controlForm = true
 
-/-- Null PRO is impossible in Gã: a null controlled-subject form cannot
-    host the irrealis tone. -/
-theorem null_pro_impossible (inv : MinPronInventory PronForm)
-    (h : inv.controlForm = .null) : ¬ HostsControlTone inv :=
-  fun hc => by simpa [PronForm.hostsTone, h] using hc rfl
-
-/-! ### Minimal pronoun inventory -/
-
-/-- Gã vocabulary items: reflexive when locally bound, pronoun
-    elsewhere; no null item. (The reflexive item is required by
-    [ostrove-2026]'s syncretism row for Gã; UNVERIFIED — [allotey-2021]
-    never discusses Gã reflexives, check [campbell-2017].) -/
-def gaInventory : MinPronInventory PronForm where
-  items := [[.locallyBound] ⟷ .reflexive]
-  elsewhere := .pronoun
+/-- Null PRO is impossible in Gã: a null controlled-subject form cannot host
+    the irrealis tone. -/
+theorem null_pro_impossible (inv : MinPronInventory PronForm) (h : inv.controlForm = .null) :
+    ¬ HostsControlTone inv :=
+  λ hc ↦ by simpa [hostsTone, h] using hc rfl
 
 /-- The Gã inventory meets the tone-hosting requirement. -/
-theorem ga_hostsControlTone : HostsControlTone gaInventory :=
-  fun _ => rfl
+theorem ga_hostsControlTone : HostsControlTone gaInventory := λ _ ↦ rfl
 
-/-- Controlled subjects surface as overt proclitics: no null item
-    exists, so the elsewhere pronoun applies. -/
+/-- Controlled subjects surface as overt proclitics. -/
 theorem ga_overt_pro : gaInventory.controlForm = .pronoun := rfl
 
-/-- The locally-bound context realizes the reflexive item. -/
-theorem ga_has_reflexive :
-    gaInventory.realize .locallyBound = .reflexive := rfl
+/-- Overt PRO and no *pro*-drop: Gã instantiates the implicational universal. -/
+theorem ga_satisfies_universal : gaInventory.OvertPROUniversal Ga.allowsProDrop := λ _ ↦ rfl
+
+/-- Ex 53 witnesses the *de se* row of Table 2: infelicitous in its context. -/
+theorem deSe_witness :
+    ∃ row ∈ Examples.all, row.feature? "diagnostic" = some "deSe" ∧
+      row.judgment = .questionable := by
+  decide +kernel
 
 /-! ### Typological placement -/
 
-/-- Gã complements in [noonan-2007]'s typology; `.infinitive` is §5.6's
+/-- Gã complements in [noonan-2007]'s typology; `.infinitive` is the paper's
     own term for the bare-root `ni`-complement. -/
 def gaToNoonan : EmbeddedClauseType → Complement.Coding
-  | .finiteAke  => .indicative
+  | .finiteAke => .indicative
   | .finiteKeji => .indicative
   | .irrealisNi => .infinitive
 
-/-- The control complement is reduced (deranked) in Noonan's terms. -/
-theorem ni_complement_reduced :
-    (gaToNoonan .irrealisNi).isReduced = true := rfl
-
-/-- Gã instantiates [ostrove-2026]'s universal: overt PRO and no
-    *pro*-drop. -/
-theorem ga_satisfies_universal :
-    gaInventory.OvertPROUniversal Ga.allowsProDrop :=
-  fun _ => rfl
+/-- The control complement is reduced in Noonan's terms. -/
+theorem ni_complement_reduced : (gaToNoonan .irrealisNi).isReduced = true := rfl
 
 end Allotey2021
