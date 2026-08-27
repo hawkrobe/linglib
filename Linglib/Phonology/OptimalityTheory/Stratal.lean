@@ -24,7 +24,9 @@ are *cross-stratum* because strata typically score different candidate types
 
 * `StratalDerivation` — the per-stratum input/output record.
 * `findRank` — the rank (0 = highest) of a constraint by name in a ranking.
-* `isPromotedAcross` / `isDemotedAcross` — cross-stratum reranking predicates.
+* `IsPromotedAcross` / `IsDemotedAcross` — cross-stratum change of absolute rank.
+* `Outranks` / `Reranked` — pairwise domination in one stratum, and its reversal
+  between two strata.
 -/
 
 namespace OptimalityTheory.Stratal
@@ -81,5 +83,25 @@ def IsDemotedAcross (l : L) (r₁ : List (L × Constraint C₁))
 instance (l : L) (r₁ : List (L × Constraint C₁)) (r₂ : List (L × Constraint C₂)) :
     Decidable (IsDemotedAcross l r₁ r₂) := by
   unfold IsDemotedAcross; infer_instance
+
+/-- `a` outranks `b` in a ranking: both are active and `a` is ranked strictly higher. -/
+def Outranks (a b : L) (r : List (L × Constraint C)) : Prop :=
+  match findRank a r, findRank b r with
+  | some p, some q => p < q
+  | _, _ => False
+
+instance (a b : L) (r : List (L × Constraint C)) : Decidable (Outranks a b r) := by
+  unfold Outranks; split <;> infer_instance
+
+/-- `a` and `b` are reranked between two strata: `a ≫ b` in `r₁` and `b ≫ a` in `r₂` (e.g.
+`*DIST-0 ≫ MAX` at the Word level but `MAX ≫ *DIST-0` at the Phrase level in Telugu,
+[aitha-2026] §5.3). -/
+def Reranked (a b : L) (r₁ : List (L × Constraint C₁)) (r₂ : List (L × Constraint C₂)) :
+    Prop :=
+  Outranks a b r₁ ∧ Outranks b a r₂
+
+instance (a b : L) (r₁ : List (L × Constraint C₁)) (r₂ : List (L × Constraint C₂)) :
+    Decidable (Reranked a b r₁ r₂) := by
+  unfold Reranked; infer_instance
 
 end OptimalityTheory.Stratal

@@ -10,47 +10,29 @@ import Linglib.Data.Examples.Aitha2026
 /-!
 # The nouns that say -ni
 
-[aitha-2026] separates two stem alternations in Telugu nouns. The strong
-alternation (*il-lu* ~ *in-ṭi* 'house') is contextual allomorphy of the
-nominalizer n conditioned by [ACC], the feature every nonnominative case
-contains under [caha-2009]'s containment hierarchy ([mcfadden-2018]). The
-weak alternation (*samudr-am* ~ *samudr-āni* 'ocean') only looks like case
-allomorphy: it violates *ABA, is triggered by agreement suffixes in
-nominative contexts, and reads the weight of the next syllable inside the
-prosodic word. It is instead the phonology of a single underlying
-*-am-ni*, derived in Stratal OT ([kiparsky-2000]) from prespecified stress
-on the singular suffix *-ni*.
+Telugu nouns show two stem alternations. The strong one (*il-lu* ~ *in-ṭi* 'house') is
+contextual allomorphy of the nominalizer n conditioned by [ACC], the feature every
+nonnominative case contains under [caha-2009]'s containment ([mcfadden-2018]). The weak
+one (*samudr-am* ~ *samudr-āni* 'ocean') only looks like case allomorphy: it violates *ABA,
+is triggered by agreement suffixes in nominative contexts, and reads the weight of the next
+syllable inside the prosodic word. It is the phonology of one underlying *-am-ni*, derived in
+Stratal OT ([kiparsky-2000]) from prespecified stress on the singular suffix *-ni*.
 
-## Main definitions
+This file defines the Vocabulary Items of the strong alternation (`strongItems`), the weak
+generalization (`weakN`), the singular suffix (`numItems`), and the Stem, Word, and Phrase
+tableaux with the marks of the paper's (49), (59), (62), (63), (66), and (67) under the
+rankings of (64) and (68). `strong_rows` and `weak_rows` check both alternations against
+every paradigm cell of the pool; `weak_not_case_function` and `weak_violates_aba` are the
+arguments against case conditioning; `oblique_across_quantifier` is the locality contrast;
+the `*_optimal` theorems derive both surface forms from *-am-ni*, and the `*_reranked`
+theorems are the Word-to-Phrase rerankings of (68).
 
-* `strongItems`, `strongN`: the Vocabulary Items of (4) over root lists and
-  [ACC], and the n exponent they insert.
-* `Following`, `weakN`: what follows n and the long/short generalization of
-  §3.2 — long iff the next syllable is light and inside the prosodic word.
-* `numItems`: the singular suffix *-ni* as an exponent of Num conditioned by
-  the preceding *-am* ((40)).
-* `stemRanking`, `wordNomRanking`, `wordDatRanking`, `phraseRanking`: the
-  tableaux of (49), (62), (59), and (66).
+## References
 
-## Main results
-
-* `strong_rows`, `weak_rows`: the items and the generalization reproduce every
-  paradigm cell of the data pool.
-* `weak_not_case_function`: no assignment of exponents to cases fits the weak
-  rows — the nominative carries both forms ((8), (16)).
-* `weak_violates_aba`, `strong_contiguous`: the paradigm shapes against
-  containment.
-* `wordNom_optimal`, `wordDat_optimal`: Word-level phonology deletes
-  word-final stressed *-ni* and repairs /mn/ by compensatory lengthening.
-* `distZero_demoted`, `alignR_demoted`: the Word-to-Phrase rerankings of
-  (68).
-
-## Implementation notes
-
-The Stem-level sandhi of the *-em* and *-ām* subclasses ((52), (55)) and the
-quantifier-postposing tableaux ((63), (67)) are not formalized. Tableau
-violation marks follow the paper's prose where the tableau images are not
-in the text layer.
+* [aitha-2026]
+* [caha-2009]
+* [mcfadden-2018]
+* [kiparsky-2000]
 -/
 
 namespace Aitha2026
@@ -158,8 +140,8 @@ def weakN (f : Option Following) : String := if TriggersLong f then "āni" else 
 
 /-! ### The data pool -/
 
-/-- A paradigm cell of the pool: the root class, the case if any, what follows
-n, and the n exponent. -/
+/-- A paradigm cell of the pool: the root class, the case if any, what follows n, the n
+exponent, and for singular weak nouns whether the form is long. -/
 structure Cell where
   noun : String
   strongRoot : Option Root
@@ -167,6 +149,7 @@ structure Cell where
   case : Option TeluguCase
   following : Option Following
   n : String
+  long : Option Bool
   deriving DecidableEq, Repr
 
 /-- The cell an example records, from its `paperFeatures`. -/
@@ -188,9 +171,12 @@ def Cell.ofExample (ex : LinguisticExample) : Option Cell := do
     | _, _ => none
   let strongRoot ←
     if cls = "strong" then (fs.lookup "root" >>= Root.ofString).map some else some none
-  pure ⟨noun, strongRoot, number = "pl", TeluguCase.ofString case, following, n⟩
+  pure ⟨noun, strongRoot, number = "pl", TeluguCase.ofString case, following, n,
+    (fs.lookup "form").map (· = "long")⟩
 
-theorem cell_ofExample_isSome : ∀ ex ∈ Examples.all, (Cell.ofExample ex).isSome := by decide
+/-- Every row recording an n exponent is a cell. -/
+theorem cell_ofExample_isSome :
+    ∀ ex ∈ Examples.all, (ex.feature? "n").isSome → (Cell.ofExample ex).isSome := by decide
 
 /-- The cells of the pool. -/
 def cells : List Cell := Examples.all.filterMap Cell.ofExample
@@ -202,37 +188,44 @@ def strongCells : List (Root × TeluguCase × String) :=
 /-- The singular weak cells. -/
 def weakCells : List Cell := cells.filter fun c => c.strongRoot = none ∧ ¬ c.plural
 
-/-- **The strong paradigm**: (4) inserts the attested exponent in every strong
-cell of (1), (2), and fn. 6 — the agreement suffix, bearing no [ACC], leaves
-the nominative form. -/
+/-- **The strong paradigm**: (4) inserts the attested exponent in every strong cell of (1),
+(2), and fn. 6 — the agreement suffix, bearing no [ACC], leaves the nominative form. -/
 theorem strong_rows : ∀ x ∈ strongCells, strongN x.1 x.2.1 = some x.2.2 := by decide
 
-/-- **The weak generalization**: the long form in every singular weak cell of
-(8), (13)–(18) is predicted by the following syllable alone. -/
-theorem weak_rows : ∀ c ∈ weakCells, weakN c.following = c.n := by decide
+/-- **The weak generalization**: in every singular weak cell of (6)–(8), (13)–(18), and (34)
+the form is long exactly when the following syllable is light and word-internal. -/
+theorem weak_rows : ∀ c ∈ weakCells, c.long = some (decide (TriggersLong c.following)) := by
+  decide
 
 /-- The nominative short form of (8). -/
-def oceanNom : Cell := ⟨"samudram", none, false, some .nom, none, "am"⟩
+def oceanNom : Cell := ⟨"samudram", none, false, some .nom, none, "am", some false⟩
 
-/-- The long form under the 1SG agreement suffix, in a nominative predicate
-nominal ((13)). -/
-def ocean1sg : Cell := ⟨"samudram", none, false, some .nom, some ⟨true, .light⟩, "āni"⟩
+/-- The long form under the 1SG agreement suffix, in a nominative predicate nominal ((13)). -/
+def ocean1sg : Cell := ⟨"samudram", none, false, some .nom, some ⟨true, .light⟩, "āni", some true⟩
 
-/-- **Not case allomorphy**: no assignment of an n exponent to each case fits
-the weak cells, since the nominative carries both *-am* and *-āni* ((8) with
-(13)–(16)). -/
+/-- **Not case allomorphy**: no assignment of a form to each case fits the weak cells, since
+the nominative carries both *-am* and *-āni* ((8) with (13)–(16)). -/
 theorem weak_not_case_function :
-    ¬ ∃ f : Option TeluguCase → String, ∀ c ∈ weakCells, f c.case = c.n := by
+    ¬ ∃ f : Option TeluguCase → Option Bool, ∀ c ∈ weakCells, f c.case = c.long := by
   rintro ⟨f, h⟩
   have h₁ := h oceanNom (by decide)
   have h₂ := h ocean1sg (by decide)
   simp only [oceanNom, ocean1sg] at h₁ h₂
   exact absurd (h₁.symm.trans h₂) (by decide)
 
+/-- **Locality** ((33)–(36)): across a postposed quantifier the strong oblique is licensed
+exactly when the overall case is nonnominative. -/
+theorem oblique_across_quantifier :
+    ∀ row ∈ Examples.all, row.feature? "intervener" = some "quantifier" →
+      row.feature? "class" = some "strong" →
+      (row.judgment = .acceptable ↔
+        (row.feature? "stem" = some "obl" ↔ row.feature? "case" ≠ some "nom")) := by
+  decide
+
 /-! ### Paradigm shapes against containment (§3.1) -/
 
-/-- The suffix shapes of the case paradigms (1) and (8): null nominative and
-genitive, light *-ni*/*-ki*, and the heavy postposition *-lō*. -/
+/-- The suffix shapes of the case paradigms (1) and (8): null nominative and genitive, light
+*-ni* and *-ki*, and the heavy postposition *-lō*. -/
 def caseSuffix : TeluguCase → Option Following
   | .nom => none
   | .acc => some ⟨true, .light⟩
@@ -245,14 +238,13 @@ def weakPattern : AllomorphyPattern :=
   let code (c : TeluguCase) : Nat := if weakN (caseSuffix c) = "am" then 0 else 1
   ⟨code .nom, code .acc, code .gen, code .dat⟩
 
-/-- The strong paradigm of *illu* as an allomorphy pattern, nominative 0 and
-oblique 1. -/
+/-- The strong paradigm of *illu* as an allomorphy pattern, nominative 0 and oblique 1. -/
 def strongPattern : AllomorphyPattern :=
   let code (c : TeluguCase) : Nat := if strongN .house c = strongN .house .nom then 0 else 1
   ⟨code .nom, code .acc, code .gen, code .dat⟩
 
-/-- The weak ABAB paradigm violates *ABA: the nominative form resurfaces in
-the genitive, which contains [ACC] ([caha-2009]). -/
+/-- The weak ABAB paradigm violates *ABA: the nominative form resurfaces in the genitive,
+which contains [ACC] ([caha-2009]). -/
 theorem weak_violates_aba : weakPattern.ViolatesABA := by decide
 
 /-- The strong ABB paradigm is contiguous on the containment hierarchy. -/
@@ -265,22 +257,22 @@ inductive NumContext where
   | afterAm
   deriving DecidableEq, Repr
 
-/-- The Vocabulary Items of Num in the singular ((40)): *-ni* after *-am*,
-null elsewhere — conditioned inward, as root-out insertion allows. -/
+/-- The Vocabulary Items of Num in the singular ((40)): *-ni* after *-am*, null elsewhere —
+conditioned inward, as root-out insertion allows. -/
 def numItems : List (VocabularyItem NumContext String) := [[.afterAm] ⟷ "ni", [] ⟷ "ø"]
 
 /-- The singular exponent of Num after an n exponent. -/
 def numSg (nExponent : String) : Option String :=
   subsetPrinciple numItems (if nExponent = "am" then [.afterAm] else [] : List NumContext)
 
-/-- Weak nouns take *-ni*, strong nouns the null singular: the underlying weak
-singular is *samudr-am-ni-K* ((41)). -/
+/-- Weak nouns take *-ni*, strong nouns the null singular: the underlying weak singular is
+*samudr-am-ni-K* ((41)). -/
 theorem numSg_am : numSg "am" = some "ni" ∧ numSg "lu" = some "ø" := by decide
 
 /-! ### Stem-level phonology (§5.1) -/
 
-/-- The metrical parses of *samudr-am* in (49): final heavy syllable
-unparsed, three degenerate feet, or two bimoraic trochees. -/
+/-- The metrical parses of *samudr-am* in (49): final heavy syllable unparsed, three
+degenerate feet, or two bimoraic trochees. -/
 inductive StemCandidate where
   | unparsedFinal
   | degenerate
@@ -292,8 +284,8 @@ def StemCandidate.toFooting : StemCandidate → Footing Syllable.Weight
   | .degenerate => [.inl ⟨[.light], 0⟩, .inl ⟨[.light], 0⟩, .inl ⟨[.heavy], 0⟩]
   | .trochees => [.inl ⟨[.light, .light], 0⟩, .inl ⟨[.heavy], 0⟩]
 
-/-- ALL-FT-LEFT ((48)): per foot, the syllables between the left edge of the
-domain and the foot. -/
+/-- ALL-FT-LEFT ((48)): per foot, the syllables between the left edge of the domain and the
+foot. -/
 def allFtLeftOf (fc : Footing Syllable.Weight) : Nat :=
   let rec go : Footing Syllable.Weight → Nat → Nat
     | [], _ => 0
@@ -322,65 +314,118 @@ theorem stem_optimal :
     (Tableau.ofRanking stemCandidates stemRanking stemCandidates_ne).optimal = {.trochees} := by
   decide
 
+/-! ### Word- and Phrase-level rankings (§5.2–5.3)
+
+The constraints of the two strata are shared by label; each stratum fixes one order, and
+each tableau supplies only its candidates' violation marks. -/
+
+/-- The constraints of (64) and (68). -/
+inductive Con where
+  | distZero | alignR | identStress | ftBin | complexCoda | maxMora | max | identLength | onset
+  deriving DecidableEq, Repr
+
+/-- The Word-level ranking (64), with ONSET below IDENT-STRESS (§5.2); Hasse siblings are
+listed in the order of the paper's tableau columns. -/
+def wordOrder : List Con :=
+  [.distZero, .alignR, .identStress, .ftBin, .complexCoda, .maxMora, .max, .identLength, .onset]
+
+/-- The Phrase-level ranking (68). -/
+def phraseOrder : List Con :=
+  [.ftBin, .onset, .identLength, .max, .identStress, .distZero, .alignR, .maxMora]
+
+/-- A stratum's ranked constraints over a candidate type, from its order and marks. -/
+def ranking {C : Type*} (order : List Con) (marks : C → Con → ℕ) : List (Con × Constraint C) :=
+  order.map fun l => (l, fun c => marks c l)
+
 /-! ### Word-level phonology (§5.2) -/
 
-/-- The constraints of §5.2–5.3, as labels shared across strata. -/
-inductive Con where
-  | distZero | alignR | identStress | ftBin | maxMora | max | identLength | complexCoda
-  deriving DecidableEq, Repr
-
-/-- The Word-level candidates for nominative *samudr-am-ní* ((62)): destress
-*-ni*; foot it alone; delete /i/ into a coda cluster; delete /i/ and /m/; or
-delete /ni/. -/
-inductive WordCandNom where
-  | destress | degenerateFoot | deleteI | deleteIM | deleteNi
-  deriving DecidableEq, Repr
-
-/-- (62): IDENT-STRESS, FT-BIN, *COMPLEXCODA, ALIGN-R ≫ MAX-μ, MAX. -/
-def wordNomRanking : List (Con × Constraint WordCandNom) :=
-  [ (.identStress, fun | .destress => 1 | _ => 0),
-    (.ftBin, fun | .degenerateFoot => 1 | _ => 0),
-    (.complexCoda, fun | .deleteI => 1 | _ => 0),
-    (.alignR, fun | .deleteIM => 1 | _ => 0),
-    (.maxMora, fun | .deleteI => 1 | .deleteIM => 2 | .deleteNi => 1 | _ => 0),
-    (.max, fun | .deleteI => 1 | .deleteIM => 2 | .deleteNi => 2 | _ => 0) ]
-
-def wordNomCands : List WordCandNom := [.destress, .degenerateFoot, .deleteI, .deleteIM, .deleteNi]
-
-theorem wordNomCands_ne : wordNomCands ≠ [] := by decide
-
-/-- (62): word-final stressed *-ni*, unable to head a binary foot, is deleted —
-the short form *samudram*. -/
-theorem wordNom_optimal :
-    (Tableau.ofRanking wordNomCands (wordNomRanking.map (·.2)) wordNomCands_ne).optimal =
-      {.deleteNi} := by
-  decide
-
-/-- The Word-level candidates for dative *samudr-am-ní-ki* ((59)): keep /mn/;
-delete /n/ or /m/ with the mora; delete /m/ or /n/ with compensatory
-lengthening. -/
+/-- The candidates for dative *samudr-am-ní-ki* ((59)): keep /mn/; delete /n/ or /m/ with the
+mora; delete /m/ or /n/ with compensatory lengthening. -/
 inductive WordCandDat where
   | faithful | deleteN | deleteM | deleteMLengthen | deleteNLengthen
   deriving DecidableEq, Repr
 
-/-- (59): *DIST-0, MAX-μ ≫ ALIGN-R ≫ MAX, IDENT-LENGTH. -/
-def wordDatRanking : List (Con × Constraint WordCandDat) :=
-  [ (.distZero, fun | .faithful => 1 | _ => 0),
-    (.maxMora, fun | .deleteN => 1 | .deleteM => 1 | _ => 0),
-    (.alignR, fun | .deleteNLengthen => 1 | _ => 0),
-    (.max, fun | .faithful => 0 | _ => 1),
-    (.identLength, fun | .deleteMLengthen => 1 | .deleteNLengthen => 1 | _ => 0) ]
+/-- The marks of (59). -/
+def WordCandDat.marks : WordCandDat → Con → ℕ
+  | .faithful, .distZero => 1
+  | .deleteN, .alignR | .deleteN, .maxMora => 1
+  | .deleteN, .max => 2
+  | .deleteM, .maxMora | .deleteM, .max => 1
+  | .deleteMLengthen, .max | .deleteMLengthen, .identLength => 1
+  | .deleteNLengthen, .alignR | .deleteNLengthen, .identLength => 1
+  | .deleteNLengthen, .max => 2
+  | _, _ => 0
 
 def wordDatCands : List WordCandDat :=
   [.faithful, .deleteN, .deleteM, .deleteMLengthen, .deleteNLengthen]
 
 theorem wordDatCands_ne : wordDatCands ≠ [] := by decide
 
-/-- (59): the /mn/ contact is repaired by deleting /m/ and lengthening /a/ —
-the long form *samudrāniki*. -/
+/-- (59): the /mn/ contact is repaired by deleting /m/ and lengthening /a/ — the long form
+*samudrāniki*. -/
 theorem wordDat_optimal :
-    (Tableau.ofRanking wordDatCands (wordDatRanking.map (·.2)) wordDatCands_ne).optimal =
-      {.deleteMLengthen} := by
+    (Tableau.ofRanking wordDatCands ((ranking wordOrder WordCandDat.marks).map (·.2))
+      wordDatCands_ne).optimal = {.deleteMLengthen} := by
+  decide
+
+/-- The candidates for nominative *samudr-am-ní* ((62)): destress *-ni*; foot it alone; delete
+/i/ into a coda cluster; delete /i/ and /m/; or delete /ni/. -/
+inductive WordCandNom where
+  | destress | degenerateFoot | deleteI | deleteIM | deleteNi
+  deriving DecidableEq, Repr
+
+/-- The marks of (62). -/
+def WordCandNom.marks : WordCandNom → Con → ℕ
+  | .destress, .identStress => 1
+  | .degenerateFoot, .ftBin => 1
+  | .deleteI, .complexCoda | .deleteI, .maxMora | .deleteI, .max => 1
+  | .deleteIM, .alignR | .deleteIM, .maxMora => 1
+  | .deleteIM, .max => 2
+  | .deleteNi, .maxMora => 1
+  | .deleteNi, .max => 2
+  | _, _ => 0
+
+def wordNomCands : List WordCandNom := [.destress, .degenerateFoot, .deleteI, .deleteIM, .deleteNi]
+
+theorem wordNomCands_ne : wordNomCands ≠ [] := by decide
+
+/-- (62): word-final stressed *-ni*, unable to head a binary foot, is deleted — the short form
+*samudram*. -/
+theorem wordNom_optimal :
+    (Tableau.ofRanking wordNomCands ((ranking wordOrder WordCandNom.marks).map (·.2))
+      wordNomCands_ne).optimal = {.deleteNi} := by
+  decide
+
+/-- The candidates for *samudr-am-ní-antaṭi-ni* with a postposed quantifier ((63)): destress
+*-ni*; foot it alone; delete /i/ into /mn/; delete /i/ and /m/ with /n/ as coda; delete /ni/;
+or delete /i/ and /m/ with /n/ resyllabified as onset. -/
+inductive WordCandQ where
+  | destress | degenerateFoot | deleteI | deleteIM | deleteNi | deleteIMResyllabify
+  deriving DecidableEq, Repr
+
+/-- The marks of (63), with ONSET marked on every candidate whose *an* lacks an onset. -/
+def WordCandQ.marks : WordCandQ → Con → ℕ
+  | .destress, .identStress | .destress, .onset => 1
+  | .degenerateFoot, .ftBin | .degenerateFoot, .onset => 1
+  | .deleteI, .distZero | .deleteI, .max => 1
+  | .deleteIM, .alignR | .deleteIM, .onset => 1
+  | .deleteIM, .max => 2
+  | .deleteNi, .onset => 1
+  | .deleteNi, .max => 2
+  | .deleteIMResyllabify, .identStress => 1
+  | .deleteIMResyllabify, .max => 2
+  | _, _ => 0
+
+def wordQCands : List WordCandQ :=
+  [.destress, .degenerateFoot, .deleteI, .deleteIM, .deleteNi, .deleteIMResyllabify]
+
+theorem wordQCands_ne : wordQCands ≠ [] := by decide
+
+/-- (63): before the heavy *an* the stressed *-ni* is again deleted, leaving the coda /m/
+before an onsetless syllable. -/
+theorem wordQ_optimal :
+    (Tableau.ofRanking wordQCands ((ranking wordOrder WordCandQ.marks).map (·.2))
+      wordQCands_ne).optimal = {.deleteNi} := by
   decide
 
 /-- The n exponent each Word-level output leaves. -/
@@ -397,9 +442,9 @@ def WordCandDat.nExponent : WordCandDat → String
   | .deleteMLengthen => "āni"
   | .deleteNLengthen => "āmi"
 
-/-- The two Word-level winners are the two forms of the generalization
-`weakN`: the same underlying *-am-ni* surfaces short before nothing and long
-before a word-internal light syllable. -/
+/-- The two Word-level winners are the two forms of the generalization `weakN`: the same
+underlying *-am-ni* surfaces short before nothing and long before a word-internal light
+syllable. -/
 theorem word_level_derives_weakN :
     WordCandNom.deleteNi.nExponent = weakN (caseSuffix .nom) ∧
       WordCandDat.deleteMLengthen.nExponent = weakN (caseSuffix .dat) := by
@@ -407,41 +452,86 @@ theorem word_level_derives_weakN :
 
 /-! ### Phrase-level phonology (§5.3) -/
 
-/-- The Phrase-level candidates for *samudram nunci* 'from the ocean' ((66)):
-delete /m/ with or without lengthening, delete the postposition's /n/, or
-keep the /mn/ contact. -/
-inductive PhraseCand where
+/-- The candidates for *samudram nunci* 'from the ocean' ((66)): delete /m/ with or without
+lengthening, delete the postposition's /n/, or keep the /mn/ contact. -/
+inductive PhraseCandP where
   | deleteMLengthen | deleteM | deleteN | faithful
   deriving DecidableEq, Repr
 
-/-- (66), (68): at the Phrase level MAX outranks *DIST-0 and ALIGN-R, and
-segmental faithfulness outranks prosodic faithfulness. -/
-def phraseRanking : List (Con × Constraint PhraseCand) :=
-  [ (.max, fun | .faithful => 0 | _ => 1),
-    (.identLength, fun | .deleteMLengthen => 1 | _ => 0),
-    (.distZero, fun | .faithful => 1 | _ => 0),
-    (.alignR, fun _ => 0),
-    (.identStress, fun _ => 0),
-    (.maxMora, fun | .deleteM => 1 | _ => 0) ]
+/-- The marks of (66), as printed. -/
+def PhraseCandP.marks : PhraseCandP → Con → ℕ
+  | .deleteMLengthen, .max => 1
+  | .deleteM, .identStress | .deleteM, .max => 1
+  | .deleteN, .max | .deleteN, .alignR => 1
+  | .faithful, .distZero => 1
+  | .faithful, .alignR => 2
+  | _, _ => 0
 
-def phraseCands : List PhraseCand := [.deleteMLengthen, .deleteM, .deleteN, .faithful]
+def phrasePCands : List PhraseCandP := [.deleteMLengthen, .deleteM, .deleteN, .faithful]
 
-theorem phraseCands_ne : phraseCands ≠ [] := by decide
+theorem phrasePCands_ne : phrasePCands ≠ [] := by decide
 
 /-- (66): across the postposition boundary the /mn/ contact is kept. -/
-theorem phrase_optimal :
-    (Tableau.ofRanking phraseCands (phraseRanking.map (·.2)) phraseCands_ne).optimal =
-      {.faithful} := by
+theorem phraseP_optimal :
+    (Tableau.ofRanking phrasePCands ((ranking phraseOrder PhraseCandP.marks).map (·.2))
+      phrasePCands_ne).optimal = {.faithful} := by
   decide
 
-/-- *DIST-0 is demoted below MAX from Word to Phrase ((68)). -/
-theorem distZero_demoted :
-    OptimalityTheory.Stratal.IsDemotedAcross .distZero phraseRanking wordDatRanking := by
+/-- The candidates for the Word-level output of (63) at the Phrase level ((67)): keep the
+onsetless *an*; resyllabify /m/ as its onset; lengthen /a/ and resyllabify; or foot the
+shortened *dra* alone. -/
+inductive PhraseCandQ where
+  | faithful | resyllabify | lengthen | degenerateFoot
+  deriving DecidableEq, Repr
+
+/-- The marks of (67). -/
+def PhraseCandQ.marks : PhraseCandQ → Con → ℕ
+  | .faithful, .onset => 1
+  | .resyllabify, .identStress | .resyllabify, .alignR | .resyllabify, .maxMora => 1
+  | .lengthen, .identLength | .lengthen, .alignR => 1
+  | .degenerateFoot, .ftBin | .degenerateFoot, .identStress | .degenerateFoot, .alignR
+  | .degenerateFoot, .maxMora => 1
+  | _, _ => 0
+
+def phraseQCands : List PhraseCandQ := [.faithful, .resyllabify, .lengthen, .degenerateFoot]
+
+theorem phraseQCands_ne : phraseQCands ≠ [] := by decide
+
+/-- (67): the coda /m/ resyllabifies as the onset of *an*, shifting stress — *samudra.man.ta.ṭi.ni*
+without compensatory lengthening. -/
+theorem phraseQ_optimal :
+    (Tableau.ofRanking phraseQCands ((ranking phraseOrder PhraseCandQ.marks).map (·.2))
+      phraseQCands_ne).optimal = {.resyllabify} := by
   decide
 
-/-- ALIGN-R is demoted below MAX from Word to Phrase ((68)). -/
-theorem alignR_demoted :
-    OptimalityTheory.Stratal.IsDemotedAcross .alignR phraseRanking wordDatRanking := by
+/-! ### Rerankings (68) -/
+
+open OptimalityTheory.Stratal
+
+/-- *DIST-0 and ALIGN-RIGHT outrank MAX at the Word level and are outranked by it at the
+Phrase level: consonant deletion at the Word level, retention and resyllabification at the
+Phrase level. -/
+theorem distZero_alignR_max_reranked :
+    Reranked Con.distZero .max (ranking wordOrder WordCandDat.marks)
+        (ranking phraseOrder PhraseCandP.marks) ∧
+      Reranked Con.alignR .max (ranking wordOrder WordCandDat.marks)
+        (ranking phraseOrder PhraseCandP.marks) := by
+  decide
+
+/-- Prosodic faithfulness (IDENT-STRESS, MAX-μ) outranks segmental faithfulness (MAX,
+IDENT-LENGTH) at the Word level and is outranked by it at the Phrase level. -/
+theorem prosodic_segmental_reranked :
+    Reranked Con.identStress .max (ranking wordOrder WordCandQ.marks)
+        (ranking phraseOrder PhraseCandQ.marks) ∧
+      Reranked Con.maxMora .identLength (ranking wordOrder WordCandQ.marks)
+        (ranking phraseOrder PhraseCandQ.marks) := by
+  decide
+
+/-- IDENT-STRESS outranks ONSET at the Word level and ONSET outranks it at the Phrase level:
+the onsetless *an* of (63) is resyllabified only in (67). -/
+theorem identStress_onset_reranked :
+    Reranked Con.identStress .onset (ranking wordOrder WordCandQ.marks)
+      (ranking phraseOrder PhraseCandQ.marks) := by
   decide
 
 end Aitha2026
