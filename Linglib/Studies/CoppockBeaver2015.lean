@@ -19,7 +19,7 @@ one king (Uniqueness), while leaving Existence in the scope of negation.
 The classical Russellian analysis collapses both into the assertion and
 loses this distinction.
 
-The factorization is operationalized in `Semantics.Definiteness` as
+The factorization is operationalized in `Definiteness` as
 `Existence`, `Uniqueness`, and `existsUnique`; this file tests it over a
 tiny frame (`Body`: sun / moon / mars, one situation index).
 
@@ -32,7 +32,7 @@ tiny frame (`Body`: sun / moon / mars, one situation index).
   `planet_not_existsUnique`: Russellian `existsUnique` holds exactly for a
   singleton extension.
 - `interpret_theSun`, `interpret_kingOfFrance`, `interpret_planet`:
-  `Semantics.Definiteness.interpret` on a `.unique` description returns
+  `Definiteness.interpret` on a `.unique` description returns
   `none` precisely in the Russellian failure cases.
 - `uniqueness_projects_through_negation`,
   `existence_does_not_project_through_negation`: the projection contrast —
@@ -43,7 +43,7 @@ namespace CoppockBeaver2015
 
 open Intensional
 open Intensional.Variables
-open Semantics.Definiteness
+open Definiteness
 
 /-! ### A tiny frame for the projection diagnostics -/
 
@@ -118,7 +118,7 @@ theorem planet_not_existsUnique : ¬ ∃! x, planet x := by
   rintro ⟨_, hUniq⟩
   exact planet_existence_without_uniqueness.2 hUniq
 
-/-! ### Alignment with `Semantics.Definiteness.interpret` -/
+/-! ### Alignment with `Definiteness.interpret` -/
 
 /-- A trivial bi-assignment: every entity slot is `sun`, every situation
     slot is `()`. The diagnostics in this file do not bind anything. -/

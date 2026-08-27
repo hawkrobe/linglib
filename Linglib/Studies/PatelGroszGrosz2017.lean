@@ -29,7 +29,7 @@ by an added pragmatic effect (emotivity §5.1, disambiguation §5.2, register §
 The contributions are made *true by construction* on shared substrate:
 
 * **DEM = PER + anaphoric index** is the [schwarz-2009] weak/strong refinement
-  `Semantics.Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`: the strong description
+  `Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`: the strong description
   (DEM, `.anaphoric`) and the weak description (PER, `.unique`) over one restrictor
   pick the same referent exactly when the indexed entity is the unique satisfier —
   off that, DEM is anaphoric in a way PER is not. Both denote via
@@ -55,7 +55,7 @@ modeling absent here.
 
 namespace PatelGroszGrosz2017
 
-open Semantics.Definiteness (ArticleType)
+open Definiteness
 
 /-- The **three** pragmatic contexts that license the strong-article ("DEM") series
     in German ([patel-grosz-grosz-2017] §5): a positive pragmatic effect must
@@ -148,14 +148,14 @@ theorem schwarz_pgg_german_consistent :
     *different* referents. Reusing [schwarz-2009] §8's two-satisfier scenario:
     the weak PER fails uniqueness (two satisfiers → `none`) while the strong DEM
     reads off the discourse index. This is the divergence direction the convergence
-    theorem (`Semantics.Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`) rules out
+    theorem (`Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`) rules out
     only under uniqueness. -/
 theorem der_er_can_diverge :
-    Semantics.Definiteness.interpret
-        (Semantics.Definiteness.Description.ofPresupType .uniqueness Schwarz2009.studentRestr 0)
+    Definiteness.interpret
+        (Definiteness.Description.ofPresupType .uniqueness Schwarz2009.studentRestr 0)
         Schwarz2009.gAlice Schwarz2009.gs0
-      ≠ Semantics.Definiteness.interpret
-        (Semantics.Definiteness.Description.ofPresupType .familiarity Schwarz2009.studentRestr 0)
+      ≠ Definiteness.interpret
+        (Definiteness.Description.ofPresupType .familiarity Schwarz2009.studentRestr 0)
         Schwarz2009.gAlice Schwarz2009.gs0 :=
   Schwarz2009.two_articles_can_disagree
 
@@ -177,10 +177,10 @@ open Semantics.Presupposition.PhiFeatures (femSem)
     feature *drives* the definite description's restrictor rather than re-stipulating it. -/
 theorem feminine_per_restrictor_is_femSem {E W : Type}
     (isFemale : E → Prop) (sIdx : Nat) :
-    Semantics.Definiteness.Description.ofPresupType .uniqueness
+    Definiteness.Description.ofPresupType .uniqueness
         ((fun _ _ x => (femSem isFemale).presup x) :
           Intensional.Variables.DenotGS E W .et) sIdx
-      = Semantics.Definiteness.Description.unique
+      = Definiteness.Description.unique
           ((fun _ _ x => isFemale x) :
             Intensional.Variables.DenotGS E W .et) sIdx := rfl
 
@@ -189,12 +189,12 @@ theorem feminine_per_restrictor_is_femSem {E W : Type}
 theorem feminine_per_picks_unique_female {E W : Type}
     (isFemale : E → Prop) (sIdx : Nat)
     (g : Assignment E) (gs : Intensional.Variables.SitAssignment W) :
-    Semantics.Definiteness.interpret
-        (Semantics.Definiteness.Description.ofPresupType .uniqueness
+    Definiteness.interpret
+        (Definiteness.Description.ofPresupType .uniqueness
           ((fun _ _ x => (femSem isFemale).presup x) :
             Intensional.Variables.DenotGS E W .et) sIdx) g gs
-      = Semantics.Definiteness.russellIota (E := E) (fun x => isFemale x) :=
-  Semantics.Definiteness.interpret_unique
+      = Definiteness.russellIota (E := E) (fun x => isFemale x) :=
+  Definiteness.interpret_unique
     ((fun _ _ x => isFemale x) : Intensional.Variables.DenotGS E W .et) sIdx g gs
 
 end PatelGroszGrosz2017

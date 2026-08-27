@@ -235,7 +235,7 @@ structure Marker where
   /-- Which grammatical positions can be relativized using this marker. -/
   positions : List AHPosition
   /-- Which head-NP definiteness context attests the marker (purely
-      descriptive). Reuses `Semantics.Definiteness.Definiteness` rather
+      descriptive). Reuses `Definiteness` rather
       than introducing a parallel enum. `none` if the language doesn't
       make a comparable definiteness contrast on relative-clause markers
       (the typical case) or if the data hasn't been encoded. Languages
@@ -247,7 +247,7 @@ structure Marker where
       (Wright 1896; Cantarino 1974; [ryding-2005]): MSA *alladhī*
       with definite antecedents vs Ø-relative-pronoun with indefinite
       antecedents. Substrate makes no claim about syntactic mechanism. -/
-  headDefiniteness : Option Semantics.Definiteness.Definiteness := none
+  headDefiniteness : Option Definiteness := none
   /-- Additional notes. -/
   notes : String := ""
   deriving BEq, Repr

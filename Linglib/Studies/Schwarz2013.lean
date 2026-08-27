@@ -31,7 +31,7 @@ fragment encodes the flipped cell, and the divergence is proved below.
 
 namespace Schwarz2013
 
-open Semantics.Definiteness
+open Definiteness
 
 /-! ### The German/Fering baseline (§3.1) -/
 

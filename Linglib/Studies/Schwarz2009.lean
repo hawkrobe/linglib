@@ -33,13 +33,13 @@ the distinction at the surface.
 
 The split is operationalized in the Core layer by:
 
-- **`Semantics.Definiteness.Description`** — distinct `.unique` (weak) and
+- **`Definiteness.Description`** — distinct `.unique` (weak) and
   `.anaphoric` (strong) constructors, with different argument shapes
   (`.unique` carries a *situation* index for resource-situation binding;
   `.anaphoric` carries a *discourse* index for antecedent lookup).
-- **`Semantics.Definiteness.DescriptionKind.presupType`** — projects each kind
+- **`Definiteness.DescriptionKind.presupType`** — projects each kind
   to the [schwarz-2009] presupposition type it expresses.
-- **`Semantics.Definiteness.Determiner`** — the declared determiner set records the
+- **`Definiteness.Determiner`** — the declared determiner set records the
   morphological inventory; `Determiner.Inventory.IsSyncretic` is the predicate that
   distinguishes English-style syncretism from German-style bipartition.
 
@@ -66,7 +66,7 @@ We verify:
 
 namespace Schwarz2009
 
-open Semantics.Definiteness
+open Definiteness
 open Intensional
 open Intensional.Variables
 

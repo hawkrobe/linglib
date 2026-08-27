@@ -41,7 +41,7 @@ coverage ([shen-huang-2026] §4.1).
 
 namespace Syntax.Binding.SpecificityCondition
 
-open Semantics.Definiteness
+open Definiteness
 
 -- ============================================================================
 -- §1. Specificity

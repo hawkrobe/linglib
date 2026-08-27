@@ -51,7 +51,7 @@ namespace ShenHuang2026
 
 open Minimalist.Linearization
 open ArgumentStructure
-open Semantics.Definiteness
+open Definiteness
 open Syntax.Binding.SpecificityCondition (ExternalOperator blocked)
 
 -- ============================================================================

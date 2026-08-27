@@ -202,7 +202,7 @@ noncomputable def NOM (domain : List E) (P : (E → Prop)) : Option E :=
 
     Maps `⟨e,t⟩ → ⟨⟨e,t⟩,t⟩` (partial). Unlike `A` (which is total), `THE`
     presupposes existence and uniqueness. Connects to the semantics of "the"
-    in `Semantics.Definiteness`. -/
+    in `Definiteness`. -/
 noncomputable def THE (domain : List E) (P : (E → Prop)) : Option (Quantifier E) :=
   (iota domain P).map individual
 

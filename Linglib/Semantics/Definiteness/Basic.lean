@@ -13,7 +13,7 @@ import Linglib.Fragments.English.Determiners
 Connective tissue between definite-description denotations and the rest of
 the library. The denotational layer itself lives in two canonical pieces:
 
-- `Semantics.Definiteness.russellIotaList` (the per-context referent selector,
+- `Definiteness.russellIotaList` (the per-context referent selector,
   Russellian iota over a `List E` filtered by a `Bool` predicate), and
 - `Semantics.Presupposition.PartialProp.presupOfReferent` (the combinator lifting a
   referent selector and a scope predicate into a `PartialProp W`).
@@ -39,7 +39,7 @@ This module retains:
 
 -/
 
-namespace Semantics.Definiteness
+namespace Definiteness
 
 open Intensional (Ty)
 open Quantification (every_sem some_sem)
@@ -57,7 +57,7 @@ open Semantics.Presupposition (PartialProp)
 been introduced into the discourse and are available for anaphoric reference.
 Familiarity-based definites (Schwarz's strong article) are evaluated by
 running the canonical Russellian-iota selector
-(`Semantics.Definiteness.russellIotaList`) over `dc.salient` rather than the full
+(`Definiteness.russellIotaList`) over `dc.salient` rather than the full
 domain. -/
 structure DiscourseContext (E : Type) where
   /-- Entities currently salient/familiar in discourse -/
@@ -154,4 +154,4 @@ def modifierNecessary {E : Type}
     | [_] => true   -- modifier rescues uniqueness
     | _ => false    -- modifier doesn't help
 
-end Semantics.Definiteness
+end Definiteness

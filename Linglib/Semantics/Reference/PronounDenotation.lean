@@ -126,7 +126,7 @@ personal/demonstrative split is the [schwarz-2009] weak/strong-article split:
 PER (*er*) the **weak** article (`Description.ofPresupType .uniqueness` = `.unique`),
 "DEM" (*der*) the **strong** article (`…ofPresupType .familiarity` = `.anaphoric`,
 the weak description plus an anaphoric index). PG&G's "DEM = PER + index" is the
-weak/strong refinement `Semantics.Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`;
+weak/strong refinement `Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`;
 the strength round-trips through `DescriptionKind.presupType`. The extra layer is that index,
 **not** spatial deixis (footnote 1) — *der* is a strong *personal* pronoun, not a
 separate type; genuine deictic demonstratives are `Description.demonstrative`.
@@ -142,13 +142,13 @@ exactly when `g i` is the unique satisfier. -/
 description whenever the restrictor holds of the indexed referent: the
 **strong-article** (`Description.ofPresupType .familiarity`) reading, since the
 anaphoric index *is* the indexed entity. The **weak** reading coincides too when
-that entity is the unique satisfier (`Semantics.Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`). -/
+that entity is the unique satisfier (`Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`). -/
 theorem PersonalPronoun.denote_selector_eq_ofPresupType {E W : Type} [PartialOrder E]
     (e : PersonalPronoun) (i : ℕ) (R : DenotGS E W .et)
     (speaker addressee : E) (isFemale isInanimate : E → Prop)
     (g : Assignment E) (gs : SitAssignment W) (w : PUnit)
     (h : R g gs (g i)) :
     (e.denote i speaker addressee isFemale isInanimate).selector g w
-      = Semantics.Definiteness.interpret (Semantics.Definiteness.Description.ofPresupType .familiarity R i) g gs := by
-  show some (g i) = Semantics.Definiteness.interpret (.anaphoric R i) g gs
-  rw [Semantics.Definiteness.interpret_anaphoric, if_pos h]
+      = Definiteness.interpret (Definiteness.Description.ofPresupType .familiarity R i) g gs := by
+  show some (g i) = Definiteness.interpret (.anaphoric R i) g gs
+  rw [Definiteness.interpret_anaphoric, if_pos h]
