@@ -27,7 +27,7 @@ namespace Kratzer2012Informational
 abbrev World := Fin 4
 
 open Modality.Kratzer
-open Semantics.Evidential
+open Evidential
 
 /-! ## Propositions -/
 

@@ -18,7 +18,7 @@ Tariana's classic D1 5-term Vaupés system per [aikhenvald-2004]:
 visual, non-visual sensory, inferred (from result), assumed (from
 reasoning), reported. -/
 
-open Semantics.Evidential
+open Evidential
 
 def evidentials : List Evidential :=
   [ { form := "-ka", exponent := .verbalAffix, covers := {.visual} },

@@ -30,7 +30,7 @@ The key empirical contrasts establishing (8):
 
 namespace Izvorski1997
 
-open Semantics.Evidential
+open Evidential
 
 /-! ### Languages with PE -/
 

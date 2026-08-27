@@ -25,7 +25,7 @@ This module supplies the shared vocabulary consumed by both
 evidential lexical API in the sibling `Defs`/`Basic` files.
 -/
 
-namespace Semantics.Evidential
+namespace Evidential
 
 /-- Coarse three-way evidential source classification: [willett-1988]'s
     attested / reported / inferring tripartition. `hearsay` is the umbrella
@@ -132,4 +132,4 @@ instance (priority := 100) {α : Type*} [HasCoarseSource α] :
 instance : HasEvidentialPerspective EvidentialPerspective where
   toEvidentialPerspective := some
 
-end Semantics.Evidential
+end Evidential

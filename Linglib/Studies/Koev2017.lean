@@ -138,7 +138,7 @@ theorem triangle_predicts_all :
 
 /-! ### Evidential Perspective -/
 
-open Semantics.Evidential
+open Evidential
 
 /-- A datum's evidential perspective is read off temporal overlap:
     overlapping learning events are contemporaneous, non-overlapping ones

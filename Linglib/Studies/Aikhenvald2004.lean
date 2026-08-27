@@ -50,7 +50,7 @@ systems (`tariana_illustration`, `wanka_illustration`, `turkish_illustration`).
 
 namespace Aikhenvald2004
 
-open Semantics.Evidential
+open Evidential
 
 /-! ### Terms -/
 

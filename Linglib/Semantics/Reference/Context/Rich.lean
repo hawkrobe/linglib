@@ -30,7 +30,7 @@ express:
 namespace Semantics.Context
 
 open Semantics.Context (KContext ContextTower ContextShift)
-open Semantics.Evidential
+open Evidential
 
 -- ════════════════════════════════════════════════════════════════
 -- § Rich Context

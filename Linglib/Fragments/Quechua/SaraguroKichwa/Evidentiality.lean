@@ -42,7 +42,7 @@ Saraguro Kichwa's 3-way matrix-declarative system per
 inferential `-shi`. The focus-and-verum enclitic `=mi` is intentionally
 excluded (not analyzed as an evidential in this variety). -/
 
-open Semantics.Evidential
+open Evidential
 
 def evidentials : List Evidential :=
   [ { form := "-rka", exponent := .verbalAffix, covers := {.visual, .sensory} },

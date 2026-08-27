@@ -23,7 +23,7 @@ intersubjectification.
 
 namespace Features.Subjectivity
 
-open Semantics.Epistemicity (EpistemicAuthority)
+open Epistemicity
 
 /-- Synchronic subjectivity scale ([traugott-dasher-2002] Table 1,
     [traugott-2010] cline 2). Diachronic work shows that subjective

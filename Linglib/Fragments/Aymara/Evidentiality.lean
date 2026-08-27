@@ -15,7 +15,7 @@ namespace Aymara.Evidentiality
 Aymara's 3-way Andean system: direct `-wa`, reportative `-sa`,
 inferential `-pacha`. Obligatory verbal affixes. -/
 
-open Semantics.Evidential
+open Evidential
 
 def evidentials : List Evidential :=
   [ { form := "-wa", exponent := .verbalAffix, covers := {.visual, .sensory} },

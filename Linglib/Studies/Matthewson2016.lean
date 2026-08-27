@@ -114,7 +114,7 @@ theorem gitksan_circ_factual :
     modals reportative, and factual circumstantials encode no information
     source. -/
 def backgroundCoarseSource :
-    BackgroundClass → Option Semantics.Evidential.CoarseSource
+    BackgroundClass → Option Evidential.CoarseSource
   | .factualEvidential => some .inference
   | .contentEvidential => some .hearsay
   | .factualCircumstantial => none

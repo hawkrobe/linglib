@@ -15,8 +15,8 @@ partition the parameters the language expresses (`Semantics/Evidential/Basic.lea
 
 ## Main definitions
 
-* `Semantics.Evidential.Parameter` — the six semantic parameters of information source.
-* `Semantics.Evidential.Exponent` — how an evidential is realized.
+* `Evidential.Parameter` — the six semantic parameters of information source.
+* `Evidential.Exponent` — how an evidential is realized.
 * `Evidential` — the lexical entry; `Evidential.covers` its information sources.
 * `Evidential.IsDirect`, `IsInferential`, `IsReportative`, `IsNonfirsthand` — the coarse
   kinds of term, as properties of coverage.
@@ -28,7 +28,7 @@ partition the parameters the language expresses (`Semantics/Evidential/Basic.lea
 * [willett-1988]
 -/
 
-namespace Semantics.Evidential
+namespace Evidential
 
 /-- The six recurrent semantic parameters of information source. -/
 inductive Parameter where
@@ -64,21 +64,21 @@ inductive Exponent where
   | toneAblaut
   deriving DecidableEq, Repr
 
-end Semantics.Evidential
+end Evidential
 
 /-- An evidential: its form, its realization, and the information sources it covers. -/
 structure Evidential where
   /-- A representative morpheme or construction label. -/
   form : String
   /-- The realization strategy. -/
-  exponent : Semantics.Evidential.Exponent
+  exponent : Evidential.Exponent
   /-- The semantic parameters the term covers. -/
-  covers : Finset Semantics.Evidential.Parameter
+  covers : Finset Evidential.Parameter
   deriving DecidableEq
 
 namespace Evidential
 
-open Semantics.Evidential
+open Evidential
 
 /-- A direct evidential covers firsthand evidence only. -/
 def IsDirect (e : Evidential) : Prop := e.covers.Nonempty ∧ e.covers ⊆ {.visual, .sensory}
