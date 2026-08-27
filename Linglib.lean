@@ -2971,3 +2971,4 @@ import Linglib.Data.Examples.Allotey2021
 import Linglib.Data.Examples.AlokBhalla2026
 import Linglib.Data.Examples.AloniVanOrmondt2023
 import Linglib.Data.Examples.AlonsoOvalle2009
+import Linglib.Data.Examples.AlonsoOvalleMenendezBenito2010

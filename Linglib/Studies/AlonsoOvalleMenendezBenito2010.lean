@@ -1,620 +1,357 @@
-import Linglib.Features.ModalIndefinite
-import Linglib.Fragments.Spanish.ModalIndefinites
+import Mathlib.Tactic.DeriveFintype
+import Mathlib.Data.Finset.Powerset
+import Linglib.Semantics.Presupposition.Defs
+import Linglib.Data.Examples.AlonsoOvalleMenendezBenito2010
 
 /-!
-# Alonso-Ovalle & Menéndez-Benito (2010): Modal Indefinites
-[alonso-ovalle-menendez-benito-2010]
+# Alonso-Ovalle & Menéndez-Benito (2010): modal indefinites
 
-Formalization of the core analysis: *algún* imposes an **anti-singleton
-constraint** on its domain of quantification, and the Modal Variation
-effect (speaker ignorance) is **derived** as a conversational implicature
-via scalar competition with singleton-domain alternatives.
+Spanish *algún* conveys that at least two individuals in its domain are possibilities — the
+Modal Variation component (18), `ModalVariation` — where German *irgendein* conveys the
+stronger Free Choice component (13c), `FreeChoice`: in the hide-and-seek scenario (15) Pedro
+can use *algún* with the bathroom ruled out (`hideAndSeek`), and under uniqueness Free Choice
+entails Modal Variation but not conversely (`modalVariation_of_freeChoice`). The component is
+a conversational implicature: as a presupposition it would make the negated (36) contradictory
+(`not_modalVariation_of_nec_empty`), and it is cancellable (42), absent under downward
+entailing operators (43)–(44), and reinforceable (45d).
 
-## Subset Selection Functions (§4.1)
+The paper derives it from an anti-singleton constraint (53)–(54) on the subset selection
+function *algún* takes (`algún`), which excludes the singleton restrictors of (47)/(49)
+(`algún_not_of_singleton`). The competitors (58) are the singleton subdomains; their falsity
+under a necessity modal (59) gives Modal Variation (`modalVariation_of_falseCompetitors`), and
+under a possibility modal, where some competitor must be true (`some_competitor_of_poss`), the
+anti-exhaustivity implicatures (67)–(68) do (`antiSingleton_modalVariation`). A domain widener
+competes with every proper subdomain (70), and the same reasoning yields Free Choice
+(`widening_freeChoice`). Without uniqueness the blocked exhaustivity inference (76) and the
+plural competitor (77) give ignorance of number (`numberIgnorance_of_competition`), which
+uniqueness makes unavailable (`not_numberIgnorance_of_uniqueness`) — the two parameters of
+Table 1. The scenario verdicts (24)–(30) are checked in `rows_agree`.
 
-Indefinite determiners take a subset selection function `f` as argument
-([alonso-ovalle-menendez-benito-2010], building on von Fintel 1999a).
-The function `f` maps a predicate `P` to a contextually relevant subset
-`f(P)`:
+## References
 
-- (50): `⟦un⟧ = λf.λP.λQ. ∃x[f(P)(x) ∧ Q(x)]`
-- (54): `⟦algún⟧ = λf.λP.λQ : anti-singleton(f). ∃x[f(P)(x) ∧ Q(x)]`
-
-The sole lexical difference: *algún* presupposes that `f` is
-anti-singleton (`|f(P)| > 1`). *Un* allows singleton `f`.
-
-## Two Derivation Paths (§§4.2, 4.3)
-
-The Modal Variation effect is derived by scalar competition.
-The paper presents two parallel derivations:
-
-- **§4.2 (Necessity/ASSERT)**: Singleton competitors □(bedroom), □(living room),
-  □(bathroom) are too strong — the speaker would have used one if she could.
-  Negating them yields: the speaker doesn't know which room.
-- **§4.3 (Possibility/◇)**: Anti-exhaustivity implicatures — if ◇(bedroom),
-  then also ◇(other rooms). Rules out singleton epistemic states.
-
-Both paths derive the same Modal Variation effect.
-
-## Modal Variation vs Free Choice (§§2, 4.4)
-
-The anti-singleton constraint derives a WEAKER modal effect than the
-domain widening of *irgendein* ([kratzer-shimoyama-2002]):
-
-- **Modal Variation** (*algún*): at least two domain members are
-  epistemic possibilities — competitors are singleton subdomains only.
-- **Free Choice** (*irgendein*): EVERY domain member is a possibility —
-  competitors are ALL subdomains.
-
-## Typology (Table 1)
-
-Two parameters (uniqueness × domain constraint) yield a 2×2 typology:
-- Cell 1: *irgendein*, *uno qualsiasi* (widening + uniqueness → FC)
-- Cell 4: *algún* (anti-singleton + non-uniqueness → MV + number ignorance)
-- Cells 2, 3: predicted but unattested at time of publication
-
+* [alonso-ovalle-menendez-benito-2010]
+* [kratzer-shimoyama-2002]
+* [chierchia-2006]
+* [von-fintel-2000-whatever]
+* [dayal-1997]
+* [schwarzschild-2002]
+* [potts-2005]
+* [zimmermann-2000]
+* [jayez-tovena-2006]
 -/
 
 namespace AlonsoOvalleMenendezBenito2010
 
-open Features.ModalIndefinite
-open Spanish.ModalIndefinites
+open Semantics.Presupposition Data.Examples
 
+variable {E W : Type*} [DecidableEq E]
 
--- ════════════════════════════════════════════════════════════════
--- Part I: Subset Selection Functions (§4.1)
--- ════════════════════════════════════════════════════════════════
+/-! ### Subset selection functions (§4.1) -/
+
+/-- A singleton subset selection function (52). -/
+def IsSingleton (f : Finset E → Finset E) : Prop := ∀ P, (f P).card = 1
 
+/-- An anti-singleton subset selection function (53). -/
+def IsAntiSingleton (f : Finset E → Finset E) : Prop := ∀ P, (f P).card ≠ 1
 
--- ════════════════════════════════════════════════════
--- § 1. Abstract Framework
--- ════════════════════════════════════════════════════
+/-- *un* (50): existential quantification over the subdomain `f` selects from `P`. -/
+def un (f : Finset E → Finset E) (P : Finset E) (Q : W → E → Prop) : PartialProp W :=
+  .ofProp fun w => ∃ x ∈ f P, Q w x
 
-/-- A subset selection function maps predicates to predicates ((50)).
+/-- *algún* (54): the assertion of *un*, defined only for anti-singleton `f`. -/
+def algún (f : Finset E → Finset E) (P : Finset E) (Q : W → E → Prop) : PartialProp W where
+  presup _ := IsAntiSingleton f
+  assertion w := ∃ x ∈ f P, Q w x
 
-    In [alonso-ovalle-menendez-benito-2010]'s analysis, `f` models
-    contextual domain restriction: `f(P)` selects the subset of `P` that
-    the determiner quantifies over. Following von Fintel (1999a), different
-    indefinite determiners impose different constraints on `f`. -/
-abbrev SubsetSelFn (Entity : Type*) := (Entity → Bool) → Entity → Bool
+omit [DecidableEq E] in
+/-- (46)–(49): on a singleton restrictor an anti-singleton selection returns no domain, so
+*algún*'s claim cannot be true where *un*'s can. -/
+theorem algún_not_of_singleton {f : Finset E → Finset E} (hf : ∀ P, f P ⊆ P)
+    {P : Finset E} (hP : P.card = 1) (Q : W → E → Prop) (w : W)
+    (h : (algún f P Q).presup w) : ¬ (algún f P Q).assertion w := by
+  have : f P = ∅ := Finset.card_eq_zero.1 <|
+    Nat.lt_one_iff.1 <| lt_of_le_of_ne (hP ▸ Finset.card_le_card (hf P)) (h P)
+  simp [algún, this]
 
-/-- The cardinality of the selected subdomain: |f(P)| in a finite domain. -/
-def selectedSize {Entity : Type*} [BEq Entity]
-    (f : SubsetSelFn Entity) (domain : List Entity)
-    (P : Entity → Bool) : Nat :=
-  (domain.filter (f P)).length
+/-! ### Modal Variation and Free Choice (§2) -/
 
-/-- Singleton SSF ((52)): `f` is singleton iff `|f(P)| = 1`.
+variable (A : Finset W) (D : Finset E) (Q : W → E → Prop) [∀ w, DecidablePred (Q w)]
 
-    Singleton selection functions yield specific indefinites — the speaker
-    has a particular witness in mind. *Un* allows these; *algún* does not. -/
-def isSingletonSSF {Entity : Type*} [BEq Entity]
-    (f : SubsetSelFn Entity) (domain : List Entity)
-    (P : Entity → Bool) : Bool :=
-  selectedSize f domain P == 1
+/-- The witnesses of the existential claim at `w`. -/
+def witnesses (w : W) : Finset E := D.filter (Q w ·)
 
-/-- Anti-singleton SSF ((53)): `f` is anti-singleton iff `|f(P)| > 1`.
+/-- The Modal Variation component (18): the witnesses vary across the accessible worlds. -/
+def ModalVariation : Prop := ∃ w' ∈ A, ∃ w'' ∈ A, witnesses D Q w' ≠ witnesses D Q w''
 
-    *Algún* presupposes that its selection function is anti-singleton:
-    the domain of quantification must contain more than one individual.
-    This is the paper's core lexical-semantic claim. -/
-def isAntiSingletonSSF {Entity : Type*} [BEq Entity]
-    (f : SubsetSelFn Entity) (domain : List Entity)
-    (P : Entity → Bool) : Bool :=
-  selectedSize f domain P > 1
+/-- The Free Choice component (13c): every member of the domain is a witness somewhere. -/
+def FreeChoice : Prop := ∀ x ∈ D, ∃ w ∈ A, Q w x
 
+/-- Uniqueness: at most one witness in each accessible world. -/
+def Uniqueness : Prop := ∀ w ∈ A, (witnesses D Q w).card ≤ 1
 
--- ════════════════════════════════════════════════════
--- § 2. Denotations of *un* and *algún* ((50), (54))
--- ════════════════════════════════════════════════════
+omit [DecidableEq E] in
+/-- ◇ over the accessible worlds. -/
+def poss (p : W → Prop) : Prop := ∃ w ∈ A, p w
 
-/-- ⟦un⟧ = λf.λP.λQ. ∃x[f(P)(x) ∧ Q(x)] ((50)).
+omit [DecidableEq E] in
+/-- □ over the accessible worlds; the covert ASSERT (20) when `A` is the speaker's
+epistemic alternatives. -/
+def nec (p : W → Prop) : Prop := ∀ w ∈ A, p w
 
-    The plain indefinite *un*: existential quantification over `f(P)`.
-    No constraint on `f` — the domain CAN be a singleton. -/
-def un_sat {Entity : Type*}
-    (f : SubsetSelFn Entity) (domain : List Entity)
-    (P Q : Entity → Bool) : Bool :=
-  domain.any λ x => f P x && Q x
+omit [DecidableEq E] in
+/-- The existential claim over the subdomain `S` (58): some member of `S` is a witness. -/
+def claim (S : Finset E) (w : W) : Prop := ∃ x ∈ S, Q w x
 
-/-- ⟦algún⟧ = λf.λP.λQ : **anti-singleton**(f). ∃x[f(P)(x) ∧ Q(x)] ((54)).
+instance [DecidableEq W] : Decidable (ModalVariation A D Q) :=
+  inferInstanceAs (Decidable (∃ w' ∈ A, ∃ w'' ∈ A, _ ≠ _))
 
-    Same assertive content as *un* but with an anti-singleton
-    presupposition on `f`. Returns `(presupposition, assertion)`. -/
-def algún_sat {Entity : Type*} [BEq Entity]
-    (f : SubsetSelFn Entity) (domain : List Entity)
-    (P Q : Entity → Bool) : Bool × Bool :=
-  (isAntiSingletonSSF f domain P, un_sat f domain P Q)
+instance : Decidable (FreeChoice A D Q) := inferInstanceAs (Decidable (∀ x ∈ D, ∃ w ∈ A, _))
 
-/-- When the presupposition is satisfied, *algún* and *un* have the
-    same assertive content. The ONLY lexical difference is the
-    presupposition on `f`. -/
-theorem algún_un_same_assertion {Entity : Type*} [BEq Entity]
-    (f : SubsetSelFn Entity) (domain : List Entity)
-    (P Q : Entity → Bool) :
-    (algún_sat f domain P Q).2 = un_sat f domain P Q := rfl
+instance (p : W → Prop) [DecidablePred p] : Decidable (poss A p) :=
+  inferInstanceAs (Decidable (∃ w ∈ A, _))
 
+instance (p : W → Prop) [DecidablePred p] : Decidable (nec A p) :=
+  inferInstanceAs (Decidable (∀ w ∈ A, _))
 
--- ════════════════════════════════════════════════════════════════
--- Part II: The Hide-and-Seek Scenario (§§4.1–4.3)
--- ════════════════════════════════════════════════════════════════
+instance (S : Finset E) (w : W) : Decidable (claim Q S w) :=
+  inferInstanceAs (Decidable (∃ x ∈ S, _))
 
+omit [DecidableEq E] in
+theorem claim_iff_witnesses_nonempty (w : W) : claim Q D w ↔ (witnesses D Q w).Nonempty := by
+  simp [claim, witnesses, Finset.Nonempty]
 
--- ════════════════════════════════════════════════════
--- § 3. Model Setup ((15), (56)–(57))
--- ════════════════════════════════════════════════════
+omit [DecidableEq E] in
+/-- Two distinct possibilities give Modal Variation under uniqueness. -/
+theorem modalVariation_of_two (hU : Uniqueness A D Q) {a b : E} (ha : a ∈ D) (hb : b ∈ D)
+    (hab : a ≠ b) (pa : poss A (Q · a)) (pb : poss A (Q · b)) : ModalVariation A D Q := by
+  obtain ⟨w', hw', hqa⟩ := pa
+  obtain ⟨w'', hw'', hqb⟩ := pb
+  refine ⟨w', hw', w'', hw'', fun h => ?_⟩
+  have hb' : b ∈ witnesses D Q w' := h ▸ Finset.mem_filter.2 ⟨hb, hqb⟩
+  have := hU w' hw'
+  rw [Finset.card_le_one] at this
+  exact hab (this a (Finset.mem_filter.2 ⟨ha, hqa⟩) b hb')
 
-/-- The three rooms of the house ((57)).
+omit [DecidableEq E] in
+/-- Under uniqueness, Free Choice on a domain with two members entails Modal Variation. -/
+theorem modalVariation_of_freeChoice (hU : Uniqueness A D Q) (hD : 1 < D.card)
+    (h : FreeChoice A D Q) : ModalVariation A D Q :=
+  let ⟨a, ha, b, hb, hab⟩ := Finset.one_lt_card.1 hD
+  modalVariation_of_two A D Q hU ha hb hab (h a ha) (h b hb)
 
-    Scenario (15): María, Juan, and Pedro are playing hide-and-seek.
-    Pedro believes Juan is inside but not in the bathroom or kitchen. -/
-inductive Room where | bedroom | livingRoom | bathroom
-  deriving DecidableEq, Repr, Inhabited
+/-! ### Not a presupposition (§3.1) -/
 
-/-- Epistemic worlds: which room Juan is in. -/
-inductive HideWorld where
-  | inBedroom
-  | inLivingRoom
-  | inBathroom
-  deriving DecidableEq, Repr, Inhabited
-
-private def allRooms : List Room := [.bedroom, .livingRoom, .bathroom]
-private def allHW : List HideWorld := [.inBedroom, .inLivingRoom, .inBathroom]
-
-/-- "is a room of the house": the restrictor P. -/
-private def isRoom : Room → Bool := λ _ => true
-
-/-- Which room Juan is in, by world. -/
-private def juanRoom : HideWorld → Room
-  | .inBedroom => .bedroom
-  | .inLivingRoom => .livingRoom
-  | .inBathroom => .bathroom
-
-/-- "Juan is in room r" as a world-relative predicate. -/
-private def juanIn (r : Room) (w : HideWorld) : Bool :=
-  juanRoom w == r
-
-/-- Pedro's epistemic alternatives ((15)):
-    he knows Juan is not in the bathroom or kitchen.
-    Only bedroom and living room are compatible with his beliefs. -/
-private def pedroEpist : List HideWorld := [.inBedroom, .inLivingRoom]
-
-
--- ════════════════════════════════════════════════════
--- § 4. Anti-Singleton Constraint: *Un* vs *Algún* ((46)–(49))
--- ════════════════════════════════════════════════════
-
-/-- A singleton selection function: picks only the bedroom. -/
-private def fSingleton : SubsetSelFn Room := λ _ r => r == .bedroom
-
-/-- An anti-singleton SSF: picks bedroom and living room. -/
-private def fAntiSingleton : SubsetSelFn Room :=
-  λ _ r => r == .bedroom || r == .livingRoom
-
-/-- The identity SSF (full domain): all rooms. -/
-private def fFull : SubsetSelFn Room := λ P r => P r
-
-theorem singleton_selects_one :
-    selectedSize fSingleton allRooms isRoom = 1 := by native_decide
-
-theorem antisingleton_selects_two :
-    selectedSize fAntiSingleton allRooms isRoom = 2 := by native_decide
-
-theorem full_selects_all :
-    selectedSize fFull allRooms isRoom = 3 := by native_decide
-
-/-- *Un* is felicitous with a singleton domain ((46)):
-    "Juan compró un libro que resultó ser el más caro." -/
-theorem un_allows_singleton :
-    un_sat fSingleton allRooms isRoom (λ _ => true) = true := by native_decide
-
-/-- *Algún* rejects singleton domains ((47)):
-    "# Juan compró algún libro que resultó ser el más caro."
-    The anti-singleton presupposition fails. -/
-theorem algún_rejects_singleton :
-    (algún_sat fSingleton allRooms isRoom (λ _ => true)).1 = false := by native_decide
-
-/-- *Algún* accepts non-singleton domains. -/
-theorem algún_accepts_antisingleton :
-    (algún_sat fAntiSingleton allRooms isRoom (λ _ => true)).1 = true := by native_decide
-
-
--- ════════════════════════════════════════════════════
--- § 5. The ASSERT Operator ((20)) and Necessity Derivation (§4.2)
--- ════════════════════════════════════════════════════
-
-/-- The covert assertoric operator ((20)):
-    ⟦ASSERT⟧ᶜ = λp.λw. ∀w' ∈ Epistemicₛₚₑₐₖₑᵣ(w)[p(w')]
-
-    Ranges over the speaker's epistemic alternatives. Following
-    [kratzer-shimoyama-2002], unembedded *algún* sentences are
-    in the scope of this operator, unifying the modal and non-modal cases. -/
-def assertOp (epist : List HideWorld) (p : HideWorld → Bool) : Bool :=
-  epist.all p
-
-/-- Full sentence under ASSERT:
-    □[∃r ∈ f(room). Juan is in r]
-    = ∀w' ∈ Epistemic. ∃r ∈ f(room). juanIn(r)(w')
-
-    Adapted from (55b) to the room scenario. -/
-def sentenceUnderAssert (f : SubsetSelFn Room) (epist : List HideWorld) : Bool :=
-  assertOp epist λ w => allRooms.any λ r => f isRoom r && juanIn r w
-
-/-- With the full domain: Pedro believes Juan is in SOME room. Trivially true. -/
-theorem assert_full_holds :
-    sentenceUnderAssert fFull pedroEpist = true := by native_decide
-
-/-- With a singleton domain {bedroom}: ASSERT requires Pedro to believe
-    Juan is in the bedroom in ALL epistemic alternatives. He doesn't —
-    he also considers the living room. So this is FALSE. -/
-theorem assert_singleton_fails :
-    sentenceUnderAssert fSingleton pedroEpist = false := by native_decide
-
-/-- With anti-singleton {bedroom, living room}: Pedro believes Juan is
-    in one of these two rooms. Holds in all his alternatives. -/
-theorem assert_antisingleton_holds :
-    sentenceUnderAssert fAntiSingleton pedroEpist = true := by native_decide
-
-
--- ════════════════════════════════════════════════════
--- § 6. Deriving MV by Scalar Competition under □ (§4.2)
--- ════════════════════════════════════════════════════
-
-/-! The Modal Variation effect is NOT stipulated — it is DERIVED:
-
-1. Speaker used *algún* (anti-singleton f) rather than singleton
-   competitors □(Juan is in the bedroom), □(… living room), etc.
-2. By the quantity maxim, the speaker cannot assert any singleton.
-3. Therefore: the speaker doesn't know which room → ignorance.
-
-The competitors ((58)) are SINGLETON subdomain alternatives.
-The implicature ((59b)) negates each:
-  ¬□(bedroom) ∧ ¬□(living room) ∧ ¬□(bathroom) -/
-
-/-- A singleton competitor: □(Juan is in room r). -/
-def singletonCompetitor (r : Room) (epist : List HideWorld) : Bool :=
-  assertOp epist (juanIn r)
-
-/-- The strengthened meaning ((59)): assertion + negated singleton competitors.
-
-    assertion: □(∃r ∈ f(room). Juan is in r)
-    implicature: ¬□(bedroom) ∧ ¬□(living room) ∧ ¬□(bathroom)
-
-    The conjunction derives the Modal Variation effect. -/
-def strengthenedMeaning (f : SubsetSelFn Room) (epist : List HideWorld) : Bool :=
-  sentenceUnderAssert f epist &&
-    !singletonCompetitor .bedroom epist &&
-    !singletonCompetitor .livingRoom epist &&
-    !singletonCompetitor .bathroom epist
-
-/-- The strengthened meaning holds for Pedro: he believes Juan is in
-    some room (bedroom or living room) but cannot assert which. -/
-theorem strengthened_holds :
-    strengthenedMeaning fAntiSingleton pedroEpist = true := by native_decide
-
-/-- Each singleton competitor individually fails — Pedro doesn't know
-    which room Juan is in. This IS the Modal Variation effect. -/
-theorem not_know_bedroom :
-    singletonCompetitor .bedroom pedroEpist = false := by native_decide
-
-theorem not_know_livingRoom :
-    singletonCompetitor .livingRoom pedroEpist = false := by native_decide
-
-theorem not_know_bathroom :
-    singletonCompetitor .bathroom pedroEpist = false := by native_decide
-
-/-- The strengthened meaning correctly RULES OUT scenarios where the
-    speaker knows the answer. If Pedro's epistemic state were a singleton
-    (only the bedroom world), the strengthened meaning would fail. -/
-theorem singleton_epist_fails_strengthened :
-    strengthenedMeaning fFull [.inBedroom] = false := by native_decide
-
-
--- ════════════════════════════════════════════════════
--- § 6b. Deriving MV under ◇: Anti-Exhaustivity (§4.3)
--- ════════════════════════════════════════════════════
-
-/-! The paper gives a SECOND derivation path when *algún* is under a
-possibility modal (§4.3, (60)–(68)). The reasoning:
-
-1. Speaker uses ◇(algún room) rather than a singleton ◇(bedroom).
-2. The hearer infers anti-exhaustivity: if one room is possible,
-   some other room must also be possible.
-3. This rules out singleton epistemic states → Modal Variation.
-
-The anti-exhaustivity implicatures ((68b)):
-  ◇(bedroom)     → ◇(living room ∨ bathroom)
-  ◇(living room)  → ◇(bedroom ∨ bathroom)
-  ◇(bathroom)     → ◇(bedroom ∨ living room) -/
-
-/-- Possibility modal ◇ ((60b)):
-    ◇(p) = ∃w' ∈ Epistemic. p(w') -/
-def possOp (epist : List HideWorld) (p : HideWorld → Bool) : Bool :=
-  epist.any p
-
-/-- Sentence under ◇ ((60b)):
-    ◇[∃r ∈ f(room). Juan is in r] -/
-def sentenceUnderPoss (f : SubsetSelFn Room) (epist : List HideWorld) : Bool :=
-  possOp epist λ w => allRooms.any λ r => f isRoom r && juanIn r w
-
-/-- Anti-exhaustivity implicature for room `r` ((68b)):
-    ◇(Juan is in r) → ◇(Juan is in some OTHER room).
-    As a Boolean: `¬◇(r) ∨ ◇(other rooms)`.
-    Blocks exhaustive readings where only one room is possible. -/
-def antiExhaustImplicature (r : Room) (epist : List HideWorld) : Bool :=
-  !possOp epist (juanIn r) ||
-    (allRooms.filter (· != r)).any λ r' => possOp epist (juanIn r')
-
-/-- Strengthened meaning under ◇ ((68)):
-    assertion + anti-exhaustivity implicatures for all singleton competitors.
-
-    This is the §4.3 analog of `strengthenedMeaning` (§4.2). -/
-def strengthenedMeaningPoss (f : SubsetSelFn Room) (epist : List HideWorld) : Bool :=
-  sentenceUnderPoss f epist &&
-    antiExhaustImplicature .bedroom epist &&
-    antiExhaustImplicature .livingRoom epist &&
-    antiExhaustImplicature .bathroom epist
-
-/-- Under ◇, the strengthened meaning holds for Pedro. -/
-theorem strengthened_poss_holds :
-    strengthenedMeaningPoss fAntiSingleton pedroEpist = true := by native_decide
-
-/-- Under ◇, singleton epistemic states are ruled out: if Pedro only
-    considers the bedroom, the anti-exhaustivity implicature for
-    bedroom fails (there's no other room that's possible). -/
-theorem singleton_epist_fails_poss :
-    strengthenedMeaningPoss fFull [.inBedroom] = false := by native_decide
-
-/-- Both derivation paths (§4.2 under □, §4.3 under ◇) agree:
-    they accept the same epistemic states for Pedro. -/
-theorem necessity_poss_agree :
-    strengthenedMeaning fAntiSingleton pedroEpist =
-    strengthenedMeaningPoss fAntiSingleton pedroEpist := by native_decide
-
-
--- ════════════════════════════════════════════════════
--- § 7. Modal Variation ≠ Free Choice (§§2, 4.4)
--- ════════════════════════════════════════════════════
-
-/-! *Algún*'s Modal Variation is WEAKER than *irgendein*'s Free Choice:
-
-- **Modal Variation** ((18)): the witnesses vary across epistemic
-  alternatives — at least two domain members are possibilities.
-- **Free Choice** ((13c)): ∀x[P(w)(x) → ∃w' ∈ 𝒜ᵥ. Q(w')(x)] —
-  EVERY domain member is a possibility.
-
-Scenario (27)–(30): Pedro knows Juan is NOT in the bathroom.
-*Cualquiera* (FC) is ruled out: not ALL rooms are possibilities.
-*Algún* (MV) is felicitous: at least two rooms are. -/
-
-/-- Free Choice ((13c)): every room is an epistemic possibility for Juan. -/
-def freeChoice (epist : List HideWorld) : Bool :=
-  allRooms.all λ r => epist.any (juanIn r)
-
-/-- Modal Variation (counting version): at least two rooms are
-    epistemic possibilities. -/
-def modalVariation (epist : List HideWorld) : Bool :=
-  (allRooms.filter λ r => epist.any (juanIn r)).length > 1
-
-/-- The witness set at world w: {r : isRoom(r) ∧ juanIn(r)(w)}.
-    Under uniqueness (one room per world), this is always a singleton.
-    MV requires that DIFFERENT worlds yield different singletons. -/
-private def witnessSet (w : HideWorld) : List Room :=
-  allRooms.filter (juanIn · w)
-
-/-- Modal Variation ((18), formal definition):
-    ∃w', w'' ∈ 𝒟_w [{x : P(w')(x) & Q(w')(x)} ≠ {x : P(w'')(x) & Q(w'')(x)}]
-
-    There exist two epistemic alternatives where the sets of individuals
-    satisfying both the restrictor and the scope differ. -/
-def modalVariation18 (epist : List HideWorld) : Bool :=
-  epist.any λ w' => epist.any λ w'' => witnessSet w' != witnessSet w''
-
-/-- The formal definition (18) and the counting definition agree
-    in the hide-and-seek model. -/
-theorem mv_eq_mv18_pedro :
-    modalVariation pedroEpist = modalVariation18 pedroEpist := by native_decide
-
-theorem mv_eq_mv18_full :
-    modalVariation allHW = modalVariation18 allHW := by native_decide
-
-/-- Pedro's situation ((27)–(30)): MV holds but FC doesn't.
-    *Algún* is appropriate; *cualquiera* is not. -/
-theorem mv_not_fc :
-    modalVariation pedroEpist = true ∧
-    freeChoice pedroEpist = false := by
-  constructor <;> native_decide
-
-/-- With full uncertainty (all three rooms possible), BOTH hold. -/
-theorem full_uncertainty_both :
-    modalVariation allHW = true ∧
-    freeChoice allHW = true := by
-  constructor <;> native_decide
-
-/-- FC entails MV (for non-trivial domains): if ALL are possibilities
-    then certainly more than one is. But not vice versa. -/
-theorem fc_strictly_stronger :
-    (freeChoice allHW = true → modalVariation allHW = true) ∧
-    (modalVariation pedroEpist = true ∧ freeChoice pedroEpist = false) := by
-  refine ⟨λ _ => by native_decide, ?_, ?_⟩ <;> native_decide
-
-
--- ════════════════════════════════════════════════════════════════
--- Part III: Typology (§§4.4, 5, 6)
--- ════════════════════════════════════════════════════════════════
-
-
--- ════════════════════════════════════════════════════
--- § 8. Domain Widening vs Anti-Singleton (§4.4)
--- ════════════════════════════════════════════════════
-
-/-- The two domain constraint strategies for modal indefinites.
-
-    [alonso-ovalle-menendez-benito-2010] §4.4 argues that the
-    contrast between *irgendein* and *algún* reduces to different
-    constraints on the selection function:
-    - Widening: f(P) = P (maximal domain; competitors = all subdomains)
-    - Anti-singleton: |f(P)| > 1 (competitors = singleton subdomains only)
-
-    Different competitor sets → different exhaustification outcomes →
-    different modal effects (Free Choice vs Modal Variation). -/
-inductive DomainConstraint where
+omit [DecidableEq E] in
+/-- (35)–(36): a Modal Variation presupposition projecting through negation contradicts the
+assertion that no accessible world has a witness. -/
+theorem not_modalVariation_of_nec_empty (h : nec A fun w => witnesses D Q w = ∅) :
+    ¬ ModalVariation A D Q :=
+  fun ⟨w', hw', w'', hw'', hne⟩ => hne ((h w' hw').trans (h w'' hw'').symm)
+
+/-! ### Deriving the component (§4) -/
+
+/-- The domain constraints of §4.4. -/
+inductive DomainConstraint
+  /-- The domain is as wide as it can be ([kratzer-shimoyama-2002]'s *irgendein*). -/
   | widening
+  /-- The domain is not a singleton (*algún*). -/
   | antiSingleton
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- The predicted modal effect from each domain constraint type. -/
-def DomainConstraint.modalEffect : DomainConstraint → String
-  | .widening => "Free Choice"
-  | .antiSingleton => "Modal Variation"
+/-- The pragmatic competitors of the claim over `D`: the singleton subdomains (58) for an
+anti-singleton indefinite, every nonempty proper subdomain (70) for a domain widener. -/
+def competitors : DomainConstraint → Finset E → Finset (Finset E)
+  | .antiSingleton, D => D.image ({·})
+  | .widening, D => D.powerset.filter fun S => S.Nonempty ∧ S ≠ D
 
-/-- Different constraints yield different modal effects. -/
-theorem different_constraints_different_effects :
-    DomainConstraint.widening.modalEffect ≠
-    DomainConstraint.antiSingleton.modalEffect := by decide
+/-- The anti-singleton competitors are among the widening competitors. -/
+theorem competitors_antiSingleton_subset (hD : 1 < D.card) :
+    competitors .antiSingleton D ⊆ competitors .widening D := by
+  intro S hS
+  obtain ⟨a, ha, rfl⟩ := Finset.mem_image.1 hS
+  refine Finset.mem_filter.2 ⟨Finset.mem_powerset.2 (Finset.singleton_subset_iff.2 ha),
+    Finset.singleton_nonempty a, fun h => ?_⟩
+  simp [← h] at hD
 
+/-- §4.2, (59): under a necessity modal, a true claim whose singleton competitors are all
+false shows Modal Variation. -/
+theorem modalVariation_of_falseCompetitors (hA : A.Nonempty) (h : nec A (claim Q D))
+    (hc : ∀ S ∈ competitors .antiSingleton D, ¬ nec A (claim Q S)) : ModalVariation A D Q := by
+  obtain ⟨w', hw'⟩ := hA
+  obtain ⟨a, ha, hqa⟩ := h w' hw'
+  have := hc {a} (Finset.mem_image_of_mem _ ha)
+  simp only [nec, claim, Finset.mem_singleton, exists_eq_left, not_forall] at this
+  obtain ⟨w'', hw'', hna⟩ := this
+  exact ⟨w', hw', w'', hw'', fun h =>
+    hna (Finset.mem_filter.1 (h ▸ Finset.mem_filter.2 ⟨ha, hqa⟩ : a ∈ witnesses D Q w'')).2⟩
 
--- ════════════════════════════════════════════════════
--- § 9. Competitor Sets (§4.4, (58), (70))
--- ════════════════════════════════════════════════════
+omit [∀ w, DecidablePred (Q w)] in
+/-- (60)–(61): under a possibility modal the claim entails one of its singleton competitors,
+so they cannot all be false. -/
+theorem some_competitor_of_poss (h : poss A (claim Q D)) :
+    ∃ S ∈ competitors .antiSingleton D, poss A (claim Q S) :=
+  let ⟨w, hw, a, ha, hqa⟩ := h
+  ⟨{a}, Finset.mem_image_of_mem _ ha, w, hw, a, Finset.mem_singleton_self a, hqa⟩
 
-/-! The critical mechanism: different constraints generate different
-competitor sets for exhaustification.
+/-- The anti-exhaustivity implicature (67) for the competitor `S`: if `S` is possible, so is
+the rest of the domain. -/
+def AntiExhaustivity (S : Finset E) : Prop := poss A (claim Q S) → poss A (claim Q (D \ S))
 
-For *irgendein* (domain widener, (70)): competitors = ALL proper subdomains:
-  ◇(bedroom), ◇(living room), ◇(bathroom),
-  ◇(bedroom ∨ living room), ◇(bedroom ∨ bathroom), ◇(living room ∨ bathroom)
+instance (S : Finset E) : Decidable (AntiExhaustivity A D Q S) :=
+  inferInstanceAs (Decidable (_ → _))
 
-The full domain ◇(bedroom ∨ living room ∨ bathroom) is the assertion (69)
-itself, NOT a competitor.
+omit [∀ w, DecidablePred (Q w)] in
+/-- §4.3, (68): the anti-exhaustivity implicatures of the singleton competitors make at
+least two individuals possibilities. -/
+theorem two_of_antiSingleton (h : poss A (claim Q D))
+    (hs : ∀ S ∈ competitors .antiSingleton D, AntiExhaustivity A D Q S) :
+    ∃ a ∈ D, ∃ b ∈ D, a ≠ b ∧ poss A (Q · a) ∧ poss A (Q · b) := by
+  obtain ⟨w, hw, a, ha, hqa⟩ := h
+  obtain ⟨w', hw', b, hb, hqb⟩ :=
+    hs {a} (Finset.mem_image_of_mem _ ha) ⟨w, hw, a, Finset.mem_singleton_self a, hqa⟩
+  obtain ⟨hbD, hba⟩ := Finset.mem_sdiff.1 hb
+  exact ⟨a, ha, b, hbD, fun h => hba (h ▸ Finset.mem_singleton_self a), ⟨w, hw, hqa⟩,
+    ⟨w', hw', hqb⟩⟩
 
-For *algún* (anti-singleton, (58)): competitors = SINGLETON subdomains:
-  □(bedroom), □(living room), □(bathroom)
+/-- Under uniqueness the anti-singleton derivation yields Modal Variation. -/
+theorem antiSingleton_modalVariation (hU : Uniqueness A D Q) (h : poss A (claim Q D))
+    (hs : ∀ S ∈ competitors .antiSingleton D, AntiExhaustivity A D Q S) :
+    ModalVariation A D Q :=
+  let ⟨_, ha, _, hb, hab, pa, pb⟩ := two_of_antiSingleton A D Q h hs
+  modalVariation_of_two A D Q hU ha hb hab pa pb
 
-Exhaustifying over all subdomains → Free Choice (every room possible).
-Exhaustifying over singletons only → Modal Variation (≥2 rooms possible). -/
+/-- §4.4, (70)–(72): the anti-exhaustivity implicatures of every proper subdomain yield Free
+Choice. -/
+theorem widening_freeChoice (h : poss A (claim Q D))
+    (hs : ∀ S ∈ competitors .widening D, AntiExhaustivity A D Q S) : FreeChoice A D Q := by
+  intro a ha
+  by_contra hna
+  obtain ⟨w, hw, x, hx, hqx⟩ := h
+  have hxa : x ≠ a := fun h => hna ⟨w, hw, h ▸ hqx⟩
+  have hS : D.erase a ∈ competitors .widening D := by
+    refine Finset.mem_filter.2 ⟨Finset.mem_powerset.2 (Finset.erase_subset a D),
+      ⟨x, Finset.mem_erase.2 ⟨hxa, hx⟩⟩, fun h => ?_⟩
+    exact Finset.notMem_erase a D (by rw [h]; exact ha)
+  obtain ⟨w', hw', y, hy, hqy⟩ := hs _ hS ⟨w, hw, x, Finset.mem_erase.2 ⟨hxa, hx⟩, hqx⟩
+  obtain ⟨-, hy'⟩ := Finset.mem_sdiff.1 hy
+  have : y = a := by
+    by_contra hya
+    exact hy' (Finset.mem_erase.2 ⟨hya, (Finset.mem_sdiff.1 hy).1⟩)
+  exact hna ⟨w', hw', this ▸ hqy⟩
 
-/-- Singleton competitor set (for anti-singleton items like *algún*). -/
-def singletonSubdomains : List (List Room) :=
-  [[.bedroom], [.livingRoom], [.bathroom]]
+/-! ### Non-uniqueness (§5) -/
 
-/-- Proper subdomain competitors ((70a–f), for domain wideners like
-    *irgendein*). Excludes the full domain, which is the assertion
-    itself ((69)), not a competitor. -/
-def allSubdomains : List (List Room) :=
-  [[.bedroom], [.livingRoom], [.bathroom],
-   [.bedroom, .livingRoom], [.bedroom, .bathroom], [.livingRoom, .bathroom]]
+/-- Ignorance with respect to number: the number of witnesses varies across the accessible
+worlds. -/
+def NumberIgnorance : Prop :=
+  ∃ w' ∈ A, ∃ w'' ∈ A, (witnesses D Q w').card ≠ (witnesses D Q w'').card
 
-/-- Anti-singleton items have strictly fewer competitors. This is WHY
-    their modal effect is weaker: fewer negated competitors = weaker
-    implicature (MV instead of FC). -/
-theorem fewer_competitors :
-    singletonSubdomains.length < allSubdomains.length := by native_decide
+omit [DecidableEq E] in
+theorem modalVariation_of_numberIgnorance (h : NumberIgnorance A D Q) :
+    ModalVariation A D Q :=
+  let ⟨w', hw', w'', hw'', hne⟩ := h
+  ⟨w', hw', w'', hw'', fun h => hne (h ▸ rfl)⟩
 
+omit [DecidableEq E] in
+/-- (76)–(78): with the exhaustivity inference of a singleton domain blocked and the plural
+competitor (77) unassertable, a true claim conveys ignorance of number. -/
+theorem numberIgnorance_of_competition (hc : nec A (claim Q D))
+    (h₁ : ¬ nec A fun w => (witnesses D Q w).card = 1)
+    (h₂ : ¬ nec A fun w => 2 ≤ (witnesses D Q w).card) : NumberIgnorance A D Q := by
+  simp only [nec, not_forall] at h₁ h₂
+  obtain ⟨w', hw', h₁⟩ := h₁
+  obtain ⟨w'', hw'', h₂⟩ := h₂
+  refine ⟨w', hw', w'', hw'', fun h => ?_⟩
+  have := Finset.card_pos.2 ((claim_iff_witnesses_nonempty D Q w'').1 (hc w'' hw''))
+  omega
 
--- ════════════════════════════════════════════════════
--- § 10. 2×2 Typology (Table 1, p.27)
--- ════════════════════════════════════════════════════
+omit [DecidableEq E] in
+/-- Under uniqueness a true claim fixes the number of witnesses at one in every accessible
+world, so ignorance of number conflicts with the common ground. -/
+theorem not_numberIgnorance_of_uniqueness (hU : Uniqueness A D Q) (h : nec A (claim Q D)) :
+    ¬ NumberIgnorance A D Q := by
+  rintro ⟨w', hw', w'', hw'', hne⟩
+  have one : ∀ w ∈ A, (witnesses D Q w).card = 1 := fun w hw =>
+    le_antisymm (hU w hw) (Finset.card_pos.2 ((claim_iff_witnesses_nonempty D Q w).1 (h w hw)))
+  exact hne ((one w' hw').trans (one w'' hw'').symm)
 
-/-- Whether uniqueness of the existential witness is assumed.
+/-! ### The scenarios -/
 
-    Uniqueness: at most one individual per world satisfies the claim
-    (e.g., María can only marry one person). Ignorance is about
-    IDENTITY ("the speaker doesn't know who").
+/-- The hiding places; the domain of *habitación de la casa* is the house. -/
+inductive Room | bedroom | livingRoom | bathroom | kitchen | barn
+  deriving DecidableEq, Fintype
 
-    Non-uniqueness: multiple witnesses possible (e.g., multiple flies
-    in the soup, (73)–(78)). Ignorance is about NUMBER ("the speaker
-    doesn't know how many"). -/
-inductive UniquenessParam where
-  | uniqueness
-  | nonUniqueness
-  deriving DecidableEq, Repr
+/-- Worlds are Juan's hiding places. -/
+def inRoom (w r : Room) : Prop := w = r
 
-/-- A cell in the 2010 typology (Table 1). -/
-structure TypologyCell where
-  uniqueness : UniquenessParam
-  constraint : DomainConstraint
-  modalEffect : String
-  numberIgnorance : Bool
-  exemplars : List String
-  deriving Repr
+instance (w : Room) : DecidablePred (inRoom w) := fun r => inferInstanceAs (Decidable (w = r))
 
-/-- Cell 1: Widening + Uniqueness → FC, no number ignorance.
-    *Irgendein*, *uno qualsiasi*: "any doctor" — every doctor is a
-    permitted option, but no ignorance about how many. -/
-def cell1_widening_unique : TypologyCell where
-  uniqueness := .uniqueness
-  constraint := .widening
-  modalEffect := "Free Choice"
-  numberIgnorance := false
-  exemplars := ["irgendein", "uno qualsiasi"]
+abbrev house : Finset Room := {.bedroom, .livingRoom, .bathroom, .kitchen}
+/-- (15): the bathroom and the kitchen are ruled out. -/
+abbrev pedro15 : Finset Room := {.bedroom, .livingRoom}
+/-- (23): only the bathroom. -/
+abbrev pedro23 : Finset Room := {.bathroom}
+/-- (27): the other rooms or the barn. -/
+abbrev pedro27 : Finset Room := {.bedroom, .livingRoom, .barn}
 
-/-- Cell 4: Anti-singleton + Non-uniqueness → MV + number ignorance.
-    *Algún*: "alguna mosca" — the speaker doesn't know how many flies
-    are in the soup ((73)–(78)). -/
-def cell4_antisingleton_nonunique : TypologyCell where
-  uniqueness := .nonUniqueness
-  constraint := .antiSingleton
-  modalEffect := "Modal Variation"
-  numberIgnorance := true
-  exemplars := ["algún"]
+/-- The candidates of (29); worlds are the permitted hires. -/
+inductive Candidate | phdA | phdB | noPhd
+  deriving DecidableEq, Fintype
 
-/-- Cell 2: Anti-singleton + Uniqueness (predicted, unattested in 2010).
-    Would show MV without number ignorance. -/
-def cell2_predicted : TypologyCell where
-  uniqueness := .uniqueness
-  constraint := .antiSingleton
-  modalEffect := "Modal Variation"
-  numberIgnorance := false
-  exemplars := []
+def hires (w c : Candidate) : Prop := w = c
 
-/-- Cell 3: Widening + Non-uniqueness (predicted, unattested in 2010).
-    Would show FC with number ignorance. -/
-def cell3_predicted : TypologyCell where
-  uniqueness := .nonUniqueness
-  constraint := .widening
-  modalEffect := "Free Choice"
-  numberIgnorance := true
-  exemplars := []
+instance (w : Candidate) : DecidablePred (hires w) := fun c => inferInstanceAs (Decidable (w = c))
 
-/-- The two filled cells differ on BOTH dimensions. -/
-theorem filled_cells_contrast :
-    cell1_widening_unique.uniqueness ≠ cell4_antisingleton_nonunique.uniqueness ∧
-    cell1_widening_unique.constraint ≠ cell4_antisingleton_nonunique.constraint := by
-  constructor <;> decide
+abbrev applicants : Finset Candidate := Finset.univ
+abbrev permitted : Finset Candidate := {.phdA, .phdB}
 
-/-- Two cells are attested, two are predicted gaps. -/
-theorem typology_coverage :
-    cell1_widening_unique.exemplars.length > 0 ∧
-    cell4_antisingleton_nonunique.exemplars.length > 0 ∧
-    cell2_predicted.exemplars.length = 0 ∧
-    cell3_predicted.exemplars.length = 0 := by
-  decide
+/-- In (15) Modal Variation holds without Free Choice; the singleton competitors are all
+false (59b) and carry their anti-exhaustivity implicatures (68b), while the widening
+competitor *bedroom or living room* (72) does not. -/
+theorem hideAndSeek :
+    ModalVariation pedro15 house inRoom ∧ ¬ FreeChoice pedro15 house inRoom ∧
+      (∀ S ∈ competitors .antiSingleton house, ¬ nec pedro15 (claim inRoom S)) ∧
+      (∀ S ∈ competitors .antiSingleton house, AntiExhaustivity pedro15 house inRoom S) ∧
+      ¬ AntiExhaustivity pedro15 house inRoom {.bedroom, .livingRoom} := by decide
 
+/-! ### The paper's verdicts -/
 
--- ════════════════════════════════════════════════════
--- § 11. Bridge to Fragment Entries
--- ════════════════════════════════════════════════════
+/-- The accessible worlds and domain a row's `scenario` feature names, as the Modal Variation
+and Free Choice verdicts over them. -/
+def scenario : String → Option (Prop × Prop)
+  | "hideAndSeek15" => some (ModalVariation pedro15 house inRoom, FreeChoice pedro15 house inRoom)
+  | "oneRoom23" => some (ModalVariation pedro23 house inRoom, FreeChoice pedro23 house inRoom)
+  | "barn27" => some (ModalVariation pedro27 house inRoom, FreeChoice pedro27 house inRoom)
+  | "hiring29" =>
+    some (ModalVariation permitted applicants hires, FreeChoice permitted applicants hires)
+  | _ => none
 
-/-- The 2010 paper's anti-singleton constraint maps to the `upperBounded`
-    field in the fragment entry. `upperBounded = true` records that
-    *algún*'s domain cannot be a singleton. -/
-theorem algún_entry_captures_antisingleton :
-    algúnEntry.upperBounded = true := rfl
+/-- A row's predicted verdict: *algún* needs Modal Variation, *cualquiera* Free Choice, *un*
+nothing. -/
+def predicted (row : LinguisticExample) : Option Bool :=
+  match row.feature? "scenario", row.feature? "determiner" with
+  | some "hideAndSeek15", some d => verdictIn pedro15 house inRoom d
+  | some "oneRoom23", some d => verdictIn pedro23 house inRoom d
+  | some "barn27", some d => verdictIn pedro27 house inRoom d
+  | some "hiring29", some d => verdictIn permitted applicants hires d
+  | _, _ => none
+where
+  verdictIn {E W : Type} [DecidableEq E] [DecidableEq W] (A : Finset W) (D : Finset E)
+      (Q : W → E → Prop) [∀ w, DecidablePred (Q w)] : String → Option Bool
+    | "algún" => some (decide (ModalVariation A D Q))
+    | "cualquiera" => some (decide (FreeChoice A D Q))
+    | "un" => some true
+    | _ => none
 
-/-- The Modal Variation component is classified as `notAtIssue` in the
-    fragment entry, consistent with the paper's §3.3 argument that it is
-    a conversational implicature: cancellable ((42)), disappears under
-    DE operators ((43)–(44)), reinforceable without redundancy ((45d)). -/
-theorem algún_entry_not_at_issue :
-    algúnEntry.status = .notAtIssue := rfl
+/-- A row's observed verdict: deviant or judged false, else fine. -/
+def observed (row : LinguisticExample) : Bool :=
+  row.judgment == .acceptable && row.feature? "verdict" != some "false"
 
-/-- The 2010 paper analyzes *algún* as having epistemic content only:
-    the Modal Variation inference concerns the SPEAKER's beliefs, mediated
-    by ASSERT ((20)). The fragment entry records epistemic-only flavor. -/
-theorem algún_entry_epistemic_only :
-    algúnEntry.hasFlavor .epistemic = true ∧
-    algúnEntry.hasFlavor .circumstantial = false := ⟨rfl, rfl⟩
+/-- Every row in a modelled scenario carries the predicted verdict. -/
+theorem rows_agree :
+    ∀ row ∈ Examples.all, ∀ b, predicted row = some b → observed row = b := by decide +kernel
 
+example : (Examples.all.filter fun row => (predicted row).isSome).length = 7 := by
+  decide +kernel
 
 end AlonsoOvalleMenendezBenito2010
