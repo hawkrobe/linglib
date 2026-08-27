@@ -188,11 +188,11 @@ instance : DecidablePred SlavicLang.HasVCPresent := fun l => by
     throughout — the paper's central cross-Slavic exception ([stojkovic-2026],
     Table 1, §4.4). -/
 theorem presentStem_iff_VCPresent :
-    ∀ d ∈ allData, d.lang.HasVCPresent ↔ d.presStem = .uv := by decide
+    ∀ d ∈ allData, d.language.HasVCPresent ↔ d.presStem = .uv := by decide
 
 /-- Each datum's infinitive stem is one of its language's group forms. -/
 theorem infStem_mem_group_forms :
-    ∀ d ∈ allData, d.infStem ∈ d.lang.vblzGroup.forms := by decide
+    ∀ d ∈ allData, d.infStem ∈ d.language.vblzGroup.forms := by decide
 
 /-! ### Constraints -/
 
@@ -315,7 +315,7 @@ theorem factorial_optima_are_singletons :
 theorem iv_unattested :
     ({VBLZCandidate.iv} : Finset VBLZCandidate) ∈
         factorialOptima fissionCandidates variableConstraints ∧
-    ∀ d ∈ allData, VBLZCandidate.iv ∉ d.lang.vblzGroup.forms := by
+    ∀ d ∈ allData, VBLZCandidate.iv ∉ d.language.vblzGroup.forms := by
   refine ⟨?_, by decide⟩
   rw [factorial_optima_are_singletons]; decide
 
