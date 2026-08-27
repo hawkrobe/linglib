@@ -116,6 +116,25 @@ def identViolFeature {F : Type*} [DecidableEq F] (proj : α → F)
     (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((c.edge r₁ r₂).filter fun p => proj (c.form r₁)[p.1] ≠ proj (c.form r₂)[p.2]).card
 
+/-- MAX of a privative property along a segmental correspondence: corresponding pairs
+whose first member has `P` and whose second lacks it — the autosegment is lost. -/
+def maxViolFeature (P : α → Prop) [DecidablePred P] (c : Correspondence Role α) (r₁ r₂ : Role) :
+    ℕ :=
+  ((c.edge r₁ r₂).filter fun p => P (c.form r₁)[p.1] ∧ ¬ P (c.form r₂)[p.2]).card
+
+/-- DEP of a privative property along a segmental correspondence: corresponding pairs whose
+second member has `P` and whose first lacks it — the autosegment is inserted. -/
+def depViolFeature (P : α → Prop) [DecidablePred P] (c : Correspondence Role α) (r₁ r₂ : Role) :
+    ℕ :=
+  ((c.edge r₁ r₂).filter fun p => ¬ P (c.form r₁)[p.1] ∧ P (c.form r₂)[p.2]).card
+
+/-- `maxViolFeature` is positive exactly when some correspondent loses `P`. -/
+theorem maxViolFeature_pos_iff (P : α → Prop) [DecidablePred P] (c : Correspondence Role α)
+    (r₁ r₂ : Role) :
+    0 < maxViolFeature P c r₁ r₂ ↔
+      ∃ p ∈ c.edge r₁ r₂, P (c.form r₁)[p.1] ∧ ¬ P (c.form r₂)[p.2] := by
+  simp [maxViolFeature, Finset.card_pos, Finset.filter_nonempty_iff]
+
 /-- I-CONTIG, "No Skipping" (A.4a): whether the domain of the relation is a contiguous
 substring of `form r₁`. -/
 def contigIViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
