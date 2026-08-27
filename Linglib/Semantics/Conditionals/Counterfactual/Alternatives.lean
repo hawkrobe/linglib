@@ -59,6 +59,12 @@ theorem distributive_iff_homogeneity_eq_true :
     refine ⟨fun h' => (h h').elim, fun h' => ?_⟩
     split_ifs at h'
 
+/-- The verdict is `.false` iff `S` is nonempty and no proposition's counterfactual holds. -/
+theorem homogeneity_eq_false_iff :
+    homogeneity sim S C w = .false ↔
+      S ≠ [] ∧ ∀ A ∈ S, ¬ universalCounterfactual sim (· ∈ A) C w :=
+  Trivalent.distList_eq_false_iff _ _
+
 /-- On a singleton the modal quantifies over the closest worlds of its one proposition. -/
 theorem would_singleton (A : Finset W) :
     would sim [A] C w ↔ universalCounterfactual sim (· ∈ A) C w := by

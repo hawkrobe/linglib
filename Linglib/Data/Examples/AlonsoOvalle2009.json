@@ -1,0 +1,924 @@
+[
+  {
+    "id": "alonsoovalle2009_1",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If we had had good weather this summer or the sun had grown cold, we would have had a bumper crop.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The summer is over; visiting a farm, the owner complains about the weather and points to a bunch of immature pumpkins and ruined pumpkin plants.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["scenario", "bumperCrop"],
+      ["antecedent", "good weather or sun cold"],
+      ["modal", "would"],
+      ["verdict", "false"]
+    ],
+    "comment": "A variation on an example in Nute 1975; repeated as (4), (11), (20), (48), and (78a). Judged false: if the sun had grown cold the pumpkins would have been ruined."
+  },
+  {
+    "id": "alonsoovalle2009_15a",
+    "source": {"bibkey": "dayal-1996", "paperLabel": "p. 188"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(15a)"},
+    "language": "hind1269",
+    "primaryText": "jo laRkii khaRii hai vo lambii hai",
+    "glossedTokens": [
+      ["jo", "which"], ["laRkii", "girl"], ["khaRii", "standing"], ["hai", "be-PRES"],
+      ["vo", "she"], ["lambii", "tall"], ["hai", "be-PRES"]
+    ],
+    "translation": "Which girl is standing, that one is tall.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "correlative"],
+      ["number", "singular"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "alonsoovalle2009_15b",
+    "source": {"bibkey": "dayal-1996", "paperLabel": "p. 192"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(15b)"},
+    "language": "hind1269",
+    "primaryText": "jo laRkiyaaN khaRii haiN ve lambii haiN",
+    "glossedTokens": [
+      ["jo", "which"], ["laRkiyaaN", "girls"], ["khaRii", "standing"], ["haiN", "be-PRES"],
+      ["ve", "they"], ["lambii", "tall"], ["haiN", "be-PRES"]
+    ],
+    "translation": "Which girls are standing, they are tall.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "correlative"],
+      ["number", "plural"]
+    ],
+    "comment": "Repeated as (18) and (28a).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "alonsoovalle2009_15c",
+    "source": {"bibkey": "dayal-1996", "paperLabel": "p. 192"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(15c)"},
+    "language": "hind1269",
+    "primaryText": "jo do laRkiyaaN khaRii haiN ve lambii haiN",
+    "glossedTokens": [
+      ["jo", "which"], ["do", "two"], ["laRkiyaaN", "girls"], ["khaRii", "standing"],
+      ["haiN", "be-PRES"], ["ve", "they"], ["lambii", "tall"], ["haiN", "be-PRES"]
+    ],
+    "translation": "Which two girls are standing, they are tall.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "correlative"],
+      ["number", "plural"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "alonsoovalle2009_29",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(29)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is plain false that Hitler would have been pleased if Spain had joined Germany or the U.S.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Kratzer, p.c., a variation on an example in Nute 1980.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["scenario", "hitler"],
+      ["antecedent", "joined Germany or the U.S."],
+      ["modal", "would"],
+      ["polarity", "negated"],
+      ["verdict", "true"]
+    ],
+    "comment": "Under the universal quantifier over propositions, true iff not both (30a) and (30b) are true; the continuation (31) shows one of them can be."
+  },
+  {
+    "id": "alonsoovalle2009_30a",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(30a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Hitler would have been pleased if Spain had joined Germany.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["scenario", "hitler"],
+      ["antecedent", "joined Germany"],
+      ["modal", "would"],
+      ["verdict", "true"]
+    ],
+    "comment": "True per the continuation (31)."
+  },
+  {
+    "id": "alonsoovalle2009_30b",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(30b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Hitler would have been pleased if Spain had joined the U.S.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["scenario", "hitler"],
+      ["antecedent", "joined the U.S."],
+      ["modal", "would"],
+      ["verdict", "false"]
+    ],
+    "comment": "Not true per the continuation (31): he might have objected to Spain joining the U.S."
+  },
+  {
+    "id": "alonsoovalle2009_31",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(31)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "...There is enough evidence showing that he might have objected to Spain joining the U.S. If she had joined Germany, he would have been pleased, of course.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Continuation of (29) (Kratzer, p.c.).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["role", "continuation"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_32",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(32)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sandy didn't see the cats.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Sandy saw none of the cats", "judgment": "acceptable"},
+      {"name": "Sandy didn't see every cat", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "homogeneity"]
+    ],
+    "comment": "Plural definites under negation convey that none was seen, not merely that not all were."
+  },
+  {
+    "id": "alonsoovalle2009_34",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(34)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is plain false that Sandy saw the cats.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Sandy saw none of the cats", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "homogeneity"],
+      ["polarity", "wide-scope negation"]
+    ],
+    "comment": "Does not seem to convey that Sandy saw none of the cats."
+  },
+  {
+    "id": "alonsoovalle2009_36",
+    "source": {"bibkey": "lewis-1973", "paperLabel": "p. 1"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(36)"},
+    "language": "stan1293",
+    "primaryText": "If kangaroos had no tails, they would topple over.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["inference", "strengthening the antecedent"],
+      ["role", "premise"]
+    ],
+    "comment": "Repeated as (41a) and (46a)."
+  },
+  {
+    "id": "alonsoovalle2009_41b",
+    "source": {"bibkey": "lewis-1973", "paperLabel": "p. 9"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(41b)"},
+    "language": "stan1293",
+    "primaryText": "If kangaroos had no tails but used crutches, they would topple over.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["inference", "strengthening the antecedent"],
+      ["role", "conclusion"]
+    ],
+    "comment": "Does not follow from (41a); repeated as (46b)."
+  },
+  {
+    "id": "alonsoovalle2009_40a",
+    "source": {"bibkey": "von-fintel-1999", "paperLabel": "p. 33"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(40a)"},
+    "language": "stan1293",
+    "primaryText": "If you had left any earlier, you would have missed the plane.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["npi", "any"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_40b",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(40b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If you had ever heard my album, you would know that I could never consider the music business.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["npi", "ever"]
+    ],
+    "comment": "Attested (brainyquote.com)."
+  },
+  {
+    "id": "alonsoovalle2009_42a",
+    "source": {"bibkey": "lewis-1973", "paperLabel": "p. 33"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(42a)"},
+    "language": "stan1293",
+    "primaryText": "If Hoover had been born in Russia, he would have been a Communist.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["inference", "hypothetical syllogism"],
+      ["role", "premise"]
+    ],
+    "comment": "Attributed to Stalnaker 1968."
+  },
+  {
+    "id": "alonsoovalle2009_42b",
+    "source": {"bibkey": "lewis-1973", "paperLabel": "p. 33"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(42b)"},
+    "language": "stan1293",
+    "primaryText": "If Hoover had been a Communist, he would have been a traitor.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["inference", "hypothetical syllogism"],
+      ["role", "premise"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_42c",
+    "source": {"bibkey": "lewis-1973", "paperLabel": "p. 33"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(42c)"},
+    "language": "stan1293",
+    "primaryText": "If Hoover had been born in Russia, he would have been a traitor.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["inference", "hypothetical syllogism"],
+      ["role", "conclusion"]
+    ],
+    "comment": "Does not follow from (42a) and (42b)."
+  },
+  {
+    "id": "alonsoovalle2009_43a",
+    "source": {"bibkey": "kratzer-1979", "paperLabel": "p. 128"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(43a)"},
+    "language": "stan1293",
+    "primaryText": "If Goethe had survived the year 1832, he would nevertheless be dead by now.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["inference", "contraposition"],
+      ["role", "premise"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_43b",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(43b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If Goethe were alive now, he would have died in 1832.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["inference", "contraposition"],
+      ["role", "conclusion"]
+    ],
+    "comment": "Does not follow from (43a)."
+  },
+  {
+    "id": "alonsoovalle2009_49a",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(49a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If we had had good weather this summer, we would have had a bumper crop.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The summer is over; visiting a farm, the owner complains about the weather and points to a bunch of immature pumpkins and ruined pumpkin plants.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["scenario", "bumperCrop"],
+      ["antecedent", "good weather"],
+      ["modal", "would"],
+      ["verdict", "true"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_49b",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(49b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If the sun had grown cold, we would have had a bumper crop.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The summer is over; visiting a farm, the owner complains about the weather and points to a bunch of immature pumpkins and ruined pumpkin plants.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["scenario", "bumperCrop"],
+      ["antecedent", "sun cold"],
+      ["modal", "would"],
+      ["verdict", "false"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_51",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(51)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If you had had a good magic book or you had been a newborn baby, you might have bent that fork too.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "After a magic show in which the magician bent a fork with the power of his mind.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["scenario", "fork"],
+      ["antecedent", "magic book or newborn baby"],
+      ["modal", "might"],
+      ["verdict", "false"]
+    ],
+    "comment": "The hearer disagrees: a newborn baby would not have bent the fork. Repeated as (56), (59), (69), and, with 'newborn child', (73)."
+  },
+  {
+    "id": "alonsoovalle2009_58a",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(58a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If you had had a good magic book, you might have bent that fork.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "After a magic show in which the magician bent a fork with the power of his mind.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["scenario", "fork"],
+      ["antecedent", "magic book"],
+      ["modal", "might"],
+      ["verdict", "true"]
+    ],
+    "comment": "Repeated as (61a) and (74a)."
+  },
+  {
+    "id": "alonsoovalle2009_58b",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(58b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If you had been a newborn baby, you might have bent that fork.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "After a magic show in which the magician bent a fork with the power of his mind.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["scenario", "fork"],
+      ["antecedent", "newborn baby"],
+      ["modal", "might"],
+      ["verdict", "false"]
+    ],
+    "comment": "Repeated as (61b) and (74b)."
+  },
+  {
+    "id": "alonsoovalle2009_64",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(64)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If you had had a good magic book, you would have bent that fork.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "After a magic show in which the magician bent a fork with the power of his mind.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["scenario", "fork"],
+      ["antecedent", "magic book"],
+      ["modal", "would"]
+    ],
+    "comment": "The would counterfactual Stalnaker's analysis embeds under epistemic might in (61a)."
+  },
+  {
+    "id": "alonsoovalle2009_65",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(65)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If Sandy does her homework or yours, she may eat this ice cream.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Mom, to Dad.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "may"],
+      ["antecedent", "disjunctive"]
+    ],
+    "comment": "Repeated as (72). It is natural to conclude (66a) and (66b)."
+  },
+  {
+    "id": "alonsoovalle2009_66a",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(66a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If Sandy does her homework, she may eat this ice cream.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "may"]
+    ],
+    "comment": "Repeated as (68a)."
+  },
+  {
+    "id": "alonsoovalle2009_66b",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(66b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If Sandy does your homework, she may eat this ice cream.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "may"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_67",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(67)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If Sandy does her homework or her sister's, she may eat this ice cream, but if she does her homework, she may not eat it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "may"]
+    ],
+    "comment": "Sounds contradictory."
+  },
+  {
+    "id": "alonsoovalle2009_68b",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(68b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It might be the case that if Sandy does her homework, she must eat this ice cream.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "must"]
+    ],
+    "comment": "Definitely not equivalent to (66a)."
+  },
+  {
+    "id": "alonsoovalle2009_77",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(77)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If you had a good magic book or you were a newborn child, you might have bent that fork; but, for all I know, it is possible that if you have a good magic book you might not have bent that fork.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "After a magic show in which the magician bent a fork with the power of his mind.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "might"]
+    ],
+    "comment": "Deviant, but not predicted so by the manner principle (76)."
+  },
+  {
+    "id": "alonsoovalle2009_79",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(79)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If we had had good weather this summer or the sun had grown cold, we might have had a bumper crop.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The summer is over; visiting a farm, the owner complains about the weather and points to a bunch of immature pumpkins and ruined pumpkin plants.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["scenario", "bumperCrop"],
+      ["antecedent", "good weather or sun cold"],
+      ["modal", "might"]
+    ],
+    "comment": "The might counterpart of (78a)."
+  },
+  {
+    "id": "alonsoovalle2009_80",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(80)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If the U.S. devoted more than half of its budget to defense or to education, it would devote more than half of its budget to defense.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["scenario", "budget"],
+      ["antecedent", "defense or education"],
+      ["modal", "would"],
+      ["closure", "existential"],
+      ["verdict", "true"]
+    ],
+    "comment": "Nute 1984. Intuitively true; the consequent is one of the disjuncts."
+  },
+  {
+    "id": "alonsoovalle2009_83",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(83)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If I earned at most $30,000 or more than a billion, I would surely earn at most $30,000.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "would"],
+      ["verdict", "contradictory"]
+    ],
+    "comment": "Sounds contradictory unless forced into the readings paraphrased in (84)."
+  },
+  {
+    "id": "alonsoovalle2009_84a",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(84a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If I were to earn at most $30,000 or more than a billion, I would earn at most $30,000.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["role", "paraphrase of (83)"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_84b",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(84b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If I might earn at most $30,000 or more than a billion, I would earn at most $30,000.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["role", "paraphrase of (83)"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_84c",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(84c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "(Even) if it were possible that I earned at most $30,000 and it were also possible that I earned more than a billion, I would nevertheless earn at most $30,000.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["role", "paraphrase of (83)"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_85a",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(85a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If the U.S. were to devote more than half of its budget to defense or education, it would devote more than half of its budget to defense.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["role", "paraphrase of (80)"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_85b",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(85b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If it were the case that the U.S. might devote more than half of its budget to defense or to education, it would devote more than half of its budget to defense.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["role", "paraphrase of (80)"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_85c",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "(85c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "(Even) if it were possible that the U.S. devoted more than half of its budget to defense and it were possible that the U.S. devoted more than half of its budget to education, the U.S. would nevertheless devote more than half of its budget to defense.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["role", "paraphrase of (80)"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_fn12",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "fn. 12 (i)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Let us suppose that John Kerry or Hillary Clinton became president. Then Bill Clinton would / might become ambassador to the United Nations.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["anaphor", "then"],
+      ["role", "intersentential"]
+    ],
+    "comment": "Due to an anonymous reviewer: the alternatives introduced by a disjunction in a modal context can antecede then across sentences."
+  },
+  {
+    "id": "alonsoovalle2009_fn18",
+    "source": {"bibkey": "stalnaker-1984", "paperLabel": "p. 144"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "fn. 18 (i)"},
+    "language": "stan1293",
+    "primaryText": "Would President Carter have appointed a woman to the Supreme Court last year if a vacancy had occurred? No, certainly not, although he might have appointed a woman.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "might"]
+    ],
+    "comment": "The denial of a would counterfactual is hard to follow with the corresponding might counterfactual."
+  },
+  {
+    "id": "alonsoovalle2009_fn22",
+    "source": {"bibkey": "alonso-ovalle-2009", "paperLabel": "fn. 22 (i)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If John had picked a black ball or a red ball, he would have had 30% chances of winning.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "(81) John is playing a game of luck with white, black, and red balls. We know (but he doesn't) that none of the white balls has a winning number, but that taken together 30% of the black and red balls have a winning number. John picked a ball, and lost.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "If John had picked a ball that wasn't white, he would have had 30% chances of winning", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["closure", "existential"]
+    ],
+    "comment": "Due to an anonymous reviewer."
+  },
+  {
+    "id": "alonsoovalle2009_bennettD",
+    "source": {"bibkey": "bennett-2003", "paperLabel": "D, pp. 168–170"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "§4 D"},
+    "language": "stan1293",
+    "primaryText": "If there had been rain or frost, the game would have been called off.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["inference", "simplification"],
+      ["role", "premise"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_bennettDr",
+    "source": {"bibkey": "bennett-2003", "paperLabel": "Dr, pp. 168–170"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "§4 Dr"},
+    "language": "stan1293",
+    "primaryText": "If it had rained, the game would have been called off.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["inference", "simplification"],
+      ["role", "conclusion"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_bennettDf",
+    "source": {"bibkey": "bennett-2003", "paperLabel": "Df, pp. 168–170"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "§4 Df"},
+    "language": "stan1293",
+    "primaryText": "If there had been frost, the game would have been called off.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["inference", "simplification"],
+      ["role", "conclusion"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_lewis1",
+    "source": {"bibkey": "lewis-1977", "paperLabel": "(1), pp. 360–361"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "§6 (1)"},
+    "language": "stan1293",
+    "primaryText": "If either Oswald had not fired or Kennedy had been in a bullet-proof car, then Kennedy would be alive today.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "disjunctive"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_lewis4",
+    "source": {"bibkey": "lewis-1977", "paperLabel": "(4), pp. 360–361"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "§6 (4)"},
+    "language": "stan1293",
+    "primaryText": "I can lick any man in the house, or drink the lot of you under the table.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "disjunction under a modal"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_lewis5",
+    "source": {"bibkey": "lewis-1977", "paperLabel": "(5), pp. 360–361"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "§6 (5)"},
+    "language": "stan1293",
+    "primaryText": "It is legal for you to report this as taxable income or for me to claim you as a dependent.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "disjunction under a modal"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "alonsoovalle2009_lewis6",
+    "source": {"bibkey": "lewis-1977", "paperLabel": "(6), pp. 360–361"},
+    "reportedIn": {"bibkey": "alonso-ovalle-2009", "paperLabel": "§6 (6)"},
+    "language": "stan1293",
+    "primaryText": "Holmes now knows whether the butler did it or the gardener did.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "disjunction under whether"]
+    ],
+    "comment": ""
+  }
+]
