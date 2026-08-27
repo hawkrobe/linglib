@@ -261,6 +261,75 @@ theorem maxOnScale_lt_stative (i : NonemptyInterval Time) :
     maxOnScale .lt (timeTrace (stativeDenotation i)) = {i.fst} := by
   rw [timeTrace_stative_closedInterval, maxOnScale_lt_closedInterval _ _ i.fst_le_snd]
 
+/-- The time trace of an accomplishment denotation is its run-time's closed interval. -/
+theorem timeTrace_accomplishment_closedInterval (i : NonemptyInterval Time) :
+    timeTrace (accomplishmentDenotation i) = { t | i.fst ≤ t ∧ t ≤ i.snd } := by
+  rw [timeTrace_accomplishmentDenotation]; ext; simp [NonemptyInterval.mem_def]
+
+/-- MAX₍<₎ of an accomplishment denotation's time trace is {start}. -/
+theorem maxOnScale_lt_accomplishment (i : NonemptyInterval Time) :
+    maxOnScale .lt (timeTrace (accomplishmentDenotation i)) = {i.fst} := by
+  rw [timeTrace_accomplishment_closedInterval, maxOnScale_lt_closedInterval _ _ i.fst_le_snd]
+
+/-- MAX₍>₎ of a stative denotation's time trace is {finish}. -/
+theorem maxOnScale_gt_stative (i : NonemptyInterval Time) :
+    maxOnScale .gt (timeTrace (stativeDenotation i)) = {i.snd} := by
+  rw [timeTrace_stative_closedInterval, maxOnScale_gt_closedInterval _ _ i.fst_le_snd]
+
+/-- The time trace of the inchoative coercion of a stative is its onset. -/
+theorem timeTrace_inchoat_stative (i : NonemptyInterval Time) :
+    timeTrace (INCHOAT (stativeDenotation i)) = {i.fst} := by
+  rw [inchoat_bridges_inception]
+  ext; simp [timeTrace, NonemptyInterval.mem_pure]
+
+/-- The time trace of the completive coercion of an accomplishment is its telos. -/
+theorem timeTrace_complet_accomplishment (i : NonemptyInterval Time) :
+    timeTrace (COMPLET (accomplishmentDenotation i)) = {i.snd} := by
+  rw [complet_bridges_cessation]
+  ext; simp [timeTrace, NonemptyInterval.mem_pure]
+
+/-- *Before* against a denotation with earliest time `m`: some time of `A` precedes `m`. -/
+theorem Rett.before_iff_of_maxOnScale_eq {A B : SentDenotation Time} {m : Time}
+    (h : maxOnScale .lt (timeTrace B) = {m}) : Rett.before A B ↔ ∃ t ∈ timeTrace A, t < m := by
+  simp [Rett.before, h]
+
+/-- *After* against a denotation with latest time `m`: some time of `A` follows `m`. -/
+theorem Rett.after_iff_of_maxOnScale_eq {A B : SentDenotation Time} {m : Time}
+    (h : maxOnScale .gt (timeTrace B) = {m}) : Rett.after A B ↔ ∃ t ∈ timeTrace A, m < t := by
+  simp [Rett.after, h]
+
+/-- A stative main clause is *before* `B` iff its onset precedes `B`'s earliest time. -/
+theorem Rett.before_stative_iff (a : NonemptyInterval Time) {B : SentDenotation Time} {m : Time}
+    (h : maxOnScale .lt (timeTrace B) = {m}) : Rett.before (stativeDenotation a) B ↔ a.fst < m := by
+  rw [Rett.before_iff_of_maxOnScale_eq h, timeTrace_stative_closedInterval]
+  exact ⟨fun ⟨_, ⟨h1, _⟩, h3⟩ => lt_of_le_of_lt h1 h3, fun h => ⟨a.fst, ⟨le_rfl, a.fst_le_snd⟩, h⟩⟩
+
+/-- A stative main clause is *after* `B` iff its end follows `B`'s latest time. -/
+theorem Rett.after_stative_iff (a : NonemptyInterval Time) {B : SentDenotation Time} {m : Time}
+    (h : maxOnScale .gt (timeTrace B) = {m}) : Rett.after (stativeDenotation a) B ↔ m < a.snd := by
+  rw [Rett.after_iff_of_maxOnScale_eq h, timeTrace_stative_closedInterval]
+  exact ⟨fun ⟨_, ⟨_, h2⟩, h3⟩ => lt_of_lt_of_le h3 h2, fun h => ⟨a.snd, ⟨a.fst_le_snd, le_rfl⟩, h⟩⟩
+
+/-- Before-start: a stative before an accomplishment compares onset to start. -/
+theorem Rett.before_stative_accomplishment_iff (a b : NonemptyInterval Time) :
+    Rett.before (stativeDenotation a) (accomplishmentDenotation b) ↔ a.fst < b.fst :=
+  Rett.before_stative_iff a (maxOnScale_lt_accomplishment b)
+
+/-- Before-finish under `COMPLET`: onset to telos. -/
+theorem Rett.before_stative_complet_iff (a b : NonemptyInterval Time) :
+    Rett.before (stativeDenotation a) (COMPLET (accomplishmentDenotation b)) ↔ a.fst < b.snd :=
+  Rett.before_stative_iff a (by rw [timeTrace_complet_accomplishment, maxOnScale_singleton])
+
+/-- After-finish: a stative after a stative compares end to end. -/
+theorem Rett.after_stative_stative_iff (a b : NonemptyInterval Time) :
+    Rett.after (stativeDenotation a) (stativeDenotation b) ↔ b.snd < a.snd :=
+  Rett.after_stative_iff a (maxOnScale_gt_stative b)
+
+/-- After-start under `INCHOAT`: end to onset. -/
+theorem Rett.after_stative_inchoat_iff (a b : NonemptyInterval Time) :
+    Rett.after (stativeDenotation a) (INCHOAT (stativeDenotation b)) ↔ b.fst < a.snd :=
+  Rett.after_stative_iff a (by rw [timeTrace_inchoat_stative, maxOnScale_singleton])
+
 /-- The time trace of `COMPLET(preEventDenotation bot i)` is the degenerate
     interval `{i.fst}`. -/
 theorem timeTrace_complet_preEvent (bot : Time) (i : NonemptyInterval Time) (hbot : bot ≤ i.fst) :

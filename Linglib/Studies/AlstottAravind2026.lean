@@ -64,6 +64,39 @@ def weakAfter (A B : SentDenotation Time) : Prop := ∃ i ∈ A, ∃ j ∈ B, j.
 /-- Temporal overlap — the *while* reading a competition-based implicature negates (§8.1). -/
 def Overlap (A B : SentDenotation Time) : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
 
+/-- A stative is weakly *before* an accomplishment iff its onset precedes the telos. -/
+theorem weakBefore_stative_accomplishment_iff (a b : NonemptyInterval Time) :
+    weakBefore (stativeDenotation a) (accomplishmentDenotation b) ↔ a.fst < b.snd := by
+  constructor
+  · rintro ⟨i, hi, h⟩
+    exact lt_of_le_of_lt ((Set.mem_Iic.mp hi).1.trans i.fst_le_snd) (h b rfl)
+  · intro h
+    exact ⟨NonemptyInterval.pure a.fst, Set.mem_Iic.mpr ⟨le_rfl, a.fst_le_snd⟩,
+      fun j hj => hj ▸ h⟩
+
+/-- A stative is weakly *after* a stative iff its end follows the other's onset. -/
+theorem weakAfter_stative_stative_iff (a b : NonemptyInterval Time) :
+    weakAfter (stativeDenotation a) (stativeDenotation b) ↔ b.fst < a.snd := by
+  constructor
+  · rintro ⟨i, hi, j, hj, h⟩
+    exact lt_of_le_of_lt ((Set.mem_Iic.mp hj).1.trans j.fst_le_snd)
+      (h.trans_le (i.fst_le_snd.trans (Set.mem_Iic.mp hi).2))
+  · intro h
+    exact ⟨NonemptyInterval.pure a.snd, Set.mem_Iic.mpr ⟨a.fst_le_snd, le_rfl⟩,
+      NonemptyInterval.pure b.fst, Set.mem_Iic.mpr ⟨le_rfl, b.fst_le_snd⟩, h⟩
+
+/-- A stative and an accomplishment overlap iff neither ends before the other starts. -/
+theorem overlap_stative_accomplishment_iff (a b : NonemptyInterval Time) :
+    Overlap (stativeDenotation a) (accomplishmentDenotation b) ↔ a.fst ≤ b.snd ∧ b.fst ≤ a.snd := by
+  simp only [Overlap, timeTrace_stative_closedInterval, timeTrace_accomplishment_closedInterval,
+    Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨t, ⟨h1, h2⟩, h3, h4⟩
+    exact ⟨h1.trans h4, h3.trans h2⟩
+  · rintro ⟨h1, h2⟩
+    exact ⟨max a.fst b.fst, ⟨le_max_left _ _, max_le a.fst_le_snd h2⟩,
+      le_max_right _ _, max_le h1 b.fst_le_snd⟩
+
 /-! ### The experimental contexts (29) and (31)
 
 Time is measured in minutes; a stative denotes an interval with its subintervals, an
@@ -89,46 +122,14 @@ abbrev fear := stativeDenotation laraFears
 abbrev regretfulA := stativeDenotation daveRegretfulA
 abbrev regretfulB := stativeDenotation daveRegretfulB
 
-private theorem mem_tt_stative {i : NonemptyInterval ℕ} {t : ℕ} :
-    t ∈ timeTrace (stativeDenotation i) ↔ i.fst ≤ t ∧ t ≤ i.snd := by
-  rw [timeTrace_stativeDenotation]; simp [NonemptyInterval.mem_def]
-
-private theorem mem_tt_accomplishment {i : NonemptyInterval ℕ} {t : ℕ} :
-    t ∈ timeTrace (accomplishmentDenotation i) ↔ i.fst ≤ t ∧ t ≤ i.snd := by
-  rw [timeTrace_accomplishmentDenotation]; simp [NonemptyInterval.mem_def]
-
-private theorem mem_stative {i j : NonemptyInterval ℕ} :
-    j ∈ stativeDenotation i ↔ i.fst ≤ j.fst ∧ j.snd ≤ i.snd := by
-  simp [stativeDenotation, NonemptyInterval.le_def]
-
 /-- Exp. 2: Rett's default before-start reading is true in the before-start context and
 false in the before-finish context, where `COMPLET` restores truth — coercion is needed in
 (29b) only. -/
 theorem exp2_rett_asymmetric :
     Rett.before irritableA tent ∧ ¬ Rett.before irritableB tent ∧
       Rett.before irritableB (COMPLET tent) := by
-  refine ⟨⟨120, mem_tt_stative.mpr (by simp [emmaIrritableA]), 240,
-      ⟨mem_tt_accomplishment.mpr (by simp [hectorBuilds]), fun x hx hne => ?_⟩, by omega⟩,
-    ?_, ?_⟩
-  · have := mem_tt_accomplishment.mp hx
-    simp [hectorBuilds] at this hne
-    show 240 < x
-    omega
-  · rintro ⟨t, ht, m, ⟨hm, hmax⟩, hlt⟩
-    have h1 := mem_tt_stative.mp ht
-    have h2 := mem_tt_accomplishment.mp hm
-    simp [emmaIrritableB, hectorBuilds] at h1 h2
-    by_cases hm240 : m = 240
-    · omega
-    · have := hmax 240 (mem_tt_accomplishment.mpr (by simp [hectorBuilds])) (Ne.symm hm240)
-      change m < 240 at this
-      omega
-  · rw [complet_bridges_cessation]
-    refine ⟨255, mem_tt_stative.mpr (by simp [emmaIrritableB]), 270, ⟨?_, fun x hx hne => ?_⟩,
-      by omega⟩
-    · simp [timeTrace, hectorBuilds]
-    · simp [timeTrace, hectorBuilds] at hx
-      omega
+  simp only [Rett.before_stative_accomplishment_iff, Rett.before_stative_complet_iff]
+  decide
 
 /-- Exp. 2: the under-specification reading is true in both contexts, and so is the
 overlap a *while*-competition implicature would negate — neither distinguishes (29a) from
@@ -136,16 +137,8 @@ overlap a *while*-competition implicature would negate — neither distinguishes
 theorem exp2_underspecification_symmetric :
     (weakBefore irritableA tent ∧ weakBefore irritableB tent) ∧
       (Overlap irritableA tent ∧ Overlap irritableB tent) := by
-  refine ⟨⟨⟨⟨⟨120, 120⟩, le_rfl⟩, mem_stative.mpr (by simp [emmaIrritableA]), ?_⟩,
-      ⟨⟨⟨255, 255⟩, le_rfl⟩, mem_stative.mpr (by simp [emmaIrritableB]), ?_⟩⟩,
-    ⟨260, mem_tt_stative.mpr (by simp [emmaIrritableA]),
-      mem_tt_accomplishment.mpr (by simp [hectorBuilds])⟩,
-    ⟨260, mem_tt_stative.mpr (by simp [emmaIrritableB]),
-      mem_tt_accomplishment.mpr (by simp [hectorBuilds])⟩⟩ <;>
-  · intro j hj
-    simp [accomplishmentDenotation] at hj
-    subst hj
-    simp [hectorBuilds]
+  simp only [weakBefore_stative_accomplishment_iff, overlap_stative_accomplishment_iff]
+  decide
 
 /-- Exp. 4: Rett's default after-finish reading is false in the after-start context, where
 `INCHOAT` restores truth, and true in the after-finish context — coercion is needed in
@@ -153,34 +146,18 @@ theorem exp2_underspecification_symmetric :
 theorem exp4_rett_asymmetric :
     ¬ Rett.after regretfulA fear ∧ Rett.after regretfulA (INCHOAT fear) ∧
       Rett.after regretfulB fear := by
-  refine ⟨?_, ?_, ⟨700, mem_tt_stative.mpr (by simp [daveRegretfulB]), 615,
-      ⟨mem_tt_stative.mpr (by simp [laraFears]), fun x hx hne => ?_⟩, by omega⟩⟩
-  · rintro ⟨t, ht, m, ⟨hm, hmax⟩, hlt⟩
-    have h1 := mem_tt_stative.mp ht
-    have h2 := mem_tt_stative.mp hm
-    simp [daveRegretfulA, laraFears] at h1 h2
-    by_cases hm615 : m = 615
-    · omega
-    · have := hmax 615 (mem_tt_stative.mpr (by simp [laraFears])) (Ne.symm hm615)
-      change m > 615 at this
-      omega
-  · rw [inchoat_bridges_inception]
-    refine ⟨605, mem_tt_stative.mpr (by simp [daveRegretfulA]), 600, ⟨?_, fun x hx hne => ?_⟩,
-      by omega⟩
-    · simp [timeTrace, laraFears]
-    · simp [timeTrace, laraFears] at hx
-      omega
-  · have := mem_tt_stative.mp hx
-    simp [laraFears] at this hne
-    show 615 > x
-    omega
+  simp only [Rett.after_stative_stative_iff, Rett.after_stative_inchoat_iff]
+  decide
 
 /-- Exp. 4: the under-specification reading is true in both contexts. -/
-theorem exp4_underspecification_symmetric : weakAfter regretfulA fear ∧ weakAfter regretfulB fear :=
-  ⟨⟨⟨⟨605, 615⟩, by omega⟩, mem_stative.mpr (by simp [daveRegretfulA]),
-      ⟨⟨600, 600⟩, le_rfl⟩, mem_stative.mpr (by simp [laraFears]), by simp⟩,
-    ⟨⟨⟨605, 4935⟩, by omega⟩, mem_stative.mpr (by simp [daveRegretfulB]),
-      ⟨⟨600, 600⟩, le_rfl⟩, mem_stative.mpr (by simp [laraFears]), by simp⟩⟩
+theorem exp4_underspecification_symmetric :
+    weakAfter regretfulA fear ∧ weakAfter regretfulB fear := by
+  simp only [weakAfter_stative_stative_iff]
+  decide
+
+private theorem mem_stative {i j : NonemptyInterval ℕ} :
+    j ∈ stativeDenotation i ↔ i.fst ≤ j.fst ∧ j.snd ≤ i.snd := by
+  simp [stativeDenotation, NonemptyInterval.le_def]
 
 /-! ### A non-coercive account of *within*-modifiers (§8.2) -/
 
