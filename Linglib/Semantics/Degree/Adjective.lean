@@ -20,7 +20,7 @@ abstract `PolarMeasure`.
 * `GradableAdjective` — a syntactic `Adjective` refined with the degree-semantic
   layer; `scaleType`, `standard`, and `adjectiveClass` are derived views.
 * `ThresholdPair` — the two thresholds of a contrary antonym pair, with a gap.
-* `InformationalStrength` — the weak/strong distinction ([alexandropoulou-gotzner-2024]).
+* `InformationalStrength` — the weak/strong distinction ([alexandropoulou-gotzner-2024b]).
 * `DimensionBindingType` — how a multidimensional adjective binds its dimensions.
 * `adjMeasure` — a `GradableAdjective` read as a `PolarMeasure` over a scale.
 
@@ -246,7 +246,7 @@ A strong adjective entails its weak counterpart on the same pole:
 This distinction is orthogonal to scale structure (relative vs absolute)
 and polarity (positive vs negative).
 
-Source: [alexandropoulou-gotzner-2024], [horn-1972]
+Source: [alexandropoulou-gotzner-2024b], [horn-1972]
 -/
 inductive InformationalStrength where
   | weak    -- large, small, clean, dirty

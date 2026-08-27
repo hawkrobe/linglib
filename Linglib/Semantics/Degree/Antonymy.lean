@@ -94,9 +94,8 @@ end Degree.Antonymy
 /-! ### The surface quadruplet and prediction skeleton
 [cruse-1986] [horn-1989] [krifka-2007b] [tessler-franke-2019]
 
-Absorbed from the retired `AntonymPrediction.lean`: `AntonymForm`
-(happy / not happy / unhappy / not unhappy), its two contested
-denotations, and the complexity/prediction skeleton.
+`AntonymForm` (happy / not happy / unhappy / not unhappy), its two contested
+denotations, and the polarity flip.
 -/
 
 namespace Degree
@@ -163,7 +162,7 @@ abbrev AntonymForm.contradictoryDenot {max : Nat} (θ : Threshold max)
     lifts notNegative ("not unhappy") away from positive ("happy") and
     notPositive ("not happy") away from negative ("unhappy"). This is the
     effective-semantic position post-pragmatic-strengthening (Krifka 2007 §4)
-    or the lexically-encoded position (Alexandropoulou-Gotzner 2024). -/
+    or the lexically-encoded position of [alexandropoulou-gotzner-2024a]. -/
 abbrev AntonymForm.strengthenedDenot {max : Nat} (tp : ThresholdPair max)
     (q : AntonymForm) (d : Bounded max) : Prop :=
   match q with
@@ -245,33 +244,21 @@ theorem isContrary_strengthenedDenot {max : Nat} (tp : ThresholdPair max)
     · exact absurd hn (not_lt.mpr hd1)
 
 -- ============================================================================
--- § 4. Prediction Skeleton
+-- § 4. Polarity flip
 -- ============================================================================
 
-/-- **Anchored prediction skeleton.** Map an antonymy type to predicted
-    polarity-asymmetry direction:
+/-- Exchange the two poles of the quadruplet: *happy* ↔ *unhappy*,
+    *not happy* ↔ *not unhappy*. -/
+def AntonymForm.flip : AntonymForm → AntonymForm
+  | .positive    => .negative
+  | .negative    => .positive
+  | .notPositive => .notNegative
+  | .notNegative => .notPositive
 
-    - `.contradictory ↦ .symmetric` — anchored by `isContradictory_contradictoryDenot`
-      (the forms are genuinely complementary, so the contradictory base collapses
-      notPositive and negative; no asymmetry to derive).
-    - `.contrary ↦ .asymmetric` — anchored by `isContrary_strengthenedDenot`
-      (the forms are genuinely contrary, so the gap admits a witness where
-      notNegative holds but positive does not).
+@[simp] theorem AntonymForm.flip_flip (f : AntonymForm) : f.flip.flip = f := by
+  cases f <;> rfl
 
-    The map thus rides on the substrate's `IsContradictory`/`IsContrary` between the
-    two form denotations — the antonym tag is the real opposition, not a stipulation.
-
-    Consumed by per-paper prediction signatures (Horn 1989, Krifka 2007,
-    Alexandropoulou-Gotzner 2024 JoS) which read this map via
-    `predictionForEntry` against a Fragment lexical entry's
-    `antonymRelation` field. -/
-def predictionForAntonymy : NegationType → Asymmetry
-  | .contradictory => .symmetric
-  | .contrary      => .asymmetric
-
-/-- Read prediction off a Fragment lexical entry's `antonymRelation`. Defaults
-    to `.symmetric` for entries without an explicit antonymy classification. -/
-def predictionForEntry (e : GradableAdjective) : Asymmetry :=
-  e.antonymRelation.elim .symmetric predictionForAntonymy
+theorem AntonymForm.flip_involutive : Function.Involutive AntonymForm.flip :=
+  AntonymForm.flip_flip
 
 end Degree

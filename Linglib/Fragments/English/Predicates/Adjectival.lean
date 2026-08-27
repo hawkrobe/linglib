@@ -154,6 +154,7 @@ def clean : AdjectivalPredicateEntry where
 /-- "dirty" — closed scale (maximally dirty), contradictory to "clean" -/
 def dirty : AdjectivalPredicateEntry where
   form := "dirty"
+  isLowerEndpoint := true
   dimension := some .cleanliness
   antonymForm := some "clean"
   antonymRelation := some .contradictory
@@ -318,6 +319,7 @@ def pristine : AdjectivalPredicateEntry where
 /-- "filthy" — closed scale, contrary to "pristine" (extreme absolute: gap exists) -/
 def filthy : AdjectivalPredicateEntry where
   form := "filthy"
+  isLowerEndpoint := true
   dimension := some .cleanliness
   antonymForm := some "pristine"
   antonymRelation := some .contrary
