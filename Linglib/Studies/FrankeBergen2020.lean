@@ -1,4 +1,4 @@
-import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Classical
 import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Mathlib.Data.List.ProdSigma

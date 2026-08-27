@@ -1,4 +1,4 @@
-import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Classical
 import Linglib.Data.Examples.Alsop2024
 
 /-!
