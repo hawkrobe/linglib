@@ -1,0 +1,1159 @@
+[
+  {
+    "id": "alokbhalla2026_1a",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(1a)"},
+    "language": "soul1243",
+    "primaryText": "Pettek lan egin di-k",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pettek", "Peter.ERG"], ["lan", "work"], ["egin", "do"], ["di-k", "AUX.3.ERG-M.NHA"]
+    ],
+    "translation": "Peter worked",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-k"],
+      ["addressee", "nh"],
+      ["addresseeGender", "m"],
+      ["clause", "matrix"]
+    ],
+    "comment": "Oyharçabal (1993); said to a male friend.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_1b",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(1b)"},
+    "language": "soul1243",
+    "primaryText": "Pettek lan egin di-n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pettek", "Peter.ERG"], ["lan", "work"], ["egin", "do"], ["di-n", "AUX.3.ERG-F.NHA"]
+    ],
+    "translation": "Peter worked",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-n"],
+      ["addressee", "nh"],
+      ["addresseeGender", "f"],
+      ["clause", "matrix"]
+    ],
+    "comment": "Said to a female friend.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_1c",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(1c)"},
+    "language": "soul1243",
+    "primaryText": "Pettek lan egin di-zü",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pettek", "Peter.ERG"], ["lan", "work"], ["egin", "do"], ["di-zü", "AUX.3.ERG-HA"]
+    ],
+    "translation": "Peter worked",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-zü"],
+      ["addressee", "h"],
+      ["clause", "matrix"]
+    ],
+    "comment": "Said to someone of higher social status.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_1d",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(1d)"},
+    "language": "soul1243",
+    "primaryText": "Pettek lan egin dü",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pettek", "Peter.ERG"], ["lan", "work"], ["egin", "do"], ["dü", "AUX.3.ERG"]
+    ],
+    "translation": "Peter worked",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "matrix"]
+    ],
+    "comment": "Said to a group: no allocutive marker.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_2a",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(2a)"},
+    "language": "maga1260",
+    "primaryText": "Ham dauR-l-i-au",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ham", "I"], ["dauR-l-i-au", "run-PRF-1-NHS.NHA"]
+    ],
+    "translation": "I ran (said to a friend)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-au"],
+      ["subject", "nh"],
+      ["addressee", "nh"],
+      ["clause", "matrix"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_2b",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(2b)"},
+    "language": "maga1260",
+    "primaryText": "Ham dauR-l-i-o",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ham", "I"], ["dauR-l-i-o", "run-PRF-1-NHS.HA"]
+    ],
+    "translation": "I ran (said to a father)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-o"],
+      ["subject", "nh"],
+      ["addressee", "h"],
+      ["clause", "matrix"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_2c",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(2c)"},
+    "language": "maga1260",
+    "primaryText": "Ham dauR-l-i-ain",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ham", "I"], ["dauR-l-i-ain", "run-PRF-1-NHS.HHA"]
+    ],
+    "translation": "I ran (said to a teacher)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-ain"],
+      ["subject", "nh"],
+      ["addressee", "hh"],
+      ["clause", "matrix"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_3",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(3)"},
+    "language": "maga1260",
+    "primaryText": "Santee-aa dauR-l-au",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Santee-aa", "Santee-FM"], ["dauR-l-au", "run-PRF-NHS.NHA"]
+    ],
+    "translation": "Santee ran (said to a friend)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-au"],
+      ["subject", "nh"],
+      ["addressee", "nh"],
+      ["clause", "matrix"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_4",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(4)"},
+    "language": "maga1260",
+    "primaryText": "Baabaa dauR-la-thu(n)",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Baabaa", "grandfather.H"], ["dauR-la-thu(n)", "run-PRF-HS.NHA"]
+    ],
+    "translation": "Grandfather ran (said to a friend)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-thu(n)"],
+      ["subject", "h"],
+      ["addressee", "nh"],
+      ["clause", "matrix"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_5",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(5)"},
+    "language": "maga1260",
+    "primaryText": "Santee-aa dauR-l-ain",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Santee-aa", "Santee-FM"], ["dauR-l-ain", "run-PRF-NHS.HHA"]
+    ],
+    "translation": "Santee ran (said to a teacher)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-ain"],
+      ["subject", "nh"],
+      ["addressee", "hh"],
+      ["clause", "matrix"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_6",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(6)"},
+    "language": "maga1260",
+    "primaryText": "PanDiit-jii dauR-la-thi(n)",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["PanDiit-jii", "priest-HH"], ["dauR-la-thi(n)", "run-PRF-HHS.HHA"]
+    ],
+    "translation": "The priest ran (said to a teacher)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-thi(n)"],
+      ["subject", "hh"],
+      ["addressee", "hh"],
+      ["clause", "matrix"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_7",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(7)"},
+    "language": "tami1289",
+    "primaryText": "Naan ʤaangiri vaang-in-een-ŋgæ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Naan", "I"], ["ʤaangiri", "Jangri"], ["vaang-in-een-ŋgæ", "buy-PST-1.SG.SBJ-ALLOC"]
+    ],
+    "translation": "I bought Jangri",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-ŋgæ"],
+      ["addressee", "h"],
+      ["clause", "matrix"]
+    ],
+    "comment": "McFadden (2020); the marker is homophonous with the plural marker.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_8a",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(8a)"},
+    "language": "kore1280",
+    "primaryText": "Inho-ka choysen-ul ta ha-ess-supnita",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Inho-ka", "Inho-NOM"], ["choysen-ul", "best-ACC"], ["ta", "all"],
+      ["ha-ess-supnita", "do-PST-DECL.FORM"]
+    ],
+    "translation": "Inho did his best",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "supnita"],
+      ["speechStyle", "form"],
+      ["clause", "matrix"],
+      ["status", "lt"],
+      ["formal", "+"]
+    ],
+    "comment": "Portner et al. (2019).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_8b",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(8b)"},
+    "language": "kore1280",
+    "primaryText": "Inho-ka choysen-ul ta ha-ess-eyo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Inho-ka", "Inho-NOM"], ["choysen-ul", "best-ACC"], ["ta", "all"],
+      ["ha-ess-eyo", "do-PST-DECL.POL"]
+    ],
+    "translation": "Inho did his best",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "eyo"],
+      ["speechStyle", "pol"],
+      ["clause", "matrix"],
+      ["status", "lt"],
+      ["formal", "-"]
+    ],
+    "comment": "Portner et al. (2019).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_8c",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(8c)"},
+    "language": "kore1280",
+    "primaryText": "Inho-ka choysen-ul ta ha-ess-ney",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Inho-ka", "Inho-NOM"], ["choysen-ul", "best-ACC"], ["ta", "all"],
+      ["ha-ess-ney", "do-PST-DECL.FAM"]
+    ],
+    "translation": "Inho did his best",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "ney"],
+      ["speechStyle", "fam"],
+      ["clause", "matrix"]
+    ],
+    "comment": "Portner et al. (2019).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_8d",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(8d)"},
+    "language": "kore1280",
+    "primaryText": "Inho-ka choysen-ul ta ha-ess-e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Inho-ka", "Inho-NOM"], ["choysen-ul", "best-ACC"], ["ta", "all"],
+      ["ha-ess-e", "do-PST-DECL.INTIM"]
+    ],
+    "translation": "Inho did his best",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "e"],
+      ["speechStyle", "intim"],
+      ["clause", "matrix"],
+      ["status", "ge"],
+      ["formal", "-"]
+    ],
+    "comment": "Portner et al. (2019).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_9a",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(9a)"},
+    "language": "gali1258",
+    "primaryText": "Esquecin que vos está aquí",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Esquecin", "forgot.1SG.PST"], ["que", "that"], ["vos", "2PL.FAM.DAT"], ["está", "COP"],
+      ["aquí", "here"]
+    ],
+    "translation": "I forgot that he is here",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "vos"],
+      ["clause", "embedded"],
+      ["embedding", "factive"]
+    ],
+    "comment": "Alok and Haddican (2022); repeated as (19).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_9b",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(9b)"},
+    "language": "gali1258",
+    "primaryText": "A rapaza que che está aquí",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A", "the"], ["rapaza", "girl"], ["que", "that"], ["che", "2SG.FAM.DAT"], ["está", "COP"],
+      ["aquí", "here"]
+    ],
+    "translation": "The girl that is here",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "che"],
+      ["clause", "embedded"],
+      ["embedding", "relative"]
+    ],
+    "comment": "Repeated as (20).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_10",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(10)"},
+    "language": "gali1258",
+    "primaryText": "Merquei-che unhas botas",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Merquei-che", "bought.1SG-2SG.FAM.DAT"], ["unhas", "some"], ["botas", "boots"]
+    ],
+    "translation": "I bought you some boots / I bought some boots",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "che"],
+      ["clause", "matrix"]
+    ],
+    "comment": "Haddican (2019): the same clitic serves as the thematic dative.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_11",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(11)"},
+    "language": "soul1243",
+    "primaryText": "Lan egin dü-zü",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Lan", "work"], ["egin", "do"], ["dü-zü", "AUX-2SG.H.ERG"]
+    ],
+    "translation": "You (formal) worked",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Lan egin dü-k", "judgment": "acceptable"},
+      {"form": "Lan egin dü-n", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["argumentAgreement", "2sg"],
+      ["clause", "matrix"]
+    ],
+    "comment": "The allocutive markers of (1) reappear as ordinary agreement with a second-person subject.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_12",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(12)"},
+    "language": "soul1243",
+    "primaryText": "Ezdinat nahi gerta diakionan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ezdinat", "NEG.AUX.1.ERG.NHA"], ["nahi", "want"], ["gerta", "happen"],
+      ["diakionan", "3.AUX.3NHA.COMP"]
+    ],
+    "translation": "I don't want it to happen to him",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "embedded"],
+      ["embedding", "complement"]
+    ],
+    "comment": "Oyharçabal (1993): allocutive marking inside the complement.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_13",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(13)"},
+    "language": "kore1280",
+    "primaryText": "Inho-ka sensayngnim-kkey choysen-ul ta ha-ess-supnita-ko malhayss-ta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Inho-ka", "Inho-NOM"], ["sensayngnim-kkey", "teacher-DAT"], ["choysen-ul", "best-ACC"],
+      ["ta", "all"], ["ha-ess-supnita-ko", "do-PST-DECL.FORM-COMP"],
+      ["malhayss-ta", "said-DECL.PLAIN"]
+    ],
+    "translation": "Inho told the teacher that he did his best",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "supnita"],
+      ["clause", "embedded"],
+      ["embedding", "saying"]
+    ],
+    "comment": "Portner et al. (2019).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_14a",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(14a)"},
+    "language": "nucl1643",
+    "primaryText": "Taroo-wa Hanako-ga ki-mas-u to itta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taroo-wa", "Taro-TOP"], ["Hanako-ga", "Hanako-NOM"], ["ki-mas-u", "come-MAS-PRS"],
+      ["to", "COMP"], ["itta", "said"]
+    ],
+    "translation": "Taro said that Hanako will come",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-mas-"],
+      ["clause", "embedded"],
+      ["embedding", "saying"]
+    ],
+    "comment": "Miyagawa (2017).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_14b",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(14b)"},
+    "language": "nucl1643",
+    "primaryText": "Taroo-wa Hanako-ga ki-mas-u to sinzitei-ru",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taroo-wa", "Taro-TOP"], ["Hanako-ga", "Hanako-NOM"], ["ki-mas-u", "come-MAS-PRS"],
+      ["to", "COMP"], ["sinzitei-ru", "believe-PRS"]
+    ],
+    "translation": "Taro believes that Hanako will come",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Taroo-wa Hanako-ga kuru to sinzitei-ru", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-mas-"],
+      ["clause", "embedded"],
+      ["embedding", "believe"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_15",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(15)"},
+    "language": "nucl1643",
+    "primaryText": "Hanako-ga ki-mas-u kara, ie-ni ite-kudasai",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hanako-ga", "Hanako-NOM"], ["ki-mas-u", "come-MAS-PRS"], ["kara,", "because"],
+      ["ie-ni", "home-at"], ["ite-kudasai", "be-please"]
+    ],
+    "translation": "Because Hanako will come, please be at home",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-mas-"],
+      ["clause", "embedded"],
+      ["embedding", "reason"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_16",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(16)"},
+    "language": "maga1260",
+    "primaryText": "Ham dekhl-i-au ki Santeeaa bhag gel-au",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ham", "I"], ["dekhl-i-au", "saw-1-NHS.NHA"], ["ki", "COMP"], ["Santeeaa", "Santee"],
+      ["bhag", "escape"], ["gel-au", "went-NHS.NHA"]
+    ],
+    "translation": "I saw that Santee ran away (said to a friend)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-au"],
+      ["addressee", "nh"],
+      ["clause", "embedded"],
+      ["embedding", "perceptual"]
+    ],
+    "comment": "Alok (2021).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_17",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(17)"},
+    "language": "maga1260",
+    "primaryText": "Laikwaa je uhan khaRaa h-au hamar bhaai h-au",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Laikwaa", "boy"], ["je", "REL"], ["uhan", "there"], ["khaRaa", "stand"],
+      ["h-au", "be-NHS.NHA"], ["hamar", "my"], ["bhaai", "brother"], ["h-au", "be-NHS.NHA"]
+    ],
+    "translation": "The boy who is standing there is my brother (said to a friend)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-au"],
+      ["addressee", "nh"],
+      ["clause", "embedded"],
+      ["embedding", "relative"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_18",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(18)"},
+    "language": "maga1260",
+    "primaryText": "Aphawaah ki Santeeaa inaam jitl-au sahii ha-l-au",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Aphawaah", "rumor"], ["ki", "COMP"], ["Santeeaa", "Santee"], ["inaam", "prize"],
+      ["jitl-au", "won-NHS.NHA"], ["sahii", "true"], ["ha-l-au", "be-PRF-NHS.NHA"]
+    ],
+    "translation": "The rumor that Santee won the prize was true (said to a friend)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-au"],
+      ["addressee", "nh"],
+      ["clause", "embedded"],
+      ["embedding", "nounComplement"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_21",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(21)"},
+    "language": "gali1258",
+    "primaryText": "Non sei quen cha viu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Non", "NEG"], ["sei", "know.1.SG"], ["quen", "who"], ["cha", "2.SG.FAM.DAT.3SG.F"],
+      ["viu", "see.3SG.PST"]
+    ],
+    "translation": "I don't know who saw it",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "che"],
+      ["clause", "embedded"],
+      ["embedding", "wh"]
+    ],
+    "comment": "cha < che + a.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_30a",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(30a)"},
+    "language": "maga1260",
+    "primaryText": "Santee-aa jaayel chahl-i-au",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Santee-aa", "Santee-FM"], ["jaayel", "go.INF"], ["chahl-i-au", "want.PRF-1-NHS.NHA"]
+    ],
+    "translation": "Santee wants to go (said to a friend)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Santee-aa jaayel-au chahl-i-au", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-au"],
+      ["addressee", "nh"],
+      ["clause", "embedded"],
+      ["embedding", "nonfinite"]
+    ],
+    "comment": "No allocutive marker on the nonfinite complement.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_30b",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(30b)"},
+    "language": "maga1260",
+    "primaryText": "Ham okaraa dhekhe-se bachl-i-au",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ham", "I"], ["okaraa", "him.DAT.NH"], ["dhekhe-se", "seeing-INS"],
+      ["bachl-i-au", "avoid.PRF-1-NHS.NHA"]
+    ],
+    "translation": "I avoided seeing him (said to a friend)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ham okaraa dhekhe-se-au bachl-i-au", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-au"],
+      ["addressee", "nh"],
+      ["clause", "embedded"],
+      ["embedding", "nonfinite"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_31a",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(31a)"},
+    "language": "tami1289",
+    "primaryText": "Niiŋgæ saap-ʈ-aaččǔ-ngæl-aa-ŋgæ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Niiŋgæ", "you.PL"], ["saap-ʈ-aaččǔ-ngæl-aa-ŋgæ", "eat-ASP-RES-ALLOC-Q-ALLOC"]
+    ],
+    "translation": "Have you eaten?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-ŋgæ"],
+      ["clause", "matrix"],
+      ["positions", "2"]
+    ],
+    "comment": "McFadden (2020): the marker appears below and above the question particle.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_31b",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(31b)"},
+    "language": "tami1289",
+    "primaryText": "Maya avæ pooʈʈi-le ʤejkkæ-poo-r-aaɭ-ŋgæ-nnŭ so-nn-aa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Maya", "Maya"], ["avæ", "she"], ["pooʈʈi-le", "contest-LOC"],
+      ["ʤejkkæ-poo-r-aaɭ-ŋgæ-nnŭ", "win-go-PRS-3.SG.F-ALLOC-COMP"], ["so-nn-aa", "say-PST-3.SG.F"]
+    ],
+    "translation": "Maya said that she would win the contest",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-ŋgæ"],
+      ["clause", "embedded"],
+      ["embedding", "saying"],
+      ["positions", "1"]
+    ],
+    "comment": "Only the position below the complementizer is available when embedded.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_32",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(32)"},
+    "language": "gali1258",
+    "primaryText": "Einstein tivo que estudar-che moito",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Einstein", "Einstein"], ["tivo", "have.3.SG.PST"], ["que", "that"],
+      ["estudar-che", "study.INF-2.SG.FAM.DAT"], ["moito", "much"]
+    ],
+    "translation": "Einstein had to study a lot",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "che"],
+      ["clause", "embedded"],
+      ["embedding", "infinitive"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_33a",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(33a)"},
+    "language": "nucl1643",
+    "primaryText": "Gomeiwaku-o o-kake si-masi-ta-koto-wa zonzi-te i-mas-u",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gomeiwaku-o", "trouble-ACC"], ["o-kake", "HON-giving"],
+      ["si-masi-ta-koto-wa", "do-HON-PST-COMP-TOP"], ["zonzi-te", "know.HON-CVB"],
+      ["i-mas-u", "PRF-HON-PRS"]
+    ],
+    "translation": "I know that I gave you trouble",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-mas-"],
+      ["clause", "embedded"],
+      ["embedding", "koto"]
+    ],
+    "comment": "Yamada (2019).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_33b",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(33b)"},
+    "language": "nucl1643",
+    "primaryText": "Isya-wa kanzya-san-ni kusuri-o nomi-mas-u yooni motome-masi-ta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Isya-wa", "doctor-TOP"], ["kanzya-san-ni", "patient-DAT"], ["kusuri-o", "medicine-ACC"],
+      ["nomi-mas-u", "take-MAS-PRS"], ["yooni", "COMP"], ["motome-masi-ta", "ask-MAS-PST"]
+    ],
+    "translation": "The doctor asked the patient to take medicine",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-mas-"],
+      ["clause", "embedded"],
+      ["embedding", "yooni"]
+    ],
+    "comment": "Miyagawa (2022).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_33c",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(33c)"},
+    "language": "nucl1643",
+    "primaryText": "Taroo-wa Hanako-ga ki-mas-u to sinzitei-ru",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taroo-wa", "Taro-TOP"], ["Hanako-ga", "Hanako-NOM"], ["ki-mas-u", "come-MAS-PRS"],
+      ["to", "COMP"], ["sinzitei-ru", "believe-PRS"]
+    ],
+    "translation": "Taroo believes that Hanako will come",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Taroo-wa Hanako-ga ku-ru to sinzitei-ru", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "-mas-"],
+      ["clause", "embedded"],
+      ["embedding", "to"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_35",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(35)"},
+    "language": "ital1282",
+    "primaryText": "Gli infermieri ti porteranno un bicchiere d'acqua",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gli", "the"], ["infermieri", "nurses"], ["ti", "you.FAM"], ["porteranno", "will.bring"],
+      ["un", "a"], ["bicchiere", "glass"], ["d'acqua", "of.water"]
+    ],
+    "translation": "The nurses will bring you a glass of water",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun2", "nh"],
+      ["tv", "T"]
+    ],
+    "comment": "Addressee a friend or relative.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_36",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(36)"},
+    "language": "ital1282",
+    "primaryText": "Gli infermieri Le porteranno un bicchiere d'acqua",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gli", "the"], ["infermieri", "nurses"], ["Le", "you.POL"], ["porteranno", "will.bring"],
+      ["un", "a"], ["bicchiere", "glass"], ["d'acqua", "of.water"]
+    ],
+    "translation": "The nurses will bring you a glass of water",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun2", "h"],
+      ["tv", "V"]
+    ],
+    "comment": "Addressee a stranger.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_39",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(39)"},
+    "language": "maga1260",
+    "primaryText": "Santee-aa toraa dekhl-ai",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Santee-aa", "Santee-FM"], ["toraa", "you.NH.ACC"], ["dekhl-ai", "see.PRF-NHS"]
+    ],
+    "translation": "Santee saw you (a friend)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun2", "nh"],
+      ["subject", "nh"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_40",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(40)"},
+    "language": "maga1260",
+    "primaryText": "Santee-aa apne-ke dekhl-ai",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Santee-aa", "Santee-FM"], ["apne-ke", "you.HH-ACC"], ["dekhl-ai", "see.PRF-NHS"]
+    ],
+    "translation": "Santee saw you (a teacher)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun2", "hh"],
+      ["subject", "nh"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_41",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(41)"},
+    "language": "maga1260",
+    "primaryText": "Ram apne-ke tor kitaab lauTal-ai",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ram", "Ram"], ["apne-ke", "you.HH-DAT"], ["tor", "you.NH.GEN"], ["kitaab", "book"],
+      ["lauTal-ai", "return.PRF-NHS"]
+    ],
+    "translation": "Ram returned your book to you",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun2", "hh"],
+      ["pronoun2Other", "nh"],
+      ["subject", "nh"]
+    ],
+    "comment": "Two second-person pronouns of different honorific level in one clause.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_42",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(42)"},
+    "language": "maga1260",
+    "primaryText": "Ram apne-ke kitaab lauTal-ain",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ram", "Ram"], ["apne-ke", "you.H-DAT"], ["kitaab", "book"],
+      ["lauTal-ain", "return.PRF-NHS.HHA"]
+    ],
+    "translation": "Ram returned the book to you",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ram apne-ke kitaab lauTal-au", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun2", "hh"],
+      ["marker", "-ain"],
+      ["addressee", "hh"],
+      ["subject", "nh"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_43",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(43)"},
+    "language": "maga1260",
+    "primaryText": "Ram toraa kitaab lauTal-au",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ram", "Ram"], ["toraa", "you.NH.DAT"], ["kitaab", "book"],
+      ["lauTal-au", "return.PRF-NHS.NHA"]
+    ],
+    "translation": "Ram returned the book to you",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ram toraa kitaab lauTal-ain", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun2", "nh"],
+      ["marker", "-au"],
+      ["addressee", "nh"],
+      ["subject", "nh"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_44a",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(44a)"},
+    "language": "maga1260",
+    "primaryText": "Santee-aa okraa dekhl-ai",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Santee-aa", "Santee-FM"], ["okraa", "him.NH.ACC"], ["dekhl-ai", "see.PRF-NHS"]
+    ],
+    "translation": "Santee saw him (a friend)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun3", "nh"],
+      ["subject", "nh"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_44b",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(44b)"},
+    "language": "maga1260",
+    "primaryText": "Santee-aa unkaa dekhl-ai",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Santee-aa", "Santee-FM"], ["unkaa", "him.H.ACC"], ["dekhl-ai", "see.PRF-NHS"]
+    ],
+    "translation": "Santee saw him (a teacher)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun3", "h"],
+      ["subject", "nh"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_45",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(45)"},
+    "language": "maga1260",
+    "primaryText": "Apne okar kitaab unkaa del-thin",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Apne", "you.HH"], ["okar", "him.NH.GEN"], ["kitaab", "book"], ["unkaa", "him.H.DAT"],
+      ["del-thin", "give.PRF-HHS"]
+    ],
+    "translation": "You (my teacher) gave his (my brother's) book to him (my father)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun2", "hh"],
+      ["pronoun3", "nh"],
+      ["pronoun3Other", "h"],
+      ["subject", "hh"]
+    ],
+    "comment": "Each DP sets its referent's relation to the speaker independently.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_48a",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(48a)"},
+    "language": "hind1269",
+    "primaryText": "Pankaj-jii aaye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pankaj-jii", "Pankaj-HON"], ["aaye", "come.PRF.3.PL"]
+    ],
+    "translation": "Pankaj came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjectHon", "h"],
+      ["subjectNumber", "sg"],
+      ["agreement", "pl"]
+    ],
+    "comment": "Bhatt and Davis (2023).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_48b",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(48b)"},
+    "language": "hind1269",
+    "primaryText": "Pankaj aaya",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pankaj", "Pankaj.SG"], ["aaya", "come.PRF.3.SG"]
+    ],
+    "translation": "Pankaj came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjectHon", "nh"],
+      ["subjectNumber", "sg"],
+      ["agreement", "sg"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "alokbhalla2026_48c",
+    "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(48c)"},
+    "language": "hind1269",
+    "primaryText": "LaRke aaye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["LaRke", "boy.PL"], ["aaye", "come.PRF.3.PL"]
+    ],
+    "translation": "The boys came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjectHon", "nh"],
+      ["subjectNumber", "pl"],
+      ["agreement", "pl"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  }
+]

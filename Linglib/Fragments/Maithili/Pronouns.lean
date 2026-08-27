@@ -1,11 +1,12 @@
 /-
-# Maithili Pronoun & Allocutive Fragment
+# Maithili Pronoun Fragment
 
-Personal pronouns and allocutive verbal morphology in Maithili (Indo-Aryan).
-Maithili has a three-level honorific system for 2nd person (non-hon / hon /
-high-hon) realized as verbal agreement morphemes on finite verbs. 3rd person
-also distinguishes honorific levels (*ũ* non-hon / *o* hon). AA is Fin-based
-and freely embeddable.
+Personal pronouns of Maithili (Indo-Aryan): a three-level honorific system for
+2nd person (non-hon / hon / high-hon); 3rd person also distinguishes honorific
+levels (*ũ* non-hon / *o* hon). Maithili has allocutive agreement, blocked with
+a second-person subject and incompatible with object agreement
+([alok-bhalla-2026], after Kumari 2022); its marker forms are not recorded
+here.
 
 -/
 
@@ -69,24 +70,6 @@ def allPronouns : List PersonalPronoun :=
   [hum, humSab] ++ secondPersonPronouns ++ [uN, o, uNSab]
 
 -- ============================================================================
--- Allocutive Markers (verbal agreement suffixes)
--- ============================================================================
-
-/-- Non-honorific finite suffix. -/
-def suffNH : AllocutiveEntry :=
-  { form := "-ah", register := .informal, gloss := "FIN.NH" }
-
-/-- Honorific finite suffix. -/
-def suffH : AllocutiveEntry :=
-  { form := "-thunh", register := .neutral, gloss := "FIN.H" }
-
-/-- High-honorific finite suffix. -/
-def suffHH : AllocutiveEntry :=
-  { form := "-lnhi", register := .formal, gloss := "FIN.HH" }
-
-def allAllocMarkers : List AllocutiveEntry := [suffNH, suffH, suffHH]
-
--- ============================================================================
 -- Verification
 -- ============================================================================
 
@@ -108,10 +91,6 @@ theorem second_person_all_2p :
 /-- Three-level register distinction in 2nd person. -/
 theorem three_levels :
     secondPersonPronouns.map (·.register) = [.informal, .neutral, .formal] := rfl
-
-/-- Allocutive markers have three levels matching 2nd person pronouns. -/
-theorem markers_three_levels :
-    allAllocMarkers.map (·.register) = [.informal, .neutral, .formal] := rfl
 
 /-- 3rd person also has a register distinction. -/
 theorem third_person_honorific :

@@ -1,10 +1,11 @@
 /-
-# Punjabi Pronoun & Allocutive Fragment
+# Punjabi Pronoun Fragment
 
-Personal pronouns and allocutive verbal morphology in Punjabi (Indo-Aryan).
-Punjabi has a two-level honorific system for 2nd person (non-hon *tũ* / hon
-*tusii*) realized as verbal agreement suffixes. 3rd person uses demonstrative
-forms (*uh* for both sg and pl). AA is Fin-based with limited embeddability.
+Personal pronouns of Punjabi (Indo-Aryan): a two-level honorific system for
+2nd person (non-hon *tũ* / hon *tusii*); 3rd person uses demonstrative forms
+(*uh* for both sg and pl). Punjabi has allocutive agreement with third-person
+subjects only ([alok-bhalla-2026], after Kaur 2020); its marker forms are not
+recorded here.
 
 -/
 
@@ -60,20 +61,6 @@ def allPronouns : List PersonalPronoun :=
   [maiN, asiiN] ++ secondPersonPronouns ++ [uh_sg, uh_pl]
 
 -- ============================================================================
--- Allocutive Markers (verbal agreement suffixes)
--- ============================================================================
-
-/-- Non-honorific agreement suffix. -/
-def suffNH : AllocutiveEntry :=
-  { form := "-ẽ", register := .informal, gloss := "AGR.NH" }
-
-/-- Honorific agreement suffix. -/
-def suffH : AllocutiveEntry :=
-  { form := "-o", register := .formal, gloss := "AGR.H" }
-
-def allAllocMarkers : List AllocutiveEntry := [suffNH, suffH]
-
--- ============================================================================
 -- Verification
 -- ============================================================================
 
@@ -96,10 +83,6 @@ theorem second_person_all_2p :
 theorem tv_distinction :
     secondPersonPronouns.any (·.register == .informal) = true ∧
     secondPersonPronouns.any (·.register == .formal) = true := ⟨rfl, rfl⟩
-
-/-- Allocutive markers match 2nd person pronoun register levels. -/
-theorem markers_match_2p :
-    allAllocMarkers.map (·.register) = secondPersonPronouns.map (·.register) := rfl
 
 /-- 3sg and 3pl share the same form (demonstrative-based). -/
 theorem third_person_homophony :

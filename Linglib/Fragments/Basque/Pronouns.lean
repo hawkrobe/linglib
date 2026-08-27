@@ -65,18 +65,19 @@ def allPronouns : List PersonalPronoun :=
   [ni, gu] ++ secondPersonPronouns ++ [zuek, hura, haiek]
 
 -- ============================================================================
--- Allocutive Markers (verbal suffixes)
+-- Allocutive Markers ([alok-bhalla-2026] (1), Oyharçabal 1993)
 -- ============================================================================
 
-/-- *-n* familiar allocutive suffix. -/
-def allocFamiliar : AllocutiveEntry :=
-  { form := "-n", register := .informal, gloss := "2sg.familiar.alloc" }
+/-- *-k* — nonhonorific addressee, male. -/
+def allocM : AllocutiveEntry := { form := "-k", register := .informal, gloss := "M.NHA" }
 
-/-- *-zu* formal allocutive suffix. -/
-def allocFormal : AllocutiveEntry :=
-  { form := "-zu", register := .formal, gloss := "2sg.formal.alloc" }
+/-- *-n* — nonhonorific addressee, female. -/
+def allocF : AllocutiveEntry := { form := "-n", register := .informal, gloss := "F.NHA" }
 
-def allAllocMarkers : List AllocutiveEntry := [allocFamiliar, allocFormal]
+/-- *-zü* — honorific addressee. -/
+def allocH : AllocutiveEntry := { form := "-zü", register := .formal, gloss := "HA" }
+
+def allAllocMarkers : List AllocutiveEntry := [allocM, allocF, allocH]
 
 -- ============================================================================
 -- Verb Agreement Examples
