@@ -64,7 +64,7 @@ Three empirical signatures:
 
 | Substrate | Provides |
 |-----------|----------|
-| `Semantics/Composition/Layered` | `BiLayered W` ⟨A, N⟩ pair, three composition rules |
+| `Semantics/Presupposition/ContentLayer` | `BiLayered W` ⟨A, N⟩ pair (rules I–III defined below) |
 | `Semantics/Highlighting` | `HighlightingContext`, `Highlighted`, `AddressesQUD` |
 | `Discourse/EvidentialIllocution` | `assert`, `present`, `EvidentialAct`, `raisedPropositions` |
 | `Semantics/Evidential/Source` | `CoarseSource` (`direct`, `hearsay`, `inference`) |
@@ -83,7 +83,44 @@ in `Fragments/Quechua/SaraguroKichwa/Evidentiality.lean`.
 
 namespace MartinezVera2026
 
-open Semantics.ContentLayer (BiLayered)
+open Presupposition
+
+/-! ### Composition of ⟨A, N⟩ pairs -/
+
+variable {W : Type*}
+
+/-- Composition rule I: β has empty NAI; α brings NAI. The new at-issue layer is `α.A β.A`;
+the new NAI is `α.N β.A`. -/
+def composeI (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) : BiLayered W :=
+  { atIssue := atFn β.atIssue, notAtIssue := naiFn β.atIssue }
+
+/-- Composition rule II: both α and β bring NAI; the new NAI accumulates `α.N β.A ∧ β.N`. -/
+def composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) : BiLayered W :=
+  { atIssue := atFn β.atIssue, notAtIssue := fun w => naiFn β.atIssue w ∧ β.notAtIssue w }
+
+/-- Composition rule III: an illocutionary operator takes the full ⟨A, N⟩ pair. -/
+def composeIII (op : BiLayered W → BiLayered W) (β : BiLayered W) : BiLayered W := op β
+
+@[simp] theorem composeI_atIssue (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) :
+    (composeI atFn naiFn β).atIssue = atFn β.atIssue := rfl
+
+@[simp] theorem composeI_notAtIssue (atFn naiFn : (W → Prop) → (W → Prop))
+    (β : BiLayered W) : (composeI atFn naiFn β).notAtIssue = naiFn β.atIssue := rfl
+
+@[simp] theorem composeII_atIssue (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) :
+    (composeII atFn naiFn β).atIssue = atFn β.atIssue := rfl
+
+@[simp] theorem composeII_notAtIssue (atFn naiFn : (W → Prop) → (W → Prop))
+    (β : BiLayered W) :
+    (composeII atFn naiFn β).notAtIssue = fun w => naiFn β.atIssue w ∧ β.notAtIssue w := rfl
+
+/-- Rule II generalizes rule I: they coincide when β's NAI is trivial. -/
+theorem composeI_eq_composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W)
+    (hβ : β.notAtIssue = fun _ => True) : composeI atFn naiFn β = composeII atFn naiFn β := by
+  ext w
+  · rfl
+  · simp [composeI, composeII, hβ]
+
 open Semantics.Highlighting (HighlightingContext Highlighted AddressesQUD addSalient)
 open Semantics.Evidential (CoarseSource)
 open Discourse (DiscourseRole)

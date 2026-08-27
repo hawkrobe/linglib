@@ -25,7 +25,7 @@ upper bound strengthens the assertion.
 
 namespace Modality
 
-open Modality.Kratzer Presupposition Semantics.ContentLayer
+open Modality.Kratzer Presupposition
 
 variable {W E : Type*} (src : ModalSource W) (D : Finset E) (P Q : E → W → Prop) (w : W)
 

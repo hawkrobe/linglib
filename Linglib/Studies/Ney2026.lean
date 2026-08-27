@@ -467,7 +467,7 @@ the trivially-failing `noSemanticValueAccount := ⊥`. A genuine
 predict no semantic value, so the discriminator stays formally sound
 but is currently unfalsifiable: any always-false account produces the
 same negative side. The principled fix is to lift `Account` to range
-over `Semantics.ContentLayer.LayeredProp` so that Camp routes the
+over `Presupposition.LayeredProp` so that Camp routes the
 unavowed content to `.implicature` while coordination routes to
 `.atIssue` — a cross-framework integration deferred until a real Camp
 study lands. -/
