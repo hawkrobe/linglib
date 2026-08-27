@@ -61,7 +61,7 @@ licenses otherwise unselected *pu* (ex. 22) — both left as prose.
 namespace Roussou2010
 
 open Greek.StandardModern.Complementizers
-open Semantics.Presupposition
+open Presupposition
 open Semantics.Composition.Tree
 open Semantics.Composition.TypeShifting
 

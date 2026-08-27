@@ -6,7 +6,7 @@ import Mathlib.Data.Finset.Basic
 
 The rival trivalent connective families on `PartialProp`, beyond the
 classical (Weak Kleene) and filtering (middle Kleene) canon of
-`Semantics.Presupposition.Basic`: Strong Kleene ([kleene-1952]), Belnap
+`Presupposition.Basic`: Strong Kleene ([kleene-1952]), Belnap
 conditional assertion / flexible accommodation ([belnap-1970],
 [geurts-2005]), the symmetric K&P disjunction ([karttunen-peters-1979]),
 and the positive-antecedent rival ([sharvit-2025]).
@@ -34,7 +34,7 @@ and the positive-antecedent rival ([sharvit-2025]).
   one definition each, with one bridge theorem instead of eight.
 -/
 
-namespace Semantics.Presupposition
+namespace Presupposition
 
 namespace PartialProp
 
@@ -378,4 +378,4 @@ theorem genuineness_comm (disj : PartialProp W → PartialProp W → PartialProp
 
 end PartialProp
 
-end Semantics.Presupposition
+end Presupposition

@@ -183,7 +183,7 @@ theorem additive_deRe_available : ye_deRe.accepted = true := rfl
 -- Constraint-based Formalization (was: Implicature/Constraints/Wang2025.lean)
 -- ============================================================================
 
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 
 /-- Local Bool-valued accessibility used by Wang2025 for `List.all` evaluation
 of the speaker-K operator. The Prop-valued canonical version lives in

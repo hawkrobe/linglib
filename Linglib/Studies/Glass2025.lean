@@ -44,7 +44,7 @@ causal derivation via the Predicate Lexicalization Constraint is
 namespace Glass2025
 
 open Doxastic
-open Semantics.Presupposition
+open Presupposition
 open ArgumentStructure
 open English.Predicates.Verbal
 open Mandarin.Predicates

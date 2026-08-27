@@ -134,7 +134,7 @@ def indexStrength (c : IndexCandidate) : Nat :=
     substrate's general Maximize Presupposition construction at
     strength 1. -/
 def indexConstraint : Constraints.Constraint IndexCandidate :=
-  Semantics.Presupposition.MaximizePresupposition.mpConstraintOf
+  Presupposition.MaximizePresupposition.mpConstraintOf
     1 indexStrength
 
 /-- With a discourse antecedent available, the indexed candidate incurs
@@ -172,7 +172,7 @@ def topicAwareIndexStrength (c : TopicCandidate) : Nat :=
 /-- The topic-aware Index! constraint. -/
 def topicAwareIndexConstraint :
     Constraints.Constraint TopicCandidate :=
-  Semantics.Presupposition.MaximizePresupposition.mpConstraintOf
+  Presupposition.MaximizePresupposition.mpConstraintOf
     1 topicAwareIndexStrength
 
 /-- A bare candidate marked as a continuing topic ties with the indexed

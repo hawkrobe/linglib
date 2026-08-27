@@ -46,8 +46,8 @@ namespace Semantics.Reference.Donnellan
 
 open Intensional (Intension)
 open Intensional.Intension (rigid IsRigid rigid_isRigid)
-open Semantics.Presupposition (PartialProp)
-open Semantics.Presupposition.PartialProp (presupOfReferent)
+open Presupposition
+open Presupposition.PartialProp
 open Semantics.Reference.Basic
 open Definiteness
 

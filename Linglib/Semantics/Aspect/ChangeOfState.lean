@@ -15,7 +15,7 @@ Each CoS predicate has:
 1. A **presupposition** about the prior state
 2. An **assertion** about the result state
 
-This maps directly to `PartialProp` from `Semantics.Presupposition`:
+This maps directly to `PartialProp` from `Presupposition`:
 - `presup`: the prior state condition
 - `assertion`: the result state condition
 
@@ -34,7 +34,7 @@ import Linglib.Semantics.Presupposition.Basic
 
 namespace Features.ChangeOfState
 
-open Semantics.Presupposition
+open Presupposition
 
 -- Change-of-State Verb Classification
 

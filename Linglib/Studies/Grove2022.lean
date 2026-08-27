@@ -74,7 +74,7 @@ derives it from scope rather than from local-context filtering.
 namespace Grove2022
 
 open Trivalent (Prop3)
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 
 /-! ## Part I — Apparatus -/
 

@@ -50,7 +50,7 @@ dynamic conjunction, conditional, and disjunction
 
 namespace DynamicSemantics
 
-open Semantics.Presupposition
+open Presupposition
 
 /-- A partial context change potential: a partial function on information
     states, the partial variant of the `CCP` API. The domain condition is

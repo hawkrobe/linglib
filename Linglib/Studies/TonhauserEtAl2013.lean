@@ -27,8 +27,8 @@ substrate's own rendering of that theory, `Context.presupSatisfied` at the matri
 
 namespace TonhauserEtAl2013
 
-open Semantics.Presupposition Semantics.Presupposition.Context
-  Semantics.Presupposition.BeliefEmbedding Semantics.Presupposition.ProjectiveContent
+open Presupposition Presupposition.Context
+  Presupposition.BeliefEmbedding Presupposition.ProjectiveContent
 
 variable {W E : Type*} (m : Set W) (c : Set W)
 

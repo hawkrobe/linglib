@@ -57,7 +57,7 @@ namespace StapsRooryck2024
 
 open Intensional (Index)
 
-open Semantics.Presupposition
+open Presupposition
 open French.Predicates
 open ArgumentStructure
 open ArgumentStructure.Affectedness
@@ -499,7 +499,7 @@ theorem dynamic_follow_high :
 The paper's key semantic contribution: par and de share at-issue content
 (Initiator(x,e)) but carry complementary presuppositions about
 proto-agentivity. Formalized using `PartialProp W` from
-`Semantics.Presupposition`. -/
+`Presupposition`. -/
 
 /-- Parameters for agentive preposition denotations (35a/35b).
     Bundled so the denotation is parametric over the event/entity model. -/

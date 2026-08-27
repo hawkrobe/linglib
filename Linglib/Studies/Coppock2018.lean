@@ -75,7 +75,7 @@ namespace Coppock2018
 
 open Trivalent (Prop3)
 open ModalLogic (box)
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 
 variable {W Ω : Type*}
 

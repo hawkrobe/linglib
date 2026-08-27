@@ -241,11 +241,11 @@ theorem indefinite_satisfies_both :
 -- ============================================================================
 
 /-! [blutner-2000]'s projection sites correspond to the accommodation
-    levels in `Semantics.Presupposition.Accommodation`. The bridge makes
+    levels in `Presupposition.Accommodation`. The bridge makes
     explicit that Blutner's OT analysis operates over the same site taxonomy
     as the Heim/Lewis/van der Sandt tradition. -/
 
-open Semantics.Presupposition.Accommodation (AccommodationLevel)
+open Presupposition.Accommodation
 
 /-- Map projection sites to the standard accommodation levels. -/
 def ProjectionSite.toAccommodationLevel : ProjectionSite → AccommodationLevel

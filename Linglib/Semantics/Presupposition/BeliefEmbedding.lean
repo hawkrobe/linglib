@@ -21,10 +21,10 @@ the attitude holder).
   [delpinal-bassi-sauerland-2024] §3.2.
 -/
 
-namespace Semantics.Presupposition.BeliefEmbedding
+namespace Presupposition.BeliefEmbedding
 
-open Semantics.Presupposition
-open Semantics.Presupposition.Context
+open Presupposition
+open Presupposition.Context
 
 variable {W : Type*} {Agent : Type*}
 
@@ -126,4 +126,4 @@ theorem opaque_implies_transparent_when_reflexive
 
 end OpaqueTransparent
 
-end Semantics.Presupposition.BeliefEmbedding
+end Presupposition.BeliefEmbedding

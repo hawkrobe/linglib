@@ -18,7 +18,7 @@ On the finest question the semantics is the best-worlds one (`want_finest_iff`).
 
 namespace Desire.QuestionBased
 
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 
 variable {W : Type*} (G N Q : List (Finset W)) (bel p : Set W)
 

@@ -52,7 +52,7 @@ namespace BaleSchwarz2022
 open Degree
 open Features.Dimension (Dimension QuotientDimension quotient_components_distinct)
 open English.MeasurePhrases (gram kilo milliliter liter MeasureTermEntry)
-open Semantics.Presupposition (PartialProp PartialValue)
+open Presupposition
 open Features (Acceptability)
 
 -- ============================================================================

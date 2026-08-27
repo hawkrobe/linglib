@@ -38,7 +38,7 @@ this apparatus live in `Studies/Zheng2025.lean`.
 namespace Modality
 
 open Modality.Kratzer
-open Semantics.Presupposition
+open Presupposition
 open Intensional.Premise
 
 variable {W : Type*}

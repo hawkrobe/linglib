@@ -76,7 +76,7 @@ open Intensional (Intension)
 open Modality (ModalFlavor)
 open Japanese.OutlookMarkers (OutlookMarkerForm)
 open Data.Examples (LinguisticExample)
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 
 /-! ### Stance classification -/
 

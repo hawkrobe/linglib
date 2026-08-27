@@ -48,7 +48,7 @@ primitive fields in `Syntax/Category/Verb/Basic.lean`, not stipulated as an enum
 [bale-schwarz-2026] [dayal-2025] [heim-1992] [icard-2012] [kennedy-2007] [maier-2015] [qing-uegaki-2025] [rappaport-hovav-levin-2024] [solstad-bott-2024] [rappaport-hovav-levin-1998]
 -/
 
-open Semantics.Presupposition
+open Presupposition
 open Features
 open ArgumentStructure
 open Features.ChangeOfState

@@ -12,7 +12,7 @@ truth-functional connectives and are blocked only by direct quotation ([potts-20
 
 The at-issue tier carries the Heyting algebra of `W → Prop` (`ᶜ`/`⊓`/`⊔`/`⇨`); the CI tier
 always takes the meet `⊓`. `TwoDimProp.ofPartialProp` bridges
-`Semantics.Presupposition.PartialProp` into this type.
+`Presupposition.PartialProp` into this type.
 
 ## Main definitions
 
@@ -202,7 +202,7 @@ def appositiveProperties : SecondaryMeaningProperties :=
 analysis. Deliberately discards presupposition *filtering*: a CI-tier presupposition projects
 through `and`/`imp` where a real presupposition would be filtered by its local context, which
 is the point — the de re presupposition is evaluated against the common ground instead. -/
-@[simps] def TwoDimProp.ofPartialProp (p : Semantics.Presupposition.PartialProp W) :
+@[simps] def TwoDimProp.ofPartialProp (p : Presupposition.PartialProp W) :
     TwoDimProp W := ⟨p.assertion, p.presup⟩
 
 end Pragmatics.Expressives

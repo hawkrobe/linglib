@@ -32,7 +32,7 @@ open scoped ENNReal
 
 namespace DTS.Also
 
-open Semantics.Presupposition
+open Presupposition
 open DTS
 open DTS.ScalarImplicature (sgnRelevance RelevanceSign)
 

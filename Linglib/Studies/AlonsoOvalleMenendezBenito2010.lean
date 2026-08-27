@@ -42,7 +42,7 @@ Table 1. The scenario verdicts (24)–(30) are checked in `rows_agree`.
 
 namespace AlonsoOvalleMenendezBenito2010
 
-open Semantics.Presupposition Data.Examples
+open Presupposition Data.Examples
 
 variable {E W : Type*} [DecidableEq E]
 

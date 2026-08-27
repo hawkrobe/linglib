@@ -198,7 +198,7 @@ theorem wxdy_partially_open :
 
 /-! ### Presupposition (§2.1) -/
 
-open Semantics.Presupposition
+open Presupposition
 
 /-- The incredulity reading presupposes the embedded proposition and has
 trivial assertion: ex. 4's diner presupposes that there is a fly in the

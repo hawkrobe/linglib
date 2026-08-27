@@ -6,11 +6,11 @@ consensus inventory of the projection literature (cf. [zeevat-1992],
 [tonhauser-beaver-roberts-simons-2013]). Fragment lexical entries carry a
 `PresupTrigger` value as theory-neutral metadata; orthogonal classifications
 of the same inventory are the projection classes of
-`Semantics.Presupposition.ProjectiveContent` and the soft/hard distinction in
+`Presupposition.ProjectiveContent` and the soft/hard distinction in
 `Semantics.Verb`.
 -/
 
-namespace Semantics.Presupposition.TriggerTypology
+namespace Presupposition.TriggerTypology
 
 /-- Presupposition trigger classes, by hosting lexical item. -/
 inductive PresupTrigger where
@@ -50,4 +50,4 @@ inductive PresupTrigger where
   | aspectual
   deriving DecidableEq, Repr
 
-end Semantics.Presupposition.TriggerTypology
+end Presupposition.TriggerTypology

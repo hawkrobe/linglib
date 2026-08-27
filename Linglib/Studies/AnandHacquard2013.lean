@@ -362,7 +362,7 @@ is `mightS S p ∧ mightS S ¬p`. The doxastic component is what lets
 Truckenbrodt: "Kommt Peter heute?" — "Ich hoffe/*will, dass er heute
 kommt") and distinguishes *hope* from pure-preferential *want*. -/
 
-open Semantics.Presupposition (PartialProp) in
+open Presupposition in
 /-- The (56) entry over the study's information-state semantics:
     presupposition = uncertainty, assertion = doxastic possibility
     plus preference. The doxastic conjunct is entailed by the first

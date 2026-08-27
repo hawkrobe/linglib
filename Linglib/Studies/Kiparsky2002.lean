@@ -219,7 +219,7 @@ asserted. Wh-extraction from presupposed content is blocked. This explains why *
 (the eating is presupposed, so "what" cannot extract from it).
 
 TODO: Full formalization requires bridging to presupposition semantics
-(Semantics.Presupposition) and question semantics (Semantics.Questions). -/
+(Presupposition) and question semantics (Semantics.Questions). -/
 
 /-- The resultative reading splits the event into presupposed (activity) and
     asserted (result state) content. -/

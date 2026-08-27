@@ -26,7 +26,7 @@ restrictions), aspectual classification, and suppression conditions live in
 `Studies/RobertsSimons2024.lean`.
 -/
 
-namespace Semantics.Presupposition.Aboutness
+namespace Presupposition.Aboutness
 
 open Features (Polarity)
 
@@ -97,4 +97,4 @@ def EntailmentRelation.projects : EntailmentRelation → Bool
   | .consequence  => false
   | .concomitant  => false
 
-end Semantics.Presupposition.Aboutness
+end Presupposition.Aboutness

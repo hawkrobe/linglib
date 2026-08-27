@@ -44,7 +44,7 @@ namespace Semantics.Conditionals.Presupposition
 
 open Semantics.Conditionals
 open Semantics.Conditionals (SimilarityOrdering)
-open Semantics.Presupposition
+open _root_.Presupposition
 
 variable {W : Type*}
 

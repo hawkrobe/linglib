@@ -853,7 +853,7 @@ theorem veridicality_from_quantifiers :
 -- § 22: Presupposition Modeling
 -- ============================================================================
 
-open Semantics.Presupposition
+open Presupposition
 
 /-- A temporal connective modeled as a presuppositional proposition.
     Veridical connectives presuppose their complement (like factives);

@@ -465,7 +465,7 @@ non-presuppositional items. -/
 
 section FilteringComparison
 
-open Semantics.Presupposition
+open Presupposition
 
 variable {W : Type*}
 

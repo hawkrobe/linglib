@@ -54,7 +54,7 @@ lemma carries the connection.
 
 namespace Semantics.Reference
 
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 
 /-- A presuppositional, context-relative individual denotation.
 

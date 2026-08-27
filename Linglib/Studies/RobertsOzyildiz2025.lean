@@ -34,7 +34,7 @@ topologically ordered vertex list so proofs reduce structurally.
 namespace RobertsOzyildiz2025
 
 open Doxastic Glass2025
-open Semantics.Presupposition
+open Presupposition
 open Causation Causation.Mechanism Causation.SEM
 
 /-! ### The belief-formation causal model -/

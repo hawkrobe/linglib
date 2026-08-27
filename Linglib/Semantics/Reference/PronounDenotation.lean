@@ -15,7 +15,7 @@ selector is the project-canonical variable denotation `interpPronoun`
 variable are the same individual *by construction* — not via a bridge
 theorem. The intrinsic presupposition is the φ-feature presupposition read
 off the entry's person/number/gender via the [sauerland-2003]-style
-cells in `Semantics.Presupposition.PhiFeatures`.
+cells in `Presupposition.PhiFeatures`.
 
 This follows [buring-2012]'s survey: the assignment lookup (his (14)), the
 feature presuppositions (his (49)/(50)), and the absence-of-features treatment
@@ -37,8 +37,8 @@ surface genders contribute the vacuous cell here; the principled route is the
 bridges plus `ContainmentPairLike.toPair`, deferred until a study needs them.
 -/
 
-open Semantics.Presupposition (PartialProp)
-open Semantics.Presupposition.PhiFeatures
+open Presupposition
+open Presupposition.PhiFeatures
 open Semantics.Reference (NominalDenot)
 open Intensional.Variables (interpPronoun DenotGS SitAssignment)
 

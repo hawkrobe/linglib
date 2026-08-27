@@ -57,12 +57,12 @@ resolution and symmetric filtering — "a cage of their own".
 
 namespace SolstadBott2024
 
-open Semantics.Presupposition.Aboutness
-open Semantics.Presupposition.ProjectiveContent
+open Presupposition.Aboutness
+open Presupposition.ProjectiveContent
 open SolstadBott2022
 open German.Predicates
-open Semantics.Presupposition
-open Semantics.Presupposition.Context
+open Presupposition
+open Presupposition.Context
 open Generalizations.Projectivity
 
 /-! ### Filtering direction and context resolution -/

@@ -69,7 +69,7 @@ suggests restricted quantification is a deep linguistic universal.
 
 namespace Belnap1970
 
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 open Aristotelian (Square SquareRelations)
 open Quantification
 open Semantics.Montague (ToyEntity)

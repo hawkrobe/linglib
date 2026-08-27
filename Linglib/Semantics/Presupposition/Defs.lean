@@ -22,8 +22,8 @@ points. References: [heim-1983], [belnap-1970], [bale-schwarz-2022].
   presupposition are inert).
 
 The connective families on `PartialProp` live in
-`Semantics.Presupposition.Basic` (classical, filtering, entailment) and
-`Semantics.Presupposition.Trivalent` (rival trivalent families).
+`Presupposition.Basic` (classical, filtering, entailment) and
+`Presupposition.Trivalent` (rival trivalent families).
 
 ## Implementation notes
 
@@ -42,7 +42,7 @@ idiom in logic-heavy files such as `Mathlib/Order/Filter/Basic.lean`.
   to arbitrary at-issue carriers.
 -/
 
-namespace Semantics.Presupposition
+namespace Presupposition
 
 open Trivalent (Prop3)
 
@@ -243,4 +243,4 @@ theorem eval_eq_eval_iff (p q : PartialProp W) :
 
 end PartialProp
 
-end Semantics.Presupposition
+end Presupposition

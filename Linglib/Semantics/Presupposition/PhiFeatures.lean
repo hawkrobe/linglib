@@ -45,11 +45,11 @@ separate general phi-feature presuppositional theory (which belongs in
 belong in `Studies/`).
 -/
 
-namespace Semantics.Presupposition.PhiFeatures
+namespace Presupposition.PhiFeatures
 
 open Mereology (Atom)
 open Features (ContainmentPair ContainmentPairLike)
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 
 -- ============================================================================
 -- §1  Generic Presuppositional Denotations
@@ -536,7 +536,7 @@ witness, that witness is atomic; if ≥ 2, their sum is non-atomic.
 ### Connection to `PresuppositionContext.presupSatisfiable`
 
 Conceivability = satisfiability in context:
-`presupSatisfiable c p` from `Semantics.Presupposition.Context`
+`presupSatisfiable c p` from `Presupposition.Context`
 checks whether `p.presup` is compatible with context set `c`. The
 conceivability presupposition of an indefinite is the meta-requirement
 that the number feature's entity-level presupposition be satisfiable.
@@ -718,4 +718,4 @@ theorem cardConceivable_mono (witnessCard : W → Nat)
 
 end CardinalityConceivability
 
-end Semantics.Presupposition.PhiFeatures
+end Presupposition.PhiFeatures

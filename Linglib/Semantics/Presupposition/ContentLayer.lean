@@ -108,7 +108,7 @@ def LayeredProp.get {W : Type*} (lp : LayeredProp W) : ContentLayer → (W → B
 -- § Bridge to PartialProp
 -- ════════════════════════════════════════════════════
 
-open Semantics.Presupposition in
+open Presupposition in
 /-- Project a `LayeredProp` to a `PartialProp` by discarding the implicature layer.
 
     This is the canonical projection: `PartialProp` is the 2-layer special case
@@ -117,7 +117,7 @@ def LayeredProp.toPartialProp {W : Type*} (lp : LayeredProp W) : PartialProp W :
   { presup := fun w => lp.presupposition w = true
   , assertion := fun w => lp.atIssue w = true }
 
-open Semantics.Presupposition Classical in
+open Presupposition Classical in
 /-- Lift a `PartialProp` to a `LayeredProp` with trivially true implicature.
 
     This is the canonical embedding: every `PartialProp` is a `LayeredProp` with
@@ -128,7 +128,7 @@ noncomputable def LayeredProp.ofPartialProp {W : Type*} (p : PartialProp W) : La
   , atIssue := fun w => if p.assertion w then true else false
   , implicature := λ _ => true }
 
-open Semantics.Presupposition Classical in
+open Presupposition Classical in
 /-- The round-trip `PartialProp → LayeredProp → PartialProp` is the identity.
 
     This confirms that `PartialProp` embeds faithfully into `LayeredProp`:

@@ -25,7 +25,7 @@ and the filtering predictions derived from partial context change potentials.
 
 namespace Heim1983
 
-open Semantics.Presupposition
+open Presupposition
 
 /--
 World type for the king example.

@@ -42,7 +42,7 @@ whence a non-modal sentence presupposes exactly what both it and its negation en
 
 namespace Beaver2001
 
-open Semantics.Presupposition DynamicSemantics Classical
+open Presupposition DynamicSemantics Classical
 
 variable {W : Type*}
 

@@ -305,7 +305,7 @@ theorem flow_restriction : sentence.val = sentence_alt_nrrc.val := rfl
     captures this: content projects past all operators without
     requiring prior establishment in context. -/
 
-open Semantics.Presupposition.ProjectiveContent (ProjectiveClass ProjectiveTrigger)
+open Presupposition.ProjectiveContent
 
 theorem nrrc_is_classB : ProjectiveTrigger.nrrc.toClass = .classB := rfl
 theorem appositive_is_classB : ProjectiveTrigger.appositive.toClass = .classB := rfl
