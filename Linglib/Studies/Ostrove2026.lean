@@ -567,10 +567,14 @@ def gaCopyControlType : CopyControlType := .obligatoryPronominal
 theorem ga_same_copy_type_as_smpm :
     gaCopyControlType = smpmCopyControlType := rfl
 
-/-- Gã syncretism row, derived from the Allotey2021 inventory:
-    reflexive ×, controlled =, bound variable = . -/
-def gaSyncretism : BVASyncretism :=
-  syncretismFromInventory Allotey2021.gaInventory "Gã"
+/-- The Gã inventory of `Studies/Allotey2021.lean` with the reflexive item
+    this paper's syncretism table records for Gã ([allotey-2021] does not
+    discuss Gã reflexives). -/
+def gaInventory : MinPronInventory PronForm :=
+  { Allotey2021.gaInventory with items := [[.locallyBound] ⟷ .reflexive] }
+
+/-- Gã syncretism row: reflexive ×, controlled =, bound variable =. -/
+def gaSyncretism : BVASyncretism := syncretismFromInventory gaInventory "Gã"
 
 /-- Gã patterns with SMPM in the syncretism typology: distinct
     reflexive, but controlled subjects and bound variables syncretic
@@ -587,7 +591,7 @@ theorem ga_syncretism_matches_smpm :
     SMPM: identical controlled-subject realization, identical pro-drop
     status. -/
 theorem ga_patterns_with_smpm :
-    Allotey2021.gaInventory.controlForm = smpmInventory.controlForm ∧
+    gaInventory.controlForm = smpmInventory.controlForm ∧
       Ga.allowsProDrop = Mixtec.SMPM.allowsProDrop :=
   ⟨rfl, rfl⟩
 

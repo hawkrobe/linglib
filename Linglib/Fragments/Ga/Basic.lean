@@ -18,7 +18,7 @@ clause typology.
 
 ## Coverage
 
-- Subject proclitics (person × number; the paper's Table 3)
+- Pronouns by person, number and case (the paper's Table 3)
 - TAM prefixes (future, progressive, perfective) and the irrealis
   marker `á`, realized in embedded control clauses as high tone on
   the subject pronoun
@@ -52,25 +52,35 @@ namespace Ga
 
 /-! ### Pronoun paradigm -/
 
-/-- Subject proclitic forms (plain subjective series, [allotey-2021]
-    Table 3), on the canonical person/number inventory; `none` for cells
-    outside Gã's 3 × 2 paradigm. Not covered: the clipped past-tense 1SG
-    variant *ĩ* and the impersonal subject pronoun *a*.
+/-- The three case forms of Gã pronouns ([allotey-2021] Table 3). -/
+inductive PronounCase where
+  | subjective
+  | objective
+  | possessive
+  deriving DecidableEq, Repr
 
-    Gã subject pronouns are proclitics on the inflected verb. In
-    [allotey-2021]'s OC examples, the embedded subject of a controlled
-    `ni`-clause is realized as an overt subject proclitic (ex 3a: `e-` for
-    a 3SG controllee) — the embedded subject position cannot be silent.
-    Merged with the irrealis marker `á` the 1SG proclitic surfaces as the
-    portmanteau *má* (ex 34) rather than plain *mi*. -/
-def subjectProclitic : Person → Number → Option String
-  | .first,  .singular => some "mi"
-  | .second, .singular => some "o"
-  | .third,  .singular => some "e"
-  | .first,  .plural   => some "wɔ"
-  | .second, .plural   => some "nyɛ"
-  | .third,  .plural   => some "amɛ"
-  | _,       _         => none
+/-- Pronoun forms by person, number and case ([allotey-2021] Table 3); `none`
+    outside the 3 × 2 paradigm. Subject pronouns are proclitics on the
+    inflected verb and cannot be dropped; only second and third person
+    singular distinguish subjective from objective forms, and the possessive
+    always matches the subjective. Not covered: the clipped past-tense 1SG
+    variant *ĩ* and the impersonal subject pronoun *a*. -/
+def pronoun : Person → Number → PronounCase → Option String
+  | .first,  .singular, _           => some "mi"
+  | .second, .singular, .objective  => some "bo"
+  | .second, .singular, _           => some "o"
+  | .third,  .singular, .objective  => some "lɛ"
+  | .third,  .singular, _           => some "e"
+  | .first,  .plural,   _           => some "wɔ"
+  | .second, .plural,   _           => some "nyɛ"
+  | .third,  .plural,   _           => some "amɛ"
+  | _,       _,         _           => none
+
+/-- Subject proclitic forms (the subjective column of Table 3). In
+    [allotey-2021]'s OC examples the embedded subject of a controlled
+    `ni`-clause is one of these, never silent; merged with the irrealis marker
+    the 1SG proclitic surfaces as the portmanteau *má*. -/
+def subjectProclitic (p : Person) (n : Number) : Option String := pronoun p n .subjective
 
 /-! ### TAM marking -/
 
@@ -165,31 +175,32 @@ inductive EmbeddedClauseType where
   | irrealisNi
   deriving DecidableEq, Repr
 
-/-- Properties distinguishing the three clause types. -/
+/-- Properties distinguishing the three clause types ([allotey-2021] §5.5). -/
 structure ClauseProperties where
-  /-- All four TAM categories available -/
+  /-- All four TAM categories available (exx 110–111 vs 118–119). -/
   unrestrictedTAM : Bool
   /-- Tense independent of the matrix clause ([landau-2004]'s `[±T]`):
-      finite complements host past/progressive/future freely (exx
-      110–111), while `ni`-clauses have only "the tense of a possible
-      future" and reject overt tense (exx 118–119). -/
+      finite complements host past/progressive/future freely, while
+      `ni`-clauses have only "the tense of a possible future" (ex 109). -/
   independentTense : Bool
-  /-- Noncoreferential embedded subject possible -/
+  /-- Noncoreferential embedded subject possible (exx 110 vs 112). -/
   noncoreferentialSubject : Bool
-  /-- Selects one of the finite complementizers (`akɛ`, `kɛji`) -/
+  /-- Selects one of the finite complementizers (`akɛ`, `kɛji`). -/
   finiteComplementizer : Bool
   /-- Matrix negation licenses an embedded NPI across this clause's
-      boundary ([allotey-2021] §5.5.3: possible across `ni`, exx
-      117a–b; impossible across `akɛ`, exx 116a–b; `kɛji` unattested
-      per-example but finite, so covered by her generalization that
-      NPIs "cannot be licensed across borders of finite" clauses). -/
+      boundary (exx 116 vs 117). -/
   npiTransparent : Bool
+  /-- Focus fronting inside the clause (exx 107–108). -/
+  focusFronting : Bool
+  /-- Negation precedes the verb (the free negator *ka*, exx 122, 125)
+      rather than following it as a suffix (exx 121, 124). -/
+  preverbalNegation : Bool
   deriving DecidableEq, Repr
 
 def clauseProperties : EmbeddedClauseType → ClauseProperties
-  | .finiteAke   => ⟨true,  true,  true,  true,  false⟩
-  | .finiteKeji  => ⟨true,  true,  true,  true,  false⟩
-  | .irrealisNi  => ⟨false, false, false, false, true⟩
+  | .finiteAke   => ⟨true,  true,  true,  true,  false, true,  false⟩
+  | .finiteKeji  => ⟨true,  true,  true,  true,  false, true,  false⟩
+  | .irrealisNi  => ⟨false, false, false, false, true,  false, true⟩
 
 def clauseComplementizer : EmbeddedClauseType → Complementizer
   | .finiteAke   => .ake
