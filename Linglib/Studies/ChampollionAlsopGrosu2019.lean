@@ -231,7 +231,10 @@ instance : IsFiniteMeasure jointPriorB :=
       exact ENNReal.natCast_lt_top _⟩
 
 /-- The extensions as sets. -/
-def semSet (i : Interp) (u : Utterance) : Set FCState := ↑(sem i u)
+def semSet (i : Interp) (u : Utterance) : Set FCState := {w | interpMeaning i u w}
+
+theorem mem_semSet {i : Interp} {u : Utterance} {w : FCState} :
+    w ∈ semSet i u ↔ interpMeaning i u w := Iff.rfl
 
 /-- The literal listeners at the biased prior (8a). -/
 noncomputable def famB (i : Interp) : Kernel Utterance FCState :=
@@ -249,44 +252,23 @@ theorem jointPriorB_real_singleton (p : FCState × Interp) :
 listener hearing *or* ranks Any Number above every other state at every rationality —
 under the exhaustified function *or* is produced there with certainty, and no other state
 has a comparable prior. -/
-theorem anyNumber_of_prior {α : ℝ} (hα : 0 < α) (w : FCState) (hw : w ≠ .anyNumber) :
+theorem anyNumber_of_prior {α : ℝ} (hα : 0 < α) {w : FCState} (hw : w ≠ .anyNumber) :
     (listenerB α .or_).fst.real {w} < (listenerB α .or_).fst.real {.anyNumber} := by
-  have hone : RSA.speaker α 1 (famB .exhaustified) .anyNumber {.or_} = 1 :=
-    speaker_apply_singleton_eq_one (L := famB .exhaustified) (cost := 1) hα one_ne_zero
-      ENNReal.one_ne_top
-      (by
-        have hL : famB .exhaustified .or_ {.anyNumber}
-            = (priorB (semSet .exhaustified .or_))⁻¹ * priorB {.anyNumber} :=
-          literalListener_indicator_apply_singleton priorB (semSet .exhaustified)
-            (Finset.mem_coe.mpr (by decide))
-        rw [hL]
-        exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _))
-          (by rw [priorB_singleton]; simp [biasedWeight]))
-      (literalListener_indicator_apply_singleton_le_one (sem := semSet .exhaustified)
-        (u := .or_) _ (measure_ne_top _ _) (Finset.mem_coe.mpr (by decide)))
-      fun u' hu' => literalListener_indicator_apply_singleton_of_notMem
-        (sem := semSet .exhaustified) _ fun h =>
-          absurd (Finset.mem_coe.mp h) (by revert hu'; cases u' <;> decide)
-  have hu : (familySpeaker famB α 1 ∘ₘ jointPriorB) {.or_} ≠ 0 :=
-    comp_familySpeaker_ne_zero (w := .anyNumber) (l := .exhaustified)
-      (by rw [jointPriorB_singleton]; simp [biasedWeight]) (by rw [hone]; exact one_ne_zero)
-  rw [Measure.fst_real_singleton, Measure.fst_real_singleton, listenerB,
-    familyListener_real_lt_iff _ _ _ hu, Finset.sum_product, Finset.sum_product,
-    Finset.sum_singleton, Finset.sum_singleton,
-    show (Finset.univ : Finset Interp) = {.literal, .exhaustified} from by decide,
-    Finset.sum_insert (by decide), Finset.sum_singleton, Finset.sum_insert (by decide),
-    Finset.sum_singleton, jointPriorB_real_singleton, jointPriorB_real_singleton,
-    jointPriorB_real_singleton, jointPriorB_real_singleton]
-  have h1 := speaker_real_singleton_le_one α 1 (famB .literal) w .or_
-  have h2 := speaker_real_singleton_le_one α 1 (famB .exhaustified) w .or_
-  have h3 : (RSA.speaker α 1 (famB .exhaustified) .anyNumber).real {.or_} = 1 := by
-    rw [measureReal_def, hone, ENNReal.toReal_one]
-  have h4 := measureReal_nonneg (μ := RSA.speaker α 1 (famB .literal) .anyNumber) (s := {.or_})
-  have hw1 : (biasedWeight w : ℝ) = 1 := by cases w <;> simp_all [biasedWeight]
-  rw [h3, hw1]
-  simp only [biasedWeight]
-  push_cast
-  linarith
+  have hother : ∀ u' ≠ Utterance.or_, FCState.anyNumber ∉ semSet .exhaustified u' := by
+    simp only [ne_eq, mem_semSet]; decide
+  have hμ : priorB {.anyNumber} ≠ 0 := by rw [priorB_singleton]; simp [biasedWeight]
+  have hone := speaker_literalListener_indicator_eq_one (cost := 1) (u := .or_) (w := .anyNumber)
+    hα one_ne_zero ENNReal.one_ne_top priorB (semSet .exhaustified) hμ
+    ((mem_semSet (i := .exhaustified) (u := .or_) (w := .anyNumber)).mpr trivial) hother
+  have hlt : (∑ p ∈ ({w} ×ˢ Finset.univ : Finset (FCState × Interp)), jointPriorB.real {p})
+      < jointPriorB.real {(.anyNumber, .exhaustified)} := by
+    rw [Finset.sum_product, Finset.sum_singleton]
+    simp only [jointPriorB_real_singleton, Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
+      show Fintype.card Interp = 2 from rfl]
+    cases w <;> first | exact absurd rfl hw | norm_num [biasedWeight]
+  rw [Measure.fst_real_singleton, Measure.fst_real_singleton, listenerB]
+  exact familyListener_real_lt_of_certain famB α 1 (p₀ := (.anyNumber, .exhaustified))
+    (by simp) hone hlt
 
 /-! ### No free choice under negation (§4, Table 9) -/
 

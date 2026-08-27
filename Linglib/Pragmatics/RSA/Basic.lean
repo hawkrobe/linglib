@@ -164,6 +164,20 @@ theorem speaker_real_singleton_le_one (α : ℝ) (cost : U → ℝ≥0∞) (L : 
   exact ENNReal.toReal_mono ENNReal.one_ne_top
     ((measure_mono (Set.subset_univ _)).trans (Kernel.ofWeights_apply_univ_le_one _ w))
 
+/-- With Boolean meanings, a state whose only true utterance is `u` produces `u` with
+certainty at any prior giving the state positive mass. -/
+theorem speaker_literalListener_indicator_eq_one [DiscreteMeasurableSpace W] {α : ℝ}
+    (hα : 0 < α) {cost : U → ℝ≥0∞} {u : U} (hc0 : cost u ≠ 0) (hctop : cost u ≠ ∞)
+    (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) {w : W} (hμ : μ {w} ≠ 0)
+    (hmem : w ∈ sem u) (hother : ∀ u' ≠ u, w ∉ sem u') :
+    speaker α cost (literalListener μ fun u => (sem u).indicator 1) w {u} = 1 :=
+  speaker_apply_singleton_eq_one hα hc0 hctop
+    (by
+      rw [literalListener_indicator_apply_singleton μ sem hmem]
+      exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hμ)
+    (literalListener_indicator_apply_singleton_le_one μ sem (measure_ne_top _ _) hmem)
+    fun u' hu' => literalListener_indicator_apply_singleton_of_notMem μ sem (hother u' hu')
+
 /-! #### Pragmatic listeners -/
 
 section Listener
@@ -390,6 +404,27 @@ theorem familyListener_snd_real_lt_iff [Fintype W] (L : Λ → Kernel U W) {α :
     posterior_snd_real_lt_iff _ _ (comp_familySpeaker_ne_zero (hμ0 (w₀, l₀)) hs), key, key,
     mul_lt_mul_iff_right₀
       (show (0 : ℝ) < μ.real {p₀} from ENNReal.toReal_pos (hμ0 p₀) (measure_ne_top _ _))]
+
+/-- A pair producing the utterance with certainty outweighs any event of smaller total prior
+mass: the listener's posterior on the pair's event exceeds that event's. -/
+theorem familyListener_real_lt_of_certain (L : Λ → Kernel U W) (α : ℝ) (cost : U → ℝ≥0∞)
+    {u : U} {E₁ E₂ : Finset (W × Λ)} {p₀ : W × Λ} (hp₀ : p₀ ∈ E₂)
+    (hs : speaker α cost (L p₀.2) p₀.1 {u} = 1) (hlt : (∑ p ∈ E₁, μ.real {p}) < μ.real {p₀}) :
+    (familyListener L α cost μ u).real ↑E₁ < (familyListener L α cost μ u).real ↑E₂ := by
+  have hpos : 0 < μ.real {p₀} :=
+    (Finset.sum_nonneg fun _ _ => measureReal_nonneg).trans_lt hlt
+  rw [familyListener_real_lt_iff L α cost
+    (comp_familySpeaker_ne_zero (w := p₀.1) (l := p₀.2) (ENNReal.toReal_pos_iff.mp hpos).1.ne'
+      (hs ▸ one_ne_zero))]
+  calc ∑ p ∈ E₁, μ.real {p} * (speaker α cost (L p.2) p.1).real {u}
+      ≤ ∑ p ∈ E₁, μ.real {p} := Finset.sum_le_sum fun p _ =>
+        mul_le_of_le_one_right measureReal_nonneg (speaker_real_singleton_le_one _ _ _ _ _)
+    _ < μ.real {p₀} := hlt
+    _ = μ.real {p₀} * (speaker α cost (L p₀.2) p₀.1).real {u} := by
+        rw [measureReal_def (μ := speaker α cost (L p₀.2) p₀.1), hs, ENNReal.toReal_one, mul_one]
+    _ ≤ ∑ p ∈ E₂, μ.real {p} * (speaker α cost (L p.2) p.1).real {u} :=
+        Finset.single_le_sum (f := fun p => μ.real {p} * (speaker α cost (L p.2) p.1).real {u})
+          (fun p _ => mul_nonneg measureReal_nonneg measureReal_nonneg) hp₀
 
 end Family
 
