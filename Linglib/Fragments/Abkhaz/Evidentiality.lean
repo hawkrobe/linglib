@@ -16,7 +16,7 @@ results and verbal report, restricted to declarative main clauses.
 
 namespace Abkhaz.Evidentiality
 
-open Semantics.Evidential
+open Evidential
 
 /-- The non-firsthand affixes *-zaap'* and *-zaarən*. -/
 def evidentials : List Evidential :=

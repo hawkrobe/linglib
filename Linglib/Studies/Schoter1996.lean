@@ -192,7 +192,7 @@ built from the guard and the semi-designation function `σ`. -/
 
 section Connectives
 
-open Evidential (guard)
+open Evidential
 
 variable {S : Type*} [LinearOrder S] [BoundedOrder S]
 

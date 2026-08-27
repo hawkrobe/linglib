@@ -60,7 +60,7 @@ namespace SpeasTenny2003
 open Minimalist
 open Semantics.Context (KContext ContextTower ContextShift)
 open Mood (Illocutionary ClauseType)
-open Semantics.Epistemicity (EpistemicAuthority EpistemicProfile)
+open Epistemicity
 
 /-! ### Pragmatic roles -/
 
@@ -369,7 +369,7 @@ abbrev evalPSpecifier : SAPMood → PRole := seatOfKnowledge
     (direct / inference / hearsay). NB this three-way coarsening merges S&T's
     top tier (personal experience) into "direct"; the paper's full evidence
     hierarchy is personal experience ≫ direct ≫ indirect ≫ hearsay (p.327). -/
-abbrev EvidPSpecifier := Semantics.Evidential.CoarseSource
+abbrev EvidPSpecifier := Evidential.CoarseSource
 
 /-- **Real bridge to `Semantics/Evidential/Epistemicity.lean`.** The Sentience Domain's
     two specifiers ARE the two main fields of an `EpistemicProfile`:

@@ -38,7 +38,7 @@ famous feature — is the visual and sensory terms. The performative and the
     parameters of information source; the performative is kept with an empty
     coverage, so the paradigm fits none of Aikhenvald's kinds. -/
 
-open Semantics.Evidential
+open Evidential
 
 def evidentials : List Evidential :=
   [ { form := "-wela/-mela", exponent := .verbalAffix, covers := ∅ },

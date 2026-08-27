@@ -42,7 +42,7 @@ must not directly settle the prejacent.
 
 namespace VonFintelGillies2010
 
-open Semantics.Evidential
+open Evidential
 open Data.Examples
 
 /-! ### Evidence types -/
@@ -73,7 +73,7 @@ instance : HasCoarseSource EvidenceType where
 /-- All VF&G evidence types are nonfuture: their perspective is always
     retrospective or contemporaneous (T ≤ A). -/
 theorem all_evidence_types_nonfuture (e : EvidenceType) :
-    Semantics.Evidential.IsNonfuture e := by
+    Evidential.IsNonfuture e := by
   cases e <;> decide
 
 /-! ### Adapters over the example rows -/

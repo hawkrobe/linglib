@@ -20,7 +20,7 @@ namespace Tuyuca.Evidentiality
 Tuyuca's 5-term D1 system per [aikhenvald-2004] Ch 2 §2.4 and
 [barnes-1984]. -/
 
-open Semantics.Evidential
+open Evidential
 
 /-- Tuyuca evidential inventory in the new typed form. Five entries:
     two `Direct` (visual/non-visual sensory), two `Inferential`

@@ -13,7 +13,7 @@ firsthand evidence only, retrospective otherwise.
 
 ## Main definitions
 
-* `Semantics.Evidential.CoarseSource.block`, `Parameter.coarse` — the domains as blocks.
+* `Evidential.CoarseSource.block`, `Parameter.coarse` — the domains as blocks.
 * `Evidential.toCoarseSource` — the coarse source of a term, when defined.
 * `Evidential.finpartition` — the paradigm of a well-formed inventory.
 
@@ -27,7 +27,7 @@ firsthand evidence only, retrospective otherwise.
 * [willett-1988]
 -/
 
-namespace Semantics.Evidential
+namespace Evidential
 
 /-- Willett's coarse domains as blocks of parameters. -/
 def CoarseSource.block : CoarseSource → Finset Parameter
@@ -43,11 +43,11 @@ def Parameter.coarse : Parameter → CoarseSource
 
 theorem Parameter.mem_block (p : Parameter) : p ∈ p.coarse.block := by cases p <;> decide
 
-end Semantics.Evidential
+end Evidential
 
 namespace Evidential
 
-open Semantics.Evidential
+open Evidential
 
 /-- The coarse source of an evidential, when its coverage lies within one of Willett's
 domains; a non-firsthand term has none. -/

@@ -35,9 +35,9 @@ extension respectively) and are left for future work.
 
 -/
 
-namespace Semantics.Epistemicity
+namespace Epistemicity
 
-open Semantics.Evidential
+open Evidential
 open Features.Mirativity
 open Semantics.Context
 
@@ -104,4 +104,4 @@ theorem epistemicAuthority_shift_invariant {W E P T : Type*} [DecidableEq E]
     epistemicAuthority (tower.push σ) knower = epistemicAuthority tower knower := by
   simp only [epistemicAuthority, ContextTower.push_origin]
 
-end Semantics.Epistemicity
+end Epistemicity

@@ -18,7 +18,7 @@ firsthand information. The [cumming-2026] tense-evidential paradigm data are in
 
 namespace Bulgarian.Evidentiality
 
-open Semantics.Evidential
+open Evidential
 
 /-- The non-firsthand *l*-form; the aorist is its unmarked counterpart. -/
 def evidentials : List Evidential :=

@@ -16,7 +16,7 @@ non-firsthand is fused with tense and the copula.
 
 namespace Turkish.Evidentiality
 
-open Semantics.Evidential
+open Evidential
 
 /-- The non-firsthand *-mIş*; the *-DI* past is evidentiality-neutral, not a firsthand term. -/
 def evidentials : List Evidential :=

@@ -15,7 +15,7 @@ namespace WestGreenlandic.Evidentiality
 West Greenlandic's inferential mood: a single verbal-affix marker
 covering inference; no dedicated direct or reportative marker. -/
 
-open Semantics.Evidential
+open Evidential
 
 def evidentials : List Evidential :=
   [ { form := "-gunarpoq", exponent := .verbalAffix, covers := {.inference, .assumption} } ]

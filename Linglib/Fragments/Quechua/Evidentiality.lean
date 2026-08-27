@@ -20,7 +20,7 @@ Cuzco Quechua's canonical B1 Andean system: direct `-mi`, reportative
 `-si`, conjectural/inferential `-chá`. Obligatory second-position
 clitics on finite clauses. -/
 
-open Semantics.Evidential
+open Evidential
 
 def evidentials : List Evidential :=
   [ { form := "-mi", exponent := .clitic2P, covers := {.visual, .sensory} },

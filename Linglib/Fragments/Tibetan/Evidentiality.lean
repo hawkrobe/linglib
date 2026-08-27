@@ -18,7 +18,7 @@ and auxiliary system: `red`/`yod` (direct, personal knowledge) vs
 `'dug`/`yin` (indirect, new information). Grammaticalized lexical
 opposition. -/
 
-open Semantics.Evidential
+open Evidential
 
 def evidentials : List Evidential :=
   [ { form := "red", exponent := .lexicalFrame, covers := {.visual, .sensory} },

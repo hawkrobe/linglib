@@ -230,7 +230,7 @@ theorem direct_evidence_blocks_both :
 
 /-! ### Epistemic authority bridge -/
 
-open Semantics.Epistemicity
+open Epistemicity
 
 /-- Strong assertions (ego + direct) correspond to settling kernels.
     When the speaker has privileged access AND direct evidence, the
