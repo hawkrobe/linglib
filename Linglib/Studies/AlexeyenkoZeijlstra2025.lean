@@ -1,15 +1,6 @@
 import Linglib.Features.WordOrder
-import Linglib.Features.Number.Basic
-import Linglib.Features.Gender.Basic
-import Linglib.Semantics.Definiteness.Defs
 import Linglib.Studies.ZwickyPullum1983
 import Linglib.Fragments.Slavic.Russian.Agreement
-import Linglib.Fragments.Slavic.Russian.Case
-import Linglib.Fragments.Slavic.Serbian.Case
-import Linglib.Fragments.German.Case
-import Linglib.Fragments.Greek.Case
-import Linglib.Fragments.Latin.Case
-import Linglib.Fragments.Icelandic.Case
 import Linglib.Data.Examples.AlexeyenkoZeijlstra2025
 
 /-!
@@ -25,13 +16,15 @@ covers every nominal feature, or its attributivizer is morphophonologically
 independent of the adjective.
 
 Both conditions are derived here from the paper's analysis: direct modification
-is available only to adjectives that carry all φ and case features (`classify`,
-read off per-language concord data and the Fragment case inventories); every
-other language needs an attributivizer, which forces adjacency exactly when it
-is an adjectival affix, overt or null, under the Input Correspondence Principle
-(`AttrStatus.Adjacent`). The resulting `Possible` reproduces the decision trees
-and agrees with the sample of Table 3 on every language the paper profiles; the
-example rows ground the AP-internal orders and the attributive judgments.
+is available only to adjectives whose agreement profile (`Agreement.Profile`,
+the Fragments' target-by-dimension record) is shared across the predicative and
+attributive targets and covers every feature of the DP, case included
+(`marking`); every other language needs an attributivizer, which forces
+adjacency exactly when it is an adjectival affix, overt or null, under the
+Input Correspondence Principle (`AttrStatus.Adjacent`). The resulting
+`Possible` encodes the decision trees and agrees with the sample of Table 3 on
+every language the paper profiles; the example rows ground the AP-internal
+orders and the attributive judgments.
 
 ## References
 
@@ -44,49 +37,28 @@ example rows ground the AP-internal orders and the attributive judgments.
 
 namespace AlexeyenkoZeijlstra2025
 
-open Features Semantics.Definiteness Data.Examples
+open Features Data.Examples
 
-/-! ### Adjectival concord -/
+/-! ### Agreement marking -/
 
-/-- The nominal features an adjectival form is specified for. -/
-structure Concord where
-  numbers : Finset Number := ∅
-  genders : Finset Gender := ∅
-  cases : Finset Case := ∅
-  definiteness : Finset Definiteness := ∅
-  deriving DecidableEq
-
-/-- Pointwise inclusion of specifications. -/
-instance : LE Concord where
-  le a b := a.numbers ⊆ b.numbers ∧ a.genders ⊆ b.genders ∧ a.cases ⊆ b.cases ∧
-    a.definiteness ⊆ b.definiteness
-
-instance : DecidableLE Concord := λ _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
-
-/-- A language's adjectival concord: the predicative and attributive forms and the
-    φ-features of its DP. Case is present on every DP whether or not it is
-    realized, so completeness demands overt case on the adjective as well. -/
-structure AdjConcord where
-  pred : Concord
-  attr : Concord
-  dp : Concord
-
-/-- The four ways an adjective can be marked: no overt agreement; agreement on
-    attributive forms that predicative forms lack (an agreeing attributivizer, or
-    definiteness-sensitive forms as in Icelandic); a shared marker missing some
+/-- How an adjective is marked: no overt agreement; agreement on attributive forms
+    that predicative forms lack (an agreeing attributivizer, or the
+    definiteness-sensitive forms of Icelandic); a shared marker missing some
     nominal feature; a shared marker covering them all. -/
-inductive Agreement
+inductive Marking
   | unmarked
   | distinct
   | incomplete
   | complete
   deriving DecidableEq
 
-/-- Read the marking type off concord data. -/
-def AdjConcord.classify (c : AdjConcord) : Agreement :=
-  if c.attr = {} then .unmarked
-  else if c.pred ≠ c.attr then .distinct
-  else if c.dp ≤ c.attr ∧ c.attr.cases.Nonempty then .complete
+/-- Read the marking off an agreement profile and the features available in the DP.
+    Case is present on every DP whether or not it is realized, so completeness
+    demands overt case on the adjective. -/
+def marking (agr : Agreement.Profile) (dp : Finset Agreement.Dimension) : Marking :=
+  if agr .attributive = ∅ then .unmarked
+  else if agr .predicate ≠ agr .attributive then .distinct
+  else if dp ⊆ agr .attributive ∧ .case ∈ agr .attributive then .complete
   else .incomplete
 
 /-! ### Attributivizers -/
@@ -130,22 +102,25 @@ def Position.intervening : Position → HeadDirection
   | .postnominal => .headFinal
 
 /-- What the generalization needs to know about a language: where its adjectives
-    stand, which AP-internal orders its predicative adjectives allow, how they are
-    marked, and what attributivizer they take. A language whose adjectives are not
-    φ/κ-complete must have an attributivizer. -/
+    stand, which AP-internal orders its predicative adjectives allow, how they
+    agree, which features its DP carries, and what attributivizer they take. A
+    language whose adjectives are not φ/κ-complete must have an attributivizer. -/
 structure Profile where
   positions : Finset Position
   apOrders : Finset HeadDirection
-  agreement : Agreement
+  agreement : Agreement.Profile
+  dp : Finset Agreement.Dimension
   attributivizer : Option AttrStatus
-  attr_of_incomplete : agreement ≠ .complete → attributivizer ≠ none
+  attr_of_incomplete : marking agreement dp ≠ .complete → attributivizer ≠ none
+
+def Profile.marking (p : Profile) : Marking := AlexeyenkoZeijlstra2025.marking p.agreement p.dp
 
 /-- An XP may separate the adjective from the noun on the given side: the AP order
     creates the configuration and either the adjective modifies directly or its
     attributivizer does not need to be adjacent to it. -/
 def Possible (p : Profile) (pos : Position) : Prop :=
   pos.intervening ∈ p.apOrders ∧
-    (p.agreement = .complete ∨ ∃ s ∈ p.attributivizer, ¬ s.Adjacent)
+    (p.marking = .complete ∨ ∃ s ∈ p.attributivizer, ¬ s.Adjacent)
 
 instance (p : Profile) (pos : Position) : Decidable (Possible p pos) :=
   inferInstanceAs (Decidable (_ ∧ (_ ∨ ∃ s ∈ _, _)))
@@ -153,131 +128,106 @@ instance (p : Profile) (pos : Position) : Decidable (Possible p pos) :=
 /-- The Modifier-Noun Adjacency Generalization: intervention only under a complete
     shared agreement marker or an independent attributivizer. -/
 theorem mag (p : Profile) (pos : Position) (h : Possible p pos) :
-    p.agreement = .complete ∨ ∃ s ∈ p.attributivizer, ¬ s.Adjacent :=
+    p.marking = .complete ∨ ∃ s ∈ p.attributivizer, ¬ s.Adjacent :=
   h.2
 
 /-! ### The languages the paper profiles -/
 
-private def full (cases : Finset Case) (definiteness : Finset Definiteness := ∅) : Concord :=
-  { numbers := {.singular, .plural}, genders := {.masculine, .feminine, .neuter}, cases,
-    definiteness }
+/-- An adjectival agreement profile from its attributive and predicative targets. -/
+private def adj (attr pred : Finset Agreement.Dimension) : Agreement.Profile
+  | .attributive => attr
+  | .predicate => pred
+  | _ => ∅
+
+/-- Gender, number and case on the adjective. -/
+private def φκ : Finset Agreement.Dimension := {.number, .gender, .case}
 
 /-- Greek: one form, inflected for gender, number and case in both uses. -/
-def greekConcord : AdjConcord :=
-  ⟨full Greek.Case.caseInventory, full Greek.Case.caseInventory, full Greek.Case.caseInventory⟩
+def greek : Profile := ⟨{.prenominal}, {.headInitial}, adj φκ φκ, φκ, none, by decide +kernel⟩
 
 /-- Russian long forms, the only attributive forms, carry number, gender and case in
-    both uses; the caseless short forms are predicative only and never at issue. -/
-def russianConcord : AdjConcord :=
-  ⟨full Russian.Case.caseInventory, full Russian.Case.caseInventory,
-    full Russian.Case.caseInventory⟩
+    both uses (the Fragment's profile); the caseless short forms are predicative
+    only and never at issue. -/
+def russian : Profile :=
+  ⟨{.prenominal}, {.headInitial}, Russian.Agreement.profile, φκ, none, by decide +kernel⟩
 
 /-- Latin adjectives are marked for gender, number and case in both uses. -/
-def latinConcord : AdjConcord :=
-  ⟨full Latin.Case.caseInventory, full Latin.Case.caseInventory, full Latin.Case.caseInventory⟩
+def latin : Profile := ⟨{.prenominal}, {.headInitial}, adj φκ φκ, φκ, none, by decide +kernel⟩
+
+/-- Kalaallisut: affixal number and case agreement shared by predicative and
+    attributive forms. -/
+def kalaallisut : Profile :=
+  ⟨{.postnominal}, {.headFinal}, adj {.number, .case} {.number, .case}, {.number, .case}, none,
+    by decide +kernel⟩
+
+/-- Italian adjectives agree in gender and number but never case; the DP carries
+    case regardless. -/
+def italian : Profile :=
+  ⟨{.prenominal, .postnominal}, {.headInitial}, adj {.number, .gender} {.number, .gender},
+    {.number, .gender}, some .null, by decide +kernel⟩
 
 /-- German predicative adjectives are bare; attributive forms carry gender, number
     and case. -/
-def germanConcord : AdjConcord :=
-  ⟨{}, full German.Case.caseInventory, full German.Case.caseInventory⟩
-
-private def italianForm : Concord :=
-  { numbers := {.singular, .plural}, genders := {.masculine, .feminine} }
-
-/-- Italian adjectives agree in gender and number but never case. -/
-def italianConcord : AdjConcord := ⟨italianForm, italianForm, italianForm⟩
-
-/-- English adjectives carry no agreement at all. -/
-def englishConcord : AdjConcord := ⟨{}, {}, { numbers := {.singular, .plural} }⟩
-
-/-- Icelandic strong forms appear predicatively; attributive forms additionally
-    encode definiteness through the strong/weak choice. -/
-def icelandicConcord : AdjConcord :=
-  ⟨full Icelandic.Case.caseInventory, full Icelandic.Case.caseInventory {.definite, .indefinite},
-    full Icelandic.Case.caseInventory {.definite, .indefinite}⟩
-
-/-- Serbo-Croatian short forms are predicative; attributive long forms add
-    definiteness or specificity. -/
-def serboCroatianConcord : AdjConcord :=
-  ⟨full Serbian.Case.caseInventory, full Serbian.Case.caseInventory {.definite, .indefinite},
-    full Serbian.Case.caseInventory {.definite, .indefinite}⟩
-
-private def dutchForm : Concord :=
-  { numbers := {.singular, .plural}, genders := {.common, .neuter},
-    definiteness := {.definite, .indefinite} }
+def german : Profile :=
+  ⟨{.prenominal}, {.headInitial, .headFinal}, adj φκ ∅, φκ, some .adjectivalAffix,
+    by decide +kernel⟩
 
 /-- Dutch predicative adjectives are bare; the attributive schwa is sensitive to
     gender, number and definiteness. -/
-def dutchConcord : AdjConcord := ⟨{}, dutchForm, dutchForm⟩
-
-/-- Build a profile from concord data. -/
-def Profile.ofConcord (positions : Finset Position) (apOrders : Finset HeadDirection)
-    (c : AdjConcord) (attributivizer : Option AttrStatus)
-    (h : c.classify ≠ .complete → attributivizer ≠ none := by decide +kernel) : Profile :=
-  ⟨positions, apOrders, c.classify, attributivizer, h⟩
-
-def greek : Profile := .ofConcord {.prenominal} {.headInitial} greekConcord none
-def russian : Profile := .ofConcord {.prenominal} {.headInitial} russianConcord none
-def latin : Profile := .ofConcord {.prenominal} {.headInitial} latinConcord none
-def italian : Profile :=
-  .ofConcord {.prenominal, .postnominal} {.headInitial} italianConcord (some .null)
-def german : Profile :=
-  .ofConcord {.prenominal} {.headInitial, .headFinal} germanConcord (some .adjectivalAffix)
 def dutch : Profile :=
-  .ofConcord {.prenominal} {.headInitial, .headFinal} dutchConcord (some .adjectivalAffix)
-def english : Profile := .ofConcord {.prenominal} {.headInitial} englishConcord (some .null)
+  ⟨{.prenominal}, {.headInitial, .headFinal}, adj {.number, .gender, .definiteness} ∅,
+    {.number, .gender, .definiteness}, some .adjectivalAffix, by decide +kernel⟩
+
+/-- English adjectives carry no agreement at all. -/
+def english : Profile :=
+  ⟨{.prenominal}, {.headInitial}, adj ∅ ∅, {.number}, some .null, by decide +kernel⟩
+
+/-- Icelandic strong forms appear predicatively; attributive forms additionally
+    encode definiteness through the strong/weak choice. -/
 def icelandic : Profile :=
-  .ofConcord {.prenominal} {.headInitial, .headFinal} icelandicConcord (some .adjectivalAffix)
+  ⟨{.prenominal}, {.headInitial, .headFinal}, adj (φκ ∪ {.definiteness}) φκ,
+    φκ ∪ {.definiteness}, some .adjectivalAffix, by decide +kernel⟩
+
+/-- Serbo-Croatian short forms are predicative; attributive long forms add
+    definiteness or specificity. -/
 def serboCroatian : Profile :=
-  .ofConcord {.prenominal} {.headInitial} serboCroatianConcord (some .adjectivalAffix)
-
-/-- The dimensions a specification covaries in — its projection onto the agreement
-    profile of the Fragments. -/
-def Concord.dims (c : Concord) : Finset Agreement.Dimension :=
-  (if c.numbers = ∅ then ∅ else {.number}) ∪ (if c.genders = ∅ then ∅ else {.gender}) ∪
-    (if c.cases = ∅ then ∅ else {.case}) ∪ (if c.definiteness = ∅ then ∅ else {.definiteness})
-
-/-- The Russian long-form specification covaries in exactly the dimensions the
-    Fragment's agreement profile records for attributive and predicate targets. -/
-theorem russian_dims :
-    russianConcord.attr.dims = Russian.Agreement.profile .attributive ∧
-    russianConcord.pred.dims = Russian.Agreement.profile .predicate := by
-  decide +kernel
-
-/-- The marking types the paper motivates are what the concord data yield. -/
-theorem classify_profiled :
-    greekConcord.classify = .complete ∧ russianConcord.classify = .complete ∧
-    latinConcord.classify = .complete ∧ germanConcord.classify = .distinct ∧
-    italianConcord.classify = .incomplete ∧ englishConcord.classify = .unmarked ∧
-    icelandicConcord.classify = .distinct ∧ serboCroatianConcord.classify = .distinct ∧
-    dutchConcord.classify = .distinct := by
-  decide +kernel
+  ⟨{.prenominal}, {.headInitial}, adj (φκ ∪ {.definiteness}) φκ, φκ ∪ {.definiteness},
+    some .adjectivalAffix, by decide +kernel⟩
 
 /-- Mandarin: no agreement; the attributivizer *de* cliticizes to the AP. -/
 def mandarin : Profile :=
-  ⟨{.prenominal}, {.headInitial, .headFinal}, .unmarked, some .clitic, by decide⟩
+  ⟨{.prenominal}, {.headInitial, .headFinal}, adj ∅ ∅, ∅, some .clitic, by decide +kernel⟩
 
 /-- Tagalog: no agreement; the linker is a clitic. -/
-def tagalog : Profile := ⟨{.prenominal}, {.headInitial}, .unmarked, some .clitic, by decide⟩
+def tagalog : Profile :=
+  ⟨{.prenominal}, {.headInitial}, adj ∅ ∅, ∅, some .clitic, by decide +kernel⟩
 
 /-- Farsi: no agreement; the ezafe cliticizes to the noun phrase. -/
-def farsi : Profile := ⟨{.postnominal}, {.headFinal}, .unmarked, some .clitic, by decide⟩
+def farsi : Profile :=
+  ⟨{.postnominal}, {.headFinal}, adj ∅ ∅, ∅, some .clitic, by decide +kernel⟩
 
 /-- Atong: no agreement; clitic attributivizer. -/
-def atong : Profile := ⟨{.postnominal}, {.headFinal}, .unmarked, some .clitic, by decide⟩
-
-/-- Kalaallisut: affixal agreement shared by predicative and attributive forms and
-    covering the nominal features. -/
-def kalaallisut : Profile := ⟨{.postnominal}, {.headFinal}, .complete, none, by decide⟩
+def atong : Profile :=
+  ⟨{.postnominal}, {.headFinal}, adj ∅ ∅, ∅, some .clitic, by decide +kernel⟩
 
 /-- Basque: the decision tree places it under a null attributivizer with adjectives
     that are not φ/κ-complete. -/
-def basque : Profile := ⟨{.postnominal}, {.headFinal}, .unmarked, some .null, by decide⟩
+def basque : Profile :=
+  ⟨{.postnominal}, {.headFinal}, adj ∅ ∅, ∅, some .null, by decide +kernel⟩
 
 /-- Japanese: strictly head-final APs, so the filter is obeyed trivially. -/
-def japanese : Profile := ⟨{.prenominal}, {.headFinal}, .unmarked, some .null, by decide⟩
+def japanese : Profile :=
+  ⟨{.prenominal}, {.headFinal}, adj ∅ ∅, ∅, some .null, by decide +kernel⟩
 
 theorem japanese_trivial : ¬ Possible japanese .prenominal := by decide +kernel
+
+/-- The marking types the paper motivates are what the profiles yield. -/
+theorem marking_profiled :
+    greek.marking = .complete ∧ russian.marking = .complete ∧ latin.marking = .complete ∧
+    kalaallisut.marking = .complete ∧ italian.marking = .incomplete ∧
+    german.marking = .distinct ∧ dutch.marking = .distinct ∧ icelandic.marking = .distinct ∧
+    serboCroatian.marking = .distinct ∧ english.marking = .unmarked := by
+  decide +kernel
 
 /-! ### Table 3 -/
 
