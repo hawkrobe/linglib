@@ -1,94 +1,36 @@
-import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Data.Examples.AlbrightHayes2003
 
 /-!
-# Albright & Hayes (2003): Rules vs. analogy in English past tenses
-[albright-hayes-2003] [berko-1958] [albright-hayes-2002]
-[mikheev-1997] [pinker-prince-1988] [bybee-moder-1983]
+# Albright & Hayes 2003: rules vs. analogy in English past tenses
 
-A computational/experimental study of how speakers form past tenses
-for novel English verbs (wug verbs). The paper's central architectural
-claim is that morphological knowledge is best modelled as **multiple
-stochastic rules** — each with a structural description, a scope, a
-hit count, and an adjusted-confidence score — and that this model
-fits human wug-test data better than either a purely analogical model
-or a single-default-rule dual-mechanism model.
+Morphological knowledge is a set of stochastic rules learned by minimal generalization over
+the lexicon, each scored by its reliability (hits over scope, discounted for small scope). The
+most reliable rules are *islands of reliability*, and the lexicon has them for regular as well
+as irregular changes; the wug ratings of Experiment 2 track them for both — against the dual
+mechanism model, whose single default rule leaves novel regulars context-free — while a purely
+analogical model, free to use variegated similarity, misses the islands and misassigns the
+regular allomorphs.
 
-## Architectural commitments
+This file defines `StochasticRule` with its reliability order, the rules the paper reports
+(`island_more_reliable`, `gleed_ranking`), the Table 3 cells (`IORCategory`), and reads
+Appendix A — every rated past of the 58 wug stems — into cell means: `regulars_ior` and
+`irregulars_ior` are the island effects for both past types, `regulars_not_cell_invariant` the
+failure of the single-default-rule prediction, `tradeoff` the competition effect of Fig. 3–4,
+`analogical_misses_islands` Table 4, and `burnt_underestimated` the rule-based model's one
+systematic error. The wug-paradigm vocabulary consumed by [breiss-katsuda-kawahara-2026]
+is declared first.
 
-Three positions are at stake:
+## References
 
-- **Single-default-rule dual-mechanism**: regular pasts are derived
-  by a *single*, context-free rule; only irregular pasts are sensitive
-  to phonological context. Predicts that novel-word ratings of regular
-  pasts are *invariant* in the phonological context of the stem.
-- **Pure analogy** (e.g. GCM-style): all generalisation flows from
-  variegated similarity to existing lexemes. No structured rules; the
-  influence of a model form on a novel form can ride on any feature.
-- **Multiple stochastic rules** (this paper): the lexicon supplies
-  *many* rules per change, each restricted to a structurally-defined
-  context. A novel form's past-tense rating depends on the *adjusted
-  confidence* of the most accurate rule whose structural description
-  it satisfies. Predicts both regular and irregular ratings vary with
-  phonological context — specifically, with **island-of-reliability
-  membership**.
-
-## Empirical core: islands of reliability for **both** regulars and irregulars
-
-A&H's central empirical contribution is that wug ratings of *regular*
-past tenses **also** show context sensitivity, contrary to the
-single-default-rule prediction. The 4-way Core stimulus design
-crosses island-of-reliability (IOR) status for regulars × IOR for
-irregulars, and the published rating data show:
-
-- ratings F(1, 78) = 27.23, P < 0.0001 main effect of islandhood
-- production-probability F(1, 78) = 14.05, P < 0.001 main effect of
-  islandhood
-
-with no significant interaction. **Both** regulars and irregulars are
-sensitive to IOR membership.
-
-## What this file formalises
-
-The shared wug-paradigm vocabulary (formerly `Morphology/WugTest.lean`,
-dissolved into this file 2026-07-17) is declared below the module
-docstring; [breiss-katsuda-kawahara-2026] imports it from here. The
-paper-specific content supplies:
-
-- The 4-way IOR Core wug stem set (example 14 in the paper);
-- A `StochasticRule` type with scope/hits/rawConfidence;
-- A note on Mikheev (1997) lower-confidence-limit adjustment, kept
-  as an abstract specification rather than a numerical implementation;
-- An `AHWugCell` type that participates in the WugTest contract via
-  `HasAttestation`;
-- A local typeclass `HasIORForRegular` (binary IOR factor — the
-  WugTest `HasFrequency` analogue for the discrete IOR dimension);
-- Two paradigm-level predicates `NovelRegularsShowIORGradient` and
-  `NovelRegularsInvariantInIOR`;
-- A structural discriminator
-  `novelRegularsGradient_inconsistent_with_invariance`;
-- A concrete A&H step-function model that satisfies the gradient and
-  hence rules out the single-default-rule prediction by structural
-  impossibility.
-
-## Out of scope
-
-Per CLAUDE.md "do not encode conclusions as definitions": we do not
-formalise the numerical correlation tables (r = 0.745 etc.) as Lean
-theorems with `rfl` proofs. The numbers are reported in prose and the
-paper-side citation. We formalise the *qualitative* prediction-shape
-contrasts that the empirical correlations support.
-
-We also do not implement the [mikheev-1997] lower-confidence-limit
-interval. The discriminator below depends only on `rawConfidence` and
-on the qualitative shape of the prediction (gradient on novel cells
-across IOR membership), not on the adjustment formula. We expose
-`adjustedConfidence` as a placeholder definition equal to
-`rawConfidence` so that downstream code can reference the API name;
-wiring this to a real Wilson interval (or the [albright-hayes-2002]
-MGL implementation) is deferred.
+* [albright-hayes-2003]
+* [albright-hayes-2002]
+* [berko-1958]
+* [pinker-prince-1988]
+* [bybee-moder-1983]
+* [mikheev-1997]
 -/
 
 /-! ### Wug-paradigm vocabulary ([berko-1958])
@@ -264,112 +206,25 @@ end Morphology.WugTest
 
 namespace AlbrightHayes2003
 
-open Morphology.WugTest (Attestation HasFactor HasAttestation Rate
-  NovelShowsFactorGradient NovelInvariantInFactor
-  novelGradient_inconsistent_with_invariance)
+open Data.Examples Examples
 
--- ============================================================================
--- § 1: Core wug stems — 4-way IOR design (Table 3, example 14)
--- ============================================================================
+/-! ### Stochastic rules -/
 
-/-- Island-of-reliability category for a wug stem. The 4-way Core
-    design crosses (IOR for regulars) × (IOR for irregulars); a stem
-    is in exactly one cell, picked out by two booleans. Structural
-    encoding via product avoids the 4-way enum + 2 helper accessors
-    pattern: the cells of a 2×2 design *are* the boolean product.
-    Table 3 of [albright-hayes-2003]. -/
-structure IORCategory where
-  /-- Whether the stem is in an island of reliability for the regular
-      allomorph. Example for `regular = true`: *bredge* /brɛdʒ/. -/
-  iorForRegular : Bool
-  /-- Whether the stem is in an island of reliability for some
-      irregular pattern. Example for `iorForIrregular = true` only:
-      *spling* /splɪŋ/ (close to *spring/sling/sting*). -/
-  iorForIrregular : Bool
-  deriving DecidableEq, Repr, Inhabited
-
-/-! ### Named cells of Table 3, retained as `abbrev`s so that
-paper-side terminology survives in the witness definitions. -/
-
-namespace IORCategory
-
-/-- IOR for **both** regulars and irregulars: e.g. *dize*. -/
-abbrev regAndIrreg : IORCategory := ⟨true, true⟩
-
-/-- IOR for **regulars only**: e.g. *bredge*. -/
-abbrev regOnly : IORCategory := ⟨true, false⟩
-
-/-- IOR for **irregulars only**: e.g. *spling*. -/
-abbrev irregOnly : IORCategory := ⟨false, true⟩
-
-/-- IOR for **neither**: e.g. *gude*. -/
-abbrev neither : IORCategory := ⟨false, false⟩
-
-end IORCategory
-
-/-- A wug stem with its IPA form and its IOR category. The IPA strings
-    are taken verbatim from example (14) of [albright-hayes-2003]. -/
-structure WugStem where
-  ipa : String
-  category : IORCategory
-  deriving Repr, Inhabited
-
-/-! ### Sample stems from each cell of Table 3 (example 14) -/
-
--- IOR for both
-def stem_dize : WugStem := { ipa := "daɪz", category := .regAndIrreg }
-def stem_fro  : WugStem := { ipa := "fro",  category := .regAndIrreg }
-def stem_rife : WugStem := { ipa := "raɪf", category := .regAndIrreg }
-
--- IOR for regulars only
-def stem_bredge : WugStem := { ipa := "brɛdʒ", category := .regOnly }
-def stem_gezz   : WugStem := { ipa := "gɛz",   category := .regOnly }
-def stem_nace   : WugStem := { ipa := "nes",   category := .regOnly }
-
--- IOR for irregulars only
-def stem_fleep  : WugStem := { ipa := "flip",  category := .irregOnly }
-def stem_gleed  : WugStem := { ipa := "glid",  category := .irregOnly }
-def stem_spling : WugStem := { ipa := "splɪŋ", category := .irregOnly }
-
--- IOR for neither
-def stem_gude  : WugStem := { ipa := "gud",  category := .neither }
-def stem_nung  : WugStem := { ipa := "nʌŋ",  category := .neither }
-def stem_preak : WugStem := { ipa := "prik", category := .neither }
-
--- ============================================================================
--- § 2: Stochastic rules — minimal generalization with scope and hits
--- ============================================================================
-
-/-- A past-tense structural change (the "input → output" half of a
-    rule). The three regular allomorphs and a residual category for
-    vowel-changing irregulars and zero-derivation. -/
+/-- A past-tense structural change: the three regular suffixes, a vowel change, or no change. -/
 inductive PastChange where
-  | suffixD       -- /-d/ as in `rub-rubbed`
-  | suffixT       -- /-t/ as in `jump-jumped`
-  | suffixSchwaD  -- /-əd/ as in `vote-voted`
-  | vowelChange   -- e.g. [ɪ] → [ʌ] as in `cling-clung`
-  | noChange      -- e.g. `cut-cut`
+  | suffixD
+  | suffixT
+  | suffixSchwaD
+  | vowelChange
+  | noChange
   deriving DecidableEq, Repr, Inhabited
 
-/-- Whether a past-tense change is one of the three regular suffixes. -/
 def PastChange.isRegular : PastChange → Bool
   | .suffixD | .suffixT | .suffixSchwaD => true
   | .vowelChange | .noChange => false
 
-/-- A stochastic rule: a structural change applied in a structurally-
-    defined context, together with its `scope` (number of forms in
-    the lexicon meeting the structural description) and `hits`
-    (number of those forms on which the change actually obtains).
-
-    The bundled invariant `hits ≤ scope` is a real-data property of
-    rules extracted by a minimal-generalization procedure: every form
-    counted as a hit must be in the scope. This is the structural fact
-    that makes `rawConfidence ≤ 1`.
-
-    The structural-description / context is kept abstract — A&H's
-    rules are extracted from the lexicon by a minimal-generalization
-    procedure, and the discriminator below does not depend on any
-    specific encoding of the contexts. -/
+/-- A stochastic rule: a change with the number of lexicon forms meeting its structural
+description (`scope`) and the number on which the change holds (`hits`). -/
 structure StochasticRule where
   change : PastChange
   scope : ℕ
@@ -377,211 +232,139 @@ structure StochasticRule where
   hits_le_scope : hits ≤ scope
   deriving Repr
 
-/-- Raw confidence: hits / scope. Defaults to 0 when scope = 0 to
-    avoid division by zero; that case never arises for a rule
-    extracted from real data. [albright-hayes-2003]. -/
-def StochasticRule.rawConfidence (r : StochasticRule) : ℚ :=
-  if r.scope = 0 then 0 else (r.hits : ℚ) / (r.scope : ℚ)
+/-- `r` is less reliable than `s`: its raw confidence, hits over scope, is smaller — the
+counts cross-multiplied. The lower-confidence-limit discount the paper applies to raw
+confidence ([mikheev-1997], fitted at 0.55) is not formalized. -/
+def StochasticRule.LessReliable (r s : StochasticRule) : Prop := r.hits * s.scope < s.hits * r.scope
 
-/-- `rawConfidence ≤ 1` follows structurally from `hits_le_scope`. -/
-theorem StochasticRule.rawConfidence_le_one (r : StochasticRule) :
-    r.rawConfidence ≤ 1 := by
-  unfold rawConfidence
-  split_ifs with h
-  · exact zero_le_one
-  · have hscope_pos : (0 : ℚ) < (r.scope : ℚ) := by
-      exact_mod_cast Nat.pos_of_ne_zero h
-    rw [div_le_one hscope_pos]
-    exact_mod_cast r.hits_le_scope
+instance (r s : StochasticRule) : Decidable (r.LessReliable s) := by
+  unfold StochasticRule.LessReliable; infer_instance
 
-/-- [mikheev-1997] lower-confidence-limit adjustment to raw
-    confidence, used by [albright-hayes-2003] to penalise rules
-    supported by few forms; A&H §2.3.4 reports the best-fit lower-
-    confidence-limit parameter α = 0.55.
+/-- The general suffixation rule (7a) over the 4253-pair learning set. -/
+def generalRule : StochasticRule := ⟨.suffixD, 4253, 4034, by decide⟩
 
-    **TODO**: this is a placeholder equal to `rawConfidence`. A faithful
-    implementation would apply the Wilson-style interval used in the
-    [albright-hayes-2002] MGL code. The discriminator below depends
-    on `rawConfidence`, not on this adjustment, so the placeholder is
-    sound for the present proof obligations. -/
-noncomputable def adjustedConfidence (r : StochasticRule) : ℚ := r.rawConfidence
+/-- (8): *-t* after a voiceless fricative — every one of the 352 such verbs is regular. -/
+def voicelessFricativeRule : StochasticRule := ⟨.suffixT, 352, 352, le_rfl⟩
 
--- ============================================================================
--- § 3: Wug cell — wiring to the wug-paradigm vocabulary
--- ============================================================================
+/-- Table 1: the rules deriving *gleeded*, *gled*, *glode*, and *gleed*. -/
+def gleeded : StochasticRule := ⟨.suffixSchwaD, 1234, 1146, by decide⟩
+def gled : StochasticRule := ⟨.vowelChange, 7, 6, by decide⟩
+def glode : StochasticRule := ⟨.vowelChange, 184, 6, by decide⟩
+def gleedUnchanged : StochasticRule := ⟨.noChange, 1234, 29, by decide⟩
 
-/-- A cell in the A&H wug-rating paradigm. Carries:
+/-- An island of reliability outscores the general rule. -/
+theorem island_more_reliable : generalRule.LessReliable voicelessFricativeRule := by decide
 
-    - the stem being rated;
-    - whether the stem is presented as a wug (novel) or a real verb
-      (attested) — A&H's cross-paradigm comparison;
-    - the IOR-for-regular factor — the propositional phonological-
-      context dimension that A&H's experiments turn on. The field is
-      `Prop` rather than `Bool` because IOR-membership is a
-      propositional property of the stimulus, not a designed numeric
-      coordinate; mathlib quality requires Prop with `[Decidable]` for
-      such fields rather than `Bool` standing in for a proposition. -/
-structure AHWugCell where
-  stem : WugStem
-  attestation : Attestation
-  withinIORForRegular : Prop
+/-- Table 1's ranking of *gleed*'s pasts by raw confidence. -/
+theorem gleed_ranking :
+    gleedUnchanged.LessReliable glode ∧ glode.LessReliable gled ∧ gled.LessReliable gleeded := by
+  decide
 
-namespace AHWugCell
+/-! ### The Core design (Table 3) and Appendix A -/
 
-/-- The wug-vocabulary `HasAttestation` instance: BKK and
-    A&H both use the same wug paradigm contract. Lens laws by `rfl`
-    on the structure projections. -/
-instance : HasAttestation AHWugCell where
-  factorOf c := c.attestation
-  setFactor a c := { c with attestation := a }
-  factorOf_setFactor := by intros; rfl
-  setFactor_factorOf := by intros; rfl
-  setFactor_setFactor := by intros; rfl
+/-- A Core stem's cell: whether it occupies an island of reliability for the regular past and
+for some irregular past. -/
+structure IORCategory where
+  iorForRegular : Bool
+  iorForIrregular : Bool
+  deriving DecidableEq, Repr
 
-end AHWugCell
+def IORCategory.ofString : String → Option IORCategory
+  | "both" => some ⟨true, true⟩
+  | "regOnly" => some ⟨true, false⟩
+  | "irregOnly" => some ⟨false, true⟩
+  | "neither" => some ⟨false, false⟩
+  | _ => none
 
--- ============================================================================
--- § 4: A binary "island-of-reliability" lens
--- ============================================================================
+/-- A printed decimal read as an integer of its digits: ratings in hundredths, production
+probabilities in thousandths. -/
+def digits (s : String) : ℕ :=
+  s.toList.foldl (fun n c => if c.isDigit then 10 * n + (c.toNat - '0'.toNat) else n) 0
 
-/-- A&H's discriminator runs on the categorical *island membership*
-    dimension; the WugTest paradigm contract handles this through the
-    `HasFactor Cell Prop` specialisation, parallel to
-    `HasFrequency = HasFactor Cell ℝ`. The lens-law shape is shared.
+/-- The Appendix A rows of one past type, in the cells satisfying `p` (Table A2's Peripheral
+stems have no cell). -/
+def rows (regular : Bool) (p : IORCategory → Bool) : List LinguisticExample :=
+  Examples.all.filter fun r =>
+    r.feature? "pastType" = some (if regular then "regular" else "irregular") ∧
+      ((r.feature? "cell").bind IORCategory.ofString).any p
 
-    The Prop factor inherits its `<` from mathlib's complete-Boolean-
-    algebra structure on `Prop` (`p < q ↔ (p → q) ∧ ¬(q → p)`), so
-    `NovelShowsFactorGradient (F := Prop)` instantiates to "rate is
-    strictly higher under any pair where the second IOR proposition
-    strictly entails the first" — exactly A&H's prediction reading IOR
-    as a propositional property. -/
-abbrev HasIORForRegular (Cell : Type) := HasFactor Cell Prop
+/-- A row's numeric feature. -/
+def value (key : String) (r : LinguisticExample) : ℕ := digits ((r.feature? key).getD "0")
 
-namespace AHWugCell
+/-- The sum of a numeric feature over rows. -/
+def total (key : String) (rs : List LinguisticExample) : ℕ := (rs.map (value key)).sum
 
-instance : HasIORForRegular AHWugCell where
-  factorOf c := c.withinIORForRegular
-  setFactor p c := { c with withinIORForRegular := p }
-  factorOf_setFactor := by intros; rfl
-  setFactor_factorOf := by intros; rfl
-  setFactor_setFactor := by intros; rfl
+/-- The mean of `key` over `A` exceeds its mean over `B`, cross-multiplied. -/
+def MeanGT (key : String) (A B : List LinguisticExample) : Prop :=
+  total key A * B.length > total key B * A.length
 
-end AHWugCell
+instance (key : String) (A B : List LinguisticExample) : Decidable (MeanGT key A B) := by
+  unfold MeanGT; infer_instance
 
--- ============================================================================
--- § 5: Paradigm-level predictions
--- ============================================================================
+/-- Islands of reliability for regulars: novel regular pasts are rated higher, and volunteered
+more often, when the stem occupies an island for the regular change. -/
+theorem regulars_ior :
+    MeanGT "adjustedRating" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) ∧
+      MeanGT "production" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) := by
+  decide
 
-variable {Cell : Type} {R : Type}
+/-- Islands of reliability for irregulars, likewise. -/
+theorem irregulars_ior :
+    MeanGT "adjustedRating" (rows false (·.iorForIrregular)) (rows false (!·.iorForIrregular)) ∧
+      MeanGT "production" (rows false (·.iorForIrregular)) (rows false (!·.iorForIrregular)) := by
+  decide
 
-/-- A rate observable shows the **novel-regulars IOR gradient** if,
-    on novel cells, switching the IOR-for-regular factor from `false`
-    to `true` strictly raises the rate. The shared paradigm-level
-    predicate `NovelShowsFactorGradient (F := Bool)` already expresses
-    exactly this: the only `Bool` pair satisfying `f₁ < f₂` is
-    `false < true`. This is the A&H multiple-stochastic-rule
-    prediction: novel regulars receive higher ratings when the stem
-    occupies an island where the regular allomorph works particularly
-    well. -/
-abbrev NovelRegularsShowIORGradient
-    [HasAttestation Cell] [HasIORForRegular Cell] [LT R]
-    (rate : Rate Cell R) : Prop :=
-  NovelShowsFactorGradient (F := Prop) rate
+/-- The single-default-rule prediction — novel regular ratings do not vary with the stem's
+cell — fails on the Core data: the regulars-only and irregulars-only cells differ. -/
+theorem regulars_not_cell_invariant :
+    total "adjustedRating" (rows true (· = ⟨true, false⟩)) *
+        (rows true (· = ⟨false, true⟩)).length ≠
+      total "adjustedRating" (rows true (· = ⟨false, true⟩)) *
+        (rows true (· = ⟨true, false⟩)).length := by
+  decide
 
-/-- A rate observable is **invariant in IOR for novel regulars** if,
-    on novel cells, switching the IOR-for-regular factor leaves the
-    rate unchanged. This is the single-default-rule dual-mechanism
-    prediction: regular pasts are derived by one rule whose
-    confidence does not vary with phonological context, so novel
-    regular ratings cannot vary with IOR membership. Specialises
-    `NovelInvariantInFactor (F := Prop)`. -/
-abbrev NovelRegularsInvariantInIOR
-    [HasAttestation Cell] [HasIORForRegular Cell]
-    (rate : Rate Cell R) : Prop :=
-  NovelInvariantInFactor (F := Prop) rate
+/-- Competition (Figs. 3–4): a past is rated higher when its rival is not in an island —
+regulars in the regulars-only cell beat those in the both cell, and in the neither cell beat
+those in the irregulars-only cell; irregulars symmetrically. -/
+theorem tradeoff :
+    MeanGT "adjustedRating" (rows true (· = ⟨true, false⟩)) (rows true (· = ⟨true, true⟩)) ∧
+      MeanGT "adjustedRating" (rows true (· = ⟨false, false⟩)) (rows true (· = ⟨false, true⟩)) ∧
+      MeanGT "adjustedRating" (rows false (· = ⟨false, true⟩)) (rows false (· = ⟨true, true⟩)) ∧
+      MeanGT "adjustedRating" (rows false (· = ⟨false, false⟩))
+        (rows false (· = ⟨true, false⟩)) := by
+  decide
 
--- ============================================================================
--- § 7: Concrete A&H step-function model
--- ============================================================================
+/-- The rule-based model's predicted regular ratings are higher in the regular islands: the
+stimuli were chosen by the model. -/
+theorem ruleBased_islands :
+    MeanGT "ruleBased" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) := by decide
 
-/-! These definitions are concrete witnesses that the A&H prediction-
-shape `NovelRegularsShowIORGradient` is realised by a model. The
-model is a step function: ratings on IOR=true cells equal `slope`,
-ratings on IOR=false cells equal `0`. The shape is intentionally
-minimal — the goal is to exhibit a model satisfying the gradient,
-not to fit the empirical numbers. -/
+/-- Table 4: on the twelve regular pasts in the best islands the analogical model, unable to
+locate structured similarity, scores below both the participants and the rule-based model. -/
+theorem analogical_misses_islands :
+    ∀ r ∈ Examples.all,
+      r.primaryText ∈ ["blafed", "driced", "naced", "teshed", "wissed", "flidged", "bredged",
+        "daped", "shilked", "tarked", "spacked", "bligged"] →
+      value "analogical" r < value "adjustedRating" r ∧
+        value "analogical" r < value "ruleBased" r := by
+  decide +kernel
 
-/-- Step-function regular-rating model: rating = `slope` when the
-    IOR-for-regular proposition holds, 0 otherwise. A faithful proxy
-    for the monotonic relationship between IOR-supported rule-
-    confidence and novel-form ratings reported in
-    [albright-hayes-2003] for the regulars panel. Noncomputable
-    because the IOR-for-regular field is `Prop` rather than `Bool`;
-    `Classical.propDecidable` discharges the `Decidable`-of-`if`. -/
-noncomputable def ahRegularRating (slope : ℝ) (c : AHWugCell) : ℝ :=
-  open Classical in
-  if c.withinIORForRegular then slope else 0
+/-- The pseudo-*burnt* irregulars of (15), Table A2. -/
+def burnt : List LinguisticExample :=
+  Examples.all.filter fun r =>
+    r.primaryText ∈ ["grelt", "murnt", "scoilt", "shurnt", "skelt", "snelt", "squilt"]
 
-/-- A&H's model satisfies `NovelRegularsShowIORGradient` for any
-    positive rating slope. The `Prop`-valued IOR factor satisfies
-    `f₁ < f₂` iff `f₁ → f₂` and `¬(f₂ → f₁)`; the only consistent
-    case (modulo classical reasoning) is `¬f₁ ∧ f₂`, on which the
-    rate jumps from 0 to `slope`. -/
-theorem ah_satisfies_NovelRegularsShowIORGradient
-    (slope : ℝ) (hSlope : 0 < slope) :
-    NovelRegularsShowIORGradient (ahRegularRating slope) := by
-  intro c f₁ f₂ hf
-  -- `Prop`'s `<` decomposes via `lt_iff_le_not_le`; on `Prop`, `≤` is
-  -- implication.  Classical case analysis on f₁ and f₂ kills three
-  -- of the four cases; only `¬f₁ ∧ f₂` is consistent with `f₁ < f₂`.
-  have h_le : f₁ ≤ f₂ := le_of_lt hf
-  have h_nle : ¬ f₂ ≤ f₁ := not_le_of_gt hf
-  by_cases h₁ : f₁
-  · exact absurd (fun _ => h₁) h_nle
-  · by_cases h₂ : f₂
-    · show (open Classical in if (HasFactor.setFactor f₁
-              (HasFactor.setFactor Attestation.novel c)).withinIORForRegular
-            then slope else 0) <
-           (open Classical in if (HasFactor.setFactor f₂
-              (HasFactor.setFactor Attestation.novel c)).withinIORForRegular
-            then slope else 0)
-      show (open Classical in if f₁ then slope else 0) <
-           (open Classical in if f₂ then slope else 0)
-      rw [if_neg h₁, if_pos h₂]
-      exact hSlope
-    · exact absurd (fun hf2 => absurd hf2 h₂) h_nle
+/-- The rule-based model's one systematic error: it underrates the *burnt*-class forms, which
+the analogical model overrates. -/
+theorem burnt_underestimated :
+    total "ruleBased" burnt < total "adjustedRating" burnt ∧
+      total "adjustedRating" burnt < total "analogical" burnt := by
+  decide
 
-/-- A concrete `AHWugCell` witness — the wug stem *bredge*
-    (regulars-only IOR) presented as a novel form. Used as the
-    discriminator-corollary witness below. -/
-def cell_bredge : AHWugCell where
-  stem := stem_bredge
-  attestation := .novel
-  withinIORForRegular := True
-
-/-- **A&H rules out the single-default-rule dual-mechanism
-    prediction** (the [pinker-prince-1988] family). Wired through
-    `Morphology/WugTest.lean`'s `novelGradient_inconsistent_with_invariance`
-    at `F := Bool`: the empirical fact that novel regulars show an
-    IOR gradient is structurally incompatible with the single-rule
-    prediction that novel regulars are invariant in phonological
-    context. Any account in the latter family is ruled out by
-    structural impossibility, not just empirical fit.
-
-    NB: this discriminator only captures A&H's *anti-dual-mechanism*
-    prong. A&H also argue against pure analogy via §4.3.2 ("Failure of
-    the analogical model to locate islands of reliability"); the
-    structured-vs-variegated similarity contrast that drives the
-    anti-analogy prong is not formalised here. See [bybee-moder-1983]
-    for the analogical tradition A&H argue against. -/
-theorem ah_excludes_singleDefaultRule
-    (slope : ℝ) (hSlope : 0 < slope) :
-    ¬ NovelRegularsInvariantInIOR (ahRegularRating slope) := by
-  intro h_inv
-  refine novelGradient_inconsistent_with_invariance (F := Prop)
-    (ahRegularRating slope)
-    (ah_satisfies_NovelRegularsShowIORGradient slope hSlope)
-    h_inv cell_bredge False True ?_
-  exact ⟨False.elim, fun h => h trivial⟩
+/-- Participants preferred regular pasts overall. -/
+theorem regulars_preferred :
+    MeanGT "rating" (Examples.all.filter fun r => r.feature? "pastType" = some "regular")
+      (Examples.all.filter fun r => r.feature? "pastType" = some "irregular") := by
+  decide
 
 end AlbrightHayes2003
