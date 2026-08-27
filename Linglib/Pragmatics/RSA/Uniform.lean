@@ -415,6 +415,21 @@ theorem uniformJointListener_fst_real_lt_of_divPowSum (hsem : ∀ t, ∃ c, t �
 /-! ### Latent families at the uniform prior -/
 
 omit [Nonempty C] in
+/-- A pair whose state the utterance does not describe under its latent receives no
+posterior mass, as soon as some state is described under some latent. -/
+theorem familyListener_uniform_apply_singleton_eq_zero {Λ : Type*} [Fintype Λ]
+    [MeasurableSpace Λ] [DiscreteMeasurableSpace Λ] [Nonempty Λ] (sem : Λ → C → Finset T)
+    {α : ℝ} (hα : 0 < α) {c : C} (hc : ∃ l t, t ∈ sem l c) {p : T × Λ}
+    (hp : p.1 ∉ sem p.2 c) :
+    familyListener (fun l => uniformListener (sem l)) α 1 (uniformOn Set.univ) c {p} = 0 :=
+  let ⟨l, t, h⟩ := hc
+  familyListener_apply_singleton_eq_zero (fun l => uniformListener (sem l)) α 1
+    (comp_familySpeaker_ne_zero (L := fun l => uniformListener (sem l)) (α := α) (cost := 1)
+      (μ := uniformOn Set.univ) (w := t) (l := l) (u := c) (uniformOn_univ_singleton_ne_zero _)
+      (uniformSpeaker_apply_singleton_ne_zero (sem l) hα.le h))
+    (uniformSpeaker_apply_singleton_eq_zero (sem p.2) hα hp)
+
+omit [Nonempty C] in
 /-- The evaluation register for a latent family at a natural rationality and the uniform
 prior on (state, latent) pairs: posterior preference between two events of pairs is the
 ℕ-valued common-denominator comparison — a kernel `decide`. The strict inequality carries
