@@ -28,12 +28,6 @@ cualquiera* (`upperBoundedSat`, `notUpperBounded`, (122)–(127)); under an impe
 attitude the anchor can be coindexed with the external modal's, the harmonic readings of
 §4.3 (`harmonic`, (82)–(85)).
 
-The rows record the paper's context-relative judgments: `position_rows` checks the
-flavor pattern and the epistemic and decision scenarios against the models, and
-`entry_rows` checks the cross-linguistic contrasts of §§5–6 (at-issue status under
-embedding, flavor selectivity, unremarkable readings, upper bounds) against the
-`ModalIndefiniteEntry` fragments.
-
 ## References
 
 * [alonso-ovalle-royer-2024]
