@@ -24,6 +24,22 @@ total.
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
+namespace MeasureTheory.Measure
+
+variable {β : Type*} [MeasurableSpace β] [Fintype β] [MeasurableSingletonClass β]
+
+/-- A finite sum of scaled Dirac measures evaluates at a singleton to its weight. -/
+theorem sum_smul_dirac_apply_singleton (w : β → ℝ≥0∞) (b : β) :
+    (∑ b', w b' • dirac b') {b} = w b := by
+  rw [finsetSum_apply,
+    Finset.sum_eq_single_of_mem b (Finset.mem_univ b) fun b' _ hb' => by
+      rw [smul_apply, smul_eq_mul, dirac_apply' _ (.singleton b),
+        Set.indicator_of_notMem (fun h => hb' (Set.mem_singleton_iff.mp h)), mul_zero],
+    smul_apply, smul_eq_mul, dirac_apply' _ (.singleton b),
+    Set.indicator_of_mem (Set.mem_singleton b), Pi.one_apply, mul_one]
+
+end MeasureTheory.Measure
+
 namespace ProbabilityTheory.Kernel
 
 variable {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
@@ -40,15 +56,9 @@ noncomputable def ofWeights (w : α → β → ℝ≥0∞) : Kernel α β :=
 
 @[simp] theorem ofWeights_apply_singleton (w : α → β → ℝ≥0∞) (a : α) (b : β) :
     ofWeights w a {b} = w a b / ∑ b', w a b' := by
-  have hval : (∑ b', w a b' • Measure.dirac b') {b} = w a b := by
-    rw [Measure.finsetSum_apply,
-      Finset.sum_eq_single_of_mem b (Finset.mem_univ b) fun b' _ hb' => by
-        rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply' _ (.singleton b),
-          Set.indicator_of_notMem (fun h => hb' (Set.mem_singleton_iff.mp h)), mul_zero],
-      Measure.smul_apply, smul_eq_mul, Measure.dirac_apply' _ (.singleton b),
-      Set.indicator_of_mem (Set.mem_singleton b), Pi.one_apply, mul_one]
   show ((∑ b', w a b')⁻¹ • ∑ b', w a b' • Measure.dirac b') {b} = _
-  rw [Measure.smul_apply, smul_eq_mul, hval, ENNReal.div_eq_inv_mul]
+  rw [Measure.smul_apply, smul_eq_mul, Measure.sum_smul_dirac_apply_singleton,
+    ENNReal.div_eq_inv_mul]
 
 omit [MeasurableSingletonClass β] in
 /-- A row with a positive entry and finite entries normalizes to a

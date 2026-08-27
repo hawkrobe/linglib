@@ -56,6 +56,24 @@ theorem posterior_apply_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω
   rw [hrect]
   ring
 
+/-- Comparing posterior masses of finite events reduces to comparing prior-weighted
+likelihood sums; the observation marginal cancels. -/
+theorem posterior_real_finset_lt_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (E₁ E₂ : Finset Ω) :
+    ((κ†μ) x).real ↑E₁ < ((κ†μ) x).real ↑E₂
+      ↔ (∑ ω ∈ E₁, μ.real {ω} * (κ ω).real {x}) < ∑ ω ∈ E₂, μ.real {ω} * (κ ω).real {x} := by
+  have hne : ∀ E : Finset Ω, (∑ ω ∈ E, μ {ω} * κ ω {x}) ≠ ∞ := fun E =>
+    ENNReal.sum_ne_top.mpr fun ω _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
+  rw [measureReal_def, measureReal_def, ← sum_measure_singleton, ← sum_measure_singleton]
+  simp_rw [posterior_apply_singleton κ μ hx, div_eq_mul_inv]
+  rw [← Finset.sum_mul, ← Finset.sum_mul, ← div_eq_mul_inv, ← div_eq_mul_inv,
+    ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (hne E₁) hx) (ENNReal.div_ne_top (hne E₂) hx),
+    ENNReal.div_lt_div_iff_left hx (measure_ne_top _ _),
+    ← ENNReal.toReal_lt_toReal (hne E₁) (hne E₂),
+    ENNReal.toReal_sum (fun ω _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
+    ENNReal.toReal_sum (fun ω _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))]
+  simp_rw [ENNReal.toReal_mul]
+  exact Iff.rfl
+
 /-- A single state of positive prior mass and positive emission witnesses a
 positive observation marginal. -/
 theorem comp_apply_singleton_ne_zero {Ω' 𝓧' : Type*} [MeasurableSpace Ω']
@@ -88,6 +106,19 @@ theorem snd_apply_singleton [Fintype Ω] (m : Measure (Ω × Θ)) (θ : Θ) :
       ext ⟨a, b⟩; simp [eq_comm],
     ← sum_measure_singleton, Finset.sum_product]
   exact Finset.sum_congr rfl fun ω _ => Finset.sum_singleton _ _
+
+/-- The state marginal at a singleton is the mass of the corresponding product event. -/
+theorem fst_real_singleton [Fintype Θ] (m : Measure (Ω × Θ)) (ω : Ω) :
+    m.fst.real {ω} = m.real ↑(({ω} : Finset Ω) ×ˢ (Finset.univ : Finset Θ)) := by
+  rw [measureReal_def, measureReal_def, fst_apply_singleton, ← sum_measure_singleton,
+    Finset.sum_product, Finset.sum_singleton]
+
+/-- The latent marginal at a singleton is the mass of the corresponding product event. -/
+theorem snd_real_singleton [Fintype Ω] (m : Measure (Ω × Θ)) (θ : Θ) :
+    m.snd.real {θ} = m.real ↑((Finset.univ : Finset Ω) ×ˢ ({θ} : Finset Θ)) := by
+  rw [measureReal_def, measureReal_def, snd_apply_singleton, ← sum_measure_singleton,
+    Finset.sum_product]
+  exact congrArg _ (Finset.sum_congr rfl fun ω _ => (Finset.sum_singleton _ _).symm)
 
 end MeasureTheory.Measure
 

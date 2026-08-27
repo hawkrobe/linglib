@@ -103,6 +103,14 @@ theorem uniformSpeaker_apply_singleton_ne_zero {α : ℝ} (hα : 0 ≤ α) {t : 
     (fun c' => uniformListener_apply_singleton_le_one sem c' t)
     (uniformListener_apply_singleton_ne_zero sem h)
 
+/-- A state truly described by a single choice produces it with certainty. -/
+theorem uniformSpeaker_apply_singleton_eq_one {α : ℝ} (hα : 0 < α) {t : T} {c : C}
+    (hmem : t ∈ sem c) (hother : ∀ c' ≠ c, t ∉ sem c') : uniformSpeaker sem α t {c} = 1 :=
+  speaker_apply_singleton_eq_one (L := uniformListener sem) (cost := 1) hα one_ne_zero
+    ENNReal.one_ne_top (uniformListener_apply_singleton_ne_zero sem hmem)
+    (uniformListener_apply_singleton_le_one sem c t) fun c' hc' => by
+      rw [uniformListener_apply_singleton, if_neg (hother c' hc')]
+
 variable [DecidableEq O] (obs : C → O)
 
 theorem sum_rpow_uniformListener {α : ℝ} (hα : 0 < α) (t : T) :
@@ -402,6 +410,52 @@ theorem uniformJointListener_fst_real_lt_of_divPowSum (hsem : ∀ t, ∃ c, t �
   rw [key _ _ (fun n hn => hdvd₁ n (hfsub t₁ n hn)) hdvd₂,
     key _ _ (fun n hn => hdvd₂ n (hfsub t₂ n hn)) hdvd₁,
     div_lt_div_iff_of_pos_right (by have := NeZero.ne D; positivity)]
+  exact_mod_cast hlt
+
+/-! ### Latent families at the uniform prior -/
+
+omit [Nonempty C] in
+/-- The evaluation register for a latent family at a natural rationality and the uniform
+prior on (state, latent) pairs: posterior preference between two events of pairs is the
+ℕ-valued common-denominator comparison — a kernel `decide`. The strict inequality carries
+its own truth witness. -/
+theorem familyListener_uniform_real_lt_of_divPowSum {Λ : Type*} [Fintype Λ] [DecidableEq Λ]
+    [MeasurableSpace Λ] [DiscreteMeasurableSpace Λ] [Nonempty Λ] (sem : Λ → C → Finset T)
+    (hsem : ∀ l t, ∃ c, t ∈ sem l c) {k D : ℕ} [NeZero k] [NeZero D]
+    (hdvd : ∀ l t, ∀ n ∈ profile (sem l) t, n ∣ D) {c : C} {E₁ E₂ : Finset (T × Λ)}
+    (hlt : familyDivPowSum sem D k c E₁ < familyDivPowSum sem D k c E₂) :
+    (familyListener (fun l => uniformListener (sem l)) k 1 (uniformOn Set.univ) c).real ↑E₁
+      < (familyListener (fun l => uniformListener (sem l)) k 1 (uniformOn Set.univ) c).real
+          ↑E₂ := by
+  rw [familyDivPowSum_eq_sum, familyDivPowSum_eq_sum] at hlt
+  have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne k))
+  obtain ⟨p₀, -, hp₀⟩ := Finset.exists_ne_zero_of_sum_ne_zero
+    (Nat.pos_iff_ne_zero.mp (lt_of_le_of_lt (Nat.zero_le _) hlt))
+  have hmem₀ : p₀.1 ∈ sem p₀.2 c := by
+    by_contra h
+    exact hp₀ (by simp [h])
+  have hu : (familySpeaker (fun l => uniformListener (sem l)) k 1 ∘ₘ uniformOn Set.univ) {c}
+      ≠ 0 :=
+    comp_familySpeaker_ne_zero (w := p₀.1) (l := p₀.2) (uniformOn_univ_singleton_ne_zero p₀)
+      (uniformSpeaker_apply_singleton_ne_zero (sem p₀.2) hα.le hmem₀)
+  have key : ∀ E : Finset (T × Λ),
+      (∑ p ∈ E, (uniformOn (Set.univ : Set (T × Λ))).real {p}
+        * (speaker k 1 (uniformListener (sem p.2)) p.1).real {c})
+      = (Fintype.card (T × Λ) : ℝ)⁻¹ * ∑ p, (if p ∈ E then
+          (if p.1 ∈ sem p.2 c then (((D / (sem p.2 c).card) ^ k : ℕ) : ℝ) else 0) else 0)
+            / ((profile (sem p.2) p.1).divPowSum D k : ℝ) := by
+    intro E
+    simp_rw [ite_div, zero_div]
+    rw [Finset.sum_ite_mem, Finset.univ_inter, Finset.mul_sum]
+    refine Finset.sum_congr rfl fun p _ => ?_
+    rw [uniformOn_univ_real_singleton, uniformSpeaker_real_singleton_divPowSum (sem p.2)
+      (hdvd p.2 p.1), ite_div, zero_div]
+  rw [familyListener_real_lt_iff _ _ _ hu, key, key,
+    mul_lt_mul_iff_right₀ (inv_pos.mpr (Nat.cast_pos.mpr Fintype.card_pos)),
+    sum_div_lt_sum_div_iff fun p => by
+    exact_mod_cast Multiset.divPowSum_pos (NeZero.ne D) (hdvd p.2 p.1)
+      (profile_ne_zero (sem p.2) (hsem p.2) p.1)]
+  simp only [ite_mul, zero_mul] at hlt ⊢
   exact_mod_cast hlt
 
 end RSA
