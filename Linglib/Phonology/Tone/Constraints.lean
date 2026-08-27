@@ -26,6 +26,8 @@ count. Equation numbers below are [mcpherson-lamont-2026]'s.
 * `maxTone` / `depLinkTone` / `maxLinkTone` — `MAX(T)` / `DEP(link)/T` / `MAX(link)/T` (eq. 7)
 * `haveTone` — `HAVETONE` (eq. 17)
 * `integrityTone` — `INTEGRITY` ([akinbo-fwangwar-2026]; [mccarthy-prince-1995])
+* `leftAnchorTone` / `rightAnchorTone` — morpheme-specific `ANCHOR` ([finley-2009];
+  [akinbo-fwangwar-2026])
 
 ## Implementation notes
 
@@ -174,5 +176,33 @@ def maxLinkTone (t : TRN) : Constraint (FloatingForm S TRN M) :=
 def integrityTone (m : M) (t : TRN) :
     Constraint (FloatingForm S TRN M) :=
   fun f => f.countUpper (fun k => f.IsAlive k ∧ f.upperMorpheme? k = some m ∧ ToneHasValue f k t) - 1
+
+/-! ### Morpheme-specific anchoring
+[finley-2009]
+
+A grammatical tone sponsored by morpheme `m` must correspond to an edge of a host root. With
+several hosts the constraint counts the host it is realised on that is closest to satisfying
+it; unrealised anywhere, it counts every TBU of every host ([akinbo-fwangwar-2026] (22),
+(26)). -/
+
+/-- Backbone position `i` bears an upper-tier element of value `t` sponsored by `m`. -/
+def bearsTone (m : M) (t : TRN) (i : SegIdx) : Bool :=
+  (f.linksTo i).any fun k => (f.upper.get? k).any fun ts => decide (ts.value = t ∧ ts.morpheme = m)
+
+/-- `LEFT-ANCHOR-T_m`: the TBUs between a host's left edge and the leftmost TBU bearing
+`t` from `m` — the fewest over the hosts bearing it, or every TBU of every host if none does. -/
+def leftAnchorTone (m : M) (t : TRN) (hosts : List M) : Constraint (FloatingForm S TRN M) :=
+  fun f =>
+    match (hosts.filterMap fun h => (f.segsOfMorpheme h).findIdx? (bearsTone f m t)).min? with
+    | some d => d
+    | none => (hosts.map fun h => (f.segsOfMorpheme h).length).sum
+
+/-- `RIGHT-ANCHOR-T_m`: as `leftAnchorTone`, counted from the host's right edge. -/
+def rightAnchorTone (m : M) (t : TRN) (hosts : List M) : Constraint (FloatingForm S TRN M) :=
+  fun f =>
+    match (hosts.filterMap fun h =>
+        (f.segsOfMorpheme h).reverse.findIdx? (bearsTone f m t)).min? with
+    | some d => d
+    | none => (hosts.map fun h => (f.segsOfMorpheme h).length).sum
 
 end Tone

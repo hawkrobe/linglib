@@ -2,191 +2,145 @@ import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Tone.Grammatical
 
 /-!
-# Mwaghavul Phonological Fragment
-[akinbo-fwangwar-2026] [fwangwar-2018]
+# Mwaghavul
 
-Mwaghavul (ISO 639-3: sur, Glottocode: mwag1236) is an A3 West Chadic
-(Afro-Asiatic) language spoken by more than 700,000 people in Plateau State,
-Nigeria ([crozier-blench-1992]).
+Mwaghavul (A3 West Chadic, Plateau State, Nigeria; Glottocode mwag1236) contrasts H, M, and
+L level tones and an LH rise on syllable TBUs. Verbs are derived from ideophones by two
+segmentally null verbalisers whose sole exponents are tone: `verbM` overwrites every TBU
+with M, `verbMH` every nonfinal TBU with M and the final one with H; pluractional verbs
+reduplicate the ideophone and bear M on every TBU of the reduplicant and H on every TBU of
+the base. Data from [akinbo-fwangwar-2026] (7)–(10) and [fwangwar-2018].
 
-## Tone system
+## Main definitions
 
-Mwaghavul contrasts three level tones — high (H), mid (M), and low (L) —
-plus an LH rising contour. The tone-bearing unit (TBU) is the syllable.
-All tonal co-occurrences on bisyllabic roots are attested except M-LH
-([akinbo-fwangwar-2026] Table 3).
-
-## Ideophones
-
-Mwaghavul has a rich inventory of ideophones — "an open class of marked words
-that depict sensory imagery" ([dingemanse-2019]:16). Ideophones share the
-same grammatical classes as nonideophonic words (nouns, verbs, adjectives,
-adverbs) and occur in comparable morphosyntactic environments.
-
-## Verbalisation
-
-All tonally derived verbs in Mwaghavul have ideophonic bases. The verb
-formation is morphophonologically marked through one of two lexically
-determined tonal alternations triggered by segmentally null verbalisers:
-
-1. **M verbaliser** (VBZ₁): overwrites every TBU with M
-2. **M-H verbaliser** (VBZ₂): overwrites nonfinal TBUs with M, final with H
-
-The M-H melody is attested only in derived verbs — no underived verb has
-this pattern. Data from [akinbo-fwangwar-2026] and
-[fwangwar-2018].
+* `Ideophone` — an ideophonic base with its lexical tones and, if it has one, the verbaliser
+  of its singular verb.
+* `ideophones` — the paper's dataset.
+* `deriveVerb` / `derivePluractional` / `intensity` — the singular verb, the pluractional
+  verb, and tone-preserving reduplication.
 -/
 
 namespace Mwaghavul
 
-open Tone (TRN TBUKind
-  WordProsodicType)
-open Tone (TBU Spec ValuationWindow)
+open Tone (TRN TBU Spec)
 
--- ============================================================================
--- S 1: Phonological Inventory
--- ============================================================================
+/-- Mwaghavul is a tone language with syllable TBUs. -/
+def wordProsodicType : Tone.WordProsodicType := .toneBased
+def tbuKind : Tone.TBUKind := .syllable
 
-/-- Mwaghavul is a three-level tone language with syllable TBUs. -/
-def wordProsodicType : WordProsodicType := .toneBased
-def tbuKind : TBUKind := .syllable
+/-! ### Verbalisers -/
 
--- ============================================================================
--- S 2: Verbaliser Allomorphs
--- ============================================================================
-
-/-- The two lexically specific suppletive allomorphs of the verbaliser
-    morpheme ([akinbo-fwangwar-2026] (17)). -/
-inductive VerbalizerChoice where
-  | m   -- VBZ₁: M melody (targets unreduplicated ideophones only)
-  | mh  -- VBZ₂: M-H melody (targets both unreduplicated and reduplicated)
+/-- The two lexically specific suppletive allomorphs of the verbaliser ((17)). -/
+inductive Verbalizer where
+  | m
+  | mh
   deriving DecidableEq, Repr
 
-/-- The M-tone verbaliser (VBZ₁): targets only unreduplicated ideophones.
-    Overwrites every TBU of the host with M. -/
-def verbM : Spec :=
-  { name := "VBZ₁"
-    melody := [.M]
-    window := .whole }
+/-- VBZ₁: M on every TBU of the host. -/
+def verbM : Spec := { name := "VBZ₁", melody := [.M], window := .whole }
 
-/-- The M-H verbaliser (VBZ₂): targets both unreduplicated and
-    reduplicated ideophones. Nonfinal TBUs get M, final gets H. -/
-def verbMH : Spec :=
-  { name := "VBZ₂"
-    melody := [.M, .H]
-    window := .nonfinalFinal }
+/-- VBZ₂ on a single host: M on every nonfinal TBU, H on the final one. -/
+def verbMH : Spec := { name := "VBZ₂", melody := [.M, .H], window := .nonfinalFinal }
 
--- ============================================================================
--- S 3: Ideophone Data
--- ============================================================================
+/-- The H of VBZ₂ on its own host, as in pluractional verbs. -/
+def verbMHBase : Spec := { name := "VBZ₂", melody := [.H], window := .whole }
 
-/-- An ideophone entry: base form, gloss, lexical tones, and which
-    verbaliser it selects. Tone pattern is listed left-to-right matching
-    syllable order.
+/-! ### Ideophones -/
 
-    Whether an ideophone undergoes M or M-H alternation is lexically
-    determined and not predictable from syllable structure or tone
-    ([akinbo-fwangwar-2026] §3.1). -/
+/-- An ideophonic base: its form, gloss, the lexical tones of one copy, and the verbaliser of
+its singular verb — `none` when only the reduplicated form is verbalised ((9), (10)). -/
 structure Ideophone where
-  form     : String
-  gloss    : String
-  tones    : List TRN
-  verbType : VerbalizerChoice
-  deriving Repr
-
-/-- Number of syllables, derived from the tone list. -/
-def Ideophone.nSyl (i : Ideophone) : Nat := i.tones.length
-
--- M-tone verbaliser ideophones from (7a)
-def zut     : Ideophone := ⟨"zùt",    "how solid substance ejects", [.L],     .m⟩
-def diis    : Ideophone := ⟨"dìːs",   "blood sucking",              [.L],     .m⟩
-def kwaaj   : Ideophone := ⟨"kwàj",   "bubbling hot water",         [.L],     .m⟩
-def vjaar   : Ideophone := ⟨"vjàr",   "pouring of urine",          [.L],     .m⟩
-def shweer  : Ideophone := ⟨"ʃwèr",   "how water falls",           [.L],     .m⟩
-def wuulash : Ideophone := ⟨"wùlàʃ",  "wide open",                 [.L, .L], .m⟩
-
--- M-tone verbaliser ideophones from (7b)
-def fooyoop : Ideophone := ⟨"fɔ̀yɔ̀p", "oily",                     [.L, .L], .m⟩
-def vjayaap : Ideophone := ⟨"vjàyàp", "liquid ejects from a fruit", [.L, .L], .m⟩
-
--- M-H verbaliser ideophones from (8a)
-def bishool  : Ideophone := ⟨"bìʃɔ̀l",  "shabbily dressed",         [.L, .L], .mh⟩
-def kitiif   : Ideophone := ⟨"kìtíf",   "untidy",                   [.L, .H], .mh⟩
-def kodzoong : Ideophone := ⟨"kɔ̀dʒɔ̀ŋ", "walking effortfully",     [.L, .L], .mh⟩
-def kitfor   : Ideophone := ⟨"kìtʃɔ̀r",  "old-sounding vehicle",    [.L, .L], .mh⟩
-
--- M-H verbaliser ideophones from (8b)
-def korjong  : Ideophone := ⟨"kɔ̀rjɔ̀ŋ", "crooked",                 [.L, .L], .mh⟩
-def mondos   : Ideophone := ⟨"mɔ̀ndɔ̀s",  "big nose",                [.L, .L], .mh⟩
-def vwaplas  : Ideophone := ⟨"vwàplàs",  "oversized",               [.L, .L], .mh⟩
-def jalpat   : Ideophone := ⟨"jàlpàt",   "hanging loose",           [.L, .L], .mh⟩
-
--- M-H verbaliser ideophones from (8c)
-def hanlayap : Ideophone := ⟨"háŋláyáp", "light-weighted",          [.H, .H, .H], .mh⟩
-def hamhoyof : Ideophone := ⟨"hámhɔ̀yɔ̀ʃ","dryness of cracked feet", [.H, .L, .L], .mh⟩
-
--- ============================================================================
--- S 4: Derivation via tonalOverwrite
--- ============================================================================
+  form : String
+  gloss : String
+  tones : List TRN
+  singular : Option Verbalizer
+  /-- Inherently reduplicated ((10)): `form` shows both copies, `tones` one. -/
+  frozen : Bool := false
+  deriving DecidableEq, Repr
 
 /-- A toned Mwaghavul syllable. -/
 structure Syl where
   ipa : String
   deriving DecidableEq, Repr
 
-/-- Convenience: a toned Mwaghavul syllable. -/
-abbrev TSyl := TBU Syl
+/-- The host of an ideophone as toned TBUs. -/
+def Ideophone.host (i : Ideophone) : List (TBU Syl) := i.tones.map fun t => ⟨⟨i.form⟩, t⟩
 
-/-- Build a toned syllable from IPA and tone. -/
-def mkTSyl (ipa : String) (t : TRN) : TSyl :=
-  ⟨⟨ipa⟩, t⟩
+/-- The singular verb's tones, if the ideophone has a singular verb. -/
+def deriveVerb (i : Ideophone) : Option (List TRN) :=
+  i.singular.map fun v =>
+    (Tone.tonalOverwrite i.host (match v with | .m => verbM | .mh => verbMH)).map (·.tone)
 
-/-- Derive a verb from an ideophone using its verbaliser spec.
-    Returns the output tonal pattern. -/
-def deriveVerb (base : Ideophone) : List TRN :=
-  let spec := match base.verbType with
-    | .m  => verbM
-    | .mh => verbMH
-  let host := base.tones.map λ t => mkTSyl base.form t
-  (Tone.tonalOverwrite host spec).map TBU.tone
+/-- The pluractional verb's tones: the M of VBZ₂ on every TBU of the reduplicant and its H
+on every TBU of the base. -/
+def derivePluractional (i : Ideophone) : List TRN :=
+  (Tone.tonalOverwrite i.host verbM ++ Tone.tonalOverwrite i.host verbMHBase).map (·.tone)
 
--- M-tone verbaliser: wùlàʃ [L L] → wūlāʃ [M M]
-theorem wuulash_verb : deriveVerb wuulash = [.M, .M] := by decide
+/-- Reduplication without a tonal alternation, expressing intensity ((9)). -/
+def intensity (i : Ideophone) : List TRN := i.tones ++ i.tones
 
--- M-tone verbaliser on monosyllable: dìːs [L] → dīːs [M]
-theorem diis_verb : deriveVerb diis = [.M] := by decide
-
--- M-H verbaliser: bìʃɔ̀l [L L] → bīʃɔ́l [M H]
-theorem bishool_verb : deriveVerb bishool = [.M, .H] := by decide
-
--- M-H verbaliser on trisyllable: háŋláyáp [H H H] → hāŋlāyáp [M M H]
-theorem hanlayap_verb : deriveVerb hanlayap = [.M, .M, .H] := by decide
-
--- M-H verbaliser: kìtíf [L H] → kītíf [M H]
-theorem kitiif_verb : deriveVerb kitiif = [.M, .H] := by decide
-
--- M-H verbaliser: jàlpàt [L L] → jālpát [M H]
-theorem jalpat_verb : deriveVerb jalpat = [.M, .H] := by decide
-
--- ============================================================================
--- S 5: Empirical Generalizations ([akinbo-fwangwar-2026] (13))
--- ============================================================================
-
-/-- All M-tone derived verbs produce uniform M across all TBUs (13a). -/
-theorem m_verb_uniform (i : Ideophone) (h : i.verbType = .m) :
-    deriveVerb i = i.tones.map (λ _ => TRN.M) := by
-  simp [deriveVerb, h, verbM,
-    Tone.tonalOverwrite,
+theorem derivePluractional_eq (i : Ideophone) :
+    derivePluractional i = i.tones.map (fun _ => .M) ++ i.tones.map (fun _ => .H) := by
+  simp [derivePluractional, Ideophone.host, verbM, verbMHBase, Tone.tonalOverwrite,
     List.map_map, Function.comp_def]
 
-/-- M-H derived verbs have M on nonfinal TBUs and H on the final TBU.
-    Verified on bisyllabic bases. -/
-theorem mh_verb_bisyllabic_pattern (i : Ideophone)
-    (h : i.verbType = .mh) (h2 : i.tones.length = 2) :
-    deriveVerb i = [.M, .H] := by
-  simp [deriveVerb, h, verbMH]
-  match i, h2 with
-  | ⟨_, _, [_, _], _⟩, _ =>
-    simp [Tone.tonalOverwrite]
+/-! ### The dataset
+[akinbo-fwangwar-2026] (7)–(10). -/
+
+def zut : Ideophone := ⟨"zùt", "how solid substance ejects", [.L], some .m, false⟩
+def diis : Ideophone := ⟨"ɗìːs", "sound of blood sucking", [.L], some .m, false⟩
+def kwaj : Ideophone := ⟨"kwàj", "sound of bubbling hot water", [.L], some .m, false⟩
+def vjar : Ideophone := ⟨"vjàr", "pouring of urine", [.L], some .m, false⟩
+def shwer : Ideophone := ⟨"ʃwɛ̀r", "how water falls", [.L], some .m, false⟩
+def shoghop : Ideophone := ⟨"ʃɔ̀ɣɔ̀p", "oily", [.L, .L], some .m, false⟩
+def vjaghap : Ideophone := ⟨"vjàɣàp", "how liquid ejects from a fruit", [.L, .L], some .m, false⟩
+def wulash : Ideophone := ⟨"wùlàʃ", "wide open", [.L, .L], some .m, false⟩
+def lubuk : Ideophone := ⟨"lúɓúk", "smooth and soft", [.H, .H], some .m, false⟩
+def wulashSmall : Ideophone := ⟨"wúláʃ", "wide open of small thing", [.H, .H], some .m, false⟩
+
+def bishol : Ideophone := ⟨"bɨ̀ʃɔ̀l", "shabbily dressed", [.L, .L], some .mh, false⟩
+def kitish : Ideophone := ⟨"kɨ̀tìʃ", "untidy", [.L, .L], some .mh, false⟩
+def kodong : Ideophone := ⟨"kɔ̀ɗɔ̀ŋ", "walking effortfully", [.L, .L], some .mh, false⟩
+def kitshor : Ideophone := ⟨"kɨ̀tʃɔ̀r", "old-sounding vehicle", [.L, .L], some .mh, false⟩
+def korjong : Ideophone := ⟨"kɔ̀rjɔ̀ŋ", "crooked", [.L, .L], some .mh, false⟩
+def mondos : Ideophone := ⟨"mɔ̀ndɔ̀s", "big nose", [.L, .L], some .mh, false⟩
+def vwaplas : Ideophone := ⟨"vwàplàs", "oversized", [.L, .L], some .mh, false⟩
+def jalpat : Ideophone := ⟨"jàlpàt", "hanging loose", [.L, .L], some .mh, false⟩
+def hanlaghap : Ideophone := ⟨"háŋláɣáp", "light-weighted", [.H, .H, .H], some .mh, false⟩
+def hamhoghosh : Ideophone :=
+  ⟨"hámhɔ́ɣɔ́ʃ", "dryness of cracked feet", [.H, .H, .H], some .mh, false⟩
+def jegherek : Ideophone := ⟨"dʒɛ́ɣɛ́rɛ́k", "thin, fragile", [.H, .H, .H], some .mh, false⟩
+def gokshirok : Ideophone := ⟨"gɔ̀kʃìrɔ̀k", "old or abnormal", [.L, .L, .L], some .mh, false⟩
+def zongilong : Ideophone := ⟨"zɔ̀ngɨ̀lɔ̀ŋ", "long and thin", [.L, .L, .L], some .mh, false⟩
+def salmutat : Ideophone := ⟨"sàlmùtàt", "sluggish", [.L, .L, .L], some .mh, false⟩
+def dighirik : Ideophone := ⟨"dɨ̀ɣɨ̀rɨ̀k", "being big and lazy", [.L, .L, .L], some .mh, false⟩
+
+def jumHeavy : Ideophone := ⟨"dʒùm", "heavy water plop", [.L], none, false⟩
+def kurashSlow : Ideophone := ⟨"kùràʃ", "slow scratching sound", [.L, .L], none, false⟩
+def kwaasSlow : Ideophone := ⟨"kwàːs", "slow foot-dragging sound", [.L], none, false⟩
+def tirat : Ideophone := ⟨"tɨ̀ràt", "sound of sipping", [.L, .L], none, false⟩
+def jumLight : Ideophone := ⟨"dʒúm", "light water plop", [.H], none, false⟩
+def kurashFast : Ideophone := ⟨"kúráʃ", "fast scratching sound", [.H, .H], none, false⟩
+def kwaasFast : Ideophone := ⟨"kwáːs", "fast foot-dragging sound", [.H], none, false⟩
+def weng : Ideophone := ⟨"wɛ́ŋ", "sound of buzzing", [.H], none, false⟩
+
+def girgir : Ideophone := ⟨"gɨ̀r-gɨ̀r", "sound of a moving truck", [.L], none, true⟩
+def wurwur : Ideophone := ⟨"wùr-wùr", "in a rush", [.L], none, true⟩
+def tengteng : Ideophone := ⟨"tɛ̀ŋ-tɛ̀ŋ", "zigzag", [.L], none, true⟩
+def zetzet : Ideophone := ⟨"zɛ̀t-zɛ̀t", "hurried walk", [.L], none, true⟩
+def wuretwuret : Ideophone := ⟨"wùrɛ̀t-wùrɛ̀t", "fast walk", [.L, .L], none, true⟩
+def shuretshuret : Ideophone := ⟨"ʃùrɛ̀t-ʃùrɛ̀t", "profusely crying", [.L, .L], none, true⟩
+def kipetkipet : Ideophone := ⟨"kɨ́pɛ́t-kɨ́pɛ́t", "flip-flop sound", [.H, .H], none, true⟩
+def wulengwuleng : Ideophone := ⟨"wúlɛ́ŋ-wúlɛ́ŋ", "smart look", [.H, .H], none, true⟩
+def zonzon : Ideophone := ⟨"zɔ́n-zɔ́n", "aimless movement", [.H], none, true⟩
+
+/-- The paper's dataset ((7)–(10)); (10c) *ram-ram*, printed without tone marks, is omitted. -/
+def ideophones : List Ideophone :=
+  [zut, diis, kwaj, vjar, shwer, shoghop, vjaghap, wulash, lubuk, wulashSmall,
+    bishol, kitish, kodong, kitshor, korjong, mondos, vwaplas, jalpat, hanlaghap, hamhoghosh,
+    jegherek, gokshirok, zongilong, salmutat, dighirik,
+    jumHeavy, kurashSlow, kwaasSlow, tirat, jumLight, kurashFast, kwaasFast, weng,
+    girgir, wurwur, tengteng, zetzet, wuretwuret, shuretshuret, kipetkipet, wulengwuleng,
+    zonzon]
 
 end Mwaghavul

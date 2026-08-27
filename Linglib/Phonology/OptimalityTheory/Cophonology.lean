@@ -37,7 +37,7 @@ phonology without violating modularity.
 The substrate implements neither bracket erasure ([kiparsky-1982]) nor DM PF discharge
 ([embick-noyer-2007]) — rival theories of the syntax–phonology interface that
 [sande-clem-dabkowski-2026] §6.2 argues against; it makes the CPT view expressible
-without forcing it on consumers. Consuming studies: `Studies/AkinboFwangwar2026.lean`
+without forcing it on consumers. Consuming studies: `Studies/Rolle2018.lean`
 (per-VI, dominant grammatical tone) and `Studies/SandeClemDabkowski2026.lean` (phasal,
 Guébie discontinuous harmony).
 -/

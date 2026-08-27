@@ -1,0 +1,648 @@
+[
+  {
+    "id": "akinbofwangwar2026_6a",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(6a)"},
+    "language": "mwag1236",
+    "primaryText": "gɨ̀rgɨ̀r pūs ràndɔ̄ŋ nī",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gɨ̀rgɨ̀r", "IDEO"], ["pūs", "hit"], ["ràndɔ̄ŋ", "cow"], ["nī", "DET"]
+    ],
+    "translation": "a heavy-duty vehicle hit the cow",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ideophone", "gɨ̀rgɨ̀r"],
+      ["wordClass", "noun"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_6b",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(6b)"},
+    "language": "mwag1236",
+    "primaryText": "gɨ̀rgɨ̀r pwās ràndɔ̄ŋ kí m̀mɛ̂ː nī",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gɨ̀rgɨ̀r", "IDEO"], ["pwās", "hit.PL"], ["ràndɔ̄ŋ", "cow"], ["kí", "CONJ"],
+      ["m̀mɛ̂ː", "IDEO"], ["nī", "DET"]
+    ],
+    "translation": "a heavy-duty vehicle hit the cow and the goat",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ideophone", "gɨ̀rgɨ̀r"],
+      ["wordClass", "noun"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_6c",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(6c)"},
+    "language": "mwag1236",
+    "primaryText": "gɨ̀rgɨ̀r pwās m̀múː kí m̀mɛ̂ː nī",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gɨ̀rgɨ̀r", "IDEO"], ["pwās", "hit.PL"], ["m̀múː", "IDEO"], ["kí", "CONJ"],
+      ["m̀mɛ̂ː", "IDEO"], ["nī", "DET"]
+    ],
+    "translation": "a heavy-duty vehicle hit the cow and the goat",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ideophone", "gɨ̀rgɨ̀r"],
+      ["wordClass", "noun"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_6d",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(6d)"},
+    "language": "mwag1236",
+    "primaryText": "máːtòː gɨ̀rgɨ̀r pwās rāndɔ̄ŋ nī",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["máːtòː", "motor"], ["gɨ̀rgɨ̀r", "IDEO"], ["pwās", "hit.PL"], ["rāndɔ̄ŋ", "cow"],
+      ["nī", "DET"]
+    ],
+    "translation": "a heavy-duty vehicle hit the cow multiple times",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ideophone", "gɨ̀rgɨ̀r"],
+      ["wordClass", "adjective"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_6e",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(6e)"},
+    "language": "mwag1236",
+    "primaryText": "máːtòː nī kɨ́ wál kàː sɨ́ gɨ̀rgɨ̀r",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["máːtòː", "motor"], ["nī", "DET"], ["kɨ́", "IMPERF"], ["wál", "cry"], ["kàː", "come:up"],
+      ["sɨ́", "there"], ["gɨ̀rgɨ̀r", "IDEO"]
+    ],
+    "translation": "there comes the vehicle making gɨ̀rgɨ̀r sounds",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ideophone", "gɨ̀rgɨ̀r"],
+      ["wordClass", "adverb"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_6f",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(6f)"},
+    "language": "mwag1236",
+    "primaryText": "nāːnlɛ̀ múl mwɔ̀ːr kɔ́ːm",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nāːnlɛ̀", "N."], ["múl", "IDEO"], ["mwɔ̀ːr", "oil"], ["kɔ́ːm", "groundnut"]
+    ],
+    "translation": "Naanle rubbed/rubs groundnut oil",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ideophone", "múl"],
+      ["wordClass", "verb"]
+    ],
+    "comment": "The ideophonic verb carries a negative affective meaning: the oil was rubbed wastefully or imprecisely.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_6g",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(6g)"},
+    "language": "mwag1236",
+    "primaryText": "nāːnlɛ̀ m̀-múl mwɔ̀ːr kɔ́ːm",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nāːnlɛ̀", "N."], ["m̀-múl", "FUT-IDEO"], ["mwɔ̀ːr", "oil"], ["kɔ́ːm", "peanut"]
+    ],
+    "translation": "Naanle will rub groundnut oil",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ideophone", "múl"],
+      ["wordClass", "verb"],
+      ["construction", "future"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_11a",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(11a)"},
+    "language": "mwag1236",
+    "primaryText": "nāːnlɛ̀ mwàːn ŋ̀-kɨ̀sūwā",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nāːnlɛ̀", "N."], ["mwàːn", "walk"], ["ŋ̀-kɨ̀sūwā", "LOC-market"]
+    ],
+    "translation": "Naanle walked/walks at the market",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "underived"],
+      ["lexeme", "mwàːn"],
+      ["construction", "presentPast"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_11b",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(11b)"},
+    "language": "mwag1236",
+    "primaryText": "nāːnlɛ̀ m̀-mwàːn ŋ̀-kɨ̀sūwā",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nāːnlɛ̀", "N."], ["m̀-mwàːn", "FUT-walk"], ["ŋ̀-kɨ̀sūwā", "LOC-market"]
+    ],
+    "translation": "Naanle will walk at the market",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "underived"],
+      ["lexeme", "mwàːn"],
+      ["construction", "future"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_11c",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(11c)"},
+    "language": "mwag1236",
+    "primaryText": "nāːnlɛ̀ mū-mwàːn ŋ̀-kɨ̀sūwā",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nāːnlɛ̀", "N."], ["mū-mwàːn", "FOC-walk"], ["ŋ̀-kɨ̀sūwā", "LOC-market"]
+    ],
+    "translation": "Naanle WALKED (did nothing else) at the market",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "underived"],
+      ["lexeme", "mwàːn"],
+      ["construction", "focus"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_11d",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(11d)"},
+    "language": "mwag1236",
+    "primaryText": "nāːnlɛ̀ mwàːn ʃām ŋ̀-kɨ̀sūwā",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nāːnlɛ̀", "N."], ["mwàːn", "walk"], ["ʃām", "come"], ["ŋ̀-kɨ̀sūwā", "LOC-market"]
+    ],
+    "translation": "Naanle came here walk(ing)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "underived"],
+      ["lexeme", "mwàːn"],
+      ["construction", "serialVerb"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_11e",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(11e)"},
+    "language": "mwag1236",
+    "primaryText": "bà nāːnlɛ̀ mwàːn ŋ̀-kɨ̀sūwā kás",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["bà", "NEG"], ["nāːnlɛ̀", "N."], ["mwàːn", "walk"], ["ŋ̀-kɨ̀sūwā", "LOC-market"],
+      ["kás", "NEG"]
+    ],
+    "translation": "Naanle did not walk at the market",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "underived"],
+      ["lexeme", "mwàːn"],
+      ["construction", "negation"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_12a",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(12a)"},
+    "language": "mwag1236",
+    "primaryText": "nāːnlɛ̀ kɔ̄rjɔ́ŋ ŋ̀-kɨ̀sūwā",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nāːnlɛ̀", "N."], ["kɔ̄rjɔ́ŋ", "IDEO.VBZ"], ["ŋ̀-kɨ̀sūwā", "LOC-market"]
+    ],
+    "translation": "Naanle wobbles crookedly at the market",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "derived"],
+      ["lexeme", "kɔ̄rjɔ́ŋ"],
+      ["construction", "presentPast"]
+    ],
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_12b",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(12b)"},
+    "language": "mwag1236",
+    "primaryText": "nāːnlɛ̀ ŋ̀-kɔ̄rjɔ́ŋ ŋ̀-kɨ̀sūwā",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nāːnlɛ̀", "N."], ["ŋ̀-kɔ̄rjɔ́ŋ", "FUT-IDEO.VBZ"], ["ŋ̀-kɨ̀sūwā", "LOC-market"]
+    ],
+    "translation": "Naanle will wobble crookedly at the market",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "derived"],
+      ["lexeme", "kɔ̄rjɔ́ŋ"],
+      ["construction", "future"]
+    ],
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_12c",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(12c)"},
+    "language": "mwag1236",
+    "primaryText": "nāːnlɛ̀ kɨ̄-kɔ̄rjɔ́ŋ ŋ̀-kɨ̀sūwā",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nāːnlɛ̀", "N."], ["kɨ̄-kɔ̄rjɔ́ŋ", "FOCUS-IDEO.VBZ"], ["ŋ̀-kɨ̀sūwā", "LOC-market"]
+    ],
+    "translation": "Naanle WOBBLED CROOKEDLY at the market",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "derived"],
+      ["lexeme", "kɔ̄rjɔ́ŋ"],
+      ["construction", "focus"]
+    ],
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_12d",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(12d)"},
+    "language": "mwag1236",
+    "primaryText": "nāːnlɛ̀ kɔ̄rjɔ́ŋ vūkmún ŋ̀-kɨ̀sūwā",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nāːnlɛ̀", "N."], ["kɔ̄rjɔ́ŋ", "IDEO.VBZ"], ["vūkmún", "IDEO.VBZ"],
+      ["ŋ̀-kɨ̀sūwā", "LOC-market"]
+    ],
+    "translation": "Naanle wobbles crookedly and dusty at the market",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "derived"],
+      ["lexeme", "kɔ̄rjɔ́ŋ"],
+      ["construction", "serialVerb"]
+    ],
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_12e",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(12e)"},
+    "language": "mwag1236",
+    "primaryText": "níː kɨ́ kɔ̄rjɔ́ŋ dʒì",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["níː", "elephant"], ["kɨ́", "IMP"], ["kɔ̄rjɔ́ŋ", "IDEO.VBZ"], ["dʒì", "come"]
+    ],
+    "translation": "The elephant is coming wobbling crookedly",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "derived"],
+      ["lexeme", "kɔ̄rjɔ́ŋ"],
+      ["construction", "serialVerb"]
+    ],
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_12f",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(12f)"},
+    "language": "mwag1236",
+    "primaryText": "bà nāːnlɛ̀ kɔ̄rjɔ́ŋ ŋ̀-kɨ̀sūwā kás",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["bà", "NEG"], ["nāːnlɛ̀", "N."], ["kɔ̄rjɔ́ŋ", "IDEO.VBZ"], ["ŋ̀-kɨ̀sūwā", "LOC-market"],
+      ["kás", "NEG"]
+    ],
+    "translation": "Naanle did not wobble crookedly to the market",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "derived"],
+      ["lexeme", "kɔ̄rjɔ́ŋ"],
+      ["construction", "negation"]
+    ],
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_21_1",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(21)"},
+    "language": "mwag1236",
+    "primaryText": "wāːm",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["wāːm", ""]
+    ],
+    "translation": "the gerundive of to be feeble",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "wāːm"],
+      ["verbTones", "M"],
+      ["gerundiveTones", "M"]
+    ],
+    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_21_2",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(21)"},
+    "language": "mwag1236",
+    "primaryText": "pɨ̄lāŋ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["pɨ̄lāŋ", ""]
+    ],
+    "translation": "the gerundive of to rinse",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "pɨ̄lāŋ"],
+      ["verbTones", "M"],
+      ["gerundiveTones", "M"]
+    ],
+    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_21_3",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(21)"},
+    "language": "mwag1236",
+    "primaryText": "wām",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["wām", ""]
+    ],
+    "translation": "the gerundive of to be rotten",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "wàm"],
+      ["verbTones", "L"],
+      ["gerundiveTones", "M"]
+    ],
+    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_21_4",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(21)"},
+    "language": "mwag1236",
+    "primaryText": "zūɣūm",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["zūɣūm", ""]
+    ],
+    "translation": "the gerundive of to be generous",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "zùɣùm"],
+      ["verbTones", "L"],
+      ["gerundiveTones", "M"]
+    ],
+    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_27_1",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(27)"},
+    "language": "mwag1236",
+    "primaryText": "lɛ̀k wát",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["lɛ̀k wát", ""]
+    ],
+    "translation": "the water of a thief",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["possessed", "lɛ̀k"],
+      ["possessedClass", "nonideophone"],
+      ["possessedTones", "L"],
+      ["outputTones", "L"]
+    ],
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_27_2",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(27)"},
+    "language": "mwag1236",
+    "primaryText": "wàn wát",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["wàn wát", ""]
+    ],
+    "translation": "the clay of a thief",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["possessed", "wān"],
+      ["possessedClass", "nonideophone"],
+      ["possessedTones", "M"],
+      ["outputTones", "L"]
+    ],
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_27_3",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(27)"},
+    "language": "mwag1236",
+    "primaryText": "ɓwɔ̀ːn wát",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ɓwɔ̀ːn wát", ""]
+    ],
+    "translation": "the pelvis of a thief",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["possessed", "ɓwɔ́ːn"],
+      ["possessedClass", "nonideophone"],
+      ["possessedTones", "H"],
+      ["outputTones", "L"]
+    ],
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_27_4",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(27)"},
+    "language": "mwag1236",
+    "primaryText": "ɓwɔ̄ːn wát",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ɓwɔ̄ːn wát", ""]
+    ],
+    "translation": "the surroundings of a thief",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["possessed", "ɓwɔ́ːn"],
+      ["possessedClass", "nonideophone"],
+      ["possessedTones", "H"],
+      ["outputTones", "M"]
+    ],
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_27_5",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(27)"},
+    "language": "mwag1236",
+    "primaryText": "gɨ̀r-gɨ̀r wát",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gɨ̀r-gɨ̀r wát", ""]
+    ],
+    "translation": "the heavy duty vehicle of a thief",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["possessed", "gɨ̀r-gɨ̀r"],
+      ["possessedClass", "ideophone"],
+      ["possessedTones", "L"],
+      ["outputTones", "L"]
+    ],
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_27_6",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(27)"},
+    "language": "mwag1236",
+    "primaryText": "ràm-ràm wát",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ràm-ràm wát", ""]
+    ],
+    "translation": "the excitement of a thief",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["possessed", "rām-rām"],
+      ["possessedClass", "ideophone"],
+      ["possessedTones", "M"],
+      ["outputTones", "L"]
+    ],
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "akinbofwangwar2026_27_7",
+    "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(27)"},
+    "language": "mwag1236",
+    "primaryText": "kūrāʃ wát",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kūrāʃ wát", ""]
+    ],
+    "translation": "the pot scrapping sound of a thief",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["possessed", "kúráʃ"],
+      ["possessedClass", "ideophone"],
+      ["possessedTones", "H"],
+      ["outputTones", "M"]
+    ],
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
