@@ -285,10 +285,11 @@ def StemCandidate.toFooting : StemCandidate → Footing Syllable.Weight
   | .degenerate => [.inl ⟨[.light], 0⟩, .inl ⟨[.light], 0⟩, .inl ⟨[.heavy], 0⟩]
   | .trochees => [.inl ⟨[.light, .light], 0⟩, .inl ⟨[.heavy], 0⟩]
 
-/-- FT-BIN(μ) ≫ PARSE-SYL ≫ ALL-FT-LEFT ((46)–(48)), read off each parse's footing. -/
+/-- FT-BIN(μ) ≫ PARSE-SYL ≫ ALL-FT-LEFT ((46)–(48)), read off each parse's footing: the
+non-bimoraic feet, the stray syllables, and the feet's distances from the left edge. -/
 def stemRanking : List (Constraint StemCandidate) :=
-  [Footing.ftBin id ∘ StemCandidate.toFooting, Footing.parseSyl ∘ StemCandidate.toFooting,
-    Footing.allFtLeft ∘ StemCandidate.toFooting]
+  [fun c => (c.toFooting.nonBimoraicFeet id).length, fun c => c.toFooting.strays.length,
+    fun c => c.toFooting.footOffsets.sum]
 
 /-- (49): the Stem parses as two moraic trochees, (ˈsa.mu)(ˌdram). -/
 theorem stem_optimal : (Tableau.ofFintype stemRanking).optimal = {.trochees} := by decide
