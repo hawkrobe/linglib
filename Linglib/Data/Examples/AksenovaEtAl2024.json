@@ -9,32 +9,12 @@
     "translation": "smoke",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "lokaa"],
-      ["tier", "eo"]
+    "alternatives": [
+      {"form": "èsìsɔ̀n", "judgment": "ungrammatical"}
     ],
-    "comment": "Akinlabi (2009); the tier holds the non-high vowels.",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_3a_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(3a)"},
-    "language": "loka1252",
-    "primaryText": "èsìsɔ̀n",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "smoke",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "lokaa"],
-      ["tier", "eɔ"]
-    ],
-    "comment": "",
+    "paperFeatures": [],
+    "comment": "Akinlabi (2009).",
     "lgrConformance": "WORD_ALIGNED"
   },
   {
@@ -47,32 +27,12 @@
     "translation": "housefly",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "lokaa"],
-      ["tier", "ɛɔ"]
+    "alternatives": [
+      {"form": "ɛ̀sísòn", "judgment": "ungrammatical"}
     ],
-    "comment": "Akinlabi (2009); the tier holds the non-high vowels.",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_3b_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(3b)"},
-    "language": "loka1252",
-    "primaryText": "ɛ̀sísòn",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "housefly",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "lokaa"],
-      ["tier", "ɛo"]
-    ],
-    "comment": "",
+    "paperFeatures": [],
+    "comment": "Akinlabi (2009).",
     "lgrConformance": "WORD_ALIGNED"
   },
   {
@@ -85,32 +45,12 @@
     "translation": "matriclan",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "lokaa"],
-      ["tier", "eə"]
+    "alternatives": [
+      {"form": "lèjìmà", "judgment": "ungrammatical"}
     ],
-    "comment": "Akinlabi (2009); the tier holds the non-high vowels.",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_3c_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(3c)"},
-    "language": "loka1252",
-    "primaryText": "lèjìmà",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "matriclan",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "lokaa"],
-      ["tier", "ea"]
-    ],
-    "comment": "",
+    "paperFeatures": [],
+    "comment": "Akinlabi (2009).",
     "lgrConformance": "WORD_ALIGNED"
   },
   {
@@ -123,32 +63,12 @@
     "translation": "kind of plant",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "lokaa"],
-      ["tier", "ɛa"]
+    "alternatives": [
+      {"form": "ékílìkà", "judgment": "ungrammatical"}
     ],
-    "comment": "Akinlabi (2009); the tier holds the non-high vowels.",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_3d_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(3d)"},
-    "language": "loka1252",
-    "primaryText": "ékílìkà",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "kind of plant",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "lokaa"],
-      ["tier", "ea"]
-    ],
-    "comment": "",
+    "paperFeatures": [],
+    "comment": "Akinlabi (2009).",
     "lgrConformance": "WORD_ALIGNED"
   },
   {
@@ -165,10 +85,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kirghiz"],
-      ["tier", "oo"]
-    ],
+    "paperFeatures": [],
     "comment": "Nanayev (1950).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
@@ -186,10 +103,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kirghiz"],
-      ["tier", "ie"]
-    ],
+    "paperFeatures": [],
     "comment": "Nanayev (1950).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
@@ -207,10 +121,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kirghiz"],
-      ["tier", "üö"]
-    ],
+    "paperFeatures": [],
     "comment": "Nanayev (1950).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
@@ -228,10 +139,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kirghiz"],
-      ["tier", "ou"]
-    ],
+    "paperFeatures": [],
     "comment": "Nanayev (1950).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
@@ -249,10 +157,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kirghiz"],
-      ["tier", "ii"]
-    ],
+    "paperFeatures": [],
     "comment": "Nanayev (1950).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
@@ -270,10 +175,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kirghiz"],
-      ["tier", "üü"]
-    ],
+    "paperFeatures": [],
     "comment": "Nanayev (1950).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
@@ -289,33 +191,11 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {"form": "ɔr-aːd", "judgment": "ungrammatical"}
+    ],
     "readings": [],
-    "paperFeatures": [
-      ["language", "buryat"],
-      ["tier", "ɔɔ"]
-    ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_9a_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(9a)"},
-    "language": "russ1264",
-    "primaryText": "ɔr-aːd",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["ɔr-aːd", "enter-perf"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "buryat"],
-      ["tier", "ɔa"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
@@ -331,33 +211,11 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {"form": "ɔr-ʊːl-ɔːd", "judgment": "ungrammatical"}
+    ],
     "readings": [],
-    "paperFeatures": [
-      ["language", "buryat"],
-      ["tier", "ɔʊa"]
-    ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_9b_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(9b)"},
-    "language": "russ1264",
-    "primaryText": "ɔr-ʊːl-ɔːd",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["ɔr-ʊːl-ɔːd", "enter-caus-perf"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "buryat"],
-      ["tier", "ɔʊɔ"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
@@ -373,33 +231,11 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {"form": "toːr-eːd", "judgment": "ungrammatical"}
+    ],
     "readings": [],
-    "paperFeatures": [
-      ["language", "buryat"],
-      ["tier", "oo"]
-    ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_9c_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(9c)"},
-    "language": "russ1264",
-    "primaryText": "toːr-eːd",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["toːr-eːd", "wander-perf"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "buryat"],
-      ["tier", "oe"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
@@ -415,33 +251,11 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {"form": "toːr-uːl-oːd", "judgment": "ungrammatical"}
+    ],
     "readings": [],
-    "paperFeatures": [
-      ["language", "buryat"],
-      ["tier", "oue"]
-    ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_9d_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(9d)"},
-    "language": "russ1264",
-    "primaryText": "toːr-uːl-oːd",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["toːr-uːl-oːd", "wander-caus-perf"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "buryat"],
-      ["tier", "ouo"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
@@ -457,33 +271,11 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {"form": "mɔrin-aː", "judgment": "ungrammatical"}
+    ],
     "readings": [],
-    "paperFeatures": [
-      ["language", "buryat"],
-      ["tier", "ɔɔ"]
-    ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_9e_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(9e)"},
-    "language": "russ1264",
-    "primaryText": "mɔrin-aː",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["mɔrin-aː", "horse-poss"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "buryat"],
-      ["tier", "ɔa"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
@@ -499,33 +291,11 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {"form": "oːrin-geː", "judgment": "ungrammatical"}
+    ],
     "readings": [],
-    "paperFeatures": [
-      ["language", "buryat"],
-      ["tier", "oo"]
-    ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_9f_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(9f)"},
-    "language": "russ1264",
-    "primaryText": "oːrin-geː",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["oːrin-geː", "group-poss"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "buryat"],
-      ["tier", "oe"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
@@ -541,34 +311,12 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "ooo"]
+    "alternatives": [
+      {"form": "oɣo-lar", "judgment": "ungrammatical"}
     ],
+    "readings": [],
+    "paperFeatures": [],
     "comment": "Kaun (1995).",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_14a_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(14a)"},
-    "language": "yaku1245",
-    "primaryText": "oɣo-lar",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["oɣo-lar", "child-pl"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "ooa"]
-    ],
-    "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -583,34 +331,12 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "ööö"]
+    "alternatives": [
+      {"form": "börö-ler", "judgment": "ungrammatical"}
     ],
+    "readings": [],
+    "paperFeatures": [],
     "comment": "Kaun (1995).",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_14b_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(14b)"},
-    "language": "yaku1245",
-    "primaryText": "börö-ler",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["börö-ler", "wolf-pl"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "ööe"]
-    ],
-    "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -625,34 +351,12 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "oou"]
+    "alternatives": [
+      {"form": "oɣo-nɨ", "judgment": "ungrammatical"}
     ],
+    "readings": [],
+    "paperFeatures": [],
     "comment": "Kaun (1995).",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_14c_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(14c)"},
-    "language": "yaku1245",
-    "primaryText": "oɣo-nɨ",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["oɣo-nɨ", "child-acc"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "ooɨ"]
-    ],
-    "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -667,34 +371,12 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "ööü"]
+    "alternatives": [
+      {"form": "börö-ni", "judgment": "ungrammatical"}
     ],
+    "readings": [],
+    "paperFeatures": [],
     "comment": "Kaun (1995).",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_14d_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(14d)"},
-    "language": "yaku1245",
-    "primaryText": "börö-ni",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["börö-ni", "wolf-acc"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "ööi"]
-    ],
-    "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -709,34 +391,12 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "uuu"]
+    "alternatives": [
+      {"form": "murum-ɨ", "judgment": "ungrammatical"}
     ],
+    "readings": [],
+    "paperFeatures": [],
     "comment": "Kaun (1995).",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_14e_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(14e)"},
-    "language": "yaku1245",
-    "primaryText": "murum-ɨ",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["murum-ɨ", "nose-acc"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "uuɨ"]
-    ],
-    "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -751,34 +411,12 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "üüü"]
+    "alternatives": [
+      {"form": "tünnük-i", "judgment": "ungrammatical"}
     ],
+    "readings": [],
+    "paperFeatures": [],
     "comment": "Kaun (1995).",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_14f_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(14f)"},
-    "language": "yaku1245",
-    "primaryText": "tünnük-i",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["tünnük-i", "window-acc"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "üüi"]
-    ],
-    "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -793,34 +431,12 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "oua"]
+    "alternatives": [
+      {"form": "ojum-lor", "judgment": "ungrammatical"}
     ],
+    "readings": [],
+    "paperFeatures": [],
     "comment": "Kaun (1995).",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_14g_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(14g)"},
-    "language": "yaku1245",
-    "primaryText": "ojum-lor",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["ojum-lor", "shaman-pl"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "ouo"]
-    ],
-    "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -835,34 +451,12 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "üüe"]
+    "alternatives": [
+      {"form": "tünnük-lör", "judgment": "ungrammatical"}
     ],
+    "readings": [],
+    "paperFeatures": [],
     "comment": "Kaun (1995).",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  },
-  {
-    "id": "aksenovaetal2024_14h_star",
-    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(14h)"},
-    "language": "yaku1245",
-    "primaryText": "tünnük-lör",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["tünnük-lör", "window-pl"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["language", "yakut"],
-      ["tier", "üüö"]
-    ],
-    "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -879,11 +473,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kikongo"],
-      ["tier", "oel"]
-    ],
-    "comment": "Hyman (1998); the tier string keeps the vowels and the nasal-tier consonants n, m, d, l, with the prenasalized stops mp, mb, ng unprojected.",
+    "paperFeatures": [],
+    "comment": "Hyman (1998).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -900,11 +491,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kikongo"],
-      ["tier", "leel"]
-    ],
-    "comment": "Hyman (1998); the tier string keeps the vowels and the nasal-tier consonants n, m, d, l, with the prenasalized stops mp, mb, ng unprojected.",
+    "paperFeatures": [],
+    "comment": "Hyman (1998).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -921,11 +509,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kikongo"],
-      ["tier", "iil"]
-    ],
-    "comment": "Hyman (1998); the tier string keeps the vowels and the nasal-tier consonants n, m, d, l, with the prenasalized stops mp, mb, ng unprojected.",
+    "paperFeatures": [],
+    "comment": "Hyman (1998).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -942,11 +527,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kikongo"],
-      ["tier", "uil"]
-    ],
-    "comment": "Hyman (1998); the tier string keeps the vowels and the nasal-tier consonants n, m, d, l, with the prenasalized stops mp, mb, ng unprojected.",
+    "paperFeatures": [],
+    "comment": "Hyman (1998).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -963,11 +545,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kikongo"],
-      ["tier", "ool"]
-    ],
-    "comment": "Hyman (1998); the tier string keeps the vowels and the nasal-tier consonants n, m, d, l, with the prenasalized stops mp, mb, ng unprojected.",
+    "paperFeatures": [],
+    "comment": "Hyman (1998).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -984,11 +563,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kikongo"],
-      ["tier", "leol"]
-    ],
-    "comment": "Hyman (1998); the tier string keeps the vowels and the nasal-tier consonants n, m, d, l, with the prenasalized stops mp, mb, ng unprojected.",
+    "paperFeatures": [],
+    "comment": "Hyman (1998).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -1005,11 +581,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kikongo"],
-      ["tier", "ilul"]
-    ],
-    "comment": "Hyman (1998); the tier string keeps the vowels and the nasal-tier consonants n, m, d, l, with the prenasalized stops mp, mb, ng unprojected.",
+    "paperFeatures": [],
+    "comment": "Hyman (1998).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -1026,11 +599,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kikongo"],
-      ["tier", "uul"]
-    ],
-    "comment": "Hyman (1998); the tier string keeps the vowels and the nasal-tier consonants n, m, d, l, with the prenasalized stops mp, mb, ng unprojected.",
+    "paperFeatures": [],
+    "comment": "Hyman (1998).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -1047,11 +617,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kikongo"],
-      ["tier", "uidi"]
-    ],
-    "comment": "Ao (1991);  the tier string keeps the vowels and the nasal-tier consonants n, m, d, l, with the prenasalized stops mp, mb, ng unprojected.",
+    "paperFeatures": [],
+    "comment": "Ao (1991).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -1068,11 +635,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kikongo"],
-      ["tier", "niini"]
-    ],
-    "comment": "Ao (1991);  the tier string keeps the vowels and the nasal-tier consonants n, m, d, l, with the prenasalized stops mp, mb, ng unprojected.",
+    "paperFeatures": [],
+    "comment": "Ao (1991).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -1089,11 +653,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kikongo"],
-      ["tier", "meene"]
-    ],
-    "comment": "Ao (1991);  the tier string keeps the vowels and the nasal-tier consonants n, m, d, l, with the prenasalized stops mp, mb, ng unprojected.",
+    "paperFeatures": [],
+    "comment": "Ao (1991).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -1110,11 +671,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kikongo"],
-      ["tier", "uulu"]
-    ],
-    "comment": "Ao (1991);  the tier string keeps the vowels and the nasal-tier consonants n, m, d, l, with the prenasalized stops mp, mb, ng unprojected.",
+    "paperFeatures": [],
+    "comment": "Ao (1991).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -1131,11 +689,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kikongo"],
-      ["tier", "niunu"]
-    ],
-    "comment": "Ao (1991);  the tier string keeps the vowels and the nasal-tier consonants n, m, d, l, with the prenasalized stops mp, mb, ng unprojected.",
+    "paperFeatures": [],
+    "comment": "Ao (1991).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
@@ -1152,11 +707,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["language", "kikongo"],
-      ["tier", "meono"]
-    ],
-    "comment": "Ao (1991);  the tier string keeps the vowels and the nasal-tier consonants n, m, d, l, with the prenasalized stops mp, mb, ng unprojected.",
+    "paperFeatures": [],
+    "comment": "Ao (1991).",
     "lgrConformance": "MORPHEME_ALIGNED"
   }
 ]
