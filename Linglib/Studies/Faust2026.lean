@@ -861,13 +861,15 @@ def taqtilCandidates : List (TemplateMatch String) :=
     wins. This is [faust-2026]'s core analytical point about (10):
     intrusion lets the grammar "have it both ways". -/
 theorem tadmit_wins_under_misalign_over_fill :
-    (Tableau.ofRanking taqtilCandidates [starMisalign, fill]).optimal = {hebrewDmj_tadmit} := by decide
+    (Tableau.ofRanking taqtilCandidates [starMisalign, fill]).optimal = {hebrewDmj_tadmit} := by
+  decide
 
 /-- And it wins under the reversed ranking too — because intrusion
     satisfies *both* constraints, the ranking between them is irrelevant
     once the intrusion candidate is in the candidate set. -/
 theorem tadmit_wins_under_fill_over_misalign :
-    (Tableau.ofRanking taqtilCandidates [fill, starMisalign]).optimal = {hebrewDmj_tadmit} := by decide
+    (Tableau.ofRanking taqtilCandidates [fill, starMisalign]).optimal = {hebrewDmj_tadmit} := by
+  decide
 
 /-- The taQTiL factorial typology collapses to **one** language: when an
     intrusion strategy is in the candidate set, both rankings of
