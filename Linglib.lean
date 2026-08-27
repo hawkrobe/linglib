@@ -2973,3 +2973,4 @@ import Linglib.Data.Examples.AlonsoOvalle2009
 import Linglib.Data.Examples.AlonsoOvalleMenendezBenito2010
 import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025a
 import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
+import Linglib.Data.Examples.AlonsoOvalleRoyer2024
