@@ -90,7 +90,7 @@ substantive move is the LF reanalysis (p.391), not a structural inference.
 namespace Geurts2005
 
 open Modality
-open Semantics.Presupposition
+open Presupposition
 
 variable {W : Type*}
 

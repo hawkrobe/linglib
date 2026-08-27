@@ -149,7 +149,7 @@ theorem all_evidentialSurvives : ∀ d ∈ presupData, d.evidentialSurvives := b
 /-! ### Bridge: EV operator and modal semantics -/
 
 open Modality.Kratzer
-open Semantics.Presupposition
+open Presupposition
 open Tense.Evidential
 open Bulgarian.Evidentials
 

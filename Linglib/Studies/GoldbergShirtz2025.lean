@@ -49,7 +49,7 @@ different foils (M = 86.09%, β = 2.28, z = 6.09, p < 0.0001).
 namespace GoldbergShirtz2025
 
 open ConstructionGrammar
-open Semantics.Presupposition
+open Presupposition
 
 /-! ### The Figure 5 constructicon -/
 

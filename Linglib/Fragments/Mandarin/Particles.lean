@@ -23,7 +23,7 @@ competition analysis built on it live in `Studies/Wang2025.lean`.
 
 namespace Mandarin.Particles
 
-open Semantics.Presupposition.TriggerTypology (PresupTrigger)
+open Presupposition.TriggerTypology
 
 /-- Mandarin presupposition triggers studied in [wang-2025] Experiments 1-2. -/
 inductive MandarinTrigger where

@@ -19,7 +19,7 @@ trigger movement to matrix AspP_outer — lives in the Studies file.
 
 namespace Cantonese.Particles
 
-open Semantics.Presupposition.TriggerTypology (PresupTrigger)
+open Presupposition.TriggerTypology
 
 /-- A Cantonese presuppositional particle entry. -/
 structure PresupParticle where

@@ -590,9 +590,8 @@ The argument chain:
 section UniquenessBridge
 
 open Definiteness
-open Semantics.Presupposition (PartialProp)
-open Semantics.Presupposition.PartialProp (presupOfReferent presupOfReferent_presup
-  presupOfReferent_assertion_some presupOfReferent_assertion_none)
+open Presupposition
+open Presupposition.PartialProp
 open Definiteness
 
 /-- Toy discourse entity for the uniqueness worked example. -/

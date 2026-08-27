@@ -145,7 +145,7 @@ theorem antiAdditive_implies_intolerant {α : Type*} (f : Set α → Prop)
 /-- A **Karttunen-Peters operator**: a function from an argument set to
     a presuppositional proposition (truth + presup). The presupposition
     may depend on the argument (per K&P 1979's heritage function). -/
-abbrev KPOperator (W : Type*) : Type _ := Set W → Semantics.Presupposition.PartialProp W
+abbrev KPOperator (W : Type*) : Type _ := Set W → Presupposition.PartialProp W
 
 /-- The truth-conditional projection of a K&P operator. -/
 def KPOperator.truth {W : Type*} (op : KPOperator W) : Set W → Set W :=
@@ -493,7 +493,7 @@ them to `only` and verify the empirical match: weak NPIs licensed
 -/
 
 open NaturalLogic
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 
 /-- The K&P operator for `only x`: assertion = "no y ≠ x has scope",
     presupposition = "some y has x and scope" (Horn 1996). Built directly

@@ -23,7 +23,7 @@ files ([tonhauser-beaver-roberts-simons-2013], [solstad-bott-2024],
   `toClass`. The `occasion_verb` case follows [solstad-bott-2024].
 -/
 
-namespace Semantics.Presupposition.ProjectiveContent
+namespace Presupposition.ProjectiveContent
 
 /--
 Strong Contextual Felicity (SCF): whether a trigger requires its
@@ -155,4 +155,4 @@ def ProjectiveTrigger.toClass : ProjectiveTrigger → ProjectiveClass
   | .demonstrative_indication => .classD
   | .focus_salience => .classD
 
-end Semantics.Presupposition.ProjectiveContent
+end Presupposition.ProjectiveContent

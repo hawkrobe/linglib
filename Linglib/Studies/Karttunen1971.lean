@@ -25,7 +25,7 @@ other direction open (`force_neg_not_entails`, `beAble_not_entails`,
 
 namespace Karttunen1971
 
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 
 /-- The condition `v(S)` is presupposed to be for the complement. -/
 inductive Condition where

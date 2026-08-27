@@ -42,7 +42,7 @@ assertive from presuppositional content.
 `pexIEII` takes the same IE/II computation from `Operators.lean` and
 produces a `PartialProp World` — a Prop-based partial proposition with separate
 assertive and presuppositional components. This directly integrates with
-the presupposition projection infrastructure in `Semantics.Presupposition`.
+the presupposition projection infrastructure in `Presupposition`.
 
 This file contains only the abstract pex theory (parameterized by an
 arbitrary `World` type and abstract `ALT`, `φ`). The concrete worked
@@ -56,7 +56,7 @@ puzzles from §3–§5 — live in the study file
 namespace Exhaustification.Presuppositional
 
 open Exhaustification
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 
 variable {World : Type*}
 

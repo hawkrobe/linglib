@@ -9,7 +9,7 @@ status from event structure, theta-role linking, and so on. Verb classification
 is computed here, not stipulated as enum fields on `Verb`.
 -/
 
-open Semantics.Presupposition
+open Presupposition
 open Features
 open ArgumentStructure
 open Features.ChangeOfState

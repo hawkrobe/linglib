@@ -18,7 +18,7 @@ veridicality and opacity. Its proposition-taking semantics
 verbs require the complement at the evaluation world,
 `veridical_entails_complement`) with the universal modal, and
 `toPartialProp` exposes the same content as a
-`Semantics.Presupposition.PartialProp` — presupposition = veridicality
+`Presupposition.PartialProp` — presupposition = veridicality
 check, assertion = modal — connecting doxastic verbs to the projection
 infrastructure. `HoldsAtQuestion` is the [karttunen-1977]
 question-taking semantics: knowing a question is knowing a true answer.
@@ -126,7 +126,7 @@ theorem veridical_entails_complement (V : DoxasticPredicate W E)
   simp only [hV, VeridicalityHolds] at holds
   exact holds.1
 
-open Semantics.Presupposition in
+open Presupposition in
 /-- The predicate application as a `PartialProp`: presupposition =
     veridicality check, assertion = universal modal. `HoldsAt` is the
     conjunction of the two fields. -/

@@ -69,7 +69,7 @@ Type B (EXH¹).
 namespace WangDavidson2026
 
 open Trivalent (Prop3)
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 open Exhaustification (innocent predToFinset altsFromPreds)
 open Exhaustification.Trivalent
 

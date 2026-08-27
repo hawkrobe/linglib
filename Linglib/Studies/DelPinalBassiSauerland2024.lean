@@ -31,9 +31,9 @@ The five-world model and alternative set are [bar-lev-fox-2020]'s.
 
 namespace DelPinalBassiSauerland2024
 
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 open Exhaustification Exhaustification.Presuppositional BarLevFox2020 ModalLogic
-open Semantics.Presupposition.Context (presupSatisfied localCtxSecondDisjunct)
+open Presupposition.Context
 
 /-! ### `pex^{IE+II}` on `◇(p ∨ q)` (§2) -/
 

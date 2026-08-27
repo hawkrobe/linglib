@@ -63,7 +63,7 @@ open Core.Order
 open Tense
 open Semantics.Evidential
 open Features.Mirativity
-open Semantics.Presupposition
+open Presupposition
 
 /-! ### Evidential Frame -/
 

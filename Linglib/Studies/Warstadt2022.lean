@@ -26,7 +26,7 @@ sprinter") triggers stronger accommodation than genus-level ("not runner").
 
 namespace Warstadt2022
 
-open Semantics.Presupposition
+open Presupposition
 open RSA (WithSilence liftMeaning)
 
 

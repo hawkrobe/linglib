@@ -34,7 +34,7 @@ the class are plugs (`conj_plug_plug_presup`).
 
 namespace Karttunen1973
 
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 open ModalLogic (box box_and)
 
 variable {W : Type*} (X : Set W) (p q : PartialProp W) (w : W)
@@ -145,7 +145,7 @@ theorem conj_presup_35 :
       ¬ (conj Set.univ (.ofProp (· ∉ capitalParis)) kingBald).presup .parisNoKing := by
   simp only [conj, Entails, PartialProp.ofProp, kingBald]; decide
 
-open Semantics.Presupposition.PartialProp in
+open Presupposition.PartialProp in
 /-- Strong-Kleene conjunction makes (35b) false at the actual world and so bivalent —
 presupposition-free — while (35a) is undefined. -/
 theorem kleene_35 :

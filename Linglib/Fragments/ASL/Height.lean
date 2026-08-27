@@ -39,7 +39,7 @@ pronouns or proximal/distal on demonstratives.
 
 namespace ASL.Height
 
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Vertical Height Scale

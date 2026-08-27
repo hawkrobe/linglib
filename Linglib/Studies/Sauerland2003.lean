@@ -41,10 +41,10 @@ namespace Sauerland2003
 open Mereology (Atom AlgClosure cum_maximal_unique algClosure_cum not_atom_sup_of_ne)
 open Semantics.Plurality.Algebra (D)
 open Features (ContainmentPair ContainmentPairLike)
-open Semantics.Presupposition (PartialProp)
+open Presupposition
 open Constraints OptimalityTheory
-open Semantics.Presupposition.PhiFeatures
-open Semantics.Presupposition.MaximizePresupposition (phiMP phi_mp_selects_maximal)
+open Presupposition.PhiFeatures
+open Presupposition.MaximizePresupposition
 
 variable {E : Type*}
 

@@ -8,8 +8,8 @@ import Linglib.Studies.Heim1983
 Projection predictions of the local-context theory, applied to the
 King and conditional examples from `Studies.Heim1983`. The
 per-connective local contexts are substrate
-(`Semantics.Presupposition.LocalContext`); belief embedding
-([schlenker-2009] §3.1.2) is `Semantics.Presupposition.BeliefEmbedding`.
+(`Presupposition.LocalContext`); belief embedding
+([schlenker-2009] §3.1.2) is `Presupposition.BeliefEmbedding`.
 
 ## Main declarations
 
@@ -28,9 +28,9 @@ per-connective local contexts are substrate
 
 namespace Schlenker2009
 
-open Semantics.Presupposition
-open Semantics.Presupposition.Context
-open Semantics.Presupposition.BeliefEmbedding
+open Presupposition
+open Presupposition.Context
+open Presupposition.BeliefEmbedding
 open Heim1983
 
 variable {W : Type*} {Agent : Type*}

@@ -35,11 +35,11 @@ paribus — presupposition P comes into existence at t."
 - **Binding preference**: anaphoric resolution is preferred over accommodation
 -/
 
-namespace Semantics.Presupposition.Accommodation
+namespace Presupposition.Accommodation
 
 open Classical
-open Semantics.Presupposition
-open Semantics.Presupposition.Context
+open Presupposition
+open Presupposition.Context
 
 variable {W : Type*}
 
@@ -63,7 +63,7 @@ inductive AccommodationLevel where
 /-- Global accommodation: update the context to include the presupposition.
  [lewis-1979]: "presupposition P comes into existence."
 
- Delegates to `Semantics.Presupposition.Context.accommodate`. -/
+ Delegates to `Presupposition.Context.accommodate`. -/
 abbrev globalAccommodate (c : Set W) (presup : Set W) : Set W :=
  accommodate c presup
 
@@ -84,7 +84,7 @@ instance (bindingDepth : Nat) : DecidablePred (isTrapped bindingDepth) := fun l 
  unfold isTrapped; cases l <;> infer_instance
 
 /-- All constraints bundled together.
- Uses canonical operations from `Semantics.Presupposition.Context`. -/
+ Uses canonical operations from `Presupposition.Context`. -/
 structure AccommodationOK (c : Set W) (presup : Set W) : Prop where
  informative : accommodationInformative c presup
  consistent : accommodationConsistent c presup
@@ -146,4 +146,4 @@ theorem heim_never_intermediate (c : Set W) (presup : Set W) :
  · rw [heim_projection_when_consistent c presup h]; exact AccommodationLevel.noConfusion
  · rw [heim_cancellation_equivalence c presup h]; exact AccommodationLevel.noConfusion
 
-end Semantics.Presupposition.Accommodation
+end Presupposition.Accommodation

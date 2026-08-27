@@ -24,9 +24,9 @@ presupposition is *conceivable* in the common ground iff there exists some
 world in the context set satisfying it.
 -/
 
-namespace Semantics.Presupposition.Context
+namespace Presupposition.Context
 
-open Semantics.Presupposition
+open Presupposition
 
 variable {W : Type*}
 
@@ -179,4 +179,4 @@ theorem local_context_matches_disjFilterLeft (c : Set W)
   · intro h w hc hn; exact h ⟨hc, hn⟩
   · intro h w ⟨hc, hn⟩; exact h w hc hn
 
-end Semantics.Presupposition.Context
+end Presupposition.Context

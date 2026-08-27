@@ -152,7 +152,7 @@ Von Fintel's key observation: `only` is NOT classically DE
 "Only x VP" as a `PartialProp`: Horn's asymmetric decomposition.
 -/
 def onlyPartialProp {W : Type*} (x : W → Prop) (scope : Set W) :
-    Semantics.Presupposition.PartialProp W where
+    Presupposition.PartialProp W where
   presup := fun _ => ∃ y, x y ∧ scope y
   assertion := fun _ => ∀ y, x y ∨ ¬ scope y
 

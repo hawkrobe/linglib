@@ -37,7 +37,7 @@ semantics, plus a single pragmatic constraint (ToD).
 
 This file connects three layers:
 - `Features.ContainmentPair`: the algebraic structure (specLevel ordering)
-- `Semantics.Presupposition.PhiFeatures`: presuppositional
+- `Presupposition.PhiFeatures`: presuppositional
   denotations, semantic markedness, and presuppositional strength ordering
 - `Constraint`: constraint evaluation and factorial typology
 
@@ -57,8 +57,7 @@ namespace Wang2023
 
 open Features (ContainmentPair ContainmentPairLike)
 open Constraints OptimalityTheory
-open Semantics.Presupposition.PhiFeatures (isSemanticUnmarked presupStrength
-  presupWeakerThan wellFormed_specLevel_le_two sgSem plSem)
+open Presupposition.PhiFeatures
 
 -- ============================================================================
 -- §1  Typological Data
@@ -148,7 +147,7 @@ cells, they prefer opposite directions. This is the structural heart
 of [wang-r-2023]'s analysis.
 
 The constraints are defined in terms of `presupStrength` from
-`Semantics.Presupposition.PhiFeatures`, not reimplemented —
+`Presupposition.PhiFeatures`, not reimplemented —
 ToD IS the presuppositional strength ordering.
 -/
 
@@ -199,14 +198,14 @@ theorem mp_maximal_zero : mpConstraint .maximal = 0 := rfl
     `MaximizePresupposition`: the same violation-counting function.
     This connects Wang2023's domain-specific MP! to the general theory. -/
 theorem mpConstraint_eq_phiMP :
-    mpConstraint = Semantics.Presupposition.MaximizePresupposition.phiMP := rfl
+    mpConstraint = Presupposition.MaximizePresupposition.phiMP := rfl
 
 /-- `todConstraint` equals `markednessPenalty presupStrength`.
     ToD is an instance of the general markedness penalty from
     `MaximizePresupposition`. -/
 theorem todConstraint_eval_eq_markednessPenalty (c : ContainmentPair) :
     todConstraint c =
-    (Semantics.Presupposition.MaximizePresupposition.markednessPenalty presupStrength) c := rfl
+    (Presupposition.MaximizePresupposition.markednessPenalty presupStrength) c := rfl
 
 /-- `tod_reverses_mp` is a corollary of the general
     `mp_reverses_markedness` theorem from `MaximizePresupposition`. -/
@@ -214,7 +213,7 @@ theorem tod_reverses_mp_from_general (c₁ c₂ : ContainmentPair)
     (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed) :
     todConstraint c₁ < todConstraint c₂ ↔
     mpConstraint c₁ > mpConstraint c₂ :=
-  Semantics.Presupposition.MaximizePresupposition.phi_mp_reverses_markedness c₁ c₂ hw₁ hw₂
+  Presupposition.MaximizePresupposition.phi_mp_reverses_markedness c₁ c₂ hw₁ hw₂
 
 -- ============================================================================
 -- §3  Binary Case: ToD >> MP! Derives Unmarked Recruitment
@@ -426,7 +425,7 @@ theorem thirdPerson_strategy_is_third :
     Proved via `unmarked_vacuous_presup` from PhiFeatures. -/
 theorem recruited_cells_have_vacuous_presup {E : Type*} (innerP outerP : E → Prop) :
     ∀ s : HonStrategy,
-      ∀ x : E, (Semantics.Presupposition.PhiFeatures.phiPresup innerP outerP
+      ∀ x : E, (Presupposition.PhiFeatures.phiPresup innerP outerP
         (honStrategyCell s)).defined x := by
   intro s x; cases s <;> trivial
 

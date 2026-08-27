@@ -42,8 +42,8 @@ p. 195) needs a non-trivial similarity ordering and is not formalized.
 
 namespace Heim1992
 
-open DynamicSemantics CCP.Partial Semantics.Presupposition Desire.Conditional
-open Semantics.Presupposition.BeliefEmbedding
+open DynamicSemantics CCP.Partial Presupposition Desire.Conditional
+open Presupposition.BeliefEmbedding
   (presupAttributedToHolder transparentProjection opaque_implies_transparent_when_reflexive)
 
 /-! ### Belief reports -/

@@ -68,8 +68,8 @@ conceivability presupposition — not about the entity but about the
 
 namespace Enguehard2024
 
-open Semantics.Presupposition (PartialProp)
-open Semantics.Presupposition.PhiFeatures
+open Presupposition
+open Presupposition.PhiFeatures
 
 -- ============================================================================
 -- §1  Core Types
@@ -664,9 +664,9 @@ theorem constant_presup_satisfied_iff_satisfiable
     {W : Type*} (witnessCard : W → Nat) (conceivable : W → Prop)
     (c : Set W)
     (hne : c.Nonempty) :
-    Semantics.Presupposition.Context.presupSatisfied c
+    Presupposition.Context.presupSatisfied c
       (sgIndefPresup witnessCard conceivable) ↔
-    Semantics.Presupposition.Context.presupSatisfiable c
+    Presupposition.Context.presupSatisfiable c
       (sgIndefPresup witnessCard conceivable) := by
   constructor
   · intro hsat

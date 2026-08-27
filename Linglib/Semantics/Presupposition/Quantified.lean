@@ -18,7 +18,7 @@ delimit when each reading surfaces.
 * `negExistsPartial` — negated existential, universal projection.
 -/
 
-namespace Semantics.Presupposition
+namespace Presupposition
 
 namespace PartialProp
 
@@ -76,4 +76,4 @@ theorem forallPartial_holds {α : Type*} (S : α → Prop) (φ : α → PartialP
 
 end PartialProp
 
-end Semantics.Presupposition
+end Presupposition

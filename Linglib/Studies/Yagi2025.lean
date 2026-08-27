@@ -78,7 +78,7 @@ definition with disjunction-update survival.
 namespace Yagi2025
 
 open Trivalent (isDefined metaAssert Prop3)
-open Semantics.Presupposition
+open Presupposition
 
 /-! ## World type
 

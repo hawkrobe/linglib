@@ -41,7 +41,7 @@ connects it to existing domain-specific implementations:
    constraint hierarchy for presupposition obligatoriness
    ([wang-2025]). The alternative-structure typology driving it lives in
    `Studies/Wang2025.lean`; consensus trigger types in
-   `Semantics.Presupposition.TriggerTypology`.
+   `Presupposition.TriggerTypology`.
 
 ## Core abstraction
 
@@ -65,12 +65,12 @@ strength directly (`mp_reverses_markedness`).
 - §4: Presuppositional strict total order on well-formed cells
 -/
 
-namespace Semantics.Presupposition.MaximizePresupposition
+namespace Presupposition.MaximizePresupposition
 
 open Features (ContainmentPair)
 open Constraints OptimalityTheory
 open Core.Optimization.Evaluation
-open Semantics.Presupposition.PhiFeatures
+open Presupposition.PhiFeatures
 
 -- ============================================================================
 -- §1  Abstract MP and Markedness Constraints
@@ -347,4 +347,4 @@ theorem strength_iff_specLevel (a b : ContainmentPair) :
     presupWeakerThan a b = true ↔ a.specLevel < b.specLevel := by
   simp [presupWeakerThan, decide_eq_true_eq]
 
-end Semantics.Presupposition.MaximizePresupposition
+end Presupposition.MaximizePresupposition

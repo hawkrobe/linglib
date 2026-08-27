@@ -170,7 +170,7 @@ The PER series is the **weak** article (uniqueness); the marked DEM series the *
 grounding (`Studies/Hanink2021`): there `deixis` filled `Description.demonstrative`'s slot; here the
 `HasPhi.phi` **gender** supplies the restrictor's presupposition. -/
 
-open Semantics.Presupposition.PhiFeatures (femSem)
+open Presupposition.PhiFeatures
 
 /-- `⟦sie⟧` made concrete: the feminine PER's weak-article restrictor **is** the `femSem`
     presupposition — true by construction (`(femSem isFemale).presup = isFemale`), so the gender

@@ -39,10 +39,10 @@ This study file imports and bridges:
 
 namespace RobertsSimons2024
 
-open Semantics.Presupposition.Aboutness
+open Presupposition.Aboutness
 open Features.ChangeOfState
 open Features
-open Semantics.Presupposition.ProjectiveContent
+open Presupposition.ProjectiveContent
 
 variable {W : Type*}
 

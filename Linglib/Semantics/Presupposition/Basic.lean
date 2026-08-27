@@ -27,8 +27,8 @@ The canonical connectives, entailment relations, and combinators on
 
 The rival trivalent connective families (Strong Kleene, Belnap / flexible
 accommodation, symmetric K&P, positive-antecedent) live in
-`Semantics.Presupposition.Trivalent`; quantified projection lives in
-`Semantics.Presupposition.Quantified`.
+`Presupposition.Trivalent`; quantified projection lives in
+`Presupposition.Quantified`.
 
 ## Implementation notes
 
@@ -38,7 +38,7 @@ paired with `eval_*` bridge theorems mapping each to the corresponding
 `Trivalent` operator on the evaluation.
 -/
 
-namespace Semantics.Presupposition
+namespace Presupposition
 
 namespace PartialProp
 
@@ -120,7 +120,7 @@ def impFilter (p q : PartialProp W) : PartialProp W where
     Generalizes `disjFilterLeft` to a presuppositional first disjunct
     (`orFilter_ofProp`). The symmetric K&P variant is
     `PartialProp.orKPSymmetric`; the positive-antecedent variant is
-    `PartialProp.orPositive` (`Semantics.Presupposition.Trivalent`). -/
+    `PartialProp.orPositive` (`Presupposition.Trivalent`). -/
 def orFilter (p q : PartialProp W) : PartialProp W where
   presup := fun w => p.presup w ∧ (¬p.assertion w → q.presup w)
   assertion := fun w => p.assertion w ∨ q.assertion w
@@ -421,4 +421,4 @@ theorem presupOfReferent_assertion_none {E : Type*}
 
 end PartialProp
 
-end Semantics.Presupposition
+end Presupposition
