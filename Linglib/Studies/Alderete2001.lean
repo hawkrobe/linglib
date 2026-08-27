@@ -108,25 +108,30 @@ def depAccent (input base : List Syl) : Constraint (List Syl) := fun out =>
 /-- CULMINATIVITY (15a): the word bears an accent. -/
 def culmin : Constraint (List Syl) := Constraint.binary fun out => out.all (!·.accent)
 
+/-- The inputs and bases of (21)–(23): *adá+ppó+i*, *yóm+tára*, *kóobe+kko*. -/
+def adaInput : List Syl := [un "a", acc "da", acc "ppo", un "i"]
+def adaBase : List Syl := [un "a", acc "da"]
+def yomInput : List Syl := [acc "yom", acc "ta", un "ra"]
+def yomBase : List Syl := [acc "yon", un "da"]
+def koobeInput : List Syl := [acc "koo", un "be", un "kko"]
+def koobeBase : List Syl := [acc "koo", un "be"]
+
 /-- (21): the dominant accented suffix *-ppó* under `¬OO-MAX ≫ OO-MAX ≫ IO-MAX` deletes the base
 accent and keeps its own: *ada-ppó-i*. -/
 theorem dominant_accented :
     (Tableau.ofRanking
       [[un "a", acc "da", un "ppo", un "i"], [un "a", un "da", un "ppo", un "i"],
         [un "a", un "da", acc "ppo", un "i"]]
-      [(maxAccent [un "a", acc "da", acc "ppo", un "i"] [un "a", acc "da"] .base).antifaithful,
-        maxAccent [un "a", acc "da", acc "ppo", un "i"] [un "a", acc "da"] .base,
-        maxAccent [un "a", acc "da", acc "ppo", un "i"] [un "a", acc "da"] .input]).optimal =
-      {[un "a", un "da", acc "ppo", un "i"]} := by
+      [(maxAccent adaInput adaBase .base).antifaithful, maxAccent adaInput adaBase .base,
+        maxAccent adaInput adaBase .input]).optimal = {[un "a", un "da", acc "ppo", un "i"]} := by
   decide
 
 /-- (22): the recessive suffix *-tára*, with `OO-MAX ≫ ¬OO-MAX`, leaves the base accent:
 *yón-dara*. -/
 theorem recessive :
     (Tableau.ofRanking [[un "yon", acc "da", un "ra"], [acc "yon", un "da", un "ra"]]
-      [maxAccent [acc "yom", acc "ta", un "ra"] [acc "yon", un "da"] .base,
-        (maxAccent [acc "yom", acc "ta", un "ra"] [acc "yon", un "da"] .base).antifaithful])
-      |>.optimal = {[acc "yon", un "da", un "ra"]} := by
+      [maxAccent yomInput yomBase .base, (maxAccent yomInput yomBase .base).antifaithful]).optimal =
+      {[acc "yon", un "da", un "ra"]} := by
   decide
 
 /-- (23): the dominant unaccented suffix *-kko* deletes the base accent, and with
@@ -135,9 +140,8 @@ theorem dominant_unaccented :
     (Tableau.ofRanking
       [[acc "koo", un "be", un "kko"], [un "koo", acc "be", un "kko"],
         [un "koo", un "be", un "kko"]]
-      [(maxAccent [acc "koo", un "be", un "kko"] [acc "koo", un "be"] .base).antifaithful,
-        depAccent [acc "koo", un "be", un "kko"] [acc "koo", un "be"], culmin]).optimal =
-      {[un "koo", un "be", un "kko"]} := by
+      [(maxAccent koobeInput koobeBase .base).antifaithful, depAccent koobeInput koobeBase,
+        culmin]).optimal = {[un "koo", un "be", un "kko"]} := by
   decide
 
 /-! ### Limburg Dutch: dragging tone mutation ((42), (52)–(53))
