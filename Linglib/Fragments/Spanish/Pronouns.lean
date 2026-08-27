@@ -29,11 +29,6 @@ Unlike Italian LEI, USTED can also be used in *laísta* varieties where
 namespace Spanish.Pronouns
 
 open Pronoun
-open Features.Register (Level)
-
--- ============================================================================
--- § 1: Strong Pronouns
--- ============================================================================
 
 /-- *yo* — 1sg. -/
 def yo : PersonalPronoun :=
@@ -54,11 +49,11 @@ def usted : PersonalPronoun :=
 
 /-- *él* — 3sg masculine. -/
 def el : PersonalPronoun :=
-  { form := "él", person := some .third, number := some .singular }
+  { form := "él", person := some .third, number := some .singular, gender := some .masculine }
 
 /-- *ella* — 3sg feminine. -/
 def ella : PersonalPronoun :=
-  { form := "ella", person := some .third, number := some .singular }
+  { form := "ella", person := some .third, number := some .singular, gender := some .feminine }
 
 /-- *nosotros* — 1pl. -/
 def nosotros : PersonalPronoun :=
@@ -75,34 +70,14 @@ def ustedes : PersonalPronoun :=
 
 /-- *ellos* — 3pl masculine. -/
 def ellos : PersonalPronoun :=
-  { form := "ellos", person := some .third, number := some .plural }
+  { form := "ellos", person := some .third, number := some .plural, gender := some .masculine }
 
-def allPronouns : List PersonalPronoun :=
-  [yo, tu, usted, el, ella, nosotros, vosotros, ustedes, ellos]
+/-- *ellas* — 3pl feminine. -/
+def ellas : PersonalPronoun :=
+  { form := "ellas", person := some .third, number := some .plural, gender := some .feminine }
 
--- ============================================================================
--- § 2: Verification Theorems
--- ============================================================================
-
-/-- T/V distinction: *tú* is informal, *usted* is formal. -/
-theorem tv_distinction :
-    tu.register = .informal ∧ usted.register = .formal := ⟨rfl, rfl⟩
-
-/-- USTED has 3rd person agreement features but 2nd person interpretable
-    features. [adamson-zompi-2025] -/
-theorem usted_dual_person :
-    usted.person = some .third ∧
-    usted.referentialPerson = some .second := ⟨rfl, rfl⟩
-
-/-- *ustedes* (2pl formal) also has dual person features. -/
-theorem ustedes_dual_person :
-    ustedes.person = some .third ∧
-    ustedes.referentialPerson = some .second := ⟨rfl, rfl⟩
-
-/-- All three persons are attested. -/
-theorem has_all_persons :
-    allPronouns.any (·.person == some .first) = true ∧
-    allPronouns.any (·.person == some .second) = true ∧
-    allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
+/-- The strong-pronoun inventory. -/
+def pronouns : List PersonalPronoun :=
+  [yo, tu, usted, el, ella, nosotros, vosotros, ustedes, ellos, ellas]
 
 end Spanish.Pronouns

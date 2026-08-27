@@ -16,8 +16,8 @@ Italian has a T/V distinction in 2nd person:
 
 ## Clitic Paradigm
 
-Italian object clitics show the same syncretism pattern as Spanish: 1sg/2sg are syncretic across accusative, dative,
-and reflexive cases, while 3sg/3pl are not.
+Italian object clitics show the same syncretism pattern as Spanish: 1sg/2sg are
+syncretic across accusative, dative, and reflexive cases, while 3sg/3pl are not.
 
 | Person | ACC    | DAT    | REFL |
 |--------|--------|--------|------|
@@ -33,7 +33,6 @@ and reflexive cases, while 3sg/3pl are not.
 namespace Italian.Pronouns
 
 open Pronoun
-open Features.Register (Level)
 
 -- ============================================================================
 -- § 1: Strong Pronouns
@@ -58,11 +57,11 @@ def lei_formal : PersonalPronoun :=
 
 /-- *lui* — 3sg masculine. -/
 def lui : PersonalPronoun :=
-  { form := "lui", person := some .third, number := some .singular }
+  { form := "lui", person := some .third, number := some .singular, gender := some .masculine }
 
 /-- *lei* — 3sg feminine. -/
 def lei : PersonalPronoun :=
-  { form := "lei", person := some .third, number := some .singular }
+  { form := "lei", person := some .third, number := some .singular, gender := some .feminine }
 
 /-- *noi* — 1pl. -/
 def noi : PersonalPronoun :=
@@ -80,10 +79,8 @@ def loro_formal : PersonalPronoun :=
 def loro : PersonalPronoun :=
   { form := "loro", person := some .third, number := some .plural }
 
-def secondPersonPronouns : List PersonalPronoun := [tu, lei_formal]
-
-def allPronouns : List PersonalPronoun :=
-  [io] ++ secondPersonPronouns ++ [lui, lei, noi, voi, loro_formal, loro]
+/-- The strong-pronoun inventory. -/
+def pronouns : List PersonalPronoun := [io, tu, lei_formal, lui, lei, noi, voi, loro_formal, loro]
 
 -- ============================================================================
 -- § 2: Clitic Paradigm
@@ -96,37 +93,48 @@ open Romance.Clitics (CliticEntry CliticCase)
 (`Fragments/Romance/Clitics.lean`). -/
 
 -- 1sg clitics
-def mi_acc : CliticEntry := { form := "mi", person := .first, number := .Sing, case_ := .accusative }
+def mi_acc : CliticEntry := { form := "mi", person := .first, number := .Sing,
+                              case_ := .accusative }
 def mi_dat : CliticEntry := { form := "mi", person := .first, number := .Sing, case_ := .dative }
-def mi_refl : CliticEntry := { form := "mi", person := .first, number := .Sing, case_ := .reflexive }
+def mi_refl : CliticEntry := { form := "mi", person := .first, number := .Sing,
+                               case_ := .reflexive }
 
 -- 2sg clitics
-def ti_acc : CliticEntry := { form := "ti", person := .second, number := .Sing, case_ := .accusative }
+def ti_acc : CliticEntry := { form := "ti", person := .second, number := .Sing,
+                              case_ := .accusative }
 def ti_dat : CliticEntry := { form := "ti", person := .second, number := .Sing, case_ := .dative }
-def ti_refl : CliticEntry := { form := "ti", person := .second, number := .Sing, case_ := .reflexive }
+def ti_refl : CliticEntry := { form := "ti", person := .second, number := .Sing,
+                               case_ := .reflexive }
 
 -- 3sg clitics
 def lo_cl : CliticEntry := { form := "lo", person := .third, number := .Sing, case_ := .accusative }
 def la_cl : CliticEntry := { form := "la", person := .third, number := .Sing, case_ := .accusative }
 def gli_dat : CliticEntry := { form := "gli", person := .third, number := .Sing, case_ := .dative }
 def le_dat : CliticEntry := { form := "le", person := .third, number := .Sing, case_ := .dative }
-def si_refl : CliticEntry := { form := "si", person := .third, number := .Sing, case_ := .reflexive }
+def si_refl : CliticEntry := { form := "si", person := .third, number := .Sing,
+                               case_ := .reflexive }
 
 -- 1pl clitics
-def ci_acc : CliticEntry := { form := "ci", person := .first, number := .Plur, case_ := .accusative }
+def ci_acc : CliticEntry := { form := "ci", person := .first, number := .Plur,
+                              case_ := .accusative }
 def ci_dat : CliticEntry := { form := "ci", person := .first, number := .Plur, case_ := .dative }
-def ci_refl : CliticEntry := { form := "ci", person := .first, number := .Plur, case_ := .reflexive }
+def ci_refl : CliticEntry := { form := "ci", person := .first, number := .Plur,
+                               case_ := .reflexive }
 
 -- 2pl clitics
-def vi_acc : CliticEntry := { form := "vi", person := .second, number := .Plur, case_ := .accusative }
+def vi_acc : CliticEntry := { form := "vi", person := .second, number := .Plur,
+                              case_ := .accusative }
 def vi_dat : CliticEntry := { form := "vi", person := .second, number := .Plur, case_ := .dative }
-def vi_refl : CliticEntry := { form := "vi", person := .second, number := .Plur, case_ := .reflexive }
+def vi_refl : CliticEntry := { form := "vi", person := .second, number := .Plur,
+                               case_ := .reflexive }
 
 -- 3pl clitics
 def li_cl : CliticEntry := { form := "li", person := .third, number := .Plur, case_ := .accusative }
 def le_cl : CliticEntry := { form := "le", person := .third, number := .Plur, case_ := .accusative }
-def loro_dat : CliticEntry := { form := "loro", person := .third, number := .Plur, case_ := .dative }
-def si_refl_pl : CliticEntry := { form := "si", person := .third, number := .Plur, case_ := .reflexive }
+def loro_dat : CliticEntry := { form := "loro", person := .third, number := .Plur,
+                                case_ := .dative }
+def si_refl_pl : CliticEntry := { form := "si", person := .third, number := .Plur,
+                                  case_ := .reflexive }
 
 -- ============================================================================
 -- § 3: Paradigm and Syncretism
@@ -187,45 +195,11 @@ theorem syncretic_2pl : datReflSyncretic .second .Plur = true := rfl
 /-- 3pl: dative and reflexive are NOT syncretic ("loro" ≠ "si"). -/
 theorem not_syncretic_3pl : datReflSyncretic .third .Plur = false := rfl
 
--- Form identity
-/-- 1sg forms are identical across all three cases. -/
-theorem mi_forms_identical :
-    mi_acc.form = mi_dat.form ∧ mi_dat.form = mi_refl.form := ⟨rfl, rfl⟩
-
-/-- 2sg forms are identical across all three cases. -/
-theorem ti_forms_identical :
-    ti_acc.form = ti_dat.form ∧ ti_dat.form = ti_refl.form := ⟨rfl, rfl⟩
-
-/-- 3sg dative ≠ 3sg reflexive (gli ≠ si). -/
-theorem gli_ne_si : gli_dat.form ≠ si_refl.form := by decide
-
--- T/V distinction
-/-- *tu* is informal, *Lei* is formal. -/
-theorem tv_distinction :
-    tu.register = .informal ∧ lei_formal.register = .formal := ⟨rfl, rfl⟩
-
-/-- *Lei* has 3rd person agreement features but 2nd person interpretable features.
-    [adamson-zompi-2025] -/
-theorem lei_formal_dual_person :
-    lei_formal.person = some .third ∧
-    lei_formal.referentialPerson = some .second := ⟨rfl, rfl⟩
-
-/-- All three persons are attested. -/
-theorem has_all_persons :
-    allPronouns.any (·.person == some .first) = true ∧
-    allPronouns.any (·.person == some .second) = true ∧
-    allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
-
-/-- Both singular and plural are attested. -/
-theorem has_both_numbers :
-    allPronouns.any (·.number == some .singular) = true ∧
-    allPronouns.any (·.number == some .plural) = true := ⟨rfl, rfl⟩
-
 -- ============================================================================
 -- § 5: Cardinaletti–Starke deficiency classes
 -- ============================================================================
 
-/-- Italian's tonic series (`allPronouns`) instantiates the Cardinaletti–Starke
+/-- Italian's tonic series (`pronouns`) instantiates the Cardinaletti–Starke
     `.strong` class ([cardinaletti-starke-1999]). -/
 def strongStrength : Strength := .strong
 

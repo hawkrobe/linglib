@@ -113,8 +113,8 @@ theorem magahi_fusion_rows :
 /-- The Souletin markers of ex 1 and the Galician clitics are the Fragments'. -/
 theorem marker_rows :
     ∀ row ∈ Examples.all, ∀ m ∈ row.feature? "marker",
-      (row.language = "soul1243" → m ∈ Basque.Pronouns.allAllocMarkers.map (·.form)) ∧
-      (row.language = "gali1258" → m ∈ Galician.Pronouns.allAllocClitics.map (·.form)) ∧
+      (row.language = "soul1243" → m ∈ Basque.Pronouns.allocutiveMarkers.map (·.form)) ∧
+      (row.language = "gali1258" → m ∈ Galician.Pronouns.allocutiveClitics.map (·.form)) ∧
       (row.language = "tami1289" → m = Tamil.Pronouns.pluralSuffix) := by
   decide +kernel
 

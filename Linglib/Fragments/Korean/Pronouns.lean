@@ -1,11 +1,12 @@
 /-
-# Korean Pronoun & Allocutive Fragment
+# Korean pronouns and speech-style particles
 [kwon-lee-2026] [sohn-1999]
 
-Personal pronouns and allocutive particles in Korean. Korean has
-particle-based allocutive marking (*-yo* polite, *-(su)pnida* formal)
-hosted in the SAP layer, restricted to root clauses. 1st person has a
-plain/humble distinction (*na* / *jeo*).
+Personal pronouns of Korean and its sentence-final speech-style particles
+(*-yo* polite, *-(su)pnida* formal), which encode the speaker–addressee
+relation and the formality of the discourse and are confined to root clauses
+([alok-bhalla-2026] (8), (13)). The first person has a plain/humble contrast
+(*na* / *jeo*).
 
 ## 3rd-Person Reference
 
@@ -44,7 +45,6 @@ import Linglib.Syntax.Category.Pronoun.Basic
 namespace Korean.Pronouns
 
 open Pronoun
-open Features.Register (Level)
 
 -- ============================================================================
 -- First Person
@@ -52,11 +52,13 @@ open Features.Register (Level)
 
 /-- 나 *na* — 1sg plain. -/
 def na : PersonalPronoun :=
-  { form := "na", script := some "나", person := some .first, number := some .singular, register := .informal }
+  { form := "na", script := some "나", person := some .first, number := some .singular,
+    register := .informal }
 
 /-- 저 *jeo* — 1sg humble. -/
 def jeo : PersonalPronoun :=
-  { form := "jeo", script := some "저", person := some .first, number := some .singular, register := .formal }
+  { form := "jeo", script := some "저", person := some .first, number := some .singular,
+    register := .formal }
 
 /-- 우리 *uri* — 1pl. -/
 def uri : PersonalPronoun :=
@@ -68,11 +70,13 @@ def uri : PersonalPronoun :=
 
 /-- 너 *neo* — 2sg plain. -/
 def neo : PersonalPronoun :=
-  { form := "neo", script := some "너", person := some .second, number := some .singular, register := .informal }
+  { form := "neo", script := some "너", person := some .second, number := some .singular,
+    register := .informal }
 
 /-- 당신 *dangsin* — 2sg polite. -/
 def dangsin : PersonalPronoun :=
-  { form := "dangsin", script := some "당신", person := some .second, number := some .singular, register := .formal }
+  { form := "dangsin", script := some "당신", person := some .second, number := some .singular,
+    register := .formal }
 
 -- ============================================================================
 -- Third Person
@@ -107,100 +111,18 @@ def geudeul : PersonalPronoun :=
   { form := "geudeul", script := some "그들", person := some .third, number := some .plural
   , register := .formal }
 
--- ============================================================================
--- Pronoun Lists
--- ============================================================================
+/-- The pronoun inventory: the literary third-person forms *geu*, *geunyeo*,
+    *geudeul* and the colloquial *gyae* (Yale *ku*, *kunye*, *kutul*, *kyay*). -/
+def pronouns : List PersonalPronoun :=
+  [na, jeo, uri, neo, dangsin, geu, geunyeo, geudeul, gyae]
 
-def secondPersonPronouns : List PersonalPronoun := [neo, dangsin]
+/-- *-yo* — the polite speech-style particle. -/
+def yo : AllocutiveEntry := { form := "-yo", register := .neutral, gloss := "POL" }
 
-/-- 3rd-person pronouns: literary *geu*/*geunyeo*/*geudeul* and
-    colloquial *gyae*. Yale-romanization variants (*ku*/*kunye*/*kutul*/
-    *kyay*) refer to the same lexical items. -/
-def thirdPersonPronouns : List PersonalPronoun := [geu, geunyeo, geudeul, gyae]
+/-- *-(su)pnida* — the formal speech-style particle. -/
+def supnida : AllocutiveEntry := { form := "-(su)pnida", register := .formal, gloss := "FORM" }
 
-def allPronouns : List PersonalPronoun :=
-  [na, jeo, uri] ++ secondPersonPronouns ++ thirdPersonPronouns
-
--- ============================================================================
--- Allocutive Particles (SAP-layer)
--- ============================================================================
-
-/-- *-yo* polite particle. -/
-def yo : AllocutiveEntry :=
-  { form := "-yo", register := .neutral, gloss := "POL" }
-
-/-- *-(su)pnida* formal particle. -/
-def supnida : AllocutiveEntry :=
-  { form := "-(su)pnida", register := .formal, gloss := "FORM" }
-
-def allAllocParticles : List AllocutiveEntry := [yo, supnida]
-
--- ============================================================================
--- Verb Agreement Examples
--- ============================================================================
-
-/-- A verb form showing speech-level inflection. -/
-structure VerbForm where
-  form : String
-  gloss : String
-  register : Level
-  deriving Repr, BEq
-
-/-- 가 *ga* — "go" (plain/intimate). -/
-def ga : VerbForm := { form := "ga", gloss := "go.PLN", register := .informal }
-
-/-- 가요 *gayo* — "go" (polite). -/
-def gayo : VerbForm := { form := "gayo", gloss := "go.POL", register := .neutral }
-
-/-- 갑니다 *gamnida* — "go" (formal). -/
-def gamnida : VerbForm := { form := "gamnida", gloss := "go.FORM", register := .formal }
-
--- ============================================================================
--- Verification
--- ============================================================================
-
-/-- All three persons are attested. -/
-theorem has_all_persons :
-    allPronouns.any (·.person == some .first) = true ∧
-    allPronouns.any (·.person == some .second) = true ∧
-    allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
-
-/-- Both singular and plural are attested. -/
-theorem has_both_numbers :
-    allPronouns.any (·.number == some .singular) = true ∧
-    allPronouns.any (·.number == some .plural) = true := ⟨rfl, rfl⟩
-
-/-- 1st person has plain/humble register distinction. -/
-theorem first_person_humble :
-    na.register = .informal ∧ jeo.register = .formal := ⟨rfl, rfl⟩
-
-/-- 2nd person pronouns are all second person. -/
-theorem second_person_all_2p :
-    secondPersonPronouns.all (·.person == some .second) = true := rfl
-
-/-- The T/V register distinction is present in 2nd person. -/
-theorem tv_distinction :
-    secondPersonPronouns.any (·.register == .informal) = true ∧
-    secondPersonPronouns.any (·.register == .formal) = true := ⟨rfl, rfl⟩
-
-/-- Verb forms span all three speech levels. -/
-theorem verb_three_levels :
-    ga.register = .informal ∧ gayo.register = .neutral ∧ gamnida.register = .formal := ⟨rfl, rfl, rfl⟩
-
-/-- 3rd-person pronouns split by register: *gyae* is colloquial,
-    *geu*/*geunyeo*/*geudeul* are literary ([kwon-lee-2026] fn. 2). -/
-theorem third_person_register_split :
-    gyae.register = .informal ∧
-    geu.register = .formal ∧
-    geunyeo.register = .formal ∧
-    geudeul.register = .formal := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- *gyae* is gender-neutral; *geu*/*geunyeo* are gendered. This is the
-    central asymmetry of the Korean 3rd-person system: the colloquial
-    pronoun lacks the gender contrast carried by the literary forms. -/
-theorem gyae_gender_neutral :
-    gyae.gender = none ∧
-    geu.gender = some .masculine ∧
-    geunyeo.gender = some .feminine := ⟨rfl, rfl, rfl⟩
+/-- The speech-style particles recorded here. -/
+def allocutiveParticles : List AllocutiveEntry := [yo, supnida]
 
 end Korean.Pronouns

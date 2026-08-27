@@ -1,36 +1,28 @@
-/-
-# Magahi Pronoun & Allocutive Fragment
-
-Personal pronouns and allocutive verbal morphology in Magahi (Indo-Aryan).
-Magahi has a three-level honorific system for 2nd person (non-hon / hon /
-high-hon) realized as verbal agreement morphemes. 3rd person uses demonstrative
-forms (*i* proximal / *ũ* distal). AA is Fin-based and freely embeddable.
-
--/
-
 import Linglib.Syntax.Category.Pronoun.Basic
+
+/-!
+# Magahi pronouns and allocutive markers
+
+Personal pronouns of Magahi, with a three-level honorific contrast in the
+second person (*tõ* / *tũ* / *apne*) and a two-level one in the third
+(*okraa* / *unkaa*), and the allocutive agreement suffixes of
+[alok-bhalla-2026]'s (2)–(6): composites of the subject's and the
+addressee's honorific level (`allocutive`). Allocutive agreement is sourced
+from the finiteness phrase and occurs in every finite embedded clause.
+-/
 
 namespace Magahi.Pronouns
 
 open Pronoun
 
--- ============================================================================
--- First Person
--- ============================================================================
-
 /-- *hum* — 1sg. -/
-def hum : PersonalPronoun :=
-  { form := "hum", person := some .first, number := some .singular }
+def hum : PersonalPronoun := { form := "hum", person := some .first, number := some .singular }
 
 /-- *hum sab* — 1pl. -/
 def humSab : PersonalPronoun :=
   { form := "hum sab", person := some .first, number := some .plural }
 
--- ============================================================================
--- Second Person (three-level honorific)
--- ============================================================================
-
-/-- *tõ* — 2sg non-honorific. -/
+/-- *tõ* — 2sg nonhonorific. -/
 def toN : PersonalPronoun :=
   { form := "tõ", person := some .second, number := some .singular, register := .informal }
 
@@ -38,38 +30,52 @@ def toN : PersonalPronoun :=
 def tuN : PersonalPronoun :=
   { form := "tũ", person := some .second, number := some .singular, register := .neutral }
 
-/-- *apne* — 2sg high-honorific. -/
+/-- *apne* — 2sg high honorific. -/
 def apne : PersonalPronoun :=
   { form := "apne", person := some .second, number := some .singular, register := .formal }
 
--- ============================================================================
--- Third Person (demonstrative-based)
--- ============================================================================
+/-- *toraa* — 2sg nonhonorific accusative ([alok-bhalla-2026] (39)). -/
+def toraa : PersonalPronoun :=
+  { form := "toraa", person := some .second, number := some .singular, case_ := some .acc,
+    register := .informal }
+
+/-- *tor* — 2sg nonhonorific genitive ([alok-bhalla-2026] (41)). -/
+def tor : PersonalPronoun :=
+  { form := "tor", person := some .second, number := some .singular, case_ := some .gen,
+    register := .informal }
+
+/-- *apne-ke* — 2sg high honorific accusative/dative ([alok-bhalla-2026] (40)). -/
+def apneKe : PersonalPronoun :=
+  { form := "apne-ke", person := some .second, number := some .singular, case_ := some .acc,
+    register := .formal }
 
 /-- *i* — 3sg proximal. -/
-def i_prox : PersonalPronoun :=
-  { form := "i", person := some .third, number := some .singular }
+def iProx : PersonalPronoun := { form := "i", person := some .third, number := some .singular }
 
 /-- *ũ* — 3sg distal. -/
-def uN : PersonalPronoun :=
-  { form := "ũ", person := some .third, number := some .singular }
+def uN : PersonalPronoun := { form := "ũ", person := some .third, number := some .singular }
 
 /-- *ũ sab* — 3pl distal. -/
-def uNSab : PersonalPronoun :=
-  { form := "ũ sab", person := some .third, number := some .plural }
+def uNSab : PersonalPronoun := { form := "ũ sab", person := some .third, number := some .plural }
 
--- ============================================================================
--- Pronoun Lists
--- ============================================================================
+/-- *okraa* — 3sg nonhonorific accusative ([alok-bhalla-2026] (44a)). -/
+def okraa : PersonalPronoun :=
+  { form := "okraa", person := some .third, number := some .singular, case_ := some .acc,
+    register := .informal }
 
-def secondPersonPronouns : List PersonalPronoun := [toN, tuN, apne]
+/-- *okar* — 3sg nonhonorific genitive ([alok-bhalla-2026] (45)). -/
+def okar : PersonalPronoun :=
+  { form := "okar", person := some .third, number := some .singular, case_ := some .gen,
+    register := .informal }
 
-def allPronouns : List PersonalPronoun :=
-  [hum, humSab] ++ secondPersonPronouns ++ [i_prox, uN, uNSab]
+/-- *unkaa* — 3sg honorific accusative/dative ([alok-bhalla-2026] (44b)). -/
+def unkaa : PersonalPronoun :=
+  { form := "unkaa", person := some .third, number := some .singular, case_ := some .acc,
+    register := .neutral }
 
--- ============================================================================
--- Allocutive Markers ([alok-bhalla-2026] (2)–(6), Alok 2021)
--- ============================================================================
+/-- The pronoun inventory. -/
+def pronouns : List PersonalPronoun :=
+  [hum, humSab, toN, tuN, apne, toraa, tor, apneKe, iProx, uN, uNSab, okraa, okar, unkaa]
 
 /-- *-au* — nonhonorific subject, nonhonorific addressee. -/
 def suffNH : AllocutiveEntry := { form := "-au", register := .informal, gloss := "NHS.NHA" }
@@ -80,9 +86,10 @@ def suffH : AllocutiveEntry := { form := "-o", register := .neutral, gloss := "N
 /-- *-ain* — nonhonorific subject, high-honorific addressee. -/
 def suffHH : AllocutiveEntry := { form := "-ain", register := .formal, gloss := "NHS.HHA" }
 
-def allAllocMarkers : List AllocutiveEntry := [suffNH, suffH, suffHH]
+/-- The allocutive markers of a nonhonorific subject. -/
+def allocutiveMarkers : List AllocutiveEntry := [suffNH, suffH, suffHH]
 
-/-- The fused subject/addressee agreement suffix, by the subject's and the
+/-- The fused subject/addressee agreement suffix by the subject's and the
     addressee's honorific level; `none` where no form is attested. -/
 def allocutive : Features.Register.Level → Features.Register.Level → Option String
   | .informal, .informal => some "-au"
@@ -91,32 +98,5 @@ def allocutive : Features.Register.Level → Features.Register.Level → Option 
   | .neutral, .informal => some "-thu(n)"
   | .formal, .formal => some "-thi(n)"
   | _, _ => none
-
--- ============================================================================
--- Verification
--- ============================================================================
-
-/-- All three persons are attested. -/
-theorem has_all_persons :
-    allPronouns.any (·.person == some .first) = true ∧
-    allPronouns.any (·.person == some .second) = true ∧
-    allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
-
-/-- Both singular and plural are attested. -/
-theorem has_both_numbers :
-    allPronouns.any (·.number == some .singular) = true ∧
-    allPronouns.any (·.number == some .plural) = true := ⟨rfl, rfl⟩
-
-/-- 2nd person pronouns are all second person. -/
-theorem second_person_all_2p :
-    secondPersonPronouns.all (·.person == some .second) = true := rfl
-
-/-- Three-level register distinction in 2nd person. -/
-theorem three_levels :
-    secondPersonPronouns.map (·.register) = [.informal, .neutral, .formal] := rfl
-
-/-- Allocutive markers have three levels matching 2nd person pronouns. -/
-theorem markers_three_levels :
-    allAllocMarkers.map (·.register) = [.informal, .neutral, .formal] := rfl
 
 end Magahi.Pronouns

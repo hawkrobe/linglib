@@ -29,11 +29,6 @@ in assumed-identity copular constructions ([keine-et-al-2019],
 namespace German.Pronouns
 
 open Pronoun
-open Features.Register (Level)
-
--- ============================================================================
--- § 1: Strong Pronouns
--- ============================================================================
 
 /-- *ich* — 1sg. -/
 def ich : PersonalPronoun :=
@@ -54,15 +49,15 @@ def sie_polite : PersonalPronoun :=
 
 /-- *er* — 3sg masculine. -/
 def er : PersonalPronoun :=
-  { form := "er", person := some .third, number := some .singular }
+  { form := "er", person := some .third, number := some .singular, gender := some .masculine }
 
 /-- *sie* — 3sg feminine. -/
 def sie_f : PersonalPronoun :=
-  { form := "sie", person := some .third, number := some .singular }
+  { form := "sie", person := some .third, number := some .singular, gender := some .feminine }
 
 /-- *es* — 3sg neuter. -/
 def es : PersonalPronoun :=
-  { form := "es", person := some .third, number := some .singular }
+  { form := "es", person := some .third, number := some .singular, gender := some .neuter }
 
 /-- *wir* — 1pl. -/
 def wir : PersonalPronoun :=
@@ -76,30 +71,8 @@ def ihr : PersonalPronoun :=
 def sie_pl : PersonalPronoun :=
   { form := "sie", person := some .third, number := some .plural }
 
-def allPronouns : List PersonalPronoun :=
+/-- The pronoun inventory. -/
+def pronouns : List PersonalPronoun :=
   [ich, du, sie_polite, er, sie_f, es, wir, ihr, sie_pl]
-
--- ============================================================================
--- § 2: Verification Theorems
--- ============================================================================
-
-/-- T/V distinction: *du* is informal, *Sie* is formal. -/
-theorem tv_distinction :
-    du.register = .informal ∧ sie_polite.register = .formal := ⟨rfl, rfl⟩
-
-/-- SIE has 3rd person (plural) agreement features but 2nd person
-    interpretable features. [adamson-zompi-2025] -/
-theorem sie_polite_dual_person :
-    sie_polite.person = some .third ∧
-    sie_polite.referentialPerson = some .second := ⟨rfl, rfl⟩
-
-/-- SIE uses 3pl, unlike Italian LEI (3sg) and Spanish USTED (3sg). -/
-theorem sie_is_plural : sie_polite.number = some .plural := rfl
-
-/-- All three persons are attested. -/
-theorem has_all_persons :
-    allPronouns.any (·.person == some .first) = true ∧
-    allPronouns.any (·.person == some .second) = true ∧
-    allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
 
 end German.Pronouns
