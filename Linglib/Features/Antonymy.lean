@@ -33,7 +33,7 @@ namespace Features
     Antonymy is genuinely binary (an antonym pair is *either* contradictory *or*
     contrary — never subcontrary or unconnected), so this stays a 2-case type;
     `NegationType.toOpposition` embeds it as the `{contradictory, contrary}` slice
-    of the substrate's `Aristotelian.OppositionRel`, and `AntonymPrediction`'s
+    of the substrate's `Aristotelian.OppositionRel`, and `Degree.Antonymy`'s
     `isContradictory_*Denot` ground the tag in the real opposition between the
     adjective denotations. -/
 inductive NegationType where
@@ -61,16 +61,10 @@ theorem NegationType.range_toOpposition (r : Aristotelian.OppositionRel) :
   · rintro (rfl | rfl)
     exacts [⟨.contradictory, rfl⟩, ⟨.contrary, rfl⟩]
 
-/-- Predicted behaviour of an antonymic adjective pair under sentential
-    negation: do positive and negative forms diverge under polarity
-    (asymmetric — gap-licensed strengthening) or behave in parallel
-    (symmetric — no gap available)?
-
-    Used as the codomain of prediction signatures in studies of negated
-    antonymic adjectives (Horn 1989, Krifka 2007, Tessler & Franke 2019,
-    Alexandropoulou & Gotzner 2024). Anchored in
-    `Semantics/Gradability/AntonymPrediction.lean`'s
-    `predictionForAntonymy` map and its substrate witness theorems. -/
+/-- Interpretation pattern of an antonymic adjective pair under sentential
+    negation: the negated positive and negated negative forms diverge
+    (asymmetric) or behave in parallel (symmetric). The codomain of the
+    prediction signatures in studies of negated antonyms. -/
 inductive Asymmetry where
   | asymmetric    -- diverging behavior under polarity
   | symmetric     -- parallel behavior under polarity

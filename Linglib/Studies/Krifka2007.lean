@@ -294,6 +294,15 @@ inductive Region where
   | negative     -- clearly unhappy (d << θ)
   deriving Repr, DecidableEq
 
+/-- Mirror image of a region under the polarity flip. -/
+def Region.flip : Region → Region
+  | .positive    => .negative
+  | .negative    => .positive
+  | .plateauHigh => .plateauLow
+  | .plateauLow  => .plateauHigh
+
+@[simp] theorem Region.flip_flip (r : Region) : r.flip.flip = r := by cases r <;> rfl
+
 /-- Semantically compatible form-meaning pairs as a `Finset` (decidable
     membership; supports `decide`-based per-pair blocking checks via the
     substrate's `Blocks.decidableOnFinset` instance).
@@ -314,6 +323,13 @@ def biotPairs : Finset (AntonymForm × Region) :=
 def krifkaQuadruplet : Finset (AntonymForm × Region) :=
   { (.positive,    .positive), (.notNegative, .plateauHigh),
     (.negative,    .negative), (.notPositive, .plateauLow) }
+
+/-- The quadruplet is polarity-symmetric: flipping every form and every region
+    returns the same assignment, so *not happy* and *not unhappy* fill the two
+    halves of the gap as mirror images. -/
+theorem krifkaQuadruplet_flip :
+    krifkaQuadruplet.image (Prod.map AntonymForm.flip Region.flip) = krifkaQuadruplet := by
+  decide
 
 /-- **M-Principle** constraint ([horn-1984], Horn's Division of Pragmatic
     Labor): penalizes mismatch between form complexity and meaning

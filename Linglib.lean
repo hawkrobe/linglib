@@ -1889,8 +1889,8 @@ import Linglib.Studies.AkinboFwangwar2026
 import Linglib.Studies.AksenovaEtAl2024
 import Linglib.Studies.AlbrightHayes2003
 import Linglib.Studies.Alderete2001
-import Linglib.Studies.AlexandropoulouGotzner2024
-import Linglib.Studies.AlexandropoulouGotzner2024JoS
+import Linglib.Studies.AlexandropoulouGotzner2024a
+import Linglib.Studies.AlexandropoulouGotzner2024b
 import Linglib.Studies.AlexeyenkoZeijlstra2025
 import Linglib.Studies.Allotey2021
 import Linglib.Studies.AlokBhalla2026
@@ -2964,3 +2964,5 @@ import Linglib.Data.Examples.AkinboFwangwar2026
 import Linglib.Data.Examples.AksenovaEtAl2024
 import Linglib.Data.Examples.AlbrightHayes2003
 import Linglib.Data.Examples.Alderete2001
+import Linglib.Data.Examples.AlexandropoulouGotzner2024a
+import Linglib.Data.Examples.AlexandropoulouGotzner2024b
