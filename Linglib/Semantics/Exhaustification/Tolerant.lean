@@ -14,7 +14,7 @@ tolerant operator drops that requirement and excludes every non-weaker
 alternative unconditionally. The result `tolerant.exh` may therefore be
 empty (a contradiction).
 
-Tolerance is empirically motivated by EFCIs ([alonso-ovalle-moghiseh-2025]):
+Tolerance is empirically motivated by EFCIs ([alonso-ovalle-moghiseh-2025a]):
 applying `tolerant` to an unembedded existential free-choice item produces
 the contradiction that drives modal insertion or partial exhaustification.
 

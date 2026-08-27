@@ -1,68 +1,20 @@
 import Linglib.Data.UD.Basic
 import Linglib.Semantics.Quantification.ChoiceFunction
-import Linglib.Semantics.Modality.ModalTypes
 import Mathlib.Data.Rat.Defs
 
-/-! # Farsi Determiner and Indefinite Lexicon
-[mirrazi-2024] [alonso-ovalle-moghiseh-2025]
+/-!
+# Farsi determiners and indefinites
 
-## Plain Indefinites (Choice Functions)
-
-Farsi plain indefinites *ye* (singular), *čand-ta* (plural classifier "some-CL"),
-and *do-ta* (numeral classifier "two-CL") are choice-function indefinites
-with an independent world/situation variable. [mirrazi-2024] shows
-that this world variable, when bound by an intensional operator, produces
-wide pseudo-scope de dicto readings: the indefinite appears to scope above
-negation (via the ∃-closure over the CF) while remaining de dicto with
-respect to the intensional operator (via the bound world variable).
-
-## EFCI: *yek-i*
-
-*yek-i* is an Existential Free Choice Item (EFCI): uniqueness in root,
-free choice under deontic, modal variation under epistemic.
-[alonso-ovalle-moghiseh-2025].
+The numeral *yek* (*ye* in the informal register) forms *yek* DPs with a bare NP and
+*yek-i* DPs with an NP carrying the indefinite enclitic *-i*; the latter are existential free
+choice items ([alonso-ovalle-moghiseh-2025a]). The plain indefinites *ye*, *čand-ta*, and
+*do-ta* are choice-function indefinites with an independent world variable
+([mirrazi-2024]).
 -/
 
 namespace Farsi.Determiners
 
-
-/--
-EFCI rescue mechanism type.
-Determines how the item rescues itself from the exhaustification contradiction.
--/
-inductive EFCIRescue where
-  /-- No rescue available (ungrammatical in UE root) -/
-  | none
-  /-- Can insert covert epistemic modal -/
-  | modalInsertion
-  /-- Can do partial exhaustification (prune one alternative type) -/
-  | partialExhaustification
-  /-- Both mechanisms available -/
-  | both
-  deriving DecidableEq, Repr
-
-/--
-The reading an EFCI yields in different contexts.
--/
-inductive EFCIReading where
-  /-- Plain existential (DE contexts) -/
-  | plainExistential
-  /-- Exactly one satisfies P (uniqueness) -/
-  | uniqueness
-  /-- For each x, it's permitted that P(x) -/
-  | freeChoice
-  /-- At least two x's are epistemically possible for P -/
-  | modalVariation
-  /-- Speaker doesn't know/care which x satisfies P -/
-  | epistemicIgnorance
-  deriving DecidableEq, Repr
-
-
-/--
-A Farsi indefinite DP entry.
-
-Captures syntactic and semantic properties including EFCI behavior.
--/
+/-- A Farsi indefinite determiner. -/
 structure IndefiniteDeterminer where
   /-- Surface form (Persian script) -/
   form : String
@@ -70,271 +22,47 @@ structure IndefiniteDeterminer where
   romanization : String
   /-- Gloss -/
   gloss : String
-  /-- Is this an EFCI? -/
+  /-- Is this an existential free choice item? -/
   isEFCI : Bool := false
-  /-- EFCI rescue mechanism (if EFCI) -/
-  efciRescue : Option EFCIRescue := none
-  /-- Requires partitive 'az' construction? -/
-  requiresPartitive : Bool := false
-  /-- Can occur with mass nouns? -/
-  allowsMass : Bool := false
-  /-- Conveys speaker ignorance/indifference in root? -/
-  speakerIgnorance : Bool := false
-  /-- Conveys uniqueness in root? -/
-  uniqueness : Bool := false
   deriving Repr, BEq
 
-
-/--
-*yek-i*: Farsi existential free choice item.
-
-Key properties:
-- EFCI with partial exhaustification rescue
-- Requires partitive 'az NP' ("one of the NPs")
-- Yields uniqueness in root contexts (no modal insertion)
-- Yields free choice under deontic modals
-- Yields modal variation under epistemic modals
-- Plain existential in DE contexts
--/
+/-- *yek-i*: the numeral with an *-i*-marked NP, an existential free choice item. -/
 def yeki : IndefiniteDeterminer :=
-  { form := "یکی"
-  , romanization := "yek-i"
-  , gloss := "one-INDF"
-  , isEFCI := true
-  , efciRescue := some .partialExhaustification
-  , requiresPartitive := false
-  , allowsMass := false
-  , speakerIgnorance := false  -- NO modal component in root
-  , uniqueness := true          -- Yields "exactly one" in root
-  }
+  { form := "یکی", romanization := "yek-i", gloss := "one-INDF", isEFCI := true }
 
-/--
-*yek* (plain numeral): "one"
+/-- *yek*: the plain numeral. -/
+def yek : IndefiniteDeterminer := { form := "یک", romanization := "yek", gloss := "one" }
 
-Not an EFCI - just a numeral. Contrast with *yek-i*.
--/
-def yek : IndefiniteDeterminer :=
-  { form := "یک"
-  , romanization := "yek"
-  , gloss := "one"
-  , isEFCI := false
-  , requiresPartitive := false
-  , allowsMass := false
-  }
-
-/--
-Indefinite suffix *-i*: Indefiniteness marker.
-
-Attaches to nouns to create indefinites.
--/
-def indef_i : IndefiniteDeterminer :=
-  { form := "ـی"
-  , romanization := "-i"
-  , gloss := "-INDF"
-  , isEFCI := false
-  , requiresPartitive := false
-  , allowsMass := true
-  }
-
-
-open Modality (ModalFlavor)
-
-/--
-Context for determining EFCI reading. Uses the project-canonical
-`Modality.ModalFlavor`; [alonso-ovalle-moghiseh-2025] only
-distinguishes deontic (free choice) from epistemic (modal variation), so the
-other canonical flavors are not licensing-relevant here (see `getReading`).
--/
-structure EFCIContext where
-  /-- Is the context downward-entailing? -/
-  isDE : Bool
-  /-- Modal flavor if under a modal -/
-  modalFlavor : Option ModalFlavor
-  deriving Repr, BEq
-
-/--
-Root context (no modal, not DE).
--/
-def rootContext : EFCIContext :=
-  { isDE := false, modalFlavor := none }
-
-/--
-Deontic modal context.
--/
-def deonticContext : EFCIContext :=
-  { isDE := false, modalFlavor := some .deontic }
-
-/--
-Epistemic modal context.
--/
-def epistemicContext : EFCIContext :=
-  { isDE := false, modalFlavor := some .epistemic }
-
-/--
-Downward-entailing context.
--/
-def deContext : EFCIContext :=
-  { isDE := true, modalFlavor := none }
-
-/--
-Get the reading for an EFCI in a given context.
--/
-def getReading (entry : IndefiniteDeterminer) (ctx : EFCIContext) : Option EFCIReading :=
-  if !entry.isEFCI then
-    -- Non-EFCI: just plain existential everywhere
-    some .plainExistential
-  else if ctx.isDE then
-    -- DE contexts: always plain existential
-    some .plainExistential
-  else match ctx.modalFlavor with
-    | some .deontic => some .freeChoice
-    | some .epistemic => some .modalVariation
-    -- [alonso-ovalle-moghiseh-2025] specifies only deontic/epistemic;
-    -- other flavors do not license an EFCI reading.
-    | some .bouletic | some .circumstantial => some .plainExistential
-    | none =>
-      -- Root context: depends on rescue mechanism
-      match entry.efciRescue with
-      | some .partialExhaustification => some .uniqueness
-      | some .modalInsertion => some .epistemicIgnorance
-      | some .both => some .epistemicIgnorance  -- Modal insertion primary
-      | some .none => none  -- Ungrammatical
-      | none => some .plainExistential  -- Not EFCI
-
-
-/-- Yek-i in root context yields uniqueness -/
-theorem yeki_root : getReading yeki rootContext = some .uniqueness := rfl
-
-/-- Yek-i under deontic modal yields free choice -/
-theorem yeki_deontic : getReading yeki deonticContext = some .freeChoice := rfl
-
-/-- Yek-i under epistemic modal yields modal variation -/
-theorem yeki_epistemic : getReading yeki epistemicContext = some .modalVariation := rfl
-
-/-- Yek-i in DE context yields plain existential -/
-theorem yeki_de : getReading yeki deContext = some .plainExistential := rfl
-
-
-/-- German *irgendein*: EFCI with modal insertion available.
-Cross-linguistic comparison entry; canonical German entry in `German.ModalIndefinites`.
-[kratzer-shimoyama-2002] -/
-def irgendein_de : IndefiniteDeterminer :=
-  { form := "irgendein"
-  , romanization := "irgendein"
-  , gloss := "IRGEND.a"
-  , isEFCI := true
-  , efciRescue := some .modalInsertion  -- Modal insertion only (Table 2)
-  , requiresPartitive := false
-  , speakerIgnorance := true   -- Has epistemic component
-  , uniqueness := false
-  }
-
-/-- Romanian *vreun*: EFCI with no rescue mechanism.
-Cross-linguistic comparison entry; see [falaus-2014]. -/
-def vreun_ro : IndefiniteDeterminer :=
-  { form := "vreun"
-  , romanization := "vreun"
-  , gloss := "VREUN"
-  , isEFCI := true
-  , efciRescue := some .none  -- No rescue
-  , requiresPartitive := false
-  }
-
-/--
-Irgendein in root yields epistemic ignorance (via modal insertion).
-[kratzer-shimoyama-2002]
--/
-theorem irgendein_root : getReading irgendein_de rootContext = some .epistemicIgnorance := rfl
-
-/--
-Vreun in root is ungrammatical (no rescue).
--/
-theorem vreun_root_ungrammatical : getReading vreun_ro rootContext = none := rfl
-
-
--- ════════════════════════════════════════════════════
--- § Plain Indefinites (Choice Function Semantics)
--- ════════════════════════════════════════════════════
+/-- The indefinite enclitic *-i*. -/
+def indef_i : IndefiniteDeterminer := { form := "ـی", romanization := "-i", gloss := "-INDF" }
 
 open Quantification.ChoiceFunction (IndefType SkolemCF)
 
-/-- Farsi plain indefinite entry, extending `IndefiniteDeterminer` with
-    choice-function properties relevant to [mirrazi-2024]. -/
+/-- A plain indefinite with the choice-function properties of [mirrazi-2024]. -/
 structure PlainIndefiniteEntry extends IndefiniteDeterminer where
   /-- Semantic analysis: choice function or ∃-quantifier. -/
   indefType : IndefType
-  /-- Does this determiner carry an independent world/situation variable?
-      [schwarz-2012]: cross-linguistic parameter — some determiners
-      combine with a world pronoun, others do not. -/
+  /-- Does this determiner carry an independent world/situation variable? -/
   hasWorldVar : Bool
   /-- Number: singular or plural. -/
   isPlural : Bool
   deriving Repr
 
-/-- *ye*: Farsi singular indefinite determiner.
-
-    Takes wide pseudo-scope de dicto under negated intensional operators.
-    [mirrazi-2024] exx. (1), (4): under negated *think*, the indefinite
-    is interpreted de dicto (under *think*) but above negation. -/
+/-- *ye*: the singular indefinite determiner, with wide pseudo-scope de dicto readings under
+negated intensional operators ([mirrazi-2024] exx. (1), (4)). -/
 def ye : PlainIndefiniteEntry :=
-  { form := "یه"
-  , romanization := "ye"
-  , gloss := "some"
-  , isEFCI := false
-  , indefType := .choiceFunction
-  , hasWorldVar := true
-  , isPlural := false
-  }
+  { form := "یه", romanization := "ye", gloss := "some", indefType := .choiceFunction,
+    hasWorldVar := true, isPlural := false }
 
-/-- *čand-ta*: Farsi plural classifier indefinite ("some-CL").
-
-    Same scope behavior as *ye*: wide pseudo-scope de dicto available.
-    [mirrazi-2024] exx. (1), (4): *čand-ta* alternates with *ye*
-    in the key examples. -/
+/-- *čand-ta*: the plural classifier indefinite, alternating with *ye* in [mirrazi-2024]'s
+key examples. -/
 def candTa : PlainIndefiniteEntry :=
-  { form := "چندتا"
-  , romanization := "čand-ta"
-  , gloss := "some.PL-CL"
-  , isEFCI := false
-  , indefType := .choiceFunction
-  , hasWorldVar := true
-  , isPlural := true
-  }
+  { form := "چندتا", romanization := "čand-ta", gloss := "some.PL-CL",
+    indefType := .choiceFunction, hasWorldVar := true, isPlural := true }
 
-/-- *do-ta*: Farsi numeral classifier indefinite ("two-CL").
-
-    Numeral indefinites behave like other indefinites in their
-    scope-taking properties. [mirrazi-2024] exx. (8a), (9a):
-    under negated *necessary* and *can*, *do-ta* gets wide pseudo-scope
-    de dicto readings. -/
+/-- *do-ta*: the numeral classifier indefinite ([mirrazi-2024] exx. (8a), (9a)). -/
 def doTa : PlainIndefiniteEntry :=
-  { form := "دوتا"
-  , romanization := "do-ta"
-  , gloss := "two-CL"
-  , isEFCI := false
-  , indefType := .choiceFunction
-  , hasWorldVar := true
-  , isPlural := true
-  }
-
-/-- All Farsi plain indefinites are choice-functional. -/
-theorem ye_is_cf : ye.indefType = .choiceFunction := rfl
-theorem candTa_is_cf : candTa.indefType = .choiceFunction := rfl
-theorem doTa_is_cf : doTa.indefType = .choiceFunction := rfl
-
-/-- All Farsi plain indefinites carry a world variable. -/
-theorem ye_has_world_var : ye.hasWorldVar = true := rfl
-theorem candTa_has_world_var : candTa.hasWorldVar = true := rfl
-theorem doTa_has_world_var : doTa.hasWorldVar = true := rfl
-
-/-- All Farsi indefinite entries -/
-def allIndefinites : List IndefiniteDeterminer :=
-  [yeki, yek, indef_i, ye.toIndefiniteDeterminer, candTa.toIndefiniteDeterminer,
-   doTa.toIndefiniteDeterminer]
-
-/-- Lookup by romanization -/
-def lookup (romanization : String) : Option IndefiniteDeterminer :=
-  allIndefinites.find? λ e => e.romanization == romanization
-
+  { form := "دوتا", romanization := "do-ta", gloss := "two-CL", indefType := .choiceFunction,
+    hasWorldVar := true, isPlural := true }
 
 end Farsi.Determiners

@@ -7,12 +7,11 @@ import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Exhaustification.Operators.Antiexhaustive
 import Linglib.Studies.Chierchia2013
-import Linglib.Fragments.Farsi.Determiners
 
 /-!
 # Chierchia 2006: Domain Widening and the PSI Typology
 [chierchia-2006] [chierchia-2013] [fox-2007] [bar-lev-fox-2020]
-[haspelmath-1997] [kadmon-landman-1993] [alonso-ovalle-moghiseh-2025]
+[haspelmath-1997] [kadmon-landman-1993]
 
 Formalizes the lasting contributions of [chierchia-2006] "Broaden Your Views:
 Implicatures of Domain Widening and the 'Logicality' of Language."
@@ -59,7 +58,6 @@ namespace Chierchia2006
 open Haspelmath1997
 open Indefinite
 open Chierchia2013 (FCIFlavor)
-open Farsi.Determiners (EFCIRescue)
 
 -- ============================================================================
 -- §1. The PSI Parameter Space
@@ -374,26 +372,6 @@ theorem dMin_sigma_determines_de :
       (λ f => npiFCI.predictedFunctions.contains f &&
               !pureFCI.predictedFunctions.contains f) = true := by decide
 
--- ============================================================================
--- §7. Bridge to EFCI Theory
--- ============================================================================
-
-/-!
-## Connection to [alonso-ovalle-moghiseh-2025]
-
-PSI profiles predict which EFCI rescue mechanism is available:
-- Items with `hasScalarAlts = true` activate both scalar and domain
-  alternatives, creating the EFCI contradiction.
-- `requiresProperStrengthening` constrains rescue: presuppositional σ̃
-  limits to partial exhaustification (proper strengthening preserved).
--/
-
-/-- Map PSI profiles to EFCI rescue type (none if not an EFCI). -/
-def PSIProfile.toEFCIRescue (p : PSIProfile) : Option EFCIRescue :=
-  if !p.hasScalarAlts then none
-  else if p.requiresProperStrengthening then some .partialExhaustification
-  else some .both
-
 /-- Map PSI profiles to FCI flavor (none if not an FCI).
     Only D-MIN items are FCIs — D-MAX items are pure NPIs. -/
 def PSIProfile.toFCIFlavor (p : PSIProfile) : Option FCIFlavor :=
@@ -417,14 +395,6 @@ theorem qualsiasi_is_universal :
 -- Pure NPIs are NOT FCIs (D-MAX → not an FCI)
 theorem pureNPI_not_fci :
     pureNPI.toFCIFlavor = none := rfl
-
--- *irgendein* allows both rescue mechanisms
-theorem irgendein_rescue_both :
-    efciNpiFci.toEFCIRescue = some .both := rfl
-
--- Non-EFCI items don't need rescue
-theorem pureNPI_no_rescue :
-    pureNPI.toEFCIRescue = none := rfl
 
 -- ============================================================================
 -- §8. Fragment Bridges (PSIProfile → PolarityType)
