@@ -46,7 +46,7 @@ suspension of p) and serves to settle that prior issue.
 
 namespace Hohle1992
 
-open Semantics.ContentLayer (BiLayered)
+open Presupposition
 open Semantics.Highlighting (HighlightingContext Highlighted addSalient)
 
 variable {W : Type*}

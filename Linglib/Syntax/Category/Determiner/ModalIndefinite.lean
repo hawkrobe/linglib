@@ -23,7 +23,7 @@ correlate with them.
 * [kratzer-shimoyama-2002]
 -/
 
-open Modality Semantics.ContentLayer
+open Modality Presupposition
 
 /-- A modal indefinite determiner. -/
 structure ModalIndefinite extends Determiner where
