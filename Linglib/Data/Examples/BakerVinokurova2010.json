@@ -1,0 +1,2183 @@
+[
+  {
+    "id": "bakervinokurova2010_3a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Min kellim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Min", "I.NOM"], ["kel-li-m", "come-PST-1SG.SBJ"]
+    ],
+    "translation": "I came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_3b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(3b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha aqata yty kördö.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha.GEN"], ["aqa-ta", "father-3SG.POSS.NOM"], ["yt-y", "dog-ACC"],
+      ["kör-dö", "see-PST.3SG.SBJ"]
+    ],
+    "translation": "Masha's father saw the dog.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["possessorCase", "GEN"],
+      ["possesseeAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_3c",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(3c)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha Mishaqa aty bierde.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha.NOM"], ["Misha-qa", "Misha-DAT"], ["at-y", "horse-ACC"],
+      ["bier-de", "give-PST.3SG.SBJ"]
+    ],
+    "translation": "Masha gave Misha a horse.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["goalCase", "DAT"],
+      ["objectCase", "ACC"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_7b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(7b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Erel kinigeni atyylasta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Erel", "Erel"], ["kinige-ni", "book-ACC"], ["atyylas-ta", "buy-PST.3SG.SBJ"]
+    ],
+    "translation": "Erel bought the book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_7c",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(7c)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha aqatygar surugu yytta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["aqa-ty-gar", "father-3SG.POSS-DAT"], ["surug-u", "letter-ACC"],
+      ["yyt-ta", "send-PST.3SG.SBJ"]
+    ],
+    "translation": "Masha sent her father a letter.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["goalCase", "DAT"],
+      ["objectCase", "ACC"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_8a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(8a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Erel kinige atyylasta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Erel", "Erel"], ["kinige", "book"], ["atyylas-ta", "buy-PST.3SG.SBJ"]
+    ],
+    "translation": "Erel bought a book/books.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["objectCase", "bare"],
+      ["objectSpecific", "no"],
+      ["objectAdjacent", "yes"]
+    ],
+    "comment": "From Vinokurova 2005.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_10a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(10a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha salamaaty türgennik siete.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["salamaat-y", "porridge-ACC"], ["türgennik", "quickly"],
+      ["sie-te", "eat-PST.3SG.SBJ"]
+    ],
+    "translation": "Masha ate the porridge quickly.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["objectCase", "ACC"],
+      ["objectAdjacent", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_10a_bare",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(10a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha salamaat türgennik siete.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["salamaat", "porridge"], ["türgennik", "quickly"],
+      ["sie-te", "eat-PST.3SG.SBJ"]
+    ],
+    "translation": "Masha ate porridge quickly.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["objectCase", "bare"],
+      ["objectAdjacent", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_10b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(10b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha türgennik salamaat siete.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["türgennik", "quickly"], ["salamaat", "porridge"],
+      ["sie-te", "eat-PST.3SG.SBJ"]
+    ],
+    "translation": "Masha ate porridge quickly.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["objectCase", "bare"],
+      ["objectAdjacent", "yes"]
+    ],
+    "comment": "Accusative on the post-adverbial object only under contrastive focus.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_11a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(11a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Min Mashaqa kinige bierdim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Min", "I"], ["Masha-qa", "Masha-DAT"], ["kinige", "book"],
+      ["bier-di-m", "give-PST-1SG.SBJ"]
+    ],
+    "translation": "I gave Masha books/a book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["goalCase", "DAT"],
+      ["objectCase", "bare"],
+      ["objectSpecific", "no"],
+      ["objectAdjacent", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_11b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(11b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Min kinigeni Mashaqa bierdim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Min", "I"], ["kinige-ni", "book-ACC"], ["Masha-qa", "Masha-DAT"],
+      ["bier-di-m", "give-PST-1SG.SBJ"]
+    ],
+    "translation": "I gave the book to Masha.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["goalCase", "DAT"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_11b_bare",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(11b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Min kinige Mashaqa bierdim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Min", "I"], ["kinige", "book"], ["Masha-qa", "Masha-DAT"],
+      ["bier-di-m", "give-PST-1SG.SBJ"]
+    ],
+    "translation": "I gave the book to Masha.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["goalCase", "DAT"],
+      ["objectCase", "bare"],
+      ["objectAdjacent", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_13",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(13)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Min Mashaqa sorujan kinige bierdim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Min", "I.NOM"], ["Masha-qa", "Masha-DAT"], ["sorujan", "intentionally"],
+      ["kinige", "book"], ["bier-di-m", "give-PST-1SG.SBJ"]
+    ],
+    "translation": "I gave Masha books/a book intentionally.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["goalCase", "DAT"],
+      ["objectCase", "bare"],
+      ["objectSpecific", "no"],
+      ["objectAdjacent", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_13_acc",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(13)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Min Mashany sorujan kinige bierdim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Min", "I.NOM"], ["Masha-ny", "Masha-ACC"], ["sorujan", "intentionally"],
+      ["kinige", "book"], ["bier-di-m", "give-PST-1SG.SBJ"]
+    ],
+    "translation": "I gave Masha books/a book intentionally.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["goalCase", "ACC"],
+      ["objectCase", "bare"],
+      ["objectSpecific", "no"],
+      ["objectAdjacent", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_14",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(14)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Deriebineni orospuonnjuktar xalaabyttar.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Deriebine-ni", "village-ACC"], ["orospuonnjuk-tar", "robber-PL"],
+      ["xalaa-byt-tar", "raid-PTCP-3PL.SBJ"]
+    ],
+    "translation": "Some robbers raided the village.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "The object is scrambled over the subject.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_16",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(16)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha accyktaayyr.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["accykt(aa)-yyr", "hunger-AOR.3SG.SBJ"]
+    ],
+    "translation": "Masha hungers.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_16_dat",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(16)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Mashaqa accyktaayyr.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha-qa", "Masha-DAT"], ["accykt(aa)-yyr", "hunger-AOR.3SG.SBJ"]
+    ],
+    "translation": "Masha hungers.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "DAT"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_16_acc",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(16)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Mashany accyktaayyr.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha-ny", "Masha-ACC"], ["accykt(aa)-yyr", "hunger-AOR.3SG.SBJ"]
+    ],
+    "translation": "Masha hungers.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "ACC"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_17",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(17)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Ejiexe massyyna tiijbet.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ejiexe", "you.DAT"], ["massyyna", "car"], ["tiij-bet", "reach-NEG.AOR.3SG.SBJ"]
+    ],
+    "translation": "You lack a car.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectPosition", "internal"],
+      ["subjectCase", "DAT"],
+      ["objectCase", "bare"],
+      ["objectAdjacent", "yes"]
+    ],
+    "comment": "The dative asymmetrically c-commands the nominative in the base structure, by the anaphor-binding contrast in (19).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_21a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(21a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Sardaana Aiseny ytaatta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sardaana", "Sardaana"], ["Aisen-y", "Aisen-ACC"], ["yta(a)-t-ta", "cry-CAUS-PST.3SG.SBJ"]
+    ],
+    "translation": "Sardaana made Aisen cry.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "causative"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["causeeCase", "ACC"],
+      ["causeeSpecific", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_21a_dat",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(21a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Sardaana Aiseŋŋe ytaatta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sardaana", "Sardaana"], ["Aiseŋ-ŋe", "Aisen-DAT"], ["yta(a)-t-ta", "cry-CAUS-PST.3SG.SBJ"]
+    ],
+    "translation": "Sardaana made Aisen cry.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "causative"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["causeeCase", "DAT"],
+      ["causeeSpecific", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_21b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(21b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Misha Mashaqa miini siette.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Misha", "Misha"], ["Masha-qa", "Masha-DAT"], ["miin-i", "soup-ACC"],
+      ["sie-t-te", "eat-CAUS-PST.3SG.SBJ"]
+    ],
+    "translation": "Misha made Masha eat the soup.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "causative"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["causeeCase", "DAT"],
+      ["objectCase", "ACC"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_21b_bare",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(21b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Misha Mashaqa miin siette.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Misha", "Misha"], ["Masha-qa", "Masha-DAT"], ["miin", "soup"],
+      ["sie-t-te", "eat-CAUS-PST.3SG.SBJ"]
+    ],
+    "translation": "Misha made Masha eat soup.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "causative"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["causeeCase", "DAT"],
+      ["objectCase", "bare"],
+      ["objectAdjacent", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_23a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(23a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Min oloppohu aldjattym.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Min", "I.NOM"], ["oloppoh-u", "chair-ACC"], ["aldjat-ty-m", "break-PST-1SG.SBJ"]
+    ],
+    "translation": "I broke the chair.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "From Vinokurova 2005.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_23b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(23b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Caakky aldjanna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Caakky", "cup"], ["aldjan-na", "break-PST.3SG.SBJ"]
+    ],
+    "translation": "The cup broke.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["unaccusative", "yes"],
+      ["subjectCase", "NOM"],
+      ["subjectAdjacent", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_23b_acc",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(23b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Caakkyny aldjanna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Caakky-ny", "cup-ACC"], ["aldjan-na", "break-PST.3SG.SBJ"]
+    ],
+    "translation": "The cup broke.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["unaccusative", "yes"],
+      ["subjectCase", "ACC"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_24a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(24a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Caakkyny aldjatylynna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Caakky-ny", "cup-ACC"], ["aldjat-ylyn-na", "break-PASS-PST.3SG.SBJ"]
+    ],
+    "translation": "The cup was broken.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passive"],
+      ["verbAgreement", "yes"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "From Vinokurova 2005.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_24a_nom",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(24a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Caakky aldjatylynna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Caakky", "cup"], ["aldjat-ylyn-na", "break-PASS-PST.3SG.SBJ"]
+    ],
+    "translation": "The cup was broken.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passive"],
+      ["verbAgreement", "yes"],
+      ["objectCase", "NOM"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "From Vinokurova 2005.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_24b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(24b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Kinigeni aaqylynna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kinige-ni", "book-ACC"], ["aaq-ylyn-na", "read-PASS-PST.3SG.SBJ"]
+    ],
+    "translation": "The book was read.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passive"],
+      ["verbAgreement", "yes"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_25a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(25a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Caakky sorujan ötüjenen aldjatylynna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Caakky", "cup"], ["sorujan", "intentionally"], ["ötüje-nen", "hammer-INS"],
+      ["aldjat-ylyn-na", "break-PASS-PST.3SG.SBJ"]
+    ],
+    "translation": "The cup was intentionally broken with a hammer.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passive"],
+      ["verbAgreement", "yes"],
+      ["agentOrientedAdverb", "yes"],
+      ["objectCase", "NOM"],
+      ["objectSpecific", "yes"],
+      ["objectAdjacent", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_25b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(25b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Caakkyny sorujan ötüjenen aldjatylynna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Caakky-ny", "cup-ACC"], ["sorujan", "intentionally"], ["ötüje-nen", "hammer-INS"],
+      ["aldjat-ylyn-na", "break-PASS-PST.3SG.SBJ"]
+    ],
+    "translation": "The cup was broken intentionally with a hammer.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passive"],
+      ["verbAgreement", "yes"],
+      ["agentOrientedAdverb", "yes"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"],
+      ["objectAdjacent", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_27",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(27)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Surugu Mashaqa yytylynna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Surug-u", "letter-ACC"], ["Masha-qa", "Masha-DAT"],
+      ["yyt-ylyn-na", "send-PASS-PST.3SG.SBJ"]
+    ],
+    "translation": "The letter was sent to Masha.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passive"],
+      ["verbAgreement", "yes"],
+      ["goalCase", "DAT"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_27_nom",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(27)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Suruk Mashaqa yytylynna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Suruk", "letter"], ["Masha-qa", "Masha-DAT"], ["yyt-ylyn-na", "send-PASS-PST.3SG.SBJ"]
+    ],
+    "translation": "The letter was sent to Masha.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passive"],
+      ["verbAgreement", "yes"],
+      ["goalCase", "DAT"],
+      ["objectCase", "NOM"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_27_goalnom",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(27)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha suruk yytylynna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["suruk", "letter"], ["yyt-ylyn-na", "send-PASS-PST.3SG.SBJ"]
+    ],
+    "translation": "Masha was sent a letter.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passive"],
+      ["verbAgreement", "yes"],
+      ["goalCase", "NOM"],
+      ["objectCase", "bare"],
+      ["objectSpecific", "no"],
+      ["objectAdjacent", "yes"]
+    ],
+    "comment": "Marked ?* in the text; generally rejected, marginally accepted by some permissive speakers depending on the verb (fn. 11).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_29a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(29a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha ynaqy körööccünü najmylasta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["ynaq-y", "cow-ACC"], ["kör-ööccü-nü", "watch-AGT.NMLZ-ACC"],
+      ["najmylas-ta", "hire-PST.3SG.SBJ"]
+    ],
+    "translation": "Masha hired a herder for the cow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "agentiveNominal"],
+      ["verbAgreement", "no"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_29b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(29b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Terilteni salajaaccy kelle.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Terilte-ni", "company-ACC"], ["salaj-aaccy", "manage-AGT.NMLZ"],
+      ["kel-le", "come-PST.3SG.SBJ"]
+    ],
+    "translation": "The manager of the company came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "agentiveNominal"],
+      ["verbAgreement", "no"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_33a_acc",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(33a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Ynaqy ölüü miigin sohuppat.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ynaq-y", "cow-ACC"], ["öl-üü", "die-EV.NMLZ"], ["miigin", "me.ACC"],
+      ["sohup-pat", "surprise-NEG.AOR.3SG.SBJ"]
+    ],
+    "translation": "The death of the cow does not surprise me.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "eventNominal"],
+      ["verbAgreement", "no"],
+      ["unaccusative", "yes"],
+      ["subjectCase", "ACC"]
+    ],
+    "comment": "Features describe the event nominalization, not the matrix clause; the optional possessive suffix of the acceptable form is omitted.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_34",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(34)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha ynax körööccünü najmylasta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["ynax", "cow"], ["kör-ööccü-nü", "watch-AGT.NMLZ-ACC"],
+      ["najmylas-ta", "hire-PST.3SG.SBJ"]
+    ],
+    "translation": "Masha hired a cowherd.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "agentiveNominal"],
+      ["verbAgreement", "no"],
+      ["objectCase", "bare"],
+      ["objectSpecific", "no"],
+      ["objectAdjacent", "yes"]
+    ],
+    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_35",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(35)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Oqolorgo emp biereecci ol turar.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oqo-lor-go", "child-PL-DAT"], ["emp", "medicine"], ["bier-eecci", "give-AGT.NMLZ"],
+      ["ol", "there"], ["tur-ar", "stand-AOR.3SG.SBJ"]
+    ],
+    "translation": "A giver of medicine to children is over there.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "agentiveNominal"],
+      ["verbAgreement", "no"],
+      ["goalCase", "DAT"],
+      ["objectCase", "bare"],
+      ["objectSpecific", "no"],
+      ["objectAdjacent", "yes"]
+    ],
+    "comment": "Features describe the agentive nominalization, not the matrix clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_37a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(37a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Min ehigini bügün kyajyaxxyt dien eremmitim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Min", "I"], ["ehigi-ni", "you.PL-ACC"], ["bügün", "today"],
+      ["kyaj-yax-xyt", "win-FUT-2PL.SBJ"], ["dien", "that"], ["erem-mit-im", "hope-PST-1SG.SBJ"]
+    ],
+    "translation": "I hoped you would win today.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["raisedCase", "ACC"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_37b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(37b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Min ehigini bügün kyajbykkytyn ihittiim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Min", "I"], ["ehigi-ni", "you.PL-ACC"], ["bügün", "today"],
+      ["kyaj-byk-kyt-yn", "win-PTCP-2PL.POSS-ACC"], ["ihit-ti-im", "hear-PST-1SG.SBJ"]
+    ],
+    "translation": "I heard that you won today.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["raisedCase", "ACC"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_39a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(39a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Keskil Aiseny kelbet dien xomojdo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Keskil", "Keskil"], ["Aisen-y", "Aisen-ACC"], ["kel-bet", "come-NEG.AOR.3SG.SBJ"],
+      ["dien", "that"], ["xomoj-do", "become.sad-PST.3SG.SBJ"]
+    ],
+    "translation": "Keskil became sad that Aisen is not coming.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["raisedCase", "ACC"]
+    ],
+    "comment": "Unaccusative matrix verb. From Vinokurova 2005.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_39b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(39b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha Mishany yaldjya dien tönünne.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["Misha-ny", "Misha-ACC"], ["yaldj-ya", "fall.sick-FUT.3SG.SBJ"],
+      ["dien", "that"], ["tönün-ne", "return-PST.3SG.SBJ"]
+    ],
+    "translation": "Masha returned (for fear) that Misha would fall sick.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["raisedCase", "ACC"]
+    ],
+    "comment": "Unaccusative matrix verb.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_40",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(40)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Sargy kimi daqany tönnümüö dien erennerilinne.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sargy", "Sargy"], ["kim-i", "who-ACC"], ["daqany", "PRT"],
+      ["tönn-üm-üö", "return-NEG-FUT.3SG.SBJ"], ["dien", "that"],
+      ["erenner-ilin-ne", "promise-PASS-PST.3SG.SBJ"]
+    ],
+    "translation": "Sargy was promised that nobody would return.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["raisedCase", "ACC"]
+    ],
+    "comment": "Passive matrix verb with no syntactically present agent.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_42a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(42a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Bügün munnjaxxa Masha ehiil Moskvaqa barya dien cuolkajdanna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bügün", "today"], ["munnjax-xa", "meeting-DAT"], ["Masha", "Masha"],
+      ["ehiil", "next.year"], ["Moskva-qa", "Moscow-DAT"], ["bar-ya", "go-FUT.3SG.SBJ"],
+      ["dien", "that"], ["cuolkajdan-na", "become.certain-PST.3SG.SBJ"]
+    ],
+    "translation": "It became clear today at the meeting that Masha will go to Moscow next year.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["raisedCase", "NOM"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_42a_acc",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(42a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Bügün munnjaxxa Mashany ehiil Moskvaqa barya dien cuolkajdanna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bügün", "today"], ["munnjax-xa", "meeting-DAT"], ["Masha-ny", "Masha-ACC"],
+      ["ehiil", "next.year"], ["Moskva-qa", "Moscow-DAT"], ["bar-ya", "go-FUT.3SG.SBJ"],
+      ["dien", "that"], ["cuolkajdan-na", "become.certain-PST.3SG.SBJ"]
+    ],
+    "translation": "It became clear today at the meeting that Masha will go to Moscow next year.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["raisedCase", "ACC"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_42b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(42b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Aisen massyyna atyylahara naada buolla.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Aisen", "Aisen"], ["massyyna", "car"], ["atyylah-ar-a", "buy-AOR-3SG.SBJ"],
+      ["naada", "need"], ["buol-la", "become-PST.3SG.SBJ"]
+    ],
+    "translation": "It became necessary for Aisen to buy a car.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["raisedCase", "NOM"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_42b_acc",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(42b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Aiseny massyyna atyylahara naada buolla.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Aisen-y", "Aisen-ACC"], ["massyyna", "car"], ["atyylah-ar-a", "buy-AOR-3SG.SBJ"],
+      ["naada", "need"], ["buol-la", "become-PST.3SG.SBJ"]
+    ],
+    "translation": "It became necessary for Aisen to buy a car.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["raisedCase", "ACC"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_43",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(43)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Sargy Keskili kim daqany kelimie dien erennerde.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sargy", "Sargy"], ["Keskil-i", "Keskil-ACC"], ["kim", "who"], ["daqany", "PRT"],
+      ["kel-im-ie", "come-NEG-FUT.3SG.SBJ"], ["dien", "that"],
+      ["erenner-de", "promise-PST.3SG.SBJ"]
+    ],
+    "translation": "Sargy promised Keskil that nobody will come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["goalCase", "ACC"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_44",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(44)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Sargy Keskilge kimi daqany kelimie dien erennerde.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sargy", "Sargy"], ["Keskil-ge", "Keskil-DAT"], ["kim-i", "who-ACC"], ["daqany", "PRT"],
+      ["kel-im-ie", "come-NEG-FUT.3SG.SBJ"], ["dien", "that"],
+      ["erenner-de", "promise-PST.3SG.SBJ"]
+    ],
+    "translation": "Sargy promised Keskil that nobody will come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["goalCase", "DAT"],
+      ["raisedCase", "ACC"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_44_acc",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(44)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Sargy Keskili kimi daqany kelimie dien erennerde.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sargy", "Sargy"], ["Keskil-i", "Keskil-ACC"], ["kim-i", "who-ACC"], ["daqany", "PRT"],
+      ["kel-im-ie", "come-NEG-FUT.3SG.SBJ"], ["dien", "that"],
+      ["erenner-de", "promise-PST.3SG.SBJ"]
+    ],
+    "translation": "Sargy promised Keskil that nobody will come.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["goalCase", "ACC"],
+      ["raisedCase", "ACC"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_50b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(50b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha djieni tula türgennik süürde.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["djie-ni", "house-ACC"], ["tula", "around"], ["türgennik", "quickly"],
+      ["süür-de", "run-PST.3SG.SBJ"]
+    ],
+    "translation": "Masha ran quickly around the house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "pp"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["pObjectCase", "ACC"]
+    ],
+    "comment": "Accusative on the object of the postposition is optional.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_51a_acc",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(51a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Ambaary tula itii.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ambaar-y", "barn-ACC"], ["tula", "around"], ["itii", "hot"]
+    ],
+    "translation": "It is hot around the barn.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "pp"],
+      ["verbAgreement", "no"],
+      ["pObjectCase", "ACC"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_54b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(54b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Bu oqoloru djolloox oŋorbuta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bu", "this"], ["oqo-lor-u", "child-PL-ACC"], ["djolloox", "happy"],
+      ["oŋor-but-a", "make-PST-3SG.SBJ"]
+    ],
+    "translation": "This made the children happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"],
+      ["objectAdjacent", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_56a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(56a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Misha serenen kumaaqy xoruopkaqa ukta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Misha", "Misha"], ["serenen", "carefully"], ["kumaaqy", "paper"],
+      ["xoruopka-qa", "case-DAT"], ["uk-ta", "put-PST.3SG.SBJ"]
+    ],
+    "translation": "Misha put papers in the case carefully.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["objectCase", "bare"],
+      ["objectSpecific", "no"],
+      ["objectAdjacent", "no"]
+    ],
+    "comment": "The dative on the goal is lexical; the goal phrase is not a case competitor.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_56b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(56b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Bu oqo djolloox oŋoror.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bu", "this"], ["oqo", "child"], ["djolloox", "happy"], ["oŋor-or", "make-AOR.3SG.SBJ"]
+    ],
+    "translation": "This makes a child happy.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["objectCase", "bare"],
+      ["objectSpecific", "no"],
+      ["objectAdjacent", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_57",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(57)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Misha serenen xoruopkaqa kumaaqy ukta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Misha", "Misha"], ["serenen", "carefully"], ["xoruopka-qa", "case-DAT"],
+      ["kumaaqy", "paper"], ["uk-ta", "put-PST.3SG.SBJ"]
+    ],
+    "translation": "Misha carefully put a paper/papers in the case.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectCase", "NOM"],
+      ["objectCase", "bare"],
+      ["objectSpecific", "no"],
+      ["objectAdjacent", "yes"]
+    ],
+    "comment": "The dative on the goal is lexical; the goal phrase is not a case competitor.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_61a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(61a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "sibekki tyllar kem",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["sibekki", "flower"], ["tyll-ar", "bloom-AOR"], ["kem", "time"]
+    ],
+    "translation": "a time when flowers bloom",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "relative"],
+      ["verbAgreement", "no"],
+      ["headNounAgreement", "no"],
+      ["unaccusative", "yes"],
+      ["subjectCase", "bare"],
+      ["subjectSpecific", "no"],
+      ["subjectAdjacent", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_62a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(62a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha cej iher caakky",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["cej", "tea"], ["ih-er", "drink-AOR"], ["caakky", "cup"]
+    ],
+    "translation": "a cup that Masha drinks tea from",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "relative"],
+      ["verbAgreement", "no"],
+      ["headNounAgreement", "no"],
+      ["subjectCase", "bare"],
+      ["objectCase", "bare"],
+      ["objectSpecific", "no"],
+      ["objectAdjacent", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_62c",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(62c)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "yt urer sir",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["yt", "dog"], ["ur-er", "bark-AOR"], ["sir", "place"]
+    ],
+    "translation": "a place where dogs bark",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "relative"],
+      ["verbAgreement", "no"],
+      ["headNounAgreement", "no"],
+      ["subjectCase", "bare"],
+      ["subjectSpecific", "no"],
+      ["subjectAdjacent", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_62d",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(62d)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "sibekkiler emiske tyllar kem",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["sibekki-ler", "flower-PL"], ["emiske", "suddenly"], ["tyll-ar", "bloom-AOR"],
+      ["kem", "time"]
+    ],
+    "translation": "a time when the flowers suddenly bloom",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "relative"],
+      ["verbAgreement", "no"],
+      ["headNounAgreement", "no"],
+      ["unaccusative", "yes"],
+      ["subjectCase", "bare"],
+      ["subjectSpecific", "yes"],
+      ["subjectAdjacent", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_63a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(63a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha cej iher caakkyta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["cej", "tea"], ["ih-er", "drink-AOR"], ["caakky-ta", "cup-3SG.POSS"]
+    ],
+    "translation": "a cup that Masha drinks tea from",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "relative"],
+      ["verbAgreement", "no"],
+      ["headNounAgreement", "yes"],
+      ["subjectCase", "GEN"],
+      ["objectCase", "bare"],
+      ["objectSpecific", "no"],
+      ["objectAdjacent", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_63c",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(63c)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Yt urer sire",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Yt", "dog"], ["ur-er", "bark-AOR"], ["sir-e", "place-3SG.POSS"]
+    ],
+    "translation": "a place where dogs bark",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "relative"],
+      ["verbAgreement", "no"],
+      ["headNounAgreement", "yes"],
+      ["subjectCase", "GEN"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_63d",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(63d)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Sibekkiler emiske tyllar kemnere",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sibekki-ler", "flower-PL"], ["emiske", "suddenly"], ["tyll-ar", "bloom-AOR"],
+      ["kem-nere", "time-3PL.POSS"]
+    ],
+    "translation": "a time when the flowers suddenly bloom",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "relative"],
+      ["verbAgreement", "no"],
+      ["headNounAgreement", "yes"],
+      ["unaccusative", "yes"],
+      ["subjectCase", "GEN"],
+      ["subjectSpecific", "yes"],
+      ["subjectAdjacent", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_64",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(64)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha aqatyn atyylaspyt ata",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha.GEN"], ["aqa-ty-n", "father-3SG.POSS-GEN"], ["atyylas-pyt", "buy-PTCP"],
+      ["at-a", "horse-3SG.POSS"]
+    ],
+    "translation": "the horse that Masha's father bought",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "relative"],
+      ["verbAgreement", "no"],
+      ["headNounAgreement", "yes"],
+      ["subjectCase", "GEN"],
+      ["possessorCase", "GEN"],
+      ["possesseeAgreement", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_65",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(65)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Oqolorgo attary berilinne.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oqo-lor-go", "child-PL-DAT"], ["at-tar-y", "horse-PL-ACC"],
+      ["ber-ilin-ne", "give-PASS-PST.3SG.SBJ"]
+    ],
+    "translation": "The children were given horses.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passive"],
+      ["verbAgreement", "yes"],
+      ["goalCase", "DAT"],
+      ["objectCase", "ACC"],
+      ["agreesWith", "none"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_65_pl",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(65)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Oqolorgo attary berilinniler.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oqo-lor-go", "child-PL-DAT"], ["at-tar-y", "horse-PL-ACC"],
+      ["ber-ilin-ni-ler", "give-PASS-PST-3PL.SBJ"]
+    ],
+    "translation": "The children were given horses.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passive"],
+      ["verbAgreement", "yes"],
+      ["goalCase", "DAT"],
+      ["objectCase", "ACC"],
+      ["agreesWith", "object"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_66",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(66)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Mashaqa attar berilinniler.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha-qa", "Masha-DAT"], ["at-tar", "horse-PL"],
+      ["ber-ilin-ni-ler", "give-PASS-PST-3PL.SBJ"]
+    ],
+    "translation": "The horses were given to Masha.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passive"],
+      ["verbAgreement", "yes"],
+      ["goalCase", "DAT"],
+      ["objectCase", "NOM"],
+      ["objectSpecific", "yes"],
+      ["agreesWith", "object"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_66_sg",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(66)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Mashaqa attar berilinne.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha-qa", "Masha-DAT"], ["at-tar", "horse-PL"], ["ber-ilin-ne", "give-PASS-PST.3SG.SBJ"]
+    ],
+    "translation": "The horses were given to Masha.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passive"],
+      ["verbAgreement", "yes"],
+      ["goalCase", "DAT"],
+      ["objectCase", "NOM"],
+      ["objectSpecific", "yes"],
+      ["agreesWith", "none"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_68a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(68a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Misha kelieqe dien surax",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Misha", "Misha"], ["kel-ieq-e", "come-FUT-3SG.SBJ"], ["dien", "that"], ["surax", "rumor"]
+    ],
+    "translation": "a rumor that Misha will come",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "nounComplement"],
+      ["verbAgreement", "yes"],
+      ["headNounAgreement", "no"],
+      ["subjectCase", "NOM"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_68b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(68b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "En kelbitiŋ suraqa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["En", "you"], ["kel-bit-iŋ", "come-PTCP-2SG.POSS"], ["suraq-a", "rumor-3SG.POSS"]
+    ],
+    "translation": "a rumor that you came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "nounComplement"],
+      ["verbAgreement", "yes"],
+      ["headNounAgreement", "no"],
+      ["subjectCase", "NOM"]
+    ],
+    "comment": "The head noun's third-person suffix agrees with the clause, not with its subject.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_68c",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(68c)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "En kelbit suraqyŋ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["En", "you"], ["kel-bit", "come-PTCP"], ["suraq-yŋ", "rumor-2SG.POSS"]
+    ],
+    "translation": "a rumor that you came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "nounComplement"],
+      ["verbAgreement", "no"],
+      ["headNounAgreement", "yes"],
+      ["subjectCase", "GEN"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_70",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(70)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "En kelbit surax",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["En", "you"], ["kel-bit", "come-PTCP"], ["surax", "rumor"]
+    ],
+    "translation": "a rumor that you came",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "nounComplement"],
+      ["verbAgreement", "no"],
+      ["headNounAgreement", "no"],
+      ["subjectCase", "bare"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_71b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(71b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Aisen aqa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Aisen", "Aisen"], ["aqa", "father"]
+    ],
+    "translation": "Aisen's father",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "possessive"],
+      ["possessorCase", "GEN"],
+      ["possesseeAgreement", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_71c",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(71c)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Aisen aqata",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Aisen", "Aisen"], ["aqa-ta", "father-3SG.POSS"]
+    ],
+    "translation": "Aisen's father",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "possessive"],
+      ["possessorCase", "GEN"],
+      ["possesseeAgreement", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_72a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(72a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "terilteni salajyy",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["terilte-ni", "company-ACC"], ["salaj-yy", "manage-EV.NMLZ"]
+    ],
+    "translation": "the management of the company",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "eventNominal"],
+      ["verbAgreement", "no"],
+      ["headNounAgreement", "no"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_72b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(72b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha terilteni salajyy",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["terilte-ni", "company-ACC"], ["salaj-yy", "manage-EV.NMLZ"]
+    ],
+    "translation": "Masha's managing the company",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "eventNominal"],
+      ["verbAgreement", "no"],
+      ["headNounAgreement", "no"],
+      ["subjectCase", "bare"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_72c",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(72c)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Masha terilteni salajyyta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["terilte-ni", "company-ACC"],
+      ["salaj-yy-ta", "manage-EV.NMLZ-3SG.POSS"]
+    ],
+    "translation": "Masha's managing the company",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "eventNominal"],
+      ["verbAgreement", "no"],
+      ["headNounAgreement", "yes"],
+      ["subjectCase", "GEN"],
+      ["objectCase", "ACC"],
+      ["objectSpecific", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_75a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(75a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Oqolorgo üüt naada.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oqo-lor-go", "child-PL-DAT"], ["üüt", "milk"], ["naada", "need"]
+    ],
+    "translation": "The children need milk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectPosition", "internal"],
+      ["subjectCase", "DAT"],
+      ["objectCase", "NOM"],
+      ["objectAdjacent", "yes"],
+      ["agreesWith", "object"]
+    ],
+    "comment": "Third-person singular agreement is unmarked on the predicate.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_75a_pl",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(75a)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Oqolorgo üüt naadalar.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oqo-lor-go", "child-PL-DAT"], ["üüt", "milk"], ["naada-lar", "need-3PL.SBJ"]
+    ],
+    "translation": "The children need milk.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "clause"],
+      ["verbAgreement", "yes"],
+      ["subjectPosition", "internal"],
+      ["subjectCase", "DAT"],
+      ["objectCase", "NOM"],
+      ["objectAdjacent", "yes"],
+      ["agreesWith", "subject"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_75b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(75b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Oloppostoru aldjatylynna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oloppos-tor-u", "chair-PL-ACC"], ["aldjat-ylyn-na", "break-PASS-PST.3SG.SBJ"]
+    ],
+    "translation": "Chairs were broken.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passive"],
+      ["verbAgreement", "yes"],
+      ["objectCase", "ACC"],
+      ["agreesWith", "none"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakervinokurova2010_75b_pl",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(75b)"},
+    "reportedIn": null,
+    "language": "yaku1245",
+    "primaryText": "Oloppostoru aldjatylynnylar.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oloppos-tor-u", "chair-PL-ACC"], ["aldjat-ylyn-ny-lar", "break-PASS-PST-3PL.SBJ"]
+    ],
+    "translation": "Chairs were broken.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passive"],
+      ["verbAgreement", "yes"],
+      ["objectCase", "ACC"],
+      ["agreesWith", "object"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]

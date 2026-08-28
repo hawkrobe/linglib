@@ -1,418 +1,243 @@
-import Linglib.Syntax.Case.Dependent
+import Linglib.Fragments.Yakut.Case
+import Linglib.Data.Examples.BakerVinokurova2010
 
 /-!
-# Case assignment in Sakha
+# Baker & Vinokurova 2010: two modalities of case assignment in Sakha
 
-[baker-vinokurova-2010] argue that Sakha needs both of the case-assignment
-mechanisms on offer: configurational dependent case ([marantz-1991]) for
-accusative and dative, and Agree with a functional head ([chomsky-2000]) for
-nominative and genitive. The two coexist in one grammar rather than competing,
-which `CaseSystemConfig` records by giving each structural case its own
-mechanism slot; `sakhaConfig` is the resulting parameterization.
+Sakha's four structural cases split in half. Accusative and dative are dependent cases: an NP
+is valued accusative when a distinct caseless NP c-commands it in the same phase, and dative
+when it c-commands one in the same VP phase, the dative rule bleeding the accusative rule on
+the VP cycle. Nominative and genitive are assigned by T and D under agreement, and there is
+no default case: an NP that no rule reaches must be pseudo-incorporated into the verb — an
+unshifted VP-internal NP adjacent to it — or the structure is out. Object shift makes
+differential object marking a phase effect; the causee of a causative is dative exactly when
+the base verb is transitive; a passive theme is accusative exactly when a covert agent is
+present; the object of an agentive nominalization is accusative though no v is present; a
+subject raised into an impersonal clause stays unmarked; and a finite verb agrees with an NP
+exactly when it values that NP nominative. A purely configurational grammar with a default
+nominative overgenerates the Case-filter and agreement violations, and a purely Agree-based
+grammar undergenerates the datives.
 
-Differential object marking falls out of phase visibility. A specific object
-shifts to the edge of VP and is visible on the CP cycle, where it and the
-subject form the competitor pair the accusative rule needs; a nonspecific
-object stays inside VP, is invisible to T, and surfaces unmarked. The
-causative cascade is the sharper test: adding a lower theme changes the case
-on the causee from accusative to dative, which no head-driven Agree relation
-can mediate.
+## Main definitions
 
-## Main results
-
-* `two_modalities_required`: neither a purely configurational nor a purely
-  Agree-based grammar derives the Sakha pattern.
-* `dom_alternation_in_object`: object case tracks phase visibility alone.
-* `causee_case_depends_on_base_transitivity`: the causative cascade.
-* `argumental_status_drives_case`: bare-NP adverbs are not case competitors.
-* `all_four_modalities_in_one_clause`: T-Agree, D-Agree and both dependent
-  rules valuing four NPs in a single derivation.
-
-## Implementation notes
-
-ECM is not modelled: `PhasedNP` does not distinguish embedded from matrix
-domains.
+* `Slot`, `candidates`: the NPs of a row's domain, highest first, from its stated roles; the
+  covert agent and object shift are the free choices where the paper leaves them free.
+* `derive`: `assignCasesPhased` on the Yakut configuration, with T-Agree switched off in a
+  domain without an agreeing T-like head and D reaching into a relative or nominalized clause
+  whose head noun agrees with its subject.
+* `Licensed`, `Agrees`: the Case filter and the case–agreement link.
+* `Derivable`: some choice of structure yields the row's cases.
+* `rows_case`: acceptability is derivability under the two-modality grammar.
+* `pure_marantz_overgenerates`, `pure_chomsky_undergenerates`: each modality alone fails.
 
 ## References
 
 * [baker-vinokurova-2010]
+* [marantz-1991] — dependent case
+* [chomsky-2000], [chomsky-2001] — case under Agree and phases
+* [diesing-1992] — object shift of specific objects
+* [vinokurova-2005] — the source of much of the data
 -/
+
 namespace BakerVinokurova2010
 
-open Syntax.Case
+open Data.Examples Syntax.Case Yakut.Case
 
-/-! ### The Sakha configuration -/
+/-- The argument roles a row states, in c-command order. -/
+inductive Role
+  | subject
+  | causee
+  | goal
+  | raised
+  | object
+  | pObject
+  | possessor
+  deriving DecidableEq, Repr
 
-/-- Sakha's case system: accusative alignment with the
-    [baker-vinokurova-2010] two-modality split. ACC and DAT are
-    dependent (Marantz); NOM and GEN are Agree-based (Chomsky). -/
-def sakhaConfig : CaseSystemConfig where
-  langType := .accusative
-  nomMode  := .agreeT
-  datMode  := .dependent
-  accMode  := .dependent
-  genMode  := .agreeD
+/-- The prefix of a role's feature keys. -/
+def Role.key : Role → String
+  | .subject => "subject"
+  | .causee => "causee"
+  | .goal => "goal"
+  | .raised => "raised"
+  | .object => "object"
+  | .pObject => "pObject"
+  | .possessor => "possessor"
 
-/-! ### NP positions -/
+/-- The roles highest first. -/
+def Role.all : List Role :=
+  [.subject, .causee, .goal, .raised, .object, .pObject, .possessor]
 
-/-- A subject NP merged at the vP edge / SpecTP — visible on the CP cycle. -/
-def subj (label : String) : PhasedNP :=
-  { label := label, lexicalCase := none, basePhase := .cp, shifted := false }
+/-- The case a gloss shows; a bare NP shows the nominative. -/
+def parseCase? : String → Option Case
+  | "NOM" | "bare" => some .nom
+  | "ACC" => some .acc
+  | "DAT" => some .dat
+  | "GEN" => some .gen
+  | _ => none
 
-/-- A VP-internal NP that has shifted (specific object, raised theme). -/
-def shiftedVP (label : String) : PhasedNP :=
-  { label := label, lexicalCase := none, basePhase := .vp, shifted := true }
+/-- A row states a yes/no property. -/
+def yes (r : LinguisticExample) (k : String) : Bool := r.feature? k = some "yes"
 
-/-- A VP-internal NP that has not shifted (nonspecific object). -/
-def lowVP (label : String) : PhasedNP :=
-  { label := label, lexicalCase := none, basePhase := .vp, shifted := false }
+/-- An NP of a row's domain: its phase data, whether it is covert, whether it is adjacent to
+    the verb, and the case its gloss shows. -/
+structure Slot where
+  np : PhasedNP
+  covert : Bool := false
+  adjacent : Bool := false
+  observed : Case := .nom
+  deriving DecidableEq, Repr
 
-/-! ### Monotransitive with a shifted object -/
+/-- Where a role is merged: a possessor inside DP, the objects, goal, causee and raised
+    subject inside VP, and the subject outside it unless the predicate is unaccusative or
+    takes a dative subject. -/
+def Role.basePhase (r : LinguisticExample) : Role → CasePhase
+  | .subject =>
+    if yes r "unaccusative" || r.feature? "subjectPosition" = some "internal" then .vp else .cp
+  | .causee | .goal | .raised | .object => .vp
+  | .pObject | .possessor => .cp
 
-/-- "Masha cake-ACC ate" with a specific object: the object shifts,
-    competes with the subject on the CP cycle, and is valued ACC. -/
-def transSpecific : List PhasedNP := [subj "subj", shiftedVP "obj"]
+/-- Whether a VP-merged NP shifts to the phase edge: a specific one does, a nonspecific one
+    does not, a raised subject always does, and the paper leaves the rest free. -/
+def Role.shifts (r : LinguisticExample) (ρ : Role) : List Bool :=
+  match ρ.basePhase r with
+  | .cp => [false]
+  | .vp =>
+    if ρ = .raised then [true]
+    else match r.feature? (ρ.key ++ "Specific") with
+      | some "yes" => [true]
+      | some "no" => [false]
+      | _ => [false, true]
 
-def transSpecificResult : List CasedNP := assignCasesPhased sakhaConfig transSpecific
+/-- The slots a stated role contributes, one per shift option. -/
+def Role.slots (r : LinguisticExample) (ρ : Role) : Option (List Slot) :=
+  ((r.feature? (ρ.key ++ "Case")).bind parseCase?).map λ c =>
+    (ρ.shifts r).map λ sh =>
+      { np := { label := ρ.key, lexicalCase := none, basePhase := ρ.basePhase r, shifted := sh,
+                inDP := ρ = .possessor },
+        adjacent := yes r (ρ.key ++ "Adjacent"), observed := c }
 
-/-- The shifted object competes with the subject on the CP cycle and is
-    valued accusative by the dependent rule, not by Agree. -/
-theorem trans_specific_obj_acc :
-    getCaseOf "obj" transSpecificResult = some .acc ∧
-    getSourceOf "obj" transSpecificResult = some .dependent := by decide
+/-- The covert agent, merged above VP: forced in a passive with an agent-oriented adverb and
+    in an agentive nominalization, excluded when the subject is overt or the predicate
+    unaccusative, and otherwise free in a passive or event nominalization. -/
+def agentOptions (r : LinguisticExample) : List (List Slot) :=
+  let pro : Slot :=
+    { np := { label := "PRO", lexicalCase := none, basePhase := .cp }, covert := true }
+  if (r.feature? "subjectCase").isSome || yes r "unaccusative" then [[]]
+  else if yes r "agentOrientedAdverb" || r.feature? "construction" = some "agentiveNominal" then
+    [[pro]]
+  else match r.feature? "construction" with
+    | some "passive" | some "eventNominal" => [[pro], []]
+    | _ => [[]]
 
-/-- The subject is valued nominative by T-Agree, not by the unmarked
-    default. -/
-theorem trans_specific_subj_nom :
-    getCaseOf "subj" transSpecificResult = some .nom ∧
-    getSourceOf "subj" transSpecificResult = some .agree := by decide
+/-- The domains a row may have: the covert agent, then each stated role under each of its
+    shift options. -/
+def candidates (r : LinguisticExample) : List (List Slot) :=
+  (Role.all.foldr (λ ρ acc => match ρ.slots r with
+      | none => acc
+      | some vs => vs.flatMap λ s => acc.map (s :: ·)) [[]]).flatMap λ d =>
+    (agentOptions r).map (· ++ d)
 
-/-! ### Monotransitive with an unshifted object -/
+/-- The grammar a domain is evaluated under: T-Agree only where the verb bears an agreeing
+    T-like head, D-Agree on a possessor only where the possessed noun agrees. -/
+def config (cfg : CaseSystemConfig) (r : LinguisticExample) : CaseSystemConfig :=
+  { cfg with
+    nomMode := if yes r "verbAgreement" then cfg.nomMode else .unmarkedDefault
+    genMode := if yes r "possesseeAgreement" then cfg.genMode else .nonstructural }
 
-/-- "Masha cake ate" with a nonspecific object: the object stays in
-    VP and is invisible to T on the CP cycle, so the ACC rule never
-    fires (no competitor pair). The object surfaces unmarked. -/
-def transNonspecific : List PhasedNP := [subj "subj", lowVP "obj"]
+/-- D on a head noun that agrees with the clause's subject reaches into the relative or
+    nominalized clause and values its highest caseless overt NP genitive. -/
+def dProbe : List (Slot × CasedNP) → List (Slot × CasedNP)
+  | [] => []
+  | (s, c) :: rest =>
+    if !s.covert && c.source == .unmarked && s.np.visibleOnCP then
+      (s, { c with case := .gen, source := .agree }) :: rest
+    else (s, c) :: dProbe rest
 
-def transNonspecificResult : List CasedNP :=
-  assignCasesPhased sakhaConfig transNonspecific
+/-- The cases of a domain, paired with its slots. -/
+def derive (cfg : CaseSystemConfig) (r : LinguisticExample) (d : List Slot) :
+    List (Slot × CasedNP) :=
+  let out := d.zip (assignCasesPhased (config cfg r) (d.map (·.np)))
+  if yes r "headNounAgreement" && cfg.genMode == .agreeD then dProbe out else out
 
-/-- Nonspecific object: no ACC, surfaces unmarked. PIC-driven DOM. -/
-theorem trans_nonspecific_obj_unmarked :
-    getSourceOf "obj" transNonspecificResult = some .unmarked := by decide
+/-- The Case filter: a caseless overt NP must be pseudo-incorporated — an unshifted
+    VP-internal NP adjacent to the verb. -/
+def Licensed (s : Slot) (c : CasedNP) : Prop :=
+  s.covert = true ∨ c.source ≠ .unmarked ∨
+    (s.np.basePhase = .vp ∧ s.np.shifted = false ∧ s.adjacent = true)
 
-/-- T-Agree finds the highest CP-visible unvalued NP, the subject, in both
-    DOM variants. -/
-theorem trans_nonspecific_subj_nom :
-    getCaseOf "subj" transNonspecificResult = some .nom ∧
-    getSourceOf "subj" transNonspecificResult = some .agree := by decide
+instance (s : Slot) (c : CasedNP) : Decidable (Licensed s c) := by
+  unfold Licensed; infer_instance
 
-/-! ### Differential object marking -/
+/-- T agrees with the NP it values nominative: where a row states the verb's agreement target,
+    an overt NP is nominative by Agree exactly when it is that target, so default agreement
+    means no NP is. -/
+def Agrees (r : LinguisticExample) (out : List (Slot × CasedNP)) : Prop :=
+  (r.feature? "agreesWith").isSome → ∀ p ∈ out, p.1.covert = false →
+    ((p.2.case = .nom ∧ p.2.source = .agree) ↔ r.feature? "agreesWith" = some p.1.np.label)
 
-/-- The DOM alternation: object case differs purely by whether the
-    object has shifted out of VP, with no change to the subject. The
-    grammar does not stipulate "specificity → ACC"; it is derived
-    from phase visibility and the accusative rule. -/
-theorem dom_alternation_in_object :
-    getCaseOf "obj" transSpecificResult ≠ getCaseOf "obj" transNonspecificResult := by
+instance (r : LinguisticExample) (out : List (Slot × CasedNP)) : Decidable (Agrees r out) := by
+  unfold Agrees; infer_instance
+
+/-- A domain derives the row under a grammar: every overt NP gets the case its gloss shows,
+    and under the Chomskian half — the Case filter and the case–agreement link — is licensed
+    and agreed with accordingly. -/
+def Derives (cfg : CaseSystemConfig) (chomskian : Bool) (r : LinguisticExample)
+    (d : List Slot) : Prop :=
+  (∀ p ∈ derive cfg r d, p.1.covert = false →
+    p.2.case = p.1.observed ∧ (chomskian = true → Licensed p.1 p.2)) ∧
+  (chomskian = true → Agrees r (derive cfg r d))
+
+instance (cfg : CaseSystemConfig) (chomskian : Bool) (r : LinguisticExample) (d : List Slot) :
+    Decidable (Derives cfg chomskian r d) := by
+  unfold Derives; infer_instance
+
+/-- Some choice of structure derives the row. -/
+def Derivable (cfg : CaseSystemConfig) (chomskian : Bool) (r : LinguisticExample) : Prop :=
+  ∃ d ∈ candidates r, Derives cfg chomskian r d
+
+instance (cfg : CaseSystemConfig) (chomskian : Bool) (r : LinguisticExample) :
+    Decidable (Derivable cfg chomskian r) := by
+  unfold Derivable; infer_instance
+
+/-- Each of the paper's Sakha examples is acceptable exactly when some structure derives the
+    cases it shows under the two-modality grammar with the Case filter and the
+    case–agreement link. -/
+theorem rows_case :
+    ∀ r ∈ Examples.all, r.judgment = .acceptable ↔ Derivable yakutCaseConfig true r := by
   decide
 
-theorem dom_subject_invariant :
-    getCaseOf "subj" transSpecificResult = getCaseOf "subj" transNonspecificResult := by
-  decide
-
-/-! ### Ditransitives -/
-
-/-- Ditransitive with a specific theme: the DAT rule values the goal on the
-    VP cycle, and the shifted theme competes with the subject on the CP
-    cycle. -/
-def ditransitive : List PhasedNP :=
-  [subj "subj", lowVP "goal", shiftedVP "theme"]
-
-def ditransitiveResult : List CasedNP := assignCasesPhased sakhaConfig ditransitive
-
-/-- The goal is valued dative by the dative rule on the VP cycle. -/
-theorem ditrans_goal_dat :
-    getCaseOf "goal" ditransitiveResult = some .dat ∧
-    getSourceOf "goal" ditransitiveResult = some .dependent := by decide
-
-/-- Specific theme receives ACC on the CP cycle (after the goal has
-    been valued DAT and removed from competition). -/
-theorem ditrans_theme_acc :
-    getCaseOf "theme" ditransitiveResult = some .acc ∧
-    getSourceOf "theme" ditransitiveResult = some .dependent := by decide
-
-theorem ditrans_subj_nom :
-    getCaseOf "subj" ditransitiveResult = some .nom ∧
-    getSourceOf "subj" ditransitiveResult = some .agree := by decide
-
-/-- The NOM/DAT/ACC ditransitive pattern: dative on the goal is what
-    bleeds the accusative rule on the VP cycle, so only the theme surfaces
-    accusative despite two VP-internal NPs. The general reason is
-    `dat_persists_through_assignCasesPhased`. -/
-theorem ditrans_full_pattern :
-    getCaseOf "subj" ditransitiveResult = some .nom ∧
-    getCaseOf "goal" ditransitiveResult = some .dat ∧
-    getCaseOf "theme" ditransitiveResult = some .acc := by decide
-
-/-! ### Unaccusatives -/
-
-/-- Unaccusative: the theme raises to SpecTP, leaving no ACC competitor. -/
-def unaccusative : List PhasedNP := [subj "theme"]
-
-def unaccResult : List CasedNP := assignCasesPhased sakhaConfig unaccusative
-
-theorem unacc_theme_nom :
-    getCaseOf "theme" unaccResult = some .nom ∧
-    getSourceOf "theme" unaccResult = some .agree := by decide
-
-/-- No NP receives ACC: the dependent rule needs two competitors. -/
-theorem unacc_no_acc :
-    ∀ cn ∈ unaccResult, cn.case ≠ .acc := by decide
-
-/-! ### Agree-nominative is not the unmarked default -/
-
-/-! The same surface NOM can have either source, and the source is what
-downstream probes see. Sakha NOM is always `.agree`; a default-NOM grammar
-would have it `.unmarked`. -/
-
-/-- No NOM in a Sakha derivation comes from the unmarked default. -/
-theorem all_nom_is_agree_in_sakha :
-    ∀ cn ∈ transSpecificResult ++ ditransitiveResult ++ unaccResult,
-      cn.case = .nom → cn.source = .agree := by decide
-
-/-! ### The causative cascade -/
-
-/-! Morphological causatives in Sakha cascade: the causee surfaces
-accusative when the base verb is intransitive, since max VP holds one
-argumental NP and offers no dative competitor, but dative when the base verb
-is transitive, since max VP then holds two and the dative rule fires.
-
-This is the cleanest test of the dependent-case modality. Adding an NP — the
-lower theme — changes the case on a different NP, the causee, which no
-head-driven Agree relation can do. The dative rule bleeding the accusative
-rule on the VP cycle predicts the cascade with no further stipulation. -/
-
-/-- "Sardaana made Aisen cry", on an intransitive base. Max VP holds only
-    the causee, so neither dependent rule fires on the VP cycle; the causee
-    shifts to the CP phase, competes with the causer, and is valued
-    accusative there. -/
-def causativeOfIntransitive : List PhasedNP :=
-  [subj "causer", shiftedVP "causee"]
-
-def causIntransResult : List CasedNP :=
-  assignCasesPhased sakhaConfig causativeOfIntransitive
-
-theorem caus_intrans_causee_acc :
-    getCaseOf "causee" causIntransResult = some .acc ∧
-    getSourceOf "causee" causIntransResult = some .dependent := by decide
-
-theorem caus_intrans_causer_nom :
-    getCaseOf "causer" causIntransResult = some .nom ∧
-    getSourceOf "causer" causIntransResult = some .agree := by decide
-
-/-- "Misha made Masha eat soup", on a transitive base. Max VP holds the
-    causee and the theme, both argumental, so the dative rule values the
-    higher of them dative and bleeds the accusative rule; the theme then
-    shifts to the CP phase, competes with the causer, and is valued
-    accusative. -/
-def causativeOfTransitive : List PhasedNP :=
-  [subj "causer", lowVP "causee", shiftedVP "theme"]
-
-def causTransResult : List CasedNP :=
-  assignCasesPhased sakhaConfig causativeOfTransitive
-
-theorem caus_trans_causee_dat :
-    getCaseOf "causee" causTransResult = some .dat ∧
-    getSourceOf "causee" causTransResult = some .dependent := by decide
-
-theorem caus_trans_theme_acc :
-    getCaseOf "theme" causTransResult = some .acc ∧
-    getSourceOf "theme" causTransResult = some .dependent := by decide
-
-theorem caus_trans_causer_nom :
-    getCaseOf "causer" causTransResult = some .nom ∧
-    getSourceOf "causer" causTransResult = some .agree := by decide
-
-/-- The causative cascade: the *same* causative morpheme produces ACC
-    on the causee over an intransitive base and DAT over a transitive one.
-    The only difference is the number of argumental NPs in max VP, which is
-    the structural signature of dependent case. -/
-theorem causee_case_depends_on_base_transitivity :
-    getCaseOf "causee" causIntransResult = some .acc ∧
-    getCaseOf "causee" causTransResult = some .dat := by decide
-
-/-! ### Bare-NP adverbs -/
-
-/-! [baker-vinokurova-2010] restrict the dependent rules to argumental
-NPs, those bearing a θ-role with respect to some case assigner. Bare-NP
-adverbs like *sajyn* 'summer' are not case competitors even when c-commanded
-by a caseless NP, which `PhasedNP.isArgumental` records: an NP set
-non-argumental is filtered out of `unmarkedVisible` and can neither trigger
-nor receive dependent case. The same noun surfaces accusative as the object
-of a transitive verb and unmarked as a temporal adverb. -/
-
-/-- Adverbial NP — bears no θ-role w.r.t. a case-assigning head. -/
-def adverb (label : String) : PhasedNP :=
-  { label := label, lexicalCase := none, basePhase := .cp,
-    shifted := false, isArgumental := false }
-
-/-- "Bihigi beqehee ystan-nybyt" 'we yesterday jumped': an argumental
-    subject and a non-argumental adverb, leaving one NP in case
-    competition. -/
-def intransitiveWithAdverb : List PhasedNP :=
-  [subj "subj", adverb "yesterday"]
-
-def intrAdvResult : List CasedNP :=
-  assignCasesPhased sakhaConfig intransitiveWithAdverb
-
-/-- The adverb is not marked accusative, the accusative rule not seeing it
-    as a competitor; it falls through to the default sweep. -/
-theorem adverb_does_not_get_acc :
-    getCaseOf "yesterday" intrAdvResult = some .nom ∧
-    getSourceOf "yesterday" intrAdvResult = some .unmarked := by decide
-
-theorem subj_with_adverb_nom_agree :
-    getCaseOf "subj" intrAdvResult = some .nom ∧
-    getSourceOf "subj" intrAdvResult = some .agree := by decide
-
-/-- "Masha sajyn-y axt-ar" 'Masha summer-ACC misses': the same noun as
-    the object of a transitive verb, where it bears a θ-role, counts as
-    argumental, and is marked accusative. -/
-def transitiveSummerObject : List PhasedNP :=
-  [subj "masha", shiftedVP "summer"]
-
-def transSummerResult : List CasedNP :=
-  assignCasesPhased sakhaConfig transitiveSummerObject
-
-theorem summer_as_object_gets_acc :
-    getCaseOf "summer" transSummerResult = some .acc ∧
-    getSourceOf "summer" transSummerResult = some .dependent := by decide
-
-/-- The same noun receives ACC when argumental and unmarked NOM when
-    adverbial, with no lexical ambiguity stipulated. -/
-theorem argumental_status_drives_case :
-    getCaseOf "summer" transSummerResult ≠ getCaseOf "yesterday" intrAdvResult ∧
-    getSourceOf "summer" transSummerResult ≠ getSourceOf "yesterday" intrAdvResult := by
-  decide
-
-/-! ### Neither modality suffices alone -/
-
-/-- Pure Marantz (Sakha pattern with NOM as unmarked default and no
-    Agree-based case): all structural cases are configurational. -/
+/-- A purely configurational grammar: dependent accusative and dative, nominative as the
+    default, no structural genitive. -/
 def pureMarantz : CaseSystemConfig where
   langType := .accusative
-  nomMode  := .unmarkedDefault
-  datMode  := .dependent
-  accMode  := .dependent
-  genMode  := .nonstructural
+  nomMode := .unmarkedDefault
+  datMode := .dependent
+  accMode := .dependent
+  genMode := .nonstructural
 
-/-- Pure Chomsky: every structural case assigned by Agree with a functional
-    head, DAT purely inherent ([chomsky-2000], [chomsky-2001]). -/
+/-- A purely Agree-based grammar: accusative from v, nominative from T, genitive from D, and
+    no structural dative. -/
 def pureChomsky : CaseSystemConfig where
   langType := .accusative
-  nomMode  := .agreeT
-  datMode  := .nonstructural
-  accMode  := .agreeV
-  genMode  := .agreeD
+  nomMode := .agreeT
+  datMode := .nonstructural
+  accMode := .agreeV
+  genMode := .agreeD
 
-/-- Pure Marantz gives the subject the same surface NOM as Sakha but a
-    different source, so the modalities differ where the morphology does
-    not. -/
-theorem pure_marantz_subj_unmarked :
-    getSourceOf "subj" (assignCasesPhased pureMarantz ditransitive) = some .unmarked := by
+/-- Without the Case filter and the case–agreement link, the configurational grammar derives
+    a rejected example — a bare object separated from the verb, an unagreed-with subject of a
+    participial clause, a passive whose verb agrees with nothing though its theme is
+    nominative. -/
+theorem pure_marantz_overgenerates :
+    ∃ r ∈ Examples.all, r.judgment = .unacceptable ∧ Derivable pureMarantz false r := by
   decide
 
-/-- Pure Chomsky derives no DAT at all, contradicting the productive DAT on
-    Sakha structural goals. -/
-theorem pure_chomsky_no_algorithmic_dat :
-    ∀ cn ∈ assignCasesPhased pureChomsky ditransitive, cn.case ≠ .dat := by decide
-
-/-- Pure Chomsky reaches the same ACC on the theme by Agree where Sakha
-    reaches it by the dependent rule. -/
-theorem pure_chomsky_acc_via_agree :
-    getCaseOf "theme" (assignCasesPhased pureChomsky ditransitive) = some .acc ∧
-    getSourceOf "theme" (assignCasesPhased pureChomsky ditransitive) = some .agree := by
+/-- The Agree-based grammar, with no structural dative, fails an accepted example with a
+    dative goal. -/
+theorem pure_chomsky_undergenerates :
+    ∃ r ∈ Examples.all, r.judgment = .acceptable ∧ r.feature? "goalCase" = some "DAT" ∧
+      ¬ Derivable pureChomsky true r := by
   decide
-
-/-- The cascade is the wedge against any pure-Agree account: pure Chomsky
-    leaves the causee of a transitive base without DAT, its v-Agree probe
-    targeting the theme instead. -/
-theorem pure_chomsky_misses_causative_cascade :
-    getCaseOf "causee" (assignCasesPhased pureChomsky causativeOfTransitive) ≠
-      some .dat ∧
-    getCaseOf "causee" causTransResult = some .dat := by
-  refine ⟨?_, ?_⟩ <;> decide
-
-/-- Neither pure modality derives the Sakha pattern: pure Marantz misses the
-    NOM-as-Agree source, pure Chomsky misses DAT on both the ditransitive and
-    the causative cascade. -/
-theorem two_modalities_required :
-    -- Pure Marantz fails on the NOM source fingerprint
-    (getSourceOf "subj" (assignCasesPhased pureMarantz ditransitive) ≠ some .agree) ∧
-    -- Pure Chomsky fails on DAT in the ditransitive
-    (¬ ∃ cn ∈ assignCasesPhased pureChomsky ditransitive, cn.case = .dat) ∧
-    -- Pure Chomsky additionally fails on the causative cascade
-    (getCaseOf "causee" (assignCasesPhased pureChomsky causativeOfTransitive) ≠
-       some .dat) ∧
-    -- Sakha succeeds on all three
-    (getSourceOf "subj" ditransitiveResult = some .agree) ∧
-    (∃ cn ∈ ditransitiveResult, cn.case = .dat) ∧
-    (getCaseOf "causee" causTransResult = some .dat) := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
-
-/-! ### DP-internal possessors -/
-
-/-! [baker-vinokurova-2010] have D Agree with the possessor inside DP and
-value it GEN. The clausal cycles see the DP as opaque, its possessor filtered
-out of `unmarkedVisible` by the `inDP` flag, and `applyGenAgree` runs as the
-DP-internal counterpart to T-Agree. -/
-
-/-- A DP-internal possessor: opaque to clause-level case competition
-    but valued GEN by D-Agree. -/
-def possessor (label : String) : PhasedNP :=
-  { label := label, lexicalCase := none, basePhase := .cp,
-    shifted := false, isArgumental := true, inDP := true }
-
-/-- "Aisen's house [is in town]" — the matrix subject is a DP whose
-    possessor `aisen` is valued GEN by D-Agree. The possessor is
-    invisible to clausal probes; the head noun (`house`) is the
-    subject of T-Agree and surfaces NOM. -/
-def possessedSubject : List PhasedNP := [subj "house", possessor "aisen"]
-
-def possessedResult : List CasedNP :=
-  assignCasesPhased sakhaConfig possessedSubject
-
-theorem possessor_gets_gen_via_agree :
-    getCaseOf "aisen" possessedResult = some .gen ∧
-    getSourceOf "aisen" possessedResult = some .agree := by decide
-
-theorem possessed_head_gets_nom :
-    getCaseOf "house" possessedResult = some .nom ∧
-    getSourceOf "house" possessedResult = some .agree := by decide
-
-/-- The genitive possessor is invisible to the accusative rule: in a
-    transitive with a possessed object the head noun receives accusative,
-    not the possessor. -/
-def transWithPossessedObj : List PhasedNP :=
-  [subj "subj", shiftedVP "book", possessor "aisen"]
-
-def transPossResult : List CasedNP :=
-  assignCasesPhased sakhaConfig transWithPossessedObj
-
-theorem possessor_is_opaque_to_clausal_acc :
-    getCaseOf "aisen" transPossResult = some .gen ∧
-    getCaseOf "book"  transPossResult = some .acc := by decide
-
-/-- Both Agree probes and both dependent rules value four NPs in one
-    derivation. -/
-theorem all_four_modalities_in_one_clause :
-    let cl : List PhasedNP :=
-      [subj "subj", lowVP "goal", shiftedVP "theme", possessor "aisen"]
-    let r := assignCasesPhased sakhaConfig cl
-    getSourceOf "subj"  r = some .agree     ∧  -- T-Agree
-    getSourceOf "aisen" r = some .agree     ∧  -- D-Agree
-    getSourceOf "goal"  r = some .dependent ∧  -- dative rule
-    getSourceOf "theme" r = some .dependent := by decide
 
 end BakerVinokurova2010
