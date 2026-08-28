@@ -265,8 +265,7 @@ theorem nested_double_access :
     shifted via `Intension.IsRigid`, and `IsRigid.map` lifts
     the discrimination uniformly across `Res` types — so the
     parallel with [anand-nevins-2004]'s Kaplan-compliant vs
-    shifted indexicals at `Res = Agent`
-    (`Studies/AnandNevins2004.lean`) is
+    shifted indexicals at `Res = Agent` is
     substrate-level visible.
 
     **Caveat on the underlying formalization**: the tower-depth
@@ -300,7 +299,7 @@ def schlenkerPresent : TimeConcept Unit Unit Unit ℤ :=
     as a non-rigid `TimeConcept`**: the local-context reading IS the
     time-projection function `(·.time)` — non-rigid because it varies
     with whatever context is plugged in. Substrate-level analog of
-    [anand-nevins-2004]'s `shiftedI = (·.agent)`, transposed
+    [anand-nevins-2004]'s shifted first person `(·.agent)`, transposed
     from `Res = Agent` to `Res = ℤ`. -/
 def schlenkerShifted : TimeConcept Unit Unit Unit ℤ :=
   fun c => c.time
@@ -387,7 +386,7 @@ theorem schlenker_abusch_agree_on_simultaneous_value
     |----------------------------|--------------------|------------------|
     | [schlenker-2004-sot]  | `schlenkerPresent` | `schlenkerShifted` |
     | [abusch-1997]         | rigid `TimeConcept`| bound `TimeConcept`|
-    | [anand-nevins-2004]   | `kaplanI` (Agent)  | `shiftedI` (Agent) |
+    | [anand-nevins-2004]   | rigid `I` (Agent)  | shifted `I` (Agent) |
 
     All three rows discriminate via `Intension.IsRigid`. By
     `Intension.IsRigid.map`, rigidity transfers across `Res` types
@@ -400,9 +399,8 @@ theorem schlenker_abusch_agree_on_simultaneous_value
 
     The witness here bundles `schlenkerPresent_isRigid` and
     `schlenkerShifted_not_isRigid`; the SAME `Intension.IsRigid`
-    predicate proves both at `Res = ℤ`, parallel to how
-    `kaplanI_isRigid` and `shiftedI_not_isRigid` prove it at
-    `Res = Agent` in `Studies/AnandNevins2004.lean`. -/
+    predicate proves both at `Res = ℤ`, parallel to [anand-nevins-2004]'s Kaplan-compliant
+    and shifted first person at `Res = Agent`. -/
 theorem schlenker_substrate_aligned_with_isRigid :
     Intensional.Intension.IsRigid schlenkerPresent ∧
     ¬ Intensional.Intension.IsRigid schlenkerShifted :=
@@ -412,7 +410,7 @@ theorem schlenker_substrate_aligned_with_isRigid :
     `schlenkerPresent` transfers across `Res` types via any
     function `g : ℤ → α`, by `Intension.IsRigid.map`. So
     Schlenker's Kaplan-stability is preserved by the substrate's
-    functoriality just as [anand-nevins-2004]'s `kaplanI` is —
+    functoriality just as [anand-nevins-2004]'s Kaplan-compliant `I` is —
     both are instances of the same architectural pattern. -/
 theorem schlenkerPresent_lifts_rigidly {α : Type*} (g : ℤ → α) :
     Intensional.Intension.IsRigid (fun c : TenseCtx => g (schlenkerPresent c)) :=

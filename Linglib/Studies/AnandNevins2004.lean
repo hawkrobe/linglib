@@ -1,328 +1,217 @@
-import Linglib.Semantics.Reference.FreeIndirectDiscourse
-import Linglib.Semantics.Reference.Context.Tower
-import Linglib.Semantics.Reference.Context.Shifts
-import Linglib.Semantics.Tense.DeRe
-import Linglib.Data.Examples.Schema
+import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Data.Examples.AnandNevins2004
+import Mathlib.Data.List.Basic
 
 /-!
-# Reference: ContextTower
-[anand-nevins-2004] [banfield-1982] [kaplan-1989] [schlenker-2003]
+# Anand & Nevins 2004: shifty operators in changing contexts
 
-End-to-end derivation chain connecting the ContextTower infrastructure
-to the Zazaki indexical-shift data in `Data.Examples.AnandNevins2004`.
+In Zazaki every indexical may shift under *vano* 'say', and in Slave first-person indexicals
+shift under *hadi*, yet indexicals in one speech-context domain never take their values from
+different contexts (Shift-Together, (16)); in Slave the embedding verb decides which
+indexicals shift and whether they must; and under two stacked reports a shifted indexical in
+the intermediate clause blocks the lowest indexical from reaching the utterance context ((32)
+against (33)). The account: Kaplan's context and index parameters are made the same type, an
+attitude verb quantifies over indices, and a language's context-shifting operators overwrite
+the context from the index — all of it in Zazaki, the author coordinate alone in Slave —
+so shifting is literal overwriting, whence Shift-Together and the loss of the utterance
+context under an intermediate shift; lexical entries pair verbs with operator options.
 
-## Derivation Chain
+`Params` is the context–index pair, `I`/`you`/`here`/`now` read the context and
+`proSubj`/`logAddr` the index, `Op.all`/`Op.auth` are the operators (2), `attitude` is (23b),
+`Entry` a verb's operator options (39), and `readings`/`readings₂` the values an indexical
+can take under one or two reports. `opAll_forgets` and `lowerI_of_shifted_you` are the
+multiple-embedding prediction; `rows_track_entries` and `rows_shift_together` run the
+entries over the paper's examples.
 
-```
-Semantics.Context.Tower (ContextTower, push, origin, innermost)
-    ↓
-Semantics.Context.Shifts (attitudeShift, perspectiveShift, identityShift)
-    ↓
-Semantics.Reference.FreeIndirectDiscourse (FIDProfile)
-    ↓
-This file: tower operations model Kaplan's thesis and its violations
-    ↓
-Data.Examples.AnandNevins2004 (Zazaki rows (4) and (7))
-```
+## References
 
-## Key Results
-
-1. **Kaplan's thesis = identityShift**: English attitude verbs push identity
-   shifts, so embedded indexicals read from origin (speaker's context)
-2. **Indexical shift = perspectiveShift**: shift languages (Amharic, Zazaki)
-   push perspective shifts, so embedded "I" reads from local (attitude
-   holder's context)
-3. **FID = mixed access**: Classic FID reads agent from origin (narrator)
-   but time/world from local (character) — the hallmark mixed perspective
-4. **Direct speech = full local access**: All coordinates from the embedded
-   context (full perspective shift)
-
+* [anand-nevins-2004]
+* [kaplan-1989] — context and index
+* [schlenker-2003] — the lexical-underspecification rival and the Amharic data
+* [stalnaker-1978] — `Op.all` as the diagonal operator
 -/
 
 namespace AnandNevins2004
 
-open Semantics.Context
-open Semantics.Reference.FreeIndirectDiscourse
+open Data.Examples Semantics.Context
 
--- ============================================================================
--- § Concrete Context Type
--- ============================================================================
+variable {W E P T : Type*}
 
-/-- A context with distinguishable agents (for testing identity). -/
-inductive Agent where | narrator | character
-  deriving DecidableEq, Repr
+/-! ### Two parameters of the same type -/
 
-abbrev RefCtx := KContext Unit Agent Unit ℤ
+/-- Kaplan's context and index, both of context type (§3.1). -/
+abbrev Params (W E P T : Type*) := KContext W E P T × KContext W E P T
 
-/-- Speech-act context: narrator speaking at time 0. -/
-def speechCtx : RefCtx :=
-  { world := (), agent := .narrator, addressee := .character, time := 0, position := () }
+/-- An expression interpreted relative to the two parameters. -/
+abbrev Expr (W E P T : Type*) (R : Type*) := Params W E P T → R
 
-/-- Root tower at the speech-act context. -/
-def rootTower : ContextTower RefCtx := ContextTower.root speechCtx
+/-- The indexicals read the context parameter (24). -/
+def I : Expr W E P T E := fun p => p.1.agent
 
--- ============================================================================
--- § Kaplan's Thesis: English = Identity Shift
--- ============================================================================
+def you : Expr W E P T E := fun p => p.1.addressee
 
-/-- English attitude verbs push identity shifts (Kaplan's thesis).
-    "John said that I am here now" — "I", "here", "now" all refer to
-    the speaker, not to John. -/
-def englishAttitudeTower : ContextTower RefCtx :=
-  rootTower.push identityShift
+def here : Expr W E P T P := fun p => p.1.position
 
-/-- Under an identity shift, the embedded agent is still the narrator.
-    This is Kaplan's thesis: English indexicals are not shifted. -/
-theorem english_I_is_narrator :
-    englishAttitudeTower.innermost.agent = .narrator := rfl
+def now : Expr W E P T T := fun p => p.1.time
 
-/-- Under an identity shift, the embedded time is still 0.
-    "Now" refers to the speech time, not the attitude time. -/
-theorem english_now_is_speech_time :
-    englishAttitudeTower.innermost.time = 0 := rfl
+/-- Subject-controlled PRO reads the author of the index (41); the logophors read its author
+and addressee (43). -/
+def proSubj : Expr W E P T E := fun p => p.2.agent
 
--- ============================================================================
--- § Shift Languages: perspectiveShift
--- ============================================================================
+def logAddr : Expr W E P T E := fun p => p.2.addressee
 
-/-- Shift languages (Amharic, Zazaki, etc.) push perspective shifts.
-    The attitude verb shifts the agent to the attitude holder and the
-    time to the attitude time. -/
-def shiftLanguageTower : ContextTower RefCtx :=
-  rootTower.push (perspectiveShift .character (-3) ())
+/-- The context-shifting operators (2): none, Zazaki's `all` overwriting every coordinate of
+the context with the index, and Slave's `auth` overwriting the author coordinate alone. -/
+inductive Op
+  | none
+  | all
+  | auth
+  deriving DecidableEq
 
-/-- Under a perspective shift, the embedded agent is the character.
-    "I" in Amharic under an attitude verb refers to the attitude holder. -/
-theorem shifted_I_is_character :
-    shiftLanguageTower.innermost.agent = .character := rfl
+/-- The rewriting an operator performs on the parameters. -/
+def Op.act : Op → Params W E P T → Params W E P T
+  | .none => id
+  | .all => fun p => (p.2, p.2)
+  | .auth => fun p => ({ p.1 with agent := p.2.agent }, p.2)
 
-/-- Under a perspective shift, the embedded time is the attitude time.
-    "Now" in a shifted language refers to the attitude time, not speech time. -/
-theorem shifted_now_is_attitude_time :
-    shiftLanguageTower.innermost.time = -3 := rfl
+/-- (23b): an attitude verb quantifies over the indices compatible with the attitude and
+leaves the context parameter untouched. -/
+def attitude (acc : E → KContext W E P T → Set (KContext W E P T)) (x : E)
+    (φ : Expr W E P T Prop) : Expr W E P T Prop :=
+  fun p => ∀ j ∈ acc x p.2, φ (p.1, j)
 
-/-- Monsters exist: [anand-nevins-2004]'s (4) records the shifted reading
-    of Zazaki embedded `ɛz` as acceptable — the witness against Kaplan's
-    prohibition that `shiftLanguageTower` models. -/
-theorem monsters_exist :
-    Examples.ex4.readings[1]? = some ("shifted (ɛz = Hesen)", .acceptable) := rfl
+/-- (26)–(28): with `all` as sister of *say*, the complement is evaluated at the reported
+context alone, so every indexical in it shifts together. -/
+theorem attitude_all (acc : E → KContext W E P T → Set (KContext W E P T)) (x : E)
+    (φ : Expr W E P T Prop) (p : Params W E P T) :
+    attitude acc x (φ ∘ Op.all.act) p ↔ ∀ j ∈ acc x p.2, φ (j, j) := Iff.rfl
 
-/-- [anand-nevins-2004]'s (7): the temporal indexical shifts obligatorily —
-    only the attitude-anchored reading of embedded `vizeri` is acceptable,
-    the utterance-anchored one is not. This is the row that
-    `shifted_now_is_attitude_time` models on the time coordinate. -/
-theorem temporal_shift_obligatory :
-    Examples.ex7.readings.map Prod.snd = [.acceptable, .unacceptable] := rfl
+/-- (30): under `auth` the first person reads the reported author while the second person
+keeps the utterance addressee. -/
+theorem I_auth (p : Params W E P T) : I (Op.auth.act p) = p.2.agent := rfl
 
--- ============================================================================
--- § FID: Mixed Access (Narrator Agent + Character Time/World)
--- ============================================================================
+theorem you_auth (p : Params W E P T) : you (Op.auth.act p) = p.1.addressee := rfl
 
-/-- Classic FID pushes a perspective shift (character's time/world) but
-    reads the agent from origin (narrator). The FIDProfile encodes this
-    per-coordinate depth specification. -/
-def fidTower : ContextTower RefCtx :=
-  rootTower.push (perspectiveShift .character (-5) ())
+/-- A shifted first person is read de se: under `all` it coincides with PRO (§5.1). -/
+theorem I_all_eq_proSubj : (I ∘ Op.all.act : Expr W E P T E) = proSubj := rfl
 
-/-- Classic FID profile: agent from origin, everything else from local. -/
-def classicFIDProfile : FIDProfile := classicFID
+/-! ### Lexical entries and readings -/
 
-/-- In FID, the agent is the narrator (read from origin). -/
-theorem fid_agent_is_narrator :
-    classicFIDProfile.resolveAgent fidTower = .narrator := rfl
+/-- A verb's operator options (39): Zazaki *vano* and Slave TELL take `all` optionally, Slave
+WANT takes `auth` optionally, Slave SAY takes `auth` obligatorily, and the other Zazaki
+attitude verbs take none (fn. 3). -/
+abbrev Entry := List Op
 
-/-- In FID, the time is the character's (read from local). -/
-theorem fid_time_is_character :
-    classicFIDProfile.resolveTime fidTower = -5 := rfl
+def vano : Entry := [.none, .all]
 
-/-- FID is genuinely mixed: agent ≠ what perspectiveShift gives. -/
-theorem fid_is_mixed_perspective :
-    classicFIDProfile.resolveAgent fidTower ≠
-    fidTower.innermost.agent := by decide
+def zazakiAttitude : Entry := [.none]
 
--- ============================================================================
--- § Direct vs Indirect Speech Comparison
--- ============================================================================
+def slaveTell : Entry := [.none, .all]
 
-/-- Indirect speech: all coordinates from origin (Kaplan-compliant). -/
-def indirectProfile : FIDProfile := indirectSpeech
+def slaveWant : Entry := [.none, .auth]
 
-/-- Direct speech: all coordinates from local (full shift). -/
-def directProfile : FIDProfile := directSpeech
+def slaveSay : Entry := [.auth]
 
-/-- In indirect speech, agent is narrator (from origin). -/
-theorem indirect_agent_narrator :
-    indirectProfile.resolveAgent fidTower = .narrator := rfl
+/-- The values an expression takes under a report with context `c` and reported context `j`,
+one per operator option. -/
+def readings {R : Type*} (e : Entry) (φ : Expr W E P T R) (c j : KContext W E P T) : List R :=
+  e.map fun o => φ (o.act (c, j))
 
-/-- In direct speech, agent is character (from local). -/
-theorem direct_agent_character :
-    directProfile.resolveAgent fidTower = .character := rfl
+/-- (13): the first and second person under *vano* read from the same context — the two mixed
+pairs are not among the readings. -/
+theorem readings_vano_I_you (c j : KContext W E P T) :
+    readings vano (fun p => (I p, you p)) c j = [(c.agent, c.addressee), (j.agent, j.addressee)] :=
+  rfl
 
-/-- FID agent agrees with indirect speech (both from origin). -/
-theorem fid_agent_eq_indirect :
-    classicFIDProfile.resolveAgent fidTower =
-    indirectProfile.resolveAgent fidTower := rfl
+theorem mixed_notMem_readings_vano {c j : KContext W E P T} (ha : c.agent ≠ j.agent)
+    (hb : c.addressee ≠ j.addressee) :
+    (c.agent, j.addressee) ∉ readings vano (fun p => (I p, you p)) c j ∧
+      (j.agent, c.addressee) ∉ readings vano (fun p => (I p, you p)) c j := by
+  simp [readings_vano_I_you, ha, ha.symm, hb, hb.symm]
 
-/-- FID time agrees with direct speech (both from local). -/
-theorem fid_time_eq_direct :
-    classicFIDProfile.resolveTime fidTower =
-    directProfile.resolveTime fidTower := rfl
+/-- (17), (38b): under Slave SAY the first person is the reported author and the second the
+utterance addressee, obligatorily. -/
+theorem readings_slaveSay (c j : KContext W E P T) :
+    readings slaveSay (fun p => (I p, you p)) c j = [(j.agent, c.addressee)] := rfl
 
--- ============================================================================
--- § Entity-Concept Bridge: Anand-Nevins 2004 in the centered-world substrate
--- ============================================================================
+/-- (36): under Slave TELL both persons shift together. -/
+theorem readings_slaveTell (c j : KContext W E P T) :
+    readings slaveTell (fun p => (I p, you p)) c j =
+      [(c.agent, c.addressee), (j.agent, j.addressee)] := rfl
 
-/-! Bridge from [anand-nevins-2004]'s shifty-operator framework to an
-    `EntityConcept` — the individual-side dual of the substrate's
-    `Tense.DeRe.TimeConcept` at the same centered index (defined here,
-    where it is consumed). The existing FIDProfile-based formalization
-    above and the `EntityConcept`-based formalization are two
-    perspectives on the same phenomenon; the substrate's
-    `Intension.IsRigid` predicate distinguishes Kaplan-compliant from
-    shifty indexicals at the type level.
+/-- (37), (38a): under Slave WANT the first person shifts optionally and the second never. -/
+theorem readings_slaveWant (c j : KContext W E P T) :
+    readings slaveWant (fun p => (I p, you p)) c j =
+      [(c.agent, c.addressee), (j.agent, c.addressee)] := rfl
 
-    The architectural payoff: this is **exactly parallel** to how
-    `Intension.IsRigid` distinguishes Abusch-style wide-scope rigid
-    time-references from de dicto descriptive time-concepts in
-    `Studies/Abusch1997.lean` (`TimeConcept`).
-    The polymorphism in `Intension W τ` is non-trivial: individual
-    de re (this file) and temporal de re (Abusch) are *the same
-    machinery* at different `Res` types. The
-    `entityConcept_and_timeConcept_share_isRigid_substrate` theorem
-    below makes that claim kernel-checked. -/
+/-! ### Multiple embedding -/
 
-open Tense.DeRe (TimeConcept)
+/-- Overwriting loses the utterance context (§3.4): after `all`, the context no longer depends
+on what it was. -/
+theorem opAll_forgets (c c' j : KContext W E P T) :
+    (Op.all.act (c, j)).1 = (Op.all.act (c', j)).1 := rfl
 
-/-- An **entity-concept**: an intension from a centered Kaplanian context
-    to an entity — the individual-side dual of `Tense.DeRe.TimeConcept`
-    at the same evaluation index ([lewis-1979-attitudes] centered-world
-    de re, [cresswell-vonstechow-1982]). -/
-abbrev EntityConcept (W E P T : Type*) :=
-  Intensional.Intension (Semantics.Context.KContext W E P T) E
+/-- Two stacked reports with reported contexts `j₁` (intermediate) and `j₂` (lowest): the
+values of an expression in the lowest clause, one per pair of operator options. -/
+def readings₂ {R : Type*} (e₁ e₂ : Entry) (φ : Expr W E P T R) (c j₁ j₂ : KContext W E P T) :
+    List R :=
+  e₁.flatMap fun o₁ => e₂.map fun o₂ => φ (o₂.act ((o₁.act (c, j₁)).1, j₂))
 
-/-- **Kaplan-compliant "I"** as a rigid `EntityConcept`.
+/-- (33): with nothing forcing a shift in the intermediate clause, the lowest first person may
+read the utterance author. -/
+theorem readings₂_vano_I (c j₁ j₂ : KContext W E P T) :
+    readings₂ vano vano I c j₁ j₂ = [c.agent, j₂.agent, j₁.agent, j₂.agent] := rfl
 
-    An `EntityConcept` `Intension (KContext) E` is at
-    Kaplan's *content* level — the result of applying his *character*
-    to a context. Kaplan's `I` is technically a character (function
-    from context to content) that returns `c.author` for any context;
-    the **content** at a fixed actual context IS rigid. The substrate
-    captures this content rigidity by modeling `kaplanI` as a constant
-    intension at the speaker (here `.narrator`); the character-level
-    structure is elided. This matches [anand-nevins-2004]'s
-    framing of English `I` as `AUTH(c*)` (sticky to actual context),
-    contrasted with shifty languages where the operator can override
-    the context parameter (yielding non-rigid agent-projection — see
-    `shiftedI`). -/
-def kaplanI : EntityConcept Unit Agent Unit ℤ :=
-  Intensional.Intension.rigid .narrator
+/-- (32): a shifted second person in the intermediate clause diagnoses `all` there, after
+which the lowest first person can only be the intermediate or the lowest reported author —
+never the utterance author. -/
+theorem lowerI_of_shifted_you {c j₁ j₂ : KContext W E P T} {o₁ o₂ : Op} (h₁ : o₁ ∈ vano)
+    (h₂ : o₂ ∈ vano) (hyou : you (o₁.act (c, j₁)) = j₁.addressee)
+    (hne : c.addressee ≠ j₁.addressee) :
+    I (o₂.act ((o₁.act (c, j₁)).1, j₂)) ∈ [j₁.agent, j₂.agent] := by
+  simp only [vano, List.mem_cons, List.not_mem_nil, or_false] at h₁ h₂
+  rcases h₁ with rfl | rfl
+  · exact absurd hyou hne
+  · rcases h₂ with rfl | rfl <;> simp [I, Op.act]
 
-/-- **Anand-Nevins (2004 §1, eq. 2a) shifted "I"** (Zazaki under
-    `OP_V`): the operator overwrites the context parameter with the
-    index parameter (`[[OP_V[α]]]^{c,i} = [[α]]^{i,i}`), so an
-    embedded `I` reads the AUTHOR of whichever centered context is
-    locally supplied. As an `EntityConcept`, this is the
-    agent-projection function — non-rigid: it varies with whatever
-    `KContext` is plugged in. -/
-def shiftedI : EntityConcept Unit Agent Unit ℤ :=
-  fun c => c.agent
+/-! ### The paper's examples -/
 
-/-- **Kaplan's "I" is rigid** (entity-side analog of Abusch's "rigid
-    time-concept" being the de re reading). -/
-theorem kaplanI_isRigid : Intensional.Intension.IsRigid kaplanI :=
-  Intensional.Intension.rigid_isRigid _
+/-- Whether an operator makes a coordinate read the reported context: the coordinate's value
+after the operator on the distinguishing pair of contexts. -/
+def Op.shifts (o : Op) (coord : KContext Bool Bool Bool Bool → Bool) : Bool :=
+  coord (o.act (⟨false, false, false, false, false⟩, ⟨true, true, true, true, true⟩)).1
 
-/-- **[anand-nevins-2004]'s shifted "I" is non-rigid** —
-    discriminating witness from contexts with different agents.
-    Entity-side analog of Abusch's "descriptive time-concept" being
-    the de dicto reading. -/
-theorem shiftedI_not_isRigid : ¬ Intensional.Intension.IsRigid shiftedI := by
-  intro h
-  have hContradiction : (Agent.narrator) = .character :=
-    h speechCtx { speechCtx with agent := .character }
-  exact absurd hContradiction (by decide)
+def Entry.ofString? : String → Option Entry
+  | "vano" => some vano
+  | "zazaki_attitude" => some zazakiAttitude
+  | "slave_tell" => some slaveTell
+  | "slave_want" => some slaveWant
+  | "slave_say" => some slaveSay
+  | _ => none
 
-/-- **Bridge to FIDProfile**: the shifted `I` entity-concept evaluated
-    at the embedded layer of `shiftLanguageTower` (perspective-shifted
-    to `.character`) equals `directProfile.resolveAgent shiftLanguageTower`.
-    Both formalize the "shifted indexical reads from local context"
-    claim; the substrate exposes it as concept non-rigidity, the
-    FIDProfile mechanism exposes it as `.local` depth access. -/
-theorem shiftedI_at_shiftLanguageTower :
-    shiftedI shiftLanguageTower.innermost =
-    directProfile.resolveAgent shiftLanguageTower := rfl
+def coordOfString? : String → Option (KContext Bool Bool Bool Bool → Bool)
+  | "I" => some KContext.agent
+  | "you" => some KContext.addressee
+  | "here" => some KContext.position
+  | "now" => some KContext.time
+  | _ => none
 
-/-- **Bridge to FIDProfile**: Kaplan's `I` evaluated at any context
-    equals `indirectProfile.resolveAgent englishAttitudeTower`. Both
-    formalize the "Kaplan-compliant indexical reads from origin"
-    claim; the substrate exposes it as concept rigidity, the
-    FIDProfile mechanism exposes it as `.origin` depth access. -/
-theorem kaplanI_at_englishAttitudeTower (c : RefCtx) :
-    kaplanI c = indirectProfile.resolveAgent englishAttitudeTower := rfl
+/-- Every recorded reading of a single embedded indexical is available exactly when some
+operator option of the embedding verb's entry gives it: the reported-context reading when an
+option shifts the coordinate, the utterance-context reading when one does not. -/
+theorem rows_track_entries :
+    ∀ r ∈ Examples.all, r.feature? "pragmatic_clash" = none →
+      ∀ e ∈ ((r.feature? "entry").bind Entry.ofString?).toList,
+        ∀ coord ∈ ((r.feature? "indexical").bind coordOfString?).toList,
+        ∀ x ∈ r.readings,
+          (x.1 = "reported context" → (x.2 = .acceptable ↔ ∃ o ∈ e, o.shifts coord = true)) ∧
+          (x.1 = "utterance context" → (x.2 = .acceptable ↔ ∃ o ∈ e, o.shifts coord = false)) := by
+  decide +kernel
 
-/-- Concrete witnesses (4 points in the rigid/non-rigid × Agent/ℤ
-    matrix) — kept as a verifiable example. The deep structural
-    statement of why the parallel holds is
-    `kaplanI_lifts_rigidly_to_timeConcept` below — functoriality of
-    `Intension.IsRigid` does the work. -/
-example :
-    -- Res = Agent (this file)
-    Intensional.Intension.IsRigid kaplanI ∧
-    ¬ Intensional.Intension.IsRigid shiftedI ∧
-    -- Res = ℤ (Abusch's TimeConcept domain)
-    Intensional.Intension.IsRigid (Intensional.Intension.rigid (W := RefCtx) (50 : ℤ)) ∧
-    ¬ Intensional.Intension.IsRigid (fun c : RefCtx => c.time) := by
-  refine ⟨kaplanI_isRigid, shiftedI_not_isRigid,
-          Intensional.Intension.rigid_isRigid _, ?_⟩
-  intro h
-  have hContradiction : (0 : ℤ) = 999 :=
-    h speechCtx { speechCtx with time := 999 }
-  exact absurd hContradiction (by decide)
-
-/-- **Architectural payoff via `Intension` functoriality** (the deep
-    structural claim). Rigidity transfers across `Res` types via
-    post-composition with ANY function — by the general
-    `Intension.IsRigid.map` lemma in `Semantics/Intensional/Rigidity.lean`.
-
-    Concretely: [anand-nevins-2004]'s Kaplan-compliant `kaplanI`
-    (rigid at `Res = Agent`) yields, for any `f : Agent → ℤ` (e.g.
-    "birth year of the speaker"), a rigid `TimeConcept` `f ∘ kaplanI`
-    at `Res = ℤ` — proved by `kaplanI_isRigid.map f`. The parallel
-    between individual de re (this file) and temporal de re
-    (`Studies/Abusch1997.lean`) is *the covariant action of
-    `Intension RefCtx` on its target type*: a one-line corollary of
-    `Intension.IsRigid.map`, not a list of two facts.
-
-    [abusch-1997]'s prose claim at p. 6 ("To apply the same
-    machinery to de re belief, a further constraint is required...
-    the same parallel as for tenses") is now functorially true:
-    [lewis-1979-attitudes] + [cresswell-vonstechow-1982]'s
-    centered-world reduction is formalized once and applies uniformly
-    across all `Res` types via the same closure lemma. -/
-theorem kaplanI_lifts_rigidly_to_timeConcept (f : Agent → ℤ) :
-    Intensional.Intension.IsRigid (fun c : RefCtx => f (kaplanI c)) :=
-  kaplanI_isRigid.map f
-
-/-- **Bidirectional structural equivalence under injective lifting**:
-    when `f : Agent → ℤ` is injective (e.g., a unique-birth-year
-    function), rigidity of the lifted time-concept `f ∘ c` is
-    EQUIVALENT to rigidity of the underlying entity-concept `c`.
-    Both directions are corollaries of substrate-level functoriality:
-    `Intension.IsRigid.map` (forward) and `Intension.IsRigid.of_map_injective`
-    (reverse).
-
-    This establishes that the parallel between Anand-Nevins
-    entity-concepts and Abusch time-concepts is not just a one-way
-    mapping but a structural equivalence under any injective `f` —
-    rigidity-classifying entity-concepts and their image
-    time-concepts are *the same problem* up to the choice of
-    injective lifting. -/
-theorem entityConcept_rigid_iff_image_rigid_under_injective
-    {f : Agent → ℤ} (hf : Function.Injective f)
-    (c : EntityConcept Unit Agent Unit ℤ) :
-    Intensional.Intension.IsRigid c ↔
-    Intensional.Intension.IsRigid (fun ctx : RefCtx => f (c ctx)) :=
-  ⟨fun h => h.map f, fun h => h.of_map_injective hf⟩
+/-- Shift-Together (16): wherever the paper lists mixed readings, they are unacceptable. -/
+theorem rows_shift_together :
+    ∀ r ∈ Examples.all, r.feature? "test" = some "shift_together" →
+      ∀ x ∈ r.readings, x.1.startsWith "mixed" → x.2 = .unacceptable := by
+  decide +kernel
 
 end AnandNevins2004
