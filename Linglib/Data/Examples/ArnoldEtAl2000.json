@@ -1,0 +1,509 @@
+[
+  {
+    "id": "arnoldetal2000_1",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "(1)"},
+    "language": "stan1293",
+    "primaryText": "The waiter brought the wine we had ordered to the table",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "The waiter brought to the table the wine we had ordered", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "HNPS"]
+    ],
+    "comment": "Heavy NP shift: (1a) canonical, (1b) shifted.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_2",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "(2)"},
+    "language": "stan1293",
+    "primaryText": "Chris gave a bowl of Mom's traditional cranberry sauce to Terry",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Chris gave Terry a bowl of Mom's traditional cranberry sauce", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "DA"]
+    ],
+    "comment": "Dative alternation: (2a) prepositional, (2b) double object.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_3",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "(3)"},
+    "language": "stan1293",
+    "primaryText": "Sandy picked the freshly baked apple pie up.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Sandy picked up the freshly baked apple pie.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "verb-particle"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_5",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "(5)"},
+    "language": "stan1293",
+    "primaryText": "I gave to Mary the valuable book that was extremely difficult to find",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I gave the valuable book that was extremely difficult to find to Mary", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "HNPS"],
+      ["first", "to Mary"],
+      ["second", "the valuable book that was extremely difficult to find"],
+      ["eicWords", "4"]
+    ],
+    "comment": "Hawkins's early immediate constituents: (5) needs four words to recognize the VP's constituents, (4) eleven.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_6",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "(6)"},
+    "language": "stan1293",
+    "primaryText": "The Informativeness account shares with the processing account the claim that a subjectless sentence is not a grammatical option for the child, and that the omission is due to some aspect of performance",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "The Informativeness account shares the claim that a subjectless sentence is not a grammatical option for the child, and that the omission is due to some aspect of performance with the processing account", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "HNPS"],
+      ["first", "with the processing account"],
+      ["second", "the claim that a subjectless sentence is not a grammatical option for the child, and that the omission is due to some aspect of performance"]
+    ],
+    "comment": "Hyams and Wexler; the paper calls the unshifted order (7) almost unreadable.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_8",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "(8)"},
+    "language": "stan1293",
+    "primaryText": "That brings to the plate Barry Bonds.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "HNPS"],
+      ["first", "to the plate"],
+      ["second", "Barry Bonds"],
+      ["exception", "planning"]
+    ],
+    "comment": "Baseball announcers' shift of a short NP: planning time, not parsing ease.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_9",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "(9)"},
+    "language": "stan1293",
+    "primaryText": "to take as input a grammar and to associate with it, as output, an optimal structure",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "HNPS"],
+      ["shifted", "a grammar; an optimal structure"],
+      ["newness", "new"]
+    ],
+    "comment": "Smolensky, 1994 CUNY conference: short new NPs in shifted position, given-before-new without heaviness.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_10",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "(10)"},
+    "language": "stan1293",
+    "primaryText": "If you want to identify in the inner city the fifth graders who could really take off",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "HNPS"],
+      ["first", "in the inner city"],
+      ["second", "the fifth graders who could really take off"],
+      ["function", "ambiguity avoidance"]
+    ],
+    "comment": "Patrick Suppes, in a talk.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_11",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "(11)"},
+    "language": "stan1293",
+    "primaryText": "When Kennedy announced last July his plans to quit",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "HNPS"],
+      ["first", "last July"],
+      ["second", "his plans to quit"],
+      ["function", "ambiguity avoidance"]
+    ],
+    "comment": "San Jose Mercury 1991.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_t1_bring",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "Table 1"},
+    "language": "stan1293",
+    "primaryText": "It is enough to bring tears to the eyes of the Statue of Justice that stands silently in front of the Supreme Court of Canada.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "HNPS"],
+      ["verb", "bring to"],
+      ["order", "nonshifted"],
+      ["first", "tears"],
+      ["second", "to the eyes of the Statue of Justice that stands silently in front of the Supreme Court of Canada"]
+    ],
+    "comment": "Aligned-Hansard corpus.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_t1_take",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "Table 1"},
+    "language": "stan1293",
+    "primaryText": "It takes into account the need not to be overtaken by the constant evolution of the labour market.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "HNPS"],
+      ["verb", "take into account"],
+      ["order", "shifted"],
+      ["first", "into account"],
+      ["second", "the need not to be overtaken by the constant evolution of the labour market"]
+    ],
+    "comment": "Aligned-Hansard corpus.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_t1_give",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "Table 1"},
+    "language": "stan1293",
+    "primaryText": "The bank was told it should give its business to a friend of the Government.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "DA"],
+      ["verb", "give"],
+      ["order", "prepositional"],
+      ["first", "its business"],
+      ["second", "to a friend of the Government"]
+    ],
+    "comment": "Aligned-Hansard corpus.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_12",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "(12)"},
+    "language": "stan1293",
+    "primaryText": "A: What about the yellow duck? B: Give it the small green crayon.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "DA"]
+    ],
+    "comment": "The exchange the design excluded: the actor may not mention both the character and the object.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_13",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "(13)"},
+    "language": "stan1293",
+    "primaryText": "Object-mover: What about the red dog, the yellow dog, and the purple dog? Director: Um, you should look for the tic tacs and find the box with the white and green tic tacs and give that to the red dog.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "DA"],
+      ["order", "prepositional"],
+      ["given", "theme"],
+      ["first", "that"],
+      ["second", "to the red dog"]
+    ],
+    "comment": "The director's own mention makes the object given.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_14",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "(14)"},
+    "language": "stan1293",
+    "primaryText": "You are going to give the ducks objects. You are going to give the yellow duck A key. 'Kay. You're going to give a du- the red duck, um, a melon. And you're going to give THE um pink duck A um rectangular eraser, it's black.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "DA"],
+      ["order", "double object"],
+      ["given", "both"]
+    ],
+    "comment": "Both character and object mentioned before the instruction; disfluencies marked as in the paper.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_16",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "(16)"},
+    "language": "stan1293",
+    "primaryText": "Give the pink giraffe the plum, the green giraffe the pear ... and the yellow giraffe the tur er uhh plum.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "DA"],
+      ["elliptical", "true"]
+    ],
+    "comment": "Elliptical instructions were excluded from the analysis.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_17",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "(17)"},
+    "language": "stan1293",
+    "primaryText": "Having given much consideration and attention to it ...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "DA"],
+      ["first", "much consideration and attention"],
+      ["second", "to it"],
+      ["newness", "first new, second given"],
+      ["exception", "other factors"]
+    ],
+    "comment": "A longer, newer constituent before a shorter, given one.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_t4_do",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "Table 4"},
+    "language": "stan1293",
+    "primaryText": "Give the white rabbit the carrot.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "double object"],
+      ["orderClass", "goal first"]
+    ],
+    "comment": "Constructions counted in the dative alternation experiment.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_t4_hnps",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "Table 4"},
+    "language": "stan1293",
+    "primaryText": "Give to the white rabbit the carrot.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "heavy-NP-shifted"],
+      ["orderClass", "goal first"]
+    ],
+    "comment": "Constructions counted in the dative alternation experiment.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_t4_passg",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "Table 4"},
+    "language": "stan1293",
+    "primaryText": "The white rabbit should be given the carrot.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passivized goal"],
+      ["orderClass", "goal first"]
+    ],
+    "comment": "Constructions counted in the dative alternation experiment.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_t4_dotop",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "Table 4"},
+    "language": "stan1293",
+    "primaryText": "The white rabbit, give the carrot.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "double object, goal topicalized"],
+      ["orderClass", "goal first"]
+    ],
+    "comment": "Constructions counted in the dative alternation experiment.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_t4_preptop",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "Table 4"},
+    "language": "stan1293",
+    "primaryText": "To the white rabbit, give the carrot.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "prepositional, goal topicalized"],
+      ["orderClass", "goal first"]
+    ],
+    "comment": "Constructions counted in the dative alternation experiment.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_t4_prep",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "Table 4"},
+    "language": "stan1293",
+    "primaryText": "Give the carrot to the white rabbit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "prepositional"],
+      ["orderClass", "theme first"]
+    ],
+    "comment": "Constructions counted in the dative alternation experiment.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_t4_passt",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "Table 4"},
+    "language": "stan1293",
+    "primaryText": "The carrot should be given to the white rabbit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "passivized theme"],
+      ["orderClass", "theme first"]
+    ],
+    "comment": "Constructions counted in the dative alternation experiment.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnoldetal2000_t4_prepttop",
+    "source": {"bibkey": "arnold-wasow-losongco-ginstrom-2000", "paperLabel": "Table 4"},
+    "language": "stan1293",
+    "primaryText": "The carrot, give to the white rabbit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "prepositional, theme topicalized"],
+      ["orderClass", "theme first"]
+    ],
+    "comment": "Constructions counted in the dative alternation experiment.",
+    "lgrConformance": ""
+  }
+]

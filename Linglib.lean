@@ -330,6 +330,9 @@ import Linglib.Data.Examples.Anderson2006a
 import Linglib.Data.Examples.Angelopoulos2026
 import Linglib.Data.Examples.Anscombe1964
 import Linglib.Data.Examples.Anttila1997
+import Linglib.Data.Examples.Arka2013
+import Linglib.Data.Examples.Arnold2026
+import Linglib.Data.Examples.ArnoldEtAl2000
 import Linglib.Data.Examples.ArregiPietraszko2021
 import Linglib.Data.Examples.ArreguiKusumoto1998
 import Linglib.Data.Examples.BeckOdaSugisaki2004
@@ -920,6 +923,7 @@ import Linglib.Fragments.Icelandic.Reciprocals
 import Linglib.Fragments.Icelandic.TemporalConnectives
 import Linglib.Fragments.Icelandic.Verbs
 import Linglib.Fragments.Indonesian.Adposition
+import Linglib.Fragments.Indonesian.Complementation
 import Linglib.Fragments.Indonesian.Morphophonology
 import Linglib.Fragments.Indonesian.Predicates
 import Linglib.Fragments.Indonesian.TAM
@@ -2986,3 +2990,7 @@ import Linglib.Data.Examples.AnandHacquard2013
 import Linglib.Data.Examples.AnandHardtMcCloskey2021
 import Linglib.Data.Examples.Anderson2006b
 import Linglib.Data.Examples.Ariel2001
+import Linglib.Data.Examples.AsherLascarides2003
+import Linglib.Data.Examples.AssmannEtAl2023
+import Linglib.Data.Examples.Asudeh2022
+import Linglib.Data.Examples.AugurzkyEtAl2023
