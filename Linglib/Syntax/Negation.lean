@@ -52,7 +52,7 @@ marker-side data; they live in `Fragments/{Lang}/PolarityItems.lean`.
 * [dryer-2013-wals], Ch 112A
 * [miestamo-2013], Ch 114A
 * [miestamo-2005]
-* [anderson-2006], §1.7.2
+* [anderson-2006a], §1.7.2
 * [heine-1993]
 * [jin-koenig-2021]
 -/
@@ -139,7 +139,7 @@ instance : DecidablePred Strategy.IsVerbal
   | .negAffix | .negParticle => isFalse id
 
 /-- The strategy's stage on the grammaticalization cline ([heine-1993];
-[anderson-2006] ch. 7): a negative verb is an auxiliary, a negative affix
+[anderson-2006a] ch. 7): a negative verb is an auxiliary, a negative affix
 one stage further. A particle is not a bleached verb, so it is off the
 cline entirely. -/
 def Strategy.toGramStage : Strategy → Option GramStage
@@ -155,7 +155,7 @@ def Strategy.morphemeType : Strategy → Data.WALS.F112A.NegativeMorphemeType
   | .negParticle => .negativeParticle
 
 /-- The two projections agree on which strategy is verbal: the cline stage
-[anderson-2006] assigns and the morpheme type [miestamo-2005] assigns
+[anderson-2006a] assigns and the morpheme type [miestamo-2005] assigns
 partition the strategies identically. -/
 theorem toGramStage_auxiliary_iff_morphemeType_auxVerb (s : Strategy) :
     s.toGramStage = some .auxiliary ↔

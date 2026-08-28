@@ -1,5 +1,5 @@
 import Linglib.Semantics.ArgumentStructure.Linking
-import Linglib.Data.Examples.AndersonJM2006
+import Linglib.Data.Examples.Anderson2006b
 import Mathlib.Data.List.MinMax
 import Mathlib.Tactic.DeriveFintype
 
@@ -24,10 +24,10 @@ project's role labels; the second-order features {goal} and {src} are not repres
 
 ## References
 
-* [anderson-jm-2006]
+* [anderson-2006b]
 -/
 
-namespace AndersonJM2006
+namespace Anderson2006b
 
 open ArgumentStructure Data.Examples
 
@@ -172,4 +172,4 @@ theorem andersonLinking_subjects :
       andersonLinking.predict fell () .subject = some .patient ∧
       andersonLinking.predict knew () .subject = some .experiencer := by decide
 
-end AndersonJM2006
+end Anderson2006b

@@ -1,7 +1,7 @@
 [
   {
-    "id": "anderson2006_komi_neg_pres",
-    "source": {"bibkey": "anderson-2006", "paperLabel": "(47a)"},
+    "id": "anderson2006a_komi_neg_pres",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "(47a)"},
     "language": "komi1268",
     "primaryText": "o-g mun",
     "discourseSegments": [],
@@ -23,8 +23,8 @@
     "comment": "Komi negative auxiliary o- inflects for tense and person while the lexical verb is uninflected (the Uralic connegative construction, Anderson sect. 1.7.2). Anderson cites Hausenberg 1998: 315."
   },
   {
-    "id": "anderson2006_komi_neg_past",
-    "source": {"bibkey": "anderson-2006", "paperLabel": "(47b)"},
+    "id": "anderson2006a_komi_neg_past",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "(47b)"},
     "language": "komi1268",
     "primaryText": "e-g mun",
     "discourseSegments": [],
@@ -46,8 +46,8 @@
     "comment": "Past-tense counterpart of (47a): the tense alternation o-/e- is carried entirely by the negative auxiliary. Anderson cites Hausenberg 1998: 315."
   },
   {
-    "id": "anderson2006_udihe_neg",
-    "source": {"bibkey": "anderson-2006", "paperLabel": "(49)"},
+    "id": "anderson2006a_udihe_neg",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "(49)"},
     "language": "udih1248",
     "primaryText": "bi ei-mi sa:",
     "discourseSegments": [],
@@ -68,8 +68,8 @@
     "comment": "Anderson sect. 1.7.2 classifies the Udihe negative-auxiliary construction as aux-headed. Anderson cites Nikolaeva and Tolskaja 2001: 214."
   },
   {
-    "id": "anderson2006_kwerba_neg_fut",
-    "source": {"bibkey": "anderson-2006", "paperLabel": "(52a)"},
+    "id": "anderson2006a_kwerba_neg_fut",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "(52a)"},
     "language": "kwer1242",
     "primaryText": "co kwai kot-ri-m",
     "discourseSegments": [],
@@ -88,8 +88,8 @@
     "comment": "Anderson sect. 1.7.2 lists Kwerba as the lex-headed exemplar among negative-auxiliary constructions: the lexical verb hosts the inflection. Anderson cites de Vries and de Vries 1997: 12-13."
   },
   {
-    "id": "anderson2006_kwerba_neg_past",
-    "source": {"bibkey": "anderson-2006", "paperLabel": "(52b)"},
+    "id": "anderson2006a_kwerba_neg_past",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "(52b)"},
     "language": "kwer1242",
     "primaryText": "co kot-ri-m-o baye",
     "discourseSegments": [],
@@ -108,8 +108,8 @@
     "comment": "Past-tense Kwerba negation: negative suffix -o on the inflected lexical verb plus postverbal baye. Anderson cites de Vries and de Vries 1997: 12-13."
   },
   {
-    "id": "anderson2006_doyayo_lexheaded",
-    "source": {"bibkey": "anderson-2006", "paperLabel": "(15a)"},
+    "id": "anderson2006a_doyayo_lexheaded",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "(15a)"},
     "reportedIn": null,
     "language": "doya1240",
     "primaryText": "mi¹ (gi²) kpel¹-ko¹",
@@ -133,8 +133,8 @@
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
-    "id": "anderson2006_doyayo_splitdoubled",
-    "source": {"bibkey": "anderson-2006", "paperLabel": "(129)"},
+    "id": "anderson2006a_doyayo_splitdoubled",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "(129)"},
     "reportedIn": null,
     "language": "doya1240",
     "primaryText": "hi¹-za¹ hi¹-zaa¹³ hi¹-lɔ-mɔ",
@@ -158,8 +158,8 @@
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
-    "id": "anderson2006_gorum_tiger",
-    "source": {"bibkey": "anderson-2006", "paperLabel": "(63a)"},
+    "id": "anderson2006a_gorum_tiger",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "(63a)"},
     "reportedIn": null,
     "language": "pare1266",
     "primaryText": "kula ne-giʔ-sun miŋ ne-butoŋ-tuʔ ne-i-tuʔ",
@@ -187,8 +187,8 @@
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
-    "id": "anderson2006_gorum_vigorously",
-    "source": {"bibkey": "anderson-2006", "paperLabel": "(63b)"},
+    "id": "anderson2006a_gorum_vigorously",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "(63b)"},
     "reportedIn": null,
     "language": "pare1266",
     "primaryText": "miŋ ne-gaʔ-ru ne-laʔ-ru",
@@ -213,8 +213,8 @@
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
-    "id": "anderson2006_hemba_progressive",
-    "source": {"bibkey": "anderson-2006", "paperLabel": "(105)"},
+    "id": "anderson2006a_hemba_progressive",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "(105)"},
     "reportedIn": null,
     "language": "hemb1242",
     "primaryText": "tw-a-li tu-tib-a muti",
@@ -239,8 +239,8 @@
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
-    "id": "anderson2006_pipil_capability",
-    "source": {"bibkey": "anderson-2006", "paperLabel": "(49)"},
+    "id": "anderson2006a_pipil_capability",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "(49)"},
     "reportedIn": null,
     "language": "pipi1250",
     "primaryText": "weli ni-nehnemi wehka",
@@ -262,8 +262,8 @@
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
-    "id": "anderson2006_pipil_progressive",
-    "source": {"bibkey": "anderson-2006", "paperLabel": "(133b)"},
+    "id": "anderson2006a_pipil_progressive",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "(133b)"},
     "reportedIn": null,
     "language": "pipi1250",
     "primaryText": "n-yu ni-mitsin-ilwitia",
@@ -287,8 +287,8 @@
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
-    "id": "anderson2006_jakaltek_completive",
-    "source": {"bibkey": "anderson-2006", "paperLabel": "(87a)"},
+    "id": "anderson2006a_jakaltek_completive",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "(87a)"},
     "reportedIn": null,
     "language": "popt1235",
     "primaryText": "šk-ach w-ila",

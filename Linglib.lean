@@ -326,7 +326,7 @@ import Linglib.Data.Examples.AhnZhu2025
 import Linglib.Data.Examples.AlstottAravind2026
 import Linglib.Data.Examples.AnandHardtMcCloskey2025
 import Linglib.Data.Examples.AnandNevins2004
-import Linglib.Data.Examples.Anderson2006
+import Linglib.Data.Examples.Anderson2006a
 import Linglib.Data.Examples.Angelopoulos2026
 import Linglib.Data.Examples.Anscombe1964
 import Linglib.Data.Examples.ArregiPietraszko2021
@@ -1911,9 +1911,9 @@ import Linglib.Studies.AlstottAravind2026
 import Linglib.Studies.Amato2025
 import Linglib.Studies.AnandHacquard2013
 import Linglib.Studies.AnandNevins2004
-import Linglib.Studies.Anderson2006
+import Linglib.Studies.Anderson2006a
 import Linglib.Studies.Anderson2021
-import Linglib.Studies.AndersonJM2006
+import Linglib.Studies.Anderson2006b
 import Linglib.Studies.Angelopoulos2026
 import Linglib.Studies.Anscombe1964
 import Linglib.Studies.Anttila1997
@@ -2983,4 +2983,4 @@ import Linglib.Syntax.Category.Determiner.ModalIndefinite
 import Linglib.Data.Examples.Alsop2024
 import Linglib.Data.Examples.AnandHacquard2013
 import Linglib.Data.Examples.AnandHardtMcCloskey2021
-import Linglib.Data.Examples.AndersonJM2006
+import Linglib.Data.Examples.Anderson2006b

@@ -17,11 +17,11 @@ Five macro-patterns exhaust the possibilities: the auxiliary hosts the
 inflection, the lexical verb does, both carry the same categories, the
 categories divide between them, or they divide with some doubled. Which
 categories land where is finer-grained than the pattern and is recorded by
-the analysis that needs it, as in `Studies/Anderson2006.lean`.
+the analysis that needs it, as in `Studies/Anderson2006a.lean`.
 
 ## References
 
-* [anderson-2006], §1.4, chs. 2-5
+* [anderson-2006a], §1.4, chs. 2-5
 -/
 
 namespace AuxiliaryVerbs
@@ -42,7 +42,7 @@ inductive InflectionPattern where
       lexical verb. -/
   | split
   /-- The categories divide, but some are carried by both elements.
-      [anderson-2006] ch. 5 §5.2 gives thirty-odd exemplars, so this is a
+      [anderson-2006a] ch. 5 §5.2 gives thirty-odd exemplars, so this is a
       common pattern rather than a marginal one. -/
   | splitDoubled
   deriving DecidableEq, Repr, Inhabited
