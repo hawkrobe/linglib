@@ -7,21 +7,22 @@ import Mathlib.Data.List.Basic
 
 In Zazaki every indexical may shift under *vano* 'say', and in Slave first-person indexicals
 shift under *hadi*, yet indexicals in one speech-context domain never take their values from
-different contexts (Shift-Together, (16)); in Slave the embedding verb decides which
-indexicals shift and whether they must; and under two stacked reports a shifted indexical in
-the intermediate clause blocks the lowest indexical from reaching the utterance context ((32)
-against (33)). The account: Kaplan's context and index parameters are made the same type, an
-attitude verb quantifies over indices, and a language's context-shifting operators overwrite
-the context from the index — all of it in Zazaki, the author coordinate alone in Slave —
-so shifting is literal overwriting, whence Shift-Together and the loss of the utterance
-context under an intermediate shift; lexical entries pair verbs with operator options.
+different contexts (Shift-Together); in Slave the embedding verb decides which indexicals shift
+and whether they must; and under two stacked reports a shifted indexical in the intermediate
+clause blocks the lowest indexical from reaching the utterance context. The account: Kaplan's
+context and index parameters are made the same type, an attitude verb quantifies over indices,
+and a language's context-shifting operators overwrite the context from the index — all of it in
+Zazaki, the author coordinate alone in Slave — so shifting is literal overwriting, whence
+Shift-Together and the loss of the utterance context under an intermediate shift; lexical entries
+pair verbs with operator options.
 
-`Params` is the context–index pair, `I`/`you`/`here`/`now` read the context and
-`proSubj`/`logAddr` the index, `Op.all`/`Op.auth` are the operators (2), `attitude` is (23b),
-`Entry` a verb's operator options (39), and `readings`/`readings₂` the values an indexical
-can take under one or two reports. `opAll_forgets` and `lowerI_of_shifted_you` are the
-multiple-embedding prediction; `rows_track_entries` and `rows_shift_together` run the
-entries over the paper's examples.
+## Main definitions
+
+* `Params`: the context–index pair; `I`, `you`, `here`, `now` read the context, `proSubj`
+  and `logAddr` the index.
+* `Op`: the context-shifting operators (2); `attitude` is (23b).
+* `Entry`: a verb's operator options (39); `readings`, `readings₂` the values an indexical
+  can take under one or two reports.
 
 ## References
 

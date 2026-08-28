@@ -6,21 +6,21 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Anderson 2006: localist case grammar
 
-Every semantic relation an argument bears is a bundle of the three first-order case features
-of chapter 6's (11) — absolutive, the semantically empty relation; source, whose
-non-locational form is the ergative; and locative, which may carry source or goal as a
-second-order feature — and all eight combinations occur: the Experiencer is a locative
-source, the contactive patient an absolutive locative (22), and *suffer*'s subject bears all
-three (34). Subject selection ranks ergative above ergative absolutive above absolutive
-((38)′), so only a non-spatial source or an absolutive can be subject, and subject formation
-(40) then marks a selected absolutive as ergative — the neutralization behind subjecthood.
+Every semantic relation an argument bears is a bundle of the three first-order case features of
+chapter 6 — absolutive, the semantically empty relation; source, whose non-locational form is the
+ergative; and locative, which may carry source or goal as a second-order feature — and all eight
+combinations occur: the Experiencer is a locative source, the contactive patient an absolutive
+locative, and *suffer*'s subject bears all three. Subject selection ranks ergative above ergative
+absolutive above absolutive, so only a non-spatial source or an absolutive can be subject, and
+subject formation then marks a selected absolutive as ergative — the neutralization behind
+subjecthood.
 
-`Relation` is a bundle of `Feature`s, `subjectRank` the hierarchy (38)′, `subject` the
-selected argument of a `Predication`, and `subjectFormation` rule (40). `subjects_39` are the
-derivations of (39), `fell_subject_not_src` the one whose subject is ergative only by (40),
-and `rows_subject_selection` runs the hierarchy over the book's examples. `andersonLinking`
-casts the hierarchy as a `LinkingTheory`, with `Relation.toRole` the hom onto the
-project's role labels; the second-order features {goal} and {src} are not represented.
+## Main definitions
+
+* `Relation`: a bundle of first-order `Feature`s (the second-order {goal} and {src} are not
+  represented); `subjectRank` the hierarchy (38)′, `subject` the selected argument of a
+  `Predication`, `subjectFormation` rule (40).
+* `andersonLinking`: the hierarchy as a `LinkingTheory`, via `Relation.toRole`.
 
 ## References
 

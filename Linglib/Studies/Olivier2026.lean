@@ -2,32 +2,33 @@ import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 
 /-!
-# Auxiliary Switch as person-identity matching: [olivier-2026]
+# Olivier 2026: auxiliary switch as person-identity matching
 
-[olivier-2026] analyses *Auxiliary Switch* (AS) — BE in place of HAVE on a modal in a
-compound tense whose infinitive is unaccusative or reflexive (2b), (3b) — as ordinary
-auxiliary selection across a transparent restructuring domain. Auxiliary selection
-itself ([olivier-2025b], §6.2) is not driven by argument structure: a person value
-carries the referential identity of its bearer (54), Voice's valued φ-set is
-redistributed by head splitting onto `vAux[uPers]` and `VoicePrt[uGen, uNum]` (57),
-and the Vocabulary Items (55) insert BE when `[vAux + T]` carry the same identity,
-HAVE elsewhere — so unaccusatives (59) and bound reflexives (60) take BE and
-transitives (61) HAVE. In a restructuring clause (40) the auxiliary belongs to the
-modal, and whether Voice(*) KEEPs its φ-features or SHAREs them with vMOD
-([ouali-2008]'s operations, (45), the substrate's `TransferStyle`) decides both clitic
-climbing and AS at once: KEEP leaves vAux featureless, HAVE (69), (74); SHARE brings
-the bound reflexive's identity — the subject's — to vAux, BE (71), (76).
+Auxiliary Switch — BE in place of HAVE on a modal in a compound tense whose infinitive is
+unaccusative or reflexive — is ordinary auxiliary selection across a transparent
+restructuring domain. Auxiliary selection itself is not driven by argument structure: a
+person value carries the referential identity of its bearer, Voice's valued φ-set is
+redistributed by head splitting onto `vAux[uPers]` and `VoicePrt[uGen, uNum]`, and the
+Vocabulary Items insert BE when `[vAux + T]` carry the same identity, HAVE elsewhere — so
+unaccusatives and bound reflexives take BE and transitives HAVE. In a
+restructuring clause the auxiliary belongs to the modal, and whether Voice(*) KEEPs its
+φ-features or SHAREs them with vMOD decides clitic climbing and the switch at once:
+KEEP leaves vAux featureless, HAVE; SHARE brings the bound reflexive's identity — the
+subject's — to vAux, BE. Prepositional clitics (*y/ci*, *en/ne*, *lui/gli*)
+climb without a switch since they introduce no coreferential person value, and a vAux that
+also probes the internal argument gives the Italian and Sardinian speakers' BE. Out of
+scope: conditions 1–2, which the restructuring structure presupposes; gender and number on
+the participle; impersonal *si*; the corpus counts.
 
-`compound` is the simple compound tense and `matrixAux` the restructuring one; the
-theorems derive the intro's conditions 3 and α (`share_switch_iff_selectsBe`,
-`reflexive_switch_iff_climbs`), Table 1's absence of AS without climbing, the
-optionality of AS with unaccusatives (§7.2), the prepositional clitics that climb
-without triggering AS (§7.3: *y/ci*, *en/ne*, *lui/gli* introduce no coreferential
-person value; a "rich" vAux also probing the internal argument gives the Italian and
-Sardinian speakers' BE), and the varieties of §7.1 as the transfers they admit. Out of
-scope: conditions 1–2, which the structure (40) presupposes; gender/number on the
-participle; impersonal *si* (fn. 53); the corpus counts of §3 (Tables 1–3) beyond the
-qualitative generalisations stated there.
+## Main definitions
+
+* `compound`: the simple compound tense; `matrixAux` the restructuring one.
+
+## References
+
+* [olivier-2026]
+* [olivier-2025b] — person-identity auxiliary selection (§6.2)
+* [ouali-2008] — the KEEP and SHARE transfers
 -/
 
 namespace Olivier2026

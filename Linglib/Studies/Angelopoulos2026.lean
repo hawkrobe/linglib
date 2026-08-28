@@ -8,27 +8,26 @@ import Linglib.Data.Examples.Angelopoulos2026
 /-!
 # Angelopoulos 2026: on clausal complementation, once more
 
-Greek *oti*- and *pu*-clauses are in near-complementary distribution after verbs (1), are
-internal arguments and derived subjects but never external arguments (§2.2), and a
-*pu*-complement forces a stative matrix verb where adverbial and relative *pu* does not
-(§2.3). The analysis reverses selection: *oti* and *pu* carry an [n]-feature checked by a
-light noun in their specifier, which must incorporate into a lexical verbal head — possible
-from the complement position but not from Spec,vP, whose nearest host is T, nor after P
-(§3.1). The complementizers sort their clauses as content (*oti*) and situation (*pu*), and
-the incorporating noun must match, so a verb's sort fixes its complementizer (§3.2);
-situations anchor to the evaluation world, whence *pu*'s factivity (38). The stativity
+Greek *oti*- and *pu*-clauses are in near-complementary distribution after verbs, are internal
+arguments and derived subjects but never external arguments, and a *pu*-complement forces a
+stative matrix verb where adverbial and relative *pu* does not. The analysis reverses selection:
+*oti* and *pu* carry an [n]-feature checked by a light noun in their specifier, which must
+incorporate into a lexical verbal head — possible from the complement position but not from
+Spec,vP, whose nearest host is T, nor after P. The complementizers sort their clauses as content
+(*oti*) and situation (*pu*), and the incorporating noun must match, so a verb's sort fixes its
+complementizer; situations anchor to the evaluation world, whence *pu*'s factivity. The stativity
 restriction is the selectional feature of the aspectual heads introducing internal arguments:
-vState takes otiP or puP, vEvent only otiP (§4.1), and adjunct *pu*, which selects its host
-rather than being selected, escapes it. Bare *oti*-clauses are true complements that compose
-as modifiers, against the transparent syntax–semantics mapping (§7.3).
+vState takes otiP or puP, vEvent only otiP, and adjunct *pu*, which selects its host rather than
+being selected, escapes it. Bare *oti*-clauses are true complements that compose as modifiers,
+against the transparent syntax–semantics mapping.
 
-`clauseSort` is the sort a complementizer imposes, `selectsClause` the aspectual heads'
-selection, and `Predicted` combines them with a verb's sort and Vendler class;
-`rows_track_selection` runs it over the paper's verb–complementizer pairings, with the sample
-verbs' sorts in `lexicon`. `licensedIn` is incorporation licensing by position and
-`rows_track_licensing` its check against the argument-position judgments;
-`rows_sort_diagnostics` covers the truth/occurrence tests on nouns; `pu_report_factive`
-derives factivity from situation-anchoring; `transparency_conflates_axes` is §7.3.
+## Main definitions
+
+* `clauseSort`: the sort a complementizer imposes; `selectsClause` the aspectual heads'
+  selection (§4.1).
+* `Predicted`: a verb–complementizer pairing derived from the verb's sort and Vendler class,
+  with the sample verbs' sorts in `lexicon`.
+* `licensedIn`: incorporation licensing by clause position (§3.1).
 
 ## References
 

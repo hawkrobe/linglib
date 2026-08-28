@@ -7,28 +7,27 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Anand & Hacquard 2013: epistemics and attitudes
 
-Epistemic modals are acceptable in the complements of attitudes of acceptance (*think*,
-*say*, *realize*), unacceptable under desideratives and directives, and acceptable under
-emotive doxastics (*hope*, *fear*) and dubitatives (*doubt*) with possibility but not
-necessity force — Table 3, from seven-point acceptability surveys of French, Italian, and
-Spanish. The account combines Yalcin's information-state semantics, on which an epistemic
-quantifies over a state `S` anaphoric to the embedding attitude and presupposes `S ≠ ∅`,
-with Bolinger's split of attitudes: representational attitudes pass their doxastic state as
-`S`; non-representational ones set `S = ∅` and combine with their complement by Villalta's
-comparison against the Heimian alternative `¬φ`, so an embedded epistemic is never defined.
-Emotive doxastics and dubitatives are hybrids — a doxastic possibility assertion, a comparison
-of the complement's verifiers with its falsifiers, and an uncertainty presupposition demanding
-both — and the doxastic assertion of an embedded necessity modal contradicts that
-presupposition, while an embedded possibility modal contributes nothing new.
+Epistemic modals are acceptable in the complements of attitudes of acceptance (*think*, *say*,
+*realize*), unacceptable under desideratives and directives, and acceptable under emotive
+doxastics (*hope*, *fear*) and dubitatives (*doubt*) with possibility but not necessity force, in
+seven-point acceptability surveys of French, Italian, and Spanish. The account combines Yalcin's
+information-state semantics, on which an epistemic quantifies over a state `S` anaphoric to the
+embedding attitude and presupposes `S ≠ ∅`, with Bolinger's split of attitudes: representational
+attitudes pass their doxastic state as `S`; non-representational ones set `S = ∅` and combine
+with their complement by Villalta's comparison against the Heimian alternative `¬φ`, so an
+embedded epistemic is never defined. Emotive doxastics and dubitatives are hybrids — a doxastic
+possibility assertion, a comparison of the complement's verifiers with its falsifiers, and an
+uncertainty presupposition demanding both — and the doxastic assertion of an embedded necessity
+modal contradicts that presupposition, while an embedded possibility modal contributes nothing
+new. Italian *pensare* selects the subjunctive yet licenses epistemics, so subjunctive is an
+imperfect correlate.
 
-`SProp` is a complement relative to `S`, with `might`, `must`, and `ofSet`; `verifiers` are the
-sub-states settled on a complement, `Better` is Villalta's lift of an ordering, and
-`better_subStates_iff` is the footnote-19 reduction of the verifier comparison to `S ∩ p`
-against `S ∩ pᶜ`. `Licensed` asks whether any context makes an embedded epistemic defined and
-true, `licensed_iff` characterizes it by attitude kind, and `rows_track_licensing` runs the
-characterization over the paper's examples. Italian *pensare* (65) selects the subjunctive yet
-licenses epistemics, so subjunctive is an imperfect correlate (`unacceptable_rows_subjunctive`
-is the one direction that holds).
+## Main definitions
+
+* `SProp`: a complement relative to an information state `S`, with `might`, `must`, `ofSet`.
+* `Better`: Villalta's lift of an ordering to propositions; `verifiers` the sub-states settled
+  on a complement.
+* `Licensed`: whether some context makes an embedded epistemic defined and true.
 
 ## References
 
