@@ -408,26 +408,21 @@ theorem goal_more_reduced_than_source :
     contrast produces different predicted forms (Path 1 input), and
     goals are more predictable than sources (Path 2 input). Arnold et al.
     confirm that both receiving dimensions independently matter — bridged
-    via the MaxEnt independence theorems
-    `heaviness_independently_predicts` and `newness_independently_predicts`,
-    instantiated at the heaviness-only and newness-only stimulus contrasts. -/
+    via the weighted-constraint independence theorems `heaviness_alone` and
+    `newness_alone`. -/
 theorem dual_path_to_ordering :
     -- Path 1: thematic role creates a form contrast (Rosa & Arnold)
     (transferNextMention .goal).predictedForm ≠
     (transferNextMention .source).predictedForm ∧
     -- Path 2: thematic role creates a predictability contrast (Rosa & Arnold)
     nextMention_goal.percent > (100 - nextMention_goal.percent) ∧
-    -- Path 1 (weight) independently predicts in Arnold et al.'s MaxEnt model
-    harmonyDominates con (gW 1 0)
-      (heavyGoalContrast, .goalLast) (heavyGoalContrast, .themeLast) ∧
-    -- Path 2 (newness) independently predicts in Arnold et al.'s MaxEnt model
-    harmonyDominates con (gW 0 1)
-      (newThemeContrast, .themeLast) (newThemeContrast, .goalLast) := by
-  refine ⟨by decide, by decide, ?_, ?_⟩
-  · -- Path 1: heaviness alone, goal heavier than theme → goal-last more probable
-    exact heavy_goal_predicts_goalLast
-  · -- Path 2: newness alone, theme new + goal given → theme-last more probable
-    exact new_theme_predicts_themeLast
+    -- Path 1 (weight) independently predicts in Arnold et al.'s weighted model
+    (∀ p : Pair, harmonyDominates con (weights 1 0) (p, .themeLast) (p, .goalLast) ↔
+      p.2.words < p.1.words) ∧
+    -- Path 2 (newness) independently predicts in Arnold et al.'s weighted model
+    ∀ p : Pair, harmonyDominates con (weights 0 1) (p, .themeLast) (p, .goalLast) ↔
+      p.1.discourse = .new ∧ p.2.discourse = .given :=
+  ⟨by decide, by decide, heaviness_alone one_pos, newness_alone one_pos⟩
 
 -- ════════════════════════════════════════════════════
 -- § 11. Cross-Study Bridge: [kehler-rohde-2013]
