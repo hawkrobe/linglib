@@ -1,573 +1,280 @@
-import Linglib.Semantics.Intensional.Defs
-import Linglib.Semantics.Intensional.Variables
-import Linglib.Fragments.English.Toy
-import Linglib.Semantics.Composition.LexEntry
-import Linglib.Semantics.Composition.Scope
-import Linglib.Semantics.Quantification.Quantifier
-import Linglib.Semantics.Composition.Tree
-import Linglib.Studies.HeimKratzer1998
+import Mathlib.Tactic.DeriveFintype
+import Linglib.Data.Examples.Asudeh2022
 
 /-!
-# Glue Semantics
-[asudeh-2022]
+# Asudeh 2022: Glue Semantics
 
-Glue Semantics is a composition framework where meanings are assembled
-via proof search in the implicational fragment of linear logic (⊸).
-Meaning constructors are pairs M : G, where M is a lambda term and G is
-a linear logic formula. Composition corresponds to ⊸-elimination
-(functional application) and ⊸-introduction (lambda abstraction) via
-the Curry-Howard isomorphism.
+Meanings are assembled by proof search in the implicational fragment of linear logic. A word
+contributes meaning constructors `M : G`, a lambda term paired with a linear-logic formula whose
+atoms are instantiated from the syntactic parse; implication elimination is functional
+application and implication introduction functional abstraction, by Curry–Howard. Because the
+logic lacks weakening and contraction, all and only the instantiated premises are consumed —
+resource-sensitive composition, which subsumes bounded closure, Completeness and Coherence, the
+Theta Criterion and their kin — and because it is commutative, word order does not determine
+composition: the arguments of a head can be recurried by hypothetical reasoning. Syntax is
+therefore autonomous and need not be isomorphic to semantics: Finnish *join vettä* and English
+*I drank water* instantiate the same three premises from two and three words, and *Everybody
+loves somebody* is syntactically unambiguous yet has two normal-form proofs, differing only in
+the order in which the two hypotheses are discharged, which evaluate to the two scope readings
+without quantifier raising or type shifting.
 
-## Key properties ([asudeh-2022], §1)
+## Main definitions
 
-1. **Resource-sensitive composition**: Each premise is used exactly once
-   (no weakening, no contraction). This subsumes the Theta Criterion,
-   Projection Principle, Full Interpretation, Completeness/Coherence,
-   No Vacuous Quantification, and the Inclusiveness Condition as
-   instances of a single logical principle.
-2. **Flexible composition**: The logic is commutative — word order
-   doesn't determine composition order.
-3. **Autonomy of syntax**: Structural syntax and the logical syntax of
-   composition are separate levels.
-4. **Syntax/semantics non-isomorphism**: One word may contribute
-   multiple or zero meaning constructors.
+* `GlueTy`, `Term`: linear-logic types over instantiated atoms, and intrinsically typed proofs
+  with `Term.Linear` for exactly-once use of premises and hypotheses.
+* `GlueTy.denote`, `Env`, `Term.eval`: the Curry–Howard evaluation of a proof into a meaning.
+* `Logic.rules`, `resource_iff`: the substructural hierarchy and its resource logics.
+* `recurry`, `finnish`, `english`, `surface`, `inverse`: the paper's proofs and lexicons.
 
-## Scope ambiguity
+## References
 
-"Everybody loves somebody" ([asudeh-2022], §4.2) yields two
-scope readings. Each reading corresponds to a different instantiation
-of the second-order ∀ in the quantifier types, producing a different
-premise multiset. Each multiset has exactly one normal-form proof.
-
-## Integration with linglib
-
-This module connects Glue to:
-- `ScopeConfig` from `Montague/Scope.lean`
-- `interp`-based QR composition from `Composition/Tree.lean`
-- `Studies/HeimKratzer1998.lean` for the same scope example via H&K
-
-The bridge theorem `glue_qr_agree` proves that Glue proof search and
-QR tree interpretation yield the same truth values on the canonical
-scope example.
+* [asudeh-2022]
+* [girard-1987] — linear logic
+* [klein-sag-1985] — bounded closure
+* [kaplan-bresnan-1982] — Completeness and Coherence
+* [heim-kratzer-1998] — the interpretive rival
 -/
 
 namespace Asudeh2022
 
-open Intensional
-open Semantics.Montague
-open Quantification.Quantifier
-open Quantification
+open Data.Examples
 
--- ════════════════════════════════════════════════════════════════════
--- § Glue Logic: Implicational Fragment of Linear Logic
--- ════════════════════════════════════════════════════════════════════
+/-! ### The Glue logic -/
 
-/-- Glue types: the implicational fragment of linear logic.
-
-    Atomic types are parameterized by strings corresponding to
-    s-structure nodes (e.g. `"e"` for the subject's semantic
-    contribution, `"l"` for the clause). The linear implication
-    `A ⊸ B` corresponds to `lolli A B`. -/
-inductive GlueTy where
-  | atom : String → GlueTy
-  | lolli : GlueTy → GlueTy → GlueTy
+/-- Formulas of the implicational fragment of linear logic over instantiated atoms. -/
+inductive GlueTy (α : Type*)
+  | atom (a : α)
+  | lolli (A B : GlueTy α)
   deriving DecidableEq, Repr
 
 infixr:25 " ⊸ " => GlueTy.lolli
 
-/-- A meaning constructor: a meaning term M paired with a Glue type G.
-    Written `M : G` in the Glue literature ([asudeh-2022], §2). -/
-structure MeaningConstructor (α : Type) where
-  meaning : α
-  glue : GlueTy
-  deriving Repr
+variable {α : Type*}
 
--- ════════════════════════════════════════════════════════════════════
--- § Proof Terms (Curry-Howard for ⊸)
--- ════════════════════════════════════════════════════════════════════
+/-- A proof in a context of premises, as a linear λ-term: a variable refers to a context
+    position, application is implication elimination, and abstraction appends its hypothesis
+    to the context and discharges it. -/
+inductive Term : List (GlueTy α) → GlueTy α → Type _
+  | var {Γ : List (GlueTy α)} (n : ℕ) {T : GlueTy α} (h : Γ[n]? = some T) : Term Γ T
+  | app {Γ : List (GlueTy α)} {A B : GlueTy α} : Term Γ (A ⊸ B) → Term Γ A → Term Γ B
+  | lam {Γ : List (GlueTy α)} (A : GlueTy α) {B : GlueTy α} : Term (Γ ++ [A]) B → Term Γ (A ⊸ B)
 
-/-- Proof terms for the implicational fragment of linear logic.
+/-- The context positions a proof uses, with repetition. -/
+def Term.uses {Γ : List (GlueTy α)} {T : GlueTy α} : Term Γ T → List ℕ
+  | .var n _ => [n]
+  | .app f a => f.uses ++ a.uses
+  | .lam _ b => b.uses
 
-    By Curry-Howard, these are simply-typed linear lambda terms:
-    - `ax n` : use the term at context index n (premise or hypothesis)
-    - `lolliE f a` : ⊸-elimination = functional application
-    - `lolliI hypTy body` : ⊸-introduction = lambda abstraction.
-      Extends the context with `hypTy`; the hypothesis is accessed
-      in `body` via its new index (`ctx.length`). -/
-inductive GlueProof : Type where
-  | ax : Nat → GlueProof
-  | lolliE : GlueProof → GlueProof → GlueProof
-  | lolliI : GlueTy → GlueProof → GlueProof
-  deriving Repr, DecidableEq
+/-- Every hypothesis is used exactly once. -/
+def Term.HypLinear {Γ : List (GlueTy α)} {T : GlueTy α} : Term Γ T → Prop
+  | .var _ _ => True
+  | .app f a => f.HypLinear ∧ a.HypLinear
+  | .lam _ b => b.uses.count Γ.length = 1 ∧ b.HypLinear
 
--- ════════════════════════════════════════════════════════════════════
--- § Type Checking
--- ════════════════════════════════════════════════════════════════════
+instance Term.decHypLinear {Γ : List (GlueTy α)} {T : GlueTy α} :
+    (t : Term Γ T) → Decidable t.HypLinear
+  | .var _ _ => isTrue trivial
+  | .app f a => @instDecidableAnd _ _ (decHypLinear f) (decHypLinear a)
+  | .lam _ b => @instDecidableAnd _ _ inferInstance (decHypLinear b)
 
-/-- Type-check a proof against a context (premises ++ hypotheses).
-    `lolliI` extends the context by appending the hypothesis type;
-    the hypothesis is accessed in the body at index `ctx.length`.
-    Returns the conclusion type if well-typed. -/
-def GlueProof.check (ctx : List GlueTy) : GlueProof → Option GlueTy
-  | .ax n => ctx[n]?
-  | .lolliE f a => do
-    let fTy ← f.check ctx
-    let aTy ← a.check ctx
-    match fTy with
-    | .lolli dom cod =>
-      if dom = aTy then some cod else none
-    | _ => none
-  | .lolliI hypTy body => do
-    let bodyTy ← body.check (ctx ++ [hypTy])
-    some (hypTy ⊸ bodyTy)
+/-- A proof consumes every premise and every hypothesis exactly once: no weakening and no
+    contraction. -/
+def Term.Linear {Γ : List (GlueTy α)} {T : GlueTy α} (t : Term Γ T) : Prop :=
+  (∀ i < Γ.length, t.uses.count i = 1) ∧ t.HypLinear
 
-/-- Indices of *premises* (from the original context) used by a proof.
-    Hypothesis indices (≥ numPremises) are excluded. -/
-def GlueProof.usedPremises (numPremises : Nat) : GlueProof → List Nat
-  | .ax n => if n < numPremises then [n] else []
-  | .lolliE f a => f.usedPremises numPremises ++ a.usedPremises numPremises
-  | .lolliI _ body => body.usedPremises numPremises
+instance {Γ : List (GlueTy α)} {T : GlueTy α} (t : Term Γ T) : Decidable t.Linear :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- A proof is resource-correct if every premise is used exactly once.
-Frequency-based formulation: for each premise index `i ∈ [0, numPremises)`,
-`usedPremises` contains `i` exactly once. Avoids `mergeSort`, which the
-kernel cannot reduce within `decide`'s heartbeat budget. -/
-def GlueProof.isResourceCorrect (numPremises : Nat) (p : GlueProof)
-    : Bool :=
-  let used := p.usedPremises numPremises
-  (List.range numPremises).all (fun i => used.count i == 1)
-    && used.length == numPremises
+/-! ### Curry–Howard evaluation -/
 
--- ════════════════════════════════════════════════════════════════════
--- § Substructural Logic Hierarchy ([asudeh-2022], §3)
--- ════════════════════════════════════════════════════════════════════
+variable (D : α → Type)
 
-/-! ### The logic landscape
+/-- The type of meanings a formula pairs with. -/
+def GlueTy.denote : GlueTy α → Type
+  | .atom a => D a
+  | .lolli A B => A.denote → B.denote
 
-[asudeh-2022] (§3) situates linear logic in a hierarchy of
-substructural logics (Figure 1). Logics are characterized by which
-structural rules they admit:
+/-- Meanings for the premises of a context. -/
+inductive Env : List (GlueTy α) → Type _
+  | nil : Env []
+  | cons {T : GlueTy α} {Γ : List (GlueTy α)} : T.denote D → Env Γ → Env (T :: Γ)
 
-- **Weakening**: A premise can be freely added (Γ⊢B → Γ,A⊢B)
-- **Contraction**: A duplicate premise can be freely discarded (Γ,A,A⊢B → Γ,A⊢B)
-- **Commutativity**: Premises can be freely reordered (Γ,A,B⊢C → Γ,B,A⊢C)
+variable {D}
 
-Lambek logic L has none of these. Linear logic adds commutativity.
-Relevance logic adds contraction. Affine/BCK logic adds weakening.
-Intuitionistic logic has all three.
+/-- The meaning at a context position. -/
+def Env.get : {Γ : List (GlueTy α)} → Env D Γ → (n : ℕ) → {T : GlueTy α} →
+    Γ[n]? = some T → T.denote D
+  | _, .cons v _, 0, _, h => (Option.some.inj h) ▸ v
+  | _, .cons _ ρ, n + 1, _, h => ρ.get n h
 
-Semantics is best modeled by a commutative resource logic: composition
-is order-independent (Klein & Sag 1985: types, not order, determine
-composition) but resource-sensitive (each meaning used exactly once).
--/
+/-- Extend the meanings by one for a hypothesis. -/
+def Env.snoc {T : GlueTy α} : {Γ : List (GlueTy α)} → Env D Γ → T.denote D → Env D (Γ ++ [T])
+  | _, .nil, v => .cons v .nil
+  | _, .cons u ρ, v => .cons u (ρ.snoc v)
 
-/-- Structural rules that characterize logics in the substructural
-    hierarchy. -/
-inductive StructuralRule where
-  | weakening      -- A premise can be freely added
-  | contraction    -- A duplicate premise can be freely discarded
-  | commutativity  -- Premises can be freely reordered
-  deriving DecidableEq, Repr
+/-- The meaning a proof assembles: application for elimination, abstraction for introduction. -/
+def Term.eval {Γ : List (GlueTy α)} {T : GlueTy α} : Term Γ T → Env D Γ → T.denote D
+  | .var n h, ρ => ρ.get n h
+  | .app f a, ρ => f.eval ρ (a.eval ρ)
+  | .lam _ b, ρ => λ v => b.eval (ρ.snoc v)
 
-/-- Substructural logics, ordered by which structural rules they admit
-    ([asudeh-2022], §3, Figure 1). -/
-inductive SubstructuralLogic where
-  | lambekL        -- No structural rules (noncommutative resource logic)
-  | linearLogic    -- + commutativity (commutative resource logic = Glue)
-  | relevance      -- + commutativity + contraction
-  | affineBCK      -- + commutativity + weakening
-  | intuitionistic -- + all three structural rules
-  deriving DecidableEq, Repr
+/-! ### The substructural hierarchy -/
 
-def SubstructuralLogic.admitsRule : SubstructuralLogic → StructuralRule → Bool
-  | .lambekL,        _ => false
-  | .linearLogic,    .commutativity => true
-  | .linearLogic,    _ => false
-  | .relevance,      .weakening => false
-  | .relevance,      _ => true
-  | .affineBCK,      .contraction => false
-  | .affineBCK,      _ => true
-  | .intuitionistic, _ => true
+/-- The structural rules whose presence or absence characterizes a logic. -/
+inductive StructuralRule
+  | weakening
+  | contraction
+  | commutativity
+  deriving DecidableEq
 
-def SubstructuralLogic.isResourceSensitive : SubstructuralLogic → Bool
-  | .lambekL => true
-  | .linearLogic => true
-  | _ => false
+/-- The logics of the hierarchy. -/
+inductive Logic
+  | lambek
+  | linear
+  | relevance
+  | affine
+  | intuitionistic
+  deriving DecidableEq, Fintype
 
-/-- The Glue logic is linear logic. -/
-def glueLogic : SubstructuralLogic := .linearLogic
+/-- The rules each logic admits: Lambek's L none, linear logic commutativity, relevance logic
+    contraction as well, affine logic weakening instead, intuitionistic logic all three. -/
+def Logic.rules : Logic → List StructuralRule
+  | .lambek => []
+  | .linear => [.commutativity]
+  | .relevance => [.commutativity, .contraction]
+  | .affine => [.commutativity, .weakening]
+  | .intuitionistic => [.commutativity, .contraction, .weakening]
 
-theorem glue_is_commutative :
-    glueLogic.admitsRule .commutativity = true := rfl
+/-- A resource logic admits neither weakening nor contraction. -/
+def Logic.Resource (l : Logic) : Prop := .weakening ∉ l.rules ∧ .contraction ∉ l.rules
 
-theorem glue_no_weakening :
-    glueLogic.admitsRule .weakening = false := rfl
+instance (l : Logic) : Decidable l.Resource := inferInstanceAs (Decidable (_ ∧ _))
 
-theorem glue_no_contraction :
-    glueLogic.admitsRule .contraction = false := rfl
+/-- The resource logics are Lambek's L and linear logic. -/
+theorem resource_iff : ∀ l : Logic, l.Resource ↔ l = .lambek ∨ l = .linear := by decide
 
-theorem glue_is_resource_sensitive :
-    glueLogic.isResourceSensitive = true := rfl
-
--- ════════════════════════════════════════════════════════════════════
--- § "Alex likes Blake" — Basic Glue Composition
--- ════════════════════════════════════════════════════════════════════
-
-/-! ### Simple transitive composition ([asudeh-2022], §2)
-
-The simplest Glue derivation: a transitive verb with two arguments.
-Given meaning constructors:
-```
-likes : λy.λx.like(y)(x) : b ⊸ a ⊸ l
-alex  : alex              : a
-blake : blake              : b
-```
-
-The unique normal-form proof applies likes to blake, then to alex:
-```
-likes : b⊸a⊸l    blake : b
-────────────────────────── ⊸ε
-   like(blake) : a⊸l      alex : a
-   ────────────────────────────── ⊸ε
-        like(blake)(alex) : l
-```
--/
-
-section AlexLikesBlake
-
-def a_ := GlueTy.atom "a"  -- subject (alex)
-def b_ := GlueTy.atom "b"  -- object (blake)
-def l_ := GlueTy.atom "l"  -- clause type
-
-/-- Premises for "Alex likes Blake". -/
-def alexLikesBlakePremises : List GlueTy :=
-  [ b_ ⊸ a_ ⊸ l_   -- 0: likes
-  , a_               -- 1: alex
-  , b_               -- 2: blake
-  ]
-
-/-- Proof: apply likes to blake, then to alex. -/
-def alexLikesBlakeProof : GlueProof :=
-  .lolliE (.lolliE (.ax 0) (.ax 2)) (.ax 1)
-
-theorem alex_likes_blake_typechecks :
-    alexLikesBlakeProof.check alexLikesBlakePremises = some l_ := by
+/-- Linear logic is the commutative resource logic: the logic of composition. -/
+theorem commutative_resource_iff :
+    ∀ l : Logic, l.Resource ∧ .commutativity ∈ l.rules ↔ l = .linear := by
   decide
 
-theorem alex_likes_blake_resource_correct :
-    alexLikesBlakeProof.isResourceCorrect 3 = true := by decide
+/-! ### The paper's proofs -/
 
-/-- Argument reordering: the same proof works regardless of premise order,
-    because the Glue logic is commutative ([asudeh-2022], §2). -/
-def alexLikesBlakeReordered : List GlueTy :=
-  [ a_               -- 0: alex (moved first)
-  , b_               -- 1: blake
-  , b_ ⊸ a_ ⊸ l_   -- 2: likes (moved last)
-  ]
+/-- The instantiated atoms of the paper's examples. -/
+inductive Label
+  | a | b | c | l | e | s | p | w | d
+  deriving DecidableEq, Repr
 
-def alexLikesBlakeReorderedProof : GlueProof :=
-  .lolliE (.lolliE (.ax 2) (.ax 1)) (.ax 0)
+open GlueTy (atom)
 
-theorem reordered_typechecks :
-    alexLikesBlakeReorderedProof.check alexLikesBlakeReordered = some l_ := by
+/-- *Alex likes Blake*: the head consumes its arguments in either order. -/
+def likes : List (GlueTy Label) :=
+  [atom Label.b ⊸ atom Label.a ⊸ atom Label.l, atom Label.a, atom Label.b]
+
+/-- The single normal-form proof: apply *likes* to *Blake*, then to *Alex*. -/
+def likesProof : Term likes (atom Label.l) :=
+  .app (.app (.var 0 rfl) (.var 2 rfl)) (.var 1 rfl)
+
+theorem likesProof_linear : likesProof.Linear := by decide
+
+/-- Recurrying by hypothetical reasoning: from a head taking `a` then `b`, a proof taking `b`
+    then `a`, with both hypotheses discharged. -/
+def recurry :
+    Term [atom Label.a ⊸ atom Label.b ⊸ atom Label.c]
+      (atom Label.b ⊸ atom Label.a ⊸ atom Label.c) :=
+  .lam (atom Label.b) (.lam (atom Label.a) (.app (.app (.var 0 rfl) (.var 2 rfl)) (.var 1 rfl)))
+
+theorem recurry_linear : recurry.Linear := by decide
+
+/-- The recurried proof means the same function with its arguments swapped. -/
+theorem recurry_eval {D : Label → Type} (f : D .a → D .b → D .c) :
+    recurry.eval (.cons f .nil) = λ u v => f v u :=
+  rfl
+
+/-- The meaning constructors each Finnish word contributes: *join* the speaker and the drinking,
+    *vettä* the water. -/
+def finnish : List (List (GlueTy Label)) :=
+  [[atom Label.p, atom Label.w ⊸ atom Label.p ⊸ atom Label.d], [atom Label.w]]
+
+/-- The English words contribute the same three constructors one each. -/
+def english : List (List (GlueTy Label)) :=
+  [[atom Label.p], [atom Label.w ⊸ atom Label.p ⊸ atom Label.d], [atom Label.w]]
+
+/-- Two words and three words instantiate the same premises. -/
+theorem finnish_english : finnish.flatten = english.flatten ∧ finnish.length ≠ english.length :=
+  by decide
+
+/-- The one normal-form proof of *I drank water* in either language. -/
+def drinkProof : Term english.flatten (atom Label.d) :=
+  .app (.app (.var 1 rfl) (.var 2 rfl)) (.var 0 rfl)
+
+theorem drinkProof_linear : drinkProof.Linear := by decide
+
+/-- *Everybody loves somebody* with both quantifiers' scope instantiated to the clause. -/
+def loves : List (GlueTy Label) :=
+  [atom Label.s ⊸ atom Label.e ⊸ atom Label.l, (atom Label.e ⊸ atom Label.l) ⊸ atom Label.l,
+    (atom Label.s ⊸ atom Label.l) ⊸ atom Label.l]
+
+/-- Surface scope: hypothesize the object, then the subject; discharge the object under *some*
+    and the subject under *every*. -/
+def surface : Term loves (atom Label.l) :=
+  .app (.var 1 rfl) (.lam (atom Label.e)
+    (.app (.var 2 rfl) (.lam (atom Label.s) (.app (.app (.var 0 rfl) (.var 4 rfl)) (.var 3 rfl)))))
+
+/-- Inverse scope: the subject is discharged first, under *every*, and the object under
+    *some*. -/
+def inverse : Term loves (atom Label.l) :=
+  .app (.var 2 rfl) (.lam (atom Label.s)
+    (.app (.var 1 rfl) (.lam (atom Label.e) (.app (.app (.var 0 rfl) (.var 3 rfl)) (.var 4 rfl)))))
+
+theorem surface_linear : surface.Linear := by decide
+
+theorem inverse_linear : inverse.Linear := by decide
+
+/-- Meanings for the scope example: entities for the two argument positions, propositions for
+    the clause. -/
+def scopeDomain (E : Type) : Label → Type
+  | .l | .c | .d => Prop
+  | _ => E
+
+/-- The premises' meanings: *love*, and the two generalized quantifiers over persons. -/
+def scopeEnv {E : Type} (person : E → Prop) (love : E → E → Prop) : Env (scopeDomain E) loves :=
+  .cons love (.cons (λ Q => ∀ x, person x → Q x) (.cons (λ Q => ∃ y, person y ∧ Q y) .nil))
+
+/-- The surface proof means that every person loves some person. -/
+theorem surface_eval {E : Type} (person : E → Prop) (love : E → E → Prop) :
+    surface.eval (scopeEnv person love) =
+      ∀ x, person x → ∃ y, person y ∧ love y x :=
+  rfl
+
+/-- The inverse proof means that some person is loved by every person. -/
+theorem inverse_eval {E : Type} (person : E → Prop) (love : E → E → Prop) :
+    inverse.eval (scopeEnv person love) =
+      ∃ y, person y ∧ ∀ x, person x → love y x :=
+  rfl
+
+/-- The two proofs are two readings: where each of two persons loves only the other, the surface
+    reading holds and the inverse one fails. -/
+theorem readings_differ :
+    surface.eval (scopeEnv (λ _ : Bool => True) (· ≠ ·)) ∧
+      ¬ inverse.eval (scopeEnv (λ _ : Bool => True) (· ≠ ·)) := by
+  rw [surface_eval, inverse_eval]
+  exact ⟨λ x _ => ⟨!x, trivial, Bool.not_ne_self x⟩, λ ⟨y, _, h⟩ => h y trivial rfl⟩
+
+/-! ### The paper's examples -/
+
+/-- The meaning constructors a row's words contribute. -/
+def lexicon? (r : LinguisticExample) : Option (List (List (GlueTy Label))) :=
+  match r.language, r.feature? "premises" with
+  | "finn1318", some "speaker, drink, water" => some finnish
+  | "stan1293", some "speaker, drink, water" => some english
+  | _, _ => none
+
+/-- Each word of the drinking sentences contributes its constructors, and the two lexicons
+    instantiate the premises of the same proof. -/
+theorem rows_lexicon :
+    ∀ r ∈ Examples.all, ∀ lex ∈ lexicon? r,
+      r.surfaceTokens.length = lex.length ∧ lex.flatten = english.flatten := by
   decide
-
-theorem reordered_resource_correct :
-    alexLikesBlakeReorderedProof.isResourceCorrect 3 = true := by
-  decide
-
-end AlexLikesBlake
-
--- ════════════════════════════════════════════════════════════════════
--- § "Everybody loves somebody" — The Canonical Scope Example
--- ════════════════════════════════════════════════════════════════════
-
-/-! ### Meaning constructors ([asudeh-2022], §4.2)
-
-Lexical entries (before instantiation):
-```
-love    : λy.λx.love(y)(x)     : (↑ OBJ)σ ⊸ (↑ SUBJ)σ ⊸ ↑σ
-every   : λQ.every(person, Q)  : ∀S.(e ⊸ S) → S
-some    : λQ.some(person, Q)   : ∀S.(s ⊸ S) → S
-```
-
-The ∀ quantifier in the Glue logic ranges over Glue types. Different
-instantiations of S yield different premise contexts, and each context
-has exactly one normal-form proof.
-
-**Surface scope (∀>∃)**: every instantiated with S=l, some with S=e⊸l.
-**Inverse scope (∃>∀)**: some instantiated with S=l, every with S=s⊸l.
--/
-
-section EveryLovesSome
-
--- Reuse l_ from AlexLikesBlake; define additional atomic types
--- for the quantifier scope example
-def e_ := GlueTy.atom "e"  -- subject position
-def s_ := GlueTy.atom "s"  -- object position
-
--- Surface scope (∀>∃) premises
-def surfacePremises : List GlueTy :=
-  [ s_ ⊸ e_ ⊸ l_                        -- 0: love
-  , (s_ ⊸ e_ ⊸ l_) ⊸ (e_ ⊸ l_)        -- 1: some (S = e ⊸ l)
-  , (e_ ⊸ l_) ⊸ l_                      -- 2: every (S = l)
-  ]
-
--- Inverse scope (∃>∀) premises
-def inversePremises : List GlueTy :=
-  [ s_ ⊸ e_ ⊸ l_                        -- 0: love
-  , (e_ ⊸ s_ ⊸ l_) ⊸ (s_ ⊸ l_)        -- 1: every (S = s ⊸ l)
-  , (s_ ⊸ l_) ⊸ l_                      -- 2: some (S = l)
-  ]
-
-/-- Surface scope proof: every(some(love)) : l
-
-    Proof structure (cf. [asudeh-2022], Figure 4):
-    1. Apply some(S=e⊸l) to love → e ⊸ l
-    2. Apply every(S=l) to result → l -/
-def surfaceProof : GlueProof :=
-  .lolliE (.ax 2) (.lolliE (.ax 1) (.ax 0))
-
-/-- Inverse scope proof: some(every(λv.λu.love(u)(v))) : l
-
-    Proof structure (cf. [asudeh-2022], Figure 5):
-    1. Assume [v:e]³, [u:s]⁴
-    2. Apply love to u (s-arg) then to v (e-arg) → l
-    3. Abstract over u → s⊸l, then over v → e⊸s⊸l
-    4. Apply every(S=s⊸l) → s⊸l
-    5. Apply some(S=l) → l -/
-def inverseProof : GlueProof :=
-  .lolliE (.ax 2)
-    (.lolliE (.ax 1)
-      (.lolliI e_
-        (.lolliI s_
-          (.lolliE (.lolliE (.ax 0) (.ax 4)) (.ax 3)))))
-
-/-- Surface proof type-checks to l. -/
-theorem surface_typechecks :
-    surfaceProof.check surfacePremises = some l_ := by decide
-
-/-- Inverse proof type-checks to l. -/
-theorem inverse_typechecks :
-    inverseProof.check inversePremises = some l_ := by decide
-
-/-- Surface proof uses each premise exactly once. -/
-theorem surface_resource_correct :
-    surfaceProof.isResourceCorrect 3 = true := by decide
-
-/-- Inverse proof uses each premise exactly once. -/
-theorem inverse_resource_correct :
-    inverseProof.isResourceCorrect 3 = true := by decide
-
-end EveryLovesSome
-
--- ════════════════════════════════════════════════════════════════════
--- § Semantic Evaluation: Connecting Proofs to Truth Conditions
--- ════════════════════════════════════════════════════════════════════
-
-/-! The Glue logic tells us *how* to compose meanings but not *what*
-    the meanings are. The meaning terms are ordinary Montague-style
-    denotations. We connect Glue proofs to truth conditions by
-    evaluating them over the same toy entity domain used by
-    `QuantifierComposition.lean`.
-
-    The toy model has no `love` predicate, so we use `sees_sem` as
-    the transitive relation. The logical structure is identical.
-
-    Surface scope: every(person, λx. some(person, λy. sees(y)(x)))
-    Inverse scope: some(person, λy. every(person, λx. sees(y)(x)))
--/
-
-open ToyLexicon
-
-def glue_surface_meaning : Prop :=
-  every_sem person_sem
-    (λ x => some_sem person_sem (λ y => sees_sem y x))
-
-def glue_inverse_meaning : Prop :=
-  some_sem person_sem
-    (λ y => every_sem person_sem (λ x => sees_sem y x))
-
-/-- The two Glue readings differ (genuine ambiguity). -/
-theorem glue_readings_differ :
-    glue_surface_meaning ≠ glue_inverse_meaning := by
-  intro h
-  have hS : glue_surface_meaning := by
-    intro x hpx
-    cases x with
-    | john => exact ⟨.mary, trivial, trivial⟩
-    | mary => exact ⟨.john, trivial, trivial⟩
-    | _ => exact absurd hpx id
-  have hI : ¬glue_inverse_meaning := by
-    intro ⟨y, _, hy⟩
-    cases y with
-    | john => exact hy .john trivial
-    | mary => exact hy .mary trivial
-    | _ => exact absurd (by assumption : person_sem _) id
-  exact hI (h ▸ hS)
-
-/-- Surface scope is true in the toy model
-    (each person sees some person). -/
-theorem glue_surface_true : glue_surface_meaning := by
-  intro x hpx
-  cases x with
-  | john => exact ⟨.mary, trivial, trivial⟩
-  | mary => exact ⟨.john, trivial, trivial⟩
-  | _ => exact absurd hpx id
-
-/-- Inverse scope is false in the toy model
-    (no single person is seen by everyone). -/
-theorem glue_inverse_false : ¬glue_inverse_meaning := by
-  intro ⟨y, _, hy⟩
-  cases y with
-  | john => exact hy .john trivial
-  | mary => exact hy .mary trivial
-  | _ => exact absurd (by assumption : person_sem _) id
-
--- ════════════════════════════════════════════════════════════════════
--- § Bridge: Glue ↔ QR Scope Readings
--- ════════════════════════════════════════════════════════════════════
-
-/-! Both Glue and QR are extensionally equivalent on the canonical
-    scope example: both yield exactly {∀>∃, ∃>∀} with the same
-    truth values. The QR side is the H&K engine's output:
-    `qrReading` is exactly what `interp` computes on
-    [heim-kratzer-1998]'s QR trees (`qrReading_surface_computed`,
-    `qrReading_inverse_computed`). -/
-
-open Semantics.Scope
-open Syntax
-open Semantics.Composition.Tree
-open Intensional.Variables
-
-/-- Map ScopeConfig to propositions via Glue evaluation. -/
-def glueReading : ScopeConfig → Prop
-  | .surface => glue_surface_meaning
-  | .inverse => glue_inverse_meaning
-
-/-- Map ScopeConfig to propositions via direct GQ application
-    (the same semantics computed by QR tree interpretation,
-    [heim-kratzer-1998] Ch. 5). -/
-def qrReading : ScopeConfig → Prop
-  | .surface => every_sem person_sem
-      (λ x => some_sem person_sem (λ y => sees_sem y x))
-  | .inverse => some_sem person_sem
-      (λ y => every_sem person_sem (λ x => sees_sem y x))
-
-/-- The QR side is computed, not hand-written: `interp` on
-[heim-kratzer-1998]'s surface QR tree yields exactly `qrReading .surface`. -/
-theorem qrReading_surface_computed :
-    interp ToyEntity Unit HeimKratzer1998.quantLex HeimKratzer1998.g₀
-      HeimKratzer1998.tree_surface = some ⟨.t, qrReading .surface⟩ := rfl
-
-/-- Likewise for the inverse QR tree. -/
-theorem qrReading_inverse_computed :
-    interp ToyEntity Unit HeimKratzer1998.quantLex HeimKratzer1998.g₀
-      HeimKratzer1998.tree_inverse = some ⟨.t, qrReading .inverse⟩ := rfl
-
-/-- QR surface scope produces the same Prop as Glue. -/
-theorem qr_surface_agrees :
-    qrReading .surface = glue_surface_meaning := rfl
-
-/-- QR inverse scope produces the same Prop as Glue. -/
-theorem qr_inverse_agrees :
-    qrReading .inverse = glue_inverse_meaning := rfl
-
-/-- Glue and QR yield identical propositions for both scope readings.
-
-    Two fundamentally different composition mechanisms — proof search
-    in linear logic (Glue, [asudeh-2022]) vs. covert movement
-    with Predicate Abstraction (QR, [heim-kratzer-1998]) — produce
-    the same semantic results. -/
-theorem glue_qr_agree :
-    ∀ s : ScopeConfig, qrReading s = glueReading s := by
-  intro s; cases s <;> rfl
-
--- ════════════════════════════════════════════════════════════════════
--- § Resource Sensitivity as a Unifying Principle
--- ════════════════════════════════════════════════════════════════════
-
-/-! [asudeh-2022] (§3) argues that linear logic resource
-    sensitivity subsumes several well-formedness conditions from
-    different frameworks. These are all instances of: in a valid
-    linear logic proof, each premise is used exactly once. -/
-
-inductive ResourceCondition where
-  | completenessCoherence   -- [kaplan-bresnan-1982]: all and only GFs
-  | thetaCriterion          -- [chomsky-1981]: each arg ↔ one θ-role
-  | projectionPrinciple     -- [chomsky-1981]: lexical requirements projected
-  | noVacuousQuantification -- every binder binds something
-  | fullInterpretation      -- [chomsky-1982]: every LF element licensed
-  | inclusivenessCondition  -- [chomsky-1995]: no new objects in derivation
-  deriving DecidableEq, Repr
-
-/-- Resource sensitivity = no weakening + no contraction.
-    No weakening means every premise must be consumed (captures
-    fullInterpretation, inclusivenessCondition).
-    No contraction means each premise consumed at most once (captures
-    thetaCriterion, noVacuousQuantification). Together they enforce
-    completenessCoherence and projectionPrinciple. -/
-def ResourceCondition.fromNoWeakening : List ResourceCondition :=
-  [.fullInterpretation, .inclusivenessCondition, .completenessCoherence]
-
-def ResourceCondition.fromNoContraction : List ResourceCondition :=
-  [.thetaCriterion, .noVacuousQuantification, .projectionPrinciple]
-
--- ════════════════════════════════════════════════════════════════════
--- § Three Kinds of Composition Theory
--- ════════════════════════════════════════════════════════════════════
-
-/-! [asudeh-2022] (§4) distinguishes three approaches to the
-    syntax-semantics interface:
-
-    1. **Interpretive** (H&K/QR): Syntax produces LF, which is
-       directly interpreted. Scope ambiguity requires a syntactic
-       operation (QR/covert movement) — two distinct LF trees.
-    2. **Parallel** (CommonGround/CCG): Syntax and semantics computed in
-       lockstep. Scope ambiguity requires type-shifting operations
-       and corresponding categorial modifications.
-    3. **Glue** (separable logic): Syntax produces meaning
-       constructors; composition is proof search. Scope ambiguity
-       arises from multiple ∀-instantiations — no syntactic ambiguity
-       or type-shifting needed.
-
-    linglib formalizes all three: H&K in `Composition/Tree.lean`,
-    CCG in `CCG/Interface.lean`, Glue here. -/
-
-inductive CompositionApproach where
-  | interpretive   -- H&K: syntax → LF → interpretation
-  | parallel       -- CommonGround/CCG: syntax ∥ semantics
-  | glueSeparable  -- Glue: syntax → premises → proof search
-  deriving DecidableEq, Repr
-
-/-- How each approach handles scope ambiguity. -/
-inductive ScopeAmbiguityMechanism where
-  | covertMovement   -- QR: syntactic operation producing distinct LFs
-  | typeShifting      -- CommonGround/CCG: type-raising / scope-shifting
-  | proofSearch       -- Glue: multiple ∀-instantiations → multiple proofs
-  deriving DecidableEq, Repr
-
-def CompositionApproach.scopeMechanism : CompositionApproach → ScopeAmbiguityMechanism
-  | .interpretive => .covertMovement
-  | .parallel => .typeShifting
-  | .glueSeparable => .proofSearch
-
-/-- Glue is the only approach that derives scope ambiguity from
-    proof search rather than syntactic or type-theoretic operations. -/
-theorem glue_scope_via_proof_search :
-    CompositionApproach.glueSeparable.scopeMechanism = .proofSearch := rfl
-
-/-- In Glue, the structural syntax need not be ambiguous to derive
-    scope ambiguity — the ambiguity is in the proof space. -/
-def requiresSyntacticOperation : CompositionApproach → Bool
-  | .interpretive => true    -- QR = covert movement
-  | .parallel => false       -- type-shifting is semantic, not syntactic
-  | .glueSeparable => false  -- proof search is semantic, not syntactic
-
-theorem glue_no_syntactic_operation :
-    requiresSyntacticOperation .glueSeparable = false := rfl
-
-theorem interpretive_requires_syntactic_operation :
-    requiresSyntacticOperation .interpretive = true := rfl
 
 end Asudeh2022
