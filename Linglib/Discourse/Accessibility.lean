@@ -1,5 +1,4 @@
 import Linglib.Features.Givenness
-import Linglib.Features.Prominence
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -7,23 +6,14 @@ import Mathlib.Tactic.DeriveFintype
 
 `AccessibilityLevel`: the 18-tier Accessibility Marking Scale of [ariel-1990],
 reproduced in [ariel-2001]'s overview (least accessible `fullNameMod` to most
-accessible `zero`), with `rank` (and the `LinearOrder` it induces), the three
-form-function criteria (`informativity`, `rigidity`, `attenuation`), the
-coarsening `toDefinitenessLevel` to `Prominence.DefinitenessLevel`, and the
-form-correlate bridge `GivennessStatus.toAccessibility`.
-
-Accessibility and definiteness are **non-monotonically** related (full
-names are less accessible than definite descriptions, yet first/last names
-are more accessible; names are also more prominent for DOM), so they are
-separate types and `toDefinitenessLevel` is many-to-one and non-monotone.
+accessible `zero`), with `rank` (and the `LinearOrder` it induces) and the
+three form-function criteria (`informativity`, `rigidity`, `attenuation`).
 
 Sibling of `Features/Givenness.lean` (GHZ-6): this classifies *forms*,
 `GivennessStatus` classifies *entities*. Also here: `NextMentionBias`.
 -/
 
 namespace Discourse
-
-open Features.Prominence (DefinitenessLevel)
 
 /-! ### Accessibility marking scale -/
 
@@ -145,20 +135,6 @@ def AccessibilityLevel.attenuation : AccessibilityLevel → Nat
   | .verbalAgreement                                  => 4
   | .zero                                             => 5
 
-/-! ### Definiteness coarsening -/
-
-/-- Coarsening: each accessibility level maps to one of the 5
-    `DefinitenessLevel` categories used for differential argument marking.
-    This is a many-to-one, **non-monotone** mapping — names are less
-    accessible than definite descriptions but more prominent for DOM. -/
-def AccessibilityLevel.toDefinitenessLevel : AccessibilityLevel → DefinitenessLevel
-  | .fullNameMod | .fullName | .lastName | .firstName  => .properName
-  | .longDefDescription | .shortDefDescription
-  | .distalDemMod | .proxDemMod | .distalDemNP
-  | .proxDemNP | .distalDem | .proxDem                 => .definite
-  | .stressedPronGesture | .stressedPron | .unstressedPron
-  | .cliticizedPron | .verbalAgreement | .zero          => .personalPronoun
-
 /-! ### Next-mention bias -/
 
 /-- Next-mention bias: how likely a discourse referent is to be
@@ -181,25 +157,5 @@ inductive NextMentionBias where
 def NextMentionBias.predictedForm : NextMentionBias → AccessibilityLevel
   | .high => .unstressedPron
   | .low  => .fullName
-
-/-! ### Givenness projection -/
-
-/-- Prototypical accessibility level for each givenness status. The four
-    definite rows are [gundel-hedberg-zacharski-1993]'s own form correlates
-    (unstressed pronoun, bare demonstrative, demonstrative NP, definite
-    description); the two **indefinite** statuses (`referential` =
-    "indefinite this N", `typeIdentifiable` = "a N") have no form on the
-    accessibility scale, so their rows are editorial rank-alignment, not
-    form identity. [ariel-2001] criticizes the givenness hierarchy (no
-    evidence for scalar distinctions below its top statuses) rather than
-    endorsing such a projection. -/
-def _root_.Features.GivennessStatus.toAccessibility :
-    Features.GivennessStatus → AccessibilityLevel
-  | .inFocus              => .unstressedPron
-  | .activated            => .proxDem
-  | .familiar             => .distalDemNP
-  | .uniquelyIdentifiable => .shortDefDescription
-  | .referential          => .longDefDescription
-  | .typeIdentifiable     => .fullNameMod
 
 end Discourse
