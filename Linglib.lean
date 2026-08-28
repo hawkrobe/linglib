@@ -331,6 +331,8 @@ import Linglib.Data.Examples.Angelopoulos2026
 import Linglib.Data.Examples.Anscombe1964
 import Linglib.Data.Examples.Anttila1997
 import Linglib.Data.Examples.Arka2013
+import Linglib.Data.Examples.Arnold2026
+import Linglib.Data.Examples.ArnoldEtAl2000
 import Linglib.Data.Examples.ArregiPietraszko2021
 import Linglib.Data.Examples.ArreguiKusumoto1998
 import Linglib.Data.Examples.BeckOdaSugisaki2004
@@ -2988,3 +2990,7 @@ import Linglib.Data.Examples.AnandHacquard2013
 import Linglib.Data.Examples.AnandHardtMcCloskey2021
 import Linglib.Data.Examples.Anderson2006b
 import Linglib.Data.Examples.Ariel2001
+import Linglib.Data.Examples.AsherLascarides2003
+import Linglib.Data.Examples.AssmannEtAl2023
+import Linglib.Data.Examples.Asudeh2022
+import Linglib.Data.Examples.AugurzkyEtAl2023

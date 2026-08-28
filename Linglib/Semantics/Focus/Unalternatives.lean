@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.Set.Lattice.Image
 import Mathlib.Order.Minimal
+import Mathlib.Order.Preorder.Chain
 import Linglib.Semantics.Focus.Control
 
 /-!
@@ -64,6 +65,21 @@ theorem usable_iff_minimal :
   · rintro ⟨⟨hm, hf⟩, hmin⟩
     exact ⟨hm, hf, fun m' hm' hfm' hm'm =>
       le_antisymm hm'm (hmin ⟨hm', hfm'⟩ hm'm)⟩
+
+/-- A usable marking realizes every focus between the focus and the marked constituent: the
+foci a marking is syncretic for form a continuous stretch of the tree. -/
+theorem Usable.of_le (h : Usable inv m f) {g : C} (hfg : f ≤ g) (hgm : g ≤ m) : Usable inv m g :=
+  ⟨h.1, hgm, fun m' hm' hgm' hm'm => h.2.2 m' hm' (hfg.trans hgm') hm'm⟩
+
+/-- When the constituents containing a focus form a chain — in a tree — its usable marking is
+unique. -/
+theorem Usable.unique {m' : C} (hchain : IsChain (· ≤ ·) (Set.Ici f)) (h : Usable inv m f)
+    (h' : Usable inv m' f) : m = m' := by
+  rcases eq_or_ne m m' with rfl | hne
+  · rfl
+  rcases hchain h.2.1 h'.2.1 hne with hmm' | hm'm
+  · exact h'.2.2 m h.1 h.2.1 hmm'
+  · exact (h.2.2 m' h'.1 h'.2.1 hm'm).symm
 
 end Marking
 

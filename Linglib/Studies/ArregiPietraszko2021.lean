@@ -1,556 +1,400 @@
-import Linglib.Syntax.Minimalist.Movement.VerbMovementParameter
-import Linglib.Syntax.Minimalist.Agree.Basic
-import Linglib.Syntax.Minimalist.SyntacticObject.Amalgamation
 import Linglib.Data.Examples.ArregiPietraszko2021
+import Mathlib.Data.List.Basic
 
 /-!
-# GenHM and Do-Support
-[arregi-pietraszko-2021]
+# Arregi & Pietraszko 2021: the ups and downs of head displacement
 
-Connects the GenHM formalization to A&P's do-support paradigm
-(`Data/Examples/ArregiPietraszko2021.json`).
+Upward and downward head displacement are one syntactic operation, Generalized Head Movement:
+a head bearing the feature [hm] shares a single M-value — the bundle of morphological features
+Vocabulary Insertion targets — with the head of its complement, so that successive applications
+build a complex head whose internal structure obeys the Mirror Principle and whose terminals
+form a head chain. Where the complex head is pronounced is postsyntactic: Head Chain
+Pronunciation delinks every position but the highest strong one, or the highest of all if none is
+strong. French finite verbs and auxiliaries everywhere surface in T because no position is
+strong; English lexical verbs are strong and so surface low; Danish verbs are strong but so is
+C, so the same chain surfaces in C under verb-second and in V otherwise. Do-support is what a
+strong V does to a chain that gets split — by a [+P] specifier intervening between the chain's
+top and V*, or by V* being marked [−P] under ellipsis or as the lower copy of a fronted VP: each
+half keeps the whole M-value, morphological terminals whose syntactic terminal is no longer in
+their chain become orphans, an orphan V is exponed as *do*, and an orphan T is obliterated,
+impoverished, ignored, or given its elsewhere allomorph according to the language. Hence
+do-support alternates with downward displacement in English but with upward displacement in
+Monnese, where T is strong too; Mainland Scandinavian lacks Split-by-Intervention and so shows
+do-support only under ellipsis and fronting; and the Ndebele relative prefix, pronounced low,
+has the Mirror-obeying bracketing its vowel coalescence requires.
 
-## Structure
+## Main definitions
 
-**§1** English GenHM chain configurations for A&P's four do-support contexts
-**§2** The bridge table: each contextual datum paired with its GenHM prediction
-**§3** The parallelism theorem: do-support uniformity across all four contexts
-**§4** Deriving VMovementParam from GenHM
+* `MValue`, `HeadChain`: the complex head GenHM builds and the positions sharing it, with
+  `HeadChain.orphans` the terminals Orphan Assignment marks.
+* `Language`: strength, the availability of Split-by-Intervention, and the fate of an orphan T.
+* `pronounce`, `split`, `derive`: Head Chain Pronunciation, chain splitting, and the surface
+  a context and verb type yield in a language.
+* `coalesce`: Ndebele vowel coalescence over a complex head.
 
-## Central Result
+## References
 
-The parallelism of do-support across A&P's three core contexts (negation,
-SAI, verum focus) plus VPE is a DERIVED consequence of GenHM chain
-structure, not a stipulation about the V-movement parameter. The four
-contexts involve two structurally distinct reasons for chain-splitting —
-intervention by a [+P] specifier (negation, SAI, verum) and post-syntactic
-[-P] on V* (VPE) — yet all produce the same do-support outcome because
-spell-out depends only on WHETHER the chain is split.
-
-A&P unify the three intervention contexts under a single specifier-intervention
-rule (footnote 30). SAI is intervention by the subject in Spec,TP, NOT
-"probe displacement"; verum focus is intervention by a covert specifier in
-Spec,ΣP, NOT a "weak Foc head".
-
-## Out of scope
-
-Tag questions (e.g. *She likes him, doesn't she?*) are not in A&P's paper;
-their analysis belongs in a future Sailor 2018 study file. A substantive
-`TenseSupportContext → GenHMChain` bridge that would connect this file's
-predictions to `Pollock1989.lean`'s `needsDoSupport` is deferred to a
-cross-framework wiring follow-up. Orphan Assignment (the actual do-insertion
-derivation) and the strong V parameter (A&P's cross-linguistic prediction)
-are deferred to follow-up substrate work; `needsDoSupportGenHM` here is a
-Boolean proxy.
-
+* [arregi-pietraszko-2021]
+* [baker-1985] — the Mirror Principle
+* [pollock-1989] — the French/English verb-placement contrast
 -/
 
 namespace ArregiPietraszko2021
 
 open Data.Examples
-open Minimalist
 
-/-! ### Generalized Head Movement (relocated from Minimalist/GenHM.lean)
+/-! ### Head chains and M-values (§2) -/
 
-Formalization of Generalized Head Movement following [arregi-pietraszko-2021].
-
-## Central Claim
-
-Head displacement (subject-auxiliary inversion, T-lowering, do-support) is
-not syntactic movement but a single Agree-based operation — **GenHM** — that
-shares morphological features (M-values) between terminal nodes. The
-*direction* of displacement (upward vs downward) is determined postsyntactically
-at PF, based on which terminal in the chain spells out the shared M-value.
-
-## Mechanism
-
-1. **GenHM** relates two terminals X and Y in a local syntactic configuration,
-   sharing an M-value (tense/phi features) between them → chain ⟨X, Y⟩.
-2. **PF Chain Resolution**: The M-value is pronounced on exactly one terminal.
-   - Default: the M-value lowers to the goal (V) — affix hopping.
-   - When the chain is *split*, the M-value is stranded on the probe (T) —
-     looks like "raising".
-3. **Chain-splitting** occurs for exactly two reasons (A&P unify intervention
-   contexts under a single [+P]-specifier rule; cf. footnote 30):
-   - **Split-by-Intervention**: a [+P] specifier intervenes between the top
-     of the chain and V*. This subsumes overt negation (Spec,ΣP), verum
-     focus (covert specifier in Spec,ΣP), and SAI (subject in Spec,TP).
-   - **Split-by-Deletion**: V* is marked [-P] post-syntactically, e.g.
-     inside an elided VP.
-4. **Do-support**: When the M-value is stranded on a probe (T) that has no
-   independent lexical content, a dummy verb *do* is inserted at PF.
-
-## Key Result
-
-The parallelism of do-support across A&P's three core contexts (negation,
-SAI, verum focus) plus VPE is DERIVED from GenHM chain structure: all four
-share the same structural property, namely a split chain stranding the
-M-value on a contentless T. The specific *reason* for the split is
-irrelevant to the do-support prediction.
-
-## Out of scope (deferred)
-
-- **Orphan Assignment** (the actual *do*-insertion mechanism: [O] feature
-  on stranded V_m, defective Vocabulary Insertion). `needsDoSupportGenHM`
-  here is a Boolean proxy for the do-insertion decision, not the derivation.
-- **Strong V parameter** (A&P's cross-linguistic prediction for Monnese
-  and Mainland Scandinavian: strength of V/T/C heads governs whether
-  chain-splitting feeds defective spell-out). The Boolean `isSplit`
-  here corresponds only to the English/strong-V case.
-- **Tag questions** (e.g. *She likes him, doesn't she?*) are NOT in A&P's
-  paper; they have their own literature (Sailor 2018, Bjorkman 2011).
-  A future tag-question study file is the right home for them.
--/
-
--- ============================================================================
--- § GenHM.1  M-Values (Morphological Feature Bundles)
--- ============================================================================
-
-/-- An M-value is a bundle of morphological features (tense, agreement)
-    shared between terminal nodes via GenHM.
-
-    We reuse `FeatureBundle` since M-values are grammatical features. -/
-abbrev MValue := FeatureBundle
-
--- ============================================================================
--- § GenHM.2  GenHM Relation
--- ============================================================================
-
-/-- A&P's **Generalized Head Movement** (GenHM) relation.
-
-    GenHM relates two terminal nodes X (probe) and Y (goal) in a local
-    syntactic configuration. This is an instance of Agree specialized for
-    head displacement: the record captures the pre-Agree configuration
-    under an M-value assignment (probe's M-slot unvalued, goal's valued);
-    the *shared* M-value A&P's structure-sharing establishes is the
-    transmission outcome of valuing the probe's slot from the goal's
-    (`applyAgree`). -/
-structure HeadMovement where
-  /-- The higher terminal (e.g., T or C) — the probe -/
-  probe : LIToken
-  /-- The lower terminal (e.g., V or Aux) — the goal -/
-  goal : LIToken
-  /-- The M-value assignment for the tree's terminals -/
-  feats : LIToken → MValue
-  /-- The feature dimension being shared (tense, phi, etc.) -/
-  feature : FeatureType
-  /-- The containing tree -/
-  root : SyntacticObject
-  /-- Structural condition: probe c-commands goal -/
-  probe_commands_goal :
-    SyntacticObject.cCommandsIn root (.lexLeaf probe) (.lexLeaf goal)
-  /-- The goal bears valued M-features -/
-  goal_has_mvalue : (feats goal).hasValuedFeature feature = true
-  /-- The probe bears unvalued M-features -/
-  probe_needs_mvalue : (feats probe).hasUnvaluedFeature feature = true
-
-/-- GenHM is an instance of Agree: a valid GenHM relation is a valid Agree
-    relation over the same tree and M-value assignment. -/
-theorem headMovement_is_agree (g : HeadMovement) :
-    validAgree g.feats g.root (.lexLeaf g.probe) (.lexLeaf g.goal) g.feature :=
-  ⟨g.probe_commands_goal, g.probe_needs_mvalue, g.goal_has_mvalue⟩
-
-/-- The GenHM configuration is realizable: in `[TP T° V°]`, T° with
-    unvalued tense probes V° with valued tense. -/
-example : HeadMovement where
-  probe := ⟨.simple .T [], 1⟩
-  goal := ⟨.simple .V [], 2⟩
-  feats := λ tok =>
-    if tok.item.outerCat = .T then .ofGramFeatures [.unvalued (.tense true)]
-    else .ofGramFeatures [.valued (.tense true)]
-  feature := .tense
-  root := SyntacticObject.ofPlanar
-    (SyntacticObject.nodeP (SyntacticObject.leafP ⟨.simple .T [], 1⟩)
-      (SyntacticObject.leafP ⟨.simple .V [], 2⟩))
-  probe_commands_goal := by decide
-  goal_has_mvalue := by decide
-  probe_needs_mvalue := by decide
-
--- ============================================================================
--- § GenHM.3  Chain-Splitting and Chain Structure
--- ============================================================================
-
-/-- Identification of the [+P] specifier that triggers Split-by-Intervention.
-
-    Per [arregi-pietraszko-2021] footnote 30, A&P unify the three
-    intervention contexts under a single specifier-intervention rule.
-    This field is therefore diagnostic only — A&P's chain-splitting rule
-    itself does not branch on which specifier intervened. -/
-inductive InterveningSpecifier where
-  /-- Subject in Spec,TP. The configuration A&P invoke for SAI: GenHM
-      relates V, T, and C across the subject specifier. -/
-  | subjectInSpecTP
-  /-- Overt negation in Spec,ΣP (sentential negation, e.g. *Sue does not
-      eat fish*). -/
-  | negSpecifier
-  /-- Covert specifier in Spec,ΣP triggering verum focus (e.g. *Sue DOES
-      eat fish*). -/
-  | verumCovertSpecifier
+/-- The syntactic terminals that enter head chains: the verbal heads, Σ, T, C, and the D and
+linker heads of the Ndebele relative. -/
+inductive Head
+  | V
+  | Aux
+  | sigma
+  | T
+  | C
+  | D
+  | Lnk
   deriving DecidableEq, Repr
 
-/-- The reason a GenHM chain is split, preventing M-value lowering.
-
-    [arregi-pietraszko-2021] recognize exactly two chain-splitting
-    mechanisms:
-
-    1. **Split-by-Intervention**: a [+P] specifier intervenes between the
-       top of the chain and V*. Subsumes overt negation, verum focus, and
-       SAI under one rule.
-    2. **Split-by-Deletion**: V* is marked [-P] post-syntactically (e.g.
-       inside an elided VP), blocking Vocabulary Insertion of the lowered
-       M-value.
-
-    Both produce the same PF effect: the M-value cannot lower and is
-    stranded on the probe. -/
-inductive ChainSplitReason where
-  /-- A [+P] specifier intervenes; field identifies which one. -/
-  | intervention (specifier : InterveningSpecifier)
-  /-- V* is post-syntactically marked [-P], e.g. inside an elided VP. -/
-  | deletion
+/-- A complex head: the M-value GenHM builds by adding the higher head's morphological
+terminal outside the lower chain's M-value. -/
+inductive MValue
+  | leaf (h : Head)
+  | node (outer inner : MValue)
   deriving DecidableEq, Repr
 
-/-- A GenHM chain between a probe and a goal, possibly split.
+/-- The morphological terminals of a complex head. -/
+def MValue.terminals : MValue → List Head
+  | .leaf h => [h]
+  | .node o i => o.terminals ++ i.terminals
 
-    The chain captures the structural configuration relevant for PF
-    spell-out: whether the M-value can lower from probe to goal, or
-    is stranded on the probe. The `splitReason` field tracks both
-    whether the chain is split and why. -/
-structure GenHMChain where
-  /-- Category of the probe (T or C) -/
-  probeCat : Cat
-  /-- Category of the goal (V) -/
-  goalCat : Cat
-  /-- Why the chain is split, if at all. `none` = clear chain. -/
-  splitReason : Option ChainSplitReason
+/-- The M-value of a chain listed from its lowest head up, by cyclic GenHM. -/
+def chainMValue : List Head → MValue
+  | [] => .leaf .V
+  | h :: rest => rest.foldl (fun m x => .node (.leaf x) m) (.leaf h)
 
-/-- Is the chain split? A split chain strands the M-value on the probe. -/
-def GenHMChain.isSplit (chain : GenHMChain) : Bool :=
-  chain.splitReason.isSome
-
--- ============================================================================
--- § GenHM.4  PF Spell-Out Rule
--- ============================================================================
-
-/-- Where the M-value is pronounced at PF.
-
-    - `.onGoal`: M-value lowers to the goal (= affix hopping / T-lowering)
-    - `.onProbe`: M-value stays on the probe (= "raising" / stranding) -/
-inductive SpellOutTarget where
-  | onGoal
-  | onProbe
+/-- A head chain: its positions from the bottom up and the M-value they share. -/
+structure HeadChain where
+  positions : List Head
+  mvalue : MValue
   deriving DecidableEq, Repr
 
-/-- Determine where the M-value is spelled out.
+/-- Orphan Assignment: the morphological terminals whose syntactic terminal is not in the
+chain. -/
+def HeadChain.orphans (c : HeadChain) : List Head :=
+  c.mvalue.terminals.filter (· ∉ c.positions)
 
-    The M-value surfaces on the goal (lower terminal) unless the chain
-    is split, in which case it is stranded on the probe (higher terminal).
-    The reason for the split is irrelevant — only whether it is split. -/
-def spellOutTarget (chain : GenHMChain) : SpellOutTarget :=
-  if chain.isSplit then .onProbe else .onGoal
+/-- The chain GenHM builds over the given positions. -/
+def HeadChain.ofPositions (ps : List Head) : HeadChain := ⟨ps, chainMValue ps⟩
 
--- ============================================================================
--- § GenHM.5  Do-Support
--- ============================================================================
+/-- Every terminal of the M-value built over `acc` by the heads `l` comes from `acc` or from
+`l`. -/
+theorem mem_of_mem_terminals_foldl {x : Head} : ∀ (l : List Head) (acc : MValue),
+    x ∈ (l.foldl (fun m y => MValue.node (.leaf y) m) acc).terminals →
+      x ∈ acc.terminals ∨ x ∈ l
+  | [], _, h => Or.inl h
+  | y :: l, acc, h => by
+    rcases mem_of_mem_terminals_foldl l (.node (.leaf y) acc) h with h' | h'
+    · simp only [MValue.terminals, List.singleton_append, List.mem_cons] at h'
+      rcases h' with rfl | h'
+      · exact Or.inr (List.mem_cons_self ..)
+      · exact Or.inl h'
+    · exact Or.inr (List.mem_cons_of_mem _ h')
 
-/-- The do-support condition.
+/-- A chain GenHM builds has no orphans. -/
+theorem orphans_ofPositions (h : Head) (rest : List Head) :
+    (HeadChain.ofPositions (h :: rest)).orphans = [] := by
+  refine List.filter_eq_nil_iff.mpr fun x hx => ?_
+  simp only [HeadChain.ofPositions, decide_eq_true_eq, not_not]
+  rcases mem_of_mem_terminals_foldl rest (.leaf h) hx with h' | h'
+  · simp only [MValue.terminals, List.mem_singleton] at h'
+    exact h' ▸ List.mem_cons_self ..
+  · exact List.mem_cons_of_mem _ h'
 
-    Do-support is triggered when:
-    1. The M-value is stranded on the probe (chain is split), AND
-    2. The probe has no independent lexical content (is a contentless T head)
+/-! ### Pronunciation and splitting (§2, §4) -/
 
-    This is a PF repair strategy: the grammar inserts *do* to host
-    tense features that cannot lower to V and have no other host.
+/-- How a language treats an orphan T: Table 1. -/
+inductive OrphanT
+  | ignored
+  | elsewhere
+  | impoverish
+  | obliterate
+  deriving DecidableEq, Repr
 
-    NOTE: this is a Boolean proxy. A&P's actual derivation routes through
-    Orphan Assignment ([O] feature on the stranded V_m, then defective
-    Vocabulary Insertion as *do*). Modeling that machinery is deferred. -/
-def needsDoSupportGenHM (chain : GenHMChain) (probeHasContent : Bool) : Bool :=
-  match spellOutTarget chain with
-  | .onProbe => !probeHasContent
-  | .onGoal => false
+/-- The form of the verb an orphan T yields: finite in Swedish, the pseudo-infinitive in
+Yiddish, the true infinitive in Polish and Monnese, bare in English. -/
+inductive VerbForm
+  | finite
+  | pseudoInfinitive
+  | infinitive
+  | bare
+  deriving DecidableEq, Repr
 
-/-- Do-support is a last resort: it is only used when the M-value cannot
-    reach the goal AND the probe cannot host it independently. -/
-theorem doSupport_is_lastResort (chain : GenHMChain) (probeHasContent : Bool) :
-    needsDoSupportGenHM chain probeHasContent = true →
-    spellOutTarget chain = .onProbe ∧ probeHasContent = false := by
-  simp only [needsDoSupportGenHM]
-  split
-  · intro h; exact ⟨‹_›, by simpa using h⟩
-  · intro h; simp at h
+def OrphanT.form : OrphanT → VerbForm
+  | .ignored => .finite
+  | .elsewhere => .pseudoInfinitive
+  | .impoverish => .infinitive
+  | .obliterate => .bare
 
--- ============================================================================
--- § GenHM.6  Key Theorems
--- ============================================================================
+/-- A language's settings: which heads are strong, whether Split-by-Intervention is active,
+whether sentential negation is a [+P] specifier, and the fate of an orphan T. -/
+structure Language where
+  strong : Head → Bool
+  splitByIntervention : Bool
+  negIntervenes : Bool
+  orphanT : OrphanT
 
-/-- **Theorem 1: Lowering when chain is clear.**
+/-- Head Chain Pronunciation: the highest strong position, otherwise the highest. -/
+def pronounce (L : Language) (ps : List Head) : Option Head :=
+  (ps.filter L.strong).getLast? <|> ps.getLast?
 
-    When the chain is not split, the M-value surfaces on the goal
-    (= T-lowering / affix hopping). -/
-theorem lowering_when_not_split (chain : GenHMChain)
-    (h : chain.isSplit = false) :
-    spellOutTarget chain = .onGoal := by
-  simp [spellOutTarget, h]
+/-- Chain splitting at V*: by a [+P] intervener when the language has Split-by-Intervention,
+or by V* being [−P]; the two halves keep the whole M-value. -/
+def split (L : Language) (intervener elided : Bool) (c : HeadChain) : List HeadChain :=
+  match c.positions with
+  | .V :: rest =>
+    if L.strong .V ∧ rest ≠ [] ∧ ((intervener ∧ L.splitByIntervention) ∨ elided) then
+      [⟨[.V], c.mvalue⟩, ⟨rest, c.mvalue⟩]
+    else [c]
+  | _ => [c]
 
-/-- **Theorem 2: Raising when chain is split.**
+/-- The contexts the paper's derivations cover. -/
+inductive Ctx
+  | declarative
+  | negation
+  | verum
+  | inversion
+  | subjectWh
+  | v2
+  | imperative (negated : Bool)
+  | ellipsis (v2 : Bool)
+  | fronting (v2 : Bool)
+  deriving DecidableEq, Repr
 
-    When the chain is split (by intervention or deletion), the M-value
-    surfaces on the probe (= "raising" / stranding). -/
-theorem raising_when_split (chain : GenHMChain)
-    (h : chain.isSplit = true) :
-    spellOutTarget chain = .onProbe := by
-  simp [spellOutTarget, h]
+/-- The heads GenHM relates in a context, from the verb up. -/
+def Ctx.positions (L : Language) (verb : Head) : Ctx → List Head
+  | .declarative => [verb, .T]
+  | .negation => if L.negIntervenes then [verb, .sigma, .T] else [verb, .T]
+  | .verum => [verb, .sigma, .T]
+  | .inversion | .subjectWh | .v2 => [verb, .T, .C]
+  | .imperative false => [verb, .T, .C]
+  | .imperative true => [verb, .T]
+  | .ellipsis isV2 | .fronting isV2 => if isV2 then [verb, .T, .C] else [verb, .T]
 
-/-- **Theorem 3: Do-support iff split and contentless.**
+/-- Whether a [+P] specifier intervenes between the chain's top and the verb: negation where
+it is a specifier, the covert verum specifier, the subject under inversion and verb-second;
+not a subject's lower copy. -/
+def Ctx.intervener (L : Language) : Ctx → Bool
+  | .negation => L.negIntervenes
+  | .verum | .inversion | .v2 => true
+  | .ellipsis isV2 | .fronting isV2 => isV2
+  | _ => false
 
-    Do-support is triggered iff (a) the chain is split AND
-    (b) the probe has no lexical content. -/
-theorem doSupport_iff_split_and_empty (chain : GenHMChain) (probeContent : Bool) :
-    needsDoSupportGenHM chain probeContent = true ↔
-    (chain.isSplit = true ∧ probeContent = false) := by
-  constructor
-  · intro h
-    have ⟨hTarget, hContent⟩ := doSupport_is_lastResort chain probeContent h
-    refine ⟨?_, hContent⟩
-    unfold spellOutTarget at hTarget
-    split at hTarget
-    · assumption
-    · exact absurd hTarget (by simp)
-  · intro ⟨hSplit, hContent⟩
-    simp [needsDoSupportGenHM, spellOutTarget, hSplit, hContent]
+/-- Whether the verb's position is marked [−P]: under ellipsis, or as the lower copy of a
+fronted VP. -/
+def Ctx.elided : Ctx → Bool
+  | .ellipsis _ | .fronting _ => true
+  | _ => false
 
-/-- **Theorem 4: Do-support is uniform across contexts.**
+/-- What surfaces: where the finite M-value is pronounced, whether it contains an orphan V
+(*do*), the form of a separately pronounced verb, whether C is in the verb's chain (imperative
+allomorphy), and the form of a fronted verb. -/
+structure Surface where
+  finitePosition : Option Head
+  doSupport : Bool
+  verbForm : Option VerbForm
+  cInChain : Bool
+  frontedForm : Option VerbForm
+  deriving DecidableEq, Repr
 
-    For ANY GenHM chain with the same split status and probe content,
-    do-support is triggered or not uniformly. The specific reason for
-    the split (intervention or deletion) is irrelevant.
-    This is the parallelism theorem. -/
-theorem doSupport_uniform_across_contexts
-    (chain₁ chain₂ : GenHMChain) (content₁ content₂ : Bool)
-    (h_same_split : chain₁.isSplit = chain₂.isSplit)
-    (h_same_content : content₁ = content₂) :
-    needsDoSupportGenHM chain₁ content₁ = needsDoSupportGenHM chain₂ content₂ := by
-  simp only [needsDoSupportGenHM, spellOutTarget, h_same_split, h_same_content]
+/-- The derivation of a context with a lexical or auxiliary verb. -/
+def derive (L : Language) (c : Ctx) (verb : Head) : Surface :=
+  let chain := HeadChain.ofPositions (c.positions L verb)
+  let chains := split L (c.intervener L) c.elided chain
+  let upper := chains.getLast?.getD chain
+  let lower := chains.headD chain
+  { finitePosition := pronounce L upper.positions
+    doSupport := .V ∈ upper.orphans
+    verbForm := if chains.length = 2 ∧ ¬ c.elided then some L.orphanT.form else none
+    cInChain := .C ∈ lower.positions
+    frontedForm :=
+      match c with
+      | .fronting _ =>
+        some (if .T ∈ (HeadChain.mk [.V] chain.mvalue).orphans then L.orphanT.form else .finite)
+      | _ => none }
 
-/-- **Theorem 5: Auxiliaries don't need do-support.**
+/-! ### Languages -/
 
-    When the probe IS the auxiliary (T = Aux with lexical content), do-support
-    is never needed, regardless of chain structure. -/
-theorem auxiliaries_dont_need_doSupport (chain : GenHMChain) :
-    needsDoSupportGenHM chain true = false := by
-  simp [needsDoSupportGenHM]
-  split <;> rfl
+/-- English: strong lexical V, Split-by-Intervention, negation a specifier, orphan T
+obliterated. -/
+def english : Language := ⟨(· = .V), true, true, .obliterate⟩
 
-/-- **Corollary: Lexical verbs need do-support when chain is split.** -/
-theorem lexical_verb_needs_doSupport_when_split (chain : GenHMChain)
-    (h : chain.isSplit = true) :
-    needsDoSupportGenHM chain false = true := by
-  simp [needsDoSupportGenHM, spellOutTarget, h]
+/-- French: no strong head. -/
+def french : Language := ⟨fun _ => false, false, true, .obliterate⟩
 
--- ============================================================================
--- § GenHM.7  Unification with Existing Infrastructure
--- ============================================================================
+/-- Danish: strong V and C, no Split-by-Intervention. -/
+def danish : Language := ⟨fun h => h = .V ∨ h = .C, false, true, .ignored⟩
 
-/-- Extended head displacement classification.
+/-- Swedish: as Danish, with an orphan T ignored. -/
+def swedish : Language := danish
 
-    Adds GenHM as a third option alongside syntactic movement (= MCB
-    Internal Merge, encoded as `Step.im` in `Derivation.lean`) and
-    postsyntactic amalgamation. The `syntactic` constructor is now a
-    pure tag — the analyst supplies the actual `Step.im` evidence via
-    a separate `Derivation` when the diagnostic predicates are needed.
-    Refactored at 0.230.788 when the legacy `Movement` record was
-    deleted in favor of MCB-aligned `Step.im` / `Derivation.movedItems`. -/
-inductive HeadDisplacementExt where
-  | syntactic : HeadDisplacementExt
-  | amalgam : Amalgamation → HeadDisplacementExt
-  | headMovement : HeadMovement → HeadDisplacementExt
+/-- Monnese: strong V, T, and C, Split-by-Intervention, negation not a specifier, orphan T
+impoverished. -/
+def monnese : Language := ⟨fun h => h = .V ∨ h = .T ∨ h = .C, true, false, .impoverish⟩
 
-/-- GenHM subsumes both "raising" and "lowering" as surface realizations
-    of a single operation. -/
-theorem genHM_subsumes_raising_lowering (chain : GenHMChain) :
-    spellOutTarget chain = .onGoal ∨ spellOutTarget chain = .onProbe := by
-  simp only [spellOutTarget]
-  split
-  · exact Or.inr rfl
-  · exact Or.inl rfl
+/-- Polish: weak V, orphan T impoverished. -/
+def polish : Language := ⟨fun _ => false, false, true, .impoverish⟩
 
-/-- GenHM chain structure determines the surface pattern captured by
-    `VMovementParam`. -/
-def genHM_to_vMovementParam (chain : GenHMChain) : VMovementParam :=
-  match spellOutTarget chain with
-  | .onGoal => .raises
-  | .onProbe => .inSitu
+/-- Hebrew: as Polish. -/
+def hebrew : Language := polish
 
-/-- When the chain is clear, the surface pattern is V-raising. -/
-theorem genHM_clear_chain_is_raises (chain : GenHMChain)
-    (h : chain.isSplit = false) :
-    genHM_to_vMovementParam chain = .raises := by
-  simp [genHM_to_vMovementParam, spellOutTarget, h]
+/-- Yiddish: weak V, orphan T given its elsewhere allomorph. -/
+def yiddish : Language := ⟨fun _ => false, false, true, .elsewhere⟩
 
-/-- When the chain is split, the surface pattern is V-in-situ. -/
-theorem genHM_split_chain_is_inSitu (chain : GenHMChain)
-    (h : chain.isSplit = true) :
-    genHM_to_vMovementParam chain = .inSitu := by
-  simp [genHM_to_vMovementParam, spellOutTarget, h]
+/-- Spanish: no strong head. -/
+def spanish : Language := french
 
--- ============================================================================
--- § 1  English GenHM Chain Configurations
--- ============================================================================
+/-- Vallader Romansh: strong imperative T. -/
+def vallader : Language := ⟨(· = .T), false, true, .obliterate⟩
 
-/-! A&P's four do-support contexts as GenHM chains. The four chains involve
-two distinct split mechanisms:
+/-- Ndebele: strong T. -/
+def ndebele : Language := vallader
 
-- **Split-by-Intervention** (a [+P] specifier intervenes between top of
-  chain and V*): negation, SAI, verum focus.
-- **Split-by-Deletion** (V* marked [-P] post-syntactically): VPE. -/
+/-- The language of a row, by glottocode. -/
+def Language.ofRow (r : LinguisticExample) : Option Language :=
+  match r.language with
+  | "stan1293" => some english
+  | "stan1290" => some french
+  | "dani1285" => some danish
+  | "swed1254" => some swedish
+  | "lomb1257" => some monnese
+  | "poli1260" => some polish
+  | "hebr1245" => some hebrew
+  | "east2295" => some yiddish
+  | "stan1288" => some spanish
+  | "lowe1386" => some vallader
+  | _ => none
 
-/-- **Negation chain**: T ... [Spec,ΣP: *not*] ... V
+def Ctx.parse? : String → Option Ctx
+  | "declarative" => some .declarative
+  | "negation" => some .negation
+  | "verum" => some .verum
+  | "inversion" => some .inversion
+  | "subjectWh" => some .subjectWh
+  | "v2" => some .v2
+  | "imperativeAff" => some (.imperative false)
+  | "imperativeNeg" => some (.imperative true)
+  | "ellipsis" => some (.ellipsis false)
+  | "ellipsisV2" => some (.ellipsis true)
+  | "fronting" => some (.fronting false)
+  | "frontingV2" => some (.fronting true)
+  | _ => none
 
-    "Sue does not eat fish" — overt *not* in Spec,ΣP intervenes.
-    Split-by-Intervention. -/
-def negationChain : GenHMChain where
-  probeCat    := .T
-  goalCat     := .V
-  splitReason := some (.intervention .negSpecifier)
+def Head.parse? : String → Option Head
+  | "V" => some .V
+  | "T" => some .T
+  | "C" => some .C
+  | _ => none
 
-/-- **Verum focus chain**: T ... [Spec,ΣP: covert verum specifier] ... V
+def VerbForm.parse? : String → Option VerbForm
+  | "finite" => some .finite
+  | "pseudoInfinitive" => some .pseudoInfinitive
+  | "infinitive" => some .infinitive
+  | "bare" => some .bare
+  | _ => none
 
-    "Sue DOES eat fish" — covert specifier in Spec,ΣP intervenes
-    (cf. A&P fn. 30 — same intervention mechanism as negation).
-    Split-by-Intervention. -/
-def verumChain : GenHMChain where
-  probeCat    := .T
-  goalCat     := .V
-  splitReason := some (.intervention .verumCovertSpecifier)
+/-- A row's surface features agree with a derived surface. -/
+def Surface.Matches (s : Surface) (r : LinguisticExample) : Prop :=
+  (∀ p ∈ (r.feature? "finitePosition" >>= Head.parse?).toList, s.finitePosition = some p) ∧
+  (∀ d ∈ (r.feature? "doSupport").toList, (d = "true") = s.doSupport) ∧
+  (∀ f ∈ (r.feature? "verbForm" >>= VerbForm.parse?).toList, s.verbForm = some f) ∧
+  (∀ b ∈ (r.feature? "imperativeForm").toList, (b = "true") = s.cInChain) ∧
+  (∀ f ∈ (r.feature? "frontedForm" >>= VerbForm.parse?).toList, s.frontedForm = some f)
 
-/-- **Question chain (SAI)**: C ← T ... [Spec,TP: subject] ... V
+instance (s : Surface) (r : LinguisticExample) : Decidable (s.Matches r) := by
+  unfold Surface.Matches; infer_instance
 
-    "Where does Sue eat fish?" — the subject in Spec,TP intervenes
-    between T (chained to C) and V*. Crucially this is intervention,
-    NOT "probe displacement" — see A&P, where GenHM is taken to relate
-    V, T, and C across the subject specifier.
-    Split-by-Intervention. -/
-def questionChain : GenHMChain where
-  probeCat    := .T
-  goalCat     := .V
-  splitReason := some (.intervention .subjectInSpecTP)
+/-- Every verb-placement, do-support, imperative, ellipsis, and fronting example of the paper
+surfaces as its language's settings derive. -/
+theorem rows_derived :
+    ∀ r ∈ Examples.all, ∀ L ∈ (Language.ofRow r).toList,
+      ∀ c ∈ (r.feature? "context" >>= Ctx.parse?).toList,
+        (derive L c (if r.feature? "verbType" = some "auxiliary" then .Aux else .V)).Matches r := by
+  decide +kernel
 
-/-- **VP ellipsis chain**: T ... V (with V* marked [-P] post-syntactically)
+/-- The same chain surfaces in C under verb-second and in V otherwise: downward displacement
+feeds upward displacement without a step in T. -/
+theorem danish_v2 :
+    pronounce danish [.V, .T, .C] = some .C ∧ pronounce danish [.V, .T] = some .V := by decide
 
-    "She runs faster than he does" — V is present and chained to T;
-    VPE marks V* with [-P], blocking lowered Vocabulary Insertion.
-    Split-by-Deletion (NOT goal-absence — A&P's analysis crucially has
-    GenHM still applying). -/
-def vpEllipsisChain : GenHMChain where
-  probeCat    := .T
-  goalCat     := .V
-  splitReason := some .deletion
-
-/-- A declarative chain with no split: T ... V
-
-    "Sue eats fish" — clear chain, M-value lowers to V (affix hopping). -/
-def declarativeChain : GenHMChain where
-  probeCat    := .T
-  goalCat     := .V
-  splitReason := none
-
-/-- Behavioral fact about declaratives: M-value lowers (affix hopping). -/
-@[simp] theorem declarative_lowers : spellOutTarget declarativeChain = .onGoal := rfl
-
-/-- Behavioral fact about declaratives with lexical V: no do-support. -/
-@[simp] theorem declarative_no_doSupport :
-    needsDoSupportGenHM declarativeChain false = false := rfl
-
--- ============================================================================
--- § 2  Bridge Table: Empirical Data Meets GenHM Predictions
--- ============================================================================
-
-/-- Does the sentence use do-support? (`do_support` feature). -/
-def usesDoSupport (row : LinguisticExample) : Option Bool :=
-  (row.feature? "do_support").map (· == "true")
-
-/-- Does the probe carry lexical content? (auxiliary = true, lexical
-    V = false; `verb_type` feature). -/
-def probeHasContent (row : LinguisticExample) : Option Bool :=
-  (row.feature? "verb_type").map (· == "auxiliary")
-
-/-- A&P's do-support paradigm as a bridge table: each generated row
-    paired with the GenHM chain configuration assigned in §1.
-
-    Coverage: A&P's three core contexts (negation, SAI, verum focus)
-    each tested with lexical V, auxiliary, and the starred do-support
-    misuse; VPE tested with lexical V only (the auxiliary case is not a
-    do-support trigger and not in A&P's discussion of VPE). -/
-def doSupportTable : List (LinguisticExample × GenHMChain) :=
-  [ (Examples.ex32, negationChain)    -- "Sue does not eat fish"
-  , (Examples.ex33, negationChain)    -- *"Sue not eats fish"
-  , (Examples.ex34, negationChain)    -- "Sue is not eating fish"
-  , (Examples.ex35, negationChain)    -- *"Sue does not be eating fish"
-  , (Examples.ex27, questionChain)    -- "Where does Sue eat fish?"
-  , (Examples.ex30, questionChain)    -- "Where is Sue eating fish?"
-  , (Examples.ex31, questionChain)    -- *"Where does Sue be eating fish?"
-  , (Examples.ex39, verumChain)       -- "Sue DOES eat fish"
-  , (Examples.ex40, verumChain)       -- "She IS eating fish"
-  , (Examples.ex41, verumChain)       -- *"She DOES be eating fish"
-  , (Examples.ex38, vpEllipsisChain)  -- "She runs faster than he does"
-  ]
-
-/-- **Transfer equation**: a row in the bridge table is acceptable iff
-    its use (or omission) of do-support matches the GenHM prediction for
-    its chain and probe content. The starred rows (`ex31`, `ex33`,
-    `ex35`, `ex41`) are exactly those whose do-support usage contradicts
-    the prediction — A&P's parallelism claim is precisely that this
-    holds uniformly across all four contexts. -/
-theorem all_bridges_hold :
-    ∀ p ∈ doSupportTable,
-      p.1.judgment = .acceptable ↔
-        usesDoSupport p.1 = (probeHasContent p.1).map (needsDoSupportGenHM p.2) := by
+/-- Do-support alternates with downward displacement in English but with upward displacement
+in Monnese: without an intervener the English verb surfaces in V and the Monnese verb in T,
+and both get *do* under inversion. -/
+theorem directionality_no_correlation :
+    (derive english .declarative .V).finitePosition = some .V ∧
+      (derive monnese .declarative .V).finitePosition = some .T ∧
+      (derive english .inversion .V).doSupport ∧ (derive monnese .inversion .V).doSupport := by
   decide
 
--- ============================================================================
--- § 3  The Parallelism Theorem
--- ============================================================================
+/-- The typology of (73): Split-by-Intervention gives English but not Danish do-support under
+inversion; Split-by-Deletion gives both do-support under ellipsis. -/
+theorem split_typology :
+    (derive english .inversion .V).doSupport ∧ ¬ (derive danish .v2 .V).doSupport ∧
+      (derive english (.ellipsis false) .V).doSupport ∧
+      (derive danish (.ellipsis true) .V).doSupport := by
+  decide
 
-/-- **Parallelism for lexical verbs**: any split chain triggers do-support
-    when the probe is contentless. Concrete consequence of the substrate
-    theorem `lexical_verb_needs_doSupport_when_split`. -/
-theorem doSupport_parallel_lexical
-    (chain : GenHMChain) (h : chain.isSplit = true) :
-    needsDoSupportGenHM chain false = true :=
-  lexical_verb_needs_doSupport_when_split chain h
+/-! ### Ndebele relative prefixes (§3.1) -/
 
-/-- **Parallelism for auxiliaries**: no chain triggers do-support when the
-    probe carries lexical content. Concrete consequence of
-    `auxiliaries_dont_need_doSupport`. -/
-theorem doSupport_parallel_aux (chain : GenHMChain) :
-    needsDoSupportGenHM chain true = false :=
-  auxiliaries_dont_need_doSupport chain
+/-- A vowel of the Ndebele exponents. -/
+def isVowel (c : Char) : Bool := c ∈ ['a', 'e', 'i', 'o', 'u']
 
-/-- **Context-irrelevance**: any two chains with the same split status give
-    the same do-support decision. The reason for the split (intervention
-    vs deletion) is irrelevant. -/
-theorem doSupport_context_irrelevant
-    (chain₁ chain₂ : GenHMChain) (content : Bool)
-    (h : chain₁.isSplit = chain₂.isSplit) :
-    needsDoSupportGenHM chain₁ content = needsDoSupportGenHM chain₂ content :=
-  doSupport_uniform_across_contexts chain₁ chain₂ content content h rfl
+/-- Vowel coalescence at a morpheme boundary (18): identical vowels merge, `a + i` gives `e`,
+`a + u` gives `o`, and `e` yields to a following vowel. -/
+def join (a b : List Char) : List Char :=
+  match a.getLast?, b with
+  | some x, y :: rest =>
+    if isVowel x ∧ isVowel y then
+      if x = y then a ++ rest
+      else if x = 'a' ∧ y = 'i' then a.dropLast ++ 'e' :: rest
+      else if x = 'a' ∧ y = 'u' then a.dropLast ++ 'o' :: rest
+      else if x = 'e' then a.dropLast ++ b
+      else a ++ b
+    else a ++ b
+  | _, _ => a ++ b
 
--- ============================================================================
--- § 4  Deriving VMovementParam from GenHM
--- ============================================================================
+/-- A complex head over exponents, bracketed as GenHM builds it. -/
+inductive Exponents
+  | leaf (s : String)
+  | node (outer inner : Exponents)
 
-/-- A clear chain (no split) yields the `.raises` surface pattern. -/
-theorem genHM_derives_raises :
-    genHM_to_vMovementParam declarativeChain = .raises := rfl
+/-- Cyclic coalescence: each constituent of the complex head is spelled out before the one
+containing it. -/
+def coalesce : Exponents → List Char
+  | .leaf s => s.toList
+  | .node o i => join (coalesce o) (coalesce i)
 
-/-- A split chain yields the `.inSitu` surface pattern. -/
-theorem genHM_derives_inSitu :
-    genHM_to_vMovementParam negationChain = .inSitu := rfl
+/-- The relative prefix as the Mirror-obeying complex head `[Lnk [D [C T]]]` with a null C. -/
+def relPrefix (linker augment agreement : String) : Exponents :=
+  .node (.leaf linker) (.node (.leaf augment) (.node (.leaf "") (.leaf agreement)))
 
-/-! TODO: a substantive `chainOf : TenseSupportContext → GenHMChain` map
-would let us state `needsDoSupport p ctx = needsDoSupportGenHM (chainOf ctx)
-(contentOf p)` — converting Pollock1989's flat parameter into a derived
-view of GenHM's chain structure. Deferred to a cross-framework wiring
-follow-up that also touches `Pollock1989.lean`. -/
+/-- Table (19): the relative prefixes of classes 1, 9, 7, and 11 coalesce from their linker,
+augment, and agreement components in the Mirror-obeying bracketing. -/
+theorem rows_relative_prefix :
+    ∀ r ∈ Examples.all, ∀ l ∈ (r.feature? "linker").toList, ∀ a ∈ (r.feature? "augment").toList,
+      ∀ g ∈ (r.feature? "agreement").toList, ∀ rel ∈ (r.feature? "rel").toList,
+        coalesce (relPrefix l a g) = rel.toList := by
+  decide +kernel
+
+/-- The non-mirroring bracketing `[[Lnk D] T]` of (21) derives *i* for class 9, not the
+attested *e*. -/
+theorem nonmirror_class9 :
+    coalesce (.node (.node (.leaf "a") (.leaf "i")) (.leaf "i")) = ['i'] ∧
+      coalesce (relPrefix "a" "i" "i") = ['e'] := by
+  decide
+
+/-- The relative complex head is pronounced low, in strong T, after the subject in Spec,TP. -/
+theorem ndebele_low : pronounce ndebele [.T, .C, .D, .Lnk] = some .T := by decide
 
 end ArregiPietraszko2021
