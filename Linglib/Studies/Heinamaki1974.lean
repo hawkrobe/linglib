@@ -65,6 +65,20 @@ theorem by_veridical_main : by_ A B → ∃ t, t ∈ timeTrace A := fun ⟨t, ht
 theorem before_by : Anscombe.before A B → by_ A B :=
   fun ⟨t, ht, h⟩ => ⟨t, ht, fun t' ht' => (h t' ht').le⟩
 
+/-- *A before B* by the reference point: some time of `A` precedes `B`'s first time `lb`. -/
+def before (A : SentDenotation Time) (lb : Time) : Prop := ∃ t ∈ timeTrace A, t < lb
+
+/-- *A after B* by the reference point: some time of `A` follows `B`'s first time `lb`. -/
+def after (A : SentDenotation Time) (lb : Time) : Prop := ∃ t ∈ timeTrace A, lb < t
+
+/-- When `B` has a first time, the reference-point *before* is [anscombe-1964]'s. -/
+theorem before_iff_anscombe {lb : Time} (hlb : IsLeast (timeTrace B) lb) :
+    before A lb ↔ Anscombe.before A B := (before_iff_lt_least hlb).symm
+
+/-- When `B` has a first time, the reference-point *after* is [anscombe-1964]'s. -/
+theorem after_iff_anscombe {lb : Time} (hlb : IsLeast (timeTrace B) lb) :
+    after A lb ↔ Anscombe.after A B := (after_iff_least_lt hlb).symm
+
 /-- *While* is not symmetric: a moment inside a stretch. -/
 theorem while_not_symm :
     ¬∀ A B : SentDenotation ℤ, while_ A B → while_ B A := by
