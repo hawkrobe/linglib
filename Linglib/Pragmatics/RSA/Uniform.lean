@@ -120,6 +120,14 @@ theorem sum_rpow_uniformListener {α : ℝ} (hα : 0 < α) (t : T) :
   rw [profile, Multiset.invPowSum, Multiset.map_map]
   rfl
 
+/-- The speaker share of a true choice depends on the state only through its profile. -/
+theorem uniformSpeaker_apply_singleton_of_profile_eq {α : ℝ} (hα : 0 < α) {t t' : T}
+    (hprof : profile sem t = profile sem t') {c : C} (hmem : t ∈ sem c) (hmem' : t' ∈ sem c) :
+    uniformSpeaker sem α t {c} = uniformSpeaker sem α t' {c} := by
+  rw [uniformSpeaker_apply_singleton, uniformSpeaker_apply_singleton,
+    sum_rpow_uniformListener sem hα, sum_rpow_uniformListener sem hα, hprof,
+    uniformListener_apply_singleton, uniformListener_apply_singleton, if_pos hmem, if_pos hmem']
+
 theorem sum_fiber_rpow_uniformListener {α : ℝ} (hα : 0 < α) (o : O) (t : T) :
     ∑ c ∈ Finset.univ.filter (obs · = o), uniformListener sem c {t} ^ α
       = (fiberProfile sem obs o t).invPowSum α := by

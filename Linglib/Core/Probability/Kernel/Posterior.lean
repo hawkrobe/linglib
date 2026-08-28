@@ -56,6 +56,12 @@ theorem posterior_apply_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω
   rw [hrect]
   ring
 
+/-- Two states with the same likelihood of the observation and the same prior mass have the
+same posterior mass. -/
+theorem posterior_apply_singleton_congr {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) {ω₁ ω₂ : Ω}
+    (hrow : κ ω₁ {x} = κ ω₂ {x}) (hμ : μ {ω₁} = μ {ω₂}) : (κ†μ) x {ω₁} = (κ†μ) x {ω₂} := by
+  rw [posterior_apply_singleton κ μ hx, posterior_apply_singleton κ μ hx, hrow, hμ]
+
 /-- Comparing posterior masses of finite events reduces to comparing prior-weighted
 likelihood sums; the observation marginal cancels. -/
 theorem posterior_real_finset_lt_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (E₁ E₂ : Finset Ω) :

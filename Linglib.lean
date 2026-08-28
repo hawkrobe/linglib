@@ -647,6 +647,7 @@ import Linglib.Discourse.Commitment.SourceMarked
 import Linglib.Discourse.Commitment.Space
 import Linglib.Discourse.Commitment.Table
 import Linglib.Discourse.CommonGround
+import Linglib.Discourse.CommonGround.Measure
 import Linglib.Discourse.Gameboard.Basic
 import Linglib.Discourse.Gameboard.Defs
 import Linglib.Discourse.Gameboard.RepriseContent

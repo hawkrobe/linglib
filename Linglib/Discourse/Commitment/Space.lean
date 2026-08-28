@@ -54,7 +54,7 @@ Out of scope (would need substrate extensions):
   substrate has no time index; `rejectFirst` is the closest proxy for
   rescission. True time-indexed commitment dynamics need a separate layer.
 - **Anderson 2021 distributional CommonGround**: a probability distribution
-  over worlds, hosted as `PMF W` in `Studies/Anderson2021.lean`. It is
+  over worlds, hosted as `Measure W` in `Studies/Anderson2021.lean`. It is
   *not* routed through the commitment-space substrate: a `CommitmentSpace W ℝ`
   would carry unconstrained per-world reals (no sum-to-one, no normalisation),
   losing exactly the structure Anderson's entropy/KL criteria depend on. The

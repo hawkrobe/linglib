@@ -192,8 +192,8 @@ instance : CommitmentGrade Prop where
   complement := Not
 
 -- No `Bool` instance by default — consumers needing decidable grades
--- declare locally. Anderson 2021's distributional CommonGround is a genuine
--- distribution (`PMF W`, in `Studies/Anderson2021.lean`), not a graded
+-- declare locally. Anderson 2021's distributional common ground is a genuine
+-- measure (`Measure W`, in `Studies/Anderson2021.lean`), not a graded
 -- commitment, so it does not instantiate this hierarchy.
 
 /-! ### Speaker-Indexed Commitments -/
