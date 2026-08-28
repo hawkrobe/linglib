@@ -1,0 +1,1770 @@
+[
+  {
+    "id": "anttila1997_1a_puiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(1a)"},
+    "language": "finn1318",
+    "primaryText": "pui.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["pui.den", "tree.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "puu"],
+      ["gloss", "tree"],
+      ["syllables", "1"],
+      ["variant", "strong"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_1a_potilaiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(1a)"},
+    "language": "finn1318",
+    "primaryText": "po.ti.lai.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["po.ti.lai.den", "patient.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "potilas"],
+      ["gloss", "patient"],
+      ["syllables", "3"],
+      ["variant", "strong"],
+      ["final_syllable", "heavy"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_1b_kalojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(1b)"},
+    "language": "finn1318",
+    "primaryText": "ka.lo.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ka.lo.jen", "fish.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "kala"],
+      ["gloss", "fish"],
+      ["syllables", "2"],
+      ["variant", "weak"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_1b_margariinien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(1b)"},
+    "language": "finn1318",
+    "primaryText": "mar.ga.rii.ni.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mar.ga.rii.ni.en", "margarine.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "margariini"],
+      ["gloss", "margarine"],
+      ["syllables", "4"],
+      ["variant", "weak"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_1c_naapureiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(1c)"},
+    "language": "finn1318",
+    "primaryText": "naa.pu.rei.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["naa.pu.rei.den", "neighbor.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "naa.pu.ri.en", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "naapuri"],
+      ["gloss", "neighbor"],
+      ["syllables", "3"],
+      ["variant", "strong"]
+    ],
+    "comment": "Free variation; the weak variant is the alternative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_1c_reaganeiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(1c)"},
+    "language": "finn1318",
+    "primaryText": "Rea.ga.nei.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Rea.ga.nei.den", "Reagan.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Rea.ga.ni.en", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "Reagani"],
+      ["gloss", "Reagan"],
+      ["syllables", "3"],
+      ["variant", "strong"]
+    ],
+    "comment": "Free variation; the weak variant is the alternative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_1c_moskeijoiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(1c)"},
+    "language": "finn1318",
+    "primaryText": "mos.kei.joi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mos.kei.joi.den", "mosque.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "mos.kei.jo.jen", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "moskeija"],
+      ["gloss", "mosque"],
+      ["syllables", "3"],
+      ["variant", "strong"]
+    ],
+    "comment": "Free variation; the weak variant is the alternative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_1c_ministereiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(1c)"},
+    "language": "finn1318",
+    "primaryText": "mi.nis.te.rei.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mi.nis.te.rei.den", "minister.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "mi.nis.te.ri.en", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "ministeri"],
+      ["gloss", "minister"],
+      ["syllables", "4"],
+      ["variant", "strong"]
+    ],
+    "comment": "Free variation; the weak variant is the alternative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_3a_maiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(3a)"},
+    "language": "finn1318",
+    "primaryText": "mai.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mai.den", "land.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "maa"],
+      ["gloss", "land"],
+      ["syllables", "1"],
+      ["variant", "strong"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_3a_teiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(3a)"},
+    "language": "finn1318",
+    "primaryText": "tei.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["tei.den", "road.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "tie"],
+      ["gloss", "road"],
+      ["syllables", "1"],
+      ["variant", "strong"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_3b_lasien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(3b)"},
+    "language": "finn1318",
+    "primaryText": "la.si.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["la.si.en", "glass.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "lasi"],
+      ["gloss", "glass"],
+      ["syllables", "2"],
+      ["variant", "weak"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_3c_palttoiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(3c)"},
+    "language": "finn1318",
+    "primaryText": "palt.toi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["palt.toi.den", "coat.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "palttoo"],
+      ["gloss", "coat"],
+      ["syllables", "2"],
+      ["variant", "strong"],
+      ["final_syllable", "heavy"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_3c_varkaiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(3c)"},
+    "language": "finn1318",
+    "primaryText": "var.kai.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["var.kai.den", "thief.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "varas"],
+      ["gloss", "thief"],
+      ["syllables", "2"],
+      ["variant", "strong"],
+      ["final_syllable", "heavy"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_6a_lemmikkien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(6a)"},
+    "language": "finn1318",
+    "primaryText": "lem.mik.ki.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["lem.mik.ki.en", "pet.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "lem.mi.kei.den", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "lemmikki"],
+      ["gloss", "pet"],
+      ["syllables", "3"],
+      ["variant", "weak"]
+    ],
+    "comment": "The bracketed (dispreferred) variant is the alternative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_6a_sihteerien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(6a)"},
+    "language": "finn1318",
+    "primaryText": "sih.tee.ri.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["sih.tee.ri.en", "secretary.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "sih.tee.rei.den", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "sihteeri"],
+      ["gloss", "secretary"],
+      ["syllables", "3"],
+      ["variant", "weak"]
+    ],
+    "comment": "The bracketed (dispreferred) variant is the alternative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_6a_naapurien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(6a)"},
+    "language": "finn1318",
+    "primaryText": "naa.pu.ri.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["naa.pu.ri.en", "neighbor.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "naa.pu.rei.den", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "naapuri"],
+      ["gloss", "neighbor"],
+      ["syllables", "3"],
+      ["variant", "weak"]
+    ],
+    "comment": "The bracketed (dispreferred) variant is the alternative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_6b_korjaamojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(6b)"},
+    "language": "finn1318",
+    "primaryText": "kor.jaa.mo.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kor.jaa.mo.jen", "repair shop.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "kor.jaa.moi.den", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "korjaamo"],
+      ["gloss", "repair shop"],
+      ["syllables", "3"],
+      ["variant", "weak"]
+    ],
+    "comment": "The bracketed (dispreferred) variant is the alternative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_6b_fyysikkojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(6b)"},
+    "language": "finn1318",
+    "primaryText": "fyy.sik.ko.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["fyy.sik.ko.jen", "physicist.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "fyy.si.koi.den", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "fyysikko"],
+      ["gloss", "physicist"],
+      ["syllables", "3"],
+      ["variant", "weak"]
+    ],
+    "comment": "Both variants unmarked.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_6b_lokeroiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(6b)"},
+    "language": "finn1318",
+    "primaryText": "lo.ke.roi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["lo.ke.roi.den", "compartment.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "lo.ke.ro.jen", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "lokero"],
+      ["gloss", "compartment"],
+      ["syllables", "3"],
+      ["variant", "strong"]
+    ],
+    "comment": "The ?-marked variant is the alternative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_6c_sairaaloiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(6c)"},
+    "language": "finn1318",
+    "primaryText": "sai.raa.loi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["sai.raa.loi.den", "hospital.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "sai.raa.lo.jen", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "sairaala"],
+      ["gloss", "hospital"],
+      ["syllables", "3"],
+      ["variant", "strong"]
+    ],
+    "comment": "Both variants unmarked.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_6c_kameroiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(6c)"},
+    "language": "finn1318",
+    "primaryText": "ka.me.roi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ka.me.roi.den", "camera.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "ka.me.ro.jen", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "kamera"],
+      ["gloss", "camera"],
+      ["syllables", "3"],
+      ["variant", "strong"]
+    ],
+    "comment": "The ?-marked variant is the alternative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_6c_mansikoiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(6c)"},
+    "language": "finn1318",
+    "primaryText": "man.si.koi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["man.si.koi.den", "strawberry.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "man.sik.ko.jen", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "mansikka"],
+      ["gloss", "strawberry"],
+      ["syllables", "3"],
+      ["variant", "strong"]
+    ],
+    "comment": "The ?-marked variant is the alternative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_33_maiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(33)"},
+    "language": "finn1318",
+    "primaryText": "mai.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mai.den", "land.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "ma.jen", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "maa"],
+      ["gloss", "land"],
+      ["syllables", "1"],
+      ["variant", "strong"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_35_kalojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(35)"},
+    "language": "finn1318",
+    "primaryText": "ka.lo.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ka.lo.jen", "fish.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "ka.loi.den", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "kala"],
+      ["gloss", "fish"],
+      ["syllables", "2"],
+      ["variant", "weak"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_37_maailmoiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(37)"},
+    "language": "finn1318",
+    "primaryText": "maa.il.moi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["maa.il.moi.den", "world.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "maa.il.mo.jen", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "maailma"],
+      ["gloss", "world"],
+      ["syllables", "3"],
+      ["variant", "strong"]
+    ],
+    "comment": "Both variants predicted (36).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_39_ministerien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(39)"},
+    "language": "finn1318",
+    "primaryText": "mi.nis.te.ri.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mi.nis.te.ri.en", "minister.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "mi.nis.te.rei.den", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "ministeri"],
+      ["gloss", "minister"],
+      ["syllables", "4"],
+      ["variant", "weak"]
+    ],
+    "comment": "Both variants predicted (38).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_40_margariinien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(40)"},
+    "language": "finn1318",
+    "primaryText": "mar.ga.rii.ni.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mar.ga.rii.ni.en", "margarine.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "mar.ga.rii.nei.den", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "margariini"],
+      ["gloss", "margarine"],
+      ["syllables", "4"],
+      ["variant", "weak"]
+    ],
+    "comment": "The starred form stands for candidates 2b and 2c of (38), which differ only in stress.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_42_aleksantereiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(42)"},
+    "language": "finn1318",
+    "primaryText": "A.lek.san.te.rei.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A.lek.san.te.rei.den", "Alexander.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "A.lek.san.te.ri.en", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "Aleksanteri"],
+      ["gloss", "Alexander"],
+      ["syllables", "5"],
+      ["variant", "strong"]
+    ],
+    "comment": "Both variants predicted (41).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_43_koordinaatistoiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(43)"},
+    "language": "finn1318",
+    "primaryText": "koor.di.naa.tis.toi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["koor.di.naa.tis.toi.den", "coordinate grid.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "koor.di.naa.tis.to.jen", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "koordinaatisto"],
+      ["gloss", "coordinate grid"],
+      ["syllables", "5"],
+      ["variant", "strong"]
+    ],
+    "comment": "Both variants predicted (41).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_44_italiaanojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(44)"},
+    "language": "finn1318",
+    "primaryText": "i.ta.li.aa.no.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["i.ta.li.aa.no.jen", "Italian.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "i.ta.li.aa.noi.den", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "italiaano"],
+      ["gloss", "Italian"],
+      ["syllables", "5"],
+      ["variant", "weak"]
+    ],
+    "comment": "The starred form stands for candidates 3b and 3c of (41), which differ only in stress.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_46_intellektuellien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(46)"},
+    "language": "finn1318",
+    "primaryText": "in.tel.lek.tu.el.li.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["in.tel.lek.tu.el.li.en", "intellectual.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "in.tel.lek.tu.el.lei.den", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "intellektuelli"],
+      ["gloss", "intellectual"],
+      ["syllables", "6"],
+      ["variant", "weak"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_47_eksistentialistien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(47)"},
+    "language": "finn1318",
+    "primaryText": "ek.sis.ten.ti.a.lis.ti.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ek.sis.ten.ti.a.lis.ti.en", "existentialist.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "ek.sis.ten.ti.a.lis.tei.den", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "eksistentialisti"],
+      ["gloss", "existentialist"],
+      ["syllables", "7"],
+      ["variant", "weak"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_48a_kamerojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(48a)"},
+    "language": "finn1318",
+    "primaryText": "ka.me.ro.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ka.me.ro.jen", "camera.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "kamera"],
+      ["gloss", "camera"],
+      ["syllables", "3"],
+      ["variant", "weak"],
+      ["motif", "l.ta"],
+      ["obs_pct", "0.6"]
+    ],
+    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_48a_kameroiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(48a)"},
+    "language": "finn1318",
+    "primaryText": "ka.me.roi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ka.me.roi.den", "camera.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "kamera"],
+      ["gloss", "camera"],
+      ["syllables", "3"],
+      ["variant", "strong"],
+      ["motif", "l.taa"],
+      ["obs_pct", "99.4"]
+    ],
+    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_48b_sairaalojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(48b)"},
+    "language": "finn1318",
+    "primaryText": "sai.raa.lo.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["sai.raa.lo.jen", "hospital.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "sairaala"],
+      ["gloss", "hospital"],
+      ["syllables", "3"],
+      ["variant", "weak"],
+      ["motif", "h.ta"],
+      ["obs_pct", "49.5"]
+    ],
+    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_48b_sairaaloiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(48b)"},
+    "language": "finn1318",
+    "primaryText": "sai.raa.loi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["sai.raa.loi.den", "hospital.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "sairaala"],
+      ["gloss", "hospital"],
+      ["syllables", "3"],
+      ["variant", "strong"],
+      ["motif", "h.taa"],
+      ["obs_pct", "50.5"]
+    ],
+    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_48c_naapurien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(48c)"},
+    "language": "finn1318",
+    "primaryText": "naa.pu.ri.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["naa.pu.ri.en", "neighbor.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "naapuri"],
+      ["gloss", "neighbor"],
+      ["syllables", "3"],
+      ["variant", "weak"],
+      ["motif", "l.ti"],
+      ["obs_pct", "63.1"]
+    ],
+    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_48c_naapureiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(48c)"},
+    "language": "finn1318",
+    "primaryText": "naa.pu.rei.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["naa.pu.rei.den", "neighbor.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "naapuri"],
+      ["gloss", "neighbor"],
+      ["syllables", "3"],
+      ["variant", "strong"],
+      ["motif", "l.tii"],
+      ["obs_pct", "36.9"]
+    ],
+    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_48d_korjaamojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(48d)"},
+    "language": "finn1318",
+    "primaryText": "kor.jaa.mo.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kor.jaa.mo.jen", "repair shop.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "korjaamo"],
+      ["gloss", "repair shop"],
+      ["syllables", "3"],
+      ["variant", "weak"],
+      ["motif", "h.to"],
+      ["obs_pct", "82.2"]
+    ],
+    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_48d_korjaamoiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(48d)"},
+    "language": "finn1318",
+    "primaryText": "kor.jaa.moi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kor.jaa.moi.den", "repair shop.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "korjaamo"],
+      ["gloss", "repair shop"],
+      ["syllables", "3"],
+      ["variant", "strong"],
+      ["motif", "h.too"],
+      ["obs_pct", "17.8"]
+    ],
+    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_531a_kameroiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(531a)"},
+    "language": "finn1318",
+    "primaryText": "ka.me.roi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ka.me.roi.den", "camera.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "kamera"],
+      ["gloss", "camera"],
+      ["syllables", "3"],
+      ["variant", "strong"],
+      ["motif", "l.taa"],
+      ["pred_pct", "100"],
+      ["obs_pct", "99.4"],
+      ["count", "720"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_531b_kamerojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(531b)"},
+    "language": "finn1318",
+    "primaryText": "ka.me.ro.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ka.me.ro.jen", "camera.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "kamera"],
+      ["gloss", "camera"],
+      ["syllables", "3"],
+      ["variant", "weak"],
+      ["motif", "l.ta"],
+      ["pred_pct", "0"],
+      ["obs_pct", "0.6"],
+      ["count", "4"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_532a_heteroiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(532a)"},
+    "language": "finn1318",
+    "primaryText": "he.te.roi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["he.te.roi.den", "hetero.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "hetero"],
+      ["gloss", "hetero"],
+      ["syllables", "3"],
+      ["variant", "strong"],
+      ["motif", "l.too"],
+      ["pred_pct", "100"],
+      ["obs_pct", "99.5"],
+      ["count", "389"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_532b_heterojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(532b)"},
+    "language": "finn1318",
+    "primaryText": "he.te.ro.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["he.te.ro.jen", "hetero.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "hetero"],
+      ["gloss", "hetero"],
+      ["syllables", "3"],
+      ["variant", "weak"],
+      ["motif", "l.to"],
+      ["pred_pct", "0"],
+      ["obs_pct", "0.5"],
+      ["count", "2"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_533a_naapureiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(533a)"},
+    "language": "finn1318",
+    "primaryText": "naa.pu.rei.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["naa.pu.rei.den", "neighbor.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "naapuri"],
+      ["gloss", "neighbor"],
+      ["syllables", "3"],
+      ["variant", "strong"],
+      ["motif", "l.tii"],
+      ["pred_pct", "33"],
+      ["obs_pct", "36.9"],
+      ["count", "215"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_533b_naapurien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(533b)"},
+    "language": "finn1318",
+    "primaryText": "naa.pu.ri.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["naa.pu.ri.en", "neighbor.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "naapuri"],
+      ["gloss", "neighbor"],
+      ["syllables", "3"],
+      ["variant", "weak"],
+      ["motif", "l.ti"],
+      ["pred_pct", "67"],
+      ["obs_pct", "63.1"],
+      ["count", "368"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_534a_maailmoiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(534a)"},
+    "language": "finn1318",
+    "primaryText": "maa.il.moi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["maa.il.moi.den", "world.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "maailma"],
+      ["gloss", "world"],
+      ["syllables", "3"],
+      ["variant", "strong"],
+      ["motif", "h.taa"],
+      ["pred_pct", "50"],
+      ["obs_pct", "50.5"],
+      ["count", "46"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_534b_maailmojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(534b)"},
+    "language": "finn1318",
+    "primaryText": "maa.il.mo.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["maa.il.mo.jen", "world.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "maailma"],
+      ["gloss", "world"],
+      ["syllables", "3"],
+      ["variant", "weak"],
+      ["motif", "h.ta"],
+      ["pred_pct", "50"],
+      ["obs_pct", "49.5"],
+      ["count", "45"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_535a_korjaamoiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(535a)"},
+    "language": "finn1318",
+    "primaryText": "kor.jaa.moi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kor.jaa.moi.den", "repair shop.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "korjaamo"],
+      ["gloss", "repair shop"],
+      ["syllables", "3"],
+      ["variant", "strong"],
+      ["motif", "h.too"],
+      ["pred_pct", "20"],
+      ["obs_pct", "17.8"],
+      ["count", "76"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_535b_korjaamojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(535b)"},
+    "language": "finn1318",
+    "primaryText": "kor.jaa.mo.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kor.jaa.mo.jen", "repair shop.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "korjaamo"],
+      ["gloss", "repair shop"],
+      ["syllables", "3"],
+      ["variant", "weak"],
+      ["motif", "h.to"],
+      ["pred_pct", "80"],
+      ["obs_pct", "82.2"],
+      ["count", "350"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_536a_poliiseiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(536a)"},
+    "language": "finn1318",
+    "primaryText": "po.lii.sei.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["po.lii.sei.den", "police.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "poliisi"],
+      ["gloss", "police"],
+      ["syllables", "3"],
+      ["variant", "strong"],
+      ["motif", "h.tii"],
+      ["pred_pct", "0"],
+      ["obs_pct", "1.6"],
+      ["count", "13"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_536b_poliisien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(536b)"},
+    "language": "finn1318",
+    "primaryText": "po.lii.si.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["po.lii.si.en", "police.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "poliisi"],
+      ["gloss", "police"],
+      ["syllables", "3"],
+      ["variant", "weak"],
+      ["motif", "h.ti"],
+      ["pred_pct", "100"],
+      ["obs_pct", "98.4"],
+      ["count", "806"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_541a_taiteilijoiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(541a)"},
+    "language": "finn1318",
+    "primaryText": "tai.tei.li.joi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["tai.tei.li.joi.den", "artist.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "taiteilija"],
+      ["gloss", "artist"],
+      ["syllables", "4"],
+      ["variant", "strong"],
+      ["motif", "l.taa"],
+      ["pred_pct", "100"],
+      ["obs_pct", "100"],
+      ["count", "276"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_542a_luetteloiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(542a)"},
+    "language": "finn1318",
+    "primaryText": "lu.et.te.loi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["lu.et.te.loi.den", "catalogue.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "luettelo"],
+      ["gloss", "catalogue"],
+      ["syllables", "4"],
+      ["variant", "strong"],
+      ["motif", "l.too"],
+      ["pred_pct", "100"],
+      ["obs_pct", "100"],
+      ["count", "25"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_543a_ministereiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(543a)"},
+    "language": "finn1318",
+    "primaryText": "mi.nis.te.rei.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mi.nis.te.rei.den", "minister.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "ministeri"],
+      ["gloss", "minister"],
+      ["syllables", "4"],
+      ["variant", "strong"],
+      ["motif", "l.tii"],
+      ["pred_pct", "33"],
+      ["obs_pct", "14.3"],
+      ["count", "39"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_543b_ministerien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(543b)"},
+    "language": "finn1318",
+    "primaryText": "mi.nis.te.ri.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mi.nis.te.ri.en", "minister.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "ministeri"],
+      ["gloss", "minister"],
+      ["syllables", "4"],
+      ["variant", "weak"],
+      ["motif", "l.ti"],
+      ["pred_pct", "67"],
+      ["obs_pct", "85.7"],
+      ["count", "234"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_544b_luonnehdintojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(544b)"},
+    "language": "finn1318",
+    "primaryText": "luon.neh.din.to.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["luon.neh.din.to.jen", "characterization.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "luonnehdinto"],
+      ["gloss", "characterization"],
+      ["syllables", "4"],
+      ["variant", "weak"],
+      ["motif", "h.ta"],
+      ["pred_pct", "100"],
+      ["obs_pct", "100"],
+      ["count", "1"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_545b_edustustojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(545b)"},
+    "language": "finn1318",
+    "primaryText": "e.dus.tus.to.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["e.dus.tus.to.jen", "delegation.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "edustusto"],
+      ["gloss", "delegation"],
+      ["syllables", "4"],
+      ["variant", "weak"],
+      ["motif", "h.to"],
+      ["pred_pct", "100"],
+      ["obs_pct", "100"],
+      ["count", "84"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_546b_margariinien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(546b)"},
+    "language": "finn1318",
+    "primaryText": "mar.ga.rii.ni.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mar.ga.rii.ni.en", "margarine.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "margariini"],
+      ["gloss", "margarine"],
+      ["syllables", "4"],
+      ["variant", "weak"],
+      ["motif", "h.ti"],
+      ["pred_pct", "100"],
+      ["obs_pct", "100"],
+      ["count", "736"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_551a_ajattelijoiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(551a)"},
+    "language": "finn1318",
+    "primaryText": "a.jat.te.li.joi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a.jat.te.li.joi.den", "thinker.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "ajattelija"],
+      ["gloss", "thinker"],
+      ["syllables", "5"],
+      ["variant", "strong"],
+      ["motif", "l.taa"],
+      ["pred_pct", "100"],
+      ["obs_pct", "100"],
+      ["count", "101"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_552a_televisioiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(552a)"},
+    "language": "finn1318",
+    "primaryText": "te.le.vi.si.oi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["te.le.vi.si.oi.den", "television.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "televisio"],
+      ["gloss", "television"],
+      ["syllables", "5"],
+      ["variant", "strong"],
+      ["motif", "l.too"],
+      ["pred_pct", "100"],
+      ["obs_pct", "100"],
+      ["count", "41"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_553a_aleksantereiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(553a)"},
+    "language": "finn1318",
+    "primaryText": "A.lek.san.te.rei.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A.lek.san.te.rei.den", "Alexander.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "Aleksanteri"],
+      ["gloss", "Alexander"],
+      ["syllables", "5"],
+      ["variant", "strong"],
+      ["motif", "l.tii"],
+      ["pred_pct", "33"],
+      ["obs_pct", "11.8"],
+      ["count", "2"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_553b_aleksanterien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(553b)"},
+    "language": "finn1318",
+    "primaryText": "A.lek.san.te.ri.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A.lek.san.te.ri.en", "Alexander.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "Aleksanteri"],
+      ["gloss", "Alexander"],
+      ["syllables", "5"],
+      ["variant", "weak"],
+      ["motif", "l.ti"],
+      ["pred_pct", "67"],
+      ["obs_pct", "88.2"],
+      ["count", "15"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_554b_evankelistojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(554b)"},
+    "language": "finn1318",
+    "primaryText": "e.van.ke.lis.to.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["e.van.ke.lis.to.jen", "evangelist.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "evankelisto"],
+      ["gloss", "evangelist"],
+      ["syllables", "5"],
+      ["variant", "weak"],
+      ["motif", "l.h.ta"],
+      ["pred_pct", "100"],
+      ["obs_pct", "100"],
+      ["count", "2"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_555b_italiaanojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(555b)"},
+    "language": "finn1318",
+    "primaryText": "i.ta.li.aa.no.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["i.ta.li.aa.no.jen", "Italian.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "italiaano"],
+      ["gloss", "Italian"],
+      ["syllables", "5"],
+      ["variant", "weak"],
+      ["motif", "l.h.to"],
+      ["pred_pct", "100"],
+      ["obs_pct", "100"],
+      ["count", "1"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_555c_koordinaatistoiden",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(555c)"},
+    "language": "finn1318",
+    "primaryText": "koor.di.naa.tis.toi.den",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["koor.di.naa.tis.toi.den", "coordinate grid.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "koordinaatisto"],
+      ["gloss", "coordinate grid"],
+      ["syllables", "5"],
+      ["variant", "strong"],
+      ["motif", "h.h.too"],
+      ["pred_pct", "20"],
+      ["obs_pct", "20"],
+      ["count", "2"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_555d_koordinaatistojen",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(555d)"},
+    "language": "finn1318",
+    "primaryText": "koor.di.naa.tis.to.jen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["koor.di.naa.tis.to.jen", "coordinate grid.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "koordinaatisto"],
+      ["gloss", "coordinate grid"],
+      ["syllables", "5"],
+      ["variant", "weak"],
+      ["motif", "h.h.to"],
+      ["pred_pct", "80"],
+      ["obs_pct", "80"],
+      ["count", "8"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_556b_sosialistien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(556b)"},
+    "language": "finn1318",
+    "primaryText": "so.si.a.lis.ti.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["so.si.a.lis.ti.en", "socialist.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "sosialisti"],
+      ["gloss", "socialist"],
+      ["syllables", "5"],
+      ["variant", "weak"],
+      ["motif", "l.h.ti"],
+      ["pred_pct", "100"],
+      ["obs_pct", "100"],
+      ["count", "99"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "anttila1997_556d_avantgardistien",
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(556d)"},
+    "language": "finn1318",
+    "primaryText": "a.vant.gar.dis.ti.en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a.vant.gar.dis.ti.en", "avant-gardist.GEN.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["stem", "avantgardisti"],
+      ["gloss", "avant-gardist"],
+      ["syllables", "5"],
+      ["variant", "weak"],
+      ["motif", "h.h.ti"],
+      ["pred_pct", "100"],
+      ["obs_pct", "100"],
+      ["count", "2"]
+    ],
+    "comment": "Predicted and observed percentages with corpus token count.",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
