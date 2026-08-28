@@ -1,0 +1,394 @@
+[
+  {
+    "id": "bakayetal2026_5a_match",
+    "source": {"bibkey": "bakay-etal-2026", "paperLabel": "(5a), Distractor Match"},
+    "reportedIn": null,
+    "language": "nucl1301",
+    "primaryText": "Ayşe yönetmenlerin yeni kameramanlarının sertçe birbirlerini eleştirdiklerini anlattı.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ayşe", "Ayşe"], ["yönetmen-ler-in", "director-PL-GEN"], ["yeni", "new"],
+      ["kameraman-ların-ın", "cameraman-3PL.POSS-GEN"], ["sertçe", "severely"],
+      ["birbirlerin-i", "each.other-ACC"], ["eleştir-dik-lerin-i", "criticize-NMLZ-3PL.POSS-ACC"],
+      ["anlat-tı", "say-PST"]
+    ],
+    "translation": "Ayşe said that the directors' new cameramen severely criticized each other.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "matrix subject", "judgment": "unacceptable"},
+      {"name": "distractor", "judgment": "unacceptable"},
+      {"name": "embedded subject", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["experiment", "1"],
+      ["condition", "Recent Target, Distractor Match"],
+      ["target", "subject"],
+      ["distractor", "possessor in subject"],
+      ["distractorNumber", "plural"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakayetal2026_5a_mismatch",
+    "source": {"bibkey": "bakay-etal-2026", "paperLabel": "(5a), Distractor Mismatch"},
+    "reportedIn": null,
+    "language": "nucl1301",
+    "primaryText": "Ayşe yönetmenin yeni kameramanlarının sertçe birbirlerini eleştirdiklerini anlattı.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ayşe", "Ayşe"], ["yönetmen-in", "director-GEN"], ["yeni", "new"],
+      ["kameraman-ların-ın", "cameraman-3PL.POSS-GEN"], ["sertçe", "severely"],
+      ["birbirlerin-i", "each.other-ACC"], ["eleştir-dik-lerin-i", "criticize-NMLZ-3PL.POSS-ACC"],
+      ["anlat-tı", "say-PST"]
+    ],
+    "translation": "Ayşe said that the director's new cameramen severely criticized each other.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "matrix subject", "judgment": "unacceptable"},
+      {"name": "distractor", "judgment": "unacceptable"},
+      {"name": "embedded subject", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["experiment", "1"],
+      ["condition", "Recent Target, Distractor Mismatch"],
+      ["target", "subject"],
+      ["distractor", "possessor in subject"],
+      ["distractorNumber", "singular"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakayetal2026_5b_match",
+    "source": {"bibkey": "bakay-etal-2026", "paperLabel": "(5b), Distractor Match"},
+    "reportedIn": null,
+    "language": "nucl1301",
+    "primaryText": "Ayşe kameramanların yönetmenlerin izniyle sertçe birbirlerini eleştirdiklerini anlattı.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ayşe", "Ayşe"], ["kameraman-lar-ın", "cameraman-PL-GEN"],
+      ["yönetmen-ler-in", "director-PL-GEN"], ["izn-i-yle", "permission-3SG.POSS-COM"],
+      ["sertçe", "severely"], ["birbirlerin-i", "each.other-ACC"],
+      ["eleştir-dik-lerin-i", "criticize-NMLZ-3PL.POSS-ACC"], ["anlat-tı", "say-PST"]
+    ],
+    "translation": "Ayşe said that the cameramen, with the directors' permission, severely criticized each other.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "matrix subject", "judgment": "unacceptable"},
+      {"name": "embedded subject", "judgment": "acceptable"},
+      {"name": "distractor", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["experiment", "1"],
+      ["condition", "Distant Target, Distractor Match"],
+      ["target", "subject"],
+      ["distractor", "possessor in adjunct"],
+      ["distractorNumber", "plural"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakayetal2026_5b_mismatch",
+    "source": {"bibkey": "bakay-etal-2026", "paperLabel": "(5b), Distractor Mismatch"},
+    "reportedIn": null,
+    "language": "nucl1301",
+    "primaryText": "Ayşe kameramanların yönetmenin izniyle sertçe birbirlerini eleştirdiklerini anlattı.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ayşe", "Ayşe"], ["kameraman-lar-ın", "cameraman-PL-GEN"], ["yönetmen-in", "director-GEN"],
+      ["izn-i-yle", "permission-3SG.POSS-COM"], ["sertçe", "severely"],
+      ["birbirlerin-i", "each.other-ACC"], ["eleştir-dik-lerin-i", "criticize-NMLZ-3PL.POSS-ACC"],
+      ["anlat-tı", "say-PST"]
+    ],
+    "translation": "Ayşe said that the cameramen, with the director's permission, severely criticized each other.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "matrix subject", "judgment": "unacceptable"},
+      {"name": "embedded subject", "judgment": "acceptable"},
+      {"name": "distractor", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["experiment", "1"],
+      ["condition", "Distant Target, Distractor Mismatch"],
+      ["target", "subject"],
+      ["distractor", "possessor in adjunct"],
+      ["distractorNumber", "singular"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakayetal2026_8a_match",
+    "source": {"bibkey": "bakay-etal-2026", "paperLabel": "(8a), IO Match"},
+    "reportedIn": null,
+    "language": "nucl1301",
+    "primaryText": "Ayşe kameramanların yönetmenlere açıkça birbirlerini sorduğunu anladı.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ayşe", "Ayşe"], ["kameraman-lar-ın", "cameraman-PL-GEN"],
+      ["yönetmen-ler-e", "director-PL-DAT"], ["açıkça", "openly"],
+      ["birbirlerin-i", "each.other-ACC"], ["sor-duğ-un-u", "ask-NMLZ-3SG.POSS-ACC"],
+      ["anla-dı", "notice-PST"]
+    ],
+    "translation": "Ayşe noticed that the cameramen openly asked the directors about each other.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "matrix subject", "judgment": "unacceptable"},
+      {"name": "embedded subject", "judgment": "acceptable"},
+      {"name": "indirect object", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["experiment", "2"],
+      ["condition", "Plural Subject, IO Match"],
+      ["target", "subject"],
+      ["second", "indirect object"],
+      ["secondNumber", "plural"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakayetal2026_8a_mismatch",
+    "source": {"bibkey": "bakay-etal-2026", "paperLabel": "(8a), IO Mismatch"},
+    "reportedIn": null,
+    "language": "nucl1301",
+    "primaryText": "Ayşe kameramanların yönetmene açıkça birbirlerini sorduğunu anladı.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ayşe", "Ayşe"], ["kameraman-lar-ın", "cameraman-PL-GEN"], ["yönetmen-e", "director-DAT"],
+      ["açıkça", "openly"], ["birbirlerin-i", "each.other-ACC"],
+      ["sor-duğ-un-u", "ask-NMLZ-3SG.POSS-ACC"], ["anla-dı", "notice-PST"]
+    ],
+    "translation": "Ayşe noticed that the cameramen openly asked the director about each other.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "matrix subject", "judgment": "unacceptable"},
+      {"name": "embedded subject", "judgment": "acceptable"},
+      {"name": "indirect object", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["experiment", "2"],
+      ["condition", "Plural Subject, IO Mismatch"],
+      ["target", "subject"],
+      ["second", "indirect object"],
+      ["secondNumber", "singular"]
+    ],
+    "comment": "The paper coindexes singular indirect objects as available, since they occasionally bind the reciprocal despite the number mismatch.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakayetal2026_8b_match",
+    "source": {"bibkey": "bakay-etal-2026", "paperLabel": "(8b), Distractor Match"},
+    "reportedIn": null,
+    "language": "nucl1301",
+    "primaryText": "Ayşe kameramanların yönetmenlere göre açıkça birbirlerini sorduğunu anladı.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ayşe", "Ayşe"], ["kameraman-lar-ın", "cameraman-PL-GEN"],
+      ["yönetmen-ler-e", "director-PL-DAT"], ["göre", "according.to"], ["açıkça", "openly"],
+      ["birbirlerin-i", "each.other-ACC"], ["sor-duğ-un-u", "ask-NMLZ-3SG.POSS-ACC"],
+      ["anla-dı", "notice-PST"]
+    ],
+    "translation": "Ayşe noticed that the cameramen, according to the directors, openly asked about each other.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "matrix subject", "judgment": "unacceptable"},
+      {"name": "embedded subject", "judgment": "acceptable"},
+      {"name": "distractor", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["experiment", "2"],
+      ["condition", "Plural Subject, Distractor Match"],
+      ["target", "subject"],
+      ["distractor", "postpositional adjunct"],
+      ["distractorNumber", "plural"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakayetal2026_8b_mismatch",
+    "source": {"bibkey": "bakay-etal-2026", "paperLabel": "(8b), Distractor Mismatch"},
+    "reportedIn": null,
+    "language": "nucl1301",
+    "primaryText": "Ayşe kameramanların yönetmene göre açıkça birbirlerini sorduğunu anladı.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ayşe", "Ayşe"], ["kameraman-lar-ın", "cameraman-PL-GEN"], ["yönetmen-e", "director-DAT"],
+      ["göre", "according.to"], ["açıkça", "openly"], ["birbirlerin-i", "each.other-ACC"],
+      ["sor-duğ-un-u", "ask-NMLZ-3SG.POSS-ACC"], ["anla-dı", "notice-PST"]
+    ],
+    "translation": "Ayşe noticed that the cameramen, according to the director, openly asked about each other.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "matrix subject", "judgment": "unacceptable"},
+      {"name": "embedded subject", "judgment": "acceptable"},
+      {"name": "distractor", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["experiment", "2"],
+      ["condition", "Plural Subject, Distractor Mismatch"],
+      ["target", "subject"],
+      ["distractor", "postpositional adjunct"],
+      ["distractorNumber", "singular"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakayetal2026_8c",
+    "source": {"bibkey": "bakay-etal-2026", "paperLabel": "(8c), Singular Subject, IO Match"},
+    "reportedIn": null,
+    "language": "nucl1301",
+    "primaryText": "Ayşe kameramanın yönetmenlere açıkça birbirlerini sorduğunu anladı.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ayşe", "Ayşe"], ["kameraman-ın", "cameraman-GEN"], ["yönetmen-ler-e", "director-PL-DAT"],
+      ["açıkça", "openly"], ["birbirlerin-i", "each.other-ACC"],
+      ["sor-duğ-un-u", "ask-NMLZ-3SG.POSS-ACC"], ["anla-dı", "notice-PST"]
+    ],
+    "translation": "Ayşe noticed that the cameraman openly asked the directors about each other.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "matrix subject", "judgment": "unacceptable"},
+      {"name": "embedded subject", "judgment": "acceptable"},
+      {"name": "indirect object", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["experiment", "2"],
+      ["condition", "Singular Subject, IO Match"],
+      ["target", "subject"],
+      ["targetNumber", "singular"],
+      ["second", "indirect object"],
+      ["secondNumber", "plural"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakayetal2026_10a",
+    "source": {"bibkey": "bakay-etal-2026", "paperLabel": "(10a), IO, Dative"},
+    "reportedIn": null,
+    "language": "nucl1301",
+    "primaryText": "Ayşe aşçıların garsonlara sebepsizce birbirlerini kötülediklerini biliyor.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ayşe", "Ayşe"], ["aşçı-lar-ın", "chef-PL-GEN"], ["garson-lar-a", "waiter-PL-DAT"],
+      ["sebepsizce", "without.reason"], ["birbirlerin-i", "each.other-ACC"],
+      ["kötüle-dik-lerin-i", "badmouth-NMLZ-3PL.POSS-ACC"], ["bil-iyor", "know-PROG"]
+    ],
+    "translation": "Ayşe knows that the chefs badmouthed each other to the waiters for no reason.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "matrix subject", "judgment": "unacceptable"},
+      {"name": "embedded subject", "judgment": "acceptable"},
+      {"name": "indirect object", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["experiment", "3"],
+      ["condition", "IO, Dative"],
+      ["target", "subject"],
+      ["second", "indirect object"],
+      ["secondNumber", "plural"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakayetal2026_10b",
+    "source": {"bibkey": "bakay-etal-2026", "paperLabel": "(10b), Distractor, Dative"},
+    "reportedIn": null,
+    "language": "nucl1301",
+    "primaryText": "Ayşe aşçıların garsonlara rağmen sebepsizce birbirlerini kötülediklerini biliyor.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ayşe", "Ayşe"], ["aşçı-lar-ın", "chef-PL-GEN"], ["garson-lar-a", "waiter-PL-DAT"],
+      ["rağmen", "despite"], ["sebepsizce", "without.reason"], ["birbirlerin-i", "each.other-ACC"],
+      ["kötüle-dik-lerin-i", "badmouth-NMLZ-3PL.POSS-ACC"], ["bil-iyor", "know-PROG"]
+    ],
+    "translation": "Ayşe knows that the chefs, despite the waiters, badmouthed each other for no reason.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "matrix subject", "judgment": "unacceptable"},
+      {"name": "embedded subject", "judgment": "acceptable"},
+      {"name": "distractor", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["experiment", "3"],
+      ["condition", "Distractor, Dative"],
+      ["target", "subject"],
+      ["distractor", "postpositional adjunct"],
+      ["distractorNumber", "plural"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bakayetal2026_10c",
+    "source": {"bibkey": "bakay-etal-2026", "paperLabel": "(10c), Distractor, Genitive"},
+    "reportedIn": null,
+    "language": "nucl1301",
+    "primaryText": "Ayşe aşçıların garsonların etkisiyle sebepsizce birbirlerini kötülediklerini biliyor.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ayşe", "Ayşe"], ["aşçı-lar-ın", "chef-PL-GEN"], ["garson-lar-ın", "waiter-PL-GEN"],
+      ["etki-si-yle", "influence-3SG.POSS-COM"], ["sebepsizce", "without.reason"],
+      ["birbirlerin-i", "each.other-ACC"], ["kötüle-dik-lerin-i", "badmouth-NMLZ-3PL.POSS-ACC"],
+      ["bil-iyor", "know-PROG"]
+    ],
+    "translation": "Ayşe knows that the chefs, with the waiters' influence, badmouthed each other for no reason.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "matrix subject", "judgment": "unacceptable"},
+      {"name": "embedded subject", "judgment": "acceptable"},
+      {"name": "distractor", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["experiment", "3"],
+      ["condition", "Distractor, Genitive"],
+      ["target", "subject"],
+      ["distractor", "possessor in adjunct"],
+      ["distractorNumber", "plural"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]

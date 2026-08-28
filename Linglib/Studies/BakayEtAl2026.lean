@@ -1,74 +1,57 @@
-/-
-Copyright (c) 2026 Robert Hawkins. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Robert Hawkins
--/
 import Linglib.Core.Optimization.Linearization
 import Linglib.Fragments.Turkish.Anaphors
 import Linglib.Studies.BarkerPullum1990
+import Linglib.Data.Examples.BakayEtAl2026
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Bakay, Akkuş & Dillon (2026): hierarchical relations guide memory retrieval
+# Bakay, Akkuş & Dillon 2026: hierarchical relations in antecedent retrieval
 
-[bakay-etal-2026] (JML 148, 104747): three visual-world experiments showing that
-c-command between NPs within a single clause guides antecedent retrieval for the
-Turkish reciprocal *birbirleri*, deconfounded from clause-mateness, case marking,
-subjecthood, and linear order/recency — cues the paper argues are "plausibly
-construed as item-level features". This file derives the retrieval predictions
-from the `Turkish.Anaphors` fragment (its plurality requirement yields the number
-cue), Principle A (the c-command and clause-mate cues), and
-`BarkerPullum1990.cCommand` on tree addresses; each experiment's target advantage
-is an instance of `dominance`. The retrieval model is the ordinal core of
-[lewis-vasishth-2005] spreading activation — a weighted count of cue matches;
-base-level decay, fan, mismatch penalty, and noise are not modeled.
+Three visual-world experiments ask whether c-command between noun phrases within one clause
+guides antecedent retrieval for the Turkish reciprocal *birbirleri*, deconfounded from
+clause-mateness, case marking, subjecthood and linear order, which earlier studies had let
+stand in for hierarchy and which can be stored as item-level features. Targets and distractors
+share the embedded clause and the case ending: an embedded subject against a possessor inside
+the subject or inside an adjunct, and an indirect object against the complement of a
+postposition. Looks go to the c-commanding target immediately at the reciprocal, whether it
+precedes or follows the distractor and whether or not the distractor matches the reciprocal in
+number; a pre-registered replication confirms it. A cue-based account can carry this only if a
+dynamically assigned feature approximates c-command and hierarchical cues weigh more than the
+rest; a representational account instead grants c-commanding items a privileged store. Both
+predict the target advantage and part company only on interference from feature-matching
+distractors, which the paper finds limited and inconsistent.
 
 ## Main definitions
 
-* `CueSource`, `Cue` — cues tagged relational / item-level / positional, the
-  paper's deconfound (clause-mateness is item-level, e.g. a clause index).
-* `birbirleriCues` — the cue bundle *birbirleri* generates, from Principle A plus
-  the fragment's plurality requirement.
-* `weightedActivation` — activation as a weighted cue-match count.
-* `privileged` — the rival representational account: direct access by structural
-  position ([mcelree-2006]; [oberauer-2002]; gated retrieval, [dillon-etal-2013]),
-  defined on the tree configuration, not on cue matches.
+* `Cue`, `matchCount`, `weightedActivation`, `dominance`: activation as a weighted cue-match
+  count, and pointwise dominance of match vectors.
+* `Configuration`, `Role`: the three stimulus structures, with `Role.available` and
+  `Role.features` read off the geometry.
+* `birbirleriCues`: the cue bundle, with the number cue supplied by the fragment.
+* `privileged`: the representational rival.
+* `rows_available`, `rows_target_retrieved`: the paper's coindexations and the target
+  advantage, per stimulus.
 
-## Main results
+## References
 
-* `dominance` — pointwise dominance of cue-match vectors gives strictly higher
-  activation under every positive weighting.
-* `exp1_target_retrieved`, `exp1_target_retrieved_mismatch`, `exp2_io_retrieved` —
-  the target advantages (Exp 1: subject vs. possessor, both GEN; Exp 2: indirect
-  object vs. adjunct NP, both DAT), for any positive relational weight.
-* `exp1_target_privileged`, `exp1_distractor_not_privileged` — the same contrast
-  under privileged access.
-
-## Implementation notes
-
-The paper's General Discussion opposes differentially weighted cues to a
-privileged representation; both predict the target advantage and diverge only on
-early interference from feature-matching distractors, which needs the unmodeled
-fan/mismatch machinery — the paper finds limited, inconsistent number
-interference and leaves the distinction open. The relational cue is realized as
-a dynamically assigned item feature approximating c-command ([kush-2013], in the
-paper's summary). Not yet formalized: the c-command vs. coargumenthood
-alternative the paper leaves open ([pollard-sag-1994]) — `Binding.SimpleClause`
-cannot represent the possessor/IO configurations used here — and the monotone
-activation-to-looks linking to `Processing.VisualWorld` observables.
+* [bakay-etal-2026]
+* [lewis-vasishth-2005] — cue-based retrieval
+* [kush-2013] — the dynamically assigned locality feature
+* [mcelree-2006], [oberauer-2002] — direct access and the privileged region
+* [reinhart-1976], [barker-pullum-1990] — c-command on tree addresses
+* [pollard-sag-1994] — the coargumenthood alternative
 -/
 
 namespace BakayEtAl2026
 
+open Data.Examples
 open BarkerPullum1990 (cCommand Dir Address)
 
-/-! ### Cue-based retrieval: ordinal core -/
+/-! ### Cue-based retrieval -/
 
-/-- Source of a retrieval cue, following the paper's deconfound: `relational`
-    information holds between the retrieval site and the candidate (c-command);
-    `itemLevel` features are stored with the candidate (number, case, clause
-    index); `positional` cues track linear order/recency. -/
-inductive CueSource where
+/-- Where a retrieval cue comes from: a relation between the retrieval site and the candidate,
+    a feature stored with the candidate, or the candidate's position. -/
+inductive CueSource
   | relational
   | itemLevel
   | positional
@@ -82,174 +65,183 @@ structure Cue (F : Type*) where
 
 variable {F : Type*} [DecidableEq F]
 
-/-- Number of cues from source `s` that a memory item's feature bundle matches. -/
+/-- The cues from source `s` that a memory item's feature bundle matches. -/
 def matchCount (feats : List F) (cues : List (Cue F)) (s : CueSource) : ℕ :=
-  cues.countP fun c => decide (c.source = s ∧ c.feature ∈ feats)
+  cues.countP λ c => decide (c.source = s ∧ c.feature ∈ feats)
 
-/-- Activation of an item as a weighted count of cue matches. -/
+/-- Activation as a weighted count of cue matches. -/
 def weightedActivation (w : CueSource → ℕ) (feats : List F) (cues : List (Cue F)) : ℕ :=
   ∑ s, w s * matchCount feats cues s
 
-/-- If `a`'s cue-match vector pointwise dominates `b`'s, strictly at some source
-    carrying positive weight, then `a` out-activates `b` under every such
-    weighting — `Core.Optimization.sum_mul_lt_sum_mul` on cue-match vectors. -/
+/-- An item whose match vector pointwise dominates another's, strictly at a positively
+    weighted source, out-activates it under every such weighting. -/
 theorem dominance {w : CueSource → ℕ} {a b : List F} {cues : List (Cue F)}
     (hle : ∀ s, matchCount b cues s ≤ matchCount a cues s)
     (hlt : ∃ s, 0 < w s ∧ matchCount b cues s < matchCount a cues s) :
     weightedActivation w b cues < weightedActivation w a cues :=
   Core.Optimization.sum_mul_lt_sum_mul hle hlt
 
-/-! ### Retrieval cues for *birbirleri* -/
+/-! ### The stimuli -/
 
-/-- Features relevant to antecedent retrieval for *birbirleri*. `cCommanding`
-    is the dynamically assigned feature realizing the relational cue. -/
-inductive Feature where
-  | cCommanding
-  | clauseMate
+/-- Grammatical number. -/
+inductive Number
   | plural
   | singular
-  | genCase
-  | datCase
   deriving DecidableEq, Repr
 
-/-- Item-level number cue, generated exactly when the fragment's anaphor type
-    imposes a plurality requirement on its antecedent. -/
+/-- The case endings the stimuli carry. -/
+inductive Marking
+  | genitive
+  | dative
+  deriving DecidableEq, Repr
+
+/-- Features relevant to retrieving an antecedent for *birbirleri*; `cCommanding` is the
+    dynamically assigned feature that approximates the relation. -/
+inductive Feature
+  | cCommanding
+  | clauseMate
+  | number (n : Number)
+  | marking (m : Marking)
+  deriving DecidableEq, Repr
+
+/-- The item-level number cue, generated exactly when the fragment's anaphor type imposes a
+    plurality requirement on its antecedent. -/
 def numberCues : List (Cue Feature) :=
   if Turkish.Anaphors.birbirleriAcc.anaphorType.requiresPluralAntecedent then
-    [⟨.itemLevel, .plural⟩]
+    [⟨.itemLevel, .number .plural⟩]
   else []
 
-/-- Retrieval cues generated on encountering *birbirleri*: Principle A supplies
-    the relational c-command cue and the clause-mate cue; the fragment's
-    plurality requirement supplies the number cue. -/
+/-- The cues generated on encountering *birbirleri*: Principle A supplies the relational
+    c-command cue and the clause-mate cue, the fragment the number cue. -/
 def birbirleriCues : List (Cue Feature) :=
   ⟨.relational, .cCommanding⟩ :: ⟨.itemLevel, .clauseMate⟩ :: numberCues
 
-/-! ### Experiment 1: subject targets vs. possessor distractors
+/-- The three embedded-clause structures: a possessor inside the subject, or a second noun
+    phrase inside the verb phrase — an indirect object, or the complement of a postposition or
+    a possessed adjunct noun. -/
+inductive Configuration
+  | possessorInSubject
+  | secondInVP
+  deriving DecidableEq
 
-Target = embedded subject (c-commanding clause-mate, GEN, plural). Distractor =
-possessor inside the subject NP (clause-mate, GEN, plural or singular, not
-c-commanding). Same clause, same case, and — in the Match condition — same
-number: only c-command distinguishes them.
+/-- The noun phrases of a stimulus. -/
+inductive Role
+  | matrixSubject
+  | embeddedSubject
+  | indirectObject
+  | distractor
+  deriving DecidableEq
 
-```
-        CP_emb
-       /      \
-   NP_subj     VP_emb
-   /    \       /   \
-NP_poss  N'  anaph   V
-```
--/
+/-- Whether a noun phrase shares the reciprocal's clause. -/
+def Role.clauseMate : Role → Bool
+  | .matrixSubject => false
+  | _ => true
 
-def exp1TargetAddr : Address := [Dir.L]
-def exp1DistractorAddr : Address := [Dir.L, Dir.L]
-def exp1AnaphorAddr : Address := [Dir.R, Dir.L]
+/-- Tree addresses within the embedded clause: the subject is its left daughter; a second
+    noun phrase is the left daughter of the verb phrase, a possessor or a postposition's
+    complement one step further down; the reciprocal is the left daughter of the lowest verbal
+    projection. -/
+def Configuration.anaphor : Configuration → Address
+  | .possessorInSubject => [.R, .L]
+  | .secondInVP => [.R, .R, .L]
 
-/-- The embedded subject c-commands the anaphor. -/
-theorem exp1_target_ccommands :
-    cCommand exp1TargetAddr exp1AnaphorAddr = true := by decide
+/-- The address of a clause-mate noun phrase. -/
+def Configuration.address : Configuration → Role → Address
+  | _, .embeddedSubject => [.L]
+  | .possessorInSubject, _ => [.L, .L]
+  | .secondInVP, .indirectObject => [.R, .L]
+  | .secondInVP, _ => [.R, .L, .L]
 
-/-- The possessor does not c-command the anaphor. -/
-theorem exp1_distractor_no_ccommand :
-    cCommand exp1DistractorAddr exp1AnaphorAddr = false := by decide
+/-- Principle A: an available antecedent is a clause-mate that c-commands the reciprocal. -/
+def Role.available (cfg : Configuration) (r : Role) : Prop :=
+  r.clauseMate = true ∧ cCommand (cfg.address r) cfg.anaphor = true
 
-/-- Target subject (*kameramanlar* 'cameramen'). -/
-def exp1Target : List Feature := [.cCommanding, .clauseMate, .plural, .genCase]
+instance (cfg : Configuration) (r : Role) : Decidable (r.available cfg) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Possessor distractor, Match condition (plural *yönetmenler* 'directors'). -/
-def exp1DistractorMatch : List Feature := [.clauseMate, .plural, .genCase]
+/-- The feature bundle of a clause-mate noun phrase: the c-command feature read off the
+    geometry, the clause index, its number, and its case. -/
+def Role.features (cfg : Configuration) (r : Role) (n : Number) (m : Marking) : List Feature :=
+  (if cCommand (cfg.address r) cfg.anaphor then [.cCommanding] else []) ++
+    [.clauseMate, .number n, .marking m]
 
-/-- Possessor distractor, Mismatch condition (singular *yönetmen* 'director'). -/
-def exp1DistractorMismatch : List Feature := [.clauseMate, .singular, .genCase]
+/-- A subject and an indirect object c-command the reciprocal; a possessor and a postposition's
+    complement do not. -/
+theorem available_iff (cfg : Configuration) (r : Role) :
+    r.available cfg ↔ (r = .embeddedSubject ∨ (cfg = .secondInVP ∧ r = .indirectObject)) := by
+  cases cfg <;> cases r <;> decide
 
-/-- In the Match condition only the relational cue distinguishes target from
-    distractor: item-level (and positional) match counts tie. -/
-theorem exp1_relational_distinguishes :
-    matchCount exp1Target birbirleriCues .relational = 1 ∧
-    matchCount exp1DistractorMatch birbirleriCues .relational = 0 ∧
-    ∀ s, s ≠ .relational →
-      matchCount exp1Target birbirleriCues s =
-      matchCount exp1DistractorMatch birbirleriCues s := by decide
+/-- The target out-activates a distractor of any number and case, for every weighting with
+    positive relational weight: with item-level cues tied, only the relational cue separates
+    them. -/
+theorem target_retrieved (cfg : Configuration) (w : CueSource → ℕ) (hw : 0 < w .relational)
+    (n : Number) (mT mD : Marking) :
+    weightedActivation w (Role.features cfg .distractor n mD) birbirleriCues <
+      weightedActivation w (Role.features cfg .embeddedSubject .plural mT) birbirleriCues := by
+  refine dominance (λ s => ?_) ⟨.relational, hw, ?_⟩
+  · cases cfg <;> cases s <;> cases n <;> cases mD <;> cases mT <;> decide
+  · cases cfg <;> cases n <;> cases mD <;> cases mT <;> decide
 
-/-- The target out-activates the Match distractor — the hardest case, where
-    item-level cues do not distinguish them — for any weighting with positive
-    relational weight. -/
-theorem exp1_target_retrieved (w : CueSource → ℕ) (hw : 0 < w .relational) :
-    weightedActivation w exp1DistractorMatch birbirleriCues <
-    weightedActivation w exp1Target birbirleriCues :=
-  dominance (by decide) ⟨.relational, hw, by decide⟩
+/-! ### The privileged representation -/
 
-/-- In the Mismatch condition the distractor also loses the number cue, so the
-    target advantage holds a fortiori. -/
-theorem exp1_target_retrieved_mismatch (w : CueSource → ℕ) (hw : 0 < w .relational) :
-    weightedActivation w exp1DistractorMismatch birbirleriCues <
-    weightedActivation w exp1Target birbirleriCues :=
-  dominance (by decide) ⟨.relational, hw, by decide⟩
+/-- Direct access by structural position: a noun phrase is privileged at a retrieval site iff
+    it c-commands it, whatever its features. -/
+def privileged (cfg : Configuration) (r : Role) : Prop :=
+  cCommand (cfg.address r) cfg.anaphor = true
 
-/-! ### Experiment 2: indirect-object targets vs. adjunct distractors
+/-- The privileged region holds exactly the c-commanders: the subject and, in the verb
+    phrase, the indirect object. -/
+theorem privileged_iff (cfg : Configuration) (r : Role) (hr : r ≠ .matrixSubject) :
+    privileged cfg r ↔ r.available cfg := by
+  cases r <;> simp_all [privileged, Role.available, Role.clauseMate]
 
-Target = c-commanding indirect object (DAT). Distractor = NP inside a
-postpositional adjunct (DAT, e.g. *göre* 'according to'), not c-commanding.
-Extends the advantage to non-subject c-commanders, ruling out a composite
-subject-of-the-current-clause item-level cue.
+/-! ### The paper's stimuli -/
 
-```
-    IO condition:              Distractor condition:
-        CP_emb                     CP_emb
-       /      \                   /      \
-   NP_subj     VP             NP_subj     VP
-               /  \                       /  \
-           NP_IO   V'                 PP_adj   V'
-                  /  \                /    \  /  \
-              anaph   V          NP_dist  P anaph V
-```
--/
+/-- A row's configuration, from its distractor or second noun phrase. -/
+def configuration? (r : LinguisticExample) : Option Configuration :=
+  match r.feature? "distractor", r.feature? "second" with
+  | some "possessor in subject", _ => some .possessorInSubject
+  | some "possessor in adjunct", _ | some "postpositional adjunct", _ => some .secondInVP
+  | _, some "indirect object" => some .secondInVP
+  | _, _ => none
 
-def exp2IOAddr : Address := [Dir.R, Dir.L]
-def exp2DistractorAddr : Address := [Dir.R, Dir.L, Dir.L]
-def exp2AnaphorAddr : Address := [Dir.R, Dir.R, Dir.L]
+/-- A reading's noun phrase. -/
+def Role.parse? : String → Option Role
+  | "matrix subject" => some .matrixSubject
+  | "embedded subject" => some .embeddedSubject
+  | "indirect object" => some .indirectObject
+  | "distractor" => some .distractor
+  | _ => none
 
-/-- The indirect object c-commands the anaphor. -/
-theorem exp2_io_ccommands :
-    cCommand exp2IOAddr exp2AnaphorAddr = true := by decide
+/-- A row's distractor number. -/
+def distractorNumber? (r : LinguisticExample) : Option Number :=
+  match r.feature? "distractorNumber" with
+  | some "plural" => some .plural
+  | some "singular" => some .singular
+  | _ => none
 
-/-- The adjunct-internal distractor does not c-command the anaphor. -/
-theorem exp2_distractor_no_ccommand :
-    cCommand exp2DistractorAddr exp2AnaphorAddr = false := by decide
+/-- A row's distractor case: genitive on possessors, dative under a postposition. -/
+def distractorCase? (r : LinguisticExample) : Option Marking :=
+  match r.feature? "distractor" with
+  | some "possessor in subject" | some "possessor in adjunct" => some .genitive
+  | some "postpositional adjunct" => some .dative
+  | _ => none
 
-/-- Indirect-object target: c-commanding clause-mate, plural, DAT. -/
-def exp2IO : List Feature := [.cCommanding, .clauseMate, .plural, .datCase]
+/-- Each row's coindexation is Principle A on its geometry: the embedded subject and an
+    indirect object are available, the matrix subject and the distractors are not. -/
+theorem rows_available :
+    ∀ r ∈ Examples.all, ∀ cfg ∈ configuration? r, ∀ x ∈ r.readings, ∀ role ∈ Role.parse? x.1,
+      (x.2 = .acceptable ↔ role.available cfg) := by
+  decide
 
-/-- Adjunct-internal distractor: clause-mate, plural, DAT, not c-commanding. -/
-def exp2Distractor : List Feature := [.clauseMate, .plural, .datCase]
-
-/-- The indirect object out-activates the adjunct distractor for any weighting
-    with positive relational weight. Experiment 3 is the paper's pre-registered,
-    high-powered replication of the Experiment 1–2 contrasts; it introduces no
-    new configuration. -/
-theorem exp2_io_retrieved (w : CueSource → ℕ) (hw : 0 < w .relational) :
-    weightedActivation w exp2Distractor birbirleriCues <
-    weightedActivation w exp2IO birbirleriCues :=
-  dominance (by decide) ⟨.relational, hw, by decide⟩
-
-/-! ### Privileged representation
-
-The representational account grants c-commanding items a temporary association
-with a privileged store — access by structural position, not cue matching — so
-privilege is defined on the tree configuration, not on `matchCount`. -/
-
-/-- An NP position is privileged at a retrieval site iff it c-commands it: the
-    region of direct access holds the current c-commanders. -/
-def privileged (np anaphor : Address) : Prop :=
-  cCommand np anaphor = true
-
-/-- The Experiment 1 target is in the region of direct access. -/
-theorem exp1_target_privileged : privileged exp1TargetAddr exp1AnaphorAddr :=
-  exp1_target_ccommands
-
-/-- The Experiment 1 distractor is not, whatever its feature match. -/
-theorem exp1_distractor_not_privileged :
-    ¬ privileged exp1DistractorAddr exp1AnaphorAddr := by
-  simp [privileged, exp1_distractor_no_ccommand]
+/-- In every stimulus with a distractor, the plural embedded subject out-activates it under
+    any positive relational weight, whatever the distractor's number or case. -/
+theorem rows_target_retrieved (w : CueSource → ℕ) (hw : 0 < w .relational) :
+    ∀ r ∈ Examples.all, ∀ cfg ∈ configuration? r, ∀ num ∈ distractorNumber? r,
+      ∀ cas ∈ distractorCase? r,
+        weightedActivation w (Role.features cfg .distractor num cas) birbirleriCues <
+          weightedActivation w (Role.features cfg .embeddedSubject .plural .genitive)
+            birbirleriCues :=
+  λ _ _ cfg _ num _ cas _ => target_retrieved cfg w hw num .genitive cas
 
 end BakayEtAl2026
