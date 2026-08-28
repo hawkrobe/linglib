@@ -337,6 +337,7 @@ import Linglib.Data.Examples.ArregiPietraszko2021
 import Linglib.Data.Examples.ArreguiKusumoto1998
 import Linglib.Data.Examples.AsherPelletier2013
 import Linglib.Data.Examples.BakayEtAl2026
+import Linglib.Data.Examples.BaleEtAl2025
 import Linglib.Data.Examples.BeckOdaSugisaki2004
 import Linglib.Data.Examples.BeltramaSchwarz2024
 import Linglib.Data.Examples.BergenGoodman2015
