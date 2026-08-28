@@ -52,11 +52,14 @@ theorems are a ℚ veneer over them.
   categorically, partial orders add nothing over OT
   (`RealizationProblem.isOTRealizable_iff_isPartialOrderRealizable` in
   `HarmonicGrammar.Expressivity`).
-- `winProb_discrete_binary_rate` / `winProb_stratified_binary_rate`:
-  closed-form win rates for binary competitions. A ranking is decided by its
+- `card_filter_picksAt_discrete_binary` / `card_filter_picksAt_stratified_binary`:
+  closed-form win counts for binary competitions, with `winProb_discrete_binary_rate`
+  / `winProb_stratified_binary_rate` the rates. A ranking is decided by its
   earliest active constraint (`picksAt_binary_iff_head_mem_favoring`), so
   `chosen` wins at rate `|favoring ∩ active| / |active|` — restricted to the
   deciding stratum in the stratified case — with no enumeration of rankings.
+- `winProb_stratified_eq_one`: a candidate that dominates every rival at the
+  deciding stratum is the categorical output.
 
 ## Implementation notes
 
@@ -517,12 +520,14 @@ theorem sum_winProb_eq_one [IsPartialOrder (Fin n) r] [DecidableRel r]
   rw [← Finset.sum_div, ← Nat.cast_sum, sum_card_filter_picksAt h_ne h_inj]
   exact div_self (by exact_mod_cast (consistentTotalOrders_card_pos r).ne')
 
-/-- Two distinct candidates with distinct violation profiles split the
-    probability mass. -/
-theorem winProb_binary_add_eq_one [IsPartialOrder (Fin n) r] [DecidableRel r]
+/-- Two distinct candidates with distinct violation profiles partition the
+    consistent rankings. -/
+theorem card_filter_picksAt_binary_add [DecidableRel r]
     {o₁ o₂ : Output} (h_two : cands i = {o₁, o₂}) (h_ne : o₁ ≠ o₂)
     (h_vp : vp i o₁ ≠ vp i o₂) :
-    winProb cands vp r i o₁ + winProb cands vp r i o₂ = 1 := by
+    ((consistentTotalOrders r).filter (fun σ => PicksAt cands vp σ i o₁)).card +
+      ((consistentTotalOrders r).filter (fun σ => PicksAt cands vp σ i o₂)).card =
+    (consistentTotalOrders r).card := by
   have h_inj : Set.InjOn (vp i) (cands i) := by
     intro o ho o' ho' hvv
     rw [h_two] at ho ho'
@@ -530,9 +535,19 @@ theorem winProb_binary_add_eq_one [IsPartialOrder (Fin n) r] [DecidableRel r]
       Set.mem_singleton_iff] at ho ho'
     rcases ho with rfl | rfl <;> rcases ho' with rfl | rfl <;>
       first | rfl | exact absurd hvv h_vp | exact absurd hvv.symm h_vp
-  have h := sum_winProb_eq_one (r := r)
+  have h := sum_card_filter_picksAt (r := r)
     (by rw [h_two]; exact Finset.insert_nonempty _ _) h_inj
   rwa [h_two, Finset.sum_pair h_ne] at h
+
+/-- Two distinct candidates with distinct violation profiles split the
+    probability mass. -/
+theorem winProb_binary_add_eq_one [IsPartialOrder (Fin n) r] [DecidableRel r]
+    {o₁ o₂ : Output} (h_two : cands i = {o₁, o₂}) (h_ne : o₁ ≠ o₂)
+    (h_vp : vp i o₁ ≠ vp i o₂) :
+    winProb cands vp r i o₁ + winProb cands vp r i o₂ = 1 := by
+  unfold winProb
+  rw [← add_div, ← Nat.cast_add, card_filter_picksAt_binary_add h_two h_ne h_vp]
+  exact div_self (by exact_mod_cast (consistentTotalOrders_card_pos r).ne')
 
 /-! ### Bridge — binary PicksAt is decided by the σ-earliest active constraint
 
@@ -546,33 +561,15 @@ for binary POC competitions without enumerating rankings. -/
 
 open Core.Optimization.PermSubsetCombinatorics
 
-/-- For binary candidate sets, `PicksAt σ i chosen` holds exactly when the
-    σ-earliest active constraint favors `chosen`. -/
-theorem picksAt_binary_iff_head_mem_favoring
-    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) (σ : Ranking n) :
-    PicksAt cands vp σ i chosen ↔
-    ∃ x ∈ favoring vp i chosen other,
-      (permDList σ (active vp i chosen other)).head? = some x := by
+omit [DecidableEq Output] in
+/-- `o` lex-dominates `o'` under σ exactly when the σ-earliest active
+    constraint favors `o`. -/
+theorem lex_lt_iff_head_mem_favoring (σ : Ranking n) :
+    toLex (fun k : Fin n => vp i o (σ k)) < toLex (fun k : Fin n => vp i o' (σ k)) ↔
+    ∃ x ∈ favoring vp i o o', (permDList σ (active vp i o o')).head? = some x := by
   classical
-  -- Binary candidates: `PicksAt` reduces to lex domination of `chosen` over `other`.
-  have h_lex :
-      PicksAt cands vp σ i chosen ↔
-      ∃ k : Fin n, (∀ j, j < k → vp i chosen (σ j) = vp i other (σ j)) ∧
-        vp i chosen (σ k) < vp i other (σ k) := by
-    unfold PicksAt
-    constructor
-    · rintro ⟨_, h⟩
-      exact h other
-        (by rw [h_two]; exact Finset.mem_insert_of_mem (Finset.mem_singleton.mpr rfl))
-        (Ne.symm h_ne)
-    · intro h
-      refine ⟨by rw [h_two]; exact Finset.mem_insert_self _ _, ?_⟩
-      intro o' h_o' h_o'_ne
-      rw [h_two, Finset.mem_insert, Finset.mem_singleton] at h_o'
-      rcases h_o' with h' | h'
-      · exact absurd h' h_o'_ne
-      · subst h'; exact h
-  rw [h_lex]
+  show (∃ k : Fin n, (∀ j, j < k → vp i o (σ j) = vp i o' (σ j)) ∧
+    vp i o (σ k) < vp i o' (σ k)) ↔ _
   constructor
   · -- the first strict-difference position holds the σ-earliest active constraint
     rintro ⟨k, h_tie, h_lt⟩
@@ -589,12 +586,43 @@ theorem picksAt_binary_iff_head_mem_favoring
     by_contra h_ne'
     exact absurd (hmin (σ j) (mem_active.mpr h_ne')) (by simpa using not_le.mpr hj)
 
+/-- For binary candidate sets, `PicksAt σ i chosen` holds exactly when the
+    σ-earliest active constraint favors `chosen`. -/
+theorem picksAt_binary_iff_head_mem_favoring
+    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) (σ : Ranking n) :
+    PicksAt cands vp σ i chosen ↔
+    ∃ x ∈ favoring vp i chosen other,
+      (permDList σ (active vp i chosen other)).head? = some x := by
+  rw [← lex_lt_iff_head_mem_favoring]
+  unfold PicksAt
+  constructor
+  · rintro ⟨_, h⟩
+    exact h other
+      (by rw [h_two]; exact Finset.mem_insert_of_mem (Finset.mem_singleton.mpr rfl))
+      (Ne.symm h_ne)
+  · intro h
+    refine ⟨by rw [h_two]; exact Finset.mem_insert_self _ _, fun o' h_o' h_o'_ne => ?_⟩
+    rw [h_two, Finset.mem_insert, Finset.mem_singleton] at h_o'
+    rcases h_o' with h' | h'
+    · exact absurd h' h_o'_ne
+    · subst h'; exact h
+
 /-! ### Closed-form rate for binary candidates -/
 
-/-- With binary candidates, the fraction of all `n!` rankings picking `chosen`
-    is `|favoring ∩ active| / |active|` — each ranking is decided by its
-    σ-earliest active constraint, and every active constraint is equally
-    likely to come first. -/
+/-- With binary candidates, the rankings picking `chosen` number
+    `n! · |favoring ∩ active| / |active|`, in multiplied form: each ranking is
+    decided by its σ-earliest active constraint, and every active constraint is
+    equally likely to come first. -/
+theorem card_filter_picksAt_discrete_binary
+    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) :
+    (Finset.univ.filter (fun σ : Ranking n => PicksAt cands vp σ i chosen)).card *
+        (active vp i chosen other).card =
+      n.factorial * (favoring vp i chosen other ∩ active vp i chosen other).card := by
+  rw [Finset.filter_congr fun σ _ => picksAt_binary_iff_head_mem_favoring h_two h_ne σ]
+  exact perm_filter_head_in_card _ _
+
+/-- The fraction of all `n!` rankings picking `chosen` is
+    `|favoring ∩ active| / |active|`. -/
 theorem winProb_discrete_binary_rate
     (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) :
     winProb cands vp (· = ·) i chosen =
@@ -616,7 +644,7 @@ omit [DecidableEq Output] in
 /-- On a consistent ranking of a stratified grammar, the σ-earliest active
     constraint lies in the deciding stratum: earlier strata are inactive
     (`h_tie`), and constraints of later strata come after all of stratum `k`. -/
-private theorem permDList_head?_active_filter_stratum
+theorem permDList_head?_active_filter_stratum
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop} {k : Fin s}
     (hσ : IsConsistent (stratified stratumOf inner) σ)
     (h_tie : ∀ c, stratumOf c < k → vp i chosen c = vp i other c)
@@ -635,9 +663,34 @@ private theorem permDList_head?_active_filter_stratum
 
 /-- Under a stratified grammar, a binary competition whose variants tie on
     every stratum before `k` — with `k` freely ranked internally (`h_triv`)
-    and containing an active constraint (`h_dec`) — is won by `chosen` at rate
-    `|favoring ∩ Dₖ| / |Dₖ|`, where `Dₖ` is the active set restricted to
-    stratum `k`. Later strata cannot affect the outcome. -/
+    and containing an active constraint (`h_dec`) — is decided within stratum
+    `k`: the rankings picking `chosen`, times the active constraints `Dₖ` of
+    that stratum, equal all consistent rankings times those favoring `chosen`.
+    Later strata cannot affect the outcome. -/
+theorem card_filter_picksAt_stratified_binary
+    {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
+    [IsPartialOrder (Fin n) inner] [DecidableRel inner] {k : Fin s}
+    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other)
+    (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
+    (h_tie : ∀ c, stratumOf c < k → vp i chosen c = vp i other c)
+    (h_dec : ((active vp i chosen other).filter (stratumOf · = k)).Nonempty) :
+    ((consistentTotalOrders (stratified stratumOf inner)).filter
+        (fun σ => PicksAt cands vp σ i chosen)).card *
+        ((active vp i chosen other).filter (stratumOf · = k)).card =
+      (consistentTotalOrders (stratified stratumOf inner)).card *
+        (favoring vp i chosen other ∩
+          (active vp i chosen other).filter (stratumOf · = k)).card := by
+  classical
+  rw [Finset.filter_congr fun σ hσ =>
+    (picksAt_binary_iff_head_mem_favoring h_two h_ne σ).trans
+      (by rw [permDList_head?_active_filter_stratum
+        (mem_consistentTotalOrders.mp hσ) h_tie h_dec])]
+  exact filter_head_in_card_of_swaps _ _ _
+    fun y₁ h₁ y₂ h₂ σ hσ => mem_consistentTotalOrders.mpr
+      (isConsistent_swap_mul h_triv (Finset.mem_filter.mp h₁).2 (Finset.mem_filter.mp h₂).2
+        (mem_consistentTotalOrders.mp hσ))
+
+/-- The deciding-stratum rate: `chosen` wins at `|favoring ∩ Dₖ| / |Dₖ|`. -/
 theorem winProb_stratified_binary_rate
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     [IsPartialOrder (Fin n) inner] [DecidableRel inner] {k : Fin s}
@@ -649,16 +702,45 @@ theorem winProb_stratified_binary_rate
       ((favoring vp i chosen other ∩
           (active vp i chosen other).filter (stratumOf · = k)).card : ℚ) /
         (((active vp i chosen other).filter (stratumOf · = k)).card : ℚ) := by
-  classical
   unfold winProb
-  rw [Finset.filter_congr fun σ hσ =>
-    (picksAt_binary_iff_head_mem_favoring h_two h_ne σ).trans
-      (by rw [permDList_head?_active_filter_stratum
-        (mem_consistentTotalOrders.mp hσ) h_tie h_dec])]
-  exact filter_head_in_rate_of_swaps _ _ _
-    (consistentTotalOrders_nonempty (stratified stratumOf inner))
-    fun y₁ h₁ y₂ h₂ σ hσ => mem_consistentTotalOrders.mpr
-      (isConsistent_swap_mul h_triv (Finset.mem_filter.mp h₁).2 (Finset.mem_filter.mp h₂).2
-        (mem_consistentTotalOrders.mp hσ))
+  rw [div_eq_div_iff (by exact_mod_cast (consistentTotalOrders_card_pos _).ne')
+    (by exact_mod_cast h_dec.card_pos.ne')]
+  exact_mod_cast (card_filter_picksAt_stratified_binary h_two h_ne h_triv h_tie h_dec).trans
+    (Nat.mul_comm _ _)
+
+/-! ### Categorical outcomes under stratified grammars -/
+
+omit [DecidableEq Output] in
+/-- Under a stratified grammar, a consistent ranking picks `o` when, against
+    every rival, the first stratum on which they differ has all its active
+    constraints favoring `o`. -/
+theorem picksAt_stratified_of_dominates
+    {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
+    (hσ : IsConsistent (stratified stratumOf inner) σ) (ho : o ∈ cands i)
+    (h : ∀ o' ∈ cands i, o' ≠ o → ∃ k : Fin s,
+      (∀ c, stratumOf c < k → vp i o c = vp i o' c) ∧
+      ((active vp i o o').filter (stratumOf · = k)).Nonempty ∧
+      (active vp i o o').filter (stratumOf · = k) ⊆ favoring vp i o o') :
+    PicksAt cands vp σ i o := by
+  refine ⟨ho, fun o' ho' hne => ?_⟩
+  obtain ⟨k, h_tie, h_dec, h_sub⟩ := h o' ho' hne
+  obtain ⟨x, hx, hhead⟩ := exists_permDList_head?_eq_some h_dec σ
+  exact (lex_lt_iff_head_mem_favoring σ).mpr
+    ⟨x, h_sub hx, (permDList_head?_active_filter_stratum hσ h_tie h_dec).trans hhead⟩
+
+/-- A candidate dominating every rival at the deciding stratum wins with
+    probability one. -/
+theorem winProb_stratified_eq_one
+    {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
+    [IsPartialOrder (Fin n) inner] [DecidableRel inner] (ho : o ∈ cands i)
+    (h : ∀ o' ∈ cands i, o' ≠ o → ∃ k : Fin s,
+      (∀ c, stratumOf c < k → vp i o c = vp i o' c) ∧
+      ((active vp i o o').filter (stratumOf · = k)).Nonempty ∧
+      (active vp i o o').filter (stratumOf · = k) ⊆ favoring vp i o o') :
+    winProb cands vp (stratified stratumOf inner) i o = 1 := by
+  unfold winProb
+  rw [Finset.filter_true_of_mem fun σ hσ =>
+    picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) ho h]
+  exact div_self (by exact_mod_cast (consistentTotalOrders_card_pos _).ne')
 
 end OptimalityTheory
