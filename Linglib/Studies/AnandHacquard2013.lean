@@ -1,527 +1,432 @@
-import Linglib.Semantics.Attitudes.Preference
-import Linglib.Semantics.Attitudes.Doxastic
-import Linglib.Semantics.Mood.Defs
-import Linglib.Pragmatics.Emotion
+import Linglib.Semantics.Presupposition.Defs
+import Linglib.Data.Examples.AnandHacquard2013
+import Mathlib.Data.Set.Basic
+import Mathlib.Logic.Nontrivial.Defs
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Anand & Hacquard 2013: epistemics and attitudes
 
-[anand-hacquard-2013] (*Semantics & Pragmatics* 6:8) survey the
-distribution of epistemic modals in the complements of attitude verbs
-across French, Italian, and Spanish: epistemics are fully acceptable
-under attitudes of acceptance (doxastics, argumentatives,
-semifactives), degraded under desideratives and directives, and
-emotive doxastics (*hope*, *fear*) and dubitatives (*doubt*) show a
-mixed pattern — possibility but not necessity.
+Epistemic modals are acceptable in the complements of attitudes of acceptance (*think*,
+*say*, *realize*), unacceptable under desideratives and directives, and acceptable under
+emotive doxastics (*hope*, *fear*) and dubitatives (*doubt*) with possibility but not
+necessity force — Table 3, from seven-point acceptability surveys of French, Italian, and
+Spanish. The account combines Yalcin's information-state semantics, on which an epistemic
+quantifies over a state `S` anaphoric to the embedding attitude and presupposes `S ≠ ∅`,
+with Bolinger's split of attitudes: representational attitudes pass their doxastic state as
+`S`; non-representational ones set `S = ∅` and combine with their complement by Villalta's
+comparison against the Heimian alternative `¬φ`, so an embedded epistemic is never defined.
+Emotive doxastics and dubitatives are hybrids — a doxastic possibility assertion, a comparison
+of the complement's verifiers with its falsifiers, and an uncertainty presupposition demanding
+both — and the doxastic assertion of an embedded necessity modal contradicts that
+presupposition, while an embedded possibility modal contributes nothing new.
 
-The account combines two proposals. Epistemics quantify over an
-information state parameter obtained by anaphora to the embedding
-attitude ([yalcin-2007], [hacquard-2006]); attitudes split by
-*representationality* ([bolinger-1968]): representational attitudes
-convey a mental picture and so provide an information state
-S = DOX(x,w), non-representational ones combine with their complement
-by comparative preference semantics ([villalta-2008]) and provide
-none, and hybrids have both components — the representational
-component licenses possibility epistemics while the uncertainty
-condition blocks necessity. `Representationality`, `AttitudeClass`,
-and `LicensesEpistemic` render the classification, and
-`theory_matches_data` checks the prediction against the paper's
-pooled acceptability survey.
+`SProp` is a complement relative to `S`, with `might`, `must`, and `ofSet`; `verifiers` are the
+sub-states settled on a complement, `Better` is Villalta's lift of an ordering, and
+`better_subStates_iff` is the footnote-19 reduction of the verifier comparison to `S ∩ p`
+against `S ∩ pᶜ`. `Licensed` asks whether any context makes an embedded epistemic defined and
+true, `licensed_iff` characterizes it by attitude kind, and `rows_track_licensing` runs the
+characterization over the paper's examples. Italian *pensare* (65) selects the subjunctive yet
+licenses epistemics, so subjunctive is an imperfect correlate (`unacceptable_rows_subjunctive`
+is the one direction that holds).
 
-The final section maps the hybrid structure onto Bayesian
-theory-of-mind inference ([baker-jara-ettinger-saxe-tenenbaum-2017];
-[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]): the doxastic,
-preference, and uncertainty components are the belief marginal, the
-desire marginal, and non-extreme credence of a prospective emotion.
+## References
+
+* [anand-hacquard-2013]
+* [yalcin-2007] — the information-state parameter and the *imagine* contrast (23)
+* [veltman-1996], [hacquard-2006], [hacquard-2010] — anaphoric modal bases
+* [bolinger-1968] — representational attitudes
+* [villalta-2008] — comparative semantics for subjunctive-selecting attitudes
+* [heim-1992] — the alternative set `{φ, ¬φ}`
+* [geurts-2005] — the non-triviality presupposition of modals
+* [scheffler-2008] — the doxastic component of *hope*
+* [falaus-2010] — Romanian *vreun* under *want* and *hope*
+* [kratzer-2009] — the filing-cabinet scenario
 -/
 
 namespace AnandHacquard2013
 
-open Preferential
-open Doxastic
-
-/-! ### The representationality classification -/
-
-/-- Classification of attitude semantics by representationality: an
-    attitude is representational iff its semantics provides a
-    non-trivial information state that embedded epistemics can be
-    anaphoric to (§3). -/
-inductive Representationality where
-  /-- Provides the information state S = DOX(x,w): doxastics,
-      argumentatives, semifactives. -/
-  | representational
-  /-- No information state: desideratives and directives, whose
-      comparative semantics ([villalta-2008]) supplies S = ∅. -/
-  | nonRepresentational
-  /-- Both components: a representational component providing DOX and
-      a preference component ordering alternatives — emotive
-      doxastics and dubitatives. -/
-  | hybrid
-  deriving DecidableEq, Repr
-
-/-- An attitude with a representational component provides an
-    information state that epistemics can quantify over. -/
-def Representationality.HasInformationState : Representationality → Prop
-  | .representational => True
-  | .nonRepresentational => False
-  | .hybrid => True
-
-instance : DecidablePred Representationality.HasInformationState := fun r => by
-  cases r <;> unfold Representationality.HasInformationState <;> infer_instance
-
-/-- An attitude with a preference component uses comparative
-    semantics. -/
-def Representationality.HasPreferenceComponent : Representationality → Prop
-  | .representational => False
-  | .nonRepresentational => True
-  | .hybrid => True
-
-instance : DecidablePred Representationality.HasPreferenceComponent := fun r => by
-  cases r <;> unfold Representationality.HasPreferenceComponent <;> infer_instance
-
-/-- Epistemic modal force. -/
-inductive EpistemicForce where
-  /-- *might*, *may* (∃ over the information state). -/
-  | possibility
-  /-- *must*, *have to* (∀ over the information state). -/
-  | necessity
-  deriving DecidableEq, Repr
-
-/-- The central prediction: representational attitudes license both
-    forces, non-representational ones neither (the trivial modal base
-    yields tautology or contradiction), and hybrids license
-    possibility only — the uncertainty condition contradicts
-    universal quantification over DOX. -/
-def Representationality.LicensesEpistemic :
-    Representationality → EpistemicForce → Prop
-  | .representational,    _             => True
-  | .nonRepresentational, _             => False
-  | .hybrid,              .possibility  => True
-  | .hybrid,              .necessity    => False
-
-instance : ∀ r f, Decidable (Representationality.LicensesEpistemic r f) := fun r f => by
-  cases r <;> cases f <;> unfold Representationality.LicensesEpistemic <;> infer_instance
-
-/-- Epistemic licensing requires an information state. -/
-theorem licensing_requires_information_state (r : Representationality)
-    (f : EpistemicForce) (h : r.LicensesEpistemic f) :
-    r.HasInformationState := by
-  cases r <;> cases f <;> trivial
-
-/-- The seven attitude classes of the survey. -/
-inductive AttitudeClass where
-  /-- *believe*, *think*, *suppose*. -/
-  | doxastic
-  /-- *say*, *argue*, *conclude*. -/
-  | argumentative
-  /-- *know*, *realize*, *discover*. -/
-  | semifactive
-  /-- *want*, *wish*. -/
-  | desiderative
-  /-- *demand*, *order*, *require*. -/
-  | directive
-  /-- *hope*, *fear*. -/
-  | emotiveDoxastic
-  /-- *doubt*. -/
-  | dubitative
-  deriving DecidableEq, Repr
-
-/-- The representationality of each attitude class. -/
-def AttitudeClass.representationality : AttitudeClass → Representationality
-  | .doxastic        => .representational
-  | .argumentative   => .representational
-  | .semifactive     => .representational
-  | .desiderative    => .nonRepresentational
-  | .directive       => .nonRepresentational
-  | .emotiveDoxastic => .hybrid
-  | .dubitative      => .hybrid
-
-/-- Epistemic licensing for an attitude class, via its
-    representationality. -/
-def AttitudeClass.LicensesEpistemic (c : AttitudeClass)
-    (f : EpistemicForce) : Prop :=
-  c.representationality.LicensesEpistemic f
-
-instance : ∀ c f, Decidable (AttitudeClass.LicensesEpistemic c f) := fun c f => by
-  unfold AttitudeClass.LicensesEpistemic; infer_instance
-
-/-- The mood-selection correlate (§6): subjunctive tracks the
-    preference component and indicative representationality, so the
-    correlation with epistemic licensing is strong but imperfect —
-    hybrids license possibility epistemics and select subjunctive. -/
-def Representationality.fromSelector : Mood.Selector → Representationality
-  | .indicativeSelecting         => .representational
-  | .subjunctiveSelecting        => .nonRepresentational
-  | .crossLinguisticallyVariable => .hybrid
-  | .moodNeutral                 => .representational
-
-/-! ### Empirical Data: Acceptability Ratings (Table 4) -/
-
-/-!
-## Cross-Romance Survey Data
-
-Seven-point acceptability ratings (1 = unacceptable, 7 = completely
-acceptable) for epistemic modals under attitude verbs, pooled across
-French (n=31), Italian (n=11), and Spanish (n=21).
-
-### Table 4: Pooled Descriptive Statistics (mean (sd) / median)
-
-|             | des/direct | emo dox | dubitative | semifactive | accept | Mean       |
-|-------------|-----------|---------|------------|-------------|--------|------------|
-| **might**   | 3.5/3     | 5.1/6  | 6.1/7      | 6.1/7       | 6.4/7  | 5.4 (1.8)/6|
-| **must**    | 1.9/1     | 2.7/2  | 3.1/2      | 5.6/6       | 6.0/7  | 3.9 (1.7)/4|
-| **probable**| 2.4/3     | 4.2/5  | 4.8/6      | 5.6/7       | 6.2/7  | 5.0 (1.9)/5|
-
-The critical contrasts:
-- Acceptance/semifactive: might ≈ must (both high)
-- Des/directive: might ≈ must (both low)
-- Emotive doxastic/dubitative: might >> must
-
-The survey collapses some classes (doxastics ≈ argumentatives,
-desideratives ≈ directives), but the theory predicts the same
-licensing for collapsed classes — verified cell by cell in
-`theory_matches_data`.
--/
-
-/-- Acceptability judgment: acceptable (median ≥ 5) or degraded. -/
-inductive Acceptability where
-  | acceptable  -- median ≥ 5
-  | degraded    -- median ≤ 3
-  deriving DecidableEq, Repr
-
-/-- Observed acceptability from the survey data, indexed by the full
-`AttitudeClass` from Representationality.lean. Argumentatives pattern
-with doxastics; directives pattern with desideratives. -/
-def observedAcceptability : AttitudeClass → EpistemicForce → Acceptability
-  | .doxastic,        .possibility  => .acceptable
-  | .doxastic,        .necessity    => .acceptable
-  | .argumentative,   .possibility  => .acceptable
-  | .argumentative,   .necessity    => .acceptable
-  | .semifactive,     .possibility  => .acceptable
-  | .semifactive,     .necessity    => .acceptable
-  | .desiderative,    .possibility  => .degraded
-  | .desiderative,    .necessity    => .degraded
-  | .directive,       .possibility  => .degraded
-  | .directive,       .necessity    => .degraded
-  | .emotiveDoxastic, .possibility  => .acceptable
-  | .emotiveDoxastic, .necessity    => .degraded
-  | .dubitative,      .possibility  => .acceptable
-  | .dubitative,      .necessity    => .degraded
-
-/-- Predicted licensing: the prediction follows from the
-representationality classification, not per-cell stipulation. -/
-def predictedAcceptability (att : AttitudeClass) (force : EpistemicForce) :
-    Acceptability :=
-  if att.LicensesEpistemic force then .acceptable else .degraded
-
-/-! ### Theory Matches Data -/
-
-/-- The representationality theory correctly predicts all 14 cells
-(7 attitude classes × 2 epistemic forces). -/
-theorem theory_matches_data :
-    ∀ att : AttitudeClass, ∀ force : EpistemicForce,
-    predictedAcceptability att force = observedAcceptability att force := by
-  intro att force
-  cases att <;> cases force <;> rfl
-
-/-! ### Information State Semantics (Yalcin's S parameter) -/
-
-/-!
-## Epistemic Modals as Information-State Quantifiers
-
-Following [yalcin-2007] and [veltman-1996], epistemic modals
-quantify over an information state parameter S:
-
-    ⟦might φ⟧^{c,w,S,g} = 1 iff ∃w' ∈ S: ⟦φ⟧^{c,w',S,g} = 1
-    ⟦must φ⟧^{c,w,S,g} = 1 iff ∀w' ∈ S: ⟦φ⟧^{c,w',S,g} = 1
-
-Attitude verbs update S with their quantificational domain:
-
-    ⟦att φ⟧^{c,w,S,g} = λx. ∀w' ∈ S': ⟦φ⟧^{c,w',S',g} = 1
-    where S' = quantificational domain provided by att
-
-For representational attitudes: S' = DOX(x,w) (non-trivial)
-For non-representational attitudes: S' = ∅ (trivial → tautology/contradiction)
--/
+open Data.Examples Presupposition
 
 variable {W : Type*}
 
-/-- Information state: a set of worlds (represented as a list). -/
-abbrev InfoState (W : Type*) := List W
+/-! ### Complements relative to an information state -/
 
-/-- Epistemic possibility over information state S:
-    ⟦might φ⟧_S = ∃w' ∈ S: φ(w') -/
-def mightS (S : InfoState W) (φ : W → Prop) : Prop :=
-  ∃ w ∈ S, φ w
+/-- A complement evaluated against an information state `S` — Yalcin's parameter — as a
+partial proposition for each `S`. -/
+abbrev SProp (W : Type*) := Set W → PartialProp W
 
-instance {S : InfoState W} {φ : W → Prop} [DecidablePred φ] :
-    Decidable (mightS S φ) := by
-  unfold mightS; infer_instance
+/-- An unmodalized complement ignores the information state. -/
+def ofSet (p : Set W) : SProp W := fun _ => PartialProp.ofProp (· ∈ p)
 
-/-- Epistemic necessity over information state S:
-    ⟦must φ⟧_S = ∀w' ∈ S: φ(w') -/
-def mustS (S : InfoState W) (φ : W → Prop) : Prop :=
-  ∀ w ∈ S, φ w
+/-- Epistemic possibility (37a): presupposes `S ≠ ∅`; true iff `S` contains a `p`-world. -/
+def might (p : Set W) : SProp W := fun S => ⟨fun _ => S.Nonempty, fun _ => (S ∩ p).Nonempty⟩
 
-instance {S : InfoState W} {φ : W → Prop} [DecidablePred φ] :
-    Decidable (mustS S φ) := by
-  unfold mustS; infer_instance
+/-- Epistemic necessity (37b): presupposes `S ≠ ∅`; true iff `S ⊆ p`. -/
+def must (p : Set W) : SProp W := fun S => ⟨fun _ => S.Nonempty, fun _ => S ⊆ p⟩
 
-/-- Non-triviality presupposition ([geurts-2005]):
-    epistemics presuppose their modal base is non-trivial. -/
-def nonTrivial (S : InfoState W) : Prop := S ≠ []
+/-- Negation of a complement, keeping its presupposition. -/
+def neg (φ : SProp W) : SProp W := fun S => ⟨(φ S).presup, fun w => ¬ (φ S).assertion w⟩
 
-instance [DecidableEq W] {S : InfoState W} : Decidable (nonTrivial S) := by
-  unfold nonTrivial; infer_instance
+/-- Conjunction of complements. -/
+def conj (φ ψ : SProp W) : SProp W := fun S =>
+  ⟨fun w => (φ S).presup w ∧ (ψ S).presup w, fun w => (φ S).assertion w ∧ (ψ S).assertion w⟩
 
-/-- Epistemic possibility is defined (non-trivial) whenever S ≠ ∅. -/
-theorem might_defined_iff_nontrivial (S : InfoState W) (φ : W → Prop) [DecidablePred φ]
-    (_h : nonTrivial S) :
-    mightS S φ ∨ ¬ mightS S φ := by
-  exact Decidable.em _
+/-- An *according to X* phrase evaluates its complement at `X`'s own information state (39). -/
+def accordingTo (T : Set W) (φ : SProp W) : SProp W := fun _ => φ T
 
-/-- With empty S, might is trivially false — yielding infelicity. -/
-theorem might_empty (φ : W → Prop) : ¬ mightS ([] : InfoState W) φ := by
-  simp [mightS]
+/-- Epistemic modal force. -/
+inductive Force
+  | possibility
+  | necessity
+  deriving DecidableEq, Fintype
 
-/-- With empty S, must is trivially true — yielding infelicity. -/
-theorem must_empty (φ : W → Prop) : mustS ([] : InfoState W) φ := by
-  simp [mustS]
+/-- The epistemic of a given force. -/
+def Force.modal : Force → Set W → SProp W
+  | .possibility => might
+  | .necessity => must
 
-/-! ### Attitude Embedding: S-Update -/
+/-! ### Representational and non-representational attitudes -/
 
-/-- Representational attitude embedding: S' = DOX(x,w).
-    The doxastic alternatives form the information state that
-    embedded epistemics quantify over. -/
-def representationalS {E : Type*} (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')]
-    (agent : E) (w : W) (worlds : List W) : InfoState W :=
-  worlds.filter (fun w' => decide (R agent w w'))
+/-- A representational attitude (29): the complement holds at every world of the attitude's
+domain, which also serves as its information state. -/
+def representational (dox : W → Set W) (φ : SProp W) : PartialProp W where
+  presup w := ∀ v ∈ dox w, (φ (dox w)).presup v
+  assertion w := ∀ v ∈ dox w, (φ (dox w)).assertion v
 
-/-- Non-representational attitude embedding: S' = ∅.
-    Comparative semantics provides no information state. -/
-def nonRepresentationalS : InfoState W := []
+/-- Vacuous quantification (35): an embedded necessity epistemic claims that the domain is
+included in its prejacent. -/
+theorem representational_must (dox : W → Set W) (p : Set W) (w : W) :
+    (representational dox (must p)).assertion w ↔ dox w ⊆ p :=
+  ⟨fun h v hv => h v hv hv, fun h _ _ => h⟩
 
-/-- Representational attitudes yield non-trivial information states
-    (when there is at least one accessible world). -/
-theorem representational_nontrivial {E : Type*} (R : E → W → W → Prop)
-    [∀ a w w', Decidable (R a w w')]
-    (agent : E) (w : W) (worlds : List W)
-    (h : ∃ w' ∈ worlds, R agent w w') :
-    nonTrivial (representationalS R agent w worlds) := by
-  obtain ⟨w', hw'_in, hw'_acc⟩ := h
-  unfold nonTrivial representationalS
-  intro hempty
-  have hmem : w' ∈ worlds.filter (fun w' => decide (R agent w w')) :=
-    List.mem_filter.mpr ⟨hw'_in, by simp [hw'_acc]⟩
-  rw [hempty] at hmem
-  cases hmem
+/-- Yalcin's (23b): *imagine that it is raining but it might not be* is contradictory whenever
+the imagination state is nonempty, since the modal quantifies over that very state. -/
+theorem imagine_epistemic_contradiction (dox : W → Set W) (p : Set W) {w : W}
+    (h : (dox w).Nonempty) :
+    ¬ (representational dox (conj (ofSet p) (might pᶜ))).assertion w := by
+  intro hc
+  obtain ⟨v, hv⟩ := h
+  obtain ⟨u, hu, hup⟩ := (hc v hv).2
+  exact hup (hc u hu).1
 
-/-- Non-representational attitudes yield trivial information states. -/
-theorem nonRepresentational_trivial :
-    ¬ nonTrivial (nonRepresentationalS : InfoState W) := by
-  simp [nonTrivial, nonRepresentationalS]
+/-- Villalta's lift of a strict ordering to sets (32b): every member of `q` is bettered by some
+member of `p`, and some member of `p` is bettered by no member of `q`. Applied to sets of sets
+it is the ordering of (52). -/
+def Better {α : Type*} (r : α → α → Prop) (p q : Set α) : Prop :=
+  (∀ v ∈ q, ∃ u ∈ p, r u v) ∧ ∃ u ∈ p, ∀ v ∈ q, ¬ r v u
 
-/-! ### Deriving the Distribution -/
+theorem Better.mono_left {α : Type*} {r : α → α → Prop} {p p' q : Set α} (h : Better r p q)
+    (hp : p ⊆ p') : Better r p' q :=
+  ⟨fun v hv => let ⟨u, hu, hr⟩ := h.1 v hv; ⟨u, hp hu, hr⟩,
+    let ⟨u, hu, hr⟩ := h.2; ⟨u, hp hu, hr⟩⟩
 
-/-- Under a representational attitude, embedded `must p` holds iff
-    all doxastic alternatives satisfy p — a non-trivial claim. -/
-theorem believe_must {E : Type*} (R : E → W → W → Prop)
-    [∀ a w w', Decidable (R a w w')]
-    (agent : E) (w : W) (worlds : List W) (p : W → Prop) [DecidablePred p] :
-    mustS (representationalS R agent w worlds) p ↔
-    BoxAt R agent w worlds p := by
-  simp only [mustS, representationalS, BoxAt,
-    List.mem_filter, decide_eq_true_eq]
+theorem Better.anti_right {α : Type*} {r : α → α → Prop} {p q q' : Set α} (h : Better r p q)
+    (hq : q' ⊆ q) : Better r p q' :=
+  ⟨fun v hv => h.1 v (hq hv), let ⟨u, hu, hr⟩ := h.2; ⟨u, hu, fun v hv => hr v (hq hv)⟩⟩
+
+/-- A non-representational attitude (36): the information state is reset to `∅`, and the
+complement evaluated there is compared with its negation — Villalta's comparison over the
+Heimian alternative set `{φ, ¬φ}`, with `des w` the desirability ordering at `w`. -/
+def preferential (des : W → W → W → Prop) (φ : SProp W) : PartialProp W where
+  presup w := (φ ∅).presup w
+  assertion w := Better (des w) {v | (φ ∅).assertion v} {v | ¬ (φ ∅).assertion v}
+
+/-- (38): an epistemic embedded under a non-representational attitude inherits the empty
+information state and fails its non-triviality presupposition. -/
+theorem preferential_modal_undefined (des : W → W → W → Prop) (f : Force) (p : Set W)
+    (w : W) : ¬ (preferential des (f.modal p)).presup w := by
+  cases f <;> exact Set.not_nonempty_empty
+
+/-- The escape hatch (39): an *according to X* phrase makes the embedded epistemic defined
+exactly when `X`'s information state is nonempty. -/
+theorem preferential_accordingTo_defined (des : W → W → W → Prop) (T : Set W) (f : Force)
+    (p : Set W) (w : W) :
+    (preferential des (accordingTo T (f.modal p))).presup w ↔ T.Nonempty := by
+  cases f <;> exact Iff.rfl
+
+/-! ### Verifiers and falsifiers -/
+
+/-- The nonempty sub-states of `A`. -/
+def subStates {α : Type*} (A : Set α) : Set (Set α) := {X | X ⊆ A ∧ X.Nonempty}
+
+/-- The `φ`-verifiers in `S` (50): the nonempty sub-states of `S` on all of whose sub-states
+`φ` holds throughout. -/
+def verifiers (φ : SProp W) (S : Set W) : Set (Set W) :=
+  {X | X ⊆ S ∧ X.Nonempty ∧ ∀ Y ⊆ X, ∀ w ∈ Y, (φ Y).assertion w}
+
+/-- The `φ`-falsifiers in `S`: the `¬φ`-verifiers. -/
+def falsifiers (φ : SProp W) (S : Set W) : Set (Set W) := verifiers (neg φ) S
+
+theorem verifiers_eq {φ : SProp W} {q : Set W}
+    (h : ∀ X : Set W, (∀ Y ⊆ X, ∀ w ∈ Y, (φ Y).assertion w) ↔ X ⊆ q) (S : Set W) :
+    verifiers φ S = subStates (S ∩ q) := by
+  ext X; simp only [verifiers, subStates, Set.mem_ofPred_eq, h, Set.subset_inter_iff]; tauto
+
+/-- Figure 3: the verifiers of `p`, `might p`, and `must p` in `S` are all the nonempty
+sub-states of `S ∩ p`. -/
+theorem verifiers_ofSet (p S : Set W) : verifiers (ofSet p) S = subStates (S ∩ p) :=
+  verifiers_eq (φ := ofSet p) (q := p)
+    (fun X => ⟨fun h _ hw => h X Set.Subset.rfl _ hw, fun h _ hY _ hw => h (hY hw)⟩) S
+
+theorem verifiers_might (p S : Set W) : verifiers (might p) S = subStates (S ∩ p) :=
+  verifiers_eq (φ := might p) (q := p) (fun X => ⟨fun h w hw => by
+      obtain ⟨v, hv, hvp⟩ := h {w} (Set.singleton_subset_iff.mpr hw) w (Set.mem_singleton w)
+      exact Set.mem_singleton_iff.mp hv ▸ hvp,
+    fun h _ hY w hw => ⟨w, hw, h (hY hw)⟩⟩) S
+
+theorem verifiers_must (p S : Set W) : verifiers (must p) S = subStates (S ∩ p) :=
+  verifiers_eq (φ := must p) (q := p)
+    (fun X => ⟨fun h _ hw => h X Set.Subset.rfl _ hw hw, fun h _ hY _ _ => hY.trans h⟩) S
+
+/-- Figure 3: the falsifiers of `p`, `might p`, and `must p` in `S` are all the nonempty
+sub-states of `S ∩ pᶜ`. -/
+theorem falsifiers_ofSet (p S : Set W) : falsifiers (ofSet p) S = subStates (S ∩ pᶜ) :=
+  verifiers_eq (φ := neg (ofSet p)) (q := pᶜ)
+    (fun X => ⟨fun h _ hw => h X Set.Subset.rfl _ hw, fun h _ hY _ hw => h (hY hw)⟩) S
+
+theorem falsifiers_might (p S : Set W) : falsifiers (might p) S = subStates (S ∩ pᶜ) :=
+  verifiers_eq (φ := neg (might p)) (q := pᶜ) (fun _ => ⟨fun h w hw hp =>
+      h {w} (Set.singleton_subset_iff.mpr hw) w (Set.mem_singleton w) ⟨w, Set.mem_singleton w, hp⟩,
+    fun h _ hY _ _ ⟨_, hvY, hvp⟩ => h (hY hvY) hvp⟩) S
+
+theorem falsifiers_must (p S : Set W) : falsifiers (must p) S = subStates (S ∩ pᶜ) :=
+  verifiers_eq (φ := neg (must p)) (q := pᶜ) (fun _ => ⟨fun h w hw hp =>
+      h {w} (Set.singleton_subset_iff.mpr hw) w (Set.mem_singleton w)
+        (Set.singleton_subset_iff.mpr hp),
+    fun h _ hY _ hw hYp => h (hY hw) (hYp hw)⟩) S
+
+/-- Footnote 19: comparing two families of nonempty sub-states under the lifted ordering is
+comparing the states themselves, by upward monotonicity of `Better` in its first argument and
+downward monotonicity in its second. -/
+theorem better_subStates_iff {α : Type*} (r : α → α → Prop) (A B : Set α) :
+    Better (Better r) (subStates A) (subStates B) ↔ Better r A B := by
   constructor
-  · intro h w' hw' hR
-    exact h w' ⟨hw', hR⟩
-  · intro h w' ⟨hw', hR⟩
-    exact h w' hw' hR
+  · rintro ⟨h1, h2⟩
+    rcases B.eq_empty_or_nonempty with rfl | hB
+    · obtain ⟨P, ⟨hPA, u, hu⟩, -⟩ := h2
+      exact ⟨fun v hv => absurd hv (Set.notMem_empty v), u, hPA hu,
+        fun v hv => absurd hv (Set.notMem_empty v)⟩
+    · obtain ⟨p, ⟨hpA, -⟩, hp⟩ := h1 B ⟨Set.Subset.rfl, hB⟩
+      exact hp.mono_left hpA
+  · rintro ⟨h1, u, hu, hr⟩
+    refine ⟨fun q hq => ⟨A, ⟨Set.Subset.rfl, u, hu⟩, Better.anti_right ⟨h1, u, hu, hr⟩ hq.1⟩,
+      {u}, ⟨Set.singleton_subset_iff.mpr hu, Set.singleton_nonempty u⟩, fun q hq hqu => ?_⟩
+    obtain ⟨v, hv, hvr⟩ := hqu.1 u (Set.mem_singleton u)
+    exact hr v (hq.1 hv) hvr
 
-/-- Under a non-representational attitude, `must p` is trivially true. -/
-theorem want_must_trivial (p : W → Prop) :
-    mustS (nonRepresentationalS : InfoState W) p := by
-  simp [mustS, nonRepresentationalS]
+/-- (51): the preference component of an emotive doxastic compares `S ∩ p` with `S ∩ pᶜ`. -/
+theorem prefers_iff {φ : SProp W} {p S : Set W} (r : W → W → Prop)
+    (hv : verifiers φ S = subStates (S ∩ p)) (hf : falsifiers φ S = subStates (S ∩ pᶜ)) :
+    Better (Better r) (verifiers φ S) (falsifiers φ S) ↔ Better r (S ∩ p) (S ∩ pᶜ) := by
+  rw [hv, hf, better_subStates_iff]
 
-/-- Under a non-representational attitude, `might p` is trivially false. -/
-theorem want_might_trivial (p : W → Prop) :
-    ¬ mightS (nonRepresentationalS : InfoState W) p := by
-  simp [mightS, nonRepresentationalS]
+/-- The preference component does not see the modal: *hopes p*, *hopes might p*, and
+*hopes must p* all prefer the `p`-verifying doxastic alternatives. -/
+theorem prefers_modal_iff (r : W → W → Prop) (p S : Set W) (f : Force) :
+    Better (Better r) (verifiers (f.modal p) S) (falsifiers (f.modal p) S) ↔
+      Better (Better r) (verifiers (ofSet p) S) (falsifiers (ofSet p) S) := by
+  cases f <;> simp only [Force.modal, verifiers_might, verifiers_must, falsifiers_might,
+    falsifiers_must, verifiers_ofSet, falsifiers_ofSet]
 
-/-! ### The emotive doxastic lexical entry (56)
+/-! ### Emotive doxastics and dubitatives -/
 
-⟦a hopes_C that p⟧: *defined* iff both p-verifiers and p-falsifiers
-exist among the doxastic alternatives (the uncertainty condition);
-where defined, *true* iff some doxastic alternative verifies p (the
-doxastic assertion) and the p-verifiers are preferred to the
-p-falsifiers above the contextual threshold (the preference
-assertion). φ-verifiers in S are the subsets of S certain about φ —
-for unmodalized p, pow(S ∩ p) — so verifier/falsifier non-emptiness
-is `mightS S p ∧ mightS S ¬p`. The doxastic component is what lets
-*hope* answer a question ([scheffler-2008]'s dialogue, attributed to
-Truckenbrodt: "Kommt Peter heute?" — "Ich hoffe/*will, dass er heute
-kommt") and distinguishes *hope* from pure-preferential *want*. -/
+/-- The uncertainty condition (54): the complement has both verifiers and falsifiers in the
+doxastic state. -/
+def Uncertain (φ : SProp W) (S : Set W) : Prop :=
+  (verifiers φ S).Nonempty ∧ (falsifiers φ S).Nonempty
 
-open Presupposition in
-/-- The (56) entry over the study's information-state semantics:
-    presupposition = uncertainty, assertion = doxastic possibility
-    plus preference. The doxastic conjunct is entailed by the first
-    presupposition conjunct; the paper states it separately as the
-    component embedded epistemics are anaphoric to. -/
-def hopeAt {E : Type*} (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')]
-    (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ)
-    (agent : E) (p : Finset W) (w : W) (worlds : List W)
-    (C : List (Finset W)) : PartialProp W where
-  presup _ := mightS (representationalS R agent w worlds) (· ∈ p) ∧
-              mightS (representationalS R agent w worlds) (· ∉ p)
-  assertion _ := mightS (representationalS R agent w worlds) (· ∈ p) ∧
-                 μ agent p > θ C
+/-- The doxastic assertion (53): the complement holds at some world of the doxastic state. -/
+def Possible (φ : SProp W) (S : Set W) : Prop := ∃ w ∈ S, (φ S).assertion w
 
-/-- Embedded *must p* contradicts the uncertainty presupposition
-    ((48) against (47c)): if p holds throughout the doxastic state,
-    there are no falsifiers — epistemic necessity is blocked under
-    *hope* and *fear*. -/
-theorem must_contradicts_uncertainty {E : Type*} (R : E → W → W → Prop)
-    [∀ a w w', Decidable (R a w w')]
-    (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ)
-    (agent : E) (p : Finset W) (w : W) (worlds : List W)
-    (C : List (Finset W))
-    (h_must : mustS (representationalS R agent w worlds) (· ∈ p)) :
-    ¬ (hopeAt R μ θ agent p w worlds C).presup w := by
-  rintro ⟨-, w', hw', hnp⟩
-  exact hnp (h_must w' hw')
+/-- `a hopes that φ` (55): presupposes uncertainty; asserts doxastic possibility and that the
+verifiers are more desirable than the falsifiers. *fear* has the shape of `doubt` over the
+desirability ordering. -/
+def hope (des : W → W → W → Prop) (dox : W → Set W) (φ : SProp W) : PartialProp W where
+  presup w := Uncertain φ (dox w)
+  assertion w :=
+    Possible φ (dox w) ∧ Better (Better (des w)) (verifiers φ (dox w)) (falsifiers φ (dox w))
 
-/-- Embedded *might p* contributes the same doxastic content as bare
-    p ((58), modal concord): a modalized complement is settled by the
-    shared information state, so its verifiers are the p-verifiers —
-    epistemic possibility is licensed. -/
-theorem might_concord {E : Type*} (R : E → W → W → Prop)
-    [∀ a w w', Decidable (R a w w')]
-    (agent : E) (p : W → Prop) (w : W) (worlds : List W)
-    (h : mightS (representationalS R agent w worlds) p) :
-    mightS (representationalS R agent w worlds)
-      (fun _ => mightS (representationalS R agent w worlds) p) :=
-  let ⟨w', hw', _⟩ := h; ⟨w', hw', h⟩
+/-- `a doubts that φ` (63): as `hope`, with the falsifiers likelier than the verifiers. -/
+def doubt (prob : W → W → W → Prop) (dox : W → Set W) (φ : SProp W) : PartialProp W where
+  presup w := Uncertain φ (dox w)
+  assertion w :=
+    Possible φ (dox w) ∧ Better (Better (prob w)) (falsifiers φ (dox w)) (verifiers φ (dox w))
 
-/-! ### Emotive Doxastic Finite Model -/
+/-- (58) with *must*: the doxastic assertion of an embedded necessity epistemic puts the whole
+state inside `p`, leaving no falsifier — it contradicts the uncertainty presupposition. -/
+theorem uncertain_must_not_possible {p S : Set W} (hu : Uncertain (must p) S) :
+    ¬ Possible (must p) S := by
+  intro hp
+  obtain ⟨_, _, hS⟩ := hp
+  obtain ⟨_, hf⟩ := hu
+  rw [falsifiers_must] at hf
+  obtain ⟨X, hX, v, hv⟩ := hf
+  exact (hX hv).2 (hS (hX hv).1)
 
-/-!
-## Concrete Demonstration
+theorem hope_must_not_holds (des : W → W → W → Prop) (dox : W → Set W) (p : Set W) (w : W) :
+    ¬ PartialProp.holds w (hope des dox (must p)) :=
+  fun ⟨hu, hp, _⟩ => uncertain_must_not_possible hu hp
 
-We instantiate the abstract theory with a finite model demonstrating
-the must/might asymmetry under emotive doxastics.
+theorem doubt_must_not_holds (prob : W → W → W → Prop) (dox : W → Set W) (p : Set W)
+    (w : W) : ¬ PartialProp.holds w (doubt prob dox (must p)) :=
+  fun ⟨hu, hp, _⟩ => uncertain_must_not_possible hu hp
 
-World model: 3 worlds {w₁, w₂, w₃}
-- w₁: it is raining
-- w₂: it is not raining
-- w₃: it is raining (backup)
+/-- (74): a possibility epistemic scoping under negation is a universal claim and fails like
+*must*. -/
+theorem hope_not_might_not_holds (des : W → W → W → Prop) (dox : W → Set W) (p : Set W)
+    (w : W) : ¬ PartialProp.holds w (hope des dox (neg (might p))) := by
+  intro h
+  obtain ⟨⟨-, X, hXS, ⟨v, hv⟩, hX⟩, hP, -⟩ := h
+  obtain ⟨_, _, hS⟩ := hP
+  exact hX X Set.Subset.rfl v hv fun ⟨u, hu⟩ => hS ⟨u, hXS hu.1, hu.2⟩
 
-John's beliefs (DOX): {w₁, w₂} — uncertain whether it's raining.
-John's preference: raining worlds preferred to non-raining.
+theorem possible_might_iff (p S : Set W) : Possible (might p) S ↔ Possible (ofSet p) S :=
+  ⟨fun ⟨_, _, v, hv⟩ => ⟨v, hv.1, hv.2⟩, fun ⟨w, hw, hp⟩ => ⟨w, hw, w, hw, hp⟩⟩
 
-Predictions:
-- "John hopes it is raining": ✓ (uncertainty + doxastic + preference)
-- "John hopes it might be raining": ✓ (same doxastic assertion)
-- "John hopes it must be raining": ✗ (contradicts uncertainty)
--/
+/-- (59) is (57): under an emotive doxastic, *might p* and bare *p* have the same uncertainty
+presupposition, doxastic assertion, and preference — modal concord. -/
+theorem hope_might (des : W → W → W → Prop) (dox : W → Set W) (p : Set W) :
+    hope des dox (might p) = hope des dox (ofSet p) := by
+  ext w <;> simp only [hope, Uncertain, verifiers_might, verifiers_ofSet, falsifiers_might,
+    falsifiers_ofSet, possible_might_iff]
 
-inductive RainWorld where
-  | raining₁ | notRaining | raining₂
-  deriving DecidableEq, Repr
+theorem doubt_might (prob : W → W → W → Prop) (dox : W → Set W) (p : Set W) :
+    doubt prob dox (might p) = doubt prob dox (ofSet p) := by
+  ext w <;> simp only [doubt, Uncertain, verifiers_might, verifiers_ofSet, falsifiers_might,
+    falsifiers_ofSet, possible_might_iff]
 
-def isRaining : RainWorld → Prop
-  | .raining₁ => True
-  | .notRaining => False
-  | .raining₂ => True
+/-! ### The distribution -/
 
-instance : DecidablePred isRaining := fun w => by
-  cases w <;> unfold isRaining <;> infer_instance
+/-- The attitude classes of Table 3. -/
+inductive AttitudeClass
+  | doxastic
+  | argumentative
+  | semifactive
+  | desiderative
+  | directive
+  | emotiveDoxastic
+  | dubitative
+  deriving DecidableEq, Fintype
 
-/-- John's doxastic accessibility: worlds w₁ and w₂ are doxastically
-accessible (he's uncertain), w₃ is not. -/
-def johnDox : RainWorld → Bool
-  | .raining₁ => true
-  | .notRaining => true
-  | .raining₂ => false
+/-- The four lexical semantics the paper assigns. -/
+inductive Kind
+  | acceptance
+  | preferenceOriented
+  | emotiveDoxastic
+  | dubitative
+  deriving DecidableEq
 
-def allRainWorlds : List RainWorld := [.raining₁, .notRaining, .raining₂]
+/-- Attitudes of acceptance are representational (§3.3), desideratives and directives
+preference-oriented (36), and the two hybrid classes get (55) and (63). -/
+def AttitudeClass.kind : AttitudeClass → Kind
+  | .doxastic | .argumentative | .semifactive => .acceptance
+  | .desiderative | .directive => .preferenceOriented
+  | .emotiveDoxastic => .emotiveDoxastic
+  | .dubitative => .dubitative
 
-/-- John's doxastic information state -/
-def johnS : InfoState RainWorld :=
-  allRainWorlds.filter johnDox
+/-- The lexical entry of each kind, over the attitude's scale, doxastic state, and
+complement. -/
+def Kind.entry : Kind → (W → W → W → Prop) → (W → Set W) → SProp W → PartialProp W
+  | .acceptance => fun _ dox => representational dox
+  | .preferenceOriented => fun r _ => preferential r
+  | .emotiveDoxastic => hope
+  | .dubitative => doubt
 
-theorem johnS_eq : johnS = [.raining₁, .notRaining] := by decide
+/-- An epistemic of force `f` is licensed under a kind of attitude when some scale, doxastic
+state, prejacent, and world make the embedding defined and true. -/
+def Licensed (W : Type*) (k : Kind) (f : Force) : Prop :=
+  ∃ (r : W → W → W → Prop) (dox : W → Set W) (p : Set W) (w : W),
+    PartialProp.holds w (k.entry r dox (f.modal p))
 
-/-- John's DOX is non-trivial (he has beliefs). -/
-theorem john_nontrivial : nonTrivial johnS := by decide
+theorem licensed_acceptance [Nontrivial W] (f : Force) :
+    Licensed W .acceptance f := by
+  obtain ⟨a, -, -⟩ := exists_pair_ne W
+  refine ⟨fun _ _ _ => True, fun _ => Set.univ, Set.univ, a, ?_⟩
+  cases f
+  · exact ⟨fun _ _ => Set.univ_nonempty, fun _ _ => ⟨a, trivial, trivial⟩⟩
+  · exact ⟨fun _ _ => Set.univ_nonempty, fun _ _ => Set.Subset.rfl⟩
 
-/-- "might be raining" is true in John's DOX — there's a raining world. -/
-theorem john_might_rain : mightS johnS isRaining := by decide
+theorem not_licensed_preferenceOriented (f : Force) : ¬ Licensed W .preferenceOriented f :=
+  fun ⟨r, _, p, w, h, _⟩ => preferential_modal_undefined r f p w h
 
-/-- "must be raining" is false in John's DOX — there's a non-raining world. -/
-theorem john_must_rain : ¬ mustS johnS isRaining := by decide
+theorem licensed_emotiveDoxastic_possibility [Nontrivial W] :
+    Licensed W .emotiveDoxastic .possibility := by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne W
+  refine ⟨fun _ u v => u = a ∧ v ≠ a, fun _ => Set.univ, {a}, a, ?_, ⟨a, trivial, a, trivial, rfl⟩,
+    ?_⟩
+  · show Uncertain (might {a}) Set.univ
+    rw [Uncertain, verifiers_might, falsifiers_might, Set.univ_inter, Set.univ_inter]
+    exact ⟨⟨{a}, Set.Subset.rfl, Set.singleton_nonempty a⟩,
+      ⟨{b}, Set.singleton_subset_iff.mpr hab.symm, Set.singleton_nonempty b⟩⟩
+  · show Better (Better fun u v => u = a ∧ v ≠ a) (verifiers (might {a}) Set.univ)
+      (falsifiers (might {a}) Set.univ)
+    rw [prefers_iff _ (verifiers_might _ _) (falsifiers_might _ _), Set.univ_inter,
+      Set.univ_inter]
+    exact ⟨fun v hv => ⟨a, rfl, rfl, hv⟩, a, rfl, fun v hv h => hv h.1⟩
 
-/-- Uncertainty: both raining and non-raining worlds in DOX. -/
-theorem john_uncertain :
-    mightS johnS isRaining ∧
-    mightS johnS (fun w => ¬ isRaining w) := by
-  exact ⟨by decide, by decide⟩
+theorem not_licensed_emotiveDoxastic_necessity : ¬ Licensed W .emotiveDoxastic .necessity :=
+  fun ⟨r, dox, p, w, h⟩ => hope_must_not_holds r dox p w h
 
-/-! ### BToM Connection: Prospective Emotions = Emotive Doxastics -/
+theorem licensed_dubitative_possibility [Nontrivial W] : Licensed W .dubitative .possibility := by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne W
+  refine ⟨fun _ u v => u ≠ a ∧ v = a, fun _ => Set.univ, {a}, a, ?_, ⟨a, trivial, a, trivial, rfl⟩,
+    ?_⟩
+  · show Uncertain (might {a}) Set.univ
+    rw [Uncertain, verifiers_might, falsifiers_might, Set.univ_inter, Set.univ_inter]
+    exact ⟨⟨{a}, Set.Subset.rfl, Set.singleton_nonempty a⟩,
+      ⟨{b}, Set.singleton_subset_iff.mpr hab.symm, Set.singleton_nonempty b⟩⟩
+  · show Better (Better fun u v => u ≠ a ∧ v = a) (falsifiers (might {a}) Set.univ)
+      (verifiers (might {a}) Set.univ)
+    rw [falsifiers_might, verifiers_might, better_subStates_iff, Set.univ_inter, Set.univ_inter]
+    exact ⟨fun v hv => ⟨b, hab.symm, hab.symm, hv⟩, b, hab.symm, fun v hv h => h.1 hv⟩
 
-/-!
-## The BToM–Emotive Doxastic Bridge
+theorem not_licensed_dubitative_necessity : ¬ Licensed W .dubitative .necessity :=
+  fun ⟨r, dox, p, w, h⟩ => doubt_must_not_holds r dox p w h
 
-[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]'s emotion model
-computes retrospective appraisals from BToM marginals. We show that
-[anand-hacquard-2013]'s emotive doxastic semantics gives the
-formal content of *prospective* emotions computed from the same marginals.
+/-- Table 3, derived: epistemics are licensed by representational attitudes, by no
+preferential attitude, and by the hybrids only with possibility force. -/
+theorem licensed_iff [Nontrivial W] (k : Kind) (f : Force) :
+    Licensed W k f ↔ k ≠ .preferenceOriented ∧ (k = .acceptance ∨ f = .possibility) := by
+  cases k <;> cases f <;>
+    simp only [licensed_acceptance, not_licensed_preferenceOriented,
+      licensed_emotiveDoxastic_possibility, not_licensed_emotiveDoxastic_necessity,
+      licensed_dubitative_possibility, not_licensed_dubitative_necessity] <;> decide
 
-The mapping:
+/-! ### The paper's examples -/
 
-| A&H component        | BToM computation                        |
-|-----------------------|-----------------------------------------|
-| Doxastic assertion    | beliefMarginal: Pr(b \| a) > 0 for b ⊨ φ |
-| Uncertainty condition | 0 < Σ_b Pr(b\|a)·⟦φ⟧_b < 1              |
-| Preference assertion  | desireMarginal: Σ_d Pr(d\|a)·U(φ,d) > Σ_d Pr(d\|a)·U(¬φ,d) |
+/-- The `attitude_class` feature of an example row. -/
+def AttitudeClass.ofString? : String → Option AttitudeClass
+  | "doxastic" => some .doxastic
+  | "argumentative" => some .argumentative
+  | "semifactive" => some .semifactive
+  | "desiderative" => some .desiderative
+  | "directive" => some .directive
+  | "emotive_doxastic" => some .emotiveDoxastic
+  | "dubitative" => some .dubitative
+  | _ => none
 
-This unification means:
-- **hope** is a prospective emotion with positive AU (prefers φ-resolution)
-- **fear** is a prospective emotion with negative AU (prefers ¬φ-resolution)
-- Both require the *same* BToM inference (belief + desire marginals)
-- The emotive doxastic lexical semantics IS the readout function for
-  prospective emotions, just as the 8-dimensional β vector is the readout
-  for retrospective emotions
--/
+/-- The `modal_force` feature of an example row. -/
+def Force.ofString? : String → Option Force
+  | "possibility" => some .possibility
+  | "necessity" => some .necessity
+  | _ => none
 
-open Core
+/-- Every epistemic anchored to its embedding attitude is judged acceptable exactly when
+`Licensed` holds for the attitude's kind and the modal's force. -/
+theorem rows_track_licensing [Nontrivial W] :
+    ∀ r ∈ Examples.all, r.feature? "anchor" = some "attitude" →
+      r.feature? "modal_flavor" = some "epistemic" →
+      ∀ c f, (r.feature? "attitude_class").bind AttitudeClass.ofString? = some c →
+        (r.feature? "modal_force").bind Force.ofString? = some f →
+        (r.judgment = .acceptable ↔ Licensed W c.kind f) := by
+  simp only [licensed_iff]; decide +kernel
 
-/-- Hope holds from uncertainty + positive preference over resolutions. -/
-theorem hope_from_uncertainty_and_preference
-    (cred : ℚ) (u_true u_false : ℚ)
-    (h_pos : 0 < cred) (h_lt_one : cred < 1) (h_pref : u_false < u_true) :
-    (ProspectiveAppraisal.mk cred u_true u_false).isHope = true := by
-  simp only [ProspectiveAppraisal.isHope, ProspectiveAppraisal.isUncertain,
-    decide_eq_true_eq, Bool.and_eq_true]
-  exact ⟨⟨h_pos, h_lt_one⟩, h_pref⟩
-
-/-- Fear holds from uncertainty + negative preference over resolutions. -/
-theorem fear_from_uncertainty_and_dispreference
-    (cred : ℚ) (u_true u_false : ℚ)
-    (h_pos : 0 < cred) (h_lt_one : cred < 1) (h_pref : u_true < u_false) :
-    (ProspectiveAppraisal.mk cred u_true u_false).isFear = true := by
-  simp only [ProspectiveAppraisal.isFear, ProspectiveAppraisal.isUncertain,
-    decide_eq_true_eq, Bool.and_eq_true]
-  exact ⟨⟨h_pos, h_lt_one⟩, h_pref⟩
-
-/-- The uncertainty condition in the emotive doxastic semantics is the
-same as requiring non-extreme credence in the BToM framework:
-Pr(φ) > 0 ∧ Pr(φ) < 1 ↔ ∃w' ∈ DOX: φ(w') ∧ ∃w' ∈ DOX: ¬φ(w').
-
-This is the formal content of why necessity epistemics are blocked:
-Pr(φ) ≥ θ_must (≈ 1) contradicts Pr(φ) < 1. -/
-theorem necessity_contradicts_uncertainty
-    (cred : ℚ) (h_high : cred ≥ 1) (h_lt : cred < 1) : False :=
-  not_lt.mpr h_high h_lt
+/-- Every unacceptable attitude-anchored epistemic in the Romance data sits in a subjunctive
+complement (§5.1); the converse fails at (18), (20), and (65). -/
+theorem unacceptable_rows_subjunctive :
+    ∀ r ∈ Examples.all, r.feature? "anchor" = some "attitude" → r.judgment = .unacceptable →
+      r.feature? "mood" = none ∨ r.feature? "mood" = some "subjunctive" := by
+  decide +kernel
 
 end AnandHacquard2013
