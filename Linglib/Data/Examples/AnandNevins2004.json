@@ -1,47 +1,751 @@
 [
   {
-    "id": "anandnevins2004_ex4",
+    "id": "anandnevins2004_4",
     "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(4)"},
-    "language": "diml1235",
-    "primaryText": "Hɛseni (mık-ra) va kɛ ɛz dɛwlɛtia.",
+    "reportedIn": null,
+    "language": "diml1238",
+    "primaryText": "Hɛseni (mık-ra) va kɛ ɛz dɛwletia.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Hɛseni", "Hesen.OBL"], ["(mık-ra)", "(I.OBL-to)"], ["va", "said"], ["kɛ", "that"],
-      ["ɛz", "I"], ["dɛwlɛtia", "rich.be-PRES"]
+      ["ɛz", "I"], ["dɛwletia", "rich.be-PRES"]
     ],
     "translation": "Hesen said that {I am, Hesen is} rich.",
-    "context": "Zazaki: the embedded 1st-person `ɛz` can refer either to the utterance speaker OR to the attitude holder Hesen. Indexical shift is OPTIONAL under `vano` ('say'). Cornerstone first-person example.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "indexical (ɛz = utterance speaker)", "judgment": "acceptable"},
-      {"name": "shifted (ɛz = Hesen)", "judgment": "acceptable"}
+      {"name": "utterance context", "judgment": "acceptable"},
+      {"name": "reported context", "judgment": "acceptable"}
     ],
-    "comment": "Anand & Nevins 2004 ex (4), SALT XIV p. 20. First of four examples (4)-(7) demonstrating that all four Zazaki indexicals (I, you, here, yesterday) can shift under `vano`. The pronominal-shift facts motivate the context-shifting operator OPv.",
+    "paperFeatures": {"entry": "vano", "indexical": "I"},
+    "comment": "",
     "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "lgrConformance": ""
   },
   {
-    "id": "anandnevins2004_ex7",
+    "id": "anandnevins2004_5",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "diml1238",
+    "primaryText": "Hɛseni (Alik-ra) va kɛ tı dɛwletia.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hɛseni", "Hesen.OBL"], ["(Alik-ra)", "(Ali.OBL-to)"], ["va", "said"], ["kɛ", "that"],
+      ["tı", "you"], ["dɛwletia", "rich.be-PRES"]
+    ],
+    "translation": "Hesen said that {Ali is, you are} rich.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "utterance context", "judgment": "acceptable"},
+      {"name": "reported context", "judgment": "acceptable"}
+    ],
+    "paperFeatures": {"entry": "vano", "indexical": "you"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_6",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "diml1238",
+    "primaryText": "Waxto kɛ ma D.-de bime, H. mı-ra va kɛ o ita ame dina.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Waxto", "when"], ["kɛ", "that"], ["ma", "we"], ["D.-de", "D.-at"], ["bime", "were"],
+      ["H.", "H.OBL"], ["mı-ra", "me-at"], ["va", "said"], ["kɛ", "that"], ["o", "he"],
+      ["ita", "here"], ["ame", "came"], ["dina", "world"]
+    ],
+    "translation": "When we were in Diyarbekir, Hesen told me he was born {here, in D.}.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "utterance context", "judgment": "acceptable"},
+      {"name": "reported context", "judgment": "acceptable"}
+    ],
+    "paperFeatures": {"entry": "vano", "indexical": "here"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_7",
     "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(7)"},
-    "language": "diml1235",
+    "reportedIn": null,
+    "language": "diml1238",
     "primaryText": "Hefte nayeraraver, H. mı-ra va kɛ o vizeri Rojda paci kɛrd.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Hefte", "week"], ["nayeraraver", "ago"], [",", ","], ["H.", "Hesen"], ["mı-ra", "me-at"],
+      ["Hefte", "week"], ["nayeraraver", "ago"], ["H.", "H.OBL"], ["mı-ra", "me-at"],
       ["va", "said"], ["kɛ", "that"], ["o", "he"], ["vizeri", "yesterday"], ["Rojda", "Rojda"],
       ["paci", "kiss"], ["kɛrd", "did"]
     ],
     "translation": "A week ago, H. told me that he kissed Rojda {8 days ago, #yesterday}.",
-    "context": "Zazaki temporal-indexical shift. `vizeri` ('yesterday') in the embedded clause can shift to the attitude-context's now (= the day before the saying, i.e. 8 days before utterance), but NOT remain anchored to utterance-yesterday. The unavailable utterance-anchored reading is the diagnostic — English allows only that reading.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "shifted (yesterday = day-before-saying ≈ 8 days ago)", "judgment": "acceptable"},
-      {"name": "indexical (yesterday = utterance-yesterday)", "judgment": "unacceptable"}
+      {"name": "reported context", "judgment": "acceptable"},
+      {"name": "utterance context", "judgment": "unacceptable"}
     ],
-    "comment": "Anand & Nevins 2004 ex (7), p. 20. Fourth of four indexical-shift examples (4)-(7). Together with (4)-(6), motivates that ALL indexicals (I, you, here, yesterday) shift in Zazaki — not just pronouns. A&N analyze (7) as an *adverbial* shift (`vizeri` is a temporal adverbial), not a tense-pronoun shift — this distinguishes A&N's indexical-shift account from tense-pronoun analyses of cross-linguistic embedded-past.",
+    "paperFeatures": {"entry": "vano", "indexical": "yesterday", "pragmatic_clash": "a report made a week ago cannot concern the utterance's yesterday"},
+    "comment": "",
     "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_fn3_i",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "fn. 3 (i)"},
+    "reportedIn": null,
+    "language": "diml1238",
+    "primaryText": "Hɛseni termine keno kɛ ɛz newesha.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hɛseni", "Hesen"], ["termine", "believe"], ["keno", "does"], ["kɛ", "that"], ["ɛz", "I"],
+      ["newesha", "sick.be-PRES"]
+    ],
+    "translation": "Hesen believes that {I, *Hesen} is sick.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "utterance context", "judgment": "acceptable"},
+      {"name": "reported context", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": {"entry": "zazaki_attitude", "indexical": "I"},
+    "comment": "Shifting is limited to *vano*; *believe*, *think*, *dream*, *hear*, *yell* do not shift.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_8",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(8)"},
+    "reportedIn": null,
+    "language": "diml1238",
+    "primaryText": "Mı kes paci ne kɛrd.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mı", "I.ERG"], ["kes", "anyone"], ["paci", "kiss"], ["ne", "not"], ["kɛrd", "did"]
+    ],
+    "translation": "I did not kiss anyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Mı kes paci kɛrd.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": {"test": "npi", "npi": "kes"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_9",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(9)"},
+    "reportedIn": null,
+    "language": "diml1238",
+    "primaryText": "Rojda ne va kɛ mı kes paci kɛrd.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Rojda", "Rojda"], ["ne", "not"], ["va", "said"], ["kɛ", "that"], ["mı", "I"],
+      ["kes", "anyone"], ["paci", "kiss"], ["kɛrd", "did"]
+    ],
+    "translation": "Rojda didn't say that she kissed anyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "reported context", "judgment": "acceptable"}
+    ],
+    "paperFeatures": {"entry": "vano", "indexical": "I", "test": "npi_licensing"},
+    "comment": "Matrix negation licenses the NPI inside the shifted clause, so the clause is not a quotation.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_10",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(10)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The girl that Hesen said, \"I kissed t.\" is pretty.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The girl that Hesen said, \"I kissed t.\" is pretty.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": {"test": "extraction", "construction": "direct quotation"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_11",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(11)"},
+    "reportedIn": null,
+    "language": "diml1238",
+    "primaryText": "čɛnɛkɛ kɛ Hɛseni va mı paci kɛrda rindɛka.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["čɛnɛkɛ", "girl"], ["kɛ", "that"], ["Hɛseni", "Hesen"], ["va", "said"], ["mı", "I"],
+      ["paci", "kiss"], ["kɛrda", "did"], ["rindɛka", "pretty.be-PRES"]
+    ],
+    "translation": "The girl that Hesen said {Hesen, I} kissed is pretty.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "reported context", "judgment": "acceptable"},
+      {"name": "utterance context", "judgment": "acceptable"}
+    ],
+    "paperFeatures": {"entry": "vano", "indexical": "I", "test": "extraction"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_12",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "diml1238",
+    "primaryText": "Piyaa-o kɛ Rojda va kɛ mı paci kɛrd Ali biyo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Piyaa-o", "person"], ["kɛ", "that"], ["Rojda", "Rojda"], ["va", "said"], ["kɛ", "that"],
+      ["mı", "I"], ["paci", "kiss"], ["kɛrd", "did"], ["Ali", "Ali"], ["biyo", "was"]
+    ],
+    "translation": "Ali was the person that Rojda said {Rojda, I} kissed.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "reported context", "judgment": "acceptable"},
+      {"name": "utterance context", "judgment": "acceptable"}
+    ],
+    "paperFeatures": {"entry": "vano", "indexical": "I", "test": "extraction"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_13",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(13)"},
+    "reportedIn": null,
+    "language": "diml1238",
+    "primaryText": "Vizeri Rojda Bill-ra va kɛ ɛz to-ra miradiša.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Vizeri", "yesterday"], ["Rojda", "Rojda"], ["Bill-ra", "Bill-to"], ["va", "said"],
+      ["kɛ", "that"], ["ɛz", "I"], ["to-ra", "you-to"], ["miradiša", "angry.be-PRES"]
+    ],
+    "translation": "Yesterday Rojda said to Bill, \"I am angry at you.\"",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "both reported", "judgment": "acceptable"},
+      {"name": "both utterance", "judgment": "acceptable"},
+      {"name": "mixed I-utterance you-reported", "judgment": "unacceptable"},
+      {"name": "mixed I-reported you-utterance", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": {"entry": "vano", "indexicals": "I, you", "test": "shift_together"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_14",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(14)"},
+    "reportedIn": null,
+    "language": "diml1238",
+    "primaryText": "Hɛsen mı-ra va kɛ ɛz nika uža ena.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hɛsen", "Hesen"], ["mı-ra", "me.OBL-to"], ["va", "said"], ["kɛ", "that"], ["ɛz", "I"],
+      ["nika", "now"], ["uža", "there"], ["ena", "coming"]
+    ],
+    "translation": "Hesen told me that he is coming here now.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Hɛsen mı-ra va kɛ ɛz nika ita ena.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": {"entry": "vano", "indexicals": "now, here", "test": "shift_together"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_15",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(15)"},
+    "reportedIn": null,
+    "language": "diml1238",
+    "primaryText": "Hɛsen hefti nayeraver reyal kɛno va kɛ ɛz to de hefti naeratepia paci kena.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hɛsen", "Hesen"], ["hefti", "week"], ["nayeraver", "ago"], ["reyal", "plan"],
+      ["kɛno", "did"], ["va", "said"], ["kɛ", "that"], ["ɛz", "I"], ["to", "you"], ["de", "two"],
+      ["hefti", "weeks"], ["naeratepia", "after"], ["paci", "kiss"], ["kena", "will-do"]
+    ],
+    "translation": "A week ago, Hesen planned: \"I will kiss you in two weeks.\" (not two weeks from now)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "both reported", "judgment": "acceptable"},
+      {"name": "mixed persons-reported time-utterance", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": {"entry": "vano", "indexicals": "I, you, in two weeks", "test": "shift_together"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_17",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(17)"},
+    "reportedIn": null,
+    "language": "slav1253",
+    "primaryText": "Simon rásereyineht'u hadi.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Simon", "Simon"], ["rásereyineht'u", "2.sg-hit-1.sg"], ["hadi", "3.sg-say"]
+    ],
+    "translation": "Simon said that you (ADDR(U)) hit him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "utterance context", "judgment": "acceptable"}
+    ],
+    "paperFeatures": {"entry": "slave_say", "indexical": "you"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_18",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(18)"},
+    "reportedIn": null,
+    "language": "slav1253",
+    "primaryText": "sehlégé segha gon'ihkie rárulu yudeli",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["sehlégé", "1.sg-friend"], ["segha", "1.sg-for"], ["gon'ihkie", "slippers"],
+      ["rárulu", "3.sg-will-sew"], ["yudeli", "3.sg-want-4.sg"]
+    ],
+    "translation": "She_j wants her_j friend to sew slippers for her_j.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "both reported", "judgment": "acceptable"},
+      {"name": "mixed friend-reported slippers-utterance", "judgment": "unacceptable"},
+      {"name": "mixed friend-utterance slippers-reported", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": {"entry": "slave_want", "indexicals": "I, I", "test": "shift_together"},
+    "comment": "The two first-person possessors must both be the embedded author.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_21",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(21)"},
+    "reportedIn": null,
+    "language": "diml1238",
+    "primaryText": "Hɛsen va kɛ pyaay kɛ mı-ra hes kene pyaay kɛ mı-ra hes ne kene ame zuja.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hɛsen", "Hesen"], ["va", "said"], ["kɛ", "that"], ["pyaay", "people"], ["kɛ", "that"],
+      ["mı-ra", "me.OBL"], ["hes", "like"], ["kene", "do"], ["pyaay", "people"], ["kɛ", "that"],
+      ["mı-ra", "me.OBL"], ["hes", "like"], ["ne", "NEG"], ["kene", "do"], ["ame", "came"],
+      ["zuja", "together"]
+    ],
+    "translation": "H. said that people that like me and the people that don't like me met.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "both reported", "judgment": "acceptable"},
+      {"name": "both utterance", "judgment": "acceptable"},
+      {"name": "mixed first-reported second-utterance", "judgment": "unacceptable"},
+      {"name": "mixed first-utterance second-reported", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": {"entry": "vano", "indexicals": "me, me", "test": "shift_together", "c_command": "no"},
+    "comment": "The two indexicals are in separate relative clauses, so Shift-Together is not a crossing-binding-paths effect.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_32",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(32)"},
+    "reportedIn": null,
+    "language": "diml1238",
+    "primaryText": "Ali mı-ra va kɛ Hɛseni to-ra va ɛz braye Rojda-o.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ali", "Ali"], ["mı-ra", "me-to"], ["va", "said"], ["kɛ", "that"], ["Hɛseni", "Hesen"],
+      ["to-ra", "you-to"], ["va", "said"], ["ɛz", "I"], ["braye", "brother"],
+      ["Rojda-o", "Rojda-GEN"]
+    ],
+    "translation": "Ali said to Andrew that Hesen said to Andrew that {Hesen, Ali, *Andrew} is Rojda's brother.",
+    "context": "Andrew, secretly the brother of the traitor Rojda, is confronted by Hesen; Ali overhears, then tells Andrew what Hesen said; Andrew reports Ali's words to his neighbor (31).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Hesen (lowest report)", "judgment": "acceptable"},
+      {"name": "Ali (intermediate report)", "judgment": "acceptable"},
+      {"name": "Andrew (utterance)", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": {"entry": "vano", "indexical": "I", "test": "multiple_embedding", "intermediate_shift": "yes"},
+    "comment": "The shifted *to-ra* 'to you' (Andrew, not the neighbor) diagnoses the operator in the intermediate clause, which has overwritten the utterance context.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_33",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(33)"},
+    "reportedIn": null,
+    "language": "diml1238",
+    "primaryText": "Ali mı-ra va kɛ Hɛseni Fatima-ra va ɛz braye Rojda-o.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ali", "Ali"], ["mı-ra", "me-to"], ["va", "said"], ["kɛ", "that"], ["Hɛseni", "Hesen"],
+      ["Fatima-ra", "Fatima-to"], ["va", "said"], ["ɛz", "I"], ["braye", "brother"],
+      ["Rojda-o", "Rojda-GEN"]
+    ],
+    "translation": "Ali said to Andrew that Hesen said to Fatima that {Hesen, Ali, Andrew} is Rojda's brother.",
+    "context": "As for (32), but Ali overheard Hesen telling Fatima.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Hesen (lowest report)", "judgment": "acceptable"},
+      {"name": "Ali (intermediate report)", "judgment": "acceptable"},
+      {"name": "Andrew (utterance)", "judgment": "acceptable"}
+    ],
+    "paperFeatures": {"entry": "vano", "indexical": "I", "test": "multiple_embedding", "intermediate_shift": "no"},
+    "comment": "The gloss subscript {H,A,U} and the prose allow the utterance author; the printed translation's asterisk on Andrew is a typo carried over from (32).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_34a",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(34a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John told Bill, you should buy it for me, not him.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John told Bill, you should buy it for me, not him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": {"language_type": "non-shifting"},
+    "comment": "English persons do not shift under any attitude verb.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_34b",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(34b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John wanted, you should buy it for me, not him.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John wanted, you should buy it for me, not him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": {"language_type": "non-shifting"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_36",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(36)"},
+    "reportedIn": null,
+    "language": "slav1253",
+    "primaryText": "segha ráwǫd'ɨ sédɨdi yɨlé",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["segha", "1.sg-for"], ["ráwǫd'ɨ", "2.sg-will-buy"], ["sédɨdi", "2.sg-tell-1.sg"],
+      ["yɨlé", "PAST"]
+    ],
+    "translation": "You sg. told me to buy it for you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "reported context", "judgment": "acceptable"}
+    ],
+    "paperFeatures": {"entry": "slave_tell", "indexical": "I", "indexicals": "I, you"},
+    "comment": "Under TELL both embedded persons refer to the author and addressee of the reported context.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_37a",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(37a)"},
+    "reportedIn": null,
+    "language": "slav1253",
+    "primaryText": "sú leshuyie k'eguhw'e yerinewe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["sú", "Q"], ["leshuyie", "spoon"], ["k'eguhw'e", "1.sg-will-lick"],
+      ["yerinewe", "2.sg-want"]
+    ],
+    "translation": "Do you [ADDR(c*)] want to lick the spoon?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "utterance context", "judgment": "acceptable"},
+      {"name": "reported context", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": {"entry": "slave_want", "indexical": "you"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_37b",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(37b)"},
+    "reportedIn": null,
+    "language": "slav1253",
+    "primaryText": "denexare wǫję yenɨwe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["denexare", "sister"], ["wǫję", "2.sg-will-sing"], ["yenɨwe", "3.sg-want"]
+    ],
+    "translation": "Sister wants you [ADDR(c*)] to sing.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "utterance context", "judgment": "acceptable"},
+      {"name": "reported context", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": {"entry": "slave_want", "indexical": "you"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_38a",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(38a)"},
+    "reportedIn": null,
+    "language": "slav1253",
+    "primaryText": "John beya ráwoz'ie yudeli",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["John", "John"], ["beya", "1.sg-son"], ["ráwoz'ie", "3.sg-will-hunt"],
+      ["yudeli", "3.sg-want-4.sg"]
+    ],
+    "translation": "John wants {his, my} son to go hunting.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "reported context", "judgment": "acceptable"},
+      {"name": "utterance context", "judgment": "acceptable"}
+    ],
+    "paperFeatures": {"entry": "slave_want", "indexical": "I"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_38b",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(38b)"},
+    "reportedIn": null,
+    "language": "slav1253",
+    "primaryText": "Simon rásereyineht'u hadi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Simon", "Simon"], ["rásereyineht'u", "2.sg-hit-1.sg"], ["hadi", "3.sg-say"]
+    ],
+    "translation": "Simon said that you hit {him, *me}.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "reported context", "judgment": "acceptable"},
+      {"name": "utterance context", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": {"entry": "slave_say", "indexical": "I"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_42a",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(42a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Thinking that she was Mary's mother, John begged of Mary, \"Mary should sing.\"",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Thinking that she was Mary's mother, John begged of Mary, \"Mary should sing.\"",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": {"test": "de_te"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_42b",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(42b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John begged Mary to sing.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John begged Mary to sing.",
+    "context": "John, thinking she was Mary's mother, begged of Mary that Mary should sing.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": {"test": "de_te"},
+    "comment": "Object-controlled PRO is read de te: the addressee coordinate of the index.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_45",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(45)"},
+    "reportedIn": null,
+    "language": "mupu1234",
+    "primaryText": "wu sat n-an nə gwar ta dar n-jos",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["wu", "3m"], ["sat", "say"], ["n-an", "prep-1sg"], ["nə", "Comp"], ["gwar", "ADDR-LOG"],
+      ["ta", "stop"], ["dar", "stay"], ["n-jos", "Jos"]
+    ],
+    "translation": "He_1 told me that I stopped in Jos.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": {"test": "context_blocking", "logophor": "ADDR-LOG"},
+    "comment": "The addressee logophor cannot corefer with the utterance author, for whom an indexical is available (44). Data from Frajzyngier 1993.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_46",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(46)"},
+    "reportedIn": null,
+    "language": "amha1245",
+    "primaryText": "alǝttazzǝzǝññ alǝ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["alǝttazzǝzǝññ", "1st.sg.-FUT-NEG-obey-1st.sg."], ["alǝ", "3rd.sg.m-PAST-say"]
+    ],
+    "translation": "John_i said I_i will not obey me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "I reported, me utterance", "judgment": "acceptable"},
+      {"name": "I reported, me reported", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": {"test": "shift_together", "indexicals": "I, me"},
+    "comment": "Schlenker's apparent counterexample to Shift-Together (from Leslau 1995); the authors add that the both-shifted reading is unavailable.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_47",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(47)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Over the past few years, John has repeatedly told me he would return my money in precisely two days.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Over the past few years, John has repeatedly told me he would return my money in precisely two days.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "two days after each telling", "judgment": "acceptable"}
+    ],
+    "paperFeatures": {"expression": "in precisely two days"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_48",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(48)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Last Saturday [May 8th], John said that he'd return in precisely eight days.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Last Saturday [May 8th], John said that he'd return in precisely eight days.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "May 16th", "judgment": "acceptable"},
+      {"name": "May 23rd", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": {"expression": "in precisely eight days", "embedded_tense": "would"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_49",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(49)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Last Saturday [May 8th], John said that he will return in precisely eight days.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Last Saturday [May 8th], John said that he will return in precisely eight days.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "May 16th", "judgment": "unacceptable"},
+      {"name": "May 23rd", "judgment": "acceptable"}
+    ],
+    "paperFeatures": {"expression": "in precisely eight days", "embedded_tense": "will"},
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "anandnevins2004_50",
+    "source": {"bibkey": "anand-nevins-2004", "paperLabel": "(50)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I met John a week ago. In precisely two days he was sick.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I met John a week ago. In precisely two days he was sick.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I met John a week ago. Two days later he was sick.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": {"expression": "in precisely two days", "test": "discourse_anaphora"},
+    "comment": "Schlenker marks the *in two days* version unacceptable; the authors' informants accept it.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   }
 ]
