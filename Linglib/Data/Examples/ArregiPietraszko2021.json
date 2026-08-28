@@ -1,178 +1,1042 @@
 [
   {
-    "id": "arregipietraszko2021_ex27",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (36c)"},
+    "id": "arregipietraszko2021_6",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(6)"},
+    "language": "stan1290",
+    "primaryText": "Jean embrasse souvent Marie.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jean often kisses Marie.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Jean souvent embrasse Marie.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "declarative"],
+      ["verbType", "lexical"],
+      ["finitePosition", "T"]
+    ],
+    "comment": "Pollock 1989:367.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_7",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(7)"},
+    "language": "stan1293",
+    "primaryText": "Sue often eats fish.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Sue eats often fish.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "declarative"],
+      ["verbType", "lexical"],
+      ["finitePosition", "V"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_10a",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(10a)"},
+    "language": "stan1293",
+    "primaryText": "He has not understood.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "negation"],
+      ["verbType", "auxiliary"],
+      ["finitePosition", "T"],
+      ["doSupport", "false"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_10b",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(10b)"},
+    "language": "stan1290",
+    "primaryText": "Il a pas compris.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Il", "he"], ["a", "has"], ["pas", "not"], ["compris", "understood"]
+    ],
+    "translation": "He has not understood.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "negation"],
+      ["verbType", "auxiliary"],
+      ["finitePosition", "T"],
+      ["doSupport", "false"]
+    ],
+    "comment": "Pollock 1989:370.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_12",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(12)"},
+    "language": "nort2795",
+    "primaryText": "Isi-lwane si-za-gijima.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Isi-lwane", "7-lion"], ["si-za-gijima", "7SBJ-FUT-run"]
+    ],
+    "translation": "The lion will run.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "declarative"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_13",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(13)"},
+    "language": "nort2795",
+    "primaryText": "isi-lwane esi-za-gijima",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["isi-lwane", "7-lion"], ["esi-za-gijima", "7REL-FUT-run"]
+    ],
+    "translation": "the lion that will run",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "relative"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_16",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(16)"},
+    "language": "nort2795",
+    "primaryText": "i-nyama isi-lwane esi-yi-dlileyo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["i-nyama", "9-meat"], ["isi-lwane", "7-lion"], ["esi-yi-dlileyo", "7REL-9OBJ-ate.DSJ"]
+    ],
+    "translation": "the meat that the lion ate",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "relative"],
+      ["relPrefixPosition", "T"]
+    ],
+    "comment": "The whole relative prefix follows the subject in Spec,TP.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_19_1",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(19)"},
+    "language": "nort2795",
+    "primaryText": "o-",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["class", "1"],
+      ["linker", "a"],
+      ["augment", "u"],
+      ["agreement", "u"],
+      ["rel", "o"]
+    ],
+    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_19_9",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(19)"},
+    "language": "nort2795",
+    "primaryText": "e-",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["class", "9"],
+      ["linker", "a"],
+      ["augment", "i"],
+      ["agreement", "i"],
+      ["rel", "e"]
+    ],
+    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_19_7",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(19)"},
+    "language": "nort2795",
+    "primaryText": "esi-",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["class", "7"],
+      ["linker", "a"],
+      ["augment", "i"],
+      ["agreement", "si"],
+      ["rel", "esi"]
+    ],
+    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_19_11",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(19)"},
+    "language": "nort2795",
+    "primaryText": "olu-",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["class", "11"],
+      ["linker", "a"],
+      ["augment", "u"],
+      ["agreement", "lu"],
+      ["rel", "olu"]
+    ],
+    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_26",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(26)"},
+    "language": "dani1285",
+    "primaryText": "Om morgenen drikker Peter ofte kaffe.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Om", "in"], ["morgenen", "the.morning"], ["drikker", "drinks"], ["Peter", "Peter"],
+      ["ofte", "often"], ["kaffe", "coffee"]
+    ],
+    "translation": "Peter often drinks coffee in the morning.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "v2"],
+      ["verbType", "lexical"],
+      ["finitePosition", "C"],
+      ["doSupport", "false"]
+    ],
+    "comment": "Vikner 1995:47.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_27",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(27)"},
+    "language": "dani1285",
+    "primaryText": "Vi ved at Peter ofte drikker kaffe om morgenen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Vi", "we"], ["ved", "know"], ["at", "that"], ["Peter", "Peter"], ["ofte", "often"],
+      ["drikker", "drinks"], ["kaffe", "coffee"], ["om", "in"], ["morgenen", "the.morning"]
+    ],
+    "translation": "We know that Peter often drinks coffee in the morning.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "declarative"],
+      ["verbType", "lexical"],
+      ["finitePosition", "V"]
+    ],
+    "comment": "Vikner 1995:47.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_30",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(30)"},
+    "language": "stan1288",
+    "primaryText": "Llamad nos!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Llamad", "call.IMP.2PL"], ["nos", "us"]
+    ],
+    "translation": "Call us!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "imperativeAff"],
+      ["verbType", "lexical"],
+      ["finitePosition", "C"],
+      ["imperativeForm", "true"]
+    ],
+    "comment": "Enclisis diagnoses the verb in C.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_31",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(31)"},
+    "language": "stan1288",
+    "primaryText": "No nos llaméis!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["No", "not"], ["nos", "us"], ["llaméis", "call.IMP/PRS.SBJV.2PL"]
+    ],
+    "translation": "Don't call us!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "imperativeNeg"],
+      ["verbType", "lexical"],
+      ["finitePosition", "T"],
+      ["imperativeForm", "false"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_33",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(33)"},
+    "language": "lowe1386",
+    "primaryText": "ans klɔmai",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ans", "us"], ["klɔmai", "call.IMP.2PL"]
+    ],
+    "translation": "Call us!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "imperativeAff"],
+      ["verbType", "lexical"],
+      ["finitePosition", "T"],
+      ["imperativeForm", "true"]
+    ],
+    "comment": "Scuol variety of Vallader (Manzini and Savoia 2005:424); proclisis with imperative-specific inflection.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_34",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(34)"},
+    "language": "lowe1386",
+    "primaryText": "nu ns klɔmarai",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nu", "not"], ["ns", "us"], ["klɔmarai", "call.IMP/INF.2PL"]
+    ],
+    "translation": "Don't call us!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "imperativeNeg"],
+      ["verbType", "lexical"],
+      ["finitePosition", "T"],
+      ["imperativeForm", "false"]
+    ],
+    "comment": "Manzini and Savoia 2005:424.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_36a",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(36a)"},
+    "language": "stan1293",
+    "primaryText": "Sue does not eat fish.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Sue doesn't eat fish.", "judgment": "acceptable"},
+      {"form": "Sue not eats fish.", "judgment": "ungrammatical"},
+      {"form": "Sue eats not fish.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "negation"],
+      ["verbType", "lexical"],
+      ["finitePosition", "T"],
+      ["doSupport", "true"],
+      ["verbForm", "bare"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_36b",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(36b)"},
+    "language": "stan1293",
+    "primaryText": "Sue DOES (so) eat fish.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Sue so eats fish.", "judgment": "ungrammatical"},
+      {"form": "Sue eats so fish.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "verum"],
+      ["verbType", "lexical"],
+      ["finitePosition", "T"],
+      ["doSupport", "true"],
+      ["verbForm", "bare"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_36c",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(36c)"},
     "language": "stan1293",
     "primaryText": "Where does Sue eat fish?",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Where does Sue eat fish?",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "paperFeatures": [
-      ["context", "question"],
-      ["verb_type", "lexical"],
-      ["do_support", "true"]
+    "alternatives": [
+      {"form": "Where Sue eats fish?", "judgment": "ungrammatical"},
+      {"form": "Where eats Sue fish?", "judgment": "ungrammatical"}
     ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex27. Do-support in a wh-question with a lexical verb."
+    "readings": [],
+    "paperFeatures": [
+      ["context", "inversion"],
+      ["verbType", "lexical"],
+      ["finitePosition", "C"],
+      ["doSupport", "true"],
+      ["verbForm", "bare"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "arregipietraszko2021_ex30",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (37c)"},
+    "id": "arregipietraszko2021_37a",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(37a)"},
+    "language": "stan1293",
+    "primaryText": "Sue is not eating fish.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Sue isn't eating fish.", "judgment": "acceptable"},
+      {"form": "Sue does not be eating fish.", "judgment": "ungrammatical"},
+      {"form": "Sue doesn't be eating fish.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "negation"],
+      ["verbType", "auxiliary"],
+      ["finitePosition", "T"],
+      ["doSupport", "false"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_37b",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(37b)"},
+    "language": "stan1293",
+    "primaryText": "Sue IS (so) eating fish.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Sue DOES (so) be eating fish.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "verum"],
+      ["verbType", "auxiliary"],
+      ["finitePosition", "T"],
+      ["doSupport", "false"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_37c",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(37c)"},
     "language": "stan1293",
     "primaryText": "Where is Sue eating fish?",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Where is Sue eating fish?",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "paperFeatures": [
-      ["context", "question"],
-      ["verb_type", "auxiliary"],
-      ["do_support", "false"]
+    "alternatives": [
+      {"form": "Where does Sue be eating fish?", "judgment": "ungrammatical"}
     ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex30. Auxiliary inverts directly — no do-support."
+    "readings": [],
+    "paperFeatures": [
+      ["context", "inversion"],
+      ["verbType", "auxiliary"],
+      ["finitePosition", "C"],
+      ["doSupport", "false"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "arregipietraszko2021_ex31",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (37c), starred variant"},
+    "id": "arregipietraszko2021_fn38",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "fn. 38"},
     "language": "stan1293",
-    "primaryText": "Where does Sue be eating fish?",
+    "primaryText": "Who eats fish?",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Where does Sue be eating fish?",
-    "context": "",
-    "judgment": "unacceptable",
-    "paperFeatures": [
-      ["context", "question"],
-      ["verb_type", "auxiliary"],
-      ["do_support", "true"]
-    ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex31. Do-support with an auxiliary is ungrammatical."
-  },
-  {
-    "id": "arregipietraszko2021_ex32",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (36a)"},
-    "language": "stan1293",
-    "primaryText": "Sue does not eat fish",
-    "glossedTokens": [],
-    "translation": "Sue does not eat fish",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "subjectWh"],
+      ["verbType", "lexical"],
+      ["finitePosition", "V"],
+      ["doSupport", "false"]
+    ],
+    "comment": "The subject's copy in Spec,TP is a lower copy and does not intervene.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_51",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(51)"},
+    "language": "dani1285",
+    "primaryText": "Jeg tror at Johan ikke købte bogen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jeg", "I"], ["tror", "believe"], ["at", "that"], ["Johan", "Johan"], ["ikke", "not"],
+      ["købte", "bought"], ["bogen", "the.book"]
+    ],
+    "translation": "I believe that Johan didn't buy the book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
       ["context", "negation"],
-      ["verb_type", "lexical"],
-      ["do_support", "true"]
+      ["verbType", "lexical"],
+      ["finitePosition", "V"],
+      ["doSupport", "false"]
     ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex32. Do-support in sentential negation with a lexical verb."
+    "comment": "Vikner 1995:144.",
+    "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "arregipietraszko2021_ex33",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (36a), starred variant"},
-    "language": "stan1293",
-    "primaryText": "Sue not eats fish",
+    "id": "arregipietraszko2021_52",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(52)"},
+    "language": "dani1285",
+    "primaryText": "Om morgenen drikker Peter ofte kaffe.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Sue not eats fish",
+    "translation": "Peter often drinks coffee in the morning.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "v2"],
+      ["verbType", "lexical"],
+      ["finitePosition", "C"],
+      ["doSupport", "false"]
+    ],
+    "comment": "Vikner 1995:47; subject-verb inversion without do-support.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_53a",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(53a)"},
+    "language": "lomb1257",
+    "primaryText": "l tʃàkola semper",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["l", "he"], ["tʃàkola", "speak.PRS.IND.3SG"], ["semper", "always"]
+    ],
+    "translation": "He always speaks.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "declarative"],
+      ["verbType", "lexical"],
+      ["finitePosition", "T"]
+    ],
+    "comment": "Monnese (Benincà and Poletto 2004:59–60).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_53b",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(53b)"},
+    "language": "lomb1257",
+    "primaryText": "l tʃàkola mìa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["l", "he"], ["tʃàkola", "speak.PRS.IND.3SG"], ["mìa", "not"]
+    ],
+    "translation": "He doesn't speak.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
       ["context", "negation"],
-      ["verb_type", "lexical"],
-      ["do_support", "false"]
+      ["verbType", "lexical"],
+      ["finitePosition", "T"],
+      ["doSupport", "false"]
     ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex33. Lexical verb cannot raise past negation; omitting do-support is ungrammatical."
+    "comment": "Monnese; negation does not trigger do-support.",
+    "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "arregipietraszko2021_ex34",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (37a)"},
-    "language": "stan1293",
-    "primaryText": "Sue is not eating fish",
-    "glossedTokens": [],
-    "translation": "Sue is not eating fish",
+    "id": "arregipietraszko2021_54",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(54)"},
+    "language": "lomb1257",
+    "primaryText": "l à semper tʃakolà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["l", "he"], ["à", "have.PRS.IND.3SG"], ["semper", "always"], ["tʃakolà", "spoken"]
+    ],
+    "translation": "He has always spoken.",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
-      ["context", "negation"],
-      ["verb_type", "auxiliary"],
-      ["do_support", "false"]
+      ["context", "declarative"],
+      ["verbType", "auxiliary"],
+      ["finitePosition", "T"]
     ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex34. Auxiliary raises past negation — no do-support."
+    "comment": "Benincà and Poletto 2004:59.",
+    "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "arregipietraszko2021_ex35",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (37a), starred variant"},
-    "language": "stan1293",
-    "primaryText": "Sue does not be eating fish",
-    "glossedTokens": [],
-    "translation": "Sue does not be eating fish",
-    "context": "",
-    "judgment": "unacceptable",
-    "paperFeatures": [
-      ["context", "negation"],
-      ["verb_type", "auxiliary"],
-      ["do_support", "true"]
+    "id": "arregipietraszko2021_55",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(55)"},
+    "language": "lomb1257",
+    "primaryText": "à-l majà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["à-l", "have.PRS.IND.3SG-he"], ["majà", "eaten"]
     ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex35. Do-support with an auxiliary is ungrammatical even under negation."
-  },
-  {
-    "id": "arregipietraszko2021_ex38",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED VP-ellipsis discussion (no example number)"},
-    "language": "stan1293",
-    "primaryText": "She runs faster than he does",
-    "glossedTokens": [],
-    "translation": "She runs faster than he does",
+    "translation": "Has he eaten?",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
-      ["context", "vpEllipsis"],
-      ["verb_type", "lexical"],
-      ["do_support", "true"]
+      ["context", "inversion"],
+      ["verbType", "auxiliary"],
+      ["finitePosition", "C"],
+      ["doSupport", "false"]
     ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex38. VP ellipsis strands tense; do-support with a lexical verb."
+    "comment": "Benincà and Poletto 2004:52.",
+    "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "arregipietraszko2021_ex39",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (36b)"},
-    "language": "stan1293",
-    "primaryText": "Sue DOES eat fish",
-    "glossedTokens": [],
-    "translation": "Sue DOES eat fish",
+    "id": "arregipietraszko2021_56b",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(56b)"},
+    "language": "lomb1257",
+    "primaryText": "fa-l majà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["fa-l", "do.PRS.IND.3SG-he"], ["majà", "eat.INF"]
+    ],
+    "translation": "Does he eat?",
     "context": "",
     "judgment": "acceptable",
-    "paperFeatures": [
-      ["context", "verum"],
-      ["verb_type", "lexical"],
-      ["do_support", "true"]
+    "alternatives": [
+      {"form": "maja-l", "judgment": "ungrammatical"}
     ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex39. Verum focus with do-support on a lexical verb."
+    "readings": [],
+    "paperFeatures": [
+      ["context", "inversion"],
+      ["verbType", "lexical"],
+      ["finitePosition", "C"],
+      ["doSupport", "true"],
+      ["verbForm", "infinitive"]
+    ],
+    "comment": "Benincà and Poletto 2004:52; (56a) is the starred alternative.",
+    "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "arregipietraszko2021_ex40",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (37b)"},
-    "language": "stan1293",
-    "primaryText": "She IS eating fish",
-    "glossedTokens": [],
-    "translation": "She IS eating fish",
+    "id": "arregipietraszko2021_57",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(57)"},
+    "language": "lomb1257",
+    "primaryText": "fe-t mia majal 'l pom",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["fe-t", "do.PRS.IND.2SG-you"], ["mia", "not"], ["majal", "eat.INF"], ["'l", "the"],
+      ["pom", "apple"]
+    ],
+    "translation": "Do you not eat the apple?",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
-      ["context", "verum"],
-      ["verb_type", "auxiliary"],
-      ["do_support", "false"]
+      ["context", "inversion"],
+      ["verbType", "lexical"],
+      ["finitePosition", "C"],
+      ["doSupport", "true"],
+      ["verbForm", "infinitive"]
     ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex40. Verum focus with an auxiliary — no do-support."
+    "comment": "Bjorkman 2011:190–191; the infinitive follows the adverbial.",
+    "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "arregipietraszko2021_ex41",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (37b), starred variant"},
+    "id": "arregipietraszko2021_61",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(61)"},
     "language": "stan1293",
-    "primaryText": "She DOES be eating fish",
+    "primaryText": "I wanted to give him a book and I did.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "She DOES be eating fish",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
-      ["context", "verum"],
-      ["verb_type", "auxiliary"],
-      ["do_support", "true"]
+      ["context", "ellipsis"],
+      ["verbType", "lexical"],
+      ["finitePosition", "T"],
+      ["doSupport", "true"]
     ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex41. Do-support with an auxiliary is ungrammatical even for verum focus."
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_62",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(62)"},
+    "language": "poli1260",
+    "primaryText": "Chciałam mu dać książkę i dałam.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Chciałam", "wanted.1SG"], ["mu", "him"], ["dać", "give.INF"], ["książkę", "book"],
+      ["i", "and"], ["dałam", "gave.1SG"]
+    ],
+    "translation": "I wanted to give him a book and I did.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Chciałam mu dać książkę i ją dałam.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "ellipsis"],
+      ["verbType", "lexical"],
+      ["finitePosition", "T"],
+      ["doSupport", "false"]
+    ],
+    "comment": "Verb-stranding VP-ellipsis.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_67",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(67)"},
+    "language": "dani1285",
+    "primaryText": "Mona og Jasper vaskede bilen, eller rettere Mona gjorde.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mona", "Mona"], ["og", "and"], ["Jasper", "Jasper"], ["vaskede", "washed"],
+      ["bilen", "the.car"], ["eller", "or"], ["rettere", "rather"], ["Mona", "Mona"],
+      ["gjorde", "did"]
+    ],
+    "translation": "Mona and Jasper washed the car, or rather Mona did.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Mona og Jasper vaskede bilen, eller rettere Mona vaskede.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "ellipsisV2"],
+      ["verbType", "lexical"],
+      ["finitePosition", "C"],
+      ["doSupport", "true"]
+    ],
+    "comment": "Sailor 2018:855–856.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_70",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(70)"},
+    "language": "poli1260",
+    "primaryText": "Oglądać mecz oglądałam.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oglądać", "watch.INF"], ["mecz", "game"], ["oglądałam", "watched.1SG"]
+    ],
+    "translation": "Watch the game, I did.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "fronting"],
+      ["verbType", "lexical"],
+      ["doSupport", "false"],
+      ["frontedForm", "infinitive"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_71",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(71)"},
+    "language": "stan1293",
+    "primaryText": "Watch the game I did.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "fronting"],
+      ["verbType", "lexical"],
+      ["doSupport", "true"],
+      ["frontedForm", "bare"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arregipietraszko2021_74a",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(74a)"},
+    "language": "poli1260",
+    "primaryText": "Zaśpiewać, może zaśpiewam.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Zaśpiewać", "sing.INF"], ["może", "maybe"], ["zaśpiewam", "sing.FUT.1SG"]
+    ],
+    "translation": "Sing, maybe I will.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "fronting"],
+      ["verbType", "lexical"],
+      ["doSupport", "false"],
+      ["frontedForm", "infinitive"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_74b",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(74b)"},
+    "language": "hebr1245",
+    "primaryText": "Lirkod, Gil lo yirkod ba-xayim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Lirkod", "dance.INF"], ["Gil", "Gil"], ["lo", "not"], ["yirkod", "dance.FUT"],
+      ["ba-xayim", "in.the-life"]
+    ],
+    "translation": "As for dancing, Gil will never dance.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "fronting"],
+      ["verbType", "lexical"],
+      ["doSupport", "false"],
+      ["frontedForm", "infinitive"]
+    ],
+    "comment": "Landau 2006:32.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_77",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(77)"},
+    "language": "swed1254",
+    "primaryText": "… och körde bilen gjorde han.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["och", "and"], ["körde", "drive.PST"], ["bilen", "the.car"], ["gjorde", "do.PST"],
+      ["han", "he"]
+    ],
+    "translation": "… and drive the car he did.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "… och köra bilen gjorde han.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "frontingV2"],
+      ["verbType", "lexical"],
+      ["doSupport", "true"],
+      ["frontedForm", "finite"]
+    ],
+    "comment": "Platzack 2012:281; the fronted verb carries the same past inflection as the support verb.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_80a",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(80a)"},
+    "language": "east2295",
+    "primaryText": "Veys-n, veys ix.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Veys-n", "know.PRS.1SG-INF"], ["veys", "know.PRS.1SG"], ["ix", "I"]
+    ],
+    "translation": "I know.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "frontingV2"],
+      ["verbType", "lexical"],
+      ["doSupport", "false"],
+      ["frontedForm", "pseudoInfinitive"]
+    ],
+    "comment": "Waletzky 1969, cited in Travis 2003:244; the infinitive is vis-n.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_80b",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(80b)"},
+    "language": "east2295",
+    "primaryText": "Iz-n, iz es reb yixezkl gombiners shtub.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Iz-n", "be.PRS.3SG-INF"], ["iz", "be.PRS.3SG"], ["es", "it"], ["reb", "Mr."],
+      ["yixezkl", "Yikhezkl's"], ["gombiners", "Gombiner's"], ["shtub", "home"]
+    ],
+    "translation": "It is Mr. Yikhezkl's home.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "frontingV2"],
+      ["verbType", "lexical"],
+      ["doSupport", "false"],
+      ["frontedForm", "pseudoInfinitive"]
+    ],
+    "comment": "Waletzky 1969, cited in Travis 2003:244; the infinitive is zay-n.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_80c",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(80c)"},
+    "language": "east2295",
+    "primaryText": "Bin-en, bin ikh in amerike.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bin-en", "be.PRS.1SG-INF"], ["bin", "be.PRS.1SG"], ["ikh", "I"], ["in", "in"],
+      ["amerike", "America"]
+    ],
+    "translation": "As for being, I am in America.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "frontingV2"],
+      ["verbType", "lexical"],
+      ["doSupport", "false"],
+      ["frontedForm", "pseudoInfinitive"]
+    ],
+    "comment": "Davis and Prince 1986:95.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_82",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(82)"},
+    "language": "poli1260",
+    "primaryText": "Być w domu, jesteśmy.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Być", "be-INF"], ["w", "in"], ["domu", "house"], ["jesteśmy", "be.PRS-1PL"]
+    ],
+    "translation": "As for being at home, we are.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [
+      {"form": "Jesteć w domu, jesteśmy.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "fronting"],
+      ["verbType", "lexical"],
+      ["doSupport", "false"],
+      ["frontedForm", "infinitive"]
+    ],
+    "comment": "The paper marks the true infinitive ? and the pseudo-infinitive *.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "arregipietraszko2021_84",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(84)"},
+    "language": "stan1293",
+    "primaryText": "Go, he did.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Went, he did.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "fronting"],
+      ["verbType", "lexical"],
+      ["doSupport", "true"],
+      ["frontedForm", "bare"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
   }
 ]
