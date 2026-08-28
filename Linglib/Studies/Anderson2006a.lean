@@ -1,7 +1,7 @@
 import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 import Linglib.Syntax.Negation
-import Linglib.Data.Examples.Anderson2006
+import Linglib.Data.Examples.Anderson2006a
 import Mathlib.Data.Finset.Basic
 
 /-!
@@ -26,11 +26,11 @@ auxiliary partially encodes subject person through tone, comes out split by (13)
 
 ## References
 
-* [anderson-2006]
+* [anderson-2006a]
 * [bybee-1985] — the category inventory
 -/
 
-namespace Anderson2006
+namespace Anderson2006a
 
 open AuxiliaryVerbs Data.Examples Morphology Syntax.Negation
 
@@ -128,4 +128,4 @@ theorem negative_auxiliary_patterns :
       (r.feature? "infl_pattern").bind InflectionPattern.ofString? = some .lexHeaded := by
   decide +kernel
 
-end Anderson2006
+end Anderson2006a

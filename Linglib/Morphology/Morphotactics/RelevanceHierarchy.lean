@@ -47,7 +47,7 @@ inductive MorphCategory where
   /-- Agreement morphology, parameterized by the grammatical role of
       the controlling NP (`Agreement.Controller`). The role
       distinction (subj vs obj vs poss vs ...) is what allows
-      [anderson-2006]'s split/doubled AVC typology to be Lean-checkable;
+      [anderson-2006a]'s split/doubled AVC typology to be Lean-checkable;
       [bybee-1985]'s `personAgr / personAgrObj / genderAgr` source
       distinctions also round-trip cleanly. -/
   | agreement (controller : Agreement.Controller)

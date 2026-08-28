@@ -1,21 +1,21 @@
 import Linglib.Data.Examples.Schema
 
 /-!
-# `AndersonJM2006` — typed example data
+# `Anderson2006b` — typed example data
 
-Auto-generated from `Linglib/Data/Examples/AndersonJM2006.json` by
+Auto-generated from `Linglib/Data/Examples/Anderson2006b.json` by
 `scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
 the generator. Consumers (the paper's study file, test-suite hubs) import
-this module; declarations live in `namespace AndersonJM2006.Examples`.
+this module; declarations live in `namespace Anderson2006b.Examples`.
 -/
 
-namespace AndersonJM2006.Examples
+namespace Anderson2006b.Examples
 
 open Data.Examples
 
 def ex_39a : LinguisticExample :=
-  { id := "andersonjm2006_39a"
-    source := ⟨"anderson-jm-2006", "ch. 6 (39a)"⟩
+  { id := "anderson2006b_39a"
+    source := ⟨"anderson-2006b", "ch. 6 (39a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Bill read the book"
@@ -32,8 +32,8 @@ def ex_39a : LinguisticExample :=
     lgrConformance := "" }
 
 def ex_39b : LinguisticExample :=
-  { id := "andersonjm2006_39b"
-    source := ⟨"anderson-jm-2006", "ch. 6 (39b)"⟩
+  { id := "anderson2006b_39b"
+    source := ⟨"anderson-2006b", "ch. 6 (39b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Bill fell to the ground"
@@ -50,8 +50,8 @@ def ex_39b : LinguisticExample :=
     lgrConformance := "" }
 
 def ex_39c : LinguisticExample :=
-  { id := "andersonjm2006_39c"
-    source := ⟨"anderson-jm-2006", "ch. 6 (39c)"⟩
+  { id := "anderson2006b_39c"
+    source := ⟨"anderson-2006b", "ch. 6 (39c)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Bill flew to China"
@@ -68,8 +68,8 @@ def ex_39c : LinguisticExample :=
     lgrConformance := "" }
 
 def ex_39h : LinguisticExample :=
-  { id := "andersonjm2006_39h"
-    source := ⟨"anderson-jm-2006", "ch. 6 (39h)"⟩
+  { id := "anderson2006b_39h"
+    source := ⟨"anderson-2006b", "ch. 6 (39h)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Bill knew the answer"
@@ -86,8 +86,8 @@ def ex_39h : LinguisticExample :=
     lgrConformance := "" }
 
 def ex_39i : LinguisticExample :=
-  { id := "andersonjm2006_39i"
-    source := ⟨"anderson-jm-2006", "ch. 6 (39i)"⟩
+  { id := "anderson2006b_39i"
+    source := ⟨"anderson-2006b", "ch. 6 (39i)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Bill acquired a new shirt"
@@ -104,8 +104,8 @@ def ex_39i : LinguisticExample :=
     lgrConformance := "" }
 
 def ex_39j : LinguisticExample :=
-  { id := "andersonjm2006_39j"
-    source := ⟨"anderson-jm-2006", "ch. 6 (39j)"⟩
+  { id := "anderson2006b_39j"
+    source := ⟨"anderson-2006b", "ch. 6 (39j)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Bill suffered from asthma"
@@ -122,8 +122,8 @@ def ex_39j : LinguisticExample :=
     lgrConformance := "" }
 
 def ex_34 : LinguisticExample :=
-  { id := "andersonjm2006_34"
-    source := ⟨"anderson-jm-2006", "ch. 6 (34)"⟩
+  { id := "anderson2006b_34"
+    source := ⟨"anderson-2006b", "ch. 6 (34)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Phil suffered (from asthma)"
@@ -140,8 +140,8 @@ def ex_34 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex_4_8a : LinguisticExample :=
-  { id := "andersonjm2006_4_8a"
-    source := ⟨"anderson-jm-2006", "ch. 6 (4.8a)"⟩
+  { id := "anderson2006b_4_8a"
+    source := ⟨"anderson-2006b", "ch. 6 (4.8a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Sewage flooded into the tank"
@@ -158,8 +158,8 @@ def ex_4_8a : LinguisticExample :=
     lgrConformance := "" }
 
 def ex_4_8b : LinguisticExample :=
-  { id := "andersonjm2006_4_8b"
-    source := ⟨"anderson-jm-2006", "ch. 6 (4.8b)"⟩
+  { id := "anderson2006b_4_8b"
+    source := ⟨"anderson-2006b", "ch. 6 (4.8b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The tank flooded with sewage"
@@ -176,8 +176,8 @@ def ex_4_8b : LinguisticExample :=
     lgrConformance := "" }
 
 def ex_23a : LinguisticExample :=
-  { id := "andersonjm2006_23a"
-    source := ⟨"anderson-jm-2006", "ch. 6 (23a)"⟩
+  { id := "anderson2006b_23a"
+    source := ⟨"anderson-2006b", "ch. 6 (23a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Bill reads lots of books"
@@ -195,4 +195,4 @@ def ex_23a : LinguisticExample :=
 
 def all : List LinguisticExample := [ex_39a, ex_39b, ex_39c, ex_39h, ex_39i, ex_39j, ex_34, ex_4_8a, ex_4_8b, ex_23a]
 
-end AndersonJM2006.Examples
+end Anderson2006b.Examples

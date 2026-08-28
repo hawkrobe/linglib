@@ -34,7 +34,7 @@ Per-language fragments supply the entries.
 
 ## References
 
-* [anderson-2006], §1.2
+* [anderson-2006a], §1.2
 * [zeijlstra-2007]
 -/
 

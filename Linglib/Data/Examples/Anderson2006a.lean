@@ -1,21 +1,21 @@
 import Linglib.Data.Examples.Schema
 
 /-!
-# `Anderson2006` — typed example data
+# `Anderson2006a` — typed example data
 
-Auto-generated from `Linglib/Data/Examples/Anderson2006.json` by
+Auto-generated from `Linglib/Data/Examples/Anderson2006a.json` by
 `scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
 the generator. Consumers (the paper's study file, test-suite hubs) import
-this module; declarations live in `namespace Anderson2006.Examples`.
+this module; declarations live in `namespace Anderson2006a.Examples`.
 -/
 
-namespace Anderson2006.Examples
+namespace Anderson2006a.Examples
 
 open Data.Examples
 
 def komi_neg_pres : LinguisticExample :=
-  { id := "anderson2006_komi_neg_pres"
-    source := ⟨"anderson-2006", "(47a)"⟩
+  { id := "anderson2006a_komi_neg_pres"
+    source := ⟨"anderson-2006a", "(47a)"⟩
     reportedIn := none
     language := "komi1268"
     primaryText := "o-g mun"
@@ -32,8 +32,8 @@ def komi_neg_pres : LinguisticExample :=
     lgrConformance := "" }
 
 def komi_neg_past : LinguisticExample :=
-  { id := "anderson2006_komi_neg_past"
-    source := ⟨"anderson-2006", "(47b)"⟩
+  { id := "anderson2006a_komi_neg_past"
+    source := ⟨"anderson-2006a", "(47b)"⟩
     reportedIn := none
     language := "komi1268"
     primaryText := "e-g mun"
@@ -50,8 +50,8 @@ def komi_neg_past : LinguisticExample :=
     lgrConformance := "" }
 
 def udihe_neg : LinguisticExample :=
-  { id := "anderson2006_udihe_neg"
-    source := ⟨"anderson-2006", "(49)"⟩
+  { id := "anderson2006a_udihe_neg"
+    source := ⟨"anderson-2006a", "(49)"⟩
     reportedIn := none
     language := "udih1248"
     primaryText := "bi ei-mi sa:"
@@ -68,8 +68,8 @@ def udihe_neg : LinguisticExample :=
     lgrConformance := "" }
 
 def kwerba_neg_fut : LinguisticExample :=
-  { id := "anderson2006_kwerba_neg_fut"
-    source := ⟨"anderson-2006", "(52a)"⟩
+  { id := "anderson2006a_kwerba_neg_fut"
+    source := ⟨"anderson-2006a", "(52a)"⟩
     reportedIn := none
     language := "kwer1242"
     primaryText := "co kwai kot-ri-m"
@@ -86,8 +86,8 @@ def kwerba_neg_fut : LinguisticExample :=
     lgrConformance := "" }
 
 def kwerba_neg_past : LinguisticExample :=
-  { id := "anderson2006_kwerba_neg_past"
-    source := ⟨"anderson-2006", "(52b)"⟩
+  { id := "anderson2006a_kwerba_neg_past"
+    source := ⟨"anderson-2006a", "(52b)"⟩
     reportedIn := none
     language := "kwer1242"
     primaryText := "co kot-ri-m-o baye"
@@ -104,8 +104,8 @@ def kwerba_neg_past : LinguisticExample :=
     lgrConformance := "" }
 
 def doyayo_lexheaded : LinguisticExample :=
-  { id := "anderson2006_doyayo_lexheaded"
-    source := ⟨"anderson-2006", "(15a)"⟩
+  { id := "anderson2006a_doyayo_lexheaded"
+    source := ⟨"anderson-2006a", "(15a)"⟩
     reportedIn := none
     language := "doya1240"
     primaryText := "mi¹ (gi²) kpel¹-ko¹"
@@ -122,8 +122,8 @@ def doyayo_lexheaded : LinguisticExample :=
     lgrConformance := "MORPHEME_ALIGNED" }
 
 def doyayo_splitdoubled : LinguisticExample :=
-  { id := "anderson2006_doyayo_splitdoubled"
-    source := ⟨"anderson-2006", "(129)"⟩
+  { id := "anderson2006a_doyayo_splitdoubled"
+    source := ⟨"anderson-2006a", "(129)"⟩
     reportedIn := none
     language := "doya1240"
     primaryText := "hi¹-za¹ hi¹-zaa¹³ hi¹-lɔ-mɔ"
@@ -140,8 +140,8 @@ def doyayo_splitdoubled : LinguisticExample :=
     lgrConformance := "MORPHEME_ALIGNED" }
 
 def gorum_tiger : LinguisticExample :=
-  { id := "anderson2006_gorum_tiger"
-    source := ⟨"anderson-2006", "(63a)"⟩
+  { id := "anderson2006a_gorum_tiger"
+    source := ⟨"anderson-2006a", "(63a)"⟩
     reportedIn := none
     language := "pare1266"
     primaryText := "kula ne-giʔ-sun miŋ ne-butoŋ-tuʔ ne-i-tuʔ"
@@ -158,8 +158,8 @@ def gorum_tiger : LinguisticExample :=
     lgrConformance := "MORPHEME_ALIGNED" }
 
 def gorum_vigorously : LinguisticExample :=
-  { id := "anderson2006_gorum_vigorously"
-    source := ⟨"anderson-2006", "(63b)"⟩
+  { id := "anderson2006a_gorum_vigorously"
+    source := ⟨"anderson-2006a", "(63b)"⟩
     reportedIn := none
     language := "pare1266"
     primaryText := "miŋ ne-gaʔ-ru ne-laʔ-ru"
@@ -176,8 +176,8 @@ def gorum_vigorously : LinguisticExample :=
     lgrConformance := "MORPHEME_ALIGNED" }
 
 def hemba_progressive : LinguisticExample :=
-  { id := "anderson2006_hemba_progressive"
-    source := ⟨"anderson-2006", "(105)"⟩
+  { id := "anderson2006a_hemba_progressive"
+    source := ⟨"anderson-2006a", "(105)"⟩
     reportedIn := none
     language := "hemb1242"
     primaryText := "tw-a-li tu-tib-a muti"
@@ -194,8 +194,8 @@ def hemba_progressive : LinguisticExample :=
     lgrConformance := "MORPHEME_ALIGNED" }
 
 def pipil_capability : LinguisticExample :=
-  { id := "anderson2006_pipil_capability"
-    source := ⟨"anderson-2006", "(49)"⟩
+  { id := "anderson2006a_pipil_capability"
+    source := ⟨"anderson-2006a", "(49)"⟩
     reportedIn := none
     language := "pipi1250"
     primaryText := "weli ni-nehnemi wehka"
@@ -212,8 +212,8 @@ def pipil_capability : LinguisticExample :=
     lgrConformance := "MORPHEME_ALIGNED" }
 
 def pipil_progressive : LinguisticExample :=
-  { id := "anderson2006_pipil_progressive"
-    source := ⟨"anderson-2006", "(133b)"⟩
+  { id := "anderson2006a_pipil_progressive"
+    source := ⟨"anderson-2006a", "(133b)"⟩
     reportedIn := none
     language := "pipi1250"
     primaryText := "n-yu ni-mitsin-ilwitia"
@@ -230,8 +230,8 @@ def pipil_progressive : LinguisticExample :=
     lgrConformance := "MORPHEME_ALIGNED" }
 
 def jakaltek_completive : LinguisticExample :=
-  { id := "anderson2006_jakaltek_completive"
-    source := ⟨"anderson-2006", "(87a)"⟩
+  { id := "anderson2006a_jakaltek_completive"
+    source := ⟨"anderson-2006a", "(87a)"⟩
     reportedIn := none
     language := "popt1235"
     primaryText := "šk-ach w-ila"
@@ -249,4 +249,4 @@ def jakaltek_completive : LinguisticExample :=
 
 def all : List LinguisticExample := [komi_neg_pres, komi_neg_past, udihe_neg, kwerba_neg_fut, kwerba_neg_past, doyayo_lexheaded, doyayo_splitdoubled, gorum_tiger, gorum_vigorously, hemba_progressive, pipil_capability, pipil_progressive, jakaltek_completive]
 
-end Anderson2006.Examples
+end Anderson2006a.Examples

@@ -2,7 +2,7 @@ import Mathlib.Order.Nat
 
 /-!
 # Grammaticalization
-[heine-1993] [anderson-2006] [bybee-perkins-pagliuca-1994]
+[heine-1993] [anderson-2006a] [bybee-perkins-pagliuca-1994]
 [lehmann-1985] [heine-kuteva-2002] [hopper-traugott-2003]
 
 Grammaticalization: the diachronic process by which lexical items become
@@ -14,13 +14,13 @@ here is the 5-stage variant:
 ## Attribution
 
 The verbal cline is anchored on [heine-1993] ch. 3 (the source
-[anderson-2006] cites at p. 5 as `Heine (1993: 48ff.)`).
+[anderson-2006a] cites at p. 5 as `Heine (1993: 48ff.)`).
 Anderson's own running shorthand at p. 5 collapses to three stages
 (`L[exical] V[erb] >> A[uxiliary] V > AF[fi]X`); the 5-stage form
 here splits Heine's continuum at the canonical clitic/affix/zero
 boundaries also used by [lehmann-1985] and [hopper-traugott-2003].
 
-**Caveat ([heine-1993] p. 66, endorsed by [anderson-2006] p. 5):**
+**Caveat ([heine-1993] p. 66, endorsed by [anderson-2006a] p. 5):**
 "we are dealing with chains [of grammaticalization] and since chains
 are by definition continuous structures, setting up stages along
 these structures must remain an arbitrary and/or artificial endeavor."
@@ -61,7 +61,7 @@ namespace Grammaticalization
     Heine's own staging (Heine 1993 §2.4.2 uses a finer 7-stage
     A-G chain: concrete-source → starting-down → budding →
     defective → linguistic-hybrid → firmly-grammaticalized →
-    orphaning). [anderson-2006] p. 5 attributes the
+    orphaning). [anderson-2006a] p. 5 attributes the
     `LV >> AV > AFX` path to Heine 1993:48ff. without committing
     to a specific stage count; ch. 7 traces grammaticalization of
     source constructions onto whatever cline the framework adopts.
