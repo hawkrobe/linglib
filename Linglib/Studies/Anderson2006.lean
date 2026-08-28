@@ -1,125 +1,85 @@
-import Mathlib.Data.Finset.Basic
 import Linglib.Syntax.Category.Auxiliary.Constructions
-import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
-import Linglib.Fragments.Finnish.Negation
+import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 import Linglib.Syntax.Negation
-import Linglib.Studies.Sorace2000
 import Linglib.Data.Examples.Anderson2006
+import Mathlib.Data.Finset.Basic
 
 /-!
-# Anderson (2006): Auxiliary Verb Constructions
+# Anderson 2006: auxiliary verb constructions
 
-An auxiliary verb construction pairs an auxiliary with a lexical verb, and
-languages differ in where the inflection lands: on the auxiliary (English
-*have eaten*), on the lexical verb (Doyayo), on both (Gorum), split between
-them (Jakaltek puts absolutive agreement on the auxiliary and ergative on
-the lexical verb), or split with some categories doubled (Pipil, Hemba).
-The lexical verb stays the semantic head throughout, and that mismatch
-between where meaning sits and where inflection sits is what makes AVCs
-typologically distinctive. Chapter 7 places the constructions on
-[heine-1993]'s grammaticalization cline.
+An auxiliary verb construction pairs an auxiliary with a lexical verb that stays the semantic
+head, and languages differ in which element hosts the inflection: the auxiliary (English *have
+eaten*), the lexical verb (Pipil *weli ni-nehnemi*), both with the same categories (Gorum),
+the two dividing the categories (Jakaltek, absolutive on the auxiliary and ergative on the
+lexical verb), or dividing them with some doubled (Hemba, Doyayo, Pipil). The five
+macro-patterns are distinguished by the inflectional head alone (13), and across the
+split/doubled languages the doubled category is overwhelmingly the subject. Negative
+auxiliaries head constructions of every pattern: aux-headed in Udihe, split in Kokota,
+lex-headed in Kwerba, doubled in 'Iipay.
 
-Formalized here: nine datums across seven languages covering all five
-patterns, each recording which categories the auxiliary and the lexical
-verb host; the chapter 5 generalization that subject agreement doubles
-while object agreement stays on the lexical verb; negative auxiliaries as
-AVCs, with Kwerba as the counterexample to the verbal-negator
-tendency; and the compositions with [sorace-2000]'s auxiliary selection
-and [miestamo-2005]'s morpheme typology.
+`InflectionalMarking` records which categories each element carries and
+`InflectionalMarking.pattern` reads the macro-pattern off it; `rows_pattern` checks that
+reading against the book's own labels for its examples, `splitDoubled_doubles_subject` is the
+chapter 5 observation, and `negative_auxiliary_patterns` is the Udihe/Kwerba pair against the
+aux-headed expectation for verbal negators. Doyayo (15a), filed as lex-headed although its
+auxiliary partially encodes subject person through tone, comes out split by (13).
 
 ## References
 
-* [anderson-2006], §1.4, §1.7.2, chs. 2–5, ch. 7
-* [heine-1993], ch. 3
-* [karlsson-2017], §19.5
+* [anderson-2006]
+* [bybee-1985] — the category inventory
 -/
+
 namespace Anderson2006
 
-open AuxiliaryVerbs
-open ArgumentStructure.AuxiliarySelection
-open Syntax.Negation (Strategy)
+open AuxiliaryVerbs Data.Examples Morphology Syntax.Negation
 
-/-! ### Where the inflection is marked
+/-! ### Where the inflection is marked -/
 
-Possessing a distribution is neutral on periphrasis-hood
-([spencer-popova-2015] pp. 200, 204); the data is the raw material for
-the distributed-exponence criterion. -/
-
-open Morphology (MorphCategory)
-
-/-- Which inflectional categories each element of an auxiliary verb
-construction carries. The category vocabulary is `MorphCategory`
-([bybee-1985]'s relevance hierarchy); which of the five patterns the
-marking realizes is `InflectionPattern`. -/
+/-- Which inflectional categories each element of an auxiliary verb construction carries. -/
 structure InflectionalMarking where
   onAux : Finset MorphCategory
   onLex : Finset MorphCategory
   deriving DecidableEq
 
-/-- Doyayo lex-headed (`Examples.doyayo_lexheaded`): the auxiliary
-"partially encodes person of the subject through the tone" (p. 120), the
-lexical verb carries TAM. -/
-def doyayoLexHeaded : InflectionalMarking :=
-  { onAux := {.agreement .subj}, onLex := {.tense} }
+/-- The inflectional head fixes the macro-pattern (13): only the auxiliary marked, only the
+lexical verb, both with the same categories, the two disjoint, or overlapping. -/
+def InflectionalMarking.pattern (m : InflectionalMarking) : InflectionPattern :=
+  if m.onLex = ∅ then .auxHeaded
+  else if m.onAux = ∅ then .lexHeaded
+  else if m.onAux = m.onLex then .doubled
+  else if Disjoint m.onAux m.onLex then .split
+  else .splitDoubled
 
-/-- Doyayo split/doubled (`Examples.doyayo_splitdoubled`): the subject is
-marked on both elements, the object only on the lexical verb. -/
-def doyayoSplitDoubled : InflectionalMarking :=
-  { onAux := {.agreement .subj}
-  , onLex := {.agreement .subj, .agreement .obj} }
+/-- The categories doubled on both elements. -/
+def InflectionalMarking.doubled (m : InflectionalMarking) : Finset MorphCategory :=
+  m.onAux ∩ m.onLex
 
-/-- Gorum doubled (`Examples.gorum_tiger`, `Examples.gorum_vigorously`):
-subject agreement, tense and affectedness on both elements. -/
-def gorumDoubled : InflectionalMarking :=
-  { onAux := {.agreement .subj, .tense, .voice}
-  , onLex := {.agreement .subj, .tense, .voice} }
+/-! ### The book's examples -/
 
-/-- Hemba split/doubled (`Examples.hemba_progressive`): agreement on both
-elements, tense on the auxiliary, mood on the lexical verb. -/
-def hembaSplitDoubled : InflectionalMarking :=
-  { onAux := {.agreement .subj, .tense}
-  , onLex := {.agreement .subj, .mood} }
+/-- The category names used in the example rows; Gorum's affectedness is outside the
+inventory. -/
+def MorphCategory.ofString? : String → Option MorphCategory
+  | "subj" => some (.agreement .subj)
+  | "obj" => some (.agreement .obj)
+  | "tense" => some .tense
+  | "aspect" => some .aspect
+  | "mood" => some .mood
+  | "negation" => some .negation
+  | _ => none
 
-/-- Jakaltek split (`Examples.jakaltek_completive`): aspect and absolutive
-agreement on the auxiliary, ergative agreement on the lexical verb. -/
-def jakaltekSplit : InflectionalMarking :=
-  { onAux := {.aspect, .agreement .obj}
-  , onLex := {.agreement .subj} }
+/-- The categories a row lists under a feature key. -/
+def categories (r : LinguisticExample) (key : String) : Finset MorphCategory :=
+  (r.paperFeatures.filterMap fun kv =>
+    if kv.1 = key then MorphCategory.ofString? kv.2 else none).toFinset
 
-/-- Pipil lex-headed (`Examples.pipil_capability`): the capability
-auxiliary *weli* is uninflected. -/
-def pipilLexHeaded : InflectionalMarking :=
-  { onAux := ∅, onLex := {.agreement .subj} }
+/-- The inflectional marking a row records, when it records one. -/
+def InflectionalMarking.ofRow? (r : LinguisticExample) : Option InflectionalMarking :=
+  if r.paperFeatures.any (fun kv => kv.1 = "on_aux" || kv.1 = "on_lex") then
+    some ⟨categories r "on_aux", categories r "on_lex"⟩
+  else none
 
-/-- Pipil split/doubled (`Examples.pipil_progressive`): "Subjects are doubly
-marked… while objects occur only on lexical verbs". The auxiliary root *yu*
-carries prospective TAM lexically, so no tense morpheme sits on it. -/
-def pipilSplitDoubled : InflectionalMarking :=
-  { onAux := {.agreement .subj}
-  , onLex := {.agreement .subj, .agreement .obj} }
-
-/-- Finnish negative AVC, *en lue* 'I do not read': the negative auxiliary
-hosts negation, tense and agreement, the main verb the stem and aspect
-(through the connegative). [anderson-2006] §1.7.2 presents Uralic negative
-auxiliaries with connegative-marked lexical verbs without assigning
-Finnish a pattern label; the split reading follows [karlsson-2017] §19.5,
-where the connegative suffix is the diagnostic. -/
-def finnishNegative : InflectionalMarking :=
-  { onAux := {.negation, .tense, .agreement .subj}
-  , onLex := {.stem, .aspect} }
-
-/-- The 1sg negative auxiliary with the connegative *lue*, read out of
-`Finnish.Negation.negParadigm`; gloss `Neg-1 read-conneg`. -/
-def finnishNegForm : String :=
-  (Finnish.Negation.negParadigm.find?
-    (fun f => f.person == 1 && f.number == "sg")).elim "" (·.form ++ " lue")
-
-/-- The 1sg paradigm entry builds the form: a change to that entry leaves
-`finnishNegForm` empty and breaks this. -/
-theorem finnishNegForm_eq : finnishNegForm = "en lue" := rfl
-
-/-- The inflectional pattern Anderson assigns an example. -/
-def parseInflectionPattern : String → Option InflectionPattern
+def InflectionPattern.ofString? : String → Option InflectionPattern
   | "auxHeaded" => some .auxHeaded
   | "lexHeaded" => some .lexHeaded
   | "doubled" => some .doubled
@@ -127,90 +87,45 @@ def parseInflectionPattern : String → Option InflectionPattern
   | "splitDoubled" => some .splitDoubled
   | _ => none
 
-/-- The patterns Anderson's examples are classified as. -/
-def attestedPatterns : List InflectionPattern :=
-  Examples.all.filterMap fun e => (e.feature? "infl_pattern").bind parseInflectionPattern
+/-- The book's pattern label for each example is what (13) reads off its marking — except
+where the auxiliary's marking is only partial. -/
+theorem rows_pattern :
+    ∀ r ∈ Examples.all, r.feature? "aux_marking" = none →
+      ∀ m ∈ (InflectionalMarking.ofRow? r).toList,
+        ∀ p ∈ ((r.feature? "infl_pattern").bind InflectionPattern.ofString?).toList,
+          m.pattern = p := by
+  decide +kernel
 
-/-- Anderson's examples instantiate every one of his five patterns. -/
-theorem all_patterns_attested (p : InflectionPattern) : p ∈ attestedPatterns := by
-  cases p <;> decide
+/-- Doyayo (15a): the auxiliary partially encodes subject person through tone while the
+lexical verb carries tense, which (13) classifies as split; the book files it under
+lex-headed. -/
+theorem doyayo_split :
+    ∀ m ∈ (InflectionalMarking.ofRow? Examples.doyayo_lexheaded).toList, m.pattern = .split := by
+  decide +kernel
 
-/-- Chapter 5's generalization across the split/doubled languages: subject
-agreement is doubled over both elements, while object agreement stays on
-the lexical verb ("Subjects are doubly marked… while objects occur only on
-lexical verbs", p. 224). -/
-theorem splitDoubled_subj_doubled_obj_lex_only :
-    ∀ d ∈ [doyayoSplitDoubled, pipilSplitDoubled],
-      MorphCategory.agreement .subj ∈ d.onAux ∧
-      MorphCategory.agreement .subj ∈ d.onLex ∧
-      MorphCategory.agreement .obj ∈ d.onLex ∧
-      MorphCategory.agreement .obj ∉ d.onAux := by decide
+/-- Every one of the five patterns is instantiated by some example's marking. -/
+theorem all_patterns_attested (p : InflectionPattern) :
+    ∃ r ∈ Examples.all, ∃ m ∈ (InflectionalMarking.ofRow? r).toList, m.pattern = p := by
+  cases p <;> decide +kernel
 
-/-! ### Negative auxiliaries as AVCs
+/-- Chapter 5: in split/doubled patterns the doubled category is overwhelmingly the subject —
+every split/doubled example doubles subject agreement and nothing else. -/
+theorem splitDoubled_doubles_subject :
+    ∀ r ∈ Examples.all, ∀ m ∈ (InflectionalMarking.ofRow? r).toList,
+      m.pattern = .splitDoubled → m.doubled = {.agreement .subj} := by
+  decide +kernel
 
-[anderson-2006] §1.7.2 (p. 33-34) treats negative auxiliaries
-across multiple AVC patterns: aux-headed in Udihe, Neyo; split in
-Kokota; lex-headed in Kwerba; doubled in 'Iipay. The example rows
-live in `Data/Examples/Anderson2006.json` (Komi (47a,b), Udihe (49),
-Kwerba (52a,b), all verified against the book); each row's
-`infl_pattern` feature records the book's classification where it
-states one. The Strategy → InflectionPattern mapping lives in
-`Syntax/Negation.lean`: `Strategy.expectedInflectionPattern` encodes
-the most common verbal-negator → aux-headed mapping, and the Kwerba
-rows witness below that it is a tendency, not a law. -/
+/-! ### Negative auxiliaries -/
 
-/-- Udihe (49) *bi ei-mi sa:* is classified aux-headed by Anderson,
-    and the strategy-level projection expects exactly that. -/
-theorem udihe_negVerb_expects_auxHeaded :
-    Examples.udihe_neg.feature? "infl_pattern" = some "auxHeaded" ∧
-    Strategy.negVerb.expectedInflectionPattern = some .auxHeaded :=
-  ⟨rfl, rfl⟩
-
-/-- Kwerba (52a,b) shows a negative auxiliary in a *lex-headed* AVC
-    (the lexical verb hosts the inflection), so the aux-headed
-    expectation of `Strategy.expectedInflectionPattern` is defeasible —
-    Anderson's own four-pattern list is the counterexample source. -/
-theorem kwerba_negVerb_lexHeaded_counterexample :
-    Examples.kwerba_neg_fut.feature? "infl_pattern" = some "lexHeaded" ∧
-    Strategy.negVerb.expectedInflectionPattern ≠ some .lexHeaded :=
-  ⟨rfl, by decide⟩
-
-/-- The Komi tense alternation (47a,b) sits entirely on the negative
-    auxiliary: same lexical verb token, different auxiliary form. -/
-theorem komi_tense_on_aux :
-    Examples.komi_neg_pres.glossedTokens.getLast? =
-      Examples.komi_neg_past.glossedTokens.getLast? ∧
-    Examples.komi_neg_pres.primaryText ≠ Examples.komi_neg_past.primaryText :=
-  ⟨rfl, by decide⟩
-
-/-! ### Auxiliary selection
-
-Be/have auxiliary selection (`Semantics/ArgumentStructure/AuxiliarySelection.lean`) operates
-within aux-headed AVCs: the question of *which* auxiliary appears
-presupposes the auxiliary hosts inflection. [sorace-2000]'s
-sister study `Studies/Sorace2000.lean` provides
-`vendlerClassToTypicalTransitivity`; the quantified composition
-with `canonicalSelection` is given below.
-
-Sorace's **gradient** Auxiliary Selection Hierarchy is not yet
-formalized in linglib (per `Sorace2000.lean` docstring); the
-contrastive theorem against Anderson's discrete pattern typology
-(`anderson_silent_on_intermediate_ash`) will land when ASH ranks
-are added. -/
-
-/-- Quantified Sorace bridge: composing `vendlerClassToTypicalTransitivity`
-    with `canonicalSelection` yields `.be` exactly for achievements,
-    `.have` elsewhere (Italian *è arrivato* instantiates the
-    achievement case). Exposes the composition
-    `canonicalSelection ∘ vendlerClassToTypicalTransitivity`
-    as a single theorem rather than a hand-picked tuple. Falsifiable
-    by changing either lookup. -/
-theorem sorace_canonical_chain (v : Features.VendlerClass) :
-    canonicalSelection
-      (Sorace2000.vendlerClassToTypicalTransitivity v) =
-        match v with
-        | .achievement => .be
-        | _ => .have := by
-  cases v <;> rfl
+/-- Negative auxiliaries head constructions of more than one pattern (§1.7.2): Udihe (49) is
+aux-headed, as `Strategy.expectedInflectionPattern` expects of a verbal negator, and Kwerba
+(52) is lex-headed, so that expectation is a tendency rather than a law. -/
+theorem negative_auxiliary_patterns :
+    (∃ r ∈ Examples.all, r.feature? "strategy" = some "negVerb" ∧
+      (r.feature? "infl_pattern").bind InflectionPattern.ofString? =
+        Strategy.negVerb.expectedInflectionPattern) ∧
+    ∃ r ∈ Examples.all, r.feature? "strategy" = some "negVerb" ∧
+      (r.feature? "infl_pattern").bind InflectionPattern.ofString? = some .lexHeaded := by
+  decide +kernel
 
 end Anderson2006
