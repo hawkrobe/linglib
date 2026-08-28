@@ -1,0 +1,93 @@
+[
+  {
+    "id": "asudeh2022_6",
+    "source": {"bibkey": "asudeh-2022", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Alex likes Blake.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Alex", "Alex"], ["likes", "like.PRS.3SG"], ["Blake", "Blake"]
+    ],
+    "translation": "Alex likes Blake.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["premises", "likes, alex, blake"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asudeh2022_14",
+    "source": {"bibkey": "asudeh-2022", "paperLabel": "(14)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everybody loves somebody.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Everybody", "everybody"], ["loves", "love.PRS.3SG"], ["somebody", "somebody"]
+    ],
+    "translation": "Everybody loves somebody.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "surface", "judgment": "acceptable"},
+      {"name": "inverse", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["premises", "love, every, some"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asudeh2022_fig2_finnish",
+    "source": {"bibkey": "asudeh-2022", "paperLabel": "Figure 2, Finnish"},
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Join vettä.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Join", "drink.PST.1SG"], ["vettä", "water.PART"]
+    ],
+    "translation": "I drank water.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["premises", "speaker, drink, water"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asudeh2022_fig2_english",
+    "source": {"bibkey": "asudeh-2022", "paperLabel": "Figure 2, English"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I drank water.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I", "1SG"], ["drank", "drink.PST"], ["water", "water"]
+    ],
+    "translation": "I drank water.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["premises", "speaker, drink, water"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
