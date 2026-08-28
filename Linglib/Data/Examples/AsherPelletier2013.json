@@ -1,0 +1,1060 @@
+[
+  {
+    "id": "asherpelletier2013_1",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Dogs bark.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Dogs bark.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_4a",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(4a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ducks lay eggs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ducks lay eggs.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["problem", "restricted subkind"]
+    ],
+    "comment": "Repeated as (32a).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_4b",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(4b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Cardinals are bright red.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Cardinals are bright red.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["problem", "restricted subkind"]
+    ],
+    "comment": "Repeated as (32b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_5",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mosquitoes carry the West Nile Virus.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mosquitoes carry the West Nile Virus.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["problem", "weak existential"]
+    ],
+    "comment": "Repeated as (43b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_6a",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(6a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ravens are normally black.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ravens are normally black.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_6b",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(6b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "This machine crushes oranges.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This machine crushes oranges.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["problem", "no actual instances"]
+    ],
+    "comment": "Repeated as (13a).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_7",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(7)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Penguins don't fly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Penguins don't fly.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_8",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(8)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Birds fly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Birds fly.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_9",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(9)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Turtles live to be 100.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Turtles live to be 100.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "teleological", "judgment": "acceptable"},
+      {"name": "statistical", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "characterizing"]
+    ],
+    "comment": "True under the teleological construal of normality, false under the statistical one.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_10",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(10)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Girls do better in school than boys.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Girls do better in school than boys.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "generic comparison"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_13b",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(13b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Kim handles the mail from Antarctica.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kim handles the mail from Antarctica.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["problem", "no actual instances"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_14a",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(14a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "People who go to bed late don't get up early.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "People who go to bed late don't get up early.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "embedded generic"],
+      ["embedding", "antecedent"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_14b",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(14b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Dogs chase cats that chase mice.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Dogs chase cats that chase mice.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "embedded generic"],
+      ["embedding", "consequent"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_15a",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(15a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Dinosaurs are extinct.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Dinosaurs are extinct.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "kind predication"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_15b",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(15b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ducks are widespread throughout Europe.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ducks are widespread throughout Europe.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "kind predication"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_16",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(16)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ducks lay eggs and are widespread throughout Europe.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ducks lay eggs and are widespread throughout Europe.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "copredication"],
+      ["aspects", "individual, kind"]
+    ],
+    "comment": "Repeated as (39a).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_17a",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(17a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Typhoons arise in this part of the Pacific.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Typhoons arise in this part of the Pacific.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "characterizing", "judgment": "acceptable"},
+      {"name": "existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "characterizing"]
+    ],
+    "comment": "The existential reading is prominent with prosodic stress on typhoons; the logical forms are (18b) and (19b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_17b",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(17b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "There are firemen available.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "There are firemen available.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "existential"],
+      ["restrictor", "tautologous"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_20a",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(20a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John drinks beer.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John drinks beer.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["focus", "beer"]
+    ],
+    "comment": "Logical form (20b): if John drinks something, it is normally beer.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_20c",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(20c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John drinks beer.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John drinks beer.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["focus", "drinks"]
+    ],
+    "comment": "Logical form (20d): if John does something with beer, it is normally drinking it.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_20e",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(20e)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John drinks beer.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John drinks beer.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["focus", "drinks beer"]
+    ],
+    "comment": "Logical form (20f): if John has a relevant alternative property, it is normally drinking beer.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_23",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(23)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Philosophers rarely smoke nowadays.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Philosophers rarely smoke nowadays.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "adverb of quantification"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_24",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(24)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lots of animals make good pets. For instance, dogs make good pets.",
+    "discourseSegments": [
+      "Lots of animals make good pets.",
+      "For instance, dogs make good pets."
+    ],
+    "glossedTokens": [],
+    "translation": "Lots of animals make good pets. For instance, dogs make good pets.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "adverb of quantification"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_25a",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(25a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Let's talk about Australian snakes. Australian snakes are poisonous.",
+    "discourseSegments": [
+      "Let's talk about Australian snakes.",
+      "Australian snakes are poisonous."
+    ],
+    "glossedTokens": [],
+    "translation": "Let's talk about Australian snakes. Australian snakes are poisonous.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["focus", "poisonous"]
+    ],
+    "comment": "Logical form (26a).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_25b",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(25b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Let's talk about poisonous snakes. Australian snakes are poisonous but South American snakes are not.",
+    "discourseSegments": [
+      "Let's talk about poisonous snakes.",
+      "Australian snakes are poisonous but South American snakes are not."
+    ],
+    "glossedTokens": [],
+    "translation": "Let's talk about poisonous snakes. Australian snakes are poisonous but South American snakes are not.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["focus", "Australian, South American"]
+    ],
+    "comment": "Logical form (26b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_28",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(28)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Australian snakes are poisonous, Asian snakes are too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Australian snakes are poisonous, Asian snakes are too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["focus", "Australian, Asian"],
+      ["discourse", "parallelism"]
+    ],
+    "comment": "Logical form (29).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_30a",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(30a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Frenchmen eat horsemeat.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Frenchmen eat horsemeat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["focus", "Frenchmen"]
+    ],
+    "comment": "Logical form (30b): a horsemeat eater is normally French.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_31",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(31)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Let's talk about Frenchmen. Frenchmen eat horsemeat, though Belgians do too.",
+    "discourseSegments": [
+      "Let's talk about Frenchmen.",
+      "Frenchmen eat horsemeat, though Belgians do too."
+    ],
+    "glossedTokens": [],
+    "translation": "Let's talk about Frenchmen. Frenchmen eat horsemeat, though Belgians do too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["focus", "French, horsemeat"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_33a",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(33a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Female ducks lay eggs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Female ducks lay eggs.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["accommodated", "restrictor"]
+    ],
+    "comment": "Repeated as (37).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_33b",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(33b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Male cardinals are bright red.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Male cardinals are bright red.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["accommodated", "restrictor"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_34",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(34)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ducks lay eggs and are female.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ducks lay eggs and are female.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["verdict", "false"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_36",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(36)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "These farm animals have different means of reproduction. Cows bear live young, Ducks lay eggs.",
+    "discourseSegments": [
+      "These farm animals have different means of reproduction.",
+      "Cows bear live young,",
+      "Ducks lay eggs."
+    ],
+    "glossedTokens": [],
+    "translation": "These farm animals have different means of reproduction. Cows bear live young, Ducks lay eggs.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["discourse", "Elaboration"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_38",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(38)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: Cardinals are bright red. B: Well, male cardinals are bright red; female cardinals are mostly dullish brown.",
+    "discourseSegments": [
+      "A: Cardinals are bright red.",
+      "B: Well, male cardinals are bright red; female cardinals are mostly dullish brown."
+    ],
+    "glossedTokens": [],
+    "translation": "A: Cardinals are bright red. B: Well, male cardinals are bright red; female cardinals are mostly dullish brown.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["discourse", "Correction"]
+    ],
+    "comment": "B's male and female carry the contrastive-topic contour.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_39b",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(39b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mosquitoes are widespread and carry WNV.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mosquitoes are widespread and carry WNV.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "copredication"],
+      ["aspects", "kind, individual"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_40a",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(40a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Cardinals are bright red and lay smallish, speckled eggs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Cardinals are bright red and lay smallish, speckled eggs.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "copredication"],
+      ["aspects", "disjoint subkinds"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_40b",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(40b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lions have large manes and rear their young in groups.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Lions have large manes and rear their young in groups.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "copredication"],
+      ["aspects", "disjoint subkinds"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_40c",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(40c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Jade is green and black.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jade is green and black.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "copredication"],
+      ["aspects", "disjoint subkinds"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_40d",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(40d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Jade is green but also sometimes black.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jade is green but also sometimes black.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "copredication"],
+      ["aspects", "disjoint subkinds"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_40e",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(40e)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Jade is green. Jade is also black.",
+    "discourseSegments": [
+      "Jade is green.",
+      "Jade is also black."
+    ],
+    "glossedTokens": [],
+    "translation": "Jade is green. Jade is also black.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "copredication"],
+      ["aspects", "disjoint subkinds"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_41",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(41)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You be careful about mosquitoes and deer ticks. Mosquitoes carry the WNV and deer ticks do too.",
+    "discourseSegments": [
+      "You be careful about mosquitoes and deer ticks.",
+      "Mosquitoes carry the WNV and deer ticks do too."
+    ],
+    "glossedTokens": [],
+    "translation": "You be careful about mosquitoes and deer ticks. Mosquitoes carry the WNV and deer ticks do too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["problem", "weak existential"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_42a",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(42a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Asteroids collide with Earth.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Asteroids collide with Earth.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["verdict", "false"],
+      ["relativeAccount", "true"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_42b",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(42b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "US governors are bodybuilders.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "US governors are bodybuilders.",
+    "context": "There are only 50 governors and one is a bodybuilder, a much larger percentage than planet-wide.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["verdict", "false"],
+      ["relativeAccount", "true"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_42c",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(42c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Philosophers are athletes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Philosophers are athletes.",
+    "context": "There are 1000 philosophers, one or two of whom do sport, while the vast majority of the planet's inhabitants do none.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["verdict", "false"],
+      ["relativeAccount", "true"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_43a",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(43a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Nicholas smokes after dinner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nicholas smokes after dinner.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["genericity", "events"]
+    ],
+    "comment": "Logical form (44a).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_43c",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(43c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sharks attack an injured bather.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Sharks attack an injured bather.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["genericity", "individuals, events"]
+    ],
+    "comment": "Logical form (44c).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_45",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(45)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Australian snakes can be poisonous.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Australian snakes can be poisonous.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "characterizing"],
+      ["genericity", "individuals, circumstances"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_46a",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(46a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Even mammals lay eggs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Even mammals lay eggs.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "existential over kinds", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "focus-sensitive adverb"]
+    ],
+    "comment": "From Sterken 2009; the authors hear an existential quantification over kinds.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_46b",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(46b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Even dogs eat garbage.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Even dogs eat garbage.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "focus-sensitive adverb"],
+      ["verdict", "false"]
+    ],
+    "comment": "From Sterken 2009; false unless discourse restricts the alternatives.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "asherpelletier2013_46c",
+    "source": {"bibkey": "asher-pelletier-2013", "paperLabel": "(46c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "For instance body builders become important politicians.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "For instance body builders become important politicians.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [
+      {"form": "For instance body builders can become important politicians.", "judgment": "acceptable"},
+      {"form": "For instance body builders have become important politicians.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "focus-sensitive adverb"]
+    ],
+    "comment": "From Sterken 2009; the alternatives are (48a) and (48b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
