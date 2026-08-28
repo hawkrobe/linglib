@@ -178,6 +178,18 @@ theorem speaker_literalListener_indicator_eq_one [DiscreteMeasurableSpace W] {α
     (literalListener_indicator_apply_singleton_le_one μ sem (measure_ne_top _ _) hmem)
     fun u' hu' => literalListener_indicator_apply_singleton_of_notMem μ sem (hother u' hu')
 
+/-- Row-preference of the speaker reduces to comparing the weighted listener values; the
+normalization cancels. -/
+theorem speaker_real_singleton_lt_iff {α : ℝ} (hα : 0 ≤ α) {cost : U → ℝ≥0∞}
+    (hctop : ∀ u, cost u ≠ ∞) {L : Kernel U W} {w : W} (hle : ∀ u, L u {w} ≤ 1)
+    (h0 : ∃ u, L u {w} ^ α * cost u ≠ 0) {u u' : U} :
+    (speaker α cost L w).real {u} < (speaker α cost L w).real {u'} ↔
+      L u {w} ^ α * cost u < L u' {w} ^ α * cost u' :=
+  Kernel.ofWeights_real_singleton_lt_iff w
+    (fun h => let ⟨u₀, hu₀⟩ := h0; hu₀ (Finset.sum_eq_zero_iff.mp h u₀ (Finset.mem_univ _)))
+    (ENNReal.sum_ne_top.mpr fun u _ =>
+      ENNReal.mul_ne_top (weight_rpow_ne_top hα (hle u)) (hctop u))
+
 /-! #### Pragmatic listeners -/
 
 section Listener
@@ -187,6 +199,9 @@ variable [StandardBorelSpace W] [Nonempty W] (α : ℝ) (cost : U → ℝ≥0∞
 
 /-- The pragmatic listener (eq. 3): the Bayesian inverse of the speaker against the prior. -/
 noncomputable def pragmaticListener : Kernel U W := (speaker α cost L)†μ
+
+instance : IsMarkovKernel (pragmaticListener α cost L μ) :=
+  inferInstanceAs (IsMarkovKernel ((speaker α cost L)†μ))
 
 variable [DiscreteMeasurableSpace U] [StandardBorelSpace U] [Nonempty U] [DecidableEq O]
   (obs : U → O)
