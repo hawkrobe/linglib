@@ -2,71 +2,32 @@ import Linglib.Features.Case.Basic
 import Linglib.Syntax.Case.Dependent
 
 /-!
-# Yakut (Sakha) Case System
-[baker-vinokurova-2010]
+# Yakut (Sakha) case
 
-Sakha is the Turkic language analyzed by [baker-vinokurova-2010]
-as the cross-linguistic exemplar of a *two-modality* case grammar:
-ACC and DAT are dependent case (Marantz; cf. `Marantz1991.lean`),
-while NOM is assigned by finite T via Agree and GEN is assigned by
-D via Agree.
+Sakha has an accusative-aligned system in which accusative and dative are dependent cases
+while nominative and genitive are assigned under agreement with T and D; the genitive is
+homophonous with the nominative except after a third-person possessive suffix.
 
-The clausal-level derivations live in
-`Studies/BakerVinokurova2010.lean`. This fragment
-records the language-level case inventory and the corresponding
-`CaseSystemConfig` instance, parallel to `Mongolian.Case`.
+## References
+
+* [baker-vinokurova-2010]
 -/
 
 namespace Yakut.Case
 
 open Syntax.Case
 
--- ============================================================================
--- § 1: Case System Configuration
--- ============================================================================
-
-/-- The Sakha case system [baker-vinokurova-2010]: accusative
-    alignment with dependent ACC + DAT and Agree-based NOM + GEN. -/
+/-- The Sakha case system: dependent accusative and dative, nominative and genitive by
+    Agree. -/
 def yakutCaseConfig : CaseSystemConfig where
   langType := .accusative
-  nomMode  := .agreeT
-  datMode  := .dependent
-  accMode  := .dependent
-  genMode  := .agreeD
+  nomMode := .agreeT
+  datMode := .dependent
+  accMode := .dependent
+  genMode := .agreeD
 
-theorem yakut_is_accusative : yakutCaseConfig.langType = .accusative := rfl
-theorem yakut_acc_dependent : yakutCaseConfig.accMode  = .dependent  := rfl
-theorem yakut_dat_dependent : yakutCaseConfig.datMode  = .dependent  := rfl
-theorem yakut_nom_agree     : yakutCaseConfig.nomMode  = .agreeT     := rfl
-theorem yakut_gen_agree     : yakutCaseConfig.genMode  = .agreeD     := rfl
-
--- ============================================================================
--- § 2: Case Inventory
--- ============================================================================
-
-/-- Sakha morphological case inventory.
-
-    Sakha distinguishes NOM (unmarked), ACC, DAT, ABL, INST, COM,
-    and PART, plus the relational/derivational GEN that surfaces on
-    DP-internal possessors. The traditional eight-case system is
-    accusative-aligned with no ABS/ERG distinction. -/
-def caseInventory : Finset Case :=
-  {.nom, .acc, .gen, .dat, .abl, .inst, .com, .part}
-
--- ============================================================================
--- § 3: Contrast with Mongolian
--- ============================================================================
-
-/-- Sakha vs. Mongolian (cf. `Mongolian.Case`): the two
-    languages share `langType`, `nomMode`, `accMode`, and `genMode`
-    but differ exclusively in `datMode`. Sakha has dependent DAT
-    (assigned by the (4a)/(85) DAT rule); Mongolian has nonstructural
-    DAT supplied by the lexicon. The cross-Turkic/Mongolic contrast
-    localizes to a single config parameter. -/
-theorem yakut_vs_mongolian_localized :
-    yakutCaseConfig.langType = .accusative ∧
-    yakutCaseConfig.nomMode  = .agreeT ∧
-    yakutCaseConfig.accMode  = .dependent ∧
-    yakutCaseConfig.genMode  = .agreeD := ⟨rfl, rfl, rfl, rfl⟩
+/-- The morphological case inventory: nominative, accusative, genitive, dative, ablative,
+    instrumental, comitative and partitive. -/
+def caseInventory : Finset Case := {.nom, .acc, .gen, .dat, .abl, .inst, .com, .part}
 
 end Yakut.Case

@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mongolian.Case
-import Linglib.Studies.BakerVinokurova2010
+import Linglib.Fragments.Yakut.Case
 
 /-!
 # Gong 2022 [gong-2022]
@@ -307,16 +307,24 @@ open Syntax.Case in
 /-- Mongolian differs from Sakha in `datMode` alone. -/
 theorem mongolian_differs_from_sakha_in_dat_only :
     Mongolian.Case.mongolianCaseConfig =
-      { BakerVinokurova2010.sakhaConfig with datMode := .nonstructural } := rfl
+      { Yakut.Case.yakutCaseConfig with datMode := .nonstructural } := rfl
+
+open Syntax.Case in
+/-- The Sakha ditransitive: a subject, a VP-internal goal, and a theme shifted to the
+    phase edge. -/
+def sakhaDitransitive : List PhasedNP :=
+  [{ label := "subject", lexicalCase := none, basePhase := .cp },
+   { label := "goal", lexicalCase := none, basePhase := .vp },
+   { label := "theme", lexicalCase := none, basePhase := .vp, shifted := true }]
 
 open Syntax.Case in
 /-- On the Sakha ditransitive, the Mongolian configuration derives no dative
     at all, and the goal that Sakha values dative is valued differently. -/
 theorem mongolian_derives_no_dative :
-    let r := assignCasesPhased Mongolian.Case.mongolianCaseConfig
-      BakerVinokurova2010.ditransitive
-    (∀ cn ∈ r, cn.case ≠ .dat) ∧
-    getCaseOf "goal" r ≠ getCaseOf "goal" BakerVinokurova2010.ditransitiveResult := by
+    (∀ cn ∈ assignCasesPhased Mongolian.Case.mongolianCaseConfig sakhaDitransitive,
+      cn.case ≠ .dat) ∧
+    getCaseOf "goal" (assignCasesPhased Mongolian.Case.mongolianCaseConfig sakhaDitransitive) ≠
+      getCaseOf "goal" (assignCasesPhased Yakut.Case.yakutCaseConfig sakhaDitransitive) := by
   decide
 
 end Gong2022
