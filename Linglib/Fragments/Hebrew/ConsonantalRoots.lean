@@ -104,4 +104,16 @@ def qlt : ConsonantalRoot String := ⟨["q", "l", "t"]⟩
 /-- √pll — *hitpalel* 'pray' (P7) ([arad-2005] (3)). -/
 def pll : ConsonantalRoot String := ⟨["p", "l", "l"]⟩
 
+/-- √npc — *nipec* 'shatter' (P3), *nupac* (P4) ([arad-2005] (6)). -/
+def npc : ConsonantalRoot String := ⟨["n", "p", "c"]⟩
+
+/-- √xlq — *xileq* 'divide' (P3), *xulaq* (P4) ([arad-2005] (6)). -/
+def xlq : ConsonantalRoot String := ⟨["x", "l", "q"]⟩
+
+/-- √str — *histir* 'hide' (P5), *hustar* (P6) ([arad-2005] (6)). -/
+def str : ConsonantalRoot String := ⟨["s", "t", "r"]⟩
+
+/-- √pqd — *hifqid* 'deposit' (P5), *hufqad* (P6) ([arad-2005] (6)). -/
+def pqd : ConsonantalRoot String := ⟨["p", "q", "d"]⟩
+
 end Hebrew
