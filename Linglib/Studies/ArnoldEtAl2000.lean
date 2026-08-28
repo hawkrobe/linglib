@@ -1,65 +1,67 @@
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Features.Givenness
+import Linglib.Data.Examples.ArnoldEtAl2000
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
 
 /-!
-# Heaviness vs. newness in constituent ordering
+# Arnold, Wasow, Losongco & Ginstrom 2000: heaviness vs. newness
 
-[arnold-wasow-losongco-ginstrom-2000] use a corpus analysis (the
-Aligned-Hansard corpus: *bring … to* and *take … into account* for heavy
-NP shift, *give* for the dative alternation) and an elicitation
-experiment (directors instructing actors to give objects to toy animals)
-to disentangle two confounded predictors of English postverbal ordering:
-heaviness (relative word count; [behaghel-1909]'s law of growing
-constituents, "end weight") and newness (given-before-new, coded with
-[prince-1992]'s discourse-given/new distinction, the corpus's few
-inferables collapsed into given). Both factors independently predict
-ordering in both constructions (§2 corpus, §3 experiment), and §5 reads
-the interaction pattern as "a constraint-based system, where the
-strength of a constraint is greater when competing constraints are
-weak".
+Postverbal constituent order in English — heavy NP shift and the dative alternation — has
+been attributed to grammatical weight (Behaghel's law of growing constituents) and to
+discourse status (given before new), but the two are confounded: given referents get short
+expressions and new ones long. A corpus study of the Aligned-Hansard debates and an
+elicitation experiment in which directors instruct actors to give objects to toy animals
+measure heaviness as the difference in word count between the two constituents and newness
+by prior mention, and find that both factors independently shift the order, the newer and
+heavier constituent coming later, with neither reducible to the other. Their relative
+strength varies with the data: heaviness dominates where length differences are large,
+newness where the given referent has just been mentioned — a system of interacting
+constraints whose strength grows as the competing constraint weakens. Speakers' early
+disfluencies favour goal-first orders, so the postponement of new and heavy material serves
+planning as well as comprehension.
 
-The two factors are weighted markedness constraints `*HEAVY-FIRST` and
-`*NEW-FIRST` over the binary ordering candidates
-([goldwater-johnson-2003]'s MaxEnt encoding of the paper's
-soft-constraint architecture). The harmony difference between the two
-orders decomposes additively into signed per-constraint preferences
-(`score_diff_eq_components`), so independence, composition, and the
-constraint-strength interaction are one-step consequences; a
-pure-heaviness and a pure-newness contrast pair witness that neither
-factor reduces to the other.
+The two factors are read as weighted constraints over the two orders of a constituent pair:
+a graded penalty for putting the heavier constituent first, sized by the length difference the
+paper measures, and a penalty for putting a new constituent before a given one. The harmony
+difference between the orders is the weighted sum of the two signed preferences, which is
+the additive independence the paper reports; the paper's interaction is a matter of effect
+size in the data and is not represented.
+
+## Main definitions
+
+* `Phrase`, `Pair`, `Order`: a constituent by word count and givenness, a postverbal pair,
+  and which constituent comes last.
+* `heavyFirst`, `newFirst`: the two constraints; `con` their weighted family.
+* `heavyDiff`, `newDiff`: each constraint's signed preference for the theme-last order.
+
+## References
+
+* [arnold-wasow-losongco-ginstrom-2000]
+* [behaghel-1909] — the law of growing constituents
+* [prince-1992] — discourse-given, inferable, and new
 -/
 
 namespace ArnoldEtAl2000
 
-open Constraints Features
+open Constraints Features Data.Examples
 
 /-! ### Phrases, orderings, and candidates -/
 
-/-- A constituent characterized by the two dimensions
-    [arnold-wasow-losongco-ginstrom-2000] measure: word count
-    (heaviness) and discourse status (newness). Concrete syntactic
-    structure is abstracted away — these two scalars exhaust what the
-    paper's regressions condition on. -/
+/-- A constituent by the two measures the paper codes: word count and discourse status. -/
 structure Phrase where
-  wordCount : Nat
+  words : ℕ
   discourse : BinaryGivenness
   deriving DecidableEq
 
-/-- The two constituents of a binary postverbal alternation. For the
-    dative alternation, `(theme, goal)`; for heavy NP shift, `(direct
-    object, prepositional phrase)`. The constraints below are
-    construction-neutral. -/
+/-- A postverbal pair: theme and goal for the dative alternation, direct object and PP for
+heavy NP shift. -/
 abbrev Pair := Phrase × Phrase
 
-/-- Which of the two constituents occupies the second (sentence-final)
-    slot. For DA (pair = theme, goal): `themeLast` is the double object
-    (*give the white rabbit the carrot*), `goalLast` the prepositional
-    dative (*give the carrot to the white rabbit*). For HNPS (pair =
-    direct object, PP): `themeLast` is the *shifted* `V PP DO`,
-    `goalLast` the canonical `V DO PP`. -/
-inductive Order where
+/-- Which constituent comes last: `themeLast` is the double object or the shifted order,
+`goalLast` the prepositional dative or the canonical order. -/
+inductive Order
   | themeLast
   | goalLast
   deriving DecidableEq
@@ -68,198 +70,119 @@ abbrev Candidate := Pair × Order
 
 /-! ### The two constraints -/
 
-/-- `*HEAVY-FIRST`: violated when the first (verb-adjacent) constituent
-    is strictly heavier than the second — the markedness encoding of
-    [behaghel-1909]'s law of growing constituents. -/
-def heavyFirst : Constraint Candidate :=
-  fun ((th, gl), o) =>
-    match o with
-    | .themeLast => if gl.wordCount > th.wordCount then 1 else 0
-    | .goalLast  => if th.wordCount > gl.wordCount then 1 else 0
+/-- The weight penalty: the number of words by which the first constituent exceeds the
+second — the relative length the paper measures. -/
+def heavyFirst : Constraint Candidate
+  | ((th, gl), .themeLast) => gl.words - th.words
+  | ((th, gl), .goalLast) => th.words - gl.words
 
-/-- `*NEW-FIRST`: violated when the first constituent is discourse-new
-    while the second is discourse-given — the markedness encoding of the
-    given-before-new principle ([prince-1981],
-    [gundel-hedberg-zacharski-1993]). -/
-def newFirst : Constraint Candidate :=
-  fun ((th, gl), o) =>
-    match o with
-    | .themeLast =>
-      if gl.discourse = .new ∧ th.discourse = .given then 1 else 0
-    | .goalLast  =>
-      if th.discourse = .new ∧ gl.discourse = .given then 1 else 0
+/-- The newness penalty: a new constituent before a given one. -/
+def newFirst : Constraint Candidate
+  | ((th, gl), .themeLast) => if gl.discourse = .new ∧ th.discourse = .given then 1 else 0
+  | ((th, gl), .goalLast) => if th.discourse = .new ∧ gl.discourse = .given then 1 else 0
 
-/-- The two-constraint set as a `CON` over the ordering candidates. -/
+/-- The two constraints. -/
 def con : CON Candidate 2 := ![heavyFirst, newFirst]
 
-/-- The weight vector pairing with `con`: `wH` weights `*HEAVY-FIRST`,
-    `wN` weights `*NEW-FIRST`. -/
-def gW (wH wN : ℝ) : Fin 2 → ℝ := ![wH, wN]
+/-- The weights: `wH` for heaviness, `wN` for newness. -/
+def weights (wH wN : ℝ) : Fin 2 → ℝ := ![wH, wN]
 
-/-! ### Per-constraint signed preferences -/
+/-! ### Signed preferences -/
 
-/-- The heaviness constraint's signed preference for `themeLast` over
-    `goalLast` on a pair: `+1` when the theme (`p.1`) is heavier (so
-    placing it last avoids violation), `-1` when the goal (`p.2`) is
-    heavier, `0` when they are equal. -/
-def heavyDiff (p : Pair) : ℝ :=
-  (if p.1.wordCount > p.2.wordCount then (1:ℝ) else 0) -
-  (if p.2.wordCount > p.1.wordCount then (1:ℝ) else 0)
+/-- Heaviness's preference for `themeLast`: the theme's length minus the goal's. -/
+def heavyDiff (p : Pair) : ℝ := (p.1.words : ℝ) - p.2.words
 
-/-- The newness constraint's signed preference for `themeLast` over
-    `goalLast` on a pair: `+1` when the theme is new and the goal given
-    (so placing the theme last respects given-before-new), `-1` in the
-    mirror case, `0` otherwise. -/
+/-- Newness's preference for `themeLast`: `1` when the theme is new and the goal given, `-1`
+in the mirror case, `0` otherwise. -/
 def newDiff (p : Pair) : ℝ :=
-  (if p.1.discourse = .new ∧ p.2.discourse = .given then (1:ℝ) else 0) -
-  (if p.2.discourse = .new ∧ p.1.discourse = .given then (1:ℝ) else 0)
+  (if p.1.discourse = .new ∧ p.2.discourse = .given then (1 : ℝ) else 0) -
+    (if p.2.discourse = .new ∧ p.1.discourse = .given then (1 : ℝ) else 0)
 
-/-- The harmony-score difference decomposes additively into per-constraint
-    signed preferences scaled by their weights. Every prediction theorem
-    below is a one-step consequence. -/
+theorem cast_sub_sub_cast_sub (a b : ℕ) : ((a - b : ℕ) : ℝ) - ((b - a : ℕ) : ℝ) = a - b := by
+  rcases le_total a b with h | h
+  · rw [Nat.sub_eq_zero_of_le h, Nat.cast_sub h]; push_cast; ring
+  · rw [Nat.sub_eq_zero_of_le h, Nat.cast_sub h]; push_cast; ring
+
+/-- The harmony difference between the two orders is the weighted sum of the two signed
+preferences. -/
 theorem score_diff_eq_components (wH wN : ℝ) (p : Pair) :
-    harmonyScore con (gW wH wN) (p, .themeLast) -
-    harmonyScore con (gW wH wN) (p, .goalLast) =
-      wH * heavyDiff p + wN * newDiff p := by
+    harmonyScore con (weights wH wN) (p, .themeLast) -
+      harmonyScore con (weights wH wN) (p, .goalLast) = wH * heavyDiff p + wN * newDiff p := by
   obtain ⟨th, gl⟩ := p
   rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum]
-  simp only [con, gW, heavyFirst, newFirst, heavyDiff, newDiff, Fin.sum_univ_two,
-    Matrix.cons_val_zero, Matrix.cons_val_one]
+  simp only [con, weights, heavyFirst, newFirst, Fin.sum_univ_two, Matrix.cons_val_zero,
+    Matrix.cons_val_one]
+  have h := cast_sub_sub_cast_sub th.words gl.words
+  unfold heavyDiff newDiff
+  push_cast
+  linear_combination wH * h
+
+/-- The theme-last order wins exactly when the weighted preferences sum in its favour. -/
+theorem themeLast_iff (wH wN : ℝ) (p : Pair) :
+    harmonyDominates con (weights wH wN) (p, .themeLast) (p, .goalLast) ↔
+      0 < wH * heavyDiff p + wN * newDiff p := by
+  rw [harmonyDominates_iff, ← sub_pos, score_diff_eq_components]
+
+/-! ### Independence -/
+
+/-- Heaviness alone places the heavier constituent last. -/
+theorem heaviness_alone {wH : ℝ} (hH : 0 < wH) (p : Pair) :
+    harmonyDominates con (weights wH 0) (p, .themeLast) (p, .goalLast) ↔
+      p.2.words < p.1.words := by
+  rw [themeLast_iff, zero_mul, add_zero, mul_pos_iff_of_pos_left hH, heavyDiff, sub_pos,
+    Nat.cast_lt]
+
+/-- Newness alone places the new constituent after the given one. -/
+theorem newness_alone {wN : ℝ} (hN : 0 < wN) (p : Pair) :
+    harmonyDominates con (weights 0 wN) (p, .themeLast) (p, .goalLast) ↔
+      p.1.discourse = .new ∧ p.2.discourse = .given := by
+  rw [themeLast_iff, zero_mul, zero_add, mul_pos_iff_of_pos_left hN, newDiff]
+  split_ifs <;> simp_all
+
+/-- Weight effects are graded: lengthening the theme raises the harmony of the theme-last
+order by the heaviness weight per word. -/
+theorem score_diff_add_word (wH wN : ℝ) (th gl : Phrase) :
+    harmonyScore con (weights wH wN) (({ th with words := th.words + 1 }, gl), .themeLast) -
+        harmonyScore con (weights wH wN) (({ th with words := th.words + 1 }, gl), .goalLast) =
+      harmonyScore con (weights wH wN) ((th, gl), .themeLast) -
+        harmonyScore con (weights wH wN) ((th, gl), .goalLast) + wH := by
+  rw [score_diff_eq_components, score_diff_eq_components]
+  simp only [heavyDiff, newDiff]
   push_cast
   ring
 
-/-- `heavyDiff` is positive iff the theme (`p.1`) is strictly heavier
-    than the goal — i.e., `*HEAVY-FIRST` prefers `themeLast`. -/
-theorem heavyDiff_pos_iff {p : Pair} :
-    0 < heavyDiff p ↔ p.1.wordCount > p.2.wordCount := by
-  unfold heavyDiff
-  split_ifs with h1 h2 <;> norm_num <;> omega
+/-- When newness is neutral, heaviness decides; when weight is neutral, newness decides. -/
+theorem one_factor_decides (wH wN : ℝ) (p : Pair) :
+    (newDiff p = 0 → (harmonyDominates con (weights wH wN) (p, .themeLast) (p, .goalLast) ↔
+      0 < wH * heavyDiff p)) ∧
+    (heavyDiff p = 0 → (harmonyDominates con (weights wH wN) (p, .themeLast) (p, .goalLast) ↔
+      0 < wN * newDiff p)) :=
+  ⟨fun h => by rw [themeLast_iff, h, mul_zero, add_zero],
+    fun h => by rw [themeLast_iff, h, mul_zero, zero_add]⟩
 
-/-- `newDiff` is positive iff the theme is new while the goal is
-    given — i.e., `*NEW-FIRST` prefers `themeLast`. -/
-theorem newDiff_pos_iff {p : Pair} :
-    0 < newDiff p ↔ p.1.discourse = .new ∧ p.2.discourse = .given := by
-  unfold newDiff
-  split_ifs with h1 h2 <;> norm_num <;> simp_all
+/-! ### The paper's examples -/
 
-/-! ### Independence — the central paper claim, derived -/
+/-- The number of words in a constituent as printed. -/
+def words (s : String) : ℕ := (s.toList.filter (· = ' ')).length + 1
 
-/-- **Heaviness independently predicts ordering.** With the newness
-    weight zeroed out, a positive heaviness weight makes the order
-    placing the heavier constituent last strictly preferred. -/
-theorem heaviness_independently_predicts {p : Pair} {wH : ℝ}
-    (hH : 0 < wH) (h : 0 < heavyDiff p) :
-    harmonyDominates con (gW wH 0) (p, .themeLast) (p, .goalLast) := by
-  rw [harmonyDominates_iff, ← sub_pos, score_diff_eq_components]
-  simpa using mul_pos hH h
+/-- The word counts of a row's two constituents in surface order. -/
+def constituents (r : LinguisticExample) : Option (ℕ × ℕ) := do
+  let a ← r.feature? "first"
+  let b ← r.feature? "second"
+  pure (words a, words b)
 
-/-- **Newness independently predicts ordering.** With the heaviness
-    weight zeroed out, a positive newness weight makes the order
-    placing the new constituent last strictly preferred. -/
-theorem newness_independently_predicts {p : Pair} {wN : ℝ}
-    (hN : 0 < wN) (h : 0 < newDiff p) :
-    harmonyDominates con (gW 0 wN) (p, .themeLast) (p, .goalLast) := by
-  rw [harmonyDominates_iff, ← sub_pos, score_diff_eq_components]
-  simpa using mul_pos hN h
+/-- In every corpus and text example the paper offers as ordered by weight, the heavier
+constituent comes last. -/
+theorem rows_heavier_last :
+    ∀ r ∈ Examples.all, r.feature? "exception" = none →
+      ∀ c ∈ (constituents r).toList, c.1 ≤ c.2 := by
+  decide +kernel
 
-/-- **Both factors compose additively.** When neither factor opposes
-    `themeLast` and at least one strictly favors it, `themeLast` wins;
-    no separate interaction term is stipulated. -/
-theorem both_factors_compose {p : Pair} {wH wN : ℝ}
-    (hH : 0 ≤ wH) (hN : 0 ≤ wN)
-    (hHeavy : 0 ≤ heavyDiff p) (hNew : 0 ≤ newDiff p)
-    (hStrict : 0 < wH * heavyDiff p ∨ 0 < wN * newDiff p) :
-    harmonyDominates con (gW wH wN) (p, .themeLast) (p, .goalLast) := by
-  rw [harmonyDominates_iff, ← sub_pos, score_diff_eq_components]
-  have h1 : 0 ≤ wH * heavyDiff p := mul_nonneg hH hHeavy
-  have h2 : 0 ≤ wN * newDiff p := mul_nonneg hN hNew
-  rcases hStrict with hs | hs <;> linarith
-
-/-- **Tradeoff.** When heaviness and newness conflict, the prediction
-    depends on which side has the larger weighted contribution — the
-    constraint-based architecture the paper argues for. -/
-theorem tradeoff_resolved_by_weights {p : Pair} {wH wN : ℝ}
-    (h : 0 < wH * heavyDiff p + wN * newDiff p) :
-    harmonyDominates con (gW wH wN) (p, .themeLast) (p, .goalLast) := by
-  rw [harmonyDominates_iff, ← sub_pos, score_diff_eq_components]
-  exact h
-
-/-! ### Constraint-strength interaction
-
-In the corpus study the dative regressions had both main effects and no
-newness × heaviness interaction; the experiment showed one — "heaviness
-had the largest effect on utterances where both constituents were
-given" (§5). In additive harmony the pattern is immediate: when one
-constraint's differential is zero, the entire harmony difference is
-borne by the other constraint, undiluted. -/
-
-/-- When the newness constraint is neutral on a pair (both constituents
-    share givenness status), the harmony difference is exactly the
-    weighted heaviness term. -/
-theorem heaviness_dominates_when_newness_neutral
-    (wH wN : ℝ) {p : Pair} (hN : newDiff p = 0) :
-    harmonyScore con (gW wH wN) (p, .themeLast) -
-    harmonyScore con (gW wH wN) (p, .goalLast) = wH * heavyDiff p := by
-  rw [score_diff_eq_components, hN, mul_zero, add_zero]
-
-/-- When the heaviness constraint is neutral on a pair (equal lengths),
-    the harmony difference is exactly the weighted newness term. -/
-theorem newness_dominates_when_heaviness_neutral
-    (wH wN : ℝ) {p : Pair} (hH : heavyDiff p = 0) :
-    harmonyScore con (gW wH wN) (p, .themeLast) -
-    harmonyScore con (gW wH wN) (p, .goalLast) = wN * newDiff p := by
-  rw [score_diff_eq_components, hH, mul_zero, zero_add]
-
-/-! ### Contrast pairs and non-reducibility -/
-
-/-- A heavy-goal contrast: light theme, heavy goal, both new — only
-    heaviness discriminates. -/
-def heavyGoalContrast : Pair :=
-  ({ wordCount := 1, discourse := .new },
-   { wordCount := 8, discourse := .new })
-
-/-- A pure-newness contrast in the experiment's *give*-frame (*give the
-    carrot to the white rabbit*): lengths matched, theme new, goal
-    given — only newness discriminates. -/
-def newThemeContrast : Pair :=
-  ({ wordCount := 1, discourse := .new  },
-   { wordCount := 1, discourse := .given })
-
-@[simp] theorem heavyDiff_heavyGoalContrast : heavyDiff heavyGoalContrast = -1 := by
-  norm_num [heavyDiff, heavyGoalContrast]
-
-@[simp] theorem newDiff_heavyGoalContrast : newDiff heavyGoalContrast = 0 := by
-  simp [newDiff, heavyGoalContrast]
-
-@[simp] theorem heavyDiff_newThemeContrast : heavyDiff newThemeContrast = 0 := by
-  simp [heavyDiff, newThemeContrast]
-
-@[simp] theorem newDiff_newThemeContrast : newDiff newThemeContrast = 1 := by
-  norm_num [newDiff, newThemeContrast]
-  decide
-
-/-- **Non-reducibility witness.** `heavyGoalContrast` activates *only*
-    heaviness, `newThemeContrast` *only* newness: a theory
-    operationalizing one factor collapses one contrast to the trivial
-    baseline, contradicting the paper's findings. -/
-theorem heaviness_and_newness_genuinely_independent :
-    newDiff heavyGoalContrast = 0 ∧ heavyDiff heavyGoalContrast ≠ 0 ∧
-    heavyDiff newThemeContrast = 0 ∧ newDiff newThemeContrast ≠ 0 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> simp
-
-/-- Pure-heaviness grammar predicts goal-last (heavier-last) on the
-    heavy-goal contrast. -/
-theorem heavy_goal_predicts_goalLast :
-    harmonyDominates con (gW 1 0)
-      (heavyGoalContrast, .goalLast) (heavyGoalContrast, .themeLast) := by
-  rw [harmonyDominates_iff, ← sub_pos, ← neg_sub, score_diff_eq_components]
-  norm_num
-
-/-- Pure-newness grammar predicts theme-last (given-first) on the
-    pure-newness contrast. -/
-theorem new_theme_predicts_themeLast :
-    harmonyDominates con (gW 0 1)
-      (newThemeContrast, .themeLast) (newThemeContrast, .goalLast) :=
-  newness_independently_predicts one_pos (by simp)
+/-- The examples the paper sets aside — the announcer's *That brings to the plate Barry
+Bonds* and (17) — put the lighter constituent last: other factors, planning among them. -/
+theorem rows_exceptions_lighter_last :
+    ∀ r ∈ Examples.all, (r.feature? "exception").isSome →
+      ∀ c ∈ (constituents r).toList, c.2 < c.1 := by
+  decide +kernel
 
 end ArnoldEtAl2000
