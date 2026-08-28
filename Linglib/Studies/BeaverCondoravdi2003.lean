@@ -1,4 +1,5 @@
 import Linglib.Semantics.Tense.SentDenotation
+import Linglib.Studies.Anscombe1964
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Degree.Basic
 
@@ -419,5 +420,34 @@ theorem histAlt_subset_altIE_trivial
   intro w' hw'
   rw [altIE, Set.mem_ofPred_eq, equivIE_trivial_iff_agree]
   exact hIBP w t w' hw'
+
+/-! ### The classical rendering: complement monotonicity and overgeneration (§5–§6) -/
+
+section Classical
+
+open Anscombe1964
+
+variable {Time : Type*} [LinearOrder Time] (A B B' : SentDenotation Time)
+
+/-- The complement of [anscombe-1964]'s *before* is downward entailing: the universal over
+`B` reverses inclusion — the NPI-licensing environment. -/
+theorem anscombe_before_complement_DE (h : timeTrace B' ⊆ timeTrace B) :
+    Anscombe.before A B → Anscombe.before A B' :=
+  fun ⟨t, ht, hall⟩ => ⟨t, ht, fun t' ht' => hall t' (h ht')⟩
+
+/-- The complement of [anscombe-1964]'s *after* is upward entailing. -/
+theorem anscombe_after_complement_UE (h : timeTrace B ⊆ timeTrace B') :
+    Anscombe.after A B → Anscombe.after A B' :=
+  fun ⟨t, ht, t', ht', hlt⟩ => ⟨t, ht, t', h ht', hlt⟩
+
+/-- The overgeneration of (32)–(33): with a never-instantiated `B`, *A before B* is vacuously
+true of any instantiated `A` — *David ate ketchup before he won all the gold medals* comes out
+true if he never won. -/
+theorem anscombe_before_of_empty (hB : timeTrace B = ∅) (hA : (timeTrace A).Nonempty) :
+    Anscombe.before A B :=
+  let ⟨t, ht⟩ := hA
+  ⟨t, ht, fun t' ht' => absurd (hB ▸ ht') (Set.notMem_empty t')⟩
+
+end Classical
 
 end BeaverCondoravdi2003

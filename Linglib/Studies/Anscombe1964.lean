@@ -1,478 +1,163 @@
 import Linglib.Semantics.Tense.SentDenotation
-import Linglib.Core.Order.AllenRelation
+import Linglib.Data.Examples.Anscombe1964
 
 /-!
-# [anscombe-1964] / [krifka-2010b]: Under-specification Semantics
-[anscombe-1964] [krifka-2010b] [ladusaw-1980] [beaver-condoravdi-2003]
+# Anscombe 1964: before and after
 
-Single lexical entry per connective. Both *before* and *after* are predicates
-on time points; multiple readings arise from which point of B is relevant,
-determined pragmatically by telicity.
+*Before* and *after* are not converses: *the Parthenon was there after St. Peter's was* and
+*St. Peter's was there after the Parthenon was* are compatible, while the corresponding
+*before* claims are not. *Before* is asymmetric and transitive, *after* neither (*I was born
+after the Parthenon was there; the Parthenon was there after I was born* would give *I was
+born after I was born*), and *p before q* entails *q after p* but not conversely. *After* is
+not ambiguous for all that: it has alternative verifications — beginning after, being after
+the end, or merely overlapping later — none of which is constant across its uses. Rendered
+by quantification over times (§IV), *p after q* says some time of *p* follows some time of
+*q*, and *p before q* that some time of *p* precedes every time of *q* — a rendering Anscombe
+notes fits *before ever* better than *before*. For instantaneous events the two are genuine
+converses, and when a clause does not report one, a beginning or an ending is always
+involved: *p before q* is *p before q began*, and *p after q* holds if *p* is after *q* began,
+if *q* is before *p*, or if *p* is after *q* stopped (§X).
 
-- *before B* = λt. ∀t' ∈ B, t < t' (all of B follows the reference time)
-- *after B* = λt. ∃t' ∈ B, t' < t (some of B precedes the reference time)
+## Main definitions
 
-The quantificational asymmetry (∀ in *before*, ∃ in *after*) is already present
-here at Level 1 (point sets), though Anscombe did not highlight it as the source
-of the veridicality contrast.
+* `Anscombe.before`, `Anscombe.after`: the §IV renderings on time traces.
+* `Instantaneous`: a clause holding at a single time, where the two are converses.
 
-## Level
+## References
 
-**Level 1 (point sets)**: operates on `timeTrace` projections of `SentDenotation`.
-
+* [anscombe-1964]
 -/
 
 namespace Anscombe1964
 
-open Tense
-
+open Tense Data.Examples
 
 variable {Time : Type*} [LinearOrder Time]
 
--- ============================================================================
--- § Anscombe's Truth Conditions
--- ============================================================================
+/-! ### Quantification over times (§IV) -/
 
-/-- Anscombe's *before B* as a predicate on times ([krifka-2010b], eq. 13a):
-    λt. ∀t' ∈ times(B), t < t'. All times at which B holds follow t.
-
-    "A before B" then holds when some time in A satisfies this predicate. -/
+/-- *p before q*: a time at which *p* was before every time at which *q*. -/
 def Anscombe.before (A B : SentDenotation Time) : Prop :=
   ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t < t'
 
-/-- Anscombe's *after B* as a predicate on times ([krifka-2010b], eq. 13b):
-    λt. ∃t' ∈ times(B), t' < t. Some time at which B holds precedes t.
-
-    "A after B" then holds when some time in A satisfies this predicate. -/
+/-- *p after q*: a time at which *p* was after a time at which *q*. -/
 def Anscombe.after (A B : SentDenotation Time) : Prop :=
   ∃ t ∈ timeTrace A, ∃ t' ∈ timeTrace B, t' < t
 
--- ============================================================================
--- § [heinamaki-1974]: Reference NonemptyInterval Semantics
--- ============================================================================
+/-! ### The logical properties (§II) -/
 
-/-! ### Heinämäki's analysis and equivalence with Anscombe
+/-- *Before* is asymmetric. -/
+theorem before_asymm {A B : SentDenotation Time} :
+    Anscombe.before A B → ¬ Anscombe.before B A :=
+  fun ⟨a, ha, hab⟩ ⟨b, hb, hba⟩ => lt_irrefl _ ((hab b hb).trans (hba a ha))
 
-[heinamaki-1974]'s analysis uses a reference interval I(B) — the temporal
-interval associated with B — and defines *before*/*after* by comparison
-with that interval's boundary. This is the most standard textbook analysis.
+/-- *Before* is transitive. -/
+theorem before_trans {A B C : SentDenotation Time} :
+    Anscombe.before A B → Anscombe.before B C → Anscombe.before A C :=
+  fun ⟨a, ha, hab⟩ ⟨b, hb, hbc⟩ => ⟨a, ha, fun c hc => (hab b hb).trans (hbc c hc)⟩
 
-[beaver-condoravdi-2003]: Under two conditions — **left-boundedness** (B has
-a leftmost point) and **instantiation** (B is nonempty) — Anscombe and
-Heinämäki are truth-conditionally equivalent.
+/-- *p before q* entails *q after p*. -/
+theorem after_of_before {A B : SentDenotation Time} (h : Anscombe.before A B)
+    (hB : (timeTrace B).Nonempty) : Anscombe.after B A :=
+  let ⟨a, ha, hab⟩ := h
+  let ⟨b, hb⟩ := hB
+  ⟨b, hb, a, ha, hab b hb⟩
 
-We formalize the reference point as `leftBound` (= inf of timeTrace B)
-and prove the equivalence. This completes the Level 4 → Level 1 projection:
-B&C's `earliest` unifies both classical Level 1 analyses. -/
+/-- *After* is not asymmetric: two overlapping stretches are each after the other. -/
+theorem after_not_asymm :
+    ∃ A B : SentDenotation ℤ, Anscombe.after A B ∧ Anscombe.after B A :=
+  ⟨{NonemptyInterval.pure 0, NonemptyInterval.pure 2},
+    {NonemptyInterval.pure 1, NonemptyInterval.pure 3},
+    ⟨2, ⟨NonemptyInterval.pure 2, Or.inr rfl, le_rfl, le_rfl⟩,
+      1, ⟨NonemptyInterval.pure 1, Or.inl rfl, le_rfl, le_rfl⟩, by decide⟩,
+    ⟨3, ⟨NonemptyInterval.pure 3, Or.inr rfl, le_rfl, le_rfl⟩,
+      0, ⟨NonemptyInterval.pure 0, Or.inl rfl, le_rfl, le_rfl⟩, by decide⟩⟩
 
-/-- Heinämäki's *before*: A happens before the reference point of B.
-    The reference point `lb` is the left bound (minimum) of B's time trace.
-    "A before B" iff some time in A precedes B's left bound. -/
-def Heinamaki.before (A : SentDenotation Time) (lb : Time) : Prop :=
-  ∃ t ∈ timeTrace A, t < lb
-
-/-- Heinämäki's *after*: A happens after the reference point of B.
-    The reference point `lb` is the left bound (minimum) of B's time trace.
-    "A after B" iff some time in A follows B's left bound. -/
-def Heinamaki.after (A : SentDenotation Time) (lb : Time) : Prop :=
-  ∃ t ∈ timeTrace A, lb < t
-
-/-- Left-boundedness (attained): `lb` is the minimum of `timeTrace B` —
-    it belongs to B's time trace and is ≤ every element.
-
-    B&C use the infimum, but for `SentDenotation` (sets of closed intervals)
-    the infimum is always attained (intervals include their endpoints via ≤).
-    Using the minimum makes the equivalence proof constructive. -/
-def isMinTime (B : SentDenotation Time) (lb : Time) : Prop :=
-  lb ∈ timeTrace B ∧ ∀ t ∈ timeTrace B, lb ≤ t
-
-/-- **B&C Theorem 1 (before direction)**: Under left-boundedness
-    (attained minimum), Anscombe's *before* ↔ Heinämäki's *before*.
-
-    Forward: a < all of B, lb ∈ B, so a < lb.
-    Backward: a < lb, lb ≤ all of B, so a < all of B. -/
-theorem anscombe_heinamaki_equiv_before
-    (A B : SentDenotation Time) (lb : Time)
-    (hlb : isMinTime B lb) :
-    Anscombe.before A B ↔ Heinamaki.before A lb := by
-  constructor
-  · rintro ⟨a, ha, hall⟩
-    exact ⟨a, ha, hall lb hlb.1⟩
-  · rintro ⟨a, ha, halt⟩
-    exact ⟨a, ha, fun t' ht' => lt_of_lt_of_le halt (hlb.2 t' ht')⟩
-
-/-- **B&C Theorem 1 (after direction)**: Under left-boundedness
-    (attained minimum), Anscombe's *after* ↔ Heinämäki's *after*.
-
-    Forward: t' ∈ B with t' < a, lb ≤ t', so lb < a.
-    Backward: lb < a, lb ∈ B, so lb witnesses the existential. -/
-theorem anscombe_heinamaki_equiv_after
-    (A B : SentDenotation Time) (lb : Time)
-    (hlb : isMinTime B lb) :
-    Anscombe.after A B ↔ Heinamaki.after A lb := by
-  constructor
-  · rintro ⟨a, ha, t', ht', hlt⟩
-    exact ⟨a, ha, lt_of_le_of_lt (hlb.2 t' ht') hlt⟩
-  · rintro ⟨a, ha, hlt⟩
-    exact ⟨a, ha, lb, hlb.1, hlt⟩
-
--- ============================================================================
--- § Logical Properties ([beaver-condoravdi-2003], §6)
--- ============================================================================
-
-/-! ### *Before* is a strict order (antisymmetric and transitive)
-
-The ∃∀ quantifier pattern of *before* gives it strict-order-like properties.
-Antisymmetry: if some point in A precedes all of B, then no point in B can
-precede all of A (because A contains such a point).
-Transitivity: chaining through the ∀-quantified middle term. -/
-
-/-- *Before* is antisymmetric: if A before B, then not B before A.
-
-    Proof: A before B gives a₀ ∈ A with a₀ < all of B.
-    B before A would give b₀ ∈ B with b₀ < all of A.
-    But a₀ < b₀ (from first) and b₀ < a₀ (from second). Contradiction. -/
-theorem Anscombe.before_antisymmetric (A B : SentDenotation Time) :
-    Anscombe.before A B → ¬Anscombe.before B A := by
-  rintro ⟨a, ha, h_aB⟩ ⟨b, hb, h_bA⟩
-  exact absurd (lt_trans (h_aB b hb) (h_bA a ha)) (lt_irrefl _)
-
-/-- *Before* is transitive: if A before B and B before C, then A before C.
-
-    Proof: A before B gives a₀ ∈ A with a₀ < all of B.
-    B before C gives b₀ ∈ B with b₀ < all of C.
-    Since a₀ < b₀ (from first, b₀ ∈ B) and b₀ < c for any c ∈ C,
-    we have a₀ < c by transitivity of <. -/
-theorem Anscombe.before_transitive (A B C : SentDenotation Time) :
-    Anscombe.before A B → Anscombe.before B C → Anscombe.before A C := by
-  rintro ⟨a, ha, h_aB⟩ ⟨b, hb, h_bC⟩
-  exact ⟨a, ha, fun c hc => lt_trans (h_aB b hb) (h_bC c hc)⟩
-
-/-! ### *After* has neither property
-
-The ∃∃ quantifier pattern of *after* is too weak: overlapping intervals
-give mutual *after* (breaking antisymmetry), and a gap in the middle
-term breaks transitivity. -/
-
-/-- *After* is NOT antisymmetric: overlapping time traces give A after B
-    and B after A simultaneously.
-
-    Counterexample: A = {point 0, point 2}, B = {point 1, point 3}.
-    A after B: t=2 ∈ A, t'=1 ∈ B, 1 < 2.
-    B after A: t=3 ∈ B, t'=0 ∈ A, 0 < 3. -/
-theorem Anscombe.after_not_antisymmetric :
-    ∃ (A B : SentDenotation ℤ), Anscombe.after A B ∧ Anscombe.after B A := by
-  refine ⟨{NonemptyInterval.pure 0, NonemptyInterval.pure 2},
-          {NonemptyInterval.pure 1, NonemptyInterval.pure 3}, ?_, ?_⟩
-  · exact ⟨2, ⟨NonemptyInterval.pure 2, Or.inr rfl, le_refl _, le_refl _⟩,
-           1, ⟨NonemptyInterval.pure 1, Or.inl rfl, le_refl _, le_refl _⟩, by omega⟩
-  · exact ⟨3, ⟨NonemptyInterval.pure 3, Or.inr rfl, le_refl _, le_refl _⟩,
-           0, ⟨NonemptyInterval.pure 0, Or.inl rfl, le_refl _, le_refl _⟩, by omega⟩
-
-/-- *After* is NOT transitive: A after B and B after C need not give A after C.
-
-    Counterexample: A = {point 2}, B = {point 1, point 4}, C = {point 3}.
-    A after B: t=2 ∈ A, t'=1 ∈ B, 1 < 2.
-    B after C: t=4 ∈ B, t'=3 ∈ C, 3 < 4.
-    Not A after C: only time in A is 2, only time in C is 3, and 3 ≮ 2. -/
-theorem Anscombe.after_not_transitive :
-    ∃ (A B C : SentDenotation ℤ),
-      Anscombe.after A B ∧ Anscombe.after B C ∧ ¬Anscombe.after A C := by
+/-- *After* is not transitive: *I was born after the Parthenon was there; the Parthenon was
+there after I was born* does not give *I was born after I was born*. -/
+theorem after_not_trans :
+    ∃ A B C : SentDenotation ℤ,
+      Anscombe.after A B ∧ Anscombe.after B C ∧ ¬ Anscombe.after A C := by
   refine ⟨{NonemptyInterval.pure 2}, {NonemptyInterval.pure 1, NonemptyInterval.pure 4},
-          {NonemptyInterval.pure 3}, ?_, ?_, ?_⟩
-  · exact ⟨2, ⟨NonemptyInterval.pure 2, rfl, le_refl _, le_refl _⟩,
-           1, ⟨NonemptyInterval.pure 1, Or.inl rfl, le_refl _, le_refl _⟩, by omega⟩
-  · exact ⟨4, ⟨NonemptyInterval.pure 4, Or.inr rfl, le_refl _, le_refl _⟩,
-           3, ⟨NonemptyInterval.pure 3, rfl, le_refl _, le_refl _⟩, by omega⟩
-  · rintro ⟨t, ⟨i, hi, hts, htf⟩, t', ⟨j, hj, ht's, ht'f⟩, hlt⟩
-    simp only [Set.mem_singleton_iff] at hi hj
-    subst hi; subst hj
-    simp only [NonemptyInterval.pure] at hts htf ht's ht'f
-    omega
+    {NonemptyInterval.pure 3},
+    ⟨2, ⟨NonemptyInterval.pure 2, rfl, le_rfl, le_rfl⟩,
+      1, ⟨NonemptyInterval.pure 1, Or.inl rfl, le_rfl, le_rfl⟩, by decide⟩,
+    ⟨4, ⟨NonemptyInterval.pure 4, Or.inr rfl, le_rfl, le_rfl⟩,
+      3, ⟨NonemptyInterval.pure 3, rfl, le_rfl, le_rfl⟩, by decide⟩, ?_⟩
+  rintro ⟨t, ⟨i, hi, hts, htf⟩, t', ⟨j, hj, ht's, ht'f⟩, hlt⟩
+  rw [Set.mem_singleton_iff] at hi hj
+  subst hi; subst hj
+  simp only [NonemptyInterval.pure] at hts htf ht's ht'f
+  omega
 
--- ============================================================================
--- § Complement Monotonicity and NPI Licensing ([beaver-condoravdi-2003], §5)
--- ============================================================================
+/-! ### Instantaneous events (§VI–§VIII) -/
 
-/-! ### *Before* is DE; *after* is UE in the complement position
+/-- A clause reports an instantaneous event when it holds at a single time. -/
+def Instantaneous (A : SentDenotation Time) : Prop := ∃ t, timeTrace A = {t}
 
-The complement position of a temporal connective is the B argument in
-"A connective B." The quantifier structure of each connective determines
-its monotonicity, which in turn determines NPI licensing:
-- *before* (∃∀): the ∀ over B reverses subset inclusion → DE → licenses NPIs
-- *after* (∃∃): the ∃ over B preserves subset inclusion → UE → blocks NPIs
-
-This is the same insight [beaver-condoravdi-2003] express through `earliest`: the
-universal force of `earliest` (selecting the minimum, which R-dominates
-all other elements) creates a downward-entailing environment. -/
-
-/-- The complement position of *before* is downward-entailing:
-    strengthening B (shrinking its time trace) preserves "A before B."
-    This is why *before* licenses NPIs: "before anyone left" ⊨
-    "before any *man* left." -/
-theorem Anscombe.before_complement_DE (A B B' : SentDenotation Time)
-    (h : timeTrace B' ⊆ timeTrace B) :
-    Anscombe.before A B → Anscombe.before A B' := by
-  rintro ⟨t, ht, hall⟩
-  exact ⟨t, ht, fun t' ht' => hall t' (h ht')⟩
-
-/-- The complement position of *after* is upward-entailing:
-    weakening B (expanding its time trace) preserves "A after B."
-    This is why *after* does NOT license NPIs. -/
-theorem Anscombe.after_complement_UE (A B B' : SentDenotation Time)
-    (h : timeTrace B ⊆ timeTrace B') :
-    Anscombe.after A B → Anscombe.after A B' := by
-  rintro ⟨t, ht, t', ht', hlt⟩
-  exact ⟨t, ht, t', h ht', hlt⟩
-
-/-- DE + UE are in the right direction: *before* entails downward in the
-    complement (licenses NPIs), *after* entails upward (blocks NPIs).
-    Stated as a single theorem for the contrast. -/
-theorem npi_licensing_from_monotonicity (A B B' : SentDenotation Time) :
-    -- DE direction: shrinking B preserves before
-    (timeTrace B' ⊆ timeTrace B → Anscombe.before A B → Anscombe.before A B') ∧
-    -- UE direction: expanding B preserves after
-    (timeTrace B ⊆ timeTrace B' → Anscombe.after A B → Anscombe.after A B') :=
-  ⟨Anscombe.before_complement_DE A B B', Anscombe.after_complement_UE A B B'⟩
-
-/-- The Anscombe analysis overgenerates ([beaver-condoravdi-2003] (32)-(33), the
-    "ketchup" / "squares had four sides" examples): because *before* universally
-    quantifies over B, "A before B" holds whenever A is instantiated and B never is.
-    This vacuous truth — e.g. "David ate ketchup before he won all the gold medals"
-    predicted true even if he never won — motivates B&C's modal refinement
-    (`BeaverCondoravdi.BC.before`, relativized to historical alternatives, §3). -/
-theorem Anscombe.before_overgenerates (A B : SentDenotation Time)
-    (hB : timeTrace B = ∅) (hA : (timeTrace A).Nonempty) :
-    Anscombe.before A B := by
+/-- When *p* reports an instantaneous event, *p after q* is *q before p* (§X, case 2). -/
+theorem after_iff_before_of_instantaneous {A B : SentDenotation Time} (hA : Instantaneous A) :
+    Anscombe.after A B ↔ Anscombe.before B A := by
   obtain ⟨t, ht⟩ := hA
-  refine ⟨t, ht, fun t' ht' => ?_⟩
-  rw [hB] at ht'
-  exact ht'.elim
+  simp [Anscombe.after, Anscombe.before, ht]
 
-end Anscombe1964
+/-- For two instantaneous events *before* and *after* are genuine converses. -/
+theorem before_iff_after_of_instantaneous {A B : SentDenotation Time}
+    (hB : Instantaneous B) : Anscombe.before A B ↔ Anscombe.after B A :=
+  (after_iff_before_of_instantaneous hB).symm
 
-/-!
-# Event-Level Temporal Connectives
-[anscombe-1964] [krifka-2010b]
+/-- An instantaneous *p* cannot be both before and after *q* (§X, case 1). -/
+theorem before_not_after_of_instantaneous {A B : SentDenotation Time} (hA : Instantaneous A)
+    (h : Anscombe.before A B) : ¬ Anscombe.after A B := by
+  obtain ⟨t, ht⟩ := hA
+  simp only [Anscombe.before, Anscombe.after, ht, Set.mem_singleton_iff, exists_eq_left] at h ⊢
+  rintro ⟨t', ht', hlt⟩
+  exact lt_asymm (h t' ht') hlt
 
-[anscombe-1964]'s point-level semantics and [krifka-2010b]'s
-under-specification analysis lifted to **Level 3** (event predicates),
-with direct quantification over events and their runtime intervals.
+/-- A stretch can be both before and after an instantaneous event. -/
+theorem after_and_before_of_extended :
+    ∃ A B : SentDenotation ℤ, Instantaneous B ∧ Anscombe.after A B ∧ Anscombe.before A B :=
+  ⟨{NonemptyInterval.pure 1, NonemptyInterval.pure 7}, {NonemptyInterval.pure 4},
+    ⟨4, by ext t; simp [timeTrace, NonemptyInterval.pure]; omega⟩,
+    ⟨7, ⟨NonemptyInterval.pure 7, Or.inr rfl, le_rfl, le_rfl⟩,
+      4, ⟨NonemptyInterval.pure 4, rfl, le_rfl, le_rfl⟩, by decide⟩,
+    ⟨1, ⟨NonemptyInterval.pure 1, Or.inl rfl, le_rfl, le_rfl⟩, by
+      rintro t' ⟨j, hj, hs, _⟩
+      rw [Set.mem_singleton_iff] at hj
+      subst hj
+      simp only [NonemptyInterval.pure] at hs
+      omega⟩⟩
 
-## Core Insight: Quantificational Asymmetry at the Event Level
+/-! ### Beginnings and endings (§IX–§X) -/
 
-*before* and *after* differ in quantificational force over the complement:
+/-- *p before q* is *p before q began*: when *q* has a first time, *p* precedes every time of
+*q* iff some time of *p* precedes that first time. -/
+theorem before_iff_lt_least {A B : SentDenotation Time} {lb : Time}
+    (hlb : IsLeast (timeTrace B) lb) :
+    Anscombe.before A B ↔ ∃ t ∈ timeTrace A, t < lb :=
+  ⟨fun ⟨a, ha, h⟩ => ⟨a, ha, h lb hlb.1⟩,
+    fun ⟨a, ha, h⟩ => ⟨a, ha, fun _ ht' => h.trans_le (hlb.2 ht')⟩⟩
 
-- **after(P, Q)** = `e`e`[P(e`) `  Q(e`) `  `(e`) ` `(e`)]
-  Double-existential: both events must exist.
+/-- *p after q* is *p after q began* (§X, case 3a). -/
+theorem after_iff_least_lt {A B : SentDenotation Time} {lb : Time}
+    (hlb : IsLeast (timeTrace B) lb) :
+    Anscombe.after A B ↔ ∃ t ∈ timeTrace A, lb < t :=
+  ⟨fun ⟨a, ha, _, ht', h⟩ => ⟨a, ha, (hlb.2 ht').trans_lt h⟩,
+    fun ⟨a, ha, h⟩ => ⟨a, ha, lb, hlb.1, h⟩⟩
 
-- **before(P, Q)** = `e`[P(e`) `  `e`[Q(e`) ` `(e`) ` `(e`)]]
-  Existential over P, **universal** over Q.
+/-- *p after q stopped* gives *p after q* (§X, case 3c). -/
+theorem after_of_stopped {A B : SentDenotation Time} {ub : Time} (hub : ub ∈ timeTrace B)
+    (h : ∃ t ∈ timeTrace A, ub < t) : Anscombe.after A B :=
+  let ⟨a, ha, hlt⟩ := h
+  ⟨a, ha, ub, hub, hlt⟩
 
-This asymmetry derives the **veridicality contrast**: *after* entails its
-complement (`e` asserts Q happened); *before* doesn't (`e` is vacuously
-true when no Q-event exists). The same ` /` pattern present in
-[anscombe-1964] at Level 1 is preserved here at Level 3.
+/-! ### The paper's examples -/
 
-## Level
-
-**Level 3 (event predicates)**: operates on `Event Time → Prop`. Projects to
-Level 2 via `eventDenotation` (Projection.lean).
-
-## Cross-Level Comparison
-
-`AnscombeEvent.after P Q ` Anscombe.after (eventDenotation P) (eventDenotation Q)`
-but the converse fails: Anscombe allows partial overlap of runtimes,
-while the event-level version requires entire-runtime precedence (`-precedence).
-
--/
-
-namespace Anscombe1964
-
-open Tense
-
-open NonemptyInterval
-
-variable {Time : Type*} [LinearOrder Time]
-
--- ============================================================================
--- ` 1: Event-Level Truth Conditions
--- ============================================================================
-
-/-- Event-level *after*: `e``e`[P(e`) `  Q(e`) `  `(e`) ` `(e`)].
-
-    Double-existential: both the main-clause event and the subordinate-clause
-    event must exist, and the subordinate event's runtime entirely precedes
-    the main event's runtime.
-
-    This is [anscombe-1964]'s `` lifted from points to event runtimes. -/
-def AnscombeEvent.after (P Q : Event Time → Prop) : Prop :=
-  ∃ e₁ e₂ : Event Time, P e₁ ∧ Q e₂ ∧ e₂.τ.precedes e₁.τ
-
-/-- Event-level *before*: `e`[P(e`) `  `e`[Q(e`) ` `(e`) ` `(e`)]].
-
-    Existential over the main clause, universal over the subordinate:
-    the main event's runtime precedes that of EVERY potential subordinate event.
-    When no Q-events exist, the universal is vacuously true ` making *before*
-    non-veridical.
-
-    This is [anscombe-1964]'s `` lifted from points to event runtimes. -/
-def AnscombeEvent.before (P Q : Event Time → Prop) : Prop :=
-  ∃ e₁ : Event Time, P e₁ ∧ ∀ e₂ : Event Time, Q e₂ → e₁.τ.precedes e₂.τ
-
--- ============================================================================
--- Allen grounding
--- ============================================================================
-
-/-- The event precedence underlying *after* is exactly the Allen `precedes` atom
-    on run-times (`precedesSet = {precedes}`) — the relation
-    `Semantics/Tense/Reichenbach.lean` already grounds tense in. Routing through
-    `Core/Order/AllenRelation` reads the connective's temporal relation as a named
-    atom-set rather than an ad-hoc inequality (and distinguishes it from
-    `Event.precedes` of `Semantics/Events/Adjacency.lean`, which is the weaker
-    `{precedes, meets}` that also admits abutment). -/
-theorem AnscombeEvent.after_iff_allen (P Q : Event Time → Prop) :
-    AnscombeEvent.after P Q ↔
-      ∃ e₁ e₂ : Event Time, P e₁ ∧ Q e₂ ∧
-        AllenRelation.holdsIn AllenRelation.precedesSet e₂.τ e₁.τ := by
-  simp only [AnscombeEvent.after, precedes_iff_allen]
-
-/-- Dually, *before* relates the main event to every subordinate event by the same
-    Allen `precedes` atom. -/
-theorem AnscombeEvent.before_iff_allen (P Q : Event Time → Prop) :
-    AnscombeEvent.before P Q ↔
-      ∃ e₁ : Event Time, P e₁ ∧ ∀ e₂ : Event Time, Q e₂ →
-        AllenRelation.holdsIn AllenRelation.precedesSet e₁.τ e₂.τ := by
-  simp only [AnscombeEvent.before, precedes_iff_allen]
-
--- ============================================================================
--- ` 2: Veridicality
--- ============================================================================
-
-/-- *After* is veridical: `after(P, Q)` entails the complement Q.
-
-    This follows directly from the double-existential structure: the
-    definition asserts `e`, Q(e`), which witnesses the complement. -/
-theorem AnscombeEvent.after_veridical (P Q : Event Time → Prop) :
-    AnscombeEvent.after P Q → ∃ e : Event Time, Q e := by
-  rintro ⟨_, e₂, _, hq, _⟩
-  exact ⟨e₂, hq⟩
-
-/-- *After* is veridical w.r.t. the main clause too: both events must exist. -/
-theorem AnscombeEvent.after_veridical_main (P Q : Event Time → Prop) :
-    AnscombeEvent.after P Q → ∃ e : Event Time, P e := by
-  rintro ⟨e₁, _, hp, _, _⟩
-  exact ⟨e₁, hp⟩
-
-/-- *Before* is non-veridical: there exist P, Q such that `before(P, Q)` holds
-    but Q has no witnesses.
-
-    Concretely: if P has a witness and Q is empty, then `e`, Q(e`) `... is
-    vacuously true. -/
-theorem AnscombeEvent.before_nonveridical :
-    ∃ (P Q : Event ℤ → Prop), AnscombeEvent.before P Q ∧ ¬∃ e : Event ℤ, Q e := by
-  refine ⟨fun e => e = ⟨⟨⟨0, 1⟩, by omega⟩, .dynamic⟩, fun _ => False, ?_, ?_⟩
-  · exact ⟨⟨⟨⟨0, 1⟩, by omega⟩, .dynamic⟩, rfl, fun _ h => h.elim⟩
-  · rintro ⟨_, h⟩; exact h
-
-/-- *Before* is still veridical w.r.t. its main clause: the P-event must exist. -/
-theorem AnscombeEvent.before_veridical_main (P Q : Event Time → Prop) :
-    AnscombeEvent.before P Q → ∃ e : Event Time, P e := by
-  rintro ⟨e₁, hp, _⟩
-  exact ⟨e₁, hp⟩
-
--- ============================================================================
--- ` 3: Cross-Level Comparison ` Event (Level 3) vs Anscombe (Level 1)
--- ============================================================================
-
-/-- Event-level *after* implies [anscombe-1964]'s *after* when projected
-    through `eventDenotation`.
-
-    Proof: from `e`.`.precedes e`.`  (i.e., `e`.`.snd < e`.`.fst`),
-    take `t = e`.`.fst` and `t' = e`.`.snd`. -/
-theorem AnscombeEvent.after_implies_anscombe (P Q : Event Time → Prop) :
-    AnscombeEvent.after P Q → Anscombe.after (eventDenotation P) (eventDenotation Q) := by
-  rintro ⟨e₁, e₂, hp, hq, hprec⟩
-  refine ⟨e₁.τ.fst, ?_, e₂.τ.snd, ?_, hprec⟩
-  · rw [timeTrace_eventDenotation]
-    exact ⟨e₁, hp, le_refl _, e₁.τ.fst_le_snd⟩
-  · rw [timeTrace_eventDenotation]
-    exact ⟨e₂, hq, e₂.τ.fst_le_snd, le_refl _⟩
-
-/-- Event-level *before* implies [anscombe-1964]'s *before* when projected.
-
-    Proof: from ``e`, Q(e`) ` e`.`.snd < e`.`.fst`, take
-    `t = e`.`.snd`. For any `t' ` timeTrace(eventDenotation Q)`,
-    some `e`` has `Q(e`)` and `e`.`.fst ` t'`, so
-    `t = e`.`.snd < e`.`.fst ` t'`. -/
-theorem AnscombeEvent.before_implies_anscombe (P Q : Event Time → Prop) :
-    AnscombeEvent.before P Q → Anscombe.before (eventDenotation P) (eventDenotation Q) := by
-  rintro ⟨e₁, hp, hall⟩
-  refine ⟨e₁.τ.snd, ?_, ?_⟩
-  · rw [timeTrace_eventDenotation]
-    exact ⟨e₁, hp, e₁.τ.fst_le_snd, le_refl _⟩
-  · intro t' ht'
-    rw [timeTrace_eventDenotation] at ht'
-    obtain ⟨e₂, hq, ht'_lo, _⟩ := ht'
-    exact lt_of_lt_of_le (hall e₂ hq) ht'_lo
-
--- ============================================================================
--- ` 4: Divergence ` Anscombe Does NOT Imply Event-Level
--- ============================================================================
-
-/-- [anscombe-1964]'s *before* does NOT imply the event-level *before*:
-    the converse of `before_implies_anscombe` fails.
-
-    Counterexample: P-event at [1,5], Q-event at [3,8].
-    - Anscombe: t=1 ` timeTrace P, and 1 < all t' ` [3,8]. `
-    - Event-level: `(e`).snd = 5, `(e`).fst = 3, and 5 < 3 is false. `
-
-    The point-level theory sees a point in A before all of B; the event-level
-    theory requires the entire A-runtime to precede the entire B-runtime. -/
-theorem anscombe_before_not_implies_event :
-    ¬∀ (P Q : Event ℤ → Prop),
-      Anscombe.before (eventDenotation P) (eventDenotation Q) → AnscombeEvent.before P Q := by
-  intro h
-  let eP : Event ℤ := ⟨⟨⟨1, 5⟩, by omega⟩, .dynamic⟩
-  let eQ : Event ℤ := ⟨⟨⟨3, 8⟩, by omega⟩, .dynamic⟩
-  let P : Event ℤ → Prop := fun e => e = eP
-  let Q : Event ℤ → Prop := fun e => e = eQ
-  have hansc : Anscombe.before (eventDenotation P) (eventDenotation Q) := by
-    refine ⟨1, ?_, ?_⟩
-    · rw [timeTrace_eventDenotation]
-      exact ⟨eP, rfl, by simp [Event.τ, eP], by simp [Event.τ, eP]⟩
-    · intro t' ht'
-      rw [timeTrace_eventDenotation] at ht'
-      obtain ⟨e, rfl, hlo, _⟩ := ht'
-      simp only [Event.τ, eQ] at hlo; omega
-  have host := h P Q hansc
-  obtain ⟨e₁, rfl, hall⟩ := host
-  have := hall eQ rfl
-  simp [precedes, Event.τ, eP, eQ] at this
-
-/-- [anscombe-1964]'s *after* does NOT imply the event-level *after*:
-    Anscombe allows the A-point to be inside B's runtime, while the event-level
-    version requires B's runtime to entirely precede A's.
-
-    Counterexample: P-event at [5,5], Q-event at [1,8].
-    - Anscombe: t=5, t'=1, 1 < 5. `
-    - Event-level: `(eQ).snd = 8 > 5 = `(eP).fst, so `precedes. ` -/
-theorem anscombe_after_not_implies_event :
-    ¬∀ (P Q : Event ℤ → Prop),
-      Anscombe.after (eventDenotation P) (eventDenotation Q) → AnscombeEvent.after P Q := by
-  intro h
-  let eP : Event ℤ := ⟨⟨⟨5, 5⟩, by omega⟩, .dynamic⟩
-  let eQ : Event ℤ := ⟨⟨⟨1, 8⟩, by omega⟩, .dynamic⟩
-  let P : Event ℤ → Prop := fun e => e = eP
-  let Q : Event ℤ → Prop := fun e => e = eQ
-  have hansc : Anscombe.after (eventDenotation P) (eventDenotation Q) := by
-    refine ⟨5, ?_, 1, ?_, by omega⟩
-    · rw [timeTrace_eventDenotation]
-      exact ⟨eP, rfl, by simp [Event.τ, eP], by simp [Event.τ, eP]⟩
-    · rw [timeTrace_eventDenotation]
-      exact ⟨eQ, rfl, by simp [Event.τ, eQ], by simp [Event.τ, eQ]⟩
-  have host := h P Q hansc
-  obtain ⟨e₁, e₂, rfl, rfl, hprec⟩ := host
-  simp [precedes, Event.τ, eP, eQ] at hprec
+/-- The mutual pairs: *p after q and q after p* is consistent, *p before q and q before p*
+is not. -/
+theorem rows_mutual :
+    ∀ r ∈ Examples.all, r.feature? "pattern" = some "mutual" →
+      (r.judgment = .acceptable ↔ r.feature? "connective" = some "after") := by
+  decide +kernel
 
 end Anscombe1964
