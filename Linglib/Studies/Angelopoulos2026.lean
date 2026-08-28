@@ -2,378 +2,244 @@ import Linglib.Studies.Bondarenko2022
 import Linglib.Studies.Roussou2010
 import Linglib.Fragments.Greek.StandardModern.Complementizers
 import Linglib.Syntax.Category.Verb.Complement.Takes
-import Linglib.Syntax.Minimalist.Features
 import Linglib.Semantics.Attitudes.Anchor
 import Linglib.Data.Examples.Angelopoulos2026
 
 /-!
-# Angelopoulos 2026: On clausal complementation, once more
+# Angelopoulos 2026: on clausal complementation, once more
 
-[angelopoulos-2026] derives the distribution of Greek *oti*- and
-*pu*-clauses — near-complementary after verbs (ex. 1), free as internal
-arguments and derived subjects yet banned as external arguments (§2.2),
-stativity-restricted as *pu*-complements (§2.3) — from reversed
-selection: *oti* and *pu* bear an uninterpretable [n]-feature checked
-by a light noun in their specifier (partly adopting [arsenijevic-2009])
-that must incorporate into a lexical verbal head, licit only from
-complement position (§3.1). The *oti* ~ *pu* split follows from the
-content/situation dichotomy (§3.2, adopting [bondarenko-2022]) with
-*pu*'s factivity derived from situation-anchoring, the stativity
-restriction from aspectual-head selection (§4.1), and §7.3
-turns the §2 argumenthood diagnostics against Bondarenko's transparent
-syntax–semantics mapping: bare *oti*-clauses sit in complement position
-while composing via Predicate Modification (the explanans reading,
-[elliott-2020-embedding]). Typed paradigm sentences (ex. 1, 31–34) live
-in `Angelopoulos2026.Examples`.
+Greek *oti*- and *pu*-clauses are in near-complementary distribution after verbs (1), are
+internal arguments and derived subjects but never external arguments (§2.2), and a
+*pu*-complement forces a stative matrix verb where adverbial and relative *pu* does not
+(§2.3). The analysis reverses selection: *oti* and *pu* carry an [n]-feature checked by a
+light noun in their specifier, which must incorporate into a lexical verbal head — possible
+from the complement position but not from Spec,vP, whose nearest host is T, nor after P
+(§3.1). The complementizers sort their clauses as content (*oti*) and situation (*pu*), and
+the incorporating noun must match, so a verb's sort fixes its complementizer (§3.2);
+situations anchor to the evaluation world, whence *pu*'s factivity (38). The stativity
+restriction is the selectional feature of the aspectual heads introducing internal arguments:
+vState takes otiP or puP, vEvent only otiP (§4.1), and adjunct *pu*, which selects its host
+rather than being selected, escapes it. Bare *oti*-clauses are true complements that compose
+as modifiers, against the transparent syntax–semantics mapping (§7.3).
+
+`clauseSort` is the sort a complementizer imposes, `selectsClause` the aspectual heads'
+selection, and `Predicted` combines them with a verb's sort and Vendler class;
+`rows_track_selection` runs it over the paper's verb–complementizer pairings, with the sample
+verbs' sorts in `lexicon`. `licensedIn` is incorporation licensing by position and
+`rows_track_licensing` its check against the argument-position judgments;
+`rows_sort_diagnostics` covers the truth/occurrence tests on nouns; `pu_report_factive`
+derives factivity from situation-anchoring; `transparency_conflates_axes` is §7.3.
+
+## References
+
+* [angelopoulos-2026]
+* [arsenijevic-2009] — the light noun in the complementizer's specifier
+* [bondarenko-2022] — content and situation; the transparent mapping contested in §7.3
+* [elliott-2020-embedding] — explanans by Predicate Modification
+* [hale-keyser-1993] — incorporation into lexical heads
+* [roussou-2010] — *oti* and *pu* as distinct lexical items
 -/
 
 namespace Angelopoulos2026
 
-open Greek.StandardModern.Complementizers
+open Greek.StandardModern.Complementizers Data.Examples
 open Bondarenko2022 (NominalSort CompositionPath)
 open Features (VendlerClass)
-open Minimalist (GramFeature featuresMatch)
 open Anchor (existsClosure)
 
-/-! ### Reversed selection: the light noun (§3.1) -/
+/-! ### Sorts and aspectual selection -/
 
-/-- The uninterpretable [n]-feature *oti* and *pu* bear, checked by
-merging a light noun in their specifier (§3.1: selection as feature
-checking). -/
-def nProbe : GramFeature := .unvalued (.catN true)
-
-/-- The light noun's [n]-feature, interpretable and valued on a
-nominal. -/
-def nGoal : GramFeature := .valued (.catN true)
-
-/-- The §3.1 lexical assignment: *oti* and *pu* carry the [n]-feature,
-*an* and *na* none. -/
-def nProbes (c : Complementizer) : List GramFeature :=
-  if c = oti ∨ c = pu then [nProbe] else []
-
-/-- *oti* and *pu* select a light noun in their specifier: their
-feature bundle carries the [n]-feature (§3.1). -/
-def selectsLightNoun (c : Complementizer) : Prop := nProbe ∈ nProbes c
-
-instance : DecidablePred selectsLightNoun :=
-  fun _ => inferInstanceAs (Decidable (_ ∈ _))
-
-/-- The merged noun's valued [n] checks the complementizer's under
-specifier–head matching. -/
-theorem lightNoun_checks_nProbe :
-    featuresMatch nProbe nGoal = true ∧
-    nGoal.isValued = true ∧ nProbe.isUnvalued = true := by
-  decide
-
-/-! ### The attested selection classes (§1–§2.3) -/
-
-/-- Matrix verbs attested with *oti* only: saying, belief, knowledge
-(ex. 1a, 3–4, 21). -/
-def otiOnlyVerbs : List Verb :=
-  [leo, pistevo, ksero, katalaveno, sinidhitopio, eksigo]
-
-/-- Matrix verbs attested with *pu* only: the emotive factives
-(ex. 1b, 13–14, 20). -/
-def puOnlyVerbs : List Verb := [metaniono, areso, xerome]
-
-/-- Verbs attested with both, as (eventive *oti*-sense, stative
-*pu*-sense) pairs (ex. 19, 22–23). -/
-def dualVerbs : List (Verb × Verb) :=
-  [(thimame, thimameStat), (thimono, thimonoStat)]
-
-/-- Every sample verb's frames admit both *oti* and *pu* and already
-exclude *na*: coding and force underdetermine the split (§1). -/
-theorem frames_underdetermine_distribution :
-    ∀ v ∈ otiOnlyVerbs ++ puOnlyVerbs,
-      v.takes oti ∧ v.takes pu ∧ ¬ v.takes na := by
-  decide
-
-/-- Verb-level and C-level factivity are anti-aligned: the
-*oti*-selectors that presuppose their complement are exactly the
-knowledge verbs, no *pu*-only emotive factive presupposes, and only
-*pu* is lexically factive. -/
-theorem factivity_anti_aligned :
-    oti.factive = none ∧ pu.factive = some true ∧
-    otiOnlyVerbs.filter (·.factivePresup) = [ksero, katalaveno, sinidhitopio] ∧
-    puOnlyVerbs.filter (·.factivePresup) = [] :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-! ### Incorporation licensing and the argument asymmetry (§3.1) -/
-
-/-- Heads adjacent to a clause's light noun: a lexical verbal head,
-T, or P (§3.1). -/
-inductive NounHost where
-  | vLex
-  | t
-  | p
-  deriving DecidableEq, Repr
-
-/-- Only the lexical verbal head licenses light-noun incorporation
-([hale-keyser-1993]); functional T and P do not. -/
-def NounHost.licenses : NounHost → Prop
-  | .vLex => True
-  | .t    => False
-  | .p    => False
-
-instance : DecidablePred NounHost.licenses
-  | .vLex => isTrue trivial
-  | .t    => isFalse id
-  | .p    => isFalse id
-
-/-- Positions a bare oti/pu-clause can occupy (§3.1 ex. 27–32). -/
-inductive ClausePosition where
-  | internalArgument
-  | derivedSubject
-  | externalArgument
-  | pComplement
-  deriving DecidableEq, Repr
-
-/-- The nearest potential incorporation host from each position. -/
-def ClausePosition.nearestHost : ClausePosition → NounHost
-  | .internalArgument => .vLex
-  | .derivedSubject   => .vLex  -- incorporation precedes movement
-  | .externalArgument => .t     -- nearest head above Spec,vP
-  | .pComplement      => .p
-
-/-- A bare oti/pu-clause is licensed in a position iff its nearest
-host licenses light-noun incorporation (§3.1). -/
-def licensedIn (pos : ClausePosition) : Prop := pos.nearestHost.licenses
-
-instance : DecidablePred licensedIn := fun pos =>
-  inferInstanceAs (Decidable pos.nearestHost.licenses)
-
-/-- Bare clauses are licensed as internal arguments and derived
-subjects (§2.1–2.2). -/
-theorem internal_and_derived_subject_licensed :
-    licensedIn .internalArgument ∧ licensedIn .derivedSubject :=
-  ⟨trivial, trivial⟩
-
-/-- Bare clauses are banned from external-argument position: T cannot
-host incorporation (§2.2). -/
-theorem external_argument_banned : ¬ licensedIn .externalArgument := id
-
-/-- Bare clauses are excluded after P (ex. 31c, 32c). -/
-theorem p_complement_banned : ¬ licensedIn .pComplement := id
-
-/-- The licensing predictions match the ex. 31–32 judgments:
-acceptable as internal arguments, ungrammatical after P. -/
-theorem licensing_matches_judgments :
-    ∀ p ∈ [(ClausePosition.internalArgument, Examples.ex_31b),
-           (.internalArgument, Examples.ex_32b),
-           (.pComplement, Examples.ex_31c),
-           (.pComplement, Examples.ex_32c)],
-      licensedIn p.1 ↔ p.2.judgment ≠ .ungrammatical := by
-  decide
-
-/-! ### The stativity locus (§4.1) -/
+/-- The sort of clause each complementizer introduces — *oti* content, *pu* situation, *na*
+neither (§3.2); the sorted complementizers are the light-noun selectors of §3.1. -/
+def clauseSort (c : Complementizer) : Option NominalSort :=
+  if c = oti then some .content else if c = pu then some .situation else none
 
 /-- Aspectual heads introducing internal arguments (§4.1). -/
-inductive AspectualHead where
+inductive AspectualHead
   | vState
   | vEvent
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- The aspectual head determined by a verb's Vendler class: `vState`
-for stative classes, `vEvent` for dynamic ones (§4.1). -/
+/-- The aspectual head a verb's Vendler class determines. -/
 def AspectualHead.ofVendler (vc : VendlerClass) : AspectualHead :=
   match vc.dynamicity with
   | .stative => .vState
   | .dynamic => .vEvent
 
-/-- vState selects both otiP and puP as its complement; vEvent selects
-only otiP (§4.1). -/
+/-- vState selects otiP or puP, vEvent only otiP — the stativity restriction as a selectional
+feature (§4.1, fn. 19). -/
 def selectsClause : AspectualHead → Complementizer → Prop
   | .vState, c => c = oti ∨ c = pu
   | .vEvent, c => c = oti
 
-/-- A *pu*-complement forces the stative aspectual head (§2.3). -/
-theorem pu_requires_stative (h : AspectualHead)
-    (hp : selectsClause h pu) : h = .vState := by
+instance (h : AspectualHead) (c : Complementizer) : Decidable (selectsClause h c) := by
+  cases h <;> unfold selectsClause <;> infer_instance
+
+/-- A *pu*-complement forces the stative head (§2.3). -/
+theorem pu_requires_stative {h : AspectualHead} (hp : selectsClause h pu) : h = .vState := by
   cases h
   · rfl
   · exact absurd (show pu = oti from hp) (by decide)
 
-/-- A verb whose aspectual head licenses a *pu*-complement is
-Vendler-stative (§2.3). -/
-theorem pu_complement_verb_stative (vc : VendlerClass)
-    (hp : selectsClause (.ofVendler vc) pu) : vc = .state := by
-  cases vc
-  · rfl
-  all_goals exact absurd (show pu = oti from hp) (by decide)
+/-- A verb of sort `s` takes complementizer `c` iff `c` imposes `s` and the verb's aspectual
+head selects `c`'s clause. -/
+def Predicted (v : Verb) (s : NominalSort) (c : Complementizer) : Prop :=
+  clauseSort c = some s ∧
+    ∀ h ∈ (v.vendlerClass.map AspectualHead.ofVendler).toList, selectsClause h c
 
-/-- Every *pu*-only matrix verb's aspectual head is `vState`. -/
-theorem pu_only_verbs_stative :
-    ∀ v ∈ puOnlyVerbs,
-      v.vendlerClass.map AspectualHead.ofVendler = some .vState := by
-  decide
+instance (v : Verb) (s : NominalSort) (c : Complementizer) : Decidable (Predicted v s c) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Each dual verb's *pu*-sense takes `vState` and its *oti*-sense
-`vEvent` (ex. 19, 22–23). -/
-theorem dual_verbs_stative_with_pu :
-    ∀ p ∈ dualVerbs,
-      p.2.vendlerClass.map AspectualHead.ofVendler = some .vState ∧
-      p.1.vendlerClass.map AspectualHead.ofVendler = some .vEvent := by
-  decide
+/-- The sample verbs with the sort of noun each verbalizes (§3.2: saying, belief, and knowledge
+verbs are content-denoting like *rumor*, emotive factives situation-denoting like *sadness*),
+keyed as in the example rows; *thimame* splits into its attitude and perception senses
+(fn. 16), and *simveni* 'happen' is a situation verb (fn. 14). -/
+def lexicon : List (String × Verb × NominalSort) :=
+  [("leo", leo, .content), ("pistevo", pistevo, .content), ("ksero", ksero, .content),
+    ("katalaveno", katalaveno, .content), ("sinidhitopio", sinidhitopio, .content),
+    ("eksigo", eksigo, .content), ("thimame", thimame, .content),
+    ("metaniono", metaniono, .situation), ("areso", areso, .situation),
+    ("xerome", xerome, .situation), ("thimame_perception", thimameStat, .situation),
+    ("thimono_stative", thimonoStat, .situation), ("simveni", simveni, .situation)]
 
-/-! ### Content vs situation (§3.2) -/
+def Complementizer.ofString? : String → Option Complementizer
+  | "oti" => some oti
+  | "pu" => some pu
+  | _ => none
 
-/-- The sort of clause each complementizer introduces — *oti* content,
-*pu* situation, *na* neither — which must match the incorporating
-noun's sort (§3.2). -/
-def clauseSort (c : Complementizer) : Option NominalSort :=
-  if c = oti then some .content
-  else if c = pu then some .situation
-  else none
+/-- Every verb–complementizer pairing in the paper's examples, apart from those testing an
+adverb or a factivity continuation, is acceptable exactly when predicted from the verb's sort
+and Vendler class — including *simveni*, which no complementizer fits (fn. 14). -/
+theorem rows_track_selection :
+    ∀ r ∈ Examples.all, r.feature? "confound" = none →
+      ∀ e ∈ ((r.feature? "verb").bind fun name => lexicon.lookup name).toList,
+        ∀ c ∈ ((r.feature? "complementizer").bind Complementizer.ofString?).toList,
+          (r.judgment = .acceptable ↔ Predicted e.1 e.2 c) := by
+  decide +kernel
 
-/-- A light noun of sort `n` can merge in the complementizer's
-specifier iff its sort is the clause's sort (§3.2). -/
-def mergeableInSpec (n : NominalSort) (c : Complementizer) : Prop :=
-  clauseSort c = some n
+/-- Under a manner adverb or an in-adverbial, a *pu*-complement is never acceptable while an
+*oti*-complement of an eventive verb is (§2.3). -/
+theorem rows_stativity :
+    ∀ r ∈ Examples.all, r.feature? "confound" = some "manner_adverb" →
+      ∀ c ∈ ((r.feature? "complementizer").bind Complementizer.ofString?).toList,
+        (r.judgment = .acceptable ↔ c = oti) := by
+  decide +kernel
 
-instance (n : NominalSort) (c : Complementizer) :
-    Decidable (mergeableInSpec n c) :=
-  inferInstanceAs (Decidable (clauseSort c = some n))
+/-! ### Incorporation licensing and the argument asymmetry (§3.1) -/
 
-/-- Only the content noun merges in Spec,otiP and only the situation
-noun in Spec,puP (§3.2). -/
-theorem spec_noun_sorted :
-    mergeableInSpec .content oti ∧ ¬ mergeableInSpec .situation oti ∧
-    mergeableInSpec .situation pu ∧ ¬ mergeableInSpec .content pu := by
-  decide
+/-- Heads adjacent to a clause's light noun. -/
+inductive NounHost
+  | vLex
+  | t
+  | p
+  deriving DecidableEq
 
-/-- The sort of the light noun a verb verbalizes under incorporation:
-stative senses, stative preferential attitudes, and occurrence verbs
-relate to situations; saying, belief, and knowledge to content —
-this file's encoding of §3.2's split between content-denoting and
-situation-denoting verbs. -/
-def nounSort (v : Verb) : Option NominalSort :=
-  if v.senseTag = .stative then some .situation
-  else if v.unaccusative && v.attitude.isNone then some .situation
-  else match v.attitude with
-    | some (.preferential _) =>
-        if v.vendlerClass = some .state then some .situation
-        else some .content
-    | _ => some .content
+/-- Only a lexical verbal head hosts light-noun incorporation; T and P do not. -/
+def NounHost.licenses : NounHost → Prop
+  | .vLex => True
+  | .t => False
+  | .p => False
 
-/-- A verb verbalizes the light noun of sort `n` (§3.1–§3.2). -/
-def verbalizes (v : Verb) (n : NominalSort) : Prop := nounSort v = some n
+instance : DecidablePred NounHost.licenses
+  | .vLex => isTrue trivial
+  | .t => isFalse id
+  | .p => isFalse id
 
-instance (v : Verb) (n : NominalSort) : Decidable (verbalizes v n) :=
-  inferInstanceAs (Decidable (nounSort v = some n))
+/-- Positions a bare clause can be merged in. -/
+inductive ClausePosition
+  | internalArgument
+  | derivedSubject
+  | externalArgument
+  | pComplement
+  deriving DecidableEq
 
-/-- The near-complementary distribution through the light noun: each
-attested pairing has a noun the verb verbalizes that merges in the
-complementizer's specifier (§3.2). -/
-theorem distribution_via_light_noun :
-    (∀ v ∈ otiOnlyVerbs, ∃ n, verbalizes v n ∧ mergeableInSpec n oti) ∧
-    (∀ v ∈ puOnlyVerbs, ∃ n, verbalizes v n ∧ mergeableInSpec n pu) ∧
-    (∀ p ∈ dualVerbs, (∃ n, verbalizes p.1 n ∧ mergeableInSpec n oti) ∧
-      (∃ n, verbalizes p.2 n ∧ mergeableInSpec n pu)) := by
-  decide
+/-- The nearest potential host from each position: the aspectual v from the complement
+position (before any movement to subject), T from Spec,vP, P after a preposition. -/
+def ClausePosition.nearestHost : ClausePosition → NounHost
+  | .internalArgument => .vLex
+  | .derivedSubject => .vLex
+  | .externalArgument => .t
+  | .pComplement => .p
 
-/-- *simvéni* 'happen' rejects *oti* by sort mismatch and *pu* by
-eventivity, leaving its subjunctive *na*-frame (fn. 14). -/
-theorem simveni_rejects_both :
-    nounSort simveni = some .situation ∧
-    ¬ mergeableInSpec .situation oti ∧
-    simveni.vendlerClass.map AspectualHead.ofVendler = some .vEvent ∧
-    ¬ selectsClause .vEvent pu ∧
-    simveni.takes na ∧ ¬ simveni.takes oti :=
-  ⟨by decide, by decide, by decide,
-    fun h => absurd (show pu = oti from h) (by decide), by decide, by decide⟩
+/-- A bare clause is licensed where its nearest host licenses incorporation. -/
+def licensedIn (pos : ClausePosition) : Prop := pos.nearestHost.licenses
 
-/-- The situation-sorted complementizer is the lexically factive one
-(§3.2). -/
+instance : DecidablePred licensedIn := fun pos =>
+  inferInstanceAs (Decidable pos.nearestHost.licenses)
+
+def ClausePosition.ofString? : String → Option ClausePosition
+  | "internal_argument" => some .internalArgument
+  | "derived_subject" => some .derivedSubject
+  | "external_argument" => some .externalArgument
+  | "p_complement" => some .pComplement
+  | _ => none
+
+/-- Across the paper's bare clauses, grammaticality in a position is incorporation licensing
+from it: internal arguments and derived subjects in, external arguments and P-complements
+out. Nominalized clauses carry a full noun and are exempt (§5). -/
+theorem rows_track_licensing :
+    ∀ r ∈ Examples.all, r.feature? "nominalized" = none →
+      ∀ pos ∈ ((r.feature? "position").bind ClausePosition.ofString?).toList,
+        (licensedIn pos ↔ r.judgment ≠ .ungrammatical) := by
+  decide +kernel
+
+/-! ### Content and situation (§3.2) -/
+
+def NominalSort.ofString? : String → Option NominalSort
+  | "content" => some .content
+  | "situation" => some .situation
+  | _ => none
+
+/-- The sort diagnostics on nouns and nominalized verbs: truth predicates accept content and
+reject situations, occurrence predicates the reverse ((33)–(34), (36)–(37)). -/
+theorem rows_sort_diagnostics :
+    ∀ r ∈ Examples.all, ∀ s ∈ ((r.feature? "nounSort").bind NominalSort.ofString?).toList,
+      (r.feature? "diagnostic" = some "truth-predicates" →
+        (r.judgment = .acceptable ↔ s.truthEvaluable)) ∧
+      (r.feature? "diagnostic" = some "occurrence-predicates" →
+        (r.judgment = .acceptable ↔ s.occurrenceCompatible)) := by
+  decide +kernel
+
+/-- The situation-sorted complementizer is the lexically factive one. -/
 theorem situation_clause_factive :
-    ∀ c ∈ complementizers,
-      clauseSort c = some .situation → c.factive = some true := by
+    ∀ c ∈ complementizers, clauseSort c = some .situation → c.factive = some true := by
   decide
 
-/-- The sorts pass the §3.2 diagnostics: *oti*'s is truth-evaluable
-('true'/'mistaken'), *pu*'s occurrence-compatible ('happen')
-(ex. 33–34). -/
-theorem clauseSort_matches_diagnostics :
-    clauseSort oti = some .content ∧
-    NominalSort.truthEvaluable .content ∧
-    clauseSort pu = some .situation ∧
-    NominalSort.occurrenceCompatible .situation := by
-  decide
-
-/-- The light-noun selectors are exactly the sort-bearing
-complementizers: the noun must match its clause's sort (§3.1–§3.2). -/
-theorem selectsLightNoun_iff_sorted :
-    ∀ c ∈ complementizers, (selectsLightNoun c ↔ (clauseSort c).isSome) := by
-  decide
-
-/-- *oti* and *pu* are lexically distinct on this account (content vs
-situation) and on [roussou-2010]'s (indefinite vs definite), against
-fn. 17's allomorphy alternative. -/
+/-- *oti* and *pu* are distinct lexical items here (content vs situation) as in
+[roussou-2010] (indefinite vs definite), against fn. 17's allomorphy alternative. -/
 theorem oti_pu_lexically_distinct :
-    clauseSort oti ≠ clauseSort pu ∧
-    Roussou2010.profile oti ≠ Roussou2010.profile pu := by
+    clauseSort oti ≠ clauseSort pu ∧ Roussou2010.profile oti ≠ Roussou2010.profile pu := by
   decide
 
 /-! ### Factivity from situation semantics (§3.2) -/
 
-/-- A situation verb is anchored when it relates agents only to
-situation individuals realized at the evaluation situation. -/
-def Anchored {S X : Type*} (verb : SituationVerb S X) : Prop :=
-  ∀ a xs s, verb a xs s → xs.sit s
+/-- A situation verb is anchored when it relates agents only to situations realized at the
+evaluation situation. -/
+def Anchored {S X : Type*} (verb : SituationVerb S X) : Prop := ∀ a xs s, verb a xs s → xs.sit s
 
-/-- An anchored verb's *pu*-report entails its complement — the factive
-presupposition of *pu*-clauses derived from situation semantics
-(§3.2). -/
-theorem pu_report_factive {S X : Type*} {verb : SituationVerb S X}
-    (h : Anchored verb) (a : X) (q : S → Prop) (s : S) :
-    existsClosure verb a q s → q s := by
+/-- An anchored verb's *pu*-report entails its complement — *pu*'s factivity from situation
+semantics (38b). -/
+theorem pu_report_factive {S X : Type*} {verb : SituationVerb S X} (h : Anchored verb) (a : X)
+    (q : S → Prop) (s : S) : existsClosure verb a q s → q s := by
   rintro ⟨xs, hv, hq⟩
   rw [← show xs.sit = q from hq]
   exact h a xs s hv
 
-/-- Content reports carry no such entailment. -/
+/-- Content reports carry no such entailment (38a). -/
 theorem content_report_not_factive :
-    ¬ ∀ (verb : ContentVerb Bool Unit) (a : Unit) (p : Bool → Prop)
-        (w : Bool), existsClosure verb a p w → p w :=
-  fun h => h (fun _ _ _ => True) () (fun _ => False) true
-    ⟨⟨fun _ => False⟩, trivial, rfl⟩
-
-/-- Anchored regret over two situations. -/
-private def toyRegret : SituationVerb Bool Unit := fun _ xs s => xs.sit s
-
-/-- ex. 1b's *pu*-report composed through `existsClosure`. -/
-theorem ex_1b_reading :
-    existsClosure toyRegret () (· = true) true :=
-  ⟨⟨(· = true)⟩, rfl, rfl⟩
+    ¬ ∀ (verb : ContentVerb Bool Unit) (a : Unit) (p : Bool → Prop) (w : Bool),
+        existsClosure verb a p w → p w :=
+  fun h => h (fun _ _ _ => True) () (fun _ => False) true ⟨⟨fun _ => False⟩, trivial, rfl⟩
 
 /-! ### Against the transparent syntax–semantics mapping (§7.3) -/
 
-/-- Syntactic position of an embedded clause: complement or adjunct
-(§7.3). -/
-inductive SynPosition where
-  | complement
-  | adjunct
-  deriving DecidableEq, Repr
-
-/-- The (position, composition-path) pairs attested for bare
-*oti*-clauses: Predicate Modification from either position, Functional
-Application from neither (§2, §7.3). -/
-def bareOtiAttested : SynPosition → CompositionPath → Prop
-  | .complement, .viaSituation  => True
-  | .complement, .viaDPArgument => False
-  | .adjunct,    .viaSituation  => True
-  | .adjunct,    .viaDPArgument => False
-
-/-- Bare clauses never compose via FA from either position: FA requires
-the nominalizing D (§7.3 ex. 57). -/
-theorem bare_never_via_dp : ∀ p, ¬ bareOtiAttested p .viaDPArgument :=
-  fun p => by cases p <;> exact id
-
-/-- Greek bare *oti*-clauses fill the cell [bondarenko-2022]'s
-transparent mapping predicts empty: syntactic argumenthood without
-Functional Application (§7.3). -/
+/-- A clitic-doubled bare *oti*-clause is a complement with the explanans reading, composing
+as a modifier: the cell [bondarenko-2022]'s transparent mapping leaves empty is filled. -/
 theorem transparency_conflates_axes :
     ¬ Bondarenko2022.transparentSSMapping .bareArgument ∧
-    bareOtiAttested .complement .viaSituation :=
-  ⟨Bondarenko2022.not_transparentSSMapping_bareArgument, trivial⟩
+      ∃ r ∈ Examples.all, r.feature? "position" = some "internal_argument" ∧
+        r.feature? "diagnostic" = some "clitic-doubling" ∧
+        r.feature? "composition" = some "predicate_modification" :=
+  ⟨Bondarenko2022.not_transparentSSMapping_bareArgument, by decide +kernel⟩
 
 end Angelopoulos2026
