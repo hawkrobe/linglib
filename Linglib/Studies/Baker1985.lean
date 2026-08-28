@@ -2,268 +2,276 @@ import Linglib.Data.Examples.Baker1985
 import Linglib.Morphology.Morphotactics.MirrorPrinciple
 
 /-!
-# The Mirror Principle and Morphosyntactic Explanation
+# Baker 1985: the Mirror Principle
 
-Formalization of [baker-1985] (*Linguistic Inquiry* 16(3), 373–415): the Mirror
-Principle's predictions verified against the paper's data — Chamorro *fan-* agreement
-interacting with passive and causative (§§1, 3.1), the Agreement Restriction (§3.2),
-causative-reciprocal ordering in Quechua and Bemba (§4.1), and passive-applicative
-ordering in Huichol, Chi-Mwi:ni, and Kinyarwanda (§4.2).
+Processes like passive, causative, applicative and reciprocal formation each add an affix to
+the verb and rearrange the grammatical functions of its arguments. The Mirror Principle says
+the two derivations must match: affix order outward from the root is the order in which the
+syntactic components applied. Given the independently known behaviour of each process, this
+explains why Chamorro's plural agreement *fan-* registers the surface subject outside the
+passive marker, the semantic subject inside the causative marker, and an intermediate subject
+between the two; why a reciprocal inside a causative links the root's agent and patient while a
+causative inside a reciprocal links the causer to the patient in Quechua but to the agent in
+Bemba, whose causative makes the old subject the object; and why an applied argument becomes
+the passive subject only with the applied affix inside the passive affix, so that the
+patient-subject reading is out in Chi-Mwi:ni and in only in Kinyarwanda, whose passive reaches
+a second object independently. Across languages, an agreement morpheme inside a GF-rule
+morpheme references semantic functions and one outside it surface functions; the other two
+combinations do not occur.
 
-## Main declarations
+## Main definitions
 
-* `IsAttested`: the Agreement Restriction as empirical data — of Baker's (27) table,
-  only inner+semantic (27a) and outer+surface (27d) occur.
-* `isAttested_iff_deriveReference`: the Mirror Principle derives the restriction — a
-  pattern is attested exactly when its reference is the one derivational timing
-  dictates for its position.
-* `chamorroPassiveAgreement`, `chamorroCausativeAgreement`, `chamorroCausativePassive`:
-  the *fan-* data instantiating both attested patterns and the intermediate-subject
-  prediction.
-* `quechuaRecipInsideCaus` … `bembaCausInsideRecip`: the §4.1 ordering pairs.
-* `huichol`, `chiMwini`, `kinyarwanda`: the applied affix universally inner to the
-  passive affix (§4.2).
-* `surface_sublist`: the surface each derivation derives is a subsequence of its
-  stimulus's segmentation.
+* `Stage`, `Grammar`, `Process.apply`: grammatical functions at a derivational stage and the
+  syntactic component of each process, with the two causative types and the Kinyarwanda
+  passive as language settings.
+* `processes`, `derivation`: a row's processes in order of attachment, read off its
+  segmentation, and the derivation they form; `outcomes` runs them.
+* `IsAttested`, `isAttested_iff_deriveReference`: the agreement restriction, derived from
+  derivational timing.
+* `rows_surface`, `rows_agreement`, `rows_links`, `rows_subject`: the paper's examples, each
+  derived from its morphology.
 
-The glossed stimuli live in `Data/Examples/Baker1985.json` (generated module
-`Data.Examples.Baker1985`); each analysis below names its stimulus row.
+## References
+
+* [baker-1985]
+* [gibson-1980] — Chamorro
+* [muysken-1981] — Quechua
+* [givon-1976] — Bemba
+* [comrie-1982], [kisseberth-abasheikh-1977], [kimenyi-1980] — Huichol, Chi-Mwi:ni,
+  Kinyarwanda
 -/
 
 namespace Baker1985
 
 open Morphology.MirrorPrinciple Data.Examples
 
-/-! ### The Agreement Restriction ([baker-1985] §3.2)
+/-! ### Grammatical-function rules -/
 
-Of the four combinations of agreement position and GF reference, Baker's (27) records
-only two as attested: outer agreement referencing surface GFs (27d: by far the most
-common — Chamorro person-number agreement, Turkish, Sanskrit, Quechua) and inner
-agreement referencing semantic GFs (27a: Chamorro causative *fan-*, with Achenese
-agreement and Huichol verb suppletion consistent with it). No clear cases of (27b) or
-(27c) are found.
+/-- The arguments a clause may host: the root's agent and patient, a causer, and the oblique an
+    applicative promotes. -/
+inductive Arg
+  | agent
+  | patient
+  | causer
+  | applied
+  deriving DecidableEq, Repr
 
-Achenese ((31)) is a defused near-falsifier, not an instance of (27a): its verbal
-agreement references semantic subjects under passivization, which would instantiate
-the starred (27b) if the passive were marked by a morpheme inner to agreement — but
-Achenese has no overt passive morphology, so no morpheme position exists and the
-restriction is vacuously satisfied. -/
+/-- Grammatical functions at a derivational stage, with the referential dependencies and the
+    agreement registrations made so far; `second` holds an object an applicative displaced. -/
+structure Stage where
+  subj : Arg
+  obj : Option Arg := none
+  second : Option Arg := none
+  obl : List Arg := []
+  links : List (Arg × Arg) := []
+  registered : List Arg := []
+  deriving DecidableEq, Repr
 
-/-- The attested agreement patterns: exactly inner+semantic (27a) and outer+surface
-(27d) of [baker-1985]'s (27). -/
+/-- The two causative types: the Quechua type leaves a transitive root's object in place and
+    demotes its subject, the Chamorro type makes the old subject the object. -/
+inductive CausativeType
+  | quechua
+  | chamorro
+  deriving DecidableEq
+
+/-- What a language's rules consult: its causative type, and whether its passive can promote
+    the object an applicative displaced. -/
+structure Grammar where
+  causative : CausativeType
+  passivizeSecond : Bool := false
+
+/-- A process with a morphological and a syntactic component: a GF-rule, or number
+    agreement. -/
+inductive Process
+  | gf (r : GFRuleType)
+  | agreement
+  deriving DecidableEq, Repr
+
+/-- The syntactic component of each process, as the stages it can yield: passive promotes the
+    object (or, where the grammar allows, a displaced object) and demotes the subject; a
+    causative adds the causer as subject; an applicative promotes the oblique to object,
+    displacing the old one; reciprocal formation binds subject to object and makes the object
+    the subject; number agreement registers the subject of an intransitive stage. -/
+def Process.apply (g : Grammar) : Process → Stage → List Stage
+  | .gf .passive, s =>
+    (match s.obj with
+      | some o => [{ s with subj := o, obj := none, obl := s.subj :: s.obl }]
+      | none => []) ++
+    (match s.second, g.passivizeSecond with
+      | some o, true => [{ s with subj := o, second := none, obl := s.subj :: s.obl }]
+      | _, _ => [])
+  | .gf .causative, s =>
+    match g.causative, s.obj with
+    | .quechua, none => [{ s with subj := .causer, obj := some s.subj }]
+    | .quechua, some _ => [{ s with subj := .causer, obl := s.subj :: s.obl }]
+    | .chamorro, o => [{ s with subj := .causer, obj := some s.subj, obl := o.toList ++ s.obl }]
+  | .gf .applicative, s =>
+    if s.obl.contains .applied then
+      [{ s with obj := some .applied, second := s.obj, obl := s.obl.erase .applied }]
+    else []
+  | .gf .reflexReciprocal, s =>
+    match s.obj with
+    | some o => [{ s with subj := o, obj := none, links := (s.subj, o) :: s.links }]
+    | none => []
+  | .agreement, s =>
+    match s.obj with
+    | none => [{ s with registered := s.subj :: s.registered }]
+    | some _ => []
+
+/-- The stages a sequence of processes can reach from a start. -/
+def outcomes (g : Grammar) (ps : List Process) (s : Stage) : List Stage :=
+  ps.foldl (λ ss p => ss.flatMap (p.apply g)) [s]
+
+/-- An applied argument becomes the subject only with the applied affix inside the passive
+    affix: with the passive applied first, no grammar yields it. -/
+theorem applied_subject_needs_applicative_first (g : Grammar) (s : Stage)
+    (hs : s.subj ≠ .applied) (ho : s.obj ≠ some .applied) (h2 : s.second ≠ some .applied) :
+    ∀ st ∈ outcomes g [.gf .passive, .gf .applicative] s, st.subj ≠ .applied := by
+  intro st hst
+  obtain ⟨subj, obj, second, obl, links, registered⟩ := s
+  rcases g with ⟨c, ps⟩
+  cases obj <;> cases second <;> cases ps <;> aesop (add simp [outcomes, Process.apply])
+
+/-! ### Agreement and derivational timing -/
+
+/-- The attested agreement patterns: inner agreement referencing semantic functions and outer
+    agreement referencing surface functions. -/
 def IsAttested (p : AgreementPattern) : Prop :=
   p = ⟨.inner, .semantic⟩ ∨ p = ⟨.outer, .surface⟩
 
-instance : DecidablePred IsAttested := fun p =>
+instance : DecidablePred IsAttested := λ p =>
   inferInstanceAs (Decidable (p = ⟨.inner, .semantic⟩ ∨ p = ⟨.outer, .surface⟩))
 
-/-- The Mirror Principle derives the Agreement Restriction: a pattern is attested
-exactly when its GF reference is the one derivational timing dictates for its
-position ([baker-1985] (27)). -/
+/-- The Mirror Principle derives the restriction: a pattern is attested exactly when its
+    reference is the one derivational timing dictates for its position. -/
 theorem isAttested_iff_deriveReference {p : AgreementPattern} :
     IsAttested p ↔ p.reference = deriveReference p.position := by
   obtain ⟨pos, ref⟩ := p
   cases pos <;> cases ref <;> decide
 
-/-- Every pattern the Mirror Principle derives is attested; no per-position
-stipulation is needed. -/
-theorem isAttested_derived (pos : AgreementPosition) :
-    IsAttested ⟨pos, deriveReference pos⟩ :=
-  isAttested_iff_deriveReference.mpr rfl
+/-! ### The paper's examples -/
 
-/-! ### Chamorro ([baker-1985] §§1, 3.1)
+/-- A row's segmentation, as gloss labels in surface order. -/
+def morphs (r : LinguisticExample) : List String :=
+  ["m1", "m2", "m3", "m4", "m5", "m6"].filterMap r.feature?
 
-Chamorro number agreement *man-* ~ *fan-* registers plurality of the subject; passive
-*-in-* promotes the object to subject; causative *na'-* adds a causer as subject
-(data from [gibson-1980]).
-Which "subject" *fan-* registers tracks its morphological position: outside the
-passive marker it references the surface subject, inside the causative marker the
-semantic subject. -/
+/-- A row's root. -/
+def root (r : LinguisticExample) : String := (r.feature? "root").getD ""
 
-/-- Passive *Para#u#fan-s-in-aolak* 'The children are going to be spanked by their
-father': *fan-* outside *-in-* ([fan [in [saolak]]]), so *fan-* was added after
-passive and references the derived (surface) subject ([baker-1985] (15b), (21)).
-Stimulus row: `Examples.chamorro_15b`. -/
-def chamorroPassiveAgreement : AgreementPattern := ⟨.outer, .surface⟩
+/-- The affixes before the root, outermost first. -/
+def prefixes (r : LinguisticExample) : List String := (morphs r).takeWhile (· ≠ root r)
 
-/-- Causative *Hu#na'-fan-otchu* 'I made them eat': *fan-* inside *na'-*
-([na' [fan [otchu]]]), so *fan-* was added before causative and references the
-semantic subject of 'eat' ([baker-1985] (15c), (23)). Stimulus row:
-`Examples.chamorro_15c`. -/
-def chamorroCausativeAgreement : AgreementPattern := ⟨.inner, .semantic⟩
+/-- The affixes after the root, innermost first. -/
+def suffixes (r : LinguisticExample) : List String :=
+  ((morphs r).dropWhile (· ≠ root r)).drop 1
 
-/-- The Chamorro passive pattern is the derived — hence attested — pattern for outer
-agreement. -/
-theorem chamorroPassiveAgreement_isAttested : IsAttested chamorroPassiveAgreement :=
-  isAttested_iff_deriveReference.mpr rfl
+/-- The process a gloss label marks. -/
+def process? : String → Option Process
+  | "PASS" => some (.gf .passive)
+  | "CAUS" => some (.gf .causative)
+  | "APPL" | "BEN" | "INSTR" => some (.gf .applicative)
+  | "RECP" | "REFL" => some (.gf .reflexReciprocal)
+  | "PL" => some .agreement
+  | _ => none
 
-/-- The Chamorro causative pattern is the derived — hence attested — pattern for
-inner agreement. Together with `chamorroPassiveAgreement_isAttested`, a single
-language exhibits both attested patterns, so the Agreement Restriction is a property
-of UG, not a language-particular parameter ([baker-1985] §3.1). -/
-theorem chamorroCausativeAgreement_isAttested : IsAttested chamorroCausativeAgreement :=
-  isAttested_iff_deriveReference.mpr rfl
+/-- A row's derivation: its process-marking affixes in order of attachment — prefixes from the
+    root outward, then suffixes — each on its side. -/
+def derivation (r : LinguisticExample) : Derivation :=
+  ((prefixes r).reverse.filterMap λ m => (process? m).map (·, m, Morphology.Morph.Side.before)) ++
+    ((suffixes r).filterMap λ m => (process? m).map (·, m, Morphology.Morph.Side.after))
+  |>.filterMap λ (x : Process × String × Morphology.Morph.Side) =>
+    match x with
+    | (.gf g, m, side) => some ⟨g, m, side⟩
+    | (.agreement, _, _) => none
 
-/-- Causative of passive *Hu#na'-fan-s-in-aolak i famagu'un gi as tata-n-niha* 'I had
-the children spanked by their father': passive applies first, then causative; *fan-*
-sits between the two GF-rule morphemes and registers the intermediate subject —
-post-passive, pre-causative ([baker-1985] (25), (26)). Stimulus row:
-`Examples.chamorro_25`. -/
-def chamorroCausativePassive : Derivation :=
-  [⟨.passive, "in", .after⟩, ⟨.causative, "na'", .before⟩]
+/-- A row's processes in order of attachment, agreement included. -/
+def processes (r : LinguisticExample) : List Process :=
+  ((prefixes r).reverse ++ suffixes r).filterMap process?
 
-theorem chamorroCausativePassive_ruleOrder :
-    ruleOrder chamorroCausativePassive = [.passive, .causative] := rfl
+/-- The stage a root starts from: an agent, a patient if transitive, and an oblique for an
+    applicative to promote. -/
+def initial (r : LinguisticExample) : Stage :=
+  { subj := .agent, obj := if r.feature? "valence" = some "transitive" then some .patient else none,
+    obl := [.applied] }
 
-/-! ### Causative-reciprocal ordering: Quechua and Bemba ([baker-1985] §4.1)
+/-- A row's language settings: Chamorro and Bemba have the Chamorro causative, Quechua its
+    own; Kinyarwanda's passive reaches a displaced object. -/
+def grammar? (r : LinguisticExample) : Option Grammar :=
+  match r.language with
+  | "cham1312" | "bemb1257" | "huic1243" | "chim1312" => some ⟨.chamorro, false⟩
+  | "quec1387" => some ⟨.quechua, false⟩
+  | "kiny1244" => some ⟨.chamorro, true⟩
+  | _ => none
 
-Causative and reciprocal can attach in either order, and the morpheme order
-determines the interpretation: whichever rule applies first is computed on the
-pre-change grammatical functions. Quechua and Bemba show the same two orders; the
-caus-recip order is interpreted differently in the two languages — Quechua links the
-causer to the initial patient ((39b)), Bemba to the initial agent ((49b)) — because
-Bemba's causative is Chamorro-type: the initial agent, not the patient, occupies the
-object position Reciprocal Formation binds ((50)–(52)). Quechua data from
-[muysken-1981]; Bemba data from [givon-1976]. -/
+/-- The GF-rule affixes of a row's derivation, on their sides around the root, are a
+    subsequence of its segmentation: the Mirror Principle's linearization. -/
+theorem rows_surface :
+    ∀ r ∈ Examples.all, (surface (root r) (derivation r)).Sublist (morphs r) := by
+  decide +kernel
 
-/-- *Maqa-naku-ya-chi-n* 'He is causing them to beat each other': reciprocal *-naku*
-inside causative *-chi*, so Reciprocal applies first, linking agent and patient of
-the root; Causative then adds the causer ([baker-1985] (39a), (45)–(46)). Stimulus
-row: `Examples.quechua_39a`. -/
-def quechuaRecipInsideCaus : Derivation :=
-  [⟨.reflexReciprocal, "naku", .after⟩, ⟨.causative, "chi", .after⟩]
+/-- Which subject a registration matches: the surface subject, the semantic subject, or
+    neither. -/
+def agreesWith (start final : Stage) : Option String :=
+  match final.registered with
+  | [x] =>
+    some (if x = final.subj then "surface subject"
+      else if x = start.subj then "semantic subject" else "intermediate subject")
+  | _ => none
 
-/-- *Maqa-chi-naku-rka-n* 'They let someone beat each other': causative *-chi* inside
-reciprocal *-naku*, so Causative applies first; Reciprocal then links the causers to
-the initial patients ([baker-1985] (39b), (47)–(48)). Stimulus row:
-`Examples.quechua_39b`. -/
-def quechuaCausInsideRecip : Derivation :=
-  [⟨.causative, "chi", .after⟩, ⟨.reflexReciprocal, "naku", .after⟩]
-
-theorem quechuaRecipInsideCaus_ruleOrder :
-    ruleOrder quechuaRecipInsideCaus = [.reflexReciprocal, .causative] := rfl
-
-theorem quechuaCausInsideRecip_ruleOrder :
-    ruleOrder quechuaCausInsideRecip = [.causative, .reflexReciprocal] := rfl
-
-/-- The two Quechua verb forms differ in rule order: the Mirror Principle ties the
-morphological contrast to the interpretive one. -/
-theorem quechua_ruleOrders_differ :
-    ruleOrder quechuaRecipInsideCaus ≠ ruleOrder quechuaCausInsideRecip := by
+/-- Every Chamorro row's *fan-* registers the subject the paper says it does: the surface
+    subject outside the passive, the semantic subject inside the causative, and the subject
+    between passive and causative in their combination. -/
+theorem rows_agreement :
+    ∀ r ∈ Examples.all, ∀ g ∈ grammar? r, ∀ w ∈ r.feature? "agreesWith",
+      ∀ st ∈ outcomes g (processes r) (initial r), agreesWith (initial r) st = some w := by
   decide
 
-/-- *Naa-mon-an-ya Mwape na Mutumba* 'I made Mwape and Mutumba see each other':
-reciprocal *-an* inside causative *-ya* — the same order and interpretation as
-Quechua (39a) ([baker-1985] (49a)). Stimulus row: `Examples.bemba_49a`. -/
-def bembaRecipInsideCaus : Derivation :=
-  [⟨.reflexReciprocal, "an", .after⟩, ⟨.causative, "ya", .after⟩]
+/-- A row's agreement pattern relative to its single GF-rule: position from the affix order,
+    reference from the registration. -/
+def pattern? (r : LinguisticExample) (st : Stage) : Option AgreementPattern :=
+  match (processes r).filter (· ≠ .agreement), agreesWith (initial r) st with
+  | [g], some "surface subject" =>
+    some ⟨if (processes r).idxOf .agreement < (processes r).idxOf g then .inner else .outer,
+      .surface⟩
+  | [g], some "semantic subject" =>
+    some ⟨if (processes r).idxOf .agreement < (processes r).idxOf g then .inner else .outer,
+      .semantic⟩
+  | _, _ => none
 
-/-- *Mwape na Chilufya baa-mon-eshy-ana Mutumba* 'Mwape and Chilufya made each other
-see Mutumba': causative *-eshy* inside reciprocal *-ana*. Causative applies first
-and — being Chamorro-type — puts the initial agent in object position, so Reciprocal
-links causer and initial agent, unlike Quechua (39b) ([baker-1985] (49b), (52)).
-Stimulus row: `Examples.bemba_49b`. -/
-def bembaCausInsideRecip : Derivation :=
-  [⟨.causative, "eshy", .after⟩, ⟨.reflexReciprocal, "ana", .after⟩]
+/-- The Chamorro passive and causative rows instantiate the two attested patterns. -/
+theorem rows_pattern_attested :
+    ∀ r ∈ Examples.all, ∀ g ∈ grammar? r, ∀ st ∈ outcomes g (processes r) (initial r),
+      ∀ p ∈ pattern? r st, IsAttested p := by
+  decide
 
-theorem bembaRecipInsideCaus_ruleOrder :
-    ruleOrder bembaRecipInsideCaus = [.reflexReciprocal, .causative] := rfl
+/-- The dependency a row's translation records. -/
+def links? (r : LinguisticExample) : Option (Arg × Arg) :=
+  match r.feature? "links" with
+  | some "agent-patient" => some (.agent, .patient)
+  | some "causer-patient" => some (.causer, .patient)
+  | some "causer-agent" => some (.causer, .agent)
+  | _ => none
 
-theorem bembaCausInsideRecip_ruleOrder :
-    ruleOrder bembaCausInsideRecip = [.causative, .reflexReciprocal] := rfl
+/-- Reciprocal formation links the root's agent and patient when it applies before the
+    causative, and the causer to the patient (Quechua) or the agent (Bemba) when after. -/
+theorem rows_links :
+    ∀ r ∈ Examples.all, ∀ g ∈ grammar? r, ∀ l ∈ links? r,
+      ∀ st ∈ outcomes g (processes r) (initial r), st.links = [l] := by
+  decide
 
-/-- Bemba shows the same two rule orders as Quechua: the cross-linguistic difference
-lies in the interpretation of the caus-recip order, not in the available orders
-([baker-1985] §4.1). -/
-theorem bemba_ruleOrders_match_quechua :
-    ruleOrder bembaRecipInsideCaus = ruleOrder quechuaRecipInsideCaus ∧
-    ruleOrder bembaCausInsideRecip = ruleOrder quechuaCausInsideRecip :=
-  ⟨rfl, rfl⟩
+/-- The surface subject a row reports. -/
+def surfaceSubject? (r : LinguisticExample) : Option Arg :=
+  match r.feature? "surfaceSubject" with
+  | some "applied object" => some .applied
+  | some "patient" => some .patient
+  | _ => none
 
-/-- Both Quechua orders are acceptable stimuli with distinct interpretations — the
-morphological contrast carries an interpretive one, as the Mirror Principle requires. -/
-theorem quechua_both_orders_attested :
-    Examples.quechua_39a.judgment = .acceptable ∧
-    Examples.quechua_39b.judgment = .acceptable ∧
-    Examples.quechua_39a.translation ≠ Examples.quechua_39b.translation :=
-  ⟨rfl, rfl, by decide⟩
-
-/-- Both Bemba orders are likewise acceptable with distinct interpretations. -/
-theorem bemba_both_orders_attested :
-    Examples.bemba_49a.judgment = .acceptable ∧
-    Examples.bemba_49b.judgment = .acceptable ∧
-    Examples.bemba_49a.translation ≠ Examples.bemba_49b.translation :=
-  ⟨rfl, rfl, by decide⟩
-
-/-! ### Passive-applicative ordering ([baker-1985] §4.2)
-
-Applicative creates a new direct object ((53)); passive promotes a direct object to
-subject ((12)). When an applicative feeds a passive — the applied object becomes the
-surface subject — Applicative must apply first, so the Mirror Principle predicts the
-applied affix universally closer to the root than the passive affix. Attested:
-verb-appl-pass. Unattested: verb-pass-appl with oblique-to-subject promotion.
-Huichol data from [comrie-1982], Chi-Mwi:ni from [kisseberth-abasheikh-1977],
-Kinyarwanda from [kimenyi-1980]. -/
-
-/-- Huichol *Tiiri yi-nauka-ti nawazi me-puutinanai-ri-yeri* 'Four children were
-bought a knife': benefactive *-ri* inside passive *-yeri* ([baker-1985] (55)).
-Stimulus row: `Examples.huichol_55`. -/
-def huichol : Derivation := [⟨.applicative, "ri", .after⟩, ⟨.passive, "yeri", .after⟩]
-
-/-- Chi-Mwi:ni *Mwa:limu tet-el-el-a chibu:ku na Nu:ru* 'The teacher was brought the
-book by Nuru': applied *-el* inside passive *-a*, with aspect between them
-([baker-1985] (56c)). Stimulus rows: `Examples.chimwiini_56c` and the starred
-`Examples.chimwiini_56d`. -/
-def chiMwini : Derivation := [⟨.applicative, "el", .after⟩, ⟨.passive, "a", .after⟩]
-
-/-- Kinyarwanda *Ikaramu i-ra-andik-iish-w-a ibaruwa n'umugabo* 'The pen was
-written-with the letter by the man': instrumental applicative *-iish* inside passive
-*-w* ([baker-1985] (57c)). Stimulus rows: `Examples.kinyarwanda_57c` and
-`Examples.kinyarwanda_57d`. -/
-def kinyarwanda : Derivation := [⟨.applicative, "iish", .after⟩, ⟨.passive, "w", .after⟩]
-
-/-- All three languages place the applied affix before the passive affix, as the
-feeding order requires. -/
-theorem appl_before_pass :
-    ruleOrder huichol = [.applicative, .passive] ∧
-    ruleOrder chiMwini = [.applicative, .passive] ∧
-    ruleOrder kinyarwanda = [.applicative, .passive] :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- The Mirror Principle's negative prediction in Chi-Mwi:ni: goal-to-subject promotion
-under appl-inside-pass morphology is acceptable ((56c)); reading the same morphology
-with patient-to-subject promotion is starred ((56d)), since Passive would then have to
-precede Applicative syntactically while following it morphologically. -/
-theorem chiMwini_star_contrast :
-    Examples.chimwiini_56c.judgment = .acceptable ∧
-    Examples.chimwiini_56d.judgment = .ungrammatical :=
-  ⟨rfl, rfl⟩
-
-/-- Kinyarwanda's counterpart of the starred Chi-Mwi:ni sentence is grammatical:
-Kinyarwanda passive independently promotes either postverbal NP of a double-object
-verb ((58)), so (57d) is not a Mirror Principle counterexample. -/
-theorem kinyarwanda_57d_acceptable :
-    Examples.kinyarwanda_57d.judgment = .acceptable := rfl
-
-/-! ### The derived surfaces -/
-
-/-- A stimulus's morph segmentation. -/
-def segments (ex : LinguisticExample) : List String :=
-  ["m1", "m2", "m3", "m4", "m5", "m6"].filterMap ex.feature?
-
-/-- Each derivation's surface — the GF-rule affixes attached on their sides around
-the root — is a subsequence of the stimulus's segmentation: prefixal *na'-* outside
-the passive, suffixal reciprocal, causative, applied, and passive affixes in the order
-the rules applied, the non-GF morphemes interleaved. -/
-theorem surface_sublist :
-    (surface "saolak" chamorroCausativePassive).Sublist (segments Examples.chamorro_25) ∧
-      (surface "maqa" quechuaRecipInsideCaus).Sublist (segments Examples.quechua_39a) ∧
-      (surface "maqa" quechuaCausInsideRecip).Sublist (segments Examples.quechua_39b) ∧
-      (surface "mon" bembaRecipInsideCaus).Sublist (segments Examples.bemba_49a) ∧
-      (surface "mon" bembaCausInsideRecip).Sublist (segments Examples.bemba_49b) ∧
-      (surface "puutinanai" huichol).Sublist (segments Examples.huichol_55) ∧
-      (surface "tet" chiMwini).Sublist (segments Examples.chimwiini_56c) ∧
-      (surface "andik" kinyarwanda).Sublist (segments Examples.kinyarwanda_57c) := by
+/-- A passive of an applicative is acceptable exactly when some derivation in the affix order
+    makes the reported argument the subject: the applied object everywhere, the patient only in
+    Kinyarwanda. -/
+theorem rows_subject :
+    ∀ r ∈ Examples.all, ∀ g ∈ grammar? r, ∀ a ∈ surfaceSubject? r,
+      (r.judgment = .acceptable ↔ ∃ st ∈ outcomes g (processes r) (initial r), st.subj = a) := by
   decide
 
 end Baker1985
