@@ -1,154 +1,191 @@
-import Linglib.Data.Generalizations.HomogeneityProjection
+import Mathlib.Tactic.DeriveFintype
+import Linglib.Studies.KrizChemla2015
+import Linglib.Data.Examples.AugurzkyEtAl2023
 
 /-!
-# [augurzky-etal-2023]: QUD manipulation of homogeneity projection
+# Augurzky et al. 2023: plural definites in context
 
-Empirical data from Augurzky, Bonnet, Breheny, Cremers, Ebert, Mayr, Romoli,
-Steinbach & Sudo (2023), "Putting plural definites into context," *Sinn und
-Bedeutung 27*: 19-32.
+Plural definites are homogeneous — *every boy opened his presents* is understood as *all* of
+them, its negation as *none* — and non-maximal: where all that matters is whether any present
+was opened, the sentence passes though a few presents stayed closed. The implicature approach
+gives the definite an existential meaning, strengthened to the universal by an implicature in
+positive environments only, so that pruning alternatives yields non-maximality there and
+nowhere else. The non-implicature approach gives the sentence a truth-value gap in mixed
+scenarios and lets what the context makes relevant group the gap with truth or with falsity,
+symmetrically for positive and negative sentences. Two picture-verification experiments put the
+plural definite under *every*, *no* and *not every* while manipulating whether the family rule
+made it relevant that any or that all presents be opened. Under *every* the mixed picture is
+accepted in the existential context and rejected in the universal one, as both approaches
+predict; under *no* it is rejected in both, with only a small context effect, as the
+implicature approach predicts; under *not every* it is accepted in the universal context and
+rejected in the existential one, as only the non-implicature approach predicts. Each approach
+is therefore challenged by one negative quantifier.
 
-## Empirical contribution
+## Main definitions
 
-Augurzky et al. extend the Križ & Chemla 2015 paradigm
-(`[kriz-chemla-2015]`, formalized at
-`Studies/KrizChemla2015.lean`) by manipulating the QUD
-between participants:
+* `Context`, `Context.resolve`: the existential and universal questions and how each resolves a
+  partially opened set of presents.
+* `implicature`, `nonImplicature`: the two verdicts on a display, built on the some- and
+  all-substituted readings and the supervaluation of Križ and Chemla.
+* `mixed`, `table2`: the mixed pictures and the derived predictions of both approaches.
+* `rows_*`: which rows each approach fits and which it misses.
 
-- **Strict context**: QUD targets the strongest reading.
-- **Lax context**: QUD targets the weakest reading.
+## References
 
-Across two experiments, they find:
-
-- `every` is highly QUD-sensitive (low acceptance in strict, high in lax).
-- `no` is essentially QUD-insensitive (low acceptance in both).
-- `not every` patterns with `every` (high in lax), NOT with `no` — despite
-  both `no` and `not every` being downward-entailing.
-
-The `no` / `not every` asymmetry is the central puzzle.
-
-## Provenance
-
-This data was previously bundled inside an imprecision-projection file
-(then `Studies/Haslinger2025.lean`). Moved here at 0.230.521 — the empirical
-anchor is Augurzky et al. 2023, not Haslinger. The asymmetry's *theoretical
-explanation* in the original file invoked exhaustification logic from
-`[bar-lev-2021]` rather than Augurzky's or Haslinger's account; that
-explanation has been replaced with a statement of the empirical pattern alone,
-with the rival explanations cited as future-work targets.
-
+* [augurzky-etal-2023]
+* [kriz-chemla-2015] — the displays and the gap paradigm
+* [magri-2014], [bar-lev-2021] — the implicature approach
+* [kriz-2016], [kriz-spector-2021] — the non-implicature approach
 -/
 
 namespace AugurzkyEtAl2023
 
-open Generalizations.HomogeneityProjection (EmbeddingOperator)
+open Data.Examples
+open Generalizations.HomogeneityProjection (EmbeddingOperator parseOperator)
+open KrizChemla2015 (Cell Display someReading allReading gapValue supervaluation)
 
-/--
-QUD-manipulation datum for plural-definite acceptance in gap scenarios.
+/-! ### Contexts -/
 
-Source: [augurzky-etal-2023], Experiments 1-2.
+/-- What the context makes relevant about a boy's presents: whether any were opened, or whether
+    all were. -/
+inductive Context
+  | existential
+  | universal
+  deriving DecidableEq, Fintype
 
-The acceptance fields are coded categorically ("low"/"medium"/"high") since
-the original numerical rates depend on per-experiment baselines and stimulus
-sets; consult [augurzky-etal-2023] Tables 1-2 for raw rates.
--/
-structure QUDManipulationDatum where
-  /-- The embedding operator -/
-  operator : EmbeddingOperator
-  /-- Sentence -/
-  sentence : String
-  /-- Strict reading (QUD = strong) -/
-  strictReading : String
-  /-- Lax reading (QUD = weak) -/
-  laxReading : String
-  /-- Gap scenario -/
-  gapScenario : String
-  /-- Acceptance rate in STRICT context (gap scenario) -/
-  strictContextAcceptance : String  -- "low", "medium", "high"
-  /-- Acceptance rate in LAX context (gap scenario) -/
-  laxContextAcceptance : String
-  /-- Is there an interaction (context effect differs by operator)? -/
-  contextEffect : Bool
-  deriving Repr
+/-- Under the existential question a partially opened set of presents counts as opened, under
+    the universal one as not opened. -/
+def Context.resolve : Context → Cell → Cell
+  | .existential, .mixed => .full
+  | .universal, .mixed => .empty
+  | _, c => c
 
-def everyQUDEffect : QUDManipulationDatum :=
-  { operator := .every
-  , sentence := "Every boy opened his presents."
-  , strictReading := "Every boy opened all his presents"
-  , laxReading := "Every boy opened some of his presents"
-  , gapScenario := "Every boy opened some, not all opened all"
-  , strictContextAcceptance := "low"   -- strict QUD → reject in gap
-  , laxContextAcceptance := "high"     -- lax QUD → accept in gap
-  , contextEffect := true              -- big effect of QUD
-  }
+theorem resolve_homogeneous (ctx : Context) (c : Cell) : (ctx.resolve c).homogeneous := by
+  cases ctx <;> cases c <;> decide
 
-def noQUDEffect : QUDManipulationDatum :=
-  { operator := .no
-  , sentence := "No boy opened his presents."
-  , strictReading := "No boy opened any presents"
-  , laxReading := "No boy opened all his presents"
-  , gapScenario := "Some boys opened some, none opened all"
-  , strictContextAcceptance := "low"
-  , laxContextAcceptance := "low"      -- still low — QUD-insensitive
-  , contextEffect := false             -- small effect of QUD
-  }
+/-! ### The two approaches -/
 
-def notEveryQUDEffect : QUDManipulationDatum :=
-  { operator := .notEvery
-  , sentence := "Not every boy opened his presents."
-  , strictReading := "At least one boy opened none"
-  , laxReading := "At least one boy didn't open all"
-  , gapScenario := "Some boys opened some but not all"
-  , strictContextAcceptance := "low"
-  , laxContextAcceptance := "high"     -- unlike `no`
-  , contextEffect := true              -- big effect of QUD
-  }
+/-- Two readings that agree yield a bivalent verdict. -/
+theorem gapValue_ne_indet {p q : Prop} [Decidable p] [Decidable q] (h : p ↔ q) :
+    gapValue p q ≠ .indet := by
+  unfold gapValue
+  by_cases hp : p
+  · simp [hp, h.1 hp]
+  · simp [hp, mt h.2 hp]
 
+/-- On a display without partially opened presents the some- and all-substituted readings
+    coincide, so the supervaluation is bivalent. -/
+theorem supervaluation_ne_indet (op : EmbeddingOperator) (d : Display)
+    (h : ∀ c ∈ d, c.homogeneous) : supervaluation op d ≠ .indet := by
+  refine gapValue_ne_indet ?_
+  have hc : ∀ c ∈ d, (c ≠ .empty ↔ c = .full) := λ c hc => by
+    have := h c hc; cases c <;> simp_all [Cell.homogeneous]
+  cases op
+  · exact forall₂_congr hc
+  · exact forall₂_congr λ c hc' => by have := h c hc'; cases c <;> simp_all [Cell.homogeneous]
+  · show KrizChemla2015.occupied d = 2 ↔ KrizChemla2015.filled d = 2
+    unfold KrizChemla2015.occupied KrizChemla2015.filled
+    have hcount : d.countP (· != Cell.empty) = d.countP (· == Cell.full) :=
+      List.countP_congr λ c hc' => by have := h c hc'; cases c <;> simp_all [Cell.homogeneous]
+    rw [List.count_eq_countP, hcount]
+  · exact not_congr (forall₂_congr hc)
 
-/--
-The `no` / `not every` asymmetry: empirical pattern only.
+/-- The non-implicature verdict: the sentence's trivalent value, a gap being resolved by the
+    question the context makes relevant. -/
+def nonImplicature (ctx : Context) (op : EmbeddingOperator) (d : Display) : Trivalent :=
+  if supervaluation op d = .indet then supervaluation op (d.map ctx.resolve)
+  else supervaluation op d
 
-Both operators are downward-entailing, yet `not every` permits the
-weak/non-maximal reading in gap scenarios while `no` does not. This is
-the central empirical puzzle of [augurzky-etal-2023].
+/-- The context always settles the verdict. -/
+theorem nonImplicature_ne_indet (ctx : Context) (op : EmbeddingOperator) (d : Display) :
+    nonImplicature ctx op d ≠ .indet := by
+  unfold nonImplicature
+  split_ifs with h
+  · exact supervaluation_ne_indet _ _ λ c hc => by
+      obtain ⟨c', -, rfl⟩ := List.mem_map.1 hc
+      exact resolve_homogeneous ctx c'
+  · exact h
 
-Two rival theoretical accounts in the literature (cited as future-work
-targets, NOT endorsed by this file):
-- [bar-lev-2021]: exhaustification — `not every` triggers a scalar
-  implicature creating a non-monotonic context where embedded
-  exhaustification can strengthen the embedded plural; `no` lacks the
-  triggering implicature.
-- [haslinger-2025-diss] §3.6.2 (Magri effects): the asymmetry follows
-  from how potential p-equivalence and complexity interact with embedding
-  monotonicity; see also `Studies/Haslinger2025.lean`.
+/-- Implicatures arise in the scope of an operator unless it is downward entailing, as *no* and
+    *not every* are. -/
+def Strengthens : EmbeddingOperator → Prop
+  | .no | .notEvery => False
+  | _ => True
 
-The two accounts make divergent predictions for embedded environments not
-yet tested experimentally.
--/
-structure NoNotEveryAsymmetryDatum where
-  /-- `no` sentence -/
-  noSentence : String
-  /-- `not every` sentence -/
-  notEverySentence : String
-  /-- Gap scenario -/
-  gapScenario : String
-  /-- `no` permits weak reading in gap? -/
-  noPermitsWeak : Bool
-  /-- `not every` permits weak reading in gap? -/
-  notEveryPermitsWeak : Bool
-  deriving Repr
+instance : DecidablePred Strengthens := λ op => by
+  cases op <;> simp only [Strengthens] <;> infer_instance
 
-def noNotEveryAsymmetry : NoNotEveryAsymmetryDatum :=
-  { noSentence := "No boy opened his presents."
-  , notEverySentence := "Not every boy opened his presents."
-  , gapScenario := "Half opened all, half opened some but not all"
-  , noPermitsWeak := false      -- "no boy opened ALL" reading unavailable
-  , notEveryPermitsWeak := true -- "not every boy opened ALL" available
-  }
+/-- The implicature verdict: the existential literal meaning, strengthened to the universal
+    reading where implicatures arise, unless the context prunes the alternatives. -/
+def implicature (ctx : Context) (op : EmbeddingOperator) (d : Display) : Prop :=
+  someReading op d ∧ (ctx = .universal → Strengthens op → allReading op d)
 
+instance (ctx : Context) (op : EmbeddingOperator) (d : Display) :
+    Decidable (implicature ctx op d) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
--- Collections
+/-! ### The experiments -/
 
-def qudManipulationData : List QUDManipulationDatum :=
-  [everyQUDEffect, noQUDEffect, notEveryQUDEffect]
+-- UNVERIFIED: the paper's text describes Experiment 2's mixed picture as two boys with all and
+-- two with none of their presents open, which makes *not every* bivalently true; its Table 2 and
+-- the context effect it reports for both quantifiers need the some-but-not-all picture below.
+/-- The mixed pictures: two of four boys with all their presents open and two with some but not
+    all, for *every* and *not every*; two with none and two with some for *no*; and the paper's
+    proposed test for *exactly two*, two boys with some and the others with none. -/
+def mixed : EmbeddingOperator → Display
+  | .every | .notEvery => [.full, .full, .mixed, .mixed]
+  | .no => [.empty, .empty, .mixed, .mixed]
+  | .exactlyTwo => [.mixed, .mixed, .empty, .empty]
+
+/-- The derived predictions for the mixed pictures: both approaches accept *every* exactly in
+    the existential context; the implicature approach rejects *no* and *not every* in both
+    contexts, the non-implicature approach accepts both exactly in the universal context. -/
+theorem table2 : ∀ ctx : Context,
+    (implicature ctx .every (mixed .every) ↔ ctx = .existential) ∧
+      ¬ implicature ctx .no (mixed .no) ∧ ¬ implicature ctx .notEvery (mixed .notEvery) ∧
+      (nonImplicature ctx .every (mixed .every) = .true ↔ ctx = .existential) ∧
+      (nonImplicature ctx .no (mixed .no) = .true ↔ ctx = .universal) ∧
+      (nonImplicature ctx .notEvery (mixed .notEvery) = .true ↔ ctx = .universal) := by
+  decide
+
+/-- The operator of a row's sentence. -/
+def operator? (r : LinguisticExample) : Option EmbeddingOperator :=
+  (r.feature? "operator").bind parseOperator
+
+/-- The question a row's context makes relevant. -/
+def context? (r : LinguisticExample) : Option Context :=
+  match r.feature? "qud" with
+  | some "existential" => some .existential
+  | some "universal" => some .universal
+  | _ => none
+
+/-- Whether a row's mixed picture was rated high. -/
+def High (r : LinguisticExample) : Prop := r.feature? "rating" = some "high"
+
+instance (r : LinguisticExample) : Decidable (High r) := inferInstanceAs (Decidable (_ = _))
+
+/-- The implicature approach fits every row under *every* and *no*. -/
+theorem rows_implicature :
+    ∀ r ∈ Examples.all, ∀ op ∈ operator? r, ∀ ctx ∈ context? r, op ≠ .notEvery →
+      (High r ↔ implicature ctx op (mixed op)) := by
+  decide
+
+/-- It misses *not every*, which the universal context rescues as it does *every*. -/
+theorem rows_implicature_notEvery :
+    ∀ r ∈ Examples.all, ∀ op ∈ operator? r, ∀ ctx ∈ context? r, op = .notEvery →
+      (High r ↔ ctx = .universal) ∧ ¬ implicature ctx op (mixed op) := by
+  decide
+
+/-- The non-implicature approach fits every row under *every* and *not every*. -/
+theorem rows_nonImplicature :
+    ∀ r ∈ Examples.all, ∀ op ∈ operator? r, ∀ ctx ∈ context? r, op ≠ .no →
+      (High r ↔ nonImplicature ctx op (mixed op) = .true) := by
+  decide
+
+/-- It misses *no*, which the universal context should rescue but does not. -/
+theorem rows_nonImplicature_no :
+    ∀ r ∈ Examples.all, ∀ op ∈ operator? r, ∀ ctx ∈ context? r, op = .no →
+      ¬ High r ∧ (nonImplicature ctx op (mixed op) = .true ↔ ctx = .universal) := by
+  decide
 
 end AugurzkyEtAl2023
