@@ -1,0 +1,275 @@
+[
+  {
+    "id": "arnold2026_homework",
+    "source": {"bibkey": "arnold-2026", "paperLabel": "§1"},
+    "language": "stan1293",
+    "primaryText": "Every student does their homework",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["kind", "underspecified"],
+      ["antecedent", "quantified"],
+      ["representation", "underspecified"]
+    ],
+    "comment": "Singular they attested for centuries (Balhorn 2004; Baron 2020).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnold2026_lovato",
+    "source": {"bibkey": "arnold-2026", "paperLabel": "§1"},
+    "language": "stan1293",
+    "primaryText": "'I've had the revelation that I identify as non-binary,' they said",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["kind", "personal"],
+      ["pronouns", "they/them"],
+      ["representation", "elaborated"]
+    ],
+    "comment": "Article on Demi Lovato (Olson and Fuentes 2022).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnold2026_bed",
+    "source": {"bibkey": "arnold-2026", "paperLabel": "§2"},
+    "language": "stan1293",
+    "primaryText": "Everyone should make their bed",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["kind", "underspecified"],
+      ["antecedent", "quantified"],
+      ["representation", "underspecified"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnold2026_teacher",
+    "source": {"bibkey": "arnold-2026", "paperLabel": "§2"},
+    "language": "stan1293",
+    "primaryText": "A teacher should know their students",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["kind", "underspecified"],
+      ["antecedent", "indefinite"],
+      ["referentGender", "unknown"],
+      ["representation", "underspecified"]
+    ],
+    "comment": "Epicene referent.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnold2026_clerk",
+    "source": {"bibkey": "arnold-2026", "paperLabel": "§2"},
+    "language": "stan1293",
+    "primaryText": "The clerk had their back to me",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["kind", "underspecified"],
+      ["antecedent", "definite"],
+      ["referentGender", "unknown"],
+      ["representation", "underspecified"]
+    ],
+    "comment": "Epicene referent.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnold2026_neighbor",
+    "source": {"bibkey": "arnold-2026", "paperLabel": "§2"},
+    "language": "stan1293",
+    "primaryText": "My neighbor said they would stop by",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["kind", "underspecified"],
+      ["antecedent", "definite"],
+      ["referentGender", "known"],
+      ["representation", "underspecified"]
+    ],
+    "comment": "A known referent whose gender is not important to the story (Bjorkman 2017; Konnelly and Cowper 2020).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnold2026_shakespeare",
+    "source": {"bibkey": "arnold-2026", "paperLabel": "Table 1"},
+    "language": "stan1293",
+    "primaryText": "There's not a man I meet but doth salute me as if I were their well-acquainted friend",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["kind", "underspecified"],
+      ["antecedent", "quantified"],
+      ["referentGender", "known"],
+      ["representation", "underspecified"]
+    ],
+    "comment": "Shakespeare, Comedy of Errors, 1623.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnold2026_landlord",
+    "source": {"bibkey": "arnold-2026", "paperLabel": "Table 1"},
+    "language": "stan1293",
+    "primaryText": "a single mother and their three children",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["kind", "underspecified"],
+      ["antecedent", "indefinite"],
+      ["referentGender", "known"],
+      ["representation", "underspecified"]
+    ],
+    "comment": "Spoken by a landlord interviewed by John Oliver, 29 June 2020.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnold2026_son",
+    "source": {"bibkey": "arnold-2026", "paperLabel": "Table 1"},
+    "language": "stan1293",
+    "primaryText": "Me: My son will swing by to pick up my order. Store clerk: just have them call us when they are here so we can bring it out.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["kind", "underspecified"],
+      ["antecedent", "definite"],
+      ["referentGender", "known"],
+      ["representation", "underspecified"]
+    ],
+    "comment": "Phone conversation, July 2020.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnold2026_alex",
+    "source": {"bibkey": "arnold-2026", "paperLabel": "§4.3"},
+    "language": "stan1293",
+    "primaryText": "Alex made breakfast with Will. They broke some plates.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Alex broke some plates", "judgment": "acceptable"},
+      {"name": "Alex and Will broke some plates", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["kind", "personal"],
+      ["pronouns", "they/them"],
+      ["representation", "elaborated"],
+      ["ambiguity", "singular or plural"]
+    ],
+    "comment": "Arnold, Mayo and Dong (2021): Alex (they/them), Will (he/him), Liz (she/her); the plural interpretation dominates, explicit pronoun introduction raises the singular one.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnold2026_dillon",
+    "source": {"bibkey": "arnold-2026", "paperLabel": "§6.1"},
+    "language": "stan1293",
+    "primaryText": "Asia Kate Dillon (born November 15, 1984) is an American actor. They are known for their roles as…",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["kind", "personal"],
+      ["pronouns", "they/them"],
+      ["representation", "elaborated"]
+    ],
+    "comment": "Wikipedia, Asia Kate Dillon, retrieved 27 May 2025: a specific person with a well-developed discourse description.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnold2026_mother",
+    "source": {"bibkey": "arnold-2026", "paperLabel": "§6.2"},
+    "language": "stan1293",
+    "primaryText": "my mother … they",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["kind", "underspecified"],
+      ["antecedent", "definite"],
+      ["referentGender", "known"],
+      ["representation", "elaborated"],
+      ["counterexample", "true"]
+    ],
+    "comment": "Konnelly and Cowper's stage-3 production; underspecified they for a specific representation would be a counterexample to the proposal.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "arnold2026_butler",
+    "source": {"bibkey": "arnold-2026", "paperLabel": "fn. 4"},
+    "language": "stan1293",
+    "primaryText": "… Butler, who uses they/them pronouns, repeatedly affirms that…",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["kind", "personal"],
+      ["pronouns", "they/them"],
+      ["representation", "elaborated"],
+      ["pronounsIntroduced", "true"]
+    ],
+    "comment": "Szalai 2024, New York Times: pronouns introduced explicitly.",
+    "lgrConformance": ""
+  }
+]
