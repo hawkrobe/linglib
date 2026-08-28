@@ -1908,7 +1908,6 @@ import Linglib.Studies.Alsop2024
 import Linglib.Studies.AlstottAravind2026
 import Linglib.Studies.Amato2025
 import Linglib.Studies.AnandHacquard2013
-import Linglib.Studies.AnandHardtMcCloskey2021
 import Linglib.Studies.AnandNevins2004
 import Linglib.Studies.Anderson2006
 import Linglib.Studies.Anderson2021
@@ -2981,3 +2980,4 @@ import Linglib.Semantics.Modality.IndefiniteDenotation
 import Linglib.Syntax.Category.Determiner.ModalIndefinite
 import Linglib.Data.Examples.Alsop2024
 import Linglib.Data.Examples.AnandHacquard2013
+import Linglib.Data.Examples.AnandHardtMcCloskey2021
