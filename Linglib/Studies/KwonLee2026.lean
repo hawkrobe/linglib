@@ -4,7 +4,6 @@ import Linglib.Discourse.Centering.Basic
 import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Discourse.Accessibility
-import Linglib.Studies.Ariel2001
 import Linglib.Studies.KehlerRohde2013
 import Linglib.Fragments.Korean.Pronouns
 
@@ -24,9 +23,8 @@ holds cross-linguistically while the spread is language-specific.
 `LinearOrder` lifted from `AccessibilityLevel.rank`, so the central
 claim "subject bias increases in accessibility" appears as one
 `StrictMono` lemma (`subjectBias_strictMono`) rather than per-pair
-inequalities. Bridges to [kehler-rohde-2013] (topichood),
-[carminati-2002] (PAH alternative), and Ariel's
-`AccessibilityAssessment` are provided.
+inequalities. Bridges to [kehler-rohde-2013] (topichood) and
+[carminati-2002] (PAH alternative) are provided.
 -/
 
 namespace KwonLee2026
@@ -765,51 +763,6 @@ theorem pah_at_diverge_in_topic_fronting :
 theorem pah_silent_on_fullNP :
     KoreanRefForm.fullNP.pahPosition = none := rfl
 
--- ════════════════════════════════════════════════════
--- § 6c. Bridge to AccessibilityAssessment: What Each Experiment Manipulates
--- ════════════════════════════════════════════════════
-
-open Ariel2001 (AccessibilityAssessment)
-
-/-- Exp 1: a single antecedent in same-clause topic position. Maximally
-    accessible — no competition, tight unity, recently mentioned, topical.
-    Predicts the form should not need to disambiguate. -/
-def exp1_assessment : AccessibilityAssessment := ⟨0, 2, 0, 2⟩
-
-/-- Exp 2 & 3: two antecedents in same clause. Competition = 1 (one
-    additional candidate). The two experiments differ in whether
-    additional cues (gender in Exp 2) disambiguate, but the
-    accessibility-theoretic competition level is identical.
-
-    [ariel-2001]'s `AccessibilityAssessment` does not have a
-    field for "disambiguating cue", which is the gap that the Exp 2
-    naturalness × accuracy correlation (§ 4c) helps fill. -/
-def exp2_3_assessment : AccessibilityAssessment := ⟨0, 2, 1, 2⟩
-
-/-- Distance is held constant across experiments. -/
-theorem exp_distance_constant :
-    exp1_assessment.distance = exp2_3_assessment.distance := rfl
-
-/-- Topicality is held constant. -/
-theorem exp_topicality_constant :
-    exp1_assessment.topicality = exp2_3_assessment.topicality := rfl
-
-/-- Unity is held constant. -/
-theorem exp_unity_constant :
-    exp1_assessment.unity = exp2_3_assessment.unity := rfl
-
-/-- **The manipulation isolates competition**: across the three
-    experiments, only the `competition` field varies; distance, topicality,
-    and unity are held constant. This makes the experimental design a clean
-    test of how competition affects form-function visibility. -/
-theorem exp_competition_increases :
-    exp1_assessment.competition < exp2_3_assessment.competition := by decide
-
-/-- Exp 1 has higher accessibility than Exp 2/3 — the referent is more
-    accessible when there's no competition. -/
-theorem exp1_more_accessible_than_exp23 :
-    exp1_assessment.score > exp2_3_assessment.score := by decide
-
 /-- **Empirical asymmetry consistent with the theory**: in the
     high-accessibility Exp 1 setting (one antecedent), the
     form-function distinction collapses (`exp1_overt_fullNP_close`).
@@ -817,10 +770,8 @@ theorem exp1_more_accessible_than_exp23 :
     distinction emerges as a clean three-way split
     (`accessibility_predicts_subject_bias`).
 
-    This is captured by the assessment-score difference: form-bias
-    strength is *inversely* correlated with the per-referent
-    accessibility score, because forms only need to disambiguate when
-    there is ambiguity to resolve. -/
+    Forms only need to disambiguate when there is ambiguity to
+    resolve. -/
 theorem form_bias_emerges_under_competition :
     -- Exp 1 (high accessibility, no competition): adjacent forms collapse
     exp1_naturalness .fullNP - exp1_naturalness .overt ≤ 1/10 ∧

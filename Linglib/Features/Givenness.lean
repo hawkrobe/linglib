@@ -22,8 +22,8 @@ categorical view of givenness.
   A-givenness = `isAGiven` in `Studies/KratzerSelkirk2020.lean`);
   a consumer meaning another axis (e.g. discourse-status) should say so.
 
-Sibling GHZ-6 coarsenings/scales: Ariel's 18-tier
-`Features.AccessibilityLevel` (`toAccessibility`) and Centering's
+Sibling GHZ-6 scales: Ariel's 18-tier
+`Discourse.AccessibilityLevel` and Centering's
 [strube-hahn-1999] `StrubeHahnInfoStatus.ofGivenness` (its `mediated`
 tier drawn from `uniquelyIdentifiable`/`referential`). [ariel-2001]
 argues AccessibilityLevel is better grounded — the lower GHZ tiers lack
