@@ -1,0 +1,668 @@
+[
+  {
+    "id": "assmannetal2023_1",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "guru1271",
+    "primaryText": "Á fúrmáyò bà wúm kwálíngálá.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Á", "FOC"], ["fúrmáyò", "Fulani"], ["bà", "PROG"], ["wúm", "chew"],
+      ["kwálíngálá", "colanut"]
+    ],
+    "translation": "The Fulani is chewing colanut.",
+    "context": "Who is chewing colanut?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "subject", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "a before subject"]
+    ],
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1342.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_2",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "guru1271",
+    "primaryText": "Tí bà ròmb-á gwéí.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tí", "3SG"], ["bà", "PROG"], ["ròmb-á", "gather-FOC"], ["gwéí", "seeds"]
+    ],
+    "translation": "He is gathering the seeds.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "object", "judgment": "acceptable"},
+      {"name": "verb", "judgment": "acceptable"},
+      {"name": "VP", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "a between verb and object"]
+    ],
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1347.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_3",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(3)"},
+    "reportedIn": null,
+    "language": "guru1271",
+    "primaryText": "Kóo vùr mó kãa Mài Dáwà sái tí shí gànyáhú-à.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kóo", "every"], ["vùr", "when"], ["mó", ""], ["kãa", ""], ["Mài Dáwà", "Mai Dawa"],
+      ["sái", "then"], ["tí", "3SG"], ["shí", "eat"], ["gànyáhú-à", "rice-FOC"]
+    ],
+    "translation": "Always, Mai Dawa used to eat rice.",
+    "context": "discourse-initial",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "clause", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "a clause-final"]
+    ],
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1356.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_5",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "guru1271",
+    "primaryText": "Tí vún lúurìn nvùrì-à.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tí", "3SG"], ["vún", "wash"], ["lúurìn", "clothes"], ["nvùrì-à", "yesterday-FOC"]
+    ],
+    "translation": "She washed clothes yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "clause", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "a clause-final"]
+    ],
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1359.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_fn4_i",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "fn. 4 (i)"},
+    "reportedIn": null,
+    "language": "guru1271",
+    "primaryText": "Tí bà wúr má-ì à báa-sì.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tí", "3SG"], ["bà", "PROG"], ["wúr", "bring"], ["má-ì", "water-DEF"], ["à", "FOC"],
+      ["báa-sì", "father-his"]
+    ],
+    "translation": "He is bringing water to his father.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "phrase within VP", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "a before phrase within VP"]
+    ],
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1343.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_6a",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(6a)"},
+    "reportedIn": null,
+    "language": "buli1254",
+    "primaryText": "(ká) Àtìm alè dè mángó.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["(ká)", "FOC"], ["Àtìm", "Atim"], ["alè", "FOC"], ["dè", "ate"], ["mángó", "mango"]
+    ],
+    "translation": "Atim ate a mango.",
+    "context": "Who ate a mango?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "subject", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "le after subject"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_6b",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(6b)"},
+    "reportedIn": null,
+    "language": "buli1254",
+    "primaryText": "(ká) Àtìm alè dè n mángó.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["(ká)", "FOC"], ["Àtìm", "Atim"], ["alè", "FOC"], ["dè", "ate"], ["n", "1SG.POSS"],
+      ["mángó", "mango"]
+    ],
+    "translation": "Atim ate my mango.",
+    "context": "Why are you angry?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "clause", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "le after subject"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_7",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(7)"},
+    "reportedIn": null,
+    "language": "buli1254",
+    "primaryText": "wá dè ká mángó.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["wá", "3SG"], ["dè", "ate"], ["ká", "FOC"], ["mángó", "mango"]
+    ],
+    "translation": "He ate a mango.",
+    "context": "What did Atim do? / What did Atim eat?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "VP", "judgment": "acceptable"},
+      {"name": "object", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "ka before object"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_8",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(8)"},
+    "reportedIn": null,
+    "language": "buli1254",
+    "primaryText": "Aáya, Atim a lɛ Amoak kámā.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Aáya", "no"], ["Atim", "Atim"], ["a", "IPFV"], ["lɛ", "insult"], ["Amoak", "Amoak"],
+      ["kámā", "FOC"]
+    ],
+    "translation": "No, Atim insulted Amoak.",
+    "context": "Atim hit Amoak.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "verb", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "kama after VP"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_10",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(10)"},
+    "reportedIn": null,
+    "language": "haus1257",
+    "primaryText": "Kandè ta-kèe dafà kiifii.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kandè", "Kande"], ["ta-kèe", "3SG.F-REL.IPFV"], ["dafà", "cooking"], ["kiifii", "fish"]
+    ],
+    "translation": "Kande is cooking fish.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "subject", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "relative form"]
+    ],
+    "comment": "Cited from Hartmann and Zimmermann 2007c: p. 367.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_11",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(11)"},
+    "reportedIn": null,
+    "language": "haus1257",
+    "primaryText": "Kànde ta-nàa dafà kiifii.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kànde", "Kande"], ["ta-nàa", "3SG.F-IPFV"], ["dafà", "cook"], ["kiifii", "fish"]
+    ],
+    "translation": "Kande is cooking fish.",
+    "context": "What is Kande cooking? / What is Kande doing with the fish? / What is Kande doing? / What is happening?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "object", "judgment": "acceptable"},
+      {"name": "verb", "judgment": "acceptable"},
+      {"name": "VP", "judgment": "acceptable"},
+      {"name": "clause", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "absolute form"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_12",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "haus1257",
+    "primaryText": "Kandè (cee) ta-kèe dafà kiifii.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kandè", "Kande"], ["(cee)", "FOC"], ["ta-kèe", "3SG.F-REL.IPFV"], ["dafà", "cooking"],
+      ["kiifii", "fish"]
+    ],
+    "translation": "Kande is cooking fish.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "subject", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "relative form"],
+      ["particle", "cee after subject"]
+    ],
+    "comment": "Cited from Hartmann and Zimmermann 2007c: p. 367.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_13",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(13)"},
+    "reportedIn": null,
+    "language": "haus1257",
+    "primaryText": "Kànde ta-nàa dafà kiifii (nèe).",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kànde", "Kande"], ["ta-nàa", "3SG.F-IPFV"], ["dafà", "cook"], ["kiifii", "fish"],
+      ["(nèe)", "FOC"]
+    ],
+    "translation": "Kande is cooking fish.",
+    "context": "What is Kande cooking? / What is Kande doing with the fish? / What is Kande doing? / What is happening?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "object", "judgment": "acceptable"},
+      {"name": "verb", "judgment": "acceptable"},
+      {"name": "VP", "judgment": "acceptable"},
+      {"name": "clause", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "absolute form"],
+      ["particle", "nee clause-final"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_14",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(14)"},
+    "reportedIn": null,
+    "language": "haus1257",
+    "primaryText": "Kànde ta-nàa dafà àyàbà nee.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kànde", "K."], ["ta-nàa", "3SG.F-IPFV"], ["dafà", "cook"], ["àyàbà", "banana"],
+      ["nee", "FOC"]
+    ],
+    "translation": "Kande is cooking banana.",
+    "context": "What is Kande cooking?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Kànde ta-nàa dafà àyàbà cee.", "judgment": "ungrammatical"}
+    ],
+    "readings": [
+      {"name": "object", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "absolute form"],
+      ["particle", "nee clause-final"],
+      ["agreement", "masculine despite feminine object"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_15",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(15)"},
+    "reportedIn": null,
+    "language": "haus1257",
+    "primaryText": "A'a, farii-n dookìi na nèe ya halbi yaarò na.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A'a", "no"], ["farii-n", "white-LINK"], ["dookìi", "horse"], ["na", "DEF.PROX"],
+      ["nèe", "FOC"], ["ya", "3SG.M-PFV.REL"], ["halbi", "kick"], ["yaarò", "child"],
+      ["na", "DEF.PROX"]
+    ],
+    "translation": "No this white horse kicked this boy.",
+    "context": "A black horse kicked the boy.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "part of subject", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "relative form"],
+      ["particle", "nee after subject"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_17",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(17)"},
+    "reportedIn": null,
+    "language": "haus1257",
+    "primaryText": "Tankò yaa sàyi kàazaa nèe à kàasuwaa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tankò", "T."], ["yaa", "3SG.M.PFV"], ["sàyi", "buy"], ["kàazaa", "chicken"],
+      ["nèe", "FOC"], ["à", "at"], ["kàasuwaa", "market"]
+    ],
+    "translation": "Tanko bought chicken at the market.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "object", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "absolute form"],
+      ["particle", "nee after object"]
+    ],
+    "comment": "Cited from Hartmann and Zimmermann 2007a: p. 247.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_18a",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(18a)"},
+    "reportedIn": null,
+    "language": "nucl1347",
+    "primaryText": "Maa-y lekk jën.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Maa-y", "FOC.1SG-IPFV"], ["lekk", "eat"], ["jën", "fish"]
+    ],
+    "translation": "I eat fish.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "subject", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "a"]
+    ],
+    "comment": "Cited from McLaughlin 2004: p. 247.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_18b",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(18b)"},
+    "reportedIn": null,
+    "language": "nucl1347",
+    "primaryText": "Jën laa-y lekk.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jën", "fish"], ["laa-y", "FOC.1SG-IPFV"], ["lekk", "eat"]
+    ],
+    "translation": "I eat fish.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "object", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "la"],
+      ["movement", "object fronted"]
+    ],
+    "comment": "Cited from McLaughlin 2004: p. 247.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_18c",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(18c)"},
+    "reportedIn": null,
+    "language": "nucl1347",
+    "primaryText": "Dafa-y lekk jën.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Dafa-y", "FOC.3SG-IPFV"], ["lekk", "eat"], ["jën", "fish"]
+    ],
+    "translation": "He is eating fish.",
+    "context": "What is Omar doing? / Is he buying fish?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "verb", "judgment": "acceptable"},
+      {"name": "VP", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "dafa"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_19",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(19)"},
+    "reportedIn": null,
+    "language": "nucl1347",
+    "primaryText": "Mu-ngi naan ndox.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mu-ngi", "3SG-PROG"], ["naan", "drink"], ["ndox", "water"]
+    ],
+    "translation": "He is drinking water.",
+    "context": "What is happening?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "clause", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "ngi"],
+      ["aspect", "imperfective"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_20",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(20)"},
+    "reportedIn": null,
+    "language": "nucl1347",
+    "primaryText": "Fatou bind na téére.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Fatou", "F."], ["bind", "write"], ["na", "FOC.3SG"], ["téére", "book"]
+    ],
+    "translation": "Fatou wrote a book.",
+    "context": "What happened?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "clause", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "na"],
+      ["aspect", "perfective"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_37",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(37)"},
+    "reportedIn": null,
+    "language": "cent2142",
+    "primaryText": "Maria-x wawa-r t'ant' chur-i-wa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Maria-x", "Maria-TOP"], ["wawa-r", "baby-ALL"], ["t'ant'", "bread"],
+      ["chur-i-wa", "give-3-FOC"]
+    ],
+    "translation": "Maria gave bread to the baby.",
+    "context": "What happened?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "clause", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "wa on verb"]
+    ],
+    "comment": "Cited from Hardman et al. 1988: p. 281.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_38",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(38)"},
+    "reportedIn": null,
+    "language": "cent2142",
+    "primaryText": "Manq'a-k-i-wa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Manq'a-k-i-wa", "eat-EXCL-3-FOC"]
+    ],
+    "translation": "(She didn't make it!) She just ate it!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "verb", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "wa on verb"]
+    ],
+    "comment": "Cited from Klose 2015: p. 70.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_39",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(39)"},
+    "reportedIn": null,
+    "language": "cent2142",
+    "primaryText": "Jani-wa futbola-ki-t gust-k-i-ti, challwa katu-ña gusta-raki-wa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jani-wa", "no-WA"], ["futbola-ki-t", "futbol-EXCL-ABL"],
+      ["gust-k-i-ti", "like-NCOMPL-3-TI"], ["challwa", "fish"], ["katu-ña", "fish-INF"],
+      ["gusta-raki-wa", "like-ADD-FOC"]
+    ],
+    "translation": "He doesn't only like football, he also likes fishing.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "VP", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "wa on verb"]
+    ],
+    "comment": "Cited from Klose 2015: p. 70. Analysed by Klose 2015 as VP or clausal focus.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_41",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(41)"},
+    "reportedIn": null,
+    "language": "awin1248",
+    "primaryText": "Alombah a-pe'-náŋnə ŋgəsáŋè.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Alombah", "A."], ["a-pe'-náŋnə", "SM-PST-cook"], ["ŋgəsáŋè", "maize"]
+    ],
+    "translation": "Alombah cooked maize.",
+    "context": "What did Alombah cook? / What did Alombah do with the maize? / What did Alombah do? / Who cooked the maize? / What happened?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "object", "judgment": "acceptable"},
+      {"name": "verb", "judgment": "acceptable"},
+      {"name": "VP", "judgment": "acceptable"},
+      {"name": "subject", "judgment": "acceptable"},
+      {"name": "clause", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "none"]
+    ],
+    "comment": "Cited from Fominyam and Šimík 2017: p. 1038.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "assmannetal2023_53",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(53)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Kim ATE the yogurt.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kim ATE the yogurt.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "verb", "judgment": "acceptable"},
+      {"name": "object", "judgment": "unacceptable"},
+      {"name": "VP", "judgment": "unacceptable"},
+      {"name": "clause", "judgment": "unacceptable"},
+      {"name": "subject", "judgment": "unacceptable"},
+      {"name": "subject and verb", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "nuclear stress on verb"]
+    ],
+    "comment": "The contexts are (53a–f): Kim made the yogurt and then; Kim ate the pickles, and then; Kim went to the fridge and then; The lights went out and; Sam ate the yogurt before; Whenever we made yogurt.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
