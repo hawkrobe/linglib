@@ -2,6 +2,7 @@ import Linglib.Studies.Anscombe1964
 import Linglib.Studies.Karttunen1974
 import Linglib.Studies.Heinamaki1974
 import Linglib.Studies.BeaverCondoravdi2003
+import Linglib.Core.Order.AllenRelation
 import Linglib.Semantics.Tense.SentDenotation
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Fragments.English.TemporalExpressions
@@ -96,16 +97,11 @@ def before_noncommittal : VeridicalityDatum := ofVeridicality ost2024_before_non
     ([beaver-condoravdi-2003], ex. 24). -/
 def before_counterfactual_mozart : VeridicalityDatum := ofVeridicality ost2024_before_counterfactual_mozart
 
--- B&C's before/after logical-property asymmetries (antisymmetry, transitivity, NPI
--- licensing) are Anscombe's ([anscombe-1964] §I-II), formalized canonically in
--- `Studies/Anscombe1964.lean` (`Anscombe.before_antisymmetric`, `before_transitive`,
--- `after_not_antisymmetric`, `after_not_transitive`, `before_complement_DE`,
--- `after_complement_UE`). They are not Ogihara & Steinert-Threlkeld's contribution, so
--- this study consumes them rather than restating them.
-
--- B&C's (32)/(33) — the "ketchup"/"squares had four sides" Anscombe overgeneration —
--- are formalized as `Anscombe.before_overgenerates` (in `Studies/Anscombe1964.lean`),
--- not as the fabricated "win before entering" examples this file previously carried.
+-- The logical-property asymmetries of *before* and *after* are [anscombe-1964]'s
+-- (`Anscombe1964.before_asymm`, `before_trans`, `after_not_asymm`, `after_not_trans`), and
+-- the complement monotonicity and overgeneration of that rendering are B&C's
+-- (`BeaverCondoravdi2003.anscombe_before_complement_DE`, `anscombe_after_complement_UE`,
+-- `anscombe_before_of_empty`); this study consumes them rather than restating them.
 
 open BeaverCondoravdi2003
 
@@ -328,22 +324,85 @@ theorem fragment_veridicality_asymmetry :
 -- § 11: Theory → Fragment Derivation
 -- ════════════════════════════════════════════════════════════════
 
-/-- O&ST's theory derives *after*'s veridicality from the double-existential
-    quantificational structure: ∃e₁∃e₂[P(e₁) ∧ Q(e₂) ∧...] entails ∃e₂, Q(e₂).
+/-! The connectives over event predicates: *after* is doubly existential — both events
+exist and the complement's run-time wholly precedes the main event's — while *before* is
+existential over the main clause and universal over the complement, so it is vacuously
+satisfied when no complement event exists. The precedence is Allen's `precedes` atom. -/
 
-    This is not a stipulation in the Fragment — it follows from the semantics. -/
-theorem after_veridicality_derived :
-    ∀ (P Q : Event ℤ → Prop), AnscombeEvent.after P Q → ∃ e : Event ℤ, Q e :=
-  fun P Q h => AnscombeEvent.after_veridical P Q h
+variable {Time : Type*} [LinearOrder Time]
 
-/-- O&ST's theory derives *before*'s non-veridicality from the universal
-    quantification over the complement: ∃e₁[P(e₁) ∧ ∀e₂[Q(e₂) →...]] is
-    vacuously true when Q has no witnesses.
+/-- *P after Q*: some `P`-event whose run-time some `Q`-event's run-time wholly precedes. -/
+def eventAfter (P Q : Event Time → Prop) : Prop :=
+  ∃ e₁ e₂ : Event Time, P e₁ ∧ Q e₂ ∧ e₂.τ.precedes e₁.τ
 
-    Concretely: any P-event with an empty Q yields `before(P, Q)`. -/
+/-- *P before Q*: some `P`-event whose run-time wholly precedes every `Q`-event's. -/
+def eventBefore (P Q : Event Time → Prop) : Prop :=
+  ∃ e₁ : Event Time, P e₁ ∧ ∀ e₂ : Event Time, Q e₂ → e₁.τ.precedes e₂.τ
+
+theorem eventAfter_iff_allen (P Q : Event Time → Prop) :
+    eventAfter P Q ↔ ∃ e₁ e₂ : Event Time, P e₁ ∧ Q e₂ ∧
+      AllenRelation.holdsIn AllenRelation.precedesSet e₂.τ e₁.τ := by
+  simp only [eventAfter, NonemptyInterval.precedes_iff_allen]
+
+theorem eventBefore_iff_allen (P Q : Event Time → Prop) :
+    eventBefore P Q ↔ ∃ e₁ : Event Time, P e₁ ∧ ∀ e₂ : Event Time, Q e₂ →
+      AllenRelation.holdsIn AllenRelation.precedesSet e₁.τ e₂.τ := by
+  simp only [eventBefore, NonemptyInterval.precedes_iff_allen]
+
+/-- *After*'s veridicality follows from its double existential. -/
+theorem after_veridicality_derived {P Q : Event Time → Prop} (h : eventAfter P Q) :
+    ∃ e : Event Time, Q e :=
+  let ⟨_, e₂, _, hq, _⟩ := h; ⟨e₂, hq⟩
+
+/-- *Before*'s non-veridicality follows from its universal: any `P`-event with an empty `Q`
+satisfies it. -/
 theorem before_nonveridicality_derived :
-    ∃ (P Q : Event ℤ → Prop), AnscombeEvent.before P Q ∧ ¬∃ e : Event ℤ, Q e :=
-  AnscombeEvent.before_nonveridical
+    ∃ (P Q : Event ℤ → Prop), eventBefore P Q ∧ ¬ ∃ e : Event ℤ, Q e :=
+  ⟨fun e => e = ⟨⟨⟨0, 1⟩, by decide⟩, .dynamic⟩, fun _ => False,
+    ⟨⟨⟨⟨0, 1⟩, by decide⟩, .dynamic⟩, rfl, fun _ h => h.elim⟩, fun ⟨_, h⟩ => h⟩
+
+/-- Both connectives commit to the main clause. -/
+theorem eventBefore_veridical_main {P Q : Event Time → Prop} (h : eventBefore P Q) :
+    ∃ e : Event Time, P e :=
+  let ⟨e₁, hp, _⟩ := h; ⟨e₁, hp⟩
+
+/-- The event-level *after* projects to [anscombe-1964]'s on run-time denotations. -/
+theorem anscombe_after_of_eventAfter {P Q : Event Time → Prop} (h : eventAfter P Q) :
+    Anscombe.after (eventDenotation P) (eventDenotation Q) := by
+  obtain ⟨e₁, e₂, hp, hq, hprec⟩ := h
+  refine ⟨e₁.τ.fst, ?_, e₂.τ.snd, ?_, hprec⟩
+  · rw [timeTrace_eventDenotation]; exact ⟨e₁, hp, le_rfl, e₁.τ.fst_le_snd⟩
+  · rw [timeTrace_eventDenotation]; exact ⟨e₂, hq, e₂.τ.fst_le_snd, le_rfl⟩
+
+/-- The event-level *before* projects to [anscombe-1964]'s. -/
+theorem anscombe_before_of_eventBefore {P Q : Event Time → Prop} (h : eventBefore P Q) :
+    Anscombe.before (eventDenotation P) (eventDenotation Q) := by
+  obtain ⟨e₁, hp, hall⟩ := h
+  refine ⟨e₁.τ.snd, ?_, fun t' ht' => ?_⟩
+  · rw [timeTrace_eventDenotation]; exact ⟨e₁, hp, e₁.τ.fst_le_snd, le_rfl⟩
+  · rw [timeTrace_eventDenotation] at ht'
+    obtain ⟨e₂, hq, ht'_lo, _⟩ := ht'
+    exact (hall e₂ hq).trans_le ht'_lo
+
+/-- The projection is strict: [anscombe-1964]'s point-wise *before* allows the main run-time
+to reach into the complement's, which whole-run-time precedence forbids. -/
+theorem not_eventBefore_of_anscombe :
+    ¬ ∀ (P Q : Event ℤ → Prop),
+      Anscombe.before (eventDenotation P) (eventDenotation Q) → eventBefore P Q := by
+  intro h
+  let eP : Event ℤ := ⟨⟨⟨1, 5⟩, by decide⟩, .dynamic⟩
+  let eQ : Event ℤ := ⟨⟨⟨3, 8⟩, by decide⟩, .dynamic⟩
+  have hansc : Anscombe.before (eventDenotation (· = eP)) (eventDenotation (· = eQ)) := by
+    refine ⟨1, ?_, ?_⟩
+    · rw [timeTrace_eventDenotation]
+      exact ⟨eP, rfl, by simp [Event.τ, eP], by simp [Event.τ, eP]⟩
+    · intro t' ht'
+      rw [timeTrace_eventDenotation] at ht'
+      obtain ⟨e, rfl, hlo, _⟩ := ht'
+      simp only [Event.τ, eQ] at hlo; omega
+  obtain ⟨e₁, rfl, hall⟩ := h _ _ hansc
+  have := hall eQ rfl
+  simp [NonemptyInterval.precedes, Event.τ, eP, eQ] at this
 
 -- ════════════════════════════════════════════════════════════════
 -- § 12: Concrete Scenario Verification
@@ -356,7 +415,7 @@ theorem before_nonveridicality_derived :
 theorem scenario_after_punctual :
     let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩
     let arrive : Event ℤ := ⟨⟨⟨0, 0⟩, le_refl _⟩, .dynamic⟩
-    AnscombeEvent.after (· = leave) (· = arrive) := by
+    eventAfter (· = leave) (· = arrive) := by
   refine ⟨⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩, ⟨⟨⟨0, 0⟩, le_refl _⟩, .dynamic⟩, rfl, rfl, ?_⟩
   simp [NonemptyInterval.precedes, Event.τ]
 
@@ -367,7 +426,7 @@ theorem scenario_after_punctual :
 theorem scenario_before_punctual :
     let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩
     let arrive : Event ℤ := ⟨⟨⟨3, 3⟩, le_refl _⟩, .dynamic⟩
-    AnscombeEvent.before (· = leave) (· = arrive) := by
+    eventBefore (· = leave) (· = arrive) := by
   refine ⟨⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩, rfl, ?_⟩
   intro e₂ rfl
   simp [NonemptyInterval.precedes, Event.τ]
@@ -376,7 +435,7 @@ theorem scenario_before_punctual :
     O&ST predicts: before(explode, defuse) holds vacuously (no defuse-events). -/
 theorem scenario_before_counterfactual :
     let explode : Event ℤ := ⟨⟨⟨5, 5⟩, le_refl _⟩, .dynamic⟩
-    AnscombeEvent.before (· = explode) (fun _ => False) := by
+    eventBefore (· = explode) (fun _ => False) := by
   exact ⟨⟨⟨⟨5, 5⟩, le_refl _⟩, .dynamic⟩, rfl, fun _ h => h.elim⟩
 
 -- ════════════════════════════════════════════════════════════════
@@ -389,14 +448,14 @@ theorem scenario_after_projects :
     let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩
     let arrive : Event ℤ := ⟨⟨⟨0, 0⟩, le_refl _⟩, .dynamic⟩
     Anscombe.after (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
-  AnscombeEvent.after_implies_anscombe _ _ scenario_after_punctual
+  anscombe_after_of_eventAfter scenario_after_punctual
 
 /-- The punctual before-scenario projects correctly through eventDenotation. -/
 theorem scenario_before_projects :
     let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩
     let arrive : Event ℤ := ⟨⟨⟨3, 3⟩, le_refl _⟩, .dynamic⟩
     Anscombe.before (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
-  AnscombeEvent.before_implies_anscombe _ _ scenario_before_punctual
+  anscombe_before_of_eventBefore scenario_before_punctual
 
 -- ════════════════════════════════════════════════════════════════
 -- § 17: Cross-Linguistic Bridge (Japanese)
