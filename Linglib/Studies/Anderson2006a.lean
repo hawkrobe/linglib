@@ -9,20 +9,19 @@ import Mathlib.Data.Finset.Basic
 
 An auxiliary verb construction pairs an auxiliary with a lexical verb that stays the semantic
 head, and languages differ in which element hosts the inflection: the auxiliary (English *have
-eaten*), the lexical verb (Pipil *weli ni-nehnemi*), both with the same categories (Gorum),
-the two dividing the categories (Jakaltek, absolutive on the auxiliary and ergative on the
-lexical verb), or dividing them with some doubled (Hemba, Doyayo, Pipil). The five
-macro-patterns are distinguished by the inflectional head alone (13), and across the
-split/doubled languages the doubled category is overwhelmingly the subject. Negative
-auxiliaries head constructions of every pattern: aux-headed in Udihe, split in Kokota,
-lex-headed in Kwerba, doubled in 'Iipay.
+eaten*), the lexical verb (Pipil *weli ni-nehnemi*), both with the same categories (Gorum), the
+two dividing the categories (Jakaltek, absolutive on the auxiliary and ergative on the lexical
+verb), or dividing them with some doubled (Hemba, Doyayo, Pipil). The five macro-patterns are
+distinguished by the inflectional head alone, and across the split/doubled languages the doubled
+category is overwhelmingly the subject. Negative auxiliaries head constructions of every pattern:
+aux-headed in Udihe, split in Kokota, lex-headed in Kwerba, doubled in 'Iipay. Doyayo, filed as
+lex-headed although its auxiliary partially encodes subject person through tone, comes out split
+by the inflectional-head criterion.
 
-`InflectionalMarking` records which categories each element carries and
-`InflectionalMarking.pattern` reads the macro-pattern off it; `rows_pattern` checks that
-reading against the book's own labels for its examples, `splitDoubled_doubles_subject` is the
-chapter 5 observation, and `negative_auxiliary_patterns` is the Udihe/Kwerba pair against the
-aux-headed expectation for verbal negators. Doyayo (15a), filed as lex-headed although its
-auxiliary partially encodes subject person through tone, comes out split by (13).
+## Main definitions
+
+* `InflectionalMarking`: which categories each element carries;
+  `InflectionalMarking.pattern` reads the macro-pattern (13) off it.
 
 ## References
 

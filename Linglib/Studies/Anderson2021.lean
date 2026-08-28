@@ -5,7 +5,7 @@ import Linglib.Discourse.CommonGround.Measure
 # Anderson 2021: conversation update for the Rational Speech Acts framework
 
 A single RSA turn leaves no trace. Anderson makes the common ground a distribution over
-worlds, substitutes it for the world prior of every agent in the chain (Figure 4: the literal
+worlds, substitutes it for the world prior of every agent in the chain (the literal
 listener conditions the common ground on the utterance, the pragmatic listener inverts the
 speaker against it), and after each turn increments it with the pragmatic listener's
 posterior, discounted by a learning rate. Worlds can then regain probability — the update is
@@ -13,16 +13,15 @@ a mixture, not an intersection, and intersection is the learning-rate-one limit 
 speaker whose literal listener reads the common ground prefers what is new to what is
 already established. Observations are sampled from the speaker's private beliefs: by weight,
 above a confidence threshold (a speaker with nothing to say passes with the null utterance),
-or by their positive difference from the common ground.
+or by their positive difference from the common ground. On the MutualFriends worlds,
+*they like being outdoors* leaves Nancy and Katie tied at the first turn and
+favours Nancy once *they study a humanity* is in the common ground.
 
-`L0`, `S1`, `L1` are the Figure-4 agents at a common ground `cg`, `updateCG` the mixture
-update, `step` a Figure-2 turn. On the MutualFriends worlds of Figure 3,
-`s1_turn1_informativity` and `l1_turn1_inferences` are the first turn at the empty common
-ground; `cg₂` is the common ground after *they study a humanity*; `s1_prefers_new` is the
-redundancy aversion of the next speaker at any common ground of that shape, and
-`turn2_breaks_symmetry` the prediction that *they like being outdoors*, which left Nancy and
-Katie tied at the first turn, now favours Nancy. `notMem_contextSet_updateCG_one` and
-`mem_contextSet_updateCG` locate the classical intersection update.
+## Main definitions
+
+* `updateCG`: the learning-rate mixture of the common ground with a posterior.
+* `L0`, `S1`, `L1`: the Figure-4 agents at a common ground; `step` a Figure-2 turn.
+* `cg₂`: the MutualFriends common ground after *they study a humanity*.
 
 ## References
 
