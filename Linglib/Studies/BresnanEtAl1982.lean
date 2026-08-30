@@ -1,4 +1,4 @@
-import Linglib.Features.VerbCluster
+import Mathlib.Data.Fin.Rev
 
 /-!
 # Bresnan, Kaplan, Peters & Zaenen (1982)
@@ -25,11 +25,11 @@ German verb clusters show the nested (context-free) pattern instead:
 ## Main declarations
 
 - `VerbClusterExample`: an example sentence with its NP-verb binding
-  permutation (`Features.VerbClusterBinding`)
+  permutation (`Equiv.Perm (Fin n)`; crossed is `Equiv.refl`, nested `Fin.revPerm`)
 - `dutch_2np_2v`, `dutch_3np_3v`, `dutch_4np_4v`, `german_3np_3v`:
   the standard paradigm
-- `dutch_3_is_crossSerial`, `german_3_is_nested`: the binding patterns
-  derived from the permutations
+- `dutch_3_is_crossSerial`, `german_3_is_nested`: the bindings are the
+  canonical crossed and nested permutations
 
 ## Attribution
 
@@ -45,14 +45,11 @@ the 1982 paper.
 
 namespace BresnanEtAl1982
 
-open Features (VerbClusterBinding BindingPattern)
-
 /-- A verb cluster example with NP-verb dependency data.
 
     Used for both Dutch cross-serial and German nested dependency patterns.
     Surface string, gloss, and translation document the example; the binding
-    encodes the structural claim as a permutation σ : Fin n → Fin n. The
-    dependency pattern is derived from the binding via `binding.pattern`. -/
+    encodes the structural claim as a permutation σ : Fin n → Fin n. -/
 structure VerbClusterExample where
   /-- Number of NP-verb pairs -/
   n : Nat
@@ -69,8 +66,7 @@ structure VerbClusterExample where
   /-- Verbs in order -/
   verbs : List String
   /-- The NP-verb binding permutation -/
-  binding : VerbClusterBinding n
-  deriving Repr
+  binding : Equiv.Perm (Fin n)
 
 def dutch_2np_2v : VerbClusterExample :=
   { n := 2
@@ -80,7 +76,7 @@ def dutch_2np_2v : VerbClusterExample :=
   , translation := "that Jan saw Piet swim"
   , nps := ["Jan", "Piet"]
   , verbs := ["zag", "zwemmen"]
-  , binding := VerbClusterBinding.identity 2
+  , binding := Equiv.refl _
   }
 
 def dutch_3np_3v : VerbClusterExample :=
@@ -91,7 +87,7 @@ def dutch_3np_3v : VerbClusterExample :=
   , translation := "that Jan saw Piet help Marie swim"
   , nps := ["Jan", "Piet", "Marie"]
   , verbs := ["zag", "helpen", "zwemmen"]
-  , binding := VerbClusterBinding.identity 3
+  , binding := Equiv.refl _
   }
 
 def dutch_4np_4v : VerbClusterExample :=
@@ -102,7 +98,7 @@ def dutch_4np_4v : VerbClusterExample :=
   , translation := "that Jan saw Piet help Marie let Karel swim"
   , nps := ["Jan", "Piet", "Marie", "Karel"]
   , verbs := ["zag", "helpen", "laten", "zwemmen"]
-  , binding := VerbClusterBinding.identity 4
+  , binding := Equiv.refl _
   }
 
 /-- German contrast: nested dependencies. -/
@@ -114,18 +110,16 @@ def german_3np_3v : VerbClusterExample :=
   , translation := "that Jan saw Piet help Marie swim"
   , nps := ["Jan", "Piet", "Marie"]
   , verbs := ["schwimmen", "helfen", "sah"]
-  , binding := VerbClusterBinding.reverse 3
+  , binding := Fin.revPerm
   }
 
 def allExamples : List VerbClusterExample :=
   [dutch_2np_2v, dutch_3np_3v, dutch_4np_4v, german_3np_3v]
 
-/-- Dutch 3-NP example has cross-serial pattern -/
-theorem dutch_3_is_crossSerial :
-    dutch_3np_3v.binding.pattern = .crossSerial := by decide
+/-- The Dutch 3-NP binding is the crossed (identity) permutation. -/
+theorem dutch_3_is_crossSerial : dutch_3np_3v.binding = Equiv.refl _ := rfl
 
-/-- German 3-NP example has nested pattern -/
-theorem german_3_is_nested :
-    german_3np_3v.binding.pattern = .nested := by decide
+/-- The German 3-NP binding is the nested (reversal) permutation. -/
+theorem german_3_is_nested : german_3np_3v.binding = Fin.revPerm := rfl
 
 end BresnanEtAl1982

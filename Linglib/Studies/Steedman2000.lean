@@ -473,7 +473,6 @@ appendix summary) derive the attested "Jan Piet (Marie) zag (helpen) zwemmen". -
 section CrossSerial
 
 open BresnanEtAl1982
-open Features (VerbClusterBinding)
 
 /-! ### Categories for Dutch verb clusters -/
 
@@ -602,7 +601,7 @@ structure AnnotatedDerivation where
   /-- Surface words -/
   words : List String
   /-- The NP-verb binding permutation -/
-  binding : Features.VerbClusterBinding n
+  binding : Equiv.Perm (Fin n)
   /-- The grammar derives the words at `S`. -/
   derives : dutchGrammar.Derives S words
 
@@ -611,7 +610,7 @@ of "zag", Piet the argument bound into the cluster. -/
 def dutch_jan_piet_zag_zwemmen : AnnotatedDerivation :=
   { n := 2
   , words := ["Jan", "Piet", "zag", "zwemmen"]
-  , binding := VerbClusterBinding.identity 2
+  , binding := Equiv.refl _
   , derives := two_np_sub_derives
   }
 
@@ -620,7 +619,7 @@ attested word order. -/
 def dutch_jan_piet_marie_zag_helpen_zwemmen : AnnotatedDerivation :=
   { n := 3
   , words := ["Jan", "Piet", "Marie", "zag", "helpen", "zwemmen"]
-  , binding := VerbClusterBinding.identity 3
+  , binding := Equiv.refl _
   , derives := three_np_sub_derives
   }
 
