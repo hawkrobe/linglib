@@ -1,43 +1,43 @@
 import Linglib.Semantics.Dynamic.Partial
 import Linglib.Semantics.Presupposition.Trivalent
+import Linglib.Data.Examples.Beaver2001
 
 /-!
 # Beaver (2001): Presupposition and Assertion in Dynamic Semantics
 
-[beaver-2001] reviews the theories of presupposition (Part I) and develops a dynamic one
-(Part II): **partial update logic**, [veltman-1996]'s update logic — atomic updates
-eliminate worlds, *not* removes the worlds the negated sentence keeps, *and* sequences, and
-*might*/*must* test the state — with a presupposition operator `∂` whose update is defined
-only in contexts that already satisfy its argument (Ch. 6), then extended to the first-order
-fragment ABLE (Ch. 7). This file formalizes the propositional core over the substrate's
-partial context change potentials: a sentence denotes a partial function on information
-states (`Formula.eval : CCP.Partial W`), a state *satisfies* a sentence when it is a fixed
-point (D29, `Satisfies`), *admits* it when the update is defined (D30, `CCP.Partial.admits`),
-one sentence *presupposes* another when every admitting state satisfies it (D31, D46,
-`Presupposes`), and *entails* it when every update with it lands in a satisfying state (D26,
-D45, `Entails`). Discourse markers, determiners and accommodation (Chs. 7–9) are outside
+Partial update logic (Chs. 6–8): [veltman-1996]-style eliminative updates
+extended with the presupposition operator `∂`, whose update is defined only in
+contexts that already satisfy its argument. A sentence denotes a partial
+function on information states (`Formula.eval`); a state *satisfies* a sentence
+when it is a fixed point (D29) and *admits* it when the update is defined
+(D30); `φ` *presupposes* `ψ` when every admitting state satisfies `ψ` (D31,
+D46) and *entails* it when every update lands in a satisfying state (D26,
+D45). Discourse markers, determiners and accommodation (Chs. 7–9) are outside
 the propositional fragment.
 
-Two results from Part I are stated on the static side: under the Strong Kleene connectives
-presuppositions are *conditionalised* rather than projected or filtered — *φ ∧ ψ*
-presupposes *ψ → π* and *φ ∨ ψ* presupposes *¬ψ → π* when *φ* presupposes *π*, maximally so
-when *ψ* is bivalent (Fact 2.1: `andStrong_presup_iff`, `orStrong_presup_iff`). On the
-dynamic side: *must* is the dual of *might* (Fact 6.1, `eval_must`); every update is
-eliminative (Fact 7.1, `eval_eliminative`); presuppositions project through negation,
-conjunction, the conditional and the modals, and compose (Facts 8.1, 8.2, 8.8:
-`Presupposes.not`, `.and_left`, `.implies_left`, `.might`, `.must`, `.trans`); a presupposition
-of the second conjunct or the consequent projects *conditionalised* on the first conjunct or
-the antecedent (Fact 8.3: `Presupposes.and_right`, `.implies_right`) — so *if Spaceman Spiff
-lands on Planet X, he will be bothered by the fact that his weight is greater than it would be
-on Earth* (E154) presupposes that if he lands there his weight is greater, and not that it is
-(`e154`, `e154_not_unconditional`); *might* is a consistency test and *must* a satisfaction
-test (D61, Fact 8.5, Lemma 8.6, Fact 8.7). Finally, on the sentences without modals Peters'
-trivalent semantics (D70–D71, `tval`: the middle Kleene connectives, `∂φ` undefined unless
-`φ` is true) and the update semantics agree world by world (Lemma 10.1, `trueAt_iff`,
-`falseAt_iff`), the non-modal updates are distributive (Fact A.2, `mem_eval_iff`), and the
-two entailment notions coincide (Lemma 10.2, Fact 10.3: `entails_iff`, `entails_iff_tval`),
-whence a non-modal sentence presupposes exactly what both it and its negation entail
-(`presupposes_iff`).
+## Main statements
+
+* `andStrong_presup_iff`, `orStrong_presup_iff`: Strong Kleene conditionalises
+  presuppositions (Fact 2.1).
+* `eval_must`: *must* is the dual of *might* (Fact 6.1); `eval_eliminative`:
+  every update is eliminative (Facts 7.1, A.1).
+* `Presupposes.not`/`.and_left`/`.implies_left`/`.might`/`.must`/`.trans` and
+  conditionalised `.and_right`/`.implies_right`: projection (Facts 8.1–8.3,
+  8.8); `e154` is the Spaceman Spiff conditional (E154).
+* `satisfies_might_iff`, `satisfies_must_iff`: *might* is a consistency test,
+  *must* a satisfaction test (D61, Facts 8.5–8.7).
+* `trueAt_iff`, `mem_eval_iff`, `entails_iff_tval`, `presupposes_iff`: on the
+  non-modal fragment the updates agree world by world with the trivalent
+  semantics of [peters-1979] (D70–D77, Lemma 10.1), are distributive (Fact A.2), the two
+  entailment notions coincide (Lemma 10.2, Fact 10.3), and presupposition is
+  entailment by the sentence and by its negation.
+
+## References
+
+* [beaver-2001]: Presupposition and Assertion in Dynamic Semantics. CSLI.
+* [veltman-1996]: Defaults in update semantics.
+* [peters-1979]: A truth-conditional formulation of Karttunen's account of
+  presupposition. *Synthese* 40.
 -/
 
 namespace Beaver2001
