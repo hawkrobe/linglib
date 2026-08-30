@@ -19,7 +19,8 @@ pragmatic halo, [krifka-2007]'s approximate interpretation.
   projections `f_e(s) = s` and `f_a(s) = Round(s)` of
   [kao-etal-2014-hyperbole], with `Round` = round-to-nearest-multiple.
   `Studies/KaoEtAl2014PMFHyperbole.lean` grounds its goal projections in these.
-- `haloWidth`, `inferPrecisionMode`: halo width and precision mode as
+- `haloWidth`, `withinHalo`, `inferPrecisionMode`: halo width, halo
+  membership, and precision mode as
   functions of the k-ness score (`Roundness.roundnessScore`). Only the
   monotone relationship — rounder numerals carry wider halos and favour
   approximate construal — is motivated by the cited papers
@@ -74,6 +75,17 @@ def haloWidth (n : Nat) : ℚ :=
   let magnitudeFactor : ℚ :=
     if n ≥ 1000 then 50 else if n ≥ 100 then 10 else if n ≥ 10 then 5 else 1
   magnitudeFactor * score / 6
+
+/-- A value falls within a numeral's pragmatic halo. -/
+def withinHalo (n : Nat) (q : ℚ) : Prop := |q - (n : ℚ)| ≤ haloWidth n
+
+instance (n : Nat) (q : ℚ) : Decidable (withinHalo n q) :=
+  inferInstanceAs (Decidable (_ ≤ _))
+
+theorem haloWidth_nonneg (n : Nat) : 0 ≤ haloWidth n := by
+  have h : (0 : ℚ) ≤ (Roundness.roundnessScore n : ℚ) := Nat.cast_nonneg _
+  simp only [haloWidth]
+  split_ifs <;> exact div_nonneg (mul_nonneg (by norm_num) h) (by norm_num)
 
 /-- Infer precision mode from the k-ness score: `roundnessScore ≥ 2` yields
 `.approximate`. Known idealisation: score-1 numerals (5, 15, 45, …) come out

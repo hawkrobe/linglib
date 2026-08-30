@@ -103,6 +103,21 @@ def IndexicalField.indexes {Variant Trait : Type}
     (field : IndexicalField Variant Trait) (v : Variant) (t : Trait) : Prop :=
   field.association v t > 0
 
+/-- Pull back an indexical field along a variant map: `comap f field` gives each
+    variant the associations of its image. A study manipulating a coarser variant
+    space than the one a field was measured on inherits the field this way. -/
+def IndexicalField.comap {Variant Variant' Trait : Type}
+    (f : Variant' → Variant) (field : IndexicalField Variant Trait) :
+    IndexicalField Variant' Trait where
+  association := field.association ∘ f
+  order := field.order
+
+/-- Two variants are *antipodal* when their associations are exact opposites on
+    every trait. -/
+def IndexicalField.Antipodal {Variant Trait : Type}
+    (field : IndexicalField Variant Trait) (v₁ v₂ : Variant) : Prop :=
+  ∀ t, field.association v₁ t = - field.association v₂ t
+
 -- ============================================================================
 -- Social meaning dimensions
 -- ============================================================================

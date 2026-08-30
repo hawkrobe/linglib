@@ -57,10 +57,8 @@ open SocialMeaning.SCM
 -- §1. Three-way precision variant
 -- ============================================================================
 
-/-- The three precision variants for numeral use (BSB2022 §3).
-
-    Extends the two-way distinction (exact/approximate) in [beltrama-schwarz-2024] by factoring out bare round numerals as a third, diagnostically
-    crucial category. -/
+/-- The three precision variants for numeral use (BSB2022 §3): sharp numbers, bare
+    round numbers, and modified round numbers. -/
 inductive Variant where
   | precise        -- sharp number: "forty-nine minutes"
   | underspecified -- bare round number: "fifty minutes"
@@ -198,9 +196,7 @@ theorem antiSol_precise_gt_approx :
 /-- **Sign alignment**: competence and anti-solidarity share sign direction
     (both favor precise), while warmth reverses (favors approximate).
 
-    This is the core sign structure of the precision indexical field. It is
-    consistent with the `precisionField` associations in [beltrama-schwarz-2024], where `.exact →.competence = +1`, `.exact →.warmth = −1`,
-    and `.exact →.antiSolidarity = +1`. -/
+    This is the core sign structure of the precision indexical field. -/
 theorem sign_alignment :
     (exp1Mean .precise .competence > exp1Mean .approximate .competence ∧
      exp1Mean .precise .antiSolidarity > exp1Mean .approximate .antiSolidarity ∧
@@ -218,10 +214,7 @@ theorem sign_alignment :
 
     Association values are idealized signs (±1) matching the empirical ordering
     from §5. The underspecified variant gets 0 (neutral) — the diagnostic
-    theorem (§7) shows its empirical position varies by dimension.
-
-    The precise/approximate cells have the same signs as [beltrama-schwarz-2024]'s
-    `precisionField` on all three social dimensions. -/
+    theorem (§7) shows its empirical position varies by dimension. -/
 def bsbField : IndexicalField Variant SocialDimension :=
   { association := λ v d => match v, d with
     | .precise,       .competence      =>  1
@@ -233,11 +226,10 @@ def bsbField : IndexicalField Variant SocialDimension :=
     | .underspecified, _               =>  0
   , order := .third }
 
-/-- Precise and approximate have algebraically opposite associations on
-    every dimension — the same anti-symmetry as [beltrama-schwarz-2024]'s `opposite_directions`. -/
-theorem opposite_directions (d : SocialDimension) :
-    bsbField.association .precise d = - bsbField.association .approximate d := by
-  cases d <;> simp [bsbField]
+/-- Precise and approximate are antipodal: algebraically opposite associations on
+    every dimension. -/
+theorem opposite_directions : bsbField.Antipodal .precise .approximate := by
+  intro d; cases d <;> simp [bsbField]
 
 -- ============================================================================
 -- §7. Underspecified diagnostic
