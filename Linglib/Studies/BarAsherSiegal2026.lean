@@ -1,193 +1,120 @@
-import Linglib.Semantics.Causation.SEM.Counterfactual
 import Linglib.Semantics.Causation.CCSelection
 
 /-!
-# [bar-asher-siegal-2026]: Causation and Causal Relations
-[bar-asher-siegal-2026] [baglini-bar-asher-siegal-2025] [baglini-bar-asher-siegal-2020]
+# Bar-Asher Siegal 2026: causation and causal relations
 
-Formalization of the door-opening scenario from [bar-asher-siegal-2026]
-Figure 1: a structural equation model with two alternative sufficient sets
-for a single effect (the door opening).
+A review of how natural language encodes causation, from causative constructions and
+conditionals to discourse coherence and the progressive, arguing that language is evidence
+for the architecture of causal cognition. Its central proposal takes causal knowledge to be a
+structural equation model in which several sets of conditions are each sufficient for an
+effect: the door of Figure 1 opens when the handle is turned with the lock off, or when the
+circuit is closed with the power on and the lock off. Causative constructions then differ in
+which condition they may select as the cause. A change-of-state verb selects the temporally
+final condition of a sufficient set, *cause* selects any of its conditions, and both select
+only from the one sufficient set completed in the world of evaluation. Fodor's entailment from
+*Sam opened the door* to *Sam caused the door to open* follows, its converse fails, and when
+two sufficient sets are completed at once neither construction applies.
 
-## The Door-Opening Model
+## References
 
-Variables:
-- handle: handle is turned
-- lock: lock is engaged (effect needs ¬lock)
-- circuit: circuit is closed
-- electricity: electricity is running
-- button: button is pressed
-- doorOpens: door opens (the effect)
-
-Mechanism: `doorOpens = (handle ∧ ¬lock) ∨ (circuit ∧ electricity ∧ ¬lock)`,
-plus `circuit := button` for the automatic pathway. Two sufficient sets:
-
-- **Manual** (handle ∧ ¬lock) ⊨ doorOpens
-- **Automatic** (circuit ∧ electricity ∧ ¬lock) ⊨ doorOpens
-
-## Key Result
-
-The model demonstrates CC-selection at work — completion mode (CoS verbs
-like *open*) succeeds when handle alone is the active pathway, but FAILS
-under overdetermination (both pathways active simultaneously). This
-captures [bar-asher-siegal-2026]'s point that *open* is infelicitous
-when an alternative explanation exists.
-
-Member-mode (Def 10b causally-necessary) divergence between *open* and
-*cause* awaits substrate support for multi-parent disjunctive mechanisms.
-
-Sufficiency/completion predicates are imported from the substrate
-(`BoolSEM.causallySufficient`, `CCSelection.completesForEffect`)
-rather than re-stipulated locally — see CLAUDE.md "Theory-hub denotation
-as study-file constraint."
+* [bar-asher-siegal-2026]
+* [baglini-bar-asher-siegal-2025]
+* [fodor-1970]
 -/
 
 namespace BarAsherSiegal2026
 
-open Causation Causation.Mechanism Causation.SEM
+open Causation Causation.Mechanism Causation.SEM Causation.CCSelection
 
-/-- Six-vertex door scenario. Inductive enum so `Fintype.elems`
-    gives a fixed canonical order and `developDet` reduces structurally. -/
+/-- The variables of Figure 1. -/
 inductive V | handle | lock | circuit | electricity | button | doorOpens
   deriving DecidableEq, Fintype, Repr
 
-def varList : List V :=
-  [.handle, .lock, .button, .electricity, .circuit, .doorOpens]
-
-/-- Full graph: button → circuit; (handle, lock) → doorOpens (manual);
-    (circuit, electricity, lock) → doorOpens (automatic). -/
-def fullGraph : CausalGraph V := ⟨fun
-  | .handle => ∅
-  | .lock => ∅
-  | .button => ∅
-  | .electricity => ∅
+/-- The button closes the circuit; handle, lock, circuit and power bear on the door. -/
+def graph : CausalGraph V := ⟨λ
   | .circuit => {.button}
-  | .doorOpens => {.handle, .lock, .circuit, .electricity}⟩
+  | .doorOpens => {.handle, .lock, .circuit, .electricity}
+  | _ => ∅⟩
 
-/-- Manual-only graph: drops the automatic pathway entirely. -/
-def manualGraph : CausalGraph V := ⟨fun
-  | .handle => ∅
-  | .lock => ∅
-  | .button => ∅
-  | .electricity => ∅
-  | .circuit => ∅
-  | .doorOpens => {.handle, .lock}⟩
+def rank : CausalGraph.Ranking graph :=
+  ⟨λ | .circuit => 1 | .doorOpens => 2 | _ => 0,
+    by intro u v h; revert h; cases u <;> cases v <;> decide⟩
 
-/-- Depth certificate for the full graph. -/
-def fullDepth : V → ℕ := fun
-  | .circuit => 1 | .doorOpens => 2 | _ => 0
+instance : CausalGraph.IsDAG graph := rank.isDAG
 
-private lemma fullDepth_lt : ∀ {u v : V},
-    u ∈ fullGraph.parents v → fullDepth u < fullDepth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
+/-- The structural entailments G, H and I: the circuit closes when the button is pressed, and
+the door opens manually (handle on, lock off) or automatically (circuit and power on, lock
+off). -/
+noncomputable def model : BoolSEM V where
+  graph := graph
+  mech
+    | .circuit => deterministic λ ρ => ρ ⟨.button, by simp [graph]⟩
+    | .doorOpens => deterministic λ ρ =>
+        let h := ρ ⟨.handle, by simp [graph]⟩
+        let l := ρ ⟨.lock, by simp [graph]⟩
+        let c := ρ ⟨.circuit, by simp [graph]⟩
+        let e := ρ ⟨.electricity, by simp [graph]⟩
+        (h && !l) || (c && e && !l)
+    | _ => const (G := graph) false
 
-instance : CausalGraph.IsDAG fullGraph :=
-  CausalGraph.IsDAG.of_depth fullGraph fullDepth (fun h => fullDepth_lt h)
-
-/-- Depth certificate for the manual graph. -/
-def manualDepth : V → ℕ := fun
-  | .doorOpens => 1 | _ => 0
-
-private lemma manualDepth_lt : ∀ {u v : V},
-    u ∈ manualGraph.parents v → manualDepth u < manualDepth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
-
-instance : CausalGraph.IsDAG manualGraph :=
-  CausalGraph.IsDAG.of_depth manualGraph manualDepth (fun h => manualDepth_lt h)
-
-/-- Door-opens mechanism (full model): manual OR automatic, both need ¬lock. -/
-noncomputable def doorOpensFullMech : Mechanism fullGraph (fun _ => Bool) .doorOpens :=
-  deterministic (fun ρ =>
-    let h := ρ ⟨.handle, by simp [fullGraph]⟩
-    let l := ρ ⟨.lock, by simp [fullGraph]⟩
-    let c := ρ ⟨.circuit, by simp [fullGraph]⟩
-    let e := ρ ⟨.electricity, by simp [fullGraph]⟩
-    (h && !l) || (c && e && !l))
-
-/-- Door-opens mechanism (manual model): just handle ∧ ¬lock. -/
-noncomputable def doorOpensManualMech : Mechanism manualGraph (fun _ => Bool) .doorOpens :=
-  deterministic (fun ρ =>
-    let h := ρ ⟨.handle, by simp [manualGraph]⟩
-    let l := ρ ⟨.lock, by simp [manualGraph]⟩
-    h && !l)
-
-noncomputable def fullModel : BoolSEM V :=
-  { graph := fullGraph
-    mech := fun
-      | .handle => const (G := fullGraph) false
-      | .lock => const (G := fullGraph) false
-      | .button => const (G := fullGraph) false
-      | .electricity => const (G := fullGraph) false
-      | .circuit => deterministic (fun ρ => ρ ⟨.button, by simp [fullGraph]⟩)
-      | .doorOpens => doorOpensFullMech }
-
-noncomputable def manualModel : BoolSEM V :=
-  { graph := manualGraph
-    mech := fun
-      | .handle => const (G := manualGraph) false
-      | .lock => const (G := manualGraph) false
-      | .button => const (G := manualGraph) false
-      | .electricity => const (G := manualGraph) false
-      | .circuit => const (G := manualGraph) false
-      | .doorOpens => doorOpensManualMech }
-
-noncomputable instance : SEM.IsDeterministic fullModel where
-  mech_det v := match v with
-    | .handle => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .lock => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .button => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .electricity => inferInstanceAs (Mechanism.IsDeterministic (const _))
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det
     | .circuit => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
     | .doorOpens => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .handle | .lock | .button | .electricity =>
+        inferInstanceAs (Mechanism.IsDeterministic (const _))
 
-noncomputable instance : SEM.IsDeterministic manualModel where
-  mech_det v := match v with
-    | .handle => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .lock => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .button => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .electricity => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .circuit => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .doorOpens => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
-instance : CausalGraph.IsDAG fullModel.graph :=
-  inferInstanceAs (CausalGraph.IsDAG fullGraph)
+/-- A valuation from a list of settings. -/
+def valuation (l : List (V × Bool)) : Valuation (λ _ : V => Bool) :=
+  l.foldl (λ s p => s.extend p.1 p.2) Valuation.empty
 
-instance : CausalGraph.IsDAG manualModel.graph :=
-  inferInstanceAs (CausalGraph.IsDAG manualGraph)
+/-- Sufficient set I: handle on, lock off. -/
+def manual := valuation [(.handle, true), (.lock, false)]
 
-/-- Background: lock disengaged. -/
-def unlocked : Valuation (fun _ : V => Bool) :=
-  Valuation.empty.extend .lock false
+/-- Sufficient set H: circuit and power on, lock off. -/
+def automatic := valuation [(.circuit, true), (.electricity, true), (.lock, false)]
 
-open Causation.CCSelection in
-/-- **Manual-only model**: handle completes the sufficient set for
-    doorOpens (full *open* and *cause* felicity, per [bar-asher-siegal-2026]).
-    Both completion and member modes succeed because there's no
-    alternative pathway. -/
-theorem handle_completes_manual :
-    completesForEffect manualModel unlocked .handle true false .doorOpens true :=
-  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
+/-- The world in which the handle is turned on an unlocked, unpowered door. -/
+def handleWorld := valuation
+  [(.handle, true), (.lock, false), (.button, false), (.electricity, false), (.circuit, false),
+    (.doorOpens, true)]
 
-open Causation.CCSelection in
-/-- **Full model with handle alone**: handle completes the manual
-    sufficient set, satisfying *open*-style completion CC-selection.
-    The automatic pathway doesn't fire because button=false in `unlocked`. -/
-theorem handle_completes_full :
-    completesForEffect fullModel unlocked .handle true false .doorOpens true :=
-  completesForEffect_of_developDetOn varList 2 (by decide) (by decide)
+/-- The overdetermined world: handle turned and button pressed on a powered, unlocked door. -/
+def bothWorld := valuation
+  [(.handle, true), (.lock, false), (.button, true), (.electricity, true), (.circuit, true),
+    (.doorOpens, true)]
 
-open Causation.CCSelection in
-/-- **Overdetermination in the full model**: when both pathways are
-    independently activated (button=true, electricity=true alongside
-    handle=true), removing handle still leaves doorOpens true via the
-    automatic pathway — the but-for half of completion CC-selection
-    FAILS for handle. This captures [bar-asher-siegal-2026]'s point
-    that *open* is infelicitous under overdetermination. -/
-theorem handle_no_completion_overdetermined :
-    ¬ completesForEffect fullModel
-        (unlocked.extend .button true |>.extend .electricity true)
-        .handle true false .doorOpens true :=
-  fun ⟨_, hb⟩ => hb (SEM.developDet_hasValue_of_developDetOn_hasValue
-    (vs := varList) (n := 2) (by decide))
+/-- The lock was disengaged first, the handle turned last. -/
+def time : V → ℕ | .lock => 0 | .handle => 2 | _ => 1
+
+theorem rank_lt : ∀ v, rank v < 3 := by decide
+
+theorem manual_minimal : IsMinimalSufficientSet model manual .doorOpens true :=
+  (isMinimalSufficientSet_iff_fuel model 3 rank rank_lt _ _ _).2 (by decide +kernel)
+
+theorem automatic_minimal : IsMinimalSufficientSet model automatic .doorOpens true :=
+  (isMinimalSufficientSet_iff_fuel model 3 rank rank_lt _ _ _).2 (by decide +kernel)
+
+/-- *John opened the door*, *John caused the door to open*: the handle is the final condition
+of the only completed set. -/
+theorem handle_selectsFinal : SelectsFinal model handleWorld time .handle .doorOpens true :=
+  (selectsFinal_iff_fuel model 3 rank rank_lt _ _ _ _ _).2 (by decide +kernel)
+
+theorem handle_selectsMember : SelectsMember model handleWorld .handle .doorOpens true :=
+  handle_selectsFinal.selectsMember
+
+/-- The converse of Fodor's entailment fails: the unlocked lock is a condition *cause* may
+select but not the final one. -/
+theorem lock_selectsMember : SelectsMember model handleWorld .lock .doorOpens true :=
+  (selectsMember_iff_fuel model 3 rank rank_lt _ _ _ _).2 (by decide +kernel)
+
+theorem lock_not_selectsFinal : ¬ SelectsFinal model handleWorld time .lock .doorOpens true :=
+  λ h => absurd ((selectsFinal_iff_fuel model 3 rank rank_lt _ _ _ _ _).1 h) (by decide +kernel)
+
+/-- With both sets completed, neither construction can select the handle. -/
+theorem overdetermined : ¬ SelectsMember model bothWorld .handle .doorOpens true :=
+  not_selectsMember_of_two manual_minimal automatic_minimal (by decide) (by decide) (by decide)
 
 end BarAsherSiegal2026
