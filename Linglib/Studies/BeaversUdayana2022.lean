@@ -11,27 +11,30 @@ import Linglib.Data.Examples.BeaversUdayana2022
 Indonesian *ber-* middles — dispositional/passive, inherent reflexive, and
 both incorporation types — derive from one underspecified operation: *ber-*
 suppresses one direct argument of a dyadic VP, leaving it as an open
-variable ((43); the existential alternative (47) is kept aside in §3.3 for
-consistency with [beavers-zubair-2013]). Which argument goes depends on
-independent argument realization — functional application leaves the agent
-open, incorporation the patient (the 2×2 typology (31)) — and the
-suppressed variable's coreferent vs disjoint reading follows from root
-class and markedness. Anticausative *ter-* is the same operation over
-causer-unspecified roots (§5); relational-noun conflation middles
-(*ber-topi* 'have a hat on', §4) fall out once *ber-* is category-neutral.
+variable ((43); the existential alternative (47) is set aside in §3.3 for
+consistency with [beavers-zubair-2013]). Which argument goes is fixed by
+the VP shape — functional application leaves the agent open, incorporation
+the patient — carried by `VoiceSemantics.suppression_after_FA` and
+`suppression_after_incorporation` ((54), (51)); the 2×2 typology (31) is
+the product of that dimension with the suppressed variable's reading.
+This file derives the paper's diagnostic battery — *oleh*, rationale
+clauses, *dengan sendiri=nya* ((10)–(13), (17), (23), (67)) — from voice
+argument-structure profiles and the paper's licensing conditions, rather
+than stipulating the outcomes per voice. Languages without incorporation
+realize only the no-incorporation row (§7.1); anticausative *ter-* is the
+same suppression over causer-unspecified roots (§5).
 
 ## Main statements
 
-* `operation_is_identical`: the dispositional (54) and incorporation (51)
-  derivations use the same `suppressArg`; which argument surfaces is the
-  Montague type of the VP, deriving (32d) rather than stipulating it.
-* `diag_profiles_mostly_distinct`, `reflexive_incorporation_same_diag`:
-  the *oleh* / rationale / *dengan sendiri=nya* fingerprints ((10)–(13),
-  (17), (23), (67)) separate the five voices except the
-  reflexive/incorporation pair, distinguished by argument structure alone.
-* `ber_compatible_with_men`, `ber_compatible_with_di`: *ber-*'s parameter
-  underspecification — the formal content of "generalized" suppression
-  (§7.3).
+* `middleType_profiles`: each cell of the 2×2 determines its
+  argument-structure profile; the diagnostic fingerprints then follow
+  from the licensing conditions ((10)–(13), (17), (23)).
+* `anticausative_unique_profile`: *ter-*'s (67) fingerprint — *dengan
+  sendiri=nya* without rationale — falls out of the causative-paradigm
+  expectation (§5) and is shared by no other non-active voice.
+* `reflexive_incorporation_same_fingerprint`: the two agent-subject
+  middles are diagnostically identical and distinguished by argument
+  structure alone.
 
 ## References
 
@@ -48,282 +51,217 @@ namespace BeaversUdayana2022
 
 open ArgumentStructure
 open Indonesian.VoiceSystem
-open Minimalist.Voice (Params Flavor ExternalArgSemantics)
+open Minimalist.Voice (Params)
 open Beavers2010
 open ArgumentStructure.Affectedness (AffectednessDegree)
 open Voice
 open ArgumentStructure.VoiceSemantics
 open Intensional
 
-/-! ### Indonesian ber- Middle Inventory -/
+/-! ### The 2×2 middle typology ((31)) -/
 
-/-- The paper's 2×2 middle classification (object realization × suppressed-variable
-    reading). Study-local: the `Voice` substrate exposes the two dimensions as
-    independent enums (`Voice.ObjectRealization`, `Voice.SuppressedVarReading`) and
-    does not bundle them; this paper's analysis names the four cells. -/
+/-- A cell of the paper's 2×2 middle classification (31): object
+realization × suppressed-variable reading. The `Voice` substrate exposes
+the two dimensions as independent enums; this paper's analysis names the
+four cells. -/
 structure MiddleType where
   objRealization : ObjectRealization
   suppressedVar : SuppressedVarReading
   deriving DecidableEq, Repr
 
-/-- Which argument surfaces as subject depends only on object realization. -/
-def MiddleType.agentSurfaces (m : MiddleType) : Prop := m.objRealization.agentSurfaces
+/-- Dispositional/passive middle: *Mobil itu ber-jual dengan mudah* 'the
+car sells easily' (2b), *ber-jual kemarin* 'sold yesterday' (7). The
+generic vs episodic difference is temporal/modal context, not the
+suppression operation. -/
+def dispositionalMiddle : MiddleType := ⟨.noIncorporation, .disjoint⟩
 
-instance : DecidablePred MiddleType.agentSurfaces :=
-  fun m => decEq m.objRealization .incorporation
+/-- Inherent reflexive: *Ali ber-dandan* 'Ali dressed' (2a); body-care
+roots conventionally expect self-action, fixing the coreferent reading. -/
+def reflexiveMiddle : MiddleType := ⟨.noIncorporation, .coreferent⟩
 
-/-- Dispositional/passive middle: *Mobil itu ber-jual dengan mudah.*
-    'The car sells easily.' (the paper's (2b)) / *Mobil itu ber-jual
-    kemarin.* 'The car sold yesterday.' (the paper's (7))
+/-- Incorporation middle: *Orang itu ber-cuci=mata* 'the man washed his
+eyes' (18); the agent surfaces because incorporation leaves it the sole
+DP. -/
+def incorporationMiddle : MiddleType := ⟨.incorporation, .disjoint⟩
 
-    Surface subject = base patient; agent suppressed with disjoint
-    interpretation. Whether the reading is dispositional (generic) or
-    passive (episodic) depends on temporal/modal context, not on the
-    suppression operation itself. -/
-def dispositionalMiddle : MiddleType :=
-  { objRealization := .noIncorporation, suppressedVar := .disjoint }
+/-- Incorporated reflexive: *Orang itu ber-jual=diri* 'the man sold
+himself' (26b); incorporated *diri* 'self' fixes the coreferent reading. -/
+def incorporationReflexive : MiddleType := ⟨.incorporation, .coreferent⟩
 
-/-- Natural reflexive: *Ali ber-dandan.* 'Ali dressed.' (the paper's (2a))
+/-! ### Voice profiles ((35), (39), (58))
 
-    Surface subject = base patient (formally); agent suppressed with
-    coreferent interpretation. The root class (body care/grooming verbs)
-    conventionally expects self-action, triggering coreferent reading. -/
-def reflexiveMiddle : MiddleType :=
-  { objRealization := .noIncorporation, suppressedVar := .coreferent }
+The paper's syntax (35) and semantics (39)/(43) assign each voice form an
+argument-structure profile: whether the surface subject is the event's
+causer, what kind of implicit participant the unexpressed argument is —
+none (both overt), the weak syntactic `e[-D]` of *di-* passives, or the
+purely semantic open variable of (43) — and how the form relates to
+causation. The diagnostics are then licensing conditions over these
+profiles, not per-construction stipulations. -/
 
-/-- Incorporation middle (non-reflexive): *Orang itu ber-cuci=mata.*
-    'The man washed his eyes.' (the paper's (18))
-
-    Surface subject = base agent; patient = incorporated NP. The agent
-    is the surface subject because incorporation satisfies the object's
-    structural role, leaving the agent as the sole DP argument.
-    The suppressed variable (patient) receives a disjoint interpretation. -/
-def incorporationMiddle : MiddleType :=
-  { objRealization := .incorporation, suppressedVar := .disjoint }
-
-/-- Incorporation middle (reflexive): *Orang itu ber-jual=diri.*
-    'The man sold himself.' (the paper's (26b))
-
-    Incorporated *diri* 'self' triggers coreferent interpretation of
-    the suppressed variable. -/
-def incorporationReflexive : MiddleType :=
-  { objRealization := .incorporation, suppressedVar := .coreferent }
-
-/-! ### Core Generalizations (32a–d) -/
-
-/-- Which argument surfaces as subject depends on object realization.
-
-    (32d), strengthened to a biconditional by the compositional
-    derivation below: the base subject is the surface subject iff the
-    object is an incorporated NP. When the object is a full DP, the patient
-    surfaces as subject (agent suppressed). When the object is an
-    incorporated NP, the agent surfaces as subject (patient incorporated).
-
-    This is now also derived compositionally from `suppressArg` in § 5
-    above: the Montague type of the VP after FA vs. incorporation
-    determines which argument remains for the surface subject. -/
-abbrev agentSurfaces (m : MiddleType) : Prop := m.agentSurfaces
-
-/-- Incorporation middles have the agent as surface subject. -/
-theorem incorporation_agent_surfaces :
-    agentSurfaces incorporationMiddle := rfl
-
-/-- Non-incorporation middles have the patient as surface subject. -/
-theorem noIncorporation_patient_surfaces :
-    ¬ agentSurfaces dispositionalMiddle := by decide
-
-theorem noIncorporation_reflexive_patient :
-    ¬ agentSurfaces reflexiveMiddle := by decide
-
-/-- Agent surfacing depends ONLY on object realization, not on
-    suppressed variable interpretation. This captures the paper's
-    key insight that the same ber- operation yields different surface
-    argument structures through independent object realization. -/
-theorem agent_surfacing_independent_of_reading
-    (r₁ r₂ : SuppressedVarReading) :
-    agentSurfaces ⟨.incorporation, r₁⟩ ↔
-    agentSurfaces ⟨.incorporation, r₂⟩ := Iff.rfl
-
-/-! ### Diagnostic Properties -/
-
-/-- Diagnostics that distinguish *ber-* middles from *di-* passives
-    and *meN-* actives.
-
-    - `licensesOleh`: can the agent be expressed via *oleh* 'by' PP?
-    - `licensesRationale`: can a rationale clause (purpose *untuk* PRO V)
-      be controlled by the implicit agent?
-    - `licensesDenganSendiriNya`: is *dengan sendiri=nya* 'by itself'
-      compatible?
-
-    These are the key tests from §§2.1–2.4 and §5 of the paper. -/
-structure MiddleDiagnostics where
-  licensesOleh : Bool
-  licensesRationale : Bool
-  licensesDenganSendiriNya : Bool
+/-- The kind of implicit participant a voice form leaves unexpressed. -/
+inductive ImplicitArg where
+  /-- Both base arguments are overt (actives, incorporation middles). -/
+  | noImplicit
+  /-- The weak syntactic implicit argument `e[-D]` of *di-* passives (35c). -/
+  | weakImplicit
+  /-- The purely semantic open variable of ber- suppression (43). -/
+  | openVariable
   deriving DecidableEq, Repr
 
-/-- *ber-* dispositional/passive middles: no *oleh*, no rationale clause,
-    no *dengan sendiri=nya* (the paper's (11), (13), (10c)).
+/-- A voice form's argument-structure profile. -/
+structure VoiceForm where
+  /-- The surface subject is the event's causer/agent. -/
+  subjectIsCauser : Bool
+  /-- The unexpressed participant, if any. -/
+  implicitArg : ImplicitArg
+  /-- The event is understood to have a causer — entailed by the verb, or
+  expected from its causative paradigm (§5). -/
+  causerUnderstood : Bool
+  /-- A causer distinct from the surface subject is entailed. -/
+  separateCauserEntailed : Bool
+  deriving DecidableEq, Repr
 
-    The suppressed agent is syntactically inaccessible: it cannot be
-    expressed as a by-phrase, cannot control rationale PRO, and since it
-    is not the surface subject, *dengan sendiri=nya* is ruled out. -/
-def dispPassiveDiag : MiddleDiagnostics :=
-  { licensesOleh := false
-  , licensesRationale := false
-  , licensesDenganSendiriNya := false }
+/-- *oleh* 'by' realizes the weak implicit argument `e[-D]`, so only *di-*
+passives license it (11). -/
+def VoiceForm.licensesOleh (v : VoiceForm) : Prop :=
+  v.implicitArg = .weakImplicit
 
-/-- *di-* passives: *oleh* OK, rationale clause OK (controlled by
-    implicit causer), *dengan sendiri=nya* blocked.
+/-- Rationale-clause PRO is grammatically controlled by an agentive surface
+subject or by `e[-D]` ((12)–(13); pragmatic higher-authority control as in
+(14) needs contextual support and is set aside). -/
+def VoiceForm.licensesRationale (v : VoiceForm) : Prop :=
+  v.subjectIsCauser ∨ v.implicitArg = .weakImplicit
 
-    The implicit argument in *di-* passives is syntactically stronger
-    (a weak pronoun *e*[-D]) than in *ber-* middles, licensing *oleh*
-    and rationale control. -/
-def diPassiveDiag : MiddleDiagnostics :=
-  { licensesOleh := true
-  , licensesRationale := true
-  , licensesDenganSendiriNya := false }
+/-- *dengan sendiri=nya* 'by itself' is licensed when the event is
+understood to have a causer and denies causation prior to the surface
+subject — contradicted when a separate causer is entailed (§2.1, §5). -/
+def VoiceForm.licensesSendirinya (v : VoiceForm) : Prop :=
+  v.causerUnderstood ∧ ¬v.separateCauserEntailed
 
-/-- *ber-* reflexives: no *oleh*, rationale clause OK (controlled by
-    surface subject = agent), *dengan sendiri=nya* OK (the paper's (17)). -/
-def reflexiveDiag : MiddleDiagnostics :=
-  { licensesOleh := false
-  , licensesRationale := true
-  , licensesDenganSendiriNya := true }
+instance (v : VoiceForm) : Decidable v.licensesOleh :=
+  inferInstanceAs (Decidable (_ = _))
+instance (v : VoiceForm) : Decidable v.licensesRationale :=
+  inferInstanceAs (Decidable (_ ∨ _))
+instance (v : VoiceForm) : Decidable v.licensesSendirinya :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- *ber-* incorporation middles: no *oleh*, rationale clause OK
-    (surface subject IS the agent), *dengan sendiri=nya* OK
-    (the paper's (23)). -/
-def incorporationDiag : MiddleDiagnostics :=
-  { licensesOleh := false
-  , licensesRationale := true
-  , licensesDenganSendiriNya := true }
+/-- Active *meN-*: both arguments overt, agent subject (3a). -/
+def menActive : VoiceForm := ⟨true, .noImplicit, true, false⟩
 
-/-- Anticausative (*ter-*) middles: no *oleh*, no rationale clause,
-    YES *dengan sendiri=nya* (the paper's §5, examples (67a–c)).
+/-- Passive *di-*: patient subject, weak implicit agent, separate causer
+entailed (3c), (35c). -/
+def diPassive : VoiceForm := ⟨false, .weakImplicit, true, true⟩
 
-    This is a UNIQUE diagnostic profile: anticausatives differ from
-    dispositional/passive middles (which block *dengan sendiri=nya*)
-    and from reflexives (which license rationale clauses). The paper
-    argues *dengan sendiri=nya* is licensed because anticausatives
-    have causative variants, creating a paradigmatic expectation of
-    a causer — the modifier introduces the information that this
-    causer is not the surface subject. -/
-def anticausativeDiag : MiddleDiagnostics :=
-  { licensesOleh := false
-  , licensesRationale := false
-  , licensesDenganSendiriNya := true }
+/-- Dispositional/passive *ber-*: patient subject, open-variable agent with
+disjoint reading, separate causer entailed (9a). -/
+def dispositionalBer : VoiceForm := ⟨false, .openVariable, true, true⟩
 
-/-- The three-way diagnostic contrast: *di-* passives allow *oleh*;
-    *ber-* dispositionals allow none; *ber-* reflexives/incorporation
-    allow rationale + *dengan sendiri=nya* but not *oleh*. -/
-theorem oleh_distinguishes_di_from_ber :
-    diPassiveDiag.licensesOleh = true ∧
-    dispPassiveDiag.licensesOleh = false ∧
-    reflexiveDiag.licensesOleh = false ∧
-    incorporationDiag.licensesOleh = false ∧
-    anticausativeDiag.licensesOleh = false := ⟨rfl, rfl, rfl, rfl, rfl⟩
+/-- Inherent-reflexive *ber-*: the open variable is coreferent with the
+subject, which is therefore the causer (16). -/
+def reflexiveBer : VoiceForm := ⟨true, .openVariable, true, false⟩
 
-/-- *dengan sendiri=nya* is licensed when the event has a causer
-    (whether the surface subject itself or a paradigmatic expectation
-    from the verb's causative variant). It is blocked only for
-    dispositional/passive middles and *di-* passives, where the
-    implicit participant is not accessible as an effector.
+/-- Incorporation *ber-*: agent subject, patient overt as incorporated NP
+(18), (26b). -/
+def incorporationBer : VoiceForm := ⟨true, .noImplicit, true, false⟩
 
-    The licensing condition is NOT simply "agent surfaces as subject" —
-    anticausatives license *dengan sendiri=nya* even though the agent
-    does not surface. Rather, the condition involves the availability
-    of a causer interpretation (from the causative paradigm). -/
-theorem sendirinya_licensing :
-    reflexiveDiag.licensesDenganSendiriNya = true ∧
-    incorporationDiag.licensesDenganSendiriNya = true ∧
-    anticausativeDiag.licensesDenganSendiriNya = true ∧
-    dispPassiveDiag.licensesDenganSendiriNya = false ∧
-    diPassiveDiag.licensesDenganSendiriNya = false := ⟨rfl, rfl, rfl, rfl, rfl⟩
+/-- Anticausative *ter-*: causer-unspecified root, so no separate causer is
+entailed (67a), but the causative variant creates the paradigmatic
+expectation of one (§5). -/
+def terAnticausative : VoiceForm := ⟨false, .openVariable, true, false⟩
 
-/-- Four of the five profiles are pairwise distinct. The exception:
-    reflexive and incorporation middles share the same diagnostic
-    fingerprint (*{¬oleh, rationale, sendirinya}*). The paper
-    distinguishes them by ARGUMENT STRUCTURE (which DP surfaces as
-    subject), not by these syntactic diagnostics. -/
-theorem diag_profiles_mostly_distinct :
-    dispPassiveDiag ≠ diPassiveDiag ∧
-    dispPassiveDiag ≠ reflexiveDiag ∧
-    dispPassiveDiag ≠ incorporationDiag ∧
-    dispPassiveDiag ≠ anticausativeDiag ∧
-    diPassiveDiag ≠ reflexiveDiag ∧
-    diPassiveDiag ≠ incorporationDiag ∧
-    diPassiveDiag ≠ anticausativeDiag ∧
-    reflexiveDiag ≠ anticausativeDiag ∧
-    incorporationDiag ≠ anticausativeDiag := by
-  exact ⟨by decide, by decide, by decide, by decide,
-         by decide, by decide, by decide, by decide, by decide⟩
+/-- An unergative activity (*ber-jalan* 'walk'): no causal structure is
+understood, so *dengan sendiri=nya* needs rich context (72). -/
+def unergativeActivity : VoiceForm := ⟨true, .noImplicit, false, false⟩
 
-/-- Reflexive and incorporation middles are diagnostically IDENTICAL —
-    they are distinguished by argument structure (agent vs. patient
-    as surface subject), not by oleh/rationale/sendirinya tests. -/
-theorem reflexive_incorporation_same_diag :
-    reflexiveDiag = incorporationDiag := rfl
+/-! ### The diagnostic battery, derived -/
 
-/-! ### Compositional Derivation via VoiceSemantics -/
+/-- Only *di-* licenses *oleh* among the six voice forms (11): the by-phrase
+realizes `e[-D]`, which only *di-* projects. -/
+theorem oleh_only_di :
+    ∀ v ∈ [menActive, diPassive, dispositionalBer, reflexiveBer,
+           incorporationBer, terAnticausative],
+      (v.licensesOleh ↔ v = diPassive) := by decide
 
-section Compositional
+/-- The dispositional/passive middle rejects the whole battery ((9a),
+(10c), (11), (13)): its open-variable agent is neither the subject nor
+syntactically accessible, and it is entailed to be a separate causer. -/
+theorem dispositional_rejects_battery :
+    ¬dispositionalBer.licensesOleh ∧ ¬dispositionalBer.licensesRationale ∧
+      ¬dispositionalBer.licensesSendirinya := by decide
 
-/-! ### Grounding the 2×2 typology in Montague composition
+/-- *di-* passives differ from dispositional middles only in the implicit
+argument's syntactic status — which is exactly what rationale control and
+*oleh* detect ((11)–(13)). -/
+theorem di_dispositional_differ_in_implicit :
+    diPassive.licensesRationale ∧ ¬dispositionalBer.licensesRationale ∧
+      diPassive.subjectIsCauser = dispositionalBer.subjectIsCauser ∧
+      diPassive.separateCauserEntailed = dispositionalBer.separateCauserEntailed := by
+  decide
 
-    The four middle types arise from applying ONE operation (`suppressArg`)
-    to VPs of different Montague types. The VP type is determined by
-    independent argument realization (FA vs. incorporation), not by ber-.
+/-- The reflexive and incorporation middles are diagnostically identical —
+no *oleh*, rationale fine (17a)/(23a), *sendiri=nya* fine (17b)/(23b) — yet
+their profiles differ: what distinguishes them is argument structure, not
+the battery. -/
+theorem reflexive_incorporation_same_fingerprint :
+    (reflexiveBer.licensesOleh ↔ incorporationBer.licensesOleh) ∧
+      (reflexiveBer.licensesRationale ↔ incorporationBer.licensesRationale) ∧
+      (reflexiveBer.licensesSendirinya ↔ incorporationBer.licensesSendirinya) ∧
+      reflexiveBer ≠ incorporationBer := by decide
 
-    We prove this for an arbitrary model `m` and transitive verb `V`. -/
+/-- Anticausative *ter-* licenses *dengan sendiri=nya* without licensing
+rationale clauses ((67b) vs (67c)) — a combination no other non-active
+voice shows. It falls out of the profile: no separate causer is entailed
+(so *sendiri=nya* is consistent) while the subject is not a causer and
+there is no `e[-D]` (so rationale control fails). -/
+theorem anticausative_unique_profile :
+    (terAnticausative.licensesSendirinya ∧ ¬terAnticausative.licensesRationale) ∧
+      ∀ v ∈ [diPassive, dispositionalBer, reflexiveBer, incorporationBer],
+        ¬(v.licensesSendirinya ∧ ¬v.licensesRationale) := by decide
 
-variable {E W : Type}
-variable (V : Denot E W (.e ⇒ .e ⇒ .t))
-variable (np : Denot E W (.e ⇒ .t))
-variable (patient z agent : E)
+/-- *Dengan sendiri=nya* tracks the causer expectation, not entailed
+causation: the anticausative licenses it through its causative paradigm
+(67b) while a plain unergative does not (72). -/
+theorem sendirinya_from_paradigm :
+    terAnticausative.licensesSendirinya ∧
+      ¬unergativeActivity.licensesSendirinya := by decide
 
-/-- **Dispositional middle derivation** (the paper's (54)):
-    FA saturates the object → VP has type `e ⇒ t` → ber- suppresses
-    the remaining (agent) argument → result is type `t`.
+/-! ### The 2×2 cells determine the profiles
 
-    The patient (FA-applied argument) is the surface subject. -/
-theorem dispositional_derivation :
-    suppressArg z (V patient) = V patient z := rfl
+Each cell's profile is a function of its two coordinates: incorporation
+leaves both arguments overt and the agent as subject ((51),
+`VoiceSemantics.suppression_after_incorporation`); without incorporation
+the suppressed agent is an open variable and the patient raises ((54),
+`VoiceSemantics.suppression_after_FA`), the subject being the causer
+exactly on the coreferent reading. A separate causer is entailed only in
+the disjoint no-incorporation cell. -/
 
-/-- **Incorporation middle derivation** (the paper's (51)):
-    Incorporation narrows but preserves the object → VP has type
-    `e ⇒ e ⇒ t` → ber- suppresses the first (object) argument →
-    result is type `e ⇒ t` → agent fills the remaining position.
+/-- The argument-structure profile of a 2×2 cell, computed from its
+coordinates. -/
+def MiddleType.voiceForm (m : MiddleType) : VoiceForm where
+  subjectIsCauser :=
+    m.objRealization = .incorporation ∨ m.suppressedVar = .coreferent
+  implicitArg :=
+    if m.objRealization = .incorporation then .noImplicit else .openVariable
+  causerUnderstood := true
+  separateCauserEntailed :=
+    m.objRealization = .noIncorporation ∧ m.suppressedVar = .disjoint
 
-    The agent is the surface subject. -/
-theorem incorporation_derivation :
-    suppressArg z (incorporate V np) agent =
-    (V z agent ∧ np z) := rfl
+/-- The four cells compute the three attested middle profiles — both
+incorporation cells share one, since both arguments are overt either
+way (58). -/
+theorem middleType_profiles :
+    dispositionalMiddle.voiceForm = dispositionalBer ∧
+      reflexiveMiddle.voiceForm = reflexiveBer ∧
+      incorporationMiddle.voiceForm = incorporationBer ∧
+      incorporationReflexive.voiceForm = incorporationBer := by decide
 
-/-- **Active voice derivation** (contrast):
-    Active (meN-) applies the identity, preserving both arguments.
-    The subject is the agent; the object is the patient. -/
-theorem active_derivation :
-    activeSem V patient agent = V patient agent := rfl
-
-/-- The argument structure difference between dispositional and
-    incorporation middles is a TYPE difference, not an operation
-    difference. In both cases ber- = `suppressArg z`. -/
-theorem operation_is_identical :
-    -- Both use suppressArg:
-    suppressArg z (V patient) = V patient z ∧
-    suppressArg z (incorporate V np) agent = (V z agent ∧ np z) :=
-  ⟨rfl, rfl⟩
-
-/-- Agent surfaces as subject iff the VP retains both arguments
-    (incorporation case). This is the paper's (32d), now derived from
-    Montague composition rather than stipulated. -/
+/-- (32d), derived: the base subject surfaces exactly when the cell's
+profile keeps it as causer with no implicit argument — the incorporation
+column. -/
 theorem agent_surfaces_iff_incorporation :
-    -- After incorporation: result has type e ⇒ t, so agent fills it
-    (fun a => suppressArg z (incorporate V np) a) =
-    (fun a => V z a ∧ np z) := rfl
-
-end Compositional
+    ∀ m : MiddleType,
+      m.objRealization.agentSurfaces ↔ m.voiceForm.implicitArg = .noImplicit := by
+  rintro ⟨o, s⟩; cases o <;> cases s <;> decide
 
 /-! ### Conflation middles from relational nouns (§4) -/
 
@@ -332,104 +270,58 @@ section Conflation
 variable {E W : Type}
 
 /-- **Conflation middle derivation** ((64)–(65)): a relational noun (*topi*
-    'hat', *istri* 'wife') denotes a possession relation π ([barker-1995])
-    with the possessum as first argument; category-neutral ber- suppresses
-    it and the possessor surfaces as subject — *Tono ber-topi* 'Tono has a
-    hat on' (59). Sortal nouns are monadic, so suppression leaves no slot
-    for a subject: *ber-buku is a type mismatch, deriving the relational
-    restriction (61). -/
+'hat', *istri* 'wife') denotes a possession relation π ([barker-1995])
+with the possessum as first argument; category-neutral ber- suppresses
+it and the possessor surfaces as subject — *Tono ber-topi* 'Tono has a
+hat on' (59). Sortal nouns are monadic, so suppression leaves no slot
+for a subject: *ber-buku is a type mismatch, deriving the relational
+restriction (61). -/
 theorem conflation_derivation (pi : Denot E W (.e ⇒ .e ⇒ .t))
     (possessum possessor : E) :
     suppressArg possessum pi possessor = pi possessum possessor := rfl
 
 end Conflation
 
-/-! ### Voice Parameter Bridge -/
+/-! ### Parameter underspecification (§7.3) -/
 
-/-- *ber-*'s underspecification means it is compatible with the
-    Minimalist Voice parameters of EVERY other Indonesian voice.
-    This is the formal content of "generalized argument suppression":
-    the morpheme doesn't commit to ±D or ±λx. -/
+/-- *ber-* is parameter-compatible with active *meN-*: the formal content
+of covering "some type of thematic active Voice". -/
 theorem ber_compatible_with_men :
     berParams.isCompatibleWith menParams = true := rfl
 
+/-- *ber-* is parameter-compatible with passive *di-* as well — one
+underspecified head covering both non-active and active-like uses. -/
 theorem ber_compatible_with_di :
     berParams.isCompatibleWith diParams = true := rfl
 
-/-- *meN-* and *di-* are NOT compatible with each other —
-    they differ on ±λx. This is why they are distinct voices,
-    while *ber-* can behave like either. -/
+/-- *meN-* and *di-* are incompatible with each other: they are distinct
+voices, while *ber-* can behave like either. -/
 theorem men_incompatible_with_di :
     menParams.isCompatibleWith diParams = false := rfl
 
-/-! ### Bridge to Beavers 2010 (Affectedness Constraint) -/
+/-! ### Bridge to the affectedness hierarchy (§2.1) -/
 
-/-- linglib bridge (not formalized in the paper): dispositional *ber-*
-    forms are "only possible with verbs that describe change-of-state or at
-    least some degree of affectedness" (§2.1) — i.e. affectedness degree
-    ≥ nonquantized on [beavers-2010]'s hierarchy. [levin-1993]'s middle
-    diagnostic (`MeaningComponents.predictedAlternation`,
-    `Semantics/ArgumentStructure/DiathesisAlternation.lean`) draws the same verb-class
-    line via `changeOfState`. -/
+/-- Dispositional *ber-* is restricted to verbs of "change-of-state or at
+least some degree of affectedness" (§2.1, citing [beavers-2011]) — on
+[beavers-2010]'s hierarchy, at least nonquantized change. The threshold is
+a linglib bridge; the paper states the verb-class restriction without a
+hierarchy cut. -/
 def LicensesDispositionalMiddle (d : AffectednessDegree) : Prop :=
   AffectednessDegree.nonquantized ≤ d
 
 instance (d : AffectednessDegree) : Decidable (LicensesDispositionalMiddle d) := by
   unfold LicensesDispositionalMiddle; infer_instance
 
-/-- Change-of-state verbs (quantized/nonquantized) license dispositionals. -/
-theorem cos_verbs_license_dispositional :
-    LicensesDispositionalMiddle .quantized ∧
-    LicensesDispositionalMiddle .nonquantized := ⟨by decide, by decide⟩
+/-- The licensed degrees are exactly the change-of-state ones. -/
+theorem licensesDispositional_iff :
+    ∀ d, LicensesDispositionalMiddle d ↔
+      (d = .nonquantized ∨ d = .quantized) := by decide
 
-/-- Non-CoS verbs (potential/unspecified) do NOT license dispositionals. -/
-theorem non_cos_block_dispositional :
-    ¬ LicensesDispositionalMiddle .potential ∧
-    ¬ LicensesDispositionalMiddle .unspecified := ⟨by decide, by decide⟩
-
-/-- Bridge: Levin's middle alternation diagnostic and Beavers 2010's
-    affectedness constraint make the same prediction. Verbs that
-    participate in the middle alternation (i.e., have `changeOfState`)
-    are exactly those whose patients are affected enough (≥ nonquantized)
-    to license dispositional middles. -/
+/-- [levin-1993]'s middle-alternation diagnostic draws the same verb-class
+line: *break* (change of state) participates, *hit* (contact without
+change) does not. -/
 theorem levin_middle_requires_cos :
-    MeaningComponents.predictedAlternation
-      ⟨true, false, false, false, false, false⟩ .middle = true ∧   -- CoS → middle OK
-    MeaningComponents.predictedAlternation
-      ⟨false, true, true, false, false, false⟩ .middle = false     -- no CoS → no middle
-    := ⟨rfl, rfl⟩
-
-/-! ### Cross-Linguistic Predictions -/
-
-/-- The paper predicts that which middle types surface in a language
-    depends on its argument realization inventory. Languages lacking
-    incorporation can only have the no-incorporation row of the
-    typology (reflexives and dispositional/passive middles).
-
-    This is a testable prediction: if a language has incorporation, it
-    should (ceteris paribus) have incorporation middles. If it lacks
-    incorporation, it should lack them. -/
-def incorporationPredicted (hasIncorporation : Bool) (m : MiddleType) : Bool :=
-  match m.objRealization with
-  | .incorporation => hasIncorporation
-  | .noIncorporation => true
-
-/-- Indonesian has incorporation → all four types predicted. -/
-theorem indonesian_all_types_predicted :
-    incorporationPredicted true dispositionalMiddle = true ∧
-    incorporationPredicted true reflexiveMiddle = true ∧
-    incorporationPredicted true incorporationMiddle = true ∧
-    incorporationPredicted true incorporationReflexive = true := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- A language without incorporation → incorporation middles blocked. -/
-theorem no_incorporation_blocks_types :
-    incorporationPredicted false incorporationMiddle = false ∧
-    incorporationPredicted false incorporationReflexive = false := ⟨rfl, rfl⟩
-
-/-- A language without incorporation → reflexive + dispositional still OK.
-    This is the predicted pattern for Spanish *se* middles. -/
-theorem no_incorporation_allows_core :
-    incorporationPredicted false dispositionalMiddle = true ∧
-    incorporationPredicted false reflexiveMiddle = true := ⟨rfl, rfl⟩
+    MeaningComponents.break_.predictedAlternation .middle = true ∧
+      MeaningComponents.hit.predictedAlternation .middle = false := ⟨rfl, rfl⟩
 
 end BeaversUdayana2022
