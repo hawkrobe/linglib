@@ -1,0 +1,411 @@
+[
+  {
+    "id": "bachbrownmarslenwilson1986_1",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "(1)"},
+    "language": "dutc1256",
+    "primaryText": "De mannen hebben Hans de paarden leren voeren.",
+    "glossedTokens": [],
+    "translation": "The men taught Hans to feed the horses.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["dependency", "crossed"],
+      ["verb_cluster_size", "2"]
+    ],
+    "comment": "Word-by-word order: The men have Hans the horses teach feed."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_2",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "(2)"},
+    "language": "stan1295",
+    "primaryText": "Die Männer haben Hans die Pferde füttern lehren.",
+    "glossedTokens": [],
+    "translation": "The men taught Hans to feed the horses.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["dependency", "nested"],
+      ["verb_cluster_size", "2"]
+    ],
+    "comment": "Word-by-word order: The men have Hans the horses feed teach."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_3",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "(3)"},
+    "language": "stan1293",
+    "primaryText": "The men taught Hans to feed the horses.",
+    "glossedTokens": [],
+    "translation": "The men taught Hans to feed the horses.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["dependency", "right-branching"],
+      ["verb_cluster_size", "2"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_4",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "(4)"},
+    "language": "dutc1256",
+    "primaryText": "Jeanine heeft de mannen Hans de paarden helpen leren voeren.",
+    "glossedTokens": [],
+    "translation": "Jeanine helped the men teach Hans to feed the horses.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["dependency", "crossed"],
+      ["verb_cluster_size", "3"]
+    ],
+    "comment": "Rejected outright by native speakers of Dutch as unacceptable."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_5",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "(5)"},
+    "language": "stan1295",
+    "primaryText": "Johanna hat die Männer Hans die Pferde füttern lehren helfen.",
+    "glossedTokens": [],
+    "translation": "Johanna helped the men teach Hans to feed the horses.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["dependency", "nested"],
+      ["verb_cluster_size", "3"]
+    ],
+    "comment": "Rejected outright by native speakers of German as unacceptable."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_6",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "(6)"},
+    "language": "stan1293",
+    "primaryText": "Joanna helped the men teach Hans to feed the horses.",
+    "glossedTokens": [],
+    "translation": "Joanna helped the men teach Hans to feed the horses.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["dependency", "right-branching"],
+      ["verb_cluster_size", "3"]
+    ],
+    "comment": "Only marginally more complex than (3) to a speaker of English; readily comprehensible."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_7",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "(7)"},
+    "language": "dutc1256",
+    "primaryText": "Karel heeft Jeanine de mannen Hans de paarden zien helpen leren voeren.",
+    "glossedTokens": [],
+    "translation": "Charles saw Joanna help the men teach Hans to feed the horses.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["dependency", "crossed"],
+      ["verb_cluster_size", "4"]
+    ],
+    "comment": "Third level of embedding; clearly not normally acceptable."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_8",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "(8)"},
+    "language": "stan1295",
+    "primaryText": "Karl hat Johanna die Männer Hans die Pferde füttern lehren helfen sehen.",
+    "glossedTokens": [],
+    "translation": "Charles saw Joanna help the men teach Hans to feed the horses.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["dependency", "nested"],
+      ["verb_cluster_size", "4"]
+    ],
+    "comment": "Third level of embedding; clearly not normally acceptable."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_9",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "(9)"},
+    "language": "stan1293",
+    "primaryText": "Charles saw Joanna help the men teach Hans to feed the horses.",
+    "glossedTokens": [],
+    "translation": "Charles saw Joanna help the men teach Hans to feed the horses.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["dependency", "right-branching"],
+      ["verb_cluster_size", "4"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_level1_nl",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "Level 1 (Dutch)"},
+    "language": "dutc1256",
+    "primaryText": "De lerares heeft de knikkers opgeruimd.",
+    "glossedTokens": [],
+    "translation": "The teacher collected up the marbles.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["sentence_type", "test"],
+      ["embedding_level", "1"]
+    ],
+    "comment": "Sample test-set item. Mean comprehensibility rating 1.14 (1 = easy, 9 = hard)."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_level1_de",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "Level 1 (German)"},
+    "language": "stan1295",
+    "primaryText": "Die Lehrerin hat die Murmeln aufgeräumt.",
+    "glossedTokens": [],
+    "translation": "The teacher collected up the marbles.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["sentence_type", "test"],
+      ["embedding_level", "1"]
+    ],
+    "comment": "Sample test-set item."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_level2_nl",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "Level 2 (Dutch)"},
+    "language": "dutc1256",
+    "primaryText": "Jantje heeft de lerares de knikkers helpen opruimen.",
+    "glossedTokens": [],
+    "translation": "Jantje helped the teacher collect up the marbles.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["sentence_type", "test"],
+      ["embedding_level", "2"],
+      ["dependency", "crossed"]
+    ],
+    "comment": "One level of embedding, two-verb cluster helpen-opruimen in crossed order."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_level2_de",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "Level 2 (German)"},
+    "language": "stan1295",
+    "primaryText": "Wolfgang hat der Lehrerin die Murmeln aufräumen helfen.",
+    "glossedTokens": [],
+    "translation": "Wolfgang helped the teacher collect up the marbles.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["sentence_type", "test"],
+      ["embedding_level", "2"],
+      ["dependency", "nested"]
+    ],
+    "comment": "Infinitive version; the participle version ends in geholfen."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_level3_nl",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "Level 3 (Dutch)"},
+    "language": "dutc1256",
+    "primaryText": "Aad heeft Jantje de lerares de knikkers laten helpen opruimen.",
+    "glossedTokens": [],
+    "translation": "Aad let Jantje help the teacher collect up the marbles.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["sentence_type", "test"],
+      ["embedding_level", "3"],
+      ["dependency", "crossed"]
+    ],
+    "comment": "Two levels of embedding, three-verb cluster laten-helpen-opruimen in crossed order."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_level3_de",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "Level 3 (German)"},
+    "language": "stan1295",
+    "primaryText": "Arnim hat Wolfgang der Lehrerin die Murmeln aufräumen helfen lassen.",
+    "glossedTokens": [],
+    "translation": "Arnim let Wolfgang help the teacher collect up the marbles.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["sentence_type", "test"],
+      ["embedding_level", "3"],
+      ["dependency", "nested"]
+    ],
+    "comment": "Infinitive version; lassen appears only in the infinitive."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_level4_nl",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "Level 4 (Dutch)"},
+    "language": "dutc1256",
+    "primaryText": "Ingrid heeft Lotte de bewoners de blinde het eten horen leren helpen koken.",
+    "glossedTokens": [],
+    "translation": "Ingrid heard Lotte teach the residents to help the blind man to cook the food.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["sentence_type", "test"],
+      ["embedding_level", "4"],
+      ["dependency", "crossed"]
+    ],
+    "comment": "Third level of embedding; separate nine-sentence set, mean rating 7.66."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_level4_de",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "Level 4 (German)"},
+    "language": "stan1295",
+    "primaryText": "Ingrid hat Lotte die Bewohner dem Blinden das Essen kochen helfen lehren hören.",
+    "glossedTokens": [],
+    "translation": "Ingrid heard Lotte teach the residents to help the blind man to cook the food.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["sentence_type", "test"],
+      ["embedding_level", "4"],
+      ["dependency", "nested"]
+    ],
+    "comment": "Third level of embedding; mean rating 8.26 (infinitive version)."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_para2_nl",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "Paraphrase Level 2 (Dutch)"},
+    "language": "dutc1256",
+    "primaryText": "Jantje heeft de lerares geholpen om de knikkers op te ruimen.",
+    "glossedTokens": [],
+    "translation": "Jantje helped the teacher collect up the marbles.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["sentence_type", "paraphrase"],
+      ["embedding_level", "2"],
+      ["dependency", "right-branching"]
+    ],
+    "comment": "Same propositions as the Level 2 test sentence, right-branching structure."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_para2_de",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "Paraphrase Level 2 (German)"},
+    "language": "stan1295",
+    "primaryText": "Wolfgang hat der Lehrerin geholfen, die Murmeln aufzuräumen.",
+    "glossedTokens": [],
+    "translation": "Wolfgang helped the teacher collect up the marbles.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["sentence_type", "paraphrase"],
+      ["embedding_level", "2"],
+      ["dependency", "right-branching"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_para3_de",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "Paraphrase Level 3 (German)"},
+    "language": "stan1295",
+    "primaryText": "Arnim hat Wolfgang dazu gebracht, der Lehrerin beim aufräumen der Murmeln zu helfen.",
+    "glossedTokens": [],
+    "translation": "Arnim got Wolfgang to help the teacher with collecting up the marbles.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["sentence_type", "paraphrase"],
+      ["embedding_level", "3"],
+      ["dependency", "right-branching"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_10",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "(10)"},
+    "language": "dutc1256",
+    "primaryText": "Henk heeft de kinderen Anneke de koeien laten zien melken.",
+    "glossedTokens": [],
+    "translation": "Henk let the children see Anneke milk the cows.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["dependency", "crossed"],
+      ["verb_cluster_size", "3"]
+    ],
+    "comment": "Interpretation (12): P(let (H, (see (the children, (milk (A, the cows))))))."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_11",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "(11)"},
+    "language": "stan1295",
+    "primaryText": "Hans hat die Kinder Anna die Kühe melken sehen lassen.",
+    "glossedTokens": [],
+    "translation": "Hans let the children see Anna milk the cows.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["dependency", "nested"],
+      ["verb_cluster_size", "3"]
+    ],
+    "comment": "Same interpretation (12) as the Dutch (10)."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_13",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "(13)"},
+    "language": "stan1293",
+    "primaryText": "Which sonatas are these violins easy to play on?",
+    "glossedTokens": [],
+    "translation": "Which sonatas are these violins easy to play on?",
+    "context": "",
+    "judgment": "marginal",
+    "readings": [],
+    "paperFeatures": [
+      ["dependency", "crossed"],
+      ["construction", "long-distance filler-gap"]
+    ],
+    "comment": "Crossing long-distance dependencies; English listeners react markedly against these."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_14",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "(14)"},
+    "language": "stan1293",
+    "primaryText": "Which violins are these sonatas easy to play on?",
+    "glossedTokens": [],
+    "translation": "Which violins are these sonatas easy to play on?",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["dependency", "nested"],
+      ["construction", "long-distance filler-gap"]
+    ],
+    "comment": "Nested long-distance dependencies, contrasting with the crossed (13)."
+  },
+  {
+    "id": "bachbrownmarslenwilson1986_filler1_de",
+    "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "Filler Level 1 (German)"},
+    "language": "stan1295",
+    "primaryText": "Der Ball wurde durch das Fenster geworfen.",
+    "glossedTokens": [],
+    "translation": "The ball was thrown through the window.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["sentence_type", "filler"],
+      ["embedding_level", "1"]
+    ],
+    "comment": "Fillers match the test levels in numbers of nouns and verbs but not in structure."
+  }
+]

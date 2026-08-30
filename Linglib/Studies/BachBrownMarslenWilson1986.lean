@@ -1,333 +1,223 @@
 import Linglib.Features.VerbCluster
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Linglib.Data.Examples.BachBrownMarslenWilson1986
+import Mathlib.Algebra.BigOperators.Intervals
 
 /-!
-# Bach, Brown & Marslen-Wilson (1986)
-[bach-brown-marslen-wilson-1986]
+# Bach, Brown & Marslen-Wilson (1986): crossed vs nested dependencies
 
-Crossed and Nested Dependencies in German and Dutch: A Psycholinguistic Study.
-*Language and Cognitive Processes*, 1(4), 249–262.
+Standard Dutch orders clause-final verb clusters in crossed serial correspondence
+with their argument NPs (NP₁ NP₂ NP₃ V₁ V₂ V₃); Standard German nests them
+(NP₁ NP₂ NP₃ V₃ V₂ V₁). Three groups of 30 subjects (Dutch, German/Infinitive,
+German/Participle) rated matched Test sentences and right-branching Paraphrase
+controls for comprehensibility and answered probe questions about NP–verb
+pairings. At one level of embedding the languages do not differ; from two levels
+on, Dutch is reliably easier on both measures. Since a push-down store parses
+nested but not crossed dependencies, the crossed pattern being *easier* rules
+out the push-down stack as the universal basis of human parsing, confirming
+[evers-1975]'s conjecture.
 
-## Core Finding
+## The integration model
 
-Dutch crossed verb-cluster dependencies (NP₁ NP₂ NP₃ V₁ V₂ V₃) are easier to
-process than German nested dependencies (NP₁ NP₂ NP₃ V₃ V₂ V₁) at two or more
-levels of embedding, in both comprehensibility ratings and comprehension accuracy.
-At one level of embedding (Level 2), German/Participle does not differ from Dutch,
-though German/Infinitive shows a significant baseline disadvantage across all
-levels. This confirms [evers-1975]'s
-intuition that crossed dependencies are easier, with the first controlled
-experimental evidence.
+The paper argues informally that crossed orders let the hearer connect each NP
+to the matrix structure as soon as its verb arrives, while nested orders keep
+every NP unintegrated until the whole cluster has been heard. This file makes
+that argument formal over the `Features.VerbClusterBinding` permutation: NP `i`
+is matrix-integrated after `k` verbs iff every verb on the control chain from
+its verb to the matrix verb has been heard (`integratedCount`); the cumulative
+cost over a cluster of `n` verbs (`totalIntegrationCost`) is `n(n−1)/2` for the
+crossed binding and `n(n−1)` for the nested one (`cost_gap`: the gap equals the
+whole crossed cost). The gap is 1 at two verbs and grows quadratically —
+matching the observed Level-2 parity and Level-3 divergence. The cost model is
+this file's formalization of the paper's informal argument, not the paper's own
+mathematics.
 
-## Incremental Integration Model
+## Empirical results
 
-The paper argues qualitatively that crossed dependencies allow incremental
-top-down integration while nested dependencies force bottom-up accumulation of
-floating propositions. We formalize this via `totalIntegrationCost`: the
-cumulative count of NPs awaiting matrix-connected integration during verb-cluster
-processing. This metric is our formalization, not the paper's — they argue
-informally about when partial interpretations become available.
+Measured means stay in prose. Test-sentence comprehensibility (Table 1, 9-point
+scale, 1 = easy) rises from 1.16 at Level 1 to 2.58, 5.80, 7.86 at Levels 2–4;
+the Paraphrase controls rise only to 2.16, 4.01, 5.82, so the syntactic
+Test−Paraphrase difference grows 0.42 → 1.78 → 2.04. German/Participle does not
+differ from Dutch at Level 2 but does at Level 3 (F₂(1,17) = 3.705, p = 0.07);
+German/Infinitive carries a baseline disadvantage at every level. Comprehension
+accuracy (Table 3, max 2) at Level 3: Dutch 1.17 vs German 0.89 and 0.79. By NP
+position (Tables 4–5), the middle NP2 is hardest for every group, and Dutch
+shows zero Test−Paraphrase deficit on the most deeply embedded NP3 (the German
+groups show 0.41 and 0.36): the Dutch hearer integrates NP3's late-arriving verb
+into an already-built matrix structure, while for the German hearer V₃ arrives
+first and its proposition floats unrooted until the cluster ends.
 
-The integration model is derived from the `VerbClusterBinding` permutation:
-NP_i is matrix-integrated after k verbs iff `max(σ(0), σ(i)) < k` — all
-verbs in the control chain from the bound verb to the matrix verb have been
-heard. For identity (crossed), σ(0) = 0 so integration is min(k, n). For
-reverse (nested), σ(0) = n−1 so nothing integrates until all verbs are heard.
+## References
 
-The cost ratio nested/crossed is exactly 2 for all n, but the absolute difference
-n(n−1)/2 grows quadratically — consistent with the finding that the processing
-difference is undetectable at n=2 (gap = 1) but large at n=3 (gap = 3).
-
-## Dependency Length Invariance
-
-Crossed and nested patterns have identical total NP-verb dependency length (n²).
-This means the Bach et al. finding cannot be explained by dependency length
-minimization alone — the advantage of crossed dependencies is about *when*
-information becomes available for matrix integration, not about dependency
-distance.
-
-## Formal–Processing Dissociation
-
-Crossed dependencies require mildly context-sensitive power
-([shieber-1985], [bresnan-etal-1982]) while nested dependencies are
-context-free, yet crossed is psycholinguistically easier. This refutes models
-where parsing difficulty tracks the Chomsky hierarchy and provides evidence
-against push-down-store models of human parsing ([evers-1975]).
+* [bach-brown-marslen-wilson-1986]: Crossed and nested dependencies in German
+  and Dutch: A psycholinguistic study. *Language and Cognitive Processes* 1.
+* [evers-1975]: The transformational cycle in Dutch and German.
+* [bresnan-etal-1982]: Cross-serial dependencies in Dutch.
 -/
 
 namespace BachBrownMarslenWilson1986
 
 open Features (VerbClusterBinding)
-open Features.VerbClusterBinding (identity reverse unintegratedCount npVerbDist
-  identity_unintegratedCount reverse_unintegratedCount)
+open Features.VerbClusterBinding (identity reverse isProjective identity_not_projective
+  reverse_is_projective)
 
--- ============================================================================
--- §1: Incremental Integration Model
--- ============================================================================
+variable {n : ℕ}
 
-/-- Cumulative unintegrated NPs across verb positions 1..n.
+/-! ### The incremental integration model -/
 
-    Crossed: (n−1) + (n−2) + ··· + 0 = n(n−1)/2
-    Nested:  n + n + ··· + n + 0      = n(n−1) -/
-def totalIntegrationCost {n : Nat} (σ : VerbClusterBinding n) : Nat :=
-  ∑ k ∈ Finset.range n, σ.unintegratedCount (k + 1)
+/-- NPs matrix-integrated after `k` verbs heard: NP `i` counts iff every verb on
+the control chain from its verb `V_{σ i}` up to the matrix verb `V_{σ 0}` has
+been heard, i.e. `max (σ 0) (σ i) < k`. For the crossed binding this is
+`min k n`; for the nested one it is `0` until the whole cluster is heard. -/
+def integratedCount (σ : VerbClusterBinding n) (k : ℕ) : ℕ :=
+  match n with
+  | 0 => 0
+  | m + 1 =>
+    let matrix := (σ ⟨0, by omega⟩).val
+    (List.range (m + 1)).countP λ i =>
+      if hi : i < m + 1 then
+        Nat.max matrix (σ ⟨i, hi⟩).val < k
+      else false
 
--- ============================================================================
--- §2: Model Predictions
--- ============================================================================
+/-- NPs still awaiting matrix-connected integration after `k` verbs. -/
+def unintegratedCount (σ : VerbClusterBinding n) (k : ℕ) : ℕ :=
+  n - integratedCount σ k
 
-/-- Level 2 (n=2): minimal gap (1 vs 2). -/
-theorem level2_costs :
-    totalIntegrationCost (identity 2) = 1 ∧
-    totalIntegrationCost (reverse 2) = 2 := by decide
-
-/-- Level 3 (n=3): gap widens (3 vs 6). -/
-theorem level3_costs :
-    totalIntegrationCost (identity 3) = 3 ∧
-    totalIntegrationCost (reverse 3) = 6 := by decide
-
-/-- Level 4 (n=4): gap widens further (6 vs 12). -/
-theorem level4_costs :
-    totalIntegrationCost (identity 4) = 6 ∧
-    totalIntegrationCost (reverse 4) = 12 := by decide
-
-/-- The absolute cost gap grows with embedding depth. -/
-theorem gap_grows :
-    totalIntegrationCost (reverse 3) - totalIntegrationCost (identity 3) >
-    totalIntegrationCost (reverse 2) - totalIntegrationCost (identity 2) := by
-  decide
-
-/-- Crossed is strictly cheaper for n ≥ 2.
-
-    Proof by element-wise comparison via `Finset.sum_lt_sum`: at each verb
-    position k ∈ {1,…,n}, unintegratedCount (identity n) ≤ unintegratedCount
-    (reverse n), with strict inequality at k = 1 (the first verb heard). -/
-theorem crossed_lt_nested (n : Nat) (h : n ≥ 2) :
-    totalIntegrationCost (identity n) < totalIntegrationCost (reverse n) := by
-  unfold totalIntegrationCost
-  apply Finset.sum_lt_sum
-  · intro i hi
-    have him := Finset.mem_range.mp hi
-    rw [identity_unintegratedCount, reverse_unintegratedCount]
-    rw [Nat.min_eq_left (by omega)]
-    split <;> omega
-  · exact ⟨0, Finset.mem_range.mpr (by omega), by
-      rw [identity_unintegratedCount, reverse_unintegratedCount,
-          Nat.min_eq_left (by omega), if_neg (show ¬(0 + 1 ≥ n) from by omega)]
-      omega⟩
-
--- ============================================================================
--- §3: Dependency Length Invariance
--- ============================================================================
-
-/-- Total NP-verb dependency length across all n pairs. -/
-def totalNPVerbDist {n : Nat} (σ : VerbClusterBinding n) : Nat :=
-  ∑ i ∈ Finset.range n, if hi : i < n then npVerbDist n σ ⟨i, hi⟩ else 0
-
-/-- Cross-serial total distance = n². -/
-private theorem crossSerial_dist_sq (n : Nat) :
-    totalNPVerbDist (identity n) = n * n := by
-  simp only [totalNPVerbDist]
-  have : ∀ i ∈ Finset.range n,
-      (if hi : i < n then npVerbDist n (identity n) ⟨i, hi⟩ else 0) = n := by
-    intro i hi; have him := Finset.mem_range.mp hi
-    simp only [show i < n from him, dite_true, npVerbDist, identity, Equiv.refl_apply]; omega
-  rw [Finset.sum_congr rfl this]
-  simp [Finset.sum_const, Finset.card_range, Nat.nsmul_eq_mul]
-
-/-- Nested total distance = n² (sum of first n odd numbers). -/
-private theorem nested_dist_sq (n : Nat) :
-    totalNPVerbDist (reverse n) = n * n := by
-  unfold totalNPVerbDist
+private theorem countP_dite_lt_range (n k : ℕ) :
+    (List.range n).countP (λ i => if _ : i < n then decide (i < k) else false) = min k n := by
   induction n with
   | zero => simp
   | succ m ih =>
-    rw [Finset.sum_range_succ]
-    have hLast : (if hi : m < m + 1 then npVerbDist (m + 1) (reverse (m + 1)) ⟨m, hi⟩ else 0) = 1 := by
-      simp only [show m < m + 1 from by omega, dite_true, npVerbDist, reverse, Equiv.coe_fn_mk]; omega
-    rw [hLast]
-    have hStep : ∀ i ∈ Finset.range m,
-        (if hi : i < m + 1 then npVerbDist (m + 1) (reverse (m + 1)) ⟨i, hi⟩ else 0) =
-        (if hi : i < m then npVerbDist m (reverse m) ⟨i, hi⟩ else 0) + 2 := by
-      intro i hi; have him := Finset.mem_range.mp hi
-      simp only [show i < m + 1 from by omega, show i < m from him, dite_true,
-                  npVerbDist, reverse, Equiv.coe_fn_mk]; omega
-    rw [Finset.sum_congr rfl hStep, Finset.sum_add_distrib,
-        Finset.sum_const, Finset.card_range, Nat.nsmul_eq_mul, ih]
-    rw [Nat.add_mul, Nat.mul_add, Nat.mul_one, Nat.one_mul]; omega
+    rw [List.range_succ, List.countP_append, List.countP_cons, List.countP_nil]
+    simp only [show m < m + 1 from by omega, dite_true]
+    have : (List.range m).countP (λ i => if _ : i < m + 1 then decide (i < k) else false) =
+           (List.range m).countP (λ i => if _ : i < m then decide (i < k) else false) := by
+      apply List.countP_congr; intro i hi; simp only [List.mem_range] at hi
+      simp [show i < m from hi, show i < m + 1 from by omega]
+    rw [this, ih]; by_cases h : m < k <;> simp [h] <;> omega
 
-/-- General case: both patterns yield total distance n². -/
-theorem dep_length_equal (n : Nat) :
-    totalNPVerbDist (identity n) = totalNPVerbDist (reverse n) := by
-  rw [crossSerial_dist_sq, nested_dist_sq]
+/-- Crossed integration: `min k n` NPs are integrated after `k` verbs. -/
+theorem identity_integratedCount (k : ℕ) :
+    integratedCount (identity n) k = min k n := by
+  cases n with
+  | zero => simp [integratedCount]
+  | succ m => simp only [integratedCount, identity, Equiv.refl_apply, Fin.val_mk]
+              exact countP_dite_lt_range (m + 1) k
 
--- ============================================================================
--- §4: Formal–Processing Dissociation
--- ============================================================================
+private theorem reverse_max_eq (m i : ℕ) (hi : i < m + 1) :
+    Nat.max (m + 1 - 1 - 0) (m + 1 - 1 - i) = m := by
+  simp only [Nat.add_sub_cancel, Nat.sub_zero]
+  exact Nat.max_eq_left (by omega)
 
-/-- Crossed dependencies are formally harder (mildly context-sensitive) but
-    psycholinguistically easier — formal complexity ≠ processing complexity.
+/-- Nested integration: nothing integrates until all `n` verbs are heard. -/
+theorem reverse_integratedCount (k : ℕ) :
+    integratedCount (reverse n) k = if k ≥ n then n else 0 := by
+  cases n with
+  | zero => simp [integratedCount]
+  | succ m =>
+    simp only [integratedCount, Features.VerbClusterBinding.reverse, Equiv.coe_fn_mk, Fin.val_mk]
+    by_cases hk : k ≥ m + 1
+    · rw [if_pos hk]
+      have hall : ∀ i ∈ List.range (m + 1),
+          (if _ : i < m + 1 then
+            decide (Nat.max (m + 1 - 1 - 0) (m + 1 - 1 - i) < k) else false) = true := by
+        intro i hi; simp only [List.mem_range] at hi
+        simp only [show i < m + 1 from hi, dite_true, decide_eq_true_eq]
+        rw [reverse_max_eq m i hi]; omega
+      have h := List.countP_eq_length.mpr hall
+      rw [List.length_range] at h; exact h
+    · rw [if_neg hk]
+      apply List.countP_eq_zero.mpr
+      intro i hi; simp only [List.mem_range] at hi
+      simp only [show i < m + 1 from hi, dite_true, decide_eq_true_eq]
+      rw [reverse_max_eq m i hi]; omega
 
-    Two independent arguments against PDA parsing:
-    1. Dutch is comprehensible at Level 2 despite requiring MCS power
-       (a PDA cannot handle crossed deps at any depth)
-    2. Dutch is *easier* than German at Level 3+
-       (a PDA predicts nested should be easier or equal) -/
-theorem formal_processing_dissociation :
-    totalIntegrationCost (identity 3) < totalIntegrationCost (reverse 3) := by
-  decide
+theorem identity_unintegratedCount (k : ℕ) :
+    unintegratedCount (identity n) k = n - min k n := by
+  simp [unintegratedCount, identity_integratedCount]
 
-/-- Integration cost difference is NOT explained by dependency length. -/
-theorem cost_differs_despite_equal_dep_length :
-    totalIntegrationCost (identity 3) < totalIntegrationCost (reverse 3) ∧
-    totalNPVerbDist (identity 3) = totalNPVerbDist (reverse 3) :=
-  ⟨by decide, by decide⟩
+theorem reverse_unintegratedCount (k : ℕ) :
+    unintegratedCount (reverse n) k = if k ≥ n then 0 else n := by
+  simp only [unintegratedCount, reverse_integratedCount]; split <;> omega
 
--- ============================================================================
--- §5: Experimental Data
--- ============================================================================
+/-! ### Cumulative cost and its closed forms -/
 
-/-- Language group. German was tested with two verb-form versions (infinitive
-    and past participle) due to normative disagreement among informants. -/
-inductive LangGroup where
-  | dutch | germanInf | germanPart
-  deriving DecidableEq, Repr
+/-- Cumulative unintegrated NPs across the cluster: after each verb `k + 1`,
+how many NPs still float without a matrix connection. -/
+def totalIntegrationCost (σ : VerbClusterBinding n) : ℕ :=
+  ∑ k ∈ Finset.range n, unintegratedCount σ (k + 1)
 
-/-- Test sentence comprehensibility ratings × 100 (Table 1).
-    Original scale: 1 = easy, 9 = hard. Levels 1–4 indexed 0–3. -/
-def testRating : LangGroup → Fin 4 → Nat
-  | .dutch,      0 => 114 | .dutch,      1 => 234
-  | .dutch,      2 => 542 | .dutch,      3 => 766
-  | .germanInf,  0 => 109 | .germanInf,  1 => 277
-  | .germanInf,  2 => 616 | .germanInf,  3 => 826
-  | .germanPart, 0 => 124 | .germanPart, 1 => 263
-  | .germanPart, 2 => 581 | .germanPart, 3 => 766
+/-- The crossed (Dutch) cluster costs `n(n−1)/2`: one NP integrates per verb. -/
+theorem totalIntegrationCost_identity (n : ℕ) :
+    totalIntegrationCost (identity n) = n * (n - 1) / 2 := by
+  unfold totalIntegrationCost
+  have h : ∀ k ∈ Finset.range n, unintegratedCount (identity n) (k + 1) = n - 1 - k := by
+    intro k hk
+    have hkn := Finset.mem_range.mp hk
+    rw [identity_unintegratedCount, Nat.min_eq_left (by omega)]
+    omega
+  rw [Finset.sum_congr rfl h, Finset.sum_range_reflect (λ j => j) n]
+  have h2 := Finset.sum_range_id_mul_two n
+  omega
 
-/-- Paraphrase sentence ratings × 100 (Table 1, Levels 2–4 indexed 0–2).
-    Paraphrases express the same propositions using right-branching structure,
-    controlling for propositional complexity. -/
-def paraRating : LangGroup → Fin 3 → Nat
-  | .dutch,      0 => 211 | .dutch,      1 => 406 | .dutch,      2 => 594
-  | .germanInf,  0 => 202 | .germanInf,  1 => 413 | .germanInf,  2 => 589
-  | .germanPart, 0 => 236 | .germanPart, 1 => 385 | .germanPart, 2 => 562
+/-- The nested (German) cluster costs `n(n−1)`: all `n` NPs float until the
+last verb. -/
+theorem totalIntegrationCost_reverse (n : ℕ) :
+    totalIntegrationCost (reverse n) = n * (n - 1) := by
+  unfold totalIntegrationCost
+  cases n with
+  | zero => simp
+  | succ m =>
+    have h : ∀ k ∈ Finset.range m, unintegratedCount (reverse (m + 1)) (k + 1) = m + 1 := by
+      intro k hk
+      have hkm := Finset.mem_range.mp hk
+      rw [reverse_unintegratedCount, if_neg (by omega)]
+    rw [Finset.sum_range_succ, Finset.sum_const_nat h, Finset.card_range,
+        reverse_unintegratedCount, if_pos (by omega)]
+    have := Nat.mul_comm m (m + 1)
+    simp only [Nat.add_sub_cancel]
+    omega
 
-/-- Comprehension accuracy × 100 for Test sentences (Table 3).
-    Questions tested whether each subject NP was correctly associated with
-    its predicate verb phrase. Levels 2–3 indexed 0–1. -/
-def testComprehension : LangGroup → Fin 2 → Nat
-  | .dutch,      0 => 168 | .dutch,      1 => 117
-  | .germanInf,  0 => 173 | .germanInf,  1 =>  89
-  | .germanPart, 0 => 158 | .germanPart, 1 =>  79
+/-- Nested costs exactly twice crossed, at every cluster size. -/
+theorem reverse_eq_two_mul_identity (n : ℕ) :
+    totalIntegrationCost (reverse n) = 2 * totalIntegrationCost (identity n) := by
+  rw [totalIntegrationCost_identity, totalIntegrationCost_reverse]
+  have h2 := Finset.sum_range_id_mul_two n
+  omega
 
-/-- Comprehension accuracy × 100 by NP position at Level 3, Test (Table 4).
-    NP1 = matrix subject (highest clause), NP3 = most deeply embedded. -/
-def comprehensionByNP : LangGroup → Fin 3 → Nat
-  | .dutch,      0 => 117 | .dutch,      1 =>  83 | .dutch,      2 => 150
-  | .germanInf,  0 =>  88 | .germanInf,  1 =>  67 | .germanInf,  2 => 112
-  | .germanPart, 0 => 102 | .germanPart, 1 =>  38 | .germanPart, 2 =>  97
+/-- Crossed is strictly cheaper as soon as the cluster has two verbs. -/
+theorem crossed_lt_nested (hn : 2 ≤ n) :
+    totalIntegrationCost (identity n) < totalIntegrationCost (reverse n) := by
+  rw [totalIntegrationCost_identity, totalIntegrationCost_reverse]
+  have h : 0 < n * (n - 1) := Nat.mul_pos (by omega) (by omega)
+  omega
 
-/-- Test−Paraphrase error rate difference × 100 by NP at Level 3 (Table 5).
-    Higher = more syntactic disruption (Test harder relative to Paraphrase). -/
-def errorDiffByNP : LangGroup → Fin 3 → Nat
-  | .dutch,      0 => 11 | .dutch,      1 => 59 | .dutch,      2 =>  0
-  | .germanInf,  0 => 32 | .germanInf,  1 => 91 | .germanInf,  2 => 41
-  | .germanPart, 0 => 31 | .germanPart, 1 => 67 | .germanPart, 2 => 36
+/-- The absolute gap equals the whole crossed cost `n(n−1)/2` — 1 at two verbs
+(where the experiment finds no Dutch–German difference), 3 at three, 6 at four
+(where the Dutch advantage is large). -/
+theorem cost_gap (n : ℕ) :
+    totalIntegrationCost (reverse n) - totalIntegrationCost (identity n) =
+      totalIntegrationCost (identity n) := by
+  rw [reverse_eq_two_mul_identity]; omega
 
--- ============================================================================
--- §6: Data Confirms Model
--- ============================================================================
+/-- The experiment's Levels 2–4 (clusters of 2–4 verbs), instantiating the
+closed forms: crossed costs 1, 3, 6; nested costs 2, 6, 12. -/
+theorem level_costs :
+    (totalIntegrationCost (identity 2), totalIntegrationCost (identity 3),
+      totalIntegrationCost (identity 4)) = (1, 3, 6) ∧
+    (totalIntegrationCost (reverse 2), totalIntegrationCost (reverse 3),
+      totalIntegrationCost (reverse 4)) = (2, 6, 12) := by
+  simp [totalIntegrationCost_identity, totalIntegrationCost_reverse]
 
-/-- At Level 2, German/Participle does not differ from Dutch (spread = 29).
-    German/Infinitive is slightly worse throughout (spread = 43). The paper
-    reports a significant overall Ger/Inf disadvantage but no difference
-    for Ger/Part vs Dutch at Level 2. -/
-theorem level2_german_part_similar :
-    testRating .germanPart 1 - testRating .dutch 1 ≤ 30 := by decide
+/-! ### The stack argument -/
 
-/-- At Level 3, Dutch rates Test sentences as easier than both German groups. -/
-theorem level3_dutch_easier_rating :
-    testRating .dutch 2 < testRating .germanInf 2 ∧
-    testRating .dutch 2 < testRating .germanPart 2 := by decide
-
-/-- At Level 3, Dutch comprehension accuracy exceeds both German groups. -/
-theorem level3_dutch_better_comprehension :
-    testComprehension .dutch 1 > testComprehension .germanInf 1 ∧
-    testComprehension .dutch 1 > testComprehension .germanPart 1 := by decide
-
-/-- The syntactic complexity effect (Test − Paraphrase) grows faster for
-    both German groups than Dutch from Level 2 to Level 3, paralleling the
-    model's prediction that the integration cost gap grows with depth. -/
-theorem syntactic_effect_grows_faster_for_german :
-    let dutch_l2 := testRating .dutch 1 - paraRating .dutch 0
-    let dutch_l3 := testRating .dutch 2 - paraRating .dutch 1
-    let gerInf_l2 := testRating .germanInf 1 - paraRating .germanInf 0
-    let gerInf_l3 := testRating .germanInf 2 - paraRating .germanInf 1
-    let gerPart_l2 := testRating .germanPart 1 - paraRating .germanPart 0
-    let gerPart_l3 := testRating .germanPart 2 - paraRating .germanPart 1
-    (gerInf_l3 - dutch_l3) > (gerInf_l2 - dutch_l2) ∧
-    (gerPart_l3 - dutch_l3) > (gerPart_l2 - dutch_l2) := by decide
-
--- ============================================================================
--- §7: NP-by-NP Analysis (Tables 4–5)
--- ============================================================================
-
-/-- NP2 (middle NP) is hardest for all three groups (Table 4, Test).
-    This is an interference effect: NP2 is distinguished by neither primacy
-    (NP1) nor recency (NP3), making it hardest to retrieve regardless of
-    the dependency pattern. -/
-theorem np2_hardest :
-    comprehensionByNP .dutch 1 < comprehensionByNP .dutch 0 ∧
-    comprehensionByNP .dutch 1 < comprehensionByNP .dutch 2 ∧
-    comprehensionByNP .germanInf 1 < comprehensionByNP .germanInf 0 ∧
-    comprehensionByNP .germanInf 1 < comprehensionByNP .germanInf 2 ∧
-    comprehensionByNP .germanPart 1 < comprehensionByNP .germanPart 0 ∧
-    comprehensionByNP .germanPart 1 < comprehensionByNP .germanPart 2 := by
-  decide
-
-/-- Dutch advantage is largest for NP3 (most deeply embedded clause).
-
-    Dutch shows ZERO Test−Para error for NP3 (errorDiffByNP .dutch 2 = 0),
-    while both German groups show substantial error (41, 36). The paper
-    explains: in Dutch, NP3's verb (V₃) arrives last and integrates into
-    an already-built matrix structure. In German, NP3's verb (V₃) arrives
-    first — the proposition is immediately parseable but floats without
-    a matrix root, so the information decays before it can be used. -/
-theorem dutch_np3_advantage :
-    errorDiffByNP .dutch 2 = 0 ∧
-    errorDiffByNP .germanInf 2 > 0 ∧
-    errorDiffByNP .germanPart 2 > 0 := by decide
-
--- ============================================================================
--- §8: PDA Counter-Model
--- ============================================================================
-
-/-- A push-down automaton (PDA) parsing model predicts that difficulty
-    should track the Chomsky hierarchy: context-free patterns (nested) should
-    be easier than mildly-context-sensitive patterns (crossed), because PDAs
-    can parse the former but not the latter ([evers-1975]).
-
-    The data refutes this: crossed is empirically easier at n ≥ 3.
-    This is the paper's central argument against stack-based parsing. -/
-theorem pda_refuted :
-    -- Empirical reality: crossed is easier (lower integration cost)
-    totalIntegrationCost (identity 3) < totalIntegrationCost (reverse 3) ∧
-    -- Confirmed by comprehensibility ratings
-    testRating .dutch 2 < testRating .germanInf 2 ∧
-    -- Confirmed by comprehension accuracy
-    testComprehension .dutch 1 > testComprehension .germanInf 1 :=
-  ⟨by decide, by decide, by decide⟩
-
--- ============================================================================
--- §9: Summary
--- ============================================================================
-
-/-- The model predicts crossed < nested, the data confirms it, and
-    dependency length cannot explain the difference. -/
-theorem model_matches_data :
-    totalIntegrationCost (identity 3) < totalIntegrationCost (reverse 3) ∧
-    testRating .dutch 2 < testRating .germanInf 2 ∧
-    testComprehension .dutch 1 > testComprehension .germanInf 1 ∧
-    totalNPVerbDist (identity 3) = totalNPVerbDist (reverse 3) :=
-  ⟨by decide, by decide, by decide, by decide⟩
+/-- The formal side of the paper's argument against the push-down store: the
+nested (German) binding is projective — the pattern a push-down store can parse
+— while the crossed (Dutch) binding is not ([bresnan-etal-1982]). The
+processing facts run the other way: the non-projective pattern is the cheap
+one, so parsing difficulty does not track stack-parsability. -/
+theorem nonprojective_is_cheaper (hn : 2 ≤ n) :
+    isProjective (identity n) = false ∧ isProjective (reverse n) = true ∧
+    totalIntegrationCost (identity n) < totalIntegrationCost (reverse n) :=
+  ⟨identity_not_projective hn, reverse_is_projective, crossed_lt_nested hn⟩
 
 end BachBrownMarslenWilson1986
