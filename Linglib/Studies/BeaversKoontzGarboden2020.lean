@@ -1,13 +1,12 @@
 import Linglib.Semantics.ArgumentStructure.Root.Defs
 import Linglib.Semantics.ArgumentStructure.VerbDenotation
 import Linglib.Semantics.ArgumentStructure.EventStructure
+import Linglib.Data.Examples.BeaversKoontzGarboden2020
 
 /-!
 # Beavers & Koontz-Garboden (2020): The Roots of Verbal Meaning
 
-[beavers-koontz-garboden-2020]
-
-The six representative roots of the book's root typology (ch. 5), and
+The six representative roots of the book's root typology (ch. 5, (12)), and
 the falsification of the Bifurcation Thesis of Roots ([embick-2009];
 [arad-2005]) and of Manner/Result Complementarity
 ([rappaport-hovav-levin-2010]).
@@ -44,6 +43,15 @@ which root types are attested.
 The thesis predicates and the sublexical *again* operator are carried
 here as single-consumer apparatus (this study is their only consumer);
 they graduate back to the theory layer when a second study lands.
+
+## References
+
+* [beavers-koontz-garboden-2020]: The Roots of Verbal Meaning.
+* [embick-2009]: Roots, states, and stative passives.
+* [arad-2005]: Roots and Patterns: Hebrew Morpho-syntax.
+* [rappaport-hovav-levin-2010]: Reflections on manner/result
+  complementarity.
+* [von-stechow-1996]: The different readings of wieder.
 -/
 
 namespace Verb.Root.Kinds
@@ -264,9 +272,9 @@ def blossom : Root := ⟨"blossom", {.becomesState "flowering"}, {}⟩
 def crack : Root := ⟨"crack", {.becomesState "fissured", .hasCause}, {}⟩
 
 /-- √hand — manner + cause + result, adjoined position. The
-    possession result is non-cancelable ("#Mary handed John the book,
-    but he never got it"), so it is root-entailed rather than
-    implicated ([beavers-koontz-garboden-2020] ch. 3). -/
+    possession result is non-cancelable ("Mary handed John the book,
+    #but it never came to be on his person", ch. 3 (48)), so it is
+    root-entailed rather than implicated. -/
 def hand : Root := ⟨"hand",
   {.hasManner "by-hand-transfer",
    .becomesState "in-recipient-possession",
