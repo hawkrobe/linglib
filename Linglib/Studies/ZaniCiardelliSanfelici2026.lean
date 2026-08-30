@@ -518,14 +518,12 @@ the SDA inference proper — verifiable at the Lean substrate level via:
 
 - [santorio-2018]'s `Distributive` (per-alternative
   homogeneity, `Studies/Santorio2018.lean`)
-- [bar-lev-fox-2020]'s `BarLevFox2020.bar_lev_fox_sda` (Innocent
+- [bar-lev-fox-2020]'s `BarLevFox2020.sda` (Innocent
   Inclusion derivation, `Studies/BarLevFox2020.lean`)
 
-The cross-mechanism agreement
-`BarLevFox2020.bar_lev_fox_sda_implies_santorio_sda_inference` proves
-that on the shared 4-world `SDAWorld` model, Bar-Lev/Fox's
-`Exh^{IE+II}` verdict entails Santorio's distributive verdict on the SDA
-inference proper. Bar-Lev/Fox is **strictly stronger** (also derives
+On any model meeting Bar-Lev and Fox's conditions, their `Exh^{IE+II}`
+verdict on `(p ∨ q) □→ r` entails Santorio's distributive verdict on
+the disjuncts. Bar-Lev/Fox is **strictly stronger** (also derives
 `¬((p∧q)□→r)`); Santorio is silent on the conjunctive negation. They
 **agree on the SDA inference itself** — the empirical pattern this
 study measures.
@@ -538,35 +536,46 @@ The empirical finding (DCR→SDA, AR nearly absent) thus distinguishes
 the two only at the developmental level, not the mature-grammar level.
 -/
 
-/-- **Substrate witness for the mature-grammar agreement**: on the
-    shared 4-world `SDAWorld` model from
-    `BarLevFox2020.lean`, Bar-Lev/Fox's `Exh^{IE+II}` verdict at
-    `.actual` entails Santorio's distributive verdict on the SDA
-    inference. Direct re-export of the cross-framework theorem
-    proved in `BarLevFox2020.lean §7`. -/
-theorem bar_lev_fox_and_santorio_agree_on_mature_sda :
-    ∀ w, Exhaustification.exhIEII
-            BarLevFox2020.sdaALT
-            BarLevFox2020.sdaPrejacent w →
-      Distributive
-        BarLevFox2020.sdaSim
-        BarLevFox2020.sdaSantorioAlts
-        BarLevFox2020.sdaR w :=
-  BarLevFox2020.bar_lev_fox_sda_implies_santorio_sda_inference
+section MatureAgreement
 
-/-- **Bar-Lev/Fox derives a STRICTLY STRONGER verdict than Santorio**
-    on the same model: in addition to the SDA inference proper,
-    Bar-Lev/Fox's `Exh^{IE+II}` derives `¬((p∧q)□→r)`. This is the
-    Innocent-Exclusion-of-the-conjunctive-alternative component
-    (paper eqn 67 p. 206) that has no analogue in Santorio's
-    homogeneity-based derivation. -/
-theorem bar_lev_fox_strictly_stronger_than_santorio :
-    ∀ w, Exhaustification.exhIEII
-            BarLevFox2020.sdaALT
-            BarLevFox2020.sdaPrejacent w →
-      ¬ BarLevFox2020.sdaPandQbox w := by
-  intro w h
-  exact (BarLevFox2020.bar_lev_fox_sda w h).2.2
+open BarLevFox2020
 
+variable {W : Type*} [DecidableEq W] [Fintype W] {sim : SimilarityOrdering W}
+  {P Q : Finset W} {r : W → Prop} [DecidablePred r]
+  (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁)
+  (h₁ : ∃ w ∈ conditional sim (λ v => v ∈ P ∨ v ∈ Q) r,
+    w ∉ conditional sim (· ∈ Q) r ∪ conditional sim (λ v => v ∈ P ∧ v ∈ Q) r)
+  (h₂ : ∃ w ∈ conditional sim (λ v => v ∈ P ∨ v ∈ Q) r,
+    w ∉ conditional sim (· ∈ P) r ∪ conditional sim (λ v => v ∈ P ∧ v ∈ Q) r)
+  (h : ∃ w ∈ conditional sim (· ∈ P) r ∩ conditional sim (· ∈ Q) r,
+    w ∉ conditional sim (λ v => v ∈ P ∧ v ∈ Q) r)
+include htot h₁ h₂ h
+
+/-- **Mature-grammar agreement**: Bar-Lev/Fox's `Exh^{IE+II}` verdict
+    on `(p ∨ q) □→ r` entails Santorio's distributive verdict on the
+    SDA inference. -/
+theorem bar_lev_fox_and_santorio_agree_on_mature_sda (w : W)
+    (hw : w ∈ Exhaustification.exhIEII (sdaAlts sim (· ∈ P) (· ∈ Q) r)
+      (conditional sim (λ v => v ∈ P ∨ v ∈ Q) r)) :
+    Distributive sim [P, Q] r w := by
+  rw [sda htot h₁ h₂ h] at hw
+  intro A hA
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hA
+  rcases hA with rfl | rfl
+  exacts [hw.1.1, hw.1.2]
+
+/-- **Bar-Lev/Fox derives a STRICTLY STRONGER verdict than Santorio**:
+    in addition to the SDA inference proper, `Exh^{IE+II}` derives
+    `¬((p∧q)□→r)`, the Innocent-Exclusion-of-the-conjunctive-alternative
+    component that has no analogue in Santorio's homogeneity-based
+    derivation. -/
+theorem bar_lev_fox_strictly_stronger_than_santorio (w : W)
+    (hw : w ∈ Exhaustification.exhIEII (sdaAlts sim (· ∈ P) (· ∈ Q) r)
+      (conditional sim (λ v => v ∈ P ∨ v ∈ Q) r)) :
+    w ∉ conditional sim (λ v => v ∈ P ∧ v ∈ Q) r := by
+  rw [sda htot h₁ h₂ h] at hw
+  exact hw.2
+
+end MatureAgreement
 
 end ZaniCiardelliSanfelici2026

@@ -785,6 +785,42 @@ theorem isInnocentlyExcludable_iff_exhMW_entails_neg (a : Set World) (ha : a ∈
       have hna_in_union : (aᶜ) ∈ E ∪ {aᶜ} := Set.mem_union_right E rfl
       exact hE_union_sub_E hna_in_union
 
+-- Representative minimal worlds
+
+/-- A set of prejacent worlds **represents the minimal worlds** when every prejacent world lies
+above one of its members and no member lies strictly below another. -/
+structure IsMinimalCover (M : Set World) : Prop where
+  mem : ∀ v ∈ M, φ v
+  le : ∀ w, φ w → ∃ v ∈ M, v ≤[ALT] w
+  antisymm : ∀ v ∈ M, ∀ u ∈ M, (u ≤[ALT] v) → v ≤[ALT] u
+
+section MinimalCover
+
+variable {ALT φ} {M : Set World}
+
+theorem IsMinimalCover.exhMW_eq (hM : IsMinimalCover ALT φ M) :
+    exhMW ALT φ = {u | φ u ∧ ∃ v ∈ M, (v ≤[ALT] u) ∧ (u ≤[ALT] v)} := by
+  ext u
+  refine ⟨λ ⟨hu, hmin⟩ => ⟨hu, ?_⟩, λ ⟨hu, v, hv, hvu, huv⟩ => ⟨hu, ?_⟩⟩
+  · obtain ⟨v, hv, hvu⟩ := hM.le u hu
+    exact ⟨v, hv, hvu, not_not.1 λ h => hmin ⟨v, hM.mem v hv, hvu, h⟩⟩
+  · rintro ⟨x, hx, hxu, hnux⟩
+    obtain ⟨v', hv', hv'x⟩ := hM.le x hx
+    exact hnux (leALT_trans ALT _ _ _ huv (leALT_trans ALT _ _ _
+      (hM.antisymm v hv v' hv' (leALT_trans ALT _ _ _ hv'x (leALT_trans ALT _ _ _ hxu huv))) hv'x))
+
+/-- An alternative is innocently excludable iff it fails at every representative minimal
+world. -/
+theorem IsMinimalCover.isInnocentlyExcludable_iff (hM : IsMinimalCover ALT φ M) {a : Set World}
+    (ha : a ∈ ALT) : IsInnocentlyExcludable ALT φ a ↔ ∀ v ∈ M, v ∉ a := by
+  rw [isInnocentlyExcludable_iff_exhMW_entails_neg ALT φ a ha, hM.exhMW_eq]
+  constructor
+  · exact λ h v hv hva => h ⟨hM.mem v hv, v, hv, leALT_refl _ _, leALT_refl _ _⟩ hva
+  · rintro h u ⟨_, v, hv, _, huv⟩ hua
+    exact h v hv (huv a ha hua)
+
+end MinimalCover
+
 /--
 Corollary 8 (Spector p.12):
 exh_ie(ALT, φ) = φ ∧ ⋂₀ {¬a : a ∈ ALT ∧ exh_mw(ALT, φ) ⊆ ¬a}

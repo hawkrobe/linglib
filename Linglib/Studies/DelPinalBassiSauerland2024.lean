@@ -26,7 +26,7 @@ projection of the presupposition gives universal, universal-negative, and existe
 free choice, (62), (63), (75) (`universal_fc`, `universal_negative_fc`, `existential_fc`),
 and under *exactly one* (§5.2) the salient readings of (76)–(77) of
 [gotzner-romoli-santorio-2020] (`exactly_one_fc`, `exactly_one_double_prohibition`).
-The five-world model and alternative set are [bar-lev-fox-2020]'s.
+The alternative set and the free-choice strengthening are [bar-lev-fox-2020]'s.
 -/
 
 namespace DelPinalBassiSauerland2024
@@ -37,93 +37,103 @@ open Presupposition.Context
 
 /-! ### `pex^{IE+II}` on `◇(p ∨ q)` (§2) -/
 
-/-- (14): `pex^{IE+II}[◇(p ∨ q)]` on the five-world model. -/
-def pexFC : PartialProp FCWorld := pexIEII_full fcALT fcPrejacent
+section FreeChoice
 
-theorem permA_mem_II : IsInnocentlyIncludable fcALT fcPrejacent permA :=
-  mem_II_of_cell_witness fcALT fcPrejacent (by simp [fcALT]) .separatelyAB separatelyAB_in_cell
-    trivial
+variable {W : Type*} (R : W → W → Prop) (a b : Set W)
 
-theorem permB_mem_II : IsInnocentlyIncludable fcALT fcPrejacent permB :=
-  mem_II_of_cell_witness fcALT fcPrejacent (by simp [fcALT]) .separatelyAB separatelyAB_in_cell
-    trivial
+/-- (14): `pex^{IE+II}[◇(p ∨ q)]`. -/
+def pexFC : PartialProp W := pexIEII_full (fcAlts R a b) (poss R (a ∪ b))
 
-theorem permAorB_iff (w : FCWorld) : permAorB w ↔ permA w ∨ permB w := by
-  cases w <;> simp [permAorB, permA, permB]
+variable {R a b} (h₁ : ∃ w ∈ poss R a, w ∉ poss R b) (h₂ : ∃ w ∈ poss R b, w ∉ poss R a)
+  (h : ∃ w ∈ poss R a ∩ poss R b, w ∉ poss R (a ∩ b)) {w : W}
+include h₁ h₂ h
 
-variable {w : FCWorld}
+theorem poss_left_mem_II : IsInnocentlyIncludable (fcAlts R a b) (poss R (a ∪ b)) (poss R a) := by
+  rw [IsInnocentlyIncludable, II_fcAlts h₁ h₂ h]; simp
+
+theorem poss_right_mem_II : IsInnocentlyIncludable (fcAlts R a b) (poss R (a ∪ b)) (poss R b) := by
+  rw [IsInnocentlyIncludable, II_fcAlts h₁ h₂ h]; simp
 
 /-- (14): the presupposed homogeneity `◇p ↔ ◇q` with the asserted `◇(p ∨ q)` gives free
 choice. -/
-theorem pex_fc (h : pexFC.holds w) : permA w ∧ permB w := by
-  have hiff : permA w ↔ permB w :=
-    h.1.2 permA ⟨permA_mem_II, by simp [fcALT]⟩ permB ⟨permB_mem_II, by simp [fcALT]⟩
-  rcases (permAorB_iff w).1 h.2 with hA | hB
+theorem pex_fc (hw : (pexFC R a b).holds w) : w ∈ poss R a ∧ w ∈ poss R b := by
+  have hiff : w ∈ poss R a ↔ w ∈ poss R b :=
+    hw.1.2 (poss R a) ⟨poss_left_mem_II h₁ h₂ h, by simp [fcAlts]⟩ (poss R b)
+      ⟨poss_right_mem_II h₁ h₂ h, by simp [fcAlts]⟩
+  rcases poss_union.le hw.2 with hA | hB
   exacts [⟨hA, hiff.1 hA⟩, ⟨hiff.2 hB, hB⟩]
 
+omit h₁ h₂ h in
 /-- (16): negation denies the prejacent and leaves the presupposition, so `¬pex[◇(p ∨ q)]`
 is double prohibition. -/
-theorem pex_double_prohibition (h : pexFC.neg.holds w) : ¬ permA w ∧ ¬ permB w :=
-  ⟨fun hA => h.2 ((permAorB_iff w).2 (.inl hA)), fun hB => h.2 ((permAorB_iff w).2 (.inr hB))⟩
+theorem pex_double_prohibition (hw : (pexFC R a b).neg.holds w) :
+    w ∉ poss R a ∧ w ∉ poss R b :=
+  ⟨fun hA => hw.2 (poss_union.ge (.inl hA)), fun hB => hw.2 (poss_union.ge (.inr hB))⟩
 
-/-- `¬□T`, read on the five-world model: the alternatives to `¬□(T ∧ B)` — `¬□T`, `¬□B`,
-`¬□(T ∨ B)` — have the same innocent-exclusion/inclusion structure as those to `◇(p ∨ q)`,
-with `¬□T` in the place of `◇q` and `¬□B` in the place of `◇p`. -/
-abbrev notReqT : Set FCWorld := permB
+omit h₁ h₂ h in
+/-- (19a): `¬□(T ∧ B)` is `◇(¬T ∨ ¬B)`, whose alternatives `¬□T`, `¬□B`, `¬□(T ∨ B)` have the
+structure of those of `◇(p ∨ q)`, so `pex^{IE+II}` gives negative free choice. -/
+theorem pex_negative_fc {T B : Set W} (h₁ : ∃ w ∈ poss R Tᶜ, w ∉ poss R Bᶜ)
+    (h₂ : ∃ w ∈ poss R Bᶜ, w ∉ poss R Tᶜ)
+    (h : ∃ w ∈ poss R Tᶜ ∩ poss R Bᶜ, w ∉ poss R (Tᶜ ∩ Bᶜ)) (hw : (pexFC R Tᶜ Bᶜ).holds w) :
+    w ∉ nec R T ∧ w ∉ nec R B := by
+  simpa only [poss_compl, Set.mem_compl_iff] using pex_fc h₁ h₂ h hw
 
-/-- `¬□B` on the five-world model. -/
-abbrev notReqB : Set FCWorld := permA
-
-/-- (19a): `pex^{IE+II}[¬□(T ∧ B)]` gives negative free choice. -/
-theorem pex_negative_fc (h : pexFC.holds w) : notReqT w ∧ notReqB w := (pex_fc h).symm
-
-/-- (20): `¬pex^{IE+II}[□(T ∧ B)]` gives double requirement. -/
-theorem pex_double_requirement (h : pexFC.neg.holds w) : ¬ notReqT w ∧ ¬ notReqB w :=
-  (pex_double_prohibition h).symm
+omit h₁ h₂ h in
+/-- (20): `¬pex^{IE+II}[¬□(T ∧ B)]` gives double requirement. -/
+theorem pex_double_requirement {T B : Set W} (hw : (pexFC R Tᶜ Bᶜ).neg.holds w) :
+    w ∈ nec R T ∧ w ∈ nec R B := by
+  simpa only [poss_compl, Set.mem_compl_iff, not_not] using pex_double_prohibition hw
 
 /-! ### Free choice under negative factives (§3) -/
 
-variable (believes : (FCWorld → Prop) → FCWorld → Prop)
-
 /-- Under a negative factive the whole `pex` output is presupposed, so free choice is
 presupposed, (21a). -/
-theorem fc_presupposed_under_neg_factive
-    (h : (PartialProp.negFactive pexFC believes).presup w) : permA w ∧ permB w :=
-  pex_fc h
+theorem fc_presupposed_under_neg_factive (believes : (W → Prop) → W → Prop)
+    (hw : (PartialProp.negFactive (pexFC R a b) believes).presup w) :
+    w ∈ poss R a ∧ w ∈ poss R b :=
+  pex_fc h₁ h₂ h hw
 
+omit h₁ h₂ h in
 /-- The factive's assertion denies belief in the prejacent `◇(p ∨ q)`, hence belief in either
 disjunct, (21b). -/
-theorem pex_unaware_target (R : FCWorld → FCWorld → Prop)
-    (h : (PartialProp.negFactive pexFC (box R)).assertion w) :
-    ¬ box R permA w ∧ ¬ box R permB w :=
-  ⟨fun hA => h (box_mono R (by intro v hv; exact (permAorB_iff v).2 (.inl hv)) w hA),
-   fun hB => h (box_mono R (by intro v hv; exact (permAorB_iff v).2 (.inr hv)) w hB)⟩
-
-/-- `exh^{IE+II}[◇(p ∨ q)]`, fully assertive. -/
-def flatExhFC : Set FCWorld := exhIEII fcALT fcPrejacent
+theorem pex_unaware_target (R' : W → W → Prop)
+    (hw : (PartialProp.negFactive (pexFC R a b) (box R')).assertion w) :
+    ¬ box R' (poss R a) w ∧ ¬ box R' (poss R b) w :=
+  ⟨fun hA => hw (box_mono R' (λ _ hv => poss_union.ge (.inl hv)) w hA),
+   fun hB => hw (box_mono R' (λ _ hv => poss_union.ge (.inr hv)) w hB)⟩
 
 /-- With a flat `exh` complement the factive's assertion only denies belief in the
 exhaustified conjunction, which an attitude holder who believes free choice but not
-exclusivity satisfies (§3.1). -/
-theorem exh_unaware_too_weak :
-    ∃ R : FCWorld → FCWorld → Prop, (box R permA w ∧ box R permB w) ∧ ¬ box R flatExhFC w :=
-  ⟨fun _ v => v = .both, ⟨fun _ hv => hv ▸ trivial, fun _ hv => hv ▸ trivial⟩,
-   fun h => (h .both rfl).2.1 permAandB permAandB_is_ie trivial⟩
+exclusivity satisfies (§3.1): given a world permitting `p ∧ q`, believing only it. -/
+theorem exh_unaware_too_weak (hboth : ∃ w, w ∈ poss R (a ∩ b)) :
+    ∃ R' : W → W → Prop, (box R' (poss R a) w ∧ box R' (poss R b) w) ∧
+      ¬ box R' (exhIEII (fcAlts R a b) (poss R (a ∪ b))) w := by
+  obtain ⟨w₀, hw₀⟩ := hboth
+  refine ⟨fun _ v => v = w₀, ⟨fun _ hv => hv ▸ (poss_inter_subset hw₀).1,
+    fun _ hv => hv ▸ (poss_inter_subset hw₀).2⟩, fun hbox => ?_⟩
+  have := hbox w₀ rfl
+  rw [freeChoice h₁ h₂ h] at this
+  exact this.2 hw₀
 
 /-! ### Filtering free choice (§4) -/
 
 /-- In `A or pex[◇(p ∨ q)]` the homogeneity presupposition is satisfied in the second
 disjunct's local context `c ∧ ¬A`, and free choice follows there. -/
-theorem filtering_fc (c : Set FCWorld) (A : PartialProp FCWorld) (hc : w ∈ c)
-    (hA : ¬ A.assertion w) (hf : presupSatisfied (localCtxSecondDisjunct c A) pexFC)
-    (hassert : pexFC.assertion w) : permA w ∧ permB w :=
-  pex_fc ⟨hf ⟨hc, hA⟩, hassert⟩
+theorem filtering_fc (c : Set W) (A : PartialProp W) (hc : w ∈ c)
+    (hA : ¬ A.assertion w) (hf : presupSatisfied (localCtxSecondDisjunct c A) (pexFC R a b))
+    (hassert : (pexFC R a b).assertion w) : w ∈ poss R a ∧ w ∈ poss R b :=
+  pex_fc h₁ h₂ h ⟨hf ⟨hc, hA⟩, hassert⟩
 
+omit h₁ h₂ h in
 /-- A flat `exh` second disjunct has nothing to filter: its free-choice content is
 assertive and stays inside the disjunct (§4.1). -/
-theorem exh_filtering_trivial (c : Set FCWorld) (A : PartialProp FCWorld) :
-    presupSatisfied (localCtxSecondDisjunct c A) (PartialProp.ofProp flatExhFC) :=
+theorem exh_filtering_trivial (c : Set W) (A : PartialProp W) :
+    presupSatisfied (localCtxSecondDisjunct c A)
+      (PartialProp.ofProp (exhIEII (fcAlts R a b) (poss R (a ∪ b)))) :=
   fun _ _ => trivial
+
+end FreeChoice
 
 /-! ### Free choice under quantifiers (§5) -/
 
