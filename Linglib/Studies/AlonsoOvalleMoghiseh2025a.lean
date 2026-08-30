@@ -2,7 +2,7 @@ import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Data.Fintype.Prod
 import Linglib.Semantics.Exhaustification.DomainAlternatives
-import Linglib.Semantics.Exhaustification.Structural
+import Linglib.Semantics.Exhaustification.Finite
 import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025a
 
 /-!

@@ -1,7 +1,7 @@
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Semantics.Exhaustification.FreeChoice
 import Mathlib.Data.Set.Basic
+import Linglib.Logic.Modal.Basic
 
 /-!
 # Against wide scope free choice ([ciardelli-guerrini-2026])
@@ -29,7 +29,7 @@ interpreted, yielding `Δ(A ∘ B)` rather than `ΔA ∘ ΔB`.
 | must A or must B | `□A ∨ □B`     | `□(A ∨ B)`      |
 | may A and may B  | `◇A ∧ ◇B`     | `◇(A ∧ B)`      |
 
-The modal operators `diamond`/`box` are `ModalLogic.poss`/`nec` (the flat
+The modal operators are `ModalLogic.poss`/`nec` (the flat
 S5 modals shared with the whole free-choice stack), so the scope theorems consume
 the substrate's distribution lemmas directly.
 
@@ -48,7 +48,11 @@ the substrate's distribution lemmas directly.
 namespace CiardelliGuerrini2026
 
 open Modality
-open Exhaustification.FreeChoice (diamond box diamond_distributes_iff FCAltSet free_choice_forward)
+/-- Possibility of a proposition, the flat S5 `ModalLogic.poss`. -/
+abbrev poss {World : Type*} (p : Set World) : Prop := ModalLogic.poss p
+
+/-- Necessity of a proposition, the flat S5 `ModalLogic.nec`. -/
+abbrev nec {World : Type*} (p : Set World) : Prop := ModalLogic.nec p
 open English.Auxiliaries
 
 /-! ### Truth-conditional equivalence
@@ -60,16 +64,16 @@ and pragmatic enrichment. (For conjunction the LFs are *not* equivalent; see §8
 -/
 
 /-- The two disjunction LFs are truth-conditionally equivalent: `◇(A ∨ B) ↔ ◇A ∨ ◇B`.
-A thin alias for `Exhaustification.FreeChoice.diamond_distributes_iff`, recording its
-role as the central observation of [ciardelli-guerrini-2026]. -/
+The central observation of [ciardelli-guerrini-2026]. -/
 theorem scope_equivalence {World : Type*} (A B : Set World) :
-    diamond (A ∪ B) ↔ diamond A ∨ diamond B :=
-  diamond_distributes_iff A B
+    poss (A ∪ B) ↔ poss A ∨ poss B :=
+  ⟨λ ⟨w, h⟩ => h.elim (λ h => Or.inl ⟨w, h⟩) (λ h => Or.inr ⟨w, h⟩),
+    λ h => h.elim (λ ⟨w, h⟩ => ⟨w, Or.inl h⟩) (λ ⟨w, h⟩ => ⟨w, Or.inr h⟩)⟩
 
 /-! ### Must-or-must: disjunctive obligation (§2)
 
 Under *necessity*, the scope distinction is **not** truth-conditionally vacuous.
-`diamond`/`box` here are `ModalLogic.poss`/`nec`, so these theorems consume
+`poss`/`nec` here are `ModalLogic.poss`/`nec`, so these theorems consume
 the substrate's flat distribution directly. For disjunction the narrow LF
 `□(A ∪ B)` is strictly *weaker* than the wide LF `□A ∨ □B` — exactly C&G's
 must-or-must contrast: "(either) you must A or you must B" on its salient reading
@@ -78,7 +82,7 @@ is a single disjunctive obligation `□(A ∨ B)`, not two obligations. -/
 /-- Wide ⟹ narrow: `□A ∨ □B → □(A ∪ B)`. The narrow disjunctive-obligation LF is
 the weaker reading (monotonicity of `ModalLogic.nec`). -/
 theorem disjunctive_obligation_narrow_weaker {World : Type*} (A B : Set World) :
-    box A ∨ box B → box (A ∪ B) := by
+    nec A ∨ nec B → nec (A ∪ B) := by
   rintro (h | h)
   · exact ModalLogic.nec_mono (fun _ ha => Or.inl ha) h
   · exact ModalLogic.nec_mono (fun _ hb => Or.inr hb) h
@@ -87,7 +91,7 @@ theorem disjunctive_obligation_narrow_weaker {World : Type*} (A B : Set World) :
 obligation leaves which disjunct is met open, so neither `□A` nor `□B` follows.
 This is why must-or-must has a genuine narrow reading the wide LF lacks. -/
 theorem disjunctive_obligation_not_wide :
-    ∃ (A B : Set Bool), box (A ∪ B) ∧ ¬ (box A ∨ box B) := by
+    ∃ (A B : Set Bool), nec (A ∪ B) ∧ ¬ (nec A ∨ nec B) := by
   refine ⟨{true}, {false}, ?_, ?_⟩
   · intro w; cases w
     · exact Or.inr rfl
@@ -292,13 +296,22 @@ The key point: the narrow/wide scope distinction is truth-conditionally vacuous
 narrow-scope LF, exhaustified, yields free choice; the wide-scope LF
 underdetermines it (and yields an ignorance reading instead). -/
 
+/-- The narrow-scope `◇(A ∨ B)` doubly exhaustified over its disjunct and conjunctive
+alternatives ([fox-2007]): the conjunctive alternative and the exhaustified disjunct
+alternatives are denied. -/
+def doublyExhaustified {World : Type*} (A B : Set World) : Prop :=
+  poss (A ∪ B) ∧ ¬ poss (A ∩ B) ∧ ¬ (poss A ∧ ¬ poss B) ∧ ¬ (poss B ∧ ¬ poss A)
+
 /-- The **free-choice pipeline**: the narrow-scope `◇(A ∨ B)`, doubly exhaustified,
 yields free choice `◇A ∧ ◇B`. This is the reductionist thesis in action — FC
 arises from the narrow-scope LF (derived via concord) fed to the standard
-exhaustification mechanism (`free_choice_forward`). -/
-theorem narrowScope_yields_fc {World : Type*} (A B : Set World)
-    (hExh : (FCAltSet.mk A B).exh2) : diamond A ∧ diamond B :=
-  free_choice_forward ⟨A, B⟩ hExh
+exhaustification mechanism. -/
+theorem narrowScope_yields_fc {World : Type*} {A B : Set World}
+    (hExh : doublyExhaustified A B) : poss A ∧ poss B := by
+  obtain ⟨⟨w, hw⟩, -, h₁, h₂⟩ := hExh
+  by_cases hA : poss A
+  · exact ⟨hA, not_not.1 λ hB => h₁ ⟨hA, hB⟩⟩
+  · exact absurd ⟨hw.elim (λ h => absurd ⟨w, h⟩ hA) (λ h => ⟨w, h⟩), hA⟩ h₂
 
 /-- The wide-scope LF `◇A ∨ ◇B` does **not** entail free choice `◇A ∧ ◇B`: a
 disjunction of possibilities holds even when only one disjunct is possible. This
@@ -306,7 +319,7 @@ is why [ciardelli-guerrini-2026] locate the free-choice reading exclusively in t
 narrow-scope LF — the wide-scope LF yields the *ignorance* reading (the speaker is
 unsure which disjunct holds), not free choice. -/
 theorem wideScope_underdetermines_fc :
-    ∃ (A B : Set Unit), (diamond A ∨ diamond B) ∧ ¬ (diamond A ∧ diamond B) := by
+    ∃ (A B : Set Unit), (poss A ∨ poss B) ∧ ¬ (poss A ∧ poss B) := by
   refine ⟨Set.univ, ∅, Or.inl ⟨(), trivial⟩, ?_⟩
   rintro ⟨-, w, hw⟩
   exact Set.notMem_empty w hw
@@ -319,9 +332,9 @@ only from the narrow-scope LF: (1) the two disjunction LFs are equivalent, and
 not (`wideScope_underdetermines_fc`), so there is no separate problem of
 "wide-scope free choice". -/
 theorem reductionist_thesis {World : Type*} (A B : Set World) :
-    (diamond (A ∪ B) ↔ diamond A ∨ diamond B) ∧
-    ((FCAltSet.mk A B).exh2 → diamond A ∧ diamond B) :=
-  ⟨scope_equivalence A B, narrowScope_yields_fc A B⟩
+    (poss (A ∪ B) ↔ poss A ∨ poss B) ∧
+    (doublyExhaustified A B → poss A ∧ poss B) :=
+  ⟨scope_equivalence A B, narrowScope_yields_fc⟩
 
 /-! ### Auxiliary vs non-auxiliary modals (§4.1)
 
@@ -484,7 +497,7 @@ distinction has truth-conditional consequences. -/
 `◇(A ∧ B) → ◇A ∧ ◇B` (but not conversely). -/
 theorem conjunctive_narrow_stronger {World : Type*}
     (p q : Set World)
-    (h : diamond (p ∩ q)) : diamond p ∧ diamond q := by
+    (h : poss (p ∩ q)) : poss p ∧ poss q := by
   obtain ⟨w, hp, hq⟩ := h
   exact ⟨⟨w, hp⟩, ⟨w, hq⟩⟩
 

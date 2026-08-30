@@ -1,8 +1,7 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Features.Polarity
 import Linglib.Data.Generalizations.HomogeneityGap
-import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Semantics.Exhaustification.Structural
+import Linglib.Semantics.Exhaustification.Finite
 import Linglib.Semantics.Plurality.Implicature
 
 /-!

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Innocent Inclusion [bar-lev-fox-2020]
@@ -37,7 +37,7 @@ variable (φ : Set World)
     - `{r : r ∈ R} ∪ {φ} ∪ {¬q : q ∈ IE(ALT, φ)}` is consistent. -/
 def IsIICompatible (R : Set (Set World)) : Prop :=
   R ⊆ ALT ∧
-  SetConsistent ({φ} ∪ {ψ | ∃ q, IsInnocentlyExcludable ALT φ q ∧ ψ = qᶜ} ∪ R)
+  (⋂₀ ({φ} ∪ {ψ | ∃ q, IsInnocentlyExcludable ALT φ q ∧ ψ = qᶜ} ∪ R)).Nonempty
 
 /-- **Definition (MI-set)**: Maximal II-compatible set. -/
 def IsMISet (R : Set (Set World)) : Prop :=

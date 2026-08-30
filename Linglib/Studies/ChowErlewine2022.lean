@@ -1,4 +1,4 @@
-import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Exhaustification.Finite
 import Mathlib.Tactic.DeriveFintype
 /-!
 # Chow & Erlewine 2022: Restrictions on the Position of *exh*

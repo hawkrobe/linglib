@@ -1,6 +1,6 @@
 import Linglib.Semantics.Modality.Directive
 import Linglib.Semantics.Homogeneity.Decided
-import Linglib.Semantics.Exhaustification.Operators.Decidable
+import Linglib.Semantics.Exhaustification.Finite
 import Linglib.Studies.Rubinstein2014
 import Linglib.Data.Examples.AghaJeretic2026
 
@@ -53,7 +53,7 @@ namespace AghaJeretic2026
 
 open Modality.Kratzer Modality.Directive Data.Examples
 open Semantics.Homogeneity (negRaising_iff_subsingleton)
-open Exhaustification Exhaustification.Innocent
+open Exhaustification
 
 /-! ### Weak and strong necessity -/
 

@@ -2,7 +2,7 @@ import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.Eval
-import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Exhaustification.Finite
 import Mathlib.Data.ENNReal.Inv
 
 /-!
@@ -122,7 +122,7 @@ configs have world-independent uniform latent priors and use the
 ## Connection to Other Formalizations
 
 - `ExhaustivityLimit.lean`: proves RSA at α→∞ recovers Fox's exh,
-  using the same IE infrastructure (`Exhaustification.Innocent.exhIE`)
+  using the same IE infrastructure (`Exhaustification.exhIE`)
   as our `exhMeaning`.
 - `FrankeBergen2020.lean`: formalizes four RSA models (vanilla, LU, LI, GI)
   for nested quantifiers, using compositional exhaustification.

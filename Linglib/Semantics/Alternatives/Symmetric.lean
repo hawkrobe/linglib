@@ -43,7 +43,7 @@ docstrings, so the post-`Excluder` reorganization simply drops them
 rather than re-deriving Finset versions speculatively. The vacuity
 fact for the new API now lives next to its object as
 `Exhaustification.innocent_exh_eq_phi_of_innocentlyExcludable_empty`
-in `Exhaustification/Innocent.lean`.
+in `Exhaustification/Finite.lean`.
 
 ## Key Definitions and Theorems
 

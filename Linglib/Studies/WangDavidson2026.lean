@@ -1,4 +1,4 @@
-import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Exhaustification.Finite
 import Linglib.Semantics.Exhaustification.Trivalent
 import Linglib.Logic.Trivalent.Prop3
 import Linglib.Semantics.Presupposition.Basic

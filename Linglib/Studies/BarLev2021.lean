@@ -1,4 +1,4 @@
-import Linglib.Semantics.Exhaustification.Operators.Disjunctive
+import Linglib.Semantics.Exhaustification.Disjunctive
 import Linglib.Semantics.Plurality.Implicature
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Data.Examples.BarLev2021

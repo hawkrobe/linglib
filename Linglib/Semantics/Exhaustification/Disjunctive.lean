@@ -1,4 +1,4 @@
-import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
+import Linglib.Semantics.Exhaustification.InnocentInclusion
 import Mathlib.Data.Finset.Card
 
 /-!
@@ -86,7 +86,7 @@ theorem not_isInnocentlyExcludable_of_subDisjs (q : Set World) :
   intro hq
   obtain ⟨S, hS, ⟨i, hi⟩, rfl⟩ := hA hq.1
   obtain ⟨w, hw⟩ := hsep i (hS hi)
-  exact (isInnocentlyExcludable_iff_exhMW_entails_neg A _ _ hq.1).1 hq
+  exact (isInnocentlyExcludable_iff_exhMW_subset_compl A _ _ hq.1).1 hq
     (isMinimal_of_single (hS hi) (λ q hq _ => let ⟨S, hS, _, h⟩ := hA hq; ⟨S, hS, h⟩)
       (hsplit i (hS hi)) hw)
     (mem_subDisj.2 ⟨i, hi, (hw i (hS hi)).2 rfl⟩)
@@ -231,7 +231,7 @@ whenever there are two disjuncts: exhaustification then denies it. -/
 theorem isInnocentlyExcludable_iInter_of_insert (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i)
     (h2 : 2 ≤ I.card) :
     IsInnocentlyExcludable (insert (⋂ i ∈ I, p i) (subDisjs I p)) (disj I p) (⋂ i ∈ I, p i) := by
-  refine (isInnocentlyExcludable_iff_exhMW_entails_neg _ _ _ (Set.mem_insert _ _)).2 ?_
+  refine (isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (Set.mem_insert _ _)).2 ?_
   intro w ⟨hw, hmin⟩
   obtain ⟨i, hi, hwi⟩ := mem_subDisj.1 hw
   obtain ⟨j, hj, hji⟩ := Finset.exists_mem_ne (by omega : 1 < I.card) i

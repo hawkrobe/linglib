@@ -1,5 +1,4 @@
 import Mathlib.Data.Set.Functor
-import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Fragments.Japanese.Determiners
 import Linglib.Fragments.German.ModalIndefinites
 import Linglib.Fragments.Latvian.IndeterminatePronouns
@@ -46,8 +45,6 @@ movement.
 
 - §3 Hamblin FA bridges to mathlib's `Set.seq` (`hamblinFA_eq_seq`)
 - Singleton collapse bridges Hamblin modals to Kripke semantics
-- §8 free choice bridges to `free_choice_forward`
-  (`Exhaustification/FreeChoice.lean`)
 - Fragment data bridges to `Japanese/Determiners.lean`,
   `German/ModalIndefinites.lean`, and `Latvian/IndeterminatePronouns.lean`
 -/
@@ -467,16 +464,6 @@ theorem fc_end_to_end_possibility (R : HamblinAccessRel W) (p q : W → Prop)
     | inl h => exact Or.inl ⟨w', hw', h ▸ hrw⟩
     | inr h => exact Or.inr ⟨w', hw', h ▸ hrw⟩
   exact fc_possibility _ _ h_disj h_implic
-
-/-- **Bridge to [chierchia-2013].**
-    K&S's pragmatic derivation (Gricean reasoning) and Chierchia's
-    grammatical derivation (double exhaustification) both yield
-    ◇A ∧ ◇B. Different mechanisms, same empirical prediction. -/
-theorem pragmatic_agrees_with_grammatical
-    (a : Exhaustification.FreeChoice.FCAltSet W)
-    (h : a.exh2) :
-    a.freeChoice :=
-  Exhaustification.FreeChoice.free_choice_forward a h
 
 end DistributionRequirement
 

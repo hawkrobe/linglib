@@ -2,7 +2,7 @@ import Linglib.Semantics.Mereology
 import Linglib.Core.Order.Comparison
 import Linglib.Semantics.Degree.Measure.Basic
 import Linglib.Semantics.Degree.Predicate
-import Linglib.Semantics.Exhaustification.Extremum
+import Linglib.Semantics.Alternatives.Extremum
 import Linglib.Semantics.Degree.Measure.Dimension
 
 /-!
@@ -298,7 +298,7 @@ predicate `μ(x) = n`. The theorems below state this equivalence as a
 formalization-internal observation; it is not stated in either source paper.
 
 The key infrastructure is `isMaxInf_atLeast_of_hit` in
-`Semantics/Exhaustification/Extremum.lean`, which requires only point-
+`Semantics/Alternatives/Extremum.lean`, which requires only point-
 realization (`∃ e, μ(e) = n`) rather than full surjectivity. Mass nouns
 realize every n ∈ ℚ≥0 (rice is uniformly divisible by hypothesis); count
 nouns realize only n ∈ ℕ. -/

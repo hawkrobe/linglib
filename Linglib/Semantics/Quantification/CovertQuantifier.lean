@@ -87,9 +87,8 @@ def dpp (E W : Type) (atoms : List E) : LexEntry E W :=
 
     `exhOp` maps a proposition to its exhaustified version — typically
     asserting the prejacent and negating innocently excludable alternatives.
-    The canonical computational implementation is `exhIE` from
-    `Exhaustification.Innocent` (the Set-spec is `exhIE` in
-    `Exhaustification.Operators`). Specific instances are plugged in at
+    The canonical implementation is `Exhaustification.exhIE`, decidable over
+    finite worlds in `Exhaustification.Finite`. Specific instances are plugged in at
     lexicon construction time with alternatives and world domain baked
     into the closure.
 
