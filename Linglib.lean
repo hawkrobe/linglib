@@ -338,6 +338,7 @@ import Linglib.Data.Examples.ArreguiKusumoto1998
 import Linglib.Data.Examples.AsherPelletier2013
 import Linglib.Data.Examples.BakayEtAl2026
 import Linglib.Data.Examples.BaleEtAl2025
+import Linglib.Data.Examples.BaleSchwarz2022
 import Linglib.Data.Examples.BeckOdaSugisaki2004
 import Linglib.Data.Examples.BeltramaSchwarz2024
 import Linglib.Data.Examples.BergenGoodman2015
@@ -1604,6 +1605,7 @@ import Linglib.Semantics.Degree.Intensification
 import Linglib.Semantics.Degree.Measure.Basic
 import Linglib.Semantics.Degree.Measure.Dimensioned
 import Linglib.Semantics.Degree.Measure.Polar
+import Linglib.Semantics.Degree.Measure.Quantity
 import Linglib.Semantics.Degree.Measure.Temporal
 import Linglib.Semantics.Degree.MeasurePhrase
 import Linglib.Semantics.Degree.Noun

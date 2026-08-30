@@ -292,23 +292,21 @@ The simplex-dimension examples in this file (ex8a: "weighs thirteen grams
 per milliliter") are exactly the class formalized in BaleSchwarz2022 with
 full compositional derivations and dimension tracking. -/
 
-open BaleSchwarz2022 (perAnaphoric perPresup)
+open BaleSchwarz2022 (perPresup)
+open English.MeasurePhrases (milliliter liter)
 
 /-- The 2026 paper's simplex/compositional classification matches the
 2022 paper's anaphoric theory: simplex-dimension *per*-phrases are
 compositional (not math speak), and the 2022 paper provides their
-compositional derivation via `perAnaphoric`. -/
+compositional derivation via `BaleSchwarz2022.anaphoricMP`. -/
 theorem simplex_is_compositional_2022 :
     ex8a.dimType = .simplex ∧ ex8a.source = .compositional ∧
     ex8b.dimType = .simplex ∧ ex8b.source = .compositional := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- The 2022 paper's unit sensitivity presupposition (`perPresup`)
-extends to the 2026 analysis: the simplex examples here predict
-that the entity's volume must meet the per-unit threshold. -/
-theorem unit_sensitivity_carries_forward {E : Type*}
-    (μ : Degree.DimensionedMeasure E ℚ) (x : E)
-    (h : μ.apply x = 5) :
-    perPresup μ 1 x = true ∧ perPresup μ 1000 x = false := by
-  simp [perPresup, h]; decide
+/-- The 2022 paper's unit sensitivity presupposition carries forward: a
+5-millilitre sample licenses *per milliliter* but not *per liter*. -/
+theorem unit_sensitivity_carries_forward {E : Type*} (w : BaleSchwarz2022.World E) (x : E)
+    (h : w .volume x = 5) : perPresup milliliter x w ∧ ¬ perPresup liter x w := by
+  simp [perPresup, milliliter, liter, h]; norm_num
 
 end BaleSchwarz2026
