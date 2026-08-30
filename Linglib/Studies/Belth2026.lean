@@ -6,9 +6,10 @@ import Linglib.Studies.Yang2016
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.Subregular.TierStrictlyLocal
 import Linglib.Phonology.Subregular.Multitier
+import Linglib.Data.Examples.Belth2026
 
 /-!
-# Belth (2026): A Learning-Based Account of Phonological Tiers [belth-2026]
+# Belth (2026): A Learning-Based Account of Phonological Tiers
 
 D2L (Distant-to-Local) is an iterative learner that constructs phonological
 tiers as a *byproduct* of trying to express alternations as adjacent
@@ -35,21 +36,24 @@ to is
   `Disagree([?lat], {lat}) / [+cons] __ ∘ proj(·, [+cons])`,
 
 i.e. dissimilation of the underspecified affix-initial liquid `/L/` from
-the immediately preceding `[+cons]` tier segment. [belth-2026]
-reports 0.97 accuracy on a 121-word Perseus dataset; the residual ~3%
-errors are *tolerated* by Yang's Tolerance Principle (4 ≤ 121/ln 121),
-so D2L converges to this rule rather than memorizing the lexicon.
+the immediately preceding `[+cons]` tier segment. [belth-2026] reports
+0.97 average test accuracy over thirty 80/20 splits of the 121-word
+Perseus dataset (Table 7); the residual errors are *tolerated* by Yang's
+Tolerance Principle, so D2L converges to this rule rather than memorizing
+the lexicon.
 
 This study formalizes:
 
 - the rule (`latinDissimRule`) and its predictions on six worked
-  examples (Belth ex. 5/53): *navalis*, *popularis*, *pluvalis*,
-  *floralis*, *legalis*, *lunaris*;
+  examples (Belth ex. 5/53): *navalis*, *popularis*, *pluvialis*,
+  *floralis*, *legalis*, *lunaris* — including the (53c)/(53d) blocking
+  cases, where `/r/` and the non-coronal blockers sit on the tier and
+  hide the stem lateral;
 - the genuine empirical limit: *lunaris* surfaces with `[r]`, but the
   `[+cons]`-tier rule predicts `[l]` (the immediately preceding tier
   segment is the nasal `/n/`, which is `[−lat]`, so `Disagree` outputs
-  `[+lat]`). This is one of the ~3% errors the Tolerance Principle
-  tolerates;
+  `[+lat]`). The paper does not name its residual errors; *lunaris* is
+  derived here as one, absorbed by the Tolerance Principle;
 - a Tolerance-Principle certificate
   (`latinDissimRule_tolerated_on_examples`) showing the 1-of-6 exception
   count on this corpus is well under Yang's threshold;
@@ -84,9 +88,7 @@ namespace Belth2026
 open Core
 open Subregular
 
--- ============================================================================
--- § 1: A Minimal Latin Alphabet
--- ============================================================================
+/-! ### A Minimal Latin Alphabet -/
 
 /-- A minimal Latin segment alphabet sufficient for the -alis / -aris
     contrast. The unspecified affix-initial liquid is `L`; surface
@@ -100,15 +102,15 @@ inductive LatSeg where
 
 namespace LatSeg
 
-/-- `[+cons]` per [cser-2010]'s feature inventory: every non-vowel
-    is consonantal, *except* the orthographic ⟨v⟩, which [belth-2026]
-    treats as the glide `[w]` (`[−cons]`). This is the choice that lets
-    `pluv-aLis` surface as `[r]` (the tier-preceding consonant of `pluv-`
-    is `/l/`, not `/v/`). `L` is `[+cons]` — the underspecified `/L/`
-    projects onto the consonant tier even though its `[lat]` value is
-    not yet fixed. -/
+/-- Tier membership for the learned `[+cons]` tier: every non-vowel
+    projects. The orthographic ⟨v⟩ is Belth's semivowel `[w]`, and it
+    stays on the tier — the paper's §5.3.2 point is that `/r/` and the
+    non-coronal consonants, [cser-2010]'s blockers, "are preserved on
+    the tier"; `[w]` is the blocker in *pluvi-alis* (53d). `L` is also
+    on the tier — the underspecified `/L/` projects even though its
+    `[lat]` value is not yet fixed. -/
 def IsCons : LatSeg → Prop
-  | .a | .e | .i | .o | .u | .v => False
+  | .a | .e | .i | .o | .u => False
   | _ => True
 
 instance : DecidablePred IsCons := fun seg => by
@@ -129,9 +131,7 @@ def consTier : TierProjection LatSeg LatSeg := TierProjection.byClass IsCons
 
 end LatSeg
 
--- ============================================================================
--- § 2: The Learned Rule
--- ============================================================================
+/-! ### The Learned Rule -/
 
 /-- The rule D2L learns under the `[+cons]` tier ([belth-2026]
     rule 54): `Disagree([?lat], {lat}) / [+cons] __ ∘ proj(·, [+cons])`. -/
@@ -143,9 +143,7 @@ def latinDissimRule : TierRule LatSeg where
   featureValue := LatSeg.isLat
   default := none
 
--- ============================================================================
--- § 3: Worked Examples ([belth-2026] §5.3, ex. 5 / 53)
--- ============================================================================
+/-! ### Worked Examples ([belth-2026] §5.3, ex. 5 / 53) -/
 
 /-- Underlying form of *navalis* 'naval': /nav-aLis/. -/
 def navalis_ur : List LatSeg := [.n, .a, .v, .a, .L, .i, .s]
@@ -153,10 +151,10 @@ def navalis_ur : List LatSeg := [.n, .a, .v, .a, .L, .i, .s]
 /-- Underlying form of *popularis* 'popular': /popul-aLis/. -/
 def popularis_ur : List LatSeg := [.p, .o, .p, .u, .l, .a, .L, .i, .s]
 
-/-- Underlying form of *pluvalis* 'rainy': /pluv-aLis/. With `/v/` off
-    the consonant tier (treated as `[w]`, `[−cons]`), the tier-preceding
-    consonant in `pluv-a` is `/l/`. -/
-def pluvalis_ur : List LatSeg := [.p, .l, .u, .v, .a, .L, .i, .s]
+/-- Underlying form of *pluvialis* 'rainy': /pluvi-aLis/. The `[w]`
+    (⟨v⟩) on the tier hides the stem `/l/` from the suffix liquid — the
+    (53d) non-coronal blocking case. -/
+def pluvialis_ur : List LatSeg := [.p, .l, .u, .v, .i, .a, .L, .i, .s]
 
 /-- Underlying form of *floralis* 'floral': /flor-aLis/. -/
 def floralis_ur : List LatSeg := [.f, .l, .o, .r, .a, .L, .i, .s]
@@ -173,7 +171,7 @@ def lunaris_ur : List LatSeg := [.l, .u, .n, .a, .L, .i, .s]
 /-- The position of `L` in each underlying form. -/
 def navalis_lPos    : Nat := 4
 def popularis_lPos  : Nat := 6
-def pluvalis_lPos   : Nat := 5
+def pluvialis_lPos  : Nat := 6
 def floralis_lPos   : Nat := 5
 def legalis_lPos    : Nat := 4
 def lunaris_lPos    : Nat := 4
@@ -184,13 +182,10 @@ def lunaris_lPos    : Nat := 4
 def predicted (ur : List LatSeg) (lPos : Nat) : Option Bool :=
   latinDissimRule.applyAt (ur.take lPos)
 
--- ============================================================================
--- § 4: Stimulus-Contrast Theorems
--- ============================================================================
+/-! ### Stimulus-Contrast Theorems -/
 
-/-- *navalis*: `/v/` is `[−cons]` (a glide), so the tier-preceding
-    consonant of `/nav-a/` is `/n/` (`[−lat]`). Disagree outputs
-    `[+lat]` = `l`. ✓ -/
+/-- *navalis*: the tier-preceding segment of `/nav-a/` is the `[−lat]`
+    `[w]`. Disagree outputs `[+lat]` = `l`. ✓ -/
 theorem navalis_predicts_l :
     predicted navalis_ur navalis_lPos = some true := by decide
 
@@ -199,11 +194,11 @@ theorem navalis_predicts_l :
 theorem popularis_predicts_r :
     predicted popularis_ur popularis_lPos = some false := by decide
 
-/-- *pluvalis*: with `/v/` off the consonant tier, tier-preceding
-    consonant of `/pluv-a/` is `/l/` (`[+lat]`). Disagree outputs
-    `[−lat]` = `r`. ✓ -/
-theorem pluvalis_predicts_r :
-    predicted pluvalis_ur pluvalis_lPos = some false := by decide
+/-- *pluvialis*: the tier-preceding consonant of `/pluvi-a/` is the
+    `[−lat]` `[w]`, so Disagree outputs `[+lat]` = `l` — the stem `/l/`
+    is hidden by the non-coronal blocker on the tier (53d). ✓ -/
+theorem pluvialis_predicts_l :
+    predicted pluvialis_ur pluvialis_lPos = some true := by decide
 
 /-- *floralis*: tier-preceding consonant is `/r/` (`[−lat]`). The
     intervening `/r/` blocks the dissimilation that *popularis*'s
@@ -225,9 +220,7 @@ theorem navalis_popularis_minimal_pair :
     predicted navalis_ur navalis_lPos ≠
     predicted popularis_ur popularis_lPos := by decide
 
--- ============================================================================
--- § 5: The Empirical Limit — *lunaris*
--- ============================================================================
+/-! ### The Empirical Limit — *lunaris* -/
 
 /-- *lunaris*: the rule predicts `[l]` (the last `[+cons]` segment in
     `/lun-a/` is the nasal `/n/`, which is `[−lat]`, so Disagree
@@ -238,16 +231,14 @@ theorem navalis_popularis_minimal_pair :
 theorem lunaris_predicts_l_INCORRECT :
     predicted lunaris_ur lunaris_lPos = some true := by decide
 
--- ============================================================================
--- § 6: Per-Datum Coverage Rollup
--- ============================================================================
+/-! ### Per-Datum Coverage Rollup -/
 
 /-- Witness pairs `(underlying-form-prefix, expected-surface-lat-value)`
     for each worked example. -/
 def latinData : List (List LatSeg × Bool) :=
   [(navalis_ur.take navalis_lPos,     true),    -- *navalis*   — l
    (popularis_ur.take popularis_lPos, false),   -- *popularis* — r
-   (pluvalis_ur.take pluvalis_lPos,   false),   -- *pluvalis*  — r
+   (pluvialis_ur.take pluvialis_lPos, true),    -- *pluvialis* — l
    (floralis_ur.take floralis_lPos,   true),    -- *floralis*  — l
    (legalis_ur.take legalis_lPos,     true),    -- *legalis*   — l
    (lunaris_ur.take lunaris_lPos,     false)]   -- *lunaris*   — r
@@ -260,9 +251,7 @@ theorem latinDissimRule_misses_lunaris :
        !(latinDissimRule.applyAt pre == some expected))).length = 1 := by
   decide
 
--- ============================================================================
--- § 7: Tolerance Principle Certificate ([yang-2016])
--- ============================================================================
+/-! ### Tolerance Principle Certificate ([yang-2016]) -/
 
 /-! Yang's Tolerance Principle is the productivity gate inside D2L: a
 rule with `n` items in scope and `e` exceptions is *tolerated* iff
@@ -294,9 +283,7 @@ theorem latinDissimRule_tolerated_on_examples :
   show tolerates 6 1
   exact tolerates_six_one
 
--- ============================================================================
--- § 8: Subregular Bridge ([lambert-2022], [heinz-rawal-tanner-2011])
--- ============================================================================
+/-! ### Subregular Bridge ([lambert-2022], [heinz-rawal-tanner-2011]) -/
 
 /-- The consonant tier projection equals the canonical
     `tierProject` from the TSL formalism in the subregular layer.
@@ -317,9 +304,7 @@ theorem consTier_apply_eq_tierProject (xs : List LatSeg) :
 def latinTSLGrammar : Subregular.TierStrictlyLocalGrammar 2 LatSeg :=
   Subregular.TierStrictlyLocalGrammar.ocp LatSeg.IsCons
 
--- ============================================================================
--- § 9: OCP-on-Tier Bridge and OT Tableau ([goldsmith-1976])
--- ============================================================================
+/-! ### OCP-on-Tier Bridge and OT Tableau ([goldsmith-1976]) -/
 
 /-- Belth's tier-based dissimilation has a natural OCP twin: surface
     forms produced by the rule should not contain adjacent `[+lat]`
@@ -382,15 +367,19 @@ instance (c : List LatSeg) : Decidable (c ∈ latinTSLGrammar.language) :=
 
 /-- The empirically expected TSL_2 membership table for the Belth Latin
     inventory: each row pairs a candidate with whether the OCP-on-tier
-    grammar should admit it. *pluvalis* and *floralis* are the
-    discriminating cases (one candidate excluded for tier-adjacent
-    identicals); *navalis* admits both (no adjacency); *lunaris* admits
-    both (the OCP-on-tier grammar's empirical limit — the dissimilation
-    rule fires even though only one tier-lateral is adjacent). -/
+    grammar should admit it. *floralis* is the liquid-discriminating
+    case (the [r]-candidate excluded for its tier-adjacent (r, r));
+    *popularis* is excluded on both candidates — the identity-featured
+    OCP also fires on its (p, p) pair, a way the constraint is stricter
+    than the liquid pattern; *navalis* and *pluvialis* admit both (the
+    blocker separates the liquids on the tier); *lunaris* admits both
+    (the OCP-on-tier grammar's empirical limit — dissimilation fires
+    even though no tier-laterals are adjacent). -/
 def latinTSLExpected : List (List LatSeg × Bool) :=
-  [(substL .r pluvalis_ur, true), (substL .l pluvalis_ur, false),
+  [(substL .r popularis_ur, false), (substL .l popularis_ur, false),
    (substL .l floralis_ur, true), (substL .r floralis_ur, false),
    (substL .l navalis_ur,  true), (substL .r navalis_ur,  true),
+   (substL .l pluvialis_ur, true), (substL .r pluvialis_ur, true),
    (substL .l lunaris_ur,  true), (substL .r lunaris_ur,  true)]
 
 /-- The OCP-on-tier TSL_2 grammar agrees with the expected membership table
@@ -410,12 +399,12 @@ theorem popularis_loser_is_l :
     substL .l popularis_ur ∉
       (Tableau.ofRanking (latCands popularis_ur) latinRanking).optimal := by decide
 
-/-- *pluvalis*: same OCP-ranking-decides pattern as *popularis* (the
-    consonant tier of `/pluv-a/` is `[p, l]`, so substituting `L → l`
-    creates a tier-adjacent `(l, l)`). -/
-theorem pluvalis_optimal_is_r :
-    substL .r pluvalis_ur ∈
-      (Tableau.ofRanking (latCands pluvalis_ur) latinRanking).optimal := by decide
+/-- *pluvialis*: both candidates are OCP-clean — the `[w]` on the tier
+    separates the liquids — so \*r picks the empirically correct [l]
+    (53d): OT blocking through tier membership, same as the rule. -/
+theorem pluvialis_optimal_is_l :
+    substL .l pluvialis_ur ∈
+      (Tableau.ofRanking (latCands pluvialis_ur) latinRanking).optimal := by decide
 
 /-- *navalis*, *floralis*, *legalis*: the [l]-candidate has OCP=0 (no
     tier-adjacent laterals) and \*r=0; the [r]-candidate has \*r=1.
@@ -450,10 +439,11 @@ def popularisERC : ERC 2 :=
   tableauERC (Tableau.ofRanking (latCands popularis_ur) latinRanking)
     (substL .r popularis_ur) (substL .l popularis_ur)
 
-/-- The ERC induced by *pluvalis*: same shape as popularis. -/
-def pluvalisERC : ERC 2 :=
-  tableauERC (Tableau.ofRanking (latCands pluvalis_ur) latinRanking)
-    (substL .r pluvalis_ur) (substL .l pluvalis_ur)
+/-- The ERC induced by *pluvialis* (winner [l], loser [r]): OCP
+    indifferent, \*r prefers the winner — trivial. -/
+def pluvialisERC : ERC 2 :=
+  tableauERC (Tableau.ofRanking (latCands pluvialis_ur) latinRanking)
+    (substL .l pluvialis_ur) (substL .r pluvialis_ur)
 
 /-- The ERC induced by *navalis* (winner [l], loser [r]): OCP indifferent,
     \*r prefers the winner. ⟨e, W⟩ — trivial (no L). -/
@@ -483,8 +473,7 @@ def lunarisERC : ERC 2 :=
 theorem popularisERC_is_simple :
     popularisERC = simpleERC (n := 2) 0 1 := by decide
 
-theorem pluvalisERC_is_simple :
-    pluvalisERC = simpleERC (n := 2) 0 1 := by decide
+theorem pluvialisERC_isTrivial : pluvialisERC.IsTrivial := by decide
 
 theorem navalisERC_isTrivial : navalisERC.IsTrivial := by decide
 theorem floralisERC_isTrivial : floralisERC.IsTrivial := by decide
@@ -494,18 +483,17 @@ theorem lunarisERC_isContradictory : lunarisERC.IsContradictory := by decide
 
 /-- The five non-lunaris contrasts form a **consistent** ERC set: the
     identity ranking (OCP at position 0, \*r at position 1) satisfies
-    every word's ranking requirements. Two informative ERCs (popularis,
-    pluvalis) both reduce to `simpleERC 0 1`; the other three are
-    trivial. -/
+    every word's ranking requirements. One informative ERC (popularis)
+    reduces to `simpleERC 0 1`; the other four are trivial. -/
 theorem latinERCs_consistent_without_lunaris :
     (ERC.linearExtensions
-      {popularisERC, pluvalisERC, navalisERC, floralisERC, legalisERC}).Nonempty :=
+      {popularisERC, pluvialisERC, navalisERC, floralisERC, legalisERC}).Nonempty :=
   ⟨Ranking.id 2, by decide⟩
 
 /-- Bridge to the dominance characterisation: under any ranking
     satisfying the empirical ERC set (sans lunaris), OCP dominates \*r. -/
 theorem latin_OCP_dominates_starR (r : Ranking 2)
-    (hr : ∀ α ∈ ({popularisERC, pluvalisERC, navalisERC, floralisERC,
+    (hr : ∀ α ∈ ({popularisERC, pluvialisERC, navalisERC, floralisERC,
       legalisERC} : Finset (ERC 2)), α.SatisfiedBy r) :
     r.Dominates 0 1 := by
   have hpop : popularisERC.SatisfiedBy r :=
@@ -514,9 +502,7 @@ theorem latin_OCP_dominates_starR (r : Ranking 2)
     rw [← popularisERC_is_simple]; exact hpop
   exact (simpleERC_satisfiedBy_iff (by decide) r).mp this
 
--- ============================================================================
--- § 10: D2L's Other Learned Rules (documentation only)
--- ============================================================================
+/-! ### D2L's Other Learned Rules (documentation only) -/
 
 /- ### Turkish ([belth-2026] §5.1)
 
