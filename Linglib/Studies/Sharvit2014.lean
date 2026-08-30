@@ -36,10 +36,25 @@ no-tenseless assumption (§6.1, p. 299).
 
 namespace Sharvit2014
 
-open BeaverCondoravdi2003 (hasEarliest)
 open Tense.Decomposition (sotDeletionApplicable)
 open Tense.TenseAspectComposition (evalPast evalRel)
 open Semantics.Aspect (PointPred)
+
+/-- The `EARLIEST` definedness presupposition of `before^{B&C}`: `EARLIEST_C` is defined for
+    body `p` iff the set of `C`-times where `p` holds has a least element (mathlib's
+    `IsLeast`). -/
+def hasEarliest {Time : Type*} [LinearOrder Time] (C : Set Time) (p : Time → Prop) : Prop :=
+  ∃ t, IsLeast {t' | t' ∈ C ∧ p t'} t
+
+/-- [beaver-condoravdi-2003]'s `earliest` is defined exactly when the `EARLIEST`
+    presupposition holds of the instantiation times, with trivial restrictor. -/
+theorem earliestAlt_nonempty_iff_hasEarliest {W Time : Type*} [LinearOrder Time]
+    (alt : HistoricalAlternatives W Time) (B : Set (W × Time)) (w : W) (t : Time) :
+    (BeaverCondoravdi2003.earliestAlt alt B w t).Nonempty ↔
+      hasEarliest Set.univ (· ∈ BeaverCondoravdi2003.instTimes (alt ⟨w, t⟩) B) := by
+  unfold hasEarliest
+  simp only [Set.Nonempty, BeaverCondoravdi2003.mem_earliestAlt_iff_isLeast, Set.mem_univ,
+    true_and, Set.ofPred_mem_eq]
 
 /-! ### The two lexical types of tense ((30)) -/
 
@@ -74,7 +89,7 @@ theorem evalPast_iff_quantificationalPast {W Time : Type*} [LinearOrder Time]
 /-- IPF ([sharvit-2014] (27), p. 272): when the body of `before^{B&C}` is the
     quantificational past `[[PAST]]^{K,g}(q)`, and the restrictor `C` is
     order-dense (interval-like) with `K ⊆ C`, the `EARLIEST` presupposition
-    (`BeaverCondoravdi2003.hasEarliest`) fails: a witness `t_q < t_min` with `q t_q` lifts
+    (`hasEarliest`) fails: a witness `t_q < t_min` with `q t_q` lifts
     via density to a strictly smaller body-witness. The technical core of the
     thesis that only languages with pronominal tenses license past-under-past
     in `before`-clauses. -/
@@ -349,7 +364,7 @@ theorem eq99c_before_and_no_simultaneous_imply_no_bare_pshift (L : LanguageTense
 /-! ### Substrate connection: IPF and quantificational past
 
 The `wellFormedPastUnderPastBefore` predicate is grounded in the [beaver-condoravdi-2003] IPF
-result formalized via `BeaverCondoravdi2003.hasEarliest`; the two theorems below consume that
+result formalized via `hasEarliest`; the two theorems below consume that
 grounding via `wellFormedPastUnderPastBefore_iff_pronominal`. -/
 
 /-- Quantificational-past languages (Japanese) fail `wellFormedPastUnderPastBefore`, matching the

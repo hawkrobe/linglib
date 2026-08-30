@@ -138,12 +138,12 @@ structure BCCounterexampleDatum where
     branching architecture cannot handle complements whose temporal bound
     falls before the A-time. -/
 theorem bc_cannot_place_bounded_complement
-    {W : Type*} (alt : HistAlt W ℤ)
+    {W : Type*} (alt : HistoricalAlternatives W ℤ)
     (B : Set (W × ℤ)) (w : W) (tA hi : ℤ)
     (hBound : hi ≤ tA)
     (_hBounded : ∀ w' t, (w', t) ∈ B → t ≤ hi)
-    (hNoFuture : ∀ w' ∈ alt w tA, ∀ t, (w', t) ∈ B → t ≤ hi) :
-    ∀ te ∈ instTimes (alt w tA) B, te ≤ tA := by
+    (hNoFuture : ∀ w' ∈ alt ⟨w, tA⟩, ∀ t, (w', t) ∈ B → t ≤ hi) :
+    ∀ te ∈ instTimes (alt ⟨w, tA⟩) B, te ≤ tA := by
   intro te ⟨w', _, hw'B⟩
   exact le_trans (hNoFuture w' ‹_› te hw'B) hBound
 
@@ -947,5 +947,81 @@ theorem bc_readings_in_data :
     before_counterfactual.complementEntailed = false ∧
     before_noncommittal.complementEntailed = false :=
   ⟨rfl, rfl, rfl⟩
+
+
+/-! ### The event-relative equivalence and alternatives (defs 17–18)
+
+The paper's positive proposal replaces [beaver-condoravdi-2003]'s world–time
+equivalence with one relative to an interval `I` and an eventuality `e`:
+alternative worlds must contain a counterpart of `e` that co-occurs with it up
+to `I`, and be identical at all earlier times. -/
+
+section EventRelative
+
+variable {W T : Type*} [LinearOrder T]
+
+/-- Counterpart relation on eventualities across worlds (fn. 18): counterpart
+eventualities share essential properties such as starting time and thematic
+participants. -/
+abbrev Counterpart (W T : Type*) := W → T → W → T → Prop
+
+/-- Event-relative equivalence ≃_{I,e₁} (def 17): (i) a counterpart of `e₁`
+exists in `w₂`; (ii) the two co-occur throughout [START(e₁), START(I)); (iii)
+the worlds are identical at all earlier times. -/
+def equivIE (counterpart : Counterpart W T)
+    (coOccur : W → T → W → T → T → T → Prop)
+    (agree : T → W → W → Prop)
+    (w₁ w₂ : W) (startI : T) (e₁_start : T) : Prop :=
+  counterpart w₁ e₁_start w₂ e₁_start ∧
+  coOccur w₁ e₁_start w₂ e₁_start e₁_start startI ∧
+  (∀ t', t' < e₁_start → agree t' w₁ w₂)
+
+/-- Event-relative alternatives alt(w, I, e) (def 18a). -/
+def altIE (counterpart : Counterpart W T)
+    (coOccur : W → T → W → T → T → T → Prop)
+    (agree : T → W → W → Prop)
+    (w : W) (startI : T) (e_start : T) : Set W :=
+  { w' | equivIE counterpart coOccur agree w w' startI e_start }
+
+/-- Event continuation (def 18b): keep only the alternatives in which the
+counterpart eventuality develops beyond `I`. -/
+def eventContinuation (alt : Set W) (continues : W → Prop) : Set W :=
+  { w' ∈ alt | continues w' }
+
+/-- Downward closure (def 18c): equivalence at `I` implies equivalence at any
+earlier `I'`. -/
+theorem equivIE_downward_closed (counterpart : Counterpart W T)
+    (coOccur : W → T → W → T → T → T → Prop)
+    (coOccur_mono : ∀ w₁ e₁ w₂ e₂ s₁ s₂ s₂',
+      s₂' ≤ s₂ → coOccur w₁ e₁ w₂ e₂ s₁ s₂ → coOccur w₁ e₁ w₂ e₂ s₁ s₂')
+    (agree : T → W → W → Prop)
+    (w₁ w₂ : W) (startI startI' : T) (e_start : T)
+    (hle : startI' ≤ startI)
+    (h : equivIE counterpart coOccur agree w₁ w₂ startI e_start) :
+    equivIE counterpart coOccur agree w₁ w₂ startI' e_start :=
+  ⟨h.1, coOccur_mono w₁ e_start w₂ e_start e_start startI startI' hle h.2.1, h.2.2⟩
+
+/-- With trivial counterpart and co-occurrence, ≃_{I,e} is agreement at all
+earlier times — the per-world-pair content of B&C's initial branch point
+condition. -/
+theorem equivIE_trivial_iff_agree (agree : T → W → W → Prop)
+    (w₁ w₂ : W) (startI e_start : T) :
+    equivIE (fun _ _ _ _ => True) (fun _ _ _ _ _ _ => True) agree w₁ w₂ startI e_start ↔
+    (∀ t', t' < e_start → agree t' w₁ w₂) := by
+  simp [equivIE]
+
+/-- Any B&C alternative set obeying the initial branch point condition lands
+inside the trivial event-relative alternatives: the O&ST equivalence
+generalizes B&C's. -/
+theorem histAlt_subset_altIE_trivial (alt : HistoricalAlternatives W T)
+    (agree : T → W → W → Prop)
+    (hIBP : BeaverCondoravdi2003.initialBranchPoint alt agree)
+    (w : W) (t : T) :
+    alt ⟨w, t⟩ ⊆ altIE (fun _ _ _ _ => True) (fun _ _ _ _ _ _ => True) agree w t t := by
+  intro w' hw'
+  rw [altIE, Set.mem_ofPred_eq, equivIE_trivial_iff_agree]
+  exact hIBP w t w' hw'
+
+end EventRelative
 
 end OgiharaSteinertThrelkeld2024.VeridicalityBridge
