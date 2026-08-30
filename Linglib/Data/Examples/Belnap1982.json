@@ -1,0 +1,136 @@
+[
+  {
+    "id": "belnap1982_1",
+    "source": {"bibkey": "belnap-1982", "paperLabel": "(1)"},
+    "language": "stan1293",
+    "primaryText": "Which person kicked Sam?",
+    "glossedTokens": [],
+    "translation": "Which person kicked Sam?",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "answers: John / It was John / The person who kicked Sam was John", "judgment": "acceptable"},
+      {"name": "non-answers: *He / *Sam kicked John / *China is populous", "judgment": "unacceptable"},
+      {"name": "responses but not answers: I don't know / Ask Sam", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["claim", "answerhood is as entrenched as sentencehood"]
+    ],
+    "comment": "The battery grounding Q1: linguistic theory should describe the question-answer relationship."
+  },
+  {
+    "id": "belnap1982_gas",
+    "source": {"bibkey": "belnap-1982", "paperLabel": "p. 172"},
+    "language": "stan1293",
+    "primaryText": "Where is a place at which I can get gas on a Sunday?",
+    "glossedTokens": [],
+    "translation": "Where is a place at which I can get gas on a Sunday?",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "Unique Answer Fallacy"],
+      ["answers", "multiple, each full and complete and true"]
+    ],
+    "comment": "A mention-some question: any open station is a complete true answer."
+  },
+  {
+    "id": "belnap1982_prime",
+    "source": {"bibkey": "belnap-1982", "paperLabel": "p. 174"},
+    "language": "stan1293",
+    "primaryText": "What's an example of a prime between 10 and 20?",
+    "glossedTokens": [],
+    "translation": "What's an example of a prime between 10 and 20?",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "Unique Answer Fallacy"],
+      ["target", "Karttunen-style unique denotations"]
+    ],
+    "comment": "A foundation on which every question has one answer cannot even state a language that asks for examples."
+  },
+  {
+    "id": "belnap1982_unicorns",
+    "source": {"bibkey": "belnap-1982", "paperLabel": "§3"},
+    "language": "stan1293",
+    "primaryText": "John wonders where two unicorns live.",
+    "glossedTokens": [],
+    "translation": "John wonders where two unicorns live.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "for each of two actual unicorns, John wonders where it lives", "judgment": "acceptable"},
+      {"name": "John wonders where the single place is at which two unicorns live", "judgment": "acceptable"},
+      {"name": "quantifier between wonder and the wh: each unicorn possibly living in a different place", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "quantifying into questions"]
+    ],
+    "comment": "The third reading needs the quantifier scoped inside wonder but over where."
+  },
+  {
+    "id": "belnap1982_grades",
+    "source": {"bibkey": "belnap-1982", "paperLabel": "§3"},
+    "language": "stan1293",
+    "primaryText": "What the average grade is depends only on what grade each student receives.",
+    "glossedTokens": [],
+    "translation": "What the average grade is depends only on what grade each student receives.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "quantifying into questions"],
+      ["embedding", "depend"]
+    ],
+    "comment": "Each cannot scope over the whole declarative nor inside the wh: the quantified indirect question is a closed unit."
+  },
+  {
+    "id": "belnap1982_king",
+    "source": {"bibkey": "belnap-1982", "paperLabel": "§3"},
+    "language": "stan1293",
+    "primaryText": "whether the king of France is bald",
+    "glossedTokens": [],
+    "translation": "whether the king of France is bald",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "quantifying into a whether"],
+      ["status", "no true answers"]
+    ],
+    "comment": "With the quantifier scoped in, an answer must answer for the present king of France; there being none, the question has no true answers."
+  },
+  {
+    "id": "belnap1982_china",
+    "source": {"bibkey": "belnap-1982", "paperLabel": "p. 177"},
+    "language": "stan1293",
+    "primaryText": "Peter knows that China is populous but he doesn't know which person kicked Sam.",
+    "glossedTokens": [],
+    "translation": "Peter knows that China is populous but he doesn't know which person kicked Sam.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "Distributivity Test"],
+      ["verdict", "consistent, so not an answer"]
+    ],
+    "comment": "Consistency of the know-P-but-not-IQ report rules P out as an answer."
+  },
+  {
+    "id": "belnap1982_john",
+    "source": {"bibkey": "belnap-1982", "paperLabel": "p. 177"},
+    "language": "stan1293",
+    "primaryText": "Peter knows that the person who kicked Sam is John but Peter doesn't know who kicked Sam.",
+    "glossedTokens": [],
+    "translation": "Peter knows that the person who kicked Sam is John but Peter doesn't know who kicked Sam.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "Distributivity Test"],
+      ["verdict", "inconsistent — likely an answer, not guaranteed"]
+    ],
+    "comment": "The test is a necessary condition only: passing it does not certify answerhood."
+  }
+]
