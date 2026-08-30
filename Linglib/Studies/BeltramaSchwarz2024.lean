@@ -9,68 +9,66 @@ import Mathlib.Data.Sign.Defs
 import Mathlib.Tactic.NormNum
 
 /-!
-# [beltrama-schwarz-2024]: Social stereotypes affect imprecision resolution
+# Social stereotypes affect imprecision resolution across tasks
 
-[beltrama-schwarz-2024] ask whether a speaker's social persona shifts how
-comprehenders resolve numeral imprecision, and find that it does — but
-*asymmetrically across tasks*. Two stereotypes anchor the high vs. low ends of
-the precision scale ([beltrama-2018], [beltrama-solt-burnett-2023]): a **Nerdy**
-persona (studious, articulate, introverted, uptight) indexes high Competence and
-precise speech; a **Chill** persona (laid-back, sociable, extroverted, care-free)
-indexes high Warmth and tolerant speech.
+[beltrama-schwarz-2024] ask whether a speaker's social persona shifts how comprehenders
+resolve numeral imprecision, and find that it does — but asymmetrically across tasks. A
+**Nerdy** persona (studious, articulate, introverted, uptight) indexes high Competence and
+precise speech; a **Chill** persona (laid-back, sociable, extroverted, care-free) indexes
+high Warmth and tolerant speech (persona labels per [donofrio-2018]; the precision
+stereotypes per [beltrama-2018] and [beltrama-solt-burnett-2023]). In the Covered-Screen
+inference task (Experiment 1) both personae move interpretation: Nerdy speakers' round
+numerals are read more strictly, Chill speakers' more loosely. In the Truth-Value Judgment
+task (Experiment 2) only the Chill effect survives.
 
-The puzzle this file formalizes is the *task asymmetry*. In an inference task
-(Experiment 1, a Covered-Screen paradigm) **both** personae move interpretation:
-Nerdy speakers' round numerals are read more strictly, Chill speakers' more
-loosely. In a judgment task (Experiment 2, a Truth-Value Judgment), only the
-**Chill** effect survives — the Nerdy strictness vanishes. [beltrama-schwarz-2024]
-(§7) attribute this to the *prejudiciality of rejection*: in a TVJ, calling a
-statement "wrong" commits the comprehender to blaming the speaker (an instance of
-testimonial (in)justice, [fricker-2007]), and comprehenders are reluctant to
-blame a speaker they read as conscientious. We make that the structural pivot:
-acceptance shifts always manifest; rejection shifts are suppressed exactly in
-tasks where rejection is prejudicial — which derives the asymmetry rather than
-stipulating it.
+The paper's suggested explanation for the asymmetry, formalized here as the structural
+pivot, is the prejudiciality of rejection: calling a statement "wrong" in a TVJ blames the
+speaker (testimonial injustice, [fricker-2007]), and comprehenders hesitate to blame a
+speaker they read as conscientious. Acceptance shifts always manifest; rejection shifts are
+suppressed exactly in prejudicial tasks — which derives the asymmetry rather than
+stipulating it. The paper offers this tentatively, noting it would also predict globally
+more charitable TVJ responses, which is not observed.
 
 ## Main definitions
-* `precisionField` — the [eckert-2008] indexical field linking `PrecisionMode`
-  to [fiske-cuddy-glick-2007] social dimensions; `personaPrecision` /
-  `personaDimension` read off the two personae.
-* `personaShift` — the precision-driven shift on the "reject the imprecise
-  reading" scale, derived from `personaPrecision` (a `SignType`).
-* `RejectionPrejudicial` / `predictedShift` — the prejudiciality mechanism: a
-  persona's shift, suppressed when it is a rejection-shift in a prejudicial task.
+
+* `precisionField` — the [eckert-2008] indexical field linking `PrecisionMode` to
+  [fiske-cuddy-glick-2007] social dimensions; `personaPrecision` / `personaDimension` read
+  off the two personae.
+* `personaShift` — a persona's shift on the reject-the-imprecise-reading scale, derived
+  from its precision mode.
+* `RejectionPrejudicial`, `predictedShift` — a persona's shift, suppressed when it is a
+  rejection-shift in a prejudicial task.
 
 ## Main results
-* `bidirectionality`, `opposite_directions` — the persona ↔ precision mapping is
-  coherent and the two modes are exact opposites on every dimension.
-* `predictedShift_coveredScreen`, `predictedShift_truthValueJudgment`,
-  `nerdy_effect_is_task_dependent`, `acceptance_shift_never_blocked`,
-  `shift_blocked_iff` — the task asymmetry, derived from prejudiciality.
+
+* `bidirectionality`, `precisionField_signs_match_bsb` — the persona ↔ precision mapping is
+  coherent and agrees with the field [beltrama-solt-burnett-2023] measured.
+* `predictedShift_coveredScreen`, `predictedShift_truthValueJudgment`, `shift_blocked_iff` —
+  the task asymmetry, derived from prejudiciality.
 * `roundness_gates_persona` — persona effects need a round numeral to act on.
-* the `#guard` over `Examples.all` checks each predicted shift against the
-  text-reported observed direction in every persona × task cell.
 
-## Empirical findings (prose, per [beltrama-schwarz-2024])
-Effect sizes are documented here, not encoded as theorems (regression
-coefficients are not Lean content). Experiment 1 (Covered-Screen, n = 282, §4.5):
-in the critical Imprecise cell, COVERED (= precise/rejection) rates were higher
-for Nerdy than for the no-persona baseline (z = 6.62, p < .0001) and lower for
-Chill (z = 7.61, p < .0001); no persona contrast in the controls. Experiment 2
-(Truth-Value Judgment, n = 244, §5.3): WRONG (= rejection) rates were lower for
-Chill (z = 8.43, p < .0001) but did not differ from baseline for Nerdy (z = 0.15,
-p = .87). The pooled analysis (§6) found a Nerdy × Task interaction (β = 0.62,
-z = 1.99, p = .04): higher rejection for Nerdy than baseline in the Covered-Screen
-task (z = 4.40, p < .0001) but no difference in the TVJ (z = 1.51, p = .28).
+## Empirical findings
 
-## Implementation notes
-The illustrated stimulus (the "$200" ticket dialogue against a $207 screen) and
-the text-reported observed directions live in `Data.Examples.BeltramaSchwarz2024`;
-the structural predictions are checked against them by `#guard`. Persona ↔
-precision indexing reuses `Pragmatics.SocialMeaning` (the [eckert-2008] field and
-[burnett-2019]'s Eckert–Montague lift); `speakerModulatedHalo` scales the
-substrate `haloWidth` by a speaker multiplier — the paper's claim that the
-halo is a property of the number–speaker pair, not the number alone.
+Effect sizes are documented as prose, not theorems. Experiment 1 (Covered-Screen, n = 282,
+§4.5): in the critical Imprecise cell, COVERED (rejection) rates were higher for Nerdy than
+baseline (z = 6.62) and lower for Chill (z = 7.61); no persona contrast in the controls.
+Experiment 2 (TVJ, n = 244, §5.3): WRONG rates were lower for Chill (z = 8.43) but did not
+differ from baseline for Nerdy (z = 0.15, p = .87). The pooled analysis (§6) found a
+Nerdy × Task interaction (β = 0.62, p = .04): higher rejection for Nerdy in the
+Covered-Screen task (z = 4.40) but none in the TVJ (z = 1.51). The illustrated stimulus
+(the "$200" ticket dialogue against a $207 screen) and these observed directions live in
+`Data.Examples.BeltramaSchwarz2024`; `speakerModulatedHalo` scales the substrate `haloWidth`
+by a speaker multiplier — the finding that a numeral's tolerance range is a property of the
+number–speaker pair, not the number alone.
+
+## References
+
+* [beltrama-schwarz-2024] — the paper (Semantics & Pragmatics 17.10).
+* [beltrama-2018], [beltrama-solt-burnett-2023] — the precision stereotypes.
+* [eckert-2008], [fiske-cuddy-glick-2007], [burnett-2019] — indexical fields, the
+  Stereotype Content Model, and the grounded-field lift.
+* [donofrio-2018] — the persona-label paradigm.
+* [fricker-2007] — testimonial injustice; [krifka-2007] — round-number imprecision.
 -/
 
 namespace BeltramaSchwarz2024
@@ -162,6 +160,17 @@ theorem scm_coherence_chill : precisionField.indexes .approximate .warmth :=
 theorem opposite_directions (d : SocialDimension) :
     precisionField.association .exact d = - precisionField.association .approximate d := by
   cases d <;> simp [precisionField]
+
+/-- The stipulated ±1 associations agree cell-for-cell with
+    `BeltramaSoltBurnett2023.bsbField`, whose signs `sign_alignment` grounds in the measured
+    ratings: `.exact` patterns with `.precise` and `.approximate` with `.approximate` on
+    every dimension. -/
+theorem precisionField_signs_match_bsb (d : SocialDimension) :
+    precisionField.association .exact d =
+        BeltramaSoltBurnett2023.bsbField.association .precise d ∧
+      precisionField.association .approximate d =
+        BeltramaSoltBurnett2023.bsbField.association .approximate d := by
+  cases d <;> exact ⟨rfl, rfl⟩
 
 /-- The precision field as a [burnett-2019] grounded field over the SCM space. -/
 def precisionGroundedField : GroundedField PrecisionMode scmSpace :=
@@ -269,23 +278,11 @@ def impreciseReadingAvailable (n : Nat) : Prop :=
 instance (n : Nat) : Decidable (impreciseReadingAvailable n) :=
   inferInstanceAs (Decidable (inferPrecisionMode n = .approximate))
 
-/-- Any multiple of 10 carries an imprecise reading — the substrate lemma
-    `inferPrecisionMode_eq_approximate_of_ten_dvd` under this file's naming. -/
-theorem div10_enables_imprecision (n : ℕ) (h10 : 10 ∣ n) :
-    impreciseReadingAvailable n :=
-  inferPrecisionMode_eq_approximate_of_ten_dvd h10
-
-/-- Roundness gates the persona effect: the round numeral supports imprecision,
-    the displayed value does not. -/
+/-- Roundness gates the persona effect: the round numeral supports an imprecise reading
+    (`inferPrecisionMode_eq_approximate_of_ten_dvd`), the displayed value does not. -/
 theorem roundness_gates_persona :
     impreciseReadingAvailable statedAmount ∧ ¬ impreciseReadingAvailable displayedAmount :=
-  ⟨div10_enables_imprecision statedAmount (by decide), by decide⟩
-
-/-- [beltrama-solt-burnett-2023]'s round stimulus (50) is the same kind of
-    object: a round numeral whose precision resolution is under study. -/
-theorem bsb_stim_also_round :
-    impreciseReadingAvailable BeltramaSoltBurnett2023.stimRound :=
-  div10_enables_imprecision BeltramaSoltBurnett2023.stimRound (by decide)
+  ⟨inferPrecisionMode_eq_approximate_of_ten_dvd ⟨20, rfl⟩, by decide⟩
 
 /-! ### Speaker-modulated halo
 
@@ -302,9 +299,8 @@ def speakerModulatedHalo (multiplier : ℚ) (n : Nat) : ℚ :=
     Competence/Warmth ordering to tolerance width. -/
 theorem wider_halo_of_larger_multiplier (m₁ m₂ : ℚ) (n : Nat)
     (hm : m₁ < m₂) (hn : 0 < haloWidth n) :
-    speakerModulatedHalo m₁ n < speakerModulatedHalo m₂ n := by
-  unfold speakerModulatedHalo
-  exact mul_lt_mul_of_pos_right hm hn
+    speakerModulatedHalo m₁ n < speakerModulatedHalo m₂ n :=
+  mul_lt_mul_of_pos_right hm hn
 
 /-- The round numeral has positive halo width, so speaker modulation bites. -/
 theorem round_has_positive_halo : 0 < haloWidth statedAmount := by
@@ -340,8 +336,8 @@ def rowConfirmsPrediction (e : LinguisticExample) : Bool :=
   | some p, some t, some dir => decide (predictedShift p t = observedDirection dir)
   | _, _, _ => false
 
--- Build-checked: every persona × task cell's predicted shift matches the
--- text-reported observed direction (§4.5, §5.3, §6).
-#guard Examples.all.all rowConfirmsPrediction
+-- Every persona × task cell's predicted shift matches the text-reported observed
+-- direction (§4.5, §5.3, §6).
+example : Examples.all.all rowConfirmsPrediction := by decide
 
 end BeltramaSchwarz2024
