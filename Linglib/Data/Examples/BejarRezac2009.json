@@ -1,0 +1,312 @@
+[
+  {
+    "id": "br2009_2a",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(2a)"},
+    "language": "basq1248",
+    "primaryText": "ikusi zintudan",
+    "glossedTokens": [
+      ["ikusi", "seen"], ["z-in-t-u-da-n", "2-X-PL-have-1-PAST"]
+    ],
+    "translation": "I saw you.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["combination", "1>2 = 2"],
+      ["context", "inverse"]
+    ],
+    "comment": "The core slot tracks the IA: a 2nd-person object fully checks the [u-3-2] probe."
+  },
+  {
+    "id": "br2009_2b",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(2b)"},
+    "language": "basq1248",
+    "primaryText": "ikusi ninduen",
+    "glossedTokens": [
+      ["ikusi", "seen"], ["n-ind-u-en", "1-X-have-PAST"]
+    ],
+    "translation": "He saw me.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["combination", "3>1 = 1"],
+      ["context", "inverse"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "br2009_2c",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(2c)"},
+    "language": "basq1248",
+    "primaryText": "ikusininduzun",
+    "glossedTokens": [
+      ["ikusi", "seen"], ["n-ind-u-zu-n", "1-X-have-2-PAST"]
+    ],
+    "translation": "You saw me.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["combination", "2>1 = 1"],
+      ["context", "inverse"]
+    ],
+    "comment": "With (2a): no ranking of person values decides between two SAP arguments — the IA wins both times."
+  },
+  {
+    "id": "br2009_2d",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(2d)"},
+    "language": "basq1248",
+    "primaryText": "ikusi nuen",
+    "glossedTokens": [
+      ["ikusi", "seen"], ["n-u-en", "1-have-PAST"]
+    ],
+    "translation": "I saw him.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["combination", "1>3 = 1"],
+      ["context", "direct"]
+    ],
+    "comment": "The 3rd-person IA leaves the [u2] residue, which the SAP EA checks on cycle II: displacement to the EA."
+  },
+  {
+    "id": "br2009_3",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(3)"},
+    "language": "basq1248",
+    "primaryText": "Nik neure burua ikusten nuen.",
+    "glossedTokens": [
+      ["Ni-k", "1-E"], ["neure", "my.own"], ["buru-a", "head-the.A"], ["ikusten", "seeing"],
+      ["n-u-en", "1-have-PAST"]
+    ],
+    "translation": "I saw myself.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case and binding unaffected"]
+    ],
+    "comment": "Ergative displacement changes neither case marking nor binding: agreement displacement is not movement."
+  },
+  {
+    "id": "br2009_15",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(15)"},
+    "language": "basq1248",
+    "primaryText": "Zuk etsaiari misilak / *ni saldu dizkiozu.",
+    "glossedTokens": [
+      ["Zu-k", "you-E"], ["etsaia-ri", "enemy-D"], ["misil-ak", "missile-A.PL"], ["ni", "me.A"],
+      ["saldu", "sold"], ["d-i-zki-o-zu", "X-have-PL-3.D-2.E"]
+    ],
+    "translation": "You have sold the missiles / *me to the enemy.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["constraint", "Person Case Constraint"]
+    ],
+    "comment": "With a dative goal absorbing the π-probe, a 1st-person theme is unlicensable — the PLC at work."
+  },
+  {
+    "id": "br2009_t9_3_1",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "Table 9"},
+    "language": "basq1248",
+    "primaryText": "niñdduen",
+    "glossedTokens": [
+      ["n-iñdd-u-en", "1.SG-INV-have-PAST"]
+    ],
+    "translation": "He had me.",
+    "context": "Bizkaian dialect of Bolivar.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["combination", "3>1"],
+      ["repair", "added probe (INV)"]
+    ],
+    "comment": "The INV slot spells out the added probe that licenses the EA in inverse contexts."
+  },
+  {
+    "id": "br2009_10",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(10)"},
+    "language": "swah1253",
+    "primaryText": "sijakiona chochote",
+    "glossedTokens": [
+      ["si-ja-ki-ona", "1.SG-NEG-7-see"], ["chochote", "anything"]
+    ],
+    "translation": "I haven't seen anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["probe", "flat [u-3]"],
+      ["agreement", "object and subject independent"]
+    ],
+    "comment": "A flat probe is fully checked by any IA: no person-hierarchy interaction, every context inverse."
+  },
+  {
+    "id": "br2009_17a",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(17a)"},
+    "language": "otta1242",
+    "primaryText": "g-waabm-in",
+    "glossedTokens": [
+      ["g-waabm-in", "2-see-1.INV"]
+    ],
+    "translation": "I see you.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["combination", "1>2 = 2"],
+      ["context", "inverse"]
+    ],
+    "comment": "Nishnaabemwin (Odawa/Eastern Ojibwe): 2nd person is most specified ([u-3-1-2]), so the 2nd-person IA wins."
+  },
+  {
+    "id": "br2009_17b",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(17b)"},
+    "language": "otta1242",
+    "primaryText": "g-waabm-i",
+    "glossedTokens": [
+      ["g-waabm-i", "2-see-DFLT.1"]
+    ],
+    "translation": "You see me.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["combination", "2>1 = 2"],
+      ["context", "direct"]
+    ],
+    "comment": "The 1st-person IA leaves the [u2] segment, checked by the 2nd-person EA on cycle II."
+  },
+  {
+    "id": "br2009_17c",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(17c)"},
+    "language": "otta1242",
+    "primaryText": "n-waabm-ig",
+    "glossedTokens": [
+      ["n-waabm-ig", "1-see-3.INV"]
+    ],
+    "translation": "He sees me.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["combination", "3>1 = 1"],
+      ["context", "inverse"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "br2009_17d",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(17d)"},
+    "language": "otta1242",
+    "primaryText": "g-waabm-ig",
+    "glossedTokens": [
+      ["g-waabm-ig", "2-see-3.INV"]
+    ],
+    "translation": "He sees you.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["combination", "3>2 = 2"],
+      ["context", "inverse"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "br2009_18a",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(18a)"},
+    "language": "nucl1302",
+    "primaryText": "m-xedav-s",
+    "glossedTokens": [
+      ["m-xedav-s", "1.I-see-X"]
+    ],
+    "translation": "He sees me.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["combination", "3>1 = 1"],
+      ["morphology", "first-cycle m-"]
+    ],
+    "comment": "1sg spelled m- when the probe is valued on cycle I (IA controls)."
+  },
+  {
+    "id": "br2009_18b",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(18b)"},
+    "language": "nucl1302",
+    "primaryText": "v-xedav",
+    "glossedTokens": [
+      ["v-xedav", "1.II-see"]
+    ],
+    "translation": "I see him.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["combination", "1>3 = 1"],
+      ["morphology", "second-cycle v-"]
+    ],
+    "comment": "Same 1sg value spelled v- when valued on cycle II — a second-cycle effect."
+  },
+  {
+    "id": "br2009_29a",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(29a)"},
+    "language": "kash1277",
+    "primaryText": "bé chusath tsé paréna:va:n",
+    "glossedTokens": [
+      ["bé", "I.N"], ["chu-s-ath", "be.M.SG-1.SG.N-2.SG.E/A"], ["tsé", "you.N"],
+      ["paréna:va:n", "teaching"]
+    ],
+    "translation": "I am teaching you.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["combination", "1>2"],
+      ["context", "direct"],
+      ["IA case", "unmarked"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "br2009_29b",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(29b)"},
+    "language": "kash1277",
+    "primaryText": "tsé chukh me paréna:va:n",
+    "glossedTokens": [
+      ["tsé", "you.N"], ["chu-kh", "be.M.SG-2.SG.N"], ["me", "me.D"], ["paréna:va:n", "teaching"]
+    ],
+    "translation": "You are teaching me.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["combination", "2>1"],
+      ["context", "inverse"],
+      ["IA case", "R-Case (dative form)"]
+    ],
+    "comment": "The inverse-context IA takes the special R-Case; the sole agreement slot tracks the EA."
+  },
+  {
+    "id": "br2009_30b",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(30b)"},
+    "language": "kash1277",
+    "primaryText": "tsé yikh me hava:lé karné tUm'séndi dUs'",
+    "glossedTokens": [
+      ["tsé", "you.N"], ["yi-kh", "come.FUT-2.SG.N"], ["me", "me.D"], ["hava:lé", "handover"],
+      ["karné", "do.INF.ABL"], ["tUm'séndi", "he.GEN"], ["dUs'", "by"]
+    ],
+    "translation": "You will be handed over to me by him.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "passivization"],
+      ["result", "R-Case disappears"]
+    ],
+    "comment": "R-Case vanishes under passivization, unlike the inherent dative (30a) — it is structural, tied to the inverse configuration."
+  }
+]
