@@ -5,15 +5,18 @@ import Linglib.Data.Examples.Beaver2001
 /-!
 # Beaver (2001): Presupposition and Assertion in Dynamic Semantics
 
-Partial update logic (Chs. 6–8): [veltman-1996]-style eliminative updates
-extended with the presupposition operator `∂`, whose update is defined only in
-contexts that already satisfy its argument. A sentence denotes a partial
-function on information states (`Formula.eval`); a state *satisfies* a sentence
-when it is a fixed point (D29) and *admits* it when the update is defined
-(D30); `φ` *presupposes* `ψ` when every admitting state satisfies `ψ` (D31,
-D46) and *entails* it when every update lands in a satisfying state (D26,
-D45). Discourse markers, determiners and accommodation (Chs. 7–9) are outside
-the propositional fragment.
+The book reviews the linguistic theories of presupposition (Part I) and then
+builds a dynamic one (Part II). Sentences update information states — sets of
+worlds — as in [veltman-1996], and the presupposition operator `∂` blocks an
+update unless the context already establishes its argument. This file
+formalizes the propositional core, partial update logic. `Formula.eval` sends
+a sentence to a partial update. A state *satisfies* a sentence when updating
+with it changes nothing (D29), and *admits* it when the update is defined at
+all (D30). One sentence *presupposes* another when it cannot update any
+context that does not already satisfy the other (D31, D46); it *entails* the
+other when updating with it always produces a state satisfying the other
+(D26, D45). Determiners, discourse markers and accommodation (Chs. 7–9) lie
+outside the propositional fragment.
 
 ## Main statements
 
@@ -382,6 +385,25 @@ theorem admits_presup_singleton : (presup φ).eval.admits {w} ↔ TrueAt w φ :=
 theorem not_trueAt_of_falseAt (h : FalseAt w φ) : ¬TrueAt w φ := fun h' =>
   Set.singleton_ne_empty w (Part.mem_unique h' h)
 
+/-- At an admitting world, falsity is the negation of truth. -/
+theorem falseAt_iff_not_trueAt (h : φ.eval.admits {w}) : FalseAt w φ ↔ ¬TrueAt w φ :=
+  ⟨not_trueAt_of_falseAt, fun hn => (trueAt_or_falseAt h).resolve_left hn⟩
+
+private theorem sep_trueAt_not (hadm : ∀ w ∈ σ, φ.eval.admits {w}) :
+    {w ∈ σ | TrueAt w (not φ)} = σ \ {w ∈ σ | TrueAt w φ} :=
+  Set.ext fun w => by
+    by_cases hw : w ∈ σ
+    · simp [hw, trueAt_not, falseAt_iff_not_trueAt (hadm w hw)]
+    · simp [hw]
+
+private theorem sep_trueAt_and {ψ : Formula W} :
+    {w ∈ σ | TrueAt w (and φ ψ)} = {w ∈ {w ∈ σ | TrueAt w φ} | TrueAt w ψ} :=
+  Set.ext fun w => by simp [trueAt_and, and_assoc]
+
+private theorem sep_trueAt_presup :
+    {w ∈ σ | TrueAt w (presup φ)} = {w ∈ σ | TrueAt w φ} :=
+  Set.ext fun w => by simp [trueAt_presup]
+
 /-- Trivalent and update truth and falsity coincide world by world (Lemma 10.1). -/
 theorem trueAt_falseAt_iff (hφ : NonModal φ) (w : W) :
     (TrueAt w φ ↔ tval φ w = .true) ∧ (FalseAt w φ ↔ tval φ w = .false) := by
@@ -431,30 +453,21 @@ theorem mem_eval_iff (hφ : NonModal φ) (σ τ : Set W) :
     constructor
     · rintro ⟨υ, hυ, rfl⟩
       obtain ⟨hadm, rfl⟩ := (ih _ _).1 hυ
-      refine ⟨hadm, Set.ext fun w => ?_⟩
-      simp only [Set.mem_sdiff, Set.mem_ofPred_eq, not_and, trueAt_not]
-      exact ⟨fun ⟨hw, h⟩ => ⟨hw, (trueAt_or_falseAt (hadm w hw)).resolve_left (h hw)⟩,
-        fun ⟨hw, h⟩ => ⟨hw, fun _ => not_trueAt_of_falseAt h⟩⟩
+      exact ⟨hadm, (sep_trueAt_not hadm).symm⟩
     · rintro ⟨hadm, rfl⟩
-      refine ⟨_, (ih _ _).2 ⟨hadm, rfl⟩, Set.ext fun w => ?_⟩
-      simp only [Set.mem_sdiff, Set.mem_ofPred_eq, not_and, trueAt_not]
-      exact ⟨fun ⟨hw, h⟩ =>
-          ⟨hw, (trueAt_or_falseAt (show φ'.eval.admits {w} from hadm w hw)).resolve_left (h hw)⟩,
-        fun ⟨hw, h⟩ => ⟨hw, fun _ => not_trueAt_of_falseAt h⟩⟩
+      exact ⟨_, (ih _ _).2 ⟨hadm, rfl⟩, (sep_trueAt_not (φ := φ') hadm).symm⟩
   | @and φ' ψ' hφ hψ ihφ ihψ =>
     rw [mem_eval_and]
     constructor
     · rintro ⟨υ, hυ, hτ⟩
       obtain ⟨hadmφ, rfl⟩ := (ihφ _ _).1 hυ
       obtain ⟨hadmψ, rfl⟩ := (ihψ _ _).1 hτ
-      refine ⟨fun w hw => admits_and_singleton.2 ⟨hadmφ w hw, fun ht => hadmψ w ⟨hw, ht⟩⟩,
-        Set.ext fun w => ?_⟩
-      simp [trueAt_and, and_assoc]
+      exact ⟨fun w hw => admits_and_singleton.2 ⟨hadmφ w hw, fun ht => hadmψ w ⟨hw, ht⟩⟩,
+        sep_trueAt_and.symm⟩
     · rintro ⟨hadm, rfl⟩
-      refine ⟨_, (ihφ _ _).2 ⟨fun w hw => (admits_and_singleton.1 (hadm w hw)).1, rfl⟩,
+      exact ⟨_, (ihφ _ _).2 ⟨fun w hw => (admits_and_singleton.1 (hadm w hw)).1, rfl⟩,
         (ihψ _ _).2 ⟨fun w hw => (admits_and_singleton.1 (hadm w hw.1)).2 hw.2,
-          Set.ext fun w => ?_⟩⟩
-      simp [trueAt_and, and_assoc]
+          sep_trueAt_and⟩⟩
   | @presup φ' hφ ih =>
     rw [mem_eval_presup]
     constructor
@@ -462,14 +475,12 @@ theorem mem_eval_iff (hφ : NonModal φ) (σ τ : Set W) :
       obtain ⟨hadm, hσ⟩ := (ih _ _).1 hs
       have ht : ∀ w ∈ τ, TrueAt w φ' := fun w hw => ((Set.ext_iff.1 hσ w).1 hw).2
       exact ⟨fun w hw => admits_presup_singleton.2 (ht w hw),
-        (Set.sep_eq_self_iff_mem_true.2 fun w hw => trueAt_presup.2 (ht w hw)).symm⟩
+        hσ.trans (Set.ext fun w => by simp [trueAt_presup])⟩
     · rintro ⟨hadm, rfl⟩
       have ht : ∀ w ∈ σ, TrueAt w φ' := fun w hw => admits_presup_singleton.1 (hadm w hw)
-      have hσ : {w ∈ σ | TrueAt w (presup φ')} = σ :=
-        Set.sep_eq_self_iff_mem_true.2 fun w hw => trueAt_presup.2 (ht w hw)
-      rw [hσ]
-      exact ⟨(ih _ _).2 ⟨fun w hw => admits_of_mem (ht w hw),
-        (Set.sep_eq_self_iff_mem_true.2 ht).symm⟩, rfl⟩
+      have hσ : {w ∈ σ | TrueAt w φ'} = σ := Set.sep_eq_self_iff_mem_true.2 ht
+      exact ⟨(ih _ _).2 ⟨fun w hw => admits_of_mem (ht w hw), hσ.symm⟩,
+        sep_trueAt_presup.trans hσ⟩
 
 /-- A non-modal sentence is satisfied iff it is true at every world of the state. -/
 theorem satisfies_iff (hφ : NonModal φ) : Satisfies σ φ ↔ ∀ w ∈ σ, TrueAt w φ := by
