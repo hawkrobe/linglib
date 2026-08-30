@@ -1,361 +1,327 @@
 import Mathlib.Data.Fintype.Powerset
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Alternatives.Structural
-import Linglib.Fragments.Armenian.Classifiers
+import Linglib.Data.Examples.BaleKhanjian2014
 
 /-!
-# Bale & Khanjian (2014) — Singular-Plural Distinction in Western Armenian
-[bale-khanjian-2014]
+# Bale & Khanjian 2014: syntactic complexity and competition in Western Armenian
 
-Bale, Alan and Khanjian, Hrayr. *Linguistic Inquiry* 45.1: 1-26.
-Doi pending verification.
+Western Armenian singular nouns have general number — *dəgha* 'boy' is true of one boy or
+of a group of boys — while plural nouns are strictly plural; yet a definite singular denotes
+one boy. Gricean competition with the plural would strengthen every singular, and a purely
+syntactic account that denies competition needs a stipulated singular for the null number
+head and a stipulated ambiguity for numerals. What separates the cases is syntactic
+complexity: the singular indefinite is a bare NP whose existential force comes from the verb,
+so the plural indefinite, a full DP, is not among its structural alternatives and no
+competition arises; a definite singular and a definite plural are both full DPs differing
+in one head, so the plural competes, and the singular definite is read strictly. A numeral
+makes the plural alternative available but synonymous, so nothing changes; and the definite
+marker read as the supremum operator gives the plural a stronger local presupposition, which
+Maximize Presupposition applied at that subconstituent uses to rule out a numeral on a
+definite singular.
 
-## Empirical core
+## Main definitions
 
-Western Armenian (ISO `hyw`) has a singular-plural marking system
-*different* from English: so-called "singular" nouns have a **general
-number** interpretation (one or more) in indefinite contexts, while
-"plural" nouns are strictly plural (≥2). Numerals can modify either
-form. Crucially, **definiteness** forces strict singular:
+* `general`, `strictPlural`, `two`: the denotations of the singular, the plural, and a
+  numeral-modified noun over a set of boys.
+* `sup?`: the supremum operator the definite marker denotes, defined on sets containing
+  their own join.
+* `singularIndef`, `pluralIndef`, `singularDef`, `pluralDef`, `numeralSg`, `numeralPl`: the
+  paper's structures.
 
-| Sentence                          | Translation                  | Status   |
-|-----------------------------------|------------------------------|----------|
-| (3)   *dəgha vaze-ts*             | "one or more boys ran"       | OK, GEN# |
-| (11b) *dəgha-n vaze-ts*           | "the (single) boy ran"       | OK, STRICT.SG |
-| (10a) *yergu dəgha vaze-ts*       | "two boys ran"               | OK |
-| (10b) *yergu dəgha-ner vaze-ts-in*| "two boys ran"               | OK |
-| (14a) *yergu dəgha-n vaze-ts*     | "the two boys ran"           | UNGRAMMATICAL |
-| (14b) *yergu dəgha-ner-ə vaze-ts-in* | "the two boys ran"        | OK |
+## Main results
 
-The puzzle: why does definiteness force strict singular but indefinite
-singular has general number?
+* `pluralIndef_not_alternative`: the plural indefinite has structure the singular indefinite
+  and the lexicon lack, so it is no structural alternative.
+* `pluralDef_alternative`, `numeralPl_alternative`: the definite and the numeral-modified
+  plurals are alternatives of the corresponding singulars.
+* `two_general_eq_two_strictPlural`: under a numeral the two nouns mean the same.
+* `strict_singular_iff`: the definite singular denotes one boy exactly when the definite
+  plural's presupposition fails.
+* `strictPlural_presupposition_stronger`: locally, the plural's presupposition is stronger.
+* `rows_predication`: the paper's predicative sentences are acceptable exactly when the
+  subject is in the predicate's denotation.
 
-## Theoretical move
+## References
 
-[bale-khanjian-2014] argue against pure Gricean competition
-([krifka-1989], [sauerland-2003], [spector-2007]), which
-over-predicts strict-singular interpretations everywhere; against the
-[bliss-2004] purely-syntactic solution, which requires
-language-specific stipulations; and for **[katzir-2007]'s
-syntactic-complexity competition** combined with [bliss-2004]'s
-syntactic structures.
-
-Per [bliss-2004]: the singular indefinite has only `NP` (existential
-introduced by the verb); the plural indefinite has full `DP[∃ NumP[...]]`.
-Per [katzir-2007]: alternatives must be derivable from the original
-by deletion, contraction, or same-category substitution — so a plural
-alternative with *more* syntactic structure is not a viable alternative.
-
-Hence:
-- *Singular indefinite* has no viable plural alternative (plural is more
-  complex) → no competition → general-number meaning preserved.
-- *Singular definite* has a same-complexity plural alternative
-  (substitute `-ner`/`-ə` for the null Num head and `-n`) → competition
-  applies → strict-singular meaning derived.
-
-The (14a) ungrammaticality is handled by **local Maximize Presupposition**
-([singh-2011]), applied at the NumP level.
-
-## Cross-paper engagement (Sudo 2016)
-
-[sudo-2016]'s §5 flags Armenian as a counterexample to his
-blocking-principle account of obligatory classifier languages. The key
-fact from this paper: Western Armenian numerals combine *directly* with
-bare nouns (eq. 10a, *yergu dəgha vaze-ts*). This means the Sudo
-framework's input — a language with overt classifiers in the lexicon
-that block the silent ∪-operator — is not present in Western Armenian.
-Sudo's `.sudoBlocking` strategy doesn't apply; the language sits in a
-different typological cell.
-
-The Western Armenian classifier parameters are recorded in
-`Fragments/Armenian/Classifiers.lean`: `classifierObligatory := false` and
-`pluralClassifierCooccur := false` (per footnote 3, plurals are incompatible
-with classifiers).
-
-## What is formalized
-
-- A toy 3-boy domain with both general-number and strict-plural denotations
-  (per eq. 9).
-- The four syntactic structures (eqs. 21, 20, 32a, 32b) as `Tree Cat String`,
-  reusing `Syntax`.
-- Two structural-complexity theorems via `Tree.size`: indefinite plural
-  is *strictly larger* than indefinite singular (no Katzir competition);
-  definite plural is *equal in size* to definite singular (Katzir
-  competition applies).
-- A docstring-level pointer to `Semantics/Alternatives/Structural`
-  for the full Katzir 2007 competition machinery.
-
-## Out of scope
-
-- Full derivation of the strict-singular meaning via local Maximize
-  Presupposition ([singh-2011] machinery in
-  `Semantics/Presupposition/MaximizePresupposition.lean` could be
-  applied; deferred).
-- Korean / Turkish parallels (BK 2014 fn 14 + §2.3 cite Kim 2005 on Korean,
-  [bliss-2004] on Turkish; not formalized here).
-- The compositional semantics of `[-n]/[-ə]` as `sup`/`f_σ`-decomposed
-  definiteness (BK 2014 §6, derivation 37–39; deferred to a future pass).
-- The §2.1 predicate-distribution data for general number (eqs. 4–5,
-  *John-ə yev Brad-ə dəgha en* "John and Brad are boys (sg.)") which
-  is the *primary* empirical anchor for the general-number claim,
-  originally argued by [donabedian-1993].
-
-## Post-2014 engagement
-
-[marti-2020] *Numerals and the theory of number* (S&P 13:3) revisits
-the BGK 2011 / BK 2014 assumptions about Turkish and Western Armenian
-and proposes an alternative numeral-semantic analysis that doesn't rely
-on syntactic-complexity competition. A Marti 2020 study file would be
-the natural cross-paper test case here.
+* [bale-khanjian-2014]
+* [katzir-2007] — structurally defined alternatives
+* [bliss-2004] — the purely syntactic account
+* [singh-2011] — Maximize Presupposition in local contexts
+* [donabedian-1993] — general number in Western Armenian
+* [link-1983] — the supremum operator
+* [sauerland-2003], [krifka-1989], [spector-2007] — number competition
 -/
 
 namespace BaleKhanjian2014
 
-open Syntax
+open Data.Examples Syntax Alternatives.Structural
 
--- ============================================================================
--- §1: Toy domain (eq. 9)
--- ============================================================================
+/-! ### Denotations -/
 
-/-- A finite domain of three atomic boys: a, b, c. Mirrors the LMR2022
-    `Dog` toy domain. The denotations in eq. 9 of [bale-khanjian-2014]
-    use exactly this shape. -/
-inductive Boy where | a | b | c
-  deriving DecidableEq, Repr
+variable {α : Type*} [DecidableEq α]
 
-instance : Fintype Boy where
-  elems := {.a, .b, .c}
-  complete x := by cases x <;> decide
+/-- The singular noun over the boys `B`: every nonempty group of them. -/
+def general (B : Finset α) : Finset (Finset α) := B.powerset.filter (·.Nonempty)
 
-/-- Plural individuals as non-empty finsets of atomic boys. Sums of two
-    or more boys are pluralities; singletons are atomic individuals. -/
-abbrev Plurality := Finset Boy
+/-- The plural noun: the groups of two or more. -/
+def strictPlural (B : Finset α) : Finset (Finset α) := B.powerset.filter (2 ≤ ·.card)
 
-/-- [bale-khanjian-2014] (9a): general-number denotation of *dəgha*.
-    Contains all singletons and all sums (the inclusive interpretation):
-    `{a, b, c, ab, ac, bc, abc}`. Nonempty subsets of `Boy`. -/
-def daghaGenNum : Finset Plurality :=
-  (Finset.univ : Finset Plurality).filter (·.Nonempty)
+/-- A numeral restricts a noun to the groups of its cardinality. -/
+def ofCard (n : ℕ) (P : Finset (Finset α)) : Finset (Finset α) := P.filter (·.card = n)
 
-/-- [bale-khanjian-2014] (9b): strict-plural denotation of *dəgha-ner*.
-    Contains only sums of two or more: `{ab, ac, bc, abc}`. -/
-def daghaNerStrictPl : Finset Plurality :=
-  (Finset.univ : Finset Plurality).filter (·.card ≥ 2)
+/-- *yergu* 'two'. -/
+abbrev two (P : Finset (Finset α)) : Finset (Finset α) := ofCard 2 P
 
-/-- The strict-plural set is a proper subset of the general-number set —
-    every plurality in `dəgha-ner` is also in `dəgha`, but not conversely.
-    This is the formal content of "general number includes singular". -/
-theorem strictPl_subset_genNum :
-    daghaNerStrictPl ⊆ daghaGenNum := by
-  intro x hx
-  simp [daghaNerStrictPl, daghaGenNum] at *
-  exact Finset.card_pos.mp (by omega)
+/-- The supremum operator: the join of a set of groups when the set contains it. -/
+def sup? (P : Finset (Finset α)) : Option (Finset α) :=
+  if P.sup id ∈ P then some (P.sup id) else none
 
-/-- The general-number set has 7 elements (3 singletons + 3 pairs + 1 triple). -/
-theorem daghaGenNum_card : daghaGenNum.card = 7 := by decide
+theorem mem_general {B x : Finset α} : x ∈ general B ↔ x ⊆ B ∧ x.Nonempty := by
+  simp [general]
 
-/-- The strict-plural set has 4 elements (3 pairs + 1 triple). -/
-theorem daghaNerStrictPl_card : daghaNerStrictPl.card = 4 := by decide
+theorem mem_strictPlural {B x : Finset α} : x ∈ strictPlural B ↔ x ⊆ B ∧ 2 ≤ x.card := by
+  simp [strictPlural]
 
--- ============================================================================
--- §2: Bliss 2004 syntactic structures (eqs. 21, 20, 32a, 32b)
--- ============================================================================
+/-- The plural denotation is included in the singular's: general number. -/
+theorem strictPlural_subset_general (B : Finset α) : strictPlural B ⊆ general B := λ x hx => by
+  rw [mem_strictPlural] at hx
+  exact mem_general.2 ⟨hx.1, Finset.card_pos.1 (by omega)⟩
 
-/-- Eq. 21 — singular indefinite: just `[S [NP dəgha] [VP vaze-ts]]`.
-    No DP, no NumP. Existential quantification introduced by the verb
-    (Carlson 1977, Chierchia 1998). -/
+/-- Under a numeral the singular and the plural noun mean the same. -/
+theorem two_general_eq_two_strictPlural (B : Finset α) :
+    two (general B) = two (strictPlural B) := by
+  ext x
+  simp only [two, ofCard, Finset.mem_filter, mem_general, mem_strictPlural]
+  constructor
+  · rintro ⟨⟨h, -⟩, hc⟩; exact ⟨⟨h, by omega⟩, hc⟩
+  · rintro ⟨⟨h, -⟩, hc⟩; exact ⟨⟨h, Finset.card_pos.1 (by omega)⟩, hc⟩
+
+theorem sup_general (B : Finset α) : (general B).sup id = B := by
+  apply le_antisymm (Finset.sup_le λ x hx => (mem_general.1 hx).1)
+  rcases B.eq_empty_or_nonempty with rfl | hB
+  · simp
+  · exact Finset.le_sup (f := id) (mem_general.2 ⟨subset_rfl, hB⟩)
+
+/-- The singular definite denotes the group of all the boys, if any. -/
+theorem sup?_general (B : Finset α) : sup? (general B) = if B.Nonempty then some B else none := by
+  rw [sup?, sup_general]
+  by_cases hB : B.Nonempty
+  · rw [if_pos (mem_general.2 ⟨subset_rfl, hB⟩), if_pos hB]
+  · rw [if_neg (λ h => hB (mem_general.1 h).2), if_neg hB]
+
+theorem sup_strictPlural (B : Finset α) :
+    (strictPlural B).sup id = if 2 ≤ B.card then B else ∅ := by
+  split_ifs with h
+  · apply le_antisymm (Finset.sup_le λ x hx => (mem_strictPlural.1 hx).1)
+    exact Finset.le_sup (f := id) (mem_strictPlural.2 ⟨subset_rfl, h⟩)
+  · apply (Finset.sup_eq_bot_iff _ _).2
+    intro x hx
+    rw [mem_strictPlural] at hx
+    exact absurd (le_trans hx.2 (Finset.card_le_card hx.1)) h
+
+/-- The plural definite denotes the group of all the boys, presupposing that there are two. -/
+theorem sup?_strictPlural (B : Finset α) :
+    sup? (strictPlural B) = if 2 ≤ B.card then some B else none := by
+  rw [sup?, sup_strictPlural]
+  by_cases h : 2 ≤ B.card
+  · rw [if_pos h, if_pos (mem_strictPlural.2 ⟨subset_rfl, h⟩), if_pos h]
+  · rw [if_neg h, if_neg (λ hm => absurd (mem_strictPlural.1 hm).2 (by simp)), if_neg h]
+
+/-- At the number phrase, the plural's presupposition is the stronger: whenever the plural
+    definite is defined so is the singular. -/
+theorem strictPlural_presupposition_stronger (B : Finset α) :
+    (sup? (strictPlural B)).isSome → (sup? (general B)).isSome := by
+  rw [sup?_strictPlural, sup?_general]
+  intro h
+  split_ifs at h with h₁
+  · simp [Finset.card_pos.1 (by omega : 0 < B.card)]
+  · simp at h
+
+/-- Competition read off the presuppositions: the singular definite denotes a single boy
+    exactly when the plural definite's presupposition fails. -/
+theorem strict_singular_iff (B : Finset α) (hB : B.Nonempty) :
+    (sup? (general B)).map Finset.card = some 1 ↔ sup? (strictPlural B) = none := by
+  rw [sup?_general, sup?_strictPlural, if_pos hB]
+  have := Finset.card_pos.2 hB
+  constructor
+  · intro h; simp only [Option.map_some, Option.some.injEq] at h; rw [if_neg (by omega)]
+  · intro h; split_ifs at h with h₂; simp; omega
+
+/-- Under a numeral the definite singular and plural carry the same presupposition at the
+    determiner: the difference is local to the number phrase. -/
+theorem sup?_two_eq (B : Finset α) : sup? (two (general B)) = sup? (two (strictPlural B)) := by
+  rw [two_general_eq_two_strictPlural]
+
+/-! ### The three boys -/
+
+/-- The boys of the paper's context, and two named ones for the predicative sentences. -/
+inductive Boy
+  | john | brad | c
+  deriving DecidableEq, Fintype, Repr
+
+/-- The denotations over three boys: every nonempty group, and the groups of two or more. -/
+theorem denotations :
+    general (Finset.univ : Finset Boy) =
+      {{.john}, {.brad}, {.c}, {.john, .brad}, {.john, .c}, {.brad, .c}, {.john, .brad, .c}} ∧
+    strictPlural (Finset.univ : Finset Boy) =
+      {{.john, .brad}, {.john, .c}, {.brad, .c}, {.john, .brad, .c}} := by
+  decide
+
+/-! ### Structures -/
+
+/-- The singular indefinite: a bare NP, the verb supplying existential force. -/
 def singularIndef : Tree Cat String :=
-  .node .S [
-    .node .NP [.terminal .N "dəgha"],
-    .node .VP [.terminal .V "vaze-ts"]]
+  .node .S [.node .NP [.terminal .N "dəgha"], .node .VP [.terminal .V "vaze-ts"]]
 
-/-- Eq. 20 — plural indefinite:
-    `[S [DP ∃ [NumP [NP dəgha] [Num -ner]]] [VP vaze-ts-in]]`.
-    Full DP with covert existential D-head and overt plural Num. -/
+/-- The plural indefinite: a full DP with a covert existential determiner. -/
 def pluralIndef : Tree Cat String :=
   .node .S [
-    .node .DP [
-      .terminal .Det "∃",
-      .node .NumP [
-        .node .NP [.terminal .N "dəgha"],
-        .terminal .Num "-ner"]],
+    .node .DP [.terminal .Det "∃",
+      .node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"]],
     .node .VP [.terminal .V "vaze-ts-in"]]
 
-/-- Eq. 32a — singular definite:
-    `[S [DP [NumP [NP dəgha] [Num -∅]] [Det -n]] [VP vaze-ts]]`.
-    Full DP with phonologically null Num head. -/
+/-- The singular definite: a full DP with a null number head. -/
 def singularDef : Tree Cat String :=
   .node .S [
-    .node .DP [
-      .node .NumP [
-        .node .NP [.terminal .N "dəgha"],
-        .terminal .Num "-∅"],
+    .node .DP [.node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-∅"],
       .terminal .Det "-n"],
     .node .VP [.terminal .V "vaze-ts"]]
 
-/-- Eq. 32b — plural definite:
-    `[S [DP [NumP [NP dəgha] [Num -ner]] [Det -ə]] [VP vaze-ts-in]]`.
-    Same template as `singularDef` with `-ner`/`-ə` in place of
-    `-∅`/`-n`. -/
+/-- The plural definite: the same structure with the plural number head. -/
 def pluralDef : Tree Cat String :=
   .node .S [
-    .node .DP [
-      .node .NumP [
-        .node .NP [.terminal .N "dəgha"],
-        .terminal .Num "-ner"],
+    .node .DP [.node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"],
       .terminal .Det "-ə"],
     .node .VP [.terminal .V "vaze-ts-in"]]
 
--- ============================================================================
--- §3: Structural complexity (Katzir 2007)
--- ============================================================================
+/-- The numeral-modified singular indefinite: a full DP, the numeral above the number
+    phrase. -/
+def numeralSg : Tree Cat String :=
+  .node .S [
+    .node .DP [.terminal .Det "∃",
+      .node .NumP [.terminal .Num "yergu",
+        .node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-∅"]]],
+    .node .VP [.terminal .V "vaze-ts"]]
 
-open Alternatives.Structural
+/-- The numeral-modified plural indefinite. -/
+def numeralPl : Tree Cat String :=
+  .node .S [
+    .node .DP [.terminal .Det "∃",
+      .node .NumP [.terminal .Num "yergu",
+        .node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"]]],
+    .node .VP [.terminal .V "vaze-ts-in"]]
 
-/-- The lexicon needed to derive `singularDef` from `pluralDef` and vice
-    versa via [katzir-2007] substitution operations: all six
-    terminals that differ between the two trees, plus the shared noun.
-    `equalComplexity src φ ψ` is checked against `src` in both directions,
-    so this lexicon is symmetric. -/
-def waLex : List (Tree Cat String) :=
-  [ .terminal .Num "-∅",   .terminal .Num "-ner"
-  , .terminal .Det "-n",   .terminal .Det "-ə"
-  , .terminal .V "vaze-ts", .terminal .V "vaze-ts-in"
-  , .terminal .N "dəgha" ]
+/-- The lexicon the substitutions draw on: the two number heads, the two definite allomorphs,
+    the two verb forms, and the noun. -/
+def lexicon : List (Tree Cat String) :=
+  [.terminal .Num "-∅", .terminal .Num "-ner", .terminal .Det "-n", .terminal .Det "-ə",
+   .terminal .V "vaze-ts", .terminal .V "vaze-ts-in", .terminal .N "dəgha"]
 
-/-- **The headline definite-case theorem**: `singularDef` and `pluralDef`
-    have *equal* [katzir-2007] complexity — each is derivable from
-    the other by a chain of three same-category leaf substitutions
-    (`Num "-∅" ↔ "-ner"`, `Det "-n" ↔ "-ə"`, `V "vaze-ts" ↔ "vaze-ts-in"`).
+/-- The plural indefinite is no structural alternative to the singular indefinite: it has a
+    determiner phrase, and neither the singular indefinite nor the lexicon has one, so no chain
+    of deletions, contractions and substitutions reaches it. -/
+theorem pluralIndef_not_alternative :
+    pluralIndef ∉ structuralAlternatives lexicon singularIndef := λ h =>
+  category_preservation (substitutionSource lexicon singularIndef) .DP singularIndef pluralIndef
+    (by decide) (by decide) h (by decide)
 
-    Substrate helpers `equalComplexity_terminal_subst`,
-    `equalComplexity_inChild`, and `equalComplexity.trans` are available
-    in `Alternatives/Structural.lean` for cleaner future versions. The
-    direct-construction proof below explicitly walks each
-    `StructOp.inChild` chain (mechanical but verbose); a future
-    `katzir_path_subst` tactic could collapse this to ~5 lines.
-
-    Load-bearing claim from [bale-khanjian-2014] §5: the plural
-    definite is a viable structural alternative to the singular definite,
-    licensing Katzir-mediated competition that derives the strict-singular
-    meaning. -/
-theorem singularDef_pluralDef_equalComplexity :
-    equalComplexity waLex singularDef pluralDef := by
-  -- Intermediate trees for the pluralDef → singularDef chain:
-  -- After V substitution then Det substitution.
-  let pluralVNer := pluralDef
-  let intermed1 : Tree Cat String :=
+/-- The plural definite is a structural alternative to the singular definite, and conversely:
+    they differ by three same-category substitutions. -/
+theorem pluralDef_alternative : equalComplexity lexicon singularDef pluralDef := by
+  let step₁ : Tree Cat String :=
     .node .S [
-      .node .DP [
-        .node .NumP [
-          .node .NP [.terminal .N "dəgha"],
-          .terminal .Num "-ner"],
+      .node .DP [.node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"],
         .terminal .Det "-ə"],
       .node .VP [.terminal .V "vaze-ts"]]
-  let intermed2 : Tree Cat String :=
+  let step₂ : Tree Cat String :=
     .node .S [
-      .node .DP [
-        .node .NumP [
-          .node .NP [.terminal .N "dəgha"],
-          .terminal .Num "-ner"],
+      .node .DP [.node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"],
         .terminal .Det "-n"],
       .node .VP [.terminal .V "vaze-ts"]]
   refine ⟨?_, ?_⟩
-  · -- pluralDef → intermed1 → intermed2 → singularDef
-    refine .head (b := intermed1) ?_ (.head (b := intermed2) ?_ (.single ?_))
-    · -- substitute V "vaze-ts-in" with V "vaze-ts" at [1, 0]
-      apply StructOp.inChild ⟨1, by simp⟩
-      apply StructOp.inChild ⟨0, by simp⟩
-      exact StructOp.subst rfl (by simp [waLex])
-    · -- substitute Det "-ə" with Det "-n" at [0, 1]
-      apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      exact StructOp.subst rfl (by simp [waLex])
-    · -- substitute Num "-ner" with Num "-∅" at [0, 0, 1]
-      apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      exact StructOp.subst rfl (by simp [waLex])
-  · -- singularDef → intermed2 → intermed1 → pluralDef (mirror)
-    refine .head (b := intermed2) ?_ (.head (b := intermed1) ?_ (.single ?_))
-    · apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      exact StructOp.subst rfl (by simp [waLex])
-    · apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      exact StructOp.subst rfl (by simp [waLex])
+  · refine .head (b := step₁) ?_ (.head (b := step₂) ?_ (.single ?_))
     · apply StructOp.inChild ⟨1, by simp⟩
       apply StructOp.inChild ⟨0, by simp⟩
-      exact StructOp.subst rfl (by simp [waLex])
+      exact StructOp.subst rfl (by simp [lexicon])
+    · apply StructOp.inChild ⟨0, by simp⟩
+      apply StructOp.inChild ⟨1, by simp⟩
+      exact StructOp.subst rfl (by simp [lexicon])
+    · apply StructOp.inChild ⟨0, by simp⟩
+      apply StructOp.inChild ⟨0, by simp⟩
+      apply StructOp.inChild ⟨1, by simp⟩
+      exact StructOp.subst rfl (by simp [lexicon])
+  · refine .head (b := step₂) ?_ (.head (b := step₁) ?_ (.single ?_))
+    · apply StructOp.inChild ⟨0, by simp⟩
+      apply StructOp.inChild ⟨0, by simp⟩
+      apply StructOp.inChild ⟨1, by simp⟩
+      exact StructOp.subst rfl (by simp [lexicon])
+    · apply StructOp.inChild ⟨0, by simp⟩
+      apply StructOp.inChild ⟨1, by simp⟩
+      exact StructOp.subst rfl (by simp [lexicon])
+    · apply StructOp.inChild ⟨1, by simp⟩
+      apply StructOp.inChild ⟨0, by simp⟩
+      exact StructOp.subst rfl (by simp [lexicon])
 
-/-- **The headline indefinite-case theorem**: `pluralIndef` is strictly
-    larger than `singularIndef`. [katzir-2007]'s deletion/
-    contraction/substitution operations are non-increasing in tree size
-    (deletion strictly reduces, the others preserve), so a strict size
-    increase is sufficient to rule out structural-alternative status.
-    Hence `pluralIndef ∉ structuralAlternatives lex singularIndef`,
-    no Katzir-mediated competition fires, and `singularIndef` keeps its
-    general-number meaning. -/
-theorem singularIndef_size_lt_pluralIndef_size :
-    singularIndef.size < pluralIndef.size := by decide
+/-- The numeral-modified plural is a structural alternative to the numeral-modified singular,
+    and conversely: the number head and the verb form substitute. -/
+theorem numeralPl_alternative : equalComplexity lexicon numeralSg numeralPl := by
+  let step : Tree Cat String :=
+    .node .S [
+      .node .DP [.terminal .Det "∃",
+        .node .NumP [.terminal .Num "yergu",
+          .node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"]]],
+      .node .VP [.terminal .V "vaze-ts"]]
+  refine ⟨?_, ?_⟩
+  · refine .head (b := step) ?_ (.single ?_)
+    · apply StructOp.inChild ⟨1, by simp⟩
+      apply StructOp.inChild ⟨0, by simp⟩
+      exact StructOp.subst rfl (by simp [lexicon])
+    · apply StructOp.inChild ⟨0, by simp⟩
+      apply StructOp.inChild ⟨1, by simp⟩
+      apply StructOp.inChild ⟨1, by simp⟩
+      apply StructOp.inChild ⟨1, by simp⟩
+      exact StructOp.subst rfl (by simp [lexicon])
+  · refine .head (b := step) ?_ (.single ?_)
+    · apply StructOp.inChild ⟨0, by simp⟩
+      apply StructOp.inChild ⟨1, by simp⟩
+      apply StructOp.inChild ⟨1, by simp⟩
+      apply StructOp.inChild ⟨1, by simp⟩
+      exact StructOp.subst rfl (by simp [lexicon])
+    · apply StructOp.inChild ⟨1, by simp⟩
+      apply StructOp.inChild ⟨0, by simp⟩
+      exact StructOp.subst rfl (by simp [lexicon])
 
-/-! ## §3a: Cross-paper disagreement with [sauerland-2003]
+/-! ### The rows -/
 
-[bale-khanjian-2014] explicitly reject Gricean / phi-MP accounts
-of number competition (introduction + §3, citing [krifka-1989],
-[sauerland-2003], [spector-2007]). Sauerland's
-`mp_blocks_plural_at_atom` says that for any *atomic* individual, MP
-selects the singular form over the plural — pre-empting general number.
+/-- The subject of a predicative sentence: John, or John and Brad. -/
+def subject? (r : LinguisticExample) : Option (Finset Boy) :=
+  match r.feature? "subject" with
+  | some "atom" => some {.john}
+  | some "group" => some {.john, .brad}
+  | _ => none
 
-BK 2014's data contradict this for indefinite singulars: *dəgha vaze-ts*
-"one or more boys ran" (eq. 3) is felicitous about a single atomic boy,
-even though Sauerland would predict pre-emption. The (formalized)
-witness: the singleton `{Boy.a}` (a single atomic boy) is in the
-general-number denotation `daghaGenNum` (eq. 9), and BK 2014's
-empirical claim is that the singular indefinite is felicitous about
-this referent. Sauerland's account predicts pre-emption; BK's data
-deny it.
+/-- The denotation of a predicative sentence's noun phrase over the three boys, from its
+    number and numeral. -/
+def denotation? (r : LinguisticExample) : Option (Finset (Finset Boy)) :=
+  if r.feature? "construction" = some "predicative" then
+    let noun := match r.feature? "number" with
+      | some "SG" => some (general Finset.univ)
+      | some "PL" => some (strictPlural Finset.univ)
+      | _ => none
+    match r.feature? "numeral" with
+    | some "two" => noun.map (ofCard 2)
+    | some "one" => noun.map (ofCard 1)
+    | _ => noun
+  else none
 
-A *full* contradiction theorem requires bridging Sauerland's entity-
-level MP (`Sauerland2003.mp_selects_sg`)
-to BK's tree-level Katzir competition. Such a bridge is not currently
-in linglib; this section provides the witness and the structural
-argument in prose. -/
-
-/-- Witness for the Sauerland-vs-BK disagreement: the singleton `{Boy.a}`
-    is an atomic individual that BK 2014 say can be picked out by the
-    indefinite singular *dəgha* (general-number reading), but
-    [sauerland-2003]'s `mp_blocks_plural_at_atom` would predict
-    pre-emption by the strict-singular reading. -/
-theorem singleton_atom_in_genNum :
-    ({Boy.a} : Plurality) ∈ daghaGenNum := by decide
-
-/-- The asymmetry between (in)definites: equal complexity for definites,
-    strict size increase for indefinites. The empirical wedge that drives
-    the competition asymmetry per [katzir-2007]. -/
-theorem definiteness_asymmetry :
-    equalComplexity waLex singularDef pluralDef ∧
-    singularIndef.size < pluralIndef.size :=
-  ⟨singularDef_pluralDef_equalComplexity, singularIndef_size_lt_pluralIndef_size⟩
-
--- ============================================================================
--- §5: Cross-paper note — Sudo 2016 doesn't apply to Western Armenian
--- ============================================================================
-
-/-- Cross-paper note (forward reference): [sudo-2016]'s §5 flags
-    Armenian as a counterexample. The [bale-khanjian-2014] data
-    show *why* the input shape is wrong: Western Armenian numerals
-    combine directly with bare nouns (eq. 10a), so there is no overt
-    classifier morpheme that the silent ∪-operator would be blocked by.
-    Western Armenian's Fragment records `classifierObligatory := false`,
-    structurally failing the input shape that obligatory-CL frameworks
-    like [chierchia-1998] and [sudo-2016] presuppose.
-
-    The dependency goes from BK 2014 → `Fragments/Armenian/Classifiers.lean`
-    rather than BK 2014 → Sudo 2016 (which would violate the chronology
-    rule — study files may reference older papers, not newer ones). -/
-theorem western_armenian_lacks_obligatory_classifier_input :
-    Armenian.classifierObligatory = false := rfl
+/-- Each predicative sentence of the paper is acceptable exactly when its subject is in the
+    denotation of its predicate: a single boy is a boy but not boys, and two boys are boys,
+    two boys, and not one boy. -/
+theorem rows_predication :
+    ∀ r ∈ Examples.all, ∀ s ∈ subject? r, ∀ P ∈ denotation? r,
+      (s ∈ P ↔ r.judgment = .acceptable) := by
+  decide +kernel
 
 end BaleKhanjian2014
