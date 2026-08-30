@@ -1,0 +1,343 @@
+[
+  {
+    "id": "bu2022_2a",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(2a)"},
+    "language": "indo1316",
+    "primaryText": "Ali ber-dandan.",
+    "glossedTokens": [
+      ["Ali", "Ali"], ["ber-dandan", "MV-dress"]
+    ],
+    "translation": "Ali dressed.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "inherent reflexive"],
+      ["root class", "naturally reflexive"]
+    ],
+    "comment": "Body-care roots default to the coreferent reading of the suppressed variable."
+  },
+  {
+    "id": "bu2022_2b",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(2b)"},
+    "language": "indo1316",
+    "primaryText": "Mobil itu ber-jual dengan mudah.",
+    "glossedTokens": [
+      ["Mobil", "car"], ["itu", "that"], ["ber-jual", "MV-sell"], ["dengan", "with"],
+      ["mudah", "easy"]
+    ],
+    "translation": "The car sells easily.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "dispositional"],
+      ["reading", "generic"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bu2022_7",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(7)"},
+    "language": "indo1316",
+    "primaryText": "Mobil itu ber-jual kemarin.",
+    "glossedTokens": [
+      ["Mobil", "car"], ["itu", "that"], ["ber-jual", "MV-sell"], ["kemarin", "yesterday"]
+    ],
+    "translation": "The car sold yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "passive middle"],
+      ["reading", "episodic"]
+    ],
+    "comment": "Episodic reading, unlike English dispositionals."
+  },
+  {
+    "id": "bu2022_9a",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(9a)"},
+    "language": "indo1316",
+    "primaryText": "Mobil itu ber-jual tapi tidak ada orang yang men-jual=nya.",
+    "glossedTokens": [
+      ["Mobil", "car"], ["itu", "that"], ["ber-jual", "MV-sell"], ["tapi", "but"],
+      ["tidak", "NEG"], ["ada", "exist"], ["orang", "man"], ["yang", "REL"],
+      ["men-jual=nya", "AV-sell=3SG"]
+    ],
+    "translation": "The car sells/sold, but nobody sold it.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "dispositional"],
+      ["diagnostic", "agent denial"]
+    ],
+    "comment": "The unexpressed agent is entailed to exist, as with di- passives."
+  },
+  {
+    "id": "bu2022_10c",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(10c)"},
+    "language": "indo1316",
+    "primaryText": "Mobil itu ber-jual dengan sendiri=nya.",
+    "glossedTokens": [
+      ["Mobil", "car"], ["itu", "that"], ["ber-jual", "MV-sell"], ["dengan", "with"],
+      ["sendiri=nya", "alone=DEF"]
+    ],
+    "translation": "The car sold/sells by itself.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "dispositional"],
+      ["diagnostic", "dengan sendiri=nya"]
+    ],
+    "comment": "'By itself' contradicts the entailed separate causer."
+  },
+  {
+    "id": "bu2022_11",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(11)"},
+    "language": "indo1316",
+    "primaryText": "Mobil itu di-jual oleh Tono.",
+    "glossedTokens": [
+      ["Mobil", "car"], ["itu", "that"], ["di-jual", "PASS-sell"], ["oleh", "by"],
+      ["Tono", "Tono"]
+    ],
+    "translation": "The car was sold by Tono.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["voice", "di- passive"],
+      ["diagnostic", "oleh phrase"]
+    ],
+    "comment": "The ber- variant *ber-jual oleh Tono is ungrammatical: middles reject oleh."
+  },
+  {
+    "id": "bu2022_13",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(13)"},
+    "language": "indo1316",
+    "primaryText": "Orang itu ber-jual untuk meng-(k)umpul-kan dana.",
+    "glossedTokens": [
+      ["Orang", "man"], ["itu", "that"], ["ber-jual", "MV-sell"], ["untuk", "for"],
+      ["meng-(k)umpul-kan", "AV-collect-CAUS"], ["dana", "fund"]
+    ],
+    "translation": "The man sells/sold to collect funds.",
+    "context": "A charity bachelor auction.",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "dispositional"],
+      ["diagnostic", "rationale clause"]
+    ],
+    "comment": "The suppressed agent cannot control rationale PRO, unlike di- passives (12b)."
+  },
+  {
+    "id": "bu2022_17b",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(17b)"},
+    "language": "indo1316",
+    "primaryText": "Orang itu ber-dandan dengan sendiri=nya.",
+    "glossedTokens": [
+      ["Orang", "man"], ["itu", "that"], ["ber-dandan", "MV-dress"], ["dengan", "with"],
+      ["sendiri=nya", "alone=DEF"]
+    ],
+    "translation": "The man dressed by himself.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "inherent reflexive"],
+      ["diagnostic", "dengan sendiri=nya"]
+    ],
+    "comment": "The surface subject is the causer, so 'by itself' is licensed."
+  },
+  {
+    "id": "bu2022_18a",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(18a)"},
+    "language": "indo1316",
+    "primaryText": "Orang itu ber-cuci=mata.",
+    "glossedTokens": [
+      ["Orang", "man"], ["itu", "that"], ["ber-cuci=mata", "MV-wash=eye"]
+    ],
+    "translation": "The man washed his eyes.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "compositional: washed his eyes", "judgment": "acceptable"},
+      {"name": "idiomatic: watched the girls go by (24b)", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["middle type", "incorporation"],
+      ["object", "incorporated NP"]
+    ],
+    "comment": "The agent surfaces as subject; the patient is an incorporated NP."
+  },
+  {
+    "id": "bu2022_19b",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(19b)"},
+    "language": "indo1316",
+    "primaryText": "Gadis itu ber-cuci dengan cepat kaki.",
+    "glossedTokens": [
+      ["Gadis", "girl"], ["itu", "that"], ["ber-cuci", "MV-wash"], ["dengan", "with"],
+      ["cepat", "quick"], ["kaki", "leg"]
+    ],
+    "translation": "The girl washed her leg quickly.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "incorporation"],
+      ["diagnostic", "non-separability"]
+    ],
+    "comment": "The incorporated NP cannot be separated from the verb, unlike a meN- object (19a)."
+  },
+  {
+    "id": "bu2022_22",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(22)"},
+    "language": "indo1316",
+    "primaryText": "Dia ber-jual=mobil. Mobil itu mahal.",
+    "glossedTokens": [
+      ["Dia", "3SG"], ["ber-jual=mobil", "MV-sell=car"], ["Mobil", "car"], ["itu", "that"],
+      ["mahal", "expensive"]
+    ],
+    "translation": "(S)he sold a car. That car was expensive.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "incorporation"],
+      ["diagnostic", "discourse opacity"]
+    ],
+    "comment": "The incorporated noun cannot antecede 'that car' — no discourse referent."
+  },
+  {
+    "id": "bu2022_26b",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(26b)"},
+    "language": "indo1316",
+    "primaryText": "Orang itu ber-jual=diri.",
+    "glossedTokens": [
+      ["Orang", "man"], ["itu", "that"], ["ber-jual=diri", "MV-sell=REFL"]
+    ],
+    "translation": "The man sold himself.",
+    "context": "E.g. sold into servitude.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "incorporated reflexive"],
+      ["object", "diri"]
+    ],
+    "comment": "Incorporated diri triggers the coreferent reading."
+  },
+  {
+    "id": "bu2022_28",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(28)"},
+    "language": "indo1316",
+    "primaryText": "Orang itu ber-jual=baju=diri.",
+    "glossedTokens": [
+      ["Orang", "man"], ["itu", "that"], ["ber-jual=baju=diri", "MV-sell=dress=REFL"]
+    ],
+    "translation": "The man sold the dress.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "incorporation"],
+      ["diagnostic", "complementary distribution"]
+    ],
+    "comment": "Incorporated diri and an incorporated lexical NP compete for one slot."
+  },
+  {
+    "id": "bu2022_44a",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(44a)"},
+    "language": "indo1316",
+    "primaryText": "Tono dan Ali ber-dandan.",
+    "glossedTokens": [
+      ["Tono", "Tono"], ["dan", "and"], ["Ali", "Ali"], ["ber-dandan", "MV-dress"]
+    ],
+    "translation": "Tono and Ali dressed/got dressed.",
+    "context": "Tono dressed himself and Ali was dressed by his mother.",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "mixed readings"],
+      ["analysis", "open variable vs existential"]
+    ],
+    "comment": "No mixed reflexive/disjoint reading under conjunction — unlike Greek, favoring the open-variable analysis (43)."
+  },
+  {
+    "id": "bu2022_59",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(59)"},
+    "language": "indo1316",
+    "primaryText": "Tono ber-topi.",
+    "glossedTokens": [
+      ["Tono", "Tono"], ["ber-topi", "MV-hat"]
+    ],
+    "translation": "Tono has a hat on.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "conflation"],
+      ["root class", "relational noun"]
+    ],
+    "comment": "Relational nouns (body parts, kin, clothing) conflate: the possessor surfaces as subject."
+  },
+  {
+    "id": "bu2022_62",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(62)"},
+    "language": "indo1316",
+    "primaryText": "Dia ber-tangan tapi tidak ada yang men-(t)angan-kan=nya.",
+    "glossedTokens": [
+      ["Dia", "3SG"], ["ber-tangan", "MV-hand"], ["tapi", "but"], ["tidak", "NEG"],
+      ["ada", "exist"], ["yang", "REL"], ["men-(t)angan-kan=nya", "AV-hand-CAUS=3SG"]
+    ],
+    "translation": "(S)he has hands but nobody gave him/her hands.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "conflation"],
+      ["diagnostic", "change denial"]
+    ],
+    "comment": "Conflation middles are purely possessional statives, not change-of-state."
+  },
+  {
+    "id": "bu2022_67a",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(67a)"},
+    "language": "indo1316",
+    "primaryText": "Pasukan itu ter-pecah dua tapi tidak ada yang mem-(p)ecah=nya.",
+    "glossedTokens": [
+      ["Pasukan", "troop"], ["itu", "that"], ["ter-pecah", "MV-break"], ["dua", "two"],
+      ["tapi", "but"], ["tidak", "NEG"], ["ada", "exist"], ["yang", "REL"],
+      ["mem-(p)ecah=nya", "AV-break=3SG"]
+    ],
+    "translation": "The troop broke into two but nobody/nothing broke them.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "anticausative"],
+      ["diagnostic", "causer denial"]
+    ],
+    "comment": "ter- anticausatives lack the entailed external causer of dispositional ber- middles; contrast (74)."
+  },
+  {
+    "id": "bu2022_74",
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(74)"},
+    "language": "indo1316",
+    "primaryText": "Pasukan itu ber-pecah dua tapi tidak ada yang mem-(p)ecah=nya.",
+    "glossedTokens": [
+      ["Pasukan", "troop"], ["itu", "that"], ["ber-pecah", "MV-break"], ["dua", "two"],
+      ["tapi", "but"], ["tidak", "NEG"], ["ada", "exist"], ["yang", "REL"],
+      ["mem-(p)ecah=nya", "AV-break=3SG"]
+    ],
+    "translation": "The troop broke into two but nobody broke them.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["middle type", "dispositional"],
+      ["diagnostic", "causer denial"]
+    ],
+    "comment": "ber- on the same root has only the disjoint (dispositional/passive) reading, so causer denial contradicts."
+  }
+]
