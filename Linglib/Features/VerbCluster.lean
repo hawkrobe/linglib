@@ -122,37 +122,6 @@ theorem isProjective_iff_antitone {σ : VerbClusterBinding n} :
     obtain ⟨i, j, hij, hlt⟩ := habs
     exact absurd hlt (not_lt.mpr (h (le_of_lt hij)))
 
--- Integration Model
-
-/-- Count of NPs matrix-integrated after k verbs heard.
-
-    NP_i is matrix-integrated iff all verbs in the control chain from
-    V_{σ(i)} to the matrix verb V_{σ(0)} have been heard. Since verbs are
-    heard in surface order (position 0 first), and the control chain passes
-    through surface positions min(σ(0), σ(i))..max(σ(0), σ(i)), NP_i is
-    integrated iff max(σ(0), σ(i)) < k.
-
-    - Identity (σ(0) = 0): max(0, i) < k → i < k → min(k, n)
-    - Reverse (σ(0) = n−1): max(n−1, ·) = n−1 < k → k ≥ n → if k ≥ n then n else 0 -/
-def integratedCount (σ : VerbClusterBinding n) (k : Nat) : Nat :=
-  match n with
-  | 0 => 0
-  | m + 1 =>
-    let matrix := (σ ⟨0, by omega⟩).val
-    (List.range (m + 1)).countP λ i =>
-      if hi : i < m + 1 then
-        Nat.max matrix (σ ⟨i, hi⟩).val < k
-      else false
-
-/-- NPs awaiting matrix-connected integration after k verbs. -/
-def unintegratedCount (σ : VerbClusterBinding n) (k : Nat) : Nat :=
-  n - integratedCount σ k
-
-/-- Absolute NP-verb distance. NP_i is at position i, V_{σ(i)} is at position n + σ(i).
-    Distance = n + σ(i) − i. -/
-def npVerbDist (n : Nat) (σ : VerbClusterBinding n) (i : Fin n) : Nat :=
-  n + (σ i).val - i.val
-
 -- Key Theorems
 
 /-- Cross-serial (identity) binding is non-projective for n ≥ 2. -/
@@ -175,65 +144,6 @@ theorem reverse_is_projective : isProjective (reverse n) = true := by
   intro i j hij
   simp only [reverse, Equiv.coe_fn_mk, Fin.mk_le_mk]
   omega
-
--- Closed-form Reductions
-
-private theorem countP_dite_lt_range (n k : Nat) :
-    (List.range n).countP (λ i => if _ : i < n then decide (i < k) else false) = min k n := by
-  induction n with
-  | zero => simp
-  | succ m ih =>
-    rw [List.range_succ, List.countP_append, List.countP_cons, List.countP_nil]
-    simp only [show m < m + 1 from by omega, dite_true]
-    have : (List.range m).countP (λ i => if _ : i < m + 1 then decide (i < k) else false) =
-           (List.range m).countP (λ i => if _ : i < m then decide (i < k) else false) := by
-      apply List.countP_congr; intro i hi; simp only [List.mem_range] at hi
-      simp [show i < m from hi, show i < m + 1 from by omega]
-    rw [this, ih]; by_cases h : m < k <;> simp [h] <;> omega
-
-/-- Identity integration count: min(k, n) NPs integrated after k verbs. -/
-theorem identity_integratedCount (k : Nat) :
-    integratedCount (identity n) k = min k n := by
-  cases n with
-  | zero => simp [integratedCount]
-  | succ m => simp only [integratedCount, identity, Equiv.refl_apply, Fin.val_mk]
-              exact countP_dite_lt_range (m + 1) k
-
-private theorem reverse_max_eq (m i : Nat) (hi : i < m + 1) :
-    Nat.max (m + 1 - 1 - 0) (m + 1 - 1 - i) = m := by
-  simp only [Nat.add_sub_cancel, Nat.sub_zero]
-  exact Nat.max_eq_left (by omega)
-
-/-- Reverse integration count: 0 until all verbs heard, then n. -/
-theorem reverse_integratedCount (k : Nat) :
-    integratedCount (reverse n) k = if k ≥ n then n else 0 := by
-  cases n with
-  | zero => simp [integratedCount]
-  | succ m =>
-    simp only [integratedCount, reverse, Equiv.coe_fn_mk, Fin.val_mk]
-    by_cases hk : k ≥ m + 1
-    · rw [if_pos hk]
-      have hall : ∀ i ∈ List.range (m + 1),
-          (if _ : i < m + 1 then
-            decide (Nat.max (m + 1 - 1 - 0) (m + 1 - 1 - i) < k) else false) = true := by
-        intro i hi; simp only [List.mem_range] at hi
-        simp only [show i < m + 1 from hi, dite_true, decide_eq_true_eq]
-        rw [reverse_max_eq m i hi]; omega
-      have h := List.countP_eq_length.mpr hall
-      rw [List.length_range] at h; exact h
-    · rw [if_neg hk]
-      apply List.countP_eq_zero.mpr
-      intro i hi; simp only [List.mem_range] at hi
-      simp only [show i < m + 1 from hi, dite_true, decide_eq_true_eq]
-      rw [reverse_max_eq m i hi]; omega
-
-theorem identity_unintegratedCount (k : Nat) :
-    unintegratedCount (identity n) k = n - min k n := by
-  simp [unintegratedCount, identity_integratedCount]
-
-theorem reverse_unintegratedCount (k : Nat) :
-    unintegratedCount (reverse n) k = if k ≥ n then 0 else n := by
-  simp only [unintegratedCount, reverse_integratedCount]; split <;> omega
 
 end VerbClusterBinding
 
