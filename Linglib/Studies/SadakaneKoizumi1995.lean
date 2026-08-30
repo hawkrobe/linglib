@@ -88,7 +88,7 @@ correspondingly coarse.
 - Diagnostic acceptability scores use `Features.Acceptability` (the
   project canon), not a per-paper Grammaticality enum.
 - `Classification.marantz` aligns S&K's 4-way with [baker-2015]'s
-  `Syntax.Case.CaseSource` from `Syntax.Case.Dependent`. The map
+  `Case.Mechanism` from `Syntax/Case/Dependent.lean`. The map
   is partial: copula *ni* lies outside Marantz's case-assignment domain.
   Note: `.niInsertion → .unmarked` (Marantz/Schütze's "default-case"
   fallback) rather than `.agree` — Takezawa's salvage operation is what
@@ -346,8 +346,8 @@ theorem fragment_ni_predicts_inconsistent_signatures :
 /-! ## §6 Alignment with Marantz dependent case
 
 S&K's 4-way classification partially aligns with Marantz/Baker's
-`CaseSource` (`lexical | dependent | unmarked | agree`), encoded in
-`Syntax.Case.Dependent`. Per the cross-framework reasoning:
+`Mechanism` (`lexical | dependent | unmarked | agree`), encoded in
+`Syntax/Case/Dependent.lean`. Per the cross-framework reasoning:
 
 - Dative case marker *ni* — assigned by structural configuration → `dependent`
 - Postposition *ni* — bears inherent meaning, attached to NP via P head → `lexical`
@@ -359,13 +359,13 @@ S&K's 4-way classification partially aligns with Marantz/Baker's
   construction, not case marking) → `none`
 -/
 
-open Syntax.Case (CaseSource)
+open Case (Mechanism)
 
 namespace Classification
 
 /-- Partial map from S&K's 4-way *ni* taxonomy to Marantz/Baker's
-    `CaseSource`. Copula *ni* maps to `none` (outside Marantz's domain). -/
-def marantz : Classification → Option CaseSource
+    `Mechanism`. Copula *ni* maps to `none` (outside Marantz's domain). -/
+def marantz : Classification → Option Mechanism
   | .dativeCaseMarker => some .dependent
   | .postposition     => some .lexical
   | .niInsertion      => some .unmarked
@@ -382,7 +382,7 @@ end Classification
     `.unmarked`; the disagreement is recorded explicitly. -/
 theorem niInsertion_alignment_underdetermined :
     Classification.marantz .niInsertion = some .unmarked ∧
-    (some CaseSource.agree : Option CaseSource) ≠ some .unmarked := by
+    (some Mechanism.agree : Option Mechanism) ≠ some .unmarked := by
   refine ⟨rfl, ?_⟩; decide
 
 /-! ## §7 Affectedness hierarchy (§4, figure 45)

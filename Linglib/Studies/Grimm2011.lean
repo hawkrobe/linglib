@@ -514,7 +514,7 @@ Spanish *a* is dative, not flagged ACC — the fault line between structural
 and semantic case. The pipeline below runs the dependent-case algorithm on a
 prominence-annotated clause to make the divergence explicit. -/
 
-open Syntax.Case
+open Case
 
 /-- An NP annotated with referential prominence. Dependent case ignores the
     annotation; the lattice reads it. -/
@@ -526,7 +526,7 @@ structure ProminentNP where
   deriving DecidableEq, Repr
 
 /-- The NP as the dependent-case algorithm sees it. -/
-def ProminentNP.toNP (pnp : ProminentNP) : NPInDomain := ⟨pnp.label, pnp.lexicalCase⟩
+def ProminentNP.toNP (pnp : ProminentNP) : Case.NP := ⟨pnp.label, pnp.lexicalCase⟩
 
 /-- A transitive clause: subject c-commands object. -/
 structure TransClause where
@@ -535,7 +535,7 @@ structure TransClause where
   deriving DecidableEq, Repr
 
 /-- Abstract case assigned to the object by the dependent-case algorithm. -/
-def objectCase (lang : CaseLanguageType) (tc : TransClause) : Option Case :=
+def objectCase (lang : Alignment.AlignmentType) (tc : TransClause) : Option Case :=
   getCaseOf tc.object.label (assignCases lang [tc.subject.toNP, tc.object.toNP])
 
 /-- A transitive clause with a fixed human-pronoun subject and a

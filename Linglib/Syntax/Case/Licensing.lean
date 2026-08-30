@@ -74,7 +74,7 @@ structure Licenser where
 
 /-! ### Nominals and their licensing requirement -/
 
-/-- A nominal as seen by the licensing system. Extends `NPInDomain`
+/-- A nominal as seen by the licensing system. Extends `Case.NP`
     (the configural type from `Dependent.lean`) with the
     licensing-requirement flag.
 
@@ -85,10 +85,10 @@ structure Licenser where
     means the NP lacks this feature (the [-specific] / [-definite] /
     [-animate] cell of a DOM language) and is interpretable in situ.
 
-    `lexicalCase` (inherited from `NPInDomain`) records pre-assigned
+    `lexicalCase` (inherited from `Case.NP`) records pre-assigned
     lexical case from a P or V head; lexical case independently values
     [Case] and so satisfies the licensing requirement on its own. -/
-structure LicensedNP extends Syntax.Case.NPInDomain where
+structure LicensedNP extends _root_.Case.NP where
   needsLicensing : Bool
   deriving DecidableEq, Repr
 

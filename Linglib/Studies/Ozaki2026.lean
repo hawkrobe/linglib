@@ -293,7 +293,7 @@ theorem alternation_crosses_tsujimura_split :
 -- ============================================================================
 
 open Minimalist Minimalist.Voice
-open Syntax.Case
+open Case
 open Japanese.Predicates
 
 /-! ### The Spell-Out domain of a departure verb
@@ -303,18 +303,18 @@ leaver above the source. *Taroo-ga mura-kara hanare-ta* replaces the source
 with a PP, *kara* assigning it lexical ablative. -/
 
 /-- The accusative variant: leaver and source, both caseless. -/
-def accVariantNPs : List NPInDomain :=
+def accVariantNPs : List NP :=
   [ { label := "leaver", lexicalCase := none },
     { label := "source", lexicalCase := none } ]
 
 /-- The ablative variant: *kara* has valued the source ablative. -/
-def ablVariantNPs : List NPInDomain :=
+def ablVariantNPs : List NP :=
   [ { label := "leaver", lexicalCase := none },
     { label := "source", lexicalCase := some .abl } ]
 
-def accVariantResult : List CasedNP := assignCases .accusative accVariantNPs
+def accVariantResult : List (NP × Valuation) := assignCases .accusative accVariantNPs
 
-def ablVariantResult : List CasedNP := assignCases .accusative ablVariantNPs
+def ablVariantResult : List (NP × Valuation) := assignCases .accusative ablVariantNPs
 
 /-- Departure verbs predict no external argument: non-thematic Voice
     does not assign a θ-role ([kratzer-1996], [schaefer-2025]). -/
@@ -343,17 +343,17 @@ theorem abl_derivation_correct :
 
 /-- In the ACC variant, source case is dependent. -/
 theorem acc_source_from_configuration :
-    getSourceOf "source" accVariantResult = some .dependent := by decide
+    getMechanismOf "source" accVariantResult = some .dependent := by decide
 
 /-- In the ABL variant, source case is lexical. -/
 theorem abl_source_from_lexical_p :
-    getSourceOf "source" ablVariantResult = some .lexical := by decide
+    getMechanismOf "source" ablVariantResult = some .lexical := by decide
 
 /-- The alternation touches only the source: the leaver takes unmarked
     nominative in both variants. -/
 theorem leaver_unmarked_in_both :
-    getSourceOf "leaver" accVariantResult = some .unmarked ∧
-    getSourceOf "leaver" ablVariantResult = some .unmarked := by decide
+    getMechanismOf "leaver" accVariantResult = some .unmarked ∧
+    getMechanismOf "leaver" ablVariantResult = some .unmarked := by decide
 
 /-- Anticausative Voice is not a phase head. -/
 theorem agree_acc_needs_phase_head :
@@ -368,7 +368,7 @@ theorem accusative_unaccusative_paradox :
     ¬ anticausative.AssignsTheta ∧
     ¬ anticausative.IsPhasal ∧
     getCaseOf "source" accVariantResult = some .acc ∧
-    getSourceOf "source" accVariantResult = some .dependent := by
+    getMechanismOf "source" accVariantResult = some .dependent := by
   refine ⟨by decide, by decide, by decide, by decide⟩
 
 /-- Fragment entry for *hanareru* is marked unaccusative. -/

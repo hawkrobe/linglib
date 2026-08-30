@@ -24,7 +24,7 @@ Morphological case obeys a disjunctive hierarchy:
 
     lexically governed > dependent (ACC/ERG) > unmarked > default
 
-This is formalized in `Syntax/Case/Dependent.lean` as `CaseSource`
+This is formalized in `Syntax/Case/Dependent.lean` as `Mechanism`
 (lexical > dependent > unmarked). [marantz-1991]'s fourth level,
 **default** case (absolute last resort when no other principle applies),
 is not modeled separately; it is conceptually distinct from unmarked
@@ -39,7 +39,7 @@ ACC and ERG are **dependent cases** — assigned relationally:
 - ACC: dependent case assigned to the lower of two caseless NPs
 - ERG: dependent case assigned to the higher of two caseless NPs
 - The two NPs must be *distinct* (not in the same chain); this is
-  implicit in our list representation where each `NPInDomain` is a
+  implicit in our list representation where each `Case.NP` is a
   distinct structural position.
 
 ## Georgian Split Ergativity
@@ -286,7 +286,7 @@ end Minimalist
 namespace Marantz1991
 
 open Minimalist Minimalist.Voice
-open Syntax.Case
+open Case
 open Georgian.Agreement
 
 -- ============================================================================
@@ -296,12 +296,12 @@ open Georgian.Agreement
 /-- Map alignment family to dependent case language type.
     Bridges the typological description (`Alignment.SplitErgativity`) to
     the case algorithm (`Syntax/Case/Dependent.lean`). -/
-def alignmentToLangType : Alignment.AlignmentFamily → CaseLanguageType
+def alignmentToLangType : Alignment.AlignmentFamily → Alignment.AlignmentType
   | .accusative => .accusative
   | .ergative   => .ergative
 
 /-- Georgian language type for a given tense series. -/
-def georgianLangType (ts : TenseSeries) : CaseLanguageType :=
+def georgianLangType (ts : TenseSeries) : Alignment.AlignmentType :=
   alignmentToLangType (georgianSplit.alignment ts)
 
 theorem present_is_accusative : georgianLangType .present = .accusative := rfl
@@ -320,7 +320,7 @@ theorem aorist_is_ergative : georgianLangType .aorist = .ergative := rfl
       a distinct position for dependent case, explaining why unergatives
       get ERG despite being intransitive.
     - Class 4 (psych): 2 NPs — DAT subject (lexical/quirky) + NOM object -/
-def georgianNPs : VerbClass → List NPInDomain
+def georgianNPs : VerbClass → List NP
   | .class1 => [⟨"subj", none⟩, ⟨"obj", none⟩]
   | .class2 => [⟨"subj", none⟩]
   | .class3 => [⟨"subj", none⟩, ⟨"empty", none⟩]  -- phantom object position
@@ -332,10 +332,10 @@ def georgianNPs : VerbClass → List NPInDomain
 
 /-- Run the dependent case algorithm for a Georgian verb class in a
     given tense series. -/
-def georgianCaseResult (vc : VerbClass) (ts : TenseSeries) : List CasedNP :=
+def georgianCaseResult (vc : VerbClass) (ts : TenseSeries) : List (NP × Valuation) :=
   assignCases (georgianLangType ts) (georgianNPs vc)
 
-private def getCase! (label : String) (results : List CasedNP) : Case :=
+private def getCase! (label : String) (results : List (NP × Valuation)) : Case :=
   match getCaseOf label results with
   | some c => c
   | none   => .dat  -- placeholder; the algorithm always returns every NP
@@ -420,14 +420,14 @@ theorem class3_aorist_erg :
 /-- Class 4: quirky DAT takes priority (lexical > dependent). -/
 theorem class4_lexical_dat :
     getCase! "subj" (georgianCaseResult .class4 .aorist) = .dat ∧
-    getSourceOf "subj" (georgianCaseResult .class4 .aorist) = some .lexical := by
+    getMechanismOf "subj" (georgianCaseResult .class4 .aorist) = some .lexical := by
   native_decide
 
 /-- The Ergative generalization follows from NP count:
     1 NP (unaccusative) → no ERG; ≥2 positions → ERG possible. -/
 theorem ergative_requires_competitor :
-    getSourceOf "sole" (assignCases .ergative [⟨"sole", none⟩]) = some .unmarked ∧
-    getSourceOf "higher" (assignCases .ergative [⟨"higher", none⟩, ⟨"lower", none⟩]) =
+    getMechanismOf "sole" (assignCases .ergative [⟨"sole", none⟩]) = some .unmarked ∧
+    getMechanismOf "higher" (assignCases .ergative [⟨"higher", none⟩, ⟨"lower", none⟩]) =
       some .dependent := by
   native_decide
 
@@ -454,7 +454,7 @@ theorem ergative_requires_competitor :
 /-- Unaccusative: sole NP, no ACC. The "Burzio effect." -/
 theorem burzio_unaccusative_no_acc :
     getCaseOf "theme" (assignCases .accusative [⟨"theme", none⟩]) = some .nom ∧
-    getSourceOf "theme" (assignCases .accusative [⟨"theme", none⟩]) = some .unmarked := by
+    getMechanismOf "theme" (assignCases .accusative [⟨"theme", none⟩]) = some .unmarked := by
   native_decide
 
 /-- Transitive: external argument provides the case competitor → ACC. -/
@@ -486,14 +486,14 @@ theorem anticausative_one_np : npCount anticausative 1 = 1 := rfl
 /-! Hindi has aspect-conditioned split ergativity: perfective triggers
     ERG on the transitive agent (*-ne*), imperfective has NOM-ACC.
     The dependent case algorithm derives both patterns from the same
-    mechanism with different `CaseLanguageType` settings.
+    mechanism with different `Alignment.AlignmentType` settings.
 
     [marantz-1991]: Hindi ERG is prohibited on unaccusative subjects
     (*siitta (\*ne) aayii* 'Sita arrived'), optional on unergatives, and
     obligatory on transitives. The unaccusative prohibition follows from
     dependent case: a sole argument has no competitor. -/
 
-def hindiTransitive (aspect : Alignment.Aspect) : List CasedNP :=
+def hindiTransitive (aspect : Alignment.Aspect) : List (NP × Valuation) :=
   assignCases (alignmentToLangType (Alignment.hindiSplit.alignment aspect))
     [⟨"agent", none⟩, ⟨"theme", none⟩]
 
@@ -519,7 +519,7 @@ theorem hindi_perfective_unaccusative_no_erg :
     let result := assignCases (alignmentToLangType (Alignment.hindiSplit.alignment .perfective))
       [⟨"theme", none⟩]
     getCaseOf "theme" result = some .abs ∧
-    getSourceOf "theme" result = some .unmarked := by
+    getMechanismOf "theme" result = some .unmarked := by
   native_decide
 
 /-- Hindi unergative in the perfective: the unfilled object position
@@ -538,7 +538,7 @@ theorem hindi_perfective_unergative_without_phantom :
     let result := assignCases (alignmentToLangType (Alignment.hindiSplit.alignment .perfective))
       [⟨"subj", none⟩]
     getCaseOf "subj" result = some .abs ∧
-    getSourceOf "subj" result = some .unmarked := by
+    getMechanismOf "subj" result = some .unmarked := by
   native_decide
 
 /-- Cross-linguistic contrast: Georgian obligatorily counts unfilled
@@ -560,23 +560,23 @@ theorem phantom_np_parameter :
 /-! Georgian demonstrates all three levels of [marantz-1991]'s
     case realization hierarchy within a single language:
 
-    | Level     | `CaseSource` | Georgian example |
+    | Level     | `Mechanism` | Georgian example |
     |-----------|-------------|------------------|
     | Lexical   | `.lexical`  | Class 4 DAT (quirky) |
     | Dependent | `.dependent`| Class 1 aorist ERG, present ACC |
     | Unmarked  | `.unmarked` | Class 2 NOM, Class 1 present NOM | -/
 
 theorem all_three_sources_attested :
-    getSourceOf "subj" (georgianCaseResult .class4 .present) = some .lexical ∧
-    getSourceOf "subj" (georgianCaseResult .class1 .aorist) = some .dependent ∧
-    getSourceOf "subj" (georgianCaseResult .class2 .aorist) = some .unmarked := by
+    getMechanismOf "subj" (georgianCaseResult .class4 .present) = some .lexical ∧
+    getMechanismOf "subj" (georgianCaseResult .class1 .aorist) = some .dependent ∧
+    getMechanismOf "subj" (georgianCaseResult .class2 .aorist) = some .unmarked := by
   native_decide
 
 /-- Lexical case bleeds dependent case: Class 4's DAT subject prevents
     ACC on the object (no caseless competitor above it). -/
 theorem lexical_bleeds_dependent_georgian :
-    getSourceOf "obj" (georgianCaseResult .class4 .present) = some .unmarked ∧
-    getSourceOf "obj" (georgianCaseResult .class1 .present) = some .dependent := by
+    getMechanismOf "obj" (georgianCaseResult .class4 .present) = some .unmarked ∧
+    getMechanismOf "obj" (georgianCaseResult .class1 .present) = some .dependent := by
   native_decide
 
 -- ============================================================================
@@ -596,14 +596,14 @@ theorem lexical_bleeds_dependent_georgian :
     unmarked→unmarked. Agree-based case ([baker-vinokurova-2010])
     behaves like unmarked for accessibility — once T values NOM, the NP
     is fully visible to higher probes, just like an unmarked-NOM NP. -/
-def sourceToAccessibility : CaseSource → CaseAccessibility
+def sourceToAccessibility : Mechanism → CaseAccessibility
   | .lexical   => CaseAccessibility.lexical
   | .dependent => CaseAccessibility.dependent
   | .unmarked  => CaseAccessibility.unmarked
   | .agree     => CaseAccessibility.unmarked
 
 /-- The mapping preserves the rank ordering. -/
-theorem accessibility_preserves_rank (s : CaseSource) :
+theorem accessibility_preserves_rank (s : Mechanism) :
     (sourceToAccessibility s).rank = match s with
       | .lexical => 0 | .dependent => 1 | .unmarked => 2 | .agree => 2 := by
   cases s <;> rfl
@@ -613,20 +613,20 @@ theorem accessibility_preserves_rank (s : CaseSource) :
     output to the agreement hierarchy: lexical case DPs are the hardest
     for agreement probes to target. -/
 theorem class4_lexical_low_accessibility :
-    sourceToAccessibility CaseSource.lexical = CaseAccessibility.lexical ∧
+    sourceToAccessibility Mechanism.lexical = CaseAccessibility.lexical ∧
     caseAccessible CaseAccessibility.lexical CaseAccessibility.dependent = false := ⟨rfl, rfl⟩
 
 /-- Class 1 aorist subject has dependent case (ERG), which maps to
     middle accessibility. A probe with threshold = unmarked cannot
     see ERG-marked DPs. -/
 theorem class1_aorist_dependent_accessibility :
-    sourceToAccessibility CaseSource.dependent = CaseAccessibility.dependent ∧
+    sourceToAccessibility Mechanism.dependent = CaseAccessibility.dependent ∧
     caseAccessible CaseAccessibility.dependent CaseAccessibility.unmarked = false := ⟨rfl, rfl⟩
 
 /-- Class 2 aorist subject has unmarked case (NOM), which maps to
     highest accessibility. Unmarked-case DPs are always visible. -/
 theorem class2_unmarked_highest_accessibility :
-    sourceToAccessibility CaseSource.unmarked = CaseAccessibility.unmarked ∧
+    sourceToAccessibility Mechanism.unmarked = CaseAccessibility.unmarked ∧
     caseAccessible CaseAccessibility.unmarked CaseAccessibility.unmarked = true := ⟨rfl, rfl⟩
 
 -- ============================================================================
@@ -648,20 +648,21 @@ theorem class2_unmarked_highest_accessibility :
 
 /-- Build NP list from Voice: if Voice assigns θ, include both subject
     and object; otherwise include only the theme. -/
-def npsFromVoice (voice : Head) : List NPInDomain :=
+def npsFromVoice (voice : Head) : List NP :=
   if voice.AssignsTheta then [⟨"subj", none⟩, ⟨"obj", none⟩]
   else [⟨"theme", none⟩]
 
 /-- End-to-end: agentive Voice → 2 NPs → object gets dependent ACC. -/
 theorem voice_to_case_transitive :
     getCaseOf "obj" (assignCases .accusative (npsFromVoice agentive)) = some .acc ∧
-    getSourceOf "obj" (assignCases .accusative (npsFromVoice agentive)) = some .dependent := by
+    getMechanismOf "obj" (assignCases .accusative (npsFromVoice agentive)) = some .dependent := by
   native_decide
 
 /-- End-to-end: anticausative Voice → 1 NP → theme gets unmarked NOM. -/
 theorem voice_to_case_unaccusative :
     getCaseOf "theme" (assignCases .accusative (npsFromVoice anticausative)) = some .nom ∧
-    getSourceOf "theme" (assignCases .accusative (npsFromVoice anticausative)) = some .unmarked := by
+    getMechanismOf "theme" (assignCases .accusative (npsFromVoice anticausative)) =
+      some .unmarked := by
   native_decide
 
 /-- The Burzio effect derived end-to-end: ACC presence tracks Voice's

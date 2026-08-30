@@ -72,7 +72,7 @@ namespace Scott2023
 section VoiceCase
 
 open Minimalist Minimalist.Voice
-open Syntax.Case
+open Case
 
 -- ============================================================================
 -- § 1: Voice Assigns Case by Argument Position
@@ -134,10 +134,10 @@ theorem agree_voice_is_phase_head :
     or not the higher NP carries an agent θ-role. The algorithm never
     inspects Voice flavor. -/
 theorem dependent_case_ignores_voice :
-    let transitive : List NPInDomain :=
+    let transitive : List NP :=
       [ { label := "agent", lexicalCase := none },
         { label := "theme", lexicalCase := none } ]
-    let unaccusative : List NPInDomain :=
+    let unaccusative : List NP :=
       [ { label := "experiencer", lexicalCase := none },
         { label := "theme", lexicalCase := none } ]
     getCaseOf "theme" (assignCases .accusative transitive) =
@@ -151,7 +151,7 @@ theorem dependent_case_ignores_voice :
     mechanism, with the assigners keyed to θ-role rather than to NP
     configuration. -/
 theorem dependent_case_tripartite :
-    let nps : List NPInDomain :=
+    let nps : List NP :=
       [ { label := "higher", lexicalCase := none },
         { label := "lower", lexicalCase := none } ]
     getCaseOf "higher" (assignCases .tripartite nps) = some .erg ∧

@@ -1,66 +1,32 @@
 import Linglib.Features.Case.Basic
-import Linglib.Syntax.Case.Dependent
+import Linglib.Syntax.Minimalist.Case.Dependent
 import Linglib.Syntax.Minimalist.LateMerger
 
 /-!
-# Mongolian Case System
-[gong-2022] [baker-vinokurova-2010]
+# Mongolian case
 
-Mongolian (Khalkha/Chakhar) uses a hybrid case assignment system:
+Mongolian (Khalkha and Chakhar) has an accusative-aligned system in which accusative is a
+dependent case, valued on the lower of two NPs in the clause, nominative is assigned by finite T
+under Agree, and dative is nonstructural. Because accusative is configurational it is available
+at intermediate positions of a scrambling chain wherever a case competitor exists, which is what
+Wholesale Late Merger needs to bleed Condition C; Condition C reconstruction tracks these case
+positions rather than scrambling type or the A/A-bar distinction.
 
-- **Accusative**: dependent case, assigned when two argumental NPs in the
-  same phase compete and the higher NP c-commands the lower one
-  (following [baker-vinokurova-2010]'s analysis of Sakha)
-- **Nominative**: assigned by finite T via Agree
-- **Dative**: nonstructural (inherent) case
+## References
 
-This hybrid system is the key to understanding Condition C
-reconstruction effects in Mongolian scrambling ([gong-2022]):
-because ACC is a dependent case, it can be assigned at intermediate
-positions on a scrambling chain (wherever a case competitor exists),
-providing the case positions needed for Wholesale Late Merger.
-
-## Scrambling types
-
-Mongolian has three clause-internal scrambling types (short, intermediate,
-long-distance) and two clause-external types (subject and object
-cross-clausal). All behave like A-movement in terms of anaphor binding
-and WCO amelioration, but differ in Condition C reconstruction —
-tracking case positions, not the A/A-bar distinction.
-
-## Case assignment rules
-
-[gong-2022] (26)/(84):
-a. If two distinct argumental NPs in the same phase are such that NP1
-   c-commands NP2, value NP2 as ACC, unless NP1 is already marked for case.
-b. NOM is assigned by finite T.
-c. DAT is a nonstructural case.
+* [gong-2022]
+* [baker-vinokurova-2010]
 -/
 
 namespace Mongolian.Case
 
-open Minimalist
-open Syntax.Case
+open Minimalist _root_.Case
 
--- ============================================================================
--- S 1: Case System Configuration
--- ============================================================================
-
-/-- Mongolian case system: accusative alignment with Agree-based NOM
-    and nonstructural DAT. -/
-def mongolianCaseConfig : CaseSystemConfig :=
-  { langType := .accusative
-  , nomMode := .agreeT
-  , datMode := .nonstructural }
-
-theorem mongolian_is_accusative :
-    mongolianCaseConfig.langType = .accusative := rfl
-
-theorem mongolian_nom_is_agree :
-    mongolianCaseConfig.nomMode = .agreeT := rfl
-
-theorem mongolian_dat_is_nonstructural :
-    mongolianCaseConfig.datMode = .nonstructural := rfl
+/-- The Mongolian grammar of structural case: accusative on the lower of two NPs in the
+    clause, nominative from T and genitive from D under Agree, and no dependent dative. -/
+def grammar : CaseGrammar where
+  domains := [(.D, {}), (.v, {}), (.C, { low := some .acc })]
+  agree := [(.T, .nom), (.D, .gen)]
 
 -- ============================================================================
 -- S 2: Scrambling Types
@@ -106,36 +72,35 @@ inductive BinderRole where
 def caseInventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .abl, .inst, .com}
 
-/-- Mongolian is an accusative language. -/
-def mongolianLangType : CaseLanguageType := .accusative
-
 -- ============================================================================
 -- S 4: Deriving WLM from Dependent Case
 -- ============================================================================
 
-/-- A Mongolian ditransitive clause has three argumental NPs in the
-    spell-out domain: Subject > DO > IO.
-    The IO bears DAT (nonstructural, so lexically assigned).
-    Subject and DO compete for dependent case. -/
-def ditransSubject : NPInDomain := ⟨"subject", none⟩
-def ditransDO : NPInDomain := ⟨"DO", none⟩
-def ditransIO : NPInDomain := ⟨"IO", some .dat⟩
+/-- A Mongolian ditransitive: the subject above the direct object, shifted to the clause
+    edge, above the dative indirect object. -/
+def ditransitive : List PhasedNP :=
+  [{ label := "subject" }, { label := "DO", phase := .v, shifted := true },
+   { label := "IO", phase := .v, lexicalCase := some .dat }]
 
-/-- Dependent ACC is available for the DO: the subject is a caseless NP
-    above it, so `dependentAccusative` succeeds.
-    This is the key fact that enables WLM above the IO binder. -/
+/-- Its cases, with finite T probing the clause. -/
+def ditransitiveCases : List (NP × Valuation) := grammar.assign [(.T, .C)] ditransitive
+
+/-- The direct object is valued accusative by the dependent rule, the subject being the
+    caseless NP above it: the case position Wholesale Late Merger needs above the indirect
+    object. -/
 theorem do_gets_dependent_acc :
-    dependentAccusative [ditransSubject] ditransDO = some .acc := by decide
+    getCaseOf "DO" ditransitiveCases = some .acc ∧
+    getMechanismOf "DO" ditransitiveCases = some .dependent := by decide
 
-/-- The subject gets NOM (unmarked in an accusative language with no
-    higher competitor). There is no dependent case position above it. -/
-theorem subject_gets_unmarked :
-    dependentAccusative [] ditransSubject = none := by decide
+/-- The subject is valued nominative by T, not by a dependent rule: there is no dependent
+    case position above it. -/
+theorem subject_gets_nom_by_agree :
+    getCaseOf "subject" ditransitiveCases = some .nom ∧
+    getMechanismOf "subject" ditransitiveCases = some .agree := by decide
 
-/-- IO bears DAT (lexical/nonstructural), so it does not compete for
-    dependent case and does not create a case position. -/
-theorem io_has_lexical_case :
-    ditransIO.lexicalCase = some .dat := rfl
+/-- The indirect object keeps its lexical dative and neither competes for dependent case nor
+    creates a case position. -/
+theorem io_has_lexical_case : getMechanismOf "IO" ditransitiveCases = some .lexical := by decide
 
 -- ============================================================================
 -- S 5: Chain Positions for WLM (Derived)
@@ -150,14 +115,14 @@ def specVPHeight : Nat := 3  -- intermediate landing site (edge of VP phase)
 /-- Case positions available on a scrambling chain in Mongolian.
 
     **These are derived from the dependent case algorithm**, not stipulated:
-    - Above IO: `dependentAccusative [subject] do = some .acc`
-      (theorem `do_gets_dependent_acc`), so Spec,VP is a case position
-    - Above Subject: `dependentAccusative [] subject = none`
-      (theorem `subject_gets_unmarked`), so no case position exists -/
+    - Above IO: the direct object is valued dependent accusative
+      (`do_gets_dependent_acc`), so Spec,VP is a case position
+    - Above Subject: the subject is valued by T, not a dependent rule
+      (`subject_gets_nom_by_agree`), so no case position exists -/
 def casePositionsAbove (role : BinderRole) : List ChainPosition :=
   match role with
-  | .io => [⟨specVPHeight, true⟩]  -- derived from do_gets_dependent_acc
-  | .subject => []                  -- derived from subject_gets_unmarked
+  | .io => [⟨specVPHeight, true⟩]
+  | .subject => []
 
 /-- Binder height from its grammatical role. -/
 def binderHeight (role : BinderRole) : Nat :=
@@ -177,14 +142,14 @@ def predictsReconstruction (role : BinderRole) : Bool :=
 
 /-- Scrambling over IO: WLM bleeds Condition C.
     [gong-2022] (4), (18b), (27): dependent ACC is available at
-    Spec,VP (derived from `do_gets_dependent_acc`), so the NP restrictor
+    Spec,VP (`do_gets_dependent_acc`), so the NP restrictor
     can merge above the IO binder without violating Condition C. -/
 theorem io_binder_no_reconstruction :
     predictsReconstruction .io = false := by decide
 
 /-- Scrambling over Subject: WLM forces Condition C reconstruction.
     [gong-2022] (3), (20), (21), (29): no dependent case position
-    exists above the subject (derived from `subject_gets_unmarked`),
+    exists above the subject (`subject_gets_nom_by_agree`),
     so the NP restrictor must merge below the subject binder. -/
 theorem subject_binder_forces_reconstruction :
     predictsReconstruction .subject = true := by decide

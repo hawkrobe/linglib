@@ -12,8 +12,8 @@ cannot be applied to a *common* stimulus — which is exactly what comparing
 them requires. This file gives them one shared signature.
 
 * The shared stimulus is `List LicensedNP` — the richest of the rivals'
-  inputs (`LicensedNP extends NPInDomain`), so a configural account reads its
-  `NPInDomain` projection and ignores `needsLicensing`, while a licensing
+  inputs (`LicensedNP extends Case.NP`), so a configural account reads its
+  `Case.NP` projection and ignores `needsLicensing`, while a licensing
   account reads the whole thing.
 * An `Assigner` maps that stimulus to a per-label `Verdict` (a surface case
   plus its neutral `Case.Source` provenance). This is the `Predict`-style
@@ -62,9 +62,11 @@ abbrev Assigner := List LicensedNP → String → Option Assignment
 /-- Marantz dependent case as an `Assigner`: it reads the configural
     projection (`needsLicensing` ignored) and is total, so it never produces
     `unassigned`. -/
-def dependentAssigner (lang : CaseLanguageType) : Assigner := fun nps label =>
-  ((assignCases lang (nps.map (·.toNPInDomain))).find? (·.label == label)).map
-    fun r => .assigned r.case r.source.toNeutral
+def dependentAssigner (a : Alignment.AlignmentType) : Assigner := fun nps label =>
+  ((_root_.Case.assignCases a (nps.map (·.toNP))).find? (·.1.label == label)).map fun r =>
+    match r.2 with
+    | some (c, m) => .assigned c m.toSource
+    | none => .unassigned
 
 /-- A licensing outcome as a neutral assignment: primary and secondary
     licensing are structural, lexical pre-licensing inherent, and the crash
