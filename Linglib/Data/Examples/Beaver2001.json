@@ -1,0 +1,191 @@
+[
+  {
+    "id": "beaver2001_e52",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E52"},
+    "language": "stan1293",
+    "primaryText": "If I go to London, my sister will pick me up at the airport.",
+    "glossedTokens": [],
+    "translation": "If I go to London, my sister will pick me up at the airport.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "definite (my sister)"],
+      ["embedding", "consequent of conditional"]
+    ],
+    "comment": "The paradigm conditional presupposition: satisfaction models predict only 'if I go to London I have a sister'; hearers tend to infer the stronger 'I have a sister', which Ch. 9 derives by global accommodation over information orderings."
+  },
+  {
+    "id": "beaver2001_e154",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E154"},
+    "language": "stan1293",
+    "primaryText": "If Spaceman Spiff lands on Planet X, he will be bothered by the fact that his weight is greater than it would be on Earth.",
+    "glossedTokens": [],
+    "translation": "If Spaceman Spiff lands on Planet X, he will be bothered by the fact that his weight is greater than it would be on Earth.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "the fact that + factive bothered by"],
+      ["embedding", "consequent of conditional"]
+    ],
+    "comment": "Presupposes only the conditional: if he lands there, his weight is greater. Natural when Spiff hangs weightless in space, so the unconditional presupposition is wrong; structural accommodation accounts cannot produce the conditional reading."
+  },
+  {
+    "id": "beaver2001_e155",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E155"},
+    "language": "stan1293",
+    "primaryText": "It is unlikely that if Spaceman Spiff lands on Planet X, he will be bothered by the fact that his weight is greater than it would be on Earth.",
+    "glossedTokens": [],
+    "translation": "It is unlikely that if Spaceman Spiff lands on Planet X, he will be bothered by the fact that his weight is greater than it would be on Earth.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "the fact that + factive bothered by"],
+      ["embedding", "conditional under unlikely"]
+    ],
+    "comment": "Preferred reading keeps the conditional implication; accommodation into the consequent is unavailable here."
+  },
+  {
+    "id": "beaver2001_e156",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E156"},
+    "language": "stan1293",
+    "primaryText": "If Spaceman Spiff lands on Planet X and is bothered by the fact that his weight is greater than it would be on Earth, he won't stay long.",
+    "glossedTokens": [],
+    "translation": "If Spaceman Spiff lands on Planet X and is bothered by the fact that his weight is greater than it would be on Earth, he won't stay long.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "the fact that + factive bothered by"],
+      ["embedding", "second conjunct of conditional antecedent"]
+    ],
+    "comment": "Same conditional presupposition, predicted by the treatment of conjunction; accommodation into the consequent is not even available."
+  },
+  {
+    "id": "beaver2001_e198",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E198"},
+    "language": "stan1293",
+    "primaryText": "Bertha is hiding.",
+    "glossedTokens": [],
+    "translation": "Bertha is hiding.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["role", "presupposed content for E168'-E173"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "beaver2001_e168prime",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E168'"},
+    "language": "stan1293",
+    "primaryText": "Anna realises that Bertha is hiding.",
+    "glossedTokens": [],
+    "translation": "Anna realises that Bertha is hiding.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "factive realise"],
+      ["embedding", "none"]
+    ],
+    "comment": "Presupposes (and entails) that Bertha is hiding."
+  },
+  {
+    "id": "beaver2001_e169prime",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E169'"},
+    "language": "stan1293",
+    "primaryText": "Anna does not realise that Bertha is hiding.",
+    "glossedTokens": [],
+    "translation": "Anna does not realise that Bertha is hiding.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "factive realise"],
+      ["embedding", "negation"]
+    ],
+    "comment": "Projection through negation (Fact 8.1)."
+  },
+  {
+    "id": "beaver2001_e172prime",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E172'"},
+    "language": "stan1293",
+    "primaryText": "If Anna realises that Bertha is hiding, then she will find her.",
+    "glossedTokens": [],
+    "translation": "If Anna realises that Bertha is hiding, then she will find her.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "factive realise"],
+      ["embedding", "antecedent of conditional"]
+    ],
+    "comment": "Projection from the antecedent (Fact 8.1)."
+  },
+  {
+    "id": "beaver2001_e173",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E173"},
+    "language": "stan1293",
+    "primaryText": "Anna might realise that Bertha is hiding.",
+    "glossedTokens": [],
+    "translation": "Anna might realise that Bertha is hiding.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "factive realise"],
+      ["embedding", "might"]
+    ],
+    "comment": "Projection through the epistemic modals (Fact 8.8)."
+  },
+  {
+    "id": "beaver2001_e175",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E175"},
+    "language": "stan1293",
+    "primaryText": "If Bertha is not in the kitchen, then Anna realises that Bertha is in the attic.",
+    "glossedTokens": [],
+    "translation": "If Bertha is not in the kitchen, then Anna realises that Bertha is in the attic.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "factive realise"],
+      ["embedding", "consequent of conditional"]
+    ],
+    "comment": "Presupposes the conditionalised E175c: if Bertha is not in the kitchen, she is in the attic (Fact 8.3) — the paradigmatically CCP behaviour."
+  },
+  {
+    "id": "beaver2001_e206",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E206"},
+    "language": "stan1293",
+    "primaryText": "It is possible there is a happy farmer, but, then again, it is possible that there are no happy farmers.",
+    "glossedTokens": [],
+    "translation": "It is possible there is a happy farmer, but, then again, it is possible that there are no happy farmers.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "might phi and might not phi"]
+    ],
+    "comment": "Consistent as a might-sequence; following it with E207a is consistent, while E207a followed by E206a is not — might is a consistency test on the current state."
+  },
+  {
+    "id": "beaver2001_e207",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E207"},
+    "language": "stan1293",
+    "primaryText": "No farmer is happy.",
+    "glossedTokens": [],
+    "translation": "No farmer is happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "plain assertion"]
+    ],
+    "comment": "Order contrast with E206a: assertion then might-sentence is inconsistent, might-sentence then assertion is fine."
+  }
+]
