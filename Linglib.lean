@@ -340,6 +340,7 @@ import Linglib.Data.Examples.BakayEtAl2026
 import Linglib.Data.Examples.BaleEtAl2025
 import Linglib.Data.Examples.BaleSchwarz2022
 import Linglib.Data.Examples.BarAsherSiegal2026
+import Linglib.Data.Examples.BarLev2021
 import Linglib.Data.Examples.Barker2002
 import Linglib.Data.Examples.BeckOdaSugisaki2004
 import Linglib.Data.Examples.BeltramaSchwarz2024
@@ -1677,6 +1678,7 @@ import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Exhaustification.Operators.Antiexhaustive
 import Linglib.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Exhaustification.Operators.Disjunctive
 import Linglib.Semantics.Exhaustification.Operators.Decidable
 import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
 import Linglib.Semantics.Exhaustification.PreExhaustified
