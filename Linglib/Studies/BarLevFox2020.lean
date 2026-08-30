@@ -1,1162 +1,645 @@
-import Linglib.Semantics.Exhaustification.Operators.Basic
-import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
-import Linglib.Semantics.Exhaustification.Operators.Decidable
+import Linglib.Semantics.Exhaustification.Operators.Disjunctive
 import Linglib.Semantics.Conditionals.Counterfactual
-import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
+import Linglib.Semantics.Presupposition.Defs
+import Linglib.Logic.Modal.Basic
+import Linglib.Data.Examples.BarLevFox2020
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Data.Fin.VecNotation
 
 /-!
-# Bar-Lev & Fox (2020) — Free Choice via Innocent Inclusion
-[bar-lev-fox-2020] [fox-2007] [spector-2016]
+# Bar-Lev and Fox 2020: Free choice, simplification, and Innocent Inclusion
 
-Worked example of [bar-lev-fox-2020] "Free choice, simplification, and
-Innocent Inclusion" (Natural Language Semantics 28:175–223) over a five-world
-toy modal model.
+Exhaustification with Innocent Inclusion returns the cell of the partition induced by the
+alternatives whenever that cell is consistent. Free-choice disjunction `◇(a ∨ b)`, whose
+alternatives are `◇a`, `◇b` and `◇(a ∧ b)`, strengthens to `◇a ∧ ◇b ∧ ¬◇(a ∧ b)`; plain `a ∨ b`,
+whose conjunctive alternative is the conjunction of the other two, only denies it. `only`
+presupposes the includable alternatives, so free choice under `only` projects. Free choice
+under a universal quantifier, its negative counterpart, the existential-over-universal case
+and *most* with a disjunctive restrictor are one computation over eight alternatives.
+Simplification of disjunctive antecedents is the same strengthening over a variably strict
+conditional: it fails when the consequent is one of the disjuncts, and an *or both*
+antecedent, exhaustified by Hurford's constraint, turns the conjunctive simplification from
+excluded into included.
 
-## What this file does
+## Main results
 
-The abstract theory of Innocent Exclusion (`IE`), Innocent Inclusion (`II`),
-the cell-of-the-induced-partition (`cell`), and the cell-identification theorem
-`mem_II_of_cell_witness` lives in
-`Semantics/Exhaustification/Operators/Basic.lean`. This file instantiates
-that theory on a small `FCWorld` and verifies the paper's headline empirical
-prediction:
+* `freeChoice`, `simpleDisjunction`: the modal and the plain disjunction.
+* `only_presup`: free choice under `only` is presupposed.
+* `universalFreeChoice`, `negativeUniversalFreeChoice`, `freeChoiceOverUniversal`,
+  `simplificationMost`: instances of `Exhaustification.exhIEII_quantified`.
+* `sda`, `sda_consequent_disjunct`, `orBoth`: simplification, its failure, and the switches.
 
-  Exh^{IE+II}(◇(a ∨ b)) ⊨ ◇a ∧ ◇b
+## References
 
-The contrast with simple disjunction (where the alternative set IS closed
-under conjunction and free choice does *not* arise) is captured via a parallel
-`DisjWorld` toy + `simpleALT` and `simple_has_conjunction`.
-
-## Why the cell-identification API matters
-
-In the paper, the move from "exhaustification of a disjunction" to "free
-choice" is enabled by a structural property of the alternative set: the
-pairwise conjunction of the disjunctive alternatives `◇a ∩ ◇b` is NOT a
-member of `Alt(◇(a∨b))` (paper eqn 13b p. 182). The cell of the partition
-induced by the alternatives is therefore consistent and identified by
-`Exh^{IE+II}`. The free choice proof is a one-line corollary of
-`mem_II_of_cell_witness` once a witness world for the cell is exhibited
-(the `separatelyAB` world, where each disjunct is individually possible
-but not jointly).
-
-## On the `Exh^{IE+II}` definition (paper §3, eqn 24-25 pp. 187-188)
-
-`Exh^{IE+II}` strengthens the prejacent with two operations:
-1. **Innocent Exclusion (IE)** — the intersection of *maximal* subsets
-   of alternatives that can consistently be assigned `false` together
-   with the prejacent. Members are negated.
-2. **Innocent Inclusion (II)** — the intersection of *maximal* subsets
-   of alternatives that can consistently be assigned `true` together
-   with the prejacent AND the IE negations from step 1. Members are
-   asserted.
-
-II is **not** "all non-IE alternatives" (a popular but incorrect gloss).
-The non-IE = II coincidence in the basic FC case is a *derived* fact
-(paper §3.3.3) once the cell is identified, not a definition. The
-substrate `Semantics/Exhaustification/Operators/Basic.lean`
-follows the paper's actual definitions.
-
+* [bar-lev-fox-2020]
+* [fox-2007]
+* [alxatib-2014]
+* [chemla-2009]
+* [nouwen-2017]
+* [mckay-vaninwagen-1977]
+* [nute-1980]
+* [ciardelli-zhang-champollion-2018]
+* [chierchia-fox-spector-2012]
 -/
 
 namespace BarLevFox2020
 
-open Exhaustification
+open Exhaustification ModalLogic Presupposition
 
--- ============================================================================
--- §1. The five-world FC toy model
--- ============================================================================
+variable {W : Type*}
 
-/-- Possible worlds for free choice: each represents a configuration of which
-disjuncts are individually or jointly permitted.
+/-! ### Free choice and simple disjunction -/
 
-The `separatelyAB` world is the cell witness: each disjunct is individually
-permitted but they are not jointly permitted. This world distinguishes
-`◇a ∧ ◇b` from `◇(a ∧ b)` and is the cornerstone of [bar-lev-fox-2020]'s
-free-choice derivation. -/
-inductive FCWorld where
-  | neither : FCWorld       -- Neither a nor b permitted
-  | onlyA : FCWorld         -- Only a permitted
-  | onlyB : FCWorld         -- Only b permitted
-  | both : FCWorld          -- Both jointly permitted (◇(a ∧ b))
-  | separatelyAB : FCWorld  -- Each individually permitted, not jointly
-  deriving DecidableEq, Repr, Inhabited
+section FreeChoice
 
-/-- ◇a — `a` is permitted at the world. -/
-def permA : Set FCWorld
-  | .neither => False
-  | .onlyA => True
-  | .onlyB => False
-  | .both => True
-  | .separatelyAB => True
+variable (R : W → W → Prop) (a b : Set W)
 
-/-- ◇b — `b` is permitted at the world. -/
-def permB : Set FCWorld
-  | .neither => False
-  | .onlyA => False
-  | .onlyB => True
-  | .both => True
-  | .separatelyAB => True
+/-- Permission: possibility over the accessibility relation `R`, as a proposition. -/
+abbrev poss (p : Set W) : Set W := ◇[R] p
 
-/-- ◇(a ∨ b) — the prejacent. -/
-def permAorB : Set FCWorld
-  | .neither => False
-  | .onlyA => True
-  | .onlyB => True
-  | .both => True
-  | .separatelyAB => True
+/-- Obligation: necessity over the accessibility relation `R`, as a proposition. -/
+abbrev nec (s : Set W) : Set W := □[R] s
 
-/-- ◇(a ∧ b) — joint permission. -/
-def permAandB : Set FCWorld
-  | .neither => False
-  | .onlyA => False
-  | .onlyB => False
-  | .both => True
-  | .separatelyAB => False
+/-- The alternatives of `◇(a ∨ b)`: the disjunction replaced by its disjuncts and their
+conjunction. -/
+def fcAlts : Set (Set W) := {poss R (a ∪ b), poss R a, poss R b, poss R (a ∩ b)}
 
-/-- The free-choice alternative set: `{◇(a ∨ b), ◇a, ◇b, ◇(a ∧ b)}`. -/
-def fcALT : Set (Set FCWorld) :=
-  {permAorB, permA, permB, permAandB}
+variable {R a b}
 
-/-- The prejacent: `◇(a ∨ b)`. -/
-def fcPrejacent : Set FCWorld := permAorB
+theorem poss_mono {p q : Set W} (h : p ⊆ q) : poss R p ⊆ poss R q :=
+  λ _ ⟨v, hv, h'⟩ => ⟨v, hv, h h'⟩
 
--- ============================================================================
--- §2. Non-closure under conjunction
--- ============================================================================
+theorem poss_union : poss R (a ∪ b) = poss R a ∪ poss R b :=
+  Set.ext λ _ => ⟨λ ⟨v, hv, h⟩ => h.elim (λ h => Or.inl ⟨v, hv, h⟩) (λ h => Or.inr ⟨v, hv, h⟩),
+    λ h => h.elim (λ ⟨v, hv, h⟩ => ⟨v, hv, Or.inl h⟩) (λ ⟨v, hv, h⟩ => ⟨v, hv, Or.inr h⟩)⟩
 
-/-- [bar-lev-fox-2020] eqn (13b) p. 182: the pairwise conjunction
-    of the disjunctive alternatives is NOT closed by `fcALT`. The
-    `separatelyAB` world satisfies `permA ∩ permB` but no element of
-    `fcALT` (specifically not `permAandB`); witnesses at `.onlyA`/
-    `.onlyB` rule out the other three potential matches. This
-    structural property — that `Alt(◇(a∨b))` is not closed under
-    pairwise conjunction — is what lets cell identification yield
-    free choice. -/
-theorem fc_alt_not_closed_under_pairwise_conjunction :
-    ¬(∀ (X : Set (Set FCWorld)), X ⊆ fcALT → (⋂₀ X) ∈ fcALT) := by
-  intro h
-  have hX : ({permA, permB} : Set (Set FCWorld)) ⊆ fcALT := by
-    intro x hx
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
-    simp only [fcALT, Set.mem_insert_iff, Set.mem_singleton_iff]
-    rcases hx with rfl | rfl <;> simp
-  have hconj := h {permA, permB} hX
-  simp only [fcALT, Set.mem_insert_iff, Set.mem_singleton_iff] at hconj
-  rcases hconj with heq | heq | heq | heq
-  · have : ¬(⋂₀ ({permA, permB} : Set _)) .onlyA :=
-      fun hc => hc permB (Set.mem_insert_of_mem _ rfl)
-    rw [heq] at this; exact this trivial
-  · have : ¬(⋂₀ ({permA, permB} : Set _)) .onlyA :=
-      fun hc => hc permB (Set.mem_insert_of_mem _ rfl)
-    rw [heq] at this; exact this trivial
-  · have : ¬(⋂₀ ({permA, permB} : Set _)) .onlyB :=
-      fun hc => hc permA (Set.mem_insert_iff.mpr (Or.inl rfl))
-    rw [heq] at this; exact this trivial
-  · have : (⋂₀ ({permA, permB} : Set _)) .separatelyAB := by
-      intro φ hφ
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hφ
-      rcases hφ with rfl | rfl <;> trivial
-    rw [heq] at this; exact this
+theorem poss_inter_subset : poss R (a ∩ b) ⊆ poss R a ∩ poss R b :=
+  λ _ ⟨v, hv, h⟩ => ⟨⟨v, hv, h.1⟩, ⟨v, hv, h.2⟩⟩
 
--- ============================================================================
--- §3. The cell witness: `separatelyAB`
--- ============================================================================
+theorem poss_compl {s : Set W} : poss R sᶜ = (nec R s)ᶜ :=
+  Set.ext λ _ => ⟨λ ⟨v, hv, h⟩ hb => h (hb v hv),
+    λ h => let ⟨v, hv⟩ := not_forall.1 h
+      ⟨v, (Classical.not_imp.1 hv).1, (Classical.not_imp.1 hv).2⟩⟩
 
-/-!
-The cornerstone of the free-choice derivation is exhibiting a world that
-witnesses the `cell` of the partition induced by `fcALT`. Once this is in
-place, free choice follows as a one-line corollary of
-`mem_II_of_cell_witness`.
+variable (h₁ : ∃ w ∈ poss R a, w ∉ poss R b) (h₂ : ∃ w ∈ poss R b, w ∉ poss R a)
+  (h : ∃ w ∈ poss R a ∩ poss R b, w ∉ poss R (a ∩ b))
+include h₁ h₂ h
 
-The witness world is `separatelyAB`. Establishing the cell predicate at
-`separatelyAB` requires four facts about the IE structure of `fcALT`:
+/-- Free choice: given a world permitting only `a`, one permitting only `b`, and one
+permitting each but not both, `◇(a ∨ b)` strengthens to `◇a ∧ ◇b ∧ ¬◇(a ∧ b)`. -/
+theorem freeChoice :
+    exhIEII (fcAlts R a b) (poss R (a ∪ b)) = (poss R a ∩ poss R b) \ poss R (a ∩ b) := by
+  rw [fcAlts, exhIEII_pair poss_union.le
+    (h₁.imp λ _ h => ⟨⟨poss_mono Set.subset_union_left h.1, h.1⟩,
+      λ h' => h.2 (h'.elim id (λ h' => (poss_inter_subset h').2))⟩)
+    (h₂.imp λ _ h => ⟨⟨poss_mono Set.subset_union_right h.1, h.1⟩,
+      λ h' => h.2 (h'.elim id (λ h' => (poss_inter_subset h').1))⟩)
+    (h.imp λ _ h => ⟨⟨⟨poss_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩),
+    Set.inter_assoc, Set.inter_eq_right.2 λ _ h => poss_mono Set.subset_union_left h.1]
 
-* `permAorB` is *not* innocently excludable (since permAorBᶜ contradicts the
-  prejacent in any MC-set);
-* `permA` is *not* innocently excludable (witnessed by an MC-set that omits
-  permAᶜ);
-* `permB` is *not* innocently excludable (symmetric);
-* `permAandB` *is* innocently excludable.
--/
+/-- The includable alternatives of `◇(a ∨ b)` are the prejacent and the disjunct
+alternatives. -/
+theorem II_fcAlts : II (fcAlts R a b) (poss R (a ∪ b)) = {poss R (a ∪ b), poss R a, poss R b} :=
+  II_pair poss_union.le
+    (h₁.imp λ _ h => ⟨⟨poss_mono Set.subset_union_left h.1, h.1⟩,
+      λ h' => h.2 (h'.elim id (λ h' => (poss_inter_subset h').2))⟩)
+    (h₂.imp λ _ h => ⟨⟨poss_mono Set.subset_union_right h.1, h.1⟩,
+      λ h' => h.2 (h'.elim id (λ h' => (poss_inter_subset h').1))⟩)
+    (h.imp λ _ h => ⟨⟨⟨poss_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩)
 
-private theorem fcALT_finite : Set.Finite fcALT :=
-  Set.Finite.insert _ (Set.Finite.insert _ (Set.Finite.insert _ (Set.finite_singleton _)))
+omit h₁ h₂ h in
+/-- Without the modal the conjunctive alternative is the conjunction of the disjunct
+alternatives: exhaustification denies it and includes neither disjunct. -/
+theorem simpleDisjunction (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w ∉ a) :
+    exhIEII {a ∪ b, a, b, a ∩ b} (a ∪ b) = (a ∪ b) \ (a ∩ b) :=
+  exhIEII_pair_inter le_rfl (h₁.imp λ _ h => ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
+    (h₂.imp λ _ h => ⟨⟨Or.inr h.1, h.1⟩, h.2⟩)
 
-private theorem fcPrejacent_sat : ∃ w, fcPrejacent w := ⟨.onlyA, trivial⟩
+omit h₁ h₂ h in
+/-- The cell of simple disjunction is contradictory, so cell identification does not apply. -/
+theorem simpleDisjunction_cell (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w ∉ a) :
+    cell {a ∪ b, a, b, a ∩ b} (a ∪ b) = ∅ :=
+  cell_pair_inter le_rfl (h₁.imp λ _ h => ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
+    (h₂.imp λ _ h => ⟨⟨Or.inr h.1, h.1⟩, h.2⟩)
 
-private theorem permAorB_not_ie :
-    ¬IsInnocentlyExcludable fcALT fcPrejacent permAorB :=
-  not_isInnocentlyExcludable_of_phi_subset fcALT_finite fcPrejacent_sat
-    (Set.Subset.refl _)
+end FreeChoice
 
-/-- ¬`permA` and ¬`permB` together with the prejacent are inconsistent on
-`FCWorld`: every world satisfying `permAorB` satisfies at least one disjunct. -/
-private theorem perm_cover : ∀ u, fcPrejacent u → ¬permA u → ¬permB u → False :=
-  fun u => by cases u <;> simp [fcPrejacent, permAorB, permA, permB]
+/-! ### `only` -/
 
-private theorem mc_set_without_neg_permA :
-    IsMCSet fcALT fcPrejacent {fcPrejacent, permBᶜ, permAandBᶜ} := by
-  constructor
-  · refine ⟨Set.mem_insert _ _, ?_, ?_⟩
-    · intro ψ hψ
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
-      rcases hψ with rfl | rfl | rfl
-      · left; rfl
-      · right; exact ⟨permB, by simp [fcALT], rfl⟩
-      · right; exact ⟨permAandB, by simp [fcALT], rfl⟩
-    · exact ⟨.onlyA, fun ψ hψ => by
-        simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
-        rcases hψ with rfl | rfl | rfl
-        · exact trivial
-        · exact id
-        · exact id⟩
-  · intro E' hE' hsub ψ hψ'
-    rcases hE'.2.1 ψ hψ' with rfl | ⟨a, ha, rfl⟩
-    · exact Set.mem_insert _ _
-    · simp only [fcALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-      rcases ha with rfl | rfl | rfl | rfl
-      · exfalso; obtain ⟨u, hu⟩ := hE'.2.2
-        exact hu (permAorBᶜ) hψ' (hu fcPrejacent (hsub (Set.mem_insert _ _)))
-      · exfalso; obtain ⟨u, hu⟩ := hE'.2.2
-        exact perm_cover u
-          (hu fcPrejacent (hsub (Set.mem_insert _ _)))
-          (hu (permAᶜ) hψ')
-          (hu (permBᶜ) (hsub (Set.mem_insert_of_mem _ (Set.mem_insert _ _))))
-      · exact Set.mem_insert_of_mem _ (Set.mem_insert _ _)
-      · exact Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl)
+/-- `only` presupposes the innocently includable alternatives and asserts the prejacent with
+the innocently excludable ones denied. -/
+def only (ALT : Set (Set W)) (φ : Set W) : PartialProp W where
+  presup w := ∀ r ∈ II ALT φ, r w
+  assertion w := φ w ∧ ∀ q, IsInnocentlyExcludable ALT φ q → ¬ q w
 
-private theorem mc_set_without_neg_permB :
-    IsMCSet fcALT fcPrejacent {fcPrejacent, permAᶜ, permAandBᶜ} := by
-  constructor
-  · refine ⟨Set.mem_insert _ _, ?_, ?_⟩
-    · intro ψ hψ
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
-      rcases hψ with rfl | rfl | rfl
-      · left; rfl
-      · right; exact ⟨permA, by simp [fcALT], rfl⟩
-      · right; exact ⟨permAandB, by simp [fcALT], rfl⟩
-    · exact ⟨.onlyB, fun ψ hψ => by
-        simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
-        rcases hψ with rfl | rfl | rfl
-        · exact trivial
-        · exact id
-        · exact id⟩
-  · intro E' hE' hsub ψ hψ'
-    rcases hE'.2.1 ψ hψ' with rfl | ⟨a, ha, rfl⟩
-    · exact Set.mem_insert _ _
-    · simp only [fcALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-      rcases ha with rfl | rfl | rfl | rfl
-      · exfalso; obtain ⟨u, hu⟩ := hE'.2.2
-        exact hu (permAorBᶜ) hψ' (hu fcPrejacent (hsub (Set.mem_insert _ _)))
-      · exact Set.mem_insert_of_mem _ (Set.mem_insert _ _)
-      · exfalso; obtain ⟨u, hu⟩ := hE'.2.2
-        exact perm_cover u
-          (hu fcPrejacent (hsub (Set.mem_insert _ _)))
-          (hu (permAᶜ) (hsub (Set.mem_insert_of_mem _ (Set.mem_insert _ _))))
-          (hu (permBᶜ) hψ')
-      · exact Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl)
+/-- Free choice under `only` is presupposed: `only ◇(a ∨ b)` presupposes `◇a` and `◇b`. -/
+theorem only_presup {R : W → W → Prop} {a b : Set W} (h₁ : ∃ w ∈ poss R a, w ∉ poss R b)
+    (h₂ : ∃ w ∈ poss R b, w ∉ poss R a) (h : ∃ w ∈ poss R a ∩ poss R b, w ∉ poss R (a ∩ b))
+    (w : W) : (only (fcAlts R a b) (poss R (a ∪ b))).presup w ↔ w ∈ poss R a ∩ poss R b := by
+  simp only [only, II_fcAlts h₁ h₂ h, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp,
+    forall_eq]
+  exact ⟨λ h => ⟨h.2.1, h.2.2⟩, λ h => ⟨poss_mono Set.subset_union_left h.1, h.1, h.2⟩⟩
 
-private theorem permA_not_ie :
-    ¬IsInnocentlyExcludable fcALT fcPrejacent permA := by
-  refine mc_set_without_neg_permA.not_isInnocentlyExcludable_of_compl_notMem ?_
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
-  exact ⟨fun h => Eq.mp (congrFun h .neither) id,
-         fun h => Eq.mpr (congrFun h .onlyA) id trivial,
-         fun h => Eq.mpr (congrFun h .onlyA) id trivial⟩
+/-! ### Simplification of disjunctive antecedents -/
 
-private theorem permB_not_ie :
-    ¬IsInnocentlyExcludable fcALT fcPrejacent permB := by
-  refine mc_set_without_neg_permB.not_isInnocentlyExcludable_of_compl_notMem ?_
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
-  exact ⟨fun h => Eq.mp (congrFun h .neither) id,
-         fun h => Eq.mp (congrFun h .onlyA) id trivial,
-         fun h => Eq.mpr (congrFun h .onlyB) id trivial⟩
+section Simplification
 
-/-- `permAandB` *is* innocently excludable: every MC-set contains `permAandBᶜ`,
-because adjoining `permAandBᶜ` to any MC-set is consistent (witnessed at
-`onlyA` whenever the MC-set itself is consistent), so maximality forces
-inclusion. -/
-theorem permAandB_is_ie :
-    IsInnocentlyExcludable fcALT fcPrejacent permAandB := by
-  refine ⟨by simp [fcALT], ?_⟩
-  intro E hE
-  apply hE.2 (E ∪ {permAandBᶜ}) ?_ Set.subset_union_left
-    (Set.mem_union_right E rfl)
-  refine ⟨Set.mem_union_left _ hE.1.1, ?_, ?_⟩
-  · rintro ψ (hψE | hψN)
-    · exact hE.1.2.1 ψ hψE
-    · refine Or.inr ⟨permAandB, by simp [fcALT], Set.mem_singleton_iff.mp hψN⟩
-  · obtain ⟨u₀, hu₀⟩ := hE.1.2.2
-    by_cases hpAB : permAandB u₀
-    · -- u₀ satisfies permAandB, so u₀ = .both. Switch witness to .onlyA.
-      have hu_both : u₀ = FCWorld.both := by
-        cases u₀ <;> simp_all [permAandB]
-      refine ⟨FCWorld.onlyA, fun ψ hψ => ?_⟩
-      rcases hψ with hψE | hψN
-      · -- ψ ∈ E and ψ holds at .both. Cases on ψ's structure.
-        have hψBoth : ψ FCWorld.both := hu_both ▸ hu₀ ψ hψE
-        rcases hE.1.2.1 ψ hψE with hψφ | ⟨a, ha, hψN⟩
-        · rw [hψφ]; exact trivial
-        · exfalso
-          rw [hψN] at hψBoth
-          simp only [fcALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-          rcases ha with rfl | rfl | rfl | rfl
-          · exact hψBoth trivial
-          · exact hψBoth trivial
-          · exact hψBoth trivial
-          · exact hψBoth trivial
-      · rw [Set.mem_singleton_iff.mp hψN]; intro h; exact h
-    · refine ⟨u₀, fun ψ hψ => ?_⟩
-      rcases hψ with hψE | hψN
-      · exact hu₀ ψ hψE
-      · rw [Set.mem_singleton_iff.mp hψN]; exact hpAB
+open Semantics.Conditionals Semantics.Conditionals.Counterfactual
 
-/-- **Cell witness for the FC alternative set.** The `separatelyAB` world
-verifies `cell fcALT fcPrejacent` — it satisfies the prejacent, falsifies
-every IE-excludable alternative (only `permAandB`), and verifies every
-non-excludable alternative (`permAorB`, `permA`, `permB`). -/
-theorem separatelyAB_in_cell : cell fcALT fcPrejacent .separatelyAB := by
-  refine ⟨trivial, ?_, ?_⟩
-  · intro q hq
-    have hqAlt : q ∈ fcALT := hq.1
-    simp only [fcALT, Set.mem_insert_iff, Set.mem_singleton_iff] at hqAlt
-    rcases hqAlt with rfl | rfl | rfl | rfl
-    · exact absurd hq permAorB_not_ie
-    · exact absurd hq permA_not_ie
-    · exact absurd hq permB_not_ie
-    · intro h; exact h
-  · rintro r ⟨hrAlt, hrNotIE⟩
-    simp only [fcALT, Set.mem_insert_iff, Set.mem_singleton_iff] at hrAlt
-    rcases hrAlt with rfl | rfl | rfl | rfl
-    · exact trivial
-    · exact trivial
-    · exact trivial
-    · exact absurd permAandB_is_ie hrNotIE
+variable [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W) (p q r : W → Prop)
+  [DecidablePred p] [DecidablePred q] [DecidablePred r]
 
--- ============================================================================
--- §4. Free choice as a corollary of cell identification
--- ============================================================================
+/-- The variably strict conditional as a proposition. -/
+abbrev conditional (A B : W → Prop) [DecidablePred A] [DecidablePred B] : Set W :=
+  {w | universalCounterfactual sim A B w}
 
-/-- **Main free-choice theorem.** `Exh^{IE+II}(◇(a ∨ b)) ⊨ ◇a ∧ ◇b`.
+/-- The alternatives of `(p ∨ q) → r`: the antecedent's disjunction replaced by its disjuncts
+and their conjunction. -/
+def sdaAlts : Set (Set W) :=
+  {conditional sim (λ v => p v ∨ q v) r, conditional sim p r, conditional sim q r,
+    conditional sim (λ v => p v ∧ q v) r}
 
-Direct application of the substrate-level cell-witness factorization
-`exhIEII_implies_cell_witnessed_alt` (`Operators/InnocentInclusion.lean`)
-to each disjunct, using `separatelyAB_in_cell` as the cell witness.
-The substrate theorem encapsulates the abstract content of
-[bar-lev-fox-2020] §3.3: any alternative true at a cell witness
-is entailed by `exhIEII`. -/
-theorem free_choice :
-    ∀ w, exhIEII fcALT fcPrejacent w → permA w ∧ permB w := fun w h_exh =>
-  ⟨exhIEII_implies_cell_witnessed_alt fcALT fcPrejacent
-      (by simp [fcALT]) .separatelyAB separatelyAB_in_cell trivial w h_exh,
-   exhIEII_implies_cell_witnessed_alt fcALT fcPrejacent
-      (by simp [fcALT]) .separatelyAB separatelyAB_in_cell trivial w h_exh⟩
+variable {sim p q r}
 
--- ============================================================================
--- §5. Contrast: simple disjunction (closed under ∧)
--- ============================================================================
+/-- Simplification of disjunctive antecedents: over a total similarity ordering, given a world
+where only the first simplification holds, one where only the second does, and one where both
+hold but the conjunctive one fails, `(p ∨ q) → r` strengthens to
+`(p → r) ∧ (q → r) ∧ ¬((p ∧ q) → r)`. -/
+theorem sda (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁)
+    (h₁ : ∃ w ∈ conditional sim (λ v => p v ∨ q v) r,
+      w ∉ conditional sim q r ∪ conditional sim (λ v => p v ∧ q v) r)
+    (h₂ : ∃ w ∈ conditional sim (λ v => p v ∨ q v) r,
+      w ∉ conditional sim p r ∪ conditional sim (λ v => p v ∧ q v) r)
+    (h : ∃ w ∈ conditional sim p r ∩ conditional sim q r,
+      w ∉ conditional sim (λ v => p v ∧ q v) r) :
+    exhIEII (sdaAlts sim p q r) (conditional sim (λ v => p v ∨ q v) r) =
+      (conditional sim p r ∩ conditional sim q r) \ conditional sim (λ v => p v ∧ q v) r := by
+  have hsub : conditional sim p r ∩ conditional sim q r ⊆ conditional sim (λ v => p v ∨ q v) r :=
+    λ _ h => universalCounterfactual_or_of sim h.1 h.2
+  have hcov : conditional sim (λ v => p v ∨ q v) r ⊆ conditional sim p r ∪ conditional sim q r :=
+    λ _ h => universalCounterfactual_or sim htot h
+  rw [sdaAlts, exhIEII_pair hcov
+    (h₁.imp λ w h => ⟨⟨h.1, (hcov h.1).resolve_right λ h' => h.2 (Or.inl h')⟩, h.2⟩)
+    (h₂.imp λ w h => ⟨⟨h.1, (hcov h.1).resolve_left λ h' => h.2 (Or.inl h')⟩, h.2⟩)
+    (h.imp λ w h => ⟨⟨⟨hsub h.1, h.1.1⟩, h.1.2⟩, h.2⟩), Set.inter_assoc, Set.inter_eq_right.2 hsub]
 
-/-- Simple-disjunction worlds (no modal layer). -/
-inductive DisjWorld where
-  | neither : DisjWorld
-  | onlyA : DisjWorld
-  | onlyB : DisjWorld
-  | both : DisjWorld
-  deriving DecidableEq, Repr, Inhabited
+/-- Simplification fails when the consequent is one of the disjuncts (71): the other
+simplification is the only contingent alternative, so it is excluded. -/
+theorem sda_consequent_disjunct
+    (h : ∃ w ∈ conditional sim (λ v => p v ∨ q v) p, w ∉ conditional sim q p) :
+    exhIEII (sdaAlts sim p q p) (conditional sim (λ v => p v ∨ q v) p) =
+      conditional sim (λ v => p v ∨ q v) p \ conditional sim q p := by
+  refine exhIEII_eq_diff_of_forall_subset (by simp [sdaAlts]) (λ x hx hne => ?_) h
+  simp only [sdaAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hx
+  rcases hx with rfl | rfl | rfl | rfl
+  · exact le_rfl
+  · exact λ _ _ => universalCounterfactual_of_imp sim λ _ h => h
+  · exact absurd rfl hne
+  · exact λ _ _ => universalCounterfactual_of_imp sim λ _ h => h.1
 
-/-- Atomic proposition `a`. -/
-def propA : Set DisjWorld
-  | .neither => False
-  | .onlyA => True
-  | .onlyB => False
-  | .both => True
+variable (sim p q r) in
+/-- The alternatives of `(Exh(p ∨ q) ∨ (p ∧ q)) → r`, the *or both* antecedent parsed with an
+embedded exhaustifier by Hurford's constraint (80): the antecedent's three cells. -/
+def orBothAlts : Set (Set W) :=
+  {conditional sim (λ v => p v ∨ q v) r, conditional sim (λ v => p v ∧ ¬ q v) r,
+    conditional sim (λ v => q v ∧ ¬ p v) r, conditional sim (λ v => p v ∧ q v) r}
 
-/-- Atomic proposition `b`. -/
-def propB : Set DisjWorld
-  | .neither => False
-  | .onlyA => False
-  | .onlyB => True
-  | .both => True
+/-- With the antecedent's cells as alternatives nothing is excludable and, given a world
+verifying each cell's conditional alone and one verifying all three, everything is included:
+`(p ∨ q) → r` asserts the conjunctive conditional it denied under `sdaAlts` (82). -/
+theorem orBoth (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁)
+    (h₁ : ∃ w ∈ conditional sim (λ v => p v ∨ q v) r ∩ conditional sim (λ v => p v ∧ ¬ q v) r,
+      w ∉ conditional sim (λ v => q v ∧ ¬ p v) r ∪ conditional sim (λ v => p v ∧ q v) r)
+    (h₂ : ∃ w ∈ conditional sim (λ v => p v ∨ q v) r ∩ conditional sim (λ v => q v ∧ ¬ p v) r,
+      w ∉ conditional sim (λ v => p v ∧ ¬ q v) r ∪ conditional sim (λ v => p v ∧ q v) r)
+    (h₃ : ∃ w ∈ conditional sim (λ v => p v ∨ q v) r ∩ conditional sim (λ v => p v ∧ q v) r,
+      w ∉ conditional sim (λ v => p v ∧ ¬ q v) r ∪ conditional sim (λ v => q v ∧ ¬ p v) r)
+    (h : ∃ w ∈ conditional sim (λ v => p v ∨ q v) r, w ∈ conditional sim (λ v => p v ∧ ¬ q v) r ∧
+      w ∈ conditional sim (λ v => q v ∧ ¬ p v) r ∧ w ∈ conditional sim (λ v => p v ∧ q v) r) :
+    exhIEII (orBothAlts sim p q r) (conditional sim (λ v => p v ∨ q v) r) =
+      conditional sim (λ v => p v ∨ q v) r ∩ conditional sim (λ v => p v ∧ ¬ q v) r ∩
+        conditional sim (λ v => q v ∧ ¬ p v) r ∩ conditional sim (λ v => p v ∧ q v) r := by
+  have hcov : conditional sim (λ v => p v ∨ q v) r ⊆
+      ⋃ i, ![conditional sim (λ v => p v ∧ ¬ q v) r, conditional sim (λ v => q v ∧ ¬ p v) r,
+        conditional sim (λ v => p v ∧ q v) r] i := by
+    intro w hw
+    have hw' := (universalCounterfactual_congr sim (B := λ v => (p v ∧ ¬ q v) ∨
+      ((q v ∧ ¬ p v) ∨ (p v ∧ q v))) (λ v => by tauto)).1 hw
+    rcases universalCounterfactual_or sim htot hw' with h | h
+    · exact Set.mem_iUnion.2 ⟨0, h⟩
+    rcases universalCounterfactual_or sim htot h with h | h
+    · exact Set.mem_iUnion.2 ⟨1, h⟩
+    · exact Set.mem_iUnion.2 ⟨2, h⟩
+  have hA : orBothAlts sim p q r = insert (conditional sim (λ v => p v ∨ q v) r)
+      (Set.range ![conditional sim (λ v => p v ∧ ¬ q v) r, conditional sim (λ v => q v ∧ ¬ p v) r,
+        conditional sim (λ v => p v ∧ q v) r]) := by
+    simp only [orBothAlts, Matrix.range_cons, Matrix.range_empty, Set.singleton_union,
+      Set.union_empty]
+  rw [hA, exhIEII_insert_range hcov ?_ ?_]
+  · ext w
+    simp [Set.mem_iInter, Fin.forall_fin_succ, and_assoc]
+  · intro i
+    fin_cases i
+    · exact h₁.imp λ w h => ⟨h.1, λ j hj hw => by
+        fin_cases j
+        · exact hj rfl
+        · exact h.2 (Or.inl hw)
+        · exact h.2 (Or.inr hw)⟩
+    · exact h₂.imp λ w h => ⟨h.1, λ j hj hw => by
+        fin_cases j
+        · exact h.2 (Or.inl hw)
+        · exact hj rfl
+        · exact h.2 (Or.inr hw)⟩
+    · exact h₃.imp λ w h => ⟨h.1, λ j hj hw => by
+        fin_cases j
+        · exact h.2 (Or.inl hw)
+        · exact h.2 (Or.inr hw)
+        · exact hj rfl⟩
+  · exact h.imp λ w h => ⟨h.1, λ i => by fin_cases i <;> simp [h.2.1, h.2.2.1, h.2.2.2]⟩
 
-/-- Disjunction `a ∨ b`. -/
-def propAorB : Set DisjWorld
-  | .neither => False
-  | .onlyA => True
-  | .onlyB => True
-  | .both => True
+end Simplification
 
-/-- Conjunction `a ∧ b`. -/
-def propAandB : Set DisjWorld
-  | .neither => False
-  | .onlyA => False
-  | .onlyB => False
-  | .both => True
+/-! ### The switches -/
 
-/-- Simple disjunction's alternative set: `{a ∨ b, a, b, a ∧ b}`. -/
-def simpleALT : Set (Set DisjWorld) :=
-  {propAorB, propA, propB, propAandB}
+/-- A world of [ciardelli-zhang-champollion-2018]'s scenario: whether each switch is up, and
+the wiring of the light. -/
+structure Switch where
+  up₁ : Bool
+  up₂ : Bool
+  light : Bool → Bool → Bool
+  deriving DecidableEq, Fintype
 
-/-- The structural contrast with FC: simple disjunction's alternative set
-**is** closed under conjunction (`a ∧ b ∈ simpleALT`). This is what blocks
-the cell from being consistent and prevents free choice from arising. -/
-theorem simple_has_conjunction : propAandB ∈ simpleALT := by simp [simpleALT]
+namespace Switch
 
--- ============================================================================
--- §6. SDA via Innocent Inclusion (paper §7, pp. 204–206)
--- ============================================================================
+open Semantics.Conditionals
 
-/-!
-## SDA — the second contribution highlighted in the paper title
+/-- Worlds with a different wiring are farther than any with the same; among the latter,
+distance is the number of switches in another position. -/
+def rank (w₀ w : Switch) : ℕ :=
+  (if w.light = w₀.light then 0 else 4) + (if w.up₁ = w₀.up₁ then 0 else 1) +
+    (if w.up₂ = w₀.up₂ then 0 else 1)
 
-[bar-lev-fox-2020] §7 derives **simplification of disjunctive
-antecedents** by applying `Exh^{IE+II}` to a counterfactual prejacent
-`(p∨q)□→r` over the 4-element alternative set obtained by
-disjunct-replacement (eqn 65 p. 205):
+/-- The similarity ordering by `rank`. -/
+def sim : SimilarityOrdering Switch := .ofRank rank
 
-  Alt((p∨q)□→r) = {(p∨q)□→r, p□→r, q□→r, (p∧q)□→r}
+theorem sim_total (w₀ w₁ w₂ : Switch) : sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁ :=
+  le_total _ _
 
-The maximal-false-assignment sets (eqn 66 p. 206) yield IE =
-`{(p∧q)□→r}`. Innocent Inclusion then asserts the three non-IE
-alternatives, giving Bar-Lev/Fox's verdict (eqn 67 p. 206):
+/-- Switch A is down. -/
+def down₁ (w : Switch) : Prop := w.up₁ = false
 
-  Exh^{IE+II}((p∨q)□→r) ⇔ (p□→r) ∧ (q□→r) ∧ ¬((p∧q)□→r)
+/-- Switch B is down. -/
+def down₂ (w : Switch) : Prop := w.up₂ = false
 
-This is the **central rival mechanism** to [santorio-2018]'s
-homogeneity-based SDA derivation: both predict the SDA inference
-`(p∨q)□→r ⊨ (p□→r) ∧ (q□→r)` via incompatible mechanisms (Bar-Lev/Fox:
-exhaustification-via-Innocent-Inclusion; Santorio: per-alternative
-DIST_π homogeneity over Katzir-generated truthmakers). The
-`bar_lev_fox_sda_implies_santorio_sda_inference` theorem at the end
-of this section makes this cross-mechanism agreement Lean-checkable.
--/
+/-- The light is off. -/
+def off (w : Switch) : Prop := w.light w.up₁ w.up₂ = false
 
-section SDA
+instance : DecidablePred down₁ := λ _ => inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred down₂ := λ _ => inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred off := λ _ => inferInstanceAs (Decidable (_ = _))
 
-open Semantics.Conditionals.Counterfactual (universalCounterfactual)
+/-- Both switches up, and the light on exactly when the switches agree. -/
+def actual : Switch := ⟨true, true, λ x y => x == y⟩
 
-/-- Worlds for the SDA toy model. `actual` is the evaluation world
-    (no atomic prop holds); `wp` / `wq` / `wpq` are the relevant
-    counterfactual alternatives where p (and r), q (and r), or both
-    p and q (but not r) hold respectively.
+open Semantics.Conditionals.Counterfactual
 
-    Designed so that, centered at `actual`, `wp` and `wq` are closer
-    than `wpq`, making the three conditional alternatives evaluate as
-    follows at `actual`: prejacent TRUE, p□→r TRUE, q□→r TRUE,
-    (p∧q)□→r FALSE. -/
-inductive SDAWorld where
-  | actual : SDAWorld    -- ¬p, ¬q, ¬r
-  | wp : SDAWorld        -- p, ¬q, r
-  | wq : SDAWorld        -- ¬p, q, r
-  | wpq : SDAWorld       -- p, q, ¬r
-  deriving DecidableEq, Repr, Inhabited
-
-instance : Fintype SDAWorld where
-  elems := {.actual, .wp, .wq, .wpq}
-  complete x := by cases x <;> decide
-
-/-- Atomic proposition `p`. -/
-def sdaP : SDAWorld → Prop
-  | .actual => False | .wp => True | .wq => False | .wpq => True
-/-- Atomic proposition `q`. -/
-def sdaQ : SDAWorld → Prop
-  | .actual => False | .wp => False | .wq => True | .wpq => True
-/-- Atomic proposition `r`. -/
-def sdaR : SDAWorld → Prop
-  | .actual => False | .wp => True | .wq => True | .wpq => False
-
-instance : DecidablePred sdaP := fun w => by cases w <;> unfold sdaP <;> infer_instance
-instance : DecidablePred sdaQ := fun w => by cases w <;> unfold sdaQ <;> infer_instance
-instance : DecidablePred sdaR := fun w => by cases w <;> unfold sdaR <;> infer_instance
-
-/-- Similarity ordering: from `actual`, `wp` and `wq` are closer than
-    `wpq`. From `wp`, `wp` itself is closer than `wpq` (so closest
-    p-worlds from wp are just {wp}). Symmetric for `wq`. The minimal
-    structure needed for the cell-witness analysis at `actual`. -/
-def sdaSim : Semantics.Conditionals.SimilarityOrdering SDAWorld := .ofBool
-  (fun w₀ w₁ w₂ => w₁ == w₂ ||
-    (w₀ == .actual && (w₁ == .wp || w₁ == .wq) && w₂ == .wpq) ||
-    (w₀ == .wp && w₁ == .wp && w₂ == .wpq) ||
-    (w₀ == .wq && w₁ == .wq && w₂ == .wpq))
-  (by decide) (by decide)
-
-/-- The conditional `p □→ r` as a `Set SDAWorld`. -/
-def sdaPbox : Set SDAWorld := fun w => universalCounterfactual sdaSim sdaP sdaR w
-/-- The conditional `q □→ r` as a `Set SDAWorld`. -/
-def sdaQbox : Set SDAWorld := fun w => universalCounterfactual sdaSim sdaQ sdaR w
-/-- The conditional `(p∨q) □→ r` (the prejacent) as a `Set SDAWorld`. -/
-def sdaPorQbox : Set SDAWorld :=
-  fun w => universalCounterfactual sdaSim (fun v => sdaP v ∨ sdaQ v) sdaR w
-/-- The conditional `(p∧q) □→ r` as a `Set SDAWorld`. -/
-def sdaPandQbox : Set SDAWorld :=
-  fun w => universalCounterfactual sdaSim (fun v => sdaP v ∧ sdaQ v) sdaR w
-
-/-- The SDA alternative set per eqn (65) p. 205. -/
-def sdaALT : Set (Set SDAWorld) :=
-  {sdaPorQbox, sdaPbox, sdaQbox, sdaPandQbox}
-
-/-- The SDA prejacent: `(p∨q) □→ r`. -/
-def sdaPrejacent : Set SDAWorld := sdaPorQbox
-
-/-! ### Per-alternative verdicts at `.actual` -/
-
-theorem sdaPrejacent_at_actual : sdaPrejacent .actual := by
-  unfold sdaPrejacent sdaPorQbox universalCounterfactual
+/-- *If switch A or switch B were down, the light would be off* (76) is true in the scenario:
+its strengthening asserts both simplifications and denies the conjunctive one. -/
+theorem sda_actual :
+    actual ∈ exhIEII (sdaAlts sim down₁ down₂ off)
+      (conditional sim (λ v => down₁ v ∨ down₂ v) off) := by
+  rw [sda sim_total ⟨⟨false, true, λ x y => !x && !y⟩, by decide⟩
+    ⟨⟨true, false, λ x y => !x && !y⟩, by decide⟩ ⟨actual, by decide⟩]
   decide
 
-theorem sdaPbox_at_actual : sdaPbox .actual := by
-  unfold sdaPbox universalCounterfactual; decide
-
-theorem sdaQbox_at_actual : sdaQbox .actual := by
-  unfold sdaQbox universalCounterfactual; decide
-
-theorem sdaPandQbox_false_at_actual : ¬ sdaPandQbox .actual := by
-  unfold sdaPandQbox universalCounterfactual; decide
-
-/-! Per-world verdicts at the MC-set witnesses `.wp` and `.wq`. -/
-
-theorem sdaPrejacent_at_wp : sdaPrejacent SDAWorld.wp := by
-  unfold sdaPrejacent sdaPorQbox universalCounterfactual; decide
-
-theorem sdaPrejacent_at_wq : sdaPrejacent SDAWorld.wq := by
-  unfold sdaPrejacent sdaPorQbox universalCounterfactual; decide
-
-theorem sdaPbox_at_wp : sdaPbox SDAWorld.wp := by
-  unfold sdaPbox universalCounterfactual; decide
-
-theorem sdaPbox_false_at_wq : ¬ sdaPbox SDAWorld.wq := by
-  unfold sdaPbox universalCounterfactual; decide
-
-theorem sdaQbox_at_wq : sdaQbox SDAWorld.wq := by
-  unfold sdaQbox universalCounterfactual; decide
-
-theorem sdaQbox_false_at_wp : ¬ sdaQbox SDAWorld.wp := by
-  unfold sdaQbox universalCounterfactual; decide
-
-/-! ### IE structure (paper eqn 66 p. 206)
-
-The maximal-false-assignment subsets of `sdaALT` (consistent with the
-prejacent) are `{sdaPbox, sdaPandQbox}` and `{sdaQbox, sdaPandQbox}`,
-yielding `IE(prejacent, sdaALT) = {sdaPandQbox}`. The proofs adapt §3's
-FC pattern (`permA_not_ie` / `permB_not_ie` / `permAandB_is_ie`) to
-conditional-typed alternatives. -/
-
-/-- `sdaPandQbox` is identically false on `SDAWorld`: the unique
-    `(p∧q)`-world is `.wpq`, where `r` does not hold, so
-    `universalCounterfactual sim (p∧q) r u` fails for every `u`. -/
-theorem sdaPandQbox_always_false (u : SDAWorld) : ¬ sdaPandQbox u := by
-  unfold sdaPandQbox universalCounterfactual
-  intro h
-  have hfilter : (Finset.univ.filter (fun v : SDAWorld => sdaP v ∧ sdaQ v))
-      = {SDAWorld.wpq} := by
-    ext v; cases v <;> simp [sdaP, sdaQ]
-  rw [hfilter] at h
-  have hwpq_in : SDAWorld.wpq ∈ sdaSim.closestWorlds u {SDAWorld.wpq} := by
-    rw [Semantics.Conditionals.SimilarityOrdering.mem_closestWorlds]
-    refine ⟨Finset.mem_singleton.mpr rfl, ?_⟩
-    intro w'' hw''
-    rw [Finset.mem_singleton] at hw''; subst hw''
-    exact Or.inl (sdaSim.closer_refl u SDAWorld.wpq)
-  exact h SDAWorld.wpq hwpq_in
-
-/-- The prejacent + the two negated alternatives `sdaQboxᶜ` and
-    `sdaPandQboxᶜ` form an MC-set witnessed at `.wp`. This is the
-    paper's first maximal-false set (paper eqn 66a-i p. 206), with
-    `sdaPbox` notably absent. -/
-private theorem mc_set_without_neg_sdaPbox :
-    IsMCSet sdaALT sdaPrejacent
-      {sdaPrejacent, sdaQboxᶜ, sdaPandQboxᶜ} := by
-  constructor
-  · refine ⟨Set.mem_insert _ _, ?_, ?_⟩
-    · intro ψ hψ
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
-      rcases hψ with rfl | rfl | rfl
-      · left; rfl
-      · right; exact ⟨sdaQbox, by simp [sdaALT], rfl⟩
-      · right; exact ⟨sdaPandQbox, by simp [sdaALT], rfl⟩
-    · refine ⟨SDAWorld.wp, fun ψ hψ => ?_⟩
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
-      rcases hψ with rfl | rfl | rfl
-      · exact sdaPrejacent_at_wp
-      · exact sdaQbox_false_at_wp
-      · exact sdaPandQbox_always_false SDAWorld.wp
-  · -- Maximality: any compatible superset is contained in the MC-set
-    intro E' hE' hsub ψ hψ'
-    rcases hE'.2.1 ψ hψ' with rfl | ⟨a, ha, rfl⟩
-    · exact Set.mem_insert _ _
-    · simp only [sdaALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-      rcases ha with rfl | rfl | rfl | rfl
-      · -- ψ = sdaPorQboxᶜ: contradicts sdaPrejacent ∈ E'
-        exfalso
-        obtain ⟨u, hu⟩ := hE'.2.2
-        exact hu sdaPorQboxᶜ hψ' (hu sdaPrejacent (hsub (Set.mem_insert _ _)))
-      · -- ψ = sdaPboxᶜ: must show this is impossible. The witness u must
-        -- satisfy sdaPrejacent (≡ sdaPorQbox) AND sdaQboxᶜ AND sdaPboxᶜ.
-        -- But (p∨q)□→r ∧ ¬(p□→r) ∧ ¬(q□→r) is unsatisfiable (every
-        -- closest (p∨q)-world is a closest p-world or closest q-world).
-        exfalso
-        obtain ⟨u, hu⟩ := hE'.2.2
-        have hPrej : sdaPrejacent u :=
-          hu sdaPrejacent (hsub (Set.mem_insert _ _))
-        have hNotP : ¬ sdaPbox u := hu sdaPboxᶜ hψ'
-        have hNotQ : ¬ sdaQbox u :=
-          hu sdaQboxᶜ (hsub (Set.mem_insert_of_mem _ (Set.mem_insert _ _)))
-        revert hPrej hNotP hNotQ
-        cases u <;>
-          unfold sdaPrejacent sdaPorQbox sdaPbox sdaQbox universalCounterfactual <;>
-          decide
-      · exact Set.mem_insert_of_mem _ (Set.mem_insert _ _)
-      · exact Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl)
-
-/-- Symmetric MC-set: prejacent + `sdaPboxᶜ` + `sdaPandQboxᶜ`,
-    witnessed at `.wq`. Paper eqn 66a-ii p. 206. -/
-private theorem mc_set_without_neg_sdaQbox :
-    IsMCSet sdaALT sdaPrejacent
-      {sdaPrejacent, sdaPboxᶜ, sdaPandQboxᶜ} := by
-  constructor
-  · refine ⟨Set.mem_insert _ _, ?_, ?_⟩
-    · intro ψ hψ
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
-      rcases hψ with rfl | rfl | rfl
-      · left; rfl
-      · right; exact ⟨sdaPbox, by simp [sdaALT], rfl⟩
-      · right; exact ⟨sdaPandQbox, by simp [sdaALT], rfl⟩
-    · refine ⟨SDAWorld.wq, fun ψ hψ => ?_⟩
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
-      rcases hψ with rfl | rfl | rfl
-      · exact sdaPrejacent_at_wq
-      · exact sdaPbox_false_at_wq
-      · exact sdaPandQbox_always_false SDAWorld.wq
-  · intro E' hE' hsub ψ hψ'
-    rcases hE'.2.1 ψ hψ' with rfl | ⟨a, ha, rfl⟩
-    · exact Set.mem_insert _ _
-    · simp only [sdaALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-      rcases ha with rfl | rfl | rfl | rfl
-      · exfalso
-        obtain ⟨u, hu⟩ := hE'.2.2
-        exact hu sdaPorQboxᶜ hψ' (hu sdaPrejacent (hsub (Set.mem_insert _ _)))
-      · exact Set.mem_insert_of_mem _ (Set.mem_insert _ _)
-      · exfalso
-        obtain ⟨u, hu⟩ := hE'.2.2
-        have hPrej : sdaPrejacent u :=
-          hu sdaPrejacent (hsub (Set.mem_insert _ _))
-        have hNotP : ¬ sdaPbox u :=
-          hu sdaPboxᶜ (hsub (Set.mem_insert_of_mem _ (Set.mem_insert _ _)))
-        have hNotQ : ¬ sdaQbox u := hu sdaQboxᶜ hψ'
-        revert hPrej hNotP hNotQ
-        cases u <;>
-          unfold sdaPrejacent sdaPorQbox sdaPbox sdaQbox universalCounterfactual <;>
-          decide
-      · exact Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl)
-
-theorem sdaPrejacent_not_ie :
-    ¬ IsInnocentlyExcludable sdaALT sdaPrejacent sdaPorQbox := by
-  apply not_isInnocentlyExcludable_of_phi_subset
-  · exact (Set.Finite.insert _ (Set.Finite.insert _
-      (Set.Finite.insert _ (Set.finite_singleton _))))
-  · exact ⟨.actual, sdaPrejacent_at_actual⟩
-  · rfl
-
-/-- `sdaPbox` is **not** innocently excludable: the MC-set
-    `{prejacent, sdaQboxᶜ, sdaPandQboxᶜ}` does not contain
-    `sdaPboxᶜ`. -/
-theorem sdaPbox_not_ie :
-    ¬ IsInnocentlyExcludable sdaALT sdaPrejacent sdaPbox := by
-  refine mc_set_without_neg_sdaPbox.not_isInnocentlyExcludable_of_compl_notMem ?_
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
-  refine ⟨?_, ?_, ?_⟩
-  · -- sdaPboxᶜ ≠ sdaPrejacent: differ at .actual (prejacent T, sdaPboxᶜ F)
-    intro h
-    have heq := congrFun h SDAWorld.actual
-    simp only [eq_iff_iff] at heq
-    exact (heq.mpr sdaPrejacent_at_actual) sdaPbox_at_actual
-  · -- sdaPboxᶜ ≠ sdaQboxᶜ: differ at .wp (sdaPboxᶜ F, sdaQboxᶜ T)
-    intro h
-    have heq := congrFun h SDAWorld.wp
-    simp only [eq_iff_iff] at heq
-    exact (heq.mpr sdaQbox_false_at_wp) sdaPbox_at_wp
-  · -- sdaPboxᶜ ≠ sdaPandQboxᶜ: sdaPandQboxᶜ T everywhere; sdaPboxᶜ F at .wp
-    intro h
-    have heq := congrFun h SDAWorld.wp
-    simp only [eq_iff_iff] at heq
-    exact (heq.mpr (sdaPandQbox_always_false SDAWorld.wp)) sdaPbox_at_wp
-
-/-- `sdaQbox` is **not** innocently excludable (symmetric to `sdaPbox`). -/
-theorem sdaQbox_not_ie :
-    ¬ IsInnocentlyExcludable sdaALT sdaPrejacent sdaQbox := by
-  refine mc_set_without_neg_sdaQbox.not_isInnocentlyExcludable_of_compl_notMem ?_
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
-  refine ⟨?_, ?_, ?_⟩
-  · intro h
-    have heq := congrFun h SDAWorld.actual
-    simp only [eq_iff_iff] at heq
-    exact (heq.mpr sdaPrejacent_at_actual) sdaQbox_at_actual
-  · intro h
-    have heq := congrFun h SDAWorld.wq
-    simp only [eq_iff_iff] at heq
-    exact (heq.mpr sdaPbox_false_at_wq) sdaQbox_at_wq
-  · intro h
-    have heq := congrFun h SDAWorld.wq
-    simp only [eq_iff_iff] at heq
-    exact (heq.mpr (sdaPandQbox_always_false SDAWorld.wq)) sdaQbox_at_wq
-
-/-- `sdaPandQbox` IS innocently excludable: since `sdaPandQbox` is
-    identically false on `SDAWorld`, `sdaPandQboxᶜ` holds at every
-    world, so adjoining it to any MC-set keeps it consistent —
-    maximality forces inclusion. -/
-theorem sdaPandQbox_is_ie :
-    IsInnocentlyExcludable sdaALT sdaPrejacent sdaPandQbox := by
-  apply IsInnocentlyExcludable.of_extension_consistent
-  · simp [sdaALT]
-  · intro E hE
-    obtain ⟨u₀, hu₀⟩ := hE.1.2.2
-    refine ⟨u₀, ?_⟩
-    intro ψ hψ
-    rcases hψ with hψE | hψS
-    · exact hu₀ ψ hψE
-    · rw [Set.mem_singleton_iff] at hψS
-      rw [hψS]
-      exact sdaPandQbox_always_false u₀
-
-/-- **Cell witness for the SDA alternative set.** The `.actual` world
-    verifies `cell sdaALT sdaPrejacent`: it satisfies the prejacent
-    plus the two non-IE conditional alternatives (`sdaPbox`, `sdaQbox`)
-    and falsifies the unique IE alternative (`sdaPandQbox`). Once the
-    IE-structure proofs above are complete, this follows from the
-    per-alternative verdicts at `.actual`. -/
-theorem actual_in_sda_cell : cell sdaALT sdaPrejacent .actual := by
-  refine ⟨sdaPrejacent_at_actual, ?_, ?_⟩
-  · intro q hq
-    have hqAlt : q ∈ sdaALT := hq.1
-    simp only [sdaALT, Set.mem_insert_iff, Set.mem_singleton_iff] at hqAlt
-    rcases hqAlt with rfl | rfl | rfl | rfl
-    · exact absurd hq sdaPrejacent_not_ie
-    · exact absurd hq sdaPbox_not_ie
-    · exact absurd hq sdaQbox_not_ie
-    · exact sdaPandQbox_false_at_actual
-  · rintro r ⟨hrAlt, hrNotIE⟩
-    simp only [sdaALT, Set.mem_insert_iff, Set.mem_singleton_iff] at hrAlt
-    rcases hrAlt with rfl | rfl | rfl | rfl
-    · exact sdaPrejacent_at_actual
-    · exact sdaPbox_at_actual
-    · exact sdaQbox_at_actual
-    · exact absurd sdaPandQbox_is_ie hrNotIE
-
-/-- **Bar-Lev/Fox SDA derivation** (paper eqn 67 p. 206).
-    `Exh^{IE+II}((p∨q)□→r)` entails `(p□→r) ∧ (q□→r) ∧ ¬((p∧q)□→r)`.
-    Three one-shot applications of the substrate-level cell-witness
-    factorization theorems (`Operators/InnocentInclusion.lean`):
-    `exhIEII_implies_cell_witnessed_alt` for the two non-IE
-    conditionals (witnessed at `.actual`), and
-    `exhIEII_negates_excludable` for the unique IE alternative. -/
-theorem bar_lev_fox_sda :
-    ∀ w, exhIEII sdaALT sdaPrejacent w →
-      sdaPbox w ∧ sdaQbox w ∧ ¬ sdaPandQbox w := fun w h_exh =>
-  ⟨exhIEII_implies_cell_witnessed_alt sdaALT sdaPrejacent
-      (by simp [sdaALT]) .actual actual_in_sda_cell sdaPbox_at_actual w h_exh,
-   exhIEII_implies_cell_witnessed_alt sdaALT sdaPrejacent
-      (by simp [sdaALT]) .actual actual_in_sda_cell sdaQbox_at_actual w h_exh,
-   exhIEII_negates_excludable sdaALT sdaPrejacent sdaPandQbox_is_ie w h_exh⟩
-
-end SDA
-
--- ============================================================================
--- §7. Cross-framework agreement: Bar-Lev/Fox SDA vs Santorio's `Distributive`
--- ============================================================================
-
-/-!
-## The central debate Zani-Ciardelli-Sanfelici 2026 frames
-
-[santorio-2018] derives SDA via per-alternative homogeneity
-(`Distributive` = universal over per-disjunct counterfactuals).
-[bar-lev-fox-2020] derives SDA via Innocent Inclusion
-(`exhIEII` over disjunct-replacement alternatives, asserting the
-non-IE conditional alternatives). The two mechanisms are RIVAL but
-they AGREE on the SDA inference proper:
-
-   `(p∨q)□→r  ⊨  (p□→r) ∧ (q□→r)`
-
-This agreement is the substrate for [zani-ciardelli-sanfelici-2026]'s
-acquisition study, which contrasts the two frameworks' predicted
-developmental trajectories (Bar-Lev/Fox: AR→SDA; Santorio: DCR→SDA).
-The cross-mechanism agreement theorem below makes this Lean-checkable.
-
-Bar-Lev/Fox's full verdict additionally entails `¬((p∧q)□→r)` (the
-IE-driven negation of the conjunctive alternative); Santorio's
-`Distributive` does not entail this. So Bar-Lev/Fox is STRICTLY STRONGER
-than Santorio on this scenario — they agree on SDA, diverge on the
-extra negative conjunct.
--/
-
-open Semantics.Conditionals.Counterfactual (Distributive universalCounterfactual_mem_filter)
-
-/-- The SDA alternatives as `DecAlt SDAWorld`s for use in
-    [santorio-2018]'s `Distributive` apparatus. -/
-def sdaSantorioAlts : List (Finset SDAWorld) :=
-  [Finset.univ.filter sdaP, Finset.univ.filter sdaQ]
-
-/-- **Cross-framework agreement on the SDA inference.**
-    [bar-lev-fox-2020]'s `Exh^{IE+II}` verdict on the SDA prejacent
-    entails [santorio-2018]'s `Distributive` verdict on the same scenario.
-
-    Direct application of the substrate-level multi-target cell-witness
-    factorization `exhIEII_implies_cell_witnessed_alts` to the list of
-    Santorio-style disjunct conditionals `[sdaPbox, sdaQbox]`. The
-    factorization captures the abstract structural fact (any
-    cell-witnessed alternatives are jointly entailed by `Exh^{IE+II}`);
-    the bridge to `Distributive` is mechanical via `sdaEval_iff_forall`.
-    Santorio is silent on the negative conjunct
-    `¬((p∧q)□→r)` that Bar-Lev/Fox additionally derives — they coincide
-    on the SDA inference proper, diverge on the negative component. -/
-theorem bar_lev_fox_sda_implies_santorio_sda_inference :
-    ∀ w, exhIEII sdaALT sdaPrejacent w →
-      Distributive sdaSim sdaSantorioAlts sdaR w := by
-  intro w h
-  have h_targets := exhIEII_implies_cell_witnessed_alts sdaALT sdaPrejacent
-    [sdaPbox, sdaQbox]
-    (by intros t ht
-        simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
-        rcases ht with rfl | rfl <;> simp [sdaALT])
-    .actual actual_in_sda_cell
-    (by intros t ht
-        simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
-        rcases ht with rfl | rfl
-        · exact sdaPbox_at_actual
-        · exact sdaQbox_at_actual)
-    w h
-  intro a ha
-  simp only [sdaSantorioAlts, List.mem_cons, List.not_mem_nil, or_false] at ha
-  rcases ha with rfl | rfl
-  · exact (universalCounterfactual_mem_filter _ _ _ _).2 (h_targets sdaPbox (by simp))
-  · exact h_targets sdaQbox (by simp)
-
--- ============================================================================
--- §8. Universal Free Choice (paper §6.1 pp. 201–203)
--- ============================================================================
-
-/-!
-## ◇∀x(Px ∨ Qx) ⊨ ◇∀xPx ∧ ◇∀xQx — second application of `Exh^{IE+II}`
-
-[bar-lev-fox-2020] §6.1 derives **universal free choice** by
-applying `Exh^{IE+II}` to a counterfactual prejacent `◇∀x(Px ∨ Qx)`
-over the 8-element alternative set obtained by replacing both the
-universal quantifier and the disjunction (eqn 55 p. 202):
-
-  Alt(◇∀x(P∨Q)) = {◇∀x(P∨Q), ◇∀xP, ◇∀xQ, ◇∀x(P∧Q),
-                   ◇∃x(P∨Q), ◇∃xP, ◇∃xQ, ◇∃x(P∧Q)}
-
-The maximal-false-assignment subsets (eqn 56 p. 202) are three:
-- (i)   {◇∀xP, ◇∀xQ, ◇∀x(P∧Q), ◇∃x(P∧Q)} — witnessed at `wMixed`
-- (ii)  {◇∀xP, ◇∃xP, ◇∀x(P∧Q), ◇∃x(P∧Q)} — witnessed at `wAllQ`
-- (iii) {◇∀xQ, ◇∃xQ, ◇∀x(P∧Q), ◇∃x(P∧Q)} — witnessed at `wAllP`
-
-yielding `IE = {◇∀x(P∧Q), ◇∃x(P∧Q)}`. Innocent Inclusion then asserts
-the six non-IE alternatives, giving Bar-Lev/Fox's verdict (eqn 57 p. 202):
-
-  Exh^{IE+II}(◇∀x(P∨Q)) ⇔ ◇∀xP ∧ ◇∀xQ ∧ ¬◇∃x(P∧Q)
-
-This is the **second consumer** of the substrate factorization
-theorems `exhIEII_implies_cell_witnessed_alt` and
-`exhIEII_negates_excludable` added in
-`Semantics/Exhaustification/Operators/InnocentInclusion.lean`.
-The cell witness `wAllP_AllQ` realizes simultaneous accessibility of
-the all-P and all-Q scenarios with no overlap-scenario; the main
-theorem follows in 3 substrate-application lines.
--/
-
-section UniversalFC
-
-/-- Worlds for the universal-FC toy model. Each world represents the
-    set of accessible scenarios from the evaluation point — abstract
-    enough to validate the 8-alternative IE structure of paper eqn 55
-    p. 202. -/
-inductive UnivFCWorld where
-  | wAllP : UnivFCWorld         -- only the all-P scenario accessible
-  | wAllQ : UnivFCWorld         -- only the all-Q scenario accessible
-  | wMixed : UnivFCWorld        -- only the mixed (some-P, some-Q, no overlap) scenario accessible
-  | wAllP_AllQ : UnivFCWorld    -- all-P AND all-Q scenarios accessible (cell witness)
-  | wInaccessible : UnivFCWorld -- nothing accessible
-  deriving DecidableEq, Repr, Inhabited
-
-instance : Fintype UnivFCWorld where
-  elems := {.wAllP, .wAllQ, .wMixed, .wAllP_AllQ, .wInaccessible}
-  complete x := by cases x <;> decide
-
-/-! ### The 8 alternative predicates per paper eqn (55) p. 202 -/
-
-/-- ◇∀x(P∨Q) — the prejacent: some accessible scenario has every
-    individual reading at least one of P, Q. -/
-def univFcAllPorQ : Set UnivFCWorld
-  | .wAllP => True | .wAllQ => True | .wMixed => True
-  | .wAllP_AllQ => True | .wInaccessible => False
-
-/-- ◇∀xP — some accessible scenario has every individual reading P. -/
-def univFcAllP : Set UnivFCWorld
-  | .wAllP => True | .wAllP_AllQ => True
-  | .wAllQ => False | .wMixed => False | .wInaccessible => False
-
-/-- ◇∀xQ — some accessible scenario has every individual reading Q. -/
-def univFcAllQ : Set UnivFCWorld
-  | .wAllQ => True | .wAllP_AllQ => True
-  | .wAllP => False | .wMixed => False | .wInaccessible => False
-
-/-- ◇∀x(P∧Q) — some accessible scenario has every individual reading
-    both. None of our worlds witness an all-both scenario. -/
-def univFcAllBoth : Set UnivFCWorld := fun _ => False
-
-/-- ◇∃x(P∨Q) — some accessible scenario has some individual reading
-    at least one. -/
-def univFcSomePorQ : Set UnivFCWorld
-  | .wInaccessible => False | _ => True
-
-/-- ◇∃xP — some accessible scenario has some individual reading P. -/
-def univFcSomeP : Set UnivFCWorld
-  | .wAllP => True | .wMixed => True | .wAllP_AllQ => True
-  | .wAllQ => False | .wInaccessible => False
-
-/-- ◇∃xQ — some accessible scenario has some individual reading Q. -/
-def univFcSomeQ : Set UnivFCWorld
-  | .wAllQ => True | .wMixed => True | .wAllP_AllQ => True
-  | .wAllP => False | .wInaccessible => False
-
-/-- ◇∃x(P∧Q) — some accessible scenario has some individual reading
-    both. None of our worlds witness an overlap scenario. -/
-def univFcSomeBoth : Set UnivFCWorld := fun _ => False
-
-/-- The 8-element alternative set per paper eqn (55) p. 202. -/
-def universalFcALT : Set (Set UnivFCWorld) :=
-  {univFcAllPorQ, univFcAllP, univFcAllQ, univFcAllBoth,
-   univFcSomePorQ, univFcSomeP, univFcSomeQ, univFcSomeBoth}
-
-/-- The universal-FC prejacent. -/
-def universalFcPrejacent : Set UnivFCWorld := univFcAllPorQ
-
-/-! ### Per-world verdicts at the cell witness `wAllP_AllQ`
-
-Established by direct case analysis. The cell witness satisfies the
-prejacent + every non-IE alternative; the two IE alternatives
-(`univFcAllBoth`, `univFcSomeBoth`) are identically false on this
-toy model. -/
-
-theorem universalFcPrejacent_at_witness :
-    universalFcPrejacent .wAllP_AllQ := trivial
-theorem univFcAllP_at_witness : univFcAllP .wAllP_AllQ := trivial
-theorem univFcAllQ_at_witness : univFcAllQ .wAllP_AllQ := trivial
-theorem univFcSomePorQ_at_witness : univFcSomePorQ .wAllP_AllQ := trivial
-theorem univFcSomeP_at_witness : univFcSomeP .wAllP_AllQ := trivial
-theorem univFcSomeQ_at_witness : univFcSomeQ .wAllP_AllQ := trivial
-
-theorem univFcAllBoth_always_false (u : UnivFCWorld) :
-    ¬ univFcAllBoth u := id
-theorem univFcSomeBoth_always_false (u : UnivFCWorld) :
-    ¬ univFcSomeBoth u := id
-
-/-! ### Finset-side alternative set + bridge to Set side
-
-For decidability of cell membership and IE-ness, work with Finset
-versions of the 8 alternatives. Bridge equations to the Set side let
-the general substrate theorems
-(`Operators/InnocentInclusion.lean::mem_II_of_cell_witness`,
-`not_isInnocentlyExcludable_of_cell_witness`) consume Finset-derived
-facts via `decide`. -/
-
-/-- Finset version of `univFcAllPorQ`. -/
-def univFcAllPorQ_f : Finset UnivFCWorld :=
-  {.wAllP, .wAllQ, .wMixed, .wAllP_AllQ}
-def univFcAllP_f : Finset UnivFCWorld := {.wAllP, .wAllP_AllQ}
-def univFcAllQ_f : Finset UnivFCWorld := {.wAllQ, .wAllP_AllQ}
-def univFcAllBoth_f : Finset UnivFCWorld := ∅
-def univFcSomePorQ_f : Finset UnivFCWorld :=
-  {.wAllP, .wAllQ, .wMixed, .wAllP_AllQ}
-def univFcSomeP_f : Finset UnivFCWorld :=
-  {.wAllP, .wMixed, .wAllP_AllQ}
-def univFcSomeQ_f : Finset UnivFCWorld :=
-  {.wAllQ, .wMixed, .wAllP_AllQ}
-def univFcSomeBoth_f : Finset UnivFCWorld := ∅
-
-/-- The 8-element alternative set (Finset-typed) per paper eqn (55) p. 202. -/
-def universalFcALT_f : Finset (Finset UnivFCWorld) :=
-  {univFcAllPorQ_f, univFcAllP_f, univFcAllQ_f, univFcAllBoth_f,
-   univFcSomePorQ_f, univFcSomeP_f, univFcSomeQ_f, univFcSomeBoth_f}
-
-/-- The Finset-side prejacent. -/
-def universalFcPrejacent_f : Finset UnivFCWorld := univFcAllPorQ_f
-
-/-! ### Per-alt Set/Finset bridge equations -/
-
-theorem univFcAllPorQ_eq : univFcAllPorQ = ↑univFcAllPorQ_f := by
-  ext w; show univFcAllPorQ w ↔ w ∈ univFcAllPorQ_f
-  cases w <;> simp [univFcAllPorQ, univFcAllPorQ_f]
-theorem univFcAllP_eq : univFcAllP = ↑univFcAllP_f := by
-  ext w; show univFcAllP w ↔ w ∈ univFcAllP_f
-  cases w <;> simp [univFcAllP, univFcAllP_f]
-theorem univFcAllQ_eq : univFcAllQ = ↑univFcAllQ_f := by
-  ext w; show univFcAllQ w ↔ w ∈ univFcAllQ_f
-  cases w <;> simp [univFcAllQ, univFcAllQ_f]
-theorem univFcAllBoth_eq : univFcAllBoth = ↑univFcAllBoth_f := by
-  ext w; show univFcAllBoth w ↔ w ∈ univFcAllBoth_f
-  cases w <;> simp [univFcAllBoth, univFcAllBoth_f]
-theorem univFcSomePorQ_eq : univFcSomePorQ = ↑univFcSomePorQ_f := by
-  ext w; show univFcSomePorQ w ↔ w ∈ univFcSomePorQ_f
-  cases w <;> simp [univFcSomePorQ, univFcSomePorQ_f]
-theorem univFcSomeP_eq : univFcSomeP = ↑univFcSomeP_f := by
-  ext w; show univFcSomeP w ↔ w ∈ univFcSomeP_f
-  cases w <;> simp [univFcSomeP, univFcSomeP_f]
-theorem univFcSomeQ_eq : univFcSomeQ = ↑univFcSomeQ_f := by
-  ext w; show univFcSomeQ w ↔ w ∈ univFcSomeQ_f
-  cases w <;> simp [univFcSomeQ, univFcSomeQ_f]
-theorem univFcSomeBoth_eq : univFcSomeBoth = ↑univFcSomeBoth_f := by
-  ext w; show univFcSomeBoth w ↔ w ∈ univFcSomeBoth_f
-  cases w <;> simp [univFcSomeBoth, univFcSomeBoth_f]
-
-/-- ALT-level bridge: the Set-typed `universalFcALT` equals the
-    `asSetOfSets` image of the Finset-typed `universalFcALT_f`. Lifts
-    Finset-side membership facts to the Set-side substrate theorems. -/
-theorem universalFcALT_eq :
-    universalFcALT = Exhaustification.Innocent.asSetOfSets universalFcALT_f := by
-  rw [universalFcALT, univFcAllPorQ_eq, univFcAllP_eq, univFcAllQ_eq,
-      univFcAllBoth_eq, univFcSomePorQ_eq, univFcSomeP_eq,
-      univFcSomeQ_eq, univFcSomeBoth_eq]
-  ext s
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff,
-    Exhaustification.Innocent.mem_asSetOfSets, universalFcALT_f,
-    Finset.mem_insert, Finset.mem_singleton]
-  constructor
-  · rintro (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl)
-    all_goals (
-      first
-        | exact ⟨univFcAllPorQ_f, Or.inl rfl, rfl⟩
-        | exact ⟨univFcAllP_f, Or.inr (Or.inl rfl), rfl⟩
-        | exact ⟨univFcAllQ_f, Or.inr (Or.inr (Or.inl rfl)), rfl⟩
-        | exact ⟨univFcAllBoth_f, Or.inr (Or.inr (Or.inr (Or.inl rfl))), rfl⟩
-        | exact ⟨univFcSomePorQ_f,
-            Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl)))), rfl⟩
-        | exact ⟨univFcSomeP_f,
-            Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl))))), rfl⟩
-        | exact ⟨univFcSomeQ_f,
-            Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl)))))), rfl⟩
-        | exact ⟨univFcSomeBoth_f,
-            Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr rfl)))))), rfl⟩)
-  · rintro ⟨a, ha, rfl⟩
-    rcases ha with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
-    · left; rfl
-    · right; left; rfl
-    · right; right; left; rfl
-    · right; right; right; left; rfl
-    · right; right; right; right; left; rfl
-    · right; right; right; right; right; left; rfl
-    · right; right; right; right; right; right; left; rfl
-    · right; right; right; right; right; right; right; rfl
-
-/-- Prejacent bridge. -/
-theorem universalFcPrejacent_eq :
-    universalFcPrejacent = (↑universalFcPrejacent_f : Set UnivFCWorld) :=
-  univFcAllPorQ_eq
-
-/-! ### Cell witness via Finset bridge -/
-
-set_option maxRecDepth 2000 in
-/-- **Cell witness for the universal-FC alternative set** (paper eqn
-    56 p. 202 cell). `wAllP_AllQ` is in the cell. Proof: `decide`-
-    checkable on the Finset side (`Operators/Decidable.lean::cellFinset`);
-    lifted to Set via `mem_cellFinset_iff` + `universalFcALT_eq` /
-    `universalFcPrejacent_eq`. Replaces ~250 LOC of manual MC-set +
-    IE-structure proofs from earlier versions. -/
-theorem wAllP_AllQ_in_universal_fc_cell :
-    cell universalFcALT universalFcPrejacent UnivFCWorld.wAllP_AllQ := by
-  rw [universalFcALT_eq, universalFcPrejacent_eq]
-  exact (Exhaustification.Innocent.mem_cellFinset_iff
-    universalFcALT_f universalFcPrejacent_f UnivFCWorld.wAllP_AllQ).mp (by decide)
-
-/-! ### Innocent excludability theorems (cell-witness corollaries) -/
-
-theorem universalFcPrejacent_not_ie :
-    ¬ IsInnocentlyExcludable universalFcALT universalFcPrejacent univFcAllPorQ :=
-  not_isInnocentlyExcludable_of_phi_subset
-    (Set.Finite.insert _ (Set.Finite.insert _ (Set.Finite.insert _
-      (Set.Finite.insert _ (Set.Finite.insert _ (Set.Finite.insert _
-      (Set.Finite.insert _ (Set.finite_singleton _))))))))
-    ⟨UnivFCWorld.wAllP_AllQ, universalFcPrejacent_at_witness⟩
-    (Set.Subset.refl _)
-
-theorem univFcAllP_not_ie :
-    ¬ IsInnocentlyExcludable universalFcALT universalFcPrejacent univFcAllP :=
-  not_isInnocentlyExcludable_of_cell_witness universalFcALT universalFcPrejacent
-    UnivFCWorld.wAllP_AllQ wAllP_AllQ_in_universal_fc_cell univFcAllP_at_witness
-
-theorem univFcAllQ_not_ie :
-    ¬ IsInnocentlyExcludable universalFcALT universalFcPrejacent univFcAllQ :=
-  not_isInnocentlyExcludable_of_cell_witness universalFcALT universalFcPrejacent
-    UnivFCWorld.wAllP_AllQ wAllP_AllQ_in_universal_fc_cell univFcAllQ_at_witness
-
-theorem univFcSomePorQ_not_ie :
-    ¬ IsInnocentlyExcludable universalFcALT universalFcPrejacent univFcSomePorQ :=
-  not_isInnocentlyExcludable_of_cell_witness universalFcALT universalFcPrejacent
-    UnivFCWorld.wAllP_AllQ wAllP_AllQ_in_universal_fc_cell univFcSomePorQ_at_witness
-
-theorem univFcSomeP_not_ie :
-    ¬ IsInnocentlyExcludable universalFcALT universalFcPrejacent univFcSomeP :=
-  not_isInnocentlyExcludable_of_cell_witness universalFcALT universalFcPrejacent
-    UnivFCWorld.wAllP_AllQ wAllP_AllQ_in_universal_fc_cell univFcSomeP_at_witness
-
-theorem univFcSomeQ_not_ie :
-    ¬ IsInnocentlyExcludable universalFcALT universalFcPrejacent univFcSomeQ :=
-  not_isInnocentlyExcludable_of_cell_witness universalFcALT universalFcPrejacent
-    UnivFCWorld.wAllP_AllQ wAllP_AllQ_in_universal_fc_cell univFcSomeQ_at_witness
-
-/-- `univFcAllBoth` IS innocently excludable: identically false on
-    `UnivFCWorld`, so its negation is trivially consistent with any
-    MC-set; maximality forces inclusion. -/
-theorem univFcAllBoth_is_ie :
-    IsInnocentlyExcludable universalFcALT universalFcPrejacent univFcAllBoth := by
-  apply IsInnocentlyExcludable.of_extension_consistent
-  · simp [universalFcALT]
-  · intro E hE
-    obtain ⟨u₀, hu₀⟩ := hE.1.2.2
-    refine ⟨u₀, ?_⟩
-    intro ψ hψ
-    rcases hψ with hψE | hψS
-    · exact hu₀ ψ hψE
-    · rw [Set.mem_singleton_iff] at hψS
-      rw [hψS]
-      exact univFcAllBoth_always_false u₀
-
-/-- `univFcSomeBoth` IS innocently excludable (parallel to AllBoth). -/
-theorem univFcSomeBoth_is_ie :
-    IsInnocentlyExcludable universalFcALT universalFcPrejacent univFcSomeBoth := by
-  apply IsInnocentlyExcludable.of_extension_consistent
-  · simp [universalFcALT]
-  · intro E hE
-    obtain ⟨u₀, hu₀⟩ := hE.1.2.2
-    refine ⟨u₀, ?_⟩
-    intro ψ hψ
-    rcases hψ with hψE | hψS
-    · exact hu₀ ψ hψE
-    · rw [Set.mem_singleton_iff] at hψS
-      rw [hψS]
-      exact univFcSomeBoth_always_false u₀
-
-/-- **Bar-Lev/Fox universal free choice** (paper eqn 57 p. 202).
-    `Exh^{IE+II}(◇∀x(P∨Q)) ⊨ ◇∀xP ∧ ◇∀xQ ∧ ¬◇∃x(P∧Q)`.
-
-    Three one-shot applications of the substrate-level cell-witness
-    factorization theorems: `exhIEII_implies_cell_witnessed_alt` for
-    the two universal-distributive non-IE alternatives, and
-    `exhIEII_negates_excludable` for the existential-conjunctive IE
-    alternative. The substrate factorization (`Semantics/
-    Exhaustification/Operators/InnocentInclusion.lean`) is what makes
-    this main theorem a 3-line consequence of the cell witness. -/
-theorem universal_fc :
-    ∀ w, exhIEII universalFcALT universalFcPrejacent w →
-      univFcAllP w ∧ univFcAllQ w ∧ ¬ univFcSomeBoth w := fun w h_exh =>
-  ⟨exhIEII_implies_cell_witnessed_alt universalFcALT universalFcPrejacent
-      (by simp [universalFcALT]) .wAllP_AllQ wAllP_AllQ_in_universal_fc_cell
-      univFcAllP_at_witness w h_exh,
-   exhIEII_implies_cell_witnessed_alt universalFcALT universalFcPrejacent
-      (by simp [universalFcALT]) .wAllP_AllQ wAllP_AllQ_in_universal_fc_cell
-      univFcAllQ_at_witness w h_exh,
-   exhIEII_negates_excludable universalFcALT universalFcPrejacent
-      univFcSomeBoth_is_ie w h_exh⟩
-
-end UniversalFC
+/-- *If switch A or switch B or both were down, the light would be off* (78) is false in the
+scenario: its strengthening asserts the conjunctive conditional. -/
+theorem orBoth_actual :
+    actual ∉ exhIEII (orBothAlts sim down₁ down₂ off)
+      (conditional sim (λ v => down₁ v ∨ down₂ v) off) := by
+  rw [orBoth sim_total ⟨⟨false, true, λ x y => x || !y⟩, by decide⟩
+    ⟨⟨true, false, λ x y => y || !x⟩, by decide⟩ ⟨⟨false, false, λ x y => x || y⟩, by decide⟩
+    ⟨⟨true, true, λ x y => x && y⟩, by decide⟩]
+  decide
+
+end Switch
+
+/-! ### Free choice under quantifiers -/
+
+section Quantified
+
+variable {D : Type*} [Nonempty D] (P Q B : D → Set W)
+
+/-- The alternatives of `∀x(Px ∨ Qx)` (41): the disjunction replaced by its disjuncts and by
+their conjunctive counterpart `B`, and the universal by the existential. -/
+def universalAlts : Set (Set W) :=
+  {⋂ x, P x ∪ Q x, ⋂ x, P x, ⋂ x, Q x, ⋂ x, B x, ⋃ x, P x ∪ Q x, ⋃ x, P x, ⋃ x, Q x, ⋃ x, B x}
+
+variable {P Q B}
+
+/-- Universal free choice (44): given a world where every individual has `P` and none `Q`, one
+the other way round, one where each has exactly one and both occur, and one where every
+individual has `P` and `Q` but none `B`, `∀x(Px ∨ Qx)` strengthens to
+`∀x Px ∧ ∀x Qx ∧ ¬∃x Bx`. With `Px = ◇px` and `Bx = ◇(px ∧ qx)` this is (36). -/
+theorem universalFreeChoice (hB : ∀ x, B x ⊆ P x ∩ Q x)
+    (h₁ : ∃ w, (∀ x, w ∈ P x) ∧ ∀ x, w ∉ Q x) (h₂ : ∃ w, (∀ x, w ∈ Q x) ∧ ∀ x, w ∉ P x)
+    (h₃ : ∃ w, (∀ x, w ∈ P x ↔ w ∉ Q x) ∧ (∃ x, w ∈ P x) ∧ ∃ x, w ∈ Q x)
+    (h : ∃ w, (∀ x, w ∈ P x) ∧ (∀ x, w ∈ Q x) ∧ ∀ x, w ∉ B x) :
+    exhIEII (universalAlts P Q B) (⋂ x, P x ∪ Q x) = ((⋂ x, P x) ∩ ⋂ x, Q x) \ ⋃ x, B x := by
+  obtain ⟨x₀⟩ := ‹Nonempty D›
+  rw [universalAlts, exhIEII_quantified ?_ ?_ ?_ ?_ ?_]
+  · ext w
+    simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_iInter, Set.mem_iUnion, Set.mem_union,
+      not_or, not_exists]
+    constructor
+    · rintro ⟨⟨⟨⟨⟨⟨-, hP⟩, hQ⟩, -⟩, -⟩, -⟩, -, hB'⟩
+      exact ⟨⟨hP, hQ⟩, hB'⟩
+    · rintro ⟨⟨hP, hQ⟩, hB'⟩
+      exact ⟨⟨⟨⟨⟨⟨λ x => Or.inl (hP x), hP⟩, hQ⟩, ⟨x₀, Or.inl (hP x₀)⟩⟩, ⟨x₀, hP x₀⟩⟩,
+        ⟨x₀, hQ x₀⟩⟩, λ hx => hB' x₀ (hx x₀), hB'⟩
+  · intro w hw
+    simp only [Set.mem_iInter, Set.mem_iUnion, Set.mem_union] at hw ⊢
+    by_cases hq : ∀ x, w ∉ Q x
+    · exact Or.inl ⟨λ x => (hw x).resolve_right (hq x), ⟨x₀, hw x₀⟩,
+        ⟨x₀, (hw x₀).resolve_right (hq x₀)⟩⟩
+    push Not at hq
+    obtain ⟨y, hy⟩ := hq
+    by_cases hp : ∀ x, w ∉ P x
+    · exact Or.inr (Or.inl ⟨λ x => (hw x).resolve_left (hp x), ⟨x₀, hw x₀⟩, ⟨y, hy⟩⟩)
+    push Not at hp
+    obtain ⟨z, hz⟩ := hp
+    exact Or.inr (Or.inr ⟨⟨x₀, hw x₀⟩, ⟨z, hz⟩, ⟨y, hy⟩⟩)
+  · obtain ⟨w, hP, hQ⟩ := h₁
+    refine ⟨w, ?_⟩
+    simp only [Set.mem_iInter, Set.mem_iUnion, Set.mem_union, not_forall, not_exists]
+    exact ⟨λ x => Or.inl (hP x), hP, ⟨x₀, Or.inl (hP x₀)⟩, ⟨x₀, hP x₀⟩, ⟨x₀, hQ x₀⟩,
+      ⟨x₀, λ h => hQ x₀ (hB x₀ h).2⟩, hQ, λ x h => hQ x (hB x h).2⟩
+  · obtain ⟨w, hQ, hP⟩ := h₂
+    refine ⟨w, ?_⟩
+    simp only [Set.mem_iInter, Set.mem_iUnion, Set.mem_union, not_forall, not_exists]
+    exact ⟨λ x => Or.inr (hQ x), hQ, ⟨x₀, Or.inr (hQ x₀)⟩, ⟨x₀, hQ x₀⟩, ⟨x₀, hP x₀⟩,
+      ⟨x₀, λ h => hP x₀ (hB x₀ h).1⟩, hP, λ x h => hP x (hB x h).1⟩
+  · obtain ⟨w, hPQ, ⟨y, hy⟩, ⟨z, hz⟩⟩ := h₃
+    refine ⟨w, ?_⟩
+    simp only [Set.mem_iInter, Set.mem_iUnion, Set.mem_union, not_forall, not_exists]
+    refine ⟨λ x => by by_cases h : w ∈ P x; exacts [Or.inl h, Or.inr (not_not.1 (mt (hPQ x).2 h))],
+      ⟨y, Or.inl hy⟩, ⟨y, hy⟩, ⟨z, hz⟩, ⟨z, (hPQ z).not.2 (not_not.2 hz)⟩, ⟨y, (hPQ y).1 hy⟩,
+      ⟨y, λ h => (hPQ y).1 hy (hB y h).2⟩, λ x h => (hPQ x).1 (hB x h).1 (hB x h).2⟩
+  · obtain ⟨w, hP, hQ, hB'⟩ := h
+    refine ⟨w, ?_⟩
+    simp only [Set.mem_iInter, Set.mem_iUnion, Set.mem_union, not_forall, not_exists]
+    exact ⟨λ x => Or.inl (hP x), hP, hQ, ⟨x₀, Or.inl (hP x₀)⟩, ⟨x₀, hP x₀⟩, ⟨x₀, hQ x₀⟩,
+      ⟨x₀, hB' x₀⟩, hB'⟩
+
+section Negative
+
+variable (R : W → W → Prop) (p q : D → Set W)
+
+/-- The alternatives of `¬∃x □(px ∧ qx)`, *no student is required to solve both* (46): the
+conjunction replaced by its conjuncts and their disjunction, *no* by *not every*. -/
+def negativeUniversalAlts : Set (Set W) :=
+  {(⋃ x, nec R (p x ∩ q x))ᶜ, (⋃ x, nec R (p x))ᶜ, (⋃ x, nec R (q x))ᶜ,
+    (⋃ x, nec R (p x ∪ q x))ᶜ, (⋂ x, nec R (p x ∩ q x))ᶜ, (⋂ x, nec R (p x))ᶜ,
+    (⋂ x, nec R (q x))ᶜ, (⋂ x, nec R (p x ∪ q x))ᶜ}
+
+variable {R p q}
+
+theorem mem_nec_inter {s t : Set W} {w : W} : w ∈ nec R (s ∩ t) ↔ w ∈ nec R s ∧ w ∈ nec R t :=
+  ⟨λ h => ⟨λ v hv => (h v hv).1, λ v hv => (h v hv).2⟩, λ h v hv => ⟨h.1 v hv, h.2 v hv⟩⟩
+
+theorem nec_mono {s t : Set W} (h : s ⊆ t) : nec R s ⊆ nec R t := λ _ h' v hv => h (h' v hv)
+
+/-- Negative universal free choice (47): the alternatives of `¬∃x □(px ∧ qx)` stand in the
+entailment pattern of universal free choice, so with the corresponding worlds it strengthens
+to `¬∃x □px ∧ ¬∃x □qx ∧ ∀x □(px ∨ qx)`. -/
+theorem negativeUniversalFreeChoice
+    (h₁ : ∃ w, (∀ x, w ∉ nec R (p x)) ∧ ∀ x, w ∈ nec R (q x))
+    (h₂ : ∃ w, (∀ x, w ∉ nec R (q x)) ∧ ∀ x, w ∈ nec R (p x))
+    (h₃ : ∃ w, (∀ x, w ∈ nec R (p x ∪ q x)) ∧ (∀ x, w ∉ nec R (p x ∩ q x)) ∧
+      (∃ x, w ∈ nec R (p x)) ∧ (∃ x, w ∈ nec R (q x)) ∧ (∃ x, w ∉ nec R (p x)) ∧
+      ∃ x, w ∉ nec R (q x))
+    (h : ∃ w, (∀ x, w ∉ nec R (p x)) ∧ (∀ x, w ∉ nec R (q x)) ∧ ∀ x, w ∈ nec R (p x ∪ q x)) :
+    exhIEII (negativeUniversalAlts R p q) (⋃ x, nec R (p x ∩ q x))ᶜ =
+      ((⋃ x, nec R (p x))ᶜ ∩ (⋃ x, nec R (q x))ᶜ) ∩ ⋂ x, nec R (p x ∪ q x) := by
+  obtain ⟨x₀⟩ := ‹Nonempty D›
+  have hpq : ∀ {w : W} {x : D}, w ∉ nec R (p x) → w ∉ nec R (p x ∩ q x) :=
+    λ h h' => h (mem_nec_inter.1 h').1
+  have hqp : ∀ {w : W} {x : D}, w ∉ nec R (q x) → w ∉ nec R (p x ∩ q x) :=
+    λ h h' => h (mem_nec_inter.1 h').2
+  rw [negativeUniversalAlts, exhIEII_quantified ?_ ?_ ?_ ?_ ?_]
+  · ext w
+    simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_union, Set.mem_compl_iff,
+      Set.mem_iInter, Set.mem_iUnion, not_or, not_exists, not_forall, not_not]
+    constructor
+    · rintro ⟨⟨⟨⟨⟨⟨-, hP⟩, hQ⟩, -⟩, -⟩, -⟩, -, hPQ⟩
+      exact ⟨⟨hP, hQ⟩, hPQ⟩
+    · rintro ⟨⟨hP, hQ⟩, hPQ⟩
+      exact ⟨⟨⟨⟨⟨⟨λ x => hpq (hP x), hP⟩, hQ⟩, ⟨x₀, hpq (hP x₀)⟩⟩, ⟨x₀, hP x₀⟩⟩, ⟨x₀, hQ x₀⟩⟩,
+        ⟨x₀, hPQ x₀⟩, hPQ⟩
+  · intro w hw
+    simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall] at hw ⊢
+    by_cases hp : ∀ x, w ∉ nec R (p x)
+    · exact Or.inl ⟨hp, ⟨x₀, hw x₀⟩, ⟨x₀, hp x₀⟩⟩
+    push Not at hp
+    obtain ⟨y, hy⟩ := hp
+    by_cases hq : ∀ x, w ∉ nec R (q x)
+    · exact Or.inr (Or.inl ⟨hq, ⟨x₀, hw x₀⟩, ⟨x₀, hq x₀⟩⟩)
+    push Not at hq
+    obtain ⟨z, hz⟩ := hq
+    exact Or.inr (Or.inr ⟨⟨x₀, hw x₀⟩, ⟨z, λ h => hw z (mem_nec_inter.2 ⟨h, hz⟩)⟩,
+      ⟨y, λ h => hw y (mem_nec_inter.2 ⟨hy, h⟩)⟩⟩)
+  · obtain ⟨w, hP, hQ⟩ := h₁
+    refine ⟨w, ?_⟩
+    simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall, not_not]
+    exact ⟨λ x => hpq (hP x), hP, ⟨x₀, hpq (hP x₀)⟩, ⟨x₀, hP x₀⟩, ⟨x₀, hQ x₀⟩,
+      ⟨x₀, nec_mono Set.subset_union_right (hQ x₀)⟩, hQ,
+      λ x => nec_mono Set.subset_union_right (hQ x)⟩
+  · obtain ⟨w, hQ, hP⟩ := h₂
+    refine ⟨w, ?_⟩
+    simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall, not_not]
+    exact ⟨λ x => hqp (hQ x), hQ, ⟨x₀, hqp (hQ x₀)⟩, ⟨x₀, hQ x₀⟩, ⟨x₀, hP x₀⟩,
+      ⟨x₀, nec_mono Set.subset_union_left (hP x₀)⟩, hP,
+      λ x => nec_mono Set.subset_union_left (hP x)⟩
+  · obtain ⟨w, hPQ, hB, ⟨y, hy⟩, ⟨z, hz⟩, ⟨y', hy'⟩, ⟨z', hz'⟩⟩ := h₃
+    refine ⟨w, ?_⟩
+    simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall, not_not]
+    exact ⟨hB, ⟨x₀, hB x₀⟩, ⟨y', hy'⟩, ⟨z', hz'⟩, ⟨y, hy⟩, ⟨z, hz⟩, ⟨x₀, hPQ x₀⟩, hPQ⟩
+  · obtain ⟨w, hP, hQ, hPQ⟩ := h
+    refine ⟨w, ?_⟩
+    simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall, not_not]
+    exact ⟨λ x => hpq (hP x), hP, hQ, ⟨x₀, hpq (hP x₀)⟩, ⟨x₀, hP x₀⟩, ⟨x₀, hQ x₀⟩, ⟨x₀, hPQ x₀⟩,
+      hPQ⟩
+
+end Negative
+
+section OverUniversal
+
+variable (R : W → W → Prop) (p q : D → Set W)
+
+/-- The alternatives of `◇∀x(px ∨ qx)` (55). -/
+def overUniversalAlts : Set (Set W) :=
+  {poss R (⋂ x, p x ∪ q x), poss R (⋂ x, p x), poss R (⋂ x, q x), poss R (⋂ x, p x ∩ q x),
+    poss R (⋃ x, p x ∪ q x), poss R (⋃ x, p x), poss R (⋃ x, q x), poss R (⋃ x, p x ∩ q x)}
+
+variable {R p q}
+
+/-- Free choice with the existential modal over the universal (57), [nouwen-2017]'s case:
+given the corresponding worlds, `◇∀x(px ∨ qx)` strengthens to `◇∀x px ∧ ◇∀x qx ∧ ¬◇∃x(px ∧ qx)`,
+although `◇∀` does not distribute over disjunction. -/
+theorem freeChoiceOverUniversal
+    (h₁ : ∃ w ∈ poss R (⋂ x, p x), w ∉ poss R (⋃ x, q x))
+    (h₂ : ∃ w ∈ poss R (⋂ x, q x), w ∉ poss R (⋃ x, p x))
+    (h₃ : ∃ w ∈ poss R (⋂ x, p x ∪ q x) ∩ poss R (⋃ x, p x) ∩ poss R (⋃ x, q x),
+      w ∉ poss R (⋂ x, p x) ∪ poss R (⋂ x, q x) ∪ poss R (⋃ x, p x ∩ q x))
+    (h : ∃ w ∈ poss R (⋂ x, p x) ∩ poss R (⋂ x, q x), w ∉ poss R (⋃ x, p x ∩ q x)) :
+    exhIEII (overUniversalAlts R p q) (poss R (⋂ x, p x ∪ q x)) =
+      (poss R (⋂ x, p x) ∩ poss R (⋂ x, q x)) \ poss R (⋃ x, p x ∩ q x) := by
+  obtain ⟨x₀⟩ := ‹Nonempty D›
+  have hφ : poss R (⋂ x, p x) ⊆ poss R (⋂ x, p x ∪ q x) :=
+    poss_mono (Set.iInter_mono λ x => Set.subset_union_left)
+  have hφ' : poss R (⋂ x, q x) ⊆ poss R (⋂ x, p x ∪ q x) :=
+    poss_mono (Set.iInter_mono λ x => Set.subset_union_right)
+  have he : poss R (⋂ x, p x) ⊆ poss R (⋃ x, p x ∪ q x) :=
+    poss_mono λ w h => Set.mem_iUnion.2 ⟨x₀, Or.inl (Set.mem_iInter.1 h x₀)⟩
+  have he₁ : poss R (⋂ x, p x) ⊆ poss R (⋃ x, p x) :=
+    poss_mono λ w h => Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
+  have he₂ : poss R (⋂ x, q x) ⊆ poss R (⋃ x, q x) :=
+    poss_mono λ w h => Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
+  have hsb : poss R (⋂ x, p x ∩ q x) ⊆ poss R (⋃ x, p x ∩ q x) :=
+    poss_mono λ w h => Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
+  have hbp : poss R (⋃ x, p x ∩ q x) ⊆ poss R (⋃ x, p x) :=
+    poss_mono (Set.iUnion_mono λ x => Set.inter_subset_left)
+  have hbq : poss R (⋃ x, p x ∩ q x) ⊆ poss R (⋃ x, q x) :=
+    poss_mono (Set.iUnion_mono λ x => Set.inter_subset_right)
+  rw [overUniversalAlts, exhIEII_quantified ?_ ?_ ?_ ?_ ?_]
+  · ext w
+    simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_union, not_or]
+    exact ⟨λ h => ⟨⟨h.1.1.1.1.1.2, h.1.1.1.1.2⟩, h.2.2⟩,
+      λ h => ⟨⟨⟨⟨⟨⟨hφ h.1.1, h.1.1⟩, h.1.2⟩, he h.1.1⟩, he₁ h.1.1⟩, he₂ h.1.2⟩,
+        λ h' => h.2 (hsb h'), h.2⟩⟩
+  · rintro w ⟨v, hv, hvpq⟩
+    have hvpq' := λ x => Set.mem_iInter.1 hvpq x
+    by_cases hq : ∀ x, v ∉ q x
+    · exact Or.inl ⟨⟨v, hv, Set.mem_iInter.2 λ x => (hvpq' x).resolve_right (hq x)⟩,
+        ⟨v, hv, Set.mem_iUnion.2 ⟨x₀, hvpq' x₀⟩⟩,
+        ⟨v, hv, Set.mem_iUnion.2 ⟨x₀, (hvpq' x₀).resolve_right (hq x₀)⟩⟩⟩
+    push Not at hq
+    obtain ⟨y, hy⟩ := hq
+    by_cases hp : ∀ x, v ∉ p x
+    · exact Or.inr (Or.inl ⟨⟨v, hv, Set.mem_iInter.2 λ x => (hvpq' x).resolve_left (hp x)⟩,
+        ⟨v, hv, Set.mem_iUnion.2 ⟨x₀, hvpq' x₀⟩⟩, ⟨v, hv, Set.mem_iUnion.2 ⟨y, hy⟩⟩⟩)
+    push Not at hp
+    obtain ⟨z, hz⟩ := hp
+    exact Or.inr (Or.inr ⟨⟨v, hv, Set.mem_iUnion.2 ⟨x₀, hvpq' x₀⟩⟩,
+      ⟨v, hv, Set.mem_iUnion.2 ⟨z, hz⟩⟩, ⟨v, hv, Set.mem_iUnion.2 ⟨y, hy⟩⟩⟩)
+  · obtain ⟨w, hP, hQ⟩ := h₁
+    exact ⟨w, hφ hP, hP, he hP, he₁ hP, λ h => hQ (he₂ h), λ h => hQ (hbq (hsb h)), hQ,
+      λ h => hQ (hbq h)⟩
+  · obtain ⟨w, hQ, hP⟩ := h₂
+    exact ⟨w, hφ' hQ, hQ, poss_mono (Set.iUnion_mono λ x => Set.subset_union_right) (he₂ hQ),
+      he₂ hQ, λ h => hP (he₁ h), λ h => hP (hbp (hsb h)), hP, λ h => hP (hbp h)⟩
+  · obtain ⟨w, ⟨⟨hPQ, hP⟩, hQ⟩, hn⟩ := h₃
+    simp only [Set.mem_union, not_or] at hn
+    exact ⟨w, hPQ, poss_mono (Set.iUnion_mono λ x => Set.subset_union_left) hP, hP, hQ, hn.1.1,
+      hn.1.2, λ h => hn.2 (hsb h), hn.2⟩
+  · obtain ⟨w, ⟨hP, hQ⟩, hB⟩ := h
+    exact ⟨w, hφ hP, hP, hQ, he hP, he₁ hP, he₂ hQ, λ h => hB (hsb h), hB⟩
+
+end OverUniversal
+
+end Quantified
+
+/-! ### Simplification with *most* -/
+
+section Most
+
+variable {D : Type*} [DecidableEq D]
+
+/-- `most(P)(S)`: more than half of `P` lies in `S` (86). -/
+def Most (P S : Finset D) : Prop := P.card < 2 * (P ∩ S).card
+
+/-- `some(P)(S)`: `P` and `S` overlap. -/
+def Overlaps (P S : Finset D) : Prop := (P ∩ S).Nonempty
+
+variable {P Q S : Finset D}
+
+theorem Most.overlaps (h : Most P S) : Overlaps P S :=
+  Finset.card_pos.1 (by unfold Most at h; omega)
+
+theorem Overlaps.of_inter_left (h : Overlaps (P ∩ Q) S) : Overlaps P S :=
+  h.mono (Finset.inter_subset_inter_right Finset.inter_subset_left)
+
+theorem Overlaps.of_inter_right (h : Overlaps (P ∩ Q) S) : Overlaps Q S :=
+  h.mono (Finset.inter_subset_inter_right Finset.inter_subset_right)
+
+theorem overlaps_union_iff : Overlaps (P ∪ Q) S ↔ Overlaps P S ∨ Overlaps Q S := by
+  simp only [Overlaps, Finset.union_inter_distrib_right, Finset.union_nonempty]
+
+/-- *Most* is not monotone in its restrictor, but a restrictor that adds nothing to the scope
+can be dropped. -/
+theorem Most.of_union (h : Most (P ∪ Q) S) (hQ : ¬ Overlaps Q S) : Most P S := by
+  have h₁ : (P ∪ Q) ∩ S = P ∩ S := by
+    rw [Finset.union_inter_distrib_right, Finset.not_nonempty_iff_eq_empty.1 hQ,
+      Finset.union_empty]
+  have h₂ := Finset.card_le_card (Finset.subset_union_left (s₁ := P) (s₂ := Q))
+  unfold Most at h ⊢
+  rw [h₁] at h
+  omega
+
+theorem Most.of_union_right (h : Most (P ∪ Q) S) (hP : ¬ Overlaps P S) : Most Q S :=
+  (Finset.union_comm P Q ▸ h).of_union hP
+
+variable (P Q S : W → Finset D)
+
+/-- The alternatives of `most(P ∪ Q)(S)` (87): the disjunctive restrictor replaced by its
+disjuncts and their intersection, and *most* by *some*. -/
+def mostAlts : Set (Set W) :=
+  {{w | Most (P w ∪ Q w) (S w)}, {w | Most (P w) (S w)}, {w | Most (Q w) (S w)},
+    {w | Most (P w ∩ Q w) (S w)}, {w | Overlaps (P w ∪ Q w) (S w)}, {w | Overlaps (P w) (S w)},
+    {w | Overlaps (Q w) (S w)}, {w | Overlaps (P w ∩ Q w) (S w)}}
+
+variable {P Q S}
+
+/-- Simplification with *most* (89): given a world where most of `P ∪ Q` and most of `P` are in
+`S` but nothing of `Q` is, one the other way round, one where most of `P ∪ Q` but of neither
+`P` nor `Q` is, and one where most of each is but nothing of `P ∩ Q`, `most(P ∪ Q)(S)`
+strengthens to `most(P)(S) ∧ most(Q)(S) ∧ ¬some(P ∩ Q)(S)`. -/
+theorem simplificationMost
+    (h₁ : ∃ w, Most (P w ∪ Q w) (S w) ∧ Most (P w) (S w) ∧ ¬ Overlaps (Q w) (S w))
+    (h₂ : ∃ w, Most (P w ∪ Q w) (S w) ∧ Most (Q w) (S w) ∧ ¬ Overlaps (P w) (S w))
+    (h₃ : ∃ w, Most (P w ∪ Q w) (S w) ∧ ¬ Most (P w) (S w) ∧ ¬ Most (Q w) (S w) ∧
+      Overlaps (P w) (S w) ∧ Overlaps (Q w) (S w) ∧ ¬ Overlaps (P w ∩ Q w) (S w))
+    (h : ∃ w, Most (P w ∪ Q w) (S w) ∧ Most (P w) (S w) ∧ Most (Q w) (S w) ∧
+      ¬ Overlaps (P w ∩ Q w) (S w)) :
+    exhIEII (mostAlts P Q S) {w | Most (P w ∪ Q w) (S w)} =
+      ({w | Most (P w ∪ Q w) (S w)} ∩ {w | Most (P w) (S w)} ∩ {w | Most (Q w) (S w)}) \
+        {w | Overlaps (P w ∩ Q w) (S w)} := by
+  rw [mostAlts, exhIEII_quantified ?_ ?_ ?_ ?_ ?_]
+  · ext w
+    simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_union, Set.mem_ofPred_eq, not_or]
+    exact ⟨λ h => ⟨⟨⟨h.1.1.1.1.1.1, h.1.1.1.1.1.2⟩, h.1.1.1.1.2⟩, h.2.2⟩,
+      λ h => ⟨⟨⟨⟨⟨⟨h.1.1.1, h.1.1.2⟩, h.1.2⟩, h.1.1.1.overlaps⟩, h.1.1.2.overlaps⟩,
+        h.1.2.overlaps⟩, λ h' => h.2 h'.overlaps, h.2⟩⟩
+  · intro w hw
+    simp only [Set.mem_ofPred_eq] at hw ⊢
+    rcases overlaps_union_iff.1 hw.overlaps with hP | hQ
+    · by_cases hQ : Overlaps (Q w) (S w)
+      · exact Or.inr (Or.inr ⟨hw.overlaps, hP, hQ⟩)
+      · exact Or.inl ⟨hw.of_union hQ, hw.overlaps, hP⟩
+    · by_cases hP : Overlaps (P w) (S w)
+      · exact Or.inr (Or.inr ⟨hw.overlaps, hP, hQ⟩)
+      · exact Or.inr (Or.inl ⟨hw.of_union_right hP, hw.overlaps, hQ⟩)
+  · obtain ⟨w, hPQ, hP, hQ⟩ := h₁
+    exact ⟨w, hPQ, hP, hPQ.overlaps, hP.overlaps, λ h => hQ h.overlaps,
+      λ h => hQ h.overlaps.of_inter_right, hQ, λ h => hQ h.of_inter_right⟩
+  · obtain ⟨w, hPQ, hQ, hP⟩ := h₂
+    exact ⟨w, hPQ, hQ, hPQ.overlaps, hQ.overlaps, λ h => hP h.overlaps,
+      λ h => hP h.overlaps.of_inter_left, hP, λ h => hP h.of_inter_left⟩
+  · obtain ⟨w, hPQ, hP, hQ, hP', hQ', hB⟩ := h₃
+    exact ⟨w, hPQ, hPQ.overlaps, hP', hQ', hP, hQ, λ h => hB h.overlaps, hB⟩
+  · obtain ⟨w, hPQ, hP, hQ, hB⟩ := h
+    exact ⟨w, hPQ, hP, hQ, hPQ.overlaps, hP.overlaps, hQ.overlaps, λ h => hB h.overlaps, hB⟩
+
+end Most
 
 end BarLevFox2020

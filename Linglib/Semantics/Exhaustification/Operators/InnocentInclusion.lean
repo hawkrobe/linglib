@@ -233,4 +233,62 @@ theorem exhIEII_singleton (hsat : ∃ w, φ w) : exhIEII {φ} φ = φ := by
     exact not_isInnocentlyExcludable_of_phi_subset (Set.finite_singleton _) hsat le_rfl
   · rw [Set.mem_singleton_iff.1 hr.1]; exact hw
 
+
+/-! ### Representative minimal worlds -/
+
+section MinimalCover
+
+variable {ALT φ} {M : Set World}
+
+theorem IsMinimalCover.cell_eq (hM : IsMinimalCover ALT φ M) :
+    cell ALT φ = {w | w ∈ φ ∧ ∀ q ∈ ALT, (w ∈ q ↔ ∃ v ∈ M, v ∈ q)} := by
+  ext w
+  constructor
+  · rintro ⟨hφ, hIE, hne⟩
+    refine ⟨hφ, λ q hq => ⟨λ hwq => ?_, λ ⟨v, hv, hvq⟩ => hne q ⟨hq, λ hIEq => ?_⟩⟩⟩
+    · by_contra hnone
+      push Not at hnone
+      exact hIE q ((hM.isInnocentlyExcludable_iff hq).2 hnone) hwq
+    · exact (hM.isInnocentlyExcludable_iff hq).1 hIEq v hv hvq
+  · rintro ⟨hφ, h⟩
+    refine ⟨hφ, λ q hIEq hwq => ?_, λ r ⟨hr, hnIE⟩ => ?_⟩
+    · obtain ⟨v, hv, hvq⟩ := (h q hIEq.1).1 hwq
+      exact (hM.isInnocentlyExcludable_iff hIEq.1).1 hIEq v hv hvq
+    · by_contra hnr
+      exact hnIE ((hM.isInnocentlyExcludable_iff hr).2 λ v hv hvr => hnr ((h r hr).2 ⟨v, hv, hvr⟩))
+
+/-- With a representative set of minimal worlds and a consistent cell, exhaustification asserts
+the prejacent and settles every alternative as the minimal worlds jointly do. -/
+theorem IsMinimalCover.exhIEII_eq (hM : IsMinimalCover ALT φ M)
+    (hne : ∃ w ∈ φ, ∀ q ∈ ALT, (w ∈ q ↔ ∃ v ∈ M, v ∈ q)) :
+    exhIEII ALT φ = {w | w ∈ φ ∧ ∀ q ∈ ALT, (w ∈ q ↔ ∃ v ∈ M, v ∈ q)} := by
+  rw [← hM.cell_eq]
+  exact exhIEII_eq_cell_of_cell_nonempty ALT φ (by rw [hM.cell_eq]; exact hne)
+
+theorem IsMinimalCover.II_eq (hM : IsMinimalCover ALT φ M)
+    (hne : ∃ w ∈ φ, ∀ q ∈ ALT, (w ∈ q ↔ ∃ v ∈ M, v ∈ q)) :
+    II ALT φ = {r ∈ ALT | ∃ v ∈ M, v ∈ r} := by
+  rw [II_eq_nonExcludable_of_cell_nonempty ALT φ (by rw [hM.cell_eq]; exact hne)]
+  ext r
+  exact and_congr_right λ hr => by rw [hM.isInnocentlyExcludable_iff hr]; push Not; rfl
+
+/-- When every alternative other than `d` is entailed by the prejacent and some prejacent world
+falsifies `d`, exhaustification denies exactly `d`. -/
+theorem exhIEII_eq_diff_of_forall_subset {d : Set World} (hd : d ∈ ALT)
+    (hA : ∀ q ∈ ALT, q ≠ d → φ ⊆ q) (hne : ∃ w ∈ φ, w ∉ d) : exhIEII ALT φ = φ \ d := by
+  obtain ⟨w₀, hw₀, hw₀d⟩ := hne
+  have hM : IsMinimalCover ALT φ {w₀} :=
+    ⟨by simpa, λ w hw => ⟨w₀, rfl, λ q hq hq₀ => hA q hq (λ h => hw₀d (h ▸ hq₀)) hw⟩,
+      by simp⟩
+  rw [hM.exhIEII_eq ⟨w₀, hw₀, by simp⟩]
+  ext w
+  simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff, exists_eq_left, Set.mem_sdiff]
+  refine ⟨λ ⟨hw, h⟩ => ⟨hw, λ hwd => hw₀d ((h d hd).1 hwd)⟩, λ ⟨hw, hwd⟩ => ⟨hw, λ q hq => ?_⟩⟩
+  by_cases hqd : q = d
+  · subst hqd
+    exact ⟨λ h => absurd h hwd, λ h => absurd h hw₀d⟩
+  · exact ⟨λ _ => hA q hq hqd hw₀, λ _ => hA q hq hqd hw⟩
+
+end MinimalCover
+
 end Exhaustification

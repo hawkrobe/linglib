@@ -341,6 +341,7 @@ import Linglib.Data.Examples.BaleEtAl2025
 import Linglib.Data.Examples.BaleSchwarz2022
 import Linglib.Data.Examples.BarAsherSiegal2026
 import Linglib.Data.Examples.BarLev2021
+import Linglib.Data.Examples.BarLevFox2020
 import Linglib.Data.Examples.Barker2002
 import Linglib.Data.Examples.BeckOdaSugisaki2004
 import Linglib.Data.Examples.BeltramaSchwarz2024

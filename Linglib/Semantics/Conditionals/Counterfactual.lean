@@ -79,6 +79,59 @@ instance universalCounterfactual_decidable {W : Type*} [DecidableEq W] [Fintype 
     Decidable (universalCounterfactual sim A B w) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
+section Antecedent
+
+variable {W : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W) {A B C : W → Prop}
+  [DecidablePred A] [DecidablePred B] [DecidablePred C] {w : W}
+
+theorem universalCounterfactual_congr (h : ∀ v, A v ↔ B v) :
+    universalCounterfactual sim A C w ↔ universalCounterfactual sim B C w := by
+  unfold universalCounterfactual
+  rw [Finset.filter_congr (λ v _ => h v)]
+
+/-- A counterfactual whose antecedent entails its consequent holds everywhere. -/
+theorem universalCounterfactual_of_imp (h : ∀ v, A v → B v) :
+    universalCounterfactual sim A B w := by
+  intro v hv
+  simp only [SimilarityOrdering.closestWorlds, Finset.mem_filter, Finset.mem_univ, true_and] at hv
+  exact h v hv.1
+
+/-- A counterfactual holds of a disjunctive antecedent when it holds of each disjunct. -/
+theorem universalCounterfactual_or_of (hA : universalCounterfactual sim A C w)
+    (hB : universalCounterfactual sim B C w) :
+    universalCounterfactual sim (λ v => A v ∨ B v) C w := by
+  intro v hv
+  simp only [universalCounterfactual, SimilarityOrdering.closestWorlds, Finset.mem_filter,
+    Finset.mem_univ, true_and] at hv hA hB
+  rcases hv.1 with h | h
+  · exact hA v ⟨h, λ u hu => hv.2 u (Or.inl hu)⟩
+  · exact hB v ⟨h, λ u hu => hv.2 u (Or.inr hu)⟩
+
+/-- Under a total similarity ordering, a counterfactual with a disjunctive antecedent entails
+one of its simplifications. -/
+theorem universalCounterfactual_or (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁)
+    (h : universalCounterfactual sim (λ v => A v ∨ B v) C w) :
+    universalCounterfactual sim A C w ∨ universalCounterfactual sim B C w := by
+  by_contra hn
+  simp only [universalCounterfactual, SimilarityOrdering.closestWorlds, Finset.mem_filter,
+    Finset.mem_univ, true_and] at h hn
+  push Not at hn
+  obtain ⟨⟨x, ⟨hxA, hx⟩, hxC⟩, ⟨y, ⟨hyB, hy⟩, hyC⟩⟩ := hn
+  have hx' : ¬ ∀ u, (A u ∨ B u) → sim.closer w x u ∨ ¬ sim.closer w u x :=
+    λ hx' => hxC (h x ⟨Or.inl hxA, hx'⟩)
+  have hy' : ¬ ∀ u, (A u ∨ B u) → sim.closer w y u ∨ ¬ sim.closer w u y :=
+    λ hy' => hyC (h y ⟨Or.inr hyB, hy'⟩)
+  push Not at hx' hy'
+  obtain ⟨z, hz, hxz, hzx⟩ := hx'
+  obtain ⟨z', hz', hyz', hz'y⟩ := hy'
+  have hzB : B z := hz.resolve_left λ hzA => (hx z hzA).elim hxz (λ h => h hzx)
+  have hz'A : A z' := hz'.resolve_right λ hz'B => (hy z' hz'B).elim hyz' (λ h => h hz'y)
+  have hyz : sim.closer w y z := (hy z hzB).elim id λ hn => (htot w y z).resolve_right hn
+  have hxz' : sim.closer w x z' := (hx z' hz'A).elim id λ hn => (htot w x z').resolve_right hn
+  exact hxz (sim.closer_trans w x z' z hxz' (sim.closer_trans w z' y z hz'y hyz))
+
+end Antecedent
+
 
 /-!
 ## Selectional Theory
