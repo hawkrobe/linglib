@@ -1,6 +1,4 @@
 import Mathlib.Algebra.Group.Prod
-import Mathlib.Algebra.Group.Pi.Basic
-import Mathlib.Algebra.Group.TypeTags.Basic
 import Mathlib.Algebra.GroupWithZero.Basic
 import Linglib.Semantics.Degree.Measure.Dimensioned
 
@@ -10,15 +8,13 @@ import Linglib.Semantics.Degree.Measure.Dimensioned
 A quantity is a magnitude together with a dimension: `0.9 g` is a magnitude in the
 dimension of mass, `0.9 g/mL` one in the dimension of density, and `9` is a pure number,
 a magnitude in the identity dimension. This file sets up the quantity calculus that
-measure-phrase semantics computes in. Dimensions form the free abelian group on the base
-`Dimension`s, written multiplicatively, so that `.of .mass / .of .volume` is the dimension
-of density; quantities are pairs `K × QuantityDimension` of a magnitude and a dimension and
+measure-phrase semantics computes in. Dimensions are the group `QuantityDimension`;
+quantities are pairs `K × QuantityDimension` of a magnitude and a dimension and
 multiply and divide componentwise, so that dividing two quantities of one dimension yields a
 pure number.
 
 ## Main definitions
 
-* `QuantityDimension`, `QuantityDimension.of`: the dimension group and its generators.
 * `Quantity`, `Quantity.pure`, `Quantity.unit`: quantities, pure numbers, unit quantities.
 * `DimensionedMeasure.quantity`: the value of a measure function as a quantity.
 
@@ -29,30 +25,6 @@ pure number.
 -/
 
 namespace Degree
-
-open Features (Dimension)
-
-/-- The dimensions of the quantity calculus: the free abelian group on the base
-dimensions, written multiplicatively. -/
-abbrev QuantityDimension := Multiplicative (Dimension → ℤ)
-
-namespace QuantityDimension
-
-/-- The base dimension `d` as a generator of the dimension group. -/
-def of (d : Dimension) : QuantityDimension := .ofAdd (Pi.single d 1)
-
-@[simp] theorem of_ne_one (d : Dimension) : of d ≠ 1 := by simp [of, Pi.single_eq_zero_iff]
-
-theorem of_injective : Function.Injective of := λ d d' h => by
-  simpa [of, Pi.single_apply, eq_comm] using congrFun (Multiplicative.ofAdd.injective h) d
-
-@[simp] theorem of_inj {d d' : Dimension} : of d = of d' ↔ d = d' := of_injective.eq_iff
-
-/-- Dividing by a base dimension changes the dimension. -/
-@[simp] theorem div_of_ne_self (a : QuantityDimension) (d : Dimension) : a / of d ≠ a := by
-  simp [div_eq_self]
-
-end QuantityDimension
 
 /-- A quantity, a magnitude in `K` with a dimension. Quantities multiply and divide
 componentwise. -/

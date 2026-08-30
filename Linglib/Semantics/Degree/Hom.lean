@@ -4,7 +4,6 @@ import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.GCongr
 import Mathlib.Order.Interval.Finset.Fin
 import Linglib.Semantics.Degree.Quantifier
-import Linglib.Features.Dimension
 import Linglib.Semantics.Degree.Delineation
 import Linglib.Semantics.Degree.Measure.Dimensioned
 
@@ -57,7 +56,6 @@ namespace Degree
 
 open Degree.Delineation
 
-open Features (Dimension)
 /-! ### Measurement → Degree → Delineation
 
 The maps themselves carry no new definitions: measurement forgets to a

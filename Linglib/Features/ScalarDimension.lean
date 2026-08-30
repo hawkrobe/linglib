@@ -2,7 +2,7 @@ import Mathlib.Tactic.DeriveFintype
 import Linglib.Core.Order.Boundedness
 import Linglib.Features.Aktionsart
 import Linglib.Features.PropertyDomain
-import Linglib.Features.Dimension
+import Linglib.Semantics.Degree.Measure.Dimension
 
 /-!
 # Scalar dimensions
@@ -10,12 +10,11 @@ import Linglib.Features.Dimension
 The axis a gradable predicate — an adjective, or a degree-achievement
 verb's base adjective — measures along. One key with several views:
 perceptual channel (`domain`, drives RSA noise), canonical scale shape
-(`boundedness`), and the physical-quantity bridges (`physical?`,
-`quotient?`).
+(`boundedness`), and the physical-quantity bridge (`dimension?`).
 
 Physical measurement dimensions (mass, volume-as-litres, …) are a
 different fibration — an extensive ℚ-measure, not a gradable scale —
-and live in `Features.Dimension`. The bridges are partial: evaluative
+and live in `Degree.Dimension`. The bridge is partial: evaluative
 and psychological scales (`happiness`, `intelligence`) have no physical
 dimension, which is why they reject ratio measure phrases ("six feet
 tall" vs "*six feet happy"). `speed` is simplex here as a lexical scale
@@ -84,29 +83,18 @@ abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
 
 /-! ### Bridges to the physical quantity algebra -/
 
-/-- The physical dimension a scalar dimension is measured in, when one
-    exists: spatial scales are `distance`, `weight` is `mass`, `quantity`
-    is `cardinality`. `none` for evaluative/psychological/state scales —
-    the scales that reject ratio measure phrases. -/
-def ScalarDimension.physical? : ScalarDimension → Option Dimension
-  | .height | .width | .length | .depth | .thickness => some .distance
-  | .weight => some .mass
-  | .age => some .time
-  | .temperature => some .temperature
-  | .quantity => some .cardinality
+/-- The physical dimension a scalar dimension is measured in, when one exists: spatial
+    scales are `distance`, `weight` is `mass`, `quantity` is `cardinality`, and *fast*
+    lexicalizes the quotient `distance / time` as a primitive scale. `none` for
+    evaluative/psychological/state scales — the scales that reject ratio measure phrases. -/
+def ScalarDimension.dimension? : ScalarDimension → Option Degree.QuantityDimension
+  | .height | .width | .length | .depth | .thickness => some (.of .distance)
+  | .weight => some (.of .mass)
+  | .age => some (.of .time)
+  | .temperature => some (.of .temperature)
+  | .quantity => some (.of .cardinality)
+  | .speed => some (.of .distance / .of .time)
   | _ => none
-
-/-- The quotient physical dimension, for lexical scales that are
-    physically ratios: *fast* lexicalizes `speed = distance / time` as a
-    primitive scale. -/
-def ScalarDimension.quotient? : ScalarDimension → Option QuotientDimension
-  | .speed => some .speed
-  | _ => none
-
-/-- No scalar dimension is both simplex-physical and quotient-physical. -/
-theorem ScalarDimension.physical_quotient_disjoint (d : ScalarDimension) :
-    d.physical? = none ∨ d.quotient? = none := by
-  cases d <;> simp [ScalarDimension.physical?, ScalarDimension.quotient?]
 
 /-! ### Degree fiber and aspectual views ([kennedy-levin-2008])
 

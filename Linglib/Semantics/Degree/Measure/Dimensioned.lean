@@ -3,7 +3,7 @@ import Linglib.Core.Order.Comparison
 import Linglib.Semantics.Degree.Measure.Basic
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Exhaustification.Extremum
-import Linglib.Features.Dimension
+import Linglib.Semantics.Degree.Measure.Dimension
 
 /-!
 # Measurement Semantics
@@ -33,7 +33,7 @@ specific physical dimension:
     μ : Entity → D
 
 The dimension tag (mass, volume, distance, time, cardinality, ...) lives in
-`Features/Dimension.lean`; this module imports it and exposes `DimensionedMeasure`,
+`Semantics/Degree/Measure/Dimension.lean`; this module imports it and exposes `DimensionedMeasure`,
 which carries the tag plus the underlying `apply` function.
 
 ### Measure Terms
@@ -64,15 +64,15 @@ CARD Num-head itself lives at the syntactic level.
 The degree substrate works with plain measure functions `μ : E → α` into a
 linear order. This module adds:
 
-- typed dimensions (what μ measures), via `Features.Dimension`
+- typed dimensions (what μ measures), via `Dimension`
 - multiple measure functions per entity (a box has weight AND volume AND
   cardinality — `DimensionedMeasure` is not a typeclass)
 - the quantity-uniform property (Scontras's QU_μ, eq. (44) p. 43)
 
 ## Connection to [bale-schwarz-2026]
 
-`Features/Dimension.lean` provides the typed-dimension substrate
-(`Dimension`, `QuotientDimension`, `DimensionType`) used by
+`Semantics/Degree/Measure/Dimension.lean` provides the typed-dimension substrate
+(`Dimension`, `QuantityDimension`) used by
 `Studies/BaleSchwarz2026.lean` to formulate the No Division Hypothesis
 (eq. (5), p. 135): "Quantity division is not available as an operation for
 semantic composition." The hypothesis itself is stated and applied in the
@@ -81,8 +81,6 @@ consuming Studies file, not here.
 -/
 
 namespace Degree
-
-open Features (Dimension)
 
 -- ============================================================================
 -- § 1. Measure Functions

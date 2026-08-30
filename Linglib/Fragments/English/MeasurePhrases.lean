@@ -1,4 +1,3 @@
-import Linglib.Features.Dimension
 import Linglib.Semantics.Degree.Measure.Quantity
 
 /-!
@@ -18,8 +17,7 @@ dimension's reference unit, so that `kilogram.quantity = pure 1000 * gram.quanti
 
 namespace English.MeasurePhrases
 
-open Features (Dimension)
-open Degree (QuantizingNounClass)
+open Degree (Dimension QuantizingNounClass)
 
 /-- A measure term, a noun naming a unit quantity of a dimension. -/
 structure MeasureTerm where
