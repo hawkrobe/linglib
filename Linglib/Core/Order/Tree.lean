@@ -70,6 +70,10 @@ def TreeOrder.properDom {Node : Type*} [PartialOrder Node]
     (_T : TreeOrder Node) (a b : Node) : Prop :=
   a ≤ b ∧ a ≠ b
 
+instance {Node : Type*} [PartialOrder Node] [DecidableLE Node] [DecidableEq Node]
+    (T : TreeOrder Node) (a b : Node) : Decidable (T.properDom a b) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
 /-- **Upper bounds** of a node with respect to property `P`
     ([barker-pullum-1990] Definition 2).
 
@@ -77,6 +81,11 @@ def TreeOrder.properDom {Node : Type*} [PartialOrder Node]
 def upperBounds {Node : Type*} [PartialOrder Node]
     (T : TreeOrder Node) (a : Node) (P : Set Node) : Set Node :=
   {b | T.properDom b a ∧ b ∈ P}
+
+instance {Node : Type*} [PartialOrder Node] [DecidableLE Node] [DecidableEq Node]
+    (T : TreeOrder Node) (a : Node) (P : Set Node) [DecidablePred (· ∈ P)] (b : Node) :
+    Decidable (b ∈ upperBounds T a P) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- A `TreeOrder`'s Connected Ancestor Condition is exactly left-linearity: the
     syntactic-tree CAC and the branching-time no-backward-branching axiom are one and
