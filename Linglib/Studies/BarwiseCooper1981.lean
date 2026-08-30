@@ -1,516 +1,371 @@
-import Linglib.Features.Acceptability
+import Linglib.Semantics.Quantification.Counting
+import Linglib.Semantics.Quantification.Properties
+import Linglib.Semantics.Quantification.Lindstrom
+import Linglib.Fragments.English.Determiners
+import Linglib.Semantics.Composition.Reduction
+import Linglib.Data.Examples.BarwiseCooper1981
 import Mathlib.Data.Finset.Fin
 import Mathlib.Data.Set.Card
 import Mathlib.Order.Interval.Finset.Nat
-import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.English.Toy
-import Linglib.Semantics.Composition.Reduction
-import Linglib.Semantics.Quantification.DomainRestriction
-import Linglib.Core.ModelTheory.EhrenfeuchtFraisseGame
 
 /-!
-# Quantifier Universals Bridge
-[barwise-cooper-1981] [mostowski-1957] [peters-westerstahl-2006] [van-benthem-1984] [van-de-pol-etal-2023]
+# Barwise and Cooper 1981: generalized quantifiers and natural language
 
-Bridges the English determiner fragment (`English.Determiners.QuantityWord`)
-to the GQ property predicates in `Quantification` and
-`Quantification.Quantifier`.
+A noun phrase denotes a quantifier — a family of subsets of the domain — and a determiner
+assigns to each set `A` a quantifier that lives on `A` (the paper's determiner universal, the
+one condition the logic imposes on non-logical determiners). The classifications of §4 are
+conditions on such families. A determiner is positive (negative) strong when `A` always
+(never) lies in `D(A)` and weak otherwise; definite when `D(A)` is a principal filter with a
+nonempty generator; a quantifier is monotone when closed under supersets or subsets, and
+outer negation, inner negation and the dual exchange the two directions. Appendix C's
+propositions are general: a quantifier living on `A` contains `A` iff it contains the domain,
+so a strong determiner's *there*-sentence is trivial (C1); definite determiners are positive
+strong (C2, C3); the intersection condition is symmetry, and no proper strong determiner has
+it (C4–C6); persistent symmetric determiners are increasing (C7); positive strong increasing
+determiners validate *D N that VP, VP* (C8); negation reverses monotonicity (C9); an
+increasing quantifier and its dual overlap (C10); a monotone quantifier is decided by its
+witness sets (C11). C12 and C13 prove that *more than half* is definable neither in
+first-order logic nor from the unrelativized majority quantifier, so *most* is a determiner,
+not a quantifier. The fragment's quantity words instantiate Table II, and the paper's own
+artificial determiners witness that the universals U6–U8 are not logical truths. Under the
+substrate's proportional reading of *few* (fewer than half), *few N are N* is contradictory,
+so `few_sem` comes out negative strong — B&C's Table II lists *few* as weak, a classification
+their own §4.8 discussion of *many* and *few* already marks as unstable. Partial determiners
+(*the n*, *both*, *neither*) fall outside the total type `GQ α` and are not treated.
 
-## Empirical phenomena verified
+## Main results
 
-1. **Conservativity** ([barwise-cooper-1981], conservativity conjecture):
-   all six English quantity words satisfy CONSERV.
-2. **Quantity/isomorphism closure** ([mostowski-1957]): all six satisfy QUANT.
-3. **Table II per-entry verification** ([barwise-cooper-1981] Table II):
-   each quantity word's strength and monotonicity direction match the
-   paper's classification. Changing a fragment field breaks exactly one theorem.
-4. **Monotonicity–strength correlation** ([barwise-cooper-1981] U7):
-   strong English determiners are scope-↑MON (increasing).
-5. **Weak ↔ there-insertion** ([barwise-cooper-1981] §4.6):
-   weak determiners allow there-insertion; strong determiners don't.
-6. **Symmetry ↔ weak** ([peters-westerstahl-2006], symmetric ↔
-   there-insertion): weak = symmetric, strong = not symmetric.
-7. **Positive-strong → scope-↑** ([peters-westerstahl-2006],
-   positive-strong determiners are scope-upward-monotone).
-8. **Duality** ([barwise-cooper-1981] §4.11): outer/inner negation
-   and dual operations connect every ↔ some ↔ no via the Square of
-   Opposition, bridged to fragment entries.
-9. **Domain restriction** ([ritchie-schiller-2024]): conservativity
-   enables domain restriction for all six quantity words.
+* `livesOn_apply_iff`, `there_of_positiveStrong`, `Definite.positiveStrong` — C1–C3.
+* `strong_trivial_of_intersective` — C6; `scopeUp_of_restrictorUp_symmetric` — C7.
+* `monotone_apply_iff`, `antitone_apply_iff` — C11 witness sets.
+* `exists_and_of_scopeUp_dualQ` — C10; `most_selfDual_of_odd_count`.
+* `more_than_half_not_definable` (C12), `more_than_half_not_Q_definable` (C13),
+  `no_tree_means_most`.
 
-## Data structures
+## References
 
-- `MonotonicitySimplicity`, `ConservativitySimplicity`, `QuantitySimplicity`:
-  [van-de-pol-etal-2023] LZ complexity effect sizes.
-
+* [barwise-cooper-1981]
+* [milsark-1977]
+* [mostowski-1957]
 -/
+
+open Quantification
 
 namespace BarwiseCooper1981
 
-open English.Determiners (Monotonicity Strength QuantityWord)
-open Quantification
-open Quantification.DomainRestriction (DomainRestrictor
-  conservative_domain_restricted)
+variable {α : Type*}
 
--- ============================================================================
--- §1. [barwise-cooper-1981]: Conservativity is (near-)universal
--- ============================================================================
+/-! ### Quantifiers and witness sets -/
 
-/-- Conservativity holds for all simple (lexicalized) English determiners.
-    [barwise-cooper-1981] conjecture this is a universal of natural
-    language. Proved individually for each quantity word via
-    `every_conservative`, `some_conservative`, etc. -/
-theorem conservativity_universal :
-  ∀ (q : QuantityWord) {α : Type*} [Fintype α] [DecidableEq α],
-    Conservative (q.gqDenotation (α := α)) := by
-  intro q α inst inst2
-  cases q <;> simp only [QuantityWord.gqDenotation]
-  · exact Quantification.no_conservative
-  · exact Quantification.few_conservative
-  · exact Quantification.some_conservative
-  · exact Quantification.half_conservative
-  · exact Quantification.most_conservative
-  · exact Quantification.every_conservative
+section Quantifier
 
--- ============================================================================
--- §2. [mostowski-1957] / [keenan-stavi-1986]: Quantity
--- ============================================================================
+/-- A proper quantifier, or sieve: some set passes and some set fails (§4.5). -/
+def Sieve (Q : Quantifier α) : Prop := (∃ X, Q X) ∧ ∃ X, ¬ Q X
 
-/-- All simple determiners satisfy quantity/isomorphism closure:
-    their truth value depends only on cardinalities |A∩B|, |A\B|, etc.
+/-- The principal filter generated by `B`: the sets containing `B` (§4.6). -/
+def principalFilter (B : α → Prop) : Quantifier α := λ X => ∀ x, B x → X x
 
-    TODO: Rewrite proof for cardinality-based quantifiers (most, few, half)
-    which need `count_bij_inv` adapted to Prop predicates. -/
-theorem quantity_universal :
-  ∀ (q : QuantityWord) {α : Type*} [Fintype α] [DecidableEq α],
-    QuantityInvariant (q.gqDenotation (α := α)) := by
-  intro q α inst inst2 A B A' B' f hBij hA hB
-  cases q <;> simp only [QuantityWord.gqDenotation]
-  case all =>
-    simp only [every_sem]
-    rw [forall_bij_inv f hBij]
-    exact forall_congr' fun x => by rw [show A (f x) ↔ A' x from hA x,
-                                         show B (f x) ↔ B' x from hB x]
-  case some_ =>
-    simp only [some_sem]
-    rw [exists_bij_inv f hBij]
-    exact exists_congr fun x => by rw [show A (f x) ↔ A' x from hA x,
-                                        show B (f x) ↔ B' x from hB x]
-  case none_ =>
-    simp only [no_sem]
-    rw [forall_bij_inv f hBij]
-    exact forall_congr' fun x => by rw [show A (f x) ↔ A' x from hA x,
-                                         show B (f x) ↔ B' x from hB x]
-  -- TODO: cardinality-based cases need `count_bij_inv` adapted to Prop predicates.
-  case most => sorry
-  case few => sorry
-  case half => sorry
+variable {Q : Quantifier α} {A B X : α → Prop}
 
-/-! ### Extension: domain independence
+/-- C1: a quantifier living on `A` contains `A` iff it contains the domain. -/
+theorem livesOn_apply_iff (h : LivesOn Q A) : Q A ↔ Q (λ _ => True) := by
+  rw [h (λ _ => True)]
+  simp only [and_true]
 
-EXT (`Q(A,B)` depends only on `A` and `B`, not on an ambient universe)
-holds trivially for `GQ α` since the representation is universe-free —
-no axiom needed. EXT + CONS together yield the [van-benthem-1984]
-characterization: determiners can be represented as type ⟨1⟩ quantifiers
-that "live on" their restrictor; see `conservative_iff_livesOn`. -/
+/-- C2: the principal filter generated by `B` lives on `A` iff `B ⊆ A`. -/
+theorem principalFilter_livesOn_iff : LivesOn (principalFilter B) A ↔ ∀ x, B x → A x := by
+  constructor
+  · intro h x hx
+    exact (((h (λ _ => True)).1 (λ _ _ => trivial)) x hx).1
+  · intro hBA X
+    exact ⟨λ h x hx => ⟨hBA x hx, h x hx⟩, λ h x hx => (h x hx).2⟩
 
-/-! ### [barwise-cooper-1981] Table II: per-entry verification
+/-- A principal filter with a nonempty generator is a sieve. -/
+theorem sieve_principalFilter (hB : ∃ x, B x) : Sieve (principalFilter B) :=
+  ⟨⟨λ _ => True, λ _ _ => trivial⟩,
+    ⟨λ _ => False, λ h => let ⟨x, hx⟩ := hB; h x hx⟩⟩
 
-Each theorem takes one quantity word's `QuantityWord.entry` *typological
-label* (the textbook-consensus B&C Table II strength/monotonicity classification)
-as a **hypothesis** and proves the corresponding genuine GQ **property of the
-denotation** `QuantityWord.gqDenotation`:
+/-- A witness set for a quantifier living on `A`: a subset of `A` in the quantifier
+(§4.9). -/
+def Witness (Q : Quantifier α) (A w : α → Prop) : Prop := (∀ x, w x → A x) ∧ Q w
 
-- `strength = .weak`      ⟹ `Existential ⟦d⟧`      (intersective: passes there-insertion)
-- `strength = .strong`    ⟹ `¬ Existential ⟦d⟧`
-- `monotonicity = .increasing` ⟹ `ScopeUpwardMono ⟦d⟧`
-- `monotonicity = .decreasing` ⟹ `ScopeDownwardMono ⟦d⟧`
+/-- C11(i): an increasing quantifier living on `A` holds of `X` iff some witness set is
+contained in `X`. -/
+theorem monotone_apply_iff (h : LivesOn Q A) (hm : Monotone Q) :
+    Q X ↔ ∃ w, Witness Q A w ∧ ∀ x, w x → X x :=
+  ⟨λ hX => ⟨λ x => A x ∧ X x, ⟨λ _ hx => hx.1, (h X).1 hX⟩, λ _ hx => hx.2⟩,
+    λ ⟨_, hw, hwX⟩ => hm hwX hw.2⟩
 
-So changing a `QuantityWord.entry` field still breaks exactly one theorem
-(the label is a hypothesis), but the theorem now *earns* its content from the
-denotation rather than self-reporting the stored field. Where the substrate
-lacks the backing lemma the conclusion is left `sorry` with a `TODO`.
+/-- C11(ii): a decreasing quantifier living on `A` holds of `X` iff `X ∩ A` is contained in
+some witness set. -/
+theorem antitone_apply_iff (h : LivesOn Q A) (hm : Antitone Q) :
+    Q X ↔ ∃ w, Witness Q A w ∧ ∀ x, X x ∧ A x → w x :=
+  ⟨λ hX => ⟨λ x => A x ∧ X x, ⟨λ _ hx => hx.1, (h X).1 hX⟩, λ _ hx => ⟨hx.2, hx.1⟩⟩,
+    λ ⟨_, hw, hXw⟩ => (h X).2 (hm (λ x hx => hXw x ⟨hx.2, hx.1⟩) hw.2)⟩
 
-B&C's Table II classifies every/all (strong, ↑MON), some (weak, ↑MON),
-no (weak, ↓MON), most (strong, ↑MON), many (weak, ↑MON), few (weak, ↓MON);
-our scale omits "many" and adds proportional "half" (van-de-pol et al.).
+/-- §4.10: a mixed conjunction of an increasing and a decreasing quantifier — *John and no
+woman* — is neither increasing nor decreasing. -/
+theorem not_monotone_mixed_conjunction :
+    ¬ Monotone (individual true ⊓ restrict no_sem (· = false)) ∧
+    ¬ Antitone (individual true ⊓ restrict no_sem (· = false)) := by
+  constructor
+  · intro h
+    have := h (a := (· = true)) (b := λ _ => True) (λ x hx => trivial)
+      ⟨rfl, λ x hx hx' => by simp_all⟩
+    exact this.2 false rfl trivial
+  · intro h
+    have := h (a := λ _ => False) (b := (· = true)) (λ x hx => hx.elim)
+      ⟨rfl, λ x hx hx' => by simp_all⟩
+    exact this.1
 
-**Caveat — "weak" ≠ `Existential` for proportional determiners.** B&C's "weak"
-tracks felicity in there-sentences; for the *intersective* words (some, no)
-it coincides with the GQ `Existential` property. But the table also labels the
-*proportional* words few and half `.weak` (they do pass there-insertion:
-"there are few cats"), and `Existential` *fails* for them — `few_sem`/`half_sem`
-are not intersective. So the `weak ⟹ Existential` bridge is stated and proved
-only for the intersective words; for few/half the genuine GQ fact is the
-*negation* (`¬ Existential`), recorded below as a substrate gap. -/
+end Quantifier
 
-/-- some: weak ⟹ `Existential`, and increasing ⟹ `ScopeUpwardMono`. -/
-theorem table_II_some {α : Type*} [Fintype α] [DecidableEq α] :
-    (QuantityWord.some_.entry.strength = .weak →
-      Existential (QuantityWord.some_.gqDenotation (α := α))) ∧
-    (QuantityWord.some_.entry.monotonicity = .increasing →
-      ScopeUpwardMono (QuantityWord.some_.gqDenotation (α := α))) := by
-  refine ⟨fun _ => ?_, fun _ => ?_⟩
-  · simpa only [QuantityWord.gqDenotation] using Quantification.some_existential
-  · simpa only [QuantityWord.gqDenotation] using Quantification.some_scope_up
+/-! ### Determiners: strength, definiteness, and the intersection condition -/
 
-/-- no: weak ⟹ `Existential`, and decreasing ⟹ `ScopeDownwardMono`. -/
-theorem table_II_none {α : Type*} [Fintype α] [DecidableEq α] :
-    (QuantityWord.none_.entry.strength = .weak →
-      Existential (QuantityWord.none_.gqDenotation (α := α))) ∧
-    (QuantityWord.none_.entry.monotonicity = .decreasing →
-      ScopeDownwardMono (QuantityWord.none_.gqDenotation (α := α))) := by
-  refine ⟨fun _ => ?_, fun _ => ?_⟩
-  · simpa only [QuantityWord.gqDenotation] using Quantification.no_existential
-  · simpa only [QuantityWord.gqDenotation] using Quantification.no_scope_down
+section Determiner
 
-/-- every/all: strong ⟹ `¬ Existential` (over a nonempty domain), and
-    increasing ⟹ `ScopeUpwardMono`. The nonemptiness hypothesis is essential:
-    over the empty domain every GQ is vacuously `Existential`. -/
-theorem table_II_all {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α] :
-    (QuantityWord.all.entry.strength = .strong →
-      ¬ Existential (QuantityWord.all.gqDenotation (α := α))) ∧
-    (QuantityWord.all.entry.monotonicity = .increasing →
-      ScopeUpwardMono (QuantityWord.all.gqDenotation (α := α))) := by
-  refine ⟨fun _ => ?_, fun _ => ?_⟩
-  · -- every is positive-strong, hence not existential: witness R = univ, S = ∅.
-    simp only [QuantityWord.gqDenotation]
-    intro h
-    obtain ⟨x⟩ := ‹Nonempty α›
-    have hiff := h (fun _ => True) (fun _ => False)
-    simp only [every_sem] at hiff
-    exact hiff.mpr (fun _ _ => trivial) x trivial
-  · simpa only [QuantityWord.gqDenotation] using Quantification.every_scope_up
+/-- Strong: positive or negative strong (§4.6). -/
+def Strong (D : GQ α) : Prop := PositiveStrong D ∨ NegativeStrong D
 
-/-- most: increasing ⟹ `ScopeUpwardMono` (polymorphic, `most_scope_up`). The
-    strength ⟹ `¬ Existential` half is witnessed separately at `Fin 3`
-    (`table_II_most_not_existential`): `most` is proportional, not intersective,
-    so refuting `Existential` needs a `|α| ≥ 3` witness, not mere nonemptiness. -/
-theorem table_II_most {α : Type*} [Fintype α] [DecidableEq α] :
-    QuantityWord.most.entry.monotonicity = .increasing →
-      ScopeUpwardMono (QuantityWord.most.gqDenotation (α := α)) := by
-  intro _
-  simpa only [QuantityWord.gqDenotation] using Quantification.most_scope_up
+/-- Weak: neither positive nor negative strong (§4.6). -/
+def Weak (D : GQ α) : Prop := ¬ Strong D
 
-/-- most: strong ⟹ `¬ Existential`, witnessed at `Fin 3`. `most` is proportional,
-    not intersective, so it blocks there-insertion ([barwise-cooper-1981] Table II).
-    Refuting `Existential` needs `|α| ≥ 3` (1 elem in R∩S, 2 in R∖S): over `Fin 1`/
-    `Fin 2` every GQ is vacuously `Existential`. Earned from `not_existential_most_sem`. -/
-theorem table_II_most_not_existential :
-    QuantityWord.most.entry.strength = .strong →
-      ¬ Existential (QuantityWord.most.gqDenotation (α := Fin 3)) := by
-  intro _
-  simpa only [QuantityWord.gqDenotation] using Quantification.not_existential_most_sem
+/-- Definite: every `D(A)` is the principal filter of a nonempty generator (§4.6). -/
+def Definite (D : GQ α) : Prop :=
+  ∀ A, ∃ B : α → Prop, (∃ x, B x) ∧ ∀ X, D A X ↔ ∀ x, B x → X x
 
-/-- few: decreasing ⟹ `ScopeDownwardMono` (`few_scope_down`). The table labels
-    few `.weak`, but `few_sem` is proportional, *not* intersective, so the
-    genuine GQ fact is `¬ Existential ⟦few⟧` (a substrate gap), not `Existential`. -/
-theorem table_II_few {α : Type*} [Fintype α] [DecidableEq α] :
-    QuantityWord.few.entry.monotonicity = .decreasing →
-      ScopeDownwardMono (QuantityWord.few.gqDenotation (α := α)) := by
-  intro _
-  simpa only [QuantityWord.gqDenotation] using Quantification.few_scope_down
+/-- Self-dual (§4.11). -/
+def SelfDual (D : GQ α) : Prop := dualQ D = D
 
-/-- few: strong/weak ⟹ existential status, witnessed at `Fin 3`. The table's
-    `.weak` label tracks there-insertion; the genuine GQ property is
-    `¬ Existential` because `few_sem` is proportional, not intersective
-    (`|R∩S| < |R∖S|` is not determined by `|R∩S|` alone). Earned from
-    `not_existential_few_sem`. -/
-theorem table_II_few_not_existential :
-    ¬ Existential (QuantityWord.few.gqDenotation (α := Fin 3)) := by
-  simpa only [QuantityWord.gqDenotation] using Quantification.not_existential_few_sem
+variable {D : GQ α}
 
-/-- half: non-monotone, so the increasing/decreasing bridges are vacuously true
-    (the label hypothesis is unsatisfiable for half). -/
-theorem table_II_half {α : Type*} [Fintype α] [DecidableEq α] :
-    (QuantityWord.half.entry.monotonicity = .increasing →
-      ScopeUpwardMono (QuantityWord.half.gqDenotation (α := α))) ∧
-    (QuantityWord.half.entry.monotonicity = .decreasing →
-      ScopeDownwardMono (QuantityWord.half.gqDenotation (α := α))) :=
-  ⟨fun h => absurd h (by decide), fun h => absurd h (by decide)⟩
+/-- The *there*-sentence of a positive strong determiner is a tautology (§4.6): *there are
+D N* says the domain lies in `D(N)`, which C1 reduces to `N ∈ D(N)`. -/
+theorem there_of_positiveStrong (hc : Conservative D) (h : PositiveStrong D) (A : α → Prop) :
+    D A (λ _ => True) :=
+  (livesOn_apply_iff ((conservative_iff_livesOn D).1 hc A)).1 (h A)
 
-/-- half: the table labels half `.weak`, but `half_sem` is proportional, so the
-    genuine GQ property is `¬ Existential ⟦half⟧`, witnessed at `Fin 3`.
-    `Existential half_sem` (`2|R∩S| = |R| ↔ 2|R∩S| = |R∩S|`) is false; refuting it
-    needs a witness with `R∖S` non-empty. Earned from `not_existential_half_sem`. -/
-theorem table_II_half_not_existential :
-    ¬ Existential (QuantityWord.half.gqDenotation (α := Fin 3)) := by
-  simpa only [QuantityWord.gqDenotation] using Quantification.not_existential_half_sem
+/-- The *there*-sentence of a negative strong determiner is a contradiction (§4.6). -/
+theorem not_there_of_negativeStrong (hc : Conservative D) (h : NegativeStrong D)
+    (A : α → Prop) : ¬ D A (λ _ => True) :=
+  λ hA => h A ((livesOn_apply_iff ((conservative_iff_livesOn D).1 hc A)).2 hA)
 
--- ============================================================================
--- §5. Monotonicity–Strength Correlation
--- ============================================================================
+/-- C3: definite determiners are positive strong. -/
+theorem Definite.positiveStrong (hc : Conservative D) (hd : Definite D) :
+    PositiveStrong D := by
+  intro A
+  obtain ⟨B, -, hB⟩ := hd A
 
-/-- All English quantity words except "half" are monotone in scope (each is
-    `ScopeUpwardMono` or `ScopeDownwardMono`); "half" is the lone non-monotone
-    simple determiner ([van-de-pol-etal-2023]). Stated as a real disjunction of
-    GQ monotonicity properties, witnessed per word from the substrate lemmas. -/
-theorem english_quantifiers_mostly_monotone {α : Type*} [Fintype α] [DecidableEq α] :
-    ScopeDownwardMono (QuantityWord.none_.gqDenotation (α := α)) ∧
-    ScopeDownwardMono (QuantityWord.few.gqDenotation (α := α)) ∧
-    ScopeUpwardMono (QuantityWord.some_.gqDenotation (α := α)) ∧
-    ScopeUpwardMono (QuantityWord.most.gqDenotation (α := α)) ∧
-    ScopeUpwardMono (QuantityWord.all.gqDenotation (α := α)) := by
-  simp only [QuantityWord.gqDenotation]
-  exact ⟨Quantification.no_scope_down, Quantification.few_scope_down,
-         Quantification.some_scope_up, Quantification.most_scope_up,
-         Quantification.every_scope_up⟩
+  have hlive : LivesOn (principalFilter B) A :=
+    λ X => ((hB X).symm.trans (hc A X)).trans (hB _)
+  exact (hB A).2 (principalFilter_livesOn_iff.1 hlive)
 
-/-- "Half" is non-monotone: it is neither scope-upward nor scope-downward
-    monotone ([van-de-pol-etal-2023]), witnessed at `Fin 3` (a 2-element restrictor
-    on which half flips true→false under scope growth/shrinkage). Earned from
-    `half_not_monotone`. -/
-theorem half_nonmonotone :
-    ¬ ScopeUpwardMono (QuantityWord.half.gqDenotation (α := Fin 3)) ∧
-    ¬ ScopeDownwardMono (QuantityWord.half.gqDenotation (α := Fin 3)) := by
-  simpa only [QuantityWord.gqDenotation] using Quantification.half_not_monotone
+/-- C4: under the intersection condition, `B ∈ D(A)` iff the domain lies in `D(A ∩ B)` —
+the *there is/are* paraphrase of weak determiners. -/
+theorem apply_univ_inter_of_intersective (h : IntersectionCondition D) (A B : α → Prop) :
+    D A B ↔ D (λ x => A x ∧ B x) (λ _ => True) :=
+  h A B (λ x => A x ∧ B x) (λ _ => True) (λ x => by tauto)
 
-/-- [barwise-cooper-1981] U7 (monotonicity–strength correlation): the strong
-    English determiners (every, most) are scope-↑MON. Both are positive-strong,
-    so the universal reduces to: strong → increasing, here proved as the genuine
-    `ScopeUpwardMono` property of each denotation. -/
-theorem strong_implies_increasing {α : Type*} [Fintype α] [DecidableEq α] :
-    (QuantityWord.all.entry.strength = .strong →
-      ScopeUpwardMono (QuantityWord.all.gqDenotation (α := α))) ∧
-    (QuantityWord.most.entry.strength = .strong →
-      ScopeUpwardMono (QuantityWord.most.gqDenotation (α := α))) := by
-  refine ⟨fun _ => ?_, fun _ => ?_⟩
-  · simpa only [QuantityWord.gqDenotation] using Quantification.every_scope_up
-  · simpa only [QuantityWord.gqDenotation] using Quantification.most_scope_up
+/-- C6: a strong determiner satisfying the intersection condition is trivial — positive
+strong makes every `D(A)` everything, negative strong makes it empty. So no proper strong
+determiner is symmetric. -/
+theorem strong_trivial_of_intersective (h : IntersectionCondition D) :
+    (PositiveStrong D → ∀ A B, D A B) ∧ (NegativeStrong D → ∀ A B, ¬ D A B) :=
+  ⟨λ hs A B => (h (λ x => A x ∧ B x) (λ x => A x ∧ B x) A B (λ x => by tauto)).1
+      (hs (λ x => A x ∧ B x)),
+    λ hs A B hAB => hs (λ x => A x ∧ B x)
+      ((h A B (λ x => A x ∧ B x) (λ x => A x ∧ B x) (λ x => by tauto)).1 hAB)⟩
 
--- ============================================================================
--- §6. Weak/Strong and There-Insertion
--- ============================================================================
+/-- C7: a persistent symmetric determiner is increasing. -/
+theorem scopeUp_of_restrictorUp_symmetric (hp : RestrictorUpwardMono D)
+    (hs : QSymmetric D) : ScopeUpwardMono D :=
+  λ R S S' hSS' hRS => (hs R S').2 (hp S S' R hSS' ((hs R S).1 hRS))
 
-/-- Weak intersective determiners allow there-insertion, formalized as the
-    `Existential` property ([barwise-cooper-1981] §4.6; [peters-westerstahl-2006]
-    existential ↔ there-insertion). "There are some/no cats." -/
-theorem weak_there_insertion {α : Type*} [Fintype α] [DecidableEq α] :
-    Existential (QuantityWord.some_.gqDenotation (α := α)) ∧
-    Existential (QuantityWord.none_.gqDenotation (α := α)) := by
-  simp only [QuantityWord.gqDenotation]
-  exact ⟨Quantification.some_existential, Quantification.no_existential⟩
+/-- C8: a positive strong increasing determiner validates *D N that VP, VP* — the scope
+lies in `D` of the intersected restrictor. -/
+theorem apply_inter_of_positiveStrong_scopeUp (hps : PositiveStrong D)
+    (hm : ScopeUpwardMono D) (A B : α → Prop) : D (λ x => A x ∧ B x) B :=
+  hm _ (λ x => A x ∧ B x) B (λ _ h => h.2) (hps _)
 
-/-- Strong determiners block there-insertion: `¬ Existential` over a nonempty
-    domain ([barwise-cooper-1981] Table II). The `most` case is witnessed at
-    `Fin 3` in `table_II_most_not_existential` (proportional `most` needs `|α| ≥ 3`). -/
-theorem strong_no_there_insertion {α : Type*} [Fintype α] [DecidableEq α]
-    [Nonempty α] :
-    ¬ Existential (QuantityWord.all.gqDenotation (α := α)) :=
-  (table_II_all (α := α)).1 rfl
+/-- C9 for the dual: the dual of an increasing quantifier is increasing. -/
+theorem dualQ_scopeUp (h : ScopeUpwardMono D) : ScopeUpwardMono (dualQ D) :=
+  outerNeg_down_to_up _ (innerNeg_up_to_down _ h)
 
--- ============================================================================
--- §7. Symmetry ↔ Weak
--- ============================================================================
+/-- C10: an increasing quantifier and its dual overlap: `D(R)(A)` and `Ď(R)(B)` force a
+common member of `A` and `B`. -/
+theorem exists_and_of_scopeUp_dualQ (hm : ScopeUpwardMono D) {R A B : α → Prop}
+    (hA : D R A) (hB : dualQ D R B) : ∃ x, A x ∧ B x := by
+  by_contra h
+  push Not at h
+  exact hB (hm R A (λ x => ¬ B x) (λ x hx hBx => h x hx hBx) hA)
 
-/-- Weak (intersective) English determiners are symmetric
-    ([peters-westerstahl-2006], symmetric ↔ there-insertion ↔ weak), proved as
-    the genuine `QSymmetric` property of the denotation. -/
-theorem weak_are_symmetric {α : Type*} [Fintype α] [DecidableEq α] :
-    QSymmetric (QuantityWord.some_.gqDenotation (α := α)) ∧
-    QSymmetric (QuantityWord.none_.gqDenotation (α := α)) := by
-  simp only [QuantityWord.gqDenotation]
-  exact ⟨Quantification.some_symmetric, Quantification.no_symmetric⟩
+/-! §4.8's artificial strong-but-not-increasing determiner shows U7 (*positive strong
+determiners are increasing*) is not a logical truth. -/
 
-/-! Strong English determiners are not symmetric ([peters-westerstahl-2006]).
-The genuine `¬ QSymmetric` property for `all` (= `every_sem`) is proved as
-`strong_all_not_symmetric` below, over the `ToyEntity` witness it requires; for
-`most` it is `strong_most_not_symmetric`, witnessed at `Fin 3`. -/
+open Classical in
+/-- `X ∈ D(A)` iff `X ∖ A` is even — positive strong, but not increasing (§4.8). -/
+noncomputable def evenOutside [Fintype α] : GQ α :=
+  λ A X => Even (count (λ x => X x ∧ ¬ A x))
 
-/-- Strong `most` is not symmetric, as a property of its denotation over the
-    `Fin 3` witness ([peters-westerstahl-2006]). `most R S ↔ most S R` fails for
-    `R = {0}`, `S = {0,1}`: `most R S` holds (`|R∩S| = 1 > |R∖S| = 0`) but
-    `most S R` does not (`|S∩R| = 1 > |S∖R| = 1` is false). Earned from
-    `not_qsymmetric_most_sem`. -/
-theorem strong_most_not_symmetric :
-    ¬ QSymmetric (QuantityWord.most.gqDenotation (α := Fin 3)) := by
-  simpa only [QuantityWord.gqDenotation] using Quantification.not_qsymmetric_most_sem
+open Classical in
+theorem positiveStrong_evenOutside [Fintype α] :
+    PositiveStrong (evenOutside (α := α)) := by
+  intro A
+  unfold evenOutside
+  simp [count, countOn]
 
-/-! #### Toy-witnessed counterexamples
-
-Counterexamples to non-properties of specific determiners need a concrete
-witness type; the witness is the toy fragment's `ToyEntity`. -/
-
-section ToyWitnesses
-
-open Semantics.Montague (ToyEntity)
-open Semantics.Montague.ToyLexicon (student_sem thing_sem)
-
-/-- `⟦every⟧` is NOT symmetric. Witness: R=students, S=things; every(students,
-    things)=true but every(things,students)=false. -/
-theorem every_not_symmetric : ¬ QSymmetric (every_sem (α := ToyEntity)) := by
+open Classical in
+theorem not_scopeUp_evenOutside : ¬ ScopeUpwardMono (evenOutside (α := Unit)) := by
   intro h
-  have := (h student_sem thing_sem).mp (fun x _ => trivial)
-  exact absurd (this ToyEntity.pizza trivial) id
+  have h0 : evenOutside (α := Unit) (λ _ => False) (λ _ => False) := by
+    unfold evenOutside
+    simp [count, countOn]
+  have h1 := h (λ _ => False) (λ _ => False) (λ _ => True) (λ _ h => h.elim) h0
+  unfold evenOutside at h1
+  simp [count, countOn, Nat.even_iff] at h1
 
-/-- `⟦no⟧` is NOT positive strong: no(A,A) = false when A is non-empty. -/
-theorem no_not_positive_strong : ¬ PositiveStrong (no_sem (α := ToyEntity)) := by
+/-! §4.9's *some but not all* is persistent but neither increasing nor symmetric, so U8
+(*persistent determiners are increasing and weak*) is not a logical truth either. -/
+
+/-- `X ∈ D(A)` iff some but not all of `A` is in `X` (Appendix C, after C6). -/
+def someNotAll : GQ α := λ A X => (∃ x, A x ∧ X x) ∧ ∃ x, A x ∧ ¬ X x
+
+theorem restrictorUp_someNotAll : RestrictorUpwardMono (someNotAll (α := α)) :=
+  λ _ _ _ hRR' ⟨⟨x, hx, hSx⟩, ⟨y, hy, hSy⟩⟩ =>
+    ⟨⟨x, hRR' x hx, hSx⟩, ⟨y, hRR' y hy, hSy⟩⟩
+
+theorem not_scopeUp_someNotAll : ¬ ScopeUpwardMono (someNotAll (α := Bool)) := by
   intro h
-  have := h student_sem
-  exact this ToyEntity.john trivial trivial
+  have := h (λ _ => True) (· = true) (λ _ => True) (λ _ _ => trivial)
+    ⟨⟨true, trivial, rfl⟩, ⟨false, trivial, by simp⟩⟩
+  obtain ⟨-, y, -, hy⟩ := this
+  exact hy trivial
 
-/-- Strong `all` (= `every_sem`) is not symmetric, as a property of its
-    denotation `QuantityWord.all.gqDenotation` over the `ToyEntity` witness
-    ([peters-westerstahl-2006]). The genuine §7 strong-not-symmetric fact,
-    earned from the denotation rather than the typological `.strength` label. -/
-theorem strong_all_not_symmetric :
-    ¬ QSymmetric (QuantityWord.all.gqDenotation (α := ToyEntity)) := by
-  simpa only [QuantityWord.gqDenotation] using every_not_symmetric
+theorem not_qSymmetric_someNotAll : ¬ QSymmetric (someNotAll (α := Bool)) := by
+  intro h
+  have := (h (λ _ => True) (· = true)).1
+    ⟨⟨true, trivial, rfl⟩, ⟨false, trivial, by simp⟩⟩
+  obtain ⟨-, y, -, hy⟩ := this
+  exact hy trivial
 
-end ToyWitnesses
+end Determiner
 
--- ============================================================================
--- §8. [barwise-cooper-1981] §4.11: Duality (Square of Opposition)
--- ============================================================================
+/-! ### The English quantity words (Table II and §4.7) -/
 
-/-- The dual of ⟦every⟧ is ⟦some⟧: Q̌(every) = some ([barwise-cooper-1981] §4.11).
-    ¬(∀x. R(x) → ¬S(x)) = ∃x. R(x) ∧ S(x).
-    Bridges `dualQ_every_eq_some` from Quantifier.lean to fragment entries. -/
-theorem dual_all_eq_some {α : Type*} [Fintype α] [DecidableEq α] :
-    dualQ (QuantityWord.all.gqDenotation (α := α)) = QuantityWord.some_.gqDenotation (α := α) := by
-  simp only [QuantityWord.gqDenotation]
-  exact Quantification.dualQ_every_eq_some
+section English
 
-/-- Inner negation maps ⟦every⟧ to ⟦no⟧: every~ = no ([barwise-cooper-1981] §4.11).
-    ∀x. R(x) → ¬S(x) = ¬∃x. R(x) ∧ S(x).
-    Bridges `pinnerNeg_every_eq_no` to fragment entries. -/
-theorem innerNeg_all_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
-    innerNeg (QuantityWord.all.gqDenotation (α := α)) = QuantityWord.none_.gqDenotation (α := α) := by
-  simp only [QuantityWord.gqDenotation]
-  exact Quantification.innerNeg_every_eq_no
+open English.Determiners (QuantityWord)
 
-/-- Outer negation maps ⟦some⟧ to ⟦no⟧: ~some = no ([barwise-cooper-1981] §4.11).
-    ¬(∃x. R(x) ∧ S(x)) = ∀x. R(x) → ¬S(x).
-    Bridges `pouterNeg_some_eq_no` to fragment entries. -/
-theorem outerNeg_some_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
-    outerNeg (QuantityWord.some_.gqDenotation (α := α)) = QuantityWord.none_.gqDenotation (α := α) := by
-  simp only [QuantityWord.gqDenotation]
-  exact Quantification.outerNeg_some_eq_no
+variable [Fintype α]
 
--- ============================================================================
--- §9. Left anti-additivity → NPI licensing
--- ============================================================================
+/-- *every/all* is positive strong (Table II). -/
+theorem all_positiveStrong : PositiveStrong (QuantityWord.all.gqDenotation (α := α)) :=
+  every_positive_strong
 
-/- Left anti-additive determiners license NPIs ([peters-westerstahl-2006]).
-   LAA is formalized: see `every_laa`, `no_laa` in Quantifier.lean.
-   The NPI ↔ DE bridge is now formalized in
-   `Ladusaw1979`. -/
+open Classical in
+/-- *most* is positive strong on nonempty restrictors (Table II; Appendix B's SP1): *most
+N are N* whenever there are `N`s. On the empty restrictor the proportional reading fails,
+which is B&C's Table I column: *most N* can denote the empty quantifier. -/
+theorem most_apply_self (A : α → Prop) (h : ∃ x, A x) :
+    QuantityWord.most.gqDenotation (α := α) A A := by
+  obtain ⟨x, hx⟩ := h
+  show most_sem A A
+  unfold most_sem
+  have h0 : count (λ y : α => A y ∧ ¬ A y) = 0 := by
+    simp [count, countOn]
+  have h1 : 0 < count (λ y : α => A y ∧ A y) :=
+    Finset.card_pos.2 ⟨x, by simp [hx]⟩
+  omega
 
--- ============================================================================
--- §10. Positive-strong → scope-↑MON
--- ============================================================================
+open Classical in
+/-- Under the proportional reading (*fewer than half*), *few N are N* is contradictory:
+`few_sem` is negative strong, where B&C's Table II lists *few* as weak. -/
+theorem few_negativeStrong : NegativeStrong (few_sem : GQ α) := by
+  intro A hA
+  unfold few_sem at hA
+  have h0 : count (λ y : α => A y ∧ ¬ A y) = 0 := by
+    simp [count, countOn]
+  omega
 
-/-- Positive-strong determiners are scope-upward-monotone
-    ([peters-westerstahl-2006]).
-    Only `all` (= `every_sem`) is genuinely positive-strong; for the rest,
-    `PositiveStrong` is vacuously false (contradicted by `R = λ _ => false`
-    or `R = λ _ => true`), making the implication trivially true. -/
-theorem positive_strong_determiners_upward_monotone :
-  ∀ (q : QuantityWord) {α : Type*} [Fintype α] [DecidableEq α],
-    PositiveStrong (q.gqDenotation (α := α)) →
-    ScopeUpwardMono (q.gqDenotation (α := α)) := by
-  intro q α inst inst2 hPS
-  cases q
-  case all => exact Quantification.every_scope_up
-  case some_ => exact Quantification.some_scope_up
-  -- TODO: Adapt remaining cases for Prop-valued GQs.
-  -- The vacuity argument (PositiveStrong contradicted by R = fun _ => False)
-  -- needs count lemmas adapted for Prop predicates.
-  case most => sorry
-  case few => sorry
-  case none_ => sorry
-  case half => sorry
+omit [Fintype α] in
+/-- *some* is weak (Table II): *some N is a N* is contingent. -/
+theorem some_weak [Nonempty α] : Weak (some_sem : GQ α) := by
+  rintro (h | h)
+  · obtain ⟨x, hx, -⟩ := h (λ _ => False)
+    exact hx
+  · exact h (λ _ => True) ⟨Classical.arbitrary α, trivial, trivial⟩
 
--- ============================================================================
--- §11. [van-benthem-1984] §3.3: Aristotle Reversed — Square of Opposition
--- ============================================================================
+omit [Fintype α] in
+/-- *no* is weak (Table II): *no N is a N* is contingent. -/
+theorem no_weak [Nonempty α] : Weak (no_sem : GQ α) := by
+  rintro (h | h)
+  · exact h (λ _ => True) (Classical.arbitrary α) trivial trivial
+  · exact h (λ _ => False) (λ x hx => hx.elim)
 
-/- [van-benthem-1984] §3.3: Under CONSERV (+ VAR*), the Square of Opposition
-   is completely determined by inferential (relational) conditions:
-   - all:     transitive + reflexive      → inclusion  (A ⊆ B)
-   - some:    symmetric + quasi-reflexive → overlap    (A ∩ B ≠ ∅)
-   - no:      symmetric + quasi-universal → disjointness (A ∩ B = ∅)
-   - not all: almost-connected + irreflexive
+/-- *exactly half* is weak (§4.7's non-monotone *exactly half the men*): *half the N are
+N* is contingent, witnessed over `Fin 3`. -/
+theorem half_weak : Weak (half_sem : GQ (Fin 3)) := by
+  rintro (h | h)
+  · have key := h (fun x : Fin 3 => x = 0)
+    simp only [half_sem, count_eq_decidable (fun x : Fin 3 => x = 0 ∧ x = 0) _,
+      count_eq_decidable (fun x : Fin 3 => x = 0) _] at key
+    have v0 : (count fun x : Fin 3 => x = 0 ∧ x = 0) = 1 := by
+      simp only [count, countOn]; decide
+    have v1 : (count fun x : Fin 3 => x = 0) = 1 := by
+      simp only [count, countOn]; decide
+    rw [v0, v1] at key
+    exact absurd key (by decide)
+  · refine h (fun _ : Fin 3 => False) ?_
+    simp only [half_sem, count_eq_decidable (fun x : Fin 3 => False ∧ False) _,
+      count_eq_decidable (fun x : Fin 3 => False) _]
+    have v0 : (count fun x : Fin 3 => False ∧ False) = 0 := by
+      simp only [count, countOn]; decide
+    have v1 : (count fun x : Fin 3 => False) = 0 := by
+      simp only [count, countOn]; decide
+    rw [v0, v1]
 
-   Proved in `Quantification`:
-   - `vanBenthem_refl_antisym_is_inclusion`:  CONSERV + reflexive + antisymmetric → "all"
-   - `vanBenthem_symm_quasiRefl_is_overlap`:  CONSERV + symmetric + quasi-reflexive → "some"
-     (→ direction fully proved; ← direction needs QUANT/isomorphism invariance)
-   - `vanBenthem_symm_quasiUniv_is_disjointness`: CONSERV + symmetric + quasi-universal → "no"
-     (← direction fully proved; → direction needs QUANT)
+open Classical in
+/-- The lower half of *exactly half*. -/
+noncomputable def atLeastHalf : GQ α := λ R S => count R ≤ 2 * count (λ x => R x ∧ S x)
 
-   Additional structural results:
-   - `zwarts_refl_trans_scopeUp`:  CONSERV + reflexive + transitive → MON↑
+open Classical in
+/-- The upper half of *exactly half*. -/
+noncomputable def atMostHalf : GQ α := λ R S => 2 * count (λ x => R x ∧ S x) ≤ count R
 
-   Bridge theorems in `English.Determiners`:
-     `all_inferential_bridge`, `some_inferential_bridge`, `none_inferential_bridge`
+open Classical in
+/-- U6 for *exactly half* (§4.8's "not monotone" example): the non-monotone determiner is
+the conjunction of an increasing and a decreasing one, as the monotonicity constraint
+requires of simple NPs. `exactly n` decomposes likewise
+(`Quantification.exactly_eq_meet_at_least_at_most`). -/
+theorem half_eq_meet : (half_sem : GQ α) = gqMeet atLeastHalf atMostHalf := by
+  funext R S
+  simp only [half_sem, gqMeet_apply, atLeastHalf, atMostHalf, eq_comm]
+  exact propext le_antisymm_iff
 
-   NPI licensing connection (via `Ladusaw1979`):
-   - scope-↓ monotone quantifiers (no, few) license weak NPIs in scope
-   - restrictor-↓ monotone quantifiers (every, no) license weak NPIs in restrictor
-   - left-anti-additive quantifiers (every, no) license strong NPIs -/
+open Classical in
+theorem atLeastHalf_scopeUp : ScopeUpwardMono (atLeastHalf (α := α)) :=
+  λ _ _ _ hSS' h => h.trans (Nat.mul_le_mul_left 2
+    (count_le_of_imp (λ x hx => ⟨hx.1, hSS' x hx.2⟩)))
 
--- ============================================================================
--- §12. [van-de-pol-etal-2023]: Simplicity and Universals
--- ============================================================================
+open Classical in
+theorem atMostHalf_scopeDown : ScopeDownwardMono (atMostHalf (α := α)) :=
+  λ _ _ _ hSS' h =>
+    (Nat.mul_le_mul_left 2 (count_le_of_imp (λ x hx => ⟨hx.1, hSS' x hx.2⟩))).trans h
 
-/-- Monotone quantifiers have strictly lower LZ complexity than
-    non-monotone ones. This is the strongest of the three effects.
-    ([van-de-pol-etal-2023]) -/
-structure MonotonicitySimplicity where
-  /-- Mean LZ complexity of monotone quantifiers (universe size 4) -/
-  monotone_mean_lz : ℚ
-  /-- Mean LZ complexity of non-monotone quantifiers -/
-  non_monotone_mean_lz : ℚ
-  /-- Monotone is simpler -/
-  monotone_simpler : monotone_mean_lz < non_monotone_mean_lz
+open Classical in
+/-- §4.11: on a restrictor of odd size, *more than half* is self-dual. -/
+theorem most_selfDual_of_odd_count {A : α → Prop} (h : Odd (count (λ x => A x)))
+    (S : α → Prop) : dualQ (most_sem : GQ α) A S ↔ most_sem A S := by
+  simp only [dualQ, innerNeg, outerNeg_apply, most_sem,
+    count_eq_decidable (fun x : α => A x ∧ ¬ ¬ S x) _,
+    count_eq_decidable (fun x : α => A x ∧ ¬ S x) _]
+  have hc : count (λ x : α => A x ∧ ¬ ¬ S x) = count (λ x : α => A x ∧ S x) :=
+    count_congr_iff (λ x => by tauto)
+  have hd := count_decompose (α := α) A S
+  obtain ⟨k, hk⟩ := h
+  omega
 
-/-- Conservative quantifiers have lower LZ complexity than
-    non-conservative ones. -/
-structure ConservativitySimplicity where
-  conservative_mean_lz : ℚ
-  non_conservative_mean_lz : ℚ
-  conservative_simpler : conservative_mean_lz < non_conservative_mean_lz
-
-/-- Quantity-satisfying quantifiers have lower LZ complexity, but the
-    effect is weaker than monotonicity. -/
-structure QuantitySimplicity where
-  quantity_mean_lz : ℚ
-  non_quantity_mean_lz : ℚ
-  quantity_simpler : quantity_mean_lz < non_quantity_mean_lz
-
-/-- The three universals combined: quantifiers satisfying all three have
-    the lowest complexity. Monotonicity is the strongest single predictor,
-    quantity the weakest. -/
-structure UniversalsSimplicityRanking where
-  monotonicity_effect : MonotonicitySimplicity
-  conservativity_effect : ConservativitySimplicity
-  quantity_effect : QuantitySimplicity
-
--- ============================================================================
--- §13. Conservativity Enables Domain Restriction
--- [barwise-cooper-1981] + [ritchie-schiller-2024]
--- ============================================================================
-
-/-- Conservativity universally enables domain restriction: all 6 English
-    quantity words remain conservative under any domain restrictor C.
-
-    This connects [barwise-cooper-1981]'s conservativity conjecture
-    (all simple determiners are conservative) to
-    [ritchie-schiller-2024]'s DDRPs. Domain restriction via
-    C-intersection is well-defined for the entire English determiner
-    system because every lexicalized determiner is conservative.
-
-    Cross-references:
-    - `conservative_domain_restricted` (general GQ theorem)
-    - `DDRP` structure (nested spatial regions → candidate restrictors)
-    - `RitchieSchiller2024.lean` (full RSA model with DDRPs) -/
-theorem domain_restriction_preserves_conservativity :
-    ∀ (q : QuantityWord) {α : Type*} [Fintype α] [DecidableEq α]
-      (C : DomainRestrictor α),
-    Conservative (λ R S => q.gqDenotation (α := α) (λ x => C x ∧ R x) S) := by
-  intro q α inst inst2 C
-  exact conservative_domain_restricted (conservativity_universal q)
+end English
 
 end BarwiseCooper1981
 
@@ -534,19 +389,7 @@ namespace BarwiseCooper1981
 
 open FirstOrder Language
 
-/-- Relation symbols: two unary predicates. -/
-inductive uvRel : ℕ → Type
-  | U : uvRel 1
-  | V : uvRel 1
-  deriving DecidableEq
-
-/-- The monadic language of C12 (equality is built into the formula type). -/
-def L_UV : Language :=
-  { Functions := fun _ => Empty
-    Relations := uvRel }
-
-abbrev uRel : L_UV.Relations 1 := .U
-abbrev vRel : L_UV.Relations 1 := .V
+open Quantification (L_UV uRel vRel structOfAB)
 
 /-- Quantifier count of a formula (`c(φ)` minus the free-variable count in
 B&C's notation). -/
@@ -558,21 +401,13 @@ def numQuant : ∀ {α : Type*} {n : ℕ}, L_UV.BoundedFormula α n → ℕ
   | _, _, .all f => numQuant f + 1
 
 /-- `M₁`: `U` is `[0, m)`, `V` is `[0, 2m)` — exactly half the V's are U's. -/
-@[reducible] def struc₁ (m k : ℕ) : L_UV.Structure (Fin k) where
-  funMap := fun f _ => f.elim
-  RelMap {n} r v :=
-    match r, v with
-    | .U, v => (v 0).val < m
-    | .V, v => (v 0).val < 2 * m
+@[reducible] def struc₁ (m k : ℕ) : L_UV.Structure (Fin k) :=
+  structOfAB (fun x => x.val < m) (fun x => x.val < 2 * m)
 
 /-- `M₂`: `U` is `[0, m+1)`, `V` is `[0, 2m)` — more than half the V's are
 U's. -/
-@[reducible] def struc₂ (m k : ℕ) : L_UV.Structure (Fin k) where
-  funMap := fun f _ => f.elim
-  RelMap {n} r v :=
-    match r, v with
-    | .U, v => (v 0).val < m + 1
-    | .V, v => (v 0).val < 2 * m
+@[reducible] def struc₂ (m k : ℕ) : L_UV.Structure (Fin k) :=
+  structOfAB (fun x => x.val < m + 1) (fun x => x.val < 2 * m)
 
 /-- Realization in `M₁` (structures are term-level, so instances are pinned
 explicitly). -/
@@ -731,7 +566,7 @@ theorem realize_iff_of_regionMatch (m k : ℕ) (hk : 3 * m ≤ k) :
     · exact e.elim
     rcases j with e | j
     · exact e.elim
-    simp only [Realize₁, Realize₂, Term.realize_var, Sum.elim_inr]
+    simp only [Realize₁, Realize₂]
     exact h.inj i j
   | rel R ts =>
     intro _ a b h
@@ -748,7 +583,8 @@ theorem realize_iff_of_regionMatch (m k : ℕ) (hk : 3 * m ≤ k) :
       obtain ⟨i, hi⟩ := term_eq_var (ts 0)
       rcases i with e | i
       · exact e.elim
-      show ((fun p => @Term.realize L_UV _ (struc₁ m k) _ (Sum.elim default a) (ts p)) 0).val < 2 * m ↔
+      show ((fun p => @Term.realize L_UV _ (struc₁ m k) _ (Sum.elim default a) (ts p)) 0).val
+          < 2 * m ↔
         ((fun p => @Term.realize L_UV _ (struc₂ m k) _ (Sum.elim default b) (ts p)) 0).val < 2 * m
       simp only [hi, Term.realize_var, Sum.elim_inr]
       exact h.inV i
@@ -787,7 +623,7 @@ private theorem ncard_val_lt (n c : ℕ) (hc : c ≤ n) :
   have hset : {x : Fin n | x.val < c} = ↑((Finset.Ico 0 c).attachFin
       (fun x hx => lt_of_lt_of_le (Finset.mem_Ico.mp hx).2 hc)) := by
     ext x
-    simp [Finset.mem_attachFin, Finset.mem_Ico]
+    simp
   rw [hset, Set.ncard_coe_finset, Finset.card_attachFin, Nat.card_Ico]
   omega
 
@@ -835,166 +671,18 @@ theorem more_than_half_not_definable :
   have hagree : Realize₁ m (3 * m + 1) φ default ↔ Realize₂ m (3 * m + 1) φ default :=
     realize_iff_of_regionMatch m (3 * m + 1) (by omega) φ (by omega)
       ⟨fun i => i.elim0, fun i => i.elim0, fun i => i.elim0⟩
-  have hsent₁ : @Sentence.Realize L_UV _ (struc₁ m (3 * m + 1)) φ ↔ Realize₁ m (3 * m + 1) φ default := by
+  have hsent₁ : @Sentence.Realize L_UV _ (struc₁ m (3 * m + 1)) φ ↔
+      Realize₁ m (3 * m + 1) φ default := by
     unfold Realize₁
     exact iff_of_eq (congrArg₂ (@BoundedFormula.Realize L_UV _ (struc₁ m (3 * m + 1)) Empty 0 φ)
       (funext fun e => e.elim) (funext fun i => i.elim0))
-  have hsent₂ : @Sentence.Realize L_UV _ (struc₂ m (3 * m + 1)) φ ↔ Realize₂ m (3 * m + 1) φ default := by
+  have hsent₂ : @Sentence.Realize L_UV _ (struc₂ m (3 * m + 1)) φ ↔
+      Realize₂ m (3 * m + 1) φ default := by
     unfold Realize₂
     exact iff_of_eq (congrArg₂ (@BoundedFormula.Realize L_UV _ (struc₂ m (3 * m + 1)) Empty 0 φ)
       (funext fun e => e.elim) (funext fun i => i.elim0))
   exact hmth₁ ((hφ _ (struc₁ m (3 * m + 1))).mp
     (hsent₁.mpr (hagree.mpr (hsent₂.mp ((hφ _ (struc₂ m (3 * m + 1))).mpr hmth₂)))))
-
-/-! ### The same result via the general Ehrenfeucht–Fraïssé apparatus
-
-The proof above is B&C's hand-rolled Fraïssé argument. The same conclusion follows
-from the project's *general* finite-rank EF engine
-(`Core.ModelTheory.EhrenfeuchtFraisseGame`): build, for each rank `k`, a pair of
-`L_UV`-structures that are rank-`k` back-and-forth equivalent yet separated by *more
-than half*, then feed `nEquiv_of_backForth` into `not_foDefinable_of_nEquiv`. This
-section is a *demonstration* of that apparatus on a known result — the colored-set
-back-and-forth of Libkin, *Elements of Finite Model Theory* §3 (Cor 3.10 and the two-
-unary-predicate "colored sets" example) — alongside, not in place of, B&C's own proof.
-
-The rank-`k` witnesses are exactly B&C's `struc₁`/`struc₂` instantiated at `m = k + 1`
-on the domain `Fin (3·(k+1)+1)`: the colour classes `U∩V`, `V \ U`, and `¬V` then each
-have matching size or both have size `≥ k + 1`, which is the "enough room" condition the
-`RegionMatch`-extension lemmas (`extend₁₂`/`extend₂₁`) already discharge. -/
-
-/-- Every `L_UV`-term is a variable, restated over `Fin m'` free variables (the file's
-`term_eq_var` is `private` and over `Empty`). -/
-private theorem term_eq_var_fin {γ : Type} (t : L_UV.Term γ) : ∃ i, t = Term.var i := by
-  cases t with
-  | var i => exact ⟨i, rfl⟩
-  | func f _ => exact f.elim
-
-private theorem sumElim_eq_append {m' n k : ℕ} (v : Fin m' → Fin k) (xs : Fin n → Fin k)
-    (i : Fin m' ⊕ Fin n) : Sum.elim v xs i = (Fin.append v xs) (finSumFinEquiv i) := by
-  rcases i with i | i <;> simp [Fin.append_left, Fin.append_right]
-
-/-- **Quantifier-free agreement (`BackForth 0` base case).** Region-matched tuples
-satisfy the same quantifier-rank-`0` formulas. Generalized over the bound-variable count
-`n` (so the `all` case is vacuous: it would force `qr ≥ 1`); the free tuple `v`/`w` and
-the bound tuple `xs`/`ys` are matched jointly via `Fin.append`. -/
-private theorem realize_iff_of_regionMatch_qf (m k : ℕ) :
-    ∀ {m' n : ℕ} (φ : L_UV.BoundedFormula (Fin m') n), φ.qr = 0 →
-      ∀ {v w : Fin m' → Fin k} {xs ys : Fin n → Fin k},
-        RegionMatch m k (Fin.append v xs) (Fin.append w ys) →
-        (@BoundedFormula.Realize L_UV _ (struc₁ m k) (Fin m') n φ v xs ↔
-         @BoundedFormula.Realize L_UV _ (struc₂ m k) (Fin m') n φ w ys) := by
-  intro m' n φ
-  induction φ with
-  | falsum => intro _ v w xs ys _; exact Iff.rfl
-  | equal t₁ t₂ =>
-    intro _ v w xs ys h
-    obtain ⟨i, rfl⟩ := term_eq_var_fin t₁
-    obtain ⟨j, rfl⟩ := term_eq_var_fin t₂
-    simp only [BoundedFormula.Realize, Term.realize_var]
-    rw [sumElim_eq_append v xs i, sumElim_eq_append v xs j,
-        sumElim_eq_append w ys i, sumElim_eq_append w ys j]
-    exact h.inj _ _
-  | rel R ts =>
-    intro _ v w xs ys h
-    cases R with
-    | U =>
-      obtain ⟨i, hi⟩ := term_eq_var_fin (ts 0)
-      simp only [BoundedFormula.Realize]
-      show ((fun p => @Term.realize L_UV _ (struc₁ m k) _ (Sum.elim v xs) (ts p)) 0).val < m ↔
-        ((fun p => @Term.realize L_UV _ (struc₂ m k) _ (Sum.elim w ys) (ts p)) 0).val < m + 1
-      simp only [hi, Term.realize_var]
-      rw [sumElim_eq_append v xs i, sumElim_eq_append w ys i]
-      exact h.inU _
-    | V =>
-      obtain ⟨i, hi⟩ := term_eq_var_fin (ts 0)
-      simp only [BoundedFormula.Realize]
-      show ((fun p => @Term.realize L_UV _ (struc₁ m k) _ (Sum.elim v xs) (ts p)) 0).val < 2 * m ↔
-        ((fun p => @Term.realize L_UV _ (struc₂ m k) _ (Sum.elim w ys) (ts p)) 0).val < 2 * m
-      simp only [hi, Term.realize_var]
-      rw [sumElim_eq_append v xs i, sumElim_eq_append w ys i]
-      exact h.inV _
-  | imp f₁ f₂ ih₁ ih₂ =>
-    intro hφ v w xs ys h
-    rw [BoundedFormula.qr_imp] at hφ
-    simp only [BoundedFormula.realize_imp]
-    exact imp_congr (ih₁ (by omega) h) (ih₂ (by omega) h)
-  | all f ih =>
-    intro hφ v w xs ys h
-    rw [BoundedFormula.qr_all] at hφ
-    omega
-
-/-- **The colored-set back-and-forth between `struc₁` and `struc₂`.** A region match of
-two `ℓ`-tuples lifts to the rank-`r` EF back-and-forth as long as `ℓ + r < m` (so each of
-the `r` remaining rounds still has "enough room" to extend the correspondence). The base
-case is `realize_iff_of_regionMatch_qf`; the forth/back steps reuse the file's
-`extend₁₂`/`extend₂₁`. -/
-private theorem backForth_of_regionMatch (m k : ℕ) (hk : 3 * m ≤ k) :
-    ∀ (r : ℕ) {ℓ : ℕ}, ℓ + r < m → ∀ {v w : Fin ℓ → Fin k}, RegionMatch m k v w →
-      @BackForth L_UV (Fin k) (Fin k) (struc₁ m k) (struc₂ m k) r ℓ v w := by
-  intro r
-  induction r with
-  | zero =>
-    intro ℓ _ v w h φ hφ
-    have hv : Fin.append v (default : Fin 0 → Fin k) = v := by
-      rw [Subsingleton.elim (default : Fin 0 → Fin k) Fin.elim0, Fin.append_elim0]; rfl
-    have hw : Fin.append w (default : Fin 0 → Fin k) = w := by
-      rw [Subsingleton.elim (default : Fin 0 → Fin k) Fin.elim0, Fin.append_elim0]; rfl
-    exact realize_iff_of_regionMatch_qf m k φ hφ (v := v) (w := w)
-      (xs := default) (ys := default) (by rw [hv, hw]; exact h)
-  | succ r ih =>
-    intro ℓ hℓ v w h
-    refine ⟨fun a => ?_, fun b => ?_⟩
-    · obtain ⟨b, hb⟩ := extend₁₂ m k hk (by omega) h a
-      exact ⟨b, ih (by omega) hb⟩
-    · obtain ⟨a, ha⟩ := extend₂₁ m k hk (by omega) h b
-      exact ⟨a, ih (by omega) ha⟩
-
-/-- `MoreThanHalf` as a property of bundled `L_UV`-structures, for the EF inexpressibility
-corollary `not_foDefinable_of_nEquiv`. -/
-def MoreThanHalfPred (M : CategoryTheory.Bundled.{0} L_UV.Structure) : Prop :=
-  MoreThanHalf M M.str
-
-/-- Rank-`k` witness `A`: `U = [0, k+1)`, `V = [0, 2k+2)` on `Fin (3k+4)` — exactly half
-the V's are U's, so `¬ MoreThanHalf`. -/
-def efWitnessA (k : ℕ) : CategoryTheory.Bundled.{0} L_UV.Structure :=
-  ⟨Fin (3 * (k + 1) + 1), struc₁ (k + 1) (3 * (k + 1) + 1)⟩
-
-/-- Rank-`k` witness `B`: `U = [0, k+2)`, `V = [0, 2k+2)` on `Fin (3k+4)` — more than half
-the V's are U's, so `MoreThanHalf`. -/
-def efWitnessB (k : ℕ) : CategoryTheory.Bundled.{0} L_UV.Structure :=
-  ⟨Fin (3 * (k + 1) + 1), struc₂ (k + 1) (3 * (k + 1) + 1)⟩
-
-private theorem not_moreThanHalf_efWitnessA (k : ℕ) : ¬ MoreThanHalfPred (efWitnessA k) := by
-  show ¬ MoreThanHalf (Fin (3 * (k + 1) + 1)) (struc₁ (k + 1) (3 * (k + 1) + 1))
-  rw [moreThanHalf_iff (m := k + 1) (c := k + 1) _ (fun _ => Iff.rfl) (fun _ => Iff.rfl)
-    (by omega) (by omega)]
-  omega
-
-private theorem moreThanHalf_efWitnessB (k : ℕ) : MoreThanHalfPred (efWitnessB k) := by
-  show MoreThanHalf (Fin (3 * (k + 1) + 1)) (struc₂ (k + 1) (3 * (k + 1) + 1))
-  rw [moreThanHalf_iff (m := k + 1) (c := k + 2) _ (fun _ => Iff.rfl) (fun _ => Iff.rfl)
-    (by omega) (by omega)]
-  omega
-
-private theorem nEquiv_efWitness (k : ℕ) : NEquiv k (efWitnessA k) (efWitnessB k) := by
-  haveI : Nonempty (efWitnessA k : Type) := ⟨(0 : Fin (3 * (k + 1) + 1))⟩
-  haveI : Nonempty (efWitnessB k : Type) := ⟨(0 : Fin (3 * (k + 1) + 1))⟩
-  refine nEquiv_of_backForth (efWitnessA k) (efWitnessB k) ?_
-  exact backForth_of_regionMatch (k + 1) (3 * (k + 1) + 1) (by omega) k (ℓ := 0) (by omega)
-    ⟨fun i => i.elim0, fun i => i.elim0, fun i => i.elim0⟩
-
-/-- **C12 via the general EF apparatus** ([barwise-cooper-1981] Appendix C, reproved
-through `Core.ModelTheory.EhrenfeuchtFraisseGame`). *More than half the V's are U's*
-is not first-order definable: for each rank `k` the structures `efWitnessA k` and
-`efWitnessB k` are `k`-equivalent (a colored-set back-and-forth) yet disagree on the
-property, so `not_foDefinable_of_nEquiv` applies. Cf. `more_than_half_not_definable`, which
-proves the same via B&C's own hand-rolled Fraïssé argument; Libkin, *Elements of Finite
-Model Theory* §3 (Cor 3.10 + colored sets). -/
-theorem more_than_half_not_FODefinable_via_EF : ¬ FODefinable MoreThanHalfPred := by
-  refine not_foDefinable_of_nEquiv (fun n => ⟨efWitnessA n, efWitnessB n, nEquiv_efWitness n, ?_⟩)
-  intro hiff
-  exact not_moreThanHalf_efWitnessA n (hiff.mpr (moreThanHalf_efWitnessB n))
-
 end BarwiseCooper1981
 
 /-! ### Appendix C: C13 — *most* is a determiner, not a quantifier
@@ -1015,6 +703,7 @@ automorphism argument"), reducing to C12's models. -/
 namespace BarwiseCooper1981
 
 open FirstOrder Language
+open Quantification (L_UV uRel vRel)
 
 /-- Formulas of B&C's `L(Q)`: the monadic language of C12 (atoms `U`, `V`,
 equality) plus the unrelativized majority quantifier `Qx[·]`. De Bruijn
@@ -1295,7 +984,7 @@ theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
       exact forall_congr' fun x =>
         realize_star_iff hUV f (by omega) (Fin.snoc xs x)
   | n, .qx f, hb, xs => by
-      haveI := Classical.decEq E
+      have := Classical.decEq E
       have hq : numQ (qx f) = numQ f + 1 := rfl
       rw [hq] at hb
       have hIH : ∀ b, ((star f).Realize U V (Fin.snoc xs b) ↔
@@ -1483,6 +1172,7 @@ theorem most_sem_not_definable :
 /-! ### The engine-level corollary: no fragment tree means *most* -/
 
 open Semantics.Composition in
+set_option linter.style.haveILetI false in
 /-- **No tree of the compiled fragment means *most***: for any logical
 vocabulary and disjoint naming maps over `L_UV`, no closed tree of the FO
 fragment has, across all nonempty finite models, exactly ⟦most⟧'s truth
@@ -1492,7 +1182,7 @@ theorem, not a design choice. -/
 theorem no_tree_means_most (fw : FOWords) (nm : LexNaming L_UV)
     (hnd : fw.Nodup) (hfr : fw.FreshFor nm) (hdj : nm.Disjoint) :
     ¬ ∃ (t : Syntax.Tree Unit String) (φ : L_UV.Formula ℕ)
-        (_ : compileFO fw nm t = some φ) (hcl : φ.freeVarFinset = ∅),
+        (_ : compileFO fw nm t = some φ) (_ : φ.freeVarFinset = ∅),
       ∀ (M : Type) [Fintype M] [Nonempty M] (S : L_UV.Structure M)
         (g : Assignment M),
         HoldsAt (Model.ofStructure M S)
