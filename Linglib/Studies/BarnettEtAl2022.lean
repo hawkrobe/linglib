@@ -1,488 +1,322 @@
-import Linglib.Core.Probability.ENNRealArith
-import Linglib.Core.Probability.Scores
-import Linglib.Pragmatics.DecisionTheoretic.Basic
-import Linglib.Pragmatics.RSA.CombinedUtility
+import Linglib.Core.Combinatorics.SetFamily.FourFunctions
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.Order.Field.Rat
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
+import Mathlib.Order.UpperLower.Basic
 
 /-!
-# [barnett-griffiths-hawkins-2022]: the weak evidence effect
+# Barnett, Griffiths and Hawkins 2022: a pragmatic account of the weak evidence effect
 
-RSA with a persuasive speaker whose utility adds `β · ln L0(w*|u)` for a
-goal state w* to the epistemic term (eq. 6; β = 0 is standard RSA). With
-w* = "longer" the speaker weight is `L0(longer|u)^β · 𝟙[u ∈ w]` (eq. 8;
-α = 1, so the exponent is β, here 2). A pragmatic listener who expects the
-strongest available evidence reads weak positive evidence as implying no
-stronger evidence exists — so it backfires.
-
-The paper's Stick Contest (5 sticks from {1,…,9}, 126 worlds) is
-formalized at 3 sticks from {1,…,5} (10 worlds, midpoint 3), preserving
-the load-bearing structure: the prior favors ¬longer (2/5) and
-`L0(longer|·)` is monotone in stick length.
+A speaker with a persuasive goal chooses among the true pieces of evidence with weight
+`L0(goal | u)^β`, so a listener who expects such a speaker discounts what they are shown: the
+state in which stronger evidence was available makes the speaker's actual choice less likely.
+Conditioned on the shown stick, the hidden sticks form a distributive lattice, the verdict
+*longer* is an upper set, and the speaker's share of the shown stick is antitone in the hidden
+sticks — so by the FKG inequality the pragmatic listener's belief in *longer* is at most the
+literal listener's, for every stick and every persuasive bias. The weak evidence effect is the
+case where the discount exceeds the literal support: in the Stick Contest a shown `6` lowers
+belief in *longer* below the prior at `β = 2` while a shown `9` raises it, and the range of
+backfiring evidence widens with `β`. The model follows the paper's simulation code: the hidden
+sticks are a multiset (a sorted vector) of lengths `1`–`9`, *longer* is a total of at least
+`25`, and the speaker normalizes over the five positions.
 
 ## Main results
 
-* `weak_evidence_effect`: at β = 2, stick 4 — positive literal evidence —
-  *backfires* under the pragmatic listener; `strong_evidence_works` shows
-  the strongest evidence cannot be explained away.
-* `l0_s5_positive` / `l0_s1_negative` / `l0_s5_strongest` / `l0_monotone`:
-  the literal-listener evidence ordering.
-* `posRelevant_but_backfires`: stick 4 is positively relevant evidence for
-  "longer" ([merin-1999-relevance]'s sign of [cummins-franke-2021]'s
-  argumentative strength) yet backfires — the model's wedge between
-  argumentative and pragmatic evidence.
-* `model_predicts_interaction` / `pragmatic_backfire`: the predicted
-  listener-type × evidence interaction matches the behavioral data.
+* `pragmatic_le_literal` — the pragmatic listener discounts every stick.
+* `pragmatic_zero` — at `β = 0` it is the literal listener.
+* `weak_evidence_effect`, `strongest_evidence`, `effect_widens` — the simulation claims.
 
-## Implementation notes
+## References
 
-The uniform world prior cancels from both listeners, so the chain is two
-`PMF.ofScores` levels over ℚ≥0 scores and every prediction is one
-event-mass kernel certificate.
+* [barnett-griffiths-hawkins-2022]
 -/
 
-open scoped ENNReal NNRat
+open Finset
 
 namespace BarnettEtAl2022
 
-open DTS
-open RSA.CombinedUtility
-
-/-! ### Domain Types -/
-
-/-- Stick lengths 1–5 -/
-inductive Stick where
-  | s1 | s2 | s3 | s4 | s5
-  deriving DecidableEq, Repr, Inhabited
-
-instance : Fintype Stick where
-  elems := {.s1, .s2, .s3, .s4, .s5}
-  complete := fun x => by cases x <;> simp
-
-/-- Worlds: sets of 3 distinct sticks from {1,...,5}. C(5,3) = 10 worlds. -/
-inductive StickWorld where
-  | w123 | w124 | w125 | w134 | w135
-  | w145 | w234 | w235 | w245 | w345
-  deriving DecidableEq, Repr, Inhabited
-
-instance : Fintype StickWorld where
-  elems := {.w123, .w124, .w125, .w134, .w135, .w145, .w234, .w235, .w245, .w345}
-  complete := fun x => by cases x <;> simp
-
-/-- Whether a stick is available in a given world. -/
-def worldContains : StickWorld → Stick → Prop
-  | .w123, .s1 | .w123, .s2 | .w123, .s3 => True
-  | .w124, .s1 | .w124, .s2 | .w124, .s4 => True
-  | .w125, .s1 | .w125, .s2 | .w125, .s5 => True
-  | .w134, .s1 | .w134, .s3 | .w134, .s4 => True
-  | .w135, .s1 | .w135, .s3 | .w135, .s5 => True
-  | .w145, .s1 | .w145, .s4 | .w145, .s5 => True
-  | .w234, .s2 | .w234, .s3 | .w234, .s4 => True
-  | .w235, .s2 | .w235, .s3 | .w235, .s5 => True
-  | .w245, .s2 | .w245, .s4 | .w245, .s5 => True
-  | .w345, .s3 | .w345, .s4 | .w345, .s5 => True
-  | _, _ => False
-
-instance : ∀ w u, Decidable (worldContains w u) := fun w u => by
-  cases w <;> cases u <;> (unfold worldContains; infer_instance)
-
-/-- A world is "longer" if the average stick length exceeds the midpoint (3);
-equivalently, the three sticks sum past 9. 4 of 10 worlds qualify. -/
-def longer : StickWorld → Prop
-  | .w145 | .w235 | .w245 | .w345 => True
-  | _ => False
-
-instance : DecidablePred longer := fun w => by
-  cases w <;> (unfold longer; infer_instance)
-
-/-! ### Persuasive-speaker scores -/
-
-/-- The literal listener's longer-probability per stick: each stick
-appears in six worlds, and `l0LongerQ_eq_eventMass` certifies these
-fractions against the chain. -/
-def l0LongerQ : Stick → ℚ≥0
-  | .s1 => 1/6
-  | .s2 => 1/3
-  | .s3 => 1/3
-  | .s4 => 1/2
-  | .s5 => 2/3
-
-/-- `l0LongerQ` agrees with the chain: it is the literal listener's
-longer-event mass at each stick. -/
-theorem l0LongerQ_eq_eventMass (u : Stick) :
-    l0LongerQ u = PMF.eventMass
-      (PMF.scoresWith .uniform fun w => if worldContains w u then 1 else 0)
-      longer := by
-  cases u <;> decide +kernel
-
-/-- Persuasive-speaker weight (eq. 8 at β = 2): `L0(longer|u)² · 𝟙[u ∈ w]`. -/
-def s1Score (w : StickWorld) (u : Stick) : ℚ≥0 :=
-  if worldContains w u then l0LongerQ u ^ 2 else 0
-
-/-! ### The chain
-
-The world prior is uniform, so it cancels from both listeners: L0 is the
-normalized extension indicator, the persuasive speaker normalizes
-`s1Score` per world, and L1 is the normalized speaker column. -/
-
-/-- Literal listener over worlds (uniform prior conditioned on the
-extension). -/
-noncomputable def l0 (u : Stick) : PMF StickWorld :=
-  .ofScores .uniform fun w => if worldContains w u then 1 else 0
-
-/-- Event marginal of the literal listener. -/
-noncomputable def l0Event (u : Stick) (P : StickWorld → Prop) [DecidablePred P] : ℝ≥0∞ :=
-  ∑' w, if P w then l0 u w else 0
-
-/-- Persuasive speaker (eq. 8 at β = 2). -/
-noncomputable def s1Persuade (w : StickWorld) : PMF Stick :=
-  .ofScores .uniform (s1Score w)
-
-/-- Pragmatic listener over worlds: the normalized speaker column (the
-uniform prior cancels). -/
-noncomputable def l1w (u : Stick) : PMF StickWorld :=
-  .ofScores .uniform fun w => PMF.scoresWith .uniform (s1Score w) u
-
-/-- Event marginal of the pragmatic listener. -/
-noncomputable def l1Event (u : Stick) (P : StickWorld → Prop) [DecidablePred P] : ℝ≥0∞ :=
-  ∑' w, if P w then l1w u w else 0
-
-open scoped ENNReal
-
-/-! ### Predictions — L0 -/
-
-/-- L0(longer|s5) > L0(¬longer|s5): stick 5 is positive evidence for "longer".
-4 of 6 worlds containing s5 are longer, vs 2 not-longer. -/
-theorem l0_s5_positive :
-    l0Event .s5 (fun w => ¬ longer w) < l0Event .s5 longer :=
-  PMF.ofScores_event_lt _ _ (by decide +kernel)
-
-/-- L0(longer|s5) > L0(longer|s4): stick 5 provides stronger evidence than s4. -/
-theorem l0_s5_strongest : l0Event .s4 longer < l0Event .s5 longer :=
-  PMF.ofScores_event_lt_cross _ _ _ _ (by decide +kernel)
-
-/-- L0(¬longer|s1) > L0(longer|s1): stick 1 is evidence against "longer".
-Only 1 of 6 worlds containing s1 is longer. -/
-theorem l0_s1_negative :
-    l0Event .s1 longer < l0Event .s1 (fun w => ¬ longer w) :=
-  PMF.ofScores_event_lt _ _ (by decide +kernel)
-
-/-- L0(longer|·) is monotonically increasing in stick length. This structural
-property ensures the simplified domain faithfully mirrors the paper's full domain
-(Appendix Theorem 2). -/
-theorem l0_monotone :
-    l0LongerQ .s1 ≤ l0LongerQ .s2 ∧
-    l0LongerQ .s2 ≤ l0LongerQ .s3 ∧
-    l0LongerQ .s3 ≤ l0LongerQ .s4 ∧
-    l0LongerQ .s4 ≤ l0LongerQ .s5 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> simp only [l0LongerQ] <;>
-    first
-      | rfl
-      | exact_mod_cast (by norm_num : (1:ℚ)/6 ≤ 1/3)
-      | exact_mod_cast (by norm_num : (1:ℚ)/3 ≤ 1/2)
-      | exact_mod_cast (by norm_num : (1:ℚ)/2 ≤ 2/3)
-
-/-! ### Predictions — L1 (weak evidence effect) -/
-
-/-- The weak evidence effect: at β = 2, showing stick 4 — positive literal
-evidence — *decreases* the pragmatic listener's belief in "longer" below
-the ¬longer mass (p. 172: "the absence of strong evidence from a speaker
-who would be highly motivated to show it statistically implies that no
-such evidence exists"). -/
-theorem weak_evidence_effect :
-    l1Event .s4 longer < l1Event .s4 (fun w => ¬ longer w) :=
-  PMF.ofScores_event_lt _ _ (by decide +kernel)
-
-/-- Strong evidence works: the strongest available evidence cannot be
-explained away by the absence of something better. -/
-theorem strong_evidence_works :
-    l1Event .s5 (fun w => ¬ longer w) < l1Event .s5 longer :=
-  PMF.ofScores_event_lt _ _ (by decide +kernel)
-
-/-! ### Bridge Theorems -/
-
-/-- At β=1, the persuasive utility equals combinedWeighted(1,1,...). -/
-theorem goalOriented_at_one (uEpi uPers : ℚ) :
-    goalOrientedUtility uEpi uPers 1 = combinedWeighted 1 1 uEpi uPers :=
-  goalOriented_eq_combinedWeighted uEpi uPers 1
-
-/-- The paper's Eq. 6 (additive: U_epi + β·U_pers) equals
-(1+β) · combined(β/(1+β), U_epi, U_pers). -/
-theorem goalOriented_via_combined (uEpi uPers β : ℚ) (hβ : 0 ≤ β) :
-    goalOrientedUtility uEpi uPers β = (1 + β) * combined (betaToLam β) uEpi uPers :=
-  goalOriented_eq_scaled_combined uEpi uPers β hβ
-
-instance : MeasurableSpace StickWorld := ⊤
-instance : DiscreteMeasurableSpace StickWorld := ⟨fun _ => trivial⟩
-
-/-- The contest as a Merin/DTS context: counting prior over the ten worlds,
-topic "longer" (4 of the 10 worlds; conditioning normalizes, so counting and
-uniform priors induce the same relevance facts). -/
-noncomputable def stickContext : DTS.Context StickWorld :=
-  ⟨{w | longer w}, .of_discrete, .count⟩
-
-/-- The evidence of showing stick `u`: the worlds containing it. -/
-def shows (u : Stick) : Set StickWorld := {w | worldContains w u}
-
-private lemma topic_eq : ({w | longer w} : Set StickWorld) =
-    ↑({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
-      Finset StickWorld) := by
-  ext w; cases w <;> simp [longer]
-
-private lemma shows_s4_eq : shows .s4 =
-    ↑({StickWorld.w124, StickWorld.w134, StickWorld.w145, StickWorld.w234,
-      StickWorld.w245, StickWorld.w345} : Finset StickWorld) := by
-  ext w; cases w <;> simp [shows, worldContains]
-
-private lemma shows_s3_eq : shows .s3 =
-    ↑({StickWorld.w123, StickWorld.w134, StickWorld.w135, StickWorld.w234,
-      StickWorld.w235, StickWorld.w345} : Finset StickWorld) := by
-  ext w; cases w <;> simp [shows, worldContains]
-
-/-- Showing stick 4 is positively relevant evidence for "longer" (Bayes
-factor 3/2): in [cummins-franke-2021]'s terms it has positive argumentative
-strength toward the goal. -/
-theorem s4_posRelevant : DTS.posRelevant stickContext (shows .s4) := by
-  simp only [DTS.posRelevant, DTS.bayesFactor_def, stickContext,
-    ProbabilityTheory.cond_apply MeasurableSet.of_discrete, topic_eq, shows_s4_eq,
-    ← Finset.coe_compl, ← Finset.coe_inter, MeasureTheory.Measure.count_apply_finset]
-  rw [show ({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
-      Finset StickWorld).card = 4 by decide,
-    show (({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
-      Finset StickWorld) ∩ {StickWorld.w124, StickWorld.w134, StickWorld.w145,
-      StickWorld.w234, StickWorld.w245, StickWorld.w345}).card = 3 by decide,
-    show (({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
-      Finset StickWorld)ᶜ).card = 6 by decide,
-    show ((({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
-      Finset StickWorld))ᶜ ∩ {StickWorld.w124, StickWorld.w134, StickWorld.w145,
-      StickWorld.w234, StickWorld.w245, StickWorld.w345}).card = 3 by decide]
-  rw [ENNReal.lt_div_iff_mul_lt (Or.inr (by finiteness)) (Or.inl (by finiteness)), one_mul]
-  gcongr <;> norm_num
-
-/-- Showing stick 3 is not positively relevant to "longer" (Bayes factor 3/4). -/
-theorem s3_not_posRelevant : ¬ DTS.posRelevant stickContext (shows .s3) := by
-  simp only [DTS.posRelevant, DTS.bayesFactor_def, stickContext,
-    ProbabilityTheory.cond_apply MeasurableSet.of_discrete, topic_eq, shows_s3_eq,
-    ← Finset.coe_compl, ← Finset.coe_inter, MeasureTheory.Measure.count_apply_finset]
-  rw [show ({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
-      Finset StickWorld).card = 4 by decide,
-    show (({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
-      Finset StickWorld) ∩ {StickWorld.w123, StickWorld.w134, StickWorld.w135,
-      StickWorld.w234, StickWorld.w235, StickWorld.w345}).card = 2 by decide,
-    show (({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
-      Finset StickWorld)ᶜ).card = 6 by decide,
-    show ((({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
-      Finset StickWorld))ᶜ ∩ {StickWorld.w123, StickWorld.w134, StickWorld.w135,
-      StickWorld.w234, StickWorld.w235, StickWorld.w345}).card = 4 by decide]
-  rw [not_lt]
-  refine ENNReal.le_of_toReal
-    ((ENNReal.div_lt_top (by finiteness)
-      (mul_ne_zero (ENNReal.inv_ne_zero.mpr (by finiteness)) (by norm_num))).ne)
-    ENNReal.one_ne_top ?_
-  rw [ENNReal.toReal_div]
-  norm_num [ENNReal.toReal_inv]
-
-/-- The weak evidence effect shows that argumentatively positive evidence
-can still backfire under a pragmatic listener model. This is the core
-insight connecting [barnett-griffiths-hawkins-2022] to
-[cummins-franke-2021]'s work on argumentative strength.
-
-Stick 4 is positively relevant evidence for "longer", yet L1 assigns more
-mass to ¬longer than longer after seeing it. -/
-theorem posRelevant_but_backfires :
-    posRelevant stickContext (shows .s4) ∧
-    l1Event .s4 longer < l1Event .s4 (fun w => ¬ longer w) :=
-  ⟨s4_posRelevant, weak_evidence_effect⟩
-
-/-! ### Experimental Design & Behavioral Data -/
-
-/-- Listener type inferred from speaker expectation phase -/
-inductive ListenerType where
-  | pragmatic   -- expects strongest evidence (67% of participants)
-  | literal     -- expects weaker/hedged evidence (33%)
-  deriving DecidableEq, Repr
-
-/-- Evidence strength conditions (distance from midpoint 5") -/
-inductive EvidenceStrength where
-  | weak      -- 6" (1" from midpoint)
-  | moderate  -- 7" (2" from midpoint)
-  | strong    -- 8" (3" from midpoint)
-  | strongest -- 9" (4" from midpoint)
-  deriving DecidableEq, Repr
-
-/-- Which contestant goes first -/
-inductive FirstContestant where
-  | longBiased   -- wants judge to say "longer"
-  | shortBiased  -- wants judge to say "shorter"
-  deriving DecidableEq, Repr
-
-/-- Stick Contest design parameters -/
-structure StickContestDesign where
-  nSticks : Nat            -- sticks per sample (5)
-  minLength : Nat          -- minimum stick length (1")
-  maxLength : Nat          -- maximum stick length (9")
-  midpoint : Nat           -- midpoint for verdict (5")
-  nParticipants : Nat      -- total after exclusions
-  deriving Repr
-
-/-- The actual experimental parameters -/
-def design : StickContestDesign :=
-  { nSticks := 5
-    minLength := 1
-    maxLength := 9
-    midpoint := 5
-    nParticipants := 723 }
-
-/-- Proportion expecting strongest evidence (pragmatic listeners) -/
-def pragmaticProportion : ℚ := 485 / 723
-
-/-- Proportion expecting weaker evidence (literal listeners) -/
-def literalProportion : ℚ := 238 / 723
-
-theorem pragmatic_is_majority : pragmaticProportion > 1 / 2 := by norm_num [pragmaticProportion]
-
-/-- Key interaction: speaker expectations × evidence strength.
-t(718) = 5.2, p < 0.001 (p. 175) -/
-structure InteractionEffect where
-  tStatistic : ℚ
-  df : Nat
-  pLessThan : ℚ
-  deriving Repr
-
-def interactionEffect : InteractionEffect :=
-  { tStatistic := 52 / 10  -- 5.2
-    df := 718
-    pLessThan := 1 / 1000 }
-
-/-- Behavioral result for a listener group -/
-structure GroupResult where
-  listenerType : ListenerType
-  nParticipants : Nat
-  meanSlider : ℚ           -- 0–100 scale, 50 = neutral
-  ci95Lower : Option ℚ     -- 95% CI lower bound (when reported)
-  ci95Upper : Option ℚ     -- 95% CI upper bound (when reported)
-  deriving Repr
-
-/-- Pragmatic group: weak evidence backfires (mean below 50).
-95% CI: [32.3, 37.3] (paper p. 175). -/
-def pragmaticResult : GroupResult :=
-  { listenerType := .pragmatic
-    nParticipants := 485
-    meanSlider := 347 / 10    -- 34.7
-    ci95Lower := some (323 / 10)   -- 32.3
-    ci95Upper := some (373 / 10) } -- 37.3
-
-/-- Literal group: no weak evidence effect (mean at 50).
-CIs not reported in paper. -/
-def literalResult : GroupResult :=
-  { listenerType := .literal
-    nParticipants := 238
-    meanSlider := 501 / 10  -- 50.1
-    ci95Lower := none
-    ci95Upper := none }
-
-/-- Pragmatic group shows backfire: mean significantly below 50 (midpoint) -/
-theorem pragmatic_backfire : pragmaticResult.meanSlider < 50 := by norm_num [pragmaticResult]
-
-/-- Literal group shows no backfire: mean at midpoint -/
-theorem literal_no_backfire : literalResult.meanSlider > 49 := by norm_num [literalResult]
-
-/-- The two groups differ in the predicted direction -/
-theorem groups_differ :
-    pragmaticResult.meanSlider < literalResult.meanSlider := by
-  norm_num [pragmaticResult, literalResult]
-
-/-! ### Model Comparison (Table 1) -/
-
-/-- Model families compared -/
-inductive ModelFamily where
-  | anchorAdjust     -- A&A: P(w|u) = P(w) + η(s(u) - R)
-  | minAcceptable    -- MAS: like A&A but R ~ Unif[-1,1]
-  | rsaPragmatic     -- RSA with persuasive speaker
-  deriving DecidableEq, Repr
-
-/-- Model variant (how individual differences are handled) -/
-inductive ModelVariant where
-  | homogeneous       -- single model for all participants
-  | heterogeneous     -- mixture of J0 and J1
-  | speakerDependent  -- mixture weights conditioned on speaker phase
-  deriving DecidableEq, Repr
-
-/-- Model comparison result from Table 1 -/
-structure ModelComparisonDatum where
-  family : ModelFamily
-  variant : ModelVariant
-  logLikelihood : ℚ
-  waic : ℚ
-  waicSE : ℚ
-  psisLoo : ℚ
-  psisLooSE : ℚ
-  deriving Repr
-
-/-- Table 1 data -/
-def modelComparison : List ModelComparisonDatum :=
-  [ ⟨.anchorAdjust,  .homogeneous,      -281/10,  577/10, 99/10,  288/10, 99/10⟩
-  , ⟨.minAcceptable, .homogeneous,       82/10,   -133/10, 96/10, -66/10, 96/10⟩
-  , ⟨.minAcceptable, .heterogeneous,     82/10,   -113/10, 95/10, -56/10, 95/10⟩
-  , ⟨.rsaPragmatic,  .homogeneous,       81/10,   -133/10, 95/10, -67/10, 95/10⟩
-  , ⟨.rsaPragmatic,  .heterogeneous,     81/10,   -105/10, 93/10, -52/10, 93/10⟩
-  , ⟨.rsaPragmatic,  .speakerDependent,  12,      -164/10, 91/10, -92/10, 91/10⟩
-  ]
-
-/-- The RSA speaker-dependent model has the best (highest) log-likelihood -/
-theorem rsa_speaker_dep_best_likelihood :
-    (12 : ℚ) > 82 / 10 := by norm_num
-
-/-- The RSA speaker-dependent model has the best (lowest) WAIC -/
-theorem rsa_speaker_dep_best_waic :
-    (-164 : ℚ) / 10 < -133 / 10 := by norm_num
-
-/-! ### Fitted Parameters -/
-
-/-- Fitted parameters for the best model (RSA speaker-dependent).
-β̂ = 2.26 and mixture weights from main text (p. 178);
-β̄ = 2.03 and ō = −0.13 from Fig 3B caption (p. 177). -/
-structure FittedParams where
-  betaMAP : ℚ              -- MAP estimate of persuasive bias (p. 178)
-  betaCV : ℚ               -- 10-fold CV average β (Fig 3B)
-  responseOffsetCV : ℚ     -- 10-fold CV average offset (Fig 3B)
-  pragmaticMixWeight : ℚ   -- mixture weight for pragmatic group (p. 178)
-  literalMixWeight : ℚ     -- mixture weight for literal group (p. 178)
-  deriving Repr
-
-def bestModelParams : FittedParams :=
-  { betaMAP := 226 / 100           -- β̂ = 2.26 (p. 178)
-    betaCV := 203 / 100            -- β̄ = 2.03 (Fig 3B)
-    responseOffsetCV := -13 / 100  -- ō = -0.13 (Fig 3B)
-    pragmaticMixWeight := 99/100   -- p̂_z = 0.99 (J1 dominates; p. 178)
-    literalMixWeight := 1/10 }     -- p̂_z = 0.1 (J0 dominates; p. 178)
-
-/-- β > 0 provides strong support for non-zero persuasive bias -/
-theorem beta_positive : bestModelParams.betaMAP > 0 := by norm_num [bestModelParams]
-
-/-- Pragmatic group is best explained by J1 (pragmatic listener model) -/
-theorem pragmatic_group_uses_j1 :
-    bestModelParams.pragmaticMixWeight > 9 / 10 := by norm_num [bestModelParams]
-
-/-- Literal group is best explained by J0 (literal listener model) -/
-theorem literal_group_uses_j0 :
-    bestModelParams.literalMixWeight < 2 / 10 := by norm_num [bestModelParams]
-
-/-! ### Model–Data Connection -/
-
-/-- The RSA model predicts the qualitative pattern underlying the observed
-interaction between listener type and evidence strength (t(718) = 5.2,
-p < 0.001). To the literal model (L0), s4 is positively relevant evidence,
-predicting no backfire. The pragmatic model (L1) shows backfire. The experiment
-confirms exactly this divergence: pragmatic participants' mean (34.7) falls
-below neutral (50), while literal participants' mean (50.1) does not. -/
-theorem model_predicts_interaction :
-    -- Model: L0 (literal) — s4 is positive evidence
-    posRelevant stickContext (shows .s4) ∧
-    -- Model: L1 (pragmatic) — s4 backfires
-    l1Event .s4 longer < l1Event .s4 (fun w => ¬ longer w) ∧
-    -- Data: pragmatic group shows backfire
-    pragmaticResult.meanSlider < 50 ∧
-    -- Data: literal group shows no backfire
-    literalResult.meanSlider > 49 :=
-  ⟨s4_posRelevant, weak_evidence_effect, pragmatic_backfire, literal_no_backfire⟩
+/-! ### Beliefs under a weight -/
+
+section Belief
+
+variable {X : Type*} [Fintype X] (μ : X → ℚ) (P Q : X → Prop) [DecidablePred P] [DecidablePred Q]
+
+/-- The belief in `P` under the weight `μ`. -/
+def belief : ℚ := (∑ x ∈ univ.filter P, μ x) / ∑ x, μ x
+
+variable {μ P Q}
+
+theorem belief_nonneg (hμ : 0 ≤ μ) : 0 ≤ belief μ P :=
+  div_nonneg (sum_nonneg λ x _ => hμ x) (sum_nonneg λ x _ => hμ x)
+
+theorem belief_pos (hμ : 0 ≤ μ) {x : X} (hx : 0 < μ x) (hP : P x) : 0 < belief μ P :=
+  div_pos (sum_pos' (λ y _ => hμ y) ⟨x, mem_filter.2 ⟨mem_univ x, hP⟩, hx⟩)
+    (sum_pos' (λ y _ => hμ y) ⟨x, mem_univ x, hx⟩)
+
+/-- A weaker event has a smaller belief. -/
+theorem belief_le_belief (hμ : 0 ≤ μ) (h : ∀ x, P x → Q x) : belief μ P ≤ belief μ Q :=
+  div_le_div_of_nonneg_right
+    (sum_le_sum_of_subset_of_nonneg (monotone_filter_right _ λ x _ => h x) λ x _ _ => hμ x)
+    (sum_nonneg λ x _ => hμ x)
+
+/-- Scaling the weight leaves beliefs unchanged. -/
+theorem belief_mul_const {c : ℚ} (hc : c ≠ 0) : belief (μ * λ _ => c) P = belief μ P := by
+  simp only [belief, Pi.mul_apply, ← sum_mul]
+  rw [mul_div_mul_right _ _ hc]
+
+/-- Reweighting by an antitone factor lowers the belief in an upper set, under a
+log-supermodular weight. -/
+theorem belief_mul_le [DistribLattice X] {s : X → ℚ} (hμ₀ : 0 ≤ μ) (hs₀ : 0 ≤ s)
+    (hs : Antitone s) (hP : IsUpperSet {x | P x}) (hμ : ∀ a b, μ a * μ b ≤ μ (a ⊓ b) * μ (a ⊔ b))
+    (hpos : 0 < ∑ x, μ x * s x) : belief (μ * s) P ≤ belief μ P := by
+  have hμpos : 0 < ∑ x, μ x := by
+    refine (sum_nonneg λ x _ => hμ₀ x).lt_of_ne λ h => hpos.ne' ?_
+    rw [eq_comm, sum_eq_zero_iff_of_nonneg (λ x _ => hμ₀ x)] at h
+    exact sum_eq_zero λ x _ => by rw [h x (mem_univ x), zero_mul]
+  have key := fkg_antitone_monotone hμ₀ hs₀ (λ x => by dsimp; split_ifs <;> norm_num) hs
+    (λ x y hxy => by
+      dsimp
+      split_ifs with hx hy
+      · exact le_rfl
+      · exact absurd (hP hxy hx) hy
+      · exact zero_le_one
+      · exact le_rfl) hμ (g := λ x => if P x then (1 : ℚ) else 0)
+  simp only [mul_ite, mul_one, mul_zero, ← sum_filter] at key
+  simp only [belief, Pi.mul_apply]
+  rw [div_le_div_iff₀ hpos hμpos]
+  linarith [key]
+
+end Belief
+
+/-! ### The Stick Contest -/
+
+/-- `n` hidden sticks of lengths `1`–`9`. -/
+abbrev Sticks (n : ℕ) := Fin n → Fin 9
+
+/-- The length of a stick. -/
+def length (i : Fin 9) : ℕ := i.val + 1
+
+theorem length_mono : Monotone length := λ _ _ h => Nat.succ_le_succ h
+
+variable {n : ℕ}
+
+/-- The total length of the hidden sticks. -/
+def total (x : Sticks n) : ℕ := ∑ i, length (x i)
+
+theorem total_mono : Monotone (total (n := n)) :=
+  λ _ _ h => sum_le_sum λ i _ => length_mono (h i)
+
+/-- The verdict *longer*: the five sticks average at least the midpoint `5`, so with `shown`
+the total of the sticks already shown, the hidden ones bring the total to at least `25`. -/
+def Long (shown : ℕ) (x : Sticks n) : Prop := 25 ≤ shown + total x
+
+instance (shown : ℕ) : DecidablePred (Long (n := n) shown) := λ _ => Nat.decLe _ _
+
+theorem long_mono {shown shown' : ℕ} (h : shown ≤ shown') {x : Sticks n} (hx : Long shown x) :
+    Long shown' x :=
+  le_trans hx (Nat.add_le_add_right h _)
+
+theorem isUpperSet_long (shown : ℕ) : IsUpperSet {x : Sticks n | Long shown x} :=
+  λ _ _ hxy hx => le_trans hx (Nat.add_le_add_left (total_mono hxy) _)
+
+/-! ### Multisets of sticks as sorted vectors -/
+
+instance : DecidablePred (Monotone : Sticks n → Prop) :=
+  λ x => decidable_of_iff (∀ i j, i ≤ j → x i ≤ x j) Iff.rfl
+
+/-- The uniform weight over multisets of hidden sticks: the sorted vectors. -/
+def sorted (x : Sticks n) : ℚ := if Monotone x then 1 else 0
+
+theorem sorted_nonneg : 0 ≤ sorted (n := n) := λ x => by unfold sorted; split_ifs <;> norm_num
+
+theorem sorted_logSupermodular (a b : Sticks n) :
+    sorted a * sorted b ≤ sorted (a ⊓ b) * sorted (a ⊔ b) := by
+  by_cases h : Monotone a ∧ Monotone b
+  · simp [sorted, h.1, h.2, h.1.inf h.2, h.1.sup h.2]
+  · have : sorted a * sorted b = 0 := by
+      rcases not_and_or.1 h with h' | h' <;> simp [sorted, h']
+    rw [this]
+    exact mul_nonneg (sorted_nonneg _) (sorted_nonneg _)
+
+/-- The sticks are sorted and at least `lo`. -/
+def SortedFrom (lo : Fin 9) (x : Sticks n) : Prop := Monotone x ∧ ∀ i, lo ≤ x i
+
+instance (lo : Fin 9) : DecidablePred (SortedFrom (n := n) lo) := λ _ => inferInstanceAs
+  (Decidable (_ ∧ _))
+
+theorem sortedFrom_cons {lo a : Fin 9} {x : Sticks n} :
+    SortedFrom lo (Fin.cons a x) ↔ lo ≤ a ∧ SortedFrom a x := by
+  constructor
+  · rintro ⟨hm, hlo⟩
+    refine ⟨by simpa using hlo 0, ?_, λ i => by simpa using hm (Fin.zero_le i.succ)⟩
+    have := hm.comp Fin.strictMono_succ.monotone
+    simpa [Function.comp_def] using this
+  · rintro ⟨hla, hm, hlo⟩
+    refine ⟨?_, λ i => Fin.cases hla (λ j => hla.trans (hlo j)) i⟩
+    rw [Fin.monotone_iff_le_succ]
+    intro i
+    cases n with
+    | zero => exact i.elim0
+    | succ n =>
+      refine Fin.cases ?_ (λ j => ?_) i
+      · simpa using hlo 0
+      · simpa using Fin.monotone_iff_le_succ.1 hm j
+
+theorem sortedFrom_zero {x : Sticks n} : SortedFrom 0 x ↔ Monotone x :=
+  ⟨And.left, λ h => ⟨h, λ _ => Fin.zero_le _⟩⟩
+
+/-- Summing over the sticks one at a time. -/
+theorem sum_sticks_succ (f : Sticks (n + 1) → ℚ) :
+    ∑ x, f x = ∑ a, ∑ x : Sticks n, f (Fin.cons a x) := by
+  rw [← (Fin.consEquiv λ _ => Fin 9).sum_comp, Fintype.sum_prod_type]
+  rfl
+
+/-- The sum of `f` over the sorted vectors at least `lo`, enumerated one stick at a time. -/
+def sortedSum : (n : ℕ) → Fin 9 → (Sticks n → ℚ) → ℚ
+  | 0, _, f => f default
+  | n + 1, lo, f => ∑ a ∈ univ.filter (lo ≤ ·), sortedSum n a λ x => f (Fin.cons a x)
+
+theorem sum_sortedFrom (lo : Fin 9) (f : Sticks n → ℚ) :
+    ∑ x, (if SortedFrom lo x then f x else 0) = sortedSum n lo f := by
+  induction n generalizing lo with
+  | zero =>
+    rw [Fintype.sum_unique, if_pos ⟨λ i => i.elim0, λ i => i.elim0⟩]
+    exact congrArg f (Subsingleton.elim _ _)
+  | succ n ih =>
+    rw [sum_sticks_succ, sortedSum, sum_filter]
+    refine sum_congr rfl λ a _ => ?_
+    by_cases h : lo ≤ a
+    · simp only [sortedFrom_cons, h, true_and, if_true]
+      exact ih a _
+    · simp [sortedFrom_cons, h]
+
+/-- Beliefs under the multiset weight, computed one stick at a time. -/
+theorem belief_sorted_mul (g : Sticks n → ℚ) (P : Sticks n → Prop) [DecidablePred P] :
+    belief (sorted * g) P = sortedSum n 0 (λ x => if P x then g x else 0) / sortedSum n 0 g := by
+  unfold belief
+  rw [sum_filter, ← sum_sortedFrom, ← sum_sortedFrom]
+  congr 1 <;> refine sum_congr rfl λ x _ => ?_ <;>
+    simp only [Pi.mul_apply, sorted, sortedFrom_zero] <;> split_ifs <;> simp
+
+theorem belief_sorted (P : Sticks n → Prop) [DecidablePred P] :
+    belief sorted P = sortedSum n 0 (λ x => if P x then 1 else 0) / sortedSum n 0 1 := by
+  simpa only [mul_one, Pi.one_apply] using belief_sorted_mul 1 P
+
+/-! ### The listeners -/
+
+/-- The literal listener's belief in *longer* after seeing the stick `u`. -/
+def literal (u : Fin 9) : ℚ := belief (sorted (n := 4)) (Long (length u))
+
+/-- The belief in *longer* before any evidence. -/
+def prior : ℚ := belief (sorted (n := 5)) (Long 0)
+
+/-- The persuasive weight of showing `u`: the literal support it lends the goal, raised to the
+bias `β`. -/
+def persuasive (β : ℕ) (u : Fin 9) : ℚ := literal u ^ β
+
+/-- The persuasive speaker's share of showing `u` when the other sticks are `x`. -/
+def share (β : ℕ) (u : Fin 9) (x : Sticks 4) : ℚ :=
+  persuasive β u / (persuasive β u + ∑ i, persuasive β (x i))
+
+/-- The pragmatic listener's belief in *longer* after seeing `u` from a speaker of bias `β`. -/
+def pragmatic (β : ℕ) (u : Fin 9) : ℚ := belief (sorted * share β u) (Long (length u))
+
+theorem literal_nonneg (u : Fin 9) : 0 ≤ literal u := belief_nonneg sorted_nonneg
+
+theorem literal_pos (u : Fin 9) : 0 < literal u :=
+  belief_pos sorted_nonneg (x := λ _ => 8) (by simp [sorted, monotone_const]) (by
+    have h : total (λ _ : Fin 4 => (8 : Fin 9)) = 36 := by decide
+    unfold Long
+    omega)
+
+/-- Literal support for *longer* grows with the stick shown. -/
+theorem literal_mono : Monotone literal := by
+  intro x y h
+  unfold literal
+  exact belief_le_belief sorted_nonneg λ _ => long_mono (length_mono h)
+
+theorem persuasive_pos (β : ℕ) (u : Fin 9) : 0 < persuasive β u := pow_pos (literal_pos u) β
+
+theorem persuasive_mono (β : ℕ) : Monotone (persuasive β) := by
+  intro x y h
+  unfold persuasive
+  exact pow_le_pow_left₀ (literal_nonneg _) (literal_mono h) β
+
+/-- The share of the shown stick falls as the hidden sticks grow: stronger evidence was
+available. -/
+theorem share_antitone (β : ℕ) (u : Fin 9) : Antitone (share β u) := by
+  intro x y hxy
+  have h : ∑ i, persuasive β (x i) ≤ ∑ i, persuasive β (y i) :=
+    sum_le_sum λ i _ => persuasive_mono β (hxy i)
+  have hpos : 0 < persuasive β u + ∑ i, persuasive β (x i) :=
+    add_pos_of_pos_of_nonneg (persuasive_pos β u) (sum_nonneg λ _ _ => (persuasive_pos β _).le)
+  exact div_le_div_of_nonneg_left (persuasive_pos β u).le hpos (by linarith)
+
+theorem share_pos (β : ℕ) (u : Fin 9) (x : Sticks 4) : 0 < share β u x :=
+  div_pos (persuasive_pos β u)
+    (add_pos_of_pos_of_nonneg (persuasive_pos β u) (sum_nonneg λ _ _ => (persuasive_pos β _).le))
+
+/-- The pragmatic listener discounts every stick: their belief in *longer* is at most the
+literal listener's. -/
+theorem pragmatic_le_literal (β : ℕ) (u : Fin 9) : pragmatic β u ≤ literal u :=
+  belief_mul_le sorted_nonneg (λ x => (share_pos β u x).le) (share_antitone β u)
+    (isUpperSet_long _) sorted_logSupermodular
+    (sum_pos' (λ x _ => mul_nonneg (sorted_nonneg x) (share_pos β u x).le)
+      ⟨λ _ => 0, mem_univ _, mul_pos (by simp [sorted, monotone_const]) (share_pos β u _)⟩)
+
+/-- Without a persuasive goal the speaker is indifferent among the true sticks and the
+pragmatic listener is the literal one. -/
+theorem pragmatic_zero (u : Fin 9) : pragmatic 0 u = literal u := by
+  have : share 0 u = λ _ => 1 / 5 := by
+    funext x
+    simp [share, persuasive]
+    norm_num
+  rw [pragmatic, this, belief_mul_const (by norm_num)]
+  rfl
+
+/-! ### The simulation -/
+
+/-- The literal listener's belief in *longer* for each stick shown. -/
+theorem literal_eq :
+    literal = ![47/165, 169/495, 40/99, 7/15, 8/15, 59/99, 326/495, 118/165, 127/165] := by
+  funext u
+  fin_cases u <;> (rw [literal, belief_sorted]; decide +kernel)
+
+/-- The belief in *longer* before any evidence. -/
+theorem prior_eq : prior = 680 / 1287 := by
+  rw [prior, belief_sorted]
+  decide +kernel
+
+/-- A shown `6` is literal evidence for *longer*. -/
+theorem literal_six : prior < literal ⟨5, by decide⟩ := by
+  rw [prior_eq, literal_eq]
+  norm_num
+
+/-- The weak evidence effect: at `β = 2` a shown `6` lowers belief in *longer* below the
+prior. -/
+theorem weak_evidence_effect : pragmatic 2 ⟨5, by decide⟩ < prior := by
+  rw [pragmatic, belief_sorted_mul, prior_eq]
+  delta share persuasive
+  rw [literal_eq]
+  decide +kernel
+
+/-- The strongest evidence cannot be explained away. -/
+theorem strongest_evidence : prior < pragmatic 2 ⟨8, by decide⟩ := by
+  rw [pragmatic, belief_sorted_mul, prior_eq]
+  delta share persuasive
+  rw [literal_eq]
+  decide +kernel
+
+/-- The range of backfiring evidence widens with the bias: a shown `7` supports *longer* at
+`β = 2` and backfires at `β = 10`. -/
+theorem effect_widens :
+    prior < pragmatic 2 ⟨6, by decide⟩ ∧ pragmatic 10 ⟨6, by decide⟩ < prior := by
+  rw [pragmatic, pragmatic, belief_sorted_mul, belief_sorted_mul, prior_eq]
+  delta share persuasive
+  rw [literal_eq]
+  exact ⟨by decide +kernel, by decide +kernel⟩
 
 end BarnettEtAl2022
