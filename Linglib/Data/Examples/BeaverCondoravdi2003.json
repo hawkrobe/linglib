@@ -1,0 +1,309 @@
+[
+  {
+    "id": "beavercondoravdi2003_1",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(1)"},
+    "language": "stan1293",
+    "primaryText": "Cleo left Europe before David did.",
+    "glossedTokens": [],
+    "translation": "Cleo left Europe before David did.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "before"]
+    ],
+    "comment": "True iff (2) is — the intuition behind converseness; implies David did in fact leave Europe."
+  },
+  {
+    "id": "beavercondoravdi2003_2",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(2)"},
+    "language": "stan1293",
+    "primaryText": "David left Europe after Cleo did.",
+    "glossedTokens": [],
+    "translation": "David left Europe after Cleo did.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "after"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "beavercondoravdi2003_3",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(3)"},
+    "language": "stan1293",
+    "primaryText": "Cleo was in America before David was in America.",
+    "glossedTokens": [],
+    "translation": "Cleo was in America before David was in America.",
+    "context": "Cleo's stay starts before David's; their stays overlap.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "before"],
+      ["phenomenon", "antisymmetry"]
+    ],
+    "comment": "True iff (4) is false: before is antisymmetric."
+  },
+  {
+    "id": "beavercondoravdi2003_5",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(5)"},
+    "language": "stan1293",
+    "primaryText": "Cleo was in America after David was in America.",
+    "glossedTokens": [],
+    "translation": "Cleo was in America after David was in America.",
+    "context": "Cleo's stay starts before David's; their stays overlap.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "after"],
+      ["phenomenon", "antisymmetry"]
+    ],
+    "comment": "Can be true together with (6) in the overlap situation (7): after is not antisymmetric."
+  },
+  {
+    "id": "beavercondoravdi2003_9",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(9)"},
+    "language": "stan1293",
+    "primaryText": "Fred was dancing after Ginger was.",
+    "glossedTokens": [],
+    "translation": "Fred was dancing after Ginger was.",
+    "context": "Ginger dances continuously; Fred dances in the middle; Delores does a quick routine after Fred stops, while Ginger still dances.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "after"],
+      ["phenomenon", "transitivity"]
+    ],
+    "comment": "Judged true in situation (8)."
+  },
+  {
+    "id": "beavercondoravdi2003_10",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(10)"},
+    "language": "stan1293",
+    "primaryText": "Ginger was dancing after Delores was.",
+    "glossedTokens": [],
+    "translation": "Ginger was dancing after Delores was.",
+    "context": "Same situation (8).",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "after"],
+      ["phenomenon", "transitivity"]
+    ],
+    "comment": "Judged true in situation (8)."
+  },
+  {
+    "id": "beavercondoravdi2003_11",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(11)"},
+    "language": "stan1293",
+    "primaryText": "Fred was dancing after Delores was.",
+    "glossedTokens": [],
+    "translation": "Fred was dancing after Delores was.",
+    "context": "Same situation (8).",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "after"],
+      ["phenomenon", "transitivity"]
+    ],
+    "comment": "Judged false in situation (8): after is not transitive."
+  },
+  {
+    "id": "beavercondoravdi2003_12",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(12)"},
+    "language": "stan1293",
+    "primaryText": "Delores was dancing before Ginger was.",
+    "glossedTokens": [],
+    "translation": "Delores was dancing before Ginger was.",
+    "context": "Same situation (8).",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "before"],
+      ["phenomenon", "converseness"]
+    ],
+    "comment": "Not judged true in situation (8), though (10) is — the direct counterexample to sentential converseness."
+  },
+  {
+    "id": "beavercondoravdi2003_15",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(15)"},
+    "language": "stan1293",
+    "primaryText": "Cleo leapt into action before David moved a muscle.",
+    "glossedTokens": [],
+    "translation": "Cleo leapt into action before David moved a muscle.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "before"],
+      ["phenomenon", "npi-licensing"]
+    ],
+    "comment": "Before licenses NPIs in its clause; also with 'could say a word'."
+  },
+  {
+    "id": "beavercondoravdi2003_16",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(16)"},
+    "language": "stan1293",
+    "primaryText": "Cleo leapt into action after David moved a muscle.",
+    "glossedTokens": [],
+    "translation": "Cleo leapt into action after David moved a muscle.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "after"],
+      ["phenomenon", "npi-licensing"]
+    ],
+    "comment": "After does not license NPIs; main clauses license none regardless of connective ((17), (18))."
+  },
+  {
+    "id": "beavercondoravdi2003_22",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(22)"},
+    "language": "stan1293",
+    "primaryText": "On Dec. 9, the U.S. Supreme Court stopped the hand count before it was completed.",
+    "glossedTokens": [],
+    "translation": "On Dec. 9, the U.S. Supreme Court stopped the hand count before it was completed.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "before"],
+      ["phenomenon", "veridicality"],
+      ["reading", "counterfactual"]
+    ],
+    "comment": "Uncounted votes: the before-clause is not instantiated."
+  },
+  {
+    "id": "beavercondoravdi2003_23",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(23)"},
+    "language": "stan1293",
+    "primaryText": "Another booby-trapped bicycle and a bomb hidden in a supermarket cart were discovered and defused by police before they exploded.",
+    "glossedTokens": [],
+    "translation": "Another booby-trapped bicycle and a bomb hidden in a supermarket cart were discovered and defused by police before they exploded.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "before"],
+      ["phenomenon", "veridicality"],
+      ["reading", "counterfactual"]
+    ],
+    "comment": "No explosion."
+  },
+  {
+    "id": "beavercondoravdi2003_24",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(24)"},
+    "language": "stan1293",
+    "primaryText": "Mozart died before he finished the Requiem and it was completed by his student, Franz Xavier Suessmayr.",
+    "glossedTokens": [],
+    "translation": "Mozart died before he finished the Requiem and it was completed by his student, Franz Xavier Suessmayr.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "before"],
+      ["phenomenon", "veridicality"],
+      ["reading", "counterfactual"]
+    ],
+    "comment": "Unfinished Requiem; simplified as (40), which implies (41): if Mozart had not died when he did, he might/would have finished it."
+  },
+  {
+    "id": "beavercondoravdi2003_25",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(25)"},
+    "language": "stan1293",
+    "primaryText": "Mozart died after he finished the Requiem.",
+    "glossedTokens": [],
+    "translation": "Mozart died after he finished the Requiem.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "after"],
+      ["phenomenon", "veridicality"]
+    ],
+    "comment": "Requiem finished: after-clauses stay veridical under any toying with the examples."
+  },
+  {
+    "id": "beavercondoravdi2003_26",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(26)"},
+    "language": "stan1293",
+    "primaryText": "Mozart finished the Requiem after he died.",
+    "glossedTokens": [],
+    "translation": "Mozart finished the Requiem after he died.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "after"],
+      ["phenomenon", "veridicality"]
+    ],
+    "comment": "Requiem finished post mortem: both clauses veridical."
+  },
+  {
+    "id": "beavercondoravdi2003_32",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(32)"},
+    "language": "stan1293",
+    "primaryText": "David ate lots of ketchup before he made a clean sweep of all the gold medals in the Sydney Olympics.",
+    "glossedTokens": [],
+    "translation": "David ate lots of ketchup before he made a clean sweep of all the gold medals in the Sydney Olympics.",
+    "context": "David never won a gold medal at anything.",
+    "judgment": "marginal",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "before"],
+      ["phenomenon", "overgeneration"]
+    ],
+    "comment": "Predicted true by the classical rendering whenever the before-clause is empty; odd because no context with common-sense assumptions makes the win reasonably probable."
+  },
+  {
+    "id": "beavercondoravdi2003_34",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(34)"},
+    "language": "stan1293",
+    "primaryText": "Cleo left exactly 5 seconds before David sang.",
+    "glossedTokens": [],
+    "translation": "Cleo left exactly 5 seconds before David sang.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "before"],
+      ["phenomenon", "measure-phrase"]
+    ],
+    "comment": "A universal rendering of the before-clause would require leaving exactly 5 seconds before every singing time."
+  },
+  {
+    "id": "beavercondoravdi2003_42",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(42)"},
+    "language": "stan1293",
+    "primaryText": "The police defused the bomb before it exploded.",
+    "glossedTokens": [],
+    "translation": "The police defused the bomb before it exploded.",
+    "context": "It is taken for granted that there was a bomb ticking which ended up not exploding.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "before"],
+      ["phenomenon", "veridicality"],
+      ["reading", "counterfactual"]
+    ],
+    "comment": "New information: the bomb did not explode because the police defused it before the time it would have exploded."
+  },
+  {
+    "id": "beavercondoravdi2003_43",
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(43)"},
+    "language": "stan1293",
+    "primaryText": "I left the party before there was any trouble.",
+    "glossedTokens": [],
+    "translation": "I left the party before there was any trouble.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "before"],
+      ["phenomenon", "veridicality"],
+      ["reading", "non-committal"]
+    ],
+    "comment": "No commitment to there having been trouble, but trouble seemed likely shortly before the departure."
+  }
+]
