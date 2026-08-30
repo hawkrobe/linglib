@@ -1,4 +1,4 @@
-import Linglib.Studies.BarkerPullum1990
+import Linglib.Syntax.Tree.Command
 import Linglib.Core.Order.Branching
 
 /-!
@@ -38,11 +38,10 @@ defining universal to the finite list of A's prefixes.
 
 namespace Reinhart1976
 
-open BarkerPullum1990
 open Core.Order
 open Core.Order.Branching (isBranchingAt cCommandAt yield)
-open Syntax (Tree)
-open Syntax.Tree (leaf bin)
+open Syntax (Tree Cat)
+open Syntax.Tree (leaf bin labeled sCommand)
 open Set
 
 -- ============================================================================
@@ -103,10 +102,10 @@ also a branching node — a universally accepted structural assumption
     Every S-node is a branching node (S-nodes dominate ≥2 children),
     so `{S-nodes} ⊆ {branching nodes}`, and by B&P's antitone map
     (`command_antitone`), `C_{branching} ⊆ C_{S}`. -/
-theorem cCommand_implies_command {Node : Type} [PartialOrder Node] (T : LabeledTree Node)
-    (h_S_branch : sNodes T ⊆ branchingNodes T.toTreeOrder) :
-    cCommand T.toTreeOrder ⊆ sCommand T :=
-  command_antitone T.toTreeOrder (sNodes T) (branchingNodes T.toTreeOrder) h_S_branch
+theorem cCommand_implies_command {W : Type*} (t : Tree Cat W)
+    (h_S_branch : labeled t {.S} ⊆ {p | isBranchingAt t p}) :
+    cCommandAt t ⊆ sCommand t :=
+  command_antitone _ _ _ h_S_branch
 
 -- ============================================================================
 -- §3: The Coreference Restriction (10b)
