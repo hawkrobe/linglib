@@ -3,86 +3,45 @@ import Linglib.Studies.Beavers2010
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Syntax.Voice.Middle
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
+import Linglib.Data.Examples.BeaversUdayana2022
 
 /-!
-# [beavers-udayana-2022] Middle voice as generalized argument suppression
+# Beavers & Udayana (2022): Middle Voice as Generalized Argument Suppression
 
-Beavers, John and I Nyoman Udayana. 2022. Middle voice as generalized
-argument suppression: The case from Indonesian. *Natural Language &
-Linguistic Theory* 41:51–102.
+Indonesian *ber-* middles — dispositional/passive, inherent reflexive, and
+both incorporation types — derive from one underspecified operation: *ber-*
+suppresses one direct argument of a dyadic VP, leaving it as an open
+variable ((43); the existential alternative (47) is kept aside in §3.3 for
+consistency with [beavers-zubair-2013]). Which argument goes depends on
+independent argument realization — functional application leaves the agent
+open, incorporation the patient (the 2×2 typology (31)) — and the
+suppressed variable's coreferent vs disjoint reading follows from root
+class and markedness. Anticausative *ter-* is the same operation over
+causer-unspecified roots (§5); relational-noun conflation middles
+(*ber-topi* 'have a hat on', §4) fall out once *ber-* is category-neutral.
 
-## Core claim
+## Main statements
 
-Indonesian *ber-* middles — reflexive, dispositional/passive,
-anticausative, and incorporation — all derive from **one**
-underspecified argument-suppression operation. The surface variation
-comes from independent argument realization strategies (functional
-application vs. noun incorporation) and lexical-semantic/pragmatic
-constraints on the suppressed variable.
+* `operation_is_identical`: the dispositional (54) and incorporation (51)
+  derivations use the same `suppressArg`; which argument surfaces is the
+  Montague type of the VP, deriving (32d) rather than stipulating it.
+* `diag_profiles_mostly_distinct`, `reflexive_incorporation_same_diag`:
+  the *oleh* / rationale / *dengan sendiri=nya* fingerprints ((10)–(13),
+  (17), (23), (67)) separate the five voices except the
+  reflexive/incorporation pair, distinguished by argument structure alone.
+* `ber_compatible_with_men`, `ber_compatible_with_di`: *ber-*'s parameter
+  underspecification — the formal content of "generalized" suppression
+  (§7.3).
 
-## Formal analysis
+## References
 
-*ber-* suppresses one direct argument of a dyadic VP by leaving it
-as an open variable, while preserving truth conditions:
-
-    ⟦ber-⟧ = λP_{<e,α>}[P(z̲)]                           -- UNVERIFIED: (43)
-
-The suppressed argument *z* is interpreted via lexical and pragmatic
-conventions: for naturally reflexive roots the convention is
-coreferent interpretation; for other roots the convention is
-disjoint interpretation. An alternative formulation existentially
-binds z with a contextual constraint function f:
-
-    ⟦ber-⟧ = λP_{<e,α>} ∃z[f_{C,P}(z) ∧ P(z)]          -- UNVERIFIED: (47)
-
-The authors note "we see no particular reason to assume (43) over
-(47), but maintain the former for consistency with Beavers and Zubair
-(2013)" (the paper's §4.2). The "consistency" is notational
-(open-variable form): [beavers-zubair-2013]'s final operator
-(their ex. (77)) likewise uses an open variable, but adds a sortal
-restriction `x ∈ U_I` that does the predictive work for Sinhala
-anticausatives (blocks *murder*-type verbs). The 2022 generalization
-to Indonesian middle voice drops this restriction because *ber-*
-suppresses arguments other than causers. The 2013 operator with the
-U_I restriction is formalized at
-`BeaversZubair2013.causerSuppress`.
-
-## 2×2 typology (the paper's (31))
-
-The four middle types are classified along two independent dimensions:
-(a) whether the suppressed variable is interpreted as coreferent or
-disjoint from the surface subject, and (b) whether the base object is
-realized as a full DP (functional application) or an incorporated NP:
-
-|                      | non-reflexive (disjoint)           | reflexive (coreferent)   |
-|----------------------|------------------------------------|--------------------------|
-| **No incorporation** | dispositional/passive middle       | inherent reflexive       |
-| **Incorporation**    | *ber*-V=lexical NP                 | *ber*-V=*diri*           |
-
-## Key generalizations (the paper's (32))
-
-(a) The base V is transitive (dyadic), taking subject and object
-    DPs in the active *meN-* form.
-(b) *ber-* forms always take a subject DP but never a canonical
-    object DP.
-(c) The underlying object is always expressed lexically (as an
-    NP or DP).
-(d) The base subject can be the surface subject if the object
-    is an incorporated NP. (The biconditional reading sometimes
-    quoted is implied by (32a–c) jointly, not by (32d) on its own.)
-
-## Anticausatives (§5)
-
-Anticausatives (*ter-* forms) are outside the core 2×2 typology
-but derive from the same mechanism applied to causer-unspecified
-verb roots. They have a unique diagnostic profile: no *oleh*, no
-rationale clauses, but YES *dengan sendiri=nya*.
-
-## Cross-linguistic predictions
-
-The core of argument suppression may underlie middles in other
-languages, but language-specific argument realization strategies
-(and their absence) determine which middle types surface.
+* [beavers-udayana-2022]: Middle voice as generalized argument suppression:
+  The case from Indonesian. *NLLT* 41.
+* [beavers-zubair-2013]: Anticausatives in Sinhala: Involitivity and causer
+  suppression.
+* [kemmer-1993]: The Middle Voice.
+* [beavers-2011]: On affectedness.
+* [barker-1995]: Possessive Descriptions.
 -/
 
 namespace BeaversUdayana2022
@@ -96,9 +55,7 @@ open Voice
 open ArgumentStructure.VoiceSemantics
 open Intensional
 
--- ============================================================================
--- § 2: Indonesian ber- Middle Inventory
--- ============================================================================
+/-! ### § 2: Indonesian ber- Middle Inventory -/
 
 /-- The paper's 2×2 middle classification (object realization × suppressed-variable
     reading). Study-local: the `Voice` substrate exposes the two dimensions as
@@ -152,14 +109,13 @@ def incorporationMiddle : MiddleType :=
 def incorporationReflexive : MiddleType :=
   { objRealization := .incorporation, suppressedVar := .coreferent }
 
--- ============================================================================
--- § 3: Core Generalizations (32a–d)
--- ============================================================================
+/-! ### § 3: Core Generalizations (32a–d) -/
 
 /-- Which argument surfaces as subject depends on object realization.
 
-    (32d): The base subject can be the surface subject IFF the object
-    is an incorporated NP. When the object is a full DP, the patient
+    (32d), strengthened to a biconditional by the compositional
+    derivation in § 5: the base subject is the surface subject iff the
+    object is an incorporated NP. When the object is a full DP, the patient
     surfaces as subject (agent suppressed). When the object is an
     incorporated NP, the agent surfaces as subject (patient incorporated).
 
@@ -188,9 +144,7 @@ theorem agent_surfacing_independent_of_reading
     agentSurfaces ⟨.incorporation, r₁⟩ ↔
     agentSurfaces ⟨.incorporation, r₂⟩ := Iff.rfl
 
--- ============================================================================
--- § 4: Diagnostic Properties
--- ============================================================================
+/-! ### § 4: Diagnostic Properties -/
 
 /-- Diagnostics that distinguish *ber-* middles from *di-* passives
     and *meN-* actives.
@@ -311,9 +265,7 @@ theorem diag_profiles_mostly_distinct :
 theorem reflexive_incorporation_same_diag :
     reflexiveDiag = incorporationDiag := rfl
 
--- ============================================================================
--- § 5: Compositional Derivation via VoiceSemantics
--- ============================================================================
+/-! ### § 5: Compositional Derivation via VoiceSemantics -/
 
 section Compositional
 
@@ -373,9 +325,26 @@ theorem agent_surfaces_iff_incorporation :
 
 end Compositional
 
--- ============================================================================
--- § 6: Voice Parameter Bridge
--- ============================================================================
+/-! ### § 5b: Conflation middles from relational nouns (§4) -/
+
+section Conflation
+
+variable {E W : Type}
+
+/-- **Conflation middle derivation** ((64)–(65)): a relational noun (*topi*
+    'hat', *istri* 'wife') denotes a possession relation π ([barker-1995])
+    with the possessum as first argument; category-neutral ber- suppresses
+    it and the possessor surfaces as subject — *Tono ber-topi* 'Tono has a
+    hat on' (59). Sortal nouns are monadic, so suppression leaves no slot
+    for a subject: *ber-buku is a type mismatch, deriving the relational
+    restriction (61). -/
+theorem conflation_derivation (pi : Denot E W (.e ⇒ .e ⇒ .t))
+    (possessum possessor : E) :
+    suppressArg possessum pi possessor = pi possessum possessor := rfl
+
+end Conflation
+
+/-! ### § 6: Voice Parameter Bridge -/
 
 /-- *ber-*'s underspecification means it is compatible with the
     Minimalist Voice parameters of EVERY other Indonesian voice.
@@ -393,9 +362,7 @@ theorem ber_compatible_with_di :
 theorem men_incompatible_with_di :
     menParams.isCompatibleWith diParams = false := rfl
 
--- ============================================================================
--- § 7: Bridge to Beavers 2010 (Affectedness Constraint)
--- ============================================================================
+/-! ### § 7: Bridge to Beavers 2010 (Affectedness Constraint) -/
 
 /-- linglib bridge (not formalized in the paper): dispositional *ber-*
     forms are "only possible with verbs that describe change-of-state or at
@@ -432,9 +399,7 @@ theorem levin_middle_requires_cos :
       ⟨false, true, true, false, false, false⟩ .middle = false     -- no CoS → no middle
     := ⟨rfl, rfl⟩
 
--- ============================================================================
--- § 8: Cross-Linguistic Predictions
--- ============================================================================
+/-! ### § 8: Cross-Linguistic Predictions -/
 
 /-- The paper predicts that which middle types surface in a language
     depends on its argument realization inventory. Languages lacking

@@ -353,6 +353,7 @@ import Linglib.Data.Examples.BeaverCondoravdi2003
 import Linglib.Data.Examples.Beavers2010
 import Linglib.Data.Examples.BeaversEtAl2021
 import Linglib.Data.Examples.BeaversKoontzGarboden2020
+import Linglib.Data.Examples.BeaversUdayana2022
 import Linglib.Data.Examples.BeckOdaSugisaki2004
 import Linglib.Data.Examples.BeltramaSchwarz2024
 import Linglib.Data.Examples.BergenGoodman2015
