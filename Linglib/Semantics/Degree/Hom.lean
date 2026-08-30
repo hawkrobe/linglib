@@ -57,7 +57,7 @@ namespace Degree
 
 open Degree.Delineation
 
-open Features.Dimension (Dimension)
+open Features (Dimension)
 /-! ### Measurement → Degree → Delineation
 
 The maps themselves carry no new definitions: measurement forgets to a

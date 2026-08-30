@@ -1,3 +1,5 @@
+import Mathlib.Tactic.DeriveFintype
+
 /-!
 # Physical Dimension
 [bale-schwarz-2026] [scontras-2014] [zabbal-2005]
@@ -22,13 +24,13 @@ studies that need to label values without committing to a specific dimension.
 ## Consumers
 
 - `Semantics/Measurement/Basic.lean`: `DimensionedMeasure` carries `Dimension`
-- `Fragments/English/MeasurePhrases.lean`: `MeasureTermEntry` carries `Dimension`
+- `Fragments/English/MeasurePhrases.lean`: `MeasureTerm` carries `Dimension`
 - `Studies/{BaleSchwarz2022, BaleSchwarz2026, Scontras2014}.lean`
 - `Semantics/{Noun/Binominal, Gradability/Hierarchy, Verb/VerbEntry, Events/MeasurePhrases}.lean`
 
 -/
 
-namespace Features.Dimension
+namespace Features
 
 -- ============================================================================
 -- § 1. Simplex Dimensions
@@ -49,7 +51,7 @@ inductive Dimension where
   | temperature  -- temperature (degrees Celsius, Fahrenheit)
   | area         -- area (square meters, acres)
   | force        -- force (newtons, pound-force)
-  deriving Repr, DecidableEq
+  deriving Repr, DecidableEq, Fintype
 
 -- ============================================================================
 -- § 2. Quotient Dimensions
@@ -100,4 +102,4 @@ theorem quotient_components_distinct (q : QuotientDimension) :
     q.components.1 ≠ q.components.2 := by
   cases q <;> decide
 
-end Features.Dimension
+end Features

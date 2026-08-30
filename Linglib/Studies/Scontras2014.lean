@@ -49,7 +49,7 @@ the Fragment entries (class assignments) correctly predict the Theory's
 MEASURE-reading licensing.
 
 Dependency chain:
-  Theory (`licensesMeasureReading`) → Fragment (`QuantizingNounEntry.nounClass`)
+  Theory (`licensesMeasureReading`) → Fragment (`QuantizingNoun.nounClass`)
     → Studies (this file)
 
 -/
@@ -68,7 +68,7 @@ open English.MeasurePhrases
 specific context. -/
 structure MeasureObservation where
   /-- The quantizing noun being tested. -/
-  noun : QuantizingNounEntry
+  noun : QuantizingNoun
   /-- The mass noun complement (e.g., "rice", "water"). -/
   complement : String
   /-- Which reading is active (for container nouns). -/
@@ -83,16 +83,14 @@ structure MeasureObservation where
 
 /-- "Three kilos of rice" — a measure of rice. -/
 def obs_kilo_rice : MeasureObservation where
-  noun := { form := "kilo", formPlural := "kilos",
-            nounClass := .measureTerm, measureDimension := some .mass }
+  noun := kilo
   complement := "rice"
   reading := none
   sentence := "Three kilos of rice (a 3-kilo quantity)"
   licensesMeasure := true
 
 def obs_liter_water : MeasureObservation where
-  noun := { form := "liter", formPlural := "liters",
-            nounClass := .measureTerm, measureDimension := some .volume }
+  noun := liter
   complement := "water"
   reading := none
   sentence := "Three liters of water (a 3-liter quantity)"
@@ -249,7 +247,7 @@ A sentence context can force one reading of an ambiguous container noun:
 - Generic quantity context ("add three glasses") → MEASURE -/
 structure DisambiguationContext where
   /-- The noun being disambiguated. -/
-  noun : QuantizingNounEntry
+  noun : QuantizingNoun
   /-- Context type. -/
   contextType : String
   /-- Example sentence. -/

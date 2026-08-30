@@ -30,7 +30,7 @@ pure number.
 
 namespace Degree
 
-open Features.Dimension (Dimension)
+open Features (Dimension)
 
 /-- The dimensions of the quantity calculus: the free abelian group on the base
 dimensions, written multiplicatively. -/
@@ -87,6 +87,13 @@ theorem div_eq_div_iff_eq_mul_div {a b q r : Quantity K} (hb : b.1 ≠ 0) (hr : 
   rw [Prod.ext_iff, Prod.ext_iff]
   simp only [Prod.fst_div, Prod.snd_div, Prod.fst_mul, Prod.snd_mul, ← mul_div_assoc]
   rw [div_eq_div_iff hb hr, eq_div_iff hr, div_eq_div_iff_mul_eq_mul, eq_div_iff_mul_eq']
+
+/-- The quotient of two quantities of one dimension is the pure number `n` with `n ⋅ q = a`. -/
+theorem div_eq_pure_iff {a q : Quantity K} {n : K} (hq : q.1 ≠ 0) (h : a.2 = q.2) :
+    a / q = pure n ↔ pure n * q = a := by
+  simp only [Prod.ext_iff, Prod.fst_div, Prod.snd_div, Prod.fst_mul, Prod.snd_mul, pure_fst,
+    pure_snd, h, div_self', one_mul, and_true, div_eq_iff hq]
+  exact eq_comm
 
 end Quantity
 

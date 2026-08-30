@@ -64,7 +64,7 @@ CARD Num-head itself lives at the syntactic level.
 The degree substrate works with plain measure functions `μ : E → α` into a
 linear order. This module adds:
 
-- typed dimensions (what μ measures), via `Features.Dimension.Dimension`
+- typed dimensions (what μ measures), via `Features.Dimension`
 - multiple measure functions per entity (a box has weight AND volume AND
   cardinality — `DimensionedMeasure` is not a typeclass)
 - the quantity-uniform property (Scontras's QU_μ, eq. (44) p. 43)
@@ -82,7 +82,7 @@ consuming Studies file, not here.
 
 namespace Degree
 
-open Features.Dimension (Dimension)
+open Features (Dimension)
 
 -- ============================================================================
 -- § 1. Measure Functions
