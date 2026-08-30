@@ -707,4 +707,38 @@ theorem cumulativity_bridge_smoke :
       · simp only [Set.mem_singleton_iff] at h; subst h
         simp only [Finset.mem_insert, Finset.mem_singleton, or_true]
 
+/-! ### Convergence with [beck-2001]
+
+[beck-2001] §4.3.2 and [haug-dalrymple-2020] (41) converge on the presuppositional
+treatment of reciprocal distinctness against [sternefeld-1998]'s asserted (26b): Beck
+marks distinctness as `@(x ≠ y)` inside the cumulated relation ((113), (121b)); H&D
+wrap both the group-identity and the distinctness condition in `∂` ((41)). Both consume
+[langendoen-1978]'s reciprocity-as-cumulativity, differing in the relation `**` applies
+to: the verb relation (Beck) vs. equality on the sum-dref value-sets (group identity). -/
+
+/-- Beck-shaped cumulativity on equality is group identity: `**` applied to equality
+    on the sum-dref value-sets is `groupIdentityCond`. -/
+theorem beck_cumulativity_on_equality_iff_groupIdentity
+    {E : Type} [DecidableEq E]
+    (uAnaph uAnt : Nat) (S : PluralAssign ℕ E) (xa xb : Finset E)
+    (hxa : ∀ d, d ∈ xa ↔ d ∈ PluralAssign.sumDref S uAnaph)
+    (hxb : ∀ d, d ∈ xb ↔ d ∈ PluralAssign.sumDref S uAnt) :
+    Cumulative (fun a b : E => a = b) xa xb ↔
+      groupIdentityCond uAnaph uAnt S ∅ :=
+  (groupIdentityCond_iff_cumulative_eq uAnaph uAnt S xa xb hxa hxb).symm
+
+/-- Reciprocity factors as coverage plus distinctness on both sides: a Beck-shaped
+    pair (cumulativity on equality, per-state distinctness) matches `reciprocityCond`
+    over the same plural state. -/
+theorem reciprocity_factors_as_coverage_and_distinctness
+    {E : Type} [DecidableEq E]
+    (uAnaph uAnt : Nat) (S : PluralAssign ℕ E) (xa xb : Finset E)
+    (hxa : ∀ d, d ∈ xa ↔ d ∈ PluralAssign.sumDref S uAnaph)
+    (hxb : ∀ d, d ∈ xb ↔ d ∈ PluralAssign.sumDref S uAnt) :
+    (Cumulative (fun a b : E => a = b) xa xb ∧
+        ∀ s ∈ S, ∀ d_a d_b, s uAnaph = some d_a → s uAnt = some d_b → d_a ≠ d_b) ↔
+      reciprocityCond uAnaph uAnt S ∅ := by
+  unfold reciprocityCond
+  rw [beck_cumulativity_on_equality_iff_groupIdentity uAnaph uAnt S xa xb hxa hxb]
+
 end HaugDalrymple2020

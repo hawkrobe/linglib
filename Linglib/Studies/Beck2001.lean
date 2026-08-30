@@ -1,256 +1,152 @@
 import Mathlib.Data.Finset.Card
-import Linglib.Semantics.Plurality.Cumulativity
 import Linglib.Semantics.Plurality.Reciprocal
-import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
 
 /-!
-# Beck (2001): Reciprocals are Definites
-[beck-2001]
+# Reciprocals are definites
 
-*Natural Language Semantics* 9(1): 69–138. doi:10.1023/A:1012203407127.
+Formalization of [beck-2001] (NLS 9). *Each other* uniformly denotes "the other ones
+among them" — an anaphoric plural definite recasting [heim-lasnik-may-1991] — and a
+reciprocal sentence is a special kind of relational plural. The paper admits exactly
+four semantic readings — collective, Strong Reciprocity, Weak Reciprocity, and
+situation-based WR — tracking the readings of relational plurals. The other
+interpretations of the [dalrymple-et-al-1998] survey are not semantic: Partitioned SR
+and One-way WR are cover effects ([schwarzschild-1996] subgroups and exceptions),
+Intermediate Reciprocity is situation-based WR under a subsituation context (§5), and
+Inclusive Alternative Ordering is left underived, a lexical process limited to
+spatio-temporal relations (§6.3).
 
-The [heim-lasnik-may-1991] analysis of reciprocals — *each other*
-means "the other ones among them" — is recast as a special kind of
-relational plural. Interpretational variability across the six known
-reciprocal readings (Strong Reciprocity, Partitioned Strong Reciprocity,
-Intermediate Reciprocity, Weak Reciprocity, One-way Weak Reciprocity,
-Inclusive Alternative Ordering) is derived not from ambiguity of the
-reciprocal itself but from the standard mechanisms of plural predication:
-the `*` distribution operator ([link-1983]), the `**` cumulation
-operator ([beck-sauerland-2000]), [schwarzschild-1996] covers,
-QR, and the addition of contextual information. The reciprocal expression
-is **uniformly** "the other ones among them" — the variability is at the
-plural-predication layer.
+## Main definitions
 
-## What is formalized
+* `otherOnesAmongThem` — the HLM definite ((76)), in its singularity-parts case.
+* `CollectiveReading` — predication of the reciprocal group itself ((84)).
+* `SituationWeakReciprocity` — WR with cumulation over the situation argument ((193),
+  bivalent, singleton covers).
 
-A scope-bounded slice of the paper:
+## Main results
 
-| Paper § | Topic                                  | Lean encoding              |
-|---------|----------------------------------------|----------------------------|
-| §2      | Four reciprocal readings               | Prop predicates over `(A, R)` |
-| §2.6    | Entailment lattice (eq 28)             | Implication theorems       |
-| §3.3    | HLM "the other ones among them" (eq 76) | `otherOnesAmongThem`       |
-| §4.3    | Bare `**(R)(A,A)` coverage forward dir | `weaklyReciprocal_implies_cumulative_R` |
-| §4.3.2  | Beck eq 120 = [sternefeld-1998] eq 26b (bivalent) | `Plurality.Reciprocal.weakReciprocity_iff_cumulative_strict` |
-| §4.3.2  | Distinctness as presupposition         | Bridge to H&D 2020         |
+* `strongReciprocity_iff_otherOnes`, `collectiveReading_iff_strong` — SR is double
+  distribution over the definite ((81)); with a distributive relation the collective
+  schema collapses into SR.
+* `situationWR_imp_weakReciprocity` — under persistence, situation-based WR entails
+  WR: the right edge of the entailment chain SR → sitWR → WR feeding the Strongest
+  Meaning Hypothesis ((219), fn. 15).
 
-The two readings whose definitions involve unbounded existentials —
-**Partitioned SR** (paper eq 12, ∃ partition) and **Intermediate
-Reciprocity** (paper eq 17, ∃ chain) — are documented in prose but
-defined as `Prop` only with no entailment theorems against the four
-basic readings.
+The six-scheme entailment lattice ((28)) and the WR-as-cumulation identity ((120),
+`weakReciprocity_iff_cumulative_strict`) live in `Plurality/Reciprocal.lean` and are
+consumed here. The convergence with [haug-dalrymple-2020] on presuppositional
+distinctness is housed in `Studies/HaugDalrymple2020.lean` (the later paper draws the
+comparison); the trivalent divergence from [sternefeld-1998] in
+`Studies/Sternefeld1998.lean`.
 
-Sections out of scope for a study-file size budget:
-- The full §3 plural-predication machinery (`*`, `**`, covers,
-  QR-based LF) — substrate-deferred to `Plurality.{Distributivity,
-  Cumulativity, Cover}.lean` and consumed at the predicate level here.
-- §4.2's [sternefeld-1998] critique (negation interaction, distinct
-  subgroups effect) — would require formalising Sternefeld 1998 itself.
-- §5 intermediate reciprocity via salient relations.
-- §6 SMH application — synthesised SMH refutation already in
-  `Reciprocals.lean`'s `SMH_diverges_from_relational`.
+## References
 
-## Connection to H&D 2020
-
-[haug-dalrymple-2020] formalises reciprocity in PPCDRT (plural
-partial CDRT) — a fundamentally different framework from Beck's HLM +
-plural-predication apparatus. Despite the framework difference, both
-papers **converge on the presuppositional treatment of distinctness**
-(paper §4.3.2 ↔ H&D 2020 eq 41) — both agree against
-[sternefeld-1998]'s asserted treatment.
-
-The two papers diverge on the derivation method:
-- **Beck**: HLM "the other ones among them" + `**` cumulation + covers
-  + QR. WR derives from `**` applied to the HLM-denoted reciprocal.
-- **H&D**: anaphoric relations (binding, group identity, reciprocity)
-  in PPCDRT. WR is the basic reading; SR derives from Maximize Anaphora.
-
-The §6 cross-paper bridge `beck_cumulativity_on_equality_iff_HD_groupIdentity`
-makes the convergence visible at the type level: H&D's group identity is
-Beck-Sauerland `**` applied to *equality* on the sum-dref value-sets, while
-Beck applies `**` to the verb relation. Both consume the same machinery —
-[langendoen-1978]'s reciprocity-as-cumulativity is the shared insight.
-
-Note on imports: this file does **not** import
-`HaugDalrymple2020.lean` directly — per the convention used by
-`DalrympleHaug2024.lean` and `Rakosi2019.lean`, cross-paper references
-are made via `[key]` in docstrings while substrate-level theorems
-chain through `PPCDRT/Cumulativity.lean` (which both papers consume).
+* [beck-2001] — the paper; [heim-lasnik-may-1991] — the recast analysis.
+* [dalrymple-et-al-1998] — the reading survey and the Strongest Meaning Hypothesis;
+  [langendoen-1978] — reciprocity as relational-plural predication;
+  [fiengo-lasnik-1973] — Partitioned SR; [kanski-1987] — IAO.
+* [link-1983], [schwarzschild-1996], [sharvy-1980], [beck-sauerland-2000] — the
+  plural-predication substrate: `*`, covers, maximality, `**`.
+* [sternefeld-1998] — the WR-by-cumulation analysis §4 builds on and improves.
 -/
 
 namespace Beck2001
 
-open Semantics.Plurality.Cumulativity
 open Semantics.Plurality.Reciprocal
-open PPCDRT
 
--- ════════════════════════════════════════════════════════════════
--- § 1: Four Basic Reciprocal Readings (paper §2)
--- ════════════════════════════════════════════════════════════════
+variable {α : Type*}
 
-variable {α : Type*} [DecidableEq α]
+section
+variable [DecidableEq α]
 
-/-! ### § 1-2: Reciprocal schemes + entailment lattice
+/-! ### The HLM definite -/
 
-The six DKMPK / Langendoen 1978 reciprocal schemes and Beck's
-entailment lattice (paper eq 28) now live in
-`Plurality/Reciprocal.lean`. See `StrongReciprocity`, `WeakReciprocity`,
-`OneWayWeakReciprocity`, `InclusiveAlternativeOrdering`,
-`PartitionedStrongReciprocity`, `IntermediateReciprocity` for the
-predicates, and `strong_imp_weak`, `weak_imp_oneWay`,
-`oneWay_imp_inclusiveAlternative`, `strong_imp_inclusiveAlternative`
-for the right-hand-spine entailments. -/
-
-/-! ### § 3: Beck's HLM Denotation for *each other* (paper eq 76) -/
-
-/-- Paper eq 76: `each other = max(*λz[¬z∘x₁ ∧ z ≤ x₃ ∧ Cov(z)])` —
-    "the other ones among them" via the maximum of the (covered) parts
-    of the antecedent group that are not (overlapping) the contrast
-    argument.
-
-    Skipping the full LF (the `*` operator, the cover variable Cov, the
-    QR-introduced trace x₁), the denotation reduces to: given an
-    antecedent group `A` and a contrast individual `x`, return the
-    maximal subgroup of A that does not include x. For singularity parts
-    (the simplest case, paper p. 92), this is `A \ {x}`.
-
-    *Layered-grounding gap*: the full eq 76 invokes Sharvy max
-    (`Semantics/Definiteness/Maximality.lean` provides the substrate) and Link `*`
-    (`Plurality/Algebra.lean`); current `A.erase x` is the simplest
-    case. Promoting `otherOnesAmongThem` to consume `Nominal/Maximality`
-    is queued (Tier-4 of the cross-framework auditor's recommendation
-    list). -/
+/-- The reciprocal's denotation ((76)): "the other ones among them" — the maximal
+    subgroup of the antecedent `A` not overlapping the contrast argument `x`. In the
+    singularity-parts case (distinctness = non-identity, p. 92) this is `A.erase x`;
+    the full (76) routes through Sharvy maximality and Link `*`, with non-overlap
+    replacing non-identity when covers contain genuine subgroups ((78)). -/
 def otherOnesAmongThem (A : Finset α) (x : α) : Finset α :=
   A.erase x
 
-/-- The reciprocal denotation excludes the contrast argument. -/
+/-- The definite excludes the contrast argument. -/
 theorem otherOnesAmongThem_excludes (A : Finset α) (x : α) :
-    x ∉ otherOnesAmongThem A x := by
-  unfold otherOnesAmongThem; exact Finset.notMem_erase x A
+    x ∉ otherOnesAmongThem A x :=
+  Finset.notMem_erase x A
 
-/-- The reciprocal denotation is a subgroup of the antecedent. -/
+/-- The definite is a subgroup of the antecedent. -/
 theorem otherOnesAmongThem_subset (A : Finset α) (x : α) :
-    otherOnesAmongThem A x ⊆ A := by
-  unfold otherOnesAmongThem; exact Finset.erase_subset x A
+    otherOnesAmongThem A x ⊆ A :=
+  Finset.erase_subset x A
 
-/-- For an antecedent group with at least 2 members, the
-    `otherOnesAmongThem` denotation is non-empty for any element. -/
-theorem otherOnesAmongThem_nonempty (A : Finset α) (x : α)
-    (hne : 1 < A.card) : (otherOnesAmongThem A x).Nonempty := by
+/-- On a plural antecedent the definite is defined (nonempty) at every member — the
+    plurality presupposition ((115), §4.3.1). -/
+theorem otherOnesAmongThem_nonempty (A : Finset α) (x : α) (hne : 1 < A.card) :
+    (otherOnesAmongThem A x).Nonempty := by
   obtain ⟨y, hy, hyx⟩ := A.exists_mem_ne hne x
-  refine ⟨y, ?_⟩
-  unfold otherOnesAmongThem
-  exact Finset.mem_erase.mpr ⟨hyx, hy⟩
+  exact ⟨y, Finset.mem_erase.mpr ⟨hyx, hy⟩⟩
 
-/-! ### § 4: WR via Cumulation — [sternefeld-1998] eq 26b vs Beck eq 120
+/-! ### The semantic readings, read off the definite -/
 
-The substrate-level bridge `WeakReciprocity R A ↔
-Cumulative (fun a b => R a b ∧ a ≠ b) A A` and the forward weakening
-`WeakReciprocity → Cumulative` both live in `Plurality/Reciprocal.lean`
-(`weakReciprocity_iff_cumulative_strict`, `weakReciprocity_imp_cumulative`).
-They formalise the bivalent collapse of [sternefeld-1998] eq 26b
-and [beck-2001] eq 120 (both papers keep the distinctness clause
-`x ≠ y` inside the `**`'s relation argument; they differ only at the
-trivalent layer, where Sternefeld asserts distinctness and Beck
-presupposes it). The cross-paper trivalent divergence is *only*
-visible in trivalent semantics: Sternefeld returns false when R holds
-with x = y; Beck returns "undefined" (presupposition failure). See
-`Studies/Sternefeld1998.lean` for the cross-paper bridges. -/
+/-- SR is double distribution over the definite ((81)): distribute over the
+    antecedent, then over "the other ones among them". -/
+theorem strongReciprocity_iff_otherOnes (R : α → α → Prop) (A : Finset α) :
+    StrongReciprocity R A ↔ ∀ x ∈ A, ∀ y ∈ otherOnesAmongThem A x, R x y := by
+  constructor
+  · intro h x hx y hy
+    obtain ⟨hyx, hyA⟩ := Finset.mem_erase.mp hy
+    exact h x hx y hyA hyx
+  · intro h x hx y hy hyx
+    exact h x hx y (Finset.mem_erase.mpr ⟨hyx, hy⟩)
 
--- ════════════════════════════════════════════════════════════════
--- § 5: Cross-framework Bridge to H&D 2020
--- (paper §4.3.2 ↔ [haug-dalrymple-2020] eq 41)
--- ════════════════════════════════════════════════════════════════
+/-- The collective reading ((84)): the relation holds of each member and the
+    reciprocal group itself, with no distribution over that group — "the forks are
+    propped against each other". -/
+def CollectiveReading (R : α → Finset α → Prop) (A : Finset α) : Prop :=
+  ∀ x ∈ A, R x (otherOnesAmongThem A x)
 
-/-! Beck §4.3.2 (paper p. 105, eq 121d) and [haug-dalrymple-2020]
-    eq 41 (PPCDRT paper p. 18) **converge** on the *presuppositional*
-    treatment of reciprocal distinctness. [sternefeld-1998]
-    eq 26b also has distinctness inside the `**`'s relation argument
-    but treats it as asserted, not presupposed — the Beck/H&D
-    refinement is the assertion → presupposition status change.
+/-- With a relation that distributes to members, the collective schema is exactly SR:
+    (81) and (84) differ only in distribution over the definite. -/
+theorem collectiveReading_iff_strong (R : α → α → Prop) (A : Finset α) :
+    CollectiveReading (fun x Y => ∀ y ∈ Y, R x y) A ↔ StrongReciprocity R A := by
+  rw [strongReciprocity_iff_otherOnes]
+  rfl
 
-    Beck's argument (paper §4.3.2): the distinctness condition `x ≠ y`
-    must project as a presupposition (paper eq 121d marks distinctness
-    as `@(x ≠ y)`), NOT be part of the asserted content. Otherwise we
-    mispredict a tautological reading for "they don't like each other"
-    (paper eq 100). The presuppositional analysis correctly predicts
-    the distinct-subgroups effect.
+end
 
-    H&D 2020's analysis (eq 41): `[[each other]] = λP. [u | ∂(∪u =
-    ∪𝒜(u)), ∂(u ≠ 𝒜(u))]; P(u)`. The `∂` wrapper makes BOTH the group
-    identity condition and the distinctness condition presuppositional.
+/-! ### Situation-based Weak Reciprocity
 
-    Both papers therefore agree that distinctness is presuppositional;
-    they disagree on the framework (Beck: HLM + `**` + covers; H&D:
-    PPCDRT). Below we make the substrate-level convergence visible at
-    the type level. -/
+(120)'s bivalent collapse — WR is `**` of the strict-distinct relation — is the
+substrate theorem `weakReciprocity_iff_cumulative_strict`, shared with
+[sternefeld-1998]'s (26b); the two analyses differ only trivalently, where
+[sternefeld-1998] asserts distinctness and [beck-2001] presupposes it ((113), the
+distinct-subgroups effect of §4.3.2). What remains of the paper's own reading
+inventory is the situation layer. -/
 
-/-- **Beck-shaped cumulativity coverage on equality reduces to H&D 2020
-    group identity.** Both Beck (paper §4.3, eq 120) and
-    [haug-dalrymple-2020] (eq 41) invoke `**` (`Cumulative`); they
-    differ in the relation argument. Beck applies `**` to the verb
-    relation `R` (yielding WR coverage); H&D's group identity is what
-    you get when you apply `**` to *equality* on the sum-dref value-sets.
-    The two analyses therefore consume the same machinery; this theorem
-    makes the convergence visible at the type level.
+variable {σ : Type*}
 
-    [langendoen-1978]'s reciprocity-as-cumulativity is the shared
-    insight; this is its first true cross-paper realization in linglib. -/
-theorem beck_cumulativity_on_equality_iff_HD_groupIdentity
-    {E : Type} [DecidableEq E]
-    (uAnaph uAnt : Nat) (S : PluralAssign ℕ E)
-    (xa xb : Finset E)
-    (hxa : ∀ d, d ∈ xa ↔ d ∈ PluralAssign.sumDref S uAnaph)
-    (hxb : ∀ d, d ∈ xb ↔ d ∈ PluralAssign.sumDref S uAnt) :
-    Cumulative (fun a b : E => a = b) xa xb ↔
-    groupIdentityCond uAnaph uAnt S ∅ :=
-  (groupIdentityCond_iff_cumulative_eq uAnaph uAnt S xa xb hxa hxb).symm
+/-- Situation-based WR ((193), bivalent, singleton covers): every relevant
+    subsituation contains a distinct pair in the relation, and every member
+    participates in some relevant subsituation, in each direction. -/
+def SituationWeakReciprocity (R : α → α → σ → Prop) (A : Finset α)
+    (subs : Finset σ) : Prop :=
+  (∀ s ∈ subs, ∃ x ∈ A, ∃ y ∈ A, x ≠ y ∧ R x y s) ∧
+    (∀ x ∈ A, ∃ s ∈ subs, ∃ y ∈ A, x ≠ y ∧ R x y s) ∧
+      (∀ y ∈ A, ∃ s ∈ subs, ∃ x ∈ A, x ≠ y ∧ R x y s)
 
-/-- **(Coverage, distinctness) factorization theorem** — replaces the
-    previous-session `True := trivial` placeholder with a real typed
-    statement of the cross-paper convergence.
-
-    Both Beck eq 120 and [haug-dalrymple-2020] `reciprocityCond`
-    factor reciprocity into a *coverage* component plus a *distinctness*
-    component. The coverage components are bridged by
-    `groupIdentityCond_iff_cumulative_eq` (chained as
-    `beck_cumulativity_on_equality_iff_HD_groupIdentity` above) — Beck's
-    `**`-on-equality is H&D's group identity. The distinctness components
-    are pointwise per-state distinctness on either side.
-
-    Concretely: a Beck-shaped pair `(coverage on equality, distinctness)`
-    over the value-sets matches an H&D `reciprocityCond` over the same
-    plural state. -/
-theorem reciprocity_factors_as_coverage_and_distinctness
-    {E : Type} [DecidableEq E]
-    (uAnaph uAnt : Nat) (S : PluralAssign ℕ E)
-    (xa xb : Finset E)
-    (hxa : ∀ d, d ∈ xa ↔ d ∈ PluralAssign.sumDref S uAnaph)
-    (hxb : ∀ d, d ∈ xb ↔ d ∈ PluralAssign.sumDref S uAnt) :
-    -- Beck-shape: cumulativity-on-equality + per-state distinctness
-    (Cumulative (fun a b : E => a = b) xa xb ∧
-     ∀ s ∈ S, ∀ d_a d_b, s uAnaph = some d_a → s uAnt = some d_b → d_a ≠ d_b)
-    ↔
-    -- H&D-shape: reciprocityCond
-    reciprocityCond uAnaph uAnt S ∅ := by
-  unfold reciprocityCond
-  rw [beck_cumulativity_on_equality_iff_HD_groupIdentity uAnaph uAnt S xa xb hxa hxb]
-
-/-! **Divergence with [sternefeld-1998]** is *only* visible in
-    trivalent semantics. In bivalent encoding, Sternefeld eq 26b and
-    Beck eq 120 produce the same predicate — formally witnessed by
-    `Sternefeld1998.sternefeldWR_iff_WeakReciprocity` (chained
-    through `Plurality.Reciprocal.weakReciprocity_iff_cumulative_strict`).
-    The presupposition-vs-assertion divergence on truth-value
-    gaps when `R` holds with `x = y` requires `∂` substrate (PPCDRT
-    operator set was trimmed in 0.230.781; queued).
-
-    Originally this section housed a `True := trivial` placeholder
-    citing eq 98 of Sternefeld; that attribution was wrong (Sternefeld
-    1998 has only ~70 numbered equations, the highest-numbered being
-    eq 70 on p. 335). The actual Sternefeld WR analysis (eq 26b)
-    coincides with Beck's eq 120 in bivalent encoding; the structural
-    equivalence is now witnessed by the Sternefeld1998.lean bridge. -/
+/-- Under persistence — what holds in a subsituation holds in the evaluation
+    situation — situation-based WR entails WR at the evaluation situation: the right
+    edge of the entailment chain SR → sitWR → WR that feeds the paper's Strongest
+    Meaning Hypothesis ((219), fn. 15). -/
+theorem situationWR_imp_weakReciprocity (R : α → α → σ → Prop) (A : Finset α)
+    (subs : Finset σ) (s : σ)
+    (hpers : ∀ x y, ∀ s' ∈ subs, R x y s' → R x y s)
+    (h : SituationWeakReciprocity R A subs) :
+    WeakReciprocity (fun a b => R a b s) A := by
+  obtain ⟨-, hx, hy⟩ := h
+  refine ⟨fun x hxA => ?_, fun y hyA => ?_⟩
+  · obtain ⟨s', hs', y, hyA, hxy, hR⟩ := hx x hxA
+    exact ⟨y, hyA, hpers x y s' hs' hR, hxy⟩
+  · obtain ⟨s', hs', x, hxA, hxy, hR⟩ := hy y hyA
+    exact ⟨x, hxA, hpers x y s' hs' hR, hxy⟩
 
 end Beck2001
