@@ -53,7 +53,7 @@ theorem earliestAlt_nonempty_iff_hasEarliest {W Time : Type*} [LinearOrder Time]
     (BeaverCondoravdi2003.earliestAlt alt B w t).Nonempty ↔
       hasEarliest Set.univ (· ∈ BeaverCondoravdi2003.instTimes (alt ⟨w, t⟩) B) := by
   unfold hasEarliest
-  simp only [Set.Nonempty, BeaverCondoravdi2003.mem_earliestAlt_iff_isLeast, Set.mem_univ,
+  simp only [Set.Nonempty, BeaverCondoravdi2003.earliestAlt, Set.mem_ofPred_eq, Set.mem_univ,
     true_and, Set.ofPred_mem_eq]
 
 /-! ### The two lexical types of tense ((30)) -/
