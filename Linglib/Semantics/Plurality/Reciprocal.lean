@@ -95,7 +95,8 @@ instance [DecidableEq A] (R : A → A → Prop) [DecidableRel R] (X : Finset A) 
 /-! ### Partitioned Strong Reciprocity -/
 
 /-- **Partitioned Strong Reciprocity** ([fiengo-lasnik-1973]): there is
-    a partition of `X` such that SR holds within each cell. "The men are hitting each other" can be true if the men
+    a partition of `X` such that SR holds within each cell. "The men are hitting each other" can be
+    true if the men
     team up in pairs that stand in the hit-relation. -/
 def PartitionedStrongReciprocity (R : A → A → Prop) (X : Finset A) : Prop :=
   ∃ PART : Finset (Finset A),
