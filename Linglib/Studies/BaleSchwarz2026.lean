@@ -32,7 +32,6 @@ density and never a weight.
 namespace BaleSchwarz2026
 
 open Degree Quantity English.MeasurePhrases BaleSchwarz2022
-open Features (Dimension)
 
 variable {E : Type*} {w : World E} {D D₁ D₂ : Dimension} {x y : E} {n : ℚ} {u r : MeasureTerm}
 

@@ -682,7 +682,6 @@ import Linglib.Features.Clusivity
 import Linglib.Features.ContainmentPair
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Deixis
-import Linglib.Features.Dimension
 import Linglib.Features.Empathy
 import Linglib.Features.Expressive
 import Linglib.Features.Gender.Basic
@@ -1606,6 +1605,7 @@ import Linglib.Semantics.Degree.Granularity
 import Linglib.Semantics.Degree.Hom
 import Linglib.Semantics.Degree.Intensification
 import Linglib.Semantics.Degree.Measure.Basic
+import Linglib.Semantics.Degree.Measure.Dimension
 import Linglib.Semantics.Degree.Measure.Dimensioned
 import Linglib.Semantics.Degree.Measure.Polar
 import Linglib.Semantics.Degree.Measure.Quantity

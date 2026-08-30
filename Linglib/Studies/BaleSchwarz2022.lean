@@ -38,7 +38,6 @@ fragment.
 namespace BaleSchwarz2022
 
 open Degree Quantity English.MeasurePhrases Presupposition
-open Features (Dimension)
 
 variable {E : Type*}
 
