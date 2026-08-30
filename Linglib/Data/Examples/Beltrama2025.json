@@ -1,0 +1,241 @@
+[
+  {
+    "id": "beltrama2025_1a",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(1a)"},
+    "language": "stan1293",
+    "primaryText": "This pizza is decent.",
+    "glossedTokens": [],
+    "translation": "This pizza is decent.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "middling: positive but only moderately so", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["class", "MPA"],
+      ["inference", "middling"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "beltrama2025_3c",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(3c)"},
+    "language": "stan1293",
+    "primaryText": "A: Can you recommend a place making a decent pizza around here? B: Mario's! Their pizza is really good!",
+    "glossedTokens": [],
+    "translation": "A: Can you recommend a place making a decent pizza around here? B: Mario's! Their pizza is really good!",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "cancelability"],
+      ["verdict", "middling inference is an implicature"]
+    ],
+    "comment": "Contrast lukewarm (3b): elaborating with the stronger term contradicts lexicalized upper bounds."
+  },
+  {
+    "id": "beltrama2025_4c",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(4c)"},
+    "language": "stan1293",
+    "primaryText": "This pizza is decent—but it's not great.",
+    "glossedTokens": [],
+    "translation": "This pizza is decent—but it's not great.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "reinforceability"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "beltrama2025_5c",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(5c)"},
+    "language": "stan1293",
+    "primaryText": "Every customer who thinks their pizza was decent will get a refund.",
+    "glossedTokens": [],
+    "translation": "Every customer who thinks their pizza was decent will get a refund.",
+    "context": "The refund is meant for unhappy customers.",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "DE suspension"],
+      ["verdict", "no upper-bounded reading in the restrictor"]
+    ],
+    "comment": "The contradictory flavor shows the middling inference is suspended in downward-entailing contexts."
+  },
+  {
+    "id": "beltrama2025_8a",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(8a)"},
+    "language": "stan1293",
+    "primaryText": "This pizza is decent for a US pizza; but for an Italian pizza, it wouldn't be.",
+    "glossedTokens": [],
+    "translation": "This pizza is decent for a US pizza; but for an Italian pizza, it wouldn't be.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "for-phrase"],
+      ["property", "context-sensitivity"]
+    ],
+    "comment": "MPAs are comparison-class sensitive, unlike absolute adjectives."
+  },
+  {
+    "id": "beltrama2025_11a",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(11a)"},
+    "language": "stan1293",
+    "primaryText": "The pizza is very/incredibly/super decent.",
+    "glossedTokens": [],
+    "translation": "The pizza is very/incredibly/super decent.",
+    "context": "",
+    "judgment": "marginal",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "strong intensifiers"],
+      ["property", "restricted gradability"]
+    ],
+    "comment": "Moderate modifiers (quite, pretty, somewhat) are fine; high and extreme ones degrade."
+  },
+  {
+    "id": "beltrama2025_12a",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(12a)"},
+    "language": "stan1293",
+    "primaryText": "Pizza A is more decent than Pizza B.",
+    "glossedTokens": [],
+    "translation": "Pizza A is more decent than Pizza B.",
+    "context": "Pizza A is exceptionally good.",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "comparative"],
+      ["property", "mildness retained in comparatives"]
+    ],
+    "comment": "Better is fine in the same context: the MPA comparative keeps the middling flavor."
+  },
+  {
+    "id": "beltrama2025_15a",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(15a)"},
+    "language": "stan1293",
+    "primaryText": "This pizza is neither acceptable nor unacceptable.",
+    "glossedTokens": [],
+    "translation": "This pizza is neither acceptable nor unacceptable.",
+    "context": "",
+    "judgment": "marginal",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "zone of indifference"],
+      ["verdict", "near-contradiction"]
+    ],
+    "comment": "Good/bad leave a neutral gap (14a); MPAs do not — existential vs universal force clash."
+  },
+  {
+    "id": "beltrama2025_21",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(21)"},
+    "language": "stan1293",
+    "primaryText": "This pizza is barely decent.",
+    "glossedTokens": [],
+    "translation": "This pizza is barely decent.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "barely"],
+      ["property", "crisp boundary"]
+    ],
+    "comment": "#barely good needs a special high-standard context; the necessity standard gives MPAs a crisp edge."
+  },
+  {
+    "id": "beltrama2025_22a",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(22a)"},
+    "language": "stan1293",
+    "primaryText": "Ok, this pizza is acceptable. But a pizza any worse than this one—even by just a tiny bit—wouldn't be acceptable.",
+    "glossedTokens": [],
+    "translation": "Ok, this pizza is acceptable. But a pizza any worse than this one—even by just a tiny bit—wouldn't be acceptable.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "crisp judgment"]
+    ],
+    "comment": "The same continuation with good is infelicitous — vague standards resist crisp cutoffs."
+  },
+  {
+    "id": "beltrama2025_24a",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(24a)"},
+    "language": "stan1293",
+    "primaryText": "The pizza scene in this town is truly desperate—you can't find even a decent one.",
+    "glossedTokens": [],
+    "translation": "The pizza scene in this town is truly desperate—you can't find even a decent one.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "emphasis in DE"],
+      ["parallel", "minimizers"]
+    ],
+    "comment": "With good or fantastic in place of decent the emphasis collapses."
+  },
+  {
+    "id": "beltrama2025_26a",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(26a)"},
+    "language": "stan1293",
+    "primaryText": "Joe is very low maintenance when it comes to pizza. It takes just a decent one to make him happy.",
+    "glossedTokens": [],
+    "translation": "Joe is very low maintenance when it comes to pizza. It takes just a decent one to make him happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "minimal sufficiency exclusive"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "beltrama2025_39",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(39)"},
+    "language": "stan1293",
+    "primaryText": "The pizza is slightly decent.",
+    "glossedTokens": [],
+    "translation": "The pizza is slightly decent.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "slightly"],
+      ["verdict", "against the MinSAA analysis"]
+    ],
+    "comment": "MinSAAs (slightly wet, slightly profitable) accept the modifier; MPAs reject it out of the blue."
+  },
+  {
+    "id": "beltrama2025_51b",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(51b)"},
+    "language": "stan1293",
+    "primaryText": "Pizza A is more decent than Pizza B, but neither is decent. In fact, they're both really bad.",
+    "glossedTokens": [],
+    "translation": "Pizza A is more decent than Pizza B, but neither is decent. In fact, they're both really bad.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "comparative entailment"],
+      ["verdict", "positive form not entailed"]
+    ],
+    "comment": "For MinSAAs the parallel construction contradicts — the MPA standard is more than nonzero value."
+  },
+  {
+    "id": "beltrama2025_70",
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(70)"},
+    "language": "stan1293",
+    "primaryText": "A: I heard that pizza sucks. B: Not at all. It's actually extremely decent!",
+    "glossedTokens": [],
+    "translation": "A: I heard that pizza sucks. B: Not at all. It's actually extremely decent!",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "strong intensifier rescued"],
+      ["condition", "significance excluded from the QUD"]
+    ],
+    "comment": "When only the necessity standard is at issue, the intensifier clash with the middling flavor disappears."
+  }
+]

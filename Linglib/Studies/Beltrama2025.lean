@@ -2,41 +2,48 @@ import Linglib.Syntax.Category.Degree.Basic
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Basic
-import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Order.Boundedness
+import Linglib.Data.Examples.Beltrama2025
 
 /-!
-# Beltrama 2025: Evaluation, thresholds, and practical commitments
+# Beltrama (2025): Evaluation, Thresholds, and Practical Commitments
 
-[beltrama-2025]
+Mildly positive adjectives (*decent*, *acceptable*, *adequate*) are a
+hybrid class: context-sensitive and gradable like relative adjectives,
+yet crisp, *barely*-friendly, and gapless like absolute ones (Table 1).
+Their positive form encodes a **necessity standard** — the minimum value
+an object must have for its pursuit to be circumstantially possible
+((64): `s(MPA) = Max({d : ∀w' ∈ Acc(w)[PURSUED(x)(w') → μ_value(x)(w') ≥
+d]})`) — a functional standard in [kagan-alexeyenko-2011]'s sense,
+paralleling *enough* as analyzed by [nadathur-2023]. The middling
+inference ("not great") is a cancelable scalar implicature, and
+[kennedy-2007]'s Interpretive Economy must be generalized to let the
+standard function assign functional standards.
 
-Beltrama, A. (2025). Evaluation, thresholds, and practical commitments:
-the grammar of adjectival mildness. *Natural Language Semantics* 33, 169--205.
+## Main statements
 
-## Core claims
+* `minsaa_hypothesis_rejected`: the four §4.2 diagnostics (slightly,
+  comparison classes, comparative entailments, denials) separate MPAs
+  from minimum-standard absolute adjectives point for point.
+* `necessityStandard` and `mpaPositiveForm`: the (64)–(65) semantics on
+  finite models; `ie_divergence_on_value_scale`: three standard types
+  coexist on one lower-bounded value scale (contextual *good*,
+  functional MPAs, minEndpoint MinSAAs), against unrevised Interpretive
+  Economy.
+* `mpa_entries_mildly_positive`, `mpa_not_endpoint_licensed`: the
+  Fragment entries carry the class as a standard override on an open
+  `.value` scale, not a scale-structure fact.
 
-1. **MPAs** (*decent*, *acceptable*, *adequate*) are a novel class of gradable
-   predicates with a hybrid profile overlapping both relative and absolute adjectives.
+## References
 
-2. MPAs encode a **necessity standard**: the minimum value required for an object's
-   pursuit to be possible given the norms and circumstances in the current world.
-   This is a *functional standard* (cf. [kagan-alexeyenko-2011]), not a
-   distributional (contextual) or endpoint standard.
-
-3. The **middling inference** ("not great") is a scalar implicature, not hardwired
-   semantics: it is cancelable, reinforceable, and suspended in DE contexts.
-
-4. The **standard function s** must be generalized beyond [kennedy-2007]'s
-   Principle of Interpretive Economy to handle functional standards.
-
-## Key formal definitions
-
-- `⟦MPA⟧ = λx. μ_value(x)` — basic entry (measure function returning value)
-- `s(MPA) = Max({d : ∀w' ∈ Acc(w)[PURSUED(x)(w') → μ_value(x)(w') ≥ d]})`
-  — necessity standard (functional)
-- `⟦POS MPA⟧ = λx. μ_value(x)(w) ≥ s(MPA)` — positive form
+* [beltrama-2025]: Evaluation, thresholds, and practical commitments:
+  The grammar of adjectival mildness. *Natural Language Semantics* 33.
+* [kennedy-2007]: Vagueness and grammar.
+* [nadathur-2023]: Actuality Inferences.
+* [kagan-alexeyenko-2011]: Degree modification in Russian morphology.
+* [wolfsdorf-2019]: On Goodness.
 -/
 
 namespace Beltrama2025
@@ -45,9 +52,7 @@ open Core.Order (Boundedness)
 open Degree (PositiveStandard interpretiveEconomy positiveMeaning)
 open Degree (AdjectiveClass)
 
--- ============================================================================
--- § 1. Empirical Profile (Table 1)
--- ============================================================================
+/-! ### Empirical Profile (Table 1) -/
 
 /-- Properties distinguishing MPAs from *good* (Table 1, p. 179).
 
@@ -100,9 +105,7 @@ theorem mpa_good_diverge :
     mpaProfile.emphasisInDE ≠ goodProfile.emphasisInDE := by
   exact ⟨by decide, by decide, by decide, by decide⟩
 
--- ============================================================================
--- § 2. Scale Structure
--- ============================================================================
+/-! ### Scale Structure -/
 
 /-- The value scale is lower-bounded at 0 (purpose-thwarting → purpose-serving),
     open above. Following [wolfsdorf-2019] and [qing-2021]. -/
@@ -115,9 +118,7 @@ def valueScaleBoundedness : Boundedness := .lowerBounded
 theorem ie_underpredicts_for_value_scale :
     interpretiveEconomy valueScaleBoundedness = .minEndpoint := rfl
 
--- ============================================================================
--- § 3. Standard Types: MPA vs Good vs MinSAA
--- ============================================================================
+/-! ### Standard Types: MPA vs Good vs MinSAA -/
 
 /-- *good* receives a contextual standard despite being on a lower-bounded
     scale — an exception to Interpretive Economy. The standard is determined
@@ -148,9 +149,7 @@ theorem mpa_good_both_cc_sensitive :
     goodStandard.RequiresComparisonClass ∧
     ¬ minsaaStandard.RequiresComparisonClass := ⟨trivial, trivial, id⟩
 
--- ============================================================================
--- § 4. MinSAA Rejection ([beltrama-2025] §4)
--- ============================================================================
+/-! ### MinSAA Rejection ([beltrama-2025] §4) -/
 
 /-- The MinSAA hypothesis: MPAs are minimum-standard absolute adjectives.
     This is initially plausible — lower-bounded scale, s(MPA) = 0 — but
@@ -183,9 +182,7 @@ def mpaActual : MinSAAHypothesis :=
 theorem minsaa_hypothesis_rejected :
     minsaaPredictions ≠ mpaActual := by decide
 
--- ============================================================================
--- § 5. Necessity Standard (Formal Definition)
--- ============================================================================
+/-! ### Necessity Standard (Formal Definition) -/
 
 /-- A simplified finite model for the necessity standard.
 
@@ -226,9 +223,7 @@ def necessityStandard {W : Type} (m : NecStandardModel W) : Nat :=
 def mpaPositiveForm {W : Type} (m : NecStandardModel W) (actualValue : Nat) : Bool :=
   actualValue ≥ necessityStandard m
 
--- ============================================================================
--- § 5. Degree Modifier Compatibility
--- ============================================================================
+/-! ### Degree Modifier Compatibility -/
 
 /-- Degree modifier compatibility data for MPAs.
 
@@ -266,9 +261,7 @@ theorem mpa_resists_strong_intensifiers :
     decentModifiers.veryExtremely = false ∧
     goodModifiers.veryExtremely = true := ⟨rfl, rfl⟩
 
--- ============================================================================
--- § 6. Fragment Entry Verification
--- ============================================================================
+/-! ### Fragment Entry Verification -/
 
 open English.Predicates.Adjectival (decent acceptable adequate good)
 
@@ -300,9 +293,7 @@ theorem good_same_scale_as_mpas :
 theorem good_vs_mpa_standard_override :
     goodStandard ≠ mpaStandard := by decide
 
--- ============================================================================
--- § 7. Middling Inference as Scalar Implicature
--- ============================================================================
+/-! ### Middling Inference as Scalar Implicature -/
 
 /-- The middling inference is a scalar implicature, not lexical semantics.
     Evidence: cancelability, reinforceability, suspension in DE contexts.
@@ -338,9 +329,7 @@ theorem decent_implicates_not_good :
 theorem good_no_middling_against_decent :
     middlingInference .good .decent = false := rfl
 
--- ============================================================================
--- § 8. Non-Vague Behavior: No Zone of Indifference
--- ============================================================================
+/-! ### Non-Vague Behavior: No Zone of Indifference -/
 
 /-- MPAs lack a zone of indifference ([beltrama-2025] §6.3, p. 199--200).
 
@@ -358,9 +347,7 @@ theorem mpa_no_indifference_zone :
     mpaProfile.zoneOfIndifference = false ∧
     goodProfile.zoneOfIndifference = true := ⟨rfl, rfl⟩
 
--- ============================================================================
--- § 9. Adjective Class: MPAs as a Novel Category
--- ============================================================================
+/-! ### Adjective Class: MPAs as a Novel Category -/
 
 /-- MPAs don't fit Kennedy's three-way classification. They share
     context-sensitivity with relative adjectives and crisp judgments
@@ -371,9 +358,7 @@ def decentClass : AdjectiveClass := .mildlyPositive
 theorem mpa_not_relative :
     ¬ decentClass.IsRelative := by decide
 
--- ============================================================================
--- § 10. Integration: Kennedy 2007 Licensing Pipeline
--- ============================================================================
+/-! ### Integration: Kennedy 2007 Licensing Pipeline -/
 
 open Core.Order (LicensingPipeline)
 /-- MPAs sit on the open `.value` scale, so [kennedy-2007]'s scale-structure
@@ -392,9 +377,7 @@ theorem mpa_not_endpoint_licensed :
 theorem good_not_endpoint_licensed :
     ¬ LicensingPipeline.IsLicensed good.scaleType := id
 
--- ============================================================================
--- § 11. Integration: Evaluative Valence
--- ============================================================================
+/-! ### Integration: Evaluative Valence -/
 
 open Features (EvaluativeValence)
 
@@ -411,14 +394,12 @@ def goodValence : EvaluativeValence := .positive
 theorem mpa_good_same_valence :
     mpaValence = goodValence := rfl
 
--- ============================================================================
--- § 12. Integration: Head.sufficiency (*enough* parallel)
--- ============================================================================
+/-! ### Integration: Head.sufficiency (*enough* parallel) -/
 
 open Degree (Head)
 
 /-- MPAs encode the same necessity component as *enough*
-    ([beltrama-2025] §5.3; Nadathur 2023): the minimum degree
+    ([beltrama-2025] §5.3; [nadathur-2023]): the minimum degree
     required for the complement/pursuit to be circumstantially possible.
 
     The parallel: "old enough to drink" ≈ "acceptable (for the purpose)".
@@ -427,9 +408,7 @@ open Degree (Head)
     MPAs get their purpose from context (action-guidance). -/
 def enoughParallel : Head := .sufficiency
 
--- ============================================================================
--- § 13. Integration: IE Divergence for Evaluative Predicates
--- ============================================================================
+/-! ### Integration: IE Divergence for Evaluative Predicates -/
 
 /-- Interpretive Economy maps lower-bounded → minEndpoint, but on the
     value scale THREE different standards coexist:
