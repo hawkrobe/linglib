@@ -1,0 +1,754 @@
+[
+  {
+    "id": "barwisecooper1981_6a",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(6a)"},
+    "language": "stan1293",
+    "primaryText": "Harry sneezed.",
+    "glossedTokens": [],
+    "translation": "Harry sneezed.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["np", "proper name"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_6b",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(6b)"},
+    "language": "stan1293",
+    "primaryText": "Some person sneezed.",
+    "glossedTokens": [],
+    "translation": "Some person sneezed.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "some"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_6c",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(6c)"},
+    "language": "stan1293",
+    "primaryText": "Every man sneezed.",
+    "glossedTokens": [],
+    "translation": "Every man sneezed.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "every"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_6d",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(6d)"},
+    "language": "stan1293",
+    "primaryText": "Most babies sneeze.",
+    "glossedTokens": [],
+    "translation": "Most babies sneeze.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "most"]
+    ],
+    "comment": "No predicate-calculus representation."
+  },
+  {
+    "id": "barwisecooper1981_21",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(21)"},
+    "language": "stan1293",
+    "primaryText": "No boy at the party kissed Mary.",
+    "glossedTokens": [],
+    "translation": "No boy at the party kissed Mary.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "no"],
+      ["class", "weak"]
+    ],
+    "comment": "Naturally taken to assume (22); the assumption can be cancelled, (23)."
+  },
+  {
+    "id": "barwisecooper1981_22",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(22)"},
+    "language": "stan1293",
+    "primaryText": "There were boys at the party.",
+    "glossedTokens": [],
+    "translation": "There were boys at the party.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "there-sentence"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_23",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(23)"},
+    "language": "stan1293",
+    "primaryText": "No boy at the party kissed Mary since there weren't any boys at the party.",
+    "glossedTokens": [],
+    "translation": "No boy at the party kissed Mary since there weren't any boys at the party.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "no"],
+      ["class", "weak"]
+    ],
+    "comment": "Cancelling the sieve assumption is easy for a weak determiner."
+  },
+  {
+    "id": "barwisecooper1981_24a",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(24a)"},
+    "language": "stan1293",
+    "primaryText": "Every man at the party kissed Mary.",
+    "glossedTokens": [],
+    "translation": "Every man at the party kissed Mary.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "every"],
+      ["class", "strong"]
+    ],
+    "comment": "Invites (24b)."
+  },
+  {
+    "id": "barwisecooper1981_24c",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(24c)"},
+    "language": "stan1293",
+    "primaryText": "Every man at the party kissed Mary, but only because there weren't any men at the party.",
+    "glossedTokens": [],
+    "translation": "Every man at the party kissed Mary, but only because there weren't any men at the party.",
+    "context": "",
+    "judgment": "questionable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "every"],
+      ["class", "strong"]
+    ],
+    "comment": "Denying the sieve assumption is hard for a strong determiner."
+  },
+  {
+    "id": "barwisecooper1981_30",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(30)"},
+    "language": "stan1293",
+    "primaryText": "If some Republican entered the race early, then some Republican entered the race.",
+    "glossedTokens": [],
+    "translation": "If some Republican entered the race early, then some Republican entered the race.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "some"],
+      ["monotonicity", "increasing"]
+    ],
+    "comment": "Valid; likewise every linguist, John, most peanut farmers, many men."
+  },
+  {
+    "id": "barwisecooper1981_31",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(31)"},
+    "language": "stan1293",
+    "primaryText": "If no plumber entered the race, then no plumber entered the race early.",
+    "glossedTokens": [],
+    "translation": "If no plumber entered the race, then no plumber entered the race early.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "no"],
+      ["monotonicity", "decreasing"]
+    ],
+    "comment": "Valid; likewise few linguists, neither Democrat."
+  },
+  {
+    "id": "barwisecooper1981_32",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(32)"},
+    "language": "stan1293",
+    "primaryText": "Most men that love Mary, love Mary.",
+    "glossedTokens": [],
+    "translation": "Most men that love Mary, love Mary.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "most"],
+      ["class", "positive strong"]
+    ],
+    "comment": "Judged valid; likewise both, the three."
+  },
+  {
+    "id": "barwisecooper1981_33",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(33)"},
+    "language": "stan1293",
+    "primaryText": "Every man that loves Mary, loves Mary.",
+    "glossedTokens": [],
+    "translation": "Every man that loves Mary, loves Mary.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "every"],
+      ["class", "positive strong"]
+    ],
+    "comment": "Judged valid; likewise the."
+  },
+  {
+    "id": "barwisecooper1981_34",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(34)"},
+    "language": "stan1293",
+    "primaryText": "Neither man that loves Mary, loves Mary.",
+    "glossedTokens": [],
+    "translation": "Neither man that loves Mary, loves Mary.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "neither"],
+      ["class", "negative strong"]
+    ],
+    "comment": "Judged contradictory."
+  },
+  {
+    "id": "barwisecooper1981_35a",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(35a)"},
+    "language": "stan1293",
+    "primaryText": "No man that loves Mary, loves Mary.",
+    "glossedTokens": [],
+    "translation": "No man that loves Mary, loves Mary.",
+    "context": "",
+    "judgment": "questionable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "no"],
+      ["class", "weak"]
+    ],
+    "comment": "Odd, not universally valid; equivalent to (37a)."
+  },
+  {
+    "id": "barwisecooper1981_35b",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(35b)"},
+    "language": "stan1293",
+    "primaryText": "Some man that loves Mary, loves Mary.",
+    "glossedTokens": [],
+    "translation": "Some man that loves Mary, loves Mary.",
+    "context": "",
+    "judgment": "questionable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "some"],
+      ["class", "weak"]
+    ],
+    "comment": "Equivalent to (37b)."
+  },
+  {
+    "id": "barwisecooper1981_36b",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(36b)"},
+    "language": "stan1293",
+    "primaryText": "Few men that love Mary, love Mary.",
+    "glossedTokens": [],
+    "translation": "Few men that love Mary, love Mary.",
+    "context": "",
+    "judgment": "questionable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "few"],
+      ["class", "weak"]
+    ],
+    "comment": "Whether this is equivalent to (38b) is unclear: the authors disagree on the intersection condition for few and many."
+  },
+  {
+    "id": "barwisecooper1981_37a",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(37a)"},
+    "language": "stan1293",
+    "primaryText": "No man loves Mary.",
+    "glossedTokens": [],
+    "translation": "No man loves Mary.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "no"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_37'a",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(37'a)"},
+    "language": "stan1293",
+    "primaryText": "There is no man that loves Mary.",
+    "glossedTokens": [],
+    "translation": "There is no man that loves Mary.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "no"],
+      ["construction", "there-sentence"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_37''a",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(37''a)"},
+    "language": "stan1293",
+    "primaryText": "No one that loves Mary is a man.",
+    "glossedTokens": [],
+    "translation": "No one that loves Mary is a man.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "no"]
+    ],
+    "comment": "The symmetric form: restrictor and scope switched."
+  },
+  {
+    "id": "barwisecooper1981_4.10-32a",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (32a)"},
+    "language": "stan1293",
+    "primaryText": "A man and three women could lift this piano.",
+    "glossedTokens": [],
+    "translation": "A man and three women could lift this piano.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["conjunction", "increasing + increasing"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_4.10-32b",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (32b)"},
+    "language": "stan1293",
+    "primaryText": "No man and few women could lift this piano.",
+    "glossedTokens": [],
+    "translation": "No man and few women could lift this piano.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["conjunction", "decreasing + decreasing"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_4.10-32c",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (32c)"},
+    "language": "stan1293",
+    "primaryText": "*John and no woman could lift this piano.",
+    "glossedTokens": [],
+    "translation": "*John and no woman could lift this piano.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["conjunction", "mixed"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_4.10-33a",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (33a)"},
+    "language": "stan1293",
+    "primaryText": "John was invited and no woman was, so he went home alone again.",
+    "glossedTokens": [],
+    "translation": "John was invited and no woman was, so he went home alone again.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["conjunction", "sentential"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_4.10-33a'",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (33a')"},
+    "language": "stan1293",
+    "primaryText": "*John and no woman was invited, so he went home alone again.",
+    "glossedTokens": [],
+    "translation": "*John and no woman was invited, so he went home alone again.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["conjunction", "mixed"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_4.10-35a",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (35a)"},
+    "language": "stan1293",
+    "primaryText": "John but no woman was invited.",
+    "glossedTokens": [],
+    "translation": "John but no woman was invited.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["conjunction", "but, mixed"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_4.10-36a",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (36a)"},
+    "language": "stan1293",
+    "primaryText": "*John but a woman was invited.",
+    "glossedTokens": [],
+    "translation": "*John but a woman was invited.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["conjunction", "but, increasing + increasing"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_4.10-37a",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (37a)"},
+    "language": "stan1293",
+    "primaryText": "John and a woman and three children were invited.",
+    "glossedTokens": [],
+    "translation": "John and a woman and three children were invited.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["conjunction", "iterated and"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_4.10-37b",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (37b)"},
+    "language": "stan1293",
+    "primaryText": "*John but no woman but three children were invited.",
+    "glossedTokens": [],
+    "translation": "*John but no woman but three children were invited.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["conjunction", "iterated but"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_40a",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(40a)"},
+    "language": "stan1293",
+    "primaryText": "Not every man left.",
+    "glossedTokens": [],
+    "translation": "Not every man left.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "every"],
+      ["negation", "NP"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_40b",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(40b)"},
+    "language": "stan1293",
+    "primaryText": "Not all men left.",
+    "glossedTokens": [],
+    "translation": "Not all men left.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "all"],
+      ["negation", "NP"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_40c",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(40c)"},
+    "language": "stan1293",
+    "primaryText": "Not a (single) man left.",
+    "glossedTokens": [],
+    "translation": "Not a (single) man left.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "a"],
+      ["negation", "NP"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_40d",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(40d)"},
+    "language": "stan1293",
+    "primaryText": "Not one man left.",
+    "glossedTokens": [],
+    "translation": "Not one man left.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "one"],
+      ["negation", "NP"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_40e",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(40e)"},
+    "language": "stan1293",
+    "primaryText": "Not many men left.",
+    "glossedTokens": [],
+    "translation": "Not many men left.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "many"],
+      ["negation", "NP"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_41a",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(41a)"},
+    "language": "stan1293",
+    "primaryText": "*Not each man left.",
+    "glossedTokens": [],
+    "translation": "*Not each man left.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "each"],
+      ["negation", "NP"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_41b",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(41b)"},
+    "language": "stan1293",
+    "primaryText": "*Not some man left.",
+    "glossedTokens": [],
+    "translation": "*Not some man left.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "some"],
+      ["negation", "NP"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_41c",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(41c)"},
+    "language": "stan1293",
+    "primaryText": "*Not John left.",
+    "glossedTokens": [],
+    "translation": "*Not John left.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["np", "proper name"],
+      ["negation", "NP"]
+    ],
+    "comment": "Self-dual."
+  },
+  {
+    "id": "barwisecooper1981_41d",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(41d)"},
+    "language": "stan1293",
+    "primaryText": "*Not the man left.",
+    "glossedTokens": [],
+    "translation": "*Not the man left.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "the"],
+      ["negation", "NP"]
+    ],
+    "comment": "Self-dual."
+  },
+  {
+    "id": "barwisecooper1981_41e",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(41e)"},
+    "language": "stan1293",
+    "primaryText": "(*) Not few men left.",
+    "glossedTokens": [],
+    "translation": "(*) Not few men left.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "few"],
+      ["negation", "NP"],
+      ["monotonicity", "decreasing"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_41f",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(41f)"},
+    "language": "stan1293",
+    "primaryText": "*Not no man left.",
+    "glossedTokens": [],
+    "translation": "*Not no man left.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "no"],
+      ["negation", "NP"],
+      ["monotonicity", "decreasing"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_41g",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(41g)"},
+    "language": "stan1293",
+    "primaryText": "?*Not most men left.",
+    "glossedTokens": [],
+    "translation": "?*Not most men left.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "most"],
+      ["negation", "NP"]
+    ],
+    "comment": "Left unexplained by U9."
+  },
+  {
+    "id": "barwisecooper1981_42",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(42)"},
+    "language": "stan1293",
+    "primaryText": "It is not true that most men left.",
+    "glossedTokens": [],
+    "translation": "It is not true that most men left.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "most"],
+      ["negation", "sentential"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_43",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(43)"},
+    "language": "stan1293",
+    "primaryText": "At least half the men didn't leave.",
+    "glossedTokens": [],
+    "translation": "At least half the men didn't leave.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "at least half"]
+    ],
+    "comment": "A paraphrase of (42) if most means more than half: the dual of more than half is at least half."
+  },
+  {
+    "id": "barwisecooper1981_44a",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(44a)"},
+    "language": "stan1293",
+    "primaryText": "It is not true that some man didn't leave.",
+    "glossedTokens": [],
+    "translation": "It is not true that some man didn't leave.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "every man left", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["determiner", "some"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_44b",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(44b)"},
+    "language": "stan1293",
+    "primaryText": "It is not true that every man didn't leave.",
+    "glossedTokens": [],
+    "translation": "It is not true that every man didn't leave.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "some man left", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["determiner", "every"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_44c",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(44c)"},
+    "language": "stan1293",
+    "primaryText": "It is not true that most men didn't leave.",
+    "glossedTokens": [],
+    "translation": "It is not true that most men didn't leave.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "most"]
+    ],
+    "comment": "No basic determiner D such that this is D men left."
+  },
+  {
+    "id": "barwisecooper1981_46",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(46)"},
+    "language": "stan1293",
+    "primaryText": "Not many men left.",
+    "glossedTokens": [],
+    "translation": "Not many men left.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "many"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barwisecooper1981_47",
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(47)"},
+    "language": "stan1293",
+    "primaryText": "Quite a few men didn't leave.",
+    "glossedTokens": [],
+    "translation": "Quite a few men didn't leave.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["determiner", "quite a few"]
+    ],
+    "comment": "Not accepted as a paraphrase of (46): quite a few is not used as the dual of many."
+  }
+]
