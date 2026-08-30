@@ -88,7 +88,7 @@ abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
     exists: spatial scales are `distance`, `weight` is `mass`, `quantity`
     is `cardinality`. `none` for evaluative/psychological/state scales —
     the scales that reject ratio measure phrases. -/
-def ScalarDimension.physical? : ScalarDimension → Option Dimension.Dimension
+def ScalarDimension.physical? : ScalarDimension → Option Dimension
   | .height | .width | .length | .depth | .thickness => some .distance
   | .weight => some .mass
   | .age => some .time
@@ -99,7 +99,7 @@ def ScalarDimension.physical? : ScalarDimension → Option Dimension.Dimension
 /-- The quotient physical dimension, for lexical scales that are
     physically ratios: *fast* lexicalizes `speed = distance / time` as a
     primitive scale. -/
-def ScalarDimension.quotient? : ScalarDimension → Option Dimension.QuotientDimension
+def ScalarDimension.quotient? : ScalarDimension → Option QuotientDimension
   | .speed => some .speed
   | _ => none
 

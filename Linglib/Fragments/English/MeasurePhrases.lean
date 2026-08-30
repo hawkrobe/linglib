@@ -2,329 +2,113 @@ import Linglib.Features.Dimension
 import Linglib.Semantics.Degree.Measure.Quantity
 
 /-!
-# English Measure Phrase Fragment
-[bale-schwarz-2022] [bale-schwarz-2026] [coppock-2021] [scontras-2014] [davidson-1979]
+# English measure phrases
 
-Lexical entries for English measure terms and the preposition *per*.
+Lexical entries for the English nouns that quantize a mass noun in a pseudo-partitive
+(*three grams of salt*, *three glasses of water*, *three grains of rice*): measure terms,
+which name a unit quantity of a dimension, and the container nouns and atomizers of
+Scontras's classification. A measure term carries the size of its unit relative to the
+dimension's reference unit, so that `kilogram.quantity = pure 1000 * gram.quantity`.
 
-This fragment provides the English-specific data layer for measurement:
-- Measure term entries (gram, kilo, mile,...) typed by `Dimension`
-- The preposition *per* with its dual interpretation
-- Context-dependent interpretation selection
+## References
 
-## Architecture
-
-The `Dimension` / `QuotientDimension` / `DimensionType` taxonomies live
-in `Features/Dimension.lean`. The `DimensionedMeasure` structure and
-`DimensionedMeasure.applyNumeral` semantics live in
-`Semantics/Measurement/Basic.lean`. This file
-provides English lexical entries — pure data typed by those substrate
-types, following the Theories → Fragments dependency discipline.
-
+* [scontras-2014]
+* [bale-schwarz-2022]
 -/
 
 namespace English.MeasurePhrases
 
-open Features.Dimension (Dimension QuotientDimension DimensionType)
+open Features (Dimension)
+open Degree (QuantizingNounClass)
 
--- ============================================================================
--- § 1. Measure Term Entries
--- ============================================================================
-
-/-- A measure term entry: an English noun that names a specific measure function.
-
-This is the Fragment-level data for measure terms. The Theory-level semantics
-(`DimensionedMeasure`, `DimensionedMeasure.applyNumeral`) is in
-`Degree/Measure/Dimensioned.lean`. -/
-structure MeasureTermEntry where
-  /-- Surface form (e.g., "gram", "milliliter", "mile"). -/
+/-- A measure term, a noun naming a unit quantity of a dimension. -/
+structure MeasureTerm where
   form : String
-  /-- Plural form. -/
   formPlural : String
-  /-- Which dimension this term measures. -/
+  /-- The unit's symbol in the quantity calculus (`g`, `mL`, `km`). -/
+  symbol : String
   dimension : Dimension
-  /-- Size of the unit relative to the dimension's reference unit (gram, milliliter,
-  meter, second): a kilogram is `1000` grams, a mile `1609.344` meters. -/
+  /-- Size of the unit relative to the dimension's reference unit (gram, milliliter, meter,
+  second): a kilogram is `1000` grams, a mile `1609.344` meters. -/
   magnitude : ℚ := 1
   deriving Repr, BEq
 
 /-- The unit quantity a measure term denotes. -/
-def MeasureTermEntry.quantity (e : MeasureTermEntry) : Degree.Quantity ℚ :=
-  (e.magnitude, .of e.dimension)
+def MeasureTerm.quantity (t : MeasureTerm) : Degree.Quantity ℚ := (t.magnitude, .of t.dimension)
 
-def gram : MeasureTermEntry :=
-  { form := "gram", formPlural := "grams", dimension := .mass }
-def kilogram : MeasureTermEntry :=
-  { form := "kilogram", formPlural := "kilograms", dimension := .mass, magnitude := 1000 }
-def kilo : MeasureTermEntry :=
-  { form := "kilo", formPlural := "kilos", dimension := .mass, magnitude := 1000 }
-def pound : MeasureTermEntry :=
-  { form := "pound", formPlural := "pounds", dimension := .mass, magnitude := 45359237 / 100000 }
-def milliliter : MeasureTermEntry :=
-  { form := "milliliter", formPlural := "milliliters", dimension := .volume }
-def liter : MeasureTermEntry :=
-  { form := "liter", formPlural := "liters", dimension := .volume, magnitude := 1000 }
-def mile : MeasureTermEntry :=
-  { form := "mile", formPlural := "miles", dimension := .distance, magnitude := 1609344 / 1000 }
-def kilometer : MeasureTermEntry :=
-  { form := "kilometer", formPlural := "kilometers", dimension := .distance, magnitude := 1000 }
-def meter : MeasureTermEntry :=
-  { form := "meter", formPlural := "meters", dimension := .distance }
-def hour : MeasureTermEntry :=
-  { form := "hour", formPlural := "hours", dimension := .time, magnitude := 3600 }
-def second_ : MeasureTermEntry :=
-  { form := "second", formPlural := "seconds", dimension := .time }
+def gram : MeasureTerm :=
+  { form := "gram", formPlural := "grams", symbol := "g", dimension := .mass }
+def kilogram : MeasureTerm :=
+  { form := "kilogram", formPlural := "kilograms", symbol := "kg", dimension := .mass,
+    magnitude := 1000 }
+def kilo : MeasureTerm :=
+  { form := "kilo", formPlural := "kilos", symbol := "kg", dimension := .mass, magnitude := 1000 }
+def pound : MeasureTerm :=
+  { form := "pound", formPlural := "pounds", symbol := "lb", dimension := .mass,
+    magnitude := 45359237 / 100000 }
+def milliliter : MeasureTerm :=
+  { form := "milliliter", formPlural := "milliliters", symbol := "mL",
+    dimension := .volume }
+def liter : MeasureTerm :=
+  { form := "liter", formPlural := "liters", symbol := "L", dimension := .volume,
+    magnitude := 1000 }
+def mile : MeasureTerm :=
+  { form := "mile", formPlural := "miles", symbol := "mi", dimension := .distance,
+    magnitude := 1609344 / 1000 }
+def kilometer : MeasureTerm :=
+  { form := "kilometer", formPlural := "kilometers", symbol := "km", dimension := .distance,
+    magnitude := 1000 }
+def meter : MeasureTerm :=
+  { form := "meter", formPlural := "meters", symbol := "m", dimension := .distance }
+def hour : MeasureTerm :=
+  { form := "hour", formPlural := "hours", symbol := "h", dimension := .time, magnitude := 3600 }
+def second_ : MeasureTerm :=
+  { form := "second", formPlural := "seconds", symbol := "s", dimension := .time }
 
-def allMeasureTerms : List MeasureTermEntry :=
+def allMeasureTerms : List MeasureTerm :=
   [gram, kilogram, kilo, pound, milliliter, liter, mile, kilometer, meter, hour, second_]
 
 /-- The measure term with singular or plural form `s`. -/
-def measureTerm? (s : String) : Option MeasureTermEntry :=
-  allMeasureTerms.find? λ e => e.form = s ∨ e.formPlural = s
+def measureTerm? (s : String) : Option MeasureTerm :=
+  allMeasureTerms.find? λ t => t.form = s ∨ t.formPlural = s
 
--- ============================================================================
--- § 2. Quantizing Noun Entries ([scontras-2014], Ch. 3)
--- ============================================================================
-
-open Degree (QuantizingNounClass ContainerReading)
-
-/-- A quantizing noun entry: an English noun that turns a mass term into a
-countable expression.
-
-[scontras-2014] identifies three classes, each with different
-semantics:
-
-- **Measure terms** (kilo, liter): type ⟨n, ⟨e,t⟩⟩, always quantity-uniform.
-  Already covered by `MeasureTermEntry` above.
-- **Container nouns** (glass, box, cup): ambiguous between a CONTAINER reading
-  (individuated physical objects, NOT quantity-uniform) and a MEASURE reading
-  (functions as a volume/mass unit, IS quantity-uniform).
-- **Atomizers** (grain, piece, drop): impose a minimal-part structure on
-  a mass noun, creating countable atoms without naming a measure function.
-
-The Fragment entry captures the lexical form and class. The semantic
-distinction (quantity-uniformity, CONTAINER vs MEASURE reading) comes
-from the Theory types `QuantizingNounClass` and `ContainerReading`. -/
-structure QuantizingNounEntry where
-  /-- Surface form (e.g., "glass", "grain"). -/
+/-- A quantizing noun, one that turns a mass term into a countable expression: a measure
+term, a container noun, or an atomizer. -/
+structure QuantizingNoun where
   form : String
-  /-- Plural form. -/
   formPlural : String
-  /-- Which class of quantizing noun. -/
   nounClass : QuantizingNounClass
-  /-- For container nouns in their MEASURE reading: which dimension they
-      measure. A glass measures volume; a bag might measure volume or mass.
-      Atomizers and pure containers have `none`. -/
-  measureDimension : Option Dimension := none
-  /-- Available readings. Measure terms and atomizers have only one reading;
-      container nouns are ambiguous between CONTAINER and MEASURE. -/
-  availableReadings : List ContainerReading := []
+  /-- The dimension a measure term names, or that a container noun measures on its
+  measure reading; atomizers name no measure function. -/
+  dimension : Option Dimension := none
   deriving Repr, BEq
 
--- Container nouns (ambiguous CONTAINER/MEASURE)
+/-- A measure term as a quantizing noun. -/
+def MeasureTerm.toQuantizingNoun (t : MeasureTerm) : QuantizingNoun :=
+  { form := t.form, formPlural := t.formPlural, nounClass := .measureTerm,
+    dimension := some t.dimension }
 
-/-- "glass" — prototypical container noun (Scontras §3.2).
+instance : Coe MeasureTerm QuantizingNoun := ⟨MeasureTerm.toQuantizingNoun⟩
 
-  - CONTAINER: "three glasses of water" = three individual glasses containing water
-  - MEASURE: "three glasses of water" = a quantity of water equal to three glass-volumes
+def glass : QuantizingNoun :=
+  { form := "glass", formPlural := "glasses", nounClass := .containerNoun,
+    dimension := some .volume }
+def box : QuantizingNoun :=
+  { form := "box", formPlural := "boxes", nounClass := .containerNoun, dimension := some .volume }
+def cup : QuantizingNoun :=
+  { form := "cup", formPlural := "cups", nounClass := .containerNoun, dimension := some .volume }
+def bag : QuantizingNoun :=
+  { form := "bag", formPlural := "bags", nounClass := .containerNoun, dimension := some .volume }
+def bottle : QuantizingNoun :=
+  { form := "bottle", formPlural := "bottles", nounClass := .containerNoun,
+    dimension := some .volume }
+def grain : QuantizingNoun := { form := "grain", formPlural := "grains", nounClass := .atomizer }
+def piece : QuantizingNoun := { form := "piece", formPlural := "pieces", nounClass := .atomizer }
+def drop : QuantizingNoun := { form := "drop", formPlural := "drops", nounClass := .atomizer }
+def slice : QuantizingNoun := { form := "slice", formPlural := "slices", nounClass := .atomizer }
+def chunk : QuantizingNoun := { form := "chunk", formPlural := "chunks", nounClass := .atomizer }
 
-The CONTAINER reading is NOT quantity-uniform: three glasses ⊕ three glasses ≠ three glasses.
-The MEASURE reading IS quantity-uniform (like any measure term). -/
-def glass : QuantizingNounEntry where
-  form := "glass"
-  formPlural := "glasses"
-  nounClass := .containerNoun
-  measureDimension := some .volume
-  availableReadings := [.container, .measure]
-
-def box : QuantizingNounEntry where
-  form := "box"
-  formPlural := "boxes"
-  nounClass := .containerNoun
-  measureDimension := some .volume
-  availableReadings := [.container, .measure]
-
-def cup : QuantizingNounEntry where
-  form := "cup"
-  formPlural := "cups"
-  nounClass := .containerNoun
-  measureDimension := some .volume
-  availableReadings := [.container, .measure]
-
-def bag : QuantizingNounEntry where
-  form := "bag"
-  formPlural := "bags"
-  nounClass := .containerNoun
-  measureDimension := some .volume
-  availableReadings := [.container, .measure]
-
-def bottle : QuantizingNounEntry where
-  form := "bottle"
-  formPlural := "bottles"
-  nounClass := .containerNoun
-  measureDimension := some .volume
-  availableReadings := [.container, .measure]
-
--- Atomizers (impose minimal-part structure)
-
-/-- "grain" — atomizer (Scontras §3.3).
-
-  "three grains of rice" imposes a minimal-part structure on the mass
-  noun "rice". Unlike measure terms, "grain" does not name a standard
-  measure function — it creates contextually-determined atoms. -/
-def grain : QuantizingNounEntry where
-  form := "grain"
-  formPlural := "grains"
-  nounClass := .atomizer
-
-def piece : QuantizingNounEntry where
-  form := "piece"
-  formPlural := "pieces"
-  nounClass := .atomizer
-
-def drop : QuantizingNounEntry where
-  form := "drop"
-  formPlural := "drops"
-  nounClass := .atomizer
-
-def slice : QuantizingNounEntry where
-  form := "slice"
-  formPlural := "slices"
-  nounClass := .atomizer
-
-def chunk : QuantizingNounEntry where
-  form := "chunk"
-  formPlural := "chunks"
-  nounClass := .atomizer
-
-def allQuantizingNouns : List QuantizingNounEntry :=
-  [glass, box, cup, bag, bottle, grain, piece, drop, slice, chunk]
-
-def allContainerNouns : List QuantizingNounEntry :=
-  allQuantizingNouns.filter (·.nounClass == .containerNoun)
-
-def allAtomizers : List QuantizingNounEntry :=
-  allQuantizingNouns.filter (·.nounClass == .atomizer)
-
--- ============================================================================
--- § 3. Per-Phrase Interpretation
--- ============================================================================
-
-/-- Interpretation mode for *per*-phrases.
-
-*Per* exhibits a dual interpretive pattern:
-- **Compositional**: when saturating measure predicates that select for simplex
-  dimensions (weight, distance). The grammar computes meaning via multiplication.
-- **Math speak**: when describing quotient dimensions (density, speed). The phrase
-  verbalizes quantity calculus notation and gets its meaning from extra-grammatical
-  conventions, parallel to mixed quotation. -/
-inductive PerInterpretation where
-  /-- Grammatically composed: *per* interacts with a covert pronoun *pro*
-      whose value is determined anaphorically ([bale-schwarz-2022], eq. 16).
-      ⟦per⟧ = λq. λx. μ_{dim(q)}(x) / q
-      The result is a pure number that composes with the measure phrase
-      via multiplication ([bale-schwarz-2026]: multiplication only). -/
-  | compositional
-  /-- Math speak: the *per*-phrase verbalizes a quantity calculus expression.
-      Not derived from the syntactic structure of English. -/
-  | mathSpeak
-  /-- Non-compositional, idiomatic unit (e.g., "pounds per square inch" = psi).
-      Speakers know the abbreviation without knowing the underlying ratio. -/
-  | idiomatic
-  deriving Repr, DecidableEq
-
-/-- Entry for the preposition *per* in measure phrases. -/
-structure PerEntry where
-  form : String := "per"
-  /-- *Per* is ambiguous between compositional and math-speak interpretations. -/
-  interpretations : List PerInterpretation := [.compositional, .mathSpeak]
-  /-- Compositional *per* composes via multiplication only (No Division Hypothesis). -/
-  usesMultiplicationOnly : Bool := true
-  deriving Repr, BEq
-
-def per : PerEntry := {}
-
-/-- Which interpretation is available depends on the dimension type
-of the measure predicate. Simplex dimensions license compositional
-interpretation; quotient dimensions force math speak. -/
-def perInterpInContext (selectsDimension : Dimension)
-    (predicateDimension : Option Dimension) : PerInterpretation :=
-  match predicateDimension with
-  | some d => if d == selectsDimension then .compositional else .mathSpeak
-  | none   => .mathSpeak  -- No simplex predicate → must be math speak
-
--- ============================================================================
--- § 4. Verification
--- ============================================================================
-
-/-- All measure terms have distinct dimensions appropriately assigned. -/
-theorem gram_is_mass : gram.dimension = .mass := rfl
-theorem liter_is_volume : liter.dimension = .volume := rfl
-theorem mile_is_distance : mile.dimension = .distance := rfl
-theorem hour_is_time : hour.dimension = .time := rfl
-
-/-- Container nouns are classified correctly. -/
-theorem glass_is_container : glass.nounClass = .containerNoun := rfl
-theorem box_is_container : box.nounClass = .containerNoun := rfl
-
-/-- Atomizers are classified correctly. -/
-theorem grain_is_atomizer : grain.nounClass = .atomizer := rfl
-theorem piece_is_atomizer : piece.nounClass = .atomizer := rfl
-
-/-- Container nouns have both readings available. -/
-theorem glass_has_both_readings :
-    glass.availableReadings = [.container, .measure] := rfl
-
-/-- Container nouns in MEASURE reading measure volume. -/
-theorem glass_measures_volume : glass.measureDimension = some .volume := rfl
-
-/-- Atomizers have no measure dimension (they don't name a measure function). -/
-theorem grain_no_dimension : grain.measureDimension = none := rfl
-theorem piece_no_dimension : piece.measureDimension = none := rfl
-
-/-- All container nouns are container nouns; all atomizers are atomizers. -/
-theorem all_containers_are_containers :
-    ∀ n ∈ allContainerNouns, n.nounClass = .containerNoun := by
-  simp [allContainerNouns, allQuantizingNouns]
-
-theorem all_atomizers_are_atomizers :
-    ∀ n ∈ allAtomizers, n.nounClass = .atomizer := by
-  simp [allAtomizers, allQuantizingNouns]
-
-/-- Container nouns all have a measure dimension; atomizers never do. -/
-theorem containers_have_dimension :
-    ∀ n ∈ allContainerNouns, n.measureDimension.isSome = true := by
-  simp [allContainerNouns, allQuantizingNouns]; decide
-
-theorem atomizers_lack_dimension :
-    ∀ n ∈ allAtomizers, n.measureDimension.isNone = true := by
-  simp [allAtomizers, allQuantizingNouns]; decide
-
-/-- Per defaults to compositional and math-speak interpretations. -/
-theorem per_default_interps :
-    per.interpretations = [.compositional, .mathSpeak] := rfl
-
-/-- Compositional per uses multiplication only. -/
-theorem per_multiplication_only : per.usesMultiplicationOnly = true := rfl
-
--- ============================================================================
--- § 5. Interpretation Selection from Verb Context
--- ============================================================================
-
-/-- When a verb selects for the same dimension as the *per*-phrase's unit,
-the interpretation is compositional. -/
-theorem same_dimension_compositional (d : Dimension) :
-    perInterpInContext d (some d) = .compositional := by
-  cases d <;> rfl
-
-/-- When the verb selects for a different dimension (or none), the
-interpretation is math speak. -/
-theorem different_dimension_mathSpeak (d₁ d₂ : Dimension) (h : d₁ ≠ d₂) :
-    perInterpInContext d₁ (some d₂) = .mathSpeak := by
-  cases d₁ <;> cases d₂ <;> (first | exact absurd rfl h | rfl)
-
-/-- When no predicate dimension is available, the interpretation is math speak. -/
-theorem no_dimension_mathSpeak (d : Dimension) :
-    perInterpInContext d none = .mathSpeak := rfl
+def allQuantizingNouns : List QuantizingNoun :=
+  allMeasureTerms.map (↑) ++ [glass, box, cup, bag, bottle, grain, piece, drop, slice, chunk]
 
 end English.MeasurePhrases

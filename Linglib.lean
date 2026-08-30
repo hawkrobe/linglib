@@ -3004,3 +3004,4 @@ import Linglib.Data.Examples.BakerVinokurova2010
 import Linglib.Syntax.Minimalist.Case.Dependent
 import Linglib.Data.Examples.Bale2008
 import Linglib.Data.Examples.BaleKhanjian2014
+import Linglib.Data.Examples.BaleSchwarz2026
