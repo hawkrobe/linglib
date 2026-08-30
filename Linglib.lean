@@ -359,6 +359,7 @@ import Linglib.Data.Examples.BeckmanPierrehumbert1986
 import Linglib.Data.Examples.BejarRezac2009
 import Linglib.Data.Examples.Belnap1970
 import Linglib.Data.Examples.Belnap1982
+import Linglib.Data.Examples.Belth2026
 import Linglib.Data.Examples.BeltramaSchwarz2024
 import Linglib.Data.Examples.BergenGoodman2015
 import Linglib.Data.Examples.Bondarenko2022

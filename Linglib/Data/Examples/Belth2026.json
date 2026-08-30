@@ -1,0 +1,167 @@
+[
+  {
+    "id": "belth2026_53a",
+    "source": {"bibkey": "belth-2026", "paperLabel": "(53a)"},
+    "language": "lati1261",
+    "primaryText": "nav-alis",
+    "glossedTokens": [
+      ["nav-alis", "naval"]
+    ],
+    "translation": "naval",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "-alis"],
+      ["analysis", "default l: tier-preceding consonant not lateral"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "belth2026_53b1",
+    "source": {"bibkey": "belth-2026", "paperLabel": "(53b)"},
+    "language": "lati1261",
+    "primaryText": "popul-aris",
+    "glossedTokens": [
+      ["popul-aris", "popular"]
+    ],
+    "translation": "popular",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "-aris"],
+      ["analysis", "dissimilation from tier-adjacent stem l"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "belth2026_53b2",
+    "source": {"bibkey": "belth-2026", "paperLabel": "(53b)"},
+    "language": "lati1261",
+    "primaryText": "lun-aris",
+    "glossedTokens": [
+      ["lun-aris", "lunar"]
+    ],
+    "translation": "lunar",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "-aris"],
+      ["analysis", "dissimilation across the coronal n"]
+    ],
+    "comment": "Rule (54) predicts *lunalis here (the tier-preceding consonant is non-lateral n): a residual error the Tolerance Principle absorbs."
+  },
+  {
+    "id": "belth2026_53c",
+    "source": {"bibkey": "belth-2026", "paperLabel": "(53c)"},
+    "language": "lati1261",
+    "primaryText": "flor-alis",
+    "glossedTokens": [
+      ["flor-alis", "floral"]
+    ],
+    "translation": "floral",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "-alis"],
+      ["analysis", "blocked by intervening r"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "belth2026_53d1",
+    "source": {"bibkey": "belth-2026", "paperLabel": "(53d)"},
+    "language": "lati1261",
+    "primaryText": "pluvi-alis",
+    "glossedTokens": [
+      ["pluvi-alis", "rainy"]
+    ],
+    "translation": "rainy",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "-alis"],
+      ["analysis", "blocked by an intervening non-coronal consonant"]
+    ],
+    "comment": "The non-coronal blocker stays on the tier, hiding the stem l from the suffix liquid."
+  },
+  {
+    "id": "belth2026_53d2",
+    "source": {"bibkey": "belth-2026", "paperLabel": "(53d)"},
+    "language": "lati1261",
+    "primaryText": "leg-alis",
+    "glossedTokens": [
+      ["leg-alis", "legal"]
+    ],
+    "translation": "legal",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "-alis"],
+      ["analysis", "blocked by intervening g"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "belth2026_46",
+    "source": {"bibkey": "belth-2026", "paperLabel": "(46)"},
+    "language": "nucl1301",
+    "primaryText": "dal-lar-ın / yer-ler-in / ip-ler-in",
+    "glossedTokens": [
+      ["dal-lar-ın", "branch-PL-GEN"], ["yer-ler-in", "place-PL-GEN"],
+      ["ip-ler-in", "rope-PL-GEN"]
+    ],
+    "translation": "of the branches / of the places / of the ropes",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["process", "backness harmony"],
+      ["tier", "vowels"]
+    ],
+    "comment": "Affix vowels harmonize with the preceding vowel across intervening consonants."
+  },
+  {
+    "id": "belth2026_47",
+    "source": {"bibkey": "belth-2026", "paperLabel": "(47)"},
+    "language": "nucl1301",
+    "primaryText": "ip-in / jüz-ün / kız-ın / buz-un",
+    "glossedTokens": [
+      ["ip-in", "rope-GEN"], ["jüz-ün", "face-GEN"], ["kız-ın", "girl-GEN"], ["buz-un", "ice-GEN"]
+    ],
+    "translation": "of the rope / of the face / of the girl / of the ice",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["process", "secondary rounding harmony"],
+      ["target", "high vowels only"]
+    ],
+    "comment": "High affix vowels copy both backness and rounding from the preceding vowel of any height."
+  },
+  {
+    "id": "belth2026_51",
+    "source": {"bibkey": "belth-2026", "paperLabel": "(51)"},
+    "language": "finn1318",
+    "primaryText": "pöytä-nä / pouta-na / koti-na / velje-nä",
+    "glossedTokens": [
+      ["pöytä-nä", "table-ESS"], ["pouta-na", "fine.weather-ESS"], ["koti-na", "home-ESS"],
+      ["velje-nä", "road-ESS"]
+    ],
+    "translation": "as a table / as fine weather / as a home / as a road",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["process", "backness harmony"],
+      ["neutral vowels", "i, e off the tier"],
+      ["default", "front when only neutral vowels precede"]
+    ],
+    "comment": "koti-na: harmony passes over the neutral i; velje-nä: the Elsewhere default fires."
+  }
+]
