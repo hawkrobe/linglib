@@ -730,7 +730,6 @@ import Linglib.Features.ScopeTypes
 import Linglib.Features.Slot
 import Linglib.Features.Subjectivity
 import Linglib.Features.Valence
-import Linglib.Features.VerbCluster
 import Linglib.Features.WordOrder
 import Linglib.Fragments.ASL.Classifiers
 import Linglib.Fragments.ASL.Height
