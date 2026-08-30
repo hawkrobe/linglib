@@ -1,6 +1,5 @@
 import Linglib.Core.Optimization.Linearization
 import Linglib.Fragments.Turkish.Anaphors
-import Linglib.Studies.BarkerPullum1990
 import Linglib.Data.Examples.BakayEtAl2026
 import Mathlib.Tactic.DeriveFintype
 
@@ -45,7 +44,25 @@ distractors, which the paper finds limited and inconsistent.
 namespace BakayEtAl2026
 
 open Data.Examples
-open BarkerPullum1990 (cCommand Dir Address)
+
+/-- A direction in a binary tree. -/
+inductive Dir
+  | L
+  | R
+  deriving DecidableEq
+
+/-- A tree address: the path from the root. -/
+abbrev Address := List Dir
+
+/-- The sister of an address: its last direction flipped. -/
+def sister : Address → Option Address
+  | [] => none
+  | [.L] => some [.R]
+  | [.R] => some [.L]
+  | d :: rest => (sister rest).map (d :: ·)
+
+/-- C-command on addresses ([reinhart-1976]): the sister of `a` dominates `b`. -/
+def cCommand (a b : Address) : Bool := (sister a).elim false (·.isPrefixOf b)
 
 /-! ### Cue-based retrieval -/
 
