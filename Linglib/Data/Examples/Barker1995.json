@@ -1,0 +1,261 @@
+[
+  {
+    "id": "barker1995_ch2_39c",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 2 (39c)"},
+    "language": "stan1293",
+    "primaryText": "I saw John's child.",
+    "glossedTokens": [],
+    "translation": "I saw John's child.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "uniqueness"]
+    ],
+    "comment": "Patterns with the definite (39b): refers to a uniquely determined entity."
+  },
+  {
+    "id": "barker1995_ch2_44b",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 2 (44b)"},
+    "language": "stan1293",
+    "primaryText": "I saw John's children yesterday.",
+    "glossedTokens": [],
+    "translation": "I saw John's children yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "maximality"]
+    ],
+    "comment": "The plural possessive describes only the maximal set of John's children."
+  },
+  {
+    "id": "barker1995_ch2_46",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 2 (46)"},
+    "language": "stan1293",
+    "primaryText": "People are sitting in my seat!",
+    "glossedTokens": [],
+    "translation": "People are sitting in my seat!",
+    "context": "Richard serves coffee at 4; seats are first-come-first-served; Tom arrives late to a full office.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "uniqueness relative to cases"]
+    ],
+    "comment": "Uniqueness without a specific referent: unique relative to each occasion, not absolutely."
+  },
+  {
+    "id": "barker1995_ch2_47b",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 2 (47b)"},
+    "language": "stan1293",
+    "primaryText": "I hate it when my shoes get wet.",
+    "glossedTokens": [],
+    "translation": "I hate it when my shoes get wet.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "uniqueness relative to cases"]
+    ],
+    "comment": "No particular pair of shoes: unique and maximal per situation, varying across cases."
+  },
+  {
+    "id": "barker1995_ch2_50a",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 2 (50a)"},
+    "language": "stan1293",
+    "primaryText": "I saw John's child today.",
+    "glossedTokens": [],
+    "translation": "I saw John's child today.",
+    "context": "Neutral context; the child has not been mentioned.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "novel reference"],
+      ["possession", "lexical"]
+    ],
+    "comment": "A lexical possessive introduces a novel referent: the kinship relation is familiar."
+  },
+  {
+    "id": "barker1995_ch2_50b",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 2 (50b)"},
+    "language": "stan1293",
+    "primaryText": "I saw John's human today.",
+    "glossedTokens": [],
+    "translation": "I saw John's human today.",
+    "context": "Neutral context; the person has not been mentioned.",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "novel reference"],
+      ["possession", "extrinsic"]
+    ],
+    "comment": "An extrinsic possessive cannot introduce a novel referent: the relation is too vague."
+  },
+  {
+    "id": "barker1995_ch2_53a",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 2 (53a)"},
+    "language": "stan1293",
+    "primaryText": "I saw John's car yesterday.",
+    "glossedTokens": [],
+    "translation": "I saw John's car yesterday.",
+    "context": "Neutral context.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "novel reference"],
+      ["possession", "conventional"]
+    ],
+    "comment": "Cars are conventionally owned, so the relation counts as familiar — only on the ownership reading."
+  },
+  {
+    "id": "barker1995_ch2_53b",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 2 (53b)"},
+    "language": "stan1293",
+    "primaryText": "I saw John's bus yesterday.",
+    "glossedTokens": [],
+    "translation": "I saw John's bus yesterday.",
+    "context": "Neutral context.",
+    "judgment": "marginal",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "novel reference"],
+      ["possession", "extrinsic"]
+    ],
+    "comment": "Busses are not conventionally possessed; the extrinsic relation is not resolvable."
+  },
+  {
+    "id": "barker1995_ch4_1",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 4 (1)"},
+    "language": "stan1293",
+    "primaryText": "Most students' cars are old and decrepit.",
+    "glossedTokens": [],
+    "translation": "Most students' cars are old and decrepit.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "proportion"]
+    ],
+    "comment": "The Tony-and-Simona scenario: what counts as a counterexample tracks how instances group into cases."
+  },
+  {
+    "id": "barker1995_ch4_6",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 4 (6)"},
+    "language": "stan1293",
+    "primaryText": "Three students' dogs were barking last night until 2 AM.",
+    "glossedTokens": [],
+    "translation": "Three students' dogs were barking last night until 2 AM.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "asymmetric quantification"]
+    ],
+    "comment": "Requires three students, not three dogs: the possessor description dominates."
+  },
+  {
+    "id": "barker1995_ch4_7",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 4 (7)"},
+    "language": "stan1293",
+    "primaryText": "Most people's favorite color is blue.",
+    "glossedTokens": [],
+    "translation": "Most people's favorite color is blue.",
+    "context": "Simona favors red, Tony green, Lola, Max and Sandy blue.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "asymmetric quantification"]
+    ],
+    "comment": "True in the model (8): counts people, never colors — no possessee-dominant reading."
+  },
+  {
+    "id": "barker1995_ch4_10",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 4 (10)"},
+    "language": "stan1293",
+    "primaryText": "Three students' apartment burned down last night.",
+    "glossedTokens": [],
+    "translation": "Three students' apartment burned down last night.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "proportion"]
+    ],
+    "comment": "A single jointly-possessed apartment yields at most one case, clashing with the three-case presupposition."
+  },
+  {
+    "id": "barker1995_ch4_11",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 4 (11)"},
+    "language": "stan1293",
+    "primaryText": "Most planets' rings are made of ice.",
+    "glossedTokens": [],
+    "translation": "Most planets' rings are made of ice.",
+    "context": "Nine planets; only Saturn, Neptune and Uranus have rings; Saturn's and Neptune's are icy.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "narrowing"]
+    ],
+    "comment": "True and felicitous: quantification ranges only over the ringed planets — the domain narrowing problem."
+  },
+  {
+    "id": "barker1995_ch4_12c",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 4 (12c)"},
+    "language": "stan1293",
+    "primaryText": "Every woman's dream is to become a merchant marine.",
+    "glossedTokens": [],
+    "translation": "Every woman's dream is to become a merchant marine.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "narrowing"]
+    ],
+    "comment": "Quantifies only over women who have a dream: narrowing with every."
+  },
+  {
+    "id": "barker1995_ch4_62",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 4 (62)"},
+    "language": "stan1293",
+    "primaryText": "Most younger students' favorite teachers smile at them often.",
+    "glossedTokens": [],
+    "translation": "Most younger students' favorite teachers smile at them often.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "perspective paradox"]
+    ],
+    "comment": "Feels like a generalization about students or about teachers, with no truth-conditional difference."
+  },
+  {
+    "id": "barker1995_ch4_63",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 4 (63)"},
+    "language": "stan1293",
+    "primaryText": "Most kindergarten teachers' children obey them.",
+    "glossedTokens": [],
+    "translation": "Most kindergarten teachers' children obey them.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "lexical vs extrinsic"]
+    ],
+    "comment": "Kinship reading (their own children) or extrinsic reading (their students); the relation holds constant across the quantification."
+  },
+  {
+    "id": "barker1995_ch4_72",
+    "source": {"bibkey": "barker-1995", "paperLabel": "Ch. 4 (72)"},
+    "language": "stan1293",
+    "primaryText": "Most graduate students' longer papers are about English.",
+    "glossedTokens": [],
+    "translation": "Most graduate students' longer papers are about English.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "perspective paradox"]
+    ],
+    "comment": "Uniqueness forces maximal paper-sums, so pair-cases and student-cases coincide: one instance per case."
+  }
+]
