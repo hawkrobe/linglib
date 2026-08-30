@@ -2,6 +2,7 @@ import Mathlib.Order.Antisymmetrization
 import Mathlib.Data.Fintype.Card
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.GCongr
+import Mathlib.Order.Interval.Finset.Fin
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Features.Dimension
 import Linglib.Semantics.Degree.Delineation
@@ -287,6 +288,118 @@ theorem relativeRank_mem_Ioc {D : Type*} [Fintype D] [LinearOrder D] (d : D) :
     exact_mod_cast Finset.card_filter_le _ _
 
 
+
+/-! ### Universal degrees of a ranking -/
+
+section Universal
+
+variable {D : Type*} [LinearOrder D]
+
+/-- The relative position of `d` among the values of a finite scale `S`: the fraction of `S` at
+    or below it. `relativeRank` is the case `S = univ`. -/
+def relativeRankIn (S : Finset D) (d : D) : ℚ := (S.filter (· ≤ d)).card / S.card
+
+theorem relativeRank_eq_relativeRankIn_univ [Fintype D] (d : D) :
+    relativeRank d = relativeRankIn Finset.univ d := by
+  simp [relativeRank, relativeRankIn, Finset.card_univ]
+
+theorem relativeRankIn_lt_iff {S : Finset D} {d₁ d₂ : D} (h₁ : d₁ ∈ S) (h₂ : d₂ ∈ S) :
+    relativeRankIn S d₁ < relativeRankIn S d₂ ↔ d₁ < d₂ := by
+  have hS : (0 : ℚ) < S.card := by exact_mod_cast Finset.card_pos.2 ⟨d₁, h₁⟩
+  rw [relativeRankIn, relativeRankIn, div_lt_div_iff_of_pos_right hS, Nat.cast_lt]
+  constructor
+  · intro h
+    by_contra hle
+    exact absurd h (not_lt.2 (Finset.card_le_card
+      (Finset.monotone_filter_right S λ x _ (hx : x ≤ d₂) => hx.trans (not_lt.1 hle))))
+  · intro h
+    refine Finset.card_lt_card ((Finset.ssubset_iff_of_subset
+      (Finset.monotone_filter_right S λ x _ (hx : x ≤ d₁) => hx.trans h.le)).2 ⟨d₂, ?_, ?_⟩)
+    · exact Finset.mem_filter.2 ⟨h₂, le_rfl⟩
+    · exact λ hd => absurd (Finset.mem_filter.1 hd).2 (not_le.2 h)
+
+theorem relativeRankIn_le_iff {S : Finset D} {d₁ d₂ : D} (h₁ : d₁ ∈ S) (h₂ : d₂ ∈ S) :
+    relativeRankIn S d₁ ≤ relativeRankIn S d₂ ↔ d₁ ≤ d₂ := by
+  rw [← not_lt, ← not_lt, relativeRankIn_lt_iff h₂ h₁]
+
+/-- The greatest value of a scale has degree one. -/
+theorem relativeRankIn_of_forall_le {S : Finset D} {d : D} (hd : d ∈ S)
+    (hmax : ∀ x ∈ S, x ≤ d) : relativeRankIn S d = 1 := by
+  rw [relativeRankIn, Finset.filter_true_of_mem hmax, div_self]
+  exact_mod_cast (Finset.card_pos.2 ⟨d, hd⟩).ne'
+
+/-- The least value of a scale has degree one over the number of values. -/
+theorem relativeRankIn_of_forall_ge {S : Finset D} {d : D} (hd : d ∈ S)
+    (hmin : ∀ x ∈ S, d ≤ x) : relativeRankIn S d = 1 / S.card := by
+  have : S.filter (· ≤ d) = {d} := by
+    ext x
+    simp only [Finset.mem_filter, Finset.mem_singleton]
+    exact ⟨λ ⟨hx, hxd⟩ => le_antisymm hxd (hmin x hx), by rintro rfl; exact ⟨hd, le_rfl⟩⟩
+  rw [relativeRankIn, this, Finset.card_singleton, Nat.cast_one]
+
+variable {α : Type*} [Fintype α]
+
+/-- [bale-2008]'s universal degree of `x` under the quasi-order a ranking induces: the relative
+    position of `rank x` among the values the ranking takes. Equivalent elements share a degree,
+    and the denominator counts equivalence classes, not elements. -/
+def universalDegree (rank : α → D) (x : α) : ℚ :=
+  relativeRankIn (Finset.univ.image rank) (rank x)
+
+theorem universalDegree_lt_iff (rank : α → D) (x y : α) :
+    universalDegree rank x < universalDegree rank y ↔ rank x < rank y :=
+  relativeRankIn_lt_iff (Finset.mem_image_of_mem _ (Finset.mem_univ _))
+    (Finset.mem_image_of_mem _ (Finset.mem_univ _))
+
+theorem universalDegree_le_iff (rank : α → D) (x y : α) :
+    universalDegree rank x ≤ universalDegree rank y ↔ rank x ≤ rank y :=
+  relativeRankIn_le_iff (Finset.mem_image_of_mem _ (Finset.mem_univ _))
+    (Finset.mem_image_of_mem _ (Finset.mem_univ _))
+
+/-- Two rankings taking the same values are compared across scales as their values are: a
+    direct comparison. -/
+theorem universalDegree_lt_iff_of_image_eq {β : Type*} [Fintype β] {rank₁ : α → D}
+    {rank₂ : β → D} (h : Finset.univ.image rank₁ = Finset.univ.image rank₂) (x : α) (y : β) :
+    universalDegree rank₁ x < universalDegree rank₂ y ↔ rank₁ x < rank₂ y := by
+  unfold universalDegree
+  rw [h]
+  exact relativeRankIn_lt_iff (h ▸ Finset.mem_image_of_mem _ (Finset.mem_univ _))
+    (Finset.mem_image_of_mem _ (Finset.mem_univ _))
+
+/-- Adding elements equivalent to existing ones changes no degree: the classes, not the
+    elements, are counted. -/
+theorem universalDegree_comp_of_surjective {α' : Type*} [Fintype α'] [DecidableEq α]
+    (rank : α → D)
+    {rep : α' → α} (hrep : Function.Surjective rep) (x : α') :
+    universalDegree (rank ∘ rep) x = universalDegree rank (rep x) := by
+  unfold universalDegree
+  rw [Function.comp_apply, ← Finset.image_image, Finset.image_univ_of_surjective hrep]
+
+/-- A ranking onto a finite linear order gives each element the relative rank of its value. -/
+theorem universalDegree_of_surjective [Fintype D] {rank : α → D} (h : Function.Surjective rank)
+    (x : α) : universalDegree rank x = relativeRank (rank x) := by
+  rw [universalDegree, Finset.image_univ_of_surjective h, relativeRank_eq_relativeRankIn_univ]
+
+/-- An element ranked at least as high as every other has degree one. -/
+theorem universalDegree_of_forall_le (rank : α → D) {x : α} (h : ∀ y, rank y ≤ rank x) :
+    universalDegree rank x = 1 :=
+  relativeRankIn_of_forall_le (Finset.mem_image_of_mem _ (Finset.mem_univ _)) λ d hd => by
+    obtain ⟨y, -, rfl⟩ := Finset.mem_image.1 hd; exact h y
+
+/-- An element ranked at most as high as every other has degree one over the number of
+    classes. -/
+theorem universalDegree_of_forall_ge (rank : α → D) {x : α} (h : ∀ y, rank x ≤ rank y) :
+    universalDegree rank x = 1 / (Finset.univ.image rank).card :=
+  relativeRankIn_of_forall_ge (Finset.mem_image_of_mem _ (Finset.mem_univ _)) λ d hd => by
+    obtain ⟨y, -, rfl⟩ := Finset.mem_image.1 hd; exact h y
+
+/-- On `Fin n`, position `k` has relative rank `(k + 1) / n`. -/
+theorem relativeRank_fin {n : ℕ} (k : Fin n) : relativeRank k = (k.val + 1 : ℚ) / n := by
+  have : (Finset.univ.filter (· ≤ k)) = Finset.Iic k := by ext; simp
+  rw [relativeRank, this, Fin.card_Iic, Fintype.card_fin]
+  push_cast
+  rfl
+
+end Universal
 
 /-! ### Transport: which operators are natural in the scale
 
