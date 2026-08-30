@@ -31,7 +31,7 @@ logistic mixed-effects regressions):
 The paper's ALT constraint — alternatives are QUD answers the speaker is
 competent about, `ALT(p) ⊆ ANS(QUD) ∩ {q : Kₛ(q) ∨ Kₛ(¬q)}` — is
 `exhaustificationLicensed`; the competence half is
-`BaleEtAl2025.Competent`, derived from the speaker's observation state,
+`Competent`, derived from the speaker's observation state,
 the same derivation [bale-etal-2025]'s scalar-implicature paradigm uses,
 so conditional perfection and scalar implicature share the competence
 gate by construction. Perfection is not a semantic entailment
@@ -55,7 +55,30 @@ coverage without exclusion does not suffice
 namespace EvcenBaleBarner2026
 
 open VonFintel2001 Semantics.Conditionals Exhaustification NeoGricean
-open BaleEtAl2025 (SpeakerKnowledge Competent fk_competent pk_not_competent)
+open BaleEtAl2025 (speakerState all competent_iff_looked)
+open GoodmanStuhlmuller2013 (Access WorldState)
+
+/-- Whether Mary tested all three buttons or only two. -/
+inductive SpeakerKnowledge where
+  | fullKnowledge
+  | partialKnowledge
+  deriving DecidableEq, Repr
+
+/-- The buttons Mary tested, as an observation state: all three or two. -/
+def SpeakerKnowledge.access : SpeakerKnowledge → Access
+  | .fullKnowledge => Access.a3
+  | .partialKnowledge => Access.a2
+
+/-- Competence about the alternative: Mary knows whether every button plays the sound, which
+    her observation state settles exactly when she tested all three. -/
+def Competent (k : SpeakerKnowledge) : Prop :=
+  speakerState k.access .s2 ∈ competent all
+
+theorem competent_iff {k : SpeakerKnowledge} : Competent k ↔ k = .fullKnowledge := by
+  cases k <;>
+    simp only [Competent, SpeakerKnowledge.access,
+      competent_iff_looked _ _ (by decide : WorldState.s2 ∈ BaleEtAl2025.seen)] <;>
+    decide
 
 /-! ### Experimental conditions and observed rates -/
 
@@ -118,8 +141,7 @@ with a fully knowledgeable speaker. -/
     {k : SpeakerKnowledge} {q : QUDType} :
     exhaustificationLicensed k q ↔
       q = .antecedentFocused ∧ k = .fullKnowledge := by
-  cases k <;>
-    simp [exhaustificationLicensed, qudProvidesAlternatives, fk_competent, pk_not_competent]
+  cases k <;> simp [exhaustificationLicensed, qudProvidesAlternatives, competent_iff]
 
 /-! ### Licensing predicts the observed rates -/
 
