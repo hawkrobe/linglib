@@ -356,6 +356,7 @@ import Linglib.Data.Examples.BeaversKoontzGarboden2020
 import Linglib.Data.Examples.BeaversUdayana2022
 import Linglib.Data.Examples.BeckOdaSugisaki2004
 import Linglib.Data.Examples.BeckmanPierrehumbert1986
+import Linglib.Data.Examples.BejarRezac2009
 import Linglib.Data.Examples.BeltramaSchwarz2024
 import Linglib.Data.Examples.BergenGoodman2015
 import Linglib.Data.Examples.Bondarenko2022
