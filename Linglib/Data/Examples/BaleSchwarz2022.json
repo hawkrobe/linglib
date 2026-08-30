@@ -1,0 +1,436 @@
+[
+  {
+    "id": "bs2022_3",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(3)"},
+    "language": "stan1293",
+    "primaryText": "The sample weighs 0.9 grams.",
+    "glossedTokens": [],
+    "translation": "The sample weighs 0.9 grams.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["construction", "measurement verb"],
+      ["numeral", "0.9"],
+      ["unit", "grams"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_6",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(6)"},
+    "language": "stan1293",
+    "primaryText": "The sample weighs 0.9 grams per milliliter.",
+    "glossedTokens": [],
+    "translation": "The sample weighs 0.9 grams per milliliter.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["construction", "measurement verb"],
+      ["numeral", "0.9"],
+      ["unit", "grams"],
+      ["per_unit", "milliliter"],
+      ["unit_sensitivity", "the sample's volume is at least 1 milliliter"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_10",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(10)"},
+    "language": "stan1293",
+    "primaryText": "This cube weighs what that cube weighs.",
+    "glossedTokens": [],
+    "translation": "This cube weighs what that cube weighs.",
+    "context": "This cube weighs 1 kg while that cube weighs 2 kg.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "same weight", "judgment": "acceptable"},
+      {"name": "same density", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "free relative"]
+    ],
+    "comment": "Judged false in the context, so the density reading is unavailable."
+  },
+  {
+    "id": "bs2022_14a",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(14a)"},
+    "language": "stan1293",
+    "primaryText": "This cube weighs more than that cube weighs.",
+    "glossedTokens": [],
+    "translation": "This cube weighs more than that cube weighs.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "comparing weight", "judgment": "acceptable"},
+      {"name": "comparing density", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "comparative"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_14b",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(14b)"},
+    "language": "stan1293",
+    "primaryText": "What does this cube weigh?",
+    "glossedTokens": [],
+    "translation": "What does this cube weigh?",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "asking for weight", "judgment": "acceptable"},
+      {"name": "asking for density", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "wh-interrogative"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_23a",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(23a)"},
+    "language": "stan1293",
+    "primaryText": "The mixture contains 0.9 grams of salt.",
+    "glossedTokens": [],
+    "translation": "The mixture contains 0.9 grams of salt.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["construction", "pseudo-partitive"],
+      ["numeral", "0.9"],
+      ["unit", "grams"],
+      ["measure_function", "weight"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_23b",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(23b)"},
+    "language": "stan1293",
+    "primaryText": "The mixture contains 0.8 milliliters of salt.",
+    "glossedTokens": [],
+    "translation": "The mixture contains 0.8 milliliters of salt.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["construction", "pseudo-partitive"],
+      ["numeral", "0.8"],
+      ["unit", "milliliters"],
+      ["measure_function", "volume"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_27",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(27)"},
+    "language": "stan1293",
+    "primaryText": "The mixture contains 0.1 grams per milliliter of salt.",
+    "glossedTokens": [],
+    "translation": "The mixture contains 0.1 grams per milliliter of salt.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "The mixture contains 0.1 grams of salt per milliliter.", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "pseudo-partitive"],
+      ["numeral", "0.1"],
+      ["unit", "grams"],
+      ["per_unit", "milliliter"],
+      ["unit_sensitivity", "the mixture's volume is at least 1 milliliter"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_33",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(33)"},
+    "language": "stan1293",
+    "primaryText": "How much salt does the mixture contain?",
+    "glossedTokens": [],
+    "translation": "How much salt does the mixture contain?",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "asking for absolute weight or volume", "judgment": "acceptable"},
+      {"name": "asking for concentration", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "wh-interrogative"],
+      ["measure_function", "underspecified"]
+    ],
+    "comment": "The concentration reading is brought out by appending 'proportionally speaking'."
+  },
+  {
+    "id": "bs2022_34",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(34)"},
+    "language": "stan1293",
+    "primaryText": "Amy knows how much salt the mixture contains.",
+    "glossedTokens": [],
+    "translation": "Amy knows how much salt the mixture contains.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "knowing the absolute weight or volume", "judgment": "acceptable"},
+      {"name": "knowing the concentration", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "embedded question"],
+      ["measure_function", "underspecified"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_36a",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(36a)"},
+    "language": "stan1293",
+    "primaryText": "The mixture contains 0.1 kilograms per liter of salt.",
+    "glossedTokens": [],
+    "translation": "The mixture contains 0.1 kilograms per liter of salt.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["construction", "pseudo-partitive"],
+      ["numeral", "0.1"],
+      ["unit", "kilograms"],
+      ["per_unit", "liter"],
+      ["unit_sensitivity", "the mixture's volume is at least 1 liter"]
+    ],
+    "comment": "Not equivalent to (27), despite 0.1 kg/L = 0.1 g/mL."
+  },
+  {
+    "id": "bs2022_37",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(37)"},
+    "language": "stan1293",
+    "primaryText": "The 5 milliliter sample of mixture contained 0.1 grams of salt per milliliter.",
+    "glossedTokens": [],
+    "translation": "The 5 milliliter sample of mixture contained 0.1 grams of salt per milliliter.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["construction", "pseudo-partitive"],
+      ["subject_measure", "5"],
+      ["subject_unit", "milliliter"],
+      ["numeral", "0.1"],
+      ["unit", "grams"],
+      ["per_unit", "milliliter"],
+      ["unit_sensitivity", "5 mL ≥ mL"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_38a",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(38a)"},
+    "language": "stan1293",
+    "primaryText": "The 5 milliliter sample of mixture contained 0.1 grams of salt per liter.",
+    "glossedTokens": [],
+    "translation": "The 5 milliliter sample of mixture contained 0.1 grams of salt per liter.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["construction", "pseudo-partitive"],
+      ["subject_measure", "5"],
+      ["subject_unit", "milliliter"],
+      ["numeral", "0.1"],
+      ["unit", "grams"],
+      ["per_unit", "liter"],
+      ["unit_sensitivity", "5 mL ≥ L"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_38b",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(38b)"},
+    "language": "stan1293",
+    "primaryText": "The 0.1 milliliter sample of mixture contained 0.1 grams of salt per milliliter.",
+    "glossedTokens": [],
+    "translation": "The 0.1 milliliter sample of mixture contained 0.1 grams of salt per milliliter.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["construction", "pseudo-partitive"],
+      ["subject_measure", "0.1"],
+      ["subject_unit", "milliliter"],
+      ["numeral", "0.1"],
+      ["unit", "grams"],
+      ["per_unit", "milliliter"],
+      ["unit_sensitivity", "0.1 mL ≥ mL"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_39a",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(39a)"},
+    "language": "stan1293",
+    "primaryText": "The monograph by Dole contained more than 3 typos per page.",
+    "glossedTokens": [],
+    "translation": "The monograph by Dole contained more than 3 typos per page.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["construction", "pseudo-partitive"],
+      ["per_unit", "page"],
+      ["unit_sensitivity", "a monograph has at least one page"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_39b",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(39b)"},
+    "language": "stan1293",
+    "primaryText": "The paragraph by Dole contained more than 3 typos per line.",
+    "glossedTokens": [],
+    "translation": "The paragraph by Dole contained more than 3 typos per line.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["construction", "pseudo-partitive"],
+      ["per_unit", "line"],
+      ["unit_sensitivity", "a paragraph has at least one line"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_40",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(40)"},
+    "language": "stan1293",
+    "primaryText": "The paragraph by Dole contained more than 3 typos per page.",
+    "glossedTokens": [],
+    "translation": "The paragraph by Dole contained more than 3 typos per page.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["construction", "pseudo-partitive"],
+      ["per_unit", "page"],
+      ["unit_sensitivity", "a paragraph comprises less than a whole page"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_44",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(44)"},
+    "language": "stan1293",
+    "primaryText": "The 5 milliliter portion of solution weighed 0.9 grams per milliliter.",
+    "glossedTokens": [],
+    "translation": "The 5 milliliter portion of solution weighed 0.9 grams per milliliter.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["construction", "measurement verb"],
+      ["subject_measure", "5"],
+      ["subject_unit", "milliliter"],
+      ["numeral", "0.9"],
+      ["unit", "grams"],
+      ["per_unit", "milliliter"],
+      ["unit_sensitivity", "5 mL ≥ mL"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_45a",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(45a)"},
+    "language": "stan1293",
+    "primaryText": "The 5 milliliter portion of solution weighed 0.9 kilograms per liter.",
+    "glossedTokens": [],
+    "translation": "The 5 milliliter portion of solution weighed 0.9 kilograms per liter.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["construction", "measurement verb"],
+      ["subject_measure", "5"],
+      ["subject_unit", "milliliter"],
+      ["numeral", "0.9"],
+      ["unit", "kilograms"],
+      ["per_unit", "liter"],
+      ["unit_sensitivity", "5 mL ≥ L"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_45b",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(45b)"},
+    "language": "stan1293",
+    "primaryText": "The 0.1 milliliter portion of solution weighed 0.9 grams per milliliter.",
+    "glossedTokens": [],
+    "translation": "The 0.1 milliliter portion of solution weighed 0.9 grams per milliliter.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["construction", "measurement verb"],
+      ["subject_measure", "0.1"],
+      ["subject_unit", "milliliter"],
+      ["numeral", "0.9"],
+      ["unit", "grams"],
+      ["per_unit", "milliliter"],
+      ["unit_sensitivity", "0.1 mL ≥ mL"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bs2022_46",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(46)"},
+    "language": "stan1293",
+    "primaryText": "The sample's density is 0.9 grams per milliliter.",
+    "glossedTokens": [],
+    "translation": "The sample's density is 0.9 grams per milliliter.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["construction", "copular"],
+      ["numeral", "0.9"],
+      ["unit", "grams"],
+      ["per_unit", "milliliter"]
+    ],
+    "comment": "Reports on the sample's density."
+  },
+  {
+    "id": "bs2022_47",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(47)"},
+    "language": "stan1293",
+    "primaryText": "The sample's density is 0.9 grams.",
+    "glossedTokens": [],
+    "translation": "The sample's density is 0.9 grams.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["construction", "copular"],
+      ["numeral", "0.9"],
+      ["unit", "grams"]
+    ],
+    "comment": "A weight quantity portrayed as a density: mismatching dimensions."
+  },
+  {
+    "id": "bs2022_48",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(48)"},
+    "language": "stan1293",
+    "primaryText": "The sample's density is 0.9 grams for every cubic centimeter.",
+    "glossedTokens": [],
+    "translation": "The sample's density is 0.9 grams for every cubic centimeter.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["construction", "copular"],
+      ["numeral", "0.9"],
+      ["unit", "grams"],
+      ["quantifier", "for every"]
+    ],
+    "comment": "Expresses density without vocabulary associated with quantity division."
+  },
+  {
+    "id": "bs2022_49",
+    "source": {"bibkey": "bale-schwarz-2022", "paperLabel": "(49)"},
+    "language": "stan1293",
+    "primaryText": "London's population density is 968 people for every km².",
+    "glossedTokens": [],
+    "translation": "London's population density is 968 people for every km².",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["construction", "copular"],
+      ["numeral", "968"],
+      ["unit", "people"],
+      ["quantifier", "for every"]
+    ],
+    "comment": "Naturally occurring example (blackburnnews.com)."
+  }
+]

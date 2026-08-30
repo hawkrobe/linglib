@@ -1,5 +1,5 @@
 import Linglib.Features.Dimension
-import Linglib.Semantics.Degree.Measure.Dimensioned
+import Linglib.Semantics.Degree.Measure.Quantity
 
 /-!
 # English Measure Phrase Fragment
@@ -43,31 +43,44 @@ structure MeasureTermEntry where
   formPlural : String
   /-- Which dimension this term measures. -/
   dimension : Dimension
+  /-- Size of the unit relative to the dimension's reference unit (gram, milliliter,
+  meter, second): a kilogram is `1000` grams, a mile `1609.344` meters. -/
+  magnitude : ℚ := 1
   deriving Repr, BEq
+
+/-- The unit quantity a measure term denotes. -/
+def MeasureTermEntry.quantity (e : MeasureTermEntry) : Degree.Quantity ℚ :=
+  (e.magnitude, .of e.dimension)
 
 def gram : MeasureTermEntry :=
   { form := "gram", formPlural := "grams", dimension := .mass }
+def kilogram : MeasureTermEntry :=
+  { form := "kilogram", formPlural := "kilograms", dimension := .mass, magnitude := 1000 }
 def kilo : MeasureTermEntry :=
-  { form := "kilo", formPlural := "kilos", dimension := .mass }
+  { form := "kilo", formPlural := "kilos", dimension := .mass, magnitude := 1000 }
 def pound : MeasureTermEntry :=
-  { form := "pound", formPlural := "pounds", dimension := .mass }
+  { form := "pound", formPlural := "pounds", dimension := .mass, magnitude := 45359237 / 100000 }
 def milliliter : MeasureTermEntry :=
   { form := "milliliter", formPlural := "milliliters", dimension := .volume }
 def liter : MeasureTermEntry :=
-  { form := "liter", formPlural := "liters", dimension := .volume }
+  { form := "liter", formPlural := "liters", dimension := .volume, magnitude := 1000 }
 def mile : MeasureTermEntry :=
-  { form := "mile", formPlural := "miles", dimension := .distance }
+  { form := "mile", formPlural := "miles", dimension := .distance, magnitude := 1609344 / 1000 }
 def kilometer : MeasureTermEntry :=
-  { form := "kilometer", formPlural := "kilometers", dimension := .distance }
+  { form := "kilometer", formPlural := "kilometers", dimension := .distance, magnitude := 1000 }
 def meter : MeasureTermEntry :=
   { form := "meter", formPlural := "meters", dimension := .distance }
 def hour : MeasureTermEntry :=
-  { form := "hour", formPlural := "hours", dimension := .time }
+  { form := "hour", formPlural := "hours", dimension := .time, magnitude := 3600 }
 def second_ : MeasureTermEntry :=
   { form := "second", formPlural := "seconds", dimension := .time }
 
 def allMeasureTerms : List MeasureTermEntry :=
-  [gram, kilo, pound, milliliter, liter, mile, kilometer, meter, hour, second_]
+  [gram, kilogram, kilo, pound, milliliter, liter, mile, kilometer, meter, hour, second_]
+
+/-- The measure term with singular or plural form `s`. -/
+def measureTerm? (s : String) : Option MeasureTermEntry :=
+  allMeasureTerms.find? λ e => e.form = s ∨ e.formPlural = s
 
 -- ============================================================================
 -- § 2. Quantizing Noun Entries ([scontras-2014], Ch. 3)
