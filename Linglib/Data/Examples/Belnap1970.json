@@ -1,0 +1,147 @@
+[
+  {
+    "id": "belnap1970_11",
+    "source": {"bibkey": "belnap-1970", "paperLabel": "(11)"},
+    "language": "stan1293",
+    "primaryText": "All crows are black.",
+    "glossedTokens": [],
+    "translation": "All crows are black.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "quantified conditional assertion: consider the crows — each one is black", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["form", "A"],
+      ["assertive iff", "there are crows"]
+    ],
+    "comment": "Asserts nothing about crowhood: the content is the conjunction of 't is black' for the crows t."
+  },
+  {
+    "id": "belnap1970_12",
+    "source": {"bibkey": "belnap-1970", "paperLabel": "(12)"},
+    "language": "stan1293",
+    "primaryText": "Some crows are black.",
+    "glossedTokens": [],
+    "translation": "Some crows are black.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "consider the crows: some of them are black", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["form", "I"],
+      ["assertive iff", "there are crows"]
+    ],
+    "comment": "The freshman rendering ∃x(if Cx then Bx) comes out right under conditional assertion."
+  },
+  {
+    "id": "belnap1970_unicorns_a",
+    "source": {"bibkey": "belnap-1970", "paperLabel": "p. 8"},
+    "language": "stan1293",
+    "primaryText": "Some unicorns are animals.",
+    "glossedTokens": [],
+    "translation": "Some unicorns are animals.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["status", "nonassertive"],
+      ["diagnostic", "I-conversion"]
+    ],
+    "comment": "Nonassertive: no unicorns. Its converse is plain false — conversion preserves truth, not assertiveness."
+  },
+  {
+    "id": "belnap1970_unicorns_b",
+    "source": {"bibkey": "belnap-1970", "paperLabel": "p. 8"},
+    "language": "stan1293",
+    "primaryText": "Some animals are unicorns.",
+    "glossedTokens": [],
+    "translation": "Some animals are unicorns.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["status", "false"],
+      ["diagnostic", "I-conversion"]
+    ],
+    "comment": "Assertive (there are animals) and false."
+  },
+  {
+    "id": "belnap1970_johns_children",
+    "source": {"bibkey": "belnap-1970", "paperLabel": "p. 8"},
+    "language": "stan1293",
+    "primaryText": "Some of John's children are asleep.",
+    "glossedTokens": [],
+    "translation": "Some of John's children are asleep.",
+    "context": "John has no children.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["status", "nonassertive"],
+      ["diagnostic", "I-conversion"]
+    ],
+    "comment": "Nonassertive in this context, while 'Some sleepers are children of John's' is false."
+  },
+  {
+    "id": "belnap1970_barbara",
+    "source": {"bibkey": "belnap-1970", "paperLabel": "p. 8"},
+    "language": "stan1293",
+    "primaryText": "All of Alan's birds are black.",
+    "glossedTokens": [],
+    "translation": "All of Alan's birds are black.",
+    "context": "Major: all crows are black. Minor: all of Alan's birds are crows.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Barbara conclusion"],
+      ["asymmetry", "the major alone implies the conclusion"]
+    ],
+    "comment": "When the minor is true, major and conclusion are both assertive, and the major's content implies the conclusion's."
+  },
+  {
+    "id": "belnap1970_biscuits",
+    "source": {"bibkey": "belnap-1970", "paperLabel": "p. 11"},
+    "language": "stan1293",
+    "primaryText": "There are biscuits on the sideboard if you want some.",
+    "glossedTokens": [],
+    "translation": "There are biscuits on the sideboard if you want some.",
+    "context": "There are no biscuits, and you don't want any.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["status", "plain false, not nonassertive"]
+    ],
+    "comment": "Not a conditional assertion: falsity survives a false antecedent — the biscuit conditional is something else."
+  },
+  {
+    "id": "belnap1970_frank_james",
+    "source": {"bibkey": "belnap-1970", "paperLabel": "p. 9"},
+    "language": "stan1293",
+    "primaryText": "If my name is Frank James, I have never beaten my wife.",
+    "glossedTokens": [],
+    "translation": "If my name is Frank James, I have never beaten my wife.",
+    "context": "A reply to: If your name is Frank James, have you stopped beating your wife?",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["use", "conditional denial of a conditional question's presupposition"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "belnap1970_wages",
+    "source": {"bibkey": "belnap-1970", "paperLabel": "p. 11"},
+    "language": "stan1293",
+    "primaryText": "Wages were high throughout the 1960's.",
+    "glossedTokens": [],
+    "translation": "Wages were high throughout the 1960's.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["use", "summarizing an empirical regularity without explanatory force"]
+    ],
+    "comment": "Quantified conditional assertion limits a law's scope without asserting a connection between antecedent and consequent."
+  }
+]

@@ -2,69 +2,44 @@ import Linglib.Semantics.Presupposition.Trivalent
 import Linglib.Logic.Aristotelian.Square
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Fragments.English.Toy
+import Linglib.Data.Examples.Belnap1970
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# Belnap 1970: Conditional Assertion and Restricted Quantification
-[belnap-1970]
+# Belnap (1970): Conditional Assertion and Restricted Quantification
 
-Nuel D. Belnap Jr. Conditional Assertion and Restricted Quantification.
-*Noûs* 4(1): 1–12, 1970.
+"If p then q" read as *conditional assertion*: the assertion of q on the
+condition p, assertive only where p is true and as if never made
+otherwise. Belnap gives each sentence four semantic coordinates per world
+(p. 3) — true, false, assertive, and what it asserts — which are exactly
+`PartialProp`'s two fields, and then combines conditional assertion (3)
+with ordinary universal quantification (10) to *derive* restricted
+quantification (11): "All crows are black" comes out as "Consider the
+crows: each one is black", assertive only if there are crows. The four
+Aristotelian forms then stand in "pretty much a good old fashioned square
+of opposition" with equi-assertiveness on top of the content relations,
+obversion is a strong equivalence, I-conversion preserves truth but not
+assertiveness, and Barbara's major alone implies her conclusion.
 
-## Core idea
+## Main statements
 
-"If p then q" is not a truth-functional connective but a **conditional
-assertion** — the assertion of q on the condition p. When p is false,
-(p/q) is *nonassertive*: it asserts nothing. Belnap introduces four
-semantic concepts per sentence A at world w (p. 3):
+* `belnap_forall_content_eq_every`, `belnap_exists_content_eq_some`: the
+  content of the restricted forms (11)–(12) is `every_sem`/`some_sem`;
+  their shared assertiveness condition is [strawson-1952]'s stipulated
+  existential presupposition, here derived.
+* `content_square_relations`: the four forms satisfy all six
+  `SquareRelations` whenever the restrictor is non-empty — exactly the
+  worlds where they are assertive.
+* `i_conversion_equitrue`, `i_conversion_not_equiassertive`, `barbara`:
+  the paper's asymmetries — conversion preserves truth only, and Barbara's
+  major does all the implying (p. 8–9).
 
-1. A is **true_w** — standard sentential truth
-2. A is **false_w** — standard sentential falsity
-3. A is **assertive_w** — whether A asserts anything at w
-4. **A_w** — what A asserts at w (a proposition = set of worlds)
+## References
 
-We formalize this via `PartialProp` (presup = assertive, assertion = content),
-showing that Belnap's system is isomorphic to linglib's existing partial
-proposition infrastructure.
-
-## Main result
-
-Combining conditional assertion with universal quantification **derives
-restricted quantification**: ∀x(Cx/Bx) is assertive_w iff ∃xCx is
-true_w, and what it asserts = ⋀{Bt_w : Ct true_w}. "All crows are
-black" = "Consider the crows: each one is black."
-
-## Integration
-
-- `belnap_forall_content_eq_every`: content of Belnap's restricted ∀
-  equals `every_sem` from generalized quantifier infrastructure
-- `belnap_exists_content_eq_some`: same for restricted ∃
-- `subalternation_a_i` (in `Quantifier.lean`): the non-empty-restrictor
-  condition that Belnap derives is exactly what [strawson-1952]
-  stipulated as a presupposition of universals
-- `content_square_relations`: concrete `SquareRelations` instance from
-  `Aristotelian.Square`, connecting to the abstract algebraic framework
-- `contrapositive_different_assertiveness`: ∀x(Cx/Bx) and ∀x(¬Bx/¬Cx)
-  have different assertiveness conditions — relevant to the confirmation
-  paradox
-
-## Three Routes to Restricted Quantification
-
-Belnap's derivation is one of three independent routes to restricted
-quantification in linglib:
-
-1. **Conditional assertion** (this file): ∀x(Cx/Bx) = conditional assertion
-   + universal quantification. [belnap-1970]
-2. **Kratzer restrictor**: if-clauses restrict modal bases, deriving
-   restricted quantification from modality. [kratzer-1986]
-   See `Semantics/Conditionals/Restrictor.lean`.
-3. **Domain restriction**: contextual predicates intersect the restrictor,
-   deriving restricted quantification from pragmatics.
-   [von-fintel-1994] [stanley-szab-2000]
-   See `Semantics/Lexical/Determiner/DomainRestriction.lean`.
-
-The convergence of three independent mechanisms on the same result
-suggests restricted quantification is a deep linguistic universal.
+* [belnap-1970]: Conditional Assertion and Restricted Quantification.
+  *Noûs* 4.
+* [quine-1950]: Methods of Logic (the Quine–Rhinelander reading).
+* [strawson-1952]: Introduction to Logical Theory.
 -/
 
 namespace Belnap1970
@@ -72,194 +47,115 @@ namespace Belnap1970
 open Presupposition
 open Aristotelian (Square SquareRelations)
 open Quantification
-open Semantics.Montague (ToyEntity)
 
--- ════════════════════════════════════════════════════════════════
--- §2–3. Conditional Assertion as PartialProp
--- ════════════════════════════════════════════════════════════════
+/-! ### Belnap's functors in the `PartialProp` substrate ((3), (6)–(10))
 
-/-- Belnap's (3): conditional assertion (A/B).
+The four concepts of p. 3 are `PartialProp`'s fields: `presup` is
+assertiveness, `assertion` the asserted content. (3) is
+`PartialProp.condAssert` — assertive where the antecedent is true,
+asserting the consequent there; (6)'s categorical atoms are
+`PartialProp.ofProp`, assertive everywhere; (7) is `PartialProp.neg`,
+which preserves assertiveness (`PartialProp.neg_presup`); the
+skip-undefined conjunction (8) and disjunction (9) are
+`PartialProp.andBelnap` and `PartialProp.orBelnap`, assertive iff at
+least one operand is. The quantifiers (10) — assertive iff some instance
+is, asserting the conjunction/disjunction of the assertive instances —
+specialize to the restricted forms below when the instances are
+conditional assertions over categorical predicates. -/
 
-    "(A/B) is assertive_w just in case A is true_w.
-     Provided (A/B) is assertive_w: (A/B)_w = B_w." -/
-abbrev condAssert {W : Type*} := @PartialProp.condAssert W
+variable {E : Type}
 
-/-- Belnap's (6): atomic sentences are categorical — always assertive
-    and always asserting the same proposition. -/
-abbrev atomic {W : Type*} := @PartialProp.ofProp W
+/-- (11): restricted universal quantification. ∀x(Cx/Bx) is assertive iff
+∃xCx, and asserts the conjunction of Bt for the t with Ct true — the
+A-form as "consider the crows: each one is black". -/
+def restrictedForall (C B : E → Prop) : PartialProp Unit where
+  presup := fun _ => ∃ x : E, C x
+  assertion := fun _ => ∀ x : E, C x → B x
 
-/-- Atomic sentences are assertive at every world (Belnap's (6)). -/
-theorem atomic_always_assertive {W : Type*} (p : W → Prop) (w : W) :
-    (atomic p).presup w := trivial
+/-- (12): restricted existential quantification. ∃x(Cx/Bx) is assertive
+iff ∃xCx, and asserts the disjunction of Bt for the t with Ct true. -/
+def restrictedExists (C B : E → Prop) : PartialProp Unit where
+  presup := fun _ => ∃ x : E, C x
+  assertion := fun _ => ∃ x : E, C x ∧ B x
 
--- ════════════════════════════════════════════════════════════════
--- §4. Connectives under Conditional Assertion
--- ════════════════════════════════════════════════════════════════
+/-! ### The content is generalized quantification -/
 
-/-- Belnap's (7): negation preserves assertiveness and negates content.
+/-- What (11) asserts, when assertive, is exactly `every_sem`. -/
+theorem belnap_forall_content_eq_every (C B : E → Prop) :
+    (restrictedForall C B).assertion () ↔ every_sem C B := Iff.rfl
 
-    "~A is assertive_w just in case A is assertive_w. (~A)_w = ~(A_w)."
-    This is exactly `PartialProp.neg`. -/
-theorem neg_preserves_assertiveness {W : Type*} (p : PartialProp W) :
-    (PartialProp.neg p).presup = p.presup := PartialProp.neg_presup p
+/-- What (12) asserts, when assertive, is exactly `some_sem`. -/
+theorem belnap_exists_content_eq_some (C B : E → Prop) :
+    (restrictedExists C B).assertion () ↔ some_sem C B := Iff.rfl
 
-/-- Belnap's (8): conjunction under conditional assertion is
-    `PartialProp.andBelnap`, not classical `PartialProp.and`.
+/-- Assertiveness of (11) is the existential presupposition of universals:
+what [strawson-1952] stipulated, Belnap derives — ∀x(Cx/Bx) is
+nonassertive when nothing satisfies C. -/
+theorem assertive_iff_restrictor_nonempty (C B : E → Prop) :
+    (restrictedForall C B).presup () ↔ ∃ x : E, C x := Iff.rfl
 
-    Classical conjunction requires BOTH operands to be defined.
-    Belnap's requires only ONE — undefined conjuncts are skipped. -/
-abbrev belnapAnd {W : Type*} := @PartialProp.andBelnap W
+/-! ### The square of opposition -/
 
-/-- Belnap's (9): disjunction under conditional assertion. -/
-abbrev belnapOr {W : Type*} := @PartialProp.orBelnap W
-
--- ════════════════════════════════════════════════════════════════
--- §5. Restricted Quantification
--- ════════════════════════════════════════════════════════════════
-
-/-- Belnap's (11): restricted universal quantification.
-
-    ∀x(Cx/Bx) is assertive_w iff ∃xCx is true_w.
-    What it asserts = conjunction of Bt for all t such that Ct is true_w.
-
-    This derives restricted quantification from two independent mechanisms:
-    conditional assertion (§2) and standard universal quantification (§4). -/
-def restrictedForall {E : Type} [Fintype E]
-    (C B : E → Bool) : PartialProp Unit where
-  presup := λ _ => ∃ x : E, C x = true
-  assertion := λ _ => ∀ x : E, C x = true → B x = true
-
-/-- Belnap's (12): restricted existential quantification.
-
-    ∃x(Cx/Bx) is assertive iff ∃xCx is true.
-    What it asserts = disjunction of Bt for all t such that Ct is true. -/
-def restrictedExists {E : Type} [Fintype E]
-    (C B : E → Bool) : PartialProp Unit where
-  presup := λ _ => ∃ x : E, C x = true
-  assertion := λ _ => ∃ x : E, C x = true ∧ B x = true
-
--- ════════════════════════════════════════════════════════════════
--- §5. Bridge: Belnap ↔ Standard GQ Infrastructure
--- ════════════════════════════════════════════════════════════════
-
-/-- **Content bridge (∀)**: what Belnap's ∀x(Cx/Bx) asserts (when
-    assertive) is exactly what `every_sem` computes.
-
-    Proof uses `every_sem_extension`: every_sem m C B =
-    (elements.filter C).all B. -/
-theorem belnap_forall_content_eq_every {E : Type} [Fintype E]
-    (C B : E → Bool) :
-    (restrictedForall C B).assertion () ↔
-      every_sem (fun x => C x = true) (fun x => B x = true) := by
-  simp only [restrictedForall, every_sem]
-
-/-- **Content bridge (∃)**: what Belnap's ∃x(Cx/Bx) asserts (when
-    assertive) is exactly what `some_sem` computes. -/
-theorem belnap_exists_content_eq_some {E : Type} [Fintype E]
-    (C B : E → Bool) :
-    (restrictedExists C B).assertion () ↔
-      some_sem (fun x => C x = true) (fun x => B x = true) := by
-  simp only [restrictedExists, some_sem]
-
-/-- **Assertiveness = existential presupposition**: Belnap's
-    assertiveness condition for ∀x(Cx/Bx) is exactly the existential
-    presupposition of universal quantifiers.
-
-    [strawson-1952] argued "All S are P" *presupposes* there are Ss.
-    Belnap *derives* this: ∀x(Cx/Bx) is nonassertive when nothing
-    satisfies C. See also `subalternation_a_i` in `Quantifier.lean`,
-    which proves the consequence: every(R,S) entails some(R,S)
-    when the restrictor is non-empty. -/
-theorem assertive_iff_restrictor_nonempty {E : Type} [Fintype E]
-    (C B : E → Bool) :
-    (restrictedForall C B).presup () ↔ ∃ x : E, C x = true := Iff.rfl
-
--- ════════════════════════════════════════════════════════════════
--- §5. Square of Opposition
--- ════════════════════════════════════════════════════════════════
-
-/-- The **Belnap square**: the four Aristotelian forms as Belnap
-    restricted quantification, packaged as a `Aristotelian.Square`
-    of partial propositions (`PartialProp Unit`).
-
-    A: ∀x(Cx/Bx)   "All C are B"
-    E: ∀x(Cx/¬Bx)  "No C are B"
-    I: ∃x(Cx/Bx)   "Some C are B"
-    O: ∃x(Cx/¬Bx)  "Some C are not B"
-
-    Belnap: "semantic relations between these forms turn out to be
-    pretty much a good old fashioned square of opposition!" -/
-def belnapSquare {E : Type} [Fintype E]
-    (C B : E → Bool) : Square (PartialProp Unit) where
+/-- The four Aristotelian forms as restricted quantification: "semantic
+relations between these forms turn out ... to constitute what is pretty
+much a good old fashioned square of opposition" (p. 8). -/
+def belnapSquare (C B : E → Prop) : Square (PartialProp Unit) where
   A := restrictedForall C B
-  E := restrictedForall C (λ x => !B x)
+  E := restrictedForall C (fun x => ¬B x)
   I := restrictedExists C B
-  O := restrictedExists C (λ x => !B x)
+  O := restrictedExists C (fun x => ¬B x)
 
-/-- All four forms share the same assertiveness condition: ∃xCx. -/
-theorem square_equiassertive {E : Type} [Fintype E]
-    (C B : E → Bool) :
+/-- All four forms share one assertiveness condition, ∃xCx: the square's
+relations are as strong as possible, equi-assertiveness on top of the
+content relations (p. 8). -/
+theorem square_equiassertive (C B : E → Prop) :
     (belnapSquare C B).A.presup = (belnapSquare C B).E.presup ∧
     (belnapSquare C B).A.presup = (belnapSquare C B).I.presup ∧
     (belnapSquare C B).A.presup = (belnapSquare C B).O.presup :=
   ⟨rfl, rfl, rfl⟩
 
-/-- The **content square**: extract the assertion-level content into a
-    `Square (Unit → Bool)`, suitable for constructing `SquareRelations`.
+section ContentSquare
 
-    Since `PartialProp` assertions are now `Prop`-valued, we use `decide` to
-    convert back to `Bool` for compatibility with `SquareRelations`. -/
-def contentSquare {E : Type} [Fintype E] [DecidableEq E]
-    (C B : E → Bool) : Square (Unit → Bool) where
-  A := λ _ => decide (∀ x : E, C x = true → B x = true)
-  E := λ _ => decide (∀ x : E, C x = true → (!B x) = true)
-  I := λ _ => decide (∃ x : E, C x = true ∧ B x = true)
-  O := λ _ => decide (∃ x : E, C x = true ∧ (!B x) = true)
+variable [Fintype E]
 
-/-- A and O have contradictory content (when both assertive). -/
-theorem a_o_contradictory {E : Type} [Fintype E] [DecidableEq E]
-    (C B : E → Bool) (w : Unit) :
+/-- The assertion-level contents as a Boolean square, for
+`SquareRelations`. -/
+def contentSquare (C B : E → Prop) [DecidablePred C] [DecidablePred B] :
+    Square (Unit → Bool) where
+  A := fun _ => decide (∀ x : E, C x → B x)
+  E := fun _ => decide (∀ x : E, C x → ¬B x)
+  I := fun _ => decide (∃ x : E, C x ∧ B x)
+  O := fun _ => decide (∃ x : E, C x ∧ ¬B x)
+
+variable (C B : E → Prop) [DecidablePred C] [DecidablePred B]
+
+/-- A and O have contradictory content. -/
+theorem a_o_contradictory (w : Unit) :
     (contentSquare C B).A w = !((contentSquare C B).O w) := by
   simp only [contentSquare]
   rw [Bool.eq_iff_iff]
-  simp only [decide_eq_true_eq, Bool.not_eq_true', decide_eq_false_iff_not]
-  constructor
-  · rintro h ⟨x, hCx, hBx⟩
-    have := h x hCx; cases B x <;> simp_all
-  · intro h x hCx
-    by_contra hBx
-    exact h ⟨x, hCx, by cases B x <;> simp_all⟩
+  simp only [decide_eq_true_eq, Bool.not_eq_true', decide_eq_false_iff_not,
+    not_exists, not_and, not_not]
 
-/-- E and I have contradictory content (when both assertive). -/
-theorem e_i_contradictory {E : Type} [Fintype E] [DecidableEq E]
-    (C B : E → Bool) (w : Unit) :
+/-- E and I have contradictory content. -/
+theorem e_i_contradictory (w : Unit) :
     (contentSquare C B).E w = !((contentSquare C B).I w) := by
   simp only [contentSquare]
   rw [Bool.eq_iff_iff]
-  simp only [decide_eq_true_eq, Bool.not_eq_true', decide_eq_false_iff_not]
-  constructor
-  · rintro h ⟨x, hCx, hBx⟩
-    have := h x hCx; cases B x <;> simp_all
-  · intro h x hCx
-    by_contra hBx
-    exact h ⟨x, hCx, by cases B x <;> simp_all⟩
+  simp only [decide_eq_true_eq, Bool.not_eq_true', decide_eq_false_iff_not,
+    not_exists, not_and]
 
 /-- The content square satisfies all six `SquareRelations` when the
-    restrictor is non-empty. The non-empty condition is exactly Belnap's
-    assertiveness condition — the square's relations hold precisely in
-    the worlds where the forms are assertive. -/
-theorem content_square_relations {E : Type} [Fintype E] [DecidableEq E]
-    (C B : E → Bool)
-    (hR : ∃ x : E, C x = true) :
+restrictor is non-empty — exactly Belnap's assertiveness condition, so the
+relations hold precisely where the forms are assertive. -/
+theorem content_square_relations (hR : ∃ x : E, C x) :
     SquareRelations (contentSquare C B) where
   subalternAI := Aristotelian.le_iff_forall.mpr fun w hA => by
-    simp only [contentSquare] at hA ⊢
-    rw [decide_eq_true_eq] at hA ⊢
+    simp only [contentSquare, decide_eq_true_eq] at hA ⊢
     obtain ⟨x, hCx⟩ := hR
     exact ⟨x, hCx, hA x hCx⟩
   subalternEO := Aristotelian.le_iff_forall.mpr fun w hE => by
-    simp only [contentSquare] at hE ⊢
-    rw [decide_eq_true_eq] at hE ⊢
+    simp only [contentSquare, decide_eq_true_eq] at hE ⊢
     obtain ⟨x, hCx⟩ := hR
     exact ⟨x, hCx, hE x hCx⟩
   contradAO := Aristotelian.isContradictory_iff_forall.mpr
@@ -287,8 +183,7 @@ theorem content_square_relations {E : Type} [Fintype E] [DecidableEq E]
   contraryAE := Aristotelian.disjoint_iff_forall.mpr fun w hand => by
     obtain ⟨hA, hE⟩ := hand
     have hI : (contentSquare C B).I w = true := by
-      simp only [contentSquare] at hA ⊢
-      rw [decide_eq_true_eq] at hA ⊢
+      simp only [contentSquare, decide_eq_true_eq] at hA ⊢
       obtain ⟨x, hCx⟩ := hR
       exact ⟨x, hCx, hA x hCx⟩
     have hEI := e_i_contradictory C B w
@@ -297,143 +192,83 @@ theorem content_square_relations {E : Type} [Fintype E] [DecidableEq E]
     by_cases hI : (contentSquare C B).I w = true
     · exact Or.inl hI
     · right
-      have hIf : (contentSquare C B).I w = false := by simpa using hI
-      simp only [contentSquare] at hIf ⊢
-      rw [decide_eq_false_iff_not] at hIf; push Not at hIf
+      have hIf : ¬∃ x : E, C x ∧ B x := by
+        simpa [contentSquare] using hI
+      push Not at hIf
       obtain ⟨x, hCx⟩ := hR
-      have hBf := hIf x hCx
-      exact decide_eq_true_eq.mpr ⟨x, hCx, by simp [hBf]⟩
+      simp only [contentSquare, decide_eq_true_eq]
+      exact ⟨x, hCx, hIf x hCx⟩
 
--- ════════════════════════════════════════════════════════════════
--- §5. Obversion
--- ════════════════════════════════════════════════════════════════
+end ContentSquare
 
-/-- **Obversion is a strong equivalence** (p. 8): "All S are P" ↔
-    "No S are non-P". In Belnap's framework: ∀x(Cx/Bx) and
-    ∀x(Cx/~~Bx) are equi-assertive and content-identical, since
-    ~~B = B. This is trivially true but worth stating as Belnap
-    explicitly mentions it. -/
-theorem obversion {E : Type} [Fintype E]
-    (C B : E → Bool) :
-    restrictedForall C B = restrictedForall C (λ x => !!B x) := by
-  simp only [restrictedForall, Bool.not_not]
+/-! ### Obversion, I-conversion, Barbara -/
 
--- ════════════════════════════════════════════════════════════════
--- §5. I-Conversion
--- ════════════════════════════════════════════════════════════════
+/-- Obversion is a strong equivalence (p. 8): ∀x(Cx/¬¬Bx) and ∀x(Cx/Bx)
+are equi-assertive with identical content. -/
+theorem obversion (C B : E → Prop) :
+    (restrictedForall C fun x => ¬¬B x).presup =
+        (restrictedForall C B).presup ∧
+      ((restrictedForall C fun x => ¬¬B x).assertion () ↔
+        (restrictedForall C B).assertion ()) :=
+  ⟨rfl, by simp [restrictedForall, not_not]⟩
 
-/-- **I-conversion preserves assertion content**: ∃x(Cx/Bx) and
-    ∃x(Bx/Cx) assert the same proposition (when assertive).
-
-    Both reduce to ∃x. C(x) ∧ B(x), which is symmetric in C and B.
-    However, they are NOT equi-assertive: the first requires ∃xCx,
-    the second requires ∃xBx. -/
-theorem i_conversion_content {E : Type} [Fintype E]
-    (C B : E → Bool) :
+/-- I-conversion preserves content: ∃x(Cx/Bx) and ∃x(Bx/Cx) assert the
+same proposition when assertive. -/
+theorem i_conversion_content (C B : E → Prop) :
     (restrictedExists C B).assertion () ↔
-    (restrictedExists B C).assertion () := by
-  simp only [restrictedExists]
-  exact ⟨fun ⟨x, hC, hB⟩ => ⟨x, hB, hC⟩,
-         fun ⟨x, hB, hC⟩ => ⟨x, hC, hB⟩⟩
+      (restrictedExists B C).assertion () :=
+  ⟨fun ⟨x, hC, hB⟩ => ⟨x, hB, hC⟩, fun ⟨x, hB, hC⟩ => ⟨x, hC, hB⟩⟩
 
-/-- **I-conversion is equitrue** (p. 8): "truth is preserved in
-    passing from one to the other." If ∃x(Cx/Bx)'s assertion holds,
-    then ∃x(Bx/Cx) is assertive and its assertion holds too.
-
-    Note: we prove the stronger result that assertion alone suffices —
-    assertiveness is not needed as a hypothesis (it follows from
-    assertion since any witness for the filter also witnesses ∃xBx).
-
-    Belnap: "But 'Some unicorns are animals' is nonassertive while
-    'Some animals are unicorns' is just plain false." -/
-theorem i_conversion_equitrue {E : Type} [Fintype E]
-    (C B : E → Bool)
+/-- I-conversion is equitrue (p. 8): "truth is preserved in passing from
+one to the other" — a true ∃x(Cx/Bx) makes its converse assertive and
+true. Assertion alone suffices: the witness also witnesses ∃xBx. -/
+theorem i_conversion_equitrue (C B : E → Prop)
     (hTrue : (restrictedExists C B).assertion ()) :
     (restrictedExists B C).presup () ∧
-    (restrictedExists B C).assertion () := by
-  constructor
-  · simp only [restrictedExists] at *
-    obtain ⟨x, hCx, hBx⟩ := hTrue
-    exact ⟨x, hBx⟩
-  · exact (i_conversion_content C B).mp hTrue
+      (restrictedExists B C).assertion () :=
+  have ⟨x, _, hBx⟩ := hTrue
+  ⟨⟨x, hBx⟩, (i_conversion_content C B).mp hTrue⟩
 
-/-- I-conversion is NOT equi-assertive in general:
-    ∃xCx can hold while ∃xBx fails (or vice versa). -/
+/-- But not equi-assertive: "'Some unicorns are animals' is nonassertive
+while 'Some animals are unicorns' is just plain false" (p. 8). -/
 theorem i_conversion_not_equiassertive :
-    ∃ (E : Type) (_ : Fintype E) (C B : E → Bool),
-    ((restrictedExists C B).presup () ∧ ¬(restrictedExists B C).presup ()) := by
-  refine ⟨ToyEntity, inferInstance,
-    (λ x => match x with | .john => true | _ => false),
-    (λ _ => false), ?_⟩
-  simp only [restrictedExists]
-  exact ⟨⟨.john, rfl⟩, fun ⟨_, h⟩ => nomatch h⟩
+    ∃ (E : Type) (_ : Fintype E) (C B : E → Prop),
+      (restrictedExists C B).presup () ∧
+        ¬(restrictedExists B C).presup () :=
+  ⟨Semantics.Montague.ToyEntity, inferInstance, (· = .john), fun _ => False,
+    ⟨.john, rfl⟩, fun ⟨_, h⟩ => h⟩
 
--- ════════════════════════════════════════════════════════════════
--- §5. Barbara Syllogism
--- ════════════════════════════════════════════════════════════════
-
-/-- **Barbara: assertiveness propagation.** When Barbara's minor
-    premise is true (assertive and assertion holds), both her major
-    and her conclusion are assertive.
-
-    Belnap (p. 9): "for every w in which Barbara's minor is true_w,
-    both her major and her conclusion are assertive_w."
-
-    Proof: the minor's truth means every A-element is a C-element.
-    Combined with its assertiveness (∃xAx), this gives ∃xCx (major
-    is assertive) and ∃xAx (conclusion is assertive, same as minor). -/
-theorem barbara_assertive {E : Type} [Fintype E]
-    (A C B : E → Bool)
+/-- Barbara's assertiveness propagation (p. 9): "for every w in which
+Barbara's minor is true_w, both her major and her conclusion are
+assertive_w". -/
+theorem barbara_assertive (A C B : E → Prop)
     (hMinorAssertive : (restrictedForall A C).presup ())
     (hMinorTrue : (restrictedForall A C).assertion ()) :
-    (restrictedForall C B).presup () ∧
-    (restrictedForall A B).presup () := by
-  simp only [restrictedForall] at *
-  constructor
-  · obtain ⟨x, hAx⟩ := hMinorAssertive
-    exact ⟨x, hMinorTrue x hAx⟩
-  · exact hMinorAssertive
+    (restrictedForall C B).presup () ∧ (restrictedForall A B).presup () :=
+  have ⟨x, hAx⟩ := hMinorAssertive
+  ⟨⟨x, hMinorTrue x hAx⟩, hMinorAssertive⟩
 
-/-- **Barbara: content implication.** What Barbara's major asserts
-    propositionally implies what her conclusion asserts.
-
-    Major: ∀x(Cx/Bx)  "All crows are black"
-    Minor: ∀x(Ax/Cx)  "All of Alan's birds are crows"
-    Concl: ∀x(Ax/Bx)  "All of Alan's birds are black"
-
-    Belnap (p. 9): "it is her major alone which does any implying
-    of her conclusion, a feature of the situation which doubtless
-    explains the tradition according to which Barbara's major is
-    major and her minor only minor." -/
-theorem barbara {E : Type} [Fintype E]
-    (A C B : E → Bool)
+/-- Barbara's content implication: the major alone implies the conclusion
+— "a feature of the situation which doubtless explains the tradition
+according to which Barbara's major is major and her minor only minor"
+(p. 9). -/
+theorem barbara (A C B : E → Prop)
     (hMajor : (restrictedForall C B).assertion ())
     (hMinor : (restrictedForall A C).assertion ()) :
-    (restrictedForall A B).assertion () := by
-  simp only [restrictedForall] at *
-  intro x hAx
-  exact hMajor x (hMinor x hAx)
+    (restrictedForall A B).assertion () :=
+  fun x hAx => hMajor x (hMinor x hAx)
 
--- ════════════════════════════════════════════════════════════════
--- §6. Contrapositive and Confirmation
--- ════════════════════════════════════════════════════════════════
+/-! ### Contraposition and confirmation (§6) -/
 
-/-- The contrapositive ∀x(¬Bx/¬Cx) has a DIFFERENT assertiveness
-    condition from the original ∀x(Cx/Bx).
-
-    Original: assertive iff ∃xCx (there are crows)
-    Contrapositive: assertive iff ∃x¬Bx (there are nonblack things)
-
-    This is relevant to the confirmation paradox (p. 10): "reports
-    that such and such is not a crow, although offering support for
-    the contrapositive 'No nonblack things are noncrows' — ∀x(~Bx/~Cx) —
-    when such and such is not black, is evidentially irrelevant to
-    ∀x(Cx/Bx)." -/
-theorem contrapositive_different_assertiveness {E : Type} [Fintype E]
-    (C B : E → Bool) :
-    ((restrictedForall C B).presup () ↔ ∃ x : E, C x = true) ∧
-    ((restrictedForall (λ x => !B x) (λ x => !C x)).presup () ↔
-      ∃ x : E, (!B x) = true) :=
+/-- The contrapositive ∀x(¬Bx/¬Cx) has a different assertiveness condition
+from ∀x(Cx/Bx): there-are-nonblack-things vs there-are-crows. Reports that
+something is not a crow support the contrapositive but are "evidentially
+irrelevant" to the original (p. 10) — the confirmation paradox dissolves
+because the two are not the same conditional assertion. -/
+theorem contrapositive_different_assertiveness (C B : E → Prop) :
+    ((restrictedForall C B).presup () ↔ ∃ x : E, C x) ∧
+      ((restrictedForall (fun x => ¬B x) fun x => ¬C x).presup () ↔
+        ∃ x : E, ¬B x) :=
   ⟨Iff.rfl, Iff.rfl⟩
 
 end Belnap1970
