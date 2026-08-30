@@ -1,138 +1,175 @@
-import Linglib.Studies.GroenendijkStokhof1984
+import Linglib.Semantics.Questions.Hamblin
+import Linglib.Semantics.Questions.Resolution
+import Linglib.Data.Examples.Belnap1982
 
 /-!
-# [belnap-1982]: Approaches to the semantics of questions in natural language
+# Belnap (1982): Questions and Answers in Montague Grammar
 
-Single-paper formalisation of the answerhood theorems from
-[belnap-1982] ("Approaches to the semantics of questions in
-natural language", in *Issues in the Logic of Questions*), formulated
-over the `QUD W` substrate.
+Belnap's answerhood essay: answers are propositions, a question offers a
+set of possible answers, and two theses organize the field. The **Unique
+Answer Fallacy** (§2.2): it is fallacious to build into the foundations —
+as Tichy's answer-functions and [karttunen-1977]'s jointly-constituted
+denotations do — that every question has exactly one complete true
+answer; *Where is a place at which I can get gas on a Sunday?* has
+several, each full, complete, and true. The **Distributivity Principle
+and Test** (§2.4): to know an indirect question is to know some answer to
+it, so if *Sally knows that P but Sally doesn't know IQ* is consistent, P
+is not an answer to IQ — a necessary condition only, since P may entail
+an answer without being one. Formalized on the Hamblin-style reading
+Belnap prefers ([hamblin-1973b]): the possible answers are the maximal
+alternatives `Question.alt`, and an information state knows Q at w when
+it settles an alternative true at w.
 
-## Theorems
+## Main statements
 
-* **Unique Answer Fallacy** (§2.3): each question does **not** have a
-  unique complete true answer — `ANS(Q, w)` varies with the index `w`.
-  Direct restatement of [groenendijk-stokhof-1984]'s
-  `ans_situation_dependent` under Belnap's diagnostic name.
-* **Distributivity Principle** (§2.4): knowing the answer to a
-  wh-question is equivalent to knowing each atomic fact (for each
-  individual, whether the predicate holds). Bridges question-embedding
-  and propositional attitudes.
-* **Distributivity Test** (§2.4, p. 177): a negative criterion for
-  ruling out candidate answers — *Sally knows that P, but Sally
-  doesn't know IQ* must be inconsistent for `P` to answer `IQ`.
+* `unique_answer_fallacy`: a mention-some `which` question with two
+  distinct complete true answers at a single world;
+  `joint_answer_not_an_answer`: the jointly-constituted [karttunen-1977]
+  denotation is not itself among the possible answers there.
+* `distributivity_test`: if some information state entails P without
+  knowing Q at w, then P is not a true answer to Q at w (p. 176–177).
+* `test_only_necessary`: the converse fails — the joint answer entails an
+  answer, so knowing it always yields knowledge of Q, yet it is not an
+  answer (§2.4's caveat).
+
+## References
+
+* [belnap-1982]: Questions and Answers in Montague Grammar.
+* [karttunen-1977]: Syntax and semantics of questions.
+* [hamblin-1973b]: Questions in Montague English.
 -/
 
 namespace Belnap1982
 
-open GroenendijkStokhof1984
+open Question
 
-/-! ### Unique Answer Fallacy (§2.3) -/
+variable {W : Type*}
 
-/-- [belnap-1982]'s **Unique Answer Fallacy**: it is a fallacy to
-    assume that each question has a unique complete true answer. In
-    the G&S framework, `ans q w` varies with the index `w` — the same
-    question Q yields different complete true answers at different
-    worlds. Direct restatement of `ans_situation_dependent`. -/
-theorem unique_answer_fallacy {W : Type*} (q : QUD W) (w v : W)
-    (hDiff : ¬ q.r w v) :
-    ∃ u, QUD.ans q w u ≠ QUD.ans q v u :=
-  ans_situation_dependent q w v hDiff
+/-- An information state σ knows question Q at world w when it settles
+some alternative true at w — the Distributivity Principle (§2.4), "to
+know IQ is to know some answer to the question as to IQ", as a semantic
+rendering of *know* + indirect question. Dropping the truth conjunct
+gives the substrate's `Question.Resolves`. -/
+def KnowsAnswer (σ : Set W) (Q : Question W) (w : W) : Prop :=
+  ∃ p ∈ alt Q, w ∈ p ∧ σ ⊆ p
 
-/-! ### Distributivity Principle (§2.4) -/
+/-- Knowing an answer resolves the question. -/
+theorem KnowsAnswer.resolves {σ : Set W} {Q : Question W} {w : W}
+    (h : KnowsAnswer σ Q w) : Resolves σ Q :=
+  let ⟨p, hp, _, hσ⟩ := h
+  ⟨p, hp, hσ⟩
 
-/-- [belnap-1982]'s **Distributivity Principle**: knowing the
-    answer to a wh-question is equivalent to knowing, for each
-    individual, whether the predicate holds.
+/-! ### The Unique Answer Fallacy (§2.2)
 
-    An agent whose epistemic state (the set of worlds they consider
-    possible) is `epState` *knows the answer to Q at w* iff their
-    state is a subset of `ans(Q, w)` — i.e., every world they consider
-    possible agrees with w on the full extension of the predicate.
+Tichy makes the question a function delivering one entity per world;
+Karttunen has it denote "the set of propositions which in that situation
+jointly constitute a complete and true answer" — on both, uniqueness is
+built in, and neither can state a question that asks for examples. On the
+Hamblin/Bennett reading the members of the set are each answers, and
+mention-some questions have several true ones at once. -/
 
-    The Distributivity Principle says this is equivalent to knowing
-    each atomic fact: for every entity `e` in the domain, the agent
-    knows whether `pred e` holds. This bridges question-embedding
-    ("knows who walks") and propositional attitudes ("knows that John
-    walks ∧ knows that Mary walks ∧ ..."). -/
-theorem distributivity_principle {W E : Type*} [DecidableEq E]
-    (domain : List E) (pred : E → W → Bool) (w : W)
-    (epState : W → Bool) :
-    let q := QUD.ofProject (λ w' => domain.map (λ x => pred x w'))
-    (∀ v, epState v = true → QUD.ans q w v = true) ↔
-    (∀ e ∈ domain, ∀ v, epState v = true → pred e v = pred e w) := by
-  simp only [exhaustive_answers]
-  constructor
-  · intro h e he v hv; exact (h v hv e he).symm
-  · intro h v hv e he; exact (h e he v hv).symm
+/-- Station A is open in worlds 0 and 1. -/
+def stationA : Set (Fin 3) := {w | w.val ≤ 1}
 
-/-! ### Distributivity Test (§2.4, p. 177) -/
+/-- Station B is open in worlds 0 and 2. -/
+def stationB : Set (Fin 3) := {w | w.val ≠ 1}
 
-/-- Partial answer: eliminates some cells but not all. -/
-def isPartialAnswer {W : Type*} [DecidableEq W] (p : W → Bool) (q : QUD W)
-    (worlds : List W) : Bool :=
-  let cells := q.toCells worlds
-  let compatible := cells.filter λ cell =>
-    worlds.any λ w => p w && decide (w ∈ cell)
-  compatible.length > 1 && compatible.length < cells.length
+instance : DecidablePred (· ∈ stationA) :=
+  fun w => inferInstanceAs (Decidable (w.val ≤ 1))
 
-/-- [belnap-1982]'s **Distributivity Test** (§2.4, p. 177): a
-    negative criterion for ruling out candidate answers. For any
-    proposition `P` and indirect question `IQ`, if the following is
-    consistent:
+instance : DecidablePred (· ∈ stationB) :=
+  fun w => inferInstanceAs (Decidable (w.val ≠ 1))
 
-        Sally knows that P, but Sally doesn't know IQ.
+/-- *Where is a place at which I can get gas on a Sunday?* (p. 172) as a
+mention-some `which` over the two stations. -/
+def gasQuestion : Question (Fin 3) :=
+  which Set.univ (fun b : Bool => if b then stationA else stationB)
 
-    then `P` is **not** an answer to `IQ`. The test "distributes" the
-    *know* inside the question and onto its answers: if knowing `P`
-    doesn't suffice to know `IQ`, then `P` doesn't answer `IQ`.
+theorem stationA_mem_alt : stationA ∈ alt gasQuestion :=
+  mem_alt_which_of_maximal true trivial
+    ⟨0, show (0 : Fin 3) ∈ stationA by decide⟩ fun e' _ hsub => by
+    cases e' with
+    | false =>
+        exact absurd (hsub (show (1 : Fin 3) ∈ stationA by decide))
+          (show (1 : Fin 3) ∉ stationB by decide)
+    | true => rfl
 
-    Formalisation: `P` fails the test for `Q` at `w` if there exists
-    an epistemic state (set of worlds the agent considers possible)
-    that is a subset of `P` (the agent knows `P`) but **not** a subset
-    of `ans(Q, w)` (the agent doesn't know `Q`). -/
-def failsDistributivityTest {W : Type*} (p : W → Bool) (q : QUD W)
-    (w : W) (worlds : List W) : Bool :=
-  worlds.any λ v => p v && !QUD.ans q w v
+theorem stationB_mem_alt : stationB ∈ alt gasQuestion :=
+  mem_alt_which_of_maximal false trivial
+    ⟨0, show (0 : Fin 3) ∈ stationB by decide⟩ fun e' _ hsub => by
+    cases e' with
+    | false => rfl
+    | true =>
+        exact absurd (hsub (show (2 : Fin 3) ∈ stationB by decide))
+          (show (2 : Fin 3) ∉ stationA by decide)
 
-/-- If `P` passes the Distributivity Test (no witnessing world
-    exists), then knowing `P` implies knowing `Q` — i.e., `P` is at
-    least as informative as `Q` w.r.t. the partition. Contrapositive
-    of the test. -/
-theorem passes_test_implies_answer {W : Type*} (p : W → Bool) (q : QUD W)
-    (w : W) (worlds : List W)
-    (hPasses : failsDistributivityTest p q w worlds = false) :
-    ∀ v ∈ worlds, p v = true → QUD.ans q w v = true := by
-  intro v hv hp
-  by_contra h
-  have : failsDistributivityTest p q w worlds = true := by
-    simp only [failsDistributivityTest]
-    rw [List.any_eq_true]
-    exact ⟨v, hv, by simp [hp, Bool.eq_false_iff.mpr h]⟩
-  rw [this] at hPasses; exact absurd hPasses (by simp)
+/-- **The Unique Answer Fallacy** (§2.2): at world 0 both stations are
+open, and each is a full, complete, true answer — two distinct complete
+true answers to one question at one world. -/
+theorem unique_answer_fallacy :
+    ∃ p q : Set (Fin 3), p ∈ alt gasQuestion ∧ q ∈ alt gasQuestion ∧
+      p ≠ q ∧ (0 : Fin 3) ∈ p ∧ (0 : Fin 3) ∈ q :=
+  ⟨stationA, stationB, stationA_mem_alt, stationB_mem_alt,
+    fun h => absurd (h ▸ show (1 : Fin 3) ∈ stationA by decide)
+      (show (1 : Fin 3) ∉ stationB by decide),
+    show (0 : Fin 3) ∈ stationA by decide,
+    show (0 : Fin 3) ∈ stationB by decide⟩
 
-/-- Concrete demonstration of the Distributivity Test.
+/-- The [karttunen-1977] denotation — the true propositions taken
+*jointly* — is here the intersection of the two stations' propositions,
+and it is not itself among the question's possible answers: uniqueness is
+an artifact of taking the set itself as the answer. -/
+theorem joint_answer_not_an_answer :
+    stationA ∩ stationB ∉ alt gasQuestion := fun h => by
+  have hA : stationA ∈ gasQuestion :=
+    mem_which.mpr (Or.inr ⟨true, trivial, subset_rfl⟩)
+  have heq := h.2 stationA hA Set.inter_subset_left
+  have h1 : (1 : Fin 3) ∈ stationA := by decide
+  rw [← heq] at h1
+  exact absurd h1.2 (show (1 : Fin 3) ∉ stationB by decide)
 
-    [belnap-1982] §2.4, p. 177: "Peter knows that the person who
-    kicked Sam is John, but Peter doesn't know who kicked Sam." This
-    is inconsistent — so *the person who kicked Sam is John* IS an
-    answer to *who kicked Sam*.
+/-! ### The Distributivity Test (§2.4, pp. 176–177) -/
 
-    Vs: "Peter knows that China is populous, but Peter doesn't know
-    which person kicked Sam." This IS consistent — so *China is
-    populous* is NOT an answer.
+/-- **The Distributivity Test**: "For any P and IQ, let the following
+inference fail: Sally knows that P, therefore Sally knows IQ. Then P is
+not an answer to IQ." A failing instance is an information state that
+entails P without knowing Q — its existence rules P out as a true
+answer. -/
+theorem distributivity_test {p : Set W} {Q : Question W} {w : W}
+    (h : ∃ σ, σ ⊆ p ∧ ¬KnowsAnswer σ Q w) :
+    ¬(p ∈ alt Q ∧ w ∈ p) :=
+  fun ⟨hpQ, hwp⟩ =>
+    let ⟨_, hσp, hnk⟩ := h
+    hnk ⟨p, hpQ, hwp, hσp⟩
 
-    We verify on `Fin 3` with identity partition (who kicked Sam → full
-    extension):
+/-- The p. 177 example pattern: an irrelevant truth (*China is populous*,
+here the trivial proposition) supports no alternative, so the test rules
+it out as an answer. -/
+theorem irrelevant_fact_not_answer :
+    ¬(Set.univ ∈ alt gasQuestion ∧ (0 : Fin 3) ∈ Set.univ) :=
+  distributivity_test
+    ⟨Set.univ, subset_rfl, fun ⟨p, hp, _, hsub⟩ => by
+      rcases mem_which.mp (mem_of_mem_alt hp) with rfl | ⟨e, _, hpe⟩
+      · exact hsub (Set.mem_univ 0)
+      · cases e with
+        | true =>
+            exact absurd ((hsub.trans hpe) (Set.mem_univ 2))
+              (show (2 : Fin 3) ∉ stationA by decide)
+        | false =>
+            exact absurd ((hsub.trans hpe) (Set.mem_univ 1))
+              (show (1 : Fin 3) ∉ stationB by decide)⟩
 
-    * "the answer is 0" passes the test (knowing it entails knowing
-      who kicked Sam);
-    * "w.val < 2" (an irrelevant fact) fails the test. -/
-theorem distributivity_test_examples :
-    let q : QUD (Fin 3) := QUD.ofProject id
-    let worlds : List (Fin 3) := [0, 1, 2]
-    failsDistributivityTest (λ w => decide (w = (0 : Fin 3))) q 0 worlds = false ∧
-    failsDistributivityTest (λ w => decide (w.val < 2)) q 0 worlds = true := by
-  native_decide
+/-- The test is necessary, not sufficient: "P might obviously entail some
+answer to IQ without itself being such an answer" (p. 177). The joint
+answer is the witness: any state that knows it knows the question, yet it
+is not an answer. -/
+theorem test_only_necessary :
+    ∃ p : Set (Fin 3),
+      (∀ σ, σ ⊆ p → KnowsAnswer σ gasQuestion 0) ∧ p ∉ alt gasQuestion :=
+  ⟨stationA ∩ stationB,
+    fun _ hσ => ⟨stationA, stationA_mem_alt,
+      show (0 : Fin 3) ∈ stationA by decide,
+      hσ.trans Set.inter_subset_left⟩,
+    joint_answer_not_an_answer⟩
 
 end Belnap1982
