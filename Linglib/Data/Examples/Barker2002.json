@@ -1,0 +1,323 @@
+[
+  {
+    "id": "barker2002_4a",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(4a)"},
+    "language": "stan1293",
+    "primaryText": "John left.",
+    "glossedTokens": [],
+    "translation": "John left.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["translation", "left j"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barker2002_4b",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(4b)"},
+    "language": "stan1293",
+    "primaryText": "John saw Mary.",
+    "glossedTokens": [],
+    "translation": "John saw Mary.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["translation", "saw m j"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barker2002_14",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(14)"},
+    "language": "stan1293",
+    "primaryText": "John saw everyone.",
+    "glossedTokens": [],
+    "translation": "John saw everyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["translation", "∀x.saw x j"],
+      ["quantifiers", "everyone"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barker2002_17a",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(17a)"},
+    "language": "stan1293",
+    "primaryText": "John saw every man.",
+    "glossedTokens": [],
+    "translation": "John saw every man.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["translation", "∀x.man x → saw x j"],
+      ["quantifiers", "every"]
+    ],
+    "comment": "Printed 'every men'."
+  },
+  {
+    "id": "barker2002_17b",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(17b)"},
+    "language": "stan1293",
+    "primaryText": "John saw most men.",
+    "glossedTokens": [],
+    "translation": "John saw most men.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["translation", "most(man)(λx.saw x j)"],
+      ["quantifiers", "most"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barker2002_17c",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(17c)"},
+    "language": "stan1293",
+    "primaryText": "Every man saw a woman.",
+    "glossedTokens": [],
+    "translation": "Every man saw a woman.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "a > every", "judgment": "acceptable"},
+      {"name": "every > a", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["quantifiers", "every a"]
+    ],
+    "comment": "(17c) prints the inverse scoping; the surface scoping arrives with subject priority."
+  },
+  {
+    "id": "barker2002_19a",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(19a)"},
+    "language": "stan1293",
+    "primaryText": "A raindrop fell on every car.",
+    "glossedTokens": [],
+    "translation": "A raindrop fell on every car.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["quantifiers", "a every"],
+      ["natural_reading", "every > a"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barker2002_19b",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(19b)"},
+    "language": "stan1293",
+    "primaryText": "A raindrop fell on the hood of every car.",
+    "glossedTokens": [],
+    "translation": "A raindrop fell on the hood of every car.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["quantifiers", "a every"],
+      ["natural_reading", "every > a"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barker2002_19c",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(19c)"},
+    "language": "stan1293",
+    "primaryText": "A raindrop fell on the top of the hood of every car.",
+    "glossedTokens": [],
+    "translation": "A raindrop fell on the top of the hood of every car.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["quantifiers", "a every"],
+      ["natural_reading", "every > a"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barker2002_21a",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(21a)"},
+    "language": "stan1293",
+    "primaryText": "A man thought everyone saw Mary.",
+    "glossedTokens": [],
+    "translation": "A man thought everyone saw Mary.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["quantifiers", "a everyone"],
+      ["translation", "∃y.man y ∧ thought(∀x.saw m x) y"],
+      ["island", "tensed S"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barker2002_22a",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(22a)"},
+    "language": "stan1293",
+    "primaryText": "No man from a foreign country was admitted.",
+    "glossedTokens": [],
+    "translation": "No man from a foreign country was admitted.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "no > a", "judgment": "acceptable"},
+      {"name": "a > no", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["quantifiers", "no a"]
+    ],
+    "comment": "(22b) linear, (22c) inverse linking."
+  },
+  {
+    "id": "barker2002_23a",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(23a)"},
+    "language": "stan1293",
+    "primaryText": "Two politicians spy on someone from every city.",
+    "glossedTokens": [],
+    "translation": "Two politicians spy on someone from every city.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "every > two > someone", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["quantifiers", "two someone every"],
+      ["constituent", "someone every"]
+    ],
+    "comment": "May's observation."
+  },
+  {
+    "id": "barker2002_26a",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(26a)"},
+    "language": "stan1293",
+    "primaryText": "Most subjects put an object in every box.",
+    "glossedTokens": [],
+    "translation": "Most subjects put an object in every box.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "every > most > an", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["quantifiers", "most an every"],
+      ["constituent", "an every"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barker2002_27a",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(27a)"},
+    "language": "stan1293",
+    "primaryText": "John left and John slept.",
+    "glossedTokens": [],
+    "translation": "John left and John slept.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["coordination", "S"],
+      ["translation", "and(left j)(slept j)"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barker2002_27b",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(27b)"},
+    "language": "stan1293",
+    "primaryText": "John left and slept.",
+    "glossedTokens": [],
+    "translation": "John left and slept.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["coordination", "VP"],
+      ["translation", "and(left j)(slept j)"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barker2002_27c",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(27c)"},
+    "language": "stan1293",
+    "primaryText": "John saw and liked Mary.",
+    "glossedTokens": [],
+    "translation": "John saw and liked Mary.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["coordination", "Vt"],
+      ["translation", "and(saw m j)(liked m j)"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barker2002_27d",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(27d)"},
+    "language": "stan1293",
+    "primaryText": "John and Mary left.",
+    "glossedTokens": [],
+    "translation": "John and Mary left.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["coordination", "NP"],
+      ["translation", "and(left j)(left m)"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barker2002_42a",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(42a)"},
+    "language": "stan1293",
+    "primaryText": "Someone saw the friend of the friend of everyone.",
+    "glossedTokens": [],
+    "translation": "Someone saw the friend of the friend of everyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "someone > everyone", "judgment": "acceptable"},
+      {"name": "everyone > someone", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["quantifiers", "someone everyone"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barker2002_43",
+    "source": {"bibkey": "barker-2002", "paperLabel": "(43)"},
+    "language": "stan1293",
+    "primaryText": "Someone saw a friend of everyone.",
+    "glossedTokens": [],
+    "translation": "Someone saw a friend of everyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "someone > a > everyone", "judgment": "acceptable"},
+      {"name": "someone > everyone > a", "judgment": "acceptable"},
+      {"name": "a > everyone > someone", "judgment": "acceptable"},
+      {"name": "everyone > a > someone", "judgment": "acceptable"},
+      {"name": "everyone > someone > a", "judgment": "unacceptable"},
+      {"name": "a > someone > everyone", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["quantifiers", "someone a everyone"],
+      ["constituent", "a everyone"],
+      ["derivation", "someone saw a friend of everyone"]
+    ],
+    "comment": "Four of the six orders; the two splitting the object's quantifiers are excluded by Integrity."
+  }
+]
