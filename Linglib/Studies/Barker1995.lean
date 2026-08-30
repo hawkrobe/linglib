@@ -1,33 +1,31 @@
 import Linglib.Semantics.Possessive.GQ
+import Linglib.Semantics.Quantification.Counting
+import Linglib.Data.Examples.Barker1995
+import Mathlib.Data.Fintype.Prod
 
 /-!
-# Barker 1995: *Possessive Descriptions*
+# Barker (1995): Possessive Descriptions
 
-Paper-anchored consumer of the possessive substrate for [barker-1995]. Two of
-the dissertation's signature claims, tested against concrete models:
-
-* **Narrowing** ([barker-1995] p. 139): a quantificational possessor restricts
-  quantification to those possessors that stand in the possession relation to
-  some possessee. *Most planets' rings are made of ice* is evaluated only over
-  planets that have rings. The substrate operator
-  `Possessive.Poss` builds this in via the domain
-  restriction `dom A R`; here we exhibit a model where narrowing flips the truth
-  value (demonstrated with `every`, since the `dom` restriction is independent of
-  the choice of possessor quantifier; `most` is noncomputable cardinality).
-
-* **Definiteness and uniqueness**: a definite possessive denotes a unique
-  possessee. The `HasIotaWitness` capability of `Possessive.Definite` yields this
-  via `existsUnique_possessee` with no bespoke proof — the payoff of the
-  composable-mixin design.
+Possessives are descriptions: a possessor, a possession relation — the noun's
+own relation for a relational noun (*John's child*), a contextually resolved
+one otherwise (*John's stick*) — and a sortal restrictor. Like definites they
+presuppose a unique maximal possessee per possessor; like indefinites they can
+introduce novel referents. In a quantificational possessive (*most planets'
+rings*) the quantifier binds the possessor and possessee variables together.
+Two consequences follow: quantification *narrows* to possessors that have a
+possessee, and the possessor-dominant and symmetric construals cannot be told
+apart truth-conditionally — uniqueness leaves one instance per case, which is
+the book's resolution of the perspective paradox.
 
 ## Main statements
 
-* `narrowed_holds` / `unnarrowed_fails` / `narrowing_flips_truth_value`: the
-  narrowing contrast on the planets/rings model.
-* `theBoysCat_unique`: a definite possessive inherits `∃!`-reference from its
-  capability instance.
-* `johnsSisters_possesseeSet`: a relational possessive's `possesseeSet` is its
-  lexical relation applied to the possessor.
+* `most_planets_rings_icy`, `not_unnarrowed`: the planets-and-rings model —
+  narrowing is truth-conditionally active, and `Poss` builds it in via `dom`.
+* `symmetric_iff_possessor_dominant`: with a unique possessee per possessor,
+  *most* over possessor–possessee pairs agrees with `Poss most_sem` — the
+  perspective paradox resolved.
+* `favorite_color_possessor_dominant`, `not_favorite_color_possessee_dominant`:
+  *most people's favorite color is blue* counts people, never colors.
 
 ## References
 
@@ -36,56 +34,218 @@ the dissertation's signature claims, tested against concrete models:
 
 namespace Barker1995
 
-open Quantification
-open Possessive
-open ArgumentStructure.Relational
+open Quantification Possessive
 
-/-! ### Narrowing
+/-! ### Decidability for the toy models -/
 
-Model over `Fin 5`: `0, 1, 2` are planets, `3, 4` are rings. Planet `0` has
-ring `3`, planet `1` has ring `4`, and planet `2` has no ring. Both rings are
-icy. *Most/every planet's rings are made of ice* should be evaluated only over
-the ring-having planets `0, 1` — planet `2` is narrowed away. -/
+instance {α : Type*} [Fintype α] {A : α → Prop} {R : α → α → Prop}
+    [DecidablePred A] [∀ x, DecidablePred (R x)] (x : α) :
+    Decidable (dom A R x) :=
+  decidable_of_iff (∃ b, A b ∧ R x b) Iff.rfl
 
-/-- The planets `{0, 1, 2}`. -/
-def isPlanet : Fin 5 → Prop := fun x => x.val < 3
+instance {α : Type*} [Fintype α] {R S : α → Prop}
+    [DecidablePred R] [DecidablePred S] :
+    Decidable (some_sem R S) :=
+  decidable_of_iff (∃ x, R x ∧ S x) Iff.rfl
 
-/-- The rings `{3, 4}`. -/
-def isRing : Fin 5 → Prop := fun x => 3 ≤ x.val
+/-! ### The perspective paradox resolved (Ch. 4)
 
-/-- Both rings are icy. -/
-def isIcy : Fin 5 → Prop := isRing
+With a unique possessee per possessor there is one instance per case, whether
+or not the possessee variable helps distinguish cases: counting
+possessor–possessee pairs agrees with counting possessors. -/
 
-/-- Planet `0` has ring `3`; planet `1` has ring `4`; planet `2` has no ring. -/
-def hasRing : Fin 5 → Fin 5 → Prop := fun x y => (x = 0 ∧ y = 3) ∨ (x = 1 ∧ y = 4)
+variable {α : Type*} [Fintype α]
 
-/-- With narrowing, *every planet's rings are made of ice* is **true**: the
-ring-less planet `2` is excluded by the `dom isRing hasRing` restriction. -/
-theorem narrowed_holds :
-    Poss every_sem isPlanet some_sem hasRing isRing isIcy := by
-  simp only [Poss, dom, every_sem, some_sem, isPlanet, isIcy, isRing, hasRing]
-  decide
+/-- `count` does not depend on the choice of `Decidable` instances. -/
+private theorem count_irrel {γ : Type*} [Fintype γ] (P : γ → Prop)
+    (i1 i2 : DecidablePred P) : @count γ _ P i1 = @count γ _ P i2 :=
+  congrArg (fun i => @count γ _ P i)
+    (funext fun a => Subsingleton.elim (i1 a) (i2 a))
 
-/-- Without narrowing, the naive reading *for every planet, it has an icy ring*
-is **false**: the ring-less planet `2` falsifies it. -/
-theorem unnarrowed_fails :
-    ¬ every_sem isPlanet (fun x => some_sem (fun y => isRing y ∧ hasRing x y) isIcy) := by
-  simp only [every_sem, some_sem, isPlanet, isIcy, isRing, hasRing]
-  decide
+open Classical in
+private theorem count_pair_eq (C A : α → Prop) (R : α → α → Prop)
+    (huniq : ∀ x y y', A y → R x y → A y' → R x y' → y = y') (P : α → α → Prop) :
+    count (fun p : α × α => (C p.1 ∧ A p.2 ∧ R p.1 p.2) ∧ P p.1 p.2) =
+      count (fun x => (C x ∧ dom A R x) ∧ ∃ y, A y ∧ R x y ∧ P x y) := by
+  unfold count countOn
+  refine Finset.card_bij (fun p _ => p.1) ?_ ?_ ?_
+  · rintro ⟨x, y⟩ hp
+    rw [Finset.mem_filter] at hp ⊢
+    obtain ⟨-, ⟨hC, hA, hR⟩, hP⟩ := hp
+    exact ⟨Finset.mem_univ x, ⟨hC, y, hA, hR⟩, y, hA, hR, hP⟩
+  · rintro ⟨x, y⟩ hp ⟨x', y'⟩ hq h
+    rw [Finset.mem_filter] at hp hq
+    obtain ⟨-, ⟨-, hA, hR⟩, -⟩ := hp
+    obtain ⟨-, ⟨-, hA', hR'⟩, -⟩ := hq
+    dsimp only at h
+    subst h
+    exact congrArg (Prod.mk x) (huniq x y y' hA hR hA' hR')
+  · intro x hx
+    rw [Finset.mem_filter] at hx
+    obtain ⟨-, ⟨hC, hdom⟩, y, hA, hR, hP⟩ := hx
+    exact ⟨(x, y), Finset.mem_filter.2 ⟨Finset.mem_univ _, ⟨hC, hA, hR⟩, hP⟩, rfl⟩
 
-/-- Narrowing is truth-conditionally active in this model: the narrowed reading
-is true exactly where the un-narrowed reading is false. This is Barker's
-narrowing — quantification ranges only over possessors with a possessee. -/
-theorem narrowing_flips_truth_value :
-    Poss every_sem isPlanet some_sem hasRing isRing isIcy ∧
-      ¬ every_sem isPlanet (fun x => some_sem (fun y => isRing y ∧ hasRing x y) isIcy) :=
-  ⟨narrowed_holds, unnarrowed_fails⟩
+open Classical in
+/-- The uniqueness presupposition neutralizes the perspective paradox (Ch. 4):
+when each possessor has at most one possessee, *most* over
+possessor–possessee pairs (the symmetric construal) and `Poss most_sem` (the
+possessor-dominant construal) have the same truth conditions. -/
+theorem symmetric_iff_possessor_dominant (C A B : α → Prop) (R : α → α → Prop)
+    (huniq : ∀ x y y', A y → R x y → A y' → R x y' → y = y') :
+    most_sem (fun p : α × α => C p.1 ∧ A p.2 ∧ R p.1 p.2) (fun p => B p.2) ↔
+      Poss most_sem C some_sem R A B := by
+  unfold Poss most_sem
+  beta_reduce
+  rw [count_eq_decidable (fun p : α × α => (C p.1 ∧ A p.2 ∧ R p.1 p.2) ∧ B p.2) _,
+      count_eq_decidable (fun p : α × α => (C p.1 ∧ A p.2 ∧ R p.1 p.2) ∧ ¬ B p.2) _,
+      count_eq_decidable (fun x => (C x ∧ dom A R x) ∧
+        some_sem (fun y => A y ∧ R x y) B) _,
+      count_eq_decidable (fun x => (C x ∧ dom A R x) ∧
+        ¬ some_sem (fun y => A y ∧ R x y) B) _]
+  have h1' : count (fun p : α × α => (C p.1 ∧ A p.2 ∧ R p.1 p.2) ∧ B p.2)
+      = count (fun x => (C x ∧ dom A R x) ∧ ∃ y, A y ∧ R x y ∧ B y) :=
+    (count_irrel _ _ _).trans
+      ((count_pair_eq C A R huniq fun _ y => B y).trans (count_irrel _ _ _))
+  have h2' : count (fun p : α × α => (C p.1 ∧ A p.2 ∧ R p.1 p.2) ∧ ¬ B p.2)
+      = count (fun x => (C x ∧ dom A R x) ∧ ∃ y, A y ∧ R x y ∧ ¬ B y) :=
+    (count_irrel _ _ _).trans
+      ((count_pair_eq C A R huniq fun _ y => ¬ B y).trans (count_irrel _ _ _))
+  have hc1 : count (fun x => (C x ∧ dom A R x) ∧ ∃ y, A y ∧ R x y ∧ B y)
+      = count (fun x => (C x ∧ dom A R x) ∧ some_sem (fun y => A y ∧ R x y) B) :=
+    count_congr_iff fun x => by unfold some_sem; tauto
+  have hc2 : count (fun x => (C x ∧ dom A R x) ∧ ∃ y, A y ∧ R x y ∧ ¬ B y)
+      = count (fun x => (C x ∧ dom A R x) ∧ ¬ some_sem (fun y => A y ∧ R x y) B) :=
+    count_congr_iff fun x => by
+      unfold some_sem
+      constructor
+      · rintro ⟨⟨hC, hdom⟩, y, hA, hR, hnB⟩
+        exact ⟨⟨hC, hdom⟩, fun ⟨y', ⟨hA', hR'⟩, hB'⟩ =>
+          hnB (huniq x y' y hA' hR' hA hR ▸ hB')⟩
+      · rintro ⟨⟨hC, y, hA, hR⟩, hn⟩
+        exact ⟨⟨hC, ⟨y, hA, hR⟩⟩, y, hA, hR, fun hB => hn ⟨y, ⟨hA, hR⟩, hB⟩⟩
+  omega
 
-/-! ### Definiteness and the capability mixins
+/-! ### Narrowing: the planets and their rings (Ch. 4)
+
+Nine planets, of which only Saturn, Neptune and Uranus have rings; Saturn's
+and Neptune's rings are icy, Uranus's are not. *Most planets' rings are made
+of ice* is judged true — the quantification ranges only over the three ringed
+planets. Entities `0`–`8` are the planets, `9`–`11` their rings. -/
+
+abbrev isPlanet : Fin 12 → Prop := fun x => x.val < 9
+
+abbrev isRing : Fin 12 → Prop := fun x => 9 ≤ x.val
+
+abbrev hasRing : Fin 12 → Fin 12 → Prop := fun x y =>
+  (x = 0 ∧ y = 9) ∨ (x = 1 ∧ y = 10) ∨ (x = 2 ∧ y = 11)
+
+abbrev isIcy : Fin 12 → Prop := fun y => y = 9 ∨ y = 10
+
+/-- *Most planets' rings are made of ice* is true: `Poss` narrows the domain
+to the three ringed planets, two of which have icy rings. -/
+theorem most_planets_rings_icy :
+    Poss most_sem isPlanet some_sem hasRing isRing isIcy := by
+  unfold Poss most_sem
+  beta_reduce
+  rw [count_eq_decidable (fun x : Fin 12 => (isPlanet x ∧ dom isRing hasRing x) ∧
+        some_sem (fun y => isRing y ∧ hasRing x y) isIcy) _,
+      count_eq_decidable (fun x : Fin 12 => (isPlanet x ∧ dom isRing hasRing x) ∧
+        ¬ some_sem (fun y => isRing y ∧ hasRing x y) isIcy) _]
+  have v1 : count (fun x : Fin 12 => (isPlanet x ∧ dom isRing hasRing x) ∧
+      some_sem (fun y => isRing y ∧ hasRing x y) isIcy) = 2 := by
+    simp only [count, countOn]; decide
+  have v2 : count (fun x : Fin 12 => (isPlanet x ∧ dom isRing hasRing x) ∧
+      ¬ some_sem (fun y => isRing y ∧ hasRing x y) isIcy) = 1 := by
+    simp only [count, countOn]; decide
+  omega
+
+/-- Without narrowing, the quantification is false: only two of the nine
+planets have an icy ring. -/
+theorem not_unnarrowed :
+    ¬ most_sem isPlanet
+      (fun x => some_sem (fun y => isRing y ∧ hasRing x y) isIcy) := by
+  unfold most_sem
+  beta_reduce
+  rw [count_eq_decidable (fun x : Fin 12 => isPlanet x ∧
+        some_sem (fun y => isRing y ∧ hasRing x y) isIcy) _,
+      count_eq_decidable (fun x : Fin 12 => isPlanet x ∧
+        ¬ some_sem (fun y => isRing y ∧ hasRing x y) isIcy) _]
+  have v1 : count (fun x : Fin 12 => isPlanet x ∧
+      some_sem (fun y => isRing y ∧ hasRing x y) isIcy) = 2 := by
+    simp only [count, countOn]; decide
+  have v2 : count (fun x : Fin 12 => isPlanet x ∧
+      ¬ some_sem (fun y => isRing y ∧ hasRing x y) isIcy) = 7 := by
+    simp only [count, countOn]; decide
+  omega
+
+/-! ### No possessee-dominant reading (Ch. 4)
+
+Five people and three colors: one favors red, one yellow, three blue. *Most
+people's favorite color is blue* is true counting people (3 of 5) and would
+be false counting colors (1 of 3); the color-counting reading does not exist.
+Entities `0`–`4` are the people; `5`, `6`, `7` are red, yellow, blue. -/
+
+abbrev isPerson : Fin 8 → Prop := fun x => x.val < 5
+
+abbrev isColor : Fin 8 → Prop := fun x => 5 ≤ x.val
+
+abbrev favors : Fin 8 → Fin 8 → Prop := fun x y =>
+  (x = 0 ∧ y = 5) ∨ (x = 1 ∧ y = 6) ∨ ((x = 2 ∨ x = 3 ∨ x = 4) ∧ y = 7)
+
+abbrev isBlue : Fin 8 → Prop := fun y => y = 7
+
+/-- *Most people's favorite color is blue*, counting people: true, 3 of 5. -/
+theorem favorite_color_possessor_dominant :
+    Poss most_sem isPerson some_sem favors isColor isBlue := by
+  unfold Poss most_sem
+  beta_reduce
+  rw [count_eq_decidable (fun x : Fin 8 => (isPerson x ∧ dom isColor favors x) ∧
+        some_sem (fun y => isColor y ∧ favors x y) isBlue) _,
+      count_eq_decidable (fun x : Fin 8 => (isPerson x ∧ dom isColor favors x) ∧
+        ¬ some_sem (fun y => isColor y ∧ favors x y) isBlue) _]
+  have v1 : count (fun x : Fin 8 => (isPerson x ∧ dom isColor favors x) ∧
+      some_sem (fun y => isColor y ∧ favors x y) isBlue) = 3 := by
+    simp only [count, countOn]; decide
+  have v2 : count (fun x : Fin 8 => (isPerson x ∧ dom isColor favors x) ∧
+      ¬ some_sem (fun y => isColor y ∧ favors x y) isBlue) = 2 := by
+    simp only [count, countOn]; decide
+  omega
+
+/-- Counting favored colors instead of people would make the sentence false —
+the reading English does not have. -/
+theorem not_favorite_color_possessee_dominant :
+    ¬ most_sem (fun c => isColor c ∧ ∃ p, isPerson p ∧ favors p c) isBlue := by
+  unfold most_sem
+  beta_reduce
+  rw [count_eq_decidable (fun c : Fin 8 =>
+        (isColor c ∧ ∃ p, isPerson p ∧ favors p c) ∧ isBlue c) _,
+      count_eq_decidable (fun c : Fin 8 =>
+        (isColor c ∧ ∃ p, isPerson p ∧ favors p c) ∧ ¬ isBlue c) _]
+  have v1 : count (fun c : Fin 8 =>
+      (isColor c ∧ ∃ p, isPerson p ∧ favors p c) ∧ isBlue c) = 1 := by
+    simp only [count, countOn]; decide
+  have v2 : count (fun c : Fin 8 =>
+      (isColor c ∧ ∃ p, isPerson p ∧ favors p c) ∧ ¬ isBlue c) = 2 := by
+    simp only [count, countOn]; decide
+  omega
+
+/-- Each person favors at most one color. -/
+theorem favors_unique :
+    ∀ x y y' : Fin 8, isColor y → favors x y → isColor y' → favors x y' →
+      y = y' := by decide
+
+/-- The symmetric construal of the favorite-color sentence, derived from the
+possessor-dominant one through `symmetric_iff_possessor_dominant`. -/
+theorem favorite_color_symmetric :
+    most_sem (fun p : Fin 8 × Fin 8 => isPerson p.1 ∧ isColor p.2 ∧ favors p.1 p.2)
+      (fun p => isBlue p.2) :=
+  (symmetric_iff_possessor_dominant isPerson isColor isBlue favors
+    favors_unique).mpr favorite_color_possessor_dominant
+
+/-! ### Definiteness and the capability mixins (Ch. 2)
 
 A definite possessive ("the boy's cat") and a relational possessive ("John's
-sisters"), exercising the possessive-description capability mixins
-(`HasIotaWitness`, `HasPossessor`, `HasPossessionRelation`). -/
+sisters"), exercising the possessive-description capability mixins. -/
 
 /-- "the boy's cat": possessor `0` (the boy), with a uniquely-identified cat
 `1`. Entities are `Fin 3` (boy, cat, dog); one situation. -/
@@ -95,7 +255,7 @@ def theBoysCat : Possessive.Definite (Fin 3) Unit where
   presupposition := fun _ => ⟨1, rfl, fun _ hy => hy⟩
 
 /-- The definite possessive denotes a unique possessee, inherited from its
-`HasIotaWitness` instance via `existsUnique_possessee` — no bespoke proof. -/
+`HasIotaWitness` instance via `existsUnique_possessee`. -/
 theorem theBoysCat_unique (s : Unit) :
     ∃! y : Fin 3, HasPossesseePredicate.possesseePredicate theBoysCat y s :=
   existsUnique_possessee theBoysCat s
@@ -111,35 +271,30 @@ def johnsSisters : Possessive.Description (Fin 3) Unit where
   restrictor := fun _ _ => True
 
 /-- The relational possessive's `possesseeSet` is its lexical possession
-relation applied to the possessor — derived through the `HasPossessor` and
-`HasPossessionRelation` instances. -/
+relation applied to the possessor. -/
 theorem johnsSisters_possesseeSet (y : Fin 3) (s : Unit) :
     possesseeSet johnsSisters y s ↔ sibling 0 y :=
   Iff.rfl
 
 /-! ### Narrowing through a description
 
-The same narrowing, now for a type ⟨1⟩ possessor ("planet 2's rings"). A description
-bundles a single possessor, so narrowing surfaces as existential import: routed
-through the unified `descriptionGQ` denotation, *planet 2's rings are icy* is false
-because planet 2 has no ring. Reuses the planets/rings model above. -/
+For a single possessor, narrowing surfaces as existential import: *Mercury's
+rings are icy* fails because Mercury (planet `3`) has no ring. -/
 
-/-- "planet 2's rings": possessor `2`, with `hasRing` as the possession
+/-- "Mercury's rings": possessor `3`, with `hasRing` as the possession
 relation. -/
-def planet2sRings : Possessive.Description (Fin 5) Unit where
-  possessor := 2
+def mercurysRings : Possessive.Description (Fin 12) Unit where
+  possessor := 3
   relation := fun x y _ => hasRing x y
   restrictor := fun y _ => isRing y
 
-/-- *Planet 2's rings are icy* is false: via the unified description denotation,
-existential import (`descriptionGQ_existential_import`) requires planet 2 to possess
-a ring, but it has none — narrowing at the individual level. -/
-theorem planet2sRings_no_icy_rings :
-    ¬ descriptionGQ planet2sRings some_sem () isRing isIcy := by
+/-- *Mercury's rings are icy* is false: the description denotation carries
+existential import, and Mercury has no ring. -/
+theorem mercurysRings_not_icy :
+    ¬ descriptionGQ mercurysRings some_sem () isRing isIcy := by
   intro h
-  obtain ⟨b, _, hr⟩ := descriptionGQ_existential_import planet2sRings some_sem () h
-  have hb : hasRing 2 b := hr
-  simp only [hasRing] at hb
-  rcases hb with ⟨h2, _⟩ | ⟨h2, _⟩ <;> exact absurd h2 (by decide)
+  obtain ⟨b, -, hr⟩ := descriptionGQ_existential_import mercurysRings some_sem () h
+  have hb : hasRing 3 b := hr
+  rcases hb with ⟨h3, -⟩ | ⟨h3, -⟩ | ⟨h3, -⟩ <;> exact absurd h3 (by decide)
 
 end Barker1995

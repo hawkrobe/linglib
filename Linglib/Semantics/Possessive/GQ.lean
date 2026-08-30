@@ -8,7 +8,7 @@ import Linglib.Semantics.Possessive.Basic
 ("every student's"), a possessee quantifier `Q₂` (typically covert), and a
 possession relation `R`: "every student's cat sleeps" =
 `Poss every student a own cat sleep`. The possessor restrictor is narrowed by
-`dom A R` to those who possess an `A`-thing (narrowing: [barker-1995] p. 139);
+`dom A R` to those who possess an `A`-thing (narrowing: [barker-1995]);
 `PossW` is the variant for type ⟨1⟩ possessor NPs taken whole ("John's"),
 which keeps narrowing in the scope.
 

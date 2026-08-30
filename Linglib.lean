@@ -344,6 +344,7 @@ import Linglib.Data.Examples.BachBrownMarslenWilson1986
 import Linglib.Data.Examples.BarAsherSiegal2026
 import Linglib.Data.Examples.BarLev2021
 import Linglib.Data.Examples.BarLevFox2020
+import Linglib.Data.Examples.Barker1995
 import Linglib.Data.Examples.Barker2002
 import Linglib.Data.Examples.BarwiseCooper1981
 import Linglib.Data.Examples.Beaver2001
