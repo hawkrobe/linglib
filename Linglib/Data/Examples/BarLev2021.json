@@ -1,0 +1,653 @@
+[
+  {
+    "id": "barlev2021_1a",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(1a)"},
+    "language": "stan1293",
+    "primaryText": "The kids laughed.",
+    "glossedTokens": [],
+    "translation": "The kids laughed.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "all the kids laughed", "judgment": "acceptable"},
+      {"name": "some of the kids laughed", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "positive"]
+    ],
+    "comment": "Out of the blue."
+  },
+  {
+    "id": "barlev2021_1b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(1b)"},
+    "language": "stan1293",
+    "primaryText": "The kids didn't laugh.",
+    "glossedTokens": [],
+    "translation": "The kids didn't laugh.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "not all the kids laughed", "judgment": "unacceptable"},
+      {"name": "none of the kids laughed", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "negative"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_2",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(2)"},
+    "language": "stan1293",
+    "primaryText": "No boy found his presents.",
+    "glossedTokens": [],
+    "translation": "No boy found his presents.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "no boy found all of his presents", "judgment": "unacceptable"},
+      {"name": "no boy found any of his presents", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "negative"],
+      ["scope", "definite plural bound below negation"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_3b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(3b)"},
+    "language": "stan1293",
+    "primaryText": "The kids laughed.",
+    "glossedTokens": [],
+    "translation": "The kids laughed.",
+    "context": "There was a clown at my kid's birthday party. Someone asks me if they gave a funny performance.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "true if most of the kids laughed", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "positive"],
+      ["reading", "non-maximal"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_4b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(4b)"},
+    "language": "stan1293",
+    "primaryText": "The kids laughed.",
+    "glossedTokens": [],
+    "translation": "The kids laughed.",
+    "context": "Someone asks me who among the five adults and the ten kids at the birthday party laughed.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "true if most of the kids laughed", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "positive"],
+      ["reading", "maximal"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_9b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(9b)"},
+    "language": "stan1293",
+    "primaryText": "The kids didn't laugh.",
+    "glossedTokens": [],
+    "translation": "The kids didn't laugh.",
+    "context": "There was a clown at my kid's birthday party. Someone asks me if they gave a funny performance.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "true if most of the kids didn't laugh", "judgment": "questionable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "negative"]
+    ],
+    "comment": "Accepted by many speakers, rejected by some; the definite plural may outscope negation."
+  },
+  {
+    "id": "barlev2021_10a",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(10a)"},
+    "language": "stan1293",
+    "primaryText": "All of the kids took their vitamins.",
+    "glossedTokens": [],
+    "translation": "All of the kids took their vitamins.",
+    "context": "The kids are required to take at least 2 of the 4 vitamins I gave each of them.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "every kid took at least 2 vitamins", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "positive"],
+      ["scope", "definite plural bound"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_10b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(10b)"},
+    "language": "stan1293",
+    "primaryText": "None of the kids took their vitamins.",
+    "glossedTokens": [],
+    "translation": "None of the kids took their vitamins.",
+    "context": "The kids are required to take at least 2 of the 4 vitamins I gave each of them.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "no kid took any vitamin", "judgment": "acceptable"},
+      {"name": "no kid took at least 2 vitamins", "judgment": "questionable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "negative"],
+      ["scope", "definite plural bound"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_11a",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(11a)"},
+    "language": "stan1293",
+    "primaryText": "All of the kids came with their parents to the meeting.",
+    "glossedTokens": [],
+    "translation": "All of the kids came with their parents to the meeting.",
+    "context": "Context B: the kids were told to come with at least one parent to the meeting.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "every kid came with at least one parent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "positive"],
+      ["scope", "definite plural bound"]
+    ],
+    "comment": "In Context A (both parents required) only the maximal reading."
+  },
+  {
+    "id": "barlev2021_11b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(11b)"},
+    "language": "stan1293",
+    "primaryText": "None of the kids came with their parents to the meeting.",
+    "glossedTokens": [],
+    "translation": "None of the kids came with their parents to the meeting.",
+    "context": "Context B: the kids were told to come with at least one parent to the meeting.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "no kid came with any parent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "negative"],
+      ["scope", "definite plural bound"]
+    ],
+    "comment": "Immune to the contextual manipulation."
+  },
+  {
+    "id": "barlev2021_14a",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(14a)"},
+    "language": "stan1293",
+    "primaryText": "In every performance by this clown the kids who sit on the first 3 rows laugh. (Well, of course, not all of those kids do.)",
+    "glossedTokens": [],
+    "translation": "In every performance by this clown the kids who sit on the first 3 rows laugh. (Well, of course, not all of those kids do.)",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["polarity", "positive"],
+      ["scope", "definite plural bound"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_14b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(14b)"},
+    "language": "stan1293",
+    "primaryText": "In no performance by this clown the kids who sit on the first 3 rows laugh. (# Well, of course, some of those kids do.)",
+    "glossedTokens": [],
+    "translation": "In no performance by this clown the kids who sit on the first 3 rows laugh. (# Well, of course, some of those kids do.)",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["polarity", "negative"],
+      ["scope", "definite plural bound"]
+    ],
+    "comment": "The continuation is infelicitous."
+  },
+  {
+    "id": "barlev2021_17",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(17)"},
+    "language": "stan1293",
+    "primaryText": "Mary is allowed to read \"War and Peace\" or \"Anna Karenina\".",
+    "glossedTokens": [],
+    "translation": "Mary is allowed to read \"War and Peace\" or \"Anna Karenina\".",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "allowed to read W&P and allowed to read AK", "judgment": "acceptable"},
+      {"name": "allowed to read W&P or allowed to read AK", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "free choice"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_18",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(18)"},
+    "language": "stan1293",
+    "primaryText": "Mary is not allowed to read \"War and Peace\" or \"Anna Karenina\".",
+    "glossedTokens": [],
+    "translation": "Mary is not allowed to read \"War and Peace\" or \"Anna Karenina\".",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "not both allowed", "judgment": "unacceptable"},
+      {"name": "allowed to read neither", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "free choice"],
+      ["polarity", "negative"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_21",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(21)"},
+    "language": "stan1293",
+    "primaryText": "Exactly one student read the books.",
+    "glossedTokens": [],
+    "translation": "Exactly one student read the books.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "one student read all of the books and no more than one read any", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["environment", "non-monotonic"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_23",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(23)"},
+    "language": "stan1293",
+    "primaryText": "Mary read the books, but John didn't.",
+    "glossedTokens": [],
+    "translation": "Mary read the books, but John didn't.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "Mary read all and John read none", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["environment", "ellipsis"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_41a",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(41a)"},
+    "language": "stan1293",
+    "primaryText": "Kelly or Jane laughed.",
+    "glossedTokens": [],
+    "translation": "Kelly or Jane laughed.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "Kelly or Jane laughed but not both", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["alternatives", "with conjunction"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_41b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(41b)"},
+    "language": "stan1293",
+    "primaryText": "The kids laughed.",
+    "glossedTokens": [],
+    "translation": "The kids laughed.",
+    "context": "The kids are Kelly and Jane.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "Kelly and Jane laughed", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["alternatives", "subdomain only"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_71b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(71b)"},
+    "language": "stan1293",
+    "primaryText": "None of the guests ate their poisoned peas.",
+    "glossedTokens": [],
+    "translation": "None of the guests ate their poisoned peas.",
+    "context": "Each guest was served a plate containing 10 poisoned peas. Eating 3 is harmless; eating 4 or more leads to certain death.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "no guest ate more than 3 poisoned peas", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "negative"],
+      ["scope", "definite plural bound"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_72b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(72b)"},
+    "language": "stan1293",
+    "primaryText": "No contestant ate their pies.",
+    "glossedTokens": [],
+    "translation": "No contestant ate their pies.",
+    "context": "Each contestant in a pie eating contest is provided with 25 pies. To move on a contestant must eat at least 20 pies.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "no contestant ate at least 20 pies", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "negative"],
+      ["scope", "definite plural bound"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_73",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(73)"},
+    "language": "stan1293",
+    "primaryText": "Mary read the books.",
+    "glossedTokens": [],
+    "translation": "Mary read the books.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "true if Mary read all of the books", "judgment": "acceptable"},
+      {"name": "false if Mary read none", "judgment": "acceptable"},
+      {"name": "neither true nor false if some but not all", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "positive"],
+      ["gappiness", "yes"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_74a",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(74a)"},
+    "language": "stan1293",
+    "primaryText": "Mary read the 4 books.",
+    "glossedTokens": [],
+    "translation": "Mary read the 4 books.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "Mary read all of the 4 books", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "positive"],
+      ["gappiness", "no"],
+      ["non_maximality", "no"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_74b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(74b)"},
+    "language": "stan1293",
+    "primaryText": "Mary didn't read the 4 books.",
+    "glossedTokens": [],
+    "translation": "Mary didn't read the 4 books.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "Mary didn't read any of the 4 books", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "negative"],
+      ["gappiness", "no"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_76",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(76)"},
+    "language": "stan1293",
+    "primaryText": "Mary read the 4 books.",
+    "glossedTokens": [],
+    "translation": "Mary read the 4 books.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "true if Mary read all of the 4 books", "judgment": "acceptable"},
+      {"name": "false otherwise", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["gappiness", "no"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_77",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(77)"},
+    "language": "stan1293",
+    "primaryText": "Sue read \"Anna Karenina\" and \"War and Peace\".",
+    "glossedTokens": [],
+    "translation": "Sue read \"Anna Karenina\" and \"War and Peace\".",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "true if both", "judgment": "acceptable"},
+      {"name": "false otherwise", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["gappiness", "no"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_80",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(80)"},
+    "language": "stan1293",
+    "primaryText": "Mary read the books.",
+    "glossedTokens": [],
+    "translation": "Mary read the books.",
+    "context": "If Mary reads any five of the ten books she is guaranteed to pass the test; if she reads less than five she is guaranteed to fail.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "true if Mary read at least five of the ten books", "judgment": "acceptable"},
+      {"name": "false otherwise", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["gappiness", "no"],
+      ["reading", "at least five"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_81",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(81)"},
+    "language": "stan1293",
+    "primaryText": "Mary read the books.",
+    "glossedTokens": [],
+    "translation": "Mary read the books.",
+    "context": "To pass the test, Mary has to read all of the ten books on the reading list; if she reads less than ten she is guaranteed to fail.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "true if Mary read all of the ten books", "judgment": "acceptable"},
+      {"name": "false otherwise", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["gappiness", "no"],
+      ["reading", "maximal"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_82a",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(82a)"},
+    "language": "stan1293",
+    "primaryText": "The squares are red.",
+    "glossedTokens": [],
+    "translation": "The squares are red.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "neither true nor false if some but not all of the squares are red", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "positive"],
+      ["gappiness", "yes"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_82b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(82b)"},
+    "language": "stan1293",
+    "primaryText": "The squares aren't red.",
+    "glossedTokens": [],
+    "translation": "The squares aren't red.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "neither true nor false if some but not all of the squares are red", "judgment": "questionable"}
+    ],
+    "paperFeatures": [
+      ["polarity", "negative"],
+      ["gappiness", "reduced"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_84a",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(84a)"},
+    "language": "stan1293",
+    "primaryText": "John read the books, I don't know which.",
+    "glossedTokens": [],
+    "translation": "John read the books, I don't know which.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "cancellation"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_84b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(84b)"},
+    "language": "stan1293",
+    "primaryText": "You are allowed to eat ice cream or cake, I don't know which.",
+    "glossedTokens": [],
+    "translation": "You are allowed to eat ice cream or cake, I don't know which.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "cancellation"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_85a",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(85a)"},
+    "language": "stan1293",
+    "primaryText": "The kids laughed. In fact, Kelly and Bill did but Jane didn't.",
+    "glossedTokens": [],
+    "translation": "The kids laughed. In fact, Kelly and Bill did but Jane didn't.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "cancellation"]
+    ],
+    "comment": "With 'all' the continuation is infelicitous."
+  },
+  {
+    "id": "barlev2021_85b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(85b)"},
+    "language": "stan1293",
+    "primaryText": "You are allowed to have ice cream or cake. In fact, you are allowed to have ice cream but not cake.",
+    "glossedTokens": [],
+    "translation": "You are allowed to have ice cream or cake. In fact, you are allowed to have ice cream but not cake.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "cancellation"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_88a",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(88a)"},
+    "language": "stan1293",
+    "primaryText": "The kids lifted the piano.",
+    "glossedTokens": [],
+    "translation": "The kids lifted the piano.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "true if half of the kids lifted it together and no one else did", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate", "non-distributive"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_88b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(88b)"},
+    "language": "stan1293",
+    "primaryText": "The kids didn't lift the piano.",
+    "glossedTokens": [],
+    "translation": "The kids didn't lift the piano.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "true if half of the kids lifted it together and no one else did", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate", "non-distributive"],
+      ["polarity", "negative"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_94a",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(94a)"},
+    "language": "stan1293",
+    "primaryText": "The girls danced with the boys.",
+    "glossedTokens": [],
+    "translation": "The girls danced with the boys.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "every girl danced with some boy and every boy with some girl", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate", "two-place"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "barlev2021_94b",
+    "source": {"bibkey": "bar-lev-2021", "paperLabel": "(94b)"},
+    "language": "stan1293",
+    "primaryText": "The girls didn't dance with the boys.",
+    "glossedTokens": [],
+    "translation": "The girls didn't dance with the boys.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "no girl danced with any boy", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate", "two-place"],
+      ["polarity", "negative"]
+    ],
+    "comment": ""
+  }
+]

@@ -225,4 +225,12 @@ theorem not_isInnocentlyExcludable_of_cell_witness {target : Set World}
     ¬ IsInnocentlyExcludable ALT φ target :=
   fun h_ie => hwitness.2.1 target h_ie htarget
 
+/-- With the prejacent as its only alternative, exhaustification is vacuous. -/
+theorem exhIEII_singleton (hsat : ∃ w, φ w) : exhIEII {φ} φ = φ := by
+  ext w
+  refine ⟨λ h => h.1, λ hw => ⟨hw, λ q hq => absurd hq ?_, λ r hr => ?_⟩⟩
+  · rw [Set.mem_singleton_iff.1 hq.1]
+    exact not_isInnocentlyExcludable_of_phi_subset (Set.finite_singleton _) hsat le_rfl
+  · rw [Set.mem_singleton_iff.1 hr.1]; exact hw
+
 end Exhaustification
