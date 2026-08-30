@@ -1,0 +1,292 @@
+[
+  {
+    "id": "beavers2010_9a",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(9a)"},
+    "language": "stan1293",
+    "primaryText": "John loaded the hay onto the wagon.",
+    "glossedTokens": [],
+    "translation": "John loaded the hay onto the wagon.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "locative"],
+      ["direct", "theme"]
+    ],
+    "comment": "Theme object: all the hay moved (quantized); the wagon at least partly filled (nonquantized)."
+  },
+  {
+    "id": "beavers2010_9b",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(9b)"},
+    "language": "stan1293",
+    "primaryText": "John loaded the wagon with the hay.",
+    "glossedTokens": [],
+    "translation": "John loaded the wagon with the hay.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "locative"],
+      ["direct", "location"]
+    ],
+    "comment": "Location object: the wagon completely filled (quantized); the hay at least partly moved (nonquantized) — Anderson's holistic effect."
+  },
+  {
+    "id": "beavers2010_10a",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(10a)"},
+    "language": "stan1293",
+    "primaryText": "Kim loaded the hay onto the wagon, but still needed a truck for the rest.",
+    "glossedTokens": [],
+    "translation": "Kim loaded the hay onto the wagon, but still needed a truck for the rest.",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "locative"],
+      ["diagnostic", "holistic effect"]
+    ],
+    "comment": "Infelicitous: the theme object entails total movement."
+  },
+  {
+    "id": "beavers2010_18a",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(18a)"},
+    "language": "stan1293",
+    "primaryText": "John cut the diamond on the glass.",
+    "glossedTokens": [],
+    "translation": "John cut the diamond on the glass.",
+    "context": "John moves a sharp-edged diamond forcefully into contact with a piece of glass.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "locative"],
+      ["verb class", "cut/slice"]
+    ],
+    "comment": "Diamond affected: the object is damaged (nonquantized), the oblique only potentially (potential)."
+  },
+  {
+    "id": "beavers2010_18b",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(18b)"},
+    "language": "stan1293",
+    "primaryText": "John cut the glass with the diamond.",
+    "glossedTokens": [],
+    "translation": "John cut the glass with the diamond.",
+    "context": "Same scenario; the glass is damaged rather than the diamond.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "locative"],
+      ["verb class", "cut/slice"]
+    ],
+    "comment": "No holistic effect, so locative alternations are not in general governed by aspect."
+  },
+  {
+    "id": "beavers2010_20a",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(20a)"},
+    "language": "stan1293",
+    "primaryText": "Marie cut the rope.",
+    "glossedTokens": [],
+    "translation": "Marie cut the rope.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "conative"],
+      ["verb class", "cut"]
+    ],
+    "comment": "The rope is cut, to no specific degree: nonquantized change."
+  },
+  {
+    "id": "beavers2010_20b",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(20b)"},
+    "language": "stan1293",
+    "primaryText": "Marie cut at the rope.",
+    "glossedTokens": [],
+    "translation": "Marie cut at the rope.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "conative"],
+      ["verb class", "cut"]
+    ],
+    "comment": "The rope may or may not be cut: potential for change only."
+  },
+  {
+    "id": "beavers2010_21a",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(21a)"},
+    "language": "stan1293",
+    "primaryText": "Marie ate her cake.",
+    "glossedTokens": [],
+    "translation": "Marie ate her cake.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "conative"],
+      ["verb class", "consumption"]
+    ],
+    "comment": "All (or a contextually significant amount) of the cake consumed: quantized change."
+  },
+  {
+    "id": "beavers2010_21b",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(21b)"},
+    "language": "stan1293",
+    "primaryText": "Marie ate at her cake.",
+    "glossedTokens": [],
+    "translation": "Marie ate at her cake.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "conative"],
+      ["verb class", "consumption"]
+    ],
+    "comment": "At least some consumed, not necessarily all: nonquantized change."
+  },
+  {
+    "id": "beavers2010_22a",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(22a)"},
+    "language": "stan1293",
+    "primaryText": "Marie hit Defarge.",
+    "glossedTokens": [],
+    "translation": "Marie hit Defarge.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "conative"],
+      ["verb class", "impact"]
+    ],
+    "comment": "Defarge is hit but not necessarily affected: potential for change."
+  },
+  {
+    "id": "beavers2010_22b",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(22b)"},
+    "language": "stan1293",
+    "primaryText": "Marie hit at Defarge.",
+    "glossedTokens": [],
+    "translation": "Marie hit at Defarge.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "conative"],
+      ["verb class", "impact"]
+    ],
+    "comment": "Defarge not necessarily even hit: unspecified for change (double modality)."
+  },
+  {
+    "id": "beavers2010_24a",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(24a)"},
+    "language": "stan1293",
+    "primaryText": "John hit the fence with the stick.",
+    "glossedTokens": [],
+    "translation": "John hit the fence with the stick.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "locative"],
+      ["contrast", "none"]
+    ],
+    "comment": "Alternates with 'John hit the stick against the fence' with no truth-conditional contrast — the equal-role case the MAP permits."
+  },
+  {
+    "id": "beavers2010_29",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(29)"},
+    "language": "stan1293",
+    "primaryText": "The tailor lengthened the jeans to 32ins.",
+    "glossedTokens": [],
+    "translation": "The tailor lengthened the jeans to 32ins.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["degree", "quantized"],
+      ["diagnostic", "telicity"]
+    ],
+    "comment": "Specific predicate-supplied result state: telic, quantized change."
+  },
+  {
+    "id": "beavers2010_30",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(30)"},
+    "language": "stan1293",
+    "primaryText": "The tailor lengthened the jeans.",
+    "glossedTokens": [],
+    "translation": "The tailor lengthened the jeans.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["degree", "nonquantized"],
+      ["diagnostic", "telicity"]
+    ],
+    "comment": "Some result on the length scale, unspecified which: atelic, nonquantized change."
+  },
+  {
+    "id": "beavers2010_81a",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(81a)"},
+    "language": "stan1293",
+    "primaryText": "John climbed the stairs.",
+    "glossedTokens": [],
+    "translation": "John climbed the stairs.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "traversal"],
+      ["degree", "totally traversed"]
+    ],
+    "comment": "The stairs all traversed; the affected participant is John (quantized change of location)."
+  },
+  {
+    "id": "beavers2010_81b",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(81b)"},
+    "language": "stan1293",
+    "primaryText": "John climbed up the stairs.",
+    "glossedTokens": [],
+    "translation": "John climbed up the stairs.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "traversal"],
+      ["degree", "traversed"]
+    ],
+    "comment": "The stairs all or partly traversed: the oblique weakens total traversal to mere traversal."
+  },
+  {
+    "id": "beavers2010_88a",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(88a)"},
+    "language": "stan1293",
+    "primaryText": "Kim mailed London a ball.",
+    "glossedTokens": [],
+    "translation": "Kim mailed London a ball.",
+    "context": "",
+    "judgment": "marginal",
+    "readings": [
+      {"name": "London as an agency (Scotland Yard reading)", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["alternation", "dative"],
+      ["direct", "recipient"]
+    ],
+    "comment": "Indirect objects must be prospective possessors: the goal-only reading is out."
+  },
+  {
+    "id": "beavers2010_88b",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(88b)"},
+    "language": "stan1293",
+    "primaryText": "Kim mailed a ball to London.",
+    "glossedTokens": [],
+    "translation": "Kim mailed a ball to London.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["alternation", "dative"],
+      ["oblique", "goal"]
+    ],
+    "comment": "The to-variant needs only a goal: the indirect object monotonically adds prospective possession (90)."
+  }
+]
