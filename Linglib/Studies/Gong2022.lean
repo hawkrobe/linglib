@@ -51,7 +51,7 @@ position is available in the matrix clause.
 namespace Gong2022
 
 open Minimalist
-open Syntax.Case
+open Case
 open Mongolian.Case
 
 -- ============================================================================
@@ -220,21 +220,14 @@ theorem sbg_overpredicts :
 -- S 7: Bridge — Dependent Case Algorithm Determines WLM
 -- ============================================================================
 
-/-- The dependent case algorithm *determines* WLM availability:
-    `dependentAccusative` succeeding at Spec,VP (above IO) is exactly
-    what makes the case position available for late merger.
-
-    This connects the Mongolian fragment's WLM predictions to the
-    theory-layer dependent case algorithm in `Syntax/Case/Dependent.lean`,
-    rather than stipulating case positions independently. -/
+/-- The dependent case algorithm *determines* WLM availability: the direct object being
+    valued dependent accusative at Spec,VP (above IO) is exactly what makes the case position
+    available for late merger, and the subject being valued by T rather than a dependent rule
+    is what leaves none above it. -/
 theorem dependent_acc_determines_wlm :
-    -- The dependent case algorithm assigns ACC to DO above IO
-    dependentAccusative [ditransSubject] ditransDO = some .acc ∧
-    -- Therefore WLM bleeds Condition C over IO
+    Case.getMechanismOf "DO" ditransitiveCases = some .dependent ∧
     predictsReconstruction .io = false ∧
-    -- The dependent case algorithm assigns no ACC above Subject
-    dependentAccusative [] ditransSubject = none ∧
-    -- Therefore WLM forces reconstruction over Subject
+    Case.getMechanismOf "subject" ditransitiveCases ≠ some .dependent ∧
     predictsReconstruction .subject = true := by decide
 
 -- ============================================================================
@@ -303,28 +296,25 @@ other three mechanisms fixed and varying only `datMode`, the algorithm stops
 deriving dative at all, so the dative on a Mongolian goal must be supplied as
 lexical case. -/
 
-open Syntax.Case in
-/-- Mongolian differs from Sakha in `datMode` alone. -/
+/-- Mongolian differs from Sakha in the verb phrase's high case alone: no dependent dative. -/
 theorem mongolian_differs_from_sakha_in_dat_only :
-    Mongolian.Case.mongolianCaseConfig =
-      { Yakut.Case.yakutCaseConfig with datMode := .nonstructural } := rfl
+    Mongolian.Case.grammar.rules .v = { Yakut.Case.grammar.rules .v with high := none } ∧
+    Mongolian.Case.grammar.rules .C = Yakut.Case.grammar.rules .C ∧
+    Mongolian.Case.grammar.agree = Yakut.Case.grammar.agree := by decide
 
-open Syntax.Case in
 /-- The Sakha ditransitive: a subject, a VP-internal goal, and a theme shifted to the
     phase edge. -/
-def sakhaDitransitive : List PhasedNP :=
-  [{ label := "subject", lexicalCase := none, basePhase := .cp },
-   { label := "goal", lexicalCase := none, basePhase := .vp },
-   { label := "theme", lexicalCase := none, basePhase := .vp, shifted := true }]
+def sakhaDitransitive : List Minimalist.PhasedNP :=
+  [{ label := "subject" }, { label := "goal", phase := .v },
+   { label := "theme", phase := .v, shifted := true }]
 
-open Syntax.Case in
-/-- On the Sakha ditransitive, the Mongolian configuration derives no dative
-    at all, and the goal that Sakha values dative is valued differently. -/
+/-- The Mongolian grammar values no NP of the Sakha ditransitive dative — it mentions no
+    dative — so the goal Sakha values dative comes out otherwise. -/
 theorem mongolian_derives_no_dative :
-    (∀ cn ∈ assignCasesPhased Mongolian.Case.mongolianCaseConfig sakhaDitransitive,
-      cn.case ≠ .dat) ∧
-    getCaseOf "goal" (assignCasesPhased Mongolian.Case.mongolianCaseConfig sakhaDitransitive) ≠
-      getCaseOf "goal" (assignCasesPhased Yakut.Case.yakutCaseConfig sakhaDitransitive) := by
+    (∀ s ∈ Mongolian.Case.grammar.assign [(.T, .C)] sakhaDitransitive,
+      s.2.map (·.1) ≠ some .dat) ∧
+    Case.getCaseOf "goal" (Mongolian.Case.grammar.assign [(.T, .C)] sakhaDitransitive) ≠
+      Case.getCaseOf "goal" (Yakut.Case.grammar.assign [(.T, .C)] sakhaDitransitive) := by
   decide
 
 end Gong2022

@@ -753,7 +753,7 @@ theorem universal68_scenario_form_frequency :
 /-- [marantz-1991]: Hindi's aspect-conditioned ERG split is derived
     structurally — the *same* `[⟨"agent", none⟩, ⟨"theme", none⟩]` NP
     list produces ERG-marking under perfective and NOM-ACC under
-    imperfective, driven by the `CaseLanguageType` parameter alone.
+    imperfective, driven by the `Alignment.AlignmentType` parameter alone.
     No prominence input enters the algorithm. -/
 theorem marantz_hindi_split_is_structural :
     Marantz1991.hindiTransitive .perfective ≠
@@ -762,13 +762,14 @@ theorem marantz_hindi_split_is_structural :
 
 /-- [marantz-1991]: in ergative mode, the *higher* of two caseless
     NPs gets ERG, regardless of any "prominence" attribute. The function
-    signature `assignCases : CaseLanguageType → List NPInDomain → List CasedNP`
-    has no prominence input — `NPInDomain` carries only `label : String`
+    signature `assignCases : Alignment.AlignmentType → List Case.NP →
+    List (Case.NP × Case.Valuation)`
+    has no prominence input — `Case.NP` carries only `label : String`
     and `lex : Option Case`. The two-NP transitive case witnesses this
     uniformity. -/
 theorem marantz_ergative_uniform_on_higher :
-    Syntax.Case.getCaseOf "agent"
-      (Syntax.Case.assignCases .ergative
+    Case.getCaseOf "agent"
+      (Case.assignCases .ergative
         [⟨"agent", none⟩, ⟨"theme", none⟩]) = some .erg := by
   decide
 
@@ -778,8 +779,8 @@ theorem marantz_ergative_uniform_on_higher :
     derived subjects. The empirical witness is Hindi unaccusatives
     (*siitta (\*ne) aayii*). -/
 theorem marantz_ergative_no_marking_on_sole_np :
-    Syntax.Case.getCaseOf "theme"
-      (Syntax.Case.assignCases .ergative [⟨"theme", none⟩]) = some .abs := by
+    Case.getCaseOf "theme"
+      (Case.assignCases .ergative [⟨"theme", none⟩]) = some .abs := by
   decide
 
 /-- The two frameworks partition the empirical territory of split case
@@ -792,16 +793,16 @@ theorem marantz_ergative_no_marking_on_sole_np :
     and ANY language type, `assignCases` produces the same case sequence
     (up to label relabeling). The labels are uninterpreted strings — the
     function cannot read them as proxies for prominence. There is no
-    prominence input to `assignCases : CaseLanguageType → List NPInDomain
-    → List CasedNP`; `NPInDomain` carries only `label : String` and
+    prominence input to `assignCases : Alignment.AlignmentType → List Case.NP
+    → List (Case.NP × Case.Valuation)`; `Case.NP` carries only `label : String` and
     `lex : Option Case`. A Fore-style prominence-conditioned ERG would
     require an extra parameter not present in the algorithm. -/
 theorem marantz_haspelmath_partition_witness
-    (lang : Syntax.Case.CaseLanguageType) (l₁ l₂ l₁' l₂' : String) :
-    (Syntax.Case.assignCases lang
-        [⟨l₁, none⟩, ⟨l₂, none⟩]).map (·.case) =
-    (Syntax.Case.assignCases lang
-        [⟨l₁', none⟩, ⟨l₂', none⟩]).map (·.case) := by
+    (lang : Alignment.AlignmentType) (l₁ l₂ l₁' l₂' : String) :
+    (Case.assignCases lang
+        [⟨l₁, none⟩, ⟨l₂, none⟩]).map (·.2) =
+    (Case.assignCases lang
+        [⟨l₁', none⟩, ⟨l₂', none⟩]).map (·.2) := by
   cases lang <;> rfl
 
 end Haspelmath2021

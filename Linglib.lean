@@ -2998,3 +2998,4 @@ import Linglib.Data.Examples.Asudeh2022
 import Linglib.Data.Examples.AugurzkyEtAl2023
 import Linglib.Data.Examples.Baker2015
 import Linglib.Data.Examples.BakerVinokurova2010
+import Linglib.Syntax.Minimalist.Case.Dependent

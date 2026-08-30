@@ -59,7 +59,7 @@ with Nez Perce as the primary case study.
 
 namespace Woolford1997
 
-open Syntax.Case
+open Case
 
 -- ============================================================================
 -- § 1: Case Inventory (paper's (1)–(2))

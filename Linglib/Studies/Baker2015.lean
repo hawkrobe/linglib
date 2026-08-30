@@ -32,14 +32,14 @@ how the unmarked case is realized.
 
 namespace Baker2015
 
-open Data.Examples Syntax.Case
+open Data.Examples Case
 
 /-- The book's languages of focus by alignment type: accusative Sakha, Tamil, Amharic, Cuzco
     Quechua, Korean and Finnish; ergative Shipibo, Burushaski, Chukchi, Lezgian, Ingush,
     Greenlandic, Kewa and Wardaman; tripartite Nez Perce, Coast Tsimshian, Semelai, Diyari and
     Warlpiri. The marked-nominative and marked-absolutive languages differ in the realization of
     the unmarked case, which the algorithm does not fix. -/
-def alignment? : String → Option CaseLanguageType
+def alignment? : String → Option Alignment.AlignmentType
   | "yaku1245" | "tami1289" | "amha1245" | "cusc1236" | "kore1280" | "finn1318" =>
     some .accusative
   | "ship1254" | "buru1296" | "chuk1273" | "lezg1247" | "ingu1240" | "kala1399" | "west2599"
@@ -64,16 +64,16 @@ def Observed.parse? : String → Option Observed
 
 /-- An assigned case realizes an observed one: the dependent cases as themselves, and the
     unmarked case as whatever label the language gives it. -/
-def Realizes (c : Case) (src : CaseSource) : Observed → Prop
+def Realizes (c : Case) (src : Mechanism) : Observed → Prop
   | .erg => c = .erg ∧ src = .dependent
   | .acc => c = .acc ∧ src = .dependent
   | .unmarked => src = .unmarked
 
-instance (c : Case) (src : CaseSource) (o : Observed) : Decidable (Realizes c src o) := by
+instance (c : Case) (src : Mechanism) (o : Observed) : Decidable (Realizes c src o) := by
   cases o <;> simp only [Realizes] <;> infer_instance
 
 /-- The NPs of a row's clause, subject first: it c-commands the object. -/
-def domain (r : LinguisticExample) : List NPInDomain :=
+def domain (r : LinguisticExample) : List NP :=
   ⟨"subject", none⟩ :: if r.feature? "transitive" = some "yes" then [⟨"object", none⟩] else []
 
 /-- The observed case of a row's NP. -/
@@ -86,7 +86,7 @@ def observed? (r : LinguisticExample) (np : String) : Option Observed :=
 theorem rows_case :
     ∀ r ∈ Examples.all, ∀ lang ∈ alignment? r.language, ∀ np ∈ ["subject", "object"],
       ∀ o ∈ observed? r np, ∀ c ∈ getCaseOf np (assignCases lang (domain r)),
-        ∀ src ∈ getSourceOf np (assignCases lang (domain r)), Realizes c src o := by
+        ∀ src ∈ getMechanismOf np (assignCases lang (domain r)), Realizes c src o := by
   decide
 
 /-- Agreement does not enter the algorithm: a subject is ergative in a transitive clause and

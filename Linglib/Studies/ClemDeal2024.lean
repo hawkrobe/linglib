@@ -53,7 +53,7 @@ This study file does five things:
 5. **Counterexample** the configurational case rules [clem-deal-2024]
    discusses (§1 (1), after [baker-2015]; §4.1 (37), a
    [barany-sheehan-2024]-style rule) by running linglib's *own* formalized
-   dependent-case algorithm (`Syntax.Case.assignCases`) on Shawi cells,
+   dependent-case algorithm (`Case.assignCases`) on Shawi cells,
    rather than a local strawman.
 
 Genuinely new machinery — bidirectional Agree (goal flagging),
@@ -71,7 +71,7 @@ open Deal2024 (DealGrammar isLicit strictlyDescending dpBears
   sd_off_diagonal_iff_outranks)
 open Kawapanan.Shawi (ObjectPosition ObjectSyntax Phi mustBeHigh
   ergativeMarker oagrOnSMarker objectSyntaxLicit)
-open Syntax.Case (NPInDomain assignCases getCaseOf)
+open Case (NP assignCases getCaseOf)
 
 -- ============================================================================
 -- § 1: Mapping Shawi to Deal-2024
@@ -232,7 +232,7 @@ theorem local_object_must_be_high (p : Person) (h : p.IsSAP) :
     the subject c-commands the object (earlier = structurally higher), and
     neither bears lexical case. Person-blind, exactly as a configurational
     case rule is. -/
-def shawiDomain (_subj _obj : Person) : List NPInDomain :=
+def shawiDomain (_subj _obj : Person) : List NP :=
   [⟨"subj", none⟩, ⟨"obj", none⟩]
 
 /-- Baker's configurational rule for ergative ([baker-2015]; [clem-deal-2024]
@@ -240,7 +240,7 @@ def shawiDomain (_subj _obj : Person) : List NPInDomain :=
     that NP1 c-commands NP2, then value the case feature of NP1 as ergative
     unless NP2 has already been marked for case." Rather than restate this
     as a local strawman, we *run* linglib's own dependent-case algorithm —
-    `Syntax.Case.assignCases .ergative`, which values the higher of two
+    `Case.assignCases .ergative`, which values the higher of two
     caseless NPs ergative — over the Shawi domain. -/
 def configErg (subj obj : Person) : Bool :=
   getCaseOf "subj" (assignCases .ergative (shawiDomain subj obj)) == some .erg
