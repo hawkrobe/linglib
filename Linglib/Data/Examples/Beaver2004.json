@@ -1,0 +1,200 @@
+[
+  {
+    "id": "beaver2004_1",
+    "source": {"bibkey": "beaver-2004", "paperLabel": "(1)"},
+    "language": "stan1293",
+    "primaryText": "Jane likes Mary. She often brings her flowers. She chats with her for ages.",
+    "glossedTokens": [],
+    "translation": "Jane likes Mary. She often brings her flowers. She chats with her for ages.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "In (1c), she = Jane and her = Mary", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["transition", "continue"]
+    ],
+    "comment": "BFP's worked example: sixteen candidate resolutions of (1c), filtered and ranked; the continuation wins."
+  },
+  {
+    "id": "beaver2004_2",
+    "source": {"bibkey": "beaver-2004", "paperLabel": "(2)"},
+    "language": "stan1293",
+    "primaryText": "Mary likes tennis. She plays Jim quite often. He used to play doubles with Mary.",
+    "glossedTokens": [],
+    "translation": "Mary likes tennis. She plays Jim quite often. He used to play doubles with Mary.",
+    "context": "",
+    "judgment": "marginal",
+    "readings": [
+      {"name": "He = Jim and the two Marys corefer", "judgment": "marginal"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "rule 1 violation"]
+    ],
+    "comment": "BFP filters out the coreferential reading (Rule 1); demoting PRO-TOP below FAM-DEF recovers it, and the production tableau explains the awkwardness: the speaker would have pronominalized Mary."
+  },
+  {
+    "id": "beaver2004_5",
+    "source": {"bibkey": "beaver-2004", "paperLabel": "(5)"},
+    "language": "stan1293",
+    "primaryText": "Jane likes Mary. She often visits her for tea. The woman is a compulsive tea drinker.",
+    "glossedTokens": [],
+    "translation": "Jane likes Mary. She often visits her for tea. The woman is a compulsive tea drinker.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "She = Jane, her = Mary; the woman = Jane", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "definite description resolution"]
+    ],
+    "comment": "PRO-TOP fails for every candidate of (5c), so FAM-DEF and COHERE decide: the definite resolves to the topic."
+  },
+  {
+    "id": "beaver2004_8",
+    "source": {"bibkey": "beaver-2004", "paperLabel": "(8)"},
+    "language": "stan1293",
+    "primaryText": "Jane likes Mary. She often goes around for tea with her. She chats with the young woman for ages.",
+    "glossedTokens": [],
+    "translation": "Jane likes Mary. She often goes around for tea with her. She chats with the young woman for ages.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "She = Jane, the young woman = Mary", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["transition", "continue"]
+    ],
+    "comment": "The parallel-subject reading wins; the crossed reading violates PRO-TOP and ALIGN."
+  },
+  {
+    "id": "beaver2004_9",
+    "source": {"bibkey": "beaver-2004", "paperLabel": "(9)"},
+    "language": "stan1293",
+    "primaryText": "Jane is happy. Mary gave her a present. She smiled.",
+    "glossedTokens": [],
+    "translation": "Jane is happy. Mary gave her a present. She smiled.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "She = Jane, the topic, not the previous subject Mary", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["transition", "continue"]
+    ],
+    "comment": "Neither parallelism nor subjecthood of the antecedent decides: COHERE keeps the topic."
+  },
+  {
+    "id": "beaver2004_12",
+    "source": {"bibkey": "beaver-2004", "paperLabel": "(12)"},
+    "language": "stan1293",
+    "primaryText": "Jane is happy. She was congratulated by Freda, and Mary gave her a present.",
+    "glossedTokens": [],
+    "translation": "Jane is happy. She was congratulated by Freda, and Mary gave her a present.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "her = Jane", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["transition", "retain"]
+    ],
+    "comment": "Jane stays topic but leaves subject position: only ALIGN is violated."
+  },
+  {
+    "id": "beaver2004_14",
+    "source": {"bibkey": "beaver-2004", "paperLabel": "(14)"},
+    "language": "stan1293",
+    "primaryText": "Jane is happy. Mary gave her a present. She smiled at her.",
+    "glossedTokens": [],
+    "translation": "Jane is happy. Mary gave her a present. She smiled at her.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "She = Mary, her = Jane", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["transition", "smooth shift"]
+    ],
+    "comment": "Both pronouns force an anaphoric reading whose topic was non-topical subject before: ALIGN decides."
+  },
+  {
+    "id": "beaver2004_16",
+    "source": {"bibkey": "beaver-2004", "paperLabel": "(16)"},
+    "language": "stan1293",
+    "primaryText": "Jane is happy. Mary gave her a present. Somebody unwrapped it.",
+    "glossedTokens": [],
+    "translation": "Jane is happy. Mary gave her a present. Somebody unwrapped it.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "it = the present", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["transition", "rough shift"]
+    ],
+    "comment": "The only agreeing resolution shifts the topic to the present, in non-subject position."
+  },
+  {
+    "id": "beaver2004_23",
+    "source": {"bibkey": "beaver-2004", "paperLabel": "(23)"},
+    "language": "stan1293",
+    "primaryText": "A great refinement among armorial signets was to reproduce not only the coat-of-arms but the correct tinctures; they were repeated in colour on the reverse side and the crystal would then be set in the gold bezel.",
+    "glossedTokens": [],
+    "translation": "A great refinement among armorial signets was to reproduce not only the coat-of-arms but the correct tinctures; they were repeated in colour on the reverse side and the crystal would then be set in the gold bezel.",
+    "context": "Corpus example from museum-object descriptions.",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "rule 1 violation"]
+    ],
+    "comment": "The topic continues via a bridging description while a less salient entity is pronominalized; felicitous, supporting defeasible PRO-TOP over an absolute Rule 1."
+  },
+  {
+    "id": "beaver2004_24",
+    "source": {"bibkey": "beaver-2004", "paperLabel": "(24)"},
+    "language": "stan1293",
+    "primaryText": "John went to his favorite music store to buy a piano. He had frequented the store for many years. He was excited to be going to the store to actually buy a piano. It was the biggest music store in the area. It had just the kind of piano that he wanted. It was closing just as John arrived.",
+    "glossedTokens": [],
+    "translation": "John went to his favorite music store to buy a piano. He had frequented the store for many years. He was excited to be going to the store to actually buy a piano. It was the biggest music store in the area. It had just the kind of piano that he wanted. It was closing just as John arrived.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "text coherence"]
+    ],
+    "comment": "The coherent variant of the Grosz-Sidner text pair: one COHERE violation in the whole-text tableau."
+  },
+  {
+    "id": "beaver2004_25",
+    "source": {"bibkey": "beaver-2004", "paperLabel": "(25)"},
+    "language": "stan1293",
+    "primaryText": "John went to his favorite music store to buy a piano. It was a store John had frequented for many years. He was excited to be going to the store to actually buy a piano. It was the biggest music store in the area. He knew that it had just the kind of piano that he wanted. It was closing just as John arrived.",
+    "glossedTokens": [],
+    "translation": "John went to his favorite music store to buy a piano. It was a store John had frequented for many years. He was excited to be going to the store to actually buy a piano. It was the biggest music store in the area. He knew that it had just the kind of piano that he wanted. It was closing just as John arrived.",
+    "context": "",
+    "judgment": "marginal",
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "text coherence"]
+    ],
+    "comment": "The jerky variant: multiple PRO-TOP, FAM-DEF and ALIGN violations accumulate in the whole-text tableau."
+  },
+  {
+    "id": "beaver2004_28",
+    "source": {"bibkey": "beaver-2004", "paperLabel": "(28)"},
+    "language": "stan1293",
+    "primaryText": "Fred was eating. He saw Jim. HE winked.",
+    "glossedTokens": [],
+    "translation": "Fred was eating. He saw Jim. HE winked.",
+    "context": "The speaker wants to convey that Jim winked.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "Stressed HE = Jim (switch reference)", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "stressed pronoun"]
+    ],
+    "comment": "Unstressed he is bidirectionally optimal for Fred, so BLOCK gives the stressed form the complementary, topic-shifting reading."
+  }
+]

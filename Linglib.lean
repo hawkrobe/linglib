@@ -348,6 +348,7 @@ import Linglib.Data.Examples.Barker1995
 import Linglib.Data.Examples.Barker2002
 import Linglib.Data.Examples.BarwiseCooper1981
 import Linglib.Data.Examples.Beaver2001
+import Linglib.Data.Examples.Beaver2004
 import Linglib.Data.Examples.BeaverCondoravdi2003
 import Linglib.Data.Examples.Beavers2010
 import Linglib.Data.Examples.BeckOdaSugisaki2004

@@ -3,284 +3,133 @@ import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Tableau
+import Linglib.Data.Examples.Beaver2004
 
 /-!
-# [beaver-2004]: The Optimization of Discourse Anaphora
+# Beaver (2004): The Optimization of Discourse Anaphora
 
-David I. Beaver (2004), "The Optimization of Discourse Anaphora,"
-*Linguistics and Philosophy* 27(1): 3-56. © 2004 Kluwer.
-DOI 10.1023/B:LING.0000010796.76522.7a.
+Centering's BFP algorithm ([brennan-friedman-pollard-1987]) is restated as six
+ranked OT constraints, COT (4): AGREE > DISJOINT > PRO-TOP > FAM-DEF >
+COHERE > ALIGN. Three of the six are Centering primitives this library already
+carries — PRO-TOP is Rule 1 without its if-clause (`CbPronominalized`), COHERE
+and ALIGN are the transition-classification tests (`cb`, `cp`) — so on those
+the correspondence with BFP holds by construction. The paper's Theorem (20)
+says COT and BFP resolve anaphora identically; its core is table (19), which
+matches COHERE/ALIGN violation patterns to the transition ranking, proved here
+in general. Because COT constraints are rerankable, demoting PRO-TOP below
+FAM-DEF (§4.1) recovers the coreferential reading of (2c) that BFP wrongly
+filters out.
 
-Beaver reformulates [grosz-joshi-weinstein-1995] Centering (and
-the [brennan-friedman-pollard-1987] algorithmic version) as an
-Optimality Theory system over six ranked constraints (his §3.2 p. 14):
+## Main statements
 
-```
-AGREE > DISJOINT > PRO-TOP > FAM-DEF > COHERE > ALIGN
-```
+* `cot_iff_bfp`: table (19) — for candidates tied on the four higher-ranked
+  constraints, the COT profile comparison is the BFP transition preference.
+* `d2_canonical_picks_two_marys`, `d2_demoted_picks_bound`: the §4.1
+  reranking flips (2c) from the two-Marys reading to the coreferential one.
+* `cohere_factors_through_cb`, `align_factors_through_cb_and_cp`: the reused
+  constraints see a candidate only through `cb` (and `cp`).
 
-His main theorem (his §3.4 (20), proven Appendix A): given a sentence
-in which the only definite expressions are proper nouns and pronouns,
-if either COT or BFP uniquely predicts an interpretation involving
-fully anaphoric resolution, then both do, and they resolve anaphors
-identically.
+## References
 
-[poesio-stevenson-eugenio-hitzeman-2004] §3.1 fn 12 endorse
-this OT reformulation as the right framework for "unpacking" Centering's
-constraints into ranked-OT terms.
-
-## Design: deep reuse of Centering primitives
-
-Per the audit's mathlib-style recommendation, three of Beaver's six
-constraints are LITERAL RESTATEMENTS of existing Centering primitives
-(Beaver acknowledges this in his §3.2-3.3 prose):
-
-| Beaver constraint | Beaver's source                              | Our definition |
-|-------------------|----------------------------------------------|----------------|
-| **PRO-TOP**       | "essentially the effect of Centering's Rule 1" (his p. 15-16) | via **`CbPronominalized`** from `Centering/Pronominalization.lean` (NOT `PronominalizationConstraint`) |
-| **COHERE**        | "the conditions used in BFP to specify transition types" (his p. 17) | via `cb` (topic stability test) |
-| **ALIGN**         | same | via `cb` + `cp` (topic in preferred-center position) |
-| **AGREE**         | binding theory (his p. 14)                   | NEW (substrate-gap-flagged: `Realization` lacks number/gender features) |
-| **DISJOINT**      | Principle B (his p. 15)                      | NEW (substrate-gap-flagged: `Utterance` lacks predicate-argument structure) |
-| **FAM-DEF**       | familiarity (Heim 1982; his p. 16)           | NEW (substrate-gap-flagged: `Realization` lacks definiteness) |
-
-The 3 reused constraints make Theorem (20)'s equivalence with BFP
-*structural* on those clauses (it follows from the constraints being
-literal restatements). The 3 novel constraints fire as user-supplied
-boolean flags on the candidate type — substrate gaps that future
-commits can fill (number/gender features; predicate-argument structure;
-definiteness marking).
-
-This is the **PMF-vs-Measure mathlib pattern** applied: Centering and OT
-are sibling substrates with their own vocabularies; the bridge lives
-in this paper-anchored study file rather than as a substrate-level
-identity. Where Beaver explicitly equates his constraints with
-Centering primitives, we *define* them via those primitives (deep
-reuse). Where Beaver introduces independent content (AGREE/DISJOINT/
-FAM-DEF), we keep them independent.
-
-## Scope
-
-This file mechanizes:
-1. The 6 COT constraints with the design above.
-2. Beaver's tableau examples (5b), (12c) — predicting BFP-equivalent
-   resolutions.
-3. Theorem (20) witnesses on those examples (the COT-optimal candidate
-   matches the BFP-survivor).
-4. Beaver §4.1's PRO-TOP demotion: a re-ranked constraint hierarchy
-   (PRO-TOP below FAM-DEF) gives Beaver (2c) "Mary likes tennis. She
-   plays Jim. He used to play doubles with Mary." the bound reading
-   where BFP overpredicts. The PSDH §3.1 fn 12 critique mechanized.
-
-Out of scope (Beaver's §5 extensions):
-- Production / bidirectional grammar (his §5.1-5.3)
-- Multi-sentence text optimization (his §5.4 with examples (24)/(25))
-- Accented pronoun interpretation (his §6)
-- Beaver's full Appendix A proof of Theorem (20) — we mechanize
-  per-example witnesses, not the general schematic proof.
+* [beaver-2004]: The optimization of discourse anaphora.
+  *Linguistics and Philosophy* 27.
+* [brennan-friedman-pollard-1987]: A centering approach to pronouns.
+* [grosz-joshi-weinstein-1995]: Centering: a framework for modeling the local
+  coherence of discourse.
+* [gordon-grosz-gilliom-1993]: Pronouns, names, and the centering of attention
+  in discourse.
+* [strube-1998]: Never look back: an alternative to centering.
+* [poesio-stevenson-eugenio-hitzeman-2004]: Centering: a parametric theory and
+  its instantiations.
 -/
 
 namespace Beaver2004
 
 open Discourse.Centering Constraints OptimalityTheory Core.Optimization.Evaluation
 
--- ════════════════════════════════════════════════════
--- § 1. Candidate type
--- ════════════════════════════════════════════════════
+/-! ### Candidates -/
 
-/-- A COT candidate: a fully-resolved `cur` utterance plus precomputed
-    boolean flags for the three constraints whose substrates linglib
-    doesn't yet model (AGREE/DISJOINT/FAM-DEF).
-
-    Beaver's GEN function (his §3.1 p. 13) generates all candidate
-    pairs of (form, meaning); the constraints filter. For our
-    formalization, candidates are alternative `Utterance E R` values
-    for the same surface form (different pronoun resolutions), with
-    the 3 substrate-gap flags supplied by the example author.
-
-    The 3 flags correspond to constraints whose semantics requires
-    information the existing `Realization E R` type doesn't carry:
-    - `agreementOK`: pronoun-antecedent number/gender match
-    - `argDisjointOK`: co-arguments of a predicate refer to distinct entities
-    - `famDefOK`: every definite NP has an antecedent (familiarity) -/
+/-- A COT candidate: a fully-resolved utterance (pronouns bound to entities)
+plus verdict flags for the three constraints whose inputs the `Utterance`
+substrate does not carry — φ-features (AGREE), predicate-argument structure
+(DISJOINT) and definiteness/familiarity (FAM-DEF). -/
 structure Candidate (E : Type) (R : Type) where
-  /-- The resolved utterance — pronouns bound to specific entities. -/
+  /-- The resolved utterance. -/
   utt : Utterance E R
-  /-- AGREE: pronoun-antecedent agreement OK?
-      (Substrate gap: Realization E R lacks number/gender features.
-      `Linglib/Features/{Number,Gender}.lean` define the feature
-      enums; an `[HasPhi E]` typeclass lift would let us derive this
-      from the entity type. Queued.) -/
+  /-- AGREE verdict: pronoun–antecedent number/gender match. -/
   agreementOK : Bool
-  /-- DISJOINT: co-arguments of any predicate are distinct entities?
-      (Substrate gap: Utterance E R lacks predicate-argument structure.
-      `Linglib/Semantics/ArgumentStructure/Thematic/Defs.lean` provides
-      `ThematicFrame` which could carry this info; integration queued.) -/
+  /-- DISJOINT verdict: co-arguments of each predicate are distinct. -/
   argDisjointOK : Bool
-  /-- FAM-DEF: every definite NP is familiar (has antecedent in prev)?
-      (Substrate gap: Realization E R lacks definiteness marking.
-      `Linglib/Semantics/Definiteness/Defs.lean` defines the enum; an
-      `[HasDefiniteness E]` typeclass + a `[HasGivenness E]`
-      typeclass (the latter not yet defined; deferred to a follow-up
-      PR per the post-Krifka substrate redesign) would let `famDefOK`
-      be derived from `Features.GivennessStatus`.
-      Queued.) -/
+  /-- FAM-DEF verdict: every definite NP is familiar. -/
   famDefOK : Bool
   deriving Repr, DecidableEq
 
--- ════════════════════════════════════════════════════
--- § 2. The 6 COT constraints (deep reuse where applicable)
--- ════════════════════════════════════════════════════
+/-! ### The six constraints (4) -/
 
 variable {E R : Type}
 
-/-- **AGREE** (Beaver §3.2 p. 14): "Anaphoric expressions agree with
-    their antecedents in number and gender."
-
-    Substrate gap. Implementation tests the candidate's precomputed
-    `agreementOK` flag rather than computing agreement from features
-    on `Realization`. -/
+/-- AGREE: anaphoric expressions agree with their antecedents in number and
+gender. -/
 def agree : Constraint (Candidate E R) :=
   Constraint.binary (fun c => ¬ c.agreementOK = true)
 
-/-- **DISJOINT** (Beaver §3.2 p. 14, "mirroring Principle B from
-    binding theory"): "Co-arguments of a predicate are disjoint."
-
-    Substrate gap. Tests the candidate's precomputed `argDisjointOK`
-    flag. -/
+/-- DISJOINT: co-arguments of a predicate are disjoint (the effect of
+Principle B). -/
 def disjoint : Constraint (Candidate E R) :=
   Constraint.binary (fun c => ¬ c.argDisjointOK = true)
 
-/-- **PRO-TOP** ([beaver-2004] §3.2, "essentially the effect of
-    Centering's Rule 1"): "The topic is pronominalized."
-
-    **Reused from `CbPronominalized`** (the *unconditional* Rule 1 variant
-    from `Centering/Pronominalization.lean`, after [gordon-grosz-gilliom-1993]).
-    Beaver §3.2 explicitly REMOVES the if-clause: in OT, PRO-TOP
-    has no antecedent — the topic should be pronominalized, full
-    stop. Defeasibility is encoded by PRO-TOP's lower ranking
-    position (3rd of 6), not by a propositional if-clause.
-
-    **Important**: an EARLIER version of this file used `PronominalizationConstraint`
-    (the *conditional* Rule 1: "if any pronoun, then CB
-    pronominalized"). That was the WRONG reuse — Beaver §3.2 ("if
-    there are no pronouns, then all candidate interpretations will
-    be equally bad as far as PRO-TOP is concerned") explicitly
-    states all interpretations VIOLATE PRO-TOP when no pronoun
-    realizes the topic. With the conditional `PronominalizationConstraint`, all
-    pronoun-free interpretations would *satisfy* PRO-TOP — the
-    opposite of Beaver's intent. `CbPronominalized` (which fires
-    unconditionally when CB exists and isn't pronominalized) is
-    the correct restatement. -/
+/-- PRO-TOP: the topic is pronominalized — Rule 1 without its if-clause,
+via the unconditional `CbPronominalized` ([gordon-grosz-gilliom-1993]).
+With no pronoun in the sentence every candidate violates PRO-TOP alike
+(p. 16), so the conditional Rule-1 form would be the wrong primitive. -/
 def proTop [DecidableEq E] [CfRankerOf E R]
     (prev : Utterance E R) : Constraint (Candidate E R) :=
   Constraint.binary (fun c => ¬ CbPronominalized prev c.utt)
 
-/-- **FAM-DEF** (Beaver §3.2 p. 15, "Heim 1982"): "Each definite NP is
-    familiar."
-
-    Substrate gap. Tests `famDefOK` flag. -/
+/-- FAM-DEF: each definite NP is familiar. -/
 def famDef : Constraint (Candidate E R) :=
   Constraint.binary (fun c => ¬ c.famDefOK = true)
 
-/-- **COHERE** ([beaver-2004] §3.2, p. 15 statement; commentary
-    p. 17): "The topic of the current sentence is the topic of the
-    previous one."
-
-    **Reused from Centering's `cb`**: the "topic" of the current
-    utterance is `cb prev cand.utt`; the prior topic (supplied as
-    `Option E`). Per Beaver p. 17 ("satisfied only if the topic is
-    defined and unchanged") plus p. 16 ("undefinedness of the topic
-    will result in a violation"), COHERE fires when:
-    - `cb prev c.utt = none` (current topic undefined), OR
-    - both topics defined but different.
-    Only when both are defined and equal is COHERE satisfied. -/
+/-- COHERE: the topic of the current sentence is the topic of the previous
+one — satisfied only when both are defined and equal (p. 17); an undefined
+topic counts as a violation. -/
 def cohere [DecidableEq E] [CfRankerOf E R]
     (prev : Utterance E R) (priorTopic : Option E) :
     Constraint (Candidate E R) :=
   Constraint.binary (fun c =>
-    -- Violation iff (current topic is undefined) OR (defined and ≠ priorTopic).
-    -- Phrased via Option equality: only "both defined and equal" satisfies.
     ¬ ((cb prev c.utt).isSome ∧ cb prev c.utt = priorTopic))
 
-/-- **ALIGN** ([beaver-2004] §3.2, p. 15 statement; commentary
-    p. 18): "The topic is in subject position."
-
-    **Reused from Centering's `cb` and `cp`**: ALIGN is satisfied
-    iff the topic (`cb prev c.utt`) coincides with the preferred
-    center (`c.utt.cp`) — i.e., the highest-ranked Cf is the topic.
-    This IS BFP's "smooth shift / continue" test.
-
-    Per Beaver p. 18: "ALIGN literally requires the topic to be
-    subject, but for canonical English sentences this is equivalent
-    to saying that the topic is the preferred center of the current
-    sentence." Per Beaver p. 16 (general policy on undefined topic),
-    undefined topic counts as a violation — same shape as COHERE. -/
+/-- ALIGN: the topic is in subject position — for canonical sentences, the
+topic is the preferred center (p. 18); an undefined topic counts as a
+violation. -/
 def align [DecidableEq E] [CfRankerOf E R]
     (prev : Utterance E R) : Constraint (Candidate E R) :=
   Constraint.binary (fun c =>
-    -- Violation iff (current topic undefined) OR (defined but ≠ cp).
     ¬ ((cb prev c.utt).isSome ∧ cb prev c.utt = c.utt.cp))
 
-/-- The COT constraint hierarchy (Beaver §3.2 p. 14):
-    `AGREE > DISJOINT > PRO-TOP > FAM-DEF > COHERE > ALIGN`. -/
+/-- The COT ranking (4): AGREE > DISJOINT > PRO-TOP > FAM-DEF > COHERE >
+ALIGN. -/
 def cotRanking [DecidableEq E] [CfRankerOf E R]
     (prev : Utterance E R) (priorTopic : Option E) :
     List (Constraint (Candidate E R)) :=
   [agree, disjoint, proTop prev, famDef, cohere prev priorTopic, align prev]
 
--- ════════════════════════════════════════════════════
--- § 2a. Structural faithfulness: COHERE/ALIGN factor through cb (and cp)
--- ════════════════════════════════════════════════════
+/-- The §4.1 reranking: PRO-TOP demoted below FAM-DEF. -/
+def cotRankingDemoted [DecidableEq E] [CfRankerOf E R]
+    (prev : Utterance E R) (priorTopic : Option E) :
+    List (Constraint (Candidate E R)) :=
+  [agree, disjoint, famDef, proTop prev, cohere prev priorTopic, align prev]
 
-/-! These two theorems are the substrate-level structural backing for
-    the cross-framework finding worked out in
-    `Studies/PoesioEtAl2004.lean §5.1`: Beaver's
-    COT cannot distinguish two candidates whose `cb` agrees, and ALIGN
-    additionally consults `cp`. Per-example facts in §5.1 (the
-    `decide`-checked Nat comparisons on `u227`/`u229`) follow as
-    corollaries: the cb-and-cp values for `cand_u229` reduce, and the
-    structural theorems say the constraint evaluations are determined
-    by those reductions.
+/-! ### COHERE and ALIGN factor through `cb` (and `cp`) -/
 
-    Mathlib analogue: a function `f` "factors through `g`" when
-    `g x = g y → f x = f y`. Here `g = cb prev` (or `g = cb prev × cp`)
-    and `f = cohere prev priorTopic` (or `align prev`).
-    The theorems are the formal statement of `Beaver.cohere ∘ Candidate
-    = ψ ∘ cb prev` for some `ψ`, surfacing the cb-only dependence
-    Beaver's substrate makes invisible. -/
-
-/-- **COHERE factors through `cb`**. For fixed `prev` and `priorTopic`,
-    Beaver's COHERE constraint cannot distinguish two candidates whose
-    `cb prev c.utt` values agree. Pure `unfold + rw` proof: COHERE's
-    predicate references `cb prev c.utt` only; `Constraint.binary` turns the
-    predicate into an if-then-else; equal cb's give equal evaluations.
-
-    The cross-framework consequence (worked out in
-    `PoesioEtAl2004.lean §5.1`): on PSDH (10), `cb u227 u229` returns
-    a single member of the `cbAll` tie set; COHERE's verdict on any
-    candidate `c` with `cb u227 c.utt = cb u227 u229` is therefore
-    fully determined by `cb u227 u229` and `priorTopic` — Beaver's
-    COT cannot recover the discarded tie member from candidate-side
-    information. -/
+/-- COHERE cannot distinguish candidates whose `cb` agrees. -/
 theorem cohere_factors_through_cb [DecidableEq E] [CfRankerOf E R]
     (prev : Utterance E R) (priorTopic : Option E)
     (c1 c2 : Candidate E R) (h : cb prev c1.utt = cb prev c2.utt) :
     (cohere prev priorTopic) c1 = (cohere prev priorTopic) c2 := by
   simp only [cohere, Constraint.binary_apply, h]
 
-/-- **ALIGN factors through `cb` AND `cp`**. ALIGN's predicate
-    references both `cb prev c.utt` and `c.utt.cp`; equal cb's AND
-    equal cp's give equal evaluations.
-
-    The cross-framework consequence: ALIGN inherits the cb-blindness
-    structurally (via `h_cb`), but additionally requires cp-equality
-    (via `h_cp`). Two candidates that agree on cb but disagree on cp
-    can produce different ALIGN verdicts; this is the formal opening
-    by which a positional totalizer (Strube-Hahn linear order) could
-    differ from Beaver's lex-min — Strube-Hahn changes which
-    realization wins the cf-sort tiebreaker, hence which is `cp`,
-    hence ALIGN's verdict on candidates that share `cb`. -/
+/-- ALIGN cannot distinguish candidates whose `cb` and `cp` both agree. -/
 theorem align_factors_through_cb_and_cp [DecidableEq E] [CfRankerOf E R]
     (prev : Utterance E R)
     (c1 c2 : Candidate E R)
@@ -289,20 +138,88 @@ theorem align_factors_through_cb_and_cp [DecidableEq E] [CfRankerOf E R]
     (align prev) c1 = (align prev) c2 := by
   simp only [align, Constraint.binary_apply, h_cb, h_cp]
 
--- ════════════════════════════════════════════════════
--- § 3. Application: Beaver example (12) — RETAIN
--- ════════════════════════════════════════════════════
+/-! ### Table (19): the COT ranking is the BFP transition preference -/
 
-/-! Beaver §3.3 (12) (paper p. 23):
+/-- BFP's four transition types. -/
+inductive BFPTransition where
+  | continue_
+  | retain
+  | smoothShift
+  | roughShift
+  deriving DecidableEq, Repr
 
-    > (12) a. Jane is happy.
-    >      b. She was congratulated by Freda,
-    >      c. and Mary gave her a present.
+/-- The BFP preference: continue > retain > smooth shift > rough shift. -/
+def BFPTransition.rank : BFPTransition → ℕ
+  | .continue_ => 3
+  | .retain => 2
+  | .smoothShift => 1
+  | .roughShift => 0
 
-    BFP classifies (12c) as RETAIN (Jane maintained as topic,
-    realized in object position not subject). COT predicts the same
-    resolution: "her" → Jane (l=i in Beaver's notation). The competing
-    resolution "her" → Freda (l=j) is disfavored by COHERE. -/
+/-- The transition a candidate realizes, read off its COHERE and ALIGN
+verdicts: topic kept and aligned is a continuation, kept but unaligned a
+retain, changed but aligned a smooth shift, changed and unaligned a rough
+shift. -/
+def bfpTransition [DecidableEq E] [CfRankerOf E R] (prev : Utterance E R)
+    (priorTopic : Option E) (c : Candidate E R) : BFPTransition :=
+  if (cohere prev priorTopic) c = 0 then
+    if (align prev) c = 0 then .continue_ else .retain
+  else
+    if (align prev) c = 0 then .smoothShift else .roughShift
+
+private theorem profile_lt_iff_last_two {p q : ViolationProfile 6}
+    (h : ∀ i : Fin 6, i.val < 4 → p i = q i) :
+    p < q ↔ p 4 < q 4 ∨ (p 4 = q 4 ∧ p 5 < q 5) := by
+  constructor
+  · rintro ⟨i, hpre, hlt⟩
+    rcases Nat.lt_or_ge i.val 4 with hi | hi
+    · exact absurd hlt (by rw [h i hi]; exact lt_irrefl _)
+    rcases Nat.lt_or_ge i.val 5 with hi5 | hi5
+    · have hi4 : i = 4 := Fin.ext (by omega)
+      subst hi4
+      exact Or.inl hlt
+    · have hi6 : i.val < 6 := i.isLt
+      have hi5' : i = 5 := Fin.ext (by omega)
+      subst hi5'
+      exact Or.inr ⟨hpre 4 (by decide), hlt⟩
+  · rintro (h4 | ⟨he, h5⟩)
+    · exact ⟨4, fun j hj => h j hj, h4⟩
+    · refine ⟨5, fun j hj => ?_, h5⟩
+      rcases Nat.lt_or_ge j.val 4 with hj4 | hj4
+      · exact h j hj4
+      · have hj5 : j.val < 5 := hj
+        have : j = 4 := Fin.ext (by omega)
+        subst this
+        exact he
+
+/-- Table (19), in general: for two candidates tied on AGREE, DISJOINT,
+PRO-TOP and FAM-DEF, the COT profile comparison under the canonical ranking
+coincides with the BFP preference between the transitions they realize —
+the core of the equivalence Theorem (20). -/
+theorem cot_iff_bfp [DecidableEq E] [CfRankerOf E R]
+    (prev : Utterance E R) (priorTopic : Option E) (c1 c2 : Candidate E R)
+    (h : ∀ i : Fin 6, i.val < 4 →
+      buildViolationProfile (cotRanking prev priorTopic).get c1 i =
+        buildViolationProfile (cotRanking prev priorTopic).get c2 i) :
+    buildViolationProfile (cotRanking prev priorTopic).get c1 <
+        buildViolationProfile (cotRanking prev priorTopic).get c2 ↔
+      (bfpTransition prev priorTopic c2).rank <
+        (bfpTransition prev priorTopic c1).rank := by
+  rw [profile_lt_iff_last_two h]
+  have e1 : ∀ c : Candidate E R,
+      buildViolationProfile (cotRanking prev priorTopic).get c (4 : Fin 6) =
+        (cohere prev priorTopic) c := fun _ => rfl
+  have e2 : ∀ c : Candidate E R,
+      buildViolationProfile (cotRanking prev priorTopic).get c (5 : Fin 6) =
+        (align prev) c := fun _ => rfl
+  rw [e1 c1, e1 c2, e2 c1, e2 c2]
+  have b1 : (cohere prev priorTopic) c1 ≤ 1 := Constraint.binary_le_one _ _
+  have b2 : (cohere prev priorTopic) c2 ≤ 1 := Constraint.binary_le_one _ _
+  have b3 : (align prev) c1 ≤ 1 := Constraint.binary_le_one _ _
+  have b4 : (align prev) c2 ≤ 1 := Constraint.binary_le_one _ _
+  unfold bfpTransition
+  split_ifs <;> simp only [BFPTransition.rank] <;> omega
+
+/-! ### Example (12): a retain -/
 
 namespace D12
 
@@ -311,103 +228,52 @@ abbrev Utt := Utterance String GrammaticalRole
 /-- (12a) "Jane is happy." -/
 def a : Utt := ⟨[⟨"Jane", .subject, false⟩]⟩
 
-/-- (12b) "She was congratulated by Freda." She=Jane (resolved). -/
+/-- (12b) "She was congratulated by Freda." She = Jane. -/
 def b : Utt :=
   ⟨[⟨"Jane", .subject, true⟩, ⟨"Freda", .other, false⟩]⟩
 
-/-- (12c) Candidate where "her"=Jane (l=i): the BFP-survivor / COT
-    prediction. The resolved utterance: subject Mary (full name),
-    object her=Jane (pronoun), other "present" (full). -/
+/-- (12c) with her = Jane: the winner. -/
 def c_l_eq_i : Utt :=
   ⟨[⟨"Mary", .subject, false⟩, ⟨"Jane", .object, true⟩,
     ⟨"present", .other, false⟩]⟩
 
-/-- (12c) Candidate where "her"=Freda (l=j): non-survivor under both
-    BFP and COT. -/
+/-- (12c) with her = Freda: the loser. -/
 def c_l_eq_j : Utt :=
   ⟨[⟨"Mary", .subject, false⟩, ⟨"Freda", .object, true⟩,
     ⟨"present", .other, false⟩]⟩
 
-/-- The two candidates wrapped with substrate-gap flags. AGREE,
-    DISJOINT, FAM-DEF all OK in both (Mary, Freda, present, Jane all
-    distinct; "her" is pronoun matching either Jane or Freda in
-    number/gender; no definite descriptions). -/
+/-- her = Jane, wrapped: AGREE, DISJOINT and FAM-DEF are all satisfied. -/
 def cand_l_eq_i : Candidate String GrammaticalRole :=
   ⟨c_l_eq_i, true, true, true⟩
 
+/-- her = Freda, wrapped. -/
 def cand_l_eq_j : Candidate String GrammaticalRole :=
   ⟨c_l_eq_j, true, true, true⟩
 
-/-- The prior topic, computed from (12a) → (12b): Jane. -/
+/-- The prior topic, from (12a) → (12b): Jane. -/
 def priorTopic : Option String := cb a b
 
 end D12
 
-/-- The prior topic for (12) is `some "Jane"`. -/
-theorem d12_priorTopic_jane : D12.priorTopic = some "Jane" := by decide
+/-- The (12c) winner's profile under the canonical ranking. -/
+def d12_profile_l_eq_i : ViolationProfile 6 :=
+  buildViolationProfile (cotRanking D12.b D12.priorTopic).get D12.cand_l_eq_i
 
-/-- Beaver tableau (13) line 1 (winner, l=i): only ALIGN violated.
-    COHERE not violated because the topic (cb b c_l_eq_i = Jane)
-    matches the prior topic (cb a b = Jane). -/
-theorem d12_l_eq_i_violations :
-    (agree D12.cand_l_eq_i = 0) ∧
-    (disjoint D12.cand_l_eq_i = 0) ∧
-    ((proTop D12.b) D12.cand_l_eq_i = 0) ∧
-    (famDef D12.cand_l_eq_i = 0) ∧
-    ((cohere D12.b D12.priorTopic) D12.cand_l_eq_i = 0) ∧
-    ((align D12.b) D12.cand_l_eq_i = 1) := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
+/-- The (12c) loser's profile. -/
+def d12_profile_l_eq_j : ViolationProfile 6 :=
+  buildViolationProfile (cotRanking D12.b D12.priorTopic).get D12.cand_l_eq_j
 
-/-- Beaver tableau (13) line 2 (loser, l=j): COHERE and ALIGN both
-    violated (topic shifts from Jane to Freda; topic not in subject
-    position). -/
-theorem d12_l_eq_j_violations :
-    (agree D12.cand_l_eq_j = 0) ∧
-    (disjoint D12.cand_l_eq_j = 0) ∧
-    ((proTop D12.b) D12.cand_l_eq_j = 0) ∧
-    (famDef D12.cand_l_eq_j = 0) ∧
-    ((cohere D12.b D12.priorTopic) D12.cand_l_eq_j = 1) ∧
-    ((align D12.b) D12.cand_l_eq_j = 1) := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
+/-- Tableau (13): the her = Jane candidate wins the lexicographic
+comparison. -/
+theorem d12_lex_picks_l_eq_i :
+    d12_profile_l_eq_i < d12_profile_l_eq_j := by decide
 
-/-- **Beaver Theorem (20) witness on example (12)**: the COT-optimal
-    candidate (l=i) matches BFP's prediction (RETAIN with Jane as
-    topic). The Beaver-side optimization picks l=i because it has
-    fewer COHERE violations (the higher-ranked constraint among the
-    two that distinguish the candidates). -/
-theorem beaver_witness_d12_l_eq_i_wins :
-    -- l=i wins on the highest-ranked discriminating constraint
-    ((cohere D12.b D12.priorTopic) D12.cand_l_eq_i) <
-    ((cohere D12.b D12.priorTopic) D12.cand_l_eq_j) := by decide
+/-- The (12c) winner realizes a retain: Jane stays topic but leaves subject
+position. -/
+theorem d12_transition_retain :
+    bfpTransition D12.b D12.priorTopic D12.cand_l_eq_i = .retain := by decide
 
--- ════════════════════════════════════════════════════
--- § 4. Application: Beaver (2) — Rule 1 overprediction
--- ════════════════════════════════════════════════════
-
-/-! Beaver §2.4 (2) and §4.1 p. 26 (paper pp. 10, 26):
-
-    > (2) a. Mary likes tennis.
-    >     b. She plays Jim quite often.
-    >     c. He used to play doubles with Mary.
-
-    BFP predicts: in (2c), since the topic (Mary) is not pronominalized
-    despite "He" being a pronoun, **the bound reading where "Mary" in
-    (2c) refers back to (2a)'s Mary is filtered out** (Rule 1 violation).
-    The resulting forced reading involves "two different people called
-    Mary" (Beaver p. 11) — empirically wrong; the bound reading is
-    available though awkward.
-
-    Beaver §4.1 p. 26: demoting PRO-TOP below FAM-DEF (re-ranking
-    `AGREE > DISJOINT > FAM-DEF > PRO-TOP > COHERE > ALIGN`)
-    correctly predicts the bound reading. Under the demoted ranking,
-    the FAM-DEF constraint (penalizing introduction of a "second
-    Mary") outranks PRO-TOP (penalizing the unpronominalized topic),
-    so the candidate where Mary in (2c) IS the prior Mary wins.
-
-    This is the [poesio-stevenson-eugenio-hitzeman-2004] §3.1 fn
-    12 critique mechanized: "in BFP Rule 1 is effectively used as a
-    hard constraint, a problem fixed by Beaver's own optimality-
-    theoretic reformulation of the algorithm." -/
+/-! ### Example (2): breaking Rule 1 by reranking (§4.1) -/
 
 namespace D2
 
@@ -417,199 +283,57 @@ abbrev Utt := Utterance String GrammaticalRole
 def a : Utt :=
   ⟨[⟨"Mary", .subject, false⟩, ⟨"tennis", .object, false⟩]⟩
 
-/-- (2b) "She plays Jim quite often." She=Mary (resolved). -/
+/-- (2b) "She plays Jim quite often." She = Mary. -/
 def b : Utt :=
   ⟨[⟨"Mary", .subject, true⟩, ⟨"Jim", .object, false⟩]⟩
 
-/-- (2c) **Bound reading** (Mary in (2c) = Mary in (2a)): "He=Jim
-    used to play doubles with Mary=Mary_a." Subject = Jim (pronoun
-    "He"), object = Mary (full name, but ANAPHORIC to prior Mary —
-    so famDefOK = true, FAM-DEF satisfied). -/
+/-- (2c), coreferential reading: He = Jim, Mary = the (2a) Mary. -/
 def c_bound : Utt :=
   ⟨[⟨"Jim", .subject, true⟩, ⟨"Mary", .other, false⟩]⟩
 
-/-- (2c) **Two-Marys reading** (BFP's predicted resolution): "He=Jim
-    used to play doubles with Mary'≠Mary_a." Same surface; the
-    object "Mary" introduces a NEW entity ≠ the prior Mary. We
-    encode the new entity as a distinct string `"Mary_new"`. Under
-    this resolution, FAM-DEF FIRES (Mary_new is a definite that has
-    no familiar antecedent). -/
+/-- (2c), two-Marys reading: the object "Mary" is a new entity. -/
 def c_two_marys : Utt :=
   ⟨[⟨"Jim", .subject, true⟩, ⟨"Mary_new", .other, false⟩]⟩
 
-/-- Bound-reading candidate. AGREE/DISJOINT OK; famDefOK=true (Mary
-    is anaphoric to the (2a) Mary). -/
+/-- Coreferential candidate: the anaphoric "Mary" is familiar. -/
 def cand_bound : Candidate String GrammaticalRole :=
   ⟨c_bound, true, true, true⟩
 
-/-- Two-Marys candidate. AGREE/DISJOINT OK; famDefOK=FALSE (the
-    second Mary is a brand-new definite without antecedent — FAM-DEF
-    fires). -/
+/-- Two-Marys candidate: the new "Mary" is an unfamiliar definite, so
+FAM-DEF fires. -/
 def cand_two_marys : Candidate String GrammaticalRole :=
   ⟨c_two_marys, true, true, false⟩
 
-/-- The prior topic for (2): Mary, the topic of (2b) given (2a). -/
+/-- The prior topic for (2c): Mary. -/
 def priorTopic : Option String := cb a b
 
 end D2
 
-theorem d2_priorTopic_mary : D2.priorTopic = some "Mary" := by decide
+/-- Under the canonical ranking (18), the two-Marys reading wins — BFP's
+(incorrect) prediction, driven by PRO-TOP over FAM-DEF. -/
+theorem d2_canonical_picks_two_marys :
+    buildViolationProfile (cotRanking D2.b D2.priorTopic).get D2.cand_two_marys <
+      buildViolationProfile (cotRanking D2.b D2.priorTopic).get D2.cand_bound := by
+  decide
 
-/-- **Bound-reading candidate violates PRO-TOP** (the topic Mary is
-    not pronominalized — "Mary" is a full name, not "her"). Under
-    Beaver's CANONICAL ranking with PRO-TOP > FAM-DEF, this filters
-    out the bound reading. -/
-theorem d2_bound_violates_proTop :
-    (proTop D2.b) D2.cand_bound = 1 := by decide
+/-- Under the demoted ranking (21), the coreferential reading wins: FAM-DEF
+now outranks PRO-TOP, so introducing a second Mary costs more than leaving
+the topic unpronominalized. -/
+theorem d2_demoted_picks_bound :
+    buildViolationProfile (cotRankingDemoted D2.b D2.priorTopic).get D2.cand_bound <
+      buildViolationProfile (cotRankingDemoted D2.b D2.priorTopic).get
+        D2.cand_two_marys := by
+  decide
 
-/-- **Two-Marys candidate violates FAM-DEF** (the second "Mary" is
-    a definite NP without familiar antecedent). -/
-theorem d2_two_marys_violates_famDef :
-    famDef D2.cand_two_marys = 1 := by decide
+/-! ### ALIGN and Strube's cheapness -/
 
-/-- Under canonical COT ranking (PRO-TOP > FAM-DEF), the two-Marys
-    reading wins (matches BFP). PRO-TOP violation is more costly. -/
-theorem d2_canonical_ranking_picks_two_marys :
-    -- Bound reading violates PRO-TOP (rank 3); two-Marys does not
-    (proTop D2.b) D2.cand_bound = 1 ∧
-    (proTop D2.b) D2.cand_two_marys = 0 := ⟨by decide, by decide⟩
-
-/-- **Beaver §4.1 demoted ranking** (his p. 26): `AGREE > DISJOINT >
-    FAM-DEF > PRO-TOP > COHERE > ALIGN`. PRO-TOP demoted below
-    FAM-DEF. -/
-def cotRankingDemoted [DecidableEq E] [CfRankerOf E R]
-    (prev : Utterance E R) (priorTopic : Option E) :
-    List (Constraint (Candidate E R)) :=
-  [agree, disjoint, famDef, proTop prev, cohere prev priorTopic, align prev]
-
-/-- **Beaver §4.1 prediction**: under the demoted ranking, the bound
-    reading wins because FAM-DEF (now ranked higher than PRO-TOP)
-    eliminates the two-Marys candidate. The bound reading's PRO-TOP
-    violation is now LESS costly than the two-Marys candidate's
-    FAM-DEF violation. The PSDH §3.1 fn 12 critique mechanized:
-    Beaver's reformulation FIXES BFP's Rule-1-as-hard-constraint
-    overprediction by allowing Rule 1 to be defeated by higher-ranked
-    constraints. -/
-theorem beaver_demoted_ranking_picks_bound_reading :
-    -- Two-Marys violates FAM-DEF (now rank 3); bound does not
-    famDef D2.cand_two_marys = 1 ∧
-    famDef D2.cand_bound = 0 := ⟨by decide, by decide⟩
-
--- ════════════════════════════════════════════════════
--- § 5. Theorem (20) BFP-equivalence: structural reuse
--- ════════════════════════════════════════════════════
-
-/-! Beaver's headline theorem (his §3.4 (20), p. 26):
-
-    > Given a sentence in which the only definite expressions are
-    > proper nouns and pronouns, if either COT (with the constraints
-    > and constraint ranking above) or BFP uniquely predicts an
-    > interpretation involving fully anaphoric interpretation of all
-    > definites, then both do, and in this case they resolve anaphors
-    > identically.
-
-    With our **deep-reuse design** (PRO-TOP via `CbPronominalized`, COHERE via
-    cb, ALIGN via cb+cp), this theorem is partly STRUCTURAL:
-
-    - The COT-side `proTop` constraint IS BFP's Rule 1 by definition.
-    - The COT-side `cohere` constraint IS BFP's "Cb stable" test.
-    - The COT-side `align` constraint IS BFP's "Cb = Cp" test.
-    - AGREE / DISJOINT / FAM-DEF are the BFP-Filter conditions
-      (Beaver §2.2 p. 8: BFP's Filter 1 = Rule 1 = our PRO-TOP;
-      Filter 3 = argument coreference = our DISJOINT). FAM-DEF is
-      Beaver's addition (BFP doesn't have it, since BFP doesn't
-      handle definite descriptions).
-
-    The structural correspondence makes the COT-vs-BFP equivalence
-    mechanically apparent for the 3 reused constraints (PRO-TOP / COHERE
-    / ALIGN are LITERALLY defined via `CbPronominalized` / `cb` / `cb`+`cp`,
-    so no bridge theorems are needed — the connection is true by
-    construction). The 3 novel constraints don't change BFP's
-    predictions on Beaver's worked examples (verified by `decide`
-    per-example). -/
-
--- ════════════════════════════════════════════════════
--- § 6. ViolationProfile comparison — OT lex-min actually fires
--- ════════════════════════════════════════════════════
-
-/-! Per audit's mathlib-discipline finding (the file defined 6
-    constraints + per-example violation theorems but never invoked
-    the `ViolationProfile` lex-ordering machinery), compute the full
-    `ViolationProfile 6` for Beaver (12)'s two candidates under the
-    canonical COT ranking and verify the lex-ordering picks `l=i`.
-
-    A full `Tableau` construction would also work (and is what
-    mathlib-style would prefer): the substrate `Utterance E R`
-    derives `DecidableEq`, and `Candidate` now does too, so the
-    `Tableau.optimal = {cand_l_eq_i}` form is unblocked; queued for
-    follow-up. The `ViolationProfile` comparison gives the same
-    kernel-checked OT witness without requiring `Finset` machinery. -/
-
-/-- Beaver tableau (13) line 1: ViolationProfile of `cand_l_eq_i`
-    under the canonical COT ranking. -/
-def d12_profile_l_eq_i : ViolationProfile 6 :=
-  buildViolationProfile (cotRanking D12.b D12.priorTopic).get D12.cand_l_eq_i
-
-/-- Beaver tableau (13) line 2: ViolationProfile of `cand_l_eq_j`. -/
-def d12_profile_l_eq_j : ViolationProfile 6 :=
-  buildViolationProfile (cotRanking D12.b D12.priorTopic).get D12.cand_l_eq_j
-
-/-- **OT lex-min witness on Beaver (12)**: under the canonical COT
-    ranking, `cand_l_eq_i`'s violation profile is strictly less than
-    `cand_l_eq_j`'s in `ViolationProfile`'s lex order — i.e., the
-    OT optimization mechanism (lex-min on Nat-vector profiles)
-    picks `cand_l_eq_i` as the unique optimal candidate. This is
-    the kernel-checked OT-mechanism witness, exercising the
-    `Constraint` substrate's `buildViolationProfile` /
-    `ViolationProfile.LinearOrder` infrastructure. -/
-theorem d12_lex_picks_l_eq_i :
-    d12_profile_l_eq_i < d12_profile_l_eq_j := by decide
-
--- ════════════════════════════════════════════════════
--- § 7. Cross-framework bridges — Sidner 1983, Strube 1998
--- ════════════════════════════════════════════════════
-
-/-! Per audit's cross-framework finding, three sibling Centering
-    formalizations exist in linglib that Beaver should engage:
-
-    - **`Sidner1983.lean`**: two-focus account. Beaver §4.3 explicitly
-      proposes SALIENT EMPATHY (his p. 30) which is structurally
-      Sidner's actor focus. Out-of-scope for this commit (Beaver §4.3
-      cross-linguistic constraints not formalized), but flagged.
-
-    - **`Centering/Transition.lean::isCheap`** (cheap iff
-      `cb prev cur = priorCp`). Beaver's ALIGN at the *previous*
-      utterance position structurally encodes the same predicate —
-      see hidden-agreement theorem below.
-
-    - **`KehlerRohde2013.lean`**: Bayesian decomposition of pronoun
-      resolution. Chronology: Beaver < KR2013, so the bridge belongs
-      in `KehlerRohde2013.lean`, not here. Future-work. -/
-
-/-- **Hidden agreement: ALIGN ≈ Strube 1998 cheap (structurally)**.
-    Strube's "cheap" predicate (`isCheap`) tests
-    `cb prev cur = priorCp ∧ cb is some` — the previous-Cp predicts
-    the current-CB. ALIGN at the *current* utterance tests the
-    analogous within-utterance condition: `cb prev cur = current-cp`.
-
-    Their structural identity: ALIGN says "topic = current Cp";
-    cheap says "topic = previous Cp." Same shape, different time
-    index. Not literally equal — the "previous Cp" version is
-    Strube's specific contribution. The shapes match; the witness
-    below shows ALIGN is satisfied iff the (constructed) within-
-    utterance cheap-condition holds. -/
-theorem align_within_utterance_iff_cb_eq_cp [DecidableEq E] [CfRankerOf E R]
+/-- ALIGN is satisfied exactly when the topic is defined and is the current
+preferred center — the within-utterance analogue of [strube-1998]'s cheap
+transitions (`isCheap` tests the same shape against the *previous* Cp). -/
+theorem align_eq_zero_iff [DecidableEq E] [CfRankerOf E R]
     (prev : Utterance E R) (c : Candidate E R) :
     (align prev) c = 0 ↔
       ((cb prev c.utt).isSome ∧ cb prev c.utt = c.utt.cp) := by
-  simp only [align, Constraint.binary_apply]
-  simp only [ite_eq_right_iff]
-  constructor
-  · intro h
-    by_contra hne
-    have := h hne
-    cases this
-  · rintro ⟨_, _⟩ h
-    exact absurd ⟨‹_›, ‹_›⟩ h
+  simp [align]
 
 end Beaver2004
