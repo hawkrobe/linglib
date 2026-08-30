@@ -55,7 +55,7 @@ open Voice
 open ArgumentStructure.VoiceSemantics
 open Intensional
 
-/-! ### § 2: Indonesian ber- Middle Inventory -/
+/-! ### Indonesian ber- Middle Inventory -/
 
 /-- The paper's 2×2 middle classification (object realization × suppressed-variable
     reading). Study-local: the `Voice` substrate exposes the two dimensions as
@@ -109,12 +109,12 @@ def incorporationMiddle : MiddleType :=
 def incorporationReflexive : MiddleType :=
   { objRealization := .incorporation, suppressedVar := .coreferent }
 
-/-! ### § 3: Core Generalizations (32a–d) -/
+/-! ### Core Generalizations (32a–d) -/
 
 /-- Which argument surfaces as subject depends on object realization.
 
     (32d), strengthened to a biconditional by the compositional
-    derivation in § 5: the base subject is the surface subject iff the
+    derivation below: the base subject is the surface subject iff the
     object is an incorporated NP. When the object is a full DP, the patient
     surfaces as subject (agent suppressed). When the object is an
     incorporated NP, the agent surfaces as subject (patient incorporated).
@@ -144,7 +144,7 @@ theorem agent_surfacing_independent_of_reading
     agentSurfaces ⟨.incorporation, r₁⟩ ↔
     agentSurfaces ⟨.incorporation, r₂⟩ := Iff.rfl
 
-/-! ### § 4: Diagnostic Properties -/
+/-! ### Diagnostic Properties -/
 
 /-- Diagnostics that distinguish *ber-* middles from *di-* passives
     and *meN-* actives.
@@ -265,7 +265,7 @@ theorem diag_profiles_mostly_distinct :
 theorem reflexive_incorporation_same_diag :
     reflexiveDiag = incorporationDiag := rfl
 
-/-! ### § 5: Compositional Derivation via VoiceSemantics -/
+/-! ### Compositional Derivation via VoiceSemantics -/
 
 section Compositional
 
@@ -325,7 +325,7 @@ theorem agent_surfaces_iff_incorporation :
 
 end Compositional
 
-/-! ### § 5b: Conflation middles from relational nouns (§4) -/
+/-! ### Conflation middles from relational nouns (§4) -/
 
 section Conflation
 
@@ -344,7 +344,7 @@ theorem conflation_derivation (pi : Denot E W (.e ⇒ .e ⇒ .t))
 
 end Conflation
 
-/-! ### § 6: Voice Parameter Bridge -/
+/-! ### Voice Parameter Bridge -/
 
 /-- *ber-*'s underspecification means it is compatible with the
     Minimalist Voice parameters of EVERY other Indonesian voice.
@@ -362,7 +362,7 @@ theorem ber_compatible_with_di :
 theorem men_incompatible_with_di :
     menParams.isCompatibleWith diParams = false := rfl
 
-/-! ### § 7: Bridge to Beavers 2010 (Affectedness Constraint) -/
+/-! ### Bridge to Beavers 2010 (Affectedness Constraint) -/
 
 /-- linglib bridge (not formalized in the paper): dispositional *ber-*
     forms are "only possible with verbs that describe change-of-state or at
@@ -399,7 +399,7 @@ theorem levin_middle_requires_cos :
       ⟨false, true, true, false, false, false⟩ .middle = false     -- no CoS → no middle
     := ⟨rfl, rfl⟩
 
-/-! ### § 8: Cross-Linguistic Predictions -/
+/-! ### Cross-Linguistic Predictions -/
 
 /-- The paper predicts that which middle types surface in a language
     depends on its argument realization inventory. Languages lacking
