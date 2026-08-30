@@ -2,6 +2,7 @@ import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Alternatives.AltMeaning
 import Linglib.Semantics.Focus.Control
 import Linglib.Studies.HartmannZimmermann2007
+import Linglib.Studies.BeckmanPierrehumbert1986
 
 /-!
 # Two-feature decomposition of information structure
@@ -304,5 +305,23 @@ theorem hz_matrix_cells_violate_ks_reading :
     ¬ KSHausaReading HartmannZimmermann2007.exSitu_newInfo ∧
     ¬ KSHausaReading HartmannZimmermann2007.inSitu_corrective := by
   decide
+
+/-! ### Prosodic spellout at the φ level -/
+
+section FocusProsody
+
+open Features.Prosody BeckmanPierrehumbert1986
+
+/-- K&S place [FoC]'s prosodic spellout at the head of a φ-level prosodic
+constituent — [beckman-pierrehumbert-1986]'s intermediate phrase, which is
+also the catathesis domain. Whether focus spellout triggers catathesis
+therefore depends on the accent inventory: guaranteed in Japanese, whose
+only accent shape (H*+L) is bitonal, but not in English, whose default H*
+is monotonal. -/
+theorem foc_catathesis_language_dependent :
+    japanese.accentShapes.all (·.isBitonal) = true ∧
+      PitchAccent.H_star.isBitonal = false := ⟨rfl, rfl⟩
+
+end FocusProsody
 
 end KratzerSelkirk2020

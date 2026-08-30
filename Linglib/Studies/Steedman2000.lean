@@ -7,6 +7,7 @@ import Linglib.Syntax.CCG.Derivation
 import Linglib.Syntax.CCG.Grammar
 import Linglib.Syntax.CCG.Interface
 import Linglib.Syntax.CCG.Intonation
+import Linglib.Studies.BeckmanPierrehumbert1986
 import Linglib.Features.ScopeTypes
 
 /-!
@@ -860,5 +861,36 @@ theorem ccg_predicts_mary_sees_john :
     ccgMeaning ccg_mary_sees_john = some True := rfl
 
 end TruthConditions
+
+/-! ### The Tune terminal is Beckman–Pierrehumbert's ip/IP decomposition -/
+
+section BPTerminal
+
+open Features.Prosody BeckmanPierrehumbert1986 CCG.Intonation
+
+/-- A CCG `Tune` from a [beckman-pierrehumbert-1986] intonation phrase: the
+tune's terminal contour is the IP's final phrase accent plus boundary tone
+— the book's Tune decomposition is B&P's §4.3 ip/IP decomposition. -/
+def ipToTune (ip : IntonationPhrase) (accent : PitchAccent) : Tune :=
+  ⟨accent, ip.terminalContour⟩
+
+theorem ipToTune_terminal (ip : IntonationPhrase) (accent : PitchAccent) :
+    (ipToTune ip accent).terminal = ip.terminalContour := rfl
+
+/-- A declarative B&P IP (L phrase accent, L% boundary). -/
+def declarativeIP : IntonationPhrase :=
+  { ips := [{ aps := [accentedAP], phraseAccent := .L }], boundaryTone := .L_pct }
+
+/-- A continuation-rise B&P IP (L phrase accent, H% boundary). -/
+def continuationIP : IntonationPhrase :=
+  { ips := [{ aps := [accentedAP], phraseAccent := .L }], boundaryTone := .H_pct }
+
+/-- The declarative IP carries the rheme tune's terminal (H* L L%), the
+continuation-rise IP the theme tune's (L+H* L H%). -/
+theorem bp_terminals_match_tunes :
+    declarativeIP.terminalContour = rhemeTune.terminal ∧
+      continuationIP.terminalContour = themeTune.terminal := by decide
+
+end BPTerminal
 
 end Steedman2000
