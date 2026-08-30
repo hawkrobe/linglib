@@ -149,6 +149,16 @@ abbrev admitsIndividual (s : CauserSort) : Prop := individual ≤ s
     involitive" ([beavers-zubair-2013] §8). -/
 abbrev admitsVolitive (s : CauserSort) : Prop := event ≤ s
 
+/-- Only `individual` and `any` admit the suppression operator's U_I requirement. -/
+theorem admitsIndividual_iff {s : CauserSort} :
+    admitsIndividual s ↔ s = individual ∨ s = any := by
+  cases s <;> decide
+
+/-- `individual` does not admit the volitive's event requirement: the suppression
+    operator's output subject can never be volitive — anticausatives are always
+    involitive ([beavers-zubair-2013] §8). -/
+theorem not_admitsVolitive_individual : ¬ admitsVolitive individual := by decide
+
 end CauserSort
 
 end Causation

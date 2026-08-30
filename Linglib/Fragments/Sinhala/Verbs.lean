@@ -72,13 +72,9 @@ def gilann : SinhalaVerb :=
     involitiveForm := some "gilenn",
     causerSort := .any }
 
-/-- *marann* (vol) / *mærenn* (invol) 'kill/die'.
-
-    TODO: B&Z 2013 do not directly classify *marann* on the U/U_E
-    axis; it is included here by analogy with the other alternating
-    roots. Cross-linguistically *kill* often patterns with U_V
-    (effector OK, individual subject pragmatically marked) — see
-    [levin-hovav-1995] ch. 3 on *kill* vs. *murder*. -/
+/-- *marann* (vol) / *mærenn* (invol) 'kill/die'. Listed among the detransitivizing
+    ECOS roots ([beavers-zubair-2013] §3.2, exx. (14) and (17)): the causative admits
+    non-agentive causers, unlike *minimarann* 'murder'. -/
 def marann : SinhalaVerb :=
   { gloss := "kill",
     volitiveForm := "marann",

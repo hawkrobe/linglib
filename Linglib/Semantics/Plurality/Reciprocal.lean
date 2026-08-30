@@ -7,12 +7,11 @@ import Linglib.Semantics.Plurality.Cumulativity
 
 Substrate for the reciprocal-meaning typology. The six interpretation
 schemes originate in [langendoen-1978] (Strong Reciprocity SR,
-Intermediate Reciprocity IR, Weak Reciprocity WR), Kański 1987 (bib
-entry pending; Inclusive Alternative Ordering IAO), Fiengo & Lasnik
-1973 (bib entry pending; Partitioned Strong Reciprocity PartSR), and
-[dalrymple-et-al-1998] (the **Alternative** variants SAR/IAR plus
-One-way Weak Reciprocity OWR as a methodological waypoint between WR
-and IAO). DKMPK 1998 organises them along two axes — **quantification
+Intermediate Reciprocity IR, Weak Reciprocity WR), [kanski-1987]
+(Inclusive Alternative Ordering IAO), [fiengo-lasnik-1973]
+(Partitioned Strong Reciprocity PartSR), and [dalrymple-et-al-1998]
+(the **Alternative** variants SAR/IAR plus One-way Weak Reciprocity
+OWR). DKMPK organise them along two axes — **quantification
 strength** (∀∀ / ∃-chain / ∃∃) and **directionality** (one-way vs
 alternative `R x y ∨ R y x`) — and proposes the **Strongest Meaning
 Hypothesis** (SMH): interpretation selects the strongest scheme
@@ -42,12 +41,12 @@ the entailment lattice between the bivalent versions, and a bridge to
 
 ## Implementation notes
 
-The standard DKMPK / Langendoen 1978 form of WR requires both
+The standard [dalrymple-et-al-1998] / [langendoen-1978] form of WR requires both
 `∃y ∈ X. y ≠ x ∧ R x y` AND `∃y ∈ X. y ≠ x ∧ R y x` for each
 `x ∈ X` — i.e., each member must be both an `R`-subject and an
 `R`-object of some distinct other. The single-conjunct version (here:
-`OneWayWeakReciprocity`) is empirically too weak; it's named after
-Sabato & Winter 2005's terminology.
+`OneWayWeakReciprocity`) is empirically too weak; [beck-2001] §4.4
+reanalyses apparent OWR as WR plus cover-licensed exceptions.
 
 `IntermediateReciprocity` uses `List.IsChain` on a list of atoms in `X`
 to express "connected by an `R`-chain"; `PartitionedStrongReciprocity`
@@ -59,8 +58,6 @@ uses `Finset (Finset α)` for the partition witness.
   variants): SAR, IAR.
 * Strongest Meaning Hypothesis as an interpretation operator selecting
   among schemes given context.
-* Add bib entries: Kański 1987, Fiengo & Lasnik 1973, Sabato & Winter
-  2005.
 -/
 
 namespace Semantics.Plurality.Reciprocal
@@ -71,9 +68,9 @@ open Semantics.Plurality.Cumulativity
 variable {A : Type*}
 
 /-- The six reciprocal interpretation schemes. SR/IR/WR originate in
-    [langendoen-1978]; IAO in Kański 1987 (bib entry pending);
-    Partitioned SR in Fiengo & Lasnik 1973 (bib entry pending); the
-    **Alternative** variants (SAR, IAR) in [dalrymple-et-al-1998]. -/
+    [langendoen-1978]; IAO in [kanski-1987]; Partitioned SR in
+    [fiengo-lasnik-1973]; the **Alternative** variants (SAR, IAR) in
+    [dalrymple-et-al-1998]. -/
 inductive ReciprocalScheme where
   | strong                  -- Strong Reciprocity (SR)
   | partitionedStrong       -- Partitioned Strong Reciprocity (PartSR)
@@ -97,9 +94,9 @@ instance [DecidableEq A] (R : A → A → Prop) [DecidableRel R] (X : Finset A) 
 
 /-! ### Partitioned Strong Reciprocity -/
 
-/-- **Partitioned Strong Reciprocity** (Fiengo & Lasnik 1973, bib entry
-    pending): there is a partition of `X` such that SR holds within
-    each cell. "The men are hitting each other" can be true if the men
+/-- **Partitioned Strong Reciprocity** ([fiengo-lasnik-1973]): there is
+    a partition of `X` such that SR holds within each cell. "The men are hitting each other" can be
+    true if the men
     team up in pairs that stand in the hit-relation. -/
 def PartitionedStrongReciprocity (R : A → A → Prop) (X : Finset A) : Prop :=
   ∃ PART : Finset (Finset A),
@@ -109,7 +106,7 @@ def PartitionedStrongReciprocity (R : A → A → Prop) (X : Finset A) : Prop :=
 
 /-! ### Intermediate Reciprocity -/
 
-/-- **Intermediate Reciprocity** (Langendoen 1978): any two distinct
+/-- **Intermediate Reciprocity** ([langendoen-1978]): any two distinct
     members of `X` are connected by an `R`-chain through `X`. "Five
     Boston pitchers sat alongside each other": each pitcher has an
     `R`-chain to every other pitcher.
@@ -123,7 +120,7 @@ def IntermediateReciprocity (R : A → A → Prop) (X : Finset A) : Prop :=
 
 /-! ### Weak Reciprocity -/
 
-/-- **Weak Reciprocity** (Langendoen 1978; DKMPK 1998): every member of
+/-- **Weak Reciprocity** ([langendoen-1978]; [dalrymple-et-al-1998]): every member of
     `X` is `R`-related to at least one distinct other member **in both
     directions** — as `R`-subject and as `R`-object. "The boys are
     stacked on top of each other": each boy has *some* other boy on
@@ -140,8 +137,8 @@ instance [DecidableEq A] (R : A → A → Prop) [DecidableRel R] (X : Finset A) 
 
 /-! ### One-way Weak Reciprocity -/
 
-/-- **One-way Weak Reciprocity** (Sabato & Winter 2005 terminology):
-    only the first direction of WR is required. "The pirates are
+/-- **One-way Weak Reciprocity** ([dalrymple-et-al-1998]): only the
+    first direction of WR is required. "The pirates are
     staring at each other" — pirate 6 is not stared at by anybody, but
     everyone stares at someone. -/
 def OneWayWeakReciprocity (R : A → A → Prop) (X : Finset A) : Prop :=
@@ -153,7 +150,7 @@ instance [DecidableEq A] (R : A → A → Prop) [DecidableRel R] (X : Finset A) 
 
 /-! ### Inclusive Alternative Ordering -/
 
-/-- **Inclusive Alternative Ordering** (Kański 1987, bib entry pending):
+/-- **Inclusive Alternative Ordering** ([kanski-1987]):
     each member of `X` participates in `R` as either first or second
     argument of a distinct other. "The plates are stacked on top of
     each other" — each plate is on top of one or has one on top of
