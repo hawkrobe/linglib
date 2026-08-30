@@ -1,4 +1,4 @@
-import Linglib.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Logic.Natural.Basic
 
 /-!
@@ -14,7 +14,7 @@ on the two classic Horn scales:
 2. **or/and** scale: "John sang or danced" → exclusive reading
 
 The abstract Spector framework lives in
-`Semantics/Exhaustification/Operators/Basic.lean`. This file holds the
+`Semantics/Exhaustification/InnocentExclusion.lean`. This file holds the
 empirical exemplars — small finite worlds, scale-specific alternative
 sets, and the per-scale `exhMW ≡ exhIE` corollaries — kept out of the
 theory file in line with the project's theory/Studies split.
@@ -239,7 +239,7 @@ theorem allStudents_entails_someStudents : allStudents ⊆ someStudents := by
 theorem someAll_exhMW_iff_exhIE :
     exhMW someAllALT someStudents = exhIE someAllALT someStudents := by
   apply Set.Subset.antisymm
-  · exact exhMW_entails_exhIE someAllALT someStudents
+  · exact exhMW_subset_exhIE someAllALT someStudents
   · intro w hie
     constructor
     · have hsome_in_IE : someStudents ∈ IE someAllALT someStudents := by
@@ -298,7 +298,7 @@ theorem sangAndDanced_entails_sangOrDanced : sangAndDanced ⊆ sangOrDanced := b
 theorem orAnd_exhMW_iff_exhIE :
     exhMW orAndALT sangOrDanced = exhIE orAndALT sangOrDanced := by
   apply Set.Subset.antisymm
-  · exact exhMW_entails_exhIE orAndALT sangOrDanced
+  · exact exhMW_subset_exhIE orAndALT sangOrDanced
   · intro w hie
     constructor
     · have hor_in_IE : sangOrDanced ∈ IE orAndALT sangOrDanced := λ E hE => hE.1.1

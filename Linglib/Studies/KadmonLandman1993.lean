@@ -2,7 +2,6 @@ import Linglib.Logic.Natural.Basic
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Polarity.Item
 import Linglib.Logic.Natural.Strawson.Basic
-import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Semantics.Supervaluation
 import Linglib.Studies.Ladusaw1979
 import Mathlib.Data.Set.Basic
@@ -47,8 +46,6 @@ namespace KadmonLandman1993
 open NaturalLogic
 open Polarity (LicensingContext)
 open Polarity (LicensingMechanism)
-open Exhaustification.FreeChoice (Ctx existsInDomain
-  widening_strengthens_in_de widening_weakens_in_ue)
 open Ladusaw1979 (licensingStrength)
 open Semantics.Supervaluation (SpecSpace superTrue superTrue_true_iff
   superTrue_indet_iff)
@@ -61,10 +58,20 @@ must entail the narrow: `C (∃x∈D', Px) ⊆ C (∃x∈D, Px)`. This holds exa
 when `C` is antitone, which is why DE contexts license — and why widening in
 UE contexts, where it weakens, leaves *any* unlicensed. -/
 
+/-- The existential over a domain: `∃ x ∈ D, P x`. -/
+def existsInDomain {World Entity : Type*} (D : Set Entity) (P : Entity → Set World) :
+    Set World :=
+  λ w => ∃ x ∈ D, P x w
+
+/-- Widening the domain weakens the existential. -/
+theorem existsInDomain_mono {World Entity : Type*} {D D' : Set Entity} (P : Entity → Set World)
+    (h : D ⊆ D') : existsInDomain D P ⊆ existsInDomain D' P :=
+  λ _ ⟨x, hx, hP⟩ => ⟨x, h hx, hP⟩
+
 /-- K&L's strengthening condition: widening the domain `D` to `D'` in context
 `C` creates a stronger statement — the wide interpretation entails the narrow
 one. -/
-def Strengthening {World Entity : Type*} (C : Ctx World) (D D' : Set Entity)
+def Strengthening {World Entity : Type*} (C : Set World → Set World) (D D' : Set Entity)
     (P : Entity → Set World) : Prop :=
   C (existsInDomain D' P) ⊆ C (existsInDomain D P)
 
@@ -72,18 +79,18 @@ def Strengthening {World Entity : Type*} (C : Ctx World) (D D' : Set Entity)
 many examples this makes the same predictions as [ladusaw-1979], while
 explaining *why* DE contexts license: widening must strengthen, and DE
 reverses entailment. -/
-theorem de_satisfies_strengthening {World Entity : Type*} {C : Ctx World}
+theorem de_satisfies_strengthening {World Entity : Type*} {C : Set World → Set World}
     (hDE : Antitone C) (D D' : Set Entity) (P : Entity → Set World)
     (hD : D ⊆ D') : Strengthening C D D' P :=
-  widening_strengthens_in_de C hDE D D' P hD
+  hDE (existsInDomain_mono P hD)
 
 /-- In a UE (monotone) context, widening *weakens* — the opposite of
 strengthening. This is K&L's explanation for why *any* is out in plain
 positive contexts. -/
-theorem ue_widening_weakens {World Entity : Type*} {C : Ctx World}
+theorem ue_widening_weakens {World Entity : Type*} {C : Set World → Set World}
     (hUE : Monotone C) (D D' : Set Entity) (P : Entity → Set World)
     (hD : D ⊆ D') : C (existsInDomain D P) ⊆ C (existsInDomain D' P) :=
-  widening_weakens_in_ue C hUE D D' P hD
+  hUE (existsInDomain_mono P hD)
 
 /-! ### Licensing contexts and entailment signatures
 

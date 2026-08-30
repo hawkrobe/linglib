@@ -1,6 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.NormNum
-import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Exhaustification.Finite
 import Linglib.Semantics.Alternatives.Symmetric
 import Linglib.Studies.Magri2009
 
@@ -58,7 +58,7 @@ Two components:
 ## Key connections
 
 - [fox-2007]: innocent exclusion (IE) algorithm — `innocent.exh`,
-  `innocent.excluded`, `IsMCSet` from `Innocent.lean`
+  `innocent.excluded`, `IsMCSet` from `Finite.lean`
 - [magri-2009]: blindness hypothesis + mismatch hypothesis —
   `BlindScenario`, `blindOdd` from `Magri2009.lean`
 - [fox-katzir-2011]: contextual constraint on alternatives

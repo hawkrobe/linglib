@@ -1,6 +1,6 @@
 import Linglib.Pragmatics.RSA.Uniform
 import Linglib.Pragmatics.Implicature.SomeAll
-import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Exhaustification.Finite
 import Mathlib.Data.List.ProdSigma
 import Mathlib.Tactic.DeriveFintype
 

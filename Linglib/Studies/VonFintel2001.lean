@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Linglib.Semantics.Conditionals.Basic
-import Linglib.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # von Fintel (2001): Conditional Strengthening

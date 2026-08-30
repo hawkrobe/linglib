@@ -1,6 +1,6 @@
 import Linglib.Logic.Natural.Strawson.Basic
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Studies.VonFintel1999
@@ -556,7 +556,7 @@ Parallel to §4.4's K&P-based Conditions 3, 4: Conditions 1, 2 (eqs.
 59, 66) handle the implicature side via Spector 2016's `exhMW`
 operator, treated as Gajewski's `O(F, G)`. The substrate substrate's
 `Exhaustification.exhMW` lives in
-`Semantics/Exhaustification/Operators/Basic.lean`.
+`Semantics/Exhaustification/InnocentExclusion.lean`.
 
 The substrate's trivial-ALT bridge theorem
 (`condition1_with_no_alts_iff_de`) shows: with no alternatives,

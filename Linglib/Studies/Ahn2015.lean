@@ -1,5 +1,5 @@
-import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Semantics.Focus.Interpretation
+import Mathlib.Data.Set.Lattice
 import Linglib.Data.Examples.Ahn2015
 
 /-!
@@ -123,9 +123,9 @@ theorem either_negative_vacuous :
 
 /-- In any downward-entailing context the scalar alternative of the disjunction is entailed, so
 exhaustification is vacuous there too: the account licenses *either* beyond negation. -/
-theorem either_vacuous_in_de (C : Exhaustification.FreeChoice.Ctx World) (hDE : Antitone C) :
-    Exhaustification.FreeChoice.siVacuous C (either q p) (q ⊓ p) :=
-  Exhaustification.FreeChoice.si_vacuous_in_de C hDE _ _ (inf_le_left.trans le_sup_left)
+theorem either_vacuous_in_de (C : Set World → Set World) (hDE : Antitone C) :
+    C (either q p) ⊆ C (q ⊓ p) :=
+  hDE (inf_le_left.trans le_sup_left)
 
 /-! ### The data -/
 

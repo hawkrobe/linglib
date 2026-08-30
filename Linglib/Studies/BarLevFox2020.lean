@@ -1,4 +1,4 @@
-import Linglib.Semantics.Exhaustification.Operators.Disjunctive
+import Linglib.Semantics.Exhaustification.Disjunctive
 import Linglib.Semantics.Conditionals.Counterfactual
 import Linglib.Semantics.Presupposition.Defs
 import Linglib.Logic.Modal.Basic

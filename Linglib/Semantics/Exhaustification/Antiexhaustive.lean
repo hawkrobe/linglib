@@ -1,4 +1,4 @@
-import Linglib.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Antiexhaustive Operator O⁻ [chierchia-2006]

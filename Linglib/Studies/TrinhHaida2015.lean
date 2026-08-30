@@ -1,7 +1,7 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Semantics.Alternatives.Structural
 import Linglib.Semantics.Alternatives.Symmetric
-import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Exhaustification.Finite
 
 /-!
 # Trinh & Haida 2015: Constraining the Derivation of Alternatives
@@ -38,7 +38,7 @@ to structural operations. This refines [fox-katzir-2011] /
 
 Atomicity is a restriction on the formal-alternative source `F`, the
 [fox-katzir-2011] `F` (not `C`) side of the asymmetry.
-`Semantics/Exhaustification/Combinators.lean` packages F-side
+`Semantics/Exhaustification/Excluder.lean` packages F-side
 restrictions as the abstract combinator `Excluder.preFilter`, with the
 algebraic non-monotonicity theorem `preFilter_can_create_implicature`.
 The Trinh–Haida construction is a linguistically-motivated *two-layer*
@@ -47,7 +47,7 @@ to a single `preFilter` call: `innocent.exh` on full `F_AT(run)` remains
 vacuous; the strengthening to `ran ∧ smoked` requires the further
 domain-choice step `A = {ran, ranNotSmoked}`. The Symmetric/Atomic
 formalization here is therefore complementary to (not subsumed by) the
-abstract combinator: `Combinators.lean` proves the asymmetry exists in
+abstract combinator: `Excluder.lean` proves the asymmetry exists in
 the algebra; this file shows the linguistic substance the asymmetry
 licenses.
 -/

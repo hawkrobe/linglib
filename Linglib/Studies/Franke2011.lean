@@ -8,7 +8,7 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Linglib.Core.Order.Argmax
 import Linglib.Pragmatics.SignalingGame.Interpretation
-import Linglib.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Data.Examples.Franke2011
 
 /-!
@@ -47,7 +47,7 @@ contained in minimal-models exhaustification ([vanrooij-schulz-2004]; Fact 1,
 `receiver1_subset_exhMW`), and in general strictly (`R₁ ≠ R₂` in the
 free-choice game). Appendix A compares `exhMW` with [fox-2007]'s innocent
 exclusion `exhIE` on the substrate of [spector-2016]: Fact 3 is
-`Exhaustification.exhMW_entails_exhIE`, Lemma 1 is
+`Exhaustification.exhMW_subset_exhIE`, Lemma 1 is
 `exhIE_eq_exhMW_indistinguishable`, and Fact 2 holds for alternatives that are
 *monotonically* determined by the others (`ltALT_insert_of_monotoneDetermined`)
 but not, as printed, for every truth-determined alternative
@@ -1260,7 +1260,7 @@ theorem receiver1_subset_exhMW (m : M) (t : T) (ht : t ∈ receiverStep G G.true
 
 /-! ### Comparison of exhaustivity operators (Appendix A)
 
-Fact 3, `ExhMM ⊆ ExhIE`, is `Exhaustification.exhMW_entails_exhIE`. Lemma 1
+Fact 3, `ExhMM ⊆ ExhIE`, is `Exhaustification.exhMW_subset_exhIE`. Lemma 1
 characterises innocent exclusion as closure of the minimal worlds: a
 `φ`-world survives `ExhIE` iff every alternative false throughout `ExhMM` is
 false at it. Fact 2 claims the order is invariant under adding an

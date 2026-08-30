@@ -1,6 +1,6 @@
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Exhaustification.Operators.Basic
-import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
+import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Exhaustification.InnocentInclusion
 
 /-!
 # Presuppositional Exhaustification (pex)

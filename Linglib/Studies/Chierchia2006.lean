@@ -3,9 +3,8 @@ import Linglib.Semantics.Polarity.Item
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Fragments.German.PolarityItems
-import Linglib.Semantics.Exhaustification.FreeChoice
-import Linglib.Semantics.Exhaustification.Operators.Basic
-import Linglib.Semantics.Exhaustification.Operators.Antiexhaustive
+import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Exhaustification.Antiexhaustive
 import Linglib.Studies.Chierchia2013
 
 /-!
@@ -48,7 +47,7 @@ contiguous function ranges cross-linguistically.
 ## Theoretical engine
 
 The mechanism behind PSI licensing is **domain widening reversal**
-([kadmon-landman-1993], proved in `Exhaustification.FreeChoice`):
+([kadmon-landman-1993]):
 widening strengthens in DE but weakens in UE. The PSI parameter space
 refines this into D-MAX (even-like) vs D-MIN (antiexhaustive) enrichment.
 -/
@@ -467,7 +466,7 @@ theorem irgendein_profile_consistent :
 ## Exercising the Exhaustification theory layer
 
 This section connects [chierchia-2006]'s PSI typology to the formal
-results in `Exhaustification.FreeChoice` and `Exhaustification.Operators`.
+results in `Exhaustification`.
 
 ### σ̃: Presuppositional implicature freezing (§3.3, §5.3)
 
@@ -491,7 +490,6 @@ section SigmaOperators
 
 variable {World : Type*}
 
-open Exhaustification.FreeChoice (entailment_reversal_in_de si_vacuous_in_de)
 open Exhaustification (oMinus antiexh_yields_universal)
 
 /-- σ̃'s presupposition: the enriched meaning is **strictly stronger**
@@ -511,8 +509,7 @@ def sigmaBoldDefined (plain enriched : World → Prop) : Prop :=
     *reverses* the entailment: C(plain) ⊆ C(enriched), making the
     enriched meaning under C strictly WEAKER, not stronger.
 
-    Delegates to `Exhaustification.FreeChoice.entailment_reversal_in_de`:
-    the DE reversal gives C(plain) ⊆ C(enriched), which contradicts σ̃'s
+    The DE reversal gives C(plain) ⊆ C(enriched), which contradicts σ̃'s
     requirement that C(enriched) be strictly stronger than C(plain). -/
 theorem sigma_bold_fails_in_de
     (C : (World → Prop) → (World → Prop))
@@ -520,24 +517,20 @@ theorem sigma_bold_fails_in_de
     (plain enriched : World → Prop)
     (h_stronger : ∀ w, enriched w → plain w) :
     ¬sigmaBoldDefined (C plain) (C enriched) :=
-  fun ⟨_, hnotrev⟩ =>
-    hnotrev (entailment_reversal_in_de C hDE plain enriched h_stronger)
+  fun ⟨_, hnotrev⟩ => hnotrev (hDE enriched plain h_stronger)
 
 /-- **SI vacuity in DE blocks D-MAX enrichment in UE.**
 
     [chierchia-2006] §4.1: D-MAX items (pure NPIs) trigger
-    even-like (E) enrichment, which is an SI. SIs are vacuous in DE
-    (`si_vacuous_in_de`), so E enrichment is informative only in
-    non-DE contexts — but D-MAX items *require* DE. This is why
-    pure NPIs are confined to DE contexts.
-
-    Instantiates `Exhaustification.FreeChoice.si_vacuous_in_de`. -/
+    even-like (E) enrichment, which is an SI. SIs are vacuous in DE, so E
+    enrichment is informative only in non-DE contexts — but D-MAX items
+    *require* DE. This is why pure NPIs are confined to DE contexts. -/
 theorem dMax_enrichment_vacuous_in_de
     (C : (World → Prop) → (World → Prop))
     (hDE : ∀ (p q : World → Prop), (∀ w, p w → q w) → (∀ w, C q w → C p w))
     (weak strong : World → Prop) (h_ent : ∀ w, strong w → weak w) :
     ∀ w, ¬(C weak w ∧ ¬C strong w) :=
-  si_vacuous_in_de C hDE weak strong h_ent
+  fun w ⟨hCw, hnCs⟩ => hnCs (hDE strong weak h_ent w hCw)
 
 /-- **O⁻ yields universal force from existential base (§5.1).**
 

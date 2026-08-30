@@ -1,5 +1,5 @@
+import Linglib.Semantics.Exhaustification.Finite
 import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Studies.Chierchia2004
 import Mathlib.Tactic.DeriveFintype
 

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.Numerals.Basic
-import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Exhaustification.Finite
 
 /-!
 # Spector 2013: Bare Numerals and Scalar Implicatures
@@ -451,7 +451,7 @@ The results here connect to three independent lines of evidence in the library:
 
 1. **EXH bridge** (§3): `exhNumeral` = `innocent.exh` on the four-world numeral
    domain. This closes the gap between `Semantics/Lexical/Numeral/Semantics.lean`
-   and `Semantics/Exhaustification/Innocent.lean` — numerals get standard
+   and `Semantics/Exhaustification/Finite.lean` — numerals get standard
    [fox-2007] exhaustification.
 
 2. **RSA=EXH limit** (`ExhaustivityLimit.lean`): `l1_weak_weakOnly_tendsto_one`
