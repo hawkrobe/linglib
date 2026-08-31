@@ -1,5 +1,5 @@
-import Linglib.Core.Order.ComparativeProbability.Representability
-import Linglib.Core.Order.ComparativeProbability.CancellationFin4
+import Linglib.Logic.ComparativeProbability.Representability
+import Linglib.Logic.ComparativeProbability.CancellationFin4
 import Mathlib.Tactic.IntervalCases
 
 /-! # KPS representation and completeness theorems
@@ -27,27 +27,27 @@ namespace ComparativeProbability
     Theorem 8): below five worlds every FA system is representable —
     FA and FP∞ coincide. -/
 theorem representable_of_card_lt_five {W : Type*} [Fintype W]
-    (sys : EpistemicSystemFA W) (hcard : Fintype.card W < 5) :
+    (sys : QualitativeProbability W) (hcard : Fintype.card W < 5) :
     Representable sys := by
   have : DecidableEq W := Classical.typeDecidableEq W
   let e := Fintype.equivFin W
   set n := Fintype.card W with hn_def
   interval_cases n
-  · exact (no_fa_empty (transportFA e sys)).elim
-  · exact perm_repr e sys (representable_fin1 (transportFA e sys))
-  · exact perm_repr e sys (representable_fin2 (transportFA e sys))
-  · exact perm_repr e sys (representable_fin3 (transportFA e sys))
-  · exact perm_repr e sys (representable_fin4 (transportFA e sys))
+  · exact (sys.transport e).elim0
+  · exact perm_repr e sys (representable_fin1 (sys.transport e))
+  · exact perm_repr e sys (representable_fin2 (sys.transport e))
+  · exact perm_repr e sys (representable_fin3 (sys.transport e))
+  · exact perm_repr e sys (representable_fin4 (sys.transport e))
 
 /-- **Theorem 8b** ([kraft-pratt-seidenberg-1959] Theorem 8): at every
     cardinality ≥ 5 some FA system is non-representable, so FA is strictly
     weaker than FP∞. -/
 theorem exists_nonrepresentable_of_five_le_card {W : Type*} [Fintype W]
     (hcard : 5 ≤ Fintype.card W) :
-    ∃ sys : EpistemicSystemFA W, ¬Representable sys := by
+    ∃ sys : QualitativeProbability W, ¬Representable sys := by
   have : DecidableEq W := Classical.typeDecidableEq W
   obtain ⟨sysF, hsysF⟩ := exists_nonrepresentable_fin hcard
-  exact ⟨transportFA (Fintype.equivFin W).symm sysF,
+  exact ⟨sysF.transport (Fintype.equivFin W).symm,
     fun h => hsysF (perm_repr (Fintype.equivFin W).symm sysF h)⟩
 
 -- ── Completeness (Theorems 2 and 6) ─────────────
@@ -56,25 +56,25 @@ attribute [local instance] Classical.propDecidable
 
 /-- Count of finsets dominated by A under the ge ordering. -/
 private noncomputable def belowCount {W : Type*} [Fintype W]
-    (sys : EpistemicSystemFA W) (A : Set W) : ℕ :=
+    (sys : QualitativeProbability W) (A : Set W) : ℕ :=
   (Finset.univ.filter (fun S : Finset W => sys.ge A ↑S)).card
 
 private theorem belowCount_univ {W : Type*} [Fintype W]
-    (sys : EpistemicSystemFA W) :
+    (sys : QualitativeProbability W) :
     belowCount sys Set.univ = Fintype.card (Finset W) := by
   unfold belowCount
   rw [Finset.filter_true_of_mem fun S _ => sys.mono _ _ (Set.subset_univ _)]
   exact Finset.card_univ
 
 private theorem belowCount_mono {W : Type*} [Fintype W]
-    (sys : EpistemicSystemFA W) (A B : Set W)
+    (sys : QualitativeProbability W) (A B : Set W)
     (h : sys.ge A B) : belowCount sys A ≥ belowCount sys B := by
   refine Finset.card_le_card fun S hS => ?_
   rw [Finset.mem_filter] at hS ⊢
   exact ⟨hS.1, sys.trans _ _ _ h hS.2⟩
 
 private theorem belowCount_strict {W : Type*} [Fintype W]
-    (sys : EpistemicSystemFA W) (A B : Set W)
+    (sys : QualitativeProbability W) (A B : Set W)
     (h : ¬sys.ge A B) : belowCount sys A < belowCount sys B := by
   refine Finset.card_lt_card ⟨fun S hS => ?_, fun hsub => ?_⟩
   · rw [Finset.mem_filter] at hS ⊢
@@ -85,7 +85,7 @@ private theorem belowCount_strict {W : Type*} [Fintype W]
     exact h this.2
 
 private theorem belowCount_iff {W : Type*} [Fintype W]
-    (sys : EpistemicSystemFA W) (A B : Set W) :
+    (sys : QualitativeProbability W) (A B : Set W) :
     belowCount sys A ≥ belowCount sys B ↔ sys.ge A B := by
   refine ⟨fun hcount => by_contra fun hng => ?_, belowCount_mono sys A B⟩
   have := belowCount_strict sys A B hng
@@ -99,7 +99,7 @@ private theorem ge_div_iff {a b d : ℚ} (hd : 0 < d) :
     every FA system is representable by a qualitatively additive measure —
     the dominated-set count, affinely renormalised so μ(∅) = 0 and μ(Ω) = 1. -/
 theorem exists_qualAddMeasure_repr {W : Type*} [Fintype W]
-    (sys : EpistemicSystemFA W) :
+    (sys : QualitativeProbability W) :
     ∃ (m : QualAddMeasure ℚ W), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
   classical
   set E : ℚ := (belowCount sys ∅ : ℚ) with hE
@@ -148,56 +148,50 @@ private lemma ge_of_forall_singleton {W : Type*} [Fintype W]
       (ih (fun c hc => hsub c (Finset.mem_insert_of_mem hc)))
 
 /-- **Theorem 2** ([halpern-2003], Thm. 7.5.1a; [holliday-icard-2013]):
-    an epistemic system satisfying R, T, Tran, J (right-union),
+    a monotone, transitive comparison relation satisfying J (right-union)
     and DS (determination by singletons) is representable by Lewis's l-lifting
     from a reflexive preorder on worlds.
 
     The paper states this as a *logic* completeness theorem for **WJR**
     (K + BT + Tran + J + Mon + R). We prove the underlying per-model
     *representation* result, which is the model-theoretic core: the semantic
-    hypotheses (R, T, Tran, J, DS) correspond to WJR's axioms evaluated
-    on a single model, without formalizing the syntax or proof system.
+    hypotheses correspond to WJR's axioms evaluated on a single model, without
+    formalizing the syntax or proof system.
 
-    Construction: `ge_w u v := sys.ge {u} {v}`. -/
+    Construction: `ge_w u v := ge {u} {v}`. -/
 theorem exists_dominationLift_repr {W : Type*} [Fintype W]
-    (sys : EpistemicSystemW W)
-    (hTran : ∀ A B C : Set W, sys.ge A B → sys.ge B C → sys.ge A C)
-    (hJ : RightUnion sys.ge)
-    (hDS : DeterminedBySingletons sys.ge) :
+    {ge : Set W → Set W → Prop}
+    (hMono : ∀ A B : Set W, A ⊆ B → ge B A)
+    (hTran : ∀ A B C : Set W, ge A B → ge B C → ge A C)
+    (hJ : RightUnion ge) (hDS : DeterminedBySingletons ge) :
     ∃ (ge_w : W → W → Prop) (_ : ∀ w, ge_w w w),
-      ∀ A B, sys.ge A B ↔ dominationLift ge_w A B := by
-  refine ⟨fun u v => sys.ge {u} {v}, fun w => sys.refl {w}, fun A B => ?_⟩
+      ∀ A B, ge A B ↔ dominationLift ge_w A B := by
+  refine ⟨fun u v => ge {u} {v}, fun w => hMono {w} {w} subset_rfl, fun A B => ?_⟩
   constructor
-  · -- Forward: sys.ge A B → dominationLift (fun u v => sys.ge {u} {v}) A B
-    intro hAB b hbB
-    -- {b} ⊆ B, so sys.ge B {b} by monotonicity (Axiom T)
-    have hBb : sys.ge B {b} := sys.mono {b} B (Set.singleton_subset_iff.mpr hbB)
-    -- Transitivity: sys.ge A B → sys.ge B {b} → sys.ge A {b}
-    have hAb : sys.ge A {b} := hTran A B {b} hAB hBb
-    -- DS: sys.ge A {b} → ∃ a ∈ A, sys.ge {a} {b}
-    exact hDS A b hAb
-  · -- Backward: dominationLift → sys.ge A B
-    intro hLift
-    apply ge_of_forall_singleton sys.mono hJ A B
+  · intro hAB b hbB
+    have hBb : ge B {b} := hMono {b} B (Set.singleton_subset_iff.mpr hbB)
+    exact hDS A b (hTran A B {b} hAB hBb)
+  · intro hLift
+    apply ge_of_forall_singleton hMono hJ A B
     intro b hbB
     obtain ⟨a, haA, hab⟩ := hLift b hbB
-    -- {a} ⊆ A, so sys.ge A {a} by monotonicity
-    have hAa : sys.ge A {a} := sys.mono {a} A (Set.singleton_subset_iff.mpr haA)
-    -- Transitivity: sys.ge A {a} → sys.ge {a} {b} → sys.ge A {b}
+    have hAa : ge A {a} := hMono {a} A (Set.singleton_subset_iff.mpr haA)
     exact hTran A {a} {b} hAa hab
 
-/-- Round trip of `exists_dominationLift_repr`: a transitive epistemic system
-    is representable by Lewis's l-lifting **iff** it satisfies right-union and
-    determination by singletons — the model-theoretic form of soundness and
-    completeness for WJR ([holliday-icard-2013]; [halpern-2003] Thm. 7.5.1).
-    Soundness transfers `dominationLift_rightUnion` and
-    `dominationLift_determinedBySingletons` across the representation. -/
+/-- Round trip of `exists_dominationLift_repr`: a monotone, transitive
+    comparison relation is representable by Lewis's l-lifting **iff** it
+    satisfies right-union and determination by singletons — the
+    model-theoretic form of soundness and completeness for WJR
+    ([holliday-icard-2013]; [halpern-2003] Thm. 7.5.1). Soundness transfers
+    `dominationLift_rightUnion` and `dominationLift_determinedBySingletons`
+    across the representation. -/
 theorem dominationLift_repr_iff {W : Type*} [Fintype W]
-    (sys : EpistemicSystemW W)
-    (hTran : ∀ A B C : Set W, sys.ge A B → sys.ge B C → sys.ge A C) :
+    {ge : Set W → Set W → Prop}
+    (hMono : ∀ A B : Set W, A ⊆ B → ge B A)
+    (hTran : ∀ A B C : Set W, ge A B → ge B C → ge A C) :
     (∃ ge_w : W → W → Prop, (∀ w, ge_w w w) ∧
-      ∀ A B, sys.ge A B ↔ dominationLift ge_w A B) ↔
-    RightUnion sys.ge ∧ DeterminedBySingletons sys.ge := by
+      ∀ A B, ge A B ↔ dominationLift ge_w A B) ↔
+    RightUnion ge ∧ DeterminedBySingletons ge := by
   constructor
   · rintro ⟨ge_w, -, hiff⟩
     refine ⟨fun A B C hab hac => ?_, fun A b hA => ?_⟩
@@ -206,7 +200,7 @@ theorem dominationLift_repr_iff {W : Type*} [Fintype W]
     · obtain ⟨a, ha, hab⟩ := dominationLift_determinedBySingletons A b ((hiff _ _).mp hA)
       exact ⟨a, ha, (hiff _ _).mpr hab⟩
   · rintro ⟨hJ, hDS⟩
-    obtain ⟨ge_w, hrefl, hiff⟩ := exists_dominationLift_repr sys hTran hJ hDS
+    obtain ⟨ge_w, hrefl, hiff⟩ := exists_dominationLift_repr hMono hTran hJ hDS
     exact ⟨ge_w, hrefl, hiff⟩
 
 -- ── Bridge: Axiom A ↔ FA ────────────────────────

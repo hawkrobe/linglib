@@ -1,4 +1,4 @@
-import Linglib.Core.Order.ComparativeProbability.Cancellation
+import Linglib.Logic.ComparativeProbability.Cancellation
 import Linglib.Core.Order.Caratheodory
 import Linglib.Core.Order.SignVectors
 import Mathlib.Data.List.Perm.Basic
@@ -57,7 +57,7 @@ private lemma cmpVec_mergeCmp {n : ℕ} (c d : Finset (Fin n) × Finset (Fin n))
 
 /-- `mergeCmp` of two valid comparisons is valid, given the disjointness conditions.
     Uses `ge_generalized_merge` then Axiom A to reach disjoint normal form. -/
-private lemma mergeCmp_valid {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+private lemma mergeCmp_valid {n : ℕ} (sys : QualitativeProbability (Fin n))
     {c d : Finset (Fin n) × Finset (Fin n)}
     (hc : sys.ge ↑c.1 ↑c.2) (hd : sys.ge ↑d.1 ↑d.2)
     (hpos : Disjoint c.1 d.1) (hneg : Disjoint c.2 d.2) :
@@ -91,7 +91,7 @@ private lemma cvSumList_perm {n : ℕ} {L L' : List (Finset (Fin n) × Finset (F
     everywhere with a strict negative coordinate, some atom is null (`ge ∅ {i}`).
     Disjointness forces `A ⊆ D` and `C ⊆ B`, giving `ge C A → ge C B → (Axiom A) ge ∅ (B\C)`
     and symmetrically `ge ∅ (D\A)`; the strict coordinate lies in one of them. -/
-private lemma null_from_pair (sys : EpistemicSystemFA (Fin 4))
+private lemma null_from_pair (sys : QualitativeProbability (Fin 4))
     {A B C D : Finset (Fin 4)}
     (hAB : sys.ge ↑A ↑B) (hCD : sys.ge ↑C ↑D)
     (hABd : Disjoint A B) (hCDd : Disjoint C D)
@@ -348,7 +348,7 @@ private lemma v1_tailored
     `(p, q)` with `p = (vpos \ c.1) ∪ (c.2 \ vneg)`, `q = (vneg \ c.2) ∪ (c.1 \ vpos)`
     — is provable (`ge p q`, the IH), then `ge vpos vneg`. Proved by merging `(p,q)`
     with `c` via `mergeCmp_valid`; the disjoint-normal-form is exactly `(vpos, vneg)`. -/
-private lemma recombine (sys : EpistemicSystemFA (Fin 4))
+private lemma recombine (sys : QualitativeProbability (Fin 4))
     (vpos vneg : Finset (Fin 4)) (c : Finset (Fin 4) × Finset (Fin 4))
     (hcd : Disjoint c.1 c.2) (hvv : Disjoint vpos vneg)
     (hrc1 : Disjoint vneg c.1) (hrc2 : Disjoint vpos c.2)
@@ -384,7 +384,7 @@ private lemma recombine (sys : EpistemicSystemFA (Fin 4))
     mono-domination, merge a generalizable pair and recurse, or (no g-merge pair)
     `v1_tailored` gives a null pair (→ contradiction via `hnull`) or a member merged
     by the reversed target (→ peel it, recurse, `recombine`). -/
-private theorem merge_to_single (sys : EpistemicSystemFA (Fin 4))
+private theorem merge_to_single (sys : QualitativeProbability (Fin 4))
     (hnull : ∀ i : Fin 4, ¬ sys.ge ∅ {i})
     (L : List (Finset (Fin 4) × Finset (Fin 4)))
     (hdisj : ∀ c ∈ L, Disjoint c.1 c.2)
@@ -526,7 +526,7 @@ private lemma cleared_sum_eq (P : Portfolio 4) (i : Fin 4) (D : ℕ)
     clearing denominators yields a unit-weight list `R` of valid disjoint comparisons
     with `cvSumList R = cmpVec (s.right, s.left)` — the denominator-cleared balanced
     multiset with one copy of `s` removed. -/
-private theorem exists_balanced_list (sys : EpistemicSystemFA (Fin 4))
+private theorem exists_balanced_list (sys : QualitativeProbability (Fin 4))
     (P : Portfolio 4) (hvalid : P.isValid sys.ge) (hneutral : P.isNeutral)
     (s : WComparison 4) (hsmem : List.Mem s P) :
     ∃ R : List (Finset (Fin 4) × Finset (Fin 4)),
@@ -596,7 +596,7 @@ private theorem exists_balanced_list (sys : EpistemicSystemFA (Fin 4))
 
 /-- **No-null case** of Theorem 8a (Fin 4): when no atom is null, every valid neutral
     portfolio is non-strict, via the merge reduction `merge_to_single`. -/
-theorem no_null_cancellation (sys : EpistemicSystemFA (Fin 4))
+theorem no_null_cancellation (sys : QualitativeProbability (Fin 4))
     (hnull : ∀ i : Fin 4, ¬ sys.ge ∅ {i}) :
     Cancellation 4 sys.ge := by
   intro P hvalid hneutral hstrict
@@ -621,7 +621,7 @@ private def restrict3 (A : Set (Fin 4)) : Set (Fin 3) := {i | Fin.castSucc i ∈
 
 /-- Lexicographic extension: the new world `Fin.last 3` dominates; ties break
     by the restriction. -/
-def extendFA (sys : EpistemicSystemFA (Fin 3)) : EpistemicSystemFA (Fin 4) where
+def QualitativeProbability.extendLex (sys : QualitativeProbability (Fin 3)) : QualitativeProbability (Fin 4) where
   ge A B := (Fin.last 3 ∈ A ∧ Fin.last 3 ∉ B) ∨
     ((Fin.last 3 ∈ A ↔ Fin.last 3 ∈ B) ∧ sys.ge (restrict3 A) (restrict3 B))
   mono A B hAB := by
@@ -684,9 +684,9 @@ def extendFA (sys : EpistemicSystemFA (Fin 3)) : EpistemicSystemFA (Fin 4) where
         · exact Or.inr ⟨iff_of_false ha hb, (sys.additive _ _).mpr hge⟩
 
 /-- The extension preserves the absence of null atoms. -/
-private lemma extendFA_no_null (sys : EpistemicSystemFA (Fin 3))
+private lemma extendLex_no_null (sys : QualitativeProbability (Fin 3))
     (hnull : ∀ i : Fin 3, ¬sys.ge ∅ {i}) :
-    ∀ j : Fin 4, ¬(extendFA sys).ge ∅ {j} := by
+    ∀ j : Fin 4, ¬(QualitativeProbability.extendLex sys).ge ∅ {j} := by
   refine Fin.lastCases ?_ ?_
   · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
     · exact h3
@@ -733,8 +733,8 @@ private lemma comparisonVec_map_castSucc (A B : Finset (Fin 3)) (i : Fin 3) :
   simp only [Finset.mem_map']; rfl
 
 /-- Cancellation transfers back along the lexicographic extension. -/
-private theorem cancellation_extendFA (sys : EpistemicSystemFA (Fin 3))
-    (h : Cancellation 4 (extendFA sys).ge) : Cancellation 3 sys.ge := by
+private theorem cancellation_extendLex (sys : QualitativeProbability (Fin 3))
+    (h : Cancellation 4 (QualitativeProbability.extendLex sys).ge) : Cancellation 3 sys.ge := by
   intro P hvalid hneutral hstrict
   refine h (P.map embedComparison) ?_ ?_ ?_
   · -- validity transfers through the restriction
@@ -785,25 +785,25 @@ private theorem cancellation_extendFA (sys : EpistemicSystemFA (Fin 3))
 /-- **Cancellation for Fin 3**, structurally: a null atom reduces to `Fin 2`
     representability; the no-null case extends lexicographically into `Fin 4`
     and pulls back through `no_null_cancellation`. -/
-theorem fa_cancellation_fin3 (sys : EpistemicSystemFA (Fin 3)) :
+theorem fa_cancellation_fin3 (sys : QualitativeProbability (Fin 3)) :
     Cancellation 3 sys.ge := by
   by_cases h : ∃ j, sys.ge ∅ {j}
   · obtain ⟨j, hj⟩ := h
     exact cancellation_of_null_atom sys hj representable_fin2
   · push Not at h
-    exact cancellation_extendFA sys
-      (no_null_cancellation (extendFA sys) (extendFA_no_null sys h))
+    exact cancellation_extendLex sys
+      (no_null_cancellation (QualitativeProbability.extendLex sys) (extendLex_no_null sys h))
 
 /-- **Theorem 8a for Fin 3**: every FA system on three elements is representable —
     now *derived from* Scott cancellation, replacing the former measure-by-measure
     case analysis. -/
-theorem representable_fin3 (sys : EpistemicSystemFA (Fin 3)) : Representable sys :=
+theorem representable_fin3 (sys : QualitativeProbability (Fin 3)) : Representable sys :=
   cancellation_implies_representable sys (fa_cancellation_fin3 sys)
 
 /-- **Theorem 8a (Fin 4), structural**: every FA system on `Fin 4` satisfies
     cancellation. A null atom reduces to `Fin 3`; the no-null case is the merge
     reduction `no_null_cancellation`. -/
-theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
+theorem fa_cancellation_fin4 (sys : QualitativeProbability (Fin 4)) :
     Cancellation 4 sys.ge := by
   by_cases h : ∃ j, sys.ge ∅ {j}
   · obtain ⟨j, hj⟩ := h
@@ -813,7 +813,7 @@ theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
 
 /-- **Theorem 8a for Fin 4**: every FA system on 4 elements is representable.
     Via Scott cancellation — see `Cancellation.lean` for the framework. -/
-theorem representable_fin4 (sys : EpistemicSystemFA (Fin 4)) : Representable sys :=
+theorem representable_fin4 (sys : QualitativeProbability (Fin 4)) : Representable sys :=
   cancellation_implies_representable sys (fa_cancellation_fin4 sys)
 
 end ComparativeProbability

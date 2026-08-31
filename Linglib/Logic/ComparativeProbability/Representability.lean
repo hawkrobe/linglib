@@ -1,29 +1,33 @@
-import Linglib.Core.Order.ComparativeProbability.Systems
+import Linglib.Logic.ComparativeProbability.Systems
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Tauto
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Algebra.BigOperators.Fin
 
 /-!
-# Representability of Epistemic Systems
+# Representability of qualitative probability orders
 
 [kraft-pratt-seidenberg-1959] [holliday-icard-2013]
 
-FA systems on small domains (|W| ≤ 4) are representable by finitely additive
-probability measures (**Theorem 8a**, [kraft-pratt-seidenberg-1959]).
-For every |W| ≥ 5 this fails: padding the KPS counterexample with null atoms
-gives a non-representable FA system at each cardinality (**Theorem 8b**).
+Qualitative probability orders on small domains (|W| ≤ 4) are representable by
+finitely additive probability measures (**Theorem 8a**,
+[kraft-pratt-seidenberg-1959]). For every |W| ≥ 5 this fails: padding the KPS
+counterexample with null atoms gives a non-representable order at each
+cardinality (**Theorem 8b**).
 
 ## Contents
 
 1. **`Representable`**: the representability predicate.
-2. **KPS counterexample** (Fin 5): non-representable FA system (`kpsSystemFA`,
-   `kps_not_representable`); null-atom padding (`padFA`,
+2. **KPS counterexample** (Fin 5): non-representable order (`kpsSystem`,
+   `kps_not_representable`); null-atom padding (`QualitativeProbability.pad`,
    `exists_nonrepresentable_fin`) extends it to every `Fin n` with `n ≥ 5`.
-3. **Shared infrastructure**: injection pullback (`comapFA`), null element
-   reduction (`null_elem_reduce`), transport/permutation (`transportFA`,
-   `perm_repr`)
-4. **Small-cardinality proofs**: Fin 0 (`no_fa_empty`), Fin 1
+3. **Shared infrastructure**: injection pullback
+   (`QualitativeProbability.comap`), null element reduction
+   (`null_elem_reduce`), transport along equivalences
+   (`QualitativeProbability.transport`, `perm_repr`).
+4. **Small-cardinality proofs**: Fin 0 (`QualitativeProbability.elim0`), Fin 1
    (`representable_fin1`), Fin 2 (`representable_fin2`).  Fin 3 and Fin 4 are
    derived from Scott cancellation in `CancellationFin4.lean`
    (`representable_fin3`, `representable_fin4`).
@@ -33,7 +37,7 @@ namespace ComparativeProbability
 
 /-- An FA system is **representable** when some finitely additive probability
     measure induces exactly its comparison relation. -/
-def Representable {W : Type*} (sys : EpistemicSystemFA W) : Prop :=
+def Representable {W : Type*} (sys : QualitativeProbability W) : Prop :=
   ∃ m : FinAddMeasure ℚ W, ∀ A B, sys.ge A B ↔ m.inducedGe A B
 
 -- ── KPS Counterexample Infrastructure ──────────────
@@ -72,49 +76,24 @@ private theorem kps_additive_finset :
       (kpsRank a ≥ kpsRank b) ↔ (kpsRank (a \ b) ≥ kpsRank (b \ a)) := by
   decide
 
-private theorem kps_bottom_finset :
-    kpsRank Finset.univ ≥ kpsRank ∅ := by decide
-
 section KPSSystem
 
 attribute [local instance] Classical.propDecidable
 
-private noncomputable def toFS (A : Set (Fin 5)) : Finset (Fin 5) :=
-  Finset.univ.filter (λ x => x ∈ A)
-
-private theorem toFS_mem (A : Set (Fin 5)) (x : Fin 5) :
-    x ∈ toFS A ↔ x ∈ A := by
-  simp only [toFS, Finset.mem_filter, Finset.mem_univ, true_and]
-
-private theorem toFS_univ : toFS (Set.univ : Set (Fin 5)) = Finset.univ := by
-  ext x; simp only [toFS_mem, Set.mem_univ, Finset.mem_univ]
-
-private theorem toFS_empty : toFS (∅ : Set (Fin 5)) = ∅ := by
-  ext x; simp [toFS_mem]
-
-private theorem toFS_diff (A B : Set (Fin 5)) :
-    toFS (A \ B) = toFS A \ toFS B := by
-  ext x; simp only [toFS_mem, Set.mem_sdiff, Finset.mem_sdiff]
-
-private theorem toFS_subset (A B : Set (Fin 5)) :
-    A ⊆ B ↔ toFS A ⊆ toFS B :=
-  ⟨fun h x hx => by rw [toFS_mem] at hx ⊢; exact h hx,
-   fun h x hx => (toFS_mem B x).mp (h ((toFS_mem A x).mpr hx))⟩
-
-private noncomputable def kpsRankSet (A : Set (Fin 5)) : ℕ := kpsRank (toFS A)
+private noncomputable def kpsRankSet (A : Set (Fin 5)) : ℕ := kpsRank A.toFinset
 private noncomputable def kpsGe (A B : Set (Fin 5)) : Prop := kpsRankSet A ≥ kpsRankSet B
 
-noncomputable def kpsSystemFA : EpistemicSystemFA (Fin 5) where
+noncomputable def kpsSystem : QualitativeProbability (Fin 5) where
   ge := kpsGe
-  mono := λ {A B} hAB => kps_mono_finset _ _ ((toFS_subset A B).mp hAB)
+  mono := λ {A B} hAB => kps_mono_finset _ _ (Set.toFinset_subset_toFinset.mpr hAB)
   nonTrivial := by
-    simp only [kpsGe, kpsRankSet, toFS_univ, toFS_empty]; decide
+    simp only [kpsGe, kpsRankSet, Set.toFinset_univ, Set.toFinset_empty]; decide
   total := λ A B => le_total (kpsRankSet B) (kpsRankSet A)
   trans := λ {_ _ _} hab hbc => le_trans hbc hab
   additive A B := by
-    show kpsRank (toFS A) ≥ kpsRank (toFS B) ↔
-         kpsRank (toFS (A \ B)) ≥ kpsRank (toFS (B \ A))
-    rw [toFS_diff, toFS_diff]; exact kps_additive_finset (toFS A) (toFS B)
+    unfold kpsGe kpsRankSet
+    rw [Set.toFinset_sdiff, Set.toFinset_sdiff]
+    exact kps_additive_finset _ _
 
 private theorem mu_pair (m : FinAddMeasure ℚ (Fin 5)) (a b : Fin 5) (hab : a ≠ b) :
     m.mu ({a, b} : Set (Fin 5)) = m.mu {a} + m.mu {b} := by
@@ -131,7 +110,7 @@ private theorem mu_triple (m : FinAddMeasure ℚ (Fin 5)) (a b c : Fin 5)
       exacts [absurd rfl hab, absurd rfl hac]),
     mu_pair m b c hbc, add_assoc]
 
-theorem kps_not_representable : ¬Representable kpsSystemFA := by
+theorem kps_not_representable : ¬Representable kpsSystem := by
   intro ⟨m, hm⟩
   set P := m.mu ({(0 : Fin 5)} : Set (Fin 5))
   set Q := m.mu ({(1 : Fin 5)} : Set (Fin 5))
@@ -141,20 +120,16 @@ theorem kps_not_representable : ¬Representable kpsSystemFA := by
   -- Ordering facts: three strict (rank <), one weak (rank ≥)
   have hord1 : ¬ kpsGe ({1, 3} : Set (Fin 5)) {0} := by
     unfold kpsGe kpsRankSet
-    rw [show toFS ({1, 3} : Set (Fin 5)) = {1, 3} by ext x; simp [toFS_mem],
-        show toFS ({(0 : Fin 5)} : Set (Fin 5)) = {0} by ext x; simp [toFS_mem]]; decide
+    simp only [Set.toFinset_insert, Set.toFinset_singleton]; decide
   have hord2 : ¬ kpsGe ({0, 1} : Set (Fin 5)) {2, 3} := by
     unfold kpsGe kpsRankSet
-    rw [show toFS ({0, 1} : Set (Fin 5)) = {0, 1} by ext x; simp [toFS_mem],
-        show toFS ({2, 3} : Set (Fin 5)) = {2, 3} by ext x; simp [toFS_mem]]; decide
+    simp only [Set.toFinset_insert, Set.toFinset_singleton]; decide
   have hord3 : ¬ kpsGe ({0, 3} : Set (Fin 5)) {1, 4} := by
     unfold kpsGe kpsRankSet
-    rw [show toFS ({0, 3} : Set (Fin 5)) = {0, 3} by ext x; simp [toFS_mem],
-        show toFS ({1, 4} : Set (Fin 5)) = {1, 4} by ext x; simp [toFS_mem]]; decide
+    simp only [Set.toFinset_insert, Set.toFinset_singleton]; decide
   have hord4 : kpsGe ({0, 1, 3} : Set (Fin 5)) {2, 4} := by
     unfold kpsGe kpsRankSet
-    rw [show toFS ({0, 1, 3} : Set (Fin 5)) = {0, 1, 3} by ext x; simp [toFS_mem],
-        show toFS ({2, 4} : Set (Fin 5)) = {2, 4} by ext x; simp [toFS_mem]]; decide
+    simp only [Set.toFinset_insert, Set.toFinset_singleton]; decide
   -- Convert to measure inequalities via the representation isomorphism
   have hmeas1 : m.mu ({1, 3} : Set _) < m.mu ({(0 : Fin 5)} : Set _) :=
     not_le.mp (λ h => hord1 ((hm _ _).mpr h))
@@ -189,7 +164,7 @@ attribute [local instance] Classical.propDecidable
 
 /-- Agreement on disjoint pairs suffices for full representability (Axiom A
     reduces every comparison to a disjoint one). -/
-theorem reduce_to_disjoint {W : Type*} (sys : EpistemicSystemFA W)
+theorem reduce_to_disjoint {W : Type*} (sys : QualitativeProbability W)
     (m : FinAddMeasure ℚ W)
     (h : ∀ C D : Set W, Disjoint C D → (sys.ge C D ↔ m.inducedGe C D)) :
     ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
@@ -201,20 +176,15 @@ theorem reduce_to_disjoint {W : Type*} (sys : EpistemicSystemFA W)
 
 /-- Removing a null element (`sys.ge ∅ {j}`) from both sides of a disjoint
     comparison preserves `ge`. -/
-theorem null_removal_disjoint {W : Type*} (sys : EpistemicSystemFA W)
+theorem null_removal_disjoint {W : Type*} (sys : QualitativeProbability W)
     (j : W) (hj : sys.ge ∅ {j})
     (C D : Set W) (hdisj : Disjoint C D) :
     sys.ge C D ↔ sys.ge (C \ {j}) (D \ {j}) := by
   have null_sub : ∀ S : Set W, sys.ge (S \ {j}) S := by
     intro S
     by_cases hj_in : j ∈ S
-    · rw [sys.additive (S \ {j}) S,
-        show (S \ {j}) \ S = ∅ by
-          ext x; simp only [Set.mem_sdiff, Set.mem_empty_iff_false, iff_false]; tauto,
-        show S \ (S \ {j}) = {j} by
-          ext x; simp only [Set.mem_sdiff, Set.mem_singleton_iff]
-          exact ⟨fun ⟨hx, hn⟩ => by by_contra hne; exact hn ⟨hx, hne⟩,
-            by rintro rfl; exact ⟨hj_in, fun ⟨_, h⟩ => h rfl⟩⟩]
+    · rw [sys.additive (S \ {j}) S, Set.sdiff_eq_empty.mpr Set.sdiff_subset,
+        Set.sdiff_sdiff_cancel_left (Set.singleton_subset_iff.mpr hj_in)]
       exact hj
     · rw [Set.sdiff_singleton_eq_self hj_in]; exact sys.refl S
   by_cases hjC : j ∈ C
@@ -237,9 +207,9 @@ private theorem succ_image_preimage {n : ℕ} (S : Set (Fin (n + 1))) :
 
 /-- Pull back an FA system along an injection: `α`-propositions compare via their
     images. Non-triviality requires a witness and must be supplied. -/
-def comapFA {α W : Type*} (f : α → W) (hf : Function.Injective f)
-    (sys : EpistemicSystemFA W) (hnt : ¬sys.ge ∅ (Set.range f)) :
-    EpistemicSystemFA α where
+def QualitativeProbability.comap {α W : Type*} (f : α → W) (hf : Function.Injective f)
+    (sys : QualitativeProbability W) (hnt : ¬sys.ge ∅ (Set.range f)) :
+    QualitativeProbability α where
   ge A B := sys.ge (f '' A) (f '' B)
   mono _ _ hAB := sys.mono _ _ (Set.image_mono hAB)
   nonTrivial := by
@@ -253,33 +223,29 @@ def comapFA {α W : Type*} (f : α → W) (hf : Function.Injective f)
 
 /-- Null element reduction: if atom 0 is null in an FA system on `Fin (n+2)` and
     some atom is not, representability reduces along `Fin.succ` to `Fin (n+1)`. -/
-theorem null_elem_reduce {n : ℕ} (sys : EpistemicSystemFA (Fin (n + 2)))
+theorem null_elem_reduce {n : ℕ} (sys : QualitativeProbability (Fin (n + 2)))
     (hn0 : sys.ge ∅ {(0 : Fin (n + 2))})
     (hnn : ∃ i : Fin (n + 1), ¬sys.ge ∅ {Fin.succ i})
-    (sub_repr : ∀ sys' : EpistemicSystemFA (Fin (n + 1)), Representable sys') :
+    (sub_repr : ∀ sys' : QualitativeProbability (Fin (n + 1)), Representable sys') :
     Representable sys := by
   have hnt : ¬sys.ge ∅ (Set.range (Fin.succ : Fin (n + 1) → Fin (n + 2))) := by
     obtain ⟨i, hi⟩ := hnn
     exact fun h => hi (sys.trans _ _ _ h
       (sys.mono _ _ (Set.singleton_subset_iff.mpr ⟨i, rfl⟩)))
-  obtain ⟨m_r, hm_r⟩ := sub_repr (comapFA Fin.succ (Fin.succ_injective _) sys hnt)
+  obtain ⟨m_r, hm_r⟩ := sub_repr (sys.comap Fin.succ (Fin.succ_injective _) hnt)
   -- lift the sub-measure (the null element gets weight 0)
-  refine ⟨{
-    mu := fun A => m_r.mu (Fin.succ ⁻¹' A)
-    nonneg := fun A => m_r.nonneg _
-    additive := fun A B hdisj => by
-      rw [Set.preimage_union]; exact m_r.additive _ _ (hdisj.preimage _)
-    total := by rw [Set.preimage_univ]; exact m_r.total
-  }, reduce_to_disjoint sys _ (fun C D hdisj => ?_)⟩
+  refine ⟨m_r.map Fin.succ, reduce_to_disjoint sys _ (fun C D hdisj => ?_)⟩
   rw [null_removal_disjoint sys 0 hn0 C D hdisj,
       ← succ_image_preimage C, ← succ_image_preimage D]
   exact hm_r (Fin.succ ⁻¹' C) (Fin.succ ⁻¹' D)
 
 -- ── Card 0: impossible ─────────────────────────────
 
-theorem no_fa_empty (sys : EpistemicSystemFA (Fin 0)) : False := by
+/-- There is no qualitative probability order on an empty carrier: `∅ = Ω`
+    contradicts non-triviality. Mirrors `Fin.elim0`. -/
+def QualitativeProbability.elim0 {C : Sort*} (sys : QualitativeProbability (Fin 0)) : C := by
   have : (∅ : Set (Fin 0)) = Set.univ := by ext x; exact Fin.elim0 x
-  exact sys.nonTrivial (this ▸ sys.refl ∅)
+  exact absurd (this ▸ sys.refl ∅) sys.nonTrivial
 
 -- ── Card 1 ─────────────────────────────────────────
 
@@ -288,68 +254,35 @@ private theorem set_fin1_eq (A : Set (Fin 1)) : A = ∅ ∨ A = Set.univ := by
   · right; ext x; simp [Fin.eq_zero x, h]
   · left; ext x; exact ⟨fun hx => absurd (Fin.eq_zero x ▸ hx) h, fun hx => hx.elim⟩
 
-private noncomputable def measure_fin1 : FinAddMeasure ℚ (Fin 1) where
-  mu := fun A => if (0 : Fin 1) ∈ A then 1 else 0
-  nonneg := fun A => by split <;> norm_num
-  additive := fun A B hdisj => by
-    by_cases h0A : (0 : Fin 1) ∈ A <;> by_cases h0B : (0 : Fin 1) ∈ B
-    · exact absurd h0B (Set.disjoint_left.mp hdisj h0A)
-    · simp [Set.mem_union, h0A, h0B]
-    · simp [Set.mem_union, h0A, h0B]
-    · simp [h0A, h0B, show (0 : Fin 1) ∉ A ∪ B from fun h => h.elim h0A h0B]
-  total := by simp [Set.mem_univ]
+private noncomputable def measure_fin1 : FinAddMeasure ℚ (Fin 1) :=
+  .ofFintype ![1] (by intro i; fin_cases i; norm_num) (by simp)
 
-theorem representable_fin1 (sys : EpistemicSystemFA (Fin 1)) : Representable sys := by
+theorem representable_fin1 (sys : QualitativeProbability (Fin 1)) : Representable sys := by
   refine ⟨measure_fin1, fun A B => ?_⟩
+  have hme := measure_fin1.mu_empty
+  have hu := measure_fin1.total
   rcases set_fin1_eq A with rfl | rfl <;> rcases set_fin1_eq B with rfl | rfl
   · exact ⟨fun _ => le_refl _, fun _ => sys.refl _⟩
   · exact ⟨fun h => absurd h sys.nonTrivial,
-          fun h => by simp [FinAddMeasure.inducedGe, measure_fin1, Set.mem_univ] at h; linarith⟩
-  · exact ⟨fun _ => by simp [FinAddMeasure.inducedGe, measure_fin1, Set.mem_univ],
+          fun h => by simp only [FinAddMeasure.inducedGe] at h; linarith⟩
+  · exact ⟨fun _ => by simp only [FinAddMeasure.inducedGe]; rw [hme, hu]; norm_num,
           fun _ => sys.mono _ _ (Set.empty_subset _)⟩
   · exact ⟨fun _ => le_refl _, fun _ => sys.refl _⟩
 
 -- ── Card 2: Infrastructure ──────────────────────────
 
 private noncomputable def measure_fin2 (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
-    FinAddMeasure ℚ (Fin 2) where
-  mu := fun A =>
-    (if (0 : Fin 2) ∈ A then a else 0) + (if (1 : Fin 2) ∈ A then 1 - a else 0)
-  nonneg := fun A => add_nonneg (by split <;> [exact ha; exact le_refl _])
-    (by split <;> [linarith; exact le_refl _])
-  additive := fun A B hdisj => by
-    have hd : ∀ x ∈ A, x ∉ B := fun x hx => Set.disjoint_left.mp hdisj hx
-    simp only [Set.mem_union]
-    by_cases h0A : (0 : Fin 2) ∈ A <;> by_cases h0B : (0 : Fin 2) ∈ B <;>
-    by_cases h1A : (1 : Fin 2) ∈ A <;> by_cases h1B : (1 : Fin 2) ∈ B <;>
-    simp_all
-  total := by simp only [Set.mem_univ, ite_true]; linarith
-
-private theorem measure_fin2_mu (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) (A : Set (Fin 2)) :
-    (measure_fin2 a ha ha1).mu A =
-    (if (0 : Fin 2) ∈ A then a else 0) + (if (1 : Fin 2) ∈ A then 1 - a else 0) := rfl
-
-private theorem mf2_empty (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
-    (measure_fin2 a ha ha1).mu ∅ = 0 := by
-  rw [measure_fin2_mu]; simp
+    FinAddMeasure ℚ (Fin 2) :=
+  .ofFintype ![a, 1 - a] (by intro i; fin_cases i <;> simp <;> linarith)
+    (by simp [Fin.sum_univ_two])
 
 private theorem mf2_zero (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
     (measure_fin2 a ha ha1).mu {(0 : Fin 2)} = a := by
-  rw [measure_fin2_mu, if_pos (show (0 : Fin 2) ∈ ({(0 : Fin 2)} : Set _) from rfl),
-    if_neg (show (1 : Fin 2) ∉ ({(0 : Fin 2)} : Set _) by
-      simp only [Set.mem_singleton_iff]; exact fun h => absurd (Fin.ext_iff.mp h) (by omega))]
-  linarith
+  simp [measure_fin2]
 
 private theorem mf2_one (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
     (measure_fin2 a ha ha1).mu {(1 : Fin 2)} = 1 - a := by
-  rw [measure_fin2_mu, if_neg (show (0 : Fin 2) ∉ ({(1 : Fin 2)} : Set _) by
-      simp only [Set.mem_singleton_iff]; exact fun h => absurd (Fin.ext_iff.mp h) (by omega)),
-    if_pos (show (1 : Fin 2) ∈ ({(1 : Fin 2)} : Set _) from rfl)]
-  linarith
-
-private theorem mf2_univ (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
-    (measure_fin2 a ha ha1).mu (Set.univ : Set (Fin 2)) = 1 := by
-  rw [measure_fin2_mu]; simp only [Set.mem_univ, ite_true]; linarith
+  simp [measure_fin2]
 
 private theorem set_fin2_eq (A : Set (Fin 2)) :
     A = ∅ ∨ A = {0} ∨ A = {1} ∨ A = Set.univ := by
@@ -359,7 +292,7 @@ private theorem set_fin2_eq (A : Set (Fin 2)) :
   · right; right; left; ext x; fin_cases x <;> simp_all
   · left; ext x; fin_cases x <;> simp_all
 
-private theorem not_both_null_fin2 (sys : EpistemicSystemFA (Fin 2)) :
+private theorem not_both_null_fin2 (sys : QualitativeProbability (Fin 2)) :
     ¬(sys.ge ∅ {0} ∧ sys.ge ∅ {1}) := by
   intro ⟨h0, h1⟩
   have hd1 : ({(0 : Fin 2)} : Set _) \ Set.univ = ∅ := by ext x; simp
@@ -375,21 +308,19 @@ private theorem not_both_null_fin2 (sys : EpistemicSystemFA (Fin 2)) :
     The 7 non-disjoint pairs close by exfalso.
     The 5 uniform pairs (∅/∅, X/∅, ∅/univ) are independent of the ordering.
     The 4 critical pairs (∅/{0}, ∅/{1}, {0}/{1}, {1}/{0}) use the hypotheses. -/
-private theorem fin2_dispatch (sys : EpistemicSystemFA (Fin 2))
+private theorem fin2_dispatch (sys : QualitativeProbability (Fin 2))
     (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1)
-    (hme : (measure_fin2 a ha ha1).mu ∅ = 0)
-    (hm0 : (measure_fin2 a ha ha1).mu {(0 : Fin 2)} = a)
-    (hm1 : (measure_fin2 a ha ha1).mu {(1 : Fin 2)} = 1 - a)
-    (hmu : (measure_fin2 a ha ha1).mu (Set.univ : Set (Fin 2)) = 1)
-    -- Ordering hypotheses matching measure values
     (he0 : sys.ge ∅ {(0 : Fin 2)} ↔ a ≤ 0)
     (he1 : sys.ge ∅ {(1 : Fin 2)} ↔ 1 - a ≤ 0)
     (h01 : sys.ge {(0 : Fin 2)} {1} ↔ a ≥ 1 - a)
-    (h10 : sys.ge {(1 : Fin 2)} {0} ↔ 1 - a ≥ a)
-    :
+    (h10 : sys.ge {(1 : Fin 2)} {0} ↔ 1 - a ≥ a) :
     ∀ C D : Set (Fin 2), Disjoint C D →
       (sys.ge C D ↔ (measure_fin2 a ha ha1).inducedGe C D) := by
   intro C D hCD
+  have hme := (measure_fin2 a ha ha1).mu_empty
+  have hm0 := mf2_zero a ha ha1
+  have hm1 := mf2_one a ha ha1
+  have hmu := (measure_fin2 a ha ha1).total
   have hdisj : ∀ x ∈ C, x ∉ D := fun x hx => Set.disjoint_left.mp hCD hx
   rcases set_fin2_eq C with rfl | rfl | rfl | rfl <;>
   rcases set_fin2_eq D with rfl | rfl | rfl | rfl
@@ -433,7 +364,7 @@ private theorem fin2_dispatch (sys : EpistemicSystemFA (Fin 2))
 
 -- ── Card 2: Main theorem ───────────────────────────
 
-theorem representable_fin2 (sys : EpistemicSystemFA (Fin 2)) : Representable sys := by
+theorem representable_fin2 (sys : QualitativeProbability (Fin 2)) : Representable sys := by
   by_cases h_null0 : sys.ge ∅ {(0 : Fin 2)}
   · -- Case 1: ge ∅ {0} → a = 0
     have h_nnull1 : ¬sys.ge ∅ {(1 : Fin 2)} := fun h => not_both_null_fin2 sys ⟨h_null0, h⟩
@@ -443,8 +374,7 @@ theorem representable_fin2 (sys : EpistemicSystemFA (Fin 2)) : Representable sys
       (sys.total {(1 : Fin 2)} {0}).resolve_right h_nge01
     refine ⟨measure_fin2 0 le_rfl zero_le_one,
       reduce_to_disjoint sys _ (fin2_dispatch sys 0 le_rfl zero_le_one
-        (mf2_empty ..) (mf2_zero ..) (mf2_one ..) (mf2_univ ..)
-        ⟨fun _ => le_refl _, fun _ => h_null0⟩
+                ⟨fun _ => le_refl _, fun _ => h_null0⟩
         ⟨fun h => absurd h h_nnull1, fun h => by linarith⟩
         ⟨fun h => absurd h h_nge01, fun h => by linarith⟩
         ⟨fun _ => by linarith, fun _ => h_ge10⟩)⟩
@@ -456,8 +386,7 @@ theorem representable_fin2 (sys : EpistemicSystemFA (Fin 2)) : Representable sys
         (sys.total {(0 : Fin 2)} {1}).resolve_right h_nge10
       refine ⟨measure_fin2 1 zero_le_one le_rfl,
         reduce_to_disjoint sys _ (fin2_dispatch sys 1 zero_le_one le_rfl
-          (mf2_empty ..) (mf2_zero ..) (mf2_one ..) (mf2_univ ..)
-          ⟨fun h => absurd h h_null0, fun h => by linarith⟩
+                    ⟨fun h => absurd h h_null0, fun h => by linarith⟩
           ⟨fun _ => by linarith, fun _ => h_null1⟩
           ⟨fun _ => by linarith, fun _ => h_ge01⟩
           ⟨fun h => absurd h h_nge10, fun h => by linarith⟩)⟩
@@ -467,16 +396,14 @@ theorem representable_fin2 (sys : EpistemicSystemFA (Fin 2)) : Representable sys
         · -- Case 3c: ge {0} {1} ∧ ge {1} {0} → a = 1/2
           refine ⟨measure_fin2 (1/2) (by linarith) (by linarith),
             reduce_to_disjoint sys _ (fin2_dispatch sys (1/2) (by linarith) (by linarith)
-              (mf2_empty ..) (mf2_zero ..) (mf2_one ..) (mf2_univ ..)
-              ⟨fun h => absurd h h_null0, fun h => by linarith⟩
+                            ⟨fun h => absurd h h_null0, fun h => by linarith⟩
               ⟨fun h => absurd h h_null1, fun h => by linarith⟩
               ⟨fun _ => by linarith, fun _ => h01⟩
               ⟨fun _ => by linarith, fun _ => h10⟩)⟩
         · -- Case 3a: ge {0} {1} ∧ ¬ge {1} {0} → a = 2/3
           refine ⟨measure_fin2 (2/3) (by linarith) (by linarith),
             reduce_to_disjoint sys _ (fin2_dispatch sys (2/3) (by linarith) (by linarith)
-              (mf2_empty ..) (mf2_zero ..) (mf2_one ..) (mf2_univ ..)
-              ⟨fun h => absurd h h_null0, fun h => by linarith⟩
+                            ⟨fun h => absurd h h_null0, fun h => by linarith⟩
               ⟨fun h => absurd h h_null1, fun h => by linarith⟩
               ⟨fun _ => by linarith, fun _ => h01⟩
               ⟨fun h => absurd h h10, fun h => by linarith⟩)⟩
@@ -485,54 +412,50 @@ theorem representable_fin2 (sys : EpistemicSystemFA (Fin 2)) : Representable sys
           (sys.total {(1 : Fin 2)} {0}).resolve_right h01
         refine ⟨measure_fin2 (1/3) (by linarith) (by linarith),
           reduce_to_disjoint sys _ (fin2_dispatch sys (1/3) (by linarith) (by linarith)
-            (mf2_empty ..) (mf2_zero ..) (mf2_one ..) (mf2_univ ..)
-            ⟨fun h => absurd h h_null0, fun h => by linarith⟩
+                        ⟨fun h => absurd h h_null0, fun h => by linarith⟩
             ⟨fun h => absurd h h_null1, fun h => by linarith⟩
             ⟨fun h => absurd h h01, fun h => by linarith⟩
             ⟨fun _ => by linarith, fun _ => h10⟩)⟩
 
 -- ── Transport + Permutation infrastructure ────────────
 
-def transportFA {W α : Type*} (e : W ≃ α)
-    (sys : EpistemicSystemFA W) : EpistemicSystemFA α :=
-  comapFA e.symm e.symm.injective sys
+/-- Transport an FA system along an equivalence of carriers. -/
+def QualitativeProbability.transport {W α : Type*} (e : W ≃ α)
+    (sys : QualitativeProbability W) : QualitativeProbability α :=
+  sys.comap e.symm e.symm.injective
     (by rw [Equiv.range_eq_univ]; exact sys.nonTrivial)
 
-def transportMeasure {W α : Type*}
-    (e : W ≃ α) (m : FinAddMeasure ℚ α) : FinAddMeasure ℚ W where
-  mu := fun A => m.mu (e '' A)
-  nonneg := fun A => m.nonneg _
-  additive := fun A B hdisj => by
-    rw [Set.image_union]; exact m.additive _ _ ((Set.disjoint_image_iff e.injective).mpr hdisj)
-  total := by rw [Set.image_univ_of_surjective e.surjective]; exact m.total
-
 theorem transfer_repr {W α : Type*}
-    (e : W ≃ α) (sys : EpistemicSystemFA W) (m : FinAddMeasure ℚ α)
-    (hm : ∀ A B : Set α, (transportFA e sys).ge A B ↔ m.inducedGe A B) :
-    ∀ A B : Set W, sys.ge A B ↔ (transportMeasure e m).inducedGe A B := by
+    (e : W ≃ α) (sys : QualitativeProbability W) (m : FinAddMeasure ℚ α)
+    (hm : ∀ A B : Set α, (sys.transport e).ge A B ↔ m.inducedGe A B) :
+    ∀ A B : Set W, sys.ge A B ↔ (m.map e.symm).inducedGe A B := by
   intro A B
   have h := hm (e '' A) (e '' B)
-  simpa only [transportFA, comapFA, Equiv.symm_image_image, transportMeasure,
-    FinAddMeasure.inducedGe] using h
+  simp only [QualitativeProbability.transport, QualitativeProbability.comap,
+    Equiv.symm_image_image] at h
+  simpa only [FinAddMeasure.inducedGe, FinAddMeasure.map_mu,
+    ← Equiv.image_eq_preimage_symm] using h
 
-/-- Null pattern transport: j is null in `transportFA σ sys` iff `σ.symm j` is null in `sys`. -/
+/-- Null pattern transport: `j` is null in `sys.transport σ` iff `σ.symm j` is
+    null in `sys`. -/
 theorem perm_null_iff {n : ℕ} (σ : Fin n ≃ Fin n)
-    (sys : EpistemicSystemFA (Fin n)) (j : Fin n) :
-    (transportFA σ sys).ge ∅ {j} ↔ sys.ge ∅ {σ.symm j} := by
+    (sys : QualitativeProbability (Fin n)) (j : Fin n) :
+    (sys.transport σ).ge ∅ {j} ↔ sys.ge ∅ {σ.symm j} := by
   show sys.ge (σ.symm '' ∅) (σ.symm '' {j}) ↔ sys.ge ∅ {σ.symm j}
   simp only [Set.image_empty, Set.image_singleton]
 
 /-- Representability transports backward along any equivalence. -/
-theorem perm_repr {W α : Type*} (σ : W ≃ α) (sys : EpistemicSystemFA W)
-    (h : Representable (transportFA σ sys)) : Representable sys := by
+theorem perm_repr {W α : Type*} (σ : W ≃ α) (sys : QualitativeProbability W)
+    (h : Representable (sys.transport σ)) : Representable sys := by
   obtain ⟨m, hm⟩ := h
-  exact ⟨transportMeasure σ m, transfer_repr σ sys m hm⟩
+  exact ⟨m.map σ.symm, transfer_repr σ sys m hm⟩
 
 -- ── Null-atom padding: Theorem 8b at every cardinality ≥ 5 ──
 
 /-- Pad an FA system with one null atom: comparisons on `Fin (n + 1)` are decided
     by the preimage restriction to the first `n` atoms. -/
-def padFA {n : ℕ} (sys : EpistemicSystemFA (Fin n)) : EpistemicSystemFA (Fin (n + 1)) where
+def QualitativeProbability.pad {n : ℕ} (sys : QualitativeProbability (Fin n)) :
+    QualitativeProbability (Fin (n + 1)) where
   ge A B := sys.ge (Fin.castSucc ⁻¹' A) (Fin.castSucc ⁻¹' B)
   mono _ _ hAB := sys.mono _ _ (Set.preimage_mono hAB)
   nonTrivial := by
@@ -545,21 +468,21 @@ def padFA {n : ℕ} (sys : EpistemicSystemFA (Fin n)) : EpistemicSystemFA (Fin (
     rw [Set.preimage_sdiff, Set.preimage_sdiff]; exact sys.additive _ _
 
 /-- The padded atom is null. -/
-theorem padFA_last_null {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
-    (padFA sys).ge ∅ {Fin.last n} := by
+theorem QualitativeProbability.pad_last_null {n : ℕ} (sys : QualitativeProbability (Fin n)) :
+    sys.pad.ge ∅ {Fin.last n} := by
   show sys.ge (Fin.castSucc ⁻¹' ∅) (Fin.castSucc ⁻¹' {Fin.last n})
   rw [Set.preimage_empty, show Fin.castSucc ⁻¹' {Fin.last n} = (∅ : Set (Fin n)) from
     Set.eq_empty_of_forall_notMem fun i hi => (Fin.castSucc_lt_last i).ne hi]; exact sys.refl ∅
 
-/-- Padding reflects representability: a measure for `padFA sys` assigns the
+/-- Padding reflects representability: a measure for `sys.pad` assigns the
     padded atom measure zero, so its `Fin.castSucc`-image restriction represents
     `sys`. -/
-theorem representable_of_padFA {n : ℕ} {sys : EpistemicSystemFA (Fin n)}
-    (h : Representable (padFA sys)) : Representable sys := by
+theorem representable_of_pad {n : ℕ} {sys : QualitativeProbability (Fin n)}
+    (h : Representable sys.pad) : Representable sys := by
   obtain ⟨m, hm⟩ := h
   have hinj := Fin.castSucc_injective n
   have hlast : m.mu {Fin.last n} = 0 := by
-    have h0 : m.mu ∅ ≥ m.mu {Fin.last n} := (hm _ _).mp (padFA_last_null sys)
+    have h0 : m.mu ∅ ≥ m.mu {Fin.last n} := (hm _ _).mp sys.pad_last_null
     rw [m.mu_empty] at h0; linarith [m.nonneg {Fin.last n}]
   have hcover : Fin.castSucc '' (Set.univ : Set (Fin n)) ∪ {Fin.last n} = Set.univ := by
     rw [Set.image_univ]
@@ -581,18 +504,18 @@ theorem representable_of_padFA {n : ℕ} {sys : EpistemicSystemFA (Fin n)}
     total := htotal
   }, fun A B => ?_⟩
   have key := hm (Fin.castSucc '' A) (Fin.castSucc '' B)
-  rwa [show (padFA sys).ge (Fin.castSucc '' A) (Fin.castSucc '' B) ↔ sys.ge A B from by
+  rwa [show sys.pad.ge (Fin.castSucc '' A) (Fin.castSucc '' B) ↔ sys.ge A B from by
     show sys.ge (Fin.castSucc ⁻¹' (Fin.castSucc '' A)) _ ↔ _
     rw [Set.preimage_image_eq A hinj, Set.preimage_image_eq B hinj]] at key
 
 /-- **Theorem 8b at every cardinality**: for `n ≥ 5` there is a non-representable
     FA system on `Fin n` — the KPS counterexample, padded with null atoms. -/
 theorem exists_nonrepresentable_fin {n : ℕ} (h : 5 ≤ n) :
-    ∃ sys : EpistemicSystemFA (Fin n), ¬Representable sys := by
+    ∃ sys : QualitativeProbability (Fin n), ¬Representable sys := by
   induction n, h using Nat.le_induction with
-  | base => exact ⟨kpsSystemFA, kps_not_representable⟩
+  | base => exact ⟨kpsSystem, kps_not_representable⟩
   | succ n _ ih =>
     obtain ⟨sys, hsys⟩ := ih
-    exact ⟨padFA sys, fun h => hsys (representable_of_padFA h)⟩
+    exact ⟨sys.pad, fun h => hsys (representable_of_pad h)⟩
 
 end ComparativeProbability

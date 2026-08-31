@@ -1,4 +1,4 @@
-import Linglib.Core.Order.ComparativeProbability.Defs
+import Linglib.Logic.ComparativeProbability.Defs
 
 /-!
 # Validity patterns for comparative probability

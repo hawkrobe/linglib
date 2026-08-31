@@ -43,7 +43,7 @@ probability operators (`EpistemicProbability.lean`) by defining
 The indirect path from Kratzer ordering to RSA worldPrior goes through
 [holliday-icard-2013]'s epistemic likelihood hierarchy:
 
-    Kratzer ordering → l-lifting → EpistemicSystemW → ... → RSA worldPrior
+    Kratzer ordering → l-lifting → qualitative probability → ... → RSA worldPrior
 
 This formalization provides [fagin-halpern-1994]'s more direct
 path: a `KripkeKP` structure already packages both the accessibility

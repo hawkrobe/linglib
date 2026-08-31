@@ -1,5 +1,5 @@
 import Linglib.Core.Order.FourierMotzkin
-import Linglib.Core.Order.ComparativeProbability.Representability
+import Linglib.Logic.ComparativeProbability.Representability
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
@@ -189,7 +189,7 @@ theorem representable_implies_cancellation {n : ℕ}
     The ↔ (rather than →) is essential: the forward direction ensures the
     measure respects the ordering, while the backward direction ensures
     strictness is preserved (no spurious ties). -/
-def feasibleWeights (n : ℕ) (sys : EpistemicSystemFA (Fin n)) : Set (Fin n → ℚ) :=
+def feasibleWeights (n : ℕ) (sys : QualitativeProbability (Fin n)) : Set (Fin n → ℚ) :=
   { p | (∀ i, 0 ≤ p i) ∧
         Finset.univ.sum p = 1 ∧
         ∀ (A B : Finset (Fin n)), Disjoint A B →
@@ -212,7 +212,7 @@ private theorem atomMu_eq_finset_sum {n : ℕ} (p : Fin n → ℚ) (S : Finset (
     from a pointwise membership case split. Representation (ge ↔ μ(A) ≥ μ(B))
     reduces to disjoint pairs via `reduce_to_disjoint` (using FA's Axiom A),
     then applies the ↔ condition from `feasibleWeights`. -/
-private theorem feasible_to_measure {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+private theorem feasible_to_measure {n : ℕ} (sys : QualitativeProbability (Fin n))
     {p : Fin n → ℚ} (hp : p ∈ feasibleWeights n sys) :
     Representable sys := by
   obtain ⟨hnn, hsum, hcompat⟩ := hp
@@ -257,7 +257,7 @@ private theorem feasible_to_measure {n : ℕ} (sys : EpistemicSystemFA (Fin n))
 -- ── Step 4a. Not all singletons null ─────────────
 
 /-- If all singletons are null, then ∅ ≿ S for any finset S (by FA induction). -/
-private lemma ge_empty_of_all_null {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+private lemma ge_empty_of_all_null {n : ℕ} (sys : QualitativeProbability (Fin n))
     (hall : ∀ i, sys.ge ∅ {i}) (S : Finset (Fin n)) : sys.ge ∅ ↑S := by
   induction S using Finset.induction_on with
   | empty => simp only [Finset.coe_empty]; exact sys.refl ∅
@@ -277,7 +277,7 @@ private lemma ge_empty_of_all_null {n : ℕ} (sys : EpistemicSystemFA (Fin n))
 
 /-- Not all singletons can be null: ∃ i, ¬sys.ge ∅ {i}. If all were null,
     FA induction gives sys.ge ∅ Set.univ, contradicting nonTrivial. -/
-theorem not_all_null {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
+theorem not_all_null {n : ℕ} (sys : QualitativeProbability (Fin n)) :
     ∃ i : Fin n, ¬sys.ge ∅ {i} := by
   by_contra hall; push Not at hall
   exact sys.nonTrivial (by rw [← Finset.coe_univ]; exact ge_empty_of_all_null sys hall _)
@@ -303,24 +303,24 @@ private lemma compVec_as_sum_diff {n : ℕ} (A B : Finset (Fin n)) (x : Fin n �
     simp_all [Finset.disjoint_left.mp hdisj]
 
 /-- All disjoint `ge`-pairs: disjoint (A, B) where `sys.ge ↑A ↑B`. -/
-private noncomputable def gePairsOf {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
+private noncomputable def gePairsOf {n : ℕ} (sys : QualitativeProbability (Fin n)) :
     List (Finset (Fin n) × Finset (Fin n)) :=
   ((Finset.univ ×ˢ Finset.univ : Finset _).filter
     (fun ab => Disjoint ab.1 ab.2 ∧ sys.ge ↑ab.1 ↑ab.2)).toList
 
-private theorem gePairs_mem {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+private theorem gePairs_mem {n : ℕ} (sys : QualitativeProbability (Fin n))
     (A B : Finset (Fin n)) (hd : Disjoint A B) (hge : sys.ge ↑A ↑B) :
     (A, B) ∈ gePairsOf sys := by
   simp only [gePairsOf, Finset.mem_toList, Finset.mem_filter, Finset.mem_product,
     Finset.mem_univ, true_and]; exact ⟨hd, hge⟩
 
-private theorem gePairs_disj {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+private theorem gePairs_disj {n : ℕ} (sys : QualitativeProbability (Fin n))
     (m : Fin (gePairsOf sys).length) :
     Disjoint ((gePairsOf sys).get m).1 ((gePairsOf sys).get m).2 := by
   have := List.get_mem (gePairsOf sys) m
   simp only [gePairsOf, Finset.mem_toList, Finset.mem_filter] at this; exact this.2.1
 
-private theorem gePairs_ge {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+private theorem gePairs_ge {n : ℕ} (sys : QualitativeProbability (Fin n))
     (m : Fin (gePairsOf sys).length) :
     sys.ge ↑((gePairsOf sys).get m).1 ↑((gePairsOf sys).get m).2 := by
   have := List.get_mem (gePairsOf sys) m
@@ -375,37 +375,37 @@ private lemma filterMap_weightedSum {n k' : ℕ}
       simp [this]
 
 /-- Strict pairs: disjoint (A, B) where sys.ge ↑A ↑B strictly (¬sys.ge ↑B ↑A). -/
-private noncomputable def strictPairsOf {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
+private noncomputable def strictPairsOf {n : ℕ} (sys : QualitativeProbability (Fin n)) :
     List (Finset (Fin n) × Finset (Fin n)) :=
   ((Finset.univ ×ˢ Finset.univ : Finset _).filter
     (fun ab => Disjoint ab.1 ab.2 ∧ sys.ge ↑ab.1 ↑ab.2 ∧ ¬sys.ge ↑ab.2 ↑ab.1)).toList
 
-private theorem strictPairs_mem {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+private theorem strictPairs_mem {n : ℕ} (sys : QualitativeProbability (Fin n))
     (A B : Finset (Fin n)) (hd : Disjoint A B) (hge : sys.ge ↑A ↑B) (hng : ¬sys.ge ↑B ↑A) :
     (A, B) ∈ strictPairsOf sys := by
   simp only [strictPairsOf, Finset.mem_toList, Finset.mem_filter, Finset.mem_product,
     Finset.mem_univ, true_and]; exact ⟨hd, hge, hng⟩
 
-private theorem strictPairs_disj {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+private theorem strictPairs_disj {n : ℕ} (sys : QualitativeProbability (Fin n))
     (m : Fin (strictPairsOf sys).length) :
     Disjoint ((strictPairsOf sys).get m).1 ((strictPairsOf sys).get m).2 := by
   have := List.get_mem (strictPairsOf sys) m
   simp only [strictPairsOf, Finset.mem_toList, Finset.mem_filter] at this; exact this.2.1
 
-private theorem strictPairs_ge {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+private theorem strictPairs_ge {n : ℕ} (sys : QualitativeProbability (Fin n))
     (m : Fin (strictPairsOf sys).length) :
     sys.ge ↑((strictPairsOf sys).get m).1 ↑((strictPairsOf sys).get m).2 := by
   have := List.get_mem (strictPairsOf sys) m
   simp only [strictPairsOf, Finset.mem_toList, Finset.mem_filter] at this; exact this.2.2.1
 
-private theorem strictPairs_strict {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+private theorem strictPairs_strict {n : ℕ} (sys : QualitativeProbability (Fin n))
     (m : Fin (strictPairsOf sys).length) :
     ¬sys.ge ↑((strictPairsOf sys).get m).2 ↑((strictPairsOf sys).get m).1 := by
   have := List.get_mem (strictPairsOf sys) m
   simp only [strictPairsOf, Finset.mem_toList, Finset.mem_filter] at this; exact this.2.2.2
 
 /-- `(univ, ∅)` is always a strict pair, so the strict list is nonempty. -/
-private theorem strictPairs_length_pos {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
+private theorem strictPairs_length_pos {n : ℕ} (sys : QualitativeProbability (Fin n)) :
     0 < (strictPairsOf sys).length :=
   List.length_pos_of_mem (strictPairs_mem sys Finset.univ ∅ (Finset.disjoint_empty_right _)
     (by rw [Finset.coe_univ, Finset.coe_empty]; exact sys.mono _ _ (Set.empty_subset _))
@@ -416,7 +416,7 @@ private theorem strictPairs_length_pos {n : ℕ} (sys : EpistemicSystemFA (Fin n
     compVec·p ≥ 1 per strict pair}: a feasible point normalizes to a member of
     `feasibleWeights`; an infeasibility certificate assembles a valid neutral
     portfolio with a strict member, contradicting cancellation. -/
-private theorem cancellation_nonempty {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+private theorem cancellation_nonempty {n : ℕ} (sys : QualitativeProbability (Fin n))
     (hcancel : Cancellation n sys.ge) :
     ∃ p, p ∈ feasibleWeights n sys := by
   let gePairs : List (Finset (Fin n) × Finset (Fin n)) := gePairsOf sys
@@ -695,7 +695,7 @@ private theorem cancellation_nonempty {n : ℕ} (sys : EpistemicSystemFA (Fin n)
     2. `feasible_to_measure`: a feasible weight vector constructs a
        representing `FinAddMeasure`. -/
 theorem cancellation_implies_representable {n : ℕ}
-    (sys : EpistemicSystemFA (Fin n))
+    (sys : QualitativeProbability (Fin n))
     (hcancel : Cancellation n sys.ge) :
     Representable sys := by
   obtain ⟨p, hp⟩ := cancellation_nonempty sys hcancel
@@ -703,22 +703,22 @@ theorem cancellation_implies_representable {n : ℕ}
 
 /-- **Scott's theorem**: an FA system is representable by a finitely additive
     measure iff it satisfies the cancellation property. -/
-theorem representable_iff_cancellation {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
+theorem representable_iff_cancellation {n : ℕ} (sys : QualitativeProbability (Fin n)) :
     Representable sys ↔ Cancellation n sys.ge :=
   ⟨fun ⟨m, hm⟩ => representable_implies_cancellation m hm,
    cancellation_implies_representable sys⟩
 
 /-- A null atom plus a representability oracle one cardinality down yields
     cancellation: swap the null atom to position 0 and apply `null_elem_reduce`. -/
-theorem cancellation_of_null_atom {n : ℕ} (sys : EpistemicSystemFA (Fin (n + 2)))
+theorem cancellation_of_null_atom {n : ℕ} (sys : QualitativeProbability (Fin (n + 2)))
     {j : Fin (n + 2)} (hj : sys.ge ∅ {j})
-    (sub : ∀ sys' : EpistemicSystemFA (Fin (n + 1)), Representable sys') :
+    (sub : ∀ sys' : QualitativeProbability (Fin (n + 1)), Representable sys') :
     Cancellation (n + 2) sys.ge := by
   set σ := Equiv.swap (0 : Fin (n + 2)) j with hσ
-  have h0 : (transportFA σ sys).ge ∅ {0} := by
+  have h0 : (sys.transport σ).ge ∅ {0} := by
     rw [perm_null_iff, show σ.symm 0 = j by simp [hσ]]; exact hj
-  have hnn : ∃ i : Fin (n + 1), ¬(transportFA σ sys).ge ∅ {Fin.succ i} := by
-    obtain ⟨k, hk⟩ := not_all_null (transportFA σ sys)
+  have hnn : ∃ i : Fin (n + 1), ¬(sys.transport σ).ge ∅ {Fin.succ i} := by
+    obtain ⟨k, hk⟩ := not_all_null (sys.transport σ)
     obtain ⟨i, rfl⟩ : ∃ i, Fin.succ i = k :=
       Fin.exists_succ_eq.mpr fun h => hk (h ▸ h0)
     exact ⟨i, hk⟩
