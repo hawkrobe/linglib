@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Alternatives.AltMeaning
+import Linglib.Semantics.Alternatives.Basic
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Semantics.Questions.Hamblin
 
@@ -186,13 +186,12 @@ theorem not_squiggleSet_singleton (o : α) (Γ : Set α) :
 theorem not_squiggleInd_singleton (o γ : α) : ¬ SquiggleInd o {o} γ :=
   fun ⟨hγ, hne⟩ => hne hγ
 
-open Alternatives in
 /-- "The argument must contain a focus": a focus-free phrase has a unit
 focus value, so no antecedent resolves against it ([rooth-1992] §10). -/
 theorem not_squiggleSet_unfeatured (x : α) (Γ : Set α) :
-    ¬ SquiggleSet (AltMeaning.unfeatured x).oValue
-      (AltMeaning.unfeatured x).aValue Γ := by
-  rw [AltMeaning.unfeatured_aValue, AltMeaning.unfeatured_oValue]
+    ¬ SquiggleSet (WithAlternatives.unfeatured x).ordinary
+      (WithAlternatives.unfeatured x).alternatives Γ := by
+  rw [WithAlternatives.unfeatured_alternatives, WithAlternatives.unfeatured_ordinary]
   exact not_squiggleSet_singleton x Γ
 
 end Squiggle
@@ -261,20 +260,17 @@ composition engine — the singleton complete-answer predicate mapped
 over the F-marked argument — and every canonical antecedent shape
 fully resolves against it. -/
 
-open Alternatives in
 /-- The composed focused answer `d` over the pair `{d, d'}`. -/
-def pairAnswer {W : Type*} (d d' : W) : AltMeaning (Set W) :=
-  (fun x => ({x} : Set W)) <$> (⟨d, {d, d'}⟩ : AltMeaning W)
+def pairAnswer {W : Type*} (d d' : W) : WithAlternatives (Set W) :=
+  (fun x => ({x} : Set W)) <$> (⟨d, {d, d'}⟩ : WithAlternatives W)
 
-open Alternatives in
-@[simp] theorem pairAnswer_oValue {W : Type*} (d d' : W) :
-    (pairAnswer d d').oValue = {d} := rfl
+@[simp] theorem pairAnswer_ordinary {W : Type*} (d d' : W) :
+    (pairAnswer d d').ordinary = {d} := rfl
 
-open Alternatives in
-@[simp] theorem pairAnswer_aValue {W : Type*} (d d' : W) :
-    (pairAnswer d d').aValue = {{d}, {d'}} := by
+@[simp] theorem pairAnswer_alternatives {W : Type*} (d d' : W) :
+    (pairAnswer d d').alternatives = {{d}, {d'}} := by
   ext q
-  simp only [pairAnswer, AltMeaning.mem_aValue_map]
+  simp only [pairAnswer, WithAlternatives.mem_alternatives_map]
   constructor
   · rintro ⟨a, ha, rfl⟩
     rcases (by simpa using ha : a = d ∨ a = d') with rfl | rfl
@@ -290,16 +286,16 @@ correction clause — against the composed answer over its pair. One
 semantics, four pragmatic uses. -/
 theorem use_model_resolves {W : Type*} {d d' : W} (hne : d' ≠ d) (u : Use) :
     (Use.model {d} {d'} u).Resolves
-      (pairAnswer d d').oValue (pairAnswer d d').aValue := by
+      (pairAnswer d d').ordinary (pairAnswer d d').alternatives := by
   have hne' : ({d'} : Set W) ≠ {d} :=
     fun h => hne (Set.singleton_eq_singleton_iff.mp h)
-  have hSq : SquiggleSet (pairAnswer d d').oValue (pairAnswer d d').aValue
+  have hSq : SquiggleSet (pairAnswer d d').ordinary (pairAnswer d d').alternatives
       {{d}, {d'}} := by
-    rw [pairAnswer_oValue, pairAnswer_aValue]
+    rw [pairAnswer_ordinary, pairAnswer_alternatives]
     exact ⟨subset_rfl, Or.inl rfl, ⟨{d'}, Or.inr rfl, hne'⟩⟩
   cases u with
   | newInfo     => exact hSq
-  | corrective  => exact ⟨hSq, by rw [pairAnswer_oValue]; exact hne'.symm⟩
+  | corrective  => exact ⟨hSq, by rw [pairAnswer_ordinary]; exact hne'.symm⟩
   | selective   => exact hSq
   | contrastive => exact hSq
 

@@ -28,7 +28,6 @@ morphosyntactic extension of [assmann-etal-2023].
 
 namespace Buring2015
 
-open Alternatives
 open Focus (weakBanned strongAllowed licensedFocusValue)
 
 /-- Transitive-verb meanings. -/
@@ -45,11 +44,11 @@ inductive Obj where
 def vt (r : Rel) : Obj → Rel × Obj := fun o => (r, o)
 
 /-- *ordered*, with its transitive alternatives. -/
-def orderedM : AltMeaning (Obj → Rel × Obj) :=
+def orderedM : WithAlternatives (Obj → Rel × Obj) :=
   ⟨vt .ordered, {vt .ordered, vt .paidFor}⟩
 
 /-- *breakfast*, with its object alternatives. -/
-def breakfastM : AltMeaning Obj := ⟨Obj.breakfast, {Obj.breakfast, Obj.lunch}⟩
+def breakfastM : WithAlternatives Obj := ⟨Obj.breakfast, {Obj.breakfast, Obj.lunch}⟩
 
 private theorem vt_ne : vt .paidFor ≠ vt .ordered := fun h => by
   have := congrFun h .breakfast

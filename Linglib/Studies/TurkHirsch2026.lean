@@ -1,6 +1,6 @@
 import Linglib.Semantics.Intensional.Premise
 import Linglib.Data.UD.Basic
-import Linglib.Semantics.Alternatives.AltMeaning
+import Linglib.Semantics.Alternatives.Basic
 import Linglib.Semantics.Polarity.Operator
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Fragments.Turkish.QuestionParticles
@@ -38,7 +38,6 @@ Four worlds: Ali sleeps/doesn't × deontic must/free.
 
 namespace TurkHirsch2026
 
-open Alternatives
 open Focus.Interpretation (PropFocusValue)
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -237,10 +236,10 @@ theorem theory_overgen_without_catmatch : mustP ∈ typeTheoQ :=
   typeTheo_admits_modal
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §7  Bridge: A-value computation
+-- §7  Bridge: alternative set computation
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! Following [rooth-1992], the A-value of a [FoC]-marked
+/-! Following [rooth-1992], the alternative set of a [FoC]-marked
     constituent is the set of alternatives of the same semantic type — i.e.,
     exactly the type-theoretic D_τ computation.
 
@@ -249,30 +248,30 @@ theorem theory_overgen_without_catmatch : mustP ∈ typeTheoQ :=
     is the correct constraint on alternative computation when the focus host
     is Σ_F. -/
 
-/-- Applying [FoC] with type-theoretic A-value yields the over-generating set. -/
-def applyFoC_typeTheo : AltMeaning (Set PolarWorld) :=
-  { oValue := p, aValue := typeTheoQ }
+/-- Applying [FoC] with type-theoretic alternative set yields the over-generating set. -/
+def applyFoC_typeTheo : WithAlternatives (Set PolarWorld) :=
+  { ordinary := p, alternatives := typeTheoQ }
 
 /-- The two carriers agree definitionally: the type-theoretic [FoC]
-A-value *as a set* is the type-theoretic question. -/
-theorem applyFoC_typeTheo_aValue : applyFoC_typeTheo.aValue = typeTheoQ := rfl
+alternative set *as a set* is the type-theoretic question. -/
+theorem applyFoC_typeTheo_alternatives : applyFoC_typeTheo.alternatives = typeTheoQ := rfl
 
-/-- The type-theoretic A-value produces the wrong question denotation. -/
-theorem applyFoC_is_typeTheo : mustP ∈ applyFoC_typeTheo.aValue := by
+/-- The type-theoretic alternative set produces the wrong question denotation. -/
+theorem applyFoC_is_typeTheo : mustP ∈ applyFoC_typeTheo.alternatives := by
   show mustP ∈ typeTheoAlternatives
   simp [typeTheoAlternatives, opLexicon]
 
-/-- Restricting the A-value by category match corrects the prediction. -/
-def applyFoC_catMatch : AltMeaning (Set PolarWorld) :=
-  { oValue := p, aValue := catMatchQ }
+/-- Restricting the alternative set by category match corrects the prediction. -/
+def applyFoC_catMatch : WithAlternatives (Set PolarWorld) :=
+  { ordinary := p, alternatives := catMatchQ }
 
 /-- The two carriers agree definitionally on the category-matched side
 as well. -/
-theorem applyFoC_catMatch_aValue : applyFoC_catMatch.aValue = catMatchQ := rfl
+theorem applyFoC_catMatch_alternatives : applyFoC_catMatch.alternatives = catMatchQ := rfl
 
-/-- The category-matched A-value produces the correct question denotation. -/
+/-- The category-matched alternative set produces the correct question denotation. -/
 theorem categoryMatch_fixes_applyFoC :
-    mustP ∉ applyFoC_catMatch.aValue := by
+    mustP ∉ applyFoC_catMatch.alternatives := by
   show mustP ∉ catMatchAlternatives
   -- catMatchAlternatives = [p, notP]; mustP is neither.
   have hcm : catMatchAlternatives = [p, notP] := by

@@ -27,9 +27,9 @@ targets they can realize.
   while the strong daughter stays at its ordinary value;
   `strongAllowed` (his Strong Restriction) allows only targets varying
   the accented daughter non-trivially. Both are `Set.seq` images of
-  `AltMeaning.aValue` — Hamblin application with one side held at its
+  `WithAlternatives.alternatives` — Hamblin application with one side held at its
   ordinary value — so the prosodic calculus runs through the same
-  applicative as the Roothian engine (`AltMeaning.aValue_seq`).
+  applicative as the Roothian engine (`WithAlternatives.alternatives_seq`).
 
 `licensedFocusValue` is the pipeline connector: the composable targets
 minus the banned ones. At propositional type its values are
@@ -87,7 +87,6 @@ end Marking
 
 section Prosodic
 
-open Alternatives
 
 variable {W α β : Type*}
 
@@ -97,36 +96,36 @@ pattern, the banned focal targets vary the weak (function) daughter
 The weak daughter's own ordinary value is subtracted, so a node never
 excludes its literal meaning — the revision [buring-2015] makes to the
 preliminary rule (1), which lacked the subtraction. -/
-def weakBanned (dw : AltMeaning (α → β)) (ds : AltMeaning α) : Set β :=
-  (dw.aValue \ {dw.oValue}).seq {ds.oValue}
+def weakBanned (dw : WithAlternatives (α → β)) (ds : WithAlternatives α) : Set β :=
+  (dw.alternatives \ {dw.ordinary}).seq {ds.ordinary}
 
 /-- Strong Restriction ([buring-2015]): under prosodic reversal, the
 allowed focal targets vary the accented (function) daughter
 non-trivially while the deaccented daughter stays at its ordinary
 value. -/
-def strongAllowed (dm : AltMeaning (α → β)) (ds : AltMeaning α) :
+def strongAllowed (dm : WithAlternatives (α → β)) (ds : WithAlternatives α) :
     Set β :=
-  (dm.aValue \ {dm.oValue}).seq {ds.oValue}
+  (dm.alternatives \ {dm.ordinary}).seq {ds.ordinary}
 
 /-- Reversal allows exactly the targets the default bans: the two metrical patterns of a branching
 node divide its focal targets between them. -/
-theorem strongAllowed_eq_weakBanned (dm : AltMeaning (α → β))
-    (ds : AltMeaning α) : strongAllowed dm ds = weakBanned dm ds := rfl
+theorem strongAllowed_eq_weakBanned (dm : WithAlternatives (α → β))
+    (ds : WithAlternatives α) : strongAllowed dm ds = weakBanned dm ds := rfl
 
 /-- The focal targets a metrical configuration licenses: everything
 the daughters compose to, minus the banned targets. At `β := Set W`
 this is a `PropFocusValue W` — the focus value the prosody derives. -/
-def licensedFocusValue (dw : AltMeaning (α → β)) (ds : AltMeaning α) :
+def licensedFocusValue (dw : WithAlternatives (α → β)) (ds : WithAlternatives α) :
     Set β :=
-  dw.aValue.seq ds.aValue \ weakBanned dw ds
+  dw.alternatives.seq ds.alternatives \ weakBanned dw ds
 
-theorem licensedFocusValue_subset_seq (dw : AltMeaning (α → β))
-    (ds : AltMeaning α) :
-    licensedFocusValue dw ds ⊆ dw.aValue.seq ds.aValue :=
+theorem licensedFocusValue_subset_seq (dw : WithAlternatives (α → β))
+    (ds : WithAlternatives α) :
+    licensedFocusValue dw ds ⊆ dw.alternatives.seq ds.alternatives :=
   Set.sdiff_subset
 
 theorem disjoint_licensedFocusValue_weakBanned
-    (dw : AltMeaning (α → β)) (ds : AltMeaning α) :
+    (dw : WithAlternatives (α → β)) (ds : WithAlternatives α) :
     Disjoint (licensedFocusValue dw ds) (weakBanned dw ds) :=
   Set.disjoint_sdiff_left
 
@@ -135,9 +134,9 @@ licensed focus value admits is admitted by the unrestricted Hamblin
 composition — [rooth-1992]'s fip against the prosodically derived
 focus value. -/
 theorem Antecedent.Admits.of_licensed {a : Antecedent W}
-    {dw : AltMeaning (α → Set W)} {ds : AltMeaning α}
+    {dw : WithAlternatives (α → Set W)} {ds : WithAlternatives α}
     (h : a.Admits (licensedFocusValue dw ds)) :
-    a.Admits (dw.aValue.seq ds.aValue) :=
+    a.Admits (dw.alternatives.seq ds.alternatives) :=
   h.mono Set.sdiff_subset
 
 end Prosodic

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Alternatives.AltMeaning
+import Linglib.Semantics.Alternatives.Basic
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Semantics.Focus.Control
 import Linglib.Semantics.Focus.Particles
@@ -23,15 +23,14 @@ the alternative answers of (24) — in a four-world model crossing
 subjects {Mary, Monique} with objects {Bill, Björn}. The *only* model
 is the §2.1 introduction scenario (Mary introduced Bill and Tom to
 Sue). Focus values are computed, not stipulated: the `interp` engine
-that computes ordinary values at `M = Id` computes O/A-values at
-`M = AltMeaning`, grounding the stipulated Hamblin sets, and the
+that computes ordinary values at `M = Id` computes both dimensions at
+`M = WithAlternatives`, grounding the stipulated Hamblin sets, and the
 lexicon's surface forms are checked against the English fragment
 entries.
 -/
 
 namespace Rooth1992
 
-open Alternatives
 open Focus.Interpretation (fip PropFocusValue qaCongruent qaCongruentWeak)
 
 /-! ### The question-answer world model -/
@@ -57,25 +56,25 @@ def maryCutBjorn : Set QAWorld := {maryBjorn}
 /-! ### Alternative meanings -/
 
 /-- Focused *[MARY]F* in the answer *[Mary]F cut Bill down to size*
-    ((23Aa) of [rooth-1992] §2.4): O-value = "Mary";
-    A-value = {"Mary", "Monique"}. -/
-def altSubjectFocused : AltMeaning String :=
-  { oValue := "Mary", aValue := {"Mary", "Monique"} }
+    ((23Aa) of [rooth-1992] §2.4): ordinary value = "Mary";
+    alternative set = {"Mary", "Monique"}. -/
+def altSubjectFocused : WithAlternatives String :=
+  { ordinary := "Mary", alternatives := {"Mary", "Monique"} }
 
-/-- Non-focused "cut Bill down to size": singleton A-value. Exercises
-    `AltMeaning.unfeatured`. -/
-def altPredicateUnfeatured : AltMeaning String :=
-  AltMeaning.unfeatured "cut Bill down to size"
+/-- Non-focused "cut Bill down to size": singleton alternative set. Exercises
+    `WithAlternatives.unfeatured`. -/
+def altPredicateUnfeatured : WithAlternatives String :=
+  WithAlternatives.unfeatured "cut Bill down to size"
 
-/-- Unfeatured O-value equals the input. -/
-theorem unfeatured_preserves_oValue :
-    altPredicateUnfeatured.oValue = "cut Bill down to size" := rfl
+/-- Unfeatured ordinary value equals the input. -/
+theorem unfeatured_preserves_ordinary :
+    altPredicateUnfeatured.ordinary = "cut Bill down to size" := rfl
 
-/-- Unfeatured A-value is a singleton containing the O-value — "the
+/-- Unfeatured alternative set is a singleton containing the ordinary value — "the
     focus semantic value of a focus-free phrase is the unit set of its
     ordinary semantic value" ([rooth-1992] (42)). -/
-theorem unfeatured_singleton_aValue :
-    altPredicateUnfeatured.aValue = {"cut Bill down to size"} := rfl
+theorem unfeatured_singleton_alternatives :
+    altPredicateUnfeatured.alternatives = {"cut Bill down to size"} := rfl
 
 /-! ### Question-answer congruence and the FIP
 
@@ -258,11 +257,11 @@ def introBill : OnlyWorld → Bool
 def introTom : OnlyWorld → Bool
   | billOnly => false | tomOnly => true | both => true
 
-/-- Focus on BILL ((3a)): O-value = introBill;
-    A-value = {introBill, introTom}. Focus constrains the domain of
+/-- Focus on BILL ((3a)): ordinary value = introBill;
+    alternative set = {introBill, introTom}. Focus constrains the domain of
     *only*. -/
-def altBillFocused : AltMeaning (OnlyWorld → Bool) :=
-  { oValue := introBill, aValue := {introBill, introTom} }
+def altBillFocused : WithAlternatives (OnlyWorld → Bool) :=
+  { ordinary := introBill, alternatives := {introBill, introTom} }
 
 /-- "Only Bill" = Mary introduced Bill but not Tom. -/
 def onlyBill : OnlyWorld → Bool
@@ -447,46 +446,46 @@ theorem comp_grounds_maryCutBjorn :
 
 F-marking is a non-`pure` lexicon entry: the same `interp` that
 computes ordinary values at `M = Id` computes focus values at
-`M = AltMeaning` (`pure = AltMeaning.unfeatured` lifts the focus-free
+`M = WithAlternatives` (`pure = WithAlternatives.unfeatured` lifts the focus-free
 entries), with `applyForward`'s `<*>` doing Hamblin functional
 application. -/
 
 /-- Alternatives do not distribute through predicate abstraction —
     the honest `none`. -/
-instance (E W D : Type) : PredAbs AltMeaning E W D := ⟨none⟩
+instance (E W D : Type) : PredAbs WithAlternatives E W D := ⟨none⟩
 
-/-- The focus lexicon at `M = AltMeaning`: every entry `pure`-lifts
+/-- The focus lexicon at `M = WithAlternatives`: every entry `pure`-lifts
     except focused *[Mary]F*, whose entry carries the subject
     alternatives. -/
-def focusLexF (w : QAWorld) : Lexicon E Unit AltMeaning := fun word =>
+def focusLexF (w : QAWorld) : Lexicon E Unit WithAlternatives := fun word =>
   match word with
-  | "Mary" => some ⟨.e, (⟨E.mary, {E.mary, E.monique}⟩ : AltMeaning _)⟩
-  | w' => Lexicon.lift AltMeaning (focusLex w) w'
+  | "Mary" => some ⟨.e, (⟨E.mary, {E.mary, E.monique}⟩ : WithAlternatives _)⟩
+  | w' => Lexicon.lift WithAlternatives (focusLex w) w'
 
 /-- Focus-dimension tree interpretation. -/
-def treeResultF (lex : Lexicon E Unit AltMeaning) (t : Tree Unit String) :
-    Option (AltMeaning Prop) :=
+def treeResultF (lex : Lexicon E Unit WithAlternatives) (t : Tree Unit String) :
+    Option (WithAlternatives Prop) :=
   match interp E Unit lex g₀ t with
   | some ⟨.t, p⟩ => some p
   | _ => none
 
-/-- The engine at `M = AltMeaning` computes the two-dimensional meaning
-    of *[MARY]F cut Bill down to size*: the O-value is the ordinary
-    interpretation and the A-value is the subject-alternative family —
+/-- The engine at `M = WithAlternatives` computes the two-dimensional meaning
+    of *[MARY]F cut Bill down to size*: the ordinary value is the ordinary
+    interpretation and the alternative set is the subject-alternative family —
     the focus value is computed, not stipulated. -/
 theorem treeResultF_maryCutBill (w : QAWorld) :
     treeResultF (focusLexF w) tree_maryCutBill =
       some ⟨cutInWorld w E.bill E.mary,
             {cutInWorld w E.bill E.mary, cutInWorld w E.bill E.monique}⟩ := by
   cases w <;>
-    · refine congrArg some (AltMeaning.ext rfl ?_)
+    · refine congrArg some (WithAlternatives.ext rfl ?_)
       ext q
       simp [eq_comm]
 
-/-- O-projection through the engine: mapping `oValue` over the
-    `AltMeaning` run recovers the `Id` run. -/
-theorem treeResultF_oValue (w : QAWorld) :
-    (treeResultF (focusLexF w) tree_maryCutBill).map (·.oValue) =
+/-- O-projection through the engine: mapping `ordinary` over the
+    `WithAlternatives` run recovers the `Id` run. -/
+theorem treeResultF_ordinary (w : QAWorld) :
+    (treeResultF (focusLexF w) tree_maryCutBill).map (·.ordinary) =
       treeResult (focusLex w) tree_maryCutBill := by
   cases w <;> rfl
 
