@@ -67,10 +67,17 @@ the maximal-projection identity condition (Bruening §5.5).
 ## Coverage
 
 Table (56) lists ~43 verbs across 15 cells (11 populated, 4 empty by
-Bruening's footnote on p. 1037). This file covers 31 verbs whose Fragment
-encoding is unambiguous; the remainder (*ask, promise, wish, leave,
-afford, lose, guarantee, rent, save*) are listed in the Fragment with
-attitude/question-embedding senses or absent.
+Bruening's note below the table). This file covers the 32 verbs whose
+Fragment encoding is unambiguous; the remainder (*ask, promise, wish,
+leave, afford, lose, guarantee, rent, save, email/text, bill*) are listed
+in the Fragment with attitude/question-embedding senses or absent.
+
+The table's columns record where the goal argument sits — a first object
+or a PP — and how it may be left implicit. Bruening notes that
+alternating verbs allowing neither argument to be implicit (*hand*,
+*lend*) are filed under "PP" although they also appear in the double
+object frame, so column placement classifies the goal, not the verb's
+frame inventory.
 
 The `BruRow.alternates` field encodes Bruening's classification of
 DOC-vs-PP alternation. It is NOT checked by `BruRow.matches` because the
@@ -206,6 +213,25 @@ in `Syntax/Minimalist/`. `Voice.Voice.ExternalArgSemantics` includes
 theorem g2_doc_only_implicit_first_obj_definite :
     docOnlyVerbs.all (fun v => v.implicitGoal ≠ some .indef) = true := by decide
 
+/-- The other half of G2, which is what makes it an asymmetry: where the first object admits only
+the definite interpretation, second objects and PP goals admit both. *forgive* has a definite
+implicit second object and *charge* an indefinite one; *give* has a definite implicit PP goal and
+*teach* an indefinite one — so neither position is uniformly interpreted, and the contrast with the
+first object is real rather than a gap in the sample. -/
+theorem g2_second_object_and_pp_vary :
+    forgive.implicitObj = some .def ∧ charge.implicitObj = some .indef ∧
+      give.implicitGoal = some .def ∧ teach.implicitGoal = some .indef := by
+  refine ⟨rfl, rfl, rfl, rfl⟩
+
+/-- The asymmetry in the form Bruening states it (§2.2.4): no DOC-only verb has an indefinite
+implicit first object, while both interpretations are attested for the other two positions. -/
+theorem g2_asymmetry :
+    (docOnlyVerbs.all (fun v => v.implicitGoal ≠ some .indef) = true) ∧
+      ditransitiveVerbs.any (fun v => v.implicitObj == some .def) = true ∧
+      ditransitiveVerbs.any (fun v => v.implicitObj == some .indef) = true ∧
+      ditransitiveVerbs.any (fun v => v.implicitGoal == some .indef) = true := by
+  refine ⟨by decide, by decide, by decide, by decide⟩
+
 /-! ### G3: base-transitivity constraint
 
 Bruening's G3 (§2.3.1, summary point 3): a simple transitive that allows
@@ -226,22 +252,15 @@ theorem g3_base_transitive_constraint :
       && v.implicitObj.isSome
       && decide (v.altComplementType ≠ some .np_np)) = true := by decide
 
-/-! ### G1 and G4: deferred substrate gaps
+/-! ### G1 and G4
 
-```
--- G1 (sluicing asymmetry, §2.1): formalized as a sibling in
--- `Studies/Bruening2021Sluicing.lean` via
--- `g1_sluicing_asymmetry`. Substrate: `bruening2021Identity` in
--- `Syntax/Minimalist/Ellipsis/FormalMatching.lean` § 7.
---
--- TODO(G4): Frame-conditioned implicit-arg licensing (§2.3.2 ex. 63-65).
--- The Fragment carries `implicitObj : Option ImplicitInterp` globally,
--- not per-frame. Bruening shows this distinction is real (e.g. *show*
--- is DOC-only, *pass* is PP-only, *write* is both). Schema extension
--- (`implicitObjByFrame : ComplementType → Option ImplicitInterp`) would
--- enable the theorem; deferred — out of scope for this refactor.
-```
--/
+G1, the sluicing asymmetry of §2.1, is formalized in `Studies/Bruening2021Sluicing.lean` over the
+maximal-projection identity condition of `Syntax/Minimalist/Ellipsis/FormalMatching.lean`.
+
+G4, frame-conditioned licensing (§2.3.2), is not formalized: the Fragment carries `implicitObj`
+globally rather than per frame, so the contrast between *show*, licensed only in the double object
+frame, and *pass*, licensed only in the PP frame, cannot be stated without a schema field indexed
+by complement type. -/
 
 /-! ### Cross-framework contrasts
 
