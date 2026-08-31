@@ -6,50 +6,53 @@ import Linglib.Fragments.German.PolarityItems
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Exhaustification.Antiexhaustive
 import Linglib.Studies.Chierchia2013
-
+import Linglib.Data.Examples.Chierchia2006
 /-!
-# Chierchia 2006: Domain Widening and the PSI Typology
-[chierchia-2006] [chierchia-2013] [fox-2007] [bar-lev-fox-2020]
-[haspelmath-1997] [kadmon-landman-1993]
+# Chierchia 2006: domain widening and the polarity-item typology
 
-Formalizes the lasting contributions of [chierchia-2006] "Broaden Your Views:
-Implicatures of Domain Widening and the 'Logicality' of Language."
+This file formalizes the parametric decomposition of polarity-sensitive items in
+[chierchia-2006]. An item's distribution follows from two things about its alternatives: how
+fine-grained the domain alternatives are, and whether exhaustification over them must strictly
+strengthen. Together with whether domain alternatives are obligatory and whether the item has
+scalar alternatives, these fix a class — pure negative-polarity item, negative-polarity and
+free-choice item, pure free-choice item, and their existential-free-choice counterparts — and each
+class's eligible region turns out to be a contiguous stretch of [haspelmath-1997]'s implicational
+map, which is why indefinite series cover contiguous function ranges.
 
-## What survived to 2026 consensus
+The proper-strengthening parameter is what separates Italian *qualsiasi* from English *any* under
+negation. Exhaustification of *any* in a downward-entailing context is vacuous, which its weak
+alternative-set tolerates, so the negative-polarity reading survives; *qualsiasi* requires proper
+strengthening, which a downward-entailing context cannot supply, so only the rhetorical ¬∀ reading
+remains. The Italian judgments of §2 are rows in `Data/Examples/Chierchia2006.json`.
 
-The paper's central contribution is the **parametric decomposition** of
-polarity-sensitive items (PSIs) along two dimensions:
+## Main definitions
 
-1. **Domain alternative grain**: MAX (large subdomains only, even-like) vs
-   MIN (all subdomains including singletons, antiexhaustive)
-2. **Strengthening requirement**: whether exhaustification must yield
-   *proper* strengthening (result strictly stronger than plain meaning)
+* `PSIProfile`, `PSIProfile.predictedFunctions` — the parameters and the eligible region they fix
+* `pureNPI`, `npiFCI`, `pureFCI`, `efciNpiFci`, `efciPureFci` — the classes
+* `PSIProfile.predictedLicensor`, `PSIProfile.predictedFC`, `PSIProfile.toFCIFlavor` — what a
+  profile predicts about a Fragment entry
+* `sigmaBoldDefined` — the presuppositional alternative-set of the proper-strengthening items
 
-The specific operators (O/E/O⁻, σ/σ̃) have been superseded by Innocent
-Exclusion + Innocent Inclusion ([fox-2007], [bar-lev-fox-2020]),
-but the parametric space endures as the standard cross-linguistic PSI
-classification.
+## Main results
 
-## What was superseded
+* `all_psi_classes_contiguous` — every class's eligible region is a contiguous Haspelmath stretch
+* `dMax_presuppositional_empty` — requiring both downward-entailing contexts and proper
+  strengthening is contradictory, so that cell of the typology is empty
+* `sample_series_within_predicted`, `fragment_entries_match_profiles` — the sampled series and the
+  Fragment entries fall inside what their classes predict
+* `sigma_bold_fails_in_de`, `dMax_enrichment_vacuous_in_de`, `fci_universal_from_oMinus` — why
+  proper strengthening fails in a downward-entailing context, and where the universal force of a
+  free-choice item comes from
+* `force_tracks_construction`, `subtrigging_rescues_universal`,
+  `subtrigging_does_not_rescue_existential`, `negation_rhetorical_only` — the Italian data
 
-- **O/E/O⁻ enrichment operators** → replaced by IE + II
-- **σ/σ̃ as LF operators with feature checking** → replaced by
-  obligatory exhaustification and closure properties
-- **Recursive pragmatics as sole mechanism** → pluralistic consensus
-  (grammatical exh + RSA + team semantics)
+## References
 
-## Key result
-
-Each PSI class maps to a **contiguous region** on [haspelmath-1997]'s
-implicational map, explaining *why* indefinite pronoun series cover
-contiguous function ranges cross-linguistically.
-
-## Theoretical engine
-
-The mechanism behind PSI licensing is **domain widening reversal**
-([kadmon-landman-1993]):
-widening strengthens in DE but weakens in UE. The PSI parameter space
-refines this into D-MAX (even-like) vs D-MIN (antiexhaustive) enrichment.
+* [chierchia-2006]
+* [haspelmath-1997]
+* [kadmon-landman-1993]
+* [kratzer-shimoyama-2002]
+* [fox-2007]
 -/
 
 namespace Chierchia2006
@@ -206,27 +209,6 @@ PSI class's eligible region is contiguous, and surface forms cover
 contiguous subsets of their class's region.
 -/
 
-/-- Pure NPI region {question..directNeg} is contiguous. -/
-theorem pureNPI_contiguous :
-    HaspelmathFunction.isContiguous pureNPI.predictedFunctions = true := by decide
-
-/-- NPI/FCI region {irrealis..freeChoice} is contiguous. -/
-theorem npiFCI_contiguous :
-    HaspelmathFunction.isContiguous npiFCI.predictedFunctions = true := by decide
-
-/-- Pure FCI region {comparative, freeChoice} is contiguous. -/
-theorem pureFCI_contiguous :
-    HaspelmathFunction.isContiguous pureFCI.predictedFunctions = true := by decide
-
-/-- EFCI NPI/FCI has same eligible region as NPI/FCI (scalar alts don't
-    change distributional range, only add uniqueness readings). -/
-theorem efciNpiFci_contiguous :
-    HaspelmathFunction.isContiguous efciNpiFci.predictedFunctions = true := by decide
-
-/-- EFCI pure FCI has same eligible region as pure FCI. -/
-theorem efciPureFci_contiguous :
-    HaspelmathFunction.isContiguous efciPureFci.predictedFunctions = true := by decide
-
 /-- All five PSI classes have contiguous predicted function ranges. -/
 theorem all_psi_classes_contiguous :
     [pureNPI, npiFCI, pureFCI, efciNpiFci, efciPureFci].all
@@ -268,48 +250,25 @@ private def seriesFunctions (profile : IndefiniteParadigm) (form : String)
   | some e => e.functionList
   | none => []
 
--- Italian: nessuno = pure NPI
-theorem italian_nessuno_matches :
-    functionsSubset (seriesFunctions italian "nessuno")
-      pureNPI.predictedFunctions = true := by decide
+/-- The plain indefinite profile: no obligatory domain alternatives and no proper-strengthening
+requirement. -/
+private def plainIndefinite : PSIProfile :=
+  { grain := .max, obligatoryDomainAlts := false,
+    requiresProperStrengthening := false, hasScalarAlts := false }
 
--- Italian: qualunque/qualsiasi = pure FCI
-theorem italian_qualsiasi_matches :
-    functionsSubset (seriesFunctions italian "qualunque/qualsiasi")
-      pureFCI.predictedFunctions = true := by decide
-
--- Italian: qualcuno = plain indefinite
-theorem italian_qualcuno_matches :
-    functionsSubset (seriesFunctions italian "qualcuno")
-      ({ grain := .max, obligatoryDomainAlts := false,
-         requiresProperStrengthening := false, hasScalarAlts := false
-         : PSIProfile }).predictedFunctions = true := by decide
-
--- English: any (NPI) ⊆ NPI/FCI eligible region
-theorem english_anyNPI_matches :
-    functionsSubset (seriesFunctions english "any- (NPI)")
-      npiFCI.predictedFunctions = true := by decide
-
--- English: any (FC) ⊆ NPI/FCI eligible region
-theorem english_anyFC_matches :
-    functionsSubset (seriesFunctions english "any- (FC)")
-      npiFCI.predictedFunctions = true := by decide
-
--- German: irgendwer ⊆ EFCI NPI/FCI eligible region, modulo specific-unknown.
--- The book-verified paradigm row ([haspelmath-1997] A.1, Table 4.1:
--- *irgend* 2345689) includes specificUnknown — the Kratzer–Shimoyama
--- ignorance reading — which `predictedFunctions` (isDE ∪ isFC ∪ irrealis)
--- does not generate. The exemption records that gap in Chierchia's
--- eligibility encoding rather than hiding it in the data.
-theorem german_irgendwer_matches :
-    functionsSubset
-      ((seriesFunctions german "irgendwer").filter (· != .specificUnknown))
-      efciNpiFci.predictedFunctions = true := by decide
-
--- Mandarin: 谁 covers the full NPI/FCI eligible region
-theorem mandarin_shei_matches :
-    functionsSubset (seriesFunctions mandarin "shéi (谁, non-interrog.)")
-      npiFCI.predictedFunctions = true := by decide
+/-- Every series in the sample covers a subset of the region its class predicts. The German
+*irgend*-series is checked without `specificUnknown`, the [kratzer-shimoyama-2002] ignorance
+reading, which the eligibility encoding does not generate — a gap in the encoding rather than in
+the data. -/
+theorem sample_series_within_predicted :
+    [ (seriesFunctions italian "nessuno", pureNPI)
+    , (seriesFunctions italian "qualunque/qualsiasi", pureFCI)
+    , (seriesFunctions italian "qualcuno", plainIndefinite)
+    , (seriesFunctions english "any- (NPI)", npiFCI)
+    , (seriesFunctions english "any- (FC)", npiFCI)
+    , ((seriesFunctions german "irgendwer").filter (· != .specificUnknown), efciNpiFci)
+    , (seriesFunctions mandarin "shéi (谁, non-interrog.)", npiFCI) ].all
+      (fun p => functionsSubset p.1 p.2.predictedFunctions) = true := by decide
 
 -- ============================================================================
 -- §6. The qualsiasi/any Contrast Under Negation
@@ -429,34 +388,13 @@ def PSIProfile.predictedLicensor (p : PSIProfile) :
 def PSIProfile.predictedFC (p : PSIProfile) : Bool :=
   p.obligatoryDomainAlts && p.grain == .min
 
--- Fragment entries match their PSI profile's predicted parameters
-theorem any_profile_consistent :
-    any.licensor = npiFCI.predictedLicensor ∧ any.freeChoice = npiFCI.predictedFC :=
-  ⟨rfl, rfl⟩
-theorem ever_profile_consistent :
-    ever.licensor = pureNPI.predictedLicensor ∧ ever.freeChoice = pureNPI.predictedFC :=
-  ⟨rfl, rfl⟩
-theorem mai_profile_consistent :
-    mai.licensor = pureNPI.predictedLicensor ∧ mai.freeChoice = pureNPI.predictedFC :=
-  ⟨rfl, rfl⟩
-theorem alcuno_profile_consistent :
-    alcuno.licensor = pureNPI.predictedLicensor ∧ alcuno.freeChoice = pureNPI.predictedFC :=
-  ⟨rfl, rfl⟩
-theorem nessuno_profile_consistent :
-    nessuno.licensor = pureNPI.predictedLicensor ∧ nessuno.freeChoice = pureNPI.predictedFC :=
-  ⟨rfl, rfl⟩
-theorem qualsiasi_profile_consistent :
-    qualsiasi.licensor = pureFCI.predictedLicensor ∧ qualsiasi.freeChoice = pureFCI.predictedFC :=
-  ⟨rfl, rfl⟩
-theorem qualunque_profile_consistent :
-    qualunque.licensor = pureFCI.predictedLicensor ∧ qualunque.freeChoice = pureFCI.predictedFC :=
-  ⟨rfl, rfl⟩
-theorem uno_qualsiasi_profile_consistent :
-    uno_qualsiasi.licensor = efciPureFci.predictedLicensor ∧ uno_qualsiasi.freeChoice = efciPureFci.predictedFC :=
-  ⟨rfl, rfl⟩
-theorem irgendein_profile_consistent :
-    irgendein.licensor = efciNpiFci.predictedLicensor ∧ irgendein.freeChoice = efciNpiFci.predictedFC :=
-  ⟨rfl, rfl⟩
+/-- Each Fragment entry's licensor and free-choice fields are what its class predicts. -/
+theorem fragment_entries_match_profiles :
+    [ (any, npiFCI), (ever, pureNPI), (mai, pureNPI), (alcuno, pureNPI), (nessuno, pureNPI)
+    , (qualsiasi, pureFCI), (qualunque, pureFCI), (uno_qualsiasi, efciPureFci)
+    , (irgendein, efciNpiFci) ].all
+      (fun e => e.1.licensor == e.2.predictedLicensor && e.1.freeChoice == e.2.predictedFC)
+      = true := by decide
 
 -- ============================================================================
 -- §10. Exhaustification Theory: σ̃, SI Vacuity, and O⁻
@@ -549,199 +487,57 @@ theorem fci_universal_from_oMinus
 
 end SigmaOperators
 
--- ============================================================================
--- §11. Italian FCI Empirical Data
--- ============================================================================
+/-! ### The Italian free-choice data
 
-/-!
-## Italian FCI judgment data from [chierchia-2006] §2
+The judgments of §2 are rows in `Data/Examples/Chierchia2006.json`, each tagged with the
+free-choice construction it uses ([qualsiasi N] against [un N qualsiasi]), the environment it
+appears in, and the quantificational force available there. Three contrasts drive the account: the
+two constructions differ in force, a bare universal free-choice item is marginal in an episodic
+context until a relative clause subtriggs it, and under negation the universal item yields only
+the rhetorical ¬∀ reading rather than the ¬∃ reading a negative-polarity item would. -/
 
-These observations are the core empirical motivations:
+open Data.Examples in
+/-- A row's value for one of the paper's feature keys. -/
+private def feature (e : LinguisticExample) (k : String) : Option String :=
+  (e.paperFeatures.find? (·.1 == k)).map Prod.snd
 
-1. **Two FCI constructions**: [qualsiasi/qualunque N] (universal FCI) vs
-   [un N qualsiasi/qualunque] (existential FCI)
-2. **Quantificational force contrast**: universal FCI → ∀; existential FCI → ∃
-3. **Subtrigging**: bare universal FCIs are marginal in episodic contexts;
-   adding a relative clause modifier restores grammaticality
-4. **Negation scope**: universal FCIs under negation yield only ¬∀
-   (rhetorical reading), not NPI ¬∃
--/
+/-- The two constructions differ in force outside negation: the universal free-choice item admits
+both readings and the existential one only the existential reading. -/
+theorem force_tracks_construction :
+    (∀ e ∈ Examples.all, feature e "environment" = some "future" ∨
+        feature e "environment" = some "imperative" →
+        feature e "fciType" = some "universal" → feature e "force" = some "ambiguous") ∧
+      (∀ e ∈ Examples.all, feature e "fciType" = some "existential" →
+        feature e "force" = some "existential") := by decide
 
-/-- Grammaticality judgment for Italian FCI constructions. -/
-inductive Judgment where
-  | grammatical     -- fully acceptable
-  | marginal        -- ? or ?? — degraded but parseable
-  | ungrammatical   -- * — not acceptable
-  deriving DecidableEq, Repr
-
-/-- Quantificational force of the FCI reading. -/
-inductive QForce where
-  | universal    -- ∀ reading
-  | existential  -- ∃ reading
-  | ambiguous    -- both readings available
-  deriving DecidableEq, Repr
-
-/-- FCI construction type: [qualsiasi N] vs [un N qualsiasi]. -/
-inductive FCIType where
-  | universal    -- [qualsiasi/qualunque N]: universal force
-  | existential  -- [un N qualsiasi/qualunque]: existential force
-  deriving DecidableEq, Repr
-
-/-- Embedding context for FCI observations. -/
-inductive FCIContext where
-  | future              -- future tense (10a-b)
-  | imperative          -- imperative mood (10c-d)
-  | episodic_bare       -- bare episodic, no modifier (11a, 11c)
-  | episodic_subtrigged -- episodic + relative clause (11b, 11d)
-  | negation_bare       -- under negation, no modifier (12/73a)
-  | negation_subtrigged -- under negation + relative clause (73b)
-  deriving DecidableEq, Repr
-
-/-- An Italian FCI observation from [chierchia-2006] §2. -/
-structure FCIObservation where
-  /-- The sentence (schematic) -/
-  sentence : String
-  /-- Example number in the paper -/
-  exampleNum : String
-  /-- FCI construction type -/
-  fciType : FCIType
-  /-- Embedding context -/
-  context : FCIContext
-  /-- Available quantificational force -/
-  force : QForce
-  /-- Grammaticality judgment -/
-  judgment : Judgment
-  deriving Repr
-
--- §2 data: universal vs existential FCI contrast
-
-/-- (10a): "Domani interrogherò qualsiasi studente" (future, universal FCI)
-    — Both ∀ and ∃ readings available. -/
-def obs_10a : FCIObservation :=
-  { sentence := "Domani interrogherò qualsiasi studente"
-  , exampleNum := "(10a)"
-  , fciType := .universal
-  , context := .future
-  , force := .ambiguous
-  , judgment := .grammatical }
-
-/-- (10b): "Domani interrogherò uno studente qualsiasi" (future, existential FCI)
-    — Only ∃ reading. -/
-def obs_10b : FCIObservation :=
-  { sentence := "Domani interrogherò uno studente qualsiasi"
-  , exampleNum := "(10b)"
-  , fciType := .existential
-  , context := .future
-  , force := .existential
-  , judgment := .grammatical }
-
-/-- (10c): "Prendi qualunque dolce" (imperative, universal FCI)
-    — Both ∀ and ∃ readings available. -/
-def obs_10c : FCIObservation :=
-  { sentence := "Prendi qualunque dolce"
-  , exampleNum := "(10c)"
-  , fciType := .universal
-  , context := .imperative
-  , force := .ambiguous
-  , judgment := .grammatical }
-
-/-- (10d): "Prendi un dolce qualunque" (imperative, existential FCI)
-    — Only ∃ reading. -/
-def obs_10d : FCIObservation :=
-  { sentence := "Prendi un dolce qualunque"
-  , exampleNum := "(10d)"
-  , fciType := .existential
-  , context := .imperative
-  , force := .existential
-  , judgment := .grammatical }
-
--- §2 data: subtrigging
-
-/-- (11a): "Ieri ho parlato con un qualsiasi filosofo" (bare episodic, EFCI)
-    — Marginal without modifier. -/
-def obs_11a : FCIObservation :=
-  { sentence := "Ieri ho parlato con un qualsiasi filosofo"
-  , exampleNum := "(11a)"
-  , fciType := .existential
-  , context := .episodic_bare
-  , force := .existential
-  , judgment := .marginal }
-
-/-- (11b): "Ieri ho parlato con un qualsiasi filosofo che fosse interessato"
-    — Marginal; the paper notes RC "if anything, makes things worse" for
-    existential FCIs. Subtrigging does not rescue EFCIs. -/
-def obs_11b : FCIObservation :=
-  { sentence := "Ieri ho parlato con un qualsiasi filosofo che fosse interessato"
-  , exampleNum := "(11b)"
-  , fciType := .existential
-  , context := .episodic_subtrigged
-  , force := .existential
-  , judgment := .marginal }
-
-/-- (11c): "Ieri ho parlato con qualsiasi filosofo" (bare episodic, universal FCI)
-    — Marginal without modifier. -/
-def obs_11c : FCIObservation :=
-  { sentence := "Ieri ho parlato con qualsiasi filosofo"
-  , exampleNum := "(11c)"
-  , fciType := .universal
-  , context := .episodic_bare
-  , force := .universal
-  , judgment := .marginal }
-
-/-- (11d): "Ieri ho parlato con qualsiasi filosofo che fosse interessato"
-    — Fully grammatical: subtrigging rescues universal FCIs. -/
-def obs_11d : FCIObservation :=
-  { sentence := "Ieri ho parlato con qualsiasi filosofo che fosse interessato"
-  , exampleNum := "(11d)"
-  , fciType := .universal
-  , context := .episodic_subtrigged
-  , force := .universal
-  , judgment := .grammatical }
-
--- §5.3 / §2: negation scope
-
-/-- (12)/(73a): "Non leggerò qualunque libro" (negation + bare universal FCI)
-    — Only ¬∀ (rhetorical) reading; NOT the NPI ¬∃ reading. -/
-def obs_12 : FCIObservation :=
-  { sentence := "Non leggerò qualunque libro"
-  , exampleNum := "(12)/(73a)"
-  , fciType := .universal
-  , context := .negation_bare
-  , force := .universal
-  , judgment := .grammatical }
-
-/-- (73b): "Non leggerò qualunque libro che mi consiglierà Gianni"
-    — With RC under negation: ∀¬ or ¬∃ readings become available. -/
-def obs_73b : FCIObservation :=
-  { sentence := "Non leggerò qualunque libro che mi consiglierà Gianni"
-  , exampleNum := "(73b)"
-  , fciType := .universal
-  , context := .negation_subtrigged
-  , force := .ambiguous
-  , judgment := .grammatical }
-
--- Verification theorems: the judgment data encodes the key contrasts
-
-/-- Subtrigging contrast: bare universal FCI is marginal in episodic;
-    subtrigged universal FCI is grammatical. -/
+/-- Subtrigging rescues a universal free-choice item in an episodic context: bare it is marginal,
+with a relative clause it is acceptable. -/
 theorem subtrigging_rescues_universal :
-    obs_11c.judgment = .marginal ∧ obs_11d.judgment = .grammatical := ⟨rfl, rfl⟩
+    (∀ e ∈ Examples.all, feature e "fciType" = some "universal" →
+        feature e "environment" = some "episodicBare" → e.judgment = .marginal) ∧
+      (∀ e ∈ Examples.all, feature e "fciType" = some "universal" →
+        feature e "environment" = some "episodicSubtrigged" → e.judgment = .acceptable) := by
+  decide
 
-/-- Subtrigging does NOT rescue existential FCIs in episodic contexts. -/
-theorem subtrigging_no_help_existential :
-    obs_11a.judgment = .marginal ∧ obs_11b.judgment = .marginal := ⟨rfl, rfl⟩
+/-- It does nothing for an existential one, which stays marginal in an episodic context either
+way — and both episodic existential rows are attested, so the claim is not vacuous. -/
+theorem subtrigging_does_not_rescue_existential :
+    (∀ e ∈ Examples.all, feature e "fciType" = some "existential" →
+        feature e "environment" = some "episodicBare" ∨
+          feature e "environment" = some "episodicSubtrigged" → e.judgment = .marginal) ∧
+      (∃ e ∈ Examples.all, feature e "environment" = some "episodicBare" ∧
+        feature e "fciType" = some "existential") ∧
+      (∃ e ∈ Examples.all, feature e "environment" = some "episodicSubtrigged" ∧
+        feature e "fciType" = some "existential") := by decide
 
-/-- Universal FCIs always admit ∀ (and sometimes ∃): force is ambiguous. -/
-theorem universal_fci_ambiguous_force :
-    [obs_10a, obs_10c].all (·.force == .ambiguous) = true := by decide
-
-/-- Existential FCIs have ∃ force only. -/
-theorem existential_fci_existential_force :
-    [obs_10b, obs_10d].all (·.force == .existential) = true := by decide
-
-/-- Under negation, bare universal FCI yields only ¬∀ (rhetorical), not NPI ¬∃.
-    This is the *qualsiasi*/*any* contrast: *qualsiasi* under negation ≠ NPI. -/
+/-- Under bare negation the universal free-choice item has only the universal (rhetorical ¬∀)
+reading; adding a relative clause makes the other readings available again. This is the
+*qualsiasi*/*any* contrast: *qualsiasi* under negation is not a negative-polarity item. -/
 theorem negation_rhetorical_only :
-    obs_12.force = .universal := rfl
+    (∀ e ∈ Examples.all, feature e "environment" = some "negationBare" →
+        feature e "force" = some "universal") ∧
+      (∀ e ∈ Examples.all, feature e "environment" = some "negationSubtrigged" →
+        feature e "force" = some "ambiguous") ∧
+      (∃ e ∈ Examples.all, feature e "environment" = some "negationBare") := by decide
 
 end Chierchia2006
