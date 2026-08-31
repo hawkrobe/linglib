@@ -5,69 +5,62 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fin.Basic
 
 /-!
-# Putting *oughts* together
-[boylan-2023]
+# Boylan 2023: putting oughts together
 
-Semantics and Pragmatics 16, Article 5: 1–53.
+[boylan-2023] (Semantics and Pragmatics 16) argues Consistent Agglomeration —
+⌜ought φ⌝, ⌜ought ψ⌝ entail ⌜ought (φ ∧ ψ)⌝ for consistent φ, ψ — is valid
+for deontic but not epistemic *ought*, and derives the split from three
+pieces: *ought* is an existential quantifier over the propositionally best
+partial answers to a contextual relevance question (70)–(71); it presupposes
+those best answers pairwise consistent; and deontic orderings obey the
+averaging constraint (Assumption 2) — a partial answer is never better than
+every complete answer inside it — where epistemic orderings need not, a
+disjunction being likelier than each disjunct. Deontic *ought* is then a box
+after all (Facts 2–4), while The Office falsifies epistemic Agglomeration
+(Fact 5).
 
-## Core Proposal
+## Main definitions
 
-Consistent Agglomeration — when φ and ψ are consistent, ⌜ought φ⌝ and
-⌜ought ψ⌝ entail ⌜ought (φ ∧ ψ)⌝ — is valid for deontic but not epistemic
-*ought*. Boylan gives a unified semantics that derives this asymmetry from
-three independently motivated components:
+* `BoylanPartition`, `PBEST`, `pairwiseConsistent`, `ought` — the relevance
+  question as a partition, the best partial answers (70), and the
+  existential entry with its definedness gate (71).
+* `isDeontic`, `orderingTransitive` — the appendix's Assumption 2 and the
+  ordering's implicit transitivity.
+* `officeOrdering`, `dessertOrdering`, `conflictOught` — the two scenarios
+  and the rival conflict entry (61).
 
-1. **Existential semantics**: *ought* is an existential quantifier over the
-   propositionally best partial answers to a relevance question (PBEST),
-   not a universal quantifier over best worlds.
+## Main results
 
-2. **Question-sensitivity**: The ordering only ranks partial answers to a
-   contextually supplied relevance question Q, following
-   [karttunen-1977]'s partition semantics.
+* `fact1_partial_complete`, `fact2_unique_deontic_complete`,
+  `fact3_deontic_boxy`, `fact4_deontic_agglomeration` — the appendix Facts:
+  partial and complete answers nest or exclude; a deontic ordering puts
+  exactly one complete answer into PBEST; *ought* then reduces to Kratzer
+  necessity over it; deontic Agglomeration follows.
+* `epistemic_agglomeration_failure` — Fact 5 on The Office model, with
+  `kratzer_agglomerates` showing the classic semantics cannot fit the same
+  pattern.
+* `inheritance`, `no_dilemma` — Inheritance holds, and no parameters verify
+  ⌜ought φ⌝ with ⌜ought ¬φ⌝ — against the conflict account's dilemmas
+  (`conflict_dilemma`).
+* `dessert_indifference`, `dessert_what_undefined` — Indifference from the
+  coarse relevance question, undefinedness from the fine-grained one.
 
-3. **Pairwise consistency definedness**: *ought* is defined only when all
-   pairs in PBEST are consistent with the background information.
+## Implementation notes
 
-The deontic/epistemic split arises from a structural difference in orderings:
-deontic orderings satisfy an **averaging constraint** (a disjunction cannot be
-worse than ALL its disjuncts), while epistemic orderings can violate it
-(a disjunction can be more probable than any disjunct).
+The framework is stated over an arbitrary world type; the scenarios
+instantiate four worlds. The background-information worlds are an explicit
+list, and orderings are Boolean for the `decide`-driven scenario checks. The
+Office ordering counts satisfying worlds where the paper uses a probability
+threshold, and Dessert ranks by worst outcome where the paper uses
+preferences — the same structure in exact arithmetic.
 
-## Structure
+## References
 
-The file is organized top-down: abstract framework first, concrete
-applications second.
-
-**§§1–6** establish the formal machinery — proposition-level orderings,
-partitions (partial/complete answers), PBEST, pairwise consistency,
-*ought*, and ordering assumptions (Assumptions 1–6 from the appendix).
-
-**§7** derives the general structural properties from those assumptions:
-- **Fact 1** (`fact1_partial_complete`): Partition disjunction — a partial
-  answer and complete answer are either nested or disjoint.
-- **Fact 2** (`fact2_unique_deontic_complete`): Under deontic orderings,
-  PBEST contains exactly one complete answer.
-- **Fact 3** (`fact3_deontic_boxy`): Singleton PBEST reduces Boylan's
-  *ought* to Kratzer necessity.
-- **Fact 4** (`fact4_no_agglomeration`): Singleton PBEST validates
-  Agglomeration.
-- **Inheritance** (`inheritance`): φ ⊨ ψ → ⌜ought φ⌝ ⊨ ⌜ought ψ⌝.
-- **No dilemma** (`no_dilemma`): Pairwise consistency prevents
-  ⌜ought φ⌝ ∧ ⌜ought ¬φ⌝.
-
-**§§8–14** instantiate the framework for concrete scenarios (The Office,
-Dessert) and comparisons (conflict account, Kratzer bridge).
-
-## Connection to Existing Infrastructure
-
-- Builds on `Kratzer.Ordering` (`bestWorlds`, `atLeastAsGoodAs`,
-  `accessibleWorlds`, `ModalBase`, `OrderingSource`).
-- Bridges to `Kratzer.Background` (`isConsistent` ↔ `pairConsistent`).
-- Connects to `Kratzer.Flavor` (`EpistemicFlavor`, `DeonticFlavor`).
-- Contrasts with the universal-quantifier accounts in `Directive.lean`
-  ([von-fintel-iatridou-2008]) and `Rubinstein2014.lean`
-  ([rubinstein-2014]), which model weak necessity as ∀ over refined
-  best-world sets. Boylan's operator is existential over propositions.
+* [boylan-2023] — the paper.
+* [karttunen-1977] — questions as partitions.
+* [von-fintel-2012], [horty-2012] — the conflict account (61).
+* [von-fintel-iatridou-2008], [rubinstein-2014] — the universal-quantifier
+  rivals of `Directive.lean` and `Rubinstein2014.lean`.
 -/
 
 namespace Boylan2023
@@ -77,17 +70,6 @@ abbrev World := Fin 4
 def allWorlds : List World := [0, 1, 2, 3]
 
 open Modality.Kratzer
-
-/-- Computable list of accessible worlds for use in the Boylan framework.
-    `accessibleWorlds` is now `Set`-valued (noncomputable); for the `decide`-
-    driven machinery here we ignore the (always empty) modal base and return
-    `allWorlds`. The Office and Dessert scenarios both use empty bases. -/
-def accessibleWorldsList (_f : ModalBase World) (_w : World) : List World :=
-  allWorlds
-
--- ============================================================================
--- §1. Proposition-Level Ordering
--- ============================================================================
 
 /-! ## Lifting world ordering to propositions
 
@@ -101,11 +83,9 @@ we parameterize directly over a proposition-level ordering. -/
 /-- A proposition-level ordering: ranks propositions relative to an
     evaluation world. This abstracts over the source of the ordering
     (probability, normality, deontic value, etc.). -/
-abbrev PropOrdering := World → (World → Bool) → (World → Bool) → Bool
+abbrev PropOrdering (W : Type*) := W → (W → Bool) → (W → Bool) → Bool
 
--- ============================================================================
--- §2. Partition Framework (Appendix, Assumptions 4–6)
--- ============================================================================
+variable {W : Type*}
 
 /-! ## Questions as partitions
 
@@ -119,8 +99,8 @@ The partition framework corresponds to Assumptions 4 (question-sensitivity),
 
 /-- A partition of accessible worlds into non-empty pairwise-disjoint cells.
     Models Q|f(w) — the relevance question restricted to the modal base. -/
-structure BoylanPartition (accessible : List World) where
-  cells : List ((World → Bool))
+structure BoylanPartition (accessible : List W) where
+  cells : List ((W → Bool))
   /-- Every accessible world belongs to some cell. -/
   cover : ∀ w ∈ accessible, ∃ c ∈ cells, c w = true
   /-- Distinct cells share no accessible world. -/
@@ -131,28 +111,26 @@ structure BoylanPartition (accessible : List World) where
 
 /-- A **partial answer** is a union of cells: if p intersects a cell on
     the accessible worlds, it contains the entire cell. -/
-def BoylanPartition.isPartialAnswer {acc : List World} (Q : BoylanPartition acc) (p : (World → Bool)) : Prop :=
+def BoylanPartition.isPartialAnswer {acc : List W} (Q : BoylanPartition acc)
+    (p : W → Bool) : Prop :=
   ∀ c ∈ Q.cells, (∃ w ∈ acc, c w = true ∧ p w = true) →
     ∀ w ∈ acc, c w = true → p w = true
 
 /-- A **complete answer** is a single cell of the partition. -/
-def BoylanPartition.isCompleteAnswer {acc : List World} (Q : BoylanPartition acc) (q : (World → Bool)) : Prop :=
+def BoylanPartition.isCompleteAnswer {acc : List W} (Q : BoylanPartition acc)
+    (q : W → Bool) : Prop :=
   q ∈ Q.cells
 
 /-- Every non-empty partial answer contains at least one complete cell.
     Since p is a union of cells and is non-empty, some cell's accessible
     worlds are entirely within p. -/
 theorem BoylanPartition.partial_contains_cell
-    {acc : List World} (Q : BoylanPartition acc) {p : (World → Bool)}
+    {acc : List W} (Q : BoylanPartition acc) {p : (W → Bool)}
     (hp : Q.isPartialAnswer p) (hne : ∃ w ∈ acc, p w = true) :
     ∃ c ∈ Q.cells, ∀ w ∈ acc, c w = true → p w = true := by
   obtain ⟨v, hva, hpv⟩ := hne
   obtain ⟨c, hc, hcv⟩ := Q.cover v hva
   exact ⟨c, hc, hp c hc ⟨v, hva, hcv, hpv⟩⟩
-
--- ============================================================================
--- §3. PBEST — Propositionally Best Partial Answers (§4, eq. 70)
--- ============================================================================
 
 /-! ## PBEST
 
@@ -164,7 +142,7 @@ candidate propositions (the partial answers to Q restricted to f(w))
 and filter to those that are undominated under the ordering. -/
 
 /-- Strict betterness between propositions: p is strictly better than q. -/
-def StrictlyBetter (ord : PropOrdering) (w : World) (p q : (World → Bool)) : Prop :=
+def StrictlyBetter (ord : PropOrdering W) (w : W) (p q : (W → Bool)) : Prop :=
   ord w p q = true ∧ ¬(ord w q p = true)
 
 /-- PBEST: the propositionally best partial answers.
@@ -172,27 +150,27 @@ def StrictlyBetter (ord : PropOrdering) (w : World) (p q : (World → Bool)) : P
     Given a list of candidate propositions (partial answers to Q
     restricted to f(w)), returns those that are non-empty on the
     accessible worlds and undominated under the ordering. -/
-def PBEST (ord : PropOrdering) (w : World) (candidates : List ((World → Bool)))
-    (acc : List World) : List ((World → Bool)) :=
+def PBEST (ord : PropOrdering W) (w : W) (candidates : List ((W → Bool)))
+    (acc : List W) : List ((W → Bool)) :=
   candidates.filter λ p =>
     acc.any p && !candidates.any (λ q => ord w q p && !(ord w p q))
 
 /-! ### PBEST bridge lemmas -/
 
-theorem PBEST_subset {ord : PropOrdering} {w : World}
-    {candidates : List ((World → Bool))} {acc : List World} {p : (World → Bool)}
+theorem PBEST_subset {ord : PropOrdering W} {w : W}
+    {candidates : List ((W → Bool))} {acc : List W} {p : (W → Bool)}
     (h : p ∈ PBEST ord w candidates acc) : p ∈ candidates :=
   (List.mem_filter.mp h).1
 
-theorem PBEST_nonempty {ord : PropOrdering} {w : World}
-    {candidates : List ((World → Bool))} {acc : List World} {p : (World → Bool)}
+theorem PBEST_nonempty {ord : PropOrdering W} {w : W}
+    {candidates : List ((W → Bool))} {acc : List W} {p : (W → Bool)}
     (h : p ∈ PBEST ord w candidates acc) : ∃ v ∈ acc, p v = true := by
   have := (List.mem_filter.mp h).2
   simp only [Bool.and_eq_true, List.any_eq_true] at this
   exact this.1
 
-theorem PBEST_undom {ord : PropOrdering} {w : World}
-    {candidates : List ((World → Bool))} {acc : List World} {p : (World → Bool)}
+theorem PBEST_undom {ord : PropOrdering W} {w : W}
+    {candidates : List ((W → Bool))} {acc : List W} {p : (W → Bool)}
     (h : p ∈ PBEST ord w candidates acc) :
     ∀ r ∈ candidates, ¬StrictlyBetter ord w r p := by
   have hcond := (List.mem_filter.mp h).2
@@ -205,8 +183,8 @@ theorem PBEST_undom {ord : PropOrdering} {w : World}
     exact ⟨hrp, by cases h : ord w p r <;> simp_all⟩
   simp [this] at hcond
 
-theorem mem_PBEST {ord : PropOrdering} {w : World}
-    {candidates : List ((World → Bool))} {acc : List World} {p : (World → Bool)}
+theorem mem_PBEST {ord : PropOrdering W} {w : W}
+    {candidates : List ((W → Bool))} {acc : List W} {p : (W → Bool)}
     (hmem : p ∈ candidates)
     (hne : ∃ v ∈ acc, p v = true)
     (hund : ∀ r ∈ candidates, ¬StrictlyBetter ord w r p) :
@@ -227,10 +205,6 @@ theorem mem_PBEST {ord : PropOrdering} {w : World}
       exact hund r hr ⟨hrp, hpr⟩
   simp [h1, h2]
 
--- ============================================================================
--- §4. Pairwise Consistency (§4.3)
--- ============================================================================
-
 /-! ## Consistency definedness condition
 
 ⟦ought φ⟧ is defined only if for all p and q in PBEST(w,f,g,Q),
@@ -242,21 +216,17 @@ inconsistent (not everyone can be in while someone is absent). -/
 
 /-- Two propositions are consistent with respect to background information:
     there exists a world satisfying both p, q, and the modal base. -/
-def pairConsistent (p q : (World → Bool)) (accessible : List World) : Bool :=
+def pairConsistent (p q : (W → Bool)) (accessible : List W) : Bool :=
   accessible.any (λ w => p w && q w)
 
 /-- All pairs in a list of propositions are consistent. -/
-def pairwiseConsistent (props : List ((World → Bool))) (accessible : List World) : Bool :=
+def pairwiseConsistent (props : List ((W → Bool))) (accessible : List W) : Bool :=
   props.all λ p => props.all λ q => pairConsistent p q accessible
 
 /-- Definedness condition for *ought*: PBEST is pairwise consistent. -/
-def oughtDefined (ord : PropOrdering) (w : World)
-    (candidates : List ((World → Bool))) (accessible : List World) : Bool :=
+def oughtDefined (ord : PropOrdering W) (w : W)
+    (candidates : List ((W → Bool))) (accessible : List W) : Bool :=
   pairwiseConsistent (PBEST ord w candidates accessible) accessible
-
--- ============================================================================
--- §5. The Semantics of *ought* (§4.4, eq. 71)
--- ============================================================================
 
 /-! ## Boylan's *ought*
 
@@ -266,23 +236,15 @@ def oughtDefined (ord : PropOrdering) (w : World)
 (b) If defined, ⟦ought φ⟧^{w,f,g,Q} iff ∃p ∈ PBEST(w,f,g,Q):
     ∀w' ∈ p: ⟦φ⟧^{w'} = 1 -/
 
-/-- Boylan's *ought*: existential quantifier over PBEST.
-    Returns `none` when the definedness condition fails. -/
-def ought (ord : PropOrdering) (f : ModalBase World)
-    (candidates : List ((World → Bool)))
-    (φ : (World → Bool)) (w : World) : Option Bool :=
-  let accessible := accessibleWorldsList f w
-  let best := PBEST ord w candidates accessible
-  if pairwiseConsistent best accessible then
-    -- ∃p ∈ PBEST. ∀w' ∈ p. φ(w')
-    some (best.any λ p =>
-      accessible.filter p |>.all φ)
+/-- Boylan's *ought*: existential quantifier over PBEST, with the
+    background-information worlds passed as an explicit list. Returns `none`
+    when the definedness condition fails. -/
+def ought (ord : PropOrdering W) (candidates : List (W → Bool))
+    (acc : List W) (φ : W → Bool) (w : W) : Option Bool :=
+  if pairwiseConsistent (PBEST ord w candidates acc) acc then
+    some ((PBEST ord w candidates acc).any fun p => (acc.filter p).all φ)
   else
     none
-
--- ============================================================================
--- §6. Ordering Assumptions (Appendix, Assumptions 1–2)
--- ============================================================================
 
 /-! ## Ordering constraints
 
@@ -303,21 +265,17 @@ the appendix. -/
 
     Epistemics violate this: a disjunction can be more probable than any
     disjunct (P(A∨B) > max(P(A), P(B)) when A,B overlap). -/
-def isDeontic (ord : PropOrdering) (w : World)
-    (completeAnswers : List ((World → Bool))) (acc : List World) : Prop :=
-  ∀ p : (World → Bool),
+def isDeontic (ord : PropOrdering W) (w : W)
+    (completeAnswers : List ((W → Bool))) (acc : List W) : Prop :=
+  ∀ p : (W → Bool),
     (∃ q ∈ completeAnswers, ∀ v ∈ acc, q v = true → p v = true) →
     ∃ q ∈ completeAnswers,
       (∀ v ∈ acc, q v = true → p v = true) ∧ ord w q p = true
 
 /-- Transitivity of the ordering (implicit in Kratzer's framework). -/
-def orderingTransitive (ord : PropOrdering) (w : World) : Prop :=
-  ∀ a b c : (World → Bool),
+def orderingTransitive (ord : PropOrdering W) (w : W) : Prop :=
+  ∀ a b c : (W → Bool),
     ord w a b = true → ord w b c = true → ord w a c = true
-
--- ============================================================================
--- §7. General Structural Properties (Appendix, Facts 1–4; §10–11)
--- ============================================================================
 
 /-! ## Structural properties of Boylan's *ought*
 
@@ -329,7 +287,8 @@ checks but structured proofs from the assumptions.
 to Kratzer necessity (Facts 2–3) and validates Agglomeration (Fact 4),
 while epistemic *ought* can fail Agglomeration (Fact 5, §8 below).
 
-**From §10–11**: Inheritance and No-dilemma hold for all flavors. -/
+**From §10 and §3.3**: Inheritance holds for all flavors, and — against the
+conflict account — no parameters verify a dilemma. -/
 
 /-- **Fact 1**: For any partial answer p and complete answer q (cell),
     either q ⊆ p or p ∩ q = ∅ on the accessible worlds.
@@ -337,8 +296,8 @@ while epistemic *ought* can fail Agglomeration (Fact 5, §8 below).
     **Proof**: q is a cell. If q and p share an accessible world v, then
     since p is a union of cells, all of q's accessible worlds must be in p
     (by `isPartialAnswer` applied to cell q). Otherwise disjoint. -/
-theorem fact1_partial_complete {acc : List World} (Q : BoylanPartition acc)
-    {p q : (World → Bool)}
+theorem fact1_partial_complete {acc : List W} (Q : BoylanPartition acc)
+    {p q : (W → Bool)}
     (hp : Q.isPartialAnswer p) (hq : Q.isCompleteAnswer q) :
     (∀ w ∈ acc, q w = true → p w = true) ∨
     (∀ w ∈ acc, ¬(p w = true ∧ q w = true)) := by
@@ -351,7 +310,7 @@ theorem fact1_partial_complete {acc : List World} (Q : BoylanPartition acc)
 /-- Distinct cells of a partition are pairwise inconsistent — they share
     no accessible world. This is the key to uniqueness in Fact 2. -/
 theorem BoylanPartition.cells_pairInconsistent
-    {acc : List World} (Q : BoylanPartition acc) {q₁ q₂ : (World → Bool)}
+    {acc : List W} (Q : BoylanPartition acc) {q₁ q₂ : (W → Bool)}
     (hq₁ : q₁ ∈ Q.cells) (hq₂ : q₂ ∈ Q.cells) (hne : q₁ ≠ q₂) :
     pairConsistent q₁ q₂ acc = false := by
   cases h : pairConsistent q₁ q₂ acc
@@ -368,9 +327,9 @@ theorem BoylanPartition.cells_pairInconsistent
     q ≽ r (from q ≽ p ≽ r), contradicting r ≻ q. So ¬(p ≽ r),
     hence r ≻ p, contradicting p's undominatedness. -/
 theorem undominated_of_geq
-    {ord : PropOrdering} {w : World} {candidates : List ((World → Bool))}
+    {ord : PropOrdering W} {w : W} {candidates : List ((W → Bool))}
     (htrans : orderingTransitive ord w)
-    {p q : (World → Bool)}
+    {p q : (W → Bool)}
     (hp_undom : ∀ r ∈ candidates, ¬StrictlyBetter ord w r p)
     (hq_geq_p : ord w q p = true) :
     ∀ r ∈ candidates, ¬StrictlyBetter ord w r q := by
@@ -380,7 +339,7 @@ theorem undominated_of_geq
 
 /-! ### Fact 2 — Unique Deontic Complete Answer
 
-**Proof sketch** (Boylan, p. 46):
+**Proof sketch** (the appendix):
 
 *Existence*. PBEST is non-empty (Assumption 1); take p ∈ PBEST. Since p is
 a partial answer, some cell q ⊆ p (`partial_contains_cell`). By the deontic
@@ -396,8 +355,8 @@ non-empty (a cell) and in the candidates, q' ∈ PBEST.
 /-- **Fact 2**: Under a deontic, transitive ordering with pairwise consistency,
     PBEST contains exactly one complete answer. -/
 theorem fact2_unique_deontic_complete
-    {acc : List World} (Q : BoylanPartition acc)
-    {ord : PropOrdering} {w : World} {candidates : List ((World → Bool))}
+    {acc : List W} (Q : BoylanPartition acc)
+    {ord : PropOrdering W} {w : W} {candidates : List ((W → Bool))}
     (htrans : orderingTransitive ord w)
     (hcands_pa : ∀ p ∈ candidates, Q.isPartialAnswer p)
     (hcells_in_cands : ∀ c ∈ Q.cells, c ∈ candidates)
@@ -426,37 +385,63 @@ theorem fact2_unique_deontic_complete
   have := this q' hq'_pbest
   simp [hinc] at this
 
-/-! ### Fact 3 — Deontic *Ought* Is Boxy (General)
+/-- **Fact 3** (deontic *ought* is boxy): with a best complete answer `q` in
+    PBEST and pairwise consistency, ⌜ought φ⌝ reduces to universal
+    quantification over `q`'s accessible worlds — Kratzer necessity
+    relativized to the best complete answer. Uniqueness is not needed for
+    the equation, only membership: any PBEST witness of φ contains `q`, by
+    Fact 1 plus consistency. -/
+theorem fact3_deontic_boxy {acc : List W} (Q : BoylanPartition acc)
+    {ord : PropOrdering W} {w : W} {candidates : List (W → Bool)}
+    {q : W → Bool}
+    (hcands_pa : ∀ p ∈ candidates, Q.isPartialAnswer p)
+    (hq : Q.isCompleteAnswer q)
+    (hqin : q ∈ PBEST ord w candidates acc)
+    (hpw : pairwiseConsistent (PBEST ord w candidates acc) acc = true)
+    (φ : W → Bool) :
+    ought ord candidates acc φ w = some ((acc.filter q).all φ) := by
+  simp only [ought, hpw, if_true, Option.some.injEq]
+  cases hall : (acc.filter q).all φ with
+  | true => exact List.any_eq_true.mpr ⟨q, hqin, hall⟩
+  | false =>
+    cases hany : (PBEST ord w candidates acc).any (fun p => (acc.filter p).all φ) with
+    | false => rfl
+    | true =>
+      exfalso
+      obtain ⟨p, hp, hpall⟩ := List.any_eq_true.mp hany
+      rcases fact1_partial_complete Q (hcands_pa p (PBEST_subset hp)) hq with hsub | hdisj
+      · rw [List.all_eq_true] at hpall
+        have hqall : (acc.filter q).all φ = true := List.all_eq_true.mpr fun v hv => by
+          have hvacc := List.mem_of_mem_filter hv
+          exact hpall v (List.mem_filter.mpr ⟨hvacc, hsub v hvacc (List.of_mem_filter hv)⟩)
+        simp [hqall] at hall
+      · rw [pairwiseConsistent, List.all_eq_true] at hpw
+        have h1 := hpw q hqin
+        rw [List.all_eq_true] at h1
+        have h2 := h1 p hp
+        simp only [pairConsistent, List.any_eq_true, Bool.and_eq_true] at h2
+        obtain ⟨v, hvacc, hqv, hpv⟩ := h2
+        exact hdisj v hvacc ⟨hpv, hqv⟩
 
-When PBEST = [q] (a singleton containing one complete answer), Boylan's
-existential *ought* reduces to universal quantification over q — exactly
-Kratzer necessity relativized to the unique best complete answer. -/
-
-/-- **Fact 3**: When PBEST is a singleton {q}, ⌜ought φ⌝ = true iff
-    all accessible q-worlds satisfy φ. -/
-theorem fact3_deontic_boxy
-    {ord : PropOrdering} {f : ModalBase World} {w : World}
-    {candidates : List ((World → Bool))} {q : (World → Bool)}
-    (hpbest : PBEST ord w candidates (accessibleWorldsList f w) = [q])
-    (hpw : pairwiseConsistent [q] (accessibleWorldsList f w) = true)
-    (φ : (World → Bool)) :
-    ought ord f candidates φ w =
-      some ((accessibleWorldsList f w).filter q |>.all φ) := by
-  simp only [ought]
-  rw [hpbest, hpw]
-  simp
-
-/-- **Fact 4**: Under the hypotheses of Fact 3 (PBEST = [q]),
-    Agglomeration holds: ⌜ought φ⌝ ∧ ⌜ought ψ⌝ → ⌜ought (φ ∧ ψ)⌝. -/
-theorem fact4_no_agglomeration
-    {ord : PropOrdering} {f : ModalBase World} {w : World}
-    {candidates : List ((World → Bool))} {q : (World → Bool)} {φ ψ : (World → Bool)}
-    (hpbest : PBEST ord w candidates (accessibleWorldsList f w) = [q])
-    (hpw : pairwiseConsistent [q] (accessibleWorldsList f w) = true)
-    (hφ : ought ord f candidates φ w = some true)
-    (hψ : ought ord f candidates ψ w = some true) :
-    ought ord f candidates (fun v => φ v && ψ v) w = some true := by
-  rw [fact3_deontic_boxy hpbest hpw] at hφ hψ ⊢
+/-- **Fact 4** (no deontic Agglomeration failure): under a deontic,
+    transitive ordering with pairwise consistency, two true *ought*s
+    agglomerate — Fact 2's unique best complete answer and Fact 3's
+    reduction do the work. -/
+theorem fact4_deontic_agglomeration {acc : List W} (Q : BoylanPartition acc)
+    {ord : PropOrdering W} {w : W} {candidates : List (W → Bool)}
+    {φ ψ : W → Bool}
+    (htrans : orderingTransitive ord w)
+    (hcands_pa : ∀ p ∈ candidates, Q.isPartialAnswer p)
+    (hcells : ∀ c ∈ Q.cells, c ∈ candidates)
+    (hdeontic : isDeontic ord w Q.cells acc)
+    (hex : ∃ p, p ∈ PBEST ord w candidates acc)
+    (hpw : pairwiseConsistent (PBEST ord w candidates acc) acc = true)
+    (hφ : ought ord candidates acc φ w = some true)
+    (hψ : ought ord candidates acc ψ w = some true) :
+    ought ord candidates acc (fun v => φ v && ψ v) w = some true := by
+  obtain ⟨q, hqcell, hqin, -⟩ :=
+    fact2_unique_deontic_complete Q htrans hcands_pa hcells hdeontic hex hpw
+  rw [fact3_deontic_boxy Q hcands_pa hqcell hqin hpw] at hφ hψ ⊢
   simp only [Option.some.injEq] at hφ hψ ⊢
   rw [List.all_eq_true] at hφ hψ ⊢
   intro v hv
@@ -469,11 +454,11 @@ theorem fact4_no_agglomeration
     This is a general result — not a finite data check — that holds for
     all orderings, modal bases, and candidate sets. Contrastivist accounts
     generally invalidate this (§10). -/
-theorem inheritance {ord : PropOrdering} {f : ModalBase World}
-    {cands : List ((World → Bool))} {φ ψ : (World → Bool)} {w : World}
+theorem inheritance {ord : PropOrdering W} {cands : List (W → Bool)}
+    {acc : List W} {φ ψ : W → Bool} {w : W}
     (hent : ∀ v, φ v = true → ψ v = true)
-    (hoφ : ought ord f cands φ w = some true) :
-    ought ord f cands ψ w = some true := by
+    (hoφ : ought ord cands acc φ w = some true) :
+    ought ord cands acc ψ w = some true := by
   simp only [ought] at hoφ ⊢
   split at hoφ
   · rename_i hpc
@@ -490,10 +475,10 @@ theorem inheritance {ord : PropOrdering} {f : ModalBase World}
     p₂ ∈ PBEST witnesses ¬φ, pairwise consistency gives a world in p₁ ∩ p₂
     that would satisfy both φ and ¬φ. This is the key structural advantage
     over the conflict account, which predicts dilemmas in The Office. -/
-theorem no_dilemma {ord : PropOrdering} {f : ModalBase World}
-    {cands : List ((World → Bool))} {φ : (World → Bool)} {w : World}
-    (h1 : ought ord f cands φ w = some true)
-    (h2 : ought ord f cands (fun v => !φ v) w = some true) : False := by
+theorem no_dilemma {ord : PropOrdering W} {cands : List (W → Bool)}
+    {acc : List W} {φ : W → Bool} {w : W}
+    (h1 : ought ord cands acc φ w = some true)
+    (h2 : ought ord cands acc (fun v => !φ v) w = some true) : False := by
   simp only [ought] at h1 h2
   split at h1
   · rename_i hpc
@@ -514,10 +499,6 @@ theorem no_dilemma {ord : PropOrdering} {f : ModalBase World}
       simp [hfv] at hnfv
     · rename_i hnpc; exact absurd hpc hnpc
   · simp at h1
-
--- ============================================================================
--- §8. The Office — Epistemic Agglomeration Failure (§1.2, §8.1)
--- ============================================================================
 
 /-! ## The Office
 
@@ -555,7 +536,7 @@ def officeBase : ModalBase World := λ _ => []
 
     Here we model this with a simple ordering: p is at least as good as q
     iff p is true in at least as many worlds as q. -/
-def officeOrdering : PropOrdering := λ _ p q =>
+def officeOrdering : PropOrdering World := λ _ p q =>
   let pCount := allWorlds.filter p |>.length
   let qCount := allWorlds.filter q |>.length
   decide (pCount >= qCount)
@@ -574,57 +555,53 @@ def officeCandidates : List ((World → Bool)) :=
 /-- PBEST contains exactly 4 propositions (the 3 individual-in props
     and not-everyone-in; everyoneIn is dominated). -/
 theorem office_pbest_length :
-    (PBEST officeOrdering (0 : World) officeCandidates (accessibleWorldsList officeBase (0 : World))).length = 4 := by
+    (PBEST officeOrdering (0 : World) officeCandidates allWorlds).length = 4 := by
   decide
 
 /-- The best propositions are pairwise consistent: any two workers can
     both be in (pairwise but not globally). -/
 theorem office_pairwise_consistent :
     pairwiseConsistent (PBEST officeOrdering (0 : World) officeCandidates
-      (accessibleWorldsList officeBase (0 : World)))
-      (accessibleWorldsList officeBase (0 : World)) = true := by
+      allWorlds)
+      allWorlds = true := by
   decide
 
 /-- *ought* is defined in The Office (pairwise consistency holds). -/
 theorem office_ought_defined :
     oughtDefined officeOrdering (0 : World) officeCandidates
-      (accessibleWorldsList officeBase (0 : World)) = true := by
+      allWorlds = true := by
   decide
 
 /-- "Alice should be in the office" is true: there is a best proposition
     (namely aliceIn) such that Alice is in at every world in it. -/
 theorem alice_should_be_in :
-    ought officeOrdering officeBase officeCandidates aliceIn (0 : World) = some true := by
+    ought officeOrdering officeCandidates allWorlds aliceIn (0 : World) = some true := by
   decide
 
 /-- "Bob should be in the office" is true. -/
 theorem bob_should_be_in :
-    ought officeOrdering officeBase officeCandidates bobIn (0 : World) = some true := by
+    ought officeOrdering officeCandidates allWorlds bobIn (0 : World) = some true := by
   decide
 
 /-- "Everyone should be in the office" is FALSE: no best proposition
     entails that everyone is in. This is Agglomeration failure. -/
 theorem not_everyone_should_be_in :
-    ought officeOrdering officeBase officeCandidates everyoneIn (0 : World) = some false := by
+    ought officeOrdering officeCandidates allWorlds everyoneIn (0 : World) = some false := by
   decide
 
 /-- **Fact 5 (Epistemic Agglomeration Failure)**: There exist parameters
     such that ⟦ought φ⟧ = 1 and ⟦ought ψ⟧ = 1 but ⟦ought (φ ∧ ψ)⟧ = 0,
     witnessed by The Office. -/
 theorem epistemic_agglomeration_failure :
-    ∃ (ord : PropOrdering) (f : ModalBase World)
-      (cands : List ((World → Bool))) (φ ψ : (World → Bool)) (w : World),
-      ought ord f cands φ w = some true ∧
-      ought ord f cands ψ w = some true ∧
-      ought ord f cands (λ v => φ v && ψ v) w = some false :=
-  ⟨officeOrdering, officeBase, officeCandidates, aliceIn, bobIn, (0 : World),
+    ∃ (ord : PropOrdering World) (cands : List (World → Bool))
+      (acc : List World) (φ ψ : World → Bool) (w : World),
+      ought ord cands acc φ w = some true ∧
+      ought ord cands acc ψ w = some true ∧
+      ought ord cands acc (λ v => φ v && ψ v) w = some false :=
+  ⟨officeOrdering, officeCandidates, allWorlds, aliceIn, bobIn, (0 : World),
    by decide, by decide, by decide⟩
 
 end Office
-
--- ============================================================================
--- §9. Dessert — Deontic Indifference (§5.2, §8.2)
--- ============================================================================
 
 /-! ## Dessert
 
@@ -672,7 +649,7 @@ def worstValue (p : (World → Bool)) : Nat :=
   satisfying.foldl min 100  -- 100 as sentinel for empty
 
 /-- Deontic ordering based on worst-case value (conservative). -/
-def dessertOrdering : PropOrdering := λ _ p q =>
+def dessertOrdering : PropOrdering World := λ _ p q =>
   decide (worstValue p >= worstValue q)
 
 /-- Deontic modal base: all worlds accessible. -/
@@ -688,39 +665,35 @@ def dessertCandidatesHowGood : List ((World → Bool)) :=
 
 /-- "I ought to have pie or cannoli" is true under *how good?*. -/
 theorem ought_pie_or_cannoli :
-    ought dessertOrdering dessertBase dessertCandidatesHowGood
+    ought dessertOrdering dessertCandidatesHowGood allWorlds
       pieOrCannoli (0 : World) = some true := by
   decide
 
 /-- "I ought to have (just) pie" is FALSE: no single best proposition
     in the *how good?* partition entails just pie. -/
 theorem not_ought_just_pie :
-    ought dessertOrdering dessertBase dessertCandidatesHowGood
+    ought dessertOrdering dessertCandidatesHowGood allWorlds
       justPie (0 : World) = some false := by
   decide
 
 /-- "I ought to have (just) cannoli" is FALSE. -/
 theorem not_ought_just_cannoli :
-    ought dessertOrdering dessertBase dessertCandidatesHowGood
+    ought dessertOrdering dessertCandidatesHowGood allWorlds
       justCannoli (0 : World) = some false := by
   decide
 
 /-- **Indifference**: When multiple incompatible options are equally best,
     the strongest true *ought*-claim is disjunctive. -/
 theorem dessert_indifference :
-    ought dessertOrdering dessertBase dessertCandidatesHowGood
+    ought dessertOrdering dessertCandidatesHowGood allWorlds
       pieOrCannoli (0 : World) = some true ∧
-    ought dessertOrdering dessertBase dessertCandidatesHowGood
+    ought dessertOrdering dessertCandidatesHowGood allWorlds
       justPie (0 : World) = some false ∧
-    ought dessertOrdering dessertBase dessertCandidatesHowGood
+    ought dessertOrdering dessertCandidatesHowGood allWorlds
       justCannoli (0 : World) = some false :=
   ⟨by decide, by decide, by decide⟩
 
 end Dessert
-
--- ============================================================================
--- §10. Deontic *ought* Is a Box (§7, Fact 3)
--- ============================================================================
 
 /-! ## Deontic *ought* reduces to Kratzer necessity
 
@@ -744,14 +717,14 @@ def dessertCandidatesWhat : List ((World → Bool)) :=
     two equally-best options (pie and cannoli are tied). -/
 theorem dessert_what_pbest_length :
     (PBEST dessertOrdering (0 : World) dessertCandidatesWhat
-      (accessibleWorldsList dessertBase (0 : World))).length = 2 := by
+      allWorlds).length = 2 := by
   decide
 
 /-- But these are inconsistent (no world has both just-pie and just-cannoli),
     so *ought* is UNDEFINED with the *what will I do?* question. This is why
     the deontic case forces the coarser *how good?* question. -/
 theorem dessert_what_undefined :
-    ought dessertOrdering dessertBase dessertCandidatesWhat
+    ought dessertOrdering dessertCandidatesWhat allWorlds
       justPie (0 : World) = none := by
   decide
 
@@ -768,7 +741,7 @@ def worstValueStrict (p : (World → Bool)) : Nat :=
   let satisfying := allWorlds.filter p |>.map dessertValueStrict
   satisfying.foldl min 100
 
-def dessertStrictOrd : PropOrdering := λ _ p q =>
+def dessertStrictOrd : PropOrdering World := λ _ p q =>
   decide (worstValueStrict p >= worstValueStrict q)
 
 def dessertStrictCandidates : List ((World → Bool)) :=
@@ -777,25 +750,21 @@ def dessertStrictCandidates : List ((World → Bool)) :=
 /-- With a unique best option, PBEST is a singleton. -/
 theorem strict_pbest_singleton :
     (PBEST dessertStrictOrd (0 : World) dessertStrictCandidates
-      (accessibleWorldsList dessertBase (0 : World))).length = 1 := by
+      allWorlds).length = 1 := by
   decide
 
 /-- **Fact 3 (concrete)**: When PBEST is a singleton {p},
     ought φ = true iff ∀w' ∈ p. φ(w') — matching Kratzer necessity
     relativized to the unique best proposition. -/
 theorem deontic_ought_is_box :
-    ought dessertStrictOrd dessertBase dessertStrictCandidates justPie (0 : World)
+    ought dessertStrictOrd dessertStrictCandidates allWorlds justPie (0 : World)
       = some true ∧
-    ought dessertStrictOrd dessertBase dessertStrictCandidates
+    ought dessertStrictOrd dessertStrictCandidates allWorlds
       (λ w => !justPie w) (0 : World)
       = some false :=
   ⟨by decide, by decide⟩
 
 end DeonticBox
-
--- ============================================================================
--- §11. No Deontic Agglomeration Failure (§8.3, Fact 4)
--- ============================================================================
 
 /-! ## Deontic Agglomeration holds
 
@@ -811,27 +780,23 @@ section DeonticAgglomeration
 def notCannoli : (World → Bool) := λ w => !justCannoli w
 
 theorem strict_ought_pie :
-    ought dessertStrictOrd dessertBase dessertStrictCandidates
+    ought dessertStrictOrd dessertStrictCandidates allWorlds
       justPie (0 : World) = some true := by
   decide
 
 theorem strict_ought_not_cannoli :
-    ought dessertStrictOrd dessertBase dessertStrictCandidates
+    ought dessertStrictOrd dessertStrictCandidates allWorlds
       notCannoli (0 : World) = some true := by
   decide
 
 /-- **Fact 4 (concrete)**: The conjunction of two true deontic
     *ought*-claims is also true. -/
 theorem no_deontic_agglomeration_failure :
-    ought dessertStrictOrd dessertBase dessertStrictCandidates
+    ought dessertStrictOrd dessertStrictCandidates allWorlds
       (λ w => justPie w && notCannoli w) (0 : World) = some true := by
   decide
 
 end DeonticAgglomeration
-
--- ============================================================================
--- §12. Bridge to Kratzer Necessity
--- ============================================================================
 
 /-! ## Connecting Boylan to Kratzer
 
@@ -839,12 +804,6 @@ When Boylan's *ought* is defined and the ordering is deontic (unique best
 complete answer), it agrees with Kratzer's `necessity` operator for the
 same modal base and ordering source. This is the structural connection
 that justifies calling deontic *ought* "a box after all" (§7). -/
-
-/-- The classic Kratzer semantics: ought is a universal quantifier
-    over best worlds. Boylan argues this is correct for deontics but
-    not epistemics. -/
-def classicOught (f : ModalBase World) (g : OrderingSource World) (φ : (World → Bool)) (w : World) : Prop :=
-  necessity f g (λ w' => φ w' = true) w
 
 /-- **The classic semantics cannot distinguish the epistemic pattern.**
 
@@ -868,15 +827,11 @@ theorem kratzer_agglomerates :
 /-- Boylan gets the right pattern: all three individual *ought*s true,
     conjunction false. -/
 theorem boylan_correct_office :
-    ought officeOrdering officeBase officeCandidates aliceIn (0 : World) = some true ∧
-    ought officeOrdering officeBase officeCandidates bobIn (0 : World) = some true ∧
-    ought officeOrdering officeBase officeCandidates carolIn (0 : World) = some true ∧
-    ought officeOrdering officeBase officeCandidates everyoneIn (0 : World) = some false :=
+    ought officeOrdering officeCandidates allWorlds aliceIn (0 : World) = some true ∧
+    ought officeOrdering officeCandidates allWorlds bobIn (0 : World) = some true ∧
+    ought officeOrdering officeCandidates allWorlds carolIn (0 : World) = some true ∧
+    ought officeOrdering officeCandidates allWorlds everyoneIn (0 : World) = some false :=
   ⟨by decide, by decide, by decide, by decide⟩
-
--- ============================================================================
--- §13. Conflict Account Counterexample (§3.3)
--- ============================================================================
 
 /-! ## The conflict account wrongly predicts dilemmas
 
@@ -938,11 +893,11 @@ def officeBestConflict : List ((World → Bool)) :=
 
 theorem conflict_predicts_alice_absent :
     conflictOught officeBestConflict
-      (accessibleWorldsList officeBase (0 : World)) (λ w => !aliceIn w) = true := by
+      allWorlds (λ w => !aliceIn w) = true := by
   decide
 
 theorem boylan_no_alice_absent :
-    ought officeOrdering officeBase officeCandidates (λ w => !aliceIn w) (0 : World)
+    ought officeOrdering officeCandidates allWorlds (λ w => !aliceIn w) (0 : World)
       = some false := by
   decide
 
@@ -951,14 +906,10 @@ theorem boylan_no_alice_absent :
     Boylan's semantics avoids this entirely (see `no_dilemma` above). -/
 theorem conflict_dilemma :
     conflictOught officeBestConflict
-      (accessibleWorldsList officeBase (0 : World)) aliceIn = true ∧
+      allWorlds aliceIn = true ∧
     conflictOught officeBestConflict
-      (accessibleWorldsList officeBase (0 : World)) (λ w => !aliceIn w) = true :=
+      allWorlds (λ w => !aliceIn w) = true :=
   ⟨by decide, by decide⟩
-
--- ============================================================================
--- §14. Bridges to Kratzer Infrastructure
--- ============================================================================
 
 /-! ## Connecting to Kratzer's framework
 
