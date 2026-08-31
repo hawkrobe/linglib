@@ -10,9 +10,7 @@ import Linglib.Features.MinimalPairs
 open Morphology (Word)
 
 /-!
-# Chomsky (1981) — Binding Principles A/B/C [chomsky-1981]
-
-*Lectures on Government and Binding*. Foris.
+# Chomsky 1981: binding principles A, B and C
 
 The Government-and-Binding binding theory of [chomsky-1981]
 classifies nominal expressions into three types and constrains their
@@ -23,13 +21,26 @@ distribution by c-command + a local binding domain:
 - **Principle B**: a pronoun must be free (not bound) in its local domain
 - **Principle C**: an R-expression must be free everywhere
 
-This file holds the textbook minimal-pair paradigm
-(`reflexiveCoreferenceData`, `pronominalDisjointReferenceData`,
-`referentialExpressionFreedomData`, `complementaryDistributionData`,
-`reciprocalCoreferenceData`) and the per-class binding requirements as
-data (`CoreferencePattern`), and verifies the Minimalist binding
-implementation (the relocated c-command `CommandRelation` instance below)
-against the pairs.
+This file holds the textbook minimal-pair paradigm and verifies the Minimalist binding
+implementation — c-command as a `CommandRelation` instance over the phrase-structure tree —
+against the pairs. Three of the five datasets are contrasts the sentence-level predicate can
+adjudicate and it captures all of them; Principle C is a fact about a construal rather than a
+string, so the referential-expression contrast is checked at the construal level, where the
+engine blocks a commanded name from corefering; and the reciprocal data's coordinated subjects
+lie outside the three-word parser, with the plural-antecedent contrast checked within it.
+
+## Main definitions
+
+* `reflexiveCoreferenceData`, `pronominalDisjointReferenceData`,
+  `referentialExpressionFreedomData`, `complementaryDistributionData`,
+  `reciprocalCoreferenceData` — the minimal-pair datasets
+* the `CommandRelation` instance — Minimalist c-command over the clause's tree
+
+## Main results
+
+* `captures_binding_data` — the engine captures the three sentence-level datasets
+* `principleC_blocks_commanded_name` — Principle C at the construal level
+* `reciprocal_plural_antecedent` — the reciprocal contrast within the parser's reach
 
 Companion to `Reinhart1976.lean` (which formalizes the c-command
 relation that Principles A/B/C presuppose) and to
@@ -258,62 +269,6 @@ def reciprocalCoreferenceData : PhenomenonData := {
   ]
 }
 
-/-- Types of anaphoric expressions. -/
-inductive AnaphorType where
-  | reflexive
-  | reciprocal
-  | pronoun
-  | name
-  | description
-  deriving Repr, DecidableEq
-
-/-- Domain types for coreference constraints. -/
-inductive Domain where
-  | local_
-  | nonlocal
-  | any
-  deriving Repr, DecidableEq
-
-/-- Coreference requirements for an anaphor type. -/
-structure CoreferencePattern where
-  anaphorType : AnaphorType
-  requiresAntecedent : Bool
-  antecedentDomain : Option Domain
-  deriving Repr
-
-/-- Principle A as data: anaphors are bound in the local domain. -/
-def reflexivePattern : CoreferencePattern := {
-  anaphorType := .reflexive
-  requiresAntecedent := true
-  antecedentDomain := some .local_
-}
-
-/-- Principle B as data: pronouns are free in the local domain. -/
-def pronounPattern : CoreferencePattern := {
-  anaphorType := .pronoun
-  requiresAntecedent := false
-  antecedentDomain := some .nonlocal
-}
-
-/-- Principle C as data: R-expressions are free everywhere. -/
-def namePattern : CoreferencePattern := {
-  anaphorType := .name
-  requiresAntecedent := false
-  antecedentDomain := none
-}
-
-/-- Reciprocal coreference pattern: requires a c-commanding antecedent
-    that denotes a plurality. The antecedent can be syntactically singular
-    in some languages (e.g., Hungarian null pronouns bound by a plural
-    matrix subject; [rakosi-2019], [dalrymple-haug-2024] §2).
-    The domain is local for the pronoun antecedent, but the reciprocal's
-    semantic contribution can scope wider (I-reading). -/
-def reciprocalPattern : CoreferencePattern := {
-  anaphorType := .reciprocal
-  requiresAntecedent := true
-  antecedentDomain := some .local_
-}
-
 /-- English binding under Minimalist (c-command): the framework-neutral engine
     (`Binding.grammaticalForCoreference`) applied with Minimalism's
     `CommandRelation` instance (the relocated instance above) and
@@ -332,36 +287,30 @@ def capturesCoreferenceData (phenom : PhenomenonData) : Prop :=
 instance (phenom : PhenomenonData) : Decidable (capturesCoreferenceData phenom) := by
   unfold capturesCoreferenceData; infer_instance
 
-/-- Minimalism captures `reflexiveCoreferenceData`. -/
-theorem captures_reflexive_coreference :
-    capturesCoreferenceData reflexiveCoreferenceData := by
+/-- Minimalist binding theory captures every minimal pair in the three datasets the
+sentence-level predicate can adjudicate: the grammatical member of each pair is licensed for
+coreference and its partner is not. -/
+theorem captures_binding_data :
+    ∀ phenom ∈ [reflexiveCoreferenceData, pronominalDisjointReferenceData,
+                complementaryDistributionData],
+      capturesCoreferenceData phenom := by
+  intro phenom h
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at h
+  rcases h with rfl | rfl | rfl <;> decide
+
+/-- Principle C is a fact about a construal, not a string: *he sees John* is grammatical on the
+non-coreferential reading, so the sentence-level predicate cannot register
+`referentialExpressionFreedomData`'s contrast. At the construal level the engine blocks it — the
+commanded name object cannot corefer with the pronoun subject. -/
+theorem principleC_blocks_commanded_name :
+    Binding.computeCoreferenceStatus Binding.bindingClassOf
+      { subject := he, verb := sees, object := some john } .subject .object = .blocked := by
   decide
 
-/-- Minimalism captures `complementaryDistributionData`. -/
-theorem captures_complementary_distribution :
-    capturesCoreferenceData complementaryDistributionData := by
-  decide
-
-/-- Minimalism captures `pronominalDisjointReferenceData`. -/
-theorem captures_pronominal_disjoint_reference :
-    capturesCoreferenceData pronominalDisjointReferenceData := by
-  decide
-
-/-- Per-pair verification of reflexive binding judgments. -/
-theorem reflexive_pairs_captured :
-    (grammaticalForCoreference [john, sees, himself] ∧
-     ¬ grammaticalForCoreference [himself, sees, john]) ∧
-    (grammaticalForCoreference [mary, sees, herself] ∧
-     ¬ grammaticalForCoreference [herself, sees, mary]) ∧
-    (grammaticalForCoreference [they, see, themselves] ∧
-     ¬ grammaticalForCoreference [themselves, see, them]) ∧
-    (grammaticalForCoreference [john, sees, himself] ∧
-     ¬ grammaticalForCoreference [john, sees, herself]) ∧
-    (grammaticalForCoreference [they, see, themselves] ∧
-     ¬ grammaticalForCoreference [they, see, himself]) := by
-  decide
-
-/-- Reciprocal binding: plural antecedent required, singular blocked. -/
+/-- Reciprocal binding within the three-word parser's reach: a semantically plural antecedent
+licenses *each other* and a singular one does not. The reciprocal dataset's coordinated subjects
+(*Sam and Pat saw each other*) lie outside that parser, so they are recorded as data but not
+adjudicated here. -/
 theorem reciprocal_plural_antecedent :
     grammaticalForCoreference [they, see, eachOther] ∧
     ¬ grammaticalForCoreference [john, sees, eachOther] := by
