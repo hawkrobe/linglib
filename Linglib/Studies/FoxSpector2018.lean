@@ -17,9 +17,7 @@ distributivity finding (page 20) is direct empirical support: for the
 'or' item under STRONG condition, sub-cases STRONG[≠] (where
 distributivity inferences are non-vacuous) are rated significantly
 higher than STRONG[=] (where they are vacuous), 99.5% vs 73%, W = 78,
-p < .005. See `Studies/ChemlaSpector2011.lean`
-`distributivity_strong_neq_gt_strong_eq` for the captured empirical
-inequality.
+p < .005.
 
 ## Core Argument
 

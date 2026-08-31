@@ -4,14 +4,21 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Nouns
 
 /-!
-# Minimalist Derivations of Word Order
-[chomsky-1995]
+# Chomsky 1995: Minimalist derivations of word order
 
-Verifies that Minimalist Merge derivations model English SVO order: the
-phonological yield of a transitive derivation comes out subject-verb-object.
-The transitive derivation is defined locally (chronological discipline:
-Chomsky 1995 cannot import Adger 2003 where the canonical Minimalism
-English-derivation lexicon now lives).
+This file verifies that Minimalist Merge derivations of [chomsky-1995] model English SVO order:
+the phonological yield of a transitive derivation — the verb merging its complement, then the
+subject merging as specifier — comes out subject-verb-object. The derivation is built from
+Fragment verb and noun entries through `verbToSelStack`, which reads a verb's selectional stack
+off its complement type.
+
+## Main results
+
+* `models_svo_word_order` — the derivation of *John sees Mary* linearizes as "John sees Mary"
+
+## References
+
+* [chomsky-1995]
 -/
 
 namespace Chomsky1995
