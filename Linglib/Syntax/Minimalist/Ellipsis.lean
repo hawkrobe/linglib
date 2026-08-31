@@ -22,9 +22,8 @@ N-stranding). The `DeletionSpine` class captures the shared structure:
 - X-stranding ([liptak-saab-2014]): head movement out of the
   deletion domain lets the moved head survive ellipsis
 
-Two instances:
-- **Clausal** (`SpinePos`): V, VP_adj, v, Voice, T, C
-- **Nominal** (`NomSpinePos`): N, NP_adj, n, Num, D
+The clausal instance is `SpinePos` (V, VP_adj, v, Voice, T, C); the nominal
+spine of [benz-salzmann-2025] instantiates the same class study-side.
 
 ## Clausal Ellipsis ([merchant-2013])
 
@@ -33,14 +32,6 @@ Voice mismatch tolerance tracks the *height* of ellipsis:
 - **Sluicing** ([E] on C): Voice is *internal* → voice mismatch blocked
 - **vVPE** ([E] on v): both v and Voice are *external* →
   voice *and* transitivity mismatches OK ([kalyakin-2026])
-
-## Nominal Ellipsis ([benz-salzmann-2025])
-
-Variable [E] placement in the nominal spine:
-- **N-stranding NP-ellipsis** ([E] on n): N survives via N-to-n movement;
-  postnominal material (PPs, relatives) deleted; prenominal adjectives survive
-- **nP-ellipsis** ([E] on Num): N, n, and adjectives all deleted
-- **NumP-ellipsis** ([E] on D): everything below D deleted
 
 ## Monotonicity ([sailor-2014]'s Generalization)
 
@@ -502,204 +493,16 @@ theorem again_differentiates_bangla_dargwa :
   decide
 
 -- ════════════════════════════════════════════════════
--- § 10. Nominal Spine
+-- § 10. X-Stranding
 -- ════════════════════════════════════════════════════
 
-/-- Positions in the nominal spine, ordered from lowest to highest.
-    Parallels the clausal `SpinePos` for the nominal extended projection
-    N(F0) → n(F1) → Num(F3) → D(F4).
-
-    `NP_adj` parallels clausal `VP_adj`: the site of prenominal modifiers
-    (adjectives in Spec of functional heads within nP) that are inside
-    nP but NOT in n's complement (NP). This distinction matters for
-    N-stranding NP-ellipsis ([benz-salzmann-2025]): prenominal
-    adjectives survive n[E] (outside NP) but are deleted under Num[E]
-    (inside nP). -/
-inductive NomSpinePos where
-  | N      -- Lexical noun (content)
-  | NP_adj -- nP-internal modifier position (prenominal adjectives): inside nP, outside NP
-  | n      -- Categorizer (gender/class, nominalizer; [marantz-2001])
-  | Num    -- Number ([ritter-1991])
-  | D      -- Determiner
-  deriving DecidableEq, Repr
-
-/-- Strict "in deletion domain of" relation on nominal spine positions.
-
-    Parallels `SpinePos.isBelow` with the same complement-vs-adjunction
-    distinction:
-
-    - `N.isBelow .n = true`: N is in n's complement (NP)
-    - `NP_adj.isBelow .n = false`: prenominal modifiers NOT in n's complement
-    - `NP_adj.isBelow .Num = true`: prenominal modifiers ARE in Num's
-      complement (nP) -/
-def NomSpinePos.isBelow : NomSpinePos → NomSpinePos → Bool
-  | .N, .NP_adj | .N, .n | .N, .Num | .N, .D => true
-  | .NP_adj, .Num | .NP_adj, .D => true
-  | .n, .Num | .n, .D => true
-  | .Num, .D => true
-  | _, _ => false
-
-/-- Structural height comparison (non-strict) for nominal spine.
-    Simple linear order: N ≤ NP_adj ≤ n ≤ Num ≤ D. -/
-def NomSpinePos.isAtOrBelow : NomSpinePos → NomSpinePos → Bool
-  | .N, _ => true
-  | .NP_adj, .NP_adj | .NP_adj, .n | .NP_adj, .Num | .NP_adj, .D => true
-  | .n, .n | .n, .Num | .n, .D => true
-  | .Num, .Num | .Num, .D => true
-  | .D, .D => true
-  | _, _ => false
-
-instance : DeletionSpine NomSpinePos where
-  isBelow := NomSpinePos.isBelow
-  isAtOrBelow := NomSpinePos.isAtOrBelow
-  isBelow_irrefl := by intro p; cases p <;> decide
-  isBelow_mono := by
-    intro d p₁ p₂
-    cases d <;> cases p₁ <;> cases p₂ <;>
-      simp_all [NomSpinePos.isBelow, NomSpinePos.isAtOrBelow]
-
--- ════════════════════════════════════════════════════
--- § 11. Nominal Ellipsis Types and Predictions
--- ════════════════════════════════════════════════════
-
-/-- A nominal ellipsis type: [E] on a head in the nominal spine.
-    The deletion domain is the complement of the [E]-bearing head. -/
-structure NomEllipsisType where
-  ePosition : NomSpinePos
-  name : String := ""
-  deriving Repr
-
-/-- Is a nominal position in the deletion domain? -/
-def nomInDeletionDomain (c : NomSpinePos) (e : NomEllipsisType) : Prop :=
-  inDomain c e.ePosition
-
-instance (c : NomSpinePos) (e : NomEllipsisType) : Decidable (nomInDeletionDomain c e) := by
-  unfold nomInDeletionDomain; infer_instance
-
-/-- Does a nominal position survive ellipsis? -/
-def nomSurvives (c : NomSpinePos) (e : NomEllipsisType) : Prop :=
-  ¬ nomInDeletionDomain c e
-
-instance (c : NomSpinePos) (e : NomEllipsisType) : Decidable (nomSurvives c e) := by
-  unfold nomSurvives; infer_instance
-
-/-- NumP-ellipsis: [E] on D, deletes everything below D.
-    Determiner/demonstrative survives; N, adjectives, numerals deleted. -/
-def numPEllipsis : NomEllipsisType := ⟨.D, "NumP-ellipsis"⟩
-
-/-- nP-ellipsis: [E] on Num, deletes nP (complement of Num).
-    Numeral and determiner survive; N, n, and prenominal adjectives deleted.
-    [saab-2026]: Num[E] in Spanish pseudo-partitive/quantificational
-    binominals. -/
-def nPEllipsis : NomEllipsisType := ⟨.Num, "nP-ellipsis"⟩
-
-/-- N-stranding NP-ellipsis: [E] on n, deletes only NP (complement of n).
-    N survives via N-to-n head movement; prenominal adjectives survive
-    (in nP, not NP). Postnominal dependents of N (PPs, relative clauses,
-    genitive arguments) are in NP and are deleted.
-    [benz-salzmann-2025]: German N-stranding NP-ellipsis. -/
-def nStrandingNPE : NomEllipsisType := ⟨.n, "N-stranding NP-ellipsis"⟩
-
--- N-stranding NP-ellipsis: [E] on n
-
-/-- Under N-stranding, NP-internal material (postnominal PPs, relatives,
-    genitive arguments) is in the deletion domain. -/
-theorem nStranding_deletes_NP :
-    nomInDeletionDomain .N nStrandingNPE := by decide
-
-/-- Under N-stranding, prenominal adjectives survive: they are inside nP
-    but NOT in n's complement (NP).
-    [benz-salzmann-2025] ex. (25): *Ich habe das schönste Auto und du
-    das schönste Motorrad — adjective cannot be deleted. -/
-theorem nStranding_adj_survives :
-    nomSurvives .NP_adj nStrandingNPE := by decide
-
-/-- Under N-stranding, the n head is external (it bears [E]). N moves
-    here via N-to-n head movement and survives. -/
-theorem nStranding_n_external :
-    nomSurvives .n nStrandingNPE := by decide
-
-/-- Under N-stranding, Num is external (numerals survive).
-    [benz-salzmann-2025] ex. (25b): numeral *zwei* cannot be deleted
-    under N-stranding. -/
-theorem nStranding_num_survives :
-    nomSurvives .Num nStrandingNPE := by decide
-
--- nP-ellipsis: [E] on Num
-
-/-- Under nP-ellipsis, N is in the deletion domain (N does not survive). -/
-theorem nPE_deletes_N :
-    nomInDeletionDomain .N nPEllipsis := by decide
-
-/-- Under nP-ellipsis, prenominal adjectives are deleted (inside nP). -/
-theorem nPE_deletes_adj :
-    nomInDeletionDomain .NP_adj nPEllipsis := by decide
-
-/-- Under nP-ellipsis, n is deleted. -/
-theorem nPE_deletes_n :
-    nomInDeletionDomain .n nPEllipsis := by decide
-
-/-- Under nP-ellipsis, Num is external (numerals survive).
-    [saab-2026]: the numeral/determiner remnant in Spanish
-    pseudo-partitive ellipsis. -/
-theorem nPE_num_survives :
-    nomSurvives .Num nPEllipsis := by decide
-
--- NumP-ellipsis: [E] on D
-
-/-- Under NumP-ellipsis, everything below D is deleted. -/
-theorem numPE_deletes_all :
-    nomInDeletionDomain .N numPEllipsis ∧
-    nomInDeletionDomain .NP_adj numPEllipsis ∧
-    nomInDeletionDomain .n numPEllipsis ∧
-    nomInDeletionDomain .Num numPEllipsis := by decide
-
--- Monotonicity across nominal ellipsis types
-
-/-- Nominal monotonicity: N-stranding (n[E]) → nP-ellipsis (Num[E]) →
-    NumP-ellipsis (D[E]) form a chain where lower [E] → smaller domain.
-    Anything deleted under n[E] is also deleted under Num[E] and D[E]. -/
-theorem nom_deletion_monotone :
-    -- N is deleted under all three
-    nomInDeletionDomain .N nStrandingNPE ∧
-    nomInDeletionDomain .N nPEllipsis ∧
-    nomInDeletionDomain .N numPEllipsis ∧
-    -- NP_adj: NOT deleted under N-stranding, IS deleted under nP-ellipsis
-    nomSurvives .NP_adj nStrandingNPE ∧
-    nomInDeletionDomain .NP_adj nPEllipsis ∧
-    -- n: NOT deleted under N-stranding, IS deleted under nP-ellipsis
-    nomSurvives .n nStrandingNPE ∧
-    nomInDeletionDomain .n nPEllipsis := by decide
-
--- ════════════════════════════════════════════════════
--- § 12. X-Stranding Instantiations
--- ════════════════════════════════════════════════════
-
-/-- N-to-n movement instantiates generic X-stranding: N (base) is below
-    n (landing), so when [E] is on n, N's base position is in the deletion
-    domain but the n head (where N has moved) is external.
-    [benz-salzmann-2025]: German N-stranding NP-ellipsis. -/
-theorem n_stranding_is_xStranding :
-    ¬ inDomain NomSpinePos.n NomSpinePos.n ∧
-    inDomain NomSpinePos.N NomSpinePos.n :=
-  xStranding NomSpinePos.n NomSpinePos.N (by decide)
-
-/-- V-to-v movement is the clausal analogue: V (base) is below v (landing),
-    so when [E] is on v, V's base position is deleted but v survives.
-    This is exactly v-stranding VPE ([kalyakin-2026]). -/
+/-- V-to-v movement instantiates generic X-stranding: V (base) is below v
+    (landing), so when [E] is on v, V's base position is in the deletion
+    domain but the v head, where V has moved, is external — v-stranding VPE
+    ([kalyakin-2026]). -/
 theorem v_stranding_is_xStranding :
     ¬ inDomain SpinePos.v SpinePos.v ∧
     inDomain SpinePos.V SpinePos.v :=
   xStranding SpinePos.v SpinePos.V (by decide)
-
-/-- The clausal and nominal X-stranding patterns are structurally
-    identical: both are instances of the generic `xStranding` theorem
-    at the F1 (categorizer) level of their respective extended projections.
-    V:v :: N:n — the same abstract relationship. -/
-theorem clausal_nominal_xStranding_parallel :
-    -- Clausal: V below v
-    inDomain SpinePos.V SpinePos.v ∧
-    -- Nominal: N below n
-    inDomain NomSpinePos.N NomSpinePos.n := by decide
 
 end Minimalist.Ellipsis

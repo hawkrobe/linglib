@@ -413,15 +413,14 @@ theorem recoverability_predicts_dative_shift :
 /-! In the derived DOC, the IO (NP1) asymmetrically c-commands the DO
 (NP2). This structural asymmetry predicts scope freezing: QR of DO
 over IO would violate locality/superiority, so only surface scope is
-available. The data are recorded in `Bruening2001`
-(examples `dative_double_object` and `dative_variant`). -/
+available; [bruening-2001] derives the freezing from Shortest in
+`Studies/Bruening2001.lean`. -/
 
 /-- Scope freezing follows from asymmetric c-command: in the DOC,
     IO c-commands DO but not vice versa. QR of the lower quantifier
     (DO) over the higher one (IO) is blocked, yielding surface-only scope.
 
-    This connects to `Bruening2001.dative_double_object`
-    which records "Someone gave every student a book" as `surfaceOnly`. -/
+    This is the structural premise of `Bruening2001.doc_frozen`. -/
 theorem doc_scope_freezing_structural_basis :
     -- IO > DO (IO c-commands DO): surface scope available
     cCommandsIn docDativeShiftTree DP_mary DP_letter ∧
