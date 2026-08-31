@@ -12,8 +12,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "amount_comparative"],
-      ["standard_requires_degree_abstraction", "false"]
+      ["construction", "amount_comparative"]
     ],
     "comment": "Amount yori-comparative; judgment from Ishii 1991. Gloss: Taroo-Top [Hanako-Nom bought YORI (mo)] many(-Gen) umbrella-Acc bought."
   },
@@ -21,7 +20,7 @@
     "id": "beckodasugisaki2004_degree_yori",
     "source": { "bibkey": "beck-oda-sugisaki-2004", "paperLabel": "(4-a), p. 290" },
     "language": "nucl1643",
-    "primaryText": "?Taroo-wa [Hanako-ga katta yori (mo)] nagai kasa-o katta",
+    "primaryText": "?*Taroo-wa [Hanako-ga katta yori (mo)] nagai kasa-o katta",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Taroo bought a longer umbrella than Hanako did",
@@ -30,10 +29,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "degree_comparative"],
-      ["standard_requires_degree_abstraction", "false"]
+      ["construction", "degree_comparative"]
     ],
-    "comment": "Degree yori-comparative: Ishii 1991 reports ?*; the authors' consultants range from ? to ??. The variability itself is an explanandum for the contextual analysis."
+    "comment": "Degree yori-comparative; Ishii 1991 reports ?*, the authors' consultants range from ? to ??. Gloss: Taroo-Top [Hanako-Nom bought YORI (mo)] long umbrella-Acc bought."
   },
   {
     "id": "beckodasugisaki2004_subcomp_ja",
@@ -48,8 +46,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "subcomparative"],
-      ["standard_requires_degree_abstraction", "true"]
+      ["construction", "subcomparative"]
     ],
     "comment": "Japanese lacks subcomparatives (observed by Snyder, Wexler & Das 1995). Gloss: this shelf-Top [that door-Nom wide YORI (mo)] (more) tall."
   },
@@ -66,8 +63,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "subcomparative"],
-      ["standard_requires_degree_abstraction", "true"]
+      ["construction", "subcomparative"]
     ],
     "comment": "English subcomparative control for (5-a)."
   },
@@ -84,8 +80,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "negative_island"],
-      ["standard_requires_degree_abstraction", "false"]
+      ["construction", "negative_island"]
     ],
     "comment": "Well-formed, with the individual-comparing interpretation of the paper's (6'): the yori-clause denotes the (unique) book nobody bought, not a degree set. Gloss: John-Top [anyone buy-Neg-Past NO YORI] expensive book-Acc bought."
   },
@@ -102,8 +97,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "negative_island"],
-      ["standard_requires_degree_abstraction", "true"]
+      ["construction", "negative_island"]
     ],
     "comment": "English negative-island effect: no maximal degree such that nobody bought a that-expensive book (Rullmann 1995 undefinedness)."
   }
