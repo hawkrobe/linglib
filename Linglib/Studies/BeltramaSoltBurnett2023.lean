@@ -7,45 +7,49 @@ import Linglib.Fragments.English.NumeralModifiers
 import Mathlib.Tactic.NormNum
 
 /-!
-# [beltrama-solt-burnett-2023]
+# Context, precision, and social perception
 
-Context, precision, and social perception: A sociopragmatic study.
-*Language in Society* 52(5): 805–835. doi:10.1017/S0047404522000240
+Formalization of [beltrama-solt-burnett-2023] (Language in Society 52). Two social-perception
+experiments compare three precision variants — precise "forty-nine minutes", underspecified
+"fifty minutes", approximate "about fifty minutes" — across four communicative scenarios.
+Ratings on ten scales reduce by PCA to Status, Solidarity, and anti-Solidarity; precise
+variants are rated above approximate on Status and anti-Solidarity and below on Solidarity,
+and the underspecified variant patterns with precise on Status, with approximate on
+anti-Solidarity, and in between on Solidarity — precision and approximation emerge as separate
+indexical loci. Scenario modulates the contrasts: the Status edge of precision is amplified
+where descriptive accuracy matters and neutralized in bonding contexts, while Solidarity
+contrasts sharpen where precision is pragmatically idle.
 
-Two experiments (Exp 1: N=72 within-subjects; Exp 2: N=400 between-subjects)
-examining how numeral precision affects social perception across three
-PCA-derived evaluation dimensions and four communicative scenarios.
+## Main definitions
 
-## Core contributions
+* `Variant`, `classifyVariant` — the three-way contrast, derived from the substrate roundness
+  score plus the presence of a tolerance modifier.
+* `exp1Mean`, `exp2Mean` — the per-dimension cell means (Experiment 1: 216 recruited, 61
+  excluded, within-subjects; Experiment 2: 960 recruited, 150 excluded, one-trial
+  between-subjects).
+* `bsbField` — the sign-valued indexical field, `0` on the underspecified variant (the
+  neutral-diagnostic reading of the general discussion); `bsbGroundedField` — its
+  [burnett-2019] Eckert–Montague lift.
 
-1. **Three-way variant contrast**: Distinguishes precise ("forty-nine"),
-   underspecified ("fifty"), and explicitly approximate ("about fifty") —
-   extending prior work that only compared sharp vs. round numbers.
+## Main results
 
-2. **Core indexical ordering** (robust across both experiments):
-   - Competence/Status: precise ≥ underspecified > approximate
-   - Warmth/Solidarity: approximate ≥ underspecified > precise
-   - Anti-Solidarity: precise > underspecified ≈ approximate
+* `sign_alignment`, `opposite_directions` — the core sign structure: Status and
+  anti-Solidarity favor precise, Solidarity reverses; precise and approximate are antipodal.
+* `underspec_near_precise_on_competence`, `underspec_near_approx_on_antiSol`,
+  `underspec_intermediate_on_warmth`, `diagnostic_crossover` — the underspecified diagnostic
+  (pp. 827–828).
+* `competence_enhanced_in_high_demand`, `warmth_enhanced_in_low_demand`, `context_crossover` —
+  scenario modulation of the Status and Solidarity contrasts.
+* `non_round_collapses`, `round_supports_contrast` — roundness gates the three-way contrast.
+* `underspecified_indexes_nothing` — under the EM lift the underspecified variant is
+  compatible with every persona.
 
-3. **Underspecified as diagnostic** (§General Discussion, p. 827–828):
-   bare round numbers don't uniformly pattern with either endpoint. On
-   competence, underspecified hugs precise; on anti-solidarity, it hugs
-   approximate; on warmth, it is genuinely intermediate. This reveals
-   precision and approximation as independent indexical loci.
+## References
 
-4. **Context modulation**: high-precision-demand scenarios (For-the-record,
-   Persuasion) amplify competence contrasts; low-demand scenarios (Bonding,
-   Stranger) amplify warmth/solidarity contrasts.
-
-## Fragment connections
-
-Stimuli use numerals 49 (precise) and 50 (round), with "about" as the
-tolerance modifier:
-- `Semantics.Numerals.Roundness.roundnessScore`: 49 → 0, 50 → 4
-- `Semantics.Numerals.Precision.inferPrecisionMode`: 49 →.exact,
-  50 →.approximate
-- `English.NumeralModifiers.about`: tolerance modifier
-
+* [beltrama-solt-burnett-2023] — the paper; [beltrama-2018] — the sharp/round predecessor.
+* [eckert-2008], [fiske-cuddy-glick-2007] — indexical fields and the evaluation dimensions.
+* [burnett-2019] — the Eckert–Montague lift; [krifka-2007] — round-number approximation;
+  [campbell-kibler-2011] — the neutral-variant diagnostic precedent.
 -/
 
 namespace BeltramaSoltBurnett2023
@@ -53,23 +57,18 @@ namespace BeltramaSoltBurnett2023
 open SocialMeaning.IndexicalField
 open SocialMeaning.SCM
 
--- ============================================================================
--- §1. Three-way precision variant
--- ============================================================================
+/-! ### Stimuli and the three-way contrast -/
 
-/-- The three precision variants for numeral use (BSB2022 §3).
-
-    Extends the two-way distinction (exact/approximate) in [beltrama-schwarz-2024] by factoring out bare round numerals as a third, diagnostically
-    crucial category. -/
+/-- The three precision variants ("The Precision manipulation"): a sharp number, a bare round
+    number, and a round number under an approximator. -/
 inductive Variant where
-  | precise        -- sharp number: "forty-nine minutes"
-  | underspecified -- bare round number: "fifty minutes"
-  | approximate    -- modified round number: "about fifty minutes"
+  /-- Sharp number: "forty-nine minutes". -/
+  | precise
+  /-- Bare round number: "fifty minutes". -/
+  | underspecified
+  /-- Modified round number: "about fifty minutes". -/
+  | approximate
   deriving DecidableEq, Repr
-
--- ============================================================================
--- §2. Stimuli and Fragment connections
--- ============================================================================
 
 /-- The precise stimulus numeral (sharp, non-round). -/
 def stimPrecise : Nat := 49
@@ -81,64 +80,68 @@ def stimRound : Nat := 50
 theorem stim_precise_not_round :
     Semantics.Numerals.Roundness.roundnessScore stimPrecise = 0 := by decide
 
-/-- 50 is highly round (score 5) — imprecise readings available. -/
+/-- 50 is highly round (score 5) — imprecise readings are available. -/
 theorem stim_round_is_round :
     Semantics.Numerals.Roundness.roundnessScore stimRound = 5 := by decide
 
 open Semantics.Numerals.Precision in
-/-- 49 → exact precision mode (roundnessScore 0 < 2). -/
+/-- 49 gets the exact precision mode. -/
 theorem precise_stim_is_exact :
     inferPrecisionMode stimPrecise = .exact := by decide
 
 open Semantics.Numerals.Precision in
-/-- 50 → approximate precision mode (roundnessScore 4 ≥ 2). -/
+/-- 50 gets the approximate precision mode. -/
 theorem round_stim_is_approximate :
     inferPrecisionMode stimRound = .approximate := by decide
 
 open English.NumeralModifiers in
-/-- The Fragment entry "about" is a tolerance modifier that forces an
-    approximate reading and conveys a peaked distribution shape. -/
+/-- The Fragment entry "about" is a tolerance modifier: it forces an approximate reading and
+    conveys a peaked distribution shape. -/
 theorem about_is_tolerance_modifier :
     about.modType = .tolerance ∧ about.conveysShape = true ∧
     about.pragFunction = .peakedSignal := ⟨rfl, rfl, rfl⟩
 
--- ============================================================================
--- §3. Variant classification from Fragment properties
--- ============================================================================
-
-/-- Classify a numeral into a variant based on roundness and modifier presence.
-
-    End-to-end derivation chain:
-      Fragment modifier type + Roundness score → Variant.
-
-    - Non-round (score < 2): `.precise` regardless of modifier
-    - Round + no modifier: `.underspecified` (imprecision available, not forced)
-    - Round + tolerance modifier: `.approximate` (imprecision forced) -/
+/-- Classify a numeral into a variant from the substrate roundness score and the presence of a
+    tolerance modifier: non-round is `.precise` regardless of modifier; round is
+    `.underspecified` bare and `.approximate` under a modifier. -/
 def classifyVariant (n : Nat) (hasToleranceModifier : Bool) : Variant :=
   if Semantics.Numerals.Roundness.roundnessScore n < 2 then .precise
   else if hasToleranceModifier then .approximate
   else .underspecified
 
-/-- "forty-nine minutes" → precise variant. -/
+/-- "forty-nine minutes" is the precise variant. -/
 theorem classify_49 :
     classifyVariant stimPrecise false = .precise := by decide
 
-/-- "fifty minutes" (bare) → underspecified variant. -/
+/-- Bare "fifty minutes" is the underspecified variant. -/
 theorem classify_50_bare :
     classifyVariant stimRound false = .underspecified := by decide
 
-/-- "about fifty minutes" → approximate variant. -/
+/-- "about fifty minutes" is the approximate variant. -/
 theorem classify_50_about :
     classifyVariant stimRound true = .approximate := by decide
 
--- ============================================================================
--- §4. Experimental data: cell means (7-point Likert scale)
--- ============================================================================
+/-- Non-round numerals collapse the three-way contrast to `.precise`: nothing is left for
+    social perception to modulate. -/
+theorem non_round_collapses (n : Nat)
+    (h : Semantics.Numerals.Roundness.roundnessScore n < 2) :
+    classifyVariant n true = .precise ∧ classifyVariant n false = .precise := by
+  unfold classifyVariant; constructor <;> simp [if_pos h]
 
-/-- Experiment 1 (within-subjects, N=72) cell means.
-    PCA factor scores mapped to `SocialDimension`:
-    Status → `.competence`, Solidarity → `.warmth`,
-    Anti-Solidarity → `.antiSolidarity`. -/
+/-- Round numerals support the full three-way contrast: bare is underspecified, modified is
+    approximate. -/
+theorem round_supports_contrast (n : Nat)
+    (h : Semantics.Numerals.Roundness.roundnessScore n ≥ 2) :
+    classifyVariant n false = .underspecified ∧
+    classifyVariant n true = .approximate := by
+  have h' : ¬(Semantics.Numerals.Roundness.roundnessScore n < 2) := by omega
+  unfold classifyVariant; constructor <;> simp [if_neg h']
+
+/-! ### Cell means -/
+
+/-- Experiment 1 cell means (216 recruited, 61 excluded; within-subjects; 7-point scales).
+    PCA factors mapped onto `SocialDimension`: Status → `.competence`, Solidarity →
+    `.warmth`, anti-Solidarity → `.antiSolidarity`. -/
 def exp1Mean : Variant → SocialDimension → ℚ
   | .precise,       .competence      => 501/100  -- M = 5.01, SD = 0.95
   | .precise,       .warmth          => 437/100  -- M = 4.37, SD = 1.08
@@ -150,7 +153,7 @@ def exp1Mean : Variant → SocialDimension → ℚ
   | .approximate,   .warmth          => 458/100  -- M = 4.58, SD = 0.99
   | .approximate,   .antiSolidarity  => 410/100  -- M = 4.10, SD = 1.24
 
-/-- Experiment 2 (between-subjects, N=400) cell means. -/
+/-- Experiment 2 cell means (960 recruited, 150 excluded; one-trial between-subjects). -/
 def exp2Mean : Variant → SocialDimension → ℚ
   | .precise,       .competence      => 516/100  -- M = 5.16, SD = 0.82
   | .precise,       .warmth          => 415/100  -- M = 4.15, SD = 0.97
@@ -162,45 +165,29 @@ def exp2Mean : Variant → SocialDimension → ℚ
   | .approximate,   .warmth          => 484/100  -- M = 4.84, SD = 0.85
   | .approximate,   .antiSolidarity  => 349/100  -- M = 3.49, SD = 1.13
 
--- ============================================================================
--- §5. Core indexical orderings (replicated across both experiments)
--- ============================================================================
+/-! ### The core indexical orderings (replicated across both experiments) -/
 
-/-- **Competence: precise > approximate** (both experiments).
-
-    Speakers using sharp numbers are perceived as more articulate, intelligent,
-    confident, and trustworthy than those using explicitly approximate numbers.
-    Exp 1: 5.01 > 4.84; Exp 2: 5.16 > 4.90. -/
+/-- Status: precise above approximate in both experiments (5.01 > 4.84; 5.16 > 4.90). -/
 theorem competence_precise_gt_approx :
     exp1Mean .precise .competence > exp1Mean .approximate .competence ∧
     exp2Mean .precise .competence > exp2Mean .approximate .competence := by
   norm_num [exp1Mean, exp2Mean]
 
-/-- **Warmth: approximate > precise** (both experiments).
-
-    Speakers using "about fifty" are perceived as friendlier, cooler, more
-    laid-back, and more likeable than those using "forty-nine."
-    Exp 1: 4.58 > 4.37; Exp 2: 4.84 > 4.15. -/
+/-- Solidarity: approximate above precise in both experiments (4.58 > 4.37; 4.84 > 4.15). -/
 theorem warmth_approx_gt_precise :
     exp1Mean .approximate .warmth > exp1Mean .precise .warmth ∧
     exp2Mean .approximate .warmth > exp2Mean .precise .warmth := by
   norm_num [exp1Mean, exp2Mean]
 
-/-- **Anti-Solidarity: precise > approximate** (both experiments).
-
-    Speakers using sharp numbers are perceived as more pedantic and uptight.
-    Exp 1: 4.37 > 4.10; Exp 2: 3.85 > 3.49. -/
+/-- Anti-Solidarity: precise above approximate in both experiments (4.37 > 4.10;
+    3.85 > 3.49). -/
 theorem antiSol_precise_gt_approx :
     exp1Mean .precise .antiSolidarity > exp1Mean .approximate .antiSolidarity ∧
     exp2Mean .precise .antiSolidarity > exp2Mean .approximate .antiSolidarity := by
   norm_num [exp1Mean, exp2Mean]
 
-/-- **Sign alignment**: competence and anti-solidarity share sign direction
-    (both favor precise), while warmth reverses (favors approximate).
-
-    This is the core sign structure of the precision indexical field. It is
-    consistent with the `precisionField` associations in [beltrama-schwarz-2024], where `.exact →.competence = +1`, `.exact →.warmth = −1`,
-    and `.exact →.antiSolidarity = +1`. -/
+/-- Sign alignment: Status and anti-Solidarity share direction (both favor precise) while
+    Solidarity reverses — the core sign structure of the precision indexical field. -/
 theorem sign_alignment :
     (exp1Mean .precise .competence > exp1Mean .approximate .competence ∧
      exp1Mean .precise .antiSolidarity > exp1Mean .approximate .antiSolidarity ∧
@@ -210,18 +197,13 @@ theorem sign_alignment :
      exp2Mean .approximate .warmth > exp2Mean .precise .warmth) := by
   norm_num [exp1Mean, exp2Mean]
 
--- ============================================================================
--- §6. Three-way indexical field
--- ============================================================================
+/-! ### The three-way indexical field -/
 
-/-- The three-way indexical field for numeral precision (BSB2022).
-
-    Association values are idealized signs (±1) matching the empirical ordering
-    from §5. The underspecified variant gets 0 (neutral) — the diagnostic
-    theorem (§7) shows its empirical position varies by dimension.
-
-    The precise/approximate cells have the same signs as [beltrama-schwarz-2024]'s
-    `precisionField` on all three social dimensions. -/
+/-- The three-way indexical field: idealized signs (±1) matching the ordering theorems above,
+    with `0` on the underspecified variant. The `0` encodes the neutral-diagnostic reading of
+    the general discussion (p. 828), on which the underspecified variant reveals which
+    endpoint drives each contrast; the paper's alternative — round numbers carrying their own
+    chameleonic indexicality — is not modeled. -/
 def bsbField : IndexicalField Variant SocialDimension :=
   { association := λ v d => match v, d with
     | .precise,       .competence      =>  1
@@ -233,34 +215,22 @@ def bsbField : IndexicalField Variant SocialDimension :=
     | .underspecified, _               =>  0
   , order := .third }
 
-/-- Precise and approximate have algebraically opposite associations on
-    every dimension — the same anti-symmetry as [beltrama-schwarz-2024]'s `opposite_directions`. -/
-theorem opposite_directions (d : SocialDimension) :
-    bsbField.association .precise d = - bsbField.association .approximate d := by
-  cases d <;> simp [bsbField]
+/-- Precise and approximate are antipodal: algebraically opposite associations on
+    every dimension. -/
+theorem opposite_directions : bsbField.Antipodal .precise .approximate := by
+  intro d; cases d <;> simp [bsbField]
 
--- ============================================================================
--- §7. Underspecified diagnostic
--- ============================================================================
+/-! ### The underspecified diagnostic (pp. 827–828)
 
-/-! **Underspecified diagnostic** (BSB2022's deepest contribution, p. 827–828).
+The underspecified variant does not sit uniformly between the endpoints: it clusters with
+precise on Status (an approximation-driven downgrade), with approximate on anti-Solidarity
+(a precision-driven increase), and strictly between the two on Solidarity (both forces pull).
+The paper's clustering criterion is significance patterning; the mean-gap comparisons below
+align with it in every cell. -/
 
-On each dimension, the underspecified variant does not sit uniformly
-between precise and approximate. Its proximity to each endpoint varies
-by dimension, revealing precision and approximation as independent
-indexical loci.
-
-The interpretation (p. 827): when underspecified clusters with precise
-and away from approximate, the contrast is *approximation-driven* (it is
-approximation that downgrades the trait). When underspecified clusters
-with approximate and away from precise, the contrast is *precision-driven*
-(it is precision that upgrades the trait). -/
-
-/-- On competence, underspecified is closer to precise than to approximate.
-    The contrast is approximation-driven: it is "about" that downgrades Status,
-    not sharp numbers that upgrade it.
-    Exp 1: |5.01−4.96| = 0.05 < |4.96−4.84| = 0.12.
-    Exp 2: |5.16−5.06| = 0.10 < |5.06−4.90| = 0.16. -/
+/-- On Status the underspecified variant is closer to precise than to approximate: the
+    contrast is approximation-driven (0.05 vs. 0.12 in Experiment 1; 0.10 vs. 0.16 in
+    Experiment 2). -/
 theorem underspec_near_precise_on_competence :
     (exp1Mean .precise .competence - exp1Mean .underspecified .competence <
      exp1Mean .underspecified .competence - exp1Mean .approximate .competence) ∧
@@ -268,11 +238,8 @@ theorem underspec_near_precise_on_competence :
      exp2Mean .underspecified .competence - exp2Mean .approximate .competence) := by
   norm_num [exp1Mean, exp2Mean]
 
-/-- On anti-solidarity, underspecified is closer to approximate than to precise.
-    The contrast is precision-driven: it is sharp numbers that make you seem
-    pedantic, not "about" that makes you seem relaxed.
-    Exp 1: |4.19−4.10| = 0.09 < |4.37−4.19| = 0.18.
-    Exp 2: |3.59−3.49| = 0.10 < |3.85−3.59| = 0.26. -/
+/-- On anti-Solidarity the underspecified variant is closer to approximate than to precise:
+    the contrast is precision-driven (0.09 vs. 0.18; 0.10 vs. 0.26). -/
 theorem underspec_near_approx_on_antiSol :
     (exp1Mean .underspecified .antiSolidarity - exp1Mean .approximate .antiSolidarity <
      exp1Mean .precise .antiSolidarity - exp1Mean .underspecified .antiSolidarity) ∧
@@ -280,10 +247,9 @@ theorem underspec_near_approx_on_antiSol :
      exp2Mean .precise .antiSolidarity - exp2Mean .underspecified .antiSolidarity) := by
   norm_num [exp1Mean, exp2Mean]
 
-/-- On warmth, underspecified is genuinely intermediate: it falls strictly
-    between precise and approximate in both experiments. Both precision and
-    approximation contribute independently to the Solidarity contrast,
-    pulling underspecified in opposite directions. -/
+/-- On Solidarity the underspecified variant falls strictly between precise and approximate —
+    significantly in both directions in Experiment 2, as a trend in Experiment 1 (p. 826):
+    precision and approximation pull it in opposite directions. -/
 theorem underspec_intermediate_on_warmth :
     (exp1Mean .precise .warmth < exp1Mean .underspecified .warmth ∧
      exp1Mean .underspecified .warmth < exp1Mean .approximate .warmth) ∧
@@ -291,61 +257,65 @@ theorem underspec_intermediate_on_warmth :
      exp2Mean .underspecified .warmth < exp2Mean .approximate .warmth) := by
   norm_num [exp1Mean, exp2Mean]
 
-/-- **Diagnostic asymmetry**: the dimension on which underspecified is closest
-    to each endpoint differs. On competence, the cluster gap (precise to
-    underspecified) is smaller than the outlier gap; on anti-solidarity, the
-    reverse. This crossover is what makes underspecified diagnostic.
-
-    Formalized as: the ratio of within-cluster to between-cluster gap
-    reverses between competence and anti-solidarity. -/
+/-- The crossover that makes the underspecified variant diagnostic: the small gap sits on the
+    precise side for Status but on the approximate side for anti-Solidarity. -/
 theorem diagnostic_crossover :
-    -- On competence: precise-to-underspec < underspec-to-approx
     (exp1Mean .precise .competence - exp1Mean .underspecified .competence <
      exp1Mean .underspecified .competence - exp1Mean .approximate .competence) ∧
-    -- On anti-solidarity: approx-to-underspec < underspec-to-precise (reversed!)
     (exp1Mean .underspecified .antiSolidarity - exp1Mean .approximate .antiSolidarity <
      exp1Mean .precise .antiSolidarity - exp1Mean .underspecified .antiSolidarity) := by
   norm_num [exp1Mean]
 
--- ============================================================================
--- §8. Context modulation
--- ============================================================================
+/-! ### Scenario modulation -/
 
-/-- Communicative scenario (BSB2022 §3.1). -/
+/-- Communicative scenario ("The Scenario manipulation"). -/
 inductive Scenario where
-  | forTheRecord  -- job interview: "how long is your commute?"
-  | persuasion    -- convincing friend: "it only adds X minutes"
-  | stranger      -- chatting at bar: "how long have you lived here?"
-  | bonding       -- new friend: "how long have you been at this job?"
+  /-- Testifying for the official record. -/
+  | forTheRecord
+  /-- Persuading an interlocutor to act. -/
+  | persuasion
+  /-- Small talk with a stranger. -/
+  | stranger
+  /-- Getting to know new colleagues. -/
+  | bonding
   deriving DecidableEq, Repr
 
-/-- Precision demand level of a communicative scenario. -/
+/-- Binary precision demand, the split the results discussion works with. -/
 inductive PrecisionDemand where
-  | high  -- descriptive accuracy serves communicative goal
-  | low   -- socializing; precision is irrelevant
+  | high
+  | low
   deriving DecidableEq, Repr
 
-def Scenario.precisionDemand : Scenario → PrecisionDemand
-  | .forTheRecord => .high
-  | .persuasion   => .high
-  | .stranger     => .low
-  | .bonding      => .low
+/-- The paper's four-point precision-need ordering: highest (For-the-record), medium
+    (Persuasion), low (Stranger), lowest (Bonding). -/
+def Scenario.precisionNeed : Scenario → ℕ
+  | .forTheRecord => 3
+  | .persuasion   => 2
+  | .stranger     => 1
+  | .bonding      => 0
 
-/-- Exp 1 scenario-specific means on competence (Status).
-    For-the-record vs Bonding, precise vs approximate. -/
+/-- Binary demand, derived from the four-point ordering rather than stipulated per cell. -/
+def Scenario.precisionDemand (s : Scenario) : PrecisionDemand :=
+  if 2 ≤ s.precisionNeed then .high else .low
+
+example :
+    Scenario.forTheRecord.precisionDemand = .high ∧
+      Scenario.persuasion.precisionDemand = .high ∧
+        Scenario.stranger.precisionDemand = .low ∧
+          Scenario.bonding.precisionDemand = .low := by decide
+
+/-- Experiment 1 Status means for the For-the-record/Bonding × precise/approximate
+    interaction cells (p. 816). Non-tabulated cells default to `0` and are cited by no
+    theorem. -/
 def exp1CompetenceByScenario : Scenario → Variant → ℚ
-  | .forTheRecord, .precise   => 513/100  -- M = 5.13, SD = 1.02
+  | .forTheRecord, .precise     => 513/100  -- M = 5.13, SD = 1.02
   | .forTheRecord, .approximate => 474/100  -- M = 4.74, SD = 0.97
-  | .bonding,      .precise   => 493/100  -- M = 4.93, SD = 0.96
+  | .bonding,      .precise     => 493/100  -- M = 4.93, SD = 0.96
   | .bonding,      .approximate => 495/100  -- M = 4.95, SD = 0.96
-  | _, _                      => 0
+  | _, _                        => 0
 
-/-- **Context amplifies competence contrast in high-demand scenarios.**
-
-    Exp 1, Status: In For-the-record (high demand), precise is rated 0.39
-    points above approximate. In Bonding (low demand), the gap vanishes
-    (−0.02). The Status advantage of precision is contextually relevant
-    only when descriptive accuracy matters (BSB2022 p. 830). -/
+/-- The Status contrast is amplified under high demand: 0.39 points in For-the-record,
+    vanishing (−0.02) in Bonding (pp. 816, 829–830). -/
 theorem competence_enhanced_in_high_demand :
     exp1CompetenceByScenario .forTheRecord .precise -
     exp1CompetenceByScenario .forTheRecord .approximate >
@@ -353,28 +323,24 @@ theorem competence_enhanced_in_high_demand :
     exp1CompetenceByScenario .bonding .approximate := by
   norm_num [exp1CompetenceByScenario]
 
-/-- In Bonding, the competence contrast is neutralized: approximate ≥ precise. -/
+/-- In Bonding the Status contrast is neutralized: approximate is not below precise. -/
 theorem competence_neutralized_in_bonding :
     exp1CompetenceByScenario .bonding .approximate ≥
     exp1CompetenceByScenario .bonding .precise := by
   norm_num [exp1CompetenceByScenario]
 
-/-- Exp 2 scenario-specific means on warmth (Solidarity).
-    Stranger vs For-the-record, precise vs underspecified (the significant
-    interaction from Table 4 row 9 re-leveled, p. 823). -/
+/-- Experiment 2 Solidarity means for the Stranger/For-the-record × precise/underspecified
+    interaction cells — the re-leveled interaction reported in the text (p. 823).
+    Non-tabulated cells default to `0` and are cited by no theorem. -/
 def exp2WarmthByScenario : Scenario → Variant → ℚ
   | .stranger,     .precise        => 434/100  -- M = 4.34, SD = 1.01
-  | .stranger,     .underspecified  => 478/100  -- M = 4.78, SD = 0.77
+  | .stranger,     .underspecified => 478/100  -- M = 4.78, SD = 0.77
   | .forTheRecord, .precise        => 388/100  -- M = 3.88, SD = 0.95
-  | .forTheRecord, .underspecified  => 389/100  -- M = 3.89, SD = 0.71
+  | .forTheRecord, .underspecified => 389/100  -- M = 3.89, SD = 0.71
   | _, _                           => 0
 
-/-- **Context amplifies warmth contrast in low-demand scenarios.**
-
-    Exp 2, Solidarity: In Stranger (low demand), underspecified is rated 0.44
-    points above precise. In For-the-record (high demand), the gap vanishes
-    (0.01). When precision is communicatively irrelevant, the Solidarity
-    penalty of sharp numbers becomes salient (BSB2022 p. 826). -/
+/-- The Solidarity contrast is amplified under low demand: 0.44 points in Stranger,
+    vanishing (0.01) in For-the-record (pp. 823, 826). -/
 theorem warmth_enhanced_in_low_demand :
     exp2WarmthByScenario .stranger .underspecified -
     exp2WarmthByScenario .stranger .precise >
@@ -382,79 +348,42 @@ theorem warmth_enhanced_in_low_demand :
     exp2WarmthByScenario .forTheRecord .precise := by
   norm_num [exp2WarmthByScenario]
 
-/-- **Bidirectional context modulation**: high-demand contexts amplify
-    competence contrasts while suppressing warmth contrasts, and vice versa.
-
-    This crossover interaction between precision demand and social dimension
-    composes `Scenario.precisionDemand` with the dimension-specific indexical
-    field: which region of the field is activated depends on the communicative
-    situation. -/
+/-- Bidirectional modulation: high demand amplifies the Status contrast, low demand the
+    Solidarity contrast — which region of the field is activated depends on the
+    communicative situation. -/
 theorem context_crossover :
-    -- High demand amplifies competence contrast
     (exp1CompetenceByScenario .forTheRecord .precise -
      exp1CompetenceByScenario .forTheRecord .approximate >
      exp1CompetenceByScenario .bonding .precise -
      exp1CompetenceByScenario .bonding .approximate) ∧
-    -- Low demand amplifies warmth contrast
     (exp2WarmthByScenario .stranger .underspecified -
      exp2WarmthByScenario .stranger .precise >
      exp2WarmthByScenario .forTheRecord .underspecified -
      exp2WarmthByScenario .forTheRecord .precise) := by
   norm_num [exp1CompetenceByScenario, exp2WarmthByScenario]
 
--- ============================================================================
--- §9. Roundness gating
--- ============================================================================
-
-/-- Non-round numerals collapse the three-way distinction to a single variant:
-    `.precise`. There is nothing for social perception to modulate. -/
-theorem non_round_collapses (n : Nat)
-    (h : Semantics.Numerals.Roundness.roundnessScore n < 2) :
-    classifyVariant n true = .precise ∧ classifyVariant n false = .precise := by
-  unfold classifyVariant; constructor <;> simp [if_pos h]
-
-/-- Round numerals support the full three-way contrast: bare → underspecified,
-    modified → approximate. -/
-theorem round_supports_contrast (n : Nat)
-    (h : Semantics.Numerals.Roundness.roundnessScore n ≥ 2) :
-    classifyVariant n false = .underspecified ∧
-    classifyVariant n true = .approximate := by
-  have h' : ¬(Semantics.Numerals.Roundness.roundnessScore n < 2) := by omega
-  unfold classifyVariant; constructor <;> simp [if_neg h']
-
--- ============================================================================
--- §10. Eckert–Montague bridge
--- ============================================================================
-
-/-! The BSB2022 indexical field (`bsbField`) can be lifted to a grounded
-field over the SCM property space via `fromIndexicalField`, connecting
-the empirical sign-valued associations to the persona-theoretic
-infrastructure used by [burnett-2019]'s Social Meaning Games. -/
+/-! ### The Eckert–Montague lift -/
 
 open SocialMeaning.EckertMontague
 
-/-- The BSB2022 indexical field converted to a grounded field over the
-    SCM property space. -/
+/-- The field as a [burnett-2019] grounded field over the SCM property space. -/
 def bsbGroundedField : GroundedField Variant scmSpace :=
   fromIndexicalField bsbField
 
-/-- Precise indexes {competent, cold, antiSolidary}: positive
-    association with competence and anti-solidarity, negative with warmth. -/
+/-- Precise speech indexes {competent, cold, antiSolidary}. -/
 theorem precise_scmProperties :
     bsbGroundedField.indexedProperties .precise =
       {.competent, .cold, .antiSolidary} := by
   decide
 
-/-- Approximate indexes {incompetent, warm, solidary}: the complement. -/
+/-- Approximate speech indexes the complement, {incompetent, warm, solidary}. -/
 theorem approximate_scmProperties :
     bsbGroundedField.indexedProperties .approximate =
       {.incompetent, .warm, .solidary} := by
   decide
 
-/-- Underspecified indexes nothing: zero association on all dimensions
-    → no indexed social properties. Under the EM lift, this makes
-    underspecified compatible with *all* personae — consistent with its
-    diagnostic role as a neutral baseline (§7). -/
+/-- The underspecified variant indexes nothing, so under the EM lift it is compatible with
+    every persona — the neutral-diagnostic reading made structural. -/
 theorem underspecified_indexes_nothing :
     bsbGroundedField.indexedProperties .underspecified = ∅ := by
   decide
