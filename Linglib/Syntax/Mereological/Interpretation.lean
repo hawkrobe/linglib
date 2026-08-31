@@ -1,25 +1,26 @@
 import Linglib.Syntax.Mereological.Basic
-import Linglib.Studies.Borer2005
+import Linglib.Features.Number.Interp
 
 /-!
 # Mereological Syntax → Semantics Bridge
 [adger-2025] [borer-2005] [wang-sun-2026]
 
 Connects the syntactic visibility predicate (`labelInOnePartChain`) from
-mereological syntax to the semantic individuation operator (`Div`) from
-[borer-2005]'s nominal theory, closing the gap between two
-independent uses of mereology in the library:
+mereological syntax to the atoms-restriction `Number.atomsOf` — the
+individuating operation [wang-sun-2026] and [adger-2025] assume for the
+classifier head of a [borer-2005]-style nominal spine — closing the gap
+between two independent uses of mereology in the library:
 
 1. **Semantic mereology** (`Semantics/Mereology.lean`): part-whole over entities.
-   CUM (cumulative), QUA (quantized), Div (individuation to atoms).
+   CUM (cumulative), QUA (quantized), `Number.atomsOf` (restriction to atoms).
 2. **Syntactic mereology** (`Mereological/`): part-of over syntactic
    objects. SynObj, subjoin, Dimensionality.
 
 The syntactic parthood structure *determines* which semantic operations
 compose into the denotation. Whether Cl is in D's 1-part chain determines
-whether individuation (`Div`) applies:
+whether individuation (`Number.atomsOf`) applies:
 
-- **Cl visible** (in 1-part chain) → `Div` applies → QUA → sortal
+- **Cl visible** (in 1-part chain) → atoms-restriction applies → QUA → sortal
 - **Cl invisible** (cross-dimensional) → root passes through → CUM → mensural
 
 This is the formal content of [wang-sun-2026]'s 的-contrast.
@@ -44,24 +45,23 @@ def individuates (d : SynObj) : Bool :=
 section Semantics
 
 open _root_.Mereology
-open Borer2005
 
 variable {α : Type*} [SemilatticeSup α]
 
 /-- The nominal denotation at a syntactic node, given a root predicate P.
 
-    When Cl is visible (in the node's 1-part chain), `Div` applies:
+    When Cl is visible (in the node's 1-part chain), `Number.atomsOf` applies:
     the denotation picks out atomic instances of P (sortal/count).
     When Cl is invisible, P passes through unmodified (mensural/mass). -/
 noncomputable def nominalDenotation (d : SynObj) (P : α → Prop) : α → Prop :=
-  if individuates d then Div P else P
+  if individuates d then Number.atomsOf P else P
 
-/-- Classifier-parametric variant: uses `DivCL` to further restrict
-    which atoms qualify, based on the classifier's semantic content
+/-- Classifier-parametric variant: further restricts which atoms qualify,
+    based on the classifier's semantic content
     (e.g., 张 *zhāng* restricts to flat-surface atoms). -/
 noncomputable def nominalDenotationCL (d : SynObj) (P : α → Prop)
     (cl : α → Prop) : α → Prop :=
-  if individuates d then DivCL P cl else P
+  if individuates d then Number.atomsOf (fun x => P x ∧ cl x) else P
 
 -- ════════════════════════════════════════════════════
 -- § 3. Core Bridge Theorems
@@ -72,7 +72,7 @@ noncomputable def nominalDenotationCL (d : SynObj) (P : α → Prop)
 theorem visible_cl_gives_qua (d : SynObj) (P : α → Prop)
     (hv : individuates d = true) :
     QUA (nominalDenotation d P) := by
-  unfold nominalDenotation; rw [hv]; exact div_qua P
+  unfold nominalDenotation; rw [hv]; exact qua_of_atom fun _ h => h.2
 
 /-- When Cl is invisible, the denotation equals the root predicate. -/
 theorem invisible_cl_preserves_root (d : SynObj) (P : α → Prop)
@@ -85,7 +85,7 @@ theorem invisible_cl_preserves_root (d : SynObj) (P : α → Prop)
 theorem visible_cl_gives_qua_CL (d : SynObj) (P : α → Prop)
     (cl : α → Prop) (hv : individuates d = true) :
     QUA (nominalDenotationCL d P cl) := by
-  unfold nominalDenotationCL; rw [hv]; exact divCL_qua P cl
+  unfold nominalDenotationCL; rw [hv]; exact qua_of_atom fun _ h => h.2
 
 /-- When Cl is invisible and the root is cumulative, the denotation
     is cumulative — the mass/mensural reading. -/
