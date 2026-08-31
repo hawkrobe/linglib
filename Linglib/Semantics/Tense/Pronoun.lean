@@ -1,7 +1,6 @@
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Logic.Assignment
 import Linglib.Semantics.Intensional.Index
-import Linglib.Core.Order.Relation
 import Linglib.Semantics.Tense.Defs
 
 /-!
@@ -19,7 +18,6 @@ temporal instantiation of `Assignment`; all update laws are mathlib's
 `Function.update` lemmas.
 -/
 
-open Core.Order
 open Intensional (ReferentialMode)
 open Intensional (Index)
 
@@ -99,7 +97,7 @@ def resolve (tp : TensePronoun) (g : TemporalAssignment Time) : Time :=
 /-- Presupposition: the constraint applied to the resolved time. -/
 def presupposition [LinearOrder Time]
     (tp : TensePronoun) (resolvedTime perspectiveTime : Time) : Prop :=
-  Core.Order.holds tp.constraint resolvedTime perspectiveTime
+  compare resolvedTime perspectiveTime ∈ tp.constraint
 
 /-- Resolve the evaluation time from the assignment.
     In root clauses (evalTimeIndex = 0, g(0) = speech time), this is speech time.
@@ -113,7 +111,7 @@ def evalTime (tp : TensePronoun) (g : TemporalAssignment Time) : Time :=
     This makes the eval time compositionally determined rather than stipulated. -/
 def fullPresupposition [LinearOrder Time]
     (tp : TensePronoun) (g : TemporalAssignment Time) : Prop :=
-  Core.Order.holds tp.constraint (tp.resolve g) (tp.evalTime g)
+  compare (tp.resolve g) (tp.evalTime g) ∈ tp.constraint
 
 def isIndexical (tp : TensePronoun) : Prop := tp.mode = .indexical
 instance (tp : TensePronoun) : Decidable tp.isIndexical :=
@@ -151,7 +149,7 @@ theorem indexical_present_at_speech [LinearOrder Time]
     (hPres : tp.constraint = present)
     (hPresup : tp.presupposition resolvedTime speechTime) :
     resolvedTime = speechTime := by
-  simp only [presupposition, hPres, present, Core.Order.holds_overlapping] at hPresup
+  simp only [presupposition, hPres, compare_mem_present] at hPresup
   exact hPresup
 
 end TensePronoun

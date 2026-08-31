@@ -82,7 +82,7 @@ def actualRes (dr : TemporalDeReReading W E P T) : T :=
     before the believer's now, not before the outer speech time. -/
 def IsFelicitousWith [LinearOrder T] (dr : TemporalDeReReading W E P T)
     (constraint : Finset Ordering) : Prop :=
-  Core.Order.holds constraint dr.actualRes dr.holderContext.time
+  compare dr.actualRes dr.holderContext.time ∈ constraint
 
 /-- **Modal rigidity**: the time-concept evaluates to the same time at
     every world-time pair in the alternative set — what distinguishes a

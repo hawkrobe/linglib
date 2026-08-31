@@ -47,7 +47,7 @@ the two Hungarian clause types reproduce the two values of the binary
 namespace Egressy2026
 
 open Tense (EmbeddedTenseReading SOTParameter availableReadings)
-open Core.Order (notAfter before after unrestricted overlapping)
+open Tense (present future)
 open Minimalist
 open Hungarian.Predicates
 
@@ -59,7 +59,7 @@ Past-under-past embeddings have a simultaneous and a backward-shifted reading
 relational/feature ([kauf-zeijlstra-2018]), deletion ([ogihara-2019]),
 res-movement de re, clause-size ([egressy-2026]) — disagree only about *when
 each reading is licensed*, not about what a reading is: a reading is which
-comparison atom (`Core.Order`) the embedded reference time bears to its
+comparison atom (`Ordering`) the embedded reference time bears to its
 anchor. `Tense.embeddedFrame` puts the anchor at the matrix event time, so the
 three readings are exactly the frame predicates (`isPast_iff_atom` and kin).
 
@@ -68,8 +68,11 @@ clause and the clause it contains, which atoms are licensed; `profile` folds a
 license **pairwise** along the c-command chain, so an intervening tense
 re-anchors. -/
 
+/-- The ≤ cell of [kauf-zeijlstra-2018]'s PAST: at-or-before, i.e. `Tense.futureᶜ`. -/
+def nonfuture : Finset Ordering := Tense.futureᶜ
+
 /-- A node in an embedding chain: a clause's morphological tense as a relative
-    comparison cell (past = `notAfter`, the ≤ of [kauf-zeijlstra-2018]) and
+    comparison cell (past = `nonfuture`, the ≤ of [kauf-zeijlstra-2018]) and
     its framework-neutral size grade (a Minimalist clause provides it as
     `ClauseSpine.fLevel`). -/
 structure Node where
@@ -111,13 +114,11 @@ section Realization
 (`Tense.embeddedFrame`), the licensed atom is its `R`-vs-`P` comparison, and
 the three named readings are exactly `ReichenbachFrame.isPast/isPresent/isFuture`. -/
 
-open Core.Order
-
 variable {T : Type*} [LinearOrder T]
 
 theorem isPast_iff_atom (f : Time.ReichenbachFrame T) :
     f.isPast ↔ compare f.referenceTime f.perspectiveTime = Ordering.lt := by
-  simp [Time.ReichenbachFrame.isPast, holds, Tense.past, before]
+  simp [Time.ReichenbachFrame.isPast, Tense.past]
 
 theorem isPresent_iff_atom (f : Time.ReichenbachFrame T) :
     f.isPresent ↔ compare f.referenceTime f.perspectiveTime = Ordering.eq := by
@@ -125,7 +126,7 @@ theorem isPresent_iff_atom (f : Time.ReichenbachFrame T) :
 
 theorem isFuture_iff_atom (f : Time.ReichenbachFrame T) :
     f.isFuture ↔ compare f.referenceTime f.perspectiveTime = Ordering.gt := by
-  simp [Time.ReichenbachFrame.isFuture, holds, Tense.future, after]
+  simp [Time.ReichenbachFrame.isFuture, Tense.future]
 
 end Realization
 
@@ -247,19 +248,19 @@ atom sets, not a bespoke reading function. -/
 /-- The `Say` boundary: the `Say` layer's grade on the clause-size scale. -/
 def sayBoundary : ℕ := ComplementSize.sayP.fLevel
 
-/-- A clause node: a tense cell (`notAfter` = past, `after` = future — the
+/-- A clause node: a tense cell (`nonfuture` = past, `after` = future — the
     ungated reading set of [kauf-zeijlstra-2018]) and the neutral size of its
     `ClauseType`. -/
 def clauseNode (tense : Finset Ordering) (ct : ClauseType) : Node :=
   ⟨tense, ct.complementSize.fLevel⟩
 
 /-- A past matrix clause (the container; only its tense matters to licensing). -/
-def pastMatrix : Node := ⟨notAfter, 0⟩
+def pastMatrix : Node := ⟨nonfuture, 0⟩
 
 /-- The agreeing-past gate: SOT deletion needs both the container and the
     contained clause to be morphologically past ([ogihara-1996]). -/
 def agreeingPast : Node → Node → Bool :=
-  fun a c => (a.tense == notAfter) && (c.tense == notAfter)
+  fun a c => (a.tense == nonfuture) && (c.tense == nonfuture)
 
 /-- [egressy-2026]'s license: the `Say`-boundary size gate refined by the
     agreeing-past gate. The size gate blocks simultaneity in speech-reporting
@@ -275,17 +276,17 @@ def toReadings (s : Finset Ordering) : List EmbeddedTenseReading :=
 
 /-- Non-speech-reporting (TP) clauses license both readings. -/
 theorem nonSpeech_both :
-    Simultaneous (egressyLicense pastMatrix (clauseNode notAfter .nonSpeechReporting)) ∧
-    Backshifted  (egressyLicense pastMatrix (clauseNode notAfter .nonSpeechReporting)) := by decide
+    Simultaneous (egressyLicense pastMatrix (clauseNode nonfuture .nonSpeechReporting)) ∧
+    Backshifted  (egressyLicense pastMatrix (clauseNode nonfuture .nonSpeechReporting)) := by decide
 
 /-- Speech-reporting (SayP) clauses license only the back-shifted reading. -/
 theorem speech_backshift_only :
-    ¬ Simultaneous (egressyLicense pastMatrix (clauseNode notAfter .speechReporting)) ∧
-    Backshifted    (egressyLicense pastMatrix (clauseNode notAfter .speechReporting)) := by decide
+    ¬ Simultaneous (egressyLicense pastMatrix (clauseNode nonfuture .speechReporting)) ∧
+    Backshifted    (egressyLicense pastMatrix (clauseNode nonfuture .speechReporting)) := by decide
 
 /-- The core asymmetry: simultaneity is blocked exactly in speech-reporting clauses. -/
 theorem simultaneous_iff_nonSpeech (ct : ClauseType) :
-    Simultaneous (egressyLicense pastMatrix (clauseNode notAfter ct)) ↔ ct = .nonSpeechReporting := by
+    Simultaneous (egressyLicense pastMatrix (clauseNode nonfuture ct)) ↔ ct = .nonSpeechReporting := by
   cases ct <;> decide
 
 
@@ -298,12 +299,12 @@ clause-internally — a non-speech-reporting clause behaves like an English
 
 /-- A non-speech-reporting clause reproduces the English (`.relative`) parameter. -/
 theorem nonSpeech_eq_relative :
-    toReadings (egressyLicense pastMatrix (clauseNode notAfter .nonSpeechReporting))
+    toReadings (egressyLicense pastMatrix (clauseNode nonfuture .nonSpeechReporting))
       = availableReadings .relative := by decide
 
 /-- A speech-reporting clause reproduces the Japanese (`.absolute`) parameter. -/
 theorem speech_eq_absolute :
-    toReadings (egressyLicense pastMatrix (clauseNode notAfter .speechReporting))
+    toReadings (egressyLicense pastMatrix (clauseNode nonfuture .speechReporting))
       = availableReadings .absolute := by decide
 
 
@@ -385,7 +386,7 @@ def allData : List SOTDatum :=
 /-- The grammatical prediction via the Egressy license: is the simultaneous
     reading available for this datum's clause type (under a past matrix)? -/
 def predictsSimultaneous (d : SOTDatum) : Bool :=
-  decide (Simultaneous (egressyLicense pastMatrix (clauseNode notAfter d.clauseType)))
+  decide (Simultaneous (egressyLicense pastMatrix (clauseNode nonfuture d.clauseType)))
 
 /-- Every datum's observed simultaneous availability matches the prediction. -/
 theorem all_data_match :
@@ -405,7 +406,7 @@ For the direct-perception examples (4)–(6) the back-shifted reading is exclude
 for *pragmatic* reasons — one cannot directly perceive a past event — even
 though it is grammatically available (`nonSpeech_both`). This is a layer-2
 `Narrowing`: direct perception intersects the grammatical
-reading set with the `overlapping` (=) constraint, leaving simultaneous-only
+reading set with the `present` (=) constraint, leaving simultaneous-only
 (`direct_perception_narrows`). -/
 
 /-- The direct-perception data (perception and dreaming). -/
@@ -417,19 +418,19 @@ def directPerceptionData : List SOTDatum := [ex4_lat, ex5_hall, ex6_almodik]
 theorem direct_perception_simultaneous :
     directPerceptionData.all (fun d =>
       d.simultaneousObserved &&
-        (toReadings (egressyLicense pastMatrix (clauseNode notAfter d.clauseType))
+        (toReadings (egressyLicense pastMatrix (clauseNode nonfuture d.clauseType))
           == [EmbeddedTenseReading.shifted, EmbeddedTenseReading.simultaneous])) = true := by
   decide
 
-/-- Direct perception as a layer-2 `Narrowing`: it imposes the `overlapping` (=)
+/-- Direct perception as a layer-2 `Narrowing`: it imposes the `present` (=)
     constraint — only a simultaneous reading is perceivable. -/
-def directPerception : Narrowing Unit := fun _ => overlapping
+def directPerception : Narrowing Unit := fun _ => present
 
 /-- The prose fact as a theorem: direct perception narrows the grammatically
     both-readings non-speech license down to simultaneous-only. -/
 theorem direct_perception_narrows :
     directPerception.apply ()
-        (egressyLicense pastMatrix (clauseNode notAfter .nonSpeechReporting)) = overlapping := by
+        (egressyLicense pastMatrix (clauseNode nonfuture .nonSpeechReporting)) = present := by
   decide
 
 
@@ -448,32 +449,32 @@ def simProfile (chain : List Node) : List Bool :=
     speech-reporting → back-shifted; the deepest (Mari's perception) is
     non-speech-reporting → simultaneous. Only adjacent clauses interact. -/
 def ex16 : List Node :=
-  [clauseNode notAfter .speechReporting, clauseNode notAfter .nonSpeechReporting]
+  [clauseNode nonfuture .speechReporting, clauseNode nonfuture .nonSpeechReporting]
 theorem ex16_profile : simProfile ex16 = [false, true] := by decide
 
 /-- ex. (17): hear > shout > be. Intermediate (perception of the shouting) →
     simultaneous; deepest (content of the shout) → back-shifted. Opposite of (16). -/
 def ex17 : List Node :=
-  [clauseNode notAfter .nonSpeechReporting, clauseNode notAfter .speechReporting]
+  [clauseNode nonfuture .nonSpeechReporting, clauseNode nonfuture .speechReporting]
 theorem ex17_profile : simProfile ex17 = [true, false] := by decide
 
 /-- ex. (10): dream > see > be, all non-speech-reporting → simultaneous throughout. -/
 def ex10 : List Node :=
-  [clauseNode notAfter .nonSpeechReporting, clauseNode notAfter .nonSpeechReporting]
+  [clauseNode nonfuture .nonSpeechReporting, clauseNode nonfuture .nonSpeechReporting]
 theorem ex10_profile : simProfile ex10 = [true, true] := by decide
 
 /-- ex. (15): shout > growl > be, all speech-reporting → back-shifted throughout. -/
 def ex15 : List Node :=
-  [clauseNode notAfter .speechReporting, clauseNode notAfter .speechReporting]
+  [clauseNode nonfuture .speechReporting, clauseNode nonfuture .speechReporting]
 theorem ex15_profile : simProfile ex15 = [false, false] := by decide
 
 /-- Past-under-*will*-under-past (English; [ogihara-1996], discussed by
     [egressy-2026]): *said* > *will claim* > *was*. The intervening future *will*
-    (`after`) is not an agreeing past, so the deepest `was` has no simultaneous
+    (`future`) is not an agreeing past, so the deepest `was` has no simultaneous
     reading — the `agreeingPast` gate blocks it, independently of size (English
     is size-insensitive here). -/
 def ex18 : List Node :=
-  [clauseNode after .speechReporting, clauseNode notAfter .speechReporting]
+  [clauseNode future .speechReporting, clauseNode nonfuture .speechReporting]
 theorem ex18_no_simultaneous : simProfile ex18 = [false, false] := by decide
 
 
@@ -491,15 +492,15 @@ argument does not, on its own, refute. -/
 /-- The unbounded (size-blind) de re foil: it licenses every reading. Local to
     this study — it is Egressy's reductio against unbounded res-movement, not a
     neutral SOT mechanism. -/
-def deReUnrestricted : LocalLicense := fun _ _ => unrestricted
+def deReUnrestricted : LocalLicense := fun _ _ => ⊤
 
 /-- The *unbounded* de re foil overgenerates: size-blind, it licenses
     simultaneity for a speech-reporting clause, which `egressyLicense` correctly
     blocks. This refutes unbounded res-movement, not the restricted de re of
     [ogihara-sharvit-2012]. -/
 theorem de_re_overgenerates :
-    Simultaneous (deReUnrestricted pastMatrix (clauseNode notAfter .speechReporting)) ∧
-    ¬ Simultaneous (egressyLicense pastMatrix (clauseNode notAfter .speechReporting)) := by decide
+    Simultaneous (deReUnrestricted pastMatrix (clauseNode nonfuture .speechReporting)) ∧
+    ¬ Simultaneous (egressyLicense pastMatrix (clauseNode nonfuture .speechReporting)) := by decide
 
 
 end Egressy2026

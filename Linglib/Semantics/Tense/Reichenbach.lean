@@ -46,25 +46,25 @@ namespace ReichenbachFrame
 
 variable {T : Type*} [LinearOrder T]
 
-/-- PAST: R < P (reference time precedes perspective time) — a view of
-    `Core.Order.holds Tense.past`. [kiparsky-2002]: tense locates R relative to P, not S. -/
+/-- PAST: R < P (reference time precedes perspective time) — membership of `compare R P` in the
+    `Tense.past` cell. [kiparsky-2002]: tense locates R relative to P, not S. -/
 def isPast (f : ReichenbachFrame T) : Prop :=
-  Core.Order.holds Tense.past f.referenceTime f.perspectiveTime
+  compare f.referenceTime f.perspectiveTime ∈ Tense.past
 
 /-- PRESENT: R = P (reference time equals perspective time). Present is the one tense that
     needs no ordering, so it stays the bare equality (frame predicates over unordered time keep
-    typechecking); it is definitionally `Core.Order.holds Tense.present`. -/
+    typechecking); it is equivalent to membership in `Tense.present` (`compare_mem_present`). -/
 def isPresent (f : ReichenbachFrame T) : Prop :=
   f.referenceTime = f.perspectiveTime
 
 /-- FUTURE: P < R (perspective time precedes reference time). -/
 def isFuture (f : ReichenbachFrame T) : Prop :=
-  Core.Order.holds Tense.future f.referenceTime f.perspectiveTime
+  compare f.referenceTime f.perspectiveTime ∈ Tense.future
 
-/-- NONPAST: P ≤ R (present or future) ([klecha-2016]) — the view of
-    `Core.Order.holds Tense.nonpast`. Completes the four-way relation on frames. -/
+/-- NONPAST: P ≤ R (present or future) ([klecha-2016]) — membership in `Tense.nonpast`.
+    Completes the four-way relation on frames. -/
 def isNonpast (f : ReichenbachFrame T) : Prop :=
-  Core.Order.holds Tense.nonpast f.referenceTime f.perspectiveTime
+  compare f.referenceTime f.perspectiveTime ∈ Tense.nonpast
 
 /-- Simple case: P = S (root clause, no perspective shift). -/
 def isSimpleCase (f : ReichenbachFrame T) : Prop :=
@@ -101,7 +101,7 @@ consumers can close concrete goals with `decide` and rewrite with
 
 @[simp] theorem isPast_def (f : ReichenbachFrame T) :
     f.isPast ↔ f.referenceTime < f.perspectiveTime :=
-  Core.Order.holds_before f.referenceTime f.perspectiveTime
+  Tense.compare_mem_past f.referenceTime f.perspectiveTime
 
 omit [LinearOrder T] in
 @[simp] theorem isPresent_def (f : ReichenbachFrame T) :
@@ -109,11 +109,11 @@ omit [LinearOrder T] in
 
 @[simp] theorem isFuture_def (f : ReichenbachFrame T) :
     f.isFuture ↔ f.perspectiveTime < f.referenceTime :=
-  Core.Order.holds_after f.referenceTime f.perspectiveTime
+  Tense.compare_mem_future f.referenceTime f.perspectiveTime
 
 @[simp] theorem isNonpast_def (f : ReichenbachFrame T) :
     f.isNonpast ↔ f.perspectiveTime ≤ f.referenceTime :=
-  Core.Order.holds_notBefore f.referenceTime f.perspectiveTime
+  Tense.compare_mem_nonpast f.referenceTime f.perspectiveTime
 
 omit [LinearOrder T] in
 @[simp] theorem isSimpleCase_def (f : ReichenbachFrame T) :

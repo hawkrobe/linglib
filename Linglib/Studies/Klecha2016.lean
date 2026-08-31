@@ -190,9 +190,9 @@ above. -/
 theorem dox_past_iff {Time : Type*} [LinearOrder Time]
     (evalTime refTime : Time) :
     attitudeTemporalConstraint .doxastic evalTime refTime ∧
-    Core.Order.holds Tense.past refTime evalTime ↔
+    compare refTime evalTime ∈ Tense.past ↔
     refTime < evalTime := by
-  simp only [Tense.past, Core.Order.holds_before]
+  simp only [Tense.compare_mem_past]
   exact ⟨λ ⟨_, hPast⟩ => hPast, λ h => ⟨le_of_lt h, h⟩⟩
 
 /-- CIR ∧ PAST = ⊥: a circumstantial modal base requires RT > t, but
@@ -203,8 +203,8 @@ theorem dox_past_iff {Time : Type*} [LinearOrder Time]
 theorem cir_past_iff_false {Time : Type*} [LinearOrder Time]
     (evalTime refTime : Time) :
     attitudeTemporalConstraint .circumstantial evalTime refTime ∧
-    Core.Order.holds Tense.past refTime evalTime ↔ False := by
-  simp only [Tense.past, Core.Order.holds_before]
+    compare refTime evalTime ∈ Tense.past ↔ False := by
+  simp only [Tense.compare_mem_past]
   exact ⟨λ ⟨hGt, hLt⟩ => absurd hLt (not_lt.mpr (le_of_lt hGt)), False.elim⟩
 
 /-- DOX ∧ NPST = simultaneous: a doxastic modal base requires RT ≤ t,
@@ -214,9 +214,9 @@ theorem cir_past_iff_false {Time : Type*} [LinearOrder Time]
 theorem dox_npst_iff {Time : Type*} [LinearOrder Time]
     (evalTime refTime : Time) :
     attitudeTemporalConstraint .doxastic evalTime refTime ∧
-    Core.Order.holds Tense.nonpast refTime evalTime ↔
+    compare refTime evalTime ∈ Tense.nonpast ↔
     refTime = evalTime := by
-  simp only [Tense.nonpast, Core.Order.holds_notBefore]
+  simp only [Tense.compare_mem_nonpast]
   exact ⟨λ ⟨hLe, hGe⟩ => le_antisymm hLe hGe,
    λ h => ⟨le_of_eq h, ge_of_eq h⟩⟩
 
@@ -227,9 +227,9 @@ theorem dox_npst_iff {Time : Type*} [LinearOrder Time]
 theorem cir_npst_iff {Time : Type*} [LinearOrder Time]
     (evalTime refTime : Time) :
     attitudeTemporalConstraint .circumstantial evalTime refTime ∧
-    Core.Order.holds Tense.nonpast refTime evalTime ↔
+    compare refTime evalTime ∈ Tense.nonpast ↔
     refTime > evalTime := by
-  simp only [Tense.nonpast, Core.Order.holds_notBefore]
+  simp only [Tense.compare_mem_nonpast]
   exact ⟨λ ⟨hGt, _⟩ => hGt, λ h => ⟨h, le_of_lt h⟩⟩
 
 
@@ -453,27 +453,27 @@ These theorems instantiate the general results from `ModalTense` at ℤ. -/
 /-- DOX + PAST = past: "Martina thought Carissa got pregnant" (genuine
     past reading). RT < thinking time. -/
 theorem dox_past_gives_past (t r : ℤ) :
-    attitudeTemporalConstraint .doxastic t r ∧ Core.Order.holds Tense.past r t ↔
+    attitudeTemporalConstraint .doxastic t r ∧ compare r t ∈ Tense.past ↔
     r < t :=
   dox_past_iff t r
 
 /-- DOX + NPST = simultaneous: "Martina thought Carissa was pregnant"
     where "was" = SOT agreement over NPST. RT = thinking time. -/
 theorem dox_npst_gives_simultaneous (t r : ℤ) :
-    attitudeTemporalConstraint .doxastic t r ∧ Core.Order.holds Tense.nonpast r t ↔
+    attitudeTemporalConstraint .doxastic t r ∧ compare r t ∈ Tense.nonpast ↔
     r = t :=
   dox_npst_iff t r
 
 /-- CIR + NPST = future: "Martina hoped Carissa got pregnant" where
     "got" = SOT agreement over NPST + CIR. RT > hoping time. -/
 theorem cir_npst_gives_future (t r : ℤ) :
-    attitudeTemporalConstraint .circumstantial t r ∧ Core.Order.holds Tense.nonpast r t ↔
+    attitudeTemporalConstraint .circumstantial t r ∧ compare r t ∈ Tense.nonpast ↔
     r > t :=
   cir_npst_iff t r
 
 /-- CIR + PAST = impossible: no RT can be both > t (CIR) and < t (PAST). -/
 theorem cir_past_is_impossible (t r : ℤ) :
-    ¬(attitudeTemporalConstraint .circumstantial t r ∧ Core.Order.holds Tense.past r t) :=
+    ¬(attitudeTemporalConstraint .circumstantial t r ∧ compare r t ∈ Tense.past) :=
   (cir_past_iff_false t r).mp
 
 
@@ -486,19 +486,17 @@ strictly weaker than present (ref = perspective). This matters because NPST
 includes future-oriented readings that present would exclude. -/
 
 /-- Present entails nonpast: if ref = persp, then ref ≥ persp. -/
-theorem present_implies_nonpast (r p : ℤ) (h : Core.Order.holds Tense.present r p) :
-    Core.Order.holds Tense.nonpast r p := by
-  simp only [Tense.present, Tense.nonpast, Core.Order.holds_overlapping,
-    Core.Order.holds_notBefore] at h ⊢
+theorem present_implies_nonpast (r p : ℤ) (h : compare r p ∈ Tense.present) :
+    compare r p ∈ Tense.nonpast := by
+  simp only [Tense.compare_mem_present, Tense.compare_mem_nonpast] at h ⊢
   omega
 
 /-- Nonpast does not entail present: there exist r, p where ref ≥ persp
     but ref ≠ persp (namely, any future time). -/
 theorem nonpast_strictly_weaker :
-    ∃ r p : ℤ, Core.Order.holds Tense.nonpast r p ∧
-              ¬ Core.Order.holds Tense.present r p := by
-  exact ⟨1, 0, by simp [Tense.nonpast, Core.Order.holds_notBefore],
-                by simp [Tense.present, Core.Order.holds_overlapping]⟩
+    ∃ r p : ℤ, compare r p ∈ Tense.nonpast ∧
+              ¬ compare r p ∈ Tense.present := by
+  exact ⟨1, 0, by decide, by decide⟩
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -682,7 +680,7 @@ open Sharvit2014 (english)
 theorem sharvit_klecha_agree_simultaneous_english (sayingTime sickTime : ℤ) :
     english.simultaneousAttitudeReading = true ∧
     (attitudeTemporalConstraint .doxastic sayingTime sickTime ∧
-      Core.Order.holds Tense.nonpast sickTime sayingTime ↔
+      compare sickTime sayingTime ∈ Tense.nonpast ↔
       sickTime = sayingTime) :=
   ⟨rfl, dox_npst_iff sayingTime sickTime⟩
 
@@ -842,9 +840,9 @@ mechanism. -/
 theorem klecha_covers_hope_future_oriented_reading
     (hopeTime embRT : ℤ) (h : embRT > hopeTime) :
     attitudeTemporalConstraint .circumstantial hopeTime embRT ∧
-    Core.Order.holds Tense.nonpast embRT hopeTime :=
+    compare embRT hopeTime ∈ Tense.nonpast :=
   ⟨cir_compatible_with_future hopeTime embRT h,
-    (Core.Order.holds_notBefore embRT hopeTime).mpr (le_of_lt h)⟩
+    (Tense.compare_mem_nonpast embRT hopeTime).mpr (le_of_lt h)⟩
 
 
 -- ════════════════════════════════════════════════════════════════

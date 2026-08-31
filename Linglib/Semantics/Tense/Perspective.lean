@@ -22,7 +22,7 @@ stated directly with the frame predicates. Tenses and ⌈then⌉ are temporal
 pronouns in one architecture ([partee-1973], `TensePronoun`): each
 presupposes a comparison category (`Finset Ordering`) of its reference
 against π — PAST `Tense.past`, PRES `Tense.present`, and ⌈then⌉
-`Core.Order.distinct`, the complement of `Tense.present`, so the
+`Tense.presentᶜ`, the complement of `Tense.present`, so the
 ⌈then⌉-present clash is disjointness of comparison categories.
 -/
 
@@ -35,19 +35,19 @@ open Tense
 /-! ### The ⌈then⌉ presupposition -/
 
 /-- Temporal ⌈then⌉ presupposes that its reference is disjoint from the
-    perspective π: the `Core.Order.distinct` comparison category, the
-    complement of PRES's `Tense.present` ([tsilia-zhao-2026]). This is
-    ⌈then⌉'s own presupposition, separate from the presuppositions of any
-    co-clausal tense; the clash with PRES arises because the temporal
-    assertion ("during then") forces the PRES reference inside the ⌈then⌉
+    perspective π: the cell `Tense.presentᶜ`, the complement of PRES's
+    `Tense.present` ([tsilia-zhao-2026]). This is ⌈then⌉'s own
+    presupposition, separate from the presuppositions of any co-clausal
+    tense; the clash with PRES arises because the temporal assertion
+    ("during then") forces the PRES reference inside the ⌈then⌉
     reference. -/
 def thenPresup {Time : Type*} [LinearOrder Time] (thenRef perspective : Time) : Prop :=
-  Core.Order.holds Core.Order.distinct thenRef perspective
+  compare thenRef perspective ∈ Tense.presentᶜ
 
 @[simp] theorem thenPresup_def {Time : Type*} [LinearOrder Time]
     (thenRef perspective : Time) :
-    thenPresup thenRef perspective ↔ thenRef ≠ perspective :=
-  Core.Order.holds_distinct thenRef perspective
+    thenPresup thenRef perspective ↔ thenRef ≠ perspective := by
+  simp [thenPresup]
 
 /-- A ⌈then⌉-type temporal adverb: a lexical item denoting a temporal pronoun
     that carries the `thenPresup` disjointness presupposition (English *then*,
