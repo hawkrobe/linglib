@@ -6,10 +6,7 @@ import Mathlib.Control.Monad.Cont
 import Linglib.Semantics.Reference.Binding
 
 /-!
-# [charlow-2018]: A Modular Theory of Pronouns and Binding
-
-Simon Charlow (2018). "A modular theory of pronouns and binding."
-Manuscript, Rutgers University. <https://lingbuzz.net/lingbuzz/003720>
+# Charlow 2018: a modular theory of pronouns and binding
 
 ## Thesis
 

@@ -5,13 +5,36 @@ import Linglib.Semantics.Dynamic.ICDRT.Defs
 import Linglib.Logic.CylindricAlgebra
 
 /-!
-# Charlow (2019): Where Is the Destructive Update Problem?
-[charlow-2019]
+# Charlow 2019: where is the destructive update problem?
 
-Destructive update is not empirically problematic: assignment modification
-is shared between static and dynamic systems. The static/dynamic divide
-reduces to a single operator ↑ determining whether modified assignments
-are retained.
+This file formalizes the argument of [charlow-2019] that destructive update is not a problem
+peculiar to dynamic semantics. Overwriting an assignment's value at a variable is something the
+static and the dynamic system do alike, and it costs neither of them its truth conditions; what
+separates them is only whether the modified assignment is retained, which is one operator's worth
+of difference. Lifting a pointwise update into a state of world-assignment pairs is injective and
+preserves anaphoric distributivity, and lowering back at a world undoes it, but the round trip in
+the other direction does not — which is exactly where the state's extra structure lives.
+
+## Main definitions
+
+* `trueAt`, `staticExists`, `dynamicExists` — truth of a program, and the static and dynamic
+  existentials
+* `reachable` — assignment reachability, a preorder that is not antisymmetric
+* `liftPW`, `lowerPW` — Charlow's ↑ and its inverse at a world
+* `anaphoricallyDistributive` — distributivity over the partition by assignment
+
+## Main results
+
+* `destructive_preserves_truth`, `static_dynamic_same_truth` — overwriting costs no truth
+  conditions, and the two existentials agree on them
+* `dynamic_changes_assignment`, `static_is_test` — while differing on the output assignment
+* `lowerPW_liftPW`, `liftPW_injective`, `liftPW_preserves_distributive`, `liftPW_lowerPW_not_id` —
+  what the lift keeps and what the state adds
+* `charlow_static_eq_cylindrify` — the static existential is cylindrification
+
+## References
+
+* [charlow-2019]
 -/
 
 namespace Charlow2019
