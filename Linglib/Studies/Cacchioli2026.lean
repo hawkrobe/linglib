@@ -2,35 +2,42 @@ import Linglib.Fragments.Tigrinya.Complementizers
 import Linglib.Data.Examples.Cacchioli2026
 
 /-!
-# [cacchioli-2026] — The Syntax of Clausal Prefixes in Tigrinya
+# Cacchioli 2026: the clausal prefixes of Tigrinya
 
-[cacchioli-2026] argues that Tigrinya's clause-initial prefixes owe their
-position to syntax, not to a morphological property of prefixes in a
-head-final language. *zɨ-* is a reflex of successive-cyclic Ā-movement —
-Spec-Head agreement in a phasal aspectual projection — rather than a
-complementizer head (the zɨP heads of [cacchioli-2023] are withdrawn).
-*kɛmzɨ-* is *kɛm* + *zɨ-*, so its complement clauses are relative clauses
-with a null nominal Ā-moved. *kɨ-* is a subjunctive marker heading a MoodP
-below TP in reduced, temporally dependent clauses. *ʔaj-…-(ɨ)n* is split
-negation: *ʔaj-* heads NegP below TP and *-(ɨ)n* heads PolP above it,
-which is why the suffix is missing wherever the clause lacks the higher
-layer.
+Tigrinya is head-final and yet marks its subordinate clauses with prefixes. This file formalizes
+the two descriptive generalizations of a thesis arguing that the position is syntactic rather than
+a morphological quirk: *zɨ-* is a reflex of successive-cyclic Ā-movement rather than a
+complementizer head, *kɛmzɨ-* is *kɛm* plus that reflex, so its complement clauses are relative
+clauses with a null nominal moved, *kɨ-* is a subjunctive marker heading a projection below tense,
+and *ʔaj-…-(ɨ)n* is split negation whose prefix sits below tense and whose suffix heads a polarity
+projection above it.
 
-Two of the thesis's descriptive generalizations are checked against its
-own examples (`Cacchioli2026.Examples`): the selection table (which verb
-classes take *kɛmzɨ-*, *kɨ-* and *ʔɨlu*) and the distribution of the
-negative suffix across clause types.
+The first generalization is which verb classes take which clause-typer, the thesis's own summary
+table. The second is the distribution of the negative suffix, which appears exactly in the clauses
+whose structure reaches the polarity projection — root declaratives, *ʔɨlu*-complements and the
+negative future — and is missing wherever the clause is reduced. Both are checked against the
+thesis's own examples, and both are attested on each side, so neither check is vacuous.
 
-## TODO
+## Main definitions
 
-* State the head placements — PolP above TP above NegP, MoodP below TP —
-  against the extended-projection substrate once `fValue` separates Pol,
-  T, Neg and Mod (all F2 today).
-* Record *ʔɨlu*'s agreement with the matrix subject once `Complementizer`
-  carries an agreement axis; the former `agrees` field meant
-  clause-internal agreement and had no correct setter.
+* `VerbClass`, `selects` — the verb classes and the clause-typers each admits
+* `ClauseKind`, `HasPolP` — the clause types and which of them carry the polarity projection
+
+## Main results
+
+* `kemzi_or_ki`, `kemzi_of_ilu`, `kemzi_and_ki_iff` — the shape of the selection table: every class
+  takes one of the two prefixes, *ʔɨlu* occurs only where *kɛmzɨ-* does, and the two prefixes
+  overlap on the fiction and perception verbs alone
+* `selects_covers_data`, `each_typer_attested` — the table admits every attested pairing, and each
+  typer is attested
+* `suffix_iff_polP`, `polP_clauses_attested` — the suffix appears exactly in the clauses carrying
+  the polarity projection, and every such clause type is attested with it
+
+## References
+
+* [cacchioli-2026]
+* [cacchioli-2023]
 -/
-
 namespace Cacchioli2026
 
 open Data.Examples Tigrinya.Complementizers
@@ -64,7 +71,8 @@ theorem kemzi_and_ki_iff (c : VerbClass) :
     kemzi ∈ selects c ∧ ki ∈ selects c ↔ c = .fiction ∨ c = .perception := by
   cases c <;> decide
 
-def parseVerbClass : String → Option VerbClass
+/-- The thesis's verb-class labels. -/
+private def parseVerbClass : String → Option VerbClass
   | "factive" => some .factive
   | "cognitive_non_factive" => some .cognitiveNonFactive
   | "fiction" => some .fiction
@@ -78,7 +86,8 @@ def parseVerbClass : String → Option VerbClass
   | "ecm" => some .ecm
   | _ => none
 
-def parseTyper : String → Option Complementizer
+/-- The thesis's clause-typer labels. -/
+private def parseTyper : String → Option Complementizer
   | "kemzi" => some kemzi
   | "ki" => some ki
   | "ilu" => some ilu
@@ -90,7 +99,8 @@ structure SelectionDatum where
   typer : Complementizer
   deriving DecidableEq, Repr
 
-def selectionDatum (e : LinguisticExample) : Option SelectionDatum := do
+/-- The selection pairing an example records, where it records one. -/
+private def selectionDatum (e : LinguisticExample) : Option SelectionDatum := do
   let c ← parseVerbClass (← e.paperFeatures.lookup "verb_class")
   let t ← parseTyper (← e.paperFeatures.lookup "typer")
   some ⟨c, t⟩
@@ -101,6 +111,11 @@ def selectionData : List SelectionDatum := Examples.all.filterMap selectionDatum
 /-- The selection table admits every attested pairing. -/
 theorem selects_covers_data : ∀ d ∈ selectionData, d.typer ∈ selects d.verbClass := by
   decide
+
+/-- All three typers are attested, so the coverage check has something to check. -/
+theorem each_typer_attested :
+    (∃ d ∈ selectionData, d.typer = kemzi) ∧ (∃ d ∈ selectionData, d.typer = ki) ∧
+      (∃ d ∈ selectionData, d.typer = ilu) := by decide
 
 /-! ### Sentential negation -/
 
@@ -119,7 +134,8 @@ instance : DecidablePred HasPolP
   | .root | .ilu | .future => isTrue trivial
   | .relative | .seem | .conditional | .complement | .subjunctive | .purpose => isFalse id
 
-def parseClauseKind : String → Option ClauseKind
+/-- The thesis's clause-type labels. -/
+private def parseClauseKind : String → Option ClauseKind
   | "root" => some .root
   | "ilu" => some .ilu
   | "future" => some .future
@@ -131,7 +147,8 @@ def parseClauseKind : String → Option ClauseKind
   | "purpose" => some .purpose
   | _ => none
 
-def parseSuffix : String → Option Bool
+/-- Whether an example is coded as carrying the negative suffix. -/
+private def parseSuffix : String → Option Bool
   | "present" => some true
   | "absent" => some false
   | _ => none
@@ -142,7 +159,8 @@ structure NegationDatum where
   suffix : Bool
   deriving DecidableEq, Repr
 
-def negationDatum (e : LinguisticExample) : Option NegationDatum := do
+/-- The negated clause an example records, where it records one. -/
+private def negationDatum (e : LinguisticExample) : Option NegationDatum := do
   let c ← parseClauseKind (← e.paperFeatures.lookup "clause")
   let s ← parseSuffix (← e.paperFeatures.lookup "neg_suffix")
   some ⟨c, s⟩
@@ -153,5 +171,11 @@ def negationData : List NegationDatum := Examples.all.filterMap negationDatum
 /-- The suffix appears exactly in the clauses that carry PolP. -/
 theorem suffix_iff_polP : ∀ d ∈ negationData, d.suffix = true ↔ HasPolP d.clause := by
   decide
+
+/-- Every clause type the analysis gives a polarity projection is attested with the suffix, so the
+generalization is confirmed on both sides rather than by the absence of counterexamples. -/
+theorem polP_clauses_attested :
+    ⟨.root, true⟩ ∈ negationData ∧ ⟨.ilu, true⟩ ∈ negationData ∧
+      ⟨.future, true⟩ ∈ negationData := by decide
 
 end Cacchioli2026
