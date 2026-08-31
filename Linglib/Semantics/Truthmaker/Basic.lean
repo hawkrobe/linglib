@@ -541,23 +541,23 @@ theorem subjectMatter_distinguishes_classically_equivalent :
     ∃ (A B : BilProp (Set TwoAtom)),
       (∀ s, A.ver s ↔ B.ver s) ∧
       A.subjectMatter ≠ B.subjectMatter := by
-  let aSet : Set TwoAtom := {TwoAtom.a}
+  let aValue : Set TwoAtom := {TwoAtom.a}
   let bSet : Set TwoAtom := {TwoAtom.b}
-  refine ⟨⟨(· = aSet), fun _ => False⟩,
-          ⟨(· = aSet), (· = bSet)⟩,
+  refine ⟨⟨(· = aValue), fun _ => False⟩,
+          ⟨(· = aValue), (· = bSet)⟩,
           fun _ => Iff.rfl, ?_⟩
   intro h
   simp only [BilProp.subjectMatter] at h
   -- h asserts equality of two `sSup`s; show b is in RHS but not LHS.
   have hb_in_rhs : TwoAtom.b ∈
-      sSup ({s : Set TwoAtom | s = aSet} ∪ {s : Set TwoAtom | s = bSet}) :=
+      sSup ({s : Set TwoAtom | s = aValue} ∪ {s : Set TwoAtom | s = bSet}) :=
     ⟨bSet, Or.inr rfl, rfl⟩
   have hb_not_in_lhs : TwoAtom.b ∉
-      sSup ({s : Set TwoAtom | s = aSet} ∪ {s : Set TwoAtom | False}) := by
+      sSup ({s : Set TwoAtom | s = aValue} ∪ {s : Set TwoAtom | False}) := by
     rintro ⟨t, ht, hbt⟩
     rcases ht with ht | ht
     · rw [ht] at hbt
-      -- hbt : b ∈ aSet = {a}, contradiction
+      -- hbt : b ∈ aValue = {a}, contradiction
       cases hbt
     · exact ht
   exact hb_not_in_lhs (h ▸ hb_in_rhs)
