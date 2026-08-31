@@ -9,7 +9,7 @@ import Linglib.Semantics.Plurality.Algebra
 Unified compositional semantics for classifier constructions, connecting
 the typological vocabulary in `Syntax/Category/Classifier` to the
 mereological infrastructure in `Mereology` and the materialization
-homomorphism in `Semantics.Plurality.Algebra`.
+homomorphism in `Plurality.Algebra`.
 
 ## Two Semantic Strategies
 
@@ -117,14 +117,14 @@ theorem clfForNum_qua {α M : Type*} [SemilatticeSup α] [AddCommMonoid M]
     We use `Atom x` instead of `μ(x) = 1` since atomicity is the
     mereological content of "counting as one group." -/
 def groupClf {E D : Type*} [SemilatticeSup E] [SemilatticeSup D]
-    (mat : Semantics.Plurality.Algebra.Materialization E D)
+    (mat : Plurality.Algebra.Materialization E D)
     (P : E → Prop) (x : E) : Prop :=
   Atom x ∧ ∃ y, P y ∧ mat y = mat x
 
 /-- Group classifier output is quantized: no proper part of a group
     is itself a group (since groups are atoms). -/
 theorem groupClf_qua {E D : Type*} [SemilatticeSup E] [SemilatticeSup D]
-    (mat : Semantics.Plurality.Algebra.Materialization E D)
+    (mat : Plurality.Algebra.Materialization E D)
     {P : E → Prop} : QUA (groupClf mat P) :=
   Mereology.qua_of_atom fun _ h => h.1
 

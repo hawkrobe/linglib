@@ -95,7 +95,6 @@ with low negation). Supports fronted-negation + *väl* marking NRQs.
 
 namespace SeeligerRepp2018
 
-open Semantics
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Bias values ([sudo-2013], extended by [seeliger-repp-2018])
@@ -211,7 +210,7 @@ def DeclQuestionType.declPolarity : DeclQuestionType → Features.Polarity
     evidential version of VERUM may appear.
 
     These correspond to the operators defined in
-    `Semantics.Questions.Bias` (`verum`, `mkFalsum`). -/
+    `Questions.Bias` (`verum`, `mkFalsum`). -/
 inductive IllocutionaryModifier where
   /-- FALSUM: zero commitment to q (non-propositional negation).
       [repp-2013]: speaker is not committed to q at issue. -/
@@ -493,14 +492,14 @@ theorem val_creates_questions :
     particle's bias requirement is the analysis, so it lives here):
     felicitous only in contexts with contextual evidence for the
     proposition, matching the evidential bias of PDQs and NRQs. -/
-def valContextualEvidence : Option Semantics.Questions.Bias.ContextualEvidence :=
+def valContextualEvidence : Option Questions.Bias.ContextualEvidence :=
   some .forP
 
 /-- S&R's classification, epistemic dimension: *väl* signals epistemic
     *uncertainty* — the speaker suspects p but is not certain,
     corresponding to the [-positive] epistemic bias of PDQs — so it
     imposes no original-bias requirement (contrast `dochWohlOriginalBias`). -/
-def valOriginalBias : Option Semantics.Questions.Bias.OriginalBias := none
+def valOriginalBias : Option Questions.Bias.OriginalBias := none
 
 -- ════════════════════════════════════════════════════════════════
 -- § 10. German *doch wohl* marks RQs via REJECTQ
@@ -512,11 +511,11 @@ def valOriginalBias : Option Semantics.Questions.Bias.OriginalBias := none
     and epistemic presuppositions in the REJECTQ definition (eq. 40).
     Shares its evidential value with `valContextualEvidence`; the
     epistemic dimension is where German is stricter than Swedish. -/
-def dochWohlContextualEvidence : Option Semantics.Questions.Bias.ContextualEvidence :=
+def dochWohlContextualEvidence : Option Questions.Bias.ContextualEvidence :=
   some .forP
 
 /-- See `dochWohlContextualEvidence`: prior speaker bias against p. -/
-def dochWohlOriginalBias : Option Semantics.Questions.Bias.OriginalBias :=
+def dochWohlOriginalBias : Option Questions.Bias.OriginalBias :=
   some .againstP
 
 /-- *doch wohl* is not usable in assertions — it marks questions.

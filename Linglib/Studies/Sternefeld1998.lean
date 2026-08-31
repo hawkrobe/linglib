@@ -97,8 +97,8 @@ eq 120 ↔ H&D's group identity all factor through
 
 namespace Sternefeld1998
 
-open Semantics.Plurality.Cumulativity
-open Semantics.Plurality.Reciprocal
+open Plurality.Cumulativity
+open Plurality.Reciprocal
 
 variable {α : Type*} [DecidableEq α]
 

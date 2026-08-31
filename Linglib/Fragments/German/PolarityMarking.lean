@@ -18,7 +18,7 @@ German's strategy is non-particulate.
 
 ## Cross-Module Connections
 
-- `Semantics.Questions.VerumFocus`: VERUM in questions — a
+- `Questions.VerumFocus`: VERUM in questions — a
   different phenomenon from the declarative Verum focus encoded here
 - `German.Particles`: German *denn* (question-flavoring)
 

@@ -18,14 +18,14 @@ guo has no such presupposition.
 
 ## Cross-Module Connections
 
-- `Semantics.Aspect`: ATOM-DIST and antiAtomDistLicensed
+- `Aspect`: ATOM-DIST and antiAtomDistLicensed
 - `Mandarin.Particles`: existing Mandarin particle pattern
 
 -/
 
 namespace Mandarin.AspectComparison
 
-open Semantics.Aspect
+open Aspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Cross-Domain Particle Entries

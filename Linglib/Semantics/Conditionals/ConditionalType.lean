@@ -31,7 +31,7 @@ PPI licensing requires established status (PC).
 This explains why PCs block NPIs despite being semantically DE!
 -/
 
-namespace Semantics.Conditionals
+namespace Conditionals
 open Discourse.Commitment.Table
 
 -- Conditional Type: HC vs PC
@@ -342,4 +342,4 @@ This explains the apparent paradox that PCs block NPIs despite being
 semantically DE: NPI licensing requires BOTH DE + uncertain status.
 -/
 
-end Semantics.Conditionals
+end Conditionals

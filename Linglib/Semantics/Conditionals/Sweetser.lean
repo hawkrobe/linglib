@@ -19,7 +19,7 @@ semantics to the causal-model infrastructure in `Causation/`.
 Extracted from `Conditionals/ConditionalType.lean` (was lines 309–368).
 -/
 
-namespace Semantics.Conditionals
+namespace Conditionals
 
 /-- [sweetser-1990]'s three domains of conditional meaning. -/
 inductive SweetserDomain where
@@ -67,4 +67,4 @@ theorem epistemic_not_causal :
 theorem speechAct_not_causal :
     SweetserDomain.speechAct.triggersCausalInference = false := rfl
 
-end Semantics.Conditionals
+end Conditionals

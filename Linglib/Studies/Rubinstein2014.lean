@@ -58,7 +58,7 @@ abbrev World := Fin 4
 open Modality.Kratzer
 open Modality.Directive
 open Modality (ModalForce)
-open Semantics.Homogeneity (negRaising_iff_subsingleton)
+open Homogeneity (negRaising_iff_subsingleton)
 open Data.Examples
 
 /-- Named worlds for the concrete `Fin 4` evaluation frame used in the

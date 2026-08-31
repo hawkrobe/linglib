@@ -25,12 +25,12 @@ import Linglib.Semantics.Reference.Basic
 import Linglib.Semantics.Reference.KaplanLD
 import Linglib.Semantics.Reference.Nominal
 
-namespace Semantics.Reference.Demonstratives
+namespace Reference.Demonstratives
 
 open Intensional (Intension)
 open Intensional.Intension (rigid IsRigid rigid_isRigid)
 open Semantics.Context (KContext)
-open Semantics.Reference.Basic (ReferringExpression isDirectlyReferential)
+open _root_.Reference.Basic (ReferringExpression isDirectlyReferential)
 
 /-! ## Demonstrations -/
 
@@ -200,4 +200,4 @@ Demonstrations connect to RSA reference games:
 See `RSA.FrankGoodman2012` for a reference game implementation.
 -/
 
-end Semantics.Reference.Demonstratives
+end Reference.Demonstratives

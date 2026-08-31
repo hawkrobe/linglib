@@ -63,8 +63,8 @@ namespace Kiparsky2002
 
 open Core.Order
 open Features
-open Semantics.Aspect
-open Semantics.Aspect.SubeventStructure
+open Aspect
+open Aspect.SubeventStructure
 
 -- ════════════════════════════════════════════════════
 -- § 1. Perfect Readings ([kiparsky-2002])
@@ -219,7 +219,7 @@ asserted. Wh-extraction from presupposed content is blocked. This explains why *
 (the eating is presupposed, so "what" cannot extract from it).
 
 TODO: Full formalization requires bridging to presupposition semantics
-(Presupposition) and question semantics (Semantics.Questions). -/
+(Presupposition) and question semantics (Questions). -/
 
 /-- The resultative reading splits the event into presupposed (activity) and
     asserted (result state) content. -/

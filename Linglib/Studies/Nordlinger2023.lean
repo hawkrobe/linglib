@@ -46,7 +46,7 @@ the derived values against the external WALS rows.
 - Siloni's discontinuity prediction checked against attested judgments (§3.3)
 - WALS Ch 106 grounding for the *derived* reflexive relation (via `lookupISO`)
 - `ReciprocityType` semantic 6-way classification (§4), realized as the
-  relation shapes of `Semantics.Plurality.Reciprocal`
+  relation shapes of `Plurality.Reciprocal`
 - Polysemous markers beyond the profile sample (§4.2)
 - Fragment grounding for English reciprocals
 -/
@@ -360,7 +360,7 @@ inductive ReciprocityType where
 
 /-- The relation shape each configurational label denotes over a
     participant plurality — [majid-et-al-2011]'s extensional schemas as
-    the exact-extension conditions of `Semantics.Plurality.Reciprocal`.
+    the exact-extension conditions of `Plurality.Reciprocal`.
     Symmetry and participant-exhaustiveness are theorems there
     (`ChainConfig.not_pairSymmetricOn`,
     `RadialConfig.inclusiveAlternativeOrdering`, melee failing
@@ -368,12 +368,12 @@ inductive ReciprocityType where
     features of the labels. -/
 def ReciprocityType.Realizes {A : Type*} :
     ReciprocityType → (A → A → Prop) → Finset A → Prop
-  | .strong,   R, X => Semantics.Plurality.Reciprocal.StrongReciprocity R X
-  | .pairwise, R, X => Semantics.Plurality.Reciprocal.PairwiseConfig R X
-  | .chain,    R, X => Semantics.Plurality.Reciprocal.ChainConfig R X
-  | .radial,   R, X => Semantics.Plurality.Reciprocal.RadialConfig R X
-  | .melee,    R, X => Semantics.Plurality.Reciprocal.MeleeConfig R X
-  | .ring,     R, X => Semantics.Plurality.Reciprocal.RingConfig R X
+  | .strong,   R, X => Plurality.Reciprocal.StrongReciprocity R X
+  | .pairwise, R, X => Plurality.Reciprocal.PairwiseConfig R X
+  | .chain,    R, X => Plurality.Reciprocal.ChainConfig R X
+  | .radial,   R, X => Plurality.Reciprocal.RadialConfig R X
+  | .melee,    R, X => Plurality.Reciprocal.MeleeConfig R X
+  | .ring,     R, X => Plurality.Reciprocal.RingConfig R X
 
 /-- The six reciprocity types English *each other* can express
     ([evans-et-al-2011b], p. 8; [nordlinger-2023] ex. 44). -/

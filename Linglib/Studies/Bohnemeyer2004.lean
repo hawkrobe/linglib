@@ -46,7 +46,7 @@ linking-relevant property. Two classes of counterevidence:
 namespace Bohnemeyer2004
 
 open ArgumentStructure.EventStructure (EventType InternalExternalCause Template)
-open Semantics.Aspect (Perfectivity)
+open Aspect (Perfectivity)
 open Mayan (MarkerSet)
 open Yukatek
 

@@ -33,8 +33,8 @@ receive different distributive verdicts (`substitution_fails`).
 
 namespace Santorio2018
 
-open Semantics.Conditionals (SimilarityOrdering)
-open Semantics.Conditionals.Counterfactual
+open Conditionals (SimilarityOrdering)
+open Conditionals.Counterfactual
 
 variable {W : Type*} [DecidableEq W] [Fintype W]
 

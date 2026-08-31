@@ -35,7 +35,7 @@ Generic mereological vocabulary (`CUM`, `QUA`, `Overlap`, `IsFusion`,
 `ClassicalMereology`, …) lives in `Mereology`; consumers `open Mereology`.
 -/
 
-namespace Semantics.Events.CEM
+namespace Events.CEM
 
 open _root_.Mereology
 
@@ -54,4 +54,4 @@ theorem sup_isLUB {Time : Type*} [LinearOrder Time]
     (e₁ e₂ : Event Time) : IsLUB {e₁, e₂} (e₁ ⊔ e₂) :=
   Classical.choose_spec (ClassicalMereology.exists_isLUB_pair e₁ e₂)
 
-end Semantics.Events.CEM
+end Events.CEM

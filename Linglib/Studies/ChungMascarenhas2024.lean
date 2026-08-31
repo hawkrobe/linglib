@@ -243,7 +243,7 @@ transparent compositional form of English *must*:
 
 1. the evaluative predicate `toy` 'EVAL' as the measure function `μ_R`
 2. the conditional `if φ, EVAL` as `E_w[μ_R ∣ φ]` (their eq. 44, our
-   `Semantics.Conditionals.Probabilistic.condIf`)
+   `Conditionals.Probabilistic.condIf`)
 3. the exhaustifier `-(e)ya` 'only-if' adding the alternative
    negation: `∀ψ ∈ Alt(φ). E_w[μ_R ∣ ψ] ≤ θ`
 

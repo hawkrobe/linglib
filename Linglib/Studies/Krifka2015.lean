@@ -56,7 +56,7 @@ namespace Krifka2015
 open Discourse.Krifka
 open Discourse (DiscourseRole)
 open Discourse.Commitment (IndexedCommitment CommitmentSlate)
-open Semantics.Questions.Bias (ContextualEvidence)
+open Questions.Bias (ContextualEvidence)
 open Features (Acceptability)
 
 -- ════════════════════════════════════════════════════

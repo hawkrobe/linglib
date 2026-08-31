@@ -48,10 +48,10 @@ signatures clean. Lifting to `Kernel` is only needed if downstream work
 requires disintegration/Radon-Nikodym lemmas.
 -/
 
-namespace Semantics.Probabilistic.SDS.ConceptNode
+namespace Probabilistic.SDS.ConceptNode
 
 open scoped ENNReal
-open Semantics.Probabilistic.SDS
+open _root_.Probabilistic.SDS
 
 variable {Scenario Concept Role : Type}
 
@@ -152,4 +152,4 @@ theorem conditionalAt_perScenario_uniform [Fintype Concept] [Nonempty Concept]
   rw [mul_comm ((Fintype.card Concept : ℝ≥0∞)⁻¹) (sel r c), mul_assoc,
       ENNReal.mul_inv_cancel hNinv_pos hNinv_fin, mul_one]
 
-end Semantics.Probabilistic.SDS.ConceptNode
+end Probabilistic.SDS.ConceptNode

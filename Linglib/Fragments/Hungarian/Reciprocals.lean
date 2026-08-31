@@ -45,8 +45,8 @@ construction types, while reflexives require morphosyntactic plurality
 namespace Hungarian.Reciprocals
 
 open Pronoun
-open Semantics.Reference.Reciprocals
-open Semantics.Reference.PluralityLicensing
+open Reference.Reciprocals
+open Reference.PluralityLicensing
 
 /-- *egymás* — reciprocal pronoun 'each other'.
     Morphologically invariable: no φ-feature inflection.

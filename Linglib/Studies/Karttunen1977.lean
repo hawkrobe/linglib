@@ -56,7 +56,7 @@ substrate is in place.
 namespace Karttunen1977
 
 open Question
-open Semantics.Questions.Exhaustivity
+open Questions.Exhaustivity
 
 variable {W : Type*}
 

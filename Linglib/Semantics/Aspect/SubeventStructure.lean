@@ -43,7 +43,7 @@ consumable by IMPF/PRFV/PERF. Key results:
 
 -/
 
-namespace Semantics.Aspect.SubeventStructure
+namespace Aspect.SubeventStructure
 
 open Features
 
@@ -184,7 +184,7 @@ theorem simple_no_activity {Time : Type*} [LinearOrder Time]
 
 /-! ### Phase Event Predicates -/
 
-open Semantics.Aspect
+open _root_.Aspect
 
 /-- Event predicate localized to an interval: holds of eventualities whose
     runtime equals the given interval. Converts temporal phases of a
@@ -479,4 +479,4 @@ theorem hasConsState_of_consState (n : Nucleus Time)
 
 end Nucleus
 
-end Semantics.Aspect.SubeventStructure
+end Aspect.SubeventStructure

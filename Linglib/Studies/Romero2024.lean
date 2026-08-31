@@ -30,7 +30,7 @@ predicate-level bridge below is the right granularity.
 namespace Romero2024
 
 open Pragmatics.Bias
-open Semantics.Questions.Bias
+open Questions.Bias
 
 /-- HiNQ's original-bias filter requires speaker bias for p. The
     licensed bias profile's `contradictsPriorBelief` axis is the

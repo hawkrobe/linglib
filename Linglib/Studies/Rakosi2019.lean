@@ -51,8 +51,8 @@ a morphosyntactic mechanism.
 
 namespace Rakosi2019
 
-open Semantics.Reference.Reciprocals
-open Semantics.Reference.PluralityLicensing
+open Reference.Reciprocals
+open Reference.PluralityLicensing
 open PPCDRT
 open Core
 open Hungarian.Reciprocals

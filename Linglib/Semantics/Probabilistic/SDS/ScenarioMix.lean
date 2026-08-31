@@ -63,7 +63,7 @@ naming aliases over those primitives.
   `Core/Probability/PolyaUrn.lean`.
 -/
 
-namespace Semantics.Probabilistic.SDS.ScenarioMix
+namespace Probabilistic.SDS.ScenarioMix
 
 open scoped ENNReal
 open ProbabilityTheory
@@ -99,4 +99,4 @@ noncomputable def scenarioCountPosterior (α : ℝ) (hα : 0 < α)
       pseudo_pos := fun s => by positivity }
     newDraws
 
-end Semantics.Probabilistic.SDS.ScenarioMix
+end Probabilistic.SDS.ScenarioMix

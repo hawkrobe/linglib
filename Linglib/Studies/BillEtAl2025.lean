@@ -133,8 +133,8 @@ theorem ms_decomposition_eq_coord {E W : Type} (e1 e2 : E) (p : E → Prop) :
 
 open Intensional.Conjunction in
 open Quantification (individual) in
-open Semantics.Plurality in
-open Semantics.Plurality.Distributivity in
+open Plurality in
+open Plurality.Distributivity in
 /-- The decomposition is distributive predication over the pair of conjuncts. -/
 theorem mu_is_distributive_check {E W : Type} [DecidableEq E]
     (e1 e2 : E) (P : E → Unit → Prop) [∀ a u, Decidable (P a u)] :

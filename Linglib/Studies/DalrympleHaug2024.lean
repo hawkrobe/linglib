@@ -47,7 +47,7 @@ cases, while the quantificational analysis fails for distributive operators
 
 namespace DalrympleHaug2024
 
-open Semantics.Reference.Reciprocals
+open Reference.Reciprocals
 open PPCDRT
 open Core
 

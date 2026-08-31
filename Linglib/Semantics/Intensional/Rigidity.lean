@@ -11,7 +11,7 @@ from indices (possible worlds) to extensions, rigid designators, evaluation,
 and referential interpretation modes.
 
 These primitives are shared by `Intensional.Defs`,
-`Semantics.Reference/`, `Semantics.Attitudes/`, and `RSA/` — any module
+`Reference/`, `Semantics.Attitudes/`, and `RSA/` — any module
 that needs world-parameterized meanings.
 
 ## Relationship to `Denot`

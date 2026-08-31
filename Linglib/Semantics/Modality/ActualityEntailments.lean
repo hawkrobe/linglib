@@ -49,7 +49,7 @@ from the aspect-scope licensing here would tie the two accounts together.
 
 namespace Modality
 
-open Semantics.Aspect (Perfectivity)
+open Aspect (Perfectivity)
 
 
 -- ════════════════════════════════════════════════════

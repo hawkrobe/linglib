@@ -58,7 +58,7 @@ but DISAGREE on "some" and "no" — the discriminating contrast tested
 in [ramotowska-marty-romoli-santorio-2025].
 -/
 
-namespace Semantics.Conditionals.Counterfactual
+namespace Conditionals.Counterfactual
 
 open Trivalent (ProjectionType)
 
@@ -225,4 +225,4 @@ theorem universal_all_false (n : Nat) (hn : n > 0) :
       | succ k ih => simp only [List.replicate_succ, List.foldl_cons, sup_idem, ih]
     exact this n
 
-end Semantics.Conditionals.Counterfactual
+end Conditionals.Counterfactual

@@ -22,7 +22,7 @@ docstring asserted as prose.
 
 namespace PPCDRT
 
-open Semantics.Plurality.Cumulativity
+open Plurality.Cumulativity
 
 variable {E : Type*}
 

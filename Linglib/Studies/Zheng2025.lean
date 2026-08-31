@@ -194,13 +194,13 @@ open Mandarin.QuestionParticles (nandao)
 
 /-- *Nandao* requires contextual evidence for p — Zheng's evidential
 classification, the lexical face of `evidential_bias_necessary`. -/
-def nandaoContextualEvidence : Option Semantics.Questions.Bias.ContextualEvidence :=
+def nandaoContextualEvidence : Option Questions.Bias.ContextualEvidence :=
   some .forP
 
 /-- *Nandao* does not require epistemic bias — it is compatible with a
 neutral epistemic state (pure inquiry use, ex. 3); the lexical face of
 `epistemic_bias_not_necessary`. -/
-def nandaoOriginalBias : Option Semantics.Questions.Bias.OriginalBias := none
+def nandaoOriginalBias : Option Questions.Bias.OriginalBias := none
 
 /-- `nandaoFelicitous` entails `evidenceSupports`, connecting the felicity
 predicate to `nandaoContextualEvidence` and the empirical generalization

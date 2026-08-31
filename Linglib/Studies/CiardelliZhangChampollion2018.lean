@@ -77,7 +77,7 @@ into a Crucial Set (the lumping-closure condition); it doesn't relax
 the for-all-supersets quantifier. Whether this rescues the analysis on
 the switches scenario requires building a properly situation-semantic
 switches model and instantiating
-`Semantics.Conditionals.PremiseSemantic.wouldCF`; we leave this as
+`Conditionals.PremiseSemantic.wouldCF`; we leave this as
 future work.
 
 For the first concrete `wouldCF` instantiation on a situation-semantic
@@ -94,8 +94,8 @@ combined with inquisitive lifting (§4) — and §6.4's SNCA derivation
 
 namespace CiardelliZhangChampollion2018
 
-open Semantics.Conditionals (SimilarityOrdering)
-open Semantics.Conditionals.Counterfactual
+open Conditionals (SimilarityOrdering)
+open Conditionals.Counterfactual
   (universalCounterfactual selectionalCounterfactual homogeneityCounterfactual
    PresupStatus PresupResult)
 

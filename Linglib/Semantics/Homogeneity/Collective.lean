@@ -21,7 +21,7 @@ distributive predicates this reduces to supervaluation over atoms
 * [M. Križ, *Homogeneity, Non-Maximality, and All*][kriz-2016]
 -/
 
-namespace Semantics.Homogeneity
+namespace Homogeneity
 
 open Semantics.Supervaluation (superTrue)
 
@@ -90,4 +90,4 @@ theorem generalisedTruthValue_distributive_reduction
       rw [if_pos hWitness, if_neg]
       intro hf; exact hf x hxa hpx
 
-end Semantics.Homogeneity
+end Homogeneity
