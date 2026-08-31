@@ -82,7 +82,7 @@ protected def decEq [DecidableEq F] : (s t : NanoTree F) → Decidable (s = t)
     else .isFalse fun he => by cases he; exact h rfl
 where
   /-- Structural decidable equality on daughter lists. -/
-  decEqList [DecidableEq F] : (cs ds : List (NanoTree F)) → Decidable (cs = ds)
+  decEqList : (cs ds : List (NanoTree F)) → Decidable (cs = ds)
     | [], [] => .isTrue rfl
     | [], _ :: _ => .isFalse nofun
     | _ :: _, [] => .isFalse nofun
@@ -158,7 +158,7 @@ protected def decContains [DecidableEq F] :
           | child hmem hc => exact hno ⟨_, hmem, hc⟩
 where
   /-- Does some member of `cs` contain `t`? -/
-  decAny [DecidableEq F] :
+  decAny :
       (cs : List (NanoTree F)) → (t : NanoTree F) →
         Decidable (∃ c ∈ cs, Contains c t)
     | [], _ => .isFalse fun ⟨_, hmem, _⟩ => by cases hmem

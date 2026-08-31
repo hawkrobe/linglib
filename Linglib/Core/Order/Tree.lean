@@ -91,7 +91,7 @@ instance {Node : Type*} [PartialOrder Node] [DecidableLE Node] [DecidableEq Node
     syntactic-tree CAC and the branching-time no-backward-branching axiom are one and
     the same. Use `haveI := T.toIsLeftLinear` to inherit `IsLeftLinear.isChain_Iio`
     ("ancestors are linearly ordered") on the node type. -/
-@[reducible] def TreeOrder.toIsLeftLinear {Node : Type*} [PartialOrder Node]
+theorem TreeOrder.toIsLeftLinear {Node : Type*} [PartialOrder Node]
     (T : TreeOrder Node) : IsLeftLinear Node :=
   ⟨@fun a b c => T.ancestor_connected a b c⟩
 
