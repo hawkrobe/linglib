@@ -1,280 +1,52 @@
 import Linglib.Logic.Natural.Basic
 
 /-!
-# Disjunction Ignorance [chierchia-2013]
+# Chierchia 2013: disjunction, ignorance, and the distribution of *any*
 
-Empirical patterns for ignorance inferences from disjunction, organized
-around [chierchia-2013]'s positional-asymmetry account.
+This file formalizes two threads of *Logic in Grammar* ([chierchia-2013]). First, the positional
+asymmetry of disjunction: the same *or* is preferentially exclusive in an upward-entailing
+position and inclusive in a downward-entailing one, because Maximize Strength computes the
+not-both implicature only where it strengthens. `predictReading` derives the preferred reading
+from the polarity a position determines, and the six positions of Ch.1 instantiate it. The
+ignorance side of disjunction — *Harry is in Antwerp or Brussels* conveying that the speaker
+knows neither disjunct, unlike the scalar implicature of *some* — is recorded in the section
+prose.
 
-"Harry is in Antwerp or Brussels" implicates:
-1. Speaker doesn't know Harry is in Antwerp
-2. Speaker doesn't know Harry is in Brussels
+Second, *any* as an existential whose domain alternatives are obligatorily active: it is
+ungrammatical exactly where no reading survives exhaustification, namely the positive episodic
+context, where exhaustification is contradictory; in a downward-entailing or question context
+exhaustification is vacuous and *any* is a plain existential, and a modal or generic rescues it
+into free choice.
 
-This is different from scalar implicature:
-- Scalar: "some" → speaker knows not all
-- Ignorance: "A or B" → speaker doesn't know which
+## Main definitions
 
-The file provides a `predictReading` function over `ContextPolarity`
-(from `NaturalLogic`) that derives the preferred inclusive/exclusive
-reading from structural position.
+* `DisjunctionReading`, `DisjunctionPosition`, `positionPolarity`, `predictReading` — the
+  positional asymmetry, derived from polarity
+* `UFCIContext`, `ufciGrammatical`, `ufciReading` — the distribution and readings of *any*
+* `FCIFlavor` — the existential/universal free-choice dimension later studies consume
+
+## Main results
+
+* `predictions_match_examples` — at each of the six positions, the recorded polarity and the
+  preferred reading are the derived ones
+* `ufciGrammatical_iff_reading` — grammaticality and reading are one prediction
+* `anyExamples_match_prediction` — the recorded *any* judgments match it in every sampled context
+
+## References
+
+* [chierchia-2013]
+* [gazdar-1979]
+* [geurts-2010]
 -/
 
 namespace Chierchia2013
 
 
-/--
-Empirical pattern: Disjunction and speaker ignorance.
-
-"Harry is in Antwerp or Brussels" implicates:
-1. Speaker doesn't know Harry is in Antwerp
-2. Speaker doesn't know Harry is in Brussels
-
-Source: [gazdar-1979], [geurts-2010] Ch. 3.3
--/
-structure DisjunctionIgnoranceDatum where
-  /-- The disjunctive statement -/
-  disjunction : String
-  /-- First disjunct -/
-  disjunctA : String
-  /-- Second disjunct -/
-  disjunctB : String
-  /-- Ignorance inference about A -/
-  inferenceA : String
-  /-- Ignorance inference about B -/
-  inferenceB : String
-  deriving Repr
-
-/--
-Classic example: Harry's location.
-Source: [geurts-2010] p.61
--/
-def harryLocation : DisjunctionIgnoranceDatum :=
-  { disjunction := "Harry is in Antwerp or Brussels"
-  , disjunctA := "Harry is in Antwerp"
-  , disjunctB := "Harry is in Brussels"
-  , inferenceA := "Speaker doesn't know Harry is in Antwerp"
-  , inferenceB := "Speaker doesn't know Harry is in Brussels"
-  }
-
-/--
-Location example with Mary.
--/
-def maryLocation : DisjunctionIgnoranceDatum :=
-  { disjunction := "Mary went to Paris or London"
-  , disjunctA := "Mary went to Paris"
-  , disjunctB := "Mary went to London"
-  , inferenceA := "Speaker doesn't know Mary went to Paris"
-  , inferenceB := "Speaker doesn't know Mary went to London"
-  }
-
-/--
-Activity example.
--/
-def johnActivity : DisjunctionIgnoranceDatum :=
-  { disjunction := "John is reading or sleeping"
-  , disjunctA := "John is reading"
-  , disjunctB := "John is sleeping"
-  , inferenceA := "Speaker doesn't know John is reading"
-  , inferenceB := "Speaker doesn't know John is sleeping"
-  }
-
-/--
-All basic ignorance examples.
--/
-def disjunctionIgnoranceExamples : List DisjunctionIgnoranceDatum :=
-  [harryLocation, maryLocation, johnActivity]
-
-
-/--
-Comparison between ignorance and scalar implicatures.
-
-Scalar implicatures and ignorance inferences differ:
-- Scalar: speaker knows the stronger alternative is false
-- Ignorance: speaker doesn't know which disjunct is true
--/
-structure IgnoranceVsScalarDatum where
-  /-- The utterance -/
-  utterance : String
-  /-- Type of inference -/
-  inferenceType : String
-  /-- The inference -/
-  inference : String
-  /-- Is speaker claiming knowledge? -/
-  speakerClaimsKnowledge : Bool
-  deriving Repr
-
-/--
-"Some" triggers scalar implicature (speaker knows).
--/
-def someScalar : IgnoranceVsScalarDatum :=
-  { utterance := "Some students passed"
-  , inferenceType := "scalar"
-  , inference := "Speaker believes not all students passed"
-  , speakerClaimsKnowledge := true  -- Speaker knows not all
-  }
-
-/--
-"Or" triggers ignorance (speaker doesn't know).
--/
-def orIgnorance : IgnoranceVsScalarDatum :=
-  { utterance := "John passed or Mary passed"
-  , inferenceType := "ignorance"
-  , inference := "Speaker doesn't know which one passed"
-  , speakerClaimsKnowledge := false  -- Speaker doesn't know
-  }
-
-/--
-All comparison examples.
--/
-def comparisonExamples : List IgnoranceVsScalarDatum :=
-  [someScalar, orIgnorance]
-
-
-/--
-Ignorance extends to long disjunctions (n > 2).
-
-For "A or B or C", we get ignorance about each disjunct:
-- Speaker doesn't know A
-- Speaker doesn't know B
-- Speaker doesn't know C
-
-Source: [geurts-2010] p.61-64
--/
-structure LongDisjunctionIgnoranceDatum where
-  /-- The disjunctive statement -/
-  disjunction : String
-  /-- List of disjuncts -/
-  disjuncts : List String
-  /-- Ignorance inferences (one per disjunct) -/
-  ignoranceInferences : List String
-  deriving Repr
-
-/--
-Three-way disjunction example.
-Source: [geurts-2010] p.61
--/
-def threeWayLocation : LongDisjunctionIgnoranceDatum :=
-  { disjunction := "Harry is in Antwerp, Brussels, or Copenhagen"
-  , disjuncts := ["Antwerp", "Brussels", "Copenhagen"]
-  , ignoranceInferences :=
-      [ "Speaker doesn't know Harry is in Antwerp"
-      , "Speaker doesn't know Harry is in Brussels"
-      , "Speaker doesn't know Harry is in Copenhagen"
-      ]
-  }
-
-/--
-Four-way disjunction example.
--/
-def fourWayActivity : LongDisjunctionIgnoranceDatum :=
-  { disjunction := "John is reading, writing, sleeping, or eating"
-  , disjuncts := ["reading", "writing", "sleeping", "eating"]
-  , ignoranceInferences :=
-      [ "Speaker doesn't know John is reading"
-      , "Speaker doesn't know John is writing"
-      , "Speaker doesn't know John is sleeping"
-      , "Speaker doesn't know John is eating"
-      ]
-  }
-
-/--
-All long disjunction examples.
--/
-def longDisjunctionExamples : List LongDisjunctionIgnoranceDatum :=
-  [threeWayLocation, fourWayActivity]
-
-
-/--
-Cases where ignorance inference is blocked or cancelled.
--/
-structure IgnoranceBlockingDatum where
-  /-- The context or construction -/
-  context : String
-  /-- Example sentence -/
-  sentence : String
-  /-- Is ignorance blocked? -/
-  ignoranceBlocked : Bool
-  /-- Explanation -/
-  explanation : String
-  deriving Repr
-
-/--
-Explicit knowledge blocks ignorance.
--/
-def explicitKnowledge : IgnoranceBlockingDatum :=
-  { context := "Speaker has explicit knowledge"
-  , sentence := "Harry is in Antwerp or Brussels — I know it's Antwerp"
-  , ignoranceBlocked := true
-  , explanation := "Explicit assertion of knowledge cancels ignorance inference"
-  }
-
-/--
-Rhetorical questions don't trigger ignorance.
--/
-def rhetoricalQuestion : IgnoranceBlockingDatum :=
-  { context := "Rhetorical/exam question"
-  , sentence := "Is the capital of France Paris or London?"
-  , ignoranceBlocked := true
-  , explanation := "Speaker (examiner) knows the answer; no genuine ignorance"
-  }
-
-/--
-Embedded disjunction under belief.
--/
-def embeddedBelief : IgnoranceBlockingDatum :=
-  { context := "Embedded under belief verb"
-  , sentence := "John believes Harry is in Antwerp or Brussels"
-  , ignoranceBlocked := true
-  , explanation := "Ignorance is about John's epistemic state, not speaker's"
-  }
-
-/--
-All blocking examples.
--/
-def blockingExamples : List IgnoranceBlockingDatum :=
-  [explicitKnowledge, rhetoricalQuestion, embeddedBelief]
-
-
-/--
-Interaction between disjunction ignorance and quantifiers.
--/
-structure QuantifiedIgnoranceDatum where
-  /-- The sentence -/
-  sentence : String
-  /-- Quantifier scope -/
-  quantifierScope : String
-  /-- Ignorance inference -/
-  inference : String
-  /-- Notes on the reading -/
-  notes : String
-  deriving Repr
-
-/--
-Disjunction in scope of universal.
--/
-def universalScopeDisj : QuantifiedIgnoranceDatum :=
-  { sentence := "Every student read Moby Dick or Huckleberry Finn"
-  , quantifierScope := "∀ > ∨"
-  , inference := "Speaker doesn't know which book each student read"
-  , notes := "Ignorance is about the distribution, not existence"
-  }
-
-/--
-Disjunction scoping over universal.
--/
-def disjScopeUniversal : QuantifiedIgnoranceDatum :=
-  { sentence := "Every student read Moby Dick, or every student read Huckleberry Finn"
-  , quantifierScope := "∨ > ∀"
-  , inference := "Speaker doesn't know which book all students read"
-  , notes := "Global ignorance about which alternative"
-  }
-
-/--
-All quantified ignorance examples.
--/
-def quantifiedIgnoranceExamples : List QuantifiedIgnoranceDatum :=
-  [universalScopeDisj, disjScopeUniversal]
-
+/-! The ignorance data — *Harry is in Antwerp or Brussels* implicating that the speaker knows
+neither disjunct ([geurts-2010]), its contrast with the scalar *some*, longer disjunctions
+carrying ignorance about every disjunct, the readings blocked by explicit speaker knowledge, and
+the scope interactions with *every* — are described in the section prose of Ch.1; the derivable
+part, the positional asymmetry, follows. -/
 
 /-!
 ## Positional Asymmetry in Disjunction Interpretation
@@ -440,10 +212,15 @@ def exclusiveInclusiveExamples : List ExclusiveInclusiveExample :=
   , negation_scope
   ]
 
--- Verify predictions match data
-#guard exclusiveInclusiveExamples.all (λ ex =>
-  predictReading ex.polarity == ex.preferredReading)
-
+/-- At each of the six positions, the recorded polarity is the one the position determines, and
+the preferred reading is the one Maximize Strength predicts from it. -/
+theorem predictions_match_examples :
+    ∀ ex ∈ exclusiveInclusiveExamples,
+      positionPolarity ex.position = ex.polarity ∧
+        predictReading ex.polarity = ex.preferredReading := by
+  intro ex hex
+  simp only [exclusiveInclusiveExamples, List.mem_cons, List.not_mem_nil, or_false] at hex
+  rcases hex with rfl | rfl | rfl | rfl | rfl | rfl <;> exact ⟨rfl, rfl⟩
 
 /-!
 ## Forcing Non-Preferred Readings
@@ -561,33 +338,6 @@ When not activated (low relevance), "some" = plain existential.
 -/
 
 /--
-Universal FCI: existential with obligatorily active domain alternatives.
--/
-structure UniversalFCI where
-  /-- Base meaning is existential -/
-  baseIsExistential : Bool := true
-  /-- Domain alternatives are always active (not relevance-gated) -/
-  obligatoryDomainAlts : Bool := true
-  /-- Can be rescued via modal insertion -/
-  modalRescue : Bool := true
-  /-- Can be rescued via generic/subtrigging -/
-  genericRescue : Bool := true
-
-/-- English "any" as a Universal FCI -/
-def any_FCI : UniversalFCI where
-  baseIsExistential := true
-  obligatoryDomainAlts := true
-  modalRescue := true
-  genericRescue := true
-
-/-- Italian "qualunque" as a Universal FCI -/
-def qualunque_FCI : UniversalFCI where
-  baseIsExistential := true
-  obligatoryDomainAlts := true
-  modalRescue := true
-  genericRescue := true
-
-/--
 Context type for determining Universal FCI distribution.
 -/
 inductive UFCIContext where
@@ -660,51 +410,13 @@ def ufciReading (ctx : UFCIContext) : Option UFCIReading :=
   | .generic => some .freeChoice        -- Generic universal
   | .question => some .plainExistential
 
--- 7.1: "Any" in DE Contexts (NPI Use)
-
-/--
-In DE contexts, exhaustifying "any"'s alternatives yields entailments,
-so the exhaustification is vacuous and "any" = plain existential.
-
-This explains the NPI distribution of "any".
--/
-theorem any_in_de_is_existential : ufciReading .negation = some .plainExistential := rfl
-
-/--
-"I didn't see any students" ≡ "I didn't see a student"
-
-The "any" contributes no special meaning in DE contexts.
--/
-theorem any_negation_plain : ufciReading .negation = some .plainExistential := rfl
-
--- 7.2: "Any" in Modal Contexts (FC Use)
-
-/--
-Under modals, "any" yields free choice via exhaustification.
-
-"You may read any book" = For each book x, you may read x
--/
-theorem any_modal_fc : ufciReading .deonticModal = some .freeChoice := rfl
-
-/--
-Modal insertion is the rescue mechanism for Universal FCIs.
--/
-theorem any_rescued_by_modal : ufciGrammatical .deonticModal = true := rfl
-
--- 7.3: "Any" in Positive Episodic (Ungrammatical)
-
-/--
-"*There are any cookies" is ungrammatical.
-
-Domain alternative exhaustification in UE episodic context yields contradiction.
--/
-theorem any_positive_episodic_bad : ufciGrammatical .positiveEpisodic = false := rfl
-
-/--
-The failure mechanism: exhaustification is G-contradictory.
-(See Core.Analyticity for G-triviality/L-analyticity)
--/
-theorem any_positive_contradiction : ufciReading .positiveEpisodic = none := rfl
+/-- Grammaticality and reading are one prediction: *any* is out exactly where no reading
+survives exhaustification — the positive episodic context, where exhaustifying the domain
+alternatives is contradictory. Where it survives, it is a plain existential in the
+downward-entailing and question contexts, exhaustification being vacuous there, and free choice
+under the rescuing modal or generic. -/
+theorem ufciGrammatical_iff_reading (ctx : UFCIContext) :
+    ufciGrammatical ctx = (ufciReading ctx).isSome := by cases ctx <;> rfl
 
 -- 7.5: Empirical Data
 
@@ -765,7 +477,8 @@ def anyExamples : List AnyExample :=
   [ any_positive_bad, any_negation_ok, any_deontic_ok
   , any_generic_ok, any_question_ok, any_conditional_ok ]
 
--- Verify all grammaticality predictions match
-example : anyExamples.all (λ ex => ex.grammatical == ufciGrammatical ex.context) := by decide
+/-- The recorded *any* judgments match the prediction in every context sampled. -/
+theorem anyExamples_match_prediction :
+    anyExamples.all (fun ex => ex.grammatical == ufciGrammatical ex.context) = true := by decide
 
 end Chierchia2013

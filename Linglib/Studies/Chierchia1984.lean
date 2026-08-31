@@ -5,84 +5,50 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Mathlib.Data.Fin.Basic
 
 /-!
-# Chierchia (1984): Topics in the Syntax and Semantics of Infinitives and Gerunds
-[chierchia-1984]
+# Chierchia 1984: infinitives and gerunds as properties
 
-UMass Amherst dissertation (advisor: Barbara Hall Partee).
+This file formalizes the control theory of [chierchia-1984]. Infinitival and gerundive
+complements denote properties, not propositions, and control is not movement of PRO but semantic
+entailment: a verb taking a property complement entails that a designated individual argument has
+that property. The controller is fixed by predicate class rather than syntactic configuration,
+which makes control follow from the meaning postulate wherever a property argument occurs.
 
-## Core Thesis
+Control predicates qualify the entailment modally — *try* entails the property in the situations
+where what is tried succeeds, *force* in the situations compatible with what is imposed — which
+the file states with [kratzer-1981]'s conversational backgrounds in the later two-parameter form
+of [kratzer-1991]. Two generalizations fall out of the entailment approach: a subject-control
+verb cannot passivize (Visser) and an object-control verb cannot detransitivize (Bach), since
+either operation removes the argument the meaning postulate needs.
 
-Infinitival and gerundive complements denote **properties** (type ⟨e,t⟩),
-not propositions (type ⟨s,t⟩). Control is not syntactic movement of PRO
-but **semantic entailment**: a verb taking a property complement entails
-that one of its individual arguments has that property.
+The three control classes are cut by closure properties: obligatory control (with subject
+control *try* and object control *persuade* in one class), semi-obligatory control, whose
+controller may stay implicit, and prominence control, fixed by discourse rather than by the
+Control Principle.
 
-## The Control Principle (CP)
+## Main definitions
 
-If a verb α takes individual arguments x₁...xₙ and a property argument P,
-then α(x₁)...(P)...(xₙ) → P(xᵢ) for some designated controller xᵢ.
+* `ControlVerb`, `ModalControl` — the Control Principle as a meaning postulate, and its modally
+  qualified form
+* `ChierchiaControlClass`, `derivedChierchiaClass` — the three classes, read off a Fragment
+  verb's control type
+* `controllerRole`, `cpBlocksAlternation`, `derivedPassivizable` — which argument the postulate
+  needs, and which valency alternations that blocks
 
-The controller is determined by predicate class, not syntactic configuration.
-This makes control a semantic universal: any verb that takes a property
-argument will exhibit control, because entailment is a semantic relation.
+## Main results
 
-## Three Control Classes
+* `visser`, `bach` — the two generalizations, from the meaning postulate alone
+* `subjectControl_blocks_passivization`, `objectControl_blocks_detransitivization` — the same at
+  the level of alternations
+* `fragment_control_verbs_obligatory` — every Fragment control verb is obligatory control,
+  attitude verbs included, against Landau's logophoric split
+* `passivizability_derived_agrees` — the derived passivizability matches the Fragment's flag
+* `control_complements_property_denoting` — control verbs take property-denoting complements
 
-Chierchia distinguishes three classes by their closure properties under
-argument-structure operations (Ch IV §1):
+## References
 
-1. **Obligatory control** (try, persuade, force, promise, want, enjoy,
-   manage, begin): the verb entails that a specific argument has the
-   complement property. The controller must be overtly present and bears
-   a specific θ-role. Includes both subject control (try) and object
-   control (persuade) verbs — the distinction is subject vs. object,
-   not obligatory vs. semi-obligatory.
-2. **Semi-obligatory control** (decide, signal, recommend): all the
-   properties of obligatory control EXCEPT mandatory controller presence.
-   The controller can be implicit or contextually recovered
-   (e.g., "It was decided to leave").
-3. **Prominence control** (bother, be dangerous, denounce): the controller
-   is determined by discourse prominence, not by the CP. None of the six
-   OC properties hold — no locality, no thematic uniqueness, split
-   antecedents possible, long-distance control possible.
-
-## Modal Qualification
-
-Control predicates involve modal qualification (Ch IV §2.2):
-- try(P)(j) ↔ □_{try,j} P(j) — in all situations where what j tries
-  will eventually succeed, j has property P
-- force(P)(x)(y) ↔ □_{force,y} P(x) — in all situations compatible with
-  what y imposes on x, x has property P
-
-Chierchia adopts [kratzer-1981]'s theory of conversational backgrounds
-to formalize this. Each control verb selects a conversational background
-type (deontic for force, buletic for try) and a modal relation (necessity
-or possibility). The formalization below uses the later two-parameter
-framework (modal base + ordering source) from [kratzer-1991], which
-refines Kratzer (1981)'s single-parameter approach.
-
-## Visser's and Bach's Generalizations (derived)
-
-- **Visser** (Ch IV §1.1, ex. 11): Subject control verbs cannot passivize.
-  If try(P)(j) → P(j), passivizing removes j from the argument structure,
-  leaving P(?) without a controller.
-- **Bach** (attributed by Bresnan 1982; Ch IV §1.1, ex. 13-14): Object
-  control verbs cannot detransitivize. If persuade(P)(x)(j) → P(x),
-  detransitivizing removes x, leaving P(?) without a controller.
-
-Both follow from the entailment approach: removing the controller breaks
-the meaning postulate.
-
-## Connections
-
-- The VP=Property hypothesis is the direct ancestor of [chierchia-1998]'s
-  ∩/∪ operators (which generalize to kinds) and of [grano-2024]'s
-  eventuality abstraction approach.
-- The modal qualification of control connects to Kratzer's conversational
-  backgrounds (already formalized in `Modality.Kratzer`).
-- The three control classes cut differently from Landau's predicative/logophoric
-  split: Chierchia classifies ALL verbs with the CP as obligatory (including
-  attitude verbs like want), while Landau separates attitude verbs as logophoric.
+* [chierchia-1984]
+* [kratzer-1981]
+* [kratzer-1991]
 -/
 
 namespace Chierchia1984
@@ -98,39 +64,12 @@ def allWorlds : List World := [0, 1, 2, 3]
 -- § 1. Complement Denotations: Property vs. Proposition
 -- ════════════════════════════════════════════════════════════════
 
-/-! ## The VP = Property Hypothesis
+/-! ## The VP = Property hypothesis
 
-The central type-theoretic claim: infinitival and gerundive complements
-denote properties (functions from individuals to truth values), not
-propositions (functions from worlds to truth values).
-
-We derive the property/proposition classification from two existing
-infrastructure layers:
-
-1. `ComplementType.isFinite` (VerbEntry.lean): finite = true for
-   `.finiteClause` and `.question`
-2. `ComplementDenotation` (TypeShifting.lean): the property/proposition
-   distinction as a semantic type layer
-
-The connection: nonfinite complements denote properties; finite
-complements denote propositions. This is not a new definition but
-a bridge between existing infrastructure. -/
-
-/-- Nonfinite clausal complements are property-denoting
-    (`ComplementType.denotation`, the shared derivation). -/
-theorem infinitival_is_property :
-    ComplementType.infinitival.denotation = some .property := rfl
-theorem gerund_is_property :
-    ComplementType.gerund.denotation = some .property := rfl
-
-/-- Finite clausal complements are proposition-denoting. -/
-theorem finiteClause_is_proposition :
-    ComplementType.finiteClause.denotation = some .proposition := rfl
-theorem question_is_proposition :
-    ComplementType.question.denotation = some .proposition := rfl
-
-/-- Non-clausal complement types have no denotation classification. -/
-theorem np_no_denotation : ComplementType.np.denotation = none := rfl
+The central type-theoretic claim — infinitival and gerundive complements denote properties, not
+propositions — is carried by the substrate: `ComplementType.denotation` derives the split from
+clausality and finiteness, crediting this dissertation. What remains to check here is the verbs
+(see the per-verb layer below). -/
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. The Control Principle
@@ -463,77 +402,39 @@ open English.Predicates.Verbal
 
 -- ── Per-verb Chierchia class verification ──
 
-/-- All control verbs in the Fragment are obligatory control in
-    Chierchia's sense — they have a fixed, lexically determined
-    controller and exhibit all six OC properties. -/
-
-theorem try_obligatory :
-    derivedChierchiaClass try_.toVerb = some .obligatory := rfl
-theorem manage_obligatory :
-    derivedChierchiaClass manage.toVerb = some .obligatory := rfl
-theorem begin_obligatory :
-    derivedChierchiaClass begin_.toVerb = some .obligatory := rfl
-theorem stop_obligatory :
-    derivedChierchiaClass stop.toVerb = some .obligatory := rfl
-theorem continue_obligatory :
-    derivedChierchiaClass continue_.toVerb = some .obligatory := rfl
-theorem fail_obligatory :
-    derivedChierchiaClass fail.toVerb = some .obligatory := rfl
-
-/-- "persuade" is obligatory control in Chierchia's system — it has
-    a fixed controller (the object) and all six OC properties. The
-    subject/object distinction does not affect the obligatory class. -/
-theorem persuade_obligatory :
-    derivedChierchiaClass persuade.toVerb = some .obligatory := rfl
-theorem force_obligatory :
-    derivedChierchiaClass force.toVerb = some .obligatory := rfl
-
-/-- "want" is obligatory control in Chierchia's system — the subject
-    is the fixed controller. Despite being an attitude verb, it has
-    all six OC properties. (Contrast Landau, who classifies "want"
-    as logophoric because of its attitude status.) -/
-theorem want_obligatory :
-    derivedChierchiaClass want.toVerb = some .obligatory := rfl
-theorem hope_obligatory :
-    derivedChierchiaClass hope.toVerb = some .obligatory := rfl
-theorem promise_obligatory :
-    derivedChierchiaClass promise.toVerb = some .obligatory := rfl
+/-- Every control verb in the Fragment is obligatory control in Chierchia's sense — a fixed,
+lexically determined controller with all six properties. *Want*, *hope* and *promise* included,
+attitude verbs though they are: where Landau separates attitude verbs as logophoric, the Control
+Principle classifies by fixed controller alone, and *persuade* and *force* show the class is
+indifferent to whether that controller is subject or object. -/
+theorem fragment_control_verbs_obligatory :
+    ∀ v ∈ [try_.toVerb, manage.toVerb, begin_.toVerb, stop.toVerb, continue_.toVerb,
+           fail.toVerb, persuade.toVerb, force.toVerb, want.toVerb, hope.toVerb,
+           promise.toVerb],
+      derivedChierchiaClass v = some .obligatory := by
+  intro v hv
+  fin_cases hv <;> rfl
 
 -- ── Passivizability: derived agrees with stipulated ──
 
-/-- "try" (subject control): CP blocks passivization, stipulated not passivizable. -/
-theorem try_passivizability_derived :
-    derivedPassivizable try_.toVerb.controlType
-    = try_.toVerb.passivizable := rfl
-
-/-- "persuade" (object control): CP allows passivization, stipulated passivizable. -/
-theorem persuade_passivizability_derived :
-    derivedPassivizable persuade.toVerb.controlType
-    = persuade.toVerb.passivizable := rfl
-
-/-- "force" (object control): CP allows passivization, stipulated passivizable. -/
-theorem force_passivizability_derived :
-    derivedPassivizable force.toVerb.controlType
-    = force.toVerb.passivizable := rfl
+/-- At each Fragment control verb the passivizability the Control Principle derives agrees with
+the stored flag: subject control blocks passivization and object control does not. -/
+theorem passivizability_derived_agrees :
+    ∀ v ∈ [try_.toVerb, persuade.toVerb, force.toVerb],
+      derivedPassivizable v.controlType = v.passivizable := by
+  intro v hv
+  fin_cases hv <;> rfl
 
 -- ── Complement semantic layer: control verbs take property-denoting complements ──
 
-/-- "try" takes an infinitival complement, which denotes a property. -/
-theorem try_property_denoting :
-    try_.toVerb.complementType.denotation = some .property := rfl
-
-/-- "want" takes an infinitival complement, which denotes a property. -/
-theorem want_property_denoting :
-    want.toVerb.complementType.denotation = some .property := rfl
-
-/-- "believe" takes a finite clause, which denotes a proposition. -/
-theorem believe_proposition_denoting :
-    believe.toVerb.complementType.denotation = some .proposition := rfl
-
-/-- "believe" is not a control verb — consistent with taking a propositional,
-    not property-denoting, complement. -/
-theorem believe_not_control :
-    derivedChierchiaClass believe.toVerb = none := rfl
+/-- Control verbs take property-denoting complements; *believe*, which is no control verb, takes
+a finite clause denoting a proposition. -/
+theorem control_complements_property_denoting :
+    (∀ v ∈ [try_.toVerb, want.toVerb], v.complementType.denotation = some .property) ∧
+      believe.toVerb.complementType.denotation = some .proposition ∧
+      derivedChierchiaClass believe.toVerb = none := by
+  refine ⟨fun v hv => ?_, rfl, rfl⟩
+  fin_cases hv <;> rfl
 
 end VerbVerification
 

@@ -579,8 +579,7 @@ variable {α : Type*} [SemilatticeSup α]
     for the entire mereological analysis. -/
 theorem mandarin_needs_classifiers :
     Mandarin.Nouns.mandarinMapping =
-      Semantics.Kinds.NMP.NominalMapping.argOnly :=
-  NMP.mandarin_mapping
+      Semantics.Kinds.NMP.NominalMapping.argOnly := rfl
 
 /-- The Chierchia–Borer–Wang&Sun chain for 杯 bēi:
     1. Mandarin NMP = argOnly → classifiers required (Chierchia)
@@ -600,7 +599,7 @@ theorem full_chain (P : α → Prop) (hc : CUM P) :
     -- Semantic: opposite mereological properties
     QUA (nominalDenotation noDe_D P) ∧
     CUM (nominalDenotation de_D P) :=
-  ⟨NMP.mandarin_mapping,
+  ⟨rfl,
    rfl,
    by decide,
    by decide,
