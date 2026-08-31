@@ -128,6 +128,20 @@ theorem russellIota_witness_unique
   rw [h₁] at h₂
   exact Option.some_inj.mp h₂
 
+/-- `russellIota P = some e` if and only if `e` is the unique `P`-satisfier. -/
+theorem russellIota_eq_some_iff {E : Type*} (P : E → Prop) (e : E) :
+    russellIota P = some e ↔ P e ∧ ∀ x, P x → x = e := by
+  classical
+  refine ⟨fun h => ?_, fun ⟨he, huniq⟩ => ?_⟩
+  · have hu : ∃! x, P x :=
+      (russellIota_isSome_iff_exists_unique P).1 (by rw [h]; rfl)
+    exact ⟨russellIota_witness_satisfies P e h,
+      fun x hx => hu.unique hx (russellIota_witness_satisfies P e h)⟩
+  · have hu : ∃! x, P x := ⟨e, he, huniq⟩
+    unfold russellIota
+    rw [dif_pos hu]
+    exact congrArg some (huniq _ hu.choose_spec.1)
+
 /-- Computable list-based Russellian iota: returns the unique witness when
     `domain.filter P` is a singleton, `none` otherwise. This is the concrete
     operational counterpart to `russellIota` and the canonical referent
