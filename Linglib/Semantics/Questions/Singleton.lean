@@ -13,8 +13,8 @@ several cross-linguistic question-particle analyses:
   the polar question particle presupposes that its sister denotes a
   question whose alternative set is a singleton (the "highlighted"
   cell, in the sense of [roelofsen-farkas-2015]).
-- the parallel analysis of Mandarin *nandao* that
-  [bhatt-dayal-2020] fn. 11 cites as the model for kya:.
+- the parallel analysis of Mandarin *nandao* ([xu-2017]) that
+  [bhatt-dayal-2020] draws on for kya:.
 
 Declarative contents are exactly the singleton ones (under finiteness
 of `props`); the standard two-cell polar `polar p` (with both `p` and
@@ -129,8 +129,8 @@ presupposition satisfied". Used by particle-specific study files
 /-- The **subtype of singleton issues** — issues whose alternative set
     is a singleton. Used as the well-typed sister-content for
     singleton-presuppositional Q-particles
-    ([bhatt-dayal-2020], kya: eq. 23 and parallel nandao analysis
-    cited in fn. 11). The mathlib pattern for "predicate + partial
+    ([bhatt-dayal-2020], kya: eq. 23, and the parallel nandao
+    analysis of [xu-2017]). The mathlib pattern for "predicate + partial
     function" pairs: rather than `Option`-valued partial interpretation,
     use a subtype. -/
 def SingletonQuestion (W : Type u) : Type u :=
