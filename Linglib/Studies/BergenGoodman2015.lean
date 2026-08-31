@@ -5,9 +5,9 @@ import Linglib.Pragmatics.RSA.Operators
 import Linglib.Data.Examples.BergenGoodman2015
 
 /-!
-# [bergen-goodman-2015]: the strategic use of noise
+# The strategic use of noise
 
-*Topics in Cognitive Science* 7(2), 336–350. RSA over a noisy channel
+Formalization of [bergen-goodman-2015] (Topics in Cognitive Science 7). RSA over a noisy channel
 P_N(u_p | u_i): the listener reasons about which intended utterance the
 perceived one came from (eq. 6), the speaker about which utterances
 survive noise (eqs. 7–8).
@@ -15,13 +15,13 @@ survive noise (eqs. 7–8).
 ## Main results
 
 * `l0_fragment_correct` / `l1_fragment_correct`: "Bob" — no literal
-  meaning — is interpreted as "Bob went to the movies" (§3 ellipsis):
+  meaning — is interpreted as "Bob went to the movies" (the ellipsis case study):
   noise-deletion reasoning recovers the unique full-sentence source.
 * `l0_fragment_robust`: the fragment inference holds for every noise rate
   δ ∈ (0, 1), not just the sampled δ = 1/100.
 * `stress_increases_exhaustivity`: at every noise rate ε < 2/3, "BOB
-  went" (stressed) is more likely than "Bob went" to mean only-Bob (§4)
-  — stress reduces noise on the word it protects.
+  went" (stressed) is more likely than "Bob went" to mean only-Bob (the
+  prosody case study) — stress reduces noise on the word it protects.
 * `stress_increases_discrimination`: the channel-level mechanism, for
   every ε ∈ (0, 1).
 
@@ -36,6 +36,11 @@ theorem `xAtom_lt_yAtom` places the atoms strictly on either side of the
 unstressed posterior by the two-factor GM bounds in
 `Pragmatics/RSA/Atoms.lean`, and the headline reduces to that ordering
 plus algebra. No magnitude certificates.
+
+## References
+
+* [bergen-goodman-2015] — the paper; equations (6)–(8) follow its model section.
+* [frank-goodman-2012] — the RSA base the noisy channel extends.
 -/
 
 open BigOperators RSA Real
@@ -43,7 +48,7 @@ open scoped NNRat ENNReal
 
 namespace BergenGoodman2015
 
-/-! ## Ellipsis (§3)
+/-! ## Ellipsis
 
 Three meanings, seven utterances (full sentences plus fragments); only
 full sentences have literal meaning, and per-word deletion (rate δ) turns
@@ -229,9 +234,9 @@ theorem l0_fragment_robust (δ₀ : ℝ) (hδ : δ₀ ≠ 0) :
 
 end EllipsisModel
 
-/-! ## Prosody (§4)
+/-! ## Prosody
 
-Stress halves the noise rate on the stressed word (§4.1's ε/n at n = 2).
+Stress halves the noise rate on the stressed word (the paper's ε/n at n = 2).
 An exhaustive-knowledge speaker must protect "Bob" from mishearing, a
 non-exhaustive one need not — so the listener reads stress as
 exhaustivity. -/
@@ -471,7 +476,7 @@ private theorem sum_pos_bob (hε0 : 0 < ε) (hε1 : ε < 1) :
 
 /-- Stress increases the exhaustive interpretation, at every noise rate
 ε < 2/3: "BOB went" is strictly more likely than "Bob went" to mean only
-Bob went (§4). By posterior dominance (`Finset.div_sum_lt_div_sum`), the
+Bob went. By posterior dominance (`Finset.div_sum_lt_div_sum`), the
 comparison is cell-by-cell odds dominance: trivial at `onlyAlice` (the
 stressed row is zero there) and `onlyBob`, and the atom ordering
 `xAtom < yAtom` — the paper's mechanism — at `both`. -/
