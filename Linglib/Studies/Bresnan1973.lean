@@ -1,77 +1,50 @@
+import Linglib.Core.Order.Boundedness
 import Linglib.Syntax.Category.Degree.Basic
-import Linglib.Semantics.Degree.Discrete
-import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Degree.MeasurePhrase
 
 /-!
-# Bresnan 1973: Syntax of the Comparative Clause Construction in English
-[bresnan-1973] [bhatt-pancheva-2004] [bhatt-takahashi-2011]
+# Bresnan 1973: syntax of the comparative clause construction
 
-Joan W. Bresnan. Syntax of the Comparative Clause Construction in English.
-*Linguistic Inquiry* 4(3): 275–343.
+[bresnan-1973] (Linguistic Inquiry 4) argues that underlying every English
+comparative is a quantifier phrase: a Det position hosting -er, -est, as,
+too, so, that, or nothing over a Q drawn from much, many, little, few,
+enough. Three rules derive the surface forms — -er Encliticizing (20), Much
+Deletion (10), and the suppletions of (7) and (223), so *more* is -er +
+much — and the than-clause, always underlyingly clausal, loses a
+constituent featurally nondistinct from the head under Comparative
+Deletion. The four introductory puzzles (A)–(D) then each turn on one
+structural fact about the head and the deleted constituent.
 
-## Core Contributions
+## Main definitions
 
-1. **QP structure**: Every comparative has an underlying QP (Det + Q) where
-   the Q items are `much`, `many`, `little`, `few`, `enough`, and the Det
-   position hosts `-er`, `-est`, `as`, `too`, `so`, `that`, or `∅`. The
-   surface form `more` derives from `-er` + `much` via suppletion.
+* `Det`, `Q`, `QP`, `suppletion`, `muchDeletionApplies` — the QP structure
+  (6), (108)–(109), and the morphological rules.
+* `DeletionTarget`, `identityHolds` — the nondistinctness condition on
+  Comparative Deletion.
+* `ThanClauseType`, `BresnanThanClauseAnalysis`, `bresnanAnalysisOf` — every
+  than-phrase as a clause under partial or maximal deletion.
 
-2. **Morphological derivation**: Three ordered rules derive surface forms:
-   - `-er` Encliticizing: Det `-er` cliticizes onto Q (`-er Q → Q-er`)
-   - Much Deletion: `much → ∅` before adjectives/adverbs
-   - Suppletion: `much-er → more`, `little-er → less`, etc.
+## Main results
 
-3. **Comparative Deletion**: The `than`/`as` clause originates in the Det of
-   QP. An obligatory deletion operation removes a clause constituent
-   "nondistinct" from the head. The clause is then extraposed.
+* `massParadigm_suppletion_consistent`, `countParadigm_suppletion_consistent`
+  — the (4) and (5) paradigms against the suppletion rules.
+* `enough_requires_null_det` — (107): *enough* is a Q subcategorized for a
+  null Det.
+* `puzzleA_from_head`, `puzzleB_from_partitivity`,
+  `puzzleC_from_encliticizing`, `puzzleD_from_measure_constraint` — the
+  acceptability pattern of each introductory puzzle derived from the one
+  structural bit the paper's Section 2 account assigns it.
+* `subdeletion_identity_holds`, `np_qp_identity_fails` — the identity
+  condition at work.
 
-4. **All than-clauses are underlyingly clausal**: "Phrasal" comparatives like
-   `taller than Bill` derive from full clauses via maximal deletion.
-   [bhatt-pancheva-2004] reject this view, arguing phrasal
-   comparatives are genuinely phrasal (DA). [bhatt-takahashi-2011]
-   reverses B&P on the basis of Lechner-style binding diagnostics and
-   re-vindicates Bresnan's clausal-source analysis for English (the
-   3-place '-er' is needed for *Hindi-Urdu*, not English). See
-   `BhattTakahashi2011.bt2011_agrees_with_bresnan_against_bp2004` for
-   the cross-tradition bridge.
+## References
 
-5. **Subdeletion**: When the head is a QP (measure phrase), only a matching
-   QP is deleted from the clause — not an AP or NP. This explains
-   `*more than Bill tall` (NP ≠ QP identity failure).
-
-6. **Privative adjective constraint**: `*more than five feet short` because
-   `short` rejects definite measure phrases, so the QP identity condition
-   in the clause cannot be satisfied.
-
-## What Is Current vs. Historical
-
-**Current consensus**: The data paradigms, the degree-head inventory (Det →
-modern Deg°), the `more` = `-er` + `much` decomposition, the measure phrase
-restriction with negative adjectives, subdeletion commensurability.
-
-**Modified but descended**: QP → DegP ([kennedy-1999]); comparative
-deletion → degree operator movement ([heim-2001]); QP-AP parallelism
-→ X-bar theory → Minimalist bare phrase structure.
-
-**Historical**: The construction-specific transformations (AP Shift, QP
-Raising, Much Deletion, `-er` Encliticizing), the "all comparatives are
-clausal" claim, the `so → such` transformation.
-
-## Connection to Kennedy 1999
-
-This file formalizes
-Bresnan's own proposals: the QP structure, the derivation rules, and the
-four introductory puzzles that motivated the analysis. Bridge theorems
-connect the QP inventory to `Head` and verify suppletion outputs
-against Fragment `formComp` entries.
+* [bresnan-1973] — the paper.
 -/
 
 namespace Bresnan1973
 
 open Degree (Head)
-open Degree (comparativeSem)
-open Core.Order (ScalePolarity Boundedness)
+open Core.Order (ScalePolarity)
 
 /-- The two syntactic forms of than-clauses: phrasal "than Bill" vs
     clausal "than Bill is tall". -/
@@ -191,157 +164,113 @@ def Q.canModifyAdjective : Q → Bool
 def muchDeletionApplies (q : Q) (adjFollows : Bool) : Bool :=
   q.canModifyAdjective && adjFollows
 
-/-! ### Introductory Puzzles (A)–(D) -/
+/-! ### The four puzzles ((242), (256), (273), (296))
 
-/-- An acceptability judgment with structural explanation. -/
-structure PuzzleDatum where
+Section 2's method: identify the head, then the constituent deleted from
+the clause under nondistinctness. Each puzzle turns on one structural bit,
+and the acceptability pattern follows from it. -/
+
+/-- (242): the head is either the bare AP — the reduced-relative source of
+(a) and (c), (251) — or the predicative NP `[x much tall] a man` of the
+AP-shifted source (243) for (b) and (d); with an NP head the clause
+predicates that NP of the standard, fine for *my father*, anomalous for
+*my mother*. -/
+structure TallerManDatum where
   sentence : String
+  /-- The head is the predicative NP of (243), not the bare AP. -/
+  headIsPredNP : Bool
+  /-- The standard can be predicated of the head NP: *my father is a man*. -/
+  standardFitsHead : Bool
   acceptable : Bool
-  /-- What is the head of the comparative construction? -/
-  head : String
-  /-- What is deleted from the than-clause? -/
-  deletedConstituent : String
-  /-- Why is the identity condition satisfied or not? -/
-  explanation : String
   deriving Repr
 
-/-- Puzzle (A): "I've never seen a man taller than my father/mother."
+def puzzleA : List TallerManDatum :=
+  [⟨"I've never seen a man taller than my father", false, true, true⟩,
+   ⟨"I've never seen a taller man than my father", true, true, true⟩,
+   ⟨"I've never seen a man taller than my mother", false, false, true⟩,
+   ⟨"??I've never seen a taller man than my mother", true, false, false⟩]
 
-    (i) and (ii) are roughly synonymous; (iii) and (iv) are not.
-    (i)  "a man taller than my father"  — head: AP [x much tall]
-    (ii) "a taller man than my father" — head: AP [x much tall]
-    (iii) "a man taller than my mother" — head: AP [x much tall]
-    (iv) "a taller man than my mother" — head: NP [a man x much tall]
+/-- Puzzle (A) derived: a sentence is anomalous exactly when the head is
+the predicative NP and the standard fails to fit it. -/
+theorem puzzleA_from_head :
+    ∀ d ∈ puzzleA, d.acceptable = (!d.headIsPredNP || d.standardFitsHead) := by
+  decide
 
-    In (iv), the head is the entire predicative NP. The deleted constituent
-    in the clause must match this NP — but "my mother is [x much tall] a man"
-    implies my mother is a man. Hence the anomaly. -/
-def puzzleA : List PuzzleDatum :=
-  [ { sentence := "I've never seen a man taller than my father"
-    , acceptable := true
-    , head := "AP: x much tall"
-    , deletedConstituent := "AP: x much tall"
-    , explanation := "AP head; clause: 'my father is [x much tall]' — well-formed" }
-  , { sentence := "I've never seen a taller man than my father"
-    , acceptable := true
-    , head := "AP: x much tall"
-    , deletedConstituent := "AP: x much tall"
-    , explanation := "AP head after AP Shift; clause: 'my father is [x much tall]' — well-formed" }
-  , { sentence := "I've never seen a man taller than my mother"
-    , acceptable := true
-    , head := "AP: x much tall"
-    , deletedConstituent := "AP: x much tall"
-    , explanation := "AP head; clause: 'my mother is [x much tall]' — well-formed" }
-  , { sentence := "??I've never seen a taller man than my mother"
-    , acceptable := false
-    , head := "Pred NP: [AP x much tall] a man"
-    , deletedConstituent := "Pred NP: [AP x much tall] a man"
-    , explanation := "NP head after AP Shift; clause: 'my mother is [x much tall] a man' — implies my mother is a man" }
-  ]
+/-- (256): adverbial *more* modifies the VP and needs only a matching
+adverbial in the clause (257) — available with intransitives too — while
+partitive *more* is embedded in the object NP and needs a matching
+partitive there (260); *sleeps* supplies none. -/
+structure CaviarDatum where
+  sentence : String
+  /-- The head QP is the partitive inside the object NP. -/
+  headIsPartitive : Bool
+  /-- The clause supplies an object NP to host a matching partitive. -/
+  clauseHasObjectNP : Bool
+  acceptable : Bool
+  deriving Repr
 
-/-- Puzzle (B): "Jack eats caviar more than he eats mush / sleeps."
+def puzzleB : List CaviarDatum :=
+  [⟨"Jack eats caviar more than he eats mush", false, true, true⟩,
+   ⟨"Jack eats more caviar than he eats mush", true, true, true⟩,
+   ⟨"Jack eats caviar more than he sleeps", false, false, true⟩,
+   ⟨"*Jack eats more caviar than he sleeps", true, false, false⟩]
 
-    (a,c) are grammatical; (d) is not. The deleted constituent is an
-    adverbial QP modifier of the VP.
+/-- Puzzle (B) derived: a partitive head demands an object NP in the
+clause. -/
+theorem puzzleB_from_partitivity :
+    ∀ d ∈ puzzleB, d.acceptable = (!d.headIsPartitive || d.clauseHasObjectNP) := by
+  decide
 
-    In (d), `*Jack eats more caviar than he sleeps` is bad because
-    `more` is a partitive QP embedded in the direct object NP. The
-    matching partitive QP in the clause requires an NP — but `sleep`
-    is intransitive, so no matching partitive is available. -/
-def puzzleB : List PuzzleDatum :=
-  [ { sentence := "Jack eats caviar more than he eats mush"
-    , acceptable := true
-    , head := "adverbial QP: -er much"
-    , deletedConstituent := "adverbial QP: x much"
-    , explanation := "VP-adverbial more; clause has matching VP-adverbial" }
-  , { sentence := "Jack eats more caviar than he eats mush"
-    , acceptable := true
-    , head := "partitive QP: -er much (of caviar)"
-    , deletedConstituent := "partitive QP: x much (of mush)"
-    , explanation := "partitive more in NP; clause has matching partitive" }
-  , { sentence := "Jack eats caviar more than he sleeps"
-    , acceptable := true
-    , head := "adverbial QP: -er much"
-    , deletedConstituent := "adverbial QP: x much"
-    , explanation := "VP-adverbial more; clause has matching VP-adverbial" }
-  , { sentence := "*Jack eats more caviar than he sleeps"
-    , acceptable := false
-    , head := "partitive QP: -er much (of caviar)"
-    , deletedConstituent := "partitive QP: x much"
-    , explanation := "partitive more requires NP object; sleep is intransitive" }
-  ]
+/-- (273): the synthetic comparative arises only when the QP is a left
+branch of the AP with the adjective — -er encliticizes (20) and *much*
+deletes (10); comparison across adjectives leaves the QP outside the AP
+(272), so only analytic *more angry* survives. -/
+structure AngryDatum where
+  sentence : String
+  /-- The surface form is the synthetic comparative (*angrier*). -/
+  synthetic : Bool
+  /-- The QP is AP-internal, a left branch with the adjective. -/
+  qpInsideAP : Bool
+  acceptable : Bool
+  deriving Repr
 
-/-- Puzzle (C): "I am more angry today than I was yesterday / than sad."
+def puzzleC : List AngryDatum :=
+  [⟨"I am more angry today than I was yesterday", false, true, true⟩,
+   ⟨"I am angrier today than I was yesterday", true, true, true⟩,
+   ⟨"I am more angry than sad", false, false, true⟩,
+   ⟨"*I am angrier than sad", true, false, false⟩]
 
-    The acceptability of `angrier` (synthetic) vs `more angry` (analytic)
-    follows from what is deleted and what survives. When the comparison is
-    across adjectives (angry vs sad), the comparative must be `more angry`
-    (analytic) because `more` is a sentence modifier, not within the AP.
-    Simple comparative formation (producing `angrier`) cannot apply
-    because `more` and `sad` are not within the same AP. -/
-def puzzleC : List PuzzleDatum :=
-  [ { sentence := "I am more angry today than I was yesterday"
-    , acceptable := true
-    , head := "AP: -er much angry"
-    , deletedConstituent := "AP: x much angry"
-    , explanation := "AP head in than-clause; standard temporal comparison" }
-  , { sentence := "I am angrier today than I was yesterday"
-    , acceptable := true
-    , head := "AP: -er much angry"
-    , deletedConstituent := "AP: x much angry"
-    , explanation := "same as above with -er Encliticizing + Much Deletion" }
-  , { sentence := "I am more angry than sad"
-    , acceptable := true
-    , head := "QP: -er much"
-    , deletedConstituent := "QP: x much"
-    , explanation := "sentence-level QP; clause: 'I am [x much] sad'" }
-  , { sentence := "*I am angrier than sad"
-    , acceptable := false
-    , head := "QP: -er much"
-    , deletedConstituent := "QP: x much"
-    , explanation := "more and sad not in same AP; simple comparative blocked" }
-  ]
+/-- Puzzle (C) derived: the synthetic form needs the AP-internal QP. -/
+theorem puzzleC_from_encliticizing :
+    ∀ d ∈ puzzleC, d.acceptable = (!d.synthetic || d.qpInsideAP) := by decide
 
-/-- Puzzle (D): "*Mary is more than five feet short" vs "Mary is shorter than five feet."
+/-- (296)–(297): privative adjectives reject definite measures — *five
+feet tall* against *\*five feet short* — so a derivation equating the Q
+that modifies *short* with a definite measure phrase fails nondistinctness,
+while *shorter than five feet* requires no such equation. -/
+structure ShortDatum where
+  sentence : String
+  /-- The derivation equates a Q modifying a privative adjective with a
+  definite measure phrase. -/
+  definiteMeasureOnPrivative : Bool
+  acceptable : Bool
+  deriving Repr
 
-    [kennedy-1999] explains this via positive/negative extent boundedness.
-    Bresnan's syntactic explanation: `short` rejects definite measure phrase
-    modifiers (`*How short is he? — five feet short`), so the QP identity
-    condition in the clause cannot be satisfied.
+def puzzleD : List ShortDatum :=
+  [⟨"Mary is more than six feet tall", false, true⟩,
+   ⟨"Mary is taller than six feet", false, true⟩,
+   ⟨"*Mary is more than five feet short", true, false⟩,
+   ⟨"Mary is shorter than five feet", false, true⟩]
 
-    Bridge: this connects to `Kennedy1999.measurePhraseAbsoluteRows` and
-    `AdmitsMeasurePhrase` in `MeasurePhrase.lean`. -/
-def puzzleD : List PuzzleDatum :=
-  [ { sentence := "Mary is more than six feet tall"
-    , acceptable := true
-    , head := "QP: -er much"
-    , deletedConstituent := "QP: six feet = that much"
-    , explanation := "tall admits measure phrases; than-clause: 'six feet = that much tall'" }
-  , { sentence := "Mary is taller than six feet"
-    , acceptable := true
-    , head := "AP: -er much tall"
-    , deletedConstituent := "AP: six feet tall = that much tall"
-    , explanation := "AP head; clause: 'six feet (is) [that much] tall'" }
-  , { sentence := "*Mary is more than five feet short"
-    , acceptable := false
-    , head := "QP: -er much"
-    , deletedConstituent := "QP: five feet = that much"
-    , explanation := "short rejects definite measure phrases; *five feet short" }
-  , { sentence := "Mary is shorter than five feet"
-    , acceptable := true
-    , head := "QP: -er much (subdeletion)"
-    , deletedConstituent := "QP: five feet = that much"
-    , explanation := "Bresnan (p. 334): 'certainly no problem'; clause QP [five feet] matches head QP" }
-  ]
+/-- Puzzle (D) derived: the (297) identity failure is the only source of
+anomaly in the paradigm. -/
+theorem puzzleD_from_measure_constraint :
+    ∀ d ∈ puzzleD, d.acceptable = !d.definiteMeasureOnPrivative := by decide
 
 /-! ### Comparative Deletion (Identity Condition) -/
 
-/-- The syntactic category of the constituent deleted from the than-clause.
-    Bresnan's key insight: the deleted element must be "nondistinct" (same
-    syntactic category) from the head.
-
-    This is the 1973 precursor to modern identity conditions in ellipsis
-    (e-GIVENness in [merchant-2001]; SIC in Anand, Hardt & McCloskey 2021). -/
+/-- The syntactic category of the constituent deleted from the than-clause:
+    the deleted element must be featurally nondistinct from the head. -/
 inductive DeletionTarget where
   | qp   -- QP deleted (measure phrase comparison / subdeletion)
   | ap   -- AP deleted (simple adjectival comparison)
@@ -359,11 +288,8 @@ def identityHolds (head clause : DeletionTarget) : Bool :=
 /-- Subdeletion: "The table is longer than the door is wide."
 
     Head = AP (-er much long), deleted = AP (x much wide).
-    Both are APs, so identity holds. The dimensions (length vs width) need
-    not match — only the syntactic category.
-
-    This connects to `subcomparativeExamples` in `Kennedy1999.lean` and
-    `subcomparative` in `Intervals.lean`. -/
+    Both are APs, so identity holds; the dimensions need not match, only
+    the syntactic category. -/
 theorem subdeletion_identity_holds :
     identityHolds .ap .ap = true := rfl
 
@@ -375,18 +301,9 @@ theorem np_qp_identity_fails :
 
 /-! ### All Than-Clauses Are Underlyingly Clausal -/
 
-/-- Bresnan's strongest syntactic claim: ALL comparatives are underlyingly
-    clausal. What appears as a "phrasal" comparative ("taller than Bill")
-    is derived from a full clause by maximal deletion.
-
-    [bhatt-pancheva-2004] rejected this view in favor of a "genuinely
-    phrasal" Direct Analysis. [bhatt-takahashi-2011] subsequently
-    reversed B&P on the basis of binding diagnostics and re-vindicates
-    Bresnan's clausal-source analysis for English (cross-tradition
-    bridge: `BhattTakahashi2011.bt2011_agrees_with_bresnan_against_bp2004`).
-    Both analyses yield the same truth conditions for simple comparatives
-    (proved in `ThanClause.phrasal_clausal_equivalence`), so the
-    disagreement is purely syntactic. -/
+/-- Bresnan's strongest syntactic claim: all comparatives are underlyingly
+    clausal — what appears as a "phrasal" comparative (*taller than Bill*)
+    derives from a full clause by maximal deletion. -/
 inductive BresnanThanClauseAnalysis where
   /-- Full clause with partial deletion: "than Bill is [x much tall]"
       → "than Bill is" (deletion of AP) -/
@@ -404,12 +321,10 @@ def bresnanAnalysisOf : ThanClauseType → BresnanThanClauseAnalysis
 
 /-! ### Privative Adjective Measure Phrase Constraint -/
 
-/-- Whether an adjective admits definite measure phrase modification
-    ("five feet tall" ✓ vs "*five feet short" ✗).
-
-    Bresnan observes this as a syntactic fact; [kennedy-1999]
-    derives it from extent boundedness (positive extents are bounded,
-    negative extents are not). Both predict the same distribution. -/
+/-- Whether an adjective admits definite measure phrase modification —
+    *five feet tall* against *\*five feet short*: privative adjectives do
+    not admit modifiers of definite measurement, though they do permit
+    comparison. -/
 def admitsDefiniteMeasure (polarity : ScalePolarity) : Bool :=
   match polarity with
   | .positive => true
@@ -421,17 +336,9 @@ theorem positive_admits_measure : admitsDefiniteMeasure .positive = true := rfl
 /-- Negative adjectives reject measure phrases. -/
 theorem negative_rejects_measure : admitsDefiniteMeasure .negative = false := rfl
 
-/-- **Bridge to Kennedy 1999**: Bresnan's syntactic observation and Kennedy's
-    semantic explanation make the same prediction for simple cases.
-
-    Bresnan: `short` syntactically rejects definite measure QPs, so the
-    identity condition in comparative deletion cannot be satisfied.
-
-    Kennedy: negative extents are unbounded, so equating them with bounded
-    measure phrases is semantically undefined.
-
-    The predictions diverge for `less short than five feet` (Bresnan predicts
-    OK via `little`-based QP; Kennedy predicts OK via comparative semantics). -/
+/-- An adjective's polarity with its measure-phrase behavior: *short*
+    rejects definite measure QPs, so the identity condition in Comparative
+    Deletion cannot be satisfied there. -/
 structure MeasurePhraseConstraintDatum where
   adjective : String
   polarity : ScalePolarity
@@ -441,17 +348,18 @@ structure MeasurePhraseConstraintDatum where
   deriving Repr
 
 def measurePhraseConstraintData : List MeasurePhraseConstraintDatum :=
-  [ { adjective := "tall",  polarity := .positive, measurePhraseOk := true,  comparativeMeasureOk := true  }
-  , { adjective := "short", polarity := .negative, measurePhraseOk := false, comparativeMeasureOk := false }
-  , { adjective := "long",  polarity := .positive, measurePhraseOk := true,  comparativeMeasureOk := true  }
-  , { adjective := "wide",  polarity := .positive, measurePhraseOk := true,  comparativeMeasureOk := true  }
-  ]
+  [ { adjective := "tall", polarity := .positive
+      measurePhraseOk := true, comparativeMeasureOk := true }
+  , { adjective := "short", polarity := .negative
+      measurePhraseOk := false, comparativeMeasureOk := false }
+  , { adjective := "long", polarity := .positive
+      measurePhraseOk := true, comparativeMeasureOk := true }
+  , { adjective := "wide", polarity := .positive
+      measurePhraseOk := true, comparativeMeasureOk := true } ]
 
-/-- Among Bresnan's dimensional adjectives, measure phrase acceptability
-    correlates with positive polarity.
-
-    This is the formal content behind puzzle (D) and connects to
-    `Kennedy1999.measurePhraseAbsoluteRows`. -/
+/-- Among the dimensional adjectives, measure-phrase acceptability
+    correlates with positive polarity — the classification behind puzzle
+    (D). -/
 theorem measurePhrase_polarity_correlation :
     ∀ d ∈ measurePhraseConstraintData,
       d.polarity = .negative → d.measurePhraseOk = false := by
@@ -534,43 +442,5 @@ theorem enough_requires_null_det :
   intro d hd; cases d <;> first | (exact absurd rfl hd) | rfl
 
 theorem enough_null_wellformed : QP.isWellFormed ⟨.null, .enough⟩ = true := rfl
-
-/-! ### QP-AP Parallelism -/
-
-/-- Bresnan's "archicategory" X̄ unifies QP and AP:
-    both have left-recursive specifier + head structure.
-
-    QP → (QP) QP,   QP → (Det) Q
-    AP → (AP) AP,   AP → (Adv) A
-
-    This is a direct precursor to X-bar theory (Jackendoff 1977) and
-    ultimately to the Minimalist bare phrase structure. The modern
-    counterpart is the shared structure of DegP and AdjP as functional
-    and lexical projections in the extended AP.
-
-    Structural rule from Bresnan (145):
-    X̄ → (X̄) X̄     (recursive expansion)
-    X̄ → (Spec, X̄) X̄  (specifier + head) -/
-inductive BarCategory where
-  | qp   -- quantity phrase
-  | ap   -- adjective phrase
-  | np   -- noun phrase
-  deriving DecidableEq, Repr
-
-/-! ### Comparative Semantics Bridge -/
-
-/-- Bresnan's analysis is primarily syntactic, but the truth conditions
-    it derives are compatible with the modern degree-semantic consensus.
-
-    For a simple adjectival comparative "A is taller than B":
-    - Bresnan: head = AP [-er much tall], clause deletes matching AP [x much tall]
-    - Kennedy: μ(A) > μ(B) where μ = height
-    - Heim: max({d | height(A) ≥ d}) > max({d | height(B) ≥ d})
-
-    All three yield the same truth conditions for simple cases. -/
-theorem simple_comparative_consensus {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (a b : Entity) :
-    comparativeSem μ a b .positive ↔ μ a > μ b := by
-  simp [comparativeSem]
 
 end Bresnan1973
