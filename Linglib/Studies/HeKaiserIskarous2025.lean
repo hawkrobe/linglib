@@ -1,5 +1,5 @@
 import Linglib.Semantics.Intensional.Defs
-import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.Additivity
 import Linglib.Logic.Natural.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
@@ -406,7 +406,7 @@ theorem not_reverses_entailment_HKI (p q : (HKIState → Bool))
 /-- Negative sentences are downward-entailing: complementation is
     antitone. -/
 theorem neg_sentence_is_de : Antitone (compl : Set (Fin 4) → Set (Fin 4)) :=
-  antitone_compl
+  NaturalLogic.antitone_compl
 
 /-- Positive sentences are upward-entailing: the identity context. -/
 theorem pos_sentence_is_ue : Monotone (id : Set (Fin 4) → Set (Fin 4)) :=

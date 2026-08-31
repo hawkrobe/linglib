@@ -1,5 +1,5 @@
 import Linglib.Semantics.Polarity.ExpletiveNegation
-import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.Additivity
 import Mathlib.Order.Monotone.Basic
 
 /-!
