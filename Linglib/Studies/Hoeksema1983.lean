@@ -3,7 +3,7 @@ import Linglib.Semantics.Polarity.Licensing
 import Mathlib.Order.Hom.CompleteLattice
 import Mathlib.Order.Heyting.Hom
 import Linglib.Core.Order.SetPreimage
-import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.Additivity
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Polarity.Item
 
@@ -70,7 +70,7 @@ The §3 algebraic content is formalized in five layers:
   NPI environment.
 - **Fact 4** (`gtOverSet_isAntiAdditive` in
   `Semantics/Degree/Comparative.lean`, cited from
-  `IsAntiAdditive.antitone` in `AntiAdditivity.lean`): every
+  `NaturalLogic.IsAntiAdditive.antitone`): every
   anti-additive function is antitone — hence the S-comparative
   qualifies as an NPI environment.
 - **§3.9 NP↔S equivalence** (`npComparativeGQ_principal_eq_gtOverSet_singleton`):

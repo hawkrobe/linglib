@@ -242,6 +242,7 @@ import Linglib.Core.Order.DeMorganAlgebra.Basic
 import Linglib.Core.Order.DeMorganAlgebra.Defs
 import Linglib.Core.Order.Flat
 import Linglib.Core.Order.FourierMotzkin
+import Linglib.Core.Order.GaloisConnection
 import Linglib.Core.Order.Interval
 import Linglib.Core.Order.IntervalContent
 import Linglib.Core.Order.IterateFixedPoint
@@ -1484,7 +1485,6 @@ import Linglib.Processing.Psychophysics.Psychophysics
 import Linglib.Processing.Psychophysics.SignalDetection
 import Linglib.Processing.Psychophysics.Thurstone
 import Linglib.Processing.VisualWorld
-import Linglib.Core.Order.AntiAdditive
 import Linglib.Semantics.Alternatives.AsymStronger
 import Linglib.Semantics.Alternatives.Basic
 import Linglib.Semantics.Alternatives.Competition
@@ -1669,6 +1669,7 @@ import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Semantics.Dynamic.UpdateSemantics.Bilateral
 import Linglib.Semantics.Dynamic.UpdateSemantics.Default
 import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
+import Linglib.Logic.Natural.Additivity
 import Linglib.Logic.Natural.Basic
 import Linglib.Logic.Natural.Completeness
 import Linglib.Logic.Natural.Monotonicity.Defs

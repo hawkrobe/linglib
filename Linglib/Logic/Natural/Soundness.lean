@@ -1,5 +1,6 @@
 import Linglib.Logic.Natural.Basic
-import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.Additivity
+import Mathlib.Order.GaloisConnection.Basic
 
 /-!
 # Soundness of the projectivity calculus
@@ -23,7 +24,7 @@ class.
 * `soundFor_mono_iff`, `soundFor_anti_iff`: the monotone rows
   characterize the monotone and antitone functions.
 * `soundFor_additive` … `soundFor_antiAddMult`: the algebraic rows,
-  from `IsCompletely*` hypotheses.
+  from the preservation equations plus unit conditions.
 * `SoundFor.comp`, `soundFor_contextProjectivity`: soundness composes
   along `Signature.compose` and folds along a signature path.
 * `Relation.Holds.of_le`, `Signature.SoundFor.of_le`: both implication
@@ -34,8 +35,8 @@ class.
 The algebraic rows hold in the sound direction only — projection rows
 are class-maximal, not function-characterizing; tightness is proved in
 `Logic/Natural/Completeness.lean` for the join table. The
-additive-family rows need the `IsCompletely*` unit conditions, exactly
-as [icard-2012]'s tables assume, and the proofs go through over
+additive-family rows need the unit conditions (`f ⊤ = ⊤`, `f ⊤ = ⊥`, …),
+exactly as [icard-2012]'s tables assume, and the proofs go through over
 bounded lattices rather than his Boolean lattices. `soundFor_all`
 holds unconditionally: every function realizes the no-property row.
 
@@ -172,36 +173,40 @@ theorem soundFor_anti_iff {f : α → β} :
     | reverse => exact h hR
     | negation | alternation | cover | independent => trivial
 
-/-- The `.additive` row is sound for completely additive functions. -/
-theorem soundFor_additive {f : α → β} (h : IsCompletelyAdditive f) :
+/-- The `.additive` row is sound for join-preserving, `⊤`-preserving functions. -/
+theorem soundFor_additive {f : α → β}
+    (h : (∀ p q, f (p ⊔ q) = f p ⊔ f q) ∧ f ⊤ = ⊤) :
     Signature.SoundFor .additive f := by
   obtain ⟨hadd, htop⟩ := h
+  have hmono := monotone_of_map_sup hadd
   intro R x y hR
   cases R with
   | equiv => exact congrArg f hR
-  | forward => exact hadd.monotone hR
-  | reverse => exact hadd.monotone hR
+  | forward => exact hmono hR
+  | reverse => exact hmono hR
   | negation => exact codisjoint_iff.mpr (by rw [← hadd x y, codisjoint_iff.mp hR.codisjoint]; exact htop)
   | alternation => trivial
   | cover => exact codisjoint_iff.mpr (by rw [← hadd x y, codisjoint_iff.mp hR]; exact htop)
   | independent => trivial
 
-/-- The `.mult` row is sound for completely multiplicative functions. -/
-theorem soundFor_mult {f : α → β} (h : IsCompletelyMultiplicative f) :
+/-- The `.mult` row is sound for meet-preserving, `⊥`-preserving functions. -/
+theorem soundFor_mult {f : α → β}
+    (h : (∀ p q, f (p ⊓ q) = f p ⊓ f q) ∧ f ⊥ = ⊥) :
     Signature.SoundFor .mult f := by
   obtain ⟨hmult, hbot⟩ := h
+  have hmono := monotone_of_map_inf hmult
   intro R x y hR
   cases R with
   | equiv => exact congrArg f hR
-  | forward => exact hmult.monotone hR
-  | reverse => exact hmult.monotone hR
+  | forward => exact hmono hR
+  | reverse => exact hmono hR
   | negation => exact disjoint_iff.mpr (by rw [← hmult x y, disjoint_iff.mp hR.disjoint]; exact hbot)
   | alternation => exact disjoint_iff.mpr (by rw [← hmult x y, disjoint_iff.mp hR]; exact hbot)
   | cover => trivial
   | independent => trivial
 
 /-- The `.antiAdd` row is sound for completely anti-additive functions. -/
-theorem soundFor_antiAdd {f : α → β} (h : IsCompletelyAntiAdditive f) :
+theorem soundFor_antiAdd {f : α → β} (h : IsAntiAdditive f ∧ f ⊤ = ⊥) :
     Signature.SoundFor .antiAdd f := by
   obtain ⟨haa, htop⟩ := h
   intro R x y hR
@@ -216,7 +221,7 @@ theorem soundFor_antiAdd {f : α → β} (h : IsCompletelyAntiAdditive f) :
 
 /-- The `.antiMult` row is sound for completely anti-multiplicative
 functions. -/
-theorem soundFor_antiMult {f : α → β} (h : IsCompletelyAntiMultiplicative f) :
+theorem soundFor_antiMult {f : α → β} (h : IsAntiMultiplicative f ∧ f ⊥ = ⊤) :
     Signature.SoundFor .antiMult f := by
   obtain ⟨ham, hbot⟩ := h
   intro R x y hR
@@ -231,14 +236,15 @@ theorem soundFor_antiMult {f : α → β} (h : IsCompletelyAntiMultiplicative f)
 
 /-- The `.addMult` row (preserve everything) is sound for morphisms:
 completely additive and completely multiplicative functions. -/
-theorem soundFor_addMult {f : α → β} (hadd : IsCompletelyAdditive f)
-    (hmult : IsCompletelyMultiplicative f) :
+theorem soundFor_addMult {f : α → β}
+    (hadd : (∀ p q, f (p ⊔ q) = f p ⊔ f q) ∧ f ⊤ = ⊤)
+    (hmult : (∀ p q, f (p ⊓ q) = f p ⊓ f q) ∧ f ⊥ = ⊥) :
     Signature.SoundFor .addMult f := by
   intro R x y hR
   cases R with
   | equiv => exact congrArg f hR
-  | forward => exact hadd.1.monotone hR
-  | reverse => exact hadd.1.monotone hR
+  | forward => exact monotone_of_map_sup hadd.1 hR
+  | reverse => exact monotone_of_map_sup hadd.1 hR
   | negation =>
       exact ⟨disjoint_iff.mpr (by rw [← hmult.1 x y, disjoint_iff.mp hR.disjoint]; exact hmult.2),
              codisjoint_iff.mpr (by rw [← hadd.1 x y, codisjoint_iff.mp hR.codisjoint]; exact hadd.2)⟩
@@ -250,8 +256,8 @@ theorem soundFor_addMult {f : α → β} (hadd : IsCompletelyAdditive f)
 anti-additive and completely anti-multiplicative functions. This is the
 sentential-negation row — the semantic content of "double negation is a
 morphism". -/
-theorem soundFor_antiAddMult {f : α → β} (haa : IsCompletelyAntiAdditive f)
-    (ham : IsCompletelyAntiMultiplicative f) :
+theorem soundFor_antiAddMult {f : α → β}
+    (haa : IsAntiAdditive f ∧ f ⊤ = ⊥) (ham : IsAntiMultiplicative f ∧ f ⊥ = ⊤) :
     Signature.SoundFor .antiAddMult f := by
   intro R x y hR
   cases R with
@@ -355,8 +361,8 @@ variable {α : Type*} [BooleanAlgebra α]
 /-- Complementation realizes the anti-morphism row. -/
 theorem compl_soundFor_antiAddMult :
     Signature.SoundFor .antiAddMult (compl : α → α) :=
-  soundFor_antiAddMult isCompletelyAntiAdditive_compl
-    isCompletelyAntiMultiplicative_compl
+  soundFor_antiAddMult ⟨isAntiAdditive_compl, compl_top⟩
+    ⟨isAntiMultiplicative_compl, compl_bot⟩
 
 /-- Double negation realizes the morphism row — the composed-signature
 fact `◇⊟ ∘ ◇⊟ = ⊕⊞`, certified semantically rather than by enum table
@@ -422,10 +428,10 @@ variable {α β : Type*} [Lattice α] [BoundedOrder α] [Lattice β] [BoundedOrd
 def Signature.Property.HoldsFor : Signature.Property → (α → β) → Prop
   | .monotone => Monotone
   | .antitone => Antitone
-  | .additive => IsCompletelyAdditive
-  | .multiplicative => IsCompletelyMultiplicative
-  | .antiAdditive => IsCompletelyAntiAdditive
-  | .antiMultiplicative => IsCompletelyAntiMultiplicative
+  | .additive => fun f => (∀ p q, f (p ⊔ q) = f p ⊔ f q) ∧ f ⊤ = ⊤
+  | .multiplicative => fun f => (∀ p q, f (p ⊓ q) = f p ⊓ f q) ∧ f ⊥ = ⊥
+  | .antiAdditive => fun f => IsAntiAdditive f ∧ f ⊤ = ⊥
+  | .antiMultiplicative => fun f => IsAntiMultiplicative f ∧ f ⊥ = ⊤
 
 /-- A function has signature σ — is a "σ-function" — when it has every
 property σ asserts. -/
@@ -476,8 +482,8 @@ theorem Signature.holdsFor_antiAddMult_compl {γ : Type*} [BooleanAlgebra γ] :
   intro p hp
   cases p with
   | antitone => exact antitone_compl
-  | antiAdditive => exact isCompletelyAntiAdditive_compl
-  | antiMultiplicative => exact isCompletelyAntiMultiplicative_compl
+  | antiAdditive => exact ⟨isAntiAdditive_compl, compl_top⟩
+  | antiMultiplicative => exact ⟨isAntiMultiplicative_compl, compl_bot⟩
   | monotone | additive | multiplicative => exact absurd hp (by decide)
 
 end HoldsFor
