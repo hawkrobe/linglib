@@ -2,7 +2,6 @@ import Linglib.Data.Examples.Steedman2000
 import Linglib.Syntax.Anaphora.Basic
 import Linglib.Fragments.English.Toy
 import Linglib.Fragments.English.Coordination
-import Linglib.Studies.BresnanEtAl1982
 import Linglib.Syntax.CCG.Derivation
 import Linglib.Syntax.CCG.Grammar
 import Linglib.Syntax.CCG.Interface
@@ -473,8 +472,6 @@ appendix summary) derive the attested "Jan Piet (Marie) zag (helpen) zwemmen". -
 
 section CrossSerial
 
-open BresnanEtAl1982
-
 /-! ### Categories for Dutch verb clusters -/
 
 /-- Verb phrase (infinitival). -/
@@ -624,12 +621,13 @@ def dutch_jan_piet_marie_zag_helpen_zwemmen : AnnotatedDerivation :=
   , derives := three_np_sub_derives
   }
 
-/-- The annotated binding agrees with the empirical datum. -/
+/-- The annotated bindings are the cross-serial association of [bresnan-etal-1982]: the `i`-th
+NP with the `i`-th verb. -/
 theorem dutch_jan_piet_zag_zwemmen_binding :
-    dutch_jan_piet_zag_zwemmen.binding = dutch_2np_2v.binding := rfl
+    dutch_jan_piet_zag_zwemmen.binding = Equiv.refl _ := rfl
 
 theorem dutch_jan_piet_marie_zag_helpen_zwemmen_binding :
-    dutch_jan_piet_marie_zag_helpen_zwemmen.binding = dutch_3np_3v.binding := rfl
+    dutch_jan_piet_marie_zag_helpen_zwemmen.binding = Equiv.refl _ := rfl
 
 end CrossSerial
 

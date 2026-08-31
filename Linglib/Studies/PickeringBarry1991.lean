@@ -1,6 +1,5 @@
 import Linglib.Processing.Cost.Profile
 import Linglib.Semantics.Composition.Combinator
-import Linglib.Studies.BresnanEtAl1982
 
 /-!
 # Pickering & Barry (1991)
@@ -45,7 +44,7 @@ association directly — formalized below as `subject_verb_composition`.
 - §2: The four sentence types with empirical difficulty
 - §3: Table 2 — the gap-free classification and its processing predictions
 - §4: Contrast with the trace-based analysis (Table 1)
-- §5: Bridges to ProcessingProfile, BresnanEtAl1982, and CCG
+- §5: Bridges to ProcessingProfile, cross-serial dependencies, and CCG
 -/
 
 namespace PickeringBarry1991
@@ -279,19 +278,13 @@ theorem all_orderings_verified :
 
 /-! ### Bridge to cross-serial dependencies -/
 
-/-- German verb-final order produces nested filler-verb associations,
-consistent with the nested dependency pattern in German verb clusters
-(`BresnanEtAl1982.german_3np_3v`). Both German constructions — subject
-relatives and verb clusters — exhibit nesting because the verb that
-closes each dependency comes in reverse order.
-
-[bach-brown-marslen-wilson-1986] confirms the processing prediction:
-German nested constructions are hard, like their Dutch cross-serial
-counterparts (though for different structural reasons). -/
-theorem german_nested_consistent :
-    fillerVerbPattern .gerMultiSubjRel = .nested ∧
-    BresnanEtAl1982.german_3np_3v.binding = Fin.revPerm :=
-  ⟨rfl, rfl⟩
+/-- German verb-final order produces nested filler-verb associations, the
+pattern of German verb clusters ([bach-brown-marslen-wilson-1986]): both
+constructions nest because the verb that closes each dependency comes in
+reverse order. [bach-brown-marslen-wilson-1986] confirms the processing
+prediction: German nested constructions are hard, like their Dutch
+cross-serial counterparts (though for different structural reasons). -/
+theorem german_nested_consistent : fillerVerbPattern .gerMultiSubjRel = .nested := rfl
 
 /-! ### Bridge to CCG combinators
 

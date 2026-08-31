@@ -109,8 +109,7 @@ theorem getElem?_commonPrefix_ne {α : Type*} [DecidableEq α] :
   | a :: as, b :: bs, i, j => by
     by_cases h : a = b
     · subst h
-      simp only [commonPrefix, if_pos rfl, List.length_cons,
-        List.getElem?_cons_succ]
+      simp only [commonPrefix]
       exact getElem?_commonPrefix_ne
     · simp only [commonPrefix, if_neg h, List.length_nil,
         List.getElem?_cons_zero, Option.some.injEq]
@@ -413,8 +412,7 @@ theorem cons {p q : TreePath} (i : Nat) (h : Precedes p q) :
 those indices (divergence at the root). -/
 theorem of_index_lt {i j : Nat} (hij : i < j) (p q : TreePath) :
     Precedes ⟨i :: p.toList⟩ ⟨j :: q.toList⟩ :=
-  ⟨[], i, j, hij, by simpa using List.cons_prefix_cons.mpr ⟨rfl, p.toList.nil_prefix⟩,
-    by simpa using List.cons_prefix_cons.mpr ⟨rfl, q.toList.nil_prefix⟩⟩
+  ⟨[], i, j, hij, by simp, by simp⟩
 
 /-- **Totality over the dominance remainder**: any two positions are
 dominance-comparable or precedence-ordered — the exhaustiveness that
@@ -428,7 +426,7 @@ theorem trichotomy (p q : TreePath) :
     have hple : p.toList.length ≤ cp.length := by
       by_contra hlt
       push Not at hlt
-      exact absurd hpd (by simp [List.getElem?_eq_some_iff, hlt])
+      exact absurd hpd (by simp [hlt])
     have : p.toList = cp :=
       (List.commonPrefix_prefix_left p.toList q.toList).eq_of_length
         (le_antisymm (List.commonPrefix_prefix_left p.toList q.toList).length_le hple) |>.symm
@@ -438,7 +436,7 @@ theorem trichotomy (p q : TreePath) :
       have hqle : q.toList.length ≤ cp.length := by
         by_contra hlt
         push Not at hlt
-        exact absurd hqd (by simp [List.getElem?_eq_some_iff, hlt])
+        exact absurd hqd (by simp [hlt])
       have : q.toList = cp :=
         (List.commonPrefix_prefix_right p.toList q.toList).eq_of_length
           (le_antisymm (List.commonPrefix_prefix_right p.toList q.toList).length_le hqle) |>.symm
