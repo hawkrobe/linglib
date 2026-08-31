@@ -48,7 +48,7 @@ mathlib's `SupHom` and could be folded into it (Todo).
   requires aligning `Finset Atom` with `Type*`-lattice carriers.
 -/
 
-namespace Semantics.Plurality.Algebra
+namespace Plurality.Algebra
 
 open _root_.Mereology
 
@@ -355,4 +355,4 @@ theorem distr_star_iff_all_atoms {P : E → Prop} (hDistr : IsDistr P)
     star P x → ∀ {y : E}, Atom y → y ≤ x → P y :=
   distr_atom_part hDistr hJP
 
-end Semantics.Plurality.Algebra
+end Plurality.Algebra

@@ -69,7 +69,7 @@ namespace Giannakidou2002
 
 open Core.Order
 open NonemptyInterval
-open Semantics.Aspect
+open Aspect
 open Tense Anscombe1964 Karttunen1974 Heinamaki1974
 
 variable {Time : Type*} [LinearOrder Time]

@@ -20,10 +20,10 @@ person shifts but time does not.
 
 -/
 
-namespace Semantics.Reference.ShiftedIndexicals
+namespace Reference.ShiftedIndexicals
 
 open Semantics.Context
-open Semantics.Reference.Kaplan
+open _root_.Reference.Kaplan
 
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
 
@@ -182,4 +182,4 @@ def englishMixed : MixedShiftLexicon :=
 theorem english_not_mixed :
     englishMixed.personDepth = englishMixed.temporalDepth := rfl
 
-end Semantics.Reference.ShiftedIndexicals
+end Reference.ShiftedIndexicals

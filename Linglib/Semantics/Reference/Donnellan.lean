@@ -42,13 +42,13 @@ import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Definiteness.Maximality
 
-namespace Semantics.Reference.Donnellan
+namespace Reference.Donnellan
 
 open Intensional (Intension)
 open Intensional.Intension (rigid IsRigid rigid_isRigid)
 open Presupposition
 open Presupposition.PartialProp
-open Semantics.Reference.Basic
+open _root_.Reference.Basic
 open Definiteness
 
 /-! ## Use Modes -/
@@ -182,4 +182,4 @@ theorem attributive_is_pointwise_iota {W E : Type*} (domain : List E)
     attributiveContent domain restrictor w =
     russellIotaList domain (fun e => restrictor e w) := rfl
 
-end Semantics.Reference.Donnellan
+end Reference.Donnellan

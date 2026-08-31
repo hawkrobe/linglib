@@ -73,10 +73,10 @@ three, the lumping CF does NOT use `SimilarityOrdering` /
   from minimal-change semantics) is documented separately.
 -/
 
-namespace Semantics.Conditionals.PremiseSemantic
+namespace Conditionals.PremiseSemantic
 
 open Intensional
-open Semantics.Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows)
+open _root_.Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows)
 
 variable {F : SituationFrame}
 
@@ -170,4 +170,4 @@ theorem mightCF_iff_not_wouldCF_compl {Fw : Set (Set F.Index)} {w : F.Index}
     mightCF Fw w p q ↔ ¬ wouldCF Fw w p qᶜ := by
   sorry  -- TODO: requires upward-directedness of CrucialSet; see docstring
 
-end Semantics.Conditionals.PremiseSemantic
+end Conditionals.PremiseSemantic

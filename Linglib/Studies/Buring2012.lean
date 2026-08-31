@@ -20,7 +20,7 @@ theorems are about.
   not assertion).
 * A *bound* pronoun has the *same* denotation as a free one — binding is
   supplied externally by an assignment update, not by a distinct lexical entry
-  (Büring's §3 thesis; the continuation rendering is `Semantics.Reference.Binding`).
+  (Büring's §3 thesis; the continuation rendering is `Reference.Binding`).
 
 A fourth theorem records the [arnold-2026] contrast that motivates the
 English `epicene` paradigm: *they* carries no gender presupposition, so it is

@@ -22,7 +22,7 @@ desirability relation cannot make both `p` and `¬p` wanted (`Want.not_compl`).
 
 namespace Desire.Conditional
 
-open Semantics.Conditionals (SimilarityOrdering)
+open Conditionals (SimilarityOrdering)
 
 variable {W : Type*}
 

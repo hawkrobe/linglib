@@ -18,7 +18,7 @@ Formation-locus classification of reciprocal verbs lives in
 (`Studies/Siloni2012.lean`).
 -/
 
-open Semantics.Plurality
+open Plurality
 
 /-- A symmetric verb entry: an intransitive verb whose lexical meaning
     codes symmetry; `base` is the transitive alternate when the vocabulary

@@ -39,7 +39,7 @@ Substrate note: the event-relative machinery (`EventBinder`,
 namespace Hacquard2006
 
 open Modality Modality.Kratzer
-open Semantics.Aspect (Perfectivity)
+open Aspect (Perfectivity)
 open Data.Examples (LinguisticExample)
 
 /-! ### Position → temporal perspective

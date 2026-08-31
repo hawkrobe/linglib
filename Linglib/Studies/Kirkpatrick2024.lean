@@ -41,7 +41,7 @@ makes exceptional individuals salient before the general claim is assessed.
 
 namespace Kirkpatrick2024
 
-open Semantics.Genericity.Dynamic
+open Genericity.Dynamic
 
 
 -- ═══ Toy Model: Ravens ═══

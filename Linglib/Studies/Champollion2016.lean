@@ -45,7 +45,7 @@ namespace Champollion2016
 open Intensional
 open Intensional.Conjunction
 open Quantification (individual)
-open Semantics.Plurality.Algebra
+open Plurality.Algebra
 
 /-! ### The type-shift `⊔ ↦ ⊓` is guarded to distributive predicates
 

@@ -59,7 +59,7 @@ individual denotation — it has no `NominalDenot`) remains deferred.
 
 namespace Definiteness
 
-open Semantics.Reference (NominalDenot)
+open Reference (NominalDenot)
 open Intensional.Variables
 
 variable {E W : Type}

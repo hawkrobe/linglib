@@ -228,7 +228,7 @@ atoms of `x` satisfy `P` at `w`. -/
 
 section ImplicatureBridge
 
-open Semantics.Plurality.Implicature (existPL existPL_full)
+open Plurality.Implicature (existPL existPL_full)
 
 variable {Atom W : Type*} [DecidableEq Atom]
 

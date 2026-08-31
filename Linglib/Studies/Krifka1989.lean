@@ -70,10 +70,10 @@ on abstract domains.
 namespace Krifka1989
 
 open _root_.Mereology
-open Semantics.Plurality.Algebra (Materialization)
+open Plurality.Algebra (Materialization)
 open ArgumentStructure (UP)
-open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb)
-open Semantics.Aspect.Cumulativity (VP qua_propagation)
+open Aspect.Incremental (SINC VerbIncClass IsSincVerb)
+open Aspect.Cumulativity (VP qua_propagation)
 open Core.Order (MereoTag)
 open Features
   (forXPrediction inXPrediction DiagnosticResult)

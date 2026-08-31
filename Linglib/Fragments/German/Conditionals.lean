@@ -15,7 +15,7 @@ Conditional connectives in German and their HC/PC restrictions.
 
 namespace German.Conditionals
 
-open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
+open _root_.Conditionals (ConditionalMarker ConditionalMarkerType)
 
 /-- German falls: HC-only conditional marker.
 

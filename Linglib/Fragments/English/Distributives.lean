@@ -27,9 +27,9 @@ contrast that blocks *each ten minutes* while allowing *every ten minutes*
 
 namespace English.Distributives
 
-open Semantics.Plurality
-open Semantics.Plurality.Distributivity
-open Semantics.Plurality.Trivalent
+open Plurality
+open Plurality.Distributivity
+open Plurality.Trivalent
 
 variable {Atom W : Type*} [DecidableEq Atom]
 

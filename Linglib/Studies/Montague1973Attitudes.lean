@@ -156,7 +156,7 @@ theorem up_down_identity {E W : Type} {τ : Ty} (x : Denot E W τ) (w : W) :
 
 The `morningStar`/`eveningStar` individual concepts defined above are
 *Fregean concepts* (world-dependent). In contrast, proper names in
-`Semantics.Reference.Basic` are *Kripkean rigid designators*.
+`Reference.Basic` are *Kripkean rigid designators*.
 
 This section makes the distinction explicit, connecting the existing
 Hesperus/Phosphorus examples to the direct reference framework. -/

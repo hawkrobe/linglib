@@ -44,7 +44,7 @@ is on a 7-point scale (7 = best, 1 = worst). Classifier direction
 namespace SchlenkerEtAl2026
 
 open Semantics.Iconic
-open Semantics.Reference.Monsters (IsTowerMonster attitudeShift_is_monster isTowerMonster_congr)
+open Reference.Monsters (IsTowerMonster attitudeShift_is_monster isTowerMonster_congr)
 open Semantics.Context
 open ASL (SigningSpace)
 

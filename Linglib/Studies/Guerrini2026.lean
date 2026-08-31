@@ -35,7 +35,7 @@ stimuli are typed rows in `Data/Examples/Guerrini2026.json` (`Examples.all`).
 namespace Guerrini2026
 
 open Semantics.Kinds.NMP (NominalMapping NominalDenotation CanDenoteKind downDefinedFor)
-open Semantics.Plurality (distMaximal allSatisfy noneSatisfy)
+open Plurality (distMaximal allSatisfy noneSatisfy)
 open Data.Examples (LinguisticExample)
 
 /-! ### The four LF parses -/
@@ -85,7 +85,7 @@ abbrev distributiveKindPred {Atom W : Type} (kindExt : W → Finset Atom)
     extension to a set of locations (§4, structure (62)). -/
 abbrev cumulativeKindPred {Atom Loc : Type} (R : Atom → Loc → Prop)
     (kindExt : Finset Atom) (locations : Finset Loc) : Prop :=
-  Semantics.Plurality.Cumulativity.Cumulative R kindExt locations
+  Plurality.Cumulativity.Cumulative R kindExt locations
 
 /-! ### Nominal Mapping and denotation (diagram (145), §5.3) -/
 

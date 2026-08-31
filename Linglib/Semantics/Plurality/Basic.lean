@@ -27,14 +27,14 @@ files.
 
 ## Implementation notes
 
-This file sits under `namespace Semantics.Plurality` (the directory
-umbrella) rather than `Semantics.Plurality.Basic` (filename pattern).
-Consumers `open Semantics.Plurality` for substrate access; specific
+This file sits under `namespace Plurality` (the directory
+umbrella) rather than `Plurality.Basic` (filename pattern).
+Consumers `open Plurality` for substrate access; specific
 theoretical accounts (`Distributivity`, `Trivalent`, `Implicature`,
 `Cumulativity`, …) live under sub-namespaces and are opened separately.
 -/
 
-namespace Semantics.Plurality
+namespace Plurality
 
 variable {Atom W : Type*}
 
@@ -125,4 +125,4 @@ instance noneSatisfy.instDecidable (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
     Decidable (noneSatisfy P x w) := by unfold noneSatisfy; infer_instance
 
-end Semantics.Plurality
+end Plurality

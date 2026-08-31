@@ -50,7 +50,7 @@ machinery handles the abstraction; concrete computation would need
 either MCMC (out of scope) or aggressive structural simplification.
 -/
 
-namespace Semantics.Probabilistic.SDS
+namespace Probabilistic.SDS
 
 open scoped ENNReal
 open ProbabilityTheory GraphicalModel
@@ -161,4 +161,4 @@ theorem conceptPosteriorAt_eq_of_support
 
 end GraphicalModel
 
-end Semantics.Probabilistic.SDS
+end Probabilistic.SDS

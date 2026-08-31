@@ -22,7 +22,7 @@ reported simulations, matching the exponent-free chain here.
 ## Main results
 
 * Order-independence of the prefix meaning — the paper's listener-level
-  sanity check — is the substrate lemma `Semantics.Probabilistic.prodMeaning_perm`.
+  sanity check — is the substrate lemma `Probabilistic.prodMeaning_perm`.
 * `size_first_when_size_discriminates` / `color_first_when_color_reliable`:
   the trajectory preference tracks discriminatory power (Scene A) and
   flips to the more reliable dimension under equal discrimination
@@ -37,7 +37,7 @@ reported simulations, matching the exponent-free chain here.
 The chain is exact ℚ≥0: `lex` is the Bernoulli-channel form of
 [degen-etal-2020]'s continuous semantics (reliability if the word truly
 applies, the complementary noise floor otherwise), prefix meanings are
-`Semantics.Probabilistic.prodMeaning` products, `l0Score`/`s1Score`
+`Probabilistic.prodMeaning` products, `l0Score`/`s1Score`
 normalize via `PMF.normalizeScores`, and the PMF speaker is `PMF.ofScores`. Trajectories are `Fin`-indexed
 products of speaker values, so ordering predictions close by
 `PMF.prod_ofScores_lt` with one kernel certificate each.
@@ -47,7 +47,7 @@ open scoped ENNReal NNRat
 
 namespace SchlotterbeckWang2023
 
-open Semantics.Probabilistic
+open Probabilistic
 
 /-- Referents in the reference game. -/
 inductive Referent where

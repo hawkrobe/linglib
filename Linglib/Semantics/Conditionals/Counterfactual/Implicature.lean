@@ -40,7 +40,7 @@ that can be cited (in the contrastive direction) by the
 [ramotowska-marty-romoli-santorio-2025] study file.
 -/
 
-namespace Semantics.Conditionals.Counterfactual
+namespace Conditionals.Counterfactual
 
 
 /-- Under the implicature approach with all-true individual results,
@@ -66,4 +66,4 @@ theorem implicature_wrong_for_notEvery :
       ([Trivalent.true, Trivalent.true].map Trivalent.neg) = .false := by
   decide
 
-end Semantics.Conditionals.Counterfactual
+end Conditionals.Counterfactual

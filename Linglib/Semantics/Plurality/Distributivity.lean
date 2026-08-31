@@ -35,9 +35,9 @@ A tolerance relation induces a partition on pluralities: identity tolerance
 
 -/
 
-namespace Semantics.Plurality.Distributivity
+namespace Plurality.Distributivity
 
-open Semantics.Plurality
+open _root_.Plurality
 
 variable {Atom W : Type*} [DecidableEq Atom]
 
@@ -285,4 +285,4 @@ theorem distMaximal_iff_star_atoms (P : Atom → W → Prop)
       · exact ih₁ a hau
       · exact ih₂ a hav
 
-end Semantics.Plurality.Distributivity
+end Plurality.Distributivity

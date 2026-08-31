@@ -24,12 +24,12 @@ import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Reference.Basic
 
-namespace Semantics.Reference.KaplanLD
+namespace Reference.KaplanLD
 
 open Intensional (Intension)
 open Intensional.Intension (rigid IsRigid rigid_isRigid StableCharacter)
 open Semantics.Context (KContext ProperContext LocatedContext)
-open Semantics.Reference.Basic (Context Character Content)
+open _root_.Reference.Basic (Context Character Content)
 
 /-! ## LD Structure -/
 
@@ -185,4 +185,4 @@ theorem actually_stable {W T : Type*} (cW : W) (φ : W → T → Prop) (t : T) :
     ∀ w₁ w₂ : W, opActually cW φ w₁ t = opActually cW φ w₂ t :=
   λ _ _ => rfl
 
-end Semantics.Reference.KaplanLD
+end Reference.KaplanLD

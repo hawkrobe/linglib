@@ -138,7 +138,7 @@ the §5 conclusion proposes the broader "insinuative speech" terminology.
 
 namespace Ney2026
 
-open Semantics.Reference.Basic
+open Reference.Basic
 
 /-! ## §1. Metasemantic apparatus -/
 

@@ -44,9 +44,9 @@ conversational background) lives in `Conditionals/Restrictor.lean`, which
 bridges to `strictImp` via `conditionalNecessity_iff_mem_strictImp`.
 -/
 
-namespace Semantics.Conditionals
+namespace Conditionals
 
-open Semantics.Conditionals (SimilarityOrdering)
+open _root_.Conditionals (SimilarityOrdering)
 
 variable {I W : Type*} {access : I → Set W} {p p' q q' : Set W} {i : I} {w : W}
 
@@ -125,7 +125,7 @@ theorem strict_implies_material {R : W → Set W} (h_refl : w ∈ R w)
 vacuously true if the domain has no antecedent worlds; otherwise true iff
 some antecedent world settles the consequent throughout all antecedent
 worlds at least as close. (`SimilarityOrdering` and its constructors live in
-`Semantics.Conditionals.SimilarityOrdering`.) -/
+`Conditionals.SimilarityOrdering`.) -/
 def variablyStrictImp (sim : SimilarityOrdering W) (allWorlds p q : Set W) :
     Set W :=
   {w | allWorlds ∩ p = ∅ ∨
@@ -182,4 +182,4 @@ theorem perfection_not_entailed_variablyStrict :
     Or.inr ⟨true, ⟨Set.mem_univ _, rfl⟩, λ _ _ _ => trivial⟩,
     λ h => h Bool.false_ne_true trivial⟩
 
-end Semantics.Conditionals
+end Conditionals

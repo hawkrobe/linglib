@@ -144,7 +144,7 @@ theorem only_presup {R : W → W → Prop} {a b : Set W} (h₁ : ∃ w ∈ poss 
 
 section Simplification
 
-open Semantics.Conditionals Semantics.Conditionals.Counterfactual
+open Conditionals Conditionals.Counterfactual
 
 variable [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W) (p q r : W → Prop)
   [DecidablePred p] [DecidablePred q] [DecidablePred r]
@@ -271,7 +271,7 @@ structure Switch where
 
 namespace Switch
 
-open Semantics.Conditionals
+open Conditionals
 
 /-- Worlds with a different wiring are farther than any with the same; among the latter,
 distance is the number of switches in another position. -/
@@ -301,7 +301,7 @@ instance : DecidablePred off := λ _ => inferInstanceAs (Decidable (_ = _))
 /-- Both switches up, and the light on exactly when the switches agree. -/
 def actual : Switch := ⟨true, true, λ x y => x == y⟩
 
-open Semantics.Conditionals.Counterfactual
+open Conditionals.Counterfactual
 
 /-- *If switch A or switch B were down, the light would be off* (76) is true in the scenario:
 its strengthening asserts both simplifications and denies the conjunctive one. -/

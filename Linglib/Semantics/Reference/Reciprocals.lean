@@ -63,7 +63,7 @@ distributive operators (§5) and logophoric antecedents (§6) — see
 [dalrymple-haug-2024] for the empirical contrast.
 -/
 
-namespace Semantics.Reference.Reciprocals
+namespace Reference.Reciprocals
 
 open PPCDRT
 
@@ -285,4 +285,4 @@ theorem readings_pairwise_distinct :
     crossedReading ≠ wideScopeReading := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
-end Semantics.Reference.Reciprocals
+end Reference.Reciprocals

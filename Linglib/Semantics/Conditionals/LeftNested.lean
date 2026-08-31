@@ -40,7 +40,7 @@ CAN be interpreted as HCs, because these provide "object-level" content
 that can be genuinely supposed without prior discourse.
 -/
 
-namespace Semantics.Conditionals
+namespace Conditionals
 
 open Discourse.Commitment.Table
 
@@ -88,14 +88,14 @@ def semantics (lnc : LNC W) : Set W :=
 Full LNC semantics using Kratzer-style conditionals.
 
 The outer conditional uses the canonical
-`Semantics.Conditionals.Restrictor.conditionalNecessity` (Kratzer's
+`Conditionals.Restrictor.conditionalNecessity` (Kratzer's
 restrictor analysis: if-clauses restrict the modal base, then necessity
 quantifies over best worlds), with the inner conditional as the
 restrictor. -/
 def kratzerSemantics (f : Modality.Kratzer.ModalBase W)
     (g : Modality.Kratzer.OrderingSource W) (lnc : LNC W) :
     Set W :=
-  fun w => Semantics.Conditionals.Restrictor.conditionalNecessity f g
+  fun w => Conditionals.Restrictor.conditionalNecessity f g
     lnc.innerConditional lnc.outerConsequent w
 
 end LNC
@@ -214,7 +214,7 @@ theorem lnc_grounded {W : Type*}
     (f : Modality.Kratzer.ModalBase W)
     (g : Modality.Kratzer.OrderingSource W) (lnc : LNC W) :
     lnc.kratzerSemantics f g =
-    fun w => Semantics.Conditionals.Restrictor.conditionalNecessity f g
+    fun w => Conditionals.Restrictor.conditionalNecessity f g
       lnc.innerConditional lnc.outerConsequent w := rfl
 
 -- Extended LNC with Metadata
@@ -393,4 +393,4 @@ object) inherently requires discourse anchoring to be supposed. This explains:
 4. Why modal/generic LNCs allow HC readings
 -/
 
-end Semantics.Conditionals
+end Conditionals

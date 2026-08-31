@@ -22,7 +22,7 @@ typology in `Fragments/{Language}/Conditionals.lean`.
 namespace Lassiter2025
 
 open Data.Examples
-open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
+open Conditionals (ConditionalMarker ConditionalMarkerType)
 
 /-- Marker adapter: the Fragment entry for the row's conditional marker. -/
 def markerOf (row : LinguisticExample) : Option ConditionalMarker :=
