@@ -30,8 +30,8 @@ pied-piping*, §4.3.
 * monad laws (Left/Right Identity + ASSOCIATIVITY) inherited from
   mathlib's `LawfulMonad Set`
 * `existsClosure` — Charlow's `↓` (eq. 19): `m^↓ := ⊤ ∈ m`
-* bridges to `Studies/Charlow2018.lean` (`setPure`/`setAp`): the applicative
-  presentation is strictly weaker than the monad
+* the applicative presentation of [charlow-2018] is recovered from the monad
+  (`seq_from_setBind`), and is strictly weaker than it
 * `lift_eq_A_eta` — LIFT decomposition (eq. 28):
   `A ∘ η = LIFT` on entities (Partee 1986's triangle, extended)
 * `higher_order_from_eta` — higher-order alternative sets `S(S t)`
@@ -67,7 +67,6 @@ The same `η`/`≫=` structure with a different carrier:
 
 namespace Charlow2020
 
-open Charlow2018 (setPure setAp)
 
 /-! ## Part I — Apparatus -/
 
@@ -173,28 +172,23 @@ operation. -/
 theorem eval_setToCont (m : Set Prop) :
     ContT.eval (setToCont m) = existsClosure m := rfl
 
-/-! ### §4 Bridge to `Studies/Charlow2018.lean`
+/-! ### §4 The applicative from the monad
 
-The set applicative (`setPure`, `setAp`) — point-wise composition — is
-strictly weaker than the monadic bind: the former is derivable from the
-latter, but not vice versa. Charlow argues (§5.4) that this difference
-matters: the applicative cannot derive selectivity for multiple
-island-bound indefinites, while the monad can. -/
+The Set applicative of [charlow-2018] — point-wise composition, mathlib's `<*>` — is strictly
+weaker than the monadic bind: the former is derivable from the latter, not vice versa. Charlow
+argues (§5.4) that the difference matters — the applicative cannot derive selectivity for
+multiple island-bound indefinites, while the monad can. -/
 
 section ApplicativeBridge
 
 variable {A B : Type}
 
-/-- `eta` and `setPure` (from `Studies/Charlow2018.lean`) are the same operation. -/
-theorem eta_eq_setPure (x : A) : eta x = setPure x := rfl
-
-/-- Standard monad-to-applicative derivation:
-`m ⊛ n = m ≫= λf. n ≫= λx. η(f x)`. The set applicative `setAp`
-agrees with the derived applicative from the set monad. -/
-theorem setAp_from_setBind (m : Set (A → B)) (n : Set A) :
-    setAp m n = setBind m (fun f => setBind n (fun x => eta (f x))) := by
+/-- The standard monad-to-applicative derivation at Set:
+`m ⊛ n = m ≫= λf. n ≫= λx. η (f x)`. -/
+theorem seq_from_setBind (m : Set (A → B)) (n : Set A) :
+    m <*> n = setBind m (fun f => setBind n (fun x => eta (f x))) := by
   ext b
-  simp only [Charlow2018.mem_setAp, mem_setBind, mem_eta]
+  simp only [Set.seq_eq_set_seq, Set.mem_seq_iff, mem_setBind, mem_eta]
   aesop
 
 end ApplicativeBridge

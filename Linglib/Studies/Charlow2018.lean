@@ -41,14 +41,34 @@ same ρ/⊛ with `Entity` as the environment type, where composing the VF
 applicative with itself makes assignment-dependence "spring organically
 into being."
 
-## Organization (following the paper)
+## Main definitions
 
-* **§3.1–3.2** — ρ/⊛, the four laws, H&K decomposition, categorematic Λᵢ
-* **§3.3** — applicatives already in semantic theory: Set, Cont, composition
-* **§4** — μ, higher-order variables: paychecks, binding reconstruction
-* **§5** — typed assignments `gᵣ`; composed-applicative paychecks
-* **§6** — variable-free semantics as Reader Entity
-* **Bridges** — `Core`'s `DenotG` apparatus and `Reference/Binding`'s Reader monad
+* `momIntension`, `TypedAssignment`, `vfPronoun` — the paycheck intension, type-homogeneous
+  assignments, and the variable-free pronoun
+* `composedPure`, `composedAp` — the composed applicative `Reader E₁ ∘ Reader E₂` of Fig. 5
+
+## Main results
+
+* `hk_decomposition`, `hk_lexical_lift` — Heim and Kratzer's interpretation function is `applyG`
+  on binary branching and `constDenot` on non-pronominal entries, so ρ and ⊛ are the substrate's
+  own operations, whose four applicative laws it already proves
+* `lambda_pronoun`, `lambda_rho_ap_pronoun` — Λᵢ as a categorematic operation, `lambdaAbsG`
+* `hamblin_seq`, `hamblin_pure` — Hamblin alternative semantics is `Set`'s own applicative
+* `cont_pure_eq`, `cont_ap_eq` — Shan and Barker's combinators are `Cont`'s
+* `composed_homomorphism` … `composed_composition` — applicatives compose (monads do not)
+* `paycheck_truth_conditions`, `paycheck_reading`, `reconstruction_predicate` — paychecks and
+  binding reconstruction from μ and higher-order variables
+* `typed_paycheck`, `composed_paycheck` — the same without monads, on two assignments
+* `vf_she_saw_her_composed` — composing the variable-free applicative with itself makes
+  assignment-dependence spring into being
+
+## References
+
+* [charlow-2018]
+* [heim-kratzer-1998]
+* [mcbride-paterson-2008]
+* [jacobson-1999]
+* [charlow-2020]
 -/
 
 namespace Charlow2018
@@ -58,42 +78,12 @@ open Intensional.Variables
 
 /-! ## §3.1–3.2 Getting modular: ρ and ⊛
 
-Eqs (11)–(12): instead of treating all lexical values as trivially
-assignment-dependent, invoke `ρ` to lift any `x` into a constant
-function from assignments, and `⊛` for assignment-friendly functional
-application on demand. The four applicative functor laws (§3.3 table)
-hold definitionally for `G a := g → a`. -/
-
-section ReaderApplicative
-
-variable {E A B C : Type}
-
-/-- ρ (eq. 11): lift a value into the Reader space — `ρ x := λg. x`. -/
-def readerPure (x : A) : E → A := fun _ => x
-
-/-- ⊛ (eq. 12): assignment-friendly functional application —
-`m ⊛ n := λg. m g (n g)`. -/
-def readerAp (f : E → A → B) (x : E → A) : E → B :=
-  fun e => f e (x e)
-
-/-- **Homomorphism** (§3.3): `ρ f ⊛ ρ x = ρ (f x)`. -/
-theorem reader_homomorphism (f : A → B) (x : A) :
-    readerAp (readerPure (E := E) f) (readerPure x) = readerPure (f x) := rfl
-
-/-- **Identity** (§3.3): `ρ(λx.x) ⊛ v = v`. -/
-theorem reader_identity (v : E → A) :
-    readerAp (readerPure id) v = v := rfl
-
-/-- **Interchange** (§3.3): `u ⊛ ρ y = ρ(λf. f y) ⊛ u`. -/
-theorem reader_interchange (u : E → A → B) (y : A) :
-    readerAp u (readerPure y) = readerAp (readerPure (fun f => f y)) u := rfl
-
-/-- **Composition** (§3.3): `ρ(∘) ⊛ u ⊛ v ⊛ w = u ⊛ (v ⊛ w)`. -/
-theorem reader_composition (u : E → B → C) (v : E → A → B) (w : E → A) :
-    readerAp (readerAp (readerAp (readerPure Function.comp) u) v) w =
-    readerAp u (readerAp v w) := rfl
-
-end ReaderApplicative
+The paper's ρ and ⊛ — lift a value into a constant function from assignments, apply two
+assignment-dependent meanings pointwise — are the substrate's `constDenot` and `applyG`, and the
+four applicative-functor laws of the §3.3 table are the substrate's theorems about them:
+Homomorphism is `constDenot_applyG`, Identity `applyG_constDenot_id`, Interchange
+`applyG_constDenot_interchange`, Composition `applyG_composition`. Nothing is restated here; the
+sections below put the operations to the paper's uses. -/
 
 /-! ### The ρ/⊛ decomposition of H&K's interpretation function
 
@@ -117,20 +107,6 @@ theorem hk_decomposition (f : DenotG E W (σ ⇒ τ)) (x : DenotG E W σ) :
 `⟦John⟧ := λg. j`. This is exactly ρ(j). -/
 theorem hk_lexical_lift (d : Denot E W σ) :
     constDenot d = fun (_ : Assignment E) => d := rfl
-
-/-- Composing two ρ-lifted entries via ⊛ yields ρ of the composition. -/
-theorem rho_ap_reduces (f : Denot E W (σ ⇒ τ)) (x : Denot E W σ) :
-    applyG (constDenot f) (constDenot x) = constDenot (f x) :=
-  constDenot_applyG f x
-
-/-- `Core`'s `constDenot` IS the paper's ρ. -/
-theorem constDenot_is_readerPure {σ : Ty} (d : Denot E W σ) :
-    constDenot d = readerPure d := rfl
-
-/-- `Core`'s `applyG` IS the paper's ⊛. -/
-theorem applyG_is_readerAp {σ τ : Ty}
-    (f : DenotG E W (σ ⇒ τ)) (x : DenotG E W σ) :
-    applyG f x = readerAp f x := rfl
 
 end HKDecomposition
 
@@ -169,60 +145,27 @@ semantic theory." Two examples, then the composition property. -/
 
 /-! ### The Set applicative (eqs 14–15)
 
-Hamblin alternative semantics restated as an applicative for sets
-`S a := a → t`: `ρ x := {x}` and `m ⊛ n := {f x | f ∈ m, x ∈ n}`.
-Operations are mathlib's `Set` `pure`/`<*>`; the application-form simp
-lemmas serve consumers that treat `Set A = A → Prop`. The monadic
-extension of this applicative — and why the *monad* matters for
-exceptional scope — is [charlow-2020], formalized in
+Hamblin alternative semantics is the Set applicative: ρ is `pure`, the singleton, and ⊛ is
+`Seq.seq`, pointwise application across sets. The operations and the four laws of the §3.3 table
+are mathlib's own — `LawfulApplicative Set` — so what is proved here is the identification of
+Hamblin's clauses with them. The monadic extension of this applicative, and why the monad rather
+than the applicative is what exceptional scope needs, is [charlow-2020], formalized in
 `Studies/Charlow2020.lean`. -/
 
 section SetApplicative
 
-variable {A B C : Type}
+variable {A B : Type}
 
-/-- Set ρ (eq. 14): the singleton `{x}`. Mathlib's `Set` applicative
-`pure`. -/
-def setPure (x : A) : Set A := pure x
+/-- Eq. (15): Hamblin's pointwise application `{f x | f ∈ m, x ∈ n}` is `Set`'s `<*>`. -/
+theorem hamblin_seq (m : Set (A → B)) (n : Set A) :
+    m <*> n = {b | ∃ f ∈ m, ∃ x ∈ n, f x = b} := by
+  ext b; simp only [Set.seq_eq_set_seq, Set.mem_seq_iff, Set.mem_ofPred_eq]
 
-/-- Set ⊛ (eq. 15): pointwise application across sets,
-`{f x | f ∈ m, x ∈ n}`. Mathlib's `Set` applicative `<*>` (`Set.seq`). -/
-def setAp (m : Set (A → B)) (n : Set A) : Set B := m <*> n
+/-- Eq. (14): Hamblin's `ρ x = {x}` is `Set`'s `pure`. -/
+theorem hamblin_pure (x : A) : (pure x : Set A) = {x} := rfl
 
-@[simp] theorem mem_setPure (x y : A) : y ∈ setPure x ↔ y = x := Iff.rfl
-
-/-- Application-form characterisation of `setPure` (consumers treat
-`Set A = A → Prop`). -/
-@[simp] theorem setPure_apply (x y : A) : setPure x y ↔ y = x := Iff.rfl
-
-@[simp] theorem mem_setAp (m : Set (A → B)) (n : Set A) (b : B) :
-    b ∈ setAp m n ↔ ∃ f, f ∈ m ∧ ∃ x, x ∈ n ∧ f x = b := by
-  simp only [setAp, Set.seq_eq_set_seq, Set.mem_seq_iff]
-
-/-- Application-form characterisation of `setAp`. -/
-@[simp] theorem setAp_apply (m : Set (A → B)) (n : Set A) (b : B) :
-    setAp m n b ↔ ∃ f, m f ∧ ∃ x, n x ∧ f x = b := mem_setAp m n b
-
-/-- **Homomorphism** for Set: `{f} ⊛ {x} = {f x}`. -/
-theorem set_homomorphism (f : A → B) (x : A) :
-    setAp (setPure f) (setPure x) = setPure (f x) := by
-  ext b; simp only [mem_setAp, mem_setPure]; aesop
-
-/-- **Identity** for Set: `{id} ⊛ v = v`. -/
-theorem set_identity (v : Set A) :
-    setAp (setPure id) v = v := by
-  ext b; simp only [mem_setAp, mem_setPure]; aesop
-
-/-- **Interchange** for Set: `u ⊛ {y} = {(fun f => f y)} ⊛ u`. -/
-theorem set_interchange (u : Set (A → B)) (y : A) :
-    setAp u (setPure y) = setAp (setPure (fun f => f y)) u := by
-  ext b; simp only [mem_setAp, mem_setPure]; aesop
-
-/-- **Composition** for Set: `{∘} ⊛ u ⊛ v ⊛ w = u ⊛ (v ⊛ w)`. -/
-theorem set_composition (u : Set (B → C)) (v : Set (A → B)) (w : Set A) :
-    setAp (setAp (setAp (setPure Function.comp) u) v) w =
-    setAp u (setAp v w) := by
-  ext c; simp only [mem_setAp, mem_setPure]; aesop
+/-- The §3.3 table's four laws, for free. -/
+example : LawfulApplicative Set := inferInstance
 
 end SetApplicative
 
@@ -427,11 +370,11 @@ theorem typed_paycheck
     likes (mom bill) bill := by
   simp only [composedAp, composedPure, h_intension, h_bill]
 
-/-- The intension `λh. mom(h 0)` is compositionally derived as
-`ρ(mom) ⊛ pro₀` in the inner `Gₑ` applicative. -/
+/-- The intension `λh. mom(h 0)` is compositionally derived as `ρ(mom) ⊛ pro₀` in the inner
+`Gₑ` applicative — the Reader monad's `pure` and `<*>` at the assignment sort. -/
 theorem typed_intension_is_rho_ap_pro (mom : E → E) :
-    readerAp (readerPure (E := TypedAssignment E) mom) (fun h => h 0) =
-    fun h => mom (h 0) := rfl
+    ((pure mom : Reference.Binding.Reader (TypedAssignment E) (E → E)) <*> fun h => h 0) =
+      fun h => mom (h 0) := rfl
 
 /-- `G ∘ G` paycheck reading with `Assignment` sorts: the doubly
 assignment-dependent meaning `λg λh. likes(g₁ h)(b)` depends on two
@@ -467,15 +410,15 @@ variable {E : Type}
 /-- VF pronoun: the identity function `⟦she⟧ := λx. x`. -/
 def vfPronoun : E → E := id
 
-/-- "She left" in VF: `ρ(left) ⊛ she = left`. -/
+/-- "She left" in VF: `ρ(left) ⊛ she = left`, the same Reader operations at environment `E`. -/
 theorem vf_she_left (left : E → Bool) :
-    readerAp (readerPure left) vfPronoun = left := rfl
+    ((pure left : Reference.Binding.Reader E (E → Bool)) <*> vfPronoun) = left := rfl
 
 /-- "She saw her" with a single entity parameter: both pronouns resolve
 to the same entity, yielding `λe. saw e e` (reflexive reading). -/
 theorem vf_she_saw_her_single (saw : E → E → Bool) :
-    readerAp (readerAp (readerPure saw) vfPronoun) vfPronoun =
-    fun e => saw e e := rfl
+    ((pure saw : Reference.Binding.Reader E (E → E → Bool)) <*> vfPronoun <*> vfPronoun) =
+      fun e => saw e e := rfl
 
 /-- "She saw her" with the composed applicative (two entity
 parameters): the two pronouns resolve independently, yielding
@@ -487,39 +430,5 @@ theorem vf_she_saw_her_composed (saw : E → E → Bool) :
     fun (e₁ : E) (e₂ : E) => saw e₂ e₁ := rfl
 
 end VariableFree
-
-/-! ## Bridge to `Reference/Binding.lean`'s Reader monad
-
-The paper's operations are instantiations of the Reader monad from
-`Binding.lean`:
-
-* `constDenot d` = Reader pure at `Assignment E`
-* `applyG f x` = Reader `<*>` at `Assignment E`
-* `denotGJoin` (μ) = the W combinator
-* VF `readerPure` = Reader pure at Entity -/
-
-section ReaderBridge
-
-open Reference.Binding
-
-variable {E W : Type}
-
-/-- `constDenot` is the Reader monad's `pure`. -/
-theorem constDenot_is_reader_pure {σ : Ty} (d : Denot E W σ) :
-    constDenot d =
-    @Pure.pure (Reference.Binding.Reader (Assignment E)) _ _ d := rfl
-
-/-- VF `readerPure` is also the Reader monad's `pure`. -/
-theorem readerPure_is_reader_monad_pure {A : Type} (x : A) :
-    readerPure (E := E) x =
-    @Pure.pure (Reference.Binding.Reader E) _ A x := rfl
-
-/-- `denotGJoin` (the paper's μ, eq. 19) is the `W` (duplicator)
-combinator from `Binding.lean`. -/
-theorem denotGJoin_is_W {A : Type}
-    (f : Assignment E → Assignment E → A) :
-    denotGJoin f = Reference.Binding.W f := rfl
-
-end ReaderBridge
 
 end Charlow2018
