@@ -29,7 +29,7 @@ common semantic denominator across the readings. Her fn. 2 notes that
 
 namespace Jablonska2004
 
-open Semantics.Aspect (Perfectivity)
+open Aspect (Perfectivity)
 open Svenonius2004 (Analysis WellStacked)
 open Polish.Verbs
 

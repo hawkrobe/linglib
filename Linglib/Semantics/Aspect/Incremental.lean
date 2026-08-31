@@ -39,7 +39,7 @@ and any modern incremental-theme account.
 * [dowty-1991] (proto-roles)
 -/
 
-namespace Semantics.Aspect.Incremental
+namespace Aspect.Incremental
 
 open _root_.ArgumentStructure
 
@@ -131,10 +131,10 @@ theorem mo_of_sinc {θ : α → β → Prop} (h : SINC θ) : MO θ :=
     strictly incremental reading-parts that can overlap in their
     object coverage.
 
-    Specialization of `Semantics.Aspect.PrecedenceClosure` with the
+    Specialization of `Aspect.PrecedenceClosure` with the
     trivial precedence condition: arbitrary sums are admitted. -/
 abbrev IncClosure (θ' : α → β → Prop) : α → β → Prop :=
-  Semantics.Aspect.PrecedenceClosure (fun _ _ ↦ True) θ'
+  Aspect.PrecedenceClosure (fun _ _ ↦ True) θ'
 
 /-- General Incrementality: θ is the IncClosure of some SINC θ'. -/
 def INC (θ : α → β → Prop) : Prop :=
@@ -144,8 +144,8 @@ def INC (θ : α → β → Prop) : Prop :=
     cumulative is trivially its own closure. CumTheta ensures the
     reverse direction: `IncClosure θ ⊆ θ`. -/
 theorem inc_of_sinc {θ : α → β → Prop} (h : SINC θ) (hCum : CumTheta θ) : INC θ :=
-  ⟨θ, h, fun x e => ⟨fun hθ => Semantics.Aspect.PrecedenceClosure.base hθ,
-    fun hcl => Semantics.Aspect.PrecedenceClosure.closure_subset
+  ⟨θ, h, fun x e => ⟨fun hθ => Aspect.PrecedenceClosure.base hθ,
+    fun hcl => Aspect.PrecedenceClosure.closure_subset
       (fun _ _ h => h) (fun x₁ x₂ e₁ e₂ h₁ h₂ _ => hCum _ _ _ _ h₁ h₂) hcl⟩⟩
 
 /-! ### VerbIncClass — Verb Incrementality Classification (K98 §3.6) -/
@@ -299,4 +299,4 @@ def IsQuantizedAffected.ofIsSincVerb {α β δ : Type*}
     IsQuantizedAffected (δ := δ) θ :=
   ⟨g_φ, h_quantized⟩
 
-end Semantics.Aspect.Incremental
+end Aspect.Incremental

@@ -16,7 +16,7 @@ maximally similar to `w₀` — the minimal elements of `s` under `closer w₀` 
 centering, and `w₁ ≤[sim, w₀] w₂` is notation for `sim.closer w₀ w₁ w₂`.
 -/
 
-namespace Semantics.Conditionals
+namespace Conditionals
 
 /-! ## Structure -/
 
@@ -167,4 +167,4 @@ def candidateSelections {W : Type*} (sim : SimilarityOrdering W)
 notation:50 w₁ " ≤[" sim "," w₀ "] " w₂ =>
   SimilarityOrdering.closer sim w₀ w₁ w₂
 
-end Semantics.Conditionals
+end Conditionals

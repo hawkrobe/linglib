@@ -39,7 +39,7 @@ the unmarked values, plural and third person (`politeness_unmarked`).
 namespace Sauerland2003
 
 open Mereology (Atom AlgClosure cum_maximal_unique algClosure_cum not_atom_sup_of_ne)
-open Semantics.Plurality.Algebra (D)
+open Plurality.Algebra (D)
 open Features (ContainmentPair ContainmentPairLike)
 open Presupposition
 open Constraints OptimalityTheory

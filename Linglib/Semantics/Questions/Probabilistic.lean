@@ -43,7 +43,7 @@ that introduced them) since their only consumer is the IKW 2025
 discourse-*only* study file.
 -/
 
-namespace Semantics.Questions.Probabilistic
+namespace Questions.Probabilistic
 
 open Question PMF
 
@@ -346,4 +346,4 @@ theorem IsResolutionEvidencedBy.isRelevantPropOf
   push Not at hcon
   exact absurd (hindep hcon) (ne_of_gt hRes.raises_prob)
 
-end Semantics.Questions.Probabilistic
+end Questions.Probabilistic

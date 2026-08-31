@@ -21,7 +21,7 @@ frames lives study-side (`Studies/RomeroHan2004.lean`).
 * `originalBiasOK`, `evidenceBiasOK` — Romero's compatibility tables.
 -/
 
-namespace Semantics.Questions.Bias
+namespace Questions.Bias
 
 /-- The three polar question forms ([romero-2024] §1).
 
@@ -131,4 +131,4 @@ theorem hiNQ_evidence_against_ok :
 theorem hiNQ_evidence_neutral_ok :
     evidenceBiasOK .HiNQ .neutral = true := rfl
 
-end Semantics.Questions.Bias
+end Questions.Bias

@@ -12,7 +12,7 @@ per-language marker entries live in `Fragments/{Language}/Conditionals.lean`.
 Extracted from `Conditionals/ConditionalType.lean` (was lines 372–396).
 -/
 
-namespace Semantics.Conditionals
+namespace Conditionals
 
 /-- Cross-linguistic conditional markers and their type restrictions.
 
@@ -42,4 +42,4 @@ structure ConditionalMarker where
   notes : String
   deriving Repr
 
-end Semantics.Conditionals
+end Conditionals

@@ -31,7 +31,7 @@ non-anaphoric presupposition. *Linguistics and Philosophy* 47(4):703–748.
 ## Connection to Existing Theory
 
 This study file imports and bridges:
-- `Semantics.Events.Phase` / `Presupposition.Aboutness` (EventPhase, entailment classification)
+- `Events.Phase` / `Presupposition.Aboutness` (EventPhase, entailment classification)
 - `ChangeOfState.Theory` (CoS presuppositions)
 - `Features.Aktionsart` (Vendler classes, telicity)
 - `ProjectiveContent` (Tonhauser taxonomy: all three verb classes are Class C)

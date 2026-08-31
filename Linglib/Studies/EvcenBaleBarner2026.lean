@@ -35,7 +35,7 @@ competent about, `ALT(p) ⊆ ANS(QUD) ∩ {q : Kₛ(q) ∨ Kₛ(¬q)}` — is
 the same derivation [bale-etal-2025]'s scalar-implicature paradigm uses,
 so conditional perfection and scalar implicature share the competence
 gate by construction. Perfection is not a semantic entailment
-(`Semantics.Conditionals.perfection_not_entailed_variablyStrict`), and
+(`Conditionals.perfection_not_entailed_variablyStrict`), and
 coverage without exclusion does not suffice
 (`VonFintel2001.coverage_without_exclusion_insufficient`).
 
@@ -54,7 +54,7 @@ coverage without exclusion does not suffice
 
 namespace EvcenBaleBarner2026
 
-open VonFintel2001 Semantics.Conditionals Exhaustification NeoGricean
+open VonFintel2001 Conditionals Exhaustification NeoGricean
 open BaleEtAl2025 (speakerState all competent_iff_looked)
 open GoodmanStuhlmuller2013 (Access WorldState)
 

@@ -22,7 +22,7 @@ dǎo 倒, wán 完, hǎo 好, diào 掉, zhù 住.
 
 - `Causation.Resultatives`: `ResultativeRealization`,
   `ResultOrientation`
-- `Semantics.Aspect.ChangeOfState`: `CoSType`
+- `Aspect.ChangeOfState`: `CoSType`
 - `Tay2024`: thesis-specific theorems and analysis that import this Fragment
 
 `PhaseComplement` (the closed-class V2 morpheme enum) lives here rather

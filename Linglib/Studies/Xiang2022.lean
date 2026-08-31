@@ -67,7 +67,7 @@ defer that lift and work with the propositional projection here.
 namespace Xiang2022
 
 open Question
-open Semantics.Questions.Exhaustivity
+open Questions.Exhaustivity
 
 variable {W : Type*}
 

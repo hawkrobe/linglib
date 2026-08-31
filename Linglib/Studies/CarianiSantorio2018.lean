@@ -69,9 +69,9 @@ applying (paper §8.2 footnote 32).
 
 namespace CarianiSantorio2018
 
-open _root_.Semantics.Conditionals (SelectionFunction)
+open _root_.Conditionals (SelectionFunction)
 open Modality.Selectional
-open Semantics.Conditionals.WillConditional
+open Conditionals.WillConditional
   (wouldConditional willConditional universalWillConditional compositional_CEM)
 open scoped ENNReal
 
@@ -148,7 +148,7 @@ noncomputable def cynthiaSel : SelectionFunction W where
     Proved by exhaustive enumeration over 3⁴ = 81 quadruples. -/
 theorem cynthiaSel_coherent : cynthiaSel.isCoherent := by
   intro w₀ w₁ w₂ w₃ h12 h23
-  unfold _root_.Semantics.Conditionals.selectionPrefers cynthiaSel selFn at *
+  unfold _root_.Conditionals.selectionPrefers cynthiaSel selFn at *
   revert h12 h23
   cases w₀ <;> cases w₁ <;> cases w₂ <;> cases w₃ <;>
     simp_all (config := { decide := true })
@@ -383,7 +383,7 @@ theorem universal_will_conditional_cem_fails :
     ¬ universalWillConditional wearsCap warriorsCap histAlt .cw ∧
     ¬ universalWillConditional wearsCap (fun w => ¬ warriorsCap w) histAlt .cw := by
   unfold universalWillConditional _root_.Modality.Selectional.universalWill
-    _root_.Semantics.Conditionals.WillConditional.restrict
+    _root_.Conditionals.WillConditional.restrict
   refine ⟨fun h => ?_, fun h => ?_⟩
   · have hcg : (W.cg) ∈ warriorsCap :=
       h .cg ⟨by simp [histAlt], show (W.cg) ∈ wearsCap by decide⟩

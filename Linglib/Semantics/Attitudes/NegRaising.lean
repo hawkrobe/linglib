@@ -111,7 +111,7 @@ theorem forall_opinionated_iff_subsingleton {W E : Type*} (R : E → W → W →
     (agent : E) (worlds : List W) (w : W) :
     (∀ p : W → Prop, Opinionated R agent worlds p w) ↔
       (accessibleSet R agent worlds w).Subsingleton := by
-  rw [← Semantics.Homogeneity.excludedMiddle_iff_subsingleton (accessibleSet R agent worlds w)]
+  rw [← Homogeneity.excludedMiddle_iff_subsingleton (accessibleSet R agent worlds w)]
   simp only [Opinionated, boxAt_iff_forall_accessibleSet]
 
 /-- Neg-raising is available exactly when the predicate admits a gap

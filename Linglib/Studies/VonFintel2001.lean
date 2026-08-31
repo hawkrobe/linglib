@@ -31,7 +31,7 @@ it is the project-canonical innocent-exclusion operator `exhIE`
 
 namespace VonFintel2001
 
-open Semantics.Conditionals Exhaustification
+open Conditionals Exhaustification
 
 variable {ι W : Type*}
 

@@ -78,7 +78,7 @@ of all alternatives true at `w`.
 namespace George2011
 
 open Question
-open Semantics.Questions.Exhaustivity
+open Questions.Exhaustivity
 
 variable {W : Type*}
 

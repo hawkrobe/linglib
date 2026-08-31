@@ -34,7 +34,7 @@ witnesses; for infinitary closure use `LowerSet`-style packaging.
 
 -/
 
-namespace Semantics.Truthmaker
+namespace Truthmaker
 
 open _root_.Mereology
 
@@ -109,4 +109,4 @@ theorem isConvex_regularClose (p : TMProp S) :
 
 end Regular
 
-end Semantics.Truthmaker
+end Truthmaker

@@ -112,7 +112,7 @@ back-solve, don't intervals").
 namespace ErkHerbelot2024
 
 open scoped ENNReal
-open Semantics.Probabilistic.SDS
+open Probabilistic.SDS
 
 -- ════════════════════════════════════════════════════
 -- §1. Concept, scenario, role types (paper §5.1, p. 569)

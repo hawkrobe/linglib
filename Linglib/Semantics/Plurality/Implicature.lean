@@ -47,7 +47,7 @@ bridge if needed.
   `Mereology.AlgClosure` for unification with Link's `*P` family.
 -/
 
-namespace Semantics.Plurality.Implicature
+namespace Plurality.Implicature
 
 variable {Atom W : Type*}
 
@@ -91,4 +91,4 @@ theorem existPL_singleton [DecidableEq Atom] (a : Atom) (P : Atom → W → Prop
     rwa [Finset.mem_singleton.mp hb_mem] at hP
   · intro hP; exact ⟨a, hx, Finset.mem_singleton_self a, hP⟩
 
-end Semantics.Plurality.Implicature
+end Plurality.Implicature

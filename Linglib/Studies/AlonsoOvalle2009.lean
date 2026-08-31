@@ -45,7 +45,7 @@ The paper's verdicts are checked in `rows_agree`.
 
 namespace AlonsoOvalle2009
 
-open Semantics.Conditionals Semantics.Conditionals.Counterfactual McKayVanInwagen1977
+open Conditionals Conditionals.Counterfactual McKayVanInwagen1977
   Data.Examples
 
 variable {W : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W)

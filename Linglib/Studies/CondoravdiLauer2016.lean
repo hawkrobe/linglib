@@ -60,7 +60,7 @@ namespace CondoravdiLauer2016
 
 open Desire
 open Modality.Kratzer
-open Semantics.Conditionals.Restrictor
+open Conditionals.Restrictor
 
 universe u
 

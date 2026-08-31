@@ -80,7 +80,7 @@ the verification/falsification level:
 
 -/
 
-namespace Semantics.Truthmaker
+namespace Truthmaker
 
 
 -- ════════════════════════════════════════════════════
@@ -562,4 +562,4 @@ theorem subjectMatter_distinguishes_classically_equivalent :
     · exact ht
   exact hb_not_in_lhs (h ▸ hb_in_rhs)
 
-end Semantics.Truthmaker
+end Truthmaker

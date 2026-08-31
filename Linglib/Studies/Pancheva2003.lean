@@ -55,7 +55,7 @@ analysis uses.
 namespace Pancheva2003
 
 open Data.Examples (LinguisticExample)
-open Semantics.Aspect (PerfectType)
+open Aspect (PerfectType)
 open Kiparsky2002 (PerfectReading)
 
 -- ════════════════════════════════════════════════════════════════

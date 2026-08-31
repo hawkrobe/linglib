@@ -370,9 +370,9 @@ def spread : ModelQuantityWord → ℚ
   | .all   => 1
 
 /-- PT meaning via the parametric operator from
-    `Semantics.Probabilistic.PrototypeTheory`. -/
+    `Probabilistic.PrototypeTheory`. -/
 def ptMeaning (m : ModelQuantityWord) (t : WorldState) : ℚ :=
-  Semantics.Probabilistic.PrototypeTheory.ptMeaning
+  Probabilistic.PrototypeTheory.ptMeaning
     domainSize (prototype m) (spread m) t
 
 -- Salience: Lexical Accessibility

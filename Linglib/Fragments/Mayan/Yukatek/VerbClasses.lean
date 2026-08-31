@@ -49,7 +49,7 @@ Status marking encodes both viewpoint aspect and modal assertiveness
 
 namespace Yukatek
 
-open Semantics.Aspect (Perfectivity)
+open Aspect (Perfectivity)
 open ArgumentStructure.EventStructure (EventType InternalExternalCause)
 open Mayan (MarkerSet)
 

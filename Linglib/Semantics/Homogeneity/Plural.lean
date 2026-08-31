@@ -30,11 +30,11 @@ Originates with [kriz-2016]; consumed by `Studies/Kriz2016.lean`,
 * [M. Križ, *Homogeneity, Non-Maximality, and All*][kriz-2016]
 -/
 
-namespace Semantics.Homogeneity
+namespace Homogeneity
 
 open Trivalent (Prop3)
-open Semantics.Plurality
-open Semantics.Plurality.Trivalent
+open Plurality
+open Plurality.Trivalent
 
 variable {Atom W : Type*} (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
   (x : Finset Atom)
@@ -128,4 +128,4 @@ theorem barePlural_eq_superTrue (hne : x.Nonempty) (w : W) :
 theorem allPlural_ne_indet (w : W) : allPlural P x w ≠ .indet := by
   rcases isBivalent_allPlural P x w with h | h <;> simp [h]
 
-end Semantics.Homogeneity
+end Homogeneity

@@ -81,8 +81,8 @@ end NonemptyInterval
 namespace Rouillard2026
 
 open NonemptyInterval
-open Semantics.Aspect
-open Semantics.Aspect.SubintervalProperty
+open Aspect
+open Aspect.SubintervalProperty
 open Features
 open Core.Order
 open Degree

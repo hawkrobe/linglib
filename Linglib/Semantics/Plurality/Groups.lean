@@ -20,7 +20,7 @@ directional sub-events ([siloni-2012] §4.1).
 * `GroupStructure.up_injective` — distinct sums form distinct groups.
 -/
 
-namespace Semantics.Plurality
+namespace Plurality
 
 /-- Landman's group structure: `up` packs a sum into a group atom, `down`
     recovers the underlying sum. The two laws are the operative core of
@@ -105,4 +105,4 @@ noncomputable def finsetModel (β : Type*) [DecidableEq β] [Encodable β] :
 
 end GroupStructure
 
-end Semantics.Plurality
+end Plurality

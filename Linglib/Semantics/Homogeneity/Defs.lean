@@ -21,7 +21,7 @@ gap into the negative extension; the pragmatics of the gap lives in
 * [M. Križ, *Aspects of Homogeneity in the Semantics of Natural Language*][kriz-2015]
 -/
 
-namespace Semantics.Homogeneity
+namespace Homogeneity
 
 open Trivalent (Prop3)
 
@@ -48,4 +48,4 @@ theorem not_isHomogeneous_metaAssert (p : Prop3 W) :
     ¬isHomogeneous p.metaAssert := by
   simp [isHomogeneous, Prop3.gapExt_metaAssert]
 
-end Semantics.Homogeneity
+end Homogeneity

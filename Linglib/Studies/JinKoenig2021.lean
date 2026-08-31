@@ -993,7 +993,7 @@ meaning, satisfying the logical operator licensing condition (§6.3.3).
 More precisely: "q UNLESS p" entails that ¬p is true in all
 *suppositive worlds* (worlds where q holds). -/
 
-open Semantics.Conditionals (materialImp)
+open Conditionals (materialImp)
 
 /-- UNLESS q p is definable as material implication with negated
     antecedent: if ¬p then q. The negation is structural. -/

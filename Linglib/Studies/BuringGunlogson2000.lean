@@ -38,7 +38,7 @@ inner-negation NPQ, `HiNQ` its outer-negation NPQ.
 
 namespace BuringGunlogson2000
 
-open Semantics.Questions.Bias
+open Questions.Bias
 
 /-! ### Compelling contextual evidence -/
 

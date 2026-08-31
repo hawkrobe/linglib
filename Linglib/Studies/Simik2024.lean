@@ -56,12 +56,12 @@ def razveFamily : List Particle :=
 for the prejacent (§4.2.4), extended here to the kin the chapter reports
 as similar in meaning. -/
 def evidentialRequirement (p : Particle) :
-    Option Semantics.Questions.Bias.ContextualEvidence :=
+    Option Questions.Bias.ContextualEvidence :=
   if p ∈ razveFamily then some .forP else none
 
 /-- *Razve*'s prior epistemic bias runs against the prejacent — the
 'I thought that ¬p' component of exx. 39 and 42. -/
-def razveOriginalBias : Option Semantics.Questions.Bias.OriginalBias :=
+def razveOriginalBias : Option Questions.Bias.OriginalBias :=
   some .againstP
 
 /-- *Razve* is a root phenomenon while *li* is obligatory in subordinated
