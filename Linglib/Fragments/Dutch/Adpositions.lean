@@ -2,25 +2,17 @@ import Linglib.Semantics.Events.Path
 import Linglib.Features.Aktionsart
 
 /-!
-# Dutch Adposition Fragment
-[broekhuis-corver-2026] [dendikken-2010]
+# Dutch adpositions
 
-Lexical entries for Dutch adpositions, encoding their surface distribution
-(preposition, postposition, circumposition, intransitive/particle) and
-core properties (R-pronominalization, complement types).
+Lexical entries for the Dutch adpositions, recording for each one the orders it occurs in
+(preposition, postposition, circumposition, intransitive particle), whether its complement can be
+R-pronominalized, the complement types it takes, and its locational and directional readings with
+the path each directional reading describes.
 
-## Key Empirical Generalizations ([broekhuis-corver-2026])
+## References
 
-1. PostPs are a proper subset of prePs — every postP can also be a preP (§6)
-2. PrePs are locational; postPs are directional (§2.2, ex. 21–23)
-3. Morphologically complex prePs resist R-pronominalization (§2.1, ex. 20)
-4. The four-way classification (preP/postP/circumP/intrP) is
-   epiphenomenal — all derive from prePs via syntactic movement (§6)
-
-## Cross-references
-
-- `Dutch.TemporalConnectives`: *tot* as temporal connective
-- `Dendikken1995`: particles as P heads
+* [broekhuis-corver-2026]
+* [dendikken-2010]
 -/
 
 namespace Dutch.Adpositions
@@ -28,9 +20,7 @@ namespace Dutch.Adpositions
 open Spatial (Path)
 open Features (Telicity)
 
-/-- Complement types attested for Dutch adpositions.
-    [broekhuis-corver-2026] §2.1: nominal (default), PP, adjectival,
-    clausal, infinitival, small-clause, none (intransitive). -/
+/-- The complement types Dutch adpositions are attested with. -/
 inductive PComplementType where
   | nominal      -- DP complement (default)
   | pp           -- PP complement (van [PP na de oorlog], tot [PP in het bos])
@@ -41,9 +31,7 @@ inductive PComplementType where
   | none_        -- no complement (intransitive / verbal particle)
   deriving DecidableEq, Repr
 
-/-- A Dutch adposition lexical entry.
-    Records observable distributional properties only — no
-    theoretical analysis of WHY these properties hold. -/
+/-- A Dutch adposition, recorded by its attested distribution. -/
 structure DutchAdposition where
   /-- Surface form -/
   form         : String
@@ -55,7 +43,7 @@ structure DutchAdposition where
   circumPart   : Option String := none
   /-- Attested without complement (intransitive / verbal particle use) -/
   intransOk    : Bool := false
-  /-- Allows R-pronominalization (er/daar/waar + P); §2.1, ex. 19–20 -/
+  /-- Allows R-pronominalization: *er*, *daar* or *waar* in place of the complement. -/
   rPronOk      : Bool := true
   /-- Attested complement types -/
   complTypes   : List PComplementType := [.nominal]
@@ -69,14 +57,11 @@ structure DutchAdposition where
   gloss        : String
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 1. Spatial adpositions
--- ════════════════════════════════════════════════════
+/-! ### Spatial adpositions -/
 
-/-- §2.2 ex. 21: *op* is both preP (locational "on") and postP (directional
-    "onto"). The clearest minimal pair in the paper: *op de heuvel* (on the
-    hill) vs *de heuvel op* (onto the hill). Auxiliary selection confirms the
-    semantic split: *hebben* (locational) vs *zijn* (directional, ex. 22). -/
+/-- *Op* is locational as a preposition and directional as a postposition: *op de heuvel* 'on the
+hill' against *de heuvel op* 'onto the hill', with *hebben* and *zijn* as their perfect
+auxiliaries. -/
 def op : DutchAdposition :=
   { form := "op", prePOk := true, postPOk := true
   , intransOk := true
@@ -84,8 +69,8 @@ def op : DutchAdposition :=
   , pathType := some (.goal, .telic)
   , gloss := "on/onto/up" }
 
-/-- §2.1 ex. 2a, §2.2 ex. 35a/58a: *in* is preP (locational "in") and postP
-    (directional "into"). *De boom in* (ex. 35a) = "into the tree". -/
+/-- *In* is locational as a preposition and directional as a postposition: *in de garage* 'in the
+garage' against *de boom in* 'into the tree'. -/
 def in_ : DutchAdposition :=
   { form := "in", prePOk := true, postPOk := true
   , intransOk := true
@@ -93,17 +78,16 @@ def in_ : DutchAdposition :=
   , pathType := some (.goal, .telic)
   , gloss := "in/into" }
 
-/-- §2.1 ex. 2b: *naar* is preP only, inherently directional.
-    *Naar de garage* = "to the garage". -/
+/-- *Naar* 'to' is inherently directional and occurs only as a preposition. -/
 def naar : DutchAdposition :=
   { form := "naar", prePOk := true, postPOk := false
   , directional := true
   , pathType := some (.goal, .telic)
   , gloss := "to" }
 
-/-- §2.1 ex. 6–7: *van* indicates starting point of a path.
-    Takes PP complements: *van [PP na de oorlog]* (ex. 7a).
-    Circumposition with *af*: *van het dak af* (ex. 59). -/
+/-- *Van* 'from' indicates the starting point of a path. It takes prepositional complements —
+*van [PP na de oorlog]* 'from after the war' — and forms a circumposition with *af*: *van het dak
+af* 'off the roof'. -/
 def van : DutchAdposition :=
   { form := "van", prePOk := true, postPOk := false
   , circumPart := some "af"
@@ -112,38 +96,34 @@ def van : DutchAdposition :=
   , pathType := some (.source, .telic)
   , gloss := "from/of" }
 
-/-- §2.1 ex. 6–7: *tot* indicates endpoint of a path.
-    Takes PP complements: *tot [PP (diep) in het bos]* (ex. 7b).
-    Takes AP complements: *tot [AP voor kort]* (ex. 8a).
-    See also `Dutch.TemporalConnectives.tot` for the temporal
-    sense, which has `complementType := .nominal` — the spatial sense
-    is broader. -/
+/-- *Tot* 'to, until' indicates a later point on a path, not necessarily its end. It takes
+prepositional as well as nominal complements: *tot [PP (diep) in het bos]*. See also
+`Dutch.TemporalConnectives.tot` for the temporal sense, whose complement is nominal only. -/
 def tot : DutchAdposition :=
   { form := "tot", prePOk := true, postPOk := false
-  , complTypes := [.nominal, .pp, .adjectival]
+  , complTypes := [.nominal, .pp]
   , directional := true
   , pathType := some (.goal, .telic)
   , gloss := "to/until" }
 
-/-- §3 ex. 31a, §2.3 ex. 28b: *achter* = "behind".
-    Intransitive: *Mijn fiets staat achter* (ex. 28b). -/
+/-- *Achter* 'behind', also used without a complement: *mijn fiets staat achter* 'my bike is at
+the back'. -/
 def achter : DutchAdposition :=
   { form := "achter", prePOk := true, postPOk := false
   , intransOk := true
   , locational := true
   , gloss := "behind" }
 
-/-- §2.3 ex. 28a, §3 ex. 37: *boven* = "above/upstairs".
-    Intransitive: *De douche bevindt zich boven* (ex. 28a). -/
+/-- *Boven* 'above', also used without a complement: *de douche bevindt zich boven* 'the shower
+is upstairs'. -/
 def boven : DutchAdposition :=
   { form := "boven", prePOk := true, postPOk := false
   , intransOk := true
   , locational := true
   , gloss := "above" }
 
-/-- §2.2 ex. 24a: *onder* = "under". Circumposition with *door*:
-    *onder de brug door* (ex. 24a) = crossing under the bridge.
-    Locational as preP, directional in circumP use. -/
+/-- *Onder* 'under' is locational as a preposition and directional in the circumposition with
+*door*: *onder de brug door* 'under and past the bridge'. -/
 def onder : DutchAdposition :=
   { form := "onder", prePOk := true, postPOk := false
   , circumPart := some "door"
@@ -151,9 +131,8 @@ def onder : DutchAdposition :=
   , pathType := some (.goal, .telic)
   , gloss := "under" }
 
-/-- §2.2 ex. 24b: *over* = "over/across". Circumposition with *heen*:
-    *over de heide heen* (ex. 24b) = across the heath.
-    Locational as preP, directional in circumP use. -/
+/-- *Over* 'over' is locational as a preposition and directional in the circumposition with
+*heen*: *over de heide heen* 'across the heath'. -/
 def over : DutchAdposition :=
   { form := "over", prePOk := true, postPOk := false
   , circumPart := some "heen"
@@ -162,34 +141,34 @@ def over : DutchAdposition :=
   , pathType := some (.goal, .telic)
   , gloss := "over/across" }
 
-/-- §2.2 ex. 25: *tussen* = "between". Circumposition with *in*:
-    *tussen de kippen in* (ex. 25). -/
+/-- *Tussen* 'between', with the circumpositional variant *tussen de kippen in* 'in among the
+chickens', which stays locational. -/
 def tussen : DutchAdposition :=
   { form := "tussen", prePOk := true, postPOk := false
   , circumPart := some "in"
   , locational := true
   , gloss := "between" }
 
-/-- *bij* = "at/near". Locational only. -/
+/-- *Bij* 'at, near', locational only. -/
 def bij : DutchAdposition :=
   { form := "bij", prePOk := true, postPOk := false
   , locational := true
   , gloss := "at/near" }
 
-/-- *tegen* = "against". -/
+/-- *Tegen* 'against'. -/
 def tegen : DutchAdposition :=
   { form := "tegen", prePOk := true, postPOk := false
   , locational := true
   , gloss := "against" }
 
-/-- *langs* = "along". -/
+/-- *Langs* 'along'. -/
 def langs : DutchAdposition :=
   { form := "langs", prePOk := true, postPOk := false
   , locational := true
   , gloss := "along" }
 
-/-- *uit* = "out of". Source-directional.
-    Intransitive in *uitslapen* (§2.3 ex. 29b). -/
+/-- *Uit* 'out of' describes a path away from a source, and is also a verbal particle: *Jan
+slaapt graag uit* 'Jan likes to sleep late'. -/
 def uit : DutchAdposition :=
   { form := "uit", prePOk := true, postPOk := false
   , intransOk := true
@@ -197,84 +176,72 @@ def uit : DutchAdposition :=
   , pathType := some (.source, .telic)
   , gloss := "out of" }
 
-/-- §2.3 ex. 28c: *om* = "around".
-    Intransitive: *Marie deed een sjaal om* (ex. 28c). -/
+/-- *Om* 'around', also used without a complement: *Marie deed een sjaal om* 'Marie put on a
+scarf'. -/
 def om : DutchAdposition :=
   { form := "om", prePOk := true, postPOk := false
   , intransOk := true
   , locational := true
   , gloss := "around" }
 
--- ════════════════════════════════════════════════════
--- § 2. Non-spatial adpositions
--- ════════════════════════════════════════════════════
+/-! ### Non-spatial adpositions -/
 
-/-- §2.1 ex. 14, 19e: *met* = "with".
-    Takes small-clause complement in absolute *met*-construction:
-    *Met [Jan in ons team] zullen we nooit verliezen* (ex. 14a). -/
+/-- *Met* 'with' takes a small clause in the absolute construction: *met [Jan in ons team]
+zullen we nooit verliezen* 'with Jan on our team we will never lose'. -/
 def met : DutchAdposition :=
   { form := "met", prePOk := true, postPOk := false
   , complTypes := [.nominal, .smallClause]
   , gloss := "with" }
 
-/-- §2.1 ex. 5, 9a: *voor* = "for/before".
-    Temporal sense takes clausal complement: *voor [CP (dat) hij vertrok]*
-    (ex. 9a). Also takes PP (*voor [PP bij de koffie]*, ex. 5) and
-    AP (*voor [AP kort]*, ex. 8a) complements. -/
+/-- *Voor* 'for, before' is the widest-selecting preposition of the set: nominal, prepositional
+(*voor [PP bij de koffie]*), adjectival (*voor [AP heel kort]*) and clausal (*voor [CP (dat) hij
+vertrok]*) complements. -/
 def voor : DutchAdposition :=
   { form := "voor", prePOk := true, postPOk := false
   , complTypes := [.nominal, .pp, .adjectival, .clausal]
   , locational := true
   , gloss := "for/before" }
 
-/-- §2.1 ex. 9b, 13a, 19c: *na* = "after".
-    Clausal complement with obligatory *dat*: *na [CP *(dat) hij gevallen
-    was]* (ex. 9b). Infinitival: *na [CP te zijn gevallen]* (ex. 13a). -/
+/-- *Na* 'after' takes a clausal complement with obligatory *dat* — *na [CP dat hij gevallen
+was]* — and a *te*-infinitive: *na [CP te zijn gevallen]* 'after falling'. -/
 def na : DutchAdposition :=
   { form := "na", prePOk := true, postPOk := false
   , complTypes := [.nominal, .clausal, .infinitival]
   , gloss := "after" }
 
-/-- §2.1 ex. 13b, 20c: *zonder* = "without".
-    Infinitival complement: *zonder [CP te snurken]* (ex. 13b).
-    Resists R-pronominalization: *✱er zonder* (ex. 20c). -/
+/-- *Zonder* 'without' takes a *te*-infinitive — *zonder [CP te snurken]* 'without snoring' —
+and resists R-pronominalization: *\*er zonder*. -/
 def zonder : DutchAdposition :=
   { form := "zonder", prePOk := true, postPOk := false
   , rPronOk := false
   , complTypes := [.nominal, .infinitival]
   , gloss := "without" }
 
-/-- §2.1 ex. 20a: *tijdens* = "during".
-    Resists R-pronominalization: *✱er tijdens*. -/
+/-- *Tijdens* 'during' resists R-pronominalization: *\*er tijdens*. -/
 def tijdens : DutchAdposition :=
   { form := "tijdens", prePOk := true, postPOk := false
   , rPronOk := false
   , gloss := "during" }
 
-/-- §2.1 ex. 20b: *ondanks* = "despite".
-    Resists R-pronominalization: *✱er ondanks*. -/
+/-- *Ondanks* 'despite' resists R-pronominalization: *\*er ondanks*. -/
 def ondanks : DutchAdposition :=
   { form := "ondanks", prePOk := true, postPOk := false
   , rPronOk := false
   , gloss := "despite" }
 
-/-- §4 ex. 44d: *door* = "through/by" (causal/instrumental).
-    Clausal complement: *door [CP dat de wind hard waaide]* (ex. 44d').
-    Also functions as circumP second element (*onder...door*) and as
-    verbal particle. -/
+/-- *Door* 'through, by' expresses cause as well as path, and takes a clausal complement: *door
+[CP dat de wind hard waaide]* 'because the wind was blowing hard'. It is also the second element of
+*onder … door* and a verbal particle. -/
 def door : DutchAdposition :=
   { form := "door", prePOk := true, postPOk := false
   , intransOk := true
   , complTypes := [.nominal, .clausal]
   , gloss := "through/by" }
 
--- ════════════════════════════════════════════════════
--- § 3. CircumP second elements / particles
--- ════════════════════════════════════════════════════
+/-! ### Second elements of circumpositions, and particles -/
 
-/-- *af* = "off/down". Primarily circumP second element (*van...af*, ex. 59)
-    and verbal particle. Not commonly used as standalone preP
-    (§2.2: "P₂ has a form that is not commonly used as a preP"). -/
+/-- *Af* 'off, down' is the second element of *van … af* and a verbal particle; it is not
+commonly used as a preposition on its own. -/
 def af : DutchAdposition :=
   { form := "af", prePOk := false, postPOk := false
   , intransOk := true
@@ -282,8 +249,8 @@ def af : DutchAdposition :=
   , pathType := some (.source, .telic)
   , gloss := "off/down" }
 
-/-- *heen* = directional particle. Primarily circumP second element
-    (*over...heen*, ex. 24b). Not commonly used as standalone preP. -/
+/-- *Heen* is a directional particle and the second element of *over … heen*; it is not commonly
+used as a preposition on its own. -/
 def heen : DutchAdposition :=
   { form := "heen", prePOk := false, postPOk := false
   , intransOk := true
@@ -291,41 +258,13 @@ def heen : DutchAdposition :=
   , pathType := some (.goal, .telic)
   , gloss := "thither (directional)" }
 
--- ════════════════════════════════════════════════════
--- § 4. Inventory and verification
--- ════════════════════════════════════════════════════
+/-! ### The inventory -/
 
+/-- The Dutch adpositions covered here. -/
 def dutchAdpositions : List DutchAdposition :=
   [ op, in_, naar, van, tot, achter, boven, onder, over, tussen
   , bij, tegen, langs, uit, om
   , met, voor, na, zonder, tijdens, ondanks, door
   , af, heen ]
-
-/-- Every adposition that has postP use also has preP use.
-    [broekhuis-corver-2026] §6: postPs derive from prePs by
-    complement movement, so postP ⊆ preP. -/
-theorem postP_subset_preP :
-    ∀ a ∈ dutchAdpositions, a.postPOk → a.prePOk := by decide
-
-/-- Morphologically complex prePs resist R-pronominalization.
-    §2.1 ex. 20: *tijdens*, *ondanks*, *zonder* are diachronically
-    complex and block *er*-pronominalization. -/
-theorem complex_Ps_no_rPron :
-    tijdens.rPronOk = false ∧ ondanks.rPronOk = false ∧
-    zonder.rPronOk = false := ⟨rfl, rfl, rfl⟩
-
-/-- CircumP second elements (af, heen) are not standalone prePs. -/
-theorem circumP_parts_not_preP :
-    af.prePOk = false ∧ heen.prePOk = false := ⟨rfl, rfl⟩
-
-/-- All adpositions with directional readings carry directionality and telicity. -/
-theorem directional_has_pathType :
-    ∀ a ∈ dutchAdpositions, a.directional → a.pathType.isSome := by decide
-
-/-- PostP-capable adpositions have both locational and directional readings.
-    §2.2 ex. 21: preP *op* = locational, postP *op* = directional. -/
-theorem postP_has_both_readings :
-    ∀ a ∈ dutchAdpositions, a.postPOk →
-    a.locational ∧ a.directional := by decide
 
 end Dutch.Adpositions

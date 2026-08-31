@@ -6,79 +6,71 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
-# [bumford-rett-2021] — Rationalizing Evaluativity
-[bumford-rett-2021] [lassiter-goodman-2017] [bergen-levy-goodman-2016]
-[rett-2015] [barker-2002-vagueness]
+# Bumford and Rett 2021: rationalizing evaluativity
 
-Proceedings of Sinn und Bedeutung 25, pp. 187–204.
+Degree constructions differ in how strongly they imply that a measure exceeds a contextual norm.
+This file formalizes the account on which that inference is an implicature computed by a rational
+speaker and listener, and on which its strength is graded rather than categorical: the positive
+construction is more evaluative than the equative, which is more evaluative than the comparative,
+and within the equative the marked antonym is more evaluative than the unmarked one.
 
-## Key Claims
+Two ingredients drive the result. Worlds are two-dimensional — a subject's height and the centre of
+the comparison class — so a listener who is uncertain about the class learns from the choice of
+utterance where the subject stands relative to it. And the antonyms compete under lexical
+uncertainty, with the marked form costing the speaker more, so choosing it signals that the
+speaker's reason for speaking was strong.
 
-1. **Evaluativity is gradient**: Degree constructions differ in the *strength* of
-   their evaluative inferences. The model produces a strict ranking:
-   positive > equative > comparative.
+The predictions here are the direction of the shift in the listener's posterior, proved for every
+positive cost base rather than computed at one: hearing the unmarked positive makes a world with
+the subject above the class centre more likely than the mirror world below it, hearing the marked
+positive reverses that, the marked equative shifts strongly while the unmarked one shifts weakly,
+and the comparative does not shift at all. The last of these needs a lower bound on the cost base;
+everything else is structural.
 
-2. **Comparison-class uncertainty**: Worlds are two-dimensional — subject height ×
-   comparison class center. The listener jointly infers height and CC statistics,
-   extending [lassiter-goodman-2017]'s threshold RSA with
-   [barker-2002-vagueness]'s insight that CC uncertainty is informative.
+## Main definitions
 
-3. **Lexical uncertainty for markedness**: Antonym-sensitive evaluativity
-   (marked equatives like "as short as" are evaluative; unmarked "as tall as"
-   are not) emerges from [bergen-levy-goodman-2016]'s lexical uncertainty,
-   where marked forms have higher production cost.
+* `EvalWorld`, `worldPrior` — the height-by-class-centre grid and its truncated Gaussian prior
+* `Form`, `standardMet`, `meaning` — the four constructions and their truth conditions at a
+  threshold offset
+* `L1` — the pragmatic listener, given a construction and an utterance
 
-4. **Evaluativity metric**: E[ht − μ] — the expected deviation of the subject's
-   height from the CC center — measures evaluativity strength.
+## Main results
 
-## Model Architecture (§2.1)
+* `pos_tall_evaluative`, `pos_short_evaluative` — the positive is evaluative for both antonyms
+* `eq_marked_evaluative`, `eq_unmarked_weakly_evaluative` — the equative is antonym-sensitive
+* `geq_marked_evaluative`, `geq_unmarked_barely_evaluative` — the minimum-standard equative sits
+  between the exact equative and the comparative
+* `comp_marked_weak`, `comp_unmarked_counter_evaluative` — the comparative is not evaluative
+* `rsa_neo_gricean_agreement` — the graded predictions match the categorical ones of [rett-2015]
 
-- L₀(w | u, L) ∝ P(w) · L(u, w)
-- Sₙ(u | w, L) ∝ exp(α · (log Lₙ₋₁(w | u, L) − C(u)))
-- L₁(w | u) ∝ P(w) · Σ_L P(L) · S₁(u | w, L)
-- α = 4, C(marked) = 2, C(unmarked) = 1, C(∅) = 0
+## Implementation notes
 
-## Discretization
+The paper bins heights into 17 classes with the class centre in [5, 14] and considers worlds
+within two standard deviations of it; the grid here is scaled down to nine heights with centres in
+[3, 7] and a deviation of at most two, which preserves the ranking while keeping the state space
+small. Its hyperparameters are followed: the null utterance is free, the unmarked utterance costs
+1 and the marked one 2, and the speaker's rationality parameter is 4, which enters here as the
+cost base `e = exp(-4)`.
 
-The paper uses heights 1–17, CC centers 5–14, |ht − μ| ≤ 4 (SD = 2).
-We scale to heights 1–9, CC centers 3–7, |ht − μ| ≤ 2 (SD = 1),
-preserving the qualitative predictions with a 45-world grid
-(25 valid worlds after the Gaussian truncation).
+The model runs on the `PMF` pipeline of `RSA.Canonical`, with the threshold offset as the joint
+listener's second coordinate: `meaningE` folds the world prior into the graded literal listener,
+`Sk` is the cost-sensitive speaker (kept total at prior-zero worlds by a guard), and the world
+posterior is the joint posterior's first marginal.
 
-## Verified Predictions (Table 1)
+## References
 
-1. **Positive construction** (Simulation 1): both antonyms evaluative
-2. **Exact equative** (Simulation 2): marked antonym evaluative, unmarked weakly evaluative
-3. **≥ Equative** (Simulation 3): marked evaluative, unmarked barely evaluative
-4. **Comparative** (Simulation 4): neither antonym evaluative — evaluative world
-   does NOT win over non-evaluative world, unlike equatives
-5. **Antonym asymmetry**: marked equative produces stronger evaluative inference
-6. **Cross-construction contrast**: equative marked IS evaluative but comparative
-   marked is NOT, confirming that partial antonymic competition (not just cost)
-   drives evaluativity
-
-## Connection to [rett-2015]
-
-[rett-2015] derives evaluativity categorically via Q/R-implicature
-(formalized in `Pragmatics/Implicature/Evaluativity.lean`).
-This RSA model derives the same predictions *gradiently*: evaluativity
-strength varies continuously across constructions. Both accounts agree
-on the antonym-sensitive pattern (equative marked > equative unmarked).
-
-The RSA model adds two things the Neo-Gricean account lacks:
-- Graded predictions (probability distributions over evaluativity strength)
-- A unified mechanism (rational communication) rather than separate Q/R principles
+* [bumford-rett-2021]
+* [barker-2002-vagueness]
+* [bergen-levy-goodman-2016]
+* [lassiter-goodman-2017]
+* [rett-2015]
 -/
-
 namespace BumfordRett2021
 
 open RSA
-open Core.Order (ScalePolarity)
 open Degree (Construction)
 
--- ============================================================================
--- § 1. World Type: Height × CC Center
--- ============================================================================
+/-! ### The worlds -/
 
 /-- A world is a pair (height index, CC center index).
 
@@ -96,9 +88,7 @@ def muVal (w : EvalWorld) : Int := (w.2.val : Int) + 3
 /-- Deviation of height from CC center: ht − μ. -/
 def deviation (w : EvalWorld) : Int := htVal w - muVal w
 
--- ============================================================================
--- § 2. Prior (§2.1)
--- ============================================================================
+/-! ### The prior -/
 
 /-- Gaussian-weighted prior over valid worlds.
 
@@ -112,9 +102,7 @@ def worldPrior (w : EvalWorld) : ℚ :=
   | 2 => 1
   | _ => 0
 
--- ============================================================================
--- § 3. Utterances and Costs (§2.1)
--- ============================================================================
+/-! ### Utterances and their costs -/
 
 /-- Utterance type: unmarked (positive-polar), marked (negative-polar), or null.
 
@@ -128,15 +116,7 @@ inductive Utterance where
   | null      -- silence ∅
   deriving Repr, DecidableEq, Fintype
 
-/-- Utterance costs: marked = 2, unmarked = 1, null = 0. -/
-def cost : Utterance → ℚ
-  | .unmarked => 1
-  | .marked   => 2
-  | .null     => 0
-
--- ============================================================================
--- § 4. Threshold Offset (Latent Variable)
--- ============================================================================
+/-! ### The threshold offset -/
 
 /-- Threshold offset σ ∈ {−2, −1, 0, 1, 2}.
 
@@ -148,32 +128,22 @@ abbrev Sigma := Fin 5
 /-- Integer offset value: index s ↦ σ = s − 2. -/
 def sigmaVal (s : Sigma) : Int := (s.val : Int) - 2
 
--- ============================================================================
--- § 5. Shared RSA Infrastructure
--- ============================================================================
+/-! ### Shared infrastructure -/
 
 open scoped ENNReal
-
-/-- World prior as ℝ. -/
-noncomputable def worldPriorR (w : EvalWorld) : ℝ := worldPrior w
 
 private theorem worldPrior_nonneg_Q :
     ∀ w : EvalWorld, (0 : ℚ) ≤ worldPrior w := by
   intro w; unfold worldPrior; split <;> norm_num
 
-theorem worldPriorR_nonneg : ∀ w : EvalWorld, 0 ≤ worldPriorR w := by
-  intro w; simp only [worldPriorR]; exact_mod_cast worldPrior_nonneg_Q w
-
-/-- Utterance cost as a natural exponent: `exp(−α·C(u)) = e^(costN u)` at the
-paper's α = 4, where `e := exp(−4)`. -/
+/-- The utterance's cost as an exponent: the marked form costs 2, the unmarked 1 and silence
+nothing, so the speaker's cost factor is `e ^ costN u` with `e = exp(-α)` at the paper's α = 4. -/
 def costN : Utterance → ℕ
   | .unmarked => 1
   | .marked   => 2
   | .null     => 0
 
--- ============================================================================
--- § 6. mathlib-PMF pipeline (eq 10)
--- ============================================================================
+/-! ### The listener and speaker -/
 
 /-! Companion architecture on `PMF`, parameterized by the cost-factor base
 `e` (= `exp(−4)` at the paper's α = 4; only the speaker depends on `e`):
@@ -423,239 +393,153 @@ private theorem evaluative_of_incl {sem} {e : ℝ} (he0 : 0 < e) {u : Utterance}
     exact ENNReal.mul_lt_mul_right (jointK_ne_zero hv2) (jointK_ne_top _)
       (sk_lt_of_gap he0 hv1 hv2 (hnull1 σ₀) (hnull2 σ₀) hgap1 hgap2)
 
--- ============================================================================
--- § 7. Simulation 1: Positive Construction (§2.2.1, Table 1)
--- ============================================================================
+/-! ### The four constructions
 
-/-- Positive construction meaning (eq 12):
-    - unmarked ("tall"): ht_w(j) ≥ μ_w + σ
-    - marked ("short"): ht_w(j) ≤ μ_w + σ
-    - null: true -/
-def posMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
-  match u with
-  | .unmarked => decide (htVal w ≥ muVal w + sigmaVal σ)
-  | .marked   => decide (htVal w ≤ muVal w + sigmaVal σ)
-  | .null     => true
+Every construction says two things at once: the subject's height stands in some relation to a
+standard, and a degree — the subject's own height for the positive, the standard for the rest —
+lies above the threshold for the unmarked antonym or below it for the marked one. The four rows
+differ only in the first conjunct, which is what makes them comparable. -/
 
-/-- Positive-construction pragmatic listener `L₁(· | u)` at cost base `e`. -/
-noncomputable def posL1 (u : Utterance) {e : ℝ} (he0 : 0 < e) : PMF (EvalWorld × Sigma) :=
-  RSA.Canonical.L1 (Sk posMeaning e) jointK u <|
-    match u with
-    | .unmarked => marg_ne_zero he0 (w0 := mkW 4 2) (σ0 := 0) (by decide) (by decide) (by decide)
-    | .marked   => marg_ne_zero he0 (w0 := mkW 4 4) (σ0 := 4) (by decide) (by decide) (by decide)
-    | .null     => marg_ne_zero he0 (w0 := mkW 4 2) (σ0 := 0) (by decide) (by decide) (by decide)
-
-/-! ### Prediction 1: "Tall" shifts height above CC mean
-
-Hearing "Jane is tall" (unmarked) shifts L₁'s posterior toward worlds
-where the subject's height exceeds the CC center. At fixed CC center
-μ = 5 (index 2), height 6 (index 5, dev = +1) becomes more likely
-than height 4 (index 3, dev = −1). Both worlds have equal prior (6),
-so the asymmetry is entirely due to pragmatic reasoning.
-The paper reports E[ht − μ] = 2.08 at L₁. -/
-
-theorem pos_tall_evaluative (e : ℝ) (he0 : 0 < e) :
-    (posL1 .unmarked he0).fst (mkW 5 2) > (posL1 .unmarked he0).fst (mkW 3 2) := by
-  simp only [posL1, gt_iff_lt]
-  exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
-    (fun _ => rfl) (by decide) (by decide) ⟨2, by omega⟩ (by decide) (by decide)
-
-/-! ### Prediction 2: "Short" shifts height below CC mean
-
-Mirror image: hearing "Jane is short" (marked) shifts posterior toward
-worlds where height is below the CC center. E[ht − μ] = −3.18 at L₁.
-The marked form is even more evaluative than the unmarked form,
-because the extra cost signals that the speaker's reason for speaking
-must be particularly strong. -/
-
-theorem pos_short_evaluative (e : ℝ) (he0 : 0 < e) :
-    (posL1 .marked he0).fst (mkW 3 2) > (posL1 .marked he0).fst (mkW 5 2) := by
-  simp only [posL1, gt_iff_lt]
-  exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
-    (fun _ => rfl) (by decide) (by decide) ⟨2, by omega⟩ (by decide) (by decide)
-
--- ============================================================================
--- § 8. Simulation 2: Exact Equative (§2.2.2, Table 1)
--- ============================================================================
-
-/-- Keisha's height k, fixed and known to both speaker and listener.
-    In our scaled model: k = 5 (height index 4). -/
+/-- Keisha's height `k`, fixed and known to both speaker and listener; 5 on the scaled grid. -/
 def kHeight : Int := 5
 
-/-- Exact equative meaning (eq 14):
-    - unmarked ("as tall as K"): ht = k ∧ k ≥ μ + σ
-    - marked ("as short as K"): ht = k ∧ k ≤ μ + σ
-    - null: true
+/-- The constructions simulated: the positive, the exact equative, the minimum-standard equative,
+and the comparative. -/
+inductive Form where
+  | positive
+  | exactEquative
+  | minimumEquative
+  | comparative
+  deriving DecidableEq, Repr
 
-    The equative fixes height to k. The informative content is about
-    where k sits relative to the CC center: does the threshold σ
-    classify k as "tall-enough" (unmarked) or "short-enough" (marked)? -/
-def eqMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
+/-- The degree whose position relative to the threshold the utterance conveys: the subject's height
+for the positive, the standard `k` for the constructions that compare with one. -/
+def measured : Form → EvalWorld → Int
+  | .positive, w => htVal w
+  | _, _ => kHeight
+
+/-- The relation the construction imposes between the subject's height and the standard: none for
+the positive, equality for the exact equative, a weak comparison for the minimum-standard equative
+and a strict one for the comparative. -/
+def standardMet : Form → Utterance → EvalWorld → Bool
+  | _, .null, _ => true
+  | .positive, _, _ => true
+  | .exactEquative, _, w => decide (htVal w = kHeight)
+  | .minimumEquative, .unmarked, w => decide (htVal w ≥ kHeight)
+  | .minimumEquative, .marked, w => decide (htVal w ≤ kHeight)
+  | .comparative, .unmarked, w => decide (htVal w > kHeight)
+  | .comparative, .marked, w => decide (htVal w < kHeight)
+
+/-- The truth conditions of a construction at a threshold offset and a world. Silence is true
+everywhere, which is what keeps the speaker's normaliser positive. -/
+def meaning (c : Form) (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
   match u with
-  | .unmarked => decide (htVal w = kHeight) && decide (kHeight ≥ muVal w + sigmaVal σ)
-  | .marked   => decide (htVal w = kHeight) && decide (kHeight ≤ muVal w + sigmaVal σ)
-  | .null     => true
+  | .null => true
+  | .unmarked => standardMet c u w && decide (measured c w ≥ muVal w + sigmaVal σ)
+  | .marked => standardMet c u w && decide (measured c w ≤ muVal w + sigmaVal σ)
 
-/-- Exact-equative pragmatic listener `L₁(· | u)` at cost base `e`. -/
-noncomputable def eqL1 (u : Utterance) {e : ℝ} (he0 : 0 < e) : PMF (EvalWorld × Sigma) :=
-  RSA.Canonical.L1 (Sk eqMeaning e) jointK u <|
-    match u with
-    | .unmarked => marg_ne_zero he0 (w0 := mkW 4 0) (σ0 := 0) (by decide) (by decide) (by decide)
-    | .marked   => marg_ne_zero he0 (w0 := mkW 4 4) (σ0 := 0) (by decide) (by decide) (by decide)
-    | .null     => marg_ne_zero he0 (w0 := mkW 4 0) (σ0 := 0) (by decide) (by decide) (by decide)
+/-- Every utterance of every construction is true at some world of positive prior, so the
+listener's marginal never vanishes. -/
+theorem marg_ne_zero_meaning (c : Form) (u : Utterance) {e : ℝ} (he0 : 0 < e) :
+    PMF.marginal (Sk (meaning c) e) jointK u ≠ 0 := by
+  obtain ⟨w0, σ0, hval, hlic⟩ :
+      ∃ (w : EvalWorld) (σ : Sigma), worldPrior w ≠ 0 ∧ meaning c u σ w = true := by
+    cases c <;> cases u <;> decide
+  exact marg_ne_zero he0 hval rfl hlic
 
--- k = 5 (height index 4). Relevant worlds: (4, j) for j ∈ {0,1,2,3,4}.
--- μ = 3 (j=0): k well above mean → non-evaluative direction
--- μ = 5 (j=2): k at mean → neutral
--- μ = 7 (j=4): k well below mean → evaluative direction ("short")
+/-- The pragmatic listener after hearing `u` in construction `c`. -/
+noncomputable def L1 (c : Form) (u : Utterance) {e : ℝ} (he0 : 0 < e) :
+    PMF (EvalWorld × Sigma) :=
+  RSA.Canonical.L1 (Sk (meaning c) e) jointK u (marg_ne_zero_meaning c u he0)
 
-/-! ### Prediction 3: Marked equative is evaluative
+/-- What makes an utterance shift the listener from `w1` towards `w2`: the two worlds carry the
+same nonzero prior, the utterance is true at `w2` whenever it is true at `w1`, every alternative
+available at `w2` under such a threshold is available at `w1` too, and at the threshold `σ₀` the
+utterance separates the two worlds. -/
+def ShiftsTo (c : Form) (u : Utterance) (w1 w2 : EvalWorld) (σ₀ : Sigma) : Prop :=
+  worldPrior w1 = worldPrior w2 ∧ worldPrior w1 ≠ 0 ∧ worldPrior w2 ≠ 0 ∧
+    (∀ σ, meaning c u σ w1 = true → meaning c u σ w2 = true) ∧
+    (∀ σ, meaning c u σ w1 = true → ∀ u', meaning c u' σ w2 = true → meaning c u' σ w1 = true) ∧
+    meaning c u σ₀ w1 = false ∧ meaning c u σ₀ w2 = true
 
-Hearing "Jane is as short as Keisha" (marked) shifts L₁'s posterior
-toward high-μ worlds where k = 5 is below the CC center — i.e.,
-Keisha's height is atypically low. The paper reports E[k − μ] = −1.06
-at L₁.
+instance (c : Form) (u : Utterance) (w1 w2 : EvalWorld) (σ₀ : Sigma) :
+    Decidable (ShiftsTo c u w1 w2 σ₀) := inferInstanceAs (Decidable (_ ∧ _))
 
-The mechanism: the speaker paid extra cost (C = 2) for the marked form.
-By [bergen-levy-goodman-2016]'s logic, L₁ infers the speaker must have
-had a strong reason — the marked form is distinctively informative in worlds
-where k is atypically low. -/
+/-- A shifting configuration makes the listener prefer `w2` to `w1`, at every positive cost base.
+Silence is true everywhere, so the licensing hypotheses the underlying order argument needs are
+discharged by the construction table itself. -/
+theorem shifts {c : Form} {u : Utterance} {w1 w2 : EvalWorld} {σ₀ : Sigma} {e : ℝ}
+    (he0 : 0 < e) (h : ShiftsTo c u w1 w2 σ₀) :
+    (L1 c u he0).fst w1 < (L1 c u he0).fst w2 := by
+  obtain ⟨hp, hv1, hv2, hu, halt, hgap1, hgap2⟩ := h
+  exact evaluative_of_incl he0 _ hp hv1 hv2 (fun _ => rfl) (fun _ => rfl) hu halt σ₀ hgap1 hgap2
+
+/-! ### The positive construction
+
+The two worlds compared below sit one unit above and one unit below the class centre and carry the
+same prior, so any asymmetry between them is pragmatic. The paper's expected deviations are 2.08
+for *tall* and −3.18 for *short*: the marked antonym is the more evaluative of the two, since the
+extra cost it carries signals that the speaker's reason for choosing it was strong. -/
+
+theorem pos_tall_evaluative (e : ℝ) (he0 : 0 < e) :
+    (L1 .positive .unmarked he0).fst (mkW 5 2) > (L1 .positive .unmarked he0).fst (mkW 3 2) :=
+  shifts he0 (σ₀ := 2) (by decide)
+
+theorem pos_short_evaluative (e : ℝ) (he0 : 0 < e) :
+    (L1 .positive .marked he0).fst (mkW 3 2) > (L1 .positive .marked he0).fst (mkW 5 2) :=
+  shifts he0 (σ₀ := 2) (by decide)
+
+/-! ### The exact equative
+
+The equative fixes the subject's height at the standard, so what the listener learns is where the
+standard sits relative to the class centre. The two worlds compared hold the height at the standard
+and vary the centre below and above it. The paper's expected deviations are −1.06 for the marked
+form and 0.84 for the unmarked one: the marked antonym shifts strongly and the unmarked one weakly,
+which is the antonym-sensitive pattern the categorical account states as a dichotomy. -/
 
 theorem eq_marked_evaluative (e : ℝ) (he0 : 0 < e) :
-    (eqL1 .marked he0).fst (mkW 4 4) > (eqL1 .marked he0).fst (mkW 4 0) := by
-  simp only [eqL1, gt_iff_lt]
-  exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
-    (fun _ => rfl) (by decide) (by decide) ⟨0, by omega⟩ (by decide) (by decide)
-
-/-! ### Prediction 4: Unmarked equative is weakly evaluative
-
-Hearing "Jane is as tall as Keisha" (unmarked) produces a weak
-evaluative inference: the posterior slightly favors worlds where k is
-above the CC center (μ < k). The paper reports E[k − μ] = 0.84 at L₁,
-much weaker than the marked form's −1.06.
-
-This asymmetry — marked evaluative, unmarked weakly/not evaluative — is
-the antonym-sensitive pattern that [rett-2015] identifies categorically
-and this model derives gradiently. -/
+    (L1 .exactEquative .marked he0).fst (mkW 4 4) >
+      (L1 .exactEquative .marked he0).fst (mkW 4 0) :=
+  shifts he0 (σ₀ := 0) (by decide)
 
 theorem eq_unmarked_weakly_evaluative (e : ℝ) (he0 : 0 < e) :
-    (eqL1 .unmarked he0).fst (mkW 4 0) > (eqL1 .unmarked he0).fst (mkW 4 4) := by
-  simp only [eqL1, gt_iff_lt]
-  exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
-    (fun _ => rfl) (by decide) (by decide) ⟨4, by omega⟩ (by decide) (by decide)
+    (L1 .exactEquative .unmarked he0).fst (mkW 4 0) >
+      (L1 .exactEquative .unmarked he0).fst (mkW 4 4) :=
+  shifts he0 (σ₀ := 4) (by decide)
 
--- ============================================================================
--- § 9. Simulation 3: ≥ Equative (§2.2.3, Table 1)
--- ============================================================================
+/-! ### The minimum-standard equative
 
-/-! ### ≥ Equative (Minimum-Standard) Semantics
-
-The "at least as tall as" equative uses ≥ instead of = for height.
-Unlike the exact equative, the unmarked and marked forms are NOT
-synonymous: "at least as tall as K" and "at least as short as K"
-have different truth conditions. Antonymic competition is therefore
-partial, predicting evaluativity intermediate between the exact
-equative (full synonymy) and the comparative (no overlap). -/
-
-/-- ≥ equative meaning (eq 16):
-    - unmarked ("at least as tall as K"): ht ≥ k ∧ k ≥ μ + σ
-    - marked ("at least as short as K"): ht ≤ k ∧ k ≤ μ + σ
-    - null: true -/
-def geqMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
-  match u with
-  | .unmarked => decide (htVal w ≥ kHeight) && decide (kHeight ≥ muVal w + sigmaVal σ)
-  | .marked   => decide (htVal w ≤ kHeight) && decide (kHeight ≤ muVal w + sigmaVal σ)
-  | .null     => true
-
-/-- ≥-equative pragmatic listener `L₁(· | u)` at cost base `e`. -/
-noncomputable def geqL1 (u : Utterance) {e : ℝ} (he0 : 0 < e) : PMF (EvalWorld × Sigma) :=
-  RSA.Canonical.L1 (Sk geqMeaning e) jointK u <|
-    match u with
-    | .unmarked => marg_ne_zero he0 (w0 := mkW 4 0) (σ0 := 0) (by decide) (by decide) (by decide)
-    | .marked   => marg_ne_zero he0 (w0 := mkW 4 4) (σ0 := 0) (by decide) (by decide) (by decide)
-    | .null     => marg_ne_zero he0 (w0 := mkW 4 0) (σ0 := 0) (by decide) (by decide) (by decide)
-
-/-! ### Prediction 5: Marked ≥ equative is evaluative
-
-Hearing "Jane is at least as short as Keisha" (marked) shifts L₁'s
-posterior toward worlds where k is below the CC center.
-The paper reports E[k − μ] = −1.52 at L₁. -/
+The unmarked and marked forms of *at least as tall as* are not synonymous, unlike those of the
+exact equative, so the antonyms compete only partly and the evaluativity predicted falls between
+the exact equative's and the comparative's. The paper's expected deviations are −1.52 for the marked
+form and 0.11 for the unmarked one, the weakest evaluative effect of any construction. -/
 
 theorem geq_marked_evaluative (e : ℝ) (he0 : 0 < e) :
-    (geqL1 .marked he0).fst (mkW 4 4) > (geqL1 .marked he0).fst (mkW 4 0) := by
-  simp only [geqL1, gt_iff_lt]
-  exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
-    (fun _ => rfl) (by decide) (by decide) ⟨0, by omega⟩ (by decide) (by decide)
-
-/-! ### Prediction 6: Unmarked ≥ equative is barely evaluative
-
-Hearing "Jane is at least as tall as Keisha" (unmarked) barely shifts
-the posterior. The paper reports E[k − μ] = 0.11 at L₁ — the weakest
-evaluative effect of any construction. -/
+    (L1 .minimumEquative .marked he0).fst (mkW 4 4) >
+      (L1 .minimumEquative .marked he0).fst (mkW 4 0) :=
+  shifts he0 (σ₀ := 0) (by decide)
 
 theorem geq_unmarked_barely_evaluative (e : ℝ) (he0 : 0 < e) :
-    (geqL1 .unmarked he0).fst (mkW 4 0) > (geqL1 .unmarked he0).fst (mkW 4 4) := by
-  simp only [geqL1, gt_iff_lt]
-  exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
-    (fun _ => rfl) (by decide) (by decide) ⟨4, by omega⟩ (by decide) (by decide)
+    (L1 .minimumEquative .unmarked he0).fst (mkW 4 0) >
+      (L1 .minimumEquative .unmarked he0).fst (mkW 4 4) :=
+  shifts he0 (σ₀ := 4) (by decide)
 
--- ============================================================================
--- § 10. Simulation 4: Comparative (§2.2.4, Table 1)
--- ============================================================================
+/-! ### The comparative
 
-/-! ### Comparative Semantics
-
-The comparative uses strict inequality for height (ht > k / ht < k).
-Unlike the equatives, the comparative forms have NO semantic overlap:
-"taller than K" and "shorter than K" are not even close to synonymous.
-With no antonymic competition and high informativity (the comparative
-provides clear information worth the cost), there is no pressure for
-evaluative inference.
-
-The paper predicts E[k − μ] = −0.74 (unmarked) and −0.44 (marked) at
-L₁ — both close to zero. The listener guesses Keisha is slightly below
-the CC mean, but this is a generic probabilistic consequence of
-learning relative height, not an evaluative inference. -/
-
-/-- Comparative meaning (eq 18):
-    - unmarked ("taller than K"): ht > k ∧ k ≥ μ + σ
-    - marked ("shorter than K"): ht < k ∧ k ≤ μ + σ
-    - null: true -/
-def compMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
-  match u with
-  | .unmarked => decide (htVal w > kHeight) && decide (kHeight ≥ muVal w + sigmaVal σ)
-  | .marked   => decide (htVal w < kHeight) && decide (kHeight ≤ muVal w + sigmaVal σ)
-  | .null     => true
-
-/-- Comparative pragmatic listener `L₁(· | u)` at cost base `e`. -/
-noncomputable def compL1 (u : Utterance) {e : ℝ} (he0 : 0 < e) : PMF (EvalWorld × Sigma) :=
-  RSA.Canonical.L1 (Sk compMeaning e) jointK u <|
-    match u with
-    | .unmarked => marg_ne_zero he0 (w0 := mkW 5 2) (σ0 := 0) (by decide) (by decide) (by decide)
-    | .marked   => marg_ne_zero he0 (w0 := mkW 3 2) (σ0 := 2) (by decide) (by decide) (by decide)
-    | .null     => marg_ne_zero he0 (w0 := mkW 5 2) (σ0 := 0) (by decide) (by decide) (by decide)
-
-/-! ### Prediction 7: Comparative marked does not strongly shift k
-
-Unlike the equative, the marked comparative does not push the listener
-toward worlds where k is far from the CC center. At equal prior
-(dev = ±1), the world with k near the mean is preferred over the
-world with k well above the mean. The paper reports E[k − μ] = −0.44
-at L₁ — a very weak effect, unlike the equative's −1.06. -/
+*Taller than K* and *shorter than K* have no semantic overlap at all, so the antonyms do not
+compete and nothing pressures an evaluative inference. The paper's expected deviations here are
+−0.74 for the unmarked form and −0.44 for the marked one, both close to zero: the listener does
+infer something about where the standard sits, but that is a consequence of learning a relative
+height, not evaluativity. -/
 
 theorem comp_marked_weak (e : ℝ) (he0 : 0 < e) :
-    (compL1 .marked he0).fst (mkW 3 2) > (compL1 .marked he0).fst (mkW 3 0) := by
-  simp only [compL1, gt_iff_lt]
-  exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
-    (fun _ => rfl) (by decide) (by decide) ⟨2, by omega⟩ (by decide) (by decide)
+    (L1 .comparative .marked he0).fst (mkW 3 2) > (L1 .comparative .marked he0).fst (mkW 3 0) :=
+  shifts he0 (σ₀ := 2) (by decide)
 
-/-! ### Prediction 8: Comparative unmarked is counter-evaluative
-
-Hearing "Jane is taller than Keisha" (unmarked) does NOT make the
-listener infer that Keisha is tall. In fact, the paper reports
-E[k − μ] = −0.74, slightly negative: Keisha is inferred to be
-slightly below the CC mean. This is because knowing Jane exceeds
-Keisha's height leaves more room for Keisha to be below average. -/
+/-! Hearing the unmarked comparative does not make the listener infer that the standard is high;
+the inference runs the other way, since a subject exceeding the standard leaves the standard room
+to be below average. That direction is the one case whose proof needs exact values rather than the
+inclusion argument, so the normalisers are evaluated below. -/
 
 private theorem meaningE_eq_ofReal (sem) (σ) (u) (w) :
     meaningE sem σ u w = ENNReal.ofReal (if sem u σ w then worldPrior w else 0) := by
@@ -676,17 +560,17 @@ private theorem dval {sem σ u} {D : ℚ}
   exact Finset.sum_congr rfl fun w _ => by split <;> simp
 
 private theorem dval_unm :
-    (∑' w, meaningE compMeaning (1 : Sigma) .unmarked w) = ENNReal.ofReal 25 :=
+    (∑' w, meaningE (meaning .comparative) (1 : Sigma) .unmarked w) = ENNReal.ofReal 25 :=
   dval (by decide +kernel)
 
 private theorem dval_null :
-    (∑' w, meaningE compMeaning (1 : Sigma) .null w) = ENNReal.ofReal 120 :=
+    (∑' w, meaningE (meaning .comparative) (1 : Sigma) .null w) = ENNReal.ofReal 120 :=
   dval (by decide +kernel)
 
 private theorem wp53 : worldPrior (mkW 5 3) = 10 := by decide +kernel
 
 private theorem L0v_unm :
-    L0v compMeaning (1 : Sigma) .unmarked (mkW 5 3) = ENNReal.ofReal (2 / 5) := by
+    L0v (meaning .comparative) (1 : Sigma) .unmarked (mkW 5 3) = ENNReal.ofReal (2 / 5) := by
   unfold L0v
   rw [dval_unm, meaningE_eq_ofReal, if_pos (by decide),
     show ((worldPrior (mkW 5 3) : ℝ)) = 10 by rw [wp53]; norm_num,
@@ -695,7 +579,7 @@ private theorem L0v_unm :
   norm_num
 
 private theorem L0v_null :
-    L0v compMeaning (1 : Sigma) .null (mkW 5 3) = ENNReal.ofReal (1 / 12) := by
+    L0v (meaning .comparative) (1 : Sigma) .null (mkW 5 3) = ENNReal.ofReal (1 / 12) := by
   unfold L0v
   rw [dval_null, meaningE_eq_ofReal, if_pos (by decide),
     show ((worldPrior (mkW 5 3) : ℝ)) = 10 by rw [wp53]; norm_num,
@@ -704,23 +588,24 @@ private theorem L0v_null :
   norm_num
 
 private theorem spkW_unm (e : ℝ) :
-    spkW compMeaning e (mkW 5 3, (1 : Sigma)) .unmarked = ENNReal.ofReal ((2 / 5) ^ 4 * e) := by
+    spkW (meaning .comparative) e (mkW 5 3, (1 : Sigma)) .unmarked
+      = ENNReal.ofReal ((2 / 5) ^ 4 * e) := by
   unfold spkW
   rw [L0v_unm, ← ENNReal.ofReal_pow (by norm_num : (0:ℝ) ≤ 2 / 5),
     show costN .unmarked = 1 from rfl, pow_one, ← ENNReal.ofReal_mul (by positivity)]
 
 private theorem spkW_null (e : ℝ) :
-    spkW compMeaning e (mkW 5 3, (1 : Sigma)) .null = ENNReal.ofReal ((1 / 12) ^ 4) := by
+    spkW (meaning .comparative) e (mkW 5 3, (1 : Sigma)) .null = ENNReal.ofReal ((1 / 12) ^ 4) := by
   unfold spkW
   rw [L0v_null, ← ENNReal.ofReal_pow (by norm_num : (0:ℝ) ≤ 1 / 12),
     show costN .null = 0 from rfl, pow_zero, ENNReal.ofReal_one, mul_one]
 
 private theorem spkW_marked (e : ℝ) :
-    spkW compMeaning e (mkW 5 3, (1 : Sigma)) .marked = 0 :=
+    spkW (meaning .comparative) e (mkW 5 3, (1 : Sigma)) .marked = 0 :=
   spkW_eq_zero_of_not_lic (by decide)
 
 private theorem spkW_tsum (e : ℝ) :
-    (∑' u, spkW compMeaning e (mkW 5 3, (1 : Sigma)) u)
+    (∑' u, spkW (meaning .comparative) e (mkW 5 3, (1 : Sigma)) u)
       = ENNReal.ofReal ((2 / 5) ^ 4 * e) + ENNReal.ofReal ((1 / 12) ^ 4) := by
   rw [tsum_fintype,
     show (Finset.univ : Finset Utterance) = {.unmarked, .marked, .null} from by decide,
@@ -728,9 +613,9 @@ private theorem spkW_tsum (e : ℝ) :
     spkW_unm, spkW_marked, spkW_null, zero_add]
 
 private theorem Sk_bound {e : ℝ} (he0 : 0 < e) (he_lo : (1 : ℝ) / 100 ≤ e) :
-    (5 : ℝ≥0∞) < 10 * Sk compMeaning e (mkW 5 3, (1 : Sigma)) .unmarked := by
+    (5 : ℝ≥0∞) < 10 * Sk (meaning .comparative) e (mkW 5 3, (1 : Sigma)) .unmarked := by
   have hA : (0 : ℝ) < (2 / 5) ^ 4 * e := by positivity
-  have hsum : (∑' u', spkW compMeaning e (mkW 5 3, (1 : Sigma)) u') ≠ 0 := by
+  have hsum : (∑' u', spkW (meaning .comparative) e (mkW 5 3, (1 : Sigma)) u') ≠ 0 := by
     rw [spkW_tsum]
     exact ((ENNReal.ofReal_pos.mpr hA).trans_le le_self_add).ne'
   rw [Sk_apply_eq hsum, spkW_unm, spkW_tsum, ← ENNReal.ofReal_add hA.le (by positivity),
@@ -765,37 +650,38 @@ the prior mass and the inequality flips. We therefore assume `1/100 ≤ e`
 (comfortably above the threshold, and met by the paper's `e = exp(−4) ≈ 0.018`;
 see `comp_unmarked_counter_evaluative_exp`). -/
 theorem comp_unmarked_counter_evaluative (e : ℝ) (he0 : 0 < e) (he_lo : (1 : ℝ)/100 ≤ e) :
-    (compL1 .unmarked he0).fst (mkW 5 3) > (compL1 .unmarked he0).fst (mkW 5 1) := by
+    (L1 .comparative .unmarked he0).fst (mkW 5 3) >
+      (L1 .comparative .unmarked he0).fst (mkW 5 1) := by
   -- `L1_world_prefers_iff` reduces to a comparison of joint-weighted speaker
   -- sums. `jointK(w,·)` is constant in σ, with a 10:1 prior for `mkW 5 3` over
   -- `mkW 5 1`; `Sk ≤ 1` bounds `mkW 5 1`'s five terms by `5·jointK(w1,·)`, while
   -- `mkW 5 3`'s σ = 1 term alone gives `10·jointK(w1,·)·Sk(w2,1)` with
   -- `Sk(w2,1) > 1/2` (`Sk_bound`) — so the prior mass wins.
-  simp only [compL1, gt_iff_lt, RSA.Canonical.L1_world_prefers_iff]
-  calc ∑ σ, jointK (mkW 5 1, σ) * Sk compMeaning e (mkW 5 1, σ) .unmarked
+  simp only [L1, gt_iff_lt, RSA.Canonical.L1_world_prefers_iff]
+  calc ∑ σ, jointK (mkW 5 1, σ) * Sk (meaning .comparative) e (mkW 5 1, σ) .unmarked
       ≤ ∑ σ : Sigma, jointK (mkW 5 1, 1) := by
         refine Finset.sum_le_sum fun σ _ => ?_
         rw [jointK_w1 σ]
-        calc jointK (mkW 5 1, 1) * Sk compMeaning e (mkW 5 1, σ) .unmarked
+        calc jointK (mkW 5 1, 1) * Sk (meaning .comparative) e (mkW 5 1, σ) .unmarked
             ≤ jointK (mkW 5 1, 1) * 1 := by gcongr; exact PMF.coe_le_one _ _
           _ = jointK (mkW 5 1, 1) := mul_one _
     _ = 5 * jointK (mkW 5 1, 1) := by
         rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]; norm_num
-    _ < jointK (mkW 5 3, 1) * Sk compMeaning e (mkW 5 3, 1) .unmarked := by
+    _ < jointK (mkW 5 3, 1) * Sk (meaning .comparative) e (mkW 5 3, 1) .unmarked := by
         rw [jointK_w3_ratio, mul_right_comm]
         exact ENNReal.mul_lt_mul_left (jointK_ne_zero (by decide +kernel)) (jointK_ne_top _)
           (Sk_bound he0 he_lo)
-    _ ≤ ∑ σ, jointK (mkW 5 3, σ) * Sk compMeaning e (mkW 5 3, σ) .unmarked :=
+    _ ≤ ∑ σ, jointK (mkW 5 3, σ) * Sk (meaning .comparative) e (mkW 5 3, σ) .unmarked :=
         Finset.single_le_sum
-          (f := fun σ => jointK (mkW 5 3, σ) * Sk compMeaning e (mkW 5 3, σ) .unmarked)
+          (f := fun σ => jointK (mkW 5 3, σ) * Sk (meaning .comparative) e (mkW 5 3, σ) .unmarked)
           (fun σ _ => zero_le) (Finset.mem_univ (1 : Sigma))
 
 /-- The counter-evaluative comparative at the paper's cost base `e = exp(−4)`.
 The hypothesis `1/100 ≤ exp(−4)` reduces to `exp 4 ≤ 100`, and
 `exp 4 = (exp 1)⁴ < 2.7182818286⁴ ≈ 54.6 < 100`. -/
 theorem comp_unmarked_counter_evaluative_exp :
-    (compL1 .unmarked (Real.exp_pos (-4))).fst (mkW 5 3)
-      > (compL1 .unmarked (Real.exp_pos (-4))).fst (mkW 5 1) := by
+    (L1 .comparative .unmarked (Real.exp_pos (-4))).fst (mkW 5 3)
+      > (L1 .comparative .unmarked (Real.exp_pos (-4))).fst (mkW 5 1) := by
   refine comp_unmarked_counter_evaluative (Real.exp (-4)) (Real.exp_pos _) ?_
   have he4 : Real.exp 4 ≤ 100 :=
     calc Real.exp 4 = Real.exp 1 ^ 4 := by rw [← Real.exp_nat_mul]; norm_num
@@ -804,134 +690,50 @@ theorem comp_unmarked_counter_evaluative_exp :
   rw [Real.exp_neg, one_div]
   gcongr
 
--- ============================================================================
--- § 11. Cross-Construction Contrast
--- ============================================================================
+/-! ### The ranking across constructions
 
-/-! ### Gradient evaluativity ranking
+Table 1's expected deviations rank the constructions strictly: the positive (2.08 unmarked, −3.18
+marked), then the exact equative (0.84, −1.06), then the minimum-standard equative (0.11, −1.52),
+then the comparative (−0.74, −0.44). Two factors produce the ranking. The positive leaves the
+threshold entirely open, so it is the vaguest and the most informative about where the subject
+stands; each further construction fixes more of the standard and leaves less to infer. And the
+marked antonym costs more, so the listener looks for a reason the speaker paid it, which is found
+in worlds where the standard is atypical.
 
-The paper's central prediction (Table 1) is a strict ranking of
-evaluativity strength across constructions:
+The theorems above check the qualitative pattern that ranking amounts to: both antonyms of the
+positive are evaluative, only the marked antonym of either equative is, and neither antonym of the
+comparative is.
 
-| Construction | unmarked E[ht−μ] | marked E[ht−μ] | Evaluative? |
-|---|---|---|---|
-| Positive | 2.08 | −3.18 | ✓ ✓ |
-| = Equative | 0.84 | −1.06 | ✗ ✓ |
-| ≥ Equative | 0.11 | −1.52 | ✗ ✓ |
-| Comparative | −0.74 | −0.44 | ✗ ✗ |
+### The categorical account
 
-This ranking emerges from two factors:
-1. **Informativity**: The positive construction has an open degree argument
-   (threshold is entirely unknown), making it maximally vague. Equatives
-   fix height to k, reducing uncertainty. Comparatives provide strict
-   ordering, leaving little room for evaluative inference.
-2. **Cost asymmetry**: The marked form's extra cost (C = 2 vs 1) forces
-   L₁ to seek explanations for the speaker's costly choice, driving
-   evaluative inferences in worlds where the marked form is distinctively
-   informative (i.e., atypical worlds).
-
-The theorems above verify the key qualitative pattern across all four
-constructions:
-- `pos_tall_evaluative` / `pos_short_evaluative` : positive ✓✓
-- `eq_marked_evaluative` / `eq_unmarked_weakly_evaluative` : equative ✗✓
-- `geq_marked_evaluative` / `geq_unmarked_barely_evaluative` : ≥ equative ✗✓
-- `comp_marked_weak` / `comp_unmarked_counter_evaluative` : comparative ✗✗ -/
-
--- ============================================================================
--- § 12. Bridge to Neo-Gricean Evaluativity ([rett-2015])
--- ============================================================================
-
-/-! ### RSA ↔ Neo-Gricean Agreement
-
-[rett-2015]'s Neo-Gricean account (formalized in
-`Studies/Rett2015.lean`) classifies
-constructions categorically using `Construction` and `ScalePolarity`:
-- **Positive** (`.positive`): evaluative for both polarities (Q-implicature)
-- **Equative** (`.equative`): evaluative for `.negative` only (Manner/R-implicature)
-- **Comparative** (`.comparative`): NOT evaluative (no applicable implicature)
-
-This RSA model derives the same pattern *gradiently*: each `L₁` prediction
-above confirms a qualitative directional prediction that matches
-the categorical classification. The RSA model adds:
-1. **Graded predictions** — evaluativity has a continuous strength, not just ±
-2. **Unified mechanism** — rational communication replaces separate Q/R principles
-3. **≥ equative predictions** — partial overlap produces intermediate evaluativity,
-   a novel prediction the categorical account does not make -/
-
-/-- Map utterance polarity to the adjective's `ScalePolarity`. -/
-def utterancePolarity : Utterance → Option ScalePolarity
-  | .unmarked => some .positive
-  | .marked   => some .negative
-  | .null     => none
-
-/-- Construction labels for each simulation, connecting to the
-    `Construction` type from `Semantics/Degree/Defs.lean`. -/
-abbrev posConstruction  : Construction := .positive
-abbrev eqConstruction   : Construction := .equative
-abbrev compConstruction : Construction := .comparative
+The Neo-Gricean account classifies the same constructions categorically — the positive evaluative
+for both polarities, the equative for the negative one only, the comparative for neither — and the
+theorem below checks that the two accounts agree wherever both speak. What the graded account adds
+is the strength of each inference, one mechanism in place of two implicature types, and a
+prediction about the minimum-standard equative, which the categorical account does not classify. -/
 
 open Rett2015 (Evaluative)
 
-/-- Cross-theory agreement: the RSA model and [rett-2015]'s Neo-Gricean
-    account agree on the full evaluativity paradigm.
-
-    - **Positive**: Neo-Gricean says evaluative for both polarities (Q-implicature).
-      RSA confirms: both "tall" and "short" shift the posterior away from the CC mean.
-    - **Equative**: Neo-Gricean says evaluative for negative only (Manner implicature).
-      RSA confirms: marked form shifts strongly, unmarked weakly.
-    - **Comparative**: Neo-Gricean says never evaluative (no applicable implicature).
-      RSA confirms: neither polarity shifts strongly.
-
-    This theorem connects two independent formalizations — the categorical
-    `Rett2015.Evaluative` and the RSA `L1` predictions — proving they
-    make compatible predictions despite using entirely different mechanisms. -/
+/-- The categorical classification and the listener's shifts agree across the paradigm: where the
+    Neo-Gricean account calls a construction evaluative for a polarity, the listener shifts away
+    from the class centre, and where it does not, the shift is absent. -/
 theorem rsa_neo_gricean_agreement (e : ℝ) (he0 : 0 < e) :
     -- Positive: both accounts say evaluative for both polarities
-    Evaluative posConstruction .positive ∧
-    Evaluative posConstruction .negative ∧
-    (posL1 .unmarked he0).fst (mkW 5 2) > (posL1 .unmarked he0).fst (mkW 3 2) ∧
-    (posL1 .marked he0).fst (mkW 3 2) > (posL1 .marked he0).fst (mkW 5 2) ∧
+    Evaluative .positive .positive ∧
+    Evaluative .positive .negative ∧
+    (L1 .positive .unmarked he0).fst (mkW 5 2) > (L1 .positive .unmarked he0).fst (mkW 3 2) ∧
+    (L1 .positive .marked he0).fst (mkW 3 2) > (L1 .positive .marked he0).fst (mkW 5 2) ∧
     -- Equative: Neo-Gricean says marked-only; RSA shows marked shift
-    ¬ Evaluative eqConstruction .positive ∧
-    Evaluative eqConstruction .negative ∧
-    (eqL1 .marked he0).fst (mkW 4 4) > (eqL1 .marked he0).fst (mkW 4 0) ∧
+    ¬ Evaluative .equative .positive ∧
+    Evaluative .equative .negative ∧
+    (L1 .exactEquative .marked he0).fst (mkW 4 4) > (L1 .exactEquative .marked he0).fst (mkW 4 0) ∧
     -- Comparative: both say not evaluative
-    ¬ Evaluative compConstruction .positive ∧
-    ¬ Evaluative compConstruction .negative :=
+    ¬ Evaluative .comparative .positive ∧
+    ¬ Evaluative .comparative .negative :=
   ⟨by decide, by decide,
    pos_tall_evaluative e he0, pos_short_evaluative e he0,
    by decide, by decide,
    eq_marked_evaluative e he0,
    by decide, by decide⟩
-
--- ============================================================================
--- § 13. Cross-References
--- ============================================================================
-
-/-! ### Relationship to [lassiter-goodman-2017]
-
-`LassiterGoodman2017PMF.lean` formalizes the threshold RSA model for the
-positive construction only (1D world = height, latent = threshold).
-This file extends that model to 2D worlds (height × CC center) and
-adds cost-driven antonym competition. The positive construction
-predictions here subsume LassiterGoodman2017's: both show that
-hearing "tall"/"short" shifts the height posterior.
-
-### Architecture
-
-The model runs on the mathlib-`PMF` RSA pipeline (`RSA.Canonical.L1`), with the
-latent threshold offset `σ` as the joint-listener's second coordinate:
-- `meaningE` bakes the Gaussian 2D world prior into the graded L₀ kernel
-  (L₀ ∝ P(w) · ⟦u⟧(σ,w)); `L0v` is its normalised value.
-- `Sk` is the cost-sensitive speaker `S₁(u | w,σ) ∝ L₀(w|u,σ)⁴ · e^C(u)`, with
-  cost base `e` (= `exp(−4)` at α = 4). It is `dite`-guarded so it stays total
-  at invalid worlds, which carry joint prior 0.
-- `jointK` is the uniform-over-σ joint prior `P(w)·P(σ)`; the listener is the
-  joint Bayesian posterior over `world × σ`, world marginal via `.fst`.
-
-Evaluativity (Tier A) is proved structurally from licensing-set inclusion and
-needs only `0 < e`; the counter-evaluative comparative is the sole
-prior-magnitude case and needs `1/100 ≤ e`.
--/
 
 end BumfordRett2021
