@@ -6,7 +6,9 @@ import Linglib.Semantics.Questions.Bias
 /-!
 # [gunlogson-2004]: Source-Marked Commitments
 
-[gunlogson-2004] [gunlogson-2001] [gunlogson-2003]Models the distinction between falling and rising declaratives via [bring-gunlogson-2000]
+[gunlogson-2004] [gunlogson-2001] [gunlogson-2003]
+
+Models the distinction between falling and rising declaratives via
 source-marked discourse commitments. The key innovation: commitments
 carry a tag indicating whether they are self-generated (from the
 speaker's own evidence) or other-generated (attributed to the addressee).
