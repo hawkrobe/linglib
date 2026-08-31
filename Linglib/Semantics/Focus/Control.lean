@@ -191,8 +191,8 @@ open Alternatives in
 focus value, so no antecedent resolves against it ([rooth-1992] §10). -/
 theorem not_squiggleSet_unfeatured (x : α) (Γ : Set α) :
     ¬ SquiggleSet (AltMeaning.unfeatured x).oValue
-      (AltMeaning.unfeatured x).aSet Γ := by
-  rw [AltMeaning.unfeatured_aSet, AltMeaning.unfeatured_oValue]
+      (AltMeaning.unfeatured x).aValue Γ := by
+  rw [AltMeaning.unfeatured_aValue, AltMeaning.unfeatured_oValue]
   exact not_squiggleSet_singleton x Γ
 
 end Squiggle
@@ -264,17 +264,17 @@ fully resolves against it. -/
 open Alternatives in
 /-- The composed focused answer `d` over the pair `{d, d'}`. -/
 def pairAnswer {W : Type*} (d d' : W) : AltMeaning (Set W) :=
-  (fun x => ({x} : Set W)) <$> (⟨d, [d, d']⟩ : AltMeaning W)
+  (fun x => ({x} : Set W)) <$> (⟨d, {d, d'}⟩ : AltMeaning W)
 
 open Alternatives in
 @[simp] theorem pairAnswer_oValue {W : Type*} (d d' : W) :
     (pairAnswer d d').oValue = {d} := rfl
 
 open Alternatives in
-@[simp] theorem pairAnswer_aSet {W : Type*} (d d' : W) :
-    (pairAnswer d d').aSet = {{d}, {d'}} := by
+@[simp] theorem pairAnswer_aValue {W : Type*} (d d' : W) :
+    (pairAnswer d d').aValue = {{d}, {d'}} := by
   ext q
-  simp only [pairAnswer, AltMeaning.mem_aSet_map]
+  simp only [pairAnswer, AltMeaning.mem_aValue_map]
   constructor
   · rintro ⟨a, ha, rfl⟩
     rcases (by simpa using ha : a = d ∨ a = d') with rfl | rfl
@@ -290,12 +290,12 @@ correction clause — against the composed answer over its pair. One
 semantics, four pragmatic uses. -/
 theorem use_model_resolves {W : Type*} {d d' : W} (hne : d' ≠ d) (u : Use) :
     (Use.model {d} {d'} u).Resolves
-      (pairAnswer d d').oValue (pairAnswer d d').aSet := by
+      (pairAnswer d d').oValue (pairAnswer d d').aValue := by
   have hne' : ({d'} : Set W) ≠ {d} :=
     fun h => hne (Set.singleton_eq_singleton_iff.mp h)
-  have hSq : SquiggleSet (pairAnswer d d').oValue (pairAnswer d d').aSet
+  have hSq : SquiggleSet (pairAnswer d d').oValue (pairAnswer d d').aValue
       {{d}, {d'}} := by
-    rw [pairAnswer_oValue, pairAnswer_aSet]
+    rw [pairAnswer_oValue, pairAnswer_aValue]
     exact ⟨subset_rfl, Or.inl rfl, ⟨{d'}, Or.inr rfl, hne'⟩⟩
   cases u with
   | newInfo     => exact hSq

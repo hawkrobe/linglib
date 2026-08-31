@@ -113,7 +113,7 @@ theorem g_preserves_aValue {α : Type*} (m : AltMeaning α) (a : α) (h : m.Give
     (58) itself, which states the [G]-can-contain-[FoC]-only-with-consumption
     consequence. -/
 theorem foc_g_exclusion {α : Type*} {m : AltMeaning α} {a b : α}
-    (ha : a ∈ m.aSet) (hb : b ∈ m.aSet) (hab : a ≠ b) (referent : α) :
+    (ha : a ∈ m.aValue) (hb : b ∈ m.aValue) (hab : a ≠ b) (referent : α) :
     ¬ m.Given referent := fun h => by
   rw [h] at ha hb
   exact hab (ha.trans hb.symm)
@@ -160,7 +160,7 @@ structure ContrastOperator (α : Type*) where
     singleton of the O-value. -/
 def ContrastOperator.result {α : Type*}
     (op : ContrastOperator α) : AltMeaning α :=
-  { oValue := op.meaning.oValue, aValue := [op.meaning.oValue] }
+  { oValue := op.meaning.oValue, aValue := {op.meaning.oValue} }
 
 /-- ~ preserves O-value. -/
 theorem squiggle_preserves_oValue {α : Type*} (op : ContrastOperator α) :
@@ -168,7 +168,7 @@ theorem squiggle_preserves_oValue {α : Type*} (op : ContrastOperator α) :
 
 /-- ~ collapses the A-value to a singleton. -/
 theorem squiggle_singleton_aValue {α : Type*} (op : ContrastOperator α) :
-    op.result.aValue = [op.meaning.oValue] := rfl
+    op.result.aValue = {op.meaning.oValue} := rfl
 
 /-! ## Semantics of *only*
 
@@ -199,9 +199,9 @@ because *only* + ~ consume the alternatives below the VP level. -/
     {O-value}, which is the precondition for [G]-marking. -/
 theorem consumed_alts_given {α : Type*} (op : ContrastOperator α) :
     op.result.Given op.meaning.oValue := by
-  show op.result.aSet = {op.meaning.oValue}
+  show op.result.aValue = {op.meaning.oValue}
   ext x
-  simp [AltMeaning.mem_aSet, squiggle_singleton_aValue]
+  simp [AltMeaning.mem_aValue, squiggle_singleton_aValue]
 
 /-! ## Prosodic spellout (their §6–§7, not formalized)
 
@@ -237,11 +237,11 @@ membership. -/
 
 /-- Schwarzschild's A-Givenness: the referent is in the alternatives set. -/
 def isAGiven {α : Type*} (m : AltMeaning α) (referent : α) : Prop :=
-  referent ∈ m.aSet
+  referent ∈ m.aValue
 
 instance instDecidableIsAGiven {α : Type*} [DecidableEq α] (m : AltMeaning α) (referent : α) :
     Decidable (isAGiven m referent) :=
-  decidable_of_iff _ AltMeaning.mem_aSet.symm
+  decidable_of_iff _ AltMeaning.mem_aValue.symm
 
 /-- K&S Givenness entails Schwarzschild A-Givenness ("our Givenness
     falls out as a special case of A-Givenness", their §3): if the
@@ -260,7 +260,7 @@ theorem givenness_entails_aGivenness {α : Type*} {m : AltMeaning α} {referent 
 theorem aGivenness_not_sufficient : ∃ (m : AltMeaning Nat) (referent : Nat),
     isAGiven m referent ∧ ¬ m.Given referent := by
   refine ⟨⟨1, [1, 2]⟩, 1, by decide, fun h => ?_⟩
-  have h2 : (2 : ℕ) ∈ ({1} : Set ℕ) := h ▸ AltMeaning.mem_aSet.mpr (by decide)
+  have h2 : (2 : ℕ) ∈ ({1} : Set ℕ) := h ▸ AltMeaning.mem_aValue.mpr (by decide)
   simp at h2
 
 /-! ## Hausa in situ vs ex situ (their fn. 21)

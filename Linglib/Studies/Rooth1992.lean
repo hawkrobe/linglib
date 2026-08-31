@@ -60,7 +60,7 @@ def maryCutBjorn : Set QAWorld := {maryBjorn}
     ((23Aa) of [rooth-1992] §2.4): O-value = "Mary";
     A-value = {"Mary", "Monique"}. -/
 def altSubjectFocused : AltMeaning String :=
-  { oValue := "Mary", aValue := ["Mary", "Monique"] }
+  { oValue := "Mary", aValue := {"Mary", "Monique"} }
 
 /-- Non-focused "cut Bill down to size": singleton A-value. Exercises
     `AltMeaning.unfeatured`. -/
@@ -262,7 +262,7 @@ def introTom : OnlyWorld → Bool
     A-value = {introBill, introTom}. Focus constrains the domain of
     *only*. -/
 def altBillFocused : AltMeaning (OnlyWorld → Bool) :=
-  { oValue := introBill, aValue := [introBill, introTom] }
+  { oValue := introBill, aValue := {introBill, introTom} }
 
 /-- "Only Bill" = Mary introduced Bill but not Tom. -/
 def onlyBill : OnlyWorld → Bool

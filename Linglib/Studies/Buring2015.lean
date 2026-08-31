@@ -44,10 +44,10 @@ def vt (r : Rel) : Obj → Rel × Obj := fun o => (r, o)
 
 /-- *ordered*, with its transitive alternatives. -/
 def orderedM : AltMeaning (Obj → Rel × Obj) :=
-  ⟨vt .ordered, [vt .ordered, vt .paidFor]⟩
+  ⟨vt .ordered, {vt .ordered, vt .paidFor}⟩
 
 /-- *breakfast*, with its object alternatives. -/
-def breakfastM : AltMeaning Obj := ⟨.breakfast, [.breakfast, .lunch]⟩
+def breakfastM : AltMeaning Obj := ⟨Obj.breakfast, {Obj.breakfast, Obj.lunch}⟩
 
 private theorem vt_ne : vt .paidFor ≠ vt .ordered := fun h => by
   have := congrFun h .breakfast

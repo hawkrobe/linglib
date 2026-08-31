@@ -27,9 +27,9 @@ targets they can realize.
   while the strong daughter stays at its ordinary value;
   `strongAllowed` (his Strong Restriction) allows only targets varying
   the accented daughter non-trivially. Both are `Set.seq` images of
-  `AltMeaning.aSet` — Hamblin application with one side held at its
+  `AltMeaning.aValue` — Hamblin application with one side held at its
   ordinary value — so the prosodic calculus runs through the same
-  applicative as the Roothian engine (`AltMeaning.aSet_seq`).
+  applicative as the Roothian engine (`AltMeaning.aValue_seq`).
 
 `licensedFocusValue` is the pipeline connector: the composable targets
 minus the banned ones. At propositional type its values are
@@ -96,7 +96,7 @@ pattern, the banned focal targets vary the weak (function) daughter
 over its alternative domain while the strong daughter stays at its
 ordinary value. -/
 def weakBanned (dw : AltMeaning (α → β)) (ds : AltMeaning α) : Set β :=
-  dw.aSet.seq {ds.oValue}
+  dw.aValue.seq {ds.oValue}
 
 /-- Strong Restriction ([buring-2015]): under prosodic reversal, the
 allowed focal targets vary the accented (function) daughter
@@ -104,7 +104,7 @@ non-trivially while the deaccented daughter stays at its ordinary
 value. -/
 def strongAllowed (dm : AltMeaning (α → β)) (ds : AltMeaning α) :
     Set β :=
-  (dm.aSet \ {dm.oValue}).seq {ds.oValue}
+  (dm.aValue \ {dm.oValue}).seq {ds.oValue}
 
 /-- Reversal allows only targets that the default bans. -/
 theorem strongAllowed_subset_weakBanned (dm : AltMeaning (α → β))
@@ -116,11 +116,11 @@ the daughters compose to, minus the banned targets. At `β := Set W`
 this is a `PropFocusValue W` — the focus value the prosody derives. -/
 def licensedFocusValue (dw : AltMeaning (α → β)) (ds : AltMeaning α) :
     Set β :=
-  dw.aSet.seq ds.aSet \ weakBanned dw ds
+  dw.aValue.seq ds.aValue \ weakBanned dw ds
 
 theorem licensedFocusValue_subset_seq (dw : AltMeaning (α → β))
     (ds : AltMeaning α) :
-    licensedFocusValue dw ds ⊆ dw.aSet.seq ds.aSet :=
+    licensedFocusValue dw ds ⊆ dw.aValue.seq ds.aValue :=
   Set.sdiff_subset
 
 theorem disjoint_licensedFocusValue_weakBanned
@@ -135,7 +135,7 @@ focus value. -/
 theorem Antecedent.Admits.of_licensed {a : Antecedent W}
     {dw : AltMeaning (α → Set W)} {ds : AltMeaning α}
     (h : a.Admits (licensedFocusValue dw ds)) :
-    a.Admits (dw.aSet.seq ds.aSet) :=
+    a.Admits (dw.aValue.seq ds.aValue) :=
   h.mono Set.sdiff_subset
 
 end Prosodic

@@ -251,28 +251,28 @@ theorem theory_overgen_without_catmatch : mustP ∈ typeTheoQ :=
 
 /-- Applying [FoC] with type-theoretic A-value yields the over-generating set. -/
 def applyFoC_typeTheo : AltMeaning (Set PolarWorld) :=
-  { oValue := p, aValue := typeTheoAlternatives }
+  { oValue := p, aValue := typeTheoQ }
 
 /-- The two carriers agree definitionally: the type-theoretic [FoC]
 A-value *as a set* is the type-theoretic question. -/
-theorem applyFoC_typeTheo_aSet : applyFoC_typeTheo.aSet = typeTheoQ := rfl
+theorem applyFoC_typeTheo_aValue : applyFoC_typeTheo.aValue = typeTheoQ := rfl
 
 /-- The type-theoretic A-value produces the wrong question denotation. -/
-theorem applyFoC_is_typeTheo : mustP ∈ applyFoC_typeTheo.aSet := by
-  simp [applyFoC_typeTheo, typeTheoAlternatives, opLexicon]
+theorem applyFoC_is_typeTheo : mustP ∈ applyFoC_typeTheo.aValue := by
+  show mustP ∈ typeTheoAlternatives
+  simp [typeTheoAlternatives, opLexicon]
 
 /-- Restricting the A-value by category match corrects the prediction. -/
 def applyFoC_catMatch : AltMeaning (Set PolarWorld) :=
-  { oValue := p, aValue := catMatchAlternatives }
+  { oValue := p, aValue := catMatchQ }
 
 /-- The two carriers agree definitionally on the category-matched side
 as well. -/
-theorem applyFoC_catMatch_aSet : applyFoC_catMatch.aSet = catMatchQ := rfl
+theorem applyFoC_catMatch_aValue : applyFoC_catMatch.aValue = catMatchQ := rfl
 
 /-- The category-matched A-value produces the correct question denotation. -/
 theorem categoryMatch_fixes_applyFoC :
-    mustP ∉ applyFoC_catMatch.aSet := by
-  simp only [applyFoC_catMatch, AltMeaning.mem_aSet]
+    mustP ∉ applyFoC_catMatch.aValue := by
   show mustP ∉ catMatchAlternatives
   -- catMatchAlternatives = [p, notP]; mustP is neither.
   have hcm : catMatchAlternatives = [p, notP] := by

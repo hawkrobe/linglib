@@ -115,7 +115,7 @@ private def answer : Alternatives.AltMeaning (Set Alt) :=
 all squiggle clauses, plus the correction clause for the corrective
 cells. One semantics, four pragmatic uses. -/
 theorem ctx_resolves (u : Use) :
-    (ctx u).Resolves answer.oValue answer.aSet :=
+    (ctx u).Resolves answer.oValue answer.aValue :=
   use_model_resolves (d := Alt.ans) (d' := Alt.alt) nofun u
 
 /-! ## Exhaustive focus (§3.2.5)
