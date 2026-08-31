@@ -7,53 +7,47 @@ import Linglib.Features.Person.Decomposition
 import Linglib.Fragments.Spanish.Clitics
 
 /-!
-# Charnavel & Mateu (2015): The Clitic Logophoric Restriction
-[charnavel-mateu-2015] [sells-1987] [kuno-1987]
+# Charnavel and Mateu 2015: the clitic logophoric restriction
 
-The Clitic Binding Restriction Revisited: Evidence for Antilogophoricity.
-*The Linguistic Review* 32(4).
+This file formalizes the reanalysis of the Romance clitic-cluster restriction in
+[charnavel-mateu-2015]. Earlier work took the restriction on accusative clitics to be a binding
+condition; a grammaticality experiment with French and Spanish speakers finds instead that what
+degrades a cluster is the accusative clitic corefering with a logophoric center, whether or not
+the antecedent c-commands it.
 
-## Summary
+The account gives three logophoric centers — discourse participant, empathy locus, attitude
+holder ([sells-1987], [kuno-1987]) — each a subset of a three-feature space, arranged so that
+neighbours on the hierarchy share a feature and the two ends do not. Two centers in one domain
+clash exactly when they share a feature, which makes the Person Case Constraint and the clitic
+logophoric restriction one mechanism at two places on the hierarchy: a discourse participant with
+an empathy locus, and an empathy locus with an attitude holder. A discourse participant with an
+attitude holder is the one licit pair.
 
-[charnavel-mateu-2015] (C&M) reanalyze the restriction on accusative
-clitics in Romance clitic clusters. Earlier work (Bhatt & Šimík 2009)
-attributed the restriction to *binding*; C&M's grammaticality experiment
-(97 French + 35 Spanish speakers, 9 conditions) shows that the relevant
-factor is **antilogophoricity**, not binding. Their generalization (eq. 26):
+## Main definitions
 
-> **Clitic Logophoric Restriction (CLR)**: When a third person dative clitic
-> and an accusative clitic co-occur in a cluster, the accusative clitic
-> cannot corefer with a logophoric center.
+* `LogoCenter`, `LogoFeature`, `LogoCenter.features` — the hierarchy and its feature subsets
+* `Clash`, `Antilogophoric` — two centers sharing a feature, and a domain containing such a pair
+* `dativeCenter`, `accusativeCenter` — the center a Spanish clitic realizes, from its person
+* `Condition`, `predictsUngrammatical` — the experiment's crossed factors and the prediction
 
-## Local apparatus
+## Main results
 
-C&M propose a three-level hierarchy of logophoric centers (eq. 53–54):
-discourse participant > empathy locus > attitude holder. Each center is
-characterised by a feature subset of `{A, B, C}` (eq. 63):
-- discourse participant = `{A, B}`
-- empathy locus = `{B, C}`
-- attitude holder = `{C}`
+* `not_clash_iff` — the only licit pair is the two ends of the hierarchy, which is what unifies
+  the Person Case Constraint with the clitic logophoric restriction
+* `c_command_irrelevant` — the prediction does not read c-command
+* `spanish_le_lo_de_se_clash`, `spanish_le_me_clash`, `spanish_me_lo_de_se_licit` — the Spanish
+  clusters, with each clitic's center read off its person feature
 
-Antilogophoric clash occurs when two centers in the same domain share a
-feature (equivalent to: two adjacent-or-identical positions on the
-hierarchy). PCC and CLR are both instances:
-- PCC = discourse participant + empathy locus (share `B`)
-- CLR = empathy locus + attitude holder (share `C`)
+## References
 
-## Disagreement with [pancheva-zubizarreta-2018]
-
-C&M unify CLR and PCC under one mechanism. P&Z (page 1308) explicitly
-disagree: "We do not think the CLR and the PCC should be unified along
-the lines suggested by Charnavel and Mateu (2015). The two phenomena are
-related but nevertheless distinct."
+* [charnavel-mateu-2015]
+* [sells-1987]
+* [kuno-1987]
 -/
 
 namespace CharnavelMateu2015
 
-
--- ============================================================================
--- § 1: Logophoric Centers (paper §3.5.2, eq. 53)
--- ============================================================================
+/-! ### The logophoric centers -/
 
 /-- Three types of logophoric center, ordered by degree of perspective
     integration in the discourse (paper eq. 54: discourse participant >
@@ -69,9 +63,7 @@ inductive LogoCenter : Type where
   | attitudeHolder
   deriving DecidableEq, Repr, Fintype
 
--- ============================================================================
--- § 2: Feature System (paper §3.6, eq. 63)
--- ============================================================================
+/-! ### The feature system -/
 
 /-- The three abstract logophoric features. `B` expresses the
     speaker-component (shared by discourse participants and empathy loci);
@@ -87,9 +79,7 @@ def LogoCenter.features : LogoCenter → Finset LogoFeature
   | .empathyLocus         => {.B, .C}
   | .attitudeHolder       => {.C}
 
--- ============================================================================
--- § 3: Antilogophoric Intervention (paper §3.5.2)
--- ============================================================================
+/-! ### Antilogophoric clash -/
 
 /-- Two centers clash iff their feature sets share at least one feature.
     Equivalent to "identical or adjacent on the hierarchy" (paper eq. 54). -/
@@ -112,36 +102,17 @@ def Antilogophoric (centers : List LogoCenter) : Prop :=
 instance (centers : List LogoCenter) : Decidable (Antilogophoric centers) :=
   inferInstanceAs (Decidable (∃ _ : Fin _, _))
 
--- ============================================================================
--- § 4: Predictions of Table 3 (paper §3.5.2)
--- ============================================================================
+/-- Two centers clash unless they are the two ends of the hierarchy: a discourse participant and
+an attitude holder share no feature, and every other pair does. The Person Case Constraint (a
+discourse participant with an empathy locus) and the clitic logophoric restriction (an empathy
+locus with an attitude holder) are the two clashing neighbour pairs. -/
+theorem not_clash_iff (x y : LogoCenter) :
+    ¬ Clash x y ↔
+      ((x = .discourseParticipant ∧ y = .attitudeHolder) ∨
+        (x = .attitudeHolder ∧ y = .discourseParticipant)) := by
+  cases x <;> cases y <;> decide
 
-/-- PCC clash: discourse participant (1/2 clitic) + empathy locus
-    (3.dat clitic) share feature `B`. -/
-theorem pcc_clash : Clash .discourseParticipant .empathyLocus := by decide
-
-/-- CLR clash: empathy locus (3.dat) + attitude holder (3.acc *de se*)
-    share feature `C`. -/
-theorem clr_clash : Clash .empathyLocus .attitudeHolder := by decide
-
-/-- Discourse participant + attitude holder do **not** clash — no shared
-    feature. This is the licit configuration (Table 3 final row). -/
-theorem dp_ah_no_clash : ¬ Clash .discourseParticipant .attitudeHolder := by
-  decide
-
-/-- The full Table 3 prediction: clash iff the pair shares a feature. -/
-theorem table3_predictions :
-    Clash .discourseParticipant .discourseParticipant ∧   -- PCC: *me/te me/te
-    Clash .discourseParticipant .empathyLocus ∧           -- PCC: *me/te lui
-    Clash .empathyLocus .empathyLocus ∧                   -- vacuous configuration
-    Clash .attitudeHolder .empathyLocus ∧                 -- CLR
-    Clash .attitudeHolder .attitudeHolder ∧               -- CLR
-    ¬ Clash .discourseParticipant .attitudeHolder := by   -- licit
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
-
--- ============================================================================
--- § 5: Experimental Conditions (paper §2.3, Table 1)
--- ============================================================================
+/-! ### The experiment's conditions -/
 
 /-- A test condition in C&M's grammaticality experiment, parameterised by
     the three crossed factors (paper Table 1). The 9 conditions enumerate
@@ -168,105 +139,49 @@ def predictsUngrammatical (c : Condition) : Prop :=
 instance (c : Condition) : Decidable (predictsUngrammatical c) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Paper Table 2: the experimental result. Conditions 1, 3, 6 (the three
-    rows with logo-centre antecedent + 3.dat) received significantly lower
-    scores than controls; the other six conditions did not. We collapse
-    Table 1's "bound 3" condition into the 3.dat case. -/
-theorem table2_results :
-    -- Cond 1: c-cmd=yes, logo=yes, dat=3 → *
-    predictsUngrammatical ⟨true, true, true⟩ ∧
-    -- Cond 2: c-cmd=yes, logo=yes, dat=1/2 → OK
-    ¬ predictsUngrammatical ⟨true, true, false⟩ ∧
-    -- Cond 4: c-cmd=yes, logo=no, dat=3 → OK
-    ¬ predictsUngrammatical ⟨true, false, true⟩ ∧
-    -- Cond 5: c-cmd=yes, logo=no, dat=1/2 → OK
-    ¬ predictsUngrammatical ⟨true, false, false⟩ ∧
-    -- Cond 6: c-cmd=no, logo=yes, dat=3 → * (the key finding: c-cmd irrelevant)
-    predictsUngrammatical ⟨false, true, true⟩ ∧
-    -- Cond 7: c-cmd=no, logo=yes, dat=1/2 → OK
-    ¬ predictsUngrammatical ⟨false, true, false⟩ ∧
-    -- Cond 8: c-cmd=no, logo=no, dat=3 → OK
-    ¬ predictsUngrammatical ⟨false, false, true⟩ ∧
-    -- Cond 9: c-cmd=no, logo=no, dat=1/2 → OK
-    ¬ predictsUngrammatical ⟨false, false, false⟩ := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
-
-/-- The key empirical finding (paper §2.4, conditions 4 vs 6):
-    c-command is irrelevant; only logophoric centrehood + 3rd-person
-    dative matter. -/
+/-- The hypothesis does not read c-command, which is the experiment's finding: the conditions
+that degraded were exactly those with a logophoric-center antecedent and a third-person dative,
+whether or not the antecedent c-commanded the accusative clitic. -/
 theorem c_command_irrelevant
     (logoCenter dative3rd : Bool) :
     predictsUngrammatical ⟨true, logoCenter, dative3rd⟩ ↔
     predictsUngrammatical ⟨false, logoCenter, dative3rd⟩ := by
   cases logoCenter <;> cases dative3rd <;> decide
 
--- ============================================================================
--- § 6: CLR as a Special Case of Antilogophoricity (paper eq. 26 + §3.4)
--- ============================================================================
+/-! ### The Spanish clusters
 
-/-- A clitic-cluster configuration as a list of two logophoric centres
-    (one for each clitic). The dative is read first, then the accusative. -/
-def ClusterConfig : Type := LogoCenter × LogoCenter
+Each clitic's logophoric center is read off its person feature: a dative is a discourse
+participant when it is first or second person and an empathy locus when it is third; an
+accusative is a discourse participant when it is first or second person, and a third-person one
+is an attitude holder exactly on its *de se* reading. -/
 
-/-- The Clitic Logophoric Restriction (paper eq. 26): a configuration is
-    blocked when its two centres are antilogophoric. -/
-def CLRViolated (cfg : ClusterConfig) : Prop :=
-  Clash cfg.1 cfg.2
+/-- The center a dative clitic realizes. -/
+def dativeCenter : UD.Person → LogoCenter
+  | .third => .empathyLocus
+  | _ => .discourseParticipant
 
-instance (cfg : ClusterConfig) : Decidable (CLRViolated cfg) :=
-  inferInstanceAs (Decidable (Clash _ _))
+/-- The center an accusative clitic realizes, given whether it is read *de se*. -/
+def accusativeCenter : UD.Person → Bool → LogoCenter
+  | .third, true => .attitudeHolder
+  | .third, false => .empathyLocus
+  | _, _ => .discourseParticipant
 
-/-- The canonical CLR configuration: 3.dat (empathy locus) + 3.acc *de se*
-    (attitude holder). Violation. -/
-theorem canonical_clr : CLRViolated (.empathyLocus, .attitudeHolder) := by decide
+/-- *Se lo* (underlyingly *le lo*), a third-person dative with a *de se* third-person accusative,
+is the clitic logophoric restriction's configuration: empathy locus with attitude holder. -/
+theorem spanish_le_lo_de_se_clash :
+    Clash (dativeCenter Spanish.Clitics.le_dat.person)
+      (accusativeCenter Spanish.Clitics.lo.person true) := by decide
 
-/-- The canonical PCC configuration in C&M's terms: 3.dat (empathy locus) +
-    1/2.acc (discourse participant). Violation under the same mechanism. -/
-theorem canonical_pcc : CLRViolated (.empathyLocus, .discourseParticipant) := by
-  decide
+/-- *Le me*, a third-person dative with a first-person accusative, is the Person Case Constraint's
+configuration: empathy locus with discourse participant. -/
+theorem spanish_le_me_clash :
+    Clash (dativeCenter Spanish.Clitics.le_dat.person)
+      (accusativeCenter Spanish.Clitics.me_acc.person false) := by decide
 
-/-- C&M's unification claim (paper §3.4): both phenomena are instances of
-    `CLRViolated`. The bridge file documents P&Z's dissent. -/
-theorem cm_unification :
-    CLRViolated (.empathyLocus, .attitudeHolder) ∧
-    CLRViolated (.empathyLocus, .discourseParticipant) := ⟨by decide, by decide⟩
-
--- ============================================================================
--- § 7: Spanish Anchoring (Spanish.Clitics)
--- ============================================================================
-
-/-- Spanish *me lo* — 1.DAT.ACC. Under C&M's typology, the 1.dat clitic is
-    a discourse participant; *lo* is the accusative. The cluster is licit
-    when *lo* is **not** read with an attitude-holder antecedent
-    (paper §1.1, ex. 6 type: licit accusative). -/
-theorem spanish_me_lo_dat_is_discourse :
-    Spanish.Clitics.me_dat.person = .first ∧
-    Spanish.Clitics.lo.person = .third := ⟨rfl, rfl⟩
-
-/-- Spanish *te lo* — 2.DAT + 3.ACC. Same pattern: 2.dat is a discourse
-    participant; the cluster is licit on non-attitude-holder readings. -/
-theorem spanish_te_lo_dat_is_discourse :
-    Spanish.Clitics.te_dat.person = .second ∧
-    Spanish.Clitics.lo.person = .third := ⟨rfl, rfl⟩
-
-/-- Spanish *le lo* (which surfaces as *se lo* by the spurious-se rule):
-    3.DAT + 3.ACC. The CLR-relevant configuration — empathy locus +
-    attitude holder. Bad under *de se* readings of *lo*
-    (paper §1, ex. 2b; §3.4 implementation). -/
-theorem spanish_le_lo_is_clr_pair :
-    Spanish.Clitics.le_dat.person = .third ∧
-    Spanish.Clitics.lo.person = .third := ⟨rfl, rfl⟩
-
-/-- The clash-yielding cluster for Spanish *se lo* / *le lo* under
-    a *de se* reading: empathy + attitude holder. -/
-theorem spanish_le_lo_de_se_violates_clr :
-    CLRViolated (.empathyLocus, .attitudeHolder) := by decide
-
-/-- The PCC pattern *le me / *le te in Spanish: 3.dat + 1/2.acc — empathy
-    locus + discourse participant. -/
-theorem spanish_le_me_pcc_violates :
-    Spanish.Clitics.le_dat.person = .third ∧
-    Spanish.Clitics.me_acc.person = .first ∧
-    CLRViolated (.empathyLocus, .discourseParticipant) := ⟨rfl, rfl, by decide⟩
+/-- *Me lo* is licit even on the *de se* reading: a first-person dative is a discourse
+participant, and that is the one center an attitude holder does not clash with. -/
+theorem spanish_me_lo_de_se_licit :
+    ¬ Clash (dativeCenter Spanish.Clitics.me_dat.person)
+      (accusativeCenter Spanish.Clitics.lo.person true) := by decide
 
 end CharnavelMateu2015
