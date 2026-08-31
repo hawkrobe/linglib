@@ -50,7 +50,7 @@ and marked forms pair with marked (marked) meanings. The strong
 version incorrectly predicts that marked forms are blocked in ALL
 their interpretations.
 
-The structural meta-theorem `strong ⊂ weak` ([blutner-2000] p. 12)
+The structural meta-theorem `strong ⊂ weak` ([blutner-2000] p. 205)
 lives in `Phonology/Constraint/Superoptimal.lean` as
 `isStrongOptimal_imp_mem_superoptimalSet` (Set-valued, coinductive
 proof against `OrderHom.gfp`) and its Finset corollary
@@ -260,7 +260,7 @@ theorem total_blocking_weak_vs_strong :
 -- ============================================================================
 
 /-! The structural meta-theorem `strongOptimal pairs profile ⊆ superoptimal
-    pairs profile` ([blutner-2000] p. 12) is proved coinductively in the
+    pairs profile` ([blutner-2000] p. 205) is proved coinductively in the
     substrate at `Phonology/Constraint/Superoptimal.lean` via
     `isStrongOptimal_imp_mem_superoptimalSet` (Set-valued, against mathlib's
     `OrderHom.gfp`) and `strongOptimal_subset_superoptimal` (Finset
