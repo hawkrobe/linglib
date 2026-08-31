@@ -12,12 +12,9 @@ stems with no free wordform) impose **no** LC pressure — the candidate is free
 satisfy markedness alone — while a **strongly-attested anchor** imposes strong
 pressure preserving the anchor's segments.
 
-This file holds the LC *substrate* — the paper's anchored-paradigm primitive,
-anchored to its originating paper and consumed by later study files.
-`Studies/BreissKatsudaKawahara2026.lean` instantiates it for Japanese velar
-nasalisation: bound-N2 compounds nasalise categorically (no anchor), while in
-free-N2 compounds nasalisation is suppressed in proportion to the N2's free-form
-attestation strength.
+This file holds the paper's anchored-paradigm primitive: a candidate's paradigm is
+the candidate alone when it has no attested anchor and the pair otherwise, so
+LC-FAITH has no purchase on unanchored forms.
 
 ## Architecture
 

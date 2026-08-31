@@ -20,8 +20,7 @@ Appendix A — every rated past of the 58 wug stems — into cell means: `regula
 `irregulars_ior` are the island effects for both past types, `regulars_not_cell_invariant` the
 failure of the single-default-rule prediction, `tradeoff` the competition effect of Fig. 3–4,
 `analogical_misses_islands` Table 4, and `burnt_underestimated` the rule-based model's one
-systematic error. The wug-paradigm vocabulary consumed by [breiss-katsuda-kawahara-2026]
-is declared first.
+systematic error. The wug-paradigm vocabulary is declared first.
 
 ## References
 
@@ -36,8 +35,7 @@ is declared first.
 /-! ### Wug-paradigm vocabulary ([berko-1958])
 
 Shared typed vocabulary for wug studies, homed in the modern reference
-paper for gradient wug responses (its other consumer,
-[breiss-katsuda-kawahara-2026], imports this file). [berko-1958]
+paper for gradient wug responses. [berko-1958]
 introduced the test as a probe for productive morpho-phonological
 knowledge: presented with the nonce *wug*, children produce *wugs*
 /wʌgz/ rather than refusing or randomising. A single parametric lens

@@ -37,7 +37,7 @@ The paper's production matrix `G` (solving `SG = C`) is the substrate's `product
 comprehension matrix `F` (solving `CF = S`) is `comprehension`. The DLM's
 no-stored-entries architecture sits against frequency-channel theories of a stored
 lexicon and [bybee-1985]'s `tokenFreq` (`Studies/Bybee1985.lean`); cf. the
-channel discrimination in `Studies/BreissKatsudaKawahara2026.lean`.
+activation-scaled faithfulness of `Studies/BreissKatsudaKawahara2026.lean`.
 -/
 
 namespace Saito2025
