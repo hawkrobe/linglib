@@ -6,45 +6,57 @@ import Linglib.Studies.Eckert2008
 import Linglib.Studies.Labov2012
 
 /-!
-# [burnett-2019] — Signalling Games, Sociolinguistic Variation, and
-the Construction of Style
+# Burnett 2019: signalling games and the construction of style
 
-Linguistics and Philosophy 42: 419–450.
+A speaker choosing between *-ing* and *-in'*, or between a released and a flapped /t/, conveys
+something about the persona they are projecting. This file formalizes the account on which that
+inference is the equilibrium of a signalling game played by a rational speaker and listener: each
+variant is compatible with the personae sharing a property in its indexical field, the listener
+infers a persona from the variant, and the speaker chooses the variant that best conveys the
+persona they are after.
 
-## Overview
+Two kinds of variation come out of the one model. A speaker holding a persona fixed changes
+variants as the context changes the prior over personae — style shifting, here the cool guy who
+prefers *-in'* in the casual context and *-ing* in the careful one. And a listener holding the
+variant fixed infers different personae from different speakers, since their priors differ: the
+same released /t/ that makes one speaker sound like a stern leader leaves a strongly stereotyped
+speaker's interpretation untouched.
 
-Social Meaning Games (SMGs) model how sociolinguistic variant choice
-conveys social information. A speaker's use of *-ing* vs *-in'* induces
-listener inferences about persona traits (competent, friendly, etc.).
-The framework combines [lewis-1969]'s signalling games with RSA-style
-Bayesian reasoning to derive both style shifting (intra-speaker variation
-across contexts) and social stratification (inter-speaker variation across
-classes) from the same principles.
+The meaning function is not stipulated: it is the lift of each variant's indexical field to
+persona compatibility, and `ingMeaning_eq_emMeaningMI` checks the two agree. The predictions are
+exact comparisons of the listener and speaker distributions, not simulated values.
 
-## Architecture
+## Main definitions
 
-The meaning function is **grounded** in the Eckert–Montague lift from
-`EckertMontague.emMeaningMI`: each variant's Eckert field (a set of
-indexed properties) is lifted to persona compatibility via intersection
-semantics. The grounding theorem `ingMeaning_eq_emMeaningMI` verifies
-that the study's meaning function matches the theory-layer derivation.
+* `ingField`, `ingMeaning` — the indexical fields of the two variants and the compatibility they
+  induce
+* `L0k`, `Sk`, `L1k` — the literal listener, the speaker, and the pragmatic listener of a context
+* `casualPrior`, `carefulPrior`, `ricePrior`, `pelosiPrior`, `bushPrior` — the persona priors
 
-Each context is a belief-based RSA over personae (worlds) and variants
-(utterances): the speaker `Sk` is the softmax of `L₀⁶` (α = 6) and the
-listener `L1k` the Bayesian posterior (`PMF.posterior`) against the
-context-specific persona prior, which also weights `L₀` (Burnett eq. 11).
-Predictions are exact `PMF`-value comparisons.
+## Main results
 
-## Key predictions
+* `casual_coolGuy_prefers_in'`, `careful_coolGuy_prefers_ing` — style shifting from the prior alone
+* `casual_sternLeader_prefers_ing`, `casual_doofus_prefers_in'` — the personae split by variant
+* `rice_released_sternLeader`, `pelosi_flapped_friendly` — listener interpretation by speaker
+* `bush_bulletproofing` — a strongly stereotyped prior swamps the variant's contribution
+* `smg_matches_labov_direction` — the predicted direction is the one [labov-2012] observed
+* `smg_L0_uniform_compatible` — the literal listener is uniform over compatible personae
 
-1. **Per-persona variant preference**: cool-guy prefers *-in'* ~69%
-2. **Style shifting**: casual→careful flips the cool-guy's preference
-3. **Stern-leader exclusion**: -in' is incompatible with stern leader
-4. **Listener interpretation**: Rice/Pelosi/Bush /t/ release predictions
-5. **Bulletproofing**: strong prior overwhelms variant effects (Bush)
-6. **Cross-reference**: model predictions close to [labov-2012] data
+## Implementation notes
+
+Each context is a belief-based Rational Speech Act model over personae as worlds and variants as
+utterances: the speaker is the softmax of the literal listener at rationality 6, the value the
+paper uses, and the pragmatic listener is the Bayesian posterior against the context's persona
+prior, which also weights the literal listener.
+
+## References
+
+* [burnett-2019]
+* [eckert-2008]
+* [labov-2012]
+* [lewis-1969]
+* [podesva-reynolds-callier-baptiste-2015]
 -/
-
 namespace Burnett2019
 
 open SocialMeaning
@@ -52,9 +64,7 @@ open SocialMeaning.EckertMontague
 open Eckert2008 (INGVariant)
 open RSA
 
--- ============================================================================
--- §1. Types
--- ============================================================================
+/-! ### Personae and variants -/
 
 /-- Social properties (Burnett example (5)). Two bipolar dimensions:
     competence (competent/incompetent) and warmth (friendly/aloof). -/
@@ -82,9 +92,7 @@ instance : Fintype Persona where
 -- INGVariant is imported from Studies/Eckert2008
 -- Burnett's *-ing* = .velar, *-in'* = .apical
 
--- ============================================================================
--- §2. Meaning: grounded in Eckert–Montague lift
--- ============================================================================
+/-! ### Meaning from indexical fields -/
 
 /-! Eckert fields (Burnett example (10)):
 - [*-ing*] = {competent, aloof}
@@ -120,7 +128,7 @@ def ingEckertField : INGVariant → Finset PersonaTrait
 /-- The ING grounded field: both Eckert fields are consistent. -/
 def ingField : GroundedField INGVariant burnettSpace where
   indexedProperties := ingEckertField
-  indexed_consistent := by intro v; cases v <;> native_decide
+  indexed_consistent := by intro v; cases v <;> decide
 
 /-- Meaning via the EM intersection lift: persona p is compatible with
     variant v iff p shares ≥1 property with v's Eckert field. -/
@@ -138,21 +146,19 @@ def ingMeaning : INGVariant → Persona → Bool
     theory-layer `emMeaningMI` applied to the ING Eckert fields. -/
 theorem ingMeaning_eq_emMeaningMI (v : INGVariant) (p : Persona) :
     ingMeaning v p = emMeaningMI ingField v p.toFinset := by
-  cases v <;> cases p <;> native_decide
+  cases v <;> cases p <;> decide
 
 /-- *-ing* is compatible with 3 personae (Table 1: excludes doofus). -/
 theorem ing_compat_count :
     (Finset.univ.filter (fun p => ingMeaning .velar p = true)).card = 3 := by
-  native_decide
+  decide
 
 /-- *-in'* is compatible with 3 personae (Table 1: excludes stern leader). -/
 theorem in'_compat_count :
     (Finset.univ.filter (fun p => ingMeaning .apical p = true)).card = 3 := by
-  native_decide
+  decide
 
--- ============================================================================
--- §3. SMG as belief-based RSA (mathlib-PMF pipeline)
--- ============================================================================
+/-! ### Speaker and listener -/
 
 open scoped ENNReal
 
@@ -344,9 +350,7 @@ theorem L1_lt_iff (π : Persona → ℚ) (hπ : ∀ p, 0 < π p)
       ENNReal.ofReal (π p₁) * Sk π hπ p₁ v < ENNReal.ofReal (π p₂) * Sk π hπ p₂ v := by
   rw [L1k, PMF.posterior_lt_iff_score_lt, priorK_apply, priorK_apply]
 
--- ============================================================================
--- §3a. Context-specific configurations
--- ============================================================================
+/-! ### The contexts and the speakers -/
 
 /-- Casual-context prior (Burnett Table 2): voters at the barbecue
     think Obama is aloof (personae with aloof get more weight). -/
@@ -414,9 +418,7 @@ theorem bushSum1 : (∑ p : Persona, ENNReal.ofReal (bushPrior p)) = 1 :=
 /-- Listener for the Bush item. -/
 noncomputable abbrev bushL1 : INGVariant → PMF Persona := L1k bushPrior bushPos bushSum1
 
--- ============================================================================
--- §3b. Certified numeric values
--- ============================================================================
+/-! ### Exact values -/
 
 /-! ### Denominators, literal-listener, and speaker values -/
 
@@ -844,9 +846,7 @@ private theorem bush_L1_apical_asshole :
     ← ENNReal.ofReal_mul (by norm_num [bushPrior]), ← ENNReal.ofReal_mul (by norm_num [bushPrior])]
   congr 1; norm_num [bushPrior]
 
--- ============================================================================
--- §4. Speaker predictions (casual context)
--- ============================================================================
+/-! ### Variant choice in the casual context -/
 
 section casual
 
@@ -880,9 +880,7 @@ theorem casual_doofus_prefers_in' :
 
 end casual
 
--- ============================================================================
--- §5. Style shifting: casual → careful
--- ============================================================================
+/-! ### Style shifting -/
 
 section styleShifting
 
@@ -897,9 +895,7 @@ theorem careful_coolGuy_prefers_ing :
 
 end styleShifting
 
--- ============================================================================
--- §6. /t/ release: listener interpretation ([podesva-etal-2015])
--- ============================================================================
+/-! ### Interpreting a released or flapped /t/ -/
 
 /-! The /t/ release variable has the same mathematical structure as (ING).
 Relabeling: articulate↔competent, inarticulate↔incompetent (same friendly/aloof).
@@ -978,9 +974,7 @@ theorem bush_bulletproofing :
 
 end tRelease
 
--- ============================================================================
--- §7. Cross-study bridge: Labov 2012 data ↔ SMG predictions
--- ============================================================================
+/-! ### The observed direction -/
 
 /-- Cross-reference: the SMG model's qualitative predictions match the
     directional pattern observed in [labov-2012]'s data on Obama's
@@ -997,11 +991,9 @@ theorem smg_matches_labov_direction :
     Labov2012.obama_ING.casual > Labov2012.obama_ING.careful ∧
     Labov2012.obama_ING.careful > Labov2012.obama_ING.formal :=
   ⟨casual_coolGuy_prefers_in', careful_coolGuy_prefers_ing,
-   by native_decide, by native_decide⟩
+   Labov2012.obama_ING_monotone.1, Labov2012.obama_ING_monotone.2⟩
 
--- ============================================================================
--- §8. Social Meaning Games (Definitions 4.1 and 4.3)
--- ============================================================================
+/-! ### The game -/
 
 /-! Burnett's Social Meaning Game (SMG): a signalling game in which a
 speaker's variant choice conveys social information about their persona.
@@ -1132,14 +1124,16 @@ theorem smg_meaning_grounded (v : INGVariant) (p : Persona) :
     property with [-in'] = {incompetent, friendly}). -/
 theorem smg_L0_in'_excludes_sternLeader :
     casualSMG.toInterpGame.literal .apical .sternLeader = 0 := by
-  native_decide
+  rw [InterpGame.literal_apply, if_neg]
+  decide
 
 /-- The literal listener excludes doofus after hearing *-ing*
     (incompatible: doofus = {incompetent, friendly} shares no
     property with [-ing] = {competent, aloof}). -/
 theorem smg_L0_ing_excludes_doofus :
     casualSMG.toInterpGame.literal .velar .doofus = 0 := by
-  native_decide
+  rw [InterpGame.literal_apply, if_neg]
+  decide
 
 /-- The literal listener assigns equal probability (1/3) to all
     compatible personae — uniform over ⟦v⟧: since 3 personae are
@@ -1154,7 +1148,10 @@ theorem smg_L0_uniform_compatible :
     casualSMG.toInterpGame.literal .apical .coolGuy = 1/3 ∧
     casualSMG.toInterpGame.literal .apical .asshole = 1/3 ∧
     casualSMG.toInterpGame.literal .apical .doofus = 1/3 := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+  have hv : (casualSMG.toInterpGame.trueStates .velar).card = 3 := by decide
+  have ha : (casualSMG.toInterpGame.trueStates .apical).card = 3 := by decide
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+    rw [InterpGame.literal_apply, if_pos (by decide)] <;> norm_num [hv, ha]
 
 end smgBridge
 
