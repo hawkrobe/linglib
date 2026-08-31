@@ -18,7 +18,7 @@ categorical view of givenness.
   (`GivennessStatus.toBinary`) at the identifiable/indefinite boundary
   ([lambrecht-1994] identifiability). Not [prince-1992]'s hearer-old/new
   binary (which cross-cuts identifiability), nor alternatives-based
-  givenness (`Alternatives.AltMeaning.Given`; [schwarzschild-1999]
+  givenness (`WithAlternatives.Given`; [schwarzschild-1999]
   A-givenness = `isAGiven` in `Studies/KratzerSelkirk2020.lean`);
   a consumer meaning another axis (e.g. discourse-status) should say so.
 
