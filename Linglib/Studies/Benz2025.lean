@@ -4,30 +4,53 @@ import Linglib.Data.Examples.Benz2025
 import Linglib.Fragments.German.Predicates
 
 /-!
-# Benz (2025): Structure and Interpretation Across Categories
+# Benz 2025: structure and interpretation across categories
 
-Three case studies from [benz-2025] (PhD dissertation, University of
-Pennsylvania) on the syntax–LF interface in German, all running on the
-contextual-allosemy substrate of `DistributedMorphology.Allosemy`. Nominalizations
-like *Beobachtung* carry event, referential, and content readings from a
-single syntactic structure, with the variation located in the allosemes of v
-and n (Ch. 3). The co-occurrence restrictions among prefixes, particles, and
-resultative secondary predicates follow from the conjunction of a
-phrase-structural factor and an event-structural one, [tenny-1994]'s Single
-Delimiting Constraint (Ch. 4, Table 3). The three nominalization types
-resolve the particle "structure problem" ([luedeling-2001]) in three
-different ways — phrasal inputs, particles-as-heads, outer attachment — from
-which the distribution of preverbal elements across them follows (Ch. 5).
+This file formalizes three case studies of [benz-2025] on the syntax–LF interface in German, all
+running on the contextual-allosemy substrate of `DistributedMorphology.Allosemy`. A single
+nominalization structure yields the event, referential and content readings of *Beobachtung*, the
+variation located in the allosemes of v and n (Ch. 3). The co-occurrence restrictions among
+prefixes, particles and resultative secondary predicates follow from a phrase-structural factor
+together with an event-structural one, [tenny-1994]'s Single Delimiting Constraint (Ch. 4). The
+three nominalization types solve the particle "structure problem" of [luedeling-2001] in three
+different ways — phrasal inputs, particles as heads, outer attachment — and the distribution of
+preverbal elements across them follows (Ch. 5).
 
-The (32), (87)–(89), and (115) stimuli live in `Data.Examples.Benz2025`.
-`availableReadings` derives the reading inventory from the exponence engine's
-licensed allosemes, with `adopted_unique` characterizing the adopted analysis
-as the unique economical derivation of each reading and `denoteN` grounding
-the reading table in typed denotations
-(`readingFromAllosemes_isSome_iff_denote`); `blocked_sound` and
-`blocked_complete` show the two Ch. 4 principles exactly generate the
-co-occurrence paradigm; `peAcceptable_from_solutions` derives the Ch. 5
-distribution from the structure-problem solutions.
+Alloseme selection is the substrate's own engine rather than a further table: allosemes are
+Vocabulary Items over neighborhoods, applicability is the Subset Principle, and the canonical
+choice is Elsewhere competition. The stimuli live in `Data.Examples.Benz2025`.
+
+## Main definitions
+
+* `availableReadings` — the readings a nominalization structure derives from its licensed allosemes
+* `denoteN`, `NominalizationModel` — typed denotations for the alloseme pairs, after [wood-2023]
+* `PreverbalElement`, `predictedAllowed`, `Blocked` — the three element types and the two factors
+  governing their co-occurrence
+* `NominalizationType.solution`, `peAcceptable` — the structure-problem solutions and the observed
+  distribution of preverbal elements
+
+## Main results
+
+* `beobachtung_readings_available`, `nonEventive_readings` — every attested reading is derivable in
+  the one structure, and which survive without an event-entailing root
+* `adopted_unique`, `reading_determines_contentful_head` — the adopted analysis is the only
+  derivation of each reading that leaves one head vacuous
+* `readingFromAllosemes_isSome_iff_denote` — a pair has a reading exactly when its denotation is
+  defined
+* `blocked_sound`, `blocked_complete` — the two principles generate exactly the co-occurrence
+  paradigm; `combined_prediction_matches` reproduces the paper's table cell for cell
+* `peAcceptable_from_solutions` — each nominalization type admits exactly what its solution
+  accommodates
+
+## References
+
+* [benz-2025]
+* [wood-2023]
+* [tenny-1994]
+* [luedeling-2001]
+* [rossdeutscher-kamp-2010]
+* [williams-2015]
+* [creemers-2020]
 -/
 
 namespace Benz2025
