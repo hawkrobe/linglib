@@ -70,11 +70,11 @@ use (their §8). -/
 
 /-- Apply [FoC] to a meaning: O-value unchanged, A-value becomes the
     full domain (their (45)). -/
-def applyFoC {α : Type*} (m : AltMeaning α) (domain : List α) : AltMeaning α :=
+def applyFoC {α : Type*} (m : AltMeaning α) (domain : Set α) : AltMeaning α :=
   { oValue := m.oValue, aValue := domain }
 
 /-- [FoC] preserves O-value ((45) first clause). -/
-theorem foc_preserves_oValue {α : Type*} (m : AltMeaning α) (domain : List α) :
+theorem foc_preserves_oValue {α : Type*} (m : AltMeaning α) (domain : Set α) :
     (applyFoC m domain).oValue = m.oValue := rfl
 
 /-! ## Contribution of [G]
@@ -201,7 +201,7 @@ theorem consumed_alts_given {α : Type*} (op : ContrastOperator α) :
     op.result.Given op.meaning.oValue := by
   show op.result.aValue = {op.meaning.oValue}
   ext x
-  simp [AltMeaning.mem_aValue, squiggle_singleton_aValue]
+  simp [squiggle_singleton_aValue]
 
 /-! ## Prosodic spellout (their §6–§7, not formalized)
 
@@ -239,10 +239,6 @@ membership. -/
 def isAGiven {α : Type*} (m : AltMeaning α) (referent : α) : Prop :=
   referent ∈ m.aValue
 
-instance instDecidableIsAGiven {α : Type*} [DecidableEq α] (m : AltMeaning α) (referent : α) :
-    Decidable (isAGiven m referent) :=
-  decidable_of_iff _ AltMeaning.mem_aValue.symm
-
 /-- K&S Givenness entails Schwarzschild A-Givenness ("our Givenness
     falls out as a special case of A-Givenness", their §3): if the
     alternatives set is the singleton {a}, then a is a member of it. -/
@@ -259,8 +255,8 @@ theorem givenness_entails_aGivenness {α : Type*} {m : AltMeaning α} {referent 
     is a complainer] is always true. K&S's singleton condition avoids this. -/
 theorem aGivenness_not_sufficient : ∃ (m : AltMeaning Nat) (referent : Nat),
     isAGiven m referent ∧ ¬ m.Given referent := by
-  refine ⟨⟨1, [1, 2]⟩, 1, by decide, fun h => ?_⟩
-  have h2 : (2 : ℕ) ∈ ({1} : Set ℕ) := h ▸ AltMeaning.mem_aValue.mpr (by decide)
+  refine ⟨⟨1, {1, 2}⟩, 1, by simp [isAGiven], fun h => ?_⟩
+  have h2 : (2 : ℕ) ∈ ({1} : Set ℕ) := h ▸ (by simp : (2:ℕ) ∈ ({1, 2} : Set ℕ))
   simp at h2
 
 /-! ## Hausa in situ vs ex situ (their fn. 21)

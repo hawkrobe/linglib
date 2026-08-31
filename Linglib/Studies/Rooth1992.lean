@@ -75,7 +75,7 @@ theorem unfeatured_preserves_oValue :
     focus semantic value of a focus-free phrase is the unit set of its
     ordinary semantic value" ([rooth-1992] (42)). -/
 theorem unfeatured_singleton_aValue :
-    altPredicateUnfeatured.aValue = ["cut Bill down to size"] := rfl
+    altPredicateUnfeatured.aValue = {"cut Bill down to size"} := rfl
 
 /-! ### Question-answer congruence and the FIP
 
@@ -460,7 +460,7 @@ instance (E W D : Type) : PredAbs AltMeaning E W D := ⟨none⟩
     alternatives. -/
 def focusLexF (w : QAWorld) : Lexicon E Unit AltMeaning := fun word =>
   match word with
-  | "Mary" => some ⟨.e, (⟨E.mary, [E.mary, E.monique]⟩ : AltMeaning _)⟩
+  | "Mary" => some ⟨.e, (⟨E.mary, {E.mary, E.monique}⟩ : AltMeaning _)⟩
   | w' => Lexicon.lift AltMeaning (focusLex w) w'
 
 /-- Focus-dimension tree interpretation. -/
@@ -477,8 +477,11 @@ def treeResultF (lex : Lexicon E Unit AltMeaning) (t : Tree Unit String) :
 theorem treeResultF_maryCutBill (w : QAWorld) :
     treeResultF (focusLexF w) tree_maryCutBill =
       some ⟨cutInWorld w E.bill E.mary,
-            [cutInWorld w E.bill E.mary, cutInWorld w E.bill E.monique]⟩ := by
-  cases w <;> rfl
+            {cutInWorld w E.bill E.mary, cutInWorld w E.bill E.monique}⟩ := by
+  cases w <;>
+    · refine congrArg some (AltMeaning.ext rfl ?_)
+      ext q
+      simp [eq_comm]
 
 /-- O-projection through the engine: mapping `oValue` over the
     `AltMeaning` run recovers the `Id` run. -/

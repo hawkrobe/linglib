@@ -2,90 +2,55 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Studies.Larson1988
 import Linglib.Studies.Pylkkanen2008
 
-/-! # Bruening 2021 — Implicit Arguments in English Double Object Constructions
-[bruening-2021]
+/-!
+# Bruening 2021: implicit arguments in English double object constructions
 
-Implicit arguments in English double object constructions.
-*Natural Language and Linguistic Theory* 39:1023–1085.
+This file formalizes the second of the four asymmetries [bruening-2021] draws between the arguments
+of an English ditransitive. Table (56) classifies the verbs on three coordinates: how an implicit
+second object is interpreted, whether the goal argument is a first object or a PP, and how that
+goal is interpreted when implicit. Two of the three are Fragment fields, so what this file supplies
+is the goal's position, and the grid's shape is then read off the Fragment: one combination —
+an indefinite implicit first object — is systematically missing, and every other is attested.
 
-## Core empirical findings
+That gap is the argument against treating both objects as selected arguments of V, since on
+[pesetsky-1995]'s and [larson-1988]'s accounts the two objects should be interpreted alike. In
+Bruening's analysis the second object is selected by V while the first is projected by Appl above
+VP ([marantz-1993], [bruening-2010a]); an implicit argument of V is licensed by an ∃ or ι head
+adjoined to V, while an implicit argument of a functional head needs a higher Pass or ApplPass, and
+only the ι route is available to the first object. He rejects the small-clause analyses, among them
+[pylkkanen-2008]'s low applicative, and Landau's null-NP view of implicit arguments.
 
-Bruening identifies four asymmetries in English ditransitives (§2.4
-summary, p. 1040):
+The sluicing asymmetry (G1) is formalized in `Studies/Bruening2021Sluicing.lean`. Frame-conditioned
+licensing (G4) is not: the Fragment records `implicitObj` globally rather than per frame, so the
+contrast between *show*, licensed only in the double object frame, and *pass*, licensed only in the
+PP frame, needs a field indexed by complement type.
 
-1. **Sluicing asymmetry** (G1): implicit second objects and PPs license
-   sluicing, but implicit first objects never do.
-2. **Interpretation asymmetry** (G2): implicit second objects and PPs
-   can be definite or indefinite (depending on the verb), but implicit
-   first objects are uniformly definite.
-3. **Base-transitivity constraint** (G3): a simple transitive that allows
-   an implicit object does NOT allow it when used in the DOC
-   (*\*We're baking them* with intended-recipient reading).
-4. **Frame-dependent licensing** (G4): an implicit direct object is
-   licensed only in the DOC for some verbs (*show, ask, pay, serve,
-   teach, feed*), only in the PP frame for others (*pass, throw, give*),
-   and only *write* in both (§2.3.2 ex. (63)–(65)).
+Of the roughly 43 verbs of (56), the 32 whose Fragment encoding is unambiguous are classified here;
+*ask*, *promise*, *wish*, *leave*, *afford*, *lose*, *guarantee*, *rent*, *save*, *email/text* and
+*bill* are absent or carry attitude senses in the Fragment.
 
-## Theoretical analysis
+## Main definitions
 
-Bruening adopts the ApplP analysis of [marantz-1993], developed for
-English in [bruening-2010a]: in DOC, the second object is selected
-by V while the first object is projected by Appl(icative) above VP.
-Implicit arguments of V are licensed by functional heads ∃ (indefinite)
-or ι (definite) that adjoin to V; implicit arguments of functional heads
-(Voice, Appl) require a higher functional head (Pass, ApplPass) to be
-implicit.
+* `GoalPosition`, `classification` — where each verb's goal argument sits in (56)
+* `cell` — a verb's grid coordinates, the interpretations read off the Fragment
 
-Bruening explicitly *rejects* the rival accounts that this file's
-contrastive theorems engage with: [pesetsky-1995]'s "both objects
-selected by V" view (§3.1 p. 1041), [larson-1988]'s VP-shell
-(§3.1), small-clause analyses including [pylkkanen-2008]'s low
-applicative (§3.1 + fn. 10 p. 1042), and Landau 2010's null-NP
-implicit-argument view (§4.1).
+## Main results
 
-## Formalization scope
+* `no_indefinite_implicit_first_object` — the empty cell of the grid
+* `other_combinations_attested` — every other cell is populated, so the gap is not a sampling gap
+* `g2_asymmetry` — the two halves together, over the Fragment's fields
+* `g3_base_transitive_constraint` — a base transitive with an implicit object has no double object
+  frame to license it in
+* `bruening_vs_larson_implicit_first_obj`, `bruening_vs_pylkkanen_low_recipient` — the disagreements
+  with the accounts formalized alongside
 
-This file verifies Bruening's classification (Table 56, p. 1037) against
-the English verb fragment via a single `decide`-checked drift sentry over
-a `BruRow` table. Two cross-framework contrastive theorems make
-Bruening's positions Lean-checkable against linglib's existing Pylkkänen
-2008 (`english_appl.classification = .lowRecipient`) and Larson 1988
-(`docDativeShift`) formalizations.
+## References
 
-**What is formalized**: G2 directly; G3 with the implicational consequent
-(*melt/build*-class transitives don't license `.np_np` as their alt frame).
-
-**What is deferred**:
-- G4 (frame-conditioned licensing) requires extending `Verb` with
-  per-frame implicit fields; schema change is out of scope for this study.
-
-**G1** (sluicing asymmetry) is formalized as a sibling in
-`Studies/Bruening2021Sluicing.lean`, deriving
-implicit-second-obj-licenses-sluicing-but-implicit-first-obj-doesn't from
-the maximal-projection identity condition (Bruening §5.5).
-
-## Coverage
-
-Table (56) lists ~43 verbs across 15 cells (11 populated, 4 empty by
-Bruening's footnote on p. 1037). This file covers 31 verbs whose Fragment
-encoding is unambiguous; the remainder (*ask, promise, wish, leave,
-afford, lose, guarantee, rent, save*) are listed in the Fragment with
-attitude/question-embedding senses or absent.
-
-The `BruRow.alternates` field encodes Bruening's classification of
-DOC-vs-PP alternation. It is NOT checked by `BruRow.matches` because the
-Fragment's two-slot frame schema cannot always represent
-`{.np_np, .np_pp}` alternation — e.g. *tell* has `complementType =
-.finiteClause, altComplementType = some .np_np`, with no PP slot
-available. Treating alternation as Bruening's classification (not as a
-Fragment-derivable fact) keeps the drift sentry focused on the schema
-fields it can actually check.
-
-See `Studies/HaddicanEtAl2026.lean`
-(`doc_bruening` and `bruening_give_field_consistent`) for a
-`SyntacticObject` witness of Bruening's V+P amalgam structure that
-consumes this file's `give` Fragment entry — a complementary tree-shape
-angle on the same paper.
+* [bruening-2021]
+* [marantz-1993]
+* [larson-1988]
+* [pylkkanen-2008]
+* [pesetsky-1995]
 -/
 
 namespace Bruening2021
@@ -93,118 +58,88 @@ namespace Bruening2021
 open English.Predicates.Verbal
 open ArgumentStructure
 
-/-! ### Bruening's Table (56) — encoded as a row table -/
+/-! ### Table (56) as a grid
 
-/-- A row in Bruening (56). Carries the verb, the expected
-    `implicitObj`/`implicitGoal` Fragment fields per Bruening's
-    classification, and Bruening's claim about whether this verb
-    alternates between the DOC and PP frames.
+Bruening's table is a grid: a verb's cell is fixed by how its implicit second object is
+interpreted, whether its goal argument is a first object or a PP, and how that goal is interpreted
+when implicit. Two of those three coordinates are already Fragment fields, so all this file adds is
+the goal's position — the classification below is the table's content that the Fragment does not
+carry, and every claim about interpretation is read off the Fragment itself. -/
 
-    `alternates` is documentation of Bruening's classification, not a
-    Fragment-checked claim — see the module docstring on the schema
-    limitation. -/
-structure BruRow where
-  verb : VerbEntry
-  expectedObj : Option ImplicitInterp
-  expectedGoal : Option ImplicitInterp
-  alternates : Bool
+/-- Where a verb's goal argument sits. Bruening files alternating verbs whose arguments cannot be
+implicit under "PP" as well, so this classifies the goal, not the verb's frame inventory. -/
+inductive GoalPosition where
+  | firstObject
+  | pp
+  deriving DecidableEq, Repr, BEq
 
-/-- A `BruRow` matches when the verb's Fragment fields agree with the
-    expected projection. Returns `false` (rather than failing `decide`)
-    so the diagnostic example below names the offending row directly. -/
-def BruRow.matches (r : BruRow) : Bool :=
-  r.verb.implicitObj == r.expectedObj && r.verb.implicitGoal == r.expectedGoal
-
-/-- Bruening (56), p. 1037, encoded against the English verb fragment.
-    Row groupings reflect Bruening's cell taxonomy; comments name each
-    cell. -/
-def bruening2021Table : List BruRow := [
-  -- DOC-only, indef-implicit second obj, def-implicit first obj (Cell 6).
-  ⟨charge,   some .indef, some .def,  false⟩,
-  ⟨cost,     some .indef, some .def,  false⟩,
-  ⟨fine,     some .indef, some .def,  false⟩,
-  ⟨tip,      some .indef, some .def,  false⟩,
-  ⟨pay,      some .indef, some .def,  false⟩,
-  ⟨strike_,  some .indef, some .def,  false⟩,
-  ⟨envy,     some .indef, some .def,  false⟩,
-  -- DOC-only, def-implicit second obj, def-implicit first obj (Cell 1).
-  ⟨forgive,  some .def,   some .def,  false⟩,
-  -- DOC-only, def-implicit second obj, no implicit first obj (Cell 2).
-  ⟨spare,    some .def,   none,       false⟩,
-  -- DOC-only, no implicit second obj, no implicit first obj (Cell 12).
-  ⟨begrudge, none,        none,       false⟩,
-  ⟨bet,      none,        none,       false⟩,
-  -- DOC-only, no implicit second obj, def-implicit first obj (Cell 11).
-  ⟨deny,     none,        some .def,  false⟩,
-  ⟨permit,   none,        some .def,  false⟩,
-  -- Alternating, indef-implicit second obj, def-implicit goal (Cell 8).
-  ⟨give,     some .indef, some .def,  true⟩,
-  ⟨serve,    some .indef, some .def,  true⟩,
-  -- Alternating, indef-implicit second obj, indef-implicit goal (Cell 9).
-  ⟨teach,    some .indef, some .indef, true⟩,
-  -- Alternating, indef-implicit second obj, no implicit goal (Cell 7).
-  ⟨feed,     some .indef, none,       true⟩,
-  ⟨write,    some .indef, none,       true⟩,
-  -- Alternating, def-implicit second obj, no implicit goal (Cell 2-alt).
-  ⟨show_,    some .def,   none,       true⟩,
-  -- Alternating, def-implicit second obj, indef-implicit goal (Cell 4).
-  ⟨tell,     some .def,   some .indef, true⟩,
-  ⟨sell,     some .def,   some .indef, true⟩,
-  ⟨pass,     some .def,   some .indef, true⟩,
-  ⟨throw,    some .def,   some .indef, true⟩,
-  -- Alternating, no implicit second obj, def-implicit goal (Cells 11+13).
-  ⟨assign,   none,        some .def,  true⟩,
-  ⟨award,    none,        some .def,  true⟩,
-  ⟨forward_, none,        some .def,  true⟩,
-  ⟨grant,    none,        some .def,  true⟩,
-  ⟨offer,    none,        some .def,  true⟩,
-  ⟨reserve,  none,        some .def,  true⟩,
-  ⟨send,     none,        some .def,  true⟩,
-  -- Alternating, no implicit second obj, no implicit goal (Cell 15).
-  ⟨hand,     none,        none,       true⟩,
-  ⟨lend,     none,        none,       true⟩
+/-- The position of each verb's goal in (56), for the verbs whose Fragment encoding is
+unambiguous. -/
+def classification : List (VerbEntry × GoalPosition) := [
+  (forgive, .firstObject), (spare, .firstObject), (show_, .firstObject),
+  (tell, .pp), (pass, .pp), (throw, .pp), (sell, .pp),
+  (charge, .firstObject), (cost, .firstObject), (envy, .firstObject), (fine, .firstObject),
+  (pay, .firstObject), (strike_, .firstObject), (tip, .firstObject),
+  (feed, .firstObject), (write, .firstObject),
+  (give, .pp), (serve, .pp), (teach, .pp),
+  (assign, .firstObject), (deny, .firstObject), (permit, .firstObject),
+  (begrudge, .firstObject), (bet, .firstObject),
+  (award, .pp), (forward_, .pp), (grant, .pp), (offer, .pp), (reserve, .pp), (send, .pp),
+  (hand, .pp), (lend, .pp)
 ]
 
-/-! ### Drift sentry
-
-A single `decide`-checked theorem replaces 31 per-verb `⟨rfl, rfl⟩`
-readouts. If a Fragment field changes or any verb's classification drifts,
-this theorem fails — and the diagnostic example below names the offender
-via `Repr`-printable output. -/
-
-theorem verbs_match_bruening_table :
-    bruening2021Table.all BruRow.matches = true := by decide
-
-/-- Diagnostic. When `verbs_match_bruening_table` fails, this fails too,
-    and the goal-state shows the residual non-empty list — naming the
-    drifted verb directly via the row's verb-form field. -/
-example : bruening2021Table.filter (fun r => !r.matches) = [] := by decide
+/-- The cell a verb occupies: its second object's interpretation, its goal's position, and the
+goal's interpretation — the first and third read off the Fragment. -/
+def cell (vp : VerbEntry × GoalPosition) :
+    Option ImplicitInterp × GoalPosition × Option ImplicitInterp :=
+  (vp.1.implicitObj, vp.2, vp.1.implicitGoal)
 
 /-! ### Derived verb subsets -/
 
-/-- All ditransitive verbs in Bruening (56). Derived from the table. -/
-def ditransitiveVerbs : List VerbEntry := bruening2021Table.map (·.verb)
+/-- The ditransitive verbs of (56). -/
+def ditransitiveVerbs : List VerbEntry := classification.map (·.1)
 
-/-- DOC-only verbs (those NOT alternating with a PP frame, per Bruening's
-    classification — see module docstring on alternation). Derived. -/
+/-- Verbs whose goal argument is a first object. -/
 def docOnlyVerbs : List VerbEntry :=
-  (bruening2021Table.filter (fun r => !r.alternates)).map (·.verb)
+  (classification.filter (fun vp => vp.2 == .firstObject)).map (·.1)
 
-/-! ### G2: definiteness asymmetry
+/-! ### G2: the empty cell
 
-Bruening's G2 (§2.4 summary point 2): implicit first objects in DOC are
-uniformly definite, never indefinite. This is the empirical core of his
-argument against accounts (Larson, Pesetsky) that treat both objects
-symmetrically as V's selected arguments.
+Bruening's second asymmetry (§2.2.4) is a gap in the grid: an implicit first object is always
+definite, while implicit second objects and implicit PPs are either. So the claim has two halves —
+one combination is systematically unattested, an indefinite implicit first object, and the rest of
+the grid is populated, which is what makes the gap a fact about the paradigm rather than an
+artefact of the sample. Bruening draws exactly that conclusion below the table: "all possible
+combinations are attested, other than the missing indefinite implicit first object interpretation".
 
-ANALOGUE: Bruening's ι-head (def-implicit licensor) and ApplPass
-(licensor for implicit first object) have no current substrate primitives
-in `Syntax/Minimalist/`. `Voice.Voice.ExternalArgSemantics` includes
-`thematicExistential` (the analogue of Bruening's ∃-head); a parallel
-`thematicIota` and a `Pass`-of-`Appl` head are substrate gaps. -/
+His ι-head, the licensor of a definite implicit argument, and the ApplPass head that licenses an
+implicit first object have no substrate counterpart; `Voice.Voice.ExternalArgSemantics` carries
+`thematicExistential`, the analogue of his ∃-head, so a `thematicIota` and a Pass-of-Appl head are
+the gaps on that side. -/
 
-theorem g2_doc_only_implicit_first_obj_definite :
-    docOnlyVerbs.all (fun v => v.implicitGoal ≠ some .indef) = true := by decide
+/-- The empty cell: no verb leaves a first object implicit and indefinite. -/
+theorem no_indefinite_implicit_first_object :
+    classification.all (fun vp =>
+      vp.2 != .firstObject || vp.1.implicitGoal != some .indef) = true := by decide
+
+/-- Every other combination is attested, so the gap is not a sampling accident. -/
+theorem other_combinations_attested :
+    ([(some .def, .firstObject, some .def), (some .def, .firstObject, none),
+      (some .def, .pp, some .indef), (some .indef, .firstObject, some .def),
+      (some .indef, .firstObject, none), (some .indef, .pp, some .def),
+      (some .indef, .pp, some .indef), (none, .firstObject, some .def),
+      (none, .firstObject, none), (none, .pp, some .def), (none, .pp, none)] :
+        List (Option ImplicitInterp × GoalPosition × Option ImplicitInterp)).all
+      (fun c => classification.any (fun vp => cell vp == c)) = true := by decide
+
+/-- The asymmetry stated over the two positions: a first-object goal is never implicit and
+indefinite, while both interpretations occur for second objects and for PP goals. -/
+theorem g2_asymmetry :
+    docOnlyVerbs.all (fun v => v.implicitGoal != some .indef) = true ∧
+      ditransitiveVerbs.any (fun v => v.implicitObj == some .def) = true ∧
+      ditransitiveVerbs.any (fun v => v.implicitObj == some .indef) = true ∧
+      ditransitiveVerbs.any (fun v => v.implicitGoal == some .indef) = true := by
+  refine ⟨by decide, by decide, by decide, by decide⟩
 
 /-! ### G3: base-transitivity constraint
 
@@ -226,22 +161,15 @@ theorem g3_base_transitive_constraint :
       && v.implicitObj.isSome
       && decide (v.altComplementType ≠ some .np_np)) = true := by decide
 
-/-! ### G1 and G4: deferred substrate gaps
+/-! ### G1 and G4
 
-```
--- G1 (sluicing asymmetry, §2.1): formalized as a sibling in
--- `Studies/Bruening2021Sluicing.lean` via
--- `g1_sluicing_asymmetry`. Substrate: `bruening2021Identity` in
--- `Syntax/Minimalist/Ellipsis/FormalMatching.lean` § 7.
---
--- TODO(G4): Frame-conditioned implicit-arg licensing (§2.3.2 ex. 63-65).
--- The Fragment carries `implicitObj : Option ImplicitInterp` globally,
--- not per-frame. Bruening shows this distinction is real (e.g. *show*
--- is DOC-only, *pass* is PP-only, *write* is both). Schema extension
--- (`implicitObjByFrame : ComplementType → Option ImplicitInterp`) would
--- enable the theorem; deferred — out of scope for this refactor.
-```
--/
+G1, the sluicing asymmetry of §2.1, is formalized in `Studies/Bruening2021Sluicing.lean` over the
+maximal-projection identity condition of `Syntax/Minimalist/Ellipsis/FormalMatching.lean`.
+
+G4, frame-conditioned licensing (§2.3.2), is not formalized: the Fragment carries `implicitObj`
+globally rather than per frame, so the contrast between *show*, licensed only in the double object
+frame, and *pass*, licensed only in the PP frame, cannot be stated without a schema field indexed
+by complement type. -/
 
 /-! ### Cross-framework contrasts
 
@@ -268,7 +196,7 @@ Bruening explicitly *rejects* Pylkkänen 2008's analysis as a "variety of
 small clause analysis" (fn. 10 p. 1042). -/
 theorem bruening_vs_pylkkanen_low_recipient :
     Pylkkanen2008.english_appl.classification = Minimalist.ApplType.lowRecipient
-    ∧ docOnlyVerbs.all (fun v => v.implicitGoal ≠ some .indef) = true := by
+    ∧ docOnlyVerbs.all (fun v => v.implicitGoal != some .indef) = true := by
   refine ⟨rfl, ?_⟩; decide
 
 /-- Bruening vs Larson 1988.

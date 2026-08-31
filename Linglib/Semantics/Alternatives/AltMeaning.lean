@@ -22,6 +22,7 @@ namespace Alternatives
     Every expression has an O-value and an A-value.
 
     [kratzer-selkirk-2020] §3, §8. -/
+@[ext]
 structure AltMeaning (α : Type*) where
   /-- O(rdinary)-value: the actual denotation -/
   oValue : α
