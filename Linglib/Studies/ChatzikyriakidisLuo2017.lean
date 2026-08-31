@@ -33,6 +33,27 @@ chapter's grade axioms are `LinearOrder` plus `DenselyOrdered`).
 - `man_and_not_man` … `not_human_not_man`: the chapter's §4 Coq examples
 - `no_aspect_map`, `copredication`: the §2.2 copredication argument
 - `Idiot`, `small_idiot_contradictory`: the §5 gradable-noun treatment
+
+## Main definitions
+
+* `CN`, `Sub` — a common noun as a type, and a coercion between two of them
+* `p`, `NegOperator`, `NegOperator.bigP` — the predicational forms of judgemental interpretations
+* `Idiot` — a gradable noun as a Σ-type indexed by degree
+
+## Main results
+
+* `man_and_not_man`, `not_not_man`, `not_human_not_man`, `some_man_walks` — the chapter's Coq
+  experiments, replayed against the same law set
+* `standardNeg` — a model of the negation laws, which the chapter axiomatizes without exhibiting
+* `no_aspect_map`, `copredication` — copredication needs common nouns as types
+* `small_idiot_contradictory` — *small idiot* asks for a degree both above and below the standard
+
+## References
+
+* [chatzikyriakidis-luo-2017]
+* [montague-1973]
+* [ranta-1994]
+* [asher-2011]
 -/
 
 namespace ChatzikyriakidisLuo2017

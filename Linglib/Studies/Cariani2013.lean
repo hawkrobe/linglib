@@ -3,144 +3,68 @@ import Mathlib.Data.Finset.Lattice.Fold
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# [cariani-2013] — `Ought' and Resolution Semantics
+# Cariani 2013: ought and resolution semantics
 
-`[cariani-2013]` (*Noûs* 47:534-558) presents an anti-INHERITANCE
-account of `ought`: standard "boxing" semantics treats `ought` as
-universal quantification over best worlds (Kratzer 1981/1991), which
-validates **INHERITANCE** (`If p ⊨ q then ought(p) ⊨ ought(q)`) — but
-this fails empirically. Cariani offers three motivating puzzles
-(§§I-III) and a positive proposal called **Resolution Semantics** (§4),
-inspired by Yalcin's terminology (Cariani p.545).
+This file formalizes the account of *ought* in [cariani-2013]. Reading *ought* as universal
+quantification over the best worlds validates INHERITANCE — if `p` entails `q` then *ought p*
+entails *ought q* — and [cariani-2013] argues that this is wrong. *Joan ought to attend her
+classes* does not commit one to *Joan ought to either attend her classes or burn down the
+philosophy department* ([ross-1941]), and *Procrastinate ought to accept and write the review*
+does not commit one to *Procrastinate ought to accept* ([jackson-pargetter-1986]). Both are cases
+of coarseness: an ought-sentence can be true although some way of making its prejacent true is
+impermissible, and it is false as soon as a relevant option compatible with the prejacent is
+impermissible.
 
-The three INHERITANCE-violation puzzles:
+Resolution semantics replaces the modal base and ordering source ([kratzer-1981]) with three
+parameters — a set of mutually exclusive options, an ordering on them, and a benchmark. *Ought p*
+holds when the options settle `p`, when every best option is a way of `p`, and when every option
+that is a way of `p` meets the benchmark. The third clause is what fails in both puzzles, and
+what makes the account anti-inheritance by construction rather than by stipulation.
 
-* **§I Ross's Puzzle** (Ross 1941): `Joan ought to attend her classes`
-  does NOT entail `Joan ought to either attend her classes or burn down
-  the philosophy department`.
-* **§II Procrastinate** (Jackson & Pargetter 1986): `Procrastinate
-  ought to accept and write the review` is true; `Procrastinate ought
-  to accept` is false.
-* **§III Conditional 'oughts'**: RESTRICTION + INHERITANCE jointly
-  predict `If you drink poison, you ought to drink poison`. Should be
-  false. We formalize a degenerate version (drinking poison
-  unconditionally fails strong permissibility); the full conditional
-  treatment requires a separate modal-base parameter (paper §4 p.545
-  clause (iii) uses `Q_c ∩ M_c`) which we omit for scope.
+## Main definitions
 
-Cariani's **Resolution Semantics** (§4 p.544-546):
+* `ResolutionContext`, `ofRanking` — the three parameters, and the context of a ranked space
+* `isWayOf`, `isVisible`, `isBest`, `isOptimal`, `isStronglyPermissible` — the clauses
+* `ought`, `permitted` — the two deontic operators
+* `Inheritance` — closure of *ought* under entailment of the prejacent
 
-* Three contextual parameters: **options** Q_c (mutually incompatible
-  courses of action — a partition of the action space), **ordering**
-  ≺ on options, **benchmark** threshold.
-* A proposition `p` is **visible** in Q_c iff every option is either
-  a way-of-p or a not-way-of-p (the options *settle* p).
-* **Lexical entry** (§4 p.546, formal): `⟦ought p⟧^{c,w} = 1` iff
-  - **(i) Optimality**: every best option is a way-of-p
-  - **(ii) Strong Permissibility**: every way-of-p option meets benchmark
-  - **(iii) Visibility**: p is visible in Q_c ∩ M_c
+## Main results
 
-  Our `ought` definition uses the *informal* §2 (p.540) ordering
-  (visibility ∧ optimality ∧ strong permissibility); the §4 formal
-  ordering is (i)+(ii)+(iii). The ∧-conjunction is symmetric so the
-  truth-conditions are identical.
+* `not_ought_of_impermissible_way` — one impermissible way of `p` falsifies *ought p*
+* `permitted_of_ought` — *ought* entails *permitted* wherever some option is best
+* `ought_iff_of_all_meetBenchmark` — with every option at the benchmark only the boxing clauses
+  do any work
+* `not_inheritance_ross`, `not_inheritance_proc` — either puzzle refutes INHERITANCE
 
-* **Boxing as special case** (p.546): when **(a)** cells of Q_c are
-  singleton sets AND **(b)** every option meets benchmark, Resolution
-  Semantics reduces to standard boxing. Both conditions are required
-  — see `ought_iff_kratzer_boxing_of_singletons_and_all_meet`.
+## References
 
-## Coarseness and Coarse Falsemaking
-
-[cariani-2013] §1 (p.534) opens with:
-
-> [COARSENESS] `S ought to φ` can be true even though there are
-> impermissible ways of φ-ing.
-
-This is the paper's leading desideratum — `ought` is *coarser* than
-the way-action distinction. `Cariani.ought` satisfies coarseness by
-not requiring every way-of-p to itself be ought-true; only that they
-meet the benchmark (Strong Permissibility).
-
-§2 (p.541, restated p.546) gives the positive constraint:
-
-> [COARSE FALSEMAKING] An ought-sentence is false (in a context) if
-> there is a *relevant* option compatible with the prejacent that's
-> impermissible.
-
-Our `ought_negation_via_coarse_falsemaking` makes this precise.
-
-## Cross-framework: structural agreement with Phillips-Brown
-
-Cariani's `visible` is **definitionally identical** to Phillips-Brown's
-`IsConsidered` (`Semantics/Attitudes/Desire/QuestionBased.lean`,
-[phillips-brown-2025] §3.6) — so much so that we don't redefine
-it: `Cariani2013.isVisible` is an `abbrev` for `IsConsidered` over the
-options list. The bridge theorem `isVisible_iff_IsConsidered` is
-`Iff.rfl`.
-
-This is **parallel discovery, not chain-of-influence**: Cariani 2013's
-bibliography (pp.557-558) contains no Crnič citation; PB 2025 cites
-Crnič 2011 (PhD thesis "Getting Even") as inspiration. Both
-independently arrived at the same predicate via different routes:
-Cariani via Lewisian relevant-alternatives + Yalcin terminology
-(p.546); PB via Crnič's question-sensitive belief proposal. The
-formal identity of the two predicates is a substantive cross-framework
-finding that linglib's "make agreements visible" thesis surfaces.
-
-## DUALITY failure (paper §5 p.547-548)
-
-Cariani's Resolution Semantics rejects INHERITANCE, which forces
-rejection of one direction of DUALITY (`ought p ↔ ¬ permitted ¬p`).
-Specifically (p.547): "the rejection of the right-to-left direction
-of DUALITY is an immediate consequence of the rejection of
-INHERITANCE." See `cariani_duality_right_to_left_failure`.
+* [cariani-2013]
+* [ross-1941]
+* [jackson-pargetter-1986]
+* [kratzer-1981]
 -/
 
 namespace Cariani2013
 
 open Desire.QuestionBased (IsConsidered)
 
-/-! ## §1. Resolution Semantics primitives
+variable {W : Type*}
 
-Following [cariani-2013] §4 (pp.544-545). The three contextual
-parameters are options, ordering, benchmark. Per §4 (p.545):
+/-! ### The three contextual parameters -/
 
-> If individual options are modeled as propositions, a range of
-> mutually exclusive options can be thought of as a set of mutually
-> exclusive propositions—i.e., as a partition of a subset S of
-> logical space.
-
-We model options as a `List (Finset W)` — finite, with decidable
-membership — matching the substrate's `Desire.QuestionBased` representation of
-partition cells. Mutual exclusivity is a hypothesis
-on consumers, not a structure field. -/
-
-variable {W : Type*} [Fintype W] [DecidableEq W]
-
-/-- Cariani's propositions carry function-form decidability; the question-based substrate
-reads membership. -/
-instance {p : Set W} [DecidablePred p] : DecidablePred (· ∈ p) :=
-  fun w => inferInstanceAs (Decidable (p w))
-
-/-- A `ResolutionContext` packages Cariani's three parameters:
-    options (mutually exclusive cells), an ordering on options, and a
-    benchmark predicate (a cutoff IN the ordering's range, not a
-    numeric threshold — Cariani is non-committal between ranking and
-    quantitative scales, p.545). -/
+/-- The parameters of a resolution context: mutually exclusive options, an ordering on them, and
+a benchmark. The benchmark is a cutoff in the ordering's range rather than a number, since
+[cariani-2013] is non-committal between ranking and quantitative scales. -/
 structure ResolutionContext (W : Type*) where
-  /-- Mutually exclusive options (a partition of the relevant action
-      space). Stored as `Finset` cells for `decide`-friendliness. -/
+  /-- The options: mutually exclusive courses of action, a partition of the action space. -/
   options : List (Finset W)
-  /-- Ranking on options: `betterThan o₁ o₂` means `o₁` is at least as
-      preferable as `o₂`. -/
+  /-- `betterThan o o'`: `o` is at least as good as `o'`. -/
   betterThan : Finset W → Finset W → Prop
   /-- Decidability of the ordering. -/
   betterThanDec : ∀ a b, Decidable (betterThan a b)
-  /-- Benchmark predicate: an option `meetsBenchmark` if it is at or
-      above the threshold. -/
+  /-- Whether an option is at or above the benchmark. -/
   meetsBenchmark : Finset W → Prop
-  /-- Decidability of the benchmark predicate. -/
+  /-- Decidability of the benchmark. -/
   meetsBenchmarkDec : ∀ o, Decidable (meetsBenchmark o)
 
 instance (rc : ResolutionContext W) (a b : Finset W) :
@@ -149,433 +73,166 @@ instance (rc : ResolutionContext W) (a b : Finset W) :
 instance (rc : ResolutionContext W) (o : Finset W) :
     Decidable (rc.meetsBenchmark o) := rc.meetsBenchmarkDec o
 
-/-! ## §2. The four derived predicates (Cariani §4 p.545-546)
+/-- The context of a ranked action space: an option is as good as another when its best world
+ranks at least as high, and it meets the benchmark when that rank reaches `b`. -/
+def ofRanking (options : List (Finset W)) (rank : W → ℕ) (b : ℕ) : ResolutionContext W where
+  options := options
+  betterThan o o' := o'.sup rank ≤ o.sup rank
+  betterThanDec _ _ := inferInstanceAs (Decidable (_ ≤ _))
+  meetsBenchmark o := b ≤ o.sup rank
+  meetsBenchmarkDec _ := inferInstanceAs (Decidable (_ ≤ _))
 
-* `isWayOf`: option `o` is a way-of-`p` iff every world in `o` is a
-  `p`-world (the option *entails* `p`).
-* `isVisible`: `p` is visible iff every option is a way-of-`p` or a
-  way-of-`¬p`. **Definitionally identical** to PB's `IsConsidered` —
-  we use it as an alias.
-* `isPermissible`: some way-of-`p` option meets benchmark.
-* `isStronglyPermissible`: every way-of-`p` option meets benchmark.
-* `isOptimal`: every best option is a way-of-`p`.
--/
+/-! ### The clauses -/
 
-/-- Option `o` is a *way of* `p` iff `o` entails `p`. -/
-def isWayOf (o : Finset W) (p : Set W) [DecidablePred p] : Prop :=
-  ∀ w ∈ o, p w
+/-- Cariani's propositions carry function-form decidability; the question-based substrate reads
+membership. -/
+instance {p : Set W} [DecidablePred p] : DecidablePred (· ∈ p) :=
+  fun w => inferInstanceAs (Decidable (p w))
 
-instance (o : Finset W) (p : Set W) [DecidablePred p] :
-    Decidable (isWayOf o p) :=
+instance [DecidableEq W] (a : W) : DecidablePred ({a} : Set W) :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
+
+instance [DecidableEq W] (a b : W) : DecidablePred ({a, b} : Set W) :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
+
+variable (rc : ResolutionContext W)
+
+/-- An option is a *way of* `p` when it entails `p`. -/
+def isWayOf (o : Finset W) (p : Set W) : Prop := ∀ w ∈ o, p w
+
+instance (o : Finset W) (p : Set W) [DecidablePred p] : Decidable (isWayOf o p) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-- `p` is **visible** in Cariani's options iff every option settles `p`.
+/-- `p` is *visible* when the options settle it: each is a way of `p` or a way of its
+negation. -/
+abbrev isVisible (p : Set W) : Prop := IsConsidered rc.options p
 
-    **Definitionally identical to Phillips-Brown's `IsConsidered`** —
-    aliased rather than restipulated, per CLAUDE.md "import don't
-    restipulate" discipline. The bridge theorem
-    `isVisible_iff_IsConsidered` is `Iff.rfl`. -/
-abbrev isVisible (rc : ResolutionContext W) (p : Set W) [DecidablePred p] : Prop :=
-  IsConsidered rc.options p
+/-- An option is *best* when it is at least as good as every option. -/
+def isBest (o : Finset W) : Prop := ∀ o' ∈ rc.options, rc.betterThan o o'
 
-/-- `p` is **permissible** iff some option that's a way-of-`p` meets
-    benchmark. (Not used in Cariani's `ought` definition — used to
-    define `permitted` for the dual operator, §3 below.) -/
-def isPermissible (rc : ResolutionContext W) (p : Set W) [DecidablePred p] : Prop :=
-  ∃ o ∈ rc.options, isWayOf o p ∧ rc.meetsBenchmark o
+instance (o : Finset W) : Decidable (isBest rc o) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-instance (rc : ResolutionContext W) (p : Set W) [DecidablePred p] :
-    Decidable (isPermissible rc p) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+/-- `p` is *optimal* when every best option is a way of it. -/
+def isOptimal (p : Set W) : Prop := ∀ o ∈ rc.options, isBest rc o → isWayOf o p
 
-/-- `p` is **strongly permissible** iff every option that's a way-of-`p`
-    meets benchmark. -/
-def isStronglyPermissible (rc : ResolutionContext W) (p : Set W)
-    [DecidablePred p] : Prop :=
+instance (p : Set W) [DecidablePred p] : Decidable (isOptimal rc p) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+
+/-- `p` is *strongly permissible* when every option that is a way of it meets the benchmark. -/
+def isStronglyPermissible (p : Set W) : Prop :=
   ∀ o ∈ rc.options, isWayOf o p → rc.meetsBenchmark o
 
-instance (rc : ResolutionContext W) (p : Set W) [DecidablePred p] :
-    Decidable (isStronglyPermissible rc p) :=
+instance (p : Set W) [DecidablePred p] : Decidable (isStronglyPermissible rc p) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-- An option `o` is **best** iff it's at-least-as-good-as every other
-    listed option. The `o ∈ rc.options` membership check is the
-    caller's responsibility — it's implicit in the typical
-    `∀ o ∈ rc.options, isBest rc o → ...` consumption pattern in
-    `isOptimal`. -/
-def isBest (rc : ResolutionContext W) (o : Finset W) : Prop :=
-  ∀ o' ∈ rc.options, rc.betterThan o o'
+/-! ### The two operators -/
 
-instance (rc : ResolutionContext W) (o : Finset W) :
-    Decidable (isBest rc o) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
-
-/-- `p` is **optimal** iff every best option is a way-of-`p`. -/
-def isOptimal (rc : ResolutionContext W) (p : Set W) [DecidablePred p] : Prop :=
-  ∀ o ∈ rc.options, isBest rc o → isWayOf o p
-
-instance (rc : ResolutionContext W) (p : Set W) [DecidablePred p] :
-    Decidable (isOptimal rc p) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
-
-/-! ## §3. Cariani's `ought` and `permitted` (paper §4 p.546, §5 p.547)
-
-`⟦ought p⟧^{c,w} = 1` iff `p` is **visible** AND **optimal** AND
-**strongly permissible**. The conjunction order in our definition
-follows the paper's *informal* §2 (p.540) ordering; the paper's
-*formal* §4 (p.546) ordering is (i) Optimality, (ii) Strong
-Permissibility, (iii) Visibility. The truth-conditions are identical.
-
-`permitted p` (§5 p.556 fn 23): `p` is permitted iff some option ≥
-benchmark is a way-of-`p`. This is `isPermissible` itself.
-
-DUALITY (`ought p ↔ ¬ permitted ¬p`) is rejected by Cariani in the
-right-to-left direction (p.547), as a consequence of rejecting
-INHERITANCE. -/
-
-/-- **Cariani-style `ought`** (Resolution Semantics, §4 p.546).
-    Conjunction of visibility, optimality, and strong permissibility. -/
-def ought (rc : ResolutionContext W) (p : Set W) [DecidablePred p] : Prop :=
+/-- *Ought p*: the options settle `p`, every best option is a way of `p`, and every option that
+is a way of `p` meets the benchmark. -/
+def ought (p : Set W) : Prop :=
   isVisible rc p ∧ isOptimal rc p ∧ isStronglyPermissible rc p
 
-instance (rc : ResolutionContext W) (p : Set W) [DecidablePred p] :
-    Decidable (ought rc p) :=
+instance (p : Set W) [DecidablePred p] : Decidable (ought rc p) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- **Cariani-style `permitted`** (paper p.556 fn 23, "first entry"):
-    some option ≥ benchmark is a way-of-`p`. Identical to
-    `isPermissible`; we expose it as a named operator for clarity. -/
-def permitted (rc : ResolutionContext W) (p : Set W) [DecidablePred p] : Prop :=
-  isPermissible rc p
+/-- *Permitted p*: some option that is a way of `p` meets the benchmark. -/
+def permitted (p : Set W) : Prop := ∃ o ∈ rc.options, isWayOf o p ∧ rc.meetsBenchmark o
 
-instance (rc : ResolutionContext W) (p : Set W) [DecidablePred p] :
-    Decidable (permitted rc p) :=
-  inferInstanceAs (Decidable (isPermissible rc p))
+instance (p : Set W) [DecidablePred p] : Decidable (permitted rc p) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-! ## §4. Bridge to Phillips-Brown's `IsConsidered`
+/-- Coarse falsemaking: a single option that is a way of `p` and falls below the benchmark makes
+*ought p* false, however good the rest of the options are. -/
+theorem not_ought_of_impermissible_way (p : Set W) (o : Finset W) (ho : o ∈ rc.options)
+    (hway : isWayOf o p) (himp : ¬ rc.meetsBenchmark o) : ¬ ought rc p :=
+  fun ⟨_, _, hsp⟩ => himp (hsp o ho hway)
 
-[phillips-brown-2025]'s `IsConsidered`
-(`Desire.QuestionBased`) is *definitionally* the same
-predicate as Cariani's `isVisible`. Since `isVisible` is now an
-`abbrev` (§2 above), the bridge theorem is `Iff.rfl`.
+/-- What one ought to do is permitted, as long as some option is best: that option is a way of
+`p` by optimality, and meets the benchmark by strong permissibility. -/
+theorem permitted_of_ought (p : Set W) (h : ∃ o ∈ rc.options, isBest rc o)
+    (hought : ought rc p) : permitted rc p := by
+  obtain ⟨o, ho, hbest⟩ := h
+  obtain ⟨_, hopt, hsp⟩ := hought
+  exact ⟨o, ho, hopt o ho hbest, hsp o ho (hopt o ho hbest)⟩
 
-Per the docstring's "parallel discovery" note: Cariani 2013 doesn't
-cite Crnič; PB 2025 cites Crnič 2011 but not Cariani 2013. The
-agreement is independent reinvention. Linglib's "make agreements
-visible" thesis surfaces the structural identity. -/
+/-- When every option is at the benchmark the permissibility clause does no work and *ought* is
+the boxing reading — quantification over the best options, restricted to visible prejacents. -/
+theorem ought_iff_of_all_meetBenchmark (p : Set W)
+    (h : ∀ o ∈ rc.options, rc.meetsBenchmark o) :
+    ought rc p ↔ isVisible rc p ∧ isOptimal rc p :=
+  ⟨fun ⟨hv, ho, _⟩ => ⟨hv, ho⟩, fun ⟨hv, ho⟩ => ⟨hv, ho, fun o hoo _ => h o hoo⟩⟩
 
-omit [Fintype W] [DecidableEq W] in
-/-- Cariani's `isVisible` and Phillips-Brown's `IsConsidered` are the
-    same predicate. Since `isVisible` is an `abbrev` over
-    `IsConsidered`, the proof is `Iff.rfl`. -/
-theorem isVisible_iff_IsConsidered
-    (rc : ResolutionContext W) (p : Set W) [DecidablePred p] :
-    isVisible rc p ↔ IsConsidered rc.options p := Iff.rfl
+/-- INHERITANCE: *ought* is closed under entailment of the prejacent. -/
+def Inheritance : Prop := ∀ p q : Set W, (∀ w, p w → q w) → ought rc p → ought rc q
 
-/-! ## §5. INHERITANCE failure on Ross's Puzzle (paper §I)
+/-! ### Ross's paradox -/
 
-Ross's Puzzle: `Joan ought to attend her classes` does NOT entail
-`Joan ought to either attend her classes or burn down the philosophy
-department`. Under boxing semantics, INHERITANCE (`p ⊨ q ⇒ ought(p)
-⊨ ought(q)`) makes this entailment valid. Cariani's Resolution
-Semantics predicts the disjunction is FALSE.
-
-We construct a 3-world model: `attend, stay_home, burn`. Options
-{attend, stay_home, burn}; benchmark = `≥ stay_home`; ranking:
-attend > stay_home > burn. Then:
-- `ought attend` is true: visible (every option settles attend),
-  optimal (best option = attend ⊆ attend), strongly permissible
-  (only way-of-attend option is attend itself, which meets benchmark).
-- `ought (attend ∨ burn)` is FALSE: not strongly permissible (burn is
-  a way-of-(attend∨burn) but does NOT meet benchmark).
-
-INHERITANCE fails because `attend ⊨ (attend ∨ burn)` but
-`ought(attend) ⊭ ought(attend ∨ burn)`. -/
-
-inductive RossW where
-  | attend | stay_home | burn
+/-- Joan's three courses of action. -/
+inductive RossW | attend | stayHome | burn
   deriving DecidableEq, Fintype, Repr
 
-def attendProp : Set RossW | .attend => True | _ => False
-def stayHomeProp : Set RossW | .stay_home => True | _ => False
-def burnProp : Set RossW | .burn => True | _ => False
-
-instance : DecidablePred attendProp :=
-  fun w => by cases w <;> unfold attendProp <;> infer_instance
-instance : DecidablePred stayHomeProp :=
-  fun w => by cases w <;> unfold stayHomeProp <;> infer_instance
-instance : DecidablePred burnProp :=
-  fun w => by cases w <;> unfold burnProp <;> infer_instance
-
-/-- The three options: singleton courses of action. -/
-def rossOptions : List (Finset RossW) :=
-  [{.attend}, {.stay_home}, {.burn}]
-
-/-- Rank on `RossW` worlds: attend > stay_home > burn. -/
-def rossWorldRank : RossW → ℕ
+/-- Attending is best, staying home is next, burning down the department is worst. -/
+def rossRank : RossW → ℕ
   | .attend => 3
-  | .stay_home => 2
+  | .stayHome => 2
   | .burn => 1
 
-/-- Rank of an option: max of `rossWorldRank` over its worlds (0 for
-    the empty option). For the three singleton options, this is just
-    the world's rank. -/
-def rossRank (o : Finset RossW) : ℕ :=
-  o.sup rossWorldRank
+/-- Joan's context: the three actions as options, with the benchmark at staying home, so that
+burning down the department is the one impermissible option. -/
+def rossContext : ResolutionContext RossW :=
+  ofRanking [{.attend}, {.stayHome}, {.burn}] rossRank 2
 
-def rossBetterThan : Finset RossW → Finset RossW → Prop :=
-  fun o o' => rossRank o ≥ rossRank o'
+/-- *Joan ought to attend her classes* is true. -/
+theorem ross_ought_attend : ought rossContext {RossW.attend} := by decide +kernel
 
-instance (o o' : Finset RossW) : Decidable (rossBetterThan o o') :=
-  inferInstanceAs (Decidable (_ ≥ _))
+/-- The disjunction is visible, so it is only the permissibility clause that rejects it: burning
+down the department is a way of *attend or burn* below the benchmark. -/
+theorem ross_disjunction_visible_not_permissible :
+    isVisible rossContext {RossW.attend, .burn} ∧
+      ¬ isStronglyPermissible rossContext {RossW.attend, .burn} := by decide +kernel
 
-/-- Benchmark: only attend (rank 3) and stay_home (rank 2) meet
-    benchmark. Burn (rank 1) is impermissible. -/
-def rossMeetsBenchmark : Finset RossW → Prop := fun o => rossRank o ≥ 2
+/-- *Joan ought to either attend her classes or burn down the philosophy department* is false. -/
+theorem ross_not_ought_disjunction : ¬ ought rossContext {RossW.attend, .burn} := by
+  decide +kernel
 
-instance (o : Finset RossW) : Decidable (rossMeetsBenchmark o) :=
-  inferInstanceAs (Decidable (_ ≥ _))
+/-- *Joan ought to stay home* is false as well, on the optimality clause rather than the
+permissibility one: staying home is at the benchmark but is not the best option. -/
+theorem ross_not_ought_stayHome : ¬ ought rossContext {RossW.stayHome} := by decide +kernel
 
-def rossContext : ResolutionContext RossW where
-  options := rossOptions
-  betterThan := rossBetterThan
-  betterThanDec := fun a b => inferInstanceAs (Decidable (rossBetterThan a b))
-  meetsBenchmark := rossMeetsBenchmark
-  meetsBenchmarkDec := fun o => inferInstanceAs (Decidable (rossMeetsBenchmark o))
+/-- Ross's paradox refutes INHERITANCE. -/
+theorem not_inheritance_ross : ¬ Inheritance rossContext := fun h =>
+  ross_not_ought_disjunction (h _ _ (fun _ hw => Or.inl hw) ross_ought_attend)
 
-/-- `ought(attend)` holds in Ross's context: visible, optimal, and
-    strongly permissible. -/
-theorem ross_ought_attend : ought rossContext attendProp := by decide +kernel
+/-! ### Procrastinate -/
 
-/-- `attend` is visible in Ross's context — every option settles it. -/
-theorem ross_attend_visible : isVisible rossContext attendProp := by decide +kernel
-
-/-- `attend ∨ burn` is also visible (every option settles it). -/
-theorem ross_attend_or_burn_visible :
-    isVisible rossContext (fun w => attendProp w ∨ burnProp w) := by decide +kernel
-
-/-- The disjunction `attend ∨ burn` is NOT strongly permissible — `burn`
-    is a way-of-(attend ∨ burn) but doesn't meet the benchmark. -/
-theorem ross_attend_or_burn_not_stronglyPermissible :
-    ¬ isStronglyPermissible rossContext (fun w => attendProp w ∨ burnProp w) := by
-  decide
-
-/-- **Ross's Puzzle, formal**: `ought(attend ∨ burn)` is FALSE in
-    Cariani's Resolution Semantics, even though `attend ⊨ attend ∨ burn`
-    and `ought(attend)` is true. This is the INHERITANCE failure. -/
-theorem ross_puzzle_inheritance_failure :
-    ¬ ought rossContext (fun w => attendProp w ∨ burnProp w) := by decide +kernel
-
-/-! ## §6. INHERITANCE failure on Procrastinate (paper §II)
-
-Jackson & Pargetter 1986: `Procrastinate ought to accept and write` is
-true; `Procrastinate ought to accept` is false.
-
-Cariani's analysis (p.541): Procrastinate's options must include
-"accept and write", "accept without writing", "do not accept",
-ordered as `accept_and_write > do_not_accept > benchmark > accept_without_writing`. -/
-
-inductive ProcW where
-  | accept_write | do_not_accept | accept_no_write
+/-- Procrastinate's three courses of action ([jackson-pargetter-1986]): accepting the review and
+writing it, declining it, and accepting without writing. -/
+inductive ProcW | acceptWrite | doNotAccept | acceptNoWrite
   deriving DecidableEq, Fintype, Repr
 
-def acceptWriteProp : Set ProcW | .accept_write => True | _ => False
-def doNotAcceptProp : Set ProcW | .do_not_accept => True | _ => False
-def acceptNoWriteProp : Set ProcW | .accept_no_write => True | _ => False
+/-- Accepting and writing is best; declining is better than accepting and not writing, which is
+what Procrastinate would in fact do. -/
+def procRank : ProcW → ℕ
+  | .acceptWrite => 3
+  | .doNotAccept => 2
+  | .acceptNoWrite => 1
 
-instance : DecidablePred acceptWriteProp :=
-  fun w => by cases w <;> unfold acceptWriteProp <;> infer_instance
-instance : DecidablePred doNotAcceptProp :=
-  fun w => by cases w <;> unfold doNotAcceptProp <;> infer_instance
-instance : DecidablePred acceptNoWriteProp :=
-  fun w => by cases w <;> unfold acceptNoWriteProp <;> infer_instance
+/-- Procrastinate's context, with the benchmark at declining. -/
+def procContext : ResolutionContext ProcW :=
+  ofRanking [{.acceptWrite}, {.doNotAccept}, {.acceptNoWrite}] procRank 2
 
-def procOptions : List (Finset ProcW) :=
-  [{.accept_write}, {.do_not_accept}, {.accept_no_write}]
+/-- *Procrastinate ought to accept and write the review* is true. -/
+theorem proc_ought_acceptWrite : ought procContext {ProcW.acceptWrite} := by decide +kernel
 
-def procWorldRank : ProcW → ℕ
-  | .accept_write => 3
-  | .do_not_accept => 2
-  | .accept_no_write => 1
+/-- *Procrastinate ought to accept* is false: accepting without writing is a way of accepting,
+and it is below the benchmark. -/
+theorem proc_not_ought_accept :
+    ¬ ought procContext {ProcW.acceptWrite, .acceptNoWrite} := by decide +kernel
 
-def procRank (o : Finset ProcW) : ℕ :=
-  o.sup procWorldRank
-
-def procBetterThan : Finset ProcW → Finset ProcW → Prop :=
-  fun o o' => procRank o ≥ procRank o'
-
-instance (o o' : Finset ProcW) : Decidable (procBetterThan o o') :=
-  inferInstanceAs (Decidable (_ ≥ _))
-
-def procMeetsBenchmark : Finset ProcW → Prop := fun o => procRank o ≥ 2
-
-instance (o : Finset ProcW) : Decidable (procMeetsBenchmark o) :=
-  inferInstanceAs (Decidable (_ ≥ _))
-
-def procContext : ResolutionContext ProcW where
-  options := procOptions
-  betterThan := procBetterThan
-  betterThanDec := fun a b => inferInstanceAs (Decidable (procBetterThan a b))
-  meetsBenchmark := procMeetsBenchmark
-  meetsBenchmarkDec := fun o => inferInstanceAs (Decidable (procMeetsBenchmark o))
-
-/-- The "accept" proposition: true at both `accept_write` and
-    `accept_no_write`. -/
-def acceptProp : Set ProcW :=
-  fun w => w = .accept_write ∨ w = .accept_no_write
-
-instance : DecidablePred acceptProp := fun w => by unfold acceptProp; infer_instance
-
-/-- `accept_no_write` is a way-of-`accept` but does NOT meet benchmark. -/
-theorem proc_accept_not_stronglyPermissible :
-    ¬ isStronglyPermissible procContext acceptProp := by decide +kernel
-
-/-- **Procrastinate, formal**: `ought(accept)` is FALSE in Cariani's
-    Resolution Semantics, even though `accept_write ⊨ accept` and
-    `ought(accept_write)` is true. -/
-theorem procrastinate_inheritance_failure :
-    ¬ ought procContext acceptProp := by decide +kernel
-
-/-! ## §7. Boxing as a special case (paper p.546)
-
-Cariani 2013 p.546 lists **TWO** conditions for the reduction to
-boxing:
-
-> (a) The cells of Q_c are all singleton sets.
-> (b) For every o, o ≥ benchmark.
-
-Under (a)+(b), Resolution Semantics reduces to standard
-Kratzer/Lewis boxing semantics. We formalize the partial reduction
-(under (b) alone the Strong Permissibility clause is neutralized;
-combined with (a) the Visibility + Optimality clauses collapse to the
-boxing reading). -/
-
-omit [Fintype W] [DecidableEq W] in
-/-- **Partial reduction (condition (b) only)**: when every option meets
-    the benchmark, Strong Permissibility is trivially satisfied, and
-    `ought` reduces to `Visibility ∧ Optimality`. This is *not* yet
-    Kratzer boxing — boxing requires (a) singleton cells too. -/
-theorem ought_iff_visible_and_optimal_of_all_meet_benchmark
-    (rc : ResolutionContext W)
-    (hAllMeet : ∀ o ∈ rc.options, rc.meetsBenchmark o)
-    (p : Set W) [DecidablePred p] :
-    ought rc p ↔ isVisible rc p ∧ isOptimal rc p := by
-  unfold ought
-  refine ⟨fun ⟨hV, hO, _⟩ => ⟨hV, hO⟩, fun ⟨hV, hO⟩ => ⟨hV, hO, ?_⟩⟩
-  intro o ho _
-  exact hAllMeet o ho
-
-/-! ## §8. Coarseness and Coarse Falsemaking (paper §1 p.534, §2 p.541)
-
-Cariani's leading desideratum (COARSENESS, p.534): `ought` can be
-true even when there are impermissible ways of φ-ing. And his positive
-constraint (COARSE FALSEMAKING, p.541, p.546): `ought` is false if
-there's a relevant impermissible option compatible with the prejacent.
-
-These are two sides of the same coin: `ought` is *coarser* than
-"every way-of-p is permissible" (allows some impermissible ways) but
-*finer* than "some way-of-p is permissible" (rejected when an
-impermissible option compatible with the prejacent is available). -/
-
-omit [Fintype W] [DecidableEq W] in
-/-- **Coarse Falsemaking (paper §2 p.541, restated p.546)**: if there
-    is an option `o` ∈ rc.options that is a way-of-`p` and `o` does
-    NOT meet benchmark, then `ought p` is false. This is exactly the
-    Strong Permissibility clause's contrapositive — and is the
-    mechanism by which Cariani derives `¬ ought (attend ∨ burn)` in
-    Ross's puzzle. -/
-theorem ought_negation_via_coarse_falsemaking
-    (rc : ResolutionContext W) (p : Set W) [DecidablePred p]
-    (o : Finset W) (ho : o ∈ rc.options)
-    (hWay : isWayOf o p) (hImp : ¬ rc.meetsBenchmark o) :
-    ¬ ought rc p := by
-  intro ⟨_, _, hSP⟩
-  exact hImp (hSP o ho hWay)
-
-/-! ## §9. DUALITY failure (paper §5 p.547-548)
-
-Standard deontic logic has DUALITY: `ought p ↔ ¬ permitted ¬p`. This
-follows from boxing (where ought = □ and permitted = ◇) in classical
-modal logic.
-
-Cariani (p.547) explicitly rejects the right-to-left direction
-(`¬ permitted ¬p → ought p`) as an immediate consequence of rejecting
-INHERITANCE: he uses Ross's Puzzle as the *ipso facto* counter-example
-(p.547):
-
-> The anti-boxer insists that (3) is false: it is false that Joan
-> ought to either attend her classes or burn down the philosophy
-> department. It does not follow from this that she's permitted to do
-> something incompatible with the prejacent of (3) (e.g., go to a
-> museum). She must, after all, attend her classes.
-
-Specifically, in `rossContext`: `permitted (¬(attend ∨ burn))` would
-be the existence of a way-of-(stay_home, the only ¬(attend ∨ burn)
-option) at-or-above benchmark. `stay_home` IS at benchmark.
-Yet `ought (attend ∨ burn)` fails (Ross's puzzle). So
-`¬ permitted ¬(attend ∨ burn)` is FALSE, while `ought (attend ∨ burn)`
-is also false — vacuously satisfying the right-to-left implication?
-No: the relevant case is the contrapositive. The actual right-to-left
-DUALITY failure: pick a `q` where `permitted q` is false but
-`ought ¬q` is also false. -/
-
-/-- The INHERITANCE failure, existentially packaged: a context and
-    propositions `p ⊨ q` with `ought p` true and `ought q` false
-    (Ross's puzzle: `p = attend`, `q = attend ∨ burn`). This is the
-    failure Cariani p.547 invokes to reject the right-to-left
-    direction of DUALITY (`¬ permitted ¬p → ought p`); `rossContext`
-    itself satisfies that direction vacuously, and a direct
-    DUALITY-failure witness needs a richer model. -/
-theorem inheritance_failure_exists :
-    ∃ (W : Type) (_ : Fintype W) (_ : DecidableEq W)
-      (rc : ResolutionContext W) (p : Set W) (_ : DecidablePred p)
-      (q : Set W) (_ : DecidablePred q),
-      (∀ w, p w → q w) ∧ ought rc p ∧ ¬ ought rc q :=
-  ⟨RossW, inferInstance, inferInstance,
-   rossContext, attendProp, inferInstance,
-   (fun w => attendProp w ∨ burnProp w), inferInstance,
-   fun _ => Or.inl, ross_ought_attend, ross_puzzle_inheritance_failure⟩
-
-/-! ## §10. Weakening failure (paper §III pre-figured; [cariani-2016] core)
-
-Cariani 2013 §III flags conditional-ought issues that *prefigure*
-Weakening failures, but the explicit Weakening attack
-(`ought(A) ∧ ought(B) ⊨ ought(A ∨ B)`) is the central topic of
-[cariani-2016]. We formalize the failure here using rossContext:
-`ought(attend)` and `ought(stay_home)` are both true, but
-`ought(attend ∨ stay_home ∨ burn)` is false — because `burn` is a
-way-of-the-disjunction that doesn't meet benchmark.
-
-(For the simple disjunction `attend ∨ stay_home`, Weakening holds in
-`rossContext`; the failure needs disjuncts whose union acquires an
-impermissible way-of-disjunction option, as with `burn` above.) -/
-
-/-- `ought(stay_home)` is false in rossContext — stay_home is a
-    way-of-stay_home, meets benchmark, but `attend` is the unique best
-    option and `attend` is NOT a way-of-stay_home. So `isOptimal` fails. -/
-theorem ross_ought_stay_home_false :
-    ¬ ought rossContext stayHomeProp := by decide +kernel
-
-/-! ## §11. Cross-framework summary
-
-* Cariani's `isVisible` ≡ Phillips-Brown's `IsConsidered`
-  (`isVisible_iff_IsConsidered` is `Iff.rfl` since `isVisible` is an
-  abbrev). Parallel discovery (Cariani via Lewis/Yalcin; PB via Crnič
-  2011), not chain-of-influence.
-* Cariani's account is *anti-INHERITANCE by design* (proved in §5
-  Ross, §6 Procrastinate, §9 DUALITY-concern). vF (`Desire.BestWorlds.Want`) and Heim
-  (`Desire.Conditional.Want`) are *pro-INHERITANCE* (their universal-over-best-worlds
-  shape entails it). Lassiter is anti-INHERITANCE via *intermediacy
-  of E_V* (a different mechanism — see Lassiter2017.lean).
-* `Cariani.ought` satisfies COARSENESS (paper §1 p.534) and is
-  characterized negatively by COARSE FALSEMAKING (paper §2 p.541).
-  `ought_negation_via_coarse_falsemaking` is the Lean version.
-* The boxing-as-special-case theorem (§7) proves the partial
-  reduction under benchmark-met-by-all (condition (b) of Cariani
-  p.546); the full reduction to Kratzer boxing also requires
-  singleton cells (condition (a)) — left as future work because the
-  full statement requires unifying Cariani's option-based partition
-  with Kratzer's modal-base/ordering-source apparatus.
--/
+/-- Procrastinate refutes INHERITANCE too, on a prejacent that is weaker by way of an
+impermissible option rather than by a disjunct. -/
+theorem not_inheritance_proc : ¬ Inheritance procContext := fun h =>
+  proc_not_ought_accept (h _ _ (fun _ hw => Or.inl hw) proc_ought_acceptWrite)
 
 end Cariani2013

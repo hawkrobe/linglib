@@ -6,31 +6,51 @@ Authors: Robert Hawkins
 import Linglib.Phonology.Segmental.ElementTheory
 
 /-!
-# Cavirani & Vanden Wyngaerd (2026): Czech palatalisation
-[cavirani-vandenwyngaerd-2026]
+# Cavirani and Vanden Wyngaerd 2026: Czech palatalisation
 
-Czech has three palatalisation patterns triggered by different suffixes. The
-trigger is not the suffix's front vowel but a set of **floating elements** the
-suffix carries; the triggers (`PAL₁` ⊏ `PAL₂` ⊏ `PAL₃`, "small/medium/big")
-stand in a **containment relation** — PAL₁ adds |I|, PAL₂ adds |H| + |I|, PAL₃
-adds |H| + headed |I̲| — which is exactly the substrate's `Segment.Refines` order
-(`palataliser_chain`).
+This file formalizes the representational analysis of Czech palatalisation in
+[cavirani-vandenwyngaerd-2026]. Czech has three palatalisation patterns, and what separates them
+is not the front vowel of the triggering suffix — `-ý` and `-í` are both [iː] and only the second
+palatalises — but a floating element the suffix carries. The three triggers stand in a containment
+relation: PAL₁ adds |I|, PAL₂ adds |H| and |I|, PAL₃ adds |H| and a headed |I̲|, which is the
+substrate's `Segment.Refines` order.
 
-Floating elements `dock` onto a base; the substance-free `interpret : Segment →
-CzechPhone` reproduces the paper's tables (`velar_derivations`,
-`coronal_derivations`), is non-injective (`interpret_not_injective`), and reads
-the |I|-vs-|I̲| contrast differently on velars vs /s/. Labial output-invisibility
-and lateral resistance follow from the |U|⊕|I| antagonism
-(`labial_output_invisible`, `lateral_resists`).
+Floating elements dock onto a base node by node, and a substance-free `interpret` reads the result
+off. That map is not injective — palatalised /x/ and big-palatalised /s/ are different structures
+both pronounced [ʃ] — and it reads the |I| versus |I̲| contrast differently on velars, where
+headedness is invisible, than on /s/, where it separates [s] from [ʃ]. Labials and the lateral
+resist palatalisation for a representational reason rather than a stipulated one: their place node
+carries |U|, and docking |I| there would put two antagonistic colour elements in one node.
 
 ## Scope
 
-Representational output only — which elements end up in which node. The strict-CV
-skeleton and government/licensing driving the slot-by-slot derivations
-([lowenstamm-1996], [scheer-2004]), the glide-vs-invisible labial split, and the
-/m/ → [mɲ] nasal spreading are not modelled. (`Studies/FaustLampitelli2026.lean`
-inlines a `StrictCV` substrate; this is its second consumer — a shared graduation
-is the natural next step.)
+Representational output only: which elements end up in which node. The strict-CV skeleton and the
+government and licensing that drive the slot-by-slot derivations ([lowenstamm-1996],
+[scheer-2004]), the glide-versus-invisible-labial split, and the /m/ → [mɲ] nasal spreading are
+not modelled.
+
+## Main definitions
+
+* `PAL₁`, `PAL₂`, `PAL₃`, `Suffix.palataliser` — the three floating palatalisers and the suffixes
+  carrying them
+* `palatalise`, `interpret` — docking a palataliser, and the substance-free phonetic reading
+* `PlaceColourClash` — two antagonistic colour elements in one place node
+
+## Main results
+
+* `palataliser_chain_strict` — the three palatalisers are strictly ordered by containment
+* `velar_derivations`, `coronal_derivations` — the paper's derivation tables
+* `interpret_not_injective`, `headedness_invisible_on_velars`,
+  `headedness_visible_on_coronal_s` — what the substance-free reading loses, and where
+* `labial_output_invisible`, `lateral_resists`, `velar_no_clash` — resistance from the colour clash
+
+## References
+
+* [cavirani-vandenwyngaerd-2026]
+* [backley-2011]
+* [janku-2022]
+* [lowenstamm-1996]
+* [scheer-2004]
 -/
 
 namespace CaviraniVandenWyngaerd2026
