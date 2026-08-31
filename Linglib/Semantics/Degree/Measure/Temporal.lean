@@ -61,7 +61,7 @@ quantify over the scale's maximum (or its absence).
 
 namespace Degree
 
-open ArgumentStructure.Affectedness
+open ArgumentStructure
 
 /-! ### TemporalMeasure ([hay-kennedy-levin-1999] eq. 11) -/
 

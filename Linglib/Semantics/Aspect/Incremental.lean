@@ -276,7 +276,7 @@ def IsSincVerb.mk' {θ : α → β → Prop}
     final degree is verb-specific lexical content that cannot be
     derived from SINC alone. -/
 
-open _root_.ArgumentStructure.Affectedness
+open _root_.ArgumentStructure
 
 /-- Bridge: a K98 SINC verb θ with an explicit final-degree witness
     becomes a Beavers `IsQuantizedAffected` instance (the weaker
