@@ -2,43 +2,47 @@ import Linglib.Semantics.Composition.TypeShifting
 import Mathlib.Order.Bounds.Basic
 
 /-!
-# [bylinina-nouwen-2020] — Numeral semantics: the type-shift landscape
+# Bylinina and Nouwen 2020: numeral semantics
 
-[bylinina-nouwen-2020] survey the semantics of bare numerals: three views —
-numerals as number-denoting (type `d`, their (18)), as cardinality
-modifiers (`⟨e,t⟩`, their (11)), and as degree quantifiers
-(`⟨⟨d,t⟩,t⟩`, [kennedy-2015], their (43)) — and argue the views are
-related by type-shifts and operators, "end[ing] up with equivalent
-empirical coverage". This file formalises the equivalences the survey
-itself contributes:
+A bare numeral has been given three kinds of denotation: a number, a modifier counting the atoms of
+a plurality, and a quantifier over degree properties. The survey's point is that the three are not
+rival analyses of the same data but notational variants related by type-shifts, with equivalent
+empirical coverage, and this file proves the equivalences it gives: composing the number view with
+a counting operator yields the modifier view and an operator taking cardinalities recovers the
+number from the modifier, while lowering the degree quantifier with the shifts of the Partee
+triangle lands on the number again.
 
-* their (23): the number view composed with `MANY` (their (22)) *is* the
-  modifier meaning — `many_number`;
-* their (25): `CARD` — an operator the authors define themselves, "for
-  illustration of the equivalence of the modifier and number views" —
-  maps the modifier meaning back to the number meaning —
-  `card_numModifier`;
-* their (49)–(50): [partee-1987]'s BE/IOTA lower [kennedy-2015]'s
-  *exactly* degree quantifier to the number meaning — `BE_kennedy` and
-  `iota_BE_kennedy`, on the Partee-triangle substrate
-  (`Semantics/Quantification/Quantifier.lean` for `BE`,
-  `Semantics/Composition/TypeShifting.lean` for `iota`);
-* their (52)–(54): the survey's own proposal, "fill[ing] in an empty slot
-  in the available types of numeral semantic analyses" — an *at least*
-  degree quantifier (their (52), which is exactly the Montague lift
-  `individual` of the number view) together with a `MAX` operator (their
-  (53)) that recovers Kennedy's *exactly* quantifier — `MAX_lift_eq_kennedy` — while
-  keeping the lower-bound meaning basic (their argument from the polarity
-  profile of "zero", [bylinina-nouwen-2018]).
+The survey then fills the gap the three leave: a numeral denoting the degree properties that hold
+of it — a lower-bound meaning, which is the Montague lift of the number view — together with an
+operator taking maxima, which recovers the exactly-reading quantifier from it. That keeps the
+lower bound basic, as the polarity behaviour of *zero* argues it should be, and the operator does
+real work: the two quantifiers differ before it applies.
 
-Degrees are modelled as `ℕ`; `max(P)` is mathlib's `IsGreatest`;
-pluralities are `Finset ℕ` with `#` as `Finset.card`. The survey's other
-threads — exhaustification (§5, deferring to [spector-2013]), the
-Heim–Kennedy generalization, lower-bound semantics ([horn-1972],
-`atLeastMeaning` in `Semantics/Numerals/Basic.lean`) — live with their
-primary anchors.
+Degrees are natural numbers, maxima are `IsGreatest`, and pluralities are finite sets with
+`Finset.card` for the cardinality.
+
+## Main definitions
+
+* `numModifier`, `MANY`, `CARD` — the modifier view, the counting operator and the operator
+  recovering a cardinality from a modifier meaning
+* `kennedyNum` — the degree quantifier whose degree properties have the numeral as maximum
+* `MAX` — the survey's operator, taking a quantifier to the properties whose maximum it holds of
+
+## Main results
+
+* `many_number`, `card_numModifier` — the number and modifier views are interderivable
+* `BE_kennedy`, `iota_BE_kennedy` — lowering the degree quantifier gives the number back
+* `lowerBounded_eq_lift`, `MAX_lift_eq_kennedy` — the survey's lower-bound quantifier is the
+  Montague lift of the number, and its maximum operator recovers the exactly reading
+* `lift_ne_kennedy` — the two quantifiers are not the same, so the operator is not idle
+
+## References
+
+* [bylinina-nouwen-2020]
+* [bylinina-nouwen-2018]
+* [kennedy-2015]
+* [partee-1987]
 -/
-
 namespace BylininaNouwen2020
 
 open Semantics.Composition.TypeShifting
