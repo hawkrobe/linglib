@@ -15,7 +15,7 @@ cumulative) lets the licensing pipeline classify boundedness uniformly
 with other scale-style properties.
 -/
 
-namespace Semantics.Aspect
+namespace Aspect
 
 /-- Aspectual boundedness of a situation.
 
@@ -48,4 +48,4 @@ theorem bounded_licensed :
 theorem unbounded_blocked :
     ¬ Core.Order.LicensingPipeline.IsLicensed SituationBoundedness.unbounded := id
 
-end Semantics.Aspect
+end Aspect

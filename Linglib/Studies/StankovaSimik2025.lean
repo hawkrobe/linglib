@@ -28,7 +28,7 @@ namespace StankovaSimik2025
 open Czech.Particles (nahodou snad copak)
 open Czech.Determiners (zadny nejaky)
 open Czech.Negation
-open Semantics.Questions.Bias (ContextualEvidence evidenceBiasOK)
+open Questions.Bias (ContextualEvidence evidenceBiasOK)
 open Features (Judgment)
 
 /-! ### The main experiment (§5)

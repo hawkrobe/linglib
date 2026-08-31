@@ -75,7 +75,7 @@ open Semantics.Composition
 open Semantics.Composition.Tree
 open Pragmatics.Expressives
 open Quantification
-open Semantics.Reference.Binding
+open Reference.Binding
 open Intensional
 open Intensional.Variables
 open Semantics.Montague

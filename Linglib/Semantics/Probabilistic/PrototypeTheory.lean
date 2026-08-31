@@ -19,7 +19,7 @@ This is the parametric theory consumed by paper-specific PT models
 which provide their own prototype/spread parameter values.
 -/
 
-namespace Semantics.Probabilistic.PrototypeTheory
+namespace Probabilistic.PrototypeTheory
 
 /-- Tent kernel: `max 0 (1 - |x|)`. Non-negative, monotone-decreasing
 in `|x|`, continuous, peak `1` at `x = 0`, vanishes for `|x| ≥ 1`.
@@ -52,4 +52,4 @@ theorem ptMeaning_nonneg (n : Nat) (p : Nat) (d : ℚ) (t : Fin (n + 1)) :
     0 ≤ ptMeaning n p d t :=
   bumpKernel_nonneg _
 
-end Semantics.Probabilistic.PrototypeTheory
+end Probabilistic.PrototypeTheory

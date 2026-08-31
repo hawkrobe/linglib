@@ -87,7 +87,7 @@ property.
   builds on)
 -/
 
-namespace Semantics.Aspect.Stratified
+namespace Aspect.Stratified
 
 open _root_.Mereology
 open Features
@@ -434,4 +434,4 @@ theorem in_adverbial_incompatible_with_subintervalReference
   intro hSub
   exact qua_incompatible_with_subintervalReference hQua he₁ (hSub e₁ he₁)
 
-end Semantics.Aspect.Stratified
+end Aspect.Stratified

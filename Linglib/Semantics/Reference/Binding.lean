@@ -19,7 +19,7 @@ import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Variables
 import Linglib.Semantics.Quantification.Quantifier
 
-namespace Semantics.Reference.Binding
+namespace Reference.Binding
 
 open Intensional
 open Intensional.Variables
@@ -116,4 +116,4 @@ theorem binding_establishes_diagonal {E : Type} (κ l : Nat)
 
 end CylindricAlgebra
 
-end Semantics.Reference.Binding
+end Reference.Binding

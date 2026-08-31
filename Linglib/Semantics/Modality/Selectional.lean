@@ -66,7 +66,7 @@ must satisfy three constraints:
 
 namespace Modality.Selectional
 
-open _root_.Semantics.Conditionals (SelectionFunction)
+open _root_.Conditionals (SelectionFunction)
 open HistoricalAlternatives
 open scoped ENNReal
 
@@ -100,7 +100,7 @@ instance willSem_decidable (s : SelectionFunction W) (A : W → Prop)
 /-- **Negation Swap** [cariani-santorio-2018]: under selectional
     semantics, *will* commutes with negation. `will ¬A ↔ ¬ will A`.
 
-    Derived from `Semantics.Conditionals.SelectionFunction.sel_neg_swap` — the structural
+    Derived from `Conditionals.SelectionFunction.sel_neg_swap` — the structural
     origin is single-valuedness of selection: the selected world either
     satisfies `A` or it doesn't. -/
 theorem negation_swap (s : SelectionFunction W) (A : W → Prop)
@@ -111,7 +111,7 @@ theorem negation_swap (s : SelectionFunction W) (A : W → Prop)
 /-- **Will Excluded Middle** [cariani-santorio-2018]: `will A ∨
     will ¬A` holds at every point of evaluation.
 
-    Derived from `Semantics.Conditionals.SelectionFunction.sel_em` — the disjunction
+    Derived from `Conditionals.SelectionFunction.sel_em` — the disjunction
     holds because `s.sel w f` is a single world, on which `A` is
     either true or false. This is the selectional analogue of
     Conditional Excluded Middle for Stalnaker counterfactuals; both

@@ -21,7 +21,7 @@ The normalized counterpart on `PMF` is the Product of Experts
 [erk-herbelot-2024]'s situation description systems.
 -/
 
-namespace Semantics.Probabilistic
+namespace Probabilistic
 
 variable {U W R : Type*}
 
@@ -61,4 +61,4 @@ theorem prodMeaning_nonneg [PosMulMono R] {lex : U → W → R}
 
 end Order
 
-end Semantics.Probabilistic
+end Probabilistic

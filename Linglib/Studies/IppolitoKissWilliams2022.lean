@@ -45,7 +45,7 @@ agreement. Both relations are symmetric in their `S`/`S'` arguments.
 
 namespace IppolitoKissWilliams2022
 
-open Question Semantics.Questions.Probabilistic
+open Question Questions.Probabilistic
 
 variable {W : Type*}
 

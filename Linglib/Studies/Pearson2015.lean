@@ -53,7 +53,7 @@ minimal pronoun, so — unlike *yè* — it takes no long-distance antecedent).
 namespace Pearson2015
 
 open Intensional (Intension)
-open Semantics.Reference.Acquaintance (Cover)
+open Reference.Acquaintance (Cover)
 open Features.Logophoricity (LogophoricRole Logophoric)
 
 /-! ### Concept generators ([percus-sauerland-2003], [charlow-sharvit-2014]) -/

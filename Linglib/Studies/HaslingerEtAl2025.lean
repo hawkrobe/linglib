@@ -37,9 +37,9 @@ import Linglib.Fragments.German.Distributives
 
 namespace HaslingerEtAl2025
 
-open Semantics.Plurality
-open Semantics.Plurality.Distributivity
-open Semantics.Plurality.Trivalent
+open Plurality
+open Plurality.Distributivity
+open Plurality.Trivalent
 
 -- German Distributive Lexical Items
 

@@ -59,7 +59,7 @@ namespace Svenonius2004
 open Data.Examples (LinguisticExample)
 open Morphology (Morph)
 open Morphology.Word (Tree)
-open Semantics.Aspect (Perfectivity)
+open Aspect (Perfectivity)
 open Verb (Stem)
 
 /-- Aspectual subtypes of the superlexical class — the labels recurring

@@ -45,7 +45,7 @@ theorem denn_is_PerspP :
     (whose classification lives in `Zheng2025`), and the point on which
     Bayer/Obenauer-style evidence-sensitive analyses of *denn* would
     disagree. -/
-def dennBias : Option Semantics.Questions.Bias.ContextualEvidence := none
+def dennBias : Option Questions.Bias.ContextualEvidence := none
 
 /-- Unlike Mandarin *nandao*, *denn* is licensed in constituent
     questions. Both are PerspP-layer particles, but *denn* lacks

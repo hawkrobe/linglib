@@ -45,7 +45,7 @@ made kernel-checked in `malamud_strictly_weaker_when_mixed`.
 
 Strong relevance (constancy on QUD cells) is defined at the substrate level
 in `Semantics/Homogeneity/Usable.lean` as
-`Semantics.Homogeneity.isStronglyRelevantProp` and re-exported here.
+`Homogeneity.isStronglyRelevantProp` and re-exported here.
 The bivalent bridge to [kriz-2016]'s `addressesIssue` is proved in
 `Studies/KrizSpector2021.lean`.
 
@@ -65,12 +65,12 @@ The bivalent bridge to [kriz-2016]'s `addressesIssue` is proved in
   account.
 -/
 
-namespace Semantics.Plurality.Trivalent
+namespace Plurality.Trivalent
 
-open Semantics.Homogeneity (isStronglyRelevantProp stronglyRelevantSet
+open Homogeneity (isStronglyRelevantProp stronglyRelevantSet
   exact_all_relevant)
-open Semantics.Plurality
-open Semantics.Plurality.Implicature (existPL)
+open _root_.Plurality
+open _root_.Plurality.Implicature (existPL)
 
 variable {Atom W : Type*}
 
@@ -327,7 +327,7 @@ theorem pluralTruthValue_eq_candidateSemantics (P : Atom → W → Prop)
 
 /-! ### QUD relevance for K&S candidates
 
-`isStronglyRelevantProp` lives in `Semantics.Homogeneity` (substrate);
+`isStronglyRelevantProp` lives in `Homogeneity` (substrate);
 these are the K&S-specific specialisations applied to `candidateProp`. -/
 
 /-- The maximal candidate is always strongly relevant to the exact QUD. -/
@@ -533,13 +533,13 @@ in `fullCandidateSet`. -/
 theorem mem_fullCandidateSet_of_cover_cell [DecidableEq Atom]
     (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) {parts : Finset (Finset Atom)} {hne : parts.Nonempty}
-    (hCover : Semantics.Plurality.Cover.IsFinCover parts hne x)
+    (hCover : Plurality.Cover.IsFinCover parts hne x)
     {z : Finset Atom} (hz : z ∈ parts) (hzNe : z.Nonempty) :
     candidateProp P z ∈ fullCandidateSet P x := by
   refine ⟨z, Finset.mem_powerset.mpr ?_, hzNe, rfl⟩
   have h_le : z ≤ parts.sup' hne id := Finset.le_sup' id hz
-  unfold Semantics.Plurality.Cover.IsFinCover at hCover
+  unfold Plurality.Cover.IsFinCover at hCover
   rw [hCover] at h_le
   exact h_le
 
-end Semantics.Plurality.Trivalent
+end Plurality.Trivalent

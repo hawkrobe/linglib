@@ -7,7 +7,7 @@ import Linglib.Semantics.Homogeneity.Plural
 # Križ (2016): homogeneity, non-maximality, and *all*
 
 This file verifies [kriz-2016]'s predictions against a finite model, using
-the homogeneity substrate in `Semantics.Homogeneity` and its plural
+the homogeneity substrate in `Homogeneity` and its plural
 instantiation (`barePlural`, `allPlural` — both originating with this
 paper). A five-world model checks the predictions end-to-end, including the
 §4.2 sensitivity to what an exception does instead and the §4.1
@@ -34,7 +34,7 @@ unaddressed, as in the paper.
 
 namespace Kriz2016
 
-open Semantics.Homogeneity
+open Homogeneity
 
 /-! ### Finite model
 

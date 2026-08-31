@@ -782,7 +782,7 @@ Boundedness is sentence-level and distinct from telicity: *Bill ran five
 miles* is bounded but *Bill was running five miles* is unbounded, with
 the same telic VP. These are pragmatic defaults, not entailments. -/
 
-open Semantics.Aspect (SituationBoundedness)
+open Aspect (SituationBoundedness)
 
 /-- The three default temporal arrangements of Declerck's principle of
 unmarked temporal interpretation. -/

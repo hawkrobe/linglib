@@ -54,13 +54,13 @@ different (language × scene) configurations of the same chain.
 - **Incremental RSA**: Extends [cohn-gordon-goodman-potts-2019] with
   continuous semantics and cross-linguistic word order variation.
 - **Graded composition**: `uttContinuousQ` is defined via
-  `Semantics.Probabilistic.prodMeaning`, sharing the multiplicative
+  `Probabilistic.prodMeaning`, sharing the multiplicative
   composition with [schlotterbeck-wang-2023] by construction.
 -/
 
 namespace WaldonDegen2021
 
-open RSA Semantics.Probabilistic
+open RSA Probabilistic
 
 /-! ### Domain Types -/
 

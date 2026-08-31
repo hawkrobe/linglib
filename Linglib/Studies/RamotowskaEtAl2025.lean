@@ -379,7 +379,7 @@ def experiment2PluralDefiniteResults : List PluralDefiniteDatum :=
 -- Grounding: Study Predictions ↔ Formal Selectional Semantics
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Conditionals.Counterfactual
+open Conditionals.Counterfactual
   (embeddedSelectional noSelectional notEverySelectional QStrength
    all_four_quantifiers_mixed)
 
@@ -415,7 +415,7 @@ theorem selectional_prediction_grounded (q : Quantifier) (bs : List Bool)
 
 open Trivalent (aggregate ProjectionType
   aggregate_replicate_indet aggregate_map_ofBool_mixed aggregate_map_ofBool_ne_indet)
-open Semantics.Conditionals.Counterfactual (projectTruthValues_eq_aggregate)
+open Conditionals.Counterfactual (projectTruthValues_eq_aggregate)
 
 /-!
 ### Why Strength Matters: Local vs Global Aggregation

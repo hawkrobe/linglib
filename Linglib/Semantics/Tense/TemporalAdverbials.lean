@@ -32,7 +32,7 @@ import Linglib.Semantics.Tense.TenseAspectComposition
 namespace Tense.TemporalAdverbials
 
 open Core.Order Tense
-open Semantics.Aspect
+open Aspect
 open Tense.TenseAspectComposition
 
 variable {W Time : Type*} [LinearOrder Time]

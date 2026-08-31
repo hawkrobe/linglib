@@ -28,7 +28,7 @@ of Addressing.
 * [M. Križ and B. Spector, *Interpreting Plural Predication*][kriz-spector-2021]
 -/
 
-namespace Semantics.Homogeneity
+namespace Homogeneity
 
 open Trivalent (Prop3)
 
@@ -197,4 +197,4 @@ theorem exact_stronglyRelevantSet_eq [BEq W] [LawfulBEq W]
 def bivalentPred (p : Prop3 W) : W → Bool :=
   λ w => p w == .true
 
-end Semantics.Homogeneity
+end Homogeneity

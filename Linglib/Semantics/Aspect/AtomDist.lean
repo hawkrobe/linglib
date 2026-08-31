@@ -26,7 +26,7 @@ The `antiAtomDistLicensed` predicate is the licensing condition for
 Mandarin perfective particles in [zhao-2025] (le, méi-yǒu).
 -/
 
-namespace Semantics.Aspect
+namespace Aspect
 
 
 /-- An event quantifier: a predicate on event predicates.
@@ -77,4 +77,4 @@ def ofPred {Event : Type*} (P : Event → Prop) : EvQuant Event :=
 
 end EvQuant
 
-end Semantics.Aspect
+end Aspect

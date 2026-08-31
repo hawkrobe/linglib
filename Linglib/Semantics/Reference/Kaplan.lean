@@ -19,11 +19,11 @@ import Linglib.Semantics.Reference.Basic
 import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Semantics.Reference.Context.Shifts
 
-namespace Semantics.Reference.Kaplan
+namespace Reference.Kaplan
 
 open Intensional (Intension)
 open Intensional.Intension (rigid IsRigid rigid_isRigid)
-open Semantics.Reference.Basic
+open _root_.Reference.Basic
 open Semantics.Context (KContext)
 
 /-! ## Indexicals -/
@@ -313,4 +313,4 @@ theorem opActually_root (c : KContext W' E' P' T') :
 
 end TowerIndexicals
 
-end Semantics.Reference.Kaplan
+end Reference.Kaplan

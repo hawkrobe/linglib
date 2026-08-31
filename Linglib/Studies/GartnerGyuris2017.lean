@@ -31,7 +31,7 @@ and verified against the delimiting principles.
 
 namespace GartnerGyuris2017
 
-open Semantics.Questions.Bias (PQForm OriginalBias ContextualEvidence)
+open Questions.Bias (PQForm OriginalBias ContextualEvidence)
 
 -- ============================================================================
 -- §1: Core Types

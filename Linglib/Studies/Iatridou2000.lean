@@ -173,7 +173,7 @@ def usesImperfectiveInCF : CFLanguage → Bool
 -- Fragment-level lexical fact (cf. Mizuno's use of Japanese `eba` / Mandarin `ruguo`);
 -- the CF-type morphology classification below is [iatridou-2000]'s analysis (this study).
 #guard English.Conditionals.if_.markerType ==
-  Semantics.Conditionals.ConditionalMarkerType.both
+  Conditionals.ConditionalMarkerType.both
 
 /-! ### Subjunctive-requirement data ([iatridou-2000], §6.1) -/
 

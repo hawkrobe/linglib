@@ -19,7 +19,7 @@ semantics beyond its gloss.
 
 namespace Verb
 
-open Semantics.Aspect (Perfectivity)
+open Aspect (Perfectivity)
 
 /-- A verb-stem lexical entry: citation form, lexically encoded
     perfectivity (the dictionary-consensus value), and gloss. -/

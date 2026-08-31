@@ -21,7 +21,7 @@ generalisation of this signature, to be added when a dynamic study needs it.
   selector.
 * `NominalDenot.resolve` — resolve a nominal against a scope, as
   `PartialProp.presupOfReferent` applied to the selector at a context. Existing
-  definite denotations *are* this, by `rfl` (see `Semantics.Reference.Donnellan`).
+  definite denotations *are* this, by `rfl` (see `Reference.Donnellan`).
 * `NominalDenot.toPartialProp` — the full denotation: `resolve` conjoined with the
   intrinsic presupposition, so a pronoun's φ-features project.
 
@@ -41,7 +41,7 @@ The unification this core was built toward is realized by the seam lemma
 partiality layer this signature adds. Static reference and dynamic
 (`Set`/`PMF`) anaphora therefore meet at one lookup interface on the static
 fiber, and bound pronouns share that selector with binding supplied externally
-(`Semantics.Reference.Binding`).
+(`Reference.Binding`).
 
 Carrying the effect functor `M` *in this structure* (so `selector` is
 `Ctx → W → M (Option E)` and literally `iLookup`) is deliberately **not** done
@@ -52,7 +52,7 @@ belongs with the first dynamic consumer that requires it. Until then the seam
 lemma carries the connection.
 -/
 
-namespace Semantics.Reference
+namespace Reference
 
 open Presupposition
 
@@ -166,4 +166,4 @@ theorem bind_assoc (nd : NominalDenot Ctx W α) (k : α → NominalDenot Ctx W �
 
 end NominalDenot
 
-end Semantics.Reference
+end Reference

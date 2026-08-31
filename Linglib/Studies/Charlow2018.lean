@@ -503,25 +503,25 @@ The paper's operations are instantiations of the Reader monad from
 
 section ReaderBridge
 
-open Semantics.Reference.Binding
+open Reference.Binding
 
 variable {E W : Type}
 
 /-- `constDenot` is the Reader monad's `pure`. -/
 theorem constDenot_is_reader_pure {σ : Ty} (d : Denot E W σ) :
     constDenot d =
-    @Pure.pure (Semantics.Reference.Binding.Reader (Assignment E)) _ _ d := rfl
+    @Pure.pure (Reference.Binding.Reader (Assignment E)) _ _ d := rfl
 
 /-- VF `readerPure` is also the Reader monad's `pure`. -/
 theorem readerPure_is_reader_monad_pure {A : Type} (x : A) :
     readerPure (E := E) x =
-    @Pure.pure (Semantics.Reference.Binding.Reader E) _ A x := rfl
+    @Pure.pure (Reference.Binding.Reader E) _ A x := rfl
 
 /-- `denotGJoin` (the paper's μ, eq. 19) is the `W` (duplicator)
 combinator from `Binding.lean`. -/
 theorem denotGJoin_is_W {A : Type}
     (f : Assignment E → Assignment E → A) :
-    denotGJoin f = Semantics.Reference.Binding.W f := rfl
+    denotGJoin f = Reference.Binding.W f := rfl
 
 end ReaderBridge
 

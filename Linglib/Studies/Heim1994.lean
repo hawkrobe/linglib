@@ -67,7 +67,7 @@ contexts).
 namespace Heim1994
 
 open Question
-open Semantics.Questions.Exhaustivity
+open Questions.Exhaustivity
 
 variable {W : Type*}
 

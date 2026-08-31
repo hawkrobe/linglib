@@ -22,7 +22,7 @@ overt aspect markers in Tagalog.
 
 namespace Tagalog.TemporalConnectives
 
-open Semantics.Aspect
+open Aspect
 open English.TemporalExpressions (Reading TemporalExprEntry ComplementType)
 
 -- ============================================================================

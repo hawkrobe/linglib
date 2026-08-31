@@ -48,7 +48,7 @@ to exact `PMF` evaluation.
 ## Grounding
 
 The assertability truth values are grounded in the probabilistic assertability
-condition from `Semantics.Probabilistic.ConditionalAssertability`: a conditional
+condition from `Probabilistic.ConditionalAssertability`: a conditional
 "if A then C" is assertable when P(A) > 0 and P(C|A) ≥ θ.
 
 ## Experiments
@@ -66,7 +66,7 @@ namespace GrusdtLassiterFranke2022
 
 open Causation
 open Causation.BayesNet
-open Semantics.Probabilistic.ConditionalAssertability
+open Probabilistic.ConditionalAssertability
 open Causation.Sufficiency
 open Causation.Necessity
 open scoped ENNReal

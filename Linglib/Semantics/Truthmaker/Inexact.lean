@@ -30,7 +30,7 @@ inside linglib.
 
 -/
 
-namespace Semantics.Truthmaker
+namespace Truthmaker
 
 
 -- ════════════════════════════════════════════════════
@@ -168,4 +168,4 @@ theorem InexactEntails.of_exact {p q : TMProp S} (h : p ⊨ₑ q) : p ⊨ᵢ q :
 
 end Entailment
 
-end Semantics.Truthmaker
+end Truthmaker

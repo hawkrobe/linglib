@@ -58,7 +58,7 @@ recorded here.
 
 namespace Bohnemeyer2004
 
-open ArgumentStructure.EventStructure Semantics.Aspect Causation Mayan Voice Yukatek
+open ArgumentStructure.EventStructure Aspect Causation Mayan Voice Yukatek
 
 /-! ### Causal chain and thematic hierarchy -/
 

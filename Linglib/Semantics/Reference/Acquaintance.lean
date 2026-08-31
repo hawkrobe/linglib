@@ -29,7 +29,7 @@ parallel `Concept` type is introduced. The acquaintance predicate is
 mathlib idioms — the only genuinely new content here is naming.
 -/
 
-namespace Semantics.Reference.Acquaintance
+namespace Reference.Acquaintance
 
 open Intensional (Intension)
 
@@ -87,4 +87,4 @@ theorem nameCover_isAcquaintedWith_of_mem {Idx Res : Type*} (dom : Set Res)
     isAcquaintedWith r (nameCover (Idx := Idx) dom) p := by
   refine ⟨Intension.rigid (W := Idx) r, ⟨r, hr, rfl⟩, rfl⟩
 
-end Semantics.Reference.Acquaintance
+end Reference.Acquaintance

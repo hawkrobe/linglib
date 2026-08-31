@@ -52,7 +52,7 @@ without a formal counterpart here.
 namespace AghaJeretic2026
 
 open Modality.Kratzer Modality.Directive Data.Examples
-open Semantics.Homogeneity (negRaising_iff_subsingleton)
+open Homogeneity (negRaising_iff_subsingleton)
 open Exhaustification
 
 /-! ### Weak and strong necessity -/
