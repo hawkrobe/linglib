@@ -31,8 +31,8 @@ A Defense of Conditional Excluded Middle. In Harper, Stalnaker & Pearce
 
 namespace Stalnaker1981
 
-open Semantics.Conditionals (SimilarityOrdering)
-open Semantics.Conditionals.Counterfactual
+open Conditionals (SimilarityOrdering)
+open Conditionals.Counterfactual
 
 -- ════════════════════════════════════════════════════
 -- § 1. The Bizet–Verdi Example: Indeterminacy from Ties

@@ -54,7 +54,7 @@ many orders — which is why the forward bridge yields *some* cover
 (`∃`), not a canonical one.
 -/
 
-namespace Semantics.Plurality.Cover
+namespace Plurality.Cover
 
 open _root_.Mereology
 
@@ -173,4 +173,4 @@ theorem algClosure_iff_exists_finCover {α : Type*} [SemilatticeSup α] [Decidab
   ⟨exists_finCover_of_algClosure,
    λ ⟨_, _, hCover, hP⟩ => algClosure_of_finCover hCover hP⟩
 
-end Semantics.Plurality.Cover
+end Plurality.Cover

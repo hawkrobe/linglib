@@ -57,7 +57,7 @@ See `Studies/TesslerGoodman2019.lean` for the RSA account.
 
 -/
 
-namespace Semantics.Genericity
+namespace Genericity
 
 -- Core Types
 
@@ -295,4 +295,4 @@ theorem homogeneity_no
     genHomogeneityPresup situations restrictor scope :=
   Or.inr h
 
-end Semantics.Genericity
+end Genericity

@@ -29,9 +29,9 @@ Theory definitions, never stipulating their own meaning functions.
 
 namespace German.Distributives
 
-open Semantics.Plurality
-open Semantics.Plurality.Distributivity
-open Semantics.Plurality.Trivalent
+open Plurality
+open Plurality.Distributivity
+open Plurality.Trivalent
 
 variable {Atom W : Type*} [DecidableEq Atom]
 

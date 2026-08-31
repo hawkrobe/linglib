@@ -62,7 +62,7 @@ the substrate section above.
 
 * `Studies/CarianiSantorio2018.lean` — extends the
   Stalnaker selection-function mechanism from conditionals to bare
-  *will*. C&S's `Semantics.Conditionals.SelectionFunction` infrastructure is exactly the
+  *will*. C&S's `Conditionals.SelectionFunction` infrastructure is exactly the
   one used here for `selectionConditional`; the `would`-conditional /
   Stalnaker-counterfactual identification in C&S §5.3.2 reuses this
   paper's selection-function semantics under universe parameter.
@@ -181,8 +181,8 @@ end Discourse.ReasonableInference
 namespace Stalnaker1975
 
 open Mood (Grammatical)
-open _root_.Semantics.Conditionals (SelectionFunction)
-open Semantics.Conditionals
+open _root_.Conditionals (SelectionFunction)
+open Conditionals
 open Discourse.ReasonableInference
 
 -- § 1. The direct argument is REASONABLE (abstract version)
@@ -452,7 +452,7 @@ presupposed false. For indicatives — which obey `pragmaticConstraint` —
 both inference forms come out reasonable in the Appendix's sense.
 
 The semantic-failure side already exists as
-`Semantics.Conditionals.perfection_not_entailed_variablyStrict` and can be
+`Conditionals.perfection_not_entailed_variablyStrict` and can be
 adapted directly to selection-based conditionals. The pragmatic-success
 side is a clean extension of `direct_argument_reasonable` and is left for
 follow-up. -/

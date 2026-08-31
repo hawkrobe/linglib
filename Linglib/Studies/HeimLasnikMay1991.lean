@@ -64,7 +64,7 @@ because distributors are undefined on atoms and cannot iterate.
 
 namespace HeimLasnikMay1991
 
-open Semantics.Plurality.Reciprocal
+open Plurality.Reciprocal
 
 variable {A : Type*} [DecidableEq A]
 
@@ -74,7 +74,7 @@ HLM's model is `⟨D, A, Π⟩`: a domain with mereological structure, atoms
 `A`, and proper-part-of `Π`; `·Π` is the proper-*atomic*-part relation.
 Pluralities are encoded here as `Finset A` (sums of atoms) with `·Π` as
 membership, matching the `(R, X)` signature of
-`Semantics.Plurality.Reciprocal`. -/
+`Plurality.Reciprocal`. -/
 
 /-- (16): *other* as a 3-place relation — referent `z` is an atomic part
     of the range `y` distinct from the contrast `x`. In reciprocals both
@@ -110,7 +110,7 @@ def eachOtherLF (np : Finset A) (R : A → A → Prop) : Prop :=
 /-- The compositional each∘other analysis derives Strong Reciprocity:
     HLM's truth conditions "coincide with those of the standard semantic
     analyses". Through the entailment lattice of
-    `Semantics.Plurality.Reciprocal`, the weaker schemes follow
+    `Plurality.Reciprocal`, the weaker schemes follow
     (`strong_imp_weak`, …). -/
 theorem eachOtherLF_iff_strongReciprocity (np : Finset A) (R : A → A → Prop) :
     eachOtherLF np R ↔ StrongReciprocity R np := by

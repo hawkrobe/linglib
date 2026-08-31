@@ -51,8 +51,8 @@ namespace Filip2012
 
 open _root_.Mereology
 open ArgumentStructure
-open Semantics.Aspect.Incremental
-open Semantics.Aspect.Cumulativity
+open Aspect.Incremental
+open Aspect.Cumulativity
 
 /-! ### Three-way exhaustiveness (Filip's distinctive observation) -/
 

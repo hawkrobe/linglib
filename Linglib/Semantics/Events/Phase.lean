@@ -11,7 +11,7 @@ project (`Presupposition.Aboutness`).
 
 Complementary decompositions elsewhere in the event API: `Event` (a
 temporal *token* with runtime and sort), and
-`Semantics.Aspect.SubeventStructure.TemporalDecomposition` (interval-valued
+`Aspect.SubeventStructure.TemporalDecomposition` (interval-valued
 activity/result phases of a token). `EventPhase` is type-level and modal —
 phases as predicates over worlds, not intervals. For change-of-state verbs
 its precondition/consequence coincide with `Features.ChangeOfState`'s

@@ -38,7 +38,7 @@ namespace Sharvit2014
 
 open Tense.Decomposition (sotDeletionApplicable)
 open Tense.TenseAspectComposition (evalPast evalRel)
-open Semantics.Aspect (PointPred)
+open Aspect (PointPred)
 
 /-- The `EARLIEST` definedness presupposition of `before^{B&C}`: `EARLIEST_C` is defined for
     body `p` iff the set of `C`-times where `p` holds has a least element (mathlib's

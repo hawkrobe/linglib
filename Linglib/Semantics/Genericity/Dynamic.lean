@@ -44,7 +44,7 @@ worlds. The single-world simplification suffices for all the paper's
 examples about Sobel sequences.
 -/
 
-namespace Semantics.Genericity.Dynamic
+namespace Genericity.Dynamic
 
 -- ═══ Computable Model ═══
 
@@ -653,4 +653,4 @@ def GenericSentence.fromOrder
     decide (∀ e' ∈ restricted, le e' e → le e e')
   ⟨restrictor, scope, normals⟩
 
-end Semantics.Genericity.Dynamic
+end Genericity.Dynamic

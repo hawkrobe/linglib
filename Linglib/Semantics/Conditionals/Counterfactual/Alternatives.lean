@@ -17,7 +17,7 @@ otherwise — the presupposition of `DIST_π` and the trivalent conditional of
 [cariani-goldstein-2020].
 -/
 
-namespace Semantics.Conditionals.Counterfactual
+namespace Conditionals.Counterfactual
 
 variable {W : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W)
   (S : List (Finset W)) (C : W → Prop) [DecidablePred C] (w : W)
@@ -77,4 +77,4 @@ theorem universalCounterfactual_mem_filter (A : W → Prop) [DecidablePred A] :
       universalCounterfactual sim A C w := by
   simp [universalCounterfactual]
 
-end Semantics.Conditionals.Counterfactual
+end Conditionals.Counterfactual

@@ -51,8 +51,8 @@ framework but has not been line-by-line cross-checked against IZ
 namespace IatridouZeijlstra2021
 
 open Core.Order Tense
-open Semantics.Aspect
-open Semantics.Aspect.SubintervalProperty
+open Aspect
+open Aspect.SubintervalProperty
 open Tense.TemporalAdverbials (PTSConstraint AdverbialType)
 open IatridouEtAl2001 (BoundaryKind)
 open Kiparsky2002 (PerfectReading)

@@ -21,7 +21,7 @@ These mechanisms are independent: a term can exhibit any subset.
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Reference.Context.Basic
 
-namespace Semantics.Reference.Basic
+namespace Reference.Basic
 
 open Intensional (Intension)
 open Intensional.Intension (rigid IsRigid rigid_isRigid evalAt CoRefer CoExtensional
@@ -167,4 +167,4 @@ def Context.toKContext {W E P T : Type*} (c : Context W E) (addr : E) (p : P) (t
     Semantics.Context.KContext W E P T :=
   ⟨c.agent, addr, c.world, t, p⟩
 
-end Semantics.Reference.Basic
+end Reference.Basic

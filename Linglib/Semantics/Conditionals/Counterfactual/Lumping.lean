@@ -48,7 +48,7 @@ formal definitions in §5.4.4 — is out of scope here.
   shows how to recover Kratzer's worlds-only reading.
 -/
 
-namespace Semantics.Conditionals.Counterfactual
+namespace Conditionals.Counterfactual
 
 open Set
 open Intensional
@@ -242,4 +242,4 @@ theorem Lumps.discrete_iff (p q : Set G) (w : G) :
 
 end DiscreteCorollary
 
-end Semantics.Conditionals.Counterfactual
+end Conditionals.Counterfactual

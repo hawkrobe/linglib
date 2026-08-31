@@ -85,8 +85,8 @@ The empty Base Set keeps the proofs direct.
 namespace CiardelliZhangChampollion2018Lumping
 
 open Intensional
-open Semantics.Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows)
-open Semantics.Conditionals.PremiseSemantic
+open Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows)
+open Conditionals.PremiseSemantic
   (CrucialSet IsCrucialSet wouldCF)
 
 /-! ## The switches model -/

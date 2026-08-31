@@ -31,7 +31,7 @@ monster *predicate* and Kaplan's thesis, not the operator.
 
 -/
 
-namespace Semantics.Reference.Monsters
+namespace Reference.Monsters
 
 open Semantics.Context
 
@@ -112,4 +112,4 @@ theorem kaplansThesisAsTower {W : Type*} {E : Type*} {P : Type*} {T : Type*} :
   rw [hMem]
   exact identityShift_not_monster
 
-end Semantics.Reference.Monsters
+end Reference.Monsters

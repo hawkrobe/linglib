@@ -29,17 +29,17 @@ This file proves the correspondence between the two accounts:
    Addressing the QUD ↔ `allSatisfy` is strongly relevant.
 
 These theorems connect two independently formalized mechanisms:
-- `Semantics.Homogeneity.addressesIssue` (from Križ 2016)
-- `Semantics.Homogeneity.isStronglyRelevantProp` (substrate, originating with K&S 2021)
+- `Homogeneity.addressesIssue` (from Križ 2016)
+- `Homogeneity.isStronglyRelevantProp` (substrate, originating with K&S 2021)
 
 showing they agree on the bivalent fragment.
 -/
 
 namespace KrizSpector2021
 
-open Semantics.Plurality
-open Semantics.Plurality.Trivalent
-open Semantics.Homogeneity
+open Plurality
+open Plurality.Trivalent
+open Homogeneity
 open _root_.Trivalent (Prop3)
 
 variable {Atom W : Type*}
@@ -299,7 +299,7 @@ The existing `generalisedTruthValue` in `Homogeneity/Collective.lean` captures t
 `overlaps` relation. Here we prove the connection: when an overlapping
 super-plurality satisfies P, the sentence about x is gapped, not false. -/
 
-open Semantics.Homogeneity (generalisedTruthValue generalisedTruthValue_eq_true)
+open Homogeneity (generalisedTruthValue generalisedTruthValue_eq_true)
 
 /-- Upward homogeneity: if P is false of x but true of some overlapping
     super-plurality in the domain, then the generalised truth value is GAP,
@@ -314,10 +314,10 @@ theorem upward_homogeneity_gap [DecidableEq Atom]
     (x : Finset Atom)
     (hPx : ¬ P x)
     (b : Finset Atom) (hb : b ∈ domain)
-    (hov : Semantics.Homogeneity.overlaps x b)
+    (hov : Homogeneity.overlaps x b)
     (hPb : P b) :
     generalisedTruthValue P domain x = .indet := by
-  have hex : ∃ b ∈ domain, Semantics.Homogeneity.overlaps x b ∧ P b :=
+  have hex : ∃ b ∈ domain, Homogeneity.overlaps x b ∧ P b :=
     ⟨b, hb, hov, hPb⟩
   simp [generalisedTruthValue, if_neg hPx, if_pos hex]
 

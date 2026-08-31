@@ -67,7 +67,7 @@ open Definiteness
 open Definiteness
 open Intensional (SitVarStatus ReferentialMode)
 open Definiteness
-open Semantics.Reference.Donnellan (UseMode definiteNominal)
+open Reference.Donnellan (UseMode definiteNominal)
 
 
 -- ════════════════════════════════════════════════════════════════

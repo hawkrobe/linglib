@@ -1003,13 +1003,13 @@ explains c-monstrous behavior WITHOUT touching the
 worlds-as-evaluation-points architecture or introducing context shifts.
 -/
 theorem diagonalize_no_kaplan_monster {W E P T : Type*} :
-    Semantics.Reference.Monsters.KaplansThesisHolds
+    Reference.Monsters.KaplansThesisHolds
       (kgEmbeddingShifts (W := W) (E := E) (P := P) (T := T)) := by
   intro σ hMem
   -- All entries in kgEmbeddingShifts are identityShift, never a monster.
   simp [kgEmbeddingShifts] at hMem
   rcases hMem with rfl | rfl | rfl | rfl
-  all_goals exact Semantics.Reference.Monsters.identityShift_not_monster
+  all_goals exact Reference.Monsters.identityShift_not_monster
 
 /--
 **K-G refutes KJR's convention-shift architecture.** KJR

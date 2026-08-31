@@ -28,7 +28,7 @@ i.e. *derived*, not stipulated.
 
 namespace Possessive
 
-open Semantics.Reference (NominalDenot)
+open Reference (NominalDenot)
 open Definiteness
 open Intensional.Variables (interpPronoun)
 

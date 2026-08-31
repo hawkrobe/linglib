@@ -71,7 +71,7 @@ arguments and entailing the crossed directional events
 
 namespace Siloni2012
 
-open Reciprocal ArgumentStructure Semantics.Plurality
+open Reciprocal ArgumentStructure Plurality
 
 /-! ### Three-way reciprocal classification (§2.4) -/
 

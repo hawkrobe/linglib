@@ -52,14 +52,14 @@ The central chain from [almog-2014] Ch 1–2:
 
 -/
 
-namespace Semantics.Reference.Almog2014
+namespace Reference.Almog2014
 
-open Semantics.Reference.Basic (ReferentialProfile ReferringExpression properName
+open _root_.Reference.Basic (ReferentialProfile ReferringExpression properName
   isDirectlyReferential)
-open Semantics.Reference.Kaplan (SingularProposition indexical)
-open Semantics.Reference.Donnellan (UseMode referentialExpression)
-open Semantics.Reference.KaplanLD (dthatW dthatW_isRigid)
-open Semantics.Reference.Kripke (rigid_iff_scope_invariant deRe deDicto)
+open _root_.Reference.Kaplan (SingularProposition indexical)
+open _root_.Reference.Donnellan (UseMode referentialExpression)
+open _root_.Reference.KaplanLD (dthatW dthatW_isRigid)
+open _root_.Reference.Kripke (rigid_iff_scope_invariant deRe deDicto)
 open Intensional (Intension)
 open Intensional.Intension (rigid IsRigid rigid_isRigid evalAt rigid_section
   rigid_evalAt_lossy)
@@ -178,7 +178,7 @@ def dthatExpression {C W E : Type*} (desc : Intension W E) (cW : W) :
 /-- dthat-expressions are de jure rigid: their character produces rigid
 content and their profile records the designation mechanism. -/
 theorem dthat_deJureRigid {C W E : Type*} (desc : Intension W E) (cW : W) :
-    Semantics.Reference.Basic.IsDeJureRigid
+    Reference.Basic.IsDeJureRigid
       (dthatExpression (C := C) desc cW) :=
   ⟨rfl, λ _ => dthatW_isRigid desc cW⟩
 
@@ -376,7 +376,7 @@ distinction between designation and referential use
 as independent sources of world-invariance. -/
 theorem kdthat_deFactoRigid {C W E : Type*} (loaded : E) (guide : E → W → Prop)
     (c : C) :
-    Semantics.Reference.Basic.IsDeFactoRigid
+    Reference.Basic.IsDeFactoRigid
       (kdthatExpression (C := C) loaded guide) c :=
   ⟨rigid_isRigid loaded, rfl⟩
 
@@ -741,4 +741,4 @@ this for each pair; lifting to a quantifier-over-pairs statement
 requires choosing a canonical `Mechanism` enum and an `exprs` registry.
 Previously stubbed in the deleted `Core/Conjectures.lean`. -/
 
-end Semantics.Reference.Almog2014
+end Reference.Almog2014

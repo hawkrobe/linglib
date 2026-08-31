@@ -18,7 +18,7 @@ Conditional morphemes in Mandarin and their properties.
 
 namespace Mandarin.Conditionals
 
-open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
+open _root_.Conditionals (ConditionalMarker ConditionalMarkerType)
 
 /-- Mandarin ruguo (如果): general-purpose conditional marker.
 

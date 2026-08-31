@@ -47,7 +47,7 @@ singular nouns; the syntax here is his grammar
 ## Main definitions
 
 - `IsPart`: their (6) partition (Finset counterpart of
-  `Semantics.Plurality.Cover.IsPartition`, chosen for cardinality
+  `Plurality.Cover.IsPartition`, chosen for cardinality
   counting)
 - `cardMod`: their (5) cardinal-as-modifier
 - `Equicardinal`: their (23) countability presupposition
@@ -72,7 +72,7 @@ variable {α : Type*} [DecidableEq α]
 
 /-- Their (6): `S` is a partition of `x` — nonempty, pairwise-disjoint
 cells whose union is `x`. Finset counterpart of
-`Semantics.Plurality.Cover.IsPartition`. -/
+`Plurality.Cover.IsPartition`. -/
 def IsPart (S : Finset (Finset α)) (x : Finset α) : Prop :=
   (∀ s ∈ S, s ≠ ∅) ∧ (S : Set (Finset α)).PairwiseDisjoint id ∧
     S.sup id = x

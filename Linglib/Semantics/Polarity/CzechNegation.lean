@@ -15,7 +15,7 @@ without importing them. NCI licensing by Agree follows [zeijlstra-2004].
 
 namespace Czech.Negation
 
-open Semantics.Questions.Bias (EvidentialBiasStrength)
+open Questions.Bias (EvidentialBiasStrength)
 
 /-- The three LF positions for negation in Czech PQs ([stankova-2026], her (16)).
 

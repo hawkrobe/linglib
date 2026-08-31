@@ -42,7 +42,7 @@ cumulative.
   of cumulativity — is not yet formalised.
 -/
 
-namespace Semantics.Plurality.Cumulativity
+namespace Plurality.Cumulativity
 
 variable {A B : Type*}
 
@@ -133,4 +133,4 @@ theorem singleton_right_cumulative (R : A → B → Prop) (x : Finset A) (y : B)
   obtain ⟨a, ha⟩ := hne
   exact ⟨a, ha, h a ha⟩
 
-end Semantics.Plurality.Cumulativity
+end Plurality.Cumulativity

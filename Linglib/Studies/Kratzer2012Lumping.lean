@@ -138,8 +138,8 @@ still-life painting variant from §5.2.
 namespace Kratzer2012Lumping
 
 open Intensional
-open Semantics.Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows)
-open Semantics.Conditionals.PremiseSemantic
+open Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows)
+open Conditionals.PremiseSemantic
 
 /-! ## The minimal Paula scenario -/
 

@@ -67,7 +67,7 @@ informative true Hamblin alternative.
 namespace Fox2018
 
 open Question
-open Semantics.Questions.Exhaustivity
+open Questions.Exhaustivity
 
 variable {W : Type*}
 

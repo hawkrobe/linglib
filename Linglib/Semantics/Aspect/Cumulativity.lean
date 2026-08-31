@@ -25,11 +25,11 @@ The explicit-witness variants (`cum_propagation_of_cumTheta`,
 proof-factoring helpers, not part of the public API — mathlib pattern.
 -/
 
-namespace Semantics.Aspect.Cumulativity
+namespace Aspect.Cumulativity
 
 open _root_.Mereology
 open _root_.ArgumentStructure
-open Semantics.Aspect.Incremental
+open _root_.Aspect.Incremental
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
@@ -134,4 +134,4 @@ theorem qua_propagation {θ : α → β → Prop} [IsSincVerb θ]
     QUA (VP θ OBJ) :=
   qua_propagation_of_sinc IsSincVerb.up IsSincVerb.sinc hQua
 
-end Semantics.Aspect.Cumulativity
+end Aspect.Cumulativity

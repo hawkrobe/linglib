@@ -31,7 +31,7 @@ temporal feature clashes with the verb constellation's, the adverbial wins.
 
 -/
 
-namespace Semantics.Aspect.Composition
+namespace Aspect.Composition
 
 open Features
 open _root_ (MassCount)
@@ -204,4 +204,4 @@ theorem override_agrees_with_shift :
 theorem achievement_durative_is_accomplishment :
     (overrideDuration achievementProfile .durative).toVendlerClass = .accomplishment := rfl
 
-end Semantics.Aspect.Composition
+end Aspect.Composition

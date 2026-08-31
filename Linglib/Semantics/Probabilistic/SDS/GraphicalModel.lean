@@ -52,7 +52,7 @@ Normalizing over all assignments consistent with observations gives the
 joint posterior (in `SDS/JointPosterior.lean`, Phase 2 part B).
 -/
 
-namespace Semantics.Probabilistic.SDS
+namespace Probabilistic.SDS
 
 open scoped ENNReal
 open ProbabilityTheory
@@ -166,4 +166,4 @@ theorem jointFactorObs_eq_zero_of_inconsistent
 
 end GraphicalModel
 
-end Semantics.Probabilistic.SDS
+end Probabilistic.SDS

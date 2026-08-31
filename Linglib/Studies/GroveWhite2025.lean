@@ -88,7 +88,7 @@ the specific empirical regularity the world-knowledge component is fit to.
 namespace GroveWhite2025
 
 open Factivity
-open Semantics.Probabilistic
+open Probabilistic
 open DegenTonhauser2021
 open DegenTonhauser2022
 open scoped ENNReal NNReal

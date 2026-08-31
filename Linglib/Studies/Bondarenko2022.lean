@@ -275,7 +275,7 @@ theorem transparentSSMapping_diagonal :
 
 /-! ### The Comp head -/
 
-open Semantics.Truthmaker in
+open Truthmaker in
 /-- The Comp head (§2.3 ex. 151): `x` is part of the evaluation situation
 and exactly verifies `p`, `compHead p x s ↔ x ≤ s ∧ p x`. -/
 def compHead [Preorder S] (p : S → Prop) (x s : S) : Prop :=
@@ -283,7 +283,7 @@ def compHead [Preorder S] (p : S → Prop) (x s : S) : Prop :=
 
 /-- Exact exemplification by a part is inexact verification. -/
 theorem inexactVer_of_compHead [Preorder S] {p : S → Prop} {x s : S}
-    (h : compHead p x s) : Semantics.Truthmaker.inexactVer p s :=
+    (h : compHead p x s) : Truthmaker.inexactVer p s :=
   ⟨x, h.1, h.2⟩
 
 /-! ### Cont exponence -/

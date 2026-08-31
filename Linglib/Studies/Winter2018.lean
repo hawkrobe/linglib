@@ -29,7 +29,7 @@ contact and communication verbs), beyond the event-free logical core
 formalized here.
 
 Sums of two distinct atoms are encoded as pair `Finset`s `{x, y}`,
-matching the `(R, X)` signature of `Semantics.Plurality.Reciprocal`.
+matching the `(R, X)` signature of `Plurality.Reciprocal`.
 
 ## Main declarations
 

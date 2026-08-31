@@ -124,7 +124,7 @@ theorem orPositive_defined_at_proud :
 -- Part II: K/P and K/P* Analysis
 -- ============================================================================
 
-open Semantics.Conditionals.Presupposition
+open Conditionals.Presupposition
 
 -- Decidable instances for compound PartialProp assertions
 

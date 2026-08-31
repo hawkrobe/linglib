@@ -334,7 +334,7 @@ instance : DecidablePred ExpletiveBlocksKindReading := fun a => by
 -- § 7: Bridge to Reference/Basic — Proper Names as Directly Referential
 -- ============================================================================
 
-open Semantics.Reference.Basic (properName isDirectlyReferential
+open Reference.Basic (properName isDirectlyReferential
   constantCharacter)
 
 /-- Proper names in D are directly referential.
@@ -348,8 +348,8 @@ theorem proper_name_in_d_is_constant
     {C W E : Type*} (e : E) :
     isDirectlyReferential (properName (C := C) (W := W) e).character ∧
     constantCharacter (properName (C := C) (W := W) e).character :=
-  ⟨Semantics.Reference.Basic.properName_isDirectlyReferential e,
-   Semantics.Reference.Basic.properName_constantCharacter e⟩
+  ⟨Reference.Basic.properName_isDirectlyReferential e,
+   Reference.Basic.properName_constantCharacter e⟩
 
 -- ============================================================================
 -- § 8: N-to-D Raising as Head-to-Head Movement
