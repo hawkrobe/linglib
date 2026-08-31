@@ -4,43 +4,53 @@ import Linglib.Studies.Lucy1994
 import Linglib.Syntax.Voice.Alternation
 
 /-!
-# Bohnemeyer 2004: Split intransitivity, linking, and lexical representation
+# Bohnemeyer 2004: split intransitivity, linking, and lexical representation
 
-[bohnemeyer-2004]
+This file formalizes the account of Yukatek Maya split intransitivity in [bohnemeyer-2004].
+[kraemer-wunderlich-1999] derive the language's argument linking from lexical aspect alone;
+Bohnemeyer argues that what the linking rules see is event structure, specifically whether the
+intransitive base entails internal causation. Transitivizing an internally-caused base gives
+applicative linking, the added applied object realized as U with the original S left as A;
+transitivizing an externally-caused base gives causative linking, the added instigator realized as
+A with the original S demoted to U (rules (26)–(27)). Which overt suffix appears, *-t* or *-s*, is
+lexically idiosyncratic and can dissociate from the linking, as *balak'* 'roll' and *péek* 'move'
+show in opposite directions.
 
-Split intransitivity in Yukatek Maya is governed by **event structure** —
-specifically the distinction between internally- and externally-caused events
-(in the sense of [levin-hovav-1995]) — rather than by lexical aspect
-alone (contra [kraemer-wunderlich-1999]).
+The aspect-conditioned split itself follows from the same causal chain: the participant of a
+causing subevent outranks that of the caused subevent (31), and an imperfective viewpoint aligns
+with the initial subevent while a perfective one aligns with the final subevent or the chain as a
+whole (32) — accusative and ergative defaults respectively.
 
-## Core Claims
+Verb-class data is the Yukatek Fragment's; the transitivizing suffixes are paper-specific and
+recorded here.
 
-1. **Three semantic information structures**: event structure, participant
-   structure, and lexical aspect. Event structure partially determines both;
-   linking rules operate on event structure directly.
+## Main definitions
 
-2. **Internal causation determines the linking pattern under
-   transitivization**: internally-caused bases get *applicative* linking
-   (added applied object → U, original S stays A); externally-caused bases get
-   *causative* linking (added instigator → A, original S → U). The overt
-   transitivizing suffix (*-t* ~ *-s*) usually tracks the linking pattern but
-   can dissociate from it — see below.
+* `CausalChainPosition`, `Outranks`, `linkingDefault`, `sMarkerFromViewpoint` — the thematic
+  hierarchy of (31) and the linking-by-viewpoint rule of (32)
+* `LinkingPattern`, `predictLinking`, `verbLinking` — the linking a base's causation type predicts
+* `TransitivizerSuffix`, `transitivizerSuffix` — the overt suffix, kept apart from the linking
+* `DetransitivizationType` — the antipassive, anticausative and passive of (28)–(30)
 
-3. **Linking-by-viewpoint**: imperfective aspect aligns with the head of the
-   causal chain (accusative default); perfective aligns with the tail
-   (ergative default).
+## Main results
 
-## Against aspect-based linking
+* `linking_derives_completive`, `linking_derives_incompletive` — the split follows from (31)+(32)
+* `balak_tsiirin_suffix_linking_dissociate`, `peek_causative_suffix_active_external` — suffix and
+  linking come apart in both directions
+* `degree_achievements_causativize`, `causation_orthogonal_to_event_type` — the two classes of
+  counterevidence to aspect-based linking
+* `haanEat_applicative_despite_inactive`, `inactive_split_by_causation` — stem class does not
+  determine linking either
+* `passive_anticausative_distinct_by_A_fate` — the fate of the initial A separates the two
+* `salience_agrees_on_shared_roots`, `haanEat_defies_transitiviser_diagnostic` — where this
+  classification meets [lucy-1994]'s
 
-[kraemer-wunderlich-1999] propose lexical aspect as the sole
-linking-relevant property. Two classes of counterevidence:
+## References
 
-- **Degree achievements** (grow, darken): aspectually like processes (atelic)
-  but transitivize like state-change verbs (causative linking).
-- **Non-internally-caused active verbs** (roll, buzz): take the *applicative*
-  suffix *-t* (like internally-caused actives) yet show *causative* linking,
-  because their bases are externally caused. Suffix and linking dissociate —
-  which a purely aspect-based account cannot predict.
+* [bohnemeyer-2004]
+* [kraemer-wunderlich-1999]
+* [levin-hovav-1995]
+* [lucy-1994]
 -/
 
 namespace Bohnemeyer2004
@@ -284,9 +294,10 @@ theorem waalTal_causative : verbLinking waalTal = .causative := rfl
 /-- Degree achievements are event-structurally state changes, not processes,
     even though they behave atelically.
 
-    §5: ka'n 'get tired' passes state-change diagnostics (resultative *-a'n*,
-    universal quantifier *láah*) despite being atelic in the
-    realization-under-cessation test. -/
+    §5: the class takes the resultative *-a'n* ((19), *ka'n-a'n-en* 'I'm very
+    tired') and incorporates the universal quantifier *láah* ((20),
+    *lúub-láah* 'they fell completely'), which active intransitives do not,
+    despite behaving atelically under (15). -/
 theorem kaan_is_state_change :
     kaan.stemClass.eventType = .stateChange := rfl
 
@@ -297,9 +308,10 @@ theorem naak_is_state_change :
     linking), not like process verbs.
 
     This is the first direct counterevidence against
-    [kraemer-wunderlich-1999]'s aspect-based linking: rule (14) predicts
-    applicative for degree achievements (since they are atelic, hence [-perf]
-    bases), but they exclusively causativize. ex. (21). -/
+    [kraemer-wunderlich-1999]'s aspect-based linking: rule (14) treats them
+    with the process verbs and so predicts applicativization, but they
+    causativize like every other state-change verb — (17) lists the class,
+    (21) derives *lúub* 'fall'. -/
 theorem degree_achievements_causativize :
     verbLinking kaan = .causative ∧
     verbLinking naak = .causative := ⟨rfl, rfl⟩
