@@ -15,6 +15,7 @@ children. The file provides:
 * `validFor_derives`: soundness — a valid tree derives its yield from its root.
 * `exists_valid_tree`: tree existence, with height–yield bounds.
 * `size`: the size measure, with minimality and a pigeonhole on derivation paths.
+* `map`: relabelling of nonterminals, commuting with `yield`, `height` and `subtreeAt?`.
 -/
 /-- A derivation tree for a context-free grammar.
     Leaves hold terminal symbols; internal nodes hold a nonterminal
@@ -31,6 +32,12 @@ variable {T N : Type*}
 def rootSymbol : DerivationTree T N → Symbol T N
   | .leaf t => .terminal t
   | .node nt _ => .nonterminal nt
+
+@[simp] theorem rootSymbol_leaf (t : T) :
+    (leaf t : DerivationTree T N).rootSymbol = .terminal t := rfl
+
+@[simp] theorem rootSymbol_node (nt : N) (children : List (DerivationTree T N)) :
+    (node nt children).rootSymbol = .nonterminal nt := rfl
 
 mutual
 /-- The terminal frontier (yield) of a derivation tree, read left to right. -/
@@ -55,6 +62,67 @@ def heightMax : List (DerivationTree T N) → Nat
   | [] => 0
   | t :: ts => max t.height (heightMax ts)
 end
+
+/-! ### Relabelling nonterminals -/
+
+section Map
+variable {N' : Type*}
+
+mutual
+/-- Relabel every nonterminal by `f`, keeping leaves and shape. -/
+def map (f : N → N') : DerivationTree T N → DerivationTree T N'
+  | .leaf t => .leaf t
+  | .node nt children => .node (f nt) (mapList f children)
+
+/-- `map` on a list of subtrees. -/
+def mapList (f : N → N') : List (DerivationTree T N) → List (DerivationTree T N')
+  | [] => []
+  | t :: ts => map f t :: mapList f ts
+end
+
+@[simp] theorem map_leaf (f : N → N') (t : T) :
+    map f (.leaf t : DerivationTree T N) = .leaf t := rfl
+
+@[simp] theorem map_node (f : N → N') (nt : N) (children : List (DerivationTree T N)) :
+    map f (.node nt children) = .node (f nt) (mapList f children) := rfl
+
+@[simp] theorem mapList_nil (f : N → N') : mapList f ([] : List (DerivationTree T N)) = [] := rfl
+
+@[simp] theorem mapList_cons (f : N → N') (t : DerivationTree T N)
+    (ts : List (DerivationTree T N)) :
+    mapList f (t :: ts) = map f t :: mapList f ts := rfl
+
+theorem mapList_eq_map (f : N → N') (ts : List (DerivationTree T N)) :
+    mapList f ts = ts.map (map f) := by
+  induction ts with
+  | nil => rfl
+  | cons t ts ih => simp [ih]
+
+mutual
+/-- Relabelling preserves the yield. -/
+theorem yield_map (f : N → N') : ∀ t : DerivationTree T N, (map f t).yield = t.yield
+  | .leaf _ => rfl
+  | .node _ children => by simp only [map, yield, yieldList_mapList f children]
+
+theorem yieldList_mapList (f : N → N') :
+    ∀ ts : List (DerivationTree T N), yieldList (mapList f ts) = yieldList ts
+  | [] => rfl
+  | t :: ts => by simp only [mapList, yieldList, yield_map f t, yieldList_mapList f ts]
+end
+
+mutual
+/-- Relabelling preserves the height. -/
+theorem height_map (f : N → N') : ∀ t : DerivationTree T N, (map f t).height = t.height
+  | .leaf _ => rfl
+  | .node _ children => by simp only [map, height, heightMax_mapList f children]
+
+theorem heightMax_mapList (f : N → N') :
+    ∀ ts : List (DerivationTree T N), heightMax (mapList f ts) = heightMax ts
+  | [] => rfl
+  | t :: ts => by simp only [mapList, heightMax, height_map f t, heightMax_mapList f ts]
+end
+
+end Map
 
 /-- A derivation tree is valid for a CFG if every internal node (A, children)
     corresponds to a rule A → [rootSymbol c₁, ..., rootSymbol cₖ], and all
@@ -806,6 +874,20 @@ theorem subtreeAt?_append (t : DerivationTree T N) (p1 p2 : Pos) :
     | .node _ children =>
       simp only [List.cons_append, subtreeAt?]
       rcases hi : children[i]? with _ | child
+      · simp
+      · simp [ih]
+
+/-- Relabelling commutes with subtree access. -/
+theorem subtreeAt?_map {N' : Type*} (f : N → N') (t : DerivationTree T N) (p : Pos) :
+    (map f t).subtreeAt? p = (t.subtreeAt? p).map (map f) := by
+  induction p generalizing t with
+  | nil => simp [subtreeAt?]
+  | cons i rest ih =>
+    match t with
+    | .leaf _ => simp [subtreeAt?]
+    | .node nt children =>
+      simp only [map_node, subtreeAt?, mapList_eq_map, List.getElem?_map]
+      rcases children[i]? with _ | child
       · simp
       · simp [ih]
 
