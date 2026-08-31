@@ -23,6 +23,23 @@ strong, so the listener assigns no mass to the states at which free choice would
 (`no_fci_under_negation`, Table 9). The variants without the conjunctive alternative
 (Tables 7–8) are not formalized.
 
+## Main definitions
+
+* `FCState`, `Utterance`, `Interp`, `interpMeaning` — the state space, the four utterances, and
+  the classical and exhaustified interpretation functions
+* `speaker`, `listener` — the model of (8) at a uniform prior
+* `priorB`, `listenerB` — the same with a prior favouring Any Number
+* `NegState`, `NegUtterance`, `negListener` — the negation model of §4
+
+## Main results
+
+* `speaker_or_onlyOne_exh`, `speaker_prefers_a_at_onlyA_exh` — under exhaustification the
+  disjunction is the safe choice at the free-choice states and a disjunct is not
+* `fci_derived`, `fci_majority_low_alpha` — the listener's inversion, at the paper's α and at a
+  low one
+* `anyNumber_of_prior` — exclusivity tracks the prior at every rationality
+* `no_fci_under_negation` — the negated disjunction leaves no mass where free choice would arise
+
 ## References
 
 * [champollion-alsop-grosu-2019]
