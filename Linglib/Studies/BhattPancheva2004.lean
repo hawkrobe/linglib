@@ -38,16 +38,20 @@ the empirical claims of B&P, and bridge to neighbouring studies.
   interface module and witness B&P's characteristic prohibition.
 - **§5.1** Late merger of degree clauses bleeds Condition C. Captured
   by `degree_lm_bleeds_iff_scope_position_above` (§ 1 below).
-- **§5.2** Williams 1974 derived from HKC. We bridge to
-  [heim-2001]'s intensional-verb data via
+- **§4.2, §5.2** The intensional-verb scope data and the Extraposition-Scope
+  Generalization ((39): "at least as high" from countercyclic merger, "exactly as high"
+  from §7). We bridge to [heim-2001]'s intensional-verb table via
   `bp_hkc_matches_heim_intensional_data` (§ 3 below).
-- **§3.9 (Hoeksema 1983 link)** Reduction theorem demoted to
-  corollary: `thanClause_reduces_to_max` is one line of
-  order-theoretic plumbing, not the substance of the paper.
-- **§1.1.1 fn. 4** B&P explicitly reject [bresnan-1973]'s view
-  that phrasal "than NP" reduces to clausal "than NP is Adj". Captured
-  as prose only (see closing note); the analytical machinery to encode
-  the disagreement compositionally lives in [bhatt-takahashi-2011].
+- **§7** Nonconservativity ((84), (86)) makes early merger contradictory, deriving (90):
+  degree clauses merge only at their ultimate scope position —
+  `erSem_inter_contradictory`, `erSem_not_conservative`.
+- **Hoeksema link** (this file's bridge — B&P do not cite [hoeksema-1983]; §3.9 is
+  Hoeksema's section): `thanClause_reduces_to_max` connects B&P's clausal-source
+  denotation to the `Studies/Hoeksema1983.lean` registry in one line of order plumbing.
+- **§1.1, fn. 4** B&P adopt the essence of [bresnan-1973]'s -er-decomposition
+  (more = -er + many); fn. 4 declines only much-insertion in synthetic forms, and
+  §1.1.1 leaves the ellipsis analysis of phrasal "than NP" open (see the closing
+  note).
 
 ## Polarity remarks
 
@@ -142,7 +146,9 @@ theorem bp_hkc_matches_heim_intensional_data :
   cases h : d.highDegPAvailable <;>
     simp [bpHypothesizedBinding, IsHeimKennedy, h]
 
-/-! ### Reduction theorem (B&P §3.9 link to Hoeksema 1983) -/
+/-! ### Reduction to the Hoeksema registry ([hoeksema-1983] §3.9)
+
+This bridge is the file's, not the paper's: B&P do not cite Hoeksema. -/
 
 /-- B&P's clausal-source than-clause denotation `{d | d ≤ μ b}` (the
     standard's positive extent `Set.Iic (μ b)`) collapses to the singleton
@@ -158,9 +164,9 @@ theorem thanClause_reduces_to_max
 /-- Combining [hoeksema-1983] §3.9 (the principal-ultrafilter /
     singleton-degree-set equivalence) with the B&P reduction:
     Hoeksema's NP-comparative GQ on `Q_b` equals the S-comparative on
-    the *full* clausal-source than-clause denotation. This is the
-    algebraic content of B&P's claim that "than NP" and "than [NP is
-    Adj]" deliver coextensive predicates. -/
+    the *full* clausal-source than-clause denotation — the coextensiveness of
+    "than NP" and "than [NP is Adj]" for proper-name standards, which §1.1.1's
+    comparative-ellipsis remark presupposes. -/
 theorem npGQ_principal_eq_sComp_thanClause
     {D : Type*} [Preorder D] (μ : Entity → D) (b : Entity) :
     npComparativeGQ μ (principalUltrafilter b) =
@@ -184,30 +190,45 @@ theorem reduction_preserves_polarity_signatures :
     LicensingContext.clausalComparative.properties.strawsonSignature = .antiAdd :=
   ⟨comparativeNP_signature_monotone, comparativeS_signature_anti_additive⟩
 
-/- ## Note on the Bresnan 1973 contrast (B&P §1.1.1 fn. 4)
+/-! ### Nonconservativity forces late merger (B&P §7)
 
-B&P explicitly reject [bresnan-1973]'s view that surface phrasal
-"than NP" reduces to clausal "than NP is Adj" via AP-deletion + copula
-stranding (Bresnan's `.maximalDeletion`). On B&P's analysis the phrasal
-form is genuinely phrasal — no clausal source.
+Trace Conversion turns the lower copy of a moved [-er + degree clause] into a definite
+over the standard set, so early merger feeds `-er` its own first argument intersected
+into the second ((87)). For a conservative quantifier this is harmless ((82)); for `-er`
+— standard ⊊ target ((84)) — it is a contradiction ((86)), and further covert movement
+of [-er + degree clause] recreates it. Hence (90): degree clauses are merged only in
+their ultimate scope position — the "exactly as high" half of the Extraposition-Scope
+Generalization ((39)). -/
 
-The disagreement is at the level of *underlying syntactic structure*,
-and the diagnostic apparatus needed to derive distinguishing predictions
-(binding minimal pairs in the style of Lechner 2004; idiom-chunk tests,
-scope diagnostics, ECM cases) is not encoded here. The disagreement is
-*formalized* in [bhatt-takahashi-2011] (see
-`Studies/BhattTakahashi2011.lean`), which supplies
-the binding battery (`englishBindingPairs` + `realizesReduction`) and
-reaches the conclusion that English in fact patterns with B&T's
-Reduction Analysis, vindicating Bresnan's clausal-source view against
-B&P's direct view. The cross-tradition bridge is
-`bt2011_agrees_with_bresnan_against_bp2004` in that file.
+/-- The comparative degree quantifier over degree sets ((84)): the standard is a proper
+    subset of the target. -/
+def erSem {D : Type*} (A B : Set D) : Prop := A ⊂ B
 
-The extensional content of the two analyses agrees for proper-name
-standards: `npGQ_principal_eq_sComp_thanClause` (above) shows that the
-NP-comparative GQ on `Q_b` and the S-comparative on the than-clause
-denotation deliver the same predicate. Their *intensional* difference
-— what underlying structure each posits — is what the BT2011 binding
-diagnostic resolves empirically. -/
+/-- Early merger is contradictory ((86), (87)): after Trace Conversion the second
+    argument is intersected with the first, and `A ⊂ A ∩ B` is unsatisfiable. -/
+theorem erSem_inter_contradictory {D : Type*} (A B : Set D) : ¬ erSem A (A ∩ B) :=
+  fun h => h.not_subset Set.inter_subset_left
+
+/-- `-er` is not conservative ((82) vs (86)): on a nonempty degree domain no equivalence
+    `Q A B ↔ Q A (A ∩ B)` can hold for it. -/
+theorem erSem_not_conservative {D : Type*} [Nonempty D] :
+    ¬ ∀ A B : Set D, erSem A B ↔ erSem A (A ∩ B) :=
+  fun h => erSem_inter_contradictory (∅ : Set D) Set.univ
+    ((h ∅ Set.univ).mp (Set.empty_ssubset.mpr Set.univ_nonempty))
+
+/- ## Note on the Bresnan 1973 relationship (B&P §1.1, fn. 4)
+
+B&P adopt "the essence of Bresnan's analysis" of comparative determiners (more = -er +
+many/much, less = -er + little, fewer = -er + few; §1.1); fn. 4's departure concerns
+only much-insertion in synthetic adjectival forms such as happier. On phrasal "than NP"
+the 2004 text takes no stand: §1.1.1 notes that the phrasal (12) can be assimilated to
+the clausal (11) via comparative ellipsis, leaving the clausal-source question open.
+
+`Studies/BhattTakahashi2011.lean` casts B&P 2004 as proponents of a direct (non-clausal)
+analysis of English phrasal comparatives (`englishAnalysisPerBhattPancheva2004`,
+`bt2011_agrees_with_bresnan_against_bp2004`). That attribution is not supported by the
+2004 text; whether it is [bhatt-takahashi-2011]'s own framing awaits that paper. The
+extensional agreement for proper-name standards is `npGQ_principal_eq_sComp_thanClause`
+above. -/
 
 end BhattPancheva2004
