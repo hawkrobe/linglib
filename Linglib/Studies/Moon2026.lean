@@ -1,4 +1,4 @@
-import Linglib.Studies.Borer2005
+import Linglib.Features.Number.Interp
 import Linglib.Studies.Filip2012
 import Mathlib.Topology.Connected.Basic
 import Mathlib.Tactic.FinCases
@@ -167,10 +167,10 @@ theorem mixedDrink_not_atom {recipe : Recipe α K (n + 2)} {x : α}
   rw [h0, h1] at hDisj
   exact hDisj (Overlap.refl hAtom.not_isBot)
 
-/-- [borer-2005]'s individuation operator, which restricts to atoms, excludes mixed drinks:
-their unit of individuation is not atomicity but the measured part. -/
-theorem div_excludes_mixed_drinks {recipe : Recipe α K (n + 2)} (DRINK : α → Prop) {x : α}
-    (hx : mixedDrinkDen recipe μ phase x) : ¬ Borer2005.Div DRINK x :=
+/-- The atoms-restriction — individuation as atom-based count theories construe it — excludes
+mixed drinks: their unit of individuation is not atomicity but the measured part. -/
+theorem atomsOf_excludes_mixed_drinks {recipe : Recipe α K (n + 2)} (DRINK : α → Prop) {x : α}
+    (hx : mixedDrinkDen recipe μ phase x) : ¬ Number.atomsOf DRINK x :=
   fun ⟨_, hAtom⟩ => mixedDrink_not_atom hx hAtom
 
 /-- Half a margarita with its ratios and connectivity preserved is a margarita, so the
