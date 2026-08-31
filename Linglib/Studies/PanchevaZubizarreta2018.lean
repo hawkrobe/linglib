@@ -417,13 +417,13 @@ theorem mefirst_three_three_exempt :
 -- along the lines suggested by Charnavel and Mateu (2015). The two
 -- phenomena are related but nevertheless distinct."
 --
--- C&M unify CLR and PCC under their `Antilogophoric` predicate
+-- C&M unify CLR and PCC under their `Clash` predicate
 -- (`CharnavelMateu2015`). P&Z separate them:
 -- PCC is the syntactic P-Constraint over Appl (`IsLicit` here); CLR is a
 -- distinct semantic constraint operating over logophoric centres directly.
 -- ============================================================================
 
-open CharnavelMateu2015 (LogoCenter CLRViolated)
+open CharnavelMateu2015 (LogoCenter Clash)
 
 /-- P&Z's reading of the dative clitic — as a `pivot` (Sells's broadest
     role) — is incompatible with [charnavel-mateu-2015]'s reading
@@ -457,7 +457,7 @@ theorem readings_disagree_on_proximate :
 
     Formally: under P&Z's account, ⟨3,3⟩ in a me-first grammar is licit
     (`mefirst_three_three_exempt`) and there is no separate CLR predicate
-    to check. Under C&M's account, the configuration is `CLRViolated`.
+    to check. Under C&M's account, the two centres clash.
 
     Resolution requires Bulgarian/Romanian me-first speakers tested on de
     se readings of accusative clitics in 3.DAT 3.ACC clusters; P&Z
@@ -465,6 +465,6 @@ theorem readings_disagree_on_proximate :
     did not test me-first varieties. -/
 theorem mefirst_wedge_with_cm :
     IsLicit meFirstGrammar .third .third ∧
-    CLRViolated (.empathyLocus, .attitudeHolder) := ⟨by decide, by decide⟩
+    Clash .empathyLocus .attitudeHolder := ⟨by decide, by decide⟩
 
 end PanchevaZubizarreta2018
