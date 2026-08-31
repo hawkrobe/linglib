@@ -53,7 +53,7 @@ open ArgumentStructure
 open Indonesian.VoiceSystem
 open Minimalist.Voice (Params)
 open Beavers2010
-open ArgumentStructure.Affectedness (AffectednessDegree)
+open ArgumentStructure (AffectednessDegree)
 open Voice
 open ArgumentStructure.VoiceSemantics
 open Intensional

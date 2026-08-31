@@ -331,7 +331,7 @@ with the Quantized witness `g_φ = ⊤`,
 feeding [beavers-2011]'s affectedness hierarchy. Here it is instantiated at the
 dimensions the K&L verbs measure. -/
 
-open ArgumentStructure.Affectedness
+open ArgumentStructure
 open Features (ScalarDimension)
 open Degree
 

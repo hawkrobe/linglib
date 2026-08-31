@@ -56,7 +56,7 @@ carriers for distinct objects.
 
 namespace Bhadra2024
 
-open ArgumentStructure ArgumentStructure.Affectedness
+open ArgumentStructure
 
 /-! ### Outcome cardinality -/
 
