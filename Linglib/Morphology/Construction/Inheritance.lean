@@ -55,6 +55,15 @@ structure Hierarchy (ι : Type*) where
   /-- Acyclicity: the parent relation is well-founded. -/
   wf : WellFounded (fun a b => parent b = some a)
 
+/-- Build a hierarchy from a depth function decreasing toward the root: on a
+finite node type the obligation closes by `decide`, sparing each constructicon
+a hand-rolled well-foundedness proof. -/
+def Hierarchy.ofDepth (parent : ι → Option ι) (depth : ι → Nat)
+    (h : ∀ a b, parent b = some a → depth a < depth b) : Hierarchy ι where
+  parent := parent
+  wf := Subrelation.wf (fun {a b} hab => h a b hab)
+    (InvImage.wf depth Nat.lt_wfRel.wf : WellFounded fun a b => depth a < depth b)
+
 /-- Default/override lookup with a step budget: at fuel `0` only the local
 specification is read; each further unit walks one step to the parent. -/
 def valueFuel (parent : ι → Option ι) (att : ι → Option β) : Nat → ι → Option β
@@ -225,23 +234,9 @@ private def animalParent : Animal → Option Animal
   | .canary => some .bird
   | .ostrich => some .bird
 
-private def animalDepth : Animal → Nat
-  | .animal => 0
-  | .bird => 1
-  | .fish => 1
-  | .canary => 2
-  | .ostrich => 2
-
-private theorem animalParent_wf :
-    WellFounded (fun a b : Animal => animalParent b = some a) := by
-  have hq : WellFounded (fun a b : Animal => animalDepth a < animalDepth b) :=
-    InvImage.wf animalDepth Nat.lt_wfRel.wf
-  refine Subrelation.wf (fun {a b} hab => ?_) hq
-  revert hab; cases a <;> cases b <;> decide
-
-private def animalHierarchy : Hierarchy Animal where
-  parent := animalParent
-  wf := animalParent_wf
+private def animalHierarchy : Hierarchy Animal :=
+  .ofDepth animalParent (fun a => match a with
+    | .animal => 0 | .bird => 1 | .fish => 1 | .canary => 2 | .ostrich => 2) (by decide)
 
 /-- Flight as a local specification: birds fly, the ostrich overrides. -/
 private def flies : Animal → Option Bool

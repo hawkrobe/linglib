@@ -23,7 +23,8 @@ unification (`on-` prefixation composed with `V-baar`).
 
 * `carlessness_unifies` — instantiation is unification of an adjective with the
   `-ness` schema ([booij-2010-compass]'s worked example)
-* `awareness_generates` — the `-ness` schema licenses a novel deadjectival noun
+* `carlessness_generates`, `awareness_related` — the schema's two roles on one
+  lexicon: coining the paper's novel noun, relating its stored one
 * `compound_inheritance` — subschemas inherit right-headedness (no Right-hand
   Head Rule) yet override locally (NN allows a recursive modifier, AN does not)
 * `werkbaar_overrides` — the CxM default-inheritance demand site: `werkbaar`
@@ -59,17 +60,18 @@ def nessSchema : Schema NessSlot (Flat Atom) where
     | .affix => ↑Atom.ness
   opens := {.base}
 
-/-- `carlessness`: the adjective `carless` unified into the base slot. -/
+/-- `carlessness`: the paper's novel coin (Time, October 5, 2009), the
+adjective `carless` unified into the base slot. -/
 def carlessness : NessSlot → Flat Atom
   | .base => ↑Atom.carless
   | .affix => ↑Atom.ness
 
-/-- `baldness`: a stored `-ness` noun, the attested filler at the affix slot. -/
+/-- `baldness`: a stored `-ness` noun of the paper's opening word set. -/
 def baldness : NessSlot → Flat Atom
   | .base => ↑Atom.bald
   | .affix => ↑Atom.ness
 
-/-- `awareness`: a novel `-ness` noun the schema generates. -/
+/-- `awareness`: the paper's example of an existing deadjectival noun, stored. -/
 def awareness : NessSlot → Flat Atom
   | .base => ↑Atom.aware
   | .affix => ↑Atom.ness
@@ -92,18 +94,26 @@ theorem carlessness_unifies :
     PartialUnify.unify nessSchema.body carlessness = some carlessness :=
   nessSchema.instantiates_iff_unify.mp carlessness_instantiates
 
-/-- The stored lexicon of `-ness` nouns feeding the generative role. -/
-def nessLexicon : Set (NessSlot → Flat Atom) := {baldness}
+/-- The stored `-ness` nouns, feeding the schema's two roles. -/
+def nessLexicon : Set (NessSlot → Flat Atom) := {baldness, awareness}
 
-/-- The `-ness` schema generates the novel noun `awareness`: the open base slot is
-free, and the pinned affix slot takes only its attested filler `-ness`. The
-affix slot is not open, so this is `Generates`, not full productivity. -/
-theorem awareness_generates : nessSchema.Generates nessLexicon awareness := by
+/-- The schema licenses the novel coin `carlessness`: the open base slot takes
+the unlisted adjective, and the pinned affix slot takes only its attested
+filler `-ness`. The affix slot is not open, so this is `Generates`, not full
+productivity. -/
+theorem carlessness_generates : nessSchema.Generates nessLexicon carlessness := by
   refine ⟨ness_instantiates rfl, ?_⟩
   intro v hv
   cases v with
   | base => exact absurd rfl hv
-  | affix => exact ⟨baldness, rfl, ness_instantiates rfl, rfl⟩
+  | affix => exact ⟨baldness, Set.mem_insert _ _, ness_instantiates rfl, rfl⟩
+
+/-- The relational role over the same schema: `awareness` is listed and
+instantiates it — the paper's two functions of a schema, expressing the
+predictable properties of existing words and coining new ones, on one
+schema and one lexicon. -/
+theorem awareness_related : nessSchema.Relates nessLexicon awareness :=
+  ⟨Set.mem_insert_of_mem _ rfl, ness_instantiates rfl⟩
 
 /-! ### The compound hierarchy
 
@@ -125,21 +135,9 @@ def compoundParent : CompoundNode → Option CompoundNode
   | .an => some .compound
   | .pn => some .compound
 
-private def compoundDepth : CompoundNode → Nat
-  | .compound => 0
-  | _ => 1
-
-private theorem compoundParent_wf :
-    WellFounded (fun a b : CompoundNode => compoundParent b = some a) := by
-  have hq : WellFounded (fun a b : CompoundNode => compoundDepth a < compoundDepth b) :=
-    InvImage.wf compoundDepth Nat.lt_wfRel.wf
-  refine Subrelation.wf (fun {a b} hab => ?_) hq
-  revert hab; cases a <;> cases b <;> decide
-
 /-- The hierarchical constructicon of English compounds. -/
-def compoundHierarchy : Hierarchy CompoundNode where
-  parent := compoundParent
-  wf := compoundParent_wf
+def compoundHierarchy : Hierarchy CompoundNode :=
+  .ofDepth compoundParent (fun n => match n with | .compound => 0 | _ => 1) (by decide)
 
 /-- Headedness, specified once at the general schema. -/
 inductive Headed | right | left
@@ -182,20 +180,8 @@ def baarParent : BaarNode → Option BaarNode
   | .baarSchema => none
   | .werkbaar => some .baarSchema
 
-private def baarDepth : BaarNode → Nat
-  | .baarSchema => 0
-  | .werkbaar => 1
-
-private theorem baarParent_wf :
-    WellFounded (fun a b : BaarNode => baarParent b = some a) := by
-  have hq : WellFounded (fun a b : BaarNode => baarDepth a < baarDepth b) :=
-    InvImage.wf baarDepth Nat.lt_wfRel.wf
-  refine Subrelation.wf (fun {a b} hab => ?_) hq
-  revert hab; cases a <;> cases b <;> decide
-
-def baarHierarchy : Hierarchy BaarNode where
-  parent := baarParent
-  wf := baarParent_wf
+def baarHierarchy : Hierarchy BaarNode :=
+  .ofDepth baarParent (fun n => match n with | .baarSchema => 0 | .werkbaar => 1) (by decide)
 
 /-- Transitivity of the base verb. -/
 inductive Transitivity | trans | intrans
