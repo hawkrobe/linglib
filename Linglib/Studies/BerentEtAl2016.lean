@@ -1,51 +1,40 @@
 import Linglib.Phonology.OptimalityTheory.Doubling
 
 /-!
-# Berent, Bat-El, Brentari, Dupuis & Vaknin-Nusbaum (2016) [berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016]
+# The double identity of linguistic doubling
 
-The double identity of linguistic doubling.
-*Proceedings of the National Academy of Sciences* 113(48). 13702--13707.
+Formalization of [berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016] (PNAS 113). Twelve
+experiments show that the parse of a doubled form XX — banned phonological identity vs.
+preferred morphological reduplication — depends on morphological context and on the
+speaker's L1. With novel English words, doubling is disliked in isolation (experiment 1)
+and preferred once linked to plural meaning over homogeneous object sets (experiments 2,
+4b, 8b); sign-naïve English speakers project the same shift onto novel ASL signs
+(aversion in experiment 5, preference in 6a). The cross-linguistic 2×2 (Table 1,
+experiments 6a and 10a–12a): English speakers prefer XX signs as plurals (6a) but not as
+diminutives (12a); Hebrew speakers show no plural preference (10a — negative transfer:
+Hebrew reduplication marks diminution, never plurality) but favor XX diminutives (11a),
+with a reliable Language × Meaning interaction.
 
-Twelve experiments demonstrating that the interpretation of doubled forms
-(XX) depends on (i) morphological context and (ii) the speaker's L1
-morphological system. The key finding is a 2x2 cross-linguistic
-dissociation between English and Hebrew speakers:
+The OT predictions are categorical and capture the direction of each cell, not the
+gradient magnitudes. The framework (`DoublingParse`, `DoublingGrammar`,
+`realizeMorphAvailable`) lives in `Phonology/OptimalityTheory/Doubling.lean`; this file
+instantiates the two L1 grammars and proves the four cells.
 
-|              | English (no productive redup) | Hebrew (redup for diminutives) |
-|--------------|------------------------------|-------------------------------|
-| **Plurality**  | Prefer XX (Exps 2, 4a, 8a)   | Weak/no XX pref (Exp 10a)     |
-| **Diminutive** | No XX preference (Exp 12)    | Prefer XX (Exp 11a)           |
+## Main definitions
 
-## Gradient vs. categorical
+* `englishGrammar`, `hebrewGrammar` — the two L1 `DoublingGrammar`s.
 
-The experimental data are gradient: participants show *stronger* or *weaker*
-XX preferences across conditions, measured by rating differences and
-reaction times. The OT model here gives categorical predictions
-(reduplication wins or XY wins). The categorical predictions capture the
-*direction* of the preference in each cell — which condition shows an XX
-advantage — not the continuous magnitude of the effect.
+## Main results
 
-## Mechanism: positive and negative transfer
+* `english_plurality_available`, `english_diminutive_unavailable`,
+  `hebrew_plurality_unavailable`, `hebrew_diminutive_available` — REALIZE-MORPH
+  availability from positive and negative transfer.
+* `doubling_dissociation` — the 2×2: reduplication wins exactly where the L1 licenses it.
 
-- **Positive transfer**: if the L1 expresses function *f* morphologically,
-  the speaker can interpret XX as morphological reduplication for *f*,
-  yielding a doubling preference (XX > XY).
+## References
 
-- **Negative transfer**: if the L1 uses reduplication for *other* functions
-  but specifically NOT for *f*, the speaker has positive evidence that
-  reduplication != *f*. This blocks the reduplication interpretation for *f*,
-  even if *f* is morphologically marked by other means (e.g., Hebrew marks
-  plurality by suffixation, not reduplication — so Hebrew speakers do not
-  interpret XX as plural reduplication).
-
-## Formalization
-
-The doubling framework (`DoublingParse`, `DoublingGrammar`,
-`realizeMorphAvailable`) is defined in `Phonology/Doubling.lean`.
-This file defines L1-specific `DoublingGrammar` instances for English and
-Hebrew and proves the four cells of the dissociation table as OT theorems.
-
-[berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016]
+* [berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016] — the paper.
+* [berent-2026] — Argument 3 of the synthesis builds on this dissociation.
 -/
 
 open OptimalityTheory.Doubling
@@ -58,22 +47,18 @@ open Constraints OptimalityTheory
 -- § 1: L1 Morphological Grammars
 -- ============================================================================
 
-/-- English morphological knowledge relevant to doubling.
-
-    English marks plurality morphologically (dog-s) but does not have
-    productive reduplication for any function, and does not have
-    productive diminutive morphology (booklet, doggy are semi-productive
-    at best). -/
+/-- English morphological knowledge relevant to doubling: plurality is marked
+    morphologically (dog-s), but there is no productive reduplication for any function
+    and no productive diminutive morphology (booklet, piglet are attested; -let is not
+    productive). -/
 def englishGrammar : DoublingGrammar :=
   { morphFor := fun | .plurality => true | .diminutive => false
     redupFor := fun | .plurality => false | .diminutive => false }
 
-/-- Hebrew morphological knowledge relevant to doubling.
-
-    Hebrew marks both plurality (sefer -> sfarim 'book -> books') and
-    diminutives morphologically. Crucially, Hebrew uses reduplication
-    specifically for diminutives (seleg -> slaglag 'snow -> puppy')
-    but NOT for plurality (which uses suffixation). -/
+/-- Hebrew morphological knowledge relevant to doubling: both plurality (*shir* →
+    *shirim* 'song → songs') and diminutives are marked morphologically, and
+    reduplication is used specifically for diminutives (*kelev* → *klavlav*
+    'dog → puppy') but never for plurality, which uses suffixation. -/
 def hebrewGrammar : DoublingGrammar :=
   { morphFor := fun | .plurality => true | .diminutive => true
     redupFor := fun | .plurality => false | .diminutive => true }
@@ -118,11 +103,10 @@ theorem hebrew_diminutive_available :
     ranking applies and reduplication wins. When unavailable, the
     phonological ranking applies and XY (nonidentical) wins. -/
 
-/-- English + plurality: reduplication wins (Exps 2, 4a, 8a).
-    English speakers show a gradient XX preference (higher ratings,
-    faster RTs) when signs are paired with homogeneous object sets
-    in a plurality context. The categorical prediction captures the
-    direction of this gradient effect. -/
+/-- English + plurality: reduplication wins (experiment 6a; with spoken words,
+    experiments 2, 4b, 8b). English speakers prefer XX when paired with homogeneous
+    object sets in a plurality context; the heterogeneous controls (4a, 6b, 8a) show no
+    preference or an aversion. -/
 theorem english_plurality_prefers_XX :
     (Tableau.ofRanking
       (l1CandidatesFor englishGrammar .plurality)
@@ -130,11 +114,8 @@ theorem english_plurality_prefers_XX :
       (l1CandidatesFor_ne englishGrammar .plurality)).optimal
     = {.reduplication} := by decide
 
-/-- English + diminutive: XY wins (Exp 12).
-    English speakers show no XX advantage for diminutive signs
-    because English lacks productive diminutive morphology. The model
-    predicts XY wins categorically; the data show absence of the
-    XX preference seen in the plurality condition. -/
+/-- English + diminutive: XY wins (experiment 12a). English speakers show no XX
+    advantage for diminutive signs — English lacks productive diminutive morphology. -/
 theorem english_diminutive_prefers_XY :
     (Tableau.ofRanking
       (l1CandidatesFor englishGrammar .diminutive)
@@ -142,12 +123,9 @@ theorem english_diminutive_prefers_XY :
       (l1CandidatesFor_ne englishGrammar .diminutive)).optimal
     = {.nonidentical} := by decide
 
-/-- Hebrew + plurality: XY wins (Exp 10a).
-    Hebrew speakers show weak/no XX advantage for plural signs
-    because Hebrew uses reduplication for diminutives but NOT plurality —
-    negative transfer blocks the reduplication parse. The model predicts
-    XY categorically; the data show attenuation or absence of the
-    XX preference relative to the diminutive condition. -/
+/-- Hebrew + plurality: XY wins (experiment 10a). Hebrew speakers show no XX advantage
+    for plural signs — Hebrew uses reduplication for diminutives, never plurality, so
+    negative transfer blocks the reduplication parse. -/
 theorem hebrew_plurality_prefers_XY :
     (Tableau.ofRanking
       (l1CandidatesFor hebrewGrammar .plurality)
@@ -155,11 +133,10 @@ theorem hebrew_plurality_prefers_XY :
       (l1CandidatesFor_ne hebrewGrammar .plurality)).optimal
     = {.nonidentical} := by decide
 
-/-- Hebrew + diminutive: reduplication wins (Exp 11a).
-    Hebrew speakers show a gradient XX preference for diminutive signs
-    because Hebrew has productive reduplicative diminutives — positive
-    transfer makes the reduplication parse available. The categorical
-    prediction captures the direction of the effect. -/
+/-- Hebrew + diminutive: reduplication wins (experiment 11a). Positive transfer from
+    Hebrew's partly productive reduplicative diminutives makes the parse available; the
+    preference is marginal by participants and reliable with items as the sole random
+    effect, which the paper links to that partial productivity. -/
 theorem hebrew_diminutive_prefers_XX :
     (Tableau.ofRanking
       (l1CandidatesFor hebrewGrammar .diminutive)
