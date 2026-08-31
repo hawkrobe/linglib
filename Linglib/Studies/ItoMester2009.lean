@@ -25,8 +25,7 @@ interaction of `FtBin`, `Lex-to-ω`, `Parse-into-ω`, and `No-Recursion`:
 With `FtBin`, `Lex-to-ω ≫ Parse-into-ω ≫ No-Recursion`, the **ω-adjoined**
 (recursive) structure is the optimum — Itô & Mester's central claim, that English
 and German function-word complexes use ω-adjunction, *contra* Selkirk's
-φ-attachment. This is a second OT consumer of prosodic-word recursion alongside
-`Studies/Bennett2018.lean` (Kaqchikel).
+φ-attachment.
 
 Candidates are `Prosody.Tree`s; the constraints are `Constraints.Constraint Tree` values
 (`No-Recursion` is the carrier constraint `Prosody.noRec`, `Parse-into-ω` is
