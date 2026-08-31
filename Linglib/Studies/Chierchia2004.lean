@@ -16,6 +16,21 @@ implicatures at the matrix level. Implicature suspension in exactly the
 reversal of the Strength Condition, and intervention (§4.3) follows from NPIs
 competing with strong rather than plain meanings (127).
 
+## Main definitions
+
+* `Meaning`, `Meaning.lexical`, `Meaning.StrengthCondition` — the plain and strengthened value
+  and the entailment they must keep
+* `Meaning.strengthen`, `strongApplyDE` — implicature addition at a scope site, and Strong
+  Application's DE branch
+
+## Main results
+
+* `strengthen_strong_eq_of_isGreatest`, `strongApplyDE_strong_eq_of_isGreatest` — negating all
+  strictly stronger alternatives coincides with the paper's `σ` where `σ` is defined
+* `some_not_all_implicature`, `doubt_and_indirect_implicature` — direct and indirect implicatures
+* `and_blocks_any`, `or_licenses_any` — intervention: *any* under *and* competes with a strong
+  meaning, under *or* it does not
+
 ## Implementation notes
 
 Numbered items follow the circulated manuscript (the "Bicocca, May 2001"
@@ -30,6 +45,11 @@ the `σ = ⊥` case is the empty intersection). The
 appendix's `‖α‖^S` is a *set* of admissible strong meanings (implicature
 addition at a scope site is optional); `Meaning.strong` tracks the maximal
 admissible strengthening, the path the paper's own computations follow.
+
+## References
+
+* [chierchia-2004]
+* [krifka-1995a]
 -/
 
 namespace Chierchia2004
