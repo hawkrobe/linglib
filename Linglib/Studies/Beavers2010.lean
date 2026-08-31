@@ -46,7 +46,7 @@ stairs* (85), prospective possession for the dative (90).
 namespace Beavers2010
 
 open ArgumentStructure
-open ArgumentStructure.Affectedness (AffectednessDegree profileToDegree)
+open ArgumentStructure (AffectednessDegree profileToDegree)
 open ArgumentStructure (DiathesisAlternation)
 
 /-! ### L-thematic roles as entailment sets ((65)–(67)) -/
