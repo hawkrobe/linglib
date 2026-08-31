@@ -132,20 +132,20 @@ end MeasureSemantics
 section QualitativeAdditivity
 
 /-- I1 is invalid for FA: every finitely additive measure induces an FA system
-    via `toSystemFA`, so the measure counterexample transfers. -/
-theorem fa_not_I1 : ∃ (W : Type) (sys : EpistemicSystemFA W), ¬patternI1 sys.ge :=
+    via `toQualitativeProbability`, so the measure counterexample transfers. -/
+theorem fa_not_I1 : ∃ (W : Type) (sys : QualitativeProbability W), ¬patternI1 sys.ge :=
   let ⟨m, hm⟩ := measure_not_I1
-  ⟨Fin 3, m.toSystemFA, hm⟩
+  ⟨Fin 3, m.toQualitativeProbability, hm⟩
 
 /-- I2 is invalid for FA. -/
-theorem fa_not_I2 : ∃ (W : Type) (sys : EpistemicSystemFA W), ¬patternI2 sys.ge :=
+theorem fa_not_I2 : ∃ (W : Type) (sys : QualitativeProbability W), ¬patternI2 sys.ge :=
   let ⟨m, hm⟩ := measure_not_I2
-  ⟨Fin 3, m.toSystemFA, hm⟩
+  ⟨Fin 3, m.toQualitativeProbability, hm⟩
 
 /-- I3 is invalid for FA. -/
-theorem fa_not_I3 : ∃ (W : Type) (sys : EpistemicSystemFA W), ¬patternI3 sys.ge :=
+theorem fa_not_I3 : ∃ (W : Type) (sys : QualitativeProbability W), ¬patternI3 sys.ge :=
   let ⟨m, hm⟩ := measure_not_I3
-  ⟨Fin 3, m.toSystemFA, hm⟩
+  ⟨Fin 3, m.toQualitativeProbability, hm⟩
 
 end QualitativeAdditivity
 

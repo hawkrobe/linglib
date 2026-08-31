@@ -91,7 +91,7 @@ theorem mLift_refutes_I_patterns :
 
 /-- **Theorem 6** ([van-der-hoek-1996]): every FA system is represented by a
     qualitatively additive measure. -/
-theorem fa_qualAdd_complete {W : Type*} [Fintype W] (sys : EpistemicSystemFA W) :
+theorem fa_qualAdd_complete {W : Type*} [Fintype W] (sys : QualitativeProbability W) :
     ∃ m : QualAddMeasure ℚ W, ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
   exists_qualAddMeasure_repr sys
 
@@ -100,7 +100,7 @@ theorem fa_qualAdd_complete {W : Type*} [Fintype W] (sys : EpistemicSystemFA W) 
 /-- **Theorem 8** ([kraft-pratt-seidenberg-1959]): every FA system on `Fin n`
     is representable by a finitely additive measure iff `n < 5`. -/
 theorem fa_representable_iff_card_lt_five (n : ℕ) :
-    (∀ sys : EpistemicSystemFA (Fin n), Representable sys) ↔ n < 5 :=
+    (∀ sys : QualitativeProbability (Fin n), Representable sys) ↔ n < 5 :=
   ⟨fun h => by_contra fun hge =>
       let ⟨sys, hsys⟩ := exists_nonrepresentable_fin (n := n) (by omega); hsys (h sys),
     fun h sys => representable_of_card_lt_five sys (by simpa using h)⟩

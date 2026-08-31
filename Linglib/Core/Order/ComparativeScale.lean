@@ -14,7 +14,7 @@ All scale-based reasoning factors through this structure.
 `AdditiveScale α` — comparative scale enriched with join and finite
 additivity (FA). Two independent linglib instances:
 - Mereological: `ExtMeasure.additive`
-- Epistemic: `EpistemicSystemFA` + `FinAddMeasure` ([holliday-icard-2013])
+- Epistemic: `QualitativeProbability` + `FinAddMeasure` ([holliday-icard-2013])
 
 This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).

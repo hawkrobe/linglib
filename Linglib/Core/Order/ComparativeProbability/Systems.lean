@@ -13,7 +13,7 @@ qualitatively-additive measure semantics, and the two world-ordering lifts.
 
 * `RightUnion`, `DeterminedBySingletons` — the two likelihood axioms with no
   mathlib/`Defs` analog (the rest are the `Defs.lean` mixins).
-* `EpistemicSystemW`/`FA` — bundled axiom systems; `EpistemicSystemFA` is
+* `QualitativeProbability` — the bundled qualitative probability order,
   [holliday-icard-2013]'s logic FA.
 * `FinAddMeasure`/`QualAddMeasure` — finitely- and qualitatively-additive
   probability measures over an ordered field, with their induced orders.
@@ -21,17 +21,18 @@ qualitatively-additive measure semantics, and the two world-ordering lifts.
 
 ## Main statements
 
-* `QualAddMeasure.toSystemFA` — a qualitatively additive measure satisfies FA;
-  `FinAddMeasure.toSystemFA` derives the finitely additive case through
+* `QualAddMeasure.toQualitativeProbability` — a qualitatively additive measure satisfies FA;
+  `FinAddMeasure.toQualitativeProbability` derives the finitely additive case through
   `FinAddMeasure.toQualAdd`.
 * `dominationLift_rightUnion`, `dominationLift_determinedBySingletons` — the
   soundness half of the l-lifting representation (`Completeness.lean`).
 
 ## Implementation notes
 
-`EpistemicSystemW` is coarse staging toward `EpistemicSystemFA`, not
-[holliday-icard-2013]'s logic `W`. Reflexivity and `Ω ≿ ∅` are consequences of
-monotonicity, not fields (`EpistemicSystemW.refl`/`univ_ge_empty`).
+Reflexivity and `Ω ≿ ∅` are consequences of monotonicity, not fields
+(`QualitativeProbability.refl`/`univ_ge_empty`). Sub-FA hypotheses (the
+completeness theorems for weaker logics) are stated on a bare relation with
+explicit monotonicity/transitivity hypotheses, not on a weaker bundle.
 
 The measures are generic over an ordered field `K`: `ℝ` gives the paper's literal
 `[0,1]`-valued measures, `ℚ` the computable theory. On a finite state space the
@@ -68,37 +69,23 @@ def DeterminedBySingletons : Prop := ∀ (A : Set W) (b : W), ge A {b} → ∃ a
 
 end Axioms
 
-/-! ### Axiom systems
+/-! ### Qualitative probability orders
 
-`EpistemicSystemW` is coarse staging toward `EpistemicSystemFA`. Fields hold
-the bare propositions; the matching `Defs.lean` mixin instances are below. -/
+Fields hold the bare propositions; the matching `Defs.lean` mixin instances
+are below. -/
 
-/-- A monotone likelihood relation (weaker than [holliday-icard-2013]'s
-logic `W`; see the module docstring). Reflexivity and `Ω ≿ ∅` are derived
-(`refl`, `univ_ge_empty`), not fields. -/
-structure EpistemicSystemW (W : Type*) where
+/-- A **qualitative probability** order on `Set W`: total, transitive, monotone,
+non-trivial, and qualitatively additive — the standard base system for
+comparative probability since de Finetti, and [holliday-icard-2013]'s logic FA.
+Sound and complete for qualitatively additive measure semantics (Theorem 6;
+[van-der-hoek-1996]), and strictly weaker than finite additivity for `|W| ≥ 5`
+(Theorem 8, after [kraft-pratt-seidenberg-1959]). Reflexivity and `Ω ≿ ∅` are
+consequences of monotonicity (`refl`, `univ_ge_empty`), not fields. -/
+structure QualitativeProbability (W : Type*) where
   /-- The "at least as likely as" relation on propositions. -/
   ge : Set W → Set W → Prop
   /-- Monotonicity: supersets are at least as likely. -/
   mono : ∀ A B : Set W, A ⊆ B → ge B A
-
-namespace EpistemicSystemW
-
-variable {W : Type*} (sys : EpistemicSystemW W)
-
-/-- Reflexivity, from monotonicity. -/
-theorem refl (A : Set W) : sys.ge A A := sys.mono A A subset_rfl
-
-/-- The tautology is at least as likely as the contradiction. -/
-theorem univ_ge_empty : sys.ge Set.univ ∅ := sys.mono ∅ Set.univ (Set.empty_subset _)
-
-end EpistemicSystemW
-
-/-- [holliday-icard-2013]'s logic FA: a total, transitive, qualitatively additive
-likelihood order. Sound and complete for qualitatively additive measure semantics
-(Theorem 6; [van-der-hoek-1996]), and strictly weaker than finite additivity for
-`|W| ≥ 5` (Theorem 8, after [kraft-pratt-seidenberg-1959]). -/
-structure EpistemicSystemFA (W : Type*) extends EpistemicSystemW W where
   /-- Non-triviality: excludes the degenerate all-equivalent order. -/
   nonTrivial : ¬ ge ∅ Set.univ
   /-- Totality: any two propositions are comparable. -/
@@ -107,6 +94,18 @@ structure EpistemicSystemFA (W : Type*) extends EpistemicSystemW W where
   trans : ∀ A B C : Set W, ge A B → ge B C → ge A C
   /-- Qualitative additivity: `A ≿ B ↔ (A \ B) ≿ (B \ A)`. -/
   additive : ∀ A B : Set W, ge A B ↔ ge (A \ B) (B \ A)
+
+namespace QualitativeProbability
+
+variable {W : Type*} (sys : QualitativeProbability W)
+
+/-- Reflexivity, from monotonicity. -/
+theorem refl (A : Set W) : sys.ge A A := sys.mono A A subset_rfl
+
+/-- The tautology is at least as likely as the contradiction. -/
+theorem univ_ge_empty : sys.ge Set.univ ∅ := sys.mono ∅ Set.univ (Set.empty_subset _)
+
+end QualitativeProbability
 
 /-! ### FA systems carry the comparative-probability mixins
 
@@ -117,7 +116,7 @@ probability order, and the validity patterns V1–V13 transfer from
 
 section
 
-variable {W : Type*} (sys : EpistemicSystemFA W)
+variable {W : Type*} (sys : QualitativeProbability W)
 
 instance : ComparativeProbability.IsLikelihoodMono sys.ge := ⟨sys.mono⟩
 
@@ -132,7 +131,7 @@ end
 /-! ### Consequences of the FA axioms -/
 
 section
-variable {W : Type*} (sys : EpistemicSystemFA W)
+variable {W : Type*} (sys : QualitativeProbability W)
 
 /-- **Add common context**: for `C` disjoint from both `X` and `Y`,
     `X ≿ Y ↔ (X ∪ C) ≿ (Y ∪ C)`. -/
@@ -283,7 +282,7 @@ theorem QualAddMeasure.mu_mono (m : QualAddMeasure K W) {A B : Set W} (h : A ⊆
 /-- A qualitatively additive measure induces System FA.
     Soundness direction of [holliday-icard-2013] Theorem 6:
     every qualitatively additive measure model satisfies the FA axioms. -/
-def QualAddMeasure.toSystemFA (m : QualAddMeasure K W) : EpistemicSystemFA W where
+def QualAddMeasure.toQualitativeProbability (m : QualAddMeasure K W) : QualitativeProbability W where
   ge := m.inducedGe
   mono := fun _ _ h => m.mu_mono h
   nonTrivial := by simp only [inducedGe, m.mu_empty, m.total, not_le]; exact one_pos
@@ -304,8 +303,8 @@ def FinAddMeasure.toQualAdd (m : FinAddMeasure K W) : QualAddMeasure K W where
 /-- Every finitely additive measure satisfies the FA axioms, through
     `toQualAdd`. A fortiori from [holliday-icard-2013] Theorem 6 soundness,
     since every finitely additive measure is qualitatively additive. -/
-def FinAddMeasure.toSystemFA (m : FinAddMeasure K W) : EpistemicSystemFA W :=
-  m.toQualAdd.toSystemFA
+def FinAddMeasure.toQualitativeProbability (m : FinAddMeasure K W) : QualitativeProbability W :=
+  m.toQualAdd.toQualitativeProbability
 
 end
 
@@ -372,13 +371,13 @@ section
 variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type*}
   (m : FinAddMeasure K W)
 
-instance : ComparativeProbability.IsLikelihoodMono m.inducedGe := ⟨m.toSystemFA.mono⟩
+instance : ComparativeProbability.IsLikelihoodMono m.inducedGe := ⟨m.toQualitativeProbability.mono⟩
 
-instance : IsTrans (Set W) m.inducedGe := ⟨m.toSystemFA.trans⟩
+instance : IsTrans (Set W) m.inducedGe := ⟨m.toQualitativeProbability.trans⟩
 
-instance : ComparativeProbability.IsQualitativeAdditive m.inducedGe := ⟨m.toSystemFA.additive⟩
+instance : ComparativeProbability.IsQualitativeAdditive m.inducedGe := ⟨m.toQualitativeProbability.additive⟩
 
-instance : ComparativeProbability.IsNontrivial m.inducedGe := ⟨m.toSystemFA.nonTrivial⟩
+instance : ComparativeProbability.IsNontrivial m.inducedGe := ⟨m.toQualitativeProbability.nonTrivial⟩
 
 end
 
