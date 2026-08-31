@@ -2,103 +2,64 @@ import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Studies.GeurtsPouscoulous2009
 import Linglib.Pragmatics.Implicature.Diagnostics
 
+import Mathlib.Data.Finset.Card
 /-!
-# [chemla-spector-2011] — Experimental Evidence for Embedded Scalar Implicatures
-[chemla-spector-2011]
+# Chemla and Spector 2011: experimental evidence for embedded scalar implicatures
 
-Chemla, E. & Spector, B. (2011). Experimental evidence for embedded
-scalar implicatures. *Journal of Semantics*, 28(3), 359–400.
-https://doi.org/10.1093/jos/ffq023
+This file formalizes the argument of [chemla-spector-2011] that scalar inferences computed in
+embedded position are detectable, against [geurts-pouscoulous-2009]. The disagreement turns on
+method: a binary truth-value judgment makes a participant pick one reading, while a graded
+judgment on a continuous scale lets a picture that satisfies more of a sentence's available
+readings be rated higher, which is the paper's §3.2 conjecture and this file's `RatingsMonotone`.
 
-## Two threads
+Three positions are at issue. A restricted globalist computes the inference only at the
+speech-act level, and so cannot make *every student solved some but not all the problems* a
+reading of *every student solved some of the problems*; a localist computes it in embedded
+position and can; an unrestricted globalist derives the embedded-looking reading globally, but
+only where it entails the literal reading. Experiment 1 embeds under a universal quantifier, where
+that entailment holds, and separates the restricted globalist from the other two. Experiment 2
+embeds under *exactly one*, where the local reading is logically independent of the literal one,
+and separates the localist from both globalists: the condition where only the local reading is
+true is rated far above the condition where none is, which an unrestricted globalist predicts to
+be the same.
 
-1. **Empirical, contra [geurts-pouscoulous-2009]**: using a graded
-   truth-value-judgment paradigm with letter-grid pictures, two
-   experiments show that local readings of embedded *some*/*or* under
-   universal quantifiers **are** detectable (Exp 1), and that local
-   readings under non-monotonic *exactly one* are detectable as a
-   *separate* reading logically independent of the literal (Exp 2 — the
-   killer finding against globalist theories).
-2. **Methodological**: graded judgments on a continuous scale (cursor
-   0–100%) reveal ambiguities that binary truth-value judgments mask;
-   the §3.2 conjecture is that ratings monotonically reflect the set of
-   available readings true at the picture.
+Rates are integer percentages or per-mille, as reported; the statistics stay in the paper.
 
-## T1/T2/T3 taxonomy (paper §1, page 3)
+## Main definitions
 
-The paper carves the conventionalism debate into three positions:
+* `Theory`, `Theory.generatesMonotonic`, `Theory.generatesNonMonotonic` — the three positions as
+  the reading labels their mechanisms admit
+* `RatingsMonotone` — the §3.2 conjecture, over (rating, reading-count) pairs
+* `Exp1Condition`, `Exp2Condition`, with `truthSet`, `availableUnder` and `witness` — the
+  conditions, the readings true at each, and what each theory leaves available there
 
-- **T1 (restricted globalist)**: scalar inference applies only at the
-  full speech-act level. Predicts (5) "Every student solved some but
-  not all the problems" is *not* an available reading of (2) "Every
-  student solved some of the problems".
-- **T2 (localist)**: scalar inference can apply in embedded position.
-  Predicts (5) IS an available reading.
-  References: [landman-1998], [chierchia-2004],
-  [recanati-2003], [fox-2007],
-  [chierchia-fox-spector-2008].
-- **T3 (non-restricted globalist)**: globalist mechanism applied with
-  multi-alternative negation can derive (5) globally. References:
-  [spector-2006], [vanrooij-schulz-2004],
-  [sauerland-2004], Chemla 2008/2009b.
+## Main results
 
-Exp 1 tests T1 vs {T2, T3} (via universal-quantifier embedding).
-Exp 2 tests {T1, T3} vs T2 (via non-monotonic embedding where the
-local reading is logically independent of the literal — a reading T3
-mechanically cannot derive).
+* `witness_realizes_conditions`, `exp2_witness_realizes_conditions` — the witness pictures make
+  true exactly the readings each condition's `truthSet` records
+* `exp1_some_monotone_in_readings`, `exp1_or_monotone_in_readings` — ratings rise with the number
+  of readings true, which subsumes the headline STRONG > WEAK contrast
+* `T1_strong_eq_weak_under_availableReadings`, `T2_strong_strict_superset_weak` — the restricted
+  globalist predicts no Experiment 1 contrast and the localist predicts one
+* `T3_at_local_collapses_to_false`, `T2_at_local_strict_superset_false`, `T2_T3_disagree_at_local`,
+  `local_gt_literal_some`, `local_gt_false_both_items` — the Experiment 2 separation
+* `cs_gp_agree_on_de_local_far_below_baseline` — the two papers agree on downward-entailing
+  contexts even where they disagree elsewhere
+* `localReadingExistsExp1_isReinforceable` — the local reading passes the reinforceability
+  diagnostic
 
-## Paper structure (sections mirrored below)
+## References
 
-| §  | Content                                                            |
-|----|--------------------------------------------------------------------|
-| §1 | Theories of scalar implicatures (T1/T2/T3 taxonomy)                |
-| §2 | Critique of [geurts-pouscoulous-2009]'s methodology          |
-| §3 | General features of the experimental design (graded judgments)     |
-| §4 | Experiment 1: scalar items in universal sentences                  |
-| §5 | Experiment 2: scalar items in non-monotonic environments           |
-| §6 | Conclusions                                                        |
-
-## Empirical data captured
-
-All numerical values come from Figures 5, 6, 12, 13 and Tables 1–3.
-Rates are rounded mean cursor positions in percent points; the paper
-reports them with one decimal (e.g., 12% / 44% / 68% / 99% for Exp 1
-'some'). Page references in `4:N` style do not apply (CS11 uses
-standard pagination).
-
-## Statistical-test attribution
-
-The paper uses Wilcoxon signed-rank tests (per-subject, n=16),
-Mann-Whitney U tests (per-item), and ANOVA (Block × Condition
-interactions). Specific W-statistics are *not* encoded here — same
-discipline as [geurts-pouscoulous-2009]: load-bearing inequalities
-are verified at the rate level.
-
-## Linglib integration
-
-- Per-letter cell states use the canonical `SomeAllWorld` from
-  `Pragmatics.Implicature.SomeAll`. A picture is a `Fin n →
-  SomeAllWorld` map indicating, for each letter, whether the letter is
-  connected with no / some-but-not-all / all of its circles.
-- Reading extensions (literal, global, local) are `Picture → Bool`
-  functions, the same pattern used for the 2-student scenario in
-  `RSA.Compositional`.
-- The §3.2 monotonicity conjecture is captured locally as
-  `RatingsMonotone`; promotion to shared substrate is deferred until a
-  second graded-TVJ consumer materializes (Beltrama-Schwarz 2024,
-  Ramotowska 2025, Tieu et al. — none currently expose monotonicity as
-  a theorem).
-- The qualitative "local reading exists" conclusion is submitted to the
-  Gricean diagnostics in `Pragmatics/Implicature/Diagnostics.lean` over
-  the (literal, local-reading) pair.
-
-## Subsequent literature (forward pointers)
-
-- [fox-spector-2018] economy condition predicts CS11's
-  distributivity finding (§4.4.5)
-- [ronai-2024] extends CS11's graded paradigm to scalar diversity
-- [potts-etal-2016] lexical-uncertainty RSA on the same
-  *every*/*exactly one*/*no* conditions
+* [chemla-spector-2011]
+* [geurts-pouscoulous-2009]
+* [landman-1998]
+* [chierchia-2004]
+* [recanati-2003]
+* [fox-2007]
+* [chierchia-fox-spector-2008]
+* [spector-2006]
+* [vanrooij-schulz-2004]
+* [sauerland-2004]
 -/
 
 namespace ChemlaSpector2011
@@ -338,33 +299,23 @@ def exp1OrRate : Exp1Condition → Nat
   | .weak    => 54
   | .strong  => 86
 
-/-- Paper's headline finding (page 18): STRONG > WEAK for both items.
-The two conditions differ only in whether the local reading is true (Fig
-4 page 15). T1 (restricted globalist) predicts no difference because
-neither condition makes a non-globalist reading true; the observed gap
-(31 percentage points for 'some', 32 for 'or') is the existence-of-local
-reading evidence against T1. -/
-theorem strong_gt_weak_some : exp1SomeRate .strong > exp1SomeRate .weak := by decide
-
-theorem strong_gt_weak_or : exp1OrRate .strong > exp1OrRate .weak := by decide
-
-/-- Ratings increase across conditions in step with the number of
-readings true: FALSE (0 readings) < LITERAL (1 reading) < WEAK (2
-readings) < STRONG (3 readings). The §3.2 monotonicity conjecture
-(page 10) instantiated on the Exp 1 'some' data via `RatingsMonotone`. -/
+/-- Ratings rise with the number of readings true at the condition's witness picture — the
+monotonicity conjecture of §3.2 on the Exp 1 *some* data, with the reading counts taken from
+`Exp1Condition.truthSet` rather than written in. Since the counts are strictly ordered, this
+subsumes the headline STRONG > WEAK contrast, a gap of 31 points for *some* and 32 for *or*. -/
 theorem exp1_some_monotone_in_readings :
     RatingsMonotone
-      [ (exp1SomeRate .false_,  0)
-      , (exp1SomeRate .literal, 1)
-      , (exp1SomeRate .weak,    2)
-      , (exp1SomeRate .strong,  3) ] := by decide
+      [ (exp1SomeRate .false_,  (Exp1Condition.truthSet .false_).card)
+      , (exp1SomeRate .literal, (Exp1Condition.truthSet .literal).card)
+      , (exp1SomeRate .weak,    (Exp1Condition.truthSet .weak).card)
+      , (exp1SomeRate .strong,  (Exp1Condition.truthSet .strong).card) ] := by decide
 
 theorem exp1_or_monotone_in_readings :
     RatingsMonotone
-      [ (exp1OrRate .false_,  0)
-      , (exp1OrRate .literal, 1)
-      , (exp1OrRate .weak,    2)
-      , (exp1OrRate .strong,  3) ] := by decide
+      [ (exp1OrRate .false_,  (Exp1Condition.truthSet .false_).card)
+      , (exp1OrRate .literal, (Exp1Condition.truthSet .literal).card)
+      , (exp1OrRate .weak,    (Exp1Condition.truthSet .weak).card)
+      , (exp1OrRate .strong,  (Exp1Condition.truthSet .strong).card) ] := by decide
 
 /-- T1's structural prediction, derived from `Theory.generatesMonotonic`:
 under T1, WEAK and STRONG admit the *same* reading-set (both intersected
@@ -384,20 +335,6 @@ conjecture, T2 therefore predicts STRONG > WEAK — confirmed by
 theorem T2_strong_strict_superset_weak :
     Exp1Condition.availableUnder .weak .T2_localist ⊂
       Exp1Condition.availableUnder .strong .T2_localist := by decide
-
-/-- Distributivity sub-finding (paper §4.4.5, page 20). For the 'or'
-item under STRONG condition, sub-conditions STRONG[≠] (where strong
-verifiers vary in shape, so distributivity inferences are supported)
-and STRONG[=] (where they don't) yield significantly different ratings
-(99.5% vs 73%, W = 78, p < .005). This is the *kind* of empirical
-finding [fox-spector-2018]'s economy-of-exhaustification predicts:
-embedded `exh` is licensed when non-vacuous. Rates as per-mille
-(`Nat`) so the 99.5% value `995` is exact. -/
-def exp1OrStrongDiffShapePerMille : Nat := 995  -- STRONG[≠] = 99.5%
-def exp1OrStrongSameShapePerMille : Nat := 730  -- STRONG[=] = 73.0%
-
-theorem distributivity_strong_neq_gt_strong_eq :
-    exp1OrStrongDiffShapePerMille > exp1OrStrongSameShapePerMille := by decide
 
 end ExperimentOne
 
@@ -644,18 +581,6 @@ and AGAINST T3. -/
 theorem T2_T3_disagree_at_local :
     Exp2Condition.availableUnder .local_ .T3_unrestrictedGlobalist ≠
       Exp2Condition.availableUnder .local_ .T2_localist := by decide
-
-/-- Wide-scope-or sub-finding (paper §5.5.5, page 30). Within the FALSE
-condition for the 'or' item, sub-cases where the wide-scope reading is
-true (despite local/global/literal all being false) are rated higher
-than sub-cases where it isn't (20% vs 6%, W = 128, p < .001). Evidence
-that graded TVJ detects scope ambiguities even when participants don't
-report them. Per-mille `Nat`. -/
-def exp2OrFalseWideScopeTrue : Nat := 200   -- 20%
-def exp2OrFalseWideScopeFalse : Nat := 60   -- 6%
-
-theorem wide_scope_or_detected :
-    exp2OrFalseWideScopeTrue > exp2OrFalseWideScopeFalse := by decide
 
 end ExperimentTwo
 
