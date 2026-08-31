@@ -1,6 +1,8 @@
 import Linglib.Core.Order.ComparativeProbability.Defs
 import Mathlib.Tactic.Linarith
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Comparative probability
@@ -240,6 +242,37 @@ theorem FinAddMeasure.mu_qadd (m : FinAddMeasure K W) (A B : Set W) :
       Set.disjoint_singleton_left.mpr fun h => ha (Finset.mem_coe.mp h)
     rw [Finset.sum_insert ha, ih, Finset.coe_insert, Set.insert_eq, m.additive _ _ hdisj]
 
+/-- Pushforward of a finitely additive measure along a map. -/
+def FinAddMeasure.map {α : Type*} (f : W → α) (m : FinAddMeasure K W) : FinAddMeasure K α where
+  mu A := m.mu (f ⁻¹' A)
+  nonneg _ := m.nonneg _
+  additive A B h := by rw [Set.preimage_union]; exact m.additive _ _ (h.preimage f)
+  total := by rw [Set.preimage_univ]; exact m.total
+
+@[simp] theorem FinAddMeasure.map_mu {α : Type*} (f : W → α) (m : FinAddMeasure K W)
+    (A : Set α) : (m.map f).mu A = m.mu (f ⁻¹' A) := rfl
+
+open scoped Classical in
+/-- The discrete measure with weight `w i` on the atom `i` (the `PMF.ofFintype`
+    pattern). -/
+noncomputable def FinAddMeasure.ofFintype [Fintype W] (w : W → K) (hw : ∀ i, 0 ≤ w i)
+    (hw1 : ∑ i, w i = 1) : FinAddMeasure K W where
+  mu A := ∑ i, if i ∈ A then w i else 0
+  nonneg A := Finset.sum_nonneg fun i _ => by split <;> simp [hw i]
+  additive A B h := by
+    rw [← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    by_cases hA : i ∈ A
+    · simp [Set.mem_union, hA, Set.disjoint_left.mp h hA]
+    · by_cases hB : i ∈ B <;> simp [Set.mem_union, hA, hB]
+  total := by simpa using hw1
+
+@[simp] theorem FinAddMeasure.ofFintype_singleton [Fintype W] (w : W → K)
+    (hw : ∀ i, 0 ≤ w i) (hw1 : ∑ i, w i = 1) (i : W) :
+    (ofFintype w hw hw1).mu {i} = w i := by
+  classical
+  simp [ofFintype, Set.mem_singleton_iff, Finset.sum_ite_eq' Finset.univ i w]
+
 end
 
 /-! ### Qualitatively additive measures -/
@@ -282,7 +315,8 @@ theorem QualAddMeasure.mu_mono (m : QualAddMeasure K W) {A B : Set W} (h : A ⊆
 /-- A qualitatively additive measure induces System FA.
     Soundness direction of [holliday-icard-2013] Theorem 6:
     every qualitatively additive measure model satisfies the FA axioms. -/
-def QualAddMeasure.toQualitativeProbability (m : QualAddMeasure K W) : QualitativeProbability W where
+def QualAddMeasure.toQualitativeProbability (m : QualAddMeasure K W) :
+    QualitativeProbability W where
   ge := m.inducedGe
   mono := fun _ _ h => m.mu_mono h
   nonTrivial := by simp only [inducedGe, m.mu_empty, m.total, not_le]; exact one_pos
@@ -375,9 +409,11 @@ instance : ComparativeProbability.IsLikelihoodMono m.inducedGe := ⟨m.toQualita
 
 instance : IsTrans (Set W) m.inducedGe := ⟨m.toQualitativeProbability.trans⟩
 
-instance : ComparativeProbability.IsQualitativeAdditive m.inducedGe := ⟨m.toQualitativeProbability.additive⟩
+instance : ComparativeProbability.IsQualitativeAdditive m.inducedGe :=
+  ⟨m.toQualitativeProbability.additive⟩
 
-instance : ComparativeProbability.IsNontrivial m.inducedGe := ⟨m.toQualitativeProbability.nonTrivial⟩
+instance : ComparativeProbability.IsNontrivial m.inducedGe :=
+  ⟨m.toQualitativeProbability.nonTrivial⟩
 
 end
 

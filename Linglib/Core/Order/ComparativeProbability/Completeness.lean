@@ -33,11 +33,11 @@ theorem representable_of_card_lt_five {W : Type*} [Fintype W]
   let e := Fintype.equivFin W
   set n := Fintype.card W with hn_def
   interval_cases n
-  · exact (QualitativeProbability.transport e sys).elim0
-  · exact perm_repr e sys (representable_fin1 (QualitativeProbability.transport e sys))
-  · exact perm_repr e sys (representable_fin2 (QualitativeProbability.transport e sys))
-  · exact perm_repr e sys (representable_fin3 (QualitativeProbability.transport e sys))
-  · exact perm_repr e sys (representable_fin4 (QualitativeProbability.transport e sys))
+  · exact (sys.transport e).elim0
+  · exact perm_repr e sys (representable_fin1 (sys.transport e))
+  · exact perm_repr e sys (representable_fin2 (sys.transport e))
+  · exact perm_repr e sys (representable_fin3 (sys.transport e))
+  · exact perm_repr e sys (representable_fin4 (sys.transport e))
 
 /-- **Theorem 8b** ([kraft-pratt-seidenberg-1959] Theorem 8): at every
     cardinality ≥ 5 some FA system is non-representable, so FA is strictly
@@ -47,7 +47,7 @@ theorem exists_nonrepresentable_of_five_le_card {W : Type*} [Fintype W]
     ∃ sys : QualitativeProbability W, ¬Representable sys := by
   have : DecidableEq W := Classical.typeDecidableEq W
   obtain ⟨sysF, hsysF⟩ := exists_nonrepresentable_fin hcard
-  exact ⟨QualitativeProbability.transport (Fintype.equivFin W).symm sysF,
+  exact ⟨sysF.transport (Fintype.equivFin W).symm,
     fun h => hsysF (perm_repr (Fintype.equivFin W).symm sysF h)⟩
 
 -- ── Completeness (Theorems 2 and 6) ─────────────

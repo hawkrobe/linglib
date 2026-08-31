@@ -715,10 +715,10 @@ theorem cancellation_of_null_atom {n : ℕ} (sys : QualitativeProbability (Fin (
     (sub : ∀ sys' : QualitativeProbability (Fin (n + 1)), Representable sys') :
     Cancellation (n + 2) sys.ge := by
   set σ := Equiv.swap (0 : Fin (n + 2)) j with hσ
-  have h0 : (QualitativeProbability.transport σ sys).ge ∅ {0} := by
+  have h0 : (sys.transport σ).ge ∅ {0} := by
     rw [perm_null_iff, show σ.symm 0 = j by simp [hσ]]; exact hj
-  have hnn : ∃ i : Fin (n + 1), ¬(QualitativeProbability.transport σ sys).ge ∅ {Fin.succ i} := by
-    obtain ⟨k, hk⟩ := not_all_null (QualitativeProbability.transport σ sys)
+  have hnn : ∃ i : Fin (n + 1), ¬(sys.transport σ).ge ∅ {Fin.succ i} := by
+    obtain ⟨k, hk⟩ := not_all_null (sys.transport σ)
     obtain ⟨i, rfl⟩ : ∃ i, Fin.succ i = k :=
       Fin.exists_succ_eq.mpr fun h => hk (h ▸ h0)
     exact ⟨i, hk⟩

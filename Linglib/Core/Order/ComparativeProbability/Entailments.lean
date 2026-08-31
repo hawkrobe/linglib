@@ -50,35 +50,15 @@ section MeasureSemantics
 
 attribute [local instance] Classical.propDecidable
 
-private noncomputable def uf3 : FinAddMeasure ℚ (Fin 3) where
-  mu := λ A =>
-    (if (0 : Fin 3) ∈ A then (1:ℚ)/3 else 0) +
-    (if (1 : Fin 3) ∈ A then (1:ℚ)/3 else 0) +
-    (if (2 : Fin 3) ∈ A then (1:ℚ)/3 else 0)
-  nonneg := λ A => add_nonneg (add_nonneg
-    (by split <;> norm_num) (by split <;> norm_num)) (by split <;> norm_num)
-  additive := λ A B hAB => by
-    simp only [Set.mem_union]
-    by_cases h0A : (0 : Fin 3) ∈ A <;> by_cases h0B : (0 : Fin 3) ∈ B <;>
-    by_cases h1A : (1 : Fin 3) ∈ A <;> by_cases h1B : (1 : Fin 3) ∈ B <;>
-    by_cases h2A : (2 : Fin 3) ∈ A <;> by_cases h2B : (2 : Fin 3) ∈ B <;>
-    simp_all [Set.disjoint_left] <;> linarith
-  total := by simp only [Set.mem_univ, ite_true]; norm_num
+private noncomputable def uf3 : FinAddMeasure ℚ (Fin 3) :=
+  .ofFintype (fun _ => 1/3) (fun _ => by norm_num)
+    (by simp [Finset.sum_const, Fintype.card_fin, nsmul_eq_mul])
 
-private theorem uf3_mu_eq (A : Set (Fin 3)) :
-    uf3.mu A =
-    (if (0 : Fin 3) ∈ A then (1:ℚ)/3 else 0) +
-    (if (1 : Fin 3) ∈ A then (1:ℚ)/3 else 0) +
-    (if (2 : Fin 3) ∈ A then (1:ℚ)/3 else 0) := rfl
+private theorem uf3_mu_0 : uf3.mu {(0 : Fin 3)} = 1/3 := by simp [uf3]
 
-private theorem uf3_mu_0 : uf3.mu {(0 : Fin 3)} = 1/3 := by
-  simp only [uf3_mu_eq, Set.mem_singleton_iff, Fin.reduceEq, reduceIte]; norm_num
+private theorem uf3_mu_1 : uf3.mu {(1 : Fin 3)} = 1/3 := by simp [uf3]
 
-private theorem uf3_mu_1 : uf3.mu {(1 : Fin 3)} = 1/3 := by
-  simp only [uf3_mu_eq, Set.mem_singleton_iff, Fin.reduceEq, reduceIte]; norm_num
-
-private theorem uf3_mu_2 : uf3.mu {(2 : Fin 3)} = 1/3 := by
-  simp only [uf3_mu_eq, Set.mem_singleton_iff, Fin.reduceEq, reduceIte]; norm_num
+private theorem uf3_mu_2 : uf3.mu {(2 : Fin 3)} = 1/3 := by simp [uf3]
 
 private theorem uf3_mu_union_12 : uf3.mu ({(1 : Fin 3)} ∪ {2}) = 2/3 := by
   rw [uf3.additive _ _ (Set.disjoint_singleton.mpr (by omega)), uf3_mu_1, uf3_mu_2]; norm_num
@@ -454,7 +434,7 @@ private theorem matchingLift_chain_exits {W : Type*} [Finite W] {A B : Set W} {f
     · exact absurd heq (hdist i j h)
     · exact h
     · exact absurd heq.symm (hdist j i h)
-  haveI : Infinite ↥A := Infinite.of_injective _ hinj
+  have : Infinite ↥A := Infinite.of_injective _ hinj
   exact not_finite ↥A
 
 /-- If both chains stay in A for n steps and f^[n] x = f^[n] y, then x = y. -/
@@ -556,13 +536,13 @@ of [harrison-trainor-holliday-icard-2018]
 (`HarrisonTrainorHollidayIcard2016.GFCOrder`). -/
 
 /-- The m-lift's transitivity, packaged for the abstract pattern layer. -/
-def matchingLift_isTrans {W : Type*} [Finite W] (ge_w : W → W → Prop)
+theorem matchingLift_isTrans {W : Type*} [Finite W] (ge_w : W → W → Prop)
     (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
     IsTrans (Set W) (matchingLift ge_w) :=
   ⟨fun _ _ _ => matchingLift_trans hTrans⟩
 
 /-- The m-lift's complement reversal, packaged for the abstract pattern layer. -/
-def matchingLift_isComplementReversing {W : Type*} [Finite W] (ge_w : W → W → Prop)
+theorem matchingLift_isComplementReversing {W : Type*} [Finite W] (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w)
     (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
     IsComplementReversing (matchingLift ge_w) :=
@@ -575,8 +555,8 @@ theorem matchingLift_V12 {W : Type*} [Finite W] (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w)
     (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
     patternV12 (matchingLift ge_w) := by
-  haveI := matchingLift_isTrans ge_w hTrans
-  haveI := matchingLift_isComplementReversing ge_w hRefl hTrans
+  have := matchingLift_isTrans ge_w hTrans
+  have := matchingLift_isComplementReversing ge_w hRefl hTrans
   exact patternV12_of
 
 /-- V11 is valid for the m-lifting on finite posets (Fact 5 in
@@ -585,8 +565,8 @@ theorem matchingLift_V11 {W : Type*} [Finite W] (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w)
     (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
     patternV11 (matchingLift ge_w) := by
-  haveI := matchingLift_isTrans ge_w hTrans
-  haveI := matchingLift_isComplementReversing ge_w hRefl hTrans
+  have := matchingLift_isTrans ge_w hTrans
+  have := matchingLift_isComplementReversing ge_w hRefl hTrans
   exact patternV11_of
 
 /-- V13 is valid for the m-lifting on finite posets (Fact 5 in
