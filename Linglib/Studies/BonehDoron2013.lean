@@ -1,489 +1,336 @@
 import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Genericity.Basic
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Features.Genericity
+import Linglib.Semantics.Mereology
+import Linglib.Semantics.Modality.Kratzer.Ordering
 
 /-!
-# [boneh-doron-2013] — Hab and Gen in the Expression of Habituality
+# Boneh and Doron 2013: Hab and Gen in the expression of habituality
 
-In *Genericity* (Mari, Beyssade, Del Prete eds.), OUP, Oxford Studies in
-Theoretical Linguistics 43.
+[boneh-doron-2013] (in the OUP *Genericity* volume) argue that habituality
+involves two distinct covert operators. Gen (21) is the familiar modalized
+universal; Hab (13) is a modalized existential over sums of events — an
+iteration (14) in every world of a gnomic modal base, with only a
+disposition-indicating INIT event (15) required in the actual world. The
+auxiliaries mark neither: *would* marks mood (a special case of Gen, (22)),
+and *used to* is the imperfective under a retrospective aspect (18)–(19),
+locating the reference interval wholly before the perspective interval. The
+operators are built here on the library's own objects: iteration on the
+[link-1983] closure, the modal base of [kratzer-1981], Klein's imperfective,
+and [pancheva-2003]'s final-subinterval perfect.
 
-## Core Claim
+## Main definitions
 
-HAB and GEN are **distinct** covert operators, not a single operator with
-different parameters. They share the same quantificational skeleton
-(the relativized restricted universal `Quantification.everyOn`) but differ in:
+* `iter`, `hab` — the chapter's (14) and (13)/(15), on `Mereology.AlgClosure`
+  and `Modality.Kratzer.ModalBase`.
+* `retro`, `usedToOp`, `perfectOp` — (19b), (18), and the (34a) perfect over
+  `IntervalPred`, with (19a) as the substrate's `IMPF`.
+* `HabitualForm`, `admitsViewpoint`, `admitsPerspective` — Table (41).
 
-1. **Quantificational force**: HAB is a modalized *existential* quantifier
-   over sums of events; GEN is a modalized *universal* quantifier.
-2. **Restrictor requirement**: GEN requires an explicit restrictor (e.g.,
-   "after dinner" in ex. (4a)); HAB does not — it uses INIT to anchor
-   to an initiating event.
-3. **Structural position**: HAB sits low as a VP adverb selected by AspP;
-   GEN sits high in MoodP (parallel to *would*).
+## Main results
 
-The chapter provides English evidence from three habitual verb forms:
-the simple past tense form, the periphrastic *used to*, and *would*.
+* `iter_impossible_of_unrepeatable`, `same_object_infelicity`,
+  `gen_admits_fresh_objects` — the (4)–(8) contrast derived: an indefinite
+  scoping over Hab forces an unrepeatable event, while Gen's universal lets
+  it vary.
+* `hab_without_actual_iteration` — (13)–(17): Hab holds with a single actual
+  initiating event, iteration living only in the accessible worlds.
+* `retro_perfect_forces_point`, `usedTo_of_persisting_state` — (30)–(35): the
+  retrospective and the perfect exclude each other except at a degenerate
+  perspective, and nothing bounds the state itself — retrospectivity of the
+  state is a cancellable implicature.
+* `restrictor_contrast`, `sameObjectParallel`, `actualization_contrast`,
+  `individual_level_contrast`, `would_vs_usedTo_puzzle` — the chapter's
+  judgment pairs ((2), (4), (6)–(7), (42), (47)–(48)).
+* `gen_skeleton` — Gen's reduction to the relativized restricted universal.
 
-## English Habitual Forms (Table (41))
+## References
 
-| Form        | Viewpoint aspect        | Perspective               |
-|-------------|-------------------------|---------------------------|
-| simple form | imperfective/perfective | internal/retrospective    |
-| *used to*   | imperfective            | retrospective             |
-| *would*     | imperfective            | internal                  |
-
-## Connection to Existing Infrastructure
-
-- `Quantification.everyOn` (`Counting.lean`): the shared restricted-universal
-  skeleton. GEN derives from it (see `gen_skeleton` below). HAB does *not* —
-  B&D's central claim is that HAB is a modalized *existential* over event sums,
-  structurally distinct from `everyOn`'s universal form; its force is recorded
-  by `habConfig.force = .existential`.
-- `Aspect/Basic.lean`: `Perfectivity` — the `aspectCompatibility`
-  bridge connects B&D's Table (41) to the aspectual infrastructure.
-- `DelPrete2013.lean`: Del Prete's Same-Object Effect (SOE) is the Italian
-  analogue of the same-object readings in B&D's exx. (4b), (6b), (7b).
-  The `sameObjectParallel` theorem makes this connection explicit.
+* [boneh-doron-2013] — the chapter.
+* [link-1983], [kratzer-1981], [klein-1994], [pancheva-2003] — the sum
+  closure, modal base, imperfective, and final-subinterval substrate.
+* [del-prete-2013] — the same volume's Italian Same-Object Effect.
 -/
 
 namespace BonehDoron2013
 
-open Intensional (Index)
-
 open Quantification
 open Semantics.Genericity (Situation traditionalGEN)
-open Semantics.Aspect (Perfectivity)
+open Semantics.Aspect (Perfectivity IntervalPred IMPF)
+open Modality.Kratzer (ModalBase accessibleWorlds)
 
--- ═══ Operator Distinction ═══
+/-! ### Hab against Gen ((4)–(8), (13)–(15))
 
-/-- Quantificational force of a covert operator.
+Gen needs an explicit restrictor; without one only Hab applies, and an
+indefinite can only scope over it, as in (8) `∃x [cigarette(x) ∧ Hab e
+smoke(e, Mary, x)]`. The contrast between (4a) and (4b) is then a theorem:
+smoking is unrepeatable per cigarette, so the wide-scope form is
+contradictory while Gen's (5a) is satisfiable with a fresh cigarette per
+event. -/
 
-    [boneh-doron-2013] §6.2.1: HAB is a "modalized existential
-    quantifier over sums of events"; GEN is a "modalized universal
-    quantifier" (Krifka et al. 1995). -/
-inductive QForce where
-  /-- Existential: HAB ∃-quantifies over event sums via ITER. -/
-  | existential
-  /-- Universal: GEN ∀-quantifies over individuals/events meeting
-      the restrictor. -/
-  | universal
-  deriving DecidableEq, Repr
+/-- (14): iteration — a sum of P-events with at least two distinct proper
+P-parts, on the [link-1983] closure. -/
+def iter {E : Type*} [SemilatticeSup E] (P : E → Prop) (e : E) : Prop :=
+  Mereology.AlgClosure P e ∧ ∃ e₁ < e, ∃ e₂ < e, P e₁ ∧ P e₂ ∧ e₁ ≠ e₂
 
-/-- Configuration for a covert quantifier, recording the structural
-    differences between GEN and HAB beyond the shared `everyOn` skeleton. -/
-structure CovertQConfig where
-  /-- Quantificational force (existential vs universal) -/
-  force : QForce
-  /-- Whether the operator requires an explicit restrictor in the clause.
-      GEN requires one (e.g., "after dinner"); HAB uses INIT instead. -/
-  requiresExplicitRestrictor : Bool
-  /-- Whether the operator is modalized (references a modal base MB).
-      Both GEN and HAB reference MB in their denotations (eqs. (13), (21)). -/
-  isModal : Bool
-  deriving DecidableEq, Repr
+/-- An unrepeatable predicate cannot iterate: no event carries two distinct
+proper parts of a once-only happening. -/
+theorem iter_impossible_of_unrepeatable {E : Type*} [SemilatticeSup E] {P : E → Prop}
+    (h : ∀ e₁ e₂, P e₁ → P e₂ → e₁ = e₂) (e : E) : ¬ iter P e :=
+  fun ⟨_, _, _, _, _, h₁, h₂, hne⟩ => hne (h _ _ h₁ h₂)
 
-/-- GEN configuration: universal, requires explicit restrictor, modal. -/
-def genConfig : CovertQConfig :=
-  { force := .universal
-  , requiresExplicitRestrictor := true
-  , isModal := true
-  }
+/-- (4b)/(8): with the indefinite scoping over Hab, the same object recurs
+through the iteration; when the predicate is unrepeatable per object — one
+smoking per cigarette — the reading is contradictory. [del-prete-2013]'s
+Italian Same-Object Effect is the same configuration. -/
+theorem same_object_infelicity {E C : Type*} [SemilatticeSup E]
+    {smoke : E → C → Prop} {cig : C → Prop}
+    (hOnce : ∀ c e₁ e₂, smoke e₁ c → smoke e₂ c → e₁ = e₂) :
+    ¬ ∃ c, cig c ∧ ∃ e, iter (smoke · c) e :=
+  fun ⟨c, _, e, hIter⟩ => iter_impossible_of_unrepeatable (hOnce c) e hIter
 
-/-- HAB configuration: existential, no explicit restrictor needed, modal. -/
-def habConfig : CovertQConfig :=
-  { force := .existential
-  , requiresExplicitRestrictor := false
-  , isModal := true
-  }
+/-- (4a)/(5a): Gen's universal lets the indefinite scope below, so the same
+unrepeatability premise is satisfiable — a fresh cigarette per event. -/
+theorem gen_admits_fresh_objects :
+    ∃ smoke : Bool → Bool → Prop,
+      (∀ c e₁ e₂, smoke e₁ c → smoke e₂ c → e₁ = e₂) ∧
+        everyOn (Finset.univ : Finset Bool) (fun _ => True) (fun e => ∃ c, smoke e c) :=
+  ⟨(· = ·), fun _ _ _ h₁ h₂ => h₁.trans h₂.symm, fun e _ _ => ⟨e, rfl⟩⟩
 
-/-- GEN and HAB have distinct configurations despite sharing `everyOn`. -/
-theorem gen_hab_distinct : genConfig ≠ habConfig := by decide
+/-- (13) with (15): Hab requires the disposition-indicating INIT event in the
+actual world and an iteration in every accessible world of the gnomic modal
+base ([kratzer-1981]). The paper leaves "indicating a disposition"
+unanalyzed, so it is a parameter; the temporal anchoring `τ(s) ⊆ τ(e)` is
+suppressed with the event times. -/
+def hab {W E : Type*} [SemilatticeSup E] (P : E → W → Prop) (mb : ModalBase W)
+    (indicatesDisposition : W → Prop) (w : W) : Prop :=
+  indicatesDisposition w ∧ ∀ w' ∈ accessibleWorlds mb w, ∃ e, iter (P · w') e
 
-/-- GEN and HAB agree on modality (both are modalized) but differ on
-    quantificational force and restrictor requirement. -/
-theorem gen_hab_modal_agreement :
-    genConfig.isModal = habConfig.isModal := rfl
+/-- (16)–(17), (42a–b): Hab is dispositional — it holds on the strength of a
+single actual initiating event, with the iteration living only in the
+accessible worlds. Nothing beyond INIT is actualized. -/
+theorem hab_without_actual_iteration :
+    ∃ (P : Finset ℕ → Bool → Prop) (mb : ModalBase Bool),
+      hab P mb (· = false) false ∧ ¬ ∃ e, iter (P · false) e := by
+  refine ⟨fun e w' => match w' with | true => e.Nonempty ∧ e ⊆ {0, 1} | false => e = {0},
+    fun _ => [(· = true)], ⟨rfl, ?_⟩, ?_⟩
+  · intro w' hw'
+    have hw : w' = true := by
+      simpa [accessibleWorlds, Intensional.Premise.propIntersection] using hw'
+    subst hw
+    exact ⟨{0} ⊔ {1}, .sum (.base (by decide)) (.base (by decide)),
+      {0}, by decide, {1}, by decide, by decide, by decide, by decide⟩
+  · rintro ⟨e, -, e₁, -, e₂, -, h₁, h₂, hne⟩
+    exact hne (h₁.trans h₂.symm)
 
-theorem gen_hab_differ_on_force_and_restrictor :
-    genConfig.force ≠ habConfig.force ∧
-    genConfig.requiresExplicitRestrictor ≠ habConfig.requiresExplicitRestrictor := by
-  exact ⟨by decide, by decide⟩
+/-- Gen's denotation is the canonical relativized restricted universal, with
+the restrictor conjoined from a normalcy predicate and an overt restrictor.
+Hab admits no such reduction: its force is the existential of (13). -/
+theorem gen_skeleton
+    (sits : List Situation) (normal restrictor scope : Situation → Bool) :
+    traditionalGEN sits normal restrictor scope =
+      everyOn sits.toFinset (fun s => (normal s && restrictor s) = true)
+        (fun s => scope s = true) := rfl
 
--- ═══ English Habitual Forms ═══
+/-! ### used to: the imperfective under a retrospective ((18)–(19), (30)–(35))
 
-/-- The three English verb forms that express habituality.
+The auxiliary decomposes as retrospective over imperfective. (19a) is
+Klein's imperfective — the substrate's `IMPF` — and (19b) locates the
+reference interval before the perspective interval, [kamp-reyle-1993]'s P.
+Imperfectivity and retrospectivity of *used to* in Table (41) thus hold by
+construction. -/
 
-    [boneh-doron-2013] §6.1, ex. (1): "In the good old days, people
-    dressed/used to dress/would dress elegantly to go to the opera." -/
+/-- (19b): the retrospective — some reference interval satisfying the
+description lies wholly before the perspective interval. -/
+def retro {W Time : Type*} [LinearOrder Time] (A : IntervalPred W Time) :
+    IntervalPred W Time :=
+  fun w p => ∃ i, A w i ∧ i.isBefore p
+
+/-- (18): *used to* — the retrospective over the imperfective. -/
+def usedToOp {W Time : Type*} [LinearOrder Time] (P : W → Event Time → Prop) :
+    IntervalPred W Time :=
+  retro (IMPF P)
+
+/-- (34a): the perfect — the perspective is a final subinterval of the
+reference interval ([pancheva-2003]'s PTS, from the substrate). -/
+def perfectOp {W Time : Type*} [LinearOrder Time] (A : IntervalPred W Time) :
+    IntervalPred W Time :=
+  fun w p => ∃ i, A w i ∧ p.finalSubinterval i
+
+/-- (32)–(34): one reference interval serves the retrospective and the
+perfect at once only for a degenerate instantaneous perspective. The two
+form the Horn scale behind the retrospectivity implicature (31)–(33). -/
+theorem retro_perfect_forces_point {Time : Type*} [LinearOrder Time]
+    {i p : NonemptyInterval Time} (hb : i.isBefore p) (hf : p.finalSubinterval i) :
+    p.IsPoint :=
+  le_antisymm p.fst_le_snd (hf.2.trans_le hb)
+
+/-- (30): retrospectivity of the *state* is cancellable ("… used to go to.
+Still do."): (19a) bounds only the reference interval, so a state whose
+runtime strictly contains a pre-perspective reference interval satisfies
+*used to* however far the state runs — through the perspective included. -/
+theorem usedTo_of_persisting_state {W Time : Type*} [LinearOrder Time]
+    {P : W → Event Time → Prop} {w : W} {e : Event Time} (hP : P w e)
+    {i p : NonemptyInterval Time} (hie : i < e.τ) (hip : i.isBefore p) :
+    usedToOp P w p :=
+  ⟨i, ⟨e, hie, hP⟩, hip⟩
+
+/-! ### The three forms and Table (41) -/
+
+/-- The English past-habituality forms of (1). -/
 inductive HabitualForm where
-  /-- Simple past tense form: "people dressed elegantly." -/
   | simpleForm
-  /-- Periphrastic *used to*: "people used to dress elegantly." -/
   | usedTo
-  /-- Periphrastic *would*: "people would dress elegantly." -/
   | would
   deriving DecidableEq, Repr
 
-/-- Whether a habitual form admits perfective aspect.
+/-- Internal vs. retrospective perspective, Table (41)'s second dimension. -/
+inductive PerspectiveType where
+  | internal
+  | retrospective
+  deriving DecidableEq, Repr
 
-    [boneh-doron-2013] Table (41): only the simple form admits
-    perfective; the periphrastic forms are imperfective only. -/
-def admitsPerfective : HabitualForm → Bool
-  | .simpleForm => true
-  | .usedTo => false
-  | .would => false
+/-- Table (41), viewpoint column: the simple form takes either viewpoint
+((26)–(27)); the periphrastic forms are imperfective only. -/
+def admitsViewpoint : HabitualForm → Perfectivity → Prop
+  | .simpleForm, _ => True
+  | _, .imperfective => True
+  | _, .perfective => False
 
-/-- Whether a habitual form has a retrospective perspective.
+/-- Table (41), perspective column: *used to* is retrospective, *would*
+internal, the simple form either ((35)–(40)). -/
+def admitsPerspective : HabitualForm → PerspectiveType → Prop
+  | .simpleForm, _ => True
+  | .usedTo, .retrospective => True
+  | .usedTo, .internal => False
+  | .would, .internal => True
+  | .would, .retrospective => False
 
-    [boneh-doron-2013] Table (41): the simple form can be either,
-    *used to* is retrospective, *would* is internal (not retrospective). -/
-def hasRetrospective : HabitualForm → Bool
-  | .simpleForm => true   -- can be retrospective
-  | .usedTo => true       -- always retrospective
-  | .would => false       -- internal only
+/-! ### The chapter's judgments -/
 
-/-- Whether a habitual form requires actualization (habit must be
-    instantiated by actual episodes in the world).
-
-    [boneh-doron-2013] §6.3.2, ex. (42): *used to* requires
-    actualization; the simple form and *would* do not. -/
-def requiresActualization : HabitualForm → Bool
-  | .simpleForm => false
-  | .usedTo => true
-  | .would => false
-
--- ═══ Bridge to Perfectivity ═══
-
-/-- Which viewpoint aspects each habitual form is compatible with,
-    connecting B&D's Table (41) to `Perfectivity` in `Aspect/Core.lean`.
-
-    The simple form admits both imperfective and perfective; the
-    periphrastic forms are imperfective only. -/
-def aspectCompatibility : HabitualForm → Perfectivity → Bool
-  | .simpleForm, _ => true                 -- both aspects
-  | .usedTo, .imperfective => true
-  | .usedTo, .perfective => false
-  | .would, .imperfective => true
-  | .would, .perfective => false
-
-/-- Periphrastic forms reject perfective aspect. -/
-theorem periphrastic_reject_perfective :
-    aspectCompatibility .usedTo .perfective = false ∧
-    aspectCompatibility .would .perfective = false := by
-  exact ⟨rfl, rfl⟩
-
-/-- The simple form accepts both viewpoint aspects. -/
-theorem simple_both_aspects :
-    aspectCompatibility .simpleForm .imperfective = true ∧
-    aspectCompatibility .simpleForm .perfective = true := by
-  exact ⟨rfl, rfl⟩
-
--- ═══ Data from the Chapter ═══
-
-/-- An English habituality datum. -/
+/-- An English judgment from the chapter. -/
 structure EnglishDatum where
   sentence : String
   form : HabitualForm
   felicitous : Bool
-  /-- Which operator the chapter's analysis assigns to this reading.
-      Under B&D's proposal, the simple form typically involves Hab,
-      *would* involves Gen, and *used to* involves Hab + aspectual marking. -/
-  operator : String
   exNumber : String
   deriving Repr
 
--- ── §6.2.1: Restrictor contrast (motivating HAB/GEN split) ──
-
-/-- Ex. (4a): "Mary smokes a cigarette after dinner" — GEN with
-    explicit restrictor "after dinner". Felicitous because the restrictor
-    supplies Gen's required restriction over events. -/
+/-- (4a): felicitous — *after dinner* supplies Gen's restrictor, and the
+indefinite scopes below it, as in (5a). -/
 def maryCigaretteAfterDinner : EnglishDatum :=
   { sentence := "Mary smokes a cigarette after dinner"
-  , form := .simpleForm
-  , felicitous := true
-  , operator := "GEN"
-  , exNumber := "(4a)"
-  }
+    form := .simpleForm, felicitous := true, exNumber := "(4a)" }
 
-/-- Ex. (4b): "#Mary smokes a cigarette" — No explicit restrictor,
-    so Gen cannot apply. Hab applies but the singular indefinite
-    "a cigarette" scopes over events, forcing a same-object reading
-    (smoke the same cigarette repeatedly), which is infelicitous. -/
+/-- (4b): no explicit restrictor, so only Hab applies; the indefinite scopes
+over it, (8), and `same_object_infelicity` bites. -/
 def maryCigarette : EnglishDatum :=
   { sentence := "#Mary smokes a cigarette"
-  , form := .simpleForm
-  , felicitous := false
-  , operator := "HAB"
-  , exNumber := "(4b)"
-  }
+    form := .simpleForm, felicitous := false, exNumber := "(4b)" }
 
--- ── §6.2.1: Same-object examples ──
-
-/-- Ex. (6b): "A flower grows out behind the old shed" — singular
-    indefinite under Hab forces a same-object reading: the same flower
-    grows out repeatedly. This is the same-object phenomenon that
-    [del-prete-2013] calls the Same-Object Effect (SOE). -/
+/-- (6b): the same-object reading — one flower growing out repeatedly — is
+plausible, so the sentence survives on it. -/
 def flowerGrows : EnglishDatum :=
   { sentence := "A flower grows out behind the old shed"
-  , form := .simpleForm
-  , felicitous := true  -- true but only on same-object reading
-  , operator := "HAB"
-  , exNumber := "(6b)"
-  }
+    form := .simpleForm, felicitous := true, exNumber := "(6b)" }
 
-/-- Ex. (7b): "#Max killed a rabbit repeatedly" — singular indefinite
-    under adverbial *repeatedly* forces same-object (same rabbit killed
-    over and over), which is pragmatically absurd. -/
+/-- (7b): the indefinite scopes over the adverbial's quantifier — the same
+rabbit killed repeatedly — which is absurd. -/
 def maxKilledRabbit : EnglishDatum :=
   { sentence := "#Max killed a rabbit repeatedly"
-  , form := .simpleForm
-  , felicitous := false
-  , operator := "HAB"
-  , exNumber := "(7b)"
-  }
+    form := .simpleForm, felicitous := false, exNumber := "(7b)" }
 
--- ── §6.1: *Would* context requirement ──
-
-/-- Ex. (2c): "#In the good old days, people would dress elegantly" —
-    *would* (Gen) is infelicitous even with a discourse context ("At the
-    opera"). Gen requires an explicit *in-sentence* restrictor (e.g., a
-    purpose clause "to go to the opera"), not just a contextual
-    presupposition. -/
+/-- (2c): *would* requires the restricting episodes to be explicit or
+already presupposed; the opera scene supplies no such restriction, so Gen
+goes unrestricted. -/
 def wouldDressNoContext : EnglishDatum :=
   { sentence := "#In the good old days, people would dress elegantly"
-  , form := .would
-  , felicitous := false
-  , operator := "GEN"
-  , exNumber := "(2c)"
-  }
+    form := .would, felicitous := false, exNumber := "(2c)" }
 
-/-- Ex. (2d): "In the good old days, people would dress elegantly to go
-    to the opera" — felicitous because "to go to the opera" provides the
-    restrictor for Gen. -/
+/-- (2d): the purpose clause supplies the restriction. -/
 def wouldDressWithContext : EnglishDatum :=
   { sentence := "In the good old days, people would dress elegantly to go to the opera"
-  , form := .would
-  , felicitous := true
-  , operator := "GEN"
-  , exNumber := "(2d)"
-  }
+    form := .would, felicitous := true, exNumber := "(2d)" }
 
--- ── §6.3.2: Actualization contrast ──
-
-/-- Ex. (42a): "She went to work by bus" — simple form, TRUE even
-    with a single episode. Can be read episodically or as a one-episode
-    habit. -/
+/-- (42a): true on a single actual episode — episodic, or Hab via
+`hab_without_actual_iteration`. -/
 def sheWentByBus : EnglishDatum :=
   { sentence := "She went to work by bus"
-  , form := .simpleForm
-  , felicitous := true
-  , operator := "episodic/HAB"
-  , exNumber := "(42a)"
-  }
+    form := .simpleForm, felicitous := true, exNumber := "(42a)" }
 
-/-- Ex. (42b): "She would go to work by bus" — *would* (GEN), TRUE
-    even with a single episode. Gen is about what happens in normal
-    worlds, not about actual iteration. -/
+/-- (42b): *would* is Gen — about the accessible worlds, not actual
+iteration — so a single episode suffices. -/
 def sheWouldGoByBus : EnglishDatum :=
   { sentence := "She would go to work by bus"
-  , form := .would
-  , felicitous := true
-  , operator := "GEN"
-  , exNumber := "(42b)"
-  }
+    form := .would, felicitous := true, exNumber := "(42b)" }
 
-/-- Ex. (42c): "She used to go to work by bus" — *used to*, FALSE
-    in single-episode context. *Used to* requires actualization: the
-    habit must be instantiated by multiple actual episodes. -/
+/-- (42c): false on a single episode. The chapter derives the actualization
+requirement from the aspect: the retrospective's extended reference interval
+characterizes a period, and only actualized episodes can characterize one. -/
 def sheUsedToGoByBus : EnglishDatum :=
   { sentence := "She used to go to work by bus"
-  , form := .usedTo
-  , felicitous := false
-  , operator := "HAB"
-  , exNumber := "(42c)"
-  }
+    form := .usedTo, felicitous := false, exNumber := "(42c)" }
 
--- ── §6.3.3/§6.4: Individual-level predicate contrast ──
-
-/-- Ex. (48a): "The London Bridge used to stand on the Thames" —
-    *used to* (Hab) is compatible with individual-level predicates because
-    Hab is an aspectual operator that selects for states. -/
+/-- (48a): *used to* is an aspectual operator selecting states, individual-
+level states included, so no habituality is needed here at all. -/
 def usedToStand : EnglishDatum :=
   { sentence := "The London Bridge used to stand on the Thames, now it stands in Arizona"
-  , form := .usedTo
-  , felicitous := true
-  , operator := "HAB"
-  , exNumber := "(48a)"
-  }
+    form := .usedTo, felicitous := true, exNumber := "(48a)" }
 
-/-- Ex. (48b): "*The London Bridge would stand on the Thames" —
-    *would* (Gen) is incompatible with individual-level predicates when the
-    subject is definite. Gen requires a restrictor, but a definite subject
-    cannot serve as one, and "stand on the Thames" (individual-level) is
-    incompatible with an episodic restrictor. Contrast with (47a), where
-    the indefinite singular "a French teacher" provides Gen's restrictor. -/
+/-- (48b): habitual *would* is Gen, and an individual-level predicate is
+incompatible with an episodic restrictor; a definite subject supplies no
+nominal one. -/
 def wouldStand : EnglishDatum :=
   { sentence := "*The London Bridge would stand on the Thames, now it stands in Arizona"
-  , form := .would
-  , felicitous := false
-  , operator := "GEN"
-  , exNumber := "(48b)"
-  }
+    form := .would, felicitous := false, exNumber := "(48b)" }
 
--- ── §6.4: *Would* vs *used to* puzzle ──
-
-/-- Ex. (3a)/(47a): "a French teacher would know Latin" — *would* (GEN)
-    accepts an indefinite singular subject because Gen takes a nominal
-    restrictor (the indefinite provides it). First introduced as (3a),
-    discussed fully in §6.4 as (47a). -/
+/-- (3a)/(47a): the indefinite singular provides Gen's restrictor — a
+restrictor of objects, not events — so *would* tolerates the individual-level
+predicate. -/
 def wouldKnowLatin : EnglishDatum :=
   { sentence := "a French teacher would know Latin"
-  , form := .would
-  , felicitous := true
-  , operator := "GEN"
-  , exNumber := "(3a)/(47a)"
-  }
+    form := .would, felicitous := true, exNumber := "(3a)/(47a)" }
 
-/-- Ex. (3b)/(47b): "*a French teacher used to know Latin" — *used to*
-    rejects an indefinite singular subject. *Used to* involves Hab, which
-    quantifies over *events* (not individuals). The indefinite singular
-    "a French teacher" cannot serve as a restrictor for Hab's event
-    quantification, unlike Gen which quantifies over individuals and can
-    bind the indefinite as a nominal restrictor. -/
+/-- (3b)/(47b): *used to* is aspectual, not quantificational, so the
+indefinite singular finds no operator below Gen; Gen must scope over the
+whole clause, (50b), predicating a past-cut-off habit of teachers in
+general — the wrong truth conditions. A bare plural instead denotes the kind
+and combines directly, (50a). -/
 def usedToKnowLatin : EnglishDatum :=
   { sentence := "*a French teacher used to know Latin"
-  , form := .usedTo
-  , felicitous := false
-  , operator := "HAB"
-  , exNumber := "(3b)/(47b)"
-  }
+    form := .usedTo, felicitous := false, exNumber := "(3b)/(47b)" }
 
-def englishData : List EnglishDatum :=
-  [ maryCigaretteAfterDinner, maryCigarette
-  , flowerGrows, maxKilledRabbit
-  , wouldDressNoContext, wouldDressWithContext
-  , sheWentByBus, sheWouldGoByBus, sheUsedToGoByBus
-  , usedToStand, wouldStand
-  , wouldKnowLatin, usedToKnowLatin ]
-
--- ═══ Key Predictions ═══
-
-/-- The restrictor contrast (4): "Mary smokes a cigarette after dinner" (✓)
-    vs "#Mary smokes a cigarette" (✗). Gen requires an explicit restrictor;
-    without one, Hab applies but the singular indefinite forces same-object. -/
+/-- (4): Gen with a restrictor is fine; Hab with a wide-scope indefinite is
+not — the derived halves are `gen_admits_fresh_objects` and
+`same_object_infelicity`. -/
 theorem restrictor_contrast :
-    maryCigaretteAfterDinner.felicitous = true ∧
-    maryCigarette.felicitous = false := by
-  exact ⟨rfl, rfl⟩
+    maryCigaretteAfterDinner.felicitous = true ∧ maryCigarette.felicitous = false :=
+  ⟨rfl, rfl⟩
 
-/-- The *would* restrictor contrast (2c-d): *would* (Gen) is infelicitous
-    without an explicit in-sentence restrictor (2c), but felicitous with
-    a purpose clause (2d). Same underlying mechanism as the (4a-b) contrast. -/
-theorem would_restrictor_contrast :
-    wouldDressNoContext.felicitous = false ∧
-    wouldDressWithContext.felicitous = true := by
-  exact ⟨rfl, rfl⟩
-
-/-- The restrictor requirement is consistent across forms: both the simple
-    form (4a-b) and *would* (2c-d) show Gen needs an explicit restrictor. -/
-theorem gen_restrictor_across_forms :
-    maryCigaretteAfterDinner.felicitous = true ∧
-    maryCigarette.felicitous = false ∧
-    wouldDressWithContext.felicitous = true ∧
-    wouldDressNoContext.felicitous = false := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
-
-/-- The same-object effect (6b, 7b): singular indefinites under Hab force
-    a same-object reading. When pragmatically implausible (7b), the sentence
-    is infelicitous.
-
-    This is the English counterpart of [del-prete-2013]'s SOE in Italian.
-    Del Prete's "Gianni leggeva un libro di filosofia" (HAB blocked, SOE
-    implausible) parallels B&D's "#Max killed a rabbit repeatedly." -/
+/-- (6b)/(7b): the same-object reading decides felicity — plausible for the
+flower, absurd for the rabbit. [del-prete-2013]'s Italian SOEs parallel
+these judgments. -/
 theorem sameObjectParallel :
-    flowerGrows.felicitous = true ∧      -- same-object plausible
-    maxKilledRabbit.felicitous = false := by  -- same-object implausible
-  exact ⟨rfl, rfl⟩
+    flowerGrows.felicitous = true ∧ maxKilledRabbit.felicitous = false :=
+  ⟨rfl, rfl⟩
 
-/-- The actualization contrast (42): simple form and *would* are true
-    even with a single episode; *used to* requires actualized iteration. -/
+/-- (42): one actual episode verifies the simple form and *would* but not
+*used to*. -/
 theorem actualization_contrast :
-    sheWentByBus.felicitous = true ∧
-    sheWouldGoByBus.felicitous = true ∧
-    sheUsedToGoByBus.felicitous = false := by
-  exact ⟨rfl, rfl, rfl⟩
+    sheWentByBus.felicitous = true ∧ sheWouldGoByBus.felicitous = true ∧
+      sheUsedToGoByBus.felicitous = false :=
+  ⟨rfl, rfl, rfl⟩
 
-/-- Actualization requirement matches function: *used to* requires
-    actualization; simple form and *would* do not. -/
-theorem actualization_matches_form :
-    requiresActualization .usedTo = true ∧
-    requiresActualization .simpleForm = false ∧
-    requiresActualization .would = false := by
-  exact ⟨rfl, rfl, rfl⟩
-
-/-- Individual-level predicate contrast (48): *used to* accepts individual-
-    level predicates (it selects states); *would* rejects them when the
-    subject is definite (Gen needs a restrictor the definite can't provide). -/
+/-- (48): *used to* selects individual-level states; habitual *would* cannot
+restrict Gen with them. -/
 theorem individual_level_contrast :
-    usedToStand.felicitous = true ∧
-    wouldStand.felicitous = false := by
-  exact ⟨rfl, rfl⟩
+    usedToStand.felicitous = true ∧ wouldStand.felicitous = false :=
+  ⟨rfl, rfl⟩
 
-/-- The *would* vs *used to* puzzle (3)/(47): *would* accepts an indefinite
-    singular subject; *used to* does not. This follows from *would* involving
-    Gen (which can bind the indefinite as a nominal restrictor) while *used to*
-    involves Hab (which quantifies over events, not individuals). -/
+/-- (3)/(47): the indefinite singular restricts Gen under *would* but has no
+host under aspectual *used to*. -/
 theorem would_vs_usedTo_puzzle :
-    wouldKnowLatin.felicitous = true ∧
-    usedToKnowLatin.felicitous = false := by
-  exact ⟨rfl, rfl⟩
-
-/-- (47) and (48) together show that *would*'s acceptability depends on
-    whether Gen's restrictor can be filled: indefinite singular fills it
-    (47a ✓), definite subject with individual-level predicate does not (48b ✗).
-    Meanwhile *used to* is the mirror: rejects indefinite singular (47b ✗)
-    but accepts individual-level predicates freely (48a ✓). -/
-theorem would_usedTo_complementarity :
-    wouldKnowLatin.felicitous = true ∧     -- would + indef. sing. ✓
-    wouldStand.felicitous = false ∧         -- would + def. + indiv-level ✗
-    usedToKnowLatin.felicitous = false ∧   -- used to + indef. sing. ✗
-    usedToStand.felicitous = true := by     -- used to + indiv-level ✓
-  exact ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Only the simple form admits perfective aspect; periphrastic forms
-    are imperfective only (Table (41)). -/
-theorem perfective_only_simple :
-    admitsPerfective .simpleForm = true ∧
-    admitsPerfective .usedTo = false ∧
-    admitsPerfective .would = false := by
-  exact ⟨rfl, rfl, rfl⟩
-
-/-- *Would* lacks retrospective perspective; the other forms have it
-    (Table (41)). -/
-theorem would_no_retrospective :
-    hasRetrospective .would = false ∧
-    hasRetrospective .simpleForm = true ∧
-    hasRetrospective .usedTo = true := by
-  exact ⟨rfl, rfl, rfl⟩
-
--- ═══ GEN-side skeleton ═══
-
-/-- GEN's denotation reduces to the canonical relativized restricted universal
-    `Quantification.everyOn`, with restrictor conjoined from a normalcy
-    predicate and a kind/restrictor predicate.
-
-    HAB does *not* admit a parallel reduction: B&D §6.2.1 argue HAB is
-    a modalized *existential* over event sums (`∃x [cigarette(x) & Hab e
-    smoke(e, Mary, x)]`), not a universal over a domain. The genuinely
-    distinctive existential force is recorded by
-    `habConfig.force = .existential`; there is no `everyOn`-style
-    derivation theorem for HAB. -/
-theorem gen_skeleton
-    (sits : List Situation) (normal restrictor scope : Situation → Bool) :
-    traditionalGEN sits normal restrictor scope =
-    everyOn sits.toFinset (fun s => (normal s && restrictor s) = true)
-      (fun s => scope s = true) := rfl
+    wouldKnowLatin.felicitous = true ∧ usedToKnowLatin.felicitous = false :=
+  ⟨rfl, rfl⟩
 
 end BonehDoron2013
