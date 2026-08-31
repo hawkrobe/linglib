@@ -2,7 +2,7 @@ import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Polarity.Strength
 import Linglib.Logic.Natural.Soundness
 import Linglib.Logic.Natural.Strawson.Soundness
-import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.Additivity
 import Linglib.Semantics.Quantification.Signatures
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Counting

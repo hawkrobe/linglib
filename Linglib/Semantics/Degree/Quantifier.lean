@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Basic
-import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.Additivity
 
 /-!
 # Clausal comparatives: set and max standards
@@ -15,6 +15,8 @@ special case.
 -/
 
 namespace Degree
+
+open NaturalLogic
 
 
 /-! ### Set-of-degrees comparative

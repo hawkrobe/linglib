@@ -1,5 +1,5 @@
 import Mathlib.Order.Monotone.Defs
-import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.Additivity
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
