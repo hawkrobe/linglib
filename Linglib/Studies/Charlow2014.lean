@@ -4,7 +4,7 @@ import Linglib.Semantics.Composition.Cont
 import Linglib.Data.Examples.Charlow2014
 
 /-!
-# [charlow-2014]: On the Semantics of Exceptional Scope
+# Charlow 2014: on the semantics of exceptional scope
 
 Charlow's dissertation: exceptional scope is *side effects taking scope after
 evaluation*. Dynamic semantics (a stack-based scheme in the spirit of
@@ -53,6 +53,20 @@ untyped stack and are not formalised; the stack here is `List E`.
 * `exceptional_neg`, `exceptional_cond`, `exceptional_feeds_binding`,
   `brc_derivation` — exceptional scope over negation and conditionals, feeding
   anaphora, and the Binder Roof Constraint.
+
+## References
+
+* [charlow-2014]
+* [dekker-1994]
+* [liang-hudak-jones-1995]
+* [wadler-1994]
+* [danvy-filinski-1990]
+* [rooth-partee-1982]
+* [rooth-1985]
+* [brasoveanu-farkas-2011]
+* [schwarz-2001]
+* [shan-2002]
+* [barker-shan-2014]
 * `monadLift_layered` — higher-order `M (M Prop)` programs unfold post-evaluation,
   giving selective exceptional scope.
 * `orElse_bind`, `or_pure_pure` — program disjunction and its BRC immunity.
