@@ -1488,8 +1488,8 @@ import Linglib.Processing.Psychophysics.SignalDetection
 import Linglib.Processing.Psychophysics.Thurstone
 import Linglib.Processing.VisualWorld
 import Linglib.Core.Order.AntiAdditive
-import Linglib.Semantics.Alternatives.AltMeaning
 import Linglib.Semantics.Alternatives.AsymStronger
+import Linglib.Semantics.Alternatives.Basic
 import Linglib.Semantics.Alternatives.Competition
 import Linglib.Semantics.Alternatives.Extremum
 import Linglib.Semantics.Alternatives.Lexical
