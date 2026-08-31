@@ -28,7 +28,6 @@ morphosyntactic extension of [assmann-etal-2023].
 
 namespace Buring2015
 
-open Alternatives
 open Focus (weakBanned strongAllowed licensedFocusValue)
 
 /-- Transitive-verb meanings. -/
@@ -45,11 +44,11 @@ inductive Obj where
 def vt (r : Rel) : Obj → Rel × Obj := fun o => (r, o)
 
 /-- *ordered*, with its transitive alternatives. -/
-def orderedM : AltMeaning (Obj → Rel × Obj) :=
-  ⟨vt .ordered, [vt .ordered, vt .paidFor]⟩
+def orderedM : WithAlternatives (Obj → Rel × Obj) :=
+  ⟨vt .ordered, {vt .ordered, vt .paidFor}⟩
 
 /-- *breakfast*, with its object alternatives. -/
-def breakfastM : AltMeaning Obj := ⟨.breakfast, [.breakfast, .lunch]⟩
+def breakfastM : WithAlternatives Obj := ⟨Obj.breakfast, {Obj.breakfast, Obj.lunch}⟩
 
 private theorem vt_ne : vt .paidFor ≠ vt .ordered := fun h => by
   have := congrFun h .breakfast
@@ -62,18 +61,13 @@ theorem weakBanned_eq :
     weakBanned orderedM breakfastM = {(Rel.paidFor, Obj.breakfast)} := by
   ext ⟨r, o⟩
   simp only [weakBanned, Set.mem_seq_iff, Set.mem_sdiff, Set.mem_singleton_iff,
-    AltMeaning.mem_aSet, orderedM, breakfastM]
+    Set.mem_insert_iff, orderedM, breakfastM]
   constructor
-  · rintro ⟨f, ⟨hf, hne⟩, a, rfl, heq⟩
-    rcases List.mem_cons.mp hf with rfl | hf'
+  · rintro ⟨f, ⟨rfl | rfl, hne⟩, a, rfl, heq⟩
     · exact absurd rfl hne
-    rcases List.mem_cons.mp hf' with rfl | hf''
     · exact heq.symm
-    · exact nomatch hf''
   · intro h
-    refine ⟨vt .paidFor, ⟨List.mem_cons_of_mem _ (List.mem_cons_self ..), vt_ne⟩,
-      .breakfast, rfl, ?_⟩
-    rw [h]; rfl
+    exact ⟨vt .paidFor, ⟨Or.inr rfl, vt_ne⟩, .breakfast, rfl, by rw [h]; rfl⟩
 
 /-- Default *ordered BREAKfast* bans the verb-focus target *paid for breakfast*: it varies the weak
 daughter over given *breakfast*. -/
@@ -119,16 +113,10 @@ theorem licensed_eq :
   ext ⟨r, o⟩
   rw [licensedFocusValue, weakBanned_eq]
   simp only [Set.mem_sdiff, Set.mem_singleton_iff, Set.mem_ofPred_eq, Set.mem_seq_iff,
-    AltMeaning.mem_aSet, orderedM, breakfastM]
+    Set.mem_insert_iff, orderedM, breakfastM]
   constructor
   · rintro ⟨-, hne⟩; exact hne
   · intro hne
-    refine ⟨⟨vt r, ?_, o, ?_, rfl⟩, hne⟩
-    · cases r
-      · exact List.mem_cons_self ..
-      · exact List.mem_cons_of_mem _ (List.mem_cons_self ..)
-    · cases o
-      · exact List.mem_cons_self ..
-      · exact List.mem_cons_of_mem _ (List.mem_cons_self ..)
+    exact ⟨⟨vt r, by cases r <;> simp, o, by cases o <;> simp, rfl⟩, hne⟩
 
 end Buring2015

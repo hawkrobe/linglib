@@ -98,7 +98,7 @@ front, …) lives in the cell's data row. The antecedent is the canonical
 engine (`pairAnswer`); `ctx_resolves` is the uniform full-resolution
 fact. Ex-situ variants are interpreted at the base structure (fronting
 is A'-movement for the paper, and alternatives do not distribute
-through abstraction: `PredAbs AltMeaning = ⟨none⟩`). -/
+through abstraction: `PredAbs WithAlternatives = ⟨none⟩`). -/
 
 /-- The two-point answer domain of a cell's mini-scenario. -/
 inductive Alt | ans | alt
@@ -108,14 +108,14 @@ private def ctx (u : Use) : Antecedent Alt :=
   Use.model {Alt.ans} {Alt.alt} u
 
 /-- The composed answer of the two-point scenario. -/
-private def answer : Alternatives.AltMeaning (Set Alt) :=
+private def answer : WithAlternatives (Set Alt) :=
   pairAnswer Alt.ans Alt.alt
 
 /-- Every cell's context fully resolves against the composed answer —
 all squiggle clauses, plus the correction clause for the corrective
 cells. One semantics, four pragmatic uses. -/
 theorem ctx_resolves (u : Use) :
-    (ctx u).Resolves answer.oValue answer.aSet :=
+    (ctx u).Resolves answer.ordinary answer.alternatives :=
   use_model_resolves (d := Alt.ans) (d' := Alt.alt) nofun u
 
 /-! ## Exhaustive focus (§3.2.5)
@@ -128,7 +128,7 @@ ex-situ *only BOOKS* alike. -/
 /-- The exhaustified answer: strong-theory *only* over the scenario's
 resolved contrast set. -/
 private def exhAnswer (u : Use) : Set Alt :=
-  onlyVia (ctx u).contrastSet answer.oValue
+  onlyVia (ctx u).contrastSet answer.ordinary
 
 /-- The exhaustified answer computes to the bare true answer, uniformly
 across the four uses: exhaustification consumes the resolved contrast
