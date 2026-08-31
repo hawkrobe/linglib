@@ -31,33 +31,51 @@ import Linglib.Fragments.Turkish.Case
 import Linglib.Fragments.Yakut.Case
 
 /-!
-# Caha (2009) — The Nanosyntax of Case
-[caha-2009] [blake-1994]
+# Caha 2009: the nanosyntax of case
 
-Caha's central proposal ([caha-2009] §1.1): the morphosyntactic
-representation of each case literally *contains* the representations
-of all cases below it on the universal hierarchy:
-`[[[[[ NOM ] ACC ] GEN ] DAT ] P ]`. This study file defines the
-Caha-specific containment predicate `RespectsCahaContainment` and
-applies it to each Fragment case inventory; Universal Contiguity
-itself is derived from the shared spellout engine
-(`universalContiguity_iff_spellable`).
+Each case's morphosyntactic representation contains the representations of every case below it on
+the universal sequence — nominative inside accusative inside genitive inside dative inside the
+prepositional cases. Two consequences are formalized here. An inventory must be downward closed
+under that containment: a language with a dative has a genitive, and so on down. And within a
+paradigm the cells sharing a form must be contiguous in the sequence, which is not an independent
+axiom but the generative capacity of nanosyntactic spellout — lexical entries competing under the
+Superset Principle realize exactly the contiguous patterns.
 
-Caha's **Universal Case sequence** is NOM – ACC – GEN – DAT – INST –
-COM ([caha-2009] (10b), p. 10); the Russian-specific sequence
-inserts a "prepositional" between GEN and DAT ([caha-2009] (16),
-p. 12). Vocatives are explicitly excluded from Caha's scope
-([caha-2009] §1.1 fn. 4, p. 9). For the substrate's encoding of
-this hierarchy and how it relates to Caha's actual sequence, see
-`Syntax/Case/Order.lean`.
+Every case inventory in the Fragments is downward closed but two, and both exceptions are
+principled: Dargwa is ergative, and containment is keyed to accusative alignment, while Hungarian
+has no morphological genitive, the textbook surface counterexample to the hierarchy, which the
+literature resolves by treating its dative as expressing the possessor. Finnish looks like a third
+but is not: its locative richness is on the orthogonal directional dimension, so on the nominal
+chain it has only nominative, accusative and genitive.
 
-Of 22 Fragment case inventories, 19 conform; the three principled
-exceptions are: Dargwa (ergative — Caha is keyed to accusative
-alignment), Finnish (DAT-less, ALL → DAT extension per [blake-1994]
-Ch. 6), and Hungarian (GEN-less, dative-as-possessor syncretism per
-[caha-2008] §5).
+The paradigm-shape half covers the four Slavic languages analysed in detail. The syncretism shapes
+they attest are collected once and checked for contiguity, and each language's section records
+which of them it attests, together with the violations Caha acknowledges and treats as
+phonological conflation or accidental homophony.
+
+## Main definitions
+
+* `RespectsCahaContainment` — downward closure of an inventory under containment
+* `Slavic.Paradigm`, `Slavic.IsContiguous` — a declension's syncretism shape and contiguity
+* `Slavic.SyncretismPatterns.contiguousShapes`, `nonContiguousShapes` — the shapes Caha's Slavic
+  data attests
+
+## Main results
+
+* `respectsCahaContainment_iff_isLowerSet` — the containment condition is an order-theoretic
+  closure property
+* `conformers_respectCaha`, `dargwa_not_respectsCaha`, `hungarian_not_respectsCaha` — the
+  inventories and the two principled exceptions
+* `Slavic.universalContiguity_iff_spellable` — contiguity is what the spellout engine generates
+* the per-language `all_attested_contiguous` and `Counterexamples.all_attested_not_contiguous`
+
+## References
+
+* [caha-2009]
+* [caha-2008]
+* [blake-1994]
+* [pantcheva-2011]
 -/
-
 namespace Caha2009
 
 open scoped Case.Caha
@@ -73,9 +91,7 @@ the downward-closure condition is vacuous. On-hierarchy `c` of rank
 `r` forces every lower on-hierarchy case (ranks `0, …, r-1`) into
 `inv`, which is exactly the prefix-contiguity Caha demands.
 
-Mathlib's `IsLowerSet` would suffice for the same content; the
-Caha-named predicate is kept here for grep-ability and because the
-substantive claim is Caha-specific. -/
+-/
 
 def RespectsCahaContainment (inv : Finset Case) : Prop :=
   ∀ c ∈ inv, ∀ d, d ≤ c → d ∈ inv
@@ -108,23 +124,13 @@ theorem slavicCore_respectsCaha :
 theorem slavicSeven_respectsCaha :
     RespectsCahaContainment Slavic.Case.sevenCaseInventory := by decide
 
-/-! ## § 1: Conformers
+/-! ## Inventories
 
-Every Fragment case inventory below is downward-closed under Caha's
-containment hierarchy. Checked as one `decide` over a study-local sample
-(the field-by-field consumer pattern) rather than one named theorem per
-language: no codebase consumer referenced the individual lemmas, and a new
-conforming language is now one list entry, not a new theorem. The three
-*principled* exceptions are in § 3.
+The Slavic inventories each alias one core inventory, so their conformance is structural rather
+than coincidental; the list covers every modern Slavic language with productive case morphology,
+Bulgarian and Macedonian having lost noun case entirely. -/
 
-The ten Slavic inventories each `abbrev`-alias `Slavic.Case.coreInventory`
-(`slavicCore_respectsCaha`), so their conformance is structural, not
-coincidental — the list covers every modern Slavic language with productive
-case morphology (Bulgarian and Macedonian, which lost noun case, have no
-`Case.lean` file). -/
-
-/-- The conforming Fragment case inventories. Quantified over by
-    `conformers_respectCaha`; extend by adding a `caseInventory` here. -/
+/-- The conforming Fragment case inventories. -/
 def conformers : List (Finset Case) :=
   [ -- non-Slavic
     German.Case.caseInventory, Greek.Case.caseInventory, Hindi.Case.caseInventory,
@@ -189,10 +195,7 @@ for all four Slavic languages Caha analyses in detail. Distinct
 shapes are factored into `Slavic.SyncretismPatterns` (§ 4.1) so
 per-language sections are docstring + attestation lists.
 
-Per-language sub-sections appear in encoding order (Serbian, Slovene,
-Ukrainian, Czech), not Caha's chapter order (which has Czech §8.3.3
-before Ukrainian §8.3.4) — file structure follows the order shapes
-were added; cross-Slavic narrative closes in § 4.6. -/
+Distinct shapes are collected once below, so each language's section is its attestation list. -/
 
 namespace Slavic
 
@@ -354,28 +357,23 @@ def nomInsExtremeEnds : Paradigm
 def accInsRestricted : Paradigm
   | 0 => 0 | 1 => 1 | 2 => 2 | 3 => 3 | 4 => 3 | 5 => 1
 
-/-! ### Contiguity / non-contiguity proofs (decide-checked once per
-shape; per-language `attestedShapes` lists below inherit these). -/
+/-! ### Which shapes are contiguous -/
 
-theorem animMascSg_contiguous : IsContiguous animMascSg := by decide
-theorem inanimMascSg_contiguous : IsContiguous inanimMascSg := by decide
-theorem femAStemSg_contiguous : IsContiguous femAStemSg := by decide
-theorem femIStemSg_contiguous : IsContiguous femIStemSg := by decide
-theorem plDistinct_contiguous : IsContiguous plDistinct := by decide
-theorem plNomAcc_contiguous : IsContiguous plNomAcc := by decide
-theorem dualNomAccDatIns_contiguous : IsContiguous dualNomAccDatIns := by decide
-theorem threePairs_contiguous : IsContiguous threePairs := by decide
-theorem adjPlNomAccGenPrep_contiguous : IsContiguous adjPlNomAccGenPrep := by decide
-theorem nomAccGenTripleSg_contiguous : IsContiguous nomAccGenTripleSg := by decide
-theorem genPrepDatTripleSg_contiguous : IsContiguous genPrepDatTripleSg := by decide
-theorem nomAccObliqueQuadSg_contiguous : IsContiguous nomAccObliqueQuadSg := by decide
-theorem nomAccObliquesDistinct_contiguous : IsContiguous nomAccObliquesDistinct := by decide
+/-- The syncretism shapes that respect Universal Contiguity. -/
+def contiguousShapes : List Paradigm :=
+  [animMascSg, inanimMascSg, femAStemSg, femIStemSg, plDistinct, plNomAcc, dualNomAccDatIns,
+   threePairs, adjPlNomAccGenPrep, nomAccGenTripleSg, genPrepDatTripleSg, nomAccObliqueQuadSg,
+   nomAccObliquesDistinct]
 
-theorem prepInsSkipDat_not_contiguous : ¬ IsContiguous prepInsSkipDat := by decide
-theorem nomInsExtremeEnds_not_contiguous : ¬ IsContiguous nomInsExtremeEnds := by decide
-theorem accInsRestricted_not_contiguous : ¬ IsContiguous accInsRestricted := by decide
-theorem accGenPrepInsSkipDat_not_contiguous : ¬ IsContiguous accGenPrepInsSkipDat := by decide
-theorem streetDoubleABA_not_contiguous : ¬ IsContiguous streetDoubleABA := by decide
+/-- The attested shapes that violate it, which Caha treats as phonological conflations of distinct
+representations or as accidental homophony. -/
+def nonContiguousShapes : List Paradigm :=
+  [prepInsSkipDat, nomInsExtremeEnds, accInsRestricted, accGenPrepInsSkipDat, streetDoubleABA]
+
+theorem contiguousShapes_contiguous : ∀ p ∈ contiguousShapes, IsContiguous p := by decide
+
+theorem nonContiguousShapes_not_contiguous :
+    ∀ p ∈ nonContiguousShapes, ¬ IsContiguous p := by decide
 
 end SyncretismPatterns
 
@@ -391,23 +389,20 @@ namespace Refutations
 def nomGenSkipAcc : Paradigm
   | 0 => 0 | 1 => 1 | 2 => 0 | 3 => 9 | 4 => 9 | 5 => 9
 
-theorem nomGenSkipAcc_not_contiguous :
-    ¬ IsContiguous nomGenSkipAcc := by decide
-
 /-- PREP=INS with distinct DAT — would skip the intervening DAT. -/
 def hypotheticalPrepInsSkipDat : Paradigm
   | 0 => 9 | 1 => 9 | 2 => 9 | 3 => 0 | 4 => 1 | 5 => 0
 
-theorem hypotheticalPrepInsSkipDat_not_contiguous :
-    ¬ IsContiguous hypotheticalPrepInsSkipDat := by decide
-
-/-- NOM=DAT with all 3 cells between distinct from NOM — long-range
-    ABA spanning four positions. -/
+/-- NOM=DAT with the three cells between distinct from NOM — a long-range violation spanning four
+positions. -/
 def nomDatSkipMiddle : Paradigm
   | 0 => 0 | 1 => 1 | 2 => 2 | 3 => 3 | 4 => 0 | 5 => 9
 
-theorem nomDatSkipMiddle_not_contiguous :
-    ¬ IsContiguous nomDatSkipMiddle := by decide
+/-- The shapes Caha predicts no language has. -/
+def refutedShapes : List Paradigm :=
+  [nomGenSkipAcc, hypotheticalPrepInsSkipDat, nomDatSkipMiddle]
+
+theorem refutedShapes_not_contiguous : ∀ p ∈ refutedShapes, ¬ IsContiguous p := by decide
 
 end Refutations
 
@@ -597,7 +592,8 @@ def attestedShapes : List Paradigm :=
    SyncretismPatterns.inanimMascSg,         -- machine stroj sg
    SyncretismPatterns.threePairs,           -- (67g+h+j) bundled in 'both' oba
    SyncretismPatterns.adjPlNomAccGenPrep,   -- (67g) good adj pl m dobrý, that f.pl ty
-   SyncretismPatterns.nomAccObliquesDistinct]  -- (67a) widespread NOM=ACC: window okno sg, machine stroj pl, castle kost pl
+   -- (67a) widespread NOM=ACC: window okno sg, machine stroj pl, castle kost pl
+   SyncretismPatterns.nomAccObliquesDistinct]
 
 theorem all_attested_contiguous :
     ∀ p ∈ attestedShapes, IsContiguous p := by decide
@@ -631,33 +627,14 @@ end Counterexamples
 
 end Czech
 
-/-! ### § 4.6: Cross-Slavic summary (Caha §8.3.5, p. 271)
+/-! ### Across the Slavic languages
 
-Caha (73) p. 271 presents a unified table: all five investigated
-Slavic languages (Russian, Serbian, Slovene, Czech, Ukrainian)
-share the same Universal Adjacency template
-NOM-ACC-GEN-PREP-DAT-INS. Non-contiguous attestations are addressed
-as phonological conflations of distinct underlying representations
-(most cases) or accidental homophonies in restricted niches (a few).
-
-All four detailed sub-sections (§§ 4.2-4.5) are now formalized:
-Serbian (no counterexamples — "poster child"), Slovene (3 in (18)
-p. 241), Czech (5 in (67) p. 266 — the most permissive language),
-Ukrainian (1 in (71) p. 269). Per-language `all_attested_contiguous`
-lemmas establish UC for each; per-language
-`Counterexamples.all_attested_not_contiguous` lemmas confirm the
-predicate has bite on Caha-acknowledged violators.
-
-The cross-Slavic claim is documented here rather than asserted as a
-bundled `∧`-theorem: per-language lemmas already carry the
-substantive content, and bundling them was the `caha_poster_child`
-smell prior audits twice removed.
-
-Russian is implicit: Caha (16) p. 12 establishes the same
-NOM-ACC-GEN-PREP-DAT-INS sequence for Russian as for Serbian
-(7) p. 238, with paradigm shapes shared (Russian's data appears
-in §§1.1, 5.1-5.4 as Caha's running example, but §8.3.x focuses on
-the four other Slavic languages). -/
+The five languages investigated share one template, nominative – accusative – genitive –
+prepositional – dative – instrumental, and the attestations that violate it are treated as
+phonological conflations of distinct representations or, in a few restricted niches, as accidental
+homophony. Serbian attests none, Ukrainian one, Slovene three, and Czech, the most permissive,
+five. Russian is the running example of the earlier chapters rather than a section of its own, and
+takes the same sequence. -/
 
 end Slavic
 
