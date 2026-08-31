@@ -118,11 +118,10 @@ theorem no_other_violations (c : Cat) (h : c ≠ .CP) (h' : c ≠ AdvP) :
   rcases coordExtension_exhaustive c hc with rfl | rfl
   exacts [h rfl, h' rfl]
 
-/-- The permitted violations are exactly the two the surveys tested: a clause where a noun phrase
-is selected, and a non-*ly* adverb where an adjective is selected. -/
+/-- The two violations the surveys tested are the two the earlier paper derives: a clause where a
+noun phrase is selected, and a non-*ly* adverb where an adjective is selected. -/
 theorem surveyed_violations :
-    permittedViolations = [.cpAsNp, .advAsAdj] ∧
-      SelectionViolationType.cpAsNp.cats = (.CP, NP) ∧
-      SelectionViolationType.advAsAdj.cats = (AdvP, AdjP) := ⟨rfl, rfl, rfl⟩
+    SelectionViolationType.cpAsNp.cats = (.CP, NP) ∧
+      SelectionViolationType.advAsAdj.cats = (AdvP, AdjP) := ⟨rfl, rfl⟩
 
 end Bruening2025
