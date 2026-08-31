@@ -1,681 +1,263 @@
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
-import Linglib.Fragments.Japanese.Prosody
-import Linglib.Phonology.Constraints.Lift
-import Linglib.Studies.Steriade1997
-import Linglib.Studies.AlbrightHayes2003
+import Linglib.Core.Probability.LogitChoice
+import Linglib.Phonology.Constraints.Defs
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.Fin.VecNotation
 
 /-!
-# Breiss, Katsuda & Kawahara (2026): Token frequency modulates optional paradigm uniformity in Japanese voiced velar nasalisation
-[breiss-katsuda-kawahara-2026] [mccarthy-2005] [steriade-1997]
-[kenstowicz-1996] [ito-mester-1996] [ito-mester-2003] [hibiya-1995]
-[coetzee-pater-2008] [paster-2019]
+# Breiss, Katsuda and Kawahara 2026: modelling frequency-conditioned paradigm uniformity
 
-The Japanese velar /g/ → [ŋ] alternation in N1+N2 nominal compounds is
-*optional*: speakers vacillate between [g] and [ŋ] for many compounds,
-and the rate of nasalisation varies across compounds, items, and
-speakers. The paper's central architectural claim is that this
-optionality is **modulated by token frequency** through **two
-opposite-sign channels**:
+This file formalizes the Voting Bases analysis of Japanese voiced velar nasalisation in
+[breiss-katsuda-kawahara-2026b]: a MaxEnt grammar with one markedness constraint against
+word-internal [g] and two faithfulness constraints, to the listed free-standing N2 and to the listed
+whole compound, whose violations are scaled by the resting activation of the base they are assessed
+against ([breiss-2024]). The data are the frequency effects of [breiss-katsuda-kawahara-2026a] as
+the modelling article recapitulates them: in compounds with a free N2 nasalisation is variable, more
+likely the more frequent the compound and less likely the more frequent the free N2, in existing and
+novel compounds alike; with a bound N2 it is exceptionless.
 
-- High token frequency of **N2 as a free wordform** *decreases* the
-  rate of nasalisation (negative regression coefficient on N2 token
-  frequency). The free-form [g] is a more accessible paradigm exemplar;
-  paradigm-uniformity pressure preserves it, suppressing [ŋ].
-- High token frequency of **the compound itself** *increases* the rate
-  of nasalisation (positive regression coefficient on compound token
-  frequency). More-attested compounds drift further from their
-  constituent forms.
+The model derives the opposite signs of the two effects from one mechanism. Activation strengthens
+faithfulness to a base; the free N2 is listed with the [g] it shows word-initially, and an existing
+compound is listed, by Lexicon Optimisation, with its nasalised medial; bound N2s and novel
+compounds contribute no base, so their faithfulness constraints are inert. The output–output
+account of [breiss-katsuda-kawahara-2021] fixed the direction of each effect by stipulation, and the
+traditional account ([ito-mester-1996], [ito-mester-2003]) has markedness drive the alternation,
+whereas the fitted grammar puts the markedness weight at zero.
 
-Both effects only apply when N2 is morphologically **free**. When N2 is
-**bound** (occurs only inside compounds — no surface [g] paradigm
-exemplar to anchor to), nasalisation is categorically obligatory. The
-two-channel frequency story collapses to a single-channel (markedness-
-only) story in the bound case.
+## Main definitions
 
-## Examples from the paper
+* `Base`, `Item` — a listed allomorph with its resting activation; a compound's optional N2 and
+  whole-compound bases
+* `con`, `scaledWeights`, `pNasal` — the three constraints, the activation-scaled weights, and the
+  MaxEnt probability of nasalisation
 
-Taken verbatim from [breiss-katsuda-kawahara-2026]:
+## Main results
 
-- (1a) /haigan/ ~ /haiŋan/ "lung cancer" — N2 'cancer' (癌) is free.
-- (1b) /noogeka/ ~ /nooŋeka/ "brain surgery" — N2 'surgery' (外科) is free.
-- (2a) /dokuga/ ~ /dokuŋa/ "poison moth" — N2 'moth' (蛾) is free.
-- (2b) /dokuŋa/ \*[dokuga] "poison fang" — N2 'fang' (牙) is **bound**.
-- (3) /gaʒoo/ "main castle" — initial-position [g] never nasalises.
+* `pNasal_eq_sigmoid` — nasalisation probability is the sigmoid of the markedness weight plus the
+  weighted pulls of the bases, each signed by its listed velar
+* `existing_strictAnti_n2`, `existing_strictMono_compound`, `novel_strictAnti_n2` — the two
+  frequency effects, with their signs, in existing and novel compounds
+* `novel_lt_existing`, `bound_half_le` — a stored compound adds nasalisation; a bound-N2 compound
+  nasalises at least half the time, whatever its frequency
+* `zero_markedness_iff` — with the markedness weight at zero, nasalisation wins exactly when the
+  compound base outpulls the N2 base
+* `tableau7`, `tableau8`, `tableau9` — the schematic tableaux
 
-The minimal pair (2a)/(2b) is the paper's central piece of evidence:
-two compounds with identical surface form */dokuga/* but different
-free/bound status of the segmentally-identical N2 yield categorically
-different nasalisation behaviour.
+## References
 
-## Connection to Paradigm Uniformity
-
-The architecture is **paradigm uniformity (PU) + frequency-conditioned
-strength**. The compound and its free N2 stand in a paradigm relation;
-PU prefers their shared segments to be alike. The PU pressure is
-*modulated* — not just on/off — by the token frequency of the N2.
-This puts the paper at the intersection of:
-
-- [kenstowicz-1996] *Base-Identity / Uniform Exponence* — the compound's
-  resemblance to its independently-attested free N2 is a Base-Identity effect,
-  the classical antecedent of the symmetric paradigm-uniformity lift.
-- [mccarthy-2005] (PU as the symmetric pairwise lift over members;
-  see `Studies/McCarthy2005.lean`).
-- [steriade-1997] *Lexical Conservatism* (PU pressure is anchored
-  on attested wordforms; see `Studies/Steriade1997.lean`).
-- [coetzee-pater-2008] *Frequency-scaled weights* (the modulation
-  channel — token-frequency drives a continuous weight; formalised as
-  `scaledWeight` below).
-
-The previous constraint-based account of [ito-mester-1996] /
-[ito-mester-2003] treats nasalisation as the result of a
-high-ranked markedness constraint; [hibiya-1995]'s sociolinguistic
-study established the variable, lexically-modulated character of the
-alternation. BKK 2026's contribution is the **sign of the two
-frequency channels** and the **architectural commitment** that the
-two-direction story collapses to one direction in the bound case.
-
-## Adjudication among rival frequency theories (the paper's §5)
-
-The companion modelling paper (Breiss, Katsuda & Kawahara,
-lingbuzz/009508) fits a MaxEnt grammar with [steriade-1997]'s
-Lexical Conservatism. We do not formalise the fitting routine here.
-The paper's §5 weighs four rival accounts of token frequency in the
-grammar; only those locating it at the individual morpheme (here N2)
-survive the novel-compound data of Experiment 2:
-
-- **ScaledWeights** ([coetzee-pater-2008]): consistent with the
-  data, with separate slopes per channel (positive on cpd freq,
-  negative on N2 freq).
-- **RepresentationStrength** ([moore-cantwell-2021]): consistent —
-  high N2 activation preserves the boundary segment.
-- **UseListed** ([zuraw-2000]): **ruled out** by Experiment 2
-  (novel compounds show the same N2-frequency gradient as familiar
-  ones) — see `novel_compounds_show_n2_gradient` below.
-- **Indexed constraints** ([pater-2010]): in principle a
-  multi-stratum approximation could fit, but parsimony favours the
-  continuous accounts.
-
-[paster-2019]'s critique of "counting" patterns in phonology is
-relevant to BKK Experiment 2's finding that **N2 length** (not total
-compound length) matters — undermining a mora-counting analysis and
-favouring a paradigm-anchored account.
-
-## Boundary
-
-- We formalise the qualitative direction-of-effect predictions, not
-  numerical fits, sample sizes, or specific corpus statistics.
-- "Optional" is taken at face value as variable surface realisation;
-  we do not commit to a stochastic OT vs. MaxEnt vs. mixed-effects
-  encoding of the variation. The relevant fact for downstream theory
-  is only that nasalisation rate is monotonic in the relevant
-  log-frequency, with the appropriate sign per channel.
-- The wug-test methodological contract lives in
-  the shared wug vocabulary (in `Studies/AlbrightHayes2003.lean`); this file consumes it via the
-  `novel_compounds_show_n2_gradient` discriminator.
+* [breiss-katsuda-kawahara-2026b]
+* [breiss-katsuda-kawahara-2026a]
+* [breiss-2024]
+* [breiss-katsuda-kawahara-2021]
+* [steriade-1997]
+* [ito-mester-1996]
+* [ito-mester-2003]
+* [coetzee-kawahara-2013]
 -/
 
 namespace BreissKatsudaKawahara2026
 
-open Japanese.Prosody
-open Steriade1997 (lcParadigm mkLCFaith lc_unanchored_zero)
-open Morphology.WugTest (Attestation HasFactor HasAttestation HasFrequency Rate
-  NovelShowsFreqGradient NovelInvariantInFrequency
-  novelGradient_inconsistent_with_invariance)
-open Constraints
-
--- ============================================================================
--- § 1: Real lexical entries from the paper
--- ============================================================================
-
-/-- *hai* 'lung' (肺) — N1 of /haigan/ "lung cancer", example (1a). -/
-def n1_hai : LexicalEntry :=
-  { form := "hai", gloss := "lung",
-    accentMora := some 0, nMorae := 2,
-    tokenLogFreq := 5, canStandAlone := true }
-
-/-- *gan* 'cancer' (癌) — high-token-frequency free N2.
-    Free-form [g] is well-attested; PU pressure should be strong,
-    suppressing nasalisation. Example (1a). -/
-def n2_gan : LexicalEntry :=
-  { form := "gan", gloss := "cancer",
-    accentMora := some 0, nMorae := 2,
-    tokenLogFreq := 9, canStandAlone := true }
-
-/-- *noo* 'brain' (脳) — N1 of /noogeka/ "brain surgery", example (1b). -/
-def n1_noo : LexicalEntry :=
-  { form := "noo", gloss := "brain",
-    accentMora := some 0, nMorae := 2,
-    tokenLogFreq := 5, canStandAlone := true }
-
-/-- *geka* 'surgery' (外科) — free N2, mid-frequency. Example (1b). -/
-def n2_geka : LexicalEntry :=
-  { form := "geka", gloss := "surgery",
-    accentMora := some 0, nMorae := 3,
-    tokenLogFreq := 6, canStandAlone := true }
-
-/-- *doku* 'poison' (毒) — N1 of both /dokuga/ "poison moth" and
-    /dokuŋa/ "poison fang" — the minimal pair (2a)/(2b). -/
-def n1_doku : LexicalEntry :=
-  { form := "doku", gloss := "poison",
-    accentMora := some 0, nMorae := 2,
-    tokenLogFreq := 5, canStandAlone := true }
-
-/-- *ga* 'moth' (蛾) — low-frequency *free* N2. The free /ga/ standalone
-    supplies the PU anchor. Example (2a). -/
-def n2_ga_moth : LexicalEntry :=
-  { form := "ga", gloss := "moth",
-    accentMora := some 0, nMorae := 1,
-    tokenLogFreq := 1, canStandAlone := true }
-
-/-- *ga* 'fang' (牙) — *bound* N2; never appears as a free wordform.
-    With no /ga/ anchor, PU pressure is null and nasalisation is
-    categorical. The minimal-pair partner of `n2_ga_moth`. Example (2b). -/
-def n2_ga_fang : LexicalEntry :=
-  { form := "ga", gloss := "fang",
-    accentMora := some 0, nMorae := 1,
-    tokenLogFreq := 0, canStandAlone := false }
-
--- ============================================================================
--- § 2: Real compounds from the paper
--- ============================================================================
-
-/-- /haigan/ "lung cancer" — example (1a). High-frequency free N2. -/
-def cpd_haigan : NominalCompound :=
-  { n1 := n1_hai, n2 := n2_gan, compoundLogFreq := 4 }
-
-/-- /noogeka/ "brain surgery" — example (1b). Mid-frequency free N2. -/
-def cpd_noogeka : NominalCompound :=
-  { n1 := n1_noo, n2 := n2_geka, compoundLogFreq := 3 }
-
-/-- /dokuga/ "poison moth" — example (2a). Low-frequency free N2;
-    optional nasalisation. -/
-def cpd_dokuga : NominalCompound :=
-  { n1 := n1_doku, n2 := n2_ga_moth, compoundLogFreq := 2 }
-
-/-- /dokuŋa/ "poison fang" — example (2b). Bound N2 → categorical [ŋ]. -/
-def cpd_dokunga : NominalCompound :=
-  { n1 := n1_doku, n2 := n2_ga_fang, compoundLogFreq := 2 }
-
--- ============================================================================
--- § 3: Bound vs. free split — the categorical/gradient boundary
--- ============================================================================
-
-/-- The bound case: `NominalCompound.nasalisationObligatory` returns `true`. -/
-theorem dokunga_obligatory :
-    cpd_dokunga.nasalisationObligatory = true := rfl
-
-/-- The free cases: `NominalCompound.nasalisationObligatory` returns `false`
-    — the compound is in the gradient/optional zone. -/
-theorem dokuga_optional :
-    cpd_dokuga.nasalisationObligatory = false := rfl
-
-theorem haigan_optional : cpd_haigan.nasalisationObligatory = false := rfl
-theorem noogeka_optional : cpd_noogeka.nasalisationObligatory = false := rfl
-
-/-- The minimal pair (2a)/(2b) has identical surface forms but opposite
-    obligatoriness — the paper's central piece of evidence that bound
-    vs. free is the right dimension. -/
-theorem minimal_pair_diverges :
-    cpd_dokuga.nasalisationObligatory ≠ cpd_dokunga.nasalisationObligatory := by
-  decide
-
-/-- Two free-N2 compounds are *both* in the optional zone, regardless
-    of their N2's frequency. The frequency story is *within* the
-    optional zone, not at its boundary. -/
-theorem free_zone_freq_independent :
-    cpd_dokuga.nasalisationObligatory = cpd_haigan.nasalisationObligatory := rfl
-
--- ============================================================================
--- § 4: PU as `liftPairwise` — paradigm membership encodes anchoring
--- ============================================================================
-
-/-- The PU paradigm of a compound: the candidate compound surface form
-    plus the attested free N2, when N2 is free; just the compound,
-    when N2 is bound. The free/bound split is encoded as **paradigm
-    membership** (1 vs. 2 elements), not a separate predicate guard
-    on the constraint — that is what makes the bound-case zero
-    structural rather than stipulated.
-
-    Built via `lcParadigm` from `Studies/Steriade1997.lean`, making
-    this file a downstream consumer of the LC anchored-paradigm
-    primitive. The anchor-presence channel is exactly what
-    [steriade-1997] introduced, and BKK's bound/free split is the
-    same architectural channel applied to a new domain. -/
-def n2Paradigm (c : NominalCompound) : List String :=
-  lcParadigm c.form (if c.n2.canStandAlone then some c.n2.form else none)
-
-/-- Surface mismatch between two strings: 0 on the diagonal, 1
-    off-diagonal. A whole-string identity check; **not** a velar-
-    feature comparison. The architecturally faithful version would
-    be a tier-restricted segment-by-segment comparison at the velar
-    position routed through `Phonology/Segmental/Geometry.lean`,
-    but the qualitative architectural claims (sign of the channel,
-    bound/free split) do not depend on the specific mismatch metric. -/
-def stringMismatch (a b : String) : Nat := if a = b then 0 else 1
-
-@[simp] theorem stringMismatch_self (a : String) : stringMismatch a a = 0 := by
-  unfold stringMismatch; exact if_pos rfl
-
-/-- The PU constraint **as a `Constraint`** — derived from
-    `mkLCFaith` from `Studies/Steriade1997.lean`.
-    The structural connection to [steriade-1997] is by
-    *construction*: BKK's PU pressure IS LC-FAITH on the
-    `lcParadigm`-built paradigm. The architectural difference from
-    [mccarthy-2005] (OP) is that LC's paradigm is anchored on
-    attestation; OP's is symmetric over all members. § 10 below makes
-    that contrast explicit. -/
-def puFaith : Constraint (List String) :=
-  mkLCFaith "PU-N2-FAITH" stringMismatch
-
-/-- Number of PU-FAITH violations on a compound's paradigm. -/
-def cpdPuViolations (c : NominalCompound) : Nat :=
-  puFaith (n2Paradigm c)
-
-/-- **Bound case is structurally zero.** A bound N2 produces a singleton
-    paradigm `[c.form]`; the only ordered pair is `(c.form, c.form)`
-    whose mismatch is 0 by definition. The categorical nasalisation in
-    bound compounds is the structural consequence of the PU channel
-    contributing nothing. -/
-theorem bound_cpdPuViolations_zero (c : NominalCompound)
-    (hbound : c.n2.canStandAlone = false) :
-    cpdPuViolations c = 0 := by
-  have hpar : n2Paradigm c = lcParadigm c.form none := by
-    unfold n2Paradigm; simp [hbound]
-  show puFaith (n2Paradigm c) = 0
-  rw [hpar]
-  exact lc_unanchored_zero "PU-N2-FAITH" stringMismatch stringMismatch_self c.form
-
-/-- A free-N2 paradigm with distinct compound and N2 forms produces
-    exactly two off-diagonal pairs, each contributing 1, for a total
-    of 2 violations. The compound and N2 forms differ whenever N1 is
-    non-empty — an empirically generic precondition. -/
-theorem free_cpdPuViolations_eq_two (c : NominalCompound)
-    (hfree : c.n2.canStandAlone = true)
-    (hdiff : c.form ≠ c.n2.form) :
-    cpdPuViolations c = 2 := by
-  have hpar : n2Paradigm c = [c.form, c.n2.form] := by
-    show lcParadigm c.form (if c.n2.canStandAlone then some c.n2.form else none) = _
-    rw [if_pos hfree]; rfl
-  show puFaith (n2Paradigm c) = 2
-  rw [hpar]
-  show ((List.product [c.form, c.n2.form] [c.form, c.n2.form]).map
-         (fun p => stringMismatch p.1 p.2)).sum = 2
-  simp only [List.product, List.flatMap_cons, List.flatMap_nil, List.map_cons,
-             List.map_nil, List.append_nil, List.cons_append, List.nil_append,
-             stringMismatch, if_true, if_neg hdiff, if_neg hdiff.symm,
-             List.sum_cons, List.sum_nil]
-  rfl
-
-/-- The bound /dokuŋa/ case has zero PU violations — concrete witness. -/
-theorem dokunga_zero_puviolations : cpdPuViolations cpd_dokunga = 0 :=
-  bound_cpdPuViolations_zero _ rfl
-
-/-- The free /dokuga/ case has two PU violations — concrete witness. -/
-theorem dokuga_two_puviolations : cpdPuViolations cpd_dokuga = 2 :=
-  free_cpdPuViolations_eq_two _ rfl (by decide)
-
--- ============================================================================
--- § 5: Two opposite-sign frequency channels
--- ============================================================================
-
-/-- Frequency-scaled constraint weight ([coetzee-pater-2008]): an affine
-    function of an item's log token-frequency. The "accessibility
-    scaling" channel — frequency scales a constraint's weight, the
-    representation held fixed. -/
-def scaledWeight (baseWeight slope x : ℝ) : ℝ := baseWeight + slope * x
-
-/-- The **N2-frequency-weighted PU pressure** on a compound: PU-FAITH
-    violations multiplied by `scaledWeight` of the N2 token
-    log-frequency. Higher N2 frequency → stronger weight → stronger
-    preservation of [g] → less nasalisation. This is the
-    *negative-on-nasalisation* channel (negative regression coefficient
-    on N2 token frequency in [breiss-katsuda-kawahara-2026]). -/
-noncomputable def puPressure (slope : ℝ) (c : NominalCompound) : ℝ :=
-  (cpdPuViolations c : ℝ) * scaledWeight (baseWeight := 0) (slope := slope) (c.n2.tokenFreq)
-
-/-- The **compound-frequency-weighted markedness pressure** *for*
-    nasalisation: linear in compound log-frequency. Higher compound
-    frequency → stronger drift away from constituent forms → more
-    nasalisation. This is the *positive-on-nasalisation* channel
-    (positive regression coefficient on compound token frequency in
-    [breiss-katsuda-kawahara-2026]).
-
-    Modelled as a one-parameter linear function of the compound's own
-    log-frequency, parallel to `Scaled.scaledWeight` but on the
-    compound (not lexical-entry) channel. -/
-noncomputable def cpdMarkednessPressure (slope : ℝ) (c : NominalCompound) : ℝ :=
-  slope * (c.compoundLogFreq : ℝ)
-
-/-- The predicted **nasalisation log-odds** of a compound: markedness
-    pressure (positive sign on nasalisation) minus PU pressure
-    (negative sign on nasalisation). The sign-inversion of the PU
-    channel is *built into the difference* — increasing PU
-    monotonically decreases the log-odds. -/
-noncomputable def nasLogOdds (n2Slope cpdSlope : ℝ) (c : NominalCompound) : ℝ :=
-  cpdMarkednessPressure cpdSlope c - puPressure n2Slope c
-
--- ============================================================================
--- § 6: Architectural theorems — the load-bearing predictions
--- ============================================================================
-
-/-- **Sign-inversion lemma.** PU pressure enters `nasLogOdds` with a
-    negative sign: holding compound markedness fixed, an increase in
-    PU pressure strictly decreases the log-odds. This is the formal
-    source of the *negative* regression coefficient on N2 token
-    frequency reported in [breiss-katsuda-kawahara-2026]. -/
-theorem nasLogOdds_antitone_in_puPressure (n2Slope cpdSlope : ℝ)
-    (c1 c2 : NominalCompound) (hcpd : c1.compoundLogFreq = c2.compoundLogFreq)
-    (hpu : puPressure n2Slope c1 ≤ puPressure n2Slope c2) :
-    nasLogOdds n2Slope cpdSlope c2 ≤ nasLogOdds n2Slope cpdSlope c1 := by
-  unfold nasLogOdds cpdMarkednessPressure
-  rw [show (c2.compoundLogFreq : ℝ) = (c1.compoundLogFreq : ℝ) by rw [hcpd]]
-  linarith
-
-/-- **N2-frequency channel monotonicity** (the *negative*-sign channel).
-    For two free-N2 compounds with the same compound frequency and
-    matched PU-violation counts, a higher N2 token log-frequency
-    yields strictly *higher* PU pressure (when slope is positive). -/
-theorem puPressure_monotone_in_n2_freq (slope : ℝ) (hSlope : 0 ≤ slope)
-    (c1 c2 : NominalCompound) (hviol : cpdPuViolations c1 = cpdPuViolations c2)
-    (hfreq : c1.n2.tokenFreq ≤ c2.n2.tokenFreq) :
-    puPressure slope c1 ≤ puPressure slope c2 := by
-  unfold puPressure scaledWeight
-  rw [hviol]
-  apply mul_le_mul_of_nonneg_left _ (Nat.cast_nonneg _)
-  linarith [mul_le_mul_of_nonneg_left hfreq hSlope]
-
-/-- **Compound-frequency channel monotonicity** (the *positive*-sign
-    channel). For two compounds with identical PU pressure but
-    different compound log-frequencies, the higher-compound-frequency
-    compound has strictly higher nasalisation log-odds (when slope is
-    positive). -/
-theorem nasLogOdds_monotone_in_cpd_freq (n2Slope cpdSlope : ℝ)
-    (hSlope : 0 ≤ cpdSlope) (c1 c2 : NominalCompound)
-    (hpu : puPressure n2Slope c1 = puPressure n2Slope c2)
-    (hfreq : c1.compoundLogFreq ≤ c2.compoundLogFreq) :
-    nasLogOdds n2Slope cpdSlope c1 ≤ nasLogOdds n2Slope cpdSlope c2 := by
-  unfold nasLogOdds cpdMarkednessPressure
-  rw [hpu]
-  have h : cpdSlope * (c1.compoundLogFreq : ℝ) ≤ cpdSlope * (c2.compoundLogFreq : ℝ) :=
-    mul_le_mul_of_nonneg_left (Rat.cast_le.mpr hfreq) hSlope
-  linarith
-
-/-- **Bound case: nasLogOdds collapses to pure markedness.** Because
-    the PU channel is structurally zero on bound paradigms, the
-    bound-case prediction depends only on the compound-frequency
-    channel — i.e. the bound case has **one** frequency channel, not
-    two. This is the architectural collapse the paper highlights. -/
-theorem bound_nasLogOdds_eq_markedness (n2Slope cpdSlope : ℝ) (c : NominalCompound)
-    (hbound : c.n2.canStandAlone = false) :
-    nasLogOdds n2Slope cpdSlope c = cpdMarkednessPressure cpdSlope c := by
-  unfold nasLogOdds puPressure
-  rw [bound_cpdPuViolations_zero c hbound]
-  ring
-
--- ============================================================================
--- § 7: Anti-UseListed discriminator (Experiment 2)
--- ============================================================================
-
-/-- **Anti-UseListed discriminator.** Even on **novel** compounds (no
-    listing entry), the N2-frequency gradient on PU pressure persists,
-    because PU pressure depends on the N2's free-form attestation, not
-    the compound's listing status. UseListed ([zuraw-2000])
-    predicts no frequency-dependent modulation on novel items;
-    `puPressure` and hence `nasLogOdds` show one. This is the formal
-    content of Experiment 2 of [breiss-katsuda-kawahara-2026].
-
-    Concretely: two novel free-N2 compounds with the same compound
-    log-frequency and matched PU-violation counts have *strictly*
-    different `puPressure` values when their N2 token frequencies
-    differ and the slope is strictly positive. -/
-theorem novel_compounds_show_n2_gradient (slope : ℝ) (hSlope : 0 < slope)
-    (c1 c2 : NominalCompound) (hviol : cpdPuViolations c1 = cpdPuViolations c2)
-    (hviol_pos : 0 < cpdPuViolations c1)
-    (hfreq : c1.n2.tokenFreq < c2.n2.tokenFreq) :
-    puPressure slope c1 < puPressure slope c2 := by
-  unfold puPressure scaledWeight
-  have hpos2 : (0 : ℝ) < (cpdPuViolations c2 : ℝ) := by
-    rw [← hviol]; exact_mod_cast hviol_pos
-  rw [hviol]
-  apply mul_lt_mul_of_pos_left _ hpos2
-  linarith [mul_lt_mul_of_pos_left hfreq hSlope]
-
--- ============================================================================
--- § 8: Wug paradigm cell — BKK as a wug-vocabulary consumer
--- ============================================================================
-
-/-! Experiment 2 of [breiss-katsuda-kawahara-2026] is a wug-style
-study: subjects rate nasalisation on **novel** compounds whose N2 has
-real attestation as a free wordform. The N2-frequency gradient in
-their results is the key evidence against UseListed
-[zuraw-2000]: a novel compound has no listing entry, so any
-frequency-driven modulation must come from the *N2's* lexical
-attestation, not the compound's.
-
-This section wires BKK to the methodological contract in
-the shared wug vocabulary (anchored on [berko-1958] and
-[albright-hayes-2003]). The cell type carries:
-
-- a compound (the stimulus),
-- a structural proof that N2 is **free** (so that the LC paradigm has
-  the anchor and PU pressure is non-zero),
-- a structural proof that compound and N2 forms differ (so that
-  `cpdPuViolations = 2` is forced),
-- the wug `Attestation` factor (attested vs. novel),
-- and the N2 token log-frequency.
-
-The first two fields make the cell type non-vacuous in a way that
-discharges the `cpdPuViolations` precondition without per-cell
-hypotheses. Concretely: for every `WugBKKCell`, we *prove* (not
-assume) that PU violations equal 2. -/
-
-structure WugBKKCell where
-  compound : NominalCompound
-  freeN2 : compound.n2.canStandAlone = true
-  formDistinct : compound.form ≠ compound.n2.form
-  attestation : Attestation
-  n2LogFreq : ℝ
-
-namespace WugBKKCell
-
-/-- Every `WugBKKCell` has exactly two PU violations — a derived
-    consequence of the structural fields, not a stipulation. This is
-    the load-bearing fact that lets `wugBkkRate` exhibit a strict
-    frequency gradient on novel cells without per-cell side
-    conditions. -/
-theorem cpdPuViolations_eq_two (c : WugBKKCell) :
-    cpdPuViolations c.compound = 2 :=
-  free_cpdPuViolations_eq_two c.compound c.freeN2 c.formDistinct
-
-instance : HasAttestation WugBKKCell where
-  factorOf c := c.attestation
-  setFactor a c := { c with attestation := a }
-  factorOf_setFactor := by intros; rfl
-  setFactor_factorOf := by intros; rfl
-  setFactor_setFactor := by intros; rfl
-
-instance : HasFrequency WugBKKCell where
-  factorOf c := c.n2LogFreq
-  setFactor f c := { c with n2LogFreq := f }
-  factorOf_setFactor := by intros; rfl
-  setFactor_factorOf := by intros; rfl
-  setFactor_setFactor := by intros; rfl
-
-end WugBKKCell
-
--- ============================================================================
--- § 9: Wug-paradigm rate observable + anti-UseListed discriminator
--- ============================================================================
-
-/-! `wugBkkRate` is BKK's per-cell numeric prediction expressed in the
-shape the wug vocabulary requires (`Rate Cell ℝ`). It exhibits
-the N2-frequency gradient on novel cells, satisfying the WugTest
-predicate `NovelShowsFreqGradient` — and hence (by
-`novelGradient_inconsistent_with_invariance`) excluding the UseListed
-prediction `NovelInvariantInFrequency`.
-
-The sign of `wugBkkRate` is monotone increasing in N2 log-frequency
-because it tracks the **PU pressure**, not the surface nasalisation
-rate. PU pressure pushes toward [g] preservation; nasalisation rate
-falls as PU pressure rises. The discriminator from `WugTest` only
-cares about *non-flatness* of the rate function in the frequency
-factor, so the sign is irrelevant to the structural exclusion of
-UseListed. -/
-
-/-- The wug-paradigm rate observable for BKK: PU pressure on the
-    cell's compound, computed via `cpdPuViolations` (= 2 for every
-    `WugBKKCell`) times the N2's frequency-scaled weight. -/
-noncomputable def wugBkkRate (n2Slope : ℝ) (c : WugBKKCell) : ℝ :=
-  (cpdPuViolations c.compound : ℝ) * (n2Slope * c.n2LogFreq)
-
-/-- **BKK satisfies `NovelShowsFreqGradient`.** For any positive
-    N2-frequency slope, `wugBkkRate` is strictly monotone in the
-    frequency factor on novel cells. The proof uses
-    `WugBKKCell.cpdPuViolations_eq_two` to discharge the violation
-    count without per-cell hypotheses.
-
-    This is the structural form of BKK Experiment 2's central
-    finding: even on novel compounds, varying N2 token frequency
-    produces a gradient in the predicted PU pressure. -/
-theorem bkk_satisfies_NovelShowsFreqGradient (n2Slope : ℝ) (hSlope : 0 < n2Slope) :
-    NovelShowsFreqGradient (wugBkkRate n2Slope) := by
-  intro c f₁ f₂ hf
-  unfold wugBkkRate
-  -- The lens `setFactor` calls preserve the structural fields
-  -- freeN2/formDistinct, so cpdPuViolations remains 2.
-  have h1 : cpdPuViolations
-      (HasFactor.setFactor f₁
-        (HasFactor.setFactor Attestation.novel c)).compound = 2 :=
-    WugBKKCell.cpdPuViolations_eq_two _
-  have h2 : cpdPuViolations
-      (HasFactor.setFactor f₂
-        (HasFactor.setFactor Attestation.novel c)).compound = 2 :=
-    WugBKKCell.cpdPuViolations_eq_two _
-  rw [h1, h2]
-  -- Both lens-applied cells have the freshly-set frequency.
-  show ((2 : ℕ) : ℝ) * (n2Slope * f₁) < ((2 : ℕ) : ℝ) * (n2Slope * f₂)
-  have h2pos : (0 : ℝ) < ((2 : ℕ) : ℝ) := by norm_num
-  exact mul_lt_mul_of_pos_left
-    (mul_lt_mul_of_pos_left hf hSlope) h2pos
-
-/-- A concrete non-vacuous `WugBKKCell` witness: /haigan/ "lung
-    cancer" used as a wug stimulus. The structural fields are
-    discharged by `rfl` / `decide`. Required for the discriminator
-    corollary below — `novelGradient_inconsistent_with_invariance`
-    needs distinct frequencies, which it gets from `0 < 1`. -/
-def cell_haigan : WugBKKCell where
-  compound := cpd_haigan
-  freeN2 := rfl
-  formDistinct := by decide
-  attestation := .novel
-  n2LogFreq := 0
-
-/-- **Anti-UseListed discriminator (final form).** Wired through
-    the wug vocabulary's structural impossibility theorem: BKK's
-    `wugBkkRate` cannot satisfy `NovelInvariantInFrequency` (the
-    UseListed prediction). Any account on which novel forms have flat
-    PU pressure across N2 frequencies is ruled out by Experiment 2.
-
-    This is `novel_compounds_show_n2_gradient` re-expressed at the
-    paradigm-contract level: instead of a per-pair `puPressure`
-    inequality, we get a structural impossibility on the rate
-    function itself. -/
-theorem bkk_excludes_useListed (n2Slope : ℝ) (hSlope : 0 < n2Slope) :
-    ¬ NovelInvariantInFrequency (wugBkkRate n2Slope) := by
-  intro h_inv
-  exact novelGradient_inconsistent_with_invariance
-    (wugBkkRate n2Slope)
-    (bkk_satisfies_NovelShowsFreqGradient n2Slope hSlope)
-    h_inv cell_haigan 0 1 (by norm_num)
-
--- ============================================================================
--- § 10: Engagement with Optimal Paradigms — McCarthy 2005
--- ============================================================================
-
-/-! BKK's docstring cites OP ([mccarthy-2005]) as a sister PU
-theory; the architectural choice is LC over OP because LC's anchor
-primitive structurally encodes the bound/free split.
-
-**Caveat on the analog.** [mccarthy-2005]'s OP, narrowly
-construed, ranges over the inflected wordforms of a single lexeme —
-not over a compound and its N2 constituent. Applying OP to N1+N2
-compound paradigms is an *extended application* not licensed by the
-2005 paper itself. The point of this section is precisely that
-extending OP straightforwardly to the compound case loses the
-bound/free distinction: a compound and its (free or bound) N2 are not
-in an OP-style inflectional relationship, so the architectural handle
-LC supplies via attestation-anchored paradigm membership has no
-natural OP counterpart. This is part of why BKK choose LC rather than
-OP for the compound domain.
-
-The OP-on-compounds straw-figure formalised below predicts
-**identical** PU violations on bound and free compounds with distinct
-N2 surface forms — losing BKK's categorical bound-case nasalisation as
-a structural prediction. To recover the empirical pattern, an
-extended-OP account would need an auxiliary stipulation (a separate
-constraint, a stratum, or a guard predicate). LC gets it from
-paradigm membership alone. -/
-
-/-- The OP paradigm of a compound: symmetric over all members, no
-    distinguished anchor. Because OP does not condition on
-    attestation, both bound and free N2 contribute to the paradigm. -/
-def n2OpParadigm (c : NominalCompound) : List String :=
-  [c.form, c.n2.form]
-
-/-- The OP-flavoured PU constraint, built from the same `liftPairwise`
-    combinator. Differs from `puFaith` only in the *paradigm
-    construction* (cf. `lcParadigm` vs. unconditional pair). -/
-def opPuFaith : Constraint (List String) :=
-  liftPairwise stringMismatch
-
-/-- OP-flavoured violation count on a compound. -/
-def cpdOpPuViolations (c : NominalCompound) : Nat :=
-  opPuFaith (n2OpParadigm c)
-
-/-- **OP gives identical violation counts on bound and free
-    compounds.** Whenever `c.form ≠ c.n2.form`, the OP paradigm
-    `[c.form, c.n2.form]` has two off-diagonal pairs each contributing
-    1, regardless of N2 attestation. This is the structural
-    consequence of OP's anchor-blindness. -/
-theorem op_paradigm_uniform_in_bound_free (c : NominalCompound)
-    (hdiff : c.form ≠ c.n2.form) :
-    cpdOpPuViolations c = 2 := by
-  show opPuFaith (n2OpParadigm c) = 2
-  show ((List.product [c.form, c.n2.form] [c.form, c.n2.form]).map
-         (fun p => stringMismatch p.1 p.2)).sum = 2
-  simp only [List.product, List.flatMap_cons, List.flatMap_nil, List.map_cons,
-             List.map_nil, List.append_nil, List.cons_append, List.nil_append,
-             stringMismatch, if_true, if_neg hdiff, if_neg hdiff.symm,
-             List.sum_cons, List.sum_nil]
-  rfl
-
-/-- **Extended-OP and LC structurally disagree on bound compounds.**
-    For any bound-N2 compound with distinct compound and N2 forms, the
-    OP-on-compounds analog predicts 2 violations while LC predicts 0.
-    This is the formal incompatibility motivating BKK's choice of LC
-    over an OP-style account in the compound domain — *structural*, not
-    parameter-dependent. The empirical categorical bound-case
-    nasalisation supports LC.
-
-    NB: see the §10 caveat. McCarthy's OP, narrowly construed, is over
-    inflectional paradigms of one lexeme; the disagreement here is
-    with an *extended-OP* that applies the symmetric-paradigm
-    architecture to N1+N2 compounds, which BKK take to be the natural
-    OP-style competitor in this domain. -/
-theorem op_lc_disagree_on_bound (c : NominalCompound)
-    (hbound : c.n2.canStandAlone = false)
-    (hdiff : c.form ≠ c.n2.form) :
-    cpdOpPuViolations c ≠ cpdPuViolations c := by
-  rw [op_paradigm_uniform_in_bound_free c hdiff,
-      bound_cpdPuViolations_zero c hbound]
-  decide
-
-/-- Concrete witness: /dokuŋa/ "poison fang" instantiates the
-    OP/LC disagreement. OP says 2 violations; LC says 0. -/
-theorem dokunga_op_vs_lc :
-    cpdOpPuViolations cpd_dokunga ≠ cpdPuViolations cpd_dokunga :=
-  op_lc_disagree_on_bound cpd_dokunga rfl (by decide)
+open Constraints Real
+
+/-- The compound-medial velar, oral [g] or nasal [ŋ]. -/
+inductive Velar | oral | nasal
+  deriving DecidableEq, Fintype
+
+/-- A listed allomorph, identified by its velar, with its resting activation — the sigmoid of its
+centred log-frequency (§4.4), or any scalar salience measure (§4.1). -/
+structure Base where
+  velar : Velar
+  activation : ℝ
+
+/-- A compound's lexical situation (§4.1): the free-standing N2's listed allomorph if N2 is free,
+and the whole compound's listed allomorph if the compound is existing. -/
+structure Item where
+  n2 : Option Base
+  compound : Option Base
+
+/-- A free N2 is listed with the [g] it shows word-initially, at activation `a`. -/
+def freeN2 (a : ℝ) : Base := ⟨.oral, a⟩
+
+/-- An existing compound is listed with its nasalised medial (Lexicon Optimisation), at activation
+`b`. -/
+def storedCompound (b : ℝ) : Base := ⟨.nasal, b⟩
+
+/-- A novel compound with a free N2. -/
+def novel (a : ℝ) : Item := ⟨some (freeN2 a), none⟩
+
+/-- An existing compound with a free N2. -/
+def existing (a b : ℝ) : Item := ⟨some (freeN2 a), some (storedCompound b)⟩
+
+/-- An existing compound with a bound N2. -/
+def bound (b : ℝ) : Item := ⟨none, some (storedCompound b)⟩
+
+/-! ### Constraints, scaling, and the MaxEnt probability -/
+
+/-- ID-[nasal] to an optional listed base (6b–c): one violation when the candidate's velar differs
+from the base's, none when there is no base. -/
+def idNasal : Option Base → Constraint Velar
+  | some β => Constraint.binary (· ≠ β.velar)
+  | none => 0
+
+/-- The constraint set (6): `*INTERNAL-[g]`, ID-[nasal] to the N2, ID-[nasal] to the compound. -/
+def con (it : Item) : CON Velar 3 :=
+  ![Constraint.binary (· = .oral), idNasal it.n2, idNasal it.compound]
+
+/-- Constraint weights, indexed like `con`. -/
+structure Weights where
+  markedness : ℝ
+  n2 : ℝ
+  compound : ℝ
+
+/-- A base's resting activation, `0` for no base. -/
+def activation : Option Base → ℝ
+  | some β => β.activation
+  | none => 0
+
+/-- Voting Bases scaling (§4.2): a faithfulness violation counts in proportion to the activation of
+the base it is assessed against, so each faithfulness weight is scaled by that activation. The
+relation runs opposite to [coetzee-kawahara-2013]'s, where higher frequency lowers faithfulness
+(§6.4). -/
+def scaledWeights (w : Weights) (it : Item) : Fin 3 → ℝ :=
+  ![w.markedness, w.n2 * activation it.n2, w.compound * activation it.compound]
+
+/-- The MaxEnt probability that the compound nasalises. -/
+noncomputable def pNasal (w : Weights) (it : Item) : ℝ :=
+  softmax (harmonyScore (con it) (scaledWeights w it)) .nasal
+
+/-- A base's pull toward nasalisation: its activation, signed by its listed velar. -/
+def pull : Option Base → ℝ
+  | some ⟨.oral, a⟩ => -a
+  | some ⟨.nasal, a⟩ => a
+  | none => 0
+
+@[simp] theorem pull_freeN2 (a : ℝ) : pull (some (freeN2 a)) = -a := rfl
+@[simp] theorem pull_storedCompound (b : ℝ) : pull (some (storedCompound b)) = b := rfl
+@[simp] theorem pull_none : pull none = 0 := rfl
+
+theorem sum_velar (f : Velar → ℝ) : ∑ x, f x = f .oral + f .nasal := by
+  show ∑ x ∈ ({.oral, .nasal} : Finset Velar), f x = _
+  rw [Finset.sum_pair (by decide)]
+
+theorem softmax_nasal (s : Velar → ℝ) : softmax s .nasal = sigmoid (s .nasal - s .oral) := by
+  rw [sigmoid_def, ← one_div]
+  simp only [softmax, sum_velar]
+  have h : exp (s .oral) + exp (s .nasal) = exp (s .nasal) * (1 + exp (-(s .nasal - s .oral))) := by
+    rw [mul_add, mul_one, ← exp_add, show s .nasal + -(s .nasal - s .oral) = s .oral by ring,
+      add_comm]
+  rw [h, ← div_div, div_self (exp_pos _).ne']
+
+theorem harmony_sub (w : Weights) (it : Item) :
+    harmonyScore (con it) (scaledWeights w it) .nasal
+        - harmonyScore (con it) (scaledWeights w it) .oral
+      = w.markedness + w.n2 * pull it.n2 + w.compound * pull it.compound := by
+  obtain ⟨n2, c⟩ := it
+  rcases n2 with _ | ⟨_ | _, a⟩ <;> rcases c with _ | ⟨_ | _, b⟩ <;>
+    simp [harmonyScore, weightedViolations, Fin.sum_univ_three, con, scaledWeights, idNasal, pull,
+      activation, Constraint.binary] <;> ring
+
+/-- The probability of nasalisation is the sigmoid of the markedness weight plus the weighted pulls
+of the two bases, so each frequency effect takes the sign of its base's listed velar. -/
+theorem pNasal_eq_sigmoid (w : Weights) (it : Item) :
+    pNasal w it = sigmoid (w.markedness + w.n2 * pull it.n2 + w.compound * pull it.compound) := by
+  rw [pNasal, softmax_nasal, harmony_sub]
+
+/-! ### The frequency effects -/
+
+/-- An existing compound with a free N2 nasalises with probability `σ(w_M − w_N2·a + w_C·b)`. -/
+theorem pNasal_existing (w : Weights) (a b : ℝ) :
+    pNasal w (existing a b) = sigmoid (w.markedness - w.n2 * a + w.compound * b) := by
+  rw [pNasal_eq_sigmoid]; simp only [existing, pull_freeN2, pull_storedCompound]; ring_nf
+
+/-- A novel compound has no whole-compound base. -/
+theorem pNasal_novel (w : Weights) (a : ℝ) :
+    pNasal w (novel a) = sigmoid (w.markedness - w.n2 * a) := by
+  rw [pNasal_eq_sigmoid]; simp only [novel, pull_freeN2, pull_none]; ring_nf
+
+/-- A bound N2 (5) has no free base. -/
+theorem pNasal_bound (w : Weights) (b : ℝ) :
+    pNasal w (bound b) = sigmoid (w.markedness + w.compound * b) := by
+  rw [pNasal_eq_sigmoid]; simp only [bound, pull_none, pull_storedCompound]; ring_nf
+
+/-- The N2 effect (Figure 2, right): the more active the free N2, the less nasalisation. -/
+theorem existing_strictAnti_n2 (w : Weights) (hw : 0 < w.n2) (b : ℝ) :
+    StrictAnti fun a => pNasal w (existing a b) := fun _ _ h => by
+  simp only [pNasal_existing]
+  exact sigmoid_lt (by nlinarith)
+
+/-- The compound effect (Figure 2, left): the more active the stored compound, the more
+nasalisation. -/
+theorem existing_strictMono_compound (w : Weights) (hw : 0 < w.compound) (a : ℝ) :
+    StrictMono fun b => pNasal w (existing a b) := fun _ _ h => by
+  simp only [pNasal_existing]
+  exact sigmoid_lt (by nlinarith)
+
+/-- The N2 effect persists, with the same sign, in novel compounds (Figure 3). -/
+theorem novel_strictAnti_n2 (w : Weights) (hw : 0 < w.n2) :
+    StrictAnti fun a => pNasal w (novel a) := fun _ _ h => by
+  simp only [pNasal_novel]
+  exact sigmoid_lt (by nlinarith)
+
+/-- A stored compound's pull adds nasalisation at any N2 activation. -/
+theorem novel_lt_existing (w : Weights) (hw : 0 < w.compound) (a : ℝ) {b : ℝ} (hb : 0 < b) :
+    pNasal w (novel a) < pNasal w (existing a b) := by
+  rw [pNasal_novel, pNasal_existing]
+  exact sigmoid_lt (by nlinarith)
+
+/-- A bound-N2 compound nasalises at least half the time under nonnegative weights, and its
+probability mentions no N2 activation. -/
+theorem bound_half_le (w : Weights) (hM : 0 ≤ w.markedness) (hC : 0 ≤ w.compound) {b : ℝ}
+    (hb : 0 ≤ b) : 2⁻¹ ≤ pNasal w (bound b) := by
+  rw [pNasal_bound, ← sigmoid_zero]
+  exact sigmoid_le (add_nonneg hM (mul_nonneg hC hb))
+
+/-- With `*INTERNAL-[g]` at zero weight, as in the fitted grammar (Table 1), nasalisation is the
+majority outcome exactly when the compound base's weighted activation exceeds the N2 base's:
+analogical faithfulness does all the work (§5.1, §6.2). -/
+theorem zero_markedness_iff (w : Weights) (hM : w.markedness = 0) (a b : ℝ) :
+    2⁻¹ < pNasal w (existing a b) ↔ w.n2 * a < w.compound * b := by
+  rw [pNasal_existing, ← sigmoid_zero, sigmoid_lt_iff, hM]
+  constructor <;> intro h <;> linarith
+
+/-! ### The schematic tableaux -/
+
+/-- The weights of tableaux (7) and (8): markedness 2, both faithfulness constraints 1. -/
+def w78 : Weights := ⟨2, 1, 1⟩
+
+/-- The weights of tableau (9): markedness 0.1, N2 faithfulness 1, compound faithfulness 2. -/
+noncomputable def w9 : Weights := ⟨1 / 10, 1, 2⟩
+
+/-- Tableau (7): novel compounds whose N2 activations are 0.7 and 0.3. The higher-activation N2's
+candidates have harmonies `-2` and `-0.7`, so it nasalises with probability `σ(1.3)`, less often
+than the lower-activation N2. -/
+theorem tableau7 :
+    harmonyScore (con (novel (7 / 10))) (scaledWeights w78 (novel (7 / 10))) .oral = -2 ∧
+    harmonyScore (con (novel (7 / 10))) (scaledWeights w78 (novel (7 / 10))) .nasal = -(7 / 10) ∧
+    pNasal w78 (novel (7 / 10)) = sigmoid (13 / 10) ∧
+    pNasal w78 (novel (7 / 10)) < pNasal w78 (novel (3 / 10)) := by
+  refine ⟨?_, ?_, ?_, novel_strictAnti_n2 w78 (by norm_num [w78]) (by norm_num)⟩
+  · norm_num [harmonyScore, weightedViolations, Fin.sum_univ_three, con, scaledWeights, idNasal,
+      activation, novel, freeN2, w78, Constraint.binary]
+  · norm_num [harmonyScore, weightedViolations, Fin.sum_univ_three, con, scaledWeights, idNasal,
+      activation, novel, freeN2, w78, Constraint.binary]
+    decide
+  · rw [pNasal_novel]; norm_num [w78]
+
+/-- Tableau (8): existing compounds with N2 activation 0.5 and compound activations 0.7 and 0.3.
+The higher-activation compound nasalises more, and either nasalises more than the novel compound
+of (7) with the same N2. -/
+theorem tableau8 :
+    pNasal w78 (existing (1 / 2) (3 / 10)) < pNasal w78 (existing (1 / 2) (7 / 10)) ∧
+    pNasal w78 (novel (1 / 2)) < pNasal w78 (existing (1 / 2) (3 / 10)) :=
+  ⟨existing_strictMono_compound w78 (by norm_num [w78]) _ (by norm_num),
+    novel_lt_existing w78 (by norm_num [w78]) _ (by norm_num)⟩
+
+/-- Tableau (9): with markedness weak and faithfulness strong, the nasal candidate is still the
+majority outcome for either compound of (8), and the compound effect keeps its sign. -/
+theorem tableau9 :
+    2⁻¹ < pNasal w9 (existing (1 / 2) (3 / 10)) ∧
+    pNasal w9 (existing (1 / 2) (3 / 10)) < pNasal w9 (existing (1 / 2) (7 / 10)) := by
+  refine ⟨?_, existing_strictMono_compound w9 (by norm_num [w9]) _ (by norm_num)⟩
+  rw [pNasal_existing, ← sigmoid_zero, sigmoid_lt_iff]
+  norm_num [w9]
 
 end BreissKatsudaKawahara2026

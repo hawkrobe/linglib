@@ -65,12 +65,10 @@ the substrate file's docstring.
 The DLM is the latest in a lineage of usage-based, gradient-weight
 theories. Adjacent linglib substrate:
 
-- Four rival theories of token frequency in the grammar — UseListed
-  ([zuraw-2000]), indexed constraints ([pater-2010]), representational
-  strength ([moore-cantwell-2021]), and scaled weights
-  ([coetzee-pater-2008]), adjudicated in
-  `Studies/BreissKatsudaKawahara2026.lean` (§5). All four presuppose a
-  stored lexicon to which frequency attaches.
+- The Voting Bases model ([breiss-katsuda-kawahara-2026b]) in
+  `Studies/BreissKatsudaKawahara2026.lean`: faithfulness to each stored
+  allomorph, scaled by its resting activation. Presupposes a stored
+  lexicon to which frequency attaches.
 - `Studies/Bybee1985.lean` ([bybee-1985]):
   Bybee's dynamic network — typed `LexicalEntry`s with `tokenFreq`
   strength + connection edges. Stores entries.
