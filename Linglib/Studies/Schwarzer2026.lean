@@ -163,7 +163,7 @@ theorem beschliessen_selecting :
 -- § 3: Competing Analyses & Structural Predictions
 -- ============================================================================
 
-/-! `ConjunctOrder`, `bottomUpPrediction`, and `linearClosenessPrediction`
+/-! `ConjunctOrder` and `predictOrder`
     are defined in [bruening-alkhalaf-2020] and imported via `open`.
     `VerbPosition` and `OVOrder.verbPosition` live in `WordOrder`
     substrate. -/
@@ -174,23 +174,23 @@ theorem beschliessen_selecting :
 
     Analysis: [kim-lu-2024]. -/
 def temporalClosenessPrediction : VerbPosition → ConjunctOrder :=
-  linearClosenessPrediction
+  predictOrder .linear
 
 /-- Under asymmetric coordination, the bottom-up prediction is
     position-invariant: the structurally prominent conjunct is always
     the first, so DP-first is predicted regardless of verb position. -/
 theorem asymmetric_implies_position_invariant (pos : VerbPosition) :
-    bottomUpPrediction pos = .dpFirst := rfl
+    predictOrder .structural pos = .dpFirst := rfl
 
 /-- Linear closeness predictions *differ* by position — this is the
     key empirical distinguisher. -/
 theorem linear_predictions_differ :
-    linearClosenessPrediction .preverbal ≠
-    linearClosenessPrediction .postverbal := by decide
+    predictOrder .linear .preverbal ≠
+    predictOrder .linear .postverbal := by decide
 
 /-- Temporal closeness inherits linear closeness predictions exactly. -/
 theorem temporal_equals_linear (pos : VerbPosition) :
-    temporalClosenessPrediction pos = linearClosenessPrediction pos := rfl
+    temporalClosenessPrediction pos = predictOrder .linear pos := rfl
 
 -- ============================================================================
 -- § 4: Experiment 1 — Acceptability (Likert z-scores)
@@ -305,16 +305,16 @@ theorem dp_preference_supermajority :
 
 /-- Bottom-up predicts correctly in preverbal position. -/
 theorem bottomUp_correct_preverbal :
-    bottomUpPrediction .preverbal = exp2_preverbal.majorityOrder := rfl
+    predictOrder .structural .preverbal = exp2_preverbal.majorityOrder := rfl
 
 /-- Bottom-up predicts correctly in postverbal position. -/
 theorem bottomUp_correct_postverbal :
-    bottomUpPrediction .postverbal = exp2_postverbal.majorityOrder := rfl
+    predictOrder .structural .postverbal = exp2_postverbal.majorityOrder := rfl
 
 /-- Linear closeness predicts *incorrectly* in preverbal position:
     it predicts CP-first, but DP-first is observed. -/
 theorem linear_wrong_preverbal :
-    linearClosenessPrediction .preverbal ≠ exp2_preverbal.majorityOrder := by
+    predictOrder .linear .preverbal ≠ exp2_preverbal.majorityOrder := by
   decide
 
 /-- Temporal closeness also wrong in preverbal position. -/
@@ -325,8 +325,8 @@ theorem temporal_wrong_preverbal :
 /-- All three accounts agree in postverbal position (all predict DP-first,
     which is correct). The distinguishing power is preverbal only. -/
 theorem all_agree_postverbal :
-    bottomUpPrediction .postverbal = linearClosenessPrediction .postverbal ∧
-    linearClosenessPrediction .postverbal = exp2_postverbal.majorityOrder :=
+    predictOrder .structural .postverbal = predictOrder .linear .postverbal ∧
+    predictOrder .linear .postverbal = exp2_postverbal.majorityOrder :=
   ⟨rfl, rfl⟩
 
 /-- The German 2AFC data falsifies linear percolation: structural
@@ -359,13 +359,13 @@ theorem temporal_is_linear_percolation (pos : VerbPosition) :
     satisfy selection. Under symmetric structure, no such prediction
     is made (both conjuncts are equally prominent). -/
 def structurePrediction : CoordSymmetry → Option (VerbPosition → ConjunctOrder)
-  | .asymmetric => some bottomUpPrediction
+  | .asymmetric => some (predictOrder .structural)
   | .symmetric  => none
 
 /-- Asymmetric structure entails position-invariant DP-first prediction. -/
 theorem asymmetric_entails_dp_first (pos : VerbPosition) :
-    structurePrediction .asymmetric = some bottomUpPrediction ∧
-    bottomUpPrediction pos = .dpFirst :=
+    structurePrediction .asymmetric = some (predictOrder .structural) ∧
+    predictOrder .structural pos = .dpFirst :=
   ⟨rfl, rfl⟩
 
 -- ============================================================================
@@ -375,20 +375,20 @@ theorem asymmetric_entails_dp_first (pos : VerbPosition) :
 /-- The bottom-up prediction is universal: for any language, regardless of
     its OV/VO parameter, the predicted order is always DP-first. -/
 theorem bottomUp_universal (pos : VerbPosition) :
-    bottomUpPrediction pos = .dpFirst := rfl
+    predictOrder .structural pos = .dpFirst := rfl
 
 /-- For OV languages, linear closeness makes the wrong prediction
     (CP-first in preverbal position), while bottom-up is correct. -/
 theorem ov_distinguishes_accounts :
-    linearClosenessPrediction .preverbal = .cpFirst ∧
-    bottomUpPrediction .preverbal = .dpFirst := ⟨rfl, rfl⟩
+    predictOrder .linear .preverbal = .cpFirst ∧
+    predictOrder .structural .preverbal = .dpFirst := ⟨rfl, rfl⟩
 
 /-- The German result generalizes: if an OV language shows DP-first
     preference in preverbal position, linear/temporal closeness accounts
     are ruled out for that language. -/
 theorem ov_dpfirst_rules_out_linear
     (obs : ConjunctOrder) (h : obs = .dpFirst) :
-    linearClosenessPrediction .preverbal ≠ obs := by
+    predictOrder .linear .preverbal ≠ obs := by
   subst h; decide
 
 /-- B&AK's English subject-position evidence (§3.1, examples (41a/b))
@@ -398,7 +398,7 @@ theorem ov_dpfirst_rules_out_linear
     German data directly contradicts the closeness prediction in the
     preverbal environment where B&AK claim their strongest evidence. -/
 theorem german_contradicts_bak_subject_evidence :
-    linearClosenessPrediction .preverbal = .cpFirst ∧
+    predictOrder .linear .preverbal = .cpFirst ∧
     exp2_preverbal.majorityOrder = .dpFirst := ⟨rfl, rfl⟩
 
 -- ============================================================================
@@ -459,11 +459,11 @@ theorem vo_languages_postverbal :
     deriving VerbPosition from OVOrder and then applying linear closeness
     yields CP-first, which is refuted by German data. -/
 theorem linear_wrong_for_ov_languages :
-    (OVOrder.verbPosition .ov).map linearClosenessPrediction = some .cpFirst := rfl
+    (OVOrder.verbPosition .ov).map (predictOrder .linear) = some .cpFirst := rfl
 
 /-- Bottom-up makes the correct prediction for all OV languages. -/
 theorem bottomUp_correct_for_ov_languages :
-    (OVOrder.verbPosition .ov).map bottomUpPrediction = some .dpFirst := rfl
+    (OVOrder.verbPosition .ov).map (predictOrder .structural) = some .dpFirst := rfl
 
 -- ============================================================================
 -- § 11: Fragment Membership & Coordination Particle
