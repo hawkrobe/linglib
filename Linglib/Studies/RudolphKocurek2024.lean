@@ -71,6 +71,55 @@ domination lift ([holliday-icard-2013]; Lewis's lift, also the lift of
 [kratzer-1991]'s ordering semantics, with complete logic WJR [halpern-2003];
 comparing difference sets follows [kratzer-2012]). -/
 
+namespace ComparativeProbability
+
+variable {W : Type*} {ge_w : W → W → Prop}
+
+/-- Lewis's ∃∀ comparative-possibility clause, localized to the `le`-cone at
+an index and comparing difference sets (`P∖Q` against `Q∖P`, the shape of
+[kratzer-2012]'s revised lifting), with the dominance relation a parameter —
+the single clause behind [rudolph-kocurek-2024]'s ≻ (`below` the strict
+ordering) and ≫ (`below` = far-below). -/
+def coneStrictLift (le below : W → W → Prop) (P Q : W → Prop) (i : W) : Prop :=
+  ∃ a, le a i ∧ P a ∧ ¬ Q a ∧ ∀ b, le b i → Q b → ¬ P b → below b a
+
+instance (le below : W → W → Prop) (P Q : W → Prop) (i : W) [Fintype W]
+    [DecidableRel le] [DecidableRel below] [DecidablePred P] [DecidablePred Q] :
+    Decidable (coneStrictLift le below P Q i) := by
+  unfold coneStrictLift; infer_instance
+
+/-- The cone difference set at `i`: `≤`-cone members where `P` holds and `Q`
+fails ([kratzer-2012]'s difference sets, localized to the cone). -/
+def coneDiff (le : W → W → Prop) (P Q : W → Prop) (i : W) : Set W :=
+  {x | le x i ∧ P x ∧ ¬ Q x}
+
+/-- `strict_dominationLift_iff` with the strict pair packaged as a dominance
+relation: whenever `below` is the strict form of the total `ge_w`, strict
+l-lifting is an ∃∀ clause in `below`. -/
+theorem strict_dominationLift_iff_below {below : W → W → Prop}
+    (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
+    (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b) (A B : Set W) :
+    ComparativeProbability.Strict (dominationLift ge_w) A B ↔
+    ∃ a ∈ A, ∀ b ∈ B, below b a := by
+  rw [strict_dominationLift_iff hTotal]
+  exact exists_congr fun a => and_congr_right fun _ =>
+    forall₂_congr fun b _ => (hBelow b a).symm
+
+/-- Whenever `below` is the strict form of the total `ge_w`, the
+cone-localized clause is the strict l-lifting on the cone difference sets. -/
+theorem coneStrictLift_iff_strict_dominationLift {le below : W → W → Prop}
+    (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
+    (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b)
+    (P Q : W → Prop) (i : W) :
+    coneStrictLift le below P Q i ↔
+    ComparativeProbability.Strict (dominationLift ge_w)
+      (coneDiff le P Q i) (coneDiff le Q P i) := by
+  rw [strict_dominationLift_iff_below hTotal hBelow]
+  unfold coneStrictLift coneDiff
+  simp only [Set.mem_ofPred_eq, and_imp, and_assoc]
+
+end ComparativeProbability
+
 namespace FirstOrder.Language
 
 variable {L : Language} {I W E : Type*}

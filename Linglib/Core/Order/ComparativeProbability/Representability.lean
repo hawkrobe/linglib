@@ -2,6 +2,7 @@ import Linglib.Core.Order.ComparativeProbability.Systems
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Tauto
 
 /-!
 # Representability of Epistemic Systems
@@ -105,11 +106,7 @@ private noncomputable def kpsGe (A B : Set (Fin 5)) : Prop := kpsRankSet A ≥ k
 
 noncomputable def kpsSystemFA : EpistemicSystemFA (Fin 5) where
   ge := kpsGe
-  refl := λ A => le_refl (kpsRankSet A)
   mono := λ {A B} hAB => kps_mono_finset _ _ ((toFS_subset A B).mp hAB)
-  bottom := by
-    simp only [kpsGe, kpsRankSet, toFS_univ, toFS_empty]
-    exact kps_bottom_finset
   nonTrivial := by
     simp only [kpsGe, kpsRankSet, toFS_univ, toFS_empty]; decide
   total := λ A B => le_total (kpsRankSet B) (kpsRankSet A)
@@ -244,11 +241,7 @@ def comapFA {α W : Type*} (f : α → W) (hf : Function.Injective f)
     (sys : EpistemicSystemFA W) (hnt : ¬sys.ge ∅ (Set.range f)) :
     EpistemicSystemFA α where
   ge A B := sys.ge (f '' A) (f '' B)
-  refl _ := sys.refl _
   mono _ _ hAB := sys.mono _ _ (Set.image_mono hAB)
-  bottom := by
-    show sys.ge (f '' Set.univ) (f '' ∅)
-    rw [Set.image_empty]; exact sys.mono _ _ (Set.empty_subset _)
   nonTrivial := by
     show ¬sys.ge (f '' ∅) (f '' Set.univ)
     rwa [Set.image_empty, Set.image_univ]
@@ -541,11 +534,7 @@ theorem perm_repr {W α : Type*} (σ : W ≃ α) (sys : EpistemicSystemFA W)
     by the preimage restriction to the first `n` atoms. -/
 def padFA {n : ℕ} (sys : EpistemicSystemFA (Fin n)) : EpistemicSystemFA (Fin (n + 1)) where
   ge A B := sys.ge (Fin.castSucc ⁻¹' A) (Fin.castSucc ⁻¹' B)
-  refl _ := sys.refl _
   mono _ _ hAB := sys.mono _ _ (Set.preimage_mono hAB)
-  bottom := by
-    show sys.ge (Fin.castSucc ⁻¹' Set.univ) (Fin.castSucc ⁻¹' ∅)
-    rw [Set.preimage_univ, Set.preimage_empty]; exact sys.bottom
   nonTrivial := by
     show ¬sys.ge (Fin.castSucc ⁻¹' ∅) (Fin.castSucc ⁻¹' Set.univ)
     rw [Set.preimage_univ, Set.preimage_empty]; exact sys.nonTrivial

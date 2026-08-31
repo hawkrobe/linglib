@@ -108,7 +108,7 @@ private lemma list_sum_pos {l : List ℚ}
 /-- The portfolio value (weighted sum of measure differences) equals the
     dot product of singleton measures with the weighted comparison sums.
     Proved by list induction on the portfolio; the key step connects
-    comparison vectors to measure differences via `FinAddMeasure.muFinsetSum`. -/
+    comparison vectors to measure differences via `FinAddMeasure.sum_mu_singleton`. -/
 private lemma finset_sum_as_univ {n : ℕ} (S : Finset (Fin n)) (f : Fin n → ℚ) :
     S.sum f = Finset.univ.sum (fun i => if i ∈ S then f i else 0) := by
   rw [← Finset.sum_filter]; congr 1; ext x; simp
@@ -118,7 +118,7 @@ private lemma single_comp_sum {n : ℕ} (m : FinAddMeasure ℚ (Fin n))
     m.mu ↑L - m.mu ↑R =
     Finset.univ.sum (fun i : Fin n =>
       m.mu {i} * ((comparisonVec n L R i : ℤ) : ℚ)) := by
-  rw [m.muFinsetSum L, m.muFinsetSum R, finset_sum_as_univ L, finset_sum_as_univ R,
+  rw [← m.sum_mu_singleton L, ← m.sum_mu_singleton R, finset_sum_as_univ L, finset_sum_as_univ R,
       ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [comparisonVec]
