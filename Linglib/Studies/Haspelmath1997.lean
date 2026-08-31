@@ -45,11 +45,8 @@ The German, Hungarian, Japanese, Korean, Mandarin, and Quechua (Ancash)
 paradigms are verified against the book (appendix A.1, A.26, A.36–A.39;
 Table 4.1); the rest are hand-stipulated pending the same pass. English in particular
 follows a narrower polarity-view allocation than both the book's coding
-(Table 4.1: *some-* 12345, *any-* 456789) and the
-[degano-aloni-2025]-shaped `Fragments/English/Indefinites.lean`; the
-Fragment-vs-Studies divergence is theorem-ized in `Studies/Bubnov2026.lean`
-§11 ([bubnov-2026] reads coverage distributionally, net of paradigmatic
-competition).
+(Table 4.1: *some-* 12345, *any-* 456789) and the coverage the English
+Fragment records.
 
 ## Main results
 
@@ -160,8 +157,7 @@ def english : IndefiniteParadigm :=
 /-- Russian: 6 interrogative-based series. Coverage follows
     [degano-aloni-2025] Table 2 (кое- SK; -то epistemic; -то and -нибудь
     both admit non-specific uses, so Russian fails `FormsDisjoint`); the
-    Fragment encodes -то more narrowly per [bubnov-2026], and both
-    readings coexist by design (`Studies/Bubnov2026.lean` §11). -/
+    Fragment records -то more narrowly, net of paradigmatic competition. -/
 def russian : IndefiniteParadigm :=
   { language := "Russian"
   , isoCode := "rus"

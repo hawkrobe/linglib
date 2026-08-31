@@ -12,63 +12,53 @@ import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.LexEntry
 
 /-!
-# [bumford-charlow-2024]: Effect-Driven Interpretation
+# Bumford and Charlow 2024: effect-driven interpretation
 
-[bumford-charlow-2024] cast diverse semantic phenomena — scope, binding,
-conventional implicature, indeterminacy — as algebraic effects in the
-Functor → Applicative → Monad hierarchy, with **meta-combinators** lifting
-the basic modes of combination into the presence of effects. This study
-formalizes that framework over linglib's effect carriers:
+Scope, binding, supplementary content and indeterminacy are treated here as computational effects,
+and the modes of combination as operations lifting ordinary application into their presence. This
+file formalizes that framework over the project's carriers: a scope-taker is a continuation, a
+supplement is a writer with a log of side propositions, a pronoun is a function from an antecedent,
+an antecedent is a value paired with itself, and an indeterminate expression is a set. Each effect
+enters the grammar through the class it satisfies — functor, applicative, monad — and the modes of
+combination are the liftings of an arbitrary binary combinator through those classes, each
+subsuming the one below it.
 
-| Effect | Type | linglib carrier |
-|--------|------|-----------------|
-| Scope | `(α → ρ) → ρ` | `Cont R A` (`Composition/Cont`) |
-| CI / supplementation | `α × List P` | `Writer (List P) A` (`Composition/Writer`) |
-| Input (binding) | `ι → α` | Reader (`Reference/Binding`) |
-| Output (antecedent) | `α × ι` | `Prod` |
-| Indeterminacy | `{α}` | `Set` |
+Binding is not a rule of its own but the co-unit of an adjunction: storing an antecedent is left
+adjoint to reading one, and the co-unit cancels the two against each other. Three binding
+mechanisms formalized independently elsewhere in the project — assignment-based predicate
+abstraction, the duplicator combinator, and this co-unit — turn out to compute one operation.
 
-## Main declarations
+The adjunction is not symmetric, and crossover follows: the co-unit fires only with the antecedent
+as the left daughter, so an antecedent must precede the pronoun it binds even where semantic scope
+inverts freely. The bound reading is derived exactly when the antecedent's position precedes the
+pronoun's, with the Akan subject/object asymmetry as one instance.
 
-* `F̄`/`F̃` (Functor), `A` (Applicative), `J` (Monad), `counitApp` (the W⊣R
-  co-unit `C`) — modes of combination lifting application into effects.
-* The W⊣R adjunction `Φ`/`Ψ`/`adj_η`/`adj_ε`: binding is the co-unit.
-* `binding_C_agrees_with_hk` and the three-way unification: adjunction
-  binding ≡ Heim-Kratzer assignment binding ≡ the `W` combinator.
+## Main definitions
 
-## Crossover
+* `mapL`, `mapR`, `structuredApp`, `joinMode`, `counitApp` — the modes of combination lifting a
+  binary combinator into a functor, an applicative, a monad and an adjunction
+* `Φ`, `Ψ`, `adj_η`, `adj_ε` — the storing/reading adjunction with its unit and co-unit
+* `derive` — the reading a binding configuration receives, given its daughters' positions
 
-[bumford-charlow-2024] §5.2: crossover is inherited from the
-*non-commutativity of the W⊣R adjunction*. `counitApp` fires the co-unit
-`ε` only when the W (antecedent) is the **left** daughter. With the
-pronoun's R on the left, scope may still invert — the antecedent outscopes
-the pronoun — yet binding never resolves: "anaphoric ships passing in the
-night." There is no recovery mechanism; the account is *categorical*.
+## Main results
 
-The `Crossover` namespace (§10) formalizes this: the dissociation
-(`scope_inversion_no_binding`), the structural derivation (`combine`/`derive`,
-returning either the bound co-unit reading or the Reader-retaining residual),
-and the phenomenon-neutral bridge `derive_bound_iff_precedes` — the bound
-reading derives iff the antecedent linearly precedes the pronoun. The
-Owusu/Chierchia *bí*/*biara* functional-reading asymmetry ([owusu-2022] §3.3.2,
-[chierchia-2001]) is one instance; superiority and primary/secondary crossover
-are others over the same `derive`.
+* `mapR_fa_eq_fmap`, `aApp_eq_structuredApp_fa`, `mApp_eq_aApp` — each mode subsumes the last
+* `adj_counit_yields_W`, `binding_unification` — co-unit, duplicator and assignment-based binding
+  are one operation
+* `cont_blocks_qr` — under the scope effect movement and abstraction derive nothing, so scope comes
+  from the order of binds alone
+* `ci_projection_universal` — projection of supplementary content is the functor law
+* `derive_bound_iff_precedes` — the pronoun is bound exactly when its antecedent precedes it
 
-This diverges from [shan-barker-2006], whose left-to-right `Scope` rule
-admits a marked right-to-left `Z` variant that recovers weak crossover as a
-*gradient*, defeasible reading (their continuation-level mechanism: a binder
-must take effect at the pronoun's continuation level, so crossing fails to
-unify under `Down`). Formalizing the S&B continuation calculus and the
-non-coincidence theorem between the two accounts is deferred — there is no
-S&B substrate in linglib yet.
+## References
 
-## Implementation notes
-
-Scope-as-bind-order rests on `ContT.eval` (`Composition/Cont.lean`);
-the §6 agreements are definitional instances of its `lower_*` laws.
-The eject combinators (`Ū`/`Ũ`/`⊿`) of Figure 10 are not formalized.
+* [bumford-charlow-2024]
+* [barker-shan-2014]
+* [charlow-2020]
+* [heim-kratzer-1998]
+* [owusu-2022]
+* [potts-2005]
 -/
-
 namespace BumfordCharlow2024
 
 open Semantics.Composition
@@ -81,41 +71,17 @@ open Intensional.Variables
 open Semantics.Montague
 open Semantics.Montague.ToyLexicon (student_sem person_sem)
 
--- ════════════════════════════════════════════════════════════════════
--- §1 Lean Typeclass Instances
--- ════════════════════════════════════════════════════════════════════
+/-! ### The carriers
 
-/-! ### §1 Typeclass instances for existing types
+The supplement effect is `Writer (List P)` and the scope effect is `Cont R`, both mathlib monads;
+their linguistic surface (`val`, `log`, `tell`, `ContT.eval`) is in `Composition/`. -/
 
-The W effect is mathlib's `Writer (List P)` (= `WriterT (List P) Id`), whose
-`Functor`/`Applicative`/`Monad` instances come from mathlib, with
-`LawfulMonad` and the `val`/`log`/`tell` surface in
-`Composition/Writer.lean`. The `Cont R` monad is mathlib's
-(`Mathlib.Control.Monad.Cont`); its linguistics surface (`ContT.eval`)
-lives in `Composition/Cont.lean`. -/
+/-! ### Modes of combination
 
--- ════════════════════════════════════════════════════════════════════
--- §2 Meta-Combinators
--- ════════════════════════════════════════════════════════════════════
-
-/-! ### §2 Meta-combinators
-
-central contribution: **meta-combinators**
-that build higher-order modes of combination from basic ones. Given any
-binary combinator `(∗) :: σ → τ → ω` (e.g., function application), these
-produce new combinators that work when one or both daughters carry effects.
-
-| Meta-combinator | Effectful daughters | Hierarchy | Paper ref |
-|----------------|-------------------|-----------|-----------|
-| F̄ (Map Left) | left | Functor | Figure 4 |
-| F̃ (Map Right) | right | Functor | Figure 4 |
-| A (Structured App) | both | Applicative | Figure 7 |
-| J (Join) | both + nested | Monad | Figure 8 |
-| C (Co-unit) | adjoint pair | Adjunction | Figure 10 |
-
-F̄, F̃, A, and J are parameterized over any effect type Σ for which the
-appropriate typeclass (Functor/Applicative/Monad) holds. C is defined in §4,
-parameterized over an adjunction (specifically W ⊣ R). -/
+A mode of combination takes a binary combinator `(∗) : σ → τ → ω` and produces one that works when
+a daughter carries an effect: mapping over the left daughter or the right one needs a functor,
+combining two effectful daughters an applicative, and flattening the effect a computation itself
+returns a monad. The adjunction mode is defined further below. -/
 
 section MetaCombinators
 
@@ -156,10 +122,6 @@ def structuredApp {F : Type → Type} [Applicative F]
 def joinMode {F : Type → Type} [Monad F]
     (star : σ → τ → F ω) (e₁ : F σ) (e₂ : F τ) : F ω :=
   structuredApp star e₁ e₂ >>= id
-
--- ────────────────────────────────────────────────────
--- Meta-combinator theorems
--- ────────────────────────────────────────────────────
 
 variable {α β : Type}
 
@@ -208,22 +170,11 @@ theorem structuredApp_pure_left {F : Type → Type}
 
 end MetaCombinators
 
--- ════════════════════════════════════════════════════════════════════
--- §3 Generalized Application
--- ════════════════════════════════════════════════════════════════════
+/-! ### The hierarchy of applications
 
-/-! ### §3 Generalized Application and hierarchy theorems
-
-The meta-combinators instantiated to forward application (>) yield the
-familiar hierarchy of composition rules:
-
-- **FA**: ordinary function application (the identity functor, no effects)
-- **Functorial map**: pure function + effectful argument = F̃(>)
-- **Applicative ap**: both effectful = A(>)
-- **Monadic bind**: sequenced effects
-
-H&K's FA is the base case — the identity functor applied to ordinary
-(effect-free) meanings. -/
+At forward application the modes give the familiar sequence: ordinary application on effect-free
+meanings, a map when only the argument is effectful, an applicative application when both are, and
+a bind when the effects are sequenced. Each subsumes the previous one. -/
 
 section GeneralizedApplication
 
@@ -244,9 +195,8 @@ def aApp {F : Type → Type} [Applicative F] (mf : F (α → β)) (ma : F α) : 
 
 /-- Monadic application: both effectful, with sequencing.
 
-    Enabled by `(≫=)` from Ch. 4. Every
-    monad determines an applicative via eq. 4.19a:
-    `F ⊛ X = F ≫= λf. f • X`. -/
+    Every monad determines an applicative this way (eq. 4.19a):
+    `F ⊛ X = F ≫= λf. X ≫= λx. η (f x)`. -/
 def mApp {F : Type → Type} [Monad F] (mf : F (α → β)) (ma : F α) : F β :=
   mf >>= (λ f => f <$> ma)
 
@@ -280,27 +230,16 @@ theorem aApp_eq_structuredApp_fa {F : Type → Type}
 
 end GeneralizedApplication
 
--- ════════════════════════════════════════════════════════════════════
--- §4 The W ⊣ R Adjunction
--- ════════════════════════════════════════════════════════════════════
+/-! ### Storing and reading
 
-/-! ### §4 The W ⊣ R adjunction for binding
+Binding arises from an adjunction between storing a referent (a product) and reading one (a
+function from the referent): functions out of a pair are isomorphic to curried functions, which is
+currying. The co-unit of that adjunction takes a pair of a reader and a stored referent and applies
+the one to the other, and that is the binding mechanism — when an antecedent stores itself, the
+co-unit yields the duplicator `W κ x = κ x x`.
 
-§5.1 proposes that binding arises from an
-**adjunction** between the output effect W (= product) and the input
-effect R (= reader). The adjunction W ⊣ R says that functions out of
-pairs `α × ι → β` are isomorphic to curried functions `α → ι → β` —
-this is just currying.
-
-The **co-unit** ε of this adjunction — which takes a pair `⟨f, x⟩` and
-applies `f` to `x` — IS the binding mechanism. When an antecedent stores
-itself via `▷(x) = ⟨x, x⟩` and the sentence body uses the bound variable,
-the co-unit ε yields the **W combinator** `W κ x = κ x x` from
-`Binding.lean`.
-
-Note: the paper's W (product) is distinct from `Writer (List P) A`
-(accumulating list log). The product W models single-referent storage;
-the `Writer` models CI accumulation. -/
+The storing effect here is a product, carrying one referent; it is not the writer above, which
+accumulates a log. -/
 
 section WRAdjunction
 
@@ -346,18 +285,12 @@ theorem adj_ε_eq : @adj_ε ι α = Ψ id := rfl
 
     When an antecedent `x` stores itself (via `▷(x) = ⟨x, x⟩`) and the
     sentence body `κ` has been partially applied to `x`, we get
-    `ε(κ x, x) = κ x x = W κ x`.
-
-    This connects adjunction-based binding
-    to the W combinator in `Binding.lean`. -/
+    `ε(κ x, x) = κ x x = W κ x`. -/
 theorem adj_counit_yields_W (κ : ι → ι → β) (x : ι) :
     adj_ε (κ x, x) = W κ x := rfl
 
-/-- H&K assignment-based binding and the adjunction co-unit agree
-    for reflexive binding: both produce `body(binder, binder)`.
-
-    This connects the adjunction (§5.1 of the paper) to the existing
-    `hk_bs_reflexive_equiv` theorem in `Binding.lean`. -/
+/-- Assignment-based binding and the adjunction's co-unit agree for a reflexive: both produce
+    `body(binder, binder)`. -/
 theorem adj_binding_agrees_with_hk {E : Type} (n : Nat)
     (body : E → E → Prop)
     (binder : E) (g : Assignment E) :
@@ -369,12 +302,7 @@ end WRAdjunction
 
 section CounitCombinator
 
-/-! #### The C meta-combinator
-
-eq. 5.8, Figure 10: the **co-unit** meta-combinator
-uses the adjunction's ε to compose W-computations (antecedent storage) with
-R-computations (pronoun resolution). For W ⊣ R, C reduces to unpacking the
-stored referent and feeding it to the reader function. -/
+/-! ### The co-unit mode of combination -/
 
 variable {ι σ τ ω : Type}
 
@@ -383,12 +311,12 @@ variable {ι σ τ ω : Type}
     eq. 5.8, Figure 10:
     `C(∗) E₁ E₂ := ε((λl. (λr. l ∗ r) • E₂) • E₁)`
 
-    For the W ⊣ R adjunction (§5.1), where W α = α × ι (product)
+    For the storing/reading adjunction, where the stored effect is `α × ι` (product)
     and R α = ι → α (reader), the two fmap operations compose the
     binary combinator with both computations, and ε extracts the result:
     `C(∗) ⟨s, i⟩ f = s ∗ f(i)`
 
-    **Crossover** (§5.2): The type signature encodes the crossover
+    **Crossover**: the type signature encodes the crossover
     constraint — the W effect (antecedent, `σ × ι`) must be the left
     daughter and the R effect (pronoun, `ι → τ`) the right daughter.
     Swapping them produces a type error, not a binding failure: there
@@ -408,62 +336,24 @@ theorem counitApp_via_adj_ε (star : σ → τ → ω) (e₁ : σ × ι) (e₂ :
 
     When an antecedent stores itself and the pronoun is the identity
     reader, C(>) reduces to the W combinator from `Binding.lean`:
-    `C(>) ⟨κ x, x⟩ id = κ x x = W κ x`.
-
-    This connects adjunction mechanism
-    (their central §5 contribution) to the classical duplicator
-    combinator that underlies binding. -/
+    `C(>) ⟨κ x, x⟩ id = κ x x = W κ x`. -/
 theorem counitApp_reflexive_is_W (κ : ι → ι → ω) (x : ι) :
     counitApp fa' (κ x, x) id = W κ x := rfl
 
 end CounitCombinator
 
--- ════════════════════════════════════════════════════════════════════
--- §5 Effect Operations and Handlers
--- ════════════════════════════════════════════════════════════════════
-
-/-! ### §5 Effect operations and handlers
-
-Named operations from, connecting existing
-linglib infrastructure to the effect/handler pattern.
-
-**Effects** (introduce computational context):
-- `aside`: Log a CI proposition (= `Writer.tell`)
-
-**Handlers** (eliminate computational context):
-- `handleScope`: Lower a `Cont` to its result (= `ContT.eval`)
-- `handleCI`: Extract at-issue value and CI log from `Writer` -/
-
-section EffectOps
-
-variable {R : Type} {P : Type} {α : Type}
-
-/-- Log a CI proposition as a side-effect. Alias for `Writer.tell`. -/
-def aside (p : P) : Writer (List P) Unit := Writer.tell p
-
-/-- Handle the scope effect by evaluating with the identity continuation.
-    Alias for `ContT.eval`. -/
-def handleScope (m : Cont R R) : R := ContT.eval m
-
-/-- Handle CI effects by extracting the value and accumulated log. -/
-def handleCI (m : Writer (List P) α) : α × List P := (m.val, m.log)
-
-end EffectOps
+/-! ### Predicate abstraction under effects -/
 
 section PredAbsInstances
 
-/-! #### PA capability under effects
-
-`Tree.PredAbs` records which effects admit Predicate Abstraction. The
-negative instances are theoretical content, not bookkeeping: they state
-in the type system that QR/PA-style binding is unavailable under these
-effects, so scope and binding must come from effect sequencing instead
-(`bind`-order, the W ⊣ R adjunction of §4). -/
+/-! `Tree.PredAbs` records which effects admit predicate abstraction. The negative instances say
+in the type system that abstraction-based binding is unavailable under these effects, so scope and
+binding must come from the order of binds or from the adjunction's co-unit instead. -/
 
 /-- Scope effects do not support Predicate Abstraction: a distributor
 `(Entity → Cont R α) → Cont R (Entity → α)` would have to run one
 continuation at every entity simultaneously. Binding under scope arises
-from `bind`-order instead (§7). -/
+from the order of binds instead. -/
 instance {R E W D : Type} : Tree.PredAbs (Cont R) E W D := ⟨none⟩
 
 /-- CI effects do not support Predicate Abstraction: the log of
@@ -473,17 +363,7 @@ instance {ω E W D : Type} : Tree.PredAbs (Writer ω) E W D := ⟨none⟩
 
 end PredAbsInstances
 
--- ════════════════════════════════════════════════════════════════════
--- §6 Bridge Theorems
--- ════════════════════════════════════════════════════════════════════
-
-/-! ### §6 Bridge theorems
-
-Connect the effect framework to existing linglib constructions, proving
-that independently-developed linglib modules are instances of the
-effect-driven architecture. The W and C effects need no bridge:
-`Writer`'s monadic application is mathlib's `<*>`, and
-`handleScope := ContT.eval` by definition. -/
+/-! ### Supplementary content -/
 
 section CIBridge
 
@@ -492,15 +372,10 @@ variable {W : Type}
 /-- A `TwoDimProp` embeds into a `Writer (List (W → Prop)) (W → Prop)`:
     the at-issue content is the value, the CI is the log.
 
-    This connects [potts-2005]'s two-dimensional semantics to
-    Writer effect (their W constructor
-    in Table 2). -/
+    This is [potts-2005]'s two-dimensional semantics as the writer effect (the book's `W`
+    constructor). -/
 def twoDimToWriter (p : TwoDimProp W) : Writer (List (W → Prop)) (W → Prop) :=
   Writer.mk p.atIssue ([p.ci])
-
--- ────────────────────────────────────────────────────
--- CI projection universality
--- ────────────────────────────────────────────────────
 
 /-- **CI projection universality.** Any operation that acts via `<$>`
     (i.e., transforms the value but leaves the log untouched)
@@ -525,10 +400,6 @@ theorem twoDim_neg_ci_via_writer (p : TwoDimProp W) :
 theorem twoDim_neg_val_via_writer (p : TwoDimProp W) :
     (twoDimToWriter (TwoDimProp.neg p)).val = λ w => ¬ p.atIssue w := rfl
 
--- ────────────────────────────────────────────────────
--- Running the CI Writer (shunting)
--- ────────────────────────────────────────────────────
-
 /-- Run a CI Writer by conjoining all log entries with the value.
 
     This is the Writer counterpart of shunting (↓ from
@@ -547,27 +418,6 @@ def runCIWriter {W : Type} (m : Writer (List (W → Prop)) (W → Prop)) : TwoDi
   { atIssue := λ w => m.log.foldl (λ acc ci => acc ∧ ci w) (m.val w)
   , ci := λ _ => True }
 
-/-- Running a CI Writer consumes the log: the result has trivial CI. -/
-theorem runCIWriter_trivial_ci {W : Type} (m : Writer (List (W → Prop)) (W → Prop)) (w : W) :
-    (runCIWriter m).ci w ↔ True := Iff.rfl
-
-/-- Running a Writer with an empty log preserves the value unchanged. -/
-theorem runCIWriter_empty_log {W : Type} (val : W → Prop) (w : W) :
-    (runCIWriter (Writer.mk val ([]))).atIssue w = val w := rfl
-
-/-- Running a Writer with a trivially-true log entry preserves the
-    value unchanged.
-
-    Pure quotation = clearing the log to `[λ _ => True]`. Running
-    such a Writer recovers the original at-issue content. -/
-theorem runCIWriter_trivial_log {W : Type} (val : W → Prop) (w : W) :
-    (runCIWriter (Writer.mk val ([λ _ => True]))).atIssue w ↔ val w := by
-  simp [runCIWriter]
-
--- ────────────────────────────────────────────────────
--- Single-CI round-trip (TwoDimProp ↔ Writer)
--- ────────────────────────────────────────────────────
-
 /-- **Single-CI round-trip.** Embedding a `TwoDimProp` into Writer then
     running conjoins the at-issue and CI dimensions — exactly the
     shunting operation ↓ from [kirk-giannini-2024].
@@ -577,111 +427,22 @@ theorem runCIWriter_trivial_log {W : Type} (val : W → Prop) (w : W) :
 theorem runCIWriter_twoDim {W : Type} (p : TwoDimProp W) (w : W) :
     (runCIWriter (twoDimToWriter p)).atIssue w ↔ (p.atIssue w ∧ p.ci w) := Iff.rfl
 
-/-- Function-level version: the round-trip is shunting as a function,
-    not just at a single world. -/
-theorem runCIWriter_twoDim_fn {W : Type} (p : TwoDimProp W) :
-    (runCIWriter (twoDimToWriter p)).atIssue = λ w => p.atIssue w ∧ p.ci w := rfl
-
--- ────────────────────────────────────────────────────
--- Multi-CI compositionality
--- ────────────────────────────────────────────────────
-
-/-- **Log compositionality.** Running a Writer whose log is a
-    concatenation = running the first part, then folding the rest on top.
-
-    This is the multi-CI generalization of shunting. When `Writer.bind`
-    sequences two CI-producing computations (e.g., "that bastard John
-    met that jerk Pete"), their logs are concatenated. Running the result
-    conjoins all CIs into the at-issue dimension.
-
-    Follows from `List.foldl_append`. -/
-theorem runCIWriter_log_append {W : Type}
-    (val : W → Prop) (cis₁ cis₂ : List (W → Prop)) (w : W) :
-    (runCIWriter (Writer.mk val (cis₁ ++ cis₂))).atIssue w =
-    cis₂.foldl (λ acc ci => acc ∧ ci w)
-      ((runCIWriter (Writer.mk val cis₁)).atIssue w) := by
-  simp [runCIWriter, List.foldl_append]
-
-/-- **Idempotency.** Running, re-embedding, and running again = running once.
-
-    After `runCIWriter` consumes the log, the CI dimension is trivial.
-    Re-embedding (via `twoDimToWriter`) creates a `[fun _ => true]` log.
-    Running again conjoins with `true`, which is the identity.
-
-    This is the retraction property: `runCIWriter ∘ twoDimToWriter` is
-    idempotent on the image of `runCIWriter`. -/
-theorem runCIWriter_idempotent {W : Type}
-    (m : Writer (List (W → Prop)) (W → Prop)) (w : W) :
-    (runCIWriter (twoDimToWriter (runCIWriter m))).atIssue w ↔
-    (runCIWriter m).atIssue w := by
-  simp [runCIWriter, twoDimToWriter]
-
 end CIBridge
 
 section ScopeBridge
 
-/-- A generalized quantifier IS a `Cont Prop Entity` value.
+/-- A generalized quantifier read as a scope-taking computation. The function is returned
+unchanged: `(E → Prop) → Prop` is `Cont Prop E`, and the definition only tells the elaborator to
+see it that way. -/
+def gqAsCont {E : Type} (gq : (E → Prop) → Prop) : Cont Prop E := gq
 
-    Ch. 4: the continuation monad is the
-    algebraic effect for scope-taking. A GQ `(e → t) → t` IS
-    `Cont Prop Entity` by definition. -/
-def gqAsCont {E : Type} (gq : (E → Prop) → Prop) : Cont Prop E :=
-  gq
-
-/-- A `Cont Prop Entity` value IS a generalized quantifier. -/
-def contAsGQ {E : Type} (c : Cont Prop E) : (E → Prop) → Prop :=
-  c
-
-/-- `every_sem` applied to a restrictor is a `Cont Prop Entity` value. -/
-def every_as_cont (restrictor : ToyEntity → Prop) :
-    Cont Prop ToyEntity :=
-  gqAsCont (every_sem restrictor)
-
-/-- `some_sem` applied to a restrictor is a `Cont Prop Entity` value. -/
-def some_as_cont (restrictor : ToyEntity → Prop) :
-    Cont Prop ToyEntity :=
-  gqAsCont (some_sem restrictor)
-
-/-- Lowering a scope-taking quantifier = applying it to the scope. -/
-theorem scope_lower_eq_gq_id (restrictor scope' : ToyEntity → Prop) :
-    handleScope (gqAsCont (every_sem restrictor) >>= λ x => pure (scope' x)) =
-    every_sem restrictor scope' := rfl
-
-/-- Scope resolution via Cont agrees with direct GQ application for
-    "every student sleeps": the Cont derivation produces the same Prop. -/
-theorem scope_agrees_with_qr_everyStudentSleeps :
-    handleScope (gqAsCont (every_sem student_sem) >>=
-      λ x => pure (ToyLexicon.sleeps_sem x)) =
-    every_sem student_sem ToyLexicon.sleeps_sem := rfl
-
-/-- Scope resolution via Cont agrees with direct GQ application for
-    "some student sleeps". -/
-theorem scope_agrees_with_qr_someStudentSleeps :
-    handleScope (gqAsCont (some_sem student_sem) >>=
-      λ x => pure (ToyLexicon.sleeps_sem x)) =
-    some_sem student_sem ToyLexicon.sleeps_sem := rfl
-
-/-- Surface scope (∀>∃) via continuation composition agrees with direct
-    GQ application. -/
-theorem scope_surface_agrees_with_qr :
-    handleScope (gqAsCont (every_sem person_sem) >>= λ x =>
-      gqAsCont (some_sem person_sem) >>= λ y =>
-        pure (ToyLexicon.sees_sem y x)) =
-    every_sem person_sem
-      (λ x => some_sem person_sem (λ y => ToyLexicon.sees_sem y x)) := rfl
-
-/-- Inverse scope (∃>∀) via continuation composition agrees with direct
-    GQ application. -/
-theorem scope_inverse_agrees_with_qr :
-    handleScope (gqAsCont (some_sem person_sem) >>= λ y =>
-      gqAsCont (every_sem person_sem) >>= λ x =>
-        pure (ToyLexicon.sees_sem y x)) =
-    some_sem person_sem
-      (λ y => every_sem person_sem (λ x => ToyLexicon.sees_sem y x)) := rfl
+/-- Lowering a quantifier applied to a scope is quantifier application. -/
+theorem eval_bind_pure {E : Type} (q : Cont Prop E) (scope' : E → Prop) :
+    ContT.eval (q >>= λ x => pure (scope' x)) = q scope' := rfl
 
 /-- Surface scope reading holds in the toy model. -/
 theorem surface_scope_via_cont :
-    handleScope (gqAsCont (every_sem person_sem) >>= λ x =>
+    ContT.eval (gqAsCont (every_sem person_sem) >>= λ x =>
       gqAsCont (some_sem person_sem) >>= λ y =>
         pure (ToyLexicon.sees_sem y x)) := by
   intro x hpx
@@ -692,7 +453,7 @@ theorem surface_scope_via_cont :
 
 /-- Inverse scope reading does not hold in the toy model. -/
 theorem inverse_scope_via_cont :
-    ¬handleScope (gqAsCont (some_sem person_sem) >>= λ y =>
+    ¬ ContT.eval (gqAsCont (some_sem person_sem) >>= λ y =>
       gqAsCont (every_sem person_sem) >>= λ x =>
         pure (ToyLexicon.sees_sem y x)) := by
   intro ⟨y, _, hy⟩
@@ -704,12 +465,12 @@ theorem inverse_scope_via_cont :
 /-- The two scope orderings via Cont yield genuinely different readings,
     matching `HeimKratzer1998.scope_readings_differ`. -/
 theorem cont_scope_readings_differ :
-    (handleScope (gqAsCont (every_sem person_sem) >>= λ x =>
+    ContT.eval (gqAsCont (every_sem person_sem) >>= λ x =>
       gqAsCont (some_sem person_sem) >>= λ y =>
-        pure (ToyLexicon.sees_sem y x))) ≠
-    (handleScope (gqAsCont (some_sem person_sem) >>= λ y =>
+        pure (ToyLexicon.sees_sem y x)) ≠
+    ContT.eval (gqAsCont (some_sem person_sem) >>= λ y =>
       gqAsCont (every_sem person_sem) >>= λ x =>
-        pure (ToyLexicon.sees_sem y x))) := by
+        pure (ToyLexicon.sees_sem y x)) := by
   intro h
   have hS := surface_scope_via_cont
   have hI := inverse_scope_via_cont
@@ -720,7 +481,7 @@ end ScopeBridge
 
 section TreeEngine
 
-/-! #### The tree engine under effects
+/-! ### The tree engine under effects
 
 `Tree.interp` is polymorphic over the effect functor: the same type-driven
 engine that implements H&K at `M = Id` lifts through any `[Applicative M]`.
@@ -729,10 +490,10 @@ framework-level identity, no toy lexicon required. -/
 
 open HeimKratzer1998 in
 /-- **The scope effect forecloses QR**: at `M = Cont Prop` the engine has
-no entity-distributor (`PredAbs (Cont R) := ⟨none⟩`, §5), so the
+no entity-distributor (`PredAbs (Cont R) := ⟨none⟩`), so the
 inverse-scope QR derivation that `interp` computes at `M = Id`
 (`HeimKratzer1998.interp_computes_inverse`) fails outright. The reading
-§6 derives by bind reordering is unreachable by movement-plus-abstraction
+reordering the binds derives is unreachable by movement and abstraction
 under the scope effect: Cont and QR are not notational variants. -/
 theorem cont_blocks_qr :
     interp ToyEntity Unit (M := Cont Prop)
@@ -740,8 +501,7 @@ theorem cont_blocks_qr :
 
 open HeimKratzer1998 in
 /-- Surface-scope QR fails equally: any PA (`.bind`) node is stuck under
-`Cont`. Scope under the effect comes only from bind order (§6), never
-from movement. -/
+`Cont`. Scope under the effect comes only from the order of binds, never from movement. -/
 theorem cont_blocks_qr_surface :
     interp ToyEntity Unit (M := Cont Prop)
       (Lexicon.lift (Cont Prop) quantLex) g₀ tree_surface = none := rfl
@@ -756,29 +516,20 @@ end TreeEngine
 
 section BindingBridge
 
-/-! #### Binding via the C meta-combinator
+/-! ### Binding by the co-unit
 
-Worked derivation connecting C (eq. 5.8) to
-existing binding infrastructure over the toy model.
-
-The **W combinator** `W κ x = κ x x` is the shared link between three
-independent binding mechanisms:
+The duplicator `W κ x = κ x x` is the shared link between three independent binding mechanisms:
 
 - **C** (co-unit meta-combinator): `C(<) ▷(x) body = W body x`
 - **H&K** (assignment-based): `body (g[n↦x] n) (g[n↦x] n) = W body x`
-- **[charlow-2018]'s Reader join**: `denotGJoin body = W body`
-  (proven in `Charlow2018.lean:denotGJoin_is_W`)
+- **the reader join**: `denotGJoin body = W body`
 
-The derivation follows §5.1: the subject
-stores itself as an antecedent via `▷(x) = ⟨x, x⟩` (a W-computation),
-the reflexive pronoun is the identity reader (an R-computation), and
-C resolves the binding by feeding the stored referent to the reader. -/
+In the derivation below the subject stores itself as an antecedent, `▷(x) = ⟨x, x⟩`; the reflexive
+pronoun is the identity reader; and the co-unit resolves the binding by feeding the stored referent
+to the reader. -/
 
-/-- Antecedent storage: `▷(x) = ⟨x, x⟩`.
-
-    eq. 5.1b: an entity stores its
-    referent in the W (product) effect, making it available for
-    downstream binding via the co-unit ε. -/
+/-- Antecedent storage `▷(x) = ⟨x, x⟩` (eq. 5.1b): an entity stores its own referent, making it
+    available to the co-unit downstream. -/
 def store {α : Type} (x : α) : α × α := (x, x)
 
 /-- C(<) with storage yields the W combinator.
@@ -801,10 +552,7 @@ theorem john_sees_himself_via_C :
       (λ i => ToyLexicon.sees_sem i) = False := rfl
 
 /-- C-based binding agrees with H&K assignment-based binding:
-    both compute `sees(g[1↦j](1), g[1↦j](1)) = sees(j, j)`.
-
-    This connects adjunction mechanism
-    to [heim-kratzer-1998]'s predicate abstraction. -/
+    both compute `sees(g[1↦j](1), g[1↦j](1)) = sees(j, j)`. -/
 theorem binding_C_agrees_with_hk (g : Assignment ToyEntity) :
     counitApp ba' (store ToyEntity.john)
       (λ i => ToyLexicon.sees_sem i) =
@@ -815,48 +563,20 @@ theorem binding_C_agrees_with_hk (g : Assignment ToyEntity) :
                            (g[1 ↦ ToyEntity.john] 1)
   simp only [Function.update_self]
 
-/-- C and H&K agree for Mary as well: `C(<) ▷(m) (λi. sees i) = sees m m`. -/
-theorem binding_C_agrees_with_hk_mary (g : Assignment ToyEntity) :
-    counitApp ba' (store ToyEntity.mary)
-      (λ i => ToyLexicon.sees_sem i) =
-    ToyLexicon.sees_sem (g[2 ↦ ToyEntity.mary] 2)
-                        (g[2 ↦ ToyEntity.mary] 2) := by
-  show ToyLexicon.sees_sem ToyEntity.mary ToyEntity.mary =
-       ToyLexicon.sees_sem (g[2 ↦ ToyEntity.mary] 2)
-                           (g[2 ↦ ToyEntity.mary] 2)
-  simp only [Function.update_self]
-
 end BindingBridge
 
--- ════════════════════════════════════════════════════════════════════
--- §7 General Scope Agreement: Cont ≡ GQ Application
--- ════════════════════════════════════════════════════════════════════
+/-! ### Scope as bind order
 
-/-! ### §7 General scope agreement
-
-The ScopeBridge section (§6) proved Cont ↔ QR agreement for the toy model.
-Here we prove the agreement is *structural*: it holds
-for any type, any quantifier, and any predicate — not because we checked
-all cases, but because the two approaches compute the same function.
-
-The key insight: `Cont R E := (E → R) → R` is literally a generalized
-quantifier. The identity function `gqAsCont` witnesses this — there is no
-encoding, no coercion, no wrapper. So the Cont derivation *is* GQ
-application by definition.
-
-Scope ambiguity in the Cont framework is not a special mechanism: it is
-the *order of monadic bind*. Surface scope = bind the subject first;
-inverse scope = bind the object first. The bind order IS the scope order,
-and `eval` IS GQ application.
-
-This establishes Cont as a *general* scope framework, with QR trees as
-one particular syntax for specifying bind order. -/
+A continuation `(E → R) → R` is a generalized quantifier, with no encoding in between, so a
+continuation derivation is quantifier application and scope ambiguity is the order in which the
+binds are sequenced rather than a mechanism of its own. Movement and abstraction are one syntax for
+specifying that order. -/
 
 section GeneralScopeAgreement
 
 /-! The generic scope-as-bind-order facts are the `ContT.eval_*` simp
-set in `Composition/Cont.lean`; the §6 theorems above are definitional
-instances. What remains here is the bridge to QR trees. -/
+set in `Composition/Cont.lean`; the theorems above are definitional instances of them. What
+remains here is the bridge to movement-and-abstraction trees. -/
 
 /-- **QR scope = Cont scope via lambdaAbsG**: the structural connection
     between QR trees and Cont derivations.
@@ -879,26 +599,11 @@ theorem qr_cont_structural_agreement {E W : Type}
 
 end GeneralScopeAgreement
 
--- ════════════════════════════════════════════════════════════════════
--- §8 Three-Way Binding Unification
--- ════════════════════════════════════════════════════════════════════
+/-! ### One binding operation
 
-/-! ### §8 Three-way binding unification
-
-Three independently-developed binding mechanisms in linglib all compute
-the same operation `f e e`:
-
-| Source | Operation | Definition | File |
-|--------|-----------|------------|------|
-| [heim-kratzer-1998] | `denotGJoin` (μ) | `λg. f g g` | `Variables.lean` |
-| [barker-shan-2014] | `W` (duplicator) | `W κ x = κ x x` | `Binding.lean` |
-| | `adj_ε` (co-unit) | `ε(f e, e) = (f e) e` | §2 above |
-
-The individual two-way bridges exist:
-- `denotGJoin_is_W` (`Charlow2018.lean`)
-- `adj_counit_yields_W` (§2 above)
-
-Here we close the triangle with a single three-way theorem. -/
+Assignment-based binding, the duplicator combinator and the adjunction's co-unit all compute `f e e`
+— the two-way bridges between them exist elsewhere in the project, and the theorems here close the
+triangle. -/
 
 section BindingUnification
 
@@ -917,56 +622,17 @@ theorem binding_unification {E : Type} {A : Type}
     (f : Assignment E → Assignment E → A) (g : Assignment E) :
     denotGJoin f g = W f g ∧ W f g = adj_ε (f g, g) := ⟨rfl, rfl⟩
 
-/-- Closing the triangle directly: `denotGJoin` = `adj_ε ∘ ⟨f·, ·⟩`.
-
-    ```
-        denotGJoin ──── rfl ────→ W
-              \                    |
-               \                   |
-           rfl  \              rfl |
-                 ↘                 ↓
-                   adj_ε ∘ ⟨f·, ·⟩
-    ``` -/
-theorem binding_triangle {E : Type} {A : Type}
-    (f : Assignment E → Assignment E → A) (g : Assignment E) :
-    denotGJoin f g = adj_ε (f g, g) := rfl
-
 end BindingUnification
 
--- ════════════════════════════════════════════════════════════════════
--- §9 Indeterminacy Effect (Set Monad)
--- ════════════════════════════════════════════════════════════════════
+/-! ### Indeterminacy
 
-/-! ### §9 Indeterminacy effect
-
-The **indeterminacy** effect — labeled `S` in the paper's
-Table 2 — is the set monad `(S, η, ⫝̸)` from [charlow-2020],
-formalized in `Studies/Charlow2020.lean`.
-
-| Effect | η (pure) | ⫝̸ (bind) | Linguistic use |
-|---|---|---|---|
-| Scope (C) | `λκ. κ x` | `λκ. m(λa. f a κ)` | Quantifier scope |
-| CI (W) | `⟨x, []⟩` | `⟨(f m.val).val, m.log ++ ...⟩` | Supplements |
-| Binding (R) | `λ_. x` | `λe. f(m e) e` | Assignment-sensitivity |
-| **Indeterminacy (S)** | **`{x}`** | **`⋃_{a ∈ m} f(a)`** | **Indefinites, focus, *wh*** |
-
-The set monad's applicative instance is *pointwise composition* — the
-standard mechanism of alternative semantics ([hamblin-1973b],
-[kratzer-shimoyama-2002]). Its monadic bind is *scope-taking* — the
-mechanism [charlow-2020] argues is needed for exceptional scope.
-
-The applicative is strictly weaker: it cannot derive selectivity (§5.4 of
-the paper) or the Binder Roof Constraint (§6.4). The monad can. -/
+Indeterminate expressions denote sets. The applicative instance is the pointwise composition of
+alternative semantics; the monadic bind is scope-taking, and it is the bind that [charlow-2020]
+argues is needed for exceptional scope, since the applicative alone cannot deliver it. -/
 
 section IndeterminacyBridge
 
 attribute [local instance] Set.monad
-
-/-- The set monad's `pure` is the indeterminacy effect's `pure` — the
-    singleton `{x}`, which as a `Set α = α → Prop` is `fun y => y = x`. -/
-theorem indeterminacy_pure_is_singleton {A : Type} (x : A) :
-    (pure x : Set A) = fun y => y = x := by
-  ext y; exact Iff.rfl
 
 /-- The set monad's `>>=` is the indeterminacy effect's `bind` — for
     `m : Set A` (= `A → Prop`) and `f : A → Set B`, the result at `b`
@@ -978,36 +644,20 @@ theorem indeterminacy_bind_is_seq {A B : Type}
   simp only [Set.bind_def, Set.mem_iUnion, Set.mem_ofPred_eq, exists_prop]
   rfl
 
-/-- **Indeterminacy obeys ASSOCIATIVITY** — the property [charlow-2020]
-    leans on to derive exceptional scope. Mathlib's `bind_assoc` for
-    `Set`. Distinguishes the full monad from the mere applicative;
-    without it, indefinites cannot iteratively scope out of nested
-    islands ([charlow-2020] eq. 34, Figure 7). -/
-theorem indeterminacy_associativity {A B C : Type}
-    (m : Set A) (f : A → Set B) (g : B → Set C) :
-    (m >>= f) >>= g = m >>= (fun a => f a >>= g) :=
-  bind_assoc m f g
-
 end IndeterminacyBridge
 
--- ════════════════════════════════════════════════════════════════════
--- §10 Crossover: the scope×binding dissociation
--- ════════════════════════════════════════════════════════════════════
+/-! ### Crossover
 
-/-! ### §10 Crossover
-
-[bumford-charlow-2024] §5.2 derive weak crossover from the **non-commutativity of
-the W⊣R co-unit**: `counitApp` fires ε only with the antecedent (W) as the left
-daughter, so scope (which may invert freely) and binding-availability **dissociate**
-— the antecedent must linearly *precede* the pronoun, "even while semantic scope
-may be arbitrarily inverted." This is phenomenon-neutral; weak crossover, the
-Owusu/Chierchia functional-reading asymmetry (below), superiority ([shan-barker-2006]:
-raised-*wh* trace = W, in-situ *wh* = R), and primary/secondary crossover are all
-instances over the one derivation. -/
+Crossover is inherited from the asymmetry of the adjunction. The co-unit fires only with the
+antecedent as the left daughter, so scope and the availability of binding come apart: the
+antecedent must precede the pronoun, however the scopes invert. The derivation is
+phenomenon-neutral — weak crossover, the functional-reading asymmetry below, and superiority are
+instances of it. [barker-shan-2014] derive crossover from an ordering constraint too, but by
+keeping two continuation layers that never merge rather than by letting the two effects cancel. -/
 
 namespace Crossover
 
-/-! #### The two outcomes of combining an antecedent (W) and a pronoun (R)
+/-! ### Binding and its failure
 
 The pronoun is a Reader `pro : ι → ω`; the antecedent is a stored referent `a : ι`
 (W). The co-unit discharges the Reader — feeding `a` into `pro`'s index — only with
@@ -1025,20 +675,12 @@ def coUnitBinds {ι ω : Type} (star : ι → ω → ω) (a : ι) (pro : ι → 
 def shipsPassing {ι ω : Type} (star : ι → ω → ω) (a : ι) (pro : ι → ω) : ι → ω :=
   fun i => star a (pro i)
 
-theorem coUnitBinds_is_counitApp {ι ω : Type}
-    (star : ι → ω → ω) (a : ι) (pro : ι → ω) :
-    coUnitBinds star a pro = counitApp star (store a) pro := rfl
-
 /-- `ε ⟨pro, a⟩ = pro a`: the antecedent binds the pronoun's index. -/
 theorem coUnitBinds_eval {ι ω : Type} (star : ι → ω → ω) (a : ι) (pro : ι → ω) :
     coUnitBinds star a pro = star a (pro a) := rfl
 
-theorem shipsPassing_at {ι ω : Type}
-    (star : ι → ω → ω) (a : ι) (pro : ι → ω) (i : ι) :
-    shipsPassing star a pro i = star a (pro i) := rfl
-
 /-- The residual differs at two indices, so it is not a constant (bound) reading —
-the Reader is not dischargeable (the "R constructor remains open" of §5.14). -/
+the Reader is not dischargeable: the pronoun's request for an antecedent remains open. -/
 theorem shipsPassing_reader_persists :
     ∃ (ι ω : Type) (star : ι → ω → ω) (a : ι) (pro : ι → ω) (i j : ι),
       shipsPassing star a pro i ≠ shipsPassing star a pro j :=
@@ -1051,7 +693,7 @@ theorem scope_inversion_no_binding {ι ω : Type} (pro : ι → ω) (i : ι) :
     ∀ a : ι, shipsPassing (fun _ b => b) a pro i = pro i :=
   fun _ => rfl
 
-/-! #### The derivation from structure, over real linear positions -/
+/-! ### The derivation over linear positions -/
 
 /-- A daughter in a binding configuration. -/
 inductive Daughter (ι ω : Type)
@@ -1104,11 +746,11 @@ theorem derive_crossover_residual {ι ω : Type} (star : ι → ω → ω) (a : 
     derive star a pro wPos rPos = some (.crossover (shipsPassing star a pro)) := by
   simp [derive, h, combine]
 
-/-! #### Instance: the Owusu/Chierchia functional-reading asymmetry
+/-! ### The Akan functional-reading asymmetry
 
-[owusu-2022] §3.3.2 (after [chierchia-2001]): the Akan indefinite *bí*'s skolem
-index is a pronoun (R), bound by *biara* 'every' (the antecedent, W). Akan SVO fixes
-the linear order, and the subject/object asymmetry computes via the bridge. -/
+The skolem index of the Akan indefinite *bí* is a pronoun, bound by *biara* 'every' as its
+antecedent ([owusu-2022], after [chierchia-2001]). Akan is verb-medial, so the two arguments' order
+is fixed and the subject/object asymmetry follows from the derivation above. -/
 
 inductive Arg | subject | object
   deriving DecidableEq, Repr
