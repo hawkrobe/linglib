@@ -18,7 +18,7 @@ Two models are formalized:
    `SP(V) = s · ⟦V⟧^w@ + (1 − s) · P(V)`
 
 These definitions are theory-layer infrastructure imported by study files
-(e.g., `KonukEtAl2026`, `BellerGerstenberg2025`).
+(e.g., `KonukEtAl2026`).
 -/
 
 namespace Causation.Strength
