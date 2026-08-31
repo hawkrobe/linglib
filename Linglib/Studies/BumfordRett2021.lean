@@ -6,79 +6,71 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
-# [bumford-rett-2021] — Rationalizing Evaluativity
-[bumford-rett-2021] [lassiter-goodman-2017] [bergen-levy-goodman-2016]
-[rett-2015] [barker-2002-vagueness]
+# Bumford and Rett 2021: rationalizing evaluativity
 
-Proceedings of Sinn und Bedeutung 25, pp. 187–204.
+Degree constructions differ in how strongly they imply that a measure exceeds a contextual norm.
+This file formalizes the account on which that inference is an implicature computed by a rational
+speaker and listener, and on which its strength is graded rather than categorical: the positive
+construction is more evaluative than the equative, which is more evaluative than the comparative,
+and within the equative the marked antonym is more evaluative than the unmarked one.
 
-## Key Claims
+Two ingredients drive the result. Worlds are two-dimensional — a subject's height and the centre of
+the comparison class — so a listener who is uncertain about the class learns from the choice of
+utterance where the subject stands relative to it. And the antonyms compete under lexical
+uncertainty, with the marked form costing the speaker more, so choosing it signals that the
+speaker's reason for speaking was strong.
 
-1. **Evaluativity is gradient**: Degree constructions differ in the *strength* of
-   their evaluative inferences. The model produces a strict ranking:
-   positive > equative > comparative.
+The predictions here are the direction of the shift in the listener's posterior, proved for every
+positive cost base rather than computed at one: hearing the unmarked positive makes a world with
+the subject above the class centre more likely than the mirror world below it, hearing the marked
+positive reverses that, the marked equative shifts strongly while the unmarked one shifts weakly,
+and the comparative does not shift at all. The last of these needs a lower bound on the cost base;
+everything else is structural.
 
-2. **Comparison-class uncertainty**: Worlds are two-dimensional — subject height ×
-   comparison class center. The listener jointly infers height and CC statistics,
-   extending [lassiter-goodman-2017]'s threshold RSA with
-   [barker-2002-vagueness]'s insight that CC uncertainty is informative.
+## Main definitions
 
-3. **Lexical uncertainty for markedness**: Antonym-sensitive evaluativity
-   (marked equatives like "as short as" are evaluative; unmarked "as tall as"
-   are not) emerges from [bergen-levy-goodman-2016]'s lexical uncertainty,
-   where marked forms have higher production cost.
+* `EvalWorld`, `worldPrior` — the height-by-class-centre grid and its truncated Gaussian prior
+* `posMeaning`, `eqMeaning`, `geqMeaning`, `compMeaning` — the four constructions' semantics,
+  relative to a threshold offset from the class centre
+* `posL1`, `eqL1`, `geqL1`, `compL1` — the pragmatic listener for each construction
 
-4. **Evaluativity metric**: E[ht − μ] — the expected deviation of the subject's
-   height from the CC center — measures evaluativity strength.
+## Main results
 
-## Model Architecture (§2.1)
+* `pos_tall_evaluative`, `pos_short_evaluative` — the positive is evaluative for both antonyms
+* `eq_marked_evaluative`, `eq_unmarked_weakly_evaluative` — the equative is antonym-sensitive
+* `geq_marked_evaluative`, `geq_unmarked_barely_evaluative` — the minimum-standard equative sits
+  between the exact equative and the comparative
+* `comp_marked_weak`, `comp_unmarked_counter_evaluative` — the comparative is not evaluative
+* `rsa_neo_gricean_agreement` — the graded predictions match the categorical ones of [rett-2015]
 
-- L₀(w | u, L) ∝ P(w) · L(u, w)
-- Sₙ(u | w, L) ∝ exp(α · (log Lₙ₋₁(w | u, L) − C(u)))
-- L₁(w | u) ∝ P(w) · Σ_L P(L) · S₁(u | w, L)
-- α = 4, C(marked) = 2, C(unmarked) = 1, C(∅) = 0
+## Implementation notes
 
-## Discretization
+The paper bins heights into 17 classes with the class centre in [5, 14] and considers worlds
+within two standard deviations of it; the grid here is scaled down to nine heights with centres in
+[3, 7] and a deviation of at most two, which preserves the ranking while keeping the state space
+small. Its hyperparameters are followed: the null utterance is free, the unmarked utterance costs
+1 and the marked one 2, and the speaker's rationality parameter is 4, which enters here as the
+cost base `e = exp(-4)`.
 
-The paper uses heights 1–17, CC centers 5–14, |ht − μ| ≤ 4 (SD = 2).
-We scale to heights 1–9, CC centers 3–7, |ht − μ| ≤ 2 (SD = 1),
-preserving the qualitative predictions with a 45-world grid
-(25 valid worlds after the Gaussian truncation).
+The model runs on the `PMF` pipeline of `RSA.Canonical`, with the threshold offset as the joint
+listener's second coordinate: `meaningE` folds the world prior into the graded literal listener,
+`Sk` is the cost-sensitive speaker (kept total at prior-zero worlds by a guard), and the world
+posterior is the joint posterior's first marginal.
 
-## Verified Predictions (Table 1)
+## References
 
-1. **Positive construction** (Simulation 1): both antonyms evaluative
-2. **Exact equative** (Simulation 2): marked antonym evaluative, unmarked weakly evaluative
-3. **≥ Equative** (Simulation 3): marked evaluative, unmarked barely evaluative
-4. **Comparative** (Simulation 4): neither antonym evaluative — evaluative world
-   does NOT win over non-evaluative world, unlike equatives
-5. **Antonym asymmetry**: marked equative produces stronger evaluative inference
-6. **Cross-construction contrast**: equative marked IS evaluative but comparative
-   marked is NOT, confirming that partial antonymic competition (not just cost)
-   drives evaluativity
-
-## Connection to [rett-2015]
-
-[rett-2015] derives evaluativity categorically via Q/R-implicature
-(formalized in `Pragmatics/Implicature/Evaluativity.lean`).
-This RSA model derives the same predictions *gradiently*: evaluativity
-strength varies continuously across constructions. Both accounts agree
-on the antonym-sensitive pattern (equative marked > equative unmarked).
-
-The RSA model adds two things the Neo-Gricean account lacks:
-- Graded predictions (probability distributions over evaluativity strength)
-- A unified mechanism (rational communication) rather than separate Q/R principles
+* [bumford-rett-2021]
+* [barker-2002-vagueness]
+* [bergen-levy-goodman-2016]
+* [lassiter-goodman-2017]
+* [rett-2015]
 -/
-
 namespace BumfordRett2021
 
 open RSA
-open Core.Order (ScalePolarity)
 open Degree (Construction)
 
--- ============================================================================
--- § 1. World Type: Height × CC Center
--- ============================================================================
+/-! ### The worlds -/
 
 /-- A world is a pair (height index, CC center index).
 
@@ -96,9 +88,7 @@ def muVal (w : EvalWorld) : Int := (w.2.val : Int) + 3
 /-- Deviation of height from CC center: ht − μ. -/
 def deviation (w : EvalWorld) : Int := htVal w - muVal w
 
--- ============================================================================
--- § 2. Prior (§2.1)
--- ============================================================================
+/-! ### The prior -/
 
 /-- Gaussian-weighted prior over valid worlds.
 
@@ -112,9 +102,7 @@ def worldPrior (w : EvalWorld) : ℚ :=
   | 2 => 1
   | _ => 0
 
--- ============================================================================
--- § 3. Utterances and Costs (§2.1)
--- ============================================================================
+/-! ### Utterances and their costs -/
 
 /-- Utterance type: unmarked (positive-polar), marked (negative-polar), or null.
 
@@ -134,9 +122,7 @@ def cost : Utterance → ℚ
   | .marked   => 2
   | .null     => 0
 
--- ============================================================================
--- § 4. Threshold Offset (Latent Variable)
--- ============================================================================
+/-! ### The threshold offset -/
 
 /-- Threshold offset σ ∈ {−2, −1, 0, 1, 2}.
 
@@ -148,9 +134,7 @@ abbrev Sigma := Fin 5
 /-- Integer offset value: index s ↦ σ = s − 2. -/
 def sigmaVal (s : Sigma) : Int := (s.val : Int) - 2
 
--- ============================================================================
--- § 5. Shared RSA Infrastructure
--- ============================================================================
+/-! ### Shared infrastructure -/
 
 open scoped ENNReal
 
@@ -171,9 +155,7 @@ def costN : Utterance → ℕ
   | .marked   => 2
   | .null     => 0
 
--- ============================================================================
--- § 6. mathlib-PMF pipeline (eq 10)
--- ============================================================================
+/-! ### The listener and speaker -/
 
 /-! Companion architecture on `PMF`, parameterized by the cost-factor base
 `e` (= `exp(−4)` at the paper's α = 4; only the speaker depends on `e`):
@@ -423,9 +405,7 @@ private theorem evaluative_of_incl {sem} {e : ℝ} (he0 : 0 < e) {u : Utterance}
     exact ENNReal.mul_lt_mul_right (jointK_ne_zero hv2) (jointK_ne_top _)
       (sk_lt_of_gap he0 hv1 hv2 (hnull1 σ₀) (hnull2 σ₀) hgap1 hgap2)
 
--- ============================================================================
--- § 7. Simulation 1: Positive Construction (§2.2.1, Table 1)
--- ============================================================================
+/-! ### The positive construction -/
 
 /-- Positive construction meaning (eq 12):
     - unmarked ("tall"): ht_w(j) ≥ μ_w + σ
@@ -474,9 +454,7 @@ theorem pos_short_evaluative (e : ℝ) (he0 : 0 < e) :
   exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
     (fun _ => rfl) (by decide) (by decide) ⟨2, by omega⟩ (by decide) (by decide)
 
--- ============================================================================
--- § 8. Simulation 2: Exact Equative (§2.2.2, Table 1)
--- ============================================================================
+/-! ### The exact equative -/
 
 /-- Keisha's height k, fixed and known to both speaker and listener.
     In our scaled model: k = 5 (height index 4). -/
@@ -544,9 +522,7 @@ theorem eq_unmarked_weakly_evaluative (e : ℝ) (he0 : 0 < e) :
   exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
     (fun _ => rfl) (by decide) (by decide) ⟨4, by omega⟩ (by decide) (by decide)
 
--- ============================================================================
--- § 9. Simulation 3: ≥ Equative (§2.2.3, Table 1)
--- ============================================================================
+/-! ### The minimum-standard equative -/
 
 /-! ### ≥ Equative (Minimum-Standard) Semantics
 
@@ -599,9 +575,7 @@ theorem geq_unmarked_barely_evaluative (e : ℝ) (he0 : 0 < e) :
   exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
     (fun _ => rfl) (by decide) (by decide) ⟨4, by omega⟩ (by decide) (by decide)
 
--- ============================================================================
--- § 10. Simulation 4: Comparative (§2.2.4, Table 1)
--- ============================================================================
+/-! ### The comparative -/
 
 /-! ### Comparative Semantics
 
@@ -804,9 +778,7 @@ theorem comp_unmarked_counter_evaluative_exp :
   rw [Real.exp_neg, one_div]
   gcongr
 
--- ============================================================================
--- § 11. Cross-Construction Contrast
--- ============================================================================
+/-! ### The ranking across constructions -/
 
 /-! ### Gradient evaluativity ranking
 
@@ -837,9 +809,7 @@ constructions:
 - `geq_marked_evaluative` / `geq_unmarked_barely_evaluative` : ≥ equative ✗✓
 - `comp_marked_weak` / `comp_unmarked_counter_evaluative` : comparative ✗✗ -/
 
--- ============================================================================
--- § 12. Bridge to Neo-Gricean Evaluativity ([rett-2015])
--- ============================================================================
+/-! ### The categorical account -/
 
 /-! ### RSA ↔ Neo-Gricean Agreement
 
@@ -858,18 +828,6 @@ the categorical classification. The RSA model adds:
 3. **≥ equative predictions** — partial overlap produces intermediate evaluativity,
    a novel prediction the categorical account does not make -/
 
-/-- Map utterance polarity to the adjective's `ScalePolarity`. -/
-def utterancePolarity : Utterance → Option ScalePolarity
-  | .unmarked => some .positive
-  | .marked   => some .negative
-  | .null     => none
-
-/-- Construction labels for each simulation, connecting to the
-    `Construction` type from `Semantics/Degree/Defs.lean`. -/
-abbrev posConstruction  : Construction := .positive
-abbrev eqConstruction   : Construction := .equative
-abbrev compConstruction : Construction := .comparative
-
 open Rett2015 (Evaluative)
 
 /-- Cross-theory agreement: the RSA model and [rett-2015]'s Neo-Gricean
@@ -887,51 +845,21 @@ open Rett2015 (Evaluative)
     make compatible predictions despite using entirely different mechanisms. -/
 theorem rsa_neo_gricean_agreement (e : ℝ) (he0 : 0 < e) :
     -- Positive: both accounts say evaluative for both polarities
-    Evaluative posConstruction .positive ∧
-    Evaluative posConstruction .negative ∧
+    Evaluative .positive .positive ∧
+    Evaluative .positive .negative ∧
     (posL1 .unmarked he0).fst (mkW 5 2) > (posL1 .unmarked he0).fst (mkW 3 2) ∧
     (posL1 .marked he0).fst (mkW 3 2) > (posL1 .marked he0).fst (mkW 5 2) ∧
     -- Equative: Neo-Gricean says marked-only; RSA shows marked shift
-    ¬ Evaluative eqConstruction .positive ∧
-    Evaluative eqConstruction .negative ∧
+    ¬ Evaluative .equative .positive ∧
+    Evaluative .equative .negative ∧
     (eqL1 .marked he0).fst (mkW 4 4) > (eqL1 .marked he0).fst (mkW 4 0) ∧
     -- Comparative: both say not evaluative
-    ¬ Evaluative compConstruction .positive ∧
-    ¬ Evaluative compConstruction .negative :=
+    ¬ Evaluative .comparative .positive ∧
+    ¬ Evaluative .comparative .negative :=
   ⟨by decide, by decide,
    pos_tall_evaluative e he0, pos_short_evaluative e he0,
    by decide, by decide,
    eq_marked_evaluative e he0,
    by decide, by decide⟩
-
--- ============================================================================
--- § 13. Cross-References
--- ============================================================================
-
-/-! ### Relationship to [lassiter-goodman-2017]
-
-`LassiterGoodman2017PMF.lean` formalizes the threshold RSA model for the
-positive construction only (1D world = height, latent = threshold).
-This file extends that model to 2D worlds (height × CC center) and
-adds cost-driven antonym competition. The positive construction
-predictions here subsume LassiterGoodman2017's: both show that
-hearing "tall"/"short" shifts the height posterior.
-
-### Architecture
-
-The model runs on the mathlib-`PMF` RSA pipeline (`RSA.Canonical.L1`), with the
-latent threshold offset `σ` as the joint-listener's second coordinate:
-- `meaningE` bakes the Gaussian 2D world prior into the graded L₀ kernel
-  (L₀ ∝ P(w) · ⟦u⟧(σ,w)); `L0v` is its normalised value.
-- `Sk` is the cost-sensitive speaker `S₁(u | w,σ) ∝ L₀(w|u,σ)⁴ · e^C(u)`, with
-  cost base `e` (= `exp(−4)` at α = 4). It is `dite`-guarded so it stays total
-  at invalid worlds, which carry joint prior 0.
-- `jointK` is the uniform-over-σ joint prior `P(w)·P(σ)`; the listener is the
-  joint Bayesian posterior over `world × σ`, world marginal via `.fst`.
-
-Evaluativity (Tier A) is proved structurally from licensing-set inclusion and
-needs only `0 < e`; the counter-evaluative comparative is the sole
-prior-magnitude case and needs `1/100 ≤ e`.
--/
 
 end BumfordRett2021
