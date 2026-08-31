@@ -23,18 +23,20 @@ Degrees are natural numbers, maxima are `IsGreatest`, and pluralities are finite
 
 ## Main definitions
 
-* `numModifier`, `MANY`, `CARD` — the modifier view, the counting operator and the operator
-  recovering a cardinality from a modifier meaning
-* `kennedyNum` — the degree quantifier whose degree properties have the numeral as maximum
-* `MAX` — the survey's operator, taking a quantifier to the properties whose maximum it holds of
+* `MANY`, `CARD` — the counting operator and the operator recovering a cardinality from a modifier
+  meaning
+* `exactly` — the quantifier holding of the degree properties the numeral is the maximum of
+* `MAX` — the survey's operator, taking a quantifier to the properties whose maximum satisfies it
 
 ## Main results
 
-* `many_number`, `card_numModifier` — the number and modifier views are interderivable
-* `BE_kennedy`, `iota_BE_kennedy` — lowering the degree quantifier gives the number back
-* `lowerBounded_eq_lift`, `MAX_lift_eq_kennedy` — the survey's lower-bound quantifier is the
-  Montague lift of the number, and its maximum operator recovers the exactly reading
-* `lift_ne_kennedy` — the two quantifiers are not the same, so the operator is not idle
+* `CARD_MANY` — the number and modifier views are interderivable
+* `BE_exactly`, `iota_BE_exactly` — lowering the degree quantifier gives the number back
+* `MAX_individual` — the maximum operator takes the lower-bound quantifier, which is the Montague
+  lift of the number, to the exactly-reading one
+* `individual_ne_exactly` — the two quantifiers are not the same, so the operator is not idle
+* `MANY_injective`, `exactly_injective`, `individual_injective` — each view determines the
+  numeral
 
 ## References
 
@@ -45,93 +47,100 @@ Degrees are natural numbers, maxima are `IsGreatest`, and pluralities are finite
 -/
 namespace BylininaNouwen2020
 
-open Semantics.Composition.TypeShifting
-open Quantification (BE individual)
+open Semantics.Composition.TypeShifting Quantification
 
-/-! ### The number and modifier views (their (11), (18), (22)–(25))
+/-! ### The number and the modifier views
 
-Pluralities are finite sets of atoms; `#` is cardinality. -/
+Pluralities are finite sets of atoms and `#` is cardinality. The modifier view of a numeral is the
+counting operator applied to its number (their (11), (22), (23)): the two views differ only in
+whether the counting is built into the numeral or supplied by an operator, which is why the survey
+can state their equivalence as an identity. -/
 
-/-- The modifier view (their (11)): `⟦twelveₘ⟧ = λx. #x = 12`. -/
-def numModifier (n : ℕ) : Finset ℕ → Prop := fun x => x.card = n
-
-/-- The counting operator `MANY` (their (22)): `⟦MANY⟧ = λd λx. #x = d`. -/
+/-- `MANY d` is the property of pluralities with `d` atoms: `MANY d = λx. #x = d`. -/
 def MANY (d : ℕ) : Finset ℕ → Prop := fun x => x.card = d
 
-/-- Their (23): `⟦twelveₙ MANY⟧ = ⟦twelveₘ⟧` — the number view composed
-with `MANY` is definitionally the modifier meaning. -/
-theorem many_number (n : ℕ) : MANY n = numModifier n := rfl
-
-/-- The survey's own `CARD` operator (their (24)):
-`⟦CARD⟧ = λP ιd. ∀x[P(x) → #x = d]`, rendered as the relation "`d` is the
-degree `CARD(P)` denotes" — the ι-presupposition is the existence-and-
-uniqueness conjunct. -/
+/-- `CARD P d` holds when `P` is satisfiable and every plurality satisfying it has `d` atoms —
+the relation `d = ιd'. ∀x[P(x) → #x = d']`, its presupposition the first conjunct. -/
 def CARD (P : Finset ℕ → Prop) : ℕ → Prop :=
   fun d => (∃ x, P x) ∧ ∀ x, P x → x.card = d
 
-/-- Their (25): `CARD(⟦twelveₘ⟧) = ⟦twelveₙ⟧` — `CARD` maps the modifier
-meaning back to the number meaning (`ident n` is the singleton property of
-the degree `n`). -/
-theorem card_numModifier (n : ℕ) : CARD (numModifier n) = ident n := by
+/-- `CARD` recovers the number a modifier meaning counts. -/
+theorem CARD_MANY (n : ℕ) : CARD (MANY n) = ident n := by
   funext d
   refine propext ⟨fun ⟨⟨x, hx⟩, hall⟩ => ?_, fun h => ?_⟩
   · exact (hall x hx).symm.trans hx ▸ (hall x hx ▸ rfl)
   · obtain rfl : n = d := h
     exact ⟨⟨Finset.range n, Finset.card_range n⟩, fun x hx => hx⟩
 
-/-! ### The degree-quantifier view (their (43), (47)–(50))
+/-! ### The degree-quantifier views
 
-[kennedy-2015]'s *exactly* numeral: the degree properties whose maximal
-value is `n`. `max(P) = n` is mathlib's `IsGreatest P n`. -/
+A numeral may instead denote a quantifier over degree properties, either those whose maximum it is
+(the exactly reading) or those that simply hold of it (the lower-bound reading). Maxima are
+`IsGreatest`. -/
 
-/-- Kennedy's degree quantifier (their (43)): `⟦twelve⟧ = λP. max(P) = 12`. -/
-def kennedyNum (n : ℕ) : (ℕ → Prop) → Prop := fun P => IsGreatest {d | P d} n
+/-- `exactly n` holds of the degree properties whose greatest element is `n`. -/
+def exactly (n : ℕ) : (ℕ → Prop) → Prop := fun P => IsGreatest {d | P d} n
 
-/-- Their (49): `BE(⟦twelve⟧) = {12}` — [partee-1987]'s BE lowers Kennedy's
-quantifier to the singleton degree property. -/
-theorem BE_kennedy (n : ℕ) : BE (kennedyNum n) = ident n := by
+/-- `BE` lowers the exactly-reading quantifier to the degree itself. -/
+theorem BE_exactly (n : ℕ) : BE (exactly n) = ident n := by
   funext x
   refine propext ⟨fun h => h.1, fun h => ⟨h, fun d hd => ?_⟩⟩
   exact ((hd : d = x).trans (h : n = x).symm).le
 
-/-- Their (50): `IOTA(BE(⟦twelve⟧)) = 12` — the BE/IOTA chain recovers the
-number meaning, via the substrate's `iota_ident` roundtrip. -/
-theorem iota_BE_kennedy [DecidableEq ℕ] (domain : List ℕ) (n : ℕ)
+/-- Lowering with `BE` and then `IOTA` recovers the number. -/
+theorem iota_BE_exactly [DecidableEq ℕ] (domain : List ℕ) (n : ℕ)
     (hmem : n ∈ domain) (hnd : domain.Nodup) :
-    iota domain (BE (kennedyNum n)) = some n := by
-  rw [BE_kennedy]
+    iota domain (BE (exactly n)) = some n := by
+  rw [BE_exactly]
   exact iota_ident domain n hmem hnd
 
-/-! ### The survey's proposal: at-least quantifier + MAX (their (52)–(54)) -/
+/-! ### The survey's proposal (their (52)–(54))
 
-/-- The survey's *at least* degree quantifier (their (52)):
-`⟦twelve⟧ = λP. P(12)` — exactly the Montague lift `individual` of the
-number view. -/
-theorem lowerBounded_eq_lift (n : ℕ) :
-    (fun P : ℕ → Prop => P n) = individual n := rfl
+The gap the three views leave is a numeral denoting the degree properties that merely hold of it —
+`individual n`, the Montague lift of the number view, which is the survey's (52). An operator
+taking maxima then recovers the exactly reading from it, so the lower bound can stay basic, as the
+polarity behaviour of *zero* argues it should ([bylinina-nouwen-2018]). -/
 
-/-- The survey's `MAX` operator (their (53)):
-`⟦MAX⟧ = λD λP. max(P) ∈ ∩D`. -/
+/-- `MAX D P` holds when `P` has a greatest element satisfying every property in `D`:
+`MAX = λD λP. max(P) ∈ ∩D`. -/
 def MAX (D : (ℕ → Prop) → Prop) : (ℕ → Prop) → Prop :=
   fun P => ∃ m, IsGreatest {d | P d} m ∧ ∀ Q, D Q → Q m
 
-/-- Their (54): `⟦MAX twelve⟧` on the *at least* quantifier is Kennedy's
-*exactly* quantifier — the survey's account keeps the lower-bound meaning
-basic and derives the *exactly* reading by `MAX`, preserving the
-Heim–Kennedy scope explanation. -/
-theorem MAX_lift_eq_kennedy (n : ℕ) : MAX (individual n) = kennedyNum n := by
+/-- `MAX` takes the lower-bound quantifier to the exactly-reading one. -/
+theorem MAX_individual (n : ℕ) : MAX (individual n) = exactly n := by
   funext P
   refine propext ⟨fun ⟨m, hm, hall⟩ => ?_, fun h => ⟨n, h, fun Q hQ => hQ⟩⟩
   · have : m = n := hall (fun d => d = n) rfl
     exact this ▸ hm
 
-/-- The lower-bound and *exactly* quantifiers genuinely differ before
-`MAX` applies (witness `P = {n, n+1}`): `MAX` does real work. -/
-theorem lift_ne_kennedy (n : ℕ) : individual (α := ℕ) n ≠ kennedyNum n := by
+/-- The two quantifiers differ: `{n, n+1}` holds of the numeral without having it as greatest
+element. -/
+theorem individual_ne_exactly (n : ℕ) : individual (α := ℕ) n ≠ exactly n := by
   intro h
   have := congrFun h (fun d => d = n ∨ d = n + 1)
   rw [individual] at this
-  have hk : kennedyNum n (fun d => d = n ∨ d = n + 1) := this.mp (Or.inl rfl)
+  have hk : exactly n (fun d => d = n ∨ d = n + 1) := this.mp (Or.inl rfl)
   exact absurd (hk.2 (Or.inr rfl : (n+1) ∈ {d | d = n ∨ d = n + 1})) (by omega)
+
+/-! ### Each view determines the numeral
+
+The shifts above are left inverses of the views, so no two numerals share a modifier meaning or a
+degree quantifier: the views encode the number faithfully, which is what equivalent empirical
+coverage comes to. -/
+
+private theorem ident_injective : Function.Injective (ident (E := ℕ)) := fun a b h => by
+  simpa [ident, eq_comm] using congrFun h a
+
+/-- Distinct numerals have distinct modifier meanings. -/
+theorem MANY_injective : Function.Injective MANY := fun a b h =>
+  ident_injective (by rw [← CARD_MANY, ← CARD_MANY, h])
+
+/-- Distinct numerals have distinct exactly-reading quantifiers. -/
+theorem exactly_injective : Function.Injective exactly := fun a b h =>
+  ident_injective (by rw [← BE_exactly, ← BE_exactly, h])
+
+/-- Distinct numerals have distinct lower-bound quantifiers. -/
+theorem individual_injective : Function.Injective (individual (α := ℕ)) := fun a b h =>
+  exactly_injective (by rw [← MAX_individual, ← MAX_individual, h])
 
 end BylininaNouwen2020
