@@ -112,15 +112,15 @@ theorem oFut_beat_but_not_inevitable :
   obtain ⟨hw, hnow_w, hwin_w⟩ := Flag.exists_mem_mem (le_of_lt now_lt_win)
   exact ⟨hw, hnow_w, win, hwin_w, now_lt_win, rfl⟩
 
-/-- **The Ockham side, grounded in the comparison kernel** (`BranchingTime.oFut_oAtom_holds_on_hist`):
-    *beat*'s history-relative future truth *is* a `Core.Order.holds Core.Order.after` comparison along
-    its witnessing history — `win` sits in the `after` cell relative to `now` (`after = Tense.future`),
-    with the history's own chain order supplying the linear order `holds` needs. The Peircean contrast
-    is deliberately preserved: *beat* is still `¬ IsInevitable`, so the load-bearing felicity prediction
-    remains settledness, not bare `oFut`. -/
+/-- **The Ockham side, grounded in the tense cells** (`BranchingTime.oFut_oAtom_holds_on_hist`):
+    *beat*'s history-relative future truth *is* a comparison into `Tense.future` along its
+    witnessing history — `win` sits in the future cell relative to `now`, with the history's own
+    chain order supplying the linear order that `compare` needs. The Peircean contrast is
+    deliberately preserved: *beat* is still `¬ IsInevitable`, so the load-bearing felicity
+    prediction remains settledness, not bare `oFut`. -/
 theorem beat_future_is_holds_after_but_not_inevitable :
     (∃ (h : Flag Moment) (hm : now ∈ h),
-        ∃ x : ↥h, Core.Order.holds Core.Order.after x ⟨now, hm⟩ ∧ beat (x : Moment))
+        ∃ x : ↥h, compare x ⟨now, hm⟩ ∈ Tense.future ∧ beat (x : Moment))
       ∧ ¬ IsInevitable beat now := by
   refine ⟨?_, beat_not_inevitable⟩
   obtain ⟨h, hh, hfut⟩ := oFut_beat_but_not_inevitable.1

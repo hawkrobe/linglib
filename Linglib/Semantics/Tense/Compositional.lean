@@ -16,18 +16,17 @@ cells behind the update spine's test filter.
 
 namespace Tense
 
-open Core.Order (holds)
 open Intensional (Index)
 
 variable {W Time : Type*} [LinearOrder Time]
 
 /-- The tense cell `s`, applied compositionally ([mendes-2025]):
-    ⟦s⟧ = λP.λsit.λsit'. `holds s τ(sit) τ(sit')` ∧ P(sit) — the cell
+    ⟦s⟧ = λP.λsit.λsit'. `compare τ(sit) τ(sit') ∈ s` ∧ P(sit) — the cell
     constrains the event–evaluation comparison and the payload is
     evaluated at the event situation. -/
 def constrain (s : Finset Ordering) (P : (Index W Time → Prop))
     (sit sit' : Index W Time) : Prop :=
-  holds s sit.time sit'.time ∧ P sit
+  compare sit.time sit'.time ∈ s ∧ P sit
 
 /-- ⟦PAST⟧ = `constrain past`: the event situation precedes the
     evaluation situation. -/
