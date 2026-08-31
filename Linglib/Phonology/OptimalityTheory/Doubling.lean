@@ -36,9 +36,6 @@ The `realizeMorphAvailable` predicate encodes both transfer directions:
 REALIZE-MORPH is active for function *f* when (i) the L1 marks *f*
 morphologically AND (ii) the L1 has no negative evidence (does not use
 reduplication for other functions while excluding *f*).
-
-[berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016]
-[berent-2026]
 -/
 
 namespace OptimalityTheory.Doubling
@@ -56,8 +53,11 @@ open OptimalityTheory
     categories. The availability of the reduplication parse for a given
     semantic context depends on the speaker's L1 morphology. -/
 inductive DoublingFunction where
-  | plurality     -- e.g., Indonesian rumah-rumah 'houses'
-  | diminutive    -- e.g., Hebrew seleg -> slaglag 'puppy'
+  /-- E.g. Ilocano *púsa* → *puspúsa* 'cats' ([berent-2026]). -/
+  | plurality
+  /-- E.g. Hebrew *kelev* → *klavlav* 'dog → puppy'
+      ([berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016]). -/
+  | diminutive
   deriving DecidableEq, Repr
 
 /-- Complete enumeration of `DoublingFunction` constructors.

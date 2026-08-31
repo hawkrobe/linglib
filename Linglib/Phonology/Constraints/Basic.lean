@@ -48,6 +48,15 @@ def mkForbidSingletonOnTier {C α β : Type*} (P : β → Prop) [DecidablePred P
 def adjacentIdentical {α : Type*} [DecidableEq α] : List α → Nat :=
   countAdjacent (· = ·)
 
+theorem adjacentIdentical_cons_self {α : Type*} [DecidableEq α] (a : α) (rest : List α) :
+    adjacentIdentical (a :: a :: rest) = 1 + adjacentIdentical (a :: rest) := by
+  simp [adjacentIdentical, countAdjacent]
+
+theorem adjacentIdentical_cons_of_ne {α : Type*} [DecidableEq α] {a b : α}
+    (h : a ≠ b) (rest : List α) :
+    adjacentIdentical (a :: b :: rest) = adjacentIdentical (b :: rest) := by
+  simp [adjacentIdentical, countAdjacent, h]
+
 /-- An OCP constraint ([mccarthy-1986]): penalizes adjacent identical elements on
 the tier extracted by `project`. Polymorphic over the feature type ([berent-2026]). -/
 def mkOCP {C α : Type*} [DecidableEq α] (project : C → List α) : Constraint C :=
