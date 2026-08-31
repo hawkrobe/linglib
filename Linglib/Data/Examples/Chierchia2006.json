@@ -1,0 +1,282 @@
+[
+  {
+    "id": "chierchia2006_ex10a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(10a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Domani interrogherò qualsiasi studente",
+    "glossedTokens": [],
+    "translation": "Tomorrow I will examine any student",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      [
+        "fciType",
+        "universal"
+      ],
+      [
+        "environment",
+        "future"
+      ],
+      [
+        "force",
+        "ambiguous"
+      ]
+    ],
+    "comment": "Both ∀ and ∃ readings available."
+  },
+  {
+    "id": "chierchia2006_ex10b",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(10b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Domani interrogherò uno studente qualsiasi",
+    "glossedTokens": [],
+    "translation": "Tomorrow I will examine any one student",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      [
+        "fciType",
+        "existential"
+      ],
+      [
+        "environment",
+        "future"
+      ],
+      [
+        "force",
+        "existential"
+      ]
+    ],
+    "comment": "Only the ∃ reading."
+  },
+  {
+    "id": "chierchia2006_ex10c",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(10c)"
+    },
+    "language": "ital1282",
+    "primaryText": "Prendi qualunque dolce",
+    "glossedTokens": [],
+    "translation": "Take any sweet",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      [
+        "fciType",
+        "universal"
+      ],
+      [
+        "environment",
+        "imperative"
+      ],
+      [
+        "force",
+        "ambiguous"
+      ]
+    ],
+    "comment": "Both ∀ and ∃ readings available."
+  },
+  {
+    "id": "chierchia2006_ex10d",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(10d)"
+    },
+    "language": "ital1282",
+    "primaryText": "Prendi un dolce qualunque",
+    "glossedTokens": [],
+    "translation": "Take any one sweet",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      [
+        "fciType",
+        "existential"
+      ],
+      [
+        "environment",
+        "imperative"
+      ],
+      [
+        "force",
+        "existential"
+      ]
+    ],
+    "comment": "Only the ∃ reading."
+  },
+  {
+    "id": "chierchia2006_ex11a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(11a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ieri ho parlato con un qualsiasi filosofo",
+    "glossedTokens": [],
+    "translation": "Yesterday I spoke with any one philosopher",
+    "context": "",
+    "judgment": "marginal",
+    "paperFeatures": [
+      [
+        "fciType",
+        "existential"
+      ],
+      [
+        "environment",
+        "episodicBare"
+      ],
+      [
+        "force",
+        "existential"
+      ]
+    ],
+    "comment": "Marginal without a modifier."
+  },
+  {
+    "id": "chierchia2006_ex11b",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(11b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ieri ho parlato con un qualsiasi filosofo che fosse interessato",
+    "glossedTokens": [],
+    "translation": "Yesterday I spoke with any one philosopher who was interested",
+    "context": "",
+    "judgment": "marginal",
+    "paperFeatures": [
+      [
+        "fciType",
+        "existential"
+      ],
+      [
+        "environment",
+        "episodicSubtrigged"
+      ],
+      [
+        "force",
+        "existential"
+      ]
+    ],
+    "comment": "Still marginal: a relative clause does not rescue an existential free-choice item."
+  },
+  {
+    "id": "chierchia2006_ex11c",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(11c)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ieri ho parlato con qualsiasi filosofo",
+    "glossedTokens": [],
+    "translation": "Yesterday I spoke with any philosopher",
+    "context": "",
+    "judgment": "marginal",
+    "paperFeatures": [
+      [
+        "fciType",
+        "universal"
+      ],
+      [
+        "environment",
+        "episodicBare"
+      ],
+      [
+        "force",
+        "universal"
+      ]
+    ],
+    "comment": "Marginal without a modifier."
+  },
+  {
+    "id": "chierchia2006_ex11d",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(11d)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ieri ho parlato con qualsiasi filosofo che fosse interessato",
+    "glossedTokens": [],
+    "translation": "Yesterday I spoke with any philosopher who was interested",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      [
+        "fciType",
+        "universal"
+      ],
+      [
+        "environment",
+        "episodicSubtrigged"
+      ],
+      [
+        "force",
+        "universal"
+      ]
+    ],
+    "comment": "Subtrigging rescues the universal free-choice item."
+  },
+  {
+    "id": "chierchia2006_ex12",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(12)"
+    },
+    "language": "ital1282",
+    "primaryText": "Non leggerò qualunque libro",
+    "glossedTokens": [],
+    "translation": "I will not read any book",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      [
+        "fciType",
+        "universal"
+      ],
+      [
+        "environment",
+        "negationBare"
+      ],
+      [
+        "force",
+        "universal"
+      ]
+    ],
+    "comment": "Only the rhetorical ¬∀ reading, not the ¬∃ reading of a negative-polarity item. Also numbered (73a)."
+  },
+  {
+    "id": "chierchia2006_ex73b",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(73b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Non leggerò qualunque libro che mi consiglierà Gianni",
+    "glossedTokens": [],
+    "translation": "I will not read any book that Gianni recommends to me",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      [
+        "fciType",
+        "universal"
+      ],
+      [
+        "environment",
+        "negationSubtrigged"
+      ],
+      [
+        "force",
+        "ambiguous"
+      ]
+    ],
+    "comment": "With a relative clause under negation the ∀¬ and ¬∃ readings become available."
+  }
+]
