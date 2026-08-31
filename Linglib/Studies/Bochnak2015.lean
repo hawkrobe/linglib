@@ -1,392 +1,238 @@
 import Linglib.Semantics.Degree.Delineation
 
 /-!
-# [bochnak-2015] Degree Semantics Parameter and Washo
+# Bochnak 2015: the Degree Semantics Parameter and Washo
 
-[bochnak-2015] *The Degree Semantics Parameter and cross-linguistic
-variation* (*Semantics and Pragmatics* 8(6): 1–48, doi:10.3765/sp.8.6)
-argues that Washo (Hokan isolate, California/Nevada) systematically
-lacks degree morphology: no comparatives, no measure phrases, no degree
-adverbs, no equatives, no superlatives. The proposal is that Washo
-gradable predicates are degree-free vague predicates in the
-[klein-1980] style — type ⟨e, t⟩ relative to a contextually-
-supplied comparison class, with no degree variable. This positions
-Washo as an empirical attestation of the negative setting of
-[beck-2009]'s Degree Semantics Parameter (DSP), and as a
-counterexample to the universalist (English-projective) view that all
-natural-language gradable predicates introduce degree arguments.
+[bochnak-2015] (Semantics and Pragmatics 8) argues that Washo systematically
+lacks degree morphology — comparatives, measure phrases, equatives,
+superlatives, degree adverbs — and analyzes its gradable predicates as
+[klein-1980]-style vague predicates (5): type ⟨e,t⟩ relative to a comparison
+class, with no degree variable, the negative setting of [beck-2009]'s Degree
+Semantics Parameter (7). Comparison is the conjoined construction (14): one
+clause asserts the positive and the other denies it (with -e:s) or asserts an
+antonym, and the truth conditions (27) entail a comparison through the
+Consistency Constraints (28), rendered by the sound and complete delineations
+of `Semantics/Degree/Delineation.lean`. Both of [kennedy-2007a]'s implicitness
+diagnostics follow: incompatibility with absolute-standard predicates (24),
+and the crisp-judgment effect (21) under the Similarity Constraint (20),
+stated here with the margin-of-error order (60) from the paper's van Rooij
+alternative ([van-rooij-2011a]).
 
-## Why this paper grounds linglib's substrate
+## Main definitions
 
-Linglib's [klein-1980]/[kennedy-2007] comparison hierarchy
-(`Semantics/Degree/Hom.lean`) already proves
-**`degree_characterization`**: degree semantics is exactly the monotone
-fragment of Klein's delineation framework. [bochnak-2015]'s Washo
-data sits inside this monotone fragment (Washo *tall*, *long*, *bent*
-are single-criterion monotone predicates), so the empirical interest is
-NOT that Washo motivates the strict-generality results
-(`delineation_strictly_more_general`, `nlDel_not_degree_representable`)
-— those are about non-monotone *clever*-style predicates, a different
-phenomenon. The empirical interest is that Bochnak shows the
-truth-conditional equivalence of degree-based and Klein-based
-comparatives does NOT entail a particular LEXICAL TYPE: a language can
-have monotone delineations as its lexical entries WITHOUT exposing
-degrees in those entries' types or admitting degree morphology.
+* `tallEnglish`, `washoConjoined` — the degree-based entry (1) and the
+  per-context conjoined-comparison truth conditions (27).
+* `bentPred`, `straightPred` — [kennedy-2007] min- and max-standard absolute
+  predicates.
+* `marginOrder` — the margin-of-error order (60): implicit comparison at
+  margin `ε`, explicit comparison at `ε = 0`.
 
-## Sections
+## Main results
 
-1. The Degree Semantics Parameter as a typed parameter on languages
-   (Bochnak eq. 7, after [beck-2009]).
-2. English vs Washo lexical-entry TYPES (eqs. 1, 5/11) — the central
-   contrast is at the level of types, not denotations.
-3. The conjoined-comparison construction (eq. 14, eq. 27) and its
-   per-context truth conditions; existential closure recovers
-   [klein-1980]'s `comparativeSem`.
-4. **Absolute-standard incompatibility** (eq. 23–24a/b/c): all three
-   sub-cases mechanically derived. This is one of [bochnak-2015]'s
-   two diagnostics that conjoined comparison is implicit
-   ([kennedy-2007]'s sense).
-5. **Crisp-judgment effect** under the Similarity Constraint (eqs. 20–22):
-   stipulated as a felicity predicate distinct from truth conditions
-   (the constraint is pragmatic per [klein-1980], [fara-2000]).
-   The granularity threshold is a linglib modeling choice, not from
-   the paper.
+* `washoConjoined_witnesses_comparativeSem`,
+  `comparativeSem_measureDelineation_iff_degree` — (27) closes existentially
+  to [klein-1980]'s comparative, and coincides with height comparison for a
+  measure-induced delineation, without a degree variable in the entry.
+* `washoConjoined_norm_related` — (29): conjoined comparison is obligatorily
+  norm-related.
+* `eq24a_bent_straight_fails`, `eq24b_bent_notbent_fails`,
+  `eq24c_straight_notstraight_fails`, `english_more_bent_succeeds` — the
+  absolute-standard diagnostic: every conjoined pairing fails on two bent
+  rods where the explicit comparative succeeds.
+* `marginOrder_irrefl`, `marginOrder_intervalOrder`,
+  `marginOrder_semitransitive` — (60) satisfies the semi-order axioms (58);
+  `marginOrder_zero_iff` and `marginOrder_zero_almostConnected` — at `ε = 0`
+  it is the strict weak order (59) of explicit comparison.
+* `crisp_pair_not_marginOrder`, `crisp_pair_marginOrder_zero` — a
+  minimally-different pair defeats implicit comparison at any positive margin
+  and satisfies explicit comparison, the (21) contrast.
+* `cc_b_requires_shared_class` — footnote 11: the comparison entailment needs
+  a single comparison class shared by both conjuncts.
 
-## §2.2 Consistency Constraints — substrate in `Delineation.lean §13`
+## References
 
-[bochnak-2015]'s eq. (28a/b) Consistency Constraints — his
-"strongest formal result" per the linguistics audit — are substrate-
-level. `Delineation.lean §13` houses `IsSoundDelineation` (CC-b shape,
-generalising eq. 28b to abstract scalar relations `R` per the paper's
-"the scalar concept encoded by G" wording) and `IsCompleteDelineation`
-(the converse direction, NOT in Bochnak — closer to
-[burnett-2017]'s *Plenitude* / *Granularity* axioms). CC-a (eq. 28a)
-is exactly `IsMonotoneDelineation _ Set.univ` — no separate substrate
-needed.
-
-The §3 comparison-entailment theorem factors through
-`comparativeSem_iff_of_sound_and_complete`: the equivalence
-`comparativeSem del a b ↔ height b < height a` is a one-line corollary
-firing via typeclass synthesis from `instSoundMeasureDelineation` /
-`instCompleteMeasureDelineation`. The smuggled-measure workaround
-flagged by the 0.230.434 audit is closed.
-
-The load-bearing **footnote-11** caveat (single shared comparison
-class) is formalised as `cc_b_requires_shared_class` in §6 below —
-paper-anchored here since the footnote is Bochnak-specific.
-
-## Future work still flagged
-
-- §3–§4 van Rooij-style degree-free alternative analysis. Bochnak
-  ultimately rejects it on parsimony grounds (§4: requires unifying
-  differential MPs and crisp-judgment witnesses). A faithful
-  formalization should engage [van-rooy-2003] (and successors not
-  yet in the bib) and prove Bochnak's parsimony argument.
-- §4.3 Wellwood (2014) *much*-based middle-ground analysis and the
-  Washo *t'e:k'e'* counterevidence (eqs. 64–68). Bochnak's most
-  original cross-linguistic argument lives here.
-
+* [bochnak-2015] — the paper.
+* [beck-2009] — the Degree Semantics Parameter, proposed for Motu.
+* [klein-1980] — the vague-predicate semantics and Consistency Constraints.
+* [kennedy-2007a], [kennedy-2007] — implicit vs. explicit comparison; the
+  relative vs. absolute standard typology.
+* [fara-2000] — the Similarity Constraint, with [klein-1980].
+* [van-rooij-2011a] — semi-orders and the margin of error.
 -/
 
 namespace Bochnak2015
 
 open Degree.Delineation
 
--- ════════════════════════════════════════════════════
--- § 1. The Degree Semantics Parameter
--- ════════════════════════════════════════════════════
+variable {E : Type*}
 
-/-- [beck-2009] (DSP), as adopted by [bochnak-2015] eq. 7.
-    The DSP records whether a language's gradable lexicon introduces
-    degree arguments. `true` for English-type, `false` for Washo-type.
-    A language-level setting per [bochnak-2015], not per-predicate. -/
-def DegreeSemanticsParameter : Type := Bool
+/-! ### The two lexical shapes ((1), (5))
 
-/-- English: positive DSP setting (degree arguments + degree morphology). -/
-def english : DegreeSemanticsParameter := true
+The paper's proposal is a contrast in lexical type. English *tall* (1) takes
+a degree argument for degree morphology to bind; Washo entries (5) are
+delineations, type `ComparisonClass E → E → Prop`, with — p. 6:4 — "no
+measure function, and no degree variable at all". No Washo constant is
+defined: the theorems below quantify over delineations, keeping the
+no-measure discipline visible in the types. -/
 
-/-- Washo: negative DSP setting per [bochnak-2015]. -/
-def washo : DegreeSemanticsParameter := false
-
-/-- Motu (Austronesian, Papua New Guinea): also negative DSP per
-    [beck-2009]'s appendix and [stassen-1985] typology.
-    Bochnak's eq. 6 records the conjoined-comparison construction. -/
-def motu : DegreeSemanticsParameter := false
-
-theorem english_pos : english = true := rfl
-theorem washo_neg : washo = false := rfl
-theorem motu_neg : motu = false := rfl
-
--- ════════════════════════════════════════════════════
--- § 2. English vs Washo Lexical-Entry Types
--- ════════════════════════════════════════════════════
-
-/-! [bochnak-2015]'s central proposal is at the level of LEXICAL
-    TYPES, not denotations:
-
-    - English `[[tall]]` (eq. 1): type ⟨d, ⟨e, t⟩⟩ — takes a degree
-      argument that comparative/measure morphology binds.
-    - Washo `[[tall_Washo]]^c` (eq. 5/11): type ⟨e, t⟩ relative to a
-      comparison class. **No degree argument; no measure function in
-      the denotation.**
-
-    Bochnak (p. 6:4): *"The semantics in (5) contains no measure
-    function, and no degree variable at all."*
-
-    In linglib types: English entries have shape `ℕ → E → Prop`
-    (degree-saturated ⟨e,t⟩); Washo entries have shape
-    `ComparisonClass E → E → Prop` — the type signature of any
-    Klein-style delineation (`Delineation.lean` line 72ff).
-
-    We define `tallEnglish` to demonstrate the English shape. We do
-    NOT define a `tallWasho` constant: the Washo lexicon's entry IS
-    just an arbitrary delineation; theorems below quantify over
-    `del : ComparisonClass E → E → Prop` to keep the no-measure
-    discipline visible at the type level. -/
-
-/-- [bochnak-2015] eq. 1: standard English-style degree-based
-    `[[tall]] = λdλx. height(x) ≽ d`. Type ⟨d, ⟨e, t⟩⟩. -/
-def tallEnglish {E : Type*} (height : E → ℕ) (d : ℕ) (x : E) : Prop :=
+/-- (1): degree-based `[[tall]] = λd λx. height(x) ≥ d`, type ⟨d,⟨e,t⟩⟩. -/
+def tallEnglish (height : E → ℕ) (d : ℕ) (x : E) : Prop :=
   height x ≥ d
 
--- ════════════════════════════════════════════════════
--- § 3. Conjoined Comparison ([bochnak-2015] eq. 14, eq. 27)
--- ════════════════════════════════════════════════════
+/-! ### Conjoined comparison ((14), (27)–(29)) -/
 
-/-- [bochnak-2015] eq. 14: the Washo conjoined-comparison
-    construction juxtaposes a positive form and a negated antonymic
-    form (typically with the negation suffix *-eːs*). Bochnak argues
-    NO comparative morpheme is involved — overt or covert.
-
-    [bochnak-2015] eq. 27 gives the truth conditions for a
-    specific context `C`: x is more G than y iff x counts as G in C
-    and y does not. Per-context Boolean conjunction of the lexical
-    delineation and its negation. -/
-def washoConjoined {E : Type*}
-    (del : ComparisonClass E → E → Prop)
+/-- (27): the conjoined comparison (14) in context `C` — `x` counts as G and
+`y` does not. No comparative morpheme, overt or covert, is involved. -/
+def washoConjoined (del : ComparisonClass E → E → Prop)
     (C : ComparisonClass E) (x y : E) : Prop :=
   del C x ∧ ¬ del C y
 
-/-- [klein-1980]'s existential `comparativeSem` is the existential
-    closure of the Washo conjoined construction over comparison classes.
-    [bochnak-2015]'s eq. 27 is the per-context form; Klein's is the
-    "exists a discriminating context" form. -/
-theorem washoConjoined_witnesses_comparativeSem {E : Type*}
-    (del : ComparisonClass E → E → Prop)
-    {C : ComparisonClass E} {x y : E}
+/-- [klein-1980]'s existential comparative is the closure of (27) over
+contexts: a conjoined comparison witnesses the discriminating class. -/
+theorem washoConjoined_witnesses_comparativeSem
+    (del : ComparisonClass E → E → Prop) {C : ComparisonClass E} {x y : E}
     (h : washoConjoined del C x y) : comparativeSem del x y :=
   ⟨C, h⟩
 
-/-- Truth-conditional equivalence to height comparison **for a
-    measure-induced delineation**. The Washo LEXICON exposes no
-    degree variable (§2 above), but its truth conditions in a
-    measure-induced model coincide with English's `-er`. The
-    cross-linguistic divergence is at the level of TYPE and
-    construction, not truth-conditional content.
+/-- (29): where the target does not count as G — both individuals short, in
+the paper's context — the conjoined comparison is simply false. Conjoined
+comparison is obligatorily norm-related. -/
+theorem washoConjoined_norm_related (del : ComparisonClass E → E → Prop)
+    {C : ComparisonClass E} {x y : E} (h : ¬ del C x) :
+    ¬ washoConjoined del C x y :=
+  fun ⟨hx, _⟩ => h hx
 
-    **Substrate-grounded derivation.** Now factors through
-    `Delineation.lean §13`'s `IsSoundDelineation` /
-    `IsCompleteDelineation` typeclasses (paper-anchored in
-    `ConsistencyConstraints.lean` to [bochnak-2015] §2.2 eq. 28).
-    The `instSoundMeasureDelineation` and `instCompleteMeasureDelineation`
-    instances fire by typeclass synthesis; the equivalence is a
-    one-line corollary of `comparativeSem_iff_of_sound_and_complete`.
-    The lexical entry no longer needs to expose `height` for the
-    comparison entailment to go through — `height` participates only
-    via instance synthesis. -/
-theorem comparativeSem_measureDelineation_iff_degree {E : Type*}
-    (height : E → ℕ) (a b : E) :
-    comparativeSem (measureDelineation height) a b ↔
-      height b < height a :=
+/-- For a measure-induced delineation the closure of (27) coincides with
+height comparison — the (28) entailment, through `IsSoundDelineation` and
+`IsCompleteDelineation` (the paper's Consistency Constraints in
+`Semantics/Degree/Delineation.lean`), with no degree variable in the entry. -/
+theorem comparativeSem_measureDelineation_iff_degree (height : E → ℕ) (a b : E) :
+    comparativeSem (measureDelineation height) a b ↔ height b < height a :=
   comparativeSem_iff_of_sound_and_complete (R := fun a b => height b < height a)
 
--- ════════════════════════════════════════════════════
--- § 4. Test 1: Absolute-Standard Incompatibility (eq. 23–24)
--- ════════════════════════════════════════════════════
+/-! ### Test 1: absolute standards ((23)–(24))
 
-/-! [bochnak-2015] eq. 23 (English) and eq. 24 (Washo, three
-    sub-cases) record the diagnostic: conjoined comparison fails with
-    absolute-standard predicates. The minimal scenario uses two
-    slightly bent rods where one is more bent than the other; ALL
-    three Washo conjoined attempts fail:
+Two rods, both slightly bent, one more than the other. The English explicit
+comparative (23a) is true; each Washo conjoined attempt (24a–c) requires
+*straight* or *not bent* to hold of one rod, which is false. -/
 
-    - eq. 24a: *bent ∧ straight* — fails because *straight* requires
-      zero curvature, but both rods are bent.
-    - eq. 24b: *bent ∧ ¬bent* — fails because *both* rods are bent.
-    - eq. 24c: *straight ∧ ¬straight* — fails because *both* rods are
-      bent (so neither is straight, but the form requires one to be).
+section AbsoluteStandard
 
-    These failures are construction-level (the conjoined form requires
-    an antonym OR negation to hold absolutely), not pragmatic. We
-    derive all three sub-cases mechanically. -/
+variable (curvature : E → ℕ) (x y : E)
 
-/-- [kennedy-2007] **min-standard** absolute-degree predicate:
-    holds iff the measure exceeds the scale's bottom endpoint (here `0`).
-    Models *bent*, *wet*, *dirty*. The standard is fixed at the scale
-    endpoint, not contextually supplied — so this predicate has no
-    `ComparisonClass` parameter, unlike Klein-style delineations. -/
-def bentPred {E : Type*} (curvature : E → ℕ) (x : E) : Prop :=
-  curvature x > 0
+/-- [kennedy-2007] min-standard predicate (*bent*, *wet*): the measure
+exceeds the scale's bottom. The standard is the endpoint, not a comparison
+class. -/
+def bentPred : Prop := curvature x > 0
 
-/-- [kennedy-2007] **max-standard** absolute-degree predicate:
-    holds iff the measure is at the scale endpoint (`0` for curvature).
-    Models *straight*, *dry*, *clean*. The lexical antonym of
-    `bentPred`. -/
-def straightPred {E : Type*} (curvature : E → ℕ) (x : E) : Prop :=
-  curvature x = 0
+/-- [kennedy-2007] max-standard predicate (*straight*, *dry*): the measure
+sits at the endpoint. The lexical antonym of `bentPred`. -/
+def straightPred : Prop := curvature x = 0
 
-/-- [bochnak-2015] eq. 24a: *bent ∧ straight* fails when both
-    rods have nonzero curvature. -/
-theorem eq24a_bent_straight_fails {E : Type*}
-    (curvature : E → ℕ) (x y : E)
-    (_hx : bentPred curvature x) (hy : bentPred curvature y) :
-    ¬ (bentPred curvature x ∧ straightPred curvature y) := by
-  rintro ⟨_, h⟩
-  exact absurd h (Nat.pos_iff_ne_zero.mp hy)
+/-- (24a): *bent ∧ straight* fails — both rods have nonzero curvature. -/
+theorem eq24a_bent_straight_fails (_hx : bentPred curvature x)
+    (hy : bentPred curvature y) :
+    ¬ (bentPred curvature x ∧ straightPred curvature y) :=
+  fun ⟨_, h⟩ => absurd h (Nat.pos_iff_ne_zero.mp hy)
 
-/-- [bochnak-2015] eq. 24b: *bent ∧ ¬bent* fails when both rods
-    are bent — the second conjunct is false. -/
-theorem eq24b_bent_notbent_fails {E : Type*}
-    (curvature : E → ℕ) (x y : E)
-    (_hx : bentPred curvature x) (hy : bentPred curvature y) :
-    ¬ (bentPred curvature x ∧ ¬ bentPred curvature y) := by
-  rintro ⟨_, h⟩
-  exact h hy
+/-- (24b): *bent ∧ ¬bent* fails — the second rod is bent too. -/
+theorem eq24b_bent_notbent_fails (_hx : bentPred curvature x)
+    (hy : bentPred curvature y) :
+    ¬ (bentPred curvature x ∧ ¬ bentPred curvature y) :=
+  fun ⟨_, h⟩ => h hy
 
-/-- [bochnak-2015] eq. 24c: *straight ∧ ¬straight* fails when
-    both rods are bent — the first conjunct is false. -/
-theorem eq24c_straight_notstraight_fails {E : Type*}
-    (curvature : E → ℕ) (x y : E)
-    (hx : bentPred curvature x) (_hy : bentPred curvature y) :
-    ¬ (straightPred curvature x ∧ ¬ straightPred curvature y) := by
-  rintro ⟨h, _⟩
-  exact absurd h (Nat.pos_iff_ne_zero.mp hx)
+/-- (24c): *straight ∧ ¬straight* fails — the first rod is not straight. -/
+theorem eq24c_straight_notstraight_fails (hx : bentPred curvature x)
+    (_hy : bentPred curvature y) :
+    ¬ (straightPred curvature x ∧ ¬ straightPred curvature y) :=
+  fun ⟨h, _⟩ => absurd h (Nat.pos_iff_ne_zero.mp hx)
 
-/-- The English degree-based comparative SUCCEEDS in the same scenario
-    where all three Washo conjoined attempts fail. Witnesses Bochnak's
-    diagnostic that conjoined comparison is *implicit*: same model,
-    conjoined fails on every antonym pairing, comparative succeeds. -/
-theorem english_more_bent_succeeds {E : Type*}
-    (curvature : E → ℕ) (x y : E)
-    (hmore : curvature x > curvature y) :
-    ∃ d, tallEnglish curvature d x ∧ ¬ tallEnglish curvature d y := by
-  exact ⟨curvature x, le_refl _, by simp [tallEnglish]; omega⟩
+/-- (23a): the explicit comparative succeeds in the same scenario — any
+nonzero difference suffices. -/
+theorem english_more_bent_succeeds (hmore : curvature x > curvature y) :
+    ∃ d, tallEnglish curvature d x ∧ ¬ tallEnglish curvature d y :=
+  ⟨curvature x, le_refl _, by simp [tallEnglish]; omega⟩
 
--- ════════════════════════════════════════════════════
--- § 5. Test 2: Crisp Judgment Effect (eq. 20–22)
--- ════════════════════════════════════════════════════
+end AbsoluteStandard
 
-/-! [bochnak-2015] eq. 20 records the **Similarity Constraint**
-    (parenthetically attributed in the paper to [klein-1980] and
-    [fara-2000]): when `x` and `y` differ only minimally in the
-    property `G`, speakers are unable or unwilling to judge `x is G ∧
-    y is not G` as true.
+/-! ### Test 2: crisp judgments and the margin of error ((20)–(22), (58)–(60))
 
-    This is a FELICITY constraint, not a truth-conditional one. The
-    Washo conjoined construction inherits it (eq. 21: the ladder
-    example is judged infelicitous in a minimal-difference context),
-    which is [bochnak-2015]'s second diagnostic that Washo
-    comparison is *implicit* in [kennedy-2007]'s sense.
-    [bochnak-2015] eq. 22 (the *wewš* "almost" hedge) shows the
-    construction can be salvaged in crisp contexts via hedges.
+The Similarity Constraint (20) bars separating a minimally-different pair,
+so the conjoined form is infelicitous on two nearly-equal ladders (21) —
+salvageable with hedges like *wewš* 'almost' (22). The paper's van Rooij
+section makes the margin formal: implicit comparison rests on the
+margin-of-error order (60), a semi-order (58); explicit comparison is its
+`ε = 0` case, the strict weak order (59). -/
 
-    Linglib stipulates the Similarity Constraint as a felicity
-    predicate distinct from the truth conditions established in §3.
-    The empirical content is Bochnak's claim that Washo speakers obey
-    it where English `-er` users do not.
+section MarginOfError
 
-    **Modeling-choice flag.** The granularity threshold `ε` and the
-    specific `ε ≥ 2` instantiation in `crisp_judgment_blocks_conjoined`
-    are linglib's parameterization; [bochnak-2015] gives no
-    numerical `ε`. The Lean theorem captures the SHAPE of the
-    constraint, not the paper's quantitative content. -/
+variable (μ : E → ℕ) (ε : ℕ) {x y z v w : E}
 
-/-- The granularity-`ε` distinguishability predicate underlying the
-    Similarity Constraint: `x` and `y` are crisply distinguishable on
-    measure `μ` at granularity `ε` iff their measure difference is at
-    least `ε`. -/
-def crisplyDistinguishable {E : Type*}
-    (μ : E → ℕ) (ε : ℕ) (x y : E) : Prop :=
-  μ x ≥ μ y + ε ∨ μ y ≥ μ x + ε
+/-- (60): `x` exceeds `y` by more than the margin of error `ε`. -/
+def marginOrder (x y : E) : Prop := μ y + ε < μ x
 
-/-- The conjoined-comparison felicity predicate. Felicitous on measure
-    `μ` at granularity `ε` only if `x` exceeds `y` AND the pair is
-    crisply distinguishable. SEPARATES truth conditions (the height
-    inequality) from felicity (the granularity threshold). -/
-def conjoinedFelicitous {E : Type*}
-    (μ : E → ℕ) (ε : ℕ) (x y : E) : Prop :=
-  μ y < μ x ∧ crisplyDistinguishable μ ε x y
+/-- (58a): irreflexivity. -/
+theorem marginOrder_irrefl : ¬ marginOrder μ ε x x := by
+  simp [marginOrder]
 
-/-- [bochnak-2015] eq. 21 (the ladder scenario) made formal under
-    linglib's `ε ≥ 2` modeling: a 1-unit measure difference cannot
-    satisfy the Similarity Constraint, so the conjoined form is
-    infelicitous. -/
-theorem crisp_judgment_blocks_conjoined {E : Type*}
-    (μ : E → ℕ) (ε : ℕ) (x y : E)
-    (hgap : ε ≥ 2) (hclose : μ x = μ y + 1) :
-    ¬ conjoinedFelicitous μ ε x y := by
-  rintro ⟨_, h | h⟩ <;> omega
+/-- (58b): the interval-order condition. -/
+theorem marginOrder_intervalOrder (h₁ : marginOrder μ ε x y)
+    (h₂ : marginOrder μ ε v w) :
+    marginOrder μ ε x w ∨ marginOrder μ ε v y := by
+  simp only [marginOrder] at *; omega
 
-/-- [bochnak-2015] eq. 22 (the *wewš* "almost" hedge) shows the
-    conjoined form CAN be salvaged in crisp contexts via hedges.
-    Formally: a sufficiently large measure gap restores felicity even
-    at large `ε`. The hedge effectively raises the granularity
-    threshold the speaker considers crisp. -/
-theorem large_gap_restores_felicity {E : Type*}
-    (μ : E → ℕ) (ε : ℕ) (x y : E)
-    (hbigger : μ x ≥ μ y + ε) (hpos : μ y < μ x) :
-    conjoinedFelicitous μ ε x y :=
-  ⟨hpos, Or.inl hbigger⟩
+/-- (58c): semi-transitivity. -/
+theorem marginOrder_semitransitive (h₁ : marginOrder μ ε x y)
+    (h₂ : marginOrder μ ε y z) (v : E) :
+    marginOrder μ ε x v ∨ marginOrder μ ε v z := by
+  simp only [marginOrder] at *; omega
 
--- ════════════════════════════════════════════════════
--- § 6. Footnote 11: shared-class requirement (counterexample)
--- ════════════════════════════════════════════════════
+/-- At `ε = 0` the margin order is plain measure comparison. -/
+theorem marginOrder_zero_iff : marginOrder μ 0 x y ↔ μ y < μ x := by
+  simp [marginOrder]
 
-/-- [bochnak-2015] fn 11 (p. 6:16): the comparison entailment
-    requires a SINGLE comparison class shared by both conjuncts of the
-    conjoined construction. Weakening to "exists `C₁` that makes `x`
-    positive AND exists `C₂` (possibly distinct) that makes `y`
-    negative" does NOT suffice.
+/-- (59c): at `ε = 0` the order is almost connected — with (58a) and
+transitivity, the strict weak order of explicit comparison. -/
+theorem marginOrder_zero_almostConnected (h : marginOrder μ 0 x y) (z : E) :
+    marginOrder μ 0 x z ∨ marginOrder μ 0 z y := by
+  simp only [marginOrder] at *; omega
 
-    Counterexample model: `Entity := Bool`. The delineation `del C x :=
-    x = true ∧ true ∈ C` makes `true` positive in any CC containing
-    `true`, and `false` negative everywhere. Soundness w.r.t.
-    `R a b := a = true ∧ b = false` holds (the only positive
-    discrimination is `x = true ∧ y = false`). But the SPLIT-CC weakened
-    form admits `(x, y) = (true, true)` via `C₁ := {true}` and
-    `C₂ := {false}` — `del C₁ true ∧ ¬ del C₂ true` holds, while
-    `R true true = false`.
+/-- (21): a minimally-different pair never clears a positive margin — the
+crisp-judgment infelicity of the conjoined form. -/
+theorem crisp_pair_not_marginOrder (hε : 1 ≤ ε) (hclose : μ x = μ y + 1) :
+    ¬ marginOrder μ ε x y := by
+  simp only [marginOrder]; omega
 
-    Paper-anchored here (rather than substrate-level) because the
-    footnote-11 caveat is Bochnak-specific: it explains why eq. (27)
-    threads a single shared `C` through both conjuncts. -/
+/-- The same pair satisfies explicit comparison: `-er` needs only a nonzero
+difference. -/
+theorem crisp_pair_marginOrder_zero (hclose : μ x = μ y + 1) :
+    marginOrder μ 0 x y := by
+  simp only [marginOrder]; omega
+
+end MarginOfError
+
+/-! ### Footnote 11: the shared comparison class -/
+
+/-- Footnote 11: the (28) entailment requires one comparison class shared by
+both conjuncts of (27). Soundness constrains only same-class separations, so
+a delineation sound for `R` can separate `x` from `y` across two distinct
+classes while `R x y` fails. -/
 theorem cc_b_requires_shared_class :
     ∃ (Entity : Type) (del : ComparisonClass Entity → Entity → Prop)
       (R : Entity → Entity → Prop),
       IsSoundDelineation del R ∧
       ∃ (C₁ C₂ : ComparisonClass Entity) (x y : Entity),
         del C₁ x ∧ ¬ del C₂ y ∧ ¬ R x y := by
-  refine ⟨Bool,
-          fun C x => x = true ∧ true ∈ C,
-          fun a b => a = true ∧ b = false, ?_, ?_⟩
-  · -- IsSoundDelineation: shared-CC version is sound for our R
-    refine ⟨?_⟩
-    intro C x y ⟨hxT, htC⟩ hneg
-    subst hxT
+  refine ⟨Bool, fun C x => x = true ∧ true ∈ C, fun a b => a = true ∧ b = false,
+    ⟨?_⟩, {true}, {false}, true, true, ⟨rfl, rfl⟩, ?_, ?_⟩
+  · rintro C x y ⟨rfl, htC⟩ hneg
     refine ⟨rfl, ?_⟩
-    by_contra hyne_false
-    have hyT : y = true := by
-      cases y with
-      | true => rfl
-      | false => exact absurd rfl hyne_false
-    exact hneg ⟨hyT, htC⟩
-  · -- Split-CC weakening fails: x=y=true witnesses the gap
-    refine ⟨{true}, {false}, true, true, ?_, ?_, ?_⟩
-    · exact ⟨rfl, rfl⟩
-    · intro ⟨_, h⟩
-      rw [Set.mem_singleton_iff] at h
-      exact Bool.noConfusion h
-    · intro ⟨_, h⟩
-      exact Bool.noConfusion h
+    cases y with
+    | true => exact absurd ⟨rfl, htC⟩ hneg
+    | false => rfl
+  · rintro ⟨_, h⟩
+    simp at h
+  · rintro ⟨_, h⟩
+    exact Bool.noConfusion h
 
 end Bochnak2015
