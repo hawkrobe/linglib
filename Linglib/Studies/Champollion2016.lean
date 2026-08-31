@@ -2,48 +2,48 @@ import Linglib.Semantics.Composition.CoordinatorOp
 import Linglib.Semantics.Plurality.Algebra
 
 /-!
-# Champollion 2016: Noun Coordination and the Intersective Theory of Conjunction
+# Champollion 2016: noun coordination and the intersective theory of conjunction
 
-[champollion-2016-coordination]
+This file formalizes the case in [champollion-2016-coordination] that *and* has one lexical entry,
+the intersective generalized conjunction of [partee-rooth-1983] — the Boolean meet that the
+substrate calls `Coordinator.op .j`. Collective readings such as *John and Mary met* are not a
+join on individuals folded into *and*; they come from silent type-shifters.
 
-Champollion argues that *and* has ONE lexical entry: the **intersective** (Boolean
-meet) generalized conjunction `INT` ([champollion-2016-coordination] eq. 16/17 — this
-IS linglib's [partee-rooth-1983] `genConj` = `Coordinator.op .j` = `⊓`). Collective
-readings (*John and Mary met*, *ten men and women got married*) are NOT a join on
-individuals folded into *and*; they are derived by silent type-shifters (Existential/
-Choice Raising, Intersection, Minimization). Two results, both routing through the
-`Coordinator.op` API:
+Two results support the entry. The type-shift from an individual join to a meet of type-raised
+individuals is not an anti-homomorphism but holds exactly on the predicates that distribute the
+join, and that guard is Link distributivity: a `ᴰ`-closed predicate distributes every join when
+atoms are join-prime, while a collective predicate does not, which is why collectivity needs
+raising and minimization rather than raising and intersection. And the rival collective entry of
+[heycock-zamparelli-2005], which builds *and* from union of witness sets, makes *No man and no
+woman smiled* true in a model where the only smilers are a man and a woman — where the
+intersective entry correctly makes it false.
 
-* **The type-shift `⊔ ↦ ⊓` is guarded, not free.** Montague's lift `individual : e → GQ`
-  (`x ↦ λP. P x`) relates the individual-join `x ⊔ y` to the GQ-meet
-  `Coordinator.op .j` (= `⊓`) of the raised individuals *exactly on the predicates that
-  distribute the join* (`individual_join_eq_op_iff`). It is NOT a clean anti-homomorphism:
-  for a **collective** predicate (`met`/`gather`) the two diverge
-  (`individual_join_ne_op_collective`) — which is *why* Champollion needs Raising +
-  Minimization rather than reducing collectivity to raising + intersection. The guard is
-  grounded in Link distributivity: Link's `ᴰ`-closed predicates satisfy it under
-  join-prime atoms (`linkD_distributiveOverJoin`).
+## Main definitions
 
-* **The collective theory overgenerates.** The rival entry of [heycock-zamparelli-2005] —
-  the "set product" of [champollion-2016-coordination] eq. 101, which builds *and* from
-  set **union** on individuals — wrongly predicts *No man and no woman smiled* TRUE in the
-  model where a man (John) and a woman (Mary) smiled and no-one else did (§7.1, journal
-  p. 608), where the intersective `Coordinator.op .j` correctly predicts FALSE
-  (`setProduct_overgenerates`). This divergence is the payoff: it refutes
-  join-on-individuals as the meaning of *and*.
+* `DistributiveOverJoin` — a predicate decomposes a join into a meet
+* `andIntersective`, `andSetProduct` — the two entries at the type of properties of pluralities
 
 ## Main results
 
-* `individual_join_eq_op_iff` — the type-shift `⊔ ↦ ⊓` holds at `P` iff `P` distributes the join.
-* `individual_join_eq_op_of_distributive`, `linkD_distributiveOverJoin` — the guard is Link distributivity.
-* `collective_not_distributiveOverJoin`, `individual_join_ne_op_of_not_distributive` — a collective predicate breaks the type-shift.
-* `setProduct_overgenerates` — H&Z's set-product *and* gets *No man and no woman smiled* wrong; `op .j` gets it right.
+* `individual_join_eq_op_iff` — the type-shift holds at a predicate iff it distributes the join
+* `linkD_distributiveOverJoin`, `individual_join_eq_op_of_linkD` — Link's `ᴰ`-closed predicates
+  are the licensed ones
+* `collective_not_distributiveOverJoin`, `individual_join_ne_op_of_not_distributive` — a
+  collective predicate breaks the type-shift
+* `setProduct_overgenerates` — the set-product entry and the intersective entry assign opposite
+  truth values to *No man and no woman smiled*, and the intersective one is right
+
+## References
+
+* [champollion-2016-coordination]
+* [partee-rooth-1983]
+* [heycock-zamparelli-2005]
+* [link-1983]
+* [link-1987]
 -/
 
 namespace Champollion2016
 
-open Intensional
-open Intensional.Conjunction
 open Quantification (individual)
 open Plurality.Algebra
 
@@ -58,31 +58,13 @@ come apart, which is the whole motivation for Champollion's silent operators. -/
 
 section TypeShift
 
-variable {E W : Type} [SemilatticeSup E]
+variable {E : Type} [SemilatticeSup E]
 
 /-- A predicate **distributes a join** when it decomposes `x ⊔ y` into a meet:
     `P (x ⊔ y) ↔ P x ∧ P y`. Link's `ᴰ`-closed (distributive) predicates satisfy this;
     collective predicates (`met`, `gather`) do not. -/
 def DistributiveOverJoin {E : Type*} [SemilatticeSup E] (P : E → Prop) : Prop :=
   ∀ x y : E, P (x ⊔ y) ↔ (P x ∧ P y)
-
-/-- `individual (x ⊔ y)` applied to `P` is `P (x ⊔ y)` (Montague's lift). -/
-theorem individual_join_apply (x y : E) (P : E → Prop) :
-    individual (x ⊔ y : E) P = P (x ⊔ y : E) := rfl
-
-omit [SemilatticeSup E] in
-/-- `coordEntities` (the intersective `and` of two raised individuals) IS the GQ-meet
-    `Coordinator.op .j` — [champollion-2016-coordination]'s `INT` (eq. 16) as the
-    Boolean `⊓` at the GQ type (flow-through bucket (a): `genConj` is `op`). -/
-theorem coordEntities_eq_opj (x y : E) :
-    coordEntities (W := W) x y = Coordinator.op .j (individual x) (individual y) := rfl
-
-omit [SemilatticeSup E] in
-/-- The intersective `and` of two raised individuals applied to `P` is `P x ∧ P y`. The
-    two-atom case of Link distributive predication: it equals `distMaximal P {x, y}` (see
-    [bill-etal-2025] `mu_is_distributive_check`). -/
-theorem op_individual_apply (x y : E) (P : E → Prop) :
-    Coordinator.op .j (individual x) (individual y) P = (P x ∧ P y) := rfl
 
 /-- **The type-shift `⊔ ↦ ⊓`, guarded.** Type-raising the individual-join `x ⊔ y` agrees
     with the GQ-meet `Coordinator.op .j` of the raised individuals *at `P`* iff `P`

@@ -2,71 +2,49 @@ import Linglib.Semantics.Dynamic.DPL
 import Linglib.Logic.Bilateral.Defs
 
 /-!
-# Charlow (2025) — Staged updates: lifted interpretations for DNE in dynamic semantics
-[charlow-2025-staged-updates]
-[groenendijk-stokhof-1991] [krahmer-muskens-1995] [gotham-2019-ac22]
-[mandelkern-2022] [hofmann-2025] [spector-2025] [charlow-2014]
+# Charlow 2025: staged updates and lifted interpretations for double-negation elimination
 
-Charlow's [charlow-2025-staged-updates] (SALT 35 proceedings) gives an
-algebraic characterization of how to **lift** a non-DNE-validating dynamic
-substrate δ (e.g. DPL) into a richer Δ that does validate double-negation
-elimination. Three operations (`up : δ → Δ`, `down : Δ → δ`, `invneg : Δ → Δ`)
-plus three equational laws (Emb, Inv, Neg) suffice. Charlow's Fact 4 (the
-headline) says: any two lawful lifts of the same substrate are isomorphic
-on the image of the lifted interpretation.
+This file formalizes the framework of [charlow-2025-staged-updates]. A dynamic substrate whose
+negation does not validate double-negation elimination — [groenendijk-stokhof-1991]'s, say — can
+be lifted into a richer one that does, and the lift needs only three operations, an embedding, a
+retraction and an involutive negation, subject to three laws. Under those laws the lifted
+interpretation validates DNE and is conservative over the substrate, and any two lawful lifts of
+one substrate factor through a canonical `δ ⊕ δ` — which is the paper's Fact 4, the sense in which
+the competing repairs of [krahmer-muskens-1995], [gotham-2019-ac22] and the staged updates
+themselves are presentations of one thing rather than rival choices.
 
-## Architectural placement
+The framework is more general than bilaterality: the Krahmer–Muskens lift is bilateral and takes
+its laws from `Bilateral.IsBilateral`, while the other three constructions are not, so
+`IsLawfulDNELift` consumes bilaterality where it applies rather than extending it.
 
-Per linglib anchoring discipline (CLAUDE.md), framework substrate originating
-with a paper lives in the originating Studies file until ≥ 2 paper-anchored
-consumers exist. Currently only this file consumes the lift framework, so
-the typeclasses live here. Promotion to `Semantics/Dynamic/Lift.lean`
-is queued for when a Mandelkern2022 or Gotham2019 study lands.
+The weak-meaning prediction of [spector-2025] that separates bounded meanings from staged updates
+is not formalized, nor is the paper's §6 exceptional-scope framework.
 
-The framework is **strictly more general than `Bilateral.IsBilateral`**:
-the Krahmer-Muskens (Instance 1) lift is bilateral and derives its laws from
-`IsBilateral`, but the other three instances (Gotham decomposed, Staged updates,
-Canonical) have non-bilateral shapes. `IsLawfulDNELift` does not extend
-`IsBilateral`; it consumes it where applicable.
+## Main definitions
 
-## Connection to existing linglib infrastructure
+* `DynamicSubstrate` — a carrier with conjunction and negation, the paper's δ
+* `DynForm` — the object language ℒ
+* `DNELift`, `IsLawfulDNELift` — the three operations and the three laws
+* `primInterp`, `liftInterp` — the paper's [·] and ⟨·⟩
 
-[charlow-2014] (`Linglib/Studies/Charlow2014.lean`) builds dynamic semantics
-as the State.Set monad — a state-threading substrate in the sense of
-`DynamicSubstrate`, with `Charlow2014.neg` its dynamic negation. Charlow 2025
-strengthens the state-threading picture: any two lifts that satisfy
-Emb/Inv/Neg over the same substrate δ are isomorphic on the image of
-`liftInterp`. This subsumes the prose "three incompatible DNE solutions"
-table in `Semantics/Dynamic/Update.lean` for the state-threading row —
-bilateral and ICDRT-bilateral are not incompatible choices, they are
-isomorphic presentations once the substrate is fixed. TTR remains genuinely
-outside the lift framework (its classical metalanguage gives DNE statically,
-so there is no non-DNE substrate to lift from).
+## Main results
 
-## Scope of this file
+* `liftInterp_dneg` — a lawful lift validates double-negation elimination (Fact 1)
+* `liftInterp_eq_up_primInterp_of_negFree`, `down_liftInterp_eq_primInterp_of_dnegFree` — and is
+  conservative over the substrate (Fact 2)
+* `lawful_lifts_factor_through_canonical`, `lawful_lifts_canonicalize_eq_implies` — every lawful
+  lift factors through the canonical one, so lawful lifts of a substrate agree (Fact 4)
 
-* §1 `DynamicSubstrate δ` — algebraic interface (conj + neg)
-* §2 `DynForm Atom` — paper's ℒ ::= Atom | ∃x | φ ∧ ψ | ¬φ
-* §3 `DNELift δ Δ` (data) + `IsLawfulDNELift δ Δ` (Prop, three laws)
-* §4 `primInterp` and `liftInterp` (paper's [·] and ⟨·⟩, Definition 4)
-* §5 Fact 1 (DNE validation) — proved
-* §6 Fact 2 (conservativity over the substrate) — proved
-* §7 Fact 4 (lifts factor through canonical form `δ ⊕ δ` via
-  `lawful_lifts_factor_through_canonical`; kernel congruence via canonical form
-  via `lawful_lifts_canonicalize_eq_implies` — both proved unconditionally;
-  the literal "kernel iff" requires substrate non-degeneracy which Charlow's
-  Appendix A proof implicitly assumes)
-* §8 Auxiliary `DynamicProgramDisj`, `DynamicTruth` typeclasses
-* §9-12 Four lift constructions (KM, Gotham, Staged, Canonical) over the DPL substrate
-* §13 Sanity tests
+## References
 
-The Spector 2025 weak-meaning prediction (donkey example, p. 871 of paper)
-that discriminates bounded meanings from staged updates is not formalized
-here — it requires the Mandelkern2022 study file as scaffolding.
-
-The Section 6 exceptional-scope `D_σ` framework is also out of scope; it
-requires the separate JoS [charlow-2014] successor "Static and dynamic
-exceptional scope" which has its own study file pending.
+* [charlow-2025-staged-updates]
+* [groenendijk-stokhof-1991]
+* [krahmer-muskens-1995]
+* [gotham-2019-ac22]
+* [mandelkern-2022]
+* [hofmann-2025]
+* [spector-2025]
+* [charlow-2014]
 -/
 
 namespace Charlow2025
