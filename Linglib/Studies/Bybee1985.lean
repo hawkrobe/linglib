@@ -2,22 +2,22 @@ import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Bybee (1985): relevance and the dynamic lexicon
+# Bybee 1985: relevance and lexical strength
 
-[bybee-1985] (*Morphology: A Study of the Relation Between Meaning and Form*,
-Typological Studies in Language 9) tests the **relevance hypothesis** on a
-50-language stratified probability sample ([perkins-1980]): a morpheme category
-whose meaning is more relevant to the verb stem (a) occurs more often as
-inflection cross-linguistically, (b) sits closer to the stem in suffixal
-morphology, and (c) fuses more tightly with it.
+A morpheme category whose meaning is more relevant to the verb stem should be expressed
+inflectionally in more languages, sit closer to the stem where it is, and fuse with it more
+tightly. This file formalizes the evidence for the first two, from a fifty-language stratified
+sample: the frequency surveys of chapter 2 and the morpheme-order counts of the same chapter, in
+which every tested pair confirms the predicted direction and aspect against tense and against mood
+does so without a single counterexample.
 
-This file formalizes the data behind claims (a) and (b) — the Ch 2 §5 frequency
-surveys and the Ch 2 §6 morpheme-order counts — and grounds the substrate's
-relevance order (`MorphCategory.peripherality`, via `RelevanceLT` / `RelevanceLE`)
-in that evidence. Claim (c), fusion, is qualitative in the source and is not
-formalized. The second half formalizes Ch 5's dynamic network model of the
-lexicon: lexical strength, lexical connection, and the strong-verb frequency
-table.
+The order those counts determine is then shown to be the substrate's relevance order rather than a
+table chosen to match it: on the four categories the survey covers, the relation derived from the
+counts and the substrate's `RelevanceLT` are the same order. Fusion, the third claim, is
+qualitative in the source.
+
+Chapter 5's notion of lexical strength closes the file: an irregular verb keeps its irregularity
+where its token frequency is high, and the Strong Verbs that regularized are the infrequent ones.
 
 ## Main definitions
 
@@ -26,18 +26,14 @@ table.
 * `orderPairs` — the Ch 2 §6 morpheme-order counts, one `OrderPair` per tested category pair.
 * `toMorphCategory` — the embedding of `BybeeCategory` into the substrate `MorphCategory`.
 * `SurveyedCloser` — the stem-proximity order *derived from* `orderPairs`.
-* `LexicalEntry`, `Network` — the Ch 5 dynamic network: entries with token
-  frequency (lexical strength) and typed connections (lexical connection).
-* `Network.HasMorphologicalRelation` — the Ch 5 §5 derived relation: parallel
-  semantic and phonological connections.
-* `strongStillStrong`, `strongRegularized` — the Ch 5 §6 strong-verb frequency
-  table.
+* `strongStillStrong`, `strongRegularized` — the Ch 5 §6 strong-verb frequency table.
 
 ## Main results
 
 * `valence_highest_when_derivOrInfl`, `valence_lowest_when_inflectional` — the
   relevance and generality frequency predictions.
-* `predicted_outnumbers_counter`, `aspect_categorical_against_tense_and_mood` — the order predictions.
+* `predicted_outnumbers_counter`, `aspect_categorical_against_tense_and_mood` — the order
+  predictions.
 * `survey_order_iso_relevance` — on the surveyed categories `SurveyedCloser` and the substrate
   `RelevanceLT` coincide via `toMorphCategory`: the hierarchy is the order the §6 survey forces,
   not a stipulated table.
@@ -46,17 +42,12 @@ table.
   claim: still-Strong verbs have a strictly higher mean token frequency than
   the regularized ones.
 
-## Implementation notes
+## References
 
-Out of scope: Ch 1 fusion/allomorphy, Ch 3 paradigm organization, Ch 4's
-lexical-derivational-inflectional continuum (which no discrete status
-enum expresses — flagged for future work), and Part II tense/aspect/mood
-detail (Ch 6-9). `MorphCategory.RelevanceLT` is exercised independently by
-`Studies/HahnDegenFutrell2021Morphology.lean`; the `BybeeCategory` enum and
-`toMorphCategory` bridge feed `Studies/RathiHahnFutrell2026.lean`. Not yet
-covered from Ch 5: the frequency-connection interaction (high-frequency items
-form more *distant* connections — the autonomy half of the model), and §10-§11
-schema emergence and productivity from class size.
+* [bybee-1985]
+* [francis-kucera-1982]
+* [perkins-1980]
+* [sweet-1882]
 -/
 
 namespace Bybee1985
@@ -325,92 +316,29 @@ the loop between Bybee's §6 evidence and `RespectsRelevanceHierarchy`. -/
 theorem bybeeSurveyedOrder_respects_hierarchy :
     RespectsRelevanceHierarchy (bybeeSurveyedOrder.map toMorphCategory) := by decide
 
-/-! ### Ch 5: the dynamic network model
+/-! ### Lexical strength
 
-Ch 5 ("Two Principles in a Dynamic Model of Lexical Representation") abandons
-the generative "is it in the lexicon or not?" binary for two gradient, dynamic
-notions. **Lexical strength** (§4): each token of use strengthens an item's
-representation ("etching it with deeper and darker lines each time"), and
-strength declines with disuse. **Lexical connection** (§5): items bear typed
-connections to other items, and parallel semantic and phonological connections
-constitute a *morphological relation*. Bybee's network model is the usage-based
-competitor to the realisational and generative engines in `Morphology/`; not to
-be confused with Network Morphology, the DATR-based default-inheritance
-framework. -/
+Chapter 5 replaces the question whether an item is in the lexicon with two gradient notions. Each
+token of use strengthens an item's representation — "etching it with deeper and darker lines each
+time" — and strength declines with disuse; and items bear semantic and phonological connections to
+one another, a parallel pair of which constitutes a morphological relation. The consequence tested
+below is diachronic: an irregular verb survives as irregular where its lexical strength is high.
 
-/-- A stored item in Bybee's Ch 5 lexicon: a form with its token frequency.
-Frequency models lexical strength — each token of use strengthens the
-representation, and strength declines with disuse (§4). Bybee's entries pair
-the form with a meaning; the semantic side of matching is not modeled here. -/
-structure LexicalEntry where
-  /-- The phonological form. -/
-  form : String
-  /-- The token frequency, modeling lexical strength. -/
+The table on p. 120 lists the modern descendants of the Class I, II and VII Strong Verbs of
+[sweet-1882]'s *Anglo-Saxon Primer* with their all-forms token frequencies; *slit* and *beat* now
+take the zero allomorph of the past tense. -/
+
+/-- A verb with its all-forms token frequency, which is what lexical strength amounts to here. -/
+structure VerbFrequency where
+  /-- The verb, by its modern form. -/
+  verb : String
+  /-- The all-forms token frequency ([francis-kucera-1982]). -/
   tokenFreq : Nat
   deriving Repr
 
-/-- The kind of a connection between lexical entries (Ch 5 §5): shared semantic
-features (*table*~*chair*, *deep*~*shallow*), a shared phonological skeleton
-without shared meaning (the two senses of *crane*), the morphological relation
-(parallel semantic and phonological connections), or identity (§7), the mapping
-of one word onto an existing representation. Bybee orders their strengths:
-purely phonological relations "usually go unnoticed", semantic connections are
-"the strongest and the most important" (*go*~*went* supports *goed*), the
-morphological relation is the strongest relation between distinct forms, and
-"the strongest relations are relations of identity". -/
-inductive ConnectionKind where
-  | semantic
-  | phonological
-  | morphological
-  | identity
-  deriving DecidableEq, Repr
-
-/-- A directed typed edge between two forms in the lexical network. -/
-structure Connection where
-  /-- The source form. -/
-  src : String
-  /-- The target form. -/
-  dst : String
-  /-- The kind of connection. -/
-  kind : ConnectionKind
-  deriving Repr
-
-/-- A lexical network: entries plus typed connections among them, as in the
-Ch 5 §8 representation of the Spanish *dormir* paradigm, whose three stem
-allomorphs (*dwerm*, *dorm*, *durm-y*) are linked by morphological relations
-across persons, numbers, and tenses. -/
-structure Network where
-  /-- The stored lexical entries. -/
-  entries : List LexicalEntry
-  /-- The typed connections among entries. -/
-  connections : List Connection
-  deriving Repr
-
-/-- `N.IsRelatedBy a b k` asserts that network `N` has a connection of kind `k`
-from form `a` to form `b`. -/
-def Network.IsRelatedBy (N : Network) (a b : String) (k : ConnectionKind) : Prop :=
-  ∃ c ∈ N.connections, c.src = a ∧ c.dst = b ∧ c.kind = k
-
-/-- `N.HasMorphologicalRelation a b` asserts that `a` and `b` stand in both a
-semantic and a phonological connection — Ch 5 §5: "if two words are related by
-both semantic and phonological connections, then a morphological relation
-exists between them". The relation is derived, not primitive;
-`ConnectionKind.morphological` labels edges already so classified. -/
-def Network.HasMorphologicalRelation (N : Network) (a b : String) : Prop :=
-  N.IsRelatedBy a b .semantic ∧ N.IsRelatedBy a b .phonological
-
-/-! ### Ch 5 §6: strong-verb frequencies
-
-Bybee's central diachronic claim: high-frequency strong verbs maintain their
-irregularity, low-frequency strong verbs regularize. The table on p. 120 lists
-the modern descendants of the Strong Verbs of classes I, II, and VII in
-[sweet-1882]'s *Anglo-Saxon Primer* with their all-forms token frequencies from
-[francis-kucera-1982]. *Slit* and *beat* now take the zero allomorph of Past
-Tense (Bybee's footnote). -/
-
 /-- The Strong Verbs that have stayed Strong (p. 120), with all-forms token
 frequencies. -/
-def strongStillStrong : List LexicalEntry := [
+def strongStillStrong : List VerbFrequency := [
   -- Class I (mean 223)
   ⟨"drive", 203⟩, ⟨"rise", 199⟩, ⟨"ride", 126⟩, ⟨"write", 561⟩, ⟨"bite", 26⟩,
   -- Class II (mean 140)
@@ -421,7 +349,7 @@ def strongStillStrong : List LexicalEntry := [
 
 /-- The Strong Verbs that have regularized or become Weak (p. 120), with
 all-forms token frequencies. -/
-def strongRegularized : List LexicalEntry := [
+def strongRegularized : List VerbFrequency := [
   -- Class I (mean 5)
   ⟨"bide", 1⟩, ⟨"reap", 5⟩, ⟨"slit", 3⟩, ⟨"sneak", 11⟩,
   -- Class II (mean 22)
