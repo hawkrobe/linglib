@@ -1,3 +1,5 @@
+import Linglib.Semantics.Causation.Chain
+
 /-!
 # Psych Verb Causation ([kim-2024] UPH)
 
@@ -16,7 +18,7 @@ chain; its incompatibility with an overt Cause follows from the Onset Condition.
 | Type | Purpose |
 |------|---------|
 | `CausalSource` | External (percept) vs internal (representation) |
-| `CausalChainPosition` | Onset vs terminus in a two-link chain |
+| `CausalChainPosition` | Onset vs terminus in a two-link chain (`Causation/Chain.lean`) |
 
 ## Key results
 
@@ -27,6 +29,8 @@ chain; its incompatibility with an overt Cause follows from the Onset Condition.
 -/
 
 namespace Causation.Psych
+
+open Semantics.Causation (CausalChainPosition)
 
 /-- Source of causation for psych causatives ([kim-2024] UPH).
 
@@ -41,15 +45,6 @@ namespace Causation.Psych
 inductive CausalSource where
   | external  -- percept/event → eventive reading
   | internal  -- mental representation (stative causation/maintenance) → stative reading
-  deriving DecidableEq, Repr
-
-/-- Position in a two-link causal chain.
-
-    Class II psych verbs involve a causal chain from cause (onset)
-    to experiencer's mental state change (terminus). -/
-inductive CausalChainPosition where
-  | onset      -- first link: external cause or representation
-  | terminus   -- final link: experiencer's mental state change
   deriving DecidableEq, Repr
 
 /-- The Onset Condition: causal adjuncts (including Subject Matter)

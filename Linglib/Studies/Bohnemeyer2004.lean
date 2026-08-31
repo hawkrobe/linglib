@@ -1,4 +1,5 @@
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
+import Linglib.Semantics.Causation.Chain
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Studies.Lucy1994
 import Linglib.Syntax.Voice.Alternation
@@ -57,34 +58,21 @@ recorded here.
 
 namespace Bohnemeyer2004
 
-open ArgumentStructure.EventStructure (EventType InternalExternalCause Template)
-open Semantics.Aspect (Perfectivity)
-open Mayan (MarkerSet)
-open Yukatek
-open Voice (TermRole ValencyAlternation causativization pApplicativization
-  antipassivization decausativization passivization)
+open ArgumentStructure.EventStructure Semantics.Aspect Semantics.Causation Mayan Voice Yukatek
 
 /-! ### Causal chain and thematic hierarchy -/
-
-/-- Position in the causal chain of subevents.
-    A complex event decomposes into subevents ordered in a causal chain.
-    Thematic relations are projected from this chain. -/
-inductive CausalChainPosition where
-  | head  -- causing subevent (first in causal chain)
-  | tail  -- caused subevent (last in causal chain)
-  deriving DecidableEq, Repr
 
 /-- Thematic hierarchy from causal-chain position (31): the participant of a causing subevent
 outranks the participant of the caused subevent for linking. -/
 def Outranks : CausalChainPosition → CausalChainPosition → Prop
-  | .head, .tail => True
+  | .onset, .terminus => True
   | _, _ => False
 
 /-- The core term role (31)'s hierarchy projects a causal-chain position onto: the outranking
 participant is the A of a transitive clause, the outranked one its P. -/
-def CausalChainPosition.termRole : CausalChainPosition → TermRole
-  | .head => .A
-  | .tail => .P
+def termRole : CausalChainPosition → TermRole
+  | .onset => .A
+  | .terminus => .P
 
 /-- The marker set a core term role takes in Yukatek: A takes set A and P set B. The sole argument
 of an intransitive takes whichever the viewpoint selects — that is the split
@@ -104,22 +92,21 @@ theorem outranks_asymm {a b : CausalChainPosition} (h : Outranks a b) :
 takes the subject marker, the position it outranks as P and so the object marker. The split thus
 follows from (31) via the term roles rather than being stipulated per position. -/
 theorem marker_respects_outranks {a b : CausalChainPosition} (h : Outranks a b) :
-    markerOf a.termRole = some .setA ∧ markerOf b.termRole = some .setB := by
-  cases a <;> cases b <;> simp_all [Outranks, CausalChainPosition.termRole, markerOf]
+    markerOf (termRole a) = some .setA ∧ markerOf (termRole b) = some .setB := by
+  cases a <;> cases b <;> simp_all [Outranks, termRole, markerOf]
 
 /-! ### Linking by viewpoint -/
 
 /-- §7 rule (32): viewpoint aspect selects which end of the causal chain
     provides the linking default.
 
-    - Imperfective viewpoints align with the initial (causing) subevent →
-      the highest-ranking role (`head`) is the default → accusative pattern.
-    - Perfective viewpoints align with the final (caused) subevent or the
-      chain as a whole → the lowest-ranking role (`tail`) is the default →
-      ergative pattern. -/
+    - Imperfective viewpoints align with the initial (causing) subevent, so the highest-ranking
+      role is the default — the accusative pattern.
+    - Perfective viewpoints align with the final (caused) subevent or the chain as a whole, so the
+      lowest-ranking role is the default — the ergative pattern. -/
 def linkingDefault : Perfectivity → CausalChainPosition
-  | .imperfective => .head
-  | .perfective => .tail
+  | .imperfective => .onset
+  | .perfective => .terminus
 
 /-- The marker the sole argument (S) of an intransitive receives, derived by
     composing rule (32) (viewpoint → default position) with rule (31)'s
@@ -127,10 +114,10 @@ def linkingDefault : Perfectivity → CausalChainPosition
     The split *falls out* of the causal chain rather than being stipulated
     per viewpoint.
 
-    - Head default (imperfective): S patterns with A → set-A
-    - Tail default (perfective): S patterns with U → set-B -/
+    - Onset default (imperfective): S patterns with A, taking set A.
+    - Terminus default (perfective): S patterns with U, taking set B. -/
 def sMarkerFromViewpoint (v : Perfectivity) : Option MarkerSet :=
-  markerOf (linkingDefault v).termRole
+  markerOf (termRole (linkingDefault v))
 
 /-! ### Linking by viewpoint derives the split
 
