@@ -3,48 +3,51 @@ import Linglib.Semantics.ArgumentStructure.VerbDenotation
 import Linglib.Semantics.Plurality.Cover
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Features.Aktionsart
 
 /-!
-# [champollion-2017]: Distributivity as a bridge between aspect and measurement
+# Champollion 2017: distributivity as a bridge between aspect and measurement
 
-Paper-anchored study for *Parts of a Whole*, which unifies predicative
-distributivity (Ch 4), atelicity (Ch 5–6), and pseudopartitive measurement
-(Ch 7) under one property, *stratified reference* (`Stratified.Reference`,
-Ch 4 §4.6). This file consumes that substrate against English Fragment
-verbs.
+This file formalizes results from *Parts of a Whole* ([champollion-2017]), which unifies
+predicative distributivity, atelicity and pseudopartitive measurement under one property,
+stratified reference: a predicate applies to an event exactly when that event divides
+exhaustively into parts the predicate also applies to, along some dimension. The dimension is what
+varies — thematic roles for distributivity, runtime for the *for*-adverbial, measure for the
+pseudopartitive — and the substrate carries the property once (`Stratified.Reference`).
+
+Two things are done here against that substrate. Lexical cumulativity, which the book assumes
+throughout, entails Krifka's `CUM`; and atelicity in the runtime dimension is the existence of a
+Schwarzschild cover into proper-subinterval parts, which is the book's own theorem relating
+algebraic closure to covers. The per-verb distributivity facts — *see* distributing on both roles,
+*kill* on its theme only, *meet* on neither — are meaning postulates in the book's sense, and are
+recorded as such, over the Fragment verbs' denotations.
+
+Vendler classes are not among the book's primitives; its atelicity diagnostic is the
+subinterval-reference test, not a class label.
 
 ## Main definitions
 
-* `LexicallyCumulative` / `lexicallyCumulative_imp_cum` — the §2.7.2
-  (lexical cumulativity ⟹ Krifka `CUM`) algebraic substrate; §2.5's sum
-  homomorphisms are mathlib's `SupHom`.
-* `ChampollionPostulates` — Champollion's per-verb distributivity meaning
-  postulates (§6.2–6.3), over the Fragment verbs' denotations via
-  `Verb.StratifiesOver`.
-* `subintervalReference_iff_cover` — atelicity as a Schwarzschild cover
-  ([champollion-2017] §5.4, his Theorem 14 at the runtime dimension); the
-  genuine consumer of `Semantics/Plurality/Cover.lean`.
+* `Verb.StratifiesOver` — a verb's denotation has stratified distributive reference along a role
+* `LexicallyCumulative` — a predicate is a fixed point of algebraic closure
+* `ChampollionPostulates` — the per-verb distributivity postulates over Fragment verbs
 
-## Caveats
+## Main results
 
-* **Vendler classes are not Champollion primitives** (Ch 6 disclaims them
-  explicitly). The Vendler↔atelicity theorems are a convenience bridge
-  from Fragment Vendler tags to *for*/*in*-adverbial acceptability, not
-  Champollion's own diagnostic (the subinterval-reference test).
-* **Lexical cumulativity is assumed throughout** (§2.7.2), which is why
-  `SubintervalReferenceUniv → CUM` does not hold — see `Aspect/Stratified`.
+* `lexicallyCumulative_imp_cum` — lexical cumulativity entails Krifka's `CUM`
+* `subintervalReference_iff_cover` — atelicity is a finite cover into proper-subinterval parts
+
+## References
+
+* [champollion-2017]
 -/
 
 namespace Verb
 
 open Aspect.Stratified
 
-/-! ### Verb distributivity — derived from `Verb.denote`
+/-! ### Verb distributivity
 
-Whether a verb distributes over the atomic fillers of a thematic role is a
-DERIVED property of its event denotation, not a carried feature.
-Single-consumer substrate carried here with its anchoring study. -/
+Whether a verb distributes over the atomic fillers of a thematic role is a property of its event
+denotation, not a feature it carries. -/
 
 variable {Entity State Time : Type*} [LinearOrder Time] [PartialOrder Entity]
   [SemilatticeSup (Event Time)]
@@ -57,20 +60,12 @@ def StratifiesOver (v : Verb) (M : CosModel Entity State Time)
     (R : Entity → Event Time → Prop) : Prop :=
   ∀ y x, RelationalDistributiveReferenceUniv R (M.denote v y x)
 
-theorem stratifiesOver_iff (v : Verb) (M : CosModel Entity State Time)
-    (R : Entity → Event Time → Prop) :
-    v.StratifiesOver M R ↔
-      ∀ y x, RelationalDistributiveReferenceUniv R (M.denote v y x) :=
-  Iff.rfl
-
 end Verb
 
 namespace Champollion2017
 
 open English.Predicates.Verbal
-open Features (forXPrediction inXPrediction)
 open _root_.Mereology
-open Plurality.Algebra (Materialization)
 open Aspect.Stratified
 open Plurality.Cover (IsFinCover algClosure_iff_exists_finCover)
 
@@ -91,24 +86,18 @@ theorem lexicallyCumulative_imp_cum {α : Type*} [SemilatticeSup α]
 
 end ThematicRolesAndCumulativity
 
-/-! ### Distributivity: meaning postulates over `Verb.denote` (§6.2–6.3)
+/-! ### Distributivity as meaning postulates
 
-Champollion's per-verb distributivity facts are lexical *meaning
-postulates*, stated over the Fragment verbs' denotations via
-`Verb.StratifiesOver` — the Verb-API distributivity property (relational
-stratified distributive reference of `Verb.denote`), the substrate-grounded
-successor to the retired Bool distributivity tags. -/
+The book's per-verb distributivity facts are lexical meaning postulates in Hoeksema's sense, not
+theorems; they are stated here over the Fragment verbs' denotations. -/
 
 section Distributivity
 variable {Entity State Time : Type*} [LinearOrder Time] [PartialOrder Entity]
   [SemilatticeSup (Event Time)]
 
-/-- [champollion-2017]'s verb-distributivity meaning postulates
-    (§6.2–6.3, (19)–(23)), over the Fragment verbs' `CosModel` denotations
-    and the model's agent/theme role relations: *see* distributes on both
-    roles, *kill* on theme only (collective causation blocks the agent),
-    *meet* on neither (inherently collective). Postulates, not theorems —
-    Champollion stipulates them lexically. -/
+/-- The verb-distributivity postulates of [champollion-2017] Ch 4, over the Fragment verbs'
+`CosModel` denotations and the model's agent and theme roles: *see* distributes on both, *kill*
+on its theme only — a member of the posse need not have killed anyone — and *meet* on neither. -/
 structure ChampollionPostulates (M : Verb.CosModel Entity State Time)
     (agentRole themeRole : Entity → Event Time → Prop) : Prop where
   see_distributes_agent : see.toVerb.StratifiesOver M agentRole
@@ -135,29 +124,5 @@ theorem subintervalReference_iff_cover {Time : Type*} [LinearOrder Time]
         IsFinCover parts hne e ∧ ∀ p ∈ parts, P p ∧ p.runtime < e.runtime := by
   unfold SubintervalReference Reference SubintervalGranularity
   exact algClosure_iff_exists_finCover
-
-/-! ### Vendler ↔ atelicity (convenience bridge, not Champollion's diagnostic)
-
-Champollion Ch 6 disclaims Vendler classes as primitives. These read a
-Fragment verb's Vendler tag and the textbook for-adverbial / in-adverbial
-prediction — a convenience for the atelic/telic split, distinct from the
-subinterval-reference test above. -/
-
-theorem fragment_verb_vendler_classes :
-    see.toVerb.vendlerClass = some .state ∧
-    kill.toVerb.vendlerClass = some .accomplishment ∧
-    meet.toVerb.vendlerClass = some .achievement ∧
-    eat.toVerb.vendlerClass = some .accomplishment :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Atelic Vendler classes (states/activities) accept *for X*. -/
-theorem atelic_classes_accept_forX :
-    forXPrediction .state = .accept ∧ forXPrediction .activity = .accept :=
-  ⟨rfl, rfl⟩
-
-/-- Telic Vendler classes (achievements/accomplishments) accept *in X*. -/
-theorem telic_classes_accept_inX :
-    inXPrediction .achievement = .accept ∧ inXPrediction .accomplishment = .accept :=
-  ⟨rfl, rfl⟩
 
 end Champollion2017

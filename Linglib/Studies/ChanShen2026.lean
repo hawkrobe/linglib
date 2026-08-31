@@ -7,86 +7,70 @@ import Linglib.Studies.SprouseEtAl2012
 import Linglib.Studies.Ross1967
 
 /-!
-# Chan & Shen (2026): Conditions on *wh-the-hell* licensing
-[chan-shen-2026] [pesetsky-1987] [chou-2012]
-[merchant-2002] [sato-ngui-2017] [rawlins-2008]
-[martin-2020] [ippolito-2024] [huang-ochi-2004]
-[linebarger-1987] [hoeksema-napoli-2008]
+# Chan and Shen 2026: conditions on *wh-the-hell* licensing
 
-*Linguistic Inquiry*. Advance publication.
-https://doi.org/10.1162/LING.a.562
+This file formalizes the account of *wh-the-hell* licensing in [chan-shen-2026]. Colloquial
+Singapore English forms single wh-questions three ways — full movement, partial movement, and
+in-situ — and an acceptability experiment with 32 speakers finds that *the-hell* survives the
+first two but not the third: the in-situ comparison shows a superadditive interaction (DD = 1.15)
+while the partial-movement one shows only additive costs (DD = −0.02, no interaction, p = 0.882).
+The ban extends to subject wh-in-situ, where no higher wh-phrase could intervene.
 
-## Empirical Contribution
+The account has two parts. *The-hell* bears an unvalued point-of-view feature that must be checked
+against a valued operator in matrix C ([chou-2012], after [huang-ochi-2004]), which is what
+ascribes its negative attitude to the speaker; and it is a modifier adjoined to the wh-head, so it
+cannot move on its own and rides to Spec-CP on the wh-phrase ([merchant-2002]). Licensing is then
+reachability of matrix Spec-CP, which full and partial movement give and unselective binding does
+not. The typological parameter is the modifier's movement profile: Mandarin *daodi* is
+independent, so it is licensed even where its host stays in situ.
 
-Acceptability judgment experiment (N=32 Singlish speakers, two crossed
-2×2 factorial designs sharing the Long baseline). Establishes that in
-Singlish single wh-questions:
+The paper's Table 5 compares this account with the intervention account of
+[den-dikken-giannakidou-2002], which predicts in-situ acceptable in a single wh-question where no
+intervener stands in the modifier's immediate scope ([linebarger-1987]), and with the AttP account
+of [vu-lohiniva-2020], which cannot generate the partial-movement word order. Neither rival is
+formalized here.
 
-- **In-situ** *wh-the-hell* is unacceptable: superadditive interaction
-  (WhType × Strategy p < 0.001; DD = 1.15)
-- **Partial-movement** *wh-the-hell* is acceptable: additive costs only
-  (no interaction p = 0.882; DD = -0.02)
-- The same in-situ ban holds for **subject** wh-in-situ (paper §3.3
-  ex 22b) — a separate prediction failure for the intervention account
-  (paper §3.4.1, p. 23–24): no higher wh, no intervener, but still bad.
+## Main definitions
 
-The original observation that in-situ *wh-the-hell* is bad goes back
-to [pesetsky-1987] (introducing "aggressively non-D-linked").
+* `Minimalist.ANDL.povUnvaluedFeature`, `povOperatorFeature`, `LicensedMinimalist` — the
+  point-of-view probe and goal, and Minimalist licensing
+* `TheHellLicensed` — licensing of parasitic *the-hell* under a wh-strategy
+* `whLong`, `whHellSitu`, … — the experiment's six conditions plus the subject-in-situ one
 
-## Theoretical Contribution
+## Main results
 
-Two-component analysis:
+* `theHellLicensed_iff_reachesSpecCP` — for a parasitic modifier, licensing is host reachability
+* `fullMovement_licenses_theHell`, `partialMovement_licenses_theHell`, `inSitu_blocks_theHell` —
+  the three verdicts
+* `whHellSitu_unlicensed`, `whHellSituSubject_unlicensed`, `whHellPartial_licensed` — the same
+  verdicts at the experiment's conditions
+* `insitu_binding_no_pic`, `partial_movement_pic_applies` — why in-situ is island-insensitive and
+  partial movement is not
+* `daodi_licensed_insitu`, `theHell_daodi_movement_contrast` — the typological parameter
 
-1. **POV licensing** ([chou-2012], building on [huang-ochi-2004]):
-   *the-hell* bears an unvalued POV feature [*ud*] that must be checked
-   in a Spec-head relation with a POV operator in matrix CP, ascribing
-   the negative attitude of *the-hell* to the speaker of the utterance.
+## References
 
-2. **Parasitic movement** ([merchant-2002]): *the-hell* is a
-   modifier adjoined to the wh-head. It cannot move independently — its
-   movement to Spec-CP is parasitic on the wh-phrase's movement.
-
-Predicts: *the-hell* is licensed iff the wh-phrase reaches matrix
-Spec-CP. Full and partial movement satisfy this; unselective binding
-(in-situ) does not.
-
-## Comparison with Alternative Accounts
-
-- **[den-dikken-giannakidou-2002]** (intervention/PI): correctly
-  predicts in-situ bad in *multiple* wh-questions (intervener present)
-  but wrongly predicts in-situ OK in *single* wh-questions (no intervener,
-  per [linebarger-1987]'s immediate-scope condition); doubly wrong
-  for subject in-situ where Q is in immediate scope.
-- **[vu-lohiniva-2020]** (AttP, building on [huang-ochi-2004]):
-  correctly predicts full OK and in-situ bad, but wrongly predicts
-  partial *bad* (paper §3.4.2 ex 32: cannot generate the correct word
-  order with *the-hell* in matrix Spec-AttP and wh-phrase in embedded
-  Spec-CP).
-
-## Cross-linguistic generalization
-
-The single typological parameter [chan-shen-2026] isolate is the
-modifier's movement profile (`ANDLMovementType.parasitic` for
-English/Singlish *the-hell* vs `.independent` for Mandarin *daodi*,
-[chou-2012]). Other ANDL items — *the heck*, *the fuck*,
-*the dickens*, *in the world*, *in God's name* ([hoeksema-napoli-2008],
-[jackendoff-audring-2020]; paper footnote 6) — are predicted to
-behave like *the-hell*.
-
-## Architecture
-
-Theory-neutral lexical entries (`theHell`, `daodi`) live in the
-respective Fragment files. The Minimalist analysis (POV features,
-Agree, the licensing predicate) lives in `Syntax/Minimalism/
-Core/ANDL.lean`. The empirical 2×2 design uses
-`Studies/SprouseEtAl2012.lean`. This study file only carries
-the paper's specific data (six conditions, two DD scores) and the
-bridge theorems connecting theory to data.
+* [chan-shen-2026]
+* [pesetsky-1987]
+* [chou-2012]
+* [huang-ochi-2004]
+* [merchant-2002]
+* [den-dikken-giannakidou-2002]
+* [vu-lohiniva-2020]
+* [linebarger-1987]
+* [sato-ngui-2017]
+* [rawlins-2008]
+* [martin-2020]
+* [ippolito-2024]
+* [dayal-2025]
+* [hoeksema-napoli-2008]
+* [jackendoff-audring-2020]
+* [shen-huang-2026]
 -/
 
 namespace Minimalist.ANDL
 
-/-! ## Minimalist POV-feature analysis (formerly `Core/ANDL.lean`)
+/-! ## Minimalist POV-feature analysis
 
 The Minimalist (POV-feature) analysis of aggressively non-D-linked
 (ANDL) wh-modifiers, due to [chou-2012] (building on
@@ -121,14 +105,6 @@ def povOperatorFeature : GramFeature := .valued (.pov true)
 theorem pov_probe_goal_match :
     featuresMatch povUnvaluedFeature povOperatorFeature = true := rfl
 
-/-- The ANDL modifier's POV feature is unvalued (a probe). -/
-theorem andl_pov_unvalued :
-    povUnvaluedFeature.isUnvalued = true := rfl
-
-/-- The matrix-C POV operator carries a valued feature (a goal). -/
-theorem pov_operator_valued :
-    povOperatorFeature.isValued = true := rfl
-
 /-- Minimalist licensing: an ANDL modifier is licensed iff a configuration
     obtains in which `povUnvaluedFeature` checks against `povOperatorFeature`
     in matrix Spec-CP. Operationally:
@@ -158,8 +134,7 @@ open ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType Licensed)
 open Minimalist.ANDL
   (povUnvaluedFeature povOperatorFeature LicensedMinimalist)
-open SprouseEtAl2012
-  (FactorialCondition DDResult AccountPredictions)
+open SprouseEtAl2012 (FactorialCondition)
 open Minimalist.LeftPeriphery (SelectionClass)
 
 -- ============================================================================
@@ -244,34 +219,6 @@ def whHellSituSubject : Condition :=
   , sentence := "You that time heard that who the hell went hospital for surgery ah?" }
 
 -- ============================================================================
--- §4. DD scores (paper §2.2)
--- ============================================================================
-
-/-- In-situ comparison DD score: large positive (1.15), significant
-    interaction → superadditive penalty for *the-hell* in-situ. -/
-def insituDD : DDResult :=
-  { comparison := "in-situ vs full movement"
-  , dd := 23 / 20  -- 1.15 exact
-  , interactionSignificant := true }
-
-/-- Partial-movement comparison DD score: ≈ 0 (-0.02), no significant
-    interaction → costs are linearly additive. -/
-def partialDD : DDResult :=
-  { comparison := "partial vs full movement"
-  , dd := -1 / 50  -- -0.02 exact
-  , interactionSignificant := false }
-
-/-- The in-situ DD is genuinely positive (superadditive). -/
-theorem insituDD_superadditive : insituDD.Superadditive := by
-  unfold DDResult.Superadditive insituDD
-  norm_num
-
-/-- The partial-movement DD is non-positive (additive or below). -/
-theorem partialDD_not_superadditive : ¬ partialDD.Superadditive := by
-  unfold DDResult.Superadditive partialDD
-  norm_num
-
--- ============================================================================
 -- §5. Theory ↔ data bridge — the licensed conditions are exactly the
 -- ones the experiment found acceptable
 -- ============================================================================
@@ -291,56 +238,6 @@ theorem whHellSitu_unlicensed : ¬ TheHellLicensed whHellSitu.level2 :=
 
 theorem whHellSituSubject_unlicensed : ¬ TheHellLicensed whHellSituSubject.level2 :=
   inSitu_blocks_theHell
-
--- ============================================================================
--- §6. Account comparison (paper Table 5)
--- ============================================================================
-
-/-- The empirical pattern: full ✓, partial ✓, in-situ ✗, subject in-situ ✗. -/
-def empiricalPattern : AccountPredictions 4 :=
-  AccountPredictions.of2x2 True True False False
-
-/-- Chan & Shen 2026 (negative attitude ascription via POV). The
-    predictions are derived from `TheHellLicensed`, which derives from
-    `WhStrategy.ReachesMatrixSpecCP`, which derives from the strategy's
-    `WhInterpMechanism`. -/
-def negativeAttitudeAscription : AccountPredictions 4 :=
-  AccountPredictions.of2x2
-    (TheHellLicensed fullMovement)
-    (TheHellLicensed partialMovement)
-    (TheHellLicensed whInSitu)
-    (TheHellLicensed whInSitu)  -- subject in-situ predicted alike
-
-/-- Den Dikken & Giannakidou (2002) intervention account predictions.
-    Their empirical claim is that *wh-the-hell* is licensed iff Q is in
-    the modifier's *immediate scope* ([linebarger-1987]). In single
-    wh-questions there is no other wh-phrase to intervene; their account
-    therefore predicts all four single-wh cells acceptable — including
-    object in-situ and subject in-situ, both wrongly. (Paper §3.4.1.) -/
-def denDikkenGiannakidou : AccountPredictions 4 :=
-  AccountPredictions.of2x2 True True True True
-
-/-- Vu & Lohiniva (2020) AttP account predictions. *The-hell* is
-    base-generated in matrix Spec-AttP; the nearest wh-phrase moves to
-    Spec-AttP to check [+wh] before *wh-the-hell* moves to Spec-CP.
-
-    - Full movement: wh-phrase moves all the way; ✓.
-    - Partial movement: wh-phrase stops in *embedded* Spec-CP; *the hell*
-      is in *matrix* Spec-AttP. There is no derivation that places them
-      in a single constituent at Spell-Out (paper §3.4.2 ex 32: "no way
-      to generate the correct word order"). Predicts ✗ — wrongly.
-    - In-situ: wh-phrase doesn't reach Spec-AttP. ✗.
-    - Subject in-situ: same. ✗.
-    Three out of four right; partial-movement cell is the failure. -/
-def vuLohiniva : AccountPredictions 4 :=
-  AccountPredictions.of2x2 True False False False
-
-/-- Only the Chan & Shen (2026) account matches the empirical pattern. -/
-theorem only_pov_account_matches :
-    AccountPredictions.Matches negativeAttitudeAscription empiricalPattern ∧
-    ¬ AccountPredictions.Matches denDikkenGiannakidou empiricalPattern ∧
-    ¬ AccountPredictions.Matches vuLohiniva empiricalPattern := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- §7. Cross-study bridge — island sensitivity (Shen & Huang 2026)
