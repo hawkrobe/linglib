@@ -600,7 +600,7 @@ theorem Probe.Articulated.ban_part_part (P : Probe.Articulated)
     needs or the probe.) -/
 theorem probeless_divergence_from_plc :
     ¬ Gluttonous [] [dp .first, dp .second] ∧
-    ¬ BejarRezac2003.PLCOk [] [⟨.first, false⟩] := by
+    ¬ BejarRezac2003.PLCOk [] [Minimalist.PhiGoal.unvalued (.pn .first .Sing)] := by
   decide
 
 open PCC in

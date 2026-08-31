@@ -130,15 +130,6 @@ open Agreement
 
 /-! ### Feature decomposition (grounded in `Phi/Geometry.lean`) -/
 
-/-- Bears [+participant]? Visibility to π⁰ under relativized probing
-    ([bejar-rezac-2003] via `Agreement.Cell.visibleTo`); derives from
-    [harley-ritter-2002]'s feature geometry through `decomposePerson`. -/
-def IsParticipant (c : Agreement.Cell) : Prop :=
-  c.visibleTo .participant = true
-
-instance : DecidablePred IsParticipant := fun c =>
-  inferInstanceAs (Decidable (c.visibleTo .participant = true))
-
 /-- Bears [+author]? -/
 def IsAuthor (c : Agreement.Cell) : Prop :=
   (decomposePerson c.toPerson).hasAuthor = true
@@ -149,8 +140,8 @@ instance : DecidablePred IsAuthor := fun c =>
 /-- [author] entails [participant]: the [harley-ritter-2002] geometric
     containment, inherited from `decomposePerson`. -/
 theorem isParticipant_of_isAuthor (c : Agreement.Cell) :
-    IsAuthor c → IsParticipant c := by
-  unfold IsAuthor IsParticipant Agreement.Cell.visibleTo
+    IsAuthor c → c.IsParticipant := by
+  unfold IsAuthor Agreement.Cell.IsParticipant Agreement.Cell.visibleTo
   simp only [probeVisible]
   cases c.toPerson <;> decide
 
@@ -205,10 +196,10 @@ def afRank (c : Agreement.Cell) : Nat :=
     `personRestrictionOk_iff_plc`. This is the syntactic licensing
     story, not the morphological clitic-slot competition. -/
 def PersonRestrictionOk (subj obj : Agreement.Cell) : Prop :=
-  ¬(IsParticipant subj ∧ IsParticipant obj)
+  ¬(subj.IsParticipant ∧ obj.IsParticipant)
 
 instance : DecidableRel PersonRestrictionOk := fun subj obj =>
-  inferInstanceAs (Decidable ¬(IsParticipant subj ∧ IsParticipant obj))
+  inferInstanceAs (Decidable ¬(subj.IsParticipant ∧ obj.IsParticipant))
 
 /-- The person restriction derives from the PLC ([bejar-rezac-2003];
     [preminger-2014] §4.4 (75)): with the AF clause's agent and
@@ -242,8 +233,9 @@ theorem personRestrictionOk_iff_plc (s o : Agreement.Cell) :
     Relativization to exactly the licensing-needy class is what
     converts absorption into omnivorous licensing. -/
 theorem ch4_relativization_contrast :
-    ¬ BejarRezac2003.PLCOk [[⟨.third, true⟩, ⟨.first, false⟩]]
-        [⟨.third, true⟩, ⟨.first, false⟩] ∧
+    ¬ BejarRezac2003.PLCOk
+        [[BejarRezac2003.dat (.pn .third .Sing), Minimalist.PhiGoal.unvalued (.pn .first .Sing)]]
+        [BejarRezac2003.dat (.pn .third .Sing), Minimalist.PhiGoal.unvalued (.pn .first .Sing)] ∧
     PLC Prod.snd ([(.A, .pn .third .Sing), (.P, .pn .first .Sing)] :
         List (ArgumentRole × Agreement.Cell)) := by
   decide
@@ -300,10 +292,10 @@ theorem afAgreementTarget_eq_rank :
     expectations — [+participant] → rank 2, [+plural, −participant]
     → rank 1, 3SG → rank 0. -/
 theorem feature_decomposition_cells :
-    IsParticipant (.pn .first .Sing) ∧
-    IsParticipant (.pn .second .Sing) ∧
-    ¬IsParticipant (.pn .third .Sing) ∧
-    ¬IsParticipant (.pn .third .Plur) ∧
+    (Cell.pn .first .Sing).IsParticipant ∧
+    (Cell.pn .second .Sing).IsParticipant ∧
+    ¬(Cell.pn .third .Sing).IsParticipant ∧
+    ¬(Cell.pn .third .Plur).IsParticipant ∧
     afRank (.pn .first .Sing) = 2 ∧ afRank (.pn .second .Sing) = 2 ∧
     afRank (.pn .third .Plur) = 1 ∧ afRank (.pn .third .Sing) = 0 := by
   decide
