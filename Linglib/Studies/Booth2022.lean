@@ -2,55 +2,58 @@ import Linglib.Logic.Bilateral.Defs
 import Linglib.Semantics.Questions.Basic
 
 /-!
-# Booth 2022 — Bilateral inquisitive minimal-cover semantics for `□`
+# Booth 2022: bilateral inquisitive minimal-cover semantics for necessity
 
-[booth-2022]
+[booth-2022] (Proceedings of Sinn und Bedeutung 26) resolves Ross's Puzzle by
+requiring the alternatives of a necessity claim's complement to form a
+minimal cover of the relevant worlds: each disjunct must be needed, so
+`□(p ∨ q)` licenses the Independence inferences `◇(p ∧ ¬q)`, `◇(q ∧ ¬p)`,
+and the Ross inference is strongly invalid. The semantics is bilateral —
+falsity conditions are not a function of truth conditions — which keeps
+necessity and possibility dual and distributes negated modals over
+disjunction. The paper's closing reading of `□` as a collective predicate of
+the plurality of propositions a disjunction denotes, and its restrictor
+conditional (Defs 15–16, Fact 11), are not formalized.
 
-A self-contained study file formalizing the bilateral inquisitive
-semantics of [booth-2022] for necessity-modal-with-disjunction
-sentences (`□(p ∨ q)`). The novel content is the **minimal-cover**
-requirement on `□`'s positive interpretation, which derives the
-**Independence inferences**
+## Main definitions
 
-  `□(p ∨ q) ⊨ ◇(p ∧ ¬q)` and `□(p ∨ q) ⊨ ◇(q ∧ ¬p)`
+* `IsCover`, `IsMinCover` — the §2.1 covers, minimality as mathlib's
+  `Minimal`.
+* `BilatInqProp` — Def 10 over paired `Question`s; `atom`, `negate`, `disj`,
+  `conj`, `necessity`, `possibility` — the Def 14 clauses.
+* `isTrue`, `isFalse` — Def 17.
 
-(Booth Fact 9). Pure-bilateral analyses without minimal-cover
-(BSML+, [aloni-2022]) do not derive Independence; pure-inquisitive
-analyses without bilateral negation
-([ciardelli-groenendijk-roelofsen-2018]) do not derive the
-duality between `□` and `◇`. Booth's bilateral inquisitive propositions
-combine both.
+## Main results
 
-## Substrate alignment
+Stated at the paper's own object-language scope — non-Hurford disjunctions
+of atoms — over arbitrary models:
 
-- `Question W` (`Semantics/Questions/Basic.lean`) supplies subset-closed
-  families of states with `∅`-membership — Booth Definition 10's `P°`
-  constraint becomes a `Question`. `BilatInqProp` is then paired
-  `Questions` plus a no-substantive-overlap field.
-- `Question.ofSet` is exactly Booth's `↓{·}` (Def 11 with a
-  singleton input); `Question.info` is exactly `info(·)` (Def 12);
-  `Question.alt` is exactly `alt` (Def 13).
-- `IsBilateral` (`Logic/Bilateral.lean`) supplies the
-  bilateral-substrate predicate. The `BilatInqProp` instance is
-  `rfl`-trivial — bilateral negation is bundled-record swap. This is
-  the sixth consumer of the `IsBilateral` substrate (BSML, QBSML, BUS,
-  ICDRT, Truthmaker propositions, and now Booth bilateral inquisitive).
-- `IsMinCover` is expressed as `Minimal (IsCover · S) C` using mathlib's
-  `Minimal` predicate, mirroring how `Question.alt` uses `Maximal`
-  (Booth's `alt` is the dual of his m-cover).
+* `independence_p_not_q` — Fact 9, the Independence inference.
+* `ross_strongly_invalid`, `extended_ross_strongly_invalid` — Facts 7–8.
+* `free_choice` — Fact 10.
+* `unnecessity_distribution`, `impossibility_distribution` — Facts 12–13,
+  the distributions retained from the Kratzerian semantics.
+* `pos_eq_iSup_alt_atom` and kin — the Fact 5 compactness equations, per
+  constructor.
+* `BoothExample.boothExample_independence` — a three-world model jointly
+  verifying `□(p ∨ q)` and `◇(p ∧ ¬q)`: the Independence conclusion is
+  satisfiable, not vacuous.
 
-## Out of scope
+## Implementation notes
 
-- The collectivity heuristic of [booth-2022] §4 is a discourse-level
-  proposal not formalized here.
-- Booth's restrictor conditional and accessibility-update operator
-  (Definitions 15–16) are out of scope for this initial formalization.
-- The general Independence theorem (Booth Fact 9) for *arbitrary* φ
-  requires Compactness-of-Alternatives over the full BSML language. We
-  prove it for **atomic disjunctions** (`atom Vp ∨ atom Vq`) over
-  arbitrary `R` and `W` (`independence_p_not_q`), which captures the
-  structural content. Generalizing to `φ ∨ ψ` for arbitrary `φ, ψ`
-  requires a separate Compactness lemma we don't yet have.
+`Question W` supplies Def 10's subset-closed, `∅`-containing families:
+`Question.ofSet` is `↓{·}` (Def 11), `Question.info` is `info` (Def 12), and
+`Question.alt` is `alt` (Def 13). Bilateral negation is bundled-record swap,
+so the `IsBilateral` instance is definitional. The meta-language Fact 6 for
+arbitrary non-Hurford `φ ∨ ψ` needs the compactness equations composed over
+a formula syntax, which is deferred.
+
+## References
+
+* [booth-2022] — the paper.
+* [aloni-2022] — the pure-bilateral rival, without minimal cover.
+* [ciardelli-groenendijk-roelofsen-2018] — the pure-inquisitive rival,
+  without bilateral negation.
 -/
 
 namespace Booth2022
@@ -82,6 +85,18 @@ def IsMinCover (C : Set (Set W)) (S : Set W) : Prop :=
 
 theorem IsMinCover.isCover {C : Set (Set W)} {S : Set W}
     (h : IsMinCover C S) : IsCover C S := h.prop
+
+/-- A singleton family whose member contains a nonempty `S` minimally covers
+    `S`: the only proper subfamily is empty and covers nothing nonempty. -/
+theorem isMinCover_singleton {X S : Set W} (hS : S.Nonempty) (hsub : S ⊆ X) :
+    IsMinCover ({X} : Set (Set W)) S := by
+  refine ⟨fun v hv => ⟨X, rfl, hsub hv⟩, ?_⟩
+  intro Y hYcov hYsub Z hZ
+  rcases Set.mem_singleton_iff.mp hZ with rfl
+  obtain ⟨v, hv⟩ := hS
+  obtain ⟨Z', hZ'Y, _⟩ := hYcov hv
+  rcases Set.mem_singleton_iff.mp (hYsub hZ'Y) with rfl
+  exact hZ'Y
 
 /-! ### §2 Bilateral inquisitive propositions (Booth Def 10) -/
 
@@ -248,6 +263,40 @@ theorem isTrue_possibility_iff (R : W → Set W) (φ : BilatInqProp W) (w : W) :
     rcases Set.mem_singleton_iff.mp hx with rfl
     exact h
 
+/-- Characterization of `isTrue` for `necessity`. -/
+theorem isTrue_necessity_iff (R : W → Set W) (φ : BilatInqProp W) (w : W) :
+    isTrue (BilatInqProp.necessity R φ) w ↔
+      (R w).Nonempty ∧ IsMinCover (Question.alt φ.pos) (R w) := by
+  constructor
+  · intro h
+    exact h (Set.mem_singleton_iff.mpr rfl)
+  · intro h _ hx
+    rcases Set.mem_singleton_iff.mp hx with rfl
+    exact h
+
+/-- Characterization of `isFalse` for `necessity`. -/
+theorem isFalse_necessity_iff (R : W → Set W) (φ : BilatInqProp W) (w : W) :
+    isFalse (BilatInqProp.necessity R φ) w ↔
+      ∃ R' : Set W, R' ⊆ R w ∧ R'.Nonempty ∧
+        IsMinCover (Question.alt φ.neg) R' := by
+  constructor
+  · intro h
+    exact h (Set.mem_singleton_iff.mpr rfl)
+  · intro h _ hx
+    rcases Set.mem_singleton_iff.mp hx with rfl
+    exact h
+
+/-- Characterization of `isFalse` for `possibility`: `¬◇φ` is `□¬φ`. -/
+theorem isFalse_possibility_iff (R : W → Set W) (φ : BilatInqProp W) (w : W) :
+    isFalse (BilatInqProp.possibility R φ) w ↔
+      (R w).Nonempty ∧ IsMinCover (Question.alt φ.neg) (R w) := by
+  constructor
+  · intro h
+    exact h (Set.mem_singleton_iff.mpr rfl)
+  · intro h _ hx
+    rcases Set.mem_singleton_iff.mp hx with rfl
+    exact h
+
 /-! ### §5 Per-constructor algebra of `alt` (Booth Compactness substrate)
 
 Per-constructor equations for `Question.alt` on `BilatInqProp`'s
@@ -333,6 +382,21 @@ private lemma alt_conj_atom_negate_eq_singleton (Vp Vq : Set W) :
           (BilatInqProp.negate (BilatInqProp.atom Vq))).pos
       = ({Vp ∩ Vqᶜ} : Set (Set W)) := by
   show Question.alt (Question.ofSet Vp ⊓ Question.ofSet Vqᶜ) = _
+  rw [Question.ofSet_inf]
+  exact Question.alt_ofSet _
+
+/-- `alt` of `atom V`'s negative interpretation is the singleton `{Vᶜ}`. -/
+theorem alt_atom_neg (V : Set W) :
+    Question.alt (BilatInqProp.atom V).neg = ({Vᶜ} : Set (Set W)) := by
+  show Question.alt (Question.ofSet Vᶜ) = _
+  exact Question.alt_ofSet _
+
+/-- `alt` of an atomic disjunction's negative interpretation is the joint
+    complement, via `Question.ofSet_inf`. -/
+private lemma alt_disj_atom_neg (Vp Vq : Set W) :
+    Question.alt (BilatInqProp.disj (BilatInqProp.atom Vp)
+        (BilatInqProp.atom Vq)).neg = ({Vpᶜ ∩ Vqᶜ} : Set (Set W)) := by
+  show Question.alt (Question.ofSet Vpᶜ ⊓ Question.ofSet Vqᶜ) = _
   rw [Question.ofSet_inf]
   exact Question.alt_ofSet _
 
@@ -465,19 +529,8 @@ theorem boothExample_possibility_holds :
     exact Or.inl true_false_in_Vp
   · -- IsMinCover {Vp ∩ Vqᶜ} {(true, false)}
     rw [alt_p_and_not_q_pos]
-    refine ⟨?_, ?_⟩
-    · -- IsCover
-      intro v hv
-      rcases Set.mem_singleton_iff.mp hv with rfl
-      exact ⟨Vp ∩ Vqᶜ, Set.mem_singleton _, true_false_in_Vp, true_false_not_in_Vq⟩
-    · -- Minimality
-      intro Y hYcov hYsub X hXmem
-      rcases Set.mem_singleton_iff.mp hXmem with rfl
-      have h1 : ((true, false) : W4) ∈ ({(true, false)} : Set W4) := rfl
-      obtain ⟨Z, hZY, _hZmem⟩ := hYcov h1
-      have hZ_in : Z ∈ ({Vp ∩ Vqᶜ} : Set (Set W4)) := hYsub hZY
-      rcases Set.mem_singleton_iff.mp hZ_in with rfl
-      exact hZY
+    exact isMinCover_singleton ⟨(true, false), rfl⟩
+      (Set.singleton_subset_iff.mpr ⟨true_false_in_Vp, true_false_not_in_Vq⟩)
 
 /-- **Independence inference on the 3-world model**: `□(p ∨ q)` and
     `◇(p ∧ ¬q)` are jointly true at `(true, true)`. This is a concrete
@@ -599,84 +652,127 @@ theorem pos_eq_iSup_alt_possibility (R : W → Set W) (φ : BilatInqProp W) :
       ⨆ p ∈ Question.alt (BilatInqProp.possibility R φ).pos, Question.ofSet p :=
   neg_eq_iSup_alt_necessity R (BilatInqProp.negate φ)
 
-/-! ### §8 The Independence inference, general meta-language form (Booth Fact 9)
+/-! ### §8 The paper's predictions, atomic case (Booth Facts 7–13)
 
-The headline theorem of [booth-2022]: when `p ∨ q` is non-Hurford
-(neither disjunct entails the other), `□(p ∨ q) ⊨ ◇(p ∧ ¬q)` and
-`□(p ∨ q) ⊨ ◇(q ∧ ¬p)`.
+The paper states its object-language results over models where `p ∨ q` is a
+non-Hurford disjunction of atoms; the theorems below mirror that scope over
+an arbitrary accessibility `R` and world type. The meta-language Fact 6 for
+arbitrary non-Hurford `φ ∨ ψ` needs the compactness equations of §7 composed
+over a formula syntax. -/
 
-We prove this for atomic disjunctions `atom Vp ∨ atom Vq` over an
-arbitrary accessibility relation `R` and arbitrary world type `W`. The
-proof uses minimality of the `{Vp, Vq}` cover to derive `∃ v ∈ R w,
-v ∈ Vp \ Vq` — exactly the witness needed for the possibility
-existential. (Booth Fact 9 in full generality requires
-Compactness-of-Alternatives over arbitrary `φ`; the atomic case here
-captures the structural content for `□` on disjunctions of atoms.) -/
+/-- From a minimal `{Vp, Vq}` cover of `S`: a point of `S` inside `Vp` and
+    outside `Vq`. Minimality is exactly what rules out `{Vq}` covering
+    alone. -/
+private lemma exists_left_witness {Vp Vq S : Set W} (hne : Vp ≠ Vq)
+    (hmc : IsMinCover ({Vp, Vq} : Set (Set W)) S) :
+    ∃ v ∈ S, v ∈ Vp ∧ v ∉ Vq := by
+  have hno : ¬ IsCover ({Vq} : Set (Set W)) S := by
+    intro hcover
+    have hsup : ({Vp, Vq} : Set (Set W)) ⊆ {Vq} :=
+      hmc.le_of_le hcover
+        (Set.singleton_subset_iff.mpr (Set.mem_insert_of_mem _ rfl))
+    exact hne (Set.mem_singleton_iff.mp (hsup (Set.mem_insert _ _)))
+  simp only [IsCover, Set.sUnion_singleton, Set.not_subset] at hno
+  obtain ⟨v, hvS, hvq⟩ := hno
+  have hcov : S ⊆ Vp ∪ Vq := by
+    simpa [IsCover, Set.sUnion_insert, Set.sUnion_singleton] using hmc.isCover
+  exact ⟨v, hvS, (hcov hvS).resolve_right hvq, hvq⟩
 
-/-- **Booth Fact 9 (Object-Language Independence, atomic case)**: when
-    `p ∨ q` is non-Hurford (`¬ Vp ⊆ Vq ∧ ¬ Vq ⊆ Vp`), the truth of
-    `□(p ∨ q)` at `w` entails the truth of `◇(p ∧ ¬q)` at `w`.
-
-    Proof: from `IsMinCover {Vp, Vq} (R w)`, minimality forces `{Vq}`
-    alone to NOT cover `R w` (else by `Minimal.le_of_le`, `{Vp, Vq} ⊆
-    {Vq}`, so `Vp = Vq`, contradicting non-Hurford). Hence `∃ v ∈ R w,
-    v ∉ Vq`. Combined with the cover `R w ⊆ Vp ∪ Vq`, we get
-    `v ∈ Vp \ Vq`. Then `R' := {v}` witnesses the existential in
-    `◇(p ∧ ¬q)`'s positive-side definition. -/
-theorem independence_p_not_q
-    (R : W → Set W) (Vp Vq : Set W)
-    (h_non_hurford : ¬ Vp ⊆ Vq ∧ ¬ Vq ⊆ Vp)
-    (w : W) :
-    isTrue (BilatInqProp.necessity R
-      (BilatInqProp.disj (BilatInqProp.atom Vp) (BilatInqProp.atom Vq))) w →
+/-- **Booth Fact 9** (object-language Independence, the paper's atomic
+    scope): when `p ∨ q` is non-Hurford, `□(p ∨ q)` entails `◇(p ∧ ¬q)` —
+    the minimal cover forces a `p`-without-`q` world among the relevant
+    ones. -/
+theorem independence_p_not_q (R : W → Set W) (Vp Vq : Set W)
+    (h : ¬ Vp ⊆ Vq ∧ ¬ Vq ⊆ Vp) (w : W)
+    (hT : isTrue (BilatInqProp.necessity R
+      (BilatInqProp.disj (BilatInqProp.atom Vp) (BilatInqProp.atom Vq))) w) :
     isTrue (BilatInqProp.possibility R
       (BilatInqProp.conj (BilatInqProp.atom Vp)
         (BilatInqProp.negate (BilatInqProp.atom Vq)))) w := by
-  intro h
-  -- Step 1: extract the conjunction at w from h's subset semantics.
-  have hw_in : w ∈ {w' : W | (R w').Nonempty ∧
-      IsMinCover (Question.alt (BilatInqProp.disj (BilatInqProp.atom Vp)
-        (BilatInqProp.atom Vq)).pos) (R w')} :=
-    h (Set.mem_singleton_iff.mpr rfl)
-  obtain ⟨_hRne, hMinCover⟩ := hw_in
-  rw [alt_disj_atom_eq_pair Vp Vq h_non_hurford.1 h_non_hurford.2] at hMinCover
-  -- Step 2: derive ∃ v ∈ R w, v ∉ Vq via minimality.
-  -- If {Vq} alone covered R w, then by minimality {Vp, Vq} ⊆ {Vq},
-  -- forcing Vp = Vq, contradicting non-Hurford.
-  have hVq_alone_no_cover : ¬ IsCover ({Vq} : Set (Set W)) (R w) := by
-    intro hcover
-    have hsub : ({Vq} : Set (Set W)) ⊆ ({Vp, Vq} : Set (Set W)) :=
-      Set.singleton_subset_iff.mpr (Set.mem_insert_of_mem _ rfl)
-    have hsup : ({Vp, Vq} : Set (Set W)) ⊆ ({Vq} : Set (Set W)) :=
-      hMinCover.le_of_le hcover hsub
-    have hVp_in : Vp ∈ ({Vq} : Set (Set W)) := hsup (Set.mem_insert _ _)
-    rcases Set.mem_singleton_iff.mp hVp_in with rfl
-    exact h_non_hurford.1 (Set.Subset.refl Vp)
-  -- Unpack the negation of cover into ∃ v ∈ R w, v ∉ Vq.
-  simp only [IsCover, Set.sUnion_singleton, Set.not_subset] at hVq_alone_no_cover
-  obtain ⟨v, hvR, hvNotVq⟩ := hVq_alone_no_cover
-  -- Step 3: combined with the cover R w ⊆ Vp ∪ Vq, get v ∈ Vp.
-  have hCover : (R w) ⊆ Vp ∪ Vq := by
-    have hcov : (R w) ⊆ ⋃₀ ({Vp, Vq} : Set (Set W)) := hMinCover.isCover
-    simpa [Set.sUnion_insert, Set.sUnion_singleton] using hcov
-  have hvVp : v ∈ Vp := (hCover hvR).resolve_right hvNotVq
-  -- Step 4: construct R' := {v} as the existential witness in possibility.
-  rw [isTrue_possibility_iff]
-  refine ⟨{v}, ?_, ⟨v, rfl⟩, ?_⟩
-  · intro y hy
-    rcases Set.mem_singleton_iff.mp hy with rfl
-    exact hvR
-  · rw [alt_conj_atom_negate_eq_singleton]
-    refine ⟨?_, ?_⟩
-    · intro y hy
-      rcases Set.mem_singleton_iff.mp hy with rfl
-      exact ⟨Vp ∩ Vqᶜ, Set.mem_singleton _, hvVp, hvNotVq⟩
-    · intro Y hYcov hYsub X hXmem
-      rcases Set.mem_singleton_iff.mp hXmem with rfl
-      have h1 : v ∈ ({v} : Set W) := Set.mem_singleton_iff.mpr rfl
-      obtain ⟨Z, hZY, _hZmem⟩ := hYcov h1
-      have hZ_in : Z ∈ ({Vp ∩ Vqᶜ} : Set (Set W)) := hYsub hZY
-      rcases Set.mem_singleton_iff.mp hZ_in with rfl
-      exact hZY
+  rw [isTrue_necessity_iff, alt_disj_atom_eq_pair Vp Vq h.1 h.2] at hT
+  obtain ⟨v, hvR, hvVp, hvq⟩ := exists_left_witness (fun h' => h.1 h'.le) hT.2
+  rw [isTrue_possibility_iff, alt_conj_atom_negate_eq_singleton]
+  exact ⟨{v}, Set.singleton_subset_iff.mpr hvR, ⟨v, rfl⟩,
+    isMinCover_singleton ⟨v, rfl⟩ (Set.singleton_subset_iff.mpr ⟨hvVp, hvq⟩)⟩
+
+/-- **Booth Fact 7** (atomic): the Ross inference is strongly invalid — no
+    world verifies `□p` and `□(p ∨ q)` together when `p ∨ q` is non-Hurford,
+    since with the relevant worlds inside `Vp` the pair is no longer a
+    minimal cover. -/
+theorem ross_strongly_invalid (R : W → Set W) (Vp Vq : Set W)
+    (h : ¬ Vp ⊆ Vq ∧ ¬ Vq ⊆ Vp) (w : W) :
+    ¬ (isTrue (BilatInqProp.necessity R (BilatInqProp.atom Vp)) w ∧
+        isTrue (BilatInqProp.necessity R
+          (BilatInqProp.disj (BilatInqProp.atom Vp)
+            (BilatInqProp.atom Vq))) w) := by
+  rintro ⟨h1, h2⟩
+  rw [isTrue_necessity_iff, alt_atom_pos] at h1
+  rw [isTrue_necessity_iff, alt_disj_atom_eq_pair Vp Vq h.1 h.2] at h2
+  have hRVp : R w ⊆ Vp := by
+    simpa [IsCover, Set.sUnion_singleton] using h1.2.isCover
+  have hsup : ({Vp, Vq} : Set (Set W)) ⊆ {Vp} :=
+    h2.2.le_of_le (fun v hv => ⟨Vp, rfl, hRVp hv⟩)
+      (Set.singleton_subset_iff.mpr (Set.mem_insert _ _))
+  exact h.2
+    (Set.mem_singleton_iff.mp (hsup (Set.mem_insert_of_mem _ rfl))).le
+
+/-- **Booth Fact 8** (atomic): the Extended Ross inference is just as
+    strongly invalid — adding the Diversity premise `◇q` does not help. -/
+theorem extended_ross_strongly_invalid (R : W → Set W) (Vp Vq : Set W)
+    (h : ¬ Vp ⊆ Vq ∧ ¬ Vq ⊆ Vp) (w : W) :
+    ¬ (isTrue (BilatInqProp.necessity R (BilatInqProp.atom Vp)) w ∧
+        isTrue (BilatInqProp.possibility R (BilatInqProp.atom Vq)) w ∧
+        isTrue (BilatInqProp.necessity R
+          (BilatInqProp.disj (BilatInqProp.atom Vp)
+            (BilatInqProp.atom Vq))) w) :=
+  fun ⟨h1, _, h3⟩ => ross_strongly_invalid R Vp Vq h w ⟨h1, h3⟩
+
+/-- **Booth Fact 10** (Free Choice): `◇(p ∨ q)` entails `◇p` — some subset
+    of the relevant worlds is minimally pair-covered, so a `p`-without-`q`
+    world is relevant. -/
+theorem free_choice (R : W → Set W) (Vp Vq : Set W)
+    (h : ¬ Vp ⊆ Vq ∧ ¬ Vq ⊆ Vp) (w : W)
+    (hT : isTrue (BilatInqProp.possibility R
+      (BilatInqProp.disj (BilatInqProp.atom Vp) (BilatInqProp.atom Vq))) w) :
+    isTrue (BilatInqProp.possibility R (BilatInqProp.atom Vp)) w := by
+  rw [isTrue_possibility_iff] at hT ⊢
+  obtain ⟨R', hR'sub, hR'ne, hmc⟩ := hT
+  rw [alt_disj_atom_eq_pair Vp Vq h.1 h.2] at hmc
+  obtain ⟨v, hvR', hvVp, -⟩ := exists_left_witness (fun h' => h.1 h'.le) hmc
+  rw [alt_atom_pos]
+  exact ⟨{v}, Set.singleton_subset_iff.mpr (hR'sub hvR'), ⟨v, rfl⟩,
+    isMinCover_singleton ⟨v, rfl⟩ (Set.singleton_subset_iff.mpr hvVp)⟩
+
+/-- **Booth Fact 12** (Unnecessity Distribution): the falsity of `□(p ∨ q)`
+    yields the falsity of `□p` — a subset minimally covered by the joint
+    complement is covered by `p`'s complement alone. -/
+theorem unnecessity_distribution (R : W → Set W) (Vp Vq : Set W) (w : W)
+    (hT : isFalse (BilatInqProp.necessity R
+      (BilatInqProp.disj (BilatInqProp.atom Vp) (BilatInqProp.atom Vq))) w) :
+    isFalse (BilatInqProp.necessity R (BilatInqProp.atom Vp)) w := by
+  rw [isFalse_necessity_iff] at hT ⊢
+  obtain ⟨R', hsub, hne, hmc⟩ := hT
+  rw [alt_disj_atom_neg] at hmc
+  rw [alt_atom_neg]
+  have hR' : R' ⊆ Vpᶜ ∩ Vqᶜ := by
+    have := hmc.isCover
+    simpa [IsCover, Set.sUnion_singleton, Set.subset_inter_iff] using this
+  exact ⟨R', hsub, hne, isMinCover_singleton hne fun v hv => (hR' hv).1⟩
+
+/-- **Booth Fact 13** (Impossibility Distribution): the falsity of
+    `◇(p ∨ q)` yields the falsity of `◇p` — `¬◇φ` is `□¬φ`, and relevant
+    worlds inside the joint complement sit inside `p`'s complement. -/
+theorem impossibility_distribution (R : W → Set W) (Vp Vq : Set W) (w : W)
+    (hT : isFalse (BilatInqProp.possibility R
+      (BilatInqProp.disj (BilatInqProp.atom Vp) (BilatInqProp.atom Vq))) w) :
+    isFalse (BilatInqProp.possibility R (BilatInqProp.atom Vp)) w := by
+  rw [isFalse_possibility_iff] at hT ⊢
+  obtain ⟨hne, hmc⟩ := hT
+  rw [alt_disj_atom_neg] at hmc
+  rw [alt_atom_neg]
+  have hR : R w ⊆ Vpᶜ ∩ Vqᶜ := by
+    have := hmc.isCover
+    simpa [IsCover, Set.sUnion_singleton, Set.subset_inter_iff] using this
+  exact ⟨hne, isMinCover_singleton hne fun v hv => (hR hv).1⟩
 
 end Booth2022
