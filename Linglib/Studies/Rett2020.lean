@@ -50,7 +50,8 @@ open Core.Order
 open NonemptyInterval
 open Features
 open Features.ChangeOfState
-open Core.Order (maxOnScale isAmbidirectional maxOnScale_singleton maxOnScale_lt_closedInterval maxOnScale_gt_closedInterval)
+open Degree (maxOnScale isAmbidirectional maxOnScale_singleton maxOnScale_lt_closedInterval
+  maxOnScale_gt_closedInterval)
 variable {Time : Type*} [LinearOrder Time]
 
 -- ============================================================================

@@ -2,7 +2,7 @@ import Mathlib.Order.Interval.Set.Basic
 import Linglib.Core.Order.StrictBounds
 
 /-!
-# Core/Scales/Comparison.lean — reified degree comparison
+# Reified degree comparison
 
 `Comparison` reifies the five ways a measured value relates to a threshold —
 `=`, `≥`, `>`, `≤`, `<` — as data (cf. core `Ordering`, reified for `compare`).
@@ -25,13 +25,13 @@ proofs reduce into `Set.mem_Ici` & friends rather than a bespoke lemma set:
 
 ## Main declarations
 
-* `Core.Order.Comparison` — the reified comparison.
+* `Degree.Comparison` — the reified comparison.
 * `Comparison.isStrict` — Class A (`>`,`<`) vs. non-strict (`=`,`≥`,`≤`).
 * `Comparison.over` / `Comparison.overSet` — point- and set-standard predications.
 * `Comparison.boundary_mem` — Class A/B as interval-endpoint membership.
 -/
 
-namespace Core.Order
+namespace Degree
 
 /-- [kennedy-2015]'s `REL` reified: the relation a degree modifier draws
     between a measured value and a threshold. -/
@@ -209,23 +209,18 @@ theorem Comparison.lt_iff_separating_threshold {x y : E} :
 
 end ThresholdLinear
 
-/-! ### Order-Sensitive MAX ([rett-2026]) -/
+/-! ### Scale-sensitive maximality
 
-/-! ### Scale-sensitive maximality operator
-
-[rett-2026]: MAX_c(X) picks the element(s)
-of X that c-dominate all other members. For the `<` scale (`.lt`) this is the GLB
-(earliest / smallest), for `>` (`.gt`) the LUB (latest / largest). The same operator
-underlies both temporal connectives (*before*/*after*) and degree comparatives.
-
-- Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
--/
+[rett-2026]: MAX_c(X) picks the element(s) of X that c-dominate all other members. For the
+`<` scale (`.lt`) this is the GLB (earliest / smallest), for `>` (`.gt`) the LUB (latest /
+largest). The same operator underlies both temporal connectives (*before* / *after*) and
+degree comparatives. `maxOnScale_lt_eq` / `maxOnScale_ge_eq` / `maxOnScale_gt_eq` ground the
+operator in mathlib's `IsLeast` / `IsGreatest`, and the interval evaluations are corollaries. -/
 
 /-- Order-sensitive maximality ([rett-2026], def. 1):
     MAX_c(X) = { x ∈ X | ∀ x' ∈ X, x' ≠ x → c.rel x x' }.
-    The dominance relation is the reified `Core.Order.Comparison` rather than a
-    lawless `R : α → α → Prop` — removing the "fake generality" of an unconstrained
-    relation parameter. Each concrete `c` (`.lt`, `.gt`, `.ge`, …) names an
+    The dominance relation is the reified `Comparison` rather than a lawless
+    `R : α → α → Prop`; each concrete `c` (`.lt`, `.gt`, `.ge`, …) names an
     order relation via `Comparison.rel`. -/
 def maxOnScale {α : Type*} [Preorder α] (c : Comparison) (X : Set α) : Set α :=
   { x | x ∈ X ∧ ∀ x' ∈ X, x' ≠ x → c.rel x x' }
@@ -241,40 +236,60 @@ theorem maxOnScale_singleton {α : Type*} [Preorder α] (c : Comparison) (x : α
   · rintro rfl
     exact ⟨rfl, fun x' hx' hne => absurd hx' hne⟩
 
-/-- MAX₍<₎ on a closed interval `{x | s ≤ x ∧ x ≤ f}` is the singleton `{s}`.
-    The minimum element s R-dominates all others on the `<` scale.
-    Dual: MAX₍>₎ on the same interval is `{f}`. -/
+/-- Grounding: `MAX₍≥₎` is mathlib's `IsGreatest` (the `x' = x` case of the
+    dominance quantifier holds by reflexivity). -/
+theorem maxOnScale_ge_eq {α : Type*} [Preorder α] (X : Set α) :
+    maxOnScale .ge X = {x | IsGreatest X x} := by
+  ext x
+  simp only [maxOnScale, Comparison.rel, Set.mem_ofPred_eq, IsGreatest,
+    upperBounds, ge_iff_le]
+  refine ⟨fun ⟨hx, hdom⟩ => ⟨hx, fun y hy => ?_⟩,
+    fun ⟨hx, hub⟩ => ⟨hx, fun y hy _ => hub hy⟩⟩
+  rcases eq_or_ne y x with rfl | hne
+  · exact le_refl _
+  · exact hdom y hy hne
+
+/-- Grounding: `MAX₍<₎` is mathlib's `IsLeast` — on a partial order, strictly
+    dominating the *other* elements of `X` on the `<` scale is being the least. -/
+theorem maxOnScale_lt_eq {α : Type*} [PartialOrder α] (X : Set α) :
+    maxOnScale .lt X = {x | IsLeast X x} := by
+  ext x
+  simp only [maxOnScale, Comparison.rel, Set.mem_ofPred_eq, IsLeast, lowerBounds]
+  refine ⟨fun ⟨hx, hdom⟩ => ⟨hx, fun y hy => ?_⟩, fun ⟨hx, hlb⟩ => ⟨hx, fun y hy hne => ?_⟩⟩
+  · rcases eq_or_ne y x with rfl | hne
+    · exact le_refl _
+    · exact (hdom y hy hne).le
+  · exact lt_of_le_of_ne (hlb hy) (Ne.symm hne)
+
+/-- Grounding: `MAX₍>₎` is mathlib's `IsGreatest`, dually to `maxOnScale_lt_eq`. -/
+theorem maxOnScale_gt_eq {α : Type*} [PartialOrder α] (X : Set α) :
+    maxOnScale .gt X = {x | IsGreatest X x} := by
+  ext x
+  simp only [maxOnScale, Comparison.rel, Set.mem_ofPred_eq, IsGreatest, upperBounds,
+    gt_iff_lt]
+  refine ⟨fun ⟨hx, hdom⟩ => ⟨hx, fun y hy => ?_⟩, fun ⟨hx, hub⟩ => ⟨hx, fun y hy hne => ?_⟩⟩
+  · rcases eq_or_ne y x with rfl | hne
+    · exact le_refl _
+    · exact (hdom y hy hne).le
+  · exact lt_of_le_of_ne (hub hy) hne
+
+/-- MAX₍<₎ on a closed interval `{x | s ≤ x ∧ x ≤ f}` (= `Set.Icc s f`) is the left
+    endpoint: `IsLeast` grounding plus `isLeast_Icc`. Dual: MAX₍>₎ is `{f}`. -/
 theorem maxOnScale_lt_closedInterval {α : Type*} [LinearOrder α]
     (s f : α) (hsf : s ≤ f) :
     maxOnScale .lt { x : α | s ≤ x ∧ x ≤ f } = {s} := by
-  ext x
-  simp only [maxOnScale, Comparison.rel, Set.mem_ofPred_eq, Set.mem_singleton_iff]
-  constructor
-  · rintro ⟨⟨hxs, _⟩, hdom⟩
-    by_contra hne
-    have : s < x := lt_of_le_of_ne hxs (Ne.symm hne)
-    have := hdom s ⟨le_refl _, hsf⟩ (ne_of_lt ‹s < x›)
-    exact absurd ‹s < x› (not_lt.mpr (le_of_lt this))
-  · rintro rfl
-    exact ⟨⟨le_refl _, hsf⟩, fun x' ⟨hx's, _⟩ hne =>
-      lt_of_le_of_ne hx's (Ne.symm hne)⟩
+  rw [maxOnScale_lt_eq]
+  exact Set.eq_singleton_iff_unique_mem.mpr
+    ⟨isLeast_Icc hsf, fun _ h => h.unique (isLeast_Icc hsf)⟩
 
-/-- MAX₍>₎ on a closed interval `{x | s ≤ x ∧ x ≤ f}` is the singleton `{f}`.
-    The maximum element R-dominates all others on the `>` scale. -/
+/-- MAX₍>₎ on a closed interval `{x | s ≤ x ∧ x ≤ f}` (= `Set.Icc s f`) is the right
+    endpoint. -/
 theorem maxOnScale_gt_closedInterval {α : Type*} [LinearOrder α]
     (s f : α) (hsf : s ≤ f) :
     maxOnScale .gt { x : α | s ≤ x ∧ x ≤ f } = {f} := by
-  ext x
-  simp only [maxOnScale, Comparison.rel, Set.mem_ofPred_eq, Set.mem_singleton_iff]
-  constructor
-  · rintro ⟨⟨_, hxf⟩, hdom⟩
-    by_contra hne
-    have : x < f := lt_of_le_of_ne hxf hne
-    have := hdom f ⟨hsf, le_refl _⟩ (ne_of_gt ‹x < f›)
-    exact absurd ‹x < f› (not_lt.mpr (le_of_lt this))
-  · rintro rfl
-    exact ⟨⟨hsf, le_refl _⟩, fun x' ⟨_, hx'f⟩ hne =>
-      lt_of_le_of_ne hx'f hne⟩
+  rw [maxOnScale_gt_eq]
+  exact Set.eq_singleton_iff_unique_mem.mpr
+    ⟨isGreatest_Icc hsf, fun _ h => h.unique (isGreatest_Icc hsf)⟩
 
 /-- A scalar construction f is **ambidirectional** iff
     applying f to a set B and to its complement Bᶜ yields the same result,
@@ -294,16 +309,9 @@ def isAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
     i.e., the maximum. -/
 theorem maxOnScale_atLeast_singleton {W α : Type*} [LinearOrder α] (μ : W → α) (w : W) :
     maxOnScale .ge { d : α | d ≤ μ w } = { μ w } := by
-  ext x
-  simp only [maxOnScale, Comparison.rel, Set.mem_ofPred_eq, Set.mem_singleton_iff, ge_iff_le]
-  constructor
-  · rintro ⟨hx, hdom⟩
-    by_contra hne
-    have hlt : x < μ w := lt_of_le_of_ne hx hne
-    have := hdom (μ w) (le_refl _) (Ne.symm hne)
-    exact not_le.mpr hlt this
-  · rintro rfl
-    exact ⟨le_refl _, fun x' hx' hne => le_of_lt (lt_of_le_of_ne hx' hne)⟩
+  rw [maxOnScale_ge_eq]
+  exact Set.eq_singleton_iff_unique_mem.mpr
+    ⟨isGreatest_Iic, fun _ h => h.unique isGreatest_Iic⟩
 
 /-- MAX₍≥₎ on {d | d ≤ b} is {b}. Corollary of `maxOnScale_atLeast_singleton`
     with `μ = id`. Used by the comparative boundary theorems. -/
@@ -311,17 +319,5 @@ theorem maxOnScale_ge_atMost {α : Type*} [LinearOrder α] (b : α) :
     maxOnScale .ge {d | d ≤ b} = {b} :=
   maxOnScale_atLeast_singleton id b
 
-/-- Grounding: `MAX₍≥₎` is mathlib's `IsGreatest` (the `x' = x` case of the
-    dominance quantifier holds by reflexivity). -/
-theorem maxOnScale_ge_eq {α : Type*} [Preorder α] (X : Set α) :
-    maxOnScale .ge X = {x | IsGreatest X x} := by
-  ext x
-  simp only [maxOnScale, Comparison.rel, Set.mem_ofPred_eq, IsGreatest,
-    upperBounds, ge_iff_le]
-  refine ⟨fun ⟨hx, hdom⟩ => ⟨hx, fun y hy => ?_⟩,
-    fun ⟨hx, hub⟩ => ⟨hx, fun y hy _ => hub hy⟩⟩
-  rcases eq_or_ne y x with rfl | hne
-  · exact le_refl _
-  · exact hdom y hy hne
 
-end Core.Order
+end Degree

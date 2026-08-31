@@ -1,5 +1,5 @@
 import Mathlib.Order.BoundedOrder.Basic
-import Linglib.Core.Order.Comparison
+import Linglib.Semantics.Degree.Comparison
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Card
 import Mathlib.Order.Fin.Basic
@@ -109,19 +109,19 @@ section Concrete
 variable {max : Nat}
 
 /-- Positive form (*tall*): `t < d` — the strict threshold face of
-`Core.Order.Comparison.gt.over` on the discrete carrier. -/
+`Degree.Comparison.gt.over` on the discrete carrier. -/
 def positiveMeaning (d : Bounded max) (t : Threshold max) : Prop :=
-  d ∈ Core.Order.Comparison.gt.over id (t : Bounded max)
+  d ∈ Degree.Comparison.gt.over id (t : Bounded max)
 
 /-- Polar antonym (*short*): `d < t`, evaluated against the antonym's own
 threshold (which may sit below the positive's — see `Gradability.ThresholdPair`). -/
 def negativeMeaning (d : Bounded max) (t : Threshold max) : Prop :=
-  d ∈ Core.Order.Comparison.lt.over id (t : Bounded max)
+  d ∈ Degree.Comparison.lt.over id (t : Bounded max)
 
 /-- Contradictory negation (*not tall*): `d ≤ t`, the complement of
 `positiveMeaning`. Not the polar antonym — that is `negativeMeaning`. -/
 def notPositiveMeaning (d : Bounded max) (t : Threshold max) : Prop :=
-  d ∈ Core.Order.Comparison.le.over id (t : Bounded max)
+  d ∈ Degree.Comparison.le.over id (t : Bounded max)
 
 instance (d : Bounded max) (t : Threshold max) : Decidable (positiveMeaning d t) :=
   inferInstanceAs (Decidable ((t : Bounded max) < d))

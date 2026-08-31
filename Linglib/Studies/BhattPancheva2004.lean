@@ -78,7 +78,7 @@ open Minimalist.DegreeMovement
    ScopeBinding IsHeimKennedy not_isHeimKennedy_QP_above_bound_DegP
    isHeimKennedy_no_dependency isHeimKennedy_dependency_requires_high_DegP
    williams_scope_correlation williams_exempt_when_no_binding)
-open Core.Order (Comparison)
+open Degree (Comparison)
 open Degree (gtOverSet_eq_singleton_of_isGreatest)
 open Polarity (LicensingContext)
 open Polarity (LicensingContext)

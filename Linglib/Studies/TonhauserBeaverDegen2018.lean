@@ -68,8 +68,8 @@ at-issue — is the threshold collapse of the gradient GPP. -/
 /-- The GPP projects past `θ` iff at-issueness is below the complementary threshold. -/
 theorem gpp_projects_iff (ai : AtIssuenessDegree) (θ : ProjectivityThreshold) :
     isProjective (gppProjection ai) θ ↔ ai.val < (Set.Icc.symm θ).val := by
-  simp only [isProjective, Core.Order.Comparison.mem_over,
-    Core.Order.Comparison.rel, gppProjection, Set.Icc.coe_symm_eq]
+  simp only [isProjective, Degree.Comparison.mem_over,
+    Degree.Comparison.rel, gppProjection, Set.Icc.coe_symm_eq]
   constructor <;> intro h <;> linarith
 
 /-- The binary Projection Principle: never both at-issue and projecting at
@@ -77,8 +77,8 @@ theorem gpp_projects_iff (ai : AtIssuenessDegree) (θ : ProjectivityThreshold) :
 theorem gpp_excludes_atIssue (ai : AtIssuenessDegree) (θ : ProjectivityThreshold) :
     ¬ (isAtIssue ai (Set.Icc.symm θ) ∧ isProjective (gppProjection ai) θ) := by
   rintro ⟨ha, hp⟩
-  simp only [isAtIssue, Core.Order.Comparison.mem_over,
-    Core.Order.Comparison.rel, Set.Icc.coe_symm_eq] at ha
+  simp only [isAtIssue, Degree.Comparison.mem_over,
+    Degree.Comparison.rel, Set.Icc.coe_symm_eq] at ha
   rw [gpp_projects_iff, Set.Icc.coe_symm_eq] at hp
   linarith
 

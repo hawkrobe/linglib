@@ -1,6 +1,6 @@
 import Mathlib.Order.Interval.Set.LinearOrder
 import Mathlib.Order.Bounds.Basic
-import Linglib.Core.Order.Comparison
+import Linglib.Semantics.Degree.Comparison
 import Linglib.Semantics.Degree.Defs
 import Linglib.Core.Order.Boundedness
 
@@ -11,7 +11,7 @@ import Linglib.Core.Order.Boundedness
 Comparative semantics shared across all degree frameworks: the binary
 `comparativeSem` / `equativeSem`, antonymy as scale reversal, and
 downward-entailingness of *than*-clauses. Both binary comparators are
-measure-pullback predications of the reified `Core.Order.Comparison`
+measure-pullback predications of the reified `Degree.Comparison`
 (`over` at a point standard, `overSet` at a set standard);
 `comparativeSem_positive_eq_over` makes that an identity. The set-of-degrees
 S-comparative ([hoeksema-1983]) *is* `Comparison.gt.overSet μ` directly — there is
@@ -45,8 +45,7 @@ consumers in `Studies/Hoeksema1983.lean`.
 
 namespace Degree
 
-open Core.Order (ScalePolarity Comparison maxOnScale maxOnScale_singleton maxOnScale_ge_eq
-  maxOnScale_ge_atMost maxOnScale_atLeast_singleton)
+open Core.Order (ScalePolarity)
 
 /-! ### Comparative and equative semantics -/
 
@@ -70,13 +69,13 @@ def equativeSem (μ : Entity → α) (a b : Entity) (dir : ScalePolarity) : Prop
   | .negative => μ a ≤ μ b
 
 /-- **Grounding**: the positive binary comparative is the strict-`>` point
-predication of `Core.Order.Comparison` at the standard `μ b` — not a reinvention. -/
+predication of `Degree.Comparison` at the standard `μ b` — not a reinvention. -/
 theorem comparativeSem_positive_eq_over (μ : Entity → α) (a b : Entity) :
     comparativeSem μ a b .positive ↔ a ∈ Comparison.gt.over μ (μ b) := by
   simp only [comparativeSem, Comparison.mem_over, Comparison.rel]
 
 /-- **Grounding**: the positive equative is the `≥` point predication of
-`Core.Order.Comparison` at the standard `μ b`. -/
+`Degree.Comparison` at the standard `μ b`. -/
 theorem equativeSem_positive_eq_over (μ : Entity → α) (a b : Entity) :
     equativeSem μ a b .positive ↔ a ∈ Comparison.ge.over μ (μ b) := by
   simp only [equativeSem, Comparison.mem_over, Comparison.rel]

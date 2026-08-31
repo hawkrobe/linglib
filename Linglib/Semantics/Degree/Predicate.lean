@@ -3,7 +3,7 @@ import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Max
 import Mathlib.Tactic.NormNum
 import Linglib.Core.Order.Boundedness
-import Linglib.Core.Order.Comparison
+import Linglib.Semantics.Degree.Comparison
 
 /-!
 # Degree predicates + monotonicity
@@ -14,12 +14,12 @@ Predicate transformers over a measure function `μ : W → α`:
 - `IsConstant` / `AdmitsOptimum` (informativity; monotonicity is mathlib's
   `Monotone`/`Antitone` under the pointwise order on `W → Prop`)
 - `typeLower` (Partee 1987 existential lowering)
-- monotonicity / anti-Horn-scale lemmas about the `Core.Order.Comparison.over`
+- monotonicity / anti-Horn-scale lemmas about the `Degree.Comparison.over`
   degree predicates (general)
 
 The five degree predicates ("exactly", "at least", "more than", "at most",
-"less than") are `Core.Order.Comparison.{eq,ge,gt,le,lt}.over μ` directly: the
-reified `Core.Order.Comparison` IS the canonical scale-comparison primitive, so
+"less than") are `Degree.Comparison.{eq,ge,gt,le,lt}.over μ` directly: the
+reified `Degree.Comparison` IS the canonical scale-comparison primitive, so
 there is no separate named family. `c.over μ n` is a `Set W`; `w ∈ c.over μ n ↔
 c.rel (μ w) n` (`Comparison.mem_over`), and `c.rel` unfolds to the order
 relation per case.
@@ -98,7 +98,7 @@ theorem bimonotone_no_optimum {W : Type*} (P : α → W → Prop)
 /-! ### Degree properties as `Comparison.over`
 
 The five degree predicates covering all comparison relations are
-`Core.Order.Comparison.{eq,ge,gt,le,lt}.over μ` directly — there is no separate
+`Degree.Comparison.{eq,ge,gt,le,lt}.over μ` directly — there is no separate
 named family. `c.over μ d : Set W`, with `w ∈ c.over μ d ↔ c.rel (μ w) d`
 (`Comparison.mem_over`). These are the building blocks for the named numeral
 meanings (`Semantics.Numerals.atLeastMeaning` etc.) and degree question
@@ -160,7 +160,7 @@ theorem typeLower_eqOver_iff {W : Type*} (μ : W → α) (d : α) (w : W) :
 
 /-! ### [kennedy-2015]'s De-Fregean GQ -/
 
-/-! ## A unified GQ denotation via `Core.Order.Comparison`
+/-! ## A unified GQ denotation via `Degree.Comparison`
 
 [kennedy-2015] proposes a single denotation for modified and
 unmodified numerals: `λP. max{d | #P ≥ d} REL m`, where the only parameter
@@ -169,7 +169,7 @@ distinguishing surface forms is the relation `REL ∈ {=, ≥, >, ≤, <}`.
 Specialised to a property of the form `Comparison.ge.over μ`, the maximum degree
 satisfying `Comparison.ge.over μ d w` is `μ w` itself, so Kennedy's denotation
 collapses to `c.rel (μ w) m` — i.e. `w ∈ c.over μ m` (`Comparison.mem_over`).
-The reified `Core.Order.Comparison` (in `Comparison.lean`) IS this canonical
+The reified `Degree.Comparison` (in `Comparison.lean`) IS this canonical
 comparison primitive; it selects which `rel`/`interval` to use, and the Class
 A vs Class B distinction ([geurts-nouwen-2007], [nouwen-2010]) is its
 `Comparison.boundary_mem` (non-strict comparisons keep the endpoint). -/

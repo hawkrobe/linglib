@@ -45,9 +45,9 @@ theorem relative_like (h : (tp.neg : Bounded max) < tp.pos) :
     ∃ d, AntonymForm.strengthenedDenot tp .notPositive d ∧
       ¬ AntonymForm.strengthenedDenot tp .negative d := by
   refine ⟨Degree.strengthenedDenot_breaks_synonymy tp h, ↑tp.neg, ?_, ?_⟩
-  · simpa [Degree.positiveMeaning, Core.Order.Comparison.mem_over, Core.Order.Comparison.rel]
+  · simpa [Degree.positiveMeaning, Degree.Comparison.mem_over, Degree.Comparison.rel]
       using le_of_lt h
-  · simp [Degree.negativeMeaning, Core.Order.Comparison.mem_over, Core.Order.Comparison.rel]
+  · simp [Degree.negativeMeaning, Degree.Comparison.mem_over, Degree.Comparison.rel]
 
 /-- The two residues are the same region — the gap — so the distinctions are
     symmetric across polarity. -/
@@ -58,8 +58,8 @@ theorem residues_symmetric (d : Bounded max) :
       ¬ AntonymForm.strengthenedDenot tp .negative d) := by
   simp only [AntonymForm.strengthenedDenot, Degree.positiveMeaning', Degree.contraryNegMeaning,
     Degree.notContraryNegMeaning, Degree.contradictoryNeg, Degree.positiveMeaning,
-    Degree.negativeMeaning, Degree.notPositiveMeaning, Core.Order.Comparison.mem_over,
-    Core.Order.Comparison.rel, id_eq, not_lt]
+    Degree.negativeMeaning, Degree.notPositiveMeaning, Degree.Comparison.mem_over,
+    Degree.Comparison.rel, id_eq, not_lt]
   exact and_comm
 
 /-! ### Rows -/

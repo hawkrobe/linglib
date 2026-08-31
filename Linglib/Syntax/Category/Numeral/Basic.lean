@@ -1,4 +1,4 @@
-import Linglib.Core.Order.Comparison
+import Linglib.Semantics.Degree.Comparison
 
 /-!
 # Numeral — the lexical numeral object
@@ -10,7 +10,7 @@ and a semantics later interprets. A numeral word contributes a `Comparison`
 supplied compositionally, so it is not a lexical field here.
 
 The comparison vocabulary itself is **not** numeral-specific — it is the shared
-degree-comparison primitive `Core.Order.Comparison` (also used by measure
+degree-comparison primitive `Degree.Comparison` (also used by measure
 phrases and gradable comparatives, per [kennedy-2015], [rett-2014]);
 this file just records that a numeral *entry* carries one. The denotation (the
 `Comparison.over`-based meaning, the Kennedy-vs-Horn bare-form choice) lives in
@@ -26,7 +26,7 @@ split as `Syntax/Category/Pronoun/Basic.lean` vs.
 
 namespace Numeral
 
-open Core.Order (Comparison)
+open Degree (Comparison)
 /-- Cross-linguistic lexical numeral entry: surface form, the `Comparison` it
     expresses, and its numeric argument. The measure compared against
     (cardinality, height, …) is compositional, supplied at denotation time

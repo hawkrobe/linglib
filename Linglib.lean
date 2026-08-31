@@ -238,7 +238,6 @@ import Linglib.Core.Order.ComparativeProbability.Patterns
 import Linglib.Core.Order.ComparativeProbability.Representability
 import Linglib.Core.Order.ComparativeProbability.Systems
 import Linglib.Core.Order.ComparativeScale
-import Linglib.Core.Order.Comparison
 import Linglib.Core.Order.DeMorganAlgebra.Basic
 import Linglib.Core.Order.DeMorganAlgebra.Defs
 import Linglib.Core.Order.Flat
@@ -1618,6 +1617,7 @@ import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Aggregation
 import Linglib.Semantics.Degree.Antonymy
 import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Comparison
 import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Delineation
 import Linglib.Semantics.Degree.Discrete

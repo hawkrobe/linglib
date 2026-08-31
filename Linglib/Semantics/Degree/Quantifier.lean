@@ -16,14 +16,13 @@ special case.
 
 namespace Degree
 
-open Core.Order (Comparison)
 
 /-! ### Set-of-degrees comparative
 
 The S-comparative ([hoeksema-1983] §3.8 Def 7) generalizes `comparativeSem` from a
 single standard to an arbitrary degree-set standard. It *is* `Comparison.gt.overSet μ`
 (`μ ⁻¹' strictUpperBounds Δ`) — the strict-`>` set-standard predication of
-`Core.Order.Comparison` — not a separate definition; the binary comparator is its
+`Degree.Comparison` — not a separate definition; the binary comparator is its
 singleton case (`Comparison.overSet_singleton`). The properties below are stated
 about `Comparison.gt.overSet μ` directly. Needs only `[Preorder D]`. -/
 

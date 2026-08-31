@@ -1,6 +1,6 @@
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Core.Order.Boundedness
-import Linglib.Core.Order.Comparison
+import Linglib.Semantics.Degree.Comparison
 import Mathlib.Algebra.Order.Interval.Set.Instances
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Tactic.NormNum
@@ -29,15 +29,15 @@ abbrev AtIssuenessThreshold := ↥(Set.Icc (0 : ℚ) 1)
 abbrev ProjectivityThreshold := ↥(Set.Icc (0 : ℚ) 1)
 /-! ### Threshold Semantics -/
 /-- Content is at-issue when its degree exceeds the threshold — the
-    `Core.Order.Comparison.gt.over` face of the scale. -/
+    `Degree.Comparison.gt.over` face of the scale. -/
 def isAtIssue (d : AtIssuenessDegree) (θ : AtIssuenessThreshold) : Prop :=
-  d ∈ Core.Order.Comparison.gt.over Subtype.val θ.val
+  d ∈ Degree.Comparison.gt.over Subtype.val θ.val
 instance (d : AtIssuenessDegree) (θ : AtIssuenessThreshold) :
     Decidable (isAtIssue d θ) :=
   inferInstanceAs (Decidable (θ.val < d.val))
 /-- Content is projective when its projectivity degree exceeds the threshold. -/
 def isProjective (d : ProjectivityDegree) (θ : ProjectivityThreshold) : Prop :=
-  d ∈ Core.Order.Comparison.gt.over Subtype.val θ.val
+  d ∈ Degree.Comparison.gt.over Subtype.val θ.val
 instance (d : ProjectivityDegree) (θ : ProjectivityThreshold) :
     Decidable (isProjective d θ) :=
   inferInstanceAs (Decidable (θ.val < d.val))

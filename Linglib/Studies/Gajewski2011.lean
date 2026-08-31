@@ -613,7 +613,7 @@ and hence don't license strong NPIs. -/
 theorem bridge_hoeksema_gtOverSet_strawsonAA
     {Entity D : Type*} [Preorder D] (μ : Entity → D)
     (defined : Set D → Entity → Prop) :
-    IsStrawsonAntiAdditive (Core.Order.Comparison.gt.overSet μ) defined :=
+    IsStrawsonAntiAdditive (Degree.Comparison.gt.overSet μ) defined :=
   antiAdditive_implies_strawsonAA _
     (Degree.gtOverSet_isAntiAdditive μ) _
 

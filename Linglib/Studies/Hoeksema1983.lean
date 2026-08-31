@@ -42,7 +42,7 @@ and arbitrary `sSup`/`sInf` (strengthening Hoeksema's finitary claim)
 gives complement preservation for free on `BooleanAlgebra → BooleanAlgebra`
 homs.
 
-The S-comparative is `Core.Order.Comparison.gt.overSet μ` (originally
+The S-comparative is `Degree.Comparison.gt.overSet μ` (originally
 [hoeksema-1983] §3.8 Def 7); its anti-additivity (Fact 4,
 `gtOverSet_isAntiAdditive`) lives in `Semantics/Degree/Comparative.lean`
 as the natural generalization of `comparativeSem` from a binary comparator
@@ -94,7 +94,7 @@ namespace Hoeksema1983
 
 open Polarity
 
-open Core.Order (Comparison)
+open Degree (Comparison)
 open Degree (gtOverSet_isAntiAdditive gtOverSet_atomic_eq_comparativeSem)
 open Polarity (LicensingContext)
 open Polarity (LicensingContext)

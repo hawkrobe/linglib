@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Order.Comparison
+import Linglib.Semantics.Degree.Comparison
 import Linglib.Semantics.Exhaustification.Chain
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Quantification.Quantifier
@@ -19,8 +19,8 @@ import Mathlib.Order.Interval.Set.Basic
 The numeral surface forms ("three", "more than three", "at least three", "at
 most three", "fewer than three") are five `Nat`-instantiations of
 [kennedy-2015]'s unified de-Fregean GQ
-`λP. max{d | #P ≥ d} REL m`, captured by `Core.Order.Comparison.over`. Each named
-meaning is the corresponding `Core.Order.Comparison.{eq,gt,lt,ge,le}.over id`
+`λP. max{d | #P ≥ d} REL m`, captured by `Degree.Comparison.over`. Each named
+meaning is the corresponding `Degree.Comparison.{eq,gt,lt,ge,le}.over id`
 specialization, and so inherits the scale infrastructure (maximal informativity,
 monotonicity, density) by construction.
 
@@ -34,12 +34,12 @@ The only theory disagreement is the bare-numeral semantics:
 Modified numerals are theory-independent — everyone agrees "more than 3"
 means `> 3`. The Class A / Class B distinction ([geurts-nouwen-2007],
 [nouwen-2010]) reduces to whether the modifier's comparison keeps its
-interval endpoint; see `Core.Order.Comparison.boundary_mem`.
+interval endpoint; see `Degree.Comparison.boundary_mem`.
 
 ## Sections
 
 1. Modifier classification (Class A/B, Bound direction)
-2. Numeral meaning functions (5 `def`s over `Core.Order.Comparison.{...}.over id`)
+2. Numeral meaning functions (5 `def`s over `Degree.Comparison.{...}.over id`)
 3. `BareNumeral`; `Comparison` interpretation (`Entry.denoteUnder`)
 4. Alternative sets (Kennedy §4.1)
 5. Class A/B corollaries, anti-Horn-scale corollaries
@@ -62,7 +62,7 @@ numerals — a descriptive split due to [nouwen-2010].
 Truth-conditionally the split is the reflexive/irreflexive boundary behavior:
 Class A EXCLUDES the bare-numeral world, Class B INCLUDES it (Class B iff the
 comparison's interval keeps its endpoint; see
-`Core.Order.Comparison.boundary_mem`). The further claim that this predicts
+`Degree.Comparison.boundary_mem`). The further claim that this predicts
 a *categorical* ignorance-implicature pattern (Class B carries ignorance, Class
 A not) is contested: [schwarz-buccola-hamilton-2012] show *at most* and *up
 to* dissociate (so "Class B" is not one class), and
@@ -71,7 +71,7 @@ graded and QUD-dependent rather than categorical; [enguehard-2018] derives
 comparative-numeral inferences from granularity scales rather than from the
 strict/non-strict relation type.
 
-Truth-conditionally the split is `Core.Order.Comparison.boundary_mem` (the
+Truth-conditionally the split is `Degree.Comparison.boundary_mem` (the
 non-strict comparison's interval keeps its endpoint). -/
 inductive ModifierClass where
   | classA  -- strict: >, <
@@ -92,7 +92,7 @@ inductive BoundDirection where
 -- ============================================================================
 
 /-! Five named meanings — one per surface form. Each is the `id`-instantiation
-of the corresponding `Core.Order.Comparison.over` degree property. They capture
+of the corresponding `Degree.Comparison.over` degree property. They capture
 [kennedy-2015]'s
 
   ⟦modifier m⟧ = λP. max{d | #P ≥ d} REL m
@@ -104,19 +104,19 @@ density predictions (`Comparison.antitone_ge_over`, `moreThan_noMaxInf`,
 `atLeast_hasMaxInf`, etc.) hold by construction. -/
 
 /-- Bare numeral meaning (exact reading): `n = m`. -/
-def bareMeaning : Nat → Nat → Prop := fun m n => n ∈ Core.Order.Comparison.eq.over id m
+def bareMeaning : Nat → Nat → Prop := fun m n => n ∈ Degree.Comparison.eq.over id m
 
 /-- "More than `m`": `n > m`. -/
-def moreThanMeaning : Nat → Nat → Prop := fun m n => n ∈ Core.Order.Comparison.gt.over id m
+def moreThanMeaning : Nat → Nat → Prop := fun m n => n ∈ Degree.Comparison.gt.over id m
 
 /-- "Fewer than `m`": `n < m`. -/
-def fewerThanMeaning : Nat → Nat → Prop := fun m n => n ∈ Core.Order.Comparison.lt.over id m
+def fewerThanMeaning : Nat → Nat → Prop := fun m n => n ∈ Degree.Comparison.lt.over id m
 
 /-- "At least `m`": `n ≥ m`. -/
-def atLeastMeaning : Nat → Nat → Prop := fun m n => n ∈ Core.Order.Comparison.ge.over id m
+def atLeastMeaning : Nat → Nat → Prop := fun m n => n ∈ Degree.Comparison.ge.over id m
 
 /-- "At most `m`": `n ≤ m`. -/
-def atMostMeaning : Nat → Nat → Prop := fun m n => n ∈ Core.Order.Comparison.le.over id m
+def atMostMeaning : Nat → Nat → Prop := fun m n => n ∈ Degree.Comparison.le.over id m
 
 @[simp] theorem bareMeaning_def (m n : Nat) : bareMeaning m n ↔ n = m := Iff.rfl
 @[simp] theorem moreThanMeaning_def (m n : Nat) : moreThanMeaning m n ↔ n > m := Iff.rfl
@@ -161,7 +161,7 @@ instance : ToString BareNumeral where
     | .one => "one" | .two => "two" | .three => "three"
     | .four => "four" | .five => "five"
 
-/-! The five numeral forms are the five `Core.Order.Comparison`s applied to an
+/-! The five numeral forms are the five `Degree.Comparison`s applied to an
     argument; the object lives in `Typology/Numeral/Basic.lean`. Here we give the
     semantics: the order relation each comparison names, and the theory-choice
     meaning. -/
@@ -192,19 +192,19 @@ theorem _root_.Numeral.Entry.denoteUnder_boundary (e : Numeral.Entry) (bare : Na
     e.denoteUnder bare e.argument ↔ e.argument ∈ e.comparison.interval e.argument := by
   obtain ⟨_, c, _⟩ := e
   cases c <;>
-    simp_all [Numeral.Entry.denoteUnder, Core.Order.Comparison.over,
-      Core.Order.Comparison.interval]
+    simp_all [Numeral.Entry.denoteUnder, Degree.Comparison.over,
+      Degree.Comparison.interval]
 
 -- ============================================================================
 -- Section 4: Alternative Set ([kennedy-2015] §4.1)
 -- ============================================================================
 
 /-- [kennedy-2015]'s single alternative set — the five numeral forms (bare
-    plus four modifications) as `Core.Order.Comparison`s. The point is
+    plus four modifications) as `Degree.Comparison`s. The point is
     **anti-Horn-scale**: there is no fixed scale direction. The Class A / Class B
     split is read off asymmetric entailment (cf. `classA_excludes_bare_world`,
     `classB_includes_bare_world`), not from membership in a pre-split sublist. -/
-def kennedyAlternatives : List Core.Order.Comparison :=
+def kennedyAlternatives : List Degree.Comparison :=
   [.eq, .gt, .lt, .ge, .le]
 
 -- ============================================================================
@@ -214,7 +214,7 @@ def kennedyAlternatives : List Core.Order.Comparison :=
 /-! Class A/B is the central typological generalization ([geurts-nouwen-2007],
     [nouwen-2010]): strict modifiers (`>`, `<`) exclude the bare-numeral
     world; non-strict modifiers (`≥`, `≤`) include it. Both theorems below are
-    now corollaries of `Core.Order.Comparison.boundary_mem` (Class A/B = whether the
+    now corollaries of `Degree.Comparison.boundary_mem` (Class A/B = whether the
     comparison's interval is closed at its endpoint) via `meaning_boundary`. -/
 
 /-- **Class A excludes the bare-numeral world** (universal). A strict comparison
@@ -224,7 +224,7 @@ theorem classA_excludes_bare_world (e : Numeral.Entry) (bare : Nat → Nat → P
     (h : e.comparison.isStrict) :
     ¬ e.denoteUnder bare e.argument := by
   have hne : e.comparison ≠ .eq := by intro heq; rw [heq] at h; exact h
-  rw [e.denoteUnder_boundary bare hne, Core.Order.Comparison.boundary_mem]
+  rw [e.denoteUnder_boundary bare hne, Degree.Comparison.boundary_mem]
   exact not_not_intro h
 
 /-- **Class B includes the bare-numeral world** (universal). A non-strict
@@ -233,7 +233,7 @@ theorem classA_excludes_bare_world (e : Numeral.Entry) (bare : Nat → Nat → P
 theorem classB_includes_bare_world (e : Numeral.Entry) (bare : Nat → Nat → Prop)
     (h : ¬ e.comparison.isStrict) (hne : e.comparison ≠ .eq) :
     e.denoteUnder bare e.argument := by
-  rw [e.denoteUnder_boundary bare hne, Core.Order.Comparison.boundary_mem]
+  rw [e.denoteUnder_boundary bare hne, Degree.Comparison.boundary_mem]
   exact h
 
 /-- Bare numeral pointwise entails "at least `m`" — the `id`-specialization
@@ -382,11 +382,11 @@ end GQTBridge
 
 /-! ### Denotation of the `Numeral` object
 
-The lexical numeral object (`Core.Order.Comparison`, `Numeral.Entry`) is owned by
+The lexical numeral object (`Degree.Comparison`, `Numeral.Entry`) is owned by
 `Typology/Numeral/Basic.lean`; this section is the *semantics* side — it imports
 that object and provides its `Comparison.over` denotation, mirroring how
 `Semantics/Reference/PronounDenotation.lean` denotes the `PersonalPronoun` object.
-The denotation is **by construction** a `Core.Order.Comparison.over`, so every lemma
+The denotation is **by construction** a `Degree.Comparison.over`, so every lemma
 about `Comparison.over` transfers to every numeral entry. `Entry.denoteUnder` (the
 cardinal, theory-parameterized reading) is in Section 3. -/
 
@@ -420,7 +420,7 @@ theorem denote_at_boundary {E α : Type*} [LinearOrder α]
     (e : Numeral.Entry) (μ : E → α) (m : α) {x : E} (h : μ x = m) :
     e.denote μ m x ↔ ¬ e.comparison.isStrict := by
   show x ∈ e.comparison.over μ m ↔ ¬ e.comparison.isStrict
-  rw [Core.Order.Comparison.mem_over, ← Core.Order.Comparison.mem_interval, h,
-    Core.Order.Comparison.boundary_mem]
+  rw [Degree.Comparison.mem_over, ← Degree.Comparison.mem_interval, h,
+    Degree.Comparison.boundary_mem]
 
 end Semantics.Numerals

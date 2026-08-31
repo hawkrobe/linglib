@@ -461,7 +461,7 @@ theorem maxComparative_comp (hf : StrictMono f)
 /-- The positive form transports only as a *pair*: rescaling the measure
     commutes with membership when the threshold is rescaled too. -/
 theorem mem_ge_over_comp (hf : StrictMono f) (θ : D) (x : Entity) :
-    x ∈ Core.Order.Comparison.ge.over (f ∘ μ) (f θ) ↔ x ∈ Core.Order.Comparison.ge.over μ θ :=
+    x ∈ Degree.Comparison.ge.over (f ∘ μ) (f θ) ↔ x ∈ Degree.Comparison.ge.over μ θ :=
   hf.le_iff_le
 
 /-- With a *fixed* threshold the positive form is not natural: some
@@ -470,9 +470,9 @@ theorem mem_ge_over_comp (hf : StrictMono f) (θ : D) (x : Entity) :
     context-dependence. -/
 theorem positive_not_natural :
     ∃ f : ℚ → ℚ, StrictMono f ∧ ∃ (μ : ℚ → ℚ) (θ x : ℚ),
-      x ∈ Core.Order.Comparison.ge.over μ θ ∧ x ∉ Core.Order.Comparison.ge.over (f ∘ μ) θ := by
+      x ∈ Degree.Comparison.ge.over μ θ ∧ x ∉ Degree.Comparison.ge.over (f ∘ μ) θ := by
   refine ⟨(· - 1), fun a b h => by simpa, id, 0, 0, ?_, ?_⟩ <;>
-    simp [Core.Order.Comparison.mem_over, Core.Order.Comparison.rel]
+    simp [Degree.Comparison.mem_over, Degree.Comparison.rel]
 
 end TransportMax
 

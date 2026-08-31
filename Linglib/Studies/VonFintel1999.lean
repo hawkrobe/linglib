@@ -281,7 +281,7 @@ with classical AA to spare (it licenses strong NPIs). -/
 theorem bridge_hoeksema_gtOverSet_strawsonDE
     {Entity D : Type*} [Preorder D] (μ : Entity → D)
     (defined : Set D → Entity → Prop) :
-    IsStrawsonDE (Core.Order.Comparison.gt.overSet μ) defined :=
+    IsStrawsonDE (Degree.Comparison.gt.overSet μ) defined :=
   antitone_implies_strawsonDE _
     (Degree.gtOverSet_isAntiAdditive μ).antitone defined
 
