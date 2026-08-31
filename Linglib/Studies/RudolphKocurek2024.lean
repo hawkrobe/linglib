@@ -3,7 +3,7 @@ import Mathlib.Data.Multiset.Sort
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Core.ModelTheory.FiniteModel
 import Linglib.Core.Order.TotalPreorder
-import Linglib.Core.Order.ComparativeProbability.Systems
+import Linglib.Logic.ComparativeProbability.Systems
 import Linglib.Discourse.CommonGround
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Delineation

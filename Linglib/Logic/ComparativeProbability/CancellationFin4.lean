@@ -1,4 +1,4 @@
-import Linglib.Core.Order.ComparativeProbability.Cancellation
+import Linglib.Logic.ComparativeProbability.Cancellation
 import Linglib.Core.Order.Caratheodory
 import Linglib.Core.Order.SignVectors
 import Mathlib.Data.List.Perm.Basic

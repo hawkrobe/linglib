@@ -1,5 +1,5 @@
-import Linglib.Core.Order.ComparativeProbability.Patterns
-import Linglib.Core.Order.ComparativeProbability.Systems
+import Linglib.Logic.ComparativeProbability.Patterns
+import Linglib.Logic.ComparativeProbability.Systems
 import Mathlib.Data.Set.Card
 
 /-!

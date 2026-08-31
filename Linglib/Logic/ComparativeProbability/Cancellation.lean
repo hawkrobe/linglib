@@ -1,5 +1,5 @@
 import Linglib.Core.Order.FourierMotzkin
-import Linglib.Core.Order.ComparativeProbability.Representability
+import Linglib.Logic.ComparativeProbability.Representability
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 

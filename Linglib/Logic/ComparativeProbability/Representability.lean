@@ -1,4 +1,4 @@
-import Linglib.Core.Order.ComparativeProbability.Systems
+import Linglib.Logic.ComparativeProbability.Systems
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Tactic.FinCases

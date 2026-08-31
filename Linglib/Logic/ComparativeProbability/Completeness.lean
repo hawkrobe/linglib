@@ -1,5 +1,5 @@
-import Linglib.Core.Order.ComparativeProbability.Representability
-import Linglib.Core.Order.ComparativeProbability.CancellationFin4
+import Linglib.Logic.ComparativeProbability.Representability
+import Linglib.Logic.ComparativeProbability.CancellationFin4
 import Mathlib.Tactic.IntervalCases
 
 /-! # KPS representation and completeness theorems
