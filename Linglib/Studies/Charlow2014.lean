@@ -6,53 +6,57 @@ import Linglib.Data.Examples.Charlow2014
 /-!
 # Charlow 2014: on the semantics of exceptional scope
 
-Charlow's dissertation: exceptional scope is *side effects taking scope after
-evaluation*. Dynamic semantics (a stack-based scheme in the spirit of
-[dekker-1994]) is refactored as a monad — the State.Set monad
-`StateT (Stack E) Set`, output stacks of discourse referents plus
-nondeterminism, the `StateT` transformer of [liang-hudak-jones-1995] over `Set`
-— and scope-taking as the continuation monad over it ([wadler-1994]), with
-`ContT` Lift identified with the underlying monad's sequencing and Lower with
-its `pure`. Scope islands are constituents that must be evaluated: Reset
-([danvy-filinski-1990]) discharges quantifiers but leaves nondeterministic and
-state-changing effects intact, so indefinites, disjunctions ([rooth-partee-1982]),
-drefs of proper names and maximal drefs of dynamic quantifiers all scope out of
-islands and feed binding, obeying the Binder Roof Constraint of
-[brasoveanu-farkas-2011] ([schwarz-2001]'s example), while `every`/`no` do not
-escape. The data are `Examples.ex4_1a` through `Examples.ex5_27b`.
+This file formalizes the dissertation's account of exceptional scope as side effects taking scope
+after evaluation. Dynamic semantics in the stack-based style of [dekker-1994] is refactored as a
+monad — `StateT (Stack E) Set`, output stacks of discourse referents plus nondeterminism, the
+transformer of [liang-hudak-jones-1995] over `Set` — and scope-taking as the continuation monad
+over it ([wadler-1994]), with Lift identified with `monadLift` and Lower with `ContT.eval`. A
+scope island is a constituent that must be evaluated: `ContT.reset` ([danvy-filinski-1990])
+discharges quantifiers but leaves nondeterministic and state-changing effects intact, so
+indefinites, disjunctions ([rooth-partee-1982]), the drefs of proper names and the maximal drefs
+of dynamic quantifiers all scope out of islands and feed binding — obeying the Binder Roof
+Constraint of [brasoveanu-farkas-2011] — while *every* and *no* do not escape. The paper's
+examples are rows in `Data/Examples/Charlow2014.json`, cited from the theorems deriving them.
 
-The monadic grammar ([shan-2002]): `combine` is the thesis's overloaded monadic
-application (forward and backward, evaluating left to right), `combine_bind`
-its Rebracket theorem. The Identity, Reader, Set, Reader.Set, State and
-State.Set monads are Lean's `Id`, `ReaderT`, `Set`, `ReaderT _ Set`,
-`StateT _ Id` and `StateT _ Set`; the Focus monad (Shan's pointed powerset, for
-[rooth-1985]'s alternatives) is defined here with its monad laws. The
-continuation layer is mathlib's `ContT`, read in the tower notation of
-[barker-shan-2014]: `monadLift` is monadic Lift, `ContT.eval` Lower,
-`ContT.reset` Reset; internal Lift is `Functor.map pure` and external Lift is
-`pure` one tower level up. Continuation results are `Prop`-valued rather than
-boolean, so "`True` among the outputs" is `holds`.
+The grammar is monadic application ([shan-2002]): `combine` sequences its daughters left to
+right in any monad, and its per-monad unfoldings are the thesis's application rules — functional,
+state-sensitive, nondeterministic ([kratzer-shimoyama-2002]'s rule), and their combinations. The
+Identity, Reader, Set, Reader.Set, State and State.Set monads are Lean's `Id`, `ReaderT`, `Set`,
+`ReaderT _ Set`, `StateT _ Id` and `StateT _ Set`; the Focus monad — Shan's pointed powerset, for
+[rooth-1985]'s alternatives — is defined here with its monad laws. Continuation results are
+`Prop`-valued, so "some output is true" is `holds`. Higher-order discourse referents (towers
+stored on the stack, Ch. 5.2.4) would need an untyped stack and are not formalised; the stack is
+`List E`.
 
-Higher-order discourse referents (towers stored on the stack, Ch. 5.2.4) need an
-untyped stack and are not formalised; the stack here is `List E`.
+## Main definitions
+
+* `combine` — monadic application, the thesis's overloaded rule of use
+* `Stack`, `StateSet`, `indef`, `pro`, `dref`, `holds`, `neg`, `cond`, `det`, `every`, `no` — the
+  State.Set fragment
+* `Tower`, `liftValue`, `bindShift`, `everyDP`, `noDP`, `eval₂` — scope-takers over it
+* `distr`, `or`, `dynGQ` — distributivity, program disjunction, dynamic generalized quantifiers
+* `Focus`, `Focus.fmark`, `Focus.only`, `Focus.also` — the pointed-powerset monad
+* `ReaderSet` and its fragment — the Reader.Set rival
 
 ## Main results
 
-* `combine_bind` — Rebracket: side effects propagate in linear order regardless
-  of bracketing.
-* `dref_bind`, `bind_pro` — dref introduction and Binding in State.Set.
-* `neg_dref_indef`, `neg_pro`, `cond_dref_indef`, `every_dref_indef` — negation
-  and the operators built on it are dynamically closed for nondeterminism and
-  drefs but not for pronouns.
-* `eval_combine_monadLift` — scopal application subsumes monadic application.
-* `bindShift_monadLift`, `run_bindShift_monadLift_indef` — Bind on a lifted
-  program is dref introduction, and yields the DyS indefinite.
-* `reset_every`, `reset_indef_every`, `reset_every_indef`, `reset_every_pro` —
-  what survives evaluation: indefinites and pronouns, not quantifiers, and not
-  an indefinite an inverse-scoped quantifier discharged.
-* `exceptional_neg`, `exceptional_cond`, `exceptional_feeds_binding`,
-  `brc_derivation` — exceptional scope over negation and conditionals, feeding
-  anaphora, and the Binder Roof Constraint.
+* `combine_bind` — Rebracket: side effects propagate in linear order whatever the bracketing
+* `dref_bind`, `bind_pro` — dref introduction and binding in State.Set
+* `neg_dref_indef`, `neg_pro`, `cond_dref_indef`, `every_dref_indef` — negation and the operators
+  built on it discharge nondeterminism and drefs but not pronouns
+* `eval_combine_monadLift` — scopal application subsumes monadic application
+* `reset_every`, `reset_indef_every`, `reset_every_indef`, `reset_every_pro` — what survives
+  evaluation: indefinites and pronouns, not quantifiers, and not an indefinite an inverse-scoped
+  quantifier discharged
+* `exceptional_neg`, `exceptional_cond`, `exceptional_feeds_binding`, `brc_derivation` —
+  exceptional scope over negation and conditionals, feeding anaphora, and the Binder Roof
+  Constraint
+* `monadLift_layered`, `indef_visits_indef_layered` — selective exceptional scope via layering
+* `name_dref_inverse`, `dynGQ_neg` — name drefs and maximal drefs escape islands
+* the `LawfulMonad Focus` instance and `Focus.only_focus_layered` — the Focus monad's laws and
+  selective association with focus
+* `ReaderSet.run_monadLift` — the reckoning: Reader.Set continuations see the input stack only,
+  so the rival hosts exceptional scope but not exceptional binding
 
 ## References
 
@@ -66,17 +70,11 @@ untyped stack and are not formalised; the stack here is `List E`.
 * [brasoveanu-farkas-2011]
 * [schwarz-2001]
 * [shan-2002]
+* [shan-2004]
+* [kratzer-shimoyama-2002]
 * [barker-shan-2014]
-* `monadLift_layered` — higher-order `M (M Prop)` programs unfold post-evaluation,
-  giving selective exceptional scope.
-* `orElse_bind`, `or_pure_pure` — program disjunction and its BRC immunity.
-* `name_dref_inverse`, `dynGQ_neg` — drefs of proper names and maximal drefs
-  scope out of islands.
-* `Focus.instLawfulMonad`, `only_focus_layered` — the Focus monad and selective
-  association with focus.
-* `ReaderSet.run_monadLift`, `run_monadLift` — the StateT-vs-ReaderT reckoning:
-  Reader.Set continuations see the input stack only.
 -/
+
 
 attribute [local instance] Set.monad
 
