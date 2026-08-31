@@ -22,7 +22,7 @@ a separate concern (`Agree.applyAgree`). This is the general core: the
 
 ## Main declarations
 
-- `Probe`, `Probe.ofVis`, `Probe.indiscriminate` — the bundle and constructors.
+- `Probe`, `Probe.ofVis`, `Probe.ofAct`, `Probe.indiscriminate` — the bundle and constructors.
 - `Probe.search` / `Probe.agree` — first visible goal / that goal if active.
 - `Probe.outcome`, `Probe.Outcome` — valued vs. unvalued.
 - `Probe.Licensed`, `Probe.AllLicensed`, `allLicensed_iff` — one search
@@ -82,6 +82,11 @@ def ofVis (vis : α → Bool) : Probe α := { vis := vis }
     delivers the closest one ([halpert-2012]'s L⁰). -/
 def indiscriminate : Probe α := ofVis fun _ => true
 
+/-- A probe with no visibility condition, gated only by activity: it finds the closest
+goal and Agrees with it iff that goal is active — the Active Goal Hypothesis of
+[chomsky-2000]. -/
+def ofAct (act : α → Bool) : Probe α := { vis := fun _ => true, act := act }
+
 /-! ### Search -/
 
 /-- The goal a probe finds in an ordered goal sequence: the first
@@ -138,6 +143,15 @@ theorem agree_eq_some_iff {a : α} :
       exact ⟨rfl, hb⟩
     · rintro ⟨hb, ha⟩
       exact ⟨hb ▸ ha, hb.symm ▸ rfl⟩
+
+/-- An activity-gated probe finds the closest goal. -/
+@[simp] theorem ofAct_search (act : α → Bool) : (ofAct act).search goals = goals.head? := by
+  cases goals <;> rfl
+
+/-- An activity-gated probe Agrees with the closest goal iff that goal is active. -/
+theorem ofAct_agree_eq_some_iff {act : α → Bool} {a : α} :
+    (ofAct act).agree goals = some a ↔ goals.head? = some a ∧ act a := by
+  rw [agree_eq_some_iff, ofAct_search]; rfl
 
 /-- An inactive closest goal absorbs the probe: match without Agree. -/
 theorem agree_eq_none_of_inactive {a : α}
