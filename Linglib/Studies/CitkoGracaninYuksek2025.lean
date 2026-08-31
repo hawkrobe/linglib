@@ -167,7 +167,7 @@ structure SharedNode where
     via FreeCommMagma — see `Minimalist.merge_comm`). The first-vs-second
     conjunct distinction tracked by these fields is a *coordination-
     specific stipulation* about which conjunct hosts the shared / deleted
-    material, parallel to `BrueningAlKhalaf2020.mergeCoordSymmetry`.
+    material, on the asymmetric coordinate structure both accounts of category mismatch assume.
     Phase 2+: harmonize with [citko-2011]'s symmetric-merge
     multidominance framework, where conjunct ordering is genuinely
     a multiset operation. -/

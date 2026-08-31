@@ -1,56 +1,52 @@
 import Linglib.Features.WordOrder
-import Linglib.Syntax.Coordination
 import Linglib.Syntax.Tree.Cat
 import Linglib.Fragments.English.WordOrder
 import Mathlib.Data.Finset.Basic
 
 /-!
-# Category mismatches in coordination [bruening-alkhalaf-2020]
+# Bruening and Al Khalaf 2020: category mismatches in coordination
 
-Bruening, Benjamin & Eman Al Khalaf. 2020. Category mismatches in coordination
-revisited. *Linguistic Inquiry* 51(1). 1–36.
+Coordination is supposed to conjoin like with like, and the counterexamples fall into two kinds.
+Predicates and modifiers of different categories coordinate freely but never violate a selectional
+restriction — *Danny became a political radical and very antisocial* is fine, *and under suspicion*
+is not — because what is selected there is a supercategory that several categories belong to.
+Arguments and prenominal modifiers, by contrast, do violate selection, and only in two
+configurations: a clause coordinated with a noun phrase where clauses are banned, and one of the
+non-*ly* adverbs coordinated with an adjective phrase prenominally. Those are exactly the two that
+displacement and ellipsis also permit, so the file derives the pair from distribution rather than
+listing it.
 
-In selection-violating coordination the *linearly closest* conjunct to the
-selecting head must satisfy c-selection (§3.1): the first conjunct in VO
-complement position, the last conjunct when the coordination precedes its
-selector (subject position, OV complements, postpositions). The two rival
-percolation mechanisms — linear closeness (B&AK) and structural prominence (the
-bottom-up accounts of [munn-1993], [zhang-2010]) — are the two modes of a single
-`predictOrder`; they agree postverbally but diverge preverbally, the
-configuration that empirically distinguishes them.
-
-Only two genuine category mismatches survive in selection-violating coordination
-(§3.2): CP↔NP and non-*ly* Adverb↔Adjective, both mirroring displacement and
-ellipsis. We derive this enumeration structurally from a distributional map
-rather than stipulating it. Apparent mismatches in predication and modification
-(§2) are not violations but supercategory selection (`Pred`, `Mod`).
+The paper's mechanism is that the conjunct which has to satisfy the selectional requirement is the
+one linearly closest to the selecting head, against the rival accounts on which it is the
+structurally prominent first conjunct. The two are the same rule applied to different choices of
+conjunct, and they coincide exactly where the head precedes the coordination. English subjects and
+verb-final complements are where they part company, and the judgements there — a clause must come
+first when the coordination precedes its verb — are the linear ones.
 
 ## Main definitions
 
-* `FeaturePercolation` — which conjunct's features reach the selecting head:
-  `linear` (B&AK) vs `structural` (bottom-up).
-* `predictOrder` — conjunct-order prediction from percolation mode and verb
-  position; `linearClosenessPrediction` / `bottomUpPrediction` are its partial
-  applications.
-* `coordExtension` — extended distributional compatibility per `Cat`.
-* `Supercategory` — the `Pred` / `Mod` supercategory features over `Cat`.
+* `FeaturePercolation`, `selectedSlot` — which conjunct must satisfy selection, on each account
+* `predictOrder` — the conjunct order each account predicts at a position
+* `coordExtension` — the categories a category can also appear as, outside coordination
+* `Supercategory` — the predicative and modifier supercategories over `Cat`
 
 ## Main results
 
-* `percolation_diverges_preverbal` — the two accounts disagree preverbally.
-* `subject_position_distinguishes`, `ov_predictions_diverge` — the
-  English-subject and OV configurations that adjudicate them.
-* `coordExtension_exhaustive` — only CP and AdvP extend, deriving the two
-  permitted violations rather than stipulating them.
+* `agree_iff_head_precedes` — the accounts coincide exactly where the head precedes the
+  coordination, and diverge everywhere else
+* `english_subject_diverges`, `ov_complement_diverges` — the two configurations that adjudicate
+* `coordExtension_exhaustive`, `extension_to_violation` — only clauses and adverb phrases extend,
+  which is where the two permitted violations come from
 
 ## References
 
-[bruening-alkhalaf-2020]; the cross-linguistic OV test is [schwarzer-2026].
+* [bruening-alkhalaf-2020]
+* [munn-1993]
+* [sag-etal-1985]
+* [zhang-2010]
 -/
-
 namespace BrueningAlKhalaf2020
 
-open Syntax.Coordination (CoordSymmetry)
 open Syntax (Cat)
 open Syntax.Cat (NP VP AdjP AdvP PP)
 open WordOrder
@@ -68,96 +64,56 @@ inductive ConjunctOrder where
 -- `VerbPosition` and the `OVOrder → Option VerbPosition` projection
 -- live in `WordOrder` substrate; consumed via `open` above.
 
-/-! ### Feature percolation and the directionality principle -/
+/-! ### Which conjunct must satisfy selection -/
 
-/-- How selectional features percolate through &P to the selecting head.
+/-- A conjunct's position in the coordination. -/
+inductive ConjunctSlot where
+  /-- The specifier conjunct. -/
+  | first
+  /-- The complement conjunct. -/
+  | last
+  deriving DecidableEq, Repr
 
-    The competing analyses of selection-violating coordination disagree on a
-    single parameter: which conjunct's categorial features are visible to the
-    selecting head. This parameter determines conjunct-order preferences as a
-    function of surface position. -/
+/-- Which conjunct's features reach the selecting head. The accounts differ in this alone. -/
 inductive FeaturePercolation where
-  /-- Features percolate from the structurally prominent (spec) position.
-      The first conjunct always determines &P's categorial features, regardless
-      of surface position relative to the verb.
-      Analyses: [munn-1993], [zhang-2010]. -/
+  /-- The features of the structurally prominent conjunct, whatever the surface order
+      ([munn-1993], [zhang-2010]). -/
   | structural
-  /-- Features percolate from the linearly closest conjunct to the selecting
-      head. Which conjunct is closest depends on surface position relative to
-      the verb. Analysis: [bruening-alkhalaf-2020]. -/
+  /-- The features of the conjunct linearly closest to the selecting head. -/
   | linear
   deriving DecidableEq, Repr
 
-/-- Derive conjunct order preference from feature percolation mechanism.
+/-- The conjunct adjacent to the selecting head: the first when the head precedes the coordination,
+the last when it follows it. -/
+def adjacent : VerbPosition → ConjunctSlot
+  | .postverbal => .first
+  | .preverbal => .last
 
-    The core principle: the conjunct whose features percolate to &P must satisfy
-    c-selection (= must be the DP). The percolation mechanism determines *which*
-    conjunct that is:
+/-- The conjunct that has to satisfy the head's selectional requirement: the adjacent one on the
+linear account, the prominent one — always the first — on the structural account. -/
+def selectedSlot : FeaturePercolation → VerbPosition → ConjunctSlot
+  | .linear, pos => adjacent pos
+  | .structural, _ => .first
 
-    - **Structural**: spec (= first conjunct) → always DP-first
-    - **Linear**: closest to V → DP-first postverbally, CP-first preverbally -/
+/-- The order predicted for a coordination of a selected noun phrase with a clause: the noun phrase
+takes the selected slot, so the clause takes the other. -/
 def predictOrder (fp : FeaturePercolation) (pos : VerbPosition) : ConjunctOrder :=
-  match fp with
-  | .structural => .dpFirst
-  | .linear => match pos with
-    | .postverbal => .dpFirst
-    | .preverbal  => .cpFirst
+  match selectedSlot fp pos with
+  | .first => .dpFirst
+  | .last => .cpFirst
 
-/-- Structural percolation is position-invariant: the structurally prominent
-    conjunct is always first, regardless of surface order. -/
-theorem structural_position_invariant (pos₁ pos₂ : VerbPosition) :
-    predictOrder .structural pos₁ = predictOrder .structural pos₂ := rfl
-
-/-- Linear percolation is position-dependent: preverbal and postverbal yield
-    different predictions. -/
-theorem linear_position_dependent :
-    predictOrder .linear .preverbal ≠ predictOrder .linear .postverbal := by decide
-
-/-- The two percolation mechanisms agree in postverbal position: both predict
-    DP-first when V precedes the coordination. -/
-theorem percolation_agrees_postverbal :
-    predictOrder .structural .postverbal = predictOrder .linear .postverbal := rfl
-
-/-- The two percolation mechanisms diverge in preverbal position: structural
-    predicts DP-first, linear predicts CP-first. This is the configuration that
-    empirically distinguishes the accounts. -/
-theorem percolation_diverges_preverbal :
-    predictOrder .structural .preverbal ≠ predictOrder .linear .preverbal := by decide
-
-/-- **Linear closeness prediction** (B&AK's core claim, §3.1): the linearly
-    closest conjunct to the selecting head must satisfy c-selection.
-
-    In VO complement position: V [&P X and Y] → X is closest → DP-first.
-    In OV complement position: [&P X and Y] V → Y is closest → CP-first
-    (so DP is last, verb-adjacent).
-
-    This also applies to English subject position (preverbal even in VO) and
-    postpositions (selecting head follows coordination).
-
-    Derived from `predictOrder` with linear percolation. -/
-def linearClosenessPrediction : VerbPosition → ConjunctOrder :=
-  predictOrder .linear
-
-/-- **Bottom-up prediction** (competitor account, §3.1): asymmetric &P structure
-    makes the first conjunct structurally more prominent. The selected DP must
-    be first, regardless of surface position relative to the verb.
-
-    Analyses: [munn-1993], [zhang-2010].
-
-    Derived from `predictOrder` with structural percolation. -/
-def bottomUpPrediction : VerbPosition → ConjunctOrder :=
-  predictOrder .structural
+/-- **The accounts coincide exactly where the head precedes the coordination**, since only there is
+the adjacent conjunct the prominent one. Everywhere else — an English subject, a verb-final
+complement, a postpositional complement — they make opposite predictions. -/
+theorem agree_iff_head_precedes (pos : VerbPosition) :
+    predictOrder .structural pos = predictOrder .linear pos ↔ pos = .postverbal := by
+  cases pos <;> simp [predictOrder, selectedSlot, adjacent]
 
 /-! ### Permitted selection violations -/
 
-/-- B&AK identify exactly two category mismatches that are permitted in
-    selection-violating coordination (§3.2).
-
-    These parallel the categories that allow displacement and ellipsis:
-    1. CP↔NP: CPs can appear in NP positions (also seen in topicalization,
-       pseudoclefts, "do so" replacement)
-    2. Non-*ly* Adv↔Adj: manner adverbs without *-ly* can appear in adjective
-       positions (also seen in prenominal modification) -/
+/-- The two category mismatches a coordination may use to violate selection. Both are mismatches
+that displacement and ellipsis also permit: a clause has the distribution of a noun phrase under
+topicalization and pseudoclefting, and a non-*ly* adverb has that of an adjective prenominally. -/
 inductive SelectionViolationType where
   /-- CP appearing in an NP-selecting position. -/
   | cpAsNp
@@ -165,107 +121,41 @@ inductive SelectionViolationType where
   | advAsAdj
   deriving DecidableEq, Repr
 
-/-- The exhaustive list of permitted violations, justified structurally by
-    `coordExtension_exhaustive`: only CP and AdvP have non-empty extensions.
-    See `violation_from_extension` and `extension_to_violation` for the
-    bidirectional correspondence. -/
-def permittedViolations : List SelectionViolationType :=
-  [.cpAsNp, .advAsAdj]
+/-! ### The configurations that adjudicate -/
 
-theorem exactly_two_violations : permittedViolations.length = 2 := rfl
-
-/-! ### English VO complement position -/
-
-/-- English is VO: complements follow the selecting verb. -/
-theorem english_is_vo : English.wordOrder.ovOrder = .vo := rfl
-
-/-- English complement position maps to postverbal. -/
+/-- English complements follow the verb. -/
 theorem english_complement_postverbal :
     OVOrder.verbPosition English.wordOrder.ovOrder = some .postverbal := rfl
 
-/-- B&AK predict DP-first in English complement position: the first conjunct is
-    closest to V.
+/-- With the head preceding, both accounts predict the selected noun phrase first, and that is what
+is found: *you can depend on my assistant and that he will be on time* ((3a), from
+[sag-etal-1985]). -/
+theorem english_complement_agree :
+    predictOrder .structural .postverbal = predictOrder .linear .postverbal :=
+  (agree_iff_head_precedes .postverbal).mpr rfl
 
-      You can depend on [NP my assistant] and [CP that he will
-      be on time]. ✓
+/-- An English subject precedes the verb even though complements follow it, so the accounts part
+company there. The judgement is the linear one: *that he was late all the time and his constant
+harassment of coworkers resulted in his being dismissed* is good and the reverse order is not
+((41)). The same holds of a complement of a postposition, which likewise precedes its head
+(*that she got third place and her injury in the final round notwithstanding*, (43)). -/
+theorem english_subject_diverges :
+    predictOrder .structural .preverbal ≠ predictOrder .linear .preverbal := by
+  simpa using (agree_iff_head_precedes .preverbal).not.mpr (by simp)
 
-    [bruening-alkhalaf-2020]'s (3a), from [sag-etal-1985] (1985:165). -/
-theorem bak_english_complement :
-    linearClosenessPrediction .postverbal = .dpFirst := rfl
-
-/-- Bottom-up also predicts DP-first for English VO complements. Both accounts
-    agree for this configuration. -/
-theorem accounts_agree_complement :
-    linearClosenessPrediction .postverbal = bottomUpPrediction .postverbal := rfl
-
-/-! ### English subject position: the distinguishing case
-
-B&AK's strongest within-English evidence for closeness over first-conjunct
-prominence (§3.1, their (41)):
-
-  (41a)  [CP That he was late all the time] and
-         [NP his constant harassment of coworkers]
-         resulted in his being dismissed.                          ✓
-
-  (41b) *[NP His constant harassment of coworkers] and
-         [CP that he was late all the time]
-         resulted in his being dismissed.                          ✗
-
-When coordination is in subject position, it precedes the verb even in English
-VO. The last conjunct is closest to V. B&AK predict the NP must be last
-(closest), giving CP-first order. Bottom-up accounts predict DP-first
-regardless — wrong for this configuration.
--/
-
-/-- B&AK predict CP-first in subject position: the last conjunct is closest to
-    V, so the DP must be last. -/
-theorem bak_subject_cpFirst :
-    linearClosenessPrediction .preverbal = .cpFirst := rfl
-
-/-- Bottom-up predicts DP-first even in subject position. -/
-theorem bottomUp_subject_dpFirst :
-    bottomUpPrediction .preverbal = .dpFirst := rfl
-
-/-- Subject position distinguishes the two accounts within a single language
-    (English). B&AK argue this is decisive evidence for closeness over
-    structural prominence. -/
-theorem subject_position_distinguishes :
-    linearClosenessPrediction .preverbal ≠ bottomUpPrediction .preverbal := by
-  decide
-
-/-! ### Cross-linguistic predictions -/
-
-/-- For OV languages, B&AK predict CP-first: complements precede V, so the last
-    conjunct is closest. The DP must be last → CP-first. -/
-theorem bak_predicts_cpFirst_ov :
-    (OVOrder.verbPosition .ov).map linearClosenessPrediction = some .cpFirst := rfl
-
-/-- For VO languages, B&AK predict DP-first. -/
-theorem bak_predicts_dpFirst_vo :
-    (OVOrder.verbPosition .vo).map linearClosenessPrediction = some .dpFirst := rfl
-
-/-- OV is the cross-linguistic test case. Bottom-up and B&AK diverge on OV
-    complement order.
-
-    [schwarzer-2026] tests this with German and finds DP-first (~77%),
-    supporting bottom-up over B&AK for OV complement position. -/
-theorem ov_predictions_diverge :
-    (OVOrder.verbPosition .ov).map linearClosenessPrediction ≠
-    (OVOrder.verbPosition .ov).map bottomUpPrediction := by
-  decide
+/-- A verb-final language puts every complement before its verb, so the accounts diverge there
+too — the cross-linguistic version of the subject test. -/
+theorem ov_complement_diverges :
+    (OVOrder.verbPosition .ov).map (predictOrder .structural)
+      ≠ (OVOrder.verbPosition .ov).map (predictOrder .linear) := by
+  simp [OVOrder.verbPosition, predictOrder, selectedSlot, adjacent]
 
 /-! ### Supercategories -/
 
-/-- B&AK's supercategory features unify apparent category mismatches that are
-    not true selection violations.
-
-    **Pred**: NP, VP, AP, PP can all serve as predicates. A verb like *become*
-    selects the supercategory Pred — specifically NP and AP, *not* PP (§2,
-    their (1), (34)); selection is finer-grained than the supercategory that
-    coordination cares about.
-
-    **Mod**: AP, AdvP can both modify. Prenominal position selects Mod, not
-    specifically Adj. -/
+/-- The supercategories a position may select, under which apparently mismatched predicates and
+modifiers turn out to be alike. Selection is finer-grained than the supercategory coordination
+cares about: *become* selects predicates but admits only noun and adjective phrases, so
+*became a political radical and under suspicion* is still out ((1)). -/
 inductive Supercategory where
   /-- Predicative: NP, VP, AP, PP can all serve as predicates. -/
   | pred
@@ -282,12 +172,8 @@ def Supercategory.cats : Supercategory → Finset Cat
   | .pred => {NP, VP, AdjP, PP}
   | .mod  => {AdjP, AdvP}
 
-/-- AP belongs to both supercategories. -/
-theorem adjp_in_pred : AdjP ∈ Supercategory.cats .pred := by decide
-
-theorem adjp_in_mod : AdjP ∈ Supercategory.cats .mod := by decide
-
-/-- Pred and Mod overlap at exactly AP. -/
+/-- The two supercategories overlap in the adjective phrase alone, which is why an adjective is
+the category that can be coordinated both with a predicate and with a modifier. -/
 theorem supercats_overlap :
     Supercategory.cats .pred ∩ Supercategory.cats .mod = {AdjP} := by decide
 
@@ -352,66 +238,5 @@ theorem extension_to_violation (c : Cat) (h : coordExtension c ≠ ∅) :
   rcases coordExtension_exhaustive c h with rfl | rfl
   · exact ⟨.cpAsNp, rfl⟩
   · exact ⟨.advAsAdj, rfl⟩
-
-/-! ### Structural assumptions and coordination symmetry
-
-B&AK's derivation (§4.3) builds the *syntax* left-to-right rather than bottom-up,
-with feature checking at &P using the linearly closest conjunct. They accept
-asymmetric &P structure — the same assumption as the bottom-up accounts — and
-disagree only about the *mechanism* deriving predictions from it: linear
-closeness (B&AK) vs structural prominence (bottom-up). Both accept
-`CoordSymmetry.asymmetric`, but only the bottom-up account's predictions
-*require* it.
--/
-
-/-- Coordination structure as adopted by both B&AK and the bottom-up accounts is
-    asymmetric: the first conjunct (specifier) is structurally more prominent
-    than the second (§4.3, their (82)–(83)).
-
-    Under [marcolli-chomsky-berwick-2025] nonplanar Merge, `merge x y` and
-    `merge y x` are strictly equal (Merge is commutative on the syntactic-object
-    carrier), so this asymmetry can no longer be grounded in Merge structure; it
-    survives only as a stipulation on the Coord head, or as a consequence of
-    Externalization (LCA / head directionality). The stipulation is load-bearing
-    only for the bottom-up alternatives; B&AK's own closeness mechanism is
-    linear-order-side and does not require it. -/
-def mergeCoordSymmetry : CoordSymmetry := .asymmetric
-
-/-- Despite assuming asymmetric structure, B&AK's closeness prediction is
-    position-dependent: preverbal and postverbal yield different orders. -/
-theorem closeness_is_position_dependent :
-    linearClosenessPrediction .preverbal ≠
-    linearClosenessPrediction .postverbal := by decide
-
-/-- Bottom-up accounts derive position-invariant predictions from the same
-    asymmetric structure: always DP-first. -/
-theorem bottomUp_is_position_invariant :
-    bottomUpPrediction .preverbal = bottomUpPrediction .postverbal := rfl
-
-/-- Structural percolation presupposes asymmetric coordination: there must be a
-    structurally prominent (spec) position for features to percolate from. Linear
-    percolation requires no particular structural assumption — closeness is
-    defined over surface strings, not tree structure. -/
-def FeaturePercolation.requiredSymmetry : FeaturePercolation → Option CoordSymmetry
-  | .structural => some .asymmetric
-  | .linear => none
-
-/-- Both accounts adopt asymmetric structure, but only the bottom-up account's
-    predictions *require* it. B&AK's closeness mechanism would make the same
-    predictions under symmetric structure. -/
-theorem structural_requires_asymmetric :
-    FeaturePercolation.requiredSymmetry .structural = some mergeCoordSymmetry ∧
-    FeaturePercolation.requiredSymmetry .linear = none :=
-  ⟨rfl, rfl⟩
-
-/-! ### Postposition data
-
-B&AK extend the closeness analysis to postpositions (§3.1, their (43)). When the
-selecting head is a postposition (e.g. *notwithstanding*), the coordination
-precedes it, so the last conjunct is closest and must satisfy selection (= be
-the NP), giving CP-first order — as in subject position and OV complements.
-Formally the postposition case reduces to `VerbPosition.preverbal`
-(cf. `bak_subject_cpFirst`).
--/
 
 end BrueningAlKhalaf2020
