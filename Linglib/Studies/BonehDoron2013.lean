@@ -55,8 +55,8 @@ and [pancheva-2003]'s final-subinterval perfect.
 namespace BonehDoron2013
 
 open Quantification
-open Semantics.Genericity (Situation traditionalGEN)
-open Semantics.Aspect (Perfectivity IntervalPred IMPF)
+open Genericity (Situation traditionalGEN)
+open Aspect (Perfectivity IntervalPred IMPF)
 open Modality.Kratzer (ModalBase accessibleWorlds)
 
 /-! ### Hab against Gen ((4)–(8), (13)–(15))

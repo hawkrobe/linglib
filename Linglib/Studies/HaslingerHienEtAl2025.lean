@@ -54,9 +54,9 @@ namespace HaslingerHienEtAl2025
 
 open Quantification.UnifiedUniversal
 open Quantification.ONEModifiers
-open Semantics.Plurality
-open Semantics.Plurality.Distributivity
-open Semantics.Plurality.Trivalent
+open Plurality
+open Plurality.Distributivity
+open Plurality.Trivalent
 open _root_.Mereology
 
 /-! ### Cross-linguistic typology

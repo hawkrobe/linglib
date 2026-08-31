@@ -28,7 +28,7 @@ necessity (∀w' ∈ Best(f+α, ∅, w). β(w')) equals the strict conditional
 
 -/
 
-namespace Semantics.Conditionals.Restrictor
+namespace Conditionals.Restrictor
 
 open Modality.Kratzer
 
@@ -173,4 +173,4 @@ theorem conditionalNecessity_iff_mem_strictImp
     w ∈ strictImp (accessibleWorlds f) {w' | α w'} {w' | β w'} :=
   (restrictor_eq_strict f α β w).trans mem_strictImp_forall.symm
 
-end Semantics.Conditionals.Restrictor
+end Conditionals.Restrictor

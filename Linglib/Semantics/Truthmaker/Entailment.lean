@@ -46,7 +46,7 @@ which `BoxAt` cannot.
 
 -/
 
-namespace Semantics.Truthmaker
+namespace Truthmaker
 
 
 -- ════════════════════════════════════════════════════
@@ -155,4 +155,4 @@ theorem not_isSubsumedBy_tmOr_intro_general :
   cases ht
   exact absurd hle (by decide)
 
-end Semantics.Truthmaker
+end Truthmaker

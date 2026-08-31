@@ -54,7 +54,7 @@ namespace AghaJeretic2022
 
 open Trivalent (Prop3 dist dist_eq_true_iff dist_eq_false_iff dist_eq_indet_iff
   dist_not_of_nonempty)
-open Semantics.Homogeneity Quantification Data.Examples
+open Homogeneity Quantification Data.Examples
 open Generalizations.HomogeneityGap (GapDatum GapScenario fromExample)
 open Features (Polarity)
 

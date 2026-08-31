@@ -53,9 +53,9 @@ The DCR→SDA trajectory supports homogeneity-based accounts
 namespace ZaniCiardelliSanfelici2026
 
 open Trivalent (ProjectionType)
-open Semantics.Conditionals (SimilarityOrdering)
-open Semantics.Conditionals.Counterfactual (universalCounterfactual)
-open Semantics.Conditionals.Counterfactual (Distributive homogeneity)
+open Conditionals (SimilarityOrdering)
+open Conditionals.Counterfactual (universalCounterfactual)
+open Conditionals.Counterfactual (Distributive homogeneity)
 
 
 -- ============================================================

@@ -40,7 +40,7 @@ probability layer.
 
 namespace Semantics.Montague.BayesianSemantics
 
-open Semantics.Probabilistic
+open Probabilistic
 open scoped ENNReal
 
 -- Example: Threshold Predicates (Lassiter & Goodman Style)

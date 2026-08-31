@@ -36,7 +36,7 @@ substrate that defines `bindingCond`, `reciprocityCond`,
 `groupIdentityCond`.
 -/
 
-namespace Semantics.Reference.PluralityLicensing
+namespace Reference.PluralityLicensing
 
 open PPCDRT
 
@@ -155,4 +155,4 @@ theorem binding_compatible_with_singleton (e : E) (uAnaph uAnt : Nat) :
   · subst h; rfl
   · simp [PartialAssign.update_at, h]
 
-end Semantics.Reference.PluralityLicensing
+end Reference.PluralityLicensing

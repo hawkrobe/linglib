@@ -45,8 +45,8 @@ portions, and measured parts.
 namespace Moon2026
 
 open Mereology
-open Semantics.Aspect.Incremental (IsSincVerb)
-open Semantics.Aspect.Cumulativity (VP)
+open Aspect.Incremental (IsSincVerb)
+open Aspect.Cumulativity (VP)
 
 /-! ### Mereotopology -/
 

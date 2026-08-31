@@ -61,7 +61,7 @@ the SOE conflicting with common knowledge (§8.7).
 
 namespace DelPrete2013
 
-open Semantics.Aspect (Perfectivity)
+open Aspect (Perfectivity)
 
 -- ═══ Reading Types ═══
 

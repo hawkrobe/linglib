@@ -26,7 +26,7 @@ under conjunction needs two further principles, that the content of a sum is the
 intersection of the contents and that one holder's believings are closed under sum
 (`believes_inter`); without them belief need not close (`not_believes_inter`). Finally, the
 paper's refinement of informational parthood to Fine's conjunctive parthood on alternative
-sets is `Semantics.Truthmaker.IsContentPart`, and its witness that disjunction introduction
+sets is `Truthmaker.IsContentPart`, and its witness that disjunction introduction
 fails — *Jessica married an American linguist* does not make *Jessica married a linguist or
 a philosopher* a conjunctive part — is `not_isContentPart_disjunction`.
 
@@ -240,7 +240,7 @@ theorem not_believes_inter :
 
 /-! ### Conjunctive parthood -/
 
-open Semantics.Truthmaker (IsContentPart)
+open Truthmaker (IsContentPart)
 
 /-- A singleton `{q}` is a content part of `p` only if `q` lies below every `p`-element. -/
 theorem not_isContentPart_singleton {α : Type*} [Preorder α] {q q' : α} {p : α → Prop}

@@ -212,12 +212,12 @@ theorem isFelicitousWith_past_imp_upperLimitConstraint
     Lewis."
 
     Heim's "suitable" set of time-concepts IS the substrate's
-    `Semantics.Reference.Acquaintance.Cover` at the appropriate
+    `Reference.Acquaintance.Cover` at the appropriate
     instantiation `Idx := Index W T`, `Res := T`. Membership
     `c ∈ cov` is the suitability predicate directly — no separate
     `IsSuitable` wrapper is needed. -/
 abbrev SuitableTimeCover (W T : Type*) :=
-  Semantics.Reference.Acquaintance.Cover (Index W T) T
+  Reference.Acquaintance.Cover (Index W T) T
 
 /-- **Pullback preserves cover exhaustiveness**: if `cov` is a
     suitability cover for Heim time-concepts that exhaustively
@@ -232,7 +232,7 @@ abbrev SuitableTimeCover (W T : Type*) :=
 theorem toSubstrate_image_isExhaustiveOn {W E P T : Type*}
     {cov : SuitableTimeCover W T} {dom : Set T}
     (h : cov.isExhaustiveOn dom) :
-    Semantics.Reference.Acquaintance.Cover.isExhaustiveOn
+    Reference.Acquaintance.Cover.isExhaustiveOn
       ((fun c : TimeConcept W T =>
         toSubstrate (E := E) (P := P) c) '' cov) dom := by
   intro k r hr

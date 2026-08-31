@@ -41,7 +41,7 @@ Given `Q : Question W` and a world `w : W`:
   by applying the exhaustification operator Exh to alternatives. Stub.
 -/
 
-namespace Semantics.Questions.Exhaustivity
+namespace Questions.Exhaustivity
 
 universe u
 variable {W : Type u}
@@ -481,4 +481,4 @@ def IsExhaustivelyResolvable.decidable_polar {p : Set W}
     Decidable (IsExhaustivelyResolvable (polar p) w) :=
   isTrue (isExhaustivelyResolvable_polar_of_nontrivial hne hnu w)
 
-end Semantics.Questions.Exhaustivity
+end Questions.Exhaustivity

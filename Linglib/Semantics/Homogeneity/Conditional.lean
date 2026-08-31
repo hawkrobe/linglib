@@ -10,7 +10,7 @@ plural quantifies over atoms, conditional excluded middle is the
 homogeneity gap, and *necessarily* is the gap remover, as *all* is for
 plurals (`Homogeneity.Plural`). `bareConditional` computes the same
 three-valued truth value as `selectionalCounterfactual` in
-`Semantics.Conditionals.Counterfactual` (see
+`Conditionals.Counterfactual` (see
 `selectional_as_supervaluation`); the two differ only in input
 representation.
 
@@ -27,7 +27,7 @@ representation.
   Conditionals*][von-fintel-1999]
 -/
 
-namespace Semantics.Homogeneity
+namespace Homogeneity
 
 open Trivalent (Prop3)
 open Semantics.Supervaluation (superTrue superTrue_true_iff)
@@ -74,4 +74,4 @@ theorem necessarily_prevents_nonmax (q : QUD W) (w : W)
   simp only [bareConditional, dif_pos hne] at hCondTrue
   exact (superTrue_true_iff Q ⟨closestPWorlds w, hne⟩).mp hCondTrue
 
-end Semantics.Homogeneity
+end Homogeneity

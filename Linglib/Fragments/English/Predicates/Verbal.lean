@@ -28,7 +28,7 @@ open Features
 open ArgumentStructure
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Core.Order (Boundedness)
-open Semantics.Aspect.Incremental (VerbIncClass)
+open Aspect.Incremental (VerbIncClass)
 open ArgumentStructure
 open ArgumentStructure
 

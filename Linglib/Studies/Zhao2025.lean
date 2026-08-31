@@ -64,7 +64,7 @@ namespace Zhao2025
 
 open Features
 open Mandarin.AspectComparison
-open Semantics.Aspect
+open Aspect
 
 /-! ### Mandarin particle licensing -/
 

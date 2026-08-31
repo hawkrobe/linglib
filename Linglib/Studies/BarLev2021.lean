@@ -41,7 +41,7 @@ non-distributive extension of §8 is not formalized.
 
 namespace BarLev2021
 
-open Exhaustification Semantics.Plurality.Implicature
+open Exhaustification Plurality.Implicature
 
 variable {Atom W : Type*} {D x : Finset Atom} {P : Atom → W → Prop}
 

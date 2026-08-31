@@ -60,10 +60,10 @@ uses `Finset (Finset α)` for the partition witness.
   among schemes given context.
 -/
 
-namespace Semantics.Plurality.Reciprocal
+namespace Plurality.Reciprocal
 
-open Semantics.Plurality
-open Semantics.Plurality.Cumulativity
+open _root_.Plurality
+open _root_.Plurality.Cumulativity
 
 variable {A : Type*}
 
@@ -530,4 +530,4 @@ theorem PairwiseConfig.partitionedStrong {R : A → A → Prop} {X : Finset A}
   exact ⟨P, fun Y hY => (hcells Y hY).2, hcover,
     fun Y hY x hx y hy hne => (hiff x y).mpr ⟨Y, hY, hx, hy, hne.symm⟩⟩
 
-end Semantics.Plurality.Reciprocal
+end Plurality.Reciprocal

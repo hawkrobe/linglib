@@ -43,7 +43,7 @@ glosses stacked *po-* as DLMT, the analyses here follow her own labels
 
 namespace Istratkova2004
 
-open Semantics.Aspect (Perfectivity)
+open Aspect (Perfectivity)
 open Verb (Stem)
 open Svenonius2004 (Analysis WellStacked)
 open Bulgarian.Verbs

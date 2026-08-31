@@ -31,7 +31,7 @@ the referent is the agent of an embedded context but NOT the actual speaker.
   condition
 -/
 
-namespace Semantics.Reference.PersonFeatures
+namespace Reference.PersonFeatures
 
 open Semantics.Context
 
@@ -158,4 +158,4 @@ theorem speaker_not_logophoric [BEq E] [LawfulBEq E]
     DepthSpec.origin_resolve, ContextTower.contextAt_zero,
     beq_self_eq_true, Bool.not_true, Bool.and_false]
 
-end Semantics.Reference.PersonFeatures
+end Reference.PersonFeatures

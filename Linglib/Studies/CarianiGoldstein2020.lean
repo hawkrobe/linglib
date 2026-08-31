@@ -36,8 +36,8 @@ not yet present in linglib and are left as future work.
 
 namespace CarianiGoldstein2020
 
-open Semantics.Conditionals (SimilarityOrdering)
-open Semantics.Conditionals.Counterfactual (homogeneity)
+open Conditionals (SimilarityOrdering)
+open Conditionals.Counterfactual (homogeneity)
 
 
 -- ════════════════════════════════════════════════════

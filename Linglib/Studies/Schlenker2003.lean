@@ -149,7 +149,7 @@ theorem fixity_world_only (p : W → Prop) :
 
 /-! ### Shifted indexicals -/
 
-open Semantics.Reference.Kaplan (pronI_access pronI_shift_invariant)
+open Reference.Kaplan (pronI_access pronI_shift_invariant)
 
 /-- English *I* is invariant under the attitude shift used by
     `ContextBox` — it resolves to the origin agent (the actual
@@ -161,8 +161,8 @@ theorem english_I_invariant
   pronI_shift_invariant t (attitudeShift holder w')
 
 
-open Semantics.Reference.ShiftedIndexicals (amharic_pronI)
-open Semantics.Reference.Kaplan (pronI_access)
+open Reference.ShiftedIndexicals (amharic_pronI)
+open Reference.Kaplan (pronI_access)
 
 -- ════════════════════════════════════════════════════════════════
 -- § Concrete Setup
@@ -294,7 +294,7 @@ theorem bridge_english_invariant :
 -- § Person Features: Logophoric Pronouns
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Reference.PersonFeatures
+open Reference.PersonFeatures
 
 /-- Bob is logophoric under the attitude shift: he is +author(local)
     (agent of the embedded context) but −author* (not the actual

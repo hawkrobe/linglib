@@ -31,7 +31,7 @@ The lemmas are stated over an arbitrary `Set W`, so all three are instances.
 * `negRaising_iff_forceCollapse` — the two faces coincide.
 -/
 
-namespace Semantics.Homogeneity
+namespace Homogeneity
 
 variable {W : Type*}
 
@@ -102,4 +102,4 @@ example {α : Type*} (cookies : Set α) (hne : cookies.Nonempty) :
       cookies.Subsingleton :=
   forceCollapse_iff_subsingleton hne
 
-end Semantics.Homogeneity
+end Homogeneity

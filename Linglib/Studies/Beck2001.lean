@@ -51,7 +51,7 @@ comparison); the trivalent divergence from [sternefeld-1998] in
 
 namespace Beck2001
 
-open Semantics.Plurality.Reciprocal
+open Plurality.Reciprocal
 
 variable {α : Type*}
 

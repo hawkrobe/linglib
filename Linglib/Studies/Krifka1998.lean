@@ -51,8 +51,8 @@ namespace Krifka1998
 open Features
 open _root_.Mereology
 open ArgumentStructure (IsCumThetaVerb)
-open Semantics.Aspect.Incremental (SINC IsSincVerb)
-open Semantics.Aspect.Cumulativity (VP cum_propagation qua_propagation)
+open Aspect.Incremental (SINC IsSincVerb)
+open Aspect.Cumulativity (VP cum_propagation qua_propagation)
 open Spatial (Trace)
 
 variable {α β : Type*}
@@ -227,7 +227,7 @@ def SMR [SemilatticeSup α] [SemilatticeSup β]
 /-- K98 §4.3 eq. 71: smallest θ-extension closed under precedence-respecting sums. -/
 abbrev MovementClosure [SemilatticeSup α] [SemilatticeSup β]
     (precedes : β → β → Prop) (θ' : α → β → Prop) : α → β → Prop :=
-  Semantics.Aspect.PrecedenceClosure precedes θ'
+  Aspect.PrecedenceClosure precedes θ'
 
 /-- K98 §4.3 eq. 71 MR (TANG_H-free): θ is the `MovementClosure` of some SMR θ'. -/
 def MR [SemilatticeSup α] [SemilatticeSup β]
@@ -245,8 +245,8 @@ theorem mr_of_smr [SemilatticeSup α] [SemilatticeSup β]
     (hClosed : ∀ x1 x2 e1 e2, θ x1 e1 → θ x2 e2 → precedes e1 e2 →
                θ (x1 ⊔ x2) (e1 ⊔ e2)) :
     MR adjα adjβ precedes isPath θ :=
-  ⟨θ, h, fun x e => ⟨Semantics.Aspect.PrecedenceClosure.base,
-    fun hcl => Semantics.Aspect.PrecedenceClosure.closure_subset
+  ⟨θ, h, fun x e => ⟨Aspect.PrecedenceClosure.base,
+    fun hcl => Aspect.PrecedenceClosure.closure_subset
       (fun _ _ h => h) hClosed hcl⟩⟩
 
 end K98PropositionalSubstrate

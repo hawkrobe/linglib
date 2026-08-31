@@ -52,7 +52,7 @@ do); see the per-field docstrings of `IsTooFelicitous`.
 
 namespace Thomas2026
 
-open Question Semantics.Questions.Probabilistic
+open Question Questions.Probabilistic
 
 variable {W : Type*} {μ : PMF W}
   {prejacent antecedent : Set W} {rq : Question W}
@@ -161,7 +161,7 @@ caller to exhibit. -/
 
 namespace Thomas2026.Witness
 
-open Question Semantics.Questions.Probabilistic
+open Question Questions.Probabilistic
 open scoped ENNReal
 
 abbrev W := Fin 3

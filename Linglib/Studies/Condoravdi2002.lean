@@ -42,7 +42,7 @@ Present and for the Past. In D. Beaver, S. Kaufmann, B. Clark, & L. Casillas
 namespace Condoravdi2002
 
 open Features (Dynamicity)
-open Semantics.Aspect
+open Aspect
 open HistoricalAlternatives
 open Modality (TemporalPerspective TemporalOrientation)
 

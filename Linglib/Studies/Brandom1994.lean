@@ -3,230 +3,240 @@ import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.CommonGround
 
 /-!
-# Brandom 1994: Scorekeeping Model of Assertion
+# Brandom 1994: deontic scorekeeping
 
-[brandom-1994] [brandom-1983]
+This file formalizes the scorekeeping model of assertion in [brandom-1994]. A discursive score
+records two deontic statuses for each interlocutor, commitment and entitlement, and the content of
+a claim is its role in three broadly inferential structures: what follows from it
+commitment-preservingly, what it entitles, and what it rules out — committive inferences,
+permissive inferences, and incompatibilities.
 
-Models assertion as a move in a normative scorekeeping game. Each
-participant tracks a "scorecard" for every other participant, recording
-two kinds of normative status:
+Entitlement has a default and challenge structure. Attributing a commitment normally carries an
+attribution of entitlement along with it, and asserting authorizes others to re-assert, so a
+hearer's entitlement may be inherited by deferral to the speaker; a challenge withdraws the default
+without withdrawing the commitment. Because the two statuses answer to different inferential
+relations, a scorecard can carry commitment without entitlement, and two scorekeepers can disagree
+about a third party's score.
 
-- **Commitments**: what the agent has publicly committed to
-- **Entitlements**: what the agent is entitled to assert (has reasons for)
+## Main definitions
 
-The key insight: entitlements have no analog in Stalnaker's model.
-A speaker can be committed to p without being entitled to p (assertion
-without adequate grounds) or entitled to p without being committed
-(possessing evidence but not having asserted).
+* `InferentialRole` — the committive, permissive and incompatibility relations
+* `CommittedTo`, `EntitledTo` — the two statuses, closed under their own consequence relations
+* `assert`, `challenge`, `defer` — the scorekeeping moves
 
-## Scorekeeping
+## Main results
 
-Each agent keeps a score for every other agent. Scores can DISAGREE:
-agent A might attribute commitment-to-p to agent B, while agent C
-does not. This means there is no single "common ground" — only an
-approximation derived from scorecard intersection.
+* `entitlement_not_closed_under_committive` — the two statuses answer to different inferences
+* `challenge_leaves_commitment` — a challenged assertion is a commitment without entitlement
+* `incompatible_commitment_defeats_entitlement` — what a score rules out, it is not entitled to
+* `deferral_entitles_hearer` — asserting authorizes the hearer to re-assert
+* `scorekeepers_can_disagree` — after a challenge the two scorecards differ
 
-## Inferential Closure
+## References
 
-If an agent is committed to p and p→q, they are inferentially committed
-to q (even if they haven't explicitly asserted q). This is Brandom's
-"material inference" — the content of a claim is determined by its
-inferential role.
-
+* [brandom-1994]
+* [brandom-1983]
 -/
 
 namespace Brandom1994
 
 open Discourse.Commitment (CommitmentSlate)
 
--- ════════════════════════════════════════════════════
--- § 1. Normative Status
--- ════════════════════════════════════════════════════
+/-! ### Deontic status -/
 
-/-- The normative status attributed to an agent by a scorekeeper.
-
-    Brandom's central innovation: the deontic score has two independent
-    dimensions. An agent can be committed-but-not-entitled (asserted
-    without grounds), entitled-but-not-committed (has evidence, hasn't
-    asserted), or both (well-grounded assertion). -/
+/-- The status a scorekeeper attributes to an interlocutor: what they have committed themselves to,
+and what they are entitled to. -/
 structure NormativeStatus (W : Type*) where
-  /-- Propositions the agent is committed to -/
   commitments : CommitmentSlate W
-  /-- Propositions the agent is entitled to assert -/
   entitlements : CommitmentSlate W
 
 namespace NormativeStatus
-
 variable {W : Type*}
 
-/-- Empty normative status: no commitments, no entitlements. -/
-def empty : NormativeStatus W :=
-  ⟨CommitmentSlate.empty, CommitmentSlate.empty⟩
+/-- No commitments, no entitlements. -/
+def empty : NormativeStatus W := ⟨CommitmentSlate.empty, CommitmentSlate.empty⟩
 
-/-- Add a commitment (the agent publicly commits to p). -/
-def addCommitment (ns : NormativeStatus W) (p : Set W) : NormativeStatus W :=
+/-- Undertake a commitment. -/
+def commit (ns : NormativeStatus W) (p : W → Prop) : NormativeStatus W :=
   { ns with commitments := ns.commitments.add p }
 
-/-- Add an entitlement (the agent has grounds for p). -/
-def addEntitlement (ns : NormativeStatus W) (p : Set W) : NormativeStatus W :=
+/-- Acquire an entitlement. -/
+def entitle (ns : NormativeStatus W) (p : W → Prop) : NormativeStatus W :=
   { ns with entitlements := ns.entitlements.add p }
+
+/-- Withdraw an entitlement, leaving the commitment in place — what a challenge does. -/
+def withdrawEntitlement [DecidableEq (W → Prop)] (ns : NormativeStatus W) (p : W → Prop) :
+    NormativeStatus W :=
+  { ns with entitlements := ⟨ns.entitlements.commitments.filter (fun q => decide (q ≠ p))⟩ }
 
 end NormativeStatus
 
--- ════════════════════════════════════════════════════
--- § 2. Scorecard
--- ════════════════════════════════════════════════════
+/-! ### Inferential role -/
 
-/-- Agent type for the scorekeeping model. -/
-inductive BAgent where
+/-- The three broadly inferential structures a content's role consists in: the commitments it
+carries with it, the entitlements it confers, and what it precludes. -/
+structure InferentialRole (W : Type*) where
+  /-- Commitment-preserving consequence, roughly the deductive case. -/
+  committive : (W → Prop) → (W → Prop) → Prop
+  /-- Entitlement-preserving consequence, roughly the inductive case. -/
+  permissive : (W → Prop) → (W → Prop) → Prop
+  /-- What a claim rules out. -/
+  incompatible : (W → Prop) → (W → Prop) → Prop
+  /-- Incompatibility is symmetric: ruling out is mutual. -/
+  incompatible_symm : ∀ p q, incompatible p q → incompatible q p
+
+variable {W : Type*}
+
+/-- What a score commits an interlocutor to: what they have acknowledged, closed under committive
+consequence — one is committed to the consequences of one's commitments whether or not one has
+acknowledged them. -/
+inductive CommittedTo (R : InferentialRole W) (ns : NormativeStatus W) : (W → Prop) → Prop where
+  /-- An acknowledged commitment. -/
+  | acknowledged {p} (h : p ∈ ns.commitments.commitments) : CommittedTo R ns p
+  /-- A consequential commitment, along a committive inference. -/
+  | consequential {p q} (hp : CommittedTo R ns p) (hpq : R.committive p q) : CommittedTo R ns q
+
+/-- What a score entitles an interlocutor to: what they are entitled to outright or along a
+permissive inference, provided nothing they are committed to rules it out. Entitlement travels the
+permissive relation, not the committive one, and is defeasible where the committive status is
+not. -/
+def EntitledTo (R : InferentialRole W) (ns : NormativeStatus W) (p : W → Prop) : Prop :=
+  (p ∈ ns.entitlements.commitments ∨
+      ∃ q ∈ ns.entitlements.commitments, R.permissive q p) ∧
+    ¬ ∃ q, CommittedTo R ns q ∧ R.incompatible p q
+
+/-- A score is in good order when every acknowledged commitment is one the interlocutor is entitled
+to — no commitment stands unvindicated. -/
+def Vindicated (R : InferentialRole W) (ns : NormativeStatus W) : Prop :=
+  ∀ p ∈ ns.commitments.commitments, EntitledTo R ns p
+
+/-- Committing to something a claim rules out defeats entitlement to the claim: what the score
+precludes, it is not entitled to. -/
+theorem incompatible_commitment_defeats_entitlement (R : InferentialRole W)
+    (ns : NormativeStatus W) (p q : W → Prop) (hq : CommittedTo R ns q)
+    (hinc : R.incompatible p q) : ¬ EntitledTo R ns p :=
+  fun h => h.2 ⟨q, hq, hinc⟩
+
+/-- Commitment carries along committive inferences by construction; the corresponding closure fails
+for entitlement, which is the point of keeping the two relations apart. -/
+theorem committed_of_committive (R : InferentialRole W) (ns : NormativeStatus W) {p q : W → Prop}
+    (hp : CommittedTo R ns p) (hpq : R.committive p q) : CommittedTo R ns q :=
+  .consequential hp hpq
+
+/-- Entitlement is not closed under committive consequence: a score may entitle `p` and carry `p`
+to `q` committively without entitling `q`. Deductive consequence preserves commitment, not
+entitlement. -/
+theorem entitlement_not_closed_under_committive :
+    ∃ (R : InferentialRole Bool) (ns : NormativeStatus Bool) (p q : Bool → Prop),
+      EntitledTo R ns p ∧ R.committive p q ∧ ¬ EntitledTo R ns q := by
+  refine ⟨⟨fun a b => a = (fun w => w = true) ∧ b = (fun _ => True), fun _ _ => False,
+      fun _ _ => False, by simp⟩,
+    ⟨CommitmentSlate.empty, ⟨[fun w => w = true]⟩⟩, (fun w => w = true), (fun _ => True),
+    ⟨.inl (by simp), by rintro ⟨q, -, hinc⟩; exact hinc⟩, ⟨rfl, rfl⟩, ?_⟩
+  rintro ⟨(h | ⟨q, -, hq⟩), -⟩
+  · simp only [List.mem_singleton] at h
+    have := congrFun h false
+    simp at this
+  · exact hq
+
+/-! ### Scorekeeping -/
+
+/-- The two roles a scorekeeping episode distinguishes. -/
+inductive Interlocutor where
   | speaker
-  | addressee
+  | hearer
   deriving DecidableEq, Repr, Inhabited
 
-/-- A scorecard: what one agent attributes to another.
+/-- A score: what each interlocutor attributes to each. `card k i` is `k`'s attribution to `i`, and
+two scorekeepers' attributions to the same interlocutor may differ. -/
+structure Score (W : Type*) where
+  card : Interlocutor → Interlocutor → NormativeStatus W
 
-    `card a b` is agent a's attribution of normative status to agent b.
-    Crucially, `card a b` can differ from `card c b` — scorekeepers
-    can disagree about what another agent is committed/entitled to. -/
-structure Scorecard (W : Type*) where
-  /-- Agent a's view of agent b's normative status -/
-  card : BAgent → BAgent → NormativeStatus W
-
-namespace Scorecard
-
+namespace Score
 variable {W : Type*}
 
-/-- Initial scorecard: everyone attributes empty status to everyone. -/
-def empty : Scorecard W :=
-  ⟨λ _ _ => NormativeStatus.empty⟩
+/-- Everyone attributes the empty status to everyone. -/
+def empty : Score W := ⟨fun _ _ => NormativeStatus.empty⟩
 
-/-- Get a specific agent's view of another agent's commitments. -/
-def commitmentsOf (sc : Scorecard W) (keeper scorer : BAgent) : CommitmentSlate W :=
-  (sc.card keeper scorer).commitments
+/-- Update one cell of the score. -/
+def update (s : Score W) (k i : Interlocutor) (f : NormativeStatus W → NormativeStatus W) :
+    Score W :=
+  ⟨fun k' i' => if k' = k ∧ i' = i then f (s.card k i) else s.card k' i'⟩
 
-/-- Get a specific agent's view of another agent's entitlements. -/
-def entitlementsOf (sc : Scorecard W) (keeper scorer : BAgent) : CommitmentSlate W :=
-  (sc.card keeper scorer).entitlements
+@[simp] theorem card_update_self (s : Score W) (k i : Interlocutor)
+    (f : NormativeStatus W → NormativeStatus W) : (s.update k i f).card k i = f (s.card k i) := by
+  simp [update]
 
-end Scorecard
+@[simp] theorem card_update_of_ne (s : Score W) {k i k' i' : Interlocutor}
+    (f : NormativeStatus W → NormativeStatus W) (h : ¬ (k' = k ∧ i' = i)) :
+    (s.update k i f).card k' i' = s.card k' i' := by
+  simp [update, h]
 
--- ════════════════════════════════════════════════════
--- § 3. Brandom State
--- ════════════════════════════════════════════════════
+end Score
 
-/-- Brandom's discourse state: a scorecard tracking all agent attributions. -/
-structure BrandomState (W : Type*) where
-  /-- The scorecard recording normative status attributions -/
-  scorecard : Scorecard W
+/-- Asserting `p`: the speaker undertakes commitment to `p`, and every scorekeeper attributes that
+commitment along with entitlement by default. -/
+def assert (s : Score W) (p : W → Prop) : Score W :=
+  ⟨fun k i =>
+    if i = .speaker then ((s.card k i).commit p).entitle p else s.card k i⟩
 
-namespace BrandomState
+/-- Deferral: the hearer, having heard the speaker assert `p`, inherits entitlement to `p` by
+deferring to the speaker's authority — the communicational function of assertion is to license
+others to re-assert. -/
+def defer (s : Score W) (p : W → Prop) : Score W :=
+  s.update .hearer .hearer (·.entitle p)
 
-variable {W : Type*}
+/-- A challenge by the hearer: a demand for reasons, which withdraws the hearer's attribution of
+default entitlement while leaving the attributed commitment standing. -/
+def challenge [DecidableEq (W → Prop)] (s : Score W) (p : W → Prop) : Score W :=
+  s.update .hearer .speaker (·.withdrawEntitlement p)
 
-/-- Initial state: empty scorecard. -/
-def empty : BrandomState W := ⟨Scorecard.empty⟩
+/-- Asserting attributes commitment and, by default, entitlement — on every scorecard. -/
+theorem assert_attributes_default_entitlement (s : Score W) (p : W → Prop) (k : Interlocutor) :
+    p ∈ ((assert s p).card k .speaker).commitments.commitments ∧
+      p ∈ ((assert s p).card k .speaker).entitlements.commitments := by
+  constructor <;> simp [assert, NormativeStatus.commit, NormativeStatus.entitle,
+    CommitmentSlate.add]
 
-/-- Assert: the speaker undertakes a commitment and authorizes
-    the addressee to re-assert.
+/-- Deferral entitles the hearer to what the speaker asserted, without the hearer having grounds of
+their own. -/
+theorem deferral_entitles_hearer (s : Score W) (p : W → Prop) :
+    p ∈ ((defer (assert s p) p).card .hearer .hearer).entitlements.commitments := by
+  simp [defer, NormativeStatus.entitle, CommitmentSlate.add]
 
-    [brandom-1994]: asserting p has two effects:
-    1. The speaker undertakes commitment to p
-    2. The speaker authorizes others to re-assert p (default entitlement) -/
-def assert (s : BrandomState W) (p : Set W) : BrandomState W :=
-  let card' := λ keeper scorer =>
-    if keeper == .speaker && scorer == .speaker then
-      (s.scorecard.card keeper scorer).addCommitment p |>.addEntitlement p
-    else if keeper == .addressee && scorer == .speaker then
-      -- Addressee attributes commitment to speaker
-      (s.scorecard.card keeper scorer).addCommitment p
-    else
-      s.scorecard.card keeper scorer
-  ⟨⟨card'⟩⟩
+/-- A challenged assertion is a commitment the hearer no longer grants entitlement to: the
+challenge takes back the default without taking back the commitment. This is the configuration
+that has no counterpart where a context set is all the score records. -/
+theorem challenge_leaves_commitment [DecidableEq (W → Prop)] (s : Score W) (p : W → Prop) :
+    p ∈ ((challenge (assert s p) p).card .hearer .speaker).commitments.commitments ∧
+      p ∉ ((challenge (assert s p) p).card .hearer .speaker).entitlements.commitments := by
+  refine ⟨by simp [challenge, assert, NormativeStatus.commit, NormativeStatus.entitle,
+      NormativeStatus.withdrawEntitlement, CommitmentSlate.add], ?_⟩
+  simp [challenge, assert, NormativeStatus.commit, NormativeStatus.entitle,
+    NormativeStatus.withdrawEntitlement, CommitmentSlate.add]
 
-/-- Effective context set: intersection of all attributed commitments.
+/-- Scorekeepers can disagree: after the hearer challenges, the speaker's own scorecard still
+grants entitlement where the hearer's does not, so there is no single score the two share. -/
+theorem scorekeepers_can_disagree [DecidableEq (W → Prop)] (s : Score W) (p : W → Prop) :
+    p ∈ ((challenge (assert s p) p).card .speaker .speaker).entitlements.commitments ∧
+      p ∉ ((challenge (assert s p) p).card .hearer .speaker).entitlements.commitments := by
+  refine ⟨?_, (challenge_leaves_commitment s p).2⟩
+  have hcell : (challenge (assert s p) p).card .speaker .speaker
+      = (assert s p).card .speaker .speaker := by
+    simp [challenge, Score.update]
+  rw [hcell]
+  simp [assert, NormativeStatus.commit, NormativeStatus.entitle, CommitmentSlate.add]
 
-    This is a LOSSY projection from Brandom → Stalnaker. Brandom's
-    model has strictly more structure (entitlements, disagreement
-    between scorekeepers), but for the `AssertionTheory` interface
-    we need a single `ContextSet`. -/
-def effectiveContextSet (s : BrandomState W) : Set W :=
-  λ w =>
-    -- Intersection: w must be compatible with all commitments
-    -- that both agents agree the speaker has
-    (s.scorecard.card .speaker .speaker).commitments.toContextSet w ∧
-    (s.scorecard.card .addressee .addressee).commitments.toContextSet w
+/-! ### Projection to a common ground -/
 
-/-- Stability: the state is stable when all commitments have
-    matching entitlements (no ungrounded assertions). -/
-def isStable (s : BrandomState W) : Prop :=
-  let spkrStatus := s.scorecard.card .speaker .speaker
-  spkrStatus.commitments.commitments.length ≤
-    spkrStatus.entitlements.commitments.length
+/-- The worlds compatible with everything each interlocutor is self-attributed to be committed to.
+Projecting a score this way is lossy: the disagreement of `scorekeepers_can_disagree` and the
+commitment/entitlement distinction are both invisible in the result. -/
+def contextSet (s : Score W) : W → Prop := fun w =>
+  (s.card .speaker .speaker).commitments.toContextSet w ∧
+    (s.card .hearer .hearer).commitments.toContextSet w
 
-instance (s : BrandomState W) : Decidable (isStable s) :=
-  inferInstanceAs (Decidable (_ ≤ _))
-
-end BrandomState
-
--- ════════════════════════════════════════════════════
--- § 4. Challenges
--- ════════════════════════════════════════════════════
-
-/-- A challenge: the addressee demands reasons for a commitment.
-
-    [brandom-1994]: challenges shift the burden of proof. If the speaker
-    cannot provide entitlement for a commitment, the commitment is
-    defeated (withdrawn from the scorecard). -/
-structure Challenge (W : Type*) where
-  /-- Who issues the challenge -/
-  challenger : BAgent
-  /-- The proposition challenged -/
-  proposition : Set W
-
--- ════════════════════════════════════════════════════
--- § 5. Inferential Closure
--- ════════════════════════════════════════════════════
-
-/-- Inferential closure: if committed to p and p→q, committed to q.
-
-    Brandom's "material inference" — the content of a concept is
-    its inferential role, not its reference. An agent's commitments
-    are closed under their acknowledged inferential connections.
-
-    TODO: full closure requires a fixpoint computation. -/
-def inferentialClosure {W : Type*} (cs : CommitmentSlate W)
-    (rules : List (Set W × Set W)) : CommitmentSlate W :=
-  rules.foldl (λ acc ⟨_antecedent, consequent⟩ => acc.add consequent) cs
-
--- ════════════════════════════════════════════════════
--- § 6. Verification
--- ════════════════════════════════════════════════════
-
-/-- Scorekeepers can disagree: agent A's view of B's status can differ
-    from agent C's view of B's status.
-
-    Witnessed by a scorecard where the speaker attributes a commitment
-    to the addressee, but the addressee does not self-attribute it. -/
-theorem scorekeepers_can_disagree :
-    ∃ (sc : Scorecard Unit),
-      (sc.card .speaker .addressee).commitments.commitments.length ≠
-      (sc.card .addressee .addressee).commitments.commitments.length := by
-  exact ⟨⟨λ keeper _ =>
-    if keeper == BAgent.speaker then
-      { commitments := ⟨[λ _ => True]⟩, entitlements := CommitmentSlate.empty }
-    else NormativeStatus.empty⟩, by decide⟩
-
--- ════════════════════════════════════════════════════
--- § 7. HasCommonGround instance
--- ════════════════════════════════════════════════════
-
-/-- Brandom states project to the principal common ground of
-    `effectiveContextSet` (the lossy Brandom → Stalnaker projection:
-    intersection of all self-attributed commitments). The lossy projection
-    is the price of the typeclass — Brandom's per-scorekeeper disagreement
-    is invisible at the `HasCommonGround` API level (cf.
-    `scorekeepers_can_disagree`). -/
-instance {W : Type*} : HasCommonGround (BrandomState W) W where
-  commonGround s := Filter.principal s.effectiveContextSet
+instance : HasCommonGround (Score W) W where
+  commonGround s := Filter.principal {w | contextSet s w}
 
 end Brandom1994

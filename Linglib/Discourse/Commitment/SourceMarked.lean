@@ -39,7 +39,7 @@ namespace Discourse.Gunlogson
 
 open Discourse.Commitment
 open Discourse (DiscourseRole)
-open Semantics.Questions.Bias (ContextualEvidence)
+open Questions.Bias (ContextualEvidence)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Gunlogson State

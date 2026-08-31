@@ -19,7 +19,7 @@ This probabilistic semantics:
 import Linglib.Semantics.Causation.BayesNet
 import Mathlib.Data.Rat.Defs
 
-namespace Semantics.Probabilistic.ConditionalAssertability
+namespace Probabilistic.ConditionalAssertability
 
 open Causation.BayesNet
 
@@ -316,4 +316,4 @@ theorem correlation_strength_zero_iff_independent (ws : WorldState) (hA : 0 < ws
     -- h : ws.pAC = ws.pA * ws.pC
     rw [h, mul_comm, mul_div_assoc, div_self hA_ne, mul_one]
 
-end Semantics.Probabilistic.ConditionalAssertability
+end Probabilistic.ConditionalAssertability

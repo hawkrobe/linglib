@@ -39,7 +39,7 @@ A selection function `s` determines a pairwise preference:
 `success`) and total (by definition); transitivity requires
 `s.isCoherent` — rationalizability by a total preorder. The
 `coherentSelectionToSimilarity` constructor turns a coherent `s` into
-a `Semantics.Conditionals.SimilarityOrdering`.
+a `Conditionals.SimilarityOrdering`.
 
 ## Stalnakerian indicative/subjunctive split ([stalnaker-1975])
 
@@ -56,11 +56,11 @@ equivalence within an appropriate context (the
 `*_eq_material_within_context` theorems below) rather than stipulate it.
 -/
 
-namespace Semantics.Conditionals
+namespace Conditionals
 
 open Mood (Grammatical)
-open _root_.Semantics.Conditionals (SelectionFunction selectionPrefers)
-open Semantics.Conditionals (SimilarityOrdering)
+open _root_.Conditionals (SelectionFunction selectionPrefers)
+open _root_.Conditionals (SimilarityOrdering)
 
 /-! ## Coherent selection ⇒ similarity ordering -/
 
@@ -208,4 +208,4 @@ theorem moodedConditional_indicative_eq_material_within_context {W : Type*}
   selectionConditional_eq_material_within_context s C p q w hC_w h_open_p
     h_admissible h_C_imp
 
-end Semantics.Conditionals
+end Conditionals

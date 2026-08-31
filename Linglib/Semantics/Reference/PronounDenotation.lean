@@ -21,7 +21,7 @@ This follows [buring-2012]'s survey: the assignment lookup (his (14)), the
 feature presuppositions (his (49)/(50)), and the absence-of-features treatment
 of unmarked values. The same `interpPronoun` selector serves bound, anaphoric,
 and deictic uses (his §2.1.1); binding is the external β-operator
-(`Semantics.Reference.Binding`).
+(`Reference.Binding`).
 
 ## Main definitions
 
@@ -39,7 +39,7 @@ bridges plus `ContainmentPairLike.toPair`, deferred until a study needs them.
 
 open Presupposition
 open Presupposition.PhiFeatures
-open Semantics.Reference (NominalDenot)
+open Reference (NominalDenot)
 open Intensional.Variables (interpPronoun DenotGS SitAssignment)
 
 /-- The conjoined φ-feature presupposition of a pronoun entry, over an entity

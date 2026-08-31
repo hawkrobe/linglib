@@ -44,8 +44,8 @@ re-packages those into the row-wise groupings Smith uses prose-side.
 -/
 
 open Features
-open Semantics.Aspect (ViewpointType)
-open Semantics.Aspect.Composition
+open Aspect (ViewpointType)
+open Aspect.Composition
 open Features (DiagnosticResult)
 
 namespace Smith1997

@@ -20,7 +20,7 @@ uncertainty) recovers Boolean truth — gradience is not stipulated but
 emerges from parameter uncertainty.
 -/
 
-namespace Semantics.Probabilistic
+namespace Probabilistic
 
 open scoped ENNReal
 
@@ -62,4 +62,4 @@ theorem gradedTruth_pure (sem : Θ → E → Bool) (θ₀ : Θ) (x : E) :
 
 end ParamPred
 
-end Semantics.Probabilistic
+end Probabilistic

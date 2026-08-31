@@ -38,7 +38,7 @@ verbs.
 
 namespace Verb
 
-open Semantics.Aspect.Stratified
+open Aspect.Stratified
 
 /-! ### Verb distributivity — derived from `Verb.denote`
 
@@ -70,9 +70,9 @@ namespace Champollion2017
 open English.Predicates.Verbal
 open Features (forXPrediction inXPrediction)
 open _root_.Mereology
-open Semantics.Plurality.Algebra (Materialization)
-open Semantics.Aspect.Stratified
-open Semantics.Plurality.Cover (IsFinCover algClosure_iff_exists_finCover)
+open Plurality.Algebra (Materialization)
+open Aspect.Stratified
+open Plurality.Cover (IsFinCover algClosure_iff_exists_finCover)
 
 /-! ### §2.7.2 algebraic substrate -/
 

@@ -55,7 +55,7 @@ import Linglib.Semantics.Events.Basic
 -- § Main Module
 -- ════════════════════════════════════════════════════
 
-namespace Semantics.Aspect
+namespace Aspect
 
 open _root_.Intensional (Index)
 open Features
@@ -602,4 +602,4 @@ theorem perf_prog_entails_universal_at_point (P : W → Event Time → Prop) (w 
 def IntervalPred.atPoint (p : IntervalPred W Time) : PointPred W Time :=
   λ s => p s.world (NonemptyInterval.pure s.time)
 
-end Semantics.Aspect
+end Aspect

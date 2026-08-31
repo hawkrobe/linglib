@@ -28,7 +28,7 @@ coordinates read from origin vs local.
 
 -/
 
-namespace Semantics.Reference.FreeIndirectDiscourse
+namespace Reference.FreeIndirectDiscourse
 
 open Semantics.Context
 
@@ -186,4 +186,4 @@ theorem fid_vs_direct_agent {W E P T : Type*}
     List.take, List.foldl, perspectiveShift]
   exact hDiff
 
-end Semantics.Reference.FreeIndirectDiscourse
+end Reference.FreeIndirectDiscourse
