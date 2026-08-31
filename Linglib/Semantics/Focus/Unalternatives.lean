@@ -91,12 +91,14 @@ open Alternatives
 
 variable {W α β : Type*}
 
-/-- Weak Restriction ([buring-2015]): under the default weak–strong
+/-- Weak Restriction ([buring-2015] (4)): under the default weak–strong
 pattern, the banned focal targets vary the weak (function) daughter
-over its alternative domain while the strong daughter stays at its
-ordinary value. -/
+*non-trivially* while the strong daughter stays at its ordinary value.
+The weak daughter's own ordinary value is subtracted, so a node never
+excludes its literal meaning — the revision [buring-2015] makes to the
+preliminary rule (1), which lacked the subtraction. -/
 def weakBanned (dw : AltMeaning (α → β)) (ds : AltMeaning α) : Set β :=
-  dw.aSet.seq {ds.oValue}
+  (dw.aSet \ {dw.oValue}).seq {ds.oValue}
 
 /-- Strong Restriction ([buring-2015]): under prosodic reversal, the
 allowed focal targets vary the accented (function) daughter
@@ -106,10 +108,10 @@ def strongAllowed (dm : AltMeaning (α → β)) (ds : AltMeaning α) :
     Set β :=
   (dm.aSet \ {dm.oValue}).seq {ds.oValue}
 
-/-- Reversal allows only targets that the default bans. -/
-theorem strongAllowed_subset_weakBanned (dm : AltMeaning (α → β))
-    (ds : AltMeaning α) : strongAllowed dm ds ⊆ weakBanned dm ds :=
-  Set.seq_mono Set.sdiff_subset subset_rfl
+/-- Reversal allows exactly the targets the default bans: the two metrical patterns of a branching
+node divide its focal targets between them. -/
+theorem strongAllowed_eq_weakBanned (dm : AltMeaning (α → β))
+    (ds : AltMeaning α) : strongAllowed dm ds = weakBanned dm ds := rfl
 
 /-- The focal targets a metrical configuration licenses: everything
 the daughters compose to, minus the banned targets. At `β := Set W`
