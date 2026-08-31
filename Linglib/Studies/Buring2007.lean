@@ -1,463 +1,309 @@
+import Linglib.Logic.Modal.Basic
 import Linglib.Semantics.Degree.Basic
-import Mathlib.Order.Interval.Basic
-import Mathlib.Tactic.NormNum
 
 /-!
-# Büring 2007: Cross-Polar Nomalies
-[buring-2007]
+# Büring 2007: cross-polar nomalies
 
-Daniel Büring. Cross-Polar Nomalies. SALT 17 (2007).
+Comparatives pairing a positive adjective with a negative one are anomalous — *John is shorter than
+Mary is tall* — and yet *the ladder was shorter than the house was high* is perfectly acceptable.
+This file formalizes the account of the contrast. A negative adjective is the degree negation of
+its positive counterpart, and a comparative whose degree phrase carries that negation inverts both
+intervals it compares, so *shorter than … high* can be read as *less long than … high*. Read that
+way it compares two positive extents; read literally it compares a positive extent with a negative
+one, which no scale makes true, while the reinterpretation is a subcomparative.
 
-## Core Puzzle
+The reinterpretation needs the negation and the comparative morpheme in one clause, and it is
+preempted where the than-clause adjective is the matrix one modulo the negation, since comparative
+deletion then supplies a synonymous competitor. Those two conditions cut the cross-polar space into
+the paper's three cases, and they block for different reasons: the anomaly has the reinterpretation
+available and loses to its competitor, the inverse nomaly has no competitor and still fails.
 
-Cross-polar *anomalies* — comparisons pairing A⁺ with its direct
-antonym A⁻ — are ungrammatical: *"John is shorter than Mary is tall."
-But cross-polar *nomalies* — comparisons pairing A⁻ with a
-non-antonymous A⁺ from a different spatial dimension — are perfectly
-acceptable: "The ladder was shorter than the house was high."
+A modal in the than-clause separates this account from the variant that puts the degree negation
+with the than-clause adjective. The negation outside the modal and the negation inside it turn the
+same comparison into the box and the diamond of one proposition, so the first is the stronger
+reading under a universal modal and the weaker one under an existential; they coincide only when
+the accessible worlds agree on the standard's degree.
 
-## Analysis
+## Main definitions
 
-LITTLE is a degree negation operator ([heim-2006]):
-short = LITTLE long, less = LITTLE -er. Formally, LITTLE complements
-a degree predicate: ⟦LITTLE⟧ = λi.λd. i(d) = 0,
-mapping positive extents to negative extents ([kennedy-1999]).
+* `compareWith` — the comparative morpheme, relative to the modifier in its degree phrase
+* `Comparative`, `Comparative.Acceptable` — a cross-polar comparative and the conditions on it
+* `negationOutside`, `negationInside` — the two analyses of a modal than-clause
 
-Cross-polar nomalies work because MORE LITTLE-A in the main clause
-can be reinterpreted as LITTLE-er A. This reinterpretation is blocked
-for direct antonyms by comparative deletion (MaxElide) and for inverse
-configurations by the requirement that LITTLE license ellipsis only
-in its own clause.
+## Main results
 
-Three-way pattern:
-- **Cross-polar anomaly**: *A⁺-er than A⁻ / *A⁻-er than A⁺ (direct antonyms) — BAD
-- **Cross-polar nomaly**: A⁻-er than A⁺ (different dimensions) — OK
-- **Inverse nomaly**: *A⁺-er than A⁻ (different dimensions) — BAD
+* `compareWith_little` — the degree negation inverts both intervals compared
+* `not_crossPolar`, `not_crossPolar'` — neither order of a literal cross-polar comparison is true
+* `metamorphosis_iff_subcomparative` — the reinterpretation is a subcomparative
+* `nomaly_acceptable`, `blocked_for_different_reasons` — the three-way pattern and its two sources
+* `reading_of_deletion` — the deletion competitor is synonymous exactly on one dimension
+* `negationOutside_box`, `negationInside_box` — the two analyses as box and diamond
+* `outside_entails_inside_box`, `inside_not_entails_outside` — the entailment is strict
+* `analyses_agree_of_uniform` — a degree-uniform modal base hides the difference
 
-## Two Competing Analyses (§3 vs §5)
+## References
 
-- **Analysis 1** (§3–4, preferred): LITTLE sits with -er in the main
-  clause. "shorter than high" = LITTLE-er long than HOW the house is high.
-  The degree negation scopes with the comparative morpheme.
-
-- **Analysis 2** (§5): A second LITTLE appears in the than-clause,
-  turning high into LITTLE-high (= low). The main-clause LITTLE is then
-  elided under identity with the than-clause LITTLE (comparative subdeletion).
-
-Both predict the same truth conditions for basic cases. §6 uses modal
-scope as a diagnostic: universal/existential modals in the than-clause
-disambiguate the two, favoring Analysis 1.
-
-## Formal Connections
-
-- **LITTLE as extent complement**: `littlePred` maps `Set.Iic` to `Set.Ioi`,
-  connecting to [kennedy-1999]'s extent algebra in `Degree`.
-- **Cross-polar anomaly = algebraic impossibility**: same-dimension
-  cross-polar comparison requires `crossExtentInclusion`, which
-  `Degree.not_crossExtentInclusion` proves is impossible on any linear order.
-- **Cross-polar nomaly = subcomparative**: different-dimension comparison
-  is `subcomparative` from [schwarzschild-wilkinson-2002].
-- **Klein limitation bridge**: [von-stechow-1984]'s Klein limitation 3
-  ("Ede is more tall than broad") is exactly a `subcomparative`.
+* [buring-2007]
+* [heim-2006]
+* [kennedy-1999]
+* [kennedy-2001]
+* [rullmann-1995]
+* [schwarzschild-wilkinson-2002]
+* [takahashi-fox-2005]
 -/
 
 namespace Buring2007
 
-/-! ### LITTLE: degree negation [heim-2006]
+open Core.Order ModalLogic
 
-Absorbed from the retired `Degree/Little.lean` (Büring is its only
-consumer): `⟦LITTLE⟧ = λP.λd. ¬ P d`; `short = LITTLE tall`,
-`less = LITTLE -er`.
--/
+/-! ### The comparative and the degree negation -/
 
-open _root_.Degree (comparativeSem taller_shorter_antonymy)
+section Comparative
 
-/-- LITTLE on degree predicates: complementation. -/
-def littlePred {D : Type*} (P : D → Prop) : D → Prop :=
-  fun d => ¬ P d
+variable {D : Type*} [LinearOrder D] {Entity : Type*}
 
-/-- LITTLE maps the positive extent to the negative extent:
-`LITTLE({d | d ≤ μ(x)}) = {d | μ(x) < d}`. The formal content of
-"short = LITTLE tall" — the degree predicate for 'short' is the
-complement of the degree predicate for 'tall', exactly the relation
-between positive and negative extents from [kennedy-1999]. -/
-theorem littlePred_Iic_eq_Ioi {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (x : Entity) (d : D) :
-    littlePred (· ∈ Set.Iic (μ x)) d ↔ d ∈ Set.Ioi (μ x) := by
-  simp [littlePred, Set.mem_Iic, Set.mem_Ioi, not_le]
+/-- The comparative morpheme: `compareWith m i j` holds when the than-clause interval `i` is
+properly included in the matrix interval `j`, both read through the degree-phrase modifier `m` —
+the identity for MUCH, complementation for LITTLE. -/
+def compareWith (m : Set D → Set D) (thanClause matrix : Set D) : Prop :=
+  m thanClause ⊂ m matrix
 
-/-- LITTLE is an involution: double degree negation cancels. -/
-theorem little_involution {D : Type*} (P : D → Prop) (d : D) :
-    littlePred (littlePred P) d ↔ P d := by
-  simp [littlePred]
+omit [LinearOrder D] in
+/-- LITTLE turns a more-comparative into a less-comparative by inverting both intervals compared:
+*less* is *LITTLE -er* ([heim-2006]). -/
+theorem compareWith_little (i j : Set D) : compareWith compl i j ↔ j ⊂ i :=
+  compl_lt_compl_iff_lt
 
-/-- LITTLE reverses the comparison direction: "A is LITTLE-er Adj than B"
-↔ "B is Adj-er than A". Delegates to `taller_shorter_antonymy`. -/
-theorem little_reverses_comparison {Entity α : Type*} [LinearOrder α]
-    (μ : Entity → α) (a b : Entity) :
-    comparativeSem μ a b .positive ↔ comparativeSem μ b a .negative :=
-  taller_shorter_antonymy μ a b
+/-- A positive extent is never properly included in a negative one, so the literal reading of *Mary
+is taller than John is short* is true on no scale ([kennedy-2001]). -/
+theorem not_crossPolar (a b : D) : ¬ compareWith id (Set.Iic a) (Set.Ioi b) :=
+  fun h => Degree.not_crossExtentInclusion id a b h.subset
 
-open Degree (comparativeSem taller_shorter_antonymy subcomparative
-  crossExtentInclusion not_crossExtentInclusion)
+/-- The other order fails too whenever the scale has no greatest degree: *John is shorter than Mary
+is tall* read literally would need every degree above John's height to lie below Mary's. -/
+theorem not_crossPolar' [NoMaxOrder D] (a b : D) :
+    ¬ compareWith id (Set.Ioi a) (Set.Iic b) := by
+  intro h
+  obtain ⟨d, hd⟩ := exists_gt (max a b)
+  exact absurd (h.subset ((le_max_left a b).trans_lt hd))
+    (not_le.mpr ((le_max_right a b).trans_lt hd))
 
-/-- Schwarzschild-style positive interval `[⊥, μ x]` — the bundled
-    (`NonemptyInterval`) face of `Set.Iic (μ x)`. -/
-def positiveInterval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
-    (μ : Entity → D) (x : Entity) : NonemptyInterval D :=
-  ⟨(⊥, μ x), bot_le⟩
+/-- The reinterpretation: with the negation in the degree phrase both intervals compared are
+positive extents, and the comparison is the subcomparative of [schwarzschild-wilkinson-2002] — the
+ladder's length against the house's height. -/
+theorem metamorphosis_iff_subcomparative (μ₁ μ₂ : Entity → D) (a b : Entity) :
+    compareWith compl (Set.Iic (μ₁ a)) (Set.Iic (μ₂ b)) ↔ Degree.subcomparative μ₁ μ₂ a b :=
+  (compareWith_little _ _).trans Set.Iic_ssubset_Iic
 
-/-- Negative interval `[μ x, ⊤]` (§4: ⟦short⟧ = ⟦LITTLE tall⟧ inverts
-    the positive interval) — the bundled face of `Set.Ioi (μ x)`. -/
-def negativeInterval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
-    (μ : Entity → D) (x : Entity) : NonemptyInterval D :=
-  ⟨(μ x, ⊤), le_top⟩
-/-! ### LITTLE: Degree Negation on Extents -/
+end Comparative
 
--- LITTLE is in the theory layer at `Semantics/Degree/Little.lean`:
---   littlePred, littlePred_Iic_eq_Ioi, little_involution,
---   little_reverses_comparison.
--- This section adds Büring-specific bridges.
+/-! ### The three cross-polar configurations -/
 
-/-- LITTLE maps positive intervals to negative intervals
-    ([buring-2007] §4, def. 22): the positive interval [⊥, μ(x)]
-    becomes the negative interval [μ(x), ⊤]. This is the interval-level
-    counterpart of `littlePred_Iic_eq_Ioi` (which operates on extent sets).
-
-    The bridge connects the interval framework (Schwarzschild) to the
-    extent framework (Kennedy) via LITTLE. -/
-theorem little_positive_to_negative {Entity D : Type*}
-    [LinearOrder D] [BoundedOrder D]
-    (μ : Entity → D) (x : Entity) :
-    (negativeInterval μ x).fst = (positiveInterval μ x).snd := by
-  simp [negativeInterval, positiveInterval]
-
-/-! ### Cross-Polar Anomaly: Algebraic Impossibility -/
-
-/-- **Cross-polar anomaly** = attempting to compare a positive extent
-    with a negative extent on the same dimension.
-
-    "?*John is shorter than Mary is tall" requires Iic(μ Mary) ⊆
-    Ioi(μ John), but `Degree.not_crossExtentInclusion` from
-    [kennedy-1999]'s extent algebra proves this is impossible on
-    any linear order: the boundary degree μ(a) belongs to the positive
-    extent but not the negative one, so the inclusion always fails.
-
-    Note: [buring-2007]'s explanation is syntactic (MaxElide §3.2),
-    not algebraic. The algebraic impossibility is a stronger claim:
-    even if the LF were syntactically available, the semantics would
-    be vacuous. Büring's account is compatible — MaxElide blocks
-    the LF before semantics applies. -/
-theorem crossPolar_anomaly_impossible {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (a b : Entity) :
-    ¬ crossExtentInclusion μ a b :=
-  not_crossExtentInclusion μ a b
-
-/-! ### Cross-Polar Pattern (Data) -/
-
-/-- Classification of cross-polar configurations (p. 3). -/
-inductive CrossPolarType where
-  | anomaly       -- *A⁺-er than A⁻ / *A⁻-er than A⁺ (direct antonyms)
-  | nomaly        -- A⁻-er than A⁺ (different dimensions) — OK
-  | inverseNomaly -- *A⁺-er than A⁻ (different dimensions) — BAD
+/-- The spatial dimensions the paper's examples measure: spatial extent is the one scale carrying
+measurements in more than one dimension, which is why cross-polar nomalies are confined to it. -/
+inductive Dimension where
+  | length | height | width | depth
   deriving DecidableEq, Repr
 
-structure CrossPolarDatum where
-  sentence : String
-  classification : CrossPolarType
-  grammatical : Bool
-  deriving Repr
+/-- An adjective: a dimension, measured positively (*long*) or negatively (*short*). -/
+structure Adjective where
+  dimension : Dimension
+  polarity : ScalePolarity
+  deriving DecidableEq, Repr
 
-def crossPolarData : List CrossPolarDatum :=
-  -- Cross-polar anomalies (direct antonyms, same dimension)
-  [ ⟨"?*John is shorter than Mary is tall", .anomaly, false⟩
-  , ⟨"*Mary is taller than John is short", .anomaly, false⟩
-  -- Cross-polar nomalies (different dimensions, A⁻ in main clause)
-  , ⟨"The ladder was shorter than the house was high", .nomaly, true⟩
-  , ⟨"My yacht is shorter than yours is wide", .nomaly, true⟩
-  , ⟨"Your dinghy should be shorter than your boat is wide", .nomaly, true⟩
-  -- Inverse cross-polar nomalies (different dimensions, A⁺ in main)
-  , ⟨"*The house is higher than the ladder is short", .inverseNomaly, false⟩
-  ]
+/-- A comparative pairing a matrix adjective with a than-clause adjective. -/
+structure Comparative where
+  matrix : Adjective
+  thanClause : Adjective
+  deriving DecidableEq, Repr
 
--- Nomalies are the only grammatical cross-polar configuration.
-#guard crossPolarData.all (λ d =>
-  d.grammatical == (d.classification == .nomaly))
+namespace Comparative
 
-/-! ### Cross-Polar Nomalies = Subcomparatives -/
+variable (c : Comparative)
 
--- Cross-polar nomalies are subcomparatives ([schwarzschild-wilkinson-2002]):
--- comparing two different measure functions on a shared spatial extent
--- scale (p. 1–2, footnote 2).
---
--- "The ladder is shorter(length) than the house is high(height)"
--- means: the house's height exceeds the ladder's length.
---
--- Unlike cross-polar *anomalies*, which attempt to compare positive
--- and negative extents on the SAME dimension (impossible by
--- `crossPolar_anomaly_impossible`), nomalies compare positive extents
--- on DIFFERENT dimensions via `subcomparative`. Since the two measure
--- functions are distinct (length ≠ height), no cross-extent
--- contradiction arises — the comparison reduces to a simple
--- inequality μ₂(b) > μ₁(a) on the shared spatial extent scale.
---
--- This is the formal core of [buring-2007]'s analysis:
--- the "more-to-less metamorphosis" reinterprets a comparison of
--- negative extents (via LITTLE) across dimensions as a comparison
--- of positive extents — which is just `subcomparative`.
-section Nomalies
+/-- Cross-polar: the two adjectives are of opposite polarity. -/
+def CrossPolar : Prop := c.matrix.polarity ≠ c.thanClause.polarity
 
-  /-- When both dimensions use the same measure function, the
-      subcomparative collapses to the standard comparative:
-      "a is shorter than b" = "b is taller than a". -/
-  theorem subcomparative_same_dimension {Entity D : Type*} [LinearOrder D]
-      (μ : Entity → D) (a b : Entity) :
-      subcomparative μ μ a b ↔ comparativeSem μ a b .positive :=
-    Iff.rfl
+/-- The reinterpretation is available only where the degree negation and the comparative morpheme
+share a clause, that is where the negative adjective is the matrix one: a than-clause negation
+cannot be recombined with the matrix comparative. -/
+def Metamorphosis : Prop := c.matrix.polarity = .negative
 
-end Nomalies
+/-- Comparative deletion is licensed where the than-clause adjective phrase is the matrix one
+modulo the degree morphology, that is where the two adjectives measure the same dimension. -/
+def Deletion : Prop := c.matrix.dimension = c.thanClause.dimension
 
-/-! ### Concrete Example -/
+/-- A cross-polar comparative survives when the reinterpretation is available and no comparative
+deletion competes with it ([takahashi-fox-2005]'s MaxElide prefers the larger ellipsis). -/
+def Acceptable : Prop := c.Metamorphosis ∧ ¬ c.Deletion
 
-section LadderHouse
+instance : Decidable c.CrossPolar := inferInstanceAs (Decidable ¬ _)
+instance : Decidable c.Metamorphosis := inferInstanceAs (Decidable (_ = _))
+instance : Decidable c.Deletion := inferInstanceAs (Decidable (_ = _))
+instance : Decidable c.Acceptable := inferInstanceAs (Decidable (_ ∧ _))
 
-  private inductive Thing | ladder | house
-    deriving DecidableEq, Repr
+/-- The reading a cross-polar comparative gets under the reinterpretation, on a model interpreting
+each dimension as a measure function. -/
+def reading {Entity D : Type*} [LinearOrder D] (m : Dimension → Entity → D) (c : Comparative)
+    (subject standard : Entity) : Prop :=
+  Degree.subcomparative (m c.thanClause.dimension) (m c.matrix.dimension) standard subject
 
-  private def height : Thing → ℚ | .ladder => 5 | .house => 20
-  private def length : Thing → ℚ | .ladder => 15 | .house => 40
+end Comparative
 
-  /-- "The ladder was shorter(length=15) than the house was high(height=20)":
-      a subcomparative on the shared spatial extent scale.
-      height(house) > length(ladder). -/
-  example : subcomparative height length .house .ladder := by
-    simp [subcomparative, height, length]; norm_num
+/-- *John is shorter than Mary is tall*: the negative adjective is the matrix one and both measure
+height. -/
+def anomaly : Comparative := ⟨⟨.height, .negative⟩, ⟨.height, .positive⟩⟩
 
-end LadderHouse
+/-- *Mary is taller than John is short*: the negation sits in the than-clause. -/
+def reverseAnomaly : Comparative := ⟨⟨.height, .positive⟩, ⟨.height, .negative⟩⟩
 
-/-! ### Why Anomalies Are Blocked -/
+/-- *The ladder was shorter than the house was high*: the negative adjective is the matrix one and
+the two dimensions differ. -/
+def nomaly : Comparative := ⟨⟨.length, .negative⟩, ⟨.height, .positive⟩⟩
 
-/-- [buring-2007]'s syntactic explanation for why direct-antonym
-    cross-polar constructions are anomalous (§3.2): when A⁻ and
-    A⁺ ARE direct antonyms (same dimension), comparative deletion
-    (ellipsis of the whole A in the than-clause) produces a competing
-    form. MaxElide (Takahashi and Fox 2005) prefers this deletion,
-    blocking the cross-polar LF.
+/-- *The house is higher than the ladder is short*: the dimensions differ, but the negation is in
+the than-clause. -/
+def inverseNomaly : Comparative := ⟨⟨.height, .positive⟩, ⟨.length, .negative⟩⟩
 
-    For nomalies, deletion is unavailable because the adjectives differ
-    (long ≠ high), so no competition arises (§3.3).
+/-- All four configurations are cross-polar, so the acceptability condition applies to each. -/
+theorem configurations_crossPolar :
+    anomaly.CrossPolar ∧ reverseAnomaly.CrossPolar ∧ nomaly.CrossPolar ∧
+      inverseNomaly.CrossPolar := by decide
 
-    Inverse nomalies (*A⁺-er than A⁻, different dimensions) are blocked
-    because LITTLE in the main clause cannot license ellipsis in the
-    than-clause (§3.4): the LF "the house is MORE high [than
-    HOW the ladder is LITTLE-long]" cannot be reinterpreted as
-    "LITTLE-er high" because LITTLE and MORE are in separate clauses. -/
-structure AnomalyBlockingDatum where
-  sentence : String
-  whyBlocked : String
-  competingForm : String
-  deriving Repr
+/-- The nomaly is reinterpretable and has no deletion competitor. -/
+theorem nomaly_acceptable : nomaly.Acceptable := by decide
 
-def anomalyBlocking : List AnomalyBlockingDatum :=
-  [ ⟨"?*John is shorter than Mary is tall"
-   , "comparative deletion: 'shorter than Mary (is tall)' → 'shorter than Mary'"
-   , "John is shorter than Mary"⟩
-  , ⟨"*The house is higher than the ladder is short"
-   , "inverse: LITTLE in main clause cannot license than-clause ellipsis"
-   , "(no well-formed competitor)"⟩
-  ]
+/-- The anomaly, its reverse and the inverse nomaly are all blocked. -/
+theorem others_unacceptable :
+    ¬ anomaly.Acceptable ∧ ¬ reverseAnomaly.Acceptable ∧ ¬ inverseNomaly.Acceptable := by decide
 
-/-! ### Bridge to Von Stechow's Klein Limitation -/
+/-- Neither condition derives the pattern alone: the anomaly is reinterpretable and blocked only by
+its competitor, the inverse nomaly has no competitor and is blocked only by the position of the
+negation. -/
+theorem blocked_for_different_reasons :
+    anomaly.Metamorphosis ∧ anomaly.Deletion ∧
+      ¬ inverseNomaly.Metamorphosis ∧ ¬ inverseNomaly.Deletion := by decide
 
-/-- [von-stechow-1984]'s Klein limitation 3: "Ede is more tall
-    than broad" is a cross-dimensional comparison that Klein's
-    degree-free framework cannot express.
+/-- Comparative deletion competes only where it is synonymous: on one dimension the reinterpreted
+reading is exactly the plain comparative the deletion form expresses, which is why the anomaly
+loses to it while the nomaly — whose deletion form makes a different claim — does not. -/
+theorem reading_of_deletion {Entity D : Type*} [LinearOrder D] (m : Dimension → Entity → D)
+    (c : Comparative) (h : c.Deletion) (subject standard : Entity) :
+    c.reading m subject standard ↔
+      Degree.comparativeSem (m c.matrix.dimension) standard subject .positive := by
+  have h' : c.matrix.dimension = c.thanClause.dimension := h
+  simp only [Comparative.reading, ← h']
+  exact Iff.rfl
 
-    [buring-2007]'s cross-polar nomalies are the same phenomenon:
-    "shorter(length) than high(height)" compares different dimensions
-    on a shared spatial extent scale. Both require degree ontology
-    (specifically, `subcomparative` from [schwarzschild-wilkinson-2002]).
+/-- With two dimensions the deletion form is not a paraphrase, so it does not compete: a 12-foot
+ladder is shorter than a 15-foot-high house without being shorter than the house is long. -/
+theorem reading_not_synonymous :
+    ∃ (m : Dimension → Bool → ℕ) (subject standard : Bool),
+      nomaly.reading m subject standard ∧
+        ¬ Degree.comparativeSem (m .length) standard subject .positive := by
+  refine ⟨fun d b => match d with | .length => if b then 12 else 10 | _ => 15,
+    true, false, ?_, ?_⟩ <;>
+    simp [Comparative.reading, Degree.subcomparative, nomaly, Degree.comparativeSem]
 
-    Definitionally: comparing two dimensions of the same entity is
-    `subcomparative μ₁ μ₂ a a`, which unfolds to `μ₁ a > μ₂ a`. -/
-theorem klein_limitation_is_subcomparative {Entity D : Type*} [LinearOrder D]
-    (μ₁ μ₂ : Entity → D) (a : Entity) :
-    subcomparative μ₁ μ₂ a a ↔ (μ₁ a > μ₂ a) :=
-  Iff.rfl
+/-! ### A modal in the than-clause -/
 
-/-! ### LITTLE–□ scope: the de Morgan asymmetry (§6)
+section Modal
 
-The two analyses place LITTLE on opposite sides of the than-clause modal,
-so the than-clause degree property is either LITTLE(□P) or □(LITTLE P).
-Over accessible worlds `acc` with world-indexed degree `μw`, a degree `d`
-is in LITTLE(□P) iff it exceeds some world's degree (it escapes the
-minimum), and in □(LITTLE P) iff it exceeds every world's degree (it
-escapes the maximum). □∘LITTLE entails LITTLE∘□ — the nontrivial direction
-of de Morgan for infinite meets — but not conversely, which is why the
-modal diagnostic below discriminates the two analyses. -/
+variable {W D : Type*} [LinearOrder D] {Q : (W → Prop) → Prop} {μ : W → D} {c : D}
+  {R : W → W → Prop} {w : W}
 
-/-- LITTLE(□P): `d` exceeds the degree of some accessible world. -/
-def littleOverBox {W D : Type*} [LT D] (acc : Set W) (μw : W → D) (d : D) : Prop :=
-  ∃ w ∈ acc, μw w < d
+/-- The degree negation outside the modal: the than-clause denotes the degrees the standard reaches
+under the modal, and the less-comparative asserts that the subject's positive extent is included in
+it. -/
+def negationOutside (Q : (W → Prop) → Prop) (μ : W → D) (c : D) : Prop :=
+  Set.Iic c ⊆ {d | Q fun v => d ≤ μ v}
 
-/-- □(LITTLE P): `d` exceeds the degree of every accessible world. -/
-def boxOverLittle {W D : Type*} [LT D] (acc : Set W) (μw : W → D) (d : D) : Prop :=
-  ∀ w ∈ acc, μw w < d
+/-- The degree negation inside the modal: the than-clause denotes the degrees exceeding the
+standard under the modal, and the more-comparative asserts that they are among the degrees
+exceeding the subject. -/
+def negationInside (Q : (W → Prop) → Prop) (μ : W → D) (c : D) : Prop :=
+  {d | Q fun v => μ v < d} ⊆ Set.Ioi c
 
-/-- □(LITTLE P) entails LITTLE(□P) when some world is accessible: the
-nontrivial de Morgan direction. -/
-theorem boxOverLittle_implies_littleOverBox {W D : Type*} [LT D]
-    {acc : Set W} (μw : W → D) (d : D) (hne : acc.Nonempty) :
-    boxOverLittle acc μw d → littleOverBox acc μw d :=
-  fun hall => hne.elim fun w hw => ⟨w, hw, hall w hw⟩
+/-- The outside reading holds exactly when the modal claims the standard reaches the subject's
+degree. -/
+theorem negationOutside_iff (hQ : Monotone Q) :
+    negationOutside Q μ c ↔ Q fun v => c ≤ μ v := by
+  refine ⟨fun h => h le_rfl, fun h d hd => hQ (fun v hv => hd.trans hv) h⟩
 
-/-- The converse fails: over two worlds with degrees 5 and 10, the degree 7
-escapes the minimum but not the maximum. -/
-theorem littleOverBox_not_boxOverLittle :
-    ∃ (acc : Set Bool) (μw : Bool → ℚ) (d : ℚ),
-      littleOverBox acc μw d ∧ ¬ boxOverLittle acc μw d := by
-  refine ⟨{true, false}, (if · then 5 else 10), 7,
-    ⟨true, by simp, by norm_num⟩, fun h => ?_⟩
-  have := h false (by simp)
-  norm_num at this
+/-- The inside reading holds exactly when the modal fails to claim the standard falls below the
+subject's degree. -/
+theorem negationInside_iff (hQ : Monotone Q) :
+    negationInside Q μ c ↔ ¬ Q fun v => μ v < c := by
+  refine ⟨fun h hc => absurd (h hc) (lt_irrefl c), fun h d hd => ?_⟩
+  by_contra hdc
+  exact h (hQ (fun v hv => hv.trans_le (not_lt.mp hdc)) hd)
 
-/-- When all accessible worlds agree on the degree, the two analyses
-collapse — modal scope is undetectable ([heim-2001]'s monotone collapse at
-the modal level). -/
-theorem littleBox_collapse_when_uniform {W D : Type*} [LT D]
-    {acc : Set W} (μw : W → D) (d : D) (hne : acc.Nonempty)
-    (hunif : ∀ w₁ ∈ acc, ∀ w₂ ∈ acc, μw w₁ = μw w₂) :
-    littleOverBox acc μw d ↔ boxOverLittle acc μw d := by
-  constructor
-  · rintro ⟨w, hw, hgt⟩ v hv
-    rw [hunif v hv w hw]
-    exact hgt
-  · exact boxOverLittle_implies_littleOverBox μw d hne
+theorem monotone_box (R : W → W → Prop) (w : W) : Monotone fun p : W → Prop => □[R] p w :=
+  fun _ _ h hp v hv => h v (hp v hv)
 
-/-! ### Modal Scope Diagnostic (§6) -/
+theorem monotone_diamond (R : W → W → Prop) (w : W) :
+    Monotone fun p : W → Prop => ◇[R] p w :=
+  fun _ _ h hp => hp.imp fun _ hv => ⟨hv.1, h _ hv.2⟩
 
--- [buring-2007] §6: modals in the than-clause disambiguate the
--- two competing analyses. The key test case (p. 11, ex. 29):
---
--- "The existing drawbridge is shorter than the new moat has to be wide."
---
--- **Analysis 1** (LITTLE in main clause, preferred):
--- LF: [LITTLE-more [λd than MUST the moat be d-wide] [λd the bridge is d-long]]
--- = the min-required width of the moat > the actual length of the bridge.
---
--- **Analysis 2** (LITTLE in than-clause):
--- LF: [more [λd than MUST the moat be d-LITTLE-wide] [λd the bridge is d-LITTLE-long]]
--- = the max-permitted narrowness of the moat > the actual shortness of the bridge.
---
--- The modal scopes between -er and the adjective in the than-clause.
--- Under Analysis 1, HAS-TO scopes over the positive A (wide), yielding
--- "min required width." Under Analysis 2, HAS-TO scopes over the
--- negative A (LITTLE-wide = narrow), yielding "max permitted narrowness."
--- Only Analysis 1 matches native speaker intuitions.
-section ModalDiagnostic
+/-- Under a universal than-clause modal the outside reading is that the standard reaches the
+subject's degree in every accessible world — the minimum required width of the moat exceeds the
+drawbridge's length. -/
+theorem negationOutside_box :
+    negationOutside (fun p => □[R] p w) μ c ↔ □[R] (fun v => c ≤ μ v) w :=
+  negationOutside_iff (monotone_box R w)
 
-  -- Scenario from p. 11: drawbridge (length 15ft), moat must be ≥ 30ft wide
-  private inductive CastlePart | bridge | moat
-    deriving DecidableEq, Repr
+/-- The inside reading of the same sentence is that the standard reaches it in some accessible
+world — the maximum permitted width does. -/
+theorem negationInside_box :
+    negationInside (fun p => □[R] p w) μ c ↔ ◇[R] (fun v => c ≤ μ v) w := by
+  rw [negationInside_iff (monotone_box R w), not_box]
+  simp [not_lt]
 
-  -- Three deontic worlds: moat widths 30, 35, 40 (all ≥ 30ft minimum)
-  private inductive PermittedWorld | w30 | w35 | w40
-    deriving DecidableEq, Repr
+/-- With an existential modal the two readings exchange: the outside reading becomes the weaker
+one, about the maximum permitted length of a drawbridge. -/
+theorem negationOutside_diamond :
+    negationOutside (fun p => ◇[R] p w) μ c ↔ ◇[R] (fun v => c ≤ μ v) w :=
+  negationOutside_iff (monotone_diamond R w)
 
-  private def moatWidth : PermittedWorld → ℚ
-    | .w30 => 30 | .w35 => 35 | .w40 => 40
+/-- And the inside reading becomes the stronger one, about the minimum permitted length. -/
+theorem negationInside_diamond :
+    negationInside (fun p => ◇[R] p w) μ c ↔ □[R] (fun v => c ≤ μ v) w := by
+  rw [negationInside_iff (monotone_diamond R w), not_diamond]
+  simp [not_lt]
 
-  private def bridgeLength : ℚ := 15
+/-- Under a universal modal the outside reading entails the inside one. -/
+theorem outside_entails_inside_box [IsSerial R] :
+    negationOutside (fun p => □[R] p w) μ c → negationInside (fun p => □[R] p w) μ c := by
+  rw [negationOutside_box, negationInside_box]
+  exact box_D
 
-  /-- **Analysis 1** (preferred): LITTLE scopes with -er in main clause.
-      The than-clause denotes {d | ∀w ∈ Deon(@). d ≤ WIDTH_w(moat)},
-      whose max is the minimum required width (= 30).
-      The comparative asserts: min-required-width > bridge-length.
+/-- Under an existential modal the entailment runs the other way. -/
+theorem inside_entails_outside_diamond [IsSerial R] :
+    negationInside (fun p => ◇[R] p w) μ c → negationOutside (fun p => ◇[R] p w) μ c := by
+  rw [negationOutside_diamond, negationInside_diamond]
+  exact box_D
 
-      Truth conditions: the bridge is shorter than the moat's minimum
-      required width. This is correct — the bridge (15ft) can't span
-      a moat that must be at least 30ft wide. -/
-  def analysis1_minRequiredWidth : ℚ :=
-    min (min (moatWidth .w30) (moatWidth .w35)) (moatWidth .w40)
+/-- The entailment is strict: where a regulation permits moats of 30 and of 40 feet, a 35-foot
+drawbridge is shorter than a permitted moat is wide without being shorter than every one. -/
+theorem inside_not_entails_outside :
+    ∃ (μ : Bool → ℕ) (c : ℕ),
+      negationInside (fun p => □[fun _ _ => True] p true) μ c ∧
+        ¬ negationOutside (fun p => □[fun _ _ => True] p true) μ c := by
+  refine ⟨fun b => if b then 40 else 30, 35, ?_, ?_⟩
+  · rw [negationInside_box]
+    exact ⟨true, trivial, by decide⟩
+  · rw [negationOutside_box]
+    exact fun h => absurd (h false trivial) (by decide)
 
-  theorem analysis1_correct :
-      analysis1_minRequiredWidth > bridgeLength := by
-    simp [analysis1_minRequiredWidth, moatWidth, bridgeLength]; norm_num
+/-- The two readings coincide when the accessible worlds agree on the standard's degree, which is
+why a than-clause without a modal cannot tell the analyses apart. -/
+theorem analyses_agree_of_uniform [IsSerial R] (h : ∀ v u, R w v → R w u → μ v = μ u) :
+    negationOutside (fun p => □[R] p w) μ c ↔ negationInside (fun p => □[R] p w) μ c := by
+  rw [negationOutside_box, negationInside_box]
+  refine ⟨box_D, fun ⟨v, hv, hcv⟩ u hu => ?_⟩
+  show c ≤ μ u
+  rwa [h u v hu hv]
 
-  /-- **Analysis 2**: LITTLE scopes in the than-clause (with the adjective).
-      HAS-TO scopes over LITTLE-wide (= narrow). The than-clause denotes
-      {d | ∀w ∈ Deon(@). NARROWNESS_w(moat) ≥ d}, whose max is the
-      min narrowness across permitted worlds — i.e., the narrowness in
-      the world where the moat is widest (= 40ft → narrowness is minimal).
-
-      On a bounded scale [0, maxWidth], narrowness = maxWidth - width.
-      Min narrowness = maxWidth - max(width) = maxWidth - 40.
-      For any reasonable maxWidth, this is smaller than bridge shortness.
-
-      Truth conditions: we could (but don't have to) build a moat narrow
-      enough that the bridge would span it. This does NOT match the
-      intuition of (29), which asserts the bridge is too short, period. -/
-  def analysis2_maxPermittedNarrowness (maxWidth : ℚ) : ℚ :=
-    maxWidth - max (max (moatWidth .w30) (moatWidth .w35)) (moatWidth .w40)
-
-  /-- Analysis 2 predicts narrowness of (maxWidth - 40). For any
-      reasonable maxWidth (e.g. 50), this is 10 — less than the bridge
-      length of 15. So Analysis 2 would predict the sentence is FALSE
-      (the bridge IS long enough for the widest-possible moat-narrowness).
-      This is the wrong prediction. -/
-  theorem analysis2_wrong_at_50 :
-      ¬ (analysis2_maxPermittedNarrowness 50 > bridgeLength) := by
-    simp [analysis2_maxPermittedNarrowness, moatWidth, bridgeLength]; norm_num
-
-  /-- The two analyses diverge: Analysis 1 predicts TRUE (bridge too short),
-      Analysis 2 predicts FALSE (bridge long enough). Native speakers
-      judge the sentence true, confirming Analysis 1. -/
-  theorem analyses_diverge :
-      (analysis1_minRequiredWidth > bridgeLength) ∧
-      ¬ (analysis2_maxPermittedNarrowness 50 > bridgeLength) :=
-    ⟨analysis1_correct, analysis2_wrong_at_50⟩
-
-end ModalDiagnostic
-
-/-! ### Existential Modal Variant (§6.2) -/
-
-/-- [buring-2007] §6.2 (p. 14, ex. 38): existential modals
-    produce the same disambiguation.
-
-    "The moat is narrower than drawbridges are allowed to be long."
-
-    Analysis 1: moat width < max permitted bridge length.
-    Paraphrase: "we can get a bridge that spans the moat."
-
-    Analysis 2: moat narrowness < max permitted bridge shortness.
-    Paraphrase: weaker — about permitted shortness, not length. -/
-structure ModalNomalyDatum where
-  sentence : String
-  modalForce : String   -- "universal" or "existential"
-  analysis1Reading : String
-  analysis2Reading : String
-  nativeSpeakerMatch : Bool  -- true = Analysis 1 matches
-  deriving Repr
-
-def modalDiagnosticData : List ModalNomalyDatum :=
-  [ ⟨"The drawbridge is shorter than the moat has to be wide"
-   , "universal"
-   , "min-required width > bridge length"
-   , "max-permitted narrowness > bridge shortness"
-   , true⟩
-  , ⟨"The moat is narrower than drawbridges are allowed to be long"
-   , "existential"
-   , "moat width < max-permitted bridge length"
-   , "moat narrowness < max-permitted bridge shortness"
-   , true⟩
-  , ⟨"The new reservoir is less deep than church towers were allowed to be tall"
-   , "existential"
-   , "reservoir depth < max-permitted tower height"
-   , "reservoir shallowness < max-permitted tower shortness"
-   , true⟩
-  ]
-
--- All modal diagnostic cases favor Analysis 1.
-#guard modalDiagnosticData.all (·.nativeSpeakerMatch)
+end Modal
 
 end Buring2007
