@@ -83,7 +83,7 @@ instance : PredOrder (Positions t) where
       PredOrder.min_of_le_pred (α := TreePath)
         (show p.val ≤ Order.pred p.val from h)
         (show b.val ≤ p.val from hb)
-  le_pred_of_lt {p q} h :=
+  le_pred_of_lt {_ _} h :=
     TreePath.le_parent_of_lt (Subtype.coe_lt_coe.mpr h)
 
 @[simp] theorem pred_val (p : Positions t) :
@@ -104,11 +104,11 @@ instance : IsPredArchimedean (Positions t) where
       IsPredArchimedean.exists_pred_iterate_of_le (α := TreePath) h
     exact ⟨n, Subtype.ext (by rw [pred_iterate_val]; exact hn)⟩
 
+end Positions
+
 /-- The positions of `t` as a mathlib `RootedTree`
 (`Mathlib.Order.SuccPred.Tree`): the inherited stack, bundled. -/
 def Positions.rootedTree (t : T) : RootedTree := ⟨Positions t⟩
-
-end Positions
 
 end Branching
 
@@ -128,6 +128,6 @@ def TreeOrder.ofPredArchimedean (α : Type*) [PartialOrder α]
   root := ⊥
   root_in_nodes := Set.mem_univ _
   root_le_all _ _ := bot_le
-  ancestor_connected x y z hx hy := le_total_of_directed hy hx
+  ancestor_connected _ _ _ hx hy := le_total_of_directed hy hx
 
 end Core.Order

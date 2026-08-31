@@ -351,8 +351,7 @@ theorem caseSortedTokens_in_swissGermanLang (m n : Nat) :
           List.replicate m .datV ++ List.replicate n .accV, ?_, ?_, ?_, ?_, ?_⟩
   · -- caseSortedTokens has no matrix tokens, so filter is identity.
     show List.filter _ (caseSortedTokens (arbitraryDepth m n)) = _
-    simp [caseSortedTokens, arbitraryDepth, List.filter_append,
-          List.filter_replicate, Token.isMatrix, List.append_assoc]
+    simp [caseSortedTokens, arbitraryDepth, List.filter_append, Token.isMatrix, List.append_assoc]
   · intro t ht
     rcases List.mem_append.mp ht with h | h
     · obtain rfl := List.eq_of_mem_replicate h; rfl
@@ -463,13 +462,7 @@ theorem makeString_ambncmdn_in_caseSorted (m n : Nat) :
   -- Final state ∈ accept (which is {.sA, .sB, .sC, .sD}).
   rcases hs_after_c with hSA | hSB | hSC <;>
     by_cases hn : n = 0 <;>
-    simp_all (config := { decide := true }) [DFA.accepts, caseSortedDFA]
-  all_goals
-    first
-    | (show CaseSortedState.sA ∈ ({.sA, .sB, .sC, .sD} : Set _); simp)
-    | (show CaseSortedState.sB ∈ ({.sA, .sB, .sC, .sD} : Set _); simp)
-    | (show CaseSortedState.sC ∈ ({.sA, .sB, .sC, .sD} : Set _); simp)
-    | (show CaseSortedState.sD ∈ ({.sA, .sB, .sC, .sD} : Set _); simp)
+    simp_all (config := { decide := true }) [caseSortedDFA]
 
 -- ----------------------------------------------------------------------------
 -- The intersection equality: stringMap free SG ⊓ caseSorted = ambncmdn.
@@ -570,12 +563,12 @@ private lemma sB_decomp (xs : List FourSymbol)
       have h' : caseSortedDFA.evalFrom .sC xs ∈ caseSortedDFA.accept := h
       obtain ⟨r, u, rfl⟩ := sC_decomp xs h'
       refine ⟨0, r + 1, u, ?_⟩
-      simp [List.replicate_succ, List.replicate]
+      simp [List.replicate]
     | d =>
       have h' : caseSortedDFA.evalFrom .sD xs ∈ caseSortedDFA.accept := h
       obtain ⟨u, rfl⟩ := sD_decomp xs h'
       refine ⟨0, 0, u + 1, ?_⟩
-      simp [List.replicate_succ, List.replicate]
+      simp [List.replicate]
 
 private lemma sA_decomp (xs : List FourSymbol)
     (h : caseSortedDFA.evalFrom .sA xs ∈ caseSortedDFA.accept) :
@@ -595,17 +588,17 @@ private lemma sA_decomp (xs : List FourSymbol)
       have h' : caseSortedDFA.evalFrom .sB xs ∈ caseSortedDFA.accept := h
       obtain ⟨q, r, u, rfl⟩ := sB_decomp xs h'
       refine ⟨0, q + 1, r, u, ?_⟩
-      simp [List.replicate_succ, List.replicate]
+      simp [List.replicate]
     | c =>
       have h' : caseSortedDFA.evalFrom .sC xs ∈ caseSortedDFA.accept := h
       obtain ⟨r, u, rfl⟩ := sC_decomp xs h'
       refine ⟨0, 0, r + 1, u, ?_⟩
-      simp [List.replicate_succ, List.replicate]
+      simp [List.replicate]
     | d =>
       have h' : caseSortedDFA.evalFrom .sD xs ∈ caseSortedDFA.accept := h
       obtain ⟨u, rfl⟩ := sD_decomp xs h'
       refine ⟨0, 0, 0, u + 1, ?_⟩
-      simp [List.replicate_succ, List.replicate]
+      simp [List.replicate]
 
 /-- Any case-sorted FourString decomposes uniquely into block-sorted
     `aᵖ ++ bᵠ ++ cʳ ++ dˢ`. -/
@@ -624,7 +617,7 @@ private lemma count_a_image_eq_count_datNP (ts : List Token) :
   | nil => rfl
   | cons t ts ih =>
     cases t <;>
-      simp [List.flatMap_cons, List.countP_cons, ih, tokenStringHom, tokenToSymbol]
+      simp [List.flatMap_cons, ih, tokenStringHom, tokenToSymbol]
 
 private lemma count_b_image_eq_count_accNP (ts : List Token) :
     (ts.flatMap tokenStringHom).countP (· == .b) = ts.countP (· == .accNP) := by
@@ -632,7 +625,7 @@ private lemma count_b_image_eq_count_accNP (ts : List Token) :
   | nil => rfl
   | cons t ts ih =>
     cases t <;>
-      simp [List.flatMap_cons, List.countP_cons, ih, tokenStringHom, tokenToSymbol]
+      simp [List.flatMap_cons, ih, tokenStringHom, tokenToSymbol]
 
 private lemma count_c_image_eq_count_datV (ts : List Token) :
     (ts.flatMap tokenStringHom).countP (· == .c) = ts.countP (· == .datV) := by
@@ -640,7 +633,7 @@ private lemma count_c_image_eq_count_datV (ts : List Token) :
   | nil => rfl
   | cons t ts ih =>
     cases t <;>
-      simp [List.flatMap_cons, List.countP_cons, ih, tokenStringHom, tokenToSymbol]
+      simp [List.flatMap_cons, ih, tokenStringHom, tokenToSymbol]
 
 private lemma count_d_image_eq_count_accV (ts : List Token) :
     (ts.flatMap tokenStringHom).countP (· == .d) = ts.countP (· == .accV) := by
@@ -648,7 +641,7 @@ private lemma count_d_image_eq_count_accV (ts : List Token) :
   | nil => rfl
   | cons t ts ih =>
     cases t <;>
-      simp [List.flatMap_cons, List.countP_cons, ih, tokenStringHom, tokenToSymbol]
+      simp [List.flatMap_cons, ih, tokenStringHom, tokenToSymbol]
 
 -- Filter-by-non-matrix preserves token-equality counts for cross-serial
 -- tokens (matrix is the only token that gets filtered out, and matrix is
@@ -661,7 +654,7 @@ private lemma countP_filter_notMatrix_datNP (ts : List Token) :
   | nil => rfl
   | cons t ts ih =>
     rw [List.filter_cons]
-    cases t <;> simp_all [Token.isMatrix, List.countP_cons]
+    cases t <;> simp_all [Token.isMatrix]
 
 private lemma countP_filter_notMatrix_accNP (ts : List Token) :
     (ts.filter (fun t => !t.isMatrix)).countP (· == .accNP) =
@@ -670,7 +663,7 @@ private lemma countP_filter_notMatrix_accNP (ts : List Token) :
   | nil => rfl
   | cons t ts ih =>
     rw [List.filter_cons]
-    cases t <;> simp_all [Token.isMatrix, List.countP_cons]
+    cases t <;> simp_all [Token.isMatrix]
 
 private lemma countP_filter_notMatrix_datV (ts : List Token) :
     (ts.filter (fun t => !t.isMatrix)).countP (· == .datV) =
@@ -679,7 +672,7 @@ private lemma countP_filter_notMatrix_datV (ts : List Token) :
   | nil => rfl
   | cons t ts ih =>
     rw [List.filter_cons]
-    cases t <;> simp_all [Token.isMatrix, List.countP_cons]
+    cases t <;> simp_all [Token.isMatrix]
 
 private lemma countP_filter_notMatrix_accV (ts : List Token) :
     (ts.filter (fun t => !t.isMatrix)).countP (· == .accV) =
@@ -688,7 +681,7 @@ private lemma countP_filter_notMatrix_accV (ts : List Token) :
   | nil => rfl
   | cons t ts ih =>
     rw [List.filter_cons]
-    cases t <;> simp_all [Token.isMatrix, List.countP_cons]
+    cases t <;> simp_all [Token.isMatrix]
 
 -- countP_caseValue_* lemmas removed: the new `swissGermanLang` definition uses
 -- direct token-equality counting (`· == .datNP` etc.) instead of going

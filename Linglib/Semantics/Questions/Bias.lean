@@ -1,6 +1,6 @@
 /-!
 # Polar Question Bias — vocabulary
-[romero-2024] [romero-han-2004] [ladd-1981] [bring-gunlogson-2000]
+[romero-2024] [romero-han-2004] [ladd-1981] [buring-gunlogson-2000]
 
 Theory-neutral vocabulary for polar question bias, shared by lexical
 fragments and the theory layer. Polar questions come in three forms — PosQ,
@@ -48,7 +48,7 @@ inductive OriginalBias where
   | againstP
   deriving DecidableEq, Repr
 
-/-- Contextual evidence bias ([bring-gunlogson-2000]): expectation about `p`
+/-- Contextual evidence bias ([buring-gunlogson-2000]): expectation about `p`
 induced by evidence available in the current discourse situation. A felicity
 condition on rising declaratives and a bias dimension for polar questions. -/
 inductive ContextualEvidence where
@@ -102,7 +102,7 @@ theorem posQ_neutral_ok : originalBiasOK .PosQ .neutral = true := rfl
 theorem loNQ_neutral_ok : originalBiasOK .LoNQ .neutral = true := rfl
 
 /-- Contextual evidence bias conditions on PQ forms ([romero-2024] Table 2,
-[bring-gunlogson-2000]).
+[buring-gunlogson-2000]).
 
 PosQ requires evidence for p (or neutral). LoNQ requires evidence against p.
 Outer-HiNQ is felicitous with neutral or against-p evidence. -/
@@ -117,7 +117,7 @@ def evidenceBiasOK : PQForm → ContextualEvidence → Bool
   | .HiNQ, .neutral    => true
   | .HiNQ, .againstP   => true
 
-/-- LoNQs require contextual evidence against p ([bring-gunlogson-2000]). -/
+/-- LoNQs require contextual evidence against p ([buring-gunlogson-2000]). -/
 theorem loNQ_requires_evidence_against_p :
     evidenceBiasOK .LoNQ .forP = false ∧
     evidenceBiasOK .LoNQ .neutral = false ∧

@@ -1,4 +1,3 @@
-import Linglib.Studies.BresnanEtAl1982
 import Linglib.Studies.Shieber1985
 import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 import Linglib.Core.Computability.NonContextFree.AmBnCmDn
