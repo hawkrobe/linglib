@@ -51,7 +51,7 @@ from the surface (`MeaningComponents.changeOfState`) and root
 (`LexKind.result`) change-of-state notions ([beavers-koontz-garboden-2020]).
 -/
 
-namespace ArgumentStructure.Affectedness
+namespace ArgumentStructure
 
 variable {α β δ : Type*}
 
@@ -312,4 +312,4 @@ per-verb substrate binding a fragment verb's profile to its θ; until that
 lands, consumers declare the strongest mixin the verb's scalar witnesses
 support. -/
 
-end ArgumentStructure.Affectedness
+end ArgumentStructure

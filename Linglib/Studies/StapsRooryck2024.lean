@@ -60,9 +60,7 @@ open Intensional (Index)
 open Presupposition
 open French.Predicates
 open ArgumentStructure
-open ArgumentStructure.Affectedness
 open Features
-open ArgumentStructure
 open Minimalist Minimalist.Voice
 
 -- ============================================================================
