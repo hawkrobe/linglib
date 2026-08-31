@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Card
 import Mathlib.Data.Nat.Basic
 import Linglib.Semantics.Intensional.Rigidity
-import Linglib.Core.Order.Comparison
+import Linglib.Semantics.Degree.Comparison
 import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Studies.Aikhenvald2000
 import Linglib.Studies.Chierchia1998
@@ -144,13 +144,13 @@ def ofSortal (P : Intensional.Intension W (E → Prop)) : ClassifierDenot W E wh
     AND the count of `x`'s ⊑-atomic `counted`-parts equals `n`.
 
     The counting clause is the **exact (`=`) case of the shared
-    comparison-over-a-measure primitive** `Core.Order.Comparison.over`, with the
+    comparison-over-a-measure primitive** `Degree.Comparison.over`, with the
     measure being the atom-count `λx. |{y ⊑ x : counted_w(y)}|` — classifier
     counting *is* numeral comparison with `μ = atom-count`, the same primitive
     measure phrases and bare cardinals use. (`Set.ncard` returns 0 on infinite
     sets; for natural-language counting the relevant sets are finite.) -/
 def apply (cl : ClassifierDenot W E) (w : W) (n : ℕ) (x : E) : Prop :=
-  cl.sortal w x ∧ x ∈ Core.Order.Comparison.eq.over (atomCount cl.counted w) n
+  cl.sortal w x ∧ x ∈ Degree.Comparison.eq.over (atomCount cl.counted w) n
 
 @[simp] lemma ofSortal_sortal (P : Intensional.Intension W (E → Prop)) :
     (ofSortal P).sortal = P := rfl

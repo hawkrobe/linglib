@@ -23,7 +23,7 @@ density predictions.
 ## Bridge Structure
 
 The named numeral meanings (`atLeastMeaning`, `moreThanMeaning`, ...) are
-`def`s over `Core.Order.Comparison.{ge, gt, ...}.over id` in
+`def`s over `Degree.Comparison.{ge, gt, ...}.over id` in
 `Semantics/Numerals/Basic.lean` §2 — the connection holds by
 construction, no bridge lemma needed.
 
@@ -43,7 +43,7 @@ namespace FoxHackl2006Numerals
 open Degree
 open Entailment
 open Semantics.Numerals
-open Core.Order (Comparison)
+open Degree (Comparison)
 
 -- ════════════════════════════════════════════════════
 -- § 1. HasMaxInf for "at least" (any scale)

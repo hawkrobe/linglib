@@ -8,8 +8,8 @@ import Mathlib.Order.Interval.Set.Basic
 `strictUpperBounds s` is the set of points strictly above every element of `s`.
 mathlib has no strict-bounds primitive — strictness is usually routed through
 `Set.Ioi` / `ssubset` — so this file fills the gap as a sibling of `upperBounds`,
-modelled on it lemma-for-lemma. It backs the set-standard degree comparative
-([hoeksema-1983]'s S-comparative) and any "strictly exceeds a whole set" notion.
+modelled on it lemma-for-lemma. It backs any "strictly exceeds a whole set" notion
+(e.g. the set-standard degree comparative in `Semantics/Degree/Comparison.lean`).
 
 ## Main definitions
 

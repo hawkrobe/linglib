@@ -1,5 +1,5 @@
 import Linglib.Semantics.Mereology
-import Linglib.Core.Order.Comparison
+import Linglib.Semantics.Degree.Comparison
 import Linglib.Semantics.Degree.Measure.Basic
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Alternatives.Extremum
@@ -118,12 +118,12 @@ instance {E : Type*} : CoeFun (DimensionedMeasure E D) (fun _ => E → D) where
 [scontras-2014]: measure terms are nouns that name specific measure
 functions. Their type is ⟨n, ⟨e,t⟩⟩ — they take a numeral and return a
 predicate. This is the **exact (`=`) case of the shared comparison-over-a-
-measure primitive** `Core.Order.Comparison.over`: `⟦kilo⟧(n)` is
+measure primitive** `Degree.Comparison.over`: `⟦kilo⟧(n)` is
 `Comparison.eq.over μ_kg n`. Modified readings (`> n`, `≥ n`, …) are the other
 `Comparison`s over the same `μ`. -/
 def DimensionedMeasure.applyNumeral {E : Type*} [Preorder D] (μ : DimensionedMeasure E D) (n : D)
     (x : E) : Prop :=
-  x ∈ Core.Order.Comparison.eq.over μ.apply n
+  x ∈ Degree.Comparison.eq.over μ.apply n
 
 /-- `applyNumeral` is exact measure predication: `μ(x) = n` (definitionally,
     the `.eq` interval-membership). -/
@@ -303,7 +303,6 @@ realization (`∃ e, μ(e) = n`) rather than full surjectivity. Mass nouns
 realize every n ∈ ℚ≥0 (rice is uniformly divisible by hypothesis); count
 nouns realize only n ∈ ℕ. -/
 
-open Core.Order (Comparison)
 open Entailment (IsMaxInf HasMaxInf)
 
 /-- For a measure function μ into a linear scale: when n is realized by some entity, the

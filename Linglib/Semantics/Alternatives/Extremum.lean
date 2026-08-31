@@ -60,7 +60,7 @@ not their primary formulation.
 namespace Entailment
 
 open Degree
-open Core.Order (Comparison)
+open Degree (Comparison)
 variable {α : Type*} [LinearOrder α]
 
 -- ════════════════════════════════════════════════════

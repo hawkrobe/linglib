@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Order.Comparison
+import Linglib.Semantics.Degree.Comparison
 import Linglib.Semantics.Quantification.Numerals.Basic
 import Linglib.Semantics.Exhaustification.Chain
 import Linglib.Semantics.Exhaustification.PreExhaustified
@@ -48,7 +48,7 @@ obliterates the next-stronger alternative.
 
 ## Main definitions
 
-- `much`, `little`: the extent indicators, as `Core.Order.Comparison.interval`s
+- `much`, `little`: the extent indicators, as `Degree.Comparison.interval`s
 - `compTC`, `atSupTC`: the [comp]/[at-sup] truth conditions on the maximum
 - `Form`: BN/CMN/SMN assertion forms; `Form.toComparison` factors them
   through the `Comparison` spine; `Form.tc`, `Form.domainAlts`,
@@ -85,7 +85,7 @@ obliterates the next-stronger alternative.
 
 namespace Mihoc2019
 
-open Core.Order
+open Degree (Comparison)
 
 /-! ### Extent indicators (her §2.5, Ch. 2 (27)–(28)) -/
 
@@ -204,7 +204,7 @@ instance (φ : Form) (maxD : ℕ) : Decidable (φ.tc maxD) := by
 /-! ### The Op × Extent factorization of the `Comparison` spine
 
 The four modified forms are a coordinate system on the four non-`eq`
-`Core.Order.Comparison`s: the operator carries strictness (Class A/B,
+`Degree.Comparison`s: the operator carries strictness (Class A/B,
 `Comparison.isStrict`), the extent and operator jointly fix the bound
 direction. `Form.tc_iff_rel` makes the factorization first-class; the Class
 A/B boundary facts then follow from `Comparison.boundary_mem` rather than
