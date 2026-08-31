@@ -2027,7 +2027,7 @@ import Linglib.Studies.BrehenyEtAl2018
 import Linglib.Studies.BreissKatsudaKawahara2026
 import Linglib.Studies.Bresnan1973
 import Linglib.Studies.BresnanEtAl1982
-import Linglib.Studies.BringGunlogson2000
+import Linglib.Studies.BuringGunlogson2000
 import Linglib.Studies.Broe1993
 import Linglib.Studies.BroekhuisCorver2026
 import Linglib.Studies.Bruening2001
