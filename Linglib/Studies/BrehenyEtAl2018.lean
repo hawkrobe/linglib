@@ -3,64 +3,56 @@ import Linglib.Semantics.Exhaustification.Finite
 import Linglib.Semantics.Alternatives.Symmetric
 
 /-!
-# The Symmetry Problem: Current Theories and Prospects
-[breheny-et-al-2018]
+# Breheny, Klinedinst, Romoli and Sudo 2018: the symmetry problem
 
-Breheny, R., Klinedinst, N., Romoli, J. & Sudo, Y. (2018).
-The Symmetry Problem: Current Theories and Prospects.
-Natural Language Semantics, 26(2), 85–110.
+[breheny-et-al-2018] (Natural Language Semantics 26) surveys the symmetry
+problem for scalar-implicature alternatives: a theory must admit the
+alternative A while excluding its symmetric partner S ∧ ¬A. The structural
+approach ([katzir-2007], [fox-katzir-2011]) solves the basic some/all case
+but undergenerates for indirect (12) and particularised (18) implicatures;
+[trinh-haida-2015]'s Atomicity Constraint repairs those two and backfires on
+gradable adjectives under negation (32), blocking the needed *empty*
+alternative (40); and the RSA account of [bergen-levy-goodman-2016] covers
+the direct, indirect, and full/empty cases through cost and relative
+informativity, but fails on the many-variant (54), the run-and-smoke
+sentences (55), the adjective asymmetry (56), and — short of frequency
+costs — [swanson-2010]'s lexicalized partners (44), (57). No account covers
+everything; the problem stays open. Each argument runs through
+[fox-2007]'s innocent-exclusion engine on a small domain: the wrong
+alternative sets make `exh` vacuous or derive the unattested inference, the
+right ones derive the observed implicature.
 
-## Overview
+## Main results
 
-Critical survey of three approaches to the **symmetry problem** for
-scalar implicature alternatives:
+* `indirect_si_blocked`, `indirect_si_correct` — (12): with the symmetric
+  *some* present, exhaustification is vacuous; under the Atomicity
+  Constraint the indirect implicature is derived.
+* `adjective_full_alts_vacuous`, `ac_wrong_for_adjectives`,
+  `adjective_correct_alts` — (32): without the constraint neither inference
+  arrives, with it the unattested "the glass is empty" is derived, and the
+  observed inference needs an alternative set no structural variant
+  generates.
+* `particularised_symmetric`, `particularised_blocked`,
+  `particularised_correct` — (18) and (28): the conjunctive alternative
+  derives the implicature exactly when the substitution source supplies it.
+* `swanson_symmetric`, `swanson_exh_vacuous`, `swanson_without_symmetric` —
+  (44): lexicalized symmetric partners of equal complexity leave
+  exhaustification vacuous.
 
-1. **Structural approach** ([katzir-2007], [fox-katzir-2011]):
-   alternatives restricted by structural complexity. Solves the basic
-   symmetry problem (some/all) but undergenerates for indirect and
-   particularised scalar implicatures.
+## References
 
-2. **Atomicity Constraint** ([trinh-haida-2015]): augments the
-   structural approach by making extracted subconstituents atomic (opaque
-   to further substitution). Solves indirect SIs but wrongly blocks
-   the needed antonym alternative for gradable adjectives under negation.
-
-3. **RSA approach** ([bergen-levy-goodman-2016]): replaces structural
-   restriction with utterance cost + relative informativity. Handles
-   direct SIs and gradable adjectives but fails for indirect SIs of
-   equal complexity and for the [swanson-2010] cases.
-
-No single approach handles all cases. The symmetry problem remains open.
-
-## Formalization Strategy
-
-The paper's core arguments are demonstrated computationally using the
-`exhB`/`ieIndices` machinery from [fox-2007] (`InnocentExclusion.lean`).
-Each section defines a small domain and shows how different alternative
-sets yield different (correct/incorrect) predictions. This makes the
-paper's claims machine-checkable: the structural approach's failures
-and the AC's overcorrection are verified by `native_decide`.
-
-## Key Results
-
-- `indirect_si_blocked`: with symmetric alts, exh fails for indirect SIs
-- `indirect_si_correct`: without symmetric alt, exh derives correct SI
-- `ac_wrong_for_adjectives`: the AC produces wrong prediction for full/empty
-- `adjective_correct_alts`: the correct prediction requires alts the AC blocks
-- `particularised_symmetric`: smoked/ran∧¬smoked partition ran
-- `swanson_symmetric`: required/optional partition permitted
-- `swanson_exh_vacuous`: lexicalized symmetric alts make exh vacuous
+* [breheny-et-al-2018] — the paper.
+* [katzir-2007], [fox-katzir-2011] — the structural approach.
+* [trinh-haida-2015] — the Atomicity Constraint.
+* [bergen-levy-goodman-2016], [swanson-2010] — the RSA account and the
+  lexicalized-symmetry cases.
+* [fox-2007] — innocent exclusion.
 -/
 
 namespace BrehenyEtAl2018
 
 open Exhaustification (innocent predToFinset altsFromPreds)
 open Alternatives.Symmetric
-
-
--- ═══════════════════════════════════════════════════════════════════════
--- §1  Indirect Scalar Implicatures (§2.2, examples 12–15)
--- ═══════════════════════════════════════════════════════════════════════
 
 /-!
 ## The Problem of Indirect Scalar Implicatures
@@ -127,11 +119,6 @@ theorem ac_solves_indirect_si :
 
 end IndirectSI
 
-
--- ═══════════════════════════════════════════════════════════════════════
--- §2  AC Fails: Gradable Adjectives (§3.2.2, examples 32–40)
--- ═══════════════════════════════════════════════════════════════════════
-
 /-!
 ## Gradable Adjectives Under Negation
 
@@ -153,15 +140,11 @@ and derives the WRONG inference (32b): the glass IS empty. The AC's
 solution for one class of cases (indirect SIs) creates a problem for
 another (gradable adjectives).
 
-### Adjective pair asymmetry (ex. 38)
+### Adjective pair asymmetry ((34), (35), (38))
 
-Not all contradictory antonym pairs generate the inference:
-- full/empty: "not full" ⤳ not empty      ✓
-- required/allowed: "not required" ⤳ allowed ✓
-- certain/possible: "not certain" ⤳ possible ✓
-- safe/dangerous: "not safe" ⤴ not dangerous  ✗
-- tall/short: "not tall" ⤴ not short      ✗
-- transparent/opaque: "not transparent" ⤴ not opaque ✗
+Not all contradictory antonym pairs generate the inference: full/empty,
+required/allowed (34), and certain/possible (35) do; the (38) pairs
+safe/dangerous, tall/short, and transparent/opaque do not.
 
 The paper notes this variation cuts across scale structure: safe has
 an upper closed scale, transparent has a fully closed scale, and tall
@@ -243,11 +226,6 @@ theorem adjective_correct_alts :
 
 end GradableAdjectives
 
-
--- ═══════════════════════════════════════════════════════════════════════
--- §3  Particularised Scalar Implicatures (§3.2.1, examples 18, 28)
--- ═══════════════════════════════════════════════════════════════════════
-
 /-!
 ## Particularised SIs and the Role of Conjunction
 
@@ -294,7 +272,7 @@ private def ranAndNotSmoked : ActivityWorld → Bool
     they partition ran's denotation (ex. 19). -/
 theorem particularised_symmetric :
     isSymmetric actDomain ran smoked ranAndNotSmoked = true := by
-  native_decide
+  decide
 
 /-- With the symmetric alternative present, exh is vacuous —
     the inference "John smoked" is not derived. -/
@@ -306,19 +284,14 @@ theorem particularised_blocked :
     from context), exh correctly derives: ran ∧ ¬(ran ∧ ¬smoked)
     = ran ∧ smoked = {ranAndSmoked}.
 
-    The structural approach generates this alternative for (18) via
-    contextual salience ([fox-katzir-2011] def 37), but NOT
-    for (28), where the conjunction spans separate sentences. -/
+    The structural approach generates this alternative for (18) because
+    the salient conjunctive constituent is in the substitution source, but
+    NOT for (28), where the conjunction spans separate sentences. -/
 theorem particularised_correct :
     innocent.exh (altsFromPreds [ran, ranAndNotSmoked]) (predToFinset ran)
       = predToFinset smoked := by decide
 
 end ParticularisedSI
-
-
--- ═══════════════════════════════════════════════════════════════════════
--- §4  Too Many Lexical Alternatives (§4.2, [swanson-2010])
--- ═══════════════════════════════════════════════════════════════════════
 
 /-!
 ## Lexicalized Symmetric Alternatives
@@ -337,7 +310,7 @@ denotation, they are symmetric, and exh is vacuous.
 
 (45) The heater sometimes squeaks.
   a. ⤳ The heater intermittently squeaks.   (observed)
-  b. ⤴ The heater always squeaks.           (not observed)
+  b. ⤴ The heater constantly squeaks.       (not observed)
 
 Same pattern: "intermittently" ≈ sometimes ∧ ¬always.
 -/
@@ -366,7 +339,7 @@ private def isOptional : DeonticWorld → Bool
     in `Symmetry.lean`). -/
 theorem swanson_symmetric :
     isSymmetric deonticDomain isPermitted isRequired isOptional
-      = true := by native_decide
+      = true := by decide
 
 /-- With both lexicalized symmetric alternatives, exh is vacuous.
     The structural approach cannot block "optional" from F because
@@ -385,11 +358,6 @@ theorem swanson_without_symmetric :
 
 end SwansonCases
 
-
--- ═══════════════════════════════════════════════════════════════════════
--- §5  The RSA Approach (§5, [bergen-levy-goodman-2016])
--- ═══════════════════════════════════════════════════════════════════════
-
 /-!
 ## The RSA Approach to Symmetry
 
@@ -398,68 +366,31 @@ end SwansonCases
 dissolves the symmetry problem without structural restriction of
 alternatives.
 
-### Successes
-- **Direct SIs**: "some but not all" is costlier than "all", so
-  cost breaks the symmetry → SI ¬all is derived.
-- **Gradable adjectives** (ex. 50): "not empty" is more complex than
-  "empty", so the RSA correctly derives ¬empty for "not full".
+What it covers: direct SIs — *some but not all* is costlier than *all*,
+so cost breaks the symmetry; plain indirect SIs (48) — the alternatives
+{some, none} tie in complexity, but *some* is relatively uninformative
+against *not all* where *none* is not, so informativity breaks it; and
+the full/empty case (50), since *not empty* is costlier than *empty*.
 
-### Failures
-- **Indirect SIs** (ex. 48): "didn't see all" has symmetric
-  alternatives {some, none} of equal complexity. Neither cost nor
-  informativity breaks the symmetry.
-- **Adjective asymmetry** (ex. 56): RSA predicts the same inference
-  for all adjective pairs (safe/dangerous, tall/short), but only
-  full/empty actually generates it.
-- **[swanson-2010] cases** (ex. 57): "intermittently" is not more
-  complex than "always", so cost cannot break the symmetry.
-
-See `Comparisons/RSANeoGricean.lean` for the formal connection between
-RSA at α → ∞ and categorical exhaustification.
+Where it fails: the many-variant (54), where the unwanted *many* matches
+the needed *not many* on both dimensions; the run-and-smoke sentences (55),
+where the unattested alternative is if anything simpler; the adjective
+asymmetry (56), predicting the same inference for safe/dangerous and
+tall/short as for full/empty; and (57), where *intermittently* is no more
+complex than *always* — unless lexical frequency is priced into cost.
 -/
-
-
--- ═══════════════════════════════════════════════════════════════════════
--- §6  Summary
--- ═══════════════════════════════════════════════════════════════════════
 
 /-!
-## Summary: Landscape of Predictions
+## Summary
 
-| Phenomenon                    | Structural | +AC | RSA |
-|-------------------------------|:---:|:---:|:---:|
-| Direct SI (some/all)          | ✓   | ✓   | ✓   |
-| Indirect SI (¬all → some)     | ✗   | ✓   | ✗   |
-| Gradable adj (¬full → ¬empty) | ✗   | ✗   | ✓   |
-| Particularised SI (28)        | ✗   | ✗   | ✗   |
-| Swanson (permitted/optional)  | ✗   | ✗   | ✗   |
-
-No single approach handles all cases. The symmetry problem remains
-open as of this paper.
-
-## Architectural observations for linglib
-
-This paper reveals several tensions in linglib's organization:
-
-1. **Alternatives straddle semantics/pragmatics**: structural
-   alternatives (`Semantics/Alternatives/`) and RSA
-   alternatives (`Pragmatics/RSA/`) address the same
-   problem but with incompatible representations.
-
-2. **Type-level vs value-level alternatives**: RSA models define
-   alternatives as `Fintype U` (compile-time); structural alternatives
-   are computed as `List (PFTree W)` (runtime). No bridge exists.
-
-3. **Adjective scale structure and alternative generation are
-   disconnected**: the full/empty case requires connecting
-   `Adjective/Theory.lean` antonym pairs to `Structural.lean`
-   substitution — currently four separate modules with no wiring.
-
-4. **No embedded exhaustification**: `exhB` operates at a single
-   point, but indirect SIs require exhaustification under negation.
-   The `RSA/ScalarImplicatures/Embedded/` directory partially handles
-   this for RSA but not for the grammatical approach.
+The paper's three problems — indirect and particularised implicatures, too
+few lexical alternatives (the Japanese deontic paradigm (41)–(43), where
+the needed necessity alternative is not structurally derivable), and too
+many (Swanson's lexicalized partners) — leave every account partial: the
+structural approach fails the first, the Atomicity Constraint trades the
+indirect cases for the gradable-adjective ones, and the RSA account clears
+direct, indirect, and full/empty but not (54)–(57). The symmetry problem
+remains open as of this paper.
 -/
-
 
 end BrehenyEtAl2018
