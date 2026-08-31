@@ -2049,7 +2049,6 @@ import Linglib.Studies.Caha2009
 import Linglib.Studies.Caie2023
 import Linglib.Studies.CaoWhiteLassiter2025
 import Linglib.Studies.Cariani2013
-import Linglib.Studies.CarianiGoldstein2020
 import Linglib.Studies.CarianiSantorio2018
 import Linglib.Studies.CarianiSantorioWellwood2024
 import Linglib.Studies.Carstens2026
@@ -3024,3 +3023,4 @@ import Linglib.Syntax.Minimalist.Case.Dependent
 import Linglib.Data.Examples.Bale2008
 import Linglib.Data.Examples.BaleKhanjian2014
 import Linglib.Data.Examples.BaleSchwarz2026
+import Linglib.Data.Examples.Chierchia2006

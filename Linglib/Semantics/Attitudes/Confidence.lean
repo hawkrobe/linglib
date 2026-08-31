@@ -29,7 +29,7 @@ Key features:
   one theme
 - **Not probabilistic**: the ordering need not respect conjunction — there is
   no conjunction-monotonicity axiom; the divergence witness is
-  `CarianiSantorioWellwood2024.conjunction_fallacy_predicted` (CSW (52))
+  `CarianiSantorioWellwood2024.exists_conjunction_fallacy_credence` (CSW (52))
 - **Bounded above (for ordinary holders)**: `certain` picks out the
   maximal elements (CSW §5.2). The maximality assumption is supplied
   per-theorem via `h_top`, not baked into the structure — CSW p.19 hedges
@@ -118,11 +118,10 @@ example : ConfidenceOrdering Bool Unit where
 differ only in a **contrast point** on it (CSW Figures 2–3: same
 background ordering, different cut-offs). The lexical entries are
 POS-free (CSW §3.3): the positive form is `co.le contrastPt s` directly
-on the preorder — no covert `pos` morpheme, no degree, and (post
-substrate dissolution) no entry struct: a CSW lexical entry IS its
-contrast point. `certain`'s point is maximal for ordinary holders (CSW
-§5.2, hedged per-theorem via `h_top`); `doubts` is negative-polarity,
-holding of states *below* its point.
+on the preorder — no covert `pos` morpheme, no degree and no entry
+record: a CSW lexical entry is its contrast point. `certain`'s point is
+maximal for ordinary holders (CSW §5.2, hedged per-theorem via `h_top`);
+`doubts` is negative-polarity, holding of states *below* its point.
 -/
 
 /-- `certain` entails `confident` (CSW (65)/(66)).
@@ -225,14 +224,10 @@ confident that (p ∧ q) without being confident that p (CSW (52),
 *absence of a constraint* — the background `Preorder` carries no
 conjunction-monotonicity axiom, unlike a probability measure.
 
-The genuine witness that this diverges from a probabilistic account — a
-non-monotone credence ranking a *consistent* conjunction above a conjunct, which
-no probability measure can do — is
-`CarianiSantorioWellwood2024.conjunction_fallacy_predicted`; the packaged
-cross-framework refutation is
-`CarianiSantorioWellwood2024.states_vs_threshold_on_conjunction_fallacy`.
-(Earlier a vacuous `conjunction_fallacy_compatible : ∃ a b c : ℕ, a ≤ b ∧ ¬ a ≤ c`
-stood here; it encoded nothing about confidence or conjunction and was removed.) -/
+The witness that this diverges from a probabilistic account — a credence ranking a
+*consistent* conjunction above a conjunct, which no probability measure can do — is
+`CarianiSantorioWellwood2024.exists_conjunction_fallacy_credence`, against
+`CarianiSantorioWellwood2024.not_conjunction_fallacy_of_probabilistic`. -/
 
 /-! ### Bridge to Neo-Davidsonian event semantics
 

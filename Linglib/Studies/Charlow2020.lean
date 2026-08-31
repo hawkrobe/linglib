@@ -4,11 +4,7 @@ import Linglib.Semantics.Composition.Cont
 import Linglib.Semantics.Composition.TypeShifting
 
 /-!
-# [charlow-2020]: The Scope of Alternatives — Indefiniteness and Islands
-
-Simon Charlow (2020). "The scope of alternatives: indefiniteness and
-islands." *Linguistics and Philosophy* 43(4): 427–472.
-<https://doi.org/10.1007/s10988-019-09278-3>
+# Charlow 2020: the scope of alternatives
 
 ## Thesis
 
@@ -61,6 +57,12 @@ The same `η`/`≫=` structure with a different carrier:
 | Bind | `m ≫=_S f = ⋃_{x∈m} f(x)` | `v ≫=_# k = k(v); # ≫=_# k = #` |
 | Linguistic effect | Alternatives | Partiality |
 | Scope payoff | Indefinites escape islands | Presuppositions project past filters |
+
+## References
+
+* [charlow-2020]
+* [charlow-2018]
+* [grove-2022]
 -/
 
 namespace Charlow2020

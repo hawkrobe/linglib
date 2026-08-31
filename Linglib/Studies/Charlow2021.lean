@@ -28,7 +28,7 @@ side by side:
 | Post-suppositions (§5, App. B) | `PostSupp S A` (Writer monad) | ✓ via deferred cardinality tests |
 | Update semantics (§6) | `State.CCP W E` | ✓ via non-distributive `Mvar_u` |
 
-## Main declarations
+## Main definitions
 
 * `cumulativeReading`, `pseudoCumulativeReading`: decidable model-checks over
   the finite witness scenarios; `scenarioB_pseudo_true` exhibits the
