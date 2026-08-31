@@ -7,7 +7,7 @@ import Linglib.Semantics.Questions.Bias
 
 /-!
 # Bias in Commitment Space Semantics
-[krifka-2015] [cohen-krifka-2014] [ginzburg-2012] [bring-gunlogson-2000]
+[krifka-2015] [cohen-krifka-2014] [ginzburg-2012] [buring-gunlogson-2000]
 
 Worked examples exercising the commitment-space framework of
 [krifka-2015] ("Bias in Commitment Space Semantics: Declarative
@@ -261,7 +261,7 @@ theorem high_neg_not_entails_low_neg :
 
 /-! ## Table 1 (paper p. 341) — Büring & Gunlogson 2000 licensing
 
-[bring-gunlogson-2000] (cited by [krifka-2015] p. 341)
+[buring-gunlogson-2000] (cited by [krifka-2015] p. 341)
 identifies a 3×3 contextual-evidence × negation-type acceptability
 pattern. Contexts (rows): contextual evidence FOR φ / NEUTRAL / AGAINST φ.
 Question types (columns): no negation / low negation / high negation.
@@ -276,7 +276,7 @@ Cell values use `Features.Acceptability` (`ok` / `marginal` / `anomalous`).
 The paper's `(#)` parenthesised hash maps to `marginal`; bare `#` maps to
 `anomalous`. The `ContextualEvidence` enum is reused from
 `Discourse.Commitment` (originally introduced for
-[bring-gunlogson-2000]).
+[buring-gunlogson-2000]).
 -/
 
 /-- The three negation columns of Krifka's Table 1. -/

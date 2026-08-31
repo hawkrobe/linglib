@@ -1,388 +1,201 @@
 import Linglib.Syntax.Minimalist.Ellipsis
 
 /-!
-# Benz & Salzmann (2025): Evidence from German for N-stranding NP-ellipsis
-[benz-salzmann-2025]
+# Benz and Salzmann 2025: N-stranding NP-ellipsis in German
 
-Evidence from German for N-stranding NP-ellipsis.
-Proceedings of the Chicago Linguistic Society 60.
+This file formalizes the argument of [benz-salzmann-2025] that German has N-stranding
+NP-ellipsis. [liptak-saab-2014] take the absence of such ellipsis in Spanish as evidence that the
+noun does not leave NP: a postnominal PP cannot be recovered in *Juan habló con tres estudiantes de
+física y yo hablé con dos*. Benz and Salzmann observe that in those examples the numeral is
+contrastive and the noun is not; make the noun contrastive and recovery becomes possible in German,
+English and Spanish alike. The [E] feature can then sit on n, deleting only NP while the noun
+survives in its raised position — the nominal counterpart of V-stranding VP-ellipsis.
 
-## Overview
+The nominal spine instantiates the substrate's `DeletionSpine`, with an adjunction position for
+prenominal modifiers alongside the head positions: that distinction is what the paper's evidence
+against deleting individual constituents turns on, and it is why this spine is stated here rather
+than over the `Cat` positions of the extended projection.
 
-German has N-stranding NP-ellipsis: ellipsis of NP after N-to-n head
-movement, which strands the moved noun outside
-the deletion domain. What looks like deletion of individual constituents
-(PPs, relative clauses, genitives) is actually NP-ellipsis with N having
-evacuated.
+## Main definitions
 
-## Key Claims
+* `NomSpinePos`, `NomEllipsisType` — the nominal spine and an [E] position on it
+* `nStrandingNPE`, `nPEllipsis`, `numPEllipsis` — [E] on n, on Num, and on D
+* `ePositionOfContrast` — the contrast condition on [E] placement
 
-1. **X-stranding diagnostic** ([liptak-saab-2014]): if a language has
-   both X-movement out of XP and XP-ellipsis, X-stranding XP-ellipsis
-   should exist. German has N-to-n movement and NP-ellipsis → N-stranding
-   NP-ellipsis exists.
+## Main results
 
-2. **Variable [E] placement**: [E] can be on D, Num, or n, producing
-   different-sized deletion domains.
+* `n_stranding_is_xStranding` — N-to-n movement instantiates the generic X-stranding theorem
+* `no_individual_prenominal_deletion`, `no_individual_numeral_deletion` — no [E] position deletes a
+  prenominal modifier while sparing the noun
+* `postnominal_all_or_nothing` — the only [E] position recovering a postnominal dependent deletes
+  every one of them
+* `contrast_governs_recovery` — a postnominal dependent is recoverable exactly when the noun is
+  contrastive
+* `gender_parallels_voice` — the categorizer is external under N-stranding as Voice is under VPE
 
-3. **Contrast condition**: n[E] (N-stranding) requires the noun to be
-   contrastive. When N is not contrastive, [E] must be on a higher head
-   (Num or D), and N is deleted along with the rest.
+## References
 
-4. **Against individual deletion**: Apparent deletion of individual PPs or
-   relatives is actually NP-ellipsis after N-movement — there is no
-   mechanism for deleting arbitrary individual constituents within DP.
-   No [E] position can delete prenominal modifiers without also deleting N.
-
-5. **Against pragmatic recovery**: Bound variable readings inside elided
-   material prove these are genuine syntactic ellipsis, not pragmatic
-   inference.
-
-6. **Gender mismatch parallel**: N-stranding tolerates gender mismatches
-   (n hosts gender, n is external under n[E]) — paralleling voice mismatch
-   tolerance in VPE (Voice external under Voice[E]).
-
-## Architecture
-
-This study imports `DeletionDomain.lean`: the generic `DeletionSpine`
-class, the clausal `SpinePos` instance, and the nominal `NomSpinePos`
-instance with `NomEllipsisType` and the `xStranding` theorem.
-
-N-to-n head movement is assumed but not formally instantiated; the
-deletion-domain predictions are independent of the movement mechanism.
-
-The core predictions are derived from the `NomSpinePos` deletion domain:
-- n[E]: NP deleted, N/adj/num survive (N-stranding)
-- Num[E]: nP deleted, num/D survive (standard NP-ellipsis)
-- D[E]: NumP deleted, only D survives
-
-All already proved in `DeletionDomain.lean` §§ 11-12. This file adds
-the German empirical data and verifies it against those predictions.
+* [benz-salzmann-2025]
+* [liptak-saab-2014]
+* [merchant-2001]
+* [merchant-2013]
 -/
 
 namespace BenzSalzmann2025
 
 open Minimalist.Ellipsis
 
--- ════════════════════════════════════════════════════════════════
--- § 1: German NP-Ellipsis Data
--- ════════════════════════════════════════════════════════════════
+/-! ### The nominal spine -/
 
-/-- Grammaticality judgment for a DP-ellipsis example. -/
-structure DPEllipsisDatum where
-  /-- German sentence -/
-  sentence : String
-  /-- English translation -/
-  translation : String
-  /-- Is the ellipsis grammatical? -/
-  grammatical : Bool
-  /-- Which [E] position licenses (or fails to license) this? -/
+/-- Positions of the nominal extended projection, lowest first. `NP_adj` is the site of prenominal
+modifiers: inside nP but outside n's complement, the nominal counterpart of the clausal spine's
+`VP_adj`. -/
+inductive NomSpinePos where
+  /-- The lexical noun and its postnominal dependents. -/
+  | N
+  /-- Prenominal modifiers: adjectives and, for the paper's purposes, numerals' host positions. -/
+  | NP_adj
+  /-- The categorizer, which hosts gender and is the landing site of N-movement. -/
+  | n
+  /-- Number. -/
+  | Num
+  /-- The determiner. -/
+  | D
+  deriving DecidableEq, Repr
+
+/-- The deletion-domain relation: `p.isBelow q` when `p` lies in `q`'s complement. Prenominal
+modifiers are not in n's complement, though they are in Num's. -/
+def NomSpinePos.isBelow : NomSpinePos → NomSpinePos → Bool
+  | .N, .NP_adj | .N, .n | .N, .Num | .N, .D => true
+  | .NP_adj, .Num | .NP_adj, .D => true
+  | .n, .Num | .n, .D => true
+  | .Num, .D => true
+  | _, _ => false
+
+/-- Structural height, the linear order N ≤ NP_adj ≤ n ≤ Num ≤ D. -/
+def NomSpinePos.isAtOrBelow : NomSpinePos → NomSpinePos → Bool
+  | .N, _ => true
+  | .NP_adj, .NP_adj | .NP_adj, .n | .NP_adj, .Num | .NP_adj, .D => true
+  | .n, .n | .n, .Num | .n, .D => true
+  | .Num, .Num | .Num, .D => true
+  | .D, .D => true
+  | _, _ => false
+
+instance : DeletionSpine NomSpinePos where
+  isBelow := NomSpinePos.isBelow
+  isAtOrBelow := NomSpinePos.isAtOrBelow
+  isBelow_irrefl := by intro p; cases p <;> decide
+  isBelow_mono := by
+    intro d p₁ p₂
+    cases d <;> cases p₁ <;> cases p₂ <;>
+      simp_all [NomSpinePos.isBelow, NomSpinePos.isAtOrBelow]
+
+/-- An [E] feature on a head of the nominal spine; its deletion domain is that head's
+complement. -/
+structure NomEllipsisType where
   ePosition : NomSpinePos
-  /-- Is the noun contrastive? -/
-  nounContrastive : Bool
-  /-- Source example number -/
-  source : String
+  name : String := ""
   deriving Repr
 
--- § 1.1: NP-ellipsis exists in German (§2.2)
+/-- Whether a position falls in the deletion domain. -/
+def nomInDeletionDomain (c : NomSpinePos) (e : NomEllipsisType) : Prop :=
+  inDomain c e.ePosition
 
-/-- ex. (11): Deletion of more than just the noun — NP-ellipsis deletes
-    N + PP modifier. -/
-def ex11 : DPEllipsisDatum :=
-  { sentence := "Ich kaufte zwei Bücher über Chomsky und du kauftest drei"
-  , translation := "I bought two books about Chomsky and you bought three."
-  , grammatical := true
-  , ePosition := .Num
-  , nounContrastive := false
-  , source := "Benz & Salzmann 2025, (11)" }
+instance (c : NomSpinePos) (e : NomEllipsisType) : Decidable (nomInDeletionDomain c e) := by
+  unfold nomInDeletionDomain; infer_instance
 
-/-- ex. (12): PP complement of elided noun survives — the elided noun
-    *Angst* selects *vor*, showing syntactic structure in the ellipsis site. -/
-def ex12 : DPEllipsisDatum :=
-  { sentence := "Die Angst vor Monstern ist grösser als die vor Spinnen"
-  , translation := "The fear of monsters is bigger than that of spiders."
-  , grammatical := true
-  , ePosition := .Num
-  , nounContrastive := false
-  , source := "Benz & Salzmann 2025, (12)" }
+/-- Whether a position survives ellipsis. -/
+def nomSurvives (c : NomSpinePos) (e : NomEllipsisType) : Prop :=
+  ¬ nomInDeletionDomain c e
 
--- § 1.2: N-stranding with contrastive N (§2.1)
+instance (c : NomSpinePos) (e : NomEllipsisType) : Decidable (nomSurvives c e) := by
+  unfold nomSurvives; infer_instance
 
-/-- ex. (6a): PP *der Physik* recovered in second conjunct — noun is
-    contrastive (*Studenten* vs *Professoren*), enabling N-stranding.
-    The PP dependent of the elided NP is interpreted in the ellipsis site. -/
-def ex6a : DPEllipsisDatum :=
-  { sentence := "Peter sprach mit zwei Studenten der Physik und ich sprach mit zwei Professoren"
-  , translation := "Peter spoke with two students of physics and I spoke with two professors (of physics)."
-  , grammatical := true
-  , ePosition := .n
-  , nounContrastive := true
-  , source := "Benz & Salzmann 2025, (6a)" }
+/-- N-stranding NP-ellipsis: [E] on n, deleting NP alone. The noun survives in its raised
+position, and prenominal modifiers, being outside n's complement, survive with it. -/
+def nStrandingNPE : NomEllipsisType := ⟨.n, "N-stranding NP-ellipsis"⟩
 
--- § 1.3: N-stranding blocked without contrastive N (§1.2, §2.1)
+/-- nP-ellipsis: [E] on Num, the configuration [liptak-saab-2014] find in Spanish. The noun, the
+categorizer and prenominal modifiers are all deleted. -/
+def nPEllipsis : NomEllipsisType := ⟨.Num, "nP-ellipsis"⟩
 
-/-- ex. (5): Non-contrastive noun blocks N-stranding (Spanish;
-    [liptak-saab-2014]) — only the numeral contrasts (*tres* vs
-    *dos*), not the noun *estudiantes*. Since N is not contrastive, n[E]
-    is unavailable. [E] must be on Num or higher, deleting N and its
-    PP dependent. The PP *de física* cannot be recovered. -/
-def ex5_analog : DPEllipsisDatum :=
-  { sentence := "Juan habló con tres estudiantes de física y yo hablé con dos"
-  , translation := "Juan talked with three students of physics and I talked with two (students, not of physics)."
-  , grammatical := false
-  , ePosition := .Num  -- N not contrastive → [E] on Num, not n; PP deleted with N
-  , nounContrastive := false
-  , source := "Benz & Salzmann 2025, (5) / Lipták & Saab 2014" }
+/-- NumP-ellipsis: [E] on D, leaving only the determiner. -/
+def numPEllipsis : NomEllipsisType := ⟨.D, "NumP-ellipsis"⟩
 
-/-- ex. (27): N not contrastive but adjective contrastive → N-stranding
-    blocked. *Zerstörung* is the same noun in both conjuncts; only the
-    ordinal (*erste* vs *zweite*) contrasts. Since N is not contrastive,
-    [E] must be on a higher head, deleting N along with the genitive
-    argument *Roms*. The genitive cannot be recovered. -/
-def ex27 : DPEllipsisDatum :=
-  { sentence := "*Ich sah die erste Zerstörung Roms und du sahst die zweite Zerstörung"
-  , translation := "Intended: I saw the first destruction of Rome and you saw the second (of Rome)."
-  , grammatical := false
-  , ePosition := .Num  -- N not contrastive → [E] on Num; genitive deleted with N
-  , nounContrastive := false
-  , source := "Benz & Salzmann 2025, (27)" }
+/-! ### N-stranding -/
 
--- § 1.4: Against individual deletion (§2.3)
+/-- N-to-n movement instantiates the generic X-stranding pattern: the base position of the noun
+lies in n's complement while n itself is external, so [E] on n deletes NP and spares the moved
+noun (§1.1). -/
+theorem n_stranding_is_xStranding :
+    ¬ inDomain NomSpinePos.n NomSpinePos.n ∧ inDomain NomSpinePos.N NomSpinePos.n :=
+  xStranding NomSpinePos.n NomSpinePos.N (by decide)
 
-/-- ex. (25a): Prenominal adjective cannot be individually deleted —
-    *schönste* cannot be elided while N (*Auto*/*Motorrad*) contrasts.
-    No [E] position achieves this: n[E] leaves adj external; Num[E] and
-    D[E] delete both adj and N. See `no_individual_prenominal_deletion`. -/
-def ex25a : DPEllipsisDatum :=
-  { sentence := "*Ich habe das schönste Auto und du das Motorrad"
-  , translation := "Intended: I have the prettiest car and you the (prettiest) motorbike."
-  , grammatical := false
-  , ePosition := .Num  -- nearest [E] that deletes adj, but it also deletes N
-  , nounContrastive := true
-  , source := "Benz & Salzmann 2025, (25a)" }
+/-- The clausal and nominal patterns are the same theorem at the categorizer of each extended
+projection: V is to v as N is to n. -/
+theorem clausal_nominal_parallel :
+    inDomain SpinePos.V SpinePos.v ∧ inDomain NomSpinePos.N NomSpinePos.n := by decide
 
-/-- ex. (25b): Numeral cannot be individually deleted — *zwei* cannot
-    be elided while N (*Bücher*/*Romane*) contrasts.
-    D[E] is the only position that could delete Num, but it also
-    deletes N, adj, and n. -/
-def ex25b : DPEllipsisDatum :=
-  { sentence := "*Ich las diese zwei Bücher und du last diese Romane"
-  , translation := "Intended: I read these two books and you read these (two) novels."
-  , grammatical := false
-  , ePosition := .D  -- only D[E] puts Num in deletion domain, but deletes everything
-  , nounContrastive := true
-  , source := "Benz & Salzmann 2025, (25b)" }
+/-- Under N-stranding the noun's dependents go and everything above n stays: the postnominal PP of
+*zwei Studenten der Physik* is recovered in *zwei Professoren*, while the numeral and determiner
+are pronounced ((6a)). -/
+theorem nStranding_domain :
+    nomInDeletionDomain .N nStrandingNPE ∧ nomSurvives .NP_adj nStrandingNPE ∧
+      nomSurvives .n nStrandingNPE ∧ nomSurvives .Num nStrandingNPE ∧
+      nomSurvives .D nStrandingNPE := by decide
 
-/-- ex. (26a): Prenominal genitive (in Spec,DP) cannot be deleted and
-    recovered. Even D[E] (the highest [E] position) deletes only D's
-    complement — Spec,DP is never in any deletion domain. -/
-def ex26a : DPEllipsisDatum :=
-  { sentence := "*Ich schätze Goethes Romane aber du bevorzugst Gedichte"
-  , translation := "Intended: I appreciate Goethe's novels but you prefer (Goethe's) poems."
-  , grammatical := false
-  , ePosition := .D  -- even D[E] cannot delete Spec,DP material
-  , nounContrastive := true
-  , source := "Benz & Salzmann 2025, (26a)" }
+/-! ### Against deleting individual constituents -/
 
-/-- ex. (26b): Postnominal *von*-PP CAN be deleted — this IS NP-ellipsis
-    after N-stranding, not individual constituent deletion. -/
-def ex26b : DPEllipsisDatum :=
-  { sentence := "Ich schätze Goethes Romane aber du bevorzugst die Gedichte von Goethe"
-  , translation := "I appreciate Goethe's novels but you prefer the poems by Goethe."
-  , grammatical := true
-  , ePosition := .n
-  , nounContrastive := true
-  , source := "Benz & Salzmann 2025, (26b)" }
+/-- No [E] position deletes a prenominal modifier while sparing the noun, since the noun lies in
+the complement of every head that dominates the modifier: *das schönste Auto … das schönste
+Motorrad* is out on the elided-adjective reading ((25a)). -/
+theorem no_individual_prenominal_deletion (p : NomSpinePos)
+    (h : NomSpinePos.NP_adj.isBelow p = true) : NomSpinePos.N.isBelow p = true := by
+  cases p <;> simp [NomSpinePos.isBelow] at h ⊢
 
--- § 1.5: All-or-nothing postnominal deletion and bound variables (§2.3)
+/-- The same for numerals: only [E] on D puts Num in the deletion domain, and that deletes the
+noun too ((25b)). -/
+theorem no_individual_numeral_deletion (p : NomSpinePos)
+    (h : NomSpinePos.Num.isBelow p = true) : NomSpinePos.N.isBelow p = true := by
+  cases p <;> simp [NomSpinePos.isBelow] at h ⊢
 
-/-- ex. (28a): One PP (*von jedem Studenten*) remains while the second
-    (*vor seinem Professor*) is attempted to be recovered — UNGRAMMATICAL.
-    If one postnominal modifier survives, NP-ellipsis did not apply,
-    and the second modifier cannot be individually deleted. -/
-def ex28a : DPEllipsisDatum :=
-  { sentence := "*Die Angst von jedem Studenten vor seinem Professor ist grösser als der Respekt von jedem Studenten"
-  , translation := "Intended: Every student's fear of his professor is greater than every student's respect (of his professor)."
-  , grammatical := false
-  , ePosition := .n  -- n[E] would delete ALL NP material, not just one PP
-  , nounContrastive := true
-  , source := "Benz & Salzmann 2025, (28a)" }
+/-- Deleting a postnominal dependent requires deleting the noun's whole complement, so if one
+postnominal modifier is pronounced no other can be recovered ((28a)) while eliding both is fine
+((28b)). -/
+theorem postnominal_all_or_nothing (e : NomEllipsisType) (h : nomInDeletionDomain .N e) :
+    ∀ p, p.isAtOrBelow .N = true → nomInDeletionDomain p e := by
+  intro p hp
+  cases p <;> simp [NomSpinePos.isAtOrBelow] at hp
+  exact h
 
-/-- ex. (28b): BOTH PPs deleted — GRAMMATICAL. This is genuine
-    N-stranding NP-ellipsis: *Angst* vs *Respekt* are contrastive,
-    n[E] applies, and the entire NP (both PPs) is deleted.
-    The bound pronoun *seinem* (bound by *jedem Studenten*) in the
-    elided material proves genuine syntactic ellipsis — pragmatic
-    recovery cannot bind variables. -/
-def ex28b : DPEllipsisDatum :=
-  { sentence := "Die Angst von jedem Studenten vor seinem Professor ist grösser als der Respekt"
-  , translation := "Every student's fear of his professor is greater than the respect."
-  , grammatical := true
-  , ePosition := .n
-  , nounContrastive := true
-  , source := "Benz & Salzmann 2025, (28b)" }
+/-! ### The contrast condition -/
 
--- ════════════════════════════════════════════════════════════════
--- § 2: Contrast Condition
--- ════════════════════════════════════════════════════════════════
+/-- Where [E] sits, given whether the noun is contrastive: on n when it is, higher when it is not
+(§2.1, motivated by (27)). -/
+def ePositionOfContrast (nounContrastive : Bool) : NomEllipsisType :=
+  if nounContrastive then nStrandingNPE else nPEllipsis
 
-/-- The contrast condition on [E] placement: n[E] (N-stranding) is
-    available only when the noun is contrastive. When N is not contrastive,
-    [E] must be on a higher head (Num or D), causing N to be deleted too.
+/-- A postnominal dependent of the noun is recoverable exactly when the noun is contrastive: with
+contrast the noun survives while its complement is deleted, without it the noun is deleted along
+with the dependent — the difference between (6a) and Spanish (5), and between (26b) and (27). -/
+theorem contrast_governs_recovery (b : Bool) :
+    nomInDeletionDomain .N (ePositionOfContrast b) ∧
+      (nomSurvives .n (ePositionOfContrast b) ↔ b = true) := by
+  cases b <;> exact ⟨by decide, by decide⟩
 
-    This predicts:
-    - Contrastive N + postnominal modifier → N-stranding OK (ex. 6a)
-    - Non-contrastive N + postnominal modifier → modifier not recovered (ex. 5, 27) -/
-def ePositionFromContrast (nounContrastive : Bool) : NomSpinePos :=
-  if nounContrastive then .n else .Num
+/-! ### Ellipsis height and mismatches -/
 
-/-- When N is contrastive, [E] is on n. The n head (to which N has moved)
-    is external → the noun survives via its moved copy at n. -/
-theorem contrastive_nHead_survives :
-    nomSurvives .n ⟨ePositionFromContrast true, ""⟩ := by decide
+/-- German N-stranding deletes strictly less than the Spanish configuration: the categorizer and
+the prenominal modifiers survive the one and not the other. -/
+theorem german_smaller_domain_than_spanish :
+    nomSurvives .NP_adj nStrandingNPE ∧ nomInDeletionDomain .NP_adj nPEllipsis ∧
+      nomSurvives .n nStrandingNPE ∧ nomInDeletionDomain .n nPEllipsis := by decide
 
-/-- When N is not contrastive, [E] is on Num. Both N (base position)
-    and n are in the deletion domain — the noun is deleted along with
-    all NP-internal and nP-internal material. -/
-theorem nonContrastive_noun_deleted :
-    nomInDeletionDomain .N ⟨ePositionFromContrast false, ""⟩ ∧
-    nomInDeletionDomain .n ⟨ePositionFromContrast false, ""⟩ := by decide
-
--- ════════════════════════════════════════════════════════════════
--- § 3: Predictions — Prenominal vs. Postnominal Asymmetry
--- ════════════════════════════════════════════════════════════════
-
-/-- The central asymmetry ([benz-salzmann-2025] §2.3):
-    - Prenominal modifiers (adjectives, numerals, prenominal genitives)
-      CANNOT be individually deleted → they are above n
-    - Postnominal modifiers (PPs, relative clauses, postnominal genitives)
-      CAN be deleted under N-stranding → they are inside NP (below n)
-
-    This follows directly from the `NomSpinePos` deletion domain:
-    under n[E], only material below n (= NP-internal) is deleted. -/
-theorem prenominal_postnominal_asymmetry :
-    -- Postnominal material (NP-internal = below n): deleted under n[E]
-    nomInDeletionDomain .N nStrandingNPE ∧
-    -- Prenominal adjectives (nP-internal = above NP): survive n[E]
-    nomSurvives .NP_adj nStrandingNPE ∧
-    -- Numerals (at Num level): survive n[E]
-    nomSurvives .Num nStrandingNPE ∧
-    -- D (determiner): always survives
-    nomSurvives .D nStrandingNPE := by decide
-
-/-- Individual prenominal deletion is impossible: any [E] position that
-    puts the prenominal adjective in the deletion domain also puts N
-    in the deletion domain. So you cannot delete an adjective without
-    also deleting the noun — ruling out individual adjective deletion
-    when N is contrastive (ex. 25a).
-
-    This follows from NP_adj being structurally above N: N is below
-    NP_adj in the complement hierarchy, so any complement that contains
-    NP_adj also contains N. -/
-theorem no_individual_prenominal_deletion (p : NomSpinePos) :
-    NomSpinePos.NP_adj.isBelow p = true → NomSpinePos.N.isBelow p = true := by
-  cases p <;> simp [NomSpinePos.isBelow]
-
-/-- Individual numeral deletion is impossible: any [E] position that
-    puts Num in the deletion domain also puts N in the deletion domain.
-    Only D[E] deletes Num, and D[E] also deletes everything else (ex. 25b). -/
-theorem no_individual_numeral_deletion (p : NomSpinePos) :
-    NomSpinePos.Num.isBelow p = true → NomSpinePos.N.isBelow p = true := by
-  cases p <;> simp [NomSpinePos.isBelow]
-
-/-- Under N-stranding, if one postnominal modifier remains, ALL must remain
-    (ex. 28a vs 28b). Ellipsis targets the entire NP projection, not
-    individual constituents.
-
-    If [E] is NOT on n (no N-stranding), then [E] must be higher (Num or D),
-    and all postnominal material plus N is deleted — so individual PP
-    recovery is impossible. The only way to recover a PP is N-stranding,
-    which deletes the entire NP. -/
-theorem all_or_nothing_postnominal :
-    -- Under N-stranding: ALL NP-internal material is deleted
-    nomInDeletionDomain .N nStrandingNPE ∧
-    -- Under nP-ellipsis: NP-internal material PLUS n-level material deleted
-    nomInDeletionDomain .N nPEllipsis ∧
-    nomInDeletionDomain .NP_adj nPEllipsis ∧
-    nomInDeletionDomain .n nPEllipsis := by decide
-
--- ════════════════════════════════════════════════════════════════
--- § 4: N-Stranding as X-Stranding
--- ════════════════════════════════════════════════════════════════
-
-/-- N-stranding NP-ellipsis is an instance of the generic X-stranding
-    pattern, just as V-stranding VPE is. Both are proved by the same
-    `xStranding` theorem from `DeletionDomain.lean` § 0.
-
-    The parallel: V:v :: N:n — the lexical head moves to the categorizer,
-    and when [E] is on the categorizer, the lexical head's complement
-    (VP/NP) is deleted while the moved head survives. -/
-theorem n_stranding_parallels_v_stranding :
-    -- N-stranding: n external under n[E], N's base deleted under n[E]
-    nomSurvives .n nStrandingNPE ∧
-    nomInDeletionDomain .N nStrandingNPE ∧
-    -- V-stranding: v external under v[E], V deleted under v[E]
-    (¬ isInDeletionDomain .v vVPE) ∧
-    isInDeletionDomain .V vVPE ∧
-    -- Same structural reason: lexical head below categorizer in both spines
-    inDomain NomSpinePos.N NomSpinePos.n ∧
-    inDomain SpinePos.V SpinePos.v := by decide
-
--- ════════════════════════════════════════════════════════════════
--- § 5: Connection to Saab (2026)
--- ════════════════════════════════════════════════════════════════
-
-/-- German N-stranding (n[E]) and Spanish Num[E] are different [E]
-    placements in the same nominal spine. German n[E] produces a strictly
-    smaller deletion domain than Spanish Num[E].
-
-    This is the nominal analogue of the clausal vVPE vs. English VPE
-    distinction: lower [E] → smaller deletion domain → more survivors. -/
-theorem german_spanish_e_height :
-    -- German N-stranding: [E] on n
-    nStrandingNPE.ePosition = NomSpinePos.n ∧
-    -- Spanish Num[E] / standard nP-ellipsis: [E] on Num
-    nPEllipsis.ePosition = NomSpinePos.Num ∧
-    -- n is structurally below Num
-    NomSpinePos.n.isAtOrBelow NomSpinePos.Num = true := ⟨rfl, rfl, rfl⟩
-
-/-- Monotonicity: German N-stranding tolerates more "mismatches" (i.e.,
-    more positions survive) than Spanish nP-ellipsis, because n < Num.
-    Adjectives survive German n[E] but not Spanish Num[E]. -/
-theorem german_more_survivors_than_spanish :
-    -- Adjective survives German N-stranding
-    nomSurvives .NP_adj nStrandingNPE ∧
-    -- Adjective does NOT survive Spanish nP-ellipsis
-    ¬ nomSurvives .NP_adj nPEllipsis := by decide
-
--- ════════════════════════════════════════════════════════════════
--- § 6: Gender Mismatch Parallel
--- ════════════════════════════════════════════════════════════════
-
-/-- Gender mismatches under N-stranding parallel voice mismatches
-    under VPE. Both involve the categorizer head being external to
-    the deletion domain when [E] is at that categorizer:
-
-    - N-stranding (n[E]): n hosts gender features, n is external
-      → gender mismatches tolerated
-    - English VPE (Voice[E]): Voice hosts voice features, Voice is
-      external → voice mismatches tolerated
-
-    Conversely, when [E] is higher:
-    - nP-ellipsis (Num[E]): n is internal → gender mismatches blocked
-    - Sluicing (C[E]): Voice is internal → voice mismatches blocked
-
-    [benz-salzmann-2025] p.62-63: "while gender mismatches are
-    normally not possible in nominal ellipsis [...], such mismatches
-    do become possible in our N-stranding NP-ellipsis data." -/
-theorem gender_voice_parallel :
-    -- n external under n[E] → gender mismatch tolerated
-    nomSurvives .n nStrandingNPE ∧
-    -- Voice external under Voice[E] → voice mismatch tolerated
-    canMismatch englishVPE voiceMismatch ∧
-    -- n internal under Num[E] → gender mismatch blocked
-    nomInDeletionDomain .n nPEllipsis ∧
-    -- Voice internal under C[E] → voice mismatch blocked
-    ¬ canMismatch sluicing voiceMismatch := by decide
+/-- Gender mismatches pattern with voice mismatches: the head bearing the feature is external
+exactly when [E] sits on it. Gender lives on n, which survives N-stranding but not nP-ellipsis,
+as Voice survives VP-ellipsis but not sluicing (§3). -/
+theorem gender_parallels_voice :
+    nomSurvives .n nStrandingNPE ∧ nomInDeletionDomain .n nPEllipsis ∧
+      canMismatch englishVPE voiceMismatch ∧ ¬ canMismatch sluicing voiceMismatch := by decide
 
 end BenzSalzmann2025
