@@ -23,7 +23,6 @@ Source and strength classifications are NOT stipulated globally — each
 study derives its own from its theoretical commitments. See:
 - `LuPanDegen2025.lean`: `mosIslandSources`, `mosIslandStrength`
 - `ShenHuang2026.lean`: `definiteNominalSources`, `definiteNominalStrength`
-- `CartnerEtAl2026.lean`: `subjectIslandSource`
 -/
 
 /-- Types of island constraints (descriptive labels). Ross's foundational
