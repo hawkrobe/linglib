@@ -624,14 +624,12 @@ private def restrict3 (A : Set (Fin 4)) : Set (Fin 3) := {i | Fin.castSucc i ∈
 def extendFA (sys : EpistemicSystemFA (Fin 3)) : EpistemicSystemFA (Fin 4) where
   ge A B := (Fin.last 3 ∈ A ∧ Fin.last 3 ∉ B) ∨
     ((Fin.last 3 ∈ A ↔ Fin.last 3 ∈ B) ∧ sys.ge (restrict3 A) (restrict3 B))
-  refl _ := Or.inr ⟨Iff.rfl, sys.refl _⟩
   mono A B hAB := by
     by_cases hb : Fin.last 3 ∈ B
     · by_cases ha : Fin.last 3 ∈ A
       · exact Or.inr ⟨iff_of_true hb ha, sys.mono _ _ fun i hi => hAB hi⟩
       · exact Or.inl ⟨hb, ha⟩
     · exact Or.inr ⟨iff_of_false hb fun h => hb (hAB h), sys.mono _ _ fun i hi => hAB hi⟩
-  bottom := Or.inl ⟨trivial, fun h => h⟩
   nonTrivial := by
     rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
     · exact h3

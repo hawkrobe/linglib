@@ -11,9 +11,9 @@ The top-level results of [holliday-icard-2013] / [kraft-pratt-seidenberg-1959]:
   five worlds).
 * `ComparativeProbability.exists_nonrepresentable_of_five_le_card` — for `|W| ≥ 5`, FA is
   strictly weaker than FP∞ (the KPS counterexample, padded with null atoms).
-* `ComparativeProbability.exists_qualAddMeasure_repr`, `exists_dominationLift_repr` —
-  qualitative completeness results ([van-der-hoek-1996]; [halpern-2003]
-  Thm. 7.5.1a).
+* `ComparativeProbability.exists_qualAddMeasure_repr`, `exists_dominationLift_repr`,
+  `dominationLift_repr_iff` — qualitative completeness results
+  ([van-der-hoek-1996]; [halpern-2003] Thm. 7.5.1a).
 * `ComparativeProbability.axiomA_iff_fa` — Axiom A is equivalent to disjoint-union
   invariance (finite additivity).
 -/
@@ -29,7 +29,7 @@ namespace ComparativeProbability
 theorem representable_of_card_lt_five {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) (hcard : Fintype.card W < 5) :
     Representable sys := by
-  haveI : DecidableEq W := Classical.typeDecidableEq W
+  have : DecidableEq W := Classical.typeDecidableEq W
   let e := Fintype.equivFin W
   set n := Fintype.card W with hn_def
   interval_cases n
@@ -45,7 +45,7 @@ theorem representable_of_card_lt_five {W : Type*} [Fintype W]
 theorem exists_nonrepresentable_of_five_le_card {W : Type*} [Fintype W]
     (hcard : 5 ≤ Fintype.card W) :
     ∃ sys : EpistemicSystemFA W, ¬Representable sys := by
-  haveI : DecidableEq W := Classical.typeDecidableEq W
+  have : DecidableEq W := Classical.typeDecidableEq W
   obtain ⟨sysF, hsysF⟩ := exists_nonrepresentable_fin hcard
   exact ⟨transportFA (Fintype.equivFin W).symm sysF,
     fun h => hsysF (perm_repr (Fintype.equivFin W).symm sysF h)⟩
@@ -185,6 +185,29 @@ theorem exists_dominationLift_repr {W : Type*} [Fintype W]
     have hAa : sys.ge A {a} := sys.mono {a} A (Set.singleton_subset_iff.mpr haA)
     -- Transitivity: sys.ge A {a} → sys.ge {a} {b} → sys.ge A {b}
     exact hTran A {a} {b} hAa hab
+
+/-- Round trip of `exists_dominationLift_repr`: a transitive epistemic system
+    is representable by Lewis's l-lifting **iff** it satisfies right-union and
+    determination by singletons — the model-theoretic form of soundness and
+    completeness for WJR ([holliday-icard-2013]; [halpern-2003] Thm. 7.5.1).
+    Soundness transfers `dominationLift_rightUnion` and
+    `dominationLift_determinedBySingletons` across the representation. -/
+theorem dominationLift_repr_iff {W : Type*} [Fintype W]
+    (sys : EpistemicSystemW W)
+    (hTran : ∀ A B C : Set W, sys.ge A B → sys.ge B C → sys.ge A C) :
+    (∃ ge_w : W → W → Prop, (∀ w, ge_w w w) ∧
+      ∀ A B, sys.ge A B ↔ dominationLift ge_w A B) ↔
+    RightUnion sys.ge ∧ DeterminedBySingletons sys.ge := by
+  constructor
+  · rintro ⟨ge_w, -, hiff⟩
+    refine ⟨fun A B C hab hac => ?_, fun A b hA => ?_⟩
+    · exact (hiff _ _).mpr (dominationLift_rightUnion _ _ _
+        ((hiff _ _).mp hab) ((hiff _ _).mp hac))
+    · obtain ⟨a, ha, hab⟩ := dominationLift_determinedBySingletons A b ((hiff _ _).mp hA)
+      exact ⟨a, ha, (hiff _ _).mpr hab⟩
+  · rintro ⟨hJ, hDS⟩
+    obtain ⟨ge_w, hrefl, hiff⟩ := exists_dominationLift_repr sys hTran hJ hDS
+    exact ⟨ge_w, hrefl, hiff⟩
 
 -- ── Bridge: Axiom A ↔ FA ────────────────────────
 

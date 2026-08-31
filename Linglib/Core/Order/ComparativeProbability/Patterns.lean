@@ -9,7 +9,7 @@ stated for an abstract likelihood relation `r` on a Boolean algebra and proved
 **once** at the weakest axiom hypotheses. Models whose relations carry the
 `ComparativeProbability.*` mixins unconditionally (e.g. `FinAddMeasure.inducedGe`)
 discharge each pattern by instance resolution. The world-ordering lifts
-(`Scales/EpistemicScale/Entailments.lean`) instead validate most patterns for
+(`Entailments.lean`) instead validate most patterns for
 *arbitrary* world relations — strictly weaker hypotheses than the mixin route,
 which would demand reflexivity, transitivity, and (for the m-lift) finiteness —
 so their `V2`–`V7` proofs are deliberately bespoke; they consume this layer
