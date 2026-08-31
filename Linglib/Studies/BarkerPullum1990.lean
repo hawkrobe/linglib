@@ -153,7 +153,7 @@ def unfairGenerator (x u : TreePath) : Prop := x = ⟨[0, 0]⟩ ∧ u = ⟨[0]�
 and itself, the sister commands the verb, the noun does not, yet the sister does not
 dominate the noun. -/
 theorem not_fair_unfairGenerator :
-    ¬ Fair (commandByRelation (toTreeOrder witness) unfairGenerator) := λ h =>
+    ¬ Fair (commandByRelation unfairGenerator) := λ h =>
   absurd (h ⟨[0, 0]⟩ ⟨[0, 1]⟩ ⟨[1]⟩ (λ _ ⟨_, hu⟩ => hu ▸ by decide)
     (λ _ ⟨hx, _⟩ => absurd hx (by decide)) (λ h => absurd (h ⟨[0]⟩ ⟨rfl, rfl⟩) (by decide))
     ⟨[0, 0]⟩ (λ _ ⟨_, hu⟩ => hu ▸ by decide)) (by decide)

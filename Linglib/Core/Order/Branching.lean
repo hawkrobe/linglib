@@ -328,7 +328,7 @@ namespace Branching
 variable {T : Type*} [Branching T]
 
 /-- Dominance (`p ≤ q`, prefix order) on positions is decidable. -/
-instance : DecidableLE TreePath := fun p q =>
+instance : DecidableLE TreePath := fun _ _ =>
   decidable_of_iff _ TreePath.le_def.symm
 
 /-- A position `p` is a **branching node** of `t` when its subtree has at
