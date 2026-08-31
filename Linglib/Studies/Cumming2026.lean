@@ -127,7 +127,7 @@ theorem nfutL_downstream (f : EvidentialFrame ℤ) :
 theorem future_no_downstream :
     English.Tense.future.epConstraint ⟨⟨10, 10, 0, 5⟩, 0⟩ ∧
     ¬ downstreamEvidence ⟨⟨10, 10, 0, 5⟩, 0⟩ := by
-  refine ⟨(Core.Order.holds_unrestricted _ _).mpr trivial, ?_⟩
+  refine ⟨Finset.mem_univ _, ?_⟩
   simp [downstreamEvidence]
 
 /-! ### Korean EP/UP factorization -/

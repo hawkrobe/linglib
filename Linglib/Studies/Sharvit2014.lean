@@ -158,7 +158,7 @@ theorem pronominalLookup_eq_some_iff_tensePronoun {Time : Type*} [LinearOrder Ti
       (Tense.TensePronoun.mk k Tense.past mode j).fullPresupposition g ∧
       (Tense.TensePronoun.mk k Tense.past mode j).resolve g = t := by
   simp only [Tense.TensePronoun.fullPresupposition, Tense.TensePronoun.resolve,
-    Tense.TensePronoun.evalTime, Tense.interpTense, Tense.past, Core.Order.holds_before]
+    Tense.TensePronoun.evalTime, Tense.interpTense, Tense.compare_mem_past]
   exact pronominalLookup_eq_some_iff g j k t
 
 /-! ### The parameter space ((98)) -/

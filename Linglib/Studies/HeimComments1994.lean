@@ -199,7 +199,7 @@ theorem isFelicitousWith_past_imp_upperLimitConstraint
     (h : dr.IsFelicitousWith Tense.past) :
     Tense.upperLimitConstraint
       dr.actualRes dr.holderContext.time :=
-  le_of_lt ((Core.Order.holds_before dr.actualRes dr.holderContext.time).mp h)
+  le_of_lt ((Tense.compare_mem_past dr.actualRes dr.holderContext.time).mp h)
 
 
 -- ════════════════════════════════════════════════════════════════

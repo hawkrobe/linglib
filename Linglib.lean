@@ -250,7 +250,6 @@ import Linglib.Core.Order.Markedness
 import Linglib.Core.Order.Monotone.Monovary
 import Linglib.Core.Order.Normality
 import Linglib.Core.Order.OfCriteria
-import Linglib.Core.Order.Opposition
 import Linglib.Core.Order.Orthoframe
 import Linglib.Core.Order.Orthoframe.Representation
 import Linglib.Core.Order.Ortholattice
@@ -260,7 +259,6 @@ import Linglib.Core.Order.Plausibility
 import Linglib.Core.Order.Positions
 import Linglib.Core.Order.PreorderLattice
 import Linglib.Core.Order.PullbackPreorder
-import Linglib.Core.Order.Relation
 import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Order.SetPreimage
 import Linglib.Core.Order.SignVectors

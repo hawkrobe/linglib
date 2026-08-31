@@ -265,12 +265,12 @@ def willDeletion [LT Time] (f : TensePerspective Time) : Prop :=
 
     *Derived, not stipulated*: the use is *true* exactly when the event-vs-speech
     comparison falls in the tense's `Finset Ordering` cell
-    (`Core.Order.holds gramTense f.eventTime f.speechTime`), reproducing the
-    four-way past/present/future/nonpast table (`before`: `E < S`; `overlapping`:
-    `E = S`; `after`: `S < E`; `notBefore`: `S ≤ E`). -/
+    (`compare f.eventTime f.speechTime ∈ gramTense`), reproducing the four-way
+    past/present/future/nonpast table (`past`: `E < S`; `present`: `E = S`;
+    `future`: `S < E`; `nonpast`: `S ≤ E`). -/
 def classifyUse [LinearOrder Time] (gramTense : Finset Ordering)
     (f : TensePerspective Time) : TenseUseType :=
-  if Core.Order.holds gramTense f.eventTime f.speechTime then .trueTense else .falseTense
+  if compare f.eventTime f.speechTime ∈ gramTense then .trueTense else .falseTense
 
 /-- **Periphrastic forms block false tense** (Lakoff §1, ex. 8a vs 9a):
     a false tense use demands a synthetic form; true tense is compatible
@@ -383,7 +383,7 @@ theorem false_past_satisfies_up_present (f : TensePerspective ℤ)
 theorem false_past_classified_correctly [LinearOrder Time]
     (f : TensePerspective Time) (h : falsePast f) :
     classifyUse Tense.past f = .falseTense := by
-  simp only [classifyUse, Tense.past, Core.Order.holds_before]
+  simp only [classifyUse, Tense.compare_mem_past]
   exact if_neg (by rw [h.1]; exact lt_irrefl _)
 
 theorem will_deletion_requires_future_and_salience (f : TensePerspective ℤ)

@@ -13,8 +13,8 @@ Each is the spine's test filter `lift (test ·)` at the tense cell
 (`Tense/Defs.lean`) between two dref lookups — so the static and dynamic
 operators are *the same cell*, lifted from a state-level predicate to a
 context-level filter, and the temporal algebra (partition, contradiction,
-chaining) is the cells' Boolean algebra (`Core.Order.holds_or_holds₃`,
-`Core.Order.not_holds_and_holds`) through the generic filter algebra of
+chaining) is the cells' Boolean algebra in `Finset Ordering` — cover and
+disjointness of the three atoms — through the generic filter algebra of
 `Update.lean` (`lift_test_cover₃`, `lift_test_disjoint`).
 
 Contexts are level-0 states over `Index.Possibility` — the
@@ -29,7 +29,7 @@ world coordinate is the current evaluation index, drefs are indices.
   eliminative updates (`CCP.IsEliminative`).
 - [de-groote-2006] recovers static readings from dynamic ones by the
   trivial continuation; [charlow-2021] recasts the lift monadically.
-  The `dynPAST = lift (test (holds past · ·))` factoring below is the
+  The `dynPAST = lift (test (compare · · ∈ past))` factoring below is the
   tense fragment of that lift.
 
 ## Main results
@@ -48,7 +48,6 @@ Sibling of `Tense/Compositional.lean` (the static operators) and
 
 namespace Tense
 
-open Core.Order (holds)
 open _root_.Intensional (Index)
 open DynamicSemantics
 open DynamicSemantics.Update (test closure)
@@ -62,21 +61,21 @@ def dynPAST (eventVar refVar : ℕ) :
     Set (Index.Possibility W Time) →
       Set (Index.Possibility W Time) :=
   lift (test fun p =>
-    holds past (p.assignment eventVar).time (p.assignment refVar).time)
+    compare (p.assignment eventVar).time (p.assignment refVar).time ∈ past)
 
 /-- Dynamic PRES: the test filter at the `present` cell. -/
 def dynPRES (eventVar refVar : ℕ) :
     Set (Index.Possibility W Time) →
       Set (Index.Possibility W Time) :=
   lift (test fun p =>
-    holds present (p.assignment eventVar).time (p.assignment refVar).time)
+    compare (p.assignment eventVar).time (p.assignment refVar).time ∈ present)
 
 /-- Dynamic FUT: the test filter at the `future` cell. -/
 def dynFUT (eventVar refVar : ℕ) :
     Set (Index.Possibility W Time) →
       Set (Index.Possibility W Time) :=
   lift (test fun p =>
-    holds future (p.assignment eventVar).time (p.assignment refVar).time)
+    compare (p.assignment eventVar).time (p.assignment refVar).time ∈ future)
 
 variable (e r : ℕ) (c : Set (Index.Possibility W Time))
   (p : Index.Possibility W Time)
@@ -129,9 +128,9 @@ theorem temporal_partition (v₁ v₂ : ℕ) :
     dynPAST v₁ v₂ c ∪ dynPRES v₁ v₂ c ∪ dynFUT v₁ v₂ c = c := by
   unfold dynPAST dynPRES dynFUT
   exact lift_test_cover₃ _ _ _
-    (fun p => Core.Order.holds_or_holds₃
-      (s := past) (t := present) (u := future) (by decide)
-      (p.assignment v₁).time (p.assignment v₂).time) c
+    (fun p => by
+      cases compare (p.assignment v₁).time (p.assignment v₂).time <;>
+        simp [past, present, future]) c
 
 /-- PAST and FUT are contradictory on the same variables:
 `lift_test_disjoint` at the disjoint cells `past ⊓ future = ⊥`. -/
@@ -139,24 +138,27 @@ theorem dynPAST_dynFUT_empty (v₁ v₂ : ℕ) :
     dynPAST v₁ v₂ (dynFUT v₁ v₂ c) = ∅ := by
   unfold dynPAST dynFUT
   exact lift_test_disjoint _ _
-    (fun p h₂ h₁ => Core.Order.not_holds_and_holds
-      (s := past) (t := future) (by decide) _ _ ⟨h₁, h₂⟩) c
+    (fun p h₂ h₁ => by
+      simp only [compare_mem_past, compare_mem_future] at h₁ h₂
+      exact absurd h₂ h₁.asymm) c
 
 /-- PAST and PRES are contradictory on the same variables. -/
 theorem dynPAST_dynPRES_empty (v₁ v₂ : ℕ) :
     dynPAST v₁ v₂ (dynPRES v₁ v₂ c) = ∅ := by
   unfold dynPAST dynPRES
   exact lift_test_disjoint _ _
-    (fun p h₂ h₁ => Core.Order.not_holds_and_holds
-      (s := past) (t := present) (by decide) _ _ ⟨h₁, h₂⟩) c
+    (fun p h₂ h₁ => by
+      simp only [compare_mem_past, compare_mem_present] at h₁ h₂
+      exact absurd h₂ h₁.ne) c
 
 /-- PRES and FUT are contradictory on the same variables. -/
 theorem dynPRES_dynFUT_empty (v₁ v₂ : ℕ) :
     dynPRES v₁ v₂ (dynFUT v₁ v₂ c) = ∅ := by
   unfold dynPRES dynFUT
   exact lift_test_disjoint _ _
-    (fun p h₂ h₁ => Core.Order.not_holds_and_holds
-      (s := present) (t := future) (by decide) _ _ ⟨h₁, h₂⟩) c
+    (fun p h₂ h₁ => by
+      simp only [compare_mem_present, compare_mem_future] at h₁ h₂
+      exact absurd h₂ (by rw [h₁]; exact lt_irrefl _)) c
 
 /-- Chained PAST constraints compose: e < r ∧ r < s → e < s. -/
 theorem dynPAST_transitive (e r s : ℕ)

@@ -40,7 +40,6 @@ namespace Tense.TenseAspectComposition
 
 open Intensional (Index)
 
-open Core.Order
 open Aspect
 
 variable {W Time : Type*} [LinearOrder Time]

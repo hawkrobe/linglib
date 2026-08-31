@@ -70,11 +70,11 @@ structure Stimulus (Time : Type) where
 -- ════════════════════════════════════════════════════
 
 /-- The three MBT-presupposition profiles Huijsmans's four lexical items
-    instantiate. A domain-flavored selector over the abstract
-    `Core.Order` comparison partition (cf. `EPCondition` in
-    `Tense/Evidential.lean`, which selects from the same partition for
-    the EAT/ET slot pair). Only three of the five abstract relations
-    name a Huijsmans modal; the others are unused here. -/
+    instantiate. A domain-flavored selector over the tense-cell
+    partition (cf. `EPCondition` in `Tense/Evidential.lean`, which
+    selects from the same partition for the EAT/ET slot pair). Only
+    three of the cells name a Huijsmans modal; the others are unused
+    here. -/
 inductive MBTProfile where
   /-- `MBT < PrejT`. Modal base established strictly before the prejacent's
       earliest moment. *səm*, *will*. Eq. (35). -/
@@ -86,18 +86,18 @@ inductive MBTProfile where
   | unrestricted
   deriving DecidableEq, Repr
 
-/-- Underlying point-relation: the slot pair is `(earliestMBT, earliestPrejT)`,
-    and each profile picks one shape from `Relation`. Mirrors
+/-- Underlying comparison cell: the slot pair is `(earliestMBT, earliestPrejT)`,
+    and each profile picks one cell (`Tense/Defs.lean`). Mirrors
     `EPCondition.toRelation` in `Tense/Evidential.lean`. -/
 def MBTProfile.toRelation : MBTProfile → Finset Ordering
-  | .strictPrior    => Core.Order.before
-  | .nonProspective => Core.Order.notBefore        -- PrejT ≤ MBT, i.e. MBT ≥ PrejT
-  | .unrestricted   => Core.Order.unrestricted
+  | .strictPrior    => Tense.past
+  | .nonProspective => Tense.nonpast               -- PrejT ≤ MBT, i.e. MBT ≥ PrejT
+  | .unrestricted   => ⊤
 
 /-- The MBT-licensing predicate, derived from the abstract partition. -/
 def MBTProfile.licenses {Time : Type} [LinearOrder Time]
     (c : MBTProfile) (s : Stimulus Time) : Prop :=
-  Core.Order.holds c.toRelation s.earliestMBT s.earliestPrejT
+  compare s.earliestMBT s.earliestPrejT ∈ c.toRelation
 
 instance {Time : Type} [LinearOrder Time] [DecidableEq Time] (c : MBTProfile)
     (s : Stimulus Time) : Decidable (c.licenses s) := by

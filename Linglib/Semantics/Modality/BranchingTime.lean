@@ -1,5 +1,5 @@
 import Linglib.Core.Order.LeftLinear
-import Linglib.Core.Order.Relation
+import Linglib.Semantics.Tense.Defs
 import Mathlib.Order.Zorn
 import Mathlib.Order.Directed
 
@@ -205,35 +205,35 @@ def kaufmannPast [PartialOrder M] (φ : OProp M) : OProp M := oPast φ
 theorem isInevitable_iff_oSupervaluation_oFut [PartialOrder M] (φ : MProp M) (m : M) :
     IsInevitable φ m ↔ oSupervaluation (oFut (oAtom φ)) m := Iff.rfl
 
-/-! ### Grounding in the `Core.Order` comparison kernel
+/-! ### Grounding in the library's tense cells
 
-The Ockhamist past/future operators reuse the shared point-comparison kernel (`Core.Order.holds` over
-`Finset Ordering`) rather than re-stipulating "earlier"/"later": `oPast`'s witness sits `before` the
-evaluation moment, `oFut`'s sits `after` it. Since `Core.Order.before = Tense.past` and
-`Core.Order.after = Tense.future`, branching-time tense and the rest of the library's tense are the
-*same* comparison. These are the **linear-frame** reductions (no branching, so the comparison is total
-on all of `M`); for a genuinely branching frame the comparison lives on each history's chain order
+The Ockhamist past/future operators land in the same comparison cells as the rest of the library's
+tense (`Tense.past`/`Tense.future`, `Semantics/Tense/Defs.lean`) rather than re-stipulating
+"earlier"/"later": `oPast`'s witness compares into `Tense.past` against the evaluation moment,
+`oFut`'s into `Tense.future`, so branching-time tense and grammatical tense are the *same*
+comparison. These are the **linear-frame** reductions (no branching, so the comparison is total on
+all of `M`); for a genuinely branching frame the comparison lives on each history's chain order
 (`Flag`'s `LinearOrder`), `oFut_oAtom_holds_on_hist`. -/
 
 @[simp] theorem oPast_oAtom_iff_holds {M : Type*} [LinearOrder M]
     (φ : MProp M) (m : M) (h : Flag M) :
-    oPast (oAtom φ) m h ↔ ∃ m', Core.Order.holds Core.Order.before m' m ∧ φ m' := by
-  simp only [oPast, oAtom, Core.Order.holds_before]
+    oPast (oAtom φ) m h ↔ ∃ m', compare m' m ∈ Tense.past ∧ φ m' := by
+  simp only [oPast, oAtom, Tense.compare_mem_past]
 
 @[simp] theorem oFut_oAtom_iff_holds {M : Type*} [LinearOrder M]
     (φ : MProp M) (m : M) (h : Flag M) :
-    oFut (oAtom φ) m h ↔ ∃ m' ∈ h, Core.Order.holds Core.Order.after m' m ∧ φ m' := by
-  simp only [oFut, oAtom, Core.Order.holds_after]
+    oFut (oAtom φ) m h ↔ ∃ m' ∈ h, compare m' m ∈ Tense.future ∧ φ m' := by
+  simp only [oFut, oAtom, Tense.compare_mem_future]
 
 /-- **Genuine-branching grounding** (`oFut` on any branching frame): the future witness comparison
-    is `Core.Order.holds after` over the history's own chain order (mathlib's `LinearOrder ↥h` for a
-    maximal chain `h`). So the Ockhamist future *along a history* is literally the comparison-kernel
-    future, with the chain supplying the linear order `Core.Order.holds` requires. -/
+    lands in `Tense.future` over the history's own chain order (mathlib's `LinearOrder ↥h` for a
+    maximal chain `h`). So the Ockhamist future *along a history* is literally the tense-cell
+    future, with the chain supplying the linear order that `compare` requires. -/
 theorem oFut_oAtom_holds_on_hist {M : Type*} [PartialOrder M]
     [DecidableEq M] [DecidableRel (· ≤ · : M → M → Prop)] [DecidableLT M]
     (φ : MProp M) {m : M} {h : Flag M} (hm : m ∈ h) :
-    oFut (oAtom φ) m h ↔ ∃ x : ↥h, Core.Order.holds Core.Order.after x ⟨m, hm⟩ ∧ φ (x : M) := by
-  simp only [oFut, oAtom, Core.Order.holds_after]
+    oFut (oAtom φ) m h ↔ ∃ x : ↥h, compare x ⟨m, hm⟩ ∈ Tense.future ∧ φ (x : M) := by
+  simp only [oFut, oAtom, Tense.compare_mem_future]
   constructor
   · rintro ⟨m', hm', hlt, hφ⟩
     exact ⟨⟨m', hm'⟩, hlt, hφ⟩

@@ -59,7 +59,6 @@ open Time
 
 namespace Tense.Evidential
 
-open Core.Order
 open Tense
 open _root_.Evidential
 open Features.Mirativity
@@ -94,20 +93,20 @@ inductive EPCondition where
   deriving DecidableEq, Repr
 
 /-- Underlying comparison category: `EPCondition` is a domain-flavored selector
-    over the abstract `Core.Order` partition. The evidential
+    over the tense-cell partition (`Tense/Defs.lean`). The evidential
     vocabulary (downstream/prospective/…) maps onto the abstract
-    before/after/… comparison cells; the slot pair is
+    past/future/… comparison cells; the slot pair is
     `(eventTime, acquisitionTime)`. -/
 def EPCondition.toRelation : EPCondition → Finset Ordering
-  | .downstream       => notAfter
-  | .strictDownstream => before
-  | .contemporaneous  => overlapping
-  | .prospective      => after          -- A < T, i.e. T > A
-  | .unconstrained    => unrestricted
+  | .downstream       => futureᶜ
+  | .strictDownstream => past
+  | .contemporaneous  => present
+  | .prospective      => future         -- A < T, i.e. T > A
+  | .unconstrained    => ⊤
 
 /-- Recover the predicate over `EvidentialFrame ℤ` from an `EPCondition`. -/
 def EPCondition.toConstraint (e : EPCondition) (f : EvidentialFrame ℤ) : Prop :=
-  holds e.toRelation f.eventTime f.acquisitionTime
+  compare f.eventTime f.acquisitionTime ∈ e.toRelation
 
 /-- Map EP constraint shapes to `EvidentialPerspective` where applicable.
     Unconstrained has no single perspective. -/
@@ -215,13 +214,14 @@ theorem EPCondition.nonfuture_implies_downstream
     downstreamEvidence f := by
   cases ep with
   | downstream =>
-      simp only [toConstraint, toRelation, Core.Order.holds_notAfter] at h_ep
+      simp only [toConstraint, toRelation, Finset.mem_compl, compare_mem_future,
+        not_lt] at h_ep
       exact h_ep
   | strictDownstream =>
-      simp only [toConstraint, toRelation, Core.Order.holds_before] at h_ep
+      simp only [toConstraint, toRelation, compare_mem_past] at h_ep
       exact le_of_lt h_ep
   | contemporaneous =>
-      simp only [toConstraint, toRelation, Core.Order.holds_overlapping] at h_ep
+      simp only [toConstraint, toRelation, compare_mem_present] at h_ep
       exact le_of_eq h_ep
   | prospective => exact absurd h_nf (by decide)
   | unconstrained => exact absurd h_nf (by decide)

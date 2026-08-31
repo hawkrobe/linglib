@@ -90,7 +90,7 @@ instance : BooleanAlgebra (LindstromQuantifier.{u, v, w} L) :=
 
 /-- `holds` bundled: the embedding of the generalized-quantifier Boolean algebra into the powerset
 algebra `Set (Bundled L.Structure)` is a `BoundedLatticeHom` (it also preserves `ᶜ`, see
-`holds_compl`) — the Lindström analogue of `Core.Order.holdsHom`. -/
+`holds_compl`) — the pulled-back powerset algebra, bundled. -/
 def holdsHom :
     BoundedLatticeHom (LindstromQuantifier.{u, v, w} L) (Set (Bundled.{w} L.Structure)) where
   toFun := holds

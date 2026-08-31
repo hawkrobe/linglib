@@ -161,7 +161,7 @@ theorem sf_introduces_future {W Time : Type*} [LinearOrder Time]
   -- FUT requires the new situation to be after the reference
   unfold subordinateFuture at h
   obtain ⟨-, h_gt⟩ := DynamicSemantics.mem_lift_test.mp h
-  exact le_of_lt ((Core.Order.holds_after _ _).mp h_gt)
+  exact le_of_lt ((Tense.compare_mem_future _ _).mp h_gt)
 
 /--
 Temporal shift is parasitic on modal donkey anaphora.
@@ -217,7 +217,7 @@ theorem temporal_shift_parasitic_on_modal {W Time : Type*} [LinearOrder Time]
     simp only [Set.mem_ofPred_eq] at h_hist
     exact h_hist.2
   -- 3. The FUT constraint gives us the strict ordering
-  · exact (Core.Order.holds_after _ _).mp h_gt
+  · exact (Tense.compare_mem_future _ _).mp h_gt
 
 /--
 SF in restrictor enables future reference for strong quantifiers.
@@ -243,7 +243,7 @@ theorem sf_restrictor_future_reference {W Time : Type*} [LinearOrder Time]
     Set.Subset.trans (hN _) (hR _) h
   -- subordinateFuture guarantees the future ordering via dynFUT
   unfold subordinateFuture at h_sf
-  exact (Core.Order.holds_after _ _).mp (DynamicSemantics.mem_lift_test.mp h_sf).2
+  exact (Tense.compare_mem_future _ _).mp (DynamicSemantics.mem_lift_test.mp h_sf).2
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -418,7 +418,7 @@ theorem derivation_future_ordering
   simp only [Set.mem_ofPred_eq] at h_ant
   obtain ⟨h_sf, _⟩ := h_ant
   unfold lexSF subordinateFuture at h_sf
-  exact (Core.Order.holds_after _ _).mp (DynamicSemantics.mem_lift_test.mp h_sf).2
+  exact (Tense.compare_mem_future _ _).mp (DynamicSemantics.mem_lift_test.mp h_sf).2
 
 /--
 If Maria is at home at s₁, she answers at s₁.
