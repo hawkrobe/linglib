@@ -8,39 +8,35 @@ import Linglib.Fragments.Japanese.Nouns
 import Linglib.Fragments.Italian.Nouns
 
 /-!
-Noun Categorization × [chierchia-1998] Nominal Mapping Parameter
-[chierchia-1998]
+# Chierchia 1998: the Nominal Mapping Parameter and noun categorization
 
-Connects the noun categorization types the Fragments record (in
-Aikhenvald's typology) to the Nominal Mapping
-Parameter from `Semantics.Kinds.NMP`.
+This file formalizes the typological half of [chierchia-1998]. The Nominal Mapping Parameter sets
+whether a language's nouns denote kinds, predicates, or either, and the noun categorization system
+follows: a [+arg, −pred] language's kind-denoting nouns need individuating before they can be
+counted, so it has numeral classifiers; a [−arg, +pred] language projects D for argumenthood and
+carries noun class or gender instead; a [+arg, +pred] language has no productive system. Bare
+arguments and covert type-shifting track the same setting — [+arg] languages license bare
+arguments with no shift blocked, while a [−arg] language's articles pre-empt ι.
 
-## Predictions verified
+The parameter commits the framework to classifiers that serve the noun rather than the numeral:
+`japaneseStrategy` and `mandarinStrategy` record that commitment, and the studies of later
+classifier accounts dispute it there rather than in the Fragments.
 
-- `argOnly_implies_numeral_classifier`: [+arg, -pred] → numeral classifiers
-- `predOnly_implies_noun_class`: [-arg, +pred] → noun class
-- `mandarin_chierchia_consistent`, `japanese_chierchia_consistent`,
-  `french_chierchia_consistent`, `italian_chierchia_consistent`:
-  Actual classifier types match predictions
+## Main definitions
 
-## Classifier Strategy Connection ([little-moroney-royer-2022])
+* `nominalMappingToClassifierType` — the mapping's predicted categorization system
+* `predictsBareNP`, `predictsIotaBlocked` — its predicted bare-argument and blocking profile
+* `japaneseStrategy`, `mandarinStrategy` — the classifier-for-noun commitment
 
-[chierchia-1998]'s theory is a CLF-for-N theory: the classifier
-atomizes the noun denotation (which denotes kinds in [+arg, -pred]
-languages). This predicts that classifiers in [+arg, -pred] languages
-should appear beyond numerals — with demonstratives, quantifiers, and
-relative clauses. Mandarin and Japanese confirm this (那本书 'that CLF
-book', Mandarin).
+## Main results
 
-The NMP-to-classifier bridge is accurate at Aikhenvald's morphosyntactic
-level but does not distinguish between CLF-for-NUM and CLF-for-N within
-the numeral classifier type. Both Ch'ol (CLF-for-NUM) and Shan (CLF-for-N)
-are `numeralClassifier` in Aikhenvald's typology. `Classifier.Strategy`
-captures this finer distinction.
+* `sample_matches_prediction` — each sampled language's recorded system is the predicted one
+* `bare_np_tracks_mapping`, `iota_blocking_tracks_mapping`, `argOnly_no_blocking` — bare
+  arguments and blocking track the mapping at the sampled languages
 
-## Known gaps
+## References
 
-- English [+arg, +pred] prediction (no system) not yet connected to data
+* [chierchia-1998]
 -/
 
 namespace NMP
@@ -57,70 +53,20 @@ def nominalMappingToClassifierType : NominalMapping → Option Kind
   | .predOnly => some .nounClass          -- French, Italian
   | .argAndPred => none                   -- English: no productive system
 
-/-- French mapping is [-arg, +pred]. -/
-theorem french_mapping : French.Nouns.frenchMapping = .predOnly := rfl
+/-- At each sampled language the recorded categorization system is the one its nominal mapping
+predicts: numeral classifiers for Mandarin and Japanese, noun class for French and Italian. -/
+theorem sample_matches_prediction :
+    ∀ p ∈ [ (Mandarin.classifierKind, Mandarin.Nouns.mandarinMapping)
+          , (Japanese.classifierKind, Japanese.Nouns.japaneseMapping)
+          , (French.classifierKind, French.Nouns.frenchMapping)
+          , (Italian.classifierKind, Italian.Nouns.italianMapping) ],
+      p.1 = nominalMappingToClassifierType p.2 := by decide
 
-/-- Mandarin mapping is [+arg, -pred]. -/
-theorem mandarin_mapping : Mandarin.Nouns.mandarinMapping = .argOnly := rfl
+/-! ### The classifier-for-noun commitment
 
-/-- Japanese mapping is [+arg, -pred]. -/
-theorem japanese_mapping : Japanese.Nouns.japaneseMapping = .argOnly := rfl
-
-/-- Italian mapping is [-arg, +pred]. Italian is the
-    star witness for `predOnly`: bare arguments are restricted and D
-    must be projected for argumenthood. -/
-theorem italian_mapping : Italian.Nouns.italianMapping = .predOnly := rfl
-
-/-- The Chierchia-Aikhenvald bridge: [+arg, -pred] languages are numeral
-    classifier languages. -/
-theorem argOnly_implies_numeral_classifier :
-    nominalMappingToClassifierType .argOnly = some .numeralClassifier := rfl
-
-/-- [-arg, +pred] languages are noun class languages. -/
-theorem predOnly_implies_noun_class :
-    nominalMappingToClassifierType .predOnly = some .nounClass := rfl
-
-/-- [+arg, +pred] languages (English/Germanic) lack a productive noun
-    categorization system in Aikhenvald's sense. -/
-theorem argAndPred_no_system :
-    nominalMappingToClassifierType .argAndPred = none := rfl
-
-/-- Mandarin's actual classifier type matches the Chierchia prediction. -/
-theorem mandarin_chierchia_consistent :
-    Mandarin.classifierKind =
-      nominalMappingToClassifierType Mandarin.Nouns.mandarinMapping := rfl
-
-/-- Japanese's actual classifier type matches the Chierchia prediction. -/
-theorem japanese_chierchia_consistent :
-    Japanese.classifierKind =
-      nominalMappingToClassifierType Japanese.Nouns.japaneseMapping := rfl
-
-/-- French's actual classifier type matches the Chierchia prediction. -/
-theorem french_chierchia_consistent :
-    French.classifierKind =
-      nominalMappingToClassifierType French.Nouns.frenchMapping := rfl
-
-/-- Italian's actual classifier type matches the Chierchia prediction. -/
-theorem italian_chierchia_consistent :
-    Italian.classifierKind =
-      nominalMappingToClassifierType Italian.Nouns.italianMapping := rfl
-
-/-- French and Italian agree on Chierchia mapping: both are predOnly. -/
-theorem french_italian_same_mapping :
-    French.Nouns.frenchMapping =
-      Italian.Nouns.italianMapping := rfl
-
-/-! ## §2: [chierchia-1998]'s per-language strategy assignments
-
-[chierchia-1998]'s theory is a CLF-for-N theory: the classifier
-atomizes the noun denotation. The NMP determines that nouns denote kinds
-(need individuation), so classifiers serve the noun (atomization), not the
-numeral. This commits Chierchia's framework to a `.forNoun` strategy for
-every [+arg, -pred] language with classifiers.
-
-Per-language assignments live here (in this study file) rather than in the
-Fragments, where they would silently endorse Chierchia's
-framework over alternatives like [sudo-2016]'s `.sudoBlocking`. -/
+The parameter makes the nouns of a [+arg, −pred] language denote kinds, which need individuating,
+so the classifier serves the noun. The assignments are the framework's commitment and live here
+rather than in the Fragments, which stay neutral between classifier accounts. -/
 
 /-- Chierchia's strategy assignment for Japanese: CLF atomizes a kind-denoting
     noun. -/
@@ -130,44 +76,35 @@ def japaneseStrategy : Classifier.Strategy := .forNoun
     noun. -/
 def mandarinStrategy : Classifier.Strategy := .forNoun
 
-/-- Chierchia's framework assigns the CLF-for-N strategy to all
-    [+arg, -pred] classifier languages. -/
-theorem chierchia_assignments_uniform :
-    japaneseStrategy = .forNoun ∧ mandarinStrategy = .forNoun := ⟨rfl, rfl⟩
+/-! ### Bare arguments and type-shift blocking -/
 
--- ============================================================================
--- §?: Bare-NP / Type-Shift Blocking Predictions
--- ============================================================================
+/-- The mapping's predicted bare-argument profile: [+arg] languages license them. -/
+def predictsBareNP : NominalMapping → Bool
+  | .predOnly => false
+  | _ => true
 
-/-! Empirical predictions of [chierchia-1998]'s Nominal Mapping
-Parameter, verified against Fragment data. -/
+/-- The mapping's predicted ι-blocking: only a [−arg] language's articles pre-empt the shift. -/
+def predictsIotaBlocked : NominalMapping → Bool
+  | .predOnly => true
+  | _ => false
 
-/-- Bare NPs are licensed in [+arg] languages, not in [-arg] languages
-    (Chierchia's central typological prediction). -/
-theorem bare_np_tracks_arg :
-    Mandarin.Nouns.bareNPLicensed = true ∧
-    Japanese.Nouns.bareNPLicensed = true ∧
-    French.Nouns.barePluralLicensed = false := ⟨rfl, rfl, rfl⟩
+/-- Bare-argument licensing tracks the mapping at the sampled languages. -/
+theorem bare_np_tracks_mapping :
+    ∀ p ∈ [ (Mandarin.Nouns.bareNPLicensed, Mandarin.Nouns.mandarinMapping)
+          , (Japanese.Nouns.bareNPLicensed, Japanese.Nouns.japaneseMapping)
+          , (French.Nouns.barePluralLicensed, French.Nouns.frenchMapping) ],
+      p.1 = predictsBareNP p.2 := by decide
 
-/-- Chierchia's blocking principle: [+arg, -pred] languages have no
-    articles to block covert type shifts. [-arg, +pred] languages
-    block ι and ∃. -/
-theorem blocking_tracks_mapping :
-    Mandarin.Nouns.mandarinBlocking.iotaBlocked = false ∧
-    Japanese.Nouns.japaneseBlocking.iotaBlocked = false ∧
-    French.Nouns.frenchBlocking.iotaBlocked = true := ⟨rfl, rfl, rfl⟩
+/-- So does ι-blocking. -/
+theorem iota_blocking_tracks_mapping :
+    ∀ p ∈ [ (Mandarin.Nouns.mandarinBlocking.iotaBlocked, Mandarin.Nouns.mandarinMapping)
+          , (Japanese.Nouns.japaneseBlocking.iotaBlocked, Japanese.Nouns.japaneseMapping)
+          , (French.Nouns.frenchBlocking.iotaBlocked, French.Nouns.frenchMapping) ],
+      p.1 = predictsIotaBlocked p.2 := by decide
 
-/-- No type-shift blocking in Mandarin (`[+arg, -pred]`: ι, ∃, ∩ all
-    available). -/
-theorem mandarin_no_blocking :
-    Mandarin.Nouns.mandarinBlocking.iotaBlocked = false ∧
-    Mandarin.Nouns.mandarinBlocking.existsBlocked = false ∧
-    Mandarin.Nouns.mandarinBlocking.downBlocked = false := ⟨rfl, rfl, rfl⟩
-
-/-- No type-shift blocking in Japanese. -/
-theorem japanese_no_blocking :
-    Japanese.Nouns.japaneseBlocking.iotaBlocked = false ∧
-    Japanese.Nouns.japaneseBlocking.existsBlocked = false ∧
-    Japanese.Nouns.japaneseBlocking.downBlocked = false := ⟨rfl, rfl, rfl⟩
+/-- A [+arg, −pred] language blocks no covert shift at all: ι, ∃ and ∩ are all available. -/
+theorem argOnly_no_blocking :
+    ∀ b ∈ [Mandarin.Nouns.mandarinBlocking, Japanese.Nouns.japaneseBlocking],
+      b.iotaBlocked = false ∧ b.existsBlocked = false ∧ b.downBlocked = false := by decide
 
 end NMP
