@@ -3,91 +3,49 @@ import Linglib.Studies.Lechner2004
 import Linglib.Syntax.Minimalist.Movement.DegreeMovement
 
 /-!
-# Bhatt & Takahashi 2011: Reduced and Unreduced Phrasal Comparatives
-[bhatt-takahashi-2011] [bhatt-pancheva-2004] [bresnan-1973]
-[lechner-2001] [lechner-2004] [merchant-2009]
-[takahashi-hulsey-2009] [heim-2006]
+# Bhatt and Takahashi 2011: reduced and unreduced phrasal comparatives
 
-Rajesh Bhatt and Shoichi Takahashi. Reduced and Unreduced Phrasal
-Comparatives. *Natural Language & Linguistic Theory* 29(3): 581–620.
+This file formalizes the diagnostics of [bhatt-takahashi-2011] for the two analyses of a phrasal
+comparative: reduction of a clausal source, using the two-place degree head, or a genuinely phrasal
+standard combining with an individual, using the three-place head. The binding generalization of §2
+— the standard is c-commanded by everything that c-commands the associate — holds in English,
+which is the signature of reduction and reverses the verdict of [bhatt-pancheva-2004]; Hindi-Urdu
+fails it, since the standard is an external PP. §4's scope generalization sorts the two languages
+the same way. Each language's realized analyses are therefore read off its data rather than
+stipulated, and §6 proposes that both degree heads are universally available, their distribution
+fixed by the subcategorization of *than*, *yori* and *-se*.
 
-## What this file is
+The binding schema (`BindingDatum`, `realizesReduction`, `realizesDirect`,
+`headAvailabilityFromBinding`) is [lechner-2004]'s disjoint-reference battery, on which the paper
+models its English examples (fn. 4); it lives in `Studies/Lechner2004.lean`.
 
-A paper-faithful study of B&T 2011, the successor paper to
-[bhatt-pancheva-2004] that reverses B&P's central typological
-claim about English phrasal comparatives. It also delivers the
-diagnostic battery that the B&P 2004 file's closing prose flagged as
-needed for a syntactic-structure verdict.
+Out of scope: the Single Standard Restriction (§3.2) and the Precedence Constraint (§3.3), which
+need an overt linear-order interface; the derivation of Japanese's realized analyses from *yori*'s
+subcategorization (§5–§6), which is stipulated here.
 
-The diagnostic schema (`BindingDatum`, `RAPredictsCoref`,
-`DAPredictsCoref`, `realizesReduction`, `realizesDirect`,
-`HeadAvailability`, `headAvailabilityFromBinding`) lives in
-`Lechner2004.lean` — B&T fn. 4 explicitly attributes (11)–(13) to
-[lechner-2004]'s disjoint-reference battery. This file imports
-that schema and instantiates it on B&T's English and Hindi-Urdu data.
+## Main definitions
 
-## B&T's two-analyses framework (§1)
+* `englishBindingPairs`, `hindiUrduBindingPairs` — the §2 and §3.4 minimal pairs
+* `englishScopeData`, `hindiUrduScopeData`, `scopeRealizesReduction` — the §4 scope diagnostic
+* `englishHeadAvailability`, `hindiUrduHeadAvailability` — realized analyses, derived from the data
 
-Phrasal "John is taller than Bill" admits two competing analyses:
+## Main results
 
-- **Reduction Analysis (RA)** — phrasal `than NP` derives from clausal
-  `than [NP is Adj]` via reduction (gapping, conjunction reduction,
-  TP-ellipsis, stripping). Uses the 2-place degree head, which combines
-  with degree predicates.
-- **Direct Analysis (DA)** — phrasal `than NP` is genuinely phrasal;
-  the 'than'-phrase combines with an individual. Uses the 3-place
-  degree head, which combines with two individuals plus a predicate of
-  individuals and degrees.
+* `english_data_realizes_reduction`, `english_data_rules_out_direct` — English binding is the
+  reduction pattern
+* `hindi_urdu_data_realizes_direct`, `hindi_urdu_data_rules_out_reduction` — Hindi-Urdu is not
+* `english_scope_matches_RA`, `hindi_urdu_scope_rules_out_RA` — the scope diagnostic agrees
+* `bt2011_verdict_matches_data_bp2004_verdict_does_not` — the disagreement with
+  [bhatt-pancheva-2004] is empirical, not terminological
+* `bt2011_agrees_with_bresnan_against_bp2004` — the reduction verdict re-vindicates [bresnan-1973]
+* `surveyed_languages_pairwise_distinct` — the surveyed languages occupy three cells of the grid
 
-## The walked-back B&P 2004 claim
+## References
 
-[bhatt-pancheva-2004] §1.1.1 fn. 4 rejected [bresnan-1973]'s
-reduction analysis of English phrasal comparatives. B&T 2011 §2's
-binding diagnostic establishes the opposite for English: the standard
-is c-commanded by everything that c-commands the associate, which is
-the structural signature of RA, not DA. The 3-place '-er' is needed
-for *Hindi-Urdu* §3, not English.
-
-The cross-tradition bridge `bt2011_agrees_with_bresnan_against_bp2004`
-witnesses that B&T's "reduction" and Bresnan's "maximal deletion" are
-the same kind of analysis — both derive surface phrasal forms from
-underlying clausal sources via deletion.
-
-## The diagnostic battery (§2, §3.4)
-
-The B&P 2004 file's closing note says formalizing the Bresnan
-disagreement "would need either Bhatt & Takahashi 2011's diagnostic
-battery or a richer syntactic interface." This file supplies the
-former for the binding component:
-
-- **§2** English binding generalization (B&T (10)) — six minimal-pair
-  entries from B&T (11)–(13), checked against
-  `realizesReduction` / `realizesDirect`.
-- **§3.4** Hindi-Urdu binding contrast — captured by
-  `hindiUrduBindingPairs` and the corresponding realization theorems.
-
-Scope (§4), the Single Standard Restriction (§3.2), and the Precedence
-Constraint (§3.3) are noted in prose; their formalization would
-require richer syntactic infrastructure than the Lechner-style
-binding minimal pairs.
-
-## The typology proposal (B&T (63))
-
-B&T's central crosslinguistic claim: both 2-place and 3-place degree
-heads are universally available in principle. Crosslinguistic variation
-in which is *realized* is determined by:
-
-1. The **subcategorization** of the comparative marker (than / yori / -se):
-   does it accept DPs, CPs, or both?
-2. A **preference for minimal structure**: when a DP is locally
-   available, the language prefers the smaller analysis.
-
-For English and Hindi-Urdu the per-language `HeadAvailability` is
-*derived* from the binding data via `headAvailabilityFromBinding`
-(anti-stipulation). Japanese, where both analyses are realized, is
-stipulated with an explicit comment: B&T's §5 multiple-standard
-diagnostics (which would witness RA-realization for Japanese) require
-infrastructure not present here.
+* [bhatt-takahashi-2011]
+* [bhatt-pancheva-2004]
+* [lechner-2004]
+* [bresnan-1973]
 -/
 
 namespace BhattTakahashi2011
@@ -114,32 +72,27 @@ open Minimalist.DegreeMovement
 -- § 2. English binding diagnostic (B&T §2, generalization (10))
 -- ════════════════════════════════════════════════════
 
-/-- B&T §2 English minimal pairs (11)–(13). Each pair contrasts a
-    pronominal that c-commands the associate (blocking coref into the
-    standard) with a no-c-command baseline (allowing coref).
-
-    UNVERIFIED: judgments paraphrased; the binary pattern matches
-    B&T's reported data. (13b) is recorded with `.marginal`
-    acceptability per B&T fn. 5 (which describes some speakers as
-    finding it "(?)mildly deviant" — `corefAttested := true` because
-    the binding relation is licensed for the prediction direction). -/
+/-- The English minimal pairs (11)–(13), modelled by the paper on [lechner-2004] (fn. 4). Each
+pair contrasts a pronoun that c-commands the associate, where coreference into the standard is
+blocked, with one that does not, where it is licit. (13b) is marginal for some speakers (fn. 5),
+which is still the coreference-licit direction. -/
 def englishBindingPairs : List BindingDatum :=
-  [-- B&T (11a): "*she_i introduced him to Mary's_i mother"
+  [-- (11a) *More people introduced himᵢ to Mary than to Johnᵢ's mother.
    { citationId := "11a", acceptability := .unacceptable
      pronCCommandsAssociate := true,  corefAttested := false },
-   -- B&T (11b): "she_i is taller than Mary's_i mother (is)"
+   -- (11b) Mary introduced himᵢ to more people than Johnᵢ's mother.
    { citationId := "11b", acceptability := .ok
      pronCCommandsAssociate := false, corefAttested := true },
-   -- B&T (12a): "*he_i talked to her about Sally's_i sister"
+   -- (12a) *More people talked to himᵢ about Sally than about Peterᵢ's sister.
    { citationId := "12a", acceptability := .unacceptable
      pronCCommandsAssociate := true,  corefAttested := false },
-   -- B&T (12b): "he_i is smarter than Sally's_i sister (is)"
+   -- (12b) More people talked to Sally about himᵢ than to Peterᵢ's sister.
    { citationId := "12b", acceptability := .ok
      pronCCommandsAssociate := false, corefAttested := true },
-   -- B&T (13a): the c-command-blocks-coref baseline
+   -- (13a) *More people expect himᵢ to overtake Sally than Peterᵢ's sister.
    { citationId := "13a", acceptability := .unacceptable
      pronCCommandsAssociate := true,  corefAttested := false },
-   -- B&T (13b) per fn. 5: marginal but in the "coref licit" direction
+   -- (13b) (?)More people expect Sally to overtake himᵢ than Peterᵢ's sister.
    { citationId := "13b", acceptability := .marginal
      pronCCommandsAssociate := false, corefAttested := true }]
 
@@ -168,8 +121,9 @@ theorem english_data_rules_out_direct :
     standard is grammatical, because the standard is an external PP
     that the matrix pronoun never c-commands.
 
-    UNVERIFIED: B&T (35) supplies the key positive-coref-with-c-command
-    example; the second entry is the no-c-command baseline. -/
+(35) supplies the coreference-with-c-command example — *Atif showed Mohan's sister's picture to
+    himᵢ more times than Raviᵢ's sister's picture* — and the second entry is the no-c-command
+    baseline. -/
 def hindiUrduBindingPairs : List BindingDatum :=
   [-- B&T (35): pronoun c-commands associate, coref STILL licit
    { citationId := "35", acceptability := .ok
@@ -233,22 +187,18 @@ structure ScopeDatum where
   thanInternalScopeAttested : Bool
   deriving Repr
 
-/-- B&T §4 (43) English scope data. The structural prediction is RA's:
-    than-internal scope is attested iff the QP's base position is at
-    or below the DegP (B&T's "doesn't c-command the degree trace from
-    the base").
-
-    UNVERIFIED: examples paraphrased; the binary pattern matches
-    B&T's reported English data. (44a) is the in-situ existential
-    case (base = degH); (44b) is the raised universal blocking
-    than-internal scope. -/
+/-- The English scope data of (43): a quantifier inside the 'than'-phrase must scope out when its
+base position c-commands the than-phrase-internal degree trace, and may otherwise take scope
+within the 'than'-phrase. -/
 def englishScopeData : List ScopeDatum :=
-  [-- B&T (44a): existential in situ inside than-XP, base = DegP height
-   { citationId := "44a"
+  [-- (43b) Craige assigned more students every paper by Hellan than every paper by …:
+   -- base does not c-command the degree trace, than-internal scope licit
+   { citationId := "43b"
      binding := ⟨1, 1, 1, false⟩
      thanInternalScopeAttested := true },
-   -- B&T (44b): raised universal, base position above DegP
-   { citationId := "44b"
+   -- (43a) Craige assigned every first year student more papers than every second year student:
+   -- base c-commands the degree trace, the quantifier must scope out
+   { citationId := "43a"
      binding := ⟨1, 2, 2, true⟩
      thanInternalScopeAttested := false }]
 
@@ -257,8 +207,8 @@ def englishScopeData : List ScopeDatum :=
     *forces* scope-out: than-internal scope is unattested even when
     the base position is at or below the DegP.
 
-    UNVERIFIED: data point reflects B&T §4.2's verdict that
-    Hindi-Urdu obligatorily scopes out, not RA-internal scope. -/
+The datum records §4.2's verdict that Hindi-Urdu scopes
+    out obligatorily. -/
 def hindiUrduScopeData : List ScopeDatum :=
   [-- low-base existential: RA would predict than-internal scope, but
    -- Hindi-Urdu does not allow it (scope-out is obligatory)
@@ -355,14 +305,10 @@ theorem hindi_urdu_head_availability_derived :
     hindiUrduHeadAvailability = ⟨false, true⟩ := by
   decide
 
-/-- Japanese (B&T §5): both analyses realized. UNVERIFIED-AS-DERIVED:
-    B&T's §5 argument that Japanese realizes RA rests on
-    multiple-standard data and *yori*'s subcategorization for CPs;
-    those diagnostics require infrastructure not present in this
-    file. The DA-realization side could in principle be derived from
-    Japanese binding data parallel to Hindi-Urdu's, but B&T do not
-    give the relevant minimal pairs in the cited form. So Japanese is
-    stipulated, with an explicit note that the derivation is owed. -/
+/-- Japanese realizes both: a clausal or multiple-standard complement of *yori* forces the 2-place
+head, while a DP complement is analysed as a DP and takes the 3-place head (§6). Unlike English and
+Hindi-Urdu this is stipulated rather than derived, since the argument runs through *yori*'s
+subcategorization and the multiple-standard diagnostics of §5. -/
 def japaneseHeadAvailability : HeadAvailability := ⟨true, true⟩
 
 /-- B&T's surveyed languages, in citation order. The list is the unit
@@ -389,26 +335,5 @@ theorem all_surveyed_languages_realize_some_analysis :
 theorem surveyed_languages_pairwise_distinct :
     surveyedLanguages.Pairwise (fun a b => a.2 ≠ b.2) := by
   decide
-
-/- ## What this file does not formalize
-
-- **§3.2 Single Standard Restriction** (Hindi-Urdu allows exactly one
-  standard per phrasal comparative). Statable as a `List Standard`
-  with cardinality constraint, but the constraint is on Hindi-Urdu
-  syntactic structure rather than on the diagnostic data points
-  formalized above.
-- **§3.3 Precedence Constraint** (Hindi-Urdu requires the associate
-  to overtly precede '-er'). Requires an overt-linear-order interface
-  not currently in scope.
-- **§5 Japanese RA-realization derivation**. Multiple-standard data
-  + *yori*'s CP subcategorization would witness RA-realization for
-  Japanese; here we stipulate `japaneseHeadAvailability := ⟨true, true⟩`
-  with an explicit comment.
-- **§6 Subcategorization-and-minimal-structure derivation** of the
-  typology. B&T derive the per-language realized availabilities from
-  morphosyntactic properties of than / yori / -se plus a parsing economy
-  constraint; we record the *outcomes* in `HeadAvailability` but do
-  not derive them from a formalization of the subcategorization
-  lexicon. -/
 
 end BhattTakahashi2011
