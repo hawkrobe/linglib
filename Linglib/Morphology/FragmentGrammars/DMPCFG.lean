@@ -150,7 +150,7 @@ theorem nonempty_rulesWithLHS_of_mem_image {a : G.NT}
     Direct corollary of `PolyaUrn.seqProb_pos`. -/
 theorem lhsFactor_pos {a : G.NT} (ha : a ∈ G.rules.image (·.input))
     (D : Multiset (DerivationTree T G.NT)) : 0 < M.lhsFactor a D := by
-  haveI := nonempty_rulesWithLHS_of_mem_image ha
+  have := nonempty_rulesWithLHS_of_mem_image ha
   exact (M.lhsUrn a).seqProb_pos _
 
 /-- DMPCFG corpus probabilities are nonnegative (in fact, positive). -/
@@ -176,7 +176,7 @@ theorem corpusProb_zero : M.corpusProb (0 : Multiset (DerivationTree T G.NT)) = 
   unfold corpusProb
   apply Finset.prod_eq_one
   intro a ha
-  haveI := nonempty_rulesWithLHS_of_mem_image ha
+  have := nonempty_rulesWithLHS_of_mem_image ha
   show M.lhsFactor a 0 = 1
   unfold lhsFactor
   rw [lhsCounts_zero]
@@ -244,7 +244,7 @@ theorem mapWeight_pos {r : ContextFreeRule T G.NT} (hr : r ∈ G.rules)
   · have h1 : 0 < M.pseudo r := M.pseudo_pos r hr
     have h2 : 0 ≤ (corpusRuleCount r D : ℝ) := Nat.cast_nonneg _
     linarith
-  · haveI : Nonempty (G.RulesWithLHS r.input) :=
+  · have : Nonempty (G.RulesWithLHS r.input) :=
       ⟨⟨r, Finset.mem_filter.mpr ⟨hr, rfl⟩⟩⟩
     exact M.mapWeight_denom_pos D
 
@@ -280,7 +280,7 @@ theorem mapWeight_lt_mapWeight_iff_of_same_lhs
   have h_denom_eq : G.rules.filter (·.input = r.input) =
                     G.rules.filter (·.input = r'.input) := by rw [h_lhs]
   rw [h_denom_eq]
-  haveI : Nonempty (G.RulesWithLHS r'.input) :=
+  have : Nonempty (G.RulesWithLHS r'.input) :=
     ⟨⟨r', Finset.mem_filter.mpr ⟨hr'_in, rfl⟩⟩⟩
   exact div_lt_div_iff_of_pos_right (M.mapWeight_denom_pos D)
 
@@ -459,7 +459,7 @@ theorem posteriorMode_pos {r : ContextFreeRule T G.NT} (hr : r ∈ G.rules)
   apply div_pos
   · have := h r (Finset.mem_filter.mpr ⟨hr, rfl⟩)
     linarith
-  · haveI : Nonempty (G.RulesWithLHS r.input) :=
+  · have : Nonempty (G.RulesWithLHS r.input) :=
       ⟨⟨r, Finset.mem_filter.mpr ⟨hr, rfl⟩⟩⟩
     exact M.posteriorMode_denom_pos D h
 
@@ -480,7 +480,7 @@ theorem posteriorMode_lt_iff_of_same_lhs
   have h_denom_eq : G.rules.filter (·.input = r.input) =
                     G.rules.filter (·.input = r'.input) := by rw [h_lhs]
   rw [h_denom_eq]
-  haveI : Nonempty (G.RulesWithLHS r'.input) :=
+  have : Nonempty (G.RulesWithLHS r'.input) :=
     ⟨⟨r', Finset.mem_filter.mpr ⟨hr'_in, rfl⟩⟩⟩
   rw [div_lt_div_iff_of_pos_right (M.posteriorMode_denom_pos D h_wd)]
   constructor

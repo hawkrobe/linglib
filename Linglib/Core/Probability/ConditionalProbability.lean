@@ -114,6 +114,6 @@ theorem count_apply_fintype [Fintype Ω] [MeasurableSingletonClass Ω]
     (e : Set Ω) [DecidablePred (· ∈ e)] :
     (Measure.count : Measure Ω) e = (Finset.univ.filter (· ∈ e)).card := by
   rw [measure_apply_fintype]
-  simp [Measure.count_singleton]
+  simp []
 
 end ProbabilityTheory
