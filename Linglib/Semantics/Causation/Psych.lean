@@ -30,7 +30,7 @@ chain; its incompatibility with an overt Cause follows from the Onset Condition.
 
 namespace Causation.Psych
 
-open Semantics.Causation (CausalChainPosition)
+open Causation (CausalChainPosition)
 
 /-- Source of causation for psych causatives ([kim-2024] UPH).
 

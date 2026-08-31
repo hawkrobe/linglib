@@ -14,7 +14,7 @@ different classification and belong with the accounts that use them.
 * `CausalChainPosition` — the causing and caused ends of a two-link chain
 -/
 
-namespace Semantics.Causation
+namespace Causation
 
 /-- Position in a two-link causal chain: the causing subevent that opens it and the caused
 subevent that closes it. -/
@@ -25,4 +25,4 @@ inductive CausalChainPosition where
   | terminus
   deriving DecidableEq, Repr
 
-end Semantics.Causation
+end Causation
