@@ -29,8 +29,8 @@ additivity axiomatized here, which mathlib does not state.
 - `IsIntervalContent.ofStrictMono`: Stieltjes-style constructor — a
   strictly monotone potential `F` into an ordered group induces the
   content `fun i => F i.snd - F i.fst`.
-- `IsIntervalContent.measure_lt_of_left_lt`: moving the left endpoint
-  strictly right strictly decreases measure.
+- `IsIntervalContent.monotone`, `IsIntervalContent.measure_lt_of_left_lt`: contents are
+  monotone under inclusion, strictly so in each endpoint.
 - `IsIntervalContent.not_isLeast_rightAnchored`: over a dense order, the
   measures of right-anchored covers `[l, s]` with `l` strictly below a
   point have no least element — the domain-general form of
@@ -65,6 +65,18 @@ theorem degenerate_eq_zero [IsCancelAdd M] (a : α) :
   have h := additive (μ := μ) a a a (le_refl a) (le_refl a)
   exact add_left_cancel (a := μ ⟨⟨a, a⟩, le_refl a⟩) (by rw [add_zero, ← h])
 
+/-- A degenerate interval has measure zero. -/
+theorem eq_zero_of_fst_eq_snd [IsCancelAdd M] :
+    ∀ {i : NonemptyInterval α}, i.fst = i.snd → μ i = 0
+  | ⟨⟨a, _⟩, _⟩, h => by
+    have h' : a = _ := h
+    subst h'
+    exact degenerate_eq_zero μ a
+
+/-- Strict positivity on nondegenerate intervals. -/
+theorem positive' : ∀ {i : NonemptyInterval α}, i.fst < i.snd → 0 < μ i
+  | ⟨⟨a, b⟩, _⟩, h => positive (μ := μ) a b h
+
 /-- Moving the left endpoint strictly right strictly decreases measure. -/
 theorem measure_lt_of_left_lt [AddRightStrictMono M]
     {a b s : α} (hab : a < b) (hbs : b ≤ s) :
@@ -80,6 +92,28 @@ theorem measure_lt_of_lt_right [AddLeftStrictMono M]
   exact lt_add_of_pos_right _ (positive (μ := μ) b s hbs)
 
 end Preorder
+
+section PartialOrder
+
+variable [PartialOrder α] [AddCommMonoid M] [PartialOrder M] [IsCancelAdd M]
+  (μ : NonemptyInterval α → M) [IsIntervalContent μ]
+
+/-- Interval contents are nonnegative. -/
+theorem nonneg : ∀ i : NonemptyInterval α, 0 ≤ μ i
+  | ⟨⟨a, b⟩, hab⟩ => hab.eq_or_lt.elim
+    (fun h => (eq_zero_of_fst_eq_snd μ (i := ⟨⟨a, b⟩, hab⟩) h).ge)
+    fun h => (positive (μ := μ) a b h).le
+
+/-- Interval contents are monotone under inclusion. -/
+theorem monotone [IsOrderedAddMonoid M] : Monotone μ := by
+  rintro ⟨⟨a, b⟩, hab⟩ ⟨⟨c, d⟩, hcd⟩ h
+  obtain ⟨hca, hbd⟩ := NonemptyInterval.le_def.1 h
+  calc μ ⟨⟨a, b⟩, hab⟩ ≤ μ ⟨⟨a, b⟩, hab⟩ + μ ⟨⟨b, d⟩, hbd⟩ := le_add_of_nonneg_right (nonneg μ _)
+    _ = μ ⟨⟨a, d⟩, hab.trans hbd⟩ := (additive (μ := μ) a b d hab hbd).symm
+    _ ≤ μ ⟨⟨c, a⟩, hca⟩ + μ ⟨⟨a, d⟩, hab.trans hbd⟩ := le_add_of_nonneg_left (nonneg μ _)
+    _ = μ ⟨⟨c, d⟩, hcd⟩ := (additive (μ := μ) c a d hca (hab.trans hbd)).symm
+
+end PartialOrder
 
 section Dense
 
