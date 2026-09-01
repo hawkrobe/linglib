@@ -3,7 +3,7 @@ import Linglib.Pragmatics.RSA.Operators
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Linglib.Core.Probability.Scores
 import Linglib.Pragmatics.RSA.Atoms
-import Linglib.Semantics.Composition.Probabilistic
+import Linglib.Pragmatics.RSA.Incremental
 
 /-!
 # [waldon-degen-2021] — Continuous-Incremental RSA (CI-RSA)
@@ -54,13 +54,13 @@ different (language × scene) configurations of the same chain.
 - **Incremental RSA**: Extends [cohn-gordon-goodman-potts-2019] with
   continuous semantics and cross-linguistic word order variation.
 - **Graded composition**: `uttContinuousQ` is defined via
-  `Semantics.Composition.prodMeaning`, sharing the multiplicative
+  `RSA.prodMeaning`, sharing the multiplicative
   composition with [schlotterbeck-wang-2023] by construction.
 -/
 
 namespace WaldonDegen2021
 
-open RSA Semantics.Composition
+open RSA
 
 /-! ### Domain Types -/
 
