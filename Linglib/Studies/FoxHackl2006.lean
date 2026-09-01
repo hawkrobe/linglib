@@ -20,8 +20,8 @@ existential modal cannot. A bare numeral's *at least d* is closed at the count
 
 ## Main results
 
-* `cim`, `cim_below`: the Constraint on Interval Maximization for upward and downward
-  monotone properties.
+* `not_hasMaxInf_of_isNecessarilyOpen`, `not_hasMaxInf_of_isNecessarilyOpenBelow`: the
+  Constraint on Interval Maximization for upward and downward monotone properties.
 * `moreThan_not_hasMaxInf`, `negation_not_hasMaxInf`: *more than d* has no most informative
   degree (no implicature, no *only*), and neither does *not … d* (negative islands).
 * `hasMaxInf_box`, `not_isGreatest_diamond` and their duals: a universal modal closes the
@@ -59,17 +59,18 @@ abbrev IsNecessarilyOpenBelow (φ : D → Set W) : Prop :=
 
 /-- (42) The Constraint on Interval Maximization: on a dense scale a necessarily open
 upward-monotone property has no most informative degree. -/
-theorem cim [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ) (hopen : IsNecessarilyOpen φ)
-    (w : W) : ¬ HasMaxInf φ w :=
+theorem not_hasMaxInf_of_isNecessarilyOpen [DenselyOrdered D] {φ : D → Set W}
+    (hφ : StrictAnti φ) (hopen : IsNecessarilyOpen φ) (w : W) : ¬ HasMaxInf φ w :=
   (hasMaxInf_iff_isGreatest hφ).not.2 fun ⟨_, hm⟩ =>
     let ⟨_, hd, hlt⟩ := hopen w
     let ⟨y, hmy, hyd⟩ := exists_between (lt_of_not_ge fun h => hd (hφ.antitone h hm.1))
     not_le.2 hmy (hm.2 (hlt y hyd))
 
 /-- (42) for downward-monotone properties. -/
-theorem cim_below [DenselyOrdered D] {φ : D → Set W} (hφ : StrictMono φ)
+theorem not_hasMaxInf_of_isNecessarilyOpenBelow [DenselyOrdered D] {φ : D → Set W} (hφ : StrictMono φ)
     (hopen : IsNecessarilyOpenBelow φ) (w : W) : ¬ HasMaxInf φ w :=
-  cim (φ := fun d : Dᵒᵈ => φ (ofDual d)) (fun _ _ h => hφ h) hopen w
+  not_hasMaxInf_of_isNecessarilyOpen (φ := fun d : Dᵒᵈ => φ (ofDual d))
+    (fun _ _ h => hφ h) hopen w
 
 /-! ### Implicatures and *only* -/
 
@@ -82,7 +83,8 @@ theorem isNecessarilyOpen_gt_over (μ : W → D) : IsNecessarilyOpen (Comparison
 carries no scalar implicature and rejects *only*. -/
 theorem moreThan_not_hasMaxInf [DenselyOrdered D] (μ : W → D) (hμ : Function.Surjective μ)
     (w : W) : ¬ HasMaxInf (Comparison.gt.over μ) w :=
-  cim (Comparison.strictAnti_gt_over μ hμ) (isNecessarilyOpen_gt_over μ) w
+  not_hasMaxInf_of_isNecessarilyOpen (Comparison.strictAnti_gt_over μ hμ)
+    (isNecessarilyOpen_gt_over μ) w
 
 /-! ### Modal operators -/
 
@@ -136,7 +138,8 @@ theorem isNecessarilyOpenBelow_lt_over (μ : W → D) :
 (least true) degree, so a degree question or definite description over it is undefined. -/
 theorem negation_not_hasMaxInf [DenselyOrdered D] (μ : W → D) (hμ : Function.Surjective μ)
     (w : W) : ¬ HasMaxInf (Comparison.lt.over μ) w :=
-  cim_below (Comparison.strictMono_lt_over μ hμ) (isNecessarilyOpenBelow_lt_over μ) w
+  not_hasMaxInf_of_isNecessarilyOpenBelow (Comparison.strictMono_lt_over μ hμ)
+    (isNecessarilyOpenBelow_lt_over μ) w
 
 /-- (27b), (28a), (29a): *required not to φ d* — a universal modal over a downward-monotone
 property closes the interval from below. -/
