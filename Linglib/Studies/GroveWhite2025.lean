@@ -1,372 +1,218 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+import Linglib.Core.Probability.Distributions.Bernoulli
 import Linglib.Semantics.Attitudes.Factivity
-import Mathlib.MeasureTheory.Measure.Dirac
-import Mathlib.MeasureTheory.Measure.Real
-import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
-import Linglib.Studies.DegenTonhauser2022
-import Linglib.Studies.ScontrasTonhauser2025
-import Linglib.Core.Algebra.Order.Interval.Set.Instances
 
 /-!
-# [grove-white-2025]
+# Grove & White (2025): discrete factivity, gradient world knowledge
 
-Factivity, presupposition projection, and the role of discrete knowledge
-in gradient inference judgments. Natural Language Semantics 34:1–45.
+[grove-white-2025] ask whether the gradience of projection judgments for clause-embedding
+predicates is *resolved* indeterminacy — factivity is a discrete property of token occurrences,
+the Fundamental Discreteness Hypothesis (7a) — or *unresolved* indeterminacy — nothing discrete
+separates factive from non-factive occurrences, the Fundamental Gradience Hypothesis (7b). The
+lexical entry (13) makes `know` ambiguous between a factive reading `m` (`BEL ∧ C`) and a
+non-factive reading `n` (`BEL`), selected by a state-level truth value `τ_know(s)`; the response
+models of §4 turn the prior over readings and the complement's prior probability into a
+distribution over answers to *how likely is it that φ?* on the slider scale `[0, 1]`.
 
-## Core Contribution
+The four models fitted to [degen-tonhauser-2021]'s projection data are the completions of the
+two norming models (§4.2) by the two treatments of factivity (§4.3):
 
-Grove & White compare two hypotheses about the gradience observed in
-inference judgments for clause-embedding predicates:
+|                      | world knowledge gradient | world knowledge discrete |
+|----------------------|--------------------------|--------------------------|
+| factivity resolved   | `discreteFactivity`      | `whollyDiscrete`         |
+| factivity unresolved | `whollyGradient`         | `discreteWorld`          |
 
-- **Fundamental Discreteness Hypothesis (FDH)** (definition (7a), p. 10):
-  factivity is a discrete property of an expression on a particular occasion
-  of use. A given use either triggers a projective inference, or it does not.
-  Observed gradience arises from *resolved indeterminacy* — variation across
-  occasions in which reading is selected.
+Response noise (the truncated-normal likelihood `f(·, Φ)` of §4.1) is not modelled: each model
+here is the distribution of the intended answer.
 
-- **Fundamental Gradience Hypothesis (FGH)** (definition (7b), p. 10):
-  there is no property distinguishing factive from non-factive occurrences.
-  Gradient distinctions reflect gradient inference contributions.
+## Main definitions
 
-Both hypotheses are recorded as `FactivityHypothesis.FDH` and
-`FactivityHypothesis.FGH`, exposed as the two `GradienceSource` values
-(resolved vs unresolved indeterminacy). The paper's distinctive formal
-content is the τ-parameterised model and the 2 × 2 model space crossing
-factivity discreteness with world-knowledge discreteness.
+* `FactivityReading`, `clauseEmbeddingSem`: the readings `m`, `n` of (13), as
+  `Factivity.factivePos` and `Factivity.nonFactivePos`.
+* `normingGradient p`, `normingDiscrete p`: the answer when the complement has probability `p`
+  under the common ground — the degree `p` itself, or a Bernoulli(`p`) draw of the complement's
+  truth at an index, sent to the endpoints of the scale.
+* `resolvedFactivity τ ν`: draw a reading with `P(m) = τ`; answer `1` under `m`, `ν` under `n`.
+* `unresolvedFactivity τ ν`: disjoin a token-level factivity probability `τ` with the answer `ν`.
+* `discreteFactivity`, `whollyDiscrete`, `whollyGradient`, `discreteWorld`: the four models.
 
-## The Discrete-Factivity Model
+## Main results
 
-The discrete-factivity model is a Bernoulli prior over `FactivityReading`:
+* `discreteFactivity_eq`, `whollyDiscrete_eq`, `whollyGradient_eq`, `discreteWorld_eq`: each
+  model in closed form.
+* `resolvedFactivity_zero`, `unresolvedFactivity_zero`: at `τ = 0` each model is the norming
+  model it completes; `resolvedFactivity_one`, `unresolvedFactivity_one`: at `τ = 1` every model
+  answers `1`.
+* `integral_discreteFactivity`, …: the four models share the mean answer `τ + (1 - τ) * p`.
+* `variance_discreteFactivity`, …: they differ in spread — `whollyGradient` is deterministic, the
+  models with a discrete component send mass to the endpoints. This is the shape difference behind
+  the model comparison of §4.4, where `discreteFactivity` fits best and the two gradient-factivity
+  models worst.
 
-- `clauseEmbeddingSem .factive`     = `factivePos` (`BEL ∧ C`)
-- `clauseEmbeddingSem .nonfactive`  = `nonFactivePos` (`BEL`)
-- prior over readings: `⟨τ, 1 − τ⟩` for `τ : Set.Icc (0 : ℚ) 1`
+## References
 
-The graded truth value of a predicate at a world `w` then unfolds to
-`τ · 1[BEL∧C] + (1−τ) · 1[BEL]` (`discreteFactivity_eq`).
-This is the closed-form reduction of the τ-vertex of the paper's DAG
-(definition (13), p. 20).
-
-## The Four Models
-
-Crossing factivity (discrete/gradient) × world knowledge (discrete/gradient)
-yields four model variants. The paper reports that the discrete-factivity
-× gradient-world variant achieves the best ELPD across all four datasets
-(Sect. 4.3–4.4). The 2 × 2 is captured by `ModelVariant`, with the
-discrete-factivity-vs-wholly-gradient pair sharing world-knowledge treatment
-(`best_worst_share_world_knowledge`) so that switching factivity hypothesis
-is the active variable.
-
-## Connection to PDS
-
-The paper's formal framework is Probabilistic Dynamic Semantics (PDS),
-developed in [grove-white-2025b]. The model's inference value is the Bernoulli
-prior's mass on the satisfied-readings event: graded inference judgments emerge from
-marginalising over a *discrete* reading parameter, exactly the PDS
-pattern in which a `bind` over a discrete probability node feeds a
-Boolean predicate.
-
-## Connection to [scontras-tonhauser-2025]
-
-[scontras-tonhauser-2025]'s RSA model uses the same `factivePos` /
-`nonFactivePos` foundation from `Factivity`
-for `know` / `think`. The bridges
-`clauseEmbedding_factive_eq_st_know` and
-`clauseEmbedding_nonfactive_eq_st_think` make this explicit. The S&T binary
-treatment is the τ → {0, 1} limiting case of the discrete-factivity model
-(`st_is_limiting_case`).
-
-## Connection to D&T 2021/2022
-
-The empirical anchoring is provided by `DegenTonhauser2022`'s aggregate
-projection ratings: under the discrete-factivity model with `τ_know > τ_think`,
-the model predicts the empirically observed `know > think` projection
-ordering (`empirical_ordering_consistent_with_tau`). The prior-belief
-modulation finding from [degen-tonhauser-2021] (replicated in 2b) is
-the specific empirical regularity the world-knowledge component is fit to.
+* [J. Grove, A. S. White, *Factivity, presupposition projection, and the role of discrete
+  knowledge in gradient inference judgments*][grove-white-2025]
+* [J. Degen, J. Tonhauser, *Prior beliefs modulate projection*][degen-tonhauser-2021]
 -/
+
+open MeasureTheory Measure ProbabilityTheory Factivity unitInterval
 
 namespace GroveWhite2025
 
-open MeasureTheory Factivity
-open DegenTonhauser2021
-open DegenTonhauser2022
-open scoped ENNReal NNReal
+/-! ### The lexical entry (13) -/
 
-/-! ## §1. Clause-embedding semantics -/
-
-section ClauseEmbedding
-
-/-- The two readings of a clause-embedding predicate under the FDH.
-    The `factive` reading triggers a projective inference (`BEL ∧ C`);
-    the `nonfactive` reading does not (`BEL`). -/
+/-- The two readings of a clause-embedding predicate in (13): `m` triggers the projective
+inference, `n` does not. -/
 inductive FactivityReading where
   | factive
   | nonfactive
-  deriving DecidableEq, Repr, Inhabited
-
-instance : Fintype FactivityReading where
-  elems := {.factive, .nonfactive}
-  complete := fun x => by cases x <;> simp
-
-variable {W : Type*} [HasBelief W] [HasComplement W]
-
-/-- The Boolean denotation of a clause-embedding predicate, parameterized by
-    the resolved reading. The two readings dispatch directly to
-    `Factivity` — `factivePos` and
-    `nonFactivePos` — so this study shares its foundations with
-    [scontras-tonhauser-2025]'s `know` / `think` denotations. -/
-def clauseEmbeddingSem : FactivityReading → W → Bool
-  | .factive    => factivePos
-  | .nonfactive => nonFactivePos
-
-end ClauseEmbedding
-
-/-! ## §2. The τ-parameterised prior -/
-
-section Prior
-
-variable {W : Type*}
-
-/-- `τ.val : ℚ` lifted to `ℝ≥0` via the canonical `ℝ`-coercion. -/
-noncomputable def toNNReal (τ : Set.Icc (0 : ℚ) 1) : ℝ≥0 :=
-  Real.toNNReal τ.val
-
-theorem toNNReal_le_one (τ : Set.Icc (0 : ℚ) 1) : toNNReal τ ≤ 1 :=
-  Real.toNNReal_le_one.mpr (by exact_mod_cast τ.prop.2)
-
-theorem toNNReal_val (τ : Set.Icc (0 : ℚ) 1) : ((toNNReal τ : ℝ≥0) : ℝ) = τ.val :=
-  Real.coe_toNNReal _ (by exact_mod_cast τ.prop.1)
+  deriving DecidableEq
 
 instance : MeasurableSpace FactivityReading := ⊤
 instance : DiscreteMeasurableSpace FactivityReading := ⟨fun _ => trivial⟩
 
-/-- The Bernoulli prior over `FactivityReading`: factive with probability
-    `τ.val`, nonfactive with probability `1 − τ.val`. The τ parameter is
-    bundled as `Set.Icc (0 : ℚ) 1`, so the [0,1] constraint is
-    intrinsic to the type rather than threaded as side hypotheses. This is
-    the τ-vertex of the discrete-factivity DAG (definition (13), p. 20). -/
-noncomputable def factivityPrior (τ : Set.Icc (0 : ℚ) 1) : Measure FactivityReading :=
-  (toNNReal τ : ℝ≥0∞) • Measure.dirac .factive +
-    ((1 - toNNReal τ : ℝ≥0) : ℝ≥0∞) • Measure.dirac .nonfactive
-
-@[simp] theorem factivityPrior_singleton_factive (τ : Set.Icc (0 : ℚ) 1) :
-    factivityPrior τ {.factive} = ((toNNReal τ : ℝ≥0) : ℝ≥0∞) := by
-  simp [factivityPrior]
-
-@[simp] theorem factivityPrior_singleton_nonfactive (τ : Set.Icc (0 : ℚ) 1) :
-    factivityPrior τ {.nonfactive} = (((1 : ℝ≥0) - toNNReal τ : ℝ≥0) : ℝ≥0∞) := by
-  simp [factivityPrior]
-
-instance (τ : Set.Icc (0 : ℚ) 1) : IsProbabilityMeasure (factivityPrior τ) := ⟨by
-  simp only [factivityPrior, Measure.coe_add, Pi.add_apply, Measure.smul_apply, measure_univ,
-    smul_eq_mul, mul_one]
-  rw [← ENNReal.coe_add, add_tsub_cancel_of_le (toNNReal_le_one τ), ENNReal.coe_one]⟩
-
-end Prior
-
-/-! ## §3. The discrete-factivity model -/
-
-section DiscreteFactivity
-
 variable {W : Type*} [HasBelief W] [HasComplement W]
 
-/-- The discrete-factivity model: the probability that the clause-embedding predicate holds
-    at `w` is the Bernoulli prior's mass on the readings under which it does
-    (definition (13), p. 20). -/
-noncomputable def discreteFactivity (τ : Set.Icc (0 : ℚ) 1) (w : W) : ℝ :=
-  (factivityPrior τ).real {θ | clauseEmbeddingSem θ w}
+/-- The parent nodes of (13): reading `m` is `factivePos` (`BEL ∧ C`), reading `n` is
+`nonFactivePos` (`BEL`) — the `know` and `think` denotations of `Factivity`. -/
+def clauseEmbeddingSem : FactivityReading → W → Bool
+  | .factive => factivePos
+  | .nonfactive => nonFactivePos
 
-/-- Closed-form reduction: graded truth = `τ · 1[factivePos] + (1−τ) · 1[nonFactivePos]`.
-    This is the substantive content of the τ-parameterised model — graded
-    inference values arise from a τ-weighted mixture of two crisp Boolean
-    readings. -/
-theorem discreteFactivity_eq (τ : Set.Icc (0 : ℚ) 1) (w : W) :
-    discreteFactivity τ w =
-      (if factivePos w then (τ.val : ℝ) else 0) +
-        (if nonFactivePos (W := W) w then 1 - (τ.val : ℝ) else 0) := by
-  simp only [discreteFactivity, measureReal_def, factivityPrior,
-    Measure.coe_add, Pi.add_apply, Measure.smul_apply, Measure.dirac_apply, smul_eq_mul,
-    Set.indicator_apply, Set.mem_ofPred_eq, clauseEmbeddingSem, Pi.one_apply]
-  split_ifs <;> simp [ENNReal.toReal_add, toNNReal_val, NNReal.coe_sub (toNNReal_le_one τ),
-    -ENNReal.coe_sub]
+/-! ### Norming models (§4.2) -/
 
-/-- With τ = 1 (certainly factive), graded truth reduces to `factivePos`. -/
-theorem discreteFactivity_certain_factive (w : W) :
-    discreteFactivity 1 w = if factivePos w then 1 else 0 := by
-  rw [discreteFactivity_eq]; simp
+/-- World knowledge as unresolved indeterminacy: the complement's probability `p` under the common
+ground, reported as a degree. -/
+noncomputable abbrev normingGradient (p : I) : Measure I := dirac p
 
-/-- With τ = 0 (certainly nonfactive), graded truth reduces to `nonFactivePos`. -/
-theorem discreteFactivity_certain_nonfactive (w : W) :
-    discreteFactivity 0 w = if nonFactivePos (W := W) w then 1 else 0 := by
-  rw [discreteFactivity_eq]; simp
+/-- World knowledge as resolved indeterminacy: a Bernoulli(`p`) draw of the complement's truth at
+an index of the common ground, sent to the endpoints of the scale. -/
+noncomputable abbrev normingDiscrete (p : I) : Measure I := Ber(1, 0, p)
 
-/-- Monotonicity in τ: at a world that satisfies the factive reading but
-    not the nonfactive reading, increasing τ strictly increases graded
-    truth. The hypothesis pattern `factivePos w ∧ ¬ nonFactivePos w` is
-    impossible in standard Boolean semantics (`factive_entails_nonfactive`
-    rules it out), so this lemma is vacuously achievable; the substantive
-    case is the *contrapositive* one supplied by `discreteFactivity_eq`
-    plus monotonicity of the Bernoulli mixture. -/
-theorem discreteFactivity_lt_of_lt
-    (τ₁ τ₂ : Set.Icc (0 : ℚ) 1) (w : W)
-    (h_tau : τ₁.val > τ₂.val)
-    (h_factive : factivePos w = true)
-    (h_nonfactive : nonFactivePos (W := W) w = false) :
-    discreteFactivity τ₁ w > discreteFactivity τ₂ w := by
-  rw [discreteFactivity_eq, discreteFactivity_eq]
-  simp only [h_factive, h_nonfactive, Bool.false_eq_true, ↓reduceIte, add_zero]
-  exact_mod_cast h_tau
+/-! ### Completing a norming model by factivity (§4.3) -/
 
-end DiscreteFactivity
+/-- Resolved factivity: a reading of (13) is drawn with `P(m) = τ`; under `m` the complement is
+entailed (`Factivity.factivePos_entails_c`) and the answer is `1`, under `n` the answer follows
+`ν`. -/
+noncomputable def resolvedFactivity (τ : I) (ν : Measure I) : Measure I :=
+  Ber(FactivityReading.factive, FactivityReading.nonfactive, τ).bind fun
+    | .factive => dirac 1
+    | .nonfactive => ν
 
-/-! ## §4. The 2 × 2 model space -/
+/-- Unresolved factivity: `τ` is the common-ground probability of `τ_know(c_i)` in (14), taken
+independent of the complement, so an answer `d` becomes the probability `1 - (1 - τ) (1 - d)` of
+the disjunction. -/
+noncomputable def unresolvedFactivity (τ : I) (ν : Measure I) : Measure I :=
+  ν.map fun d => σ (σ τ * σ d)
 
-section ModelVariants
+/-- Discrete factivity, gradient world knowledge (§4.3.1). -/
+noncomputable abbrev discreteFactivity (τ p : I) : Measure I :=
+  resolvedFactivity τ (normingGradient p)
 
-/-- Sources of gradience in inference judgment tasks. -/
-inductive GradienceSource where
-  /-- Resolved on each occasion but varying across occasions (type-level). -/
-  | resolved
-  /-- Persists even after fixing the interpretation (token-level). -/
-  | unresolved
-  deriving DecidableEq, Repr
+/-- Discrete factivity, discrete world knowledge (§4.3.1). -/
+noncomputable abbrev whollyDiscrete (τ p : I) : Measure I :=
+  resolvedFactivity τ (normingDiscrete p)
 
-/-- The choice between the discrete (FDH) and gradient (FGH) hypotheses
-    is a binary choice of source for the gradient projection observations.
+/-- Gradient factivity, gradient world knowledge (§4.3.2). -/
+noncomputable abbrev whollyGradient (τ p : I) : Measure I :=
+  unresolvedFactivity τ (normingGradient p)
 
-    Defined as `@[reducible] def` rather than `abbrev` so the unfolding is
-    explicit (mathlib convention). -/
-@[reducible] def FactivityHypothesis : Type := GradienceSource
+/-- Gradient factivity, discrete world knowledge (§4.3.2). -/
+noncomputable abbrev discreteWorld (τ p : I) : Measure I :=
+  unresolvedFactivity τ (normingDiscrete p)
 
-/-- The Fundamental Discreteness Hypothesis (definition (7a), p. 10):
-    factivity is a discrete property of an expression on each occasion
-    of use. Observed gradience arises from resolved indeterminacy. -/
-def FactivityHypothesis.FDH : FactivityHypothesis := .resolved
+section Completion
 
-/-- The Fundamental Gradience Hypothesis (definition (7b), p. 10):
-    there is no property distinguishing factive from non-factive
-    occurrences. Gradient distinctions reflect gradient inference
-    contributions. -/
-def FactivityHypothesis.FGH : FactivityHypothesis := .unresolved
+variable (τ : I) (ν : Measure I)
 
-/-- The four model variants from Sect. 4.3–4.4, crossing factivity
-    (discrete/gradient) × world knowledge (discrete/gradient). Each model
-    is a completion of one of the two norming models (Sect. 4.2) with a
-    factivity component. -/
-inductive ModelVariant where
-  /-- Discrete factivity + gradient world knowledge. Best fit. Extends
-      norming-gradient (Sect. 4.2.1). -/
-  | discreteFactivity
-  /-- Discrete factivity + discrete world knowledge. Extends norming-discrete
-      (Sect. 4.2.2). -/
-  | whollyDiscrete
-  /-- Gradient factivity + gradient world knowledge. Worst fit. -/
-  | whollyGradient
-  /-- Gradient factivity + discrete world knowledge. -/
-  | discreteWorld
-  deriving DecidableEq, Repr
+private theorem measurable_disj : Measurable fun d : I => σ (σ τ * σ d) :=
+  Measurable.subtype_mk (by fun_prop : Measurable fun d : I => 1 - (1 - (τ : ℝ)) * (1 - d))
 
-/-- Two norming-model bases (Sect. 4.2). -/
-inductive NormingModel where
-  /-- Norming-gradient (Sect. 4.2.1): world knowledge as unresolved gradience. -/
-  | gradient
-  /-- Norming-discrete (Sect. 4.2.2): world knowledge as resolved gradience. -/
-  | discrete
-  deriving DecidableEq, Repr
+theorem resolvedFactivity_eq : resolvedFactivity τ ν = toNNReal τ • dirac 1 + toNNReal (σ τ) • ν :=
+  bernoulliMeasure_bind _ _ _ .of_discrete
 
-/-- Whether a model treats factivity as discrete (FDH) or gradient (FGH). -/
-def ModelVariant.factivityHypothesis : ModelVariant → FactivityHypothesis
-  | .discreteFactivity => .FDH
-  | .whollyDiscrete    => .FDH
-  | .whollyGradient    => .FGH
-  | .discreteWorld     => .FGH
+instance [IsProbabilityMeasure ν] : IsProbabilityMeasure (resolvedFactivity τ ν) :=
+  ⟨by simp [resolvedFactivity_eq]⟩
 
-/-- Whether a model treats world knowledge as gradient (unresolved) or
-    discrete (resolved). -/
-def ModelVariant.worldKnowledgeSource : ModelVariant → GradienceSource
-  | .discreteFactivity => .unresolved
-  | .whollyDiscrete    => .resolved
-  | .whollyGradient    => .unresolved
-  | .discreteWorld     => .resolved
+instance [IsProbabilityMeasure ν] : IsProbabilityMeasure (unresolvedFactivity τ ν) :=
+  isProbabilityMeasure_map (measurable_disj τ).aemeasurable
 
-/-- Each factivity model extends one of two norming models. The extension
-    relationship is determined by the world-knowledge treatment. -/
-def ModelVariant.baseNormingModel : ModelVariant → NormingModel
-  | .discreteFactivity => .gradient
-  | .whollyDiscrete    => .discrete
-  | .whollyGradient    => .gradient
-  | .discreteWorld     => .discrete
+@[simp] theorem resolvedFactivity_zero : resolvedFactivity 0 ν = ν := by
+  simp [resolvedFactivity_eq]
 
-/-- The best and worst models share their world-knowledge treatment but
-    differ in factivity hypothesis. This isolates the discreteness of
-    factivity as the variable explaining the ELPD spread between the two
-    extremes. -/
-theorem best_worst_share_world_knowledge :
-    ModelVariant.discreteFactivity.worldKnowledgeSource =
-    ModelVariant.whollyGradient.worldKnowledgeSource ∧
-    ModelVariant.discreteFactivity.factivityHypothesis ≠
-    ModelVariant.whollyGradient.factivityHypothesis :=
-  ⟨rfl, by decide⟩
+@[simp] theorem resolvedFactivity_one : resolvedFactivity 1 ν = dirac 1 := by
+  simp [resolvedFactivity_eq]
 
-end ModelVariants
+@[simp] theorem unresolvedFactivity_zero : unresolvedFactivity 0 ν = ν := by
+  simp [unresolvedFactivity]
 
-/-! ## §5. Bridge to [scontras-tonhauser-2025] -/
+@[simp] theorem unresolvedFactivity_one [IsProbabilityMeasure ν] :
+    unresolvedFactivity 1 ν = dirac 1 := by
+  simp [unresolvedFactivity, Measure.map_const]
 
-section ScontrasTonhauserBridge
+end Completion
 
-/-- The `factive` reading of `clauseEmbeddingSem` is the same Boolean
-    predicate as [scontras-tonhauser-2025]'s `literalMeaning .knowPos`.
-    Both unfold to `factivePos` from `Factivity`,
-    so the equality is true by construction — a *grounding theorem* in the
-    sense of `CLAUDE.md`, witnessing that two paper-specific lexical entries
-    share their foundation. -/
-theorem clauseEmbedding_factive_eq_st_know :
-    clauseEmbeddingSem (W := ScontrasTonhauser2025.WorldState) .factive
-      = ScontrasTonhauser2025.literalMeaning .knowPos := rfl
+/-! ### The four models in closed form -/
 
-/-- The `nonfactive` reading is [scontras-tonhauser-2025]'s
-    `literalMeaning .thinkPos` (both unfold to `nonFactivePos`). -/
-theorem clauseEmbedding_nonfactive_eq_st_think :
-    clauseEmbeddingSem (W := ScontrasTonhauser2025.WorldState) .nonfactive
-      = ScontrasTonhauser2025.literalMeaning .thinkPos := rfl
+section Models
 
-/-- The S&T binary model is the τ → {0, 1} limiting case of the
-    discrete-factivity model: `know` corresponds to `τ_know = 1` (always
-    factive) and `think` corresponds to `τ_think = 0` (never factive). The
-    Grove–White model generalises by allowing intermediate τ values for
-    the same predicate across occasions of use. -/
-theorem st_is_limiting_case :
-    (∀ w : ScontrasTonhauser2025.WorldState,
-      discreteFactivity 1 w =
-      if ScontrasTonhauser2025.literalMeaning .knowPos w then 1 else 0) ∧
-    (∀ w : ScontrasTonhauser2025.WorldState,
-      discreteFactivity 0 w =
-      if ScontrasTonhauser2025.literalMeaning .thinkPos w then 1 else 0) :=
-  ⟨discreteFactivity_certain_factive, discreteFactivity_certain_nonfactive⟩
+variable (τ p : I)
 
-end ScontrasTonhauserBridge
+theorem discreteFactivity_eq : discreteFactivity τ p = Ber(1, p, τ) := by
+  rw [discreteFactivity, resolvedFactivity_eq, normingGradient, bernoulliMeasure_def]
 
-/-! ## §6. Empirical anchoring (D&T 2021/2022) -/
+theorem whollyDiscrete_eq : whollyDiscrete τ p = Ber(1, 0, σ (σ τ * σ p)) := by
+  have h₁ : toNNReal τ + toNNReal (σ τ) * toNNReal p = toNNReal (σ (σ τ * σ p)) :=
+    NNReal.eq (by simp [coe_symm_eq]; ring)
+  have h₂ : toNNReal (σ τ) * toNNReal (σ p) = toNNReal (σ τ * σ p) := NNReal.eq (by simp)
+  rw [whollyDiscrete, resolvedFactivity_eq, normingDiscrete, bernoulliMeasure_def,
+    bernoulliMeasure_def, symm_symm, smul_add, smul_smul, smul_smul, ← add_assoc, ← add_smul, h₁,
+    h₂]
 
-section EmpiricalAnchor
+theorem whollyGradient_eq : whollyGradient τ p = dirac (σ (σ τ * σ p)) :=
+  Measure.map_dirac' (measurable_disj τ) p
 
-/-- With `τ_know > τ_think` the discrete-factivity model predicts a `know > think`
-    projection ordering; [degen-tonhauser-2022]'s exp 1a ratings confirm the
-    direction (0.86 vs 0.20). -/
-theorem empirical_ordering_consistent_with_tau :
-    certainty1a .know > certainty1a .think := by
-  norm_num [certainty1a]
+theorem discreteWorld_eq : discreteWorld τ p = Ber(1, τ, p) := by
+  simp [unresolvedFactivity]
 
-/-- The prior-belief modulation finding from [degen-tonhauser-2021] (replicated
-    in Exp 2b) is the empirical regularity the world-knowledge component of the
-    discrete-factivity model is fit to: a prior-sensitive (monotone) account
-    predicts that higher prior probability of the complement yields stronger
-    projection (`DegenTonhauser2021.sensitive_predicts_modulation`), which their
-    data confirm for all 20 predicates. -/
-theorem prior_effect_consistent {acc : PriorAccount} (h : PriorSensitive acc)
-    {p q : Set.Icc (0 : ℚ) 1} (hpq : p < q) : acc p < acc q :=
-  sensitive_predicts_modulation h hpq
+/-! ### Mean answer -/
 
-end EmpiricalAnchor
+theorem integral_discreteFactivity : ∫ d, (d : ℝ) ∂discreteFactivity τ p = τ + (1 - τ) * p := by
+  simp [discreteFactivity_eq, integral_bernoulliMeasure]
+
+theorem integral_whollyDiscrete : ∫ d, (d : ℝ) ∂whollyDiscrete τ p = τ + (1 - τ) * p := by
+  simp [whollyDiscrete_eq, integral_bernoulliMeasure, coe_symm_eq]; ring
+
+theorem integral_whollyGradient : ∫ d, (d : ℝ) ∂whollyGradient τ p = τ + (1 - τ) * p := by
+  simp [whollyGradient_eq, coe_symm_eq]; ring
+
+theorem integral_discreteWorld : ∫ d, (d : ℝ) ∂discreteWorld τ p = τ + (1 - τ) * p := by
+  simp [discreteWorld_eq, integral_bernoulliMeasure]; ring
+
+/-! ### Spread of the answer -/
+
+theorem variance_discreteFactivity :
+    Var[fun d : I => (d : ℝ); discreteFactivity τ p] = τ * (1 - τ) * (1 - p) ^ 2 := by
+  simp [discreteFactivity_eq, variance_bernoulliMeasure _ _ _ measurable_subtype_coe.aemeasurable]
+
+theorem variance_whollyDiscrete :
+    Var[fun d : I => (d : ℝ); whollyDiscrete τ p] = (τ + (1 - τ) * p) * (1 - τ) * (1 - p) := by
+  simp [whollyDiscrete_eq, variance_bernoulliMeasure _ _ _ measurable_subtype_coe.aemeasurable,
+    coe_symm_eq]
+  ring
+
+theorem variance_whollyGradient : Var[fun d : I => (d : ℝ); whollyGradient τ p] = 0 := by
+  simp [whollyGradient_eq]
+
+theorem variance_discreteWorld :
+    Var[fun d : I => (d : ℝ); discreteWorld τ p] = p * (1 - p) * (1 - τ) ^ 2 := by
+  simp [discreteWorld_eq, variance_bernoulliMeasure _ _ _ measurable_subtype_coe.aemeasurable]
+
+end Models
 
 end GroveWhite2025

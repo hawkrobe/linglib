@@ -291,6 +291,7 @@ import Linglib.Core.Probability.Decision.Blackwell
 import Linglib.Core.Probability.Decision.Duality
 import Linglib.Core.Probability.Decision.ExperimentDesign
 import Linglib.Core.Probability.DirichletMultinomial
+import Linglib.Core.Probability.Distributions.Bernoulli
 import Linglib.Core.Probability.ENNRealArith
 import Linglib.Core.Probability.Entropy
 import Linglib.Core.Probability.Eval
