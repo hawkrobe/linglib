@@ -55,14 +55,14 @@ variable {Time : Type*} [LinearOrder Time]
 /-- The under-specification entry for *before* (7a): some run-time of the main clause is
 partly preceded by every run-time of the embedded clause — Anscombe's entry with *some*
 subinterval following in place of *every*, the weakening accomplishments require. -/
-def weakBefore (A B : SentDenotation Time) : Prop := ∃ i ∈ A, ∀ j ∈ B, i.snd < j.snd
+def weakBefore (A B : RunTimes Time) : Prop := ∃ i ∈ A, ∀ j ∈ B, i.snd < j.snd
 
 /-- The under-specification entry for *after* (7b): some run-time of the main clause fully
 follows some run-time of the embedded clause. -/
-def weakAfter (A B : SentDenotation Time) : Prop := ∃ i ∈ A, ∃ j ∈ B, j.snd < i.fst
+def weakAfter (A B : RunTimes Time) : Prop := ∃ i ∈ A, ∃ j ∈ B, j.snd < i.fst
 
 /-- Temporal overlap — the *while* reading a competition-based implicature negates (§8.1). -/
-def Overlap (A B : SentDenotation Time) : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
+def Overlap (A B : RunTimes Time) : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
 
 /-- A stative is weakly *before* an accomplishment iff its onset precedes the telos. -/
 theorem weakBefore_stative_accomplishment_iff (a b : NonemptyInterval Time) :
@@ -163,7 +163,7 @@ private theorem mem_stative {i j : NonemptyInterval ℕ} :
 
 /-- *Within d* at the reference time `t` (33b): the clause holds throughout some subinterval
 of `[t, t + d]`. -/
-def within (t d : ℕ) (p : SentDenotation ℕ) : Prop := ∃ i ∈ p, t ≤ i.fst ∧ i.snd ≤ t + d
+def within (t d : ℕ) (p : RunTimes ℕ) : Prop := ∃ i ∈ p, t ≤ i.fst ∧ i.snd ≤ t + d
 
 /-- For a state holding throughout `[s, f]`, *within d* says the state reaches into the
 span, and the negation of the alternative with a shorter span `d'` (35) says it does not

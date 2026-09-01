@@ -24,7 +24,7 @@ reference point is selected (all of B vs MAX of B).
 
 ## Level
 
-**Level 2 (interval sets)**: operates on `SentDenotation` directly, using
+**Level 2 (interval sets)**: operates on `RunTimes` directly, using
 `maxOnScale` from `Degree` to select the informative bound.
 
 ## Bridges
@@ -60,12 +60,12 @@ variable {Time : Type*} [LinearOrder Time]
 
 /-- Rett's *before* (eq. 22a): ∃t ∈ times(A) [t ≺ MAX(times(B)_≺)].
     Some time in A precedes the maximal (on the ≺ scale) time of B. -/
-def Rett.before (A B : SentDenotation Time) : Prop :=
+def Rett.before (A B : RunTimes Time) : Prop :=
   ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .lt (timeTrace B), t < m
 
 /-- Rett's *after* (eq. 22b): ∃t ∈ times(A) [t ≻ MAX(times(B)_≻)].
     Some time in A succeeds the maximal (on the ≻ scale) time of B. -/
-def Rett.after (A B : SentDenotation Time) : Prop :=
+def Rett.after (A B : RunTimes Time) : Prop :=
   ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt (timeTrace B), t > m
 
 -- ============================================================================
@@ -79,7 +79,7 @@ def Rett.after (A B : SentDenotation Time) : Prop :=
     Linguistically: "Amy was surprised" → "the start of Amy being surprised".
     Cross-linguistically realized as inchoative morphology (Russian *-sja*,
     Tagalog PFV.NEUT). -/
-def INCHOAT (p : SentDenotation Time) : SentDenotation Time :=
+def INCHOAT (p : RunTimes Time) : RunTimes Time :=
   { i | ∃ onset : Time,
     (∀ j ∈ p, onset ≤ j.fst) ∧
     (∀ t, (∀ j ∈ p, t ≤ j.fst) → t ≤ onset) ∧
@@ -92,7 +92,7 @@ def INCHOAT (p : SentDenotation Time) : SentDenotation Time :=
     Linguistically: "Jane climbed the mountain" → "the moment Jane reached
     the top". Cross-linguistically realized as completive morphology
     (Tagalog AIA). -/
-def COMPLET (p : SentDenotation Time) : SentDenotation Time :=
+def COMPLET (p : RunTimes Time) : RunTimes Time :=
   { i | ∃ telos : Time,
     (∀ j ∈ p, j.snd ≤ telos) ∧
     (∀ t, (∀ j ∈ p, j.snd ≤ t) → telos ≤ t) ∧
@@ -140,8 +140,8 @@ theorem complet_bridges_cessation (i : NonemptyInterval Time) :
     - Rett: ∃ t ∈ A, t < MAX(B_≺). For statives, MAX on ≺ picks B.fst
       (the GLB), and t < B.fst ↔ t < all times in B. -/
 theorem anscombe_rett_agree_stative_before_start
-    (A : SentDenotation Time) (i_B : NonemptyInterval Time) :
-    (Anscombe.before A (stativeDenotation i_B) ↔
+    (A : RunTimes Time) (i_B : NonemptyInterval Time) :
+    (Anscombe.beforeEver A (stativeDenotation i_B) ↔
      Rett.before A (stativeDenotation i_B)) := by
   constructor
   · rintro ⟨t, ht_A, h_all⟩
@@ -165,7 +165,7 @@ theorem anscombe_rett_agree_stative_before_start
     A to follow B's *finish* (t > MAX₍>₎(B) = i_B.snd). These differ
     when A overlaps B without extending past B's endpoint. -/
 theorem rett_implies_anscombe_telic_after_finish
-    (A : SentDenotation Time) (i_B : NonemptyInterval Time) :
+    (A : RunTimes Time) (i_B : NonemptyInterval Time) :
     Rett.after A (accomplishmentDenotation i_B) →
     Anscombe.after A (accomplishmentDenotation i_B) := by
   rintro ⟨t, ht_A, m, ⟨hm_mem, _⟩, htm⟩
@@ -181,8 +181,8 @@ theorem rett_implies_anscombe_telic_after_finish
     From Rett: t < m where m = min(timeTrace B). Since m < all other
     points in timeTrace B (by maxOnScale), t < every point in timeTrace B.
     This gives Anscombe's ∀-quantified conclusion. -/
-theorem rett_before_implies_anscombe (A B : SentDenotation Time) :
-    Rett.before A B → Anscombe.before A B := by
+theorem rett_before_implies_anscombe (A B : RunTimes Time) :
+    Rett.before A B → Anscombe.beforeEver A B := by
   rintro ⟨t, ht, m, ⟨hm_mem, hm_min⟩, htm⟩
   exact ⟨t, ht, fun t' ht' => by
     by_cases heq : t' = m
@@ -193,7 +193,7 @@ theorem rett_before_implies_anscombe (A B : SentDenotation Time) :
 
     Immediate: m ∈ maxOnScale(timeTrace B) implies m ∈ timeTrace B,
     and t > m gives the existential witness for Anscombe.after. -/
-theorem rett_after_implies_anscombe (A B : SentDenotation Time) :
+theorem rett_after_implies_anscombe (A B : RunTimes Time) :
     Rett.after A B → Anscombe.after A B := by
   rintro ⟨t, ht, m, ⟨hm_mem, _⟩, htm⟩
   exact ⟨t, ht, m, hm_mem, htm⟩
@@ -218,14 +218,14 @@ to this bound, so negating B is truth-conditionally vacuous.
 *While* requires total temporal overlap; ¬B fails when A overlaps B. -/
 
 /-- *Before* truth conditions depend only on MAX₍<₎ of B's time trace. -/
-theorem before_determined_by_max (A B₁ B₂ : SentDenotation Time)
+theorem before_determined_by_max (A B₁ B₂ : RunTimes Time)
     (h : maxOnScale .lt (timeTrace B₁) = maxOnScale .lt (timeTrace B₂)) :
     Rett.before A B₁ ↔ Rett.before A B₂ := by
   constructor <;> rintro ⟨t, ht, m, hm, htm⟩ <;> exact ⟨t, ht, m, h ▸ hm, htm⟩
 
 /-- When B's time trace is a closed interval [s, f], Rett.before reduces to
     "∃ t ∈ A, t < s". -/
-theorem rett_before_closedTrace_eq (A B : SentDenotation Time) (s f : Time) (hsf : s ≤ f)
+theorem rett_before_closedTrace_eq (A B : RunTimes Time) (s f : Time) (hsf : s ≤ f)
     (htrace : timeTrace B = { t | s ≤ t ∧ t ≤ f }) :
     Rett.before A B ↔ ∃ t ∈ timeTrace A, t < s := by
   unfold Rett.before
@@ -249,7 +249,7 @@ theorem complet_stative (i : NonemptyInterval Time) :
 
 /-- The pre-event complement of an event interval [s, f]. -/
 def preEventDenotation (bot : Time) (i : NonemptyInterval Time) (hbot : bot ≤ i.fst) :
-    SentDenotation Time :=
+    RunTimes Time :=
   stativeDenotation ⟨⟨bot, i.fst⟩, hbot⟩
 
 /-- The time trace of a stative denotation is the closed interval [start, finish]. -/
@@ -290,23 +290,23 @@ theorem timeTrace_complet_accomplishment (i : NonemptyInterval Time) :
   ext; simp [timeTrace, NonemptyInterval.mem_pure]
 
 /-- *Before* against a denotation with earliest time `m`: some time of `A` precedes `m`. -/
-theorem Rett.before_iff_of_maxOnScale_eq {A B : SentDenotation Time} {m : Time}
+theorem Rett.before_iff_of_maxOnScale_eq {A B : RunTimes Time} {m : Time}
     (h : maxOnScale .lt (timeTrace B) = {m}) : Rett.before A B ↔ ∃ t ∈ timeTrace A, t < m := by
   simp [Rett.before, h]
 
 /-- *After* against a denotation with latest time `m`: some time of `A` follows `m`. -/
-theorem Rett.after_iff_of_maxOnScale_eq {A B : SentDenotation Time} {m : Time}
+theorem Rett.after_iff_of_maxOnScale_eq {A B : RunTimes Time} {m : Time}
     (h : maxOnScale .gt (timeTrace B) = {m}) : Rett.after A B ↔ ∃ t ∈ timeTrace A, m < t := by
   simp [Rett.after, h]
 
 /-- A stative main clause is *before* `B` iff its onset precedes `B`'s earliest time. -/
-theorem Rett.before_stative_iff (a : NonemptyInterval Time) {B : SentDenotation Time} {m : Time}
+theorem Rett.before_stative_iff (a : NonemptyInterval Time) {B : RunTimes Time} {m : Time}
     (h : maxOnScale .lt (timeTrace B) = {m}) : Rett.before (stativeDenotation a) B ↔ a.fst < m := by
   rw [Rett.before_iff_of_maxOnScale_eq h, timeTrace_stative_closedInterval]
   exact ⟨fun ⟨_, ⟨h1, _⟩, h3⟩ => lt_of_le_of_lt h1 h3, fun h => ⟨a.fst, ⟨le_rfl, a.fst_le_snd⟩, h⟩⟩
 
 /-- A stative main clause is *after* `B` iff its end follows `B`'s latest time. -/
-theorem Rett.after_stative_iff (a : NonemptyInterval Time) {B : SentDenotation Time} {m : Time}
+theorem Rett.after_stative_iff (a : NonemptyInterval Time) {B : RunTimes Time} {m : Time}
     (h : maxOnScale .gt (timeTrace B) = {m}) : Rett.after (stativeDenotation a) B ↔ m < a.snd := by
   rw [Rett.after_iff_of_maxOnScale_eq h, timeTrace_stative_closedInterval]
   exact ⟨fun ⟨_, ⟨_, h2⟩, h3⟩ => lt_of_lt_of_le h3 h2, fun h => ⟨a.snd, ⟨a.fst_le_snd, le_rfl⟩, h⟩⟩
@@ -354,7 +354,7 @@ theorem maxOnScale_lt_complet_preEvent (bot : Time) (i : NonemptyInterval Time) 
     the original uses the default *before*-start reading (MAX₍<₎),
     while the negated version requires COMPLET coercion to extract the
     end of the pre-event interval. -/
-theorem before_preEvent_ambidirectional (A : SentDenotation Time) (i_B : NonemptyInterval Time)
+theorem before_preEvent_ambidirectional (A : RunTimes Time) (i_B : NonemptyInterval Time)
     (bot : Time) (hbot : bot ≤ i_B.fst) :
     Rett.before A (stativeDenotation i_B) ↔
     Rett.before A (COMPLET (preEventDenotation bot i_B hbot)) := by
@@ -364,12 +364,12 @@ theorem before_preEvent_ambidirectional (A : SentDenotation Time) (i_B : Nonempt
 /-- *After* is NOT ambidirectional: negating B changes
     truth conditions because MAX₍>₎(B) ≠ MAX₍>₎(¬B). -/
 theorem after_not_ambidirectional (hab : ∃ (a b : Time), a < b) :
-    ¬ ∀ (A : SentDenotation Time) (B : Set Time),
+    ¬ ∀ (A : RunTimes Time) (B : Set Time),
       isAmbidirectional (λ X => ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt X, t > m) B := by
   obtain ⟨a, b, hab⟩ := hab
   intro h
   have h_amb := h {NonemptyInterval.pure b} {a}
-  have h_fB : ∃ t ∈ timeTrace ({NonemptyInterval.pure b} : SentDenotation Time),
+  have h_fB : ∃ t ∈ timeTrace ({NonemptyInterval.pure b} : RunTimes Time),
       ∃ m ∈ maxOnScale .gt ({a} : Set Time), t > m :=
     ⟨b, ⟨NonemptyInterval.pure b, rfl, le_refl _, le_refl _⟩,
      a, ⟨rfl, fun _ hx' hne => absurd hx' hne⟩, hab⟩
@@ -462,7 +462,7 @@ def ee_stative : NonemptyInterval ℕ :=
 def ee_accomplishment : NonemptyInterval ℕ :=
   ⟨⟨3, 8⟩, by omega⟩
 
--- Sentence denotations
+-- Run times
 abbrev A_early := accomplishmentDenotation me_early
 abbrev A_late := accomplishmentDenotation me_late
 abbrev A_inside := accomplishmentDenotation me_inside
@@ -508,7 +508,7 @@ private theorem mem_tt_inside {t : ℕ} :
 
 /-- "John left₁ before she was president₅₋₁₀" — True under Anscombe.
     Witness: t = 1 ∈ ME, and 1 < all t' ∈ [5, 10]. -/
-theorem scenario1_anscombe : Anscombe.before A_early B_stative := by
+theorem scenario1_anscombe : Anscombe.beforeEver A_early B_stative := by
   refine ⟨1, mem_tt_early.mpr rfl, ?_⟩
   intro t' ht'
   exact Nat.lt_of_lt_of_le (by omega) (mem_tt_stative.mp ht').1
@@ -546,7 +546,7 @@ theorem scenario2_rett : Rett.after A_late B_stative := by
 
 /-- "John met Mary₁ before she climbed the mountain₃₋₈" — True under Anscombe.
     Witness: t = 1, and 1 < all t' in [3, 8]. -/
-theorem scenario3_anscombe : Anscombe.before A_early B_telic := by
+theorem scenario3_anscombe : Anscombe.beforeEver A_early B_telic := by
   refine ⟨1, mem_tt_early.mpr rfl, ?_⟩
   intro t' ht'
   have ⟨h1, _⟩ := mem_tt_telic.mp ht'
@@ -585,7 +585,7 @@ theorem scenario4_rett : Rett.after A_late B_telic := by
 
 /-- "John left₇ before she was president₅₋₁₀" — False under Anscombe.
     Any witness t from ME (t=7) fails: t'=7 ∈ EE and ¬(7 < 7). -/
-theorem scenario5_anscombe_false : ¬ Anscombe.before A_inside B_stative := by
+theorem scenario5_anscombe_false : ¬ Anscombe.beforeEver A_inside B_stative := by
   intro ⟨t, ht, hall⟩
   have := mem_tt_inside.mp ht
   subst this
@@ -612,7 +612,7 @@ theorem scenario6_rett_false : ¬ Rett.after A_inside B_stative := by
 -- ============================================================================
 
 /-- Both theories agree on scenario 1 (ME before stative EE). -/
-theorem scenario1_agree : Anscombe.before A_early B_stative ∧
+theorem scenario1_agree : Anscombe.beforeEver A_early B_stative ∧
     Rett.before A_early B_stative :=
   ⟨scenario1_anscombe, scenario1_rett⟩
 
@@ -622,7 +622,7 @@ theorem scenario2_agree : Anscombe.after A_late B_stative ∧
   ⟨scenario2_anscombe, scenario2_rett⟩
 
 /-- Both theories agree on scenario 3 (ME before accomplishment EE). -/
-theorem scenario3_agree : Anscombe.before A_early B_telic ∧
+theorem scenario3_agree : Anscombe.beforeEver A_early B_telic ∧
     Rett.before A_early B_telic :=
   ⟨scenario3_anscombe, scenario3_rett⟩
 
@@ -711,10 +711,10 @@ theorem scenario_by_coincidence : by_ A_at_deadline B_deadline := by
   refine ⟨3, mem_tt_at_deadline.mpr rfl, ?_⟩
   intro t' ht'; have := mem_tt_deadline.mp ht'; omega
 
-/-- "He arrived₃ before 3pm₃" — FALSE under `Anscombe.before`.
+/-- "He arrived₃ before 3pm₃" — FALSE under `Anscombe.beforeEver`.
     Need 3 < 3, which fails. Shows *by* ⊋ *before*. -/
 theorem scenario_before_coincidence_false :
-    ¬ Anscombe.before A_at_deadline B_deadline := by
+    ¬ Anscombe.beforeEver A_at_deadline B_deadline := by
   intro ⟨t, ht, hall⟩
   have ht3 := mem_tt_at_deadline.mp ht
   have hlt := hall 3 (mem_tt_deadline.mpr rfl)
@@ -724,7 +724,7 @@ theorem scenario_before_coincidence_false :
     weakening from `before_by`. -/
 theorem by_without_before :
     by_ A_at_deadline B_deadline ∧
-    ¬ Anscombe.before A_at_deadline B_deadline :=
+    ¬ Anscombe.beforeEver A_at_deadline B_deadline :=
   ⟨scenario_by_coincidence, scenario_before_coincidence_false⟩
 
 /-- "He slept₅₋₁₀ till she arrived₅" — True under durative `until_` (*till* is *until*).
@@ -773,7 +773,7 @@ private theorem mem_tt_kiss {t : ℕ} :
 
 /-- Scenario 11: "The princess woke up₃ before the prince kissed her₅" — TRUE.
     3 < 5. This is the base *before* that gets negated in punctual *until*. -/
-theorem scenario11_before_true : Anscombe.before A_wake_early B_kiss := by
+theorem scenario11_before_true : Anscombe.beforeEver A_wake_early B_kiss := by
   refine ⟨3, mem_tt_wake.mpr rfl, ?_⟩
   intro t' ht'; have := mem_tt_kiss.mp ht'; omega
 

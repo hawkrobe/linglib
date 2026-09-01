@@ -1,4 +1,4 @@
-import Linglib.Semantics.Tense.SentDenotation
+import Linglib.Semantics.Tense.RunTimes
 import Linglib.Studies.Anscombe1964
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Data.Examples.BeaverCondoravdi2003
@@ -181,12 +181,12 @@ section Classical
 
 open Anscombe1964
 
-variable {Time : Type*} [LinearOrder Time] (A B B' : SentDenotation Time)
+variable {Time : Type*} [LinearOrder Time] (A B B' : RunTimes Time)
 
-/-- The complement of [anscombe-1964]'s *before* is downward entailing: the universal over
-`B` reverses inclusion — the NPI-licensing environment. -/
+/-- The complement of [anscombe-1964]'s quantificational *before* is downward entailing: the
+universal over `B` reverses inclusion — the NPI-licensing environment. -/
 theorem anscombe_before_complement_DE (h : timeTrace B' ⊆ timeTrace B) :
-    Anscombe.before A B → Anscombe.before A B' :=
+    Anscombe.beforeEver A B → Anscombe.beforeEver A B' :=
   fun ⟨t, ht, hall⟩ => ⟨t, ht, fun t' ht' => hall t' (h ht')⟩
 
 /-- The complement of [anscombe-1964]'s *after* is upward entailing. -/
@@ -198,7 +198,7 @@ theorem anscombe_after_complement_UE (h : timeTrace B ⊆ timeTrace B') :
 true of any instantiated `A` — *David ate ketchup before he won all the gold medals* comes out
 true if he never won. -/
 theorem anscombe_before_of_empty (hB : timeTrace B = ∅) (hA : (timeTrace A).Nonempty) :
-    Anscombe.before A B :=
+    Anscombe.beforeEver A B :=
   let ⟨t, ht⟩ := hA
   ⟨t, ht, fun t' ht' => absurd (hB ▸ ht') (Set.notMem_empty t')⟩
 
