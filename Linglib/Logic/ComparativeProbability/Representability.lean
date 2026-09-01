@@ -17,6 +17,9 @@ finitely additive probability measures (**Theorem 8a**,
 counterexample with null atoms gives a non-representable order at each
 cardinality (**Theorem 8b**).
 
+`[UPSTREAM]` candidate: KPS representability is measurement theory absent
+from mathlib (see the note in `Systems.lean`).
+
 ## Contents
 
 1. **`Representable`**: the representability predicate.
@@ -85,24 +88,24 @@ private noncomputable def kpsGe (A B : Set (Fin 5)) : Prop := kpsRankSet A ≥ k
 
 noncomputable def kpsSystem : QualitativeProbability (Fin 5) where
   ge := kpsGe
-  mono := λ {A B} hAB => kps_mono_finset _ _ (Set.toFinset_subset_toFinset.mpr hAB)
+  mono' := λ {A B} hAB => kps_mono_finset _ _ (Set.toFinset_subset_toFinset.mpr hAB)
   nonTrivial := by
     simp only [kpsGe, kpsRankSet, Set.toFinset_univ, Set.toFinset_empty]; decide
   total := λ A B => le_total (kpsRankSet B) (kpsRankSet A)
-  trans := λ {_ _ _} hab hbc => le_trans hbc hab
+  trans' := λ {_ _ _} hab hbc => le_trans hbc hab
   additive A B := by
     unfold kpsGe kpsRankSet
     rw [Set.toFinset_sdiff, Set.toFinset_sdiff]
     exact kps_additive_finset _ _
 
 private theorem mu_pair (m : FinAddMeasure ℚ (Fin 5)) (a b : Fin 5) (hab : a ≠ b) :
-    m.mu ({a, b} : Set (Fin 5)) = m.mu {a} + m.mu {b} := by
-  rw [Set.insert_eq a {b}, m.additive {a} {b} (Set.disjoint_singleton.mpr hab)]
+    m ({a, b} : Set (Fin 5)) = m {a} + m {b} := by
+  rw [Set.insert_eq a {b}, m.additive (Set.disjoint_singleton.mpr hab)]
 
 private theorem mu_triple (m : FinAddMeasure ℚ (Fin 5)) (a b c : Fin 5)
     (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
-    m.mu ({a, b, c} : Set (Fin 5)) = m.mu {a} + m.mu {b} + m.mu {c} := by
-  rw [Set.insert_eq a ({b, c} : Set (Fin 5)), m.additive {a} {b, c}
+    m ({a, b, c} : Set (Fin 5)) = m {a} + m {b} + m {c} := by
+  rw [Set.insert_eq a ({b, c} : Set (Fin 5)), m.additive (A := {a}) (B := {b, c})
     (Set.disjoint_left.mpr fun x hx hxbc => by
       rw [Set.mem_singleton_iff] at hx
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hxbc
@@ -112,11 +115,11 @@ private theorem mu_triple (m : FinAddMeasure ℚ (Fin 5)) (a b c : Fin 5)
 
 theorem kps_not_representable : ¬Representable kpsSystem := by
   intro ⟨m, hm⟩
-  set P := m.mu ({(0 : Fin 5)} : Set (Fin 5))
-  set Q := m.mu ({(1 : Fin 5)} : Set (Fin 5))
-  set R := m.mu ({(2 : Fin 5)} : Set (Fin 5))
-  set S := m.mu ({(3 : Fin 5)} : Set (Fin 5))
-  set T := m.mu ({(4 : Fin 5)} : Set (Fin 5))
+  set P := m ({(0 : Fin 5)} : Set (Fin 5))
+  set Q := m ({(1 : Fin 5)} : Set (Fin 5))
+  set R := m ({(2 : Fin 5)} : Set (Fin 5))
+  set S := m ({(3 : Fin 5)} : Set (Fin 5))
+  set T := m ({(4 : Fin 5)} : Set (Fin 5))
   -- Ordering facts: three strict (rank <), one weak (rank ≥)
   have hord1 : ¬ kpsGe ({1, 3} : Set (Fin 5)) {0} := by
     unfold kpsGe kpsRankSet
@@ -131,13 +134,13 @@ theorem kps_not_representable : ¬Representable kpsSystem := by
     unfold kpsGe kpsRankSet
     simp only [Set.toFinset_insert, Set.toFinset_singleton]; decide
   -- Convert to measure inequalities via the representation isomorphism
-  have hmeas1 : m.mu ({1, 3} : Set _) < m.mu ({(0 : Fin 5)} : Set _) :=
+  have hmeas1 : m ({1, 3} : Set _) < m ({(0 : Fin 5)} : Set _) :=
     not_le.mp (λ h => hord1 ((hm _ _).mpr h))
-  have hmeas2 : m.mu ({0, 1} : Set _) < m.mu ({2, 3} : Set _) :=
+  have hmeas2 : m ({0, 1} : Set _) < m ({2, 3} : Set _) :=
     not_le.mp (λ h => hord2 ((hm _ _).mpr h))
-  have hmeas3 : m.mu ({0, 3} : Set _) < m.mu ({1, 4} : Set _) :=
+  have hmeas3 : m ({0, 3} : Set _) < m ({1, 4} : Set _) :=
     not_le.mp (λ h => hord3 ((hm _ _).mpr h))
-  have hmeas4 : m.mu ({0, 1, 3} : Set _) ≥ m.mu ({2, 4} : Set _) :=
+  have hmeas4 : m ({0, 1, 3} : Set _) ≥ m ({2, 4} : Set _) :=
     (hm _ _).mp hord4
   -- Decompose pairs/triples using finite additivity
   rw [mu_pair m 1 3 (by decide)] at hmeas1
@@ -190,12 +193,12 @@ theorem null_removal_disjoint {W : Type*} (sys : QualitativeProbability W)
   by_cases hjC : j ∈ C
   · have hjnD : j ∉ D := Set.disjoint_left.mp hdisj hjC
     rw [Set.sdiff_singleton_eq_self hjnD]
-    exact ⟨fun h => sys.trans _ _ _ (null_sub C) h,
-           fun h => sys.trans _ _ _ (sys.mono _ _ Set.sdiff_subset) h⟩
+    exact ⟨fun h => sys.trans (null_sub C) h,
+           fun h => sys.trans (sys.mono Set.sdiff_subset) h⟩
   · rw [Set.sdiff_singleton_eq_self hjC]
     by_cases hjD : j ∈ D
-    · exact ⟨fun h => sys.trans _ _ _ h (sys.mono _ _ Set.sdiff_subset),
-             fun h => sys.trans _ _ _ h (null_sub D)⟩
+    · exact ⟨fun h => sys.trans h (sys.mono Set.sdiff_subset),
+             fun h => sys.trans h (null_sub D)⟩
     · rw [Set.sdiff_singleton_eq_self hjD]
 
 /-- `Fin.succ '' (Fin.succ ⁻¹' S) = S \ {0}` for `S : Set (Fin (n+1))`. -/
@@ -211,12 +214,12 @@ def QualitativeProbability.comap {α W : Type*} (f : α → W) (hf : Function.In
     (sys : QualitativeProbability W) (hnt : ¬sys.ge ∅ (Set.range f)) :
     QualitativeProbability α where
   ge A B := sys.ge (f '' A) (f '' B)
-  mono _ _ hAB := sys.mono _ _ (Set.image_mono hAB)
+  mono' _ _ hAB := sys.mono (Set.image_mono hAB)
   nonTrivial := by
     show ¬sys.ge (f '' ∅) (f '' Set.univ)
     rwa [Set.image_empty, Set.image_univ]
   total _ _ := sys.total _ _
-  trans _ _ _ h1 h2 := sys.trans _ _ _ h1 h2
+  trans' _ _ _ h1 h2 := sys.trans h1 h2
   additive A B := by
     show sys.ge (f '' A) (f '' B) ↔ sys.ge (f '' (A \ B)) (f '' (B \ A))
     rw [Set.image_sdiff hf, Set.image_sdiff hf]; exact sys.additive _ _
@@ -230,8 +233,8 @@ theorem null_elem_reduce {n : ℕ} (sys : QualitativeProbability (Fin (n + 2)))
     Representable sys := by
   have hnt : ¬sys.ge ∅ (Set.range (Fin.succ : Fin (n + 1) → Fin (n + 2))) := by
     obtain ⟨i, hi⟩ := hnn
-    exact fun h => hi (sys.trans _ _ _ h
-      (sys.mono _ _ (Set.singleton_subset_iff.mpr ⟨i, rfl⟩)))
+    exact fun h => hi (sys.trans h
+      (sys.mono (Set.singleton_subset_iff.mpr ⟨i, rfl⟩)))
   obtain ⟨m_r, hm_r⟩ := sub_repr (sys.comap Fin.succ (Fin.succ_injective _) hnt)
   -- lift the sub-measure (the null element gets weight 0)
   refine ⟨m_r.map Fin.succ, reduce_to_disjoint sys _ (fun C D hdisj => ?_)⟩
@@ -266,7 +269,7 @@ theorem representable_fin1 (sys : QualitativeProbability (Fin 1)) : Representabl
   · exact ⟨fun h => absurd h sys.nonTrivial,
           fun h => by simp only [FinAddMeasure.inducedGe] at h; linarith⟩
   · exact ⟨fun _ => by simp only [FinAddMeasure.inducedGe]; rw [hme, hu]; norm_num,
-          fun _ => sys.mono _ _ (Set.empty_subset _)⟩
+          fun _ => sys.mono (Set.empty_subset _)⟩
   · exact ⟨fun _ => le_refl _, fun _ => sys.refl _⟩
 
 -- ── Card 2: Infrastructure ──────────────────────────
@@ -277,11 +280,11 @@ private noncomputable def measure_fin2 (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) 
     (by simp [Fin.sum_univ_two])
 
 private theorem mf2_zero (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
-    (measure_fin2 a ha ha1).mu {(0 : Fin 2)} = a := by
+    (measure_fin2 a ha ha1) {(0 : Fin 2)} = a := by
   simp [measure_fin2]
 
 private theorem mf2_one (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
-    (measure_fin2 a ha ha1).mu {(1 : Fin 2)} = 1 - a := by
+    (measure_fin2 a ha ha1) {(1 : Fin 2)} = 1 - a := by
   simp [measure_fin2]
 
 private theorem set_fin2_eq (A : Set (Fin 2)) :
@@ -299,7 +302,7 @@ private theorem not_both_null_fin2 (sys : QualitativeProbability (Fin 2)) :
   have hd2 : Set.univ \ ({(0 : Fin 2)} : Set _) = {(1 : Fin 2)} := by
     ext x; simp only [Set.mem_sdiff, Set.mem_univ, Set.mem_singleton_iff, true_and, Fin.ext_iff]
     omega
-  exact sys.nonTrivial (sys.trans _ _ _ h0
+  exact sys.nonTrivial (sys.trans h0
     ((sys.additive {0} Set.univ).mpr (hd1 ▸ hd2 ▸ h1)))
 
 -- ── Card 2: Helper for disjoint-pair dispatch ────────
@@ -336,7 +339,7 @@ private theorem fin2_dispatch (sys : QualitativeProbability (Fin 2))
     exact ⟨fun h => absurd h sys.nonTrivial, fun h => by linarith⟩
   -- {0} vs ∅
   · show sys.ge {0} ∅ ↔ _ ≥ _; rw [hm0, hme]
-    exact ⟨fun _ => ha, fun _ => sys.mono _ _ (Set.empty_subset _)⟩
+    exact ⟨fun _ => ha, fun _ => sys.mono (Set.empty_subset _)⟩
   -- {0} vs {0}: not disjoint
   · exact (hdisj 0 rfl rfl).elim
   -- {0} vs {1}
@@ -345,7 +348,7 @@ private theorem fin2_dispatch (sys : QualitativeProbability (Fin 2))
   · exact (hdisj 0 rfl (Set.mem_univ _)).elim
   -- {1} vs ∅
   · show sys.ge {1} ∅ ↔ _ ≥ _; rw [hm1, hme]
-    exact ⟨fun _ => by linarith, fun _ => sys.mono _ _ (Set.empty_subset _)⟩
+    exact ⟨fun _ => by linarith, fun _ => sys.mono (Set.empty_subset _)⟩
   -- {1} vs {0}
   · show sys.ge {1} {0} ↔ _ ≥ _; rw [hm1, hm0]; exact h10
   -- {1} vs {1}: not disjoint
@@ -354,7 +357,7 @@ private theorem fin2_dispatch (sys : QualitativeProbability (Fin 2))
   · exact (hdisj 1 rfl (Set.mem_univ _)).elim
   -- univ vs ∅
   · show sys.ge Set.univ ∅ ↔ _ ≥ _; rw [hmu, hme]
-    exact ⟨fun _ => by linarith, fun _ => sys.mono _ _ (Set.empty_subset _)⟩
+    exact ⟨fun _ => by linarith, fun _ => sys.mono (Set.empty_subset _)⟩
   -- univ vs {0}: not disjoint
   · exact (hdisj 0 (Set.mem_univ _) rfl).elim
   -- univ vs {1}: not disjoint
@@ -369,7 +372,7 @@ theorem representable_fin2 (sys : QualitativeProbability (Fin 2)) : Representabl
   · -- Case 1: ge ∅ {0} → a = 0
     have h_nnull1 : ¬sys.ge ∅ {(1 : Fin 2)} := fun h => not_both_null_fin2 sys ⟨h_null0, h⟩
     have h_nge01 : ¬sys.ge {(0 : Fin 2)} {1} :=
-      fun h => not_both_null_fin2 sys ⟨h_null0, sys.trans _ _ _ h_null0 h⟩
+      fun h => not_both_null_fin2 sys ⟨h_null0, sys.trans h_null0 h⟩
     have h_ge10 : sys.ge {(1 : Fin 2)} {0} :=
       (sys.total {(1 : Fin 2)} {0}).resolve_right h_nge01
     refine ⟨measure_fin2 0 le_rfl zero_le_one,
@@ -381,7 +384,7 @@ theorem representable_fin2 (sys : QualitativeProbability (Fin 2)) : Representabl
   · by_cases h_null1 : sys.ge ∅ {(1 : Fin 2)}
     · -- Case 2: ge ∅ {1} → a = 1
       have h_nge10 : ¬sys.ge {(1 : Fin 2)} {0} :=
-        fun h => not_both_null_fin2 sys ⟨sys.trans _ _ _ h_null1 h, h_null1⟩
+        fun h => not_both_null_fin2 sys ⟨sys.trans h_null1 h, h_null1⟩
       have h_ge01 : sys.ge {(0 : Fin 2)} {1} :=
         (sys.total {(0 : Fin 2)} {1}).resolve_right h_nge10
       refine ⟨measure_fin2 1 zero_le_one le_rfl,
@@ -433,7 +436,7 @@ theorem transfer_repr {W α : Type*}
   have h := hm (e '' A) (e '' B)
   simp only [QualitativeProbability.transport, QualitativeProbability.comap,
     Equiv.symm_image_image] at h
-  simpa only [FinAddMeasure.inducedGe, FinAddMeasure.map_mu,
+  simpa only [FinAddMeasure.inducedGe, FinAddMeasure.map_apply,
     ← Equiv.image_eq_preimage_symm] using h
 
 /-- Null pattern transport: `j` is null in `sys.transport σ` iff `σ.symm j` is
@@ -457,12 +460,12 @@ theorem perm_repr {W α : Type*} (σ : W ≃ α) (sys : QualitativeProbability W
 def QualitativeProbability.pad {n : ℕ} (sys : QualitativeProbability (Fin n)) :
     QualitativeProbability (Fin (n + 1)) where
   ge A B := sys.ge (Fin.castSucc ⁻¹' A) (Fin.castSucc ⁻¹' B)
-  mono _ _ hAB := sys.mono _ _ (Set.preimage_mono hAB)
+  mono' _ _ hAB := sys.mono (Set.preimage_mono hAB)
   nonTrivial := by
     show ¬sys.ge (Fin.castSucc ⁻¹' ∅) (Fin.castSucc ⁻¹' Set.univ)
     rw [Set.preimage_univ, Set.preimage_empty]; exact sys.nonTrivial
   total _ _ := sys.total _ _
-  trans _ _ _ h1 h2 := sys.trans _ _ _ h1 h2
+  trans' _ _ _ h1 h2 := sys.trans h1 h2
   additive A B := by
     show sys.ge _ _ ↔ sys.ge _ _
     rw [Set.preimage_sdiff, Set.preimage_sdiff]; exact sys.additive _ _
@@ -481,8 +484,8 @@ theorem representable_of_pad {n : ℕ} {sys : QualitativeProbability (Fin n)}
     (h : Representable sys.pad) : Representable sys := by
   obtain ⟨m, hm⟩ := h
   have hinj := Fin.castSucc_injective n
-  have hlast : m.mu {Fin.last n} = 0 := by
-    have h0 : m.mu ∅ ≥ m.mu {Fin.last n} := (hm _ _).mp sys.pad_last_null
+  have hlast : m {Fin.last n} = 0 := by
+    have h0 : m ∅ ≥ m {Fin.last n} := (hm _ _).mp sys.pad_last_null
     rw [m.mu_empty] at h0; linarith [m.nonneg {Fin.last n}]
   have hcover : Fin.castSucc '' (Set.univ : Set (Fin n)) ∪ {Fin.last n} = Set.univ := by
     rw [Set.image_univ]
@@ -493,15 +496,15 @@ theorem representable_of_pad {n : ℕ} {sys : QualitativeProbability (Fin n)}
     · exact Or.inr rfl
   have hdisj : Disjoint (Fin.castSucc '' (Set.univ : Set (Fin n))) {Fin.last n} :=
     Set.disjoint_singleton_right.mpr fun ⟨i, _, hi⟩ => (Fin.castSucc_lt_last i).ne hi
-  have htotal : m.mu (Fin.castSucc '' (Set.univ : Set (Fin n))) = 1 := by
-    have := m.additive _ _ hdisj
+  have htotal : m (Fin.castSucc '' (Set.univ : Set (Fin n))) = 1 := by
+    have := m.additive hdisj
     rw [hcover, m.total, hlast, add_zero] at this; linarith
   refine ⟨{
-    mu := fun A => m.mu (Fin.castSucc '' A)
-    nonneg := fun A => m.nonneg _
-    additive := fun A B hd => by
-      rw [Set.image_union]; exact m.additive _ _ ((Set.disjoint_image_iff hinj).mpr hd)
-    total := htotal
+    toFun := fun A => m (Fin.castSucc '' A)
+    nonneg' := fun A => m.nonneg _
+    additive' := fun A B hd => by
+      rw [Set.image_union]; exact m.additive ((Set.disjoint_image_iff hinj).mpr hd)
+    total' := htotal
   }, fun A B => ?_⟩
   have key := hm (Fin.castSucc '' A) (Fin.castSucc '' B)
   rwa [show sys.pad.ge (Fin.castSucc '' A) (Fin.castSucc '' B) ↔ sys.ge A B from by

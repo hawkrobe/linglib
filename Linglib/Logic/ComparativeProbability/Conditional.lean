@@ -51,11 +51,17 @@ structure CondMeasure (W : Type*) extends FinAddMeasure ℚ W where
   /-- Conditioning sees only the part inside the evidence: P(A|B) = P(A ∩ B|B) -/
   cond_inter : ∀ A B, condMu A B = condMu (A ∩ B) B
   /-- Unconditional connection: P(A | Ω) = μ(A) -/
-  cond_univ : ∀ A, condMu A Set.univ = mu A
+  cond_univ : ∀ A, condMu A Set.univ = toFun A
 
 namespace CondMeasure
 
 variable {W : Type*}
+
+/-- A conditional measure applies as its underlying unconditional measure
+    (`CoeFun`, not `FunLike`: the conditional component is not determined by
+    the unconditional values). -/
+instance : CoeFun (CondMeasure W) (fun _ => Set W → ℚ) :=
+  ⟨fun m => ⇑m.toFinAddMeasure⟩
 
 /-- Conditional comparison: A ≿_B C iff P(A|B) ≥ P(C|B). -/
 def condGe (m : CondMeasure W) (A C B : Set W) : Prop :=
@@ -97,22 +103,22 @@ end CondMeasure
 noncomputable def FinAddMeasure.toCondMeasure {W : Type*}
     (m : FinAddMeasure ℚ W) : CondMeasure W where
   toFinAddMeasure := m
-  condMu := fun A B => m.mu (A ∩ B) / m.mu B
+  condMu := fun A B => m (A ∩ B) / m B
   cond_nonneg := fun A B => div_nonneg (m.nonneg _) (m.nonneg _)
   cond_norm := fun B hne => by
     simp only [Set.inter_self] at hne ⊢
     exact div_self fun h => hne (by rw [h, div_zero])
   cond_additive := fun A₁ A₂ B hdisj => by
-    rw [Set.union_inter_distrib_right, m.additive (A₁ ∩ B) (A₂ ∩ B)
-      (hdisj.mono Set.inter_subset_left Set.inter_subset_left), add_div]
+    rw [Set.union_inter_distrib_right,
+      m.additive (hdisj.mono Set.inter_subset_left Set.inter_subset_left), add_div]
   cond_chain := fun A B C => by
     -- Ratio algebra a/c = (a/b)·(b/c): when μ(B∩C)=0 both sides vanish, else cancel.
     rw [Set.inter_assoc]
-    by_cases hBC : m.mu (B ∩ C) = 0
-    · have hABC : m.mu (A ∩ (B ∩ C)) = 0 :=
+    by_cases hBC : m (B ∩ C) = 0
+    · have hABC : m (A ∩ (B ∩ C)) = 0 :=
         le_antisymm (hBC ▸ m.mu_mono Set.inter_subset_right) (m.nonneg _)
       simp [hABC, hBC]
-    · rw [div_mul_div_comm, mul_comm (m.mu (A ∩ (B ∩ C))), mul_div_mul_left _ _ hBC]
+    · rw [div_mul_div_comm, mul_comm (m (A ∩ (B ∩ C))), mul_div_mul_left _ _ hBC]
   cond_inter := fun A B => by rw [Set.inter_assoc, Set.inter_self]
   cond_univ := fun A => by simp [Set.inter_univ, m.total, div_one]
 
@@ -170,10 +176,10 @@ theorem jeffreyUpdate_total {W : Type*} (m : CondMeasure W)
     Jeffrey update is a finitely additive probability measure. -/
 def jeffreyMeasure {W : Type*} (m : CondMeasure W) (ev : EvidencePartition W)
     (hnorm : ∀ E ∈ ev.cells, m.condMu E E ≠ 0) : FinAddMeasure ℚ W where
-  mu := jeffreyUpdate m ev
-  nonneg := jeffreyUpdate_nonneg m ev
-  additive := jeffreyUpdate_additive m ev
-  total := jeffreyUpdate_total m ev hnorm
+  toFun := jeffreyUpdate m ev
+  nonneg' := jeffreyUpdate_nonneg m ev
+  additive' := jeffreyUpdate_additive m ev
+  total' := jeffreyUpdate_total m ev hnorm
 
 /-- Bayesian conditioning is Jeffrey conditioning with the partition `{B, Bᶜ}`
     and weights `1, 0`. -/

@@ -177,9 +177,9 @@ open ComparativeProbability in
 /-- In finite W, if every singleton in A has measure 0, then μ(A) = 0. -/
 private theorem mu_eq_zero_of_singletons {W : Type*} [Fintype W] [DecidableEq W]
     (m : FinAddMeasure ℚ W) (A : Set W)
-    (h : ∀ w ∈ A, m.mu {w} = 0) : m.mu A = 0 := by
+    (h : ∀ w ∈ A, m {w} = 0) : m A = 0 := by
   classical
-  suffices key : ∀ (s : Finset W), (∀ w ∈ s, m.mu {w} = 0) → m.mu ↑s = 0 by
+  suffices key : ∀ (s : Finset W), (∀ w ∈ s, m {w} = 0) → m ↑s = 0 by
     have hA : A = ↑(Finset.univ.filter (· ∈ A)) := by ext x; simp
     rw [hA]
     exact key _ (fun w hw => by simp [Finset.mem_filter] at hw; exact h w hw)
@@ -191,7 +191,7 @@ private theorem mu_eq_zero_of_singletons {W : Type*} [Fintype W] [DecidableEq W]
     rw [Finset.coe_cons, Set.insert_eq a ↑t]
     have hdisj : Disjoint ({a} : Set W) ↑t :=
       Set.disjoint_singleton_left.mpr fun hxt => ha (Finset.mem_coe.mp hxt)
-    rw [m.additive {a} ↑t hdisj,
+    rw [m.additive hdisj,
         hall a (Finset.mem_cons_self a t),
         ih (fun w hw => hall w (Finset.mem_cons.mpr (Or.inr hw))),
         zero_add]
@@ -225,7 +225,7 @@ open ComparativeProbability in
 private theorem mu_diff_eq_zero_of_condMu {W : Type*}
     (m : CondMeasure W) (ψ φ : Set W)
     (hreg : m.condMu φ φ ≠ 0) (hcond : m.condMu ψ φ = m.condMu Set.univ φ) :
-    m.mu (φ \ ψ) = 0 := by
+    m (φ \ ψ) = 0 := by
   have hnorm := m.cond_norm φ hreg
   have htop := (condMu_self_eq_univ m φ hreg).symm
   rw [hnorm] at htop
@@ -246,9 +246,9 @@ open ComparativeProbability in
     Worlds with positive measure satisfy all probability-1 beliefs. -/
 private theorem mem_of_mu_singleton_pos {W : Type*}
     (m : FinAddMeasure ℚ W) (w : W) (A : Set W)
-    (hw : 0 < m.mu {w}) (hA : m.mu A = 1) : w ∈ A := by
+    (hw : 0 < m {w}) (hA : m A = 1) : w ∈ A := by
   by_contra hw_not
-  have hAc : m.mu Aᶜ = 0 := by have := m.mu_compl A; linarith
+  have hAc : m Aᶜ = 0 := by have := m.mu_compl A; linarith
   have hsub : ({w} : Set W) ⊆ Aᶜ := fun v hv => by
     rw [Set.mem_singleton_iff.mp hv]; exact hw_not
   linarith [m.mu_mono hsub]
@@ -263,19 +263,23 @@ open ComparativeProbability in
     is equivalent to: every singleton has positive measure.
 
     [halpern-2003]'s regularity condition. -/
-structure ComparativeProbability.RegularCondMeasure (W : Type*) extends ComparativeProbability.CondMeasure W where
+structure RegularCondMeasure (W : Type*) extends ComparativeProbability.CondMeasure W where
   regular : ∀ (φ : Set W), (∃ w, w ∈ φ) → condMu φ φ ≠ 0
-  muPositive : ∀ (φ : Set W), (∃ w, w ∈ φ) → 0 < mu φ
+  muPositive : ∀ (φ : Set W), (∃ w, w ∈ φ) → 0 < toFun φ
+
+/-- A regular conditional measure applies as its underlying measure. -/
+instance {W : Type*} : CoeFun (RegularCondMeasure W) (fun _ => Set W → ℚ) :=
+  ⟨fun m => ⇑m.toCondMeasure⟩
 
 open ComparativeProbability in
 /-- The core inclusion argument, factored as a helper for reuse by K*5.
     If P(ψ|φ) = P(⊤|φ) and w satisfies all probability-1 beliefs and φ,
     then w satisfies ψ. -/
 private theorem revised_entails {W : Type*}
-    (m : ComparativeProbability.RegularCondMeasure W) (ψ φ : Set W)
+    (m : RegularCondMeasure W) (ψ φ : Set W)
     (hrev : m.condMu (fun w => ψ w : Set W) (fun w => φ w : Set W) =
             m.condMu Set.univ (fun w => φ w : Set W))
-    (w : W) (hbeliefs : ∀ (χ : Set W), m.mu (fun w => χ w : Set W) = 1 → χ w)
+    (w : W) (hbeliefs : ∀ (χ : Set W), m (fun w => χ w : Set W) = 1 → χ w)
     (hφ : φ w) : ψ w := by
   by_contra hnψ
   have hsat : ∃ v, φ v := ⟨w, hφ⟩
@@ -284,10 +288,10 @@ private theorem revised_entails {W : Type*}
   -- w ∈ φ \ ψ, so {w} ⊆ φ \ ψ, so μ({w}) ≤ μ(φ \ ψ) = 0
   have hsub : ({w} : Set W) ⊆ (fun w => φ w : Set W) \ (fun w => ψ w : Set W) :=
     fun v hv => by rw [Set.mem_singleton_iff.mp hv]; exact ⟨hφ, hnψ⟩
-  have hw_zero : m.mu ({w} : Set W) = 0 :=
+  have hw_zero : m ({w} : Set W) = 0 :=
     le_antisymm (by linarith [m.toFinAddMeasure.mu_mono hsub]) (m.nonneg _)
   -- μ({w}ᶜ) = 1, so by hbeliefs, w ∈ {w}ᶜ — contradiction
-  have hcompl : m.mu ({w} : Set W)ᶜ = 1 := by
+  have hcompl : m ({w} : Set W)ᶜ = 1 := by
     have := m.toFinAddMeasure.mu_compl ({w} : Set W); linarith
   exact absurd (hbeliefs (fun v => v ≠ w) hcompl) (not_not.mpr rfl)
 
@@ -309,10 +313,10 @@ open ComparativeProbability in
       measure 0, so μ(φ \ ψ) = 0)
     - K*5 (consistency): finite W has a positive-measure φ-world satisfying
       all beliefs, which satisfies all of K*φ by K*3 -/
-noncomputable def ComparativeProbability.RegularCondMeasure.toAGM {W : Type*}
+noncomputable def RegularCondMeasure.toAGM {W : Type*}
     [Fintype W] [DecidableEq W]
-    (m : ComparativeProbability.RegularCondMeasure W) : AGMRevision W where
-  beliefs := { ψ | m.mu (fun w => ψ w : Set W) = 1 }
+    (m : RegularCondMeasure W) : AGMRevision W where
+  beliefs := { ψ | m (fun w => ψ w : Set W) = 1 }
   revise := fun φ =>
     { ψ | m.condMu (fun w => ψ w : Set W) (fun w => φ w : Set W) =
            m.condMu Set.univ (fun w => φ w : Set W) }
@@ -325,11 +329,11 @@ noncomputable def ComparativeProbability.RegularCondMeasure.toAGM {W : Type*}
   vacuity := fun φ ψ hnot_neg hent => by
     show m.condMu (fun w => ψ w) (fun w => φ w) = m.condMu Set.univ (fun w => φ w)
     -- ¬φ ∉ beliefs ↔ μ(φᶜ) ≠ 1 ↔ μ(φ) > 0
-    have hmu_phi_pos : 0 < m.mu (fun w => φ w : Set W) := by
+    have hmu_phi_pos : 0 < m (fun w => φ w : Set W) := by
       have hcompl := m.toFinAddMeasure.mu_compl (fun w => φ w : Set W)
       by_contra h; push Not at h
       have h0 := le_antisymm h (m.nonneg _)
-      have hone : m.mu (fun w => φ w : Set W)ᶜ = 1 := by linarith
+      have hone : m (fun w => φ w : Set W)ᶜ = 1 := by linarith
       exact hnot_neg hone
     have hsat : ∃ w, φ w := by
       by_contra hall; push Not at hall
@@ -349,15 +353,16 @@ noncomputable def ComparativeProbability.RegularCondMeasure.toAGM {W : Type*}
     simp only [Set.inter_univ] at hchain
     rw [m.toCondMeasure.cond_univ, m.toCondMeasure.cond_univ] at hchain
     -- Show μ(ψᶜ ∩ φ) = 0: every w ∈ ψᶜ ∩ φ has μ({w}) = 0
-    have hdiff_zero : m.mu ((fun w => ψ w : Set W)ᶜ ∩ (fun w => φ w : Set W)) = 0 := by
+    have hdiff_zero : m ((fun w => ψ w : Set W)ᶜ ∩ (fun w => φ w : Set W)) = 0 := by
       apply mu_eq_zero_of_singletons m.toFinAddMeasure
       intro w ⟨hnψ, hφ⟩
       by_contra h_pos; push Not at h_pos
-      have h_pos' : 0 < m.mu ({w} : Set W) :=
+      have h_pos' : 0 < m ({w} : Set W) :=
         lt_of_le_of_ne (m.nonneg _) (Ne.symm h_pos)
-      have hbeliefs : ∀ (χ : Set W), m.mu (fun w => χ w : Set W) = 1 → χ w :=
+      have hbeliefs : ∀ (χ : Set W), m (fun w => χ w : Set W) = 1 → χ w :=
         fun χ hχ => mem_of_mu_singleton_pos m.toFinAddMeasure w _ h_pos' hχ
       exact hnψ (hent w hbeliefs hφ)
+    simp only [FinAddMeasure.toFun_eq_coe] at hchain
     rw [hdiff_zero] at hchain
     rcases mul_eq_zero.mp hchain.symm with h | h
     · exact h
@@ -365,15 +370,16 @@ noncomputable def ComparativeProbability.RegularCondMeasure.toAGM {W : Type*}
   consistency := fun φ hsat => by
     -- Find w ∈ φ with μ({w}) > 0, then w satisfies all of K*φ.
     have hmu_pos := m.muPositive _ hsat
+    simp only [FinAddMeasure.toFun_eq_coe] at hmu_pos
     -- If all singletons in φ had measure 0, μ(φ) = 0, contradiction.
     by_contra hall; push Not at hall
     -- hall : ∀ w, ∃ ψ ∈ revise φ, ¬ψ w
-    have hzero : ∀ w, φ w → m.mu ({w} : Set W) = 0 := by
+    have hzero : ∀ w, φ w → m ({w} : Set W) = 0 := by
       intro w hw
       by_contra h_pos; push Not at h_pos
-      have h_pos' : 0 < m.mu ({w} : Set W) :=
+      have h_pos' : 0 < m ({w} : Set W) :=
         lt_of_le_of_ne (m.nonneg _) (Ne.symm h_pos)
-      have hbeliefs : ∀ (χ : Set W), m.mu (fun w => χ w : Set W) = 1 → χ w :=
+      have hbeliefs : ∀ (χ : Set W), m (fun w => χ w : Set W) = 1 → χ w :=
         fun χ hχ => mem_of_mu_singleton_pos m.toFinAddMeasure w _ h_pos' hχ
       obtain ⟨ψ, hψ, hnψ⟩ := hall w
       exact hnψ (revised_entails m ψ φ hψ w hbeliefs hw)

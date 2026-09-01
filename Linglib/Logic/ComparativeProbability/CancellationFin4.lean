@@ -112,26 +112,26 @@ private lemma null_from_pair (sys : QualitativeProbability (Fin 4))
       sub_zero] at this
     split_ifs at this <;> omega
   -- ge C A, ge C B
-  have hCA : sys.ge ↑C ↑A := sys.trans _ _ _ hCD (sys.mono ↑A ↑D (Finset.coe_subset.mpr hAD))
-  have hCB_ge : sys.ge ↑C ↑B := sys.trans _ _ _ hCA hAB
+  have hCA : sys.ge ↑C ↑A := sys.trans hCD (sys.mono (Finset.coe_subset.mpr hAD))
+  have hCB_ge : sys.ge ↑C ↑B := sys.trans hCA hAB
   -- Axiom A: ge ∅ (B \ C)
   have hBC : sys.ge (∅ : Set (Fin 4)) ↑(B \ C) := by
     have hax := (sys.additive ↑C ↑B).mp hCB_ge
     rwa [← Finset.coe_sdiff, ← Finset.coe_sdiff,
       Finset.sdiff_eq_empty_iff_subset.mpr hCB, Finset.coe_empty] at hax
   -- symmetric: ge A D, ge A C, ge A D? -> ge ∅ (D \ A)
-  have hAC : sys.ge ↑A ↑C := sys.trans _ _ _ hAB (sys.mono ↑C ↑B (Finset.coe_subset.mpr hCB))
+  have hAC : sys.ge ↑A ↑C := sys.trans hAB (sys.mono (Finset.coe_subset.mpr hCB))
   have hDA : sys.ge (∅ : Set (Fin 4)) ↑(D \ A) := by
-    have hax := (sys.additive ↑A ↑D).mp (sys.trans _ _ _ hAC hCD)
+    have hax := (sys.additive ↑A ↑D).mp (sys.trans hAC hCD)
     rwa [← Finset.coe_sdiff, ← Finset.coe_sdiff,
       Finset.sdiff_eq_empty_iff_subset.mpr hAD, Finset.coe_empty] at hax
   -- strict coordinate i₀ ∈ (B \ C) ∪ (D \ A)
   have hmem : i₀ ∈ B \ C ∨ i₀ ∈ D \ A := by
     simp only [cmpVec, Finset.mem_sdiff] at hlt ⊢; split_ifs at hlt <;> simp_all
   rcases hmem with hm | hm
-  · exact ⟨i₀, sys.trans _ _ _ hBC (sys.mono {i₀} ↑(B \ C)
+  · exact ⟨i₀, sys.trans hBC (sys.mono
       (by rw [Set.singleton_subset_iff]; exact Finset.mem_coe.mpr hm))⟩
-  · exact ⟨i₀, sys.trans _ _ _ hDA (sys.mono {i₀} ↑(D \ A)
+  · exact ⟨i₀, sys.trans hDA (sys.mono
       (by rw [Set.singleton_subset_iff]; exact Finset.mem_coe.mpr hm))⟩
 
 /-! ### Bridging comparisons to ℚ sign vectors -/
@@ -621,15 +621,16 @@ private def restrict3 (A : Set (Fin 4)) : Set (Fin 3) := {i | Fin.castSucc i ∈
 
 /-- Lexicographic extension: the new world `Fin.last 3` dominates; ties break
     by the restriction. -/
-def QualitativeProbability.extendLex (sys : QualitativeProbability (Fin 3)) : QualitativeProbability (Fin 4) where
+def QualitativeProbability.extendLex (sys : QualitativeProbability (Fin 3)) :
+    QualitativeProbability (Fin 4) where
   ge A B := (Fin.last 3 ∈ A ∧ Fin.last 3 ∉ B) ∨
     ((Fin.last 3 ∈ A ↔ Fin.last 3 ∈ B) ∧ sys.ge (restrict3 A) (restrict3 B))
-  mono A B hAB := by
+  mono' A B hAB := by
     by_cases hb : Fin.last 3 ∈ B
     · by_cases ha : Fin.last 3 ∈ A
-      · exact Or.inr ⟨iff_of_true hb ha, sys.mono _ _ fun i hi => hAB hi⟩
+      · exact Or.inr ⟨iff_of_true hb ha, sys.mono fun i hi => hAB hi⟩
       · exact Or.inl ⟨hb, ha⟩
-    · exact Or.inr ⟨iff_of_false hb fun h => hb (hAB h), sys.mono _ _ fun i hi => hAB hi⟩
+    · exact Or.inr ⟨iff_of_false hb fun h => hb (hAB h), sys.mono fun i hi => hAB hi⟩
   nonTrivial := by
     rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
     · exact h3
@@ -644,12 +645,12 @@ def QualitativeProbability.extendLex (sys : QualitativeProbability (Fin 3)) : Qu
     · rcases sys.total (restrict3 A) (restrict3 B) with h | h
       · exact Or.inl (Or.inr ⟨iff_of_false ha hb, h⟩)
       · exact Or.inr (Or.inr ⟨iff_of_false hb ha, h⟩)
-  trans A B C := by
+  trans' A B C := by
     rintro (⟨ha, hnb⟩ | ⟨hab, hge1⟩) (⟨hb, hnc⟩ | ⟨hbc, hge2⟩)
     · exact absurd hb hnb
     · exact Or.inl ⟨ha, fun hc => hnb (hbc.mpr hc)⟩
     · exact Or.inl ⟨hab.mpr hb, hnc⟩
-    · exact Or.inr ⟨hab.trans hbc, sys.trans _ _ _ hge1 hge2⟩
+    · exact Or.inr ⟨hab.trans hbc, sys.trans hge1 hge2⟩
   additive A B := by
     by_cases ha : Fin.last 3 ∈ A <;> by_cases hb : Fin.last 3 ∈ B
     · -- tie on both sides; restriction additivity carries it

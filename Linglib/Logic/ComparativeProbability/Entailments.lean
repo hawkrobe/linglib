@@ -54,20 +54,20 @@ private noncomputable def uf3 : FinAddMeasure ℚ (Fin 3) :=
   .ofFintype (fun _ => 1/3) (fun _ => by norm_num)
     (by simp [Finset.sum_const, Fintype.card_fin, nsmul_eq_mul])
 
-private theorem uf3_mu_0 : uf3.mu {(0 : Fin 3)} = 1/3 := by simp [uf3]
+private theorem uf3_mu_0 : uf3 {(0 : Fin 3)} = 1/3 := by simp [uf3]
 
-private theorem uf3_mu_1 : uf3.mu {(1 : Fin 3)} = 1/3 := by simp [uf3]
+private theorem uf3_mu_1 : uf3 {(1 : Fin 3)} = 1/3 := by simp [uf3]
 
-private theorem uf3_mu_2 : uf3.mu {(2 : Fin 3)} = 1/3 := by simp [uf3]
+private theorem uf3_mu_2 : uf3 {(2 : Fin 3)} = 1/3 := by simp [uf3]
 
-private theorem uf3_mu_union_12 : uf3.mu ({(1 : Fin 3)} ∪ {2}) = 2/3 := by
-  rw [uf3.additive _ _ (Set.disjoint_singleton.mpr (by omega)), uf3_mu_1, uf3_mu_2]; norm_num
+private theorem uf3_mu_union_12 : uf3 ({(1 : Fin 3)} ∪ {2}) = 2/3 := by
+  rw [uf3.additive (Set.disjoint_singleton.mpr (by omega)), uf3_mu_1, uf3_mu_2]; norm_num
 
-private theorem uf3_mu_pair_01 : uf3.mu ({0, 1} : Set (Fin 3)) = 2/3 := by
+private theorem uf3_mu_pair_01 : uf3 ({0, 1} : Set (Fin 3)) = 2/3 := by
   rw [show ({0, 1} : Set (Fin 3)) = {0} ∪ {1} from Set.insert_eq 0 {1},
-    uf3.additive _ _ (Set.disjoint_singleton.mpr (by omega)), uf3_mu_0, uf3_mu_1]; norm_num
+    uf3.additive (Set.disjoint_singleton.mpr (by omega)), uf3_mu_0, uf3_mu_1]; norm_num
 
-private theorem uf3_mu_compl' (A : Set (Fin 3)) : uf3.mu Aᶜ = 1 - uf3.mu A := by
+private theorem uf3_mu_compl' (A : Set (Fin 3)) : uf3 Aᶜ = 1 - uf3 A := by
   have := uf3.mu_compl A; linarith
 
 /-- I1 is invalid for measure semantics: with uniform measure on Fin 3,
