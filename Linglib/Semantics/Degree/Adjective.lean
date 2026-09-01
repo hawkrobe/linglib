@@ -24,8 +24,8 @@ abstract `PolarMeasure`.
 * `DimensionBindingType` — how a multidimensional adjective binds its dimensions.
 * `adjMeasure` — a `GradableAdjective` read as a `PolarMeasure` over a scale.
 
-Core degree types (`Degree`, `Threshold`) live in `Core.MeasurementScale`; the
-threshold semantics (`positiveMeaning`, `negativeMeaning`) in `Semantics/Degree/Basic`.
+The finite degree carrier `Bounded`, its `Threshold`, and the threshold semantics
+(`positiveMeaning`, `negativeMeaning`) live in `Semantics/Degree/Discrete`.
 The intersective/subsective/privative classification lives in
 `Semantics/Modification/Classification.lean`.
 -/
@@ -425,30 +425,26 @@ def predictedBinding : Degree.PositiveStandard → DimensionBindingType
   | .contextual   => .mixed
   | .functional   => .mixed   -- evaluative; context-dependent like contextual
 
-/-! ### Degree–PolarMeasure bridge
+/-! ### Polar measures -/
 
-`Bounded max` has `LinearOrder` and `BoundedOrder` (from `Core.MeasurementScale`), so the
-abstract theorems in `MeasurementScale.lean` apply directly to concrete RSA degree
-computations. -/
+/-- A gradable adjective read as a polar measure over `μ`: the scale classification and
+pole are the entry's `scaleType` and `polarity` (positive when unspecified). -/
+def adjMeasure {max : Nat} {W : Type*} (μ : W → Bounded max) (entry : GradableAdjective) :
+    PolarMeasure (Bounded max) W :=
+  { boundedness := entry.scaleType, μ, polarity := entry.polarity.getD .positive }
 
-def adjMeasure {max : Nat} {W : Type*} (μ : W → Bounded max)
-    (entry : GradableAdjective) : PolarMeasure (Bounded max) W :=
-  PolarMeasure.adjective μ entry.scaleType
+@[simp] theorem isLicensed_adjMeasure {max : Nat} {W : Type*} (μ : W → Bounded max)
+    (entry : GradableAdjective) :
+    (adjMeasure μ entry).IsLicensed ↔ entry.scaleType.IsLicensed := Iff.rfl
 
 theorem closedAdj_licensed {max : Nat} {W : Type*} (μ : W → Bounded max)
     (entry : GradableAdjective) (h : entry.scaleType = .closed) :
     (adjMeasure μ entry).IsLicensed := by
-  simp [adjMeasure, PolarMeasure.adjective,
-        PolarMeasure.IsLicensed, Boundedness.IsLicensed, h]
+  rw [isLicensed_adjMeasure, h]; decide
 
 theorem openAdj_blocked {max : Nat} {W : Type*} (μ : W → Bounded max)
     (entry : GradableAdjective) (h : entry.scaleType = .open_) :
     ¬ (adjMeasure μ entry).IsLicensed := by
-  simp [adjMeasure, PolarMeasure.adjective,
-        PolarMeasure.IsLicensed, Boundedness.IsLicensed, h]
-
-theorem degree_measure_is_id {max : Nat} {W : Type*} (μ : W → Bounded max) :
-    (PolarMeasure.numeral μ).μ = μ :=
-  rfl
+  rw [isLicensed_adjMeasure, h]; decide
 
 end Degree

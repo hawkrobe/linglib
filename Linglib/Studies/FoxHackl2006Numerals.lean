@@ -124,14 +124,9 @@ def foxHackl_asymmetry_data : FoxHacklAsymmetry :=
 theorem foxHackl_atLeast_verified :
     foxHackl_asymmetry_data.atLeast_always = true := rfl
 
-/-- Kennedy numeral domains are always licensed (closed scale). -/
-theorem kennedy_numeral_licensed {W : Type*} (μ : W → ℕ) :
-    (PolarMeasure.numeral μ).IsLicensed := trivial
-
-/-- [kennedy-2015]'s de-Fregean type-shift at the `PolarMeasure`
-    constructor level: the maximally informative degree of a numeral
-    domain's derived property is the true cardinality — the bundled form
-    of `isMaxInf_atLeast_iff_eq`. -/
+/-- [kennedy-2015]'s maximality semantics for bare numerals (`max{n | D n} = m`) at the
+    `PolarMeasure` level: the maximally informative degree of the numeral's degree
+    property is the true cardinality — the bundled form of `isMaxInf_atLeast_iff_eq`. -/
 theorem kennedy_numeral_isMaxInf {W : Type*} (μ : W → ℕ) (m : ℕ) (w : W)
     (hSurj : Function.Surjective μ) :
     IsMaxInf (PolarMeasure.numeral μ).degreeProperty m w ↔ μ w = m :=
