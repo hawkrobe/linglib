@@ -85,7 +85,7 @@ obliterates the next-stronger alternative.
 
 namespace Mihoc2019
 
-open Degree (Comparison)
+open Degree
 
 /-! ### Extent indicators (her §2.5, Ch. 2 (27)–(28)) -/
 

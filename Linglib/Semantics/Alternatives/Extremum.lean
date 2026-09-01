@@ -39,7 +39,7 @@ by `Antitone.map_isGreatest`.
 
 namespace Alternatives
 
-open Degree (Comparison)
+open Degree
 open OrderDual
 
 variable {α W : Type*}

@@ -94,9 +94,7 @@ namespace Hoeksema1983
 
 open Polarity
 
-open Degree (Comparison)
-open Degree (gtOverSet_isAntiAdditive gtOverSet_atomic_eq_comparativeSem)
-open Polarity (LicensingContext)
+open Degree
 open Polarity (LicensingContext)
 
 variable {Entity : Type*} {D : Type*} [Preorder D]

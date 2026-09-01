@@ -42,7 +42,7 @@ closed at the count (`Alternatives.hasMaxInf_ge_over`), exhaustification is MAXi
 namespace FoxHackl2006
 
 open Alternatives ModalLogic OrderDual Set
-open Degree (Comparison)
+open Degree
 
 variable {D W : Type*} [LinearOrder D]
 
