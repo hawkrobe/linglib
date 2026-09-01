@@ -52,6 +52,16 @@ def Free (B : List {F : TieredAR ι τ // Finite F.obj.V}) : Prop :=
 
 variable {F X} {o : ι → ℕ}
 
+instance (G : {F : TieredAR ι τ // Finite F.obj.V}) : Finite G.val.obj.V := G.property
+
+@[simp] theorem free_nil : X.Free [] := fun _ h => (List.not_mem_nil h).elim
+
+/-- A grammar tests its forbidden factors one by one. -/
+theorem free_cons {F : {F : TieredAR ι τ // Finite F.obj.V}}
+    {B : List {F : TieredAR ι τ // Finite F.obj.V}} :
+    X.Free (F :: B) ↔ ¬ F.val.FactorEmbeds X ∧ X.Free B :=
+  List.forall_mem_cons
+
 /-- On a tier where the factor is nonempty, the window equations force the offset
     in bounds. -/
 theorem IsFactorAt.offset_le (h : F.IsFactorAt X o) {i : ι} (hi : F.tierLength i ≠ 0) :

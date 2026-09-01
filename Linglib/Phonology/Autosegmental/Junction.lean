@@ -308,6 +308,54 @@ theorem AR.factorEmbeds_ofData_iff
         · exact (AR.link_ofData false true _ _).mpr
             ⟨by decide, hbf p hp, hbt q hq, Or.inl hres⟩
 
+/-! #### Two-tier representations from words -/
+
+namespace TwoTier
+
+/-- The tier words of a melody word and a timing word. -/
+def words (as : List α) (bs : List β) : ∀ b : Bool, List (TwoTier α β b)
+  | true => (as : List (TwoTier α β true))
+  | false => (bs : List (TwoTier α β false))
+
+/-- Association lines from melody position `p` to timing position `q` under `L`. -/
+def links (L : ℕ → ℕ → Prop) (i j : Bool) (p q : ℕ) : Prop := i = true ∧ j = false ∧ L p q
+
+instance (L : ℕ → ℕ → Prop) [DecidableRel L] (i j : Bool) (p q : ℕ) :
+    Decidable (links L i j p q) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+end TwoTier
+
+/-- The representation of a melody `as` over a timing word `bs`, associated by `L` on
+positions: the general two-tier form, of which `junction` is the complete case. -/
+def AR.ofWords (as : List α) (bs : List β) (L : ℕ → ℕ → Prop) :
+    AR (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool) :=
+  AR.ofData (TwoTier.words as bs) (TwoTier.links L)
+
+instance (as : List α) (bs : List β) (L : ℕ → ℕ → Prop) : Finite (AR.ofWords as bs L).obj.V :=
+  inferInstanceAs (Finite ((_ : Bool) × Fin _))
+
+@[simp] theorem AR.tierWord_ofWords_true (as : List α) (bs : List β) (L : ℕ → ℕ → Prop) :
+    (AR.ofWords as bs L).tierWord true = as :=
+  AR.tierWord_ofData true
+
+@[simp] theorem AR.tierWord_ofWords_false (as : List α) (bs : List β) (L : ℕ → ℕ → Prop) :
+    (AR.ofWords as bs L).tierWord false = bs :=
+  AR.tierWord_ofData false
+
+/-- Embedding between representations of words is the data-level check, hence decidable. -/
+theorem AR.factorEmbeds_ofWords_iff (as as' : List α) (bs bs' : List β)
+    (L L' : ℕ → ℕ → Prop) :
+    (AR.ofWords as bs L).FactorEmbeds (AR.ofWords as' bs' L') ↔
+      dataEmbeds (TwoTier.words as bs) (TwoTier.words as' bs') (TwoTier.links L)
+        (TwoTier.links L') :=
+  AR.factorEmbeds_ofData_iff
+
+instance [DecidableEq α] [DecidableEq β] (as as' : List α) (bs bs' : List β)
+    (L L' : ℕ → ℕ → Prop) [DecidableRel L] [DecidableRel L'] :
+    Decidable ((AR.ofWords as bs L).FactorEmbeds (AR.ofWords as' bs' L')) :=
+  decidable_of_iff _ (AR.factorEmbeds_ofWords_iff as as' bs bs' L L').symm
+
 /-- A timing slot **surfaces with** melody label `a`: some `a`-labelled melody
     node links to it. -/
 def AR.surfacesWith
