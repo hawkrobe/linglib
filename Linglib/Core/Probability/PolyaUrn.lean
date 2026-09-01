@@ -39,8 +39,8 @@ distribution). The corresponding count-vector PMF — the
 `Probability.ProbabilityMassFunction.Basic` import (transitively
 ~10s of olean loading via `MeasureTheory.Measure.Dirac`).
 
-The sequential sampler itself is not formalized — only the closed
-form is needed by downstream constructions.
+The sequential sampler enters through `seqProb_countVec_cons`: prepending a draw
+multiplies the sequence likelihood by the Pólya predictive of that draw.
 
 ## Type-polymorphic alphabet
 
@@ -72,6 +72,8 @@ type for such a bridge) is also deferred.
 - `PolyaUrn.total` — the sum `Σ π_i`.
 - `PolyaUrn.seqProb` — closed-form per-sequence likelihood
   (eq 3.7 of [odonnell-2015], depending only on counts).
+- `PolyaUrn.countVec` — the count vector of a draw sequence, the urn's sufficient statistic;
+  `seqProb_countVec_cons` is the urn scheme (likelihood × predictive).
 
 ## References
 
@@ -271,6 +273,27 @@ theorem seqProb_succ [Nonempty α] [DecidableEq α] (x : α → ℕ) (c : α) :
   field_simp
 
 omit [Fintype α] in
+/-- The count vector of a draw sequence: how often each colour was drawn. The urn's
+sufficient statistic — `seqProb` depends on a sequence only through it. -/
+def countVec [DecidableEq α] {N : ℕ} (seq : Fin N → α) (c : α) : ℕ :=
+  (Finset.univ.filter (seq · = c)).card
+
+omit [Fintype α] in
+@[simp] theorem countVec_zero [DecidableEq α] (seq : Fin 0 → α) : countVec seq = fun _ => 0 := by
+  funext c; simp [countVec]
+
+omit [Fintype α] in
+/-- Prepending a draw increments its colour's count. -/
+theorem countVec_cons [DecidableEq α] {N : ℕ} (c : α) (seq : Fin N → α) :
+    countVec (Fin.cons c seq) = Function.update (countVec seq) c (countVec seq c + 1) := by
+  funext d
+  unfold countVec
+  simp only [Finset.card_filter, Fin.sum_univ_succ, Fin.cons_zero, Fin.cons_succ]
+  by_cases hcd : d = c
+  · subst hcd; simp [add_comm]
+  · simp [Function.update_of_ne hcd, Ne.symm hcd]
+
+omit [Fintype α] in
 /-- Count-vector identity: appending color `c` to a length-`N` sequence
 increments the count at `c` by 1 and leaves other counts unchanged. -/
 private lemma snoc_count_eq [DecidableEq α] {N : ℕ}
@@ -292,10 +315,16 @@ private lemma snoc_count_eq [DecidableEq α] {N : ℕ}
     simp only [Fin.snoc_castSucc, Fin.snoc_last]
     rw [if_neg (fun h => hcd h.symm), add_zero]
 
+omit [Fintype α] in
+/-- Appending a draw increments its colour's count. -/
+theorem countVec_snoc [DecidableEq α] {N : ℕ} (seq : Fin N → α) (c : α) :
+    countVec (Fin.snoc seq c) = Function.update (countVec seq) c (countVec seq c + 1) :=
+  snoc_count_eq seq c
+
 /-- The total count of a length-`N` sequence equals `N`. -/
-lemma sum_counts_eq_length [DecidableEq α] {N : ℕ}
-    (seq : Fin N → α) :
-    ∑ d : α, ((Finset.univ : Finset (Fin N)).filter (fun i => seq i = d)).card = N := by
+lemma sum_counts_eq_length [DecidableEq α] {N : ℕ} (seq : Fin N → α) :
+    ∑ d : α, countVec seq d = N := by
+  show ∑ d : α, ((Finset.univ : Finset (Fin N)).filter (fun i => seq i = d)).card = N
   simp_rw [Finset.card_filter]
   rw [Finset.sum_comm]
   have : ∀ i : Fin N, ∑ d : α, (if seq i = d then 1 else 0 : ℕ) = 1 := by
@@ -311,7 +340,8 @@ lemma sum_counts_eq_length [DecidableEq α] {N : ℕ}
 defines a probability distribution over sequences; this identity says the
 total mass is 1. Proved by induction on `N` using `seqProb_succ`. -/
 theorem sum_seqProb_eq_one [Nonempty α] [DecidableEq α] (N : ℕ) :
-    (∑ seq : Fin N → α, u.seqProb (fun c => (Finset.univ.filter (seq · = c)).card)) = 1 := by
+    ∑ seq : Fin N → α, u.seqProb (countVec seq) = 1 := by
+  show (∑ seq : Fin N → α, u.seqProb (fun c => (Finset.univ.filter (seq · = c)).card)) = 1
   induction N with
   | zero =>
     -- Only one sequence: `Fin.elim0`. Show its count vector is `fun _ => 0`,
@@ -473,6 +503,12 @@ theorem predictive_zero_symmetric (c : ℝ) (hc : 0 < c) (i : α) :
   simp only [symmetric, total]
   rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
   field_simp
+
+/-- The urn scheme: prepending a draw multiplies the sequence likelihood by the predictive
+probability of that draw given the counts so far. -/
+theorem seqProb_countVec_cons [DecidableEq α] (c : α) {N : ℕ} (seq : Fin N → α) :
+    u.seqProb (countVec (Fin.cons c seq)) = u.seqProb (countVec seq) * u.predictive (countVec seq) c := by
+  rw [countVec_cons, seqProb_succ, predictive, mul_div_assoc]
 
 /-- Polya predictive monotonicity: a color with a higher previous count
 gets higher predictive probability (the "rich get richer" /

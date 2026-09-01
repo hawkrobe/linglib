@@ -1,799 +1,698 @@
-import Linglib.Semantics.Probabilistic.SDS.GraphicalModel
-import Linglib.Semantics.Probabilistic.SDS.JointPosterior
-import Mathlib.Probability.Distributions.Uniform
+import Linglib.Core.Probability.DirichletMultinomial
+import Linglib.Core.Probability.Kernel.Posterior
+import Linglib.Core.Probability.UniformOn
+import Mathlib.MeasureTheory.Constructions.Pi
 
 /-!
 # Erk & Herbelot 2024 — How to Marry a Star
 [erk-herbelot-2024]
 
-Erk, K. & Herbelot, A. (2024). How to Marry a Star: Probabilistic Constraints
-for Meaning in Context. *Journal of Semantics* 40(4), 549–583.
+Situation description systems (SDS) model utterance understanding as Bayesian inference over
+the *concepts* underlying the words of a sentence, constrained locally by *selectional
+preferences* and globally by *scenarios*. The graphical model (§5.1, Figure 5; the sampling
+process in Appendix A):
 
-## Status: Phase 3 (paper-faithful instantiation)
+1. a scenario mix drawn from a symmetric Dirichlet with concentration `α` — integrated out
+   here into the Pólya-urn law of the per-node scenario draws, `PolyaUrn.seqLaw`;
+2. one scenario per concept node, drawn from the mix;
+3. one concept per node: a top-level concept (the verb) is drawn from its scenario's concept
+   distribution alone; a role filler is drawn from the *Product of Experts* of its scenario's
+   distribution and its role's selectional constraint (p. 570: `a_i b_i / ∑_j a_j b_j`);
+4. one observed condition label per node, a deterministic function of the concept.
 
-This file instantiates the SDS substrate from
-`Semantics/Probabilistic/SDS/{GraphicalModel,JointPosterior}.lean`
-on the paper's running examples — currently the bat-in-player sentence
-(paper §5.1, Figure 5, Table 1). Phase 4 will add the astronomer-married-
-star sentence (Table 2).
+`SDS.nodePosterior` is the posterior over the concept at one node given the labels of all
+nodes: mathlib's posterior kernel `κ†μ` of the deterministic label kernel against the joint,
+pushed forward to the node. `SDS.nodePosterior_apply` is the closed form the paper estimates by
+WebPPL sampling — a ratio of sums, over scenario assignments, of per-node fibre masses.
 
-The previous version of this file used the legacy `SDSConstraintSystem`
-flat-substrate (a Product-of-Experts caricature that collapsed the
-paper's directed graphical model to two functions over the concept
-space). Replaced because the caricature could not reproduce Tables 1–2
-nor the qualitative α-monotonicity result paper §5.2 advertises. The
-new version uses the paper-faithful multi-node graphical model.
+## Main results
 
-## Numerical reproduction
+The paper's two worked sentences, with the posteriors computed exactly as functions of `α`:
 
-Closed-form derivation in our framework (see derivations in theorem
-docstrings) gives:
+* `batStick_real` — *a player was holding a bat* (§5.1, Table 1):
+  `P(BAT-STICK | labels) = (α + 1) / (2α + 1)`; hence `batStick_strictAnti`: the *stick*
+  reading strengthens as `α` decreases (p. 571).
+* `starPerson_real` — *an astronomer married a star* (§5.2, Table 2):
+  `P(STAR-PERSON | labels) = 105α / (115α + 8)`; hence `starSun_strictAnti`: the *sun*
+  reading strengthens as `α` decreases (p. 572).
+* `star_constraints_conflict` — Figure 6: on the `star` node the selectional constraint prefers
+  STAR-PERSON while the STARGAZING scenario prefers STAR-SUN.
 
-| α    | P(BAT-STICK \| obs) | P(BAT-ANIMAL \| obs) |
-|------|---------------------|----------------------|
-| 0.5  | 3/4 = 0.75          | 1/4 = 0.25           |
-| 0.1  | 11/12 ≈ 0.917       | 1/12 ≈ 0.083         |
+## Numbers
 
-Paper Table 1 (p. 571, WebPPL Monte Carlo, 2000 samples):
+| sentence, α | exact posterior | paper (WebPPL, 2000 samples) |
+|---|---|---|
+| bat, ½: P(stick) | 3/4 | 0.82 |
+| bat, 0.1: P(stick) | 11/12 | 0.96 |
+| star, ½: P(person) | 105/131 ≈ 0.80 | 0.82 |
+| star, 0.1: P(person) | 7/13 ≈ 0.54 | 0.57 |
 
-| α    | p(stick) | p(animal) |
-|------|----------|-----------|
-| 0.5  | 0.82     | 0.18      |
-| 0.1  | 0.96     | 0.04      |
-
-After detailed re-read of paper §4.1, §4.2, and §5.1 graphical-model
-descriptions (PDF pp. 13-25), the ~7pp discrepancy at α=0.5 is NOT
-explained by:
-
-1. **HOLD-AGENT selectional choice**: PLAYER is observed at the player
-   node, so `selectional(hold-agent, PLAYER)` is a constant factor in
-   all configurations and cancels in normalization. Any non-zero
-   spec — uniform or otherwise — gives the same posterior at the bat
-   node, given the observation.
-2. **Bernoulli role-existence nodes** (paper §4.1, p. 563): these are
-   typically = 1 for mandatory roles (paper: "the sleeper always needs
-   to be realized in a sleeping event, that is, P(SLEEP-THEME | SLEEP)
-   = 1"). HOLD-AGENT and HOLD-THEME for "hold" are both presumably
-   mandatory; even if not, observing Agent/Theme conditions pins the
-   Bernoulli to "yes" with constant likelihood factor across configs.
-3. **Other-verb sem.role nodes** (paper §4.1: "PAINT-AGENT and
-   PAINT-THEME, both with zero probability of occurring as roles of
-   SLEEP"): contribute multiplicative factor 1 to all configurations,
-   wash out.
-4. **Verb concept-node lacking a role contribution** (paper p. 569:
-   verb concept (5) "is conditionally dependent on node (3)" only,
-   not on any role node): my model places a uniform-PMF placeholder
-   `verb_self` at the verb node. Since c_verb = HOLD is observed, the
-   uniform-PMF contribution is a constant factor across configs.
-5. **Soft vs hard role-Bernoullis with non-unit P(role | verb)**:
-   doesn't change posterior given observation pins the Bernoulli.
-
-The most plausible remaining explanations:
-- **Monte Carlo noise** in paper's 2000-sample WebPPL simulation. SE for
-  p=0.82 with N=2000 is ≈ 0.009, so the 95% CI on paper's true
-  probability is roughly [0.80, 0.84]. Our 0.75 is 8 SDs below 0.82 —
-  within MC noise only if paper's underlying probability is much closer
-  to 0.78 than 0.82.
-- **A graphical-model structural element we haven't identified**, such
-  as additional dependencies between concept nodes and the scenario-mix
-  node that aren't visible in the figures we read.
-- **Paper's WebPPL implementation specifics** (rejection-sampling bias,
-  etc.) that effectively change the implied posterior.
-
-The qualitative direction — lower α → more BAT-STICK (the
-BASEBALL-favored sense) — matches the paper. Both rows of Table 1 show
-the same direction in our closed-form derivation.
-
-The numbers above are what the closed-form joint posterior of our
-graphical model evaluates to; we do not back-solve parameters to match
-the paper's WebPPL output (per the user-locked decision in the
-0.230.298 redo: "compute the true closed-form joint posterior — don't
-back-solve, don't intervals").
-
-## Provenance for paper-cited values
-
-- 9-concept inventory: paper p. 569 ("BALL, BAT-ANIMAL, HOLD, BAT-STICK,
-  CANDLE, CAT, PLAYER, STONE, VAMPIRE")
-- BASEBALL scenario distribution: paper p. 569 ("equal probability to
-  the concepts BALL, BAT-STICK, HOLD, PLAYER, and STONE, and zero
-  probability to all other concepts")
-- GOTHIC scenario distribution: paper p. 569 ("equal probability to the
-  concepts BAT-ANIMAL, CANDLE, CAT, HOLD, and VAMPIRE, and zero
-  probability otherwise")
-- HOLD-THEME selectional: paper p. 569 ("P(c | HOLD-THEME) = {0 for
-  c=HOLD; 0.125 else}")
-- HOLD-AGENT selectional: NOT specified by paper; we assume uniform 1/8
-  over non-HOLD concepts (analogous to HOLD-THEME)
-- VERB-SELF selectional (placeholder for the no-role hold concept-node):
-  uniform 1/9 over all concepts. Contributes a constant factor that
-  washes out in normalization, so doesn't affect the posterior.
+The astronomer rows are within sampling error of the paper's; the bat rows are not, and the
+paper does not describe its WebPPL model in enough detail to locate the difference. Ingredients
+the paper leaves unspecified are set as follows: HOLD-AGENT and MARRY-AGENT get the same
+constraint as the corresponding theme role (both cancel, since the agent concept is observed);
+MARRY-THEME gives MARRY itself weight `0` (the three stated values already sum to `1`).
 -/
 
 namespace ErkHerbelot2024
 
+open MeasureTheory ProbabilityTheory
 open scoped ENNReal
-open Probabilistic.SDS
 
--- ════════════════════════════════════════════════════
--- §1. Concept, scenario, role types (paper §5.1, p. 569)
--- ════════════════════════════════════════════════════
+/-- A situation description system: the Dirichlet prior on the scenario mix (as a Pólya urn
+over scenarios), the per-scenario concept distributions, and the per-role selectional
+constraints. -/
+structure SDS (S C R : Type*) [MeasurableSpace C] where
+  /-- The scenario-mix prior `Dirichlet(α, …, α)`, integrated out to its urn. -/
+  urn : PolyaUrn S
+  /-- `P(c | s)`: the concepts a scenario makes available. -/
+  scenario : S → Measure C
+  /-- `P(c | r)`: the selectional constraint of a semantic role. -/
+  selectional : R → Measure C
 
-/-- The 9-concept inventory of paper §5.1 p. 569. -/
-inductive BatConcept where
+namespace SDS
+
+section Node
+
+variable {S C R : Type*} [MeasurableSpace S] [MeasurableSpace C] [MeasurableSpace R]
+  [Countable S] [MeasurableSingletonClass S] [Countable R] [MeasurableSingletonClass R]
+  [Fintype C] [MeasurableSingletonClass C] (m : SDS S C R)
+
+/-- Product of Experts (p. 570): the role-filler distribution for scenario `s` and role `r` is
+the normalized pointwise product of `scenario s` and `selectional r`. When the two share no
+concept (fn 10) the row is the zero measure. -/
+noncomputable def poe : Kernel (S × R) C :=
+  Kernel.ofWeights fun p c => m.scenario p.1 {c} * m.selectional p.2 {c}
+
+instance : IsFiniteKernel m.poe := inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+
+/-- The concept distribution at one node: a top-level concept (no role) draws from its scenario
+alone; a role filler draws from the Product of Experts (Appendix A). -/
+noncomputable def emission (s : S) : Option R → Measure C
+  | none => m.scenario s
+  | some r => m.poe (s, r)
+
+instance [∀ s, IsProbabilityMeasure (m.scenario s)] (s : S) :
+    ∀ o : Option R, IsFiniteMeasure (m.emission s o)
+  | none => inferInstanceAs (IsFiniteMeasure (m.scenario s))
+  | some r => inferInstanceAs (IsFiniteMeasure (m.poe (s, r)))
+
+omit [MeasurableSingletonClass C] in
+theorem emission_univ_le_one [∀ s, IsProbabilityMeasure (m.scenario s)] (s : S) :
+    ∀ o : Option R, m.emission s o Set.univ ≤ 1
+  | none => (measure_univ (μ := m.scenario s)).le
+  | some _ => Kernel.ofWeights_apply_univ_le_one _ _
+
+end Node
+
+section Sentence
+
+variable {S C R L : Type*} [Fintype S] [DecidableEq S] [Nonempty S] [MeasurableSpace S]
+  [MeasurableSingletonClass S] [Fintype C] [Nonempty C] [MeasurableSpace C]
+  [MeasurableSingletonClass C] [MeasurableSpace R] [Countable R] [MeasurableSingletonClass R]
+  [MeasurableSpace L] [MeasurableSingletonClass L]
+  (m : SDS S C R) [∀ s, IsProbabilityMeasure (m.scenario s)] {n : ℕ}
+
+omit [DecidableEq S] [Nonempty S] [Nonempty C] in
+/-- The concept nodes of an `n`-node sentence with roles `ρ`, conditionally independent given
+their scenarios. -/
+noncomputable def emissions (ρ : Fin n → Option R) : Kernel (Fin n → S) (Fin n → C) :=
+  Kernel.ofFunOfCountable fun s => Measure.pi fun i => m.emission (s i) (ρ i)
+
+omit [DecidableEq S] [Nonempty S] [Nonempty C] [MeasurableSingletonClass C]
+  [∀ s, IsProbabilityMeasure (m.scenario s)] in
+theorem emissions_apply (ρ : Fin n → Option R) (s : Fin n → S) :
+    m.emissions ρ s = Measure.pi fun i => m.emission (s i) (ρ i) := rfl
+
+omit [DecidableEq S] [Nonempty S] [Nonempty C] in
+instance (ρ : Fin n → Option R) : IsFiniteKernel (m.emissions ρ) :=
+  ⟨⟨1, ENNReal.one_lt_top, fun s => by
+    rw [emissions_apply, Measure.pi_univ]
+    exact Finset.prod_le_one (fun _ _ => zero_le) fun i _ =>
+      m.emission_univ_le_one _ _⟩⟩
+
+omit [Nonempty C] in
+/-- The joint law of scenario and concept assignments (Figure 5, nodes 1–9). -/
+noncomputable def joint (ρ : Fin n → Option R) : Measure ((Fin n → S) × (Fin n → C)) :=
+  m.urn.seqLaw n ⊗ₘ m.emissions ρ
+
+omit [Nonempty C] in
+instance (ρ : Fin n → Option R) : IsFiniteMeasure (m.joint ρ) :=
+  inferInstanceAs (IsFiniteMeasure (_ ⊗ₘ _))
+
+/-- Each node emits its condition label deterministically (Figure 5, nodes 10–14). -/
+noncomputable def observe (S : Type*) [MeasurableSpace S] [Countable S]
+    [MeasurableSingletonClass S] (label : C → L) (n : ℕ) :
+    Kernel ((Fin n → S) × (Fin n → C)) (Fin n → L) :=
+  Kernel.deterministic (fun ω i => label (ω.2 i)) (measurable_of_countable _)
+
+instance (label : C → L) (n : ℕ) : IsFiniteKernel (observe S label n) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.deterministic _ _))
+
+/-- The posterior over the concept at node `t`, given the labels `x` of all nodes. -/
+noncomputable def nodePosterior (label : C → L) (ρ : Fin n → Option R) (x : Fin n → L)
+    (t : Fin n) : Measure C :=
+  (((observe S label n)†(m.joint ρ)) x).map fun ω => ω.2 t
+
+variable (label : C → L) (ρ : Fin n → Option R) (x : Fin n → L)
+
+omit [Nonempty S] [Nonempty C] in
+/-- The joint mass of a box of per-node concept events: a sum over scenario assignments of
+the urn likelihood times the per-node masses. -/
+theorem joint_apply_univ_prod_pi (T : Fin n → Set C) :
+    m.joint ρ (Set.univ ×ˢ Set.pi Set.univ T) =
+      ∑ s, m.urn.seqLaw n {s} * ∏ i, m.emission (s i) (ρ i) (T i) := by
+  rw [joint, Measure.compProd_apply_prod .univ .of_discrete, Measure.restrict_univ,
+    lintegral_fintype]
+  exact Finset.sum_congr rfl fun s _ => by rw [emissions_apply, Measure.pi_pi, mul_comm]
+
+/-- The node posterior in closed form: the ratio of two scenario-assignment sums of per-node
+fibre masses — the quantity the paper estimates by sampling. -/
+theorem nodePosterior_apply (t : Fin n) (c : C)
+    (hx : ∑ s, m.urn.seqLaw n {s} * ∏ i, m.emission (s i) (ρ i) (label ⁻¹' {x i}) ≠ 0) :
+    m.nodePosterior label ρ x t {c} =
+      (∑ s, m.urn.seqLaw n {s} *
+          ∏ i, m.emission (s i) (ρ i) {c' | label c' = x i ∧ (i = t → c' = c)}) /
+        ∑ s, m.urn.seqLaw n {s} * ∏ i, m.emission (s i) (ρ i) (label ⁻¹' {x i}) := by
+  have hF : (fun ω : (Fin n → S) × (Fin n → C) => fun i => label (ω.2 i)) ⁻¹' {x} =
+      Set.univ ×ˢ Set.pi Set.univ fun i => label ⁻¹' {x i} := by
+    ext ⟨s, c⟩; simp [funext_iff]
+  have hE : (Set.univ ×ˢ Set.pi Set.univ fun i => label ⁻¹' {x i}) ∩
+      ((fun ω : (Fin n → S) × (Fin n → C) => ω.2 t) ⁻¹' {c}) =
+      Set.univ ×ˢ Set.pi Set.univ fun i => {c' | label c' = x i ∧ (i = t → c' = c)} := by
+    ext ⟨s, c'⟩
+    simp only [Set.mem_inter_iff, Set.mem_prod, Set.mem_univ, true_and, Set.mem_univ_pi,
+      Set.mem_preimage, Set.mem_singleton_iff, Set.mem_ofPred_eq]
+    exact ⟨fun ⟨h₁, h₂⟩ i => ⟨h₁ i, fun hi => hi ▸ h₂⟩, fun h => ⟨fun i => (h i).1, (h t).2 rfl⟩⟩
+  rw [nodePosterior, Measure.map_apply (measurable_of_countable _) (measurableSet_singleton c)]
+  unfold observe
+  rw [posterior_deterministic_eq_cond _ _ (by rwa [hF, joint_apply_univ_prod_pi]), hF,
+    ProbabilityTheory.cond_apply
+      (s := Set.univ ×ˢ Set.pi Set.univ fun i => label ⁻¹' {x i}) .of_discrete, hE,
+    joint_apply_univ_prod_pi, joint_apply_univ_prod_pi, ENNReal.div_eq_inv_mul]
+
+omit [Nonempty C] [MeasurableSingletonClass C] in
+/-- The scenario-assignment sums on reals: urn likelihoods times per-node real masses. -/
+theorem sum_toReal (T : Fin n → Set C) :
+    (∑ s, m.urn.seqLaw n {s} * ∏ i, m.emission (s i) (ρ i) (T i)).toReal =
+      ∑ s, m.urn.seqProb (PolyaUrn.countVec s) * ∏ i, (m.emission (s i) (ρ i)).real (T i) := by
+  rw [ENNReal.toReal_sum fun s _ =>
+    ENNReal.mul_ne_top (measure_ne_top _ _) (ENNReal.prod_ne_top fun i _ => measure_ne_top _ _)]
+  refine Finset.sum_congr rfl fun s _ => ?_
+  rw [ENNReal.toReal_mul, ENNReal.toReal_prod, PolyaUrn.seqLaw_apply_singleton,
+    ENNReal.toReal_ofReal (m.urn.seqProb_pos _).le]
+  rfl
+
+end Sentence
+
+end SDS
+
+/-! ### Evaluation helpers -/
+
+/-- A sum over three-node scenario assignments, coordinatewise. -/
+private theorem sum_fin_three {S M : Type*} [Fintype S] [AddCommMonoid M]
+    (f : (Fin 3 → S) → M) : ∑ s, f s = ∑ a, ∑ b, ∑ c, f ![a, b, c] := by
+  rw [← (Fin.consEquiv fun _ => S).sum_comp, Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl fun a _ => ?_
+  rw [← (Fin.consEquiv fun _ => S).sum_comp, Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl fun b _ => ?_
+  rw [← (Fin.consEquiv fun _ => S).sum_comp, Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl fun c _ => ?_
+  rw [Fintype.sum_unique]
+  exact congrArg f (by funext i; fin_cases i <;> rfl)
+
+/-- The real mass of a decidable event under the uniform measure on a finset. -/
+private theorem uniformOn_real_setOf {C : Type*} [MeasurableSpace C] [MeasurableSingletonClass C]
+    [DecidableEq C] [Fintype C] (A : Finset C) (p : C → Prop) [DecidablePred p] :
+    (uniformOn ↑A).real {c | p c} = ((A.filter p).card : ℝ) / A.card := by
+  rw [show {c | p c} = (↑(Finset.univ.filter p) : Set C) by ext c; simp,
+    measureReal_def, uniformOn_apply_finset, Finset.inter_filter, Finset.inter_univ,
+    ENNReal.toReal_div, ENNReal.toReal_natCast, ENNReal.toReal_natCast]
+
+/-! ### *A player was holding a bat* (§5.1, Figure 5, Table 1) -/
+
+/-- The concept inventory (p. 569). -/
+inductive BatConcept
   | BALL | BAT_ANIMAL | HOLD | BAT_STICK | CANDLE | CAT | PLAYER | STONE | VAMPIRE
-  deriving Fintype, DecidableEq, Repr
+  deriving Fintype, DecidableEq
 
-instance : Inhabited BatConcept := ⟨.HOLD⟩
-instance : Nonempty BatConcept := ⟨.HOLD⟩
-
-/-- The 2-scenario inventory of paper §5.1 p. 569. -/
-inductive BatScenario where
+/-- The two scenarios (p. 569). -/
+inductive BatScenario
   | BASEBALL | GOTHIC
-  deriving Fintype, DecidableEq, Repr
+  deriving Fintype, DecidableEq
 
-instance : Inhabited BatScenario := ⟨.BASEBALL⟩
+/-- The semantic roles of HOLD (p. 569). -/
+inductive BatRole
+  | holdAgent | holdTheme
+  deriving Fintype, DecidableEq
+
+/-- Condition labels: one word form per concept; *bat* is shared by its two senses. -/
+inductive BatLabel
+  | ball | bat | hold | candle | cat | player | stone | vampire
+  deriving Fintype, DecidableEq
+
+instance : MeasurableSpace BatConcept := ⊤
+instance : DiscreteMeasurableSpace BatConcept := ⟨fun _ => trivial⟩
+instance : MeasurableSpace BatScenario := ⊤
+instance : DiscreteMeasurableSpace BatScenario := ⟨fun _ => trivial⟩
+instance : MeasurableSpace BatRole := ⊤
+instance : DiscreteMeasurableSpace BatRole := ⟨fun _ => trivial⟩
+instance : MeasurableSpace BatLabel := ⊤
+instance : DiscreteMeasurableSpace BatLabel := ⟨fun _ => trivial⟩
+instance : Nonempty BatConcept := ⟨.HOLD⟩
 instance : Nonempty BatScenario := ⟨.BASEBALL⟩
 
-/-- Roles in the bat-in-player sentence. `verb_self` is a uniform-selectional
-placeholder for the verb concept-node, which has no role attached in the
-paper's graphical model (paper Figure 5 node 5: holds concept node, no
-incoming role edge). -/
-inductive BatRole where
-  | hold_agent | hold_theme | verb_self
-  deriving Fintype, DecidableEq, Repr
+/-- The condition label of each concept (Figure 5, nodes 10–14). -/
+def batLabel : BatConcept → BatLabel
+  | .BALL => .ball | .BAT_ANIMAL => .bat | .HOLD => .hold | .BAT_STICK => .bat
+  | .CANDLE => .candle | .CAT => .cat | .PLAYER => .player | .STONE => .stone
+  | .VAMPIRE => .vampire
 
--- ════════════════════════════════════════════════════
--- §2. Per-scenario concept distributions (paper p. 569)
--- ════════════════════════════════════════════════════
+/-- The concepts of each scenario: BASEBALL and GOTHIC give equal probability to five concepts
+each and zero to the rest (p. 569). -/
+def batScenario : BatScenario → Finset BatConcept
+  | .BASEBALL => {.BALL, .BAT_STICK, .HOLD, .PLAYER, .STONE}
+  | .GOTHIC => {.BAT_ANIMAL, .CANDLE, .CAT, .HOLD, .VAMPIRE}
 
-/-- The BASEBALL scenario's concept distribution: uniform 1/5 over
-{BALL, BAT-STICK, HOLD, PLAYER, STONE}, zero elsewhere. Paper p. 569. -/
-noncomputable def baseballDist : PMF BatConcept :=
-  PMF.uniformOfFinset
-    {.BALL, .BAT_STICK, .HOLD, .PLAYER, .STONE}
-    (by decide)
+/-- HOLD-THEME: `0` for HOLD and `0.125` for each of the eight concrete objects (p. 569).
+HOLD-AGENT, which the paper leaves unspecified, is set the same way. -/
+def holdFiller : Finset BatConcept :=
+  {.BALL, .BAT_ANIMAL, .BAT_STICK, .CANDLE, .CAT, .PLAYER, .STONE, .VAMPIRE}
 
-/-- The GOTHIC scenario's concept distribution: uniform 1/5 over
-{BAT-ANIMAL, CANDLE, CAT, HOLD, VAMPIRE}, zero elsewhere. Paper p. 569. -/
-noncomputable def gothicDist : PMF BatConcept :=
-  PMF.uniformOfFinset
-    {.BAT_ANIMAL, .CANDLE, .CAT, .HOLD, .VAMPIRE}
-    (by decide)
+/-- The bat-sentence system with Dirichlet concentration `α`. -/
+noncomputable def batSDS (α : ℝ) (hα : 0 < α) : SDS BatScenario BatConcept BatRole where
+  urn := PolyaUrn.symmetric α hα
+  scenario s := uniformOn ↑(batScenario s)
+  selectional _ := uniformOn ↑holdFiller
 
-/-- Per-scenario concept distribution. -/
-noncomputable def batPerScenario : BatScenario → PMF BatConcept
-  | .BASEBALL => baseballDist
-  | .GOTHIC => gothicDist
+instance (α : ℝ) (hα : 0 < α) (s : BatScenario) :
+    IsProbabilityMeasure ((batSDS α hα).scenario s) :=
+  isProbabilityMeasure_uniformOn (Finset.finite_toSet _)
+    (Finset.coe_nonempty.mpr (by cases s <;> decide))
 
--- ════════════════════════════════════════════════════
--- §3. Selectional preferences (paper p. 569 + assumptions)
--- ════════════════════════════════════════════════════
+/-- Node roles (Figure 5): the verb node has no role; *player* fills HOLD-AGENT and *bat*
+HOLD-THEME. -/
+def batRoles : Fin 3 → Option BatRole := ![none, some .holdAgent, some .holdTheme]
 
-/-- The HOLD-THEME selectional preference: uniform 1/8 over the 8 non-HOLD
-concepts. Paper p. 569 ("P(c | HOLD-THEME) = {0 for c=HOLD; 0.125 else}"). -/
-noncomputable def holdThemeSel : PMF BatConcept :=
-  PMF.uniformOfFinset
-    ({.BALL, .BAT_ANIMAL, .BAT_STICK, .CANDLE, .CAT, .PLAYER, .STONE, .VAMPIRE} :
-      Finset BatConcept)
-    (by decide)
+/-- The observed labels `hold(_)`, `player(_)`, `bat(_)` (Figure 5, nodes 12, 10, 14). -/
+def batLabels : Fin 3 → BatLabel := ![.hold, .player, .bat]
 
-/-- The HOLD-AGENT selectional preference. NOT specified in paper §5.1;
-we assume uniform 1/8 over the 8 non-HOLD concepts (analogous to
-HOLD-THEME). -/
-noncomputable def holdAgentSel : PMF BatConcept := holdThemeSel
+@[simp] theorem batSDS_urn (α : ℝ) (hα : 0 < α) :
+    (batSDS α hα).urn = PolyaUrn.symmetric α hα := rfl
 
-/-- Verb-self placeholder selectional: uniform 1/9 over all 9 concepts.
-For the verb concept-node which has no role attached in paper Figure 5;
-the uniform contribution factors out of normalization and doesn't affect
-the marginal posterior at any other node. -/
-noncomputable def verbSelfSel : PMF BatConcept :=
-  PMF.uniformOfFintype BatConcept
+@[simp] theorem batSDS_scenario (α : ℝ) (hα : 0 < α) (s : BatScenario) :
+    (batSDS α hα).scenario s = uniformOn ↑(batScenario s) := rfl
 
-/-- Per-role selectional preferences. -/
-noncomputable def batSelectional : BatRole → PMF BatConcept
-  | .hold_agent => holdAgentSel
-  | .hold_theme => holdThemeSel
-  | .verb_self => verbSelfSel
+/-- A role filler's distribution is uniform on the concepts its scenario and role agree on. -/
+theorem batSDS_poe (α : ℝ) (hα : 0 < α) (s : BatScenario) (r : BatRole) :
+    (batSDS α hα).poe (s, r) = uniformOn (↑(batScenario s ∩ holdFiller) : Set BatConcept) :=
+  Kernel.ofWeights_uniformOn_mul_uniformOn (fun p : BatScenario × BatRole => batScenario p.1)
+    (fun _ => holdFiller) (s, r)
 
--- ════════════════════════════════════════════════════
--- §4. The graphical model
--- ════════════════════════════════════════════════════
+private theorem sum_batScenario {M : Type*} [AddCommMonoid M] (f : BatScenario → M) :
+    ∑ s, f s = f .BASEBALL + f .GOTHIC := by
+  rw [show (Finset.univ : Finset BatScenario) = {.BASEBALL, .GOTHIC} by decide,
+    Finset.sum_pair (by decide)]
 
-/-- The paper's bat-in-player graphical model, parameterized by the
-Dirichlet concentration α. -/
-noncomputable def batModel (α : ℝ) (hα : 0 < α) :
-    GraphicalModel BatScenario BatConcept BatRole where
-  perScenario := batPerScenario
-  selectional := batSelectional
-  alpha := α
-  alphaPos := hα
+/-- The real mass of a label fibre under the uniform measure on a finset. -/
+private theorem uniformOn_real_preimage {C L : Type*} [MeasurableSpace C]
+    [MeasurableSingletonClass C] [DecidableEq C] [Fintype C] [DecidableEq L] (A : Finset C)
+    (f : C → L) (y : L) :
+    (uniformOn ↑A).real (f ⁻¹' {y}) = ((A.filter (f · = y)).card : ℝ) / A.card :=
+  uniformOn_real_setOf A (f · = y)
 
--- ════════════════════════════════════════════════════
--- §5. The sentence: "a player was holding a bat" (paper §5.1)
--- ════════════════════════════════════════════════════
+private theorem countVec_vecCons {S : Type*} [DecidableEq S] {N : ℕ} (c : S) (seq : Fin N → S) :
+    PolyaUrn.countVec (Matrix.vecCons c seq) =
+      Function.update (PolyaUrn.countVec seq) c (PolyaUrn.countVec seq c + 1) :=
+  PolyaUrn.countVec_cons c seq
 
-/-- The 3-node sentence structure. Paper Figure 5: nodes (5) holds, (8)
-player, (9) bat. We index them 0, 1, 2 and assign roles per the figure:
-the verb has no role (uniform placeholder), player gets HOLD-AGENT, bat
-gets HOLD-THEME. -/
-def batSentenceRoles : Fin 3 → BatRole
-  | 0 => .verb_self  -- node (5): hold concept (no role)
-  | 1 => .hold_agent -- node (8): player concept
-  | 2 => .hold_theme -- node (9): bat concept
+private theorem seqProb_countVec_vecCons {S : Type*} [Fintype S] [DecidableEq S] [Nonempty S]
+    (u : PolyaUrn S) (c : S) {N : ℕ} (seq : Fin N → S) :
+    u.seqProb (PolyaUrn.countVec (Matrix.vecCons c seq)) =
+      u.seqProb (PolyaUrn.countVec seq) * u.predictive (PolyaUrn.countVec seq) c :=
+  u.seqProb_countVec_cons c seq
 
-/-- Observations: the surface form at each concept-node restricts the
-admissible concept set. Paper Figure 5 nodes (10)-(14):
-- node (12) observes "hold(_)" → c_hold = HOLD
-- node (10) observes "player(_)" → c_player = PLAYER
-- node (14) observes "bat(_)" → c_bat ∈ {BAT-ANIMAL, BAT-STICK}
--/
-def batSentenceObs : GraphicalModel.Observations BatConcept 3
-  | 0 => {.HOLD}
-  | 1 => {.PLAYER}
-  | 2 => {.BAT_ANIMAL, .BAT_STICK}
+/-- The fibre counts the bat sentence's masses reduce to, settled by `decide`. -/
+private theorem bat_cards :
+    ((batScenario .BASEBALL).filter (batLabel · = .hold)).card = 1 ∧
+    ((batScenario .GOTHIC).filter (batLabel · = .hold)).card = 1 ∧
+    ((batScenario .BASEBALL ∩ holdFiller).filter (batLabel · = .player)).card = 1 ∧
+    ((batScenario .GOTHIC ∩ holdFiller).filter (batLabel · = .player)).card = 0 ∧
+    (batScenario .BASEBALL).card = 5 ∧ (batScenario .GOTHIC).card = 5 ∧
+    (batScenario .BASEBALL ∩ holdFiller).card = 4 ∧
+    (batScenario .GOTHIC ∩ holdFiller).card = 4 := by decide
 
--- ════════════════════════════════════════════════════
--- §6. Closed-form posteriors at the bat node (paper Table 1)
--- ════════════════════════════════════════════════════
+private theorem bat_cards_den :
+    ((batScenario .BASEBALL ∩ holdFiller).filter (batLabel · = .bat)).card = 1 ∧
+    ((batScenario .GOTHIC ∩ holdFiller).filter (batLabel · = .bat)).card = 1 := by decide
 
-/-!
-## Closed-form derivation
+private theorem bat_cards_num :
+    ((batScenario .BASEBALL ∩ holdFiller).filter
+      (fun c => batLabel c = .bat ∧ c = .BAT_STICK)).card = 1 ∧
+    ((batScenario .GOTHIC ∩ holdFiller).filter
+      (fun c => batLabel c = .bat ∧ c = .BAT_STICK)).card = 0 := by decide
 
-Conditional on observations:
-- c_player = PLAYER. Since perScenario(GOTHIC, PLAYER) = 0, the player
-  observation forces s_player = BASEBALL. (Paper's "probabilistic modus
-  tollens", p. 570.)
-- c_hold = HOLD. Both BASEBALL and GOTHIC give P(HOLD | scenario) = 1/5,
-  so the hold observation does not constrain s_hold.
-- c_bat ∈ {BAT-ANIMAL, BAT-STICK}. Constrained:
-  - If s_bat = BASEBALL, only BAT-STICK has nonzero P (1/5).
-  - If s_bat = GOTHIC, only BAT-ANIMAL has nonzero P (1/5).
+/-- The observation likelihood of *a player was holding a bat*: `1/160`, independent of `α`
+(the observed labels pin the *player* node's scenario to BASEBALL, whose prior mass is `1/2`,
+and the remaining factors are constants). -/
+private theorem bat_den (α : ℝ) (hα : 0 < α) :
+    (∑ s, (batSDS α hα).urn.seqLaw 3 {s} *
+      ∏ i, (batSDS α hα).emission (s i) (batRoles i) (batLabel ⁻¹' {batLabels i})).toReal =
+      1 / 160 := by
+  rw [SDS.sum_toReal, sum_fin_three]
+  simp only [sum_batScenario, Fin.prod_univ_three, batRoles, batLabels, Matrix.cons_val_zero,
+    Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons, SDS.emission,
+    batSDS_poe, batSDS_scenario, batSDS_urn, seqProb_countVec_vecCons, uniformOn_real_preimage,
+    bat_cards, bat_cards_den]
+  simp +decide only [countVec_vecCons, PolyaUrn.countVec_zero, PolyaUrn.seqProb_zero,
+    PolyaUrn.predictive, PolyaUrn.symmetric, PolyaUrn.total, Function.update_apply,
+    sum_batScenario, ↓reduceIte]
+  push_cast
+  field_simp
+  ring
 
-So nonzero (s_hold, s_player, s_bat, c_hold, c_player, c_bat) configurations
-are exactly the 4 cases:
-1. (B, B, B, HOLD, PLAYER, BAT-STICK)  — counts (3, 0)
-2. (B, B, G, HOLD, PLAYER, BAT-ANIMAL) — counts (2, 1)
-3. (G, B, B, HOLD, PLAYER, BAT-STICK)  — counts (2, 1)
-4. (G, B, G, HOLD, PLAYER, BAT-ANIMAL) — counts (1, 2)
+/-- The joint mass of the observed labels with BAT-STICK at the *bat* node. -/
+private theorem bat_num (α : ℝ) (hα : 0 < α) :
+    (∑ s, (batSDS α hα).urn.seqLaw 3 {s} * ∏ i, (batSDS α hα).emission (s i) (batRoles i)
+      {c' | batLabel c' = batLabels i ∧ (i = 2 → c' = .BAT_STICK)}).toReal =
+      (α + 1) / (160 * (2 * α + 1)) := by
+  rw [SDS.sum_toReal, sum_fin_three]
+  simp +decide only [sum_batScenario, Fin.prod_univ_three, batRoles, batLabels,
+    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
+    Matrix.tail_cons, SDS.emission, batSDS_poe, batSDS_scenario, batSDS_urn,
+    seqProb_countVec_vecCons, false_implies, true_implies, and_true, uniformOn_real_setOf,
+    bat_cards, bat_cards_num]
+  simp +decide only [countVec_vecCons, PolyaUrn.countVec_zero, PolyaUrn.seqProb_zero,
+    PolyaUrn.predictive, PolyaUrn.symmetric, PolyaUrn.total, Function.update_apply,
+    sum_batScenario, ↓reduceIte]
+  push_cast
+  field_simp
+  ring
 
-Each configuration has factor:
-  seqProb_α(counts) · perScenario(s_hold, HOLD)·perScenario(s_player, PLAYER)·perScenario(s_bat, c_bat) · selectional(verb-self, HOLD)·selectional(hold-agent, PLAYER)·selectional(hold-theme, c_bat)
+/-- Table 1 in closed form: the posterior probability of the *stick* sense of *bat* in
+*a player was holding a bat* is `(α + 1) / (2α + 1)`. -/
+theorem batStick_real (α : ℝ) (hα : 0 < α) :
+    ((batSDS α hα).nodePosterior batLabel batRoles batLabels 2).real {.BAT_STICK} =
+      (α + 1) / (2 * α + 1) := by
+  have hden : ∑ s, (batSDS α hα).urn.seqLaw 3 {s} *
+      ∏ i, (batSDS α hα).emission (s i) (batRoles i) (batLabel ⁻¹' {batLabels i}) ≠ 0 := by
+    intro h
+    have := bat_den α hα
+    rw [h, ENNReal.toReal_zero] at this
+    norm_num at this
+  rw [measureReal_def, SDS.nodePosterior_apply _ _ _ _ _ _ hden, ENNReal.toReal_div, bat_num,
+    bat_den]
+  field_simp
 
-The perScenario products are 1/5·1/5·1/5 = 1/125 in all 4 configurations
-(since c_hold=HOLD is in both scenarios, c_player=PLAYER is only in
-BASEBALL but s_player is forced to BASEBALL anyway, and c_bat is forced
-to match s_bat).
+/-- Table 1, `α = 0.5`: `P(stick) = 3/4` (paper's simulation: `0.82`). -/
+theorem batStick_half :
+    ((batSDS (1 / 2) (by norm_num)).nodePosterior batLabel batRoles batLabels 2).real
+      {.BAT_STICK} = 3 / 4 := by
+  rw [batStick_real]; norm_num
 
-The selectional products are 1/9·1/8·1/8 in all 4 configurations.
+/-- Table 1, `α = 0.1`: `P(stick) = 11/12` (paper's simulation: `0.96`). -/
+theorem batStick_tenth :
+    ((batSDS (1 / 10) (by norm_num)).nodePosterior batLabel batRoles batLabels 2).real
+      {.BAT_STICK} = 11 / 12 := by
+  rw [batStick_real]; norm_num
 
-So the 4 factors are proportional to seqProb alone:
+/-- The *stick* preference "grows more pronounced when the concentration parameter α of the
+Dirichlet distribution is lower" (p. 571): the posterior is strictly decreasing in `α`. -/
+theorem batStick_strictAnti {α β : ℝ} (hα : 0 < α) (hαβ : α < β) :
+    ((batSDS β (hα.trans hαβ)).nodePosterior batLabel batRoles batLabels 2).real {.BAT_STICK} <
+      ((batSDS α hα).nodePosterior batLabel batRoles batLabels 2).real {.BAT_STICK} := by
+  have hβ : 0 < β := hα.trans hαβ
+  rw [batStick_real, batStick_real, div_lt_div_iff₀ (by positivity) (by positivity)]
+  nlinarith
 
-For α = 1/2:
-  seqProb(3,0) = 5/16, seqProb(2,1) = 1/16, seqProb(1,2) = 1/16
-  → Factors (BAT-STICK first, BAT-ANIMAL second): 5, 1 / 1, 1
-  → BAT-STICK total: 6, BAT-ANIMAL total: 2
-  → Posterior: 3/4 / 1/4
+/-! ### *An astronomer married a star* (§5.2, Figure 6, Table 2) -/
 
-For α = 1/10:
-  seqProb(3,0) = 7/16, seqProb(2,1) = 1/48, seqProb(1,2) = 1/48
-  → Factors: 7/16, 1/48 / 1/48, 1/48
-  → BAT-STICK total: 7/16+1/48 = 11/24, BAT-ANIMAL: 2/48 = 1/24
-  → Posterior: 11/12 / 1/12
--/
-
--- ════════════════════════════════════════════════════
--- §6.5. Explicit support enumeration for the bat-in-player joint
--- ════════════════════════════════════════════════════
-
-/-- The 4-element support of nonzero `jointFactorObs` configurations for
-the bat-in-player sentence. By the closed-form analysis above, only
-these 4 (s_hold, s_player, s_bat, c_hold, c_player, c_bat)
-configurations have nonzero factor:
-- (BB, BB, BB; HOLD, PLAYER, BAT_STICK)
-- (BB, BB, GO; HOLD, PLAYER, BAT_ANIMAL)
-- (GO, BB, BB; HOLD, PLAYER, BAT_STICK)
-- (GO, BB, GO; HOLD, PLAYER, BAT_ANIMAL)
-
-Used with `GraphicalModel.conceptPosteriorAt_eq_of_support` to discharge
-the Table 1 theorems. -/
-def batSentenceSupport : Finset ((Fin 3 → BatScenario) × (Fin 3 → BatConcept)) :=
-  {(![.BASEBALL, .BASEBALL, .BASEBALL], ![.HOLD, .PLAYER, .BAT_STICK]),
-   (![.BASEBALL, .BASEBALL, .GOTHIC],   ![.HOLD, .PLAYER, .BAT_ANIMAL]),
-   (![.GOTHIC,   .BASEBALL, .BASEBALL], ![.HOLD, .PLAYER, .BAT_STICK]),
-   (![.GOTHIC,   .BASEBALL, .GOTHIC],   ![.HOLD, .PLAYER, .BAT_ANIMAL])}
-
-/-! ### `h_supp` discharge: structural blocker lemmas
-
-Rather than `decide` over the full 5832-element configuration space (which
-exceeds Lean's `maxRecDepth` and crashes with `maxRecDepth 32000`),
-we identify the ≤ 6 STRUCTURAL conditions any (sA, cA) ∉ supp must satisfy,
-and use the SDS substrate's helper lemmas to discharge each. -/
-
-/-- Blocker (a): cA 0 ≠ HOLD (verb-position) → inconsistent. -/
-private lemma blocker_a (α : ℝ) (hα : 0 < α)
-    (sA : Fin 3 → BatScenario) (cA : Fin 3 → BatConcept) (h : cA 0 ≠ .HOLD) :
-    (batModel α hα).jointFactorObs batSentenceRoles batSentenceObs sA cA = 0 := by
-  apply GraphicalModel.jointFactorObs_eq_zero_of_inconsistent
-  intro hCons
-  have := hCons 0
-  simp [batSentenceObs] at this
-  exact h this
-
-/-- Blocker (b): cA 1 ≠ PLAYER (agent-position) → inconsistent. -/
-private lemma blocker_b (α : ℝ) (hα : 0 < α)
-    (sA : Fin 3 → BatScenario) (cA : Fin 3 → BatConcept) (h : cA 1 ≠ .PLAYER) :
-    (batModel α hα).jointFactorObs batSentenceRoles batSentenceObs sA cA = 0 := by
-  apply GraphicalModel.jointFactorObs_eq_zero_of_inconsistent
-  intro hCons
-  have := hCons 1
-  simp [batSentenceObs] at this
-  exact h this
-
-/-- Blocker (c): cA 2 ∉ {BAT_ANIMAL, BAT_STICK} (theme-position) → inconsistent. -/
-private lemma blocker_c (α : ℝ) (hα : 0 < α)
-    (sA : Fin 3 → BatScenario) (cA : Fin 3 → BatConcept)
-    (ha : cA 2 ≠ .BAT_ANIMAL) (hs : cA 2 ≠ .BAT_STICK) :
-    (batModel α hα).jointFactorObs batSentenceRoles batSentenceObs sA cA = 0 := by
-  apply GraphicalModel.jointFactorObs_eq_zero_of_inconsistent
-  intro hCons
-  have := hCons 2
-  simp [batSentenceObs] at this
-  rcases this with h | h
-  · exact ha h
-  · exact hs h
-
-/-- Per-scenario zero lemma: `perScenario(GOTHIC, PLAYER) = 0`. -/
-private lemma perScenario_GOTHIC_PLAYER (α : ℝ) (hα : 0 < α) :
-    (batModel α hα).perScenario .GOTHIC .PLAYER = 0 := by
-  show batPerScenario .GOTHIC .PLAYER = 0
-  unfold batPerScenario gothicDist
-  rw [PMF.uniformOfFinset_apply]
-  simp
-
-/-- Per-scenario zero lemma: `perScenario(GOTHIC, BAT_STICK) = 0`. -/
-private lemma perScenario_GOTHIC_BAT_STICK (α : ℝ) (hα : 0 < α) :
-    (batModel α hα).perScenario .GOTHIC .BAT_STICK = 0 := by
-  show batPerScenario .GOTHIC .BAT_STICK = 0
-  unfold batPerScenario gothicDist
-  rw [PMF.uniformOfFinset_apply]
-  simp
-
-/-- Per-scenario zero lemma: `perScenario(BASEBALL, BAT_ANIMAL) = 0`. -/
-private lemma perScenario_BASEBALL_BAT_ANIMAL (α : ℝ) (hα : 0 < α) :
-    (batModel α hα).perScenario .BASEBALL .BAT_ANIMAL = 0 := by
-  show batPerScenario .BASEBALL .BAT_ANIMAL = 0
-  unfold batPerScenario baseballDist
-  rw [PMF.uniformOfFinset_apply]
-  simp
-
-/-- Blocker (d): cA 1 = PLAYER ∧ sA 1 = GOTHIC → perScenario zero. -/
-private lemma blocker_d (α : ℝ) (hα : 0 < α)
-    (sA : Fin 3 → BatScenario) (cA : Fin 3 → BatConcept)
-    (hcA : cA 1 = .PLAYER) (hsA : sA 1 = .GOTHIC) :
-    (batModel α hα).jointFactorObs batSentenceRoles batSentenceObs sA cA = 0 := by
-  unfold GraphicalModel.jointFactorObs
-  split_ifs with hCons
-  · exact GraphicalModel.jointFactor_eq_zero_of_perScenario_zero
-      _ _ _ _ (i := 1) (by rw [hsA, hcA]; exact perScenario_GOTHIC_PLAYER α hα)
-  · rfl
-
-/-- Blocker (e): cA 2 = BAT_STICK ∧ sA 2 = GOTHIC → perScenario zero. -/
-private lemma blocker_e (α : ℝ) (hα : 0 < α)
-    (sA : Fin 3 → BatScenario) (cA : Fin 3 → BatConcept)
-    (hcA : cA 2 = .BAT_STICK) (hsA : sA 2 = .GOTHIC) :
-    (batModel α hα).jointFactorObs batSentenceRoles batSentenceObs sA cA = 0 := by
-  unfold GraphicalModel.jointFactorObs
-  split_ifs with hCons
-  · exact GraphicalModel.jointFactor_eq_zero_of_perScenario_zero
-      _ _ _ _ (i := 2) (by rw [hsA, hcA]; exact perScenario_GOTHIC_BAT_STICK α hα)
-  · rfl
-
-/-- Blocker (f): cA 2 = BAT_ANIMAL ∧ sA 2 = BASEBALL → perScenario zero. -/
-private lemma blocker_f (α : ℝ) (hα : 0 < α)
-    (sA : Fin 3 → BatScenario) (cA : Fin 3 → BatConcept)
-    (hcA : cA 2 = .BAT_ANIMAL) (hsA : sA 2 = .BASEBALL) :
-    (batModel α hα).jointFactorObs batSentenceRoles batSentenceObs sA cA = 0 := by
-  unfold GraphicalModel.jointFactorObs
-  split_ifs with hCons
-  · exact GraphicalModel.jointFactor_eq_zero_of_perScenario_zero
-      _ _ _ _ (i := 2) (by rw [hsA, hcA]; exact perScenario_BASEBALL_BAT_ANIMAL α hα)
-  · rfl
-
-/-- BatScenario binarity: any scenario is BASEBALL or GOTHIC. -/
-private lemma batScenario_eq_BB_or_GO (s : BatScenario) :
-    s = .BASEBALL ∨ s = .GOTHIC := by cases s <;> simp
-
-/-- The h_supp discharge: any configuration not in `batSentenceSupport`
-gives `jointFactorObs = 0`, by case analysis through the 6 blockers. -/
-private lemma batSentence_h_supp (α : ℝ) (hα : 0 < α) :
-    ∀ p, p ∉ batSentenceSupport →
-      (batModel α hα).jointFactorObs batSentenceRoles batSentenceObs p.1 p.2 = 0 := by
-  rintro ⟨sA, cA⟩ hp
-  -- (a) cA 0 must be HOLD, else blocker_a
-  by_cases h0 : cA 0 = .HOLD
-  swap; · exact blocker_a α hα sA cA h0
-  -- (b) cA 1 must be PLAYER, else blocker_b
-  by_cases h1 : cA 1 = .PLAYER
-  swap; · exact blocker_b α hα sA cA h1
-  -- (c) cA 2 must be BAT_ANIMAL or BAT_STICK, else blocker_c
-  by_cases h2a : cA 2 = .BAT_ANIMAL
-  · -- Subcase: cA 2 = BAT_ANIMAL
-    -- (f) sA 2 must be GOTHIC (else perScenario(BB, BAT_ANIMAL) = 0 → blocker_f)
-    by_cases hsA2 : sA 2 = .GOTHIC
-    swap
-    · rcases batScenario_eq_BB_or_GO (sA 2) with h | h
-      · exact blocker_f α hα sA cA h2a h
-      · exact absurd h hsA2
-    -- (d) sA 1 must be BASEBALL (else perScenario(GO, PLAYER) = 0 → blocker_d)
-    by_cases hsA1 : sA 1 = .BASEBALL
-    swap
-    · rcases batScenario_eq_BB_or_GO (sA 1) with h | h
-      · exact absurd h hsA1
-      · exact blocker_d α hα sA cA h1 h
-    -- All forced: cA = ![HOLD, PLAYER, ANIMAL]; sA = ![?, BB, GO] for ? ∈ {BB, GO}
-    -- Both ?-values yield p ∈ batSentenceSupport, contradicting hp.
-    exfalso; apply hp
-    have h_cA : cA = ![.HOLD, .PLAYER, .BAT_ANIMAL] := by
-      funext i; fin_cases i <;> simp [h0, h1, h2a]
-    rcases batScenario_eq_BB_or_GO (sA 0) with hsA0 | hsA0
-    · have h_sA : sA = ![.BASEBALL, .BASEBALL, .GOTHIC] := by
-        funext i; fin_cases i <;> simp [hsA0, hsA1, hsA2]
-      rw [h_sA, h_cA]; decide
-    · have h_sA : sA = ![.GOTHIC, .BASEBALL, .GOTHIC] := by
-        funext i; fin_cases i <;> simp [hsA0, hsA1, hsA2]
-      rw [h_sA, h_cA]; decide
-  · by_cases h2s : cA 2 = .BAT_STICK
-    · -- Subcase: cA 2 = BAT_STICK
-      -- (e) sA 2 must be BASEBALL
-      by_cases hsA2 : sA 2 = .BASEBALL
-      swap
-      · rcases batScenario_eq_BB_or_GO (sA 2) with h | h
-        · exact absurd h hsA2
-        · exact blocker_e α hα sA cA h2s h
-      -- (d) sA 1 must be BASEBALL
-      by_cases hsA1 : sA 1 = .BASEBALL
-      swap
-      · rcases batScenario_eq_BB_or_GO (sA 1) with h | h
-        · exact absurd h hsA1
-        · exact blocker_d α hα sA cA h1 h
-      exfalso; apply hp
-      have h_cA : cA = ![.HOLD, .PLAYER, .BAT_STICK] := by
-        funext i; fin_cases i <;> simp [h0, h1, h2s]
-      rcases batScenario_eq_BB_or_GO (sA 0) with hsA0 | hsA0
-      · have h_sA : sA = ![.BASEBALL, .BASEBALL, .BASEBALL] := by
-          funext i; fin_cases i <;> simp [hsA0, hsA1, hsA2]
-        rw [h_sA, h_cA]; decide
-      · have h_sA : sA = ![.GOTHIC, .BASEBALL, .BASEBALL] := by
-          funext i; fin_cases i <;> simp [hsA0, hsA1, hsA2]
-        rw [h_sA, h_cA]; decide
-    · -- (c) cA 2 ∉ {ANIMAL, STICK}
-      exact blocker_c α hα sA cA h2a h2s
-
-/-!
-## α-monotonicity (paper §5.1, p. 571)
-
-Paper text: "this preference grows more pronounced when the
-concentration parameter α of the Dirichlet distribution is lower, that
-is, when we implement a stronger preference towards sparse scenario
-distributions."
-
-The qualitative theorem we want: as α decreases from 1/2 to 1/10,
-P(BAT-STICK | obs) increases from 3/4 to 11/12.
-
-Since 11/12 > 3/4, this is true for our two specific α values. The
-general monotonicity statement (∀ α₁ ≤ α₂, …) requires the Polya-urn
-predictive monotonicity in α, which is a known property
-(`PolyaUrn.predictive_mono` in `Core/Probability/PolyaUrn.lean` proves
-monotonicity in counts; the α-direction would be a separate theorem).
--/
-
-theorem batStick_increases_as_alpha_decreases :
-    (3 : ℝ≥0∞)/4 ≤ 11/12 := by
-  -- Cross-multiply via ENNReal mul_inv: 3/4 ≤ 11/12 ↔ 3·12 ≤ 11·4 ↔ 36 ≤ 44.
-  rw [show (3 : ℝ≥0∞) / 4 = 9 / 12 by
-        rw [show (9 : ℝ≥0∞) / 12 = 3 / 4 by
-              rw [show (12 : ℝ≥0∞) = 4 * 3 from by norm_num,
-                  show (9 : ℝ≥0∞) = 3 * 3 from by norm_num,
-                  ENNReal.mul_div_mul_right _ _ (by norm_num) (by norm_num)]]]
-  exact ENNReal.div_le_div_right (by norm_num) _
-
--- ════════════════════════════════════════════════════
--- §7. Astronomer-married-star example (paper §5.2, Figure 6, Table 2)
--- ════════════════════════════════════════════════════
-
-/-!
-## Paper §5.2: "an astronomer married a star"
-
-Paper p. 571: "We use two scenarios. The scenario STARGAZING gives equal
-probabilities to the concepts ASTRONOMER, STAR(SUN), and MARRY, and zero
-otherwise, while the scenario STAGE gives equal probabilities to the
-concepts STAR(PERSON) and MARRY, and zero otherwise (For simplicity, we
-have added MARRY to both scenarios instead of adding a third scenario.)
-The concept MARRY has mandatory Agent and Theme roles, both with a strong
-preference for human role fillers: We set P(c | MARRY-THEME) = 0.475 for
-a concept c = ASTRONOMER or c = STAR-PERSON and P(c | MARRY-THEME) = 0.05
-for c = STAR-SUN."
-
-Note the selectional is *non-uniform* here (unlike the bat-in-player
-HOLD-THEME): 0.475/0.475/0.05/0 over (ASTRONOMER, STAR-PERSON, STAR-SUN,
-MARRY). This makes the closed-form derivation slightly more involved.
-
-The signature pun phenomenon: under MARRY-THEME, STAR-PERSON has 9.5×
-higher selectional weight than STAR-SUN. But under STARGAZING scenario,
-STAR-SUN has nonzero P while STAR-PERSON has zero. The "pun" arises
-because conditioning on the observed sentence requires resolving
-WHETHER the scenario is STARGAZING (favoring STAR-SUN) or STAGE
-(favoring STAR-PERSON), and both are plausible given the
-"astronomer" + "marry" + "star" observations.
-
-This conflict — two scenarios each plausibly supporting a different
-concept — is the SDS-native analog of the *distinctiveness* measure of
-[kao-levy-goodman-2016], whose phonetic-pun model scores funniness by the
-symmetrized KL divergence between the word-support distributions of a
-sentence's two meanings. SDS realizes the same "different evidence
-supports different interpretations" intuition structurally, as
-scenario/selectional disagreement, rather than as a post-hoc
-information-theoretic readout over hand-estimated word-relatedness scores.
--/
-
-/-- The 4-concept inventory for the astronomer-married-star sentence
-(paper §5.2 p. 571 lists: ASTRONOMER, STAR-SUN, STAR-PERSON, MARRY). -/
-inductive StarConcept where
+/-- The concept inventory (p. 571). -/
+inductive StarConcept
   | ASTRONOMER | STAR_PERSON | STAR_SUN | MARRY
-  deriving Fintype, DecidableEq, Repr
+  deriving Fintype, DecidableEq
 
-instance : Inhabited StarConcept := ⟨.MARRY⟩
-instance : Nonempty StarConcept := ⟨.MARRY⟩
-
-/-- The 2-scenario inventory of paper §5.2. -/
-inductive MarryScenario where
+/-- The two scenarios (p. 571). -/
+inductive StarScenario
   | STARGAZING | STAGE
-  deriving Fintype, DecidableEq, Repr
+  deriving Fintype, DecidableEq
 
-instance : Inhabited MarryScenario := ⟨.STARGAZING⟩
-instance : Nonempty MarryScenario := ⟨.STARGAZING⟩
+/-- The semantic roles of MARRY (p. 571). -/
+inductive StarRole
+  | marryAgent | marryTheme
+  deriving Fintype, DecidableEq
 
-/-- Roles in the astronomer-married-star sentence. `marry_self` is a
-uniform-PMF placeholder for the verb concept node. -/
-inductive MarryRole where
-  | marry_agent | marry_theme | marry_self
-  deriving Fintype, DecidableEq, Repr
+/-- Condition labels; *star* is shared by its two senses. -/
+inductive StarLabel
+  | astronomer | star | marry
+  deriving Fintype, DecidableEq
 
-/-- STARGAZING scenario distribution: equal 1/3 over {ASTRONOMER,
-STAR_SUN, MARRY}. Paper p. 571. -/
-noncomputable def stargazingDist : PMF StarConcept :=
-  PMF.uniformOfFinset
-    {.ASTRONOMER, .STAR_SUN, .MARRY}
-    (by decide)
+instance : MeasurableSpace StarConcept := ⊤
+instance : DiscreteMeasurableSpace StarConcept := ⟨fun _ => trivial⟩
+instance : MeasurableSpace StarScenario := ⊤
+instance : DiscreteMeasurableSpace StarScenario := ⟨fun _ => trivial⟩
+instance : MeasurableSpace StarRole := ⊤
+instance : DiscreteMeasurableSpace StarRole := ⟨fun _ => trivial⟩
+instance : MeasurableSpace StarLabel := ⊤
+instance : DiscreteMeasurableSpace StarLabel := ⟨fun _ => trivial⟩
+instance : Nonempty StarConcept := ⟨.MARRY⟩
+instance : Nonempty StarScenario := ⟨.STARGAZING⟩
 
-/-- STAGE scenario distribution: equal 1/2 over {STAR_PERSON, MARRY}. -/
-noncomputable def stageDist : PMF StarConcept :=
-  PMF.uniformOfFinset
-    {.STAR_PERSON, .MARRY}
-    (by decide)
+/-- The condition label of each concept. -/
+def starLabel : StarConcept → StarLabel
+  | .ASTRONOMER => .astronomer | .STAR_PERSON => .star | .STAR_SUN => .star | .MARRY => .marry
 
-/-- Per-scenario concept distribution. -/
-noncomputable def starPerScenario : MarryScenario → PMF StarConcept
-  | .STARGAZING => stargazingDist
-  | .STAGE => stageDist
+/-- STARGAZING gives equal probability to ASTRONOMER, STAR-SUN and MARRY; STAGE to STAR-PERSON
+and MARRY (p. 571). -/
+def starScenario : StarScenario → Finset StarConcept
+  | .STARGAZING => {.ASTRONOMER, .STAR_SUN, .MARRY}
+  | .STAGE => {.STAR_PERSON, .MARRY}
 
-/-- The MARRY-THEME selectional preference: paper p. 571 cites
-`P(ASTRONOMER) = P(STAR_PERSON) = 0.475`, `P(STAR_SUN) = 0.05`. We assume
-`P(MARRY) = 0` (paper doesn't mention MARRY as an option for THEME, and
-the three given values sum to exactly 1).
+/-- MARRY-THEME (p. 571): `0.475` on ASTRONOMER and on STAR-PERSON, `0.05` on STAR-SUN, and
+`0` on MARRY. MARRY-AGENT, "with a strong preference for human role fillers" but otherwise
+unspecified, is set the same way. -/
+noncomputable def marryFiller : StarConcept → ℝ≥0∞
+  | .ASTRONOMER => 19 / 40 | .STAR_PERSON => 19 / 40 | .STAR_SUN => 1 / 20 | .MARRY => 0
 
-Sum-to-1: enumerate the 4-element Fintype, push numerals through
-`ENNReal.div_add_div_same`, close via `ENNReal.div_self`. -/
-noncomputable def marryThemeSel : PMF StarConcept :=
-  PMF.ofFintype
-    (fun
-      | .ASTRONOMER => 475/1000
-      | .STAR_PERSON => 475/1000
-      | .STAR_SUN => 50/1000
-      | .MARRY => 0)
-    (by
-      rw [show (Finset.univ : Finset StarConcept) =
-            {.ASTRONOMER, .STAR_PERSON, .STAR_SUN, .MARRY} from by decide]
-      rw [Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-          Finset.sum_insert (by decide), Finset.sum_singleton]
-      rw [show (475 : ℝ≥0∞) / 1000 + (475 / 1000 + (50 / 1000 + 0)) =
-              1000 / 1000 by
-        rw [add_zero, ENNReal.div_add_div_same, ENNReal.div_add_div_same]
-        congr 1
-        norm_num]
-      exact ENNReal.div_self (by norm_num) (by norm_num))
+/-- The selectional constraint of MARRY's roles as a measure. -/
+noncomputable def marryTheme : Measure StarConcept := ∑ c, marryFiller c • Measure.dirac c
 
-/-- The MARRY-AGENT selectional preference. Paper says "both with a
-strong preference for human role fillers" — assumed same shape as
-MARRY-THEME. Doesn't matter for the posterior since c_astronomer is
-observed = ASTRONOMER in all configs (factor cancels in normalization). -/
-noncomputable def marryAgentSel : PMF StarConcept := marryThemeSel
+@[simp] theorem marryTheme_apply_singleton (c : StarConcept) : marryTheme {c} = marryFiller c :=
+  Measure.sum_smul_dirac_apply_singleton _ c
 
-/-- Verb-self placeholder for the marry concept-node (no role attached
-in paper Figure 6). Doesn't matter for the posterior since c_marry is
-observed = MARRY in all configs. -/
-noncomputable def marrySelfSel : PMF StarConcept :=
-  PMF.uniformOfFintype StarConcept
+/-- The astronomer-sentence system with Dirichlet concentration `α`. -/
+noncomputable def starSDS (α : ℝ) (hα : 0 < α) : SDS StarScenario StarConcept StarRole where
+  urn := PolyaUrn.symmetric α hα
+  scenario s := uniformOn ↑(starScenario s)
+  selectional _ := marryTheme
 
-/-- Per-role selectional preferences. -/
-noncomputable def starSelectional : MarryRole → PMF StarConcept
-  | .marry_agent => marryAgentSel
-  | .marry_theme => marryThemeSel
-  | .marry_self => marrySelfSel
+instance (α : ℝ) (hα : 0 < α) (s : StarScenario) :
+    IsProbabilityMeasure ((starSDS α hα).scenario s) :=
+  isProbabilityMeasure_uniformOn (Finset.finite_toSet _)
+    (Finset.coe_nonempty.mpr (by cases s <;> decide))
 
-/-- The astronomer-married-star graphical model. -/
-noncomputable def astronomerModel (α : ℝ) (hα : 0 < α) :
-    GraphicalModel MarryScenario StarConcept MarryRole where
-  perScenario := starPerScenario
-  selectional := starSelectional
-  alpha := α
-  alphaPos := hα
+@[simp] theorem starSDS_urn (α : ℝ) (hα : 0 < α) :
+    (starSDS α hα).urn = PolyaUrn.symmetric α hα := rfl
 
-/-- The 3-node sentence "an astronomer married a star". Paper Figure 6:
-left node is ASTRONOMER concept, middle is MARRY (verb), right is STAR
-concept. Roles per paper: ASTRONOMER node gets MARRY-AGENT, STAR node
-gets MARRY-THEME, MARRY node has no role attached. -/
-def starSentenceRoles : Fin 3 → MarryRole
-  | 0 => .marry_agent  -- astronomer position
-  | 1 => .marry_self   -- marry verb position
-  | 2 => .marry_theme  -- star position
+@[simp] theorem starSDS_scenario (α : ℝ) (hα : 0 < α) (s : StarScenario) :
+    (starSDS α hα).scenario s = uniformOn ↑(starScenario s) := rfl
 
-/-- Observations: astronomer admits {ASTRONOMER}, marry admits {MARRY},
-star admits {STAR_PERSON, STAR_SUN}. -/
-def starSentenceObs : GraphicalModel.Observations StarConcept 3
-  | 0 => {.ASTRONOMER}
-  | 1 => {.MARRY}
-  | 2 => {.STAR_PERSON, .STAR_SUN}
+/-- Node roles (Figure 6): *astronomer* fills MARRY-AGENT, the verb node has no role, *star*
+fills MARRY-THEME. -/
+def starRoles : Fin 3 → Option StarRole := ![some .marryAgent, none, some .marryTheme]
 
-/-!
-## Closed-form derivation for the astronomer-married-star posterior
+/-- The observed labels `astronomer(_)`, `marry(_)`, `star(_)`. -/
+def starLabels : Fin 3 → StarLabel := ![.astronomer, .marry, .star]
 
-The astronomer observation forces s_astronomer = STARGAZING (since
-perScenario(STAGE, ASTRONOMER) = 0). The marry observation does not
-constrain s_marry (both scenarios admit MARRY). The star observation
-constrains the (s_star, c_star) pair:
-- s_star = STARGAZING ⇒ c_star = STAR-SUN (only c with nonzero P)
-- s_star = STAGE ⇒ c_star = STAR-PERSON
+/-- A role filler's row is the weight kernel of scenario mass times MARRY's constraint. -/
+theorem starSDS_poe (α : ℝ) (hα : 0 < α) :
+    (starSDS α hα).poe =
+      Kernel.ofWeights fun p c => uniformOn ↑(starScenario p.1) {c} * marryFiller c := by
+  show Kernel.ofWeights _ = _
+  congr 1
+  funext p c
+  exact congrArg _ (marryTheme_apply_singleton c)
 
-Nonzero (s_astron, s_marry, s_star, c_star) configurations:
-1. (ST, ST, ST, STAR-SUN) — counts (3, 0)
-2. (ST, ST, SG, STAR-PERSON) — counts (2, 1)
-3. (ST, SG, ST, STAR-SUN) — counts (2, 1)
-4. (ST, SG, SG, STAR-PERSON) — counts (1, 2)
+private theorem uniformOn_mul_marryFiller_ne_top (s : StarScenario) (c : StarConcept) :
+    uniformOn (↑(starScenario s) : Set StarConcept) {c} * marryFiller c ≠ ∞ := by
+  refine ENNReal.mul_ne_top ?_ (by cases c <;> simp only [marryFiller] <;> finiteness)
+  rw [uniformOn_finset_apply_singleton]
+  split_ifs with h
+  · exact ENNReal.inv_ne_top.mpr (Nat.cast_ne_zero.mpr (Finset.card_pos.mpr ⟨c, h⟩).ne')
+  · exact ENNReal.zero_ne_top
 
-Each configuration's factor (after dividing out constant terms across
-all 4 configs):
+/-- A role filler's real mass on a decidable event, as a ratio of weight sums. -/
+private theorem starSDS_poe_real (α : ℝ) (hα : 0 < α) (s : StarScenario) (r : StarRole)
+    (p : StarConcept → Prop) [DecidablePred p] :
+    ((starSDS α hα).poe (s, r)).real {c | p c} =
+      (∑ c with p c, (uniformOn ↑(starScenario s) {c} * marryFiller c).toReal) /
+        ∑ c, (uniformOn ↑(starScenario s) {c} * marryFiller c).toReal := by
+  rw [starSDS_poe]
+  exact Kernel.ofWeights_real_setOf _ (s, r) (uniformOn_mul_marryFiller_ne_top s) p
 
-  factor = seqProb_α(counts) · perScenario(s_marry, MARRY) · perScenario(s_star, c_star) · sel(MARRY-THM, c_star)
+private theorem sum_starScenario {M : Type*} [AddCommMonoid M] (f : StarScenario → M) :
+    ∑ s, f s = f .STARGAZING + f .STAGE := by
+  rw [show (Finset.univ : Finset StarScenario) = {.STARGAZING, .STAGE} by decide,
+    Finset.sum_pair (by decide)]
 
-Variable per-config values:
-- perScenario(ST, MARRY) = 1/3, perScenario(SG, MARRY) = 1/2
-- perScenario(ST, STAR-SUN) = 1/3, perScenario(SG, STAR-PERSON) = 1/2
-- sel(MARRY-THM, STAR-SUN) = 1/20 = 0.05
-- sel(MARRY-THM, STAR-PERSON) = 19/40 = 0.475
+private theorem sum_starConcept {M : Type*} [AddCommMonoid M] (f : StarConcept → M) :
+    ∑ c, f c = f .ASTRONOMER + (f .STAR_PERSON + (f .STAR_SUN + f .MARRY)) := by
+  rw [show (Finset.univ : Finset StarConcept) = {.ASTRONOMER, .STAR_PERSON, .STAR_SUN, .MARRY}
+    by decide, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_singleton]
 
-For α = 1/2:
-- seqProb(3,0) = 5/16, seqProb(2,1) = seqProb(1,2) = 1/16
+private theorem preimage_singleton_eq {C L : Type*} (f : C → L) (y : L) :
+    f ⁻¹' {y} = {c | f c = y} := rfl
 
-Configs (raw factors before LCM):
-1. STAR-SUN:    5/16 · 1/3 · 1/3 · 1/20 = 5/2880
-2. STAR-PERSON: 1/16 · 1/3 · 1/2 · 19/40 = 19/3840
-3. STAR-SUN:    1/16 · 1/2 · 1/3 · 1/20 = 1/1920
-4. STAR-PERSON: 1/16 · 1/2 · 1/2 · 19/40 = 19/2560
+/-- The fibre counts the astronomer sentence's masses reduce to, settled by `decide`. -/
+private theorem star_cards :
+    ((starScenario .STARGAZING).filter (starLabel · = .marry)).card = 1 ∧
+    ((starScenario .STAGE).filter (starLabel · = .marry)).card = 1 ∧
+    (starScenario .STARGAZING).card = 3 ∧ (starScenario .STAGE).card = 2 := by decide
 
-Common denom 23040 = 2⁹ · 3² · 5:
-- Config 1: 40/23040, Config 2: 114/23040, Config 3: 12/23040, Config 4: 171/23040
-- STAR-SUN total: 52, STAR-PERSON total: 285, Z = 337
-- P(STAR-PERSON | obs, α=1/2) = 285/337 ≈ 0.846
-- P(STAR-SUN | obs, α=1/2) = 52/337 ≈ 0.154
+/-- The observation likelihood of *an astronomer married a star*. -/
+private theorem star_den (α : ℝ) (hα : 0 < α) :
+    (∑ s, (starSDS α hα).urn.seqLaw 3 {s} *
+      ∏ i, (starSDS α hα).emission (s i) (starRoles i) (starLabel ⁻¹' {starLabels i})).toReal =
+      19 * (115 * α + 8) / (10584 * (2 * α + 1)) := by
+  rw [SDS.sum_toReal, sum_fin_three]
+  simp +decide only [sum_starScenario, Fin.prod_univ_three, starRoles, starLabels,
+    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
+    Matrix.tail_cons, SDS.emission, starSDS_scenario, starSDS_urn, seqProb_countVec_vecCons,
+    preimage_singleton_eq, starSDS_poe_real, uniformOn_real_setOf, star_cards]
+  simp +decide only [countVec_vecCons, PolyaUrn.countVec_zero, PolyaUrn.seqProb_zero,
+    PolyaUrn.predictive, PolyaUrn.symmetric, PolyaUrn.total, Function.update_apply,
+    sum_starScenario, Finset.sum_filter, sum_starConcept, uniformOn_finset_apply_singleton,
+    marryFiller, star_cards, ENNReal.toReal_mul, ENNReal.toReal_inv, ENNReal.toReal_natCast,
+    ENNReal.toReal_div, ENNReal.toReal_ofNat, ENNReal.toReal_one, ENNReal.toReal_zero,
+    ↓reduceIte]
+  push_cast
+  field_simp
+  ring
 
-For α = 1/10:
-- seqProb(3,0) = 7/16, seqProb(2,1) = seqProb(1,2) = 1/48
+/-- The joint mass of the observed labels with STAR-PERSON at the *star* node. -/
+private theorem star_num (α : ℝ) (hα : 0 < α) :
+    (∑ s, (starSDS α hα).urn.seqLaw 3 {s} * ∏ i, (starSDS α hα).emission (s i) (starRoles i)
+      {c' | starLabel c' = starLabels i ∧ (i = 2 → c' = .STAR_PERSON)}).toReal =
+      95 * α / (504 * (2 * α + 1)) := by
+  rw [SDS.sum_toReal, sum_fin_three]
+  simp +decide only [sum_starScenario, Fin.prod_univ_three, starRoles, starLabels,
+    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
+    Matrix.tail_cons, SDS.emission, starSDS_scenario, starSDS_urn, seqProb_countVec_vecCons,
+    false_implies, true_implies, and_true, starSDS_poe_real, uniformOn_real_setOf,
+    star_cards]
+  simp +decide only [countVec_vecCons, PolyaUrn.countVec_zero, PolyaUrn.seqProb_zero,
+    PolyaUrn.predictive, PolyaUrn.symmetric, PolyaUrn.total, Function.update_apply,
+    sum_starScenario, Finset.sum_filter, sum_starConcept, uniformOn_finset_apply_singleton,
+    marryFiller, star_cards, ENNReal.toReal_mul, ENNReal.toReal_inv, ENNReal.toReal_natCast,
+    ENNReal.toReal_div, ENNReal.toReal_ofNat, ENNReal.toReal_one, ENNReal.toReal_zero,
+    ↓reduceIte]
+  push_cast
+  field_simp
+  ring
 
-Configs (raw factors):
-1. STAR-SUN:    7/16 · 1/3 · 1/3 · 1/20 = 7/2880
-2. STAR-PERSON: 1/48 · 1/3 · 1/2 · 19/40 = 19/11520
-3. STAR-SUN:    1/48 · 1/2 · 1/3 · 1/20 = 1/5760
-4. STAR-PERSON: 1/48 · 1/2 · 1/2 · 19/40 = 19/7680
+/-- The joint mass of the observed labels with STAR-SUN at the *star* node. -/
+private theorem star_num_sun (α : ℝ) (hα : 0 < α) :
+    (∑ s, (starSDS α hα).urn.seqLaw 3 {s} * ∏ i, (starSDS α hα).emission (s i) (starRoles i)
+      {c' | starLabel c' = starLabels i ∧ (i = 2 → c' = .STAR_SUN)}).toReal =
+      38 * (5 * α + 4) / (10584 * (2 * α + 1)) := by
+  rw [SDS.sum_toReal, sum_fin_three]
+  simp +decide only [sum_starScenario, Fin.prod_univ_three, starRoles, starLabels,
+    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
+    Matrix.tail_cons, SDS.emission, starSDS_scenario, starSDS_urn, seqProb_countVec_vecCons,
+    false_implies, true_implies, and_true, starSDS_poe_real, uniformOn_real_setOf,
+    star_cards]
+  simp +decide only [countVec_vecCons, PolyaUrn.countVec_zero, PolyaUrn.seqProb_zero,
+    PolyaUrn.predictive, PolyaUrn.symmetric, PolyaUrn.total, Function.update_apply,
+    sum_starScenario, Finset.sum_filter, sum_starConcept, uniformOn_finset_apply_singleton,
+    marryFiller, star_cards, ENNReal.toReal_mul, ENNReal.toReal_inv, ENNReal.toReal_natCast,
+    ENNReal.toReal_div, ENNReal.toReal_ofNat, ENNReal.toReal_one, ENNReal.toReal_zero,
+    ↓reduceIte]
+  push_cast
+  field_simp
+  ring
 
-Common denom 23040:
-- Config 1: 56/23040, Config 2: 38/23040, Config 3: 4/23040, Config 4: 57/23040
-- STAR-SUN total: 60, STAR-PERSON total: 95, Z = 155
-- P(STAR-PERSON | obs, α=1/10) = 95/155 = 19/31 ≈ 0.613
-- P(STAR-SUN | obs, α=1/10) = 60/155 = 12/31 ≈ 0.387
+private theorem star_den_ne_zero (α : ℝ) (hα : 0 < α) :
+    ∑ s, (starSDS α hα).urn.seqLaw 3 {s} *
+      ∏ i, (starSDS α hα).emission (s i) (starRoles i) (starLabel ⁻¹' {starLabels i}) ≠ 0 := by
+  intro h
+  have := star_den α hα
+  rw [h, ENNReal.toReal_zero] at this
+  have : (0 : ℝ) < 19 * (115 * α + 8) / (10584 * (2 * α + 1)) := by positivity
+  linarith
 
-| α    | Our framework P(STAR-PERSON) | Paper Table 2 |
-|------|-------------------------------|---------------|
-| 1/2  | 285/337 ≈ 0.846               | 0.82          |
-| 1/10 | 19/31 ≈ 0.613                 | 0.57          |
+/-- Table 2 in closed form: the posterior probability of the *person* sense of *star* in
+*an astronomer married a star* is `105α / (115α + 8)`. -/
+theorem starPerson_real (α : ℝ) (hα : 0 < α) :
+    ((starSDS α hα).nodePosterior starLabel starRoles starLabels 2).real {.STAR_PERSON} =
+      105 * α / (115 * α + 8) := by
+  rw [measureReal_def, SDS.nodePosterior_apply _ _ _ _ _ _ (star_den_ne_zero α hα),
+    ENNReal.toReal_div, star_num, star_den]
+  field_simp
+  ring
 
-Discrepancy at α=1/2 is ≈ 2.5pp; at α=1/10 is ≈ 4pp. Both are within
-plausible Monte Carlo noise for paper's 2000-sample WebPPL simulation
-(SE ≈ 0.009-0.01 on these probabilities). The astronomer example tracks
-the paper's Table 2 numbers more closely than the bat-in-player tracks
-Table 1, possibly because the non-uniform selectional captures more
-structure.
+/-- The posterior probability of the *sun* sense of *star* is `(10α + 8) / (115α + 8)`. -/
+theorem starSun_real (α : ℝ) (hα : 0 < α) :
+    ((starSDS α hα).nodePosterior starLabel starRoles starLabels 2).real {.STAR_SUN} =
+      (10 * α + 8) / (115 * α + 8) := by
+  rw [measureReal_def, SDS.nodePosterior_apply _ _ _ _ _ _ (star_den_ne_zero α hα),
+    ENNReal.toReal_div, star_num_sun, star_den]
+  field_simp
+  ring
 
-The qualitative pun phenomenon — STAR-SUN remains a meaningful
-proportion of the posterior even though MARRY-THEME strongly prefers
-human fillers — is reproduced: at α=1/2, STAR-SUN gets 0.154; at
-α=1/10, 0.387. Lower α (more peaked scenario mixtures) increases the
-STAR-SUN reading, exactly as paper §5.2 p. 572 advertises ("the more
-emphasis there is on a coherent scenario (the lower the value of α),
-the more probability mass is given to the situation where an
-astronomer marries a giant ball of plasma").
--/
+/-- Table 2, `α = 0.5`: `P(person) = 105/131 ≈ 0.80` (paper's simulation: `0.82`). -/
+theorem starPerson_half :
+    ((starSDS (1 / 2) (by norm_num)).nodePosterior starLabel starRoles starLabels 2).real
+      {.STAR_PERSON} = 105 / 131 := by
+  rw [starPerson_real]; norm_num
 
-/-- The signature qualitative result of paper §5.2: lower α → more
-probability mass on the STAR-SUN reading (i.e., the giant-ball-of-plasma
-interpretation gets stronger as the scenario distribution gets sparser).
+/-- Table 2, `α = 0.1`: `P(person) = 7/13 ≈ 0.54` (paper's simulation: `0.57`). -/
+theorem starPerson_tenth :
+    ((starSDS (1 / 10) (by norm_num)).nodePosterior starLabel starRoles starLabels 2).real
+      {.STAR_PERSON} = 7 / 13 := by
+  rw [starPerson_real]; norm_num
 
-Numerically: at α=1/2, P(STAR-SUN) = 52/337 ≈ 0.154; at α=1/10,
-P(STAR-SUN) = 12/31 ≈ 0.387. Since 12/31 > 52/337, lowering α from 1/2
-to 1/10 increases the STAR-SUN posterior. -/
-theorem starSun_increases_as_alpha_decreases :
-    (52 : ℝ≥0∞)/337 ≤ 12/31 := by
-  -- Common denominator 10447 = 337 · 31.
-  -- 52/337 = 1612/10447, 12/31 = 4044/10447, 1612 ≤ 4044.
-  rw [show (52 : ℝ≥0∞) / 337 = 1612 / 10447 by
-        rw [show (10447 : ℝ≥0∞) = 337 * 31 from by norm_num,
-            show (1612 : ℝ≥0∞) = 52 * 31 from by norm_num,
-            ENNReal.mul_div_mul_right _ _ (by norm_num) (by norm_num)],
-      show (12 : ℝ≥0∞) / 31 = 4044 / 10447 by
-        rw [show (10447 : ℝ≥0∞) = 31 * 337 from by norm_num,
-            show (4044 : ℝ≥0∞) = 12 * 337 from by norm_num,
-            ENNReal.mul_div_mul_right _ _ (by norm_num) (by norm_num)]]
-  exact ENNReal.div_le_div_right (by norm_num) _
+/-- "The more emphasis there is on a coherent scenario (the lower the value of α), the more
+probability mass is given to the situation where an astronomer marries a giant ball of plasma"
+(p. 572): the *sun* posterior is strictly decreasing in `α`. -/
+theorem starSun_strictAnti {α β : ℝ} (hα : 0 < α) (hαβ : α < β) :
+    ((starSDS β (hα.trans hαβ)).nodePosterior starLabel starRoles starLabels 2).real
+        {.STAR_SUN} <
+      ((starSDS α hα).nodePosterior starLabel starRoles starLabels 2).real {.STAR_SUN} := by
+  have hβ : 0 < β := hα.trans hαβ
+  rw [starSun_real, starSun_real, div_lt_div_iff₀ (by positivity) (by positivity)]
+  nlinarith
 
-/-! ### Figure 6: selectional and scenario constraints conflict
+/-! ### Figure 6: the two constraints on *star* conflict -/
 
-Paper §5.2 / Figure 6 (p. 571): *"Either the concept for star conflicts
-with the selectional constraint ... or it conflicts with the preference
-for a coherent scenario."* The pun in *an astronomer married a star*
-arises because the two constraints on the `star` concept node disagree.
-The selectional constraint MARRY-THEME prefers the *person* sense
-(STAR-PERSON, 0.475) over the *celestial* sense (STAR-SUN, 0.05); but a
-coherent STARGAZING scenario prefers STAR-SUN (1/3) over STAR-PERSON (0 —
-STAR-PERSON is not in STARGAZING's support). Over the two
-observation-admissible `star` concepts the selectional argmax and the
-scenario argmax differ, and neither factor's preferred sense dominates the
-joint posterior (`starSun_increases_as_alpha_decreases`) — hence the pun.
+/-- Selectional side: MARRY-THEME prefers the *person* sense of *star* to the *sun* sense
+(p. 571: `0.475` against `0.05`). -/
+theorem marryTheme_prefers_person (α : ℝ) (hα : 0 < α) :
+    ((starSDS α hα).selectional .marryTheme).real {.STAR_SUN} <
+      ((starSDS α hα).selectional .marryTheme).real {.STAR_PERSON} := by
+  show marryTheme.real {.STAR_SUN} < marryTheme.real {.STAR_PERSON}
+  simp only [measureReal_def, marryTheme_apply_singleton, marryFiller, ENNReal.toReal_div,
+    ENNReal.toReal_ofNat, ENNReal.toReal_one]
+  norm_num
 
-This is the formal content of Figure 6. It re-expresses the
-conflict-detection idea of the retired `SDSConstraintSystem.hasConflict`
-on the paper-faithful PMF model, rather than on the deleted two-function
-caricature. -/
+/-- Scenario side: a coherent STARGAZING scenario prefers the *sun* sense, which STAR-PERSON is
+excluded from (p. 571). -/
+theorem stargazing_prefers_sun (α : ℝ) (hα : 0 < α) :
+    ((starSDS α hα).scenario .STARGAZING).real {.STAR_PERSON} <
+      ((starSDS α hα).scenario .STARGAZING).real {.STAR_SUN} := by
+  simp +decide only [starSDS_scenario, measureReal_def, uniformOn_finset_apply_singleton,
+    ↓reduceIte, ENNReal.toReal_inv, ENNReal.toReal_natCast, ENNReal.toReal_zero,
+    star_cards]
+  norm_num
 
-/-- Selectional side of the Figure 6 conflict: MARRY-THEME prefers the
-*person* sense of `star` to the *celestial* sense (paper p. 571: 0.475 vs
-0.05). -/
-theorem marryTheme_prefers_person :
-    marryThemeSel .STAR_SUN < marryThemeSel .STAR_PERSON := by
-  have h1 : marryThemeSel .STAR_SUN = 50 / 1000 := by simp [marryThemeSel]
-  have h2 : marryThemeSel .STAR_PERSON = 475 / 1000 := by simp [marryThemeSel]
-  rw [h1, h2]
-  gcongr <;> norm_num
-
-/-- Scenario side of the Figure 6 conflict: a coherent STARGAZING scenario
-prefers the *celestial* sense of `star` to the *person* sense (paper p. 571:
-STAR-SUN is in STARGAZING's support, STAR-PERSON is not). -/
-theorem stargazing_prefers_sun :
-    stargazingDist .STAR_PERSON < stargazingDist .STAR_SUN := by
-  have h0 : stargazingDist .STAR_PERSON = 0 := by
-    unfold stargazingDist; rw [PMF.uniformOfFinset_apply]; simp
-  have hpos : 0 < stargazingDist .STAR_SUN := by
-    unfold stargazingDist; rw [PMF.uniformOfFinset_apply]; simp
-  rw [h0]; exact hpos
-
-/-- **Figure 6 conflict (the pun).** On the `star` concept node the
-selectional and scenario constraints pull in opposite directions:
-selectional prefers STAR-PERSON while the coherent STARGAZING scenario
-prefers STAR-SUN. This opposition — neither factor's preferred sense
-dominating — is the source of the pun in *an astronomer married a star*
-(paper §5.2, Figure 6). -/
-theorem star_node_constraints_conflict :
-    marryThemeSel .STAR_SUN < marryThemeSel .STAR_PERSON ∧
-      stargazingDist .STAR_PERSON < stargazingDist .STAR_SUN :=
-  ⟨marryTheme_prefers_person, stargazing_prefers_sun⟩
+/-- Figure 6: "either the concept for *star* conflicts with the selectional constraint, or it
+conflicts with the preference for a coherent scenario": on the *star* node the selectional
+constraint prefers STAR-PERSON while the STARGAZING scenario prefers STAR-SUN. -/
+theorem star_constraints_conflict (α : ℝ) (hα : 0 < α) :
+    ((starSDS α hα).selectional .marryTheme).real {.STAR_SUN} <
+        ((starSDS α hα).selectional .marryTheme).real {.STAR_PERSON} ∧
+      ((starSDS α hα).scenario .STARGAZING).real {.STAR_PERSON} <
+        ((starSDS α hα).scenario .STARGAZING).real {.STAR_SUN} :=
+  ⟨marryTheme_prefers_person α hα, stargazing_prefers_sun α hα⟩
 
 end ErkHerbelot2024

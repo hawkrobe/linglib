@@ -1812,10 +1812,6 @@ import Linglib.Semantics.Probabilistic.Composition
 import Linglib.Semantics.Probabilistic.ConditionalAssertability
 import Linglib.Semantics.Probabilistic.ParamPred
 import Linglib.Semantics.Probabilistic.PrototypeTheory
-import Linglib.Semantics.Probabilistic.SDS.ConceptNode
-import Linglib.Semantics.Probabilistic.SDS.GraphicalModel
-import Linglib.Semantics.Probabilistic.SDS.JointPosterior
-import Linglib.Semantics.Probabilistic.SDS.ScenarioMix
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Binominal
 import Linglib.Semantics.Quantification.BinominalDefs

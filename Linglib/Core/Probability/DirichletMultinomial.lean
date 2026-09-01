@@ -1,4 +1,5 @@
 import Linglib.Core.Probability.PolyaUrn
+import Linglib.Core.Probability.Kernel.OfWeights
 import Mathlib.Data.Nat.Factorial.BigOperators
 import Mathlib.Probability.ProbabilityMassFunction.Basic
 import Mathlib.Topology.Algebra.InfiniteSum.Defs
@@ -89,11 +90,16 @@ and `ProbabilityMassFunction.Monad` for `.map`).
   `PMF (α → ℕ)`, supported on count vectors summing to `N`.
   `pmfReal_hasSum_one` discharges the HasSum chain via the multinomial
   counting identity + count-vector surjectivity (both proved in this file).
+- `PolyaUrn.seqLaw` — the exchangeable law of `N` draws on labelled sequences, as a
+  probability `Measure (Fin N → α)`; the count distribution is its pushforward along
+  `PolyaUrn.countVec`.
 -/
 
 namespace ProbabilityTheory
 
 namespace DirichletMultinomial
+
+open PolyaUrn (countVec)
 
 variable {α : Type*} [Fintype α] (u : PolyaUrn α)
 
@@ -112,10 +118,6 @@ theorem pmfReal_nonneg [Nonempty α] (x : α → ℕ) :
   unfold pmfReal
   refine mul_nonneg (div_nonneg (Nat.cast_nonneg _) ?_) (u.seqProb_pos x).le
   exact_mod_cast (Finset.univ.prod (fun i => (x i).factorial)).zero_le
-
-/-- Helper: the count vector function from sequences `Fin N → α`. -/
-private def countVec [DecidableEq α] {N : ℕ} (seq : Fin N → α) : α → ℕ :=
-  fun c => (Finset.univ.filter (seq · = c)).card
 
 /-- The set of count vectors realized by sequences `Fin N → α`. -/
 private noncomputable def countVectors [DecidableEq α] (N : ℕ) : Finset (α → ℕ) :=
@@ -682,5 +684,31 @@ theorem pmf_apply_of_sum_ne [DecidableEq α] [Nonempty α]
   exact if_neg hx
 
 end DirichletMultinomial
+
+namespace PolyaUrn
+
+open MeasureTheory
+
+variable {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α] [MeasurableSpace α]
+  [MeasurableSingletonClass α] (u : PolyaUrn α)
+
+/-- The exchangeable law of `N` draws from the urn on labelled sequences: mass
+`seqProb (countVec seq)` at each sequence. `DirichletMultinomial.pmf` is its
+count-vector pushforward. -/
+noncomputable def seqLaw (N : ℕ) : Measure (Fin N → α) :=
+  ∑ seq, ENNReal.ofReal (u.seqProb (countVec seq)) • Measure.dirac seq
+
+omit [Nonempty α] in
+@[simp] theorem seqLaw_apply_singleton (N : ℕ) (seq : Fin N → α) :
+    u.seqLaw N {seq} = ENNReal.ofReal (u.seqProb (countVec seq)) :=
+  Measure.sum_smul_dirac_apply_singleton _ seq
+
+instance (N : ℕ) : IsProbabilityMeasure (u.seqLaw N) := ⟨by
+  rw [← Finset.coe_univ, ← sum_measure_singleton]
+  simp only [seqLaw_apply_singleton]
+  rw [← ENNReal.ofReal_sum_of_nonneg fun _ _ => (u.seqProb_pos _).le, u.sum_seqProb_eq_one N,
+    ENNReal.ofReal_one]⟩
+
+end PolyaUrn
 
 end ProbabilityTheory

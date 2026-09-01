@@ -4,8 +4,8 @@ import Mathlib.MeasureTheory.Measure.Real
 /-!
 # The uniform measure on a finite type
 
-Evaluation of `ProbabilityTheory.uniformOn Set.univ` at singletons and finite sets, in
-`ℝ≥0∞` and on reals.
+Evaluation of `ProbabilityTheory.uniformOn` on a finset or on `Set.univ` at singletons and
+finite sets, in `ℝ≥0∞` and on reals.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -14,6 +14,14 @@ open scoped ENNReal
 namespace MeasureTheory
 
 variable {W : Type*} [MeasurableSpace W] [MeasurableSingletonClass W] [Fintype W]
+
+omit [Fintype W] in
+/-- The uniform measure on a finset at a singleton: `1 / #A` on `A` and `0` off it. -/
+theorem uniformOn_finset_apply_singleton [DecidableEq W] (A : Finset W) (w : W) :
+    uniformOn ↑A {w} = if w ∈ A then (A.card : ℝ≥0∞)⁻¹ else 0 := by
+  rw [← Finset.coe_singleton, uniformOn_apply_finset]
+  by_cases h : w ∈ A <;> simp [Finset.inter_singleton_of_mem, Finset.inter_singleton_of_notMem, h,
+    div_eq_mul_inv]
 
 theorem uniformOn_univ_apply_singleton (w : W) :
     uniformOn (Set.univ : Set W) {w} = (Fintype.card W : ℝ≥0∞)⁻¹ := by
