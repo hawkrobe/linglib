@@ -24,20 +24,22 @@ This is the *process* layer of the substrate's three-layer spec (objects `AR`,
 precedence-morphisms `PrecAR`, processes here). The autosegmental case — correspondence
 between multi-tier APGs — extends it over `MultiGraph`.
 
-## Scope note
-
-`SubgraphEmbeds` matches contiguous blocks of *both* tiers plus links, so it expresses
-**correspondence** (input↔output) banned subgraphs directly. Jardine's *output-only*
-markedness constraints (e.g. forbid an output `apa` regardless of input) need the
-arc-labelled-subgraph refinement he flags in Ch. 7 fn. 7; that is deferred.
+A banned subgraph is a factor (`AR.FactorEmbeds`): contiguous windows of both tiers plus
+links. Jardine's arc-label distinction (Ch. 7 fn. 7) is the tier/link split itself, so
+his constraint types are all factors — a correspondence constraint carries links, an
+*output-only* markedness constraint (forbid a surface `apa` whatever the input) is a factor
+with an empty input tier and no links.
 
 ## Main definitions
 
-* `Correspondence.input`/`output` — the two strings a correspondence graph relates.
-* `Correspondence.rel` — `R(CG)`, the string relation of a set of correspondence graphs
+* `Rep`, `Rep.input`/`Rep.output` — a finite correspondence representation and the two
+  strings it relates.
+* `relRep` — `R(CG)`, the string relation of a set of correspondence graphs
   ([jardine-2016b] Def. 25).
-* `Correspondence.specifiedBy` — `CG(φ)`, a process presented by a banned-subgraph grammar.
-* `Correspondence.IsLocal` — a relation presented by a finite banned-subgraph grammar.
+* `specifiedByRep` — `CG(φ)`, a process presented by a banned-subgraph grammar;
+  `IsLocalRep`, a relation presented by a finite one.
+* `Strings` — a correspondence graph given by its data (input word, output word,
+  correspondence relation), whose banned-subgraph test `Strings.SpecifiedBy` decides.
 -/
 
 namespace Autosegmental
@@ -55,10 +57,10 @@ section Coordinate
 universe u
 variable {S T : Type u}
 
-/-- A finite two-tier correspondence representation. -/
+/-- A finite two-tier correspondence representation: input over `true`, output over
+`false`, on a vertex type in `Type` — where `AR.ofData` builds. -/
 abbrev Rep (S T : Type u) :=
-  {G : AR.{u, 0, u} (Sigma.fst : ((b : Bool) × TwoTier S T b) → Bool) //
-    Finite G.obj.V}
+  {G : AR.{u, 0, 0} (Sigma.fst : ((b : Bool) × TwoTier S T b) → Bool) // Finite G.obj.V}
 
 /-- The **input** string: the `true`-tier word. -/
 noncomputable def Rep.input (G : Rep S T) : List S :=
@@ -103,6 +105,73 @@ theorem specifiedByRep_append (φ ψ : List (Rep S T)) (G : Rep S T) :
 @[simp] theorem specifiedByRep_nil (G : Rep S T) : specifiedByRep [] G ↔ True := by
   unfold specifiedByRep AR.Free
   simp
+
+instance (G : Rep S T) : Finite G.val.obj.V := G.property
+
+/-! ### Correspondence graphs from data
+
+A correspondence graph presented by its data — the two strings and the correspondence
+relation on their positions. Its banned-subgraph test is computed on the data
+(`AR.factorEmbeds_ofData_iff`), so grammars over concrete strings decide. -/
+
+/-- A string correspondence: an input word, an output word, and the correspondence
+relation between their positions. -/
+structure Strings (S T : Type u) where
+  /-- The input string. -/
+  input : List S
+  /-- The output string. -/
+  output : List T
+  /-- Input position `p` corresponds to output position `q`. -/
+  Corr : ℕ → ℕ → Prop
+  [decCorr : DecidableRel Corr]
+
+namespace Strings
+
+attribute [instance] decCorr
+
+/-- The tier words: input over `true`, output over `false`. -/
+def words (D : Strings S T) : ∀ b : Bool, List (TwoTier S T b)
+  | true => (D.input : List (TwoTier S T true))
+  | false => (D.output : List (TwoTier S T false))
+
+/-- The links: correspondence arcs from the input tier to the output tier. -/
+def links (D : Strings S T) (i j : Bool) (p q : ℕ) : Prop := i = true ∧ j = false ∧ D.Corr p q
+
+instance (D : Strings S T) (i j : Bool) (p q : ℕ) : Decidable (D.links i j p q) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+/-- The correspondence representation presented by the data. -/
+def toRep (D : Strings S T) : Rep S T := ⟨AR.ofData D.words D.links, inferInstance⟩
+
+@[simp] theorem input_toRep (D : Strings S T) : D.toRep.input = D.input :=
+  AR.tierWord_ofData true
+
+@[simp] theorem output_toRep (D : Strings S T) : D.toRep.output = D.output :=
+  AR.tierWord_ofData false
+
+/-- `F` occurs in `G`, computed on the data. -/
+def Embeds (F G : Strings S T) : Prop := dataEmbeds F.words G.words F.links G.links
+
+instance [DecidableEq S] [DecidableEq T] (F G : Strings S T) : Decidable (F.Embeds G) :=
+  inferInstanceAs (Decidable (dataEmbeds _ _ _ _))
+
+theorem factorEmbeds_toRep_iff (F G : Strings S T) :
+    F.toRep.val.FactorEmbeds G.toRep.val ↔ F.Embeds G :=
+  AR.factorEmbeds_ofData_iff
+
+/-- A correspondence free of every banned subgraph of a grammar, on the data. -/
+def SpecifiedBy (φ : List (Strings S T)) (G : Strings S T) : Prop := ∀ F ∈ φ, ¬ F.Embeds G
+
+instance [DecidableEq S] [DecidableEq T] (φ : List (Strings S T)) (G : Strings S T) :
+    Decidable (SpecifiedBy φ G) :=
+  List.decidableBAll _ _
+
+/-- The data-level grammar test is the representation-level one. -/
+theorem specifiedByRep_map_toRep (φ : List (Strings S T)) (G : Strings S T) :
+    specifiedByRep (φ.map toRep) G.toRep ↔ SpecifiedBy φ G := by
+  simp only [specifiedByRep, AR.Free, List.forall_mem_map, factorEmbeds_toRep_iff, SpecifiedBy]
+
+end Strings
 
 end Coordinate
 

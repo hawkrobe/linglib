@@ -6,163 +6,159 @@ Authors: Robert Hawkins
 import Linglib.Phonology.Autosegmental.Correspondence
 
 /-!
-# Jardine (2016): transformations as correspondence-graph relations
+# Jardine (2016): intervocalic voicing as a local string relation
 
-[jardine-2016b] (Ch. 7) presents a phonological process as a **relation** between input
-and output, given by correspondence graphs carved out of GEN by banned-subgraph
-constraints. This file exercises the `Autosegmental.Correspondence` substrate on the
-intervocalic-voicing schema (Jardine's running example): a faithfulness constraint
-`*[p↔p]` — forbidding a `p` that corresponds to a `p` — admits the voicing
-correspondence `apa ↔ aba` and rejects the faithful `apa ↔ apa`.
+[jardine-2016b] (Ch. 7) presents a phonological process as a **relation** between input and
+output strings: a set of correspondence graphs, carved out of GEN by banned-subgraph
+constraints. §7.2 runs the idea on intervocalic voicing, (7.1). Over Σ = ∆ = {a, b, p} the
+primitives Γ = {aa, pb, pp, bb} of (7.14) — an input symbol over its output — generate
+GEN = CG(Γ) by concatenation ((7.15); `g`), and five banned subgraphs cut the voicing
+relation out of it: φ_apa (7.19) forbids a surface `apa`, and the four of (7.21) forbid a
+`p` surfacing as `b` word-initially, word-finally, after a `p`, and before a `p`. The
+grammar is φ_apba (7.22), and the relation it presents is R(CG(φ_apba)) (Def. 25).
 
-## Scope
+## Main definitions
 
-This demonstrates the constraint mechanism at the correspondence-graph level. The full
-relation-level result `R(CG(φ)) = R_voice` additionally requires GEN (`CG(Γ)`, the
-correspondence graphs built from primitives), which fixes the correspondence structure;
-and Jardine's *output-only* markedness `*VTV` needs the arc-labelled-subgraph refinement
-(Ch. 7 fn. 7). Both are deferred — see `Autosegmental/Correspondence.lean`.
+* `Pair`, `g`, `gen` — Γ with the boundary primitives, Jardine's `g : Γ* → CG(Γ)`, and a
+  Γ-string's graph wrapped in the boundaries ⋊, ⋉ that (7.21) reads.
+* `voicingGrammar` — φ_apba, the five banned subgraphs of (7.22).
+* `voicing` — R(CG(φ_apba)) on boundary-augmented strings.
+
+## Main results
+
+* `voicing_iff` — Def. 25 unwound: `(w, v)` is in the relation iff some Γ-string spells
+  both and its graph is free of the grammar — after which each data point decides.
+* The data of (7.5), (7.17) and (7.20): `apa ↦ aba` and `pa ↦ pa` are in; `apa ↦ apa`,
+  `pa ↦ ba` and `appa ↦ abpa` are out.
+* `voicing_bpa_bba` — the grammar also admits `bpa ↦ bba`: no subgraph of (7.22) mentions
+  a `b` beside the target, so the identity R(CG(φ_apba)) = Rvoice that the text leaves to
+  the reader holds only on inputs with no `b` adjacent to a `p`.
 -/
 
 namespace Jardine2016b
 
 open Autosegmental Correspondence
 
-/-- Toy alphabet for intervocalic voicing: a vowel `a`, voiceless `p`, voiced `b`. -/
-inductive Seg | a | p | b
+/-- Σ = ∆ = {a, b, p} of (7.1), with the word boundaries ⋊ (`lb`) and ⋉ (`rb`) that the
+subgraphs of (7.21) read. -/
+inductive Seg | a | b | p | lb | rb
   deriving DecidableEq, Repr
 
-open Autosegmental Autosegmental.Correspondence in
-/-- A correspondence representation over the one alphabet. -/
-abbrev CRep := Rep Seg Seg
+/-- The correspondence primitives Γ = {aa, pb, pp, bb} of (7.14) — an input symbol over its
+output — with the boundary primitives ⋊ over ⋊ and ⋉ over ⋉. -/
+inductive Pair | aa | pb | pp | bb | lb | rb
+  deriving DecidableEq, Repr
 
-/-- The faithfulness banned subgraph `*[pⁱ↔p]`: a `p` corresponding to a `p`.
-    Forbidding it forces an intervocalic `p` to change. -/
-def noPP : CRep :=
-  ⟨Autosegmental.AR.ofData
-    (fun b => match b with
-      | true => ([Seg.p] : List (Autosegmental.TwoTier Seg Seg true))
-      | false => [Seg.p])
-    (fun i j p q => i = true ∧ j = false ∧ p = 0 ∧ q = 0),
-    inferInstanceAs (Finite ((_ : Bool) × Fin _))⟩
+namespace Pair
 
-/-- The voicing correspondence `apa ↔ aba`: identity positions, the medial `p`
-    corresponding to a `b`. -/
-def gVoice : CRep :=
-  ⟨Autosegmental.AR.ofData
-    (fun b => match b with
-      | true => ([Seg.a, .p, .a] : List (Autosegmental.TwoTier Seg Seg true))
-      | false => [Seg.a, .b, .a])
-    (fun i j p q => i = true ∧ j = false ∧ p = q),
-    inferInstanceAs (Finite ((_ : Bool) × Fin _))⟩
+/-- The input symbol of a primitive. -/
+def input : Pair → Seg
+  | aa => .a | pb => .p | pp => .p | bb => .b | lb => .lb | rb => .rb
 
-/-- The faithful correspondence `apa ↔ apa`: the medial `p` stays `p`. -/
-def gFaithful : CRep :=
-  ⟨Autosegmental.AR.ofData
-    (fun b => match b with
-      | true => ([Seg.a, .p, .a] : List (Autosegmental.TwoTier Seg Seg true))
-      | false => [Seg.a, .p, .a])
-    (fun i j p q => i = true ∧ j = false ∧ p = q),
-    inferInstanceAs (Finite ((_ : Bool) × Fin _))⟩
+/-- The output symbol of a primitive. -/
+def output : Pair → Seg
+  | aa => .a | pb => .b | pp => .p | bb => .b | lb => .lb | rb => .rb
 
-open Autosegmental Autosegmental.Correspondence
+/-- A primitive is its input–output pair. -/
+theorem ext {x y : Pair} (hi : x.input = y.input) (ho : x.output = y.output) : x = y := by
+  cases x <;> cases y <;> simp_all [input, output]
 
-instance : Finite (noPP : CRep).val.obj.V :=
-  inferInstanceAs (Finite ((_ : Bool) × Fin _))
+/-- A Γ-string is determined by the strings it spells. -/
+theorem map_injective {γs γs' : List Pair} (hi : γs.map input = γs'.map input)
+    (ho : γs.map output = γs'.map output) : γs = γs' := by
+  induction γs generalizing γs' with
+  | nil => exact (List.map_eq_nil_iff.mp hi.symm).symm
+  | cons x xs ih =>
+    cases γs' with
+    | nil => simp at hi
+    | cons y ys =>
+      simp only [List.map_cons, List.cons.injEq] at hi ho
+      rw [ext hi.1 ho.1, ih hi.2 ho.2]
 
-instance : Finite (gVoice : CRep).val.obj.V :=
-  inferInstanceAs (Finite ((_ : Bool) × Fin _))
+end Pair
 
-instance : Finite (gFaithful : CRep).val.obj.V :=
-  inferInstanceAs (Finite ((_ : Bool) × Fin _))
+/-- Jardine's `g` on Γ-strings ((7.15)): the correspondence graph spelling the input and
+output symbols position by position. -/
+def g (γs : List Pair) : Strings Seg Seg := ⟨γs.map Pair.input, γs.map Pair.output, (· = ·)⟩
 
-/-- `gVoice` reads input `apa`, output `aba`. -/
-theorem gVoice_io :
-    gVoice.input = [Seg.a, .p, .a] ∧ gVoice.output = [Seg.a, .b, .a] :=
-  ⟨AR.tierWord_ofData true, AR.tierWord_ofData false⟩
+/-- A Γ-string's graph between the boundaries ⋊ and ⋉. -/
+def gen (γs : List Pair) : Strings Seg Seg := g (.lb :: γs ++ [.rb])
 
-/-- The faithful correspondence is **rejected** — it contains a `p↔p`,
-    embedded at position 1 of both tiers. -/
-theorem gFaithful_rejected : ¬ specifiedByRep [noPP] gFaithful := by
-  intro h
-  refine h noPP (List.mem_singleton.mpr rfl) ⟨fun _ => 1, ?_, ?_⟩
-  · intro i p hp
-    have hp' : p < (AR.ofData
-        (fun b => match b with
-          | true => ([Seg.p] : List (Autosegmental.TwoTier Seg Seg true))
-          | false => [Seg.p])
-        (fun i j p q => i = true ∧ j = false ∧ p = 0 ∧ q = 0)).tierLength i := hp
-    rw [AR.tierLength_ofData] at hp'
-    have hp0 : p = 0 := by cases i <;> simpa using Nat.lt_one_iff.mp (by simpa using hp')
-    subst hp0
-    show ((gFaithful : CRep).val.tierWord i)[0 + 1]? = ((noPP : CRep).val.tierWord i)[0]?
-    rw [show (gFaithful : CRep).val.tierWord i
-        = _ from AR.tierWord_ofData i,
-      show (noPP : CRep).val.tierWord i = _ from AR.tierWord_ofData i]
-    cases i <;> rfl
-  · intro i j p q hl
-    rcases (AR.link_ofData i j p q).mp hl with
-      ⟨-, -, -, ⟨rfl, rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl, rfl⟩⟩
-    · exact (AR.link_ofData true false 1 1).mpr
-        ⟨by decide, by decide, by decide, Or.inl ⟨rfl, rfl, rfl⟩⟩
-    · exact (AR.link_ofData false true 1 1).mpr
-        ⟨by decide, by decide, by decide, Or.inr ⟨rfl, rfl, rfl⟩⟩
+/-! ### The grammar φ_apba -/
 
-/-- The voicing correspondence is **admitted** by the `*[p↔p]` grammar: the
-    `p↔p` link would have to land on the output `b`. -/
-theorem gVoice_specified : specifiedByRep [noPP] gVoice := by
-  intro F hF
-  rw [List.mem_singleton] at hF
-  subst hF
-  rintro ⟨o, hw, hl⟩
-  have hbt : (0 : ℕ) < (noPP : CRep).val.tierLength true := by
-    rw [show (noPP : CRep).val.tierLength true
-      = _ from AR.tierLength_ofData true]
-    simp
-  have hbf : (0 : ℕ) < (noPP : CRep).val.tierLength false := by
-    rw [show (noPP : CRep).val.tierLength false
-      = _ from AR.tierLength_ofData false]
-    simp
-  have hwt := hw true 0 hbt
-  have hwf := hw false 0 hbf
-  rw [show (gVoice : CRep).val.tierWord true
-      = _ from AR.tierWord_ofData true,
-    show (noPP : CRep).val.tierWord true
-      = _ from AR.tierWord_ofData true] at hwt
-  rw [show (gVoice : CRep).val.tierWord false
-      = _ from AR.tierWord_ofData false,
-    show (noPP : CRep).val.tierWord false
-      = _ from AR.tierWord_ofData false] at hwf
-  have hlink := hl true false 0 0 ((AR.link_ofData true false 0 0).mpr
-    ⟨by decide, by decide, by decide, Or.inl ⟨rfl, rfl, rfl, rfl⟩⟩)
-  rcases (AR.link_ofData true false (0 + o true) (0 + o false)).mp hlink with
-    ⟨-, hpb, hqb, ⟨-, -, hpq⟩ | ⟨h1, -⟩⟩
-  · have h3' : o false < 3 := by
-      have := AR.tierLength_ofData
-        (ws := fun b => match b with
-          | true => ([Seg.a, .p, .a] : List (Autosegmental.TwoTier Seg Seg true))
-          | false => [Seg.a, .b, .a])
-        (L := fun i j p q => i = true ∧ j = false ∧ p = q) false
-      simp only [Nat.zero_add] at hqb
-      omega
-    simp only [Nat.zero_add] at hpq
-    rw [hpq] at hwt
-    match hof : o false, h3' with
-    | 0, _ =>
-      rw [hof] at hwt
-      exact Seg.noConfusion (Option.some.inj hwt)
-    | 1, _ =>
-      rw [hof] at hwf
-      exact Seg.noConfusion (Option.some.inj hwf)
-    | 2, _ =>
-      rw [hof] at hwt
-      exact Seg.noConfusion (Option.some.inj hwt)
-  · exact absurd h1 (by decide)
+/-- φ_apa (7.19): a surface `apa` — output-only, the markedness constraint *VTV. -/
+def banApa : Strings Seg Seg := ⟨[], [.a, .p, .a], fun _ _ => False⟩
 
-/-- Hence `apa ↔ aba` lies in the relation presented by the local grammar
-    `*[p↔p]`, witnessed by `gVoice` ([jardine-2016b] Def. 25). -/
-theorem voicing_local :
-    relRep (specifiedByRep [noPP]) [Seg.a, .p, .a] [Seg.a, .b, .a] :=
-  ⟨gVoice, gVoice_specified, gVoice_io.1, gVoice_io.2⟩
+/-- φ_⋊pb (7.21): a `p` surfacing as `b` word-initially. -/
+def banInitialPb : Strings Seg Seg := ⟨[.p], [.lb, .b], fun i o => i = 0 ∧ o = 1⟩
+
+/-- φ_pb⋉ (7.21): a `p` surfacing as `b` word-finally. -/
+def banFinalPb : Strings Seg Seg := ⟨[.p], [.b, .rb], fun i o => i = 0 ∧ o = 0⟩
+
+/-- φ_ppb (7.21): a `p` surfacing as `b` after a surface `p`. -/
+def banPbAfterP : Strings Seg Seg := ⟨[.p], [.p, .b], fun i o => i = 0 ∧ o = 1⟩
+
+/-- φ_pbp (7.21): a `p` surfacing as `b` before a surface `p`. -/
+def banPbBeforeP : Strings Seg Seg := ⟨[.p], [.b, .p], fun i o => i = 0 ∧ o = 0⟩
+
+/-- φ_apba (7.22). -/
+def voicingGrammar : List (Strings Seg Seg) :=
+  [banApa, banInitialPb, banFinalPb, banPbAfterP, banPbBeforeP]
+
+/-! ### The relation R(CG(φ_apba)) -/
+
+/-- CG(φ_apba): the graphs of GEN = CG(Γ) free of the grammar. -/
+def CG (G : Rep Seg Seg) : Prop :=
+  (∃ γs, G = (gen γs).toRep) ∧ specifiedByRep (voicingGrammar.map Strings.toRep) G
+
+/-- R(CG(φ_apba)) (Def. 25), on boundary-augmented strings. -/
+def voicing (w v : List Seg) : Prop := relRep CG (.lb :: w ++ [.rb]) (.lb :: v ++ [.rb])
+
+/-- Def. 25 unwound: `(w, v)` is in the relation iff some Γ-string spells both and its
+graph is free of the grammar. -/
+theorem voicing_iff {w v : List Seg} :
+    voicing w v ↔ ∃ γs, γs.map Pair.input = w ∧ γs.map Pair.output = v ∧
+      Strings.SpecifiedBy voicingGrammar (gen γs) := by
+  constructor
+  · rintro ⟨G, ⟨⟨γs, rfl⟩, hφ⟩, hi, ho⟩
+    refine ⟨γs, ?_, ?_, (Strings.specifiedByRep_map_toRep _ _).mp hφ⟩
+    · simpa [gen, g, Pair.input] using hi
+    · simpa [gen, g, Pair.output] using ho
+  · rintro ⟨γs, rfl, rfl, hφ⟩
+    exact ⟨(gen γs).toRep, ⟨⟨γs, rfl⟩, (Strings.specifiedByRep_map_toRep _ _).mpr hφ⟩,
+      by simp [gen, g, Pair.input], by simp [gen, g, Pair.output]⟩
+
+/-! ### The data of (7.5), (7.17) and (7.20) -/
+
+/-- An intervocalic `p` voices: `apa ↦ aba` ((7.18a)). -/
+theorem voicing_apa_aba : voicing [.a, .p, .a] [.a, .b, .a] :=
+  voicing_iff.mpr ⟨[.aa, .pb, .aa], rfl, rfl, by decide⟩
+
+/-- It must: the faithful `apa ↦ apa` contains φ_apa ((7.18b)). -/
+theorem not_voicing_apa_apa : ¬ voicing [.a, .p, .a] [.a, .p, .a] := fun h => by
+  obtain ⟨γs, hi, ho, hφ⟩ := voicing_iff.mp h
+  obtain rfl := Pair.map_injective (γs' := [.aa, .pp, .aa]) hi ho
+  exact absurd hφ (by decide)
+
+/-- A non-intervocalic `p` stays: `pa ↦ pa`. -/
+theorem voicing_pa_pa : voicing [.p, .a] [.p, .a] :=
+  voicing_iff.mpr ⟨[.pp, .aa], rfl, rfl, by decide⟩
+
+/-- And may not voice: `pa ↦ ba` contains φ_⋊pb ((7.20a)). -/
+theorem not_voicing_pa_ba : ¬ voicing [.p, .a] [.b, .a] := fun h => by
+  obtain ⟨γs, hi, ho, hφ⟩ := voicing_iff.mp h
+  obtain rfl := Pair.map_injective (γs' := [.pb, .aa]) hi ho
+  exact absurd hφ (by decide)
+
+/-- `appa ↦ abpa` contains φ_pbp ((7.20b)). -/
+theorem not_voicing_appa_abpa : ¬ voicing [.a, .p, .p, .a] [.a, .b, .p, .a] := fun h => by
+  obtain ⟨γs, hi, ho, hφ⟩ := voicing_iff.mp h
+  obtain rfl := Pair.map_injective (γs' := [.aa, .pb, .pp, .aa]) hi ho
+  exact absurd hφ (by decide)
+
+/-- The grammar also admits `bpa ↦ bba`: none of the subgraphs of (7.22) mentions a `b`
+beside the target, so Rvoice's `bpa ↦ bpa` is not the only image of `bpa`. -/
+theorem voicing_bpa_bba : voicing [.b, .p, .a] [.b, .b, .a] :=
+  voicing_iff.mpr ⟨[.bb, .pb, .aa], rfl, rfl, by decide⟩
 
 end Jardine2016b
