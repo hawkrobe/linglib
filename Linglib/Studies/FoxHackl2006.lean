@@ -5,16 +5,16 @@ import Linglib.Logic.Modal.Defs
 /-!
 # Fox and Hackl 2006: the universal density of measurement
 
-This file formalizes the paper's Universal Density of Measurement — measurement scales in
-natural language semantics are always dense — and the single mechanism it drives through
-scalar implicatures, *only*, degree questions and definite descriptions. Each of the four
-maximizes a property of degrees with MAXinf, the most informative true degree
-(`Alternatives.IsMaxInf`), and the Constraint on Interval Maximization says this fails on a
-property that necessarily describes an open interval (`IsNecessarilyOpen`). On a strictly antitone family
-the most informative degree is the greatest true one (`Alternatives.hasMaxInf_iff_isGreatest`),
-so density removes it exactly when the true set is open at its informative end; a universal
-modal can close the interval and an existential modal cannot. A bare numeral's *at least d* is
-closed at the count (`Alternatives.hasMaxInf_ge_over`), exhaustification is MAXinf
+This file formalizes the paper's Universal Density of Measurement — measurement scales in natural
+language semantics are always dense — and the single mechanism it drives through scalar
+implicatures, *only*, degree questions and definite descriptions. Each of the four maximizes a
+property of degrees with MAXinf, the most informative true degree (`Alternatives.IsMaxInf`), and
+the Constraint on Interval Maximization says this fails on a property that necessarily describes
+an open interval (`IsNecessarilyOpen`). On a strictly antitone family the most informative degree
+is the greatest true one (`Alternatives.hasMaxInf_iff_isGreatest`), so density removes it exactly
+when the true set is open at its informative end; a universal modal can close the interval and an
+existential modal cannot. A bare numeral's *at least d* is closed at the count
+(`Alternatives.hasMaxInf_ge_over`), exhaustification is MAXinf
 (`Alternatives.exhChain_iff_isMaxInf`), and the paper's example sentences are the rows of
 `Examples.all`.
 
@@ -128,7 +128,8 @@ theorem not_isGreatest_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : Stri
 /-! ### Negative islands -/
 
 /-- *Not … d* is necessarily open from below: the true degrees are those above the measure. -/
-theorem isNecessarilyOpenBelow_lt_over (μ : W → D) : IsNecessarilyOpenBelow (Comparison.lt.over μ) :=
+theorem isNecessarilyOpenBelow_lt_over (μ : W → D) :
+    IsNecessarilyOpenBelow (Comparison.lt.over μ) :=
   isNecessarilyOpen_gt_over (toDual ∘ μ)
 
 /-- (16), (19a), (25): on a dense scale the negated degree property has no most informative
