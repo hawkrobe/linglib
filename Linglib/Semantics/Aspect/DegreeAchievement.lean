@@ -18,13 +18,12 @@ mΔ(e) = d(result(e)) - d(init(e)) on A's scale. Telicity = whether mΔ is bound
 if A's scale has a maximum, mΔ is bounded → telic (accomplishment); if A's scale is
 open, mΔ is unbounded → atelic (activity).
 
-This module derives `VendlerClass` from `Boundedness`, connecting to the existing
-`LicensingPipeline` infrastructure in `Core/Scales/Scale.lean`.
+This module derives `VendlerClass` from `Boundedness`.
 -/
 
 namespace Features.DegreeAchievement
 
-open Core.Order (Boundedness LicensingPipeline)
+open Core.Order (Boundedness)
 open Features
 open Features
 
@@ -105,13 +104,5 @@ theorem telicity_vendler_agree (s : DegreeAchievementScale) :
     Features.ScalarDimension.defaultVendlerClass, Features.ScalarDimension.defaultTelicity]
   cases s.dimension.boundedness <;> simp [VendlerClass.telicity]
 
--- ════════════════════════════════════════════════════
--- § LicensingPipeline instance
--- ════════════════════════════════════════════════════
-
-/-- LicensingPipeline instance: a degree-achievement scale's boundedness is its
-    dimension's (a derived view, no stored flag). -/
-instance : LicensingPipeline DegreeAchievementScale where
-  toBoundedness s := s.scaleBoundedness
 
 end Features.DegreeAchievement

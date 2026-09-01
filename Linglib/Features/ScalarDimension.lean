@@ -102,7 +102,7 @@ Absorbed from the retired `Degree/Gradability/Dimension.lean`: the degree
 carrier transports from `Boundedness.degreeShape`, and the Kennedy–Levin
 telicity defaults are theorems about it. -/
 
-open Core.Order (Boundedness LicensingPipeline)
+open Core.Order (Boundedness)
 
 /-- Each dimension's degree type — inherited from its boundedness, so the grounding
     transports rather than re-casing per dimension. -/
@@ -139,9 +139,5 @@ theorem ScalarDimension.defaultTelicity_telic_iff_hasGreatest (d : ScalarDimensi
     d.defaultTelicity = .telic ↔ ∃ m : d.degree, IsTop m := by
   rw [ScalarDimension.hasGreatest_degree_iff]; cases d <;> decide
 
-/-! ### The endpoint: one more `LicensingPipeline` instance -/
-
-instance : LicensingPipeline ScalarDimension where
-  toBoundedness := ScalarDimension.boundedness
 
 end Features

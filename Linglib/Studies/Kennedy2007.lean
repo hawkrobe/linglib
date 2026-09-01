@@ -27,12 +27,11 @@ central claims against the degree substrate and the English adjective Fragment.
    absolutes (*dry*, *straight*) a negative one (eq. (50)) — whereas relative
    adjectives (*long*, *tall*) carry neither (eq. (51)–(52)).
 
-3. **Scale structure licenses degree modifiers.** [kennedy-2007] eq. (61)
-   (= [kennedy-mcnally-2005] eq. (15)): maximizers/proportional modifiers
-   (*completely*, *half*) require an upper endpoint, minimizers/diminishers
-   (*slightly*) a lower one. The `Licenses` matrix encodes this, and the
-   bridges below check it against the English Fragment entries (*tall*, *full*,
-   *wet*, *dry*) and the `LicensingPipeline` substrate.
+3. **Scale structure licenses degree modifiers.** [kennedy-2007] eq. (61):
+   maximizers/proportional modifiers (*completely*, *half*) require an upper
+   endpoint, minimizers/diminishers (*slightly*) a lower one. The `Licenses`
+   matrix encodes this, and the bridges below check it against the English
+   Fragment entries (*tall*, *full*, *wet*, *dry*).
 
 ## Main results
 
@@ -533,50 +532,13 @@ instance : ∀ (m : DegreeModifierType) (b : Core.Order.Boundedness),
   | .intensifier, _ => isTrue trivial
   | .measurePhrase, _ => isTrue trivial
 
-/-! ### Fragment licensing
-
-Runs `LicensingPipeline` on the concrete English Fragment entries (*tall*, *full*,
-*wet*, *dry*) and checks the verdicts against the empirical data above. -/
+/-! ### Fragment adjectives -/
 
 section Bridge
 
 open Degree
 open English.Predicates.Adjectival
 open Core.Order
-
-/-! #### Fragment → licensing -/
-
-/-- "tall" (open scale) blocks degree modification. -/
-theorem adj_pipeline_tall :
-    ¬ LicensingPipeline.IsLicensed tall.scaleType := id
-
-/-- "full" (closed scale) licenses degree modification. -/
-theorem adj_pipeline_full :
-    LicensingPipeline.IsLicensed full.scaleType := trivial
-
-/-- "wet" (closed scale) licenses. -/
-theorem adj_pipeline_wet :
-    LicensingPipeline.IsLicensed wet.scaleType := trivial
-
-/-- "dry" (closed scale) licenses. -/
-theorem adj_pipeline_dry :
-    LicensingPipeline.IsLicensed dry.scaleType := trivial
-
-/-! #### Licensing → data -/
-
-/-- The closure puzzle is predicted: closed-scale adjectives license "completely",
-    open-scale ones don't. Matches `closurePuzzle.worksWithClosed` / `.worksWithOpen`. -/
-theorem closurePuzzle_predicted :
-    (LicensingPipeline.IsLicensed full.scaleType ↔ closurePuzzle.worksWithClosed = true) ∧
-    (LicensingPipeline.IsLicensed tall.scaleType ↔ closurePuzzle.worksWithOpen = true) :=
-  ⟨iff_of_true trivial rfl, iff_of_false id (by decide)⟩
-
-/-- "completely" works with AGA-max (closed) but not RGA (open): licensing matches the
-    `completelyModifier` fields. -/
-theorem completely_distribution :
-    (LicensingPipeline.IsLicensed full.scaleType ↔ completelyModifier.worksWithAGAMax = true) ∧
-    (LicensingPipeline.IsLicensed tall.scaleType ↔ completelyModifier.worksWithRGA = true) :=
-  ⟨iff_of_true trivial rfl, iff_of_false id (by decide)⟩
 
 /-! #### Scale structure → comparison-class sensitivity
 
@@ -617,13 +579,6 @@ theorem mpa_mildly_positive :
     decent.adjectiveClass = .mildlyPositive ∧
     acceptable.adjectiveClass = .mildlyPositive ∧
     adequate.adjectiveClass = .mildlyPositive := ⟨rfl, rfl, rfl⟩
-
-/-- MPAs and *good* share scale-structure licensing status: both sit on the open
-    `.value` scale, so neither is endpoint-licensed. Their difference is in
-    standard type (functional vs contextual), not in structural licensing. -/
-theorem mpa_good_same_licensing :
-    LicensingPipeline.IsLicensed decent.scaleType ↔
-    LicensingPipeline.IsLicensed good.scaleType := Iff.rfl
 
 /-- IE path diverges for MPAs: the open-scale shape-default is a *contextual*
     standard (`interpretiveEconomy .open_`), yet MPAs actually receive a
@@ -704,26 +659,6 @@ theorem straight_scaleType_consistency :
     class). -/
 theorem bent_class_consistency :
     bent.adjectiveClass = bentTypology.classification := rfl
-
-/-- "tall" (open scale): pipeline blocked = "completely" doesn't work with RGA. -/
-theorem tall_completely_agrees :
-    LicensingPipeline.IsLicensed tall.scaleType ↔
-    completelyModifier.worksWithRGA = true := by decide
-
-/-- "full" (closed scale): pipeline licensed = "completely" works with AGA-max. -/
-theorem full_completely_agrees :
-    LicensingPipeline.IsLicensed full.scaleType ↔
-    completelyModifier.worksWithAGAMax = true := by decide
-
-/-- "tall": typology's naturalWithCompletely matches pipeline prediction. -/
-theorem tall_completely_from_pipeline :
-    tallTypology.naturalWithCompletely = true ↔
-    LicensingPipeline.IsLicensed tall.scaleType := by decide
-
-/-- "full": typology's naturalWithCompletely matches pipeline prediction. -/
-theorem full_completely_from_pipeline :
-    fullTypology.naturalWithCompletely = true ↔
-    LicensingPipeline.IsLicensed full.scaleType := by decide
 
 /-- "tall" (open): threshold shifts with comparison class. -/
 theorem tall_threshold_shifts :

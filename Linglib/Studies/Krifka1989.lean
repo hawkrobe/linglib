@@ -4,7 +4,6 @@ import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.ArgumentStructure.Thematic.Mereology
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Aspect.Cumulativity
-import Linglib.Core.Order.Boundedness
 import Linglib.Features.Aktionsart
 
 /-!
@@ -74,9 +73,15 @@ open Plurality.Algebra (Materialization)
 open ArgumentStructure (UP)
 open Aspect.Incremental (SINC VerbIncClass IsSincVerb)
 open Aspect.Cumulativity (VP qua_propagation)
-open Core.Order (MereoTag)
 open Features
   (forXPrediction inXPrediction DiagnosticResult)
+
+/-- Reference type as a lexical tag: cumulative or quantized. The algebraic content is
+`Mereology.CUM`/`Mereology.QUA`. -/
+inductive RefType
+  | cum
+  | qua
+  deriving DecidableEq, Repr
 
 /-! ### K89 measure-phrase substrate (inlined from Events/MeasurePhrases.lean in 0.231.55) -/
 
@@ -136,7 +141,7 @@ inductive NPRefSource where
 /-- The structural source uniquely determines CUM vs QUA per K89 §3.
     Mass nouns and bare plurals are CUM; count, measured, definite
     NPs are QUA. -/
-def NPRefSource.expectedRef : NPRefSource → MereoTag
+def NPRefSource.expectedRef : NPRefSource → RefType
   | .massNoun       => .cum
   | .barePlural     => .cum
   | .countNumeral   => .qua
@@ -149,7 +154,7 @@ def NPRefSource.expectedRef : NPRefSource → MereoTag
     `all_nps_consistent_with_source` verifies they agree. -/
 structure NPDatum where
   np : String
-  refType : MereoTag
+  refType : RefType
   source : NPRefSource
   deriving Repr, BEq
 
@@ -228,7 +233,7 @@ theorem all_nps_consistent_with_source :
 
 /-! These theorems exercise the K89 theory file's propositional
     predicates on abstract domains, bridging the file-level Bool-tag
-    classification (`MereoTag.cum`/`.qua`) to K89's algebraic content
+    classification (`RefType.cum`/`.qua`) to K89's algebraic content
     (`CUM`/`QUA` on `α → Prop`). The `applesNP.refType = .cum` Bool tag
     corresponds to the propositional claim `CUM (AlgClosure P)` for any
     apples-like `P`, which follows from `Mereology.algClosure_cum`. -/
@@ -632,14 +637,10 @@ def k89Section7Data : List K89QuantDatum :=
     predicate-level properties entail bounds on the *carrier* itself
     (e.g. that it has Mathlib `OrderTop` / `OrderBot` instances).
 
-    This matters because downstream linglib code uses
-    `Core.Order.MereoTag.qua = .closed` as a lexical-classification tag
-    that conflates the two levels. That conflation is convenient for
-    cross-framework gluing across [krifka-1989], [kennedy-2007],
-    [rouillard-2026] (see the mereological-dimension lemmas in
-    `Semantics/Mereology.lean` for the structural facts that DO hold —
-    e.g. `qua_pullback`, `cum_measure_unbounded`), but it does
-    not follow from K89's definitions.
+    The lexical tag `RefType` records which reference type a predicate has
+    and says nothing about the carrier (see the mereological-dimension lemmas
+    in `Semantics/Mereology.lean` for the structural facts that do hold —
+    e.g. `qua_pullback`, `cum_measure_unbounded`).
     The two examples below show the gap in both directions.
 
     The defeasible cross-domain bridge `closed scale → telic verb` for

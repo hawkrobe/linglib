@@ -1,5 +1,4 @@
 import Linglib.Data.Examples.Schema
-import Linglib.Semantics.Aspect.Boundedness
 import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Semantics.Tense.Embedding
@@ -782,7 +781,11 @@ Boundedness is sentence-level and distinct from telicity: *Bill ran five
 miles* is bounded but *Bill was running five miles* is unbounded, with
 the same telic VP. These are pragmatic defaults, not entailments. -/
 
-open Aspect (SituationBoundedness)
+/-- [smith-1997]'s situation boundedness: bounded (telic, perfective) or unbounded. -/
+inductive SituationBoundedness
+  | bounded
+  | unbounded
+  deriving DecidableEq, Repr
 
 /-- The three default temporal arrangements of Declerck's principle of
 unmarked temporal interpretation. -/

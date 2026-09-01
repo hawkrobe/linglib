@@ -50,7 +50,6 @@ namespace KennedyLevin2008
 
 open English.Predicates.Verbal hiding clean cool warm open_
 open Features.DegreeAchievement (DegreeAchievementScale)
-open Core.Order (LicensingPipeline)
 open Features (forXPrediction inXPrediction)
 
 -- Fully qualified aliases for names shared between Verbal and Adjectival
@@ -256,72 +255,6 @@ theorem cool_forX :
 /-- "warmed for an hour" — open-scale DA accepts "for X". -/
 theorem warm_forX :
     forXPrediction vWarm.toVerb.vendlerClass.get! = .accept := rfl
-
-/-! ### Pipeline convergence
-
-`LicensingPipeline.toBoundedness` agrees whether applied to the verb's
-`degreeAchievementScale` or to its `vendlerClass` — the scale-based and
-Vendler-based routes to boundedness converge. -/
-
-/-- "bend": DA pipeline → closed = VendlerClass pipeline → closed. -/
-theorem bend_pipeline_converge :
-    LicensingPipeline.toBoundedness bend.toVerb.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness bend.toVerb.vendlerClass.get! := rfl
-
-/-- "boil": DA pipeline → closed = VendlerClass pipeline → closed. -/
-theorem boil_pipeline_converge :
-    LicensingPipeline.toBoundedness boil.toVerb.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness boil.toVerb.vendlerClass.get! := rfl
-
-/-- "rust": DA pipeline → open = VendlerClass pipeline → open. -/
-theorem rust_pipeline_converge :
-    LicensingPipeline.toBoundedness rust.toVerb.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness rust.toVerb.vendlerClass.get! := rfl
-
-/-- "increase": DA pipeline → open = VendlerClass pipeline → open. -/
-theorem increase_pipeline_converge :
-    LicensingPipeline.toBoundedness increase.toVerb.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness increase.toVerb.vendlerClass.get! := rfl
-
-/-- "clean": DA pipeline → closed = VendlerClass pipeline → closed. -/
-theorem clean_pipeline_converge :
-    LicensingPipeline.toBoundedness vClean.toVerb.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness vClean.toVerb.vendlerClass.get! := rfl
-
-/-- "straighten": DA pipeline → closed = VendlerClass pipeline → closed. -/
-theorem straighten_pipeline_converge :
-    LicensingPipeline.toBoundedness straighten.toVerb.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness straighten.toVerb.vendlerClass.get! := rfl
-
-/-- "flatten": DA pipeline → closed = VendlerClass pipeline → closed. -/
-theorem flatten_pipeline_converge :
-    LicensingPipeline.toBoundedness flatten.toVerb.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness flatten.toVerb.vendlerClass.get! := rfl
-
-/-- "open": DA pipeline → closed = VendlerClass pipeline → closed. -/
-theorem open_pipeline_converge :
-    LicensingPipeline.toBoundedness vOpen.toVerb.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness vOpen.toVerb.vendlerClass.get! := rfl
-
-/-- "lengthen": DA pipeline → open = VendlerClass pipeline → open. -/
-theorem lengthen_pipeline_converge :
-    LicensingPipeline.toBoundedness lengthen.toVerb.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness lengthen.toVerb.vendlerClass.get! := rfl
-
-/-- "widen": DA pipeline → open = VendlerClass pipeline → open. -/
-theorem widen_pipeline_converge :
-    LicensingPipeline.toBoundedness widen.toVerb.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness widen.toVerb.vendlerClass.get! := rfl
-
-/-- "cool": DA pipeline → open = VendlerClass pipeline → open. -/
-theorem cool_pipeline_converge :
-    LicensingPipeline.toBoundedness vCool.toVerb.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness vCool.toVerb.vendlerClass.get! := rfl
-
-/-- "warm": DA pipeline → open = VendlerClass pipeline → open. -/
-theorem warm_pipeline_converge :
-    LicensingPipeline.toBoundedness vWarm.toVerb.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness vWarm.toVerb.vendlerClass.get! := rfl
 
 /-! ### Substrate demonstration: telicity from scale order
 
