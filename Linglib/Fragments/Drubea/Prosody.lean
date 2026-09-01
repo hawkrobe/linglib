@@ -170,8 +170,9 @@ def applyBoundary (specs : List TRN)
 -- § 5: Language Properties
 -- ============================================================================
 
-/-- Drubea is a register-based tone system ([lionnet-2025] §6.2). -/
-def wordProsodicType : WordProsodicType := .registerBased
+/-- Drubea is tonal by [hyman-2006]'s definition (3) — register enters lexical
+realization — and has no stress accent ([lionnet-2025] §6.2). -/
+def wordProsody : WordProsody := ⟨true, false⟩
 
 /-- The register-bearing unit in Drubea is the mora ([lionnet-2025] §4.2). -/
 def tbuKind : TBUKind := .mora
