@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.FreeMonoid.Destutter
 import Linglib.Phonology.OCP
 import Linglib.Phonology.Autosegmental.Realization
+import Linglib.Phonology.Autosegmental.Junction
 
 /-!
 # OCP-merging collapse of autosegmental representations
@@ -356,7 +357,110 @@ noncomputable def realizeMerged (g₀ : S → TieredAR ι τ)
     TieredAR ι τ :=
   (AR.realize g₀ w).collapse m
 
+instance (g₀ : S → TieredAR ι τ) [∀ s, Finite (g₀ s).obj.V] (w : List S) :
+    Finite (realizeMerged m g₀ w).obj.V :=
+  inferInstanceAs (Finite ((AR.realize g₀ w).collapse m).obj.V)
+
 end RealizeMerged
+
+/-! ### The merged realization of word primitives
+
+Two-tier case, melody over `true`: the merged realization of a string of word primitives
+has the readers of one representation of words — the melody destuttered, the lines
+repointed through the run index. -/
+
+section MergedOfWords
+
+universe u
+variable {α β : Type u} [DecidableEq α] {S : Type*}
+
+/-- The lines of an OCP-merged realization: a line of the realization with its melody
+position repointed through the run index of the melody. -/
+def mergedLinks (melody : List α) (Lk : ℕ → ℕ → Prop) (r s : ℕ) : Prop :=
+  ∃ p < melody.length, Lk p s ∧ runIdx melody p = r
+
+instance (melody : List α) (Lk : ℕ → ℕ → Prop) [DecidableRel Lk] :
+    DecidableRel (mergedLinks melody Lk) :=
+  fun _ _ => by unfold mergedLinks; infer_instance
+
+/-- Melody-to-timing lines of a two-tier collapse at the melody tier. -/
+theorem AR.link_collapse_true_false (X : TieredAR Bool (TwoTier α β)) [Finite X.obj.V]
+    (r s : ℕ) :
+    (X.collapse true).link true false r s ↔
+      ∃ p < X.tierLength true, X.link true false p s ∧ runIdx (X.tierWord true) p = r := by
+  rw [AR.link_collapse]
+  simp only [AR.collapseIdx_self, AR.collapseIdx_of_ne _ true (by decide : false ≠ true)]
+  constructor
+  · rintro ⟨p, q, hl, rfl, rfl⟩
+    obtain ⟨hp, -, -⟩ := id hl
+    exact ⟨p, hp, hl, rfl⟩
+  · rintro ⟨p, hp, hl, rfl⟩
+    exact ⟨p, s, hl, rfl, rfl⟩
+
+variable (as : S → List α) (bs : S → List β) (L : S → ℕ → ℕ → Prop)
+  (g₀ : S → TieredAR Bool (TwoTier α β)) [∀ s, Finite (g₀ s).obj.V]
+  (hg : ∀ s, g₀ s = AR.ofWords (as s) (bs s) (L s))
+include hg
+
+theorem AR.tierWord_realizeMerged_true_of_eq_ofWords (w : List S) :
+    (realizeMerged true g₀ w).tierWord true = OCP.collapse (w.map as).flatten := by
+  simp [realizeMerged, AR.tierWord_realize_true_of_eq_ofWords as bs L g₀ hg]
+
+theorem AR.tierWord_realizeMerged_false_of_eq_ofWords (w : List S) :
+    (realizeMerged true g₀ w).tierWord false = (w.map bs).flatten := by
+  simp [realizeMerged, AR.tierWord_realize_false_of_eq_ofWords as bs L g₀ hg]
+
+theorem AR.link_realizeMerged_of_eq_ofWords (w : List S) (r s : ℕ) :
+    (realizeMerged true g₀ w).link true false r s ↔
+      mergedLinks (w.map as).flatten (blockLinks as bs L w) r s := by
+  show ((AR.realize g₀ w).collapse true).link true false r s ↔ _
+  rw [AR.link_collapse_true_false]
+  simp only [AR.link_realize_of_eq_ofWords as bs L g₀ hg,
+    AR.tierWord_realize_true_of_eq_ofWords as bs L g₀ hg, mergedLinks, AR.tierLength_realize,
+    hg, AR.tierLength_ofWords_true, List.length_flatten, List.map_map, Function.comp_def]
+
+/-- The tier words of the merged realization are those of its representation of words. -/
+theorem AR.tierWord_realizeMerged_eq_tierWord_ofWords (w : List S) (i : Bool) :
+    (realizeMerged true g₀ w).tierWord i =
+      (AR.ofWords (OCP.collapse (w.map as).flatten) (w.map bs).flatten
+        (mergedLinks (w.map as).flatten (blockLinks as bs L w))).tierWord i := by
+  cases i
+  · exact (AR.tierWord_realizeMerged_false_of_eq_ofWords as bs L g₀ hg w).trans
+      (AR.tierWord_ofWords_false _ _ _).symm
+  · exact (AR.tierWord_realizeMerged_true_of_eq_ofWords as bs L g₀ hg w).trans
+      (AR.tierWord_ofWords_true _ _ _).symm
+
+/-- The lines of the merged realization are those of its representation of words. -/
+theorem AR.link_realizeMerged_iff_link_ofWords (w : List S) (i j : Bool) (p q : ℕ) :
+    (realizeMerged true g₀ w).link i j p q ↔
+      (AR.ofWords (OCP.collapse (w.map as).flatten) (w.map bs).flatten
+        (mergedLinks (w.map as).flatten (blockLinks as bs L w))).link i j p q :=
+  AR.link_iff_of_true_false (fun r s => by
+    rw [AR.link_realizeMerged_of_eq_ofWords as bs L g₀ hg, AR.link_ofWords]
+    constructor
+    · rintro ⟨p, hp, hl, rfl⟩
+      exact ⟨runIdx_lt_collapse_length _ hp, (blockLinks_lt as bs L hl).2, p, hp, hl, rfl⟩
+    · exact fun h => h.2.2) i j p q
+
+/-- Embedding into the merged realization of word primitives computes on the words. -/
+theorem AR.factorEmbeds_realizeMerged_iff_of_eq_ofWords
+    (F : TieredAR Bool (TwoTier α β)) [Finite F.obj.V] (w : List S) :
+    F.FactorEmbeds (realizeMerged true g₀ w) ↔
+      F.FactorEmbeds (AR.ofWords (OCP.collapse (w.map as).flatten) (w.map bs).flatten
+        (mergedLinks (w.map as).flatten (blockLinks as bs L w))) :=
+  AR.factorEmbeds_congr (fun _ => rfl) (fun _ _ _ _ => Iff.rfl)
+    (AR.tierWord_realizeMerged_eq_tierWord_ofWords as bs L g₀ hg w)
+    (AR.link_realizeMerged_iff_link_ofWords as bs L g₀ hg w)
+
+theorem AR.free_realizeMerged_iff_of_eq_ofWords
+    (B : List {F : TieredAR Bool (TwoTier α β) // Finite F.obj.V}) (w : List S) :
+    (realizeMerged true g₀ w).Free B ↔
+      (AR.ofWords (OCP.collapse (w.map as).flatten) (w.map bs).flatten
+        (mergedLinks (w.map as).flatten (blockLinks as bs L w))).Free B :=
+  AR.free_congr (AR.tierWord_realizeMerged_eq_tierWord_ofWords as bs L g₀ hg w)
+    (AR.link_realizeMerged_iff_link_ofWords as bs L g₀ hg w) B
+
+end MergedOfWords
 
 section Axiom6Bridge
 
