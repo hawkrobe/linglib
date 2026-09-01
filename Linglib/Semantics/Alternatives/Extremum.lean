@@ -135,7 +135,7 @@ def MIP_LicensedDown {W : Type*} (P : α → W → Prop) : Prop :=
 -- ════════════════════════════════════════════════════
 
 /-! Applications of `IsMaxInf` to the canonical degree predicates
-    `Comparison.{ge,gt,le}.over` (defined in `Core/Order/Comparison.lean`,
+    `Comparison.{ge,gt,le}.over` (defined in `Semantics/Degree/Comparison.lean`,
     monotonicity in `Semantics/Degree/Predicate.lean`). The IsMaxInf-flavored
     consequences live here as a downstream entailment-theoretic application. -/
 
@@ -255,36 +255,34 @@ theorem mip_direction_invariant {W : Type*} (μ : W → α) (m : α) (w : W)
     IsMaxInf (Comparison.ge.over μ) m w ↔ IsMaxInf (Comparison.le.over μ) m w := by
   rw [mip_atLeast_is_exact μ m w hSurj, mip_atMost_is_exact μ m w hSurj]
 
-/-! ### The bundled form: `PolarMeasure.degreeProperty`
+end Entailment
 
-`PolarMeasure.degreeProperty` derives "at least" or "at most" from the
-stored `direction`; under maximal informativity either direction yields
-exact meaning at the true measure value. This ties the algebraic
-constructor layer (`numeral`, `adjective`, epistemic thresholds) to the
-entailment-theoretic MIP layer. -/
+/-! ### Polar measures
 
-/-- The maximally informative degree of a directed measure's derived
-    property is the true measure value, whichever the direction. -/
-theorem _root_.Degree.PolarMeasure.isMaxInf_degreeProperty_iff
-    {W : Type*} (dm : PolarMeasure α W) (m : α) (w : W)
+`PolarMeasure.degreeProperty` is "at least" or "at most" by polarity; under maximal
+informativity either yields exact meaning at the true measure value. -/
+
+namespace Degree.PolarMeasure
+
+open Entailment
+
+variable {α : Type*} [LinearOrder α] {W : Type*}
+
+/-- The maximally informative degree of a polar measure's degree property is the true
+measure value, whichever the polarity. -/
+theorem isMaxInf_degreeProperty_iff (dm : PolarMeasure α W) (m : α) (w : W)
     (hSurj : Function.Surjective dm.μ) :
     IsMaxInf dm.degreeProperty m w ↔ dm.μ w = m := by
-  cases h : dm.direction with
-  | positive =>
-      simp only [PolarMeasure.degreeProperty, h]
-      exact isMaxInf_atLeast_iff_eq dm.μ m w hSurj
-  | negative =>
-      simp only [PolarMeasure.degreeProperty, h]
-      exact isMaxInf_atMost_iff_eq dm.μ m w hSurj
+  cases h : dm.polarity <;> simp only [degreeProperty, h]
+  · exact isMaxInf_atLeast_iff_eq dm.μ m w hSurj
+  · exact isMaxInf_atMost_iff_eq dm.μ m w hSurj
 
-/-- Direction-invariance, bundled: two directed measures sharing a measure
-    function agree on maximal informativity regardless of direction or
-    boundedness — the constructor-level form of `mip_direction_invariant`. -/
-theorem _root_.Degree.PolarMeasure.isMaxInf_degreeProperty_congr
-    {W : Type*} (dm₁ dm₂ : PolarMeasure α W) (hμ : dm₁.μ = dm₂.μ)
+/-- Polar measures with the same measure function agree on maximal informativity,
+whatever their polarity or boundedness. -/
+theorem isMaxInf_degreeProperty_congr (dm₁ dm₂ : PolarMeasure α W) (hμ : dm₁.μ = dm₂.μ)
     (m : α) (w : W) (hSurj : Function.Surjective dm₁.μ) :
     IsMaxInf dm₁.degreeProperty m w ↔ IsMaxInf dm₂.degreeProperty m w := by
   rw [dm₁.isMaxInf_degreeProperty_iff m w hSurj,
-      dm₂.isMaxInf_degreeProperty_iff m w (hμ ▸ hSurj), hμ]
+    dm₂.isMaxInf_degreeProperty_iff m w (hμ ▸ hSurj), hμ]
 
-end Entailment
+end Degree.PolarMeasure

@@ -1,128 +1,89 @@
-import Mathlib.Order.Basic
-import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.ComparativeScale
-import Linglib.Semantics.Degree.Predicate
+import Linglib.Semantics.Degree.Comparison
 
 /-!
-# Directed measurement primitive
-[kennedy-2007] [kennedy-2015] [lassiter-goodman-2017] [krantz-1971]
+# Polar measures
 
-A `PolarMeasure D E` packages a degree type, entity type, measure function,
-boundedness classification, and direction. The common algebraic core of the
-degree-domain constructors and epistemic threshold semantics.
+This file defines polar measures: a measure function `μ : E → D` bundled with the
+lexical classification of the scale it lexicalizes — its boundedness (the
+`ComparativeScale` it extends) and the pole of the scale the predicate names. A
+gradable adjective's lexical entry is a scale together with a polarity along it;
+antonyms such as *tall*/*short* measure on the same scale and differ only in
+polarity, so the threshold property of the positive form is derived from the
+polarity rather than stored: "at least `d`" on the positive pole, "at most `d`" on
+the negative one.
 
 ## Main declarations
 
-- `PolarMeasure`: the bundled measure structure.
-- `PolarMeasure.IsLicensed`: endpoint-based licensing via `Boundedness.IsLicensed`.
-- `PolarMeasure.degreeProperty`: the degree property derived from
-  `direction` (`Comparison.ge.over` positive, `Comparison.le.over` negative); its
-  maximal informativity is characterized in `Semantics/Alternatives/Extremum.lean`.
-- `PolarMeasure.numeral`, `PolarMeasure.adjective`: Kennedy-style
-  numeral and gradable-adjective domains.
+* `PolarMeasure`: a measure function with the boundedness and polarity of its scale.
+* `PolarMeasure.degreeProperty`: the threshold property of the positive form,
+  `Comparison.ge.over μ` or `Comparison.le.over μ` by polarity.
+* `PolarMeasure.numeral`: the cardinality measure of a numeral on the scale `ℕ`.
 
-## Scale types as Mathlib typeclass combinations
+## Implementation notes
 
-For **theorems about concrete scales** — proving facts about a particular
-type — use Mathlib typeclasses directly:
+`boundedness` classifies the *lexicalized* scale and need not agree with the order
+structure of the carrier `D`: an open-scale adjective can be measured on a finite
+carrier for computation, and licensing (`IsLicensed`, inherited from
+`ComparativeScale`) reads the classification. `numeral` is the one constructor whose
+carrier is the scale itself, and its classification is faithful to `ℕ`
+(`hasMin_numeral_iff`, `hasMax_numeral_iff`).
 
-- **Measurement scale**: `[LinearOrder α]`
-- **Dense measurement scale** ([fox-hackl-2006] UDM): `[LinearOrder α] [DenselyOrdered α]`
-- **Upper-bounded scale**: `[LinearOrder α] [OrderTop α]`
-- **Lower-bounded scale**: `[LinearOrder α] [OrderBot α]`
-- **Open scale**: `[LinearOrder α] [NoMaxOrder α] [NoMinOrder α]`
+## References
 
-For **lexical-data tagging**, use the `Boundedness` enum from `Defs.lean`.
-Mathlib typeclass instances cannot be stored in record fields; the enum
-and the typeclass system serve different roles and both are real.
+* [C. Kennedy, *Vagueness and grammar: the semantics of relative and absolute gradable
+  adjectives* (2007)][kennedy-2007]
+* [C. Kennedy, *A "de-Fregean" semantics (and neo-Gricean pragmatics) for modified and
+  unmodified numerals* (2015)][kennedy-2015]
+* [D. Lassiter and N. D. Goodman, *Adjectival vagueness in a Bayesian model of
+  interpretation* (2017)][lassiter-goodman-2017]
 -/
 
 namespace Degree
 
 open Core.Order
 
-/-! ### PolarMeasure -/
-
-/-- A directed measurement on a bounded scale: a degree type `D` (the scale),
-    an entity type `E`, a measure function `μ : E → D`, boundedness
-    (from `ComparativeScale`), and a direction.
-
-    Common algebraic core of the `numeral`/`adjective` domain
-    constructors. The degree property
-    (`Comparison.ge.over` for positive, `Comparison.le.over` for negative) is
-    derived from `direction`, not stored — per [lassiter-goodman-2017], the
-    binary direction choice is the fundamental parameter. -/
-structure PolarMeasure (D : Type*) [LinearOrder D] (E : Type*) extends ComparativeScale D where
-  /-- Measure function: maps entities to degrees on the scale -/
+/-- A measure function `μ : E → D` with the boundedness and polarity of the scale it
+lexicalizes; antonyms share `μ` and differ only in `polarity`. -/
+@[ext]
+structure PolarMeasure (D : Type*) [Preorder D] (E : Type*) extends ComparativeScale D where
+  /-- The measure function. -/
   μ : E → D
-  /-- Scale direction: positive (μ(x) ≥ θ) or negative (μ(x) ≤ θ).
-      Determines which side of a threshold counts as satisfying the
-      predicate. Positive: tall, likely, full. Negative: short,
-      unlikely, empty. -/
-  direction : ScalePolarity := .positive
+  /-- The pole of the scale the predicate names (*tall* positive, *short* negative). -/
+  polarity : ScalePolarity := .positive
 
 namespace PolarMeasure
 
-variable {D : Type*} [LinearOrder D] {E : Type*}
+variable {D : Type*} [Preorder D] {E : Type*}
 
-/-- Licensing: licensed iff the bounded scale admits an optimum.
-    See `Boundedness.IsLicensed` for the caveat — this checks
-    "any endpoint exists", not [kennedy-2007]'s full
-    modifier-class licensing matrix. -/
-def IsLicensed (dm : PolarMeasure D E) : Prop := dm.boundedness.IsLicensed
-
-instance (dm : PolarMeasure D E) : Decidable dm.IsLicensed :=
-  inferInstanceAs (Decidable dm.boundedness.IsLicensed)
-
-/-- The degree property derived from the measure's direction: `Comparison.ge.over`
-    for positive scales (tall, likely), `Comparison.le.over` for negative ones
-    (short, unlikely). The derivation the structure docstring promises:
-    `direction` is the stored parameter, the property follows. -/
+/-- The threshold property of the positive form: the entities measuring at least `d` on
+the positive pole, at most `d` on the negative one. -/
 def degreeProperty (dm : PolarMeasure D E) : D → Set E :=
-  match dm.direction with
+  match dm.polarity with
   | .positive => Comparison.ge.over dm.μ
   | .negative => Comparison.le.over dm.μ
 
-end PolarMeasure
+/-! ### Numerals -/
 
-/-! ### Numeral and adjective domains
+/-- The cardinality measure `μ : E → ℕ` of a numeral. The scale `ℕ` of cardinalities has a
+least degree and no greatest, so its classification is `lowerBounded`. -/
+@[simps]
+def numeral (μ : E → ℕ) : PolarMeasure ℕ E := { boundedness := .lowerBounded, μ }
 
-Constructors for [kennedy-2015]'s numeral domains (de-Fregean type-shift
-over cardinality) and [kennedy-2007]'s gradable-adjective domains. The
-licensing theorems below only pin the `Boundedness → licensed` map; the
-substantive maximal-informativity results (exactness of the maximally
-informative degree) live in `Semantics/Alternatives/Extremum.lean`
-(`isMaxInf_atLeast_iff_eq`, `isMaxInf_atMost_iff_eq`) and are discharged
-over real numeral meanings in `Studies/FoxHackl2006Numerals.lean`. -/
+@[simp] theorem isLicensed_numeral (μ : E → ℕ) : (numeral μ).IsLicensed := trivial
 
-namespace PolarMeasure
+@[simp] theorem degreeProperty_numeral (μ : E → ℕ) :
+    (numeral μ).degreeProperty = Comparison.ge.over μ := rfl
 
-variable {α : Type*} [LinearOrder α] {W : Type*}
+/-- The classification of `numeral` is faithful to its carrier: `ℕ` has a least degree. -/
+theorem hasMin_numeral_iff (μ : E → ℕ) :
+    (numeral μ).boundedness.HasMin ↔ ∃ m : ℕ, IsBot m :=
+  iff_of_true trivial ⟨0, fun _ => Nat.zero_le _⟩
 
-/-- [kennedy-2015] numeral domain: "at least n" over cardinality.
-    Closed scale (ℕ well-ordered) → always licensed.
-    Type-shift to exact = MIP applied to `Comparison.ge.over`. -/
-def numeral (μ : W → α) : PolarMeasure α W :=
-  { boundedness := .closed, μ := μ }
-
-/-- [kennedy-2007] gradable adjective domain.
-    Boundedness varies by adjective class (tall: open, full: closed). -/
-def adjective (μ : W → α) (b : Boundedness) : PolarMeasure α W :=
-  { boundedness := b, μ := μ }
-
-/-! ### Licensing theorems -/
-
-/-- Numeral domains are always licensed (closed scale). -/
-theorem numeral_licensed (μ : W → α) :
-    (numeral μ).IsLicensed := trivial
-
-/-- Class B adjectives (closed scale) are licensed. -/
-theorem classB_licensed (μ : W → α) :
-    (adjective μ .closed).IsLicensed := trivial
-
-/-- Class A adjectives (open scale) are blocked. -/
-theorem classA_blocked (μ : W → α) :
-    ¬ (adjective μ .open_).IsLicensed := id
+/-- The classification of `numeral` is faithful to its carrier: `ℕ` has no greatest degree. -/
+theorem hasMax_numeral_iff (μ : E → ℕ) :
+    (numeral μ).boundedness.HasMax ↔ ∃ m : ℕ, IsTop m :=
+  iff_of_false id fun ⟨m, hm⟩ => not_isMax m hm.isMax
 
 end PolarMeasure
 
