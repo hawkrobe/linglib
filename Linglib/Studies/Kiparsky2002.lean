@@ -57,7 +57,7 @@ files consume it). Verified against the Kiparsky 2002 PDF: the
 
 -/
 
-open Time
+open Tense
 
 namespace Kiparsky2002
 

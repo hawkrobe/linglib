@@ -24,7 +24,7 @@ has a PRESENT tense head (indexical-compatible).
 
 -/
 
-open Time
+open Tense
 open Tense
 
 namespace German.Tense

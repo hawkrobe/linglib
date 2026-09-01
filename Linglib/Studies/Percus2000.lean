@@ -44,7 +44,7 @@ Fragments/English/Predicates/Verbal.lean
 
 -/
 
-open Time
+open Tense
 open Tense
 
 namespace Percus2000

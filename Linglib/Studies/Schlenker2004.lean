@@ -65,7 +65,7 @@ This file: tower operations produce the Reichenbach frames of the SOT diagnostic
 
 -/
 
-open Tense Time
+open Tense
 
 namespace Schlenker2004
 

@@ -17,7 +17,7 @@ Tense relates R to P; Aspect relates E to R.
 
 -/
 
-namespace Time
+namespace Tense
 
 /--
 Reichenbach's temporal parameters for tense/aspect analysis,
@@ -173,4 +173,4 @@ instance (f : ReichenbachFrame T) : Decidable f.isProspective :=
 
 end ReichenbachFrame
 
-end Time
+end Tense

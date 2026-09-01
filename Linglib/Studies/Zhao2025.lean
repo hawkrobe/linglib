@@ -81,7 +81,7 @@ theorem guo_compatible_with_all :
 
 /-! ### The ⌈then⌉-present puzzle -/
 
-open Time Tense.Perspective
+open Tense Tense.Perspective
 
 /-- The ⌈then⌉ adverbs of [zhao-2025]'s language sample, from the Fragment
     lexicons. -/

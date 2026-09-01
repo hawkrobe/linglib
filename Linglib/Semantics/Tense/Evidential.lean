@@ -55,7 +55,7 @@ classification in `Evidential`. `EPCondition.IsNonfuture` and
 
 -/
 
-open Time
+open Tense
 
 namespace Tense.Evidential
 
