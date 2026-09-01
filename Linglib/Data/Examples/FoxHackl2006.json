@@ -1,0 +1,1090 @@
+[
+  {
+    "id": "foxhackl2006_1",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John has 3 children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "implicature: John doesn't have 4 children", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["operator", "exh"],
+      ["modal", "none"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_2",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John has more than 3 children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "implicature: John doesn't have more than 4 children", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["operator", "exh"],
+      ["modal", "none"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_4",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(4)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John has very few children. He only has 3F (children).",
+    "discourseSegments": [
+      "John has very few children.",
+      "He only has 3F (children)."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "only"],
+      ["modal", "none"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_5",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John has very few children. He only has more than 3F (children).",
+    "discourseSegments": [
+      "John has very few children.",
+      "He only has more than 3F (children)."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "only"],
+      ["modal", "none"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_7a",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(7a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John weighs 120 pounds.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "implicature: John only weighs 120 pounds", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["operator", "exh"],
+      ["modal", "none"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_7b",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(7b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John weighs more than 120 pounds.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "implicature: for every degree d greater than 120, John does not weigh more than d pounds", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["operator", "exh"],
+      ["modal", "none"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_7c",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(7c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John only weighs more than 120F pounds.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "only"],
+      ["modal", "none"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_13a",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(13a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You're required to read more than 30 books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "implicature: there is no degree d greater than 30 such that you are required to read more than d books", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["operator", "exh"],
+      ["modal", "universal"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_13b",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(13b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You're only required to read more than 30F books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "only"],
+      ["modal", "universal"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_14a",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(14a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You're allowed to smoke more than 30 cigarettes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "implicature: there is no degree d greater than 30 such that you are allowed to smoke more than d cigarettes", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["operator", "exh"],
+      ["modal", "existential"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_14b",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(14b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You're only allowed to smoke more than 30F cigarettes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "only"],
+      ["modal", "existential"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_16",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(16)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How much does John not weigh?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "none"],
+      ["property", "downward"]
+    ],
+    "comment": "Paired in the paper with the statement 'John doesn't weigh 190 pounds.'",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_19a",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(19a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I have the amount of water that you don't.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "I have the amount of water that you do.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "definite"],
+      ["modal", "none"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_19b",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(19b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I have an amount of water that you don't.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "indefinite"],
+      ["modal", "none"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_21",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(21)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How much flour is sufficient to bake a cake?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "none"],
+      ["property", "downward"]
+    ],
+    "comment": "Acceptable although no maximal sufficient amount exists: the most informative true answer is the minimal one.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_23",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(23)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I have the amount of flour sufficient to bake a cake.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "definite"],
+      ["modal", "none"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_27a",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(27a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How much are you sure that this vessel won't weigh?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The addressee does not know how much the vessel will weigh but can put an upper bound on possible weights.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "universal"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_27b",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(27b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How much radiation are we not allowed to expose our workers to?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "universal"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_27c",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(27c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The amount of radiation that we are not allowed to expose our workers to is greater than we had thought.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "definite"],
+      ["modal", "universal"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_28a",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(28a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How much radiation is the company not allowed to expose its workers to?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "universal"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_28b",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(28b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How much food is the company not required to give its workers?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "existential"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_29a",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(29a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How much radiation is the company required not to expose its workers to?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "universal"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_29b",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(29b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How much food is the company allowed not to give its workers?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "existential"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_30b",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(30b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The amount of food that the company is not required to give its workers is quite high.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "definite"],
+      ["modal", "existential"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_32",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(32)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Before when did John arrive?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "none"],
+      ["property", "downward"]
+    ],
+    "comment": "Time rather than degree; the paper's [-NI,+MV] case.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_33",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(33)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Before when do you have to arrive?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "universal"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_34",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(34)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Before when are you allowed to arrive?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Addressed to a guest of a youth hostel whose doors are locked at 10 pm.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "existential"],
+      ["property", "downward"]
+    ],
+    "comment": "Acceptable through the free-choice reading of the answer 'You are allowed to arrive before 10 pm'.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_50a",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(50a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John didn't smoke 30 cigarettes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "implicature: John smoked 29 cigarettes", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["operator", "exh"],
+      ["modal", "none"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_50b",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(50b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John didn't read 30 books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "implicature: John read 29 books", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["operator", "exh"],
+      ["modal", "none"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_52",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(52)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is not allowed to smoke 30 cigarettes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "implicature: John is allowed to smoke 29 cigarettes", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["operator", "exh"],
+      ["modal", "universal"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_53",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(53)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is required not to smoke 30 cigarettes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "implicature: John is allowed to smoke 29 cigarettes", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["operator", "exh"],
+      ["modal", "universal"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_54",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(54)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is not required to read 30 books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "implicature: John is required to read 29 books", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["operator", "exh"],
+      ["modal", "existential"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_55",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(55)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is allowed not to read 30 books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "implicature: John is required to read 29 books", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["operator", "exh"],
+      ["modal", "existential"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_57a",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(57a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John has only not smoked 30F cigarettes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "only"],
+      ["modal", "none"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_57c",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(57c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John only does not weigh 190F pounds.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "only"],
+      ["modal", "none"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_58a",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(58a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is only required not to smoke 30F cigarettes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "only"],
+      ["modal", "universal"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_60",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(60)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is only allowed not to read 30F books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "only"],
+      ["modal", "existential"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_61",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(61)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is only not required to read 30F books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "only"],
+      ["modal", "existential"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_62a",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(62a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "More than how many books did John read?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "none"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_62b",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(62b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "More than how many books does John have to read?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "universal"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_62c",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(62c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "More than how many cigarettes is John allowed to smoke?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "existential"],
+      ["property", "upward"]
+    ],
+    "comment": "Marked ??/* in the paper.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_63a",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(63a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How many feet is John under?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "none"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_63b",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(63b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How many feet do you have to be under to take this ride?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "universal"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_64a",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(64a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The amount of food such that you ate more than that (is greater than I had thought).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "definite"],
+      ["modal", "none"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_64b",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(64b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The amount of food such that we are required to eat more than that (is greater than we had thought).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "definite"],
+      ["modal", "universal"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_64c",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(64c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The amount of candy such that we are allowed to eat more than that (is greater than we had thought).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "definite"],
+      ["modal", "existential"],
+      ["property", "upward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_100a",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(100a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Tell me how many points Iverson didn't score?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "none"],
+      ["property", "downward"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "foxhackl2006_100b",
+    "source": {"bibkey": "fox-hackl-2006", "paperLabel": "(100b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Among the following, please tell me how many points Iverson didn't score? A. 20 B. 30 C. 40 D. 50",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["operator", "question"],
+      ["modal", "none"],
+      ["property", "downward"]
+    ],
+    "comment": "A discrete set of alternatives is specified; the paper's syntactic contextual restriction.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
