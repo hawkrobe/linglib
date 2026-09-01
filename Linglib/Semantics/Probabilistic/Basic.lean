@@ -1,38 +1,37 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Mathlib.MeasureTheory.Measure.Dirac
 import Mathlib.MeasureTheory.Measure.Real
 import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 
 /-!
-# Meaning under parameter uncertainty
+# Graded truth from a prior on a parameter
 
-A denotation that depends on a latent parameter `θ : Θ` — the threshold of a gradable
-adjective, the reading of a clause-embedding predicate, the sense of a polysemous word —
-together with a prior `μ : Measure Θ` yields a *graded* truth value: the prior's mass on the
-parameters that make the predicate true. Gradience is not stipulated in the predicate; it
-emerges from uncertainty about the parameter, and a point-mass prior recovers Boolean truth
-(`gradedTruth_dirac`).
-
-The construction is [kamp-1975]'s probability measure over the completions of a vague
-predicate; its threshold instance is [lassiter-goodman-2017], its discrete-parameter instance
-(factive against non-factive readings) is [grove-white-2025].
+For a predicate `φ : Θ → E → Prop` depending on a parameter `θ : Θ` and a prior `μ : Measure Θ`,
+`gradedTruth μ φ x` is the mass `μ.real {θ | φ θ x}` of the parameters at which `φ x` holds. The
+threshold of a gradable adjective or the reading of a clause-embedding predicate are such
+parameters: each `φ θ` is Boolean, and the graded value comes from the prior.
 
 ## Main definitions
 
-* `Probabilistic.gradedTruth μ φ x` — `μ.real {θ | φ θ x}`.
+* `Probabilistic.gradedTruth μ φ x`: the graded truth value `μ.real {θ | φ θ x}`.
 
 ## Main results
 
-* `Probabilistic.gradedTruth_dirac` — a point mass recovers Boolean truth.
-* `Probabilistic.gradedTruth_mono`, `gradedTruth_compl` — graded truth respects entailment and
-  negation.
+* `Probabilistic.gradedTruth_dirac`: under the Dirac prior at `θ₀`, the graded truth value is `1`
+  if `φ θ₀ x` holds and `0` otherwise.
+* `Probabilistic.gradedTruth_mono`, `Probabilistic.gradedTruth_compl`: monotonicity in the
+  predicate, and the value of the negated predicate.
 
 ## References
 
-* [H. Kamp, *Two theories about adjectives* (1975)][kamp-1975]
-* [D. Lassiter and N. D. Goodman, *Adjectival vagueness in a Bayesian model of interpretation*
-  (2017)][lassiter-goodman-2017]
+* [D. Lassiter and N. D. Goodman, *Adjectival vagueness in a Bayesian model of
+  interpretation*][lassiter-goodman-2017]
 * [J. Grove and A. S. White, *Factivity, presupposition projection, and the role of discrete
-  knowledge in gradient inference judgments* (2025)][grove-white-2025]
+  knowledge in gradient inference judgments*][grove-white-2025]
 -/
 
 open MeasureTheory
