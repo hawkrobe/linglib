@@ -478,7 +478,7 @@ theorem identicalVowel_synersis_overshoots_walker_rose :
     adjacent |A| elements collapse to one.
 
     This makes structurally explicit that F&L's "fusion" mechanism
-    is the same operation as [lionnet-2022]'s `mergeTRN` for
+    is the same operation as [lionnet-2022]'s `TRN.merge` for
     Laal tones, just instantiated over a different value space
     (privative `Element` vs binary-feature `TRN`). -/
 theorem fusion_is_collapse_instance :

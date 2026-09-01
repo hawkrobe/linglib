@@ -1419,6 +1419,7 @@ import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Tone.Plateauing
+import Linglib.Phonology.Tone.Register
 import Linglib.Phonology.Tone.Surfacing
 import Linglib.Pragmatics.AsymmetricCommunication
 import Linglib.Pragmatics.BToM

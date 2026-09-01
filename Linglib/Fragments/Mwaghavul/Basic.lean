@@ -24,8 +24,7 @@ namespace Mwaghavul
 
 open Tone (TRN TBU Spec)
 
-/-- Mwaghavul is a tone language with syllable TBUs. -/
-def wordProsodicType : Tone.WordProsodicType := .toneBased
+/-- Mwaghavul's tone-bearing unit is the syllable. -/
 def tbuKind : Tone.TBUKind := .syllable
 
 /-! ### Verbalisers -/

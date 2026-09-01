@@ -11,9 +11,7 @@ import Linglib.Fragments.Laal.Prosody
 /-!
 # Lionnet (2022): The features and geometry of tone in Laal
 
-[lionnet-2022]
-
-Laal (isolate, southern Chad) has three contrastive tone heights H/M/L. Lionnet
+Laal (isolate, southern Chad) has three contrastive tone heights H/M/L. [lionnet-2022]
 argues for a subtonal analysis à la [yip-1980]/[pulleyblank-1986] (two register
 features `[±upper]`, `[±raised]`) linked to a Tonal Root Node ([snider-2020]):
 H = `[+upper, −raised]`, M = `[−upper, +raised]`, L = `[−upper, −raised]`, with
@@ -25,10 +23,10 @@ exclusivity (`*MX/XM`) and its instability (M-lowering).
 
 * §5.1 the featural analysis — the substrate `TRN.H/M/L` encode Lionnet's (51).
 * §3 M-exclusivity (`*MX/XM`) over the attested stem melodies.
-* §5.2 M-lowering as `[−raised]` assimilation (`subtonalAssimilate`): a `[−raised]`
+* §5.2 M-lowering as `[−raised]` assimilation (`TRN.assimilate`): a `[−raised]`
   trigger (H or L) turns the only `[+raised]` tone, M, into L.
 * §5.5 the ventive suffix as a floating `[−raised]` with `[upper]` from the root
-  (`dockFloating`).
+  (`TRN.dock`).
 * §5.6 the `[+upper, +raised]` gap (Table-4 type-A system).
 * §5.2 (ex. 53–55, 58) the **optional** OCP-`[raised]` merger — consuming the
   `OCP` fusion repair.
@@ -74,6 +72,17 @@ theorem featural_analysis :
 theorem tones_distinct_as_TRN :
     (([Tone.H, Tone.M, Tone.L]).map toneToTRN).Nodup := by decide
 
+/-- Paradigmatic pitch (§4): `[upper]` counts two and `[raised]` one, independently per
+node — no register state. -/
+def absolutePitch (t : TRN) : Int :=
+  (if t.upper = some true then 2 else 0) + if t.raised = some true then 1 else 0
+
+/-- `L < M < H`, with the gap above `H`. -/
+theorem absolutePitch_ordered :
+    absolutePitch TRN.L = 0 ∧ absolutePitch TRN.M = 1 ∧ absolutePitch TRN.H = 2 ∧
+      absolutePitch TRN.superHigh = 3 := by
+  decide
+
 /-- The minimal triplet (ex. 8) contrasts in tone alone: pairwise-distinct
 melodies on one segmental frame. -/
 theorem minimalTriplet_distinct_tones :
@@ -90,27 +99,27 @@ theorem M_exclusive :
 
 /-- M-lowering is `[−raised]` assimilation: an L trigger (`[−raised]`) spreads its
 `[raised]` value onto M (the only `[+raised]` tone), turning it into L. -/
-theorem mLowering_from_L : subtonalAssimilate .raised TRN.L TRN.M = TRN.L := by decide
+theorem mLowering_from_L : TRN.assimilate .raised TRN.L TRN.M = TRN.L := by decide
 
 /-- M-lowering from a `[−raised]` H trigger likewise turns M into L. -/
-theorem mLowering_from_H : subtonalAssimilate .raised TRN.H TRN.M = TRN.L := by decide
+theorem mLowering_from_H : TRN.assimilate .raised TRN.H TRN.M = TRN.L := by decide
 
 /-- Only M is targeted: H is inert under `[−raised]` assimilation (already
 `[−raised]`), explaining why H- and L-toned roots never lower. -/
-theorem H_stable : subtonalAssimilate .raised TRN.L TRN.H = TRN.H := by decide
+theorem H_stable : TRN.assimilate .raised TRN.L TRN.H = TRN.H := by decide
 
 /-- L is likewise inert under `[−raised]` assimilation. -/
-theorem L_stable : subtonalAssimilate .raised TRN.H TRN.L = TRN.L := by decide
+theorem L_stable : TRN.assimilate .raised TRN.H TRN.L = TRN.L := by decide
 
 /-! ### The ventive suffix (§5.5) -/
 
 /-- The ventive suffix (ex. 60) is a floating `[−raised]` feature with `[upper]`
-inherited from the root: `dockFloating .raised false`. It surfaces as H after a
+inherited from the root: `TRN.dock .raised false`. It surfaces as H after a
 `[+upper]` (H) root and as L after `[−upper]` (M or L) roots — the M-lowering
 realisation `kárá`/`dàgà`/`jàrà`. -/
-theorem ventive_after_H : dockFloating .raised false TRN.H = TRN.H := by decide
-theorem ventive_after_M : dockFloating .raised false TRN.M = TRN.L := by decide
-theorem ventive_after_L : dockFloating .raised false TRN.L = TRN.L := by decide
+theorem ventive_after_H : TRN.dock .raised false TRN.H = TRN.H := by decide
+theorem ventive_after_M : TRN.dock .raised false TRN.M = TRN.L := by decide
+theorem ventive_after_L : TRN.dock .raised false TRN.L = TRN.L := by decide
 
 /-! ### The `[+upper, +raised]` gap (§5.6) -/
 
