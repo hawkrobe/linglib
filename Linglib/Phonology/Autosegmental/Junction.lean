@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Factors
+import Linglib.Phonology.Autosegmental.Realization
 
 /-!
 # Local autosegmental configurations
@@ -317,6 +318,10 @@ def words (as : List α) (bs : List β) : ∀ b : Bool, List (TwoTier α β b)
   | true => (as : List (TwoTier α β true))
   | false => (bs : List (TwoTier α β false))
 
+@[simp] theorem words_true (as : List α) (bs : List β) : words as bs true = as := rfl
+
+@[simp] theorem words_false (as : List α) (bs : List β) : words as bs false = bs := rfl
+
 /-- Association lines from melody position `p` to timing position `q` under `L`. -/
 def links (L : ℕ → ℕ → Prop) (i j : Bool) (p q : ℕ) : Prop := i = true ∧ j = false ∧ L p q
 
@@ -355,6 +360,127 @@ instance [DecidableEq α] [DecidableEq β] (as as' : List α) (bs bs' : List β)
     (L L' : ℕ → ℕ → Prop) [DecidableRel L] [DecidableRel L'] :
     Decidable ((AR.ofWords as bs L).FactorEmbeds (AR.ofWords as' bs' L')) :=
   decidable_of_iff _ (AR.factorEmbeds_ofWords_iff as as' bs bs' L L').symm
+
+@[simp] theorem AR.tierLength_ofWords_true (as : List α) (bs : List β) (L : ℕ → ℕ → Prop) :
+    (AR.ofWords as bs L).tierLength true = as.length :=
+  AR.tierLength_ofData true
+
+@[simp] theorem AR.tierLength_ofWords_false (as : List α) (bs : List β) (L : ℕ → ℕ → Prop) :
+    (AR.ofWords as bs L).tierLength false = bs.length :=
+  AR.tierLength_ofData false
+
+/-- The lines of a representation of words: in bounds, and related by `L`. -/
+theorem AR.link_ofWords (as : List α) (bs : List β) (L : ℕ → ℕ → Prop) (p q : ℕ) :
+    (AR.ofWords as bs L).link true false p q ↔ p < as.length ∧ q < bs.length ∧ L p q := by
+  simp [AR.ofWords, AR.link_ofData, TwoTier.words, TwoTier.links]
+
+/-- A representation of words with no lines. -/
+theorem AR.not_link_ofWords_false (as : List α) (bs : List β) (i j : Bool) (p q : ℕ) :
+    ¬ (AR.ofWords as bs fun _ _ => False).link i j p q := fun hl => by
+  rcases (AR.link_ofData i j p q).mp hl with ⟨-, -, -, ⟨-, -, h⟩ | ⟨-, -, h⟩⟩ <;> exact h
+
+/-- Two-tier links are determined by the melody-to-timing case. -/
+theorem AR.link_iff_of_true_false {X Y : AR (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool)}
+    [Finite X.obj.V] [Finite Y.obj.V]
+    (h : ∀ p q, X.link true false p q ↔ Y.link true false p q) (i j : Bool) (p q : ℕ) :
+    X.link i j p q ↔ Y.link i j p q := by
+  cases i <;> cases j
+  · exact iff_of_false (X.not_link_self_tier _ _ _) (Y.not_link_self_tier _ _ _)
+  · exact ⟨fun hl => Y.link_symm ((h q p).mp (X.link_symm hl)),
+      fun hl => X.link_symm ((h q p).mpr (Y.link_symm hl))⟩
+  · exact h p q
+  · exact iff_of_false (X.not_link_self_tier _ _ _) (Y.not_link_self_tier _ _ _)
+
+/-! #### Realizations of word primitives
+
+The realization of a string whose primitives are representations of words has the readers
+of one representation of words: the tier words concatenate, and a line lives inside one
+symbol's primitive, at that symbol's offsets. -/
+
+section RealizeOfWords
+
+variable {S : Type*} (as : S → List α) (bs : S → List β) (L : S → ℕ → ℕ → Prop)
+
+/-- The offset of the `k`-th symbol's word in the concatenation. -/
+def wordOffset {γ : Type*} (f : S → List γ) (w : List S) (k : ℕ) : ℕ :=
+  ((w.take k).map fun s => (f s).length).sum
+
+theorem wordOffset_add_length_le {γ : Type*} (f : S → List γ) {w : List S} {k : ℕ}
+    (hk : k < w.length) : wordOffset f w k + (f w[k]).length ≤ (w.map f).flatten.length := by
+  have h := List.sum_take_add_sum_drop (w.map fun s => (f s).length) k
+  rw [List.drop_eq_getElem_cons (by simpa using hk), List.sum_cons] at h
+  simp only [wordOffset, List.length_flatten, List.map_map, List.map_take, List.getElem_map,
+    Function.comp_def] at h ⊢
+  omega
+
+/-- The lines of a concatenation of word primitives: inside one symbol's primitive, at its
+offsets. -/
+def blockLinks (w : List S) (p q : ℕ) : Prop :=
+  ∃ k, ∃ hk : k < w.length, wordOffset as w k ≤ p ∧ wordOffset bs w k ≤ q ∧
+    p - wordOffset as w k < (as w[k]).length ∧ q - wordOffset bs w k < (bs w[k]).length ∧
+    L w[k] (p - wordOffset as w k) (q - wordOffset bs w k)
+
+instance [∀ s, DecidableRel (L s)] (w : List S) : DecidableRel (blockLinks as bs L w) :=
+  fun _ _ => by unfold blockLinks; infer_instance
+
+theorem blockLinks_lt {w : List S} {p q : ℕ} (h : blockLinks as bs L w p q) :
+    p < (w.map as).flatten.length ∧ q < (w.map bs).flatten.length := by
+  obtain ⟨k, hk, hp, hq, hp', hq', -⟩ := h
+  have := wordOffset_add_length_le as hk
+  have := wordOffset_add_length_le bs hk
+  omega
+
+variable (g₀ : S → AR (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool)) [∀ s, Finite (g₀ s).obj.V]
+  (hg : ∀ s, g₀ s = AR.ofWords (as s) (bs s) (L s))
+include hg
+
+theorem AR.tierWord_realize_true_of_eq_ofWords (w : List S) :
+    (AR.realize g₀ w).tierWord true = (w.map as).flatten := by
+  simp [AR.tierWord_realize, hg]
+
+theorem AR.tierWord_realize_false_of_eq_ofWords (w : List S) :
+    (AR.realize g₀ w).tierWord false = (w.map bs).flatten := by
+  simp [AR.tierWord_realize, hg]
+
+theorem AR.tierOffset_true_of_eq_ofWords (w : List S) (k : ℕ) :
+    AR.tierOffset g₀ true w k = wordOffset as w k := by
+  simp [AR.tierOffset, hg, wordOffset]
+
+theorem AR.tierOffset_false_of_eq_ofWords (w : List S) (k : ℕ) :
+    AR.tierOffset g₀ false w k = wordOffset bs w k := by
+  simp [AR.tierOffset, hg, wordOffset]
+
+theorem AR.link_realize_of_eq_ofWords (w : List S) (p q : ℕ) :
+    (AR.realize g₀ w).link true false p q ↔ blockLinks as bs L w p q := by
+  rw [AR.link_realize]
+  simp only [AR.tierOffset_true_of_eq_ofWords as bs L g₀ hg,
+    AR.tierOffset_false_of_eq_ofWords as bs L g₀ hg, hg, AR.link_ofWords, blockLinks]
+
+/-- The realization of word primitives has the readers of one representation of words. -/
+theorem AR.factorEmbeds_realize_iff_of_eq_ofWords
+    (F : AR (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool)) [Finite F.obj.V] (w : List S) :
+    F.FactorEmbeds (AR.realize g₀ w) ↔
+      F.FactorEmbeds (AR.ofWords (w.map as).flatten (w.map bs).flatten (blockLinks as bs L w)) :=
+  AR.factorEmbeds_congr (fun _ => rfl) (fun _ _ _ _ => Iff.rfl)
+    (fun i => by
+      cases i
+      · exact (AR.tierWord_realize_false_of_eq_ofWords as bs L g₀ hg w).trans
+          (AR.tierWord_ofWords_false _ _ _).symm
+      · exact (AR.tierWord_realize_true_of_eq_ofWords as bs L g₀ hg w).trans
+          (AR.tierWord_ofWords_true _ _ _).symm)
+    (AR.link_iff_of_true_false fun p q => by
+      rw [AR.link_realize_of_eq_ofWords as bs L g₀ hg, AR.link_ofWords]
+      exact ⟨fun h => ⟨(blockLinks_lt as bs L h).1, (blockLinks_lt as bs L h).2, h⟩,
+        fun h => h.2.2⟩)
+
+theorem AR.free_realize_iff_of_eq_ofWords
+    (B : List {F : AR (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool) // Finite F.obj.V})
+    (w : List S) :
+    (AR.realize g₀ w).Free B ↔
+      (AR.ofWords (w.map as).flatten (w.map bs).flatten (blockLinks as bs L w)).Free B :=
+  forall₂_congr fun _ _ => not_congr (AR.factorEmbeds_realize_iff_of_eq_ofWords as bs L g₀ hg _ w)
+
+end RealizeOfWords
 
 /-- A timing slot **surfaces with** melody label `a`: some `a`-labelled melody
     node links to it. -/
