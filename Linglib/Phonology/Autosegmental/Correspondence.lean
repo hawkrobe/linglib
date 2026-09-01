@@ -38,8 +38,9 @@ with an empty input tier and no links.
   ([jardine-2016b] Def. 25).
 * `specifiedByRep` — `CG(φ)`, a process presented by a banned-subgraph grammar;
   `IsLocalRep`, a relation presented by a finite one.
-* `Strings` — a correspondence graph given by its data (input word, output word,
-  correspondence relation), whose banned-subgraph test `Strings.SpecifiedBy` decides.
+* `Rep.ofWords` — the correspondence graph of an input word, an output word and a
+  correspondence relation on their positions; banned-subgraph tests between such graphs
+  decide.
 -/
 
 namespace Autosegmental
@@ -108,70 +109,52 @@ theorem specifiedByRep_append (φ ψ : List (Rep S T)) (G : Rep S T) :
 
 instance (G : Rep S T) : Finite G.val.obj.V := G.property
 
-/-! ### Correspondence graphs from data
+/-- A grammar tests its banned subgraphs one by one. -/
+theorem specifiedByRep_cons (F : Rep S T) (φ : List (Rep S T)) (G : Rep S T) :
+    specifiedByRep (F :: φ) G ↔ ¬ F.val.FactorEmbeds G.val ∧ specifiedByRep φ G := by
+  unfold specifiedByRep AR.Free
+  exact List.forall_mem_cons
 
-A correspondence graph presented by its data — the two strings and the correspondence
-relation on their positions. Its banned-subgraph test is computed on the data
+/-! ### Correspondence graphs from words
+
+The graph of an input word, an output word, and a correspondence relation on their
+positions. Banned-subgraph tests between such graphs are computed on the words
 (`AR.factorEmbeds_ofData_iff`), so grammars over concrete strings decide. -/
 
-/-- A string correspondence: an input word, an output word, and the correspondence
-relation between their positions. -/
-structure Strings (S T : Type u) where
-  /-- The input string. -/
-  input : List S
-  /-- The output string. -/
-  output : List T
-  /-- Input position `p` corresponds to output position `q`. -/
-  Corr : ℕ → ℕ → Prop
-  [decCorr : DecidableRel Corr]
+/-- The tier words of an input word and an output word: input over `true`, output over
+`false`. -/
+def words (w : List S) (v : List T) : ∀ b : Bool, List (TwoTier S T b)
+  | true => (w : List (TwoTier S T true))
+  | false => (v : List (TwoTier S T false))
 
-namespace Strings
+/-- Correspondence arcs from the input tier to the output tier, under a correspondence
+relation on positions. -/
+def links (C : ℕ → ℕ → Prop) (i j : Bool) (p q : ℕ) : Prop := i = true ∧ j = false ∧ C p q
 
-attribute [instance] decCorr
-
-/-- The tier words: input over `true`, output over `false`. -/
-def words (D : Strings S T) : ∀ b : Bool, List (TwoTier S T b)
-  | true => (D.input : List (TwoTier S T true))
-  | false => (D.output : List (TwoTier S T false))
-
-/-- The links: correspondence arcs from the input tier to the output tier. -/
-def links (D : Strings S T) (i j : Bool) (p q : ℕ) : Prop := i = true ∧ j = false ∧ D.Corr p q
-
-instance (D : Strings S T) (i j : Bool) (p q : ℕ) : Decidable (D.links i j p q) :=
+instance (C : ℕ → ℕ → Prop) [DecidableRel C] (i j : Bool) (p q : ℕ) :
+    Decidable (links C i j p q) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-/-- The correspondence representation presented by the data. -/
-def toRep (D : Strings S T) : Rep S T := ⟨AR.ofData D.words D.links, inferInstance⟩
+/-- The correspondence graph of the input word `w` and the output word `v` under the
+correspondence relation `C` on their positions. -/
+def Rep.ofWords (w : List S) (v : List T) (C : ℕ → ℕ → Prop) : Rep S T :=
+  ⟨AR.ofData (words w v) (links C), inferInstance⟩
 
-@[simp] theorem input_toRep (D : Strings S T) : D.toRep.input = D.input :=
+@[simp] theorem Rep.input_ofWords (w : List S) (v : List T) (C : ℕ → ℕ → Prop) :
+    (Rep.ofWords w v C).input = w :=
   AR.tierWord_ofData true
 
-@[simp] theorem output_toRep (D : Strings S T) : D.toRep.output = D.output :=
+@[simp] theorem Rep.output_ofWords (w : List S) (v : List T) (C : ℕ → ℕ → Prop) :
+    (Rep.ofWords w v C).output = v :=
   AR.tierWord_ofData false
 
-/-- `F` occurs in `G`, computed on the data. -/
-def Embeds (F G : Strings S T) : Prop := dataEmbeds F.words G.words F.links G.links
-
-instance [DecidableEq S] [DecidableEq T] (F G : Strings S T) : Decidable (F.Embeds G) :=
-  inferInstanceAs (Decidable (dataEmbeds _ _ _ _))
-
-theorem factorEmbeds_toRep_iff (F G : Strings S T) :
-    F.toRep.val.FactorEmbeds G.toRep.val ↔ F.Embeds G :=
-  AR.factorEmbeds_ofData_iff
-
-/-- A correspondence free of every banned subgraph of a grammar, on the data. -/
-def SpecifiedBy (φ : List (Strings S T)) (G : Strings S T) : Prop := ∀ F ∈ φ, ¬ F.Embeds G
-
-instance [DecidableEq S] [DecidableEq T] (φ : List (Strings S T)) (G : Strings S T) :
-    Decidable (SpecifiedBy φ G) :=
-  List.decidableBAll _ _
-
-/-- The data-level grammar test is the representation-level one. -/
-theorem specifiedByRep_map_toRep (φ : List (Strings S T)) (G : Strings S T) :
-    specifiedByRep (φ.map toRep) G.toRep ↔ SpecifiedBy φ G := by
-  simp only [specifiedByRep, AR.Free, List.forall_mem_map, factorEmbeds_toRep_iff, SpecifiedBy]
-
-end Strings
+/-- Embedding between graphs of words is the data-level check, hence decidable. -/
+instance [DecidableEq S] [DecidableEq T] (w w' : List S) (v v' : List T)
+    (C C' : ℕ → ℕ → Prop) [DecidableRel C] [DecidableRel C'] :
+    Decidable ((Rep.ofWords w v C).val.FactorEmbeds (Rep.ofWords w' v' C').val) :=
+  decidable_of_iff (dataEmbeds (words w v) (words w' v') (links C) (links C'))
+    (AR.factorEmbeds_ofData_iff (wsF := words w v) (wsX := words w' v') (LF := links C)
+      (LX := links C')).symm
 
 end Coordinate
 
