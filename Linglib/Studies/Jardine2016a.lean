@@ -130,7 +130,7 @@ private theorem markLeft_run_H_iff (w : List TBU) (j : ℕ) :
 /-- The (43) decomposition computes UTP. -/
 theorem utp_eq_resolve_mark (w : List TBU) : utp.map w = resolve (markLeft.run w) := by
   have hmark : ∀ i : ℕ, Mark.H ∈ (markLeft.run w).drop (i + 1) ↔ TBU.H ∈ w.drop (i + 1) :=
-    fun i => by simp only [List.mem_drop_iff_getElem?, markLeft_run_H_iff]
+    fun i => by simp only [List.mem_iff_getElem?, List.getElem?_drop, markLeft_run_H_iff]
   refine List.ext_getElem? fun i => ?_
   rw [utp.map_getElem?, resolve, resolveRight, Mealy.getElem?_ofFlag_runRight]
   simp only [List.any_beq', List.contains_eq_mem, decide_eq_decide.mpr (hmark i)]
