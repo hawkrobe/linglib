@@ -26,7 +26,7 @@ on the pointwise product of the experts' masses — the combination rule of
 [erk-herbelot-2024]'s situation description systems.
 -/
 
-namespace Probabilistic
+namespace Semantics.Composition
 
 variable {U W R : Type*}
 
@@ -66,4 +66,4 @@ theorem prodMeaning_nonneg [PosMulMono R] {lex : U → W → R}
 
 end Order
 
-end Probabilistic
+end Semantics.Composition

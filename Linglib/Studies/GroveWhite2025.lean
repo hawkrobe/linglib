@@ -1,5 +1,7 @@
 import Linglib.Semantics.Attitudes.Factivity
-import Linglib.Semantics.Probabilistic.Basic
+import Mathlib.MeasureTheory.Measure.Dirac
+import Mathlib.MeasureTheory.Measure.Real
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 import Linglib.Studies.DegenTonhauser2022
 import Linglib.Studies.ScontrasTonhauser2025
 import Linglib.Core.Algebra.Order.Interval.Set.Instances
@@ -33,7 +35,7 @@ factivity discreteness with world-knowledge discreteness.
 
 ## The Discrete-Factivity Model
 
-The discrete-factivity model is `Probabilistic.gradedTruth` over `FactivityReading`:
+The discrete-factivity model is a Bernoulli prior over `FactivityReading`:
 
 - `clauseEmbeddingSem .factive`     = `factivePos` (`BEL ∧ C`)
 - `clauseEmbeddingSem .nonfactive`  = `nonFactivePos` (`BEL`)
@@ -57,9 +59,8 @@ is the active variable.
 ## Connection to PDS
 
 The paper's formal framework is Probabilistic Dynamic Semantics (PDS),
-developed in [grove-white-2025b]. The model's graded truth is the Bernoulli
-prior's mass on the satisfied-readings event (`Probabilistic.gradedTruth`):
-graded inference judgments emerge from
+developed in [grove-white-2025b]. The model's inference value is the Bernoulli
+prior's mass on the satisfied-readings event: graded inference judgments emerge from
 marginalising over a *discrete* reading parameter, exactly the PDS
 pattern in which a `bind` over a discrete probability node feeds a
 Boolean predicate.
@@ -86,7 +87,7 @@ the specific empirical regularity the world-knowledge component is fit to.
 
 namespace GroveWhite2025
 
-open MeasureTheory Factivity Probabilistic
+open MeasureTheory Factivity
 open DegenTonhauser2021
 open DegenTonhauser2022
 open scoped ENNReal NNReal
@@ -169,11 +170,11 @@ section DiscreteFactivity
 
 variable {W : Type*} [HasBelief W] [HasComplement W]
 
-/-- The discrete-factivity model: the graded truth of the clause-embedding predicate at `w`
-    is the Bernoulli prior's mass on the readings under which it holds
-    (`Probabilistic.gradedTruth` of `clauseEmbeddingSem`; definition (13), p. 20). -/
+/-- The discrete-factivity model: the probability that the clause-embedding predicate holds
+    at `w` is the Bernoulli prior's mass on the readings under which it does
+    (definition (13), p. 20). -/
 noncomputable def discreteFactivity (τ : Set.Icc (0 : ℚ) 1) (w : W) : ℝ :=
-  Probabilistic.gradedTruth (factivityPrior τ) (fun θ w => clauseEmbeddingSem θ w) w
+  (factivityPrior τ).real {θ | clauseEmbeddingSem θ w}
 
 /-- Closed-form reduction: graded truth = `τ · 1[factivePos] + (1−τ) · 1[nonFactivePos]`.
     This is the substantive content of the τ-parameterised model — graded
@@ -183,7 +184,7 @@ theorem discreteFactivity_eq (τ : Set.Icc (0 : ℚ) 1) (w : W) :
     discreteFactivity τ w =
       (if factivePos w then (τ.val : ℝ) else 0) +
         (if nonFactivePos (W := W) w then 1 - (τ.val : ℝ) else 0) := by
-  simp only [discreteFactivity, Probabilistic.gradedTruth, measureReal_def, factivityPrior,
+  simp only [discreteFactivity, measureReal_def, factivityPrior,
     Measure.coe_add, Pi.add_apply, Measure.smul_apply, Measure.dirac_apply, smul_eq_mul,
     Set.indicator_apply, Set.mem_ofPred_eq, clauseEmbeddingSem, Pi.one_apply]
   split_ifs <;> simp [ENNReal.toReal_add, toNNReal_val, NNReal.coe_sub (toNNReal_le_one τ),
@@ -206,7 +207,7 @@ theorem discreteFactivity_certain_nonfactive (w : W) :
     rules it out), so this lemma is vacuously achievable; the substantive
     case is the *contrapositive* one supplied by `discreteFactivity_eq`
     plus monotonicity of the Bernoulli mixture. -/
-theorem higher_tau_higher_gradedTruth
+theorem discreteFactivity_lt_of_lt
     (τ₁ τ₂ : Set.Icc (0 : ℚ) 1) (w : W)
     (h_tau : τ₁.val > τ₂.val)
     (h_factive : factivePos w = true)
