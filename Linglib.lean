@@ -1449,6 +1449,7 @@ import Linglib.Pragmatics.RSA.Profile
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Pragmatics.RSA.CombinedUtility
 import Linglib.Pragmatics.RSA.Gibbs
+import Linglib.Pragmatics.RSA.Incremental
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.LexicalUncertainty
 import Linglib.Pragmatics.RSA.Operators
@@ -1589,7 +1590,6 @@ import Linglib.Semantics.Composition.Coordination
 import Linglib.Semantics.Composition.CoordinatorOp
 import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Composition.Model
-import Linglib.Semantics.Composition.Probabilistic
 import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Composition.Scope
 import Linglib.Semantics.Composition.Tree
