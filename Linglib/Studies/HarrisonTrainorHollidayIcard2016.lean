@@ -149,16 +149,16 @@ variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
 
 open scoped Classical in
 private lemma mu_eq_sum_ite (E : Set W) :
-    m.mu E = ∑ s, if s ∈ E then m.mu {s} else 0 := by
+    m E = ∑ s, if s ∈ E then m {s} else 0 := by
   classical
-  have h : m.mu E = ∑ i ∈ E.toFinset, m.mu {i} := by
+  have h : m E = ∑ i ∈ E.toFinset, m {i} := by
     rw [m.sum_mu_singleton, Set.coe_toFinset]
   rw [h, ← Finset.sum_filter]
   refine Finset.sum_congr ?_ (fun _ _ => rfl)
   ext s; simp [Set.mem_toFinset]
 
 private lemma mu_listSum (L : List (Set W)) :
-    (L.map m.mu).sum = ∑ s, m.mu {s} * (seqCount s L : K) := by
+    (L.map m).sum = ∑ s, m {s} * (seqCount s L : K) := by
   classical
   induction L with
   | nil => simp [seqCount]
@@ -173,14 +173,14 @@ private lemma mu_listSum (L : List (Set W)) :
     · simp [hs]
 
 private lemma mu_listSum_eq_of_balanced {L₁ L₂ : List (Set W)} (h : Balanced L₁ L₂) :
-    (L₁.map m.mu).sum = (L₂.map m.mu).sum := by
+    (L₁.map m).sum = (L₂.map m).sum := by
   rw [mu_listSum m L₁, mu_listSum m L₂]
   exact Finset.sum_congr rfl (fun s _ => by rw [h s])
 
 omit [Fintype W] in
 private lemma mu_sum_mono {prem : List (Set W × Set W)}
     (hprem : ∀ p ∈ prem, m.inducedGe p.1 p.2) :
-    ((prem.map Prod.snd).map m.mu).sum ≤ ((prem.map Prod.fst).map m.mu).sum := by
+    ((prem.map Prod.snd).map m).sum ≤ ((prem.map Prod.fst).map m).sum := by
   induction prem with
   | nil => simp
   | cons p ps ih =>
@@ -204,8 +204,8 @@ def GFCOrder.ofMeasure : GFCOrder W where
     simp only [List.map_append, List.sum_append, List.map_replicate, List.sum_replicate,
       nsmul_eq_mul] at hsum
     have hr0 : (0 : K) < r := by exact_mod_cast Nat.lt_of_lt_of_le Nat.one_pos hr
-    show m.mu X ≤ m.mu Y
-    have hkey : (r : K) * m.mu X ≤ (r : K) * m.mu Y := by nlinarith [mu_sum_mono m hprem]
+    show m X ≤ m Y
+    have hkey : (r : K) * m X ≤ (r : K) * m Y := by nlinarith [mu_sum_mono m hprem]
     exact le_of_mul_le_mul_left hkey hr0
 
 end

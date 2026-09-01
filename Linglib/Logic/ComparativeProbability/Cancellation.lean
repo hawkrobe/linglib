@@ -115,9 +115,9 @@ private lemma finset_sum_as_univ {n : ℕ} (S : Finset (Fin n)) (f : Fin n → �
 
 private lemma single_comp_sum {n : ℕ} (m : FinAddMeasure ℚ (Fin n))
     (L R : Finset (Fin n)) (hd : Disjoint L R) :
-    m.mu ↑L - m.mu ↑R =
+    m ↑L - m ↑R =
     Finset.univ.sum (fun i : Fin n =>
-      m.mu {i} * ((comparisonVec n L R i : ℤ) : ℚ)) := by
+      m {i} * ((comparisonVec n L R i : ℤ) : ℚ)) := by
   rw [← m.sum_mu_singleton L, ← m.sum_mu_singleton R, finset_sum_as_univ L, finset_sum_as_univ R,
       ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -126,8 +126,8 @@ private lemma single_comp_sum {n : ℕ} (m : FinAddMeasure ℚ (Fin n))
 
 private lemma portfolio_interchange {n : ℕ} (m : FinAddMeasure ℚ (Fin n))
     (P : Portfolio n) :
-    (P.map (fun wc => wc.weight * (m.mu ↑wc.left - m.mu ↑wc.right))).sum =
-    Finset.univ.sum (fun i => m.mu {i} * Portfolio.weightedSum P i) := by
+    (P.map (fun wc => wc.weight * (m ↑wc.left - m ↑wc.right))).sum =
+    Finset.univ.sum (fun i => m {i} * Portfolio.weightedSum P i) := by
   induction P with
   | nil =>
     simp only [List.map_nil, List.sum_nil]
@@ -157,7 +157,7 @@ theorem representable_implies_cancellation {n : ℕ}
     Cancellation n ge := by
   intro P hValid hNeutral ⟨wc, hwc_mem, hwc_strict⟩
   -- Define the portfolio valuation function
-  let f : WComparison n → ℚ := fun wc => wc.weight * (m.mu ↑wc.left - m.mu ↑wc.right)
+  let f : WComparison n → ℚ := fun wc => wc.weight * (m ↑wc.left - m ↑wc.right)
   -- Each term is nonneg
   have hnn : ∀ x ∈ P.map f, (0 : ℚ) ≤ x := by
     intro x hx
@@ -165,7 +165,7 @@ theorem representable_implies_cancellation {n : ℕ}
     exact mul_nonneg wc'.weight_pos.le
       (sub_nonneg.mpr ((hm _ _).mp (hValid wc' hwc'_mem)))
   -- The strict term is strictly positive
-  have hlt : m.mu ↑wc.left > m.mu ↑wc.right := by
+  have hlt : m ↑wc.left > m ↑wc.right := by
     by_contra h; push Not at h
     exact hwc_strict ((hm _ _).mpr h)
   have hp : ∃ x ∈ P.map f, (0 : ℚ) < x :=
@@ -175,7 +175,7 @@ theorem representable_implies_cancellation {n : ℕ}
   have hpos := list_sum_pos hnn hp
   -- But by interchange, portfolio value = Σ_i mu_i * weightedSum_i = 0
   rw [portfolio_interchange m P] at hpos
-  have hzero : Finset.univ.sum (fun i => m.mu {i} * P.weightedSum i) = 0 :=
+  have hzero : Finset.univ.sum (fun i => m {i} * P.weightedSum i) = 0 :=
     Finset.sum_eq_zero (fun i _ => by rw [hNeutral i, mul_zero])
   linarith
 
@@ -272,7 +272,7 @@ private lemma ge_empty_of_all_null {n : ℕ} (sys : QualitativeProbability (Fin 
       · rintro ⟨hx | hx, hnx⟩ <;> [exact hx; exact absurd hx hnx]
       · rintro rfl; exact ⟨Or.inl rfl, fun h => haS' (Finset.mem_coe.mp h)⟩
     rw [Finset.coe_insert, Set.insert_eq]
-    exact sys.trans ∅ ↑S' ({a} ∪ ↑S') ih
+    exact sys.trans (B := ↑S') ih
       (by rw [sys.additive ↑S' ({a} ∪ ↑S'), h1, h2]; exact hall a)
 
 /-- Not all singletons can be null: ∃ i, ¬sys.ge ∅ {i}. If all were null,
@@ -408,7 +408,7 @@ private theorem strictPairs_strict {n : ℕ} (sys : QualitativeProbability (Fin 
 private theorem strictPairs_length_pos {n : ℕ} (sys : QualitativeProbability (Fin n)) :
     0 < (strictPairsOf sys).length :=
   List.length_pos_of_mem (strictPairs_mem sys Finset.univ ∅ (Finset.disjoint_empty_right _)
-    (by rw [Finset.coe_univ, Finset.coe_empty]; exact sys.mono _ _ (Set.empty_subset _))
+    (by rw [Finset.coe_univ, Finset.coe_empty]; exact sys.mono (Set.empty_subset _))
     (by rw [Finset.coe_univ, Finset.coe_empty]; exact sys.nonTrivial))
 
 /-- The core LP step: cancellation implies the feasibility polytope is nonempty.
@@ -656,7 +656,7 @@ private theorem cancellation_nonempty {n : ℕ} (sys : QualitativeProbability (F
         split_ifs at hj with hpos
         cases hj
         simp only [Finset.coe_singleton, Finset.coe_empty]
-        exact sys.mono ∅ {j} (Set.empty_subset _)
+        exact sys.mono (Set.empty_subset _)
     have hQ_neutral : Q.isNeutral := by
       intro j
       show Portfolio.weightedSum (Q_ord ++ Q_strict ++ Q_sing) j = 0
