@@ -1553,7 +1553,6 @@ import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Semantics.Attitudes.Preference
-import Linglib.Semantics.Causation.BayesNet
 import Linglib.Semantics.Causation.CCSelection
 import Linglib.Semantics.Causation.CauserSort
 import Linglib.Semantics.Causation.CoerciveImplication
@@ -1808,7 +1807,6 @@ import Linglib.Semantics.Presupposition.ProjectiveContent
 import Linglib.Semantics.Presupposition.Quantified
 import Linglib.Semantics.Presupposition.TriggerTypology
 import Linglib.Semantics.Presupposition.Trivalent
-import Linglib.Semantics.Probabilistic.ConditionalAssertability
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Binominal
 import Linglib.Semantics.Quantification.BinominalDefs
