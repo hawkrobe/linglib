@@ -1,9 +1,7 @@
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Basic
-import Linglib.Semantics.Degree.Adjective
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Order.Boundedness
-import Linglib.Semantics.Degree.Measure.Polar
 import Linglib.Features.PropertyDomain
 import Linglib.Features.Antonymy
 
@@ -43,9 +41,8 @@ central claims against the degree substrate and the English adjective Fragment.
 * `minStandard_comparative_entails_positive` / `maxStandard_comparative_entails_negative`
   / `relative_comparative_not_entails_positive` — the eq. (49)–(52) asymmetry.
 * `Licenses` — the eq. (61) modifier-class licensing matrix.
-* `k2007_matrix_agrees_with_typology`, `k2007_modifier_data_agrees`,
-  `pipeline_agrees_with_measure` — the matrix agrees with the per-adjective
-  typology data and with the `PolarMeasure` / `LicensingPipeline` substrate.
+* `k2007_matrix_agrees_with_typology`, `k2007_modifier_data_agrees` — the matrix agrees
+  with the per-adjective typology data.
 * `tall_requires_cc`, `full_no_cc` (etc.) — comparison-class sensitivity
   read off each Fragment adjective's scale structure.
 -/
@@ -536,12 +533,10 @@ instance : ∀ (m : DegreeModifierType) (b : Core.Order.Boundedness),
   | .intensifier, _ => isTrue trivial
   | .measurePhrase, _ => isTrue trivial
 
-/-! ### Fragment licensing bridges
+/-! ### Fragment licensing
 
-Connects the abstract `adjMeasure` and `LicensingPipeline` algebra to the
-concrete English Fragment entries (*tall*, *full*, *wet*, *dry*) and the
-empirical data above, and verifies the per-entry typology data against the
-Fragment annotations. -/
+Runs `LicensingPipeline` on the concrete English Fragment entries (*tall*, *full*,
+*wet*, *dry*) and checks the verdicts against the empirical data above. -/
 
 section Bridge
 
@@ -549,72 +544,39 @@ open Degree
 open English.Predicates.Adjectival
 open Core.Order
 
-/-! #### Fragment → PolarMeasure licensing -/
+/-! #### Fragment → licensing -/
 
-/-- "tall" (open scale) → PolarMeasure blocks degree modification. -/
-theorem tall_blocks_completely {max : Nat} {W : Type*} (μ : W → Bounded max) :
-    ¬ (adjMeasure μ tall).IsLicensed :=
-  openAdj_blocked μ tall rfl
-
-/-- "full" (closed scale) → PolarMeasure licenses degree modification. -/
-theorem full_licenses_completely {max : Nat} {W : Type*} (μ : W → Bounded max) :
-    (adjMeasure μ full).IsLicensed :=
-  closedAdj_licensed μ full rfl
-
-/-- "wet" (closed scale) → PolarMeasure licenses. -/
-theorem wet_licensed {max : Nat} {W : Type*} (μ : W → Bounded max) :
-    (adjMeasure μ wet).IsLicensed :=
-  closedAdj_licensed μ wet rfl
-
-/-- "dry" (closed scale) → PolarMeasure licenses. -/
-theorem dry_licensed {max : Nat} {W : Type*} (μ : W → Bounded max) :
-    (adjMeasure μ dry).IsLicensed :=
-  closedAdj_licensed μ dry rfl
-
-/-! #### PolarMeasure → data bridges -/
-
-/-- The closure puzzle is predicted by PolarMeasure:
-    closed-scale adjectives license "completely", open-scale ones don't.
-    Matches `closurePuzzle.worksWithClosed` / `.worksWithOpen`. -/
-theorem closurePuzzle_predicted {max : Nat} {W : Type*} (μ : W → Bounded max) :
-    ((adjMeasure μ full).IsLicensed ↔ closurePuzzle.worksWithClosed = true) ∧
-    ((adjMeasure μ tall).IsLicensed ↔ closurePuzzle.worksWithOpen = true) :=
-  ⟨iff_of_true (closedAdj_licensed μ full rfl) rfl,
-   iff_of_false (openAdj_blocked μ tall rfl) (by decide)⟩
-
-/-- "completely" works with AGA-max (closed) but not RGA (open).
-    `adjMeasure` licensing matches `completelyModifier` fields. -/
-theorem completely_distribution {max : Nat} {W : Type*} (μ : W → Bounded max) :
-    ((adjMeasure μ full).IsLicensed ↔ completelyModifier.worksWithAGAMax = true) ∧
-    ((adjMeasure μ tall).IsLicensed ↔ completelyModifier.worksWithRGA = true) :=
-  ⟨iff_of_true (closedAdj_licensed μ full rfl) rfl,
-   iff_of_false (openAdj_blocked μ tall rfl) (by decide)⟩
-
-/-! #### LicensingPipeline bridges -/
-
-/-- "tall" through the universal pipeline: open_ → blocked. -/
+/-- "tall" (open scale) blocks degree modification. -/
 theorem adj_pipeline_tall :
     ¬ LicensingPipeline.IsLicensed tall.scaleType := id
 
-/-- "full" through the universal pipeline: closed → licensed. -/
+/-- "full" (closed scale) licenses degree modification. -/
 theorem adj_pipeline_full :
     LicensingPipeline.IsLicensed full.scaleType := trivial
 
-/-- "wet" through the universal pipeline: closed (endpoint) → licensed. -/
+/-- "wet" (closed scale) licenses. -/
 theorem adj_pipeline_wet :
     LicensingPipeline.IsLicensed wet.scaleType := trivial
 
-/-- "dry" through the universal pipeline: closed (endpoint) → licensed. -/
+/-- "dry" (closed scale) licenses. -/
 theorem adj_pipeline_dry :
     LicensingPipeline.IsLicensed dry.scaleType := trivial
 
-/-- Pipeline agrees with PolarMeasure for all four test adjectives. -/
-theorem pipeline_agrees_with_measure {max : Nat} {W : Type*} (μ : W → Bounded max) :
-    (LicensingPipeline.IsLicensed tall.scaleType ↔ (adjMeasure μ tall).IsLicensed) ∧
-    (LicensingPipeline.IsLicensed full.scaleType ↔ (adjMeasure μ full).IsLicensed) ∧
-    (LicensingPipeline.IsLicensed wet.scaleType ↔ (adjMeasure μ wet).IsLicensed) ∧
-    (LicensingPipeline.IsLicensed dry.scaleType ↔ (adjMeasure μ dry).IsLicensed) :=
-  ⟨Iff.rfl, Iff.rfl, Iff.rfl, Iff.rfl⟩
+/-! #### Licensing → data -/
+
+/-- The closure puzzle is predicted: closed-scale adjectives license "completely",
+    open-scale ones don't. Matches `closurePuzzle.worksWithClosed` / `.worksWithOpen`. -/
+theorem closurePuzzle_predicted :
+    (LicensingPipeline.IsLicensed full.scaleType ↔ closurePuzzle.worksWithClosed = true) ∧
+    (LicensingPipeline.IsLicensed tall.scaleType ↔ closurePuzzle.worksWithOpen = true) :=
+  ⟨iff_of_true trivial rfl, iff_of_false id (by decide)⟩
+
+/-- "completely" works with AGA-max (closed) but not RGA (open): licensing matches the
+    `completelyModifier` fields. -/
+theorem completely_distribution :
+    (LicensingPipeline.IsLicensed full.scaleType ↔ completelyModifier.worksWithAGAMax = true) ∧
+    (LicensingPipeline.IsLicensed tall.scaleType ↔ completelyModifier.worksWithRGA = true) :=
+  ⟨iff_of_true trivial rfl, iff_of_false id (by decide)⟩
 
 /-! #### Scale structure → comparison-class sensitivity
 

@@ -134,8 +134,8 @@ private theorem union_diff_union_disjoint {W : Type*} (A B C : Set W)
     (fun hx => absurd (Or.inr hx) h.2), fun ⟨hxA, hxnB⟩ =>
     ⟨Or.inl hxA, fun h => h.elim hxnB (hAC x hxA)⟩⟩
 
-/-- **Algebraic bridge**: Axiom A and the finite additivity property
-    of `AdditiveScale` are equivalent for any comparison on sets. -/
+/-- **Algebraic bridge**: Axiom A and finite additivity (disjoint augmentation
+    preserves the comparison) are equivalent for any comparison on sets. -/
 theorem axiomA_iff_fa {W : Type*} (ge : Set W → Set W → Prop) :
     (∀ A B : Set W, ge A B ↔ ge (A \ B) (B \ A)) ↔
     (∀ A B C : Set W, (∀ x, x ∈ A → x ∉ C) → (∀ x, x ∈ B → x ∉ C) →

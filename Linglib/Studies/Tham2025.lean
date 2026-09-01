@@ -86,8 +86,7 @@ the paper's argument is that disturbance predicates are a uniform class.
 namespace Tham2025
 
 open Core.Order (Boundedness LicensingPipeline)
-open Degree (DimensionBindingType GradableAdjective
-  adjMeasure closedAdj_licensed conjunctiveBinding disjunctiveBinding)
+open Degree (DimensionBindingType GradableAdjective conjunctiveBinding disjunctiveBinding)
 open Degree.Aggregation (weightedScore boolMeasures
   spatialNormalizedScore spatialNormalizedBinding)
 open Features.DegreeAchievement (DegreeAchievementScale)
@@ -449,9 +448,8 @@ theorem all_disturbance_compatible_with_much :
 
 /-! Verify that the Fragment adjective entries classify disturbance
     adjectives with the correct `Boundedness` value. These are
-    consumption sites for the substrate, not bridges — `closedAdj_licensed`
-    and `LicensingPipeline.IsLicensed` are foundational and are called
-    inline. -/
+    consumption sites for the substrate, not bridges —
+    `LicensingPipeline.IsLicensed` is called inline. -/
 
 theorem cracked_is_closed : Adjectival.cracked.scaleType = .closed := rfl
 theorem dented_is_closed  : Adjectival.dented.scaleType = .closed := rfl
@@ -487,9 +485,6 @@ theorem scratch_adj_verb_scale_agree :
 
 /-- Disturbance adjectives are licensed for degree modification by the
     Kennedy pipeline, just like *full* and *clean*. -/
-theorem cracked_licensed {max : Nat} {W : Type*} (μ : W → Degree.Bounded max) :
-    (adjMeasure μ Adjectival.cracked).IsLicensed :=
-  closedAdj_licensed μ Adjectival.cracked rfl
 theorem cracked_pipeline_licensed :
     LicensingPipeline.IsLicensed Adjectival.cracked.scaleType := trivial
 
@@ -612,10 +607,9 @@ theorem crack_refutes_strict_hkl_matrix :
 -- § 11. Cross-paper engagement: Kennedy 2007 licensing
 -- ════════════════════════════════════════════════════
 
-/-! [kennedy-2007]'s `closedAdj_licensed` substrate (consumed in
-    `Studies/Kennedy2007.lean` for *full*,
-    *wet*, *dry*, *straight*) extends to disturbance adjectives without
-    modification. The convergence at `Boundedness` is the partner of the
+/-! [kennedy-2007]'s endpoint licensing (`Boundedness.IsLicensed`, run in
+    `Studies/Kennedy2007.lean` on *full*, *wet*, *dry*) extends to disturbance
+    adjectives without modification. The convergence at `Boundedness` is the partner of the
     §9 divergence at `VendlerClass`: same substrate, different
     granularity, different verdict. -/
 
@@ -623,12 +617,10 @@ theorem crack_refutes_strict_hkl_matrix :
     canonical totally-closed adjective). The convergence is at the
     `Boundedness` level — both are `.closed`, hence both license degree
     modification. -/
-theorem cracked_licensing_converges_with_kennedy2007
-    {max : Nat} {W : Type*} (μ : W → Degree.Bounded max) :
-    (adjMeasure μ Adjectival.cracked).IsLicensed ↔
-    (adjMeasure μ Adjectival.full).IsLicensed :=
-  iff_of_true (closedAdj_licensed μ Adjectival.cracked rfl)
-    (closedAdj_licensed μ Adjectival.full rfl)
+theorem cracked_licensing_converges_with_kennedy2007 :
+    LicensingPipeline.IsLicensed Adjectival.cracked.scaleType ↔
+    LicensingPipeline.IsLicensed Adjectival.full.scaleType :=
+  iff_of_true trivial trivial
 
 /-- All three disturbance adjectives converge with Kennedy 2007 at
     `Boundedness`. -/

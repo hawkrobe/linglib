@@ -1,6 +1,5 @@
 import Mathlib.Order.Bounds.Image
 import Linglib.Semantics.Degree.Predicate
-import Linglib.Semantics.Degree.Measure.Polar
 
 /-!
 # Cross-world extremum under entailment
@@ -61,6 +60,7 @@ namespace Entailment
 
 open Degree
 open Degree (Comparison)
+open OrderDual
 variable {α : Type*} [LinearOrder α]
 
 -- ════════════════════════════════════════════════════
@@ -203,37 +203,28 @@ theorem moreThan_nat_hasMaxInf {W : Type*} (μ : W → ℕ) (w : W)
   · have : μ w > 0 := hw; show μ w > μ w - 1; omega
   · have : μ w' > μ w - 1 := hw'; have : μ w > d := hd; show μ w' > d; omega
 
-/-- "At most d" always has a maximally informative element: d₀ = μ(w).
-    Symmetric to `atLeast_hasMaxInf`. -/
+/-- "At most d" always has a maximally informative element: `atLeast_hasMaxInf` on the
+    dual order. -/
 theorem atMost_hasMaxInf {W : Type*} (μ : W → α) (w : W) :
     HasMaxInf (Comparison.le.over μ) w :=
-  ⟨μ w, le_refl _, fun _ hd _ hw' => le_trans hw' hd⟩
+  atLeast_hasMaxInf (toDual ∘ μ) w
 
-/-- **Kennedy / [rouillard-2026] bridge**: `IsMaxInf` of "at most d" at
-    value m and world w holds iff the measure at w equals m. Symmetric to
-    `isMaxInf_atLeast_iff_eq`: the MIP derives exact meaning from "at most"
-    just as it does from "at least". -/
+/-- **Kennedy / [rouillard-2026] bridge**: `IsMaxInf` of "at most d" at value m and
+    world w holds iff the measure at w equals m — `isMaxInf_atLeast_iff_eq` on the dual
+    order, so the MIP derives exact meaning from "at most" just as from "at least". -/
 theorem isMaxInf_atMost_iff_eq {W : Type*} (μ : W → α) (m : α) (w : W)
     (hSurj : Function.Surjective μ) :
-    IsMaxInf (Comparison.le.over μ) m w ↔ μ w = m := by
-  constructor
-  · intro ⟨hle, hent⟩
-    obtain ⟨w_m, hw_m⟩ := hSurj m
-    have h : μ w_m ≤ μ w := hent (μ w) (le_refl _) w_m (le_of_eq hw_m)
-    have : m ≤ μ w := hw_m ▸ h
-    exact le_antisymm hle this
-  · rintro rfl
-    exact ⟨le_refl _, fun _ hd _ hw' => le_trans hw' hd⟩
+    IsMaxInf (Comparison.le.over μ) m w ↔ μ w = m :=
+  isMaxInf_atLeast_iff_eq (toDual ∘ μ) (toDual m) w (toDual.surjective.comp hSurj)
 
 -- ════════════════════════════════════════════════════
--- § 5. MIP = Kennedy's Type-Shift
+-- § 5. MIP = Kennedy's maximality
 -- ════════════════════════════════════════════════════
 
-/-! Kennedy's de-Fregean type-shift is the MIP applied to a monotone degree
-    property: for both "at least" (Kennedy direction) and "at most"
-    ([rouillard-2026] direction), max⊨ at world w = μ(w), the true
-    value. So the MIP universally derives exact meaning from monotone
-    degree properties, regardless of monotonicity direction. -/
+/-! [kennedy-2015]'s numeral denotation `max{n | D n} = m` is the MIP applied to a
+    monotone degree property: for both "at least" (Kennedy's direction) and "at most"
+    ([rouillard-2026]'s direction), max⊨ at world w = μ(w), the true value. So the MIP
+    derives exact meaning from monotone degree properties regardless of direction. -/
 
 /-- MIP derives exact meaning from "at least" (Kennedy's direction). -/
 theorem mip_atLeast_is_exact {W : Type*} (μ : W → α) (m : α) (w : W)
@@ -248,7 +239,7 @@ theorem mip_atMost_is_exact {W : Type*} (μ : W → α) (m : α) (w : W)
   rw [isMaxInf_atMost_iff_eq μ m w hSurj, Comparison.mem_over, Comparison.rel]
 
 /-- The MIP is direction-invariant: "at least" and "at most" yield the
-    same exact meaning under maximal informativity. Kennedy's type-shift
+    same exact meaning under maximal informativity. Kennedy's maximality
     and Rouillard's MIP are literally the same operation. -/
 theorem mip_direction_invariant {W : Type*} (μ : W → α) (m : α) (w : W)
     (hSurj : Function.Surjective μ) :
@@ -256,33 +247,3 @@ theorem mip_direction_invariant {W : Type*} (μ : W → α) (m : α) (w : W)
   rw [mip_atLeast_is_exact μ m w hSurj, mip_atMost_is_exact μ m w hSurj]
 
 end Entailment
-
-/-! ### Polar measures
-
-`PolarMeasure.degreeProperty` is "at least" or "at most" by polarity; under maximal
-informativity either yields exact meaning at the true measure value. -/
-
-namespace Degree.PolarMeasure
-
-open Entailment
-
-variable {α : Type*} [LinearOrder α] {W : Type*}
-
-/-- The maximally informative degree of a polar measure's degree property is the true
-measure value, whichever the polarity. -/
-theorem isMaxInf_degreeProperty_iff (dm : PolarMeasure α W) (m : α) (w : W)
-    (hSurj : Function.Surjective dm.μ) :
-    IsMaxInf dm.degreeProperty m w ↔ dm.μ w = m := by
-  cases h : dm.polarity <;> simp only [degreeProperty, h]
-  · exact isMaxInf_atLeast_iff_eq dm.μ m w hSurj
-  · exact isMaxInf_atMost_iff_eq dm.μ m w hSurj
-
-/-- Polar measures with the same measure function agree on maximal informativity,
-whatever their polarity or boundedness. -/
-theorem isMaxInf_degreeProperty_congr (dm₁ dm₂ : PolarMeasure α W) (hμ : dm₁.μ = dm₂.μ)
-    (m : α) (w : W) (hSurj : Function.Surjective dm₁.μ) :
-    IsMaxInf dm₁.degreeProperty m w ↔ IsMaxInf dm₂.degreeProperty m w := by
-  rw [dm₁.isMaxInf_degreeProperty_iff m w hSurj,
-    dm₂.isMaxInf_degreeProperty_iff m w (hμ ▸ hSurj), hμ]
-
-end Degree.PolarMeasure

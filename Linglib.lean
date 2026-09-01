@@ -232,7 +232,6 @@ import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.Branching
 import Linglib.Core.Order.Caratheodory
 import Linglib.Core.Order.Command
-import Linglib.Core.Order.ComparativeScale
 import Linglib.Core.Order.DeMorganAlgebra.Basic
 import Linglib.Core.Order.DeMorganAlgebra.Defs
 import Linglib.Core.Order.Domination
@@ -1633,7 +1632,6 @@ import Linglib.Semantics.Degree.Intensification
 import Linglib.Semantics.Degree.Measure.Basic
 import Linglib.Semantics.Degree.Measure.Dimension
 import Linglib.Semantics.Degree.Measure.Dimensioned
-import Linglib.Semantics.Degree.Measure.Polar
 import Linglib.Semantics.Degree.Measure.Quantity
 import Linglib.Semantics.Degree.Measure.Temporal
 import Linglib.Semantics.Degree.MeasurePhrase

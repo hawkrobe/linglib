@@ -1,5 +1,4 @@
 import Mathlib.Order.Basic
-import Linglib.Semantics.Degree.Measure.Polar
 
 /-!
 # Marginality Scales
@@ -9,10 +8,6 @@ ML theory enriches a linear order with a primitive "marginally smaller than"
 relation M. From R (= `<`) and M one derives L (largely smaller than):
 L(x,y) := x < y ∧ ¬ M x y. Five axioms govern M; Theorem 2.2 derives
 M-TRANSITIVITY and M-BOUNDEDNESS as consequences.
-
-This sits alongside `PolarMeasure` (in `Degree`): a `PolarMeasure`
-determines licensing from boundedness, while an `MLScale` adds granularity
-structure (marginal vs. large difference) on the same `LinearOrder`.
 -/
 
 namespace DinisJacinto2026
@@ -82,13 +77,7 @@ theorem m_bounded (x y z : α) (hxz : ml.M x z) (hxy : x < y) (hyz : y < z) :
 
 end MLScale
 
-/-! ### Marginality scales ([dinis-jacinto-2026]) -/
-
-open Core.Order Degree
-
-structure GradableMLScale (α : Type*) [LinearOrder α] (W : Type*) extends
-    Degree.PolarMeasure α W where
-  ml : MLScale α
+/-! ### The positive form -/
 
 def marginalityPositive {α : Type*} [LinearOrder α]
     (ml : MLScale α) (norm degree : α) : Prop :=
