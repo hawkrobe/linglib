@@ -3,7 +3,6 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Degree.Measure.Polar
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Alternatives.Extremum
 import Linglib.Semantics.Quantification.Numerals.Basic
@@ -90,7 +89,7 @@ theorem moreThan_exhChain_crash (c maxD : ℚ) :
 
 /-- max⊨ of "at least n" at world w ↔ the true value equals n.
     This is the MIP derivation of exact meaning from lower-bound semantics:
-    [kennedy-2015]'s "de-Fregean" type-shift IS the MIP. -/
+    [kennedy-2015]'s maximality `max{n | D n} = m` IS the MIP. -/
 theorem mip_derives_exact (m n : ℕ) :
     IsMaxInf (Comparison.ge.over (α := ℕ) id) m n ↔ n = m :=
   isMaxInf_atLeast_iff_eq id m n Function.surjective_id
@@ -123,13 +122,5 @@ def foxHackl_asymmetry_data : FoxHacklAsymmetry :=
 /-- The "at least" part: always has max⊨ (any scale, any world). -/
 theorem foxHackl_atLeast_verified :
     foxHackl_asymmetry_data.atLeast_always = true := rfl
-
-/-- [kennedy-2015]'s maximality semantics for bare numerals (`max{n | D n} = m`) at the
-    `PolarMeasure` level: the maximally informative degree of the numeral's degree
-    property is the true cardinality — the bundled form of `isMaxInf_atLeast_iff_eq`. -/
-theorem kennedy_numeral_isMaxInf {W : Type*} (μ : W → ℕ) (m : ℕ) (w : W)
-    (hSurj : Function.Surjective μ) :
-    IsMaxInf (PolarMeasure.numeral μ).degreeProperty m w ↔ μ w = m :=
-  (PolarMeasure.numeral μ).isMaxInf_degreeProperty_iff m w hSurj
 
 end FoxHackl2006Numerals

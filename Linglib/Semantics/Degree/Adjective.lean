@@ -1,5 +1,4 @@
 import Linglib.Core.Order.Boundedness
-import Linglib.Semantics.Degree.Measure.Polar
 import Linglib.Features.ScalarDimension
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
@@ -11,9 +10,8 @@ import Linglib.Syntax.Category.Adjective.Basic
 
 Adjective-specific degree semantics, layered on the syntactic `Adjective`
 (`Syntax/Category/Adjective`): the `GradableAdjective` lexeme with its derived Kennedy
-classification, the two-threshold model for contrary antonyms, multidimensional
-binding ([sassoon-2013]), and the bridge from a concrete `Degree` scale to the
-abstract `PolarMeasure`.
+classification, the two-threshold model for contrary antonyms, and multidimensional
+binding ([sassoon-2013]).
 
 ## Main definitions
 
@@ -22,7 +20,6 @@ abstract `PolarMeasure`.
 * `ThresholdPair` — the two thresholds of a contrary antonym pair, with a gap.
 * `InformationalStrength` — the weak/strong distinction ([alexandropoulou-gotzner-2024b]).
 * `DimensionBindingType` — how a multidimensional adjective binds its dimensions.
-* `adjMeasure` — a `GradableAdjective` read as a `PolarMeasure` over a scale.
 
 The finite degree carrier `Bounded`, its `Threshold`, and the threshold semantics
 (`positiveMeaning`, `negativeMeaning`) live in `Semantics/Degree/Discrete`.
@@ -95,7 +92,7 @@ inductive AdjectiveClass where
   /-- Necessity-relative threshold — *decent*, *acceptable* ([beltrama-2025]). -/
   | mildlyPositive
   /-- Non-gradable: no degree argument, no scale — *atomic*, *prime*,
-  *deceased*, *pregnant*. Outside the gradable (`PolarMeasure`) system;
+  *deceased*, *pregnant*. Outside the degree-based system;
   consumers that classify a general adjective should map non-gradables
   here rather than coercing them into a gradable class. -/
   | nonGradable
@@ -424,27 +421,5 @@ def predictedBinding : Degree.PositiveStandard → DimensionBindingType
   | .minEndpoint  => .disjunctive
   | .contextual   => .mixed
   | .functional   => .mixed   -- evaluative; context-dependent like contextual
-
-/-! ### Polar measures -/
-
-/-- A gradable adjective read as a polar measure over `μ`: the scale classification and
-pole are the entry's `scaleType` and `polarity` (positive when unspecified). -/
-def adjMeasure {max : Nat} {W : Type*} (μ : W → Bounded max) (entry : GradableAdjective) :
-    PolarMeasure (Bounded max) W :=
-  { boundedness := entry.scaleType, μ, polarity := entry.polarity.getD .positive }
-
-@[simp] theorem isLicensed_adjMeasure {max : Nat} {W : Type*} (μ : W → Bounded max)
-    (entry : GradableAdjective) :
-    (adjMeasure μ entry).IsLicensed ↔ entry.scaleType.IsLicensed := Iff.rfl
-
-theorem closedAdj_licensed {max : Nat} {W : Type*} (μ : W → Bounded max)
-    (entry : GradableAdjective) (h : entry.scaleType = .closed) :
-    (adjMeasure μ entry).IsLicensed := by
-  rw [isLicensed_adjMeasure, h]; decide
-
-theorem openAdj_blocked {max : Nat} {W : Type*} (μ : W → Bounded max)
-    (entry : GradableAdjective) (h : entry.scaleType = .open_) :
-    ¬ (adjMeasure μ entry).IsLicensed := by
-  rw [isLicensed_adjMeasure, h]; decide
 
 end Degree
