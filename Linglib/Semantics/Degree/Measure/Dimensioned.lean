@@ -297,13 +297,13 @@ realized in the image of μ: under that point-realization condition, the
 predicate `μ(x) = n`. The theorems below state this equivalence as a
 formalization-internal observation; it is not stated in either source paper.
 
-The key infrastructure is `isMaxInf_atLeast_of_hit` in
+The key infrastructure is `isMaxInf_ge_over_iff` in
 `Semantics/Alternatives/Extremum.lean`, which requires only point-
 realization (`∃ e, μ(e) = n`) rather than full surjectivity. Mass nouns
 realize every n ∈ ℚ≥0 (rice is uniformly divisible by hypothesis); count
 nouns realize only n ∈ ℕ. -/
 
-open Entailment (IsMaxInf HasMaxInf)
+open Alternatives (IsMaxInf)
 
 /-- For a measure function μ into a linear scale: when n is realized by some entity, the
 MIP applied to the at-least degree property at n yields μ(x) = n.
@@ -315,14 +315,14 @@ theorem scontras_kennedy_dense {E : Type*} [LinearOrder D] (μ : DimensionedMeas
     (x : E)
     (hHit : ∃ e, μ.apply e = n) :
     IsMaxInf (Comparison.ge.over μ.apply) n x ↔ μ.apply x = n :=
-  Entailment.isMaxInf_atLeast_of_hit μ.apply n x hHit
+  Alternatives.isMaxInf_ge_over_iff μ.apply x hHit
 
 /-- For a cardinality function on ℕ: same point-realization equivalence.
 *Formalization-internal observation* — see the prose above. -/
 theorem scontras_kennedy_card {E : Type*} (cardFn : E → ℕ) (n : ℕ) (x : E)
     (hHit : ∃ e, cardFn e = n) :
     IsMaxInf (Comparison.ge.over cardFn) n x ↔ cardFn x = n :=
-  Entailment.isMaxInf_atLeast_of_hit cardFn n x hHit
+  Alternatives.isMaxInf_ge_over_iff cardFn x hHit
 
 -- ============================================================================
 -- § 7. Bridges to Mereology (Krifka) and admissibleMeasure (Wellwood)
