@@ -22,7 +22,7 @@ constraints via `EPCondition` and `UPCondition` enums.
 
 -/
 
-open Time
+open Tense
 open Tense
 
 namespace English.Tense

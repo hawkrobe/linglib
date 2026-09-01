@@ -54,7 +54,7 @@ can be future-oriented:
 
 -/
 
-open Time
+open Tense
 open Tense
 
 namespace Klecha2016

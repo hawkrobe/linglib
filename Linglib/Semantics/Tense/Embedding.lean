@@ -17,7 +17,7 @@ shifted/simultaneous split by a language's `SOTParameter`, and
 presuppositional construal.
 -/
 
-open Time
+open Tense
 
 namespace Tense
 

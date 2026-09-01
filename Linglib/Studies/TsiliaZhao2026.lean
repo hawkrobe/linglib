@@ -36,7 +36,7 @@ tolerates present-under-future.
 
 namespace TsiliaZhao2026
 
-open Time Tense Tense.Perspective
+open Tense Tense.Perspective
 open Semantics.Context (KContext)
 
 /-! ### Shift together -/

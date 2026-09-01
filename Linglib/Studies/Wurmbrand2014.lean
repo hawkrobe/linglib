@@ -198,7 +198,7 @@ theorem restructuring_dependent :
     embedded perspective time is the matrix event time (`embeddedFrame`). -/
 theorem propositional_uses_attitude_eval_time :
     classOrientation .propositional = .simultaneous ∧
-    ∀ (f : Time.ReichenbachFrame ℕ) (embR embE : ℕ),
+    ∀ (f : Tense.ReichenbachFrame ℕ) (embR embE : ℕ),
       (Tense.embeddedFrame f embR embE).perspectiveTime = f.eventTime :=
   ⟨rfl, fun _ _ _ => rfl⟩
 
