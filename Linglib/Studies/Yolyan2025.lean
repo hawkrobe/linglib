@@ -246,9 +246,9 @@ theorem tutrugbu_not_bmrsWeaklyDeterministic :
 flagship pattern (the class of the paper's Prop. 5.4 Bemba case), through
 `Phonology/Tone/Plateauing`'s witness. -/
 theorem utp_not_bmrsWeaklyDeterministic :
-    ¬ IsBmrsWeaklyDeterministic Tone.Plateauing.utp.map :=
+    ¬ IsBmrsWeaklyDeterministic Tone.utp.map :=
   not_isBmrsWeaklyDeterministic_of_requiresBothSides
-    Tone.Plateauing.utp.requiresBothSides
+    Tone.utp.requiresBothSides
 
 /-! ### Bemba high-tone spreading is not weakly deterministic (Prop. 5.4)
 

@@ -15,7 +15,7 @@ marked tone value, and a context predicate `Surfaces w i` saying position `i` of
 surfaces with it. The induced rewrite `Surfacing.map` writes the marked tone exactly at
 the surfacing positions and the default elsewhere; `Surfacing.support` is the surfacing
 set. Owning the context predicate on the process is what lets rival processes coexist:
-unbounded tonal plateauing (`Tone.Plateauing.utp`) and Copperbelt Bemba high-tone
+unbounded tonal plateauing (`Tone.utp`) and Copperbelt Bemba high-tone
 spreading (`Studies/Yolyan2025`) instantiate the same structure with very different
 predicates — plateauing's is convex and its map a closure operator, spreading's is
 neither — so only the genuinely shared API lives here.
