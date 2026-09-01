@@ -67,8 +67,8 @@ theorem not_hasMaxInf_of_isNecessarilyOpen [DenselyOrdered D] {φ : D → Set W}
     not_le.2 hmy (hm.2 (hlt y hyd))
 
 /-- (42) for downward-monotone properties. -/
-theorem not_hasMaxInf_of_isNecessarilyOpenBelow [DenselyOrdered D] {φ : D → Set W} (hφ : StrictMono φ)
-    (hopen : IsNecessarilyOpenBelow φ) (w : W) : ¬ HasMaxInf φ w :=
+theorem not_hasMaxInf_of_isNecessarilyOpenBelow [DenselyOrdered D] {φ : D → Set W}
+    (hφ : StrictMono φ) (hopen : IsNecessarilyOpenBelow φ) (w : W) : ¬ HasMaxInf φ w :=
   not_hasMaxInf_of_isNecessarilyOpen (φ := fun d : Dᵒᵈ => φ (ofDual d))
     (fun _ _ h => hφ h) hopen w
 
