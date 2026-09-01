@@ -3,23 +3,26 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
-# Prototype Theory: Gradient Meaning over a Numerical Domain
+# Prototype meaning for quantity words
 
-Generic Prototype-Theory operator parameterized by per-word
-`prototype` and `spread`: meaning is a non-negative gradient peaking
-at the prototype and falling off with distance, scaled by `spread`.
+A quantity word's meaning as a non-negative gradient over the proportion scale, peaking at a
+per-word `prototype` and falling off with distance at a per-word `spread`.
 
 The bump kernel is a rational-arithmetic approximation of a Gaussian
 `exp(-x²)` — specifically, a piecewise-linear-in-`|x|` tent that is
 genuinely non-negative, monotone-decreasing in `|x|`, and continuous
 at the breakpoints. See `bumpKernel`.
 
-This is the parametric theory consumed by paper-specific PT models
-(e.g., `Studies/VanTielEtAl2021.lean`),
-which provide their own prototype/spread parameter values.
+Paper-specific models (`Studies/VanTielEtAl2021.lean`) supply the prototype and spread
+parameters.
+
+## References
+
+* [B. van Tiel, M. Franke and U. Sauerland, *Probabilistic pragmatics explains gradience and
+  focality in natural language quantification* (2021)][van-tiel-franke-sauerland-2021]
 -/
 
-namespace Probabilistic.PrototypeTheory
+namespace Quantification.Prototype
 
 /-- Tent kernel: `max 0 (1 - |x|)`. Non-negative, monotone-decreasing
 in `|x|`, continuous, peak `1` at `x = 0`, vanishes for `|x| ≥ 1`.
@@ -52,4 +55,4 @@ theorem ptMeaning_nonneg (n : Nat) (p : Nat) (d : ℚ) (t : Fin (n + 1)) :
     0 ≤ ptMeaning n p d t :=
   bumpKernel_nonneg _
 
-end Probabilistic.PrototypeTheory
+end Quantification.Prototype

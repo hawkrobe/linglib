@@ -16,8 +16,8 @@ composition for a per-word lex function `lex : U → W → R`, stated over any
 token order — is the listener-level sanity check of
 [schlotterbeck-wang-2023].
 
-The normalized counterpart on `PMF` is the Product of Experts
-(`Core/Probability/ProductOfExperts.lean`), the combination rule of
+The normalized counterpart is the Product of Experts — `ProbabilityTheory.Kernel.ofWeights`
+on the pointwise product of the experts' masses — the combination rule of
 [erk-herbelot-2024]'s situation description systems.
 -/
 

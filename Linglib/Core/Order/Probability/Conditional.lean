@@ -18,7 +18,7 @@ This file formalizes:
 ## Conditioning across linglib
 
 Several conditioning operations elsewhere in linglib are instances of
-conditional plausibility: `PMF.condProbSet` (`BayesianSemantics`) is the same
+conditional plausibility: `PMF.condProbSet` (`Core/Probability/Finite.lean`) is the same
 ratio construction as `toCondMeasure`; eliminative update on possibility sets
 (`Semantics/Dynamic/Update.lean`) is the special case where P(A|B) ∈ {0, 1}; Spohn ranking
 conditionalization ([spohn-1988], `Logic/RankingFunction`) is its

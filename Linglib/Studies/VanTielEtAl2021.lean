@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Determiners
 import Linglib.Semantics.Quantification.Lexicon
-import Linglib.Semantics.Probabilistic.PrototypeTheory
+import Linglib.Semantics.Quantification.Prototype
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -370,9 +370,9 @@ def spread : ModelQuantityWord → ℚ
   | .all   => 1
 
 /-- PT meaning via the parametric operator from
-    `Probabilistic.PrototypeTheory`. -/
+    `Quantification.Prototype`. -/
 def ptMeaning (m : ModelQuantityWord) (t : WorldState) : ℚ :=
-  Probabilistic.PrototypeTheory.ptMeaning
+  Quantification.Prototype.ptMeaning
     domainSize (prototype m) (spread m) t
 
 -- Salience: Lexical Accessibility
