@@ -62,6 +62,51 @@ theorem free_cons {F : {F : TieredAR ι τ // Finite F.obj.V}}
     X.Free (F :: B) ↔ ¬ F.val.FactorEmbeds X ∧ X.Free B :=
   List.forall_mem_cons
 
+/-- Embedding reads only the tier words and links of the two representations. -/
+theorem factorEmbeds_congr {F' X' : TieredAR ι τ} [Finite F'.obj.V] [Finite X'.obj.V]
+    (hwF : ∀ i, F.tierWord i = F'.tierWord i)
+    (hlF : ∀ i j p q, F.link i j p q ↔ F'.link i j p q)
+    (hwX : ∀ i, X.tierWord i = X'.tierWord i)
+    (hlX : ∀ i j p q, X.link i j p q ↔ X'.link i j p q) :
+    F.FactorEmbeds X ↔ F'.FactorEmbeds X' := by
+  have hlen : ∀ i, F.tierLength i = F'.tierLength i := fun i => by
+    rw [← length_tierWord, hwF, length_tierWord]
+  refine exists_congr fun o => ⟨fun h => ⟨fun i p hp => ?_, fun i j p q hl => ?_⟩,
+    fun h => ⟨fun i p hp => ?_, fun i j p q hl => ?_⟩⟩
+  · rw [← hwX, ← hwF]; exact h.window i p (by rwa [hlen])
+  · exact (hlX ..).mp (h.link_map i j p q ((hlF ..).mpr hl))
+  · rw [hwX, hwF]; exact h.window i p (by rwa [← hlen])
+  · exact (hlX ..).mpr (h.link_map i j p q ((hlF ..).mp hl))
+
+/-- Freeness reads only the tier words and links. -/
+theorem free_congr {Y : TieredAR ι τ} [Finite Y.obj.V]
+    (hw : ∀ i, X.tierWord i = Y.tierWord i) (hl : ∀ i j p q, X.link i j p q ↔ Y.link i j p q)
+    (B : List {F : TieredAR ι τ // Finite F.obj.V}) : X.Free B ↔ Y.Free B :=
+  forall₂_congr fun _ _ =>
+    not_congr (factorEmbeds_congr (fun _ => rfl) (fun _ _ _ _ => Iff.rfl) hw hl)
+
+/-- Factor occurrences compose, offsets adding. -/
+theorem IsFactorAt.trans {Y : TieredAR ι τ} [Finite Y.obj.V] {o' : ι → ℕ}
+    (h : F.IsFactorAt X o) (h' : X.IsFactorAt Y o') :
+    F.IsFactorAt Y fun i => o i + o' i where
+  window i p hp := by
+    have hlt : p + o i < X.tierLength i := by
+      have hF : p < (F.tierWord i).length := by simpa using hp
+      have h1 : (X.tierWord i)[p + o i]? = some (F.tierWord i)[p] :=
+        (h.window i p hp).trans (List.getElem?_eq_getElem hF)
+      simpa using (List.getElem?_eq_some_iff.mp h1).1
+    rw [← Nat.add_assoc, h'.window i (p + o i) hlt]
+    exact h.window i p hp
+  link_map i j p q hl := by
+    simpa [Nat.add_assoc] using h'.link_map i j _ _ (h.link_map i j p q hl)
+
+/-- Factor embedding is transitive. -/
+theorem FactorEmbeds.trans {Y : TieredAR ι τ} [Finite Y.obj.V]
+    (h : F.FactorEmbeds X) (h' : X.FactorEmbeds Y) : F.FactorEmbeds Y :=
+  have ⟨_, h⟩ := h
+  have ⟨_, h'⟩ := h'
+  ⟨_, h.trans h'⟩
+
 /-- On a tier where the factor is nonempty, the window equations force the offset
     in bounds. -/
 theorem IsFactorAt.offset_le (h : F.IsFactorAt X o) {i : ι} (hi : F.tierLength i ≠ 0) :
