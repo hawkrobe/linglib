@@ -25,9 +25,10 @@ projection experiments (BEL? and C?), and `assumesComplement` renders
 
 The semantics is `Bool`-valued deliberately: these meanings feed the
 ℚ-valued RSA tables of [scontras-tonhauser-2025] (`Studies/
-ScontrasTonhauser2025.lean`) and [grove-white-2025]-style models
-(`Studies/GroveWhite2025.lean`) as literal-listener truth tables; the
-Prop migration is coupled to the planned RSA measures migration.
+ScontrasTonhauser2025.lean`) as literal-listener truth tables and are the
+two readings of [grove-white-2025]'s lexical entry for *know*
+(`Studies/GroveWhite2025.lean`); the Prop migration is coupled to the
+planned RSA measures migration.
 -/
 
 namespace Factivity
