@@ -1,4 +1,5 @@
-import Linglib.Logic.ComparativeProbability.Systems
+import Linglib.Core.Order.Probability.Basic
+import Linglib.Core.Order.Probability.Content
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Tactic.FinCases
@@ -9,16 +10,13 @@ import Mathlib.Algebra.BigOperators.Fin
 /-!
 # Representability of qualitative probability orders
 
-[kraft-pratt-seidenberg-1959] [holliday-icard-2013]
-
 Qualitative probability orders on small domains (|W| ≤ 4) are representable by
 finitely additive probability measures (**Theorem 8a**,
 [kraft-pratt-seidenberg-1959]). For every |W| ≥ 5 this fails: padding the KPS
 counterexample with null atoms gives a non-representable order at each
 cardinality (**Theorem 8b**).
 
-`[UPSTREAM]` candidate: KPS representability is measurement theory absent
-from mathlib (see the note in `Systems.lean`).
+`[UPSTREAM]` candidate (see the note in `Defs.lean`).
 
 ## Contents
 
@@ -26,11 +24,9 @@ from mathlib (see the note in `Systems.lean`).
 2. **KPS counterexample** (Fin 5): non-representable order (`kpsSystem`,
    `kps_not_representable`); null-atom padding (`QualitativeProbability.pad`,
    `exists_nonrepresentable_fin`) extends it to every `Fin n` with `n ≥ 5`.
-3. **Shared infrastructure**: injection pullback
-   (`QualitativeProbability.comap`), null element reduction
-   (`null_elem_reduce`), transport along equivalences
-   (`QualitativeProbability.transport`, `perm_repr`).
-4. **Small-cardinality proofs**: Fin 0 (`QualitativeProbability.elim0`), Fin 1
+3. **Shared infrastructure**: null element reduction (`null_elem_reduce`),
+   representability along equivalences (`perm_repr`).
+4. **Small-cardinality proofs**: Fin 1
    (`representable_fin1`), Fin 2 (`representable_fin2`).  Fin 3 and Fin 4 are
    derived from Scott cancellation in `CancellationFin4.lean`
    (`representable_fin3`, `representable_fin4`).
@@ -209,23 +205,6 @@ private theorem succ_image_preimage {n : ℕ} (S : Set (Fin (n + 1))) :
   ext x; simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_singleton_iff,
     Set.mem_sdiff]; exact And.comm
 
-/-- Pull back a qualitative probability order along an injection: `α`-sets
-    compare via their images. Non-triviality requires a witness and must be
-    supplied. -/
-def QualitativeProbability.comap {α W : Type*} (f : α → W) (hf : Function.Injective f)
-    (sys : QualitativeProbability (Set W)) (hnt : ¬sys.le (Set.range f) ∅) :
-    QualitativeProbability (Set α) where
-  le A B := sys.le (f '' A) (f '' B)
-  mono' _ _ hAB := sys.mono (Set.image_mono hAB)
-  nonTrivial := by
-    show ¬sys.le (f '' Set.univ) (f '' ∅)
-    rwa [Set.image_empty, Set.image_univ]
-  total _ _ := sys.total _ _
-  trans' _ _ _ h1 h2 := sys.trans h1 h2
-  additive A B := by
-    show sys.le (f '' A) (f '' B) ↔ sys.le (f '' (A \ B)) (f '' (B \ A))
-    rw [Set.image_sdiff hf, Set.image_sdiff hf]; exact sys.additive _ _
-
 /-- Null element reduction: if atom 0 is null in an order on `Fin (n+2)` and
     some atom is not, representability reduces along `Fin.succ` to `Fin (n+1)`. -/
 theorem null_elem_reduce {n : ℕ} (sys : QualitativeProbability (Set (Fin (n + 2))))
@@ -244,15 +223,6 @@ theorem null_elem_reduce {n : ℕ} (sys : QualitativeProbability (Set (Fin (n + 
   exact hm_r (Fin.succ ⁻¹' C) (Fin.succ ⁻¹' D)
 
 -- ── Card 0: impossible ─────────────────────────────
-
-/-- There is no qualitative probability order on an empty carrier: `∅ = Ω`
-    contradicts non-triviality. Mirrors `Fin.elim0`. -/
-def QualitativeProbability.elim0 {C : Sort*} (sys : QualitativeProbability (Set (Fin 0))) :
-    C := by
-  have : (∅ : Set (Fin 0)) = Set.univ := by ext x; exact Fin.elim0 x
-  have h : sys.le ⊤ ⊥ := by
-    rw [Set.top_eq_univ, Set.bot_eq_empty, ← this]; exact sys.refl ∅
-  exact absurd h sys.nonTrivial
 
 -- ── Card 1 ─────────────────────────────────────────
 
@@ -417,12 +387,6 @@ theorem representable_fin2 (sys : QualitativeProbability (Set (Fin 2))) : Repres
             ⟨fun _ => by linarith, fun _ => h10⟩)⟩
 
 -- ── Transport + Permutation infrastructure ────────────
-
-/-- Transport a qualitative probability order along an equivalence of carriers. -/
-def QualitativeProbability.transport {W α : Type*} (e : W ≃ α)
-    (sys : QualitativeProbability (Set W)) : QualitativeProbability (Set α) :=
-  sys.comap e.symm e.symm.injective
-    (by rw [Equiv.range_eq_univ, ← Set.top_eq_univ, ← Set.bot_eq_empty]; exact sys.nonTrivial)
 
 theorem transfer_repr {W α : Type*}
     (e : W ≃ α) (sys : QualitativeProbability (Set W)) (m : FinAddMeasure ℚ α)

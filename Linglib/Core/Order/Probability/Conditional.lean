@@ -1,4 +1,4 @@
-import Linglib.Logic.ComparativeProbability.Systems
+import Linglib.Core.Order.Probability.Content
 import Mathlib.Algebra.Order.BigOperators.Group.List
 import Mathlib.Tactic.Ring
 
