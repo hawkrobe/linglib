@@ -42,7 +42,7 @@ granularities avoid it (her §3.7; [spector-2014]'s grade context, her §3.6
 contextual ([sauerland-stateva-2011]'s granularity functions; rounder
 numerals select coarser scales, [krifka-2007] and her pp. 110–111), not
 universally dense — contra [fox-hackl-2006] (her fn. 8). On discrete scales
-the two accounts agree (`FoxHackl2006Numerals.moreThan_has_maxInf_nat` is
+the two accounts agree (`FoxHackl2006.moreThan_exact_nat` is
 the g = 1 'exactly n+1' rescue); they part on whether density ever
 obliterates the next-stronger alternative.
 
@@ -316,7 +316,7 @@ instead (her §3.6–3.7). The scale and its granularity are contextual
 ([sauerland-stateva-2011]'s granularity functions; rounder numerals select
 coarser scales, [krifka-2007], her pp. 110–111) rather than universally
 dense (her fn. 8, contra [fox-hackl-2006] — though on discrete ℕ the
-accounts agree: cf. `FoxHackl2006Numerals.moreThan_has_maxInf_nat`). -/
+accounts agree: cf. `FoxHackl2006.moreThan_exact_nat`). -/
 
 /-- The next-stronger σA scalemate of a form at granularity `g`. -/
 def Form.strongerAlt (g : ℕ) : Form → Form
@@ -420,7 +420,7 @@ theorem spector_grade_context (maxD : ℕ) :
 against the *whole* granularity-`g` scale, since the scale is an entailment
 chain. (Dually, `Exhaustification.exhChain_not_of_dense` is the
 [fox-hackl-2006] crash that this file's contextual-granularity scales
-avoid: cf. `FoxHackl2006Numerals.moreThan_exhChain_crash`.) -/
+avoid: cf. `FoxHackl2006.moreThan_not_hasMaxInf`.) -/
 
 theorem exhSigma_moreThan_eq_exhChain (n g maxD : ℕ) :
     (Form.moreThan n).exhSigma g maxD ↔
