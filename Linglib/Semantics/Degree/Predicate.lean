@@ -11,7 +11,7 @@ import Linglib.Semantics.Degree.Comparison
 
 Predicate transformers over a measure function `μ : W → α`:
 
-- `IsConstant` / `AdmitsOptimum` (informativity; monotonicity is mathlib's
+- `IsConstant` (information collapse; monotonicity is mathlib's
   `Monotone`/`Antitone` under the pointwise order on `W → Prop`)
 - `typeLower` (Partee 1987 existential lowering)
 - monotonicity / anti-Horn-scale lemmas about the `Degree.Comparison.over`
@@ -59,26 +59,6 @@ theorem bimonotone_constant {W : Type*} (P : α → W → Prop)
     rcases le_total y x with h | h
     · exact hUp h w hy
     · exact hDown h w hy
-
-/-- **Informativity licensing**: a scale admits a well-defined optimum iff
-    it is NOT constant. When the family is constant (information collapse),
-    no grammatical element operating on that scale is felicitous.
-
-    This is the abstract pattern shared by:
-    - Kennedy's Interpretive Economy: degree modifiers require non-trivial
-      scale contribution
-    - Rouillard's MIP: TIA numerals require maximally informative values -/
-def AdmitsOptimum {W : Type*} (P : α → W → Prop) : Prop :=
-  ¬ IsConstant P
-
-/-- Bimonotone families do not admit an optimum: if a family is both upward
-    and downward monotone, it collapses to a constant and no element is
-    maximally informative. This is the abstract core of why open-scale
-    degree modification and atelic-VP E-TIAs are both blocked. -/
-theorem bimonotone_no_optimum {W : Type*} (P : α → W → Prop)
-    (hUp : Monotone P) (hDown : Antitone P) :
-    ¬ AdmitsOptimum P :=
-  fun h => h (bimonotone_constant P hUp hDown)
 
 /-! ### Maximal informativity is downstream -/
 

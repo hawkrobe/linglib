@@ -17,8 +17,6 @@ Containment, the subinterval order, and point intervals are mathlib's
 own API: `t ∈ i` (`mem_def`), `i₁ ≤ i₂` (`le_def`), `i₁ < i₂`
 (strict containment, see `lt_def`), `pure t`.
 
-Generalized intervals with open/closed boundaries ([rouillard-2026])
-live with their consuming study in `Studies/Rouillard2026.lean`.
 -/
 
 namespace NonemptyInterval
@@ -184,18 +182,5 @@ theorem overlaps_not_transitive :
   omega
 
 end LinearOrder
-
-/-! ### Boundary type (open/closed endpoints) -/
-
-/-- Whether an interval's boundary is included (closed) or excluded (open).
-    [rouillard-2026] §2.2.4: the distinction between closed and open
-    times is central to deriving the polarity sensitivity of G-TIAs.
-    Event runtimes are closed; PTSs are open intervals.
-
-    Consumed by `GInterval` (in `Studies/Rouillard2026.lean`). -/
-inductive BoundaryType where
-  | closed  -- boundary moment included in the interval
-  | open_   -- boundary moment excluded from the interval
-  deriving DecidableEq, Repr
 
 end NonemptyInterval
