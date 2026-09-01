@@ -426,6 +426,17 @@ theorem isRightSubsequential_iff_left_reverse :
       ↔ IsLeftSubsequential (fun xs => (f xs.reverse).reverse) :=
   Iff.rfl
 
+/-- A finite Mealy machine computes a left-subsequential function. -/
+theorem Mealy.isLeftSubsequential_run {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
+    IsLeftSubsequential T.run :=
+  T.isMealyComputable.isLeftSubsequential
+
+/-- A finite Mealy machine run right-to-left computes a right-subsequential function. -/
+theorem Mealy.isRightSubsequential_runRight {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
+    IsRightSubsequential T.runRight := by
+  rw [isRightSubsequential_iff_left_reverse]
+  simpa using T.isLeftSubsequential_run
+
 /-- A left-subsequential function withholds at most the longest state-final output:
 `f u` and `f (u ++ v)` share a prefix covering all but boundedly many symbols of `f u`.
 Much weaker than [choffrut-1977]'s bounded-variation characterization — this compares
