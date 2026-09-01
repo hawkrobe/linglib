@@ -7,10 +7,10 @@ evaluation, following [knick-sharf-2026].
 ## The Pipeline
 
 ```
-Event Time → Prop ──[IMPF/PRFV]──▷ IntervalPred ──[PERF]──▷ PointPred ──[eval*]──▷ Prop
+Event T → Prop ──[IMPF/PRFV]──▷ IntervalPred ──[PERF]──▷ PointPred ──[eval*]──▷ Prop
 ```
 
-The aspect chain produces `PointPred W Time = Index W Time → Prop`.
+The aspect chain produces `PointPred W T = Index W T → Prop`.
 The eval* operators instantiate the situation (fixing world and time).
 
 ## Composed Forms
@@ -42,34 +42,34 @@ open Intensional (Index)
 
 open Aspect
 
-variable {W Time : Type*} [LinearOrder Time]
+variable {W T : Type*} [LinearOrder T]
 
 /-! ### Tense Evaluation Operators -/
 
 /-- Evaluate a point predicate at speech time (PRESENT).
     PRES: p holds at tc in world w. -/
-def evalPres (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
+def evalPres (p : PointPred W T) (tc : T) (w : W) : Prop :=
   p ⟨w, tc⟩
 
 /-- Existential tense evaluation: the GQ `some` (`Quantification.some_sem`)
     over times `rel`-related to the evaluation time `tc`, scope `p` at `⟨w, ·⟩`.
     `evalPast`/`evalFut` are the `<`/`>` instances. -/
-def evalRel (rel : Time → Time → Prop) (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
+def evalRel (rel : T → T → Prop) (p : PointPred W T) (tc : T) (w : W) : Prop :=
   Quantification.some_sem (fun t => rel t tc) (fun t => p ⟨w, t⟩)
 
-omit [LinearOrder Time] in
+omit [LinearOrder T] in
 /-- Monotone in the body predicate — inherited from `some_scope_up`, not reproved. -/
-theorem evalRel_mono {rel : Time → Time → Prop} {p q : PointPred W Time}
-    (h : ∀ x, p x → q x) {tc : Time} {w : W} :
+theorem evalRel_mono {rel : T → T → Prop} {p q : PointPred W T}
+    (h : ∀ x, p x → q x) {tc : T} {w : W} :
     evalRel rel p tc w → evalRel rel q tc w :=
   Quantification.some_scope_up _ _ _ fun _ hp => h _ hp
 
 /-- Evaluate a point predicate with existential past (PAST): `∃ t < tc, p(w)(t)`. -/
-def evalPast (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
+def evalPast (p : PointPred W T) (tc : T) (w : W) : Prop :=
   evalRel (· < ·) p tc w
 
 /-- Evaluate a point predicate with existential future (FUTURE): `∃ t > tc, p(w)(t)`. -/
-def evalFut (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
+def evalFut (p : PointPred W T) (tc : T) (w : W) : Prop :=
   evalRel (· > ·) p tc w
 
 /-! ### Composed Tense–Aspect Forms -/
@@ -78,49 +78,49 @@ def evalFut (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
     "John runs" = at speech time, ∃e with tc ⊂ τ(e) and V(e).
     Since atPoint evaluates at [tc, tc], this gives:
     ∃e, [tc,tc] ⊂ τ(e) ∧ V(e). -/
-def simplePresent (V : W → Event Time → Prop) (tc : Time) (w : W) : Prop :=
+def simplePresent (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
   evalPres (IntervalPred.atPoint (IMPF V)) tc w
 
 /-- **Simple past**: PAST(PRFV(V).atPoint).
     "John ran" = ∃t < tc, ∃e with τ(e) ⊆ [t,t] and V(e). -/
-def simplePast (V : W → Event Time → Prop) (tc : Time) (w : W) : Prop :=
+def simplePast (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
   evalPast (IntervalPred.atPoint (PRFV V)) tc w
 
 /-- **Present perfect progressive**: PRES(PERF(IMPF(V))).
     "John has been running" = at tc, ∃PTS with RB(PTS, tc) and IMPF(V)(PTS). -/
-def presPerfProg (V : W → Event Time → Prop) (tc : Time) (w : W) : Prop :=
+def presPerfProg (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
   evalPres (PERF (IMPF V)) tc w
 
 /-- **Present perfect simple**: PRES(PERF(PRFV(V))).
     "John has run" = at tc, ∃PTS with RB(PTS, tc) and PRFV(V)(PTS). -/
-def presPerfSimple (V : W → Event Time → Prop) (tc : Time) (w : W) : Prop :=
+def presPerfSimple (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
   evalPres (PERF (PRFV V)) tc w
 
 /-- **Present perfect progressive with Extended Now**: PRES(PERF_XN(IMPF(V), tᵣ)).
     [knick-sharf-2026] eq. 39b: the U-perf reading.
     "John has been running (since Monday)" with domain restriction tᵣ on LB. -/
-def presPerfProgXN (V : W → Event Time → Prop) (tᵣ : Set Time) (tc : Time) (w : W) : Prop :=
+def presPerfProgXN (V : W → Event T → Prop) (tᵣ : Set T) (tc : T) (w : W) : Prop :=
   evalPres (PERF_XN (IMPF V) tᵣ) tc w
 
 /-- **Past perfect progressive**: PAST(PERF(IMPF(V))).
     "John had been running" = ∃t < tc, PERF(IMPF(V))(w)(t). -/
-def pastPerfProg (V : W → Event Time → Prop) (tc : Time) (w : W) : Prop :=
+def pastPerfProg (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
   evalPast (PERF (IMPF V)) tc w
 
 /-! ### Unfold Theorems -/
 
 /-- Simple present unfolds to: ∃e, [tc,tc] ⊂ τ(e) ∧ V(w)(e). -/
-theorem simplePresent_unfold (V : W → Event Time → Prop) (tc : Time) (w : W) :
+theorem simplePresent_unfold (V : W → Event T → Prop) (tc : T) (w : W) :
     simplePresent V tc w ↔
-    ∃ e : Event Time, NonemptyInterval.pure tc < e.τ ∧ V w e := by
+    ∃ e : Event T, NonemptyInterval.pure tc < e.τ ∧ V w e := by
   rfl
 
 /-- Present perfect progressive with XN unfolds to K&S eq. 39b:
     ∃PTS, ∃tLB ∈ tᵣ, LB(tLB, PTS) ∧ RB(PTS, tc) ∧ IMPF(V)(w)(PTS). -/
-theorem presPerfProgXN_unfold (V : W → Event Time → Prop) (tᵣ : Set Time)
-    (tc : Time) (w : W) :
+theorem presPerfProgXN_unfold (V : W → Event T → Prop) (tᵣ : Set T)
+    (tc : T) (w : W) :
     presPerfProgXN V tᵣ tc w ↔
-    ∃ pts : NonemptyInterval Time, ∃ tLB ∈ tᵣ,
+    ∃ pts : NonemptyInterval T, ∃ tLB ∈ tᵣ,
       LB tLB pts ∧ RB pts tc ∧ IMPF V w pts := by
   rfl
 
@@ -136,8 +136,8 @@ theorem presPerfProgXN_unfold (V : W → Event Time → Prop) (tᵣ : Set Time)
     Proof sketch: Given PERF_XN(IMPF(V), tᵣ)(w)(tc), we have PTS with
     RB(PTS, tc) and ∃e with PTS ⊂ τ(e). Since [tc,tc] ⊆ PTS (because
     tc = PTS.snd) and PTS ⊂ τ(e), we get [tc,tc] ⊂ τ(e). -/
-theorem u_perf_entails_simple_present (V : W → Event Time → Prop)
-    (tᵣ : Set Time) (tc : Time) (w : W) :
+theorem u_perf_entails_simple_present (V : W → Event T → Prop)
+    (tᵣ : Set T) (tc : T) (w : W) :
     presPerfProgXN V tᵣ tc w → simplePresent V tc w := by
   intro ⟨pts, _, _, _, hRB, e, hlt, hV⟩
   obtain ⟨hsub, hOr⟩ := NonemptyInterval.lt_def.mp hlt
@@ -160,7 +160,7 @@ theorem u_perf_entails_simple_present (V : W → Event Time → Prop)
     ∃e with [tc,tc] ⊂ τ(e). Construct PTS = [e.τ.fst, tc]. Then
     LB(e.τ.fst, PTS) ∈ Set.univ, RB(PTS, tc), and PTS ⊆ τ(e) with
     PTS ⊂ τ(e) (since tc < e.τ.snd by properSubinterval). -/
-theorem broad_focus_equiv (V : W → Event Time → Prop) (tc : Time) (w : W) :
+theorem broad_focus_equiv (V : W → Event T → Prop) (tc : T) (w : W) :
     presPerfProgXN V Set.univ tc w ↔ simplePresent V tc w := by
   constructor
   · exact u_perf_entails_simple_present V Set.univ tc w
@@ -180,8 +180,8 @@ theorem broad_focus_equiv (V : W → Event Time → Prop) (tc : Time) (w : W) :
     Proof sketch: Given PTS₁ = [tLB₁, tc] with e.τ ⊃ PTS₁ and V(e),
     construct PTS₂ = [tLB₂, tc]. Since tLB₁ < tLB₂ ≤ tc, PTS₂ is valid.
     PTS₂ ⊆ PTS₁ ⊆ τ(e), and PTS₂ ⊂ τ(e) follows from PTS₁ ⊂ τ(e). -/
-theorem earlier_lb_stronger_impf (V : W → Event Time → Prop)
-    (tLB₁ tLB₂ : Time) (tc : Time) (w : W) (h : tLB₁ < tLB₂) (htc : tLB₂ ≤ tc) :
+theorem earlier_lb_stronger_impf (V : W → Event T → Prop)
+    (tLB₁ tLB₂ : T) (tc : T) (w : W) (h : tLB₁ < tLB₂) (htc : tLB₂ ≤ tc) :
     PERF_XN (IMPF V) {tLB₁} ⟨w, tc⟩ → PERF_XN (IMPF V) {tLB₂} ⟨w, tc⟩ := by
   intro ⟨pts, tLB, htLB, hLB, hRB, e, hlt, hV⟩
   obtain ⟨hsub, _hOr⟩ := NonemptyInterval.lt_def.mp hlt
@@ -213,8 +213,8 @@ theorem earlier_lb_stronger_impf (V : W → Event Time → Prop)
     Proof sketch: Given PTS₂ = [tLB₂, tc] with τ(e) ⊆ PTS₂,
     construct PTS₁ = [tLB₁, tc]. Since tLB₁ < tLB₂, PTS₂ ⊆ PTS₁,
     so τ(e) ⊆ PTS₁. -/
-theorem later_lb_stronger_prfv (V : W → Event Time → Prop)
-    (tLB₁ tLB₂ : Time) (tc : Time) (w : W) (h : tLB₁ < tLB₂) :
+theorem later_lb_stronger_prfv (V : W → Event T → Prop)
+    (tLB₁ tLB₂ : T) (tc : T) (w : W) (h : tLB₁ < tLB₂) :
     PERF_XN (PRFV V) {tLB₂} ⟨w, tc⟩ → PERF_XN (PRFV V) {tLB₁} ⟨w, tc⟩ := by
   intro ⟨pts, tLB, htLB, hLB, hRB, e, hle, hV⟩
   obtain ⟨hS1, hS2⟩ := NonemptyInterval.le_def.mp hle

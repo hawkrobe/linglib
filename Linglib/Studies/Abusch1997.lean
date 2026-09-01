@@ -43,14 +43,14 @@ namespace Abusch1997
 
 open Tense Acquaintance
 
-variable {E W Time : Type*}
+variable {E W T : Type*}
 
 /-! ### De re interpretation across attitude contexts -/
 
 /-- The simultaneous reading of *Mary believed it was raining*: the embedded past is anaphoric
 to the matrix past, hence de re, with identity to the now as acquaintance relation; the believed
 centered proposition is rain at the believer's now. -/
-theorem simultaneous_deRe (rain : Time → W → Prop) :
+theorem simultaneous_deRe (rain : T → W → Prop) :
     deRe (identity (E := E)) (fun t _ w => rain t w) = fun _ t w => rain t w :=
   deRe_identity _
 
@@ -66,12 +66,12 @@ def matrixPast : TemporalArgument ℕ := ⟨1, 1, 0⟩
 `R²(t₂, t₂)`. -/
 def embeddedPast : TemporalArgument ℕ := ⟨2, 2, 2⟩
 
-variable {ρ : RelationAssignment ℕ Time} {g : ℕ → Time}
+variable {ρ : RelationAssignment ℕ T} {g : ℕ → T}
 
 /-- The simultaneous reading is licensed non-locally: the embedded relation is reflexive at the
 now, so the matrix relation must be precedence — the believing precedes the utterance time and
 the raining is at the believer's now. -/
-theorem simultaneous_nonLocal [Preorder Time] (h₁ : matrixPast.Con ρ g)
+theorem simultaneous_nonLocal [Preorder T] (h₁ : matrixPast.Con ρ g)
     (h₂ : embeddedPast.Con ρ g) (hp₁ : PastConstraint ρ {1}) (hp₂ : PastConstraint ρ {1, 2}) :
     g 1 < g 0 ∧ embeddedPast.NonLocallyLicensed ρ {1, 2} :=
   ⟨by simpa [matrixPast, TemporalArgument.Con, pastConstraint_singleton.1 hp₁] using h₁,
@@ -92,7 +92,7 @@ theorem narrowScope_forward (k : ℕ) (hk : k ≠ 1) :
 
 /-- The wide-scope LF: the relative clause is outside the attitude, so its past has access only
 to its own relation, evaluated at the utterance time — the interest precedes the utterance. -/
-theorem wideScope_precedes [Preorder Time] {k i : ℕ}
+theorem wideScope_precedes [Preorder T] {k i : ℕ}
     (hcon : (⟨k, i, 0⟩ : TemporalArgument ℕ).Con ρ g) (hp : PastConstraint ρ {k}) : g i < g 0 := by
   simpa [TemporalArgument.Con, pastConstraint_singleton.1 hp] using hcon
 
@@ -101,7 +101,7 @@ def matrixPresent : TemporalArgument ℕ := ⟨1, 1, 0⟩
 
 /-- A present matrix forces local licensing: the past of *a man she met recently* must itself be
 precedence, so the meeting precedes the marrying. -/
-theorem expects_local [Preorder Time] (h₁ : matrixPresent.Con ρ g)
+theorem expects_local [Preorder T] (h₁ : matrixPresent.Con ρ g)
     (hq : PresentConstraint ρ {1}) (hp : PastConstraint ρ {1, 3})
     (h₃ : (⟨3, 3, 2⟩ : TemporalArgument ℕ).Con ρ g) : g 3 < g 2 := by
   obtain ⟨r, hr, hρ⟩ := hp
@@ -112,7 +112,7 @@ theorem expects_local [Preorder Time] (h₁ : matrixPresent.Con ρ g)
 
 /-- *Sue expects to marry a man she loved* has no simultaneous reading: coindexing the embedded
 past with the marrying time leaves no relation to license it. -/
-theorem expects_no_simultaneous [Preorder Time] (h₁ : matrixPresent.Con ρ g)
+theorem expects_no_simultaneous [Preorder T] (h₁ : matrixPresent.Con ρ g)
     (hq : PresentConstraint ρ {1}) (hp : PastConstraint ρ {1, 3})
     (h₃ : (⟨3, 2, 2⟩ : TemporalArgument ℕ).Con ρ g) : False := by
   obtain ⟨r, hr, hρ⟩ := hp
@@ -124,15 +124,15 @@ theorem expects_no_simultaneous [Preorder Time] (h₁ : matrixPresent.Con ρ g)
 /-- The two LFs of the simultaneous reading — de re with the identity relation, and non-locally
 licensed with the embedded past coindexed with the now — ascribe the same centered
 proposition. -/
-theorem deRe_eq_nonLocal (rain : Time → W → Prop) :
-    deRe (identity (E := E)) (fun t _ w => rain t w) = fun (_ : E) (t : Time) w => rain t w :=
+theorem deRe_eq_nonLocal (rain : T → W → Prop) :
+    deRe (identity (E := E)) (fun t _ w => rain t w) = fun (_ : E) (t : T) w => rain t w :=
   simultaneous_deRe rain
 
 /-! ### The upper limit constraint -/
 
 /-- The forward-shifted reading of *he thought that a burglar attacked him*: an embedded past
 anaphoric to the later opening violates the upper limit constraint at the thinking time. -/
-theorem forwardShifted_not_upperLimit [LinearOrder Time] {a : TemporalArgument ℕ}
+theorem forwardShifted_not_upperLimit [LinearOrder T] {a : TemporalArgument ℕ}
     (h : g a.evalIndex < g a.index) : ¬ a.UpperLimit g :=
   not_le.2 h
 
@@ -144,7 +144,7 @@ def embeddedPresent : TemporalArgument ℕ := ⟨3, 3, 2⟩
 
 /-- The non-de-re LF is contradictory: the matrix past makes `R¹` precedence, the embedded
 present requires it to exclude precedence. -/
-theorem presentUnderPast_false [Preorder Time] (h₁ : matrixPast.Con ρ g)
+theorem presentUnderPast_false [Preorder T] (h₁ : matrixPast.Con ρ g)
     (hp : PastConstraint ρ {1}) (hq : PresentConstraint ρ {1, 3}) : False :=
   hp.false_of_presentConstraint hq (by simp) h₁
 
@@ -153,8 +153,8 @@ utterance time; its trace denotes `J` in the belief world, bounded by the upper 
 at the believer's now; and the counterpart correspondence — `I` follows the believing time iff `J`
 follows the now, `I` overlaps it iff `J` overlaps the now — leaves only the reading where `I`
 overlaps the believing time as well. -/
-theorem doubleAccess_of_counterpart [LinearOrder Time] {I J : Set Time} (hI : I.OrdConnected)
-    {believing utterance now : Time} (hlt : believing < utterance) (hU : utterance ∈ I)
+theorem doubleAccess_of_counterpart [LinearOrder T] {I J : Set T} (hI : I.OrdConnected)
+    {believing utterance now : T} (hlt : believing < utterance) (hU : utterance ∈ I)
     (hulc : ∃ s ∈ J, s ≤ now)
     (hafter : (∀ s ∈ I, believing < s) ↔ ∀ s ∈ J, now < s)
     (hoverlap : believing ∈ I ↔ now ∈ J) :

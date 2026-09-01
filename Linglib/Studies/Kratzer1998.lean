@@ -151,8 +151,8 @@ end KratzerChain
     they differ in mechanism (deletion of a genuine PAST vs a bound zero
     PRESENT — see `Ogihara1996.PastReading` for the typed
     mechanism-level divergence). -/
-theorem deletion_agrees_with_zero_tense_binding {Time : Type*}
-    (m : ReichenbachFrame Time) :
+theorem deletion_agrees_with_zero_tense_binding {T : Type*}
+    (m : ReichenbachFrame T) :
     applyDeletion m = Tense.simultaneousFrame m m.eventTime ∧
     (applyDeletion m).isPresent :=
   ⟨applyDeletion_eq_simultaneousFrame m, applyDeletion_isPresent m⟩

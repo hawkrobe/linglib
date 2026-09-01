@@ -169,7 +169,7 @@ The reading hierarchy `(25c) ⊨ (25b) ⊨ (25a)` and the result-root collapse
 (§2.4, exs (43)/(45)) fall out of the change-of-state entailments of
 `Verb.CosModel`. -/
 
-variable {Entity State Time : Type*} [LinearOrder Time]
+variable {Entity State T : Type*} [LinearOrder T]
 
 /-- (26): the sublexical modifier *again*. Given a precedence `≪` (`lt`) on an
     eventuality type `ι` and a predicate `P`, *again* asserts `P e` and
@@ -189,30 +189,30 @@ theorem again_iff {ι : Type*} (lt : ι → ι → Prop) (P : ι → Prop) (e : 
 
 /-- (27a): *again* attached low, to the root `√V`. The asserted/presupposed
     predicate is the root **state** — the restitutive reading. -/
-def againRestitutive (M : CosModel Entity State Time)
+def againRestitutive (M : CosModel Entity State T)
     (ltS : State → State → Prop) (v : Verb) (x : Entity) (s : State) : Prop :=
   again ltS (M.rootState v x) s
 
 /-- (27b): *again* attached to `vbecomeP` — the repetitive-over-change
     reading. -/
-def againRepetitiveBecome (M : CosModel Entity State Time)
-    (ltE : Event Time → Event Time → Prop) (v : Verb) (x : Entity)
-    (e : Event Time) : Prop :=
+def againRepetitiveBecome (M : CosModel Entity State T)
+    (ltE : Event T → Event T → Prop) (v : Verb) (x : Entity)
+    (e : Event T) : Prop :=
   again ltE (M.inchoative v x) e
 
 /-- (27c): *again* attached high, to `vcauseP` — the
     repetitive-over-causation reading. -/
-def againRepetitiveCause (M : CosModel Entity State Time)
-    (ltE : Event Time → Event Time → Prop) (v : Verb) (y x : Entity)
-    (w : Event Time) : Prop :=
+def againRepetitiveCause (M : CosModel Entity State T)
+    (ltE : Event T → Event T → Prop) (v : Verb) (y x : Entity)
+    (w : Event T) : Prop :=
   again ltE (M.causative v y x) w
 
 /-- (25) hierarchy, upper step: the repetitive-causation presupposition (25c)
     entails the repetitive-change presupposition (25b) — the earlier causing
     event *is* an earlier change, by `causative_entails_inchoative`. -/
-theorem againPresup_cause_entails_become (M : CosModel Entity State Time)
-    (lt : Event Time → Event Time → Prop) (v : Verb) (y x : Entity)
-    (w : Event Time) (h : againPresup lt (M.causative v y x) w) :
+theorem againPresup_cause_entails_become (M : CosModel Entity State T)
+    (lt : Event T → Event T → Prop) (v : Verb) (y x : Entity)
+    (w : Event T) (h : againPresup lt (M.causative v y x) w) :
     ∃ w', lt w' w ∧ ∃ e, M.inchoative v x e := by
   obtain ⟨w', hlt, hcaus⟩ := h
   exact ⟨w', hlt, M.causative_entails_inchoative v y x w' hcaus⟩
@@ -220,9 +220,9 @@ theorem againPresup_cause_entails_become (M : CosModel Entity State Time)
 /-- (25) hierarchy, lower step: the repetitive-change presupposition (25b)
     entails the restitutive presupposition (25a) — the earlier change gives
     rise to an earlier root state, by `inchoative_entails_resultState`. -/
-theorem againPresup_become_entails_state (M : CosModel Entity State Time)
-    (lt : Event Time → Event Time → Prop) (v : Verb) (x : Entity)
-    (e : Event Time) (h : againPresup lt (M.inchoative v x) e) :
+theorem againPresup_become_entails_state (M : CosModel Entity State T)
+    (lt : Event T → Event T → Prop) (v : Verb) (x : Entity)
+    (e : Event T) (h : againPresup lt (M.inchoative v x) e) :
     ∃ e', lt e' e ∧ ∃ s, M.become s e' ∧ M.rootState v x s := by
   obtain ⟨e', hlt, hinch⟩ := h
   exact ⟨e', hlt, M.inchoative_entails_resultState v x e' hinch⟩
@@ -230,9 +230,9 @@ theorem againPresup_become_entails_state (M : CosModel Entity State Time)
 /-- (25) hierarchy, end to end: "Mary had flattened it before" ⊨ "it had
     been flat before", composed through the change-of-state decomposition
     (`causative_entails_resultState`). -/
-theorem againPresup_cause_entails_state (M : CosModel Entity State Time)
-    (lt : Event Time → Event Time → Prop) (v : Verb) (y x : Entity)
-    (w : Event Time) (h : againPresup lt (M.causative v y x) w) :
+theorem againPresup_cause_entails_state (M : CosModel Entity State T)
+    (lt : Event T → Event T → Prop) (v : Verb) (y x : Entity)
+    (w : Event T) (h : againPresup lt (M.causative v y x) w) :
     ∃ w', lt w' w ∧ ∃ e s, M.become s e ∧ M.rootState v x s := by
   obtain ⟨w', hlt, hcaus⟩ := h
   exact ⟨w', hlt, M.causative_entails_resultState v y x w' hcaus⟩
@@ -241,7 +241,7 @@ theorem againPresup_cause_entails_state (M : CosModel Entity State Time)
     change, so even the low/restitutive attachment of *again* carries a change
     entailment — the restitutive reading collapses into the repetitive one
     ("result roots never admit truly restitutive readings"). -/
-theorem result_restitution_entails_change (M : CosModel Entity State Time)
+theorem result_restitution_entails_change (M : CosModel Entity State T)
     (ltS : State → State → Prop) (v : Verb) (x : Entity) (s : State)
     (hres : ∀ s, M.rootState v x s → ∃ e, M.become s e)
     (h : againPresup ltS (M.rootState v x) s) :
@@ -406,16 +406,16 @@ def jogV : Verb := { form := "jog", frames := [], root := jog }
 /-- √crack carries `.result`, so in **any** model its denotation entails the
     result state — the non-cancelable result of [beavers-koontz-garboden-2020]
     (6), derived from crack's signature rather than stipulated. -/
-theorem crack_denote_entails_result {Entity State Time : Type*} [LinearOrder Time]
-    (M : Verb.CosModel Entity State Time) (y x : Entity) (e : Event Time)
+theorem crack_denote_entails_result {Entity State T : Type*} [LinearOrder T]
+    (M : Verb.CosModel Entity State T) (y x : Entity) (e : Event T)
     (h : M.denote crackV y x e) : ∃ e' s, M.become s e' ∧ M.rootState crackV x s :=
   M.denote_result_entails_resultState crackV y x e (by decide) h
 
 /-- √jog has no `.result` (nor `.cause`), so its denotation is the bare manner
     core — no `become`, no result state. Only the change-of-state root entails a
     result. -/
-theorem jog_denote_eq_manner {Entity State Time : Type*} [LinearOrder Time]
-    (M : Verb.CosModel Entity State Time) (y x : Entity) :
+theorem jog_denote_eq_manner {Entity State T : Type*} [LinearOrder T]
+    (M : Verb.CosModel Entity State T) (y x : Entity) :
     M.denote jogV y x = M.manner jogV := by
   unfold Verb.CosModel.denote
   rw [if_neg (by decide), if_neg (by decide)]
@@ -443,9 +443,9 @@ theorem jog_template_no_resultState : ¬ jog.template.HasResultState := by decid
 /-- √crack's template embeds a result state, so by `denote_result_from_template`
     its denotation entails the result state in any model — the template diagnostic
     and the denotational entailment are *one* fact through `crack`'s `kinds`. -/
-theorem crack_template_forces_denote_result {Entity State Time : Type*}
-    [LinearOrder Time] (M : Verb.CosModel Entity State Time) (y x : Entity)
-    (e : Event Time) (h : M.denote crackV y x e) :
+theorem crack_template_forces_denote_result {Entity State T : Type*}
+    [LinearOrder T] (M : Verb.CosModel Entity State T) (y x : Entity)
+    (e : Event T) (h : M.denote crackV y x e) :
     ∃ e' s, M.become s e' ∧ M.rootState crackV x s :=
   M.denote_result_from_template crackV crack_template_hasResultState y x e h
 

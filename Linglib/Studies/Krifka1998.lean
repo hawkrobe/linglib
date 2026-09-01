@@ -22,7 +22,7 @@ This file inlines the §4 movement-relation predicates (formerly in
 * `IsInitialPart` / `IsFinalPart` / `IsTelic` — K98 §2.5 telicity, with
   `isTelic_of_qua` the `QUA → TEL` direction.
 * `EXP` / `SEINC` / `ADJ` / `SMR` / `MovementClosure` / `MR` — K98 §4 movement
-  substrate (TANG_H-free), with `mr_of_smr` and the `Event Time` instantiations
+  substrate (TANG_H-free), with `mr_of_smr` and the `Event T` instantiations
   `expEv` / `seincEv` / `smrPath` / `mrPath`.
 
 ## Main statements
@@ -257,9 +257,9 @@ section SpatialTracePullback
 
 open Spatial
 
-variable {Loc Time : Type*} [LinearOrder Time]
-variable [Event.Mereology Time] [ClassicalMereology (Event Time)] [SemilatticeSup (Path Loc)]
-variable [st : Trace Loc Time]
+variable {Loc T : Type*} [LinearOrder T]
+variable [Event.Mereology T] [ClassicalMereology (Event T)] [SemilatticeSup (Path Loc)]
+variable [st : Trace Loc T]
 
 /-- Bounded path (QUA) ↦ telic VP via the σ-pullback (K98 §4.5 *walked from X to Y*). -/
 theorem walked_from_to_telic_propositional
@@ -320,41 +320,41 @@ theorem pathType_telicity_matches_motionData :
 
 end MotionData
 
-/-! ### EXP / SEINC instances on `Event Time` (K98 §4.1) -/
+/-! ### EXP / SEINC instances on `Event T` (K98 §4.1) -/
 
 section Expansiveness
 
-variable [SemilatticeSup α] {Time : Type*} [LinearOrder Time]
+variable [SemilatticeSup α] {T : Type*} [LinearOrder T]
 
-/-- EXP-as-property of any θ : α → Event Time → Prop using `Event.precedes`. -/
-abbrev expEv (θ : α → Event Time → Prop) : Prop :=
-  EXP (Event.precedes (Time := Time)) θ
+/-- EXP-as-property of any θ : α → Event T → Prop using `Event.precedes`. -/
+abbrev expEv (θ : α → Event T → Prop) : Prop :=
+  EXP (Event.precedes (T := T)) θ
 
-/-- SEINC-as-property of θ over `Event Time` using `Event.precedes`. -/
-abbrev seincEv [Event.Mereology Time] [ClassicalMereology (Event Time)]
-    (θ : α → Event Time → Prop) : Prop :=
-  SEINC (Event.precedes (Time := Time)) θ
+/-- SEINC-as-property of θ over `Event T` using `Event.precedes`. -/
+abbrev seincEv [Event.Mereology T] [ClassicalMereology (Event T)]
+    (θ : α → Event T → Prop) : Prop :=
+  SEINC (Event.precedes (T := T)) θ
 
 end Expansiveness
 
-/-! ### SMR / MR instances on `Path Loc → Event Time → Prop` (K98 §4.2-4.3) -/
+/-! ### SMR / MR instances on `Path Loc → Event T → Prop` (K98 §4.2-4.3) -/
 
 section MovementInstances
 
 open Spatial
 
-variable {Loc Time : Type*} [LinearOrder Time]
-variable [Event.Mereology Time] [ClassicalMereology (Event Time)]
+variable {Loc T : Type*} [LinearOrder T]
+variable [Event.Mereology T] [ClassicalMereology (Event T)]
 variable [SemilatticeSup (Path Loc)]
 
 /-- SMR specialized to paths and events with concrete adjacency. -/
-abbrev smrPath (θ : Path Loc → Event Time → Prop) : Prop :=
-  SMR Path.adjacent (Event.adjacent (Time := Time))
+abbrev smrPath (θ : Path Loc → Event T → Prop) : Prop :=
+  SMR Path.adjacent (Event.adjacent (T := T))
     (fun _ : Path Loc => True) θ
 
 /-- MR specialized to paths and events with concrete adjacency + precedence. -/
-abbrev mrPath (θ : Path Loc → Event Time → Prop) : Prop :=
-  MR Path.adjacent (Event.adjacent (Time := Time)) (Event.precedes (Time := Time))
+abbrev mrPath (θ : Path Loc → Event T → Prop) : Prop :=
+  MR Path.adjacent (Event.adjacent (T := T)) (Event.precedes (T := T))
     (fun _ : Path Loc => True) θ
 
 end MovementInstances

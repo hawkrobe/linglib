@@ -10,7 +10,7 @@ types.
 
 ## Main definitions
 
-* `ThematicRel` — the core relation type `Entity → Event Time → Prop`
+* `ThematicRel` — the core relation type `Entity → Event T → Prop`
 * `EventRel` — event-first generalization to non-entity arguments ([rudin-2025b])
 * `ThematicFrame` — a model's assignment of the role relations
 
@@ -25,8 +25,8 @@ namespace ArgumentStructure
 /-- A thematic relation: a two-place predicate relating an entity to an event.
     The core neo-Davidsonian type.
     Agent(j, e) means "j is the agent of event e". -/
-abbrev ThematicRel (Entity Time : Type*) [LinearOrder Time] :=
-  Entity → Event Time → Prop
+abbrev ThematicRel (Entity T : Type*) [LinearOrder T] :=
+  Entity → Event T → Prop
 
 /-- A relation between an event and an argument of arbitrary sort.
     Generalizes `ThematicRel` past the entity-first restriction:
@@ -36,7 +36,7 @@ abbrev ThematicRel (Entity Time : Type*) [LinearOrder Time] :=
     the neo-Davidsonian convention for thematic roles vs. the more
     general event-relation pattern used by content/reenactment relations
     ([rudin-2025b], §4.4–4.7). -/
-abbrev EventRel (Time α : Type*) [LinearOrder Time] := Event Time → α → Prop
+abbrev EventRel (T α : Type*) [LinearOrder T] := Event T → α → Prop
 
 /-- A thematic frame bundles thematic relations for a given model.
 
@@ -44,25 +44,25 @@ abbrev EventRel (Time α : Type*) [LinearOrder Time] := Event Time → α → Pr
     selects for states, not actions. The Fragment-layer `ThetaRole`
     enum does not include `holder` since `VendlerClass` already
     encodes dynamicity. -/
-structure ThematicFrame (Entity Time : Type*) [LinearOrder Time] where
+structure ThematicFrame (Entity T : Type*) [LinearOrder T] where
   /-- Agent: volitional causer -/
-  agent : ThematicRel Entity Time
+  agent : ThematicRel Entity T
   /-- Patient: affected entity -/
-  patient : ThematicRel Entity Time
+  patient : ThematicRel Entity T
   /-- Theme: entity in a state/location -/
-  theme : ThematicRel Entity Time
+  theme : ThematicRel Entity T
   /-- Experiencer: perceiver/cognizer -/
-  experiencer : ThematicRel Entity Time
+  experiencer : ThematicRel Entity T
   /-- Goal: recipient/target -/
-  goal : ThematicRel Entity Time
+  goal : ThematicRel Entity T
   /-- Source: origin -/
-  source : ThematicRel Entity Time
+  source : ThematicRel Entity T
   /-- Instrument: means -/
-  instrument : ThematicRel Entity Time
+  instrument : ThematicRel Entity T
   /-- Stimulus: cause of experience -/
-  stimulus : ThematicRel Entity Time
+  stimulus : ThematicRel Entity T
   /-- Holder: entity in a state. Distinct from Agent: selects for
       states, not actions. -/
-  holder : ThematicRel Entity Time
+  holder : ThematicRel Entity T
 
 end ArgumentStructure

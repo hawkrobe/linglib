@@ -61,8 +61,8 @@ open Tense
 /-- [von-stechow-2009] derives the shifted reading: [PAST] feature
     checked against matrix E. The embedded reference time is before
     the matrix event time. -/
-theorem vonStechow_derives_shifted {Time : Type*} [LinearOrder Time]
-    (matrixFrame : ReichenbachFrame Time) (embeddedR embeddedE : Time)
+theorem vonStechow_derives_shifted {T : Type*} [LinearOrder T]
+    (matrixFrame : ReichenbachFrame T) (embeddedR embeddedE : T)
     (hPast : compare embeddedR matrixFrame.eventTime ∈ Tense.past) :
     (embeddedFrame matrixFrame embeddedR embeddedE).isPast := by
   simp only [embeddedFrame, ReichenbachFrame.isPast]
@@ -71,17 +71,17 @@ theorem vonStechow_derives_shifted {Time : Type*} [LinearOrder Time]
 /-- [von-stechow-2009] derives the simultaneous reading: [PRES]
     feature checked against matrix E. The embedded reference time
     equals the matrix event time — no deletion rule needed. -/
-theorem vonStechow_derives_simultaneous {Time : Type*} [LinearOrder Time]
-    (matrixFrame : ReichenbachFrame Time) (embeddedE : Time) :
+theorem vonStechow_derives_simultaneous {T : Type*} [LinearOrder T]
+    (matrixFrame : ReichenbachFrame T) (embeddedE : T) :
     (embeddedFrame matrixFrame matrixFrame.eventTime embeddedE).isPresent := by
   simp only [embeddedFrame, ReichenbachFrame.isPresent]
 
 /-- [von-stechow-2009] derives double-access: [PRES] feature under
     past attitude verb. The present tense is checked against matrix E,
     but its indexical nature also requires truth at speech time. -/
-theorem vonStechow_derives_double_access {Time : Type*}
-    (matrixFrame : ReichenbachFrame Time)
-    (p : Time → Prop)
+theorem vonStechow_derives_double_access {T : Type*}
+    (matrixFrame : ReichenbachFrame T)
+    (p : T → Prop)
     (h_matrix : p matrixFrame.eventTime)
     (h_speech : p matrixFrame.speechTime) :
     p matrixFrame.eventTime ∧ p matrixFrame.speechTime :=
@@ -96,8 +96,8 @@ theorem vonStechow_derives_double_access {Time : Type*}
     This is where von Stechow has an advantage over [abusch-1997]:
     feature checking does not require attitude semantics or res
     movement — any eval time source works. -/
-theorem vonStechow_derives_relative_clause {Time : Type*} [LinearOrder Time]
-    (rcPerspective : Time) (rcRefTime : Time)
+theorem vonStechow_derives_relative_clause {T : Type*} [LinearOrder T]
+    (rcPerspective : T) (rcRefTime : T)
     (hPast : compare rcRefTime rcPerspective ∈ Tense.past) :
     rcRefTime < rcPerspective :=
   (Tense.compare_mem_past _ _).mp hPast
@@ -110,8 +110,8 @@ theorem vonStechow_derives_relative_clause {Time : Type*} [LinearOrder Time]
 /-- [von-stechow-2009]'s feature checking is
     `TensePronoun.fullPresupposition` when the eval time resolves to
     the same value. -/
-theorem feature_checking_is_fullPresupposition {Time : Type*} [LinearOrder Time]
-    (tp : TensePronoun) (g : TemporalAssignment Time) :
+theorem feature_checking_is_fullPresupposition {T : Type*} [LinearOrder T]
+    (tp : TensePronoun) (g : TemporalAssignment T) :
     compare (tp.resolve g) (tp.evalTime g) ∈ tp.constraint ↔
     tp.fullPresupposition g :=
   Iff.rfl
@@ -120,44 +120,44 @@ theorem feature_checking_is_fullPresupposition {Time : Type*} [LinearOrder Time]
 /-! ### Situation-indexed attitudes
 
 The complement type of *believe* shifts from `W → Prop` to
-predicates over `Index W Time`, and doxastic alternatives become world–time pairs:
+predicates over `Index W T`, and doxastic alternatives become world–time pairs:
 ⟦x believes p⟧(w,t) = ∀(w',t') ∈ Dox_x(w,t). p(w',t'). -/
 
 open Intensional (Index)
 open Doxastic (Veridicality DoxasticPredicate BoxAt VeridicalityHolds)
 
-variable {W Time E : Type*}
+variable {W T E : Type*}
 
 /-- Universal modal over situations: `p` holds at every accessible
     world–time pair. -/
-def sitBoxAt (R : E → Index W Time → Index W Time → Prop)
-    (agent : E) (s : Index W Time)
-    (situations : List (Index W Time)) (p : (Index W Time → Prop)) : Prop :=
+def sitBoxAt (R : E → Index W T → Index W T → Prop)
+    (agent : E) (s : Index W T)
+    (situations : List (Index W T)) (p : (Index W T → Prop)) : Prop :=
   ∀ s' ∈ situations, R agent s s' → p s'
 
-instance (R : E → Index W Time → Index W Time → Prop)
-    [∀ a s s', Decidable (R a s s')] (agent : E) (s : Index W Time)
-    (situations : List (Index W Time)) (p : (Index W Time → Prop))
+instance (R : E → Index W T → Index W T → Prop)
+    [∀ a s s', Decidable (R a s s')] (agent : E) (s : Index W T)
+    (situations : List (Index W T)) (p : (Index W T → Prop))
     [DecidablePred p] : Decidable (sitBoxAt R agent s situations p) :=
   inferInstanceAs (Decidable (∀ s' ∈ situations, _))
 
 /-- A world-proposition as a situation-proposition ignoring the
     temporal coordinate. -/
-def liftProp (p : W → Prop) : (Index W Time → Prop) :=
+def liftProp (p : W → Prop) : (Index W T → Prop) :=
   fun s => p s.world
 
 /-- A world-accessibility relation as a situation-accessibility
     relation ignoring temporal coordinates — classic Hintikka
     behavior, where doxastic alternatives differ only in world. -/
 def liftAccess (R : E → W → W → Prop) :
-    E → Index W Time → Index W Time → Prop :=
+    E → Index W T → Index W T → Prop :=
   fun agent s₁ s₂ => R agent s₁.world s₂.world
 
 /-- Hintikka semantics is the time-invariant special case: on lifted
     relations and propositions, the situation modal is `BoxAt` over
     the world projections. -/
 theorem sitBoxAt_lift_eq_BoxAt (R : E → W → W → Prop) (agent : E)
-    (s : Index W Time) (sits : List (Index W Time))
+    (s : Index W T) (sits : List (Index W T))
     (p : W → Prop) :
     sitBoxAt (liftAccess R) agent s sits (liftProp p) ↔
     BoxAt R agent s.world (sits.map (·.world)) p := by
@@ -170,43 +170,43 @@ theorem sitBoxAt_lift_eq_BoxAt (R : E → W → W → Prop) (agent : E)
 
 /-- The veridicality check at a situation: veridical predicates
     require the complement at the evaluation situation. -/
-def sitVeridicalityHolds (v : Veridicality) (p : (Index W Time → Prop))
-    (s : Index W Time) : Prop :=
+def sitVeridicalityHolds (v : Veridicality) (p : (Index W T → Prop))
+    (s : Index W T) : Prop :=
   match v with
   | .veridical => p s
   | .nonVeridical => True
 
-instance (v : Veridicality) (p : (Index W Time → Prop)) [DecidablePred p]
-    (s : Index W Time) :
+instance (v : Veridicality) (p : (Index W T → Prop)) [DecidablePred p]
+    (s : Index W T) :
     Decidable (sitVeridicalityHolds v p s) := by
   cases v <;> simp [sitVeridicalityHolds] <;> infer_instance
 
 /-- Lifted veridicality is world-level veridicality. -/
 theorem sitVeridicalityHolds_lift (v : Veridicality) (p : W → Prop)
-    (s : Index W Time) :
+    (s : Index W T) :
     sitVeridicalityHolds v (liftProp p) s ↔ VeridicalityHolds v p s.world := by
   cases v <;> simp [sitVeridicalityHolds, VeridicalityHolds, liftProp]
 
 /-- A doxastic predicate with situation-indexed accessibility:
     `Dox_y(w,t)` is a set of world–time pairs. -/
-structure SitDoxasticPredicate (W Time E : Type*) where
+structure SitDoxasticPredicate (W T E : Type*) where
   /-- Situation-indexed accessibility relation. -/
-  access : E → Index W Time → Index W Time → Prop
+  access : E → Index W T → Index W T → Prop
   /-- Veridicality (veridical or not). -/
   veridicality : Veridicality
 
 /-- ⟦x V that p⟧(s): the veridicality check at `s` plus the universal
     modal over accessible situations. -/
-def SitDoxasticPredicate.HoldsAt (V : SitDoxasticPredicate W Time E)
-    (agent : E) (p : (Index W Time → Prop)) (s : Index W Time)
-    (situations : List (Index W Time)) : Prop :=
+def SitDoxasticPredicate.HoldsAt (V : SitDoxasticPredicate W T E)
+    (agent : E) (p : (Index W T → Prop)) (s : Index W T)
+    (situations : List (Index W T)) : Prop :=
   sitVeridicalityHolds V.veridicality p s ∧ sitBoxAt V.access agent s situations p
 
 /-- Veridical situation-indexed predicates entail their complement at
     the evaluation situation. -/
-theorem sit_veridical_entails_complement (V : SitDoxasticPredicate W Time E)
-    (hV : V.veridicality = .veridical) (agent : E) (p : (Index W Time → Prop))
-    (s : Index W Time) (sits : List (Index W Time))
+theorem sit_veridical_entails_complement (V : SitDoxasticPredicate W T E)
+    (hV : V.veridicality = .veridical) (agent : E) (p : (Index W T → Prop))
+    (s : Index W T) (sits : List (Index W T))
     (holds : V.HoldsAt agent p s sits) : p s := by
   unfold SitDoxasticPredicate.HoldsAt at holds
   rw [hV] at holds
@@ -214,8 +214,8 @@ theorem sit_veridical_entails_complement (V : SitDoxasticPredicate W Time E)
 
 /-- A world-level `DoxasticPredicate` as a situation-indexed one, with
     time-invariant accessibility. -/
-def liftDoxastic (V : DoxasticPredicate W E) (Time : Type*) :
-    SitDoxasticPredicate W Time E where
+def liftDoxastic (V : DoxasticPredicate W E) (T : Type*) :
+    SitDoxasticPredicate W T E where
   access := liftAccess V.access
   veridicality := V.veridicality
 
@@ -223,9 +223,9 @@ def liftDoxastic (V : DoxasticPredicate W E) (Time : Type*) :
     `DoxasticPredicate` analysis replays unchanged in the
     situation-indexed framework. -/
 theorem liftDoxastic_holdsAt_iff (V : DoxasticPredicate W E) (agent : E)
-    (p : W → Prop) (s : Index W Time)
-    (sits : List (Index W Time)) :
-    (liftDoxastic V Time).HoldsAt agent (liftProp p) s sits ↔
+    (p : W → Prop) (s : Index W T)
+    (sits : List (Index W T)) :
+    (liftDoxastic V T).HoldsAt agent (liftProp p) s sits ↔
     V.HoldsAt agent p s.world (sits.map (·.world)) := by
   simp only [SitDoxasticPredicate.HoldsAt, DoxasticPredicate.HoldsAt,
     liftDoxastic, sitVeridicalityHolds_lift, sitBoxAt_lift_eq_BoxAt]
@@ -239,23 +239,23 @@ clause's temporal interpretation to the matrix event time. -/
 /-- Accessible situations share the evaluation time — the
     simultaneous reading in sequence of tense. -/
 def temporallyBound (R : E → W → W → Prop) :
-    E → Index W Time → Index W Time → Prop :=
+    E → Index W T → Index W T → Prop :=
   fun agent s₁ s₂ => R agent s₁.world s₂.world ∧ s₂.time = s₁.time
 
-instance [DecidableEq Time] (R : E → W → W → Prop)
+instance [DecidableEq T] (R : E → W → W → Prop)
     [∀ a w w', Decidable (R a w w')] :
-    ∀ a s₁ s₂, Decidable (temporallyBound (Time := Time) R a s₁ s₂) := by
+    ∀ a s₁ s₂, Decidable (temporallyBound (T := T) R a s₁ s₂) := by
   intro a s₁ s₂; unfold temporallyBound; infer_instance
 
 /-- Accessible situations are at or after the evaluation time —
     forward-looking attitudes like *expect* and *intend*. -/
-def futureOriented [LE Time] (R : E → W → W → Prop) :
-    E → Index W Time → Index W Time → Prop :=
+def futureOriented [LE T] (R : E → W → W → Prop) :
+    E → Index W T → Index W T → Prop :=
   fun agent s₁ s₂ => R agent s₁.world s₂.world ∧ s₁.time ≤ s₂.time
 
-instance [LE Time] [DecidableRel (α := Time) (· ≤ ·)]
+instance [LE T] [DecidableRel (α := T) (· ≤ ·)]
     (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')] :
-    ∀ a s₁ s₂, Decidable (futureOriented (Time := Time) R a s₁ s₂) := by
+    ∀ a s₁ s₂, Decidable (futureOriented (T := T) R a s₁ s₂) := by
   intro a s₁ s₂; unfold futureOriented; infer_instance
 
 /-! ### Temporal tower bridge ([abusch-1997] ↔ `ContextTower`)

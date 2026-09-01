@@ -69,10 +69,10 @@ open Presupposition
 /-- Cumming's (S, A, T) frame. Extends Reichenbach with an evidence-acquisition
     time A. S = speechTime, T = eventTime, A = acquisitionTime. The existing
     referenceTime (R) stays — it governs utterance perspective independently. -/
-structure EvidentialFrame (Time : Type*) extends ReichenbachFrame Time where
+structure EvidentialFrame (T : Type*) extends ReichenbachFrame T where
   /-- Evidence-acquisition time (A): when the speaker acquires the evidence
       grounding the assertion. -/
-  acquisitionTime : Time
+  acquisitionTime : T
 
 /-! ### EP Constraint Enum -/
 

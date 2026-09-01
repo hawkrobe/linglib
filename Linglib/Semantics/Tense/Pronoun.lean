@@ -27,15 +27,15 @@ namespace Tense
 
 /-- Temporal assignment function: maps variable indices to times.
     The temporal analogue of H&K's `Assignment` (`ℕ → Entity`). -/
-abbrev TemporalAssignment (Time : Type*) := Assignment Time
+abbrev TemporalAssignment (T : Type*) := Assignment T
 
 /-- Modified temporal assignment `g[n ↦ t]`. Specializes `Function.update`. -/
-abbrev updateTemporal {Time : Type*} (g : TemporalAssignment Time)
-    (n : ℕ) (t : Time) : TemporalAssignment Time :=
+abbrev updateTemporal {T : Type*} (g : TemporalAssignment T)
+    (n : ℕ) (t : T) : TemporalAssignment T :=
   Function.update g n t
 
 /-- Temporal variable denotation: ⟦tₙ⟧^g = g(n). -/
-abbrev interpTense {Time : Type*} (n : ℕ) (g : TemporalAssignment Time) : Time :=
+abbrev interpTense {T : Type*} (n : ℕ) (g : TemporalAssignment T) : T :=
   g n
 
 /-- Temporal lambda abstraction: bind a time variable.
@@ -43,29 +43,29 @@ abbrev interpTense {Time : Type*} (n : ℕ) (g : TemporalAssignment Time) : Time
     Partee's bound tense: "Whenever Mary phones, Sam *is* asleep" —
     present tense bound by "whenever", just as "Every farmer beats
     *his* donkey" has "his" bound by "every farmer". -/
-abbrev temporalLambdaAbs {Time α : Type*} (n : ℕ)
-    (body : TemporalAssignment Time → α) :
-    TemporalAssignment Time → Time → α :=
+abbrev temporalLambdaAbs {T α : Type*} (n : ℕ)
+    (body : TemporalAssignment T → α) :
+    TemporalAssignment T → T → α :=
   λ g t => body (Function.update g n t)
 
 /-- Project a situation assignment to a temporal assignment: the temporal
     coordinate of each situation is extracted. -/
-def situationToTemporal {W Time : Type*}
-    (g : ℕ → Index W Time) : TemporalAssignment Time :=
+def situationToTemporal {W T : Type*}
+    (g : ℕ → Index W T) : TemporalAssignment T :=
   λ n => (g n).time
 
 /-- Temporal interpretation via situation assignment commutes with
     time projection: `interpTense n (π g) = (g n).time`. -/
-theorem situation_temporal_commutes {W Time : Type*}
-    (g : ℕ → Index W Time) (n : ℕ) :
+theorem situation_temporal_commutes {W T : Type*}
+    (g : ℕ → Index W T) (n : ℕ) :
     interpTense n (situationToTemporal g) = (g n).time := rfl
 
 /-- Zero tense: a bound tense variable contributes no independent
     temporal constraint. When an attitude verb binds it, the variable receives
     the matrix event time. This is the SOT mechanism: the "past" morphology on
     the embedded verb is agreement, not a semantic tense. -/
-theorem zeroTense_receives_binder_time {Time : Type*}
-    (g : TemporalAssignment Time) (n : ℕ) (binderTime : Time) :
+theorem zeroTense_receives_binder_time {T : Type*}
+    (g : TemporalAssignment T) (n : ℕ) (binderTime : T) :
     interpTense n (updateTemporal g n binderTime) = binderTime :=
   Function.update_self n binderTime g
 
@@ -88,29 +88,29 @@ structure TensePronoun where
 
 namespace TensePronoun
 
-variable {Time : Type*}
+variable {T : Type*}
 
 /-- Resolve: look up the temporal variable. -/
-def resolve (tp : TensePronoun) (g : TemporalAssignment Time) : Time :=
+def resolve (tp : TensePronoun) (g : TemporalAssignment T) : T :=
   interpTense tp.varIndex g
 
 /-- Presupposition: the constraint applied to the resolved time. -/
-def presupposition [LinearOrder Time]
-    (tp : TensePronoun) (resolvedTime perspectiveTime : Time) : Prop :=
+def presupposition [LinearOrder T]
+    (tp : TensePronoun) (resolvedTime perspectiveTime : T) : Prop :=
   compare resolvedTime perspectiveTime ∈ tp.constraint
 
 /-- Resolve the evaluation time from the assignment.
     In root clauses (evalTimeIndex = 0, g(0) = speech time), this is speech time.
     Under embedding, the attitude verb updates the assignment so that
     g(evalTimeIndex) = matrix event time. -/
-def evalTime (tp : TensePronoun) (g : TemporalAssignment Time) : Time :=
+def evalTime (tp : TensePronoun) (g : TemporalAssignment T) : T :=
   interpTense tp.evalTimeIndex g
 
 /-- Full presupposition: the tense constraint checked against the resolved
     evaluation time (not just a bare perspective time parameter).
     This makes the eval time compositionally determined rather than stipulated. -/
-def fullPresupposition [LinearOrder Time]
-    (tp : TensePronoun) (g : TemporalAssignment Time) : Prop :=
+def fullPresupposition [LinearOrder T]
+    (tp : TensePronoun) (g : TemporalAssignment T) : Prop :=
   compare (tp.resolve g) (tp.evalTime g) ∈ tp.constraint
 
 def isIndexical (tp : TensePronoun) : Prop := tp.mode = .indexical
@@ -124,7 +124,7 @@ instance (tp : TensePronoun) : Decidable tp.isBound :=
 /-- When evalTimeIndex = 0 and g(0) = speechTime, the evaluation time is speech time.
     This is the root-clause default: tense is checked against speech time. -/
 theorem evalTime_root_is_speech (tp : TensePronoun)
-    (g : TemporalAssignment Time) (speechTime : Time)
+    (g : TemporalAssignment T) (speechTime : T)
     (hEval : tp.evalTimeIndex = 0) (hRoot : g 0 = speechTime) :
     tp.evalTime g = speechTime := by
   simp [evalTime, interpTense, hEval, hRoot]
@@ -133,19 +133,19 @@ theorem evalTime_root_is_speech (tp : TensePronoun)
     the embedded tense is now checked against a different time (the matrix
     event time). This is how attitude verbs "transmit" their event time. -/
 theorem evalTime_shifts_under_embedding (tp : TensePronoun)
-    (g : TemporalAssignment Time) (matrixEventTime : Time) :
+    (g : TemporalAssignment T) (matrixEventTime : T) :
     tp.evalTime (updateTemporal g tp.evalTimeIndex matrixEventTime) = matrixEventTime :=
   zeroTense_receives_binder_time g tp.evalTimeIndex matrixEventTime
 
 /-- Resolving a bound tense under binding yields the binder time. -/
 theorem bound_resolve_eq_binder (tp : TensePronoun)
-    (g : TemporalAssignment Time) (binderTime : Time) :
+    (g : TemporalAssignment T) (binderTime : T) :
     tp.resolve (updateTemporal g tp.varIndex binderTime) = binderTime :=
   zeroTense_receives_binder_time g tp.varIndex binderTime
 
 /-- An indexical present tense presupposes resolution to speech time. -/
-theorem indexical_present_at_speech [LinearOrder Time]
-    (tp : TensePronoun) (resolvedTime speechTime : Time)
+theorem indexical_present_at_speech [LinearOrder T]
+    (tp : TensePronoun) (resolvedTime speechTime : T)
     (hPres : tp.constraint = present)
     (hPresup : tp.presupposition resolvedTime speechTime) :
     resolvedTime = speechTime := by

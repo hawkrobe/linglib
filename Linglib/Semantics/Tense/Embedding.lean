@@ -21,7 +21,7 @@ open Time
 
 namespace Tense
 
-variable {Time : Type*}
+variable {T : Type*}
 
 /-! ### Embedded frames -/
 
@@ -30,8 +30,8 @@ variable {Time : Type*}
     tense locates its R′ relative to the attitude holder's now, not
     speech time. `embeddedR` and `embeddedE` are the embedded clause's
     reference and event times, determined by its tense and aspect. -/
-def embeddedFrame (matrixFrame : ReichenbachFrame Time)
-    (embeddedR embeddedE : Time) : ReichenbachFrame Time where
+def embeddedFrame (matrixFrame : ReichenbachFrame T)
+    (embeddedR embeddedE : T) : ReichenbachFrame T where
   speechTime := matrixFrame.speechTime
   perspectiveTime := matrixFrame.eventTime
   referenceTime := embeddedR
@@ -41,14 +41,14 @@ def embeddedFrame (matrixFrame : ReichenbachFrame Time)
     Mary was sick" — sick at the saying time), so embedded tense is
     PRESENT relative to the embedded perspective
     (`simultaneousFrame_isPresent`). -/
-def simultaneousFrame (matrixFrame : ReichenbachFrame Time)
-    (embeddedE : Time) : ReichenbachFrame Time :=
+def simultaneousFrame (matrixFrame : ReichenbachFrame T)
+    (embeddedE : T) : ReichenbachFrame T :=
   embeddedFrame matrixFrame matrixFrame.eventTime embeddedE
 
 /-- The simultaneous frame satisfies PRESENT (R = P) relative to the
     embedded perspective. -/
-theorem simultaneousFrame_isPresent (matrixFrame : ReichenbachFrame Time)
-    (embeddedE : Time) :
+theorem simultaneousFrame_isPresent (matrixFrame : ReichenbachFrame T)
+    (embeddedE : T) :
     (simultaneousFrame matrixFrame embeddedE).isPresent := rfl
 
 /-! ### Embedded tense readings -/
@@ -97,16 +97,16 @@ modal-layer formulation would be more faithful. -/
 /-- The Upper Limit Constraint ([abusch-1997] §7, presuppositional
     construal per [heim-1994-comments]): the embedded reference time may
     not exceed the matrix event time (= the embedded perspective). -/
-abbrev upperLimitConstraint [LE Time] (embeddedR matrixE : Time) : Prop :=
+abbrev upperLimitConstraint [LE T] (embeddedR matrixE : T) : Prop :=
   embeddedR ≤ matrixE
 
 /-- The shifted reading satisfies the ULC. -/
-theorem shifted_satisfies_ulc [Preorder Time] (embeddedR matrixE : Time)
+theorem shifted_satisfies_ulc [Preorder T] (embeddedR matrixE : T)
     (h : embeddedR < matrixE) : upperLimitConstraint embeddedR matrixE :=
   le_of_lt h
 
 /-- The simultaneous reading satisfies the ULC. -/
-theorem simultaneous_satisfies_ulc [Preorder Time] (embeddedR matrixE : Time)
+theorem simultaneous_satisfies_ulc [Preorder T] (embeddedR matrixE : T)
     (h : embeddedR = matrixE) : upperLimitConstraint embeddedR matrixE :=
   le_of_eq h
 
@@ -116,9 +116,9 @@ theorem simultaneous_satisfies_ulc [Preorder Time] (embeddedR matrixE : Time)
     R = the pronoun's referent under `g`, with perspective, speech, and
     event times supplied by the embedding context. -/
 def TensePronoun.toFrame (tp : TensePronoun)
-    (g : TemporalAssignment Time)
-    (speechTime perspectiveTime eventTime : Time) :
-    ReichenbachFrame Time where
+    (g : TemporalAssignment T)
+    (speechTime perspectiveTime eventTime : T) :
+    ReichenbachFrame T where
   speechTime := speechTime
   perspectiveTime := perspectiveTime
   referenceTime := tp.resolve g
@@ -128,8 +128,8 @@ def TensePronoun.toFrame (tp : TensePronoun)
     simultaneous reading as pronoun resolution: binding the variable to
     the perspective time yields a PRESENT frame. -/
 theorem TensePronoun.bound_present_simultaneous
-    (tp : TensePronoun) (g : TemporalAssignment Time)
-    (speechTime perspTime eventTime : Time)
+    (tp : TensePronoun) (g : TemporalAssignment T)
+    (speechTime perspTime eventTime : T)
     (hBind : tp.resolve g = perspTime)
     (_hPres : tp.constraint = present) :
     (tp.toFrame g speechTime perspTime eventTime).isPresent := by
@@ -139,7 +139,7 @@ theorem TensePronoun.bound_present_simultaneous
 /-- The double access reading of a present tense under a past attitude: the denotation of the
 present tense overlaps both the believing time and the utterance time. A condition on the
 tense's reference, not on the truth of the complement at either time. -/
-def DoubleAccess (I : Set Time) (believing utterance : Time) : Prop :=
+def DoubleAccess (I : Set T) (believing utterance : T) : Prop :=
   believing ∈ I ∧ utterance ∈ I
 
 end Tense

@@ -49,15 +49,15 @@ open Aspect.Stratified
 Whether a verb distributes over the atomic fillers of a thematic role is a property of its event
 denotation, not a feature it carries. -/
 
-variable {Entity State Time : Type*} [LinearOrder Time] [PartialOrder Entity]
-  [SemilatticeSup (Event Time)]
+variable {Entity State T : Type*} [LinearOrder T] [PartialOrder Entity]
+  [SemilatticeSup (Event T)]
 
 /-- A verb **stratifies over** the atomic fillers of role `R`: for every
     argument assignment `(y, x)`, the verb's `CosModel` denotation has
     relational Stratified Distributive Reference along `R`
     (`RelationalDistributiveReference`). -/
-def StratifiesOver (v : Verb) (M : CosModel Entity State Time)
-    (R : Entity → Event Time → Prop) : Prop :=
+def StratifiesOver (v : Verb) (M : CosModel Entity State T)
+    (R : Entity → Event T → Prop) : Prop :=
   ∀ y x, RelationalDistributiveReferenceUniv R (M.denote v y x)
 
 end Verb
@@ -92,14 +92,14 @@ The book's per-verb distributivity facts are lexical meaning postulates in Hoeks
 theorems; they are stated here over the Fragment verbs' denotations. -/
 
 section Distributivity
-variable {Entity State Time : Type*} [LinearOrder Time] [PartialOrder Entity]
-  [SemilatticeSup (Event Time)]
+variable {Entity State T : Type*} [LinearOrder T] [PartialOrder Entity]
+  [SemilatticeSup (Event T)]
 
 /-- The verb-distributivity postulates of [champollion-2017] Ch 4, over the Fragment verbs'
 `CosModel` denotations and the model's agent and theme roles: *see* distributes on both, *kill*
 on its theme only — a member of the posse need not have killed anyone — and *meet* on neither. -/
-structure ChampollionPostulates (M : Verb.CosModel Entity State Time)
-    (agentRole themeRole : Entity → Event Time → Prop) : Prop where
+structure ChampollionPostulates (M : Verb.CosModel Entity State T)
+    (agentRole themeRole : Entity → Event T → Prop) : Prop where
   see_distributes_agent : see.toVerb.StratifiesOver M agentRole
   see_distributes_theme : see.toVerb.StratifiesOver M themeRole
   kill_distributes_theme : kill.toVerb.StratifiesOver M themeRole
@@ -116,11 +116,11 @@ end Distributivity
     *is* the existence of such a cover — his Theorem 14
     (`Cover.algClosure_iff_exists_finCover`) at the runtime dimension. The
     genuine consumer of `Semantics/Plurality/Cover.lean`. -/
-theorem subintervalReference_iff_cover {Time : Type*} [LinearOrder Time]
-    [SemilatticeSup (Event Time)] [DecidableEq (Event Time)]
-    {P : Event Time → Prop} {e : Event Time} :
+theorem subintervalReference_iff_cover {T : Type*} [LinearOrder T]
+    [SemilatticeSup (Event T)] [DecidableEq (Event T)]
+    {P : Event T → Prop} {e : Event T} :
     SubintervalReference P e ↔
-      ∃ (parts : Finset (Event Time)) (hne : parts.Nonempty),
+      ∃ (parts : Finset (Event T)) (hne : parts.Nonempty),
         IsFinCover parts hne e ∧ ∀ p ∈ parts, P p ∧ p.runtime < e.runtime := by
   unfold SubintervalReference Reference SubintervalGranularity
   exact algClosure_iff_exists_finCover

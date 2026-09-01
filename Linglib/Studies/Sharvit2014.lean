@@ -43,13 +43,13 @@ open Aspect (PointPred)
 /-- The `EARLIEST` definedness presupposition of `before^{B&C}`: `EARLIEST_C` is defined for
     body `p` iff the set of `C`-times where `p` holds has a least element (mathlib's
     `IsLeast`). -/
-def hasEarliest {Time : Type*} [LinearOrder Time] (C : Set Time) (p : Time → Prop) : Prop :=
+def hasEarliest {T : Type*} [LinearOrder T] (C : Set T) (p : T → Prop) : Prop :=
   ∃ t, IsLeast {t' | t' ∈ C ∧ p t'} t
 
 /-- [beaver-condoravdi-2003]'s `earliest` is defined exactly when the `EARLIEST`
     presupposition holds of the instantiation times, with trivial restrictor. -/
-theorem earliestAlt_nonempty_iff_hasEarliest {W Time : Type*} [LinearOrder Time]
-    (alt : HistoricalAlternatives W Time) (B : Set (W × Time)) (w : W) (t : Time) :
+theorem earliestAlt_nonempty_iff_hasEarliest {W T : Type*} [LinearOrder T]
+    (alt : HistoricalAlternatives W T) (B : Set (W × T)) (w : W) (t : T) :
     (BeaverCondoravdi2003.earliestAlt alt B w t).Nonempty ↔
       hasEarliest Set.univ (· ∈ BeaverCondoravdi2003.instTimes (alt ⟨w, t⟩) B) := by
   unfold hasEarliest
@@ -72,8 +72,8 @@ inductive LexicalType
     `some` (`Quantification.some_sem`) over the contextual restrictor `K`, with
     scope "precedes `t` and satisfies `p`". Definitionally
     `∃ t' ∈ K, t' < t ∧ p t'`. -/
-def quantificationalPast {Time : Type*} [LT Time]
-    (K : Set Time) (p : Time → Prop) (t : Time) : Prop :=
+def quantificationalPast {T : Type*} [LT T]
+    (K : Set T) (p : T → Prop) (t : T) : Prop :=
   Quantification.some_sem (· ∈ K) (fun t' => t' < t ∧ p t')
 
 /-- The pipeline's existential past is the quantificational past with trivial
@@ -81,8 +81,8 @@ def quantificationalPast {Time : Type*} [LT Time]
     with `pronominalLookup_eq_some_iff_tensePronoun` below, this places both
     of Sharvit's tense lexical types over operators the rest of the codebase
     already uses. -/
-theorem evalPast_iff_quantificationalPast {W Time : Type*} [LinearOrder Time]
-    (p : PointPred W Time) (tc : Time) (w : W) :
+theorem evalPast_iff_quantificationalPast {W T : Type*} [LinearOrder T]
+    (p : PointPred W T) (tc : T) (w : W) :
     evalPast p tc w ↔ quantificationalPast Set.univ (λ t => p ⟨w, t⟩) tc := by
   simp [evalPast, evalRel, quantificationalPast, Quantification.some_sem]
 
@@ -93,11 +93,11 @@ theorem evalPast_iff_quantificationalPast {W Time : Type*} [LinearOrder Time]
     via density to a strictly smaller body-witness. The technical core of the
     thesis that only languages with pronominal tenses license past-under-past
     in `before`-clauses. -/
-theorem ipf_quantificationalPast {Time : Type*} [LinearOrder Time]
-    {C K : Set Time}
+theorem ipf_quantificationalPast {T : Type*} [LinearOrder T]
+    {C K : Set T}
     (hK : K ⊆ C)
     (hC_dense : ∀ a b, a ∈ C → b ∈ C → a < b → ∃ c ∈ C, a < c ∧ c < b)
-    (q : Time → Prop) :
+    (q : T → Prop) :
     ¬ hasEarliest C (quantificationalPast K q) := by
   rintro ⟨t_min, ⟨ht_min_C, t_q, ht_q_K, ht_q_lt, hq_t_q⟩, hmin⟩
   obtain ⟨t_mid, ht_mid_C, ht_q_lt_mid, ht_mid_lt_min⟩ :=
@@ -129,21 +129,21 @@ past-constraint `TensePronoun`, so [sharvit-2014]'s (30a) and
 /-- [sharvit-2014] (30a): pronominal-past lookup `[[past_{j,k}]]^g`. Indices `j`
     (evaluation), `k` (referential); defined iff `g k < g j`, then `g k`. Uses
     `Option` (not `Part`/`PFun`) as the domain is decidable. -/
-def pronominalLookup {Time : Type*} [LT Time] [DecidableLT Time]
-    (g : ℕ → Time) (j k : ℕ) : Option Time :=
+def pronominalLookup {T : Type*} [LT T] [DecidableLT T]
+    (g : ℕ → T) (j k : ℕ) : Option T :=
   if g k < g j then some (g k) else none
 
 /-- The pronominal past denotes the referential index when defined. -/
 @[simp]
-theorem pronominalLookup_eq_some_iff {Time : Type*} [LT Time]
-    [DecidableLT Time] (g : ℕ → Time) (j k : ℕ) (t : Time) :
+theorem pronominalLookup_eq_some_iff {T : Type*} [LT T]
+    [DecidableLT T] (g : ℕ → T) (j k : ℕ) (t : T) :
     pronominalLookup g j k = some t ↔ g k < g j ∧ g k = t := by
   unfold pronominalLookup; split <;> simp_all
 
 /-- The pronominal past is undefined exactly when the constraint fails. -/
 @[simp]
-theorem pronominalLookup_eq_none_iff {Time : Type*} [LT Time]
-    [DecidableLT Time] (g : ℕ → Time) (j k : ℕ) :
+theorem pronominalLookup_eq_none_iff {T : Type*} [LT T]
+    [DecidableLT T] (g : ℕ → T) (j k : ℕ) :
     pronominalLookup g j k = none ↔ ¬ g k < g j := by
   unfold pronominalLookup; split <;> simp_all
 
@@ -151,8 +151,8 @@ theorem pronominalLookup_eq_none_iff {Time : Type*} [LT Time]
     defined with value `t` iff the past-constraint `TensePronoun` with
     referential index `k` and evaluation index `j` satisfies its presupposition
     and resolves to `t` — for any binding `mode`. -/
-theorem pronominalLookup_eq_some_iff_tensePronoun {Time : Type*} [LinearOrder Time]
-    (g : Tense.TemporalAssignment Time) (j k : ℕ) (t : Time)
+theorem pronominalLookup_eq_some_iff_tensePronoun {T : Type*} [LinearOrder T]
+    (g : Tense.TemporalAssignment T) (j k : ℕ) (t : T)
     (mode : Intensional.ReferentialMode) :
     pronominalLookup g j k = some t ↔
       (Tense.TensePronoun.mk k Tense.past mode j).fullPresupposition g ∧

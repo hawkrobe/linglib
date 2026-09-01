@@ -50,15 +50,15 @@ def OForm.mentions : OForm Atom → Atom → Prop
 
 namespace TWFrame
 
-variable {Time : Type*} {World : Type*} [LinearOrder Time]
+variable {T : Type*} {World : Type*} [LinearOrder T]
 
-@[simp] theorem sat_imp (F : TWFrame Time World) (V : Atom → Time → World → Prop)
-    (a b : OForm Atom) (t : Time) (w : World) :
+@[simp] theorem sat_imp (F : TWFrame T World) (V : Atom → T → World → Prop)
+    (a b : OForm Atom) (t : T) (w : World) :
     F.sat V (a.imp b) t w ↔ (F.sat V a t w → F.sat V b t w) := by
   simp only [OForm.imp, sat_neg, sat_and, not_and, not_not]
 
-@[simp] theorem sat_or (F : TWFrame Time World) (V : Atom → Time → World → Prop)
-    (a b : OForm Atom) (t : Time) (w : World) :
+@[simp] theorem sat_or (F : TWFrame T World) (V : Atom → T → World → Prop)
+    (a b : OForm Atom) (t : T) (w : World) :
     F.sat V (a.or b) t w ↔ (F.sat V a t w ∨ F.sat V b t w) := by
   simp only [OForm.or, sat_neg, sat_and, not_and_or, not_not]
 
@@ -66,7 +66,7 @@ variable {Time : Type*} {World : Type*} [LinearOrder Time]
 
 A formula's truth at a point depends only on the valuation of the atoms it mentions. -/
 
-theorem sat_iff_of_agree (F : TWFrame Time World) (V₁ V₂ : Atom → Time → World → Prop) :
+theorem sat_iff_of_agree (F : TWFrame T World) (V₁ V₂ : Atom → T → World → Prop) :
     ∀ (a : OForm Atom), (∀ p, a.mentions p → ∀ t w, V₁ p t w ↔ V₂ p t w) →
       ∀ t w, (F.sat V₁ a t w ↔ F.sat V₂ a t w)
   | .atom p,  h, t, w => h p rfl t w
@@ -95,8 +95,8 @@ end TWFrame
 
 /-- A formula is **valid** when it is true at every point of every T × W model. -/
 def Valid (a : OForm Atom) : Prop :=
-  ∀ {Time : Type u} {World : Type v} [LinearOrder Time]
-    (F : TWFrame Time World) (V : Atom → Time → World → Prop) (t : Time) (w : World),
+  ∀ {T : Type u} {World : Type v} [LinearOrder T]
+    (F : TWFrame T World) (V : Atom → T → World → Prop) (t : T) (w : World),
     F.sat V a t w
 
 /-! ### The `TW` calculus -/
@@ -171,7 +171,7 @@ open ModalLogic (box_four self_imp_box_flip_diamond)
 
 /-- **Soundness of `TW`** ([von-kutschera-1997]): every `TW`-provable formula is T × W-valid. -/
 theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
-  intro Time World _ F V t w
+  intro T World _ F V t w
   induction h generalizing V t w with
   | impK _ _ => simp only [sat_imp]; exact fun p _ => p
   | impS _ _ _ => simp only [sat_imp]; exact fun f g p => f p (g p)
@@ -216,7 +216,7 @@ theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
   | necBox _ ih => exact fun w' _ => ih V t w'
   | @ir a q _ hq ih =>
       classical
-      let V' : Atom → Time → World → Prop := fun p t'' w'' => if p = q then t < t'' else V p t'' w''
+      let V' : Atom → T → World → Prop := fun p t'' w'' => if p = q then t < t'' else V p t'' w''
       have hbox : F.sat V' (OForm.and (.neg (.atom q)) (.G (.atom q))).box t w := by
         intro w' _; refine ⟨?_, fun t' ht' => ?_⟩ <;> simp only [sat_neg, sat_atom, V']
         exacts [lt_irrefl t, ht']

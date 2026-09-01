@@ -28,13 +28,13 @@ universe u v
 
 /-- A **T × W frame** ([thomason-1984], [von-kutschera-1997]): linear time, worlds, and a per-time
     historical-equivalence `sim` that is an equivalence and backward-closed. -/
-structure TWFrame (Time : Type u) (World : Type v) [LinearOrder Time] where
+structure TWFrame (T : Type u) (World : Type v) [LinearOrder T] where
   /-- Historical equivalence `∼ₜ`: `sim t w w'` holds iff `w`, `w'` share their history up to `t`. -/
-  sim : Time → World → World → Prop
+  sim : T → World → World → Prop
   /-- Each `∼ₜ` is an equivalence relation. -/
   sim_equiv : ∀ t, Equivalence (sim t)
   /-- **Backward closure**: agreement up to `t` implies agreement up to any earlier `t'`. -/
-  sim_backward : ∀ {t t' : Time} (w w' : World), t' ≤ t → sim t w w' → sim t' w w'
+  sim_backward : ∀ {t t' : T} (w w' : World), t' ≤ t → sim t w w' → sim t' w w'
 
 /-- The object language `L` of T × W logic ([von-kutschera-1997] §1). -/
 inductive OForm (Atom : Type*) where
@@ -56,15 +56,15 @@ inductive OForm (Atom : Type*) where
 
 namespace TWFrame
 
-variable {Time : Type u} {World : Type v} {Atom : Type*} [LinearOrder Time]
+variable {T : Type u} {World : Type v} {Atom : Type*} [LinearOrder T]
 
 open ModalLogic (box) in
 /-- Satisfaction `V_{t,w}(A)` ([von-kutschera-1997]) relative to an atomic valuation `V`.
     `G`/`H`/`N`/`box` are `ModalLogic.box` Kripke modalities over, respectively, future
     precedence `<`, past precedence `>`, historical equivalence `sim t`, and the universal
     relation — making the object logic a multimodal Kripke logic by construction. -/
-def sat (F : TWFrame Time World) (V : Atom → Time → World → Prop) :
-    OForm Atom → Time → World → Prop
+def sat (F : TWFrame T World) (V : Atom → T → World → Prop) :
+    OForm Atom → T → World → Prop
   | .atom p,  t, w => V p t w
   | .neg a,   t, w => ¬ F.sat V a t w
   | .and a b, t, w => F.sat V a t w ∧ F.sat V b t w
@@ -74,7 +74,7 @@ def sat (F : TWFrame Time World) (V : Atom → Time → World → Prop) :
   | .box a,   t, w => box ⊤ (fun w' => F.sat V a t w') w
 
 /-- Local entailment in a model: `a` entails `b` iff `b` holds wherever `a` does. -/
-def entails (F : TWFrame Time World) (V : Atom → Time → World → Prop) (a b : OForm Atom) : Prop :=
+def entails (F : TWFrame T World) (V : Atom → T → World → Prop) (a b : OForm Atom) : Prop :=
   ∀ t w, F.sat V a t w → F.sat V b t w
 
 end TWFrame

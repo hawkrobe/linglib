@@ -139,31 +139,31 @@ theorem tier_eq_multi_iff (c : OutcomeClass) :
 /-! ### States, boundaries, and roots -/
 
 /-- An object's state over time: a lifespan point for each time (53). -/
-abbrev StateFunction (Entity State Time : Type*) := Time → Entity → State
+abbrev StateFunction (Entity State T : Type*) := T → Entity → State
 
-variable {Entity State Time : Type*} [LinearOrder Time]
+variable {Entity State T : Type*} [LinearOrder T]
 
 /-- `res(e)(x)`, the object's state at the right boundary of `e` (64). -/
-def resState (k : StateFunction Entity State Time) (e : Event Time) (x : Entity) : State :=
+def resState (k : StateFunction Entity State T) (e : Event T) (x : Entity) : State :=
   k (Event.τ e).snd x
 
 /-- `pre(e)(x)`, the object's state at the left boundary of `e` (65). -/
-def preState (k : StateFunction Entity State Time) (e : Event Time) (x : Entity) : State :=
+def preState (k : StateFunction Entity State T) (e : Event T) (x : Entity) : State :=
   k (Event.τ e).fst x
 
 /-- A verb root as the prefixes see it: its base predicate with the lexical outcome set of
 states at the right boundary and the contextual threshold set of states at the left
 boundary ((56), (60)). -/
-structure VerbOutcomes (Entity State Time : Type*) [LinearOrder Time] where
+structure VerbOutcomes (Entity State T : Type*) [LinearOrder T] where
   /-- The base predicate `P(e)(x)`. -/
-  verb : EventRel Time Entity
+  verb : EventRel T Entity
   /-- The outcome set `O`. -/
   outcomes : Set State
   /-- The threshold set `T`. -/
   thresholds : Set State
 
 /-- The cardinality tier of a root's outcome set. -/
-noncomputable def VerbOutcomes.cardinality (vro : VerbOutcomes Entity State Time) :
+noncomputable def VerbOutcomes.cardinality (vro : VerbOutcomes Entity State T) :
     OutcomeCardinality :=
   OutcomeCardinality.ofSet vro.outcomes
 
@@ -173,9 +173,9 @@ noncomputable def VerbOutcomes.cardinality (vro : VerbOutcomes Entity State Time
 event starts from, a multi-membered outcome set, and the *un-* event returning the object
 to the base event's initial state. The vacuous `∃ Q. Q(e)(x)` of the assertion is
 dropped. -/
-def unSem (k : StateFunction Entity State Time) (vro : VerbOutcomes Entity State Time)
-    (e : Event Time) (x : Entity) : Prop :=
-  ∃ e' : Event Time,
+def unSem (k : StateFunction Entity State T) (vro : VerbOutcomes Entity State T)
+    (e : Event T) (x : Entity) : Prop :=
+  ∃ e' : Event T,
     vro.verb e' x ∧
     (Event.τ e').precedes (Event.τ e) ∧
     resState k e' x = preState k e x ∧
@@ -186,9 +186,9 @@ def unSem (k : StateFunction Entity State Time) (vro : VerbOutcomes Entity State
 result state is an admissible start state — the base action does not leave the object where
 its result cannot be restored — and the base predicate holding of the *re-* event. No
 cardinality demand is placed on the outcome set. -/
-def reSem (k : StateFunction Entity State Time) (vro : VerbOutcomes Entity State Time)
-    (e : Event Time) (x : Entity) : Prop :=
-  (∃ e' : Event Time,
+def reSem (k : StateFunction Entity State T) (vro : VerbOutcomes Entity State T)
+    (e : Event T) (x : Entity) : Prop :=
+  (∃ e' : Event T,
     vro.verb e' x ∧
     (Event.τ e').precedes (Event.τ e) ∧
     resState k e x = resState k e' x ∧
@@ -196,34 +196,34 @@ def reSem (k : StateFunction Entity State Time) (vro : VerbOutcomes Entity State
   vro.verb e x
 
 /-- A root whose outcome set is not multi-membered cannot host *un-* (67). -/
-theorem subsingleton_blocks_un (k : StateFunction Entity State Time)
-    (vro : VerbOutcomes Entity State Time) (h : ¬ vro.outcomes.Nontrivial)
-    (e : Event Time) (x : Entity) : ¬ unSem k vro e x :=
+theorem subsingleton_blocks_un (k : StateFunction Entity State T)
+    (vro : VerbOutcomes Entity State T) (h : ¬ vro.outcomes.Nontrivial)
+    (e : Event T) (x : Entity) : ¬ unSem k vro e x :=
   fun ⟨_, _, _, _, hnt, _⟩ => h hnt
 
-theorem singleton_blocks_un (k : StateFunction Entity State Time)
-    (vro : VerbOutcomes Entity State Time) (s : State) (hs : vro.outcomes = {s})
-    (e : Event Time) (x : Entity) : ¬ unSem k vro e x :=
+theorem singleton_blocks_un (k : StateFunction Entity State T)
+    (vro : VerbOutcomes Entity State T) (s : State) (hs : vro.outcomes = {s})
+    (e : Event T) (x : Entity) : ¬ unSem k vro e x :=
   subsingleton_blocks_un k vro
     (by rw [Set.not_nontrivial_iff, hs]; exact Set.subsingleton_singleton) e x
 
-theorem empty_blocks_un (k : StateFunction Entity State Time)
-    (vro : VerbOutcomes Entity State Time) (hs : vro.outcomes = ∅)
-    (e : Event Time) (x : Entity) : ¬ unSem k vro e x :=
+theorem empty_blocks_un (k : StateFunction Entity State T)
+    (vro : VerbOutcomes Entity State T) (hs : vro.outcomes = ∅)
+    (e : Event T) (x : Entity) : ¬ unSem k vro e x :=
   subsingleton_blocks_un k vro
     (by rw [Set.not_nontrivial_iff, hs]; exact Set.subsingleton_empty) e x
 
 /-- Hosting *un-* forces a root's outcome set into the multi-membered tier. -/
-theorem un_requires_multi (k : StateFunction Entity State Time)
-    (vro : VerbOutcomes Entity State Time) (e : Event Time) (x : Entity)
+theorem un_requires_multi (k : StateFunction Entity State T)
+    (vro : VerbOutcomes Entity State T) (e : Event T) (x : Entity)
     (h : unSem k vro e x) : vro.cardinality = .multi :=
   let ⟨_, _, _, _, hnt, _⟩ := h
   OutcomeCardinality.ofSet_eq_multi hnt
 
 /-- A base action whose result is never an admissible start state blocks *re-* (72). -/
-theorem not_reSem_of_outcome_not_threshold (k : StateFunction Entity State Time)
-    (vro : VerbOutcomes Entity State Time) (x : Entity)
-    (h : ∀ e', vro.verb e' x → resState k e' x ∉ vro.thresholds) (e : Event Time) :
+theorem not_reSem_of_outcome_not_threshold (k : StateFunction Entity State T)
+    (vro : VerbOutcomes Entity State T) (x : Entity)
+    (h : ∀ e', vro.verb e' x → resState k e' x ∉ vro.thresholds) (e : Event T) :
     ¬ reSem k vro e x :=
   fun ⟨⟨e', hv, _, _, hT⟩, _⟩ => h e' hv hT
 

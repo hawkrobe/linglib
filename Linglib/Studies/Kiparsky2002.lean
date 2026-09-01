@@ -89,24 +89,24 @@ inductive PerfectReading where
 /-- Existential reading: the PTS is right-bounded at R, and the event
     runtime is contained within the PTS.
     "I have visited Paris" — ∃ visiting event inside the PTS. -/
-def existentialReading {Time : Type*} [LinearOrder Time]
-    (d : TemporalDecomposition Time) (pts : NonemptyInterval Time)
-    (R : Time) : Prop :=
+def existentialReading {T : Type*} [LinearOrder T]
+    (d : TemporalDecomposition T) (pts : NonemptyInterval T)
+    (R : T) : Prop :=
   pts.snd = R ∧ d.runtime ≤ pts
 
 /-- Universal reading: the PTS is right-bounded at R, and the PTS is
     contained within the event runtime (event ongoing throughout PTS).
     "I have lived here since 2010" — PTS ⊆ event runtime. -/
-def universalReading {Time : Type*} [LinearOrder Time]
-    (d : TemporalDecomposition Time) (pts : NonemptyInterval Time)
-    (R : Time) : Prop :=
+def universalReading {T : Type*} [LinearOrder T]
+    (d : TemporalDecomposition T) (pts : NonemptyInterval T)
+    (R : T) : Prop :=
   pts.snd = R ∧ pts ≤ d.runtime
 
 /-- Resultative reading: the result phase contains R. Requires a complex
     decomposition (telic predicate with activity + result phases).
     "I have broken the vase" — result state holds at R. -/
-def resultativeReading {Time : Type*} [LinearOrder Time]
-    (d : TemporalDecomposition Time) (R : Time) : Prop :=
+def resultativeReading {T : Type*} [LinearOrder T]
+    (d : TemporalDecomposition T) (R : T) : Prop :=
   match d with
   | .complex _ phases _ _ => R ∈ phases.resultTrace
   | .simple _ => False
@@ -114,8 +114,8 @@ def resultativeReading {Time : Type*} [LinearOrder Time]
 /-- Present-state reading: result phase contains R, activity is implicit
     (presupposed rather than asserted). Requires complex decomposition.
     "The road has widened" — result state observable at R. -/
-def presentStateReading {Time : Type*} [LinearOrder Time]
-    (d : TemporalDecomposition Time) (R : Time) : Prop :=
+def presentStateReading {T : Type*} [LinearOrder T]
+    (d : TemporalDecomposition T) (R : T) : Prop :=
   match d with
   | .complex _ phases _ _ => R ∈ phases.resultTrace
   | .simple _ => False
@@ -151,8 +151,8 @@ theorem atelic_no_presentState (c : VendlerClass) (h : c.telicity = .atelic) :
 
 /-- The resultative reading requires a complex (telic) decomposition:
     simple decompositions make it trivially False. -/
-theorem resultative_requires_complex {Time : Type*} [LinearOrder Time]
-    (r : NonemptyInterval Time) (R : Time) :
+theorem resultative_requires_complex {T : Type*} [LinearOrder T]
+    (r : NonemptyInterval T) (R : T) :
     ¬ resultativeReading (.simple r) R := by
   simp [resultativeReading]
 
@@ -175,8 +175,8 @@ TODO: Full formalization requires formalizing P_sub anchoring rules (Kiparsky's
 /-- In the resultative reading of a present perfect, R includes P (= S for root).
     Since P is within the result phase, the embedded perspective is not past-shifted,
     and SOT does not apply. -/
-theorem resultative_no_sot_shift {Time : Type*} [LinearOrder Time]
-    (f : ReichenbachFrame Time) (d : TemporalDecomposition Time)
+theorem resultative_no_sot_shift {T : Type*} [LinearOrder T]
+    (f : ReichenbachFrame T) (d : TemporalDecomposition T)
     (h_present : f.isPresent) (h_result : resultativeReading d f.referenceTime) :
     -- The result phase contains R (= P by h_present), so the embedded
     -- temporal perspective is anchored to "now", not to a past time.
@@ -196,8 +196,8 @@ and two readings (existential vs resultative) explain the ambiguity. -/
 
 /-- Present perfect with a past-time adverb: if R = P and the adverb forces
     R < P, we get a contradiction. -/
-theorem present_perfect_puzzle {Time : Type*} [LinearOrder Time]
-    (f : ReichenbachFrame Time)
+theorem present_perfect_puzzle {T : Type*} [LinearOrder T]
+    (f : ReichenbachFrame T)
     (h_present : f.isPresent)
     (h_past_adverb : f.referenceTime < f.perspectiveTime) :
     False := by
@@ -205,8 +205,8 @@ theorem present_perfect_puzzle {Time : Type*} [LinearOrder Time]
   exact absurd (h_present ▸ h_past_adverb) (lt_irrefl _)
 
 /-- Past perfect allows past-time adverbs: R < P is consistent with isPast. -/
-theorem past_perfect_allows_adverbs {Time : Type*} [LinearOrder Time]
-    (f : ReichenbachFrame Time)
+theorem past_perfect_allows_adverbs {T : Type*} [LinearOrder T]
+    (f : ReichenbachFrame T)
     (h_past : f.isPast)
     (h_perfect : f.isPerfect) :
     f.referenceTime < f.perspectiveTime ∧ f.eventTime < f.referenceTime :=
@@ -253,8 +253,8 @@ same compositional pipeline used by ViewpointAspect.lean. -/
     The PTS is right-bounded at R, and the full event runtime is
     contained within the PTS — exactly PRFV (runtime ⊆ PTS)
     composed with PERF (PTS ends at R). -/
-theorem existential_eq_perf_prfv {Time : Type*} [LinearOrder Time]
-    (d : TemporalDecomposition Time) (R : Time) :
+theorem existential_eq_perf_prfv {T : Type*} [LinearOrder T]
+    (d : TemporalDecomposition T) (R : T) :
     (∃ pts, existentialReading d pts R) ↔
     PERF (PRFV (phasePred d.runtime)) ⟨(), R⟩ := by
   simp only [existentialReading, PERF, RB, PRFV, phasePred, Event.τ]
@@ -269,8 +269,8 @@ theorem existential_eq_perf_prfv {Time : Type*} [LinearOrder Time]
     The PTS is right-bounded at R, and the PTS is contained within
     the event runtime — exactly UNBOUNDED (PTS ⊆ runtime)
     composed with PERF (PTS ends at R). -/
-theorem universal_eq_perf_unbounded {Time : Type*} [LinearOrder Time]
-    (d : TemporalDecomposition Time) (R : Time) :
+theorem universal_eq_perf_unbounded {T : Type*} [LinearOrder T]
+    (d : TemporalDecomposition T) (R : T) :
     (∃ pts, universalReading d pts R) ↔
     PERF (UNBOUNDED (phasePred d.runtime)) ⟨(), R⟩ := by
   simp only [universalReading, PERF, RB, UNBOUNDED, phasePred, Event.τ]
@@ -286,11 +286,11 @@ theorem universal_eq_perf_unbounded {Time : Type*} [LinearOrder Time]
     event guarantees the result trace is within the reference time (by
     `perfective_full_entails_result`), but the reading itself depends
     only on R's position relative to the result phase. -/
-theorem resultative_from_result_contains {Time : Type*} [LinearOrder Time]
-    (rt : NonemptyInterval Time) (phases : SubeventPhases Time)
+theorem resultative_from_result_contains {T : Type*} [LinearOrder T]
+    (rt : NonemptyInterval T) (phases : SubeventPhases T)
     (h_act : phases.activityTrace ≤ rt)
     (h_res : phases.resultTrace ≤ rt)
-    (R : Time)
+    (R : T)
     (h_R_in_result : R ∈ phases.resultTrace) :
     resultativeReading (.complex rt phases h_act h_res) R :=
   h_R_in_result

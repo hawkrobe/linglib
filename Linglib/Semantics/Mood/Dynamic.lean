@@ -58,7 +58,7 @@ open HistoricalAlternatives DynamicSemantics
 open DynamicSemantics.CCP (IsEliminative)
 open DynamicSemantics.Update (test closure)
 
-variable {W Time : Type*}
+variable {W T : Type*}
 
 /-- The generative update behind `dynSUBJ`: for each entry with
 assignment `g` and current index `s`, produce the entries
@@ -66,12 +66,12 @@ assignment `g` and current index `s`, produce the entries
 assignment at `v` *and* move the evaluation index to the introduced
 situation. Unlike a test filter, this is *not* eliminative: it can
 produce entries that did not appear in the input context. -/
-def dynIntroduce (gen : Index W Time → Set (Index W Time))
-    (v : ℕ) (c : Set (Index.Possibility W Time)) :
-    Set (Index.Possibility W Time) :=
+def dynIntroduce (gen : Index W T → Set (Index W T))
+    (v : ℕ) (c : Set (Index.Possibility W T)) :
+    Set (Index.Possibility W T) :=
   { p' |
     ∃ g s s',
-      (⟨s, g⟩ : Index.Possibility W Time) ∈ c ∧
+      (⟨s, g⟩ : Index.Possibility W T) ∈ c ∧
       s' ∈ gen s ∧
       p'.assignment = Function.update g v s' ∧
       p'.world = s' }
@@ -80,9 +80,9 @@ def dynIntroduce (gen : Index W Time → Set (Index W Time))
 returns the new current index — the structural property that makes a
 same-variable filter (`dynIND v ∘ dynIntroduce gen v`) vacuous. -/
 theorem dynIntroduce_binds_current
-    (gen : Index W Time → Set (Index W Time))
-    {v : ℕ} {c : Set (Index.Possibility W Time)}
-    {p : Index.Possibility W Time}
+    (gen : Index W T → Set (Index W T))
+    {v : ℕ} {c : Set (Index.Possibility W T)}
+    {p : Index.Possibility W T}
     (h : p ∈ dynIntroduce gen v c) :
     p.assignment v = p.world := by
   obtain ⟨g, _, s', _, _, h_upd, h_eq⟩ := h
@@ -91,11 +91,11 @@ theorem dynIntroduce_binds_current
 /-- Every output entry of `dynIntroduce` has its current index drawn
 from `gen` applied to some input index. -/
 theorem dynIntroduce_current_in_gen
-    (gen : Index W Time → Set (Index W Time))
-    {v : ℕ} {c : Set (Index.Possibility W Time)}
-    {p : Index.Possibility W Time}
+    (gen : Index W T → Set (Index W T))
+    {v : ℕ} {c : Set (Index.Possibility W T)}
+    {p : Index.Possibility W T}
     (h : p ∈ dynIntroduce gen v c) :
-    ∃ s, (∃ g, (⟨s, g⟩ : Index.Possibility W Time) ∈ c) ∧
+    ∃ s, (∃ g, (⟨s, g⟩ : Index.Possibility W T) ∈ c) ∧
       p.world ∈ gen s := by
   obtain ⟨g, s, s', hc, h_gen, _, h_eq⟩ := h
   exact ⟨s, ⟨g, hc⟩, h_eq ▸ h_gen⟩
@@ -103,41 +103,41 @@ theorem dynIntroduce_current_in_gen
 /-- Dynamic IND: the eliminative update filtering entries whose current
 index shares its world with the situation bound to `v` — the spine's
 test filter at `sameWorld`. -/
-def dynIND (v : ℕ) : Set (Index.Possibility W Time) →
-    Set (Index.Possibility W Time) :=
+def dynIND (v : ℕ) : Set (Index.Possibility W T) →
+    Set (Index.Possibility W T) :=
   lift (test fun p => sameWorld p.world (p.assignment v))
 
 /-! ### The eliminative side -/
 
 /-- `dynIND` is a context filter. -/
 theorem dynIND_isEliminative (v : ℕ) :
-    IsEliminative (dynIND (W := W) (Time := Time) v) :=
+    IsEliminative (dynIND (W := W) (T := T) v) :=
   lift_test_isEliminative _
 
 /-- Surviving `dynIND` means the current and bound situations share a
 world. -/
 theorem dynIND_same_world {v : ℕ}
-    {c : Set (Index.Possibility W Time)}
-    {p : Index.Possibility W Time} (h : p ∈ dynIND v c) :
+    {c : Set (Index.Possibility W T)}
+    {p : Index.Possibility W T} (h : p ∈ dynIND v c) :
     p.world.world = (p.assignment v).world :=
   (mem_lift_test.mp h).2
 
 /-- `dynIND` is idempotent. -/
 theorem dynIND_idempotent (v : ℕ)
-    (c : Set (Index.Possibility W Time)) :
+    (c : Set (Index.Possibility W T)) :
     dynIND v (dynIND v c) = dynIND v c :=
   lift_test_idem _ c
 
 section Subjunctive
 
-variable [LE Time] (history : HistoricalAlternatives W Time) (v : ℕ)
-  (c : Set (Index.Possibility W Time))
-  (p : Index.Possibility W Time)
+variable [LE T] (history : HistoricalAlternatives W T) (v : ℕ)
+  (c : Set (Index.Possibility W T))
+  (p : Index.Possibility W T)
 
 /-- Dynamic SUBJ: the generative update sending each entry to its
 extensions at every historically accessible situation. -/
-def dynSUBJ : Set (Index.Possibility W Time) →
-    Set (Index.Possibility W Time) :=
+def dynSUBJ : Set (Index.Possibility W T) →
+    Set (Index.Possibility W T) :=
   dynIntroduce (historicalBase history) v
 
 /-! ### The generative side -/
@@ -145,7 +145,7 @@ def dynSUBJ : Set (Index.Possibility W Time) →
 /-- Every `dynSUBJ` output situation is drawn from the historical base
 of some input situation. -/
 theorem dynSUBJ_existential (h : p ∈ dynSUBJ history v c) :
-    ∃ s₀, (∃ g₀, (⟨s₀, g₀⟩ : Index.Possibility W Time) ∈ c) ∧
+    ∃ s₀, (∃ g₀, (⟨s₀, g₀⟩ : Index.Possibility W T) ∈ c) ∧
       p.world ∈ historicalBase history s₀ :=
   dynIntroduce_current_in_gen _ h
 
@@ -158,10 +158,10 @@ theorem dynSUBJ_binds_current (h : p ∈ dynSUBJ history v c) :
 
 /-- The exact output of `dynSUBJ` on a singleton context:
 `⟨s₁, g[v↦s₁]⟩` for each `s₁` in the historical base of `s₀`. -/
-theorem dynSUBJ_singleton_eq (g : ℕ → Index W Time)
-    (s₀ : Index W Time) :
+theorem dynSUBJ_singleton_eq (g : ℕ → Index W T)
+    (s₀ : Index W T) :
     dynSUBJ history v
-      ({⟨s₀, g⟩} : Set (Index.Possibility W Time)) =
+      ({⟨s₀, g⟩} : Set (Index.Possibility W T)) =
     { p | ∃ s₁ ∈ historicalBase history s₀,
         p = ⟨s₁, Function.update g v s₁⟩ } := by
   apply Set.ext; intro p
@@ -177,10 +177,10 @@ theorem dynSUBJ_singleton_eq (g : ℕ → Index W Time)
 
 /-- `dynSUBJ` realizes the static `SUBJ`: on a singleton context, some
 output satisfies `P` at the bound variable iff `SUBJ` holds. -/
-theorem dynSUBJ_realizes_SUBJ (g : ℕ → Index W Time)
-    (s₀ : Index W Time) (P : SitPred W Time) :
+theorem dynSUBJ_realizes_SUBJ (g : ℕ → Index W T)
+    (s₀ : Index W T) (P : SitPred W T) :
     (∃ p ∈ dynSUBJ history v
-        ({⟨s₀, g⟩} : Set (Index.Possibility W Time)),
+        ({⟨s₀, g⟩} : Set (Index.Possibility W T)),
       P (p.assignment v) s₀) ↔
     SUBJ history P s₀ := by
   rw [dynSUBJ_singleton_eq]
@@ -209,8 +209,8 @@ theorem dynIND_after_dynSUBJ_same_var :
 /-- The dynamic operator each grammatical mood denotes: indicative the
 eliminative `dynIND`, subjunctive the generative `dynSUBJ`. -/
 def Grammatical.dynOp :
-    Grammatical → ℕ → Set (Index.Possibility W Time) →
-      Set (Index.Possibility W Time)
+    Grammatical → ℕ → Set (Index.Possibility W T) →
+      Set (Index.Possibility W T)
   | .indicative  => dynIND
   | .subjunctive => dynSUBJ history
 
@@ -224,7 +224,7 @@ carries a freshly introduced situation, bound to `v`. -/
 theorem dynOp_subjunctive_introduces
     (h : p ∈ Grammatical.subjunctive.dynOp history v c) :
     p.assignment v = p.world ∧
-      ∃ s₀, (∃ g₀, (⟨s₀, g₀⟩ : Index.Possibility W Time) ∈ c) ∧
+      ∃ s₀, (∃ g₀, (⟨s₀, g₀⟩ : Index.Possibility W T) ∈ c) ∧
         p.world ∈ historicalBase history s₀ :=
   ⟨dynSUBJ_binds_current history v c p h,
    dynSUBJ_existential history v c p h⟩

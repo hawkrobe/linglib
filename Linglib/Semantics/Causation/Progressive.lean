@@ -263,7 +263,7 @@ theorem typeLevelHolds_is_develop {V : Type*} [Fintype V] [DecidableEq V]
     variable. The causal model explains WHY the activity leads to the
     result: the initiator is type-level sufficient. -/
 structure CausallyGroundedEvent (V : Type*) [Fintype V] [DecidableEq V]
-    (Time : Type*) [LinearOrder Time] where
+    (T : Type*) [LinearOrder T] where
   /-- The causal process underlying the event -/
   process : CausalProcess V
   /-- IsDAG instance for process.M.graph (carried explicitly). -/
@@ -271,7 +271,7 @@ structure CausallyGroundedEvent (V : Type*) [Fintype V] [DecidableEq V]
   /-- IsDeterministic instance for proc.M (carried explicitly). -/
   detInst : SEM.IsDeterministic process.M
   /-- The temporal phases: activity and result with ordering -/
-  phases : Aspect.SubeventStructure.SubeventPhases Time
+  phases : Aspect.SubeventStructure.SubeventPhases T
   /-- The causal trajectory is viable: initiator is type-level sufficient. -/
   causallyViable : @CausalProcess.typeLevelHolds V _ _ process dagInst detInst
 

@@ -130,9 +130,9 @@ def ReferenceUniv {α β : Type*} [SemilatticeSup α]
     partial-order instance via the entity lattice).
 
     For dimensions without a `PartialOrder` instance — notably the
-    runtime dimension (`NonemptyInterval Time`) used by stativity — atomicity
+    runtime dimension (`NonemptyInterval T`) used by stativity — atomicity
     is expressed dimension-natively (e.g., `NonemptyInterval.IsPoint` for
-    `NonemptyInterval Time`). The unification is at the `Reference`
+    `NonemptyInterval T`). The unification is at the `Reference`
     parameter-space level: both express "γ = inner is atomic in the
     dimension's natural sense" at different concrete instantiations. -/
 def AtomicGranularity {β : Type*} [PartialOrder β] : β → β → Prop :=
@@ -210,8 +210,8 @@ theorem relationalDistributiveReference_graph {Entity α : Type*}
 
 /-- Proper-subinterval granularity: inner runtime is a proper subinterval
     of outer runtime. The binary `γ` for subinterval reference. -/
-def SubintervalGranularity {Time : Type*} [LinearOrder Time]
-    (inner outer : NonemptyInterval Time) : Prop :=
+def SubintervalGranularity {T : Type*} [LinearOrder T]
+    (inner outer : NonemptyInterval T) : Prop :=
   inner < outer
 
 /-- Stratified Subinterval Reference: dimension is τ (runtime),
@@ -224,15 +224,15 @@ def SubintervalGranularity {Time : Type*} [LinearOrder Time]
 
     Genuine instance of `Reference` with `d := τ` and
     `γ := SubintervalGranularity`. -/
-def SubintervalReference {Time : Type*} [LinearOrder Time]
-    [SemilatticeSup (Event Time)]
-    (P : Event Time → Prop) (e : Event Time) : Prop :=
-  Reference (λ e' : Event Time => e'.runtime) SubintervalGranularity P e
+def SubintervalReference {T : Type*} [LinearOrder T]
+    [SemilatticeSup (Event T)]
+    (P : Event T → Prop) (e : Event T) : Prop :=
+  Reference (λ e' : Event T => e'.runtime) SubintervalGranularity P e
 
 /-- Universal subinterval reference: every P-event has it. -/
-def SubintervalReferenceUniv {Time : Type*} [LinearOrder Time]
-    [SemilatticeSup (Event Time)]
-    (P : Event Time → Prop) : Prop :=
+def SubintervalReferenceUniv {T : Type*} [LinearOrder T]
+    [SemilatticeSup (Event T)]
+    (P : Event T → Prop) : Prop :=
   ∀ e, P e → SubintervalReference P e
 
 /-! ### Stratified Measurement Reference -/
@@ -290,8 +290,8 @@ abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β]
 /-- "for"-adverbials require subinterval reference: the predicate must
     have stratified subinterval reference (atelicity).
     Map = τ, granularity = proper subinterval. -/
-abbrev forConstr {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
-    (Share : Event Time → Prop) (e : Event Time) : Prop :=
+abbrev forConstr {T : Type*} [LinearOrder T] [SemilatticeSup (Event T)]
+    (Share : Event T → Prop) (e : Event T) : Prop :=
   SubintervalReference Share e
 
 /-! ### Key Theorems -/
@@ -379,8 +379,8 @@ theorem reference_join {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     "John ran for an hour" is felicitous because "run" has it.
     "* John arrived for an hour" is infelicitous because "arrive" lacks it. -/
 theorem forAdverbial_requires_subintervalReference
-    {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
-    {P : Event Time → Prop}
+    {T : Type*} [LinearOrder T] [SemilatticeSup (Event T)]
+    {P : Event T → Prop}
     (h_for_ok : SubintervalReferenceUniv P) :
     ∀ e, P e → SubintervalReference P e :=
   h_for_ok
@@ -398,10 +398,10 @@ theorem forAdverbial_requires_subintervalReference
     `P := λe. e.runtime.length ≤ 1` over dense time). See module docstring
     "Relation to Krifka's CUM/QUA". -/
 theorem qua_incompatible_with_subintervalReference
-    {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
-    {P : Event Time → Prop}
+    {T : Type*} [LinearOrder T] [SemilatticeSup (Event T)]
+    {P : Event T → Prop}
     (hQua : QUA P)
-    {e : Event Time} (he : P e) (hSub : SubintervalReference P e) :
+    {e : Event T} (he : P e) (hSub : SubintervalReference P e) :
     False := by
   obtain ⟨a, ⟨hPa, hGran⟩, hle⟩ := algClosure_has_base hSub
   have hne : a ≠ e := by
@@ -416,9 +416,9 @@ theorem qua_incompatible_with_subintervalReference
     ([champollion-2017]'s for-adverbial entry, eq. (72), restated for
     *for an hour* as eq. (21); eq. (39) is the constraint on its Share).
     "V for δ" = λe. V(e) ∧ τ(e) = δ ∧ SubintervalReference V e. -/
-def forAdverbialMeaning {Time : Type*} [LinearOrder Time]
-    [SemilatticeSup (Event Time)]
-    (V : Event Time → Prop) (duration : NonemptyInterval Time) (e : Event Time) : Prop :=
+def forAdverbialMeaning {T : Type*} [LinearOrder T]
+    [SemilatticeSup (Event T)]
+    (V : Event T → Prop) (duration : NonemptyInterval T) (e : Event T) : Prop :=
   V e ∧ e.runtime = duration ∧ SubintervalReference V e
 
 /-- "in"-adverbials are incompatible with subinterval reference (they
@@ -426,10 +426,10 @@ def forAdverbialMeaning {Time : Type*} [LinearOrder Time]
     subinterval reference. Any P-event with subinterval reference has a
     strict P-part, contradicting QUA. -/
 theorem in_adverbial_incompatible_with_subintervalReference
-    {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
-    {P : Event Time → Prop}
+    {T : Type*} [LinearOrder T] [SemilatticeSup (Event T)]
+    {P : Event T → Prop}
     (hQua : QUA P)
-    {e₁ e₂ : Event Time} (he₁ : P e₁) (_he₂ : P e₂) (_hne : e₁ ≠ e₂) :
+    {e₁ e₂ : Event T} (he₁ : P e₁) (_he₂ : P e₂) (_hne : e₁ ≠ e₂) :
     ¬ SubintervalReferenceUniv P := by
   intro hSub
   exact qua_incompatible_with_subintervalReference hQua he₁ (hSub e₁ he₁)

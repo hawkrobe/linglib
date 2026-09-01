@@ -50,22 +50,22 @@ open Core.Order
 
 /-! ### The two theories (§2.1) -/
 
-variable {Time : Type*} [LinearOrder Time]
+variable {T : Type*} [LinearOrder T]
 
 /-- The under-specification entry for *before* (7a): some run-time of the main clause is
 partly preceded by every run-time of the embedded clause — Anscombe's entry with *some*
 subinterval following in place of *every*, the weakening accomplishments require. -/
-def weakBefore (A B : RunTimes Time) : Prop := ∃ i ∈ A, ∀ j ∈ B, i.snd < j.snd
+def weakBefore (A B : RunTimes T) : Prop := ∃ i ∈ A, ∀ j ∈ B, i.snd < j.snd
 
 /-- The under-specification entry for *after* (7b): some run-time of the main clause fully
 follows some run-time of the embedded clause. -/
-def weakAfter (A B : RunTimes Time) : Prop := ∃ i ∈ A, ∃ j ∈ B, j.snd < i.fst
+def weakAfter (A B : RunTimes T) : Prop := ∃ i ∈ A, ∃ j ∈ B, j.snd < i.fst
 
 /-- Temporal overlap — the *while* reading a competition-based implicature negates (§8.1). -/
-def Overlap (A B : RunTimes Time) : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
+def Overlap (A B : RunTimes T) : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
 
 /-- A stative is weakly *before* an accomplishment iff its onset precedes the telos. -/
-theorem weakBefore_stative_accomplishment_iff (a b : NonemptyInterval Time) :
+theorem weakBefore_stative_accomplishment_iff (a b : NonemptyInterval T) :
     weakBefore (stativeDenotation a) (accomplishmentDenotation b) ↔ a.fst < b.snd := by
   constructor
   · rintro ⟨i, hi, h⟩
@@ -75,7 +75,7 @@ theorem weakBefore_stative_accomplishment_iff (a b : NonemptyInterval Time) :
       fun j hj => hj ▸ h⟩
 
 /-- A stative is weakly *after* a stative iff its end follows the other's onset. -/
-theorem weakAfter_stative_stative_iff (a b : NonemptyInterval Time) :
+theorem weakAfter_stative_stative_iff (a b : NonemptyInterval T) :
     weakAfter (stativeDenotation a) (stativeDenotation b) ↔ b.fst < a.snd := by
   constructor
   · rintro ⟨i, hi, j, hj, h⟩
@@ -86,7 +86,7 @@ theorem weakAfter_stative_stative_iff (a b : NonemptyInterval Time) :
       NonemptyInterval.pure b.fst, Set.mem_Iic.mpr ⟨le_rfl, b.fst_le_snd⟩, h⟩
 
 /-- A stative and an accomplishment overlap iff neither ends before the other starts. -/
-theorem overlap_stative_accomplishment_iff (a b : NonemptyInterval Time) :
+theorem overlap_stative_accomplishment_iff (a b : NonemptyInterval T) :
     Overlap (stativeDenotation a) (accomplishmentDenotation b) ↔ a.fst ≤ b.snd ∧ b.fst ≤ a.snd := by
   simp only [Overlap, timeTrace_stative_closedInterval, timeTrace_accomplishment_closedInterval,
     Set.mem_ofPred_eq]

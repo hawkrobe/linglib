@@ -57,22 +57,22 @@ the forward-expansion variants are Condoravdi's modal apparatus (evaluation
 expanded to the half-open `[t, _)`), consumed by the modal operators below. -/
 
 section AtRelation
-variable {W Time : Type*} [LinearOrder Time]
+variable {W T : Type*} [LinearOrder T]
 
 /-- Eventive AT, `AT(t, w, P)` for eventive `P`: an event of `P` whose runtime
     is included in `t`. Definitionally Klein's perfective `Aspect.PRFV`;
     Condoravdi writes the conjuncts predicate-first, `PRFV` relation-first. -/
-def atEvent (P : W → Event Time → Prop) : IntervalPred W Time := PRFV P
+def atEvent (P : W → Event T → Prop) : IntervalPred W T := PRFV P
 
 /-- Stative AT, `AT(t, w, P)` for stative `P`: an event of `P` whose runtime
     merely overlaps `t`. Weaker than `Aspect.IMPF` (proper inclusion), so it
     has no Aspect counterpart and stays a local definition. -/
-def atState (P : W → Event Time → Prop) : IntervalPred W Time :=
-  fun w t => ∃ e : Event Time, e.τ.overlaps t ∧ P w e
+def atState (P : W → Event T → Prop) : IntervalPred W T :=
+  fun w t => ∃ e : Event T, e.τ.overlaps t ∧ P w e
 
 /-- The AT relation, dispatching on eventuality sort. The paper's third case
     (properties of times) is vacuous here: the event predicate is eventuality-valued. -/
-def at' (sort : Dynamicity) (P : W → Event Time → Prop) (w : W) (t : NonemptyInterval Time) :
+def at' (sort : Dynamicity) (P : W → Event T → Prop) (w : W) (t : NonemptyInterval T) :
     Prop :=
   match sort with
   | .dynamic => atEvent P w t
@@ -80,20 +80,20 @@ def at' (sort : Dynamicity) (P : W → Event Time → Prop) (w : W) (t : Nonempt
 
 /-- Eventive instantiation is stronger than stative: an event included in the
     interval certainly overlaps it. -/
-theorem atState_of_atEvent (P : W → Event Time → Prop) (w : W) (t : NonemptyInterval Time)
+theorem atState_of_atEvent (P : W → Event T → Prop) (w : W) (t : NonemptyInterval T)
     (h : atEvent P w t) : atState P w t :=
   let ⟨e, hSub, hP⟩ := h
   ⟨e, NonemptyInterval.overlaps_of_le hSub, hP⟩
 
 /-- `atEvent` is monotone in the reference interval. -/
-theorem atEvent_mono {t₁ t₂ : NonemptyInterval Time} (P : W → Event Time → Prop) (w : W)
+theorem atEvent_mono {t₁ t₂ : NonemptyInterval T} (P : W → Event T → Prop) (w : W)
     (hSub : t₁ ≤ t₂) (h : atEvent P w t₁) : atEvent P w t₂ :=
   let ⟨e, heSub, hP⟩ := h
   ⟨e, le_trans heSub hSub, hP⟩
 
 /-- `atState` is monotone in the reference interval: overlap with a subinterval
     entails overlap with the containing interval. -/
-theorem atState_mono {t₁ t₂ : NonemptyInterval Time} (P : W → Event Time → Prop) (w : W)
+theorem atState_mono {t₁ t₂ : NonemptyInterval T} (P : W → Event T → Prop) (w : W)
     (hSub : t₁ ≤ t₂) (h : atState P w t₁) : atState P w t₂ :=
   let ⟨e, hOv, hP⟩ := h
   ⟨e, ⟨le_trans hOv.1 (NonemptyInterval.le_def.mp hSub).2,
@@ -108,16 +108,16 @@ constraints are expressed directly: for events the runtime starts at or after
 
 /-- Event instantiated in the future of `t` — `AT([t, _), w, P)` for eventive
     `P`: the event starts at or after `t`. -/
-def atEventForward (P : W → Event Time → Prop) (w : W) (t : Time) : Prop :=
-  ∃ e : Event Time, t ≤ e.τ.fst ∧ P w e
+def atEventForward (P : W → Event T → Prop) (w : W) (t : T) : Prop :=
+  ∃ e : Event T, t ≤ e.τ.fst ∧ P w e
 
 /-- State instantiated through `t` — `AT([t, _), w, P)` for stative `P`: the
     state persists at or past `t`. -/
-def atStateForward (P : W → Event Time → Prop) (w : W) (t : Time) : Prop :=
-  ∃ e : Event Time, t ≤ e.τ.snd ∧ P w e
+def atStateForward (P : W → Event T → Prop) (w : W) (t : T) : Prop :=
+  ∃ e : Event T, t ≤ e.τ.snd ∧ P w e
 
 /-- Forward AT, dispatching on eventuality sort. -/
-def atForward (sort : Dynamicity) (P : W → Event Time → Prop) (w : W) (t : Time) :
+def atForward (sort : Dynamicity) (P : W → Event T → Prop) (w : W) (t : T) :
     Prop :=
   match sort with
   | .dynamic => atEventForward P w t
@@ -125,19 +125,19 @@ def atForward (sort : Dynamicity) (P : W → Event Time → Prop) (w : W) (t : T
 
 /-- Forward stative is weaker than forward eventive: if the event starts at or
     after `t`, its finish is also at or after `t`. -/
-theorem atStateForward_of_atEventForward (P : W → Event Time → Prop) (w : W)
-    (t : Time) (h : atEventForward P w t) : atStateForward P w t :=
+theorem atStateForward_of_atEventForward (P : W → Event T → Prop) (w : W)
+    (t : T) (h : atEventForward P w t) : atStateForward P w t :=
   let ⟨e, hStart, hP⟩ := h
   ⟨e, le_trans hStart e.τ.fst_le_snd, hP⟩
 
 /-- `atEvent` at a point `[t, t]` implies `atEventForward` at `t`. -/
-theorem atEventForward_of_atEvent_point (P : W → Event Time → Prop) (w : W) (t : Time)
+theorem atEventForward_of_atEvent_point (P : W → Event T → Prop) (w : W) (t : T)
     (h : atEvent P w (NonemptyInterval.pure t)) : atEventForward P w t :=
   let ⟨e, hSub, hP⟩ := h
   ⟨e, hSub.1, hP⟩
 
 /-- `atState` at a point `[t, t]` implies `atStateForward` at `t`. -/
-theorem atStateForward_of_atState_point (P : W → Event Time → Prop) (w : W) (t : Time)
+theorem atStateForward_of_atState_point (P : W → Event T → Prop) (w : W) (t : T)
     (h : atState P w (NonemptyInterval.pure t)) : atStateForward P w t :=
   let ⟨e, hOv, hP⟩ := h
   ⟨e, hOv.2, hP⟩
@@ -147,19 +147,19 @@ end AtRelation
 /-! ## Operators -/
 
 section Operators
-variable {W Time : Type*} [LinearOrder Time]
+variable {W T : Type*} [LinearOrder T]
 
 /-- Present tense: instantiates a property at the utterance time. The
     temporal anchor is a single point. -/
-def pres (sort : Dynamicity) (P : W → Event Time → Prop) (t : Time)
+def pres (sort : Dynamicity) (P : W → Event T → Prop) (t : T)
     (w : W) : Prop :=
   at' sort P w (NonemptyInterval.pure t)
 
 /-- Perfect: shifts evaluation to a prior time. There is some `t' < t` at
     which the property holds. -/
-def perf (sort : Dynamicity) (P : W → Event Time → Prop) (w : W)
-    (t : Time) : Prop :=
-  ∃ t' : Time, t' < t ∧ at' sort P w (NonemptyInterval.pure t')
+def perf (sort : Dynamicity) (P : W → Event T → Prop) (w : W)
+    (t : T) : Prop :=
+  ∃ t' : T, t' < t ∧ at' sort P w (NonemptyInterval.pure t')
 
 /-! ### Modal cores vs. prospective modals
 
@@ -173,35 +173,35 @@ prospective operator; `may_of_mayCore_dynamic` relates the two. -/
 
 /-- Modal possibility core: ∃ w' ∈ MB(w,t), the prejacent holds at
     the point `t` in `w'`. No forward expansion. -/
-def mayCore (MB : W → Time → Set W) (sort : Dynamicity)
-    (P : W → Event Time → Prop) (w : W) (t : Time) : Prop :=
+def mayCore (MB : W → T → Set W) (sort : Dynamicity)
+    (P : W → Event T → Prop) (w : W) (t : T) : Prop :=
   ∃ w' ∈ MB w t, at' sort P w' (NonemptyInterval.pure t)
 
 /-- MAY/MIGHT: existential quantification over the modal base, with
     forward temporal expansion. The English modal lexicalizes the
     prospective choice ([condoravdi-2002]). -/
-def may (MB : W → Time → Set W) (sort : Dynamicity)
-    (P : W → Event Time → Prop) (w : W) (t : Time) : Prop :=
+def may (MB : W → T → Set W) (sort : Dynamicity)
+    (P : W → Event T → Prop) (w : W) (t : T) : Prop :=
   ∃ w' ∈ MB w t, atForward sort P w' t
 
 /-- Modal necessity core: ∀ w' ∈ MB(w,t), the prejacent holds at
     the point `t` in `w'`. No forward expansion. -/
-def wollCore (MB : W → Time → Set W) (sort : Dynamicity)
-    (P : W → Event Time → Prop) (w : W) (t : Time) : Prop :=
+def wollCore (MB : W → T → Set W) (sort : Dynamicity)
+    (P : W → Event T → Prop) (w : W) (t : T) : Prop :=
   ∀ w' ∈ MB w t, at' sort P w' (NonemptyInterval.pure t)
 
 /-- WOLL: universal quantification over the modal base, with forward
     temporal expansion. The untensed modal underlying *will* / *would*. -/
-def woll (MB : W → Time → Set W) (sort : Dynamicity)
-    (P : W → Event Time → Prop) (w : W) (t : Time) : Prop :=
+def woll (MB : W → T → Set W) (sort : Dynamicity)
+    (P : W → Event T → Prop) (w : W) (t : T) : Prop :=
   ∀ w' ∈ MB w t, atForward sort P w' t
 
 /-- For dynamic predicates, `mayCore` implies `may`: forward expansion
     is a weakening when the prejacent is checked at a point. The
     pointwise instantiation gives an event whose start lies at or
     after `t`, which is exactly what `atEventForward` requires. -/
-theorem may_of_mayCore_dynamic (MB : W → Time → Set W)
-    (P : W → Event Time → Prop) (w : W) (t : Time)
+theorem may_of_mayCore_dynamic (MB : W → T → Set W)
+    (P : W → Event T → Prop) (w : W) (t : T)
     (h : mayCore MB .dynamic P w t) : may MB .dynamic P w t := by
   obtain ⟨w', hMem, hAt⟩ := h
   refine ⟨w', hMem, ?_⟩
@@ -209,8 +209,8 @@ theorem may_of_mayCore_dynamic (MB : W → Time → Set W)
 
 /-- For stative predicates, `mayCore` implies `may`: pointwise state
     overlap entails forward state persistence at the point. -/
-theorem may_of_mayCore_stative (MB : W → Time → Set W)
-    (P : W → Event Time → Prop) (w : W) (t : Time)
+theorem may_of_mayCore_stative (MB : W → T → Set W)
+    (P : W → Event T → Prop) (w : W) (t : T)
     (h : mayCore MB .stative P w t) : may MB .stative P w t := by
   obtain ⟨w', hMem, hAt⟩ := h
   refine ⟨w', hMem, ?_⟩
@@ -226,8 +226,8 @@ counterfactual modality. The trivial single-operator examples
 /-- "He may have won" — *epistemic* reading. The modal scopes over the
     perfect (PRES > MAY > PERF). Modal base evaluated at `t`; the
     perfect back-shifts inside the modal's scope. -/
-def mayEpistemic (MB : W → Time → Set W) (P : W → Event Time → Prop)
-    (t : Time) (w : W) : Prop :=
+def mayEpistemic (MB : W → T → Set W) (P : W → Event T → Prop)
+    (t : T) (w : W) : Prop :=
   ∃ w' ∈ MB w t, perf .dynamic P w' t
 
 /-- "He might have won" — *counterfactual* reading. The perfect scopes
@@ -235,9 +235,9 @@ def mayEpistemic (MB : W → Time → Set W) (P : W → Event Time → Prop)
     base's evaluation point to a past `t'`; the modal then quantifies
     over worlds compatible with the past, with the property in
     `[t', _)`. -/
-def mightCounterfactual (MB : W → Time → Set W) (P : W → Event Time → Prop)
-    (t : Time) (w : W) : Prop :=
-  ∃ t' : Time, t' < t ∧ may MB .dynamic P w t'
+def mightCounterfactual (MB : W → T → Set W) (P : W → Event T → Prop)
+    (t : T) (w : W) : Prop :=
+  ∃ t' : T, t' < t ∧ may MB .dynamic P w t'
 
 end Operators
 
@@ -277,13 +277,13 @@ def ModalReading.orientation : ModalReading → TemporalOrientation
 /-! ## Bridge to Klein's viewpoint operators -/
 
 section KleinBridge
-variable {W Time : Type*} [LinearOrder Time]
+variable {W T : Type*} [LinearOrder T]
 
 /-- Condoravdi's eventive `perf` entails Klein's `perfSimple`: a prior
     point of instantiation gives a degenerate PTS `[t', t']`
     right-bounded at `t`. -/
 theorem perf_eventive_implies_perfSimple
-    (P : W → Event Time → Prop) (w : W) (t : Time)
+    (P : W → Event T → Prop) (w : W) (t : T)
     (h : perf .dynamic P w t) : perfSimple P ⟨w, t⟩ := by
   obtain ⟨t', hlt, e, hSub, hP⟩ := h
   exact ⟨⟨⟨t', t⟩, le_of_lt hlt⟩, rfl, e,
@@ -292,7 +292,7 @@ theorem perf_eventive_implies_perfSimple
 
 /-- [klein-1994]'s imperfective entails Condoravdi's stative AT: proper
     inclusion of the reference interval in the event runtime implies overlap. -/
-theorem atState_of_impf (P : W → Event Time → Prop) (w : W) (t : NonemptyInterval Time)
+theorem atState_of_impf (P : W → Event T → Prop) (w : W) (t : NonemptyInterval T)
     (h : IMPF P w t) : atState P w t :=
   let ⟨e, hPSub, hP⟩ := h
   have hOv : e.τ.overlaps t :=
@@ -315,17 +315,17 @@ modality expressed:
   not settled, so a metaphysical base is available. -/
 
 section ScopeCorrelation
-variable {W Time : Type*} [LinearOrder Time]
+variable {W T : Type*} [LinearOrder T]
 
 /-- When MAY scopes over PERF, the property under the modal is *back-
     shifted past*. If this property is settled in the common ground (as
     past properties are), then a metaphysical modal base cannot satisfy
     diversity — restricting MODAL > PERF to epistemic modality. -/
 theorem modal_over_perf_blocks_metaphysical
-    (history : HistoricalAlternatives W Time)
-    (MB : W → Time → Set W)
-    (cg : Set W) (now : Time)
-    (P : W → Event Time → Prop)
+    (history : HistoricalAlternatives W T)
+    (MB : W → T → Set W)
+    (cg : Set W) (now : T)
+    (P : W → Event T → Prop)
     (hMB : ∀ w ∈ cg, ∀ w' ∈ MB w now, histEquiv history now w w')
     (hSettled : settled history cg now (λ w => perf .dynamic P w now)) :
     ¬ diverse MB cg now (λ w => perf .dynamic P w now) :=
@@ -337,9 +337,9 @@ theorem modal_over_perf_blocks_metaphysical
     base wider. This is the structural source of the counterfactual
     reading's "could have been otherwise" force. -/
 theorem counterfactual_widens_domain
-    (history : HistoricalAlternatives W Time)
+    (history : HistoricalAlternatives W T)
     (hBC : history.backwardsClosed) (w : W)
-    {t' now : Time} (hle : t' ≤ now) :
+    {t' now : T} (hle : t' ≤ now) :
     metaphysicalBase history w now ⊆ metaphysicalBase history w t' :=
   metaphysicalBase_antitone hBC w hle
 
@@ -355,16 +355,16 @@ period intersects the temporal region the modal projects. The eight
 `le_refl` rather than a lookup table. -/
 
 section Adverbs
-variable {Time : Type*} [LinearOrder Time]
+variable {T : Type*} [LinearOrder T]
 
 /-- "Yesterday": strictly before the reference time. -/
-def yesterday (now : Time) : Set Time := {t | t < now}
+def yesterday (now : T) : Set T := {t | t < now}
 
 /-- "Now": the reference time itself. -/
-def nowAdv (now : Time) : Set Time := {now}
+def nowAdv (now : T) : Set T := {now}
 
 /-- "Tomorrow": strictly after the reference time. -/
-def tomorrow (now : Time) : Set Time := {t | now < t}
+def tomorrow (now : T) : Set T := {t | now < t}
 
 /-- The temporal region in which a modal evaluates its scope, read off
     the AT relation:
@@ -382,7 +382,7 @@ def tomorrow (now : Time) : Set Time := {t | now < t}
     table-style "now is incompatible with eventive future" prediction
     of the original paper is a pragmatic event-duration fact that
     `compatible` does not formally exclude. -/
-def projectedRegion (orient : TemporalOrientation) (now : Time) : Set Time :=
+def projectedRegion (orient : TemporalOrientation) (now : T) : Set T :=
   match orient with
   | .future  => {t | now ≤ t}
   | .present => {now}
@@ -390,24 +390,24 @@ def projectedRegion (orient : TemporalOrientation) (now : Time) : Set Time :=
 
 /-- Compatibility: the adverb's selected period overlaps the modal's
     projected region. -/
-def compatible (period : Time → Set Time) (reading : ModalReading)
-    (now : Time) : Prop :=
+def compatible (period : T → Set T) (reading : ModalReading)
+    (now : T) : Prop :=
   ∃ t, t ∈ period now ∧ t ∈ projectedRegion reading.orientation now
 
 -- ── Modals for the present (future orientation) ──
 
 /-- "He may get sick tomorrow." Future-oriented modal accepts a future
     adverb (witnessed via `NoMaxOrder`). -/
-theorem tomorrow_present_compat [NoMaxOrder Time] (now : Time) :
-    compatible (tomorrow (Time := Time)) .present now := by
+theorem tomorrow_present_compat [NoMaxOrder T] (now : T) :
+    compatible (tomorrow (T := T)) .present now := by
   obtain ⟨t, ht⟩ := exists_gt now
   exact ⟨t, ht, le_of_lt ht⟩
 
 /-- "*He may get sick yesterday." Future-oriented modal rejects a past
     adverb: any witness would satisfy `t < now ∧ now ≤ t`,
     contradicting `lt_irrefl`. -/
-theorem yesterday_present_incompat (now : Time) :
-    ¬ compatible (yesterday (Time := Time)) .present now := by
+theorem yesterday_present_incompat (now : T) :
+    ¬ compatible (yesterday (T := T)) .present now := by
   rintro ⟨t, ht1, ht2⟩
   exact absurd (lt_of_lt_of_le ht1 ht2) (lt_irrefl _)
 
@@ -415,24 +415,24 @@ theorem yesterday_present_incompat (now : Time) :
     with `[now, ∞)` via `le_refl`. The eventive variant ("??He may get
     sick now") is marginal in the paper for pragmatic event-duration
     reasons; see the `projectedRegion` docstring. -/
-theorem now_present_compat (now : Time) :
-    compatible (nowAdv (Time := Time)) .present now :=
+theorem now_present_compat (now : T) :
+    compatible (nowAdv (T := T)) .present now :=
   ⟨now, rfl, le_refl now⟩
 
 -- ── Modals for the past (past orientation, epistemic reading) ──
 
 /-- "He may have gotten sick yesterday." Past-oriented modal accepts a
     past adverb (witnessed via `NoMinOrder`). -/
-theorem yesterday_epistemic_compat [NoMinOrder Time] (now : Time) :
-    compatible (yesterday (Time := Time)) .epistemic now := by
+theorem yesterday_epistemic_compat [NoMinOrder T] (now : T) :
+    compatible (yesterday (T := T)) .epistemic now := by
   obtain ⟨t, ht⟩ := exists_lt now
   exact ⟨t, ht, ht⟩
 
 /-- "*He may have gotten sick tomorrow." Past-oriented modal rejects a
     future adverb: `now < t ∧ t < now` contradicts `lt_irrefl` via
     `lt_trans`. -/
-theorem tomorrow_epistemic_incompat (now : Time) :
-    ¬ compatible (tomorrow (Time := Time)) .epistemic now := by
+theorem tomorrow_epistemic_incompat (now : T) :
+    ¬ compatible (tomorrow (T := T)) .epistemic now := by
   rintro ⟨t, ht1, ht2⟩
   exact absurd (lt_trans ht2 ht1) (lt_irrefl _)
 

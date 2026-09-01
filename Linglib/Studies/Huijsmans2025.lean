@@ -53,16 +53,16 @@ open Tense.Evidential (EPCondition EvidentialFrame)
     state both Huijsmans's MBT predictions and the EAT predictions she
     is contrasted against. The MBT/EAT split lives in *which* pair of
     anchors a profile reads. -/
-structure Stimulus (Time : Type) where
+structure Stimulus (T : Type) where
   /-- ⌜MBT⌝ — the maximum over `q ∈ MB` of `EARLIEST(SHIFT q)`, i.e.
       the latest "earliest moment" required by the modal base. -/
-  earliestMBT   : Time
+  earliestMBT   : T
   /-- ⌜PrejT⌝ — `EARLIEST(p)` for the prejacent `p`. -/
-  earliestPrejT : Time
+  earliestPrejT : T
   /-- The (Cumming/Hirayama-Matthewson) evidence-acquisition time. -/
-  eat           : Time
+  eat           : T
   /-- The event time of the prejacent. -/
-  et            : Time
+  et            : T
   deriving Repr
 
 -- ════════════════════════════════════════════════════
@@ -95,12 +95,12 @@ def MBTProfile.toRelation : MBTProfile → Finset Ordering
   | .unrestricted   => ⊤
 
 /-- The MBT-licensing predicate, derived from the abstract partition. -/
-def MBTProfile.licenses {Time : Type} [LinearOrder Time]
-    (c : MBTProfile) (s : Stimulus Time) : Prop :=
+def MBTProfile.licenses {T : Type} [LinearOrder T]
+    (c : MBTProfile) (s : Stimulus T) : Prop :=
   compare s.earliestMBT s.earliestPrejT ∈ c.toRelation
 
-instance {Time : Type} [LinearOrder Time] [DecidableEq Time] (c : MBTProfile)
-    (s : Stimulus Time) : Decidable (c.licenses s) := by
+instance {T : Type} [LinearOrder T] [DecidableEq T] (c : MBTProfile)
+    (s : Stimulus T) : Decidable (c.licenses s) := by
   unfold MBTProfile.licenses; infer_instance
 
 -- ════════════════════════════════════════════════════
@@ -186,14 +186,14 @@ theorem smell_table :
     partition shape to `(eat, et)` instead of `(earliestMBT, earliestPrejT)`.
     Defined inline rather than imported from a (not-yet-existent)
     Hirayama-Matthewson study file. -/
-def MBTProfile.eatLicenses {Time : Type} [LinearOrder Time] :
-    MBTProfile → Stimulus Time → Prop
+def MBTProfile.eatLicenses {T : Type} [LinearOrder T] :
+    MBTProfile → Stimulus T → Prop
   | .strictPrior,    s => s.eat < s.et
   | .nonProspective, s => s.et ≤ s.eat
   | .unrestricted,   _ => True
 
-instance {Time : Type} [LinearOrder Time] [DecidableEq Time] (c : MBTProfile)
-    (s : Stimulus Time) : Decidable (c.eatLicenses s) := by
+instance {T : Type} [LinearOrder T] [DecidableEq T] (c : MBTProfile)
+    (s : Stimulus T) : Decidable (c.eatLicenses s) := by
   cases c <;> simp [MBTProfile.eatLicenses] <;> infer_instance
 
 /-- **The empirical wedge** (Huijsmans (46)–(49)).

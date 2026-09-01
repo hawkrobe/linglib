@@ -38,7 +38,7 @@ every temporal argument by its local evaluation time.
 
 namespace Tense
 
-variable {ι Time : Type*}
+variable {ι T : Type*}
 
 /-- A temporal argument: its relation variable, the index of its time, and the index of its local
 evaluation time. -/
@@ -51,43 +51,43 @@ structure TemporalArgument (ι : Type*) where
   evalIndex : ℕ
 
 /-- An assignment of temporal relations to relation variables. -/
-abbrev RelationAssignment (ι Time : Type*) := ι → Time → Time → Prop
+abbrev RelationAssignment (ι T : Type*) := ι → T → T → Prop
 
 namespace TemporalArgument
 
-variable (a : TemporalArgument ι) (ρ : RelationAssignment ι Time) (g : ℕ → Time)
+variable (a : TemporalArgument ι) (ρ : RelationAssignment ι T) (g : ℕ → T)
 
 /-- The constraint `con`: the argument's relation holds between its time and its local
 evaluation time. -/
 def Con : Prop := ρ a.rel (g a.index) (g a.evalIndex)
 
 /-- The upper limit constraint: the argument's time does not follow its local evaluation time. -/
-def UpperLimit [LE Time] : Prop := upperLimitConstraint (g a.index) (g a.evalIndex)
+def UpperLimit [LE T] : Prop := upperLimitConstraint (g a.index) (g a.evalIndex)
 
 /-- Locally licensed: the argument's own relation is temporal precedence. -/
-def LocallyLicensed [LT Time] : Prop := ρ a.rel = (· < ·)
+def LocallyLicensed [LT T] : Prop := ρ a.rel = (· < ·)
 
 /-- Non-locally licensed: a transmitted relation other than the argument's own is precedence. -/
-def NonLocallyLicensed [LT Time] (acc : Finset ι) : Prop :=
+def NonLocallyLicensed [LT T] (acc : Finset ι) : Prop :=
   ∃ r ∈ acc, r ≠ a.rel ∧ ρ r = (· < ·)
 
 end TemporalArgument
 
 /-- The past tense constraint on the relations a tense has access to: at least one is temporal
 precedence. -/
-def PastConstraint [LT Time] (ρ : RelationAssignment ι Time) (acc : Finset ι) : Prop :=
+def PastConstraint [LT T] (ρ : RelationAssignment ι T) (acc : Finset ι) : Prop :=
   ∃ r ∈ acc, ρ r = (· < ·)
 
 /-- The present tense constraint: every accessible relation entails the negation of temporal
 precedence. -/
-def PresentConstraint [LT Time] (ρ : RelationAssignment ι Time) (acc : Finset ι) : Prop :=
+def PresentConstraint [LT T] (ρ : RelationAssignment ι T) (acc : Finset ι) : Prop :=
   ∀ r ∈ acc, ∀ a b, ρ r a b → ¬ a < b
 
-variable {ρ : RelationAssignment ι Time} {acc : Finset ι} {r : ι}
+variable {ρ : RelationAssignment ι T} {acc : Finset ι} {r : ι}
 
 section LT
 
-variable [LT Time]
+variable [LT T]
 
 theorem pastConstraint_singleton : PastConstraint ρ {r} ↔ ρ r = (· < ·) := by
   simp [PastConstraint]
@@ -96,21 +96,21 @@ theorem PastConstraint.of_mem (hr : r ∈ acc) (h : ρ r = (· < ·)) : PastCons
   ⟨r, hr, h⟩
 
 /-- A present-constrained relation that holds somewhere is not temporal precedence. -/
-theorem PresentConstraint.ne_lt (hq : PresentConstraint ρ acc) (hr : r ∈ acc) {a b : Time}
+theorem PresentConstraint.ne_lt (hq : PresentConstraint ρ acc) (hr : r ∈ acc) {a b : T}
     (hab : ρ r a b) : ρ r ≠ (· < ·) := fun h =>
   hq r hr a b hab ((congrFun (congrFun h a) b).mp hab)
 
 /-- No relation both licenses a past tense and satisfies a present constraint at an instantiated
 argument. -/
 theorem PastConstraint.false_of_presentConstraint (hp : PastConstraint ρ {r}) {acc : Finset ι}
-    (hq : PresentConstraint ρ acc) (hr : r ∈ acc) {a b : Time} (hab : ρ r a b) : False :=
+    (hq : PresentConstraint ρ acc) (hr : r ∈ acc) {a b : T} (hab : ρ r a b) : False :=
   hq.ne_lt hr hab (pastConstraint_singleton.1 hp)
 
 end LT
 
 section Preorder
 
-variable [Preorder Time] {a : TemporalArgument ι} {g : ℕ → Time}
+variable [Preorder T] {a : TemporalArgument ι} {g : ℕ → T}
 
 theorem TemporalArgument.not_locallyLicensed_of_coindexed (hcon : a.Con ρ g)
     (h : a.index = a.evalIndex) : ¬ a.LocallyLicensed ρ := fun hl => by

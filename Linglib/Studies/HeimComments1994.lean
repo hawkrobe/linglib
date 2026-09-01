@@ -21,7 +21,7 @@ contributions:
    - **ULC as presupposition** (eq 16, p. 149): "If α_i is a tense,
      then [[α_i]]^g,c is only defined if `g(i)` does-not-follow `g(0)`."
      The substrate's `Tense.upperLimitConstraint` (in `Tense/Embedding.lean`)
-     IS this presupposition, already typed at `[LE Time]` and credited
+     IS this presupposition, already typed at `[LE T]` and credited
      to [heim-1994-comments] in its docstring; this study file
      proves the felicity-to-ULC bridge through the substrate primitive.
    - **Time-concept** (p. 155): "By a 'time-concept' I mean a function
@@ -182,7 +182,7 @@ theorem toSubstrate_factors_iff_agent_blind {W E P T : Type*}
     [[α_i]]^g,c is only defined if `g(i)` does-not-follow `g(0)`."
     Heim's presuppositional construal of [abusch-1997]'s Upper
     Limit Constraint is already encoded in the substrate as
-    `Tense.upperLimitConstraint` (typed `[LE Time]`,
+    `Tense.upperLimitConstraint` (typed `[LE T]`,
     anchored to [heim-1994-comments] in its docstring). This
     bridge theorem projects the substrate's `TemporalDeReReading`
     `IsFelicitousWith .past` (strict `<`) onto the substrate's ULC

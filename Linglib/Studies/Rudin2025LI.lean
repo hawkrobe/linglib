@@ -80,7 +80,7 @@ We split the formalization in two layers:
 1. **`PerformanceOntology Perf`** — properties of utterance-events
    (LINGMAT, Loud, Whispered, RisingDecl, Commits, RaisesIssue) and
    the cross-property axioms that drive verb-class postulates.
-2. **`SpeechVerbs Time SemObj Perf [Ω]`** — verb predicates (SAY, ASK,
+2. **`SpeechVerbs T SemObj Perf [Ω]`** — verb predicates (SAY, ASK,
    ASSERT, YELL, WHISPER), event relations (CONTENT, REENACT), and
    meaning postulates that connect verbs to performances via the
    ontology.
@@ -127,7 +127,7 @@ each verb). The SAY and ASK postulates are explicit in the paper.
 
 Performances are *events* in their own right — utterance-events
 paratactically associated with the speech-event. We model `Performance`
-as a type synonym `Event Time`, following [rudin-2025b]'s remark that
+as a type synonym `Event T`, following [rudin-2025b]'s remark that
 performances are special-purpose events. But the `SpeechVerbs` structure
 is parameterized over an arbitrary `Perf` type, so alternative
 ontologies (e.g., a Farkas-Bruce-derived discourse adapter) can supply
@@ -142,12 +142,12 @@ open _root_.ArgumentStructure (EventRel)
 -- § 1. Performance Ontology
 -- ════════════════════════════════════════════════════
 
-/-- Default performance type: an `Event Time`, since performances have
+/-- Default performance type: an `Event T`, since performances have
     temporal extent and ontological status as events
     (per [rudin-2025b], fn 21). The `SpeechVerbs` structure is
     parameterized over `Perf`, so users may instantiate `Perf` with
     other types (e.g., a discourse-state-derived performance type). -/
-abbrev Performance (Time : Type*) [LinearOrder Time] := Event Time
+abbrev Performance (T : Type*) [LinearOrder T] := Event T
 
 /-- The ontology of performance properties.
 
@@ -223,22 +223,22 @@ end PerformanceOntology
     Each meaning postulate carries an annotation indicating whether it
     is *explicit* in [rudin-2025b] or an *extrapolation* (formal
     rendering of an informal generalization in the paper). -/
-structure SpeechVerbs (Time SemObj Perf : Type*) [LinearOrder Time]
+structure SpeechVerbs (T SemObj Perf : Type*) [LinearOrder T]
     (Ω : PerformanceOntology Perf) where
   /-- *say*: linguistic-material producing event -/
-  SAY : Event Time → Prop
+  SAY : Event T → Prop
   /-- *assert*: SAY + commitment -/
-  ASSERT : Event Time → Prop
+  ASSERT : Event T → Prop
   /-- *ask*: REENACT pole forces RESP performances -/
-  ASK : Event Time → Prop
+  ASK : Event T → Prop
   /-- *yell*: SAY + loud performance -/
-  YELL : Event Time → Prop
+  YELL : Event T → Prop
   /-- *whisper*: SAY + whispered performance -/
-  WHISPER : Event Time → Prop
+  WHISPER : Event T → Prop
   /-- CONTENT: event-to-content (proposition or question denotation) -/
-  CONTENT : EventRel Time SemObj
+  CONTENT : EventRel T SemObj
   /-- REENACT: event-to-performance ([rudin-2025b] §3.2). -/
-  REENACT : EventRel Time Perf
+  REENACT : EventRel T Perf
   /-- The semantic object is a proposition. -/
   isProposition : SemObj → Prop
   /-- The semantic object is a question denotation. -/
@@ -284,7 +284,7 @@ structure SpeechVerbs (Time SemObj Perf : Type*) [LinearOrder Time]
 
 namespace SpeechVerbs
 
-variable {Time SemObj Perf : Type*} [LinearOrder Time] {Ω : PerformanceOntology Perf}
+variable {T SemObj Perf : Type*} [LinearOrder T] {Ω : PerformanceOntology Perf}
 
 -- ════════════════════════════════════════════════════
 -- § 3. Composition: Quotative vs Propositional Complements
@@ -292,15 +292,15 @@ variable {Time SemObj Perf : Type*} [LinearOrder Time] {Ω : PerformanceOntology
 
 /-- *Propositional* complement composition: *V that p* asserts a CONTENT
     relation between the verb-event and the propositional denotation. -/
-def thatComp (M : SpeechVerbs Time SemObj Perf Ω) (V : Event Time → Prop)
-    (p : SemObj) (e : Event Time) : Prop :=
+def thatComp (M : SpeechVerbs T SemObj Perf Ω) (V : Event T → Prop)
+    (p : SemObj) (e : Event T) : Prop :=
   V e ∧ M.CONTENT e p
 
 /-- *Quotative* complement composition: *V "u"* asserts a REENACT relation
     between the verb-event and the cotemporaneous performance *u*
     (the referent of covert *pthat*; [rudin-2025b] §3). -/
-def quoteComp (M : SpeechVerbs Time SemObj Perf Ω) (V : Event Time → Prop)
-    (u : Perf) (e : Event Time) : Prop :=
+def quoteComp (M : SpeechVerbs T SemObj Perf Ω) (V : Event T → Prop)
+    (u : Perf) (e : Event T) : Prop :=
   V e ∧ M.REENACT e u
 
 /-- Quotative composition existentially closed over the performance.
@@ -309,8 +309,8 @@ def quoteComp (M : SpeechVerbs Time SemObj Perf Ω) (V : Event Time → Prop)
     attaches, then constrained by descriptive content (a proposition
     over performances, e.g., "this rising-declarative tokening of
     *Aaron likes apples?*"). -/
-def quoteCompEx (M : SpeechVerbs Time SemObj Perf Ω) (V : Event Time → Prop)
-    (P : Perf → Prop) (e : Event Time) : Prop :=
+def quoteCompEx (M : SpeechVerbs T SemObj Perf Ω) (V : Event T → Prop)
+    (P : Perf → Prop) (e : Event T) : Prop :=
   V e ∧ ∃ u, M.REENACT e u ∧ P u
 
 -- ════════════════════════════════════════════════════
@@ -320,8 +320,8 @@ def quoteCompEx (M : SpeechVerbs Time SemObj Perf Ω) (V : Event Time → Prop)
 /-- Prediction: a *say* event with REENACT to *u* requires *u* to be
     linguistic material. (Rules out *#Sara said {grunt}* in the absence
     of LINGMAT.) -/
-theorem say_quote_lingmat (M : SpeechVerbs Time SemObj Perf Ω)
-    (e : Event Time) (u : Perf) :
+theorem say_quote_lingmat (M : SpeechVerbs T SemObj Perf Ω)
+    (e : Event T) (u : Perf) :
     quoteComp M M.SAY u e → Ω.LINGMAT u := by
   rintro ⟨hsay, hreen⟩
   exact (M.say_iff_lingmat e).mp hsay u hreen
@@ -329,8 +329,8 @@ theorem say_quote_lingmat (M : SpeechVerbs Time SemObj Perf Ω)
 /-- Prediction: an *assert* event with a rising-declarative performance
     is impossible ([rudin-2025b] §4.5: *#Sara asserted "Aaron
     likes apples?"* with rising intonation). -/
-theorem assert_quote_rd_empty (M : SpeechVerbs Time SemObj Perf Ω)
-    (e : Event Time) (u : Perf) :
+theorem assert_quote_rd_empty (M : SpeechVerbs T SemObj Perf Ω)
+    (e : Event T) (u : Perf) :
     Ω.RisingDecl u → ¬ quoteComp M M.ASSERT u e := by
   intro hrd ⟨hass, hreen⟩
   obtain ⟨_, hcom⟩ := (M.assert_iff_say_and_commits e).mp hass
@@ -341,8 +341,8 @@ theorem assert_quote_rd_empty (M : SpeechVerbs Time SemObj Perf Ω)
     raise an issue and don't commit), satisfying ASK's postulate.
     ([rudin-2025b] §4.4.1: derives the felicity of *Sara asked
     "Aaron likes apples?"*.) -/
-theorem ask_quote_rd_consistent (M : SpeechVerbs Time SemObj Perf Ω)
-    (e : Event Time) (u : Perf) :
+theorem ask_quote_rd_consistent (M : SpeechVerbs T SemObj Perf Ω)
+    (e : Event T) (u : Perf) :
     M.ASK e → M.REENACT e u → Ω.RisingDecl u → Ω.RESP u := by
   intro hask hreen _
   exact (M.ask_iff_resp e).mp hask u hreen
@@ -352,15 +352,15 @@ theorem ask_quote_rd_consistent (M : SpeechVerbs Time SemObj Perf Ω)
     `RaisesIssue`. (Rules out e.g. *#Sara asked "Aaron likes apples"*
     with falling, declarative intonation that commits the original
     speaker rather than raising an open question.) -/
-theorem ask_quote_no_issue_empty (M : SpeechVerbs Time SemObj Perf Ω)
-    (e : Event Time) (u : Perf) :
+theorem ask_quote_no_issue_empty (M : SpeechVerbs T SemObj Perf Ω)
+    (e : Event T) (u : Perf) :
     ¬ Ω.RaisesIssue u → ¬ quoteComp M M.ASK u e := by
   intro hni ⟨hask, hreen⟩
   exact hni ((M.ask_iff_resp e).mp hask u hreen).1
 
 /-- Prediction: a *yell* event with REENACT to *u* makes *u* loud. -/
-theorem yell_quote_loud (M : SpeechVerbs Time SemObj Perf Ω)
-    (e : Event Time) (u : Perf) :
+theorem yell_quote_loud (M : SpeechVerbs T SemObj Perf Ω)
+    (e : Event T) (u : Perf) :
     quoteComp M M.YELL u e → Ω.Loud u := by
   rintro ⟨hyell, hreen⟩
   exact ((M.yell_iff_say_and_loud e).mp hyell).2 u hreen
@@ -368,8 +368,8 @@ theorem yell_quote_loud (M : SpeechVerbs Time SemObj Perf Ω)
 /-- Prediction: a *whisper* event with a loud performance is impossible.
     Loud and whispered are mutually exclusive, but `whisper` requires
     whispered performances. -/
-theorem whisper_quote_loud_empty (M : SpeechVerbs Time SemObj Perf Ω)
-    (e : Event Time) (u : Perf) :
+theorem whisper_quote_loud_empty (M : SpeechVerbs T SemObj Perf Ω)
+    (e : Event T) (u : Perf) :
     Ω.Loud u → ¬ quoteComp M M.WHISPER u e := by
   intro hloud ⟨hwhis, hreen⟩
   obtain ⟨_, hwh⟩ := (M.whisper_iff_say_and_whispered e).mp hwhis
@@ -379,8 +379,8 @@ theorem whisper_quote_loud_empty (M : SpeechVerbs Time SemObj Perf Ω)
     that CONTENT be a question. Combined with disjointness of
     `isProposition` and `isQuestion` in concrete models, this rules out
     *#ask that p* with declarative *p*. -/
-theorem ask_that_question (M : SpeechVerbs Time SemObj Perf Ω)
-    (e : Event Time) (δ : SemObj) :
+theorem ask_that_question (M : SpeechVerbs T SemObj Perf Ω)
+    (e : Event T) (δ : SemObj) :
     thatComp M M.ASK δ e → M.isQuestion δ := by
   rintro ⟨hask, hcont⟩
   exact M.content_ask_question e δ hask hcont
@@ -390,18 +390,18 @@ theorem ask_that_question (M : SpeechVerbs Time SemObj Perf Ω)
 -- ════════════════════════════════════════════════════
 
 /-- ASSERT ⊆ SAY: an assertion is a saying. Direct from the postulate. -/
-theorem assert_implies_say (M : SpeechVerbs Time SemObj Perf Ω)
-    (e : Event Time) : M.ASSERT e → M.SAY e := fun h =>
+theorem assert_implies_say (M : SpeechVerbs T SemObj Perf Ω)
+    (e : Event T) : M.ASSERT e → M.SAY e := fun h =>
   ((M.assert_iff_say_and_commits e).mp h).1
 
 /-- YELL ⊆ SAY: yelling is a manner-of-saying. -/
-theorem yell_implies_say (M : SpeechVerbs Time SemObj Perf Ω)
-    (e : Event Time) : M.YELL e → M.SAY e := fun h =>
+theorem yell_implies_say (M : SpeechVerbs T SemObj Perf Ω)
+    (e : Event T) : M.YELL e → M.SAY e := fun h =>
   ((M.yell_iff_say_and_loud e).mp h).1
 
 /-- WHISPER ⊆ SAY: whispering is a manner-of-saying. -/
-theorem whisper_implies_say (M : SpeechVerbs Time SemObj Perf Ω)
-    (e : Event Time) : M.WHISPER e → M.SAY e := fun h =>
+theorem whisper_implies_say (M : SpeechVerbs T SemObj Perf Ω)
+    (e : Event T) : M.WHISPER e → M.SAY e := fun h =>
   ((M.whisper_iff_say_and_whispered e).mp h).1
 
 /-- ASSERT and ASK are incompatible at a single performance: ASSERT
@@ -410,7 +410,7 @@ theorem whisper_implies_say (M : SpeechVerbs Time SemObj Perf Ω)
     asked "p?"* via different performances, but a single performance
     can satisfy at most one.) -/
 theorem assert_ask_incompatible_at_perf
-    (M : SpeechVerbs Time SemObj Perf Ω) (e e' : Event Time) (u : Perf) :
+    (M : SpeechVerbs T SemObj Perf Ω) (e e' : Event T) (u : Perf) :
     M.ASSERT e → M.REENACT e u → M.ASK e' → M.REENACT e' u → False := by
   intro hass hreen hask hreen'
   obtain ⟨_, hcom⟩ := (M.assert_iff_say_and_commits e).mp hass
@@ -422,7 +422,7 @@ theorem assert_ask_incompatible_at_perf
     not linguistic material is impossible. The postulate enforces
     LINGMAT, so a non-LINGMAT witness gives an immediate contradiction. -/
 theorem say_non_lingmat_impossible
-    (M : SpeechVerbs Time SemObj Perf Ω) (e : Event Time) (u : Perf) :
+    (M : SpeechVerbs T SemObj Perf Ω) (e : Event T) (u : Perf) :
     M.SAY e → M.REENACT e u → ¬ Ω.LINGMAT u → False := fun hsay hreen hnl =>
   hnl ((M.say_iff_lingmat e).mp hsay u hreen)
 
@@ -689,8 +689,8 @@ inductive Complement
   deriving DecidableEq, Repr, Inhabited
 
 /-- Selector: map a `Verb` enum to the corresponding model predicate. -/
-def Verb.toPred {Time SemObj Perf : Type*} [LinearOrder Time] {Ω : PerformanceOntology Perf}
-    (M : SpeechVerbs Time SemObj Perf Ω) : Verb → (Event Time → Prop)
+def Verb.toPred {T SemObj Perf : Type*} [LinearOrder T] {Ω : PerformanceOntology Perf}
+    (M : SpeechVerbs T SemObj Perf Ω) : Verb → (Event T → Prop)
   | .say => M.SAY
   | .assert => M.ASSERT
   | .yell => M.YELL
@@ -720,8 +720,8 @@ def Verb.toPred {Time SemObj Perf : Type*} [LinearOrder Time] {Ω : PerformanceO
     constraints on REENACTed performances (or CONTENT denotations);
     if those constraints conflict with the complement's, no witness
     exists and the cell is infelicitous. -/
-def Felicitous {Time SemObj Perf : Type*} [LinearOrder Time] {Ω : PerformanceOntology Perf}
-    (M : SpeechVerbs Time SemObj Perf Ω) (V : Event Time → Prop) :
+def Felicitous {T SemObj Perf : Type*} [LinearOrder T] {Ω : PerformanceOntology Perf}
+    (M : SpeechVerbs T SemObj Perf Ω) (V : Event T → Prop) :
     Complement → Prop
   | .quoteDecl =>
       ∃ e u, V e ∧ M.REENACT e u ∧ Ω.LINGMAT u ∧ Ω.Commits u
@@ -747,8 +747,8 @@ def Felicitous {Time SemObj Perf : Type*} [LinearOrder Time] {Ω : PerformanceOn
     This class IS the empirical claim. There is no separate `empirical`
     function whose values must be reconciled with model predictions —
     a model satisfies these facts or it does not. -/
-class IsRudinModel {Time SemObj Perf : Type*} [LinearOrder Time]
-    {Ω : PerformanceOntology Perf} (M : SpeechVerbs Time SemObj Perf Ω) :
+class IsRudinModel {T SemObj Perf : Type*} [LinearOrder T]
+    {Ω : PerformanceOntology Perf} (M : SpeechVerbs T SemObj Perf Ω) :
     Prop where
   -- say (5 felicitous, 1 infelicitous)
   say_quoteDecl       : Felicitous M M.SAY .quoteDecl

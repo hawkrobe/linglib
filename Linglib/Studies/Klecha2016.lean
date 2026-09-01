@@ -82,8 +82,8 @@ stipulated ULC. -/
 /-- Temporal constraint imposed by the modal base pronoun: DOX confines
 the embedded reference time to the actual history (RT ≤ EvalT, the Upper
 Limit Constraint), CIR to the future histories (RT > EvalT). -/
-def attitudeTemporalConstraint {Time : Type*} [LinearOrder Time]
-    (kind : ModalBaseKind) (evalTime refTime : Time) : Prop :=
+def attitudeTemporalConstraint {T : Type*} [LinearOrder T]
+    (kind : ModalBaseKind) (evalTime refTime : T) : Prop :=
   match kind with
   | .doxastic => isActualHistory evalTime refTime
   | .circumstantial => isFutureHistory evalTime refTime
@@ -91,37 +91,37 @@ def attitudeTemporalConstraint {Time : Type*} [LinearOrder Time]
 /-- Membership in `actualHistoryBase` derives the DOX constraint (35a):
 the ULC follows from the situation base rather than being stipulated. -/
 theorem attitudeTemporalConstraint_derived_doxastic
-    {W Time : Type*} [LinearOrder Time]
-    (history : HistoricalAlternatives W Time)
-    (s s' : Intensional.Index W Time)
+    {W T : Type*} [LinearOrder T]
+    (history : HistoricalAlternatives W T)
+    (s s' : Intensional.Index W T)
     (h : s' ∈ actualHistoryBase history s) :
     attitudeTemporalConstraint .doxastic s.time s'.time :=
   actualHistoryBase_time_actual history s s' h
 
 /-- Membership in `futureHistoryBase` derives the CIR constraint (35b). -/
 theorem attitudeTemporalConstraint_derived_circumstantial
-    {W Time : Type*} [LinearOrder Time]
-    (history : HistoricalAlternatives W Time)
-    (s s' : Intensional.Index W Time)
+    {W T : Type*} [LinearOrder T]
+    (history : HistoricalAlternatives W T)
+    (s s' : Intensional.Index W T)
     (h : s' ∈ futureHistoryBase history s) :
     attitudeTemporalConstraint .circumstantial s.time s'.time :=
   futureHistoryBase_time_future history s s' h
 
 /-- Past reference satisfies the DOX constraint. -/
-theorem dox_compatible_with_past {Time : Type*} [LinearOrder Time]
-    (evalTime refTime : Time) (hPast : refTime < evalTime) :
+theorem dox_compatible_with_past {T : Type*} [LinearOrder T]
+    (evalTime refTime : T) (hPast : refTime < evalTime) :
     attitudeTemporalConstraint .doxastic evalTime refTime :=
   le_of_lt hPast
 
 /-- Future reference violates the DOX constraint. -/
-theorem dox_incompatible_with_future {Time : Type*} [LinearOrder Time]
-    (evalTime refTime : Time) (hFut : refTime > evalTime) :
+theorem dox_incompatible_with_future {T : Type*} [LinearOrder T]
+    (evalTime refTime : T) (hFut : refTime > evalTime) :
     ¬ attitudeTemporalConstraint .doxastic evalTime refTime :=
   not_le.mpr hFut
 
 /-- Future reference satisfies the CIR constraint. -/
-theorem cir_compatible_with_future {Time : Type*} [LinearOrder Time]
-    (evalTime refTime : Time) (hFut : refTime > evalTime) :
+theorem cir_compatible_with_future {T : Type*} [LinearOrder T]
+    (evalTime refTime : T) (hFut : refTime > evalTime) :
     attitudeTemporalConstraint .circumstantial evalTime refTime :=
   hFut
 
@@ -187,8 +187,8 @@ above. -/
     tense, the embedded reference time is strictly before the evaluation
     time. Both constraints are satisfiable, and their conjunction is just
     PAST (since RT < t implies RT ≤ t). -/
-theorem dox_past_iff {Time : Type*} [LinearOrder Time]
-    (evalTime refTime : Time) :
+theorem dox_past_iff {T : Type*} [LinearOrder T]
+    (evalTime refTime : T) :
     attitudeTemporalConstraint .doxastic evalTime refTime ∧
     compare refTime evalTime ∈ Tense.past ↔
     refTime < evalTime := by
@@ -200,8 +200,8 @@ theorem dox_past_iff {Time : Type*} [LinearOrder Time]
     surface "past" morphology in "Martina hoped Carissa got pregnant"
     under the future-oriented (CIR) reading is SOT agreement over
     semantic NPST per [klecha-2016] §3.3, not semantic PAST. -/
-theorem cir_past_iff_false {Time : Type*} [LinearOrder Time]
-    (evalTime refTime : Time) :
+theorem cir_past_iff_false {T : Type*} [LinearOrder T]
+    (evalTime refTime : T) :
     attitudeTemporalConstraint .circumstantial evalTime refTime ∧
     compare refTime evalTime ∈ Tense.past ↔ False := by
   simp only [Tense.compare_mem_past]
@@ -211,8 +211,8 @@ theorem cir_past_iff_false {Time : Type*} [LinearOrder Time]
     and non-past tense requires RT ≥ t. The conjunction forces RT = t.
     This is why "Martina thought Carissa was pregnant" with non-past
     (SOT-agreed) gives a simultaneous reading. -/
-theorem dox_npst_iff {Time : Type*} [LinearOrder Time]
-    (evalTime refTime : Time) :
+theorem dox_npst_iff {T : Type*} [LinearOrder T]
+    (evalTime refTime : T) :
     attitudeTemporalConstraint .doxastic evalTime refTime ∧
     compare refTime evalTime ∈ Tense.nonpast ↔
     refTime = evalTime := by
@@ -224,8 +224,8 @@ theorem dox_npst_iff {Time : Type*} [LinearOrder Time]
     and non-past tense requires RT ≥ t. The conjunction is RT > t.
     This is why "Martina hoped Carissa got pregnant" with non-past
     (SOT-agreed) gives a future-oriented reading under CIR. -/
-theorem cir_npst_iff {Time : Type*} [LinearOrder Time]
-    (evalTime refTime : Time) :
+theorem cir_npst_iff {T : Type*} [LinearOrder T]
+    (evalTime refTime : T) :
     attitudeTemporalConstraint .circumstantial evalTime refTime ∧
     compare refTime evalTime ∈ Tense.nonpast ↔
     refTime > evalTime := by
@@ -409,7 +409,7 @@ proposition:
   via `actualHistoryBase_time_actual : s' ∈ actualHistoryBase history s
   → s'.time ≤ s.time`, a `.2`-projection through the situation-base
   definition. The doxastic-alternative quantification is carried by
-  `HistoricalAlternatives W Time` membership.
+  `HistoricalAlternatives W T` membership.
 
 - **Abusch route** (in `Semantics/Tense/Embedding.lean`): the
   predicate is stated directly as `abbrev upperLimitConstraint
@@ -422,7 +422,7 @@ proposition:
 So the equivalence is strict at the value level. **It is *not* strict
 at the modal-layer level**: Klecha's substrate carries doxastic
 alternatives via `HistoricalAlternatives`; Abusch's bare-`≤` form has dropped
-them. A modal-layer `upperLimitConstraint` over `HistoricalAlternatives W Time`
+them. A modal-layer `upperLimitConstraint` over `HistoricalAlternatives W T`
 matching Abusch's original "now of an epistemic alternative" is
 deferred. -/
 
@@ -435,8 +435,8 @@ deferred. -/
     the implementation-level equality kernel-checked. The substantive
     spirit-level difference (derivation vs. stipulation) is recorded
     in §5b above and in the docstring. -/
-theorem klecha_dox_iff_abusch_ulc {Time : Type*} [LinearOrder Time]
-    (evalTime refTime : Time) :
+theorem klecha_dox_iff_abusch_ulc {T : Type*} [LinearOrder T]
+    (evalTime refTime : T) :
     attitudeTemporalConstraint .doxastic evalTime refTime ↔
     upperLimitConstraint refTime evalTime :=
   Iff.rfl

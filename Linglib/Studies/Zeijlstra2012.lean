@@ -135,8 +135,8 @@ theorem sotConfig_only_matrix_active (cfg : SOTAgreeConfig) :
     clause has no independent past — it is interpreted at the matrix event
     time, giving `simultaneousFrame` (R' = P' = matrix E). See the module notes
     on the fn. 9 non-future refinement. -/
-theorem zeijlstra_derives_simultaneous {Time : Type*}
-    (matrixFrame : ReichenbachFrame Time) (embeddedE : Time)
+theorem zeijlstra_derives_simultaneous {T : Type*}
+    (matrixFrame : ReichenbachFrame T) (embeddedE : T)
     (embeddedT : TenseHead)
     (h_u : embeddedT.status = .uninterpretable) :
     ¬ embeddedT.IsSemanticallyActive ∧
@@ -148,9 +148,9 @@ theorem zeijlstra_derives_simultaneous {Time : Type*}
 /-- The back-shifted reading: when embedded `T` bears an independent `[iPAST]`
     (no Agree), it contributes genuine past semantics: the embedded frame
     is past (R' < P'). -/
-theorem zeijlstra_derives_shifted {Time : Type*} [LinearOrder Time]
-    (matrixFrame : ReichenbachFrame Time)
-    (embeddedR embeddedE : Time)
+theorem zeijlstra_derives_shifted {T : Type*} [LinearOrder T]
+    (matrixFrame : ReichenbachFrame T)
+    (embeddedR embeddedE : T)
     (embeddedT : TenseHead)
     (h_i : embeddedT.status = .interpretable)
     (h_shifted : embeddedR < matrixFrame.eventTime) :

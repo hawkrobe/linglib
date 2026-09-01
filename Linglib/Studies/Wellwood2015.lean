@@ -247,24 +247,24 @@ end TypeDriven
 /-! ### Three domain instantiations -/
 
 section Domains
-variable {Entity Time : Type*} [LinearOrder Time]
+variable {Entity T : Type*} [LinearOrder T]
 
 /-- Nominal comparative (§2.1, eq. 42): Agent role, entities measured via
     `themeOf`. -/
-def nominalComparative (frame : ThematicFrame Entity Time)
-    (P : Event Time → Prop) (themeOf : Event Time → Entity)
+def nominalComparative (frame : ThematicFrame Entity T)
+    (P : Event T → Prop) (themeOf : Event T → Entity)
     (μ : Entity → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.agent P themeOf μ a b
 
 /-- Verbal comparative (§2.2, eq. 48): Agent role, events measured directly. -/
-def verbalComparative (frame : ThematicFrame Entity Time)
-    (P : Event Time → Prop) (μ : Event Time → ℚ) (a b : Entity) : Prop :=
+def verbalComparative (frame : ThematicFrame Entity T)
+    (P : Event T → Prop) (μ : Event T → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.agent P id μ a b
 
 /-- Adjectival comparative (§3.2, eq. 65): Holder role, states measured
     directly. -/
-def adjectivalComparative (frame : ThematicFrame Entity Time)
-    (P : Event Time → Prop) (μ : Event Time → ℚ) (a b : Entity) : Prop :=
+def adjectivalComparative (frame : ThematicFrame Entity T)
+    (P : Event T → Prop) (μ : Event T → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.holder P id μ a b
 
 end Domains

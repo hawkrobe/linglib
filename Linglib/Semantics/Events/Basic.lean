@@ -46,9 +46,9 @@ sortless construction sites default to `.dynamic`.
 open Features
 
 /-- An event: a temporal individual with ontological sort. -/
-structure Event (Time : Type*) [LinearOrder Time] where
+structure Event (T : Type*) [LinearOrder T] where
   /-- The temporal extent of this event -/
-  runtime : NonemptyInterval Time
+  runtime : NonemptyInterval T
   /-- Ontological sort (aktionsart): `dynamic` or `stative` ([bach-1986]).
       This is the `Features.Dynamicity` feature — the action/state distinction
       at the event-token level. -/
@@ -56,39 +56,39 @@ structure Event (Time : Type*) [LinearOrder Time] where
 
 namespace Event
 
-variable {Time : Type*} [LinearOrder Time]
+variable {T : Type*} [LinearOrder T]
 
 /-! ### Temporal trace -/
 
 /-- Temporal trace function τ(e) = the runtime interval of event e. -/
 @[simp]
-def τ (e : Event Time) : NonemptyInterval Time :=
+def τ (e : Event T) : NonemptyInterval T :=
   e.runtime
 
 /-! ### Sort predicates -/
 
 /-- Is this event an action (dynamic event)? -/
-def isAction (e : Event Time) : Prop :=
+def isAction (e : Event T) : Prop :=
   e.sort = .dynamic
 
 /-- Is this event a state (stative event)? -/
-def isState (e : Event Time) : Prop :=
+def isState (e : Event T) : Prop :=
   e.sort = .stative
 
-instance : DecidablePred (isAction (Time := Time)) :=
+instance : DecidablePred (isAction (T := T)) :=
   fun e => decEq e.sort .dynamic
 
-instance : DecidablePred (isState (Time := Time)) :=
+instance : DecidablePred (isState (T := T)) :=
   fun e => decEq e.sort .stative
 
 /-- `isAction` and `isState` are complementary. -/
-theorem isAction_iff_not_isState (e : Event Time) :
+theorem isAction_iff_not_isState (e : Event T) :
     e.isAction ↔ ¬ e.isState := by
   simp only [Event.isAction, Event.isState]
   cases e.sort <;> decide
 
 /-- `isState` and `isAction` are complementary. -/
-theorem isState_iff_not_isAction (e : Event Time) :
+theorem isState_iff_not_isAction (e : Event T) :
     e.isState ↔ ¬ e.isAction := by
   simp only [Event.isAction, Event.isState]
   cases e.sort <;> decide
@@ -98,37 +98,37 @@ theorem isState_iff_not_isAction (e : Event Time) :
 /-- Is this event punctual (instantaneous)? Its runtime is a single point.
     The temporal-extent counterpart of the dynamicity sort; derived from the
     runtime via `NonemptyInterval.IsPoint`. -/
-def isPunctual (e : Event Time) : Prop :=
+def isPunctual (e : Event T) : Prop :=
   e.τ.IsPoint
 
 /-- Is this event durative (temporally extended)? -/
-def isDurative (e : Event Time) : Prop :=
+def isDurative (e : Event T) : Prop :=
   ¬ e.isPunctual
 
-instance : DecidablePred (isPunctual (Time := Time)) :=
+instance : DecidablePred (isPunctual (T := T)) :=
   fun e => by unfold Event.isPunctual NonemptyInterval.IsPoint; infer_instance
 
-instance : DecidablePred (isDurative (Time := Time)) :=
+instance : DecidablePred (isDurative (T := T)) :=
   fun e => by unfold Event.isDurative; infer_instance
 
 /-- `isDurative` and `isPunctual` are complementary. -/
-theorem isDurative_iff_not_isPunctual (e : Event Time) :
+theorem isDurative_iff_not_isPunctual (e : Event T) :
     e.isDurative ↔ ¬ e.isPunctual := Iff.rfl
 
 /-! ### Existential closure -/
 
 /-- Existential closure: ∃e. P(e). The fundamental step from event
     semantics to truth conditions. -/
-def existsClosure (P : Event Time → Prop) : Prop :=
-  ∃ e : Event Time, P e
+def existsClosure (P : Event T → Prop) : Prop :=
+  ∃ e : Event T, P e
 
 /-! ### Mereology -/
 
 /-- Axioms for event part-of structure. Part-of is a partial order on
     events with temporal and sort constraints. -/
-class Mereology (Time : Type*) [LinearOrder Time] where
+class Mereology (T : Type*) [LinearOrder T] where
   /-- e₁ is a part of e₂ -/
-  partOf : Event Time → Event Time → Prop
+  partOf : Event T → Event T → Prop
   /-- Part-of is reflexive -/
   refl : ∀ e, partOf e e
   /-- Part-of is antisymmetric -/
@@ -144,8 +144,8 @@ class Mereology (Time : Type*) [LinearOrder Time] where
 
 /-- Event mereology induces a `PartialOrder`: parthood is reflexive,
     transitive, and antisymmetric. -/
-instance partialOrder (Time : Type*) [LinearOrder Time]
-    [m : Mereology Time] : PartialOrder (Event Time) where
+instance partialOrder (T : Type*) [LinearOrder T]
+    [m : Mereology T] : PartialOrder (Event T) where
   le := m.partOf
   le_refl := m.refl
   le_trans := m.trans
@@ -156,17 +156,17 @@ instance partialOrder (Time : Type*) [LinearOrder Time]
 /-- A manner: the "how" of an event, individuated as an equivalence class
     of events under a similarity relation ([liefke-2024] §4.3).
     Manners are to events what properties are to individuals. -/
-structure Manner (Time : Type*) [LinearOrder Time] where
+structure Manner (T : Type*) [LinearOrder T] where
   /-- The characteristic predicate: which events exhibit this manner -/
-  exhibits : Event Time → Prop
+  exhibits : Event T → Prop
 
 /-- The manner of an event under a similarity criterion.
     `e.manner sim` gives the manner class of `e` under `sim`. -/
-def manner (e : Event Time) (sim : Event Time → Event Time → Prop) : Manner Time :=
+def manner (e : Event T) (sim : Event T → Event T → Prop) : Manner T :=
   ⟨sim e⟩
 
 /-- Two events share a manner iff both satisfy the manner predicate. -/
-def Manner.sharedBy (m : Manner Time) (e₁ e₂ : Event Time) : Prop :=
+def Manner.sharedBy (m : Manner T) (e₁ e₂ : Event T) : Prop :=
   m.exhibits e₁ ∧ m.exhibits e₂
 
 end Event
@@ -185,27 +185,27 @@ stated as order-theoretic facts about it (see
 
 section Denotation
 
-variable {Time : Type*} [LinearOrder Time]
+variable {T : Type*} [LinearOrder T]
 
 /-- The event→interval projection: the set of run-time intervals of events
     satisfying `P`, i.e. the image of `P` under the temporal trace τ. Every
     event-level temporal theory projects to the interval level through this map. -/
-def eventDenotation (P : Event Time → Prop) : Set (NonemptyInterval Time) :=
+def eventDenotation (P : Event T → Prop) : Set (NonemptyInterval T) :=
   Event.τ '' { e | P e }
 
 /-- Membership in `eventDenotation`: an interval is a run-time of some `P`-event. -/
 @[simp]
-theorem mem_eventDenotation {P : Event Time → Prop} {i : NonemptyInterval Time} :
+theorem mem_eventDenotation {P : Event T → Prop} {i : NonemptyInterval T} :
     i ∈ eventDenotation P ↔ ∃ e, P e ∧ e.τ = i := Iff.rfl
 
 /-- No events satisfy `P` ↔ the denotation is empty. -/
-theorem eventDenotation_eq_empty {P : Event Time → Prop} :
+theorem eventDenotation_eq_empty {P : Event T → Prop} :
     eventDenotation P = ∅ ↔ ∀ e, ¬ P e := by
   rw [eventDenotation, Set.image_eq_empty]
   exact Set.eq_empty_iff_forall_notMem
 
 /-- The run-time of any `P`-event is in the denotation. -/
-theorem mem_eventDenotation_of {P : Event Time → Prop} {e : Event Time} (he : P e) :
+theorem mem_eventDenotation_of {P : Event T → Prop} {e : Event T} (he : P e) :
     e.τ ∈ eventDenotation P :=
   Set.mem_image_of_mem _ he
 

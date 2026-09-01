@@ -217,25 +217,25 @@ theorem worry_uniform_projection :
 -- § 4. Temporal Prediction from CausalSource
 -- ════════════════════════════════════════════════════
 
-variable {Time : Type*} [LinearOrder Time]
+variable {T : Type*} [LinearOrder T]
 
 /-- **Temporal derivation (external)**: any verb with external causal source
     predicts temporal precedence and a state transition (BECOME).
     The temporal behavior FOLLOWS from the causal source, not from
     per-verb stipulation. -/
 theorem external_predicts_precedence :
-    (CausalSource.toLink Time .external).temporalConstraint =
+    (CausalSource.toLink T .external).temporalConstraint =
       NonemptyInterval.precedes ∧
-    (CausalSource.toLink Time .external).involvesTransition = true :=
+    (CausalSource.toLink T .external).involvesTransition = true :=
   ⟨rfl, rfl⟩
 
 /-- **Temporal derivation (internal)**: any verb with internal causal source
     predicts temporal overlap and no state transition.
     Cause and effect coexist (maintenance relation). -/
 theorem internal_predicts_overlap :
-    (CausalSource.toLink Time .internal).temporalConstraint =
+    (CausalSource.toLink T .internal).temporalConstraint =
       NonemptyInterval.overlaps ∧
-    (CausalSource.toLink Time .internal).involvesTransition = false :=
+    (CausalSource.toLink T .internal).involvesTransition = false :=
   ⟨rfl, rfl⟩
 
 /-- **Per-verb temporal grounding**: frighten's fragment datum (external source)
@@ -243,18 +243,18 @@ theorem internal_predicts_overlap :
     would change the predictions. -/
 theorem frighten_temporal :
     frighten.causalSource = some .external ∧
-    (CausalSource.toLink Time .external).temporalConstraint =
+    (CausalSource.toLink T .external).temporalConstraint =
       NonemptyInterval.precedes ∧
-    (CausalSource.toLink Time .external).involvesTransition = true :=
+    (CausalSource.toLink T .external).involvesTransition = true :=
   ⟨rfl, rfl, rfl⟩
 
 /-- **Per-verb temporal grounding**: concern's internal source determines
     temporal overlap and no transition. -/
 theorem concern_temporal :
     concern.causalSource = some .internal ∧
-    (CausalSource.toLink Time .internal).temporalConstraint =
+    (CausalSource.toLink T .internal).temporalConstraint =
       NonemptyInterval.overlaps ∧
-    (CausalSource.toLink Time .internal).involvesTransition = false :=
+    (CausalSource.toLink T .internal).involvesTransition = false :=
   ⟨rfl, rfl, rfl⟩
 
 /-- **UPH at the causal link level**: eventive and stative Class II verbs
@@ -263,13 +263,13 @@ theorem concern_temporal :
     to argument structure. -/
 theorem uph_causal_link_level :
     -- Different temporal behavior
-    (CausalSource.toLink Time .external).temporalConstraint =
+    (CausalSource.toLink T .external).temporalConstraint =
       NonemptyInterval.precedes ∧
-    (CausalSource.toLink Time .internal).temporalConstraint =
+    (CausalSource.toLink T .internal).temporalConstraint =
       NonemptyInterval.overlaps ∧
     -- Different event structure
-    (CausalSource.toLink Time .external).involvesTransition = true ∧
-    (CausalSource.toLink Time .internal).involvesTransition = false :=
+    (CausalSource.toLink T .external).involvesTransition = true ∧
+    (CausalSource.toLink T .internal).involvesTransition = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════

@@ -65,9 +65,9 @@ open English.Predicates.Verbal
 
 /-- HKL eq 11: `[long(x)(t)] = the degree to which x is long at time t`.
     A gradable adjective denotes a time-indexed measure function — the
-    same shape as K&L 2008's `TemporalMeasure α δ Time` in
+    same shape as K&L 2008's `TemporalMeasure α δ T` in
     `Semantics/Degree/Measure/Temporal.lean`. -/
-abbrev TimedAdjective (α δ Time : Type*) := α → Time → δ
+abbrev TimedAdjective (α δ T : Type*) := α → T → δ
 
 /-- HKL eq 16, the INCREASE function:
     `INCREASE(φ)(x)(d)(e) = 1 iff φ(x)(SPO(e)) + d = φ(x)(EPO(e))`.
@@ -82,22 +82,22 @@ abbrev TimedAdjective (α δ Time : Type*) := α → Time → δ
     The two coincide on monotone-increase events with `d ≥ 0`; HKL's
     `Prop`-valued INCREASE is sufficient for the §3 data and avoids
     the clamping bookkeeping. -/
-def INCREASE {α δ Time : Type*} [Add δ]
-    (φ : TimedAdjective α δ Time) (x : α) (d : δ)
-    (startT finT : Time) : Prop :=
+def INCREASE {α δ T : Type*} [Add δ]
+    (φ : TimedAdjective α δ T) (x : α) (d : δ)
+    (startT finT : T) : Prop :=
   φ x startT + d = φ x finT
 
 /-- Zero-duration events (start = end) carry zero difference value. -/
-theorem increase_self {α δ Time : Type*} [AddZeroClass δ]
-    (φ : TimedAdjective α δ Time) (x : α) (t : Time) :
+theorem increase_self {α δ T : Type*} [AddZeroClass δ]
+    (φ : TimedAdjective α δ T) (x : α) (t : T) :
     INCREASE φ x 0 t t := by
   simp [INCREASE]
 
 /-- HKL §3 thesis at the type level: when the difference value `d` is
     given, the end degree is **uniquely determined** by the start degree
     — the structural source of telic interpretations. -/
-theorem increase_unique_end {α δ Time : Type*} [Add δ]
-    (φ : TimedAdjective α δ Time) (x : α) (d : δ) (startT finT₁ finT₂ : Time)
+theorem increase_unique_end {α δ T : Type*} [Add δ]
+    (φ : TimedAdjective α δ T) (x : α) (d : δ) (startT finT₁ finT₂ : T)
     (h₁ : INCREASE φ x d startT finT₁) (h₂ : INCREASE φ x d startT finT₂) :
     φ x finT₁ = φ x finT₂ :=
   h₁.symm.trans h₂

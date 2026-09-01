@@ -45,8 +45,8 @@ theorem present_past_no_deletion :
 /-- The embedded frame after SOT deletion: the embedded reference time
     becomes the matrix event time (the embedded clause inherits the matrix
     temporal coordinates). -/
-def applyDeletion {Time : Type*}
-    (matrixFrame : ReichenbachFrame Time) : ReichenbachFrame Time where
+def applyDeletion {T : Type*}
+    (matrixFrame : ReichenbachFrame T) : ReichenbachFrame T where
   speechTime := matrixFrame.speechTime
   perspectiveTime := matrixFrame.eventTime
   referenceTime := matrixFrame.eventTime
@@ -56,15 +56,15 @@ def applyDeletion {Time : Type*}
     the embedded tense yields exactly the simultaneous-reading frame whose
     embedded event time is the matrix event time — the formal core of the
     Kratzer/Ogihara "same predictions" agreement. -/
-theorem applyDeletion_eq_simultaneousFrame {Time : Type*}
-    (matrixFrame : ReichenbachFrame Time) :
+theorem applyDeletion_eq_simultaneousFrame {T : Type*}
+    (matrixFrame : ReichenbachFrame T) :
     applyDeletion matrixFrame = simultaneousFrame matrixFrame matrixFrame.eventTime :=
   rfl
 
 /-- Deletion derives the simultaneous reading: after deletion the embedded
     reference time is the matrix event time, the PRESENT relation. -/
-theorem applyDeletion_isPresent {Time : Type*}
-    (matrixFrame : ReichenbachFrame Time) :
+theorem applyDeletion_isPresent {T : Type*}
+    (matrixFrame : ReichenbachFrame T) :
     (applyDeletion matrixFrame).isPresent := rfl
 
 /-! ### Surface tense -/

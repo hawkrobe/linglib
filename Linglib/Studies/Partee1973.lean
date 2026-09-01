@@ -44,8 +44,8 @@ open Intensional (Index)
     Past tense introduces a temporal variable resolved to a specific
     contextually salient time. The negation scopes over the temporal
     reference, giving ¬P(t_i) rather than Prior's ∃t < now. ¬P(t). -/
-def parteeStoveExample {Time : Type*} (turnedOff : Time → Bool)
-    (g : TemporalAssignment Time) (n : ℕ) : Bool :=
+def parteeStoveExample {T : Type*} (turnedOff : T → Bool)
+    (g : TemporalAssignment T) (n : ℕ) : Bool :=
   !turnedOff (interpTense n g)
 
 /-- [partee-1973]'s argument against [prior-1967], as a countermodel: in a
@@ -66,8 +66,8 @@ theorem stove_refutes_prior :
     anaphora. Under the referential analysis both clauses evaluate at
     g(n) for the same discourse-salient temporal variable n, just as
     anaphoric pronouns corefer with an established individual. -/
-def narrativeAnaphora {Time : Type*} (P Q : Time → Bool)
-    (g : TemporalAssignment Time) (n : ℕ) : Bool :=
+def narrativeAnaphora {T : Type*} (P Q : T → Bool)
+    (g : TemporalAssignment T) (n : ℕ) : Bool :=
   P (interpTense n g) && Q (interpTense n g)
 
 end Partee1973

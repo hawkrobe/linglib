@@ -24,34 +24,34 @@ BeaverCondoravdi2003, Rett2020, …).
 namespace Tense
 
 
-variable {Time : Type*} [LinearOrder Time]
+variable {T : Type*} [LinearOrder T]
 
 /-- A sentence denotes a set of temporal intervals — its "run-times". -/
-abbrev RunTimes (Time : Type*) [LinearOrder Time] := Set (NonemptyInterval Time)
+abbrev RunTimes (T : Type*) [LinearOrder T] := Set (NonemptyInterval T)
 
 /-- The time points contained in some interval of a denotation. -/
-def timeTrace (p : RunTimes Time) : Set Time :=
+def timeTrace (p : RunTimes T) : Set T :=
   { t | ∃ i ∈ p, t ∈ i }
 
-@[simp] theorem mem_timeTrace {p : RunTimes Time} {t : Time} :
+@[simp] theorem mem_timeTrace {p : RunTimes T} {t : T} :
     t ∈ timeTrace p ↔ ∃ i ∈ p, t ∈ i := Iff.rfl
 
-theorem timeTrace_image {α : Type*} (f : α → NonemptyInterval Time) (s : Set α) :
+theorem timeTrace_image {α : Type*} (f : α → NonemptyInterval T) (s : Set α) :
     timeTrace (f '' s) = { t | ∃ a ∈ s, t ∈ f a } := by
   ext t; simp
 
-@[simp] theorem timeTrace_empty : timeTrace (∅ : RunTimes Time) = ∅ := by
+@[simp] theorem timeTrace_empty : timeTrace (∅ : RunTimes T) = ∅ := by
   ext; simp [timeTrace]
 
-@[simp] theorem timeTrace_singleton (i : NonemptyInterval Time) :
-    timeTrace {i} = (i : Set Time) := by
+@[simp] theorem timeTrace_singleton (i : NonemptyInterval T) :
+    timeTrace {i} = (i : Set T) := by
   ext; simp [timeTrace]
 
-@[simp] theorem timeTrace_insert (i : NonemptyInterval Time) (p : RunTimes Time) :
-    timeTrace (insert i p) = (i : Set Time) ∪ timeTrace p := by
+@[simp] theorem timeTrace_insert (i : NonemptyInterval T) (p : RunTimes T) :
+    timeTrace (insert i p) = (i : Set T) ∪ timeTrace p := by
   ext; simp [timeTrace]
 
-theorem mem_timeTrace_pure {a t : Time} :
+theorem mem_timeTrace_pure {a t : T} :
     t ∈ timeTrace {NonemptyInterval.pure a} ↔ t = a := by
   simp
 
@@ -60,42 +60,42 @@ theorem mem_timeTrace_pure {a t : Time} :
     subinterval-closure property. The *activity* case (a minimal-parts floor:
     a single step is not "running") is the stratified reference of
     `Aspect/Stratified` ([champollion-2017]), not this lower set. -/
-def stativeDenotation (i : NonemptyInterval Time) : RunTimes Time :=
+def stativeDenotation (i : NonemptyInterval T) : RunTimes T :=
   Set.Iic i
 
 /-- Accomplishment denotation: exactly the singleton `{i}` — quantization. -/
-def accomplishmentDenotation (i : NonemptyInterval Time) : RunTimes Time :=
+def accomplishmentDenotation (i : NonemptyInterval T) : RunTimes T :=
   {i}
 
-theorem stativeDenotation_self (i : NonemptyInterval Time) :
+theorem stativeDenotation_self (i : NonemptyInterval T) :
     i ∈ stativeDenotation i :=
   Set.mem_Iic.mpr le_rfl
 
-theorem timeTrace_stativeDenotation (i : NonemptyInterval Time) :
+theorem timeTrace_stativeDenotation (i : NonemptyInterval T) :
     timeTrace (stativeDenotation i) = { t | t ∈ i } := by
   ext t
   simp only [mem_timeTrace, stativeDenotation, Set.mem_Iic, Set.mem_ofPred_eq,
     NonemptyInterval.mem_def, NonemptyInterval.le_def]
   grind
 
-theorem mem_timeTrace_stativeDenotation {i : NonemptyInterval Time} {t : Time} :
+theorem mem_timeTrace_stativeDenotation {i : NonemptyInterval T} {t : T} :
     t ∈ timeTrace (stativeDenotation i) ↔ t ∈ i := by
   rw [timeTrace_stativeDenotation]; rfl
 
-theorem timeTrace_accomplishmentDenotation (i : NonemptyInterval Time) :
+theorem timeTrace_accomplishmentDenotation (i : NonemptyInterval T) :
     timeTrace (accomplishmentDenotation i) = { t | t ∈ i } := by
   ext t; simp [timeTrace, accomplishmentDenotation]
 
 
-theorem timeTrace_eventDenotation (P : Event Time → Prop) :
+theorem timeTrace_eventDenotation (P : Event T → Prop) :
     timeTrace (eventDenotation P) = { t | ∃ e, P e ∧ t ∈ e.τ } :=
   timeTrace_image Event.τ { e | P e }
 
-theorem eventDenotation_singleton (e₀ : Event Time) :
+theorem eventDenotation_singleton (e₀ : Event T) :
     eventDenotation (fun e => e = e₀) = accomplishmentDenotation e₀.τ := by
   simp [eventDenotation, accomplishmentDenotation]
 
-theorem eventDenotation_sub_stative (i : NonemptyInterval Time) (P : Event Time → Prop)
+theorem eventDenotation_sub_stative (i : NonemptyInterval T) (P : Event T → Prop)
     (hP : ∀ e, P e → e.τ ≤ i) :
     eventDenotation P ⊆ stativeDenotation i := by
   rintro j ⟨e, he, rfl⟩; exact hP e he

@@ -19,11 +19,11 @@ namespace Intensional
     This is the Lewis/Kaplan "index" — a coordinate tuple as point of
     evaluation, abstracting from the spatial/parthood structure of true
     Kratzer situations (see `Intensional.Situations`). -/
-structure Index (W Time : Type*) where
+structure Index (W T : Type*) where
   /-- The world coordinate -/
   world : W
   /-- The temporal coordinate -/
-  time : Time
+  time : T
   deriving Repr
 
 end Intensional

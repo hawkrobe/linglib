@@ -31,7 +31,7 @@ namespace Karttunen1974
 
 open Tense Anscombe1964 Heinamaki1974
 
-variable {Time : Type*} [LinearOrder Time] (A B : RunTimes Time)
+variable {T : Type*} [LinearOrder T] (A B : RunTimes T)
 
 /-- Durative *A until B*: some run-time of `A` reaches a time of `B`. -/
 def until_ : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
@@ -53,7 +53,7 @@ theorem notUntil_iff : notUntil A B ↔ ∀ t ∈ timeTrace A, ∃ t' ∈ timeTr
 theorem not_notUntil_iff : ¬ notUntil A B ↔ Anscombe.beforeEver A B := not_not
 
 /-- The logical form holds of a clause that never happens. -/
-theorem notUntil_empty : notUntil (∅ : RunTimes Time) B :=
+theorem notUntil_empty : notUntil (∅ : RunTimes T) B :=
   fun ⟨_, ⟨_, hi, _⟩, _⟩ => hi
 
 /-- Disjunctive syllogism, (36): assertion and presupposition together yield *A when B*. -/
@@ -62,7 +62,7 @@ theorem notUntil_when (h : notUntil A B) (hp : presupposition A B) : when_ A B :
 
 /-- For point events under the presupposition, *A not until B* and *A when B* — the logical
 forms of Finnish *ennenkuin* and *vasta*, (39) — say the same. -/
-theorem notUntil_iff_when_of_presupposition (a b : Time)
+theorem notUntil_iff_when_of_presupposition (a b : T)
     (hp : presupposition {NonemptyInterval.pure a} {NonemptyInterval.pure b}) :
     notUntil {NonemptyInterval.pure a} {NonemptyInterval.pure b} ↔
       when_ {NonemptyInterval.pure a} {NonemptyInterval.pure b} := by

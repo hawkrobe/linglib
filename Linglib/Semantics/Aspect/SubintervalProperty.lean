@@ -38,7 +38,7 @@ namespace Aspect.SubintervalProperty
 
 open _root_.Aspect
 
-variable {W Time : Type*} [LinearOrder Time]
+variable {W T : Type*} [LinearOrder T]
 
 /-- **Subinterval property for event predicates** (mereological version).
     SUB(P) iff every subinterval of a P-event's runtime that is also
@@ -64,18 +64,18 @@ variable {W Time : Type*} [LinearOrder Time]
     ([zhao-2025] ATOM-DIST_t) lives in `Semantics/Aspect/AtomDist.lean`. The
     three formulations are NOT directly interderivable; bridging requires
     explicit witness-existence assumptions. -/
-def HasSubintervalProp (P : W → Event Time → Prop) : Prop :=
-  ∀ (e₁ : Event Time) (w : W),
+def HasSubintervalProp (P : W → Event T → Prop) : Prop :=
+  ∀ (e₁ : Event T) (w : W),
     P w e₁ →
-    ∀ (t : NonemptyInterval Time), t ≤ e₁.τ →
-    ∀ (e₂ : Event Time), e₂.τ = t →
+    ∀ (t : NonemptyInterval T), t ≤ e₁.τ →
+    ∀ (e₂ : Event T), e₂.τ = t →
     P w e₂
 
 /-- **Closed subinterval property** (CSUB): `P`'s run-times form a *lower set*.
 
     This is the contentful homogeneity property — `eventDenotation (P w ·)`
     (the run-time image, `Semantics/Events/Basic.lean`) is downward-closed in
-    `NonemptyInterval Time` at every world. Equivalently, for any subinterval
+    `NonemptyInterval T` at every world. Equivalently, for any subinterval
     `t` of a P-event's runtime there *exists* a P-event whose runtime is `t`
     (the witness form — see `hasClosedSubintervalProp_iff_witnesses`).
 
@@ -91,18 +91,18 @@ def HasSubintervalProp (P : W → Event Time → Prop) : Prop :=
     that already exist and is vacuous under a sparse event ontology; CSUB
     *produces* a witness at every subinterval, which is what every
     operator-level theorem below consumes. -/
-def HasClosedSubintervalProp (P : W → Event Time → Prop) : Prop :=
+def HasClosedSubintervalProp (P : W → Event T → Prop) : Prop :=
   ∀ w, IsLowerSet (eventDenotation (fun e => P w e))
 
 /-- **CSUB ⟺ the witness form.** Unfolds the lower-set definition to the
     classic Bennett-Partee/Dowty statement: every subinterval of a P-event's
     runtime is itself the runtime of some P-event. Operator-level theorems
     consume CSUB through this characterization. -/
-theorem hasClosedSubintervalProp_iff_witnesses {P : W → Event Time → Prop} :
+theorem hasClosedSubintervalProp_iff_witnesses {P : W → Event T → Prop} :
     HasClosedSubintervalProp P ↔
-      ∀ (e₁ : Event Time) (w : W), P w e₁ →
-        ∀ (t : NonemptyInterval Time), t ≤ e₁.τ →
-        ∃ (e₂ : Event Time), e₂.τ = t ∧ P w e₂ := by
+      ∀ (e₁ : Event T) (w : W), P w e₁ →
+        ∀ (t : NonemptyInterval T), t ≤ e₁.τ →
+        ∃ (e₂ : Event T), e₂.τ = t ∧ P w e₂ := by
   constructor
   · intro h e₁ w hP t ht
     obtain ⟨e₂, hPe₂, he₂⟩ := h w ht (mem_eventDenotation_of hP)
@@ -159,10 +159,10 @@ open Features
     subinterval. It is the witness form of CSUB
     (`hasClosedSubintervalProp_iff_witnesses`). -/
 theorem activity_entailment
-    (P : W → Event Time → Prop) (hSub : HasClosedSubintervalProp P)
-    (w : W) (e₁ : Event Time) (hP : P w e₁)
-    (t : NonemptyInterval Time) (hSub' : t ≤ e₁.τ) :
-    ∃ (e₂ : Event Time), e₂.τ = t ∧ P w e₂ :=
+    (P : W → Event T → Prop) (hSub : HasClosedSubintervalProp P)
+    (w : W) (e₁ : Event T) (hP : P w e₁)
+    (t : NonemptyInterval T) (hSub' : t ≤ e₁.τ) :
+    ∃ (e₂ : Event T), e₂.τ = t ∧ P w e₂ :=
   hasClosedSubintervalProp_iff_witnesses.mp hSub e₁ w hP t hSub'
 
 /-- **Telic non-homogeneity** (the extensional core of the imperfective
@@ -174,28 +174,28 @@ theorem activity_entailment
     intensional and modeled elsewhere; see the section caveat above. This
     theorem only exhibits a non-subinterval-closed predicate.)
 
-    The hypothesis `t₁ < t₂` ensures Time is nontrivial — in a singleton
-    Time there is only one interval and SUB holds vacuously for all P.
+    The hypothesis `t₁ < t₂` ensures `T` is nontrivial — in a singleton
+    `T` there is only one interval and SUB holds vacuously for all P.
     With two distinct time points, we construct a "telic" predicate
     P that holds only for events finishing at t₂ and fails for proper
     subintervals like [t₁, t₁]. -/
 theorem imperfective_paradox_possible
-    (w : W) (t₁ t₂ : Time) (hlt : t₁ < t₂) :
-    ¬ (∀ (P : W → Event Time → Prop), HasSubintervalProp P) := by
+    (w : W) (t₁ t₂ : T) (hlt : t₁ < t₂) :
+    ¬ (∀ (P : W → Event T → Prop), HasSubintervalProp P) := by
   intro hall
   -- Define a "telic" predicate: P holds iff the event's runtime ends at t₂
-  let P : W → Event Time → Prop := λ _ e => e.τ.snd = t₂
+  let P : W → Event T → Prop := λ _ e => e.τ.snd = t₂
   have hSub := hall P
   -- Construct an event e₁ with runtime [t₁, t₂]; P holds (finish = t₂)
   -- sort is irrelevant here (defaults to .dynamic); the proof never reads .sort
-  let e₁ : Event Time := ⟨⟨⟨t₁, t₂⟩, le_of_lt hlt⟩, .dynamic⟩
+  let e₁ : Event T := ⟨⟨⟨t₁, t₂⟩, le_of_lt hlt⟩, .dynamic⟩
   have hPe₁ : P w e₁ := rfl
   -- [t₁, t₁] is a subinterval of [t₁, t₂]
-  let sub : NonemptyInterval Time := ⟨⟨t₁, t₁⟩, le_refl t₁⟩
+  let sub : NonemptyInterval T := ⟨⟨t₁, t₁⟩, le_refl t₁⟩
   have hSI : sub ≤ e₁.τ := NonemptyInterval.le_def.mpr ⟨le_refl t₁, le_of_lt hlt⟩
   -- SIP says P must hold for any event with runtime [t₁, t₁]
   -- sort is irrelevant here (defaults to .dynamic); the proof never reads .sort
-  let e₂ : Event Time := ⟨sub, .dynamic⟩
+  let e₂ : Event T := ⟨sub, .dynamic⟩
   have hPe₂ := hSub e₁ w hPe₁ sub hSI e₂ rfl
   -- But P w e₂ means t₁ = t₂, contradicting t₁ < t₂
   exact absurd hPe₂ (ne_of_lt hlt)
@@ -238,8 +238,8 @@ theorem imperfective_paradox_possible
     running has CSUB, there exists a running event whose runtime
     IS exactly t, which satisfies the PRFV containment requirement. -/
 theorem impf_entails_prfv_of_csub
-    (P : W → Event Time → Prop) (hCSUB : HasClosedSubintervalProp P)
-    (w : W) (t : NonemptyInterval Time) :
+    (P : W → Event T → Prop) (hCSUB : HasClosedSubintervalProp P)
+    (w : W) (t : NonemptyInterval T) :
     IMPF P w t → PRFV P w t := by
   intro ⟨e, hPSub, hP⟩
   -- hPSub : t < e.τ — reference time properly inside event
@@ -265,9 +265,9 @@ theorem impf_entails_prfv_of_csub
     - Q gives t ⊆ τ(e₂) (from the predicate's second conjunct)
     - Mutual containment gives τ(e₂) = t (closing the ⊆ → = gap) -/
 theorem csub_necessary_for_impf_prfv :
-    (∀ (P : W → Event Time → Prop) (w : W) (t : NonemptyInterval Time),
+    (∀ (P : W → Event T → Prop) (w : W) (t : NonemptyInterval T),
       IMPF P w t → PRFV P w t) →
-    ∀ (P : W → Event Time → Prop), HasClosedSubintervalProp P := by
+    ∀ (P : W → Event T → Prop), HasClosedSubintervalProp P := by
   intro hall P
   rw [hasClosedSubintervalProp_iff_witnesses]
   intro e w hP t hSub
@@ -278,7 +278,7 @@ theorem csub_necessary_for_impf_prfv :
   · -- τ(e) ≠ t: t is strictly contained in τ(e)
     have hProper : t < e.τ := lt_of_le_of_ne hSub (fun h => heq (h ▸ rfl))
     -- Step 2: refined predicate Q carries reverse containment
-    let Q : W → Event Time → Prop := fun w' e' => P w' e' ∧ t ≤ e'.τ
+    let Q : W → Event T → Prop := fun w' e' => P w' e' ∧ t ≤ e'.τ
     -- IMPF(Q)(w)(t): witnessed by e (proper subinterval + P holds + t ⊆ τ(e))
     obtain ⟨e₂, hSub₂, hPe₂, hSubRev⟩ := hall Q w t ⟨e, hProper, hP, hSub⟩
     -- hSub₂ : τ(e₂) ⊆ t (from PRFV), hSubRev : t ⊆ τ(e₂) (from Q)

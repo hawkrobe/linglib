@@ -37,26 +37,26 @@ open Modifier (intersective intersective_apply)
     - `holder_selects_state`: holders only participate in states
     - `agent_unique`: each event has at most one agent
     - `patient_unique`: each event has at most one patient -/
-class ThematicAxioms (Entity Time : Type*) [LinearOrder Time]
-    (frame : ThematicFrame Entity Time) where
+class ThematicAxioms (Entity T : Type*) [LinearOrder T]
+    (frame : ThematicFrame Entity T) where
   /-- Agents only participate in actions (dynamic events). -/
-  agent_selects_action : ∀ (x : Entity) (e : Event Time),
+  agent_selects_action : ∀ (x : Entity) (e : Event T),
     frame.agent x e → e.sort = .dynamic
   /-- Holders only participate in states. -/
-  holder_selects_state : ∀ (x : Entity) (e : Event Time),
+  holder_selects_state : ∀ (x : Entity) (e : Event T),
     frame.holder x e → e.sort = .stative
   /-- Each event has at most one agent. -/
-  agent_unique : ∀ (x y : Entity) (e : Event Time),
+  agent_unique : ∀ (x y : Entity) (e : Event T),
     frame.agent x e → frame.agent y e → x = y
   /-- Each event has at most one patient. -/
-  patient_unique : ∀ (x y : Entity) (e : Event Time),
+  patient_unique : ∀ (x y : Entity) (e : Event T),
     frame.patient x e → frame.patient y e → x = y
 
 /-- Agent and holder cannot both hold of the same entity and event,
     since agents require actions and holders require states. -/
-theorem agent_holder_disjoint {Entity Time : Type*} [LinearOrder Time]
-    {frame : ThematicFrame Entity Time} [ax : ThematicAxioms Entity Time frame]
-    (x : Entity) (e : Event Time) :
+theorem agent_holder_disjoint {Entity T : Type*} [LinearOrder T]
+    {frame : ThematicFrame Entity T} [ax : ThematicAxioms Entity T frame]
+    (x : Entity) (e : Event T) :
     frame.agent x e → frame.holder x e → False := by
   intro hAgent hHolder
   have hAction := ax.agent_selects_action x e hAgent
@@ -67,7 +67,7 @@ theorem agent_holder_disjoint {Entity Time : Type*} [LinearOrder Time]
 /-! ### Adverbial modification (Davidson's key payoff) -/
 
 /-- An event modifier: a predicate on events (e.g., "quickly", "in the park"). -/
-abbrev EventModifier (Time : Type*) [LinearOrder Time] := Event Time → Prop
+abbrev EventModifier (T : Type*) [LinearOrder T] := Event T → Prop
 
 /-- Apply a modifier to an event predicate via conjunction.
     [davidson-1967]: adverbial modification is conjunction of event
@@ -76,13 +76,13 @@ abbrev EventModifier (Time : Type*) [LinearOrder Time] := Event Time → Prop
 
     Davidson's adverbial modification is the intersective modifier
     (`Semantics.Modification.intersective`) at event-predicate type. -/
-def modify {Time : Type*} [LinearOrder Time]
-    (P : Event Time → Prop) (M : EventModifier Time) : Event Time → Prop :=
+def modify {T : Type*} [LinearOrder T]
+    (P : Event T → Prop) (M : EventModifier T) : Event T → Prop :=
   intersective P M
 
 /-- Modification is commutative: "quickly and loudly" = "loudly and quickly". -/
-theorem modify_comm {Time : Type*} [LinearOrder Time]
-    (P : Event Time → Prop) (M₁ M₂ : EventModifier Time) :
+theorem modify_comm {T : Type*} [LinearOrder T]
+    (P : Event T → Prop) (M₁ M₂ : EventModifier T) :
     modify (modify P M₁) M₂ = modify (modify P M₂) M₁ := by
   funext e
   simp only [modify, intersective_apply]
@@ -90,8 +90,8 @@ theorem modify_comm {Time : Type*} [LinearOrder Time]
                 λ ⟨⟨hp, hm2⟩, hm1⟩ => ⟨⟨hp, hm1⟩, hm2⟩⟩
 
 /-- Modification is associative. -/
-theorem modify_assoc {Time : Type*} [LinearOrder Time]
-    (P : Event Time → Prop) (M₁ M₂ : EventModifier Time) :
+theorem modify_assoc {T : Type*} [LinearOrder T]
+    (P : Event T → Prop) (M₁ M₂ : EventModifier T) :
     modify (modify P M₁) M₂ = modify P (λ e => M₁ e ∧ M₂ e) := by
   funext e
   simp only [modify, intersective_apply]
@@ -103,24 +103,24 @@ theorem modify_assoc {Time : Type*} [LinearOrder Time]
 /-- "x is happy" ↦ ∃s. P(s) ∧ Holder(x, s). Parallel to
     `intransitiveLogicalForm` but using `holder` instead of `agent`,
     reflecting that states select for holders. -/
-def stativeLogicalForm {Entity Time : Type*} [LinearOrder Time]
-    (P : Event Time → Prop) (frame : ThematicFrame Entity Time)
+def stativeLogicalForm {Entity T : Type*} [LinearOrder T]
+    (P : Event T → Prop) (frame : ThematicFrame Entity T)
     (x : Entity) : Prop :=
-  ∃ s : Event Time, P s ∧ frame.holder x s
+  ∃ s : Event T, P s ∧ frame.holder x s
 
 /-- "x is happy in the morning" ↦ ∃s. P(s) ∧ Holder(x, s) ∧ M(s).
     State modification = event modification applied to states. -/
-def modifiedStativeLogicalForm {Entity Time : Type*} [LinearOrder Time]
-    (P : Event Time → Prop) (frame : ThematicFrame Entity Time)
-    (x : Entity) (M : EventModifier Time) : Prop :=
-  ∃ s : Event Time, P s ∧ frame.holder x s ∧ M s
+def modifiedStativeLogicalForm {Entity T : Type*} [LinearOrder T]
+    (P : Event T → Prop) (frame : ThematicFrame Entity T)
+    (x : Entity) (M : EventModifier T) : Prop :=
+  ∃ s : Event T, P s ∧ frame.holder x s ∧ M s
 
 /-- Modified stative = stative of modified predicate (Predicate Modification):
     state modification is an instance of Davidson's conjunction-based
     event modification. -/
-theorem modified_stative_is_pm {Entity Time : Type*} [LinearOrder Time]
-    (P : Event Time → Prop) (frame : ThematicFrame Entity Time)
-    (x : Entity) (M : EventModifier Time) :
+theorem modified_stative_is_pm {Entity T : Type*} [LinearOrder T]
+    (P : Event T → Prop) (frame : ThematicFrame Entity T)
+    (x : Entity) (M : EventModifier T) :
     modifiedStativeLogicalForm P frame x M ↔
       stativeLogicalForm (modify P M) frame x := by
   simp only [modifiedStativeLogicalForm, stativeLogicalForm, modify, intersective_apply]

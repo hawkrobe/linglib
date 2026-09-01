@@ -866,16 +866,16 @@ open Anscombe1964 Karttunen1974
 
 /-- BEFORE entails a temporal witness for p (the main clause event
     occurs at some time). This is the positive inference. -/
-theorem before_positive_inference {Time : Type*} [LinearOrder Time]
-    (A B : RunTimes Time) (h : Anscombe.beforeEver A B) :
+theorem before_positive_inference {T : Type*} [LinearOrder T]
+    (A B : RunTimes T) (h : Anscombe.beforeEver A B) :
     ∃ t, t ∈ timeTrace A := by
   obtain ⟨t, ht, _⟩ := h; exact ⟨t, ht⟩
 
 /-- BEFORE entails temporal separation: the main-clause time strictly
     precedes all complement-clause times. When B is nonempty,
     p (at t) and ¬p (at any t' ∈ B) coexist — the dual inference. -/
-theorem before_temporal_separation {Time : Type*} [LinearOrder Time]
-    (A B : RunTimes Time) (h : Anscombe.beforeEver A B) :
+theorem before_temporal_separation {T : Type*} [LinearOrder T]
+    (A B : RunTimes T) (h : Anscombe.beforeEver A B) :
     ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t < t' := h
 
 /-- BEFORE licenses EN because it maps to the temporal operator
@@ -885,8 +885,8 @@ theorem before_licensing :
 
 /-- Punctual UNTIL = ¬BEFORE (Karttunen): the negation of BEFORE
     surfaces as the complement-clause negator, which is exactly EN. -/
-theorem until_en_from_before_negation {Time : Type*} [LinearOrder Time]
-    (A B : RunTimes Time) :
+theorem until_en_from_before_negation {T : Type*} [LinearOrder T]
+    (A B : RunTimes T) :
     notUntil A B ↔ ¬ Anscombe.beforeEver A B := Iff.rfl
 
 -- ════════════════════════════════════════════════════

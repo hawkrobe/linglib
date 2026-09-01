@@ -26,29 +26,29 @@ namespace Anscombe1964
 
 open Tense NonemptyInterval
 
-variable {Time : Type*} [LinearOrder Time] {A B C : RunTimes Time}
+variable {T : Type*} [LinearOrder T] {A B C : RunTimes T}
 
 /-! ### Definitions -/
 
 /-- *p before q*: *p and not q, and then q* (§II). -/
-def Anscombe.before (A B : RunTimes Time) : Prop :=
+def Anscombe.before (A B : RunTimes T) : Prop :=
   ∃ t ∈ timeTrace A \ timeTrace B, ∃ t' ∈ timeTrace B, t < t'
 
 /-- *p after q*: *q, and then p* — a time of *p* after a time of *q* (§II, §IV). -/
-def Anscombe.after (A B : RunTimes Time) : Prop :=
+def Anscombe.after (A B : RunTimes T) : Prop :=
   ∃ t ∈ timeTrace A, ∃ t' ∈ timeTrace B, t' < t
 
 /-- The §IV rendering of *p before q*, a time of *p* before every time of *q*, which §V
 finds right for *p before ever q*. -/
-def Anscombe.beforeEver (A B : RunTimes Time) : Prop :=
+def Anscombe.beforeEver (A B : RunTimes T) : Prop :=
   ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t < t'
 
 /-- Repetition: *p, and then not p, and then p* (§II). -/
-def Repetition (A : RunTimes Time) : Prop :=
+def Repetition (A : RunTimes T) : Prop :=
   ∃ t₁ ∈ timeTrace A, ∃ t₂ ∉ timeTrace A, ∃ t₃ ∈ timeTrace A, t₁ < t₂ ∧ t₂ < t₃
 
 /-- A clause reports an instantaneous event when it holds at a single time (§VIII). -/
-def Instantaneous (A : RunTimes Time) : Prop := ∃ t, timeTrace A = {t}
+def Instantaneous (A : RunTimes T) : Prop := ∃ t, timeTrace A = {t}
 
 /-! ### The logical properties (§II) -/
 
@@ -134,7 +134,7 @@ theorem before_not_beforeEver :
     fun ⟨t, ht, h⟩ => absurd (h 1 (by simp)) (by simp at ht; subst ht; decide)⟩
 
 /-- *Before ever*, when *q* has a first time: a time of *p* precedes it. -/
-theorem beforeEver_iff_lt_least {lb : Time} (hlb : IsLeast (timeTrace B) lb) :
+theorem beforeEver_iff_lt_least {lb : T} (hlb : IsLeast (timeTrace B) lb) :
     Anscombe.beforeEver A B ↔ ∃ t ∈ timeTrace A, t < lb :=
   ⟨fun ⟨a, ha, h⟩ => ⟨a, ha, h lb hlb.1⟩,
     fun ⟨a, ha, h⟩ => ⟨a, ha, fun _ ht' => h.trans_le (hlb.2 ht')⟩⟩
@@ -174,19 +174,19 @@ theorem nonempty_of_before : Anscombe.before A B → (timeTrace B).Nonempty :=
   fun ⟨_, _, b, hb, _⟩ => ⟨b, hb⟩
 
 /-- For a non-repeating *q* with a first time, *p before q* is *p before q began*. -/
-theorem before_iff_lt_least {lb : Time} (hB : (timeTrace B).OrdConnected)
+theorem before_iff_lt_least {lb : T} (hB : (timeTrace B).OrdConnected)
     (hlb : IsLeast (timeTrace B) lb) : Anscombe.before A B ↔ ∃ t ∈ timeTrace A, t < lb := by
   rw [before_iff_beforeEver hB, beforeEver_iff_lt_least hlb, and_iff_left ⟨lb, hlb.1⟩]
 
 /-- *p after q* is *p after q began* (§III (3), §X case 3a); *q before p* gives it too
 (`after_of_before`, case 3b). -/
-theorem after_iff_least_lt {lb : Time} (hlb : IsLeast (timeTrace B) lb) :
+theorem after_iff_least_lt {lb : T} (hlb : IsLeast (timeTrace B) lb) :
     Anscombe.after A B ↔ ∃ t ∈ timeTrace A, lb < t :=
   ⟨fun ⟨a, ha, _, ht', h⟩ => ⟨a, ha, (hlb.2 ht').trans_lt h⟩,
     fun ⟨a, ha, h⟩ => ⟨a, ha, lb, hlb.1, h⟩⟩
 
 /-- *p after q stopped* gives *p after q* (§III (4) to (3), §X case 3c). -/
-theorem after_of_greatest_lt {ub : Time} (hub : IsGreatest (timeTrace B) ub) :
+theorem after_of_greatest_lt {ub : T} (hub : IsGreatest (timeTrace B) ub) :
     (∃ t ∈ timeTrace A, ub < t) → Anscombe.after A B :=
   fun ⟨a, ha, h⟩ => ⟨a, ha, ub, hub.1, h⟩
 
