@@ -10,7 +10,7 @@ natural language semantics are always dense — and the single mechanism it driv
 scalar implicatures, *only*, degree questions and definite descriptions. Each of the four
 maximizes a property of degrees with MAXinf, the most informative true degree
 (`Alternatives.IsMaxInf`), and the Constraint on Interval Maximization says this fails on a
-property that necessarily describes an open interval (`NOpen`). On a strictly antitone family
+property that necessarily describes an open interval (`IsNecessarilyOpen`). On a strictly antitone family
 the most informative degree is the greatest true one (`Alternatives.hasMaxInf_iff_isGreatest`),
 so density removes it exactly when the true set is open at its informative end; a universal
 modal can close the interval and an existential modal cannot. A bare numeral's *at least d* is
@@ -50,16 +50,16 @@ variable {D W : Type*} [LinearOrder D]
 
 /-- A property of degrees necessarily describes an open interval: at every world some degree
 fails it and every smaller degree satisfies it. -/
-def NOpen (φ : D → Set W) : Prop :=
+def IsNecessarilyOpen (φ : D → Set W) : Prop :=
   ∀ w, ∃ d, w ∉ φ d ∧ ∀ d' < d, w ∈ φ d'
 
 /-- The downward-monotone mirror image: some degree fails and every larger degree holds. -/
-abbrev NOpenBelow (φ : D → Set W) : Prop :=
-  NOpen fun d : Dᵒᵈ => φ (ofDual d)
+abbrev IsNecessarilyOpenBelow (φ : D → Set W) : Prop :=
+  IsNecessarilyOpen fun d : Dᵒᵈ => φ (ofDual d)
 
 /-- (42) The Constraint on Interval Maximization: on a dense scale a necessarily open
 upward-monotone property has no most informative degree. -/
-theorem cim [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ) (hopen : NOpen φ)
+theorem cim [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ) (hopen : IsNecessarilyOpen φ)
     (w : W) : ¬ HasMaxInf φ w :=
   (hasMaxInf_iff_isGreatest hφ).not.2 fun ⟨_, hm⟩ =>
     let ⟨_, hd, hlt⟩ := hopen w
@@ -68,21 +68,21 @@ theorem cim [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ) (hopen :
 
 /-- (42) for downward-monotone properties. -/
 theorem cim_below [DenselyOrdered D] {φ : D → Set W} (hφ : StrictMono φ)
-    (hopen : NOpenBelow φ) (w : W) : ¬ HasMaxInf φ w :=
+    (hopen : IsNecessarilyOpenBelow φ) (w : W) : ¬ HasMaxInf φ w :=
   cim (φ := fun d : Dᵒᵈ => φ (ofDual d)) (fun _ _ h => hφ h) hopen w
 
 /-! ### Implicatures and *only* -/
 
 /-- *More than d* necessarily describes an open interval: the true degrees at `w` are those
 below the count. -/
-theorem nOpen_gt_over (μ : W → D) : NOpen (Comparison.gt.over μ) :=
+theorem isNecessarilyOpen_gt_over (μ : W → D) : IsNecessarilyOpen (Comparison.gt.over μ) :=
   fun w => ⟨μ w, lt_irrefl _, fun _ h => h⟩
 
 /-- (2), (5), (7b–c): on a dense scale *more than d* has no most informative degree, so it
 carries no scalar implicature and rejects *only*. -/
 theorem moreThan_not_hasMaxInf [DenselyOrdered D] (μ : W → D) (hμ : Function.Surjective μ)
     (w : W) : ¬ HasMaxInf (Comparison.gt.over μ) w :=
-  cim (Comparison.strictAnti_gt_over μ hμ) (nOpen_gt_over μ) w
+  cim (Comparison.strictAnti_gt_over μ hμ) (isNecessarilyOpen_gt_over μ) w
 
 /-! ### Modal operators -/
 
@@ -117,7 +117,7 @@ theorem hasMaxInf_box [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ
 /-- (14), (47): no existential modal closes the interval — the true degrees of *allowed to
 φ d* have no greatest element, so the constraint still applies. -/
 theorem not_isGreatest_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ)
-    (hopen : NOpen φ) (R : W → W → Prop) (w : W) :
+    (hopen : IsNecessarilyOpen φ) (R : W → W → Prop) (w : W) :
     ¬ ∃ m, IsGreatest {d | diamond R (φ d) w} m := by
   rintro ⟨m, ⟨v, hv, hvm⟩, hub⟩
   obtain ⟨d, hd, hlt⟩ := hopen v
@@ -128,14 +128,14 @@ theorem not_isGreatest_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : Stri
 /-! ### Negative islands -/
 
 /-- *Not … d* is necessarily open from below: the true degrees are those above the measure. -/
-theorem nOpenBelow_lt_over (μ : W → D) : NOpenBelow (Comparison.lt.over μ) :=
-  nOpen_gt_over (toDual ∘ μ)
+theorem isNecessarilyOpenBelow_lt_over (μ : W → D) : IsNecessarilyOpenBelow (Comparison.lt.over μ) :=
+  isNecessarilyOpen_gt_over (toDual ∘ μ)
 
 /-- (16), (19a), (25): on a dense scale the negated degree property has no most informative
 (least true) degree, so a degree question or definite description over it is undefined. -/
 theorem negation_not_hasMaxInf [DenselyOrdered D] (μ : W → D) (hμ : Function.Surjective μ)
     (w : W) : ¬ HasMaxInf (Comparison.lt.over μ) w :=
-  cim_below (Comparison.strictMono_lt_over μ hμ) (nOpenBelow_lt_over μ) w
+  cim_below (Comparison.strictMono_lt_over μ hμ) (isNecessarilyOpenBelow_lt_over μ) w
 
 /-- (27b), (28a), (29a): *required not to φ d* — a universal modal over a downward-monotone
 property closes the interval from below. -/
@@ -145,7 +145,7 @@ theorem hasMaxInf_box_below [DenselyOrdered D] {φ : D → Set W} (hφ : StrictM
 
 /-- (28b), (29b), (47): *allowed not to φ d* stays open from below. -/
 theorem not_isLeast_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : StrictMono φ)
-    (hopen : NOpenBelow φ) (R : W → W → Prop) (w : W) :
+    (hopen : IsNecessarilyOpenBelow φ) (R : W → W → Prop) (w : W) :
     ¬ ∃ m, IsLeast {d | diamond R (φ d) w} m :=
   not_isGreatest_diamond (φ := fun d : Dᵒᵈ => φ (ofDual d)) (fun _ _ h => hφ h) hopen R w
 
