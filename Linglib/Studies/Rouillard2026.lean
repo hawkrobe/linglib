@@ -6,7 +6,6 @@ import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.IntervalContent
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Core.Order.Interval
-import Linglib.Semantics.Alternatives.Extremum
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Features.Aktionsart
@@ -86,7 +85,6 @@ open Aspect.SubintervalProperty
 open Features
 open Core.Order
 open Degree
-open Entailment
 open English.TemporalExpressions
 
 variable {W Time : Type*} [LinearOrder Time]
@@ -322,16 +320,13 @@ theorem gTIAPropertyOpenNeg_downwardMonotone {μ : NonemptyInterval Time → α}
   fun x y hxy w hy hx =>
     hy (gTIAPropertyOpen_upwardMonotone P s hxy w hx)
 
-/-! ### The MIP licensing predicate
+/-! ### The MIP licensing predicate -/
 
-`MIP_Licensed` and `MIP_LicensedDown` are defined in
-    `Semantics/Alternatives/Extremum.lean` and reused here. They
-    combine `Degree.AdmitsOptimum P` (non-constancy: the *atelic*
-    failure mode) with the per-world existence of a `Set.IsLeast` /
-    `Set.IsGreatest` (mathlib): a most-informative numeral exists at some
-    world. The two conjuncts capture two separate failure modes:
-    information collapse (E-TIA atelic; fails `AdmitsOptimum`) and
-    no-extremum (positive G-TIA; fails per-world `IsLeast`). -/
+/-- **Maximal Informativity Principle licensing** of a degree property: the family
+    distinguishes its alternatives (`AdmitsOptimum`; atelic E-TIAs fail here) and some
+    world has a least true value (positive G-TIAs over dense time fail here). -/
+def IsMIPLicensed (P : α → W → Prop) : Prop :=
+  AdmitsOptimum P ∧ ∃ w x, IsLeast {y | P y w} x
 
 /-! ### E-TIA atelic case: subinterval property → information collapse -/
 
@@ -366,7 +361,7 @@ theorem eTIA_atelic_no_optimum {μ : NonemptyInterval Time → α} [TimeMeasure 
 theorem eTIA_atelic_not_licensed {μ : NonemptyInterval Time → α} [TimeMeasure Time μ]
     (P : W → Event Time → Prop) (g1 : NonemptyInterval Time)
     (hSub : HasSubintervalProp P) :
-    ¬ MIP_Licensed (eTIAProperty P μ g1) :=
+    ¬ IsMIPLicensed (eTIAProperty P μ g1) :=
   fun ⟨hAdm, _⟩ => eTIA_atelic_no_optimum P g1 hSub hAdm
 
 /-! ### E-TIA telic case: upward monotone, smallest-true at event duration -/
@@ -387,7 +382,7 @@ theorem eTIA_telic_upwardMonotone {μ : NonemptyInterval Time → α} [TimeMeasu
 /-- For an upward-monotone family with a witness at some world, the
     per-world set `{y | P y w}` has a least element via `Nat.find`. The
     statement is in mathlib idiom (`IsLeast`); the cross-world `IsMaxInf`
-    bridge is in `Extremum.lean` (`isMaxInf_of_isLeast_upward`). Pinned to
+    bridge is mathlib's `Monotone.map_isLeast`. Pinned to
     `ℕ`: extremum existence needs a well-founded codomain, which dense `α`
     deliberately lacks (that failure IS the G-TIA collapse below). -/
 theorem upwardMonotone_hasIsLeast_of_witness {W : Type*}
@@ -466,13 +461,13 @@ theorem gTIAOpen_no_isLeast [DenselyOrdered Time] [AddRightStrictMono α]
   exact absurd (hLB hmem) (not_le.mpr hlt)
 
 /-- **Positive G-TIAs are not MIP-licensed** over dense time: the
-    least-true-numeral leg of `MIP_Licensed` fails at every world. The
+    least-true-numeral leg of `IsMIPLicensed` fails at every world. The
     end-to-end discharge of the information-collapse argument
     ([rouillard-2026] §4.2.2) that the ℕ-valued measure could not provide. -/
 theorem gTIAOpen_not_MIP_licensed [DenselyOrdered Time] [AddRightStrictMono α]
     {μ : NonemptyInterval Time → α} [TimeMeasure Time μ]
     (P : W → Event Time → Prop) (s : Time) :
-    ¬ MIP_Licensed (gTIAPropertyOpen P μ s) :=
+    ¬ IsMIPLicensed (gTIAPropertyOpen P μ s) :=
   fun ⟨_, w, x, hLeast⟩ => gTIAOpen_no_isLeast P s w x hLeast
 
 /-! ### The rational length model
@@ -518,7 +513,7 @@ instance : TimeMeasure ℚ ratLength where
 /-- The blocking theorem's hypotheses discharge at the rational length
     model: positive G-TIAs over `ℚ`-time are not MIP-licensed. -/
 example {W : Type*} (P : W → Event ℚ → Prop) (s : ℚ) :
-    ¬ MIP_Licensed (gTIAPropertyOpen P ratLength s) :=
+    ¬ IsMIPLicensed (gTIAPropertyOpen P ratLength s) :=
   gTIAOpen_not_MIP_licensed P s
 
 /-! ### Negated G-TIA: greatest true numeral at the gap length -/
@@ -526,7 +521,7 @@ example {W : Type*} (P : W → Event ℚ → Prop) (s : ℚ) :
 /-- For a downward-monotone family over ℕ with a true witness and a failing
     bound at world `w`, the per-world set `{y | P y w}` has a greatest
     element. Dual of `upwardMonotone_hasIsLeast_of_witness`; the cross-world
-    bridge is `Extremum.isMaxInf_of_isGreatest_downward`. Pinned to `ℕ` for
+    bridge is mathlib's `Antitone.map_isGreatest`. Pinned to `ℕ` for
     the same well-foundedness reason as its dual. -/
 theorem downwardMonotone_hasIsGreatest_of_bound {W : Type*}
     {P : ℕ → W → Prop} (hDown : Antitone P) (w : W)

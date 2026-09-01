@@ -33,7 +33,7 @@ Both are noted as future consolidation targets but require deeper
 architectural work than a literal find-and-replace.
 -/
 
-namespace Entailment
+namespace Alternatives
 
 variable {W : Type*}
 
@@ -85,4 +85,4 @@ theorem not_asymStrongerOn_self (worlds : Finset W) (φ : W → Prop)
   rintro ⟨_, _, _, hφ, hnotφ⟩
   exact hnotφ hφ
 
-end Entailment
+end Alternatives

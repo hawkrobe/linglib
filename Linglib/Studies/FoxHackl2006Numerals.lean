@@ -26,13 +26,13 @@ The named numeral meanings (`atLeastMeaning`, `moreThanMeaning`, ...) are
 `Semantics/Numerals/Basic.lean` §2 — the connection holds by
 construction, no bridge lemma needed.
 
-1. **HasMaxInf for "at least"**: `atLeast_hasMaxInf` gives the existence
+1. **HasMaxInf for "at least"**: `hasMaxInf_ge_over` gives the existence
    of a maximally informative element for any "at least" degree property.
 
-2. **Discrete "more than"**: on ℕ, `moreThan_nat_hasMaxInf` shows
+2. **Discrete "more than"**: on ℕ, `hasMaxInf_gt_over_nat` shows
    "more than" also has max⊨, recovering the Fox & Hackl asymmetry.
 
-3. **MIP derives exact meaning**: `isMaxInf_atLeast_iff_eq` proves
+3. **MIP derives exact meaning**: `isMaxInf_ge_over_iff` proves
    max⊨ of "at least n" at world w iff μ(w) = n.
 
 -/
@@ -40,7 +40,7 @@ construction, no bridge lemma needed.
 namespace FoxHackl2006Numerals
 
 open Degree
-open Entailment
+open Alternatives
 open Semantics.Numerals
 open Degree (Comparison)
 
@@ -52,12 +52,12 @@ open Degree (Comparison)
     Instantiated on ℕ with `id` as the measure function. -/
 theorem atLeast_has_maxInf_at_3 :
     HasMaxInf (Comparison.ge.over (α := ℕ) id) 3 :=
-  atLeast_hasMaxInf id 3
+  hasMaxInf_ge_over id 3
 
 /-- Generalized: "at least n" has max⊨ at every world n. -/
 theorem atLeast_has_maxInf_general (n : ℕ) :
     HasMaxInf (Comparison.ge.over (α := ℕ) id) n :=
-  atLeast_hasMaxInf id n
+  hasMaxInf_ge_over id n
 
 -- ════════════════════════════════════════════════════
 -- § 2. Discrete "more than" recovers MaxInf (F&H asymmetry)
@@ -67,10 +67,10 @@ theorem atLeast_has_maxInf_general (n : ℕ) :
     This is the discrete rescue: ℕ's successor structure collapses
     "more than n" to "at least n+1", which has max⊨.
 
-    Contrast with `moreThan_noMaxInf` on dense scales: no rescue there. -/
+    Contrast with `not_hasMaxInf_gt_over` on dense scales: no rescue there. -/
 theorem moreThan_has_maxInf_nat :
     HasMaxInf (Comparison.gt.over (α := ℕ) id) 3 :=
-  moreThan_nat_hasMaxInf id 3 (show (3 : ℕ) ∈ Comparison.gt.over id 0 from by decide)
+  hasMaxInf_gt_over_nat id 3 (show (3 : ℕ) ∈ Comparison.gt.over id 0 from by decide)
 
 /-- The dense half of the asymmetry as chain-exhaustification: on ℚ the
 stronger *more than* alternatives have no next member, so exhaustifying
@@ -92,7 +92,7 @@ theorem moreThan_exhChain_crash (c maxD : ℚ) :
     [kennedy-2015]'s maximality `max{n | D n} = m` IS the MIP. -/
 theorem mip_derives_exact (m n : ℕ) :
     IsMaxInf (Comparison.ge.over (α := ℕ) id) m n ↔ n = m :=
-  isMaxInf_atLeast_iff_eq id m n Function.surjective_id
+  isMaxInf_ge_over_iff id n ⟨m, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 4. Fox & Hackl Asymmetry Data
@@ -100,7 +100,7 @@ theorem mip_derives_exact (m n : ℕ) :
 
 /-- The [fox-hackl-2006] implicature asymmetry prediction:
     - "at least n" generates scalar implicatures (HasMaxInf) ✓
-    - "more than n" on dense scales does NOT (moreThan_noMaxInf)
+    - "more than n" on dense scales does NOT (not_hasMaxInf_gt_over)
     - "more than n" on ℕ DOES (discrete rescue)
 
     This structure records the prediction for bridge verification. -/
