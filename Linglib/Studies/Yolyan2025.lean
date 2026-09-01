@@ -38,7 +38,7 @@ false, [lamont-ohara-smith-2019] Thm. 3.1 — via [padgett-1995]/[wilson-2003]'s
 pathology), and — through the shared
 witnesses already in the library — Tutrugbu ATR harmony (Prop. 5.5,
 [mccollum-bakovic-mai-meinhardt-2020]), Luganda unbounded tonal plateauing
-([jardine-2016]), and Copperbelt Bemba high-tone spreading (Prop. 5.4), the latter
+([jardine-2016a]), and Copperbelt Bemba high-tone spreading (Prop. 5.4), the latter
 formalized here as a second `Tone.Surfacing` instance. The positive
 side: with no underlying stress the input predicate is constantly `⊥` and ⊙ collapses
 to disjunction — (5.15), recovering [koser-jardine-2020]'s LHOL program as the
@@ -242,7 +242,7 @@ theorem tutrugbu_not_bmrsWeaklyDeterministic :
   not_isBmrsWeaklyDeterministic_of_requiresBothSides
     McCollumEtAl2020.tutrugbu_requiresBothSides
 
-/-- Luganda unbounded tonal plateauing is not weakly deterministic: [jardine-2016]'s
+/-- Luganda unbounded tonal plateauing is not weakly deterministic: [jardine-2016a]'s
 flagship pattern (the class of the paper's Prop. 5.4 Bemba case), through
 `Phonology/Tone/Plateauing`'s witness. -/
 theorem utp_not_bmrsWeaklyDeterministic :
@@ -252,7 +252,7 @@ theorem utp_not_bmrsWeaklyDeterministic :
 
 /-! ### Bemba high-tone spreading is not weakly deterministic (Prop. 5.4)
 
-Copperbelt Bemba ([jardine-2016]; the paper's bounded/unbounded spreading data): a high
+Copperbelt Bemba ([jardine-2016a]; the paper's bounded/unbounded spreading data): a high
 tone spreads to the end of the word when no high follows it, and only onto the next two
 TBUs when one does. A second `Tone.Surfacing` instance — and a cautionary one: unlike
 plateauing, the surface set is not convex and the map is neither monotone nor

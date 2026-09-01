@@ -8,7 +8,7 @@ import Linglib.Phonology.Autosegmental.Junction
 /-!
 # Phonological transformations as correspondence-graph relations
 
-[jardine-2016-diss] (Ch. 7) models a phonological *process* not as a function but as a
+[jardine-2016b] (Ch. 7) models a phonological *process* not as a function but as a
 **relation** between input and output, presented by a set of **correspondence graphs**
 and carved out of GEN by **banned-subgraph constraints** (markedness + faithfulness) —
 which is what makes the relation *local*.
@@ -18,7 +18,7 @@ upper tier is the input string, the lower tier the output string, and the associ
 links are the input↔output **correspondence arcs**. (Precedence is carried by the tier
 order; Jardine's separate precedence/correspondence arc-labeling `ℓ_A` is here the
 structural split between tier-order and links.) The banned-subgraph grammar is
-`Graph.Free` ([jardine-2016-diss] Ch. 5's `L^NL_G`).
+`Graph.Free` ([jardine-2016b] Ch. 5's `L^NL_G`).
 
 This is the *process* layer of the substrate's three-layer spec (objects `AR`,
 precedence-morphisms `PrecAR`, processes here). The autosegmental case — correspondence
@@ -35,7 +35,7 @@ arc-labelled-subgraph refinement he flags in Ch. 7 fn. 7; that is deferred.
 
 * `Correspondence.input`/`output` — the two strings a correspondence graph relates.
 * `Correspondence.rel` — `R(CG)`, the string relation of a set of correspondence graphs
-  ([jardine-2016-diss] Def. 25).
+  ([jardine-2016b] Def. 25).
 * `Correspondence.specifiedBy` — `CG(φ)`, a process presented by a banned-subgraph grammar.
 * `Correspondence.IsLocal` — a relation presented by a finite banned-subgraph grammar.
 -/
@@ -70,7 +70,7 @@ noncomputable def Rep.output (G : Rep S T) : List T :=
   haveI := G.property
   G.val.tierWord false
 
-/-- **R(CG)** ([jardine-2016-diss] Def. 25) on the foundation: the string
+/-- **R(CG)** ([jardine-2016b] Def. 25) on the foundation: the string
     relation realized by a set of correspondence representations. -/
 def relRep (CG : Rep S T → Prop) (w : List S) (v : List T) : Prop :=
   ∃ G, CG G ∧ G.input = w ∧ G.output = v

@@ -345,6 +345,9 @@ instance : Finite ((𝟙_ (TieredAR ι τ)).obj.V) :=
   rw [tierWord_eq_ofFn (OrderIso.ofIsEmpty (Fin 0) _)]
   exact List.ofFn_zero
 
+@[simp] theorem tierLength_unit (i : ι) : (𝟙_ (TieredAR ι τ)).tierLength i = 0 := by
+  rw [← length_tierWord, tierWord_unit, List.length_nil]
+
 end TierWordTensor
 
 /-! ### Readers in ℕ coordinates
@@ -362,6 +365,10 @@ variable (X : TieredAR ι τ)
     (out-of-bounds positions link to nothing). -/
 def link [Finite X.obj.V] (i j : ι) (p q : ℕ) : Prop :=
   ∃ (hp : p < X.tierLength i) (hq : q < X.tierLength j), X.linkRel i j ⟨p, hp⟩ ⟨q, hq⟩
+
+open scoped MonoidalCategory in
+@[simp] theorem not_link_unit (i j : ι) (p q : ℕ) : ¬ (𝟙_ (TieredAR ι τ)).link i j p q :=
+  fun ⟨hp, _, _⟩ => by simp at hp
 
 open scoped Classical in
 /-- The two-tier reading of tiers `i` over `j`: each tier-`j` position's label
@@ -589,7 +596,7 @@ noncomputable def ofDataFiberEnum (i : ι) :
   obtain rfl : j = i := hp
   exact ⟨q, rfl⟩
 
-theorem tierLength_ofData (i : ι) :
+@[simp] theorem tierLength_ofData (i : ι) :
     (ofData ws L).tierLength i = (ws i).length := by
   rw [← length_tierWord,
     tierWord_eq_ofFn (ofDataFiberEnum i), List.length_ofFn]

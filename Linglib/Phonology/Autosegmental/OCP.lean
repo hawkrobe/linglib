@@ -83,15 +83,31 @@ variable (m : ι) [DecidableEq (τ m)]
 noncomputable def AR.collapsedWord [Finite X.obj.V] : ∀ i, List (τ i) :=
   Function.update (fun i => X.tierWord i) m (OCP.collapse (X.tierWord m))
 
+@[simp] theorem AR.collapsedWord_self [Finite X.obj.V] :
+    X.collapsedWord m m = OCP.collapse (X.tierWord m) :=
+  Function.update_self ..
+
+@[simp] theorem AR.collapsedWord_of_ne [Finite X.obj.V] {i : ι} (h : i ≠ m) :
+    X.collapsedWord m i = X.tierWord i :=
+  Function.update_of_ne h ..
+
 theorem AR.collapsedWord_length_le [Finite X.obj.V] (i : ι) :
     (X.collapsedWord m i).length ≤ X.tierLength i := by
   rcases eq_or_ne i m with rfl | h
-  · simpa [AR.collapsedWord] using OCP.collapse_length_le (X.tierWord i)
-  · simp [AR.collapsedWord, Function.update_of_ne h]
+  · simpa using OCP.collapse_length_le (X.tierWord i)
+  · simp [h]
 
 /-- Position repointing: `runIdx` on the melody tier, identity elsewhere. -/
 noncomputable def AR.collapseIdx [Finite X.obj.V] (i : ι) (p : ℕ) : ℕ :=
   if i = m then runIdx (X.tierWord m) p else p
+
+@[simp] theorem AR.collapseIdx_self [Finite X.obj.V] (p : ℕ) :
+    X.collapseIdx m m p = runIdx (X.tierWord m) p :=
+  if_pos rfl
+
+@[simp] theorem AR.collapseIdx_of_ne [Finite X.obj.V] {i : ι} (h : i ≠ m) (p : ℕ) :
+    X.collapseIdx m i p = p :=
+  if_neg h
 
 /-- **The OCP-merging collapse**: melody tier `m` destuttered, links repointed
     through `runIdx`, other tiers untouched. -/
@@ -225,7 +241,7 @@ theorem AR.link_collapse [Finite X.obj.V] (i j : ι) (r s : ℕ) :
     subst hij
     exact X.not_link_self_tier i p q hpq
 
-theorem AR.tierLength_collapse [Finite X.obj.V] (i : ι) :
+@[simp] theorem AR.tierLength_collapse [Finite X.obj.V] (i : ι) :
     (X.collapse m).tierLength i = (X.collapsedWord m i).length := by
   rw [← AR.length_tierWord, AR.tierWord_collapse]
 
@@ -388,7 +404,7 @@ private theorem AR.label_normalize_succ [Finite X.obj.V]
   exact ⟨fun h => eq_of_heq (Sigma.mk.inj_iff.mp h).2, fun h => congrArg (Sigma.mk m) h⟩
 
 /-- **The OCP bridge**: tier-word cleanliness is Axiom 6 on the normal form —
-    the coordinate OCP and [jardine-2016-diss]'s §4.2 axiom agree. -/
+    the coordinate OCP and [jardine-2016b]'s §4.2 axiom agree. -/
 theorem AR.isCleanAt_iff_isOCPClean [Finite X.obj.V] :
     X.IsCleanAt m ↔
       IsOCPClean (X.normalize).obj.arcs (X.normalize).obj.label Sigma.fst m := by

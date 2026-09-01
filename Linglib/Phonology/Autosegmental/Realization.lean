@@ -26,7 +26,9 @@ arcs and is too coarse to preserve tier words.
 ## Main results
 
 * `AR.cls_normalize`: normal forms represent their class.
-* `AR.tierWord_realize`: tier content of a realization is compositional.
+* `AR.tierWord_realize`, `AR.link_realize`: tier content and links of a realization are
+  compositional — each link lives inside one symbol's primitive at that symbol's tier
+  offsets (`AR.tierOffset`).
 -/
 
 namespace Autosegmental
@@ -94,17 +96,79 @@ theorem tierWord_realize [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
   | nil => simp
   | cons a w ih => simp [ih]
 
+@[simp] theorem tierLength_realize [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
+    (realize g₀ w).tierLength i = (w.map fun s => (g₀ s).tierLength i).sum := by
+  rw [← length_tierWord, tierWord_realize, List.length_flatten, List.map_map]
+  simp [Function.comp_def]
+
+/-! ### Links of realizations -/
+
+variable [∀ s, Finite (g₀ s).obj.V]
+
+/-- The tier-`i` offset of the `k`-th symbol of `w` in its realization: the tier-`i` content
+of the prefix before it. -/
+noncomputable def tierOffset (i : ι) (w : List S) (k : ℕ) : ℕ :=
+  (realize g₀ (w.take k)).tierLength i
+
+@[simp] theorem tierOffset_zero (i : ι) (w : List S) : tierOffset g₀ i w 0 = 0 := by
+  simp [tierOffset]
+
+@[simp] theorem tierOffset_cons_succ (i : ι) (a : S) (w : List S) (k : ℕ) :
+    tierOffset g₀ i (a :: w) (k + 1) = (g₀ a).tierLength i + tierOffset g₀ i w k := by
+  simp [tierOffset, List.take_succ_cons]
+
+/-- Links of a realization are blockwise: a link lives inside one symbol's primitive, at
+that symbol's tier offsets — the link half of `tierWord_realize`. -/
+theorem link_realize (i j : ι) (w : List S) (p q : ℕ) :
+    (realize g₀ w).link i j p q ↔
+      ∃ k, ∃ hk : k < w.length, tierOffset g₀ i w k ≤ p ∧ tierOffset g₀ j w k ≤ q ∧
+        (g₀ w[k]).link i j (p - tierOffset g₀ i w k) (q - tierOffset g₀ j w k) := by
+  induction w generalizing p q with
+  | nil => simp
+  | cons a w ih =>
+    rw [show (realize g₀ (a :: w)).link i j p q ↔ (g₀ a ⊗ realize g₀ w).link i j p q from
+      Iff.rfl, link_tensor, ih]
+    constructor
+    · rintro (h | ⟨hp, hq, k, hk, hpk, hqk, h⟩)
+      · exact ⟨0, by simp, by simp, by simp, by simpa using h⟩
+      · exact ⟨k + 1, by simpa using hk, by simp; omega, by simp; omega,
+          by simpa [Nat.sub_sub] using h⟩
+    · rintro ⟨_ | k, hk, hpk, hqk, h⟩
+      · exact Or.inl (by simpa using h)
+      · simp only [tierOffset_cons_succ, List.getElem_cons_succ] at hpk hqk h
+        exact Or.inr ⟨by omega, by omega, k, by simpa using hk, by omega, by omega,
+          by simpa [Nat.sub_sub] using h⟩
+
+/-- With one tier-`j` position per symbol, tier-`j` positions of the realization are the
+string's positions: a link at position `q` is a link inside the `q`-th symbol's primitive. -/
+theorem link_realize_of_tierLength_eq_one {j : ι} (hj : ∀ s, (g₀ s).tierLength j = 1)
+    (i : ι) (w : List S) (p q : ℕ) :
+    (realize g₀ w).link i j p q ↔
+      ∃ hq : q < w.length, tierOffset g₀ i w q ≤ p ∧
+        (g₀ w[q]).link i j (p - tierOffset g₀ i w q) 0 := by
+  have hoff : ∀ k ≤ w.length, tierOffset g₀ j w k = k := fun k hk => by
+    simp [tierOffset, hj, hk]
+  rw [link_realize]
+  constructor
+  · rintro ⟨k, hk, hpk, hqk, h⟩
+    rw [hoff k hk.le] at hqk h
+    obtain ⟨-, hlt, -⟩ := id h
+    rw [hj] at hlt
+    obtain rfl : k = q := by omega
+    exact ⟨hk, hpk, by simpa using h⟩
+  · rintro ⟨hq, hpq, h⟩
+    exact ⟨q, hq, hpq, by rw [hoff q hq.le], by simpa [hoff q hq.le] using h⟩
+
 /-- The tier-`i` projection of a realization, as a free-monoid homomorphism:
     each symbol contributes its primitive's tier word. -/
-noncomputable def tierProj [∀ s, Finite (g₀ s).obj.V] (i : ι) :
-    FreeMonoid S →* FreeMonoid (τ i) :=
+noncomputable def tierProj (i : ι) : FreeMonoid S →* FreeMonoid (τ i) :=
   FreeMonoid.lift fun s => FreeMonoid.ofList ((g₀ s).tierWord i)
 
-@[simp] theorem tierProj_of [∀ s, Finite (g₀ s).obj.V] (i : ι) (a : S) :
+@[simp] theorem tierProj_of (i : ι) (a : S) :
     tierProj g₀ i (FreeMonoid.of a) = FreeMonoid.ofList ((g₀ a).tierWord i) := rfl
 
 /-- `tierProj` packages `tierWord`: on a word it is the realized tier word. -/
-theorem tierProj_ofList [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
+theorem tierProj_ofList (i : ι) (w : List S) :
     tierProj g₀ i (FreeMonoid.ofList w) = FreeMonoid.ofList ((realize g₀ w).tierWord i) := by
   induction w with
   | nil => simp

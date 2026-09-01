@@ -11,7 +11,7 @@ import Linglib.Phonology.Autosegmental.Graph
 /-!
 # Autosegmental representations: the §4.2 axioms and their category
 
-The well-formedness axioms of [jardine-2016-diss] §4.2, each stated on exactly the
+The well-formedness axioms of [jardine-2016b] §4.2, each stated on exactly the
 components it reads (`Digraph` arcs, `SimpleGraph` edges, a coloring `c : V → ι`) and
 read on a labeled mixed graph at the tier coloring `X.tier t`. `AR t` is the full
 subcategory of `Graph S` they carve out, monoidal under `Graph.concat`.
@@ -19,7 +19,7 @@ subcategory of `Graph S` they carve out, monoidal under `Graph.concat`.
 ## Main definitions
 
 * `IsTierOrdered`, `NoInternalAssoc`, `IsSaturated`, `IsPlanar`, `IsOCPClean`: the six
-  well-formedness axioms of [jardine-2016-diss] §4.2.
+  well-formedness axioms of [jardine-2016b] §4.2.
 * `AR t`: the category of autosegmental representations — the full subcategory on
   Axioms 1–3, monoidal under `concat`.
 
@@ -138,7 +138,7 @@ end Graph
 open CategoryTheory
 
 /-- The category of autosegmental representations over a tier assignment, given by the
-    full subcategory on Axioms 1–3 of [jardine-2016-diss] §4.2. These are the formal
+    full subcategory on Axioms 1–3 of [jardine-2016b] §4.2. These are the formal
     literature's ARs ([jardine-2019], [chandlee-jardine-2019]). -/
 abbrev AR (t : S → ι) :=
   ObjectProperty.FullSubcategory

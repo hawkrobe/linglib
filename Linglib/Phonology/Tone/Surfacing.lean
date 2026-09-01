@@ -10,7 +10,7 @@ import Linglib.Phonology.Subregular.Dependence
 /-!
 # Tonal surfacing processes
 
-A **surfacing process** bundles the analysis [jardine-2016] gives tone-string maps: a
+A **surfacing process** bundles the analysis [jardine-2016a] gives tone-string maps: a
 marked tone value, and a context predicate `Surfaces w i` saying position `i` of `w`
 surfaces with it. The induced rewrite `Surfacing.map` writes the marked tone exactly at
 the surfacing positions and the default elsewhere; `Surfacing.support` is the surfacing

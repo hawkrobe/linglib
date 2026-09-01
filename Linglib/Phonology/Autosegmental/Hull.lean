@@ -52,6 +52,9 @@ instance : Finite (X.hull m).obj.V :=
     (X.hull m).tierWord i = X.tierWord i :=
   AR.tierWord_ofData i
 
+@[simp] theorem AR.tierLength_hull (i : ι) : (X.hull m).tierLength i = X.tierLength i := by
+  rw [← AR.length_tierWord, AR.tierWord_hull, AR.length_tierWord]
+
 /-- Hull membership at the melody tier: `q` lies between two of `p`'s links. -/
 theorem AR.link_hull_left {j : ι} (hj : m ≠ j) {p q : ℕ}
     (hq : q < X.tierLength j) :

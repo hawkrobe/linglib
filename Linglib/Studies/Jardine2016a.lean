@@ -16,7 +16,7 @@ import Linglib.Phonology.Tone.Plateauing
 /-!
 # Jardine (2016): Computationally, tone is different
 
-[jardine-2016] (Phonology 33) characterises a typological asymmetry computationally:
+[jardine-2016a] (Phonology 33) characterises a typological asymmetry computationally:
 *unbounded circumambient* processes — application depends on unboundedly distant material
 on both sides of the target — are common in tone but rare in segmental phonology, and
 they are exactly the attested maps exceeding weak determinism. The flagship witness is
@@ -31,30 +31,25 @@ The map itself and its plateau/circumambience API live in `Phonology/Tone/Platea
 ## Main definitions
 
 * `markLeft`, `resolve` — the (43) two-pass decomposition over the `?`-enlarged alphabet.
-* `toAR` — the (40) translation into autosegmental representations.
 
 ## Main results
 
 * `utp_not_isSubsequential` — the central theorem (§4.2, online appendix): no
   deterministic FST computes UTP in either direction, via
-  `IsLeftSubsequential.bounded_delay` and the reversal symmetry `utp.map_reverse`.
+  `not_isLeftSubsequential_of_diverging` and the reversal symmetry `utp.map_reverse`.
 * `utp_not_weaklyDeterministic` — §5.2, via `RequiresBothSides`: no union of
   one-sided rules expresses UTP's conjunctive trigger.
 * `utp_markup_decomposition` — (43): with the mark `?`, UTP is right-subsequential after
   left-subsequential; weak determinism forbids exactly this enlargement.
 * `utp_isBimachineComputable` — §4.2: UTP is regular, the (43) decomposition read through
   Elgot–Mezei composition.
-* `readTBU_linearize_realize` — §4.4: the TBU string is the linearization of the realized
-  AR ((37a)), so string look-ahead is timing-tier look-ahead.
-* `links_realizeMerged_utp`, `upper_realizeMerged_utp` — the OCP-merged realization of
-  the UTP output is a single H multiply linked to the `plateau`
-  ([hyman-katamba-2010] (7)).
+* `link_realizeMerged_map` — the OCP-merged realization of the UTP output is a single H
+  linked exactly to the surfacing positions ([hyman-katamba-2010] (7)).
 * `utp_fullyRegular` — §7: UTP is regular but neither subsequential nor weakly
   deterministic.
-
 -/
 
-namespace Jardine2016Tone
+namespace Jardine2016a
 
 open Tone.Plateauing
 
@@ -135,7 +130,7 @@ private theorem markLeft_run_H_iff (w : List TBU) (j : ℕ) :
 /-- The (43) decomposition computes UTP. -/
 theorem utp_eq_resolve_mark (w : List TBU) : utp.map w = resolve (markLeft.run w) := by
   have hmark : ∀ i : ℕ, Mark.H ∈ (markLeft.run w).drop (i + 1) ↔ TBU.H ∈ w.drop (i + 1) :=
-    fun i => by simp only [List.mem_drop_iff, markLeft_run_H_iff]
+    fun i => by simp only [List.mem_drop_iff_getElem?, markLeft_run_H_iff]
   refine List.ext_getElem? fun i => ?_
   rw [utp.map_getElem?, resolve, resolveRight, Mealy.getElem?_ofFlag_runRight]
   simp only [List.any_beq', List.contains_eq_mem, decide_eq_decide.mpr (hmark i)]
@@ -189,13 +184,13 @@ fuses to one `H`, linked exactly to the surfacing slots. -/
 /-- (7) in coordinates: the merged output's links are the fused `H` node over
     the surfacing positions. -/
 theorem link_realizeMerged_map {w : List TBU} {k j : ℕ} :
-    ((Autosegmental.AR.realize Tone.Plateauing.toRep (utp.map w)).collapse true).link
+    ((Autosegmental.AR.realize Tone.Plateauing.toAR (utp.map w)).collapse true).link
         true false k j ↔ k = 0 ∧ utp.Surfaces w j := by
   rw [Tone.Plateauing.link_realizeMerged, utp.map_getElem?_H_iff]
 
 /-- (7) concretely: `HØØH` fuses to one H linked to all four TBUs. -/
 example : ∀ j < 4,
-    ((Autosegmental.AR.realize Tone.Plateauing.toRep
+    ((Autosegmental.AR.realize Tone.Plateauing.toAR
       (utp.map [.H, .O, .O, .H])).collapse true).link true false 0 j := by
   intro j hj
   rw [link_realizeMerged_map]
@@ -216,4 +211,4 @@ theorem utp_fullyRegular :
       ∧ ¬ IsNonInteractingBimachineComputable utp.map :=
   ⟨utp_isBimachineComputable, utp_not_isSubsequential, utp_not_weaklyDeterministic⟩
 
-end Jardine2016Tone
+end Jardine2016a
