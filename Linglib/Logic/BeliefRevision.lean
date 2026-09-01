@@ -1,5 +1,5 @@
 import Linglib.Core.Order.Plausibility
-import Linglib.Logic.ComparativeProbability.Conditional
+import Linglib.Core.Order.Probability.Conditional
 import Linglib.Logic.RankingFunction
 import Mathlib.Data.Set.Basic
 

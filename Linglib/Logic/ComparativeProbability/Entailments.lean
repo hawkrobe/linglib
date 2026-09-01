@@ -1,5 +1,5 @@
 import Linglib.Logic.ComparativeProbability.Patterns
-import Linglib.Logic.ComparativeProbability.Systems
+import Linglib.Core.Order.Domination
 import Mathlib.Data.Set.Card
 
 /-!
@@ -533,7 +533,7 @@ transitive (`matchingLift_trans`) and complement-reversing
 `IsTrans`/`IsComplementReversing` instances. The injection extension `≿ⁱ`
 (= `matchingLift`) is moreover the genuine generalized-finite-cancellation order
 of [harrison-trainor-holliday-icard-2018]
-(`HarrisonTrainorHollidayIcard2016.GFCOrder`). -/
+(`ComparativeProbability.CancellationOrder`). -/
 
 /-- The m-lift's transitivity, packaged for the abstract pattern layer. -/
 theorem matchingLift_isTrans {W : Type*} [Finite W] (ge_w : W → W → Prop)

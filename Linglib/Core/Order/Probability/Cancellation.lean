@@ -1,49 +1,41 @@
-import Linglib.Logic.ComparativeProbability.Systems
+import Linglib.Core.Order.Probability.Representability
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
-# [harrison-trainor-holliday-icard-2016]: Cancellation axioms for comparative probability
+# Cancellation conditions
 
-The cancellation theory of precise and imprecise (multi-prior) comparative
-probability, as assembled by [harrison-trainor-holliday-icard-2016]: a pair of
-event-sequences is *balanced* when every state lies in equally many events on
-each side; **Finite Cancellation** ([scott-1964]'s reformulation of
-[kraft-pratt-seidenberg-1959]) and its **Generalized** strengthening
-([rios-insua-1992]; [alon-lehrer-2014]) are the cancellation axioms whose
-`Reflexivity + Positivity + Non-triviality` companions characterize, on a
-finite state space, representability by a single additive probability measure,
-resp. by a nonempty *set* of such measures.
+Scott's cancellation vocabulary for comparative probability, in the
+balanced-sequence form of [scott-1964] and [harrison-trainor-holliday-icard-2016]:
+a pair of event-sequences is *balanced* when every state lies in equally many
+events on each side; **finite cancellation** (representability by a single
+additive measure, [scott-1964] reformulating [kraft-pratt-seidenberg-1959])
+and its **generalized** strengthening (representability by a nonempty set of
+measures, [rios-insua-1992]; [alon-lehrer-2014]).
 
-The note's own result — GFC is strictly stronger than FC for incomplete
-relations (its Propositions 1 and 2) — is not yet formalized. This file states
-the axioms, derives the properties cancellation makes redundant (transitivity,
-monotonicity, and complement reversal follow from the four GFC-order axioms),
-and proves the soundness direction of the representation: a finitely additive
-measure's induced order is a GFC order.
+`Scott.lean` proves Scott's theorem through an equivalent weighted-portfolio
+device; the bridge from that device to the balanced-sequence statement is
+`TODO`. What is here: the definitions, the derived properties of a cancellation
+order, and the soundness directions — measures induce cancellation orders, and
+representable qualitative probability orders satisfy finite cancellation.
 
 ## Main definitions
 
-* `Balanced`, `FiniteCancellation`, `GeneralizedFiniteCancellation` — the
-  cancellation axioms.
-* `GFCOrder` — reflexivity, positivity, non-triviality, and generalized finite
-  cancellation, bundled.
+* `BalancedSeqs`, `FiniteCancellation`, `GeneralizedFiniteCancellation`.
+* `CancellationOrder` — reflexivity, positivity, non-triviality, and generalized
+  finite cancellation, bundled; totality not assumed.
 
 ## Main statements
 
-* `FiniteCancellation.of_generalized` — GFC implies FC.
-* `GFCOrder.trans`/`mono`/`complRev` — derived from cancellation, not
-  stipulated.
-* `GFCOrder.ofMeasure` — a finitely additive measure induces a GFC order.
+* `FiniteCancellation.of_generalized`; `CancellationOrder.trans`/`mono`/`complRev`.
+* `CancellationOrder.ofMeasure`, `Representable.finiteCancellation`.
 
 ## References
 
-[harrison-trainor-holliday-icard-2016], [scott-1964],
-[kraft-pratt-seidenberg-1959], [rios-insua-1992], [alon-lehrer-2014]
+[scott-1964], [kraft-pratt-seidenberg-1959], [rios-insua-1992],
+[alon-lehrer-2014], [harrison-trainor-holliday-icard-2016]
 -/
 
-namespace HarrisonTrainorHollidayIcard2016
-
-open ComparativeProbability
+namespace ComparativeProbability
 
 variable {W : Type*}
 
@@ -54,7 +46,7 @@ noncomputable def seqCount (s : W) (Es : List (Set W)) : ℕ :=
 
 /-- A **balanced** pair of event-sequences: every state lies in equally many
     events on the left as on the right. -/
-def Balanced (Es Fs : List (Set W)) : Prop := ∀ s : W, seqCount s Es = seqCount s Fs
+def BalancedSeqs (Es Fs : List (Set W)) : Prop := ∀ s : W, seqCount s Es = seqCount s Fs
 
 /-- **Finite Cancellation** ([scott-1964]'s axiom, reformulating
     [kraft-pratt-seidenberg-1959]): for every balanced pair `⟨…, X⟩` / `⟨…, Y⟩`
@@ -62,16 +54,16 @@ def Balanced (Es Fs : List (Set W)) : Prop := ∀ s : W, seqCount s Es = seqCoun
     premise events; `X`/`Y` are the heads.) -/
 def FiniteCancellation (ge : Set W → Set W → Prop) : Prop :=
   ∀ (prem : List (Set W × Set W)) (X Y : Set W),
-    Balanced (X :: prem.map Prod.fst) (Y :: prem.map Prod.snd) →
+    BalancedSeqs (X :: prem.map Prod.fst) (Y :: prem.map Prod.snd) →
     (∀ p ∈ prem, ge p.1 p.2) → ge Y X
 
 /-- **Generalized Finite Cancellation** ([rios-insua-1992]; [alon-lehrer-2014]):
     like `FiniteCancellation`, but the distinguished pair may be repeated
     `r ≥ 1` times. Strictly stronger than `FiniteCancellation` for incomplete
-    relations (the note's Propositions 1 and 2); equivalent under totality. -/
+    relations ([harrison-trainor-holliday-icard-2016]); equivalent under totality. -/
 def GeneralizedFiniteCancellation (ge : Set W → Set W → Prop) : Prop :=
   ∀ (prem : List (Set W × Set W)) (X Y : Set W) (r : ℕ), 1 ≤ r →
-    Balanced (List.replicate r X ++ prem.map Prod.fst)
+    BalancedSeqs (List.replicate r X ++ prem.map Prod.fst)
              (List.replicate r Y ++ prem.map Prod.snd) →
     (∀ p ∈ prem, ge p.1 p.2) → ge Y X
 
@@ -80,13 +72,14 @@ theorem FiniteCancellation.of_generalized {ge : Set W → Set W → Prop}
     (h : GeneralizedFiniteCancellation ge) : FiniteCancellation ge :=
   fun prem X Y hbal hprem => h prem X Y 1 le_rfl (by simpa [List.replicate_one] using hbal) hprem
 
-/-- A **GFC order**: reflexivity, positivity, non-triviality, and generalized
-    finite cancellation. On a finite state space these four axioms characterize
-    representability by a nonempty set of additive probability measures
-    (`E ≿ F ↔ ∀ μ ∈ P, μ E ≥ μ F`; [rios-insua-1992], [alon-lehrer-2014]).
+/-- A **cancellation order**: reflexivity, positivity, non-triviality, and
+    generalized finite cancellation — the comparative probability orders of
+    [rios-insua-1992] and [alon-lehrer-2014], which on a finite state space are
+    exactly those represented by a nonempty *set* of additive probability
+    measures (`E ≿ F ↔ ∀ μ ∈ P, μ E ≥ μ F`). Totality is not assumed.
     Transitivity, monotonicity, and complement reversal are *derived* from
-    cancellation (`GFCOrder.trans`/`mono`/`complRev`), not stipulated. -/
-structure GFCOrder (W : Type*) where
+    cancellation (`CancellationOrder.trans`/`mono`/`complRev`), not stipulated. -/
+structure CancellationOrder (W : Type*) where
   /-- The "at least as likely as" relation on propositions. -/
   ge : Set W → Set W → Prop
   /-- Reflexivity. -/
@@ -100,13 +93,13 @@ structure GFCOrder (W : Type*) where
 
 section
 
-variable (G : GFCOrder W)
+variable (G : CancellationOrder W)
 
 /-- A GFC order satisfies finite cancellation. -/
-theorem GFCOrder.fc : FiniteCancellation G.ge := FiniteCancellation.of_generalized G.gfc
+theorem CancellationOrder.fc : FiniteCancellation G.ge := FiniteCancellation.of_generalized G.gfc
 
 /-- Transitivity is derived from cancellation (balanced sequence `⟨A,B,C⟩`/`⟨B,C,A⟩`). -/
-theorem GFCOrder.trans {A B C : Set W} (hAB : G.ge A B) (hBC : G.ge B C) : G.ge A C := by
+theorem CancellationOrder.trans {A B C : Set W} (hAB : G.ge A B) (hBC : G.ge B C) : G.ge A C := by
   refine G.fc [(A, B), (B, C)] C A (fun s => ?_) (fun p hp => ?_)
   · simp only [seqCount, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]; omega
   · simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
@@ -116,7 +109,7 @@ theorem GFCOrder.trans {A B C : Set W} (hAB : G.ge A B) (hBC : G.ge B C) : G.ge 
 
 /-- Monotonicity is derived from positivity + cancellation
     (balanced sequence `⟨B∖A, A⟩`/`⟨∅, B⟩`). -/
-theorem GFCOrder.mono {A B : Set W} (hAB : A ⊆ B) : G.ge B A := by
+theorem CancellationOrder.mono {A B : Set W} (hAB : A ⊆ B) : G.ge B A := by
   refine G.fc [(B \ A, ∅)] A B (fun s => ?_) (fun p hp => ?_)
   · simp only [seqCount, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
       Set.mem_empty_iff_false, if_false, Set.mem_sdiff]
@@ -129,7 +122,7 @@ theorem GFCOrder.mono {A B : Set W} (hAB : A ⊆ B) : G.ge B A := by
 
 /-- Complement reversal is derived from cancellation
     (balanced sequence `⟨A, Aᶜ⟩`/`⟨B, Bᶜ⟩`). -/
-theorem GFCOrder.complRev {A B : Set W} (hAB : G.ge A B) : G.ge Bᶜ Aᶜ := by
+theorem CancellationOrder.complRev {A B : Set W} (hAB : G.ge A B) : G.ge Bᶜ Aᶜ := by
   refine G.fc [(A, B)] Aᶜ Bᶜ (fun s => ?_) (fun p hp => ?_)
   · simp only [seqCount, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
       Set.mem_compl_iff]
@@ -172,7 +165,7 @@ private lemma mu_listSum (L : List (Set W)) :
     · simp only [hs, if_true]; rw [mul_add, mul_one]
     · simp [hs]
 
-private lemma mu_listSum_eq_of_balanced {L₁ L₂ : List (Set W)} (h : Balanced L₁ L₂) :
+private lemma mu_listSum_eq_of_balanced {L₁ L₂ : List (Set W)} (h : BalancedSeqs L₁ L₂) :
     (L₁.map m).sum = (L₂.map m).sum := by
   rw [mu_listSum m L₁, mu_listSum m L₂]
   exact Finset.sum_congr rfl (fun s _ => by rw [h s])
@@ -188,10 +181,10 @@ private lemma mu_sum_mono {prem : List (Set W × Set W)}
     exact add_le_add (hprem p (List.mem_cons_self ..))
       (ih (fun q hq => hprem q (List.mem_cons_of_mem _ hq)))
 
-/-- Every finitely additive measure's induced order is a GFC order — the
-    soundness direction of the representation (a single measure `μ` is the
+/-- Every finitely additive measure's induced order is a cancellation order —
+    the soundness direction of the representation (a single measure `μ` is the
     nonempty set `{μ}`). -/
-def GFCOrder.ofMeasure : GFCOrder W where
+def CancellationOrder.ofMeasure : CancellationOrder W where
   ge := m.inducedGe
   refl := fun _ => le_refl _
   positivity := fun A => by
@@ -210,4 +203,14 @@ def GFCOrder.ofMeasure : GFCOrder W where
 
 end
 
-end HarrisonTrainorHollidayIcard2016
+
+/-- A representable qualitative probability order satisfies finite cancellation
+    (the soundness half of Scott's theorem, in balanced-sequence form). -/
+theorem Representable.finiteCancellation [Fintype W] {sys : QualitativeProbability (Set W)}
+    (h : Representable sys) : FiniteCancellation sys.ge := by
+  obtain ⟨m, hm⟩ := h
+  have hfc := (CancellationOrder.ofMeasure m).fc
+  intro prem X Y hbal hprem
+  exact (hm X Y).mpr (hfc prem X Y hbal fun p hp => (hm p.2 p.1).mp (hprem p hp))
+
+end ComparativeProbability

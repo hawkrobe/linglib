@@ -1,12 +1,10 @@
 import Linglib.Core.Order.FourierMotzkin
-import Linglib.Logic.ComparativeProbability.Representability
+import Linglib.Core.Order.Probability.Representability
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
-# Scott cancellation for comparative probability
-
-[kraft-pratt-seidenberg-1959]
+# Scott's theorem: cancellation and representability
 
 Scott's cancellation framework for representability of comparative probability orderings
 by finitely additive measures. A comparative probability ordering ≿ is representable
@@ -24,8 +22,11 @@ with a strict member.
 * `representable_implies_cancellation` — easy direction: measure existence → cancellation
 * `cancellation_implies_representable` — hard direction: cancellation → measure existence
   (via `feasibleWeights`, `cancellation_nonempty`, `feasible_to_measure`)
-* `fa_cancellation_fin3` — FA axioms imply cancellation on Fin 3 (in `CancellationFin4.lean`)
-* `fa_cancellation_fin4` — FA axioms imply cancellation on Fin 4 (in `CancellationFin4.lean`)
+* `fa_cancellation_fin3`, `fa_cancellation_fin4` — the axioms imply cancellation on
+  `Fin 3` and `Fin 4` (in `CancellationFin4.lean`)
+
+`[UPSTREAM]` candidate (see the note in `Defs.lean`); the balanced-sequence
+statement of the cancellation condition is in `Cancellation.lean`.
 -/
 
 -- ═══════════════════════════════════════════════════════════════

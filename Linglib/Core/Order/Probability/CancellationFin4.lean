@@ -1,4 +1,4 @@
-import Linglib.Logic.ComparativeProbability.Cancellation
+import Linglib.Core.Order.Probability.Scott
 import Linglib.Core.Order.Caratheodory
 import Linglib.Core.Order.SignVectors
 import Mathlib.Data.List.Perm.Basic
@@ -7,9 +7,9 @@ import Mathlib.Tactic.FinCases
 
 /-! # Cancellation for `Fin 4`: the structural merge-reduction proof
 
-Every finitely additive epistemic-comparison system on four worlds satisfies
-Scott cancellation, hence is representable by a finitely additive measure
-([holliday-icard-2013] Theorem 8).
+Every qualitative probability order on four atoms satisfies Scott cancellation,
+hence is representable by a finitely additive measure
+([kraft-pratt-seidenberg-1959]).
 
 ## Main declarations
 

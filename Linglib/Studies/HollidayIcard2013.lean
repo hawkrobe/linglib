@@ -1,5 +1,5 @@
 import Linglib.Logic.ComparativeProbability.Entailments
-import Linglib.Logic.ComparativeProbability.Completeness
+import Linglib.Core.Order.Probability.Completeness
 
 /-!
 # Holliday & Icard (2013): Measure semantics for epistemic comparatives
