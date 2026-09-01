@@ -15,7 +15,8 @@ qualitatively-additive measure semantics, and the two world-ordering lifts.
 
 * `RightUnion`, `DeterminedBySingletons` — the two likelihood axioms with no
   mathlib/`Defs` analog (the rest are the `Defs.lean` mixins).
-* `QualitativeProbability` — the bundled qualitative probability order,
+* `QualitativeProbability` — the bundled qualitative probability order on a
+  Boolean algebra (`le`-primitive; `ge` is the paper-facing `≿`), on `Set W`
   [holliday-icard-2013]'s logic FA.
 * `FinAddMeasure`/`QualAddMeasure` — finitely- and qualitatively-additive
   probability measures over an ordered field, with their induced orders.
@@ -31,10 +32,13 @@ qualitatively-additive measure semantics, and the two world-ordering lifts.
 
 ## Implementation notes
 
-Reflexivity and `Ω ≿ ∅` are consequences of monotonicity, not fields
-(`QualitativeProbability.refl`/`univ_ge_empty`). Sub-FA hypotheses (the
-completeness theorems for weaker logics) are stated on a bare relation with
-explicit monotonicity/transitivity hypotheses, not on a weaker bundle.
+The order is stored as `le` and stated in `≤`-vocabulary, mathlib's
+convention; the literature's `≿` is the derived `ge`, and it is `ge` that
+carries the pattern-layer mixin instances (the `Defs.lean` classes are
+`≿`-calibrated, as are the papers). Reflexivity and `⊥ ≼ a` are consequences
+of monotonicity, not fields. Sub-FA hypotheses (the completeness theorems for
+weaker logics) are stated on a bare relation with explicit
+monotonicity/transitivity hypotheses, not on a weaker bundle.
 
 The measures are generic over an ordered field `K`: `ℝ` gives the paper's literal
 `[0,1]`-valued measures, `ℚ` the computable theory. On a finite state space the
@@ -82,118 +86,111 @@ end Axioms
 
 /-! ### Qualitative probability orders
 
-Fields hold the bare propositions; the matching `Defs.lean` mixin instances
-are below. -/
+The relation is stored as `le` (`a ≼ b`: `a` is at most as likely as `b`),
+mathlib's convention; the paper-facing converse `≿` is `ge`, mathlib's `GE.ge`
+pattern, and it is `ge` that carries the `Defs.lean` mixin instances. -/
 
-/-- A **qualitative probability** order on `Set W`: total, transitive, monotone,
-non-trivial, and qualitatively additive — the standard base system for
-comparative probability since de Finetti, and [holliday-icard-2013]'s logic FA.
-Sound and complete for qualitatively additive measure semantics (Theorem 6;
-[van-der-hoek-1996]), and strictly weaker than finite additivity for `|W| ≥ 5`
-(Theorem 8, after [kraft-pratt-seidenberg-1959]). Reflexivity and `Ω ≿ ∅` are
-consequences of monotonicity (`refl`, `univ_ge_empty`), not fields. -/
-structure QualitativeProbability (W : Type*) where
-  /-- The "at least as likely as" relation on propositions. -/
-  ge : Set W → Set W → Prop
-  /-- Monotonicity: supersets are at least as likely. Use the lemma `mono`. -/
-  mono' : ∀ A B : Set W, A ⊆ B → ge B A
-  /-- Non-triviality: excludes the degenerate all-equivalent order. -/
-  nonTrivial : ¬ ge ∅ Set.univ
-  /-- Totality: any two propositions are comparable. -/
-  total : ∀ A B : Set W, ge A B ∨ ge B A
+/-- A **qualitative probability** order on a Boolean algebra `α`: total,
+transitive, monotone, non-trivial, and qualitatively additive — the standard
+base system for comparative probability since de Finetti, and, on `Set W`,
+[holliday-icard-2013]'s logic FA. Sound and complete for qualitatively additive
+measure semantics (Theorem 6; [van-der-hoek-1996]), and strictly weaker than
+finite additivity for `|W| ≥ 5` (Theorem 8, after [kraft-pratt-seidenberg-1959]).
+Reflexivity and `⊥ ≼ a` are consequences of monotonicity (`refl`, `bot_le`), not
+fields. -/
+structure QualitativeProbability (α : Type*) [BooleanAlgebra α] where
+  /-- The "at most as likely as" relation. -/
+  le : α → α → Prop
+  /-- Monotonicity: `a ≤ b → a ≼ b`. Use the lemma `mono`. -/
+  mono' : ∀ a b : α, a ≤ b → le a b
+  /-- Non-triviality: `⊤` is not at most as likely as `⊥`. -/
+  nonTrivial : ¬ le ⊤ ⊥
+  /-- Totality: any two elements are comparable. -/
+  total : ∀ a b : α, le a b ∨ le b a
   /-- Transitivity. Use the lemma `trans`. -/
-  trans' : ∀ A B C : Set W, ge A B → ge B C → ge A C
-  /-- Qualitative additivity: `A ≿ B ↔ (A \ B) ≿ (B \ A)`. -/
-  additive : ∀ A B : Set W, ge A B ↔ ge (A \ B) (B \ A)
+  trans' : ∀ a b c : α, le a b → le b c → le a c
+  /-- Qualitative additivity: `a ≼ b ↔ a \ b ≼ b \ a`. -/
+  additive : ∀ a b : α, le a b ↔ le (a \ b) (b \ a)
 
 namespace QualitativeProbability
 
-variable {W : Type*} (sys : QualitativeProbability W)
+variable {α : Type*} [BooleanAlgebra α] (sys : QualitativeProbability α)
 
-/-- Monotonicity: supersets are at least as likely. -/
-theorem mono {A B : Set W} (h : A ⊆ B) : sys.ge B A := sys.mono' A B h
+/-- `sys.ge a b` (`a ≿ b`): `a` is at least as likely as `b` — the converse of
+`le`, mathlib's `GE.ge` pattern. This is the relation the `Defs.lean` mixins,
+the pattern layer, and the paper-facing studies consume. -/
+def ge (a b : α) : Prop := sys.le b a
+
+@[inherit_doc le] scoped notation:50 a:51 " ≼[" sys "] " b:51 => QualitativeProbability.le sys a b
+@[inherit_doc ge] scoped notation:50 a:51 " ≿[" sys "] " b:51 => QualitativeProbability.ge sys a b
+
+@[simp] theorem ge_iff_le {a b : α} : sys.ge a b ↔ sys.le b a := Iff.rfl
+
+/-- Monotonicity. -/
+theorem mono {a b : α} (h : a ≤ b) : sys.le a b := sys.mono' a b h
 
 /-- Transitivity. -/
-theorem trans {A B C : Set W} (hab : sys.ge A B) (hbc : sys.ge B C) : sys.ge A C :=
-  sys.trans' A B C hab hbc
+theorem trans {a b c : α} (hab : sys.le a b) (hbc : sys.le b c) : sys.le a c :=
+  sys.trans' a b c hab hbc
 
 /-- Reflexivity, from monotonicity. -/
-theorem refl (A : Set W) : sys.ge A A := sys.mono subset_rfl
+theorem refl (a : α) : sys.le a a := sys.mono le_rfl
 
-/-- The tautology is at least as likely as the contradiction. -/
-theorem univ_ge_empty : sys.ge Set.univ ∅ := sys.mono (Set.empty_subset _)
+protected theorem bot_le (a : α) : sys.le ⊥ a := sys.mono bot_le
+
+protected theorem le_top (a : α) : sys.le a ⊤ := sys.mono le_top
+
+/-! #### Consequences of the axioms -/
+
+/-- Disjoint common context cancels: `a ⊔ c ≼ b ⊔ c ↔ a ≼ b` for `c` disjoint
+    from both. -/
+theorem sup_le_sup_iff_right {a b c : α} (hca : Disjoint c a) (hcb : Disjoint c b) :
+    sys.le (a ⊔ c) (b ⊔ c) ↔ sys.le a b := by
+  rw [sys.additive a b, sys.additive (a ⊔ c) (b ⊔ c), sup_comm b c, ← sdiff_sdiff_left,
+    sup_sdiff_right_self, sdiff_eq_left.mpr hca.symm, sup_comm a c, ← sdiff_sdiff_left,
+    sup_sdiff_left_self, sdiff_eq_left.mpr hcb.symm]
+
+theorem sup_le_sup_right {a b c : α} (h : sys.le a b) (hca : Disjoint c a)
+    (hcb : Disjoint c b) : sys.le (a ⊔ c) (b ⊔ c) :=
+  (sys.sup_le_sup_iff_right hca hcb).mpr h
+
+/-- Two comparisons with disjoint left parts and disjoint right parts merge
+    into their joins, even with cross overlaps: add context to each side,
+    transit through `b₁ ⊔ a₂`, then restore the pivot `a₂ ⊓ b₁` by additivity. -/
+theorem sup_le_sup {a₁ b₁ a₂ b₂ : α} (h₁ : sys.le a₁ b₁) (h₂ : sys.le a₂ b₂)
+    (ha : Disjoint a₁ a₂) (hb : Disjoint b₁ b₂) : sys.le (a₁ ⊔ a₂) (b₁ ⊔ b₂) := by
+  have e₁ : (a₂ ⊔ a₁ \ b₂) ⊔ a₁ ⊓ b₂ = a₁ ⊔ a₂ := by
+    rw [sup_assoc, sup_comm (a₁ \ b₂), sup_inf_sdiff, sup_comm]
+  have e₂ : (b₁ ⊔ b₂ \ a₁) ⊔ a₁ ⊓ b₂ = b₁ ⊔ b₂ := by
+    rw [sup_assoc, inf_comm a₁, sup_comm (b₂ \ a₁), sup_inf_sdiff]
+  rw [← e₁, ← e₂]
+  refine sys.sup_le_sup_right (sys.trans (b := b₂ ⊔ a₁) ?_ ?_)
+    ((ha.mono_left inf_le_left).sup_right (disjoint_sdiff_self_right.mono_left inf_le_right))
+    ((hb.symm.mono_left inf_le_right).sup_right (disjoint_sdiff_self_right.mono_left inf_le_left))
+  · have h := sys.sup_le_sup_right h₂ (ha.mono_left sdiff_le) disjoint_sdiff_self_left
+    rwa [sup_sdiff_self_right] at h
+  · have h := sys.sup_le_sup_right h₁ disjoint_sdiff_self_left (hb.symm.mono_left sdiff_le)
+    rwa [sup_sdiff_self_right, sup_comm a₁ b₂] at h
 
 end QualitativeProbability
 
-/-! ### FA systems carry the comparative-probability mixins
+/-! ### The mixin instances
 
-An FA system's fields are defeq the `Defs.lean` mixin classes (`a ≤ b` is `a ⊆ b`
-on `Set W`), so the instances below register its relation as a comparative-
-probability order, and the validity patterns V1–V13 transfer from
-`ComparativeProbability.Patterns` by instance resolution. -/
-
-section
-
-variable {W : Type*} (sys : QualitativeProbability W)
-
-instance : ComparativeProbability.IsLikelihoodMono sys.ge := ⟨sys.mono'⟩
-
-instance : IsTrans (Set W) sys.ge := ⟨sys.trans'⟩
-
-instance : ComparativeProbability.IsQualitativeAdditive sys.ge := ⟨sys.additive⟩
-
-instance : ComparativeProbability.IsNontrivial sys.ge := ⟨sys.nonTrivial⟩
-
-end
-
-/-! ### Consequences of the FA axioms -/
+`ge` is defeq the `Defs.lean` mixin classes' relation, so the instances below
+register it as a comparative-probability order, and the validity patterns
+V1–V13 transfer from `ComparativeProbability.Patterns` by instance resolution. -/
 
 section
-variable {W : Type*} (sys : QualitativeProbability W)
 
-/-- **Add common context**: for `C` disjoint from both `X` and `Y`,
-    `X ≿ Y ↔ (X ∪ C) ≿ (Y ∪ C)`. -/
-lemma ge_union_context (X Y C : Set W)
-    (hCX : Disjoint C X := by grind) (hCY : Disjoint C Y := by grind) :
-    sys.ge X Y ↔ sys.ge (X ∪ C) (Y ∪ C) := by
-  rw [sys.additive X Y, sys.additive (X ∪ C) (Y ∪ C)]
-  congr! 1 <;> grind
+variable {α : Type*} [BooleanAlgebra α] (sys : QualitativeProbability α)
 
-/-- Forward form of `ge_union_context`: context `C` disjoint from both sides
-    preserves `≿`. -/
-lemma ge_add_context {X Y C : Set W} (h : sys.ge X Y)
-    (hCX : Disjoint C X := by grind) (hCY : Disjoint C Y := by grind) :
-    sys.ge (X ∪ C) (Y ∪ C) :=
-  (ge_union_context sys X Y C hCX hCY).mp h
+instance : IsLikelihoodMono sys.ge := ⟨sys.mono'⟩
 
-/-- **Generalized merge**: two valid comparisons with disjoint left parts and
-    disjoint right parts merge into their union, even with pivot overlaps.
-    Derivation: add context to each side, transit through `X₂ ∪ Y₁`, then
-    restore the pivot `X₂ ∩ Y₁` via Axiom A. -/
-lemma ge_generalized_merge {X₁ Y₁ X₂ Y₂ : Set W}
-    (h1 : sys.ge X₁ Y₁) (h2 : sys.ge X₂ Y₂)
-    (hX : Disjoint X₁ X₂) (hY : Disjoint Y₁ Y₂) :
-    sys.ge (X₁ ∪ X₂) (Y₁ ∪ Y₂) := by
-  -- split each side around the pivot `X₂ ∩ Y₁`
-  rw [show X₁ ∪ X₂ = (X₁ ∪ (X₂ \ Y₁)) ∪ (X₂ ∩ Y₁) by grind,
-    show Y₁ ∪ Y₂ = (Y₂ ∪ (Y₁ \ X₂)) ∪ (X₂ ∩ Y₁) by grind]
-  -- the pivot is common context; strip it, then transit through `X₂ ∪ Y₁`
-  refine ge_add_context sys ?_
-  refine sys.trans (B := X₂ ∪ Y₁) ?_ ?_
-  · rw [show X₂ ∪ Y₁ = Y₁ ∪ (X₂ \ Y₁) by grind]
-    exact ge_add_context sys h1
-  · rw [show X₂ ∪ Y₁ = X₂ ∪ (Y₁ \ X₂) by grind]
-    exact ge_add_context sys h2
+instance : IsTrans α sys.ge := ⟨fun _ _ _ hab hbc => sys.trans hbc hab⟩
 
-/-- **Mono-domination**: a valid comparison `X ≿ Y` with `X ⊆ P` and `Q ⊆ Y`
-    proves `P ≿ Q`. -/
-lemma ge_mono_dominated {X Y P Q : Set W} (h : sys.ge X Y) (hXP : X ⊆ P) (hQY : Q ⊆ Y) :
-    sys.ge P Q :=
-  sys.trans (sys.mono hXP) (sys.trans h (sys.mono hQY))
+instance : IsQualitativeAdditive sys.ge := ⟨fun a b => sys.additive b a⟩
 
-/-- `P ≿ ∅` always (monotonicity). -/
-lemma ge_empty_target (P : Set W) : sys.ge P ∅ :=
-  sys.mono (Set.empty_subset P)
+instance : IsNontrivial sys.ge := ⟨sys.nonTrivial⟩
 
 end
 
@@ -239,7 +236,9 @@ theorem additive (m : FinAddMeasure K W) {A B : Set W} (h : Disjoint A B) :
 
 @[simp] theorem total (m : FinAddMeasure K W) : m Set.univ = 1 := m.total'
 
-/-- Measure-induced comparative likelihood: A ≿ B ↔ μ(A) ≥ μ(B). -/
+/-- Measure-induced comparative likelihood `A ≿ B ↔ μ(A) ≥ μ(B)` — the
+    paper-facing converse relation (`QualitativeProbability.ge`) that the pattern
+    layer consumes; the order itself is `toQualitativeProbability`. -/
 def inducedGe (m : FinAddMeasure K W) (A B : Set W) : Prop := m A ≥ m B
 
 /-- μ(∅) = 0 for any finitely additive measure.
@@ -263,7 +262,7 @@ theorem mu_compl (m : FinAddMeasure K W) (A : Set W) :
 /-- Qualitative additivity for a finitely additive measure: splitting `A` and `B`
     into the shared part `A ∩ B` and the private parts cancels the shared part. -/
 theorem mu_qadd (m : FinAddMeasure K W) (A B : Set W) :
-    m A ≥ m B ↔ m (A \ B) ≥ m (B \ A) := by
+    m A ≤ m B ↔ m (A \ B) ≤ m (B \ A) := by
   have key : ∀ X Y : Set W, m X = m (X \ Y) + m (X ∩ Y) := fun X Y => by
     conv_lhs => rw [(Set.sdiff_union_inter X Y).symm]
     exact m.additive (Set.disjoint_left.mpr fun _ hx hy => hx.2 hy.2)
@@ -335,7 +334,7 @@ structure QualAddMeasure (K : Type*) [Field K] [LinearOrder K] [IsStrictOrderedR
   /-- Normalization. Use the lemma `total`. -/
   total' : toFun Set.univ = 1
   /-- Qualitative additivity. Use the lemma `qualAdd`. -/
-  qualAdd' : ∀ A B, toFun A ≥ toFun B ↔ toFun (A \ B) ≥ toFun (B \ A)
+  qualAdd' : ∀ A B, toFun A ≤ toFun B ↔ toFun (A \ B) ≤ toFun (B \ A)
 
 namespace QualAddMeasure
 
@@ -354,29 +353,28 @@ theorem nonneg (m : QualAddMeasure K W) (A : Set W) : 0 ≤ m A := m.nonneg' A
 
 @[simp] theorem total (m : QualAddMeasure K W) : m Set.univ = 1 := m.total'
 
-/-- Qualitative additivity: `μ(A) ≥ μ(B) ↔ μ(A ∖ B) ≥ μ(B ∖ A)`. -/
+/-- Qualitative additivity: `μ(A) ≤ μ(B) ↔ μ(A ∖ B) ≤ μ(B ∖ A)`. -/
 theorem qualAdd (m : QualAddMeasure K W) (A B : Set W) :
-    m A ≥ m B ↔ m (A \ B) ≥ m (B \ A) := m.qualAdd' A B
+    m A ≤ m B ↔ m (A \ B) ≤ m (B \ A) := m.qualAdd' A B
 
-/-- Measure-induced comparative likelihood: A ≿ B ↔ μ(A) ≥ μ(B). -/
+/-- Measure-induced comparative likelihood `A ≿ B ↔ μ(A) ≥ μ(B)` (the
+    paper-facing converse; see `FinAddMeasure.inducedGe`). -/
 def inducedGe (m : QualAddMeasure K W) (A B : Set W) : Prop := m A ≥ m B
 
 /-- Subset monotonicity: `A ⊆ B → μ(A) ≤ μ(B)`. From qualAdd + μ(∅) = 0 + nonneg. -/
 theorem mu_mono (m : QualAddMeasure K W) {A B : Set W} (h : A ⊆ B) :
     m A ≤ m B := by
-  show m B ≥ m A
-  rw [m.qualAdd B A, Set.sdiff_eq_empty.mpr h, m.mu_empty]; exact m.nonneg (B \ A)
+  rw [m.qualAdd A B, Set.sdiff_eq_empty.mpr h, m.mu_empty]; exact m.nonneg (B \ A)
 
-/-- A qualitatively additive measure induces System FA.
-    Soundness direction of [holliday-icard-2013] Theorem 6:
-    every qualitatively additive measure model satisfies the FA axioms. -/
+/-- A qualitatively additive measure induces a qualitative probability order —
+    the soundness direction of [holliday-icard-2013] Theorem 6. -/
 def toQualitativeProbability (m : QualAddMeasure K W) :
-    QualitativeProbability W where
-  ge := m.inducedGe
+    QualitativeProbability (Set W) where
+  le A B := m A ≤ m B
   mono' := fun _ _ h => m.mu_mono h
-  nonTrivial := by simp only [inducedGe, m.mu_empty, m.total, not_le]; exact one_pos
-  total := fun A B => le_total (m B) (m A)
-  trans' := fun _ _ _ hab hbc => le_trans hbc hab
+  nonTrivial := by simp
+  total := fun A B => le_total (m A) (m B)
+  trans' := fun _ _ _ hab hbc => le_trans hab hbc
   additive := m.qualAdd
 
 end QualAddMeasure
@@ -398,7 +396,8 @@ def FinAddMeasure.toQualAdd (m : FinAddMeasure K W) : QualAddMeasure K W where
 /-- Every finitely additive measure satisfies the FA axioms, through
     `toQualAdd`. A fortiori from [holliday-icard-2013] Theorem 6 soundness,
     since every finitely additive measure is qualitatively additive. -/
-def FinAddMeasure.toQualitativeProbability (m : FinAddMeasure K W) : QualitativeProbability W :=
+def FinAddMeasure.toQualitativeProbability (m : FinAddMeasure K W) :
+    QualitativeProbability (Set W) :=
   m.toQualAdd.toQualitativeProbability
 
 end
@@ -469,10 +468,11 @@ variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type
 instance : ComparativeProbability.IsLikelihoodMono m.inducedGe :=
   ⟨m.toQualitativeProbability.mono'⟩
 
-instance : IsTrans (Set W) m.inducedGe := ⟨m.toQualitativeProbability.trans'⟩
+instance : IsTrans (Set W) m.inducedGe :=
+  ⟨fun _ _ _ hab hbc => m.toQualitativeProbability.trans hbc hab⟩
 
 instance : ComparativeProbability.IsQualitativeAdditive m.inducedGe :=
-  ⟨m.toQualitativeProbability.additive⟩
+  ⟨fun A B => m.toQualitativeProbability.additive B A⟩
 
 instance : ComparativeProbability.IsNontrivial m.inducedGe :=
   ⟨m.toQualitativeProbability.nonTrivial⟩

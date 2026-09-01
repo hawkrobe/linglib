@@ -56,23 +56,23 @@ private lemma cmpVec_mergeCmp {n : ℕ} (c d : Finset (Fin n) × Finset (Fin n))
   simp only [cmpVec, mergeCmp, Finset.mem_sdiff, Finset.mem_union]; split_ifs <;> simp_all
 
 /-- `mergeCmp` of two valid comparisons is valid, given the disjointness conditions.
-    Uses `ge_generalized_merge` then Axiom A to reach disjoint normal form. -/
-private lemma mergeCmp_valid {n : ℕ} (sys : QualitativeProbability (Fin n))
+    Uses `QualitativeProbability.sup_le_sup` then Axiom A to reach disjoint normal form. -/
+private lemma mergeCmp_valid {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
     {c d : Finset (Fin n) × Finset (Fin n)}
     (hc : sys.ge ↑c.1 ↑c.2) (hd : sys.ge ↑d.1 ↑d.2)
     (hpos : Disjoint c.1 d.1) (hneg : Disjoint c.2 d.2) :
     sys.ge ↑(mergeCmp c d).1 ↑(mergeCmp c d).2 := by
-  have hmerge : sys.ge (↑c.1 ∪ ↑d.1) (↑c.2 ∪ ↑d.2) :=
-    ge_generalized_merge sys hc hd
-      (by rwa [← Finset.disjoint_coe] at hpos)
+  have hmerge : sys.le (↑c.2 ∪ ↑d.2) (↑c.1 ∪ ↑d.1) :=
+    sys.sup_le_sup hc hd
       (by rwa [← Finset.disjoint_coe] at hneg)
+      (by rwa [← Finset.disjoint_coe] at hpos)
   -- reduce to disjoint form via Axiom A
-  rw [sys.additive (↑c.1 ∪ ↑d.1) (↑c.2 ∪ ↑d.2)] at hmerge
+  rw [sys.additive (↑c.2 ∪ ↑d.2) (↑c.1 ∪ ↑d.1)] at hmerge
   have e1 : (↑c.1 ∪ ↑d.1 : Set (Fin n)) \ (↑c.2 ∪ ↑d.2) = ↑(mergeCmp c d).1 := by
     simp only [mergeCmp, Finset.coe_sdiff, Finset.coe_union]
   have e2 : (↑c.2 ∪ ↑d.2 : Set (Fin n)) \ (↑c.1 ∪ ↑d.1) = ↑(mergeCmp c d).2 := by
     simp only [mergeCmp, Finset.coe_sdiff, Finset.coe_union]
-  rwa [e1, e2] at hmerge
+  rwa [e2, e1] at hmerge
 
 /-- Pointwise integer vector-sum of a list of comparisons. -/
 private def cvSumList {n : ℕ} (L : List (Finset (Fin n) × Finset (Fin n))) (i : Fin n) : ℤ :=
@@ -91,7 +91,7 @@ private lemma cvSumList_perm {n : ℕ} {L L' : List (Finset (Fin n) × Finset (F
     everywhere with a strict negative coordinate, some atom is null (`ge ∅ {i}`).
     Disjointness forces `A ⊆ D` and `C ⊆ B`, giving `ge C A → ge C B → (Axiom A) ge ∅ (B\C)`
     and symmetrically `ge ∅ (D\A)`; the strict coordinate lies in one of them. -/
-private lemma null_from_pair (sys : QualitativeProbability (Fin 4))
+private lemma null_from_pair (sys : QualitativeProbability (Set (Fin 4)))
     {A B C D : Finset (Fin 4)}
     (hAB : sys.ge ↑A ↑B) (hCD : sys.ge ↑C ↑D)
     (hABd : Disjoint A B) (hCDd : Disjoint C D)
@@ -112,27 +112,27 @@ private lemma null_from_pair (sys : QualitativeProbability (Fin 4))
       sub_zero] at this
     split_ifs at this <;> omega
   -- ge C A, ge C B
-  have hCA : sys.ge ↑C ↑A := sys.trans hCD (sys.mono (Finset.coe_subset.mpr hAD))
-  have hCB_ge : sys.ge ↑C ↑B := sys.trans hCA hAB
+  have hCA : sys.ge ↑C ↑A := sys.trans (sys.mono (Finset.coe_subset.mpr hAD)) hCD
+  have hCB_ge : sys.ge ↑C ↑B := sys.trans hAB hCA
   -- Axiom A: ge ∅ (B \ C)
   have hBC : sys.ge (∅ : Set (Fin 4)) ↑(B \ C) := by
-    have hax := (sys.additive ↑C ↑B).mp hCB_ge
+    have hax := (sys.additive ↑B ↑C).mp hCB_ge
     rwa [← Finset.coe_sdiff, ← Finset.coe_sdiff,
       Finset.sdiff_eq_empty_iff_subset.mpr hCB, Finset.coe_empty] at hax
   -- symmetric: ge A D, ge A C, ge A D? -> ge ∅ (D \ A)
-  have hAC : sys.ge ↑A ↑C := sys.trans hAB (sys.mono (Finset.coe_subset.mpr hCB))
+  have hAC : sys.ge ↑A ↑C := sys.trans (sys.mono (Finset.coe_subset.mpr hCB)) hAB
   have hDA : sys.ge (∅ : Set (Fin 4)) ↑(D \ A) := by
-    have hax := (sys.additive ↑A ↑D).mp (sys.trans hAC hCD)
+    have hax := (sys.additive ↑D ↑A).mp (sys.trans hCD hAC)
     rwa [← Finset.coe_sdiff, ← Finset.coe_sdiff,
       Finset.sdiff_eq_empty_iff_subset.mpr hAD, Finset.coe_empty] at hax
   -- strict coordinate i₀ ∈ (B \ C) ∪ (D \ A)
   have hmem : i₀ ∈ B \ C ∨ i₀ ∈ D \ A := by
     simp only [cmpVec, Finset.mem_sdiff] at hlt ⊢; split_ifs at hlt <;> simp_all
   rcases hmem with hm | hm
-  · exact ⟨i₀, sys.trans hBC (sys.mono
-      (by rw [Set.singleton_subset_iff]; exact Finset.mem_coe.mpr hm))⟩
-  · exact ⟨i₀, sys.trans hDA (sys.mono
-      (by rw [Set.singleton_subset_iff]; exact Finset.mem_coe.mpr hm))⟩
+  · exact ⟨i₀, sys.trans (sys.mono
+      (by rw [Set.singleton_subset_iff]; exact Finset.mem_coe.mpr hm)) hBC⟩
+  · exact ⟨i₀, sys.trans (sys.mono
+      (by rw [Set.singleton_subset_iff]; exact Finset.mem_coe.mpr hm)) hDA⟩
 
 /-! ### Bridging comparisons to ℚ sign vectors -/
 
@@ -348,7 +348,7 @@ private lemma v1_tailored
     `(p, q)` with `p = (vpos \ c.1) ∪ (c.2 \ vneg)`, `q = (vneg \ c.2) ∪ (c.1 \ vpos)`
     — is provable (`ge p q`, the IH), then `ge vpos vneg`. Proved by merging `(p,q)`
     with `c` via `mergeCmp_valid`; the disjoint-normal-form is exactly `(vpos, vneg)`. -/
-private lemma recombine (sys : QualitativeProbability (Fin 4))
+private lemma recombine (sys : QualitativeProbability (Set (Fin 4)))
     (vpos vneg : Finset (Fin 4)) (c : Finset (Fin 4) × Finset (Fin 4))
     (hcd : Disjoint c.1 c.2) (hvv : Disjoint vpos vneg)
     (hrc1 : Disjoint vneg c.1) (hrc2 : Disjoint vpos c.2)
@@ -384,7 +384,7 @@ private lemma recombine (sys : QualitativeProbability (Fin 4))
     mono-domination, merge a generalizable pair and recurse, or (no g-merge pair)
     `v1_tailored` gives a null pair (→ contradiction via `hnull`) or a member merged
     by the reversed target (→ peel it, recurse, `recombine`). -/
-private theorem merge_to_single (sys : QualitativeProbability (Fin 4))
+private theorem merge_to_single (sys : QualitativeProbability (Set (Fin 4)))
     (hnull : ∀ i : Fin 4, ¬ sys.ge ∅ {i})
     (L : List (Finset (Fin 4) × Finset (Fin 4)))
     (hdisj : ∀ c ∈ L, Disjoint c.1 c.2)
@@ -397,8 +397,8 @@ private theorem merge_to_single (sys : QualitativeProbability (Fin 4))
   · by_cases hdom : ∃ c ∈ L, c.1 ⊆ vpos ∧ vneg ⊆ c.2
     · -- mono-domination discharge
       obtain ⟨c, hcL, hc1, hc2⟩ := hdom
-      exact ge_mono_dominated sys (hvalid c hcL)
-        (Finset.coe_subset.mpr hc1) (Finset.coe_subset.mpr hc2)
+      exact sys.trans (sys.mono (Finset.coe_subset.mpr hc2))
+        (sys.trans (hvalid c hcL) (sys.mono (Finset.coe_subset.mpr hc1)))
     · -- no mono-dominating member: either a gmerge pair (merge & recurse) or, failing
       -- that, a forced null atom contradicting `hnull`.
       push Not at hdom
@@ -462,7 +462,7 @@ private theorem merge_to_single (sys : QualitativeProbability (Fin 4))
   · -- trivial-target discharge: vneg = ∅
     rw [Finset.not_nonempty_iff_eq_empty] at hne
     subst hne
-    simpa using ge_empty_target sys (↑vpos)
+    simpa using sys.bot_le (↑vpos)
 termination_by L.length
 decreasing_by
   all_goals
@@ -526,7 +526,7 @@ private lemma cleared_sum_eq (P : Portfolio 4) (i : Fin 4) (D : ℕ)
     clearing denominators yields a unit-weight list `R` of valid disjoint comparisons
     with `cvSumList R = cmpVec (s.right, s.left)` — the denominator-cleared balanced
     multiset with one copy of `s` removed. -/
-private theorem exists_balanced_list (sys : QualitativeProbability (Fin 4))
+private theorem exists_balanced_list (sys : QualitativeProbability (Set (Fin 4)))
     (P : Portfolio 4) (hvalid : P.isValid sys.ge) (hneutral : P.isNeutral)
     (s : WComparison 4) (hsmem : List.Mem s P) :
     ∃ R : List (Finset (Fin 4) × Finset (Fin 4)),
@@ -596,7 +596,7 @@ private theorem exists_balanced_list (sys : QualitativeProbability (Fin 4))
 
 /-- **No-null case** of Theorem 8a (Fin 4): when no atom is null, every valid neutral
     portfolio is non-strict, via the merge reduction `merge_to_single`. -/
-theorem no_null_cancellation (sys : QualitativeProbability (Fin 4))
+theorem no_null_cancellation (sys : QualitativeProbability (Set (Fin 4)))
     (hnull : ∀ i : Fin 4, ¬ sys.ge ∅ {i}) :
     Cancellation 4 sys.ge := by
   intro P hvalid hneutral hstrict
@@ -621,10 +621,10 @@ private def restrict3 (A : Set (Fin 4)) : Set (Fin 3) := {i | Fin.castSucc i ∈
 
 /-- Lexicographic extension: the new world `Fin.last 3` dominates; ties break
     by the restriction. -/
-def QualitativeProbability.extendLex (sys : QualitativeProbability (Fin 3)) :
-    QualitativeProbability (Fin 4) where
-  ge A B := (Fin.last 3 ∈ A ∧ Fin.last 3 ∉ B) ∨
-    ((Fin.last 3 ∈ A ↔ Fin.last 3 ∈ B) ∧ sys.ge (restrict3 A) (restrict3 B))
+def QualitativeProbability.extendLex (sys : QualitativeProbability (Set (Fin 3))) :
+    QualitativeProbability (Set (Fin 4)) where
+  le A B := (Fin.last 3 ∈ B ∧ Fin.last 3 ∉ A) ∨
+    ((Fin.last 3 ∈ B ↔ Fin.last 3 ∈ A) ∧ sys.le (restrict3 A) (restrict3 B))
   mono' A B hAB := by
     by_cases hb : Fin.last 3 ∈ B
     · by_cases ha : Fin.last 3 ∈ A
@@ -638,54 +638,54 @@ def QualitativeProbability.extendLex (sys : QualitativeProbability (Fin 3)) :
   total A B := by
     by_cases ha : Fin.last 3 ∈ A <;> by_cases hb : Fin.last 3 ∈ B
     · rcases sys.total (restrict3 A) (restrict3 B) with h | h
-      · exact Or.inl (Or.inr ⟨iff_of_true ha hb, h⟩)
-      · exact Or.inr (Or.inr ⟨iff_of_true hb ha, h⟩)
-    · exact Or.inl (Or.inl ⟨ha, hb⟩)
-    · exact Or.inr (Or.inl ⟨hb, ha⟩)
+      · exact Or.inl (Or.inr ⟨iff_of_true hb ha, h⟩)
+      · exact Or.inr (Or.inr ⟨iff_of_true ha hb, h⟩)
+    · exact Or.inr (Or.inl ⟨ha, hb⟩)
+    · exact Or.inl (Or.inl ⟨hb, ha⟩)
     · rcases sys.total (restrict3 A) (restrict3 B) with h | h
-      · exact Or.inl (Or.inr ⟨iff_of_false ha hb, h⟩)
-      · exact Or.inr (Or.inr ⟨iff_of_false hb ha, h⟩)
+      · exact Or.inl (Or.inr ⟨iff_of_false hb ha, h⟩)
+      · exact Or.inr (Or.inr ⟨iff_of_false ha hb, h⟩)
   trans' A B C := by
-    rintro (⟨ha, hnb⟩ | ⟨hab, hge1⟩) (⟨hb, hnc⟩ | ⟨hbc, hge2⟩)
+    rintro (⟨hb, hna⟩ | ⟨hba, hle1⟩) (⟨hc, hnb⟩ | ⟨hcb, hle2⟩)
     · exact absurd hb hnb
-    · exact Or.inl ⟨ha, fun hc => hnb (hbc.mpr hc)⟩
-    · exact Or.inl ⟨hab.mpr hb, hnc⟩
-    · exact Or.inr ⟨hab.trans hbc, sys.trans hge1 hge2⟩
+    · exact Or.inl ⟨hcb.mpr hb, hna⟩
+    · exact Or.inl ⟨hc, fun ha => hnb (hba.mpr ha)⟩
+    · exact Or.inr ⟨hcb.trans hba, sys.trans hle1 hle2⟩
   additive A B := by
     by_cases ha : Fin.last 3 ∈ A <;> by_cases hb : Fin.last 3 ∈ B
     · -- tie on both sides; restriction additivity carries it
       have hab : Fin.last 3 ∉ A \ B := fun h => h.2 hb
       have hba : Fin.last 3 ∉ B \ A := fun h => h.2 ha
       constructor
-      · rintro (⟨-, hnb⟩ | ⟨-, hge⟩)
-        · exact absurd hb hnb
-        · exact Or.inr ⟨iff_of_false hab hba, (sys.additive _ _).mp hge⟩
-      · rintro (⟨h3, -⟩ | ⟨-, hge⟩)
-        · exact absurd h3 hab
-        · exact Or.inr ⟨iff_of_true ha hb, (sys.additive _ _).mpr hge⟩
-    · -- the new world sits in `A \ B`: both sides true by dominance
-      exact iff_of_true (Or.inl ⟨ha, hb⟩) (Or.inl ⟨⟨ha, hb⟩, fun h => hb h.1⟩)
-    · -- the new world sits in `B \ A`: both sides false
+      · rintro (⟨-, hna⟩ | ⟨-, hle⟩)
+        · exact absurd ha hna
+        · exact Or.inr ⟨iff_of_false hba hab, (sys.additive _ _).mp hle⟩
+      · rintro (⟨h3, -⟩ | ⟨-, hle⟩)
+        · exact absurd h3 hba
+        · exact Or.inr ⟨iff_of_true hb ha, (sys.additive _ _).mpr hle⟩
+    · -- the new world sits in `A \ B`: both sides false
       refine iff_of_false ?_ ?_
       · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
-        · exact ha h3
-        · exact ha (hiff.mpr hb)
+        · exact hb h3
+        · exact hb (hiff.mpr ha)
       · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
-        · exact ha h3.1
-        · exact ha (hiff.mpr ⟨hb, ha⟩).1
+        · exact hb h3.1
+        · exact hb (hiff.mpr ⟨ha, hb⟩).1
+    · -- the new world sits in `B \ A`: both sides true by dominance
+      exact iff_of_true (Or.inl ⟨hb, ha⟩) (Or.inl ⟨⟨hb, ha⟩, fun h => ha h.1⟩)
     · -- the new world is absent everywhere; restriction additivity again
       have hab : Fin.last 3 ∉ A \ B := fun h => ha h.1
       have hba : Fin.last 3 ∉ B \ A := fun h => hb h.1
       constructor
-      · rintro (⟨h3, -⟩ | ⟨-, hge⟩)
-        · exact absurd h3 ha
-        · exact Or.inr ⟨iff_of_false hab hba, (sys.additive _ _).mp hge⟩
-      · rintro (⟨h3, -⟩ | ⟨-, hge⟩)
-        · exact absurd h3 hab
-        · exact Or.inr ⟨iff_of_false ha hb, (sys.additive _ _).mpr hge⟩
+      · rintro (⟨h3, -⟩ | ⟨-, hle⟩)
+        · exact absurd h3 hb
+        · exact Or.inr ⟨iff_of_false hba hab, (sys.additive _ _).mp hle⟩
+      · rintro (⟨h3, -⟩ | ⟨-, hle⟩)
+        · exact absurd h3 hba
+        · exact Or.inr ⟨iff_of_false hb ha, (sys.additive _ _).mpr hle⟩
 
 /-- The extension preserves the absence of null atoms. -/
-private lemma extendLex_no_null (sys : QualitativeProbability (Fin 3))
+private lemma extendLex_no_null (sys : QualitativeProbability (Set (Fin 3)))
     (hnull : ∀ i : Fin 3, ¬sys.ge ∅ {i}) :
     ∀ j : Fin 4, ¬(QualitativeProbability.extendLex sys).ge ∅ {j} := by
   refine Fin.lastCases ?_ ?_
@@ -734,7 +734,7 @@ private lemma comparisonVec_map_castSucc (A B : Finset (Fin 3)) (i : Fin 3) :
   simp only [Finset.mem_map']; rfl
 
 /-- Cancellation transfers back along the lexicographic extension. -/
-private theorem cancellation_extendLex (sys : QualitativeProbability (Fin 3))
+private theorem cancellation_extendLex (sys : QualitativeProbability (Set (Fin 3)))
     (h : Cancellation 4 (QualitativeProbability.extendLex sys).ge) : Cancellation 3 sys.ge := by
   intro P hvalid hneutral hstrict
   refine h (P.map embedComparison) ?_ ?_ ?_
@@ -786,7 +786,7 @@ private theorem cancellation_extendLex (sys : QualitativeProbability (Fin 3))
 /-- **Cancellation for Fin 3**, structurally: a null atom reduces to `Fin 2`
     representability; the no-null case extends lexicographically into `Fin 4`
     and pulls back through `no_null_cancellation`. -/
-theorem fa_cancellation_fin3 (sys : QualitativeProbability (Fin 3)) :
+theorem fa_cancellation_fin3 (sys : QualitativeProbability (Set (Fin 3))) :
     Cancellation 3 sys.ge := by
   by_cases h : ∃ j, sys.ge ∅ {j}
   · obtain ⟨j, hj⟩ := h
@@ -798,13 +798,13 @@ theorem fa_cancellation_fin3 (sys : QualitativeProbability (Fin 3)) :
 /-- **Theorem 8a for Fin 3**: every FA system on three elements is representable —
     now *derived from* Scott cancellation, replacing the former measure-by-measure
     case analysis. -/
-theorem representable_fin3 (sys : QualitativeProbability (Fin 3)) : Representable sys :=
+theorem representable_fin3 (sys : QualitativeProbability (Set (Fin 3))) : Representable sys :=
   cancellation_implies_representable sys (fa_cancellation_fin3 sys)
 
 /-- **Theorem 8a (Fin 4), structural**: every FA system on `Fin 4` satisfies
     cancellation. A null atom reduces to `Fin 3`; the no-null case is the merge
     reduction `no_null_cancellation`. -/
-theorem fa_cancellation_fin4 (sys : QualitativeProbability (Fin 4)) :
+theorem fa_cancellation_fin4 (sys : QualitativeProbability (Set (Fin 4))) :
     Cancellation 4 sys.ge := by
   by_cases h : ∃ j, sys.ge ∅ {j}
   · obtain ⟨j, hj⟩ := h
@@ -814,7 +814,7 @@ theorem fa_cancellation_fin4 (sys : QualitativeProbability (Fin 4)) :
 
 /-- **Theorem 8a for Fin 4**: every FA system on 4 elements is representable.
     Via Scott cancellation — see `Cancellation.lean` for the framework. -/
-theorem representable_fin4 (sys : QualitativeProbability (Fin 4)) : Representable sys :=
+theorem representable_fin4 (sys : QualitativeProbability (Set (Fin 4))) : Representable sys :=
   cancellation_implies_representable sys (fa_cancellation_fin4 sys)
 
 end ComparativeProbability
