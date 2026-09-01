@@ -24,8 +24,8 @@ bind which variable.
 
 ## Situation Assignment Infrastructure
 
-Situation assignments specialize `Assignment` from `D = Time`
-(Partee's temporal variables) to `D = Index W Time` (Percus's
+Situation assignments specialize `Assignment` from `D = T`
+(Partee's temporal variables) to `D = Index W T` (Percus's
 situation variables).
 
 ## Empirical Chain
@@ -59,22 +59,22 @@ open Features (Attitude)
 -- ════════════════════════════════════════════════════════════════
 
 /-- Situation assignment function: maps variable indices to situations. -/
-abbrev SituationAssignment (W Time : Type*) := Assignment (Index W Time)
+abbrev SituationAssignment (W T : Type*) := Assignment (Index W T)
 
 /-- Situation variable denotation: s_n^g = g(n). -/
-abbrev interpSitVar {W Time : Type*} (n : ℕ) (g : SituationAssignment W Time) :
-    Index W Time :=
+abbrev interpSitVar {W T : Type*} (n : ℕ) (g : SituationAssignment W T) :
+    Index W T :=
   g n
 
 /-- Modified situation assignment g[n -> s]. -/
-abbrev updateSitVar {W Time : Type*} (g : SituationAssignment W Time)
-    (n : ℕ) (s : Index W Time) : SituationAssignment W Time :=
+abbrev updateSitVar {W T : Type*} (g : SituationAssignment W T)
+    (n : ℕ) (s : Index W T) : SituationAssignment W T :=
   Function.update g n s
 
 /-- Situation lambda abstraction: bind a situation variable. -/
-abbrev sitLambdaAbs {W Time α : Type*} (n : ℕ)
-    (body : SituationAssignment W Time → α) :
-    SituationAssignment W Time → Index W Time → α :=
+abbrev sitLambdaAbs {W T α : Type*} (n : ℕ)
+    (body : SituationAssignment W T → α) :
+    SituationAssignment W T → Index W T → α :=
   λ g s => body (Function.update g n s)
 
 
@@ -126,33 +126,33 @@ theorem genX_bridge_compliant :
 -- § Attitude Semantics with Situation Binding
 -- ════════════════════════════════════════════════════════════════
 
-abbrev DoxSit (W Time E : Type*) := E → Index W Time → List (Index W Time)
+abbrev DoxSit (W T E : Type*) := E → Index W T → List (Index W T)
 
-def believeSit {W Time E : Type*}
-    (dox : DoxSit W Time E) (agent : E) (n : ℕ)
-    (complement : SituationAssignment W Time → Prop)
-    (g : SituationAssignment W Time) (s : Index W Time) : Prop :=
+def believeSit {W T E : Type*}
+    (dox : DoxSit W T E) (agent : E) (n : ℕ)
+    (complement : SituationAssignment W T → Prop)
+    (g : SituationAssignment W T) (s : Index W T) : Prop :=
   ∀ s' ∈ dox agent s, complement (updateSitVar g n s')
 
-instance {W Time E : Type*}
-    (dox : DoxSit W Time E) (agent : E) (n : ℕ)
-    (complement : SituationAssignment W Time → Prop) [DecidablePred complement]
-    (g : SituationAssignment W Time) (s : Index W Time) :
+instance {W T E : Type*}
+    (dox : DoxSit W T E) (agent : E) (n : ℕ)
+    (complement : SituationAssignment W T → Prop) [DecidablePred complement]
+    (g : SituationAssignment W T) (s : Index W T) :
     Decidable (believeSit dox agent n complement g s) := by
   unfold believeSit; infer_instance
 
-def alwaysAt {W Time : Type*}
-    (domain : Index W Time → List (Index W Time))
-    (ssh : Index W Time) (n : ℕ)
-    (scope : SituationAssignment W Time → Prop)
-    (g : SituationAssignment W Time) : Prop :=
+def alwaysAt {W T : Type*}
+    (domain : Index W T → List (Index W T))
+    (ssh : Index W T) (n : ℕ)
+    (scope : SituationAssignment W T → Prop)
+    (g : SituationAssignment W T) : Prop :=
   ∀ s' ∈ domain ssh, scope (updateSitVar g n s')
 
-instance {W Time : Type*}
-    (domain : Index W Time → List (Index W Time))
-    (ssh : Index W Time) (n : ℕ)
-    (scope : SituationAssignment W Time → Prop) [DecidablePred scope]
-    (g : SituationAssignment W Time) :
+instance {W T : Type*}
+    (domain : Index W T → List (Index W T))
+    (ssh : Index W T) (n : ℕ)
+    (scope : SituationAssignment W T → Prop) [DecidablePred scope]
+    (g : SituationAssignment W T) :
     Decidable (alwaysAt domain ssh n scope g) := by
   unfold alwaysAt; infer_instance
 
@@ -161,13 +161,13 @@ instance {W Time : Type*}
 -- § Key Properties
 -- ════════════════════════════════════════════════════════════════
 
-theorem sitVar_receives_binder_value {W Time : Type*}
-    (g : SituationAssignment W Time) (n : ℕ) (s : Index W Time) :
+theorem sitVar_receives_binder_value {W T : Type*}
+    (g : SituationAssignment W T) (n : ℕ) (s : Index W T) :
     interpSitVar n (updateSitVar g n s) = s :=
   Function.update_self n s g
 
-theorem sitVar_other_unaffected {W Time : Type*}
-    (g : SituationAssignment W Time) (n i : ℕ) (s : Index W Time)
+theorem sitVar_other_unaffected {W T : Type*}
+    (g : SituationAssignment W T) (n i : ℕ) (s : Index W T)
     (h : i ≠ n) :
     interpSitVar i (updateSitVar g n s) = interpSitVar i g :=
   Function.update_of_ne h s g
@@ -177,12 +177,12 @@ theorem sitVar_other_unaffected {W Time : Type*}
 -- § Bridge: Temporal <-> Situational
 -- ════════════════════════════════════════════════════════════════
 
-def toTemporalAssignment {W Time : Type*}
-    (g : SituationAssignment W Time) : TemporalAssignment Time :=
+def toTemporalAssignment {W T : Type*}
+    (g : SituationAssignment W T) : TemporalAssignment T :=
   λ n => (g n).time
 
-theorem temporal_projection_commutes {W Time : Type*}
-    (g : SituationAssignment W Time) (n : ℕ) :
+theorem temporal_projection_commutes {W T : Type*}
+    (g : SituationAssignment W T) (n : ℕ) :
     Tense.interpTense n (toTemporalAssignment g) = (interpSitVar n g).time :=
   rfl
 

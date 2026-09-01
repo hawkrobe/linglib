@@ -48,15 +48,15 @@ namespace ArreguiKusumoto1998
 open Data.Examples English.TemporalExpressions Japanese.TemporalConnectives
 open Tense (SOTParameter EmbeddedTenseReading availableReadings)
 
-variable {Time : Type*}
+variable {T : Type*}
 
 /-! ### Tensed clauses and their types -/
 
 /-- A tensed clause: a past-tense operator yields a set of times, a present-tense variable a
     proposition open in that variable. -/
-inductive TP (Time : Type*)
-  | times (X : Time → Prop)
-  | free (P : Time → Prop)
+inductive TP (T : Type*)
+  | times (X : T → Prop)
+  | free (P : T → Prop)
 
 /-- The semantic type of a tensed clause. -/
 inductive Shape
@@ -65,7 +65,7 @@ inductive Shape
   deriving DecidableEq
 
 /-- The type of a tensed clause. -/
-def TP.shape : TP Time → Shape
+def TP.shape : TP T → Shape
   | .times _ => .times
   | .free _ => .free
 
@@ -81,7 +81,7 @@ def Tense.shape : Tense → Shape
   | .present => .free
 
 /-- The speech time in C saturates a set of times; an unbound present variable is indexical. -/
-def TP.atSpeech : TP Time → Time → Prop
+def TP.atSpeech : TP T → T → Prop
   | .times X, s => X s
   | .free P, s => P s
 
@@ -93,62 +93,62 @@ def Shape.selected (binder : Bool) : Shape → Bool
 /-- A connective selecting TP: with a binder index it abstracts over the present variable,
     without one it takes the set of times a past operator yields. The other two combinations
     are uninterpretable — vacuous binding, or a truth value where a set of times is needed. -/
-def selectTP : Bool → TP Time → Option (Time → Prop)
+def selectTP : Bool → TP T → Option (T → Prop)
   | true, .free P => some P
   | false, .times X => some X
   | _, _ => none
 
-theorem selectTP_isSome (binder : Bool) (tp : TP Time) :
+theorem selectTP_isSome (binder : Bool) (tp : TP T) :
     (selectTP binder tp).isSome = tp.shape.selected binder := by
   cases binder <;> cases tp <;> rfl
 
-variable [LinearOrder Time]
+variable [LinearOrder T]
 
 /-! ### Tense as operator or variable -/
 
 /-- The Priorian past operator closes the clause into the set of times some `P`-time precedes;
     the present tense leaves `P` open in its variable. -/
-def Tense.tp : Tense → (Time → Prop) → TP Time
+def Tense.tp : Tense → (T → Prop) → TP T
   | .past, P => .times λ t => ∃ t' < t, P t'
   | .present, P => .free P
 
-@[simp] theorem Tense.shape_tp (τ : Tense) (P : Time → Prop) : (τ.tp P).shape = τ.shape := by
+@[simp] theorem Tense.shape_tp (τ : Tense) (P : T → Prop) : (τ.tp P).shape = τ.shape := by
   cases τ <;> rfl
 
 /-- A root present-tense sentence holds at the speech time. -/
-theorem root_present (P : Time → Prop) (s : Time) : (Tense.present.tp P).atSpeech s ↔ P s :=
+theorem root_present (P : T → Prop) (s : T) : (Tense.present.tp P).atSpeech s ↔ P s :=
   Iff.rfl
 
 /-- A root past-tense sentence holds at some time before the speech time. -/
-theorem root_past (P : Time → Prop) (s : Time) :
+theorem root_past (P : T → Prop) (s : T) :
     (Tense.past.tp P).atSpeech s ↔ ∃ t < s, P t :=
   Iff.rfl
 
 /-! ### Before and after -/
 
 /-- *before*: the times preceding every `X`-time. -/
-def before (X : Time → Prop) (t : Time) : Prop := ∀ t', X t' → t < t'
+def before (X : T → Prop) (t : T) : Prop := ∀ t', X t' → t < t'
 
 /-- *after*: the times some `X`-time precedes. -/
-def after (X : Time → Prop) (t : Time) : Prop := ∃ t', t' < t ∧ X t'
+def after (X : T → Prop) (t : T) : Prop := ∃ t', t' < t ∧ X t'
 
 /-- A connective is veridical when its clause holds only if the complement has a time. -/
-def Veridical (C : (Time → Prop) → Time → Prop) : Prop := ∀ X t, C X t → ∃ t', X t'
+def Veridical (C : (T → Prop) → T → Prop) : Prop := ∀ X t, C X t → ∃ t', X t'
 
-theorem veridical_after : Veridical (after (Time := Time)) := λ _ _ ⟨t', _, h⟩ => ⟨t', h⟩
+theorem veridical_after : Veridical (after (T := T)) := λ _ _ ⟨t', _, h⟩ => ⟨t', h⟩
 
-theorem not_veridical_before (t : Time) : ¬ Veridical (before (Time := Time)) :=
+theorem not_veridical_before (t : T) : ¬ Veridical (before (T := T)) :=
   λ h => (h (λ _ => False) t λ _ h => h.elim).elim λ _ h => h
 
 /-- The connective denotation of a fragment entry's order, where the paper gives one. -/
-def denotation : TemporalOrder → Option ((Time → Prop) → Time → Prop)
+def denotation : TemporalOrder → Option ((T → Prop) → T → Prop)
   | .before => some before
   | .after => some after
   | _ => none
 
 /-- The fragments' veridicality field is the veridicality of the denotation. -/
-theorem complementVeridical_iff (t : Time) :
-    ∀ e ∈ [before_, after_, mae, ato], ∀ C ∈ denotation (Time := Time) e.order,
+theorem complementVeridical_iff (t : T) :
+    ∀ e ∈ [before_, after_, mae, ato], ∀ C ∈ denotation (T := T) e.order,
       (e.complementVeridical = true ↔ Veridical C) := by
   simp [before_, after_, mae, ato, denotation, veridical_after, not_veridical_before t]
 
@@ -156,53 +156,53 @@ theorem complementVeridical_iff (t : Time) :
 
 /-- A relative-clause adjunct: the relative pronoun abstracts over a trace in the clause's
     time argument, and the speech time in C saturates the tensed clause. -/
-def relativeClause (τ : Tense) (P : Time → Prop) (s tj : Time) : Prop :=
+def relativeClause (τ : Tense) (P : T → Prop) (s tj : T) : Prop :=
   (τ.tp λ t => P t ∧ t = tj).atSpeech s
 
 /-- A past-tensed relative clause denotes the past `P`-times, ordered against the speech time
     alone. -/
-theorem relativeClause_past (P : Time → Prop) (s t : Time) :
+theorem relativeClause_past (P : T → Prop) (s t : T) :
     relativeClause .past P s t ↔ t < s ∧ P t := by
   simp [relativeClause, Tense.tp, TP.atSpeech]
 
 /-- An indexical present in a relative clause denotes the speech time, if `P` holds there. -/
-theorem relativeClause_present (P : Time → Prop) (s t : Time) :
+theorem relativeClause_present (P : T → Prop) (s t : T) :
     relativeClause .present P s t ↔ P s ∧ s = t :=
   Iff.rfl
 
 /-- A past-tensed matrix clause `Q` modified by an adjunct `X`: the adjunct intersects the VP
     and the matrix past locates the result before the speech time `s`. -/
-def modified (Q X : Time → Prop) (s : Time) : Prop := ∃ t < s, Q t ∧ X t
+def modified (Q X : T → Prop) (s : T) : Prop := ∃ t < s, Q t ∧ X t
 
 /-- *Satoshi left after Junko came*: both events are past, and the connective alone orders
     them. -/
-theorem after_relativeClause (Q P : Time → Prop) (s : Time) :
+theorem after_relativeClause (Q P : T → Prop) (s : T) :
     modified Q (after (relativeClause .past P s)) s ↔
       ∃ t < s, Q t ∧ ∃ t', t' < t ∧ t' < s ∧ P t' := by
   simp [modified, after, relativeClause_past]
 
 /-- *Satoshi left before Junko came*: the leaving precedes every past coming. -/
-theorem before_relativeClause (Q P : Time → Prop) (s : Time) :
+theorem before_relativeClause (Q P : T → Prop) (s : T) :
     modified Q (before (relativeClause .past P s)) s ↔
       ∃ t < s, Q t ∧ ∀ t', t' < s → P t' → t < t' := by
   simp [modified, before, relativeClause_past]
 
 /-- *Junko was in her room when Satoshi came*, past tense: an episode at a past time. -/
-theorem when_past (Q P : Time → Prop) (s : Time) :
+theorem when_past (Q P : T → Prop) (s : T) :
     modified Q (relativeClause .past P s) s ↔ ∃ t < s, Q t ∧ t < s ∧ P t := by
   simp [modified, relativeClause_past]
 
 /-- An indexical present in a when-clause contradicts a past matrix: the adjunct time is the
     speech time, which the matrix event precedes. -/
-theorem when_present_indexical (Q P : Time → Prop) (s : Time) :
+theorem when_present_indexical (Q P : T → Prop) (s : T) :
     ¬ modified Q (relativeClause .present P s) s := by
   rintro ⟨t, ht, -, -, rfl⟩
   exact lt_irrefl _ ht
 
 /-- The present variable bound by a covert adverb of quantification: over some past interval,
     every `P`-time is a `Q`-time. -/
-def whenever (P Q : Time → Prop) (s : Time) : Prop :=
-  ∃ I : Set Time, (∀ t ∈ I, t < s) ∧ ∀ t ∈ I, P t → Q t
+def whenever (P Q : T → Prop) (s : T) : Prop :=
+  ∃ I : Set T, (∀ t ∈ I, t < s) ∧ ∀ t ∈ I, P t → Q t
 
 /-- The readings of a when-clause. -/
 inductive WhenReading
@@ -218,14 +218,14 @@ def WhenReading.of : Shape → WhenReading
   | .free => .habitual
 
 /-- The truth conditions of each reading, for a when-clause `P` modifying a past `Q`. -/
-def WhenReading.denotation : WhenReading → (Time → Prop) → (Time → Prop) → Time → Prop
+def WhenReading.denotation : WhenReading → (T → Prop) → (T → Prop) → T → Prop
   | .episodic, P, Q, s => modified Q (relativeClause .past P s) s
   | .habitual, P, Q, s => whenever P Q s
 
 /-! ### Connectives selecting TP -/
 
 /-- The past operator inside an after-clause is absorbed by *after*. -/
-theorem after_past [DenselyOrdered Time] (P : Time → Prop) (t : Time) :
+theorem after_past [DenselyOrdered T] (P : T → Prop) (t : T) :
     after (λ t => ∃ t' < t, P t') t ↔ after P t := by
   constructor
   · rintro ⟨t', ht', t'', ht'', h⟩
@@ -236,25 +236,25 @@ theorem after_past [DenselyOrdered Time] (P : Time → Prop) (t : Time) :
 
 /-- *ato* takes the set of times its past-tensed complement denotes, and *after* absorbs the
     past operator. -/
-theorem after_selectTP [DenselyOrdered Time] (P : Time → Prop) :
+theorem after_selectTP [DenselyOrdered T] (P : T → Prop) :
     ∀ X ∈ selectTP false (Tense.past.tp P), after X = after P := by
   simp only [selectTP, Tense.tp, Option.mem_def, Option.some.injEq, forall_eq']
   exact funext λ t => propext (after_past P t)
 
 /-- *Satoshi left after Junko came* in Japanese: the coming precedes the leaving, with no
     relation to the speech time. -/
-theorem modified_after (Q P : Time → Prop) (s : Time) :
+theorem modified_after (Q P : T → Prop) (s : T) :
     modified Q (after P) s ↔ ∃ t < s, Q t ∧ ∃ t', t' < t ∧ P t' :=
   Iff.rfl
 
 /-- *mae* binds the present variable of its complement. -/
-theorem before_selectTP (P : Time → Prop) :
+theorem before_selectTP (P : T → Prop) :
     ∀ X ∈ selectTP true (Tense.present.tp P), X = P := by
   simp [selectTP, Tense.tp]
 
 /-- *Satoshi left before Junko came* in Japanese: the leaving precedes every coming, past or
     not. -/
-theorem modified_before (Q P : Time → Prop) (s : Time) :
+theorem modified_before (Q P : T → Prop) (s : T) :
     modified Q (before P) s ↔ ∃ t < s, Q t ∧ ∀ t', P t' → t < t' :=
   Iff.rfl
 

@@ -728,9 +728,9 @@ open ArgumentStructure in
     event with no external argument — is admitted by the bieventive Cause
     denotation, which the θ-role analysis (forcing a causer) cannot model. -/
 theorem cause_bieventive_admits_adversity_causative
-    {Time : Type*} [LinearOrder Time]
-    (cause : Event Time → Event Time → Prop) (caused : Event Time → Prop)
-    (e e' : Event Time) (hc : caused e') (hcause : cause e e') :
+    {T : Type*} [LinearOrder T]
+    (cause : Event T → Event T → Prop) (caused : Event T → Prop)
+    (e e' : Event T) (hc : caused e') (hcause : cause e e') :
     causeBieventive cause caused e :=
   causeBieventive_no_external_arg cause caused e e' hc hcause
 
@@ -1227,8 +1227,8 @@ def applIntroMode : ApplType → IntroMode
     This is `low_applicative_blocks_unergative` re-grounded in the
     `ArgumentIntroduction` substrate rather than the `IsLow` alias. -/
 theorem low_appl_blocks_unergative_denotational
-    {Entity Time : Type*} [LinearOrder Time] (a : ApplType) (hLow : a.IsLow)
-    (body : Event Time → Prop) :
+    {Entity T : Type*} [LinearOrder T] (a : ApplType) (hLow : a.IsLow)
+    (body : Event T → Prop) :
     ¬ (applIntroMode a).Licenses (VerbDenot.unergative (Entity := Entity) body) := by
   have h : applIntroMode a = .toTheme := by
     cases a <;> first | rfl | exact absurd hLow (by decide)
@@ -1237,8 +1237,8 @@ theorem low_appl_blocks_unergative_denotational
 /-- High applicatives license unergatives, derived denotationally
     (Luganda/Venda/Albanian, PDF eq. 23a/24a/25a). -/
 theorem high_appl_licenses_unergative_denotational
-    {Entity Time : Type*} [LinearOrder Time]
-    (body : Event Time → Prop) :
+    {Entity T : Type*} [LinearOrder T]
+    (body : Event T → Prop) :
     (applIntroMode .high).Licenses (VerbDenot.unergative (Entity := Entity) body) :=
   toEvent_licenses_all _
 

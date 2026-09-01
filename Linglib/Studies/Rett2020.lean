@@ -52,7 +52,7 @@ open Features
 open Features.ChangeOfState
 open Degree (maxOnScale isAmbidirectional maxOnScale_singleton maxOnScale_lt_closedInterval
   maxOnScale_gt_closedInterval)
-variable {Time : Type*} [LinearOrder Time]
+variable {T : Type*} [LinearOrder T]
 
 -- ============================================================================
 -- § 1: Rett's Truth Conditions
@@ -60,12 +60,12 @@ variable {Time : Type*} [LinearOrder Time]
 
 /-- Rett's *before* (eq. 22a): ∃t ∈ times(A) [t ≺ MAX(times(B)_≺)].
     Some time in A precedes the maximal (on the ≺ scale) time of B. -/
-def Rett.before (A B : RunTimes Time) : Prop :=
+def Rett.before (A B : RunTimes T) : Prop :=
   ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .lt (timeTrace B), t < m
 
 /-- Rett's *after* (eq. 22b): ∃t ∈ times(A) [t ≻ MAX(times(B)_≻)].
     Some time in A succeeds the maximal (on the ≻ scale) time of B. -/
-def Rett.after (A B : RunTimes Time) : Prop :=
+def Rett.after (A B : RunTimes T) : Prop :=
   ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt (timeTrace B), t > m
 
 -- ============================================================================
@@ -79,8 +79,8 @@ def Rett.after (A B : RunTimes Time) : Prop :=
     Linguistically: "Amy was surprised" → "the start of Amy being surprised".
     Cross-linguistically realized as inchoative morphology (Russian *-sja*,
     Tagalog PFV.NEUT). -/
-def INCHOAT (p : RunTimes Time) : RunTimes Time :=
-  { i | ∃ onset : Time,
+def INCHOAT (p : RunTimes T) : RunTimes T :=
+  { i | ∃ onset : T,
     (∀ j ∈ p, onset ≤ j.fst) ∧
     (∀ t, (∀ j ∈ p, t ≤ j.fst) → t ≤ onset) ∧
     i = NonemptyInterval.pure onset }
@@ -92,8 +92,8 @@ def INCHOAT (p : RunTimes Time) : RunTimes Time :=
     Linguistically: "Jane climbed the mountain" → "the moment Jane reached
     the top". Cross-linguistically realized as completive morphology
     (Tagalog AIA). -/
-def COMPLET (p : RunTimes Time) : RunTimes Time :=
-  { i | ∃ telos : Time,
+def COMPLET (p : RunTimes T) : RunTimes T :=
+  { i | ∃ telos : T,
     (∀ j ∈ p, j.snd ≤ telos) ∧
     (∀ t, (∀ j ∈ p, j.snd ≤ t) → telos ≤ t) ∧
     i = NonemptyInterval.pure telos }
@@ -103,7 +103,7 @@ def COMPLET (p : RunTimes Time) : RunTimes Time :=
 -- ============================================================================
 
 /-- INCHOAT extracts the start point of a stative denotation. -/
-theorem inchoat_bridges_inception (i : NonemptyInterval Time) :
+theorem inchoat_bridges_inception (i : NonemptyInterval T) :
     INCHOAT (stativeDenotation i) = { j | j = NonemptyInterval.pure i.fst } := by
   ext k
   simp only [INCHOAT, stativeDenotation, Set.mem_ofPred_eq, NonemptyInterval.le_def]
@@ -116,7 +116,7 @@ theorem inchoat_bridges_inception (i : NonemptyInterval Time) :
     exact ⟨i.fst, λ j ⟨hjs, _⟩ => hjs, λ t ht => ht i ⟨le_refl _, le_refl _⟩, rfl⟩
 
 /-- COMPLET extracts the finish point of an accomplishment denotation. -/
-theorem complet_bridges_cessation (i : NonemptyInterval Time) :
+theorem complet_bridges_cessation (i : NonemptyInterval T) :
     COMPLET (accomplishmentDenotation i) = { j | j = NonemptyInterval.pure i.snd } := by
   ext k
   simp only [COMPLET, accomplishmentDenotation, Set.mem_ofPred_eq]
@@ -140,7 +140,7 @@ theorem complet_bridges_cessation (i : NonemptyInterval Time) :
     - Rett: ∃ t ∈ A, t < MAX(B_≺). For statives, MAX on ≺ picks B.fst
       (the GLB), and t < B.fst ↔ t < all times in B. -/
 theorem anscombe_rett_agree_stative_before_start
-    (A : RunTimes Time) (i_B : NonemptyInterval Time) :
+    (A : RunTimes T) (i_B : NonemptyInterval T) :
     (Anscombe.beforeEver A (stativeDenotation i_B) ↔
      Rett.before A (stativeDenotation i_B)) := by
   constructor
@@ -165,7 +165,7 @@ theorem anscombe_rett_agree_stative_before_start
     A to follow B's *finish* (t > MAX₍>₎(B) = i_B.snd). These differ
     when A overlaps B without extending past B's endpoint. -/
 theorem rett_implies_anscombe_telic_after_finish
-    (A : RunTimes Time) (i_B : NonemptyInterval Time) :
+    (A : RunTimes T) (i_B : NonemptyInterval T) :
     Rett.after A (accomplishmentDenotation i_B) →
     Anscombe.after A (accomplishmentDenotation i_B) := by
   rintro ⟨t, ht_A, m, ⟨hm_mem, _⟩, htm⟩
@@ -181,7 +181,7 @@ theorem rett_implies_anscombe_telic_after_finish
     From Rett: t < m where m = min(timeTrace B). Since m < all other
     points in timeTrace B (by maxOnScale), t < every point in timeTrace B.
     This gives Anscombe's ∀-quantified conclusion. -/
-theorem rett_before_implies_anscombe (A B : RunTimes Time) :
+theorem rett_before_implies_anscombe (A B : RunTimes T) :
     Rett.before A B → Anscombe.beforeEver A B := by
   rintro ⟨t, ht, m, ⟨hm_mem, hm_min⟩, htm⟩
   exact ⟨t, ht, fun t' ht' => by
@@ -193,7 +193,7 @@ theorem rett_before_implies_anscombe (A B : RunTimes Time) :
 
     Immediate: m ∈ maxOnScale(timeTrace B) implies m ∈ timeTrace B,
     and t > m gives the existential witness for Anscombe.after. -/
-theorem rett_after_implies_anscombe (A B : RunTimes Time) :
+theorem rett_after_implies_anscombe (A B : RunTimes T) :
     Rett.after A B → Anscombe.after A B := by
   rintro ⟨t, ht, m, ⟨hm_mem, _⟩, htm⟩
   exact ⟨t, ht, m, hm_mem, htm⟩
@@ -218,14 +218,14 @@ to this bound, so negating B is truth-conditionally vacuous.
 *While* requires total temporal overlap; ¬B fails when A overlaps B. -/
 
 /-- *Before* truth conditions depend only on MAX₍<₎ of B's time trace. -/
-theorem before_determined_by_max (A B₁ B₂ : RunTimes Time)
+theorem before_determined_by_max (A B₁ B₂ : RunTimes T)
     (h : maxOnScale .lt (timeTrace B₁) = maxOnScale .lt (timeTrace B₂)) :
     Rett.before A B₁ ↔ Rett.before A B₂ := by
   constructor <;> rintro ⟨t, ht, m, hm, htm⟩ <;> exact ⟨t, ht, m, h ▸ hm, htm⟩
 
 /-- When B's time trace is a closed interval [s, f], Rett.before reduces to
     "∃ t ∈ A, t < s". -/
-theorem rett_before_closedTrace_eq (A B : RunTimes Time) (s f : Time) (hsf : s ≤ f)
+theorem rett_before_closedTrace_eq (A B : RunTimes T) (s f : T) (hsf : s ≤ f)
     (htrace : timeTrace B = { t | s ≤ t ∧ t ≤ f }) :
     Rett.before A B ↔ ∃ t ∈ timeTrace A, t < s := by
   unfold Rett.before
@@ -235,7 +235,7 @@ theorem rett_before_closedTrace_eq (A B : RunTimes Time) (s f : Time) (hsf : s �
   · rintro ⟨t, ht, htm⟩; exact ⟨t, ht, s, rfl, htm⟩
 
 /-- COMPLET on a stative denotation extracts the finish point. -/
-theorem complet_stative (i : NonemptyInterval Time) :
+theorem complet_stative (i : NonemptyInterval T) :
     COMPLET (stativeDenotation i) = { j | j = NonemptyInterval.pure i.snd } := by
   ext k
   simp only [COMPLET, stativeDenotation, Set.mem_ofPred_eq, NonemptyInterval.le_def]
@@ -248,92 +248,92 @@ theorem complet_stative (i : NonemptyInterval Time) :
     exact ⟨i.snd, fun j ⟨_, hjf⟩ => hjf, fun t ht => ht i ⟨le_refl _, le_refl _⟩, rfl⟩
 
 /-- The pre-event complement of an event interval [s, f]. -/
-def preEventDenotation (bot : Time) (i : NonemptyInterval Time) (hbot : bot ≤ i.fst) :
-    RunTimes Time :=
+def preEventDenotation (bot : T) (i : NonemptyInterval T) (hbot : bot ≤ i.fst) :
+    RunTimes T :=
   stativeDenotation ⟨⟨bot, i.fst⟩, hbot⟩
 
 /-- The time trace of a stative denotation is the closed interval [start, finish]. -/
-theorem timeTrace_stative_closedInterval (i : NonemptyInterval Time) :
+theorem timeTrace_stative_closedInterval (i : NonemptyInterval T) :
     timeTrace (stativeDenotation i) = { t | i.fst ≤ t ∧ t ≤ i.snd } := by
   rw [timeTrace_stativeDenotation]; ext; simp [NonemptyInterval.mem_def]
 
 /-- MAX₍<₎ of a stative denotation's time trace is {start}. -/
-theorem maxOnScale_lt_stative (i : NonemptyInterval Time) :
+theorem maxOnScale_lt_stative (i : NonemptyInterval T) :
     maxOnScale .lt (timeTrace (stativeDenotation i)) = {i.fst} := by
   rw [timeTrace_stative_closedInterval, maxOnScale_lt_closedInterval _ _ i.fst_le_snd]
 
 /-- The time trace of an accomplishment denotation is its run-time's closed interval. -/
-theorem timeTrace_accomplishment_closedInterval (i : NonemptyInterval Time) :
+theorem timeTrace_accomplishment_closedInterval (i : NonemptyInterval T) :
     timeTrace (accomplishmentDenotation i) = { t | i.fst ≤ t ∧ t ≤ i.snd } := by
   rw [timeTrace_accomplishmentDenotation]; ext; simp [NonemptyInterval.mem_def]
 
 /-- MAX₍<₎ of an accomplishment denotation's time trace is {start}. -/
-theorem maxOnScale_lt_accomplishment (i : NonemptyInterval Time) :
+theorem maxOnScale_lt_accomplishment (i : NonemptyInterval T) :
     maxOnScale .lt (timeTrace (accomplishmentDenotation i)) = {i.fst} := by
   rw [timeTrace_accomplishment_closedInterval, maxOnScale_lt_closedInterval _ _ i.fst_le_snd]
 
 /-- MAX₍>₎ of a stative denotation's time trace is {finish}. -/
-theorem maxOnScale_gt_stative (i : NonemptyInterval Time) :
+theorem maxOnScale_gt_stative (i : NonemptyInterval T) :
     maxOnScale .gt (timeTrace (stativeDenotation i)) = {i.snd} := by
   rw [timeTrace_stative_closedInterval, maxOnScale_gt_closedInterval _ _ i.fst_le_snd]
 
 /-- The time trace of the inchoative coercion of a stative is its onset. -/
-theorem timeTrace_inchoat_stative (i : NonemptyInterval Time) :
+theorem timeTrace_inchoat_stative (i : NonemptyInterval T) :
     timeTrace (INCHOAT (stativeDenotation i)) = {i.fst} := by
   rw [inchoat_bridges_inception]
   ext; simp [timeTrace, NonemptyInterval.mem_pure]
 
 /-- The time trace of the completive coercion of an accomplishment is its telos. -/
-theorem timeTrace_complet_accomplishment (i : NonemptyInterval Time) :
+theorem timeTrace_complet_accomplishment (i : NonemptyInterval T) :
     timeTrace (COMPLET (accomplishmentDenotation i)) = {i.snd} := by
   rw [complet_bridges_cessation]
   ext; simp [timeTrace, NonemptyInterval.mem_pure]
 
 /-- *Before* against a denotation with earliest time `m`: some time of `A` precedes `m`. -/
-theorem Rett.before_iff_of_maxOnScale_eq {A B : RunTimes Time} {m : Time}
+theorem Rett.before_iff_of_maxOnScale_eq {A B : RunTimes T} {m : T}
     (h : maxOnScale .lt (timeTrace B) = {m}) : Rett.before A B ↔ ∃ t ∈ timeTrace A, t < m := by
   simp [Rett.before, h]
 
 /-- *After* against a denotation with latest time `m`: some time of `A` follows `m`. -/
-theorem Rett.after_iff_of_maxOnScale_eq {A B : RunTimes Time} {m : Time}
+theorem Rett.after_iff_of_maxOnScale_eq {A B : RunTimes T} {m : T}
     (h : maxOnScale .gt (timeTrace B) = {m}) : Rett.after A B ↔ ∃ t ∈ timeTrace A, m < t := by
   simp [Rett.after, h]
 
 /-- A stative main clause is *before* `B` iff its onset precedes `B`'s earliest time. -/
-theorem Rett.before_stative_iff (a : NonemptyInterval Time) {B : RunTimes Time} {m : Time}
+theorem Rett.before_stative_iff (a : NonemptyInterval T) {B : RunTimes T} {m : T}
     (h : maxOnScale .lt (timeTrace B) = {m}) : Rett.before (stativeDenotation a) B ↔ a.fst < m := by
   rw [Rett.before_iff_of_maxOnScale_eq h, timeTrace_stative_closedInterval]
   exact ⟨fun ⟨_, ⟨h1, _⟩, h3⟩ => lt_of_le_of_lt h1 h3, fun h => ⟨a.fst, ⟨le_rfl, a.fst_le_snd⟩, h⟩⟩
 
 /-- A stative main clause is *after* `B` iff its end follows `B`'s latest time. -/
-theorem Rett.after_stative_iff (a : NonemptyInterval Time) {B : RunTimes Time} {m : Time}
+theorem Rett.after_stative_iff (a : NonemptyInterval T) {B : RunTimes T} {m : T}
     (h : maxOnScale .gt (timeTrace B) = {m}) : Rett.after (stativeDenotation a) B ↔ m < a.snd := by
   rw [Rett.after_iff_of_maxOnScale_eq h, timeTrace_stative_closedInterval]
   exact ⟨fun ⟨_, ⟨_, h2⟩, h3⟩ => lt_of_lt_of_le h3 h2, fun h => ⟨a.snd, ⟨a.fst_le_snd, le_rfl⟩, h⟩⟩
 
 /-- Before-start: a stative before an accomplishment compares onset to start. -/
-theorem Rett.before_stative_accomplishment_iff (a b : NonemptyInterval Time) :
+theorem Rett.before_stative_accomplishment_iff (a b : NonemptyInterval T) :
     Rett.before (stativeDenotation a) (accomplishmentDenotation b) ↔ a.fst < b.fst :=
   Rett.before_stative_iff a (maxOnScale_lt_accomplishment b)
 
 /-- Before-finish under `COMPLET`: onset to telos. -/
-theorem Rett.before_stative_complet_iff (a b : NonemptyInterval Time) :
+theorem Rett.before_stative_complet_iff (a b : NonemptyInterval T) :
     Rett.before (stativeDenotation a) (COMPLET (accomplishmentDenotation b)) ↔ a.fst < b.snd :=
   Rett.before_stative_iff a (by rw [timeTrace_complet_accomplishment, maxOnScale_singleton])
 
 /-- After-finish: a stative after a stative compares end to end. -/
-theorem Rett.after_stative_stative_iff (a b : NonemptyInterval Time) :
+theorem Rett.after_stative_stative_iff (a b : NonemptyInterval T) :
     Rett.after (stativeDenotation a) (stativeDenotation b) ↔ b.snd < a.snd :=
   Rett.after_stative_iff a (maxOnScale_gt_stative b)
 
 /-- After-start under `INCHOAT`: end to onset. -/
-theorem Rett.after_stative_inchoat_iff (a b : NonemptyInterval Time) :
+theorem Rett.after_stative_inchoat_iff (a b : NonemptyInterval T) :
     Rett.after (stativeDenotation a) (INCHOAT (stativeDenotation b)) ↔ b.fst < a.snd :=
   Rett.after_stative_iff a (by rw [timeTrace_inchoat_stative, maxOnScale_singleton])
 
 /-- The time trace of `COMPLET(preEventDenotation bot i)` is the degenerate
     interval `{i.fst}`. -/
-theorem timeTrace_complet_preEvent (bot : Time) (i : NonemptyInterval Time) (hbot : bot ≤ i.fst) :
+theorem timeTrace_complet_preEvent (bot : T) (i : NonemptyInterval T) (hbot : bot ≤ i.fst) :
     timeTrace (COMPLET (preEventDenotation bot i hbot)) =
     { t | i.fst ≤ t ∧ t ≤ i.fst } := by
   unfold preEventDenotation
@@ -343,7 +343,7 @@ theorem timeTrace_complet_preEvent (bot : Time) (i : NonemptyInterval Time) (hbo
   ext; simp [NonemptyInterval.mem_def, NonemptyInterval.mem_pure]
 
 /-- MAX₍<₎ of the COMPLET of a pre-event denotation is {start}. -/
-theorem maxOnScale_lt_complet_preEvent (bot : Time) (i : NonemptyInterval Time) (hbot : bot ≤ i.fst) :
+theorem maxOnScale_lt_complet_preEvent (bot : T) (i : NonemptyInterval T) (hbot : bot ≤ i.fst) :
     maxOnScale .lt (timeTrace (COMPLET (preEventDenotation bot i hbot))) =
     {i.fst} := by
   rw [timeTrace_complet_preEvent, maxOnScale_lt_closedInterval _ _ (le_refl _)]
@@ -354,8 +354,8 @@ theorem maxOnScale_lt_complet_preEvent (bot : Time) (i : NonemptyInterval Time) 
     the original uses the default *before*-start reading (MAX₍<₎),
     while the negated version requires COMPLET coercion to extract the
     end of the pre-event interval. -/
-theorem before_preEvent_ambidirectional (A : RunTimes Time) (i_B : NonemptyInterval Time)
-    (bot : Time) (hbot : bot ≤ i_B.fst) :
+theorem before_preEvent_ambidirectional (A : RunTimes T) (i_B : NonemptyInterval T)
+    (bot : T) (hbot : bot ≤ i_B.fst) :
     Rett.before A (stativeDenotation i_B) ↔
     Rett.before A (COMPLET (preEventDenotation bot i_B hbot)) := by
   apply before_determined_by_max
@@ -363,14 +363,14 @@ theorem before_preEvent_ambidirectional (A : RunTimes Time) (i_B : NonemptyInter
 
 /-- *After* is NOT ambidirectional: negating B changes
     truth conditions because MAX₍>₎(B) ≠ MAX₍>₎(¬B). -/
-theorem after_not_ambidirectional (hab : ∃ (a b : Time), a < b) :
-    ¬ ∀ (A : RunTimes Time) (B : Set Time),
+theorem after_not_ambidirectional (hab : ∃ (a b : T), a < b) :
+    ¬ ∀ (A : RunTimes T) (B : Set T),
       isAmbidirectional (λ X => ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt X, t > m) B := by
   obtain ⟨a, b, hab⟩ := hab
   intro h
   have h_amb := h {NonemptyInterval.pure b} {a}
-  have h_fB : ∃ t ∈ timeTrace ({NonemptyInterval.pure b} : RunTimes Time),
-      ∃ m ∈ maxOnScale .gt ({a} : Set Time), t > m :=
+  have h_fB : ∃ t ∈ timeTrace ({NonemptyInterval.pure b} : RunTimes T),
+      ∃ m ∈ maxOnScale .gt ({a} : Set T), t > m :=
     ⟨b, ⟨NonemptyInterval.pure b, rfl, le_refl _, le_refl _⟩,
      a, ⟨rfl, fun _ hx' hne => absurd hx' hne⟩, hab⟩
   obtain ⟨t, ht_A, m, ⟨hm_mem, hm_dom⟩, htm⟩ := h_amb.mp h_fB
@@ -379,22 +379,22 @@ theorem after_not_ambidirectional (hab : ∃ (a b : Time), a < b) :
   subst hj_mem
   simp only [NonemptyInterval.pure] at hj_s hj_f
   have ht_eq : t = b := le_antisymm hj_f hj_s
-  have hb_compl : b ∈ ({a} : Set Time)ᶜ := by
+  have hb_compl : b ∈ ({a} : Set T)ᶜ := by
     simp only [Set.mem_compl_iff, Set.mem_singleton_iff]; exact ne_of_gt hab
   by_cases hmb : m = b
   · rw [ht_eq, hmb] at htm; exact absurd htm (lt_irrefl _)
   · rw [ht_eq] at htm; exact absurd htm (not_lt.mpr (le_of_lt (hm_dom b hb_compl (Ne.symm hmb))))
 
-omit [LinearOrder Time] in
+omit [LinearOrder T] in
 /-- *While* is not ambidirectional. -/
-theorem while_not_ambidirectional [Inhabited Time] :
-    ¬ ∀ (A B : Set Time),
+theorem while_not_ambidirectional [Inhabited T] :
+    ¬ ∀ (A B : Set T),
       isAmbidirectional (λ X => ∀ t ∈ A, t ∈ X) B := by
   intro h
   have := h {default} {default}
   simp only [isAmbidirectional] at this
-  have lhs : ∀ t ∈ ({default} : Set Time), t ∈ ({default} : Set Time) := fun _ h => h
-  have rhs := this.mp lhs (default : Time) rfl
+  have lhs : ∀ t ∈ ({default} : Set T), t ∈ ({default} : Set T) := fun _ h => h
+  have rhs := this.mp lhs (default : T) rfl
   exact absurd rfl rhs
 
 end Rett2020

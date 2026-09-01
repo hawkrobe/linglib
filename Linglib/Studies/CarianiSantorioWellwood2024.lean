@@ -82,11 +82,11 @@ comparison of the two states' measures whenever each holder has a unique state o
 kind — the compositional half of the claim that nominal *confidence* and adjectival *confident*
 are interchangeable in the comparative. -/
 theorem confidence_comparative_reduces
-    {E : Type*} {Time : Type*} [LinearOrder Time]
-    {frame : ArgumentStructure.ThematicFrame E Time}
-    {P : Event Time → Prop}
-    {μ : Event Time → ℚ}
-    {a b : E} {sa sb : Event Time}
+    {E : Type*} {T : Type*} [LinearOrder T]
+    {frame : ArgumentStructure.ThematicFrame E T}
+    {P : Event T → Prop}
+    {μ : Event T → ℚ}
+    {a b : E} {sa sb : Event T}
     (ha : frame.holder a sa ∧ P sa)
     (ha_unique : ∀ s, frame.holder a s → P s → s = sa)
     (hb : frame.holder b sb ∧ P sb)

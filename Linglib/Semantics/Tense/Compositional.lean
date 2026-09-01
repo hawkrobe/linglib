@@ -18,43 +18,43 @@ namespace Tense
 
 open Intensional (Index)
 
-variable {W Time : Type*} [LinearOrder Time]
+variable {W T : Type*} [LinearOrder T]
 
 /-- The tense cell `s`, applied compositionally ([mendes-2025]):
     ⟦s⟧ = λP.λsit.λsit'. `compare τ(sit) τ(sit') ∈ s` ∧ P(sit) — the cell
     constrains the event–evaluation comparison and the payload is
     evaluated at the event situation. -/
-def constrain (s : Finset Ordering) (P : (Index W Time → Prop))
-    (sit sit' : Index W Time) : Prop :=
+def constrain (s : Finset Ordering) (P : (Index W T → Prop))
+    (sit sit' : Index W T) : Prop :=
   compare sit.time sit'.time ∈ s ∧ P sit
 
 /-- ⟦PAST⟧ = `constrain past`: the event situation precedes the
     evaluation situation. -/
-abbrev PAST : (Index W Time → Prop) → Index W Time →
-    Index W Time → Prop := constrain past
+abbrev PAST : (Index W T → Prop) → Index W T →
+    Index W T → Prop := constrain past
 
 /-- ⟦PRES⟧ = `constrain present`: the event situation is contemporaneous
     with the evaluation situation. -/
-abbrev PRES : (Index W Time → Prop) → Index W Time →
-    Index W Time → Prop := constrain present
+abbrev PRES : (Index W T → Prop) → Index W T →
+    Index W T → Prop := constrain present
 
 /-- ⟦FUT⟧ = `constrain future`: the event situation follows the
     evaluation situation. -/
-abbrev FUT : (Index W Time → Prop) → Index W Time →
-    Index W Time → Prop := constrain future
+abbrev FUT : (Index W T → Prop) → Index W T →
+    Index W T → Prop := constrain future
 
-@[simp] theorem constrain_past_iff (P : (Index W Time → Prop))
-    (sit sit' : Index W Time) :
+@[simp] theorem constrain_past_iff (P : (Index W T → Prop))
+    (sit sit' : Index W T) :
     constrain past P sit sit' ↔ sit.time < sit'.time ∧ P sit := by
   simp [constrain]
 
-@[simp] theorem constrain_present_iff (P : (Index W Time → Prop))
-    (sit sit' : Index W Time) :
+@[simp] theorem constrain_present_iff (P : (Index W T → Prop))
+    (sit sit' : Index W T) :
     constrain present P sit sit' ↔ sit.time = sit'.time ∧ P sit := by
   simp [constrain]
 
-@[simp] theorem constrain_future_iff (P : (Index W Time → Prop))
-    (sit sit' : Index W Time) :
+@[simp] theorem constrain_future_iff (P : (Index W T → Prop))
+    (sit sit' : Index W T) :
     constrain future P sit sit' ↔ sit'.time < sit.time ∧ P sit := by
   simp [constrain]
 

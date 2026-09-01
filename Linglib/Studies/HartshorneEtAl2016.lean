@@ -371,18 +371,18 @@ theorem profile_agreement (t : SemanticType) :
 -- ════════════════════════════════════════════════════
 
 /-- External source predicts transition (BECOME). -/
-theorem external_predicts_transition (Time : Type*) [LinearOrder Time] :
-    (CausalSource.toLink Time .external).involvesTransition = true := rfl
+theorem external_predicts_transition (T : Type*) [LinearOrder T] :
+    (CausalSource.toLink T .external).involvesTransition = true := rfl
 
 /-- Internal source predicts no transition. -/
-theorem internal_predicts_no_transition (Time : Type*) [LinearOrder Time] :
-    (CausalSource.toLink Time .internal).involvesTransition = false := rfl
+theorem internal_predicts_no_transition (T : Type*) [LinearOrder T] :
+    (CausalSource.toLink T .internal).involvesTransition = false := rfl
 
 /-- Consistency: PsychCausalLink's transition prediction agrees with the
     empirical profile derived from SemanticType.
     Both are derived independently — the agreement is a genuine check. -/
-theorem transition_prediction_consistent (t : SemanticType) (Time : Type*) [LinearOrder Time] :
-    (CausalSource.toLink Time (semanticTypeToCausalSource t)).involvesTransition =
+theorem transition_prediction_consistent (t : SemanticType) (T : Type*) [LinearOrder T] :
+    (CausalSource.toLink T (semanticTypeToCausalSource t)).involvesTransition =
       (causalSourceToProfile (semanticTypeToCausalSource t)).involvesBecome := by
   cases t <;> rfl
 

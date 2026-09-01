@@ -18,7 +18,7 @@ free, yielding only existential readings.
 ## Architecture
 
 ```
-PTSConstraint ──[toLBDomain]──▷ Set Time ──▷ PERF_XN
+PTSConstraint ──[toLBDomain]──▷ Set T ──▷ PERF_XN
 ```
 
 Adverbials are modeled as `PTSConstraint`s on the PTS interval. The
@@ -35,13 +35,13 @@ open Tense
 open Aspect
 open Tense.TenseAspectComposition
 
-variable {W Time : Type*} [LinearOrder Time]
+variable {W T : Type*} [LinearOrder T]
 
 /-! ### PTS Constraints -/
 
 /-- A constraint on the Perfect Time Span.
     Adverbials restrict which PTS intervals are admissible. -/
-abbrev PTSConstraint (Time : Type*) [LinearOrder Time] := NonemptyInterval Time → Prop
+abbrev PTSConstraint (T : Type*) [LinearOrder T] := NonemptyInterval T → Prop
 
 /-- [iatridou-anagnostopoulou-izvorski-2001] adverbial type classification.
     - `durative`: specifies the left boundary (e.g., "since Monday")
@@ -55,22 +55,22 @@ inductive AdverbialType where
 
 /-- "ever since t₀": PTS must start at t₀.
     E.g., "has been running since Monday" → PTS.fst = Monday. -/
-def everSince (t₀ : Time) : PTSConstraint Time :=
+def everSince (t₀ : T) : PTSConstraint T :=
   λ pts => pts.fst = t₀
 
 /-- "for (duration) from tStart": PTS must start at tStart.
     Simplified duration adverbial — the duration is implicit in the
     interval length [tStart, RB]. -/
-def forDurationFrom (tStart : Time) : PTSConstraint Time :=
+def forDurationFrom (tStart : T) : PTSConstraint T :=
   λ pts => pts.fst = tStart
 
 /-- "always" / no temporal adverbial: no constraint on PTS. -/
-def always : PTSConstraint Time :=
+def always : PTSConstraint T :=
   λ _ => True
 
 /-- "before t" (inclusive adverbial): no constraint on PTS start.
     The adverbial constrains the event location, not the PTS boundary. -/
-def before : PTSConstraint Time :=
+def before : PTSConstraint T :=
   λ _ => True
 
 /-! ### LB Domain Extraction -/
@@ -80,7 +80,7 @@ def before : PTSConstraint Time :=
 
     For a constraint C, the compatible LBs are those tLB ≤ tc such that
     C holds of the interval [tLB, tc]. -/
-def PTSConstraint.toLBDomain (adv : PTSConstraint Time) (tc : Time) : Set Time :=
+def PTSConstraint.toLBDomain (adv : PTSConstraint T) (tc : T) : Set T :=
   { tLB | tLB ≤ tc ∧ ∀ (h : tLB ≤ tc), adv ⟨⟨tLB, tc⟩, h⟩ }
 
 /-! ### PERF with Adverbial -/
@@ -88,8 +88,8 @@ def PTSConstraint.toLBDomain (adv : PTSConstraint Time) (tc : Time) : Set Time :
 /-- Perfect with adverbial constraint: PERF_ADV(p, adv).
     Combines PERF with an adverbial constraint on the PTS.
     Equivalent to PERF_XN with the adverbial's derived LB domain. -/
-def PERF_ADV (p : IntervalPred W Time) (adv : PTSConstraint Time) : PointPred W Time :=
-  λ s => ∃ pts : NonemptyInterval Time, RB pts s.time ∧ adv pts ∧ p s.world pts
+def PERF_ADV (p : IntervalPred W T) (adv : PTSConstraint T) : PointPred W T :=
+  λ s => ∃ pts : NonemptyInterval T, RB pts s.time ∧ adv pts ∧ p s.world pts
 
 /-! ### Adverbial Type Properties -/
 
@@ -107,8 +107,8 @@ def AdverbialType.specifiesLB : AdverbialType → Bool
     PERF_ADV requires adv(PTS); PERF_XN requires LB(tLB, PTS) with
     tLB ∈ toLBDomain(adv, tc). These are equivalent by definition of
     toLBDomain: tLB ∈ toLBDomain ↔ tLB ≤ tc ∧ adv([tLB, tc]). -/
-theorem perf_adv_eq_perf_xn (p : IntervalPred W Time) (adv : PTSConstraint Time)
-    (tc : Time) (w : W) :
+theorem perf_adv_eq_perf_xn (p : IntervalPred W T) (adv : PTSConstraint T)
+    (tc : T) (w : W) :
     PERF_ADV p adv ⟨w, tc⟩ ↔ PERF_XN p (adv.toLBDomain tc) ⟨w, tc⟩ := by
   constructor
   · intro ⟨pts, hRB, hadv, hp⟩
@@ -131,8 +131,8 @@ theorem perf_adv_eq_perf_xn (p : IntervalPred W Time) (adv : PTSConstraint Time)
 
     Proof sketch: toLBDomain(everSince t₀, tc) = {tLB | tLB ≤ tc ∧ tLB = t₀}
     = {t₀} when t₀ ≤ tc. -/
-theorem everSince_specifies_lb (t₀ tc : Time) (h : t₀ ≤ tc) :
-    (everSince t₀ : PTSConstraint Time).toLBDomain tc = {t₀} := by
+theorem everSince_specifies_lb (t₀ tc : T) (h : t₀ ≤ tc) :
+    (everSince t₀ : PTSConstraint T).toLBDomain tc = {t₀} := by
   ext x
   simp only [PTSConstraint.toLBDomain, everSince, Set.mem_ofPred_eq]
   constructor
@@ -145,8 +145,8 @@ theorem everSince_specifies_lb (t₀ tc : Time) (h : t₀ ≤ tc) :
 
     Proof sketch: toLBDomain(before, tc) = {tLB | tLB ≤ tc ∧ True}
     = {tLB | tLB ≤ tc}. -/
-theorem before_no_lb_constraint (tc : Time) :
-    (before : PTSConstraint Time).toLBDomain tc = {tLB | tLB ≤ tc} := by
+theorem before_no_lb_constraint (tc : T) :
+    (before : PTSConstraint T).toLBDomain tc = {tLB | tLB ≤ tc} := by
   ext x
   simp only [PTSConstraint.toLBDomain, before, Set.mem_ofPred_eq]
   exact ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, fun _ => trivial⟩⟩
@@ -155,7 +155,7 @@ theorem before_no_lb_constraint (tc : Time) :
 
     When the LB is pinned (durative adverbial), the U-perf reading
     entails the simple present via `u_perf_entails_simple_present`. -/
-theorem durative_licenses_u_perfect (V : W → Event Time → Prop) (t₀ tc : Time) (w : W)
+theorem durative_licenses_u_perfect (V : W → Event T → Prop) (t₀ tc : T) (w : W)
     (_h : t₀ ≤ tc) :
     presPerfProgXN V {t₀} tc w → simplePresent V tc w :=
   u_perf_entails_simple_present V {t₀} tc w
@@ -166,7 +166,7 @@ theorem durative_licenses_u_perfect (V : W → Event Time → Prop) (t₀ tc : T
     With no LB constraint, the domain is {tLB | tLB ≤ tc}. Under IMPF
     (subinterval property), this is close to Set.univ for the relevant
     range, so U-perf ↔ simple present by `broad_focus_equiv`'s argument. -/
-theorem inclusive_no_u_license (V : W → Event Time → Prop) (tc : Time) (w : W) :
+theorem inclusive_no_u_license (V : W → Event T → Prop) (tc : T) (w : W) :
     presPerfProgXN V Set.univ tc w ↔ simplePresent V tc w :=
   broad_focus_equiv V tc w
 

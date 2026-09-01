@@ -7,10 +7,10 @@ import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 [parsons-1990] [moltmann-2025] [hopperdietzel-2024]
 
 Neo-Davidsonian substrate for argument-introducing heads (Voice, applicative,
-Cause), built on the canonical `ThematicRel` (`Entity → Event Time → Prop`,
+Cause), built on the canonical `ThematicRel` (`Entity → Event T → Prop`,
 [moltmann-2025]: "the preferred version of event semantics for
 syntacticians"). A verb/VP denotation is a predicate of events
-`Event Time → Prop` (this is `Set (Event Time)`; used predicatively).
+`Event T → Prop` (this is `Set (Event T)`; used predicatively).
 
 The central new object is `VerbDenot`: a verb denotation classified by the
 structure argument introduction is sensitive to (its valency; the finite
@@ -35,25 +35,25 @@ contextually-interpreted single argument-introducer is its `IntroMode` reading.
 
 namespace ArgumentStructure
 
-variable {Entity : Type*} {Time : Type*} [LinearOrder Time]
+variable {Entity : Type*} {T : Type*} [LinearOrder T]
 
 /-! ### Event Identification and thematic uniqueness -/
 
 /-- Event Identification ([kratzer-1996]): combine an argument-introducer
 `f` (a thematic relation, awaiting its participant) with a VP predicate `g`,
 conjoining at the event. The result still awaits the introduced participant. -/
-def eventIdentification (f : ThematicRel Entity Time) (g : Event Time → Prop) :
-    ThematicRel Entity Time :=
+def eventIdentification (f : ThematicRel Entity T) (g : Event T → Prop) :
+    ThematicRel Entity T :=
   fun x e => f x e ∧ g e
 
-theorem eventIdentification_apply (f : ThematicRel Entity Time)
-    (g : Event Time → Prop) (x : Entity) (e : Event Time) :
+theorem eventIdentification_apply (f : ThematicRel Entity T)
+    (g : Event T → Prop) (x : Entity) (e : Event T) :
     eventIdentification f g x e ↔ f x e ∧ g e := Iff.rfl
 
 /-- Two thematic relations are role-exclusive when no participant bears both to
 the same event (thematic uniqueness). This is the principle behind
 [pylkkanen-2008]'s eq. 103: a participant cannot be both agent and theme. -/
-def RolesExclusive (r₁ r₂ : ThematicRel Entity Time) : Prop :=
+def RolesExclusive (r₁ r₂ : ThematicRel Entity T) : Prop :=
   ∀ x e, r₁ x e → ¬ r₂ x e
 
 /-! ### Verb denotations classified by valence -/
@@ -69,9 +69,9 @@ rather than a stipulation.
   (e.g. *send a letter*).
 * `kimianStative` — a relation over individuals with *no* event argument
   (Kimian state, [moltmann-2025] §1.4.1; e.g. *own*, *owe*). [Diagnostic 2] -/
-inductive VerbDenot (Entity : Type*) (Time : Type*) [LinearOrder Time] where
-  | unergative (body : Event Time → Prop)
-  | transitive (theme : ThematicRel Entity Time) (body : ThematicRel Entity Time)
+inductive VerbDenot (Entity : Type*) (T : Type*) [LinearOrder T] where
+  | unergative (body : Event T → Prop)
+  | transitive (theme : ThematicRel Entity T) (body : ThematicRel Entity T)
   | kimianStative (rel : Entity → Entity → Prop)
 
 namespace VerbDenot
@@ -79,11 +79,11 @@ namespace VerbDenot
 /-- Does this denotation supply an event-internal theme (Davidsonian transitive)?
 `unergative` (no participant slot) and `kimianStative` (no event argument) lack
 one, for two distinct structural reasons. -/
-def IsTransitive : VerbDenot Entity Time → Prop
+def IsTransitive : VerbDenot Entity T → Prop
   | .transitive _ _ => True
   | _ => False
 
-instance : DecidablePred (IsTransitive (Entity := Entity) (Time := Time)) := fun vd =>
+instance : DecidablePred (IsTransitive (Entity := Entity) (T := T)) := fun vd =>
   match vd with
   | .transitive _ _ => .isTrue trivial
   | .unergative _ => .isFalse id
@@ -107,12 +107,12 @@ inductive IntroMode where
 /-- Which verb denotations an introducer of this mode can compose with, derived
 from the denotation's valence: an event-relating introducer composes with
 anything; a theme-relating one needs an event-internal theme. -/
-def IntroMode.Licenses : IntroMode → VerbDenot Entity Time → Prop
+def IntroMode.Licenses : IntroMode → VerbDenot Entity T → Prop
   | .toEvent, _  => True
   | .toTheme, vd => vd.IsTransitive
 
 instance (m : IntroMode) :
-    DecidablePred (IntroMode.Licenses m (Entity := Entity) (Time := Time)) := fun vd => by
+    DecidablePred (IntroMode.Licenses m (Entity := Entity) (T := T)) := fun vd => by
   cases m <;> unfold IntroMode.Licenses <;> infer_instance
 
 /-! ### Applicative denotations -/
@@ -120,24 +120,24 @@ instance (m : IntroMode) :
 /-- High applicative / Voice denotation: introduce a participant related to the
 EVENT, via Event Identification. Total over any VP predicate — so it composes
 with unergatives. -/
-def applToEvent (rel : ThematicRel Entity Time) (vp : Event Time → Prop) :
-    ThematicRel Entity Time :=
+def applToEvent (rel : ThematicRel Entity T) (vp : Event T → Prop) :
+    ThematicRel Entity T :=
   eventIdentification rel vp
 
 /-- Low applicative denotation: relate the applied argument to the THEME of a
 transitive verb via a transfer relation. Requires the verb's internal theme
-function `ThematicRel Entity Time` (type ⟨e,⟨s,t⟩⟩) — an unergative or Kimian
+function `ThematicRel Entity T` (type ⟨e,⟨s,t⟩⟩) — an unergative or Kimian
 state cannot supply it. -/
-def applToTheme (themeRel : ThematicRel Entity Time)
-    (transfer : Entity → Entity → Prop) (verb : ThematicRel Entity Time)
-    (theme applied : Entity) : Event Time → Prop :=
+def applToTheme (themeRel : ThematicRel Entity T)
+    (transfer : Entity → Entity → Prop) (verb : ThematicRel Entity T)
+    (theme applied : Entity) : Event T → Prop :=
   fun e => verb theme e ∧ themeRel theme e ∧ transfer theme applied
 
 /-- Any low-applicative denotation entails the theme bears the theme relation —
 the theme conjunct is present by construction. -/
-theorem applToTheme_entails_theme (themeRel : ThematicRel Entity Time)
-    (transfer : Entity → Entity → Prop) (verb : ThematicRel Entity Time)
-    (theme applied : Entity) (e : Event Time)
+theorem applToTheme_entails_theme (themeRel : ThematicRel Entity T)
+    (transfer : Entity → Entity → Prop) (verb : ThematicRel Entity T)
+    (theme applied : Entity) (e : Event T)
     (h : applToTheme themeRel transfer verb theme applied e) : themeRel theme e :=
   h.2.1
 
@@ -145,25 +145,25 @@ theorem applToTheme_entails_theme (themeRel : ThematicRel Entity Time)
 
 /-- High introduction licenses any verb, including unergatives (Luganda/Venda/
 Albanian high applicatives over unergatives, [pylkkanen-2008] §2.1.2). -/
-theorem toEvent_licenses_all (vd : VerbDenot Entity Time) :
+theorem toEvent_licenses_all (vd : VerbDenot Entity T) :
     IntroMode.toEvent.Licenses vd := trivial
 
 /-- Diagnostic 1: low (theme-relating) introduction is blocked over an
 unergative — it has no event-internal theme. Derived from the valence type,
 not stipulated. -/
-theorem toTheme_blocks_unergative (body : Event Time → Prop) :
+theorem toTheme_blocks_unergative (body : Event T → Prop) :
     ¬ IntroMode.toTheme.Licenses (VerbDenot.unergative (Entity := Entity) body) :=
   id
 
 /-- Diagnostic 2: low introduction is blocked over a Kimian stative — distinct
 reason from Diagnostic 1: no event argument at all ([moltmann-2025]). -/
 theorem toTheme_blocks_kimian (rel : Entity → Entity → Prop) :
-    ¬ IntroMode.toTheme.Licenses (VerbDenot.kimianStative (Time := Time) rel) :=
+    ¬ IntroMode.toTheme.Licenses (VerbDenot.kimianStative (T := T) rel) :=
   id
 
 /-- Low introduction is licensed over a Davidsonian transitive (English DOC,
 Hebrew possessor datives). -/
-theorem toTheme_licenses_transitive (themeRel body : ThematicRel Entity Time) :
+theorem toTheme_licenses_transitive (themeRel body : ThematicRel Entity T) :
     IntroMode.toTheme.Licenses (VerbDenot.transitive themeRel body) := trivial
 
 /-- [pylkkanen-2008]'s eq. 103, as a theorem about the denotations:
@@ -172,9 +172,9 @@ argument's theme relation to the external argument, yielding `agentRel x e ∧
 themeRel x e` for one participant — contradictory under thematic uniqueness.
 The transitivity restriction is thus *derived*, not stipulated. -/
 theorem low_external_arg_clash
-    (agentRel themeRel : ThematicRel Entity Time)
+    (agentRel themeRel : ThematicRel Entity T)
     (excl : RolesExclusive agentRel themeRel)
-    (x : Entity) (e : Event Time)
+    (x : Entity) (e : Event T)
     (hAgent : agentRel x e) (hTheme : themeRel x e) : False :=
   excl x e hAgent hTheme
 
@@ -182,22 +182,22 @@ theorem low_external_arg_clash
 
 /-- Bieventive Cause: the causative head relates the described event to a
 causing event, introducing NO individual. `λf.λe. ∃e'. f e' ∧ cause e e'`. -/
-def causeBieventive (cause : Event Time → Event Time → Prop) (caused : Event Time → Prop) :
-    Event Time → Prop :=
+def causeBieventive (cause : Event T → Event T → Prop) (caused : Event T → Prop) :
+    Event T → Prop :=
   fun e => ∃ e', caused e' ∧ cause e e'
 
 /-- The θ-role analysis [pylkkanen-2008] argues against: Cause introduces a
 causer individual. `λx.λe. causer x e ∧ ∃e'. f e' ∧ cause e e'`. -/
-def causeThetaRole (cause : Event Time → Event Time → Prop)
-    (causer : ThematicRel Entity Time) (caused : Event Time → Prop) :
-    ThematicRel Entity Time :=
+def causeThetaRole (cause : Event T → Event T → Prop)
+    (causer : ThematicRel Entity T) (caused : Event T → Prop) :
+    ThematicRel Entity T :=
   fun x e => causer x e ∧ ∃ e', caused e' ∧ cause e e'
 
 /-- The θ-role analysis forces an external (causer) participant: its denotation
 entails `causer x e`. -/
-theorem causeThetaRole_forces_causer (cause : Event Time → Event Time → Prop)
-    (causer : ThematicRel Entity Time) (caused : Event Time → Prop)
-    (x : Entity) (e : Event Time)
+theorem causeThetaRole_forces_causer (cause : Event T → Event T → Prop)
+    (causer : ThematicRel Entity T) (caused : Event T → Prop)
+    (x : Entity) (e : Event T)
     (h : causeThetaRole cause causer caused x e) : causer x e :=
   h.1
 
@@ -206,8 +206,8 @@ participant: given only a causing relation to some caused event,
 `causeBieventive` holds without any causer. This is the Japanese adversity
 causative ([pylkkanen-2008] §3.2.2) the θ-role analysis cannot model. -/
 theorem causeBieventive_no_external_arg
-    (cause : Event Time → Event Time → Prop) (caused : Event Time → Prop)
-    (e e' : Event Time) (hc : caused e') (hcause : cause e e') :
+    (cause : Event T → Event T → Prop) (caused : Event T → Prop)
+    (e e' : Event T) (hc : caused e') (hcause : cause e e') :
     causeBieventive cause caused e :=
   ⟨e', hc, hcause⟩
 

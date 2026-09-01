@@ -142,26 +142,26 @@ construction. -/
 
 /-- (19b): the retrospective — some reference interval satisfying the
 description lies wholly before the perspective interval. -/
-def retro {W Time : Type*} [LinearOrder Time] (A : IntervalPred W Time) :
-    IntervalPred W Time :=
+def retro {W T : Type*} [LinearOrder T] (A : IntervalPred W T) :
+    IntervalPred W T :=
   fun w p => ∃ i, A w i ∧ i.isBefore p
 
 /-- (18): *used to* — the retrospective over the imperfective. -/
-def usedToOp {W Time : Type*} [LinearOrder Time] (P : W → Event Time → Prop) :
-    IntervalPred W Time :=
+def usedToOp {W T : Type*} [LinearOrder T] (P : W → Event T → Prop) :
+    IntervalPred W T :=
   retro (IMPF P)
 
 /-- (34a): the perfect — the perspective is a final subinterval of the
 reference interval ([pancheva-2003]'s PTS, from the substrate). -/
-def perfectOp {W Time : Type*} [LinearOrder Time] (A : IntervalPred W Time) :
-    IntervalPred W Time :=
+def perfectOp {W T : Type*} [LinearOrder T] (A : IntervalPred W T) :
+    IntervalPred W T :=
   fun w p => ∃ i, A w i ∧ p.finalSubinterval i
 
 /-- (32)–(34): one reference interval serves the retrospective and the
 perfect at once only for a degenerate instantaneous perspective. The two
 form the Horn scale behind the retrospectivity implicature (31)–(33). -/
-theorem retro_perfect_forces_point {Time : Type*} [LinearOrder Time]
-    {i p : NonemptyInterval Time} (hb : i.isBefore p) (hf : p.finalSubinterval i) :
+theorem retro_perfect_forces_point {T : Type*} [LinearOrder T]
+    {i p : NonemptyInterval T} (hb : i.isBefore p) (hf : p.finalSubinterval i) :
     p.IsPoint :=
   le_antisymm p.fst_le_snd (hf.2.trans_le hb)
 
@@ -169,9 +169,9 @@ theorem retro_perfect_forces_point {Time : Type*} [LinearOrder Time]
 Still do."): (19a) bounds only the reference interval, so a state whose
 runtime strictly contains a pre-perspective reference interval satisfies
 *used to* however far the state runs — through the perspective included. -/
-theorem usedTo_of_persisting_state {W Time : Type*} [LinearOrder Time]
-    {P : W → Event Time → Prop} {w : W} {e : Event Time} (hP : P w e)
-    {i p : NonemptyInterval Time} (hie : i < e.τ) (hip : i.isBefore p) :
+theorem usedTo_of_persisting_state {W T : Type*} [LinearOrder T]
+    {P : W → Event T → Prop} {w : W} {e : Event T} (hP : P w e)
+    {i p : NonemptyInterval T} (hie : i < e.τ) (hip : i.isBefore p) :
     usedToOp P w p :=
   ⟨i, ⟨e, hie, hP⟩, hip⟩
 

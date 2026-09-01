@@ -41,11 +41,11 @@ open Tense
     tense; the clash with PRES arises because the temporal assertion
     ("during then") forces the PRES reference inside the ⌈then⌉
     reference. -/
-def thenPresup {Time : Type*} [LinearOrder Time] (thenRef perspective : Time) : Prop :=
+def thenPresup {T : Type*} [LinearOrder T] (thenRef perspective : T) : Prop :=
   compare thenRef perspective ∈ Tense.presentᶜ
 
-@[simp] theorem thenPresup_def {Time : Type*} [LinearOrder Time]
-    (thenRef perspective : Time) :
+@[simp] theorem thenPresup_def {T : Type*} [LinearOrder T]
+    (thenRef perspective : T) :
     thenPresup thenRef perspective ↔ thenRef ≠ perspective := by
   simp [thenPresup]
 
@@ -64,13 +64,13 @@ structure ThenAdverb where
 
 /-- OP_π shifts the perspective time to a new value.
     ⟦OP_π φ⟧^{c,π,g} = λi_κ. ⟦φ⟧^{c,i_t,g}(i) -/
-def opPi {Time : Type*} (f : ReichenbachFrame Time) (newPi : Time) :
-    ReichenbachFrame Time :=
+def opPi {T : Type*} (f : ReichenbachFrame T) (newPi : T) :
+    ReichenbachFrame T :=
   { f with perspectiveTime := newPi }
 
 /-- OP_π corresponds to `embeddedFrame` when shifting to the matrix event time. -/
-theorem opPi_eq_embeddedFrame {Time : Type*}
-    (matrixFrame : ReichenbachFrame Time) (embeddedR embeddedE : Time) :
+theorem opPi_eq_embeddedFrame {T : Type*}
+    (matrixFrame : ReichenbachFrame T) (embeddedR embeddedE : T) :
     opPi { speechTime := matrixFrame.speechTime
            perspectiveTime := matrixFrame.speechTime
            referenceTime := embeddedR
@@ -85,9 +85,9 @@ theorem opPi_eq_embeddedFrame {Time : Type*}
     PRES presupposes R = π (`isPresent`), the temporal assertion requires the
     ⌈then⌉ reference to contain — in the point approximation, equal — R
     ("during then"), and ⌈then⌉ presupposes its reference disjoint from π. -/
-theorem then_present_clash {Time : Type*} [LinearOrder Time]
-    (f : ReichenbachFrame Time)
-    {thenRef : Time} (hPres : f.isPresent) (hDuring : f.referenceTime = thenRef)
+theorem then_present_clash {T : Type*} [LinearOrder T]
+    (f : ReichenbachFrame T)
+    {thenRef : T} (hPres : f.isPresent) (hDuring : f.referenceTime = thenRef)
     (hThen : thenPresup thenRef f.perspectiveTime) : False :=
   (thenPresup_def _ _).mp hThen (hDuring.symm.trans hPres)
 
@@ -96,8 +96,8 @@ theorem then_present_clash {Time : Type*} [LinearOrder Time]
     ([tsilia-zhao-2026]): a deleted tense contributes no perspectival
     presupposition, leaving only `thenPresup`, which any reference off the
     perspective witnesses. -/
-theorem thenPresup_satisfiable {Time : Type*} [LinearOrder Time] [Nontrivial Time]
-    (perspective : Time) : ∃ thenRef, thenPresup thenRef perspective := by
+theorem thenPresup_satisfiable {T : Type*} [LinearOrder T] [Nontrivial T]
+    (perspective : T) : ∃ thenRef, thenPresup thenRef perspective := by
   simpa using exists_ne perspective
 
 end Tense.Perspective

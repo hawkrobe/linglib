@@ -81,8 +81,8 @@ theorem ogihara_ambiguity_vs_deletion :
     tense reading of past: the bound variable receives `E_matrix`. The
     derivation chain is `zeroTense_receives_binder_time` (substrate) →
     `embeddedR = matrixFrame.eventTime` → `embeddedFrame.isPresent`. -/
-theorem ogihara_derives_simultaneous {Time : Type*}
-    (matrixFrame : ReichenbachFrame Time) (g : TemporalAssignment Time) (n : ℕ) :
+theorem ogihara_derives_simultaneous {T : Type*}
+    (matrixFrame : ReichenbachFrame T) (g : TemporalAssignment T) (n : ℕ) :
     let embeddedR := interpTense n (updateTemporal g n matrixFrame.eventTime)
     (embeddedFrame matrixFrame embeddedR embeddedR).isPresent := by
   simp only [zeroTense_receives_binder_time, embeddedFrame,
@@ -91,8 +91,8 @@ theorem ogihara_derives_simultaneous {Time : Type*}
 /-- [ogihara-1996] derives the shifted reading via the
     genuine-past reading: the past tense contributes temporal
     precedence. -/
-theorem ogihara_derives_shifted {Time : Type*} [LinearOrder Time]
-    (matrixFrame : ReichenbachFrame Time) (embeddedR embeddedE : Time)
+theorem ogihara_derives_shifted {T : Type*} [LinearOrder T]
+    (matrixFrame : ReichenbachFrame T) (embeddedR embeddedE : T)
     (hPast : embeddedR < matrixFrame.eventTime) :
     (embeddedFrame matrixFrame embeddedR embeddedE).isPast := by
   simp only [embeddedFrame, ReichenbachFrame.isPast_def]

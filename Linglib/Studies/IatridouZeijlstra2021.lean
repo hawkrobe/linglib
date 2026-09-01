@@ -57,7 +57,7 @@ open Tense.TemporalAdverbials (PTSConstraint AdverbialType)
 open IatridouEtAl2001 (BoundaryKind)
 open Kiparsky2002 (PerfectReading)
 
-variable {W Time : Type*} [LinearOrder Time]
+variable {W T : Type*} [LinearOrder T]
 
 
 -- ════════════════════════════════════════════════════
@@ -70,8 +70,8 @@ variable {W Time : Type*} [LinearOrder Time]
     - `pts`: the Perfect Time Span (LB set by adverbial or context, RB by Tense)
     - `uts`: the Until Time Span (LB contextually set, RB by *until*'s argument) -/
 inductive TimeSpanKind where
-  | pts  -- Perfect Time Span
-  | uts  -- Until Time Span
+  | pts  -- Perfect T Span
+  | uts  -- Until T Span
   deriving DecidableEq, Repr
 
 /-- The boundary set by Tense (not by the adverbial).
@@ -234,17 +234,17 @@ theorem nonNPI_no_domainAlts :
     These subdomain alternatives are logically stronger than the assertion
     (entailed by it), because if a culminated event took place in a
     subinterval of τ, it also took place in τ. -/
-def SubdomainAlternatives (τ : NonemptyInterval Time) : Set (NonemptyInterval Time) :=
+def SubdomainAlternatives (τ : NonemptyInterval T) : Set (NonemptyInterval T) :=
   Set.Iic τ
 
 /-- Subdomain alternatives of τ include τ itself. -/
-theorem self_in_subdomain (τ : NonemptyInterval Time) :
+theorem self_in_subdomain (τ : NonemptyInterval T) :
     τ ∈ SubdomainAlternatives τ :=
   ⟨le_refl _, le_refl _⟩
 
 /-- Subdomain alternatives of a subinterval are a subset of subdomain
     alternatives of the superinterval. -/
-theorem subdomain_monotone (τ₁ τ₂ : NonemptyInterval Time)
+theorem subdomain_monotone (τ₁ τ₂ : NonemptyInterval T)
     (h : τ₁ ≤ τ₂) :
     SubdomainAlternatives τ₁ ⊆ SubdomainAlternatives τ₂ := by
   intro τ' ⟨hs, hf⟩
@@ -257,18 +257,18 @@ theorem subdomain_monotone (τ₁ τ₂ : NonemptyInterval Time)
 /-- An event of type P has its runtime inside time span τ.
     This is the assertion form for both PTS and UTS:
     ∃e.[P(e) ∧ Run(e) ⊆ τ] -/
-def eventInSpan (P : W → Event Time → Prop) (w : W) (τ : NonemptyInterval Time) : Prop :=
-  ∃ e : Event Time, e.τ ≤ τ ∧ P w e
+def eventInSpan (P : W → Event T → Prop) (w : W) (τ : NonemptyInterval T) : Prop :=
+  ∃ e : Event T, e.τ ≤ τ ∧ P w e
 
 /-- Negated form: no P-event has runtime inside τ.
     ¬∃e.[P(e) ∧ Run(e) ⊆ τ] -/
-def noEventInSpan (P : W → Event Time → Prop) (w : W) (τ : NonemptyInterval Time) : Prop :=
+def noEventInSpan (P : W → Event T → Prop) (w : W) (τ : NonemptyInterval T) : Prop :=
   ¬ eventInSpan P w τ
 
 /-- If a culminated event occurs in a subinterval, it occurs in the
     superinterval. Entailment from subinterval to superinterval. -/
-theorem eventInSpan_monotone (P : W → Event Time → Prop) (w : W)
-    (τ₁ τ₂ : NonemptyInterval Time) (h : τ₁ ≤ τ₂) :
+theorem eventInSpan_monotone (P : W → Event T → Prop) (w : W)
+    (τ₁ τ₂ : NonemptyInterval T) (h : τ₁ ≤ τ₂) :
     eventInSpan P w τ₁ → eventInSpan P w τ₂ := by
   intro ⟨e, hsub, hP⟩
   exact ⟨e, ⟨le_trans h.1 hsub.1, le_trans hsub.2 h.2⟩, hP⟩
@@ -276,8 +276,8 @@ theorem eventInSpan_monotone (P : W → Event Time → Prop) (w : W)
 /-- Subdomain alternatives for culminated events are all nonweaker:
     every subdomain alternative entails the assertion.
     This is because eventInSpan is monotone in the time span. -/
-theorem subdomain_alts_nonweaker (P : W → Event Time → Prop) (w : W)
-    (τ : NonemptyInterval Time) (τ' : NonemptyInterval Time) (h : τ' ∈ SubdomainAlternatives τ) :
+theorem subdomain_alts_nonweaker (P : W → Event T → Prop) (w : W)
+    (τ : NonemptyInterval T) (τ' : NonemptyInterval T) (h : τ' ∈ SubdomainAlternatives τ) :
     eventInSpan P w τ' → eventInSpan P w τ :=
   eventInSpan_monotone P w τ' τ h
 
@@ -294,13 +294,13 @@ theorem subdomain_alts_nonweaker (P : W → Event Time → Prop) (w : W)
     This explains why *in years* is an NPI:
     "*Joe has met Mary in weeks" is ungrammatical because exhaustification
     of the domain alternatives in a positive context yields contradiction. -/
-theorem positive_exhaustification_contradicts (P : W → Event Time → Prop) (w : W)
-    (τ : NonemptyInterval Time)
+theorem positive_exhaustification_contradicts (P : W → Event T → Prop) (w : W)
+    (τ : NonemptyInterval T)
     (_hassert : eventInSpan P w τ)
     -- The exhaustifier requires negating all stronger alternatives
     (hexh : ∀ τ' ∈ SubdomainAlternatives τ, τ' ≠ τ → noEventInSpan P w τ') :
     -- If any proper subinterval exists, we have a contradiction
-    ∀ (τ_sub : NonemptyInterval Time),
+    ∀ (τ_sub : NonemptyInterval T),
       τ_sub ≤ τ → τ_sub ≠ τ →
       -- The assertion entails the subdomain alternative
       eventInSpan P w τ_sub → False := by
@@ -312,8 +312,8 @@ theorem positive_exhaustification_contradicts (P : W → Event Time → Prop) (w
     WEAKER than the assertion ¬∃e.[P(e) ∧ Run(e) ⊆ τ] (for τ' ⊆ τ).
     Since no subdomain alternative is stronger, there is nothing to exclude,
     and exhaustification applies vacuously. No contradiction arises. -/
-theorem negated_subdomain_weaker (P : W → Event Time → Prop) (w : W)
-    (τ τ' : NonemptyInterval Time) (h : τ' ≤ τ) :
+theorem negated_subdomain_weaker (P : W → Event T → Prop) (w : W)
+    (τ τ' : NonemptyInterval T) (h : τ' ≤ τ) :
     noEventInSpan P w τ → noEventInSpan P w τ' := by
   intro hneg hev
   exact hneg (eventInSpan_monotone P w τ' τ h hev)
@@ -333,14 +333,14 @@ theorem negated_subdomain_weaker (P : W → Event Time → Prop) (w : W)
     that stretches as far as possible, the LB must be at the most recent
     occurrence of the event. This makes the event's occurrence a
     presupposition, not just an implicature — hence noncancelable. -/
-def actualityInference (P : W → Event Time → Prop) (w : W)
-    (τ : NonemptyInterval Time) : Prop :=
+def actualityInference (P : W → Event T → Prop) (w : W)
+    (τ : NonemptyInterval T) : Prop :=
   eventInSpan P w τ
 
 /-- The AI with *in years* is at the LB: the event occurs at the LB point. -/
-def aiAtBoundary (P : W → Event Time → Prop) (w : W)
-    (τ : NonemptyInterval Time) : Prop :=
-  ∃ e : Event Time, e.τ.snd = τ.fst ∧ P w e
+def aiAtBoundary (P : W → Event T → Prop) (w : W)
+    (τ : NonemptyInterval T) : Prop :=
+  ∃ e : Event T, e.τ.snd = τ.fst ∧ P w e
 
 -- ════════════════════════════════════════════════════
 -- § 9. The Beyond Expectation Inference
@@ -355,9 +355,9 @@ def aiAtBoundary (P : W → Event Time → Prop) (w : W)
     any contextual alternative, so the event occurred earlier than expected. -/
 structure BeyondExpectationInference where
   /-- The actual time span -/
-  actualSpan : NonemptyInterval Time
+  actualSpan : NonemptyInterval T
   /-- The contextually expected upper bound on the time span -/
-  expectedBound : NonemptyInterval Time
+  expectedBound : NonemptyInterval T
   /-- The actual span is larger (the event is earlier than expected) -/
   beyondExpectation : expectedBound ≤ actualSpan
   /-- The spans are not equal (the actual is strictly larger) -/
@@ -370,14 +370,14 @@ structure BeyondExpectationInference where
 /-- Perfective contributes ST ⊆ TT: the event is contained in the time span.
     [iatridou-zeijlstra-2021] §1 (eq. 17a), following [klein-1994].
     Equivalently, the E-perfect: the event is contained in the PTS. -/
-def perfectiveContainment (e : Event Time) (τ : NonemptyInterval Time) : Prop :=
+def perfectiveContainment (e : Event T) (τ : NonemptyInterval T) : Prop :=
   e.τ ≤ τ
 
 /-- Imperfective contributes TT ⊆ ST: the time span is contained in the event.
     [iatridou-zeijlstra-2021] §1 (eq. 17b).
     With the subinterval property, every subinterval of a P-event is also
     a P-event. This is the key to *until*-d (affirmative imperfective). -/
-def imperfectiveContainment (e : Event Time) (τ : NonemptyInterval Time) : Prop :=
+def imperfectiveContainment (e : Event T) (τ : NonemptyInterval T) : Prop :=
   τ ≤ e.τ
 
 /-- Under IMPF + subinterval property, all subdomain alternatives of the
@@ -385,11 +385,11 @@ def imperfectiveContainment (e : Event Time) (τ : NonemptyInterval Time) : Prop
     is vacuous for affirmative imperfectives — explaining why *until*-d
     (affirmative imperfective + *until*) is fine without negation.
     [iatridou-zeijlstra-2021] §7.2 -/
-theorem impf_subdomain_entailed (P : W → Event Time → Prop)
+theorem impf_subdomain_entailed (P : W → Event T → Prop)
     (hSub : HasSubintervalProp P) (w : W)
-    (e : Event Time) (τ : NonemptyInterval Time)
+    (e : Event T) (τ : NonemptyInterval T)
     (hP : P w e) (hImpf : τ ≤ e.τ)
-    (τ' : NonemptyInterval Time) (hτ' : τ' ≤ τ) :
+    (τ' : NonemptyInterval T) (hτ' : τ' ≤ τ) :
     eventInSpan P w τ' := by
   -- τ' ⊆ τ ⊆ τ(e), so τ' ⊆ τ(e)
   have h_sub_e : τ' ≤ e.τ :=

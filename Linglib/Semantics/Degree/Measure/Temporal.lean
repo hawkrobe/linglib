@@ -19,7 +19,7 @@ the DA semantics (K&L eq. 25).
 
 | K&L primitive                                | This file                       |
 |----------------------------------------------|---------------------------------|
-| Measure function `m : e × t → d` (HKL eq. 11; K&L p. 167) | `TemporalMeasure α δ Time` |
+| Measure function `m : e × t → d` (HKL eq. 11; K&L p. 167) | `TemporalMeasure α δ T` |
 | Scale `⟨S, R, δ⟩` (K&L fn 8)                 | `[LinearOrder δ]`               |
 | Difference function `m_d^↑` (K&L eq. 23)     | `differenceFunction`            |
 | Measure of change `m_Δ` (K&L eq. 25)         | `measureOfChange`               |
@@ -65,7 +65,7 @@ open ArgumentStructure
 
 /-! ### TemporalMeasure ([hay-kennedy-levin-1999] eq. 11) -/
 
-/-- A **time-indexed measure function** `m : α → Time → δ`
+/-- A **time-indexed measure function** `m : α → T → δ`
     ([hay-kennedy-levin-1999] eq. 11; restated in
     [kennedy-levin-2008] §7.3.1 main text p. 167): a function
     from objects and times to degrees on a scale.
@@ -83,7 +83,7 @@ open ArgumentStructure
 
     For typeclass-resolution participation (so `HasScalarResult` and
     `HasLatentScale` instances synthesise automatically), use the
-    `HasTemporalMeasure α δ Time` typeclass below — the mathlib pattern
+    `HasTemporalMeasure α δ T` typeclass below — the mathlib pattern
     of pairing a function abbrev with a typeclass wrapper, analogous to
     `Set α := α → Prop` (abbrev) plus the various `[Membership]` /
     `[SetLike]` (typeclass) interfaces.
@@ -93,18 +93,18 @@ open ArgumentStructure
     here — same pattern as mathlib's `Function` files. The `set_option
     linter.dupNamespace false in` immediately above silences the
     namespace-duplication warning for this single declaration. -/
-abbrev TemporalMeasure (α : Type*) (δ : Type*) (Time : Type*) :=
-  α → Time → δ
+abbrev TemporalMeasure (α : Type*) (δ : Type*) (T : Type*) :=
+  α → T → δ
 
 /-- The typeclass form of `TemporalMeasure`: a verb commits to a
     canonical time-indexed measure on dimension `δ`. Per-verb instance
-    (one per (α, δ, Time) triple a verb's lexical content addresses).
+    (one per (α, δ, T) triple a verb's lexical content addresses).
 
     Mathlib pattern: cf. `MetricSpace α` (typeclass providing `dist`),
     `MeasurableSpace α` (typeclass providing `MeasurableSet`). The
     typeclass enables instance synthesis — any verb declaring a
-    `[HasTemporalMeasure α δ Time]` instance automatically gets
-    `[HasScalarResult α δ (Event Time)]` and `[HasLatentScale α (Event Time)]`
+    `[HasTemporalMeasure α δ T]` instance automatically gets
+    `[HasScalarResult α δ (Event T)]` and `[HasLatentScale α (Event T)]`
     via the auto-synthesis instances in §5 below, opening Beavers'
     affectedness typeclass chain to the verb without explicit smart
     constructor calls.
@@ -112,9 +112,9 @@ abbrev TemporalMeasure (α : Type*) (δ : Type*) (Time : Type*) :=
     The auto-synthesis is what makes the K&L → Beavers bridge
     "structural" rather than "smart-constructor": consumers who
     declare HasTemporalMeasure get Beavers' typeclasses for free. -/
-class HasTemporalMeasure (α : Type*) (δ : Type*) (Time : Type*) where
+class HasTemporalMeasure (α : Type*) (δ : Type*) (T : Type*) where
   /-- The verb's canonical time-indexed measure function. -/
-  measure : α → Time → δ
+  measure : α → T → δ
 
 /-! ### Difference Function (K&L 2008 eq. 23) -/
 
@@ -129,22 +129,22 @@ class HasTemporalMeasure (α : Type*) (δ : Type*) (Time : Type*) where
 
     Used in the comparative semantics of `wider than the carpet`
     (K&L eq. 24): `wide_{wide(c)}^↑(x)(t) ≥ stnd(wide_{wide(c)}^↑)`. -/
-def differenceFunction {α δ Time : Type*} [LinearOrder δ]
-    (m : TemporalMeasure α δ Time) (d : δ) :
-    TemporalMeasure α δ Time :=
+def differenceFunction {α δ T : Type*} [LinearOrder δ]
+    (m : TemporalMeasure α δ T) (d : δ) :
+    TemporalMeasure α δ T :=
   fun x t => max d (m x t)
 
 /-- The difference function's value is always at least the clamping
     minimum. Direct from `le_max_left`. -/
-theorem differenceFunction_ge_clamp {α δ Time : Type*} [LinearOrder δ]
-    (m : TemporalMeasure α δ Time) (d : δ) (x : α) (t : Time) :
+theorem differenceFunction_ge_clamp {α δ T : Type*} [LinearOrder δ]
+    (m : TemporalMeasure α δ T) (d : δ) (x : α) (t : T) :
     d ≤ differenceFunction m d x t :=
   le_max_left d (m x t)
 
 /-- When the underlying measure already exceeds the clamp, the
     difference function returns the underlying measure unchanged. -/
-theorem differenceFunction_eq_measure {α δ Time : Type*} [LinearOrder δ]
-    (m : TemporalMeasure α δ Time) (d : δ) (x : α) (t : Time)
+theorem differenceFunction_eq_measure {α δ T : Type*} [LinearOrder δ]
+    (m : TemporalMeasure α δ T) (d : δ) (x : α) (t : T)
     (h : d ≤ m x t) :
     differenceFunction m d x t = m x t := by
   simp [differenceFunction, max_eq_right h]
@@ -168,45 +168,45 @@ theorem differenceFunction_eq_measure {α δ Time : Type*} [LinearOrder δ]
     The Lean signature takes the initial and final times explicitly
     rather than an event, keeping the substrate event-type-agnostic.
     The convenience overload `measureOfChangeOnEvent` specialises to
-    `Event Time` events with the runtime-interval projections. -/
-def measureOfChange {α δ Time : Type*} [LinearOrder δ]
-    (m : TemporalMeasure α δ Time) (x : α) (initT finT : Time) : δ :=
+    `Event T` events with the runtime-interval projections. -/
+def measureOfChange {α δ T : Type*} [LinearOrder δ]
+    (m : TemporalMeasure α δ T) (x : α) (initT finT : T) : δ :=
   differenceFunction m (m x initT) x finT
 
 /-- Identity theorem: when initial and final times coincide, the
     measure of change is the initial degree (no change). -/
-theorem measureOfChange_self {α δ Time : Type*} [LinearOrder δ]
-    (m : TemporalMeasure α δ Time) (x : α) (t : Time) :
+theorem measureOfChange_self {α δ T : Type*} [LinearOrder δ]
+    (m : TemporalMeasure α δ T) (x : α) (t : T) :
     measureOfChange m x t t = m x t := by
   simp [measureOfChange, differenceFunction]
 
 /-- The measure of change is always at least the initial degree
     (clamped from below). Direct from `differenceFunction_ge_clamp`. -/
-theorem measureOfChange_ge_init {α δ Time : Type*} [LinearOrder δ]
-    (m : TemporalMeasure α δ Time) (x : α) (initT finT : Time) :
+theorem measureOfChange_ge_init {α δ T : Type*} [LinearOrder δ]
+    (m : TemporalMeasure α δ T) (x : α) (initT finT : T) :
     m x initT ≤ measureOfChange m x initT finT :=
   differenceFunction_ge_clamp m (m x initT) x finT
 
 /-- When the patient's degree increases over the event, the measure
     of change equals the final degree. -/
-theorem measureOfChange_eq_final {α δ Time : Type*} [LinearOrder δ]
-    (m : TemporalMeasure α δ Time) (x : α) (initT finT : Time)
+theorem measureOfChange_eq_final {α δ T : Type*} [LinearOrder δ]
+    (m : TemporalMeasure α δ T) (x : α) (initT finT : T)
     (h : m x initT ≤ m x finT) :
     measureOfChange m x initT finT = m x finT :=
   differenceFunction_eq_measure m (m x initT) x finT h
 
 /-! ### Event-specialised Measure of Change -/
 
-/-- Specialisation of `measureOfChange` to `Event Time` events: extract
+/-- Specialisation of `measureOfChange` to `Event T` events: extract
     init/fin times from the event's runtime interval. -/
-def measureOfChangeOnEvent {α δ Time : Type*} [LinearOrder δ] [LinearOrder Time]
-    (m : TemporalMeasure α δ Time) (x : α) (e : Event Time) : δ :=
+def measureOfChangeOnEvent {α δ T : Type*} [LinearOrder δ] [LinearOrder T]
+    (m : TemporalMeasure α δ T) (x : α) (e : Event T) : δ :=
   measureOfChange m x e.runtime.fst e.runtime.snd
 
 /-! ### Auto-synthesis bridges to Beavers' substrate -/
 
 /-- **Auto-synthesis instance**: a verb with a canonical measure
-    function (`[HasTemporalMeasure α δ Time]`) automatically has a
+    function (`[HasTemporalMeasure α δ T]`) automatically has a
     Beavers `HasScalarResult` instance.
 
     `HasScalarResult.resultAt x g e := measure x e.runtime.snd = g`
@@ -224,14 +224,14 @@ def measureOfChangeOnEvent {α δ Time : Type*} [LinearOrder δ] [LinearOrder Ti
     (instance synthesising the general framework's typeclass from
     a specific framework's typeclass). -/
 instance HasScalarResult.ofHasMeasureFunction
-    {α δ Time : Type*} [LinearOrder Time] [HasTemporalMeasure α δ Time] :
-    HasScalarResult α δ (Event Time) where
+    {α δ T : Type*} [LinearOrder T] [HasTemporalMeasure α δ T] :
+    HasScalarResult α δ (Event T) where
   resultAt x g e := HasTemporalMeasure.measure x e.runtime.snd = g
 
 /-- Companion smart constructor: `HasTemporalMeasure`-backed verbs
     can also be given a Beavers `HasLatentScale` instance via this
     function. NOT an `instance` because `δ` doesn't appear in the
-    `HasLatentScale α (Event Time)` conclusion — Lean's typeclass
+    `HasLatentScale α (Event T)` conclusion — Lean's typeclass
     synthesiser cannot infer which dimension's measure function to
     use, so the instance arrow can't fire automatically.
 
@@ -258,8 +258,8 @@ instance HasScalarResult.ofHasMeasureFunction
     a typeclass-elaboration hygiene marker. -/
 @[reducible]
 def HasLatentScale.ofHasMeasureFunction
-    {α δ Time : Type*} [LinearOrder Time] [HasTemporalMeasure α δ Time] :
-    HasLatentScale α (Event Time) where
+    {α δ T : Type*} [LinearOrder T] [HasTemporalMeasure α δ T] :
+    HasLatentScale α (Event T) where
   latentScale _ _ := True
 
 end Degree

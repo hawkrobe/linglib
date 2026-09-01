@@ -288,18 +288,18 @@ Selectional `will` parameterized by the metaphysical modal base of
 /-- **Selectional `will` over historical alternatives.** Evaluates
     the prejacent at the world selected from the metaphysical modal
     base at ⟨w, t⟩. -/
-def willHistorical {Time : Type*} (s : SelectionFunction W)
-    (history : HistoricalAlternatives W Time) (A : W → Prop)
-    (w : W) (t : Time) : Prop :=
+def willHistorical {T : Type*} (s : SelectionFunction W)
+    (history : HistoricalAlternatives W T) (A : W → Prop)
+    (w : W) (t : T) : Prop :=
   willSem s A (metaphysicalBase history w t) w
 
 /-- When the world-history relation is reflexive (the standard
     assumption that a world is among its own historical alternatives,
     [condoravdi-2002]), `willHistorical` collapses to its prejacent:
     `will_t A` at `w` reduces to `A w`. -/
-theorem willHistorical_reflexive_collapse {Time : Type*}
-    (s : SelectionFunction W) {history : HistoricalAlternatives W Time}
-    (hRefl : history.reflexive) (A : W → Prop) (w : W) (t : Time) :
+theorem willHistorical_reflexive_collapse {T : Type*}
+    (s : SelectionFunction W) {history : HistoricalAlternatives W T}
+    (hRefl : history.reflexive) (A : W → Prop) (w : W) (t : T) :
     willHistorical s history A w t ↔ A w := by
   unfold willHistorical
   apply unembedded_collapse

@@ -223,13 +223,13 @@ open Tense
     orthogonal to the evidential constraint: "false past" arises
     even when evidence is downstream (the chipmunk is still there, so
     T ≤ A holds) because the event has lost psychological salience. -/
-structure TensePerspective (Time : Type*) extends EvidentialFrame Time where
+structure TensePerspective (T : Type*) extends EvidentialFrame T where
   /-- Is the event psychologically salient to the speaker at S? -/
   speakerSalience : Bool
   /-- Is the propositional content new to the hearer? -/
   hearerNovelty : Bool
 
-variable {Time : Type*}
+variable {T : Type*}
 
 /-- **False tense** (Lakoff §1): past (or future) morphology applied to a
     present-time event because the speaker does not find it salient.
@@ -238,25 +238,25 @@ variable {Time : Type*}
     Future example: "That thing WILL be a chipmunk" (it already IS one).
     The licensing condition is the same for both; the surface-form
     divergence is recorded in the perspective entries (`formType`). -/
-def falsePast (f : TensePerspective Time) : Prop :=
+def falsePast (f : TensePerspective T) : Prop :=
   f.eventTime = f.speechTime ∧ ¬(f.speakerSalience = true)
 
 /-- **Novel-information present** (Lakoff §2): present tense survives under
     a past-tense matrix verb because the embedded content is new to the
     hearer ("He discovered that the boy HAS blue eyes"). -/
-def novelInfoPresent (f : TensePerspective Time) : Prop :=
+def novelInfoPresent (f : TensePerspective T) : Prop :=
   f.hearerNovelty = true ∧ f.eventTime = f.speechTime
 
 /-- **Perfect requires salience** (Lakoff §4): the present perfect is
     infelicitous when the event lacks current relevance to the speaker
     (*"Shakespeare has quarreled with Bacon"). -/
-def perfectRequiresSalience (f : TensePerspective Time) : Prop :=
+def perfectRequiresSalience (f : TensePerspective T) : Prop :=
   f.speakerSalience = true
 
 /-- **Will-deletion** (Lakoff §5): future-time events can appear in present
     tense (deleting *will*) when the speaker treats them as salient and
     scheduled ("The meeting starts at 3"). -/
-def willDeletion [LT Time] (f : TensePerspective Time) : Prop :=
+def willDeletion [LT T] (f : TensePerspective T) : Prop :=
   f.speechTime < f.eventTime ∧ f.speakerSalience = true
 
 /-- Classify a tense use as true (grammatical tense matches the temporal
@@ -268,8 +268,8 @@ def willDeletion [LT Time] (f : TensePerspective Time) : Prop :=
     (`compare f.eventTime f.speechTime ∈ gramTense`), reproducing the four-way
     past/present/future/nonpast table (`past`: `E < S`; `present`: `E = S`;
     `future`: `S < E`; `nonpast`: `S ≤ E`). -/
-def classifyUse [LinearOrder Time] (gramTense : Finset Ordering)
-    (f : TensePerspective Time) : TenseUseType :=
+def classifyUse [LinearOrder T] (gramTense : Finset Ordering)
+    (f : TensePerspective T) : TenseUseType :=
   if compare f.eventTime f.speechTime ∈ gramTense then .trueTense else .falseTense
 
 /-- **Periphrastic forms block false tense** (Lakoff §1, ex. 8a vs 9a):
@@ -368,7 +368,7 @@ theorem simplePast_entry_allows_false :
 
 /-- A false past is temporally present — the mismatch is purely
     psychological (salience), not temporal. -/
-theorem false_past_is_temporally_present (f : TensePerspective Time)
+theorem false_past_is_temporally_present (f : TensePerspective T)
     (h : falsePast f) :
     f.eventTime = f.speechTime :=
   h.1
@@ -380,8 +380,8 @@ theorem false_past_satisfies_up_present (f : TensePerspective ℤ)
     UPCondition.present.toConstraint f.toEvidentialFrame :=
   h.1
 
-theorem false_past_classified_correctly [LinearOrder Time]
-    (f : TensePerspective Time) (h : falsePast f) :
+theorem false_past_classified_correctly [LinearOrder T]
+    (f : TensePerspective T) (h : falsePast f) :
     classifyUse Tense.past f = .falseTense := by
   simp only [classifyUse, Tense.compare_mem_past]
   exact if_neg (by rw [h.1]; exact lt_irrefl _)

@@ -30,7 +30,7 @@ dynamicity projection in Aktionsart), not a single theorem.
 
 `le.requiresAntiAtomDist = true` is the Fragment-level encoding of
 [zhao-2025] Def. 5.36 (p. 165) ATOM-DIST_t at the verb-quantifier
-level. The substrate-side treatment lives in `Core/Time/AtomDist.lean`
+level. The substrate-side treatment lives in `Core/T/AtomDist.lean`
 (`AtomDist τ V`, with `EvQuant.ofPred` bridging from event predicates
 to event quantifiers); for the witness-universal subinterval form on
 event predicates, see `HasSubintervalProp` in
@@ -95,8 +95,8 @@ def thenAdverbs : List ThenAdverb :=
 /-- Root clause ("Mary is feeling sick (*then)"): π = S, so a present-tensed
     clause admits no ⌈then⌉ restriction — no reference satisfies both the
     "during then" containment and ⌈then⌉'s disjointness from π. -/
-theorem then_present_root_clash {Time : Type*} [LinearOrder Time]
-    (f : ReichenbachFrame Time)
+theorem then_present_root_clash {T : Type*} [LinearOrder T]
+    (f : ReichenbachFrame T)
     (hSimple : f.isSimpleCase) (hPres : f.isPresent) :
     ¬∃ thenRef, f.referenceTime = thenRef ∧ thenPresup thenRef f.speechTime :=
   λ ⟨_, hDuring, hThen⟩ =>

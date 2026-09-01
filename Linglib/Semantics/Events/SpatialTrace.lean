@@ -31,17 +31,17 @@ namespace Spatial
     use sites, per `Semantics/Events/CEM.lean`: sum preservation as a
     `map_sup` hypothesis, `Function.Injective st.σ` where QUA pullback needs
     it. -/
-class Trace (Loc Time : Type*) [LinearOrder Time] where
+class Trace (Loc T : Type*) [LinearOrder T] where
   /-- The path traversed in an event. -/
-  σ : Event Time → Path Loc
+  σ : Event T → Path Loc
 
 namespace Trace
 
 /-! ### Telicity transfer through σ -/
 
-variable {Loc Time : Type*} [LinearOrder Time] [Event.Mereology Time]
-  [ClassicalMereology (Event Time)] [SemilatticeSup (Path Loc)]
-  [st : Trace Loc Time] {P : Path Loc → Prop}
+variable {Loc T : Type*} [LinearOrder T] [Event.Mereology T]
+  [ClassicalMereology (Event T)] [SemilatticeSup (Path Loc)]
+  [st : Trace Loc T] {P : Path Loc → Prop}
 
 /-- QUA path predicates pull back through an injective sum-homomorphic σ to
     QUA (telic) VP predicates — [krifka-1998]'s quantization route to

@@ -47,7 +47,7 @@ open Conditionals.Counterfactual (universalCounterfactual)
     Bundles event-structural and temporal properties that distinguish
     eventive causation (percept → state change) from maintenance
     causation (representation → state persistence). -/
-structure PsychCausalLink (Time : Type*) [LinearOrder Time] where
+structure PsychCausalLink (T : Type*) [LinearOrder T] where
   /-- Ontological sort of the causing eventuality -/
   causeSort : Features.Dynamicity
   /-- Ontological sort of the caused eventuality -/
@@ -57,7 +57,7 @@ structure PsychCausalLink (Time : Type*) [LinearOrder Time] where
       Maintenance: [CAUSE [STATE]] — no. -/
   involvesTransition : Bool
   /-- Temporal constraint on the runtimes of cause and effect -/
-  temporalConstraint : NonemptyInterval Time → NonemptyInterval Time → Prop
+  temporalConstraint : NonemptyInterval T → NonemptyInterval T → Prop
 
 /-! ### Eventive and Maintenance Links -/
 
@@ -67,7 +67,7 @@ structure PsychCausalLink (Time : Type*) [LinearOrder Time] where
     Event structure: [[percept ACT] CAUSE [BECOME [experiencer STATE]]]
     Example: "The noise frightened John" — the noise event happens,
     THEN John enters the frightened state. -/
-def eventiveLink (Time : Type*) [LinearOrder Time] : PsychCausalLink Time :=
+def eventiveLink (T : Type*) [LinearOrder T] : PsychCausalLink T :=
   { causeSort := .dynamic
     effectSort := .dynamic
     involvesTransition := true
@@ -85,7 +85,7 @@ def eventiveLink (Time : Type*) [LinearOrder Time] : PsychCausalLink Time :=
     (a) Relates two eventualities (both states)
     (b) Temporal contemporaneity (τ(cause) overlaps τ(effect))
     (c) Counterfactual dependence (effect ceases when cause ceases) -/
-def maintenanceLink (Time : Type*) [LinearOrder Time] : PsychCausalLink Time :=
+def maintenanceLink (T : Type*) [LinearOrder T] : PsychCausalLink T :=
   { causeSort := .stative
     effectSort := .stative
     involvesTransition := false
@@ -96,26 +96,26 @@ def maintenanceLink (Time : Type*) [LinearOrder Time] : PsychCausalLink Time :=
 /-- Ground `CausalSource` (a two-constructor enum) in the richer
     `PsychCausalLink` structure. External source = eventive causation;
     internal source = maintenance causation. -/
-def CausalSource.toLink (Time : Type*) [LinearOrder Time] :
-    CausalSource → PsychCausalLink Time
-  | .external => eventiveLink Time
-  | .internal => maintenanceLink Time
+def CausalSource.toLink (T : Type*) [LinearOrder T] :
+    CausalSource → PsychCausalLink T
+  | .external => eventiveLink T
+  | .internal => maintenanceLink T
 
 /-! ### Temporal Theorems -/
 
 /-- Maintenance is temporally symmetric: if cause overlaps effect,
     effect overlaps cause. Delegates to `NonemptyInterval.overlaps_symm`. -/
-theorem maintenance_temporal_symmetric {Time : Type*} [LinearOrder Time]
-    (i₁ i₂ : NonemptyInterval Time)
-    (h : (maintenanceLink Time).temporalConstraint i₁ i₂) :
-    (maintenanceLink Time).temporalConstraint i₂ i₁ :=
+theorem maintenance_temporal_symmetric {T : Type*} [LinearOrder T]
+    (i₁ i₂ : NonemptyInterval T)
+    (h : (maintenanceLink T).temporalConstraint i₁ i₂) :
+    (maintenanceLink T).temporalConstraint i₂ i₁ :=
   NonemptyInterval.overlaps_symm h
 
 /-- Eventive causation is temporally irreflexive: no eventuality
     can precede itself. Delegates to `NonemptyInterval.precedes_irrefl`. -/
-theorem eventive_temporal_irrefl {Time : Type*} [LinearOrder Time]
-    (i : NonemptyInterval Time) :
-    ¬ (eventiveLink Time).temporalConstraint i i :=
+theorem eventive_temporal_irrefl {T : Type*} [LinearOrder T]
+    (i : NonemptyInterval T) :
+    ¬ (eventiveLink T).temporalConstraint i i :=
   NonemptyInterval.precedes_irrefl i
 
 /-- Precedence and overlap are mutually exclusive: if cause precedes
@@ -123,38 +123,38 @@ theorem eventive_temporal_irrefl {Time : Type*} [LinearOrder Time]
     eventive/stative dichotomy — the two temporal configurations are
     incompatible for any given pair of eventualities.
     Delegates to `NonemptyInterval.precedes_not_overlaps`. -/
-theorem precedes_excludes_overlap {Time : Type*} [LinearOrder Time]
-    (i₁ i₂ : NonemptyInterval Time)
-    (h : (eventiveLink Time).temporalConstraint i₁ i₂) :
-    ¬ (maintenanceLink Time).temporalConstraint i₁ i₂ :=
+theorem precedes_excludes_overlap {T : Type*} [LinearOrder T]
+    (i₁ i₂ : NonemptyInterval T)
+    (h : (eventiveLink T).temporalConstraint i₁ i₂) :
+    ¬ (maintenanceLink T).temporalConstraint i₁ i₂ :=
   NonemptyInterval.precedes_not_overlaps h
 
 /-! ### Event Sort Properties -/
 
 /-- Maintenance relates two states ([kim-2024] property (a)). -/
-theorem maintenance_both_states {Time : Type*} [LinearOrder Time] :
-    (maintenanceLink Time).causeSort = .stative ∧
-    (maintenanceLink Time).effectSort = .stative := ⟨rfl, rfl⟩
+theorem maintenance_both_states {T : Type*} [LinearOrder T] :
+    (maintenanceLink T).causeSort = .stative ∧
+    (maintenanceLink T).effectSort = .stative := ⟨rfl, rfl⟩
 
 /-- Eventive causation relates two dynamic eventualities. -/
-theorem eventive_both_dynamic {Time : Type*} [LinearOrder Time] :
-    (eventiveLink Time).causeSort = .dynamic ∧
-    (eventiveLink Time).effectSort = .dynamic := ⟨rfl, rfl⟩
+theorem eventive_both_dynamic {T : Type*} [LinearOrder T] :
+    (eventiveLink T).causeSort = .dynamic ∧
+    (eventiveLink T).effectSort = .dynamic := ⟨rfl, rfl⟩
 
 /-- Maintenance involves no transition (no BECOME). -/
-theorem maintenance_no_transition {Time : Type*} [LinearOrder Time] :
-    (maintenanceLink Time).involvesTransition = false := rfl
+theorem maintenance_no_transition {T : Type*} [LinearOrder T] :
+    (maintenanceLink T).involvesTransition = false := rfl
 
 /-- Eventive causation involves a transition (BECOME). -/
-theorem eventive_has_transition {Time : Type*} [LinearOrder Time] :
-    (eventiveLink Time).involvesTransition = true := rfl
+theorem eventive_has_transition {T : Type*} [LinearOrder T] :
+    (eventiveLink T).involvesTransition = true := rfl
 
 /-- The two causal flavors assign opposite values on every dimension. -/
-theorem flavors_differ_on_all_dimensions {Time : Type*} [LinearOrder Time] :
-    (eventiveLink Time).causeSort = .dynamic ∧
-    (maintenanceLink Time).causeSort = .stative ∧
-    (eventiveLink Time).involvesTransition = true ∧
-    (maintenanceLink Time).involvesTransition = false :=
+theorem flavors_differ_on_all_dimensions {T : Type*} [LinearOrder T] :
+    (eventiveLink T).causeSort = .dynamic ∧
+    (maintenanceLink T).causeSort = .stative ∧
+    (eventiveLink T).involvesTransition = true ∧
+    (maintenanceLink T).involvesTransition = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-! ### Counterfactual Predicates -/
@@ -241,14 +241,14 @@ theorem dependent_excludes_persistent {W : Type*} [DecidableEq W] [Fintype W]
     and similarity ordering. The structural version — no BECOME means
     no independent grounding for the effect — is the deeper explanation
     for WHY maintenance-caused states are counterfactually dependent. -/
-theorem maintenance_three_properties {Time : Type*} [LinearOrder Time] :
+theorem maintenance_three_properties {T : Type*} [LinearOrder T] :
     -- (a) Both eventualities are states
-    (maintenanceLink Time).causeSort = .stative ∧
-    (maintenanceLink Time).effectSort = .stative ∧
+    (maintenanceLink T).causeSort = .stative ∧
+    (maintenanceLink T).effectSort = .stative ∧
     -- (b) Temporal contemporaneity (overlaps, not precedes)
-    (maintenanceLink Time).temporalConstraint = NonemptyInterval.overlaps ∧
+    (maintenanceLink T).temporalConstraint = NonemptyInterval.overlaps ∧
     -- (c) No transition (no BECOME)
-    (maintenanceLink Time).involvesTransition = false :=
+    (maintenanceLink T).involvesTransition = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 end Causation.PsychLink

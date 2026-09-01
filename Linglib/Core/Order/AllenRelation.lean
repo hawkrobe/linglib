@@ -132,14 +132,14 @@ end AllenRelation
 -- § Holds Predicate
 -- ════════════════════════════════════════════════════
 
-variable {Time : Type*} [LinearOrder Time]
+variable {T : Type*} [LinearOrder T]
 
 namespace AllenRelation
 
 /-- `r.holds i j` is true iff atomic Allen relation `r` is the one that
     holds between intervals `i` and `j`. The defining inequalities follow
     [allen-1983]. -/
-def holds : AllenRelation → NonemptyInterval Time → NonemptyInterval Time → Prop
+def holds : AllenRelation → NonemptyInterval T → NonemptyInterval T → Prop
   | .precedes,     i, j => i.snd < j.fst
   | .meets,        i, j => i.snd = j.fst
   | .overlaps,     i, j => i.fst < j.fst ∧ j.fst < i.snd ∧ i.snd < j.snd
@@ -156,7 +156,7 @@ def holds : AllenRelation → NonemptyInterval Time → NonemptyInterval Time �
 
 /-- Holds is symmetric under inversion: r holds of (i, j) iff r⁻¹ holds of
     (j, i). This is the central algebraic property of the inverse operation. -/
-theorem holds_inverse (r : AllenRelation) (i j : NonemptyInterval Time) :
+theorem holds_inverse (r : AllenRelation) (i j : NonemptyInterval T) :
     r.holds i j ↔ r.inverse.holds j i := by
   cases r <;> simp [holds, inverse, and_comm, and_left_comm, eq_comm]
 
@@ -166,7 +166,7 @@ theorem holds_inverse (r : AllenRelation) (i j : NonemptyInterval Time) :
     `i.snd vs j.fst`, then `i.fst vs j.snd`, then refinement on
     `i.fst vs j.fst` and `i.snd vs j.snd`. Used to derive the
     constructive `NonemptyInterval.allenRel` projection. -/
-def witness (i j : NonemptyInterval Time) : { r : AllenRelation // r.holds i j } :=
+def witness (i j : NonemptyInterval T) : { r : AllenRelation // r.holds i j } :=
   if h₁ : i.snd < j.fst then ⟨.precedes, h₁⟩
   else if h₁' : i.snd = j.fst then ⟨.meets, h₁'⟩
   else
@@ -197,7 +197,7 @@ def witness (i j : NonemptyInterval Time) : { r : AllenRelation // r.holds i j }
 
 /-- **Exhaustiveness** (existence half): every interval pair satisfies at
     least one atomic Allen relation. Existential projection of `witness`. -/
-theorem holds_exists (i j : NonemptyInterval Time) : ∃ r : AllenRelation, r.holds i j :=
+theorem holds_exists (i j : NonemptyInterval T) : ∃ r : AllenRelation, r.holds i j :=
   ⟨_, (witness i j).2⟩
 
 -- ════════════════════════════════════════════════════
@@ -214,21 +214,21 @@ theorem holds_exists (i j : NonemptyInterval Time) : ∃ r : AllenRelation, r.ho
     heartbeat budget) into two 13-case lemmas. -/
 
 /-- Three-way sign of `a vs b` on a linear order. -/
-def sgn (a b : Time) : Ordering :=
+def sgn (a b : T) : Ordering :=
   if a < b then .lt else if a = b then .eq else .gt
 
-theorem sgn_lt {a b : Time} (h : a < b) : sgn a b = .lt := if_pos h
+theorem sgn_lt {a b : T} (h : a < b) : sgn a b = .lt := if_pos h
 
-theorem sgn_eq {a b : Time} (h : a = b) : sgn a b = .eq := by
+theorem sgn_eq {a b : T} (h : a = b) : sgn a b = .eq := by
   subst h; simp [sgn]
 
-theorem sgn_gt {a b : Time} (h : b < a) : sgn a b = .gt := by
+theorem sgn_gt {a b : T} (h : b < a) : sgn a b = .gt := by
   unfold sgn; rw [if_neg (lt_asymm h), if_neg (ne_of_gt h)]
 
 /-- The 4-tuple signature of an interval pair: pairwise comparisons of
     `(i.fst vs j.fst, i.fst vs j.snd, i.snd vs j.fst,
     i.snd vs j.snd)`. -/
-def signature (i j : NonemptyInterval Time) : Ordering × Ordering × Ordering × Ordering :=
+def signature (i j : NonemptyInterval T) : Ordering × Ordering × Ordering × Ordering :=
   (sgn i.fst j.fst, sgn i.fst j.snd, sgn i.snd j.fst, sgn i.snd j.snd)
 
 /-- The expected signature of each Allen atom — the unique 4-tuple of
@@ -260,7 +260,7 @@ theorem expectedSig_injective (r₁ r₂ : AllenRelation)
     signature is exactly `r.expectedSig`. (13 cases, each computing
     four `sgn` components via `Prod.ext` + the appropriate `sgn_*`
     lemma + `order`.) -/
-theorem signature_of_holds (r : AllenRelation) (i j : NonemptyInterval Time)
+theorem signature_of_holds (r : AllenRelation) (i j : NonemptyInterval T)
     (hi : i.fst < i.snd) (hj : j.fst < j.snd) (h : r.holds i j) :
     signature i j = r.expectedSig := by
   cases r <;> simp only [holds] at h
@@ -290,7 +290,7 @@ theorem signature_of_holds (r : AllenRelation) (i j : NonemptyInterval Time)
     Proof: factor through the 4-tuple `signature`. Both `r₁` and `r₂`
     force the same signature (`signature_of_holds`), and distinct atoms
     have distinct signatures (`expectedSig_injective`). -/
-theorem holds_unique (i j : NonemptyInterval Time)
+theorem holds_unique (i j : NonemptyInterval T)
     (hi : i.fst < i.snd) (hj : j.fst < j.snd)
     (r₁ r₂ : AllenRelation)
     (h₁ : r₁.holds i j) (h₂ : r₂.holds i j) : r₁ = r₂ :=
@@ -324,23 +324,23 @@ namespace AllenRelation
 /-- "`holdsIn S i j`" iff some atom in the list `S` is the relation
     holding between `i` and `j`. Singleton lists yield exact-atom
     predicates; longer lists yield union predicates. -/
-def holdsIn (S : List AllenRelation) (i j : NonemptyInterval Time) : Prop :=
+def holdsIn (S : List AllenRelation) (i j : NonemptyInterval T) : Prop :=
   ∃ r ∈ S, r.holds i j
 
-@[simp] theorem holdsIn_nil (i j : NonemptyInterval Time) :
+@[simp] theorem holdsIn_nil (i j : NonemptyInterval T) :
     holdsIn [] i j ↔ False := by simp [holdsIn]
 
-@[simp] theorem holdsIn_singleton (r : AllenRelation) (i j : NonemptyInterval Time) :
+@[simp] theorem holdsIn_singleton (r : AllenRelation) (i j : NonemptyInterval T) :
     holdsIn [r] i j ↔ r.holds i j := by simp [holdsIn]
 
 theorem holdsIn_cons (r : AllenRelation) (S : List AllenRelation)
-    (i j : NonemptyInterval Time) :
+    (i j : NonemptyInterval T) :
     holdsIn (r :: S) i j ↔ r.holds i j ∨ holdsIn S i j := by
   simp [holdsIn, or_and_right, exists_or]
 
 /-- Subset monotonicity: enlarging the atom set weakens the predicate. -/
 theorem holdsIn_mono {S₁ S₂ : List AllenRelation} (h : ∀ r ∈ S₁, r ∈ S₂)
-    (i j : NonemptyInterval Time) : holdsIn S₁ i j → holdsIn S₂ i j := by
+    (i j : NonemptyInterval T) : holdsIn S₁ i j → holdsIn S₂ i j := by
   rintro ⟨r, hr, hrij⟩; exact ⟨r, h r hr, hrij⟩
 
 -- ──── Named atom-sets corresponding to existing `NonemptyInterval` predicates ────
@@ -402,7 +402,7 @@ end AllenRelation
 
 namespace NonemptyInterval
 
-variable (i j : NonemptyInterval Time)
+variable (i j : NonemptyInterval T)
 
 /-- `NonemptyInterval.precedes` is exactly the Allen `precedes` atom. -/
 theorem precedes_iff_allen : i.precedes j ↔ AllenRelation.holdsIn AllenRelation.precedesSet i j := by
@@ -501,8 +501,8 @@ end NonemptyInterval
 namespace AllenRelation
 
 /-- `holds` is decidable on a linear order (provided `<` and `=` are). -/
-instance holds_decidable [DecidableEq Time] [DecidableRel (α := Time) (· < ·)]
-    (r : AllenRelation) (i j : NonemptyInterval Time) : Decidable (r.holds i j) := by
+instance holds_decidable [DecidableEq T] [DecidableRel (α := T) (· < ·)]
+    (r : AllenRelation) (i j : NonemptyInterval T) : Decidable (r.holds i j) := by
   cases r <;> unfold holds <;> infer_instance
 
 end AllenRelation
@@ -521,7 +521,7 @@ end AllenRelation
 
 namespace AllenRelation
 
-variable {i j k : NonemptyInterval Time}
+variable {i j k : NonemptyInterval T}
 
 /-- `equal` is a left identity: if i = j and j r k, then i r k. -/
 theorem holds_equal_left (r : AllenRelation)
@@ -578,18 +578,18 @@ namespace NonemptyInterval
     extracted from the constructive `AllenRelation.witness`. For
     non-degenerate intervals this is well-defined: `allenRel_unique`
     proves every witness equals the projection. -/
-def allenRel (i j : NonemptyInterval Time) : AllenRelation :=
+def allenRel (i j : NonemptyInterval T) : AllenRelation :=
   (AllenRelation.witness i j).1
 
 /-- The projected atom does hold between the intervals. -/
-theorem allenRel_holds (i j : NonemptyInterval Time) : (allenRel i j).holds i j :=
+theorem allenRel_holds (i j : NonemptyInterval T) : (allenRel i j).holds i j :=
   (AllenRelation.witness i j).2
 
 /-- For non-degenerate intervals, the projection is **unique**: every
     atom that holds equals `allenRel i j`. This is the core "well-
     definedness" theorem for the projection — it justifies treating
     `allenRel i j` as **the** Allen relation between the two intervals. -/
-theorem allenRel_unique (i j : NonemptyInterval Time)
+theorem allenRel_unique (i j : NonemptyInterval T)
     (hi : i.fst < i.snd) (hj : j.fst < j.snd)
     {r : AllenRelation} (h : r.holds i j) : r = allenRel i j :=
   AllenRelation.holds_unique i j hi hj r (allenRel i j) h (allenRel_holds i j)
@@ -597,7 +597,7 @@ theorem allenRel_unique (i j : NonemptyInterval Time)
 /-- The projection lands in the named atom-set iff the corresponding
     `holdsIn` predicate holds. (For non-degenerate intervals; uses
     uniqueness to convert membership to existence.) -/
-theorem allenRel_mem_iff_holdsIn (i j : NonemptyInterval Time)
+theorem allenRel_mem_iff_holdsIn (i j : NonemptyInterval T)
     (hi : i.fst < i.snd) (hj : j.fst < j.snd)
     (S : List AllenRelation) :
     allenRel i j ∈ S ↔ AllenRelation.holdsIn S i j := by

@@ -42,21 +42,21 @@ open ArgumentStructure (ThematicFrame)
 
 /-- A mental-state verb: its predicate on eventualities and its intensity measure `μ_int`;
 thematic roles are assigned by a `ThematicFrame` at use sites. -/
-structure MentalStateVerb (Time D : Type*) [LinearOrder Time] where
+structure MentalStateVerb (T D : Type*) [LinearOrder T] where
   /-- The verb's predicate on eventualities. -/
-  predicate : Event Time → Prop
+  predicate : Event T → Prop
   /-- The intensity measure. -/
-  μint : Event Time → D
+  μint : Event T → D
 
-variable {Entity Time D : Type*} [LinearOrder Time] [Preorder D] (v : MentalStateVerb Time D)
-  (frame : ThematicFrame Entity Time)
+variable {Entity T D : Type*} [LinearOrder T] [Preorder D] (v : MentalStateVerb T D)
+  (frame : ThematicFrame Entity T)
 
 /-- Eventualities of the verb with experiencer `α` and theme `x`. -/
-def themed (α x : Entity) (e : Event Time) : Prop :=
+def themed (α x : Entity) (e : Event T) : Prop :=
   frame.experiencer α e ∧ v.predicate e ∧ frame.theme x e
 
 /-- *α V x at degree d*: a themed eventuality of the verb with intensity at least `d`. -/
-def MentalStateVerb.holdsAtDegree (α x : Entity) (d : D) (e : Event Time) : Prop :=
+def MentalStateVerb.holdsAtDegree (α x : Entity) (d : D) (e : Event T) : Prop :=
   themed v frame α x e ∧ d ≤ v.μint e
 
 /-- The than-clause degrees of *β V y* are the degrees at which *β V y* holds. -/
@@ -77,7 +77,7 @@ theorem intensityComparative.exists_matrix (h : intensityComparative v frame α 
   let ⟨_, _, e, he, _⟩ := h; ⟨e, he⟩
 
 /-- With unique witnesses on both sides the comparative compares the two intensities. -/
-theorem intensityComparative_unique {ea eb : Event Time} (ha : themed v frame α x ea)
+theorem intensityComparative_unique {ea eb : Event T} (ha : themed v frame α x ea)
     (ha' : ∀ e, themed v frame α x e → e = ea) (hb : themed v frame β y eb)
     (hb' : ∀ e, themed v frame β y e → e = eb) :
     intensityComparative v frame α β x y ↔ v.μint eb < v.μint ea :=
@@ -100,7 +100,7 @@ variable {v frame}
 
 /-- With the zero degree, the comparative is consistent with there being no `β`-eventuality
 at all: *Jack admires the chairman more than Jill does; in fact, Jill doesn't admire him*. -/
-theorem intensityComparativeZero_of_none {e : Event Time} (he : themed v frame α x e)
+theorem intensityComparativeZero_of_none {e : Event T} (he : themed v frame α x e)
     (hpos : 0 < v.μint e) (hβ : ∀ e', themed v frame β y e' → v.μint e' ≤ 0) :
     intensityComparativeZero v frame α β x y :=
   ⟨e, he, 0, ⟨Set.mem_insert _ _, fun _ hd => (Set.mem_insert_iff.1 hd).elim le_of_eq

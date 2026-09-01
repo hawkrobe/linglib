@@ -329,29 +329,29 @@ exist and the complement's run-time wholly precedes the main event's — while *
 existential over the main clause and universal over the complement, so it is vacuously
 satisfied when no complement event exists. The precedence is Allen's `precedes` atom. -/
 
-variable {Time : Type*} [LinearOrder Time]
+variable {T : Type*} [LinearOrder T]
 
 /-- *P after Q*: some `P`-event whose run-time some `Q`-event's run-time wholly precedes. -/
-def eventAfter (P Q : Event Time → Prop) : Prop :=
-  ∃ e₁ e₂ : Event Time, P e₁ ∧ Q e₂ ∧ e₂.τ.precedes e₁.τ
+def eventAfter (P Q : Event T → Prop) : Prop :=
+  ∃ e₁ e₂ : Event T, P e₁ ∧ Q e₂ ∧ e₂.τ.precedes e₁.τ
 
 /-- *P before Q*: some `P`-event whose run-time wholly precedes every `Q`-event's. -/
-def eventBefore (P Q : Event Time → Prop) : Prop :=
-  ∃ e₁ : Event Time, P e₁ ∧ ∀ e₂ : Event Time, Q e₂ → e₁.τ.precedes e₂.τ
+def eventBefore (P Q : Event T → Prop) : Prop :=
+  ∃ e₁ : Event T, P e₁ ∧ ∀ e₂ : Event T, Q e₂ → e₁.τ.precedes e₂.τ
 
-theorem eventAfter_iff_allen (P Q : Event Time → Prop) :
-    eventAfter P Q ↔ ∃ e₁ e₂ : Event Time, P e₁ ∧ Q e₂ ∧
+theorem eventAfter_iff_allen (P Q : Event T → Prop) :
+    eventAfter P Q ↔ ∃ e₁ e₂ : Event T, P e₁ ∧ Q e₂ ∧
       AllenRelation.holdsIn AllenRelation.precedesSet e₂.τ e₁.τ := by
   simp only [eventAfter, NonemptyInterval.precedes_iff_allen]
 
-theorem eventBefore_iff_allen (P Q : Event Time → Prop) :
-    eventBefore P Q ↔ ∃ e₁ : Event Time, P e₁ ∧ ∀ e₂ : Event Time, Q e₂ →
+theorem eventBefore_iff_allen (P Q : Event T → Prop) :
+    eventBefore P Q ↔ ∃ e₁ : Event T, P e₁ ∧ ∀ e₂ : Event T, Q e₂ →
       AllenRelation.holdsIn AllenRelation.precedesSet e₁.τ e₂.τ := by
   simp only [eventBefore, NonemptyInterval.precedes_iff_allen]
 
 /-- *After*'s veridicality follows from its double existential. -/
-theorem after_veridicality_derived {P Q : Event Time → Prop} (h : eventAfter P Q) :
-    ∃ e : Event Time, Q e :=
+theorem after_veridicality_derived {P Q : Event T → Prop} (h : eventAfter P Q) :
+    ∃ e : Event T, Q e :=
   let ⟨_, e₂, _, hq, _⟩ := h; ⟨e₂, hq⟩
 
 /-- *Before*'s non-veridicality follows from its universal: any `P`-event with an empty `Q`
@@ -362,12 +362,12 @@ theorem before_nonveridicality_derived :
     ⟨⟨⟨⟨0, 1⟩, by decide⟩, .dynamic⟩, rfl, fun _ h => h.elim⟩, fun ⟨_, h⟩ => h⟩
 
 /-- Both connectives commit to the main clause. -/
-theorem eventBefore_veridical_main {P Q : Event Time → Prop} (h : eventBefore P Q) :
-    ∃ e : Event Time, P e :=
+theorem eventBefore_veridical_main {P Q : Event T → Prop} (h : eventBefore P Q) :
+    ∃ e : Event T, P e :=
   let ⟨e₁, hp, _⟩ := h; ⟨e₁, hp⟩
 
 /-- The event-level *after* projects to [anscombe-1964]'s on run-time denotations. -/
-theorem anscombe_after_of_eventAfter {P Q : Event Time → Prop} (h : eventAfter P Q) :
+theorem anscombe_after_of_eventAfter {P Q : Event T → Prop} (h : eventAfter P Q) :
     Anscombe.after (eventDenotation P) (eventDenotation Q) := by
   obtain ⟨e₁, e₂, hp, hq, hprec⟩ := h
   refine ⟨e₁.τ.fst, ?_, e₂.τ.snd, ?_, hprec⟩
@@ -375,7 +375,7 @@ theorem anscombe_after_of_eventAfter {P Q : Event Time → Prop} (h : eventAfter
   · rw [timeTrace_eventDenotation]; exact ⟨e₂, hq, e₂.τ.fst_le_snd, le_rfl⟩
 
 /-- The event-level *before* projects to [anscombe-1964]'s quantificational one. -/
-theorem anscombe_before_of_eventBefore {P Q : Event Time → Prop} (h : eventBefore P Q) :
+theorem anscombe_before_of_eventBefore {P Q : Event T → Prop} (h : eventBefore P Q) :
     Anscombe.beforeEver (eventDenotation P) (eventDenotation Q) := by
   obtain ⟨e₁, hp, hall⟩ := h
   refine ⟨e₁.τ.snd, ?_, fun t' ht' => ?_⟩
@@ -536,9 +536,9 @@ The following theorems make this structural parallel precise. -/
     Formally: CSIP(P) → IMPF(P)(w)(t) → PRFV(P)(w)(t). This is
     `impf_entails_prfv_of_csub` from SubintervalProperty.lean. -/
 theorem csip_entails_completion
-    {W Time : Type*} [LinearOrder Time]
-    (P : W → Event Time → Prop) (hCSIP : HasClosedSubintervalProp P)
-    (w : W) (t : NonemptyInterval Time) :
+    {W T : Type*} [LinearOrder T]
+    (P : W → Event T → Prop) (hCSIP : HasClosedSubintervalProp P)
+    (w : W) (t : NonemptyInterval T) :
     IMPF P w t → PRFV P w t :=
   fun h => impf_entails_prfv_of_csub P hCSIP w t h
 
@@ -566,10 +566,10 @@ theorem non_csip_lacks_completion
     events to worlds where a target Q is reached, there exists an ongoing
     event whose continuation satisfies Q in accessible worlds. -/
 theorem progressive_before_modal_resolution
-    {W Time : Type*} [LinearOrder Time]
-    (P Q : W → Event Time → Prop)
-    (alternatives : Event Time → Set W)
-    (w : W) (t : NonemptyInterval Time)
+    {W T : Type*} [LinearOrder T]
+    (P Q : W → Event T → Prop)
+    (alternatives : Event T → Set W)
+    (w : W) (t : NonemptyInterval T)
     (hIMPF : IMPF P w t)
     (hContinuation : ∀ e, P w e → t < e.τ →
       ∀ w' ∈ alternatives e, ∃ e', Q w' e') :
@@ -589,11 +589,11 @@ theorem progressive_before_modal_resolution
     directly entails its complement). Predicates WITHOUT CSIP require modal
     resolution (the progressive / anti-veridical *before*). -/
 theorem csip_determines_modal_need
-    {W Time : Type*} [LinearOrder Time]
-    (P : W → Event Time → Prop) (w : W) (t : NonemptyInterval Time) :
+    {W T : Type*} [LinearOrder T]
+    (P : W → Event T → Prop) (w : W) (t : NonemptyInterval T) :
     (HasClosedSubintervalProp P → IMPF P w t → PRFV P w t) ∧
     (IMPF P w t → ¬HasClosedSubintervalProp P →
-      ¬(∀ (t' : NonemptyInterval Time), t' ≤ t →
+      ¬(∀ (t' : NonemptyInterval T), t' ≤ t →
         ∃ e, e.τ = t' ∧ P w e) →
       -- Modal resolution needed: must appeal to alternative worlds
       ∃ e, t < e.τ ∧ P w e) := by

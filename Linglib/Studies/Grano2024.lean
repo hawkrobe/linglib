@@ -205,19 +205,19 @@ not carry out her intention). -/
     some stative intention state held by the agent, each of whose
     content pairs ⟨w', x⟩ supports an event that the state brings
     about in the right way and that satisfies the complement. The
-    complement type `E → W → Event Time → Prop` keeps the event
+    complement type `E → W → Event T → Prop` keeps the event
     argument open — the formal correlate of Premise 3: indicative
     would existentially close it to `W → Prop`, which cannot compose
     with the causal self-reference relation. -/
-def intentionHolds {E W Time : Type*} [LinearOrder Time]
-    (isIntention : Event Time → W → Prop)
-    (holder : E → Event Time → W → Prop)
-    (content : Event Time → Set (W × E))
-    (causeStar : Event Time → Event Time → W → Prop)
-    (agent : E) (P : E → W → Event Time → Prop) (w : W) : Prop :=
-  ∃ s : Event Time,
+def intentionHolds {E W T : Type*} [LinearOrder T]
+    (isIntention : Event T → W → Prop)
+    (holder : E → Event T → W → Prop)
+    (content : Event T → Set (W × E))
+    (causeStar : Event T → Event T → W → Prop)
+    (agent : E) (P : E → W → Event T → Prop) (w : W) : Prop :=
+  ∃ s : Event T,
     s.sort = .stative ∧ isIntention s w ∧ holder agent s w ∧
-    ∀ p ∈ content s, ∃ e : Event Time, causeStar s e p.1 ∧ P p.2 p.1 e
+    ∀ p ∈ content s, ∃ e : Event T, causeStar s e p.1 ∧ P p.2 p.1 e
 
 /-- Plain belief reports need no causal self-reference: the complement
     is a closed proposition evaluated over doxastic alternatives —
@@ -250,7 +250,7 @@ theorem subj_enables_eventuality_abstraction {E : Type*} (P : E → Prop) :
     Grammatical.subjunctive.eventDenotation P = .abstracted P := rfl
 
 /-- The three-premise argument chain:
-    1. `intentionHolds` requires P : E → W → Event Time → Prop (open event arg)
+    1. `intentionHolds` requires P : E → W → Event T → Prop (open event arg)
     2. IND closes the event argument (`eventDenotation` lands in `closed`)
     3. SBJV leaves it open (`eventDenotation` lands in `abstracted`)
     → intention reports require SBJV, reject IND -/

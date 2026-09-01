@@ -52,33 +52,33 @@ open _root_.Intensional (Index)
 open DynamicSemantics
 open DynamicSemantics.Update (test closure)
 
-variable {W Time : Type*} [LinearOrder Time]
+variable {W T : Type*} [LinearOrder T]
 
 /-- Dynamic PAST: the spine's test filter at the `past` cell. A context
     entry survives iff its event-variable index precedes its
     reference-variable index in time. -/
 def dynPAST (eventVar refVar : ℕ) :
-    Set (Index.Possibility W Time) →
-      Set (Index.Possibility W Time) :=
+    Set (Index.Possibility W T) →
+      Set (Index.Possibility W T) :=
   lift (test fun p =>
     compare (p.assignment eventVar).time (p.assignment refVar).time ∈ past)
 
 /-- Dynamic PRES: the test filter at the `present` cell. -/
 def dynPRES (eventVar refVar : ℕ) :
-    Set (Index.Possibility W Time) →
-      Set (Index.Possibility W Time) :=
+    Set (Index.Possibility W T) →
+      Set (Index.Possibility W T) :=
   lift (test fun p =>
     compare (p.assignment eventVar).time (p.assignment refVar).time ∈ present)
 
 /-- Dynamic FUT: the test filter at the `future` cell. -/
 def dynFUT (eventVar refVar : ℕ) :
-    Set (Index.Possibility W Time) →
-      Set (Index.Possibility W Time) :=
+    Set (Index.Possibility W T) →
+      Set (Index.Possibility W T) :=
   lift (test fun p =>
     compare (p.assignment eventVar).time (p.assignment refVar).time ∈ future)
 
-variable (e r : ℕ) (c : Set (Index.Possibility W Time))
-  (p : Index.Possibility W Time)
+variable (e r : ℕ) (c : Set (Index.Possibility W T))
+  (p : Index.Possibility W T)
 
 /-! ### Membership characterizations -/
 

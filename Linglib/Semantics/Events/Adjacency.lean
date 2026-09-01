@@ -21,21 +21,21 @@ are consumed by:
 /-- Two events are temporally adjacent (`∞_E` in [krifka-1998]'s
     notation) if their runtime intervals meet: one's finish equals
     the other's start. The natural concrete instance of K98's
-    abstract event-adjacency primitive (eq. 14) on the `Event Time`
-    structure where events have `runtime : Interval Time`. -/
-def Event.adjacent {Time : Type*} [LinearOrder Time]
-    (e1 e2 : Event Time) : Prop :=
+    abstract event-adjacency primitive (eq. 14) on the `Event T`
+    structure where events have `runtime : Interval T`. -/
+def Event.adjacent {T : Type*} [LinearOrder T]
+    (e1 e2 : Event T) : Prop :=
   e1.runtime.snd = e2.runtime.fst ∨ e2.runtime.snd = e1.runtime.fst
 
 /-- Event temporal precedence (`«_E` in K98 §2.5): one event's runtime
     is entirely before the other's. Defined via `Interval.isBefore`
-    from `Core/Time/Interval/Basic.lean`. -/
-def Event.precedes {Time : Type*} [LinearOrder Time]
-    (e1 e2 : Event Time) : Prop :=
+    from `Core/T/Interval/Basic.lean`. -/
+def Event.precedes {T : Type*} [LinearOrder T]
+    (e1 e2 : Event T) : Prop :=
   e1.runtime.isBefore e2.runtime
 
 /-- Event adjacency is symmetric. -/
-theorem Event.adjacent_comm {Time : Type*} [LinearOrder Time]
-    {e1 e2 : Event Time} :
+theorem Event.adjacent_comm {T : Type*} [LinearOrder T]
+    {e1 e2 : Event T} :
     e1.adjacent e2 ↔ e2.adjacent e1 :=
   or_comm

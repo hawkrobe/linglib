@@ -181,7 +181,7 @@ section Classical
 
 open Anscombe1964
 
-variable {Time : Type*} [LinearOrder Time] (A B B' : RunTimes Time)
+variable {T : Type*} [LinearOrder T] (A B B' : RunTimes T)
 
 /-- The complement of [anscombe-1964]'s quantificational *before* is downward entailing: the
 universal over `B` reverses inclusion — the NPI-licensing environment. -/

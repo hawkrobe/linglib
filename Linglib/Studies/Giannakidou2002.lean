@@ -43,7 +43,7 @@ Uses `Aspect.Core.UNBOUNDED` (= non-strict IMPF, [pancheva-2003]) projected
 to `RunTimes` for the imperfective denotation:
 
 ```
-Unit → Event Time → Prop ──[UNBOUNDED]──▷ IntervalPred ──[fix w=()]──▷ RunTimes
+Unit → Event T → Prop ──[UNBOUNDED]──▷ IntervalPred ──[fix w=()]──▷ RunTimes
 ```
 
 The key property — subinterval-closure — holds for both `UNBOUNDED` (⊆) and
@@ -72,7 +72,7 @@ open NonemptyInterval
 open Aspect
 open Tense Anscombe1964 Karttunen1974 Heinamaki1974
 
-variable {Time : Type*} [LinearOrder Time]
+variable {T : Type*} [LinearOrder T]
 
 -- ============================================================================
 -- § 1: Aspect.Core → RunTimes Projection
@@ -84,14 +84,14 @@ variable {Time : Type*} [LinearOrder Time]
     rather than `IMPF` (which requires strict ⊂) because the homogeneity
     argument is identical and the non-strict version connects cleanly to
     `stativeDenotation`. -/
-abbrev impfDen (P : Unit → Event Time → Prop) : RunTimes Time :=
+abbrev impfDen (P : Unit → Event T → Prop) : RunTimes T :=
   { i | UNBOUNDED P () i }
 
 /-- PRFV denotation: the set of exact event runtimes — the `eventDenotation`
     τ-image (`Projection.lean`) of `P ()`. Unlike the `Aspect.Core.PRFV` operator
     (whose intervals CONTAIN the runtime: TSit ⊆ TT), this gives the runtime itself,
     directly characterizing the event's temporal extent. -/
-def prfvDen (P : Unit → Event Time → Prop) : RunTimes Time :=
+def prfvDen (P : Unit → Event T → Prop) : RunTimes T :=
   eventDenotation (P ())
 
 -- ============================================================================
@@ -109,16 +109,16 @@ def prfvDen (P : Unit → Event Time → Prop) : RunTimes Time :=
     of the main clause of durative *until*. The imperfective viewpoint
     provides this automatically: since the event extends beyond any reference
     interval, every sub-window into the event is equally valid. -/
-theorem impfDen_subinterval_closed (P : Unit → Event Time → Prop)
-    (t : NonemptyInterval Time) (ht : t ∈ impfDen P)
-    (t' : NonemptyInterval Time) (ht' : t' ≤ t) :
+theorem impfDen_subinterval_closed (P : Unit → Event T → Prop)
+    (t : NonemptyInterval T) (ht : t ∈ impfDen P)
+    (t' : NonemptyInterval T) (ht' : t' ≤ t) :
     t' ∈ impfDen P := by
   obtain ⟨e, hSub, hP⟩ := ht
   exact ⟨e, ⟨le_trans hSub.1 ht'.1, le_trans ht'.2 hSub.2⟩, hP⟩
 
 /-- IMPF denotation contains the event runtime itself (the maximal interval). -/
-theorem impfDen_contains_runtime (P : Unit → Event Time → Prop)
-    (e : Event Time) (hP : P () e) :
+theorem impfDen_contains_runtime (P : Unit → Event T → Prop)
+    (e : Event T) (hP : P () e) :
     e.τ ∈ impfDen P :=
   ⟨e, le_refl _, hP⟩
 
@@ -156,7 +156,7 @@ theorem prfvDen_not_subinterval_closed :
 
 /-- IMPF denotation is homogeneous (a lower set / subinterval-closed) — wide scope
     is available. -/
-theorem impfDen_homogeneous (P : Unit → Event Time → Prop) :
+theorem impfDen_homogeneous (P : Unit → Event T → Prop) :
     IsLowerSet (impfDen P) := by
   intro a b hba ha
   exact impfDen_subinterval_closed P a ha b hba
@@ -175,7 +175,7 @@ theorem prfvDen_not_always_homogeneous :
     PRFV's failure of subinterval-closure, not from a stipulated constraint. -/
 theorem scope_pattern_derived :
     -- IMPF always permits wide scope (homogeneous)
-    (∀ (P : Unit → Event Time → Prop), IsLowerSet (impfDen P)) ∧
+    (∀ (P : Unit → Event T → Prop), IsLowerSet (impfDen P)) ∧
     -- PRFV does not always permit wide scope (not always homogeneous)
     ¬ (∀ (P : Unit → Event ℤ → Prop), IsLowerSet (prfvDen P)) :=
   ⟨impfDen_homogeneous, prfvDen_not_always_homogeneous⟩
@@ -189,8 +189,8 @@ theorem scope_pattern_derived :
     aspect bridge to the existing temporal connective infrastructure
     in `Basic.lean`. -/
 theorem impfDen_singleton_eq_stativeDenotation
-    (i : NonemptyInterval Time) :
-    impfDen (fun () (e : Event Time) => e.τ = i) =
+    (i : NonemptyInterval T) :
+    impfDen (fun () (e : Event T) => e.τ = i) =
     stativeDenotation i := by
   ext j
   simp only [UNBOUNDED, stativeDenotation, Set.mem_Iic, Set.mem_ofPred_eq, Event.τ]
@@ -202,8 +202,8 @@ theorem impfDen_singleton_eq_stativeDenotation
 /-- For a single event, the PRFV denotation is exactly the accomplishment
     denotation (singleton containing just the runtime). -/
 theorem prfvDen_singleton_eq_accomplishmentDenotation
-    (i : NonemptyInterval Time) :
-    prfvDen (fun () (e : Event Time) => e.τ = i) =
+    (i : NonemptyInterval T) :
+    prfvDen (fun () (e : Event T) => e.τ = i) =
     accomplishmentDenotation i := by
   ext j
   simp only [prfvDen, mem_eventDenotation, accomplishmentDenotation, Event.τ]
@@ -222,7 +222,7 @@ theorem prfvDen_singleton_eq_accomplishmentDenotation
     This is why Karttunen's Level 1 (point-set) definitions cannot distinguish
     imperfective from perfective clauses — the difference is only visible
     at Level 2 (interval sets). -/
-theorem timeTrace_impf_eq_prfv (P : Unit → Event Time → Prop) :
+theorem timeTrace_impf_eq_prfv (P : Unit → Event T → Prop) :
     timeTrace (impfDen P) = timeTrace (prfvDen P) := by
   ext t
   simp only [timeTrace, prfvDen, UNBOUNDED, Set.mem_ofPred_eq, Event.τ]
@@ -247,7 +247,7 @@ theorem timeTrace_impf_eq_prfv (P : Unit → Event Time → Prop) :
     Available when A is imperfective: the main clause denotes a homogeneous
     interval set via IMPF, so *until* can take it as an argument.
     Negation scopes over the entire *until*-clause. -/
-def wideScopeNotUntil (A : Unit → Event Time → Prop) (B : RunTimes Time) : Prop :=
+def wideScopeNotUntil (A : Unit → Event T → Prop) (B : RunTimes T) : Prop :=
   ¬ when_ (impfDen A) B
 
 /-- **Narrow-scope negation** under *until* (= Karttunen's ¬*before*):
@@ -259,13 +259,13 @@ def wideScopeNotUntil (A : Unit → Event Time → Prop) (B : RunTimes Time) : P
     This is the only reading available with perfective main clauses:
     since PRFV gives a bounded event, *until* reduces to temporal ordering
     and negation gives Karttunen's notUntil = ¬before. -/
-def narrowScopeNotUntil (A : Unit → Event Time → Prop) (B : RunTimes Time) : Prop :=
+def narrowScopeNotUntil (A : Unit → Event T → Prop) (B : RunTimes T) : Prop :=
   notUntil (prfvDen A) B
 
 /-- Narrow-scope ¬*until* is exactly ¬*before* (by definition).
     This is [karttunen-1974]'s identity, now made explicit in the
     aspectual decomposition. -/
-theorem narrowScope_eq_not_before (A : Unit → Event Time → Prop) (B : RunTimes Time) :
+theorem narrowScope_eq_not_before (A : Unit → Event T → Prop) (B : RunTimes T) :
     narrowScopeNotUntil A B ↔ ¬ Anscombe.beforeEver (prfvDen A) B :=
   Iff.rfl
 
@@ -349,7 +349,7 @@ theorem scope_readings_independent :
     `¬∃t'∃e' [t'∈C ∧ t'<t ∧ P(e',t')]`. The scalar/contextual component
     is abstracted away here; the core truth-conditional difference (overlap +
     lateness vs. lateness alone) is preserved. -/
-def eventiveUntil (A B : RunTimes Time) : Prop :=
+def eventiveUntil (A B : RunTimes T) : Prop :=
   (∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B) ∧ ¬ Anscombe.beforeEver A B
 
 -- ============================================================================
@@ -360,22 +360,22 @@ def eventiveUntil (A B : RunTimes Time) : Prop :=
     This is the **actualization entailment** that [giannakidou-2002]
     identifies as the hallmark of NPI-*until* (para monon), absent from
     durative *until* (mexri) and before (prin). -/
-theorem eventiveUntil_entails_actualization (A B : RunTimes Time) :
+theorem eventiveUntil_entails_actualization (A B : RunTimes T) :
     eventiveUntil A B → ∃ t, t ∈ timeTrace A := by
   rintro ⟨⟨t, ht, _⟩, _⟩; exact ⟨t, ht⟩
 
 /-- Eventive UNTIL entails complement actualization: B must have occurred. -/
-theorem eventiveUntil_entails_complement (A B : RunTimes Time) :
+theorem eventiveUntil_entails_complement (A B : RunTimes T) :
     eventiveUntil A B → ∃ t, t ∈ timeTrace B := by
   rintro ⟨⟨t, _, ht⟩, _⟩; exact ⟨t, ht⟩
 
 /-- Eventive UNTIL entails ¬*before*: A didn't happen prior to B. -/
-theorem eventiveUntil_entails_notBefore (A B : RunTimes Time) :
+theorem eventiveUntil_entails_notBefore (A B : RunTimes T) :
     eventiveUntil A B → notUntil A B :=
   And.right
 
 /-- Eventive UNTIL entails temporal coincidence (*when*): A and B overlap. -/
-theorem eventiveUntil_entails_when (A B : RunTimes Time) :
+theorem eventiveUntil_entails_when (A B : RunTimes T) :
     eventiveUntil A B → when_ A B := by
   rintro ⟨⟨t, htA, htB⟩, _⟩; exact ⟨t, htA, htB⟩
 
@@ -746,7 +746,7 @@ theorem negBefore_lacks_actualization :
     common to both *prin/before* and *until/para monon*. -/
 theorem before_not_equiv_eventiveUntil :
     -- eventiveUntil entails main-clause actualization
-    (∀ (A B : RunTimes Time), eventiveUntil A B → ∃ t, t ∈ timeTrace A) ∧
+    (∀ (A B : RunTimes T), eventiveUntil A B → ∃ t, t ∈ timeTrace A) ∧
     -- ¬before is compatible with main-clause non-actualization
     (∃ (A B : RunTimes ℤ), notUntil A B ∧ ¬ ∃ t, t ∈ timeTrace A) :=
   ⟨eventiveUntil_entails_actualization, negBefore_lacks_actualization⟩

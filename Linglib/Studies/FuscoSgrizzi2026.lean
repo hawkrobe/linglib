@@ -173,50 +173,50 @@ verb, two complement sizes. -/
 /-- A causative attitude verb: the agent causes the experiencer to
     enter a rational attitude state whose content is the complement
     predicate. -/
-structure CausativeAttitude (E Time : Type*) [LinearOrder Time] where
+structure CausativeAttitude (E T : Type*) [LinearOrder T] where
   /-- The verb's descriptive predicate (Convince). -/
-  verbPred : Event Time → Prop
+  verbPred : Event T → Prop
   /-- The agent of the matrix event. -/
   agent : E
   /-- The patient of the matrix event and experiencer of the attitude. -/
   experiencer : E
   /-- Agent thematic role. -/
-  isAgent : Event Time → E → Prop
+  isAgent : Event T → E → Prop
   /-- Patient thematic role. -/
-  isPatient : Event Time → E → Prop
+  isPatient : Event T → E → Prop
   /-- Experiencer thematic role, on the attitude event. -/
-  isExperiencer : Event Time → E → Prop
+  isExperiencer : Event T → E → Prop
   /-- The matrix event causally brings about the attitude state. -/
-  cause : Event Time → Event Time → Prop
+  cause : Event T → Event T → Prop
 
-variable {E Time : Type*} [LinearOrder Time]
+variable {E T : Type*} [LinearOrder T]
 
 /-- The verb applied to a complement predicate `P`: some matrix event
     causes a stative rational-attitude event satisfying `P`. -/
-def CausativeAttitude.denote (v : CausativeAttitude E Time)
-    (P : Event Time → Prop) : Prop :=
-  ∃ e e' : Event Time,
+def CausativeAttitude.denote (v : CausativeAttitude E T)
+    (P : Event T → Prop) : Prop :=
+  ∃ e e' : Event T,
     v.verbPred e ∧ v.isAgent e v.agent ∧ v.isPatient e v.experiencer ∧
     v.cause e e' ∧ e'.sort = .stative ∧
     v.isExperiencer e' v.experiencer ∧ P e'
 
 /-- Belief reading: the CP complement is existentially closed into a
     proposition, evaluated against doxastic content. -/
-def CausativeAttitude.beliefReading (v : CausativeAttitude E Time)
-    (embeddedVP : Event Time → Prop) : Prop :=
-  v.denote (fun _ => ∃ e : Event Time, embeddedVP e)
+def CausativeAttitude.beliefReading (v : CausativeAttitude E T)
+    (embeddedVP : Event T → Prop) : Prop :=
+  v.denote (fun _ => ∃ e : Event T, embeddedVP e)
 
 /-- Intention reading: the sub-CP complement is applied directly as an
     event predicate, evaluated against inertial continuation. -/
-def CausativeAttitude.intentionReading (v : CausativeAttitude E Time)
-    (embeddedVP : Event Time → Prop) : Prop :=
+def CausativeAttitude.intentionReading (v : CausativeAttitude E T)
+    (embeddedVP : Event T → Prop) : Prop :=
   v.denote embeddedVP
 
 /-- The paper's central claim (ex. 24): both readings are the one
     `denote` applied to different complement predicates — the
     belief/intention split is compositional, not lexical. -/
 theorem CausativeAttitude.readings_from_single_denote
-    (v : CausativeAttitude E Time) (VP : Event Time → Prop) :
+    (v : CausativeAttitude E T) (VP : Event T → Prop) :
     v.beliefReading VP = v.denote (fun _ => ∃ e, VP e) ∧
     v.intentionReading VP = v.denote VP :=
   ⟨rfl, rfl⟩

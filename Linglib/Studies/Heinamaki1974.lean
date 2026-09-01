@@ -21,7 +21,7 @@ namespace Heinamaki1974
 
 open Tense Anscombe1964 NonemptyInterval
 
-variable {Time : Type*} [LinearOrder Time] (A B : RunTimes Time)
+variable {T : Type*} [LinearOrder T] (A B : RunTimes T)
 
 /-- *A when B*: `A` and `B` hold at a common time. -/
 def when_ : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
@@ -66,18 +66,18 @@ theorem before_by : Anscombe.beforeEver A B → by_ A B :=
   fun ⟨t, ht, h⟩ => ⟨t, ht, fun t' ht' => (h t' ht').le⟩
 
 /-- *A before B* by the reference point: some time of `A` precedes `B`'s first time `lb`. -/
-def before (A : RunTimes Time) (lb : Time) : Prop := ∃ t ∈ timeTrace A, t < lb
+def before (A : RunTimes T) (lb : T) : Prop := ∃ t ∈ timeTrace A, t < lb
 
 /-- *A after B* by the reference point: some time of `A` follows `B`'s first time `lb`. -/
-def after (A : RunTimes Time) (lb : Time) : Prop := ∃ t ∈ timeTrace A, lb < t
+def after (A : RunTimes T) (lb : T) : Prop := ∃ t ∈ timeTrace A, lb < t
 
 /-- When `B` has a first time, the reference-point *before* is [anscombe-1964]'s
 quantificational one. -/
-theorem before_iff_anscombe {lb : Time} (hlb : IsLeast (timeTrace B) lb) :
+theorem before_iff_anscombe {lb : T} (hlb : IsLeast (timeTrace B) lb) :
     before A lb ↔ Anscombe.beforeEver A B := (beforeEver_iff_lt_least hlb).symm
 
 /-- When `B` has a first time, the reference-point *after* is [anscombe-1964]'s. -/
-theorem after_iff_anscombe {lb : Time} (hlb : IsLeast (timeTrace B) lb) :
+theorem after_iff_anscombe {lb : T} (hlb : IsLeast (timeTrace B) lb) :
     after A lb ↔ Anscombe.after A B := (after_iff_least_lt hlb).symm
 
 /-- *While* is not symmetric: a moment inside a stretch. -/
