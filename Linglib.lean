@@ -1885,7 +1885,7 @@ import Linglib.Semantics.Tense.Evidential
 import Linglib.Semantics.Tense.Perspective
 import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Semantics.Tense.SentDenotation
+import Linglib.Semantics.Tense.RunTimes
 import Linglib.Semantics.Tense.TemporalAdverbials
 import Linglib.Semantics.Tense.TenseAspectComposition
 import Linglib.Semantics.Truthmaker.Basic

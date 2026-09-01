@@ -7,10 +7,10 @@ import Linglib.Core.Order.Interval
 import Linglib.Semantics.Events.Basic
 
 /-!
-# Sentence denotations as run-time interval sets
+# Run times
 [krifka-1989]
 
-A sentence denotes the set of its run-time intervals (`SentDenotation`).
+A clause denotes the set of intervals at which it holds, its run times (`RunTimes`).
 Statives denote a maximal interval with all its subintervals
 (`stativeDenotation`, a principal downset); accomplishments denote a
 singleton (`accomplishmentDenotation`); `timeTrace` projects an interval
@@ -27,29 +27,44 @@ namespace Tense
 variable {Time : Type*} [LinearOrder Time]
 
 /-- A sentence denotes a set of temporal intervals — its "run-times". -/
-abbrev SentDenotation (Time : Type*) [LinearOrder Time] := Set (NonemptyInterval Time)
+abbrev RunTimes (Time : Type*) [LinearOrder Time] := Set (NonemptyInterval Time)
 
 /-- The time points contained in some interval of a denotation. -/
-def timeTrace (p : SentDenotation Time) : Set Time :=
+def timeTrace (p : RunTimes Time) : Set Time :=
   { t | ∃ i ∈ p, t ∈ i }
 
-@[simp] theorem mem_timeTrace {p : SentDenotation Time} {t : Time} :
+@[simp] theorem mem_timeTrace {p : RunTimes Time} {t : Time} :
     t ∈ timeTrace p ↔ ∃ i ∈ p, t ∈ i := Iff.rfl
 
 theorem timeTrace_image {α : Type*} (f : α → NonemptyInterval Time) (s : Set α) :
     timeTrace (f '' s) = { t | ∃ a ∈ s, t ∈ f a } := by
   ext t; simp
 
+@[simp] theorem timeTrace_empty : timeTrace (∅ : RunTimes Time) = ∅ := by
+  ext; simp [timeTrace]
+
+@[simp] theorem timeTrace_singleton (i : NonemptyInterval Time) :
+    timeTrace {i} = (i : Set Time) := by
+  ext; simp [timeTrace]
+
+@[simp] theorem timeTrace_insert (i : NonemptyInterval Time) (p : RunTimes Time) :
+    timeTrace (insert i p) = (i : Set Time) ∪ timeTrace p := by
+  ext; simp [timeTrace]
+
+theorem mem_timeTrace_pure {a t : Time} :
+    t ∈ timeTrace {NonemptyInterval.pure a} ↔ t = a := by
+  simp
+
 /-- Stative denotation: the maximal interval `i` with all its subintervals —
     the principal downset `Set.Iic i`, a lower set, which *is* the
     subinterval-closure property. The *activity* case (a minimal-parts floor:
     a single step is not "running") is the stratified reference of
     `Aspect/Stratified` ([champollion-2017]), not this lower set. -/
-def stativeDenotation (i : NonemptyInterval Time) : SentDenotation Time :=
+def stativeDenotation (i : NonemptyInterval Time) : RunTimes Time :=
   Set.Iic i
 
 /-- Accomplishment denotation: exactly the singleton `{i}` — quantization. -/
-def accomplishmentDenotation (i : NonemptyInterval Time) : SentDenotation Time :=
+def accomplishmentDenotation (i : NonemptyInterval Time) : RunTimes Time :=
   {i}
 
 theorem stativeDenotation_self (i : NonemptyInterval Time) :
@@ -62,6 +77,10 @@ theorem timeTrace_stativeDenotation (i : NonemptyInterval Time) :
   simp only [mem_timeTrace, stativeDenotation, Set.mem_Iic, Set.mem_ofPred_eq,
     NonemptyInterval.mem_def, NonemptyInterval.le_def]
   grind
+
+theorem mem_timeTrace_stativeDenotation {i : NonemptyInterval Time} {t : Time} :
+    t ∈ timeTrace (stativeDenotation i) ↔ t ∈ i := by
+  rw [timeTrace_stativeDenotation]; rfl
 
 theorem timeTrace_accomplishmentDenotation (i : NonemptyInterval Time) :
     timeTrace (accomplishmentDenotation i) = { t | t ∈ i } := by

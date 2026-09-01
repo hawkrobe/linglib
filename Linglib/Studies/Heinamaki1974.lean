@@ -9,9 +9,9 @@ the clauses' time traces: *A when B* asserts that the two hold at a common time 
 *A while B* that every time of `A` is a time of `B` (`while_`), *A whenever B* the converse
 containment (`whenever`), *A since B* that some time of `B` lies at or before every time of
 `A` (`since`), and *A by B* that some time of `A` lies at or before every time of `B`
-(`by_`). *Since* and *by* are the non-strict counterparts of [anscombe-1964]'s *before*, with
-the roles of the clauses exchanged, so *before* entails *by* but not conversely
-(`before_by`, `by_not_before`). The existential connectives commit the speaker to both
+(`by_`). *Since* and *by* are the non-strict counterparts of [anscombe-1964]'s quantificational
+*before*, with the roles of the clauses exchanged, so *before ever* entails *by* but not
+conversely (`before_by`, `by_not_before`). The existential connectives commit the speaker to both
 clauses (`when_veridical_complement`, `since_veridical_complement`, `by_veridical_main`);
 the universal ones do so only given the clause they quantify over
 (`while_veridical_complement`), and are not symmetric (`while_not_symm`).
@@ -21,7 +21,7 @@ namespace Heinamaki1974
 
 open Tense Anscombe1964 NonemptyInterval
 
-variable {Time : Type*} [LinearOrder Time] (A B : SentDenotation Time)
+variable {Time : Type*} [LinearOrder Time] (A B : RunTimes Time)
 
 /-- *A when B*: `A` and `B` hold at a common time. -/
 def when_ : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
@@ -61,19 +61,20 @@ theorem since_veridical_complement : since A B → ∃ t, t ∈ timeTrace B :=
 
 theorem by_veridical_main : by_ A B → ∃ t, t ∈ timeTrace A := fun ⟨t, ht, _⟩ => ⟨t, ht⟩
 
-/-- *Before* is strict *by*. -/
-theorem before_by : Anscombe.before A B → by_ A B :=
+/-- *Before ever* is strict *by*. -/
+theorem before_by : Anscombe.beforeEver A B → by_ A B :=
   fun ⟨t, ht, h⟩ => ⟨t, ht, fun t' ht' => (h t' ht').le⟩
 
 /-- *A before B* by the reference point: some time of `A` precedes `B`'s first time `lb`. -/
-def before (A : SentDenotation Time) (lb : Time) : Prop := ∃ t ∈ timeTrace A, t < lb
+def before (A : RunTimes Time) (lb : Time) : Prop := ∃ t ∈ timeTrace A, t < lb
 
 /-- *A after B* by the reference point: some time of `A` follows `B`'s first time `lb`. -/
-def after (A : SentDenotation Time) (lb : Time) : Prop := ∃ t ∈ timeTrace A, lb < t
+def after (A : RunTimes Time) (lb : Time) : Prop := ∃ t ∈ timeTrace A, lb < t
 
-/-- When `B` has a first time, the reference-point *before* is [anscombe-1964]'s. -/
+/-- When `B` has a first time, the reference-point *before* is [anscombe-1964]'s
+quantificational one. -/
 theorem before_iff_anscombe {lb : Time} (hlb : IsLeast (timeTrace B) lb) :
-    before A lb ↔ Anscombe.before A B := (before_iff_lt_least hlb).symm
+    before A lb ↔ Anscombe.beforeEver A B := (beforeEver_iff_lt_least hlb).symm
 
 /-- When `B` has a first time, the reference-point *after* is [anscombe-1964]'s. -/
 theorem after_iff_anscombe {lb : Time} (hlb : IsLeast (timeTrace B) lb) :
@@ -81,13 +82,13 @@ theorem after_iff_anscombe {lb : Time} (hlb : IsLeast (timeTrace B) lb) :
 
 /-- *While* is not symmetric: a moment inside a stretch. -/
 theorem while_not_symm :
-    ¬∀ A B : SentDenotation ℤ, while_ A B → while_ B A := by
+    ¬∀ A B : RunTimes ℤ, while_ A B → while_ B A := by
   intro h
   let i₁₀ : NonemptyInterval ℤ := ⟨⟨1, 10⟩, by decide⟩
   have h5 : (pure 5 : NonemptyInterval ℤ).fst = 5 ∧ (pure 5 : NonemptyInterval ℤ).snd = 5 :=
     ⟨rfl, rfl⟩
   have h₁₀ : i₁₀.fst = 1 ∧ i₁₀.snd = 10 := ⟨rfl, rfl⟩
-  have hw : while_ ({pure 5} : SentDenotation ℤ) (stativeDenotation i₁₀) := by
+  have hw : while_ ({pure 5} : RunTimes ℤ) (stativeDenotation i₁₀) := by
     rintro t ⟨i, hi, hts, htf⟩
     rw [Set.mem_singleton_iff] at hi; subst hi
     rw [timeTrace_stativeDenotation]
@@ -99,7 +100,7 @@ theorem while_not_symm :
 
 /-- *By* allows coincidence where *before* does not: an arrival exactly at the deadline. -/
 theorem by_not_before :
-    ¬∀ A B : SentDenotation ℤ, by_ A B → Anscombe.before A B := by
+    ¬∀ A B : RunTimes ℤ, by_ A B → Anscombe.beforeEver A B := by
   intro h
   have h5 : (pure 5 : NonemptyInterval ℤ).fst = 5 ∧ (pure 5 : NonemptyInterval ℤ).snd = 5 :=
     ⟨rfl, rfl⟩

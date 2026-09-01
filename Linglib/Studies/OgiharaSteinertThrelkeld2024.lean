@@ -3,7 +3,7 @@ import Linglib.Studies.Karttunen1974
 import Linglib.Studies.Heinamaki1974
 import Linglib.Studies.BeaverCondoravdi2003
 import Linglib.Core.Order.AllenRelation
-import Linglib.Semantics.Tense.SentDenotation
+import Linglib.Semantics.Tense.RunTimes
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.Japanese.TemporalConnectives
@@ -374,9 +374,9 @@ theorem anscombe_after_of_eventAfter {P Q : Event Time → Prop} (h : eventAfter
   · rw [timeTrace_eventDenotation]; exact ⟨e₁, hp, le_rfl, e₁.τ.fst_le_snd⟩
   · rw [timeTrace_eventDenotation]; exact ⟨e₂, hq, e₂.τ.fst_le_snd, le_rfl⟩
 
-/-- The event-level *before* projects to [anscombe-1964]'s. -/
+/-- The event-level *before* projects to [anscombe-1964]'s quantificational one. -/
 theorem anscombe_before_of_eventBefore {P Q : Event Time → Prop} (h : eventBefore P Q) :
-    Anscombe.before (eventDenotation P) (eventDenotation Q) := by
+    Anscombe.beforeEver (eventDenotation P) (eventDenotation Q) := by
   obtain ⟨e₁, hp, hall⟩ := h
   refine ⟨e₁.τ.snd, ?_, fun t' ht' => ?_⟩
   · rw [timeTrace_eventDenotation]; exact ⟨e₁, hp, e₁.τ.fst_le_snd, le_rfl⟩
@@ -388,11 +388,11 @@ theorem anscombe_before_of_eventBefore {P Q : Event Time → Prop} (h : eventBef
 to reach into the complement's, which whole-run-time precedence forbids. -/
 theorem not_eventBefore_of_anscombe :
     ¬ ∀ (P Q : Event ℤ → Prop),
-      Anscombe.before (eventDenotation P) (eventDenotation Q) → eventBefore P Q := by
+      Anscombe.beforeEver (eventDenotation P) (eventDenotation Q) → eventBefore P Q := by
   intro h
   let eP : Event ℤ := ⟨⟨⟨1, 5⟩, by decide⟩, .dynamic⟩
   let eQ : Event ℤ := ⟨⟨⟨3, 8⟩, by decide⟩, .dynamic⟩
-  have hansc : Anscombe.before (eventDenotation (· = eP)) (eventDenotation (· = eQ)) := by
+  have hansc : Anscombe.beforeEver (eventDenotation (· = eP)) (eventDenotation (· = eQ)) := by
     refine ⟨1, ?_, ?_⟩
     · rw [timeTrace_eventDenotation]
       exact ⟨eP, rfl, by simp [Event.τ, eP], by simp [Event.τ, eP]⟩
@@ -454,7 +454,7 @@ theorem scenario_after_projects :
 theorem scenario_before_projects :
     let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩
     let arrive : Event ℤ := ⟨⟨⟨3, 3⟩, le_refl _⟩, .dynamic⟩
-    Anscombe.before (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
+    Anscombe.beforeEver (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
   anscombe_before_of_eventBefore scenario_before_punctual
 
 -- ════════════════════════════════════════════════════════════════
@@ -823,31 +823,31 @@ that the connective entails the existence of a complement witness. -/
     Fragment: `after_.complementVeridical = true`. -/
 theorem after_veridicality_grounded :
     after_.complementVeridical = true ∧
-    (∀ (A B : SentDenotation ℤ), Anscombe.after A B → ∃ t, t ∈ timeTrace B) := by
+    (∀ (A B : RunTimes ℤ), Anscombe.after A B → ∃ t, t ∈ timeTrace B) := by
   exact ⟨rfl, fun A B ⟨_, _, t', ht', _⟩ => ⟨t', ht'⟩⟩
 
 /-- *when* is veridical: Fragment field matches theory proof. -/
 theorem when_veridicality_grounded :
     when_conn.complementVeridical = true ∧
-    (∀ (A B : SentDenotation ℤ), when_ A B → ∃ t, t ∈ timeTrace B) :=
+    (∀ (A B : RunTimes ℤ), when_ A B → ∃ t, t ∈ timeTrace B) :=
   ⟨rfl, when_veridical_complement⟩
 
 /-- *until* (durative) is veridical: Fragment field matches theory proof. -/
 theorem until_veridicality_grounded :
     until_.complementVeridical = true ∧
-    (∀ (A B : SentDenotation ℤ), until_ A B → ∃ t, t ∈ timeTrace B) :=
+    (∀ (A B : RunTimes ℤ), until_ A B → ∃ t, t ∈ timeTrace B) :=
   ⟨rfl, until_veridical_complement⟩
 
 /-- *since* is veridical: Fragment field matches theory proof. -/
 theorem since_veridicality_grounded :
     since_conn.complementVeridical = true ∧
-    (∀ (A B : SentDenotation ℤ), since A B → ∃ t, t ∈ timeTrace B) :=
+    (∀ (A B : RunTimes ℤ), since A B → ∃ t, t ∈ timeTrace B) :=
   ⟨rfl, since_veridical_complement⟩
 
 /-- *by* is veridical w.r.t. its main clause: Fragment field matches theory proof. -/
 theorem by_veridicality_grounded :
     by_deadline.complementVeridical = true ∧
-    (∀ (A B : SentDenotation ℤ), by_ A B → ∃ t, t ∈ timeTrace A) :=
+    (∀ (A B : RunTimes ℤ), by_ A B → ∃ t, t ∈ timeTrace A) :=
   ⟨rfl, by_veridical_main⟩
 
 /-! ### Non-veridical connectives -/
@@ -857,7 +857,7 @@ theorem by_veridicality_grounded :
     is vacuously true because ∀t'∈∅, 0 < t'. -/
 theorem before_nonveridicality_grounded :
     before_.complementVeridical = false ∧
-    (∃ (A B : SentDenotation ℤ), Anscombe.before A B ∧ ¬∃ t, t ∈ timeTrace B) := by
+    (∃ (A B : RunTimes ℤ), Anscombe.beforeEver A B ∧ ¬∃ t, t ∈ timeTrace B) := by
   refine ⟨rfl, ⟨{ NonemptyInterval.pure 0 }, ∅, ?_, ?_⟩⟩
   · exact ⟨0, ⟨NonemptyInterval.pure 0, rfl, le_refl _, le_refl _⟩,
       fun t' ⟨i, hi, _⟩ => absurd hi (Set.mem_empty_iff_false i).mp⟩
@@ -881,14 +881,14 @@ theorem before_fragment_matches_data :
 theorem after_three_layer :
     after_veridical.complementEntailed = true ∧
     after_.complementVeridical = true ∧
-    (∀ (A B : SentDenotation ℤ), Anscombe.after A B → ∃ t, t ∈ timeTrace B) :=
+    (∀ (A B : RunTimes ℤ), Anscombe.after A B → ∃ t, t ∈ timeTrace B) :=
   ⟨rfl, rfl, fun _ _ ⟨_, _, t', ht', _⟩ => ⟨t', ht'⟩⟩
 
 /-- Three-layer consistency for *before*: data, fragment, and theory all agree. -/
 theorem before_three_layer :
     before_nonveridical.complementEntailed = false ∧
     before_.complementVeridical = false ∧
-    (∃ (A B : SentDenotation ℤ), Anscombe.before A B ∧ ¬∃ t, t ∈ timeTrace B) :=
+    (∃ (A B : RunTimes ℤ), Anscombe.beforeEver A B ∧ ¬∃ t, t ∈ timeTrace B) :=
   ⟨rfl, rfl, before_nonveridicality_grounded.2⟩
 
 -- ============================================================================

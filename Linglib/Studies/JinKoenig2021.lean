@@ -861,13 +861,13 @@ at t but not at any complement time t'.
 The paper identifies BEFORE as the single most widespread EN trigger
 (50 languages), consistent with its transparent dual-inference structure. -/
 
-open Tense (SentDenotation timeTrace)
+open Tense (RunTimes timeTrace)
 open Anscombe1964 Karttunen1974
 
 /-- BEFORE entails a temporal witness for p (the main clause event
     occurs at some time). This is the positive inference. -/
 theorem before_positive_inference {Time : Type*} [LinearOrder Time]
-    (A B : SentDenotation Time) (h : Anscombe.before A B) :
+    (A B : RunTimes Time) (h : Anscombe.beforeEver A B) :
     ∃ t, t ∈ timeTrace A := by
   obtain ⟨t, ht, _⟩ := h; exact ⟨t, ht⟩
 
@@ -875,7 +875,7 @@ theorem before_positive_inference {Time : Type*} [LinearOrder Time]
     precedes all complement-clause times. When B is nonempty,
     p (at t) and ¬p (at any t' ∈ B) coexist — the dual inference. -/
 theorem before_temporal_separation {Time : Type*} [LinearOrder Time]
-    (A B : SentDenotation Time) (h : Anscombe.before A B) :
+    (A B : RunTimes Time) (h : Anscombe.beforeEver A B) :
     ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t < t' := h
 
 /-- BEFORE licenses EN because it maps to the temporal operator
@@ -886,8 +886,8 @@ theorem before_licensing :
 /-- Punctual UNTIL = ¬BEFORE (Karttunen): the negation of BEFORE
     surfaces as the complement-clause negator, which is exactly EN. -/
 theorem until_en_from_before_negation {Time : Type*} [LinearOrder Time]
-    (A B : SentDenotation Time) :
-    notUntil A B ↔ ¬ Anscombe.before A B := Iff.rfl
+    (A B : RunTimes Time) :
+    notUntil A B ↔ ¬ Anscombe.beforeEver A B := Iff.rfl
 
 -- ════════════════════════════════════════════════════
 -- § 9. Modal Bridge: IMPOSSIBLE → Logical Operator

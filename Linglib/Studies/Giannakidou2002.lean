@@ -1,7 +1,7 @@
 import Linglib.Studies.Karttunen1974
 import Linglib.Studies.Heinamaki1974
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Semantics.Tense.SentDenotation
+import Linglib.Semantics.Tense.RunTimes
 import Linglib.Data.Examples.Giannakidou2002
 import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 import Linglib.Fragments.Icelandic.TemporalConnectives
@@ -40,10 +40,10 @@ interaction with imperfective aspect.
 ## Architecture
 
 Uses `Aspect.Core.UNBOUNDED` (= non-strict IMPF, [pancheva-2003]) projected
-to `SentDenotation` for the imperfective denotation:
+to `RunTimes` for the imperfective denotation:
 
 ```
-Unit → Event Time → Prop ──[UNBOUNDED]──▷ IntervalPred ──[fix w=()]──▷ SentDenotation
+Unit → Event Time → Prop ──[UNBOUNDED]──▷ IntervalPred ──[fix w=()]──▷ RunTimes
 ```
 
 The key property — subinterval-closure — holds for both `UNBOUNDED` (⊆) and
@@ -75,30 +75,30 @@ open Tense Anscombe1964 Karttunen1974 Heinamaki1974
 variable {Time : Type*} [LinearOrder Time]
 
 -- ============================================================================
--- § 1: Aspect.Core → SentDenotation Projection
+-- § 1: Aspect.Core → RunTimes Projection
 -- ============================================================================
 
-/-- IMPF denotation: project `Aspect.Core.UNBOUNDED` to `SentDenotation`.
+/-- IMPF denotation: project `Aspect.Core.UNBOUNDED` to `RunTimes`.
     Each interval in the denotation is a subinterval of some event runtime
     ([klein-1994]: TT ⊆ TSit). Uses `UNBOUNDED` ([pancheva-2003])
     rather than `IMPF` (which requires strict ⊂) because the homogeneity
     argument is identical and the non-strict version connects cleanly to
     `stativeDenotation`. -/
-abbrev impfDen (P : Unit → Event Time → Prop) : SentDenotation Time :=
+abbrev impfDen (P : Unit → Event Time → Prop) : RunTimes Time :=
   { i | UNBOUNDED P () i }
 
 /-- PRFV denotation: the set of exact event runtimes — the `eventDenotation`
     τ-image (`Projection.lean`) of `P ()`. Unlike the `Aspect.Core.PRFV` operator
     (whose intervals CONTAIN the runtime: TSit ⊆ TT), this gives the runtime itself,
     directly characterizing the event's temporal extent. -/
-def prfvDen (P : Unit → Event Time → Prop) : SentDenotation Time :=
+def prfvDen (P : Unit → Event Time → Prop) : RunTimes Time :=
   eventDenotation (P ())
 
 -- ============================================================================
 -- § 2: Homogeneity
 -- ============================================================================
 
-/-! A sentence denotation is *homogeneous* (subinterval-closed) when membership is
+/-! A run-time set is *homogeneous* (subinterval-closed) when membership is
     preserved under subintervals — Karttunen's selectional restriction for durative
     *until*. This is exactly mathlib's `IsLowerSet` over the interval `≤` (subinterval
     containment), so we state homogeneity directly as `IsLowerSet` below. -/
@@ -247,7 +247,7 @@ theorem timeTrace_impf_eq_prfv (P : Unit → Event Time → Prop) :
     Available when A is imperfective: the main clause denotes a homogeneous
     interval set via IMPF, so *until* can take it as an argument.
     Negation scopes over the entire *until*-clause. -/
-def wideScopeNotUntil (A : Unit → Event Time → Prop) (B : SentDenotation Time) : Prop :=
+def wideScopeNotUntil (A : Unit → Event Time → Prop) (B : RunTimes Time) : Prop :=
   ¬ when_ (impfDen A) B
 
 /-- **Narrow-scope negation** under *until* (= Karttunen's ¬*before*):
@@ -259,14 +259,14 @@ def wideScopeNotUntil (A : Unit → Event Time → Prop) (B : SentDenotation Tim
     This is the only reading available with perfective main clauses:
     since PRFV gives a bounded event, *until* reduces to temporal ordering
     and negation gives Karttunen's notUntil = ¬before. -/
-def narrowScopeNotUntil (A : Unit → Event Time → Prop) (B : SentDenotation Time) : Prop :=
+def narrowScopeNotUntil (A : Unit → Event Time → Prop) (B : RunTimes Time) : Prop :=
   notUntil (prfvDen A) B
 
 /-- Narrow-scope ¬*until* is exactly ¬*before* (by definition).
     This is [karttunen-1974]'s identity, now made explicit in the
     aspectual decomposition. -/
-theorem narrowScope_eq_not_before (A : Unit → Event Time → Prop) (B : SentDenotation Time) :
-    narrowScopeNotUntil A B ↔ ¬ Anscombe.before (prfvDen A) B :=
+theorem narrowScope_eq_not_before (A : Unit → Event Time → Prop) (B : RunTimes Time) :
+    narrowScopeNotUntil A B ↔ ¬ Anscombe.beforeEver (prfvDen A) B :=
   Iff.rfl
 
 /-- The two scope readings are **semantically distinct**: there exist A, B
@@ -275,15 +275,15 @@ theorem narrowScope_eq_not_before (A : Unit → Event Time → Prop) (B : SentDe
     Counterexample: event A with runtime [0, 5], B at time 7.
     - Wide scope: ¬(any A-time overlaps with time 7). TRUE — 7 ∉ [0, 5].
     - Narrow scope: ¬(A happened before B). FALSE — time 0 < 7, so A
-      precedes B and `Anscombe.before` holds. -/
+      precedes B and `Anscombe.beforeEver` holds. -/
 theorem scope_readings_distinct :
-    ∃ (A : Unit → Event ℤ → Prop) (B : SentDenotation ℤ),
+    ∃ (A : Unit → Event ℤ → Prop) (B : RunTimes ℤ),
       wideScopeNotUntil A B ∧ ¬ narrowScopeNotUntil A B := by
   -- sort defaults to .action; the proof doesn't reference .sort
   let e₀ : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .dynamic⟩
   let A : Unit → Event ℤ → Prop := fun _ e => e = e₀
   let iB : NonemptyInterval ℤ := ⟨⟨7, 7⟩, by omega⟩
-  let B : SentDenotation ℤ := {iB}
+  let B : RunTimes ℤ := {iB}
   refine ⟨A, B, ?_, ?_⟩
   · intro ⟨t, ht_A, ht_B⟩
     obtain ⟨i, ⟨e, hSub, he⟩, hi⟩ := ht_A
@@ -304,13 +304,13 @@ theorem scope_readings_distinct :
     but wide-scope fails. This confirms the two readings are genuinely
     independent. -/
 theorem scope_readings_independent :
-    ∃ (A : Unit → Event ℤ → Prop) (B : SentDenotation ℤ),
+    ∃ (A : Unit → Event ℤ → Prop) (B : RunTimes ℤ),
       ¬ wideScopeNotUntil A B ∧ narrowScopeNotUntil A B := by
   -- sort defaults to .action; the proof doesn't reference .sort
   let e₀ : Event ℤ := ⟨⟨⟨5, 10⟩, by omega⟩, .dynamic⟩
   let A : Unit → Event ℤ → Prop := fun _ e => e = e₀
   let iB : NonemptyInterval ℤ := ⟨⟨3, 7⟩, by omega⟩
-  let B : SentDenotation ℤ := {iB}
+  let B : RunTimes ℤ := {iB}
   refine ⟨A, B, ?_, ?_⟩
   · intro hWide
     apply hWide
@@ -349,8 +349,8 @@ theorem scope_readings_independent :
     `¬∃t'∃e' [t'∈C ∧ t'<t ∧ P(e',t')]`. The scalar/contextual component
     is abstracted away here; the core truth-conditional difference (overlap +
     lateness vs. lateness alone) is preserved. -/
-def eventiveUntil (A B : SentDenotation Time) : Prop :=
-  (∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B) ∧ ¬ Anscombe.before A B
+def eventiveUntil (A B : RunTimes Time) : Prop :=
+  (∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B) ∧ ¬ Anscombe.beforeEver A B
 
 -- ============================================================================
 -- § 8: Actualization Asymmetry
@@ -360,29 +360,29 @@ def eventiveUntil (A B : SentDenotation Time) : Prop :=
     This is the **actualization entailment** that [giannakidou-2002]
     identifies as the hallmark of NPI-*until* (para monon), absent from
     durative *until* (mexri) and before (prin). -/
-theorem eventiveUntil_entails_actualization (A B : SentDenotation Time) :
+theorem eventiveUntil_entails_actualization (A B : RunTimes Time) :
     eventiveUntil A B → ∃ t, t ∈ timeTrace A := by
   rintro ⟨⟨t, ht, _⟩, _⟩; exact ⟨t, ht⟩
 
 /-- Eventive UNTIL entails complement actualization: B must have occurred. -/
-theorem eventiveUntil_entails_complement (A B : SentDenotation Time) :
+theorem eventiveUntil_entails_complement (A B : RunTimes Time) :
     eventiveUntil A B → ∃ t, t ∈ timeTrace B := by
   rintro ⟨⟨t, _, ht⟩, _⟩; exact ⟨t, ht⟩
 
 /-- Eventive UNTIL entails ¬*before*: A didn't happen prior to B. -/
-theorem eventiveUntil_entails_notBefore (A B : SentDenotation Time) :
+theorem eventiveUntil_entails_notBefore (A B : RunTimes Time) :
     eventiveUntil A B → notUntil A B :=
   And.right
 
 /-- Eventive UNTIL entails temporal coincidence (*when*): A and B overlap. -/
-theorem eventiveUntil_entails_when (A B : SentDenotation Time) :
+theorem eventiveUntil_entails_when (A B : RunTimes Time) :
     eventiveUntil A B → when_ A B := by
   rintro ⟨⟨t, htA, htB⟩, _⟩; exact ⟨t, htA, htB⟩
 
 /-- Karttunen's `notUntil` does NOT entail eventive UNTIL:
     ¬(A before B) holds vacuously when A is empty (no actualization). -/
 theorem notUntil_not_implies_eventiveUntil :
-    ∃ (A B : SentDenotation ℤ),
+    ∃ (A B : RunTimes ℤ),
       notUntil A B ∧ ¬ eventiveUntil A B := by
   refine ⟨∅, { NonemptyInterval.pure 0 }, ?_, ?_⟩
   · intro ⟨t, ⟨i, hi, _⟩, _⟩
@@ -406,10 +406,10 @@ theorem notUntil_not_implies_eventiveUntil :
     (imperfective *mexri* + continuation asserting no event) and ex. (57)
     (perfective *para monon* + contradictory continuation). -/
 theorem wideScopeNotUntil_compatible_with_empty_main :
-    ∃ (A : Unit → Event ℤ → Prop) (B : SentDenotation ℤ),
+    ∃ (A : Unit → Event ℤ → Prop) (B : RunTimes ℤ),
       wideScopeNotUntil A B ∧ ¬ ∃ t, t ∈ timeTrace (impfDen A) := by
   let A : Unit → Event ℤ → Prop := fun _ _ => False
-  let B : SentDenotation ℤ := { NonemptyInterval.pure 0 }
+  let B : RunTimes ℤ := { NonemptyInterval.pure 0 }
   refine ⟨A, B, ?_, ?_⟩
   · intro ⟨t, ⟨i, ⟨e, _, habs⟩, _⟩, _⟩; exact habs
   · intro ⟨t, i, ⟨e, _, habs⟩, _⟩; exact habs
@@ -422,8 +422,8 @@ theorem wideScopeNotUntil_compatible_with_empty_main :
     at 2am." — the state extends past the boundary, and the change-of-state
     is not entailed. -/
 theorem durative_compatible_with_before :
-    ∃ (A B : SentDenotation ℤ),
-      until_ A B ∧ Anscombe.before A B := by
+    ∃ (A B : RunTimes ℤ),
+      until_ A B ∧ Anscombe.beforeEver A B := by
   let iA : NonemptyInterval ℤ := ⟨⟨0, 10⟩, by omega⟩
   let iB : NonemptyInterval ℤ := ⟨⟨5, 5⟩, by omega⟩
   refine ⟨stativeDenotation iA, {iB}, ?_, ?_⟩
@@ -443,8 +443,8 @@ theorem durative_compatible_with_before :
     This is the formal content of [giannakidou-2002]'s central claim:
     the two readings are not truth-conditionally equivalent under negation. -/
 theorem eventiveUntil_strictly_stronger :
-    (∀ (A B : SentDenotation ℤ), eventiveUntil A B → notUntil A B) ∧
-    (∃ (A B : SentDenotation ℤ), notUntil A B ∧ ¬ eventiveUntil A B) :=
+    (∀ (A B : RunTimes ℤ), eventiveUntil A B → notUntil A B) ∧
+    (∃ (A B : RunTimes ℤ), notUntil A B ∧ ¬ eventiveUntil A B) :=
   ⟨fun _ _ h => h.2, notUntil_not_implies_eventiveUntil⟩
 
 -- ============================================================================
@@ -575,7 +575,7 @@ open Greek.StandardModern.TemporalConnectives
     Each maps to a different temporal connective operator:
     - *mexri* → `until_` (= `when_`, overlap)
     - *para monon* → `eventiveUntil` (overlap + lateness)
-    - *prin* → `Anscombe.before` (ordering) -/
+    - *prin* → `Anscombe.beforeEver` (ordering) -/
 theorem greek_three_way_maps_to_operators :
     -- mexri is durative until (endpoint type)
     mexri.order = .until_ ∧ mexri.complementVeridical = true ∧
@@ -716,7 +716,7 @@ theorem english_past_perfective_default :
 
 /-- ¬*before* (= [karttunen-1974]'s notUntil) is compatible with the
     main-clause event never occurring: when A = ∅, `¬(A before B)` holds
-    vacuously since `Anscombe.before ∅ B` is always false.
+    vacuously since `Anscombe.beforeEver ∅ B` is always false.
 
     [giannakidou-2002], §6, ex. (72): "I prigipisa dhen eftase prin apo
     ta mesanixta" — the princess may or may not have arrived. *Prin/before*
@@ -725,7 +725,7 @@ theorem english_past_perfective_default :
     Contrast with `eventiveUntil`, which requires main-clause actualization
     (the overlap conjunct forces a witness in A). -/
 theorem negBefore_lacks_actualization :
-    ∃ (A B : SentDenotation ℤ),
+    ∃ (A B : RunTimes ℤ),
       notUntil A B ∧ ¬ ∃ t, t ∈ timeTrace A := by
   refine ⟨∅, { NonemptyInterval.pure 0 }, ?_, ?_⟩
   · intro ⟨t, ⟨i, hi, _⟩, _⟩
@@ -746,9 +746,9 @@ theorem negBefore_lacks_actualization :
     common to both *prin/before* and *until/para monon*. -/
 theorem before_not_equiv_eventiveUntil :
     -- eventiveUntil entails main-clause actualization
-    (∀ (A B : SentDenotation Time), eventiveUntil A B → ∃ t, t ∈ timeTrace A) ∧
+    (∀ (A B : RunTimes Time), eventiveUntil A B → ∃ t, t ∈ timeTrace A) ∧
     -- ¬before is compatible with main-clause non-actualization
-    (∃ (A B : SentDenotation ℤ), notUntil A B ∧ ¬ ∃ t, t ∈ timeTrace A) :=
+    (∃ (A B : RunTimes ℤ), notUntil A B ∧ ¬ ∃ t, t ∈ timeTrace A) :=
   ⟨eventiveUntil_entails_actualization, negBefore_lacks_actualization⟩
 
 -- ============================================================================

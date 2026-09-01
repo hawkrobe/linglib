@@ -1,27 +1,21 @@
-import Linglib.Semantics.Tense.SentDenotation
-import Linglib.Data.Examples.Anscombe1964
+import Mathlib.Order.Interval.Set.OrdConnected
+import Linglib.Semantics.Tense.RunTimes
 
 /-!
 # Anscombe 1964: before and after
 
 *Before* and *after* are not converses: *the Parthenon was there after St. Peter's was* and
 *St. Peter's was there after the Parthenon was* are compatible, while the corresponding
-*before* claims are not. *Before* is asymmetric and transitive, *after* neither (*I was born
-after the Parthenon was there; the Parthenon was there after I was born* would give *I was
-born after I was born*), and *p before q* entails *q after p* but not conversely. *After* is
-not ambiguous for all that: it has alternative verifications — beginning after, being after
-the end, or merely overlapping later — none of which is constant across its uses. Rendered
-by quantification over times (§IV), *p after q* says some time of *p* follows some time of
-*q*, and *p before q* that some time of *p* precedes every time of *q* — a rendering Anscombe
-notes fits *before ever* better than *before*. For instantaneous events the two are genuine
-converses, and when a clause does not report one, a beginning or an ending is always
-involved: *p before q* is *p before q began*, and *p after q* holds if *p* is after *q* began,
-if *q* is before *p*, or if *p* is after *q* stopped (§X).
+*before* claims are not (§I). *p before q* is *p and not q, and then q*; it is asymmetric and
+transitive once *repetition* — *p, then not p, then p* — is excluded, whereas *p after q*,
+*q and then p*, is neither, and *p before q* entails *q after p* but not conversely (§II).
+Quantifying over times renders *p before q* as *a time of p before every time of q* (§IV),
+which is right for *before ever* rather than *before* (§V): the two agree exactly when *q*
+does not repeat. For instantaneous events *before* and *after* are genuine converses
+(§VIII); otherwise a beginning or an ending is always involved (§IX–§X).
 
-## Main definitions
-
-* `Anscombe.before`, `Anscombe.after`: the §IV renderings on time traces.
-* `Instantaneous`: a clause holding at a single time, where the two are converses.
+A clause's present-tense proposition holds at the times of its `timeTrace`, so excluding
+repetition is `Set.OrdConnected` and an instantaneous event has a singleton trace.
 
 ## References
 
@@ -30,134 +24,170 @@ if *q* is before *p*, or if *p* is after *q* stopped (§X).
 
 namespace Anscombe1964
 
-open Tense Data.Examples
+open Tense NonemptyInterval
 
-variable {Time : Type*} [LinearOrder Time]
+variable {Time : Type*} [LinearOrder Time] {A B C : RunTimes Time}
 
-/-! ### Quantification over times (§IV) -/
+/-! ### Definitions -/
 
-/-- *p before q*: a time at which *p* was before every time at which *q*. -/
-def Anscombe.before (A B : SentDenotation Time) : Prop :=
+/-- *p before q*: *p and not q, and then q* (§II). -/
+def Anscombe.before (A B : RunTimes Time) : Prop :=
+  ∃ t ∈ timeTrace A \ timeTrace B, ∃ t' ∈ timeTrace B, t < t'
+
+/-- *p after q*: *q, and then p* — a time of *p* after a time of *q* (§II, §IV). -/
+def Anscombe.after (A B : RunTimes Time) : Prop :=
+  ∃ t ∈ timeTrace A, ∃ t' ∈ timeTrace B, t' < t
+
+/-- The §IV rendering of *p before q*, a time of *p* before every time of *q*, which §V
+finds right for *p before ever q*. -/
+def Anscombe.beforeEver (A B : RunTimes Time) : Prop :=
   ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t < t'
 
-/-- *p after q*: a time at which *p* was after a time at which *q*. -/
-def Anscombe.after (A B : SentDenotation Time) : Prop :=
-  ∃ t ∈ timeTrace A, ∃ t' ∈ timeTrace B, t' < t
+/-- Repetition: *p, and then not p, and then p* (§II). -/
+def Repetition (A : RunTimes Time) : Prop :=
+  ∃ t₁ ∈ timeTrace A, ∃ t₂ ∉ timeTrace A, ∃ t₃ ∈ timeTrace A, t₁ < t₂ ∧ t₂ < t₃
+
+/-- A clause reports an instantaneous event when it holds at a single time (§VIII). -/
+def Instantaneous (A : RunTimes Time) : Prop := ∃ t, timeTrace A = {t}
 
 /-! ### The logical properties (§II) -/
 
-/-- *Before* is asymmetric. -/
-theorem before_asymm {A B : SentDenotation Time} :
-    Anscombe.before A B → ¬ Anscombe.before B A :=
-  fun ⟨a, ha, hab⟩ ⟨b, hb, hba⟩ => lt_irrefl _ ((hab b hb).trans (hba a ha))
+/-- Repetition is excluded exactly when the clause holds over an order-connected set. -/
+theorem not_repetition_iff_ordConnected : ¬ Repetition A ↔ (timeTrace A).OrdConnected :=
+  ⟨fun h => ⟨fun _ hx _ hy _ hz => by_contra fun hz' => h ⟨_, hx, _, hz', _, hy,
+      lt_of_le_of_ne hz.1 fun e => hz' (e ▸ hx), lt_of_le_of_ne hz.2 fun e => hz' (e ▸ hy)⟩⟩,
+    fun h ⟨_, h₁, _, h₂, _, h₃, h₁₂, h₂₃⟩ => h₂ (h.out h₁ h₃ ⟨h₁₂.le, h₂₃.le⟩)⟩
 
-/-- *Before* is transitive. -/
-theorem before_trans {A B C : SentDenotation Time} :
-    Anscombe.before A B → Anscombe.before B C → Anscombe.before A C :=
-  fun ⟨a, ha, hab⟩ ⟨b, hb, hbc⟩ => ⟨a, ha, fun c hc => (hab b hb).trans (hbc c hc)⟩
+/-- *Before* is asymmetric when repetition is excluded. -/
+theorem before_asymm (hA : (timeTrace A).OrdConnected) (hB : (timeTrace B).OrdConnected) :
+    Anscombe.before A B → ¬ Anscombe.before B A := by
+  rintro ⟨a, ⟨ha, haB⟩, b, hb, hab⟩ ⟨b', ⟨hb', hb'A⟩, a', ha', hb'a'⟩
+  have hab' : a < b' := lt_of_not_ge fun h => haB (hB.out hb' hb ⟨h, hab.le⟩)
+  exact hb'A (hA.out ha ha' ⟨hab'.le, hb'a'.le⟩)
+
+/-- *Before* is transitive when repetition is excluded. -/
+theorem before_trans (hB : (timeTrace B).OrdConnected) (hC : (timeTrace C).OrdConnected) :
+    Anscombe.before A B → Anscombe.before B C → Anscombe.before A C := by
+  rintro ⟨a, ⟨ha, haB⟩, b, hb, hab⟩ ⟨b', ⟨hb', hb'C⟩, c, hc, hb'c⟩
+  have hab' : a < b' := lt_of_not_ge fun h => haB (hB.out hb' hb ⟨h, hab.le⟩)
+  exact ⟨a, ⟨ha, fun haC => hb'C (hC.out haC hc ⟨hab'.le, hb'c.le⟩)⟩, c, hc, hab'.trans hb'c⟩
+
+/-- With repetition admitted, *before* is not asymmetric: *it was night before it was day,
+and day before it was night*. -/
+theorem before_not_asymm :
+    ∃ A B : RunTimes ℤ, Anscombe.before A B ∧ Anscombe.before B A :=
+  ⟨{pure 0, pure 2}, {pure 1, pure 3},
+    ⟨0, by simp, 1, by simp, by decide⟩, ⟨1, by simp, 2, by simp, by decide⟩⟩
 
 /-- *p before q* entails *q after p*. -/
-theorem after_of_before {A B : SentDenotation Time} (h : Anscombe.before A B)
-    (hB : (timeTrace B).Nonempty) : Anscombe.after B A :=
-  let ⟨a, ha, hab⟩ := h
-  let ⟨b, hb⟩ := hB
-  ⟨b, hb, a, ha, hab b hb⟩
+theorem after_of_before : Anscombe.before A B → Anscombe.after B A :=
+  fun ⟨a, ⟨ha, _⟩, b, hb, hab⟩ => ⟨b, hb, a, ha, hab⟩
 
-/-- *After* is not asymmetric: two overlapping stretches are each after the other. -/
+/-- *After* is not asymmetric: the overlapping existences of the Parthenon and St. Peter's. -/
 theorem after_not_asymm :
-    ∃ A B : SentDenotation ℤ, Anscombe.after A B ∧ Anscombe.after B A :=
-  ⟨{NonemptyInterval.pure 0, NonemptyInterval.pure 2},
-    {NonemptyInterval.pure 1, NonemptyInterval.pure 3},
-    ⟨2, ⟨NonemptyInterval.pure 2, Or.inr rfl, le_rfl, le_rfl⟩,
-      1, ⟨NonemptyInterval.pure 1, Or.inl rfl, le_rfl, le_rfl⟩, by decide⟩,
-    ⟨3, ⟨NonemptyInterval.pure 3, Or.inr rfl, le_rfl, le_rfl⟩,
-      0, ⟨NonemptyInterval.pure 0, Or.inl rfl, le_rfl, le_rfl⟩, by decide⟩⟩
+    ∃ A B : RunTimes ℤ, Anscombe.after A B ∧ Anscombe.after B A :=
+  ⟨stativeDenotation ⟨(0, 10), by decide⟩, stativeDenotation ⟨(5, 15), by decide⟩,
+    ⟨10, mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩,
+      5, mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩, by decide⟩,
+    ⟨15, mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩,
+      0, mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩, by decide⟩⟩
+
+/-- *The Parthenon was there after the Parthenon was there* might pass, *I was born after I
+was born* does not: a clause is after itself iff it holds at two times. -/
+theorem after_self_iff : Anscombe.after A A ↔ (timeTrace A).Nontrivial :=
+  ⟨fun ⟨t, ht, t', ht', h⟩ => ⟨t', ht', t, ht, h.ne⟩, fun h =>
+    let ⟨x, hx, y, hy, hxy⟩ := Set.nontrivial_iff_exists_lt.1 h; ⟨y, hy, x, hx, hxy⟩⟩
+
+theorem not_after_self_of_instantaneous (hA : Instantaneous A) : ¬ Anscombe.after A A :=
+  fun h => let ⟨_, ht⟩ := hA
+    Set.not_nontrivial_iff.2 (ht ▸ Set.subsingleton_singleton) (after_self_iff.1 h)
 
 /-- *After* is not transitive: *I was born after the Parthenon was there; the Parthenon was
-there after I was born* does not give *I was born after I was born*. -/
+there after I was born; ergo, I was born after I was born*. -/
 theorem after_not_trans :
-    ∃ A B C : SentDenotation ℤ,
-      Anscombe.after A B ∧ Anscombe.after B C ∧ ¬ Anscombe.after A C := by
-  refine ⟨{NonemptyInterval.pure 2}, {NonemptyInterval.pure 1, NonemptyInterval.pure 4},
-    {NonemptyInterval.pure 3},
-    ⟨2, ⟨NonemptyInterval.pure 2, rfl, le_rfl, le_rfl⟩,
-      1, ⟨NonemptyInterval.pure 1, Or.inl rfl, le_rfl, le_rfl⟩, by decide⟩,
-    ⟨4, ⟨NonemptyInterval.pure 4, Or.inr rfl, le_rfl, le_rfl⟩,
-      3, ⟨NonemptyInterval.pure 3, rfl, le_rfl, le_rfl⟩, by decide⟩, ?_⟩
-  rintro ⟨t, ⟨i, hi, hts, htf⟩, t', ⟨j, hj, ht's, ht'f⟩, hlt⟩
-  rw [Set.mem_singleton_iff] at hi hj
-  subst hi; subst hj
-  simp only [NonemptyInterval.pure] at hts htf ht's ht'f
-  omega
+    ∃ A B : RunTimes ℤ, Anscombe.after A B ∧ Anscombe.after B A ∧ ¬ Anscombe.after A A :=
+  ⟨{pure 5}, stativeDenotation ⟨(0, 10), by decide⟩,
+    ⟨5, by simp, 0, mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩, by decide⟩,
+    ⟨10, mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩, 5, by simp, by decide⟩,
+    not_after_self_of_instantaneous ⟨5, by simp⟩⟩
 
-/-! ### Instantaneous events (§VI–§VIII) -/
+/-! ### Quantification over times (§IV–§V) -/
 
-/-- A clause reports an instantaneous event when it holds at a single time. -/
-def Instantaneous (A : SentDenotation Time) : Prop := ∃ t, timeTrace A = {t}
+/-- *Before ever* is *before*, provided *q* held at all. -/
+theorem before_of_beforeEver (hB : (timeTrace B).Nonempty) :
+    Anscombe.beforeEver A B → Anscombe.before A B :=
+  fun ⟨a, ha, h⟩ => let ⟨b, hb⟩ := hB
+    ⟨a, ⟨ha, fun haB => lt_irrefl a (h a haB)⟩, b, hb, h b hb⟩
 
-/-- When *p* reports an instantaneous event, *p after q* is *q before p* (§X, case 2). -/
-theorem after_iff_before_of_instantaneous {A B : SentDenotation Time} (hA : Instantaneous A) :
-    Anscombe.after A B ↔ Anscombe.before B A := by
-  obtain ⟨t, ht⟩ := hA
-  simp [Anscombe.after, Anscombe.before, ht]
+/-- For a non-repeating *q*, *before* is *before ever* (§V). -/
+theorem before_iff_beforeEver (hB : (timeTrace B).OrdConnected) :
+    Anscombe.before A B ↔ Anscombe.beforeEver A B ∧ (timeTrace B).Nonempty :=
+  ⟨fun ⟨a, ⟨ha, haB⟩, b, hb, hab⟩ =>
+    ⟨⟨a, ha, fun _ hb' => lt_of_not_ge fun h => haB (hB.out hb' hb ⟨h, hab.le⟩)⟩, b, hb⟩,
+    fun ⟨h, hne⟩ => before_of_beforeEver hne h⟩
 
-/-- For two instantaneous events *before* and *after* are genuine converses. -/
-theorem before_iff_after_of_instantaneous {A B : SentDenotation Time}
-    (hB : Instantaneous B) : Anscombe.before A B ↔ Anscombe.after B A :=
-  (after_iff_before_of_instantaneous hB).symm
+/-- *He studied his appearance in the glass before he used the telephone* does not say he did
+so before he ever used it: *before* without *before ever*. -/
+theorem before_not_beforeEver :
+    ∃ A B : RunTimes ℤ, Anscombe.before A B ∧ ¬ Anscombe.beforeEver A B :=
+  ⟨{pure 5}, {pure 1, pure 9}, ⟨5, by simp, 9, by simp, by decide⟩,
+    fun ⟨t, ht, h⟩ => absurd (h 1 (by simp)) (by simp at ht; subst ht; decide)⟩
 
-/-- An instantaneous *p* cannot be both before and after *q* (§X, case 1). -/
-theorem before_not_after_of_instantaneous {A B : SentDenotation Time} (hA : Instantaneous A)
-    (h : Anscombe.before A B) : ¬ Anscombe.after A B := by
-  obtain ⟨t, ht⟩ := hA
-  simp only [Anscombe.before, Anscombe.after, ht, Set.mem_singleton_iff, exists_eq_left] at h ⊢
-  rintro ⟨t', ht', hlt⟩
-  exact lt_asymm (h t' ht') hlt
-
-/-- A stretch can be both before and after an instantaneous event. -/
-theorem after_and_before_of_extended :
-    ∃ A B : SentDenotation ℤ, Instantaneous B ∧ Anscombe.after A B ∧ Anscombe.before A B :=
-  ⟨{NonemptyInterval.pure 1, NonemptyInterval.pure 7}, {NonemptyInterval.pure 4},
-    ⟨4, by ext t; simp [timeTrace, NonemptyInterval.pure]; omega⟩,
-    ⟨7, ⟨NonemptyInterval.pure 7, Or.inr rfl, le_rfl, le_rfl⟩,
-      4, ⟨NonemptyInterval.pure 4, rfl, le_rfl, le_rfl⟩, by decide⟩,
-    ⟨1, ⟨NonemptyInterval.pure 1, Or.inl rfl, le_rfl, le_rfl⟩, by
-      rintro t' ⟨j, hj, hs, _⟩
-      rw [Set.mem_singleton_iff] at hj
-      subst hj
-      simp only [NonemptyInterval.pure] at hs
-      omega⟩⟩
-
-/-! ### Beginnings and endings (§IX–§X) -/
-
-/-- *p before q* is *p before q began*: when *q* has a first time, *p* precedes every time of
-*q* iff some time of *p* precedes that first time. -/
-theorem before_iff_lt_least {A B : SentDenotation Time} {lb : Time}
-    (hlb : IsLeast (timeTrace B) lb) :
-    Anscombe.before A B ↔ ∃ t ∈ timeTrace A, t < lb :=
+/-- *Before ever*, when *q* has a first time: a time of *p* precedes it. -/
+theorem beforeEver_iff_lt_least {lb : Time} (hlb : IsLeast (timeTrace B) lb) :
+    Anscombe.beforeEver A B ↔ ∃ t ∈ timeTrace A, t < lb :=
   ⟨fun ⟨a, ha, h⟩ => ⟨a, ha, h lb hlb.1⟩,
     fun ⟨a, ha, h⟩ => ⟨a, ha, fun _ ht' => h.trans_le (hlb.2 ht')⟩⟩
 
-/-- *p after q* is *p after q began* (§X, case 3a). -/
-theorem after_iff_least_lt {A B : SentDenotation Time} {lb : Time}
-    (hlb : IsLeast (timeTrace B) lb) :
+/-! ### Instantaneous events (§VI–§VIII) -/
+
+/-- When *p* reports an instantaneous event, *p after q* is *q before p* (§X, case 2). -/
+theorem after_iff_before_of_instantaneous (hA : Instantaneous A) :
+    Anscombe.after A B ↔ Anscombe.before B A := by
+  obtain ⟨a, ha⟩ := hA
+  simp only [Anscombe.after, Anscombe.before, ha, Set.mem_singleton_iff, exists_eq_left,
+    Set.mem_sdiff]
+  exact ⟨fun ⟨b, hb, h⟩ => ⟨b, ⟨hb, h.ne⟩, h⟩, fun ⟨b, ⟨hb, _⟩, h⟩ => ⟨b, hb, h⟩⟩
+
+/-- An instantaneous *p* is not both before and after a non-repeating *q* (§X, case 1). -/
+theorem not_after_of_before_of_instantaneous (hA : Instantaneous A)
+    (hB : (timeTrace B).OrdConnected) (h : Anscombe.before A B) : ¬ Anscombe.after A B := by
+  obtain ⟨a, ha⟩ := hA
+  obtain ⟨a', ⟨ha', ha'B⟩, b', hb', ha'b'⟩ := h
+  rintro ⟨t, ht, b, hb, hbt⟩
+  rw [ha, Set.mem_singleton_iff] at ht ha'
+  subst ht ha'
+  exact ha'B (hB.out hb hb' ⟨hbt.le, ha'b'.le⟩)
+
+/-- A stretch can be both before and after an instantaneous event (§X, case 1). -/
+theorem after_and_before_of_extended :
+    ∃ A B : RunTimes ℤ, Instantaneous B ∧ Anscombe.before A B ∧ Anscombe.after A B :=
+  ⟨stativeDenotation ⟨(1, 7), by decide⟩, {pure 4}, ⟨4, by simp⟩,
+    ⟨1, ⟨mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩, by simp⟩,
+      4, by simp, by decide⟩,
+    ⟨7, mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩, 4, by simp, by decide⟩⟩
+
+/-! ### Beginnings and endings (§IX–§X) -/
+
+/-- *p before q* implies that *q* began. -/
+theorem nonempty_of_before : Anscombe.before A B → (timeTrace B).Nonempty :=
+  fun ⟨_, _, b, hb, _⟩ => ⟨b, hb⟩
+
+/-- For a non-repeating *q* with a first time, *p before q* is *p before q began*. -/
+theorem before_iff_lt_least {lb : Time} (hB : (timeTrace B).OrdConnected)
+    (hlb : IsLeast (timeTrace B) lb) : Anscombe.before A B ↔ ∃ t ∈ timeTrace A, t < lb := by
+  rw [before_iff_beforeEver hB, beforeEver_iff_lt_least hlb, and_iff_left ⟨lb, hlb.1⟩]
+
+/-- *p after q* is *p after q began* (§III (3), §X case 3a); *q before p* gives it too
+(`after_of_before`, case 3b). -/
+theorem after_iff_least_lt {lb : Time} (hlb : IsLeast (timeTrace B) lb) :
     Anscombe.after A B ↔ ∃ t ∈ timeTrace A, lb < t :=
   ⟨fun ⟨a, ha, _, ht', h⟩ => ⟨a, ha, (hlb.2 ht').trans_lt h⟩,
     fun ⟨a, ha, h⟩ => ⟨a, ha, lb, hlb.1, h⟩⟩
 
-/-- *p after q stopped* gives *p after q* (§X, case 3c). -/
-theorem after_of_stopped {A B : SentDenotation Time} {ub : Time} (hub : ub ∈ timeTrace B)
-    (h : ∃ t ∈ timeTrace A, ub < t) : Anscombe.after A B :=
-  let ⟨a, ha, hlt⟩ := h
-  ⟨a, ha, ub, hub, hlt⟩
-
-/-! ### The paper's examples -/
-
-/-- The mutual pairs: *p after q and q after p* is consistent, *p before q and q before p*
-is not. -/
-theorem rows_mutual :
-    ∀ r ∈ Examples.all, r.feature? "pattern" = some "mutual" →
-      (r.judgment = .acceptable ↔ r.feature? "connective" = some "after") := by
-  decide +kernel
+/-- *p after q stopped* gives *p after q* (§III (4) to (3), §X case 3c). -/
+theorem after_of_greatest_lt {ub : Time} (hub : IsGreatest (timeTrace B) ub) :
+    (∃ t ∈ timeTrace A, ub < t) → Anscombe.after A B :=
+  fun ⟨a, ha, h⟩ => ⟨a, ha, ub, hub.1, h⟩
 
 end Anscombe1964
