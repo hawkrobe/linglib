@@ -106,6 +106,26 @@ theorem posterior_deterministic_eq_cond [Countable Ω] {f : Ω → 𝓧} (hf : M
   · rw [Set.indicator_of_notMem (by simpa using h), mul_zero, ENNReal.zero_div,
       Set.inter_singleton_eq_empty.mpr (by simpa using h), measure_empty, mul_zero]
 
+omit [StandardBorelSpace Ω] [Nonempty Ω] [IsFiniteMeasure μ] [IsFiniteKernel κ] in
+/-- The observation marginal at an atom: prior mass times emission mass, summed over states. -/
+theorem _root_.MeasureTheory.Measure.comp_apply_singleton [Fintype Ω] (x : 𝓧) :
+    (κ ∘ₘ μ) {x} = ∑ ω, μ {ω} * κ ω {x} := by
+  rw [Measure.bind_apply (.singleton x) (Kernel.aemeasurable _), lintegral_fintype]
+  exact Finset.sum_congr rfl fun ω _ => mul_comm _ _
+
+omit [StandardBorelSpace Ω] [Nonempty Ω] in
+theorem _root_.MeasureTheory.Measure.comp_real_singleton [Fintype Ω] (x : 𝓧) :
+    (κ ∘ₘ μ).real {x} = ∑ ω, μ.real {ω} * (κ ω).real {x} := by
+  rw [measureReal_def, Measure.comp_apply_singleton,
+    ENNReal.toReal_sum fun ω _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
+  simp_rw [ENNReal.toReal_mul, measureReal_def]
+
+/-- Exact Bayes on reals at a positive-mass observation. -/
+theorem posterior_real_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω : Ω) :
+    ((κ†μ) x).real {ω} = μ.real {ω} * (κ ω).real {x} / (κ ∘ₘ μ).real {x} := by
+  rw [measureReal_def, posterior_apply_singleton κ μ hx, ENNReal.toReal_div, ENNReal.toReal_mul,
+    measureReal_def, measureReal_def, measureReal_def]
+
 /-- A single state of positive prior mass and positive emission witnesses a
 positive observation marginal. -/
 theorem comp_apply_singleton_ne_zero {Ω' 𝓧' : Type*} [MeasurableSpace Ω']
