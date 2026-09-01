@@ -198,6 +198,42 @@ theorem Comparison.mem_ge_over_iff_not_mem_lt_over {θ : α} {x : E} :
     x ∈ Comparison.ge.over μ θ ↔ x ∉ Comparison.lt.over μ θ := by
   simp [Comparison.mem_over, Comparison.rel, not_lt]
 
+/-- When every degree is realized, raising an `at least` threshold strictly shrinks the
+    extension. -/
+theorem Comparison.strictAnti_ge_over (hμ : Function.Surjective μ) :
+    StrictAnti (Comparison.ge.over μ) := by
+  intro a b hab
+  refine ⟨Comparison.antitone_ge_over μ hab.le, fun h => ?_⟩
+  obtain ⟨w, rfl⟩ := hμ a
+  exact not_le.2 hab (h (le_refl (μ w)))
+
+/-- When every degree is realized, raising a `more than` threshold strictly shrinks the
+    extension. -/
+theorem Comparison.strictAnti_gt_over (hμ : Function.Surjective μ) :
+    StrictAnti (Comparison.gt.over μ) := by
+  intro a b hab
+  refine ⟨Comparison.antitone_gt_over μ hab.le, fun h => ?_⟩
+  obtain ⟨w, rfl⟩ := hμ b
+  exact lt_irrefl _ (h hab)
+
+/-- When every degree is realized, raising an `at most` threshold strictly grows the
+    extension. -/
+theorem Comparison.strictMono_le_over (hμ : Function.Surjective μ) :
+    StrictMono (Comparison.le.over μ) := by
+  intro a b hab
+  refine ⟨Comparison.monotone_le_over μ hab.le, fun h => ?_⟩
+  obtain ⟨w, rfl⟩ := hμ b
+  exact not_le.2 hab (h (le_refl (μ w)))
+
+/-- When every degree is realized, raising a `less than` threshold strictly grows the
+    extension. -/
+theorem Comparison.strictMono_lt_over (hμ : Function.Surjective μ) :
+    StrictMono (Comparison.lt.over μ) := by
+  intro a b hab
+  refine ⟨Comparison.monotone_lt_over μ hab.le, fun h => ?_⟩
+  obtain ⟨w, rfl⟩ := hμ a
+  exact lt_irrefl _ (h hab)
+
 /-- The Klein reduction: strict comparison holds iff some threshold
     separates the two measures. -/
 theorem Comparison.lt_iff_separating_threshold {x y : E} :

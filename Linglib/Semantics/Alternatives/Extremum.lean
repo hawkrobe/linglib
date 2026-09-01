@@ -1,5 +1,6 @@
 import Mathlib.Order.Bounds.Image
 import Linglib.Semantics.Degree.Predicate
+import Linglib.Semantics.Exhaustification.Chain
 
 /-!
 # Maximally informative alternatives
@@ -14,6 +15,10 @@ by `Antitone.map_isGreatest`.
 ## Main declarations
 
 * `IsMaxInf`, `HasMaxInf`: the maximally informative alternative and its existence.
+* `hasMaxInf_iff_isGreatest`, `hasMaxInf_iff_isLeast`: on a strictly antitone (monotone)
+  family, the maximally informative degree is the greatest (least) true one.
+* `exhChain_iff_isMaxInf`: exhaustifying a strictly antitone family against its stronger
+  members is asserting the prejacent maximally informative.
 * `hasMaxInf_ge_over`, `isMaxInf_ge_over_iff`: "at least `d`" always has a maximally
   informative degree, the true measure; `hasMaxInf_le_over`, `isMaxInf_le_over_iff` are
   the duals.
@@ -34,7 +39,7 @@ by `Antitone.map_isGreatest`.
 
 namespace Alternatives
 
-open Degree (Comparison)
+open Degree
 open OrderDual
 
 variable {α W : Type*}
@@ -51,6 +56,33 @@ def HasMaxInf (P : α → Set W) (w : W) : Prop :=
 theorem isMaxInf_iff {P : α → Set W} {x : α} {w : W} :
     IsMaxInf P x w ↔ w ∈ P x ∧ ∀ y, w ∈ P y → P x ⊆ P y :=
   and_congr ⟨fun ⟨_, hy, h⟩ => h ▸ hy, fun h => ⟨x, h, rfl⟩⟩ Set.forall_mem_image
+
+/-! ### Strictly monotone families -/
+
+section
+variable [LinearOrder α] {φ : α → Set W} {w : W}
+
+/-- On a strictly antitone family, a maximally informative degree is a greatest true degree. -/
+theorem hasMaxInf_iff_isGreatest (hφ : StrictAnti φ) :
+    HasMaxInf φ w ↔ ∃ m, IsGreatest {d | w ∈ φ d} m := by
+  refine ⟨fun ⟨x, hx⟩ => ?_, fun ⟨m, hm⟩ => ⟨m, hφ.antitone.map_isGreatest hm⟩⟩
+  obtain ⟨hxw, hent⟩ := isMaxInf_iff.1 hx
+  exact ⟨x, hxw, fun y hy => not_lt.1 fun hxy => (hφ hxy).2 (hent y hy)⟩
+
+/-- On a strictly monotone family, a maximally informative degree is a least true degree. -/
+theorem hasMaxInf_iff_isLeast (hφ : StrictMono φ) :
+    HasMaxInf φ w ↔ ∃ m, IsLeast {d | w ∈ φ d} m :=
+  hasMaxInf_iff_isGreatest (φ := fun d : αᵒᵈ => φ (ofDual d)) fun _ _ h => hφ h
+
+/-- Exhaustifying a strictly antitone family against all stronger members asserts that the
+prejacent is maximally informative. -/
+theorem exhChain_iff_isMaxInf (hφ : StrictAnti φ) {i : α} :
+    Exhaustification.exhChain φ i w ↔ IsMaxInf φ i w := by
+  rw [isMaxInf_iff]
+  refine and_congr_right fun _ => ⟨fun h y hy => ?_, fun h j hij hj => (hφ hij).2 (h j hj)⟩
+  exact hφ.antitone (not_lt.1 fun hiy => h y hiy hy)
+
+end
 
 /-! ### Threshold properties -/
 
@@ -84,13 +116,16 @@ variable [LinearOrder α] (μ : W → α) {m : α} (w : W)
 /-- On a dense scale every degree of which is realized, "more than `d`" has no maximally
 informative degree ([fox-hackl-2006]). -/
 theorem not_hasMaxInf_gt_over [DenselyOrdered α] (hSurj : Function.Surjective μ) :
-    ¬ HasMaxInf (Comparison.gt.over μ) w := by
-  rintro ⟨d₀, h⟩
-  obtain ⟨hd₀, hent⟩ := isMaxInf_iff.1 h
-  obtain ⟨d', hd₀d', hd'w⟩ := exists_between (hd₀ : d₀ < μ w)
-  obtain ⟨m, hd₀m, hmd'⟩ := exists_between hd₀d'
-  obtain ⟨w₁, rfl⟩ := hSurj m
-  exact absurd (hent d' hd'w hd₀m) (not_lt.mpr hmd'.le)
+    ¬ HasMaxInf (Comparison.gt.over μ) w :=
+  (hasMaxInf_iff_isGreatest (Comparison.strictAnti_gt_over μ hSurj)).not.2 fun ⟨g, hg⟩ =>
+    let ⟨y, hgy, hyw⟩ := exists_between (hg.1 : g < μ w)
+    not_le.2 hgy (hg.2 (hyw : w ∈ Comparison.gt.over μ y))
+
+/-- On a dense scale every degree of which is realized, "less than `d`" has no maximally
+informative degree: `not_hasMaxInf_gt_over` on the dual scale. -/
+theorem not_hasMaxInf_lt_over [DenselyOrdered α] (hSurj : Function.Surjective μ) :
+    ¬ HasMaxInf (Comparison.lt.over μ) w :=
+  not_hasMaxInf_gt_over (toDual ∘ μ) w (toDual.surjective.comp hSurj)
 
 /-- "At most `d`" is maximally informative at the true measure: `hasMaxInf_ge_over` on the
 dual scale. -/

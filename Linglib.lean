@@ -2190,7 +2190,6 @@ import Linglib.Studies.Fox2007
 import Linglib.Studies.Franke2011
 import Linglib.Studies.Fox2018
 import Linglib.Studies.FoxHackl2006
-import Linglib.Studies.FoxHackl2006Numerals
 import Linglib.Studies.FoxKatzir2011
 import Linglib.Studies.FoxPesetsky2005
 import Linglib.Studies.FoxSpector2018
@@ -3019,3 +3018,4 @@ import Linglib.Data.Examples.Bale2008
 import Linglib.Data.Examples.BaleKhanjian2014
 import Linglib.Data.Examples.BaleSchwarz2026
 import Linglib.Data.Examples.Chierchia2006
+import Linglib.Data.Examples.FoxHackl2006

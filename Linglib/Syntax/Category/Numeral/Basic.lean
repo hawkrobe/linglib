@@ -26,7 +26,7 @@ split as `Syntax/Category/Pronoun/Basic.lean` vs.
 
 namespace Numeral
 
-open Degree (Comparison)
+open Degree
 /-- Cross-linguistic lexical numeral entry: surface form, the `Comparison` it
     expresses, and its numeric argument. The measure compared against
     (cardinality, height, …) is compositional, supplied at denotation time
