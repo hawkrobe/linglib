@@ -39,7 +39,7 @@ prototype-theory prototypes/spreads) and theory-bridge theorems live elsewhere:
   `Semantics/Quantification/Quantifier.lean`.
 - GQT/PT meaning operators consuming numerical parameters:
   `Studies/VanTielEtAl2021.lean` (`gqtMeaning`, van Tiel's threshold scale-model),
-  `Semantics/Probabilistic/PrototypeTheory.lean` (`ptMeaning`).
+  `Semantics/Quantification/Prototype.lean` (`ptMeaning`).
 - Per-paper parameter values: `Studies/VanTielEtAl2021.lean`.
 -/
 

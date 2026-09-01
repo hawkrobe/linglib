@@ -408,9 +408,9 @@ theorem bindOnSupport_apply_two_support
 The pointwise product `p · w` must have non-zero finite total mass —
 the natural precondition for `PMF.normalize`.
 
-This is the algebraic primitive that `posterior` and `productOfExperts`
-both factor through: posterior takes `w := κ · b` (the kernel slice at
-an observation), PoE takes `w := q ·` (the second PMF). -/
+This is the algebraic primitive that `posterior` factors through, with
+`w := κ · b` (the kernel slice at an observation); a Product of Experts is
+the case `w := q` for a second distribution `q`. -/
 noncomputable def reweight (p : PMF α) (w : α → ℝ≥0∞)
     (h_pos : (∑' a, p a * w a) ≠ 0) (h_fin : (∑' a, p a * w a) ≠ ∞) : PMF α :=
   PMF.normalize (fun a => p a * w a) h_pos h_fin
