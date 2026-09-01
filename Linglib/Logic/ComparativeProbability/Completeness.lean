@@ -29,7 +29,7 @@ namespace ComparativeProbability
     Theorem 8): below five worlds every FA system is representable —
     FA and FP∞ coincide. -/
 theorem representable_of_card_lt_five {W : Type*} [Fintype W]
-    (sys : QualitativeProbability W) (hcard : Fintype.card W < 5) :
+    (sys : QualitativeProbability (Set W)) (hcard : Fintype.card W < 5) :
     Representable sys := by
   have : DecidableEq W := Classical.typeDecidableEq W
   let e := Fintype.equivFin W
@@ -46,7 +46,7 @@ theorem representable_of_card_lt_five {W : Type*} [Fintype W]
     weaker than FP∞. -/
 theorem exists_nonrepresentable_of_five_le_card {W : Type*} [Fintype W]
     (hcard : 5 ≤ Fintype.card W) :
-    ∃ sys : QualitativeProbability W, ¬Representable sys := by
+    ∃ sys : QualitativeProbability (Set W), ¬Representable sys := by
   have : DecidableEq W := Classical.typeDecidableEq W
   obtain ⟨sysF, hsysF⟩ := exists_nonrepresentable_fin hcard
   exact ⟨sysF.transport (Fintype.equivFin W).symm,
@@ -56,74 +56,72 @@ theorem exists_nonrepresentable_of_five_le_card {W : Type*} [Fintype W]
 
 attribute [local instance] Classical.propDecidable
 
-/-- Count of finsets dominated by A under the ge ordering. -/
+/-- Count of finsets at most as likely as `A`. -/
 private noncomputable def belowCount {W : Type*} [Fintype W]
-    (sys : QualitativeProbability W) (A : Set W) : ℕ :=
-  (Finset.univ.filter (fun S : Finset W => sys.ge A ↑S)).card
+    (sys : QualitativeProbability (Set W)) (A : Set W) : ℕ :=
+  (Finset.univ.filter (fun S : Finset W => sys.le ↑S A)).card
 
 private theorem belowCount_univ {W : Type*} [Fintype W]
-    (sys : QualitativeProbability W) :
+    (sys : QualitativeProbability (Set W)) :
     belowCount sys Set.univ = Fintype.card (Finset W) := by
   unfold belowCount
   rw [Finset.filter_true_of_mem fun S _ => sys.mono (Set.subset_univ _)]
   exact Finset.card_univ
 
 private theorem belowCount_mono {W : Type*} [Fintype W]
-    (sys : QualitativeProbability W) (A B : Set W)
-    (h : sys.ge A B) : belowCount sys A ≥ belowCount sys B := by
+    (sys : QualitativeProbability (Set W)) (A B : Set W)
+    (h : sys.le A B) : belowCount sys A ≤ belowCount sys B := by
   refine Finset.card_le_card fun S hS => ?_
   rw [Finset.mem_filter] at hS ⊢
-  exact ⟨hS.1, sys.trans h hS.2⟩
+  exact ⟨hS.1, sys.trans hS.2 h⟩
 
 private theorem belowCount_strict {W : Type*} [Fintype W]
-    (sys : QualitativeProbability W) (A B : Set W)
-    (h : ¬sys.ge A B) : belowCount sys A < belowCount sys B := by
+    (sys : QualitativeProbability (Set W)) (A B : Set W)
+    (h : ¬sys.le A B) : belowCount sys B < belowCount sys A := by
   refine Finset.card_lt_card ⟨fun S hS => ?_, fun hsub => ?_⟩
   · rw [Finset.mem_filter] at hS ⊢
-    exact ⟨hS.1, sys.trans ((sys.total A B).resolve_left h) hS.2⟩
-  · have : B.toFinset ∈ Finset.univ.filter (fun S : Finset W => sys.ge A ↑S) :=
-      hsub (Finset.mem_filter.mpr ⟨Finset.mem_univ _, by rw [Set.coe_toFinset]; exact sys.refl B⟩)
+    exact ⟨hS.1, sys.trans hS.2 ((sys.total A B).resolve_left h)⟩
+  · have : A.toFinset ∈ Finset.univ.filter (fun S : Finset W => sys.le ↑S B) :=
+      hsub (Finset.mem_filter.mpr ⟨Finset.mem_univ _, by rw [Set.coe_toFinset]; exact sys.refl A⟩)
     rw [Finset.mem_filter, Set.coe_toFinset] at this
     exact h this.2
 
 private theorem belowCount_iff {W : Type*} [Fintype W]
-    (sys : QualitativeProbability W) (A B : Set W) :
-    belowCount sys A ≥ belowCount sys B ↔ sys.ge A B := by
+    (sys : QualitativeProbability (Set W)) (A B : Set W) :
+    belowCount sys A ≤ belowCount sys B ↔ sys.le A B := by
   refine ⟨fun hcount => by_contra fun hng => ?_, belowCount_mono sys A B⟩
   have := belowCount_strict sys A B hng
   omega
 
-private theorem ge_div_iff {a b d : ℚ} (hd : 0 < d) :
-    a / d ≥ b / d ↔ a ≥ b := by
-  rw [ge_iff_le, ge_iff_le, div_le_div_iff_of_pos_right hd]
-
 /-- **Theorem 6 completeness** ([holliday-icard-2013], Theorem 6; [van-der-hoek-1996]):
-    every FA system is representable by a qualitatively additive measure —
-    the dominated-set count, affinely renormalised so μ(∅) = 0 and μ(Ω) = 1. -/
+    every qualitative probability order on a finite carrier is representable by a
+    qualitatively additive measure — the dominated-set count, affinely
+    renormalised so μ(∅) = 0 and μ(Ω) = 1. -/
 theorem exists_qualAddMeasure_repr {W : Type*} [Fintype W]
-    (sys : QualitativeProbability W) :
-    ∃ (m : QualAddMeasure ℚ W), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+    (sys : QualitativeProbability (Set W)) :
+    ∃ (m : QualAddMeasure ℚ W), ∀ A B, sys.le A B ↔ m A ≤ m B := by
   classical
   set E : ℚ := (belowCount sys ∅ : ℚ) with hE
   set N : ℚ := (Fintype.card (Finset W) : ℚ) with hN
   have hd : (0 : ℚ) < N - E := by
-    have := belowCount_strict sys ∅ Set.univ sys.nonTrivial
+    have := belowCount_strict sys Set.univ ∅ (by simpa using sys.nonTrivial)
     rw [belowCount_univ] at this
     exact sub_pos.mpr (by rw [hN, hE]; exact_mod_cast this)
   -- the affine map t ↦ (t − E)/(N − E) is an order isomorphism
   have key : ∀ A B : Set W,
-      ((belowCount sys A : ℚ) - E) / (N - E) ≥ ((belowCount sys B : ℚ) - E) / (N - E) ↔
-      sys.ge A B := fun A B => by
-    rw [ge_div_iff hd, ge_iff_le, sub_le_sub_iff_right, Nat.cast_le]; exact belowCount_iff sys A B
+      ((belowCount sys A : ℚ) - E) / (N - E) ≤ ((belowCount sys B : ℚ) - E) / (N - E) ↔
+      sys.le A B := fun A B => by
+    rw [div_le_div_iff_of_pos_right hd, sub_le_sub_iff_right, Nat.cast_le]
+    exact belowCount_iff sys A B
   have hAle : ∀ A : Set W, E ≤ (belowCount sys A : ℚ) := fun A => by
-    rw [hE, Nat.cast_le]; exact belowCount_mono sys A ∅ (sys.mono (Set.empty_subset A))
+    rw [hE, Nat.cast_le]; exact belowCount_mono sys ∅ A (sys.mono (Set.empty_subset A))
   refine ⟨⟨fun A => ((belowCount sys A : ℚ) - E) / (N - E),
     fun A => div_nonneg (sub_nonneg.mpr (hAle A)) hd.le,
     by simp only [← hE, sub_self, zero_div], ?_, ?_⟩, fun A B => (key A B).symm⟩
   · show ((belowCount sys Set.univ : ℚ) - E) / (N - E) = 1
     rw [belowCount_univ, ← hN]; exact div_self hd.ne'
   · intro A B
-    show _ ≥ _ ↔ _ ≥ _
+    show _ ≤ _ ↔ _ ≤ _
     rw [key A B, key (A \ B) (B \ A)]; exact sys.additive A B
 
 /-- Helper: if ge A {b} for every b ∈ B, then ge A B, given monotonicity (T)
