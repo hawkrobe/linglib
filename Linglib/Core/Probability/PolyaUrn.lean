@@ -22,8 +22,7 @@ the same exchangeable sequence law (the de Finetti representation
 theorem guarantees that *some* mixing measure exists; identifying it
 as Dirichlet is conjugacy + integration). The probability of any
 specific draw sequence with counts `x_1, …, x_K` has the closed form
-of [odonnell-2015] eq 3.7 (-- UNVERIFIED: section/equation
-number from memory; verify against PDF):
+of [odonnell-2015] §3.1.3:
 
 ```
 P(seq | π) = Γ(Σ π) / Γ(Σ π + Σ x)  ·  ∏ Γ(π_i + x_i) / Γ(π_i)
@@ -33,11 +32,9 @@ This file gives only the closed-form per-sequence likelihood
 `seqProb` — the form fragment-grammar consumers in
 `Morphology/FragmentGrammars/` actually use (a corpus IS a
 labeled derivation sequence, not a draw from the unlabeled-count
-distribution). The corresponding count-vector PMF — the
-"Dirichlet–multinomial distribution" — lives in the sibling file
-`DirichletMultinomial.lean`, which carries the heavier
-`Probability.ProbabilityMassFunction.Basic` import (transitively
-~10s of olean loading via `MeasureTheory.Measure.Dirac`).
+distribution). The sequence law and the count-vector law — the
+"Dirichlet–multinomial distribution" — live in the sibling file
+`DirichletMultinomial.lean`, which carries the measure-theory imports.
 
 The sequential sampler enters through `seqProb_countVec_cons`: prepending a draw
 multiplies the sequence likelihood by the Pólya predictive of that draw.
@@ -57,28 +54,27 @@ is the special case `α = Fin K` (with `[NeZero K]` equivalent to
 The Pólya urn is often described as the "finite-K Chinese Restaurant
 Process". This is correct sequentially but misleading
 distributionally: the labeled count distribution
-`DirichletMultinomial.pmf` (sibling file) is *not* equal at any
+`PolyaUrn.dirichletMultinomial` (sibling file) is *not equal* at any
 finite `K` to the partition distribution `PitmanYor.partitionProb`
 at `discount = 0`. The two agree only in the limit `K → ∞` with
 symmetric pseudo-counts `π_i = b/K` (Blackwell & MacQueen 1973;
 Ferguson 1973). The bridge is therefore a limit theorem, not a
 finite equality, and is not yet formalized — the labeled→unlabeled
-`.map` pushforward to `PMF (Nat.Partition N)` (the natural target
-type for such a bridge) is also deferred.
+pushforward to `Measure (Nat.Partition N)` (the natural target type
+for such a bridge) is also deferred.
 
 ## Main definitions
 
 - `PolyaUrn α` — pseudo-counts on `α` (the Dirichlet hyperparameters).
 - `PolyaUrn.total` — the sum `Σ π_i`.
 - `PolyaUrn.seqProb` — closed-form per-sequence likelihood
-  (eq 3.7 of [odonnell-2015], depending only on counts).
+  ([odonnell-2015] §3.1.3, depending only on counts).
 - `PolyaUrn.countVec` — the count vector of a draw sequence, the urn's sufficient statistic;
   `seqProb_countVec_cons` is the urn scheme (likelihood × predictive).
 
 ## References
 
-- [odonnell-2015] — Pólya-urn closed form for DMPCFG (-- UNVERIFIED:
-  §3.1.3 eq 3.7 from memory; verify against PDF).
+- [odonnell-2015] — Pólya-urn closed form for DMPCFG (§3.1.3).
 - Blackwell, D. & MacQueen, J. B. (1973). "Ferguson distributions via
   Pólya urn schemes". *The Annals of Statistics* 1(2): 353–355.
 - Ferguson, T. S. (1973). "A Bayesian analysis of some nonparametric
@@ -114,8 +110,8 @@ theorem total_pos [Nonempty α] : 0 < u.total :=
   Finset.sum_pos (fun i _ => u.pseudo_pos i) Finset.univ_nonempty
 
 /--
-Closed-form *per-sequence likelihood* (not the count PMF — see
-`DirichletMultinomial.pmfReal` for that): probability that a draw
+Closed-form *per-sequence likelihood* (not the count law — see
+`PolyaUrn.dirichletMultinomial` for that): probability that a draw
 sequence with counts `x` was emitted by the urn `u`.
 
 ```
@@ -129,8 +125,8 @@ well-defined as marginals over draw order — *partition
 exchangeability* in the EPPF sense, distinct from but implied by
 exchangeability proper of the joint sequence law.
 
-To convert to the count-vector PMF, multiply by the multinomial
-coefficient `(∑ x_i)! / ∏ (x_i!)`. See `DirichletMultinomial`.
+To convert to the count-vector mass, multiply by the multinomial
+coefficient `(∑ x_i)! / ∏ (x_i!)` (`dirichletMultinomial_real_singleton`).
 -/
 noncomputable def seqProb (x : α → ℕ) : ℝ :=
   Gamma u.total / Gamma (u.total + ∑ i, (x i : ℝ)) *

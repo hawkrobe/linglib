@@ -1,4 +1,5 @@
 import Linglib.Core.Probability.DirichletMultinomial
+import Linglib.Core.Probability.Kernel.OfWeights
 import Linglib.Core.Probability.Kernel.Posterior
 import Linglib.Core.Probability.UniformOn
 import Mathlib.MeasureTheory.Constructions.Pi
@@ -199,7 +200,7 @@ theorem sum_toReal (T : Fin n → Set C) :
   rw [ENNReal.toReal_sum fun s _ =>
     ENNReal.mul_ne_top (measure_ne_top _ _) (ENNReal.prod_ne_top fun i _ => measure_ne_top _ _)]
   refine Finset.sum_congr rfl fun s _ => ?_
-  rw [ENNReal.toReal_mul, ENNReal.toReal_prod, PolyaUrn.seqLaw_apply_singleton,
+  rw [ENNReal.toReal_mul, ENNReal.toReal_prod, PolyaUrn.seqLaw_singleton,
     ENNReal.toReal_ofReal (m.urn.seqProb_pos _).le]
   rfl
 
