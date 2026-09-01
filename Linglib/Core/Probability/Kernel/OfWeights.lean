@@ -1,5 +1,6 @@
 import Mathlib.Probability.Kernel.Basic
 import Mathlib.MeasureTheory.Measure.Real
+import Mathlib.Probability.UniformOn
 
 /-!
 # Kernels from weight functions
@@ -16,9 +17,12 @@ total.
 
 ## Main results
 
-* `ProbabilityTheory.Kernel.ofWeights_apply_singleton` — `w a b / ∑ b', w a b'`.
+* `ProbabilityTheory.Kernel.ofWeights_apply_singleton` — `w a b / ∑ b', w a b'`;
+  `ofWeights_apply_finset`, `ofWeights_real_setOf` for finite events.
 * `ProbabilityTheory.Kernel.ofWeights_real_singleton_lt_iff` — row preference is weight
   comparison.
+* `ProbabilityTheory.Kernel.ofWeights_uniformOn_mul_uniformOn` — the product of two uniform
+  experts is uniform on their agreement set.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -59,6 +63,25 @@ noncomputable def ofWeights (w : α → β → ℝ≥0∞) : Kernel α β :=
   show ((∑ b', w a b')⁻¹ • ∑ b', w a b' • Measure.dirac b') {b} = _
   rw [Measure.smul_apply, smul_eq_mul, Measure.sum_smul_dirac_apply_singleton,
     ENNReal.div_eq_inv_mul]
+
+/-- The mass of a finite event under a weight-kernel row. -/
+theorem ofWeights_apply_finset (w : α → β → ℝ≥0∞) (a : α) (E : Finset β) :
+    ofWeights w a ↑E = (∑ b ∈ E, w a b) / ∑ b, w a b := by
+  rw [← sum_measure_singleton, div_eq_mul_inv, Finset.sum_mul]
+  exact Finset.sum_congr rfl fun b _ => by rw [ofWeights_apply_singleton, div_eq_mul_inv]
+
+/-- The real mass of a finite event under a weight-kernel row with finite weights. -/
+theorem ofWeights_real_finset (w : α → β → ℝ≥0∞) (a : α) (hw : ∀ b, w a b ≠ ∞) (E : Finset β) :
+    (ofWeights w a).real ↑E = (∑ b ∈ E, (w a b).toReal) / ∑ b, (w a b).toReal := by
+  rw [measureReal_def, ofWeights_apply_finset, ENNReal.toReal_div,
+    ENNReal.toReal_sum fun b _ => hw b, ENNReal.toReal_sum fun b _ => hw b]
+
+/-- The real mass of a decidable event under a weight-kernel row with finite weights. -/
+theorem ofWeights_real_setOf (w : α → β → ℝ≥0∞) (a : α) (hw : ∀ b, w a b ≠ ∞) (p : β → Prop)
+    [DecidablePred p] :
+    (ofWeights w a).real {b | p b} = (∑ b with p b, (w a b).toReal) / ∑ b, (w a b).toReal := by
+  rw [show {b | p b} = (↑(Finset.univ.filter p) : Set β) by ext b; simp,
+    ofWeights_real_finset w a hw]
 
 omit [MeasurableSingletonClass β] in
 /-- A row with a positive entry and finite entries normalizes to a
@@ -104,5 +127,39 @@ theorem ofWeights_apply_univ_le_one (w : α → β → ℝ≥0∞) (a : α) :
 
 instance (w : α → β → ℝ≥0∞) : IsFiniteKernel (ofWeights w) :=
   ⟨⟨1, ENNReal.one_lt_top, ofWeights_apply_univ_le_one w⟩⟩
+
+omit [Countable α] [MeasurableSingletonClass α] [Fintype β] in
+/-- Two uniform experts weight a point by `(#A · #B)⁻¹` on their agreement set and `0` off it. -/
+theorem uniformOn_mul_uniformOn_apply_singleton [DecidableEq β] (A B : Finset β) (b : β) :
+    uniformOn ↑A {b} * uniformOn ↑B {b} =
+      if b ∈ A ∩ B then ((A.card : ℝ≥0∞) * B.card)⁻¹ else 0 := by
+  rw [← Finset.coe_singleton, uniformOn_apply_finset, uniformOn_apply_finset]
+  by_cases hA : b ∈ A <;> by_cases hB : b ∈ B <;>
+    simp [Finset.inter_singleton_of_mem, Finset.inter_singleton_of_notMem, hA, hB,
+      ENNReal.mul_inv, div_eq_mul_inv]
+
+/-- Product of Experts of two uniform experts: the row is uniform on their agreement set, and
+collapses to the zero measure when they agree nowhere. -/
+theorem ofWeights_uniformOn_mul_uniformOn [DecidableEq β] (A B : α → Finset β) (a : α) :
+    ofWeights (fun a b => uniformOn ↑(A a) {b} * uniformOn ↑(B a) {b}) a =
+      uniformOn (↑(A a ∩ B a) : Set β) := by
+  refine Measure.ext_of_singleton fun b => ?_
+  rw [ofWeights_apply_singleton]
+  simp only [uniformOn_mul_uniformOn_apply_singleton, Finset.sum_ite_mem, Finset.univ_inter,
+    Finset.sum_const, nsmul_eq_mul]
+  rw [← Finset.coe_singleton, uniformOn_apply_finset]
+  by_cases hb : b ∈ A a ∩ B a
+  · have hK : ((A a).card : ℝ≥0∞) * (B a).card ≠ 0 := by
+      have := Finset.mem_inter.mp hb
+      exact mul_ne_zero (Nat.cast_ne_zero.mpr (Finset.card_pos.mpr ⟨b, this.1⟩).ne')
+        (Nat.cast_ne_zero.mpr (Finset.card_pos.mpr ⟨b, this.2⟩).ne')
+    have hK' : ((A a).card : ℝ≥0∞) * (B a).card ≠ ⊤ :=
+      ENNReal.mul_ne_top (ENNReal.natCast_ne_top _) (ENNReal.natCast_ne_top _)
+    rw [if_pos hb, Finset.inter_singleton_of_mem hb, Finset.card_singleton, Nat.cast_one,
+      ENNReal.div_eq_inv_mul, ENNReal.mul_inv (Or.inr (ENNReal.inv_ne_top.mpr hK))
+        (Or.inl (ENNReal.natCast_ne_top _)), inv_inv, mul_assoc,
+      ENNReal.mul_inv_cancel hK hK', mul_one, one_div]
+  · rw [if_neg hb, Finset.inter_singleton_of_notMem hb, Finset.card_empty, Nat.cast_zero,
+      ENNReal.zero_div, ENNReal.zero_div]
 
 end ProbabilityTheory.Kernel

@@ -13,6 +13,8 @@ product parameter space, to comparisons of prior-weighted likelihood sums.
 ## Main results
 
 * `ProbabilityTheory.posterior_apply_singleton` — `(κ†μ) x {ω} = μ {ω} * κ ω {x} / (κ ∘ₘ μ) {x}`.
+* `ProbabilityTheory.posterior_deterministic_eq_cond` — a deterministic observation's posterior
+  is the prior conditioned on the observation's fibre.
 * `ProbabilityTheory.posterior_real_finset_lt_iff` — event comparison of the posterior.
 * `ProbabilityTheory.posterior_fst_real_lt_iff`, `posterior_snd_real_lt_iff` — marginal
   comparison over a product parameter space.
@@ -80,6 +82,30 @@ theorem posterior_real_finset_lt_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) 
   simp_rw [ENNReal.toReal_mul]
   exact Iff.rfl
 
+/-- The posterior mass of a finite event: prior-weighted likelihoods over the event,
+normalized by the observation marginal. -/
+theorem posterior_apply_finset {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (E : Finset Ω) :
+    (κ†μ) x ↑E = (∑ ω ∈ E, μ {ω} * κ ω {x}) / (κ ∘ₘ μ) {x} := by
+  rw [← sum_measure_singleton]
+  simp_rw [posterior_apply_singleton κ μ hx, div_eq_mul_inv]
+  rw [Finset.sum_mul]
+
+/-- A deterministic observation's posterior is the prior conditioned on the observation's
+fibre. -/
+theorem posterior_deterministic_eq_cond [Countable Ω] {f : Ω → 𝓧} (hf : Measurable f) {x : 𝓧}
+    (hx : μ (f ⁻¹' {x}) ≠ 0) : ((Kernel.deterministic f hf)†μ) x = μ[|f ⁻¹' {x}] := by
+  have hx' : (Kernel.deterministic f hf ∘ₘ μ) {x} ≠ 0 := by
+    rwa [Measure.deterministic_comp_eq_map, Measure.map_apply hf (measurableSet_singleton x)]
+  refine Measure.ext_of_singleton fun ω => ?_
+  rw [posterior_apply_singleton _ _ hx', cond_apply (hf (measurableSet_singleton x)),
+    Measure.deterministic_comp_eq_map, Measure.map_apply hf (measurableSet_singleton x),
+    Kernel.deterministic_apply' hf ω (measurableSet_singleton x)]
+  by_cases h : f ω = x
+  · rw [Set.indicator_of_mem (Set.mem_singleton_iff.mpr h), mul_one, div_eq_mul_inv, mul_comm,
+      Set.inter_eq_right.mpr (Set.singleton_subset_iff.mpr (show ω ∈ f ⁻¹' {x} from h))]
+  · rw [Set.indicator_of_notMem (by simpa using h), mul_zero, ENNReal.zero_div,
+      Set.inter_singleton_eq_empty.mpr (by simpa using h), measure_empty, mul_zero]
+
 /-- A single state of positive prior mass and positive emission witnesses a
 positive observation marginal. -/
 theorem comp_apply_singleton_ne_zero {Ω' 𝓧' : Type*} [MeasurableSpace Ω']
@@ -97,6 +123,12 @@ namespace MeasureTheory.Measure
 
 variable {Ω Θ : Type*} [MeasurableSpace Ω] [MeasurableSpace Θ]
   [MeasurableSingletonClass Ω] [MeasurableSingletonClass Θ]
+
+/-- A prior-times-kernel joint at an atom is the prior mass times the kernel's mass. -/
+theorem compProd_apply_singleton (μ : Measure Ω) [SFinite μ] (κ : Kernel Ω Θ)
+    [IsSFiniteKernel κ] (ω : Ω) (θ : Θ) : (μ ⊗ₘ κ) {(ω, θ)} = μ {ω} * κ ω {θ} := by
+  rw [← Set.singleton_prod_singleton, compProd_apply_prod (.singleton ω) (.singleton θ),
+    lintegral_singleton, mul_comm]
 
 theorem fst_apply_singleton [Fintype Θ] (m : Measure (Ω × Θ)) (ω : Ω) :
     m.fst {ω} = ∑ θ : Θ, m {(ω, θ)} := by
