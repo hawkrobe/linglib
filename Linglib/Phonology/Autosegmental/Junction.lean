@@ -12,7 +12,7 @@ The named building blocks of autosegmental representations. `AR.junction as bs` 
 every melody node of `as` to every timing slot of `bs`; its planar specializations —
 `single`, `bare`, `float`, `contour`, `spread` — are the local configurations of
 autosegmental tonology, and `concat`-products of them build every representation in the
-current tone studies (`Studies/Jardine2016Tone`, `Studies/Jardine2017`,
+current tone studies (`Studies/Jardine2016a`, `Studies/Jardine2017`,
 `Studies/Jardine2019`). Building through them (rather than raw structure literals)
 carries the in-bounds proof at arbitrary alphabets, where the studies' `by decide`
 cannot go, and gives every configuration a simp kit.
@@ -43,10 +43,9 @@ becomes primary and the five kits derive from its (the
 
 * `AR.isPlanar_junction_iff` — NCC-planarity of a junction: one side is at most a
   singleton.
-* `AR.linearize_junction` — every slot of a junction carries the whole melody.
-* Per-builder simp kits: tier projections (at the `LabeledTuple` level, so `.len`,
-  `.toList`, `.get?` follow from the `ofList` kit), reduced link sets, linearization,
-  planarity, and OCP-cleanliness.
+* The junction simp kit — tier words and lengths (`AR.tierWord_junction_true`,
+  `AR.tierLength_junction_true`, …) and links (`AR.link_junction`) — which the builders
+  inherit as transparent aliases; per-builder planarity (`AR.isPlanar_single`, …).
 -/
 
 namespace Autosegmental
@@ -70,6 +69,10 @@ variable {α β : Type u}
     `false`. -/
 abbrev TwoTier (α β : Type u) : Bool → Type u := fun b => bif b then α else β
 
+instance [DecidableEq α] : DecidableEq (TwoTier α β true) := inferInstanceAs (DecidableEq α)
+
+instance [DecidableEq β] : DecidableEq (TwoTier α β false) := inferInstanceAs (DecidableEq β)
+
 /-- Complete many-to-many association of a melody onto a slot sequence, in
     coordinates. -/
 def AR.junction (as : List α) (bs : List β) :
@@ -92,8 +95,16 @@ instance (as : List α) (bs : List β) :
     (AR.junction as bs).tierWord false = bs :=
   AR.tierWord_ofData false
 
+@[simp] theorem AR.tierLength_junction_true (as : List α) (bs : List β) :
+    (AR.junction as bs).tierLength true = as.length :=
+  AR.tierLength_ofData true
+
+@[simp] theorem AR.tierLength_junction_false (as : List α) (bs : List β) :
+    (AR.junction as bs).tierLength false = bs.length :=
+  AR.tierLength_ofData false
+
 /-- Junction links are complete: every in-bounds melody–timing pair. -/
-theorem AR.link_junction (as : List α) (bs : List β) {b b' : Bool}
+@[simp] theorem AR.link_junction (as : List α) (bs : List β) {b b' : Bool}
     {p q : ℕ} : (AR.junction as bs).link b b' p q ↔
       b = true ∧ b' = false ∧ p < as.length ∧ q < bs.length ∨
         b = false ∧ b' = true ∧ p < bs.length ∧ q < as.length := by
@@ -160,19 +171,19 @@ theorem AR.isPlanar_junction_iff (as : List α) (bs : List β) :
 /-! #### The planar local configurations -/
 
 /-- One-to-one association. -/
-def AR.single (a : α) (b : β) := AR.junction [a] [b]
+abbrev AR.single (a : α) (b : β) := AR.junction [a] [b]
 
 /-- A bare (unassociated) timing slot. -/
-def AR.bare (b : β) := AR.junction ([] : List α) [b]
+abbrev AR.bare (b : β) := AR.junction ([] : List α) [b]
 
 /-- A floating autosegment ([leben-1973]). -/
-def AR.float (a : α) := AR.junction [a] ([] : List β)
+abbrev AR.float (a : α) := AR.junction [a] ([] : List β)
 
 /-- Several melody nodes on one slot. -/
-def AR.contour (as : List α) (b : β) := AR.junction as [b]
+abbrev AR.contour (as : List α) (b : β) := AR.junction as [b]
 
 /-- One melody node over several slots. -/
-def AR.spread (a : α) (bs : List β) := AR.junction [a] bs
+abbrev AR.spread (a : α) (bs : List β) := AR.junction [a] bs
 
 theorem AR.isPlanar_single (a : α) (b : β) :
     IsPlanar (AR.single a b).obj.edges (AR.single a b).obj.arcs :=
@@ -229,8 +240,6 @@ instance {wsF wsX : ∀ b : Bool, List (TwoTier α β b)}
     [∀ i j p q, Decidable (LF i j p q)] [∀ i j p q, Decidable (LX i j p q)] :
     Decidable (dataEmbeds wsF wsX LF LX) := by
   unfold dataEmbeds
-  haveI : DecidableEq (TwoTier α β true) := inferInstanceAs (DecidableEq α)
-  haveI : DecidableEq (TwoTier α β false) := inferInstanceAs (DecidableEq β)
   infer_instance
 
 /-- **The spec**: on `ofData`-presented two-tier forms, factor embedding is the

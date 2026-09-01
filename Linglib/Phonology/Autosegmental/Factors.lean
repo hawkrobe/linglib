@@ -11,7 +11,7 @@ import Linglib.Phonology.Autosegmental.NormalForm
 
 [jardine-2017]'s connected-subgraph embedding in position coordinates: a factor
 occurs at per-tier offsets when its tier words are windows of the host's and its
-links transport shifted. Banned-subgraph grammars ([jardine-2016-diss] Ch. 5)
+links transport shifted. Banned-subgraph grammars ([jardine-2016b] Ch. 5)
 are lists of forbidden factors.
 
 ## Main definitions
@@ -46,7 +46,7 @@ structure IsFactorAt (o : ι → ℕ) : Prop where
 def FactorEmbeds : Prop := ∃ o : ι → ℕ, F.IsFactorAt X o
 
 /-- `X` avoids every forbidden factor of a banned-subgraph grammar
-    ([jardine-2016-diss] Ch. 5's `L^NL_G`). -/
+    ([jardine-2016b] Ch. 5's `L^NL_G`). -/
 def Free (B : List {F : TieredAR ι τ // Finite F.obj.V}) : Prop :=
   ∀ F ∈ B, haveI := F.property; ¬ F.val.FactorEmbeds X
 

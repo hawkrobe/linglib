@@ -2340,8 +2340,8 @@ import Linglib.Studies.JackendoffAudring2020
 import Linglib.Studies.Jaeger2007
 import Linglib.Studies.Jaeger2014
 import Linglib.Studies.JansenPollmann2001
-import Linglib.Studies.Jardine2016
-import Linglib.Studies.Jardine2016Tone
+import Linglib.Studies.Jardine2016a
+import Linglib.Studies.Jardine2016b
 import Linglib.Studies.Jardine2017
 import Linglib.Studies.Jardine2019
 import Linglib.Studies.Jenks2018

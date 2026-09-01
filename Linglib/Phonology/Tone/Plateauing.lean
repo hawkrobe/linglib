@@ -17,357 +17,237 @@ import Linglib.Phonology.Tone.Surfacing
 # Unbounded tonal plateauing
 
 [hyman-katamba-2010]'s plateauing rule for Luganda: every tone-bearing unit between two
-H-toned units surfaces H. Formalized over the string rendering of [jardine-2016]: a word
+H-toned units surfaces H. Formalized over the string rendering of [jardine-2016a]: a word
 over `TBU` records each timing unit's association state (`H` associated to a H tone, `O`
 unassociated), and `utp` — a `Tone.Surfacing` process — rewrites it pointwise by its
-surfacing predicate. What surfaces is the *representation*: `utp.Surfaces w i` is by
-definition H-linkedness of timing node `i` in the output representation `plateauAR w`
-(the OCP-merged input, hull-closed — fusion then spreading); the string reading is the
-derived `utp.surfaces_def`. The map is `utp.map`, the surfacing set `plateau`.
+surfacing predicate, the two-sided window `H ∈ w.take (i + 1) ∧ H ∈ w.drop i`: a H at or
+before `i` and one at or after it. The map is `utp.map`, the surfacing set `plateau`.
+
+What surfaces is the representation. The string reads back into two-tier autosegmental
+representations by `toAR`, and the output representation `plateauAR w` is the OCP-merged
+input, hull-closed — fusion then spreading. Timing slot `i` surfaces with H in `plateauAR w`
+exactly when `utp.Surfaces w i` (`utp.surfaces_iff_surfacesWith_plateauAR`).
 
 The map is the flagship *unbounded circumambient* process: whether a position changes
 depends on unboundedly distant material on **both** sides, in the strong witness form
-`utp.requiresBothSides` — perturbing either far side alone reverts the change — with
-the weaker `utp.twoSidedUnboundedDependence` as a corollary, which
-feeds the weak-determinism exclusion theorems of `Studies/Jardine2016Tone` (bimachine
-rendering) and `Studies/Yolyan2025` (BMRS rendering).
+`utp.requiresBothSides` — perturbing either far side alone reverts the change — with the
+weaker `utp.twoSidedUnboundedDependence` as a corollary, which feeds the weak-determinism
+exclusion theorems of `Studies/Jardine2016a` (bimachine rendering) and `Studies/Yolyan2025`
+(BMRS rendering).
 
 ## Main definitions
 
 * `Tone.Plateauing.TBU` — the H/Ø string alphabet (association states; distinct from
   `Tone.TBUKind`, the phonological typology of timing units).
-* `Tone.Plateauing.plateauAR` — the output representation (OCP-merged input,
-  hull-closed); `utp.Surfaces` is H-linkedness in it, via `Graph.SurfacesWith` and
-  `Graph.hull` (`Phonology/Autosegmental/Hull.lean`).
+* `Tone.Plateauing.toAR`, `Tone.Plateauing.plateauAR` — the translation of a TBU into a
+  one-slot representation, and the output representation (OCP-merged input, hull-closed).
 * `Tone.Plateauing.utp` — plateauing as a `Tone.Surfacing` process; `utp.map` the map.
 * `Tone.Plateauing.plateau` — the set of surfacing positions.
 
 ## Main results
 
+* `utp.surfaces_iff_surfacesWith_plateauAR` — surfacing is H-linkedness in the output
+  representation.
 * `utp.map_getElem?_H_iff` / `utp.map_getElem?_O_iff` — pointwise characterization of the map.
 * `utp_eq_plateau_indicator`, `plateau_eq_Icc` — the output is the indicator word of an
   interval, from the first trigger to the last.
-* `utp.map_toneless`, `utp.map_single`, `utp.map_plateau` — the rule schemata: toneless words and
-  lone Hs are unchanged; everything between the outermost Hs surfaces H.
+* `utp.map_toneless`, `utp.map_single`, `utp.map_plateau` — the rule schemata: toneless words
+  and lone Hs are unchanged; everything between the outermost Hs surfaces H.
 * `utp.map_getElem?_H_of_getElem?_H`, `utp.map_mono`, `utp.map_map` — plateauing is a closure
   operator in the pointwise H-order: extensive, monotone, idempotent.
 * `utp.requiresBothSides` — deleting either flanking H reverts the plateau target, at
   every distance.
-* `realizeMerged_toAR_map` — the commuting square: the merged representation of the
-  output string is the output representation `plateauAR`.
 -/
 
 namespace Tone.Plateauing
 
-
-
 /-! ### The tone-bearing-unit alphabet -/
 
 /-- A tone-bearing unit's association state: `H` is a TBU associated to a H tone, `O` an
-unspecified TBU ([jardine-2016]'s Ø). -/
+unspecified TBU ([jardine-2016a]'s Ø). -/
 inductive TBU | H | O
   deriving DecidableEq, Repr
 
 /-! ### The output representation
 
-The string rendering embeds into autosegmental representations, and plateauing on
-representations is OCP-fusion followed by hull-closure of the association lines
-([hyman-katamba-2010]'s rule as an operation on structures). What surfaces is the
-representation: `utp.Surfaces` is *by definition* H-linkedness in the output
-representation `plateauAR w`; the string-level `take`/`drop` reading is the derived
-characterization `utp.surfaces_def`. -/
+The string reads back into two-tier representations, and plateauing on representations is
+OCP-fusion followed by hull-closure of the association lines ([hyman-katamba-2010]'s rule
+as an operation on structures). -/
 
 open Autosegmental
 
-/-- `toAR` in coordinates: the two-tier representation of one association
-    state (melody over `true`, timing over `false`). -/
-noncomputable def toRep (a : TBU) :
-    Autosegmental.AR
-      (Sigma.fst : ((b : Bool) × Autosegmental.TwoTier _root_.Tone.TRN Unit b) → Bool) :=
-  match a with
-  | .H => Autosegmental.AR.single _root_.Tone.TRN.H ()
-  | .O => Autosegmental.AR.bare ()
+/-- The melody a TBU contributes: its H tone if H-toned, nothing otherwise. -/
+def melody : TBU → List TRN
+  | .H => [.H]
+  | .O => []
 
-instance (a : TBU) : Finite (toRep a).obj.V := by
-  cases a <;> exact inferInstanceAs (Finite ((_ : Bool) × Fin _))
+@[simp] theorem melody_H : melody .H = [.H] := rfl
 
-instance : DecidableEq (Autosegmental.TwoTier _root_.Tone.TRN Unit true) :=
-  inferInstanceAs (DecidableEq _root_.Tone.TRN)
+@[simp] theorem melody_O : melody .O = [] := rfl
 
-/-- The output representation in coordinates: OCP-merge then hull, both at the
-    melody tier. -/
-noncomputable def plateauRep (w : List TBU) :
-    Autosegmental.AR
-      (Sigma.fst : ((b : Bool) × Autosegmental.TwoTier _root_.Tone.TRN Unit b) → Bool) :=
-  ((Autosegmental.AR.realize toRep w).collapse true).hull true
+theorem length_melody (a : TBU) : (melody a).length = if a = .H then 1 else 0 := by
+  cases a <;> rfl
 
-instance (w : List TBU) : Finite (plateauRep w).obj.V :=
-  inferInstanceAs (Finite ((_ : Bool) × Fin _))
-
-section TierWords
-open CategoryTheory
-open scoped MonoidalCategory
-
-/-- The melody word of a realized string: one `H` node per H-toned TBU. -/
-theorem tierWord_realize_toRep_true (w : List TBU) :
-    (Autosegmental.AR.realize toRep w).tierWord true
-      = List.replicate (w.count .H) _root_.Tone.TRN.H := by
+theorem sum_length_melody (w : List TBU) :
+    (w.map fun a => (melody a).length).sum = w.count .H := by
   induction w with
-  | nil => simp [Autosegmental.AR.tierWord_unit]
-  | cons a w ih =>
-    calc (Autosegmental.AR.realize toRep (a :: w)).tierWord true
-        = (toRep a ⊗ Autosegmental.AR.realize toRep w).tierWord true := rfl
-      _ = (toRep a).tierWord true ++ (Autosegmental.AR.realize toRep w).tierWord true :=
-          Autosegmental.AR.tierWord_tensor true
-      _ = List.replicate ((a :: w).count .H) _root_.Tone.TRN.H := by
-          rw [ih]
-          cases a
-          · rw [show (toRep TBU.H).tierWord true = [_root_.Tone.TRN.H] from
-              Autosegmental.AR.tierWord_ofData true,
-              List.count_cons_self, List.replicate_succ]
-            rfl
-          · rw [show (toRep TBU.O).tierWord true = [] from
-              Autosegmental.AR.tierWord_ofData true,
-              List.count_cons_of_ne (by decide)]
-            rfl
+  | nil => rfl
+  | cons a w ih => cases a <;> simp [ih, Nat.add_comm]
 
-/-- The timing word of a realized string: one slot per TBU. -/
-theorem tierWord_realize_toRep_false (w : List TBU) :
-    (Autosegmental.AR.realize toRep w).tierWord false = List.replicate w.length () := by
+/-- The translation of a TBU into a representation, in coordinates: one timing slot
+carrying the TBU's melody ([jardine-2016a]'s reading of the string as a representation). -/
+def toAR (a : TBU) : TieredAR Bool (TwoTier TRN Unit) := AR.junction (melody a) [()]
+
+theorem toAR_H : toAR .H = AR.single TRN.H () := rfl
+
+theorem toAR_O : toAR .O = AR.bare () := rfl
+
+instance (a : TBU) : Finite (toAR a).obj.V :=
+  inferInstanceAs (Finite (AR.junction (melody a) [()]).obj.V)
+
+@[simp] theorem tierWord_toAR_true (a : TBU) : (toAR a).tierWord true = melody a :=
+  AR.tierWord_junction_true _ _
+
+@[simp] theorem tierWord_toAR_false (a : TBU) : (toAR a).tierWord false = [()] :=
+  AR.tierWord_junction_false _ _
+
+@[simp] theorem tierLength_toAR_true (a : TBU) :
+    (toAR a).tierLength true = (melody a).length :=
+  AR.tierLength_junction_true _ _
+
+@[simp] theorem tierLength_toAR_false (a : TBU) : (toAR a).tierLength false = 1 :=
+  AR.tierLength_junction_false _ _
+
+@[simp] theorem link_toAR (a : TBU) (p q : ℕ) :
+    (toAR a).link true false p q ↔ p < (melody a).length ∧ q = 0 := by
+  simp [toAR]
+
+/-- The melody of a realized string: one `H` node per H-toned TBU. -/
+@[simp] theorem tierWord_realize_toAR_true (w : List TBU) :
+    (AR.realize toAR w).tierWord true = List.replicate (w.count .H) TRN.H := by
   induction w with
-  | nil => simp [Autosegmental.AR.tierWord_unit]
-  | cons a w ih =>
-    calc (Autosegmental.AR.realize toRep (a :: w)).tierWord false
-        = (toRep a ⊗ Autosegmental.AR.realize toRep w).tierWord false := rfl
-      _ = (toRep a).tierWord false ++ (Autosegmental.AR.realize toRep w).tierWord false :=
-          Autosegmental.AR.tierWord_tensor false
-      _ = List.replicate (a :: w).length () := by
-          rw [ih, List.length_cons, List.replicate_succ]
-          cases a
-          · rw [show (toRep TBU.H).tierWord false = [()] from
-              Autosegmental.AR.tierWord_ofData false]
-            rfl
-          · rw [show (toRep TBU.O).tierWord false = [()] from
-              Autosegmental.AR.tierWord_ofData false]
-            rfl
+  | nil => simp
+  | cons a w ih => cases a <;> simp [ih, List.replicate_succ]
 
-/-- Links of a realized string: slot `j` links to melody node `p` exactly when
-    TBU `j` is H-toned and `p` is its accumulated melody position. -/
-theorem link_realize_toRep (w : List TBU) (p j : ℕ) :
-    (Autosegmental.AR.realize toRep w).link true false p j ↔
+/-- The timing tier of a realized string: one slot per TBU. -/
+@[simp] theorem tierWord_realize_toAR_false (w : List TBU) :
+    (AR.realize toAR w).tierWord false = List.replicate w.length () := by
+  induction w with
+  | nil => simp
+  | cons a w ih => simp [ih, List.replicate_succ]
+
+/-- Links of a realized string: slot `j` links to melody node `p` exactly when TBU `j` is
+H-toned and `p` is its accumulated melody position. -/
+theorem link_realize_toAR (w : List TBU) (p j : ℕ) :
+    (AR.realize toAR w).link true false p j ↔
       p = (w.take j).count .H ∧ w[j]? = some .H := by
-  induction w generalizing p j with
-  | nil =>
-    have h0 : (Autosegmental.AR.realize toRep []).tierLength true = 0 := by
-      rw [← Autosegmental.AR.length_tierWord,
-        show (Autosegmental.AR.realize toRep []).tierWord true = _ from
-          Autosegmental.AR.tierWord_unit true, List.length_nil]
-    constructor
-    · rintro ⟨hp, -, -⟩
-      omega
-    · rintro ⟨-, h⟩
-      simp at h
-  | cons a w ih =>
-    haveI := Autosegmental.AR.realize.instFinite toRep w
-    rw [show (Autosegmental.AR.realize toRep (a :: w)).link true false p j
-          = (toRep a ⊗ Autosegmental.AR.realize toRep w).link true false p j from rfl,
-      Autosegmental.AR.link_tensor (X := toRep a)
-        (Y := Autosegmental.AR.realize toRep w) true false p j]
-    cases a
-    · have hta : (toRep TBU.H).tierLength true = 1 := by
-        rw [← Autosegmental.AR.length_tierWord,
-          show (toRep TBU.H).tierWord true = [_root_.Tone.TRN.H] from
-            Autosegmental.AR.tierWord_ofData true]
-        rfl
-      have hfa : (toRep TBU.H).tierLength false = 1 := by
-        rw [← Autosegmental.AR.length_tierWord,
-          show (toRep TBU.H).tierWord false = [()] from
-            Autosegmental.AR.tierWord_ofData false]
-        rfl
-      have hj : (toRep TBU.H).link true false p j ↔ p = 0 ∧ j = 0 := by
-        refine (Autosegmental.AR.link_junction
-          [_root_.Tone.TRN.H] [()]).trans ?_
-        constructor
-        · rintro (⟨-, -, h1, h2⟩ | ⟨h, -⟩)
-          · exact ⟨by simpa using h1, by simpa using h2⟩
-          · exact absurd h (by decide)
-        · rintro ⟨rfl, rfl⟩
-          exact Or.inl ⟨rfl, rfl, by simp, by simp⟩
-      rw [hj, hta, hfa, ih]
-      rcases j with _ | j
-      · simp
-      · constructor
-        · rintro (⟨-, h⟩ | ⟨hp1, -, hrec, hj1⟩)
-          · exact absurd h (by omega)
-          · rw [show j + 1 - 1 = j from rfl] at hrec
-            refine ⟨?_, by simpa using hj1⟩
-            rw [List.take_succ_cons, List.count_cons_self]
-            omega
-        · rintro ⟨hp, hj1⟩
-          rw [List.take_succ_cons, List.count_cons_self] at hp
-          refine Or.inr ⟨by omega, by omega, ?_, by simpa using hj1⟩
-          have : j + 1 - 1 = j := by omega
-          rw [this]
-          omega
-    · have hta : (toRep TBU.O).tierLength true = 0 := by
-        rw [← Autosegmental.AR.length_tierWord,
-          show (toRep TBU.O).tierWord true = [] from
-            Autosegmental.AR.tierWord_ofData true]
-        rfl
-      have hfa : (toRep TBU.O).tierLength false = 1 := by
-        rw [← Autosegmental.AR.length_tierWord,
-          show (toRep TBU.O).tierWord false = [()] from
-            Autosegmental.AR.tierWord_ofData false]
-        rfl
-      have hj : ¬ (toRep TBU.O).link true false p j := by
-        intro h
-        rcases (Autosegmental.AR.link_junction
-          ([] : List _root_.Tone.TRN) [()]).mp h with ⟨-, -, h1, -⟩ | ⟨h1, -⟩
-        · simp at h1
-        · exact absurd h1 (by decide)
-      rw [hta, hfa, ih]
-      rcases j with _ | j
-      · constructor
-        · rintro (h | ⟨-, h, -⟩)
-          · exact absurd h hj
-          · omega
-        · rintro ⟨-, h⟩
-          simp at h
-      · constructor
-        · rintro (h | ⟨-, -, hrec, hj1⟩)
-          · exact absurd h hj
-          · rw [show j + 1 - 1 = j from rfl] at hrec
-            refine ⟨?_, by simpa using hj1⟩
-            rw [List.take_succ_cons, List.count_cons_of_ne (by decide)]
-            omega
-        · rintro ⟨hp, hj1⟩
-          rw [List.take_succ_cons, List.count_cons_of_ne (by decide)] at hp
-          refine Or.inr ⟨by omega, by omega, ?_, by simpa using hj1⟩
-          have : j + 1 - 1 = j := by omega
-          rw [this]
-          omega
+  have hoff : AR.tierOffset toAR true w j = (w.take j).count .H := by
+    simp only [AR.tierOffset, AR.tierLength_realize, tierLength_toAR_true, sum_length_melody]
+  rw [AR.link_realize_of_tierLength_eq_one toAR fun _ => tierLength_toAR_false _]
+  simp only [link_toAR, hoff, and_true, length_melody,
+    List.getElem?_eq_some_iff]
+  constructor
+  · rintro ⟨hj, hle, hlt⟩
+    split_ifs at hlt with h
+    · exact ⟨by omega, hj, h⟩
+    · omega
+  · rintro ⟨rfl, hj, h⟩
+    exact ⟨hj, le_rfl, by simp [h]⟩
 
-/-- Links of the OCP-merged realization: the single fused `H` node (index `0`)
-    links exactly to the H-toned slots. -/
+/-- Links of the OCP-merged realization: the single fused `H` node (index `0`) links
+exactly to the H-toned slots. -/
 theorem link_realizeMerged (w : List TBU) (k j : ℕ) :
-    ((Autosegmental.AR.realize toRep w).collapse true).link true false k j ↔
-      k = 0 ∧ w[j]? = some .H := by
-  haveI := Autosegmental.AR.realize.instFinite toRep w
-  rw [Autosegmental.AR.link_collapse]
+    ((AR.realize toAR w).collapse true).link true false k j ↔ k = 0 ∧ w[j]? = some .H := by
+  rw [AR.link_collapse]
+  simp only [AR.collapseIdx_self, AR.collapseIdx_of_ne _ true (by decide : false ≠ true),
+    link_realize_toAR, tierWord_realize_toAR_true, OCP.runIdx_replicate]
   constructor
-  · rintro ⟨p, q, hl, hk, hjq⟩
-    obtain ⟨hp, hq⟩ := (link_realize_toRep w p q).mp hl
-    refine ⟨?_, ?_⟩
-    · rw [← hk]
-      unfold Autosegmental.AR.collapseIdx
-      rw [if_pos rfl, tierWord_realize_toRep_true]
-      exact OCP.runIdx_replicate _ _ _
-    · rw [← hjq]
-      unfold Autosegmental.AR.collapseIdx
-      rw [if_neg (by decide)]
-      exact hq
-  · rintro ⟨rfl, hj⟩
-    refine ⟨(w.take j).count .H, j, (link_realize_toRep w _ j).mpr ⟨rfl, hj⟩, ?_, ?_⟩
-    · unfold Autosegmental.AR.collapseIdx
-      rw [if_pos rfl, tierWord_realize_toRep_true]
-      exact OCP.runIdx_replicate _ _ _
-    · unfold Autosegmental.AR.collapseIdx
-      rw [if_neg (by decide)]
+  · rintro ⟨p, q, ⟨-, h⟩, rfl, rfl⟩
+    exact ⟨rfl, h⟩
+  · rintro ⟨rfl, h⟩
+    exact ⟨_, j, ⟨rfl, h⟩, rfl, rfl⟩
 
-/-- **What surfaces is the representation**: slot `j` is H-linked in
-    `plateauRep w` iff some H-toned TBU lies at or before `j` and some at or
-    after it — fusion then spreading, read back as the string window. -/
-theorem link_plateauRep (w : List TBU) (j : ℕ) :
-    (∃ k, (plateauRep w).link true false k j) ↔
-      .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
-  haveI := Autosegmental.AR.realize.instFinite toRep w
-  have hlen : ((Autosegmental.AR.realize toRep w).collapse true).tierLength false
-      = w.length := by
-    rw [← Autosegmental.AR.length_tierWord,
-      Autosegmental.AR.tierWord_collapse,
-      show (Autosegmental.AR.realize toRep w).collapsedWord true false
-        = (Autosegmental.AR.realize toRep w).tierWord false from
-        Function.update_of_ne (by decide) _ _,
-      tierWord_realize_toRep_false]
-    exact List.length_replicate
-  rw [List.mem_take_iff, List.mem_drop_iff]
-  constructor
-  · rintro ⟨k, hk⟩
-    obtain ⟨-, hjb, -⟩ := id hk
-    have hlenh : (plateauRep w).tierLength false = w.length := by
-      rw [← Autosegmental.AR.length_tierWord,
-        show (plateauRep w).tierWord false
-          = ((Autosegmental.AR.realize toRep w).collapse true).tierWord false from
-          Autosegmental.AR.tierWord_hull true _ false,
-        Autosegmental.AR.length_tierWord, hlen]
-    have hjw : j < w.length := hlenh ▸ hjb
-    obtain ⟨q₁, q₂, h₁, h₂, hle₁, hle₂⟩ :=
-      (Autosegmental.AR.link_hull_left true _ (by decide)
-        (by omega : j < ((Autosegmental.AR.realize toRep w).collapse true).tierLength false)).mp hk
-    obtain ⟨-, hq₁⟩ := (link_realizeMerged w k q₁).mp h₁
-    obtain ⟨-, hq₂⟩ := (link_realizeMerged w k q₂).mp h₂
-    exact ⟨⟨q₁, by omega, hq₁⟩, q₂, hle₂, hq₂⟩
-  · rintro ⟨⟨q₁, hq₁b, hq₁⟩, q₂, hq₂b, hq₂⟩
-    have hq₂w : q₂ < w.length := by
-      rcases List.getElem?_eq_some_iff.mp hq₂ with ⟨h, -⟩
-      exact h
-    have hl₁ := (link_realizeMerged w 0 q₁).mpr ⟨rfl, hq₁⟩
-    have hl₂ := (link_realizeMerged w 0 q₂).mpr ⟨rfl, hq₂⟩
-    exact ⟨0, (Autosegmental.AR.link_hull_left true _ (by decide)
-      (by omega : j < ((Autosegmental.AR.realize toRep w).collapse true).tierLength false)).mpr
-      ⟨q₁, q₂, hl₁, hl₂, by omega, hq₂b⟩⟩
+/-- The output representation in coordinates: OCP-merge then hull, both at the melody
+tier. -/
+noncomputable def plateauAR (w : List TBU) : TieredAR Bool (TwoTier TRN Unit) :=
+  ((AR.realize toAR w).collapse true).hull true
 
-end TierWords
+instance (w : List TBU) : Finite (plateauAR w).obj.V :=
+  inferInstanceAs (Finite (((AR.realize toAR w).collapse true).hull true).obj.V)
+
+/-- Links of the output representation: the fused `H` links to slot `j` iff some H-toned
+TBU lies at or before `j` and some at or after it — fusion then spreading, read back as
+the string window. -/
+theorem link_plateauAR (w : List TBU) (k j : ℕ) :
+    (plateauAR w).link true false k j ↔ k = 0 ∧ .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
+  by_cases hj : j < w.length
+  · unfold plateauAR
+    rw [AR.link_hull_left true _ (by decide)
+      (by simpa using hj : j < ((AR.realize toAR w).collapse true).tierLength false)]
+    simp only [link_realizeMerged, List.mem_take_iff_getElem?, List.mem_drop_iff_getElem?,
+      Nat.lt_succ_iff]
+    constructor
+    · rintro ⟨q₁, q₂, ⟨rfl, h₁⟩, ⟨-, h₂⟩, hle₁, hle₂⟩
+      exact ⟨rfl, ⟨q₁, hle₁, h₁⟩, q₂, hle₂, h₂⟩
+    · rintro ⟨rfl, ⟨q₁, hle₁, h₁⟩, q₂, hle₂, h₂⟩
+      exact ⟨q₁, q₂, ⟨rfl, h₁⟩, ⟨rfl, h₂⟩, hle₁, hle₂⟩
+  · refine iff_of_false (fun h => hj ?_) fun ⟨_, _, h⟩ => hj (List.lt_length_of_mem_drop h)
+    obtain ⟨-, hq, -⟩ := id h
+    simpa [plateauAR] using hq
+
+/-- Slot `j` surfaces with H in the output representation iff the string window holds. -/
+theorem surfacesWith_plateauAR (w : List TBU) (j : ℕ) :
+    (plateauAR w).surfacesWith TRN.H j ↔ .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
+  simp only [AR.surfacesWith, link_plateauAR, and_assoc, exists_eq_left]
+  refine and_congr_right fun hA => and_iff_left_of_imp fun _ => ?_
+  obtain ⟨n, hn⟩ := Nat.exists_eq_succ_of_ne_zero
+    (List.count_pos_iff.mpr (List.take_subset _ _ hA)).ne'
+  simp [plateauAR, hn]
+  rfl
 
 /-! ### The plateauing process -/
 
-/-- Unbounded tonal plateauing as a surfacing process: a TBU surfaces the marked tone
-`H` iff its timing node is H-linked in the output representation. -/
+/-- Unbounded tonal plateauing as a surfacing process: TBU `i` surfaces H iff some H-toned
+TBU lies at or before it and some at or after it. -/
+@[simps hi lo]
 def utp : Surfacing TBU where
   hi := .H
   lo := .O
   Surfaces w i := .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i
   hi_ne_lo := by decide
-  lt_length h := by
-    have h₂ := List.length_pos_of_mem h.2
-    rw [List.length_drop] at h₂
-    omega
+  lt_length h := List.lt_length_of_mem_drop h.2
   surfaces_of_hi h :=
-    ⟨List.mem_take_iff.mpr ⟨_, Nat.lt_succ_self _, h⟩, List.mem_drop_iff.mpr ⟨_, le_rfl, h⟩⟩
+    ⟨List.mem_take_iff_getElem?.mpr ⟨_, Nat.lt_succ_self _, h⟩,
+      List.mem_drop_iff_getElem?.mpr ⟨_, le_rfl, h⟩⟩
   decSurfaces w i := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- **What surfaces is the representation**: `utp.Surfaces w i` is H-linkedness
-    of timing slot `i` in the coordinate output representation `plateauRep w` —
-    the OCP-merged, hull-closed realization. -/
-theorem utp.surfaces_iff_link_plateauRep {w : List TBU} {i : ℕ} :
-    utp.Surfaces w i ↔ ∃ k, (plateauRep w).link true false k i :=
-  (link_plateauRep w i).symm
-
-@[simp] theorem utp.hi_def : utp.hi = .H := rfl
-
-@[simp] theorem utp.lo_def : utp.lo = .O := rfl
+variable {w : List TBU} {i j k : ℕ}
 
 /-- The string-level reading of surfacing: the windowed form, definitional. -/
-theorem utp.surfaces_def {w : List TBU} {i : ℕ} :
-    utp.Surfaces w i ↔ .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i :=
+theorem utp.surfaces_def : utp.Surfaces w i ↔ .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i :=
   Iff.rfl
 
-variable {w : List TBU} {i j k : ℕ}
+/-- **What surfaces is the representation**: `utp.Surfaces w i` is H-linkedness of timing
+slot `i` in the output representation `plateauAR w` — the OCP-merged, hull-closed
+realization. -/
+theorem utp.surfaces_iff_surfacesWith_plateauAR :
+    utp.Surfaces w i ↔ (plateauAR w).surfacesWith TRN.H i :=
+  (surfacesWith_plateauAR w i).symm
 
 /-- Positionwise reading of surfacing: a H at some `j ≤ i` and a H at some `j ≥ i`. -/
 theorem utp.surfaces_iff :
     utp.Surfaces w i ↔ (∃ j ≤ i, w[j]? = some .H) ∧ ∃ j ≥ i, w[j]? = some .H := by
-  rw [utp.surfaces_def, List.mem_take_iff, List.mem_drop_iff]
+  rw [utp.surfaces_def, List.mem_take_iff_getElem?, List.mem_drop_iff_getElem?]
   simp
 
 /-- The surfacing set is convex: the windows only widen. -/
-theorem _root_.Tone.Surfacing.Surfaces.of_le_of_le (hi : utp.Surfaces w i)
-    (hk : utp.Surfaces w k) (hij : i ≤ j) (hjk : j ≤ k) : utp.Surfaces w j :=
+theorem utp.surfaces_of_le_of_le (hi : utp.Surfaces w i) (hk : utp.Surfaces w k)
+    (hij : i ≤ j) (hjk : j ≤ k) : utp.Surfaces w j :=
   utp.surfaces_def.mpr
     ⟨w.take_subset_take_left (by omega) (utp.surfaces_def.mp hi).1,
       w.drop_subset_drop_left (by omega) (utp.surfaces_def.mp hk).2⟩
 
-theorem _root_.Tone.Surfacing.Surfaces.H_mem (h : utp.Surfaces w i) : .H ∈ w :=
+theorem utp.H_mem_of_surfaces (h : utp.Surfaces w i) : .H ∈ w :=
   List.take_subset _ _ (utp.surfaces_def.mp h).1
 
 /-- Reversal symmetry: under `reverse` the two windows swap. -/
@@ -415,7 +295,7 @@ def plateau (w : List TBU) : Finset ℕ := utp.support w
 @[simp] theorem mem_plateau : j ∈ plateau w ↔ utp.Surfaces w j := utp.mem_support
 
 @[simp] theorem plateau_nonempty : (plateau w).Nonempty ↔ .H ∈ w :=
-  ⟨fun ⟨_, hj⟩ => (mem_plateau.mp hj).H_mem, fun hw =>
+  ⟨fun ⟨_, hj⟩ => utp.H_mem_of_surfaces (mem_plateau.mp hj), fun hw =>
     have ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
     ⟨i, mem_plateau.mpr (utp.surfaces_of_hi hi)⟩⟩
 
@@ -442,7 +322,7 @@ theorem plateau_eq_Icc (hne : (plateau w).Nonempty) :
   ext j
   rw [Finset.mem_Icc]
   refine ⟨fun hj => ⟨(plateau w).min'_le j hj, (plateau w).le_max' j hj⟩, fun ⟨h₁, h₂⟩ =>
-    mem_plateau.mpr ((mem_plateau.mp ((plateau w).min'_mem hne)).of_le_of_le
+    mem_plateau.mpr (utp.surfaces_of_le_of_le (mem_plateau.mp ((plateau w).min'_mem hne))
       (mem_plateau.mp ((plateau w).max'_mem hne)) h₁ h₂)⟩
 
 /-! ### Closure laws
@@ -458,7 +338,7 @@ theorem utp.map_getElem?_H_of_getElem?_H (h : w[i]? = some .H) :
   utp.map_getElem?_hi_of_getElem?_hi h
 
 /-- Surfacing is monotone in the word's H-set. -/
-theorem _root_.Tone.Surfacing.Surfaces.mono {w' : List TBU}
+theorem utp.surfaces_mono {w' : List TBU}
     (hw : ∀ j : ℕ, w[j]? = some TBU.H → w'[j]? = some TBU.H) (h : utp.Surfaces w i) :
     utp.Surfaces w' i := by
   obtain ⟨⟨l, hl, hlH⟩, r, hr, hrH⟩ := utp.surfaces_iff.mp h
@@ -468,12 +348,12 @@ theorem _root_.Tone.Surfacing.Surfaces.mono {w' : List TBU}
 theorem utp.map_mono {w' : List TBU}
     (hw : ∀ j : ℕ, w[j]? = some TBU.H → w'[j]? = some TBU.H) (j : ℕ)
     (h : (utp.map w)[j]? = some TBU.H) : (utp.map w')[j]? = some TBU.H :=
-  utp.map_getElem?_H_iff.mpr ((utp.map_getElem?_H_iff.mp h).mono hw)
+  utp.map_getElem?_H_iff.mpr (utp.surfaces_mono hw (utp.map_getElem?_H_iff.mp h))
 
 /-- Plateauing preserves the presence of a trigger in both directions. -/
 theorem utp.H_mem_map : .H ∈ utp.map w ↔ .H ∈ w :=
   ⟨fun h => have ⟨_, hi⟩ := List.mem_iff_getElem?.mp h
-    (utp.map_getElem?_H_iff.mp hi).H_mem,
+    utp.H_mem_of_surfaces (utp.map_getElem?_H_iff.mp hi),
    fun h => have ⟨i, hi⟩ := List.mem_iff_getElem?.mp h
     List.mem_iff_getElem?.mpr ⟨i, utp.map_getElem?_H_of_getElem?_H hi⟩⟩
 
@@ -554,7 +434,7 @@ example : utp.map [.H, .O, .O, .H] = [.H, .H, .H, .H] := by decide
 Whether the target surfaces is controlled by unboundedly distant flanks: instantiate
 the flank-witness template with `2d+2` toneless TBUs between the flanks. -/
 
-/-- UTP requires both sides ([jardine-2016]): its trigger is the two-sided window
+/-- UTP requires both sides ([jardine-2016a]): its trigger is the two-sided window
 conjunction, so deleting either flanking H reverts the plateau target. -/
 theorem utp.requiresBothSides : RequiresBothSides utp.map :=
   utp.requiresBothSides_of_surfaces_iff fun _ _ => utp.surfaces_def

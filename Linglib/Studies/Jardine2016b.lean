@@ -8,7 +8,7 @@ import Linglib.Phonology.Autosegmental.Correspondence
 /-!
 # Jardine (2016): transformations as correspondence-graph relations
 
-[jardine-2016] (Ch. 7) presents a phonological process as a **relation** between input
+[jardine-2016b] (Ch. 7) presents a phonological process as a **relation** between input
 and output, given by correspondence graphs carved out of GEN by banned-subgraph
 constraints. This file exercises the `Autosegmental.Correspondence` substrate on the
 intervocalic-voicing schema (Jardine's running example): a faithfulness constraint
@@ -24,7 +24,7 @@ and Jardine's *output-only* markedness `*VTV` needs the arc-labelled-subgraph re
 (Ch. 7 fn. 7). Both are deferred — see `Autosegmental/Correspondence.lean`.
 -/
 
-namespace Jardine2016
+namespace Jardine2016b
 
 open Autosegmental Correspondence
 
@@ -160,9 +160,9 @@ theorem gVoice_specified : specifiedByRep [noPP] gVoice := by
   · exact absurd h1 (by decide)
 
 /-- Hence `apa ↔ aba` lies in the relation presented by the local grammar
-    `*[p↔p]`, witnessed by `gVoice` ([jardine-2016] Def. 25). -/
+    `*[p↔p]`, witnessed by `gVoice` ([jardine-2016b] Def. 25). -/
 theorem voicing_local :
     relRep (specifiedByRep [noPP]) [Seg.a, .p, .a] [Seg.a, .b, .a] :=
   ⟨gVoice, gVoice_specified, gVoice_io.1, gVoice_io.2⟩
 
-end Jardine2016
+end Jardine2016b
