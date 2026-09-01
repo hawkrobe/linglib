@@ -116,17 +116,17 @@ the three named readings are exactly `ReichenbachFrame.isPast/isPresent/isFuture
 
 variable {T : Type*} [LinearOrder T]
 
-theorem isPast_iff_atom (f : Time.ReichenbachFrame T) :
+theorem isPast_iff_atom (f : Tense.ReichenbachFrame T) :
     f.isPast ↔ compare f.referenceTime f.perspectiveTime = Ordering.lt := by
-  simp [Time.ReichenbachFrame.isPast, Tense.past]
+  simp [Tense.ReichenbachFrame.isPast, Tense.past]
 
-theorem isPresent_iff_atom (f : Time.ReichenbachFrame T) :
+theorem isPresent_iff_atom (f : Tense.ReichenbachFrame T) :
     f.isPresent ↔ compare f.referenceTime f.perspectiveTime = Ordering.eq := by
-  simp [Time.ReichenbachFrame.isPresent]
+  simp [Tense.ReichenbachFrame.isPresent]
 
-theorem isFuture_iff_atom (f : Time.ReichenbachFrame T) :
+theorem isFuture_iff_atom (f : Tense.ReichenbachFrame T) :
     f.isFuture ↔ compare f.referenceTime f.perspectiveTime = Ordering.gt := by
-  simp [Time.ReichenbachFrame.isFuture, Tense.future]
+  simp [Tense.ReichenbachFrame.isFuture, Tense.future]
 
 end Realization
 

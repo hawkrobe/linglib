@@ -49,7 +49,7 @@ reversing its c-command direction.
 * Temporal de re, counterfactual tense, and relative-clause tense are not addressed.
 -/
 
-open Time
+open Tense
 
 namespace Zeijlstra2012
 

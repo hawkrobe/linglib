@@ -43,7 +43,7 @@ contrast as separate Lean defs would be vacuous.
 
 -/
 
-open Time
+open Tense
 
 namespace Sharvit2003
 

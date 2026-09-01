@@ -45,7 +45,7 @@ structures are equational.
 
 namespace Arka2013
 
-open Time Indonesian Data.Examples
+open Tense Indonesian Data.Examples
 
 /-! ### Tense theory and the status of Indonesian TAM (§2) -/
 

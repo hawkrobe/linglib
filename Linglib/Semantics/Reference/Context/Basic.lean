@@ -14,7 +14,7 @@ projection; `KContext` is the full Kaplanian structure.
 
 -/
 
-open Time
+open Tense
 
 namespace Semantics.Context
 

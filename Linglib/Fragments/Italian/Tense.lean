@@ -29,7 +29,7 @@ PRESENT tense + PERFECT aspect. The auxiliary *avere*/*essere* makes the
 PERF head morphologically transparent.
 -/
 
-open Time
+open Tense
 open Tense
 
 namespace Italian.Tense

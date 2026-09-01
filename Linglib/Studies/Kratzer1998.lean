@@ -51,7 +51,7 @@ judgment.
 
 -/
 
-open Time
+open Tense
 
 namespace Kratzer1998
 

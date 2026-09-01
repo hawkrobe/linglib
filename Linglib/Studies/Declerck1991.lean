@@ -29,7 +29,7 @@ companion volume, [declerck-1991-grammar].
 - `putiDefault`: Declerck's principle of unmarked temporal interpretation
 -/
 
-open Time
+open Tense
 
 namespace Declerck1991
 

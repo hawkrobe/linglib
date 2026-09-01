@@ -47,7 +47,7 @@ embedded tense to the matrix event time in sequence of tense.
 
 -/
 
-open Time
+open Tense
 
 namespace VonStechow2009
 

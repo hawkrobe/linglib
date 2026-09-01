@@ -40,7 +40,7 @@ puzzle (where they actually diverge).
 
 -/
 
-open Time
+open Tense
 
 namespace Ogihara1996
 

@@ -26,7 +26,7 @@ against π — PAST `Tense.past`, PRES `Tense.present`, and ⌈then⌉
 ⌈then⌉-present clash is disjointness of comparison categories.
 -/
 
-open Time
+open Tense
 
 namespace Tense.Perspective
 
