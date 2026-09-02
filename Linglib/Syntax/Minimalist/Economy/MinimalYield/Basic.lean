@@ -5,42 +5,42 @@ import Linglib.Syntax.Minimalist.Workspace.DeletionConservation
 import Linglib.Core.Order.PullbackPreorder
 import Mathlib.Order.OrderDual
 
-open ConnesKreimer
-
 /-!
-# Minimal Yield (MCB Definition 1.6.1)
-[marcolli-chomsky-berwick-2025] §1.6.1, Def 1.6.1 on book p. 63
+# Minimal Yield
 
-M-C-B's **Minimal Yield principle** as a predicate on workspace transformations,
-with the per-merge counting characterizations of **Prop 1.6.4** (EM/IM, p. 66)
-and **Prop 1.6.8** (Sideward, p. 69), on the canonical nonplanar carrier
-`Nonplanar (α ⊕ β)` (`Sum.inl` lexical, `Sum.inr` trace). A *workspace* is a
-`Forest (Nonplanar (α ⊕ β)) = Multiset (Nonplanar (α ⊕ β))`; External Merge of
-`S`, `S'` builds `Nonplanar.node (Sum.inl lbl) {S, S'}`.
+Minimal Yield is a condition on a transformation `F → F'` of workspaces, stated on the size
+measures of `Workspace/TraceMeasures.lean`: the number of components does not grow (no
+divergence), the number of accessible terms does not fall (no information loss), and the number
+of vertices grows by exactly one (minimality of yield). `MinimalYieldWeak` is the first two
+bounds and `MinimalYield` all three. The weak form is monotonicity of the signature `(b₀ᵒᵈ, α)`,
+so it is a pullback preorder on workspaces (`MinimalYieldWeak.pullbackPreorder`).
 
-The principle (Def 1.6.1, eq. 1.6.2) asks of a transformation `Φ`:
-`b₀(Φ F) ≤ b₀ F` (no divergence), `α(Φ F) ≥ α F` (no information loss),
-`σ(Φ F) = σ F + 1` (minimal yield). `MinimalYield` (strong) and
-`MinimalYieldWeak` (first two bounds) are stated relationally.
+The per-case theorems evaluate the condition on the shapes the cases of Merge produce, on the
+carrier `Nonplanar (α ⊕ β)` with `Sum.inl` lexical and `Sum.inr` trace: External Merge satisfies
+it; Internal Merge preserves `b₀`, `α`, `σ` under Δᵈ counting and raises `αᶜ`, `σᶜ` by one under
+Δᶜ counting, given the accessible-term extraction identities; the divergent Sideward cases 3(a)
+and 3(b), which raise `b₀`, violate both forms.
 
-## Per-merge signatures (Prop 1.6.4 + Prop 1.6.8)
+## Main definitions
 
-| Merge | Δb₀ | Δα | Δσ | Strong | Weak |
-|---|---|---|---|---|---|
-| External | −1 | +2 | +1 | ✓ | ✓ |
-| Internal Δᶜ | 0 | +1 | +1 | ✓ | ✓ |
-| Internal Δᵈ | 0 | 0 | 0 | ✗ | ✓ |
-| Sideward 2(b) Δᶜ | 0 | +1 | +1 | ✓ | ✓ |
-| Sideward 3(a)/3(b) | +1 | ⋯ | ⋯ | ✗ | ✗ |
+* `Minimalist.MinimalYieldWeak`, `Minimalist.MinimalYield`
+* `Minimalist.MinimalYield.signature`: the Pareto signature `(b₀ᵒᵈ, α)`.
 
-The size-delta theorems take the accessible-term relation as a hypothesis
-(`accCount`/`accCountC` extraction, MCB Lemma 1.6.3, eqs. 1.6.7/1.6.8);
-Sideward 3(a)/3(b) are ruled out by both forms via Δb₀ > 0.
+## Main results
+
+* `Minimalist.MinimalYield.em_pair`: External Merge satisfies Minimal Yield.
+* `Minimalist.MinimalYield.not_sideward_3a`, `not_sideward_3b`: the divergent Sideward cases do
+  not.
+
+## References
+
+* [marcolli-chomsky-berwick-2025], §1.6.1–1.6.2 (Definition 1.6.1, Lemma 1.6.3,
+  Propositions 1.6.4 and 1.6.8)
 -/
 
-namespace Minimalist.Merge
+namespace Minimalist
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree RoseTree.Nonplanar ConnesKreimer
 
 variable {α β : Type*}
 
@@ -59,22 +59,22 @@ structure MinimalYield (F F' : Forest (Nonplanar (α ⊕ β))) : Prop
 /-! ### `MinimalYieldWeak` as a Pareto pullback preorder -/
 
 /-- The Pareto signature `(b₀ᵒᵈ, α)`, `b₀` dualised so fewer components ranks higher. -/
-def MinimalYieldSignature (F : Forest (Nonplanar (α ⊕ β))) : ℕᵒᵈ × ℕ :=
+def MinimalYield.signature (F : Forest (Nonplanar (α ⊕ β))) : ℕᵒᵈ × ℕ :=
   (OrderDual.toDual (Forest.b₀ F), Forest.alpha F)
 
 theorem minimalYieldWeak_iff_signature_le {F F' : Forest (Nonplanar (α ⊕ β))} :
-    MinimalYieldWeak F F' ↔ MinimalYieldSignature F ≤ MinimalYieldSignature F' :=
+    MinimalYieldWeak F F' ↔ MinimalYield.signature F ≤ MinimalYield.signature F' :=
   ⟨fun ⟨h_b, h_a⟩ => ⟨h_b, h_a⟩, fun ⟨h_b, h_a⟩ => ⟨h_b, h_a⟩⟩
 
 /-- `MinimalYieldWeak` packaged as a `PullbackPreorder`. -/
-def minimalYieldWeakPullbackPreorder :
+def MinimalYieldWeak.pullbackPreorder :
     Core.Order.PullbackPreorder (Forest (Nonplanar (α ⊕ β))) (ℕᵒᵈ × ℕ) :=
-  Core.Order.PullbackPreorder.ofProj MinimalYieldSignature (fun _ _ => inferInstance)
+  Core.Order.PullbackPreorder.ofProj MinimalYield.signature (fun _ _ => inferInstance)
 
 /-! ### External Merge -/
 
 /-- External Merge of a pair satisfies Minimal Yield: Δb₀ = −1, Δα = +2, Δσ = +1. -/
-theorem em_pair_satisfiesMinimalYield (lbl : α) (S S' : Nonplanar (α ⊕ β)) :
+theorem MinimalYield.em_pair (lbl : α) (S S' : Nonplanar (α ⊕ β)) :
     MinimalYield ({S, S'} : Forest (Nonplanar (α ⊕ β)))
                  ({Nonplanar.node (Sum.inl lbl) {S, S'}}) := by
   have hnode : (Nonplanar.node (Sum.inl lbl) {S, S'}).accCount
@@ -189,7 +189,7 @@ theorem sideward_3b_b₀_increases (T_i T_j Tnode T_iq T_jq : Nonplanar (α ⊕ 
   simp only [Multiset.insert_eq_cons, Forest.b₀_cons, Forest.b₀_singleton]
 
 /-- Sideward Merge of type 3(a) violates the weak Minimal Yield principle (Δb₀ > 0). -/
-theorem sideward_3a_violates_noDivergenceWeak (T_i Tnode T_iq : Nonplanar (α ⊕ β)) :
+theorem MinimalYieldWeak.not_sideward_3a (T_i Tnode T_iq : Nonplanar (α ⊕ β)) :
     ¬ MinimalYieldWeak ({T_i} : Forest (Nonplanar (α ⊕ β)))
                        ({Tnode, T_iq} : Forest (Nonplanar (α ⊕ β))) := by
   intro h
@@ -198,7 +198,7 @@ theorem sideward_3a_violates_noDivergenceWeak (T_i Tnode T_iq : Nonplanar (α �
   omega
 
 /-- Sideward Merge of type 3(b) violates the weak Minimal Yield principle (Δb₀ > 0). -/
-theorem sideward_3b_violates_noDivergenceWeak
+theorem MinimalYieldWeak.not_sideward_3b
     (T_i T_j Tnode T_iq T_jq : Nonplanar (α ⊕ β)) :
     ¬ MinimalYieldWeak ({T_i, T_j} : Forest (Nonplanar (α ⊕ β)))
                        ({Tnode, T_iq, T_jq} : Forest (Nonplanar (α ⊕ β))) := by
@@ -207,31 +207,31 @@ theorem sideward_3b_violates_noDivergenceWeak
   rw [sideward_3b_b₀_increases T_i T_j Tnode T_iq T_jq] at hd
   omega
 
-/-- Strong-form corollary of `sideward_3a_violates_noDivergenceWeak`. -/
-theorem sideward_3a_violates_noDivergence (T_i Tnode T_iq : Nonplanar (α ⊕ β)) :
+/-- Strong-form corollary of `MinimalYieldWeak.not_sideward_3a`. -/
+theorem MinimalYield.not_sideward_3a (T_i Tnode T_iq : Nonplanar (α ⊕ β)) :
     ¬ MinimalYield ({T_i} : Forest (Nonplanar (α ⊕ β)))
                    ({Tnode, T_iq} : Forest (Nonplanar (α ⊕ β))) :=
-  fun h => sideward_3a_violates_noDivergenceWeak T_i Tnode T_iq h.toMinimalYieldWeak
+  fun h => MinimalYieldWeak.not_sideward_3a T_i Tnode T_iq h.toMinimalYieldWeak
 
-/-- Strong-form corollary of `sideward_3b_violates_noDivergenceWeak`. -/
-theorem sideward_3b_violates_noDivergence
+/-- Strong-form corollary of `MinimalYieldWeak.not_sideward_3b`. -/
+theorem MinimalYield.not_sideward_3b
     (T_i T_j Tnode T_iq T_jq : Nonplanar (α ⊕ β)) :
     ¬ MinimalYield ({T_i, T_j} : Forest (Nonplanar (α ⊕ β)))
                    ({Tnode, T_iq, T_jq} : Forest (Nonplanar (α ⊕ β))) :=
-  fun h => sideward_3b_violates_noDivergenceWeak T_i T_j Tnode T_iq T_jq h.toMinimalYieldWeak
+  fun h => MinimalYieldWeak.not_sideward_3b T_i T_j Tnode T_iq T_jq h.toMinimalYieldWeak
 
 /-! ### Unit merge -/
 
 /-- The unit-merge stage `{T} → {β, T/β}` violates weak Minimal Yield (Δb₀ > 0). -/
-theorem unitMerge_violates_noDivergenceWeak (T β_t Q : Nonplanar (α ⊕ β)) :
+theorem MinimalYieldWeak.not_unitMerge (T β_t Q : Nonplanar (α ⊕ β)) :
     ¬ MinimalYieldWeak ({T} : Forest (Nonplanar (α ⊕ β)))
                        ({β_t, Q} : Forest (Nonplanar (α ⊕ β))) :=
-  sideward_3a_violates_noDivergenceWeak T β_t Q
+  MinimalYieldWeak.not_sideward_3a T β_t Q
 
-/-- Strong-form corollary of `unitMerge_violates_noDivergenceWeak`. -/
-theorem unitMerge_violates_noDivergence (T β_t Q : Nonplanar (α ⊕ β)) :
+/-- Strong-form corollary of `MinimalYieldWeak.not_unitMerge`. -/
+theorem MinimalYield.not_unitMerge (T β_t Q : Nonplanar (α ⊕ β)) :
     ¬ MinimalYield ({T} : Forest (Nonplanar (α ⊕ β)))
                    ({β_t, Q} : Forest (Nonplanar (α ⊕ β))) :=
-  sideward_3a_violates_noDivergence T β_t Q
+  MinimalYield.not_sideward_3a T β_t Q
 
-end Minimalist.Merge
+end Minimalist

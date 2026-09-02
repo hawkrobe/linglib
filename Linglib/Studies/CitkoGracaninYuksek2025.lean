@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
-import Linglib.Syntax.Minimalist.Economy
+import Linglib.Syntax.Minimalist.Economy.Basic
 import Linglib.Syntax.Question
 /-!
 # Economy in PF Reduction
@@ -52,7 +52,7 @@ multidominance as the PF reduction mechanism.
   [citko-gracanin-yuksek-2025] — live in §2 over that substrate.
 - Pronunciation Economy is the **per-operation** primitive
   `pronunciationEconomy : List PFOperation → Prop` from
-  `Syntax/Minimalist/Economy.lean`. Paper p. 32 ex (45c) needs
+  `Syntax/Minimalist/Economy/Basic.lean`. Paper p. 32 ex (45c) needs
   per-op vacuity (a derivation with one real deletion + one vacuous
   deletion violates), which a whole-derivation `pfBefore ≠ pfAfter`
   check could not express.
@@ -111,7 +111,7 @@ and [wilder-2008] (constituent-sharing flavor).
 /-- The two mechanisms of PF reduction.
 
     Both produce representations where material is interpreted but not
-    pronounced. Economy (`Syntax/Minimalist/Economy.lean`)
+    pronounced. Economy (`Syntax/Minimalist/Economy/Basic.lean`)
     governs the choice between them. -/
 inductive PFReductionMechanism where
   /-- E-feature on a functional head triggers deletion of its complement

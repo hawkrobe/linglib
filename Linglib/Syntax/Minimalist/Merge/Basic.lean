@@ -28,7 +28,7 @@ This file builds the building blocks (`gammaMatch`, `deltaMatch`, `graftBinaryAt
 and assembles `mergeOp`, together with the generic operator `mergeOpG` over an
 arbitrary cut enumeration and its Δ^c instance `mergeOpC`. The three cases of
 Merge are realized in `Merge/External.lean`, `Merge/Internal.lean`, and
-`Merge/Sideward.lean`; the Minimal-Search weighting in `Merge/MinimalSearch.lean`.
+`Merge/Sideward.lean`; the Minimal-Search weighting in `Economy/MinimalSearch.lean`.
 
 ## Merge coproduct: Δ^ρ, not Δ^d
 
