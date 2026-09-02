@@ -38,7 +38,7 @@ classification, the modal selectional restrictions, and the dual-layer denotatio
 ## Main definitions
 
 * `Outlook` — the two-layered denotation: prejacent, counterstance presupposition, and an
-  outlook-indexed stance layer (an `Intension` into CI content).
+  outlook-indexed stance layer (an intension into CI content).
 * `StanceType` — the four evaluative stances ([kubota-2026] (1)-(2)).
 * `Marker` — the per-particle classification (form + stance + modal compatibility).
 * `saltDenotation` — the `Outlook` denotation of a *nanka*/*dōse*-marked clause ((42)).
@@ -46,7 +46,7 @@ classification, the modal selectional restrictions, and the dual-layer denotatio
 ## Main results
 
 * `saltDenotation_not_rigid` — perspective shift, **derived**: the stance layer tracks the
-  outlook (`Intension.IsRigid` fails), so it shifts to the attitude holder under embedding
+  outlook (`IsRigid` fails), so it shifts to the attitude holder under embedding
   ((42)), unlike a pure expressive (`Outlook.ofTwoDimProp`, rigid by construction).
 * `ciItem_resolve_eq_toTwoDimProp`, `ciItem_shifts_iff_not_rigid` — the outlook index
   generalizes [harris-potts-2009]'s orientation variable: a `CIItem` embeds as an `Outlook`
@@ -72,7 +72,7 @@ classification, the modal selectional restrictions, and the dual-layer denotatio
 namespace Kubota2026
 
 open Pragmatics.Expressives (TwoDimProp SecondaryMeaningProperties expressiveProperties)
-open Intensional (Intension)
+open Intensional (IsRigid isRigid_const)
 open Modality (ModalFlavor)
 open Japanese.OutlookMarkers (OutlookMarkerForm)
 open Data.Examples (LinguisticExample)
@@ -225,8 +225,8 @@ theorem modal_row_acceptable_iff_compat :
 
 The two-layered denotation of [kubota-2026] §3: an at-issue prejacent, a presupposed salient
 counterstance, and a stance layer indexed by an outlook `O`. Perspective shift ((42)) is
-*derived*: the stance layer is an `Intension O (W → Prop)`, and shiftability is exactly the
-failure of `Intension.IsRigid` — a pure expressive is the constant (rigid) family, so it
+*derived*: the stance layer is an intension `O → W → Prop`, and shiftability is exactly the
+failure of `IsRigid` — a pure expressive is the constant (rigid) family, so it
 cannot shift. -/
 
 /-- An outlook-indexed two-layered meaning ([kubota-2026] §3): at-issue content is shared
@@ -238,7 +238,7 @@ structure Outlook (W O : Type*) where
   /-- Presupposed salient counterstance ([kubota-2026] (37)-(39)). -/
   counterstance : W → Prop
   /-- Evaluative stance layer, relative to an outlook. -/
-  evaluation : Intension O (W → Prop)
+  evaluation : O → W → Prop
 
 namespace Outlook
 
@@ -260,26 +260,26 @@ theorem counterstance_projects_through_neg (m : Outlook W O) :
 theorem ci_projects_through_neg (m : Outlook W O) (o : O) :
     (TwoDimProp.neg (m.toTwoDimProp o)).ci = m.evaluation o := rfl
 
-/-- An outlook is **rigid** when its stance layer ignores the outlook — `Intension.IsRigid`
+/-- An outlook is **rigid** when its stance layer ignores the outlook — `IsRigid`
 applied to `evaluation`. Perspective shift is exactly the failure of this. -/
-def IsRigid (m : Outlook W O) : Prop := Intension.IsRigid m.evaluation
+def IsRigid (m : Outlook W O) : Prop := Intensional.IsRigid m.evaluation
 
 /-- A `TwoDimProp` (a pure expressive — a single, speaker-rigid CI) as the constant outlook
-family — `Intension.rigid` on the CI tier, with the trivial counterstance. -/
+family — the constant family on the CI tier, with the trivial counterstance. -/
 def ofTwoDimProp (t : TwoDimProp W) : Outlook W O where
   prejacent := t.atIssue
   counterstance := fun _ => True
-  evaluation := Intension.rigid t.ci
+  evaluation := fun _ => t.ci
 
 @[simp] theorem ofTwoDimProp_toTwoDimProp (t : TwoDimProp W) (o : O) :
     (ofTwoDimProp t).toTwoDimProp o = t := rfl
 
-/-- Every embedded `TwoDimProp` is rigid by construction (`Intension.rigid_isRigid`) — on
+/-- Every embedded `TwoDimProp` is rigid by construction (`isRigid_const`) — on
 [potts-2005]'s speaker-orientation idealization, a pure expressive does not shift;
 [harris-potts-2009] document pragmatic non-speaker orientation even unembedded, so rigidity
 models the idealization, not an absolute. -/
 theorem ofTwoDimProp_isRigid (t : TwoDimProp W) : (ofTwoDimProp (O := O) t).IsRigid :=
-  Intension.rigid_isRigid t.ci
+  isRigid_const t.ci
 
 end Outlook
 
@@ -298,12 +298,11 @@ def saltDenotation : Outlook Unit Bool where
 
 /-- **Perspective shift, derived** ([kubota-2026] (42)): the marker's stance layer is not
 rigid — it differs across outlooks, so under embedding it shifts to the holder (a
-local-accommodation pattern, [heim-1992]). Routed through `Intension.varying_not_rigid`;
+local-accommodation pattern, [heim-1992]). 
 this is the structural fact mirrored by the `allowsPerspectiveShift` diagnostic (see
 `outlookMarker_shifts_unlike_expressive`). -/
-theorem saltDenotation_not_rigid : ¬ saltDenotation.IsRigid :=
-  Intension.varying_not_rigid saltDenotation.evaluation true false fun h => by
-    simpa [saltDenotation] using congrFun h ()
+theorem saltDenotation_not_rigid : ¬ saltDenotation.IsRigid := fun hr => by
+  simpa [saltDenotation] using congrFun (hr true false) ()
 
 /-- Contrast: a pure expressive (`Outlook.ofTwoDimProp`) is rigid — it cannot perspective
 shift. The difference between this and `saltDenotation_not_rigid` *is* the
@@ -338,7 +337,7 @@ theorem ciItem_shifts_iff_not_rigid {Person W : Type}
     (item : HarrisPotts2009.CIItem Person W) :
     (∃ o₁ o₂, item.resolve o₁ ≠ item.resolve o₂) ↔ ¬ item.toOutlook.IsRigid := by
   simp [HarrisPotts2009.CIItem.resolve, HarrisPotts2009.CIItem.toOutlook, Outlook.IsRigid,
-    Intensional.Intension.IsRigid, TwoDimProp.mk.injEq, not_forall]
+    Intensional.IsRigid, TwoDimProp.mk.injEq, not_forall]
 
 /-- The counterstance projects through negation (via `PartialProp.neg`), and the CI tier
 projects at each outlook (via `TwoDimProp.neg`) — the dual presupposition/CI projection. -/

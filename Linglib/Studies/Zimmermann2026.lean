@@ -103,7 +103,7 @@ over (16b) for *bí*. -/
 theorem bi_reading_not_narrow :
     ∀ d ∈ Owusu2022.skolemDenot Owusu2022.preferAma () .bi,
       ¬ ((¬ ∃ x, Owusu2022.ToDwom x) ↔
-        ¬ Owusu2022.ToDwom (d (Intensional.Intension.rigid (fun _ => True)))) :=
+        ¬ Owusu2022.ToDwom (d (fun _ _ => True))) :=
   fun d hd h =>
     h.mpr (Owusu2022.bi_wide_scope_witnessed d hd) Owusu2022.someone_sang
 
@@ -118,7 +118,7 @@ pronoun coincide under negation — for any CF and restrictor; the wide
 the construals (`bound_free_diverge_box`), so the collapse is negation's
 extensionality at work, not a triviality. -/
 theorem bi_negation_construals_collapse {S E : Type*}
-    (f : SkolemCF S E) (s₀ : S) (P : Intensional.Intension S (E → Prop))
+    (f : SkolemCF S E) (s₀ : S) (P : S → E → Prop)
     (VP : E → S → Prop) :
     ((fun p s => ¬ p s)
         (fun s => VP (f.applyIntensionAt .bound s s₀ P) s) s₀ ↔

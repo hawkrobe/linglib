@@ -25,7 +25,8 @@ composition engine's runtime type dispatch.
 
 ## References
 
-* [D. Dowty, R. Wall, S. Peters, *Introduction to Montague Semantics* (1981)][dowty-wall-peters-1981]
+* [D. Dowty, R. Wall, S. Peters, *Introduction to Montague Semantics*
+  (1981)][dowty-wall-peters-1981]
 * [D. Gallin, *Intensional and Higher-Order Modal Logic* (1975)][gallin-1975]
 * [B. Partee, M. Rooth, *Generalized Conjunction and Type Ambiguity* (1983)][partee-rooth-1983]
 -/

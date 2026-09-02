@@ -119,7 +119,6 @@ def embeddedSickShifted : ReichenbachFrame ℤ := embeddedFrame matrixSaid (-5) 
 /-- *Mary is sick*, double access: embedded reference at the saying, event at speech time. -/
 def embeddedSickPresent : ReichenbachFrame ℤ := embeddedFrame matrixSaid (-2) 0
 
-
 -- ============================================================================
 -- § SOT Embedding = Temporal Shift
 -- ============================================================================
@@ -243,8 +242,6 @@ theorem nested_double_access :
 -- § F3. Phase F bridge: Schlenker (origin reading) ↔ Abusch (double access)
 -- ============================================================================
 
-
-
 -- ============================================================================
 -- § Substrate Bridge: Schlenker tower-shifts ↔ Abusch `TimeConcept`s
 -- ============================================================================
@@ -253,7 +250,7 @@ theorem nested_double_access :
     framework to the `TimeConcept` substrate
     (`Semantics/Tense/DeRe.lean`). Both formalisms resolve
     against the same `KContext` substrate (= `TenseCtx`); the
-    substrate's `Intension.IsRigid` predicate distinguishes
+    substrate's `IsRigid` predicate distinguishes
     Kaplan-stable readings (Schlenker's `presentAccess`, origin depth)
     from shifted readings (`shiftedAccess`, local depth).
 
@@ -262,7 +259,7 @@ theorem nested_double_access :
     theory of Abusch 1997, and especially of her Upper Limit
     Constraint." This bridge makes that relationship substrate-level
     structural: both frameworks discriminate Kaplan-stable from
-    shifted via `Intension.IsRigid`, and `IsRigid.map` lifts
+    shifted via `IsRigid`, and `IsRigid.map` lifts
     the discrimination uniformly across `Res` types — so the
     parallel with [anand-nevins-2004]'s Kaplan-compliant vs
     shifted indexicals at `Res = Agent` is
@@ -291,9 +288,9 @@ open Tense.DeRe (TimeConcept TemporalDeReReading)
     as a rigid `TimeConcept`**: the Kaplan-stable origin reading IS
     the constant intension at speech time. Both formalisms encode
     Kaplan's thesis at the substrate level — Schlenker via tower
-    `.origin` access, the time-concept substrate via `Intension.rigid`. -/
+    `.origin` access, the time-concept substrate via a constant intension. -/
 def schlenkerPresent : TimeConcept Unit Unit Unit ℤ :=
-  Intensional.Intension.rigid 0
+  fun _ => 0
 
 /-- [schlenker-2004-sot]'s **`shiftedAccess` (local reading)
     as a non-rigid `TimeConcept`**: the local-context reading IS the
@@ -307,7 +304,7 @@ def schlenkerShifted : TimeConcept Unit Unit Unit ℤ :=
 /-- **Bridge**: `presentAccess.resolve sotTower` IS `schlenkerPresent`
     evaluated at any context. The rigid-concept value is constant —
     both Schlenker's tower `.origin` mechanism and Abusch's
-    `Intension.rigid` predict the same value (= speech time). -/
+    the constant intension predict the same value (= speech time). -/
 theorem presentAccess_eq_schlenkerPresent (c : TenseCtx) :
     presentAccess.resolve sotTower = schlenkerPresent c := rfl
 
@@ -320,19 +317,18 @@ theorem shiftedAccess_eq_schlenkerShifted :
 
 /-- **`schlenkerPresent` is rigid** (Kaplan-stable). Substrate-level
     witness for the SOT chapter's origin-access mechanism. -/
-theorem schlenkerPresent_isRigid : Intensional.Intension.IsRigid schlenkerPresent :=
-  Intensional.Intension.rigid_isRigid _
+theorem schlenkerPresent_isRigid : Intensional.IsRigid schlenkerPresent :=
+  Intensional.isRigid_const _
 
 /-- **`schlenkerShifted` is non-rigid** (the SOT chapter's shifted
     reading varies with context). Discriminating witness: contexts
     with different `.time` fields (speech time 0 vs matrix event
     time −2). -/
-theorem schlenkerShifted_not_isRigid : ¬ Intensional.Intension.IsRigid schlenkerShifted := by
+theorem schlenkerShifted_not_isRigid : ¬ Intensional.IsRigid schlenkerShifted := by
   intro h
   have hContradiction : (0 : ℤ) = -2 :=
     h speechCtx { speechCtx with time := -2 }
   exact absurd hContradiction (by decide)
-
 
 -- ============================================================================
 -- § Cross-Framework Agreement (Schlenker ↔ Abusch on simultaneous SOT)
@@ -370,13 +366,12 @@ theorem schlenker_abusch_agree_on_simultaneous_value
   show matrixSaid.eventTime = _
   exact (tp.bound_resolve_eq_binder g matrixSaid.eventTime).symm
 
-
 -- ============================================================================
 -- § Architectural Alignment (Schlenker ↔ Abusch ↔ Anand-Nevins)
 -- ============================================================================
 
-/-- **Architectural alignment via `Intension.IsRigid` functoriality**:
-    the substrate's `Intension.IsRigid` predicate distinguishes
+/-- **Architectural alignment via `IsRigid` functoriality**:
+    the substrate's `IsRigid` predicate distinguishes
     Kaplan-stable from shifted readings uniformly across all three
     frameworks at the substrate level. The same closure lemmas
     (`IsRigid.map`, `IsRigid.precomp`, `IsRigid.of_map_injective`
@@ -388,8 +383,8 @@ theorem schlenker_abusch_agree_on_simultaneous_value
     | [abusch-1997]         | rigid `TimeConcept`| bound `TimeConcept`|
     | [anand-nevins-2004]   | rigid `I` (Agent)  | shifted `I` (Agent) |
 
-    All three rows discriminate via `Intension.IsRigid`. By
-    `Intension.IsRigid.map`, rigidity transfers across `Res` types
+    All three rows discriminate via `IsRigid`. By
+    `IsRigid.map`, rigidity transfers across `Res` types
     via any function — so the cross-`Res`-type parallel between
     Schlenker's tower analysis (Res = ℤ), Abusch's res-movement
     (Res = ℤ), and Anand-Nevins's operator-shift (Res = Agent) is
@@ -398,23 +393,22 @@ theorem schlenker_abusch_agree_on_simultaneous_value
     mechanisms.
 
     The witness here bundles `schlenkerPresent_isRigid` and
-    `schlenkerShifted_not_isRigid`; the SAME `Intension.IsRigid`
+    `schlenkerShifted_not_isRigid`; the SAME `IsRigid`
     predicate proves both at `Res = ℤ`, parallel to [anand-nevins-2004]'s Kaplan-compliant
     and shifted first person at `Res = Agent`. -/
 theorem schlenker_substrate_aligned_with_isRigid :
-    Intensional.Intension.IsRigid schlenkerPresent ∧
-    ¬ Intensional.Intension.IsRigid schlenkerShifted :=
+    Intensional.IsRigid schlenkerPresent ∧
+    ¬ Intensional.IsRigid schlenkerShifted :=
   ⟨schlenkerPresent_isRigid, schlenkerShifted_not_isRigid⟩
 
 /-- **`Intension` functoriality applied to Schlenker**: rigidity of
     `schlenkerPresent` transfers across `Res` types via any
-    function `g : ℤ → α`, by `Intension.IsRigid.map`. So
+    function `g : ℤ → α`, by `IsRigid.map`. So
     Schlenker's Kaplan-stability is preserved by the substrate's
     functoriality just as [anand-nevins-2004]'s Kaplan-compliant `I` is —
     both are instances of the same architectural pattern. -/
 theorem schlenkerPresent_lifts_rigidly {α : Type*} (g : ℤ → α) :
-    Intensional.Intension.IsRigid (fun c : TenseCtx => g (schlenkerPresent c)) :=
+    Intensional.IsRigid (fun c : TenseCtx => g (schlenkerPresent c)) :=
   schlenkerPresent_isRigid.map g
-
 
 end Schlenker2004

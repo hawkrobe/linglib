@@ -57,7 +57,7 @@ def intensionalComparative (μ : W → Entity → D) (w : W) (a b : Entity) : Pr
 /-- A rigid measure reduces `intensionalComparative` to the extensional
 `comparativeSem`. -/
 theorem intensionalComparative_rigid (μe : Entity → D) (w : W) (a b : Entity) :
-    intensionalComparative (Intension.rigid μe) w a b ↔
+    intensionalComparative (fun _ => μe) w a b ↔
       comparativeSem μe a b .positive :=
   Iff.rfl
 
