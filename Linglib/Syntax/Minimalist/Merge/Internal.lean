@@ -1,41 +1,30 @@
 import Linglib.Syntax.Minimalist.Merge.External
 
 /-!
-# Internal Merge bridge: algebraic ↔ linguistic
-[marcolli-chomsky-berwick-2025]
+# Internal Merge as a composition of Merges
 
-Realizes M-C-B Proposition 1.4.2 (book p. 50): Internal Merge as a
-**composition of two algebraic Merges** on the canonical carrier
-`ConnesKreimer R (Nonplanar α)` —
+Internal Merge (Proposition 1.4.2) on the canonical carrier `ConnesKreimer R (Nonplanar α)` is a
+composition of two algebraic Merges,
 
-  IM(mover, T) = mergeOp lbl mover (T/mover) ∘ mergeOpUnit mover
+  IM(mover, T) = mergeOp lbl mover (T/mover) ∘ mergeOpUnit mover,
 
-where the first stage `mergeOpUnit mover` selects the Δ^ρ cut on `T` whose crown
-forest equals `{mover}` (yielding `mover ⊗ (T/mover)`), and the second stage
-performs External Merge between mover and the deletion-quotient.
+where the first stage `mergeOpUnit mover` selects the Δ^ρ cut on `T` whose crown forest is
+`{mover}`, yielding `mover ⊗ (T/mover)`, and the second stage is External Merge of the mover with
+the deletion quotient. The unit stage `M_{β,1}` is a bookkeeping device that factors Internal
+Merge as a composition, not a stand-alone Merge. The carrier-level form on `SyntacticObject` is
+`SyntacticObject.intMerge_toForest` in `Merge/SyntacticObject.lean`.
 
-## Contents
+## Main results
 
-- `mergeOpUnit_apply_singleton{,_unique}`: per-cut decomposition of the unit-mover
-  stage `mergeOpUnit β`. Surviving contributions are exactly the `cutSummandsN T`
-  summands `p` with `p.1 = {β}`. Under uniqueness (the filtered sub-multiset is the
-  singleton `{p0}`), the sum collapses.
-- `mergeOp_im_composition`, `mergeOp_im_composition_moverLeft`: the IM composition
-  theorem. Under the unique-cut hypothesis, the two-stage pipeline reduces to EM
-  Case 1 (`mergeOp_pair`).
-- `mergeOp_im_matches_Step`: bridge to linguistic `Step.im` via
-  `((Step.im mover traceId).apply current).toNonplanar`.
+* `Minimalist.Merge.mergeOpUnit_apply_singleton`, `mergeOpUnit_apply_singleton_unique`: the
+  per-cut decomposition of the unit stage; only cuts with crown `{β}` contribute, and when that
+  cut is unique the sum collapses.
+* `Minimalist.Merge.mergeOp_im_composition`, `mergeOp_im_composition_moverLeft`: under the
+  unique-cut hypothesis the two-stage pipeline reduces to `mergeOp_pair`.
 
-## Deferred (substrate gap)
+## References
 
-§4 — IM cost-survival at ε = 0 (`mergeOp_eps_zero_im_*`, MCB Prop 1.5.1 bullet 3)
-— rides the same ε-weighted Δ^ρ gap as `External`'s ε arc (no `cutTotalDepth` on
-`cutSummandsN`). Queued behind that substrate.
-
-**Caveat (M-C-B p. 52 "virtual particles"):** the `mergeOpUnit` stage M_{β,1} is
-virtual — not a stand-alone Merge in M-C-B's formalism. It is introduced as a
-bookkeeping device to factor IM as composition; the linguistic Merge is the full
-IM, not the unit stage on its own.
+* [marcolli-chomsky-berwick-2025], §1.4 (Proposition 1.4.2)
 -/
 
 namespace Minimalist.Merge
@@ -155,12 +144,5 @@ theorem mergeOp_im_composition
       show ({β} : Forest (Nonplanar α)) + {Q} = ({Q, β} : Forest (Nonplanar α))
         from add_comm _ _]
   exact mergeOp_pair lbl Q β
-
-/-! The linguistic Internal-Merge bridge `mergeOp_im_matches_Step` (which related the
-`mergeOp ∘ mergeOpUnit` composition on the head-decorated `toNonplanar` projection to
-the legacy `Step.im` + `⊕ Nat` trace index) has been retired by the single-carrier
-migration. On the bare `SyntacticObject` carrier the bridge is `Workspace.lean`'s
-`SyntacticObject.intMerge_toForest` (`mergeOp_im_composition` with the bare `Sum.inr ()` label and
-the index-free `SyntacticObject.traceLeaf`). -/
 
 end Minimalist.Merge

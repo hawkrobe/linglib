@@ -1,10 +1,10 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
+import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Mathlib.LinearAlgebra.TensorProduct.Basic
 import Mathlib.RingTheory.TensorProduct.Maps
 
 /-!
 # Merge operator on the Connes–Kreimer bialgebra of nonplanar forests
-[marcolli-chomsky-berwick-2025]
 
 Per [marcolli-chomsky-berwick-2025] §1.3 (Definitions 1.3.1, 1.3.2, 1.3.4),
 the linguistic **Merge operator** `M_{S,S'}` for a pair `(S, S') : Nonplanar α`
@@ -25,8 +25,10 @@ on the canonical carrier `ConnesKreimer R (Nonplanar α)`, where:
   union, the algebra structure).
 
 This file builds the building blocks (`gammaMatch`, `deltaMatch`, `graftBinaryAt`)
-and assembles `mergeOp`. Bridges to linguistic `Step.apply` live in
-`Merge.External` (EM) and `Merge.Internal` (IM).
+and assembles `mergeOp`, together with the generic operator `mergeOpG` over an
+arbitrary cut enumeration and its Δ^c instance `mergeOpC`. The three cases of
+Merge are realized in `Merge/External.lean`, `Merge/Internal.lean`, and
+`Merge/Sideward.lean`; the Minimal-Search weighting in `Merge/MinimalSearch.lean`.
 
 ## Merge coproduct: Δ^ρ, not Δ^d
 
@@ -37,9 +39,9 @@ only in the remainder, which `mergePost` discards when grafting the pair — so
 merge correctness is unaffected. Δ^ρ is the n-ary-faithful deletion (MCB's
 binary Δ^d `+2` is a rebinarization artifact).
 
-The **cost-weighted** Merge `M^ε` (eq. 1.5.1) is deferred: it needs an
-ε-weighted Δ^ρ (a `cutTotalDepth` analogue on `cutSummandsN`), not yet in the
-substrate.
+## References
+
+* [marcolli-chomsky-berwick-2025], §1.3 (Definitions 1.3.1, 1.3.2, 1.3.4)
 -/
 
 namespace Minimalist.Merge
@@ -400,5 +402,28 @@ theorem mergeOpUnit_one (β : Nonplanar α) :
       rw [h]
     simp only [Multiset.card_zero, Multiset.card_singleton] at this
     omega)]
+
+/-! ### The generic operator over a cut enumeration -/
+
+/-- The generic Merge operator `M_{S,S'}^{cuts}` over a cut enumeration `cuts`:
+    `mergePost lbl S S' ∘ comulAlgHomNG cuts`. Only the coproduct varies with `cuts`; the
+    post-chain of graft, δ-projection, and multiplication is shared. -/
+noncomputable def mergeOpG (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α))
+    (lbl : α) (S S' : Nonplanar α) :
+    ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
+  mergePost (R := R) (α := α) lbl S S' ∘ₗ (comulAlgHomNG cuts).toLinearMap
+
+/-- The Δ^ρ operator `mergeOp` is the generic operator at `cuts := cutSummandsN`. -/
+theorem mergeOp_eq_G (lbl : α) (S S' : Nonplanar α) :
+    mergeOp (R := R) lbl S S' = mergeOpG (R := R) cutSummandsN lbl S S' := rfl
+
+omit [DecidableEq (Nonplanar α)] in
+/-- The Δ^c (trace) Merge operator, the generic operator at `cuts := cutSummandsCN τ`. Its
+    quotients carry a trace leaf at each cut site at the cut depth, so the Minimal-Search cost
+    `Cut.depthC` is recoverable from them. -/
+noncomputable def mergeOpC {β : Type*} [DecidableEq (Nonplanar (α ⊕ β))]
+    (τ : Nonplanar (α ⊕ β) → β) (lbl : α ⊕ β) (S S' : Nonplanar (α ⊕ β)) :
+    ConnesKreimer R (Nonplanar (α ⊕ β)) →ₗ[R] ConnesKreimer R (Nonplanar (α ⊕ β)) :=
+  mergeOpG (R := R) (cutSummandsCN τ) lbl S S'
 
 end Minimalist.Merge

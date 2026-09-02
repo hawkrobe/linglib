@@ -1,8 +1,7 @@
 import Linglib.Syntax.Minimalist.Merge.External
 
 /-!
-# Sideward Merge: realization on the canonical carrier
-[marcolli-chomsky-berwick-2025]
+# Sideward Merge on the algebraic carrier
 
 Realizes M-C-B Lemmas 1.4.4 + 1.4.5 (book pp. 54-55) for the three
 Sideward-flavored cases of §1.4.1 on the canonical carrier
@@ -32,13 +31,9 @@ For each case 2b, 3a, 3b:
   `Fhat` via `mergeOp_factor_out_singleton` (from `Merge.External`),
   under `CutAvoidingForest`.
 
-## Deferred (substrate gap)
+## References
 
-The §1.5 cost-suppression theorems (`mergeOp_eps_zero_for_sideward_*`,
-showing Sideward configurations vanish in the ε → 0 Minimal-Search limit)
-ride the same ε-weighted Δ^ρ gap as `External`/`Internal`'s ε arc: there
-is no `cutTotalDepth` analogue on `cutSummandsN` yet. They are queued
-behind that substrate and omitted here.
+* [marcolli-chomsky-berwick-2025], §1.4 (Lemmas 1.4.4, 1.4.5)
 -/
 
 namespace Minimalist.Merge
@@ -49,15 +44,13 @@ open RoseTree RoseTree.Nonplanar ConnesKreimer
 /-! ### Matching-cut multisets -/
 
 /-- Cut summands of `T` whose crown forest is the singleton `{β}` (single
-    accessible-term extraction). The `cutSummandsN` analogue of legacy
-    `matchingSingleEdgeCuts`. -/
+    accessible-term extraction). -/
 noncomputable def matchingSingleEdgeCutsN {α : Type*} [DecidableEq (Nonplanar α)]
     (T β : Nonplanar α) : Multiset (Forest (Nonplanar α) × Nonplanar α) :=
   (cutSummandsN T).filter (fun p => p.1 = ({β} : Forest (Nonplanar α)))
 
 /-- Cut summands of `T` whose crown forest is `{α_t, β}` (two accessible
-    terms, case 3(a)). The `cutSummandsN` analogue of legacy
-    `matchingTwoEdgeCuts`. -/
+    terms, case 3(a)). -/
 noncomputable def matchingTwoEdgeCutsN {α : Type*} [DecidableEq (Nonplanar α)]
     (T α_t β : Nonplanar α) : Multiset (Forest (Nonplanar α) × Nonplanar α) :=
   (cutSummandsN T).filter (fun p => p.1 = ({α_t, β} : Forest (Nonplanar α)))
@@ -522,9 +515,10 @@ theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R]
                   = ({T} : Forest (Nonplanar α))
                     + (({T_i, T_j} : Forest (Nonplanar α)) + Fhat') := by
       rw [show T ::ₘ Fhat' = ({T} : Forest (Nonplanar α)) + Fhat' from rfl]; abel
-    have h_rhs_eq : ({Nonplanar.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (Nonplanar α)) + T ::ₘ Fhat'
-                  = ({T} : Forest (Nonplanar α))
-                    + (({Nonplanar.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (Nonplanar α)) + Fhat') := by
+    have h_rhs_eq :
+        ({Nonplanar.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (Nonplanar α)) + T ::ₘ Fhat'
+          = ({T} : Forest (Nonplanar α))
+            + (({Nonplanar.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (Nonplanar α)) + Fhat') := by
       rw [show T ::ₘ Fhat' = ({T} : Forest (Nonplanar α)) + Fhat' from rfl]; abel
     rw [h_lhs_eq, h_rhs_eq, of'_add (R := R) ({T} : Forest (Nonplanar α)) _,
         of'_add (R := R) ({T} : Forest (Nonplanar α)) _,
