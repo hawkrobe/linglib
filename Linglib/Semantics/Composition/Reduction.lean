@@ -62,16 +62,15 @@ structure FOWords where
   or_ : String := "or"
 
 /-- The logical vocabulary's lexicon entries: GQ denotations from
-`Quantification`, truth-functional connectives from
-`Intensional`. The connectives flip arguments so that
+`Quantification` and the truth-functional connectives, which flip arguments so that
 `[t₁ [and t₂]]` composes to `⟦t₁⟧ ∧ ⟦t₂⟧`. -/
 def FOWords.lexicon (fw : FOWords) (E W : Type) : Lexicon E W := fun s =>
   if s = fw.every then some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, every_sem⟩
   else if s = fw.some_ then some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, some_sem⟩
   else if s = fw.no then some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, no_sem⟩
-  else if s = fw.not_ then some ⟨.t ⇒ .t, neg⟩
-  else if s = fw.and_ then some ⟨.t ⇒ .t ⇒ .t, fun q p => conj p q⟩
-  else if s = fw.or_ then some ⟨.t ⇒ .t ⇒ .t, fun q p => disj p q⟩
+  else if s = fw.not_ then some ⟨.t ⇒ .t, Not⟩
+  else if s = fw.and_ then some ⟨.t ⇒ .t ⇒ .t, fun q p => p ∧ q⟩
+  else if s = fw.or_ then some ⟨.t ⇒ .t ⇒ .t, fun q p => p ∨ q⟩
   else none
 
 /-- A naming-map lexicon extended with the logical vocabulary. Content words
@@ -217,19 +216,19 @@ theorem lexicon_no (hnd : fw.Nodup) :
   simp [FOWords.lexicon, h1, h2]
 
 theorem lexicon_not (hnd : fw.Nodup) :
-    fw.lexicon E W fw.not_ = some ⟨.t ⇒ .t, neg⟩ := by
+    fw.lexicon E W fw.not_ = some ⟨.t ⇒ .t, Not⟩ := by
   obtain ⟨_, _, ⟨h1, h2, h3⟩, _, _⟩ := nodup_ne hnd
   simp [FOWords.lexicon, h1, h2, h3]
 
 theorem lexicon_and (hnd : fw.Nodup) :
     fw.lexicon E W fw.and_
-      = some ⟨.t ⇒ .t ⇒ .t, fun q p => conj p q⟩ := by
+      = some ⟨.t ⇒ .t ⇒ .t, fun q p => p ∧ q⟩ := by
   obtain ⟨_, _, _, ⟨h1, h2, h3, h4⟩, _⟩ := nodup_ne hnd
   simp [FOWords.lexicon, h1, h2, h3, h4]
 
 theorem lexicon_or (hnd : fw.Nodup) :
     fw.lexicon E W fw.or_
-      = some ⟨.t ⇒ .t ⇒ .t, fun q p => disj p q⟩ := by
+      = some ⟨.t ⇒ .t ⇒ .t, fun q p => p ∨ q⟩ := by
   obtain ⟨_, _, _, _, ⟨h1, h2, h3, h4, h5⟩⟩ := nodup_ne hnd
   simp [FOWords.lexicon, h1, h2, h3, h4, h5]
 
@@ -549,7 +548,6 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
       interpBinary_t_tt]
     refine some_t_congr ?_
     rw [m.realizeAt_inf w g]
-    exact Iff.rfl
   | case6 a l a₁ a₂ t₂ hl₁ hl₂ hne ihl iht =>
     -- coordination [l [or t₂]]
     intro φ g h
@@ -565,7 +563,6 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
       interpBinary_t_tt]
     refine some_t_congr ?_
     rw [m.realizeAt_sup w g]
-    exact Iff.rfl
   | case7 a l a₁ a₂ s t₂ hl₁ hl₂ hs₁ hs₂ =>
     intro φ g h
     simp only [compileFO, if_neg hs₁, if_neg hs₂] at h

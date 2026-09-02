@@ -1,4 +1,4 @@
-import Linglib.Semantics.Quantification.Defs
+import Linglib.Semantics.Quantification.Basic
 
 /-!
 # Polyadic Quantifiers
@@ -75,6 +75,12 @@ def surfaceScope (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop
 
 def inverseScope (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Prop :=
   iterate Q₂ Q₁ B A (λ y x => R x y)
+
+/-- `∃∀ ⊨ ∀∃`: an existential scoping over a universal entails the universal scoping over
+the existential, so the two linear readings of an *every*/*some* pair are nested. -/
+theorem iterate_every_some_of_some_every (A B : α → Prop) (R : α → α → Prop)
+    (h : iterate some_sem every_sem A B R) : iterate every_sem some_sem B A (flip R) :=
+  let ⟨x, hx, hall⟩ := h; fun y hy => ⟨x, hx, hall y hy⟩
 
 /-! ### Monotonicity Inheritance -/
 

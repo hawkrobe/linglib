@@ -78,9 +78,9 @@ theorem isIntersective.isSubsective {m : Modifier α}
 
 /-- The intersective modifier built from `q`: meet the modificand with `q`.
     At `α → Prop` this is pointwise conjunction; at conjoinable `Denot`
-    domains (`Intensional/Algebra.lean` instances) it is Partee-Rooth
-    generalized conjunction with the head. The well-behaved special case
-    (restrictive relative clauses, intersective adjectives, manner adverbs). -/
+    domains it is Partee-Rooth generalized conjunction with the head. The
+    well-behaved special case (restrictive relative clauses, intersective
+    adjectives, manner adverbs). -/
 def intersective (q : α) : Modifier α := (q ⊓ ·)
 
 @[simp] theorem intersective_apply {β : Type*} (P Q : β → Prop) (x : β) :

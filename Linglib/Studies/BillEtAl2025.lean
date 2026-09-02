@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Conjunction
+import Linglib.Semantics.Quantification.Defs
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Syntax.Coordination
 import Linglib.Studies.Haspelmath2007
@@ -122,24 +122,20 @@ theorem mu_kind_differs :
 
 /-! ### The decomposition -/
 
-open Intensional.Conjunction in
 open Quantification (individual) in
-/-- The decomposition — singleton shift, subset, intersection — is the substrate's
-`coordEntities`, so *DP₁ and DP₂ VP* comes out as `VP(DP₁) ∧ VP(DP₂)` (Figure 2). -/
-theorem ms_decomposition_eq_coord {E W : Type} (e1 e2 : E) (p : E → Prop) :
-    (individual (α := E) e1 p ∧ individual (α := E) e2 p) =
-      coordEntities (E := E) (W := W) e1 e2 p :=
+/-- The decomposition — singleton shift, subset, intersection — is the meet of the raised
+conjuncts, so *DP₁ and DP₂ VP* comes out as `VP(DP₁) ∧ VP(DP₂)` (Figure 2). -/
+theorem ms_decomposition_eq_coord {E : Type} (e1 e2 : E) (p : E → Prop) :
+    (individual e1 ⊓ individual e2) p = (p e1 ∧ p e2) :=
   rfl
 
-open Intensional.Conjunction in
 open Quantification (individual) in
 open Plurality in
 open Plurality.Distributivity in
 /-- The decomposition is distributive predication over the pair of conjuncts. -/
-theorem mu_is_distributive_check {E W : Type} [DecidableEq E]
+theorem mu_is_distributive_check {E : Type} [DecidableEq E]
     (e1 e2 : E) (P : E → Unit → Prop) [∀ a u, Decidable (P a u)] :
-    coordEntities (E := E) (W := W) e1 e2 (fun a => P a ()) ↔
-    distMaximal P {e1, e2} () := by
-  simp [coordEntities_both_satisfy, distMaximal_pair]
+    (individual e1 ⊓ individual e2) (fun a => P a ()) ↔ distMaximal P {e1, e2} () := by
+  simp [individual, distMaximal_pair]
 
 end BillEtAl2025

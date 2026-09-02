@@ -1,4 +1,4 @@
-import Linglib.Semantics.Composition.CoordinatorOp
+import Linglib.Syntax.Category.Coordinator
 import Linglib.Semantics.Composition.Tree
 
 /-!
@@ -11,22 +11,23 @@ the composition-engine mode that is the sibling of `tryFA`/`tryIFA`/`tryPM`. `tr
 through the Coordinator API.
 
 `tryCoord` is an *engine* mode (the `tryX` convention), not part of the `Coordinator`
-API surface; it invokes `Coordinator.engineOp`.
+API surface: it dispatches on the sisters' type at runtime through
+`Denot.booleanAlgebra?` and applies `Coordinator.op` in the algebra found.
 -/
 
 namespace Semantics.Composition.Tree
 
 open Intensional
-open Intensional.Conjunction
 
 /-- **Coordination composition mode** — the sibling of `tryFA`/`tryIFA`/`tryPM`.
-    Two same-conjoinable-type sisters combine via `Coordinator.op` (through its runtime
-    form `Coordinator.engineOp`), threaded through the effect functor `M`. Non-conjoinable
-    or type-mismatched sisters yield `none`. -/
+    Two same-conjoinable-type sisters combine via `Coordinator.op` in the Boolean algebra
+    of their type, threaded through the effect functor `M`. Non-conjoinable or
+    type-mismatched sisters yield `none`. -/
 def tryCoord {E W : Type} {M : Type → Type} [Applicative M] (role : Coordinator.Role)
     (d1 d2 : TypedDenot E W M) : Option (TypedDenot E W M) :=
-  if h : d1.ty = d2.ty ∧ d1.ty.isConjoinable then
-    some ⟨d1.ty, (Coordinator.engineOp role d1.ty E W) <$> d1.val <*> (h.1 ▸ d2.val)⟩
+  if h : d1.ty = d2.ty then
+    (Denot.booleanAlgebra? E W d1.ty).map fun (i : BooleanAlgebra (Denot E W d1.ty)) =>
+      ⟨d1.ty, (letI := i; Coordinator.op role) <$> d1.val <*> (h ▸ d2.val)⟩
   else none
 
 /-- `tryPM` is the `⟨e,t⟩` conjunction case of `tryCoord`: intersective predicate

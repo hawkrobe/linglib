@@ -1,7 +1,6 @@
 import Linglib.Syntax.CCG.Derivation
 import Linglib.Semantics.Intensional.Defs
-import Linglib.Semantics.Intensional.Conjunction
-import Linglib.Semantics.Composition.CoordinatorOp
+import Linglib.Syntax.Category.Coordinator
 import Linglib.Semantics.Composition.Combinator
 
 /-!
@@ -39,7 +38,6 @@ theorems live in `Studies/Steedman2000.lean`.
 namespace CCG
 
 open Intensional
-open Intensional.Conjunction
 open Combinator
 
 /-! ### Type correspondence -/

@@ -1584,7 +1584,6 @@ import Linglib.Semantics.Classifier
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Semantics.Composition.Cont
 import Linglib.Semantics.Composition.Coordination
-import Linglib.Semantics.Composition.CoordinatorOp
 import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Composition.Model
 import Linglib.Semantics.Composition.Reduction
@@ -1722,14 +1721,9 @@ import Linglib.Semantics.Homogeneity.Defs
 import Linglib.Semantics.Homogeneity.Plural
 import Linglib.Semantics.Homogeneity.Usable
 import Linglib.Semantics.Iconicity
-import Linglib.Semantics.Intensional.Algebra
-import Linglib.Semantics.Intensional.Austinian
-import Linglib.Semantics.Intensional.CategoryType
-import Linglib.Semantics.Intensional.Conjunction
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Index
 import Linglib.Semantics.Intensional.Premise
-import Linglib.Semantics.Intensional.Quantification
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Intensional.Situations
 import Linglib.Semantics.Intensional.Variables
@@ -2493,7 +2487,6 @@ import Linglib.Studies.Mirrazi2024
 import Linglib.Studies.MitrovicSauerland2016
 import Linglib.Studies.Mizuno2024
 import Linglib.Studies.Montague1973
-import Linglib.Studies.Montague1973Attitudes
 import Linglib.Studies.Moon2026
 import Linglib.Studies.Moroney2021
 import Linglib.Studies.Morzycki2009

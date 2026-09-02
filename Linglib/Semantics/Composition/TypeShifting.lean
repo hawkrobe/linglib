@@ -1,6 +1,5 @@
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Quantification.Quantifier
-import Linglib.Semantics.Intensional.Conjunction
 import Linglib.Semantics.Modification.Basic
 import Linglib.Syntax.Category.Verb.Complement.Basic
 import Mathlib.Order.Hom.BoundedLattice
