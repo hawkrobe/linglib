@@ -1766,7 +1766,7 @@ import Linglib.Semantics.Polarity.Operator
 import Linglib.Semantics.Polarity.Witnesses
 import Linglib.Semantics.Possession.Basic
 import Linglib.Semantics.Possession.Defs
-import Linglib.Semantics.Possession.GQ
+import Linglib.Semantics.Possession.Quantifier
 import Linglib.Semantics.Possession.Relationalizer
 import Linglib.Semantics.Presupposition.Aboutness
 import Linglib.Semantics.Presupposition.Accommodation

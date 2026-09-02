@@ -1,4 +1,4 @@
-import Linglib.Semantics.Possession.GQ
+import Linglib.Semantics.Possession.Quantifier
 import Linglib.Semantics.Quantification.Counting
 import Linglib.Data.Examples.Barker1995
 import Mathlib.Data.Fintype.Prod
@@ -242,39 +242,20 @@ theorem favorite_color_symmetric :
   (symmetric_iff_possessor_dominant isPerson isColor isBlue favors
     favors_unique).mpr favorite_color_possessor_dominant
 
-/-! ### Definiteness and the capability mixins (Ch. 2)
+/-! ### Definiteness (Ch. 2)
 
-A definite possessive ("the boy's cat") and a relational possessive ("John's
-sisters"), exercising the possessive-description capability mixins. -/
+A definite possessive presupposes a unique possessee: *the boy's cat* in a model where the
+boy `0` owns exactly the cat `1` (entities: boy, cat, dog; one situation). -/
 
-/-- "the boy's cat": possessor `0` (the boy), with a uniquely-identified cat
-`1`. Entities are `Fin 3` (boy, cat, dog); one situation. -/
-def theBoysCat : Possession.Definite (Fin 3) Unit where
+/-- *the boy's cat*: the boy `0` owns the cat `1`. -/
+def theBoysCat : Possession.Description (Fin 3) Unit where
   possessor := 0
-  predicate := fun y _ => y = 1
-  presupposition := fun _ => ⟨1, rfl, fun _ hy => hy⟩
+  relation := fun x y _ => x = 0 ∧ y = 1
+  restrictor := fun y _ => y = 1
 
-/-- The definite possessive denotes a unique possessee, inherited from its
-`HasIotaWitness` instance via `existsUnique_possessee`. -/
-theorem theBoysCat_unique (s : Unit) :
-    ∃! y : Fin 3, HasPossesseePredicate.possesseePredicate theBoysCat y s :=
-  existsUnique_possessee theBoysCat s
-
-/-- The sibling relation: `0`'s siblings are `1` and `2`. -/
-def sibling : Fin 3 → Fin 3 → Prop := fun x y => x = 0 ∧ (y = 1 ∨ y = 2)
-
-/-- "John's sisters": possessor `0` (John), with the sibling relation as the
-possession relation (a relational noun, so the restrictor is trivial). -/
-def johnsSisters : Possession.Description (Fin 3) Unit where
-  possessor := 0
-  relation := fun x y _ => sibling x y
-  restrictor := fun _ _ => True
-
-/-- The relational possessive's `possesseeSet` is its lexical possession
-relation applied to the possessor. -/
-theorem johnsSisters_possesseeSet (y : Fin 3) (s : Unit) :
-    possesseeSet johnsSisters y s ↔ sibling 0 y :=
-  Iff.rfl
+/-- The description has a unique possessee. -/
+theorem theBoysCat_unique (s : Unit) : ∃! y, theBoysCat.possesseePred y s :=
+  ⟨1, ⟨rfl, rfl, rfl⟩, fun _ h => h.1⟩
 
 /-! ### Narrowing through a description
 
@@ -291,9 +272,9 @@ def mercurysRings : Possession.Description (Fin 12) Unit where
 /-- *Mercury's rings are icy* is false: the description denotation carries
 existential import, and Mercury has no ring. -/
 theorem mercurysRings_not_icy :
-    ¬ descriptionGQ mercurysRings some_sem () isRing isIcy := by
+    ¬ mercurysRings.toGQ some_sem () isRing isIcy := by
   intro h
-  obtain ⟨b, -, hr⟩ := descriptionGQ_existential_import mercurysRings some_sem () h
+  obtain ⟨b, -, hr⟩ := mercurysRings.toGQ_existential_import some_sem () h
   have hb : hasRing 3 b := hr
   rcases hb with ⟨h3, -⟩ | ⟨h3, -⟩ | ⟨h3, -⟩ <;> exact absurd h3 (by decide)
 
