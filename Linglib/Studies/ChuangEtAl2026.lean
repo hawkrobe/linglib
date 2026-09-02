@@ -1,5 +1,5 @@
-import Linglib.Processing.Lexical.Discriminative.Defs
-import Linglib.Processing.Lexical.Discriminative.Normed
+import Linglib.Processing.DiscriminativeLexicon.Defs
+import Linglib.Processing.DiscriminativeLexicon.Normed
 
 /-!
 # Chuang, Bell, Tseng & Baayen 2026: Word-specific tonal realizations in Mandarin
@@ -45,11 +45,11 @@ discretization of tonal categories that §4 contests.
 
 Per the Processing scope discipline, the GAM/DLM fit results above are empirical
 findings recorded in prose, not Lean theorems. The Lean content instantiates the
-DLM substrate (`Processing/Lexical/Discriminative/`, [baayen-2019]
+DLM substrate (`Processing/DiscriminativeLexicon/`, [baayen-2019]
 [heitmeier-chuang-baayen-2026]) at the paper's carriers and proves the one
 structural claim the paper itself states (fn. 29,
 `comprehension_not_surjective`). The substrate supplies the rest:
-`LinearDiscriminativeLexicon.norm_production_sub_le` (the production map's Lipschitz
+`Linear.norm_production_sub_le` (the production map's Lipschitz
 bound — similar embeddings surface as similar contours) and
 `LinearMap.sub_mem_ker_iff` (homophones like *cheng2shi4*
 'city' ~ 'computer program' (§2.1) surface distinctly iff their embedding
@@ -76,7 +76,7 @@ difference avoids the production kernel).
 
 namespace ChuangEtAl2026
 
-open Processing.Lexical.Discriminative
+open DiscriminativeLexicon
 
 /-- The paper samples 50 evenly-spaced f0 values per token from the GAM-smoothed
 contour (§3.2). -/
@@ -99,7 +99,7 @@ abbrev ContextualEmbedding : Type := MeaningVec CKIPGPT2HiddenDim
 
 /-- The paper's DLM instantiation for Taiwan Mandarin rise–fall disyllables. -/
 abbrev TaiwanMandarinRFDLM : Type :=
-  LinearDiscriminativeLexicon ℝ PitchContour ContextualEmbedding
+  Linear ℝ PitchContour ContextualEmbedding
 
 /-- **Fn. 29** (§3.3): "it is impossible to map a lower-dimensional space into a
 higher-dimensional space with a linear mapping without losing information" — any

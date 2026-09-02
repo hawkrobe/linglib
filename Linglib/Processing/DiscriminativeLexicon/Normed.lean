@@ -1,4 +1,4 @@
-import Linglib.Processing.Lexical.Discriminative.Defs
+import Linglib.Processing.DiscriminativeLexicon.Defs
 import Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib.Analysis.Normed.Operator.NNNorm
 
@@ -18,10 +18,10 @@ isomorphy claims ([chuang-bell-tseng-baayen-2026], [lu-chuang-baayen-2026]).
   Taiwan Mandarin* (2026)][lu-chuang-baayen-2026]
 -/
 
-namespace Processing.Lexical.Discriminative.LinearDiscriminativeLexicon
+namespace DiscriminativeLexicon.Linear
 
 variable {F M : Type*} [NormedAddCommGroup F] [NormedAddCommGroup M] [NormedSpace ℝ F]
-  [NormedSpace ℝ M] [FiniteDimensional ℝ M] (D : LinearDiscriminativeLexicon ℝ F M)
+  [NormedSpace ℝ M] [FiniteDimensional ℝ M] (D : Linear ℝ F M)
 
 /-- The production map is Lipschitz with constant its operator norm. -/
 theorem lipschitzWith_production :
@@ -35,4 +35,4 @@ theorem norm_production_sub_le {e₁ e₂ : M} {ε : ℝ} (h : ‖e₁ - e₂‖
   exact (D.lipschitzWith_production.dist_le_mul e₁ e₂).trans
     (mul_le_mul_of_nonneg_left h (norm_nonneg _))
 
-end Processing.Lexical.Discriminative.LinearDiscriminativeLexicon
+end DiscriminativeLexicon.Linear
