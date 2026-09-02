@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Lattice
-import Linglib.Semantics.Intensional.Situations
+import Mathlib.Order.Max
 
 /-!
 # Lumping
@@ -16,11 +16,10 @@ counterfactuals that arise when independent true propositions are added
 freely (the Paula-paints-a-still-life and zebra-escapes examples in
 [kratzer-2012], §5.4.1).
 
-This module sits on top of `Semantics/Intensional/Situations.lean`, which
-provides the `SituationFrame` carrier — entity/index types whose `Index`
-carries a partial order representing parthood. Propositions are `Set F.Index`;
-the order grounds both lumping and persistence (= mathlib's `Monotone`,
-aliased as `Persistent` in `Situations.lean`).
+Situations are the elements of a type `S` carrying a preorder, parthood; propositions are
+`Set S`, the worlds are the maximal situations (`worlds S`), and persistence is mathlib's
+`Monotone`. Possible-worlds semantics is the case of the discrete order (`discreteOrder`),
+in which every situation is a world.
 
 ## Scope
 
@@ -33,25 +32,22 @@ formal definitions in §5.4.4 — is out of scope here.
 
 ## Architectural notes
 
-- **Lumping is order-theoretic.** `Lumps` is parametric in any
-  `[Preorder S]`; only the worlds-restricted relations are bundled
-  through `SituationFrame`. Mirrors how `Persistent` is generalized in
-  `Situations.lean`.
+- **Lumping is order-theoretic.** `Lumps` uses only the parthood preorder; the logical
+  relations additionally quantify over `worlds S`.
 - **Logical relations follow Kratzer's set notation literally.** Each
   definition unfolds to the same set-theoretic formula on p. 118
-  (`F.Worlds ⊆ p`, `F.Worlds ∩ ⋂₀ A ⊆ q`, etc.), so the mathlib `Set`
+  (`worlds S ⊆ p`, `worlds S ∩ ⋂₀ A ⊆ q`, etc.), so the mathlib `Set`
   and `sInter` APIs apply unchanged.
 - **Worlds vs. arbitrary situations.** Kratzer's official definition
   restricts `Lumps p q w` to `w ∈ W`. We define the relation for any
-  situation; combine with `IsWorld w` (from `Situations.lean`) for the
-  standard restriction. The `Lumps.follows_singleton` bridge below
-  shows how to recover Kratzer's worlds-only reading.
+  situation; combine with `IsMax w` for the standard restriction. The
+  `Lumps.follows_singleton` bridge below shows how to recover Kratzer's
+  worlds-only reading.
 -/
 
 namespace Conditionals.Counterfactual
 
 open Set
-open Intensional
 
 /-! ## Lumping ([kratzer-2012] §5.3.3, p. 118)
 
@@ -128,33 +124,39 @@ end LumpingCore
 
 /-! ## Logical relations ([kratzer-2012] §5.3.3, p. 118)
 
-These quantify only over `F.Worlds` (maximal situations) and so remain
-"classical" — equivalent to their possible-worlds counterparts on the
-worlds part of `F.Index`. We follow Kratzer's set-theoretic notation
-verbatim. -/
+These quantify only over the worlds — the maximal situations — and so remain
+"classical": equivalent to their possible-worlds counterparts on the worlds
+of `S`. We follow Kratzer's set-theoretic notation verbatim. -/
 
 section LogicalRelations
 
-variable {F : SituationFrame}
+variable (S : Type*) [Preorder S]
+
+/-- The worlds of a situation structure: its maximal situations ([kratzer-1989]). -/
+def worlds : Set S := {s | IsMax s}
+
+variable {S}
+
+@[simp] theorem mem_worlds {s : S} : s ∈ worlds S ↔ IsMax s := Iff.rfl
 
 /-- **Validity** ([kratzer-2012], p. 118): every world satisfies `p`.
-    Kratzer writes this as `p ∩ W = W`; equivalently `F.Worlds ⊆ p`. -/
-def IsValid (p : Set F.Index) : Prop := F.Worlds ⊆ p
+    Kratzer writes this as `p ∩ W = W`; equivalently `worlds S ⊆ p`. -/
+def IsValid (p : Set S) : Prop := worlds S ⊆ p
 
 /-- **Logical consequence** ([kratzer-2012], p. 118): every world
     that satisfies all of `A` also satisfies `q`. Kratzer's text: "for
     all `w ∈ W`: if `w ∈ ⋂A`, then `w ∈ q`." -/
-def Follows (A : Set (Set F.Index)) (q : Set F.Index) : Prop :=
-  F.Worlds ∩ ⋂₀ A ⊆ q
+def Follows (A : Set (Set S)) (q : Set S) : Prop :=
+  worlds S ∩ ⋂₀ A ⊆ q
 
 /-- **Consistency** ([kratzer-2012], p. 118): some world satisfies
     every member of `A`. -/
-def IsConsistent (A : Set (Set F.Index)) : Prop :=
-  (F.Worlds ∩ ⋂₀ A).Nonempty
+def IsConsistent (A : Set (Set S)) : Prop :=
+  (worlds S ∩ ⋂₀ A).Nonempty
 
 /-- **Compatibility** ([kratzer-2012], p. 118): `p` is compatible
     with `A` iff `A ∪ {p}` is consistent. -/
-def IsCompatible (p : Set F.Index) (A : Set (Set F.Index)) : Prop :=
+def IsCompatible (p : Set S) (A : Set (Set S)) : Prop :=
   IsConsistent (insert p A)
 
 /-- **Logical equivalence** ([kratzer-2012], p. 118): `p` and `q`
@@ -162,30 +164,30 @@ def IsCompatible (p : Set F.Index) (A : Set (Set F.Index)) : Prop :=
 
     Renamed from Kratzer's "logical equivalence" to `LogEquiv` to avoid
     collision with mathlib's `Equiv` (type equivalences). -/
-def LogEquiv (p q : Set F.Index) : Prop := p ∩ F.Worlds = q ∩ F.Worlds
+def LogEquiv (p q : Set S) : Prop := p ∩ worlds S = q ∩ worlds S
 
 /-! ### Characterizations -/
 
 /-- A premise in a set is a logical consequence of the set. -/
-theorem Follows.of_mem {A : Set (Set F.Index)} {p : Set F.Index}
+theorem Follows.of_mem {A : Set (Set S)} {p : Set S}
     (hp : p ∈ A) : Follows A p :=
   Set.inter_subset_right.trans (Set.sInter_subset_of_mem hp)
 
 /-- Validity is logical consequence from no premises. -/
-theorem isValid_iff_follows_empty {p : Set F.Index} :
-    IsValid p ↔ Follows (∅ : Set (Set F.Index)) p := by
+theorem isValid_iff_follows_empty {p : Set S} :
+    IsValid p ↔ Follows (∅ : Set (Set S)) p := by
   simp only [IsValid, Follows, Set.sInter_empty, Set.inter_univ]
 
 /-- Consistency of `A` is the negation of "false follows from `A`". -/
-theorem isConsistent_iff_not_follows_empty_set {A : Set (Set F.Index)} :
-    IsConsistent A ↔ ¬ Follows A (∅ : Set F.Index) := by
+theorem isConsistent_iff_not_follows_empty_set {A : Set (Set S)} :
+    IsConsistent A ↔ ¬ Follows A (∅ : Set S) := by
   simp only [IsConsistent, Follows, Set.subset_empty_iff,
     ← Set.nonempty_iff_ne_empty]
 
 /-- Compatibility unfolds to consistency of the augmented set
     (definitional; this lemma exists for `simp`-style rewriting). -/
 @[simp] theorem isCompatible_iff_isConsistent_insert
-    {p : Set F.Index} {A : Set (Set F.Index)} :
+    {p : Set S} {A : Set (Set S)} :
     IsCompatible p A ↔ IsConsistent (insert p A) := Iff.rfl
 
 end LogicalRelations
@@ -199,17 +201,17 @@ order-theoretic core (`Lumps`) and the worlds-restricted relations
 
 section LumpingBridge
 
-variable {F : SituationFrame}
+variable {S : Type*} [Preorder S]
 
 /-- Worlds-restricted lumping entails logical consequence from the
     singleton premise set. The hypothesis is `Kratzer 2012`'s standard
     "for all `w ∈ W`" pattern: at every world where `p` holds, `p` lumps
     `q` there, so `q` holds at that world. -/
-theorem Lumps.follows_singleton {p q : Set F.Index}
-    (h : ∀ w ∈ F.Worlds, w ∈ p → Lumps p q w) :
+theorem Lumps.follows_singleton {p q : Set S}
+    (h : ∀ w ∈ worlds S, w ∈ p → Lumps p q w) :
     Follows {p} q := by
   intro w hw
-  have hwW : w ∈ F.Worlds := hw.1
+  have hwW : w ∈ worlds S := hw.1
   have hwp : w ∈ p := (Set.mem_sInter.mp hw.2) p (Set.mem_singleton p)
   exact (h w hwW hwp).holds_target
 
@@ -217,19 +219,30 @@ end LumpingBridge
 
 /-! ## Possible-worlds reduction
 
-In a discrete situation frame (built via `discreteSituationFrame`), parthood
-reduces to equality. The local-implication conjunct then collapses, and
-lumping at any index `w` becomes joint truth at `w` — a degenerate notion.
-This is the formal sense in which possible-worlds semantics flattens the
-distinctions Kratzer's lumping is designed to capture. -/
+Under the discrete order, parthood is equality: every situation is a world, every
+proposition is persistent, and the local-implication conjunct of lumping collapses, so
+lumping at `w` becomes joint truth at `w`. This is the formal sense in which possible-worlds
+semantics flattens the distinctions Kratzer's lumping is designed to capture. -/
 
 section DiscreteCorollary
 
+/-- The discrete partial order on `X`: `s ≤ s' ↔ s = s'`. Reducible, so `≤` unfolds to `=`
+in downstream proofs. -/
+@[reducible] def discreteOrder (X : Type*) : PartialOrder X where
+  le a b := a = b
+  le_refl _ := rfl
+  le_trans _ _ _ h₁ h₂ := h₁.trans h₂
+  le_antisymm _ _ h _ := h
+
 variable (G : Type)
 
-/-- Bring the discrete partial order on `G` into scope so the corollary below
-    can quote `Lumps` without explicit `@`-application. -/
 local instance : PartialOrder G := discreteOrder G
+
+/-- Under the discrete order every situation is a world. -/
+theorem discrete_isMax (s : G) : IsMax s := fun _ h => h.symm.le
+
+/-- Under the discrete order every proposition is persistent. -/
+theorem discrete_monotone (p : G → Prop) : Monotone p := fun _ _ h hp => h ▸ hp
 
 /-- Lumping in a discrete frame collapses to joint truth at the index. -/
 theorem Lumps.discrete_iff (p q : Set G) (w : G) :

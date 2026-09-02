@@ -47,7 +47,7 @@ def desires : OrderingSource World :=
 
 private lemma mem_acc_iff (w : World) :
     w ∈ accessibleWorlds circumstances w₀ ↔ (w.1 = true → w.2 = true) := by
-  simp [accessibleWorlds, circumstances, Intensional.Premise.propIntersection]
+  simp [accessibleWorlds, circumstances, Modality.Kratzer.propIntersection]
 
 private lemma agag_iff (a b : World) :
     atLeastAsGoodAs (desires w₀) a b ↔

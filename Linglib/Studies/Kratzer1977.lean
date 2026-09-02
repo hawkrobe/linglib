@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Premise
+import Linglib.Semantics.Modality.Kratzer.Premise
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -8,7 +8,7 @@ import Mathlib.Data.Fintype.Basic
 
 A concrete formalization of the New Zealand judgments scenario from §1.3
 of [kratzer-1977] (= Chapter 1 of [kratzer-2012]), exercising
-the API of `Intensional.Premise`.
+the API of `Modality.Kratzer.Premise`.
 
 ## The scenario
 
@@ -42,7 +42,7 @@ the intuitive predictions.
 
 ## What this study is
 
-A Phenomenon-layer **integration test** for `Intensional.Premise`:
+An integration test for the premise-set API of `Modality.Kratzer`:
 it picks the worked example Kratzer uses to motivate the revision from
 Defs 5–6 to Defs 7–8 and verifies, by structural proofs over the four-world
 frame, that the formalization gets each prediction right and that the
@@ -51,7 +51,7 @@ unrevised definitions fail in exactly the way Kratzer says they do.
 
 namespace Kratzer1977
 
-open Intensional.Premise
+open Modality.Kratzer
 
 /-! ## §1. The model
 
@@ -278,7 +278,7 @@ lemma exists_extension_with_p {B : List (Fin 4 → Prop)}
       · exact absurd hxB hNegQ
     · exact List.mem_cons_self
 
-/-- Any list containing `p` entails `p`: ⋂ C ⊆ propExtension p. -/
+/-- Any list containing `p` entails `p`: ⋂ C ⊆ p. -/
 lemma followsFrom_p_of_mem {C : List (Fin 4 → Prop)} (hp : p ∈ C) :
     followsFrom p C := fun _ hi => hi p hp
 

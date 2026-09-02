@@ -38,7 +38,7 @@ and the prejacent is not directly settled in K.
 namespace Zheng2025
 
 open Modality (Kernel)
-open Intensional.Premise
+open Modality.Kratzer
 
 /-! ### Empirical data
 
@@ -162,12 +162,12 @@ theorem raincoat_nandao_felicitous :
   refine ⟨⟨wearingRaincoat, List.mem_singleton_self _, by decide⟩, ?_, ?_⟩
   · -- No coat-world is an expected world.
     simp only [unexpected, raincoatK, dryU, Kernel.base_singleton,
-      propIntersection_singleton, disjoint_propExtension_iff]
+      propIntersection_singleton, Set.disjoint_left]
     decide
   · -- The coat neither entails rain (the sprinkler world) nor excludes it
     -- (the rain world).
     simp only [raincoatK, Kernel.directlySettles_singleton,
-      propExtension_subset_iff, disjoint_propExtension_iff]
+      Set.setOf_subset_setOf, Set.disjoint_left]
     decide
 
 /-- Without evidence, nandao is infelicitous (ex. 5 ctx 2). -/
