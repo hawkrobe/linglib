@@ -1,6 +1,6 @@
 import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Definiteness.Maximality
-import Linglib.Semantics.Possessive.Basic
+import Linglib.Semantics.Possession.Basic
 
 /-!
 # Possessive-of as a Kleisli arrow
@@ -19,10 +19,10 @@ relation), inheriting the possessor's intrinsic presupposition. So:
 
 ## Main declarations
 
-* `Possessive.theOf R` — the Kleisli arrow: the unique `R`-possessee of a
+* `Possession.theOf R` — the Kleisli arrow: the unique `R`-possessee of a
   possessor, as a `NominalDenot`.
-* `Possessive.applyTo nd R = nd >>= theOf R` — *NP's N*.
-* `Possessive.Definite.toNominalDenot` — a definite description as a `NominalDenot`
+* `Possession.applyTo nd R = nd >>= theOf R` — *NP's N*.
+* `Possession.Definite.toNominalDenot` — a definite description as a `NominalDenot`
   (always-defined selector, from `HasIotaWitness`).
 
 ## Main statements
@@ -32,8 +32,7 @@ relation), inheriting the possessor's intrinsic presupposition. So:
 * `applyTo_applyTo` — nesting, from `bind_assoc`.
 -/
 
-namespace Possessive
-
+namespace Possession
 open Reference (NominalDenot)
 open Definiteness
 
@@ -81,9 +80,9 @@ theorem applyTo_applyTo (nd : NominalDenot Ctx W E) (R₁ R₂ : E → E → Pro
 /-- A definite possessive description as a `NominalDenot` over its situations: the
 selector is `russellIota` of the possessee predicate, always defined because the
 description bears the iota-presupposition (`HasIotaWitness`). -/
-noncomputable def Definite.toNominalDenot {S : Type} (d : Possessive.Definite E S) :
+noncomputable def Definite.toNominalDenot {S : Type} (d : Possession.Definite E S) :
     NominalDenot Ctx S E where
   presup := fun _ _ => True
   selector := fun _ s => russellIota (E := E) (fun y => d.predicate y s)
 
-end Possessive
+end Possession

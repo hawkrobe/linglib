@@ -1,4 +1,4 @@
-import Linglib.Semantics.Possessive.Basic
+import Linglib.Semantics.Possession.Basic
 
 /-!
 # Partee & Borschev 2003: Genitives, relational nouns, and argument-modifier ambiguity
@@ -11,17 +11,18 @@ a free contextual relation. The two construction types map exactly onto the
 substrate:
 
 * **argument genitive** (relational head noun supplies R): `of John's = λR[R(John)]`,
-  `teacher of John's = λx[teacher(John)(x)]` — this is `viaArgument`.
+  `teacher of John's = λx[teacher(John)(x)]` — the relational noun applied to its
+  possessor, `teacher John`.
 * **modifier genitive** (sortal head noun + free relation `Rᵢ`):
   `of John's = λPλx[P(x) ∧ Rᵢ(John)(x)]`, `team of John's = λx[team(x) ∧ Rᵢ(John)(x)]`
-  — this is `viaModifier` (Barker's `π`).
+  — Barker's `π team Rᵢ` applied to the possessor.
 
 ## Main statements
 
-* `vj_coerce_eq_pb_modifier` — **convergence** (P&B §4.3): for a pragmatically
-  coerced sortal noun, J&V's "coerce to a relation, then take as argument" and
-  P&B's modifier genitive yield the *same* predicate. The accounts differ only
-  in *where* the free relation enters, not in truth conditions — `rfl`.
+* **Convergence** (P&B §4.3): for a pragmatically coerced sortal noun, J&V's "coerce
+  to a relation, then take as argument" and P&B's modifier genitive assemble the
+  same term `π team Rᵢ Mary`; the accounts differ only in *where* the free relation
+  enters, not in truth conditions.
 * `FormerMansion.readingA_ne_readingB` — **divergence** (P&B §4.3, *Mary's former
   mansion*): under the modifier *former*, putting the free relation inside vs.
   outside its scope gives different predicates. J&V's coercion derives both;
@@ -36,24 +37,9 @@ substrate:
 
 namespace ParteeBorschev2003
 
-open ArgumentStructure.Relational
-open Possessive
+open Possession
 
 variable {E S : Type*}
-
-/-! ### The two approaches converge on coerced sortals (P&B §4.3)
-
-For *team of Mary's* both accounts derive `λx[team(x) ∧ Rᵢ(Mary)(x)]`. J&V coerce
-*team* to the relation `π team Rᵢ` and apply the argument genitive; P&B apply the
-modifier genitive directly. The free relation enters inside the coerced noun for
-J&V, with the construction for P&B — but the result is identical. -/
-
-/-- **Convergence** (P&B §4.3): J&V's coerce-then-argument equals P&B's modifier
-genitive. The "two theories of genitives" are, on the coerced-sortal case, a
-single denotation reached two ways. -/
-theorem vj_coerce_eq_pb_modifier (possessor : E) (P : E → S → Prop) (R : E → E → S → Prop) :
-    viaArgument possessor (π P R) = viaModifier possessor P R :=
-  viaArgument_pi possessor P R
 
 /-! ### The readings of *Mary's former mansion* (P&B §4.3)
 
@@ -67,13 +53,13 @@ alone; J&V's coercion can introduce `R` at the noun-shift, deriving both. -/
 that is now Mary's*. The only reading P&B's split derives. -/
 def readingA (former : (E → S → Prop) → E → S → Prop) (possessor : E)
     (noun : E → S → Prop) (R : E → E → S → Prop) : E → S → Prop :=
-  viaModifier possessor (former noun) R
+  π (former noun) R possessor
 
 /-- Reading B: the free relation is inside `formerRel`'s scope — *something that
 was formerly Mary's mansion*. Available on J&V's coercion. -/
 def readingB (formerRel : (E → E → S → Prop) → E → E → S → Prop) (possessor : E)
     (noun : E → S → Prop) (R : E → E → S → Prop) : E → S → Prop :=
-  viaArgument possessor (formerRel (π noun R))
+  formerRel (π noun R) possessor
 
 namespace FormerMansion
 
@@ -101,9 +87,9 @@ theorem readingA_ne_readingB :
     readingA former 1 mansion owns ≠ readingB formerRel 1 mansion owns := by
   intro h
   have hA : ¬ readingA former 1 mansion owns 0 true := by
-    unfold readingA viaModifier π former mansion owns; decide
+    unfold readingA π former mansion owns; decide
   have hB : readingB formerRel 1 mansion owns 0 true := by
-    unfold readingB viaArgument formerRel π mansion owns; decide
+    unfold readingB formerRel π mansion owns; decide
   rw [h] at hA
   exact hA hB
 

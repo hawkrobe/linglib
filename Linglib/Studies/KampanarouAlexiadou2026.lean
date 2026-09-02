@@ -1,4 +1,4 @@
-import Linglib.Features.Possession
+import Linglib.Semantics.Possession.Typology
 import Linglib.Morphology.DistributedMorphology.NominalProjection
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Syntax.Minimalist.Verbal.SmallClause

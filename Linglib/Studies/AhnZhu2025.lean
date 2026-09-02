@@ -1,4 +1,4 @@
-import Linglib.Semantics.Possessive.Basic
+import Linglib.Semantics.Possession.Basic
 import Linglib.Studies.Jenks2018
 import Linglib.Data.Examples.AhnZhu2025
 
@@ -17,9 +17,9 @@ an antecedent is available survives the data.
 
 The analysis keeps the uniqueness ι for the bare noun and re-analyses *na* as a relationalizing
 definite whose restrictor is the π-shifted noun, `ιx[P(x)(sᵣ) ∧ R(z,x)(sᵣ)]` for a contextual
-relation `R` and an index `z`. That restrictor is `Possessive.viaModifier z P R` (`na`); a
-relational noun with its relatum dropped is `Possessive.viaArgument z Rel`; felicity is the
-substrate's `iotaPresupposition`. `na_of_two_satisfiers` shows the relation restoring uniqueness
+relation `R` and an index `z`. That restrictor is `Possession.π P R z` (`na`); a relational
+noun applied to the index is `Rel z`; felicity is `∃!` uniqueness. `na_of_two_satisfiers`
+shows the relation restoring uniqueness
 where the bare ι fails, `na_identity_iff` recovers the strong article as the identity-relation
 case, and `na_iff_bare_of_related` isolates the situations where `R` is redundant and the two
 forms compete on economy, which covers part-whole bridging (`na_seat_redundant`) and the moon.
@@ -44,26 +44,26 @@ diagnostics classify the nouns (`of_iff_relational`, `de_of_relational`).
 
 namespace AhnZhu2025
 
-open ArgumentStructure.Relational Possessive
+open Possession
 
 variable {E S : Type*} (P : E → S → Prop) (R : E → E → S → Prop) (z : E) (s : S)
 
 /-! ### Bare nouns and *na* -/
 
 /-- The *na* restrictor `na P R z x s ↔ P x s ∧ R z x s`: the noun relationalized by `π` with
-the index `z` in the relatum slot; the definite `ιx[P(x)(sᵣ) ∧ R(z,x)(sᵣ)]` is its
-`iotaPresupposition`. -/
-abbrev na : E → S → Prop := viaModifier z P R
+the index `z` in the relatum slot; the definite `ιx[P(x)(sᵣ) ∧ R(z,x)(sᵣ)]` is its `∃!`
+witness. -/
+abbrev na : E → S → Prop := π P R z
 
 /-- Two satisfiers of the noun defeat the bare noun's uniqueness presupposition; the relation to
 the index can restore it. -/
 theorem na_of_two_satisfiers (h : ∃ a b, a ≠ b ∧ P a s ∧ P b s) (hR : ∃! x, P x s ∧ R z x s) :
-    ¬ iotaPresupposition P s ∧ iotaPresupposition (na P R z) s :=
+    ¬ (∃! x, P x s) ∧ ∃! x, na P R z x s :=
   ⟨fun ⟨_, _, hu⟩ => let ⟨_, _, hab, ha, hb⟩ := h; hab ((hu _ ha).trans (hu _ hb).symm), hR⟩
 
 /-- With the identity relation *na* is the strong article: felicitous iff the indexed entity is
 `P`. -/
-theorem na_identity_iff : iotaPresupposition (na P (fun a b _ => a = b) z) s ↔ P z s :=
+theorem na_identity_iff : (∃! x, na P (fun a b _ => a = b) z x s) ↔ P z s :=
   ⟨fun ⟨_, ⟨h, hz⟩, _⟩ => hz ▸ h, fun h => ⟨z, ⟨h, rfl⟩, fun _ hy => hy.2.symm⟩⟩
 
 /-- When every `P` in `s` bears `R` to the index, the relation is redundant: *na* and the bare
@@ -71,8 +71,8 @@ noun have the same extension. -/
 theorem na_iff_bare_of_related (h : ∀ x, P x s → R z x s) (x : E) : na P R z x s ↔ P x s :=
   ⟨And.left, fun hx => ⟨hx, h x hx⟩⟩
 
-theorem iotaPresupposition_na_iff (h : ∀ x, P x s → R z x s) :
-    iotaPresupposition (na P R z) s ↔ iotaPresupposition P s :=
+theorem existsUnique_na_iff (h : ∀ x, P x s → R z x s) :
+    (∃! x, na P R z x s) ↔ ∃! x, P x s :=
   existsUnique_congr (na_iff_bare_of_related P R z s h)
 
 /-! ### Part-whole bridging: bike and seat -/
@@ -88,7 +88,7 @@ def seat : Thing → Unit → Prop := fun x _ => x = .seat
 def partOf : Thing → Thing → Unit → Prop := fun z x _ => z = .bike ∧ x = .seat
 
 /-- The bare *chezuo* picks the unique seat of the situation. -/
-theorem bare_seat : iotaPresupposition seat () := ⟨.seat, rfl, fun _ h => h⟩
+theorem bare_seat : ∃! x, seat x () := ⟨.seat, rfl, fun _ h => h⟩
 
 /-- *na ge chezuo* with `R` resolved to part-of has the same extension as the bare noun, so the
 demonstrative's restriction is redundant and economy prefers the bare noun. -/
@@ -109,21 +109,21 @@ def author : Ind → Ind → Unit → Prop := fun z x _ => z = .theNovel ∧ x =
 
 /-- The bare non-relational noun has no relatum slot, and situational uniqueness fails with two
 novelists. -/
-theorem bare_novelist_fails : ¬ iotaPresupposition novelist () := by
+theorem bare_novelist_fails : ¬ ∃! x, novelist x () := by
   rintro ⟨x, -, hu⟩
   exact absurd ((hu _ (Or.inl rfl)).trans (hu _ (Or.inr rfl)).symm) (by decide)
 
 /-- *na wei xiaoshuo-jia*: the demonstrative supplies the relatum, and `R` resolved to authorship
 picks the author. -/
-theorem na_novelist : iotaPresupposition (na novelist author .theNovel) () :=
+theorem na_novelist : ∃! x, na novelist author .theNovel x () :=
   ⟨.itsAuthor, ⟨Or.inl rfl, rfl, rfl⟩, fun _ hy => hy.2.2⟩
 
 /-- The bare *zuozhe* with its relatum argument covertly filled by the novel. -/
-theorem bare_author : iotaPresupposition (viaArgument .theNovel author) () :=
+theorem bare_author : ∃! x, author .theNovel x () :=
   ⟨.itsAuthor, ⟨rfl, rfl⟩, fun _ hy => hy.2⟩
 
 /-- *na wei zuozhe*: the relational noun detransitivized by `Ex` and re-relationalized by *na*. -/
-theorem na_ex_author : iotaPresupposition (na (ExPossessor author) author .theNovel) () :=
+theorem na_ex_author : ∃! x, na (ExPossessor author) author .theNovel x () :=
   ⟨.itsAuthor, ⟨⟨.theNovel, rfl, rfl⟩, rfl, rfl⟩, fun _ hy => hy.2.2⟩
 
 /-! ### The Studies' rows -/

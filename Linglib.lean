@@ -736,7 +736,6 @@ import Linglib.Features.Phi.Geometry
 import Linglib.Features.Person.Interp
 import Linglib.Features.Person.Resolve
 import Linglib.Features.Polarity
-import Linglib.Features.Possession
 import Linglib.Features.Prominence
 import Linglib.Features.PropertyDomain
 import Linglib.Features.Prosody
@@ -1783,11 +1782,12 @@ import Linglib.Semantics.Polarity.Marking
 import Linglib.Semantics.Polarity.Negation
 import Linglib.Semantics.Polarity.Operator
 import Linglib.Semantics.Polarity.Witnesses
-import Linglib.Semantics.Possessive.Basic
-import Linglib.Semantics.Possessive.Denotation
-import Linglib.Semantics.Possessive.GQ
-import Linglib.Semantics.Possessive.PronounMixing
-import Linglib.Semantics.Possessive.Relational
+import Linglib.Semantics.Possession.Basic
+import Linglib.Semantics.Possession.Denotation
+import Linglib.Semantics.Possession.GQ
+import Linglib.Semantics.Possession.PronounMixing
+import Linglib.Semantics.Possession.Relational
+import Linglib.Semantics.Possession.Typology
 import Linglib.Semantics.Presupposition.Aboutness
 import Linglib.Semantics.Presupposition.Accommodation
 import Linglib.Semantics.Presupposition.Basic

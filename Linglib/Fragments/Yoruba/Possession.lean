@@ -1,4 +1,4 @@
-import Linglib.Features.Possession
+import Linglib.Semantics.Possession.Typology
 
 /-!
 # Yoruba possession profile

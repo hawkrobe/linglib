@@ -1,7 +1,7 @@
 import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Studies.KoontzGarboden2009
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
-import Linglib.Semantics.Possessive.Relational
+import Linglib.Semantics.Possession.Relational
 
 /-!
 # Variation in the lexical semantics of property concept roots
@@ -66,7 +66,7 @@ namespace HaninkKoontzGarboden2025
 open Verb Verb.Root
 open KoontzGarboden2009.Monotonicity
 open DistributedMorphology (Categorizer)
-open ArgumentStructure.Relational (π)
+open Possession (π)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Morphological Classes and Semantic Types

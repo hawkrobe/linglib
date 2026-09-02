@@ -200,7 +200,7 @@ theorem interpret_anaphoric_isSome_iff
 
 /-- A possessive definite returns a referent iff its `π`-modified restrictor has
     a unique satisfier — the typed-world form of the relational definite's
-    uniqueness presupposition (`Relational.iotaPresupposition`, = `∃!`). -/
+    uniqueness presupposition (`∃!`). -/
 theorem interpret_possessive_isSome_iff_exists_unique
     (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet)
     (g : Assignment E) (gs : SitAssignment W) :

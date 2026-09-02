@@ -1,6 +1,5 @@
-import Linglib.Features.Possession
+import Linglib.Semantics.Possession.Typology
 import Linglib.Features.Grammaticalization
-import Linglib.Semantics.Possessive.Relational
 import Linglib.Data.WALS.Features.F117A
 import Linglib.Fragments.Slavic.Russian.Possession
 import Linglib.Fragments.Finnish.Possession
@@ -42,14 +41,10 @@ Cambridge Studies in Linguistics 83. Cambridge University Press, 1997.
 - `Possession.Source`: the eight schemas (substrate)
 - `Possession.Notion`: the seven target notions (substrate)
 - `Grammaticalization.GramStage`: the verbal cline
-- `ArgumentStructure.Relational`: π operator and
-  arity tracking — connects to which schemas have possessor-as-subject
-  (Action, Companion = transitive/relational) vs possessee-as-subject (rest)
 -/
 
 open Possession
 open Grammaticalization
-open ArgumentStructure.Relational (NominalInterpType)
 
 namespace Heine1997
 
@@ -313,6 +308,13 @@ theorem location_not_permanent :
 -- ============================================================================
 -- §6. Bridge to Barker 2011: Subject Encoding and Arity
 -- ============================================================================
+
+/-- Arity of the possessive predicate a schema yields: one core argument (sortal) or
+    two (relational), [barker-2011]'s two nominal types. -/
+inductive NominalInterpType
+  | sortal
+  | relational
+  deriving DecidableEq, Repr
 
 /-- Map each schema to its Barker 2011 semantic type, based on the
     argument structure of the resulting possessive predicate.
