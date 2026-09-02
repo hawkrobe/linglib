@@ -676,9 +676,9 @@ import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Transition
 import Linglib.Discourse.Coherence
 import Linglib.Discourse.Commitment.Basic
-import Linglib.Discourse.Commitment.Frame
 import Linglib.Discourse.Commitment.SourceMarked
 import Linglib.Discourse.Commitment.Space
+import Linglib.Discourse.Commitment.State
 import Linglib.Discourse.Commitment.Table
 import Linglib.Discourse.CommonGround
 import Linglib.Discourse.CommonGround.Measure

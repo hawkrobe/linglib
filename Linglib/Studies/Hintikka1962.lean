@@ -1,4 +1,4 @@
-import Linglib.Discourse.Commitment.Frame
+import Linglib.Discourse.Commitment.State
 
 /-!
 # Hintikka (1962): Doxastic indefensibility of Moore's sentence
@@ -9,13 +9,13 @@ import Linglib.Discourse.Commitment.Frame
 worlds where `p` holds while the speaker fails to believe `p`. But its
 would-be-believed form `B_a (p ∧ ¬ B_a p)` is *indefensible* in any KD4
 doxastic model: the `box_not_moore` reductio below, specialised to the
-agent-indexed belief accessibility of `CommitmentState`. The knowledge
+agent-indexed belief accessibility of `State`. The knowledge
 analogue specialises the same reductio to epistemic accessibility.
 -/
 
 namespace Hintikka1962
 
-open Discourse.Commitment.Frame
+open Discourse.Commitment
 open ModalLogic (box box_four IsSerial)
 open ModalLogic.Epistemic (knows)
 
@@ -32,34 +32,33 @@ theorem box_not_moore {R : W → W → Prop} {p : W → Prop} {w : W}
 
 /-- The Moore content for speaker `s` and proposition `p`: worlds where
     `p` holds and `s` does not believe `p`. -/
-def mooreContent (c : CommitmentState W A) (s : A) (p : Set W) : Set W :=
-  { w | w ∈ p ∧ ¬ Believes c s p w }
+def mooreContent (c : State W A) (s : A) (p : Set W) : Set W :=
+  { w | w ∈ p ∧ ¬ c.Believes s p w }
 
 /-- Doxastic indefensibility of a propositional content for an agent in
     a given commitment state: `a` does not believe `P` at any world.
     Restricted to set-valued contents; Hintikka §4.8's general
     definition ranges over finite *sets of sentences*. -/
-def DoxasticallyIndefensible (c : CommitmentState W A) (a : A) (P : Set W) : Prop :=
-  ∀ w, ¬ Believes c a P w
+def DoxasticallyIndefensible (c : State W A) (a : A) (P : Set W) : Prop :=
+  ∀ w, ¬ c.Believes a P w
 
 /-- **The Moore-paradox theorem**: under KD4 belief, no agent can
     believe the Moore content at any world. -/
 theorem mooreContent_doxasticallyIndefensible
-    (c : CommitmentState W A) (a : A) (p : Set W) :
+    (c : State W A) (a : A) (p : Set W) :
     DoxasticallyIndefensible c a (mooreContent c a p) :=
   fun _ => box_not_moore
 
 /-- A two-world KD4 frame: every world treats only `false` as belief-
     accessible. Used as a witness for `true_mem_mooreContent`. -/
-def mooreWitness : CommitmentState Bool Unit where
+def mooreWitness : State Bool Unit where
   belief _ _ v := v = false
   commitment _ _ _ _ := True
-  interp _ := Set.univ
   belief_kd45 _ := { serial := fun _ => ⟨false, rfl⟩
                      trans := fun _ _ _ _ h => h
                      eucl := fun _ _ _ _ h => h }
-  commitment_k4eucl _ _ := { trans := fun _ _ _ _ _ => trivial
-                             eucl := fun _ _ _ _ _ => trivial }
+  commitment_k45 _ _ := { trans := fun _ _ _ _ _ => trivial
+                          eucl := fun _ _ _ _ _ => trivial }
 
 /-- **Satisfiability of the Moore sentence**: with `p := {true}` over
     `mooreWitness`, the world `true` lies in `mooreContent`. The
@@ -85,10 +84,10 @@ theorem knowledge_unknowable
     *act* of asserting; this is the resulting constraint on states a
     sincere assertion could leave behind. -/
 theorem not_committed_mooreContent_of_sincere
-    (c : CommitmentState W A) (hsin : Sincere c)
+    (c : State W A) (hsin : c.Sincere)
     (s b : A) (p : Set W) (w : W) :
-    ¬ Committed c s b (mooreContent c s p) w := fun hcom =>
+    ¬ c.Committed s b (mooreContent c s p) w := fun hcom =>
   mooreContent_doxasticallyIndefensible c s p w
-    (committed_implies_believes_of_sincere hsin s b _ w hcom)
+    (hsin.believes_of_committed hcom)
 
 end Hintikka1962
