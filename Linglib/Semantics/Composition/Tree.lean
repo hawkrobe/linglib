@@ -1,7 +1,6 @@
 import Linglib.Syntax.Tree.Basic
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Variables
-import Linglib.Semantics.Intensional.Algebra
 import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Modification.Basic
 
@@ -123,7 +122,7 @@ def tryFA {E W D : Type} {M : Type → Type} [Applicative M]
 /-- IFA: Intensional Functional Application ([von-fintel-heim-2011] Step 10).
 
     If β expects an intension `⟨s,σ⟩` as argument and γ has type σ,
-    then `⟦α⟧ = ⟦β⟧(^⟦γ⟧)` — we wrap γ's denotation in `up` (rigid intension)
+    then `⟦α⟧ = ⟦β⟧(^⟦γ⟧)` — γ's denotation is wrapped as a constant intension
     before applying. This lets intensional operators (modals, attitude verbs)
     take the intension of their sister as argument via type-driven composition.
 
@@ -135,14 +134,14 @@ def tryIFA {E W D : Type} {M : Type → Type} [Applicative M]
     if ha : σ = d2.ty then
       let f : M (Denot E W (.fn (.intens σ) τ) D) := hf ▸ d1.val
       let a : M (Denot E W σ D) := ha ▸ d2.val
-      some ⟨τ, (λ fv av => fv (up av)) <$> f <*> a⟩
+      some ⟨τ, (λ fv av => fv (fun _ => av)) <$> f <*> a⟩
     else
       match hf' : d2.ty with
       | .fn (.intens σ') τ' =>
         if ha' : σ' = d1.ty then
           let f : M (Denot E W (.fn (.intens σ') τ') D) := hf' ▸ d2.val
           let a : M (Denot E W σ' D) := ha' ▸ d1.val
-          some ⟨τ', (λ av fv => fv (up av)) <$> a <*> f⟩
+          some ⟨τ', (λ av fv => fv (fun _ => av)) <$> a <*> f⟩
         else none
       | _ => none
   | _ =>
@@ -151,7 +150,7 @@ def tryIFA {E W D : Type} {M : Type → Type} [Applicative M]
       if ha : σ = d1.ty then
         let f : M (Denot E W (.fn (.intens σ) τ) D) := hf ▸ d2.val
         let a : M (Denot E W σ D) := ha ▸ d1.val
-        some ⟨τ, (λ av fv => fv (up av)) <$> a <*> f⟩
+        some ⟨τ, (λ av fv => fv (fun _ => av)) <$> a <*> f⟩
       else none
     | _ => none
 

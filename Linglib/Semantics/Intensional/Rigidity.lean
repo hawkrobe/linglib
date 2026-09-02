@@ -16,10 +16,8 @@ that needs world-parameterized meanings.
 
 ## Relationship to `Denot`
 
-`Denot E W (.intens a) = W → Denot E W a` is an `Intension W (Denot E W a)`.
-The `up`/`down` operators in `Frame.lean` are definitionally equal to
-`rigid`/`evalAt` here. This file provides the framework-agnostic
-versions; `Frame.lean` provides the IL-typed versions.
+`Denot E W (.intens a) = W → Denot E W a` is an `Intension W (Denot E W a)`, so
+everything here applies to intensional denotations directly.
 
 ## Key definitions
 
@@ -170,6 +168,11 @@ theorem IsRigid_iff_eq_const {W τ : Type*} [Nonempty W]
     exact ⟨f w₀, funext fun w => h w w₀⟩
   · rintro ⟨x, rfl⟩ w₁ w₂
     rfl
+
+/-- A rigid intension is the constant function of its value at any index. -/
+theorem IsRigid.eq_const {W τ : Type*} {f : Intension W τ} (h : IsRigid f) (w : W) :
+    f = fun _ => f w :=
+  funext fun w' => h w' w
 
 /-- `rigid x` IS `Function.const W x` definitionally; this is the
     rigid-named bridge to mathlib's `Function.const` API. -/

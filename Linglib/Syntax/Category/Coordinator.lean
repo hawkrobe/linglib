@@ -8,9 +8,9 @@ A coordinator (*and* / *or* / *but* / *nor*) is **one** thing: a lexical marking
 `role` selects a Boolean operation. This file is the carrier-agnostic core of the
 `Coordinator` API — it needs only `Mathlib.Order.BooleanAlgebra`, so Fragments import it
 directly to type their lexical coordinators (the `Syntax/Category/Verb/Defs.lean` precedent: a
-word-class lexical-entry type at `Semantics/{class}/Defs`). The Denot-specific bridges
-(`genConj = op`, `engineOp`, the `BooleanAlgebra (Denot)` instances) live downstream in
-`Semantics/Coordination/Basic.lean`.
+word-class lexical-entry type at `Semantics/{class}/Defs`). The composition engine's
+runtime form, dispatching on the sisters' type through `Denot.booleanAlgebra?`, is
+`tryCoord` in `Semantics/Composition/Coordination.lean`.
 
 `op` is the *at-issue* truth-conditional operation: the role selects the Boolean method
 (`⊓` / `⊔` / `(·⊔·)ᶜ`), the instance supplies the algebra. It is faithful for *and* (`.j`),

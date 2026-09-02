@@ -1,151 +1,70 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Real.Basic
+import Mathlib.Order.BooleanAlgebra.Basic
 
 /-!
-# Intensional Logic: Types and Denotations
+# Semantic types and denotation domains
 
-[dowty-wall-peters-1981] [gallin-1975]
+The types of intensional logic and their denotation domains. `Ty` is the type grammar —
+`e`, `t`, `⟨a,b⟩`, `⟨s,a⟩`, and the degree, cardinality and eventuality sorts of later
+work — and `Denot E W ty` computes the domain of possible denotations of each type from an
+entity type `E` and an index type `W`: functions denote in function spaces and intensions
+in `W`-indexed families, so a denotation is an ordinary Lean term and composition is
+function application.
 
-Foundations for intensional logic following DWP Ch. 6. `Ty` is the recursive
-grammar of semantic types; `Denot E W` computes denotation domains from
-explicit entity (`E`) and index (`W`) type parameters and a type.
+`Denot` is reducible: a denotation of type `⟨e,t⟩` *is* an `E → Prop` to every tactic and
+instance, and the pointwise Boolean algebra of a type that ends in `t` is mathlib's `Pi`
+instance. `Denot.booleanAlgebra?` computes that algebra by recursion on the type, for the
+composition engine's runtime type dispatch.
 
-## Key definitions
+## Main definitions
 
-- `Ty` — semantic types: `e`, `t`, `n`, `d`, `v`, `s`, `⟨a,b⟩`, `⟨s,a⟩`
-- `Denot E W` — denotation domains (DWP Def B.3), parameterized by entity and index types
-- `up`, `down` — intension formation / extension extraction (DWP Rules B.14–B.15)
+* `Ty`: semantic types.
+* `Denot E W ty`: the denotation domain of `ty`.
+* `Denot.booleanAlgebra?`: the pointwise Boolean algebra of a conjoinable type, `none` on
+  a type that does not end in `t`.
+
+## References
+
+* [D. Dowty, R. Wall, S. Peters, *Introduction to Montague Semantics* (1981)][dowty-wall-peters-1981]
+* [D. Gallin, *Intensional and Higher-Order Modal Logic* (1975)][gallin-1975]
+* [B. Partee, M. Rooth, *Generalized Conjunction and Type Ambiguity* (1983)][partee-rooth-1983]
 -/
 
 namespace Intensional
 
--- ════════════════════════════════════════════════════════════════
--- § Semantic Types (DWP Ch. 6, Def B.1)
--- ════════════════════════════════════════════════════════════════
-
-/-- Semantic types for Intensional Logic.
-
-- `e` — entities
-- `t` — truth values
-- `fn a b` — functions ⟨a,b⟩
-- `intens a` — intensions ⟨s,a⟩ (functions from indices to a-extensions)
-
-The old `Ty.s` base type is replaced by the `intens` constructor:
-intensionality is a type-forming operation, not a separate domain.
-
-The core `e`, `t`, `⟨a,b⟩`, `⟨s,a⟩` grammar is [dowty-wall-peters-1981]
-Ch. 6 (equivalently [heim-kratzer-1998]'s (5) plus intensions); the
-degree and eventuality sorts are the standard extensions of degree and
-neo-Davidsonian event semantics. Following [yu-ausensi-smith-2023]'s
-convention, `v` is the sort of events and `s` the sort of states — so
-⟨e,⟨s,t⟩⟩ is an individual/state relation (a stative or property-concept
-root) and ⟨e,⟨v,t⟩⟩ an individual/event relation (a change-of-state
-root). -/
+/-- Semantic types: Montague's `e`, `t`, `fn a b` (⟨a,b⟩) and `intens a` (⟨s,a⟩), the
+degree sort `d` ([heim-2001], [wellwood-2015]), the cardinality sort `n` ([sudo-2016],
+[scontras-2014], [little-moroney-royer-2022]), and the eventuality sorts `v` (events) and
+`s` (states) ([davidson-1967], [parsons-1990], [yu-ausensi-smith-2023]). -/
 inductive Ty where
-  | e : Ty
-  | t : Ty
-  /-- Degrees (type `d`): the scale sort of degree semantics
-      ([heim-2001], [wellwood-2015]). Denoted by the model's scale `D`,
-      `Denot`'s trailing parameter (default `ℝ`): a degree is a value of a
-      measure on the part structure, and the number system is only its
-      representation. -/
-  | d : Ty
-  /-- Numbers (type `n`): the cardinality sort — [sudo-2016]'s type-n
-      numerals, [scontras-2014]'s CARD, the measure-function codomain
-      ⟨e,n⟩ of [little-moroney-royer-2022]. Denoted by ℕ; distinct from
-      degrees `d`, into whose scale cardinality embeds by `Nat.cast`. -/
-  | n : Ty
-  /-- Events (type `v`): the neo-Davidsonian event sort ([davidson-1967],
-      [parsons-1990]). -/
-  | v : Ty
-  /-- States (type `s`): the state sort, distinguished from events per
-      [yu-ausensi-smith-2023]'s convention (`v` events, `s` states);
-      not the Montagovian index sort, which is `intens`. -/
-  | s : Ty
+  | e | t
+  /-- Degrees, denoting in the model's scale. -/
+  | d
+  /-- Cardinalities, denoting in `ℕ`. -/
+  | n
+  /-- Events. -/
+  | v
+  /-- States (not the index sort, which is `intens`). -/
+  | s
+  /-- Functions `⟨a,b⟩`. -/
   | fn : Ty → Ty → Ty
+  /-- Intensions `⟨s,a⟩`. -/
   | intens : Ty → Ty
   deriving Repr, DecidableEq
 
-infixr:25 " ⇒ " => Ty.fn
+@[inherit_doc] infixr:25 " ⇒ " => Ty.fn
 
-/-! ### Functional application at type level -/
-
-/-- Type-level functional application ([heim-kratzer-1998]'s Functional
-    Application, on types): a function type applied to a matching argument
-    type yields the value type; anything else is a type mismatch (`none`).
-    Composition failures are computed, not stipulated. -/
-def Ty.apply : Ty → Ty → Option Ty
-  | .fn a b, a' => if a = a' then some b else none
-  | _, _ => none
-
-theorem Ty.apply_eq_some_iff {f x c : Ty} :
-    f.apply x = some c ↔ f = (x ⇒ c) := by
-  constructor
-  · intro h
-    cases f with
-    | fn a b =>
-      simp only [Ty.apply] at h
-      split at h
-      · next hax => subst hax; cases h; rfl
-      · exact absurd h (by simp)
-    | e => exact absurd h (by simp [Ty.apply])
-    | t => exact absurd h (by simp [Ty.apply])
-    | d => exact absurd h (by simp [Ty.apply])
-    | n => exact absurd h (by simp [Ty.apply])
-    | v => exact absurd h (by simp [Ty.apply])
-    | s => exact absurd h (by simp [Ty.apply])
-    | intens a => exact absurd h (by simp [Ty.apply])
-  · rintro rfl
-    simp [Ty.apply]
-
-/-- Standard type abbreviations. -/
+/-- `⟨e,t⟩`, properties of individuals. -/
 abbrev Ty.et : Ty := .e ⇒ .t
+/-- `⟨e,⟨e,t⟩⟩`, relations between individuals. -/
 abbrev Ty.eet : Ty := .e ⇒ .e ⇒ .t
+/-- `⟨⟨e,t⟩,t⟩`, generalized quantifiers. -/
 abbrev Ty.ett : Ty := (.e ⇒ .t) ⇒ .t
-/-- ⟨s,t⟩ — propositions (sets of indices). -/
-abbrev Ty.prop : Ty := .intens .t
-/-- ⟨s,e⟩ — individual concepts (index-dependent individuals). -/
-abbrev Ty.indConcept : Ty := .intens .e
 
-/-- A type is conjoinable if it "ends in `t`" ([partee-rooth-1983] Definition 4).
-    Intension types `⟨s,a⟩` are conjoinable iff the base type is —
-    conjunction is pointwise over indices. -/
-def Ty.isConjoinable : Ty → Bool
-  | .t => true
-  | .e => false
-  | .d => false
-  | .n => false
-  | .v => false
-  | .s => false
-  | .fn _ τ => τ.isConjoinable
-  | .intens a => a.isConjoinable
-
--- ════════════════════════════════════════════════════════════════
--- § Denotation Domains (DWP Ch. 6, Def B.3)
--- ════════════════════════════════════════════════════════════════
-
-/-- Denotation domains, computed from an entity type `E`, an index type `W`,
-    and a semantic type.
-
-    DWP's model is ⟨A, W, T, <, F⟩; here `E` = A (the domain of individuals) and
-    `W` = W × T (world-time pairs), or just W, or `Unit` for extensional. Temporal
-    ordering, accessibility relations, etc. are structure on `W`, not baked in.
-
-    D_e = E
-    D_t = Prop
-    D_d = D   (the degree scale, a model parameter like `E` and `W`; default ℝ)
-    D_n = ℕ
-    D_⟨a,b⟩ = D_a → D_b
-    D_⟨s,a⟩ = W → D_a
-
-    The eventuality sorts `v` and `s` denote in the empty domain: the
-    extensional DWP fragment carries no eventuality domain, and nothing
-    here constructs event-typed denotations. Event-semantic
-    interpretation is the extension point — a carrier-parametric
-    variant of `Denot` supplying event and state domains — and lands
-    with the first study that composes event-typed denotations. -/
-def Denot (E W : Type) (ty : Ty) (D : Type := ℝ) : Type :=
+/-- Denotation domains: `e` denotes in `E`, `t` in `Prop`, `d` in the scale `D`, `n` in
+`ℕ`, `⟨a,b⟩` in `Denot a → Denot b` and `⟨s,a⟩` in `W → Denot a`. The eventuality sorts
+have the empty domain: nothing here constructs event-typed denotations. -/
+abbrev Denot (E W : Type) (ty : Ty) (D : Type := ℝ) : Type :=
   match ty with
   | .e => E
   | .t => Prop
@@ -156,81 +75,19 @@ def Denot (E W : Type) (ty : Ty) (D : Type := ℝ) : Type :=
   | .fn a b => Denot E W a D → Denot E W b D
   | .intens a => W → Denot E W a D
 
-/-- Soundness of type-level application: when `apply` succeeds, the
-    denotation domain of the function type is exactly the function space
-    from the argument's domain to the value's. -/
-theorem Denot.apply_sound {E W D : Type} {f x c : Ty}
-    (h : f.apply x = some c) :
-    Denot E W f D = (Denot E W x D → Denot E W c D) := by
-  rw [Ty.apply_eq_some_iff] at h; subst h; rfl
-
--- ════════════════════════════════════════════════════════════════
--- § Up and Down (DWP Rules B.14–B.15)
--- ════════════════════════════════════════════════════════════════
-
-/-- ^α — form the rigid intension of an expression.
-    Maps a denotation to the constant function over indices.
-    Definitionally equal to `Intensional.Intension.rigid`. -/
-def up {E W D : Type} {a : Ty} (x : Denot E W a D) : Denot E W (.intens a) D :=
-  λ _ => x
-
-/-- ˇα — extract the extension at index i.
-    Evaluates an intension at a given index.
-    Definitionally equal to `Intensional.Intension.evalAt`. -/
-def down {E W D : Type} {a : Ty} (s : Denot E W (.intens a) D) (i : W) : Denot E W a D :=
-  s i
-
-/-- Down-up cancellation: ˇ(^α) = α at any index. DWP Theorem 1. -/
-theorem down_up {E W D : Type} {a : Ty} (x : Denot E W a D) (i : W) :
-    down (up x) i = x := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § Sentential Operators
--- ════════════════════════════════════════════════════════════════
-
-/-- Sentence negation. -/
-def neg {E W : Type} (p : Denot E W .t) : Denot E W .t := ¬p
-
-/-- Sentence conjunction. -/
-def conj {E W : Type} (p q : Denot E W .t) : Denot E W .t := p ∧ q
-
-/-- Sentence disjunction. -/
-def disj {E W : Type} (p q : Denot E W .t) : Denot E W .t := p ∨ q
-
-theorem double_negation {E W : Type} (p : Denot E W .t) : neg (neg p) = p := by
-  simp only [neg, not_not]
-
--- ════════════════════════════════════════════════════════════════
--- § Characteristic Functions
--- ════════════════════════════════════════════════════════════════
-
-/-- Convert a predicate `e → t` to a `Set` (the extension). -/
-def predicateToSet {E W : Type} (p : Denot E W (.e ⇒ .t)) : Set E :=
-  { x | p x }
-
-/-- Convert a set to a predicate. -/
-def setToPredicate {E W : Type} (s : Set E) : Denot E W (.e ⇒ .t) :=
-  λ x => x ∈ s
-
-/-- Membership in a predicate's extension. -/
-def inExtension {E W : Type} (p : Denot E W (.e ⇒ .t)) (x : E) : Prop := p x
-
--- ════════════════════════════════════════════════════════════════
--- § Currying
--- ════════════════════════════════════════════════════════════════
-
-/-- Uncurry a binary relation (obj-first) to a pair relation (subj-first). -/
-def uncurry {E W : Type} (f : Denot E W (.e ⇒ .e ⇒ .t)) : E × E → Prop :=
-  λ (x, y) => f y x
-
-/-- Curry a pair relation to a binary relation. -/
-def curry {E W : Type} (r : E × E → Prop) : Denot E W (.e ⇒ .e ⇒ .t) :=
-  λ y x => r (x, y)
-
-theorem curry_uncurry {E W : Type} (f : Denot E W (.e ⇒ .e ⇒ .t)) :
-    curry (uncurry f) = f := rfl
-
-theorem uncurry_curry {E : Type} (W : Type) (r : E × E → Prop) :
-    uncurry (curry (W := W) r) = r := rfl
+/-- The pointwise Boolean algebra of a conjoinable type ([partee-rooth-1983]), computed by
+recursion on the type: `none` exactly when the type does not end in `t`. At a concrete
+type this is the instance `Pi.instBooleanAlgebra` finds statically. -/
+def Denot.booleanAlgebra? (E W : Type) (ty : Ty) (D : Type := ℝ) :
+    Option (BooleanAlgebra (Denot E W ty D)) :=
+  match ty with
+  | .t => some inferInstance
+  | .fn _ b =>
+    (booleanAlgebra? E W b D).map fun (i : BooleanAlgebra (Denot E W b D)) =>
+      letI := i; inferInstance
+  | .intens a =>
+    (booleanAlgebra? E W a D).map fun (i : BooleanAlgebra (Denot E W a D)) =>
+      letI := i; inferInstance
+  | _ => none
 
 end Intensional

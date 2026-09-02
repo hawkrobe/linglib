@@ -1,4 +1,5 @@
-import Linglib.Semantics.Composition.CoordinatorOp
+import Linglib.Syntax.Category.Coordinator
+import Linglib.Semantics.Quantification.Defs
 import Linglib.Semantics.Plurality.Algebra
 
 /-!
@@ -50,7 +51,7 @@ open Plurality.Algebra
 /-! ### The type-shift `⊔ ↦ ⊓` is guarded to distributive predicates
 
 The intersective entry says *and* is `INT` ([champollion-2016-coordination] eq. 16):
-generalized conjunction `genConj`, which is `Coordinator.op .j` = the Boolean meet `⊓`.
+generalized conjunction, `Coordinator.op .j`, the Boolean meet `⊓`.
 On two type-raised individuals it returns `λP. P x ∧ P y`. The collective behaviour
 people attribute to *and* (a join `x ⊔ y` on individuals) coincides with this meet only
 for predicates that *distribute* the join — for genuinely collective predicates the two
