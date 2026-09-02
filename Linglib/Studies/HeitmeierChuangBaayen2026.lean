@@ -13,23 +13,25 @@ addition, eq. 5.3, §16.3), which regularizes a system into "a reasonable approx
 regular system, and for such a system, linear mappings appear to work quite well" (§16.6,
 Table 16.2); but with the meanings of held-out verbs reconstructed this way, "none of the
 irregular verbs was produced correctly" (§12.9). This file states why, in word-and-paradigm
-terms (`Morphology.IsAnalogicallyRegular`). Over additive semantics a linear map's form table
-satisfies proportional analogy by construction, so a table violating analogy has no linear
-interpolant and forces positive training loss, and when stem and exponent vectors are jointly
-independent a table is the paradigm of some linear DLM iff it is analogically regular. Over
-word-specific embeddings, by contrast, any table is linearly realisable as soon as the
-embeddings are linearly independent, which fills the irregular-linear cell of Table 16.2. The
-English past tense at the book's letter-trigram coding (§12.9, `cueVector`) is the irregular
-table: *walk, walked* against *go, went*.
+terms (`Morphology.IsAnalogicallyRegular`), on the `Morphology.Realization` interface
+(`DiscriminativeLexicon.Linear.paradigm`). Over imputed semantics, a lexeme vector plus an
+inflectional-function vector (`imputed`; §16.6 says "imputed embeddings for stems and exponents"),
+a linear map's form table satisfies proportional analogy by construction, so a table violating
+analogy is the paradigm of no linear DLM and forces positive training loss, and when the lexeme
+and function vectors are jointly independent a table is the paradigm of some linear DLM iff it is
+analogically regular. Over word-specific embeddings, by contrast, any table is the paradigm of
+some linear DLM as soon as the embeddings are linearly independent, which fills the
+irregular-linear cell of Table 16.2. The English past tense at the book's letter-trigram coding
+(§12.9, `cueVector`) is the irregular table: *walk, walked* against *go, went*.
 
 ## Main results
 
-* `not_exists_linear_of_not_regular`, `pos_weightedLoss_of_not_regular`: an irregular table has
-  no linear interpolant over additive semantics and forces positive loss.
-* `exists_linear_iff_isAnalogicallyRegular`, `exists_paradigm_eq_iff`: over jointly independent
-  stem and exponent vectors, a table is realised by a linear DLM iff it is analogically regular.
-* `exists_linear_of_linearIndependent_words`: over independent word-specific embeddings every
-  table is linearly realisable.
+* `not_exists_paradigm_eq_of_not_regular`, `pos_weightedLoss_of_not_regular`: an irregular
+  table is the paradigm of no linear DLM over imputed semantics and forces positive loss.
+* `exists_paradigm_imputed_eq_iff`: over jointly independent lexeme and function vectors, a
+  table is the paradigm of some linear DLM iff it is analogically regular.
+* `exists_paradigm_eq_of_linearIndependent`: over independent word-specific embeddings every
+  table is the paradigm of some linear DLM.
 * `pastTense_not_regular`: *walk, walked, go, went* violates analogy.
 
 ## References
@@ -42,19 +44,19 @@ namespace HeitmeierChuangBaayen2026
 
 open DiscriminativeLexicon Morphology
 
-variable {d n : ℕ} {Stem Cell : Type*}
+variable {d n : ℕ} {Lexeme Cell : Type*}
 
-/-! ### Additive semantics -/
+/-! ### Imputed semantics -/
 
-variable (σ : Stem → MeaningVec d) (ε : Cell → MeaningVec d)
+variable (σ : Lexeme → MeaningVec d) (ε : Cell → MeaningVec d)
 
-/-- A table violating proportional analogy has no linear interpolant over additive semantics:
-irregular forms cannot be produced from constructed meanings (§12.9). -/
-theorem not_exists_linear_of_not_regular {f : Stem → Cell → FormVec n}
+/-- A table violating proportional analogy is the paradigm of no linear DLM over imputed
+semantics: irregular forms cannot be produced from constructed meanings (§12.9). -/
+theorem not_exists_paradigm_eq_of_not_regular {f : Lexeme → Cell → FormVec n}
     (hf : ¬ IsAnalogicallyRegular f) :
-    ¬ ∃ G : MeaningVec d →ₗ[ℝ] FormVec n, ∀ st c, G (σ st + ε c) = f st c := by
-  rintro ⟨G, hG⟩
-  exact hf (by simpa [hG] using (isAnalogicallyRegular_add σ ε).map G.toAddMonoidHom)
+    ¬ ∃ D : Linear ℝ (FormVec n) (MeaningVec d), D.paradigm (imputed σ ε) = f := by
+  rintro ⟨D, rfl⟩
+  exact hf (D.isAnalogicallyRegular_paradigm_imputed σ ε)
 
 /-! ### Interpolation -/
 
@@ -68,40 +70,29 @@ theorem exists_linear_of_linearIndependent {ι : Type*} {v : ι → MeaningVec d
   rwa [LinearMap.comp_apply, Submodule.subtype_apply, Module.Basis.constr_basis,
     Module.Basis.span_apply] at h
 
-/-- Over word-specific, linearly independent embeddings any form table is linearly realisable,
-irregulars included: the irregular-linear cell of Table 16.2, the English past tense on empirical
-embeddings (§12.9). -/
-theorem exists_linear_of_linearIndependent_words {s : Stem → Cell → MeaningVec d}
-    (hs : LinearIndependent ℝ (Function.uncurry s)) (f : Stem → Cell → FormVec n) :
-    ∃ G : MeaningVec d →ₗ[ℝ] FormVec n, ∀ st c, G (s st c) = f st c :=
+/-- Over word-specific, linearly independent embeddings any form table is the paradigm of some
+linear DLM, irregulars included: the irregular-linear cell of Table 16.2, the English past tense
+on empirical embeddings (§12.9). -/
+theorem exists_paradigm_eq_of_linearIndependent {s : Lexeme → Cell → MeaningVec d}
+    (hs : LinearIndependent ℝ (Function.uncurry s)) (f : Lexeme → Cell → FormVec n) :
+    ∃ D : Linear ℝ (FormVec n) (MeaningVec d), D.paradigm s = f :=
   let ⟨G, hG⟩ := exists_linear_of_linearIndependent hs (Function.uncurry f)
-  ⟨G, fun st c => hG (st, c)⟩
+  ⟨⟨0, G⟩, funext fun l => funext fun c => hG (l, c)⟩
 
-/-- When stem and exponent vectors are jointly linearly independent, a paradigm table is linearly
-realisable over additive semantics **iff** it is analogically regular: for a regularized system,
-linearity and regularity are the same constraint (§16.6). -/
-theorem exists_linear_iff_isAnalogicallyRegular [Nonempty Stem] [Nonempty Cell]
-    (hind : LinearIndependent ℝ (Sum.elim σ ε)) (f : Stem → Cell → FormVec n) :
-    (∃ G : MeaningVec d →ₗ[ℝ] FormVec n, ∀ st c, G (σ st + ε c) = f st c) ↔
+/-- When the lexeme and inflectional-function vectors are jointly linearly independent, a table
+is the paradigm of some linear DLM over imputed semantics **iff** it is analogically regular: for
+a regularized system, linearity and regularity are the same constraint (§16.6). -/
+theorem exists_paradigm_imputed_eq_iff [Nonempty Lexeme] [Nonempty Cell]
+    (hind : LinearIndependent ℝ (Sum.elim σ ε)) (f : Lexeme → Cell → FormVec n) :
+    (∃ D : Linear ℝ (FormVec n) (MeaningVec d), D.paradigm (imputed σ ε) = f) ↔
       IsAnalogicallyRegular f := by
-  refine ⟨fun ⟨G, hG⟩ => by
-    simpa [hG] using (isAnalogicallyRegular_add σ ε).map G.toAddMonoidHom, fun hreg => ?_⟩
+  refine ⟨fun ⟨D, hD⟩ => hD ▸ D.isAnalogicallyRegular_paradigm_imputed σ ε, fun hreg => ?_⟩
   obtain ⟨a, b, hab⟩ := isAnalogicallyRegular_iff_exists_add.1 hreg
   obtain ⟨G, hG⟩ := exists_linear_of_linearIndependent hind (Sum.elim a b)
-  refine ⟨G, fun st c => ?_⟩
-  have hσ : G (σ st) = a st := hG (Sum.inl st)
+  refine ⟨⟨0, G⟩, funext fun l => funext fun c => ?_⟩
+  have hσ : G (σ l) = a l := hG (Sum.inl l)
   have hε : G (ε c) = b c := hG (Sum.inr c)
-  rw [map_add, hσ, hε, hab]
-
-/-- On the `Morphology.Realization` interface: a table is the paradigm of some linear DLM over
-jointly independent imputed vectors iff it is analogically regular. -/
-theorem exists_paradigm_eq_iff [Nonempty Stem] [Nonempty Cell]
-    (hind : LinearIndependent ℝ (Sum.elim σ ε)) (f : Stem → Cell → FormVec n) :
-    (∃ D : Linear ℝ (FormVec n) (MeaningVec d), D.paradigm σ ε = f) ↔
-      IsAnalogicallyRegular f := by
-  rw [← exists_linear_iff_isAnalogicallyRegular σ ε hind]
-  refine ⟨fun ⟨D, hD⟩ => ⟨D.production, fun st c => by simpa using congrFun (congrFun hD st) c⟩,
-    fun ⟨G, hG⟩ => ⟨⟨0, G⟩, funext fun st => funext fun c => by simpa using hG st c⟩⟩
+  simp [hσ, hε, hab]
 
 /-! ### The English past tense -/
 
@@ -137,37 +128,36 @@ def trigram : Fin 13 → Augmented Letter :=
 def pastTense (v : Verb) (t : Tense) : FormVec 13 := cueVector 3 trigram (form v t)
 
 /-- The English past tense violates proportional analogy: *walked* adds the cue `ed#` to *walk*,
-*went* adds nothing to *go*. So no linear map produces it from constructed meanings
-(`not_exists_linear_of_not_regular`), while independent embeddings realise it
-(`exists_linear_of_linearIndependent_words`), as in §12.9. -/
+*went* adds nothing to *go*. So no linear DLM produces it from constructed meanings
+(`not_exists_paradigm_eq_of_not_regular`), while independent embeddings realise it
+(`exists_paradigm_eq_of_linearIndependent`), as in §12.9. -/
 theorem pastTense_not_regular : ¬ IsAnalogicallyRegular pastTense := fun h => by
-  have := congrFun (h .walk .go .past .base) 6
+  have := congrFun (isAnalogicallyRegular_iff.1 h .walk .go .past .base) 6
   simp +decide [pastTense, cueVector, multiHot] at this
 
 /-! ### Training on a paradigm -/
 
-variable [Fintype Stem] [Fintype Cell]
+variable [Fintype Lexeme] [Fintype Cell]
 
-/-- The paradigm as a training experience: conceptualized additive semantics as the meanings,
-the form table as the targets. -/
-noncomputable def paradigmExperience (f : Stem → Cell → FormVec n) :
-    TrainingExperience (Fintype.card (Stem × Cell)) n d where
-  meanings i := conceptualize (Sum.elim σ ε)
-    {Sum.inl ((Fintype.equivFin (Stem × Cell)).symm i).1,
-      Sum.inr ((Fintype.equivFin (Stem × Cell)).symm i).2}
-  forms i := f ((Fintype.equivFin (Stem × Cell)).symm i).1
-    ((Fintype.equivFin (Stem × Cell)).symm i).2
+/-- The paradigm as a training experience: imputed semantics as the meanings, the form table as
+the targets. -/
+noncomputable def paradigmExperience (f : Lexeme → Cell → FormVec n) :
+    TrainingExperience (Fintype.card (Lexeme × Cell)) n d where
+  meanings i := imputed σ ε ((Fintype.equivFin (Lexeme × Cell)).symm i).1
+    ((Fintype.equivFin (Lexeme × Cell)).symm i).2
+  forms i := f ((Fintype.equivFin (Lexeme × Cell)).symm i).1
+    ((Fintype.equivFin (Lexeme × Cell)).symm i).2
 
 /-- Irregularity forces positive training loss: no linear map fits a suppletive paradigm exactly,
 so every ERM solution carries residual error. -/
-theorem pos_weightedLoss_of_not_regular {f : Stem → Cell → FormVec n}
-    (hf : ¬ IsAnalogicallyRegular f) {q : FrequencyVector (Fintype.card (Stem × Cell))}
+theorem pos_weightedLoss_of_not_regular {f : Lexeme → Cell → FormVec n}
+    (hf : ¬ IsAnalogicallyRegular f) {q : FrequencyVector (Fintype.card (Lexeme × Cell))}
     (hq : ∀ i, 0 < q i) (G : MeaningVec d →ₗ[ℝ] FormVec n) :
     0 < weightedLoss (paradigmExperience σ ε f) q G := by
   refine lt_of_le_of_ne (weightedLoss_nonneg _ _ _) (Ne.symm fun h0 => ?_)
   have hint := (weightedLoss_eq_zero_iff _ _ _ hq).1 h0
-  refine not_exists_linear_of_not_regular σ ε hf ⟨G, fun st c => ?_⟩
-  have h := hint ((Fintype.equivFin (Stem × Cell)) (st, c))
+  refine not_exists_paradigm_eq_of_not_regular σ ε hf ⟨⟨0, G⟩, funext fun l => funext fun c => ?_⟩
+  have h := hint ((Fintype.equivFin (Lexeme × Cell)) (l, c))
   simpa [paradigmExperience] using h
 
 end HeitmeierChuangBaayen2026

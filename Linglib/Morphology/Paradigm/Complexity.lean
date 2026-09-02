@@ -1,3 +1,4 @@
+import Linglib.Morphology.Paradigm.Analogy
 import Linglib.Morphology.Paradigm.Basic
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Data.Fintype.Pi
@@ -31,6 +32,8 @@ classes.
 
 * `ParadigmSystem.conditionalCellEntropy_eq_zero_of_predicts`,
   `ParadigmSystem.isTransparent_of_isVocabularClear`: prediction is zero conditional entropy.
+* `ParadigmSystem.isVocabularClear_of_isAnalogical`: classes related by proportional analogy
+  (`Morphology.IsAnalogical`) are vocabularly clear.
 * `ParadigmSystem.cellEntropy_eq_zero_of_card_le_one`: a cell with one realization has zero
   entropy.
 * `ParadigmSystem.card_paradigms_le_prod_card_realizations`: classes are bounded by the product
@@ -189,6 +192,21 @@ theorem conditionalCellEntropy_eq_zero_of_predicts {ci cj : Fin n} (h : ps.Predi
 /-- A vocabularly clear system is transparent. -/
 theorem isTransparent_of_isVocabularClear (h : ps.IsVocabularClear) : ps.IsTransparent :=
   fun ci cj _ => ps.conditionalCellEntropy_eq_zero_of_predicts (h cj ci)
+
+omit [DecidableEq Form] in
+/-- A system whose classes are the paradigms of a family related by proportional analogy under
+any operations is vocabularly clear: a cell's form fixes the lexeme's whole paradigm
+([blevins-2016]'s analogy as implicative structure). -/
+theorem isVocabularClear_of_isAnalogical {L : Type*} {ops : Set (Form → Form)}
+    {p : L → Fin n → Form} (h : IsAnalogical ops p) (hps : ∀ e ∈ ps.entries, ∃ l, e.1 = p l) :
+    ps.IsVocabularClear := by
+  intro c j q hq q' hq' hcq
+  obtain ⟨l, hl⟩ := hps q hq
+  obtain ⟨l', hl'⟩ := hps q' hq'
+  obtain ⟨g, -, hg⟩ := h c j
+  have hc := hcq c (Finset.mem_singleton_self c)
+  rw [hl, hl'] at hc ⊢
+  rw [hg l, hg l', hc]
 
 end ParadigmSystem
 

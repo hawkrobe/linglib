@@ -24,7 +24,7 @@ proportional analogy (`Studies/HeitmeierChuangBaayen2026`).
 - `multiHot inv p`: the indicator row of the units satisfying `p` over an inventory `inv`.
 - `cueVector k inv w`: the row of `C` for `w`.
 - `conceptualize emb`: the additive map from primitive multisets to meaning vectors;
-  `conceptualize_pair` is the imputed semantics of a paradigm cell.
+  `imputed σ ε` is the resulting semantics of a lexeme at a cell.
 
 ## References
 
@@ -70,5 +70,15 @@ imputed additive semantics of a paradigm cell (eq. 5.3). -/
 @[simp] theorem conceptualize_pair {A B : Type*} (σ : A → V) (ε : B → V) (a : A) (b : B) :
     conceptualize (Sum.elim σ ε) {Sum.inl a, Sum.inr b} = σ a + ε b := by
   simp
+
+/-- **Imputed semantics**: the meaning of a lexeme at a cell conceptualized from the lexeme's
+vector and the inflectional function's vector (eq. 5.3; the constructed meaning-to-form route of
+Table 12.7, which §16.6 calls imputed embeddings for stems and exponents). -/
+def imputed {A B : Type*} (σ : A → V) (ε : B → V) (a : A) (b : B) : V :=
+  conceptualize (Sum.elim σ ε) {Sum.inl a, Sum.inr b}
+
+@[simp] theorem imputed_apply {A B : Type*} (σ : A → V) (ε : B → V) (a : A) (b : B) :
+    imputed σ ε a b = σ a + ε b :=
+  conceptualize_pair σ ε a b
 
 end DiscriminativeLexicon
