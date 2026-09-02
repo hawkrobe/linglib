@@ -30,10 +30,11 @@ polar parts and kills products of non-polar parts, because `support (x * y) ⊆ 
 
 The lemmas are stated at the *coefficient function* level (`polarHahn`, not a packaged `LinearMap`)
 and the `op` field of `rotaBaxterPolar` is constructed **inline**, so its module is the expected
-`Algebra.toModule` rather than `HahnSeries.instModule`. This avoids the `Module`-instance diamond on
-`LaurentSeries A` (the two modules are defeq but distinct *terms*, and reconciling them runs `isDefEq`
-through the noncomputable Laurent multiplication) — the same way mathlib proves the `HahnSeries` ring
-axioms directly at the coefficient level rather than by transporting packaged maps.
+`Algebra.toModule` rather than `HahnSeries.instModule`. This avoids the `Module`-instance diamond
+on `LaurentSeries A` (the two modules are defeq but distinct *terms*, and reconciling them runs
+`isDefEq` through the noncomputable Laurent multiplication) — the same way mathlib proves the
+`HahnSeries` ring axioms directly at the coefficient level rather than by transporting packaged
+maps.
 
 ## Main definitions
 
@@ -110,6 +111,45 @@ theorem polarHahn_eq_zero (s : LaurentSeries A) (h : ∀ i : ℤ, i < 0 → s.co
 /-- `1 = t⁰` is nonpolar. -/
 @[simp] theorem polarHahn_one : polarHahn (1 : LaurentSeries A) = 0 :=
   polarHahn_eq_zero _ fun i hi => by rw [HahnSeries.coeff_one, if_neg (by omega)]
+
+/-! ### Monomials -/
+
+/-- The monomial `single d r` is fixed by `R` when `d < 0` and killed otherwise. -/
+@[simp] theorem polarHahn_single (d : ℤ) (r : A) :
+    polarHahn (HahnSeries.single d r) = if d < 0 then HahnSeries.single d r else 0 := by
+  split_ifs with hd
+  · exact polarHahn_eq_self _ fun i hi => HahnSeries.coeff_single_of_ne (by omega)
+  · exact polarHahn_eq_zero _ fun i hi => HahnSeries.coeff_single_of_ne (by omega)
+
+/-- A nonzero monomial is nonpolar iff its exponent is nonnegative. -/
+theorem polarHahn_single_eq_zero_iff {d : ℤ} {r : A} (hr : r ≠ 0) :
+    polarHahn (HahnSeries.single d r) = 0 ↔ 0 ≤ d := by
+  rw [polarHahn_single]
+  split_ifs with hd
+  · simp [HahnSeries.single_eq_zero_iff, hr, hd.not_ge]
+  · simp [not_lt.mp hd]
+
+/-- The polar part of a sum of monomials is the sum over the negative exponents. -/
+theorem polarHahn_sum_map_single (d : Multiset ℤ) (r : A) :
+    polarHahn (d.map (HahnSeries.single · r)).sum
+      = ((d.filter (· < 0)).map (HahnSeries.single · r)).sum := by
+  induction d using Multiset.induction with
+  | empty => simp
+  | cons i d ih =>
+    rw [Multiset.map_cons, Multiset.sum_cons, polarHahn_add, ih, polarHahn_single]
+    by_cases h : i < 0 <;> simp [h]
+
+/-- The nonpolar projection `1 − R` of a sum of monomials keeps the nonnegative exponents. -/
+theorem sum_map_single_sub_polarHahn (d : Multiset ℤ) (r : A) :
+    (d.map (HahnSeries.single · r)).sum - polarHahn (d.map (HahnSeries.single · r)).sum
+      = ((d.filter (0 ≤ ·)).map (HahnSeries.single · r)).sum := by
+  rw [polarHahn_sum_map_single, sub_eq_iff_eq_add', ← Multiset.sum_add, ← Multiset.map_add]
+  simp only [← not_lt, Multiset.filter_add_not]
+
+/-- A sum of monomials with nonnegative exponents is nonpolar. -/
+theorem polarHahn_sum_map_single_of_nonneg {d : Multiset ℤ} (h : ∀ i ∈ d, 0 ≤ i) (r : A) :
+    polarHahn (d.map (HahnSeries.single · r)).sum = 0 := by
+  simp [polarHahn_sum_map_single, Multiset.filter_eq_nil.mpr fun i hi => not_lt.mpr (h i hi)]
 
 /-- A nonpolar series (`R s = 0`) is supported on non-negative degrees. -/
 theorem support_subset_nonneg (s : LaurentSeries A) (hs : polarHahn s = 0) :
@@ -201,7 +241,8 @@ private theorem coeff_algebraMap_mul (c : k) (y : LaurentSeries A) (i : ℤ) :
 /-- **The polar projection is a Rota–Baxter operator of weight `-1`** on `LaurentSeries A`
     ([marcolli-chomsky-berwick-2025] Prop. 3.5.2): the prototype minimal-subtraction operator. The
     `op` linear map is built inline with `letI := Algebra.toModule` to pin the expected module (see
-    the implementation note); `map_smul'` is then over the algebra action `c • x = algebraMap c * x`. -/
+    the implementation note); `map_smul'` is then over the algebra action
+    `c • x = algebraMap c * x`. -/
 noncomputable def rotaBaxterPolar : RotaBaxter k (LaurentSeries A) (-1) where
   op := by
     letI : Module k (LaurentSeries A) := Algebra.toModule
@@ -214,7 +255,7 @@ noncomputable def rotaBaxterPolar : RotaBaxter k (LaurentSeries A) (-1) where
           coeff_algebraMap_mul, coeff_algebraMap_mul, coeff_polarHahn]
         split_ifs <;> ring }
   rotaBaxter a b := by
-    letI : Module k (LaurentSeries A) := Algebra.toModule
+    let _ : Module k (LaurentSeries A) := Algebra.toModule
     simp only [LinearMap.coe_mk, AddHom.coe_mk]
     rw [neg_one_smul, ← sub_eq_add_neg]
     exact polarHahn_rotaBaxter a b

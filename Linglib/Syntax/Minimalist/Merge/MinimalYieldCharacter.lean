@@ -20,8 +20,8 @@ canonical construction `L(F) → F` is exactly `α(F) = Forest.alpha F` (the lea
 
 Since `α(F) ≥ 0`, `ϕt` lands entirely in the **nonpolar** subring `DM[[t]] = (1 − R)·DM[t⁻¹][[t]]`
 (**MCB Lemma 3.5.5**): `R·ϕt(F) = 0` for every forest `F`. This is exactly why `ϕt` alone cannot
-detect Sideward Merge — the intermediate-derivation character `ψt` (Cor. 3.5.4) and the full Birkhoff
-factorization (Prop. 3.5.6) are needed to separate Internal/External from Sideward Merge.
+detect Sideward Merge — the intermediate-derivation character `ψt` (Cor. 3.5.4) and the full
+Birkhoff factorization (Prop. 3.5.6) are needed to separate Internal/External from Sideward Merge.
 
 ## Main definitions
 
@@ -38,20 +38,11 @@ open RoseTree RoseTree.Nonplanar ConnesKreimer LaurentSeries
 
 variable {α : Type*} {R : Type*} [CommRing R]
 
-/-! ### `gradeMonomial` is a multiplicative grading -/
-
-@[simp] theorem gradeMonomial_zero : gradeMonomial (A := R) 0 = 1 := rfl
-
-/-- `tᵃ · tᵇ = tᵃ⁺ᵇ`: the grading monomials multiply by adding exponents. -/
-theorem gradeMonomial_mul (a b : ℤ) :
-    gradeMonomial (A := R) a * gradeMonomial b = gradeMonomial (a + b) := by
-  rw [gradeMonomial, gradeMonomial, gradeMonomial, HahnSeries.single_mul_single, one_mul]
-
 /-! ### The character ϕt (MCB Prop. 3.5.3, `δα` grading) -/
 
 /-- The per-tree value of `ϕt`: `t^{α(T)} = t^{accCount T}` (the `δα` grading of `L(T) → T`). -/
 noncomputable def gradingMonomialTree (T : Nonplanar α) : LaurentSeries R :=
-  gradeMonomial (T.accCount : ℤ)
+  HahnSeries.single (T.accCount : ℤ) 1
 
 /-- `ϕt` extended multiplicatively to forests (`ϕt(F ⊔ F') = ϕt(F)·ϕt(F')`); mirrors
     `antipodeMonoidHomN`. -/
@@ -79,20 +70,20 @@ noncomputable def gradingChar : ConnesKreimer R (Nonplanar α) →ₐ[R] Laurent
 /-- `ϕt(F) = t^{α(F)}`: the forest value is the single grading monomial at the accessible-term
     count (the product of per-tree monomials collapses since `α` is additive). -/
 theorem prod_gradingMonomialTree (F : Forest (Nonplanar α)) :
-    (F.map (gradingMonomialTree (R := R))).prod = gradeMonomial (Forest.alpha F : ℤ) := by
+    (F.map (gradingMonomialTree (R := R))).prod = HahnSeries.single (Forest.alpha F : ℤ) 1 := by
   induction F using Multiset.induction with
   | empty => rw [Multiset.map_zero, Multiset.prod_zero, Forest.alpha_zero]; rfl
   | cons T F ih =>
-    rw [Multiset.map_cons, Multiset.prod_cons, ih, gradingMonomialTree, gradeMonomial_mul,
-      Forest.alpha_cons]
+    rw [Multiset.map_cons, Multiset.prod_cons, ih, gradingMonomialTree,
+      HahnSeries.single_mul_single, one_mul, Forest.alpha_cons]
     push_cast; rfl
 
 theorem gradingChar_apply_of'_eq (F : Forest (Nonplanar α)) :
-    gradingChar (R := R) (of' F) = gradeMonomial (Forest.alpha F : ℤ) := by
+    gradingChar (R := R) (of' F) = HahnSeries.single (Forest.alpha F : ℤ) 1 := by
   rw [gradingChar_apply_of', prod_gradingMonomialTree]
 
 @[simp] theorem gradingChar_apply_ofTree (T : Nonplanar α) :
-    gradingChar (R := R) (ofTree T) = gradeMonomial (T.accCount : ℤ) := by
+    gradingChar (R := R) (ofTree T) = HahnSeries.single (T.accCount : ℤ) 1 := by
   unfold ofTree
   rw [gradingChar_apply_of', Multiset.map_singleton, Multiset.prod_singleton]
   rfl
@@ -104,13 +95,13 @@ theorem gradingChar_apply_of'_eq (F : Forest (Nonplanar α)) :
     operations build `F`), motivating the intermediate-derivation character `ψt`. -/
 theorem polarHahn_gradingChar_of' (F : Forest (Nonplanar α)) :
     polarHahn (gradingChar (R := R) (of' F)) = 0 := by
-  rw [gradingChar_apply_of'_eq, polarHahn_gradeMonomial,
+  rw [gradingChar_apply_of'_eq, polarHahn_single,
     if_neg (by omega : ¬ ((Forest.alpha F : ℤ) < 0))]
 
 /-- Lemma 3.5.5 on a single tree: `R·ϕt(T) = 0`. -/
 theorem polarHahn_gradingChar_ofTree (T : Nonplanar α) :
     polarHahn (gradingChar (R := R) (ofTree T)) = 0 := by
-  rw [gradingChar_apply_ofTree, polarHahn_gradeMonomial,
+  rw [gradingChar_apply_ofTree, polarHahn_single,
     if_neg (by omega : ¬ ((T.accCount : ℤ) < 0))]
 
 end Minimalist.Merge
