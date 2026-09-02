@@ -3010,3 +3010,4 @@ import Linglib.Data.Examples.BaleKhanjian2014
 import Linglib.Data.Examples.BaleSchwarz2026
 import Linglib.Data.Examples.Chierchia2006
 import Linglib.Data.Examples.FoxHackl2006
+import Linglib.Data.Examples.CiardelliGuerrini2026
