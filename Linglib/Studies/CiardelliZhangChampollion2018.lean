@@ -3,17 +3,14 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Data.Rat.Defs
 
 /-!
-# [ciardelli-zhang-champollion-2018] — Two switches in the theory of counterfactuals
-
-Ciardelli, I., Zhang, L. & Champollion, L. (2018). Two switches in the
-theory of counterfactuals: A study of truth conditionality and minimal
-change. *Linguistics and Philosophy* 41(6): 577–621.
+# Ciardelli, Zhang & Champollion 2018: Two switches
 
 ## Headline finding
 
 Two truth-conditionally equivalent clauses (`A̅ ∨ B̅` and `¬(A ∧ B)`,
 related by De Morgan) make different semantic contributions when
-embedded as counterfactual antecedents. This challenges the textbook
+embedded as counterfactual antecedents
+([ciardelli-zhang-champollion-2018]). This challenges the textbook
 truth-conditional view of meaning AND falsifies any minimal-change
 semantics of counterfactuals — including Lewis-Stalnaker similarity
 semantics and Kratzer-style premise semantics.
@@ -22,15 +19,18 @@ semantics and Kratzer-style premise semantics.
 
 Two switches A, B at opposite ends of a hallway. The light is on iff
 both switches are in the same position. Currently both are up, light is
-on. The crowdsourced experiment elicited truth judgments for five
-counterfactuals; the discriminating contrast (Tables 7–8, p. 607):
+on. The crowdsourced main experiment elicited truth judgments for five
+counterfactuals; the discriminating contrast (Table 3, "True" counts):
 
-- **`A̅ > OFF`** ("If A were down, light would be off"): ~78% true
-- **`B̅ > OFF`**:                                          ~76% true
-- **`A̅ ∨ B̅ > OFF`**:                                     ~79% true
-- **`¬(A ∧ B) > OFF`**:                                  ~20% true
+- **`A̅ > OFF`** ("If A were down, light would be off"): 169/256 ≈ 66% true
+- **`B̅ > OFF`**:                                         153/235 ≈ 65% true
+- **`A̅ ∨ B̅ > OFF`**:                                    251/362 ≈ 69% true
+- **`¬(A ∧ B) > OFF`**:                                   82/372 ≈ 22% true
 
-`A̅ ∨ B̅` and `¬(A ∧ B)` are de-Morgan equivalent yet diverge sharply.
+`A̅ ∨ B̅` and `¬(A ∧ B)` are de-Morgan equivalent yet diverge sharply
+(the paper's dashed-line block structure: within-block differences are
+not significant, across-block differences are; the same pattern holds
+in both presentation orders, Tables 7–8).
 
 ## What this file proves
 
@@ -42,8 +42,8 @@ counterfactuals; the discriminating contrast (Tables 7–8, p. 607):
    (Stalnaker + supervaluation, returns `Trivalent.true`), and
    `homogeneityCounterfactual` (von Fintel/Križ, returns `assertion =
    some true` with satisfied presupposition) — all predict `¬(A ∧ B) >
-   OFF` true. This is the empirically falsified prediction (~20% true,
-   Tables 7–8).
+   OFF` true. This is the empirically falsified prediction (22% true,
+   Table 3).
 3. **Generic structural argument** (CZC §1.2 argument, p. 582):
    the operator-agnostic core
    (`closestWorlds_predicate_forces_notBothUp`) shows that for ANY
@@ -88,8 +88,15 @@ file establishes the template for an eventual situation-semantic
 switches model that would settle the question raised here.
 
 The CZC positive proposal — a foreground/background distinction
-combined with inquisitive lifting (§4) — and §6.4's SNCA derivation
-(Proposition 2 + Lemma 1) are also left as future formalization.
+(§4, background semantics) combined with the inquisitive lifting of
+§3.2 — and §6.4's SNCA derivation (Proposition 2 + Lemma 1) are also
+left as future formalization.
+
+## References
+
+* [I. Ciardelli, L. Zhang, L. Champollion, *Two switches in the theory of
+  counterfactuals* (2018)][ciardelli-zhang-champollion-2018]
+* [A. Kratzer, *The notional category of modality* (1981)][kratzer-1981]
 -/
 
 namespace CiardelliZhangChampollion2018
@@ -186,24 +193,24 @@ def hammingSim : SimilarityOrdering World where
 
 /-- **Prediction 1**: `A̅ > OFF` is true at `uu`. (The closest A̅-world
     to `uu` is `du` — Hamming distance 1 — and the light is off there.)
-    Empirically: ~78% true. -/
+    Empirically: 66% true (Table 3). -/
 theorem aDn_off_at_uu :
     universalCounterfactual hammingSim aDn lightOff .uu := by decide
 
 /-- **Prediction 2**: `B̅ > OFF` is true at `uu`. By the symmetric
-    argument. Empirically: ~76% true. -/
+    argument. Empirically: 65% true (Table 3). -/
 theorem bDn_off_at_uu :
     universalCounterfactual hammingSim bDn lightOff .uu := by decide
 
 /-- **Prediction 3**: `A̅ ∨ B̅ > OFF` is true at `uu`. The closest
     A̅ ∨ B̅-worlds are `{ud, du}` (both at Hamming distance 1), and the
-    light is off in both. Empirically: ~79% true. -/
+    light is off in both. Empirically: 69% true (Table 3). -/
 theorem aOrBdn_off_at_uu :
     universalCounterfactual hammingSim aOrBdn lightOff .uu := by decide
 
 /-- **Prediction 4 (the falsified one)**: `¬(A ∧ B) > OFF` is *also*
     predicted true at `uu`, since `¬(A ∧ B)` and `A̅ ∨ B̅` are
-    de-Morgan equivalent. **Empirically: only ~20% true.**
+    de-Morgan equivalent. **Empirically: only 22% true (Table 3).**
 
     This is the central empirical contrast of
     [ciardelli-zhang-champollion-2018]: a truth-conditional
@@ -367,43 +374,43 @@ theorem homogeneity_minimal_change_forces_notBothUp_off
       ((homogeneity_eq_true_iff sim aDn lightOff w₀).mp h_a)
       ((homogeneity_eq_true_iff sim bDn lightOff w₀).mp h_b))
 
-/-! ## Empirical data (Tables 7 and 8, p. 607)
+/-! ## Empirical results (Table 3, main experiment)
 
-The "True" percentages from the main experiment, separated by
-presentation order. Reported as rationals for exact comparison. -/
+The exact "True" proportions of Table 3 (count judged true over responses).
+The paper's block structure: `A̅ > OFF`, `B̅ > OFF`, and `A̅ ∨ B̅ > OFF` were
+judged true by a wide majority; `¬(A ∧ B) > OFF` and `¬(A ∧ B) > ON` were
+not (within-block differences not significant, across-block differences
+highly significant). -/
 
-/-- Table 7: target precedes filler. -/
-def percentTrue_aDn_off_T7        : Rat := 80 / 100
-def percentTrue_bDn_off_T7        : Rat := 76 / 100
-def percentTrue_aOrBdn_off_T7     : Rat := 79 / 100
-def percentTrue_notBothUp_off_T7  : Rat := 20 / 100
+/-- Table 3 "True" proportion for `A̅ > OFF`. -/
+def trueRate_aDn_off : ℚ := 169 / 256
+/-- Table 3 "True" proportion for `B̅ > OFF`. -/
+def trueRate_bDn_off : ℚ := 153 / 235
+/-- Table 3 "True" proportion for `A̅ ∨ B̅ > OFF`. -/
+def trueRate_aOrBdn_off : ℚ := 251 / 362
+/-- Table 3 "True" proportion for `¬(A ∧ B) > OFF`. -/
+def trueRate_notBothUp_off : ℚ := 82 / 372
+/-- Table 3 "True" proportion for `¬(A ∧ B) > ON`. -/
+def trueRate_notBothUp_on : ℚ := 43 / 200
 
-/-- Table 8: filler precedes target. -/
-def percentTrue_aDn_off_T8        : Rat := 53 / 100
-def percentTrue_bDn_off_T8        : Rat := 53 / 100
-def percentTrue_aOrBdn_off_T8     : Rat := 59 / 100
-def percentTrue_notBothUp_off_T8  : Rat := 25 / 100
+/-- Table 3's block pattern: each first-block sentence carries a true-majority,
+    neither `¬(A ∧ B)` sentence does — "while both `A̅ > OFF` and `B̅ > OFF` were
+    judged true by a majority of participants, `¬(A ∧ B) > OFF` was not,
+    contrary to the predictions of the minimal change requirement". -/
+theorem table3_pattern :
+    (1 / 2 < trueRate_aDn_off ∧ 1 / 2 < trueRate_bDn_off ∧
+      1 / 2 < trueRate_aOrBdn_off) ∧
+    trueRate_notBothUp_off < 1 / 2 ∧ trueRate_notBothUp_on < 1 / 2 := by
+  refine ⟨⟨?_, ?_, ?_⟩, ?_, ?_⟩ <;>
+    norm_num [trueRate_aDn_off, trueRate_bDn_off, trueRate_aOrBdn_off,
+      trueRate_notBothUp_off, trueRate_notBothUp_on]
 
-/-- The discriminating empirical contrast (Table 7, p. 607): the two
-    de-Morgan-equivalent antecedents `A̅ ∨ B̅` and `¬(A ∧ B)` produce
-    sharply divergent truth-judgment rates when embedded as counterfactual
-    antecedents. -/
-theorem deMorgan_antecedents_diverge_T7 :
-    percentTrue_aOrBdn_off_T7 - percentTrue_notBothUp_off_T7 ≥ 1 / 2 := by
-  unfold percentTrue_aOrBdn_off_T7 percentTrue_notBothUp_off_T7
-  norm_num
-
-/-- The simple antecedents `A̅ > OFF` and `B̅ > OFF` are robustly judged
-    true while `¬(A ∧ B) > OFF` is robustly judged not-true (Table 7).
-    This is the contrast that the abstract minimal-change forcing
-    theorem rules out for any similarity ordering. -/
-theorem prediction_pattern_falsified_T7 :
-    percentTrue_aDn_off_T7 ≥ 3 / 4 ∧
-    percentTrue_bDn_off_T7 ≥ 3 / 4 ∧
-    percentTrue_notBothUp_off_T7 ≤ 1 / 4 := by
-  refine ⟨?_, ?_, ?_⟩
-  · unfold percentTrue_aDn_off_T7; norm_num
-  · unfold percentTrue_bDn_off_T7; norm_num
-  · unfold percentTrue_notBothUp_off_T7; norm_num
+/-- The de-Morgan pair diverges: `A̅ ∨ B̅ > OFF` was judged true more often
+    than the truth-conditionally equivalent `¬(A ∧ B) > OFF` (the difference
+    the paper reports as highly significant) — the two antecedents have
+    different truth conditions. -/
+theorem deMorgan_antecedents_diverge :
+    trueRate_notBothUp_off < trueRate_aOrBdn_off := by
+  norm_num [trueRate_aOrBdn_off, trueRate_notBothUp_off]
 
 end CiardelliZhangChampollion2018
