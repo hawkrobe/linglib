@@ -1,5 +1,4 @@
 import Linglib.Semantics.Dynamic.PLA.Update
-import Linglib.Semantics.Intensional.Rigidity
 
 /-!
 # PLA epistemic operators
@@ -8,15 +7,11 @@ Epistemic modals for PLA, from [dekker-2012]'s chapter on quantification and
 modality. Unlike assertoric updates, `might` and `must` are tests in the sense
 of [veltman-1996]: `might φ` passes an information state iff `φ` is consistent
 with it, `must φ` iff the state supports `φ`; neither eliminates possibilities.
-For de re vs de dicto distinctions, `PLA.Concept` instantiates
-An intension at PLA possibilities: a way of identifying entities
-across assignment-witness pairs.
 
 ## Main definitions
 
 - `PLA.Formula.might`, `PLA.Formula.must`: epistemic tests on information
   states
-- `PLA.Concept`, `PLA.Concept.isRigid`: concepts over PLA possibilities
 
 ## Main results
 
@@ -190,48 +185,6 @@ theorem might_iff_not_must_neg (φ : Formula) (s : InfoState E) (hs : s.Nonempty
       not_forall, Classical.not_not] at h
     obtain ⟨p, hp, hsat⟩ := h
     exact ⟨p, (Formula.mem_update M φ s p.1 p.2).mpr ⟨hp, hsat⟩⟩
-
-/--
-A concept is a way of identifying entities across possibilities.
-
-An intension at PLA possibilities: the index is an
-`(Assignment E × WitnessSeq E)` pair (a PLA possibility), and the value
-is an entity. This is the entity-side counterpart of Abusch 1997's
-`KContext W E P T → T` time-concept (`Semantics/Tense/DeRe.lean`).
--/
-abbrev Concept (E : Type*) := Assignment E × WitnessSeq E → E
-
-/--
-A rigid concept identifies the same entity in all possibilities.
-`Intensional.IsRigid` at the PLA index.
--/
-abbrev Concept.isRigid (c : Concept E) : Prop :=
-  Intensional.IsRigid c
-
-/--
-A descriptive concept may identify different entities.
--/
-def Concept.isDescriptive (c : Concept E) : Prop :=
-  ¬c.isRigid
-
-/--
-Constant concept: always refers to the same entity (proper names).
-The constant intension at the PLA index.
--/
-abbrev Concept.const (e : E) : Concept E := fun _ => e
-
-theorem const_is_rigid (e : E) : (Concept.const e).isRigid :=
-  Intensional.isRigid_const e
-
-/--
-Variable concept: looks up a variable in the assignment.
--/
-def Concept.fromVar (i : VarIdx) : Concept E := λ p => p.1 i
-
-/--
-Pronoun concept: looks up a pronoun in the witness sequence.
--/
-def Concept.fromPron (i : PronIdx) : Concept E := λ p => p.2 i
 
 /-!
 ## Relationship to [kratzer-1981] Modal Semantics
