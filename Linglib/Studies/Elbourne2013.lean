@@ -1,7 +1,8 @@
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Definiteness.Defs
 import Linglib.Semantics.Definiteness.Maximality
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Tense.Pronoun
+import Linglib.Semantics.Quantification.ChoiceFunction
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Definiteness.Basic
 import Linglib.Semantics.Reference.Donnellan
@@ -65,7 +66,8 @@ open Presupposition
 open Presupposition.PartialProp
 open Definiteness
 open Definiteness
-open Intensional (SitVarStatus ReferentialMode)
+open Tense (ReferentialMode)
+open Quantification.ChoiceFunction (SitVarStatus)
 open Definiteness
 open Reference.Donnellan (UseMode definiteNominal)
 
@@ -704,21 +706,21 @@ three-way mode classification — indexical and anaphoric expressions both
 carry free variables, differing only in how the free variable is
 pragmatically resolved (utterance context vs discourse salience). -/
 
-/-- Surjective: Partee's classification is at least as fine as Elbourne's.
-    The coarsening is the substrate's `ReferentialMode.toSitVarStatus`. -/
-theorem toSitVarStatus_surjective :
-    ∀ s : SitVarStatus, ∃ m : ReferentialMode, m.toSitVarStatus = s := by
-  intro s; cases s
-  · exact ⟨.indexical, rfl⟩
-  · exact ⟨.bound, rfl⟩
+/-- The coarsening of Partee's three modes to Elbourne's two: free expressions, indexical or
+anaphoric, carry free situation variables. -/
+def toSitVarStatus (m : ReferentialMode) : SitVarStatus := if m.isFree then .free else .bound
+
+/-- Surjective: Partee's classification is at least as fine as Elbourne's. -/
+theorem toSitVarStatus_surjective : ∀ s : SitVarStatus, ∃ m, toSitVarStatus m = s
+  | .free => ⟨.indexical, rfl⟩
+  | .bound => ⟨.bound, rfl⟩
 
 /-- Not injective: indexical ≠ anaphoric but both map to free — the
     indexical/anaphoric distinction is a pragmatic refinement invisible
     to the structural free/bound semantics. -/
 theorem toSitVarStatus_not_injective :
     ReferentialMode.indexical ≠ ReferentialMode.anaphoric ∧
-    ReferentialMode.indexical.toSitVarStatus =
-      ReferentialMode.anaphoric.toSitVarStatus :=
+    toSitVarStatus .indexical = toSitVarStatus .anaphoric :=
   ⟨nofun, rfl⟩
 
 
