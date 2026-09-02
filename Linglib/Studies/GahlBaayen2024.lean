@@ -1,4 +1,5 @@
 import Linglib.Core.LinearAlgebra.Matrix.Symmetric
+import Linglib.Processing.Lexical.Discriminative.Coding
 import Linglib.Processing.Lexical.Discriminative.Training
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.LinearAlgebra.Matrix.Notation
@@ -62,12 +63,37 @@ noncomputable section
 
 /-! ### The toy lexicon -/
 
+/-- The phones of the toy lexicon, `i` standing for the paper's `ɪ`; the diphthong is written as
+the two phones `a ɪ` (§2.3). -/
+inductive Phone
+  | t | l | a | i | m
+  deriving DecidableEq
+
+/-- The toy words as phone strings, *time*, *lime*, *thyme*; the homophones share a string. -/
+def word : Fin 3 → List Phone := ![[.t, .a, .i, .m], [.l, .a, .i, .m], [.t, .a, .i, .m]]
+
+/-- The six triphones of (2) in the paper's column order `#ta taɪ aɪm ɪm# #la laɪ`. -/
+def triphone : Fin 6 → Augmented Phone :=
+  ![[none, some .t, some .a], [some .t, some .a, some .i], [some .a, some .i, some .m],
+    [some .i, some .m, none], [none, some .l, some .a], [some .l, some .a, some .i]]
+
+/-- The rows of the form matrix `C` of (2): each word's triphone indicator, the DLM's cue coding
+at width 3 (`cueVector`). -/
+def toyForms (i : Fin 3) : FormVec 6 := cueVector 3 triphone (word i)
+
+/-- The form matrix as the paper prints it. -/
+theorem toyForms_eq :
+    toyForms = ![![1, 1, 1, 1, 0, 0], ![0, 0, 1, 1, 1, 1], ![1, 1, 1, 1, 0, 0]] := by
+  funext i j
+  fin_cases i <;> fin_cases j <;>
+    simp +decide [toyForms, cueVector, multiHot, Matrix.cons_val_two]
+
 /-- The toy lexicon of §2.3: the semantic matrix `S` of (1), rows *time*, *lime*, *thyme* over
-two arbitrary semantic dimensions (`0.1 0.3; 0.6 0.2; 1.1 0.6`), and the binary triphone matrix
-`C` of (2), columns `#ta taɪ aɪm ɪm# #la laɪ`. *time* and *thyme* share a form row. -/
+two arbitrary semantic dimensions (`0.1 0.3; 0.6 0.2; 1.1 0.6`), and the triphone matrix `C`
+of (2). *time* and *thyme* share a form row. -/
 def toy : TrainingExperience 3 6 2 where
   meanings := ![![1 / 10, 3 / 10], ![6 / 10, 2 / 10], ![11 / 10, 6 / 10]]
-  forms := ![![1, 1, 1, 1, 0, 0], ![0, 0, 1, 1, 1, 1], ![1, 1, 1, 1, 0, 0]]
+  forms := toyForms
 
 /-- *time*, the first row of the toy lexicon. -/
 abbrev time : Fin 3 := 0
@@ -112,7 +138,7 @@ equations (A2) hold. -/
 theorem endstate_isELTrainedOn : endstate.IsELTrainedOn toy := by
   refine isERMSolution_iff_forall_coord.mpr fun j k => ?_
   fin_cases j <;> fin_cases k <;>
-    norm_num [toy, endstate, endstateG, Matrix.toLin'_apply, Matrix.mulVec, dotProduct,
+    norm_num [toy, toyForms_eq, endstate, endstateG, Matrix.toLin'_apply, Matrix.mulVec, dotProduct,
       Fin.sum_univ_succ]
 
 /-- The frequency-informed mapping is the substrate's ERM solution under `freq`: the
@@ -120,7 +146,7 @@ theorem endstate_isELTrainedOn : endstate.IsELTrainedOn toy := by
 theorem frequencyInformed_isFILTrainedOn : frequencyInformed.IsFILTrainedOn toy freq := by
   refine isERMSolution_iff_forall_coord.mpr fun j k => ?_
   fin_cases j <;> fin_cases k <;>
-    norm_num [toy, freq, frequencyInformed, frequencyInformedG, Matrix.toLin'_apply,
+    norm_num [toy, toyForms_eq, freq, frequencyInformed, frequencyInformedG, Matrix.toLin'_apply,
       Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
 
 /-! ### Semantic support for form -/
@@ -144,7 +170,7 @@ theorem supportMatrix_endstate :
       (1181 : ℝ)⁻¹ • !![4080, 906, 4080; 1120, 1916, 1120; 5460, 4026, 5460] := by
   ext i k
   fin_cases i <;> fin_cases k <;>
-    norm_num [supportMatrix, semSupWord, toy, endstate, endstateG, Matrix.toLin'_apply,
+    norm_num [supportMatrix, semSupWord, toy, toyForms_eq, endstate, endstateG, Matrix.toLin'_apply,
       Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
 
 /-- Table 1, endstate column: `3.455, 1.622, 4.623`. -/
@@ -177,7 +203,7 @@ theorem semanticSupport_frequencyInformed :
     semanticSupport frequencyInformed toy = (16543 : ℝ)⁻¹ • ![65850, 52132, 102972] := by
   ext i
   fin_cases i <;>
-    norm_num [semanticSupport, supportMatrix, semSupWord, toy, frequencyInformed,
+    norm_num [semanticSupport, supportMatrix, semSupWord, toy, toyForms_eq, frequencyInformed,
       frequencyInformedG, Matrix.toLin'_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
 
 /-- Table 1, frequency-informed column: `39.805, 9.965, 6.225`. -/
@@ -202,7 +228,8 @@ their meaning difference lies outside the production kernel, the neutralization 
 theorem time_sub_thyme_notMem_ker :
     toy.meanings time - toy.meanings thyme ∉ LinearMap.ker endstate.production := fun h => by
   have := congrFun (LinearMap.sub_mem_ker_iff.mp h) 0
-  norm_num [toy, endstate, endstateG, time, thyme, Matrix.cons_val_two, Matrix.toLin'_apply,
+  norm_num [toy, toyForms_eq, endstate, endstateG, time, thyme, Matrix.cons_val_two,
+    Matrix.toLin'_apply,
     Matrix.mulVec, dotProduct, Fin.sum_univ_succ] at this
 
 /-! ### Contextual independence

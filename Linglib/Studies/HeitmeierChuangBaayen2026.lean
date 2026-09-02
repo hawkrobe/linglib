@@ -112,21 +112,16 @@ theorem not_isAnalogicallyRegular_of_xor {f : Bool → Bool → FormVec n}
 
 /-! ### The coding interface
 
-The stem-exponent setting is the two-primitive case of the DLM coding
-interface: a paradigm cell's semantic primitives are its stem and cell
-tags, and conceptualization over `Sum.elim σ ε` is the imputed additive
-semantics. The fourth proportional above is `conceptualize_analogy` at the
-multiset relation `{st, c} + {st', c'} = {st, c'} + {st', c}`. -/
+The stem-exponent setting is the two-primitive case of the DLM coding interface: a paradigm
+cell's semantic primitives are its stem and cell tags, and conceptualization over
+`Sum.elim σ ε` is the imputed additive semantics. Proportional analogy is the additivity of
+`conceptualize` at the multiset relation `{st, c} + {st', c'} = {st, c'} + {st', c}`. -/
 
-instance : SemanticPrimitives (Stem × Cell) (Stem ⊕ Cell) :=
-  ⟨fun p => {Sum.inl p.1, Sum.inr p.2}⟩
-
-@[simp] theorem primitives_pair (st : Stem) (c : Cell) :
-    primitives (Prim := Stem ⊕ Cell) (st, c) = {Sum.inl st, Sum.inr c} := rfl
-
-theorem conceptualize_sumElim (st : Stem) (c : Cell) :
-    conceptualize (Sum.elim σ ε) (st, c) = σ st + ε c := by
-  simp [conceptualize]
+/-- Conceptualizing a paradigm cell from its stem and cell primitives is the imputed additive
+semantics. -/
+@[simp] theorem conceptualize_pair (st : Stem) (c : Cell) :
+    conceptualize (Sum.elim σ ε) {Sum.inl st, Sum.inr c} = σ st + ε c := by
+  simp
 
 variable [Fintype Stem] [Fintype Cell]
 
@@ -134,8 +129,9 @@ variable [Fintype Stem] [Fintype Cell]
     meanings, the form table as the targets. -/
 noncomputable def paradigmExperience (f : Stem → Cell → FormVec n) :
     TrainingExperience (Fintype.card (Stem × Cell)) n d where
-  meanings i := σ ((Fintype.equivFin (Stem × Cell)).symm i).1
-      + ε ((Fintype.equivFin (Stem × Cell)).symm i).2
+  meanings i := conceptualize (Sum.elim σ ε)
+    {Sum.inl ((Fintype.equivFin (Stem × Cell)).symm i).1,
+      Sum.inr ((Fintype.equivFin (Stem × Cell)).symm i).2}
   forms i := f ((Fintype.equivFin (Stem × Cell)).symm i).1
       ((Fintype.equivFin (Stem × Cell)).symm i).2
 
