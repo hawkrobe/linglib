@@ -17,12 +17,14 @@ view of the assignment update.
 
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Variables
+import Linglib.Logic.CylindricAlgebra
 import Linglib.Semantics.Quantification.Quantifier
 
 namespace Reference.Binding
 
 open Intensional
 open Intensional.Variables
+open CylindricAlgebra
 
 
 section Continuations
@@ -102,17 +104,17 @@ section CylindricAlgebra
 After binding, `g(κ) = g(l)`, which is the diagonal element `Dκl`.
 The semantic effect on a predicate φ is `φ(g[κ↦g(l)])`, which is
 cylindric substitution `σ^κ_l(φ)`. -/
-theorem binding_eq_resolve {E : Type} (κ l : Nat)
+theorem binding_eq_directSubst {E : Type} (κ l : Nat)
     (φ : Assignment E → Prop) (g : Assignment E) :
-    φ (g[κ ↦ g l]) = resolve κ l φ g := rfl
+    φ (g[κ ↦ g l]) = directSubst κ l φ g := rfl
 
 /-- After binding, the bound pronoun and its binder agree:
 `(g[κ↦g(l)])(κ) = (g[κ↦g(l)])(l)`. This is the diagonal condition
 `Dκl` that cylindric substitution enforces. -/
 theorem binding_establishes_diagonal {E : Type} (κ l : Nat)
     (g : Assignment E) (h : κ ≠ l) :
-    diag κ l (g[κ ↦ g l]) := by
-  simp [diag, Function.update_of_ne (Ne.symm h) (g l) g]
+    diagonal κ l (g[κ ↦ g l]) := by
+  simp [diagonal, Function.update_of_ne (Ne.symm h) (g l) g]
 
 end CylindricAlgebra
 
