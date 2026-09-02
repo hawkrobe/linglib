@@ -1,240 +1,136 @@
 import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.NormNum
 import Linglib.Fragments.English.NumeralModifiers
 
 /-!
-# [claus-walch-2024]: Evaluative Valence Distinguishes "at most" from "up to"
-[blok-2015] [claus-walch-2024] [kennedy-2015]
+# Claus & Walch 2024: Numeral modification and framing effects
 
-Empirical data from two experiments showing that "at most" and "up to" have identical
-truth conditions but divergent framing effects due to evaluative valence.
+Three German framing experiments on numeral modification
+([claus-walch-2024]). Experiment 1 shows that enforcing a precise reading
+with *genau* 'exactly' does not preclude framing effects — a standard
+framing effect obtains for both risky-choice framing (the Mandel-variant
+deadly-disease scenario, sure-option choices) and attribute framing (a
+financial-allocation approval task) — challenging the lower-bound-reading
+and alignment-assumption accounts. Experiments 2 and 3 juxtapose the two
+upper-bound modifiers *bis zu* 'up to' and *höchstens* 'at most' in a
+2×2 (MODIFIER × FRAME) design on the same two scenarios: *up to* patterns
+standardly (more sure-option choices / approvals under the positive frame),
+*at most* patterns in reverse, with a significant MODIFIER × FRAME
+interaction in both experiments and no main effects.
 
-## Experiment 1: Truth-Value Judgments
+Both modifiers set an upper bound; they differ in evaluative valence — the
+directional *up to* vs the superlative *at most* contrast of [blok-2015],
+(5) in the paper — and the paper takes the interaction to show that valence
+appraisal (operationalized as goal conduciveness) plays a crucial role in
+the emergence of framing effects.
 
-Participants evaluated sentences like "The battery lasts {exactly / at most / up to}
-100 hours" against actual values. Key finding: "at most 100" and "up to 100" have
-the same truth conditions (accepted when actual ≤ 100), confirming they are both
-Class B upper-bound modifiers.
+The Lean content: the choice/approval proportions of Tables 1–4 as exact
+rationals, the direction claims the paper draws from them, and the Fragment
+side of the account — `English.NumeralModifiers` gives *at most* and
+*up to* the same modifier class and bound direction but opposite
+`evaluativeValence`.
 
-## Experiment 2: Framing Effects
+## Main results
 
-Participants evaluated modified numeral sentences in positive vs negative frames.
-Key findings:
-- "exactly": standard framing (higher endorsement in positive contexts)
-- "up to": standard framing (higher endorsement in positive contexts)
-- "at most": REVERSED framing (higher endorsement in NEGATIVE contexts)
+* `exp1_rcf_standard` / `exp1_af_standard` — Experiment 1's standard
+  framing effects under *genau* (Tables 1–2)
+* `exp2_upTo_standard` / `exp2_atMost_reversed` — Experiment 2's
+  opposite-direction pattern (Table 3)
+* `exp3_upTo_standard` / `exp3_atMost_reversed` — the Experiment 3
+  replication for attribute framing (Table 4)
+* `upper_bound_shared_valence_differs` — the Fragment: same class and
+  bound direction, opposite evaluative valence
 
-This reversal is predicted by [blok-2015]'s evaluative valence distinction:
-- "at most" carries negative evaluative valence → endorsed in negative contexts
-- "up to" carries positive evaluative valence → endorsed in positive contexts
+## References
 
+* [B. Claus, M. C. Walch, *Numeral modification and framing effects:
+  exactly and at most vs up to* (2024)][claus-walch-2024]
+* [D. Blok, *The semantics and pragmatics of directional numeral
+  modifiers* (2015)][blok-2015]
 -/
 
 namespace ClausWalch2024
 
--- ============================================================================
--- Shared Types
--- ============================================================================
+/-! ### Experiment 1: *genau* 'exactly' (Tables 1–2)
 
-/-- Numeral modifier used in the experiments. -/
-inductive Modifier where
-  | exactly
-  | atMost
-  | upTo
-  deriving Repr, DecidableEq
+Proportion of sure-option choices (risky-choice framing, Table 1) and of
+approvals (attribute framing, Table 2), positive vs negative frame. -/
 
-/-- Framing condition in Experiment 2. -/
-inductive FramingCondition where
-  | standard   -- positive context (e.g., "The battery lasts up to 100 hours")
-  | reversed   -- negative context (e.g., "The repair costs at most 100 euros")
-  deriving Repr, DecidableEq
+/-- Table 1, positive frame: sure-option choices under *genau*. -/
+def exp1RcfPos : ℚ := 519 / 1000
+/-- Table 1, negative frame. -/
+def exp1RcfNeg : ℚ := 346 / 1000
+/-- Table 2, positive frame: approvals under *genau*. -/
+def exp1AfPos : ℚ := 923 / 1000
+/-- Table 2, negative frame. -/
+def exp1AfNeg : ℚ := 654 / 1000
 
-/-- Truth-value judgment in Experiment 1. -/
-inductive Judgment where
-  | accepted
-  | rejected
-  deriving Repr, DecidableEq
+/-- Experiment 1, risky-choice framing: a standard framing effect under a
+forced precise reading (the paper's significant FRAME main effect). -/
+theorem exp1_rcf_standard : exp1RcfNeg < exp1RcfPos := by
+  norm_num [exp1RcfPos, exp1RcfNeg]
 
--- ============================================================================
--- Experiment 1: Truth-Value Judgments
--- ============================================================================
+/-- Experiment 1, attribute framing: likewise standard. -/
+theorem exp1_af_standard : exp1AfNeg < exp1AfPos := by
+  norm_num [exp1AfPos, exp1AfNeg]
 
-/-- A datum from Experiment 1: truth-value judgment for a modified numeral
-against an actual value. -/
-structure Exp1Datum where
-  modifier : Modifier
-  numeral : Nat
-  actualValue : Nat
-  expectedJudgment : Judgment
-  deriving Repr, BEq
+/-! ### Experiment 2: *bis zu* vs *höchstens*, risky-choice framing (Table 3) -/
 
-/-- Experiment 1 data: "exactly 100" -/
-def exp1_exactly_equal : Exp1Datum :=
-  { modifier := .exactly, numeral := 100, actualValue := 100, expectedJudgment := .accepted }
+/-- Table 3, *bis zu* 'up to', positive frame. -/
+def exp2UpToPos : ℚ := 592 / 1000
+/-- Table 3, *bis zu* 'up to', negative frame. -/
+def exp2UpToNeg : ℚ := 449 / 1000
+/-- Table 3, *höchstens* 'at most', positive frame. -/
+def exp2AtMostPos : ℚ := 423 / 1000
+/-- Table 3, *höchstens* 'at most', negative frame. -/
+def exp2AtMostNeg : ℚ := 558 / 1000
 
-def exp1_exactly_below : Exp1Datum :=
-  { modifier := .exactly, numeral := 100, actualValue := 80, expectedJudgment := .rejected }
+/-- Experiment 2: *up to* patterns standardly — more sure-option choices
+under the positive frame. -/
+theorem exp2_upTo_standard : exp2UpToNeg < exp2UpToPos := by
+  norm_num [exp2UpToPos, exp2UpToNeg]
 
-def exp1_exactly_above : Exp1Datum :=
-  { modifier := .exactly, numeral := 100, actualValue := 120, expectedJudgment := .rejected }
+/-- Experiment 2: *at most* patterns in reverse — more sure-option choices
+under the negative frame (the direction behind the paper's significant
+MODIFIER × FRAME interaction). -/
+theorem exp2_atMost_reversed : exp2AtMostPos < exp2AtMostNeg := by
+  norm_num [exp2AtMostPos, exp2AtMostNeg]
 
-/-- Experiment 1 data: "at most 100" — accepted iff actual ≤ 100 -/
-def exp1_atMost_equal : Exp1Datum :=
-  { modifier := .atMost, numeral := 100, actualValue := 100, expectedJudgment := .accepted }
+/-! ### Experiment 3: the attribute-framing replication (Table 4) -/
 
-def exp1_atMost_below : Exp1Datum :=
-  { modifier := .atMost, numeral := 100, actualValue := 80, expectedJudgment := .accepted }
+/-- Table 4, *bis zu* 'up to', positive frame. -/
+def exp3UpToPos : ℚ := 889 / 1000
+/-- Table 4, *bis zu* 'up to', negative frame. -/
+def exp3UpToNeg : ℚ := 689 / 1000
+/-- Table 4, *höchstens* 'at most', positive frame. -/
+def exp3AtMostPos : ℚ := 673 / 1000
+/-- Table 4, *höchstens* 'at most', negative frame. -/
+def exp3AtMostNeg : ℚ := 714 / 1000
 
-def exp1_atMost_above : Exp1Datum :=
-  { modifier := .atMost, numeral := 100, actualValue := 120, expectedJudgment := .rejected }
+/-- Experiment 3: *up to* standard, as in Experiment 2. -/
+theorem exp3_upTo_standard : exp3UpToNeg < exp3UpToPos := by
+  norm_num [exp3UpToPos, exp3UpToNeg]
 
-/-- Experiment 1 data: "up to 100" — accepted iff actual ≤ 100 -/
-def exp1_upTo_equal : Exp1Datum :=
-  { modifier := .upTo, numeral := 100, actualValue := 100, expectedJudgment := .accepted }
+/-- Experiment 3: *at most* reversed, replicating the interaction for
+attribute framing. -/
+theorem exp3_atMost_reversed : exp3AtMostPos < exp3AtMostNeg := by
+  norm_num [exp3AtMostPos, exp3AtMostNeg]
 
-def exp1_upTo_below : Exp1Datum :=
-  { modifier := .upTo, numeral := 100, actualValue := 80, expectedJudgment := .accepted }
+/-! ### The Fragment side: shared upper bound, opposite valence
 
-def exp1_upTo_above : Exp1Datum :=
-  { modifier := .upTo, numeral := 100, actualValue := 120, expectedJudgment := .rejected }
+The paper's premise (its (5), after [blok-2015]): *at most* and *up to*
+both set an upper bound — same modifier class, same bound direction — yet
+contrast sharply in evaluative contexts. The Fragment records exactly this
+profile, and the opposite framing directions above track the valence
+split. -/
 
-/-- All Experiment 1 data. -/
-def exp1Data : List Exp1Datum :=
-  [ exp1_exactly_equal, exp1_exactly_below, exp1_exactly_above
-  , exp1_atMost_equal, exp1_atMost_below, exp1_atMost_above
-  , exp1_upTo_equal, exp1_upTo_below, exp1_upTo_above ]
-
--- ============================================================================
--- Experiment 2: Framing Effects
--- ============================================================================
-
-/-- A datum from Experiment 2: endorsement rate for a modifier under
-a framing condition. Rates are on [0,1] scale. -/
-structure Exp2Datum where
-  modifier : Modifier
-  framingCondition : FramingCondition
-  /-- Endorsement rate (proportion of participants who endorsed) -/
-  endorsementRate : ℚ
-  deriving Repr, BEq
-
-/-- "exactly" in standard (positive) framing: high endorsement. -/
-def exp2_exactly_standard : Exp2Datum :=
-  { modifier := .exactly, framingCondition := .standard, endorsementRate := 75 / 100 }
-
-/-- "exactly" in reversed (negative) framing: lower endorsement. -/
-def exp2_exactly_reversed : Exp2Datum :=
-  { modifier := .exactly, framingCondition := .reversed, endorsementRate := 60 / 100 }
-
-/-- "up to" in standard (positive) framing: high endorsement. -/
-def exp2_upTo_standard : Exp2Datum :=
-  { modifier := .upTo, framingCondition := .standard, endorsementRate := 70 / 100 }
-
-/-- "up to" in reversed (negative) framing: lower endorsement. -/
-def exp2_upTo_reversed : Exp2Datum :=
-  { modifier := .upTo, framingCondition := .reversed, endorsementRate := 55 / 100 }
-
-/-- "at most" in standard (positive) framing: LOWER endorsement (reversed!). -/
-def exp2_atMost_standard : Exp2Datum :=
-  { modifier := .atMost, framingCondition := .standard, endorsementRate := 50 / 100 }
-
-/-- "at most" in reversed (negative) framing: HIGHER endorsement. -/
-def exp2_atMost_reversed : Exp2Datum :=
-  { modifier := .atMost, framingCondition := .reversed, endorsementRate := 65 / 100 }
-
-/-- All Experiment 2 data. -/
-def exp2Data : List Exp2Datum :=
-  [ exp2_exactly_standard, exp2_exactly_reversed
-  , exp2_upTo_standard, exp2_upTo_reversed
-  , exp2_atMost_standard, exp2_atMost_reversed ]
-
--- ============================================================================
--- Verification: Truth Conditions (Experiment 1)
--- ============================================================================
-
-/-- "at most" and "up to" agree on all truth-value judgments.
-
-Both are accepted when actual ≤ numeral, rejected when actual > numeral.
-This confirms they are both Class B upper-bound modifiers. -/
-theorem atMost_upTo_same_truth_conditions :
-    exp1_atMost_equal.expectedJudgment = exp1_upTo_equal.expectedJudgment ∧
-    exp1_atMost_below.expectedJudgment = exp1_upTo_below.expectedJudgment ∧
-    exp1_atMost_above.expectedJudgment = exp1_upTo_above.expectedJudgment := by
-  constructor; · native_decide
-  constructor <;> native_decide
-
--- ============================================================================
--- Verification: Framing Effects (Experiment 2)
--- ============================================================================
-
-/-- "at most" shows REVERSED framing: higher endorsement in negative context.
-
-This is the key empirical finding of [claus-walch-2024]. -/
-theorem atMost_reverses_framing :
-    exp2_atMost_reversed.endorsementRate > exp2_atMost_standard.endorsementRate := by
-  native_decide
-
-/-- "up to" shows STANDARD framing: higher endorsement in positive context. -/
-theorem upTo_standard_framing :
-    exp2_upTo_standard.endorsementRate > exp2_upTo_reversed.endorsementRate := by
-  native_decide
-
-/-- "exactly" shows standard framing: higher endorsement in positive context. -/
-theorem exactly_standard_framing :
-    exp2_exactly_standard.endorsementRate > exp2_exactly_reversed.endorsementRate := by
-  native_decide
-
-/-- "at most" and "up to" DIVERGE on framing direction despite same truth conditions.
-
-This is the central result: evaluative valence, not truth conditions,
-determines framing behavior. -/
-theorem atMost_upTo_diverge :
-    -- Same truth conditions (from Experiment 1)
-    (exp1_atMost_equal.expectedJudgment = exp1_upTo_equal.expectedJudgment) ∧
-    -- But opposite framing directions (from Experiment 2)
-    (exp2_atMost_reversed.endorsementRate > exp2_atMost_standard.endorsementRate) ∧
-    (exp2_upTo_standard.endorsementRate > exp2_upTo_reversed.endorsementRate) := by
-  constructor; · native_decide
-  constructor <;> native_decide
-
--- ============================================================================
--- Section 4: Valence-Predicts-Framing Bridge (Fragment ↔ Exp2)
--- ============================================================================
-
-/-! Connect the `evaluativeValence` field on `English.NumeralModifiers`
-entries (the lexical claim) to the Exp2 endorsement rates (the empirical
-observation). The bridge witnesses that the lexical valence assignment
-*predicts* the framing direction observed in Exp2, and that the prediction
-divergence is fully explained by valence (truth conditions are held fixed). -/
-
-section ValenceFramingBridge
-
-open English.NumeralModifiers
-
-/-- "at most" has negative evaluative valence and shows reversed framing.
-    The lexical valence (`atMost.evaluativeValence = .negative`) and the
-    Exp2 reversal hold simultaneously. -/
-theorem atMost_negative_predicts_reversal :
+open English.NumeralModifiers in
+/-- *at most* and *up to* share their modifier class and bound direction
+but carry opposite evaluative valence in the Fragment. -/
+theorem upper_bound_shared_valence_differs :
+    atMost.modClass = upTo.modClass ∧ atMost.boundDir = upTo.boundDir ∧
     atMost.evaluativeValence = .negative ∧
-    exp2_atMost_reversed.endorsementRate > exp2_atMost_standard.endorsementRate :=
-  ⟨rfl, atMost_reverses_framing⟩
-
-/-- "up to" has positive evaluative valence and shows standard framing. -/
-theorem upTo_positive_predicts_standard :
-    upTo.evaluativeValence = .positive ∧
-    exp2_upTo_standard.endorsementRate > exp2_upTo_reversed.endorsementRate :=
-  ⟨rfl, upTo_standard_framing⟩
-
-/-- **Valence fully explains the framing divergence.** Despite identical
-    truth conditions (both Class B upper-bound: same `modClass` and
-    `boundDir`), "at most" and "up to" diverge on framing precisely because
-    they diverge on `evaluativeValence`. -/
-theorem valence_explains_framing_divergence :
-    atMost.modClass = upTo.modClass ∧
-    atMost.boundDir = upTo.boundDir ∧
-    atMost.evaluativeValence ≠ upTo.evaluativeValence ∧
-    exp2_atMost_reversed.endorsementRate > exp2_atMost_standard.endorsementRate ∧
-    exp2_upTo_standard.endorsementRate > exp2_upTo_reversed.endorsementRate :=
-  ⟨rfl, rfl, by decide, atMost_reverses_framing, upTo_standard_framing⟩
-
-end ValenceFramingBridge
+    upTo.evaluativeValence = .positive := by
+  refine ⟨rfl, rfl, rfl, rfl⟩
 
 end ClausWalch2024
