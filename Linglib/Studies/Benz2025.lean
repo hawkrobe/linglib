@@ -254,7 +254,7 @@ retains the Theme position v introduced; the SEN predicates the root's
 entity content of an event-entity; the result alloseme picks out what an
 event of the root's kind produced ([wood-2023]'s denotation); the content
 alloseme ignores the verbal layer entirely. The non-deverbal allosemes
-have their semantics in `Semantics/Possession/Relational.lean`. -/
+have their semantics in `Semantics/Possession/Relationalizer.lean`. -/
 def denoteN (m : NominalizationModel E S) :
     VerbalDenotation E S → Nominalizer.Alloseme → Option (NominalDenotation E S)
   | .eventive p θ, .zero =>

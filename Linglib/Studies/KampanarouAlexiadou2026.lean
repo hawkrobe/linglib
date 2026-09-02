@@ -1,11 +1,8 @@
-import Linglib.Semantics.Possession.Typology
+import Linglib.Semantics.Possession.Defs
 import Linglib.Morphology.DistributedMorphology.NominalProjection
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Syntax.Minimalist.Verbal.SmallClause
 import Linglib.Syntax.Minimalist.Verbal.Applicative
-import Linglib.Fragments.Greek.StandardModern.Possession
-import Linglib.Fragments.Greek.Grevena.Possession
-import Linglib.Fragments.Greek.Smyrna.Possession
 import Linglib.Studies.Myler2016
 import Linglib.Studies.Heine1997
 
@@ -58,11 +55,25 @@ be construable as a SET.
 
 namespace KampanarouAlexiadou2026
 
-open Possession (Notion InalienabilityRank)
+open Possession (Notion AdnominalMarking)
 open DistributedMorphology (PossessionType)
 open DistributedMorphology.NominalProjection (Position)
 open DistributedMorphology.Allosemy (NominalizationReading)
 open Minimalist (SmallClause SCPredCategory ApplType)
+
+/-! ### Adnominal marking across the dialect continuum
+
+K&A's cross-dialectal argument (§4) sets Standard Modern Greek against Grevena Greek, where the
+inflectional genitive is lost on common nouns and apo-PPs carry every genitive function
+([michelioudakis-chatzikyriakidis-spathas-2024]), and Smyrna Greek, where the genitive
+over-extends to the -aki diminutives SMG rejects ([liosis-2016], their fn 7). The codings are the
+paper's; WALS 24A codes Greek as double-marking. -/
+
+/-- SMG: inflectional genitive on the possessor. -/
+def smgAdnominal : AdnominalMarking := .dependentMarking
+
+/-- Grevena Greek: no inflectional genitive on common nouns; the apo-PP carries the load. -/
+def grevenaAdnominal : AdnominalMarking := .noMarking
 
 -- ============================================================================
 -- §1. Empirical taxonomy: partitive-coercion-aware felicity
@@ -404,8 +415,7 @@ theorem ka2026_refutes_myler_VI_for_smg :
     -- to be accusative-syncretic, which apo-PPs are not.
     -- Stated structurally: the SMG distinction tracks SYNTAX (analyses
     -- 41/43/47), not phonology.
-    Greek.StandardModern.Possession.adnominalStrategy
-      = .dependentMarking := by
+    smgAdnominal = .dependentMarking := by
   refine ⟨by decide, rfl⟩
 
 /-- **Cross-framework theorem 2** (vs [aissen-polian-2025]). Both
@@ -429,16 +439,13 @@ theorem apo_PP_cannot_extract_per_ka2026 :
     Michelioudakis et al. analyse Grevena Greek (GG) apo-PPs as **reduced
     relative clauses** adjoining within the DP — like Romance *de/di*. K&A §4
     show this analysis CANNOT extend to SMG: SMG apo-PPs cannot stack, cannot
-    front, cannot sub-extract. The Lean-checkable contrast is the dialect
-    profiles' `adnominalStrategy` mismatch and the empirical-distribution
-    asymmetry encoded in the Fragment files. -/
+    front, cannot sub-extract. The Lean-checkable contrast is the two
+    dialects' adnominal-marking codings (`grevenaAdnominal`, `smgAdnominal`). -/
 theorem gg_uses_reduced_relative_smg_does_not :
     -- GG: apo-PP is the dominant adnominal strategy (genitive lost on common nouns)
-    Greek.Grevena.Possession.adnominalStrategy
-      = .zeroMarking ∧
+    grevenaAdnominal = .noMarking ∧
     -- SMG: apo-PP coexists with inflectional genitive (NOT a reduced relative)
-    Greek.StandardModern.Possession.adnominalStrategy
-      = .dependentMarking := by
+    smgAdnominal = .dependentMarking := by
   refine ⟨rfl, rfl⟩
 
 /-- Stub theorem (vs [alexiadou-stavrou-2020]). A&S 2020 treat *apo* as

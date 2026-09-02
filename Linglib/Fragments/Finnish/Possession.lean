@@ -1,26 +1,17 @@
 import Linglib.Features.Number.Basic
-import Linglib.Semantics.Possession.Typology
 
 /-!
 # Finnish Possessive Constructions
 [stassen-2009] [nichols-1986] [heine-1997]
 
 Finnish (Uralic) derives its primary have-construction from the **Location
-Schema** ("Y is located at X" → "X has Y"). The construction consists of:
-
-1. Possessor in adessive case (-lla / -llä 'on, at')
-2. Possessum in nominative (= grammatical subject)
-3. Copula `olla` 'to be'
-
-The adessive case is etymologically locative ('on the surface of'),
-grammaticalized to mark the possessor. Finnish is a textbook example
-of the Location Schema reaching Stage III: the adessive in possessive
-use is no longer interpreted as locative by speakers
-([heine-1997] Overlap Model).
-
-Per-language possession defs for Finnish (ISO `fin`). Substrate enums live in
-`Linglib/Features/Possession.lean`. Heine 1997 prediction verification for
-Finnish lives in `Studies/Heine1997.lean`.
+Schema** ("Y is located at X" → "X has Y"): possessor in the adessive
+(-lla / -llä 'on, at'), possessum in the nominative as grammatical subject,
+copula `olla` 'to be'. The adessive is etymologically locative ('on the
+surface of'), grammaticalized to mark the possessor; in possessive use it is
+no longer interpreted as locative by speakers ([heine-1997] Overlap Model,
+Stage III). The typological codings (WALS 24A, 58A, 59A, 117A) are read from
+`Data/WALS/Features/`; this file holds the possessive suffix paradigm.
 
 ## Examples
 
@@ -30,46 +21,6 @@ Finnish lives in `Studies/Heine1997.lean`.
 -/
 
 namespace Finnish.Possession
-
-open _root_.Possession
-
--- ============================================================================
--- §1. Predicative Possession Strategy
--- ============================================================================
-
-/-- Finnish uses the Location Schema for its primary have-construction. -/
-def sourceSchema : Source := .location
-
-/-- Finnish's predicative strategy is locational/existential. -/
-def predicativeStrategy : PredicativeStrategy := .locational
-
-/-- The strategy matches the schema via `predicativeSource`. -/
-theorem strategy_matches_schema :
-    predicativeSource predicativeStrategy = sourceSchema := rfl
-
--- ============================================================================
--- §2. The Adessive Construction
--- ============================================================================
-
-/-- Components of the Finnish possessive construction. -/
-structure FiPossessive where
-  /-- Possessor case: adessive (`-lla`, `-llä`; vowel harmony). -/
-  possessorCase : String := "ADESS"
-  /-- Possessee case: nominative (subject of existential). -/
-  possesseeCase : String := "NOM"
-  /-- Copula: `olla` 'to be'. -/
-  copula : String := "olla"
-  /-- Negative auxiliary: `ei` (person-inflected) + `ole` (connegative). -/
-  negAux : String := "ei"
-  /-- In negative, possessee takes partitive case instead of nominative. -/
-  negPossesseeCase : String := "PART"
-  deriving DecidableEq, Repr
-
-def primaryConstruction : FiPossessive := {}
-
--- ============================================================================
--- §3. Possessive Suffixes (Attributive)
--- ============================================================================
 
 /-- Finnish possessive suffixes on the possessum (attributive possession).
     These are declining in spoken Finnish but required in formal/written
@@ -91,39 +42,5 @@ def possSuffix : FiPossPerson → FiPossNumber → String
   | .third,  _   => "-nsa/-nsä"
   | .first,  .pl => "-mme"
   | .second, .pl => "-nne"
-
--- ============================================================================
--- §4. Adnominal Possession Marking
--- ============================================================================
-
-/-- Adnominal genitive on the possessor (dependent-marking); the optional
-    possessive suffix on the head (`Matti-n kirja-nsa` 'Matti-GEN book-POSS.3')
-    adds a double-marking pattern in formal registers, but WALS codes Finnish
-    as dependent-marking. -/
-def adnominalStrategy : AdnominalMarking := .dependentMarking
-
--- ============================================================================
--- §5. Schema-Notion Correlations
--- ============================================================================
-
-/-- The adessive construction covers most possessive notions. Finnish,
-    like Estonian, uses the Location Schema for both physical/temporary
-    and permanent/inalienable possession — showing full Stage III
-    grammaticalization (no location meaning remains). -/
-def expressibleNotions : List Notion :=
-  [.physical, .temporary, .permanent, .inalienable, .abstract,
-   .inanimateInalienable, .inanimateAlienable]
-
-/-- All seven notions are expressible, matching Swahili's coverage —
-    both are at Stage III of grammaticalization. -/
-theorem covers_all_notions :
-    expressibleNotions.length = 7 := rfl
-
--- ============================================================================
--- §6. Remaining typological dimensions
--- ============================================================================
-
-def obligatoryPossession : Obligatoriness := .noObligatory
-def possessiveClassification : Classification := .noClassification
 
 end Finnish.Possession

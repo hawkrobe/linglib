@@ -1,23 +1,19 @@
 import Linglib.Features.Number.Basic
-import Linglib.Semantics.Possession.Typology
 
 /-!
 # Turkish Possessive Constructions
 [stassen-2009] [nichols-1986] [heine-1997]
 
-Turkish (Altaic) derives its primary have-construction from the **Genitive
-Schema** ("X's Y exists" → "X has Y"). The construction consists of:
-
-1. Possessor in genitive case (`-(n)In`)
-2. Possessum with possessive agreement suffix (`-(s)I`)
-3. Existential predicate `var` 'existent' (or `yok` 'non-existent')
-
-Turkish also has a Goal Schema variant using dative (`-A`) with
-existential `var`, and the Equation Schema for belong-constructions.
-
-Per-language possession defs for Turkish (ISO `tur`). Substrate enums live in
-`Linglib/Features/Possession.lean`. Heine 1997 prediction verification for
-Turkish lives in `Studies/Heine1997.lean`.
+Turkish (Turkic) derives its primary have-construction from the **Genitive
+Schema** ("X's Y exists" → "X has Y"): possessor in the genitive (`-(n)In`),
+possessum with a possessive agreement suffix (`-(s)I`), and the non-verbal
+existential predicate `var` 'existent' (or `yok` 'non-existent'), which takes
+no tense/aspect morphology in its base form. Turkish also has a Goal Schema
+variant using the dative (`-A`) with existential `var`, and the Equation
+Schema for belong-constructions (`Kitap Hasan-ın.` 'The book is Hasan's.').
+The typological codings (WALS 24A, 58A, 59A, 117A) are read from
+`Data/WALS/Features/`; this file holds the possessive suffix paradigm and the
+existential predicate.
 
 ## Examples
 
@@ -27,24 +23,6 @@ Turkish lives in `Studies/Heine1997.lean`.
 -/
 
 namespace Turkish.Possession
-
-open _root_.Possession
-
--- ============================================================================
--- §1. Predicative Possession Strategy
--- ============================================================================
-
-/-- Turkish uses the Genitive Schema for its primary have-construction:
-    GEN-possessor + POSS-possessum + `var`/`yok`. -/
-def sourceSchema : Source := .genitive
-
-/-- Turkish's predicative strategy is genitive/dative (the possessor is
-    marked with genitive case, the predicate is a non-verbal existential). -/
-def predicativeStrategy : PredicativeStrategy := .genitive
-
--- ============================================================================
--- §2. Possessive Agreement Suffixes
--- ============================================================================
 
 /-- Turkish possessive suffix paradigm. These suffixes appear on the
     possessum and agree with the possessor in person and number. -/
@@ -70,75 +48,13 @@ def possSuffix : PossPerson → PossNumber → String
   | .second, .pl => "-(I)nIz"
   | .third,  .pl => "-lArI"
 
--- ============================================================================
--- §3. The `var`/`yok` Existential Predicate
--- ============================================================================
-
-/-- The existential predicate in Turkish possessive constructions. -/
+/-- The existential predicate in Turkish possessive constructions: a non-verbal
+    predicate that takes no tense/aspect morphology in the base form. -/
 inductive ExistPred where
   /-- `var` 'existent, there is' — affirmative possession -/
   | var
   /-- `yok` 'non-existent, there is not' — negative possession -/
   | yok
   deriving DecidableEq, Repr
-
-/-- `var`/`yok` is not a verb — it is a non-verbal predicate that takes
-    no tense/aspect morphology in the base form. This is characteristic
-    of non-lexical predicate nuclei in [heine-1997]'s Genitive Schema. -/
-def existPredIsNonVerbal : Bool := true
-
--- ============================================================================
--- §4. Multiple Schemas in Turkish
--- ============================================================================
-
-/-- Turkish also has a Location Schema variant where the possessor
-    takes locative case (`-DA`) instead of genitive. This variant
-    tends toward physical/temporary possession readings. -/
-def locationVariant : Source := .location
-
-/-- Turkish uses the Equation Schema for belong-constructions with
-    genitive predicates: `Kitap Hasan-ın.` 'The book is Hasan's.' -/
-def belongSchema : Source := .equation
-
-/-- Turkish exhibits three schemas, as [heine-1997] predicts is common
-    for languages that draw on Existence sub-schemas. -/
-def attestedSchemas : List Source :=
-  [sourceSchema, locationVariant, belongSchema]
-
-theorem three_schemas :
-    attestedSchemas.length = 3 := rfl
-
--- ============================================================================
--- §5. Schema-Notion Correlations in Turkish
--- ============================================================================
-
-/-- The Genitive Schema in Turkish is used for permanent, inalienable,
-    and abstract possession. Physical/temporary possession is expressed
-    by the Location Schema variant with locative case. This matches
-    [heine-1997]'s generalizations: Existence schemas correlate with
-    permanent/inalienable notions; Location with physical/temporary. -/
-def genitiveNotions : List Notion :=
-  [.permanent, .inalienable, .abstract]
-
-def locationNotions : List Notion :=
-  [.physical, .temporary]
-
-/-- Genitive Schema does not express physical possession in Turkish. -/
-theorem genitive_not_physical :
-    ¬genitiveNotions.contains .physical := by decide
-
-/-- Location Schema does not express inalienable possession in Turkish. -/
-theorem location_not_inalienable :
-    ¬locationNotions.contains .inalienable := by decide
-
--- ============================================================================
--- §6. Remaining typological dimensions
--- ============================================================================
-
-/-- Obligatory possessive inflection (the `-(s)I` suffix on the possessum). -/
-def obligatoryPossession : Obligatoriness := .exists_
-def possessiveClassification : Classification := .noClassification
-/-- GEN on possessor + possessive suffix on the head (`Ali-nin kitab-i`). -/
-def adnominalStrategy : AdnominalMarking := .doubleMarking
 
 end Turkish.Possession

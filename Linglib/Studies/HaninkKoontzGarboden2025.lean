@@ -1,7 +1,7 @@
 import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Studies.KoontzGarboden2009
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
-import Linglib.Semantics.Possession.Relational
+import Linglib.Semantics.Possession.Relationalizer
 
 /-!
 # Variation in the lexical semantics of property concept roots
