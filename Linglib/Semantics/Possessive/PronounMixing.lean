@@ -30,7 +30,7 @@ namespace Possessive
 
 open Reference (NominalDenot)
 open Definiteness
-open Intensional.Variables (interpPronoun)
+open Semantics.Composition (interpPronoun)
 
 variable {E : Type} [PartialOrder E]
 

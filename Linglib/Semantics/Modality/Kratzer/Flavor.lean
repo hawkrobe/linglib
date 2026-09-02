@@ -54,7 +54,6 @@ structure TeleologicalFlavor (W : Type*) where
   circumstances : ModalBase W
   goals : OrderingSource W
 
-
 /-! ## Flavor Tags
 
 Each flavor structure maps to the theory-neutral `ModalFlavor` enum from

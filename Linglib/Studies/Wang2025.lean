@@ -146,7 +146,6 @@ theorem blocked_trigger_pattern :
     jiu_none.felicity = .anomalous := by
   exact ⟨rfl, rfl, rfl⟩
 
-
 -- ============================================================================
 -- Experiment 3: De Re Presupposition
 -- ============================================================================
@@ -177,7 +176,6 @@ def ye_deDicto : Exp3Datum :=
 
 /-- Additive presupposition allows de re resolution. -/
 theorem additive_deRe_available : ye_deRe.accepted = true := rfl
-
 
 -- ============================================================================
 -- Constraint-based Formalization (was: Implicature/Constraints/Wang2025.lean)
@@ -219,7 +217,6 @@ def PragConstraint.isViolable : PragConstraint → Bool
 
 /-- The canonical constraint ranking: IC ≫ FP ≫ MP. -/
 def constraintRanking : List PragConstraint := [.IC, .FP, .MP]
-
 
 -- ============================================================================
 -- Section 1: Constraint Evaluation
@@ -267,7 +264,6 @@ the CommonGround supporting S_p's presupposition.
 -/
 def mpPrefers (cg : Set W) (sp : PartialProp W) : Prop :=
   satisfiesFP cg sp ∧ satisfiesIC sp
-
 
 /-! ### Alternative-structure typology
 
@@ -319,7 +315,6 @@ inductive Obligatoriness where
   /-- Trigger is blocked (mandatorily omitted in this context) -/
   | blocked
   deriving DecidableEq, Repr
-
 
 -- ============================================================================
 -- Section 2: Obligatoriness Predictions
@@ -380,7 +375,6 @@ theorem no_cg_blocks (alt : AltStructure) :
     predictObligatoriness alt false false = .blocked := by
   cases alt <;> rfl
 
-
 -- ============================================================================
 -- Section 3: IC Non-Violability
 -- ============================================================================
@@ -390,7 +384,6 @@ IC satisfaction is necessary for felicity.
 -/
 def icNecessary (p : PartialProp W) (h : satisfiesIC p) :
     ∃ w, PartialProp.holds w p := h
-
 
 -- ============================================================================
 -- Section 4: K Operator and Exhaustification Interaction
@@ -405,11 +398,10 @@ epistemic stance. It scopes relative to exh_mx:
 - exh_mx >> K: available for complex sentences
 
 Uses a local Bool-valued accessibility relation; for the Prop-valued
-canonical Kripke semantics see `Intensional.box`.
+canonical Kripke semantics see `ModalLogic.nec`.
 -/
 noncomputable def speakerK [Fintype W] (R : BAccessRel W) (φ : (W → Bool)) : (W → Bool) :=
   fun w => ((Finset.univ : Finset W).toList.filter (R w)).all φ
-
 
 -- ============================================================================
 -- Section 5: Felicity Check
@@ -456,7 +448,6 @@ theorem IC_violation_always_blocks (input : WangInput W) (hIC : input.ic = false
     wangCheck input = .anomalous := by
   simp [wangCheck, hIC]
 
-
 -- ============================================================================
 -- Section 6: Bridge to CI Bifurcation (De Re Presupposition)
 -- ============================================================================
@@ -468,6 +459,5 @@ common ground regardless of the embedding attitude. -/
 theorem ofPartialProp_felicitous_when_fp_holds (presup assertion : W → Prop)
     (cg : W → Prop) (hfp : ∀ w, cg w → presup w) :
     ∀ w, cg w → (TwoDimProp.ofPartialProp ⟨presup, assertion⟩).ci w := hfp
-
 
 end Wang2025

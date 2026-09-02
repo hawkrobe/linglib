@@ -30,7 +30,6 @@ predicates carry `[DecidablePred p]` constraints.
 
 namespace Rudin2025
 
-
 abbrev World := Fin 4
 
 def allWorlds : List World := [0, 1, 2, 3]

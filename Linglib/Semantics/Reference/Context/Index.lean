@@ -3,7 +3,7 @@ import Mathlib.Tactic.TypeStar
 /-!
 # Indices of evaluation
 
-An `Intensional.Index` is a (world, time) pair used as a context of
+A `Semantics.Context.Index` is a (world, time) pair used as a context of
 evaluation for intensional, dynamic, modal, and tense semantics — the
 Lewis/Kaplan "index of evaluation", with world and temporal coordinates
 only. It is *not* the Kratzer parthood-structured situation (a preordered type, as in
@@ -11,7 +11,7 @@ only. It is *not* the Kratzer parthood-structured situation (a preordered type, 
 (`Causation.Situation`).
 -/
 
-namespace Intensional
+namespace Semantics.Context
 
 /-- A world–time index: a (world, time) pair used as a context of
     evaluation in intensional, dynamic, modal, and tense semantics.
@@ -25,4 +25,4 @@ structure Index (W T : Type*) where
   time : T
   deriving Repr
 
-end Intensional
+end Semantics.Context

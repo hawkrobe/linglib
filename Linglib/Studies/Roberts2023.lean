@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Index
+import Linglib.Semantics.Reference.Context.Index
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
@@ -99,7 +99,6 @@ structure Move (W : Type*) where
   deriving Inhabited
 
 end Discourse
-
 
 /-!### Scoreboard: Unified Discourse State
 [roberts-2023] [roberts-2012] [lewis-1979] [portner-2004]
@@ -491,10 +490,9 @@ theorem boxAns_polar_after_interrogation (K : Scoreboard W)
 end Scoreboard
 end Discourse
 
-
 namespace Roberts2023
 
-open Intensional (Index)
+open Semantics.Context (Index)
 open Discourse (forceLinkingPrinciple defaultSemanticType Scoreboard)
 open Mood.Illocutionary (sincerityCondition)
 open Mood (State Component Illocutionary HasTarget)
@@ -508,7 +506,7 @@ abbrev World := Fin 4
 
 Roberts's "circumstance" ⟨w, t⟩ (eq. 45), SameHistory (47), and FUT
 (48) all instantiate the canonical world-time substrate in
-`Intensional.Index` and `HistoricalAlternatives`:
+`Semantics.Context.Index` and `HistoricalAlternatives`:
 
   Roberts                        Linglib substrate
   ────────────────────────────   ────────────────────────────

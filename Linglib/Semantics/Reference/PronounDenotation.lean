@@ -1,7 +1,7 @@
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Presupposition.PhiFeatures
-import Linglib.Semantics.Intensional.Variables
+import Linglib.Semantics.Composition.Assignment
 import Linglib.Logic.Assignment
 import Linglib.Semantics.Dynamic.Lookup
 import Linglib.Semantics.Definiteness.Interpret
@@ -40,7 +40,7 @@ bridges plus `ContainmentPairLike.toPair`, deferred until a study needs them.
 open Presupposition
 open Presupposition.PhiFeatures
 open Reference (NominalDenot)
-open Intensional.Variables (interpPronoun DenotGS SitAssignment)
+open Semantics.Composition (interpPronoun DenotGS SitAssignment)
 
 /-- The conjoined φ-feature presupposition of a pronoun entry, over an entity
 domain `E`. The model supplies the entity-level predicates the cells need

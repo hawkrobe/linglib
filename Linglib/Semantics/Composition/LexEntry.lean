@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Composition.Ty
 
 /-!
 # Lexical Entry Types
@@ -17,7 +17,7 @@ unchanged; effectful lexicons supply an explicit `M`.
 
 namespace Semantics.Montague
 
-open Intensional
+open Semantics.Composition
 
 /-- A typed lexical entry whose denotation carries the effect `M`
 (default `Id` = pure H&K). -/

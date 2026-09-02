@@ -17,7 +17,7 @@ API surface: it dispatches on the sisters' type at runtime through
 
 namespace Semantics.Composition.Tree
 
-open Intensional
+open Semantics.Composition
 
 /-- **Coordination composition mode** — the sibling of `tryFA`/`tryIFA`/`tryPM`.
     Two same-conjoinable-type sisters combine via `Coordinator.op` in the Boolean algebra

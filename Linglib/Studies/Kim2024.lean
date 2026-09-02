@@ -47,7 +47,6 @@ open Causation.Psych
 open Modality
 open Modality (ModalFlavor)
 
-
 -- ════════════════════════════════════════════════════
 -- § 1. Psych Event Content: Derived from Causal Source
 -- ════════════════════════════════════════════════════
@@ -76,7 +75,6 @@ theorem internal_is_contentful :
 theorem external_is_contentless :
     psychEventHasContent .external = false := rfl
 
-
 -- ════════════════════════════════════════════════════
 -- § 2. Bridge to Content Licensing
 -- ════════════════════════════════════════════════════
@@ -101,7 +99,6 @@ theorem intensionality_content_parallel :
     psychEventHasContent .internal = EventBinder.attitude.hasContent ∧
     psychEventHasContent .external = EventBinder.vpEvent.hasContent :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
 
 -- ════════════════════════════════════════════════════
 -- § 3. Epistemic Availability Under Psych Verbs
@@ -139,7 +136,6 @@ theorem psych_binder_parallel :
       EventBinder.vpEvent.canProjectEpistemic :=
   ⟨rfl, rfl⟩
 
-
 -- ════════════════════════════════════════════════════
 -- § 4. Available Flavors Under Psych Verbs
 -- ════════════════════════════════════════════════════
@@ -163,7 +159,6 @@ theorem flavors_match_binders :
     psychAvailableFlavors .internal = EventBinder.attitude.availableFlavors ∧
     psychAvailableFlavors .external = EventBinder.vpEvent.availableFlavors :=
   ⟨rfl, rfl⟩
-
 
 -- ════════════════════════════════════════════════════
 -- § 5. Predictions for Specific Verbs
@@ -193,6 +188,5 @@ None should provide content for epistemic licensing. -/
 theorem eventive_verbs_are_contentless :
     psychEventHasContent .external = false ∧
     psychCanProjectEpistemic .external = false := ⟨rfl, rfl⟩
-
 
 end Kim2024

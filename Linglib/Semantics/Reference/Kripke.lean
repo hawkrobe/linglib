@@ -20,17 +20,17 @@ lost" is unambiguous; "The president might have lost" is ambiguous.
 - `rigidification_not_synonymy`: dthat rescues rigidity but destroys meaning-identity
 
 The rigidity predicate and the necessity of identity live in
-`Semantics/Intensional/Rigidity.lean`.
+`Semantics/Reference/Rigidity.lean`.
 
 -/
 
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Reference.Basic
 import Linglib.Semantics.Reference.KaplanLD
 
 namespace Reference.Kripke
 
-open Intensional (IsRigid isRigid_const)
+open Reference (IsRigid isRigid_const)
 open _root_.Reference.Basic (properName isDirectlyReferential)
 open _root_.Reference.KaplanLD (dthatW dthatW_isRigid)
 

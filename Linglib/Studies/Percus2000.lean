@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Reference.Rigidity
 import Linglib.Logic.Assignment
 import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Reference.Context.Tower
@@ -49,10 +49,9 @@ open Tense
 
 namespace Percus2000
 
-open Intensional (Index)
+open Semantics.Context (Index)
 open Semantics.Context
 open Features (Attitude)
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § Situation Assignment
@@ -77,7 +76,6 @@ abbrev sitLambdaAbs {W T α : Type*} (n : ℕ)
     SituationAssignment W T → Index W T → α :=
   λ g s => body (Function.update g n s)
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Generalization X
 -- ════════════════════════════════════════════════════════════════
@@ -99,7 +97,6 @@ def genYWellFormed (quantifierBindings : List PredicateBinding) : Bool :=
 def genXYWellFormed (predicateBindings quantifierBindings : List PredicateBinding) : Bool :=
   genXWellFormed predicateBindings && genYWellFormed quantifierBindings
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Tower Bridge: Generalization X as Depth Constraint
 -- ════════════════════════════════════════════════════════════════
@@ -120,7 +117,6 @@ theorem genX_bridge_compliant :
       b.sitVarIndex = b.closestBinderIndex := by
   intro b
   simp only [PredicateBinding.genXCompliant, beq_iff_eq]
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § Attitude Semantics with Situation Binding
@@ -156,7 +152,6 @@ instance {W T : Type*}
     Decidable (alwaysAt domain ssh n scope g) := by
   unfold alwaysAt; infer_instance
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Key Properties
 -- ════════════════════════════════════════════════════════════════
@@ -172,7 +167,6 @@ theorem sitVar_other_unaffected {W T : Type*}
     interpSitVar i (updateSitVar g n s) = interpSitVar i g :=
   Function.update_of_ne h s g
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Bridge: Temporal <-> Situational
 -- ════════════════════════════════════════════════════════════════
@@ -185,7 +179,6 @@ theorem temporal_projection_commutes {W T : Type*}
     (g : SituationAssignment W T) (n : ℕ) :
     Tense.interpTense n (toTemporalAssignment g) = (interpSitVar n g).time :=
   rfl
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § Fragment Bridge: Lexical Entries → Percus Situation Binding
@@ -227,7 +220,6 @@ theorem brother_is_common :
 theorem spy_is_common :
     English.Nouns.spy.proper = false := rfl
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Concrete Model
 -- ════════════════════════════════════════════════════════════════
@@ -258,7 +250,6 @@ theorem entityOf_john :
     entityOf English.Nouns.john = .john := rfl
 theorem entityOf_bill :
     entityOf English.Nouns.bill = .bill := rfl
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § Predicate Denotations (Situation-Dependent)
@@ -294,7 +285,6 @@ theorem brother_form :
 theorem spy_form :
     English.Nouns.spy.formSg = "spy" := rfl
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Doxastic Alternatives
 -- ════════════════════════════════════════════════════════════════
@@ -302,7 +292,6 @@ theorem spy_form :
 def doxMary : Sit → List Sit
   | ⟨.actual, _⟩ => [sBelief]
   | ⟨.belief, _⟩ => [sBelief]
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § Example 1: "Mary believes John is Canadian"
@@ -351,7 +340,6 @@ theorem genX_blocks_incorrect_reading :
   intro h; exact h.mp deRe_is_true
 
 end Example1
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § Example 2: "Mary believes my brother is a spy"
@@ -411,7 +399,6 @@ theorem readingB_genX_ok : genXWellFormed readingB_bindings = true := rfl
 theorem readingC_genX_violation : genXWellFormed readingC_bindings = false := rfl
 
 end Example2
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § Example 3: "Mary thinks my brother always won the game"
@@ -496,6 +483,5 @@ theorem ex3_genXY_violation :
     genXYWellFormed ex3_predBindings ex3_quantBindings_violation = false := rfl
 
 end Example3
-
 
 end Percus2000

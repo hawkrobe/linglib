@@ -1,5 +1,5 @@
 import Linglib.Semantics.Dynamic.Update
-import Linglib.Semantics.Intensional.Index
+import Linglib.Semantics.Reference.Context.Index
 import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Semantics.Tense.Compositional
 
@@ -48,7 +48,7 @@ Sibling of `Tense/Compositional.lean` (the static operators) and
 
 namespace Tense
 
-open _root_.Intensional (Index)
+open Semantics.Context (Index)
 open DynamicSemantics
 open DynamicSemantics.Update (test closure)
 

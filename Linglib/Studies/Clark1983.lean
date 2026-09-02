@@ -5,7 +5,6 @@ import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Pragmatics.RSA.LexicalUncertainty
 import Mathlib.Data.Fintype.BigOperators
 
-
 /-!
 # Clark 1983: Making sense of nonce sense
 
@@ -65,7 +64,6 @@ level rather than a vacuous law-of-excluded-middle.
 -/
 
 namespace Clark1983
-
 
 open RSA (Lexicon)
 open DistributedMorphology (Categorizer WordStructure ofRoot categorize Headed)

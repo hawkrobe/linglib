@@ -31,7 +31,6 @@ open Classical
 open DynamicSemantics
 open DynamicSemantics.Update (test)
 
-
 /-- An assignment maps variable indices to entities -/
 abbrev Assignment (E : Type*) := VarIdx → E
 
@@ -40,7 +39,7 @@ abbrev WitnessSeq (E : Type*) := PronIdx → E
 
 /-- Assignment-update notation `g[i ↦ e]` for mathlib's `Function.update`.
 
-Unlike `Semantics/Intensional/Variables.lean`'s `notation:max`, this stays at the
+Unlike `Semantics/Composition/Assignment.lean`'s `notation:max`, this stays at the
 default precedence: at `max` the trailing `[` would capture the list-literal
 arguments of `Formula.atom`. -/
 scoped notation g "[" i " ↦ " e "]" => Function.update g i e
@@ -92,7 +91,6 @@ theorem Term.eval_witness_irrelevant (t : Term) (ht : t.pronouns = ∅)
   | var _ => rfl
   | pron i => simp [Term.pronouns] at ht
 
-
 section Satisfaction
 
 variable (M : Model E)
@@ -117,7 +115,6 @@ def Formula.sat (g : Assignment E) (ê : WitnessSeq E) : Formula → Prop
 def Formula.trueIn (φ : Formula) : Prop :=
   ∀ g : Assignment E, ∃ ê : WitnessSeq E, φ.sat M g ê
 
-
 /-- Double negation elimination -/
 theorem Formula.sat_neg_neg (g : Assignment E) (ê : WitnessSeq E) (φ : Formula) :
     (∼(∼φ)).sat M g ê ↔ φ.sat M g ê := by
@@ -141,7 +138,6 @@ theorem Formula.sat_exists_intro (g : Assignment E) (ê : WitnessSeq E) (i : Var
     (φ : Formula) (e : E) :
     φ.sat M (g[i ↦ e]) ê → (Formula.exists_ i φ).sat M g ê :=
   λ h => ⟨e, h⟩
-
 
 /--
 Resolution Correctness ([dekker-2012] Observation 7, §2.2, p.30).
@@ -208,7 +204,6 @@ theorem Formula.sat_resolve (g : Assignment E) (ê : WitnessSeq E) (ρ : Resolut
       exact λ hc => this (Finset.mem_insert_of_mem hc)
     exact exists_congr (λ e => ih (g[j ↦ e]) ê (hcompat' e) hnoCapture')
 
-
 section Examples
 
 /-- "A man walked. He sat down." -/
@@ -224,7 +219,6 @@ example : (exManWalkedIn.resolve exResolution).range = ∅ :=
   Formula.resolve_no_pronouns exManWalkedIn exResolution
 
 end Examples
-
 
 /-- Observation 4 ([dekker-2012] §2.2, p.25): PLA and PL equivalence.
 
@@ -266,7 +260,6 @@ theorem obs4_pla_pl_equivalence (φ : Formula) (hfree : φ.range = ∅)
   | exists_ j φ ih =>
     simp only [Formula.sat]
     exact exists_congr (λ e => ih hfree (g[j ↦ e]))
-
 
 /--
 Observation 5 ([dekker-2012] §2.2): Relevance.
@@ -328,7 +321,6 @@ theorem obs5_relevance (φ : Formula) (g₁ g₂ : Assignment E) (ê₁ ê₂ : 
 
 end Satisfaction
 
-
 /-! ### Embedding into Dynamic Ty2
 
 PLA distinguishes variables (`VarIdx`) from pronouns (`PronIdx`);
@@ -354,7 +346,6 @@ def pronDref (i : PronIdx) : Dref (MergedAssignment E) E :=
 def termToDref : Term → Dref (MergedAssignment E) E
   | .var i => varDref i
   | .pron i => pronDref i
-
 
 section Embedding
 

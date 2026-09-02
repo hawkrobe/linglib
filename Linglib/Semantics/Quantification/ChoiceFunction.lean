@@ -1,7 +1,8 @@
 import Mathlib.Init
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Reference.Rigidity
 import Linglib.Logic.Modal.Defs
 import Linglib.Semantics.Quantification.Basic
+import Linglib.Logic.Modal.Extensional
 
 /-!
 # Choice Functions for Indefinite Determiners
@@ -210,7 +211,7 @@ The collapse/divergence pair formalizes [zimmermann-2026]'s gloss of the
 account — "as negation is not an intensional operator, the situational
 skolem argument of the choice function cannot be shifted away from the
 actual resource situation … resulting in wide scope only": operators
-extensional at the matrix situation (`Intensional.IsExtensionalAt`) neutralize
+extensional at the matrix situation (`ModalLogic.IsExtensionalAt`) neutralize
 the free/bound distinction for the situation pronoun
 (`bound_free_collapse`), while situation quantifiers (`box`:
 conditionals, attitudes) separate the construals
@@ -261,10 +262,10 @@ theorem SkolemCF.evalAt_eq_applyIntensionAt {S E : Type*}
 situation `s₀`, the bound and free construals of the situation pronoun
 are truth-conditionally indistinguishable — for any CF and any
 intensional restrictor. Instantiated at pointwise negation
-(`Intensional.IsExtensionalAt.neg`) this derives wide-scope-only under
+(`ModalLogic.IsExtensionalAt.neg`) this derives wide-scope-only under
 negation; see `Studies/Zimmermann2026`. -/
 theorem bound_free_collapse {S E : Type*} {O : (S → Prop) → S → Prop}
-    {s₀ : S} (hO : Intensional.IsExtensionalAt O s₀) (f : SkolemCF S E)
+    {s₀ : S} (hO : ModalLogic.IsExtensionalAt O s₀) (f : SkolemCF S E)
     (P : S → E → Prop) (VP : E → S → Prop) :
     (O (fun s => VP (f.applyIntensionAt .bound s s₀ P) s) s₀ ↔
      O (fun s => VP (f.applyIntensionAt .free s s₀ P) s) s₀) :=
@@ -286,9 +287,9 @@ theorem bound_free_diverge_box :
 genuine. -/
 theorem box_not_extensionalAt :
     ∃ (S : Type) (R : S → S → Prop) (s₀ : S),
-      ¬ Intensional.IsExtensionalAt (box R) s₀ := by
+      ¬ ModalLogic.IsExtensionalAt (box R) s₀ := by
   refine ⟨Bool, ⊤, false,
-    Intensional.not_isExtensionalAt_iff_exists_witness.mpr ?_⟩
+    ModalLogic.not_isExtensionalAt_iff_exists_witness.mpr ?_⟩
   refine ⟨fun s => s = s, fun s => false = s, rfl, fun h => ?_⟩
   exact Bool.noConfusion ((iff_of_eq h).mp (fun v _ => rfl) true trivial)
 

@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Card
 import Mathlib.Data.Nat.Basic
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Degree.Comparison
 import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Studies.Aikhenvald2000
@@ -223,8 +223,8 @@ def NumeralIntens.const {W : Type u} (n : ℕ) : NumeralIntens W :=
 /-- Every constant numeral intension is rigid. Sudo's empirical claim that
     numerals do not vary across worlds is the rigidity of `NumeralIntens.const`. -/
 theorem NumeralIntens.const_isRigid {W : Type u} (n : ℕ) :
-    Intensional.IsRigid (NumeralIntens.const (W := W) n) :=
-  Intensional.isRigid_const n
+    Reference.IsRigid (NumeralIntens.const (W := W) n) :=
+  Reference.isRigid_const n
 
 end Semantics.Classifier
 
@@ -365,8 +365,7 @@ type-theoretic, not data-driven. -/
 
 /-- The toy world type. Sudo's intensional analysis is parameterized over
     worlds; for the purposes of demonstrating type-shifts, a singleton
-    world suffices. Real applications would parameterize over a richer
-    `World` type from `Intensional.Defs`. -/
+    world suffices; any index type serves in a real application. -/
 abbrev World := Unit
 
 /-- A toy entity domain: a person, a flower, an animal (small), and a

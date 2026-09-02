@@ -46,7 +46,7 @@ The constraint `t_LB ⊆ t_r` (subset) was previously transcribed as `∈`
 
 -/
 
-import Linglib.Semantics.Intensional.Index
+import Linglib.Semantics.Reference.Context.Index
 import Linglib.Core.Order.Interval
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Events.Basic
@@ -57,7 +57,7 @@ import Linglib.Semantics.Events.Basic
 
 namespace Aspect
 
-open _root_.Intensional (Index)
+open Semantics.Context (Index)
 open Features
 
 -- ════════════════════════════════════════════════════
@@ -346,7 +346,6 @@ def PROSP (P : W → Event T → Prop) : IntervalPred W T :=
     a default viewpoint type. -/
 def INIT_OVERLAP (P : W → Event T → Prop) : IntervalPred W T :=
   λ w t => ∃ e : Event T, t.initialOverlap e.τ ∧ P w e
-
 
 -- ════════════════════════════════════════════════════
 -- § Perfect Time Span / Extended Now

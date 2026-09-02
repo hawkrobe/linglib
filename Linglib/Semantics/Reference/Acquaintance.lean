@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Reference.Rigidity
 import Mathlib.Data.Set.Function
 
 /-!
@@ -31,7 +31,7 @@ mathlib idioms — the only genuinely new content here is naming.
 
 namespace Reference.Acquaintance
 
-open Intensional (IsRigid isRigid_const)
+open Reference (IsRigid isRigid_const)
 
 /-- A conceptual cover ([aloni-2001] §3.2): a set of intensions over
     an evaluation index `Idx` representing the agent's available "ways of

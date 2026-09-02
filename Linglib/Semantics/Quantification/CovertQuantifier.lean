@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Composition.LexEntry
 
 /-!
@@ -39,7 +39,6 @@ namespace Quantification.CovertQuantifier
 
 section Compositional
 
-open Intensional
 open Semantics.Montague (LexEntry Lexicon)
 
 /-- Gen: `(e→t) → (e→t) → t`. Dyadic generic quantifier.

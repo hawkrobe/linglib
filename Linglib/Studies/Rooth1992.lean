@@ -352,7 +352,7 @@ combined via Heim & Kratzer's `interp`, run once per world. The
 particle-verb *cut … down to size* is treated as a single transitive
 lexical item keyed "cut". -/
 
-open Intensional
+open Semantics.Composition
 open Semantics.Montague (Lexicon)
 open Syntax
 open Semantics.Composition.Tree

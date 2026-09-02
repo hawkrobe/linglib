@@ -37,13 +37,12 @@ files: `dynSUBJ`/`dynIND` from `Semantics/Mood/Dynamic.lean`
 
 namespace Mendes2025
 
-open Intensional (Index)
+open Semantics.Context (Index)
 open HistoricalAlternatives
 open DynamicSemantics
 open DynamicSemantics.CCP (IsEliminative)
 open Tense
 open Mood
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. The SF Operator (§3.2)
@@ -139,7 +138,6 @@ def everyWithSFRestrictor {W T : Type*} [LinearOrder T]
   let c₂ := restrictor c₁
   -- Finally: Apply nuclear scope (inherits temporal anchor)
   nuclear c₂
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. Temporal Properties of SF (§3.2)
@@ -245,7 +243,6 @@ theorem sf_restrictor_future_reference {W T : Type*} [LinearOrder T]
   unfold subordinateFuture at h_sf
   exact (Tense.compare_mem_future _ _).mp (DynamicSemantics.mem_lift_test.mp h_sf).2
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Compositional CDRT Derivations (§4.3.1)
 -- ════════════════════════════════════════════════════════════════
@@ -325,7 +322,6 @@ def seqUpdate
     (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
   consequent (antecedent c)
 
-
 /--
 Antecedent derivation:
 `⟦Maria estiver em casa⟧ = SUBJ^{s₁}_{s₀}[FUT; [| at-home(maria)(s₁)]]`
@@ -364,7 +360,6 @@ def deriveFullSentence
   let antecedent := deriveAntecedent history maria atHomeRel sfVar speechVar
   let consequent := deriveConsequent maria answerRel sfVar
   seqUpdate antecedent consequent c
-
 
 /--
 The situation introduced by SF is in the historical alternatives.
@@ -437,7 +432,6 @@ theorem derivation_conditional_holds
   simp only [Set.mem_ofPred_eq] at h
   exact h.2
 
-
 /--
 Counterfactual conditional (for comparison).
 "Se Maria estivesse em casa, ela atenderia."
@@ -466,7 +460,6 @@ theorem sf_vs_counterfactual_temporal {W T : Type*} [LinearOrder T]
     ∀ gs ∈ deriveFullSentence history maria atHomeRel answerRel sitVar speechVar c,
       (gs.assignment sitVar).time > (gs.assignment speechVar).time :=
   derivation_future_ordering history maria atHomeRel answerRel sitVar speechVar c
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Presupposition Weakening (§2.2)
@@ -510,7 +503,6 @@ def sfRestrictor {W T E : Type*} [LE T]
     (s₀ : Index W T) : E → Prop :=
   λ x => ∃ s₁ ∈ historicalBase history s₀, restrictor x s₁
 
-
 /-- Indicative preserves existential presupposition. -/
 theorem indicative_preserves_presup {W T E : Type*}
     (restrictor : E → Index W T → Prop)
@@ -553,7 +545,6 @@ theorem sf_felicitous_under_uncertainty {W T E : Type*} [LE T]
     unfold sfRestrictor
     exact ⟨s₁, h_s₁, hx⟩
   · exact h_uncertainty.2
-
 
 /--
 Relative clause with SF weakens strong quantifier presupposition.

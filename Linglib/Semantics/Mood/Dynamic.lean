@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Dynamic.Update
-import Linglib.Semantics.Intensional.Index
+import Linglib.Semantics.Reference.Context.Index
 import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Mood.Situation
@@ -53,7 +53,7 @@ dref *and* moves the evaluation index to the introduced situation.
 
 namespace Mood
 
-open Intensional (Index)
+open Semantics.Context (Index)
 open HistoricalAlternatives DynamicSemantics
 open DynamicSemantics.CCP (IsEliminative)
 open DynamicSemantics.Update (test closure)

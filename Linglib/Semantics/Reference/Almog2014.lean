@@ -60,7 +60,7 @@ open _root_.Reference.Kaplan (SingularProposition indexical)
 open _root_.Reference.Donnellan (UseMode referentialExpression)
 open _root_.Reference.KaplanLD (dthatW dthatW_isRigid)
 open _root_.Reference.Kripke (rigid_iff_scope_invariant deRe deDicto)
-open Intensional (IsRigid isRigid_const const_ne_of_not_isRigid)
+open Reference (IsRigid isRigid_const const_ne_of_not_isRigid)
 
 /-! ## Canonical Referential Profiles -/
 

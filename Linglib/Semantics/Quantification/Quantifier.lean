@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Composition.Cont
@@ -230,7 +230,7 @@ theorem gc_A_BE (domain : List E)
 
 namespace Quantifier
 
-open Intensional
+open Semantics.Composition
 
 /-! ### Semantic-type alias -/
 

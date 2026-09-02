@@ -269,7 +269,7 @@ theorem typeshift_resolves_tension :
 namespace EveryNot
 
 open BigOperators
-open Intensional (Denot)
+open Semantics.Composition (Denot)
 open Quantification (every_sem)
 open Semantics.Scope (ScopeConfig ScopeDerivation)
 
@@ -1095,7 +1095,7 @@ instance (nr : NumeralReading) (s : ScopeReading) : ∀ u, DecidablePred (uttMea
   | .null, _ => isTrue trivial
   | .twoNot, w => inferInstanceAs (Decidable (twoNotTruth nr s w = true))
 
-open Intensional (Denot)
+open Semantics.Composition (Denot)
 open Quantification (exactly_n_sem at_least_n_sem)
 open Semantics.Scope (ScopeConfig ScopeDerivation)
 

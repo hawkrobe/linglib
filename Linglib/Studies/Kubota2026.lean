@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Reference.Rigidity
 import Linglib.Studies.HarrisPotts2009
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Fragments.Japanese.Particles
@@ -72,7 +72,7 @@ classification, the modal selectional restrictions, and the dual-layer denotatio
 namespace Kubota2026
 
 open Pragmatics.Expressives (TwoDimProp SecondaryMeaningProperties expressiveProperties)
-open Intensional (IsRigid isRigid_const)
+open Reference (IsRigid isRigid_const)
 open Modality (ModalFlavor)
 open Japanese.OutlookMarkers (OutlookMarkerForm)
 open Data.Examples (LinguisticExample)
@@ -262,7 +262,7 @@ theorem ci_projects_through_neg (m : Outlook W O) (o : O) :
 
 /-- An outlook is **rigid** when its stance layer ignores the outlook — `IsRigid`
 applied to `evaluation`. Perspective shift is exactly the failure of this. -/
-def IsRigid (m : Outlook W O) : Prop := Intensional.IsRigid m.evaluation
+def IsRigid (m : Outlook W O) : Prop := Reference.IsRigid m.evaluation
 
 /-- A `TwoDimProp` (a pure expressive — a single, speaker-rigid CI) as the constant outlook
 family — the constant family on the CI tier, with the trivial counterstance. -/
@@ -337,7 +337,7 @@ theorem ciItem_shifts_iff_not_rigid {Person W : Type}
     (item : HarrisPotts2009.CIItem Person W) :
     (∃ o₁ o₂, item.resolve o₁ ≠ item.resolve o₂) ↔ ¬ item.toOutlook.IsRigid := by
   simp [HarrisPotts2009.CIItem.resolve, HarrisPotts2009.CIItem.toOutlook, Outlook.IsRigid,
-    Intensional.IsRigid, TwoDimProp.mk.injEq, not_forall]
+    Reference.IsRigid, TwoDimProp.mk.injEq, not_forall]
 
 /-- The counterstance projects through negation (via `PartialProp.neg`), and the CI tier
 projects at each outlook (via `TwoDimProp.neg`) — the dual presupposition/CI projection. -/

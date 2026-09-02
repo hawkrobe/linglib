@@ -91,7 +91,6 @@ theorem hamblinFA_eq_seq {A B : Type} (m : HamblinDen (A → B)) (n : HamblinDen
   funext b
   exact propext Set.mem_seq_iff.symm
 
-
 -- ════════════════════════════════════════════════════════════════
 -- §2: The Four Sentential Operators
 -- ════════════════════════════════════════════════════════════════
@@ -191,7 +190,6 @@ theorem opForall_gq_special_case {E W : Type}
 
 end Operators
 
-
 -- ════════════════════════════════════════════════════════════════
 -- Part II: Indeterminate Pronoun Derivations (§2)
 -- ════════════════════════════════════════════════════════════════
@@ -244,7 +242,6 @@ theorem dare_mo_derivation (slept : Person → Prop) :
 
 end Derivation
 
-
 -- ════════════════════════════════════════════════════════════════
 -- Part III: Modal–Indefinite Interaction (§7)
 -- ════════════════════════════════════════════════════════════════
@@ -268,8 +265,8 @@ The **distribution requirement** (to be derived as implicature in §8):
 
 distributes alternatives over accessible worlds.
 
-Note: We use `Prop`-valued accessibility here (rather than the `Bool`-valued
-`Intensional.BAccessRel`) to stay in `Prop` throughout the Hamblin
+Note: We use `Prop`-valued accessibility here (rather than a `Bool`-valued
+relation) to stay in `Prop` throughout the Hamblin
 semantics. The singleton collapse theorem below shows these Hamblin modals
 reduce to standard Kripke modals when the alternative set is a singleton.
 -/
@@ -278,9 +275,7 @@ section ModalInteraction
 
 variable {W : Type}
 
-/-- Prop-valued accessibility relation for Hamblin modal semantics.
-    Named distinctly from `Intensional.BAccessRel` (which is Bool-valued)
-    to avoid shadowing. -/
+/-- Prop-valued accessibility relation for Hamblin modal semantics. -/
 abbrev HamblinAccessRel (W : Type) := W → W → Prop
 
 /-- Possibility modal over Hamblin alternatives (§7, p. 133):
@@ -348,7 +343,6 @@ theorem distrib_not_entailed_by_nec :
 
 end ModalInteraction
 
-
 -- ════════════════════════════════════════════════════════════════
 -- Part IV: Domain Widening (§7)
 -- ════════════════════════════════════════════════════════════════
@@ -384,7 +378,6 @@ theorem simple_entails_widened (D : Set E) (P Q : E → Prop) :
   exact ⟨x, hP, hQ⟩
 
 end DomainWidening
-
 
 -- ════════════════════════════════════════════════════════════════
 -- Part V: Distribution Requirement as Implicature (§6, §8)
@@ -466,7 +459,6 @@ theorem fc_end_to_end_possibility (R : HamblinAccessRel W) (p q : W → Prop)
   exact fc_possibility _ _ h_disj h_implic
 
 end DistributionRequirement
-
 
 -- ════════════════════════════════════════════════════════════════
 -- Part VI: Selectivity & Intervention (§9)
@@ -567,7 +559,6 @@ theorem beck_generalization :
     beckParadigm.all (fun d => d.isScopeBearing == !d.grammatical) = true := by
   native_decide
 
-
 -- ════════════════════════════════════════════════════════════════
 -- Bridge to Fragment Entries
 -- ════════════════════════════════════════════════════════════════
@@ -599,7 +590,6 @@ theorem irgendein_existential_only :
     irgendein.status = .implicature :=
   ⟨rfl, rfl⟩
 
-
 -- ════════════════════════════════════════════════════════════════
 -- Part VII: Cross-Linguistic Indeterminate Typology (§1)
 -- ════════════════════════════════════════════════════════════════
@@ -621,6 +611,5 @@ open Latvian.IndeterminatePronouns (paradigm)
 theorem selective_contrast :
     paradigm.length = 6 ∧ japaneseParadigm.morphologicallyMarked = false :=
   ⟨rfl, rfl⟩
-
 
 end KratzerShimoyama2002

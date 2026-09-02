@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Logic.Assignment
-import Linglib.Semantics.Intensional.Defs
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Composition.Ty
+import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Quantification.Polyadic
 import Mathlib.Data.Fin.VecNotation
 
@@ -42,8 +42,8 @@ Omitted: the string-level operations (gender, verb forms), tense (S17), and post
 
 namespace Montague1973
 
-open Intensional (Ty Denot)
-open Intensional (IsRigid isRigid_const)
+open Semantics.Composition (Ty Denot)
+open Reference (IsRigid isRigid_const)
 open Quantification (every_sem some_sem)
 open Quantification.Polyadic (iterate surfaceScope inverseScope)
 

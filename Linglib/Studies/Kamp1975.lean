@@ -3,6 +3,7 @@ import Linglib.Core.Data.Trivalent
 import Mathlib.Data.Set.Basic
 import Mathlib.Algebra.Order.Ring.Rat
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Linglib.Logic.Modal.Extensional
 
 /-!
 # Kamp (1975): Two Theories about Adjectives
@@ -249,7 +250,7 @@ theorem gray_intersective : isIntersective grayAdj :=
      fun N w x => by cases x <;> simp [grayAdj]⟩
 
 /-- "gray" is therefore also extensional and subsective. -/
-example : Intensional.IsExtensional grayAdj :=
+example : ModalLogic.IsExtensional grayAdj :=
   isExtensional_of_isIntersective gray_intersective
 example : isSubsective grayAdj := gray_intersective.isSubsective
 
@@ -277,7 +278,7 @@ def skillfulAdj : Modifier (Property W2 E3) := fun N w x =>
 theorem skillful_subsective : isSubsective skillfulAdj :=
   fun _ _ _ h => h.1
 
-theorem skillful_not_extensional : ¬ Intensional.IsExtensional skillfulAdj := by
+theorem skillful_not_extensional : ¬ ModalLogic.IsExtensional skillfulAdj := by
   intro hext
   let N₁ : Property W2 E3 := fun _ _ => True
   let N₂ : Property W2 E3 := fun w x => match w, x with
@@ -299,7 +300,7 @@ def allegedAdj : Modifier (Property W2 E3) := fun _N _ x =>
 /-- "alleged" ignores the noun entirely, so it is trivially extensional —
     with `skillful_not_extensional` and `skillful_subsective`, this
     witnesses that extensionality is orthogonal to subsectivity. -/
-theorem alleged_extensional : Intensional.IsExtensional allegedAdj :=
+theorem alleged_extensional : ModalLogic.IsExtensional allegedAdj :=
   fun _ _ _ _ => rfl
 
 /-- "alleged N" does not entail "N" (not subsective). -/

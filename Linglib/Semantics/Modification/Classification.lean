@@ -1,8 +1,9 @@
 import Linglib.Semantics.Modification.Basic
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Reference.Rigidity
 import Mathlib.Order.PropInstances
 import Mathlib.Data.Set.Basic
 import Mathlib.Tactic.Common
+import Linglib.Logic.Modal.Extensional
 
 /-!
 # Modifier-meaning classification at the intensional carrier
@@ -18,7 +19,7 @@ was consolidated in [kamp-partee-1995]; the modern labels are Partee's.
 * `isIntersective_iff`, `isPrivative_iff`: pointwise forms of the
   order-theoretic classes at this carrier.
 * `isExtensional_of_isIntersective`: intersective modifier meanings are
-  `Intensional.IsExtensional`.
+  `ModalLogic.IsExtensional`.
 * `not_isSubsective_of_isPrivative`: privative meanings with non-empty
   extension are not subsective.
 * `RevisedClass`: [partee-2010]'s three-class hierarchy after the
@@ -79,7 +80,7 @@ theorem isPrivative_iff :
 /-- Intersective modifier meanings are extensional: meet with a fixed
     property reads the noun only through its extension at each world. -/
 theorem isExtensional_of_isIntersective (h : isIntersective adj) :
-    Intensional.IsExtensional adj := by
+    ModalLogic.IsExtensional adj := by
   obtain ⟨Q, hQ⟩ := h
   intro w N₁ N₂ hN
   simp only [hQ, Pi.inf_apply, hN]

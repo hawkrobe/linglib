@@ -35,7 +35,7 @@ checks type-level sufficiency (`BoolSEM.causallySufficient`);
 
 namespace Causation.Progressive
 
-open Intensional (Index)
+open Semantics.Context (Index)
 open Causation Causation.Mechanism Causation.SEM
 
 /-! ### Causal Process -/

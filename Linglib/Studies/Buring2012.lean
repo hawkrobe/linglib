@@ -33,7 +33,7 @@ gender-neutrality is the absence of a gender feature rather than a feature of it
 namespace Buring2012
 
 open English.Pronouns (she they)
-open Intensional.Variables (interpPronoun)
+open Semantics.Composition (interpPronoun)
 open Presupposition Presupposition.PhiFeatures
 
 variable {E : Type} [PartialOrder E] (e : PersonalPronoun) (g : Assignment E) (i : ℕ)

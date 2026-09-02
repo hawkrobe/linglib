@@ -30,7 +30,8 @@ instantiations (`doxasticAlternatives`, `metaphysicalAlternatives`).
 
 namespace Tense.DeRe
 
-open Intensional (Index IsRigid IsRigidOn)
+open Semantics.Context (Index)
+open Reference (IsRigid IsRigidOn)
 open Semantics.Context (KContext)
 open HistoricalAlternatives (actualHistoryBase)
 
@@ -103,7 +104,7 @@ def IsFelicitous [LinearOrder T] (dr : TemporalDeReReading W E P T)
     (alternatives : Set (Index W T)) (constraint : Finset Ordering) : Prop :=
   dr.IsFelicitousWith constraint ∧ dr.IsRigidAcrossAlternatives alternatives
 
-/-- A rigid time-concept (`Intensional.IsRigid`) is rigid
+/-- A rigid time-concept (`Reference.IsRigid`) is rigid
     across any alternative set: pre-composition with `shiftWorldTime`
     preserves rigidity (`IsRigid.precomp`), and full rigidity restricts
     to any set (`IsRigid.isRigidOn`). -/

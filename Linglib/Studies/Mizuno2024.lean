@@ -47,7 +47,7 @@ namespace Mizuno2024
 open Modality.Exclusion (MarkingStrategy XMarkingExponent)
 open Conditionals (strictImp mem_strictImp_of_subset not_subset_of_mem_strictImp)
 open HistoricalAlternatives (histEquiv_mono)
-open Intensional (Index)
+open Semantics.Context (Index)
 open Data.Examples (LinguisticExample Glottocode)
 
 /-! ### The per-language strategy record (§2–§4.2) -/

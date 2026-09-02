@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Reference.Acquaintance
 import Linglib.Features.Logophoricity
 import Linglib.Syntax.Category.Pronoun.Logophoric

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Reference.Context.Basic
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Reference.Rigidity
 
 /-!
 # Context Tower
@@ -254,9 +254,9 @@ def innermostReader (C : Type*) : AccessPattern C C := ⟨.local, id⟩
     ContextTower.contextAt_depth, id_eq]
 
 /-- An `AccessPattern` IS an intension `ContextTower C → R` via its `resolve` method, so
-    the substrate's rigidity machinery (`Intensional.IsRigid`,
+    the substrate's rigidity machinery (`Reference.IsRigid`,
     `IsRigidOn`, the functoriality lemmas in
-    `Semantics/Intensional/Rigidity.lean`) thereby applies to access
+    `Semantics/Reference/Rigidity.lean`) thereby applies to access
     patterns. The push-invariance of origin-depth access (`origin_stable`
     above) is the access-pattern analog of the substrate's `IsRigidOn`
     on tower-shift orbits. -/

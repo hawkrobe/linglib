@@ -1581,6 +1581,7 @@ import Linglib.Semantics.Causation.Sufficiency
 import Linglib.Semantics.Causation.Valuation
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.Classifier
+import Linglib.Semantics.Composition.Assignment
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Semantics.Composition.Cont
 import Linglib.Semantics.Composition.Coordination
@@ -1589,6 +1590,7 @@ import Linglib.Semantics.Composition.Model
 import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Composition.Scope
 import Linglib.Semantics.Composition.Tree
+import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Composition.Writer
 import Linglib.Semantics.Conditionals.Basic
@@ -1721,15 +1723,12 @@ import Linglib.Semantics.Homogeneity.Defs
 import Linglib.Semantics.Homogeneity.Plural
 import Linglib.Semantics.Homogeneity.Usable
 import Linglib.Semantics.Iconicity
-import Linglib.Semantics.Intensional.Defs
-import Linglib.Semantics.Intensional.Index
-import Linglib.Semantics.Intensional.Rigidity
-import Linglib.Semantics.Intensional.Variables
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Modality.ActualityEntailments
 import Linglib.Semantics.Modality.BranchingTime
 import Linglib.Semantics.Modality.Directive
 import Linglib.Logic.Modal.Epistemic
+import Linglib.Logic.Modal.Extensional
 import Linglib.Semantics.Modality.EpistemicProbability
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Modality.Exclusion
@@ -1849,6 +1848,7 @@ import Linglib.Semantics.Reference.Almog2014
 import Linglib.Semantics.Reference.Basic
 import Linglib.Semantics.Reference.Binding
 import Linglib.Semantics.Reference.Context.Basic
+import Linglib.Semantics.Reference.Context.Index
 import Linglib.Semantics.Reference.Context.Rich
 import Linglib.Semantics.Reference.Context.Shifts
 import Linglib.Semantics.Reference.Context.Tower
@@ -1864,6 +1864,7 @@ import Linglib.Semantics.Reference.PersonFeatures
 import Linglib.Semantics.Reference.PluralityLicensing
 import Linglib.Semantics.Reference.PronounDenotation
 import Linglib.Semantics.Reference.Reciprocals
+import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Reference.ShiftedIndexicals
 import Linglib.Semantics.Supervaluation
 import Linglib.Semantics.Tense.Compositional

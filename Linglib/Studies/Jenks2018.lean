@@ -34,8 +34,8 @@ namespace Jenks2018
 
 open Definiteness
 open Semantics.Kinds
-open Intensional
-open Intensional.Variables
+open Semantics.Composition
+open Semantics.Composition
 
 /-! ### The typology and its attested cells (Table 2) -/
 

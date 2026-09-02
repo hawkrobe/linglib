@@ -1,5 +1,5 @@
-import Linglib.Semantics.Intensional.Defs
-import Linglib.Semantics.Intensional.Variables
+import Linglib.Semantics.Composition.Ty
+import Linglib.Semantics.Composition.Assignment
 import Linglib.Semantics.Modification.Basic
 
 /-!
@@ -36,7 +36,7 @@ until a study reifies it.
 
 namespace RelativeClause
 
-open Intensional Intensional.Variables
+open Semantics.Composition
 open Modifier (intersective intersective_comm)
 
 /--

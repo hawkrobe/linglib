@@ -38,7 +38,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.UpperLower.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Semantics.Mereology
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Reference.Rigidity
 import Linglib.Morphology.Word.Basic
 
 open Morphology (Word)

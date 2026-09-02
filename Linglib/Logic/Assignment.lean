@@ -31,8 +31,7 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
   fuses the `some` (cf. `Finsupp.update`), and its lemmas are one-step
   consequences of the `Function.update_*` laws. Definedness is
   `(g x).isSome` — there is no wrapper predicate. The Heim–Kratzer
-  notation `g[n ↦ x]` for total update is declared in
-  `Semantics/Intensional/Variables.lean`.
+  notation `g[n ↦ x]` for total update is `Assignment`-scoped, declared below.lean`.
 * Use these names only for the variable-binding role — the state that
   quantifiers `update` and free variables look up. A `ℕ → E` that is not
   variable-binding state (interpretation tables, lookup arrays) should
@@ -46,6 +45,14 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
     `Time` for temporal variables. Update is `Function.update` directly —
     no parallel API. -/
 abbrev Assignment (E : Type*) := Nat → E
+
+namespace Assignment
+
+/-- [heim-kratzer-1998]'s assignment modification `g[n ↦ x]`, i.e. `Function.update g n x`;
+the `Function.update_*` lemmas are its laws. -/
+scoped notation:max g "[" n " ↦ " x "]" => Function.update g n x
+
+end Assignment
 
 /-! ### Partial assignments -/
 

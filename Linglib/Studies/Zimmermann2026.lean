@@ -2,6 +2,7 @@ import Linglib.Fragments.Akan.Determiners
 import Linglib.Fragments.Hausa.Determiners
 import Linglib.Studies.Owusu2022
 import Linglib.Studies.Zimmermann2008
+import Linglib.Logic.Modal.Extensional
 
 /-!
 # [zimmermann-2026]: African Lambdas I — The Nominal Domain
@@ -111,7 +112,7 @@ theorem bi_reading_not_narrow :
 intensional operator, the situational skolem argument of the choice
 function cannot be shifted away from the actual resource situation …
 resulting in wide scope only". Pointwise negation is extensional
-(`Intensional.IsExtensionalAt.neg`), so by the substrate's
+(`ModalLogic.IsExtensionalAt.neg`), so by the substrate's
 `bound_free_collapse` the bound and free construals of *bí*'s situation
 pronoun coincide under negation — for any CF and restrictor; the wide
 (free) construal is the only reading. Situation quantifiers separate
@@ -124,6 +125,6 @@ theorem bi_negation_construals_collapse {S E : Type*}
         (fun s => VP (f.applyIntensionAt .bound s s₀ P) s) s₀ ↔
      (fun p s => ¬ p s)
         (fun s => VP (f.applyIntensionAt .free s s₀ P) s) s₀) :=
-  bound_free_collapse Intensional.IsExtensionalAt.neg f P VP
+  bound_free_collapse ModalLogic.IsExtensionalAt.neg f P VP
 
 end Zimmermann2026

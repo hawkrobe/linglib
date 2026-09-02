@@ -44,7 +44,7 @@ propositional drefs, following [stone-1999] and
 [brasoveanu-2006]'s flat-update approach. Generic ICDRT
 infrastructure (assignments, updates, variable updates, dynamic
 conditions, predication, veridicality typology, multi-agent discourse
-contexts, maximization) lives in `Dynamic/Intensional.lean`;
+contexts, maximization) lives in `Semantics/Dynamic/ICDRT/Basic.lean`;
 this file owns Hofmann's Appendix C compositional fragment and the
 empirical applications.
 
@@ -257,7 +257,6 @@ def wrongOrderBathroom : AccessDatum where
   felicitous := false
   source := "Evans 1977, noted in Hofmann 2025"
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § 2. Concrete Model M₁ (§3.3.2)
 -- ════════════════════════════════════════════════════════════════
@@ -313,7 +312,6 @@ def indivBathroom : IVar → BWorld → Entity BEnt
   | ⟨0⟩, .w_bu => .some .b
   | ⟨0⟩, .w_b  => .some .b
   | _, _        => .star
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. End-to-end Derivations
@@ -381,7 +379,6 @@ theorem veridical_anaphor_accessible :
     accessible p3 v1 pDC_S j_veridical :=
   ⟨veridical_entailed_in_p3, veridical_consistent⟩
 
-
 -- ────────────────────────────────────────────────────────────────
 -- § 3.2 Counterfactual antecedent + veridical anaphor fails (§3.4)
 -- ────────────────────────────────────────────────────────────────
@@ -442,7 +439,6 @@ theorem counterfactual_veridical_impossible
     (h_extends p2 (by decide))
     h_disjoint h_dec h_subset
 
-
 -- ────────────────────────────────────────────────────────────────
 -- § 3.3 Double negation (§4.1)
 -- ────────────────────────────────────────────────────────────────
@@ -485,7 +481,6 @@ theorem double_neg_accessible :
   ⟨by intro w hw; cases w <;> simp_all [j_double_neg, p3, v1, indivBathroom],
    ⟨w_bu, Or.inl rfl⟩⟩
 
-
 -- ────────────────────────────────────────────────────────────────
 -- § 3.4 Bathroom disjunction (§4.2)
 -- ────────────────────────────────────────────────────────────────
@@ -525,7 +520,6 @@ theorem bathroom_disj_accessible :
     accessible p3 v1 pDC_S j_bathroom_disj :=
   ⟨by intro w hw; cases w <;> simp_all [j_bathroom_disj, p3, v1, indivBathroom],
    ⟨w_bu, Or.inl rfl⟩⟩
-
 
 -- ────────────────────────────────────────────────────────────────
 -- § 3.5 Disagreement (§4.3)
@@ -575,7 +569,6 @@ theorem disagreement_accessible :
     accessible p3 v1 pDC_B j_disagreement :=
   ⟨by intro w hw; cases w <;> simp_all [j_disagreement, p3, v1, indivBathroom],
    ⟨w_bu, rfl⟩⟩
-
 
 -- ────────────────────────────────────────────────────────────────
 -- § 3.6 Modal subordination (§4.4)
@@ -631,7 +624,6 @@ theorem modal_sub_accessible :
     accessible p4_modal v1 pDC_S j_modal_sub :=
   ⟨modal_sub_entailed, ⟨w_u, Or.inl rfl⟩⟩
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Accessibility Predictions (Derived)
 -- ════════════════════════════════════════════════════════════════
@@ -662,7 +654,6 @@ def accessiblePred (status : DrefStatus) (ctx : AnaphorContext) : Bool :=
   | .counterfactual,  .nonveridical  => true
   | .hypothetical,    .veridical     => false
   | .counterfactual,  .veridical     => false
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5. Per-datum Verification
@@ -737,7 +728,6 @@ theorem all_data_correct :
     accessiblePred wrongOrderBathroom.antecedentStatus wrongOrderBathroom.anaphorCtx = wrongOrderBathroom.felicitous :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § 6. Compositional Fragment (Appendix C)
 -- ════════════════════════════════════════════════════════════════
@@ -747,8 +737,7 @@ theorem all_data_correct :
 Type-driven compositional semantics for ICDRT. Each lexical entry is a
 higher-order function over dynamic meta-types; composition is function
 application + sequential update. The resulting `ICDRT.Update` values lift
-to distributive CCPs via `Core/Intensional.lean`'s
-`toUpdate_isDistributive`.
+to distributive CCPs via `ICDRT.toUpdate_isDistributive`.
 
 ### Meta-types (Definition 13)
 
@@ -1001,7 +990,6 @@ theorem veridical_comp_factors (c : ICDRT.Context BWorld BEnt) :
       (ICDRT.toUpdate (semDEC pDC_S p1 thereIsABathroom) c) :=
   seq_toUpdate _ _ c
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § 7. Comparison with Bilateral Update Semantics (§5.1.1)
 -- ════════════════════════════════════════════════════════════════
@@ -1143,6 +1131,5 @@ theorem icdrt_neg_existential_truth
     (h_dec : dynInclusion φ_DC φ_outer i) :
     counterfactualProp φ_DC φ_inner i :=
   dec_complement_counterfactual φ_DC φ_outer φ_inner i h_comp h_dec
-
 
 end Hofmann2025

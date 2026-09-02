@@ -67,7 +67,6 @@ The same `η`/`≫=` structure with a different carrier:
 
 namespace Charlow2020
 
-
 /-! ## Part I — Apparatus -/
 
 /-! ### §1 Set monad operations
@@ -210,7 +209,7 @@ section LiftDecomposition
 
 open Quantification (individual A)
 open Semantics.Composition.TypeShifting (ident A_ident_eq_individual)
-open Intensional (Denot Ty)
+open Semantics.Composition (Denot Ty)
 
 variable {E W : Type}
 

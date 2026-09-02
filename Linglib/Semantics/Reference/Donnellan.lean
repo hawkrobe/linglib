@@ -44,7 +44,7 @@ import Linglib.Semantics.Definiteness.Maximality
 
 namespace Reference.Donnellan
 
-open Intensional (IsRigid isRigid_const)
+open Reference (IsRigid isRigid_const)
 open Presupposition
 open Presupposition.PartialProp
 open _root_.Reference.Basic

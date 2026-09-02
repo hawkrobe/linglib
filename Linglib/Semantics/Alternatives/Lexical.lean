@@ -337,7 +337,6 @@ Alternative set for a semantic scale: {weaker, stronger}.
 def SemanticScale.alts {World : Type*} (s : SemanticScale World) : Set (World → Prop) :=
   {s.weaker, s.stronger}
 
-
 -- ============================================================
 -- Quantifier Scale: some/all
 -- ============================================================
@@ -374,7 +373,6 @@ def someAllScale : SemanticScale SemQuantWorld :=
   , entailment := all_entails_some
   , nonTrivial := some_not_entails_all
   }
-
 
 -- ============================================================
 -- Connective Scale: or/and
@@ -420,7 +418,6 @@ def orAndScale : SemanticScale ConnWorld :=
   , entailment := and_entails_or
   , nonTrivial := or_not_entails_and
   }
-
 
 -- ============================================================
 -- Modal Scale: possible/necessary

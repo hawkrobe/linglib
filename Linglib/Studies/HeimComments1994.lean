@@ -54,7 +54,7 @@ framework into the substrate by pre-composing with the forgetful projection. The
 **agent-blind** substrate concepts (universal property below). Rigidity
 preservation, set-relativized rigidity preservation, and
 exhaustiveness preservation all factor through the substrate's
-`IsRigid.precomp`/`IsRigidOn.precomp` (`Semantics/Intensional/Rigidity.lean`).
+`IsRigid.precomp`/`IsRigidOn.precomp` (`Semantics/Reference/Rigidity.lean`).
 
 ## What's not formalised
 
@@ -79,7 +79,8 @@ exhaustiveness preservation all factor through the substrate's
 
 namespace HeimComments1994
 
-open Intensional (Index IsRigid IsRigidOn)
+open Semantics.Context (Index)
+open Reference (IsRigid IsRigidOn)
 open Semantics.Context (KContext)
 open Tense.DeRe (TemporalDeReReading)
 
@@ -101,7 +102,7 @@ abbrev TimeConcept (W T : Type*) := (Index W T) → T
 /-- **Substrate-level pullback** of a Heim time-concept along the
     forgetful projection `Semantics.Context.KContext.toIndex`: pre-composition, whose
     structural properties transport from `IsRigid.precomp`/`IsRigidOn.precomp`
-    (`Semantics/Intensional/Rigidity.lean`). -/
+    (`Semantics/Reference/Rigidity.lean`). -/
 def toSubstrate {W E P T : Type*} (c : TimeConcept W T) :
     Tense.DeRe.TimeConcept W E P T :=
   c ∘ KContext.toIndex

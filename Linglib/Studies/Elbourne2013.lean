@@ -60,7 +60,7 @@ Fragments/English/Pronouns.lean
 
 namespace Elbourne2013
 
-open Intensional (Index)
+open Semantics.Context (Index)
 
 open Presupposition
 open Presupposition.PartialProp
@@ -70,7 +70,6 @@ open Tense (ReferentialMode)
 open Quantification.ChoiceFunction (SitVarStatus)
 open Definiteness
 open Reference.Donnellan (UseMode definiteNominal)
-
 
 -- ════════════════════════════════════════════════════════════════
 -- §1: Situation Ontology ([barwise-perry-1983], [kratzer-1989])
@@ -112,7 +111,6 @@ def SituationFrame.isMinimal (F : SituationFrame)
     (P : F.Sit → Bool) (s : F.Sit) : Prop :=
   P s = true ∧ ∀ s', F.le s' s → P s' = true → s' = s
 
-
 -- ════════════════════════════════════════════════════════════════
 -- §2: The Situation-Relative Definite Article ([elbourne-2013], Ch 3)
 -- ════════════════════════════════════════════════════════════════
@@ -146,7 +144,6 @@ def the_sit' {W E : Type} (domain : List E)
     (restrictor : E → W → Bool) (scope : E → W → Bool) : PartialProp W :=
   presupOfReferent (fun w => russellIotaList domain (fun e => restrictor e w))
                    (fun e w => scope e w = true)
-
 
 -- ════════════════════════════════════════════════════════════════
 -- §3: Bridge to the canonical definite (`Donnellan.definiteNominal`)
@@ -184,7 +181,6 @@ theorem the_sit_assertion_implies_presup
   simp only [the_sit', presupOfReferent, russellIotaList] at h ⊢
   split at h <;> simp_all [Option.isSome]
 
-
 -- ════════════════════════════════════════════════════════════════
 -- §4: Referential vs Attributive ([elbourne-2013], Ch 5)
 -- ════════════════════════════════════════════════════════════════
@@ -196,7 +192,6 @@ theorem attributive_is_the_sit_bound
     (restrictor : E → W → Bool) (scope : E → W → Bool) :
     (definiteNominal domain restrictor).resolve (fun e w => scope e w = true) ⟨⟩ =
     the_sit' domain restrictor scope := rfl
-
 
 -- ════════════════════════════════════════════════════════════════
 -- §5: Donkey Anaphora via Minimal Situations ([elbourne-2013], Ch 6)
@@ -227,7 +222,6 @@ theorem donkey_uniqueness_from_minimality
   | [] => simp [hf] at hbool
   | _ :: _ :: _ => simp [hf] at hbool
 
-
 -- ════════════════════════════════════════════════════════════════
 -- §6: De Re / De Dicto and Situation Variable Scope
 -- ════════════════════════════════════════════════════════════════
@@ -244,7 +238,6 @@ theorem useMode_sitVar_roundtrip :
       | .free => UseMode.referential
       | .bound => UseMode.attributive) = m := by
   intro m; cases m <;> rfl
-
 
 -- ════════════════════════════════════════════════════════════════
 -- §7: Existence Entailments ([elbourne-2013], Ch 8)
@@ -264,7 +257,6 @@ structure ExistenceEntailmentDatum where
   /-- Source -/
   source : String := "Elbourne 2013"
 
-
 -- ════════════════════════════════════════════════════════════════
 -- §8: Incomplete Definites ([elbourne-2013], Ch 9)
 -- ════════════════════════════════════════════════════════════════
@@ -278,7 +270,6 @@ inductive IncompletenessSource where
   deriving DecidableEq, Repr
 
 def elbournePreferred : IncompletenessSource := .situationVariable
-
 
 -- ════════════════════════════════════════════════════════════════
 -- §9: Pronouns as Definite Descriptions ([elbourne-2013], Ch 10)
@@ -319,7 +310,6 @@ theorem pronoun_assertion_implies_presup
     (pronounDenot domain recoveredNP scope).presup w :=
   the_sit_assertion_implies_presup domain recoveredNP scope w h
 
-
 -- ════════════════════════════════════════════════════════════════
 -- §10: Situation Binding Operators ([elbourne-2013], Ch 2)
 -- ════════════════════════════════════════════════════════════════
@@ -336,7 +326,6 @@ inductive SitVar where
   | free (salience : Nat := 0)
   | bound (index : Nat)
   deriving DecidableEq, Repr
-
 
 -- ════════════════════════════════════════════════════════════════
 -- §11: QUD–Situation Bridge ([roberts-1996], [kratzer-2004])
@@ -385,7 +374,6 @@ theorem qud_refinement_monotone
     (hUniq : ∀ s, F.le s w → q₁.r w s → F.le s₁ s) :
     F.le s₁ s₂ := by
   exact hUniq s₂ hs₂.1 (hRefine w s₂ hs₂.2.1)
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § Fragment Bridge: English Lexical Entries → Elbourne's System
@@ -454,7 +442,6 @@ def voldemortExample : PronounAsDefinite :=
   , npSource := .generalKnowledge
   , equivalentDefinite := "the person who hesitates" }
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Example 1: Referential vs Attributive (Ch 5)
 -- "The murderer of Smith is insane"
@@ -513,7 +500,6 @@ theorem same_entry_both_readings :
 
 end RefAttr
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Example 2: Incomplete Definites (Ch 9)
 -- "The table is covered with books"
@@ -545,7 +531,6 @@ theorem incompleteness_is_situation_variable :
     elbournePreferred = .situationVariable := rfl
 
 end Incomplete
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § Example 3: Donkey Anaphora via Minimality (Ch 6)
@@ -650,7 +635,6 @@ theorem donkey_uniqueness_via_minimality_min2 :
 
 end Donkey
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Example 4: De Re / De Dicto with Definites (Ch 7)
 -- "Mary believes the president is a spy"
@@ -723,7 +707,6 @@ theorem toSitVarStatus_not_injective :
     toSitVarStatus .indexical = toSitVarStatus .anaphoric :=
   ⟨nofun, rfl⟩
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Example 5: Existence Entailments under Attitudes (Ch 8)
 -- "Hans wants the ghost in his attic to be quiet"
@@ -786,7 +769,6 @@ theorem ponce_matches_datum :
 
 end ExistenceEntailment
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Example 6: Pronouns as Definite Articles (Ch 10)
 -- ════════════════════════════════════════════════════════════════
@@ -810,6 +792,5 @@ theorem np_sources_exercised :
   ⟨rfl, rfl, rfl⟩
 
 end PronounAsDefiniteExample
-
 
 end Elbourne2013

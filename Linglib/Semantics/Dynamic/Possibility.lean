@@ -1,5 +1,5 @@
 import Linglib.Core.Data.Part
-import Linglib.Semantics.Intensional.Index
+import Linglib.Semantics.Reference.Context.Index
 import Linglib.Core.Order.PartialUnify
 import Mathlib.Data.PFun
 import Mathlib.Logic.Function.Basic
@@ -279,8 +279,8 @@ end DynamicSemantics
 `Mood/Dynamic.lean`): a `Possibility` whose world coordinate is the
 current evaluation index and whose `ℕ`-registered drefs are also
 world-time indices. Contexts are plain level-0 states
-(`Set (Intensional.Index.Possibility W T)`), so the update
+(`Set (Semantics.Context.Index.Possibility W T)`), so the update
 spine of `Semantics/Dynamic/Update.lean` applies directly. -/
-abbrev Intensional.Index.Possibility (W T : Type*) :=
-  DynamicSemantics.Possibility (Intensional.Index W T) ℕ
-    (Intensional.Index W T)
+abbrev Semantics.Context.Index.Possibility (W T : Type*) :=
+  DynamicSemantics.Possibility (Semantics.Context.Index W T) ℕ
+    (Semantics.Context.Index W T)

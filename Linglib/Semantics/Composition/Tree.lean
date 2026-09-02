@@ -1,6 +1,6 @@
 import Linglib.Syntax.Tree.Basic
-import Linglib.Semantics.Intensional.Defs
-import Linglib.Semantics.Intensional.Variables
+import Linglib.Semantics.Composition.Ty
+import Linglib.Semantics.Composition.Assignment
 import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Modification.Basic
 
@@ -39,8 +39,8 @@ Two effect-discipline choices, both visible rather than stipulated:
 
 namespace Semantics.Composition.Tree
 
-open Intensional
-open Intensional.Variables
+open Semantics.Composition
+open scoped Assignment
 open Semantics.Montague (Lexicon)
 
 /-! ### Composition primitives -/
