@@ -15,32 +15,11 @@ flexibly resolved in discourse. Speaker-oriented readings arise when
 the orientation resolves to the speaker; non-speaker-oriented readings
 arise when it resolves to some other discourse participant.
 
-This is the alternative analysis K-G argues against in §8.2 (paper
-p.40-41). H&P's view: non-speaker-oriented readings of (26)-(28) come
-from orientation-variable resolution, NOT from quotation. K-G's view:
-they come from covert mixed quotation, with the peripheral attribution
-introduced by 𝔐 substituting for the discarded original CI.
-
-## K-G's objections (paper p.40-41)
-
-1. H&P offer no explanation for the strong default preference for
-   speaker-oriented readings of CI items (their proposal would predict
-   roughly equal frequencies if context permits both).
-
-2. H&P's account collapses certain theories of speaker-oriented uses of
-   slurs (e.g., K-G 2019's directive analysis): the orientation-variable
-   machinery cannot accommodate non-propositional CI content.
-
-The two analyses make different empirical predictions on when
-non-speaker-oriented readings are available — this stub encodes H&P's
-key commitment so K-G's `KirkGiannini2024.lean` can host the
-inequality theorems.
-
 ## Note on scope
 
-Stub formalisation. Sufficient to host inequality theorems against
-K-G's strip-then-mix architecture. Does not formalize the full appositive
-syntax/semantics or the experimental data H&P present.
+Stub formalisation: the orientation variable and its resolution only. Does
+not formalize the full appositive syntax/semantics or the experimental data
+H&P present.
 -/
 
 namespace HarrisPotts2009
@@ -84,10 +63,7 @@ theorem non_speaker_oriented_via_orientation_var
                               , ci := item.ciFor (.other p) } := rfl
 
 /-- **The orientation variable can in principle resolve to any
-    discourse participant.** This is the property K-G complains is
-    too permissive: H&P predict that any contextually salient individual
-    can serve as orientation, but the data show speaker-orientation is
-    the strong default. -/
+    discourse participant.** -/
 theorem any_orientation_available
     {Person W : Type} (item : CIItem Person W) :
     ∀ o : Orientation Person, ∃ p : TwoDimProp W, p = item.resolve o :=

@@ -2281,7 +2281,6 @@ import Linglib.Studies.HollidayIcard2013
 import Linglib.Studies.HollidayMandelkern2024
 import Linglib.Studies.Holmberg2016
 import Linglib.Studies.Horn1972
-import Linglib.Studies.Horn1989
 import Linglib.Studies.HoulihanEtAl2023
 import Linglib.Studies.HuangSpelkeSnedeker2013
 import Linglib.Studies.Hudson2010
@@ -2356,7 +2355,6 @@ import Linglib.Studies.Kiss1998
 import Linglib.Studies.Klecha2016
 import Linglib.Studies.Klein1980
 import Linglib.Studies.KlinedinstRothschild2012
-import Linglib.Studies.KocurekJerzakRudolph2020
 import Linglib.Studies.Koev2017
 import Linglib.Studies.KonnellyCowper2020
 import Linglib.Studies.KonukEtAl2026
@@ -2430,7 +2428,6 @@ import Linglib.Studies.MacuchSilvaEtAl2024
 import Linglib.Studies.Magri2009
 import Linglib.Studies.Magri2014
 import Linglib.Studies.Magri2025
-import Linglib.Studies.Maier2014
 import Linglib.Studies.Maier2015
 import Linglib.Studies.MajidBosterBowerman2008
 import Linglib.Studies.Major2024
@@ -2518,7 +2515,6 @@ import Linglib.Studies.Pesetsky1995
 import Linglib.Studies.PhillipsBrown2025
 import Linglib.Studies.PickeringBarry1991
 import Linglib.Studies.Pietraszko2026
-import Linglib.Studies.PlunkettSundell2013
 import Linglib.Studies.PoesioEtAl2004
 import Linglib.Studies.Pollock1989
 import Linglib.Studies.Poole2024
