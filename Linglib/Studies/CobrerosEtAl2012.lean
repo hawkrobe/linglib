@@ -14,23 +14,18 @@ the classical one (Lemma 1) and the tolerance principle `Pa ∧ a I_P b → Pb` 
 valid (Fact 2) up to two similarity steps (Fact 3). Borderline cases are the tolerantly-but-
 not-strictly `P` individuals (Definition 10), the ones tolerantly both `P` and `¬P`. On the
 similarity-free vocabulary tolerant validity is classical validity while nothing is strictly
-valid (Theorems 1 and 2), and tolerant and strict consequence are Priest's LP and strong Kleene
-K3 (Theorem 3), via the model correspondences of Lemmas 4 and 5. Mixing the three notions gives
-nine consequence relations `⊨ᵐⁿ` (Definition 17), ordered by Lemma 7, dualised by Lemma 6,
-collapsing to four on the restricted vocabulary (Lemmas 8 and 9) but distinct once similarity
-statements are expressible (§3.4), where the deduction theorem singles out the self-dual `st`,
-`cc` and `ts` (Lemma 10). The paper's choice is `st`, strict premises to tolerant conclusions:
-it validates tolerance and modus ponens and is non-transitive, so it validates every step of a
-sorites while invalidating the chain (§3.6, Version 1), and it makes the tolerance-premise
-sorites valid but unsound, its tolerance premise not being strictly true (Version 2).
-
-The language is the paper's propositional fragment over a set of constants `C`: negation and
-conjunction over predications `Pa` and similarity statements `a I_P b`, with disjunction and
-the conditional defined classically. The universally quantified principles appear as their
-instances, which the paper notes changes nothing (§3.6). Identity, which the paper adds in
-§2.3.1, is not represented. Consequence quantifies over T-models of every domain in the
-universe of `C` (`TModels`), as the paper's does; the atomic strict and tolerant clauses are
-`ModalLogic.box` and `ModalLogic.diamond` along `∼_P`, so Lemma 1's atomic case is the T axiom.
+valid (Theorems 1 and 2), so strict validity is not supervaluationist validity ([fine-1975]),
+which is classical; and tolerant and strict consequence are Priest's LP and strong Kleene K3
+([kleene-1952]) (Theorem 3), via the model correspondences of Lemmas 4 and 5. Mixing the three
+notions gives nine consequence relations `⊨ᵐⁿ` (Definition 17), ordered by Lemma 7, dualised
+by Lemma 6, collapsing to four on the restricted vocabulary (Lemmas 8 and 9) but distinct once
+similarity statements are expressible (§3.4), where the deduction theorem singles out the
+self-dual `st`, `cc` and `ts` (Lemma 10). The paper's choice is `st`, strict premises to
+tolerant conclusions: it validates tolerance and modus ponens and is non-transitive, so it
+validates every step of a sorites while invalidating the chain (§3.6, Version 1), and it makes
+the tolerance-premise sorites valid but unsound, its tolerance premise not being strictly true
+(Version 2). The five-men model of §4.2.3 gives the paper's account of
+[alxatib-pelletier-2011]'s data: the median man is borderline however he is classified.
 
 ## Main definitions
 
@@ -58,22 +53,17 @@ universe of `C` (`TModels`), as the paper's does; the atomic strict and tolerant
   the §3.4 distinctness of `cc`, `sc`, `ct` and `st`, on the four-element model.
 * `not_st_version1`, `st_version2`, `not_series_realize_strict_tolerance` — the sorites of
   §3.6.
-* `alxatibPelletier_median_borderline` — the median man of [alxatib-pelletier-2011]'s stimulus
-  is borderline however he is classified (§4.2.3).
+* `alxatibPelletier_median_borderline` — the five-men model of §4.2.3.
 
-## Comparisons the paper draws
+## Implementation notes
 
-* Tolerant and strict truth are not sub- and supervaluationist truth ([fine-1975]): those keep
-  classical validity, whereas strict validity is empty and borderline cases are tolerantly
-  both `P` and `¬P` (§2.1, §2.4).
-* Tolerant and strict consequence coincide with LP and K3 ([kleene-1952]) on the restricted
-  vocabulary, from distinct motivations: three notions of truth, none many-valued (§2.4).
-* [kamp-1981]'s atomic and negation clauses are similar; his conditionals and quantifiers
-  differ (footnote 3).
-* Non-transitivity of indifference is shared with [williamson-1994]'s epistemicism without its
-  commitment to the classical extensions being the objective meanings (§5).
-* [van-rooij-2011a]'s delineation between the tallest and the shortest, leaving a gap, is what
-  the five-men model of §4.2.3 represents.
+The language is the paper's propositional fragment over a set of constants `C`: negation and
+conjunction over predications `Pa` and similarity statements `a I_P b`, with disjunction and
+the conditional defined classically. The universally quantified principles appear as their
+instances, which the paper notes changes nothing (§3.6). Identity, which the paper adds in
+§2.3.1, is not represented. Consequence quantifies over T-models of every domain in the
+universe of `C` (`TModels`), as the paper's does; the atomic strict and tolerant clauses are
+`ModalLogic.box` and `ModalLogic.diamond` along `∼_P`, so Lemma 1's atomic case is the T axiom.
 
 ## References
 
@@ -83,9 +73,6 @@ universe of `C` (`TModels`), as the paper's does; the atomic strict and tolerant
   Contradictions* (2011)][alxatib-pelletier-2011]
 * [K. Fine, *Vagueness, truth and logic* (1975)][fine-1975]
 * [S. C. Kleene, *Introduction to Metamathematics* (1952)][kleene-1952]
-* [H. Kamp, *The paradox of the heap* (1981)][kamp-1981]
-* [T. Williamson, *Vagueness* (1994)][williamson-1994]
-* [R. van Rooij, *Implicit versus Explicit Comparatives* (2011)][van-rooij-2011a]
 -/
 
 universe u
