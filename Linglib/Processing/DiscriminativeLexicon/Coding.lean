@@ -1,4 +1,4 @@
-import Linglib.Processing.Lexical.Discriminative.Defs
+import Linglib.Processing.DiscriminativeLexicon.Defs
 import Linglib.Phonology.Subregular.Boundary
 import Linglib.Core.Data.List.Factors
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
@@ -31,7 +31,7 @@ proportional analogy (`Studies/HeitmeierChuangBaayen2026`).
   (2026)][heitmeier-chuang-baayen-2026]
 -/
 
-namespace Processing.Lexical.Discriminative
+namespace DiscriminativeLexicon
 
 variable {Sym : Type*}
 
@@ -64,4 +64,4 @@ def conceptualize (emb : Prim → V) : Multiset Prim →+ V :=
 @[simp] theorem conceptualize_apply (emb : Prim → V) (ps : Multiset Prim) :
     conceptualize emb ps = (ps.map emb).sum := rfl
 
-end Processing.Lexical.Discriminative
+end DiscriminativeLexicon

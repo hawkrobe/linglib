@@ -1,5 +1,5 @@
 import Linglib.Core.Analysis.LeastSquares
-import Linglib.Processing.Lexical.Discriminative.Measures
+import Linglib.Processing.DiscriminativeLexicon.Measures
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.LinearAlgebra.Matrix.DotProduct
 import Mathlib.LinearAlgebra.Matrix.ToLin
@@ -30,7 +30,7 @@ experience ([heitmeier-2024]).
 * `isERMSolution_toLin'_transpose_iff`, `isERMSolution_closedForm`: the normal equations as
   `SᵀQ(SG − C) = 0` and their closed form `(SᵀQS)⁻¹SᵀQC`.
 * `isELSolution_sqrtScale_iff`: FIL under `q` is EL on `TrainingExperience.sqrtScale`.
-* `LinearDiscriminativeLexicon.IsTrainedOn` and the `semSup` transfer theorems.
+* `Linear.IsTrainedOn` and the `semSup` transfer theorems.
 
 ## References
 
@@ -42,7 +42,7 @@ experience ([heitmeier-2024]).
   (2026)][heitmeier-chuang-baayen-2026]
 -/
 
-namespace Processing.Lexical.Discriminative
+namespace DiscriminativeLexicon
 
 noncomputable section
 
@@ -429,9 +429,9 @@ end
 
 /-! ### Trained lexicons -/
 
-namespace LinearDiscriminativeLexicon
+namespace Linear
 
-variable {m n d : ℕ} (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
+variable {m n d : ℕ} (D : Linear ℝ (FormVec n) (MeaningVec d))
   (data : TrainingExperience m n d) (q : FrequencyVector m)
 
 /-- `D` is **trained on** `data` under weights `q` if its production map is an ERM solution.
@@ -458,14 +458,14 @@ theorem IsTrainedOn.semSup_eq_of_decodable (hD : D.IsTrainedOn data q) (hq : ∀
 /-- Two DLMs trained on the same experience and weights have identical semantic support at
 every experienced meaning: `semSup` is a property of the training experience, not of the
 particular ERM solution. -/
-theorem IsTrainedOn.semSup_eq {D' : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d)}
+theorem IsTrainedOn.semSup_eq {D' : Linear ℝ (FormVec n) (MeaningVec d)}
     (hD : D.IsTrainedOn data q) (hD' : D'.IsTrainedOn data q) (hq : ∀ i, 0 < q i) (i : Fin m)
     (j : Fin n) : semSup D (data.meanings i) j = semSup D' (data.meanings i) j :=
   congrFun (IsERMSolution.apply_meanings_eq hq hD hD' i) j
 
 /-- `semSup` is well-defined at novel meanings in the span of experienced ones. -/
 theorem IsTrainedOn.semSup_eq_of_mem_span
-    {D' : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d)}
+    {D' : Linear ℝ (FormVec n) (MeaningVec d)}
     (hD : D.IsTrainedOn data q) (hD' : D'.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
     {s : MeaningVec d} (hs : s ∈ Submodule.span ℝ (Set.range data.meanings)) (j : Fin n) :
     semSup D s j = semSup D' s j :=
@@ -487,6 +487,6 @@ theorem IsTrainedOn.semSupWord_eq_of_decodable (hD : D.IsTrainedOn data q) (hq :
     rw [show D.production (data.meanings i) j = semSup D (data.meanings i) j from rfl,
       hD.semSup_eq_of_decodable hq hwj i]
 
-end LinearDiscriminativeLexicon
+end Linear
 
-end Processing.Lexical.Discriminative
+end DiscriminativeLexicon

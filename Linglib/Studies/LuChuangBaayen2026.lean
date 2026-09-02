@@ -1,4 +1,4 @@
-import Linglib.Processing.Lexical.Discriminative.Training
+import Linglib.Processing.DiscriminativeLexicon.Training
 import Linglib.Studies.ChuangEtAl2026
 
 /-!
@@ -52,7 +52,7 @@ and the nearest-neighbour accuracies are outside the Processing scope.
 
 namespace LuChuangBaayen2026
 
-open Processing.Lexical.Discriminative ChuangEtAl2026
+open DiscriminativeLexicon ChuangEtAl2026
 
 /-- The paper samples 100 f0 values per token in normalized time, centered and scaled per
 token (§4.1). -/
@@ -63,7 +63,7 @@ abbrev PitchVector : Type := FormVec PitchSampleCount
 
 /-- The paper's DLM: 100-sample pitch vectors from the 768-dimensional CKIP GPT-2
 contextualized embeddings of [chuang-bell-tseng-baayen-2026] (§4.2). -/
-abbrev TaiwanMandarinDLM : Type := LinearDiscriminativeLexicon ℝ PitchVector ContextualEmbedding
+abbrev TaiwanMandarinDLM : Type := Linear ℝ PitchVector ContextualEmbedding
 
 variable {ι V : Type*} [AddCommGroup V] [Module ℝ V]
 

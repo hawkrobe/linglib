@@ -1,10 +1,10 @@
-import Linglib.Processing.Lexical.Discriminative.Defs
+import Linglib.Processing.DiscriminativeLexicon.Defs
 import Mathlib.Data.Matrix.Mul
 
 /-!
 # DLM-derived semantic-support measures
 
-The *semantic support* measures read off a `LinearDiscriminativeLexicon`'s production map at
+The *semantic support* measures read off a `Linear`'s production map at
 the `FormVec`/`MeaningVec` carriers. The support a form receives from a meaning is the dot
 product of the predicted form with the target form, `ĉ ⬝ᵥ c` for `ĉ = sG`: the entries of
 [gahl-baayen-2024]'s support matrix `T = ĈCᵀ`, whose diagonal is their *semantic support for
@@ -30,11 +30,11 @@ form*, and at a single triphone [saito-tomaschek-baayen-2025]'s `SemSupSuffix`.
   (2026)][heitmeier-chuang-baayen-2026]
 -/
 
-namespace Processing.Lexical.Discriminative
+namespace DiscriminativeLexicon
 
 noncomputable section
 
-variable {n d : ℕ} (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
+variable {n d : ℕ} (D : Linear ℝ (FormVec n) (MeaningVec d))
 
 /-! ### Semantic support -/
 
@@ -90,4 +90,4 @@ variable {D}
 
 end
 
-end Processing.Lexical.Discriminative
+end DiscriminativeLexicon

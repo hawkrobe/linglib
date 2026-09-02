@@ -1,6 +1,6 @@
-import Linglib.Processing.Lexical.Discriminative.Defs
-import Linglib.Processing.Lexical.Discriminative.Normed
-import Linglib.Processing.Lexical.Discriminative.Training
+import Linglib.Processing.DiscriminativeLexicon.Defs
+import Linglib.Processing.DiscriminativeLexicon.Normed
+import Linglib.Processing.DiscriminativeLexicon.Training
 
 /-!
 # Saito, Tomaschek & Baayen (2025): frequency × inflectional status via the DLM
@@ -19,7 +19,7 @@ production models with an intermediate morpheme layer such as WEAVER++
 
 ## Main declarations
 
-* `GermanInflectionalDLM`: `LinearDiscriminativeLexicon` at the paper's carrier types,
+* `GermanInflectionalDLM`: `DiscriminativeLexicon.Linear` at the paper's carrier types,
   triphone form vectors of dimension 14404 and word2vec meaning vectors of dimension 300
   (paper §3.1).
 * `close_meanings_imply_close_form`: the substrate Lipschitz bound at those carriers —
@@ -42,7 +42,7 @@ activation-scaled faithfulness of `Studies/BreissKatsudaKawahara2026.lean`.
 
 namespace Saito2025
 
-open Processing.Lexical.Discriminative
+open DiscriminativeLexicon
 
 /-- Triphone count of the paper's CELEX-derived form matrix `C` (paper §3.1). -/
 abbrev TriphoneCount : ℕ := 14404
@@ -57,10 +57,10 @@ abbrev TriphoneVec := FormVec TriphoneCount
 /-- 300-dimensional word2vec meaning vectors. -/
 abbrev GermanWord2VecVec := MeaningVec Word2VecGermanDim
 
-/-- The paper's DLM: `LinearDiscriminativeLexicon` at German triphone × word2vec
+/-- The paper's DLM: `DiscriminativeLexicon.Linear` at German triphone × word2vec
 carrier types. -/
 abbrev GermanInflectionalDLM :=
-  LinearDiscriminativeLexicon ℝ TriphoneVec GermanWord2VecVec
+  Linear ℝ TriphoneVec GermanWord2VecVec
 
 /-- Close meanings yield close predicted articulations, with constant `‖production‖`. -/
 theorem close_meanings_imply_close_form

@@ -1,6 +1,6 @@
 import Linglib.Core.LinearAlgebra.Matrix.Symmetric
-import Linglib.Processing.Lexical.Discriminative.Coding
-import Linglib.Processing.Lexical.Discriminative.Training
+import Linglib.Processing.DiscriminativeLexicon.Coding
+import Linglib.Processing.DiscriminativeLexicon.Training
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.LinearAlgebra.Matrix.Notation
 import Mathlib.LinearAlgebra.Matrix.ToLin
@@ -9,7 +9,7 @@ import Mathlib.LinearAlgebra.Matrix.ToLin
 # Gahl and Baayen 2024: homophone duration without a stored lexicon
 
 The paper reanalyses the Switchboard durations of the 409 English homophones of [gahl-2008]
-(*time* ~ *thyme*) from a discriminative lexicon (`LinearDiscriminativeLexicon`, [baayen-2019]):
+(*time* ~ *thyme*) from a discriminative lexicon (`DiscriminativeLexicon.Linear`, [baayen-2019]):
 linear maps between triphone and embedding vectors, with no stored words and so no word to bear
 a frequency. Frequency is treated as composite. *Practice* is frequency-informed learning of the
 production map `G` (`IsFILTrainedOn`, [heitmeier-chuang-axen-baayen-2024]); *contextual
@@ -58,7 +58,7 @@ paper observes.
 
 namespace GahlBaayen2024
 
-open Processing.Lexical.Discriminative Matrix
+open DiscriminativeLexicon Matrix
 
 noncomputable section
 
@@ -127,7 +127,7 @@ theorem endstateG_eq :
       TrainingExperience.S, TrainingExperience.C]
 
 /-- The DLM at the endstate of learning. -/
-def endstate : LinearDiscriminativeLexicon ℝ (FormVec 6) (MeaningVec 2) where
+def endstate : Linear ℝ (FormVec 6) (MeaningVec 2) where
   comprehension := 0
   production := Matrix.toLin' endstateGᵀ
 
@@ -147,7 +147,7 @@ theorem frequencyInformedG_eq :
       TrainingExperience.S, TrainingExperience.C, FrequencyVector.Q, Matrix.diagonal]
 
 /-- The DLM after frequency-informed learning. -/
-def frequencyInformed : LinearDiscriminativeLexicon ℝ (FormVec 6) (MeaningVec 2) where
+def frequencyInformed : Linear ℝ (FormVec 6) (MeaningVec 2) where
   comprehension := 0
   production := Matrix.toLin' frequencyInformedGᵀ
 
@@ -170,12 +170,12 @@ theorem frequencyInformed_isFILTrainedOn : frequencyInformed.IsFILTrainedOn toy 
 
 /-- The support matrix `T = ĈCᵀ` of (A5): the support each word's form (column) receives from
 each word's meaning (row). -/
-def supportMatrix {m n d : ℕ} (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
+def supportMatrix {m n d : ℕ} (D : Linear ℝ (FormVec n) (MeaningVec d))
     (data : TrainingExperience m n d) : Matrix (Fin m) (Fin m) ℝ :=
   Matrix.of fun i k => semSupWord D (data.meanings i) (data.forms k)
 
 /-- *Semantic support for form*: the diagonal of `T`, a word's support for its own form. -/
-def semanticSupport {m n d : ℕ} (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
+def semanticSupport {m n d : ℕ} (D : Linear ℝ (FormVec n) (MeaningVec d))
     (data : TrainingExperience m n d) : Fin m → ℝ :=
   (supportMatrix D data).diag
 

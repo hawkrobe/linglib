@@ -20,7 +20,7 @@ The deep replacements for the linear maps — ResLDL ([chuang-bell-tseng-baayen-
 
 ## Main declarations
 
-- `LinearDiscriminativeLexicon R F M`: a pair of linear maps between form and meaning carriers.
+- `Linear R F M`: a pair of linear maps between form and meaning carriers.
 - `FormVec`, `MeaningVec`: `Fin n → ℝ` carriers for the studies' specialisations.
 
 ## References
@@ -35,7 +35,7 @@ The deep replacements for the linear maps — ResLDL ([chuang-bell-tseng-baayen-
   (2025)][heitmeier-schmidt-lensch-baayen-2025]
 -/
 
-namespace Processing.Lexical.Discriminative
+namespace DiscriminativeLexicon
 
 variable (R F M : Type*) [Semiring R] [AddCommMonoid F] [AddCommMonoid M] [Module R F]
   [Module R M]
@@ -43,7 +43,7 @@ variable (R F M : Type*) [Semiring R] [AddCommMonoid F] [AddCommMonoid M] [Modul
 /-- The endstate of a **Discriminative Lexicon Model** with linear mappings: a comprehension
 map and a production map between form and meaning carriers, fitted by linear discriminative
 learning ([heitmeier-chuang-baayen-2026]). -/
-structure LinearDiscriminativeLexicon where
+structure Linear where
   /-- The form → meaning map — the papers' comprehension matrix `F` (`Ŝ = CF`). -/
   comprehension : F →ₗ[R] M
   /-- The meaning → form map — the papers' production matrix `G` (`Ĉ = SG`). -/
@@ -55,4 +55,4 @@ abbrev FormVec (formDim : ℕ) : Type := Fin formDim → ℝ
 /-- A `meaningDim`-dimensional **meaning vector** over ℝ. -/
 abbrev MeaningVec (meaningDim : ℕ) : Type := Fin meaningDim → ℝ
 
-end Processing.Lexical.Discriminative
+end DiscriminativeLexicon

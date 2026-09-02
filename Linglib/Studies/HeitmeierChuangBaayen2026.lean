@@ -1,5 +1,5 @@
-import Linglib.Processing.Lexical.Discriminative.Coding
-import Linglib.Processing.Lexical.Discriminative.Training
+import Linglib.Processing.DiscriminativeLexicon.Coding
+import Linglib.Processing.DiscriminativeLexicon.Training
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 
 /-!
@@ -39,7 +39,7 @@ book's letter-trigram coding (§12.9, `cueVector`) is the irregular table: *walk
 
 namespace HeitmeierChuangBaayen2026
 
-open Processing.Lexical.Discriminative
+open DiscriminativeLexicon
 
 variable {d n : ℕ} {Stem Cell : Type*}
 
