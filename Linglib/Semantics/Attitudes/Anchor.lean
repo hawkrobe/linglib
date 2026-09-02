@@ -188,7 +188,7 @@ language-specific and not assumed here.
     the situation-sort sibling of `ContentIndividual`. The `sit` field is
     the situation predicate `SIT`: the set of situations the entity refers
     to. The situation-index sort `S` is typically a
-    `Intensional.SituationFrame.Index` carrying a parthood preorder, but no
+    a situation type carrying a parthood preorder, but no
     order is required here, so downstream consumers can specialize freely. -/
 structure SituationIndividual (S : Type*) where
   /-- Situation predicate: SIT(s_i) -/
