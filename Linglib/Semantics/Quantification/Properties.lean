@@ -121,6 +121,12 @@ theorem co_property_mono (q : GQ α) :
 
 /-! ### Conservativity, Symmetry, and Strength -/
 
+/-- A conservative quantifier reads its scope only on the restrictor. -/
+theorem Conservative.congr_scope {q : GQ α} (h : Conservative q) {X S S' : α → Prop}
+    (hSS : ∀ x, X x → (S x ↔ S' x)) : q X S ↔ q X S' := by
+  rw [h X S, h X S']
+  exact iff_of_eq (congrArg _ (funext fun x => propext (and_congr_right (hSS x))))
+
 /-- Under conservativity, symmetric ↔ intersective (P&W Ch.6 Fact 1).
     This is the single most important bridge theorem — it explains why
     weak determiners allow there-insertion. -/

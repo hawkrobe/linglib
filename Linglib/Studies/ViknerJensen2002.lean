@@ -8,7 +8,7 @@ genitive: the genitive always combines with a *relational* noun — a
 non-relational head is coerced via Barker's `π`, the relation type supplied by
 the noun's qualia (`availableRelations`, §3.1.2). The genitive clitic itself
 (`clitic`, their (16)) embeds a narrow-scope definite: the worked examples
-prove `∃!` uniqueness and feed `Possession.Definite`'s `existsUnique_possessee`.
+prove `∃!` uniqueness of the possessee.
 -/
 
 namespace ViknerJensen2002
@@ -111,17 +111,6 @@ theorem aGirlsTeacher (P : Fin 4 → Prop) :
   · rintro ⟨z, rfl, x, hx, hP⟩
     rwa [← (hx 1).mp ⟨rfl, rfl⟩] at hP
   · exact fun hP => ⟨0, rfl, 1, fun y => by simp, hP⟩
-
-/-- *the girl's teacher* as a `Possession.Definite`: its unique referent is
-delivered by the capability API's `existsUnique_possessee`, no bespoke proof. -/
-def theGirlsTeacher : Possession.Definite (Fin 4) Unit where
-  possessor := 0
-  predicate := teacherRel 0
-  presupposition := girlsTeacher_unique
-
-theorem girlsTeacher_existsUnique (s : Unit) :
-    ∃! y : Fin 4, HasPossesseePredicate.possesseePredicate theGirlsTeacher y s :=
-  existsUnique_possessee theGirlsTeacher s
 
 /-- The control relation: the girl `0` controls the car `2`. -/
 def controlRel : Fin 4 → Fin 4 → Unit → Prop := fun x y _ => x = 0 ∧ y = 2
