@@ -2852,7 +2852,11 @@ import Linglib.Syntax.Minimalist.Agree.Consistency
 import Linglib.Syntax.Minimalist.Agree.Coordination
 import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Syntax.Minimalist.Defs
-import Linglib.Syntax.Minimalist.Economy
+import Linglib.Syntax.Minimalist.Economy.Basic
+import Linglib.Syntax.Minimalist.Economy.MinimalSearch
+import Linglib.Syntax.Minimalist.Economy.MinimalYield.Basic
+import Linglib.Syntax.Minimalist.Economy.MinimalYield.Laurent
+import Linglib.Syntax.Minimalist.Economy.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Ellipsis
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
@@ -2867,12 +2871,6 @@ import Linglib.Syntax.Minimalist.Linearization.Replay
 import Linglib.Syntax.Minimalist.Merge.Basic
 import Linglib.Syntax.Minimalist.Merge.External
 import Linglib.Syntax.Minimalist.Merge.Internal
-import Linglib.Syntax.Minimalist.Merge.MinimalSearch
-import Linglib.Syntax.Minimalist.Merge.MinimalYield
-import Linglib.Syntax.Minimalist.Merge.MinimalYieldBirkhoff
-import Linglib.Syntax.Minimalist.Merge.MinimalYieldCharacter
-import Linglib.Syntax.Minimalist.Merge.MinimalYieldGrading
-import Linglib.Syntax.Minimalist.Merge.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Merge.Sideward
 import Linglib.Syntax.Minimalist.Merge.SyntacticObject
 import Linglib.Syntax.Minimalist.MinimalPronoun

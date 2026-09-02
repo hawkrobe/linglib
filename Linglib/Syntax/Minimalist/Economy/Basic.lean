@@ -5,8 +5,6 @@ import Mathlib.Data.DFinsupp.WellFounded
 
 /-!
 # Derivational Economy
-[chomsky-1991] [chomsky-1995] [boskovic-1997] [collins-2001]
-[citko-gracanin-yuksek-2025]
 
 Economy compares competing derivations that converge on the same PF
 string and LF interpretation, selecting the one with fewest operations
@@ -51,12 +49,10 @@ candidate set + decoder, but Minimalist economy needs neither, so we
 register `Preorder DerivationCost` directly. `coarsen_via_monotone` from
 `Core/Order/PullbackPreorder.lean` is then available for free.
 
-## Removed (for git history)
+## References
 
-Pre-Phase principles (Procrastinate, Last Resort, Greed) and `overtOps`
-field were removed at 0.230.574 — Bool-identity wrappers and a cost
-field no producer populated. Future consumers wanting Phase-Theoretic
-analogues should formalize against actual `Step`/`Phase` infrastructure.
+* [chomsky-1991], [chomsky-1995], [boskovic-1997], [collins-2001]
+* [citko-gracanin-yuksek-2025]
 -/
 
 namespace Minimalist
