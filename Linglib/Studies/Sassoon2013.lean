@@ -64,7 +64,6 @@ namespace Sassoon2013
 open Degree (DimensionBindingType conjunctiveBinding
   disjunctiveBinding deMorgan_conjunctive_disjunctive
   deMorgan_disjunctive_conjunctive predictedBinding)
-open Degree (interpretiveEconomy)
 open Degree (Boundedness)
 -- ════════════════════════════════════════════════════
 -- § 1. Multidimensional Adjective Data
@@ -76,7 +75,7 @@ structure MultidimAdj where
   /-- Evaluative polarity: positive adjectives denote membership under a
       generalization across ALL dimensional properties; negative adjectives
       denote the existence of a counterexample to SOME dimensional standard.
-      Distinct from scale-endpoint polarity (`AdjModifierEntry.isLowerEndpoint`):
+      Distinct from scale polarity (`AdjModifierEntry.isLowerEndpoint`):
       *empty* is lower-endpoint but evaluatively positive. -/
   isPositive : Bool
   /-- Scale structure classification ([kennedy-mcnally-2005]). -/
@@ -290,7 +289,7 @@ theorem hypothesis2_all : allAdjs.all hypothesis2Holds = true := by native_decid
     Max-endpoint standard → conjunctive, min-endpoint → disjunctive,
     contextual → mixed. -/
 def predictedFromStandard (b : Boundedness) : DimensionBindingType :=
-  predictedBinding (interpretiveEconomy b)
+  predictedBinding b.defaultStandard
 
 theorem standard_closed_conjunctive :
     predictedFromStandard .closed = .conjunctive := rfl

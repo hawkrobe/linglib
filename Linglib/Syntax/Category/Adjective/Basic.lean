@@ -82,11 +82,9 @@ structure Adjective where
       `none` for classifying/relational adjectives (*wooden*, *former*, *medical*)
       and other non-gradables. -/
   dimension : Option ScalarDimension := none
-  /-- Which pole of the scale the adjective lexicalizes (*short*, *empty*, *wet*):
-      the only thing distinguishing polar scale-mates that share one `dimension`. -/
-  isLowerEndpoint : Bool := false
   /-- The direction of the ordering the adjective imposes on its `dimension`: antonyms share a
-      dimension and reverse the ordering (*tall* positive, *short* negative). -/
+      dimension and reverse the ordering (*tall* positive, *short* negative), so the negative
+      member measures on the dual scale. `none` reads as positive. -/
   polarity : Option Degree.ScalePolarity := none
   /-- Comparative/superlative morphology. -/
   comparison : Adjective.ComparisonFacet := .regular

@@ -285,12 +285,12 @@ theorem all_attested_adjs_spatial :
       (·.spatialConfigType |>.isSome) = true := by
   decide
 
-/-- All attested adjectives are closed-scale (absolute) in
-    [kennedy-2007]'s terms. Spatially instantiated states have
-    crisp endpoints (fully open vs. fully closed). -/
+/-- All attested adjectives are absolute with a maximal endpoint in
+    [kennedy-2007]'s terms: spatially instantiated states have a crisp
+    endpoint (fully open, fully closed, fully flat). -/
 theorem all_attested_adjs_closed_scale :
     [open_, closed_, shut, free_, loose, flat].all
-      (·.scaleType == .closed) = true := by
+      (fun a => decide a.scaleType.HasMax) = true := by
   decide
 
 /-! Adjectives in senses that are NOT spatially instantiated do not

@@ -49,7 +49,7 @@ standard function assign functional standards.
 namespace Beltrama2025
 
 open Degree (Boundedness)
-open Degree (PositiveStandard interpretiveEconomy positiveMeaning)
+open Degree (PositiveStandard positiveMeaning)
 open Degree (AdjectiveClass)
 
 /-! ### Empirical Profile (Table 1) -/
@@ -116,7 +116,7 @@ def valueScaleBoundedness : Boundedness := .lowerBounded
     a contextual standard) and MPAs (which get a functional standard).
     This shows IE must be generalized for evaluative predicates. -/
 theorem ie_underpredicts_for_value_scale :
-    interpretiveEconomy valueScaleBoundedness = .minEndpoint := rfl
+    valueScaleBoundedness.defaultStandard = .minEndpoint := rfl
 
 /-! ### Standard Types: MPA vs Good vs MinSAA -/
 
@@ -402,7 +402,7 @@ def enoughParallel : Head := .sufficiency
     can assign functional standards when the adjective's lexical semantics
     introduces practical commitments ([beltrama-2025] §5.4, p. 195). -/
 theorem ie_divergence_on_value_scale :
-    interpretiveEconomy valueScaleBoundedness = .minEndpoint ∧
+    valueScaleBoundedness.defaultStandard = .minEndpoint ∧
     goodStandard = .contextual ∧
     mpaStandard = .functional ∧
     minsaaStandard = .minEndpoint ∧

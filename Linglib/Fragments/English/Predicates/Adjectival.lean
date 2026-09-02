@@ -5,7 +5,7 @@ import Linglib.Semantics.Degree.Adjective
 Gradable adjective entries following [kennedy-2007], typed with
 `Degree.GradableAdjective` (the syntactic `Syntax/Category/Adjective` lexeme
 refined with the degree-semantic layer). Each entry stores its surface form, scalar
-`dimension`, lexicalized pole (`isLowerEndpoint`) or `standardOverride`, and antonym
+`dimension`, `polarity` or `standardOverride`, and antonym
 data; the scale shape (`scaleType`), positive `standard`, and Kennedy `adjectiveClass`
 are *derived* views, not stored — the fix for the old `scaleType` field that conflated
 scale shape with pole (`wet`/`dry` share one closed `.wetness` scale). The derived
@@ -86,12 +86,12 @@ def full : AdjectivalPredicateEntry where
   antonymForm := some "empty"
   antonymRelation := some .contradictory  -- Closed scales often contradictory
 
-/-- "empty" — closed fullness scale, lower pole ⇒ minimum standard,
+/-- "empty" — negative pole of the closed fullness scale ⇒ maximum standard (no contents),
     contradictory to "full". -/
 def empty : AdjectivalPredicateEntry where
   form := "empty"
+  polarity := some .negative
   dimension := some .fullness
-  isLowerEndpoint := true
   antonymForm := some "full"
   antonymRelation := some .contradictory
 
@@ -125,20 +125,20 @@ def cheap : AdjectivalPredicateEntry where
   antonymForm := some "expensive"
   antonymRelation := some .contrary
 
-/-- "wet" — closed wetness scale, lower pole ⇒ minimum standard (true with any
+/-- "wet" — lower-closed wetness scale ⇒ minimum standard (true with any
     non-zero wetness). Shares the closed `.wetness` scale with "dry"; the two
     differ only in pole. -/
 def wet : AdjectivalPredicateEntry where
   form := "wet"
   dimension := some .wetness
-  isLowerEndpoint := true
   antonymForm := some "dry"
   antonymRelation := some .contradictory
 
-/-- "dry" — closed wetness scale, upper pole ⇒ maximum standard (true only at
+/-- "dry" — negative pole of the wetness scale ⇒ maximum standard (true only at
     complete dryness). -/
 def dry : AdjectivalPredicateEntry where
   form := "dry"
+  polarity := some .negative
   dimension := some .wetness
   antonymForm := some "wet"
   antonymRelation := some .contradictory
@@ -154,7 +154,7 @@ def clean : AdjectivalPredicateEntry where
 /-- "dirty" — closed scale (maximally dirty), contradictory to "clean" -/
 def dirty : AdjectivalPredicateEntry where
   form := "dirty"
-  isLowerEndpoint := true
+  polarity := some .negative
   dimension := some .cleanliness
   antonymForm := some "clean"
   antonymRelation := some .contradictory
@@ -186,6 +186,7 @@ def open_ : AdjectivalPredicateEntry where
 /-- "closed" — closed scale, contradictory to "open" -/
 def closed_ : AdjectivalPredicateEntry where
   form := "closed"
+  polarity := some .negative
   dimension := some .openness
   antonymForm := some "open"
   antonymRelation := some .contradictory
@@ -194,6 +195,7 @@ def closed_ : AdjectivalPredicateEntry where
 /-- "shut" — closed scale, contradictory to "open" (near-synonym of "closed") -/
 def shut : AdjectivalPredicateEntry where
   form := "shut"
+  polarity := some .negative
   dimension := some .openness
   antonymForm := some "open"
   antonymRelation := some .contradictory
@@ -210,6 +212,7 @@ def free_ : AdjectivalPredicateEntry where
 /-- "loose" — closed scale (maximally loose), contradictory to "tight" -/
 def loose : AdjectivalPredicateEntry where
   form := "loose"
+  polarity := some .negative
   dimension := some .tightness
   antonymForm := some "tight"
   antonymRelation := some .contradictory
@@ -222,12 +225,12 @@ def tight : AdjectivalPredicateEntry where
   antonymForm := some "loose"
   antonymRelation := some .contradictory
 
-/-- "bent" — closed straightness scale, lower pole ⇒ minimum standard (true with
+/-- "bent" — negative pole of the upper-closed straightness scale ⇒ minimum standard (true with
     any non-zero bend). Shares the closed `.straightness` scale with "straight". -/
 def bent : AdjectivalPredicateEntry where
   form := "bent"
+  polarity := some .negative
   dimension := some .straightness
-  isLowerEndpoint := true
   antonymForm := some "straight"
   antonymRelation := some .contradictory
 
@@ -241,6 +244,7 @@ def smooth : AdjectivalPredicateEntry where
 /-- "rough" — closed scale, contradictory to "smooth" -/
 def rough : AdjectivalPredicateEntry where
   form := "rough"
+  polarity := some .negative
   dimension := some .smoothness
   antonymForm := some "smooth"
   antonymRelation := some .contradictory
@@ -319,7 +323,7 @@ def pristine : AdjectivalPredicateEntry where
 /-- "filthy" — closed scale, contrary to "pristine" (extreme absolute: gap exists) -/
 def filthy : AdjectivalPredicateEntry where
   form := "filthy"
-  isLowerEndpoint := true
+  polarity := some .negative
   dimension := some .cleanliness
   antonymForm := some "pristine"
   antonymRelation := some .contrary
@@ -810,46 +814,5 @@ def allEntries : List (AdjectivalPredicateEntry) := [
 /-- Look up an entry by form -/
 def lookup (form : String) : Option (AdjectivalPredicateEntry) :=
   allEntries.find? (·.form == form)
-
-/-! ### Derived Kennedy classification
-
-The scale shape, positive standard, and Kennedy class are `GradableAdjective`
-views derived from each entry's `dimension` + pole/override — nothing here is a
-stored field ([kennedy-2007], [kennedy-mcnally-2005]). Everything closes by
-`rfl`/`decide`, so the migration off the old stored `scaleType` is checked. -/
-
--- scale *shape* is the dimension's; `wet`/`dry` no longer disagree on it:
-theorem tall_open : tall.scaleType = .open_ := rfl
-theorem wet_closed : wet.scaleType = .closed := rfl
-theorem dry_closed : dry.scaleType = .closed := rfl
-
--- the pole the old `scaleType` conflated, now recovered from `isLowerEndpoint`:
-theorem wet_min : wet.standard = .minEndpoint := rfl
-theorem dry_max : dry.standard = .maxEndpoint := rfl
-
--- every Kennedy class, derived from (dimension, pole, override):
-theorem tall_relative     : tall.adjectiveClass = .relativeGradable := rfl
-theorem good_relative     : good.adjectiveClass = .relativeGradable := rfl
-theorem full_absMax       : full.adjectiveClass = .absoluteMaximum := rfl
-theorem straight_absMax   : straight.adjectiveClass = .absoluteMaximum := rfl
-theorem dry_absMax        : dry.adjectiveClass = .absoluteMaximum := rfl
-theorem empty_absMin      : empty.adjectiveClass = .absoluteMinimum := rfl
-theorem wet_absMin        : wet.adjectiveClass = .absoluteMinimum := rfl
-theorem bent_absMin       : bent.adjectiveClass = .absoluteMinimum := rfl
-theorem decent_mildlyPos  : decent.adjectiveClass = .mildlyPositive := rfl
-theorem acceptable_mildlyPos : acceptable.adjectiveClass = .mildlyPositive := rfl
-theorem adequate_mildlyPos   : adequate.adjectiveClass = .mildlyPositive := rfl
-
--- comparison-class dependence: only the open-scale relatives require one:
-theorem tall_requires_cc  : tall.IsRelative := by decide
-theorem good_requires_cc  : good.IsRelative := by decide
-theorem wet_no_cc         : ¬ wet.IsRelative := by decide
-theorem full_no_cc        : ¬ full.IsRelative := by decide
-theorem decent_no_cc      : ¬ decent.IsRelative := by decide
-
-/-- Every entry above carries a scalar dimension, so all are gradable. -/
-theorem all_gradable :
-    tall.IsGradable ∧ full.IsGradable ∧ wet.IsGradable ∧ good.IsGradable ∧
-      decent.IsGradable := by decide
 
 end English.Predicates.Adjectival

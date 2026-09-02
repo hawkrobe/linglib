@@ -1,5 +1,6 @@
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Basic
+import Linglib.Fragments.English.Predicates.Adjectival
 
 /-!
 # Kennedy 2007: relative and absolute gradable adjectives
@@ -94,12 +95,6 @@ inductive DegreeModifier
   | minimizer
   deriving DecidableEq
 
-/-- The scale an adjective measures on: its dimension's scale for the positive member of an
-antonym pair, the same scale with the ends exchanged for the negative member ((60)). -/
-def scaleOf (b : Boundedness) : ScalePolarity → Boundedness
-  | .positive => b
-  | .negative => b.dual
-
 /-- A modifier is licensed on a scale that has the endpoint it picks out. -/
 def Licenses : DegreeModifier → Boundedness → Prop
   | .maximizer, b => b.HasMax
@@ -127,21 +122,34 @@ def table61 : ScalePolarity → Boundedness → DegreeModifier → Bool
 
 /-- Every cell of (61) is the endpoint structure of the adjective's own scale. -/
 theorem table61_iff_licenses (p : ScalePolarity) (b : Boundedness) (m : DegreeModifier) :
-    table61 p b m = true ↔ Licenses m (scaleOf b p) := by
+    table61 p b m = true ↔ Licenses m (b.ofPolarity p) := by
   cases p <;> cases b <;> cases m <;> decide
+
+open English.Predicates.Adjectival in
+/-- The Fragment's antonym pairs fill (61): *completely full/empty*, *slightly wet* but
+*??completely wet*, *completely dry* but *??slightly dry*, *slightly bent* but *??fully bent*,
+*fully straight*, and nothing on the open height scale. -/
+theorem fragment_pairs_table61 :
+    Licenses .maximizer full.scaleType ∧ Licenses .maximizer empty.scaleType ∧
+    Licenses .minimizer wet.scaleType ∧ ¬ Licenses .maximizer wet.scaleType ∧
+    Licenses .maximizer dry.scaleType ∧ ¬ Licenses .minimizer dry.scaleType ∧
+    Licenses .minimizer bent.scaleType ∧ ¬ Licenses .maximizer bent.scaleType ∧
+    Licenses .maximizer straight.scaleType ∧
+    ¬ Licenses .maximizer tall.scaleType ∧ ¬ Licenses .minimizer short.scaleType := by
+  decide
 
 /-! ### Interpretive Economy (§4.2–§4.3) -/
 
 /-- An open scale offers no endpoint, so its standard is contextual and the adjective needs a
 comparison class. -/
 theorem open_requires_comparison_class :
-    (interpretiveEconomy .open_).RequiresComparisonClass :=
+    Boundedness.IsRelative .open_ :=
   trivial
 
 /-- A totally closed scale is interpretively variable: both endpoint standards are admitted
 ((67)–(68), *opaque/transparent*, *open/exposed*); the maximum is only the default. -/
 theorem closed_admits_both_endpoints :
-    ieAdmits .closed .minEndpoint ∧ ieAdmits .closed .maxEndpoint :=
+    Boundedness.closed.Admits .minEndpoint ∧ Boundedness.closed.Admits .maxEndpoint :=
   ⟨trivial, trivial⟩
 
 end Kennedy2007
