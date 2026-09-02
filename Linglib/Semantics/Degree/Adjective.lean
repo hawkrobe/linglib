@@ -38,8 +38,8 @@ gradable adjectives by scale structure and the derivation of standard
 type from boundedness. Interpretive Economy ([kennedy-2007] eq. (66))
 maximises the contribution of conventional meaning: a scale with an
 endpoint rules out the contextual standard; a totally closed scale
-admits *both* endpoint standards (`ieAdmits`) with the maximum as the
-pragmatically preferred default (`interpretiveEconomy`). -/
+admits *both* endpoint standards (`Boundedness.Admits`) with the maximum as the
+pragmatically preferred default (`Boundedness.defaultStandard`). -/
 
 /-! ### Classification carriers -/
 
@@ -111,68 +111,44 @@ instance : DecidablePred AdjectiveClass.IsRelative :=
 one with a minimum, so an endpoint standard is available exactly where the scale has that
 endpoint; the contextual standard, which context must supply, survives IE (66) only on a
 totally open scale. A totally closed scale therefore admits both endpoints ((67)–(68)). -/
-def ieAdmits (b : Boundedness) : PositiveStandard → Prop
+def Boundedness.Admits (b : Boundedness) : PositiveStandard → Prop
   | .contextual  => b = .open_
   | .minEndpoint => b.HasMin
   | .maxEndpoint => b.HasMax
   | .functional  => False
 
-instance (b : Boundedness) (s : PositiveStandard) : Decidable (ieAdmits b s) := by
-  cases s <;> simp only [ieAdmits] <;> infer_instance
+instance (b : Boundedness) (s : PositiveStandard) : Decidable (b.Admits s) := by
+  cases s <;> simp only [Boundedness.Admits] <;> infer_instance
 
-/-- The out-of-context *default* positive standard. Where Interpretive Economy
-admits a unique standard (open / one-sided closed scales) this is forced; for a
-totally closed scale IE admits both endpoints (`ieAdmits`) and the default is
-the **maximum** on pragmatic grounds — a maximum standard entails a minimum one
-and stronger meanings are preferred ([kennedy-2007] eq. (66) discussion). So
-this is Interpretive Economy *plus* a strengthening default for closed scales,
-not IE alone; the genuine (variable) IE claim is `ieAdmits`. -/
-def interpretiveEconomy : Boundedness → PositiveStandard
+/-- The out-of-context default standard, Interpretive Economy plus a strengthening
+preference: where one standard is admitted it is forced, and a totally closed scale takes the
+maximum (a maximum standard entails a minimum one). -/
+def Boundedness.defaultStandard : Boundedness → PositiveStandard
   | .open_        => .contextual
   | .lowerBounded => .minEndpoint
   | .upperBounded => .maxEndpoint
   | .closed       => .maxEndpoint
 
-theorem interpretiveEconomy_open : interpretiveEconomy .open_ = .contextual := rfl
-theorem interpretiveEconomy_lowerBounded :
-    interpretiveEconomy .lowerBounded = .minEndpoint := rfl
-theorem interpretiveEconomy_upperBounded :
-    interpretiveEconomy .upperBounded = .maxEndpoint := rfl
-
-/-- The default standard for a totally closed scale is the maximum — a
-*pragmatic* preference (stronger meaning), not an Interpretive-Economy
-determination; the minimum is equally admitted (`ieAdmits_closed_minEndpoint`). -/
-theorem interpretiveEconomy_closed : interpretiveEconomy .closed = .maxEndpoint := rfl
-
-/-- The default standard is always among those Interpretive Economy admits. -/
-theorem ieAdmits_interpretiveEconomy (b : Boundedness) :
-    ieAdmits b (interpretiveEconomy b) := by
+/-- The default standard is always admitted. -/
+theorem Boundedness.admits_defaultStandard (b : Boundedness) : b.Admits b.defaultStandard := by
   cases b <;> decide
 
-/-- Interpretive variability of totally closed scales: IE admits the **minimum**
-standard, so the `interpretiveEconomy` maximum default is a pragmatic preference,
-not a semantic determination ([kennedy-2007] eq. (67)–(68): *opaque/transparent*,
-*open/exposed*). -/
-theorem ieAdmits_closed_minEndpoint : ieAdmits .closed .minEndpoint := trivial
+/-- A totally closed scale admits the minimum standard as well as the default maximum
+([kennedy-2007] (67)–(68)). -/
+theorem Boundedness.closed_admits_minEndpoint : Boundedness.closed.Admits .minEndpoint := trivial
 
-/-- A totally closed scale also admits the maximum standard. -/
-theorem ieAdmits_closed_maxEndpoint : ieAdmits .closed .maxEndpoint := trivial
+theorem Boundedness.closed_admits_maxEndpoint : Boundedness.closed.Admits .maxEndpoint := trivial
 
+/-- Interpretive Economy rules out the contextual standard whenever the scale has an endpoint. -/
+theorem Boundedness.not_admits_contextual_of_ne_open {b : Boundedness} (h : b ≠ .open_) :
+    ¬ b.Admits .contextual := h
 
-/-- Interpretive Economy rules out the relative (contextual) standard whenever the scale has
-an endpoint. -/
-theorem not_ieAdmits_contextual_of_ne_open {b : Boundedness} (h : b ≠ .open_) :
-    ¬ ieAdmits b .contextual := h
+/-- A scale is relative iff its default standard needs a comparison class, i.e. iff it is open
+(*tall*, *expensive*, *big*). -/
+def Boundedness.IsRelative (b : Boundedness) : Prop := b.defaultStandard.RequiresComparisonClass
 
-/-- A boundedness is *Class A* (relative) iff its default standard requires a
-comparison class — i.e. iff the scale is open. Kennedy's *tall*, *expensive*,
-*big*. -/
-def IsClassA (b : Boundedness) : Prop :=
-  (interpretiveEconomy b).RequiresComparisonClass
-
-instance : DecidablePred IsClassA :=
-  fun b => inferInstanceAs (Decidable (interpretiveEconomy b).RequiresComparisonClass)
-
+instance : DecidablePred Boundedness.IsRelative :=
+  fun b => inferInstanceAs (Decidable b.defaultStandard.RequiresComparisonClass)
 
 /-! ### Two-threshold model for contrary antonyms -/
 
@@ -283,39 +259,19 @@ structure GradableAdjective extends Adjective where
 
 namespace GradableAdjective
 
-/-- The scale's intrinsic shape — read off the `dimension` key, not stored
-    (`.open_` for a non-gradable, which has no scale). -/
+/-- The scale the adjective measures on: its dimension's, dualized for the negative member of
+an antonym pair (`.open_` for a non-gradable, which has no scale). -/
 def scaleType (g : GradableAdjective) : Boundedness :=
-  (g.dimension.map ScalarDimension.boundedness).getD .open_
+  (g.dimension.map fun d => d.boundedness.ofPolarity (g.polarity.getD .positive)).getD .open_
 
-/-- The effective positive standard: the default from (scale shape, pole),
-    overridable by `standardOverride`. This is the quantity the old `scaleType` field
-    conflated — it separates `wet` (closed + lower ⇒ min) from `dry` (closed + upper ⇒
-    max), and lets `good` (open shape) take a contextual standard rather than a bogus
-    bound. ([kennedy-2007]'s Interpretive Economy on the open/singly-bounded cases.) -/
+/-- The positive standard: the scale's default, unless overridden (the *good*/MPA residual). -/
 def standard (g : GradableAdjective) : PositiveStandard :=
-  g.standardOverride.getD <|
-    match g.dimension.map ScalarDimension.boundedness, g.isLowerEndpoint with
-    | some .closed, true  => .minEndpoint
-    | some .closed, false => .maxEndpoint
-    | some b,       _     => interpretiveEconomy b
-    | none,         _     => .contextual
+  g.standardOverride.getD g.scaleType.defaultStandard
 
-/-- The entry-level selection implements the type-level theory: an
-    override-free entry's derived `standard` is always among the standards
-    Interpretive Economy admits for its scale shape. The closed-scale
-    pole dispatch (min for lower-endpoint, max otherwise) picks within
-    IE's admitted pair rather than beyond it. -/
-theorem standard_ieAdmits (g : GradableAdjective)
-    (h : g.standardOverride = none) :
-    ieAdmits g.scaleType g.standard := by
-  unfold standard scaleType
-  rw [h]
-  cases hd : g.dimension with
-  | none => trivial
-  | some d =>
-    cases hb : d.boundedness <;> cases hl : g.isLowerEndpoint <;>
-      simp [ieAdmits, interpretiveEconomy, hb, Boundedness.HasMin, Boundedness.HasMax]
+/-- An override-free entry's standard is one its scale admits. -/
+theorem admits_standard (g : GradableAdjective) (h : g.standardOverride = none) :
+    g.scaleType.Admits g.standard := by
+  simp [standard, h, Boundedness.admits_defaultStandard]
 
 /-- Kennedy's adjective class — derived from `standard`, not stored; `.nonGradable`
     exactly when there is no `dimension` ([kennedy-2007], [kennedy-mcnally-2005]). -/

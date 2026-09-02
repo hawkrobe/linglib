@@ -91,7 +91,6 @@ open Degree.Aggregation (weightedScore boolMeasures
   spatialNormalizedScore spatialNormalizedBinding)
 open Features.DegreeAchievement (DegreeAchievementScale)
 open ArgumentStructure
-open Degree (interpretiveEconomy)
 open English.Predicates
 
 -- ════════════════════════════════════════════════════
@@ -491,7 +490,7 @@ theorem scratch_adj_verb_scale_agree :
     the lower bound determines the threshold for being on the scale at
     all. -/
 theorem cracked_standard_maxEndpoint :
-    interpretiveEconomy Adjectival.cracked.scaleType = .maxEndpoint := rfl
+    Adjectival.cracked.scaleType.defaultStandard = .maxEndpoint := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 9. Cross-paper engagement: Kennedy-Levin pipeline
@@ -941,7 +940,7 @@ theorem solt_tham_share_substrate_bounded_by_one :
     only the lower bound. The wedge is at the level of WHICH endpoint
     of the closed scale is load-bearing for which prediction. -/
 theorem cracked_ie_max_vs_tham_lower_bound :
-    interpretiveEconomy Adjectival.cracked.scaleType =
+    Adjectival.cracked.scaleType.defaultStandard =
       Degree.PositiveStandard.maxEndpoint ∧
     crack.simplePredicationObjective = true ∧
     -- The two endpoints of a closed scale are distinct standards,

@@ -17,7 +17,8 @@ pair an adjective is.
 
 ## Main declarations
 
-* `Boundedness`, `Boundedness.HasMax`, `Boundedness.HasMin`, `Boundedness.dual`
+* `Boundedness`, `Boundedness.HasMax`, `Boundedness.HasMin`, `Boundedness.dual`,
+  `Boundedness.ofPolarity`
 * `Boundedness.degreeShape`, `Boundedness.hasGreatest_degreeShape_iff`
 * `ScalePolarity`
 -/
@@ -109,5 +110,17 @@ inductive ScalePolarity where
   | positive
   | negative
   deriving DecidableEq, Repr
+
+/-- The scale an adjective measures on: its dimension's scale for the positive member of an
+antonym pair, the same scale with the ends exchanged for the negative member. -/
+def Boundedness.ofPolarity (b : Boundedness) : ScalePolarity → Boundedness
+  | .positive => b
+  | .negative => b.dual
+
+@[simp] theorem Boundedness.ofPolarity_positive (b : Boundedness) :
+    b.ofPolarity .positive = b := rfl
+
+@[simp] theorem Boundedness.ofPolarity_negative (b : Boundedness) :
+    b.ofPolarity .negative = b.dual := rfl
 
 end Degree

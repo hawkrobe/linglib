@@ -128,12 +128,11 @@ theorem increase_unique_end {α δ T : Type*} [Add δ]
     structurally; this file checks HKL's specific predictions on the
     central exemplars. -/
 
-/-- HKL eq 26 (closed-range default): "straighten" — closed scale,
+/-- HKL eq 26 (closed-range default): "straighten" — a scale with a maximum,
     accomplishment (telic). -/
 theorem straighten_closed_accomplishment :
-    straighten.toVerb.degreeAchievementScale.map (·.scaleBoundedness) =
-      some Boundedness.closed ∧
-    straighten.toVerb.vendlerClass = some .accomplishment := ⟨rfl, rfl⟩
+    (straighten.toVerb.degreeAchievementScale.get!).scaleBoundedness.HasMax ∧
+    straighten.toVerb.vendlerClass = some .accomplishment := ⟨trivial, rfl⟩
 
 /-- HKL eq 27 (open-range default): "lengthen" — open scale, activity
     (atelic). -/

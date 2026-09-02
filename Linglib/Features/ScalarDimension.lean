@@ -65,20 +65,23 @@ def ScalarDimension.domain : ScalarDimension → PropertyDomain
   | .curvature | .boiling | .corrosion | .unspecified => .state
   | .color => .color
 
-/-- The dimension's canonical scale shape. Polarity/standard-type are not
-    here — they live on the adjective entry (`min`/`max`-standard
-    adjectives select a pole of a closed scale). Reducible so the degree
-    fiber's `OrderTop`/`NoMaxOrder` instances synthesise through it. -/
+/-- The dimension's scale shape in its increasing direction ([kennedy-mcnally-2005]
+    (24)–(27), [kennedy-2007] (33), (60)): *??completely wet* but *completely dry* makes
+    wetness lower closed, *fully straight* but *??fully bent* makes straightness upper
+    closed, *100% full/empty* makes fullness closed. The negative member of an antonym
+    pair measures on the dual (`Boundedness.ofPolarity`). Reducible so the degree fiber's
+    `OrderTop`/`NoMaxOrder` instances synthesise through it. -/
 abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
-  | .straightness | .flatness | .openness | .cleanliness | .curvature
-  | .cracking | .denting | .scratching | .boiling
-  | .alive | .freedom | .fullness | .purity | .shattering | .smoothness
-  | .tightness | .wetness | .pregnancy => .closed
+  | .openness | .curvature | .cracking | .denting | .scratching | .boiling
+  | .alive | .freedom | .fullness | .shattering | .tightness | .pregnancy => .closed
+  | .straightness | .flatness | .cleanliness | .purity | .smoothness | .safety
+  | .confidence => .upperBounded
+  | .wetness => .lowerBounded
   | .height | .width | .length | .weight | .thickness | .depth | .speed
   | .strength | .age | .generalSize | .temperature | .brightness | .volume
   | .happiness | .cost | .price | .quality | .value | .danger | .beauty
-  | .importance | .safety | .intelligence | .expectation | .possibility
-  | .confidence | .hardness | .color | .corrosion | .quantity
+  | .importance | .intelligence | .expectation | .possibility
+  | .hardness | .color | .corrosion | .quantity
   | .unspecified => .open_
 
 /-! ### Bridges to the physical quantity algebra -/

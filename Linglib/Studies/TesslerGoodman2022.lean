@@ -1708,14 +1708,14 @@ the CC is pragmatic/contextual, not a constituent of the logical form.
     bounded scale → endpoint standard → s fixed by scale → nothing to infer
 
 The chain connects three independent modules:
-1. `Degree.interpretiveEconomy` (Theory: scale → standard type)
+1. `Degree.Boundedness.defaultStandard` (Theory: scale → standard type)
 2. `Degree.PositiveStandard.RequiresComparisonClass` (Theory: standard → domain-dependent?)
 3. `listenerK` with latent `ComparisonClass` (this file: infer CC) -/
 
-open Degree (interpretiveEconomy PositiveStandard IsClassA)
+open Degree (Boundedness PositiveStandard)
 
 /-- Height is an open-scale dimension: "tall" is relative (Class A). -/
-theorem height_is_classA : IsClassA Degree.Boundedness.open_ := trivial
+theorem height_is_relative : Boundedness.IsRelative .open_ := trivial
 
 /-- Open scale → contextual domain inference applies (the full chain).
     This is a three-step argument:
@@ -1727,13 +1727,13 @@ theorem height_is_classA : IsClassA Degree.Boundedness.open_ := trivial
     This is compatible with Kennedy's view: the CC is pragmatic/contextual
     (inferred by L1), not a semantic argument of *pos*. -/
 theorem open_scale_requires_cc_inference :
-    (interpretiveEconomy .open_).RequiresComparisonClass := trivial
+    (Boundedness.defaultStandard .open_).RequiresComparisonClass := trivial
 
 /-- Closed scale → contextual domain inference is irrelevant.
     "Full" has an endpoint standard via Interpretive Economy; the threshold
     is the scale maximum regardless of context. No domain to infer. -/
 theorem closed_scale_no_cc_inference :
-    ¬ (interpretiveEconomy .closed).RequiresComparisonClass := id
+    ¬ (Boundedness.defaultStandard .closed).RequiresComparisonClass := id
 
 -- ============================================================================
 -- § 13. Connection to Generic Language ([tessler-goodman-2019])
