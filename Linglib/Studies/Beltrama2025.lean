@@ -4,7 +4,7 @@ import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Boundedness
 import Linglib.Data.Examples.Beltrama2025
 
 /-!
@@ -48,7 +48,7 @@ standard function assign functional standards.
 
 namespace Beltrama2025
 
-open Core.Order (Boundedness)
+open Degree (Boundedness)
 open Degree (PositiveStandard interpretiveEconomy positiveMeaning)
 open Degree (AdjectiveClass)
 

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Questions.Partition.QUD
-import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Boundedness
 import Linglib.Semantics.Degree.Comparison
 import Mathlib.Algebra.Order.Interval.Set.Instances
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
@@ -14,7 +14,7 @@ with projectivity. Mirrors the gradable-adjective pattern (degree > θ →
 positive meaning).
 -/
 namespace Discourse.AtIssueness
-open Core.Order (Boundedness)
+open Degree (Boundedness)
 /-! ### Degree Types -/
 /-- A degree of at-issueness ∈ [0, 1].
     0 = fully backgrounded (not at-issue), 1 = fully at-issue. -/

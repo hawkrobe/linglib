@@ -34,7 +34,7 @@ members of their pairs ([bierwisch-1989], [kennedy-2007]).
 
 namespace Rett2015
 
-open Core.Order (ScalePolarity)
+open Degree (ScalePolarity)
 open Degree
 open English.Predicates.Adjectival (tall short)
 

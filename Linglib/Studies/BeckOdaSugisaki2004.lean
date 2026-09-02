@@ -58,7 +58,7 @@ Example numbers follow the journal article; the examples are typed in
 
 namespace BeckOdaSugisaki2004
 
-open Core.Order Degree Definiteness
+open Degree Definiteness
 
 variable {Entity D : Type*} [LinearOrder D]
 

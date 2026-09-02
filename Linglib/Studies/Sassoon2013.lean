@@ -1,7 +1,7 @@
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Adjective
-import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Boundedness
 
 /-!
 # [sassoon-2013]
@@ -65,7 +65,7 @@ open Degree (DimensionBindingType conjunctiveBinding
   disjunctiveBinding deMorgan_conjunctive_disjunctive
   deMorgan_disjunctive_conjunctive predictedBinding)
 open Degree (interpretiveEconomy)
-open Core.Order (Boundedness)
+open Degree (Boundedness)
 -- ════════════════════════════════════════════════════
 -- § 1. Multidimensional Adjective Data
 -- ════════════════════════════════════════════════════

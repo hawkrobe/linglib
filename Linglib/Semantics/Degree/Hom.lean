@@ -417,13 +417,13 @@ variable {Entity D D' : Type*} [LinearOrder D] [Preorder D']
 
 /-- Comparatives are invariant under change of scale representation. -/
 theorem comparativeSem_comp (hf : StrictMono f) (a b : Entity)
-    (dir : Core.Order.ScalePolarity) :
+    (dir : Degree.ScalePolarity) :
     comparativeSem (f ∘ μ) a b dir ↔ comparativeSem μ a b dir := by
   cases dir <;> exact hf.lt_iff_lt
 
 /-- Equatives are invariant under change of scale representation. -/
 theorem equativeSem_comp (hf : StrictMono f) (a b : Entity)
-    (dir : Core.Order.ScalePolarity) :
+    (dir : Degree.ScalePolarity) :
     equativeSem (f ∘ μ) a b dir ↔ equativeSem μ a b dir := by
   cases dir <;> exact hf.le_iff_le
 

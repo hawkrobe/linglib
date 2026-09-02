@@ -1715,7 +1715,7 @@ The chain connects three independent modules:
 open Degree (interpretiveEconomy PositiveStandard IsClassA)
 
 /-- Height is an open-scale dimension: "tall" is relative (Class A). -/
-theorem height_is_classA : IsClassA Core.Order.Boundedness.open_ := trivial
+theorem height_is_classA : IsClassA Degree.Boundedness.open_ := trivial
 
 /-- Open scale → contextual domain inference applies (the full chain).
     This is a three-step argument:

@@ -6,7 +6,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Studies.Sassoon2013
 import Linglib.Studies.Solt2018Multidim
 import Linglib.Studies.BeaversKoontzGarboden2020
-import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Boundedness
 import Linglib.Semantics.Degree.Adjective
 
 /-!
@@ -85,7 +85,7 @@ the paper's argument is that disturbance predicates are a uniform class.
 
 namespace Tham2025
 
-open Core.Order (Boundedness)
+open Degree (Boundedness)
 open Degree (DimensionBindingType GradableAdjective conjunctiveBinding disjunctiveBinding)
 open Degree.Aggregation (weightedScore boolMeasures
   spatialNormalizedScore spatialNormalizedBinding)

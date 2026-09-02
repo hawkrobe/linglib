@@ -1,7 +1,7 @@
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Basic
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Boundedness
 import Linglib.Features.PropertyDomain
 import Linglib.Features.Antonymy
 
@@ -297,7 +297,7 @@ structure AdjectiveTypologyDatum where
   scale : String
   /-- Scale structure (Kennedy 2007's 4-way typology), the canonical
       `Boundedness` enum rather than a `Bool`-pair re-encoding. -/
-  scaleType : Core.Order.Boundedness
+  scaleType : Degree.Boundedness
   /-- Natural with "slightly X"? -/
   naturalWithSlightly : Bool
   /-- Natural with "completely X"? -/
@@ -519,13 +519,13 @@ Per the matrix:
   considerations).
 - **Measure phrases** (*6 feet tall*) work on all dimensional scales
   ([hay-kennedy-levin-1999]). -/
-def Licenses : DegreeModifierType → Core.Order.Boundedness → Prop
+def Licenses : DegreeModifierType → Degree.Boundedness → Prop
   | .proportional, b => b.HasMax
   | .diminisher, b => b.HasMin
   | .intensifier, _ => True
   | .measurePhrase, _ => True
 
-instance : ∀ (m : DegreeModifierType) (b : Core.Order.Boundedness),
+instance : ∀ (m : DegreeModifierType) (b : Degree.Boundedness),
     Decidable (Licenses m b)
   | .proportional, b => inferInstanceAs (Decidable b.HasMax)
   | .diminisher, b => inferInstanceAs (Decidable b.HasMin)
@@ -538,7 +538,6 @@ section Bridge
 
 open Degree
 open English.Predicates.Adjectival
-open Core.Order
 
 /-! #### Scale structure → comparison-class sensitivity
 

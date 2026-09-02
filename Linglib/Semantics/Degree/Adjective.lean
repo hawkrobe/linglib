@@ -1,4 +1,4 @@
-import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Boundedness
 import Linglib.Features.ScalarDimension
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
@@ -29,7 +29,6 @@ The intersective/subsective/privative classification lives in
 
 namespace Degree
 
-open Core.Order (Boundedness)
 open Features (NegationType ScalarDimension)
 
 /-! ## Standards and Interpretive Economy ([kennedy-2007])

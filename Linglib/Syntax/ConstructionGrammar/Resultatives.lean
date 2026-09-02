@@ -388,7 +388,7 @@ The aspectual chain: `HasMax → bounded RP → telic resultative`. -/
 /-- Map [kennedy-2007]'s scale boundedness to [goldberg-jackendoff-2004]'s
 RP boundedness. Scales with a maximum endpoint yield bounded RPs (the RP denotes
 a delimited endstate). Scales without a maximum yield unbounded RPs. -/
-def adjScaleToRPBoundedness (b : Core.Order.Boundedness) : Boundedness :=
+def adjScaleToRPBoundedness (b : Degree.Boundedness) : Boundedness :=
   if b.HasMax then .bounded else .unbounded
 
 /-- Closed scales yield bounded RPs. -/
@@ -409,10 +409,10 @@ theorem lower_bounded_scale_unbounded :
 
 /-- The full aspectual chain: a closed-scale adjective as RP yields a telic
     resultative. `HasMax → bounded → telic → accomplishment`. -/
-theorem closed_scale_telic_resultative (b : Core.Order.Boundedness) (hMax : b.HasMax) :
+theorem closed_scale_telic_resultative (b : Degree.Boundedness) (hMax : b.HasMax) :
     resultativeVendlerClass (adjScaleToRPBoundedness b) = .accomplishment := by
-  cases b <;> simp [Core.Order.Boundedness.HasMax] at hMax <;>
-    simp [adjScaleToRPBoundedness, Core.Order.Boundedness.HasMax,
+  cases b <;> simp [Degree.Boundedness.HasMax] at hMax <;>
+    simp [adjScaleToRPBoundedness, Degree.Boundedness.HasMax,
       resultativeVendlerClass, resultativeAspect, AspectualProfile.toVendlerClass]
 
 /-- The dry/wet contrast: dry is productive (bounded → telic),
@@ -732,7 +732,7 @@ subconstruction satisfying the hypotheses, not just the attested entries. -/
 
 /-- **Aspect chain**: any adjective with a scale maximum, used as an RP
     in a resultative, produces a telic accomplishment. -/
-theorem aspect_chain (b : Core.Order.Boundedness) (hMax : b.HasMax) :
+theorem aspect_chain (b : Degree.Boundedness) (hMax : b.HasMax) :
     let rpB := adjScaleToRPBoundedness b
     rpB = .bounded ∧
     resultativeVendlerClass rpB = .accomplishment ∧

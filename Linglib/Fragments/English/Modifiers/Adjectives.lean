@@ -30,7 +30,7 @@ namespace English.Modifiers.Adjectives
 
 
 open Degree (AntonymRelation)
-open Core.Order (Boundedness)
+open Degree (Boundedness)
 open Features (NegationType)
 
 -- ============================================================================

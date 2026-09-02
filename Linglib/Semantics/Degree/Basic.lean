@@ -2,7 +2,7 @@ import Mathlib.Order.Interval.Set.LinearOrder
 import Mathlib.Order.Bounds.Basic
 import Linglib.Semantics.Degree.Comparison
 import Linglib.Semantics.Degree.Defs
-import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Boundedness
 
 /-!
 # Degree comparison: the point-standard core
@@ -45,7 +45,6 @@ consumers in `Studies/Hoeksema1983.lean`.
 
 namespace Degree
 
-open Core.Order (ScalePolarity)
 
 /-! ### Comparative and equative semantics -/
 

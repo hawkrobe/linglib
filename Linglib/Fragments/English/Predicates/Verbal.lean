@@ -27,7 +27,7 @@ export Features (Preferential Attitude)
 open Features
 open ArgumentStructure
 open Features.DegreeAchievement (DegreeAchievementScale)
-open Core.Order (Boundedness)
+open Degree (Boundedness)
 open Aspect.Incremental (VerbIncClass)
 open ArgumentStructure
 open ArgumentStructure

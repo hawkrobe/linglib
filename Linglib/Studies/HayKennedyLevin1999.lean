@@ -1,6 +1,6 @@
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Degree.Measure.Temporal
-import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Boundedness
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -56,7 +56,7 @@ rather than docstring prose.
 
 namespace HayKennedyLevin1999
 
-open Core.Order (Boundedness)
+open Degree (Boundedness)
 open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════

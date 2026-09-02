@@ -39,7 +39,7 @@ Two types of EN with different syntactic positions and licensing:
 
 namespace Rett2026
 
-open Core.Order (Boundedness)
+open Degree (Boundedness)
 open Degree (isAmbidirectional)
 open English.Modifiers.Adjectives (AdjModifierEntry)
 

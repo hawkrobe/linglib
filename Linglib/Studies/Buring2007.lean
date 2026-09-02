@@ -54,7 +54,8 @@ the accessible worlds agree on the standard's degree.
 
 namespace Buring2007
 
-open Core.Order ModalLogic
+open ModalLogic
+open Degree (ScalePolarity)
 
 /-! ### The comparative and the degree negation -/
 
