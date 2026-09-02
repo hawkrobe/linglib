@@ -2072,7 +2072,6 @@ import Linglib.Studies.Ciardelli2022
 import Linglib.Studies.CiardelliGroenendijkRoelofsen2018
 import Linglib.Studies.CiardelliGuerrini2026
 import Linglib.Studies.CiardelliZhangChampollion2018
-import Linglib.Studies.CiardelliZhangChampollion2018Lumping
 import Linglib.Studies.Cinque2005
 import Linglib.Studies.Cinque2020
 import Linglib.Studies.CitkoGracaninYuksek2025
