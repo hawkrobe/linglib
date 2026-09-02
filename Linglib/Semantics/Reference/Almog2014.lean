@@ -60,9 +60,7 @@ open _root_.Reference.Kaplan (SingularProposition indexical)
 open _root_.Reference.Donnellan (UseMode referentialExpression)
 open _root_.Reference.KaplanLD (dthatW dthatW_isRigid)
 open _root_.Reference.Kripke (rigid_iff_scope_invariant deRe deDicto)
-open Intensional (Intension)
-open Intensional.Intension (rigid IsRigid rigid_isRigid evalAt rigid_section
-  rigid_evalAt_lossy)
+open Intensional (IsRigid isRigid_const const_ne_of_not_isRigid)
 
 /-! ## Canonical Referential Profiles -/
 
@@ -170,21 +168,21 @@ It is a general proposition that happens to be world-invariant. -/
 
 /-- A dthat-expression as a `ReferringExpression`: rigid character, profile
 records designation without singularity or referential use. -/
-def dthatExpression {C W E : Type*} (desc : Intension W E) (cW : W) :
+def dthatExpression {C W E : Type*} (desc : W → E) (cW : W) :
     ReferringExpression C W E :=
   { character := λ _ => dthatW desc cW
   , profile := dthatProfile }
 
 /-- dthat-expressions are de jure rigid: their character produces rigid
 content and their profile records the designation mechanism. -/
-theorem dthat_deJureRigid {C W E : Type*} (desc : Intension W E) (cW : W) :
+theorem dthat_deJureRigid {C W E : Type*} (desc : W → E) (cW : W) :
     Reference.Basic.IsDeJureRigid
       (dthatExpression (C := C) desc cW) :=
   ⟨rfl, λ _ => dthatW_isRigid desc cW⟩
 
 /-- dthat-expressions do NOT have singular propositional content.
 This is the formal content of separation thesis. -/
-theorem dthat_not_singular {C W E : Type*} (desc : Intension W E) (cW : W) :
+theorem dthat_not_singular {C W E : Type*} (desc : W → E) (cW : W) :
     (dthatExpression (C := C) desc cW).profile.singularProp = false := rfl
 
 /-! ## End-to-End Argumentation Chain
@@ -204,7 +202,7 @@ and singularity are independent mechanisms with different explanatory roles. -/
 
 /-- Step 1–2: dthat is scope-inert. Since dthat is rigid (dthatW_isRigid),
 scope invariance follows from `rigid_iff_scope_invariant`. -/
-theorem dthat_scope_inert {W E : Type*} (desc : Intension W E) (cW w₀ : W) :
+theorem dthat_scope_inert {W E : Type*} (desc : W → E) (cW w₀ : W) :
     ∀ (P : E → W → Prop) (w : W),
       deRe P (dthatW desc cW) w₀ w ↔ deDicto P (dthatW desc cW) w :=
   (rigid_iff_scope_invariant (dthatW desc cW) w₀).mp (dthatW_isRigid desc cW)
@@ -218,11 +216,11 @@ propositions would distinguish them — except dthat doesn't produce
 structured content at all. So dthat eliminates scope ambiguity (step 2)
 but cannot explain informativeness. -/
 theorem dthat_insufficient_for_frege {W E : Type*}
-    (desc₁ desc₂ : Intension W E) (cW : W)
+    (desc₁ desc₂ : W → E) (cW : W)
     (hCo : desc₁ cW = desc₂ cW) :
     -- dthat makes them the same intension...
-    dthatW desc₁ cW = dthatW desc₂ cW := by
-  simp only [dthatW, hCo]
+    dthatW desc₁ cW = dthatW desc₂ cW :=
+  congrArg (fun e _ => e) hCo
 
 /-! ## The Frege Puzzle (Cross-Module Bridge) -/
 
@@ -284,7 +282,7 @@ This is the formal content of [kripke-1980]'s thesis as formalized
 via designation mechanism. -/
 theorem properName_deJure {C W E : Type*} (e : E) :
     isDirectlyReferential (properName (C := C) (W := W) e).character :=
-  λ _ => rigid_isRigid e
+  λ _ => isRigid_const e
 
 /-! ## Bridge: PLA and the Frege Puzzle
 
@@ -317,13 +315,13 @@ KDthat encodes the three-stage model of referential use (Ch 3, §1.2):
 `loaded` is the individual from stage 1 (object-contact). `guide` is the
 description used to communicate (stage 3). The guide plays no role in
 determining reference. -/
-def kdthat {W E : Type*} (loaded : E) (_guide : E → W → Prop) : Intension W E :=
-  rigid loaded
+def kdthat {W E : Type*} (loaded : E) (_guide : E → W → Prop) : W → E :=
+  fun _ => loaded
 
 /-- KDthat is rigid (trivially — reference was already fixed). -/
 theorem kdthat_isRigid {W E : Type*} (loaded : E) (guide : E → W → Prop) :
     IsRigid (kdthat loaded guide) :=
-  rigid_isRigid loaded
+  isRigid_const loaded
 
 /-- Changing the communicative guide does not change the referent.
 This is the formal content of outside-in thesis:
@@ -344,7 +342,7 @@ referential use is a genuinely different mechanism from Kaplan's
 rigidification-by-description. -/
 theorem kdthat_dthat_diverge {W E : Type*}
     (loaded : E) (guide : E → W → Prop)
-    (desc : Intension W E) (cW : W)
+    (desc : W → E) (cW : W)
     (hMisfit : desc cW ≠ loaded) :
     kdthat loaded guide ≠ dthatW desc cW := by
   intro heq
@@ -378,7 +376,7 @@ theorem kdthat_deFactoRigid {C W E : Type*} (loaded : E) (guide : E → W → Pr
     (c : C) :
     Reference.Basic.IsDeFactoRigid
       (kdthatExpression (C := C) loaded guide) c :=
-  ⟨rigid_isRigid loaded, rfl⟩
+  ⟨isRigid_const loaded, rfl⟩
 
 /-! ## Informativeness Is Not Semantic (Ch 4, §2)
 
@@ -397,7 +395,7 @@ Phosphorus" cannot come from the *semantics* (the contents are the same);
 it must come from the *cognitive* relation between the thinker and the
 two names. -/
 theorem informativeness_not_semantic {W E : Type*}
-    (t₁ t₂ : Intension W E)
+    (t₁ t₂ : W → E)
     (hRig₁ : IsRigid t₁) (hRig₂ : IsRigid t₂)
     (w : W) (hCoref : t₁ w = t₂ w) :
     t₁ = t₂ := by
@@ -413,7 +411,7 @@ requires the independent metaphysical doctrine of modal haecceitism.
 Whether an agent *believes* it requires an independent theory of attitude
 verb semantics. The reference theory is silent on both. -/
 theorem dr_same_proposition {W E : Type*}
-    (t₁ t₂ : Intension W E) (P : E → W → Bool)
+    (t₁ t₂ : W → E) (P : E → W → Bool)
     (hRig₁ : IsRigid t₁) (hRig₂ : IsRigid t₂)
     (w : W) (hCoref : t₁ w = t₂ w) :
     (λ w' => P (t₁ w') w') = (λ w' => P (t₂ w') w') := by
@@ -464,7 +462,7 @@ Same content can arise from different mechanisms; same mechanism can
 produce different content.
 
 Categorically, this is a commutativity diagram. Both `dthat` and `kdthat`
-factor through `rigid : E → Intension W E`:
+factor through the constant-intension embedding `fun x _ => x : E → W → E`:
 
 ```
                       eval
@@ -494,8 +492,8 @@ projection conflates. This non-liftability is `mechanism_content_orthogonality`.
 This is the top square of the commutativity diagram. The inside-out
 mechanism first *evaluates* the description at the actual world to
 obtain an entity, then *rigidifies* that entity. -/
-theorem dthat_factors {W E : Type*} (desc : Intension W E) (cW : W) :
-    dthatW desc cW = rigid (desc cW) :=
+theorem dthat_factors {W E : Type*} (desc : W → E) (cW : W) :
+    dthatW desc cW = fun _ => desc cW :=
   rfl
 
 /-- KDthat factors through `rigid`: `kdthat = rigid ∘ π₁`.
@@ -505,7 +503,7 @@ mechanism *projects* the loaded entity (ignoring the guide), then
 *rigidifies*. The factorization is trivial because `kdthat` is defined
 as `rigid loaded`. -/
 theorem kdthat_factors {W E : Type*} (loaded : E) (guide : E → W → Prop) :
-    kdthat loaded guide = rigid loaded :=
+    kdthat loaded guide = fun _ => loaded :=
   rfl
 
 /-- **The Separation Theorem.** The content square commutes but the
@@ -523,7 +521,7 @@ is a coequalizer of the two mechanism paths, but the projection
 distinguishes the two paths. The profile is genuinely new information
 not recoverable from the content. -/
 theorem mechanism_content_orthogonality {C W E : Type*}
-    (loaded : E) (desc : Intension W E) (guide : E → W → Prop) (cW : W)
+    (loaded : E) (desc : W → E) (guide : E → W → Prop) (cW : W)
     (hMatch : desc cW = loaded) :
     -- Content square commutes (same intension)...
     (dthatExpression (C := C) desc cW).character =
@@ -534,7 +532,7 @@ theorem mechanism_content_orthogonality {C W E : Type*}
   constructor
   · -- Commutativity: both paths through `rigid` agree
     ext _ w
-    simp only [dthatExpression, kdthatExpression, dthatW, kdthat, rigid, hMatch]
+    simp only [dthatExpression, kdthatExpression, dthatW, kdthat, hMatch]
   · -- Non-commutativity: profiles distinguish the paths
     intro heq
     have : (dthatExpression (C := C) desc cW).profile.designation =
@@ -550,36 +548,38 @@ fathers' work, the classical Fregean direction of semantic determination is
 — symbol → satisfaction → object. In the historical/referential account,
 the object determines the reference — object → signal → loaded symbol.
 
-The mathematical content of this reversal is a **section-retraction pair**:
-`rigid : E → Intension W E` is a section (right inverse) of world-evaluation
-`evalAt · w : Intension W E → E`.
+The mathematical content of this reversal is a **section-retraction pair**: the
+constant-intension embedding `fun x _ => x : E → W → E` is a section (right inverse) of
+evaluation at a world `(· w) : (W → E) → E`.
 
-- `evalAt w ∘ rigid = id` (`rigid_section`): The historical chain
-  (object → loaded name → evaluation) is lossless.
-- `rigid ∘ evalAt w ≠ id` on non-rigid intensions (`rigid_evalAt_lossy`):
-  The Fregean direction (intension → evaluate → re-embed) is lossy —
-  it discards world-variation.
+- Evaluating a constant intension returns the entity (`flowDiagramReversal`): the
+  historical chain (object → loaded name → evaluation) is lossless.
+- Re-embedding the value of a non-rigid intension does not return the intension
+  (`fregeDirectionLossy`): the Fregean direction (intension → evaluate → re-embed) is
+  lossy — it discards world-variation.
 
-This makes `E` a **retract** of `Intension W E`. The image of `rigid` —
-the rigid intensions — is isomorphic to `E`. Non-rigid intensions (descriptions)
-live in the ambient space but collapse under the retraction.
+This makes `E` a **retract** of `W → E`. The image of the embedding — the rigid
+intensions — is isomorphic to `E`. Non-rigid intensions (descriptions) live in the
+ambient space but collapse under the retraction.
 
 Consequences already formalized in this module:
-- `dthat_factors` / `kdthat_factors`: Both paths factor through the section `rigid`
+- `dthat_factors` / `kdthat_factors`: Both paths factor through the constant-intension
+  embedding
 - `informativeness_not_semantic`: The retraction annihilates modal information,
   so informativeness cannot be a semantic property of the retracted content
 - `mechanism_content_orthogonality`: The retraction coequalizes the two mechanism
   paths, but the profile is not in the retracted image -/
 
-/-- The flow diagram reversal as a retraction: `evalAt w ∘ rigid = id`.
+/-- The flow diagram reversal as a retraction: evaluating the constant intension at `x`
+returns `x`.
 
 Ch 1, §2.3: "this reversal of the flow diagram is a
 pattern that recurs in all four founding fathers' works on direct reference."
 Kripke's reversal for names (Ch 1), Donnellan's for descriptions (Ch 3),
 Kaplan's for demonstratives (Ch 2), Putnam's for common nouns (Ch 4). -/
 theorem flowDiagramReversal {W E : Type*} (w : W) :
-    (fun (x : E) => evalAt (rigid (W := W) x) w) = id :=
-  rigid_section w
+    (fun (x : E) => (fun _ : W => x) w) = id :=
+  rfl
 
 /-- The Fregean direction is lossy: non-rigid intensions (descriptions)
 cannot survive the round-trip through entity.
@@ -587,13 +587,14 @@ cannot survive the round-trip through entity.
 This is the mathematical content of "no entailments"
 thesis: once you project to the retracted image (rigid intensions / entities),
 the modal information that lived in the ambient intension space is gone.
-"The man drinking a martini" varies across worlds; `rigid (desc w)` does not.
+"The man drinking a martini" varies across worlds; the constant intension at `desc w`
+does not.
 The retraction annihilates the very information that would distinguish
 de re from de dicto readings. -/
 theorem fregeDirectionLossy {W E : Type*}
-    (desc : Intension W E) (w : W) (hVaries : ¬ IsRigid desc) :
-    rigid (desc w) ≠ desc :=
-  rigid_evalAt_lossy desc w hVaries
+    (desc : W → E) (w : W) (hVaries : ¬ IsRigid desc) :
+    (fun _ => desc w) ≠ desc :=
+  const_ne_of_not_isRigid hVaries w
 
 /-! ## The Russell-Partee-Kaplan Challenge (Ch 4, §3)
 

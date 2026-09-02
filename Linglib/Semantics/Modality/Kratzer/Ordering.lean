@@ -20,15 +20,6 @@ import Mathlib.Data.Set.Basic
 
 namespace Modality.Kratzer
 
-/-! The premise primitives live in `Intensional.Premise`; re-export
-them under `Modality.Kratzer` so the historical `Kratzer.foo` call
-style continues to work. The conversational-background primitives
-(`ConvBackground`, `ModalBase`, …) are defined directly in this namespace by
-`ConversationalBackground.lean`. -/
-
-export Intensional.Premise
-  (propExtension propIntersection followsFrom isConsistent isCompatibleWith)
-
 variable {W : Type*}
 
 /--
@@ -152,7 +143,7 @@ def accessibleWorlds (f : ModalBase W) (w : W) : Set W :=
 /-- Growing the modal base can only shrink the accessible worlds. -/
 theorem accessibleWorlds_anti {f f' : ModalBase W} {w : W} (h : f w ⊆ f' w) :
     accessibleWorlds f' w ⊆ accessibleWorlds f w :=
-  Intensional.Premise.propIntersection_anti_of_subset h
+  propIntersection_anti_of_subset h
 
 /-- The best accessible worlds: those no accessible world strictly
 betters. [kratzer-1981]'s official necessity is the limit-free

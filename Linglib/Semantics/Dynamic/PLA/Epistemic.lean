@@ -9,7 +9,7 @@ modality. Unlike assertoric updates, `might` and `must` are tests in the sense
 of [veltman-1996]: `might φ` passes an information state iff `φ` is consistent
 with it, `must φ` iff the state supports `φ`; neither eliminates possibilities.
 For de re vs de dicto distinctions, `PLA.Concept` instantiates
-`Intensional.Intension` at PLA possibilities: a way of identifying entities
+An intension at PLA possibilities: a way of identifying entities
 across assignment-witness pairs.
 
 ## Main definitions
@@ -53,7 +53,6 @@ This is also a TEST: it passes only if φ is certain.
 def Formula.must (φ : Formula) : Update E :=
   λ s => if s ⊫[M] φ then s else ∅
 
-
 /--
 Might as consistency test: might φ passes iff some possibility satisfies φ.
 -/
@@ -90,7 +89,6 @@ theorem must_iff_supports (φ : Formula) (s : InfoState E) :
     | inl hsup => simp only [if_pos hsup]
     | inr hemp => simp only [hemp, InfoState.empty_supports, ↓reduceIte]
 
-
 /--
 Testing doesn't change information (when it passes).
 -/
@@ -120,7 +118,6 @@ theorem must_subset (φ : Formula) (s : InfoState E) :
   · exact Set.Subset.rfl
   · exact Set.empty_subset s
 
-
 /--
 Asserting then testing: φ; might ψ passes iff φ-update leaves room for ψ.
 -/
@@ -132,7 +129,6 @@ Asserting then requiring: φ; must ψ passes iff φ-update supports ψ.
 -/
 theorem update_then_must (φ ψ : Formula) (s : InfoState E) :
     seq (φ.update M) (ψ.must M) s = ψ.must M (φ.update M s) := rfl
-
 
 /--
 Must idempotence: must (must φ) ≡ must φ
@@ -160,7 +156,6 @@ theorem might_idempotent (φ : Formula) (s : InfoState E) :
     simp only [Formula.update, InfoState.restrict, Set.sep_empty, Set.not_nonempty_empty,
                ↓reduceIte]
 
-
 /--
 If s supports φ, then might φ passes.
 -/
@@ -174,7 +169,6 @@ theorem supports_implies_might (φ : Formula) (s : InfoState E)
     simp only [Formula.update, InfoState.restrict, Set.mem_ofPred_eq]
     exact ⟨hp, hsup hp⟩
   simp only [if_pos hne]
-
 
 /--
 Modal duality: might φ passes iff must ¬φ fails (on nonempty states).
@@ -197,23 +191,22 @@ theorem might_iff_not_must_neg (φ : Formula) (s : InfoState E) (hs : s.Nonempty
     obtain ⟨p, hp, hsat⟩ := h
     exact ⟨p, (Formula.mem_update M φ s p.1 p.2).mpr ⟨hp, hsat⟩⟩
 
-
 /--
 A concept is a way of identifying entities across possibilities.
 
-PLA-specific instance of `Intensional.Intension`: the index is an
+An intension at PLA possibilities: the index is an
 `(Assignment E × WitnessSeq E)` pair (a PLA possibility), and the value
 is an entity. This is the entity-side counterpart of Abusch 1997's
-`Intension (KContext W E P T) T` time-concept (`Semantics/Tense/DeRe.lean`).
+`KContext W E P T → T` time-concept (`Semantics/Tense/DeRe.lean`).
 -/
-abbrev Concept (E : Type*) := Intensional.Intension (Assignment E × WitnessSeq E) E
+abbrev Concept (E : Type*) := Assignment E × WitnessSeq E → E
 
 /--
 A rigid concept identifies the same entity in all possibilities.
-Alias for `Intensional.Intension.IsRigid` at the PLA index.
+`Intensional.IsRigid` at the PLA index.
 -/
 abbrev Concept.isRigid (c : Concept E) : Prop :=
-  Intensional.Intension.IsRigid c
+  Intensional.IsRigid c
 
 /--
 A descriptive concept may identify different entities.
@@ -223,12 +216,12 @@ def Concept.isDescriptive (c : Concept E) : Prop :=
 
 /--
 Constant concept: always refers to the same entity (proper names).
-Alias for `Intensional.Intension.rigid` at the PLA index.
+The constant intension at the PLA index.
 -/
-abbrev Concept.const (e : E) : Concept E := Intensional.Intension.rigid e
+abbrev Concept.const (e : E) : Concept E := fun _ => e
 
 theorem const_is_rigid (e : E) : (Concept.const e).isRigid :=
-  Intensional.Intension.rigid_isRigid e
+  Intensional.isRigid_const e
 
 /--
 Variable concept: looks up a variable in the assignment.
@@ -239,7 +232,6 @@ def Concept.fromVar (i : VarIdx) : Concept E := λ p => p.1 i
 Pronoun concept: looks up a pronoun in the witness sequence.
 -/
 def Concept.fromPron (i : PronIdx) : Concept E := λ p => p.2 i
-
 
 /-!
 ## Relationship to [kratzer-1981] Modal Semantics

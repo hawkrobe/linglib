@@ -161,7 +161,7 @@ witnesses both at once: the raincoat evidence is causally downstream of the
 rain, and the kernel `{wearingRaincoat}` does not settle `isRaining`. -/
 
 open Modality
-open Intensional.Premise (propIntersection)
+open Modality.Kratzer (propIntersection)
 open Zheng2025 (World wearingRaincoat isRaining raincoatK
   raincoat_nandao_felicitous)
 

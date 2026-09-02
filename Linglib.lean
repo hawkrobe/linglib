@@ -1723,9 +1723,7 @@ import Linglib.Semantics.Homogeneity.Usable
 import Linglib.Semantics.Iconicity
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Index
-import Linglib.Semantics.Intensional.Premise
 import Linglib.Semantics.Intensional.Rigidity
-import Linglib.Semantics.Intensional.Situations
 import Linglib.Semantics.Intensional.Variables
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Modality.ActualityEntailments
@@ -1741,6 +1739,7 @@ import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Modality.Kratzer.Ordering
+import Linglib.Semantics.Modality.Kratzer.Premise
 import Linglib.Semantics.Modality.ModalBaseKind
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Semantics.Modality.Narrog
