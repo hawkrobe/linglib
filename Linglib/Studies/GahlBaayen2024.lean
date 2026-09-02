@@ -12,8 +12,8 @@ The paper reanalyses the Switchboard durations of the 409 English homophones of 
 (*time* ~ *thyme*) from a discriminative lexicon (`DiscriminativeLexicon.Linear`, [baayen-2019]):
 linear maps between triphone and embedding vectors, with no stored words and so no word to bear
 a frequency. Frequency is treated as composite. *Practice* is frequency-informed learning of the
-production map `G` (`IsFILTrainedOn`, [heitmeier-chuang-axen-baayen-2024]); *contextual
-independence* is the diagonal `d` of a word-to-word map `W` with `UW = U` over an
+production map `G` (`IsTrainedOn` under token frequencies, [heitmeier-chuang-axen-baayen-2024]);
+*contextual independence* is the diagonal `d` of a word-to-word map `W` with `UW = U` over an
 utterance-by-word matrix `U`, transformed to `Cind` by (9); *semantic support for form* is the
 support a word's own triphones receive from its meaning, the diagonal of `T = ĈCᵀ` (A5),
 `semSupWord` at a word's meaning and form. In Gaussian location-scale GAMs the predictors
@@ -25,18 +25,18 @@ scope, and the paper derives nothing formal from its Pearson-correlation homopho
 What is stated is the paper's own toy lexicon *time, lime, thyme* (§2.3), worked through the
 substrate's training theory. The endstate map (4) and the frequency-informed map for token
 frequencies 100, 10, 1 (A3) are the closed forms `(SᵀS)⁻¹SᵀC` and `(SᵀQS)⁻¹SᵀQC` of the normal
-equations (A2), (A4), hence `IsELTrainedOn` and `IsFILTrainedOn`; the support matrix of (A6)
-and both columns of Table 1 come out exactly, the frequency-informed column being `√frequency`
-times the support the learned map alone gives, as it is the fitted value of the `√Q`-scaled
-regression; the homophones get distinct predicted forms from identical triphones (Fig. A2); and
-the word-to-word map of (6) is the pseudoinverse solution `Uᵀ(UUᵀ)⁻¹U` of `UW = U`, an
-orthogonal projector, whose diagonal therefore lies in `[0, 1]` and dominates its rows as the
-paper observes.
+equations (A2), (A4), hence `IsELTrainedOn` and `IsTrainedOn` under `freq`; the support matrix
+of (A6) and both columns of Table 1 come out exactly, the frequency-informed column being
+`√frequency` times the support the learned map alone gives, as it is the fitted value of the
+`√Q`-scaled regression; the homophones get distinct predicted forms from identical triphones
+(Fig. A2); and the word-to-word map of (6) is the pseudoinverse solution `Uᵀ(UUᵀ)⁻¹U` of
+`UW = U`, an orthogonal projector, whose diagonal therefore lies in `[0, 1]` and dominates its
+rows as the paper observes.
 
 ## Main results
 
-* `endstate_isELTrainedOn`, `frequencyInformed_isFILTrainedOn`: the paper's mappings are the
-  substrate's ERM solutions.
+* `endstate_isELTrainedOn`, `frequencyInformed_isTrainedOn`: the paper's mappings are trained
+  in the substrate's sense, by the closed forms of the normal equations.
 * `supportMatrix_endstate`, `semanticSupport_endstate`, `semanticSupportFIL_eq`: (A6) and
   Table 1 exactly; practice reverses the order of *time* and *thyme*
   (`semanticSupport_endstate_time_lt_thyme`, `semanticSupportFIL_thyme_lt_time`).
@@ -93,8 +93,8 @@ theorem toyForms_eq :
 two arbitrary semantic dimensions (`0.1 0.3; 0.6 0.2; 1.1 0.6`), and the triphone matrix `C`
 of (2). *time* and *thyme* share a form row. -/
 def toy : TrainingExperience 3 6 2 where
-  meanings := ![![1 / 10, 3 / 10], ![6 / 10, 2 / 10], ![11 / 10, 6 / 10]]
-  forms := toyForms
+  S := !![1 / 10, 3 / 10; 6 / 10, 2 / 10; 11 / 10, 6 / 10]
+  C := Matrix.of toyForms
 
 /-- *time*, the first row of the toy lexicon. -/
 abbrev time : Fin 3 := 0
@@ -123,8 +123,7 @@ theorem endstateG_eq :
   ext i j
   fin_cases i <;> fin_cases j <;>
     norm_num [endstateG, Matrix.inv_def, Ring.inverse_eq_inv', Matrix.adjugate_fin_two,
-      Matrix.det_fin_two, Matrix.mul_apply, Fin.sum_univ_succ, toy, toyForms_eq,
-      TrainingExperience.S, TrainingExperience.C]
+      Matrix.det_fin_two, Matrix.mul_apply, Fin.sum_univ_succ, toy, toyForms_eq]
 
 /-- The DLM at the endstate of learning. -/
 def endstate : Linear ℝ (FormVec 6) (MeaningVec 2) where
@@ -144,27 +143,29 @@ theorem frequencyInformedG_eq :
   fin_cases i <;> fin_cases j <;>
     norm_num [frequencyInformedG, Matrix.inv_def, Ring.inverse_eq_inv', Matrix.adjugate_fin_two,
       Matrix.det_fin_two, Matrix.mul_apply, Fin.sum_univ_succ, toy, toyForms_eq, freq,
-      TrainingExperience.S, TrainingExperience.C, FrequencyVector.Q, Matrix.diagonal]
+      FrequencyVector.Q, Matrix.diagonal]
 
 /-- The DLM after frequency-informed learning. -/
 def frequencyInformed : Linear ℝ (FormVec 6) (MeaningVec 2) where
   comprehension := 0
   production := Matrix.toLin' frequencyInformedGᵀ
 
-/-- The endstate mapping is the uniform-weight ERM solution, by the closed form of the normal
+/-- The endstate mapping is trained under uniform weights, by the closed form of the normal
 equations (A2): `SᵀS` is invertible. -/
-theorem endstate_isELTrainedOn : endstate.IsELTrainedOn toy :=
-  isELSolution_closedForm toy <| by
-    rw [Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero]
-    norm_num [Matrix.det_fin_two, Matrix.mul_apply, Fin.sum_univ_succ, toy, TrainingExperience.S]
+theorem endstate_isELTrainedOn : endstate.IsELTrainedOn toy := by
+  rw [Linear.IsELTrainedOn, Linear.IsTrainedOn, endstate, Linear.productionMatrix_mk]
+  refine isELTrained_closedForm toy ?_
+  rw [Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero]
+  norm_num [Matrix.det_fin_two, Matrix.mul_apply, Fin.sum_univ_succ, toy]
 
-/-- The frequency-informed mapping is the ERM solution under `freq`, by the closed form of the
+/-- The frequency-informed mapping is trained under `freq`, by the closed form of the
 `√Q`-scaled normal equations (A4): `SᵀQS` is invertible. -/
-theorem frequencyInformed_isFILTrainedOn : frequencyInformed.IsFILTrainedOn toy freq :=
-  isERMSolution_closedForm toy freq <| by
-    rw [Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero]
-    norm_num [Matrix.det_fin_two, Matrix.mul_apply, Fin.sum_univ_succ, toy, freq,
-      TrainingExperience.S, FrequencyVector.Q, Matrix.diagonal]
+theorem frequencyInformed_isTrainedOn : frequencyInformed.IsTrainedOn toy freq := by
+  rw [Linear.IsTrainedOn, frequencyInformed, Linear.productionMatrix_mk]
+  refine isTrained_closedForm toy freq ?_
+  rw [Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero]
+  norm_num [Matrix.det_fin_two, Matrix.mul_apply, Fin.sum_univ_succ, toy, freq,
+    FrequencyVector.Q, Matrix.diagonal]
 
 /-! ### Semantic support for form -/
 
@@ -172,7 +173,7 @@ theorem frequencyInformed_isFILTrainedOn : frequencyInformed.IsFILTrainedOn toy 
 each word's meaning (row). -/
 def supportMatrix {m n d : ℕ} (D : Linear ℝ (FormVec n) (MeaningVec d))
     (data : TrainingExperience m n d) : Matrix (Fin m) (Fin m) ℝ :=
-  Matrix.of fun i k => semSupWord D (data.meanings i) (data.forms k)
+  Matrix.of fun i k => semSupWord D (data.S i) (data.C k)
 
 /-- *Semantic support for form*: the diagonal of `T`, a word's support for its own form. -/
 def semanticSupport {m n d : ℕ} (D : Linear ℝ (FormVec n) (MeaningVec d))
@@ -206,13 +207,13 @@ theorem semanticSupport_endstate_time_lt_thyme :
 the toy lexicon (Table 1, (A7)): the predicted forms are the fitted values `√Q S G` of the
 `√Q`-scaled regression, paired with the words' own unscaled triphone vectors. -/
 def semanticSupportFIL (i : Fin 3) : ℝ :=
-  semSupWord frequencyInformed ((toy.sqrtScale freq).meanings i) (toy.forms i)
+  semSupWord frequencyInformed ((toy.sqrtScale freq).S i) (toy.C i)
 
 /-- The `√frequency` factor made explicit: the paper's frequency-informed support is
 `√(freq i)` times the support the learned map alone gives. -/
 theorem semanticSupportFIL_eq_sqrt_mul (i : Fin 3) :
     semanticSupportFIL i = Real.sqrt (freq i) * semanticSupport frequencyInformed toy i := by
-  simp [semanticSupportFIL, semanticSupport, supportMatrix, TrainingExperience.sqrtScale]
+  simp [semanticSupportFIL, semanticSupport, supportMatrix]
 
 /-- The learned frequency-informed map alone still supports *thyme* most:
 `3.981, 3.151, 6.225`. -/
@@ -243,7 +244,7 @@ their meaning difference lies outside the production kernel, the neutralization 
 (`LinearMap.sub_mem_ker_iff`), so their triphones receive different support
 ((A3), Fig. A2; §6.2). -/
 theorem time_sub_thyme_notMem_ker :
-    toy.meanings time - toy.meanings thyme ∉ LinearMap.ker endstate.production := fun h => by
+    toy.S time - toy.S thyme ∉ LinearMap.ker endstate.production := fun h => by
   have := congrFun (LinearMap.sub_mem_ker_iff.mp h) 0
   norm_num [toy, toyForms_eq, endstate, endstateG_eq, time, thyme, Matrix.cons_val_two,
     Matrix.toLin'_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_succ] at this

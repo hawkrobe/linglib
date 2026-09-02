@@ -82,9 +82,9 @@ theorem semSup_lt_of_forms_lt
     {q : FrequencyVector m}
     (hD : D.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
     {suffixIdx : Fin TriphoneCount} {w : GermanWord2VecVec →ₗ[ℝ] ℝ}
-    (hw : ∀ i, w (data.meanings i) = data.forms i suffixIdx)
-    {i k : Fin m} (hik : data.forms i suffixIdx < data.forms k suffixIdx) :
-    semSup D (data.meanings i) suffixIdx < semSup D (data.meanings k) suffixIdx := by
+    (hw : ∀ i, w (data.S i) = data.C i suffixIdx)
+    {i k : Fin m} (hik : data.C i suffixIdx < data.C k suffixIdx) :
+    semSup D (data.S i) suffixIdx < semSup D (data.S k) suffixIdx := by
   rw [hD.semSup_eq_of_decodable hq hw i, hD.semSup_eq_of_decodable hq hw k]
   exact hik
 

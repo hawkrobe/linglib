@@ -21,7 +21,8 @@ fitted values, and the solution coset.
 * `isLeastSquares_iff_adjoint_eq_zero`, `isLeastSquares_iff_inner_eq_zero`: the **normal
   equations** — the adjoint kills the residual, equivalently the residual is orthogonal to the
   range of `A`.
-* `exists_isLeastSquares`: solutions exist.
+* `exists_isLeastSquares`, `isLeastSquares_of_map_eq`: solutions exist, and an interpolating
+  point is one.
 * `IsLeastSquares.map_eq`, `IsLeastSquares.iff_map_eq`: fitted values are unique, and the
   solutions are exactly the preimages of the fitted value.
 -/
@@ -37,7 +38,13 @@ variable {E F : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 `‖b − A y‖`. -/
 def IsLeastSquares (x : E) : Prop := IsMinOn (fun y => ‖b - A y‖) Set.univ x
 
-variable {A b} [FiniteDimensional ℝ E] [FiniteDimensional ℝ F] {x x' : E}
+variable {A b} {x x' : E}
+
+/-- An interpolating point is a least-squares solution. -/
+theorem isLeastSquares_of_map_eq (h : A x = b) : IsLeastSquares A b x :=
+  isMinOn_univ_iff.mpr fun y => by simp [h]
+
+variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ F]
 
 /-- The normal equations in adjoint form: `x` solves iff the adjoint kills the residual. -/
 theorem isLeastSquares_iff_adjoint_eq_zero :

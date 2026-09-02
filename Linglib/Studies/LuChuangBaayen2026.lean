@@ -83,11 +83,12 @@ the centroid of `P`'s embeddings exactly to the centroid of `P`'s target contour
 theorem production_centroid_eq_of_decodable {m : ℕ} {D : TaiwanMandarinDLM}
     {data : TrainingExperience m PitchSampleCount CKIPGPT2HiddenDim} (hD : D.IsELTrainedOn data)
     {P : Finset (Fin m)} {w : ContextualEmbedding →ₗ[ℝ] ℝ}
-    (hw : ∀ i, w (data.meanings i) = if i ∈ P then 1 else 0) :
-    D.production (centroid P data.meanings) = centroid P data.forms := by
-  have h := IsERMSolution.sum_smul_sub_eq_zero hD w
+    (hw : ∀ i, w (data.S i) = if i ∈ P then 1 else 0) :
+    D.production (centroid P data.S) = centroid P data.C := by
+  have h := IsTrained.sum_smul_sub_eq_zero hD w
   simp only [Pi.one_apply, NNReal.coe_one, one_mul, hw, ite_smul, one_smul, zero_smul,
-    Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_sub_distrib, sub_eq_zero] at h
+    Finset.sum_ite_mem, Finset.univ_inter, Linear.mul_productionMatrix_apply,
+    Finset.sum_sub_distrib, sub_eq_zero] at h
   simp [centroid, map_sum, h]
 
 end LuChuangBaayen2026
