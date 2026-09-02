@@ -21,8 +21,9 @@ experience ([heitmeier-2024]).
 
 * `TrainingExperience`, `FrequencyVector`, `weightedLoss`, `IsERMSolution`, `IsELSolution`.
 * `isERMSolution_iff_isLeastSquares`, `exists_isERMSolution`.
-* `isERMSolution_iff_inner_eq_zero`, `isERMSolution_iff_forall_coord`: the normal equations,
-  against every direction and in coordinates.
+* `isERMSolution_iff_inner_eq_zero`, `isERMSolution_iff_forall_coord`,
+  `IsERMSolution.sum_smul_sub_eq_zero`: the normal equations, against every direction, in
+  coordinates, and in vector form.
 * `IsERMSolution.apply_meanings_eq`, `apply_eq_of_mem_span`, `exists_apply_ne`,
   `existsUnique_isERMSolution_iff`: fitted values are unique exactly on the span of experience.
 * `isELSolution_sqrtScale_iff`: FIL under `q` is EL on `TrainingExperience.sqrtScale`.
@@ -219,6 +220,16 @@ theorem isERMSolution_iff_forall_coord :
     rw [Finset.sum_comm]
     refine Finset.sum_eq_zero fun k _ => ?_
     rw [← Finset.sum_mul, h j k, zero_mul]
+
+/-- The normal equations in vector form: the `q`-weighted residuals, weighted further by any
+linear functional of the meanings, sum to zero. -/
+theorem IsERMSolution.sum_smul_sub_eq_zero (hG : IsERMSolution data q G)
+    (w : MeaningVec d →ₗ[ℝ] ℝ) :
+    ∑ i, (q i * w (data.meanings i)) • (G (data.meanings i) - data.forms i) = 0 := by
+  funext j
+  have h := isERMSolution_iff_inner_eq_zero.1 hG (w.smulRight (Pi.single j 1))
+  simpa [dotProduct_smul, dotProduct_single, Finset.sum_apply, mul_assoc, mul_comm,
+    mul_left_comm] using h
 
 /-! ### Fitted values -/
 
