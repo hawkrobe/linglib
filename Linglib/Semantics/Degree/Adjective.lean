@@ -106,21 +106,19 @@ instance : DecidablePred AdjectiveClass.IsRelative :=
   fun c => decEq c .relativeGradable
 
 
-/-- The positive-form standards that Interpretive Economy *admits* for a scale.
-IE maximises the contribution of conventional (scalar) meaning, so the
-contextual/relative standard is admitted only on a totally open scale (which has
-no endpoint to use). A one-sided closed scale admits its single endpoint; a
-*totally closed* scale admits *both* endpoint standards — IE rules out the
-relative reading but is silent on the min/max choice ([kennedy-2007] eq. (66),
-the *opaque/transparent* and *open/exposed* cases of eq. (67)–(68)). -/
-def ieAdmits : Boundedness → PositiveStandard → Prop
-  | .open_,        s => s = .contextual
-  | .lowerBounded, s => s = .minEndpoint
-  | .upperBounded, s => s = .maxEndpoint
-  | .closed,       s => s = .minEndpoint ∨ s = .maxEndpoint
+/-- The positive-form standards Interpretive Economy admits for a scale ([kennedy-2007]
+§4.2–§4.3): a maximal degree stands out on a scale with a maximum and a non-minimal degree on
+one with a minimum, so an endpoint standard is available exactly where the scale has that
+endpoint; the contextual standard, which context must supply, survives IE (66) only on a
+totally open scale. A totally closed scale therefore admits both endpoints ((67)–(68)). -/
+def ieAdmits (b : Boundedness) : PositiveStandard → Prop
+  | .contextual  => b = .open_
+  | .minEndpoint => b.HasMin
+  | .maxEndpoint => b.HasMax
+  | .functional  => False
 
 instance (b : Boundedness) (s : PositiveStandard) : Decidable (ieAdmits b s) := by
-  cases b <;> simp only [ieAdmits] <;> infer_instance
+  cases s <;> simp only [ieAdmits] <;> infer_instance
 
 /-- The out-of-context *default* positive standard. Where Interpretive Economy
 admits a unique standard (open / one-sided closed scales) this is forced; for a
@@ -149,23 +147,22 @@ theorem interpretiveEconomy_closed : interpretiveEconomy .closed = .maxEndpoint 
 /-- The default standard is always among those Interpretive Economy admits. -/
 theorem ieAdmits_interpretiveEconomy (b : Boundedness) :
     ieAdmits b (interpretiveEconomy b) := by
-  cases b <;> simp [ieAdmits, interpretiveEconomy]
+  cases b <;> decide
 
 /-- Interpretive variability of totally closed scales: IE admits the **minimum**
 standard, so the `interpretiveEconomy` maximum default is a pragmatic preference,
 not a semantic determination ([kennedy-2007] eq. (67)–(68): *opaque/transparent*,
 *open/exposed*). -/
-theorem ieAdmits_closed_minEndpoint : ieAdmits .closed .minEndpoint := Or.inl rfl
+theorem ieAdmits_closed_minEndpoint : ieAdmits .closed .minEndpoint := trivial
 
 /-- A totally closed scale also admits the maximum standard. -/
-theorem ieAdmits_closed_maxEndpoint : ieAdmits .closed .maxEndpoint := Or.inr rfl
+theorem ieAdmits_closed_maxEndpoint : ieAdmits .closed .maxEndpoint := trivial
 
 
 /-- Interpretive Economy rules out the relative (contextual) standard whenever the scale has
 an endpoint. -/
 theorem not_ieAdmits_contextual_of_ne_open {b : Boundedness} (h : b ≠ .open_) :
-    ¬ ieAdmits b .contextual := by
-  cases b <;> simp_all [ieAdmits]
+    ¬ ieAdmits b .contextual := h
 
 /-- A boundedness is *Class A* (relative) iff its default standard requires a
 comparison class — i.e. iff the scale is open. Kennedy's *tall*, *expensive*,
@@ -315,10 +312,10 @@ theorem standard_ieAdmits (g : GradableAdjective)
   unfold standard scaleType
   rw [h]
   cases hd : g.dimension with
-  | none => simp [ieAdmits]
+  | none => trivial
   | some d =>
     cases hb : d.boundedness <;> cases hl : g.isLowerEndpoint <;>
-      simp [ieAdmits, interpretiveEconomy, hb]
+      simp [ieAdmits, interpretiveEconomy, hb, Boundedness.HasMin, Boundedness.HasMax]
 
 /-- Kennedy's adjective class — derived from `standard`, not stored; `.nonGradable`
     exactly when there is no `dimension` ([kennedy-2007], [kennedy-mcnally-2005]). -/
