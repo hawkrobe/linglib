@@ -1,35 +1,31 @@
 import Linglib.Syntax.Minimalist.Merge.Basic
-import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Linglib.Syntax.Minimalist.Workspace.Conservation
 
 /-!
-# Minimal Search: the generic (cut-policy-parameterized) Merge operator
-[marcolli-chomsky-berwick-2025]
+# Minimal Search as a weighting of Merge
 
-MCB's Merge variants and the three coproducts (Δ^ρ/Δ^c/Δ^d) share one operator
-shape `M = ⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ Δ`, differing only in the coproduct `Δ`.
-`mergeOpG cuts` parameterizes the operator over the cut enumeration (via
-`comulAlgHomNG`), recovering the Δ^ρ `mergeOp` as the instance
-`cuts := cutSummandsN` (definitional) and defining the Δ^c Merge `mergeOpC τ` as
-`cuts := cutSummandsCN τ`. This is the operator-level companion to the
-already-generic cut layer (`cutSummandsG`).
-
-The Δ^c instance is the home of the **Minimal-Search ε arc** (MCB §1.5,
-Prop 1.5.1): the trace coproduct is where extraction depth is recoverable
-(`Nonplanar.Cut.depthC`), so the ε-weighted graft and the ε → 0
-Sideward-elimination belong on `mergeOpC`, not the Δ^ρ `mergeOp`.
+The ε-weighted Merge `M^ε = ⊔ ∘ (Bᵉ ⊗ id) ∘ δ ∘ Δ` scales the graft by `ε^c`, where `c` is the
+Minimal-Search cost of the merge. Since `mergePost` is linear and the graft is its only creation,
+this is the Δ^c Merge `mergeOpC` scaled by `epsWeight ε c`. The net cost is the signed sum of the
+operands' depth-costs (`Cut.extractionCost`, `Cut.quotientCost`): External Merge costs `0`;
+Internal Merge's extraction `+d` and its own quotient's `−d` cancel; Sideward Merge's extraction
+is uncancelled, so `c = d > 0`. At `ε = 0` External and Internal Merge survive and Sideward Merge
+is annihilated.
 
 ## Main definitions
 
-* `mergeOpG cuts lbl S S'` — the generic Merge operator.
-* `mergeOp_eq_G` — the Δ^ρ `mergeOp` is `mergeOpG cutSummandsN` (definitional).
-* `mergeOpC τ lbl S S'` — the Δ^c Merge operator.
-* `epsWeight`, `emNetCost`/`imNetCost`/`swNetCost` — the Minimal-Search ε-weight
-  and the per-merge net costs (EM/IM = 0, Sideward > 0).
-* `mergeOpCEps τ ε c` — the ε-weighted Δ^c Merge (`ε^c • mergeOpC`).
-* `mergeOpCEps_zero_em`, `mergeOpCEps_zero_im`, `mergeOpCEps_zero_sideward` —
-  **MCB Proposition 1.5.1**: at ε → 0, External and Internal Merge survive
-  (`1 • M = M`), Sideward Merge vanishes (`0 • M = 0`).
+* `Minimalist.Merge.epsWeight`: the weight `ε^c`.
+* `Minimalist.Merge.emNetCost`, `imNetCost`, `swNetCost`: the per-case net costs.
+* `Minimalist.Merge.mergeOpCEps`: the ε-weighted Δ^c Merge.
+
+## Main results
+
+* `Minimalist.Merge.mergeOpCEps_zero_em`, `mergeOpCEps_zero_im`, `mergeOpCEps_zero_sideward`: the
+  ε → 0 limit keeps External and Internal Merge and kills Sideward Merge.
+
+## References
+
+* [marcolli-chomsky-berwick-2025], §1.5 (Proposition 1.5.1)
 -/
 
 namespace Minimalist.Merge
@@ -37,51 +33,9 @@ namespace Minimalist.Merge
 open scoped TensorProduct
 open RoseTree RoseTree.Nonplanar ConnesKreimer
 
-variable {R : Type*} [CommSemiring R] {α : Type*}
+variable {R : Type*} [CommSemiring R] {α β : Type*}
 
-/-- The **generic Merge operator** `M_{S,S'}^{cuts}`, parameterized by the cut
-    enumeration `cuts`: `mergePost lbl S S' ∘ comulAlgHomNG cuts`. The
-    coproduct-agnostic post-chain `mergePost` (graft `B`, δ-projection, and
-    multiplication `⊔`) is shared; only the coproduct `comulAlgHomNG cuts`
-    varies. -/
-noncomputable def mergeOpG [DecidableEq (Nonplanar α)]
-    (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α))
-    (lbl : α) (S S' : Nonplanar α) :
-    ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
-  mergePost (R := R) (α := α) lbl S S' ∘ₗ (comulAlgHomNG cuts).toLinearMap
-
-/-- The Δ^ρ Merge operator `mergeOp` is the generic operator at
-    `cuts := cutSummandsN` — definitional, since `comulAlgHomN = comulAlgHomNG
-    cutSummandsN`. -/
-theorem mergeOp_eq_G [DecidableEq (Nonplanar α)] (lbl : α) (S S' : Nonplanar α) :
-    mergeOp (R := R) lbl S S' = mergeOpG (R := R) cutSummandsN lbl S S' := rfl
-
-/-- The **Δ^c (trace) Merge operator** `mergeOpC τ`, the generic operator at
-    `cuts := cutSummandsCN τ`. Unlike the Δ^ρ `mergeOp`, this coproduct's
-    quotients carry a trace leaf at each cut site at exactly the cut depth, so
-    the Minimal-Search cost `Cut.depthC` is recoverable — making `mergeOpC` the
-    faithful home of MCB's ε-weighted Merge (§1.5). -/
-noncomputable def mergeOpC {β : Type*} [DecidableEq (Nonplanar (α ⊕ β))]
-    (τ : Nonplanar (α ⊕ β) → β) (lbl : α ⊕ β) (S S' : Nonplanar (α ⊕ β)) :
-    ConnesKreimer R (Nonplanar (α ⊕ β)) →ₗ[R] ConnesKreimer R (Nonplanar (α ⊕ β)) :=
-  mergeOpG (R := R) (cutSummandsCN τ) lbl S S'
-
-/-! ## The Minimal-Search ε arc (MCB §1.5, Prop 1.5.1)
-
-The ε-weighted Merge `M^ε = ⊔ ∘ (Bᵉ ⊗ id) ∘ δ ∘ Δ` (eq 1.5.1) scales the graft
-`Bᵉ(α⊔β) = ε^{c(𝔐(α,β))} B(α⊔β)` (eq 1.5.2) by the Minimal-Search cost `ε^c`.
-Since `mergePost` is linear and the graft is its only creation, scaling the
-graft by `ε^c` equals scaling the whole operator: `mergeOpCEps = ε^c • mergeOpC`.
-The net cost `c` is the sum of the two operands' signed depth-costs (MCB rules
-1–2, `Nonplanar.Cut.extractionCost`/`quotientCost`):
-
-* **EM** `𝔐(T_i, T_j)`: both whole, `c = 0`.
-* **IM** `𝔐(T_v, T_i/T_v)`: extracted crown `+d` and its own quotient `−d`
-  cancel, `c = 0`.
-* **Sideward** `𝔐(T_v, T')`: the crown's `+d` is uncancelled (no quotient
-  operand), `c = d > 0`.
-
-At ε → 0, `ε^0 = 1` keeps EM/IM, `ε^{d>0} = 0` drops Sideward. -/
+/-! ### The weight -/
 
 /-- The **Minimal-Search ε-weight** of a merge with net cost `c`: `ε^c`
     (MCB eq 1.5.2). -/
@@ -94,14 +48,7 @@ theorem epsWeight_zero_of_pos {c : ℕ} (hc : 0 < c) : epsWeight (0 : R) c = 0 :
 
 @[simp] theorem epsWeight_one (c : ℕ) : epsWeight (1 : R) c = 1 := one_pow c
 
-end Minimalist.Merge
-
-namespace Minimalist.Merge
-
-open scoped TensorProduct
-open RoseTree RoseTree.Nonplanar ConnesKreimer
-
-variable {R : Type*} [CommSemiring R] {α β : Type*}
+/-! ### Net costs and the weighted operator -/
 
 /-- **External Merge net cost** (MCB rule 4, whole operands): `0`. -/
 def emNetCost : ℕ := 0

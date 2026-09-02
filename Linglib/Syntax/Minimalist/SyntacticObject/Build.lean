@@ -180,5 +180,17 @@ example : (lexLeaf (mkTraceToken 0)).getLIToken = some (mkTraceToken 0) := by de
 example : demoVP.leafCount = 2 ∧ demoVP.nodeCount = 1 := by decide
 /-- The trace leaf is recognized; a lexical leaf is not a trace. -/
 example : isTrace traceLeaf ∧ ¬ isTrace (lexLeaf (mkTraceToken 0)) := by decide
+/-- A bare binary node over a lexical leaf and a bare trace, the shape of an Internal-Merge
+    result, is a syntactic object. -/
+example :
+    IsSO (Nonplanar.mk (.node (Sum.inr ())
+      [.leaf (Sum.inl (mkTraceToken 0)), .leaf (Sum.inr ())])) := by decide
+/-- A lexical item with children is rejected: lexical items are leaves. -/
+example :
+    ¬ IsSO (Nonplanar.mk (.node (Sum.inl (mkTraceToken 0)) [.leaf (Sum.inr ())])) := by decide
+/-- A ternary bare node is rejected: syntactic objects are binary. -/
+example :
+    ¬ IsSO (Nonplanar.mk (.node (Sum.inr ())
+      [.leaf (Sum.inr ()), .leaf (Sum.inr ()), .leaf (Sum.inr ())])) := by decide
 
 end Minimalist

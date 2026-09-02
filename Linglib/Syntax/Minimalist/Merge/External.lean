@@ -1,54 +1,35 @@
 import Linglib.Syntax.Minimalist.Merge.Basic
-import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Workspace.DeletionConservation
 import Linglib.Core.Combinatorics.RootedTree.CutAvoiding
 import Linglib.Core.Algebra.RootedTree.HopfAlgebra
-import Linglib.Core.Data.RoseTree.DecEq
 
 /-!
-# External Merge bridge: algebraic ↔ linguistic
-[marcolli-chomsky-berwick-2025]
+# External Merge on the algebraic carrier
 
-Realizes M-C-B §1.4 Lemma 1.4.1 (External Merge) at the algebraic level on the
-canonical carrier `ConnesKreimer R (Nonplanar α)` and bridges to linguistic
-`Step.emR`/`Step.emL`.
+External Merge (Lemma 1.4.1) on the canonical carrier `ConnesKreimer R (Nonplanar α)`: for a pair
+`(S, S') : Nonplanar α` and a root label `lbl`, `mergeOp lbl S S'` sends the workspace
+`of' {S, S'}` to `of' {Nonplanar.node lbl {S, S'}}` (`mergeOp_pair`), and on a workspace with a
+residual part `F̂` avoiding the cuts that extract `S` or `S'`, it factors through the spectator
+components (`mergeOp_factor_out_singleton`, `mergeOp_pair_residual`). The carrier-level form on
+`SyntacticObject` is `SyntacticObject.merge_toForest` in `Merge/SyntacticObject.lean`.
 
-## Contents
-
-**Lemma 1.4.1, F̂ = ∅ subcase** (`mergeOp_pair`). For any pair
-`(S, S') : Nonplanar α` and any root label `lbl`, `mergeOp lbl S S'` applied to
-`of' {S, S'}` yields `of' {Nonplanar.node lbl {S, S'}}`. Proof: expand the merge
-coproduct `Δ^ρ({S, S'}) = comulTreeN S * comulTreeN S'` (`comulForestN_cons`),
-distribute the prim/cut split of each factor, and evaluate the 4 cross-terms via
-`mergePost_basis_tensor`. Only the `prim × prim` cross-term survives; the other
-three vanish because no proper cut extracts a whole tree as its crown
-(`cutSummandsN_crown_ne_singleton`) and vertex conservation
-(`cutSummandsN_numNodes`) forbids two crowns from reassembling `{S, S'}`.
-
-**Lemma 1.4.1 with residual workspace F̂** (`mergeOp_factor_out_singleton`,
-`mergeOp_pair_residual`, MCB "Case 1"). Under `CutAvoidingForest ({S, S'}) F̂`
-(the `cutSummandsN`-based disjointness predicate: each
-`T ∈ F̂` differs from `S, S'` and no Δ^ρ cut of `T` extracts either as a crown),
-Merge factors through multiplication by the spectator components `of' {T}`; an
-induction on F̂ assembles the full Case-1 result. `mergeOp_factor_out_singleton`
-is the inductive step: `mergeOp lbl S S' (of' {T} * w) = of' {T} * mergeOp lbl S S'
-w`, isolating the surviving empty-cut summand of `comulTreeN T` via
+The proof of `mergeOp_pair` expands the merge coproduct
+`Δ^ρ({S, S'}) = comulTreeN S * comulTreeN S'`, distributes the primitive-plus-cut split of each
+factor, and evaluates the four cross-terms via `mergePost_basis_tensor`; only the primitive ×
+primitive term survives, the others vanishing because no proper cut extracts a whole tree as its
+crown (`cutSummandsN_crown_ne_singleton`) and vertex conservation (`cutSummandsN_numNodes`)
+forbids two crowns from reassembling `{S, S'}`. The residual case is an induction on `F̂` under
+`CutAvoidingForest`, isolating the surviving empty-cut summand of `comulTreeN T` via
 `cutSummandsN_filter_card_zero`.
 
-The Minimalism-specific bridges (`mergeOp_emR/emL_matches_Step`) specialize to
-`R = ℤ`, `α = LIToken ⊕ Unit`. They take the **head label** `L` of the merged
-node and a coherence hypothesis `h_coh` factoring `(current * item).toNonplanar` as
-`Nonplanar.node (Sum.inl L) {current.toNonplanar, item.toNonplanar}` — the labeling convention
-fixed in `Merge.Defs`'s `planarToNonplanar` (each internal node decorated with its head
-leaf). This is the coupling point that validates the carrier bridge's design.
+## Main results
 
-## Deferred (substrate gap)
+* `Minimalist.Merge.mergeOp_pair`: External Merge on a two-object workspace.
+* `Minimalist.Merge.mergeOp_pair_residual`: External Merge with a cut-avoiding residual workspace.
 
-- **§3-4: cost-weighted Merge `M^ε` and the ε → 0 Sideward-elimination chain**
-  (`mergeOp_eps_zero_*`, `em_only_chain_eps_zero`). Needs an ε-weighted Δ^ρ
-  (a `cutTotalDepth` analogue on `cutSummandsN`), not yet in the substrate.
-  Once it lands, the EM-only chain can ride either `mergeOp` (unweighted) or the
-  cost-weighted operator.
+## References
+
+* [marcolli-chomsky-berwick-2025], §1.4 (Lemma 1.4.1)
 -/
 
 namespace Minimalist.Merge
@@ -275,8 +256,8 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R] {α : Type*}
 
     Induction on `Fhat` via `mergeOp_factor_out_singleton`. Without the
     disjointness, `mergeOp` produces the full sum-over-matchings (including
-    Sideward contributions); MCB eliminate those via Minimal-Search cost weighting
-    in the ε → 0 limit (the deferred `M^ε` arc). -/
+    Sideward contributions); the Minimal-Search weighting `mergeOpCEps` eliminates those in
+    the ε → 0 limit. -/
 theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*}
     [DecidableEq (Nonplanar α)] (lbl : α) {S S' : Nonplanar α}
     {Fhat : Forest (Nonplanar α)}
@@ -309,11 +290,5 @@ theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*}
           (({Nonplanar.node lbl {S, S'}} : Forest (Nonplanar α)) + Fhat'),
         mergeOp_factor_out_singleton lbl hT_S hT_S']
     exact congrArg (of' (R := R) ({T} : Forest (Nonplanar α)) * ·) ih'
-
-/-! The linguistic External-Merge bridges `mergeOp_emR/emL_matches_Step` (which
-related `mergeOp (Sum.inl L)` on the head-decorated `toNonplanar` projection to the
-legacy `Step.emR/emL`) have been retired by the single-carrier migration. On the
-bare `SyntacticObject` carrier the bridge is `Workspace.lean`'s `SyntacticObject.merge_toForest`
-(`mergeOp_pair` with the bare `Sum.inr ()` label). -/
 
 end Minimalist.Merge
