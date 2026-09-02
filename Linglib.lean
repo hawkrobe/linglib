@@ -2872,7 +2872,6 @@ import Linglib.Syntax.Minimalist.Merge.MinimalYield
 import Linglib.Syntax.Minimalist.Merge.MinimalYieldBirkhoff
 import Linglib.Syntax.Minimalist.Merge.MinimalYieldCharacter
 import Linglib.Syntax.Minimalist.Merge.MinimalYieldGrading
-import Linglib.Syntax.Minimalist.Merge.MinimalYieldPsi
 import Linglib.Syntax.Minimalist.Merge.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Merge.Sideward
 import Linglib.Syntax.Minimalist.MinimalPronoun
