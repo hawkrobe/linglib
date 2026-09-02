@@ -3,35 +3,34 @@ import Mathlib.Data.Multiset.Basic
 import Linglib.Data.UD.Basic
 
 /-!
-# Syntactic Objects: the SO₀ alphabet
-[chomsky-2013] [marcolli-chomsky-berwick-2025]
+# The lexical alphabet of syntactic objects
 
-The **lexical alphabet** of the Minimalist Program: categorial features,
-lexical items, and the `LIToken` leaves over which syntactic objects are
-built. The `SyntacticObject` carrier itself — the MCB-faithful nonplanar
-`SyntacticObject` type — lives in `SyntacticObject.lean` (which imports this file for the
-alphabet), so this `Defs` module is carrier-agnostic.
+The leaves of syntactic objects are drawn from `SO₀`, the lexical items and syntactic features.
+This file defines that alphabet: categorial features `Cat`, a selectional stack `SelStack`
+consumed left to right, the feature bundle `SimpleLI` of a category and its selectional
+requirements, `LexicalItem` as a nonempty list of bundles (a head that has incorporated another
+carries both), and `LIToken`, an instantiated lexical item. It is carrier-agnostic; the carrier
+built over `LIToken ⊕ Unit` is `SyntacticObject/Basic.lean`. `LIToken.selects` is c-selection
+between tokens, `ConventionDir` the harmonic head-side parameter, and `uposToCat` the map from
+Universal Dependencies part-of-speech tags into `Cat`.
 
-Per [marcolli-chomsky-berwick-2025] Def 1.1.1 (book p. 22), `SO₀` consists of
-lexical items and syntactic features. Linglib encodes a leaf as an `LIToken`
-(an instantiated `LexicalItem`); the carrier's leaf alphabet is `LIToken ⊕ Unit`
-(lexical leaf `inl tok` vs the bare trace/structural vertex `inr ()`).
+## Main definitions
 
-- `Cat`, `SelStack`, `SimpleLI`, `LexicalItem`, `LIToken`
-- `ConventionDir` — harmonic head-side parameter (Lemma 1.13.5)
-- `uposToCat` — UD POS → Minimalist `Cat` bridge
-- `mkTraceToken`, `LIToken.phonForm` — carrier-free token helpers
+* `Minimalist.Cat`, `Minimalist.SelStack`, `Minimalist.SimpleLI`, `Minimalist.LexicalItem`,
+  `Minimalist.LIToken`
+* `Minimalist.LIToken.selects`
+* `Minimalist.ConventionDir`
+
+## References
+
+* [marcolli-chomsky-berwick-2025], §1.1 (Definition 1.1.1) and §1.13 (Lemma 1.13.5)
+* [chomsky-2013]
 -/
 
 namespace Minimalist
 
-/-- Categorial features (Definition 10).
-
-    Enumerates the head categories of the Minimalist Program clausal
-    spine and nominal extended projection: cartographic left periphery,
-    inflectional spine, v/Voice/Appl event-structure layer, nominal
-    categorizer-and-quantity sequence, and adpositional Place/Path
-    articulation. -/
+/-- Categorial features: the head categories of the clausal spine and the nominal and
+    adpositional extended projections. -/
 inductive Cat where
   | V     -- verb
   | N     -- noun
@@ -53,7 +52,11 @@ inductive Cat where
   | Top   -- topic ([rizzi-1997] split-CP; hosts [G]/givenness, topic fronting)
   | Fin   -- finiteness ([rizzi-1997] split-CP; allocutive probe in Magahi/Galician)
   | SA    -- speech act head ([speas-tenny-2003]; hosts speaker/addressee)
-  | Say   -- say/assertion layer ([major-2021]; [krifka-2023]; [moulton-2009]); embeds the content of a verbal/representational sign. Distinct from `SA` (root illocutionary layer): `Say` is clause-internal, in the embedded left periphery with Say > Foc > T, and does NOT require a CP ([kiss-2023], [egressy-2026])
+  /-- The say/assertion layer ([major-2021], [krifka-2023], [moulton-2009]), embedding the
+      content of a verbal or representational sign. Unlike the root illocutionary layer `SA`, it
+      is clause-internal, in the embedded left periphery with Say > Foc > T, and requires no CP
+      ([kiss-2023], [egressy-2026]). -/
+  | Say
   | Force -- force ([rizzi-1997] split-CP; clause-typing [decl]/[interrog])
   | Neg   -- negation ([pollock-1989]; [zanuttini-1997]; hosts [±neg])
   | Mod   -- modality ([cinque-1999]; modal auxiliaries)
@@ -61,22 +64,26 @@ inductive Cat where
   | Pol   -- polarity ([laka-1990]; ΣP for affirmation/negation)
   | Asp   -- aspect ([cinque-1999]; inner inflectional, between Voice and T)
   | Evid  -- evidential ([cinque-1999]; outer inflectional, above T below Fin)
-  | Nmlz  -- nominalizer ([keine-2020]; Hindi -naa/-ne nominalized clause; clause type distinct from CP)
-  | K     -- inherent case shell ([newman-2024]; KP wraps DP for oblique/inherent case; explains no-IO-passive languages)
+  /-- The nominalizer ([keine-2020]): the Hindi nominalized clause, a clause type distinct from
+      CP. -/
+  | Nmlz
+  /-- The inherent-case shell ([newman-2024]): KP wraps DP for oblique or inherent case. -/
+  | K
   deriving Repr, DecidableEq, Inhabited
 
-/-- Selectional stack consumed left-to-right -/
+/-- A selectional stack, consumed left to right. -/
 abbrev SelStack := List Cat
 
-/-- A simple LI is a ⟨CAT, SEL⟩ pair (Definition 10), optionally with
-    a phonological form for linearization. -/
+/-- A category with its selectional stack, and optionally a phonological form for
+    linearization. -/
 structure SimpleLI where
   cat : Cat
   sel : SelStack
   phonForm : String := ""
   deriving Repr, DecidableEq
 
-/-- Lexical item (simple or complex from head movement, Definition 88) -/
+/-- A lexical item: a nonempty list of feature bundles, one for a simple item and several for a
+    head that has incorporated others. -/
 structure LexicalItem where
   features : List SimpleLI
   nonempty : features ≠ []
@@ -88,34 +95,29 @@ instance : DecidableEq LexicalItem := λ a b =>
   else
     isFalse (by intro heq; cases heq; exact h rfl)
 
-/-- Create a simple (non-complex) LI -/
+/-- The simple lexical item with one feature bundle. -/
 def LexicalItem.simple (cat : Cat) (sel : SelStack) (phonForm : String := "") : LexicalItem :=
   ⟨[⟨cat, sel, phonForm⟩], by simp⟩
 
-/-- Get the outer (projecting) category of an LI -/
-def LexicalItem.outerCat (li : LexicalItem) : Cat :=
-  match li.features with
-  | [] => .V  -- unreachable by nonempty constraint
-  | s :: _ => s.cat
+/-- The outer, projecting category: that of the first feature bundle. -/
+def LexicalItem.outerCat (li : LexicalItem) : Cat := (li.features.head li.nonempty).cat
 
-/-- Get the outer selectional requirements -/
-def LexicalItem.outerSel (li : LexicalItem) : SelStack :=
-  match li.features with
-  | [] => []  -- unreachable
-  | s :: _ => s.sel
+/-- The outer selectional stack: that of the first feature bundle. -/
+def LexicalItem.outerSel (li : LexicalItem) : SelStack := (li.features.head li.nonempty).sel
 
-/-- Is this LI complex (result of head-to-head movement)? -/
-def LexicalItem.isComplex (li : LexicalItem) : Bool :=
-  li.features.length > 1
+/-- A complex lexical item carries more than one feature bundle. -/
+def LexicalItem.IsComplex (li : LexicalItem) : Prop := 1 < li.features.length
 
-/-- Combine two LIs for head-to-head movement (target reprojects) -/
+instance (li : LexicalItem) : Decidable li.IsComplex := inferInstanceAs (Decidable (_ < _))
+
+/-- Head-to-head movement: the target keeps projecting, with the mover's bundles appended. -/
 def LexicalItem.combine (target mover : LexicalItem) : LexicalItem :=
   ⟨target.features ++ mover.features, by
     cases htf : target.features with
     | nil => exact absurd htf target.nonempty
     | cons hd tl => simp⟩
 
-/-- LI token: specific instance of an LI in a derivation -/
+/-- A token of a lexical item, distinguished by `id` from other tokens of the same item. -/
 structure LIToken where
   item : LexicalItem
   id : Nat
@@ -132,29 +134,15 @@ instance : DecidableEq LIToken := λ a b =>
 
 /-! ### Head-side convention (MCB Lemma 1.13.5) -/
 
-/-- The harmonic head-side convention ([marcolli-chomsky-berwick-2025]
-    Lemma 1.13.5, book p. 127): head functions on a tree are in bijection with
-    its planar embeddings, under one of two conventions:
-
-    - `.initial` (harmonic head-initial): the head daughter is to the LEFT of
-      each binary node (English-like).
-    - `.final` (harmonic head-final): the head daughter is to the RIGHT
-      (Japanese/Korean/Turkish).
-
-    A carrier-free parameter (it names a directionality, not a tree shape), so it
-    lives in the alphabet layer alongside `Cat`. Consumed by the selection-induced
-    externalization (`Linearization/Externalization.lean`). Mixed-direction
-    languages (German head-final VP + head-initial CP) need a
-    `headSide : Cat → ConventionDir` refinement, out of scope for §1.13-§1.16. -/
+/-- The harmonic head-side convention: a head function determines a planar embedding by placing
+    the head daughter to the left (`initial`) or to the right (`final`) of every binary node
+    ([marcolli-chomsky-berwick-2025], Lemma 1.13.5). -/
 inductive ConventionDir where
   | initial
   | final
   deriving Repr, DecidableEq, Inhabited
 
-/-- Map UD UPOS tags to Minimalist categories.
-
-    This bridges the theory-neutral UD POS tags used in Core/Basic.lean
-    and Fragments/ to the Minimalist Cat system. -/
+/-- The category of a Universal Dependencies part-of-speech tag. -/
 def uposToCat : UD.UPOS → Cat
   | .VERB  => .V
   | .AUX   => .T
@@ -176,21 +164,17 @@ def LIToken.phonForm? (tok : LIToken) : Option String :=
   let p := tok.phonForm
   if p.isEmpty then none else some p
 
-/-- LIToken-level c-selection: `selector` selects `selected` iff
-    `selector`'s outermost selectional feature equals `selected`'s outer
-    category. A pure `LIToken` relation; no SyntacticObject structure involved. -/
+/-- `selector` c-selects `selected` iff the head of `selector`'s selectional stack is
+    `selected`'s outer category. -/
 def LIToken.selects (selector selected : LIToken) : Prop :=
   selector.item.outerSel.head? = some selected.item.outerCat
 
 instance (lt1 lt2 : LIToken) : Decidable (LIToken.selects lt1 lt2) := by
   unfold LIToken.selects; infer_instance
 
-/-- Trace marker token: the canonical LIToken read off a bare trace vertex
-    when a selection check needs an `LIToken` at that position. The `index`
-    is recorded in the `id` field (sentinel ≥ 10000) but is **not** part of
-    chain identity — MCB chain identity is workspace-level (Def 1.2.1), and the
-    `SyntacticObject` carrier's trace leaf is bare/index-free. Selection reads only the
-    token's category (`.N`) and `outerSel` (`[]`), both index-independent. -/
+/-- The saturated token a selection check reads at a bare trace vertex: category `N`, no
+    selectional requirements. The `index` only separates tokens by `id`; chain identity is a
+    property of workspaces, not of the trace leaf. -/
 def mkTraceToken (index : Nat) : LIToken :=
   ⟨.simple .N [] (phonForm := ""), index + 10000⟩
 

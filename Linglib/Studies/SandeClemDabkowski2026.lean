@@ -8,7 +8,7 @@ import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Movement.Remnant
 import Linglib.Syntax.Minimalist.Phase.Basic
-import Linglib.Syntax.Minimalist.SyntacticObject.Amalgamation
+import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 
 /-!
 # Sande, Clem & Dąbkowski 2026: discontinuous vowel harmony in Guébie
@@ -284,13 +284,11 @@ theorem guebie_PIC_admits_remnant_movement (φ : Minimalist.Phase)
 
 Three diagnostics: successive cyclicity ((25)–(26)), island sensitivity
 ((27)–(28)), and island creation ((29)–(30)). This registers Guébie beside
-[harizanov-gribanova-2019]'s Russian as a positive instance of
-`VerbDoublingIsSyntactic`, against [landau-2006]'s PF-driven Hebrew analysis
-(the reason the substrate predicate is per-construction, not universal — see
-`HarizanovGribanova2019Amalgamation.lean`). The witnesses are schematic: the
+[harizanov-gribanova-2019]'s Russian as a construction whose verb doubling is syntactic,
+against [landau-2006]'s PF-driven Hebrew analysis. The witnesses are schematic: the
 fronted remnant is an evacuation trace plus the verb copy, per their (31). -/
 
-open Minimalist (SyntacticObject LIToken VerbDoublingIsSyntacticIn)
+open Minimalist (SyntacticObject LIToken)
 open Minimalist.Movement (RemnantFronting PredicateDoubling properRemnant)
 open Minimalist.SyntacticObject
 
@@ -326,10 +324,9 @@ def guebieFrontingDerivation : Derivation :=
   { initial := guebieFrontedVP
     steps   := [.im guebieVerbLeaf] }
 
-/-- Guébie registered as a positive instance of `VerbDoublingIsSyntacticIn`
-    (§3's diagnostics; decidable from the derivation structure). -/
-theorem guebie_VDIS_positive_instance :
-    VerbDoublingIsSyntacticIn guebieFrontingDerivation guebieVerbLeaf := by
+/-- The verb is a mover of the Guébie derivation, so its doubling is syntactic (§3's
+    diagnostics; decidable from the derivation structure). -/
+theorem guebie_verb_moved : guebieVerbLeaf ∈ guebieFrontingDerivation.movedItems := by
   decide
 
 /-! ### The §7 prediction and the Wolof parallel

@@ -243,29 +243,29 @@ private theorem not_projEqP {target : SyntacticObject} {s : RoseTree SOLabel}
 /-- **Lemma 4 (CRUX): the replace bridge.** On a well-formed planar tree, the computable
     planar replacement (`planarReplaceWhereP (projEqP target) SyntacticObject.traceP`) projects
     under
-    `Nonplanar.mk` to the abstract structural substitution `replaceN target
+    `Nonplanar.mk` to the abstract structural substitution `Nonplanar.replace target
     SyntacticObject.traceLeaf`,
     and stays well-formed. The two `if`-conditions agree (`projEqP target s = true ↔
     Nonplanar.mk s = target.val`), and the recursive bare-binary case lines up with
-    `replaceN_node`'s else branch (`{·,·}` multiset built from the two daughters). -/
+    `Nonplanar.replace_node_pair`'s else branch (`{·,·}` multiset built from the two daughters). -/
 private theorem replaceWhereP_mk (target : SyntacticObject) {t : RoseTree SOLabel}
     (ht : isSOPlanar t = true) :
     Nonplanar.mk (planarReplaceWhereP (projEqP target) traceP t)
-        = replaceN target.val traceLeaf.val (Nonplanar.mk t)
+        = Nonplanar.replace target.val traceLeaf.val (Nonplanar.mk t)
       ∧ isSOPlanar (planarReplaceWhereP (projEqP target) traceP t) = true := by
   fun_induction planarReplaceWhereP (projEqP target) traceP t with
   | case1 _ hp =>
     refine ⟨?_, rfl⟩
-    rw [projEqP_eq hp, replaceN_self]; rfl
+    rw [projEqP_eq hp, Nonplanar.replace_self]; rfl
   | case2 b hp =>
     refine ⟨?_, ht⟩
     rw [show Nonplanar.mk (RoseTree.node b []) = Nonplanar.leaf b from rfl,
-      replaceN_leaf, if_neg]
+      Nonplanar.replace_leaf, if_neg]
     rw [show Nonplanar.leaf b = Nonplanar.mk (RoseTree.node b []) from rfl]
     exact not_projEqP hp
   | case3 _ _ _ hp =>
     refine ⟨?_, rfl⟩
-    rw [projEqP_eq hp, replaceN_self]; rfl
+    rw [projEqP_eq hp, Nonplanar.replace_self]; rfl
   | case4 a l r hp ihl ihr =>
     have hcase : a = Sum.inr () := by
       cases a with
@@ -283,7 +283,7 @@ private theorem replaceWhereP_mk (target : SyntacticObject) {t : RoseTree SOLabe
           planarReplaceWhereP (projEqP target) traceP r]
         = nodeP (planarReplaceWhereP (projEqP target) traceP l)
           (planarReplaceWhereP (projEqP target) traceP r) from rfl,
-      mk_nodeP, ihle, ihre, mk_nodeP, replaceN_node, if_neg hne]
+      mk_nodeP, ihle, ihre, mk_nodeP, Nonplanar.replace_node_pair, if_neg hne]
   | case5 _ cs hnil hpair _ =>
     rcases isSOPlanar_length ht with hlen | hlen
     · exact absurd (List.length_eq_zero_iff.mp hlen) hnil
@@ -309,7 +309,7 @@ private theorem externStepP_step {acc : SyntacticObject} {accp p' : RoseTree SOL
       obtain rfl := Option.some.inj h
       obtain ⟨hmkip, hwfip⟩ := toPlanarLeaf?_mk hip
       refine ⟨isSOPlanar_nodeP hwfip hwf, ?_⟩
-      rw [Step.apply, merge_val, mk_nodeP, hmkip, hmk]
+      rw [Step.apply, node_val, mk_nodeP, hmkip, hmk]
   | emR item =>
     change item.toPlanarLeaf?.map (fun p => nodeP accp p) = some p' at h
     rcases hip : item.toPlanarLeaf? with _ | ip
@@ -318,7 +318,7 @@ private theorem externStepP_step {acc : SyntacticObject} {accp p' : RoseTree SOL
       obtain rfl := Option.some.inj h
       obtain ⟨hmkip, hwfip⟩ := toPlanarLeaf?_mk hip
       refine ⟨isSOPlanar_nodeP hwf hwfip, ?_⟩
-      rw [Step.apply, merge_val, mk_nodeP, hmkip, hmk]
+      rw [Step.apply, node_val, mk_nodeP, hmkip, hmk]
   | im mover =>
     change moveLeftPlanarP accp mover = some p' at h
     rw [moveLeftPlanarP] at h
@@ -330,7 +330,7 @@ private theorem externStepP_step {acc : SyntacticObject} {accp p' : RoseTree SOL
       have hwfs : isSOPlanar s = true := planarFindP?_isSOPlanar hfind hwf
       obtain ⟨hrwe, hrws⟩ := replaceWhereP_mk mover hwf
       refine ⟨isSOPlanar_nodeP hwfs hrws, ?_⟩
-      rw [Step.apply, intMerge_val,
+      rw [Step.apply, node_val,
           deleteAccessible_val, mk_nodeP, hmks, hrwe, hmk]
       exact congrArg (Nonplanar.node (Sum.inr ())) (Multiset.cons_swap _ _ _)
 

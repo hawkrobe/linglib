@@ -9,16 +9,16 @@ import Linglib.Syntax.Minimalist.Workspace.Basic
 /-!
 # Merge on the syntactic-object carrier
 
-The carrier operations `SyntacticObject.merge` and `SyntacticObject.intMerge` of
-`SyntacticObject/Build.lean` build a bare binary node with root label `Sum.inr ()`. This file
-identifies them with the algebraic Merge operator of `Merge/Basic.lean` on workspaces lifted along
-`of'`: External Merge of two objects is `mergeOp_pair`, and Internal Merge is the two-stage
-composition `mergeOp_im_composition`, given the unique Δ^ρ cut extracting the mover.
+Merge on the carrier is the bare binary node `SyntacticObject.node` with root label
+`Sum.inr ()`. This file identifies it with the algebraic Merge operator of `Merge/Basic.lean` on
+workspaces lifted along `of'`: External Merge of two objects is `mergeOp_pair`, and Internal
+Merge of a mover with its remainder is the two-stage composition `mergeOp_im_composition`, given
+the unique Δ^ρ cut extracting the mover.
 
 ## Main results
 
-* `Minimalist.SyntacticObject.merge_toForest`: External Merge on the carrier is `mergeOp`.
-* `Minimalist.SyntacticObject.intMerge_toForest`: Internal Merge on the carrier is
+* `Minimalist.SyntacticObject.mergeOp_node`: External Merge on the carrier is `mergeOp`.
+* `Minimalist.SyntacticObject.mergeOp_node_im`: Internal Merge on the carrier is
   `mergeOp ∘ mergeOpUnit`.
 
 ## References
@@ -32,15 +32,15 @@ open RoseTree RoseTree.Nonplanar ConnesKreimer
 
 /-- External Merge on the carrier is the algebraic Merge with the bare root label on the
     two-object workspace. -/
-theorem merge_toForest (S S' : SyntacticObject) :
+theorem mergeOp_node (S S' : SyntacticObject) :
     Merge.mergeOp (R := ℤ) (Sum.inr ()) S.val S'.val
         (of' ({S.val, S'.val} : Forest (Nonplanar SOLabel)))
-      = of' (R := ℤ) ({(merge S S').val} : Forest (Nonplanar SOLabel)) := by
-  rw [Merge.mergeOp_pair, merge_val]
+      = of' (R := ℤ) ({(node S S').val} : Forest (Nonplanar SOLabel)) := by
+  rw [Merge.mergeOp_pair, node_val]
 
 /-- Internal Merge on the carrier is the two-stage algebraic Merge, given the unique Δ^ρ cut `p0`
     of `T` extracting `mover` with remainder `remainder`. -/
-theorem intMerge_toForest (mover remainder T : SyntacticObject)
+theorem mergeOp_node_im (mover remainder T : SyntacticObject)
     (p0 : Forest (Nonplanar SOLabel) × Nonplanar SOLabel)
     (h_filter : (cutSummandsN T.val).filter
         (fun p => p.1 = ({mover.val} : Forest (Nonplanar SOLabel))) = {p0})
@@ -50,8 +50,8 @@ theorem intMerge_toForest (mover remainder T : SyntacticObject)
         (Merge.mergeOpUnit (R := ℤ) mover.val
           (of' ({T.val} : Forest (Nonplanar SOLabel))))
       = of' (R := ℤ)
-          ({(intMerge mover remainder).val} : Forest (Nonplanar SOLabel)) := by
+          ({(node remainder mover).val} : Forest (Nonplanar SOLabel)) := by
   rw [Merge.mergeOp_im_composition (Sum.inr ()) mover.val T.val remainder.val
-        p0 h_filter h_remainder hT, intMerge_val]
+        p0 h_filter h_remainder hT, node_val]
 
 end Minimalist.SyntacticObject

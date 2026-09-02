@@ -6,26 +6,21 @@ Authors: Robert Hawkins
 import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 
 /-!
-# Construction DSL and accessors for syntactic objects
+# Building and reading syntactic objects
 
-[marcolli-chomsky-berwick-2025] §1.1. The computable construction layer and the
-read-back accessors for the `SyntacticObject` carrier, completing P2's API parity with the legacy
-`FreeCommMagma (LIToken ⊕ Nat)` surface. Imports only the carrier skeleton.
+The node constructor is noncomputable, so concrete syntactic objects are built planar-first with
+`leafP`, `traceP`, and `nodeP` and quotiented once by `ofPlanar`, whose well-formedness
+obligation is discharged by `decide`; `SyntacticObject.node_mk` relates such a build to `node`,
+so theorems stated over `node` apply to it. Merge on the carrier is the node itself, written
+`*`: External Merge of two objects, and the re-merge of a mover with the remainder in Internal
+Merge. The accessors read the root token, leaf and node counts, and the trace predicate; since
+the trace leaf carries no index, `isTrace` is equality with `traceLeaf`.
 
-## Construction discipline
+## Main definitions
 
-The Merge operator (`SyntacticObject.node`/`SyntacticObject.merge`) is `noncomputable` (the smart
-`Nonplanar.node` round-trips through `Quotient.out`). So concrete syntactic objects
-— the ones studies `decide` over — are built **planar-first** and quotiented once:
-`SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP tok₁) (SyntacticObject.leafP
-tok₂))`. `SyntacticObject.node_mk` (skeleton)
-relates such a build to `SyntacticObject.node`, so theorems stated over `node`/`*` still apply.
-
-## Index-free traces
-
-A trace is a bare `Sum.inr ()` leaf with **no index** (MCB Def 1.2.1: chain identity
-is workspace-level), so there is exactly **one** trace leaf — `SyntacticObject.isTrace` is just
-`· = SyntacticObject.traceLeaf`.
+* `Minimalist.SyntacticObject.ofPlanar`, `leafP`, `traceP`, `nodeP`: planar construction.
+* `Minimalist.SyntacticObject.mkLeaf`, `mkLeafPhon`: lexical leaves from features.
+* `Minimalist.SyntacticObject.getLIToken`, `isTrace`, `leafCount`, `nodeCount`, `IsLeaf`.
 -/
 
 namespace Minimalist
@@ -36,15 +31,15 @@ namespace SyntacticObject
 
 /-! ### Computable planar construction DSL -/
 
-/-- Planar builder: a lexical leaf. -/
+/-- A planar lexical leaf. -/
 abbrev leafP (tok : LIToken) : RoseTree SOLabel := .node (Sum.inl tok) []
-/-- Planar builder: the bare trace leaf. -/
+/-- The planar trace leaf. -/
 abbrev traceP : RoseTree SOLabel := .node (Sum.inr ()) []
-/-- Planar builder: a bare binary node. -/
+/-- A planar bare binary node. -/
 abbrev nodeP (l r : RoseTree SOLabel) : RoseTree SOLabel := .node (Sum.inr ()) [l, r]
 
-/-- Build a syntactic object from a planar tree, discharging well-formedness by
-    `decide` (concrete trees) — the computable entry point for `decide`-based studies. -/
+/-- The syntactic object of a well-formed planar tree; on a concrete tree the obligation is
+    discharged by `decide`. -/
 def ofPlanar (p : RoseTree SOLabel) (h : isSOPlanar p = true :=
   by first | rfl | decide) : SyntacticObject :=
   ⟨Nonplanar.mk p, h⟩
@@ -53,14 +48,12 @@ def ofPlanar (p : RoseTree SOLabel) (h : isSOPlanar p = true :=
 
 @[simp] theorem ofPlanar_traceP : ofPlanar traceP = traceLeaf := rfl
 
-/-- Default syntactic object: the bare trace leaf. Lets structures with an `SyntacticObject`
-    field be `Inhabited`/`deriving Repr`-free of bespoke witnesses. -/
+/-- The default syntactic object is the trace leaf. -/
 instance : Inhabited SyntacticObject := ⟨traceLeaf⟩
 
 /-! ### Merge as multiplication -/
 
-/-- `*` is (External) Merge: the bare binary node. Noncomputable — build concrete
-    trees with the planar DSL above, not `*`. -/
+/-- `l * r = node l r`: Merge on the carrier. -/
 noncomputable instance : Mul SyntacticObject := ⟨node⟩
 
 @[simp] theorem mul_def (l r : SyntacticObject) : l * r = node l r := rfl
@@ -69,40 +62,7 @@ theorem mul_comm (l r : SyntacticObject) : l * r = r * l := by
   apply Subtype.ext
   rw [mul_def, mul_def, node_val, node_val, Multiset.pair_comm]
 
-/-! ### The canonical Merge operators (carrier primitives)
-
-`SyntacticObject.merge` / `SyntacticObject.intMerge` are the carrier-level Merge operators
-([marcolli-chomsky-berwick-2025] Lemma 1.4.1 / Prop 1.4.2): they need only the bare
-binary node, so they live here. Their **coproduct identity** on the workspace Hopf
-algebra (`SyntacticObject.merge_toForest` / `SyntacticObject.intMerge_toForest`) lives in
-`Workspace.lean`, which
-imports the Merge algebra; this file stays algebra-free so `decide`-based consumers
-(e.g. the externalization replay in `SyntacticObject/Derivation.lean`) keep the
-computable `DecidableEq (Nonplanar …)` (#792) in scope. -/
-
-/-- **External Merge on the carrier** ([marcolli-chomsky-berwick-2025] Lemma 1.4.1): the
-    bare binary node `SyntacticObject.node` *is* External Merge (for distinct workspace items) and
-    the
-    re-merge stage of Internal Merge. Noncomputable; build concrete results with the
-    planar DSL + `decide`. -/
-noncomputable def merge (S S' : SyntacticObject) : SyntacticObject := node S S'
-
-@[simp] theorem merge_val (S S' : SyntacticObject) :
-    (merge S S').val = Nonplanar.node (Sum.inr ()) {S.val, S'.val} := rfl
-
-/-- **Internal Merge on the carrier** ([marcolli-chomsky-berwick-2025] Prop 1.4.2):
-    re-Merge the `mover` with the **deletion remainder** `remainder = T/mover` (the
-    `M_{T/β, β}` order: remainder left, mover right). IM is *not* a new structural
-    primitive — it is `SyntacticObject.merge` of the remainder and the mover. The mover ↔ trace
-    correspondence (the chain) is read at the workspace level (`Workspace.chainMultiplicity`),
-    not from an index. -/
-noncomputable def intMerge (mover remainder : SyntacticObject) : SyntacticObject :=
-  merge remainder mover
-
-@[simp] theorem intMerge_val (mover remainder : SyntacticObject) :
-    (intMerge mover remainder).val = Nonplanar.node (Sum.inr ()) {remainder.val, mover.val} := rfl
-
-/-! ### Lexical-leaf construction (the legacy `mkLeaf` API) -/
+/-! ### Lexical leaves from features -/
 
 /-- A lexical leaf from a category and selectional stack. -/
 def mkLeaf (cat : Cat) (sel : SelStack) (id : Nat) : SyntacticObject :=
@@ -127,7 +87,7 @@ def getLIToken (s : SyntacticObject) : Option LIToken :=
 @[simp] theorem getLIToken_node (l r : SyntacticObject) : (node l r).getLIToken = none := by
   rw [getLIToken, node_val, Nonplanar.rootValue_node]
 
-/-- A trace is the unique bare trace leaf (chain identity is workspace-level). -/
+/-- `isTrace s ↔ s = traceLeaf`, since the trace leaf carries no index. -/
 def isTrace (s : SyntacticObject) : Prop := s = traceLeaf
 
 instance (s : SyntacticObject) : Decidable (isTrace s) :=
@@ -135,31 +95,26 @@ instance (s : SyntacticObject) : Decidable (isTrace s) :=
 
 @[simp] theorem isTrace_traceLeaf : isTrace traceLeaf := rfl
 
-/-- Leaf count (number of leaves + traces). -/
+/-- The number of leaves, traces included. -/
 def leafCount (s : SyntacticObject) : Nat := Nonplanar.numLeaves s.val
 
-/-- Is `s` a leaf (lexical or trace)? A leaf has a single vertex; a bare binary node
-    has ≥ 2 leaves. -/
-def isLeaf (s : SyntacticObject) : Bool := s.leafCount == 1
+/-- `IsLeaf s ↔ s.leafCount = 1`: a lexical or trace leaf. -/
+def IsLeaf (s : SyntacticObject) : Prop := s.leafCount = 1
 
-/-- Is `s` a (bare binary) internal node? The complement of `SyntacticObject.isLeaf`. -/
-def isNode (s : SyntacticObject) : Bool := !s.isLeaf
+instance : DecidablePred IsLeaf := fun _ => inferInstanceAs (Decidable (_ = _))
 
-@[simp] theorem isLeaf_lexLeaf (tok : LIToken) : (lexLeaf tok).isLeaf = true := rfl
-@[simp] theorem isLeaf_traceLeaf : traceLeaf.isLeaf = true := rfl
-@[simp] theorem isNode_lexLeaf (tok : LIToken) : (lexLeaf tok).isNode = false := rfl
+@[simp] theorem isLeaf_lexLeaf (tok : LIToken) : IsLeaf (lexLeaf tok) := rfl
+@[simp] theorem isLeaf_traceLeaf : IsLeaf traceLeaf := rfl
 
-/-- A lightweight `Repr` so structures with an `SyntacticObject` field can `deriving Repr`. The full
-    tree is a `Nonplanar` quotient (no faithful structural readout without `Quot.out`);
-    for debugging surface order use `SyntacticObject.linearize`. -/
+/-- A shape summary; the full tree is a quotient with no faithful readout. -/
 instance : Repr SyntacticObject where
   reprPrec s _ := match s.getLIToken with
     | some tok => f!"SyntacticObject.lexLeaf {repr tok}"
     | none =>
-      if s.isLeaf then f!"SyntacticObject.traceLeaf"
+      if s.IsLeaf then f!"SyntacticObject.traceLeaf"
       else f!"⟨SyntacticObject node, {s.leafCount} leaves⟩"
 
-/-- Internal-node count = leaf count − 1 (full binary tree). -/
+/-- `nodeCount s = leafCount s - 1`, the number of internal vertices of a full binary tree. -/
 def nodeCount (s : SyntacticObject) : Nat := Nonplanar.numLeaves s.val - 1
 
 @[simp] theorem leafCount_lexLeaf (tok : LIToken) : (lexLeaf tok).leafCount = 1 := rfl
@@ -167,7 +122,7 @@ def nodeCount (s : SyntacticObject) : Nat := Nonplanar.numLeaves s.val - 1
 
 end SyntacticObject
 
-/-! ### `decide` demonstrations -/
+/-! ### Carrier tests -/
 
 private def demoVP : SyntacticObject :=
   ofPlanar (nodeP (leafP (mkTraceToken 0)) (leafP (mkTraceToken 1)))

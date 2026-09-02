@@ -48,7 +48,8 @@ def leafDepthsP (t : RoseTree α) : Multiset ℕ :=
 /-- The sum of root-distances of the leaves whose label satisfies `p`. -/
 def leafDepthSumP (t : RoseTree α) : ℕ := (leafDepthsP p t).sum
 
-private theorem countP_list_sum (l : List (Multiset γ)) : l.sum.countP q = (l.map fun m => m.countP q).sum := by
+private theorem countP_list_sum (l : List (Multiset γ)) :
+    l.sum.countP q = (l.map fun m => m.countP q).sum := by
   induction l with
   | nil => rfl
   | cons m l ih => simp only [List.sum_cons, Multiset.countP_add, ih, List.map_cons]
@@ -228,6 +229,14 @@ theorem numEdges_node_pair (a : α) (l r : Nonplanar α) :
   rw [numEdges_node]
   simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
     Multiset.sum_cons, Multiset.sum_singleton, ← numEdges_add_one]
+  omega
+
+/-- Adjoining a root above a pair of trees adds one vertex. -/
+theorem numNodes_node_pair (a : α) (l r : Nonplanar α) :
+    (node a {l, r}).numNodes = l.numNodes + r.numNodes + 1 := by
+  rw [numNodes_node]
+  simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
+    Multiset.sum_cons, Multiset.sum_singleton]
   omega
 
 

@@ -6,33 +6,27 @@ Authors: Robert Hawkins
 import Linglib.Syntax.Minimalist.SyntacticObject.Replace
 
 /-!
-# Derivation steps on the `SyntacticObject` carrier
+# Derivations
 
-P4-pre-b of the single-carrier program: the ordered **derivation** layer on the `SyntacticObject`
-carrier — the sequence of Merge/Move operations producing a syntactic object — replacing
-the legacy `FreeCommMagma`-based `Step`/`Derivation`.
+An ordered derivation is an initial syntactic object with a sequence of Merge steps. External
+Merge adds an item as the left or right daughter, and Internal Merge raises a mover: the step
+re-merges the mover with the remainder `deleteAccessible mover current`, the current object with
+the mover's occurrences replaced by the trace leaf. Each step applies the carrier node, so the
+derivation's Merge is the workspace Merge by construction, and the node being commutative,
+`emL` and `emR` build the same object; the left-right distinction matters only for the surface
+order, which `Linearization/Replay.lean` recovers on an ordered planar accumulator, since the
+final object is an unordered quotient. Since `node` is noncomputable, so are `Step.apply` and
+`Derivation.final`, while the movers are read off the steps.
 
-**The derivation's Merge *is* the workspace Merge by construction.** Each step applies a
-canonical MCB Merge operator (`Workspace.lean`): External Merge is `SyntacticObject.merge` (Lemma
-1.4.1), Internal Merge is `SyntacticObject.intMerge` (Prop 1.4.2's `M_{T/β,β}`) on the deletion
-remainder `SyntacticObject.deleteAccessible mover current` (= `T/mover`). So `Step.apply` *unfolds*
-to the coproduct operators (`SyntacticObject.Step.apply_emL`/`apply_im`); the Δ^ρ-coproduct identity
-is `SyntacticObject.merge_toForest`/`SyntacticObject.intMerge_toForest` — nothing is independently
-stipulated then
-bridged.
+## Main definitions
 
-**Index-free traces (D2):** Internal Merge leaves the bare `SyntacticObject.traceLeaf`; chain
-identity
-is **workspace-level** (`Workspace`, `chainMultiplicity`, #795, MCB Def 1.2.1), not a
-per-step `Nat`. The deletion remainder is realized by `SyntacticObject.replace` (#804): for a
-uniquely-accessible mover this is exactly the Δ^ρ cut remainder `SyntacticObject.intMerge_toForest`
-extracts, and `replace`-all is its total extension to the multi-occurrence (chain) case.
+* `Minimalist.SyntacticObject.Step`, `Step.apply`, `deleteAccessible`
+* `Minimalist.SyntacticObject.Derivation`, `Derivation.final`, `stageAt`, `movedItems`
 
-Because `SyntacticObject.node` is noncomputable, so are `Step.apply`/`Derivation.final` — concrete
-trees are reasoned about structurally, not by `decide`. The **computable, `decide`-able
-surface order** (externalization replay + the Π bridge, the Cinque-style word-order
-readout) lives in `Linearization/Replay.lean`; it replays the linear choices on an
-ordered planar accumulator, since `final` (a `Nonplanar` quotient) is unordered.
+## References
+
+* [marcolli-chomsky-berwick-2025], §1.2 (Definition 1.2.6) and §1.4 (Lemma 1.4.1,
+  Proposition 1.4.2)
 -/
 
 namespace Minimalist
@@ -43,10 +37,8 @@ namespace SyntacticObject
 
 /-! ### Steps -/
 
-/-- A single derivation step on the `SyntacticObject` carrier. **Index-free** (D2): `im` records
-    only the mover; the trace it leaves is the bare `SyntacticObject.traceLeaf`, and the mover ↔
-    trace
-    chain lives at the workspace level (#795), not in a per-step index. -/
+/-- A derivation step. `im` records only the mover; the trace it leaves is the bare trace leaf.
+-/
 inductive Step where
   /-- External Merge, new item as the left daughter. -/
   | emL (item : SyntacticObject)
@@ -55,60 +47,42 @@ inductive Step where
   /-- Internal Merge: raise `mover`, leaving the bare trace in its place. -/
   | im (mover : SyntacticObject)
 
-/-- **Internal-Merge deletion remainder** `T/mover` ([marcolli-chomsky-berwick-2025]
-    Def 1.2.7, the ρ-form): the syntactic object left when the moved constituent's
-    accessible occurrence is cut, with the bare `SyntacticObject.traceLeaf` in its place. For a
-    uniquely-accessible `mover` this is the Δ^ρ deletion remainder `p0.2` that
-    `SyntacticObject.intMerge_toForest` extracts from `cutSummandsN`; `SyntacticObject.replace`
-    (replace-all) is
-    its total extension to the multi-occurrence case (the chain is then read at the
-    workspace level, Def 1.2.1). -/
+/-- The remainder `T/mover`: the current object with the mover's occurrences replaced by the
+    trace leaf, the remaining tree of an admissible cut ([marcolli-chomsky-berwick-2025],
+    Definition 1.2.6). For a uniquely accessible mover this is the deletion remainder that
+    `Merge.mergeOp_im_composition` extracts; `replace` extends it to a chain of occurrences. -/
 noncomputable def deleteAccessible (mover current : SyntacticObject) : SyntacticObject :=
   current.replace mover traceLeaf
 
 @[simp] theorem deleteAccessible_val (mover current : SyntacticObject) :
-    (deleteAccessible mover current).val = replaceN mover.val traceLeaf.val current.val := rfl
+    (deleteAccessible mover current).val
+      = Nonplanar.replace mover.val traceLeaf.val current.val := rfl
 
-/-- Apply a derivation step to the current tree. **The derivation Merge *is* the
-    workspace Merge by construction:** External Merge is `SyntacticObject.merge` (Lemma 1.4.1),
-    Internal Merge is `SyntacticObject.intMerge` (Prop 1.4.2's `M_{T/β,β}`) applied to the deletion
-    remainder `SyntacticObject.deleteAccessible mover current` (= `T/mover`). The coproduct identity
-    of each is `SyntacticObject.merge_toForest`/`SyntacticObject.intMerge_toForest`. Since
-    `SyntacticObject.merge` is commutative
-    (`SyntacticObject.mul_comm`), `emL`/`emR` and the mover-left/remainder-left orders give the
-    *same*
-    `SyntacticObject` (`apply_emL_eq_emR`); the left/right distinction matters only for the surface
-    (PF) order, recovered downstream by the externalization replay. -/
+/-- Apply a step: External Merge is the node with the item on the given side, Internal Merge the
+    node of the remainder and the mover. -/
 noncomputable def Step.apply (step : Step) (current : SyntacticObject) : SyntacticObject :=
   match step with
-  | .emL item  => merge item current
-  | .emR item  => merge current item
-  | .im mover  => intMerge mover (deleteAccessible mover current)
+  | .emL item  => node item current
+  | .emR item  => node current item
+  | .im mover  => node (deleteAccessible mover current) mover
 
-/-- External Merge unfolds to the canonical workspace EM `SyntacticObject.merge` (Lemma 1.4.1). -/
 theorem Step.apply_emL (item current : SyntacticObject) :
-    (Step.emL item).apply current = merge item current := rfl
+    (Step.emL item).apply current = node item current := rfl
 
-/-- External Merge unfolds to the canonical workspace EM `SyntacticObject.merge` (Lemma 1.4.1). -/
 theorem Step.apply_emR (item current : SyntacticObject) :
-    (Step.emR item).apply current = merge current item := rfl
+    (Step.emR item).apply current = node current item := rfl
 
-/-- **Internal Merge unfolds to the coproduct operator by construction.** The `im` step
-    *is* the canonical workspace IM `SyntacticObject.intMerge` (MCB Prop 1.4.2) on the deletion
-    remainder — definitionally, not via a bridge. Composing with `SyntacticObject.intMerge_toForest`
-    gives the Δ^ρ-coproduct identity on the workspace. -/
 theorem Step.apply_im (mover current : SyntacticObject) :
-    (Step.im mover).apply current = intMerge mover (deleteAccessible mover current) := rfl
+    (Step.im mover).apply current = node (deleteAccessible mover current) mover := rfl
 
-/-- External Merge is side-indifferent on the unordered carrier: `emL` and `emR` build
-    the same syntactic object (they diverge only at externalization). -/
+/-- `emL` and `emR` build the same object; they differ only at externalization. -/
 theorem Step.apply_emL_eq_emR (item current : SyntacticObject) :
     (Step.emL item).apply current = (Step.emR item).apply current :=
   mul_comm item current
 
 /-! ### Derivations -/
 
-/-- An ordered derivation: an initial `SyntacticObject` together with a sequence of steps. -/
+/-- An initial syntactic object with a sequence of steps. -/
 structure Derivation where
   /-- The initial syntactic object (a lexical item, in canonical derivations). -/
   initial : SyntacticObject
@@ -117,28 +91,28 @@ structure Derivation where
 
 namespace Derivation
 
-/-- The final tree produced by applying every step in order. -/
+/-- The object after every step. -/
 noncomputable def final (d : Derivation) : SyntacticObject :=
   d.steps.foldl (fun so step => step.apply so) d.initial
 
-/-- The intermediate tree after the first `n` steps. -/
+/-- The object after the first `n` steps. -/
 noncomputable def stageAt (d : Derivation) (n : Nat) : SyntacticObject :=
   (d.steps.take n).foldl (fun so step => step.apply so) d.initial
 
 /-- The number of derivation steps. -/
 def length (d : Derivation) : Nat := d.steps.length
 
-/-- The movers — the subtrees that underwent Internal Merge. -/
+/-- The movers of the `im` steps. -/
 def movedItems (d : Derivation) : List SyntacticObject :=
   d.steps.filterMap fun
     | .im mover => some mover
     | _ => none
 
-/-- Stage `0` is the initial tree (no steps applied). -/
+
 @[simp] theorem stageAt_zero (d : Derivation) : d.stageAt 0 = d.initial := by
   simp [stageAt]
 
-/-- The stage at full length is the final tree. -/
+
 theorem stageAt_length (d : Derivation) : d.stageAt d.steps.length = d.final := by
   simp [stageAt, final, List.take_length]
 
@@ -146,11 +120,7 @@ end Derivation
 
 end SyntacticObject
 
-/-! ### Worked example
-
-The movers of a small derivation are read directly off the steps (a `filterMap`, so
-this is `decide`-able even though `final` is not): a derivation that internally merges
-two objects records exactly those two as moved. -/
+/-! ### Carrier tests -/
 
 private def demoTok (i : Nat) : SyntacticObject := lexLeaf ⟨.simple .N [], i⟩
 
