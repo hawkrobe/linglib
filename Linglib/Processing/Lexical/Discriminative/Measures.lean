@@ -1,90 +1,93 @@
 import Linglib.Processing.Lexical.Discriminative.Defs
+import Mathlib.Data.Matrix.Mul
 
 /-!
 # DLM-derived semantic-support measures
-[baayen-2019] [gahl-baayen-2024] [saito-tomaschek-baayen-2025]
-[heitmeier-chuang-baayen-2026]
 
-The *semantic support* measures projected from a
-`LinearDiscriminativeLexicon`'s production map, specialised to the
-`FormVec`/`MeaningVec` carriers.
+The *semantic support* measures read off a `LinearDiscriminativeLexicon`'s production map at
+the `FormVec`/`MeaningVec` carriers. The support a form receives from a meaning is the dot
+product of the predicted form with the target form, `ĉ ⬝ᵥ c` for `ĉ = sG`: the entries of
+[gahl-baayen-2024]'s support matrix `T = ĈCᵀ`, whose diagonal is their *semantic support for
+form*, and at a single triphone [saito-tomaschek-baayen-2025]'s `SemSupSuffix`.
 
 ## Main declarations
 
-- `semSup D s j`: semantic support for form coordinate `j` from meaning `s`.
-- `semSupWord D s js`: sum of `semSup` over a word's form coordinates —
-  [gahl-baayen-2024]'s *Semantic Support for Form*,
-  [saito-tomaschek-baayen-2025]'s `SemSupWord`.
-- `semSup_add` / `semSup_smul` / `semSup_zero`: `@[simp]` linearity lemmas
-  in the meaning argument.
+- `semSup D s j`: support for form coordinate `j` from meaning `s`, the predicted value
+  `D.production s j`.
+- `semSupWord D s c`: support for the form vector `c` from meaning `s`, `D.production s ⬝ᵥ c`;
+  `semSup` is its value at a coordinate indicator (`semSupWord_single`).
+- `semSup_add`, `semSup_smul`, `semSupWord_add_left`, `semSupWord_smul_right`, …: `@[simp]`
+  linearity in each argument.
+
+## References
+
+* [R. H. Baayen, Y.-Y. Chuang, E. Shafaei-Bajestan and J. P. Blevins, *The discriminative
+  lexicon* (2019)][baayen-2019]
+* [S. Gahl and R. H. Baayen, *Time and thyme again* (2024)][gahl-baayen-2024]
+* [M. Saito, F. Tomaschek and R. H. Baayen, *Interaction of frequency and inflectional status*
+  (2025)][saito-tomaschek-baayen-2025]
+* [M. Heitmeier, Y.-Y. Chuang and R. H. Baayen, *The Discriminative Lexicon*
+  (2026)][heitmeier-chuang-baayen-2026]
 -/
 
 namespace Processing.Lexical.Discriminative
 
-noncomputable section SemSupMeasures
+noncomputable section
 
-variable {n d : ℕ}
+variable {n d : ℕ} (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
 
-/-! ### Semantic support — coordinate projection of production -/
+/-! ### Semantic support -/
 
-/-- **Semantic support** for form coordinate `j` from meaning vector `s`:
-    the named binding for `D.production s j` ([saito-tomaschek-baayen-2025];
-    [gahl-baayen-2024]'s per-triphone support). -/
-def semSup (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
-    (s : MeaningVec d) (j : Fin n) : ℝ :=
-  D.production s j
+/-- **Semantic support** for form coordinate `j` from meaning `s`: the predicted value
+`D.production s j` ([saito-tomaschek-baayen-2025]; [gahl-baayen-2024]'s per-triphone support). -/
+def semSup (s : MeaningVec d) (j : Fin n) : ℝ := D.production s j
 
-/-- **Word-level semantic support** — the sum of `semSup` over a word's
-    component form coordinates ([gahl-baayen-2024]'s *Semantic Support for
-    Form*; [saito-tomaschek-baayen-2025]'s `SemSupWord`). -/
-def semSupWord (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
-    (s : MeaningVec d) (js : List (Fin n)) : ℝ :=
-  (js.map (semSup D s)).sum
+/-- **Semantic support** for the form vector `c` from meaning `s`: the dot product of the
+predicted form with `c`. At a word's own binary triphone vector this is [gahl-baayen-2024]'s
+*semantic support for form*, the diagonal of `T = ĈCᵀ`. -/
+def semSupWord (s : MeaningVec d) (c : FormVec n) : ℝ := D.production s ⬝ᵥ c
 
-/-! ### `semSup` is linear in the meaning vector
+variable {D}
 
-Since `D.production` is a `LinearMap`, `semSup D · j` is a linear
-functional on the meaning space. -/
+@[simp] theorem semSupWord_single (s : MeaningVec d) (j : Fin n) :
+    semSupWord D s (Pi.single j 1) = semSup D s j := by
+  simp [semSupWord, semSup]
 
-@[simp] theorem semSup_add
-    (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
-    (s₁ s₂ : MeaningVec d) (j : Fin n) :
+/-! ### Linearity -/
+
+@[simp] theorem semSup_add (s₁ s₂ : MeaningVec d) (j : Fin n) :
     semSup D (s₁ + s₂) j = semSup D s₁ j + semSup D s₂ j := by
-  unfold semSup
-  rw [map_add]
-  rfl
+  simp [semSup]
 
-@[simp] theorem semSup_smul
-    (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
-    (c : ℝ) (s : MeaningVec d) (j : Fin n) :
-    semSup D (c • s) j = c * semSup D s j := by
-  unfold semSup
-  rw [map_smul]
-  rfl
+@[simp] theorem semSup_smul (a : ℝ) (s : MeaningVec d) (j : Fin n) :
+    semSup D (a • s) j = a * semSup D s j := by
+  simp [semSup]
 
-@[simp] theorem semSup_zero
-    (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
-    (j : Fin n) :
-    semSup D 0 j = 0 := by
-  unfold semSup
-  rw [map_zero]
-  rfl
+@[simp] theorem semSup_zero (j : Fin n) : semSup D 0 j = 0 := by
+  simp [semSup]
 
-/-! ### `semSupWord` zero case
+@[simp] theorem semSupWord_add_left (s₁ s₂ : MeaningVec d) (c : FormVec n) :
+    semSupWord D (s₁ + s₂) c = semSupWord D s₁ c + semSupWord D s₂ c := by
+  simp [semSupWord, add_dotProduct]
 
-The general `semSupWord_add` / `semSupWord_smul` linearity is deferred
-until a consumer needs it. -/
+@[simp] theorem semSupWord_smul_left (a : ℝ) (s : MeaningVec d) (c : FormVec n) :
+    semSupWord D (a • s) c = a * semSupWord D s c := by
+  simp [semSupWord, smul_dotProduct]
 
-@[simp] theorem semSupWord_zero
-    (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
-    (js : List (Fin n)) :
-    semSupWord D 0 js = 0 := by
-  induction js with
-  | nil => rfl
-  | cons j js ih =>
-    show semSup D 0 j + semSupWord D 0 js = 0
-    rw [semSup_zero, ih, zero_add]
+@[simp] theorem semSupWord_zero_left (c : FormVec n) : semSupWord D 0 c = 0 := by
+  simp [semSupWord]
 
-end SemSupMeasures
+@[simp] theorem semSupWord_add_right (s : MeaningVec d) (c₁ c₂ : FormVec n) :
+    semSupWord D s (c₁ + c₂) = semSupWord D s c₁ + semSupWord D s c₂ := by
+  simp [semSupWord, dotProduct_add]
+
+@[simp] theorem semSupWord_smul_right (a : ℝ) (s : MeaningVec d) (c : FormVec n) :
+    semSupWord D s (a • c) = a * semSupWord D s c := by
+  simp [semSupWord, dotProduct_smul]
+
+@[simp] theorem semSupWord_zero_right (s : MeaningVec d) : semSupWord D s 0 = 0 := by
+  simp [semSupWord]
+
+end
 
 end Processing.Lexical.Discriminative

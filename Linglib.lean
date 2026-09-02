@@ -137,6 +137,7 @@ import Linglib.Core.InformationTheory.MutualInformation
 import Linglib.Core.Learning.Luce
 import Linglib.Core.Learning.RescorlaWagner
 import Linglib.Core.Learning.WidrowHoff
+import Linglib.Core.LinearAlgebra.Matrix.Symmetric
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
 import Linglib.Core.LinearAlgebra.SymmetricPower.ToSymmetricAlgebra
