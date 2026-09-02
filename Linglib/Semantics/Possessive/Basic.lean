@@ -15,7 +15,9 @@ quantificational layer (`Poss`, `PossW`, narrowing, `descriptionGQ`) is in
 * `Possessive.viaArgument`, `Possessive.viaModifier` — the two ways a possessor
   combines with a noun: with a relational noun's own relation (the argument
   genitive) or with a free relation over a sortal restrictor (the modifier
-  genitive, Barker's `π`).
+  genitive, Barker's `π`); `viaArgument_pi`, `viaModifier_eq_inf`, `viaModifier_top` — the
+  two coincide over a `π`-coerced noun, and the modifier genitive is the noun conjoined with the
+  bare predicate possessive.
 * `Possessive.Description` — a possessor + relation + sortal restrictor; the
   possessee predicate is *derived* (`viaModifier`), never stored, so a
   description cannot be incoherent.
@@ -47,10 +49,21 @@ genitive with a free relation `R`: `⟦John's team⟧ = λy. team(y) ∧ R(John)
 def viaModifier (possessor : E) (nounPred : E → S → Prop) (R : E → E → S → Prop) : E → S → Prop :=
   fun y s => π nounPred R possessor y s
 
-/-- The argument genitive is the modifier genitive over a trivial restrictor. -/
-theorem viaArgument_eq_viaModifier_top (possessor : E) (R : E → E → S → Prop) :
-    viaArgument possessor R = viaModifier possessor (fun _ _ => True) R := by
-  funext y s; simp [viaArgument, viaModifier, π]
+/-- The argument genitive over a `π`-coerced sortal is the modifier genitive: coerce the noun to
+a relation and take the possessor as its argument ([jensen-vikner-1994]), or modify the noun by
+the possessor's free relation ([partee-1997]) — one predicate. -/
+theorem viaArgument_pi (possessor : E) (P : E → S → Prop) (R : E → E → S → Prop) :
+    viaArgument possessor (π P R) = viaModifier possessor P R := rfl
+
+/-- The modifier genitive is intersective modification of the noun by the bare predicate
+possessive `λy. R(possessor)(y)` ([partee-borschev-2001]). -/
+theorem viaModifier_eq_inf (possessor : E) (P : E → S → Prop) (R : E → E → S → Prop) :
+    viaModifier possessor P R = P ⊓ viaArgument possessor R := rfl
+
+/-- Over the trivial restrictor the modifier genitive is the argument genitive. -/
+@[simp] theorem viaModifier_top (possessor : E) (R : E → E → S → Prop) :
+    viaModifier possessor ⊤ R = viaArgument possessor R := by
+  rw [viaModifier_eq_inf, top_inf_eq]
 
 /-! ### Possessive descriptions -/
 

@@ -3,149 +3,91 @@ import Linglib.Semantics.Possessive.Basic
 /-!
 # Partee & Borschev 2001: Some puzzles of predicate possessives
 
-Paper-anchored consumer of the possessive substrate for [partee-borschev-2001].
-P&B argue against the uniform "argument-only" analysis of possessives
-([jensen-vikner-1994]) using **predicate possessives**: a possessive occurs as a
-bare predicate (type ⟨e,t⟩) only when its possession relation is a free
-contextual variable (a *modifier* genitive), not when it is the inherent
-relation of a relational noun or adjective (an *argument* genitive).
-
-The argument/modifier distinction is **study-local**: it is P&B's analysis of a
-*construction*, contested by [vikner-jensen-2002] (who deny the split is
-grammatical), so it is not a field of the theory-neutral substrate description
-(`Possessive.Description`). The predicate form itself *is* substrate — the bare
-⟨e,t⟩ possessive predicate is `Possessive.viaArgument` (the relation applied to
-the possessor).
+Do predicate possessives (*that team is John's*) refute the uniform analysis of the genitive
+([jensen-vikner-1994]), on which every genitive is the argument of a relational noun, a plain noun
+being coerced to a relation first? A bare *John's* in predicate position is one of two things.
+Either it is an elliptical NP with an understood relational noun — *that teacher is John's* is
+*John's teacher* (17c), so the earlier verdict that predicate possessives take only a free
+relation ([stockwell-schachter-partee-1973]; the (c) examples of [partee-1997], repeated as
+(1)–(3)) is withdrawn, the oddness of *that father is John's* being charged to the demonstrative
+subject (17a). Or it is a genuine ⟨e,t⟩ predicate `λx[R_POSS(John)(x)]` (31), whose relation of
+possession or control comes from the possessive form and not from any noun; inside an NP such a
+possessive is an intersective modifier, the modifier genitive (6) being the noun conjoined with
+it (`Possessive.viaModifier_eq_inf`). German non-agreeing *mein* and Russian and Polish nominative
+predicate pronouns are bare predicates with the possession reading only; the agreeing and
+instrumental forms are elliptical NPs and admit the noun's relation as well ((28)–(30),
+(32)–(35)). Russian marks the split in form — postnominal genitive an argument, prenominal
+possessive a modifier — and on a relational noun the two constructions come apart (25).
 
 ## Main statements
 
-* `canBePredicate_iff_modifier` — predicativity is exactly modifier-provenance.
-* `team_predicate_ok` / `brother_predicate_bad` / `favoriteMovie_predicate_bad`
-  — P&B (1c)–(3c): *that team is John's* ✓, *#that brother/favorite movie is
-  John's* (decide-checked from the relation source).
-* `RussianForm.predicativity` — the morphosyntactically overt confirmation
-  (§2.2): the Russian genitive NP (argument) cannot predicate, the prenominal
-  possessive (modifier) can.
-* `predicateForm_eq_viaArgument` — the bare predicate possessive is the substrate
-  `Possessive.viaArgument` predicate.
+* `elliptical_iff_bare` — predicated of a `P`, the elliptical NP *[John's P]* on its possession
+  reading and the bare predicate possessive agree: the reading the two forms share.
+* `ubijcaPeti_ne_petinUbijca` — *ubijca Peti* 'murderer of Petja' (the noun's own relation
+  applied to Petja) and *Petin ubijca* (the modifier over the relatum-closed noun) are distinct
+  predicates; the latter holds exactly of a murderer Petja controls (`petinUbijca_iff`).
 
 ## References
 
-* [partee-borschev-2001]: Some puzzles of predicate possessives.
-* [jensen-vikner-1994]: the uniform argument-only analysis P&B argue against.
+* [partee-borschev-2001]
+* [jensen-vikner-1994]
+* [partee-1997]
+* [stockwell-schachter-partee-1973]
 -/
 
 namespace ParteeBorschev2001
 
-open ArgumentStructure.Relational
-
-/-! ### Relation provenance and predicativity
-
-The argument/modifier distinction is P&B's analytical classification of a
-construction, kept study-local (V&J reject it). -/
-
-/-- The provenance of a genitive's possession relation: supplied lexically by a
-relational noun/adjective (*argument*) or as a free contextual variable
-(*modifier*). -/
-inductive RelationProvenance where
-  /-- Inherent/lexical relation — the argument genitive. -/
-  | argument
-  /-- Free contextual relation — the modifier genitive. -/
-  | modifier
-  deriving DecidableEq, Repr
-
-/-- A possessive occurs as a bare predicate (*that team is John's*) iff its
-relation is modifier-provenance. Argument genitives cannot — P&B's central
-generalization. -/
-def CanBePredicate : RelationProvenance → Prop
-  | .modifier => True
-  | .argument => False
-
-instance : DecidablePred CanBePredicate := fun p => by
-  cases p <;> unfold CanBePredicate <;> infer_instance
-
-/-- Predicativity is exactly modifier-provenance. Inverting the provenance flips
-the prediction, so the distinction is not decorative. -/
-theorem canBePredicate_iff_modifier (p : RelationProvenance) :
-    CanBePredicate p ↔ p = .modifier := by
-  cases p <;> simp [CanBePredicate]
-
-/-! ### English predicate possessives (P&B 2001 (1)–(3))
-
-The genitive relation has three sources: the context (a free `R`, with a plain
-noun), an inherently relational noun (*brother*), or an inherently relational
-adjective (*favorite*). Only the contextual source is a modifier. -/
-
-/-- The three sources of the genitive relation (P&B 2001 §1.1). -/
-inductive RelationSource where
-  /-- Free contextual relation (plain noun, e.g. *team*). -/
-  | context
-  /-- Inherent relation of a relational noun (*brother*). -/
-  | relationalNoun
-  /-- Inherent relation of a relational adjective (*favorite*). -/
-  | relationalAdjective
-  deriving DecidableEq, Repr
-
-/-- Only the contextual source yields a modifier genitive; the two inherent
-sources yield argument genitives. -/
-def RelationSource.provenance : RelationSource → RelationProvenance
-  | .context => .modifier
-  | .relationalNoun => .argument
-  | .relationalAdjective => .argument
-
-/-- P&B (1c) *that team is John's* — acceptable: contextual relation (modifier). -/
-theorem team_predicate_ok :
-    CanBePredicate RelationSource.context.provenance := by decide
-
-/-- P&B (2c) *#that brother is John's* — degraded: relational noun (argument). -/
-theorem brother_predicate_bad :
-    ¬ CanBePredicate RelationSource.relationalNoun.provenance := by decide
-
-/-- P&B (3c) *#that favorite movie is John's* — degraded: relational adjective
-(argument). The whole N-bar *favorite movie* supplies the relation. -/
-theorem favoriteMovie_predicate_bad :
-    ¬ CanBePredicate RelationSource.relationalAdjective.provenance := by decide
-
-/-! ### Russian: overt morphosyntax (P&B 2001 §2.2)
-
-In Russian the distinction is visible in the form: the genitive NP (*Peti*) is
-uniformly argument-like and cannot occur in predicate position, while the
-prenominal quasi-adjectival possessive (*Petin*) and possessive pronouns admit
-the modifier reading and can. -/
-
-/-- Russian possessive forms and their relation provenance (P&B 2001 §2.2). -/
-inductive RussianForm where
-  /-- Postnominal genitive NP, *Peti* — uniformly argument. -/
-  | genitiveNP
-  /-- Prenominal quasi-adjectival possessive, *Petin* — admits modifier. -/
-  | prenominalPossessive
-  /-- Possessive pronoun, *moj* — admits modifier. -/
-  | possessivePronoun
-  deriving DecidableEq, Repr
-
-/-- Provenance of each Russian form. -/
-def RussianForm.provenance : RussianForm → RelationProvenance
-  | .genitiveNP => .argument
-  | .prenominalPossessive => .modifier
-  | .possessivePronoun => .modifier
-
-/-- The overt confirmation: a Russian form occurs as a predicate iff it is not
-the (argument-only) genitive NP. -/
-theorem RussianForm.predicativity (f : RussianForm) :
-    CanBePredicate f.provenance ↔ f ≠ .genitiveNP := by
-  cases f <;> decide
-
-/-! ### The predicate form is substrate
-
-The bare predicate possessive *John's* (`λx. R(John)(x)`) is the substrate
-`Possessive.viaArgument` — the relation applied to the possessor, a genuine
-⟨e,t⟩ predicate that the uniform argument-only approach cannot produce
-standalone. -/
+open ArgumentStructure.Relational Possessive
 
 variable {E S : Type*}
 
-theorem predicateForm_eq_viaArgument (possessor : E) (R : E → E → S → Prop) :
-    (fun x s => R possessor x s) = Possessive.viaArgument possessor R :=
-  rfl
+/-! ### Elliptical NPs and bare predicates (§2.3–2.4) -/
+
+/-- Predicated of something that is a `P`, the elliptical NP *[John's P]* on its possession
+reading — `P` coerced by `R`, then taken as the genitive's argument — and the bare predicate
+possessive `λx[R(John)(x)]` (31) agree. -/
+theorem elliptical_iff_bare {P : E → S → Prop} {x : E} {s : S} (possessor : E)
+    (R : E → E → S → Prop) (hP : P x s) :
+    viaArgument possessor (π P R) x s ↔ viaArgument possessor R x s := by
+  simp [viaArgument, π, hP]
+
+/-! ### Russian genitive vs prenominal possessive (§2.2)
+
+*stul Peti* and *Petin stul* (23)–(24) describe the same range of cases: with a plain noun the
+argument genitive over the coerced noun and the modifier possessive coincide
+(`Possessive.viaArgument_pi`). On a relational noun they part: *ubijca Peti* is 'murderer of
+Petja', while *Petin ubijca* is only 'a murderer Petja has hired' (25). Model: Petja `0`, the
+killer `1` who murdered Petja, a hireling `2` who murdered the killer and whom Petja controls. -/
+
+/-- Entities: Petja, the killer, the hireling. -/
+abbrev Ent := Fin 3
+/-- Petja. -/
+abbrev petja : Ent := 0
+/-- The one who murdered Petja. -/
+abbrev killer : Ent := 1
+/-- The murderer in Petja's employ. -/
+abbrev hireling : Ent := 2
+
+/-- *ubijca*: `murderer v y` iff `y` murdered `v`. -/
+def murderer : Ent → Ent → Unit → Prop := fun v y _ =>
+  v = petja ∧ y = killer ∨ v = killer ∧ y = hireling
+
+/-- `R_POSS`: Petja controls the hireling. -/
+def rPoss : Ent → Ent → Unit → Prop := fun p y _ => p = petja ∧ y = hireling
+
+/-- *ubijca Peti* (25a): the relational noun's own relation applied to Petja — the killer. -/
+theorem ubijcaPeti_iff (y : Ent) : viaArgument petja murderer y () ↔ y = killer := by
+  unfold viaArgument murderer; decide +revert
+
+/-- *Petin ubijca* (25b): the modifier possessive over the noun with its relatum slot closed —
+a murderer Petja controls, the hireling, never Petja's own murderer. -/
+theorem petinUbijca_iff (y : Ent) :
+    viaModifier petja (ExPossessor murderer) rPoss y () ↔ y = hireling := by
+  unfold viaModifier π ExPossessor murderer rPoss; decide +revert
+
+/-- The genitive and the prenominal possessive are distinct predicates on a relational noun. -/
+theorem ubijcaPeti_ne_petinUbijca :
+    viaArgument petja murderer ≠ viaModifier petja (ExPossessor murderer) rPoss := fun h =>
+  absurd ((ubijcaPeti_iff killer).2 rfl) (by rw [h, petinUbijca_iff]; decide)
 
 end ParteeBorschev2001
