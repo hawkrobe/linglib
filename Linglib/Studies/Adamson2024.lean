@@ -7,7 +7,7 @@ import Linglib.Fragments.Jarawara.PossessedNouns
 import Linglib.Fragments.Italian.NumberGender
 import Linglib.Fragments.Yanyuwa.Gender
 import Linglib.Fragments.CoastalMarind.Gender
-import Linglib.Semantics.Possessive.Relational
+import Linglib.Semantics.Possession.Relational
 import Linglib.Data.Examples.Adamson2024
 
 /-!
@@ -148,7 +148,7 @@ theorem kinship :
 
 section Denotation
 
-open ArgumentStructure.Relational
+open Possession
 
 variable {E S : Type*} (isSpleen : E → S → Prop) (bodyPartOf : E → E → S → Prop)
 

@@ -1,11 +1,11 @@
-import Linglib.Semantics.Possessive.Denotation
+import Linglib.Semantics.Possession.Denotation
 import Linglib.Semantics.Reference.PronounDenotation
 
 /-!
 # Possessive pronouns: where the possessive and pronoun APIs meet
 
 A possessive pronoun (*his book*, *mine*) is the possessive Kleisli arrow
-(`Possessive.applyTo` / `theOf`) applied to a possessor that is a **pronoun**
+(`Possession.applyTo` / `theOf`) applied to a possessor that is a **pronoun**
 denotation. Because both APIs trade in `NominalDenot` and possessive-of is
 `bind`, they compose with no glue:
 
@@ -15,7 +15,7 @@ denotation. Because both APIs trade in `NominalDenot` and possessive-of is
   (`g i`) — *not* on the possessee.
 
 That presup-on-possessor / selector-on-possessee split — what distinguishes a
-possessive pronoun from a plain pronoun — is exactly `Possessive.applyTo_presup`,
+possessive pronoun from a plain pronoun — is exactly `Possession.applyTo_presup`,
 i.e. *derived*, not stipulated.
 
 ## Main statements
@@ -26,8 +26,7 @@ i.e. *derived*, not stipulated.
   of the pronoun's referent.
 -/
 
-namespace Possessive
-
+namespace Possession
 open Reference (NominalDenot)
 open Definiteness
 open Semantics.Composition (interpPronoun)
@@ -54,4 +53,4 @@ theorem possessivePronoun_selector (p : PersonalPronoun) (i : ℕ)
           (fun y => R (interpPronoun (E := E) (W := PUnit) i g) y) := by
   rw [applyTo_selector]; rfl
 
-end Possessive
+end Possession

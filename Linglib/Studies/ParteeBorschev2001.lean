@@ -1,4 +1,4 @@
-import Linglib.Semantics.Possessive.Basic
+import Linglib.Semantics.Possession.Basic
 
 /-!
 # Partee & Borschev 2001: Some puzzles of predicate possessives
@@ -13,7 +13,7 @@ relation ([stockwell-schachter-partee-1973]; the (c) examples of [partee-1997], 
 subject (17a). Or it is a genuine ⟨e,t⟩ predicate `λx[R_POSS(John)(x)]` (31), whose relation of
 possession or control comes from the possessive form and not from any noun; inside an NP such a
 possessive is an intersective modifier, the modifier genitive (6) being the noun conjoined with
-it (`Possessive.viaModifier_eq_inf`). German non-agreeing *mein* and Russian and Polish nominative
+it (`Possession.pi_apply`). German non-agreeing *mein* and Russian and Polish nominative
 predicate pronouns are bare predicates with the possession reading only; the agreeing and
 instrumental forms are elliptical NPs and admit the noun's relation as well ((28)–(30),
 (32)–(35)). Russian marks the split in form — postnominal genitive an argument, prenominal
@@ -37,7 +37,7 @@ possessive a modifier — and on a relational noun the two constructions come ap
 
 namespace ParteeBorschev2001
 
-open ArgumentStructure.Relational Possessive
+open Possession
 
 variable {E S : Type*}
 
@@ -48,16 +48,16 @@ reading — `P` coerced by `R`, then taken as the genitive's argument — and th
 possessive `λx[R(John)(x)]` (31) agree. -/
 theorem elliptical_iff_bare {P : E → S → Prop} {x : E} {s : S} (possessor : E)
     (R : E → E → S → Prop) (hP : P x s) :
-    viaArgument possessor (π P R) x s ↔ viaArgument possessor R x s := by
-  simp [viaArgument, π, hP]
+    π P R possessor x s ↔ R possessor x s := by
+  simp [π, hP]
 
 /-! ### Russian genitive vs prenominal possessive (§2.2)
 
 *stul Peti* and *Petin stul* (23)–(24) describe the same range of cases: with a plain noun the
-argument genitive over the coerced noun and the modifier possessive coincide
-(`Possessive.viaArgument_pi`). On a relational noun they part: *ubijca Peti* is 'murderer of
-Petja', while *Petin ubijca* is only 'a murderer Petja has hired' (25). Model: Petja `0`, the
-killer `1` who murdered Petja, a hireling `2` who murdered the killer and whom Petja controls. -/
+argument genitive over the coerced noun and the modifier possessive assemble the same term
+`π stul R petja`. On a relational noun they part: *ubijca Peti* is 'murderer of Petja', while
+*Petin ubijca* is only 'a murderer Petja has hired' (25). Model: Petja `0`, the killer `1` who
+murdered Petja, a hireling `2` who murdered the killer and whom Petja controls. -/
 
 /-- Entities: Petja, the killer, the hireling. -/
 abbrev Ent := Fin 3
@@ -75,19 +75,18 @@ def murderer : Ent → Ent → Unit → Prop := fun v y _ =>
 /-- `R_POSS`: Petja controls the hireling. -/
 def rPoss : Ent → Ent → Unit → Prop := fun p y _ => p = petja ∧ y = hireling
 
-/-- *ubijca Peti* (25a): the relational noun's own relation applied to Petja — the killer. -/
-theorem ubijcaPeti_iff (y : Ent) : viaArgument petja murderer y () ↔ y = killer := by
-  unfold viaArgument murderer; decide +revert
+/-- *ubijca Peti* (25a): the relational noun applied to Petja — the killer. -/
+theorem ubijcaPeti_iff (y : Ent) : murderer petja y () ↔ y = killer := by
+  unfold murderer; decide +revert
 
 /-- *Petin ubijca* (25b): the modifier possessive over the noun with its relatum slot closed —
 a murderer Petja controls, the hireling, never Petja's own murderer. -/
 theorem petinUbijca_iff (y : Ent) :
-    viaModifier petja (ExPossessor murderer) rPoss y () ↔ y = hireling := by
-  unfold viaModifier π ExPossessor murderer rPoss; decide +revert
+    π (ExPossessor murderer) rPoss petja y () ↔ y = hireling := by
+  unfold π ExPossessor murderer rPoss; decide +revert
 
 /-- The genitive and the prenominal possessive are distinct predicates on a relational noun. -/
-theorem ubijcaPeti_ne_petinUbijca :
-    viaArgument petja murderer ≠ viaModifier petja (ExPossessor murderer) rPoss := fun h =>
-  absurd ((ubijcaPeti_iff killer).2 rfl) (by rw [h, petinUbijca_iff]; decide)
+theorem ubijcaPeti_ne_petinUbijca : murderer petja ≠ π (ExPossessor murderer) rPoss petja :=
+  fun h => absurd ((ubijcaPeti_iff killer).2 rfl) (by rw [h, petinUbijca_iff]; decide)
 
 end ParteeBorschev2001

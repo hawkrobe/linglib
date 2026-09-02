@@ -1,5 +1,5 @@
 import Linglib.Fragments.Swahili.Basic
-import Linglib.Features.Possession
+import Linglib.Semantics.Possession.Typology
 
 /-!
 # Swahili Possessive Constructions

@@ -1,7 +1,7 @@
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Reference.Nominal
-import Linglib.Semantics.Possessive.Basic
+import Linglib.Semantics.Possession.Basic
 
 /-!
 # The denotation of a determiner
@@ -43,11 +43,11 @@ deictic feature projects: deixis filters the referent but never selects it
   (previously deferred): a definite description selecting the unique satisfier
   of the possessee restrictor that stands in the possession relation to the
   possessor; the GQ-form possessive (`PossW`, narrowing-aware) lives in
-  `Semantics/Possessive/GQ.lean`.
-* `interpret_possessive_eq_viaModifier`, `Possessive.denote_isSome_iff_iotaPresupposition`,
-  `Possessive.toDefinite` — the determiner denotation *is* the `Possessive`
-  description API: same restrictor (Barker's `viaModifier`), same definedness
-  presupposition, same referent.
+  `Semantics/Possession/GQ.lean`.
+* `interpret_possessive_eq_pi`, `Possessive.denote_isSome_iff_existsUnique`,
+  `Possessive.toDefinite` — the determiner denotation *is* the `Possession`
+  description API: same restrictor (Barker's `π` applied to the possessor), same
+  definedness presupposition, same referent.
 
 ## Implementation notes
 
@@ -186,7 +186,7 @@ vacuous; the definite's only presupposition is definedness, exposed as the
 selector returning `some`.
 
 The narrowing-aware GQ form for quantificational possessors ("every student's
-cat") is `Possessive.PossW` — `(individual a)` of
+cat") is `Possession.PossW` — `(individual a)` of
 `PossW` reduces here when the possessor is an entity. -/
 noncomputable def _root_.Possessive.denote (_p : Possessive)
     (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet) :
@@ -214,48 +214,42 @@ theorem Possessive.denote_realized (p : Possessive)
 /-! ### Unification with the possessive description API
 
 The possessive determiner's denotation (`Description.possessive`/`russellIota`)
-and the `Possessive` description API are not two analyses — they are the same
-construction. The determiner's restrictor *is* Barker's `Possessive.viaModifier`
-(π of the noun predicate and the possession relation); its definedness
+and the `Possession` description API are not two analyses — they are the same
+construction. The determiner's restrictor *is* Barker's `Possession.π` of the noun
+predicate and the possession relation, applied to the possessor; its definedness
 presupposition *is* the description's Russellian iota-presupposition; and at a
 context where the presupposition holds, the determiner assembles into a
-`Possessive.Definite` whose `existsUnique_possessee` selects the very
+`Possession.Definite` whose `existsUnique_possessee` selects the very
 referent the determiner does. -/
 
 section DescriptionUnification
 
-open _root_.ArgumentStructure.Relational
-
 variable (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet)
   (g : Assignment E) (gs : SitAssignment W)
 
-/-- The possessive determiner's restrictor *is* Barker's `Possessive.viaModifier`
-(π of the noun predicate `R` and the possession relation `rel`): the
-`Definiteness` and `Possessive` encodings select through the same construction,
-by construction. -/
-theorem interpret_possessive_eq_viaModifier :
+/-- The possessive determiner's restrictor *is* Barker's `π` of the noun predicate `R`
+and the possession relation `rel`, applied to the possessor: the `Definiteness` and
+`Possession` encodings select through the same construction, by construction. -/
+theorem interpret_possessive_eq_pi :
     interpret (.possessive R possessor rel) g gs
-      = russellIota (fun x => Possessive.viaModifier (S := PUnit) (possessor g gs)
-          (fun y _ => R g gs y) (fun a b _ => rel g gs a b) x PUnit.unit) :=
+      = russellIota (fun x => _root_.Possession.π (S := PUnit) (fun y _ => R g gs y)
+          (fun a b _ => rel g gs a b) (possessor g gs) x PUnit.unit) :=
   rfl
 
 /-- The possessive determiner's definedness presupposition *is* the description
 API's Russellian iota-presupposition (`HasIotaWitness`'s condition). -/
-theorem Possessive.denote_isSome_iff_iotaPresupposition (p : Possessive) :
+theorem Possessive.denote_isSome_iff_existsUnique (p : Possessive) :
     ((p.denote R possessor rel).selector (g, gs) PUnit.unit).isSome
-      ↔ iotaPresupposition
-          (fun x (_ : PUnit) => R g gs x ∧ rel g gs (possessor g gs) x) PUnit.unit := by
+      ↔ ∃! x, R g gs x ∧ rel g gs (possessor g gs) x := by
   rw [Possessive.denote_selector]
   show (russellIota (fun x => R g gs x ∧ rel g gs (possessor g gs) x)).isSome ↔ _
   rw [russellIota_isSome_iff_exists_unique]
 
 /-- At a context where its presupposition holds, the possessive determiner
-assembles into a `Possessive.Definite` (over the trivial situation) whose
+assembles into a `Possession.Definite` (over the trivial situation) whose
 possessee predicate is the determiner's restrictor. -/
-def Possessive.toDefinite
-    (h : iotaPresupposition
-      (fun x (_ : PUnit) => R g gs x ∧ rel g gs (possessor g gs) x) PUnit.unit) :
-    Possessive.Definite E PUnit where
+def Possessive.toDefinite (h : ∃! x, R g gs x ∧ rel g gs (possessor g gs) x) :
+    Possession.Definite E PUnit where
   possessor := possessor g gs
   predicate := fun x _ => R g gs x ∧ rel g gs (possessor g gs) x
   presupposition := fun _ => h
@@ -263,9 +257,7 @@ def Possessive.toDefinite
 /-- The description's unique possessee (`existsUnique_possessee`, inherited from
 `HasIotaWitness`) is the referent the determiner selects — the two encodings
 agree by construction. -/
-theorem Possessive.toDefinite_existsUnique
-    (h : iotaPresupposition
-      (fun x (_ : PUnit) => R g gs x ∧ rel g gs (possessor g gs) x) PUnit.unit) :
+theorem Possessive.toDefinite_existsUnique (h : ∃! x, R g gs x ∧ rel g gs (possessor g gs) x) :
     ∃! y : E, HasPossesseePredicate.possesseePredicate
       (Possessive.toDefinite R possessor rel g gs h) y PUnit.unit :=
   existsUnique_possessee _ PUnit.unit

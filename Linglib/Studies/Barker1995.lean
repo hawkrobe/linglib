@@ -1,4 +1,4 @@
-import Linglib.Semantics.Possessive.GQ
+import Linglib.Semantics.Possession.GQ
 import Linglib.Semantics.Quantification.Counting
 import Linglib.Data.Examples.Barker1995
 import Mathlib.Data.Fintype.Prod
@@ -34,7 +34,7 @@ the book's resolution of the perspective paradox.
 
 namespace Barker1995
 
-open Quantification Possessive
+open Quantification Possession
 
 /-! ### Decidability for the toy models -/
 
@@ -249,7 +249,7 @@ sisters"), exercising the possessive-description capability mixins. -/
 
 /-- "the boy's cat": possessor `0` (the boy), with a uniquely-identified cat
 `1`. Entities are `Fin 3` (boy, cat, dog); one situation. -/
-def theBoysCat : Possessive.Definite (Fin 3) Unit where
+def theBoysCat : Possession.Definite (Fin 3) Unit where
   possessor := 0
   predicate := fun y _ => y = 1
   presupposition := fun _ => ⟨1, rfl, fun _ hy => hy⟩
@@ -265,7 +265,7 @@ def sibling : Fin 3 → Fin 3 → Prop := fun x y => x = 0 ∧ (y = 1 ∨ y = 2)
 
 /-- "John's sisters": possessor `0` (John), with the sibling relation as the
 possession relation (a relational noun, so the restrictor is trivial). -/
-def johnsSisters : Possessive.Description (Fin 3) Unit where
+def johnsSisters : Possession.Description (Fin 3) Unit where
   possessor := 0
   relation := fun x y _ => sibling x y
   restrictor := fun _ _ => True
@@ -283,7 +283,7 @@ rings are icy* fails because Mercury (planet `3`) has no ring. -/
 
 /-- "Mercury's rings": possessor `3`, with `hasRing` as the possession
 relation. -/
-def mercurysRings : Possessive.Description (Fin 12) Unit where
+def mercurysRings : Possession.Description (Fin 12) Unit where
   possessor := 3
   relation := fun x y _ => hasRing x y
   restrictor := fun y _ => isRing y

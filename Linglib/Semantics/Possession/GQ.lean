@@ -1,4 +1,5 @@
-import Linglib.Semantics.Possessive.Basic
+import Linglib.Semantics.Possession.Basic
+import Linglib.Semantics.Quantification.Basic
 
 /-!
 # Possessive Quantifiers
@@ -24,14 +25,13 @@ which keeps narrowing in the scope.
 - `possW_individual_existential_import`: "John's A B" entails John possesses
   an A-thing ([peters-westerstahl-2013])
 - `possessiveAsNPQ_iff_possW`: [barker-2011]'s type ⟨1⟩ possessive
-  (`Possessive.asNPQ`) is `PossW` of a Montagovian individual with
+  (`Possession.asNPQ`) is `PossW` of a Montagovian individual with
   existential `Q₂`
 - `poss_not_quantityInvariant`: possessive GQs with a fixed `R` are not
   isomorphism-invariant (P&W p. 256)
 -/
 
-namespace Possessive
-
+namespace Possession
 open Quantification
 
 variable {α : Type*}
@@ -167,7 +167,7 @@ theorem possW_individual_existential_import {Q₂ : GQ α} {R : α → α → Pr
 /-! ### Denoting a bundled description
 
 A possessive description bundling a possessor and a possession relation (any
-`HasPossessor` + `HasPossessionRelation` instance, e.g. `Possessive.Description`)
+`HasPossessor` + `HasPossessionRelation` instance, e.g. `Possession.Description`)
 denotes, at a situation, as the `PossW` of its possessor taken whole. Routing
 every description through one operator is what makes the API unified: a type
 inherits narrowing and existential import with no bespoke proof. -/
@@ -193,14 +193,14 @@ theorem descriptionGQ_existential_import {γ E S : Type*}
 /-! ### Bridge to Barker's type ⟨1⟩ possessive -/
 
 /-- [barker-2011]'s possessive Quantifier (`⟦John's⟧ = fun P => ∃ y, R j y ∧ P y`,
-    `Possessive.asNPQ`) is `PossW` at a Montagovian individual with
+    `Possession.asNPQ`) is `PossW` at a Montagovian individual with
     existential `Q₂` and trivial possessee restrictor — the possessee class is
     folded into `R` by Barker's π shift. -/
 theorem possessiveAsNPQ_iff_possW {E : Type*} (a : E) (R : E → E → Prop)
     (P : E → Prop) :
-    Possessive.asNPQ a R P ↔
+    Possession.asNPQ a R P ↔
       PossW (individual a) some_sem R (fun _ => True) P := by
-  unfold Possessive.asNPQ PossW dom
+  unfold Possession.asNPQ PossW dom
     individual some_sem
   constructor
   · rintro ⟨y, hR, hP⟩
@@ -231,4 +231,4 @@ theorem poss_not_quantityInvariant :
   obtain ⟨x, ⟨-, b, hb, -, hb'⟩, -⟩ := hiff.mp hpos
   exact absurd (hb' ▸ hb) (by simp)
 
-end Possessive
+end Possession

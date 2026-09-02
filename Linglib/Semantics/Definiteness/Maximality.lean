@@ -71,7 +71,7 @@ def Uniqueness {E : Type*} (P : E → Prop) : Prop :=
     iff, not `rfl` — mathlib's `∃!` bundles the components under one existential,
     CB splits them. Uniqueness is mathlib `∃!` *everywhere* in this subsystem
     (there is no separate `existsUnique` def); this theorem is the bridge to the
-    CB components, and `Relational.iotaPresupposition` is `∃!` by `abbrev`. -/
+    CB components. -/
 theorem existsUnique_iff_existence_and_uniqueness {E : Type*} (P : E → Prop) :
     (∃! x, P x) ↔ (Existence P ∧ Uniqueness P) := by
   constructor

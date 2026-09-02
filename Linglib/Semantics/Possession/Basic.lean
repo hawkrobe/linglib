@@ -1,77 +1,45 @@
-import Linglib.Semantics.Possessive.Relational
+import Linglib.Semantics.Possession.Relational
+import Linglib.Semantics.Quantification.Defs
 
 /-!
 # Possessive descriptions and capabilities
 
-The unified `Possessive` namespace for the semantics of possessive
-constructions, built on the general relational-noun substrate
-(`ArgumentStructure.Relational`: `π`, `Ex`, `iotaPresupposition`, …). The
+The `Possession` namespace for the semantics of possessive constructions,
+built on the relational-noun substrate of `Semantics/Possession/Relational.lean`
+(`π`, `Ex`, `ExPossessor`); the typological vocabulary is in
+`Semantics/Possession/Typology.lean`. The
 quantificational layer (`Poss`, `PossW`, narrowing, `descriptionGQ`) is in
 `Possessive/GQ.lean`; the determiner that denotes through these descriptions is
 `Possessive.denote` (`Semantics/Definiteness/DeterminerDenotation.lean`).
 
+A possessor combines with a noun in one of two ways: a relational noun `R` takes
+it as its argument, `R x` (the argument genitive), and a sortal noun `P` is first
+relationalized by a free relation, `π P R x` (the modifier genitive).
+
 ## Main declarations
 
-* `Possessive.viaArgument`, `Possessive.viaModifier` — the two ways a possessor
-  combines with a noun: with a relational noun's own relation (the argument
-  genitive) or with a free relation over a sortal restrictor (the modifier
-  genitive, Barker's `π`); `viaArgument_pi`, `viaModifier_eq_inf`, `viaModifier_top` — the
-  two coincide over a `π`-coerced noun, and the modifier genitive is the noun conjoined with the
-  bare predicate possessive.
-* `Possessive.Description` — a possessor + relation + sortal restrictor; the
-  possessee predicate is *derived* (`viaModifier`), never stored, so a
-  description cannot be incoherent.
-* `Possessive.Definite` — a possessive carrying a Russellian uniqueness
+* `Possession.Description` — a possessor + relation + sortal restrictor; the
+  possessee predicate is *derived* (`π`), never stored, so a description cannot
+  be incoherent.
+* `Possession.Definite` — a possessive carrying a Russellian uniqueness
   presupposition.
 * `HasPossessor`, `HasPossesseePredicate`, `HasPossessionRelation`,
   `HasIotaWitness` — composable capability mixins (root namespace, `Add`/`Mul`
   idiom); description types opt into whichever axes they bear.
 * `possesseeSet`, `existsUnique_possessee` — capability-polymorphic consumers.
-* `Possessive.PossessionRelationType` — the four-way Vikner-Jensen possession
+* `Possession.RelationType` — the four-way Vikner-Jensen possession
   taxonomy.
 -/
 
-open ArgumentStructure.Relational
-
-namespace Possessive
-
+namespace Possession
 variable {E S : Type*}
-
-/-! ### Combining a possessor with a noun -/
-
-/-- Applying a possessor to a lexically relational noun — the *argument*
-genitive: `⟦John's teacher⟧ = λy. teacher(John)(y)`. -/
-def viaArgument (possessor : E) (nounRel : E → E → S → Prop) : E → S → Prop :=
-  fun y s => nounRel possessor y s
-
-/-- Applying a possessor to a sortal noun via Barker's `π` — the *modifier*
-genitive with a free relation `R`: `⟦John's team⟧ = λy. team(y) ∧ R(John)(y)`. -/
-def viaModifier (possessor : E) (nounPred : E → S → Prop) (R : E → E → S → Prop) : E → S → Prop :=
-  fun y s => π nounPred R possessor y s
-
-/-- The argument genitive over a `π`-coerced sortal is the modifier genitive: coerce the noun to
-a relation and take the possessor as its argument ([jensen-vikner-1994]), or modify the noun by
-the possessor's free relation ([partee-1997]) — one predicate. -/
-theorem viaArgument_pi (possessor : E) (P : E → S → Prop) (R : E → E → S → Prop) :
-    viaArgument possessor (π P R) = viaModifier possessor P R := rfl
-
-/-- The modifier genitive is intersective modification of the noun by the bare predicate
-possessive `λy. R(possessor)(y)` ([partee-borschev-2001]). -/
-theorem viaModifier_eq_inf (possessor : E) (P : E → S → Prop) (R : E → E → S → Prop) :
-    viaModifier possessor P R = P ⊓ viaArgument possessor R := rfl
-
-/-- Over the trivial restrictor the modifier genitive is the argument genitive. -/
-@[simp] theorem viaModifier_top (possessor : E) (R : E → E → S → Prop) :
-    viaModifier possessor ⊤ R = viaArgument possessor R := by
-  rw [viaModifier_eq_inf, top_inf_eq]
 
 /-! ### Possessive descriptions -/
 
 /-- A possessive description ([barker-1995]): a possessor, a possession
 relation, and a sortal restrictor (the noun predicate; `⊤` for a purely
-relational noun). The possessee predicate is *derived* (`viaModifier`), not
-stored — so a description cannot bundle a predicate unrelated to its
-relation. -/
+relational noun). The possessee predicate is *derived* (`π`), not stored — so a
+description cannot bundle a predicate unrelated to its relation. -/
 structure Description (E S : Type*) where
   /-- The possessor entity. -/
   possessor : E
@@ -85,7 +53,7 @@ namespace Description
 /-- The derived possessee predicate: the restrictor conjoined with the relation
 applied to the possessor. -/
 def possesseePred (d : Description E S) : E → S → Prop :=
-  viaModifier d.possessor d.restrictor d.relation
+  π d.restrictor d.relation d.possessor
 
 end Description
 
@@ -97,14 +65,14 @@ structure Definite (E S : Type*) where
   /-- The possessee predicate (a definite description's restrictor). -/
   predicate : E → S → Prop
   /-- The possessee predicate has a unique witness at every situation. -/
-  presupposition : ∀ s : S, iotaPresupposition predicate s
+  presupposition : ∀ s : S, ∃! x, predicate x s
 
 /-! ### Vikner-Jensen possession taxonomy -/
 
 /-- Four-way lexical taxonomy of possession relations from
 [vikner-jensen-2002] §3.1.2 (their Table 1), reproduced in [barker-2011]. The
 separate "pragmatic" interpretation is not lexical and is not one of these. -/
-inductive PossessionRelationType where
+inductive RelationType where
   /-- Inherent relation: lexically argument-structural (the teacher's class). -/
   | inherent
   /-- Part-whole relation (the girl's nose, the car's wheel). -/
@@ -124,8 +92,7 @@ def asNPQ {E : Type*} (possessor : E) (R : E → E → Prop) :
     Quantification.Quantifier E :=
   fun P => ∃ y : E, R possessor y ∧ P y
 
-end Possessive
-
+end Possession
 /-! ### Composable description capabilities
 
 Cross-cutting capability mixins for the long-run library where 20-30+ possessive
@@ -135,8 +102,8 @@ operation; description types opt in to whichever axes they bear.
 
 | Type | `HasPossessor` | `HasPossesseePredicate` | `HasPossessionRelation` | `HasIotaWitness` |
 |---|---|---|---|---|
-| `Possessive.Description E S` | ✓ | ✓ | ✓ | — |
-| `Possessive.Definite E S`    | ✓ | ✓ | — | ✓ | -/
+| `Possession.Description E S` | ✓ | ✓ | ✓ | — |
+| `Possession.Definite E S`    | ✓ | ✓ | — | ✓ | -/
 
 /-- A type whose values bundle a possessor entity. -/
 class HasPossessor (α : Type*) (E : outParam Type*) where
@@ -161,11 +128,9 @@ quantificational ones do not. -/
 class HasIotaWitness (α : Type*) (E S : outParam Type*)
     [HasPossesseePredicate α E S] : Prop where
   /-- The possessee predicate has a unique witness at every situation. -/
-  iotaWitness : ∀ (a : α) (s : S),
-    iotaPresupposition (HasPossesseePredicate.possesseePredicate a) s
+  iotaWitness : ∀ (a : α) (s : S), ∃! x, HasPossesseePredicate.possesseePredicate a x s
 
-namespace Possessive
-
+namespace Possession
 variable {E S : Type*}
 
 instance : HasPossessor (Description E S) E := ⟨Description.possessor⟩
@@ -179,8 +144,7 @@ instance : HasPossesseePredicate (Definite E S) E S := ⟨Definite.predicate⟩
 typeclass instance just exposes it. -/
 instance : HasIotaWitness (Definite E S) E S := ⟨fun a => a.presupposition⟩
 
-end Possessive
-
+end Possession
 /-! ### Consuming the capabilities -/
 
 variable {α E S : Type*}

@@ -1,5 +1,5 @@
 import Linglib.Features.Number.Basic
-import Linglib.Features.Possession
+import Linglib.Semantics.Possession.Typology
 
 /-!
 # Turkish Possessive Constructions

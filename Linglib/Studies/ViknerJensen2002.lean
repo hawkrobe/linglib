@@ -1,4 +1,4 @@
-import Linglib.Semantics.Possessive.Basic
+import Linglib.Semantics.Possession.Basic
 
 /-!
 # Vikner & Jensen 2002: A semantic analysis of the English genitive
@@ -8,14 +8,12 @@ genitive: the genitive always combines with a *relational* noun — a
 non-relational head is coerced via Barker's `π`, the relation type supplied by
 the noun's qualia (`availableRelations`, §3.1.2). The genitive clitic itself
 (`clitic`, their (16)) embeds a narrow-scope definite: the worked examples
-prove `iotaPresupposition` and feed `Possessive.Definite`'s
-`existsUnique_possessee`.
+prove `∃!` uniqueness and feed `Possession.Definite`'s `existsUnique_possessee`.
 -/
 
 namespace ViknerJensen2002
 
-open ArgumentStructure.Relational
-open Possessive
+open Possession
 
 /-! ### Qualia structure (Pustejovsky, as used by Vikner & Jensen) -/
 
@@ -35,13 +33,13 @@ structure NounQualia where
 relational, part-whole iff it bears a constitutive quale, agentive iff it bears
 an agentive quale, and control unconditionally. Possessor-side selectional
 restrictions are left out, as in the paper's own derivations. -/
-def availableRelations (q : NounQualia) : Set PossessionRelationType :=
+def availableRelations (q : NounQualia) : Set RelationType :=
   {r | r = .inherent ∧ q.isRelational ∨ r = .partWhole ∧ q.hasConstitutive ∨
     r = .agentive ∧ q.hasAgentive ∨ r = .control}
 
 /-- Control is available whatever the noun's qualia. -/
 theorem control_always (q : NounQualia) :
-    PossessionRelationType.control ∈ availableRelations q :=
+    RelationType.control ∈ availableRelations q :=
   .inr <| .inr <| .inr rfl
 
 /-! ### Lexical entries -/
@@ -97,9 +95,8 @@ relation to the possessor. -/
 def teacherRel : Fin 4 → Fin 4 → Unit → Prop := fun x y _ => x = 0 ∧ y = 1
 
 /-- *the girl's teacher* (inherent): the relational noun's own relation applied
-to the possessor (`viaArgument`) has a unique satisfier. -/
-theorem girlsTeacher_unique (s : Unit) :
-    iotaPresupposition (viaArgument (E := Fin 4) 0 teacherRel) s :=
+to the possessor has a unique satisfier. -/
+theorem girlsTeacher_unique (s : Unit) : ∃! y, teacherRel 0 y s :=
   ⟨1, ⟨rfl, rfl⟩, fun _ hy => hy.2⟩
 
 /-- *a girl* as an indefinite possessor quantifier. -/
@@ -115,11 +112,11 @@ theorem aGirlsTeacher (P : Fin 4 → Prop) :
     rwa [← (hx 1).mp ⟨rfl, rfl⟩] at hP
   · exact fun hP => ⟨0, rfl, 1, fun y => by simp, hP⟩
 
-/-- *the girl's teacher* as a `Possessive.Definite`: its unique referent is
+/-- *the girl's teacher* as a `Possession.Definite`: its unique referent is
 delivered by the capability API's `existsUnique_possessee`, no bespoke proof. -/
-def theGirlsTeacher : Possessive.Definite (Fin 4) Unit where
+def theGirlsTeacher : Possession.Definite (Fin 4) Unit where
   possessor := 0
-  predicate := viaArgument 0 teacherRel
+  predicate := teacherRel 0
   presupposition := girlsTeacher_unique
 
 theorem girlsTeacher_existsUnique (s : Unit) :
@@ -133,10 +130,9 @@ def controlRel : Fin 4 → Fin 4 → Unit → Prop := fun x y _ => x = 0 ∧ y =
 def carPred : Fin 4 → Unit → Prop := fun y _ => y = 2
 
 /-- *the girl's car* (coerced, control): the sortal noun is `π`-shifted with
-the control relation, then combines exactly like a relational noun
-(`viaArgument`). The result again carries the definite's unique witness. -/
-theorem girlsCar_unique (s : Unit) :
-    iotaPresupposition (viaArgument (E := Fin 4) 0 (π carPred controlRel)) s :=
+the control relation, then takes the possessor as its argument exactly like a
+relational noun. The result again carries the definite's unique witness. -/
+theorem girlsCar_unique (s : Unit) : ∃! y, π carPred controlRel 0 y s :=
   ⟨2, ⟨rfl, rfl, rfl⟩, fun _ hy => hy.1⟩
 
 end ViknerJensen2002

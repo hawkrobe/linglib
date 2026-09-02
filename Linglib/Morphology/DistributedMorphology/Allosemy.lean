@@ -198,7 +198,7 @@ theorem Verbalizer.fromRootType_iff_entailsChange (rt : Verb.Root.ChangeType) :
 /-- The contentful allosemes of the nominal categorizer n: the three
 root-attached types — relational (the body-part-of relation), sortal, and
 the alienator that closes a possessor slot
-(`ArgumentStructure.Relational.ExPossessor`) — the content alloseme, and
+(`Possession.ExPossessor`) — the content alloseme, and
 the deverbal inventory. The deverbal denotations live in
 `Studies/Benz2025.lean`. -/
 inductive Nominalizer.Contentful where

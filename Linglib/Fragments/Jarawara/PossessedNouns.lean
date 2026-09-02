@@ -1,4 +1,4 @@
-import Linglib.Features.Possession
+import Linglib.Semantics.Possession.Typology
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person.Capabilities

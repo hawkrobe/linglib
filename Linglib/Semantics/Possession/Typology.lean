@@ -5,12 +5,12 @@ Authors: Robert Hawkins
 -/
 
 /-!
-# Possession — typological feature substrate
+# Possession: typological substrate
 
-Theory-neutral classification enums for possession, following the WALS
-possession chapters ([wals-2013]). Per-language values are bare `def`s in
-`Fragments/<Lang>/Possession.lean`, consumed by `Studies/Heine1997` and `Studies/KampanarouAlexiadou2026`. Bare-root
-`Possession` namespace under `Features/`, like `Features/Case`.
+Theory-neutral classification enums for possession, following the WALS possession chapters
+([wals-2013]). Per-language values are bare `def`s in `Fragments/<Lang>/Possession.lean`; the
+compositional semantics of possessive constructions is in `Semantics/Possession/Basic.lean` and
+its siblings.
 
 ## Main definitions
 
@@ -160,9 +160,9 @@ def predicativeSource : PredicativeStrategy → Source
 
 /-! ### The neutral alienability cut -/
 
-/-- Neutral alienable/inalienable cut, low in `Features` so the typological
-    `Classification`, DM `PossessionType`, and V&J `PossessionRelationType` can
-    coarsen onto it instead of re-stipulating the contrast. -/
+/-- Neutral alienable/inalienable cut, so the typological `Classification`, DM
+    `PossessionType`, and V&J `RelationType` can coarsen onto it instead of re-stipulating
+    the contrast. -/
 inductive Alienability where
   | inalienable
   | alienable
