@@ -1,9 +1,9 @@
 /-!
 # Expressive
-[potts-2007] [kubota-2026]
+[potts-2007b] [kubota-2026]
 
 Theory-neutral per-entry tag for **use-conditional / secondary-meaning** lexemes — the
-expressive dimension of [potts-2007]. Fragments attach an `Expressive` value to mark a
+expressive dimension of [potts-2007b]. Fragments attach an `Expressive` value to mark a
 lexeme as expressive and record which construction class it belongs to; theories then assign
 it a denotation (`Pragmatics.Expressives.TwoDimProp`, an outlook-indexed meaning,
 use-conditional types, …) and are judged on whether they predict its diagnostic behavior.
@@ -16,11 +16,11 @@ without pulling in any account of conventional implicature. The diagnostic *fing
 
 namespace Features
 
-/-- Construction class of a use-conditional / expressive lexeme ([potts-2007],
+/-- Construction class of a use-conditional / expressive lexeme ([potts-2007b],
 [kubota-2026]). The coarse, theory-neutral typology Fragments mark entries with. -/
 inductive Expressive where
   /-- Epithets, slurs, and expressive adjectives — speaker-oriented affective content
-      ("that bastard", "damn") ([potts-2007]). -/
+      ("that bastard", "damn") ([potts-2007b]). -/
   | epithet
   /-- Addressee- or referent-honorifics. -/
   | honorific

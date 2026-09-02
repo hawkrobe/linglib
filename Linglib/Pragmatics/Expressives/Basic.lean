@@ -7,8 +7,8 @@ import Linglib.Semantics.Presupposition.Basic
 Following [potts-2005], a `TwoDimProp` splits a meaning into two independent predicates over
 worlds: **at-issue** content (truth-conditional, composes normally) and **conventional
 implicature** content (use-conditional, projecting to the root). CIs project through the
-truth-functional connectives and are blocked only by direct quotation ([potts-2007]; see
-`pureQuote`, and `Semantics.Quotation.Mixed` for [kirk-giannini-2024]'s mixed quotation).
+truth-functional connectives and are blocked only by direct quotation ([potts-2007b]; see
+`pureQuote`, and `KirkGiannini2024.mq` for [kirk-giannini-2024]'s mixed quotation).
 
 The at-issue tier carries the Heyting algebra of `W → Prop` (`ᶜ`/`⊓`/`⊔`/`⇨`); the CI tier
 always takes the meet `⊓`. `TwoDimProp.ofPartialProp` bridges
@@ -17,12 +17,13 @@ always takes the meet `⊓`. `TwoDimProp.ofPartialProp` bridges
 ## Main definitions
 
 * `TwoDimProp` — a two-dimensional meaning (at-issue and CI predicates over worlds).
+* `mapAtIssue` — an at-issue operator lifted with the CI passed up unchanged.
 * `neg`, `and`, `or`, `imp` — the connectives (at-issue Heyting op, CI meet).
-* `SecondaryMeaningProperties` — the six [potts-2007] expressive diagnostics.
+* `SecondaryMeaningProperties` — the six [potts-2007b] expressive diagnostics.
 
 ## References
 
-[potts-2005] [potts-2007] [wang-2025] [kirk-giannini-2024]
+[potts-2005] [potts-2007b] [wang-2025] [kirk-giannini-2024]
 -/
 
 namespace Pragmatics.Expressives
@@ -46,10 +47,10 @@ variable {W : Type*}
 @[simps] def withCI (p c : W → Prop) : TwoDimProp W := ⟨p, c⟩
 
 /-- Pure quotation strips CI content to `⊤`, preserving only at-issue content: expressives
-are nondisplaceable *outside of direct quotation* ([potts-2007]), so in "He said 'that
+are nondisplaceable *outside of direct quotation* ([potts-2007b]), so in "He said 'that
 bastard Jones left'" the expressive is frozen inside the quotation and not attributed to
 the speaker. [kirk-giannini-2024]'s *mixed* quotation (used and mentioned at once) is the
-refinement in `Semantics.Quotation.Mixed`. -/
+refinement in `KirkGiannini2024.mq`. -/
 @[simps] def pureQuote (p : TwoDimProp W) : TwoDimProp W := ⟨p.atIssue, ⊤⟩
 
 /-- Pure quotation is information-losing: two meanings with identical at-issue content but
@@ -58,6 +59,11 @@ theorem pureQuote_loses_ci_info :
     ∃ (p₁ p₂ : TwoDimProp Unit), p₁.ci ≠ p₂.ci ∧ pureQuote p₁ = pureQuote p₂ := by
   refine ⟨⟨λ _ => True, λ _ => True⟩, ⟨λ _ => True, λ _ => False⟩, ?_, rfl⟩
   intro h; simpa using congrFun h ()
+
+/-- An at-issue operator applied to the at-issue dimension, the CI passed up unchanged: the
+composition rule under which CIs project through every at-issue operator ([potts-2005]). -/
+@[simps] def mapAtIssue (F : (W → Prop) → W → Prop) (p : TwoDimProp W) : TwoDimProp W :=
+  { p with atIssue := F p.atIssue }
 
 /-! ### Connectives
 
@@ -156,7 +162,7 @@ end TwoDimProp
 
 variable {W : Type*}
 
-/-- The six expressive diagnostics of [potts-2007]: a yes/no fingerprint a class of
+/-- The six expressive diagnostics of [potts-2007b]: a yes/no fingerprint a class of
 secondary-meaning items either matches or fails. -/
 structure SecondaryMeaningProperties where
   /-- CI contributes to a dimension separate from at-issue content -/
@@ -173,8 +179,8 @@ structure SecondaryMeaningProperties where
   repeatable : Bool
   deriving Repr, DecidableEq
 
-/-- Expressives satisfy all six [potts-2007] diagnostics ("damn damn damn" strengthens).
-Speaker orientation is the default, not an absolute: [potts-2007] adopts a shiftable
+/-- Expressives satisfy all six [potts-2007b] diagnostics ("damn damn damn" strengthens).
+Speaker orientation is the default, not an absolute: [potts-2007b] adopts a shiftable
 contextual judge, and [harris-potts-2009] document non-speaker-oriented readings even
 unembedded. -/
 def expressiveProperties : SecondaryMeaningProperties :=
@@ -186,7 +192,7 @@ def expressiveProperties : SecondaryMeaningProperties :=
   , repeatable := true }
 
 /-- Appositives (supplements) share independence and perspective dependence with expressives
-but fail the expressive-specific diagnostics ([potts-2007]): their content is ordinary
+but fail the expressive-specific diagnostics ([potts-2007b]): their content is ordinary
 propositional material — displaceable ("Ed, then a first-year resident, ..."), paraphrasable
 ("Laura, a doctor" ↔ "Laura is a doctor"), not performative-like, not repeatable. -/
 def appositiveProperties : SecondaryMeaningProperties :=

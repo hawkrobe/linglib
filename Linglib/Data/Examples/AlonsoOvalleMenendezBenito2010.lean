@@ -483,7 +483,7 @@ def ex_37 : LinguisticExample :=
 
 def ex_38a : LinguisticExample :=
   { id := "alonsoovallemenendezbenito2010_38a"
-    source := ⟨"potts-2007", "(38a)"⟩
+    source := ⟨"potts-2007b", "(38a)"⟩
     reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(38a)"⟩
     language := "stan1293"
     primaryText := "Sheila says that Chuck, a confirmed psychopath, is fit to watch the kids."
@@ -501,7 +501,7 @@ def ex_38a : LinguisticExample :=
 
 def ex_38b : LinguisticExample :=
   { id := "alonsoovallemenendezbenito2010_38b"
-    source := ⟨"potts-2007", "(38b)"⟩
+    source := ⟨"potts-2007b", "(38b)"⟩
     reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(38b)"⟩
     language := "stan1293"
     primaryText := "Sheila believes that Chuck, a psychopath, should be locked up. But Chuck is not a psychopath."
@@ -555,7 +555,7 @@ def ex_40 : LinguisticExample :=
 
 def ex_41a : LinguisticExample :=
   { id := "alonsoovallemenendezbenito2010_41a"
-    source := ⟨"potts-2007", "(41a)"⟩
+    source := ⟨"potts-2007b", "(41a)"⟩
     reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(41a)"⟩
     language := "stan1293"
     primaryText := "Edna, a fearless leader, started the descent."
@@ -573,7 +573,7 @@ def ex_41a : LinguisticExample :=
 
 def ex_41b : LinguisticExample :=
   { id := "alonsoovallemenendezbenito2010_41b"
-    source := ⟨"potts-2007", "(41b)"⟩
+    source := ⟨"potts-2007b", "(41b)"⟩
     reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(41b)"⟩
     language := "stan1293"
     primaryText := "Edna, a fearless leader, started the descent. In fact, Edna is not a fearless leader."

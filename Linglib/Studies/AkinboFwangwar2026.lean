@@ -31,7 +31,7 @@ fragment's dataset (`m_verbs_uniform`, `mh_verbs_nonfinal_final`, `pluractional_
 * [rolle-2018]
 * [dingemanse-akita-2017]
 * [dingemanse-thompson-2020]
-* [potts-2007]
+* [potts-2007b]
 -/
 
 namespace AkinboFwangwar2026

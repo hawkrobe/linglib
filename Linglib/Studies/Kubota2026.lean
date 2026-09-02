@@ -6,7 +6,7 @@ import Linglib.Data.Examples.Kubota2026
 
 /-!
 # Kubota 2026: outlook management
-[kubota-2026] [kubota-ido-2025] [coppock-2018] [farkas-bruce-2010] [potts-2007]
+[kubota-2026] [kubota-ido-2025] [coppock-2018] [farkas-bruce-2010] [potts-2007b]
 
 [kubota-2026]'s analysis of Japanese *outlook markers* (*nanka*, *dōse*, *semete*, *koso*,
 *mushiro*, …): discourse-sensitive adverbs and focus particles with a two-layered secondary
@@ -16,9 +16,9 @@ worlds as circumstances of evaluation for **at-issue** discretionary content; th
 *counterstance* originates with [kennedy-willer-2016]; the two-layered object is the
 chapter's, and rendering its stance layer as a [potts-2005]-style CI tier is this
 formalisation's bridge onto `TwoDimProp`. The chapter itself classifies that layer as
-CI-*like* while arguing it fails [potts-2007]'s independence and nondisplaceability: under
+CI-*like* while arguing it fails [potts-2007b]'s independence and nondisplaceability: under
 attitudes it shifts to the holder like a locally accommodated presupposition ([heim-1992]),
-not by semantic binding of an index. The secondary-meaning diagnostics ([potts-2007] (27))
+not by semantic binding of an index. The secondary-meaning diagnostics ([potts-2007b] (27))
 follow the projection typology of [tonhauser-beaver-roberts-simons-2013].
 
 The handbook chapter is descriptive and defers the formal analysis to its companion
@@ -53,7 +53,7 @@ classification, the modal selectional restrictions, and the dual-layer denotatio
   with trivial counterstance, and the two shift diagnostics coincide.
 * `outlookMarker_shifts_unlike_expressive`, `outlookMarker_patterns_with_hardPresup` — the
   diagnostic profile places outlook markers between pure expressives and presupposition
-  triggers ([potts-2007] (27)): they perspective-shift unlike expressives, yet pattern with
+  triggers ([potts-2007b] (27)): they perspective-shift unlike expressives, yet pattern with
   (anaphoric) presuppositions on displaceability and discourse-antecedent need.
 * `semete_rejects_epistemic`, `nanka_accepts_all_modals`, `semete_only_documented_restriction`
   — the modal selectional facts ([kubota-2026] (45)-(46)).
@@ -65,7 +65,7 @@ classification, the modal selectional restrictions, and the dual-layer denotatio
 ## References
 
 [kubota-2026] [kubota-ido-2025] [coppock-2018] [kennedy-willer-2016] [farkas-bruce-2010]
-[potts-2005] [potts-2007] [harris-potts-2009] [tonhauser-beaver-roberts-simons-2013]
+[potts-2005] [potts-2007b] [harris-potts-2009] [tonhauser-beaver-roberts-simons-2013]
 [heim-1992] [gutzmann-2015]
 -/
 
@@ -346,14 +346,14 @@ theorem saltDenotation_projects (o : Bool) :
     (TwoDimProp.neg (saltDenotation.toTwoDimProp o)).ci = saltDenotation.evaluation o :=
   ⟨Outlook.counterstance_projects_through_neg _, Outlook.ci_projects_through_neg _ _⟩
 
-/-! ### Diagnostic fingerprint ([potts-2007] (27))
+/-! ### Diagnostic fingerprint ([potts-2007b] (27))
 
-The [potts-2007] six-diagnostic fingerprint (`SecondaryMeaningProperties`), extended by the
+The [potts-2007b] six-diagnostic fingerprint (`SecondaryMeaningProperties`), extended by the
 two contrasts [kubota-2026] §3 turns on. Both extensions reify the chapter's prose
-observations, not entries in [potts-2007]'s table; the `allowsPerspectiveShift` field is the
+observations, not entries in [potts-2007b]'s table; the `allowsPerspectiveShift` field is the
 editorial counterpart of the structural `saltDenotation_not_rigid` above. -/
 
-/-- [kubota-2026]'s diagnostic profile: [potts-2007]'s six diagnostics plus the two contrasts
+/-- [kubota-2026]'s diagnostic profile: [potts-2007b]'s six diagnostics plus the two contrasts
 distinguishing outlook markers from pure expressives and pure presupposition triggers. -/
 structure OutlookDiagnostics extends SecondaryMeaningProperties where
   /-- Readily receives a shifted (attitude-holder) reading under embedding ([kubota-2026]
@@ -378,7 +378,7 @@ def outlookMarkerProfile : OutlookDiagnostics where
   allowsPerspectiveShift := true
   requiresDiscourseAntecedent := true
 
-/-- A pure expressive's profile: the six [potts-2007] diagnostics from the substrate's
+/-- A pure expressive's profile: the six [potts-2007b] diagnostics from the substrate's
 `expressiveProperties`, not readily shifted under embedding and needing no discourse
 antecedent ([kubota-2026]'s contrast class). -/
 def expressiveDiagnostics : OutlookDiagnostics :=
@@ -402,7 +402,7 @@ def hardPresupProfile : OutlookDiagnostics where
 
 /-- Outlook markers perspective-shift, pure expressives do not — the diagnostic that the
 `saltDenotation_not_rigid` vs `expressive_rigid` contrast realizes ([kubota-2026];
-[potts-2007]). -/
+[potts-2007b]). -/
 theorem outlookMarker_shifts_unlike_expressive :
     outlookMarkerProfile.allowsPerspectiveShift
       ≠ expressiveDiagnostics.allowsPerspectiveShift := by decide
@@ -415,7 +415,7 @@ theorem outlookMarker_patterns_with_hardPresup :
       = hardPresupProfile.requiresDiscourseAntecedent := by decide
 
 /-- What *does* separate outlook markers from presupposition triggers: descriptive
-ineffability (the expressive-like diagnostic; [kubota-2026], [potts-2007]). -/
+ineffability (the expressive-like diagnostic; [kubota-2026], [potts-2007b]). -/
 theorem outlookMarker_ineffable_unlike_hardPresup :
     outlookMarkerProfile.descriptivelyIneffable ≠ hardPresupProfile.descriptivelyIneffable := by
   decide
