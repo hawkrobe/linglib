@@ -3,6 +3,7 @@ import Linglib.Processing.Lexical.Discriminative.Measures
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.LinearAlgebra.Matrix.DotProduct
 import Mathlib.LinearAlgebra.Matrix.ToLin
+import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 
 /-!
 # DLM training: endstate and frequency-informed learning
@@ -26,6 +27,8 @@ experience ([heitmeier-2024]).
   coordinates, and in vector form.
 * `IsERMSolution.apply_meanings_eq`, `apply_eq_of_mem_span`, `exists_apply_ne`,
   `existsUnique_isERMSolution_iff`: fitted values are unique exactly on the span of experience.
+* `isERMSolution_toLin'_transpose_iff`, `isERMSolution_closedForm`: the normal equations as
+  `SᵀQ(SG − C) = 0` and their closed form `(SᵀQS)⁻¹SᵀQC`.
 * `isELSolution_sqrtScale_iff`: FIL under `q` is EL on `TrainingExperience.sqrtScale`.
 * `LinearDiscriminativeLexicon.IsTrainedOn` and the `semSup` transfer theorems.
 
@@ -43,7 +46,7 @@ namespace Processing.Lexical.Discriminative
 
 noncomputable section
 
-open NNReal RealInnerProductSpace
+open Matrix NNReal RealInnerProductSpace
 
 variable {m n d : ℕ}
 
@@ -327,13 +330,76 @@ theorem IsERMSolution.coord_eq_of_decodable (hq : ∀ i, 0 < q i) (hG : IsERMSol
     · exact (sub_eq_zero.1 h1).symm
     · exact sub_eq_zero.1 h1
 
+/-! ### The normal equations in matrix form
+
+The papers state the training problem on matrices: the semantic matrix `S` and form matrix `C`
+have the experienced meanings and forms as rows, the frequency vector is the diagonal of `Q`, and
+a mapping matrix `G` acts on row vectors, `ĉ = sG`. The normal equations read `SᵀQ(SG − C) = 0`,
+solved in closed form as `G = (SᵀQS)⁻¹SᵀQC` whenever `SᵀQS` is invertible ([gahl-baayen-2024]
+(A2), (A4); [heitmeier-chuang-baayen-2026] §6.1, §6.3). -/
+
+variable (data q)
+
+/-- The semantic matrix `S`: the experienced meanings as rows. -/
+def TrainingExperience.S : Matrix (Fin m) (Fin d) ℝ := Matrix.of fun i k => data.meanings i k
+
+/-- The form matrix `C`: the observed forms as rows. -/
+def TrainingExperience.C : Matrix (Fin m) (Fin n) ℝ := Matrix.of fun i j => data.forms i j
+
+/-- The weight matrix `Q`: the frequency vector on the diagonal. -/
+def FrequencyVector.Q : Matrix (Fin m) (Fin m) ℝ := Matrix.diagonal fun i => (q i : ℝ)
+
+@[simp] theorem TrainingExperience.S_apply (i : Fin m) (k : Fin d) :
+    data.S i k = data.meanings i k := rfl
+
+@[simp] theorem TrainingExperience.C_apply (i : Fin m) (j : Fin n) : data.C i j = data.forms i j :=
+  rfl
+
+@[simp] theorem FrequencyVector.Q_one : (1 : FrequencyVector m).Q = 1 := by
+  simp [FrequencyVector.Q]
+
+/-- The normal equations as a matrix identity: a mapping matrix `G`, acting on row vectors, is
+an ERM solution iff `SᵀQ(SG − C) = 0`. -/
+theorem isERMSolution_toLin'_transpose_iff (G : Matrix (Fin d) (Fin n) ℝ) :
+    IsERMSolution data q (Matrix.toLin' Gᵀ) ↔ data.Sᵀ * q.Q * (data.S * G - data.C) = 0 := by
+  rw [isERMSolution_iff_forall_coord]
+  have key : ∀ (j : Fin n) (k : Fin d), (data.Sᵀ * q.Q * (data.S * G - data.C)) k j =
+      ∑ i, q i * ((Matrix.toLin' Gᵀ (data.meanings i) j - data.forms i j) * data.meanings i k) := by
+    intro j k
+    have hsum : ∀ i, Matrix.toLin' Gᵀ (data.meanings i) j = ∑ l, data.meanings i l * G l j :=
+      fun i => by simp [Matrix.toLin'_apply, Matrix.mulVec, dotProduct, mul_comm]
+    rw [Matrix.mul_apply]
+    simp only [FrequencyVector.Q, Matrix.mul_diagonal, Matrix.transpose_apply,
+      TrainingExperience.S_apply]
+    simp only [Matrix.sub_apply, Matrix.mul_apply, TrainingExperience.S_apply,
+      TrainingExperience.C_apply, hsum]
+    exact Finset.sum_congr rfl fun i _ => by ring
+  constructor
+  · intro h
+    ext k j
+    rw [key, h, Matrix.zero_apply]
+  · intro h j k
+    rw [← key, h, Matrix.zero_apply]
+
+/-- **Closed form**: when `SᵀQS` is invertible, `G = (SᵀQS)⁻¹SᵀQC` solves the normal
+equations ([gahl-baayen-2024] (A2), (A4)). -/
+theorem isERMSolution_closedForm (hS : IsUnit (data.Sᵀ * q.Q * data.S)) :
+    IsERMSolution data q
+      (Matrix.toLin' ((data.Sᵀ * q.Q * data.S)⁻¹ * (data.Sᵀ * q.Q * data.C))ᵀ) := by
+  rw [isERMSolution_toLin'_transpose_iff, Matrix.mul_sub, ← Matrix.mul_assoc,
+    Matrix.mul_nonsing_inv_cancel_left _ _ ((Matrix.isUnit_iff_isUnit_det _).1 hS), sub_self]
+
+/-- The endstate closed form `G = (SᵀS)⁻¹SᵀC` ([gahl-baayen-2024] (A2)). -/
+theorem isELSolution_closedForm (hS : IsUnit (data.Sᵀ * data.S)) :
+    IsELSolution data (Matrix.toLin' ((data.Sᵀ * data.S)⁻¹ * (data.Sᵀ * data.C))ᵀ) := by
+  have := isERMSolution_closedForm data 1 (by simpa using hS)
+  simpa [IsELSolution] using this
+
 /-! ### √Q transport
 
 [gahl-baayen-2024]'s appendix computes FIL by solving the EL problem on `√Q`-premultiplied `S`
 and `C`; [heitmeier-2024] proves the equivalence with frequency-replicated data under
 invertibility. Here it holds at the level of ERM solution sets. -/
-
-variable (data q)
 
 /-- The `√q`-premultiplied training experience. -/
 def TrainingExperience.sqrtScale : TrainingExperience m n d where
