@@ -139,25 +139,28 @@ theorem pastTense_not_regular : ¬ IsAnalogicallyRegular pastTense := fun h => b
 
 variable [Fintype Lexeme] [Fintype Cell]
 
-/-- The paradigm as a training experience: imputed semantics as the meanings, the form table as
-the targets. -/
+/-- The paradigm as a training experience: imputed semantics as the semantic matrix, the form
+table as the form matrix. -/
 noncomputable def paradigmExperience (f : Lexeme → Cell → FormVec n) :
     TrainingExperience (Fintype.card (Lexeme × Cell)) n d where
-  meanings i := imputed σ ε ((Fintype.equivFin (Lexeme × Cell)).symm i).1
+  S := Matrix.of fun i => imputed σ ε ((Fintype.equivFin (Lexeme × Cell)).symm i).1
     ((Fintype.equivFin (Lexeme × Cell)).symm i).2
-  forms i := f ((Fintype.equivFin (Lexeme × Cell)).symm i).1
+  C := Matrix.of fun i => f ((Fintype.equivFin (Lexeme × Cell)).symm i).1
     ((Fintype.equivFin (Lexeme × Cell)).symm i).2
 
-/-- Irregularity forces positive training loss: no linear map fits a suppletive paradigm exactly,
-so every ERM solution carries residual error. -/
+open Matrix in
+/-- Irregularity forces positive training loss: no mapping matrix fits a suppletive paradigm
+exactly, so every trained matrix carries residual error. -/
 theorem pos_weightedLoss_of_not_regular {f : Lexeme → Cell → FormVec n}
     (hf : ¬ IsAnalogicallyRegular f) {q : FrequencyVector (Fintype.card (Lexeme × Cell))}
-    (hq : ∀ i, 0 < q i) (G : MeaningVec d →ₗ[ℝ] FormVec n) :
+    (hq : ∀ i, 0 < q i) (G : Matrix (Fin d) (Fin n) ℝ) :
     0 < weightedLoss (paradigmExperience σ ε f) q G := by
   refine lt_of_le_of_ne (weightedLoss_nonneg _ _ _) (Ne.symm fun h0 => ?_)
   have hint := (weightedLoss_eq_zero_iff _ _ _ hq).1 h0
-  refine not_exists_paradigm_eq_of_not_regular σ ε hf ⟨⟨0, G⟩, funext fun l => funext fun c => ?_⟩
-  have h := hint ((Fintype.equivFin (Lexeme × Cell)) (l, c))
-  simpa [paradigmExperience] using h
+  refine not_exists_paradigm_eq_of_not_regular σ ε hf
+    ⟨⟨0, Matrix.toLin' Gᵀ⟩, funext fun l => funext fun c => funext fun j => ?_⟩
+  have h := congrFun (congrFun hint ((Fintype.equivFin (Lexeme × Cell)) (l, c))) j
+  simpa [paradigmExperience, Linear.paradigm, Matrix.toLin'_apply, Matrix.mulVec_transpose,
+    Matrix.mul_apply, Matrix.vecMul, dotProduct] using h
 
 end HeitmeierChuangBaayen2026
