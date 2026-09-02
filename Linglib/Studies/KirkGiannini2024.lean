@@ -7,55 +7,26 @@ import Mathlib.Logic.Function.Basic
 # Kirk-Giannini 2024: Covert mixed quotation
 
 Mixed quotation arises compositionally from pure quotation and a phonologically null operator
-𝔐 with two meanings, saturated by its pure-quoted sister `q`: the at-issue `λq.⦇q⦈(w_c)(s_x)`,
+𝔐 with two meanings, both saturated by its pure-quoted sister `q`: the at-issue ⦇q⦈(w_c)(s_x),
 the extension of `q` as uttered by the anaphorically retrieved speaker `s_x` at the world of
 the context ([shan-2010]'s quotative interpretation function ⦇∗⦈), and the peripheral
-`λq.R(s_x, u_x, q)`, that `s_x` produced the utterance `u_x` of `q` ([potts-2005]'s second
-dimension, as [potts-2007a] uses it for quotation). Covert mixed quotation is covert pure
-quotation composed with 𝔐. Three further covert items combine with it: ↓ shunts the
-peripheral proposition into the at-issue dimension, † diagonalizes ⦇∗⦈ so that `q` means at a
-world `w` what `s_x` would mean by it at `w`, and 𝔄 is the appropriateness modal ⧫ applied to
-𝔐's peripheral proposition. The five applications are stated on the paper's own logical
-forms: (26″) non-projecting CI items, (29) c-monsters ([kocurek-jerzak-rudolph-2020]'s Pluto
-data), (3) metalinguistic negation ([horn-1989]), (6) metalinguistic negotiation
-([plunkett-sundell-2013]'s Secretariat dispute), and (7′) 'in a sense'.
+R(s_x, u_x, q), that `s_x` produced the utterance `u_x` of `q` ([potts-2005]'s second
+dimension, as [potts-2007a] uses it for quotation). Three further covert items combine with
+it: ↓ shunts the peripheral proposition into the at-issue dimension, † diagonalizes ⦇∗⦈ so
+that `q` means at a world `w` what `s_x` would mean by it there, and 𝔄 is the appropriateness
+modal ⧫ applied to 𝔐's peripheral proposition. Covert 𝔐 then accounts for non-projecting CI
+items (26″), c-monsters (29, [kocurek-jerzak-rudolph-2020]'s Pluto data), metalinguistic
+negation (3, [horn-1989]), metalinguistic negotiation (6, [plunkett-sundell-2013]'s Secretariat
+dispute) and 'in a sense' (7′).
 
-The model is the appendix's intended model with the output type χ of ⦇∗⦈ fixed to
-propositions, so a quoted item stands for the clause it contributes; parsetrees and the tree
-admissibility conditions are not represented, each rule appearing as the operator it licenses.
-
-## Main definitions
-
-* `Model` — the constants ⦇∗⦈, R and the accessibility relation of ⧫.
-* `mq`, `shunt`, `approp`, `Model.dagger` — the covert items 𝔐, ↓, 𝔄, †.
-* `appropAssertion`, `metaNeg` — the forms ↓[… 𝔄𝔐q …] and not ↓[… 𝔄𝔐q …] of (6) and (3).
-* `inTheSenseThat`, `inASense` — quantification into 𝔐 for (43) and (7′).
-
-## Main results
-
-* `Model.dagger_mqAtIssue`, `Model.exists_dagger_iff` — † is well defined on 𝔐's at-issue
-  meanings exactly under the paper's footnote-22 assumption, `Function.FactorsThrough`.
-* `metaNeg_correction`, `metaNeg_of_not_box`, `metaNeg_compl` — (3) entails that 'mongeese'
-  is inappropriate; the contrasts (37)/(38) and (41)/(42).
-* `metaNeg_atIssue_iff_not`, `negotiation` — B's denial in (6) negates A's assertion.
-* `inASense_iff` — (7′) holds iff some speaker's use of the sentence expresses a truth.
-
-## Comparisons the paper draws
-
-* [maier-2014a]'s single type-polymorphic mixed-quotation operator is replaced by pure
-  quotation plus 𝔐; that the quoted material is first pure-quoted is what eliminates its
-  peripheral content (`report_mq`).
-* [harris-potts-2009]'s free orientation variable on CI items leaves the default of speaker
-  orientation unexplained and forces non-propositional CI content into a propositional mould.
-* [kocurek-jerzak-rudolph-2020]'s world/convention pairs are not needed: † yields their Pluto
-  readings while (Conventional Wisdom) holds for unembedded material (`Model.mqAtIssue_wc`).
-* [horn-1989] and [potts-2007a] make negation ambiguous; here it is univocal, the
-  metalinguistic reading coming from covert 𝔄𝔐 material in its scope. The restrictions of
-  [horn-1985] and [burton-roberts-1989] follow: (38) incorporated negation cannot scope over
-  that material, (40) an NPI breaks the verbatim requirement R imposes on the retrieved
-  utterance, (42) double negation does not eliminate.
-* [plunkett-sundell-2013] hold that the disputants in (6) express consistent contents; on the
-  present analysis B's content is the negation of A's.
+`Model` interprets ⦇∗⦈, R and the accessibility relation of ⧫ in the appendix's intended model,
+with the output type of ⦇∗⦈ fixed to propositions; `mq`, `shunt`, `approp` and `Model.dagger`
+are the four covert items on `TwoDimProp`, † being `Function.extend`, so that
+`Model.exists_dagger_iff` identifies the paper's footnote-22 assumption with
+`Function.FactorsThrough`; `appropAssertion` and `metaNeg` are the forms ↓[… 𝔄𝔐q …] and its
+negation, whose at-issue content `metaNeg_atIssue_iff` gives as ¬p ∨ ¬⧫R. Parsetrees and the
+tree admissibility conditions are not represented, each rule appearing as the operator it
+licenses.
 
 ## References
 
@@ -64,15 +35,9 @@ admissibility conditions are not represented, each rule appearing as the operato
 * [C. Potts, *The Logic of Conventional Implicatures* (2005)][potts-2005]
 * [C. Potts, *The dimensions of quotation* (2007)][potts-2007a]
 * [E. McCready, *Varieties of conventional implicature* (2010)][mccready-2010]
-* [E. Maier, *Mixed quotation: The grammar of apparently transparent opacity* (2014)][maier-2014a]
-* [J. A. Harris and C. Potts, *Perspective-shifting with appositives and expressives*
-  (2009)][harris-potts-2009]
 * [A. W. Kocurek, E. Jerzak and R. E. Rudolph, *Against conventional wisdom*
   (2020)][kocurek-jerzak-rudolph-2020]
-* [L. R. Horn, *Metalinguistic negation and pragmatic ambiguity* (1985)][horn-1985]
 * [L. R. Horn, *A Natural History of Negation* (1989)][horn-1989]
-* [N. Burton-Roberts, *On Horn's dilemma: Presupposition and negation*
-  (1989)][burton-roberts-1989]
 * [D. Plunkett and T. Sundell, *Disagreement and the semantics of normative and evaluative
   terms* (2013)][plunkett-sundell-2013]
 * [R. C. Stalnaker, *A Theory of Conditionals* (1968)][stalnaker-1968]
@@ -82,6 +47,7 @@ namespace KirkGiannini2024
 
 open Pragmatics.Expressives (TwoDimProp)
 open Function (FactorsThrough)
+open scoped ModalLogic
 
 /-- The constants of ℒ_MQ interpreted in the intended model. -/
 structure Model (W Expr Speaker Utt : Type*) where
@@ -89,17 +55,14 @@ structure Model (W Expr Speaker Utt : Type*) where
   quot : Expr → W → Speaker → W → Prop
   /-- R: `utter s u q w` iff `s` produces the utterance `u` of `q` at `w`. -/
   utter : Speaker → Utt → Expr → W → Prop
-  /-- Accessibility of ⧫: `appropriate w v` iff `v` is among the worlds characterizing what is
-  or would be appropriate at `w`. -/
+  /-- Accessibility of ⧫, `□[M.appropriate]`: `appropriate w v` iff `v` is among the worlds
+  characterizing what is or would be appropriate at `w`. -/
   appropriate : W → W → Prop
 
 variable {W Expr Speaker Utt : Type*} (M : Model W Expr Speaker Utt) (wc : W) (sx : Speaker)
   (ux : Utt)
 
 namespace Model
-
-/-- ⧫: `M.box p w` iff `p` holds at every world appropriate at `w`. -/
-abbrev box : (W → Prop) → W → Prop := ModalLogic.box M.appropriate
 
 /-! ### Diagonalization -/
 
@@ -147,7 +110,7 @@ def shunt (p : TwoDimProp W) : TwoDimProp W := ⟨p.atIssue ⊓ p.ci, ⊤⟩
 
 /-- 𝔄 ⇝ ⧫ with Peripheral Intensional Function Application: the peripheral proposition is
 replaced by ⧫ of its intension, the at-issue meaning passing up unchanged. -/
-def approp (p : TwoDimProp W) : TwoDimProp W := ⟨p.atIssue, M.box p.ci⟩
+def approp (p : TwoDimProp W) : TwoDimProp W := ⟨p.atIssue, □[M.appropriate] p.ci⟩
 
 /-- †𝔐: † applied to 𝔐's at-issue meaning, the peripheral meaning passing up unchanged. -/
 noncomputable def daggerMQ (q : Expr) : TwoDimProp W :=
@@ -166,8 +129,8 @@ noncomputable def daggerMQ (q : Expr) : TwoDimProp W :=
 @[simp] theorem approp_atIssue (p : TwoDimProp W) (w : W) :
     (approp M p).atIssue w ↔ p.atIssue w := Iff.rfl
 
-@[simp] theorem approp_ci (p : TwoDimProp W) (w : W) : (approp M p).ci w ↔ M.box p.ci w :=
-  Iff.rfl
+@[simp] theorem approp_ci (p : TwoDimProp W) (w : W) :
+    (approp M p).ci w ↔ □[M.appropriate] p.ci w := Iff.rfl
 
 theorem daggerMQ_atIssue (h : FactorsThrough M.diag (M.mqAtIssue wc)) (q : Expr) :
     (daggerMQ M wc sx ux q).atIssue = M.diag sx q :=
@@ -179,14 +142,12 @@ conditional. -/
 theorem shunt_mq_atIssue (q : Expr) (w : W) :
     (shunt (mq M wc sx ux q)).atIssue w ↔ M.quot q wc sx w ∧ M.utter sx ux q w := Iff.rfl
 
-/-! ### Conventional implicature items (paper §3) -/
+/-! ### Conventional implicature items (§3) -/
 
-/-- (26) and (26″): a speech report `F` of a CI item `q` whose meaning is `lex q`. Unquoted, the
-report's peripheral content is the item's own CI ([potts-2005]'s projection,
-`TwoDimProp.mapAtIssue_ci`). 𝔪-quoted, pure quotation has eliminated that content, so the
-report has the same at-issue content, given that ⦇∗⦈ returns only at-issue content, but its
-peripheral content is the attribution R(s_x, u_x, q): Jones, not the speaker, is understood to
-have the attitude. -/
+/-- (26) and (26″): a speech report `F` of a CI item `q` whose meaning is `lex q`, whose
+peripheral content projects unquoted (`TwoDimProp.mapAtIssue_ci`) but, 𝔪-quoted, is replaced by
+the attribution R(s_x, u_x, q) while the at-issue content is unchanged, given that ⦇∗⦈ returns
+only at-issue content. -/
 theorem report_mq (lex : Expr → TwoDimProp W) (F : (W → Prop) → W → Prop) (q : Expr)
     (h : M.quot q wc sx = (lex q).atIssue) :
     (TwoDimProp.mapAtIssue F (mq M wc sx ux q)).atIssue =
@@ -194,7 +155,7 @@ theorem report_mq (lex : Expr → TwoDimProp W) (F : (W → Prop) → W → Prop
       (TwoDimProp.mapAtIssue F (mq M wc sx ux q)).ci = M.utter sx ux q :=
   ⟨congrArg F h, rfl⟩
 
-/-! ### C-monsters (paper §4) -/
+/-! ### C-monsters (§4) -/
 
 /-- (29) 'If Pluto were a planet, …' with †𝔐 around 'planet': the antecedent contributes the
 diagonal ⦇'planet'⦈∗(s_x), so a [stalnaker-1968] selection function takes the conditional to
@@ -206,7 +167,7 @@ theorem selectionConditional_daggerMQ (h : FactorsThrough M.diag (M.mqAtIssue wc
       C (s.sel w {v | M.quot q v sx v}) := by
   rw [daggerMQ_atIssue M wc sx ux h]; rfl
 
-/-! ### Metalinguistic negation and negotiation (paper §5, §6) -/
+/-! ### Metalinguistic negation and negotiation (§5–6) -/
 
 /-- ↓[… 𝔄𝔐q …]: the quoted clause conjoined with the appropriateness of `q`'s verbatim use.
 A's assertion in (6), the antecedent of (35″), the prejacent of (36). -/
@@ -217,17 +178,16 @@ def metaNeg (q : Expr) : TwoDimProp W := TwoDimProp.neg (appropAssertion M wc sx
 
 theorem appropAssertion_atIssue (q : Expr) (w : W) :
     (appropAssertion M wc sx ux q).atIssue w ↔
-      M.quot q wc sx w ∧ M.box (M.utter sx ux q) w := Iff.rfl
+      M.quot q wc sx w ∧ □[M.appropriate] (M.utter sx ux q) w := Iff.rfl
 
-/-- (3) is true iff it is not the case that the quoted clause holds and its verbatim use is
-appropriate. -/
 theorem metaNeg_atIssue (q : Expr) (w : W) :
     (metaNeg M wc sx ux q).atIssue w ↔
-      ¬ (M.quot q wc sx w ∧ M.box (M.utter sx ux q) w) := Iff.rfl
+      ¬ (M.quot q wc sx w ∧ □[M.appropriate] (M.utter sx ux q) w) := Iff.rfl
 
+/-- (3) is true iff the quoted clause fails or its verbatim use is inappropriate. -/
 theorem metaNeg_atIssue_iff (q : Expr) (w : W) :
     (metaNeg M wc sx ux q).atIssue w ↔
-      ¬ M.quot q wc sx w ∨ ¬ M.box (M.utter sx ux q) w := not_and_or
+      ¬ M.quot q wc sx w ∨ ¬ □[M.appropriate] (M.utter sx ux q) w := not_and_or
 
 /-- B's utterance in (6) expresses the negation of A's, the retrieved speaker and utterance
 being the same: the disputants' contents are incompatible. -/
@@ -239,13 +199,13 @@ theorem metaNeg_atIssue_iff_not (q : Expr) (w : W) :
 is not appropriate. -/
 theorem metaNeg_correction {q q' : Expr} {w : W} (h : M.quot q wc sx = M.quot q' wc sx)
     (h₁ : (metaNeg M wc sx ux q).atIssue w) (h₂ : (mq M wc sx ux q').atIssue w) :
-    ¬ M.box (M.utter sx ux q) w :=
+    ¬ □[M.appropriate] (M.utter sx ux q) w :=
   λ hb => h₁ ⟨by simpa [h] using h₂, hb⟩
 
 /-- Whenever verbatim use of `q` is inappropriate, (3)'s form is true whatever the quoted
 clause's truth value: (37) 'She's not happy' can be said of someone ecstatic, whereas (38)
 'She's unhappy', whose negation is incorporated below the covert material, cannot. -/
-theorem metaNeg_of_not_box {q : Expr} {w : W} (hb : ¬ M.box (M.utter sx ux q) w) :
+theorem metaNeg_of_not_box {q : Expr} {w : W} (hb : ¬ □[M.appropriate] (M.utter sx ux q) w) :
     (metaNeg M wc sx ux q).atIssue w :=
   λ h => hb h.2
 
@@ -254,22 +214,26 @@ theorem metaNeg_of_not_box {q : Expr} {w : W} (hb : ¬ M.box (M.utter sx ux q) w
 eliminated. -/
 theorem metaNeg_compl {q q₀ : Expr} {w : W} (h : M.quot q wc sx = (M.quot q₀ wc sx)ᶜ) :
     (metaNeg M wc sx ux q).atIssue w ↔
-      M.quot q₀ wc sx w ∨ ¬ M.box (M.utter sx ux q) w := by
+      M.quot q₀ wc sx w ∨ ¬ □[M.appropriate] (M.utter sx ux q) w := by
   simp [metaNeg_atIssue_iff, h]
 
-/-- (6) with its uncontroversial at-issue content granted: A asserts, and B denies, that
-characterizing Secretariat with 'athlete' is appropriate. -/
-theorem negotiation {q : Expr} {w : W} (hp : M.quot q wc sx w) :
-    ((appropAssertion M wc sx ux q).atIssue w ↔ M.box (M.utter sx ux q) w) ∧
-      ((metaNeg M wc sx ux q).atIssue w ↔ ¬ M.box (M.utter sx ux q) w) := by
-  simp [appropAssertion_atIssue, metaNeg_atIssue, hp]
+/-- (6) with its uncontroversial at-issue content granted: A asserts that characterizing
+Secretariat with 'athlete' is appropriate. -/
+theorem appropAssertion_atIssue_iff_box {q : Expr} {w : W} (hp : M.quot q wc sx w) :
+    (appropAssertion M wc sx ux q).atIssue w ↔ □[M.appropriate] (M.utter sx ux q) w := by
+  simp [appropAssertion_atIssue, hp]
 
-/-! ### 'In a sense' (paper §7) -/
+/-- (6) with its uncontroversial at-issue content granted: B denies that characterizing
+Secretariat with 'athlete' is appropriate. -/
+theorem metaNeg_atIssue_iff_not_box {q : Expr} {w : W} (hp : M.quot q wc sx w) :
+    (metaNeg M wc sx ux q).atIssue w ↔ ¬ □[M.appropriate] (M.utter sx ux q) w := by
+  simp [metaNeg_atIssue, hp]
 
-/-- 'In The Sense That': `⌜𝔪S𝔪 in the sense that S′⌝` with `μ` the intension of `S′` is
-`∃s_x[⦇S⦈(w_c)(s_x) ∧ [^⦇S⦈(w_c)(s_x)] = μ]`, (43). As a predicate of `μ` it is the relative
-clause of (7′), the abstraction `which_μ` introduces. The rule eliminates 𝔐's peripheral
-content. -/
+/-! ### 'In a sense' (§7) -/
+
+/-- 'In The Sense That', (43): `⌜𝔪S𝔪 in the sense that S′⌝` with `μ` the intension of `S′` is
+`∃s_x[⦇S⦈(w_c)(s_x) ∧ [^⦇S⦈(w_c)(s_x)] = μ]`, which as a predicate of `μ` is the relative
+clause of (7′). -/
 def inTheSenseThat (q : Expr) (μ : W → Prop) (w : W) : Prop :=
   ∃ s, M.quot q wc s w ∧ M.quot q wc s = μ
 
