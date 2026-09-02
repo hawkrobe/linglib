@@ -16,13 +16,15 @@ ACC ⊂ DAT but gives NOM its own feature, incomparable to ACC. The predictions:
 * ***ABA** ([bobaljik-2012]'s coinage): SCC and WCC exclude it structurally
   (`noABA`, discharged for both by their shared order-theoretic profile:
   ACC-appliers persist to DAT, and NOM∩DAT-appliers reach ACC); NCC derives it
-  (`ncc_aba_generable`, via a rule referencing its ACC-only feature k₃).
+  (`ncc_aba_generable`, via a rule referencing its accusative-specific feature
+  set {k₁, k₃}).
 * **Non-Elsewhere Nominative Stems**: SCC forces any NOM-applying rule to be
-  the featureless elsewhere (`scc_nom_forces_empty`) — Doric Greek h-stems,
-  Latvian *pat-*, and English 3sg *h-* stems refute this; WCC's k₀ writes them
-  directly (Table 25 rows 2–3; the Latvian rules (7) below). [mcfadden-2018]'s
-  markedness rescue of SCC is refuted on Latvian/Tocharian Gender in the
-  paper's §3.3 (not formalized here).
+  the featureless elsewhere (`scc_nom_forces_empty`) — the Doric Greek *h-*
+  stem (Table 3), Latvian *pat-*, and English feminine *sh-* against elsewhere
+  *h-* (Table 14) refute this; WCC's k₀ writes them directly (Table 25 rows
+  2–3; the Latvian rules (7) below). [mcfadden-2018]'s markedness rescue of
+  SCC is refuted on Latvian/Tocharian Gender in the paper's §3.3 (not
+  formalized here).
 
 Table 25's eight derivation rows are reproduced by `decide`; the Latvian
 emphatic pronoun (Table 20, rules (7)) and the Yiddish 1st person (fn. 25) are
@@ -37,7 +39,8 @@ needs k₁ (fn. 25).
   `decide` on the order-theoretic hypotheses
 * `ncc_aba_generable` — the two-rule NCC vocabulary generating A B A
 * `scc_nom_forces_empty` — SCC has no non-elsewhere nominative rules
-* `table25_row1` … `table25_row8` — the WCC derivation table
+* `table25_generates` — each `table25` row's inventory generates its PATTERN
+  column
 * `latvian_stems` / `latvian_gender_blind` / `latvian_pat_needs_singular` —
   Table 20 under rules (7)
 * `yiddish_stems` / `undz_needs_k1` — the fn. 25 paradigm and its k₁ argument
@@ -100,83 +103,47 @@ theorem noABA_wcc {v : List (Rule Case3 wcc F)} {A B : Rule Case3 wcc F}
 inductive Ex | A | B | C
   deriving DecidableEq, Repr
 
+/-- A PATTERN-column value: the exponents surfacing at NOM, ACC, DAT. -/
+def surface (n a d : Ex) : Case3 → Ex
+  | .nom => n | .acc => a | .dat => d
+
 /-- **ABA is generable under NCC**: an elsewhere rule plus a rule referencing
-{k₁, k₃} — features jointly present only in ACC — yields A B A (the
+{k₁, k₃} — the accusative-specific feature set — yields A B A (the
 overgeneration of the paper's §2). -/
 theorem ncc_aba_generable :
-    pattern (D := ncc) [⟨∅, Ex.A⟩, ⟨{.k1, .k3}, Ex.B⟩] .nom = some .A ∧
-      pattern (D := ncc) [⟨∅, Ex.A⟩, ⟨{.k1, .k3}, Ex.B⟩] .acc = some .B ∧
-      pattern (D := ncc) [⟨∅, Ex.A⟩, ⟨{.k1, .k3}, Ex.B⟩] .dat = some .A := by
-  refine ⟨by decide, by decide, by decide⟩
+    ∀ c, pattern (D := ncc) [⟨∅, Ex.A⟩, ⟨{.k1, .k3}, Ex.B⟩] c
+      = some (surface .A .B .A c) := by
+  decide
 
 /-! ### Non-Elsewhere Nominative Stems -/
 
 /-- Under SCC, a rule applicable in the nominative is featureless — the
 elsewhere rule. SCC therefore cannot write a Non-Elsewhere Nominative Stem
-(the paper's §3 problem: Doric h-stems, Latvian *pat-*, English *h-*). -/
+(the paper's §3 problem: Doric *h-*, Latvian *pat-*, English feminine *sh-*). -/
 theorem scc_nom_forces_empty {r : Rule Case3 scc F}
     (h : Exponence.Applies r .nom) : r.feats = ∅ :=
   Finset.subset_empty.mp h
 
 /-! ### Table 25: derivations of AAA, ABB, AAB, ABC under WCC
 
-Each row's rule inventory, its generated pattern by `decide`. Rows 5 and 7
-use the minimal `{k₂}` variant of the table's `{(k₁,)k₂}`. Rows 2–3 are the
-NENS derivations — rule A strictly or weakly outranks the elsewhere B. -/
+Each row pairs its rule inventory with its PATTERN column. Rows 5 and 7 use
+the minimal `{k₂}` variant of the table's `{(k₁,)k₂}`. Rows 2–3 are the NENS
+derivations — rule A strictly or weakly outranks the elsewhere B. -/
 
-theorem table25_row1 :
-    ∀ c, pattern (D := wcc) [⟨∅, Ex.A⟩] c = some .A := by decide
+/-- The eight rows of Table 25: rule inventory and PATTERN column. -/
+def table25 : List (List (Rule Case3 wcc Ex) × (Case3 → Ex)) :=
+  [([⟨∅, .A⟩], surface .A .A .A),
+   ([⟨{.k0}, .A⟩, ⟨{.k1}, .B⟩], surface .A .B .B),
+   ([⟨{.k0}, .A⟩, ⟨∅, .B⟩], surface .A .B .B),
+   ([⟨∅, .A⟩, ⟨{.k1}, .B⟩], surface .A .B .B),
+   ([⟨∅, .A⟩, ⟨{.k2}, .B⟩], surface .A .A .B),
+   ([⟨∅, .A⟩, ⟨{.k1}, .B⟩, ⟨{.k1, .k2}, .C⟩], surface .A .B .C),
+   ([⟨{.k0}, .A⟩, ⟨∅, .B⟩, ⟨{.k2}, .C⟩], surface .A .B .C),
+   ([⟨{.k0}, .A⟩, ⟨{.k1}, .B⟩, ⟨{.k1, .k2}, .C⟩], surface .A .B .C)]
 
-theorem table25_row2 :
-    pattern (D := wcc) [⟨{.k0}, Ex.A⟩, ⟨{.k1}, Ex.B⟩] .nom = some .A ∧
-      pattern (D := wcc) [⟨{.k0}, Ex.A⟩, ⟨{.k1}, Ex.B⟩] .acc = some .B ∧
-      pattern (D := wcc) [⟨{.k0}, Ex.A⟩, ⟨{.k1}, Ex.B⟩] .dat = some .B := by
-  refine ⟨by decide, by decide, by decide⟩
-
-theorem table25_row3 :
-    pattern (D := wcc) [⟨{.k0}, Ex.A⟩, ⟨∅, Ex.B⟩] .nom = some .A ∧
-      pattern (D := wcc) [⟨{.k0}, Ex.A⟩, ⟨∅, Ex.B⟩] .acc = some .B ∧
-      pattern (D := wcc) [⟨{.k0}, Ex.A⟩, ⟨∅, Ex.B⟩] .dat = some .B := by
-  refine ⟨by decide, by decide, by decide⟩
-
-theorem table25_row4 :
-    pattern (D := wcc) [⟨∅, Ex.A⟩, ⟨{.k1}, Ex.B⟩] .nom = some .A ∧
-      pattern (D := wcc) [⟨∅, Ex.A⟩, ⟨{.k1}, Ex.B⟩] .acc = some .B ∧
-      pattern (D := wcc) [⟨∅, Ex.A⟩, ⟨{.k1}, Ex.B⟩] .dat = some .B := by
-  refine ⟨by decide, by decide, by decide⟩
-
-theorem table25_row5 :
-    pattern (D := wcc) [⟨∅, Ex.A⟩, ⟨{.k2}, Ex.B⟩] .nom = some .A ∧
-      pattern (D := wcc) [⟨∅, Ex.A⟩, ⟨{.k2}, Ex.B⟩] .acc = some .A ∧
-      pattern (D := wcc) [⟨∅, Ex.A⟩, ⟨{.k2}, Ex.B⟩] .dat = some .B := by
-  refine ⟨by decide, by decide, by decide⟩
-
-theorem table25_row6 :
-    pattern (D := wcc) [⟨∅, Ex.A⟩, ⟨{.k1}, Ex.B⟩, ⟨{.k1, .k2}, Ex.C⟩] .nom
-        = some .A ∧
-      pattern (D := wcc) [⟨∅, Ex.A⟩, ⟨{.k1}, Ex.B⟩, ⟨{.k1, .k2}, Ex.C⟩] .acc
-        = some .B ∧
-      pattern (D := wcc) [⟨∅, Ex.A⟩, ⟨{.k1}, Ex.B⟩, ⟨{.k1, .k2}, Ex.C⟩] .dat
-        = some .C := by
-  refine ⟨by decide, by decide, by decide⟩
-
-theorem table25_row7 :
-    pattern (D := wcc) [⟨{.k0}, Ex.A⟩, ⟨∅, Ex.B⟩, ⟨{.k2}, Ex.C⟩] .nom
-        = some .A ∧
-      pattern (D := wcc) [⟨{.k0}, Ex.A⟩, ⟨∅, Ex.B⟩, ⟨{.k2}, Ex.C⟩] .acc
-        = some .B ∧
-      pattern (D := wcc) [⟨{.k0}, Ex.A⟩, ⟨∅, Ex.B⟩, ⟨{.k2}, Ex.C⟩] .dat
-        = some .C := by
-  refine ⟨by decide, by decide, by decide⟩
-
-theorem table25_row8 :
-    pattern (D := wcc) [⟨{.k0}, Ex.A⟩, ⟨{.k1}, Ex.B⟩, ⟨{.k1, .k2}, Ex.C⟩] .nom
-        = some .A ∧
-      pattern (D := wcc) [⟨{.k0}, Ex.A⟩, ⟨{.k1}, Ex.B⟩, ⟨{.k1, .k2}, Ex.C⟩] .acc
-        = some .B ∧
-      pattern (D := wcc) [⟨{.k0}, Ex.A⟩, ⟨{.k1}, Ex.B⟩, ⟨{.k1, .k2}, Ex.C⟩] .dat
-        = some .C := by
-  refine ⟨by decide, by decide, by decide⟩
+/-- Every Table 25 row's inventory generates its PATTERN column. -/
+theorem table25_generates :
+    ∀ p ∈ table25, ∀ c, pattern p.1 c = some (p.2 c) := by decide
 
 /-! ### Latvian *pat-* ~ *paš-* (Table 20, rules (7))
 
