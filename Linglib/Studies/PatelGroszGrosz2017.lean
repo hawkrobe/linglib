@@ -179,22 +179,22 @@ theorem feminine_per_restrictor_is_femSem {E W : Type}
     (isFemale : E → Prop) (sIdx : Nat) :
     Definiteness.Description.ofPresupType .uniqueness
         ((fun _ _ x => (femSem isFemale).presup x) :
-          Intensional.Variables.DenotGS E W .et) sIdx
+          Semantics.Composition.DenotGS E W .et) sIdx
       = Definiteness.Description.unique
           ((fun _ _ x => isFemale x) :
-            Intensional.Variables.DenotGS E W .et) sIdx := rfl
+            Semantics.Composition.DenotGS E W .et) sIdx := rfl
 
 /-- Consequently a feminine PER picks the *unique female* — the gender presupposition is the
     restrictor of the weak-article definite (`ιx[isFemale x]`). -/
 theorem feminine_per_picks_unique_female {E W : Type}
     (isFemale : E → Prop) (sIdx : Nat)
-    (g : Assignment E) (gs : Intensional.Variables.SitAssignment W) :
+    (g : Assignment E) (gs : Semantics.Composition.SitAssignment W) :
     Definiteness.interpret
         (Definiteness.Description.ofPresupType .uniqueness
           ((fun _ _ x => (femSem isFemale).presup x) :
-            Intensional.Variables.DenotGS E W .et) sIdx) g gs
+            Semantics.Composition.DenotGS E W .et) sIdx) g gs
       = Definiteness.russellIota (E := E) (fun x => isFemale x) :=
   Definiteness.interpret_unique
-    ((fun _ _ x => isFemale x) : Intensional.Variables.DenotGS E W .et) sIdx g gs
+    ((fun _ _ x => isFemale x) : Semantics.Composition.DenotGS E W .et) sIdx g gs
 
 end PatelGroszGrosz2017

@@ -19,7 +19,7 @@ context, and that index can be bound by higher operators.
 
 The IL substrate operationalizes this in two parallel pieces:
 
-- **`SitAssignment W := Nat → W`** in `Intensional.Variables`
+- **`SitAssignment W := Nat → W`** in `Semantics.Composition`
   is the situation-pronoun assignment, parallel to the entity
   assignment.
 - **`Description.unique R sIdx`** in `Definiteness.Description`
@@ -49,8 +49,8 @@ We additionally verify:
 
 namespace Hanink2021
 
-open Intensional
-open Intensional.Variables
+open Semantics.Composition
+open Semantics.Composition
 open Definiteness
 open Definiteness
 

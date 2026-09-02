@@ -44,11 +44,9 @@ partition are disjoint) is derived there.
 
 -/
 
-
 namespace Semantics.Kinds.MeaningPreservation
 
 open Semantics.Kinds.NMP (NominalMapping BlockingPrinciple downDefinedFor)
-
 
 variable (World Atom : Type)
 

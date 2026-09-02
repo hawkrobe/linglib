@@ -38,7 +38,7 @@ import Linglib.Semantics.Quantification.Basic
 
 namespace Tense.TenseAspectComposition
 
-open Intensional (Index)
+open Semantics.Context (Index)
 
 open Aspect
 

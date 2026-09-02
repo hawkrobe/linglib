@@ -21,12 +21,12 @@ and metatheorems.
 -/
 
 import Linglib.Semantics.Reference.Context.Basic
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Reference.Basic
 
 namespace Reference.KaplanLD
 
-open Intensional (IsRigid isRigid_const)
+open Reference (IsRigid isRigid_const)
 open Semantics.Context (KContext ProperContext LocatedContext)
 open _root_.Reference.Basic (Context Character Content)
 

@@ -1,5 +1,5 @@
-import Linglib.Semantics.Intensional.Defs
-import Linglib.Semantics.Intensional.Variables
+import Linglib.Semantics.Composition.Ty
+import Linglib.Semantics.Composition.Assignment
 import Linglib.Semantics.Causation.CauserSort
 
 /-!
@@ -53,8 +53,8 @@ not a stipulated data structure.
 
 namespace ArgumentStructure.VoiceSemantics
 
-open Intensional
-open Intensional.Variables
+open Semantics.Composition
+open scoped Assignment
 
 -- ============================================================================
 -- § 1: Active Voice — Identity

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Index
+import Linglib.Semantics.Reference.Context.Index
 import Linglib.Semantics.Tense.Reichenbach
 
 /-!
@@ -18,7 +18,7 @@ open Tense
 
 namespace Semantics.Context
 
-open Intensional (Index)
+open Semantics.Context (Index)
 
 /-- Full Kaplanian context of utterance: ⟨agent, world, time, position⟩.
 

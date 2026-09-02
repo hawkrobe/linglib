@@ -41,7 +41,7 @@ defeq `abbrev`s, and one `@[simp]` `funMap`/`RelMap` lemma per symbol — see
 -/
 
 open FirstOrder Language
-open Intensional
+open Semantics.Composition
 open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree
 open Syntax (Tree)

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Index
+import Linglib.Semantics.Reference.Context.Index
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Causation.CCSelection
 
@@ -35,7 +35,7 @@ d-causes without producing anything.
 
 namespace Causation.ProductionDependence
 
-open Intensional (Index)
+open Semantics.Context (Index)
 
 open Features
 

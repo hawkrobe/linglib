@@ -37,7 +37,7 @@ open Tense
 namespace Partee1973
 
 open Tense (interpTense PAST)
-open Intensional (Index)
+open Semantics.Context (Index)
 
 /-- Partee's stove example: "I didn't turn off the stove."
 

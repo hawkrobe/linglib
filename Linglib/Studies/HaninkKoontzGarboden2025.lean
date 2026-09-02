@@ -17,7 +17,7 @@ Property concept (PC) roots in Wá·šiw come in two semantic types:
 
 - **Individual/state relations** (Class 1, Class 3): `λx_e λs_v[P(x)(s)]`
   These relate an individual to a state (e.g., √IHUK' 'dry': λx λs[dry(x)(s)]).
-  Type: `⟨e,⟨s,t⟩⟩` (`Intensional.Ty`: `.e ⇒ .s ⇒ .t`).
+  Type: `⟨e,⟨s,t⟩⟩` (`Semantics.Composition.Ty`: `.e ⇒ .s ⇒ .t`).
 
 - **Quality predicates** (Class 2): `λs_v[P(s)]`
   These are predicates of states with no individual argument
@@ -84,7 +84,7 @@ inductive MorphClass where
     Derived from the paper's analysis (§§4–5):
     - Class 1/3: individual/state relations ⟨e,⟨s,t⟩⟩
     - Class 2: quality predicates ⟨v, t⟩ -/
-def MorphClass.denotationType : MorphClass → Intensional.Ty
+def MorphClass.denotationType : MorphClass → Semantics.Composition.Ty
   | .class1 => .e ⇒ .s ⇒ .t
   | .class2 => .s ⇒ .t
   | .class3 => .e ⇒ .s ⇒ .t
@@ -96,7 +96,7 @@ def MorphClass.denotationType : MorphClass → Intensional.Ty
 /-- Whether a semantic type takes an individual argument first — computed
     from the type's structure (an `.e ⇒ _` arrow head), not stipulated
     per class. -/
-def tyHasIndivArg : Intensional.Ty → Bool
+def tyHasIndivArg : Semantics.Composition.Ty → Bool
   | .fn .e _ => true
   | _ => false
 

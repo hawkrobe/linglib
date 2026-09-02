@@ -41,7 +41,7 @@ This module retains:
 
 namespace Definiteness
 
-open Intensional (Ty)
+open Semantics.Composition (Ty)
 open Quantification (every_sem some_sem)
 open Quantification.Quantifier (Ty.det)
 open Semantics.Composition.TypeShifting (iota)

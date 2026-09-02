@@ -1,6 +1,6 @@
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Reference.Rigidity
 import Linglib.Logic.Assignment
-import Linglib.Semantics.Intensional.Index
+import Linglib.Semantics.Reference.Context.Index
 import Linglib.Semantics.Tense.Defs
 
 /-!
@@ -18,7 +18,7 @@ temporal instantiation of `Assignment`; all update laws are mathlib's
 `Function.update` lemmas.
 -/
 
-open Intensional (Index)
+open Semantics.Context (Index)
 
 namespace Tense
 

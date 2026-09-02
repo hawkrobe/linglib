@@ -26,7 +26,7 @@ namespace Partee1987
 
 open Quantification (BE individual)
 open Semantics.Composition.TypeShifting (ident BE_individual_eq_ident)
-open Intensional (Denot Ty)
+open Semantics.Composition (Denot Ty)
 
 variable {E W : Type}
 

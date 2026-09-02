@@ -40,14 +40,12 @@ in mixed scenarios:
 
 namespace Conditionals.Counterfactual
 
-open Intensional (Index)
+open Semantics.Context (Index)
 
 open _root_.Conditionals
 open Trivalent (ProjectionType dist)
 
-
 open _root_.Conditionals (SimilarityOrdering)
-
 
 /-!
 ## Universal Theory
@@ -132,7 +130,6 @@ theorem universalCounterfactual_or (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w
 
 end Antecedent
 
-
 /-!
 ## Selectional Theory
 
@@ -215,7 +212,6 @@ theorem cem_selectional {W : Type*} [DecidableEq W] [Fintype W]
   set cl := sim.closestWorlds w (Finset.univ.filter A)
   split_ifs <;> simp_all (config := { decide := true })
 
-
 /-!
 ## Homogeneity Theory
 
@@ -291,8 +287,6 @@ theorem negation_swap_homogeneity_nonvacuous {W : Type*} [DecidableEq W] [Fintyp
   split_ifs at h_presup ⊢ <;> simp_all
   -- Remaining cases: h_nonvac contradicts ∀ w', w' ∉ closestWorlds
   all_goals (obtain ⟨w', hw'⟩ := h_nonvac; simp_all)
-
-
 
 /-!
 ## Grounding Selection Functions in Causal Models

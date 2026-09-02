@@ -56,7 +56,7 @@ open Beavers2010
 open ArgumentStructure (AffectednessDegree)
 open Voice
 open ArgumentStructure.VoiceSemantics
-open Intensional
+open Semantics.Composition
 
 /-! ### The 2×2 middle typology ((31)) -/
 

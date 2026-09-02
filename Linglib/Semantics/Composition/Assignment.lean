@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Composition.Ty
 import Linglib.Logic.Assignment
 
 /-!
@@ -16,7 +16,6 @@ pronouns are the same construction at an assignment of indices, and `DenotGS` ca
   `lambdaAbsG`, `interpPronoun`, `denotGJoin`.
 * `DenotGS E W ty`: denotations relative to an entity and a situation assignment;
   `interpSitPronoun`, `DenotGS.const`.
-* `g[n ↦ x]`: [heim-kratzer-1998]'s assignment update, `Function.update g n x`.
 
 ## References
 
@@ -24,15 +23,9 @@ pronouns are the same construction at an assignment of indices, and `DenotGS` ca
 * [S. Charlow, *A modular theory of pronouns and binding* (2018)][charlow-2018]
 -/
 
-namespace Intensional.Variables
+namespace Semantics.Composition
 
-open Intensional
-
-/-- Heim-Kratzer assignment-modification notation: `g[n ↦ x]` is
-`Function.update g n x`. The `Function.update_*` lemmas (`update_self`,
-`update_of_ne`, `update_idem`, `update_comm`, `update_eq_self`) are the
-update laws. -/
-scoped notation:max g "[" n " ↦ " x "]" => Function.update g n x
+open scoped Assignment
 
 /-- A denotation relative to an entity assignment. -/
 abbrev DenotG (E W : Type) (ty : Ty) := Assignment E → Denot E W ty
@@ -158,4 +151,4 @@ abbrev DenotGS (E W : Type) (ty : Ty) :=
 def DenotGS.const {E W : Type} {ty : Ty} (d : Denot E W ty) : DenotGS E W ty :=
   fun _ _ => d
 
-end Intensional.Variables
+end Semantics.Composition

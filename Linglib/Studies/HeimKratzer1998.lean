@@ -1,7 +1,7 @@
 import Linglib.Syntax.Tree.Cat
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Semantics.Composition.Tree
-import Linglib.Semantics.Intensional.Variables
+import Linglib.Semantics.Composition.Assignment
 import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Composition.LexEntry
@@ -57,8 +57,8 @@ than via `evalTree` (which would demand a blanket
 
 namespace HeimKratzer1998
 
-open Intensional
-open Intensional.Variables
+open Semantics.Composition
+open scoped Assignment
 open Semantics.Montague
 open Syntax
 open Semantics.Composition.Tree

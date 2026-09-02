@@ -317,14 +317,14 @@ theorem shiftedAccess_eq_schlenkerShifted :
 
 /-- **`schlenkerPresent` is rigid** (Kaplan-stable). Substrate-level
     witness for the SOT chapter's origin-access mechanism. -/
-theorem schlenkerPresent_isRigid : Intensional.IsRigid schlenkerPresent :=
-  Intensional.isRigid_const _
+theorem schlenkerPresent_isRigid : Reference.IsRigid schlenkerPresent :=
+  Reference.isRigid_const _
 
 /-- **`schlenkerShifted` is non-rigid** (the SOT chapter's shifted
     reading varies with context). Discriminating witness: contexts
     with different `.time` fields (speech time 0 vs matrix event
     time −2). -/
-theorem schlenkerShifted_not_isRigid : ¬ Intensional.IsRigid schlenkerShifted := by
+theorem schlenkerShifted_not_isRigid : ¬ Reference.IsRigid schlenkerShifted := by
   intro h
   have hContradiction : (0 : ℤ) = -2 :=
     h speechCtx { speechCtx with time := -2 }
@@ -375,7 +375,7 @@ theorem schlenker_abusch_agree_on_simultaneous_value
     Kaplan-stable from shifted readings uniformly across all three
     frameworks at the substrate level. The same closure lemmas
     (`IsRigid.map`, `IsRigid.precomp`, `IsRigid.of_map_injective`
-    from `Semantics/Intensional/Rigidity.lean`) apply uniformly:
+    from `Semantics/Reference/Rigidity.lean`) apply uniformly:
 
     | Framework                  | Kaplan-stable      | Shifted          |
     |----------------------------|--------------------|------------------|
@@ -397,8 +397,8 @@ theorem schlenker_abusch_agree_on_simultaneous_value
     predicate proves both at `Res = ℤ`, parallel to [anand-nevins-2004]'s Kaplan-compliant
     and shifted first person at `Res = Agent`. -/
 theorem schlenker_substrate_aligned_with_isRigid :
-    Intensional.IsRigid schlenkerPresent ∧
-    ¬ Intensional.IsRigid schlenkerShifted :=
+    Reference.IsRigid schlenkerPresent ∧
+    ¬ Reference.IsRigid schlenkerShifted :=
   ⟨schlenkerPresent_isRigid, schlenkerShifted_not_isRigid⟩
 
 /-- **`Intension` functoriality applied to Schlenker**: rigidity of
@@ -408,7 +408,7 @@ theorem schlenker_substrate_aligned_with_isRigid :
     functoriality just as [anand-nevins-2004]'s Kaplan-compliant `I` is —
     both are instances of the same architectural pattern. -/
 theorem schlenkerPresent_lifts_rigidly {α : Type*} (g : ℤ → α) :
-    Intensional.IsRigid (fun c : TenseCtx => g (schlenkerPresent c)) :=
+    Reference.IsRigid (fun c : TenseCtx => g (schlenkerPresent c)) :=
   schlenkerPresent_isRigid.map g
 
 end Schlenker2004

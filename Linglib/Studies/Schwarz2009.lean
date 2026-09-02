@@ -67,8 +67,7 @@ We verify:
 namespace Schwarz2009
 
 open Definiteness
-open Intensional
-open Intensional.Variables
+open Semantics.Composition
 
 -- ════════════════════════════════════════════════════════════════
 -- §1: The two presupposition types are genuinely distinct

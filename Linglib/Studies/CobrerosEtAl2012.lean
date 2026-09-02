@@ -97,9 +97,8 @@ case; borderline cases are exactly the boundary `upper \ lower`.
 ## Re-reading TCS through a modal-logic lens (formaliser's framing)
 
 The paper itself does NOT use modal-logic vocabulary. The framing in this
-section is the formaliser's lens, used to integrate with the existing
-`Semantics/Intensional/RestrictedModality.lean` substrate; it is not
-paper-anchored.
+section is the formaliser's lens, used to integrate with the modal-logic
+substrate (`Logic/Modal`); it is not paper-anchored.
 
 Structurally, TCS is a propositional modal logic in which each predicate
 `P` carries its own reflexive-symmetric (KTB) Kripke accessibility

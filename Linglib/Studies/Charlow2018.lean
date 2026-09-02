@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Functor
-import Linglib.Semantics.Intensional.Defs
-import Linglib.Semantics.Intensional.Variables
+import Linglib.Semantics.Composition.Ty
+import Linglib.Semantics.Composition.Assignment
 import Linglib.Logic.Assignment
 import Mathlib.Control.Monad.Cont
 import Linglib.Semantics.Reference.Binding
@@ -73,8 +73,7 @@ into being."
 
 namespace Charlow2018
 
-open Intensional
-open Intensional.Variables
+open Semantics.Composition
 
 /-! ## §3.1–3.2 Getting modular: ρ and ⊛
 

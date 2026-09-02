@@ -213,7 +213,7 @@ merger consumes a proposition (`.t`), while the na-clause — its EPP
 re-opened — is a property, `.fn .e .t`; application is undefined
 whatever the merger returns. Relative *pu* + *na* (ex. 31) escapes
 because relative *pu* binds an individual variable instead. -/
-theorem comp_over_na_type_clash (b : Intensional.Ty) :
+theorem comp_over_na_type_clash (b : Semantics.Composition.Ty) :
     canApply (.fn .t b) (.fn .e .t) = none := rfl
 
 end Roussou2010

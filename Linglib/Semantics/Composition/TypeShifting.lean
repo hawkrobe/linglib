@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Modification.Basic
 import Linglib.Syntax.Category.Verb.Complement.Basic
@@ -35,7 +35,7 @@ which extend the same type-shift to kinds and bare plurals.
 
 namespace Semantics.Composition.TypeShifting
 
-open Intensional
+open Semantics.Composition
 open Quantification
 
 variable {E W : Type}
@@ -446,7 +446,6 @@ inductive ComplementDenotation where
 def ComplementDenotation.isProperty : ComplementDenotation → Bool
   | .property    => true
   | .proposition => false
-
 
 /-- The semantic layer of a clausal complement type, derived from the two
     `Features` observables: clausal and finite → proposition, clausal and

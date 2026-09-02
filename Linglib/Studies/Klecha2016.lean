@@ -93,7 +93,7 @@ the ULC follows from the situation base rather than being stipulated. -/
 theorem attitudeTemporalConstraint_derived_doxastic
     {W T : Type*} [LinearOrder T]
     (history : HistoricalAlternatives W T)
-    (s s' : Intensional.Index W T)
+    (s s' : Semantics.Context.Index W T)
     (h : s' ∈ actualHistoryBase history s) :
     attitudeTemporalConstraint .doxastic s.time s'.time :=
   actualHistoryBase_time_actual history s s' h
@@ -102,7 +102,7 @@ theorem attitudeTemporalConstraint_derived_doxastic
 theorem attitudeTemporalConstraint_derived_circumstantial
     {W T : Type*} [LinearOrder T]
     (history : HistoricalAlternatives W T)
-    (s s' : Intensional.Index W T)
+    (s s' : Semantics.Context.Index W T)
     (h : s' ∈ futureHistoryBase history s) :
     attitudeTemporalConstraint .circumstantial s.time s'.time :=
   futureHistoryBase_time_future history s s' h
@@ -232,7 +232,6 @@ theorem cir_npst_iff {T : Type*} [LinearOrder T]
   simp only [Tense.compare_mem_nonpast]
   exact ⟨λ ⟨hGt, _⟩ => hGt, λ h => ⟨h, le_of_lt h⟩⟩
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Attitude verb modal base classification
 -- ════════════════════════════════════════════════════════════════
@@ -252,7 +251,6 @@ theorem hope_is_preferential :
 /-- *pray* is classified as preferential → can take CIR. -/
 theorem pray_is_preferential :
     pray.attitude = some (.preferential (.degreeComparison .positive)) := rfl
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. Derived modal base compatibility
@@ -274,7 +272,6 @@ theorem hope_permits_cir :
 theorem pray_permits_cir :
     (Attitude.preferential (.degreeComparison .positive)).PermitsCircumstantial := trivial
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Modal base kind derivation
 -- ════════════════════════════════════════════════════════════════
@@ -287,7 +284,6 @@ theorem think_modal_base :
 theorem hope_modal_base :
     Attitude.toModalBaseKind (.preferential (.degreeComparison .positive)) =
     ModalBaseKind.circumstantial := rfl
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Temporal orientation predictions
@@ -308,7 +304,6 @@ theorem thought_pregnant_no_future (thinkTime embRT : ℤ) (h : embRT > thinkTim
     ¬ attitudeTemporalConstraint .doxastic thinkTime embRT :=
   dox_incompatible_with_future thinkTime embRT h
 
-
 /-! ### "Martina hoped Carissa got pregnant"
 
 Under *hope* (CIR), the "past" morphology on "got" is SOT agreement —
@@ -327,7 +322,6 @@ theorem hoped_pregnant_past (hopeTime embRT : ℤ) (h : embRT < hopeTime) :
     attitudeTemporalConstraint .doxastic hopeTime embRT :=
   dox_compatible_with_past hopeTime embRT h
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § 5. The Upper Limit Constraint is DERIVED
 -- ════════════════════════════════════════════════════════════════
@@ -345,7 +339,6 @@ theorem cir_is_future (evalTime refTime : ℤ) :
     attitudeTemporalConstraint .circumstantial evalTime refTime ↔
     refTime > evalTime :=
   Iff.rfl
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5b. ULC derivation through the situation-base substrate
@@ -371,7 +364,7 @@ projection above delegates to it. -/
     derivation specialized to ℤ. -/
 theorem ulc_via_history_base {W : Type*}
     (history : HistoricalAlternatives W ℤ)
-    (matrix embedded : Intensional.Index W ℤ)
+    (matrix embedded : Semantics.Context.Index W ℤ)
     (h : embedded ∈ actualHistoryBase history matrix) :
     attitudeTemporalConstraint .doxastic matrix.time embedded.time :=
   attitudeTemporalConstraint_derived_doxastic history matrix embedded h
@@ -382,11 +375,10 @@ theorem ulc_via_history_base {W : Type*}
     specialized to ℤ. -/
 theorem future_via_history_base {W : Type*}
     (history : HistoricalAlternatives W ℤ)
-    (matrix embedded : Intensional.Index W ℤ)
+    (matrix embedded : Semantics.Context.Index W ℤ)
     (h : embedded ∈ futureHistoryBase history matrix) :
     attitudeTemporalConstraint .circumstantial matrix.time embedded.time :=
   attitudeTemporalConstraint_derived_circumstantial history matrix embedded h
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5c. Klecha ↔ Abusch: ULC predicate convergence
@@ -441,7 +433,6 @@ theorem klecha_dox_iff_abusch_ulc {T : Type*} [LinearOrder T]
     upperLimitConstraint refTime evalTime :=
   Iff.rfl
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § 6. Compositional intersection: tense × modal base
 -- ════════════════════════════════════════════════════════════════
@@ -476,7 +467,6 @@ theorem cir_past_is_impossible (t r : ℤ) :
     ¬(attitudeTemporalConstraint .circumstantial t r ∧ compare r t ∈ Tense.past) :=
   (cir_past_iff_false t r).mp
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § 7. NPST is not Present
 -- ════════════════════════════════════════════════════════════════
@@ -497,7 +487,6 @@ theorem nonpast_strictly_weaker :
     ∃ r p : ℤ, compare r p ∈ Tense.nonpast ∧
               ¬ compare r p ∈ Tense.present := by
   exact ⟨1, 0, by decide, by decide⟩
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 8. Table 1: Modal flavor → temporal orientation
@@ -536,7 +525,6 @@ theorem non_epistemic_all_cir (f : ModalFlavor) (h : f ≠ .epistemic) :
     ModalFlavor.toModalBaseKind f = ModalBaseKind.circumstantial :=
   non_epistemic_is_cir f h
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § 9. Reportatives pattern with doxastics
 -- ════════════════════════════════════════════════════════════════
@@ -550,7 +538,6 @@ doxastic verbs. Reportatives use DOX, blocking future orientation. -/
 theorem reportative_blocks_future (tellTime embRT : ℤ) (h : embRT > tellTime) :
     ¬ attitudeTemporalConstraint .doxastic tellTime embRT :=
   dox_incompatible_with_future tellTime embRT h
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 10. Classification table
@@ -589,7 +576,6 @@ theorem dox_only_block_future :
 theorem cir_compat_permit_future :
     (classificationTable.filter (! ·.isDoxOnly)).all (·.permitsFuture) = true := by
   decide
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 11. Cross-linguistic test: [matthewson-2013] Gitksan imaa
@@ -653,7 +639,6 @@ in `Fragments/Gitksan/Modals.lean` should stay where it is. Promoting
 it to Theories would silently impose Klecha's universal on languages
 whose data refutes it. -/
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § F1. Phase F bridge: Klecha ↔ Sharvit on the simultaneous reading
 -- ════════════════════════════════════════════════════════════════
@@ -684,7 +669,6 @@ theorem sharvit_klecha_agree_simultaneous_english (sayingTime sickTime : ℤ) :
       sickTime = sayingTime) :=
   ⟨rfl, dox_npst_iff sayingTime sickTime⟩
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § F2. Phase F bridge: Klecha CIR ⊆ Condoravdi metaphysical base
 -- ════════════════════════════════════════════════════════════════
@@ -709,7 +693,7 @@ makes the world-component subset relation kernel-checked. -/
     `histEquiv`. -/
 theorem klecha_cir_world_in_condoravdi_metaphysical
     {W : Type*} (history : HistoricalAlternatives W ℤ)
-    (s s' : Intensional.Index W ℤ)
+    (s s' : Semantics.Context.Index W ℤ)
     (h : s' ∈ futureHistoryBase history s) :
     s'.world ∈
       HistoricalAlternatives.metaphysicalBase history s.world s.time :=
@@ -721,12 +705,11 @@ theorem klecha_cir_world_in_condoravdi_metaphysical
     `.1` projection (same as the CIR case). -/
 theorem klecha_dox_world_in_condoravdi_metaphysical
     {W : Type*} (history : HistoricalAlternatives W ℤ)
-    (s s' : Intensional.Index W ℤ)
+    (s s' : Semantics.Context.Index W ℤ)
     (h : s' ∈ actualHistoryBase history s) :
     s'.world ∈
       HistoricalAlternatives.metaphysicalBase history s.world s.time :=
   h.1
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § F4. Phase F bridge: Klecha ↔ Abusch ULC at the modal layer
@@ -762,7 +745,7 @@ sides* now carry the modal-alternative quantification (via
     which strips it. -/
 theorem klecha_dox_iff_abusch_ulc_modal {W : Type*}
     (history : HistoricalAlternatives W ℤ)
-    (matrix embedded : Intensional.Index W ℤ) :
+    (matrix embedded : Semantics.Context.Index W ℤ) :
     embedded ∈ actualHistoryBase history matrix ↔
     upperLimitConstraintModal history matrix embedded :=
   Iff.rfl
@@ -775,11 +758,10 @@ theorem klecha_dox_iff_abusch_ulc_modal {W : Type*}
     with the substrate's `attitudeTemporalConstraint_derived_doxastic`. -/
 theorem abusch_modal_ulc_implies_klecha_dox {W : Type*}
     (history : HistoricalAlternatives W ℤ)
-    (matrix embedded : Intensional.Index W ℤ)
+    (matrix embedded : Semantics.Context.Index W ℤ)
     (h : upperLimitConstraintModal history matrix embedded) :
     attitudeTemporalConstraint .doxastic matrix.time embedded.time :=
   attitudeTemporalConstraint_derived_doxastic history matrix embedded h
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § F6. Phase F bridge: Klecha ↔ Hacquard 2006 complementarity
@@ -813,7 +795,6 @@ theorem klecha_hacquard_complementary :
     ModalBaseKind.permitsOrientation .doxastic Tense.future = false := by
   refine ⟨rfl, rfl, ?_, ?_⟩ <;> rfl
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § F7. Phase F bridge: Klecha covers what Ogihara lacks (hope + past)
 -- ════════════════════════════════════════════════════════════════
@@ -844,7 +825,6 @@ theorem klecha_covers_hope_future_oriented_reading
   ⟨cir_compatible_with_future hopeTime embRT h,
     (Tense.compare_mem_nonpast embRT hopeTime).mpr (le_of_lt h)⟩
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Substrate bridge: Klecha DOX ≡ Abusch's `metaphysicalAlternatives`
 -- ════════════════════════════════════════════════════════════════
@@ -865,6 +845,5 @@ theorem klecha_actualHistoryBase_eq_substrate_metaphysicalAlternatives
       ⟨concept, matrix⟩
     dr.metaphysicalAlternatives history =
     actualHistoryBase history matrix.toIndex := rfl
-
 
 end Klecha2016

@@ -21,7 +21,7 @@ import Linglib.Semantics.Reference.Context.Shifts
 
 namespace Reference.Kaplan
 
-open Intensional (IsRigid isRigid_const)
+open Reference (IsRigid isRigid_const)
 open _root_.Reference.Basic
 open Semantics.Context (KContext)
 
@@ -117,11 +117,8 @@ end SingularProposition
 
 /-! ## Bridge to Attitude/Intensional -/
 
-/-- Montague's `up` operator (constant intension) coincides with the character
-of a proper name: both produce `rigid e`.
-
-This connects the PTQ-style `up` (in `Attitude/Intensional.lean`) to the
-Kaplanian `constantCharacter` of a proper name. -/
+/-- The content of a proper name at any context is the constant intension at its bearer:
+Montague's `^` of the bearer is the name's Kaplanian character. -/
 theorem constantCharacter_is_up {C W E : Type*} (e : E) (c : C) :
     (properName (C := C) (W := W) e).character c = fun _ => e := rfl
 

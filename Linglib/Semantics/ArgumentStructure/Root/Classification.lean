@@ -1,14 +1,14 @@
 import Linglib.Semantics.ArgumentStructure.Root.Kinds
 import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Semantics.ArgumentStructure.SalienceClass
-import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Composition.Ty
 
 /-!
 # Root classification: change type, semantic type, and the annotation record
 
 The cross-linguistic classification dimensions a change-of-state verb root
 is typed by: whether it lexically entails change (`ChangeType`), its
-semantic type (an `Intensional.Ty` — [coon-2019] (3) types Chuj roots
+semantic type (an `Semantics.Composition.Ty` — [coon-2019] (3) types Chuj roots
 ⟨e,⟨s,t⟩⟩, ⟨e,⟨s,d⟩⟩, ⟨e,t⟩), Dixon's property-concept categories
 (`PCClass`), and the `Classification` annotation record for
 annotation-first fragments.
@@ -24,7 +24,7 @@ annotation-first fragments.
   verb inventory. The reading that result roots *lexically entail*
   change is the Beavers et al. account, contested by the
   Distributed-Morphology camp; the split itself is theory-neutral.
-* denotation types — actual semantic types (`Intensional.Ty`), not a
+* denotation types — actual semantic types (`Semantics.Composition.Ty`), not a
   bespoke enum: [coon-2019] (3)'s four Chuj domains and
   [hanink-koontz-garboden-2025]'s three Wáshiw PC classes are finite
   inventories the anchoring studies state over concrete `Ty` values.
@@ -123,7 +123,7 @@ structure Classification where
   changeType : ChangeType
   /-- The root's semantic type ([coon-2019] (3)). Optional — not all
       roots have been annotated. -/
-  denotationType : Option Intensional.Ty := none
+  denotationType : Option Semantics.Composition.Ty := none
   /-- Whether the root may combine with the transitive-forming v ~ Voice⁰
       head that merges an agent — the coordinate separating [coon-2019]'s
       √TV from her unaccusative √ITV (§3.3), which share both semantic

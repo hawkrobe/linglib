@@ -3,6 +3,7 @@ import Mathlib.Data.Finset.Image
 import Mathlib.Data.Rat.Defs
 import Linglib.Logic.Assignment
 import Linglib.Semantics.Quantification.Witness
+import Linglib.Logic.Modal.Extensional
 
 /-!
 # [cooper-2023] — From Perception to Communication

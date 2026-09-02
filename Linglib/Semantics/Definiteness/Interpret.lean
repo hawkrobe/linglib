@@ -32,8 +32,7 @@ not referent selection).
 
 namespace Definiteness
 
-open Intensional
-open Intensional.Variables
+open Semantics.Composition
 
 variable {E W : Type}
 

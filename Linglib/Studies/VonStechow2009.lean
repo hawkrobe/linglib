@@ -53,7 +53,6 @@ namespace VonStechow2009
 
 open Tense
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Derivation Theorems
 -- ════════════════════════════════════════════════════════════════
@@ -102,7 +101,6 @@ theorem vonStechow_derives_relative_clause {T : Type*} [LinearOrder T]
     rcRefTime < rcPerspective :=
   (Tense.compare_mem_past _ _).mp hPast
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Bridge to TensePronoun
 -- ════════════════════════════════════════════════════════════════
@@ -116,14 +114,13 @@ theorem feature_checking_is_fullPresupposition {T : Type*} [LinearOrder T]
     tp.fullPresupposition g :=
   Iff.rfl
 
-
 /-! ### Situation-indexed attitudes
 
 The complement type of *believe* shifts from `W → Prop` to
 predicates over `Index W T`, and doxastic alternatives become world–time pairs:
 ⟦x believes p⟧(w,t) = ∀(w',t') ∈ Dox_x(w,t). p(w',t'). -/
 
-open Intensional (Index)
+open Semantics.Context (Index)
 open Doxastic (Veridicality DoxasticPredicate BoxAt VeridicalityHolds)
 
 variable {W T E : Type*}

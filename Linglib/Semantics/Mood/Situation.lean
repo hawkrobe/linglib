@@ -29,7 +29,7 @@ clause retrieves for temporal anchoring (`conditionalSF`).
 
 namespace Mood
 
-open Intensional (Index)
+open Semantics.Context (Index)
 open HistoricalAlternatives
 
 /-- A situation predicate, relating a described situation to its anchor. -/

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Composition.Ty
 import Linglib.Logic.Natural.Additivity
 import Linglib.Logic.Natural.Basic
 import Mathlib.Data.Rat.Defs
@@ -383,7 +383,6 @@ def negMeaning (container part : PWEntity) : Prop :=
 theorem house_has_bathroom : posMeaning .house .bathroom := trivial
 theorem house_doesnt_have_bathroom : ¬ negMeaning .house .bathroom := fun h => h trivial
 theorem classroom_doesnt_have_stove : negMeaning .classroom .stove := id
-
 
 /-- Lift He et al. sentences to world-indexed propositions. -/
 def liftToWorlds (s : HKIState) : (HKIState → Bool) :=

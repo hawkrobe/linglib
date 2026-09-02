@@ -1,6 +1,6 @@
 import Linglib.Semantics.Causation.SEM.Bool
 import Linglib.Semantics.Causation.SEM.Counterfactual
-import Linglib.Semantics.Intensional.Index
+import Linglib.Semantics.Reference.Context.Index
 import Mathlib.Logic.Relation
 
 /-!
@@ -52,7 +52,7 @@ strictly stronger. Bridge theorems comparing the two belong in
 
 namespace Lewis1973
 
-open Intensional (Index)
+open Semantics.Context (Index)
 open Causation Causation.Mechanism Causation.SEM
 
 -- ════════════════════════════════════════════════════

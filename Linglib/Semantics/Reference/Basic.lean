@@ -18,12 +18,12 @@ These mechanisms are independent: a term can exhibit any subset.
 
 -/
 
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Reference.Context.Basic
 
 namespace Reference.Basic
 
-open Intensional (IsRigid isRigid_const)
+open Reference (IsRigid isRigid_const)
 
 /-! ## Context and Character -/
 

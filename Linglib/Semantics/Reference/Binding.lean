@@ -8,24 +8,23 @@ binding ([heim-kratzer-1998] Ch. 5).
 Per [buring-2012] §3, a bound pronoun has the *same* denotation as a free
 one — the variable `g(i)` — with binding supplied externally by the β-operator.
 That assignment-based binding is the project-canonical `interpPronoun` /
-`lambdaAbsG` (`Intensional.Variables`), also the selector of the
+`lambdaAbsG` (`Semantics.Composition`), also the selector of the
 unified pronoun denotation `PersonalPronoun.denote`; this file develops the
 continuation rendering (`W`, `hkBinding`/`bsBinding`) and the cylindric-algebra
 view of the assignment update.
 
 -/
 
-import Linglib.Semantics.Intensional.Defs
-import Linglib.Semantics.Intensional.Variables
+import Linglib.Semantics.Composition.Ty
+import Linglib.Semantics.Composition.Assignment
 import Linglib.Logic.CylindricAlgebra
 import Linglib.Semantics.Quantification.Quantifier
 
 namespace Reference.Binding
 
-open Intensional
-open Intensional.Variables
+open Semantics.Composition
+open scoped Assignment
 open CylindricAlgebra
-
 
 section Continuations
 
@@ -74,7 +73,6 @@ theorem binding_is_contraction {A : Type} (rel : A → A → Prop) (x : A) :
     (λ _ : Unit => rel x x) () = W rel x := rfl
 
 end CategoricalPerspective
-
 
 end Continuations
 

@@ -4,7 +4,8 @@ import Mathlib.Order.BooleanAlgebra.Basic
 /-!
 # Semantic types and denotation domains
 
-The types of intensional logic and their denotation domains. `Ty` is the type grammar —
+The semantic types of the composition engine and their denotation domains. `Ty` is the type
+grammar —
 `e`, `t`, `⟨a,b⟩`, `⟨s,a⟩`, and the degree, cardinality and eventuality sorts of later
 work — and `Denot E W ty` computes the domain of possible denotations of each type from an
 entity type `E` and an index type `W`: functions denote in function spaces and intensions
@@ -31,7 +32,7 @@ composition engine's runtime type dispatch.
 * [B. Partee, M. Rooth, *Generalized Conjunction and Type Ambiguity* (1983)][partee-rooth-1983]
 -/
 
-namespace Intensional
+namespace Semantics.Composition
 
 /-- Semantic types: Montague's `e`, `t`, `fn a b` (⟨a,b⟩) and `intens a` (⟨s,a⟩), the
 degree sort `d` ([heim-2001], [wellwood-2015]), the cardinality sort `n` ([sudo-2016],
@@ -91,4 +92,4 @@ def Denot.booleanAlgebra? (E W : Type) (ty : Ty) (D : Type := ℝ) :
       letI := i; inferInstance
   | _ => none
 
-end Intensional
+end Semantics.Composition

@@ -6,8 +6,8 @@ import Linglib.Studies.HeimKratzer1998
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Reference.Binding
-import Linglib.Semantics.Intensional.Defs
-import Linglib.Semantics.Intensional.Variables
+import Linglib.Semantics.Composition.Ty
+import Linglib.Semantics.Composition.Assignment
 import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.LexEntry
 
@@ -62,12 +62,12 @@ pronoun's, with the Akan subject/object asymmetry as one instance.
 namespace BumfordCharlow2024
 
 open Semantics.Composition
+open scoped Assignment
 open Semantics.Composition.Tree
 open Pragmatics.Expressives
 open Quantification
 open Reference.Binding
-open Intensional
-open Intensional.Variables
+open Semantics.Composition
 open Semantics.Montague
 open Semantics.Montague.ToyLexicon (student_sem person_sem)
 

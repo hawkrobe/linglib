@@ -27,7 +27,7 @@ terms (`one kilo` vs. `two kilos`).
 ### Measure Functions
 
 A **measure function** μ maps individuals to magnitudes on a scale `D` —
-the model's degree scale, default `ℝ` as for `Intensional.Denot` — along a
+the model's degree scale, default `ℝ` as for `Semantics.Composition.Denot` — along a
 specific physical dimension:
 
     μ : Entity → D

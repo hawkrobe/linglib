@@ -41,7 +41,7 @@ namespace Semantics.Composition
 
 open FirstOrder Language
 open FirstOrder.Language.Formula (all₁ ex₁)
-open Intensional
+open Semantics.Composition
 open Quantification (every_sem some_sem no_sem)
 open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree
@@ -578,7 +578,6 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
         | exact (hex₂ _ _ _ _ rfl).elim
         | exact (hex₃ _ _ _ _ _ _ _ _ _ rfl).elim
         | exact (hex₄ _ _ _ _ _ _ rfl).elim
-
 
 end Agreement
 

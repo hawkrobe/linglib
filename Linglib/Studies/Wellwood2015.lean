@@ -155,7 +155,6 @@ theorem derivation_eq_comparativeTruth {Measured : Type*}
 
 end Derivation
 
-
 /-! ### The derivations, type-driven
 
 The step-licensed derivations (37.i–viii, 45.i–vi, 61) run through the
@@ -172,7 +171,7 @@ section TypeDriven
 
 open Semantics.Composition.Tree
 open Semantics.Montague (Lexicon)
-open Intensional (Ty Denot)
+open Semantics.Composition (Ty Denot)
 open Syntax (Tree)
 
 variable {Ent α : Type}

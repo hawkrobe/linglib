@@ -63,7 +63,7 @@ namespace BeaversZubair2013
 open Causation
 open Sinhala.Verbs
 open ArgumentStructure.VoiceSemantics
-open Intensional
+open Semantics.Composition
 
 /-! ### The two resolutions of the suppressed causer -/
 

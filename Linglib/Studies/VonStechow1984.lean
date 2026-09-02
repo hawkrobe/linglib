@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.MeasurePhrase
 import Linglib.Semantics.Degree.Delineation
@@ -37,7 +37,7 @@ Example stimuli live in `Data.Examples.VonStechow1984` (`Examples.*`).
 
 namespace VonStechow1984
 
-open Degree Intensional
+open Degree
 
 variable {W Entity D : Type*} [LinearOrder D]
 

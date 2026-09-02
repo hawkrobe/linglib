@@ -32,7 +32,7 @@ namespace Ladusaw1979
 
 open Quantification
 open Polarity (LicensingContext)
-open Intensional
+
 open Semantics.Montague (ToyEntity)
 
 -- ============================================================================
