@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Merge.Basic
-import Linglib.Syntax.Minimalist.Workspace.DeletionConservation
+import Linglib.Core.Combinatorics.RootedTree.Conservation
 import Linglib.Core.Combinatorics.RootedTree.CutAvoiding
 import Linglib.Core.Algebra.RootedTree.HopfAlgebra
 
