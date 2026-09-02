@@ -7,8 +7,7 @@ import Linglib.Syntax.Minimalist.Merge.MinimalYield
 import Linglib.Core.Algebra.RotaBaxterLaurent
 
 /-!
-# The δ-grading of Minimal Yield and the polar part (MCB §3.5.2.1)
-[marcolli-chomsky-berwick-2025] §3.5.2.1, book p. 267
+# The δ-grading of Minimal Yield and the polar part
 
 MCB's §3.5.2 recasts Minimal Yield (Def. 1.6.1) as a Birkhoff factorization in a ring of **Laurent
 series** `DM[t⁻¹][[t]]` with coefficients in the algebra of free Merge derivations, weighting each
@@ -29,6 +28,12 @@ negative. Minimal-Yield-respecting steps (External/Internal Merge) have `δ ≥ 
 (the per-merge shadow of MCB Lemma 3.5.5); the divergent Sideward Merge steps 3(a)/3(b) have
 `δb₀ = −1 < 0`, hence **polar** — the derivations MCB Prop. 3.5.6's factorization eliminates.
 
+The intermediate-derivation character `ψt` (Cor. 3.5.4, eq. 3.5.7) sums `tᵟ` over all pairs
+`(F, F')` of intermediate derivations of a target, and since `δ` depends only on the endpoints,
+each pair contributes one grading monomial. For such sums the polar part is the sum over the
+divergent gradings alone (`polarHahn_sum_map_gradeMonomial`), and `1 − R` keeps the rest — the
+sum-level reason `ψt` sees a Sideward Merge that `ϕt` (Lemma 3.5.5) cannot.
+
 ## Main definitions
 
 - `Minimalist.Merge.δb₀ / δα / δσ`: the signed `ℤ`-valued gradings.
@@ -36,7 +41,7 @@ negative. Minimal-Yield-respecting steps (External/Internal Merge) have `δ ≥ 
 
 ## References
 
-[marcolli-chomsky-berwick-2025] (§3.5.2.1, Prop. 3.5.2, Lemma 3.5.5, Prop. 3.5.6)
+* [marcolli-chomsky-berwick-2025], §3.5.2 (Prop. 3.5.2, Cor. 3.5.4, Lemma 3.5.5, Prop. 3.5.6)
 -/
 
 namespace Minimalist.Merge
@@ -100,6 +105,32 @@ theorem polarHahn_gradeMonomial (d : ℤ) :
   · exact polarHahn_eq_self _ fun i hi => HahnSeries.coeff_single_of_ne (by omega)
   · exact polarHahn_eq_zero _ fun i hi => HahnSeries.coeff_single_of_ne (by omega)
 
+/-! ### Sums of grading monomials -/
+
+/-- The polar part of a sum of grading monomials is the sum over the negative gradings. -/
+theorem polarHahn_sum_map_gradeMonomial (d : Multiset ℤ) :
+    polarHahn (d.map (gradeMonomial (A := A))).sum
+      = ((d.filter (· < 0)).map gradeMonomial).sum := by
+  induction d using Multiset.induction with
+  | empty => simp
+  | cons i d ih =>
+    rw [Multiset.map_cons, Multiset.sum_cons, polarHahn_add, ih, polarHahn_gradeMonomial]
+    by_cases h : i < 0 <;> simp [h]
+
+/-- The nonpolar projection `1 − R` of a sum of grading monomials keeps the nonnegative
+    gradings. -/
+theorem sum_map_gradeMonomial_sub_polarHahn (d : Multiset ℤ) :
+    (d.map (gradeMonomial (A := A))).sum - polarHahn (d.map gradeMonomial).sum
+      = ((d.filter (0 ≤ ·)).map gradeMonomial).sum := by
+  rw [polarHahn_sum_map_gradeMonomial, sub_eq_iff_eq_add', ← Multiset.sum_add,
+    ← Multiset.map_add]
+  simp only [← not_lt, Multiset.filter_add_not]
+
+/-- A sum of grading monomials with nonnegative gradings is nonpolar. -/
+theorem polarHahn_sum_map_gradeMonomial_of_nonneg {d : Multiset ℤ} (h : ∀ i ∈ d, 0 ≤ i) :
+    polarHahn (d.map (gradeMonomial (A := A))).sum = 0 := by
+  simp [polarHahn_sum_map_gradeMonomial, Multiset.filter_eq_nil.mpr fun i hi => not_lt.mpr (h i hi)]
+
 /-! ### Per-merge polarity: Minimal Yield is nonpolar, divergent Sideward is polar -/
 
 /-- A weak-Minimal-Yield step is **nonpolar** in the `δb₀` grading: `R` annihilates its monomial
@@ -111,7 +142,8 @@ theorem polarHahn_gradeMonomial_of_minimalYieldWeak
   obtain ⟨hb, _⟩ := (minimalYieldWeak_iff F F').mp h
   omega
 
-/-- External Merge is nonpolar (MCB Lemma 3.5.5): `δb₀ = +1 ≥ 0`, so `R` annihilates its monomial. -/
+/-- External Merge is nonpolar (MCB Lemma 3.5.5): `δb₀ = +1 ≥ 0`, so `R` annihilates its
+    monomial. -/
 theorem polarHahn_gradeMonomial_em (lbl : α) (S S' : Nonplanar (α ⊕ β)) :
     polarHahn (gradeMonomial (A := A)
         (δb₀ ({S, S'} : Forest (Nonplanar (α ⊕ β))) {Nonplanar.node (Sum.inl lbl) {S, S'}})) = 0 :=
