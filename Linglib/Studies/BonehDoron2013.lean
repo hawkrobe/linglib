@@ -116,7 +116,7 @@ theorem hab_without_actual_iteration :
     fun _ => [(· = true)], ⟨rfl, ?_⟩, ?_⟩
   · intro w' hw'
     have hw : w' = true := by
-      simpa [accessibleWorlds, Intensional.Premise.propIntersection] using hw'
+      simpa [accessibleWorlds, Modality.Kratzer.propIntersection] using hw'
     subst hw
     exact ⟨{0} ⊔ {1}, .sum (.base (by decide)) (.base (by decide)),
       {0}, by decide, {1}, by decide, by decide, by decide, by decide⟩

@@ -137,8 +137,7 @@ still-life painting variant from §5.2.
 
 namespace Kratzer2012Lumping
 
-open Intensional
-open Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows)
+open Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows worlds)
 open Conditionals.PremiseSemantic
 
 /-! ## The minimal Paula scenario -/
@@ -181,38 +180,29 @@ instance : PartialOrder Sit where
 theorem Sit.le_iff {s t : Sit} :
     s ≤ t ↔ s = t ∨ (s = .sA ∧ t = .actual) := Iff.rfl
 
-/-! ## The frame and propositions -/
-
-/-- The minimal `SituationFrame`: a single dummy entity, the four-index
-    `Sit` type with the parthood ordering above. (Kratzer's argument
-    doesn't depend on entities; we provide a one-element entity domain
-    for the `Frame` interface.) -/
-def paulaSituationFrame : SituationFrame where
-  Entity := Unit
-  Index := Sit
-  order := inferInstance
+/-! ## Propositions -/
 
 /-! ### Propositions
 
-These are sets of indices in `paulaSituationFrame`. The key claim is
+These are sets of situations in `Sit`. The key claim is
 that they are *persistent* (closed upward under parthood) and have
 the lumping properties Kratzer's argument requires. -/
 
 /-- "Paula is buying apples" — supported in `actual` and in the
     partial situation `sA` that is its part. -/
-def pa : Set paulaSituationFrame.Index := {.sA, .actual}
+def pa : Set Sit := {.sA, .actual}
 
 /-- "The Atlantic is drying" — true only at the `atlantic` world. -/
-def ad : Set paulaSituationFrame.Index := {.atlantic}
+def ad : Set Sit := {.atlantic}
 
 /-- "Paula is buying apples or the Atlantic is drying" — the
     disjunction (= [kratzer-2012] (9d)). -/
-def paOrAd : Set paulaSituationFrame.Index := pa ∪ ad
+def paOrAd : Set Sit := pa ∪ ad
 
 /-- "Paula is not buying apples" — the antecedent of our
     counterfactual. True at `noApplesQuiet`, `atlantic`, and trivially
     at any other index where `pa` fails (here, none). -/
-def notPa : Set paulaSituationFrame.Index := {.noApplesQuiet, .atlantic}
+def notPa : Set Sit := {.noApplesQuiet, .atlantic}
 
 /-! ## The lumping fact -/
 
@@ -250,7 +240,7 @@ theorem lumps_pa_paOrAd_actual : Lumps pa paOrAd Sit.actual := by
     A fuller formalization would also include "Atlantic isn't drying"
     and "moon isn't falling", but the lumping argument turns on `pa`
     and `paOrAd` alone. -/
-def Fw₀ : Set (Set paulaSituationFrame.Index) := {pa, paOrAd}
+def Fw₀ : Set (Set Sit) := {pa, paOrAd}
 
 /-- The Crucial Set for antecedent `notPa` at the actual world is
     *just* the singleton `{notPa}`. Any subset that contains `paOrAd`
@@ -259,7 +249,7 @@ def Fw₀ : Set (Set paulaSituationFrame.Index) := {pa, paOrAd}
     consistently added to a lumping-closed subset of `Fw₀ ∪ {notPa}`
     that contains `notPa`. -/
 theorem crucialSet_notPa_singleton :
-    {notPa} ∈ CrucialSet (F := paulaSituationFrame) Fw₀ Sit.actual notPa := by
+    {notPa} ∈ CrucialSet (S := Sit) Fw₀ Sit.actual notPa := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · -- {notPa} ⊆ insert notPa Fw₀
     intro x hx; rcases hx with rfl; exact Set.mem_insert _ _
@@ -294,11 +284,11 @@ exactly (not just `∋ {notPa}`), which collapses the would-CF prediction
 to `Follows {notPa} ad` — and that fails at `noApplesQuiet`. -/
 
 /-- Helper: any set containing both `pa` and `notPa` is inconsistent
-    (intersects no world in `paulaSituationFrame.Worlds`). -/
+    (intersects no world in `worlds Sit`). -/
 private theorem not_isConsistent_of_pa_and_notPa
-    {A : Set (Set paulaSituationFrame.Index)}
+    {A : Set (Set Sit)}
     (hpa : pa ∈ A) (hnotPa : notPa ∈ A) :
-    ¬ IsConsistent (F := paulaSituationFrame) A := by
+    ¬ IsConsistent (S := Sit) A := by
   rintro ⟨w', _, hwall⟩
   have h_w_pa : w' ∈ pa := hwall pa hpa
   have h_w_notPa : w' ∈ notPa := hwall notPa hnotPa
@@ -312,7 +302,7 @@ private theorem not_isConsistent_of_pa_and_notPa
     lumping-closed subset of `Fw₀ ∪ {notPa}` containing `notPa` is
     `{notPa}` itself. -/
 theorem crucialSet_notPa_eq_singleton :
-    CrucialSet (F := paulaSituationFrame) Fw₀ Sit.actual notPa
+    CrucialSet (S := Sit) Fw₀ Sit.actual notPa
       = { {notPa} } := by
   apply Set.eq_singleton_iff_unique_mem.mpr
   refine ⟨crucialSet_notPa_singleton, ?_⟩
@@ -342,9 +332,9 @@ theorem crucialSet_notPa_eq_singleton :
     the consequent `ad` fails — so the only candidate Crucial Set
     member `{notPa}` does NOT logically imply `ad`. -/
 theorem follows_notPa_ad_fails :
-    ¬ Follows (F := paulaSituationFrame) {notPa} ad := by
+    ¬ Follows (S := Sit) {notPa} ad := by
   intro h
-  have h_world : Sit.noApplesQuiet ∈ paulaSituationFrame.Worlds := by
+  have h_world : Sit.noApplesQuiet ∈ worlds Sit := by
     intro s' hs'
     rcases hs' with rfl | ⟨hh, _⟩
     · exact Or.inl rfl
@@ -366,7 +356,7 @@ theorem follows_notPa_ad_fails :
     therefore reduces to `Follows {notPa} ad`, which
     `follows_notPa_ad_fails` shows is false. -/
 theorem not_wouldCF_notPa_ad :
-    ¬ wouldCF (F := paulaSituationFrame) Fw₀ Sit.actual notPa ad := by
+    ¬ wouldCF (S := Sit) Fw₀ Sit.actual notPa ad := by
   intro hwould
   obtain ⟨A', hA'_in, _, hFollows⟩ :=
     hwould {notPa} crucialSet_notPa_singleton

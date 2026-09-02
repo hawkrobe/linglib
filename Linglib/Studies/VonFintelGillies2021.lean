@@ -51,7 +51,7 @@ Kernel semantics resolves this: *can't φ* = *must*(¬φ) by definition
 construction, while the strong assertion B_K ⊆ ⟦¬φ⟧ delivers Observation 5. -/
 
 open Modality
-open Intensional.Premise
+open Modality.Kratzer
 open VonFintelGillies2010 (World mastermindK redOrBlue notRed blue red notBlue
   mastermind_base)
 

@@ -256,7 +256,7 @@ theorem harlem_true_in_hoboken_scenario :
   rw [restricted_accessible_eq] at hAcc
   obtain ⟨hAccBase, hAntec⟩ := hAcc
   have hEq : w' = wActual := by
-    unfold accessibleWorlds Intensional.Premise.propIntersection fBelS at hAccBase
+    unfold accessibleWorlds Modality.Kratzer.propIntersection fBelS at hAccBase
     simpa using hAccBase
   rw [hEq] at hAntec
   exact harlem_not_wanted_at_wActual hAntec
