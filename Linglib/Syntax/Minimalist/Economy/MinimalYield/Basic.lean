@@ -1,7 +1,5 @@
-import Linglib.Core.Data.RoseTree.Count
+import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
-import Linglib.Syntax.Minimalist.Workspace.Conservation
-import Linglib.Syntax.Minimalist.Workspace.DeletionConservation
 import Linglib.Core.Order.PullbackPreorder
 import Mathlib.Order.OrderDual
 
@@ -9,17 +7,20 @@ import Mathlib.Order.OrderDual
 # Minimal Yield
 
 Minimal Yield is a condition on a transformation `F → F'` of workspaces, stated on the size
-measures of `Workspace/TraceMeasures.lean`: the number of components does not grow (no
-divergence), the number of accessible terms does not fall (no information loss), and the number
-of vertices grows by exactly one (minimality of yield). `MinimalYieldWeak` is the first two
+measures of a workspace, its components `Multiset.card`, its accessible terms `Forest.numEdges`,
+and its vertices `Forest.numNodes`: the number of components does not grow (no divergence), the
+number of accessible terms does not fall (no information loss), and the number of vertices grows
+by exactly one (minimality of yield). `MinimalYieldWeak` is the first two
 bounds and `MinimalYield` all three. The weak form is monotonicity of the signature `(b₀ᵒᵈ, α)`,
-so it is a pullback preorder on workspaces (`MinimalYieldWeak.pullbackPreorder`).
+so it is a pullback preorder on workspaces (`MinimalYieldWeak.pullbackPreorder`). The
+trace-aware measures are those of `Workspace/TraceMeasures.lean`.
 
 The per-case theorems evaluate the condition on the shapes the cases of Merge produce, on the
 carrier `Nonplanar (α ⊕ β)` with `Sum.inl` lexical and `Sum.inr` trace: External Merge satisfies
-it; Internal Merge preserves `b₀`, `α`, `σ` under Δᵈ counting and raises `αᶜ`, `σᶜ` by one under
-Δᶜ counting, given the accessible-term extraction identities; the divergent Sideward cases 3(a)
-and 3(b), which raise `b₀`, violate both forms.
+it; Internal Merge preserves all three measures under Δᵈ counting and raises the trace-aware
+count and size by one under Δᶜ counting, given the accessible-term extraction identities; the
+divergent Sideward cases 3(a) and 3(b), which raise the number of components, violate both
+forms.
 
 ## Main definitions
 
@@ -48,19 +49,19 @@ variable {α β : Type*}
 
 /-- The weak Minimal Yield principle: no increase in `b₀`, no decrease in `α`. -/
 structure MinimalYieldWeak (F F' : Forest (Nonplanar (α ⊕ β))) : Prop where
-  noDivergence : Forest.b₀ F' ≤ Forest.b₀ F
-  noInfoLoss   : Forest.alpha F ≤ Forest.alpha F'
+  noDivergence : Multiset.card F' ≤ Multiset.card F
+  noInfoLoss   : Forest.numEdges F ≤ Forest.numEdges F'
 
 /-- The Minimal Yield principle: the weak form plus `σ` up by exactly one. -/
 structure MinimalYield (F F' : Forest (Nonplanar (α ⊕ β))) : Prop
     extends MinimalYieldWeak F F' where
-  minimalYield : Forest.sigma F' = Forest.sigma F + 1
+  minimalYield : Forest.numNodes F' = Forest.numNodes F + 1
 
 /-! ### `MinimalYieldWeak` as a Pareto pullback preorder -/
 
 /-- The Pareto signature `(b₀ᵒᵈ, α)`, `b₀` dualised so fewer components ranks higher. -/
 def MinimalYield.signature (F : Forest (Nonplanar (α ⊕ β))) : ℕᵒᵈ × ℕ :=
-  (OrderDual.toDual (Forest.b₀ F), Forest.alpha F)
+  (OrderDual.toDual (Multiset.card F), Forest.numEdges F)
 
 theorem minimalYieldWeak_iff_signature_le {F F' : Forest (Nonplanar (α ⊕ β))} :
     MinimalYieldWeak F F' ↔ MinimalYield.signature F ≤ MinimalYield.signature F' :=
@@ -77,18 +78,19 @@ def MinimalYieldWeak.pullbackPreorder :
 theorem MinimalYield.em_pair (lbl : α) (S S' : Nonplanar (α ⊕ β)) :
     MinimalYield ({S, S'} : Forest (Nonplanar (α ⊕ β)))
                  ({Nonplanar.node (Sum.inl lbl) {S, S'}}) := by
-  have hnode : (Nonplanar.node (Sum.inl lbl) {S, S'}).accCount
-      = S.accCount + S'.accCount + 2 := Nonplanar.accCount_node_pair (Sum.inl lbl) S S'
+  have hnode : (Nonplanar.node (Sum.inl lbl) {S, S'}).numEdges
+      = S.numEdges + S'.numEdges + 2 := Nonplanar.numEdges_node_pair (Sum.inl lbl) S S'
   refine ⟨⟨?_, ?_⟩, ?_⟩
-  · simp only [Forest.b₀_singleton, Multiset.insert_eq_cons, Forest.b₀_cons]
+  · simp only [Multiset.card_singleton, Multiset.insert_eq_cons, Multiset.card_cons]
     omega
-  · rw [Forest.alpha_singleton, hnode]
-    simp only [Multiset.insert_eq_cons, Forest.alpha_cons, Forest.alpha_singleton]
+  · rw [Forest.numEdges_singleton, hnode]
+    simp only [Multiset.insert_eq_cons, Forest.numEdges_cons, Forest.numEdges_singleton]
     omega
-  · simp only [Forest.sigma, Forest.b₀_singleton, Forest.alpha_singleton]
+  · simp only [Forest.numNodes_eq_card_add_numEdges, Multiset.card_singleton,
+      Forest.numEdges_singleton]
     rw [hnode]
-    simp only [Multiset.insert_eq_cons, Forest.b₀_cons, Forest.b₀_singleton,
-      Forest.alpha_cons, Forest.alpha_singleton]
+    simp only [Multiset.insert_eq_cons, Multiset.card_cons, Multiset.card_singleton,
+      Forest.numEdges_cons, Forest.numEdges_singleton]
     omega
 
 /-! ### Internal Merge -/
@@ -96,19 +98,20 @@ theorem MinimalYield.em_pair (lbl : α) (S S' : Nonplanar (α ⊕ β)) :
 /-- Internal Merge via composition leaves `b₀`, `α`, `σ` unchanged (Δᵈ counting):
     the accessible-term relation `α(T) = α(mover) + α(Q) + 2` is MCB eq. 1.6.7. -/
 theorem im_pair_size_deltas_deletion (lbl : α) {T mover Q : Nonplanar (α ⊕ β)}
-    (h : T.accCount = mover.accCount + Q.accCount + 2) :
-    Forest.b₀ ({Nonplanar.node (Sum.inl lbl) {mover, Q}} : Forest (Nonplanar (α ⊕ β)))
-        = Forest.b₀ ({T} : Forest (Nonplanar (α ⊕ β)))
-      ∧ Forest.alpha ({Nonplanar.node (Sum.inl lbl) {mover, Q}} : Forest (Nonplanar (α ⊕ β)))
-        = Forest.alpha ({T} : Forest (Nonplanar (α ⊕ β)))
-      ∧ Forest.sigma ({Nonplanar.node (Sum.inl lbl) {mover, Q}} : Forest (Nonplanar (α ⊕ β)))
-        = Forest.sigma ({T} : Forest (Nonplanar (α ⊕ β))) := by
-  have hnode : (Nonplanar.node (Sum.inl lbl) {mover, Q}).accCount
-      = mover.accCount + Q.accCount + 2 := Nonplanar.accCount_node_pair (Sum.inl lbl) mover Q
+    (h : T.numEdges = mover.numEdges + Q.numEdges + 2) :
+    Multiset.card ({Nonplanar.node (Sum.inl lbl) {mover, Q}} : Forest (Nonplanar (α ⊕ β)))
+        = Multiset.card ({T} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.numEdges ({Nonplanar.node (Sum.inl lbl) {mover, Q}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.numEdges ({T} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.numNodes ({Nonplanar.node (Sum.inl lbl) {mover, Q}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.numNodes ({T} : Forest (Nonplanar (α ⊕ β))) := by
+  have hnode : (Nonplanar.node (Sum.inl lbl) {mover, Q}).numEdges
+      = mover.numEdges + Q.numEdges + 2 := Nonplanar.numEdges_node_pair (Sum.inl lbl) mover Q
   refine ⟨rfl, ?_, ?_⟩
-  · rw [Forest.alpha_singleton, Forest.alpha_singleton, hnode]
+  · rw [Forest.numEdges_singleton, Forest.numEdges_singleton, hnode]
     omega
-  · simp only [Forest.sigma, Forest.b₀_singleton, Forest.alpha_singleton]
+  · simp only [Forest.numNodes_eq_card_add_numEdges, Multiset.card_singleton,
+      Forest.numEdges_singleton]
     rw [hnode]
     omega
 
@@ -119,32 +122,33 @@ theorem im_pair_size_deltas_deletion (lbl : α) {T mover Q : Nonplanar (α ⊕ �
 theorem im_pair_size_deltas_deletion_of_cut (lbl : α) (T : Nonplanar (α ⊕ β))
     (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ ConnesKreimer.cutSummandsN T)
     (mover : Nonplanar (α ⊕ β)) (hcard : p.1 = {mover}) (huc : p.2.numUnary = 1) :
-    Forest.b₀ ({Nonplanar.node (Sum.inl lbl) {mover, Nonplanar.contractUnary p.2}}
-        : Forest (Nonplanar (α ⊕ β))) = Forest.b₀ ({T} : Forest (Nonplanar (α ⊕ β)))
-      ∧ Forest.alpha ({Nonplanar.node (Sum.inl lbl) {mover, Nonplanar.contractUnary p.2}}
-        : Forest (Nonplanar (α ⊕ β))) = Forest.alpha ({T} : Forest (Nonplanar (α ⊕ β)))
-      ∧ Forest.sigma ({Nonplanar.node (Sum.inl lbl) {mover, Nonplanar.contractUnary p.2}}
-        : Forest (Nonplanar (α ⊕ β))) = Forest.sigma ({T} : Forest (Nonplanar (α ⊕ β))) :=
+    Multiset.card ({Nonplanar.node (Sum.inl lbl) {mover, Nonplanar.contractUnary p.2}}
+        : Forest (Nonplanar (α ⊕ β))) = Multiset.card ({T} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.numEdges ({Nonplanar.node (Sum.inl lbl) {mover, Nonplanar.contractUnary p.2}}
+        : Forest (Nonplanar (α ⊕ β))) = Forest.numEdges ({T} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.numNodes ({Nonplanar.node (Sum.inl lbl) {mover, Nonplanar.contractUnary p.2}}
+        : Forest (Nonplanar (α ⊕ β))) = Forest.numNodes ({T} : Forest (Nonplanar (α ⊕ β))) :=
   im_pair_size_deltas_deletion lbl
-    (ConnesKreimer.cutSummandsN_accCount_single_deletion T p hp mover hcard huc)
+    (ConnesKreimer.cutSummandsN_numEdges_single_deletion T p hp mover hcard huc)
 
 /-- Internal Merge via composition leaves `b₀` fixed and raises `αᶜ`, `σᶜ` by one
     (Δᶜ counting): the relation `αᶜ(T) = αᶜ(β_t) + αᶜ(trunk) + 1` is MCB eq. 1.6.8. -/
 theorem im_pair_size_deltas_contraction (lbl : α) {T β_t Q : Nonplanar (α ⊕ β)}
     (hβ : β_t.traceLeafCount < β_t.numNodes) (hQ : Q.traceLeafCount < Q.numNodes)
-    (h : T.accCountC = β_t.accCountC + Q.accCountC + 1) :
-    Forest.b₀ ({Nonplanar.node (Sum.inl lbl) {β_t, Q}} : Forest (Nonplanar (α ⊕ β)))
-        = Forest.b₀ ({T} : Forest (Nonplanar (α ⊕ β)))
-      ∧ Forest.alphaC ({Nonplanar.node (Sum.inl lbl) {β_t, Q}} : Forest (Nonplanar (α ⊕ β)))
-        = Forest.alphaC ({T} : Forest (Nonplanar (α ⊕ β))) + 1
-      ∧ Forest.sigmaC ({Nonplanar.node (Sum.inl lbl) {β_t, Q}} : Forest (Nonplanar (α ⊕ β)))
-        = Forest.sigmaC ({T} : Forest (Nonplanar (α ⊕ β))) + 1 := by
+    (h : T.accessibleCount = β_t.accessibleCount + Q.accessibleCount + 1) :
+    Multiset.card ({Nonplanar.node (Sum.inl lbl) {β_t, Q}} : Forest (Nonplanar (α ⊕ β)))
+        = Multiset.card ({T} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.accessibleCount
+          ({Nonplanar.node (Sum.inl lbl) {β_t, Q}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.accessibleCount ({T} : Forest (Nonplanar (α ⊕ β))) + 1
+      ∧ Forest.accessibleSize ({Nonplanar.node (Sum.inl lbl) {β_t, Q}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.accessibleSize ({T} : Forest (Nonplanar (α ⊕ β))) + 1 := by
   refine ⟨rfl, ?_, ?_⟩
-  · rw [Forest.alphaC_singleton, Forest.alphaC_singleton,
-        Nonplanar.accCountC_merge lbl β_t Q hβ hQ]
+  · rw [Forest.accessibleCount_singleton, Forest.accessibleCount_singleton,
+        Nonplanar.accessibleCount_merge lbl β_t Q hβ hQ]
     omega
-  · simp only [Forest.sigmaC_eq, Forest.b₀_singleton, Forest.alphaC_singleton]
-    rw [Nonplanar.accCountC_merge lbl β_t Q hβ hQ]
+  · simp only [Forest.accessibleSize, Multiset.card_singleton, Forest.accessibleCount_singleton]
+    rw [Nonplanar.accessibleCount_merge lbl β_t Q hβ hQ]
     omega
 
 /-- `im_pair_size_deltas_contraction` with the αᶜ relation discharged from a Δᶜ
@@ -155,38 +159,42 @@ theorem im_pair_size_deltas_contraction_of_cut (lbl a₀ : α)
     (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β))
     (hp : p ∈ cutSummandsCN τ (Nonplanar.node (Sum.inl a₀) F₀))
     (β_t : Nonplanar (α ⊕ β)) (hcard : p.1 = {β_t}) :
-    Forest.b₀ ({Nonplanar.node (Sum.inl lbl) {β_t, p.2}} : Forest (Nonplanar (α ⊕ β)))
-        = Forest.b₀ ({Nonplanar.node (Sum.inl a₀) F₀} : Forest (Nonplanar (α ⊕ β)))
-      ∧ Forest.alphaC ({Nonplanar.node (Sum.inl lbl) {β_t, p.2}} : Forest (Nonplanar (α ⊕ β)))
-        = Forest.alphaC ({Nonplanar.node (Sum.inl a₀) F₀} : Forest (Nonplanar (α ⊕ β))) + 1
-      ∧ Forest.sigmaC ({Nonplanar.node (Sum.inl lbl) {β_t, p.2}} : Forest (Nonplanar (α ⊕ β)))
-        = Forest.sigmaC ({Nonplanar.node (Sum.inl a₀) F₀} : Forest (Nonplanar (α ⊕ β))) + 1 :=
+    Multiset.card ({Nonplanar.node (Sum.inl lbl) {β_t, p.2}} : Forest (Nonplanar (α ⊕ β)))
+        = Multiset.card ({Nonplanar.node (Sum.inl a₀) F₀} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.accessibleCount
+          ({Nonplanar.node (Sum.inl lbl) {β_t, p.2}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.accessibleCount
+          ({Nonplanar.node (Sum.inl a₀) F₀} : Forest (Nonplanar (α ⊕ β))) + 1
+      ∧ Forest.accessibleSize
+          ({Nonplanar.node (Sum.inl lbl) {β_t, p.2}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.accessibleSize
+          ({Nonplanar.node (Sum.inl a₀) F₀} : Forest (Nonplanar (α ⊕ β))) + 1 :=
   im_pair_size_deltas_contraction lbl
     (cutSummandsCN_crown_traceLeafCount_lt_numNodes τ _ p hp β_t
       (by rw [hcard]; exact Multiset.mem_singleton_self β_t))
     (Nonplanar.traceLeafCount_lt_numNodes_of_rootInl p.2 a₀
       ((cutSummandsCN_trunk_rootValue τ _ p hp).trans (by rw [Nonplanar.rootValue_node])))
-    (cutSummandsCN_accCountC_single τ _ a₀ F₀ rfl p hp β_t hcard)
+    (cutSummandsCN_accessibleCount_single τ _ a₀ F₀ rfl p hp β_t hcard)
 
 /-! ### Sideward Merge -/
 
 /-- Sideward Merge of type 2(b) leaves the component count `b₀` unchanged. -/
 theorem sideward_2b_b₀_preserved (T_i T_j Tnode T_j_q : Nonplanar (α ⊕ β)) :
-    Forest.b₀ ({Tnode, T_j_q} : Forest (Nonplanar (α ⊕ β)))
-      = Forest.b₀ ({T_i, T_j} : Forest (Nonplanar (α ⊕ β))) := by
-  simp only [Multiset.insert_eq_cons, Forest.b₀_cons, Forest.b₀_singleton]
+    Multiset.card ({Tnode, T_j_q} : Forest (Nonplanar (α ⊕ β)))
+      = Multiset.card ({T_i, T_j} : Forest (Nonplanar (α ⊕ β))) := by
+  simp only [Multiset.insert_eq_cons, Multiset.card_cons, Multiset.card_singleton]
 
 /-- Sideward Merge of type 3(a) increases the component count `b₀` by one. -/
 theorem sideward_3a_b₀_increases (T_i Tnode T_iq : Nonplanar (α ⊕ β)) :
-    Forest.b₀ ({Tnode, T_iq} : Forest (Nonplanar (α ⊕ β)))
-      = Forest.b₀ ({T_i} : Forest (Nonplanar (α ⊕ β))) + 1 := by
-  simp only [Multiset.insert_eq_cons, Forest.b₀_cons, Forest.b₀_singleton]
+    Multiset.card ({Tnode, T_iq} : Forest (Nonplanar (α ⊕ β)))
+      = Multiset.card ({T_i} : Forest (Nonplanar (α ⊕ β))) + 1 := by
+  simp only [Multiset.insert_eq_cons, Multiset.card_cons, Multiset.card_singleton]
 
 /-- Sideward Merge of type 3(b) increases the component count `b₀` by one. -/
 theorem sideward_3b_b₀_increases (T_i T_j Tnode T_iq T_jq : Nonplanar (α ⊕ β)) :
-    Forest.b₀ ({Tnode, T_iq, T_jq} : Forest (Nonplanar (α ⊕ β)))
-      = Forest.b₀ ({T_i, T_j} : Forest (Nonplanar (α ⊕ β))) + 1 := by
-  simp only [Multiset.insert_eq_cons, Forest.b₀_cons, Forest.b₀_singleton]
+    Multiset.card ({Tnode, T_iq, T_jq} : Forest (Nonplanar (α ⊕ β)))
+      = Multiset.card ({T_i, T_j} : Forest (Nonplanar (α ⊕ β))) + 1 := by
+  simp only [Multiset.insert_eq_cons, Multiset.card_cons, Multiset.card_singleton]
 
 /-- Sideward Merge of type 3(a) violates the weak Minimal Yield principle (Δb₀ > 0). -/
 theorem MinimalYieldWeak.not_sideward_3a (T_i Tnode T_iq : Nonplanar (α ⊕ β)) :

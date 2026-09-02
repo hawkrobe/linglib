@@ -61,16 +61,16 @@ section Gradings
 variable (F F' : Forest (Nonplanar (α ⊕ β)))
 
 /-- `δb₀ F F' = b₀ F − b₀ F'`, nonnegative iff `F → F'` does not diverge. -/
-def δb₀ : ℤ := (Forest.b₀ F : ℤ) - Forest.b₀ F'
+def δb₀ : ℤ := (Multiset.card F : ℤ) - Multiset.card F'
 
 /-- `δα F F' = α F' − α F`, nonnegative iff `F → F'` loses no information. -/
-def δα : ℤ := (Forest.alpha F' : ℤ) - Forest.alpha F
+def δα : ℤ := (Forest.numEdges F' : ℤ) - Forest.numEdges F
 
 /-- `δσ F F' = σ F' − σ F`, equal to `1` iff `F → F'` has minimal yield. -/
-def δσ : ℤ := (Forest.sigma F' : ℤ) - Forest.sigma F
+def δσ : ℤ := (Forest.numNodes F' : ℤ) - Forest.numNodes F
 
 theorem δσ_eq : δσ F F' = δα F F' - δb₀ F F' := by
-  simp only [δσ, δα, δb₀, Forest.sigma]; omega
+  simp only [δσ, δα, δb₀, Forest.numNodes_eq_card_add_numEdges]; omega
 
 theorem weak_iff_gradings : MinimalYieldWeak F F' ↔ 0 ≤ δb₀ F F' ∧ 0 ≤ δα F F' := by
   simp only [δb₀, δα, sub_nonneg, Nat.cast_le]
@@ -93,7 +93,7 @@ end Gradings
 
 /-- The value of `ϕt` on a tree: `t^{α(T)}`. -/
 noncomputable def gradingMonomialTree (T : Nonplanar α) : LaurentSeries R :=
-  HahnSeries.single (T.accCount : ℤ) 1
+  HahnSeries.single (T.numEdges : ℤ) 1
 
 /-- `ϕt` on forests, multiplicative over disjoint union. -/
 noncomputable def gradingMonoidHom :
@@ -118,20 +118,20 @@ noncomputable def gradingChar : ConnesKreimer R (Nonplanar α) →ₐ[R] Laurent
 
 /-- `ϕt(F) = t^{α(F)}`, since `α` is additive over forests. -/
 theorem prod_gradingMonomialTree (F : Forest (Nonplanar α)) :
-    (F.map (gradingMonomialTree (R := R))).prod = HahnSeries.single (Forest.alpha F : ℤ) 1 := by
+    (F.map (gradingMonomialTree (R := R))).prod = HahnSeries.single (Forest.numEdges F : ℤ) 1 := by
   induction F using Multiset.induction with
-  | empty => rw [Multiset.map_zero, Multiset.prod_zero, Forest.alpha_zero]; rfl
+  | empty => rw [Multiset.map_zero, Multiset.prod_zero, Forest.numEdges_zero]; rfl
   | cons T F ih =>
     rw [Multiset.map_cons, Multiset.prod_cons, ih, gradingMonomialTree,
-      HahnSeries.single_mul_single, one_mul, Forest.alpha_cons]
+      HahnSeries.single_mul_single, one_mul, Forest.numEdges_cons]
     push_cast; rfl
 
 theorem gradingChar_apply_of'_eq (F : Forest (Nonplanar α)) :
-    gradingChar (R := R) (of' F) = HahnSeries.single (Forest.alpha F : ℤ) 1 := by
+    gradingChar (R := R) (of' F) = HahnSeries.single (Forest.numEdges F : ℤ) 1 := by
   rw [gradingChar_apply_of', prod_gradingMonomialTree]
 
 @[simp] theorem gradingChar_apply_ofTree (T : Nonplanar α) :
-    gradingChar (R := R) (ofTree T) = HahnSeries.single (T.accCount : ℤ) 1 := by
+    gradingChar (R := R) (ofTree T) = HahnSeries.single (T.numEdges : ℤ) 1 := by
   unfold ofTree
   rw [gradingChar_apply_of', Multiset.map_singleton, Multiset.prod_singleton]
   rfl
@@ -142,12 +142,12 @@ theorem gradingChar_apply_of'_eq (F : Forest (Nonplanar α)) :
 theorem polarHahn_gradingChar_of' (F : Forest (Nonplanar α)) :
     polarHahn (gradingChar (R := R) (of' F)) = 0 := by
   rw [gradingChar_apply_of'_eq, polarHahn_single,
-    if_neg (by omega : ¬ ((Forest.alpha F : ℤ) < 0))]
+    if_neg (by omega : ¬ ((Forest.numEdges F : ℤ) < 0))]
 
 theorem polarHahn_gradingChar_ofTree (T : Nonplanar α) :
     polarHahn (gradingChar (R := R) (ofTree T)) = 0 := by
   rw [gradingChar_apply_ofTree, polarHahn_single,
-    if_neg (by omega : ¬ ((T.accCount : ℤ) < 0))]
+    if_neg (by omega : ¬ ((T.numEdges : ℤ) < 0))]
 
 /-! ### Birkhoff renormalization -/
 

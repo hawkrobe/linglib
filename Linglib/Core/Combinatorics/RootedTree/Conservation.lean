@@ -3,14 +3,15 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Data.RoseTree.Count
+import Mathlib.Algebra.Order.BigOperators.Group.Multiset
 
 open RoseTree RoseTree.Nonplanar
 
 /-!
-# Trace-marker measures and conservation laws for the Δ^c cut enumeration
-[marcolli-chomsky-berwick-2025]
+# Measures and conservation laws for the cut enumerations
 
 The trace-marker leaf statistics on `RoseTree (α ⊕ β)` and
 `Nonplanar (α ⊕ β)` (`traceLeafCount`, `traceDepthSum` — `Sum.inr` marks a
@@ -30,12 +31,17 @@ and a *trunk* `p.2` carrying one trace-marker leaf per cut.
   `cutSummandsCN_crown_traceLeafCount_lt_numNodes` — non-degeneracy: the
   trunk keeps the root, crown components are lexical-rooted.
 * `ConnesKreimer.Cut.numContractions`, `ConnesKreimer.Cut.depthC` — the
-  per-cut measures (crown cardinality; trunk trace-depth sum).
+  per-cut measures (crown cardinality; trunk trace-depth sum), with
+  `Cut.depthC_pos` for proper cuts of lexical-rooted trees.
+* `ConnesKreimer.cutSummandsP_numNodes`, `cutSummandsN_numNodes` — exact
+  vertex conservation for the deletion cut enumeration, with the
+  non-degeneracy corollaries `cutSummandsN_crown_ne_singleton`,
+  `cutSummandsN_self_not_mem_crown` and the single-deletion edge count
+  `cutSummandsN_numEdges_single_deletion`.
 
-MCB's letter vocabulary over these measures (`accCount`, `αᶜ`, `σᶜ`) and
-the Merge economy corollaries live in
-`Syntax/Minimalist/Workspace/TraceMeasures.lean` and
-`Workspace/Conservation.lean`.
+## References
+
+* [marcolli-chomsky-berwick-2025], §1.2 and §1.6.2 (Definitions 1.2.5, 1.2.6, Lemma 1.6.3)
 -/
 
 namespace RoseTree
@@ -581,5 +587,165 @@ theorem cutSummandsCN_trunk_rootValue (τ : Nonplanar (α ⊕ β) → β)
       (Nonplanar.mk (RoseTree.node a cs)).rootValue
     rw [Nonplanar.rootValue_mk, Nonplanar.rootValue_mk, RoseTree.value_node,
         RoseTree.value_node]
+
+/-! ### Minimal-Search depth of a proper cut -/
+
+/-- A proper Δ^c cut of a lexical-rooted tree has trunk trace-depth at least one: the trunk keeps
+    the lexical root, so each of its fresh trace markers sits at depth at least one. -/
+theorem Cut.depthC_pos (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β)) (a₀ : α)
+    (hT : T.rootValue = Sum.inl a₀)
+    (p : Multiset (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
+    (hproper : p.1 ≠ 0) :
+    1 ≤ Cut.depthC p := by
+  have htrunk_root : p.2.rootValue = Sum.inl a₀ :=
+    (cutSummandsCN_trunk_rootValue τ T p hp).trans hT
+  have h1 : Multiset.card p.1 ≤ p.2.traceLeafCount :=
+    cutSummandsCN_trunk_traceLeafCount_ge_card τ T p hp
+  have h2 : p.2.traceLeafCount ≤ p.2.traceDepthSum :=
+    Nonplanar.traceLeafCount_le_traceDepthSum_of_rootInl p.2 a₀ htrunk_root
+  have h3 : 1 ≤ Multiset.card p.1 := by
+    rw [Nat.one_le_iff_ne_zero, Ne, Multiset.card_eq_zero]; exact hproper
+  show 1 ≤ p.2.traceDepthSum
+  omega
+
+/-! ### Vertex conservation for the deletion cuts
+
+The deletion cut enumeration `cutSummandsP` extracts a crown forest and removes the cut subtrees
+entirely, with no trace placeholder, so vertices are conserved exactly and without a `+#cuts`
+correction. Rebinarizing the remainder with `contractUnary` drops one vertex per contracted unary
+node, which is the `+2` per cut in the edge count of a single deletion. -/
+
+/-- The vertex count contributed by an `Option`-valued deletion remainder. -/
+private def optNumNodes (o : Option (RoseTree α)) : ℕ := o.elim 0 RoseTree.numNodes
+
+@[simp] private theorem optNumNodes_none : optNumNodes (none : Option (RoseTree α)) = 0 := rfl
+@[simp] private theorem optNumNodes_some (t : RoseTree α) : optNumNodes (some t) = t.numNodes := rfl
+
+mutual
+
+/-- Vertex conservation for the deletion cuts of a tree: crown vertices plus trunk vertices
+    recover the tree's vertices exactly. -/
+theorem cutSummandsP_numNodes :
+    ∀ (t : RoseTree α), ∀ p ∈ cutSummandsP t,
+      (Multiset.map RoseTree.numNodes p.1).sum + RoseTree.numNodes p.2 = RoseTree.numNodes t
+  | .node a cs => by
+    intro p hp
+    rw [cutSummandsP_node] at hp
+    obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+    have h := cutListSummandsP_numNodes cs q hq
+    simp only [RoseTree.numNodes_node]
+    omega
+
+/-- Vertex conservation for the deletion cuts of a list of children. -/
+theorem cutListSummandsP_numNodes :
+    ∀ (cs : List (RoseTree α)), ∀ q ∈ cutListSummandsP cs,
+      (Multiset.map RoseTree.numNodes q.1).sum + (q.2.map RoseTree.numNodes).sum
+        = (cs.map RoseTree.numNodes).sum
+  | [] => by
+    intro q hq
+    rw [cutListSummandsP_nil] at hq
+    obtain rfl := Multiset.mem_singleton.mp hq
+    rfl
+  | t :: ts => by
+    intro q hq
+    rw [cutListSummandsP_cons] at hq
+    obtain ⟨pr, hpr, rfl⟩ := Multiset.mem_map.mp hq
+    obtain ⟨ha, hq'⟩ := Multiset.mem_product.mp hpr
+    have h1 := augActionP_numNodes t pr.1 ha
+    have h2 := cutListSummandsP_numNodes ts pr.2 hq'
+    cases hm : pr.1.2 with
+    | none =>
+      simp only [hm, optNumNodes_none] at h1
+      show (Multiset.map RoseTree.numNodes (pr.1.1 + pr.2.1)).sum
+          + (pr.2.2.map RoseTree.numNodes).sum
+        = ((t :: ts).map RoseTree.numNodes).sum
+      simp only [Multiset.map_add, Multiset.sum_add, List.map_cons, List.sum_cons]
+      omega
+    | some r =>
+      simp only [hm, optNumNodes_some] at h1
+      show (Multiset.map RoseTree.numNodes (pr.1.1 + pr.2.1)).sum
+          + ((r :: pr.2.2).map RoseTree.numNodes).sum
+        = ((t :: ts).map RoseTree.numNodes).sum
+      simp only [Multiset.map_add, Multiset.sum_add, List.map_cons, List.sum_cons]
+      omega
+
+/-- Vertex conservation for the per-child deletion actions. -/
+theorem augActionP_numNodes :
+    ∀ (t : RoseTree α), ∀ a ∈ augActionP t,
+      (Multiset.map RoseTree.numNodes a.1).sum + optNumNodes a.2 = RoseTree.numNodes t
+  | t => by
+    intro a ha
+    rw [augActionP_eq] at ha
+    rcases Multiset.mem_cons.mp ha with h | h
+    · obtain rfl := h
+      show (Multiset.map RoseTree.numNodes {t}).sum + optNumNodes (none : Option (RoseTree α))
+        = RoseTree.numNodes t
+      rw [Multiset.map_singleton, Multiset.sum_singleton, optNumNodes_none]
+      omega
+    · obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp h
+      show (Multiset.map RoseTree.numNodes p.1).sum + optNumNodes (some p.2) = RoseTree.numNodes t
+      rw [optNumNodes_some]
+      exact cutSummandsP_numNodes t p hp
+
+end
+
+/-- Vertex conservation for the nonplanar deletion cuts. -/
+theorem cutSummandsN_numNodes (T : Nonplanar α) :
+    ∀ p ∈ cutSummandsN T,
+      (p.1.map Nonplanar.numNodes).sum + p.2.numNodes = T.numNodes := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = Nonplanar.mk T₀ :=
+    ⟨T.out, (Quotient.out_eq T).symm⟩
+  intro p hp
+  rw [cutSummandsN_mk] at hp
+  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+  have hcons := cutSummandsP_numNodes T₀ q hq
+  show ((q.1.map Nonplanar.mk).map Nonplanar.numNodes).sum + (Nonplanar.mk q.2).numNodes
+    = (Nonplanar.mk T₀).numNodes
+  rw [Nonplanar.numNodes_mk, Nonplanar.numNodes_mk, Multiset.map_map,
+      show q.1.map (Nonplanar.numNodes ∘ Nonplanar.mk) = q.1.map RoseTree.numNodes from
+        Multiset.map_congr rfl (fun x _ => Nonplanar.numNodes_mk x)]
+  exact hcons
+
+/-- No deletion cut extracts the whole tree as its crown; the full-tree extraction is the
+    separate primitive term of the coproduct. -/
+theorem cutSummandsN_crown_ne_singleton (T : Nonplanar α)
+    (p : Multiset (Nonplanar α) × Nonplanar α) (hp : p ∈ cutSummandsN T) :
+    p.1 ≠ ({T} : Multiset (Nonplanar α)) := by
+  intro hcrown
+  have hw := cutSummandsN_numNodes T p hp
+  rw [hcrown] at hw
+  simp only [Multiset.map_singleton, Multiset.sum_singleton] at hw
+  have := p.2.numNodes_pos
+  omega
+
+/-- No deletion cut of `T` has `T` itself among its crown components. -/
+theorem cutSummandsN_self_not_mem_crown (T : Nonplanar α)
+    (p : Multiset (Nonplanar α) × Nonplanar α) (hp : p ∈ cutSummandsN T) :
+    T ∉ p.1 := by
+  intro hT_mem
+  have hw := cutSummandsN_numNodes T p hp
+  have hp2 := p.2.numNodes_pos
+  have h_le : T.numNodes ≤ (p.1.map Nonplanar.numNodes).sum :=
+    Multiset.le_sum_of_mem (Multiset.mem_map_of_mem _ hT_mem)
+  omega
+
+/-- Deleting one subtree `mover` and rebinarizing the remainder removes two edges: the subtree's
+    own edge and the contracted parent. `numUnary p.2 = 1` says the cut was a single edge at a
+    binary node. -/
+theorem cutSummandsN_numEdges_single_deletion (T : Nonplanar α)
+    (p : Multiset (Nonplanar α) × Nonplanar α) (hp : p ∈ cutSummandsN T)
+    (mover : Nonplanar α) (hcard : p.1 = {mover}) (huc : p.2.numUnary = 1) :
+    T.numEdges = mover.numEdges + (Nonplanar.contractUnary p.2).numEdges + 2 := by
+  have hw := cutSummandsN_numNodes T p hp
+  have hcu := Nonplanar.numNodes_contractUnary_add_numUnary p.2
+  have hmT := T.numNodes_pos
+  have hmm := mover.numNodes_pos
+  have hmp := p.2.numNodes_pos
+  have hmc := (Nonplanar.contractUnary p.2).numNodes_pos
+  rw [hcard] at hw
+  simp only [Multiset.map_singleton, Multiset.sum_singleton] at hw
+  rw [huc] at hcu
+  simp only [Nonplanar.numEdges]
+  omega
 
 end ConnesKreimer

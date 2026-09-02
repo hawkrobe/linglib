@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Merge.Basic
-import Linglib.Syntax.Minimalist.Workspace.Conservation
+import Linglib.Core.Combinatorics.RootedTree.Conservation
 
 /-!
 # Minimal Search as a weighting of Merge
@@ -47,6 +47,32 @@ theorem epsWeight_zero_of_pos {c : ℕ} (hc : 0 < c) : epsWeight (0 : R) c = 0 :
   zero_pow (Nat.pos_iff_ne_zero.mp hc)
 
 @[simp] theorem epsWeight_one (c : ℕ) : epsWeight (1 : R) c = 1 := one_pow c
+
+/-! ### Signed depth costs of a cut -/
+
+/-- `Cut.extractionCost p = depthC p`: pulling out the crown of a Δ^c cut costs its depth. -/
+def Cut.extractionCost (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) : ℤ :=
+  (Cut.depthC p : ℤ)
+
+/-- `Cut.quotientCost p = −depthC p`: the contraction quotient of a Δ^c cut costs minus its
+    depth. -/
+def Cut.quotientCost (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) : ℤ :=
+  -(Cut.depthC p : ℤ)
+
+/-- Re-merging an extracted crown with its own quotient costs nothing. -/
+theorem Cut.extractionCost_add_quotientCost (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) :
+    Cut.extractionCost p + Cut.quotientCost p = 0 := by
+  simp only [Cut.extractionCost, Cut.quotientCost, add_neg_cancel]
+
+/-- Extracting a proper crown from a lexical-rooted object has positive cost. -/
+theorem Cut.extractionCost_pos (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β))
+    (a₀ : α) (hT : T.rootValue = Sum.inl a₀)
+    (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
+    (hproper : p.1 ≠ 0) :
+    0 < Cut.extractionCost p := by
+  have h := Cut.depthC_pos τ T a₀ hT p hp hproper
+  simp only [Cut.extractionCost]
+  exact_mod_cast h
 
 /-! ### Net costs and the weighted operator -/
 

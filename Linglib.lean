@@ -2907,8 +2907,6 @@ import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Syntax.Minimalist.Verbal.SmallClause
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Workspace.Basic
-import Linglib.Syntax.Minimalist.Workspace.Conservation
-import Linglib.Syntax.Minimalist.Workspace.DeletionConservation
 import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
 import Linglib.Syntax.Negation
 import Linglib.Syntax.Question

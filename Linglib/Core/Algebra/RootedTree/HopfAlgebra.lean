@@ -1,4 +1,5 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
+import Linglib.Core.Combinatorics.RootedTree.Conservation
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 import Mathlib.RingTheory.Coalgebra.Convolution
@@ -194,98 +195,10 @@ theorem cutSummandsN_subtree_depth_lt (T : Nonplanar α)
     rw [RoseTree.depth_node]
     omega
 
-/-! ### Weight conservation (vertex count) for cuts
+/-! ### Weight conservation for cuts
 
-Δ^ρ (the deletion variant) preserves total vertex count: for every cut
-`(cf, rem)` of `T`, the cut forest's total weight plus the remainder's
-weight equals `T`'s weight. Substrate for the lTensor sorry closure: the
-"right antipode" `antipodeRight` recurses on `rem` (weight strictly
-decreases for nontrivial cuts), in contrast to the standard antipode
-which recurses on `cf` (depth strictly decreases). -/
-
-mutual
-
-/-- Vertex conservation for cuts of tree-level trees: `cf.weight_sum + rem.numNodes = T.numNodes`. -/
-private theorem cutSummandsP_numNodes_eq :
-    ∀ (T : RoseTree α) (cf : Forest (RoseTree α)) (rem : RoseTree α),
-      (cf, rem) ∈ cutSummandsP T → (cf.map RoseTree.numNodes).sum + rem.numNodes = T.numNodes
-  | .node a cs₀, cf, rem, h_mem => by
-    rw [cutSummandsP_node, Multiset.mem_map] at h_mem
-    obtain ⟨⟨cf', rem'⟩, h_mem', h_eq⟩ := h_mem
-    have h_cf : cf' = cf := congrArg Prod.fst h_eq
-    have h_rem : (RoseTree.node a rem' : RoseTree α) = rem := congrArg Prod.snd h_eq
-    rw [← h_cf, ← h_rem]
-    -- (cf', rem') ∈ cutListSummandsP cs₀, weight conservation by IH.
-    have hc := cutListSummandsP_numNodes_eq cs₀ cf' rem' h_mem'
-    rw [RoseTree.numNodes_node, RoseTree.numNodes_node]
-    omega
-
-/-- Vertex conservation for cuts of tree-level lists. -/
-private theorem cutListSummandsP_numNodes_eq :
-    ∀ (cs : List (RoseTree α)) (cf : Forest (RoseTree α)) (rem_list : List (RoseTree α)),
-      (cf, rem_list) ∈ cutListSummandsP cs →
-        (cf.map RoseTree.numNodes).sum + (rem_list.map RoseTree.numNodes).sum =
-          (cs.map RoseTree.numNodes).sum
-  | [], cf, rem_list, h_mem => by
-    rw [cutListSummandsP_nil, Multiset.mem_singleton] at h_mem
-    have h_cf : cf = 0 := congrArg Prod.fst h_mem
-    have h_rem : rem_list = [] := congrArg Prod.snd h_mem
-    rw [h_cf, h_rem]
-    simp
-  | c :: cs', cf, rem_list, h_mem => by
-    rw [cutListSummandsP_cons, Multiset.mem_map] at h_mem
-    obtain ⟨⟨⟨aug_F, aug_opt⟩, cf_cs', rem_cs'⟩, h_pair, h_eq⟩ := h_mem
-    rw [Multiset.mem_product] at h_pair
-    obtain ⟨h_aug, h_cf_cs'⟩ := h_pair
-    -- Both cases (aug_opt = none or some r): cf = aug_F + cf_cs'.
-    have h_cf_eq : cf = aug_F + cf_cs' := by
-      cases aug_opt
-      · exact (congrArg Prod.fst h_eq).symm
-      · exact (congrArg Prod.fst h_eq).symm
-    -- For the rem_list:
-    -- - none case: rem_list = rem_cs'.
-    -- - some r case: rem_list = r :: rem_cs', where r = "the recurse-into-cut remainder for c".
-    -- We need to handle both branches.
-    -- Conservation on aug_F: weight of aug_F = c.numNodes (extract whole) or = c.numNodes - r.numNodes
-    --                                          (recurse, conservation on cutSummandsP c).
-    rw [h_cf_eq, Multiset.map_add, Multiset.sum_add]
-    -- Goal: (aug_F.map weight).sum + (cf_cs'.map weight).sum + (rem_list.map weight).sum
-    --     = ((c :: cs').map weight).sum
-    show (aug_F.map RoseTree.numNodes).sum + (cf_cs'.map RoseTree.numNodes).sum +
-           (rem_list.map RoseTree.numNodes).sum
-       = ((c :: cs').map RoseTree.numNodes).sum
-    rw [List.map_cons, List.sum_cons]
-    -- Goal: ... = c.numNodes + (cs'.map RoseTree.numNodes).sum
-    -- IH on cs': (cf_cs'.map weight).sum + (rem_cs'.map weight).sum = (cs'.map weight).sum.
-    have ih_cs' := cutListSummandsP_numNodes_eq cs' cf_cs' rem_cs' h_cf_cs'
-    rw [augActionP_eq, Multiset.mem_cons] at h_aug
-    rcases h_aug with h_aug | h_aug
-    · -- aug = ({c}, none). aug_F = {c}, aug_opt = none, rem_list = rem_cs'.
-      have h_aug_F : aug_F = {c} := congrArg Prod.fst h_aug
-      have h_aug_opt : aug_opt = Option.none := congrArg Prod.snd h_aug
-      -- rem_list = rem_cs' since aug_opt = none.
-      have h_rem_list : rem_list = rem_cs' := by
-        rw [h_aug_opt] at h_eq
-        exact (congrArg Prod.snd h_eq).symm
-      rw [h_aug_F, h_rem_list]
-      simp
-      omega
-    · -- aug = (s.1, some s.2) for s ∈ cutSummandsP c. aug_F = s.1, aug_opt = some s.2,
-      -- rem_list = s.2 :: rem_cs'.
-      rw [Multiset.mem_map] at h_aug
-      obtain ⟨s, h_s_mem, h_s_eq⟩ := h_aug
-      have h_aug_F : s.1 = aug_F := congrArg Prod.fst h_s_eq
-      have h_aug_opt : Option.some s.2 = aug_opt := congrArg Prod.snd h_s_eq
-      have h_rem_list : rem_list = s.2 :: rem_cs' := by
-        rw [← h_aug_opt] at h_eq
-        exact (congrArg Prod.snd h_eq).symm
-      rw [← h_aug_F, h_rem_list]
-      -- IH on cutSummandsP c: (s.1.map weight).sum + s.2.numNodes = c.numNodes.
-      have ih_c := cutSummandsP_numNodes_eq c s.1 s.2 h_s_mem
-      simp [List.map_cons, List.sum_cons]
-      omega
-
-end
+Vertex conservation for the deletion cuts is `cutSummandsP_numNodes`; the right antipode
+recurses on the remainder, whose weight strictly decreases for nontrivial cuts. -/
 
 /-- For nontrivial cuts (cf nonempty), the remainder has strictly smaller
     weight than the source tree. Substrate for the right-antipode
@@ -306,7 +219,8 @@ private theorem cutSummandsN_rem_numNodes_lt (T : Nonplanar α)
   rw [Nonplanar.numNodes_mk, ← h_rem, Nonplanar.numNodes_mk]
   -- Goal: rem_p.numNodes < T₀.numNodes.
   -- Use tree-level conservation: cf_p.numNodes + rem_p.numNodes = T₀.numNodes (where cf_p.numNodes = sum).
-  have h_eq := cutSummandsP_numNodes_eq T₀ cf_p rem_p h_mem_p
+  have h_eq : (cf_p.map RoseTree.numNodes).sum + rem_p.numNodes = T₀.numNodes :=
+    cutSummandsP_numNodes T₀ (cf_p, rem_p) h_mem_p
   -- Need cf_p ≠ 0 (from cf ≠ 0, since cf = cf_p.map mk).
   have h_cf_p_ne : cf_p ≠ 0 := by
     intro h_zero
