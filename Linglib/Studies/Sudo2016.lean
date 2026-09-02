@@ -115,17 +115,17 @@ universe u v
 structure ClassifierDenot (W : Type u) (E : Type v) [PartialOrder E] where
   /-- The sortal presupposition. ⟦-rin⟧ presupposes `flower`; ⟦-nin⟧
       presupposes `human`; ⟦-hiki⟧ presupposes `animal ∧ small`. -/
-  sortal : Intensional.Intension W (E → Prop)
+  sortal : W → E → Prop
   /-- The countable base whose atomic ⊑-parts of `x` are counted.
       For atomic-sortal classifiers, `counted = sortal` (see `ofSortal`). -/
-  counted : Intensional.Intension W (E → Prop)
+  counted : W → E → Prop
 
 /-- The atom-count measure: the number of ⊑-atomic `P`-parts of `x` in world
     `w`. Noncomputable (`Set.ncard`); this is the `μ` over which classifier
     counting is ordinary numeral comparison (`Comparison.eq.over`), and the same
     set the Sudo ∪/∩ operators (`upNum`/`downNum`) count. -/
 noncomputable def atomCount {W : Type u} {E : Type v} [PartialOrder E]
-    (P : Intensional.Intension W (E → Prop)) (w : W) (x : E) : ℕ :=
+    (P : W → E → Prop) (w : W) (x : E) : ℕ :=
   {y : E | y ≤ x ∧ P w y}.ncard
 
 namespace ClassifierDenot
@@ -136,7 +136,7 @@ variable {W : Type u} {E : Type v} [PartialOrder E]
     The sortal and the counting base coincide — the standard case in
     Sudo (4) for `-rin`, (8a) for `-nin`, (8b) for `-hiki` (with the
     sortal being a conjunction `small ∧ animal`). -/
-def ofSortal (P : Intensional.Intension W (E → Prop)) : ClassifierDenot W E where
+def ofSortal (P : W → E → Prop) : ClassifierDenot W E where
   sortal := P
   counted := P
 
@@ -152,15 +152,15 @@ def ofSortal (P : Intensional.Intension W (E → Prop)) : ClassifierDenot W E wh
 def apply (cl : ClassifierDenot W E) (w : W) (n : ℕ) (x : E) : Prop :=
   cl.sortal w x ∧ x ∈ Degree.Comparison.eq.over (atomCount cl.counted w) n
 
-@[simp] lemma ofSortal_sortal (P : Intensional.Intension W (E → Prop)) :
+@[simp] lemma ofSortal_sortal (P : W → E → Prop) :
     (ofSortal P).sortal = P := rfl
 
-@[simp] lemma ofSortal_counted (P : Intensional.Intension W (E → Prop)) :
+@[simp] lemma ofSortal_counted (P : W → E → Prop) :
     (ofSortal P).counted = P := rfl
 
 /-- For atomic-sortal classifiers, the body reduces to the join of the
     sortal presupposition and the cardinality constraint over `P`. -/
-lemma apply_ofSortal (P : Intensional.Intension W (E → Prop)) (w : W) (n : ℕ) (x : E) :
+lemma apply_ofSortal (P : W → E → Prop) (w : W) (n : ℕ) (x : E) :
     apply (ofSortal P) w n x ↔
       P w x ∧ {y : E | y ≤ x ∧ P w y}.ncard = n := Iff.rfl
 
@@ -191,7 +191,7 @@ Japanese — it is freely available as a covert type-shift in both.
 
 ## Architecture
 
-`NumeralIntens W` is `Intension W ℕ` — a constant intension at a numeral
+`NumeralIntens W` is `W → ℕ` — a constant intension at a numeral
 value is a "type-n singular term" in Sudo's sense. The ∪/∩ operators
 specialized to numerals are defined in `Composition.lean`, where they
 combine with the classifier denotations from `Defs.lean`.
@@ -210,12 +210,12 @@ universe u
 /-- A numeral intension: a function from worlds to natural-number meanings.
     [sudo-2016] (eq. 2) ⟦six⟧ = λw_s. 6 is a `NumeralIntens W` for any
     world type `W`. -/
-abbrev NumeralIntens (W : Type u) := Intensional.Intension W ℕ
+abbrev NumeralIntens (W : Type u) := W → ℕ
 
 /-- The rigid numeral intension: a numeral `n` denotes the constant function
-    `λw. n`. This is `Intension.rigid` specialized to `ℕ`. -/
+    `λw. n`. -/
 def NumeralIntens.const {W : Type u} (n : ℕ) : NumeralIntens W :=
-  Intensional.Intension.rigid n
+  fun _ => n
 
 @[simp] lemma NumeralIntens.const_apply {W : Type u} (n : ℕ) (w : W) :
     NumeralIntens.const n w = n := rfl
@@ -223,8 +223,8 @@ def NumeralIntens.const {W : Type u} (n : ℕ) : NumeralIntens W :=
 /-- Every constant numeral intension is rigid. Sudo's empirical claim that
     numerals do not vary across worlds is the rigidity of `NumeralIntens.const`. -/
 theorem NumeralIntens.const_isRigid {W : Type u} (n : ℕ) :
-    Intensional.Intension.IsRigid (NumeralIntens.const (W := W) n) :=
-  Intensional.Intension.rigid_isRigid n
+    Intensional.IsRigid (NumeralIntens.const (W := W) n) :=
+  Intensional.isRigid_const n
 
 end Semantics.Classifier
 
@@ -282,11 +282,11 @@ variable {W : Type u} {E : Type v} [PartialOrder E]
 
     In the type-theoretic semantics literature this is a type shift
     `⟨s,n⟩ → ⟨s,⟨e,t⟩⟩`. -/
-def upNum (atomic : Intensional.Intension W (E → Prop)) (n : NumeralIntens W) :
-    Intensional.Intension W (E → Prop) :=
+def upNum (atomic : W → E → Prop) (n : NumeralIntens W) :
+    W → E → Prop :=
   fun w x => atomCount atomic w x = n w
 
-@[simp] lemma upNum_apply (atomic : Intensional.Intension W (E → Prop))
+@[simp] lemma upNum_apply (atomic : W → E → Prop)
     (n : NumeralIntens W) (w : W) (x : E) :
     upNum atomic n w x ↔ {y : E | y ≤ x ∧ atomic w y}.ncard = n w := Iff.rfl
 
@@ -299,7 +299,7 @@ def upNum (atomic : Intensional.Intension W (E → Prop)) (n : NumeralIntens W) 
     over a uniqueness-of-cardinality witness and would establish ∪ ∘ ∩ = id
     on the property image of ∪. Marked `noncomputable` because the inverse
     of an arbitrary intensional property is not constructively decidable. -/
-noncomputable def downNum (atomic P : Intensional.Intension W (E → Prop)) (w : W) :
+noncomputable def downNum (atomic P : W → E → Prop) (w : W) :
     Option ℕ :=
   open Classical in
   if h : ∃ x, P w x then
@@ -354,7 +354,6 @@ end Semantics.Classifier
 namespace Sudo2016
 
 open Semantics.Classifier
-open Intensional.Intension (rigid)
 
 universe u
 
@@ -395,28 +394,28 @@ Each is a constant intension (rigid) over the toy domain. Named here
 theorems can reference them directly. -/
 
 /-- `flower(x)`: sortal for `-rin` (Sudo eq. 4). -/
-def flowerIntens : Intensional.Intension World (Entity → Prop) :=
-  Intensional.Intension.rigid (· = .hana)
+def flowerIntens : World → Entity → Prop :=
+  fun _ => (· = .hana)
 
 /-- `human(x)`: sortal for `-nin` (Sudo eq. 8a). -/
-def humanIntens : Intensional.Intension World (Entity → Prop) :=
-  Intensional.Intension.rigid (· = .hanako)
+def humanIntens : World → Entity → Prop :=
+  fun _ => (· = .hanako)
 
 /-- `small_animal(x)`: sortal for `-hiki` (Sudo eq. 8b's atomic-sortal core). -/
-def smallAnimalIntens : Intensional.Intension World (Entity → Prop) :=
-  Intensional.Intension.rigid (· = .inu)
+def smallAnimalIntens : World → Entity → Prop :=
+  fun _ => (· = .inu)
 
 /-- `bound_volume(x)`: sortal for `-satsu`. -/
-def bookIntens : Intensional.Intension World (Entity → Prop) :=
-  Intensional.Intension.rigid (· = .hon)
+def bookIntens : World → Entity → Prop :=
+  fun _ => (· = .hon)
 
 /-- `round(x)`: sortal for `-ko`. -/
-def roundIntens : Intensional.Intension World (Entity → Prop) :=
-  Intensional.Intension.rigid (· = .ringo)
+def roundIntens : World → Entity → Prop :=
+  fun _ => (· = .ringo)
 
 /-- `flat(x)`: sortal for `-mai`. -/
-def flatIntens : Intensional.Intension World (Entity → Prop) :=
-  Intensional.Intension.rigid (· = .kami)
+def flatIntens : World → Entity → Prop :=
+  fun _ => (· = .kami)
 
 /-! ## §3: Per-Classifier Denotations
 

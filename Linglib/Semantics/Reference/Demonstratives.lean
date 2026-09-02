@@ -27,8 +27,7 @@ import Linglib.Semantics.Reference.Nominal
 
 namespace Reference.Demonstratives
 
-open Intensional (Intension)
-open Intensional.Intension (rigid IsRigid rigid_isRigid)
+open Intensional (IsRigid isRigid_const)
 open Semantics.Context (KContext)
 open _root_.Reference.Basic (ReferringExpression isDirectlyReferential)
 
@@ -76,10 +75,10 @@ the demonstratum (if the demonstration succeeds).
 If the demonstration fails, the content is a trivially rigid intension
 returning a default entity. -/
 def TrueDemonstrative.character {C W E : Type*} [Inhabited E]
-    (td : TrueDemonstrative C W E) : C → Intension W E :=
+    (td : TrueDemonstrative C W E) : C → W → E :=
   λ c => match td.demonstration.demonstratum c with
-    | some e => rigid e
-    | none   => rigid default
+    | some e => fun _ => e
+    | none   => fun _ => default
 
 /-- Principle 2 ([kaplan-1989] §XVI): Complete demonstratives are directly
 referential — at every context, their content is rigid. -/
@@ -89,8 +88,8 @@ theorem demo_directlyReferential {C W E : Type*} [Inhabited E]
   intro c
   simp only [TrueDemonstrative.character]
   cases td.demonstration.demonstratum c with
-  | none   => exact rigid_isRigid default
-  | some e => exact rigid_isRigid e
+  | none   => exact isRigid_const default
+  | some e => exact isRigid_const e
 
 /-- Different demonstrations in different contexts yield different contents.
 
@@ -104,10 +103,7 @@ theorem demo_character_varies {C W E : Type*} [Inhabited E] [Inhabited W]
     td.character c₁ ≠ td.character c₂ := by
   intro heq
   simp only [TrueDemonstrative.character, h₁, h₂] at heq
-  have : rigid (W := W) e₁ default = rigid (W := W) e₂ default :=
-    congrFun heq default
-  simp only [rigid] at this
-  exact hne this
+  exact hne (congrFun heq default)
 
 /-! ## Demonstrative Frege Puzzle (§IX.ii-iv) -/
 
@@ -183,7 +179,7 @@ rigidly designates it. -/
 theorem toNominal_selector_eq_character {C W E : Type*} [Inhabited E]
     (td : TrueDemonstrative C W E) (c : C) (w : W) (e : E)
     (h : td.demonstration.demonstratum c = some e) :
-    (td.toNominal).selector c w = some e ∧ td.character c = rigid e := by
+    (td.toNominal).selector c w = some e ∧ td.character c = fun _ => e := by
   refine ⟨?_, ?_⟩
   · simp only [TrueDemonstrative.toNominal, h]
   · simp only [TrueDemonstrative.character, h]

@@ -14,7 +14,7 @@ was consolidated in [kamp-partee-1995]; the modern labels are Partee's.
 
 ## Main definitions
 
-* `Property W E`: intensional properties, `Intensional.Intension W (E → Prop)`.
+* `Property W E`: intensional properties, `W → E → Prop`.
 * `isIntersective_iff`, `isPrivative_iff`: pointwise forms of the
   order-theoretic classes at this carrier.
 * `isExtensional_of_isIntersective`: intersective modifier meanings are
@@ -35,10 +35,8 @@ for the denotation type, not the word class.
 
 namespace Modification
 
-/-- An intensional property: an `Intensional.Intension` valued in
-    characteristic predicates over entities (a function from worlds to
-    predicates). -/
-abbrev Property (W E : Type*) := Intensional.Intension W (E → Prop)
+/-- An intensional property: a function from worlds to predicates over entities. -/
+abbrev Property (W E : Type*) := W → E → Prop
 
 /-! ### Pointwise forms of the order-theoretic classes -/
 

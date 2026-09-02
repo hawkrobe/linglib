@@ -39,7 +39,6 @@ namespace Modality
 
 open Modality.Kratzer
 open Presupposition
-open Intensional.Premise
 
 variable {W : Type*}
 
@@ -92,15 +91,15 @@ end Kernel
 /-- K directly settles P iff some X ∈ K entails P or is incompatible with P. -/
 def Kernel.directlySettles : Prop :=
   ∃ x ∈ k.props,
-    propExtension x ⊆ propExtension φ ∨ Disjoint (propExtension x) (propExtension φ)
+    {w | x w} ⊆ {w | φ w} ∨ Disjoint {w | x w} {w | φ w}
 
 /-- If `K` directly settles `φ` then `B_K ⊆ ⟦φ⟧` or `B_K ⊆ ⟦¬φ⟧`; the
     converse fails (see `VonFintelGillies2010.entailment_settling_gap`). -/
 theorem explicit_implies_entailment (h : k.directlySettles φ) :
     k.followsFrom φ ∨ k.followsFrom (λ w' => ¬ φ w') := by
   obtain ⟨x, hx_mem, h_sub | h_disj⟩ := h
-  · exact Or.inl ((propIntersection_subset_propExtension hx_mem).trans h_sub)
-  · exact Or.inr ((propIntersection_subset_propExtension hx_mem).trans
+  · exact Or.inl ((propIntersection_subset hx_mem).trans h_sub)
+  · exact Or.inr ((propIntersection_subset hx_mem).trans
       h_disj.subset_compl_right)
 
 theorem Kernel.directlySettles_mono {k' : Kernel W} (hk : k.props ⊆ k'.props)
@@ -110,14 +109,13 @@ theorem Kernel.directlySettles_mono {k' : Kernel W} (hk : k.props ⊆ k'.props)
 
 @[simp]
 theorem Kernel.base_singleton (p : W → Prop) :
-    (⟨[p]⟩ : Kernel W).base = propExtension p :=
+    (⟨[p]⟩ : Kernel W).base = {w | p w} :=
   propIntersection_singleton p
 
 @[simp]
 theorem Kernel.directlySettles_singleton (p : W → Prop) :
     (⟨[p]⟩ : Kernel W).directlySettles φ ↔
-      propExtension p ⊆ propExtension φ ∨
-        Disjoint (propExtension p) (propExtension φ) := by
+      {w | p w} ⊆ {w | φ w} ∨ Disjoint {w | p w} {w | φ w} := by
   simp [Kernel.directlySettles]
 
 /-! ### Modal operators ([von-fintel-gillies-2010] Defs 5–6) -/

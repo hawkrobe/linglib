@@ -147,7 +147,7 @@ Mastermind scenario (Pascal asking Mordecai *Must there be two reds?*):
 `B_K = {w1}` entails *blue* without either kernel proposition settling it. -/
 
 open Modality
-open Intensional.Premise
+open Modality.Kratzer
 
 /-- Four worlds, with `w0` red, `w1` blue, `w2` green, and `w3` unknown. -/
 inductive World where

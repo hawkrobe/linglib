@@ -27,7 +27,7 @@ contributions:
    - **Time-concept** (p. 155): "By a 'time-concept' I mean a function
      from world-time pairs to times. Think of these as the meanings
      of descriptions which a thinker might represent a time to herself."
-     **This is precisely `Intension (Index W T) T`** — one
+     **This is precisely `Index W T → T`** — one
      coordinate fewer than the substrate's
      `TimeConcept := Intension (KContext W E P T) T` (which adds the
      Speas-Tenny agent slot).
@@ -46,17 +46,15 @@ contributions:
 ## Substrate identification
 
 Heim's `time-concept` framework is a **proper coordinate-projection**
-of the substrate's: Heim works at `Intension (Index W T) T`
+of the substrate's: Heim works at `Index W T → T`
 (world + time → time), the substrate at
-`Intension (KContext W E P T) T` (agent + addressee + world + time +
-position → time). The pullback `toSubstrate := Intension.precomp
-KContext.toIndex` carries Heim's framework into the substrate by
-pre-composing with the forgetful projection. The image is exactly the
+`KContext W E P T → T` (agent + addressee + world + time +
+position → time). The pullback `toSubstrate := (· ∘ KContext.toIndex)` carries Heim's
+framework into the substrate by pre-composing with the forgetful projection. The image is exactly the
 **agent-blind** substrate concepts (universal property below). Rigidity
 preservation, set-relativized rigidity preservation, and
 exhaustiveness preservation all factor through the substrate's
-intensional precomp infrastructure
-(`Semantics/Intensional/Rigidity.lean`).
+`IsRigid.precomp`/`IsRigidOn.precomp` (`Semantics/Intensional/Rigidity.lean`).
 
 ## What's not formalised
 
@@ -81,10 +79,9 @@ intensional precomp infrastructure
 
 namespace HeimComments1994
 
-open Intensional (Intension Index)
+open Intensional (Index IsRigid IsRigidOn)
 open Semantics.Context (KContext)
 open Tense.DeRe (TemporalDeReReading)
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § Heim's "time-concept" (p. 155)
@@ -94,38 +91,34 @@ open Tense.DeRe (TemporalDeReReading)
     a function from world-time pairs to times." This is the Lewis-style
     centered-world intension at one coordinate less than the substrate's
     `Tense.DeRe.TimeConcept` (which adds a Speas-Tenny agent
-    slot). Definitionally `Intension (Index W T) T`. -/
-abbrev TimeConcept (W T : Type*) := Intension (Index W T) T
-
+    slot). Definitionally `Index W T → T`. -/
+abbrev TimeConcept (W T : Type*) := (Index W T) → T
 
 -- ════════════════════════════════════════════════════════════════
 -- § Bridge: Heim TimeConcept ↔ Substrate TimeConcept
 -- ════════════════════════════════════════════════════════════════
 
 /-- **Substrate-level pullback** of a Heim time-concept along the
-    forgetful projection `Semantics.Context.KContext.toIndex`. This IS
-    the substrate's intensional pre-composition operator
-    `Intension.precomp` instantiated at `g := KContext.toIndex` —
-    no new content; the pullback's structural properties transport
-    from the substrate's `precomp`/`IsRigid.precomp`/`IsRigidOn.precomp`
-    closure lemmas (`Semantics/Intensional/Rigidity.lean`). -/
+    forgetful projection `Semantics.Context.KContext.toIndex`: pre-composition, whose
+    structural properties transport from `IsRigid.precomp`/`IsRigidOn.precomp`
+    (`Semantics/Intensional/Rigidity.lean`). -/
 def toSubstrate {W E P T : Type*} (c : TimeConcept W T) :
     Tense.DeRe.TimeConcept W E P T :=
-  Intension.precomp KContext.toIndex c
+  c ∘ KContext.toIndex
 
 /-- **Pullback preserves rigidity**: a rigid Heim time-concept lifts to
     a rigid substrate `TimeConcept`. Direct application of substrate's
-    `Intension.IsRigid.precomp` at `g := KContext.toIndex`. -/
+    `IsRigid.precomp` at `g := KContext.toIndex`. -/
 theorem toSubstrate_isRigid {W E P T : Type*}
-    {c : TimeConcept W T} (h : Intension.IsRigid c) :
-    Intension.IsRigid (toSubstrate (E := E) (P := P) c) :=
+    {c : TimeConcept W T} (h : IsRigid c) :
+    IsRigid (toSubstrate (E := E) (P := P) c) :=
   h.precomp KContext.toIndex
 
 /-- **Pullback preserves set-relativized rigidity**: rigidity on a set
     `S : Set (Index W T)` of Heim alternatives lifts to
     rigidity on the preimage `Set.preimage KContext.toIndex S` of
     substrate alternatives. Direct application of substrate's
-    `Intension.IsRigidOn.precomp` at `g := KContext.toIndex`.
+    `IsRigidOn.precomp` at `g := KContext.toIndex`.
 
     This is the last-mile companion to `toSubstrate_isRigid` that
     closes the substrate's `IsRigidAcrossAlternatives` family
@@ -135,8 +128,8 @@ theorem toSubstrate_isRigid {W E P T : Type*}
     set. -/
 theorem toSubstrate_isRigidOn {W E P T : Type*}
     {c : TimeConcept W T} {S : Set (Index W T)}
-    (h : Intension.IsRigidOn c S) :
-    Intension.IsRigidOn (toSubstrate (E := E) (P := P) c)
+    (h : IsRigidOn c S) :
+    IsRigidOn (toSubstrate (E := E) (P := P) c)
       (Set.preimage KContext.toIndex S) :=
   h.precomp KContext.toIndex
 
@@ -173,7 +166,6 @@ theorem toSubstrate_factors_iff_agent_blind {W E P T : Type*}
     apply h
     rfl
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § ULC as presupposition (eq 16, p. 149)
 -- ════════════════════════════════════════════════════════════════
@@ -200,7 +192,6 @@ theorem isFelicitousWith_past_imp_upperLimitConstraint
     Tense.upperLimitConstraint
       dr.actualRes dr.holderContext.time :=
   le_of_lt ((Tense.compare_mem_past dr.actualRes dr.holderContext.time).mp h)
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § Acquaintance: Heim's "suitable" qualification (p. 155)
@@ -239,6 +230,5 @@ theorem toSubstrate_image_isExhaustiveOn {W E P T : Type*}
   obtain ⟨c, hcov, hcr⟩ := h k.toIndex hr
   refine ⟨toSubstrate (E := E) (P := P) c, ⟨c, hcov, rfl⟩, ?_⟩
   exact hcr
-
 
 end HeimComments1994
