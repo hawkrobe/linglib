@@ -67,7 +67,6 @@ strict/non-strict distinction and the non-strict version connects cleanly to
 
 namespace Giannakidou2002
 
-open Core.Order
 open NonemptyInterval
 open Aspect
 open Tense Anscombe1964 Karttunen1974 Heinamaki1974

@@ -50,7 +50,7 @@ framework but has not been line-by-line cross-checked against IZ
 
 namespace IatridouZeijlstra2021
 
-open Core.Order Tense
+open Tense
 open Aspect
 open Aspect.SubintervalProperty
 open Tense.TemporalAdverbials (PTSConstraint AdverbialType)
