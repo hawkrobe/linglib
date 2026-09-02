@@ -149,7 +149,7 @@ theorem pos_weightedLoss_of_not_regular {f : Stem → Cell → FormVec n}
     (G : MeaningVec d →ₗ[ℝ] FormVec n) :
     0 < weightedLoss (paradigmExperience σ ε f) q G := by
   refine lt_of_le_of_ne
-    (weightedLoss_nonneg _ _ _ fun i => (hq i).le) (Ne.symm fun h0 => ?_)
+    (weightedLoss_nonneg _ _ _) (Ne.symm fun h0 => ?_)
   have hint := (weightedLoss_eq_zero_iff _ _ _ hq).1 h0
   refine not_exists_linear_of_not_regular σ ε hf ⟨G, fun st c => ?_⟩
   have h := hint ((Fintype.equivFin (Stem × Cell)) (st, c))

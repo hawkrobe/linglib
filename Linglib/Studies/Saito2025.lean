@@ -68,7 +68,7 @@ theorem close_meanings_imply_close_form
     (h : ‖s₁ - s₂‖ ≤ ε) :
     ‖D.production s₁ - D.production s₂‖ ≤
       ‖D.production.toContinuousLinearMap‖ * ε :=
-  dlm_neighbor_centroids_imply_neighbor_contours D h
+  D.norm_production_sub_le h
 
 /-- If the suffix-triphone coordinate is linearly decodable from word meanings —
 the paper's §4 mechanism, inflectional semantics tied to the suffix — then a
