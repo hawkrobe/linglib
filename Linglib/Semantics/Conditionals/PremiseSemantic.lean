@@ -7,12 +7,12 @@ import Linglib.Semantics.Conditionals.Counterfactual.Lumping
 
 Truth conditions for "would"- and "might"-counterfactuals from
 [kratzer-2012] §5.4.4 ("The formal definitions", p. 132–133),
-built on top of the lumping API in `Intensional.Lumping`.
+built on top of the lumping API in `Conditionals.Counterfactual`.
 
 ## §5.4.4 in brief
 
 A counterfactual `p □→ q` is evaluated at a world `w` against a
-*Base Set* `Fw : Set (Set F.Index)` — a privileged collection of true
+*Base Set* `Fw : Set (Set S)` — a privileged collection of true
 propositions characterizing the facts of `w`. Kratzer lists five
 admissibility conditions for `Fw` (truth, persistence, cognitive
 viability, non-redundancy, completeness — pp. 132–133); we treat `Fw`
@@ -39,7 +39,7 @@ The truth conditions are then:
 ## Architectural placement
 
 This is the **first** formal consumer of the `Lumps` API in
-`Semantics/Intensional/Lumping.lean` — closing the orphan-API problem
+`Semantics/Conditionals/Counterfactual/Lumping.lean` — closing the orphan-API problem
 flagged in earlier reviews. The crucial-set closure condition
 (condition (iii)) literally calls `Lumps q r w`, so the operator
 cannot exist without the lumping API; conversely, the API earns its
@@ -75,10 +75,9 @@ three, the lumping CF does NOT use `SimilarityOrdering` /
 
 namespace Conditionals.PremiseSemantic
 
-open Intensional
 open _root_.Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows)
 
-variable {F : SituationFrame}
+variable {S : Type*} [Preorder S]
 
 /-- **Predicate version of the Crucial Set membership condition**
     ([kratzer-2012] §5.4.4, p. 133): a subset `A` of `Fw ∪ {p}`
@@ -88,8 +87,8 @@ variable {F : SituationFrame}
     Bundled as a `structure` (mirrors mathlib's `IsLUB`/`IsGreatest`
     pattern) so that consumers project out clauses by name (`hA.consistent`,
     `hA.lumping_closed`) rather than by `.2.2.1`-style chains. -/
-structure IsCrucialSet (Fw : Set (Set F.Index)) (w : F.Index)
-    (p : Set F.Index) (A : Set (Set F.Index)) : Prop where
+structure IsCrucialSet (Fw : Set (Set S)) (w : S)
+    (p : Set S) (A : Set (Set S)) : Prop where
   /-- (Carrier) `A` is a subset of `Fw ∪ {p}`. -/
   subset_insert : A ⊆ insert p Fw
   /-- (ii) The antecedent is in `A`. -/
@@ -104,12 +103,12 @@ structure IsCrucialSet (Fw : Set (Set F.Index)) (w : F.Index)
     `w`, Base Set `Fw`, and antecedent `p`, the set of subsets of
     `Fw ∪ {p}` that contain `p`, are consistent, and are closed under
     lumping at `w`. -/
-def CrucialSet (Fw : Set (Set F.Index)) (w : F.Index) (p : Set F.Index) :
-    Set (Set (Set F.Index)) :=
+def CrucialSet (Fw : Set (Set S)) (w : S) (p : Set S) :
+    Set (Set (Set S)) :=
   { A | IsCrucialSet Fw w p A }
 
-@[simp] theorem mem_crucialSet_iff {Fw : Set (Set F.Index)} {w : F.Index}
-    {p : Set F.Index} {A : Set (Set F.Index)} :
+@[simp] theorem mem_crucialSet_iff {Fw : Set (Set S)} {w : S}
+    {p : Set S} {A : Set (Set S)} :
     A ∈ CrucialSet Fw w p ↔ IsCrucialSet Fw w p A := Iff.rfl
 
 /-- **"Would"-counterfactual** ([kratzer-2012] §5.4.4, p. 133):
@@ -125,14 +124,14 @@ def CrucialSet (Fw : Set (Set F.Index)) (w : F.Index) (p : Set F.Index) :
     [ciardelli-zhang-champollion-2018] §1.2 falsifies for ordering
     semantics — whether the lumping CF inherits the falsification on
     the switches scenario is open. -/
-def wouldCF (Fw : Set (Set F.Index)) (w : F.Index) (p q : Set F.Index) :
+def wouldCF (Fw : Set (Set S)) (w : S) (p q : Set S) :
     Prop :=
   ∀ A ∈ CrucialSet Fw w p, ∃ A' ∈ CrucialSet Fw w p, A ⊆ A' ∧ Follows A' q
 
 /-- **"Might"-counterfactual** ([kratzer-2012] §5.4.4, p. 133):
     `p ◇→ q` is true at `w` iff there is an `A` in `F_{w,p}` such that
     `q` is compatible with every superset of `A` in `F_{w,p}`. -/
-def mightCF (Fw : Set (Set F.Index)) (w : F.Index) (p q : Set F.Index) :
+def mightCF (Fw : Set (Set S)) (w : S) (p q : Set S) :
     Prop :=
   ∃ A ∈ CrucialSet Fw w p,
     ∀ A' ∈ CrucialSet Fw w p, A ⊆ A' → IsCompatible q A'
@@ -142,16 +141,16 @@ def mightCF (Fw : Set (Set F.Index)) (w : F.Index) (p q : Set F.Index) :
 /-- **Vacuous truth case**: if the Crucial Set is empty (e.g., the
     antecedent is incompatible with every lumping-closed extension of
     `Fw`), the would-counterfactual is vacuously true. -/
-theorem wouldCF_of_crucialSet_empty {Fw : Set (Set F.Index)} {w : F.Index}
-    {p q : Set F.Index} (h : CrucialSet Fw w p = ∅) :
+theorem wouldCF_of_crucialSet_empty {Fw : Set (Set S)} {w : S}
+    {p q : Set S} (h : CrucialSet Fw w p = ∅) :
     wouldCF Fw w p q := by
   intro A hA
   exact ((Set.mem_empty_iff_false A).mp (h ▸ hA)).elim
 
 /-- **Vacuous failure case**: if the Crucial Set is empty, the
     might-counterfactual is vacuously false. -/
-theorem not_mightCF_of_crucialSet_empty {Fw : Set (Set F.Index)}
-    {w : F.Index} {p q : Set F.Index} (h : CrucialSet Fw w p = ∅) :
+theorem not_mightCF_of_crucialSet_empty {Fw : Set (Set S)}
+    {w : S} {p q : Set S} (h : CrucialSet Fw w p = ∅) :
     ¬ mightCF Fw w p q := by
   rintro ⟨A, hA, _⟩
   exact (Set.mem_empty_iff_false A).mp (h ▸ hA)
@@ -165,8 +164,8 @@ theorem not_mightCF_of_crucialSet_empty {Fw : Set (Set F.Index)}
     that `Follows A' qᶜ ↔ ¬ IsCompatible q A'` *uniformly across A'* —
     which holds only when the Crucial Set is upward-directed. We leave
     the bridge as future work. -/
-theorem mightCF_iff_not_wouldCF_compl {Fw : Set (Set F.Index)} {w : F.Index}
-    {p q : Set F.Index} :
+theorem mightCF_iff_not_wouldCF_compl {Fw : Set (Set S)} {w : S}
+    {p q : Set S} :
     mightCF Fw w p q ↔ ¬ wouldCF Fw w p qᶜ := by
   sorry  -- TODO: requires upward-directedness of CrucialSet; see docstring
 
