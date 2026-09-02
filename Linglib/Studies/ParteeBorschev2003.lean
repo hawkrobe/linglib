@@ -26,9 +26,6 @@ substrate:
   mansion*): under the modifier *former*, putting the free relation inside vs.
   outside its scope gives different predicates. J&V's coercion derives both;
   P&B's split derives only the R-outside reading — J&V's empirical advantage.
-* `predicateGenitive_eq` — P&B §5.1: the predicate genitive *John's* (*that team
-  is John's*) is a bare ⟨e,t⟩ predicate `λx[Rᵢ(John)(x)]` = `viaArgument`,
-  which the uniform argument-only approach cannot produce standalone.
 
 ## References
 
@@ -56,20 +53,7 @@ genitive. The "two theories of genitives" are, on the coerced-sortal case, a
 single denotation reached two ways. -/
 theorem vj_coerce_eq_pb_modifier (possessor : E) (P : E → S → Prop) (R : E → E → S → Prop) :
     viaArgument possessor (π P R) = viaModifier possessor P R :=
-  rfl
-
-/-! ### The predicate genitive (P&B §5.1)
-
-*That team is John's*: the genitive surfaces as a bare one-place predicate with a
-free relation, `λx[Rᵢ(John)(x)]`. P&B argue this is not always reducible to an
-elliptical argument NP, so English needs the modifier genitive — a problem for
-the uniform argument-only approach. -/
-
-/-- The predicate genitive *John's* is the possessee predicate `λx[R possessor x]`
-= `viaArgument possessor R`, a genuine ⟨e,t⟩ predicate. -/
-theorem predicateGenitive_eq (possessor : E) (R : E → E → S → Prop) :
-    (fun x s => R possessor x s) = viaArgument possessor R :=
-  rfl
+  viaArgument_pi possessor P R
 
 /-! ### The readings of *Mary's former mansion* (P&B §4.3)
 
