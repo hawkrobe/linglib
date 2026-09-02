@@ -22,7 +22,7 @@ This file contains:
 * the **Designated Goals** structure with `oughtTo`/`haveTo` operators
   and the Sloman entailment `haveTo_implies_oughtTo_of_best_subset_accessible`;
 * cross-reference (in the closing docstring) to
-  [chung-mascarenhas-2024]: the C&M exhaustification clause is the
+  [chung-mascarenhas-2023]: the C&M exhaustification clause is the
   formal expected-value realisation of Sloman's "only candidate".
   C&M handles the Harlem base case, Burdick's contextual designation,
   and Breathe-style trivialities (via §5 plausibility). Open: Nissenbaum
@@ -215,10 +215,10 @@ theorem haveTo_implies_oughtTo_of_best_subset_accessible {W : Type*}
 
 end DesignatedGoals
 
-/-! ### Cross-reference to [chung-mascarenhas-2024]
+/-! ### Cross-reference to [chung-mascarenhas-2023]
 
 C&M's `mustCM` operator
-(`Studies/ChungMascarenhas2024.lean`) realises
+(`Studies/ChungMascarenhas2023.lean`) realises
 [sloman-1970]'s "only candidate" condition as an
 **exhaustification clause** on expected values:
 `mustCM φ` iff `E[μ_R ∣ φ] > θ ∧ ∀ψ ∈ Alt(φ). E[μ_R ∣ ψ] ≤ θ`.

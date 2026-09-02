@@ -1,21 +1,21 @@
 import Linglib.Data.Examples.Schema
 
 /-!
-# `ChungMascarenhas2024` — typed example data
+# `ChungMascarenhas2023` — typed example data
 
-Auto-generated from `Linglib/Data/Examples/ChungMascarenhas2024.json` by
+Auto-generated from `Linglib/Data/Examples/ChungMascarenhas2023.json` by
 `scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
 the generator. Consumers (the paper's study file, test-suite hubs) import
-this module; declarations live in `namespace ChungMascarenhas2024.Examples`.
+this module; declarations live in `namespace ChungMascarenhas2023.Examples`.
 -/
 
-namespace ChungMascarenhas2024.Examples
+namespace ChungMascarenhas2023.Examples
 
 open Data.Examples
 
 def cm2024_1_korean_conditional_eval : LinguisticExample :=
   { id := "cm2024_1_korean_conditional_eval"
-    source := ⟨"chung-mascarenhas-2024", "(1) / (42)"⟩
+    source := ⟨"chung-mascarenhas-2023", "(1) / (42)"⟩
     reportedIn := none
     language := "kore1280"
     primaryText := "John-un cip-ey iss-∅-eya toy-n-ta."
@@ -27,14 +27,14 @@ def cm2024_1_korean_conditional_eval : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "koreanComposition"), ("construction", "conditional-evaluative")]
-    comment := "The paper's centerpiece morphosyntactic argument. Korean realizes English-must as the transparent composition of (i) the evaluative predicate toy 'EVAL' as the measure function μ_R, (ii) the conditional 'if φ, EVAL' = condIf, (iii) the exhaustifier -(e)ya 'only-if'. Formalized in `mustCM_iff_korean_composition`."
+    comment := "The paper's centerpiece morphosyntactic argument. Korean realizes English-must as the transparent composition of (i) the evaluative predicate toy 'EVAL' as the measure function μ_R, (ii) the conditional 'if φ, EVAL' = condIf, (iii) the exhaustifier -(e)ya 'only-if'. Formalized in `koreanConditionalEvaluative_iff_mustCM`."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
 def cm2024_4_linda_original : LinguisticExample :=
   { id := "cm2024_4_linda_original"
     source := ⟨"tversky-kahneman-1983", "Linda task"⟩
-    reportedIn := some ⟨"chung-mascarenhas-2024", "(4) / (28)"⟩
+    reportedIn := some ⟨"chung-mascarenhas-2023", "(4) / (28)"⟩
     language := "stan1293"
     primaryText := "Linda is 31 years old, single, outspoken, and very bright. She majored in philosophy. As a student, she was deeply concerned with issues of discrimination and social justice, and also participated in anti-nuclear demonstrations. Which is more probable?"
     discourseSegments := ["Linda is 31 years old, single, outspoken, and very bright. She majored in philosophy. As a student, she was deeply concerned with issues of discrimination and social justice, and also participated in anti-nuclear demonstrations.", "Which is more probable?", "(a) Linda is a bank teller.", "(b) Linda is a bank teller and she is active in the feminist movement."]
@@ -52,7 +52,7 @@ def cm2024_4_linda_original : LinguisticExample :=
 def cm2024_15a_minersBlockNeither : LinguisticExample :=
   { id := "cm2024_15a_minersBlockNeither"
     source := ⟨"kolodny-macfarlane-2010", "Miners (15a)"⟩
-    reportedIn := some ⟨"chung-mascarenhas-2024", "(15a)"⟩
+    reportedIn := some ⟨"chung-mascarenhas-2023", "(15a)"⟩
     language := "stan1293"
     primaryText := "We ought to block neither shaft."
     discourseSegments := []
@@ -70,7 +70,7 @@ def cm2024_15a_minersBlockNeither : LinguisticExample :=
 def cm2024_15b_minersBlockA : LinguisticExample :=
   { id := "cm2024_15b_minersBlockA"
     source := ⟨"kolodny-macfarlane-2010", "Miners (15b)"⟩
-    reportedIn := some ⟨"chung-mascarenhas-2024", "(15b)"⟩
+    reportedIn := some ⟨"chung-mascarenhas-2023", "(15b)"⟩
     language := "stan1293"
     primaryText := "If the miners are in shaft A, we ought to block shaft A."
     discourseSegments := []
@@ -87,7 +87,7 @@ def cm2024_15b_minersBlockA : LinguisticExample :=
 
 def cm2024_25a_minersMust : LinguisticExample :=
   { id := "cm2024_25a_minersMust"
-    source := ⟨"chung-mascarenhas-2024", "(25a)"⟩
+    source := ⟨"chung-mascarenhas-2023", "(25a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "We must / have to block neither path."
@@ -105,7 +105,7 @@ def cm2024_25a_minersMust : LinguisticExample :=
 
 def cm2024_25b_minersMustA : LinguisticExample :=
   { id := "cm2024_25b_minersMustA"
-    source := ⟨"chung-mascarenhas-2024", "(25b)"⟩
+    source := ⟨"chung-mascarenhas-2023", "(25b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If the miners are in shaft A, we must / have to block shaft A."
@@ -123,7 +123,7 @@ def cm2024_25b_minersMustA : LinguisticExample :=
 
 def cm2024_29b_modal_linda : LinguisticExample :=
   { id := "cm2024_29b_modal_linda"
-    source := ⟨"chung-mascarenhas-2024", "(29b)"⟩
+    source := ⟨"chung-mascarenhas-2023", "(29b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Linda must be a bank teller and be active in the feminist movement."
@@ -142,7 +142,7 @@ def cm2024_29b_modal_linda : LinguisticExample :=
 def cm2024_35_jack_description : LinguisticExample :=
   { id := "cm2024_35_jack_description"
     source := ⟨"kahneman-tversky-1973", "Jack description"⟩
-    reportedIn := some ⟨"chung-mascarenhas-2024", "(35)"⟩
+    reportedIn := some ⟨"chung-mascarenhas-2023", "(35)"⟩
     language := "stan1293"
     primaryText := "Jack is a 45-year-old man. He is married and has four children. He is generally conservative, careful, and ambitious. He shows no interest in political and social issues and spends most of his free time on his many hobbies which include home carpentry, sailing, and mathematical puzzles."
     discourseSegments := []
@@ -159,7 +159,7 @@ def cm2024_35_jack_description : LinguisticExample :=
 
 def cm2024_36_jack_must_engineer : LinguisticExample :=
   { id := "cm2024_36_jack_must_engineer"
-    source := ⟨"chung-mascarenhas-2024", "(36)"⟩
+    source := ⟨"chung-mascarenhas-2023", "(36)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Jack must be an engineer."
@@ -177,7 +177,7 @@ def cm2024_36_jack_must_engineer : LinguisticExample :=
 
 def cm2024_49a_cold : LinguisticExample :=
   { id := "cm2024_49a_cold"
-    source := ⟨"chung-mascarenhas-2024", "(49a)"⟩
+    source := ⟨"chung-mascarenhas-2023", "(49a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "John did not come to work today. He must have caught a cold."
@@ -195,7 +195,7 @@ def cm2024_49a_cold : LinguisticExample :=
 
 def cm2024_54a_grammatical_mistake : LinguisticExample :=
   { id := "cm2024_54a_grammatical_mistake"
-    source := ⟨"chung-mascarenhas-2024", "(54a)"⟩
+    source := ⟨"chung-mascarenhas-2023", "(54a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "#One must under no circumstance ever make a grammatical mistake."
@@ -213,7 +213,7 @@ def cm2024_54a_grammatical_mistake : LinguisticExample :=
 
 def cm2024_55a_bushwick_helicopter : LinguisticExample :=
   { id := "cm2024_55a_bushwick_helicopter"
-    source := ⟨"chung-mascarenhas-2024", "(55a)"⟩
+    source := ⟨"chung-mascarenhas-2023", "(55a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "#In order to get to Bushwick, you have to take a helicopter."
@@ -232,7 +232,7 @@ def cm2024_55a_bushwick_helicopter : LinguisticExample :=
 def cm2024_60a_kim_marry_pat : LinguisticExample :=
   { id := "cm2024_60a_kim_marry_pat"
     source := ⟨"dretske-1972", "(adapted; PAT focus)"⟩
-    reportedIn := some ⟨"chung-mascarenhas-2024", "(60a)"⟩
+    reportedIn := some ⟨"chung-mascarenhas-2023", "(60a)"⟩
     language := "stan1293"
     primaryText := "Kim must marry Pat in order to inherit."
     discourseSegments := []
@@ -250,7 +250,7 @@ def cm2024_60a_kim_marry_pat : LinguisticExample :=
 def cm2024_63_billy_rain : LinguisticExample :=
   { id := "cm2024_63_billy_rain"
     source := ⟨"von-fintel-gillies-2010", "(originally)"⟩
-    reportedIn := some ⟨"chung-mascarenhas-2024", "(63)"⟩
+    reportedIn := some ⟨"chung-mascarenhas-2023", "(63)"⟩
     language := "stan1293"
     primaryText := "#It must be raining."
     discourseSegments := ["Billy is looking out the window at the pouring rain.", "#It must be raining."]
@@ -267,4 +267,4 @@ def cm2024_63_billy_rain : LinguisticExample :=
 
 def all : List LinguisticExample := [cm2024_1_korean_conditional_eval, cm2024_4_linda_original, cm2024_15a_minersBlockNeither, cm2024_15b_minersBlockA, cm2024_25a_minersMust, cm2024_25b_minersMustA, cm2024_29b_modal_linda, cm2024_35_jack_description, cm2024_36_jack_must_engineer, cm2024_49a_cold, cm2024_54a_grammatical_mistake, cm2024_55a_bushwick_helicopter, cm2024_60a_kim_marry_pat, cm2024_63_billy_rain]
 
-end ChungMascarenhas2024.Examples
+end ChungMascarenhas2023.Examples

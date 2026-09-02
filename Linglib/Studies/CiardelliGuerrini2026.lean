@@ -1,27 +1,32 @@
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Fragments.English.Auxiliaries
+import Linglib.Data.Examples.CiardelliGuerrini2026
 import Mathlib.Data.Set.Basic
 import Linglib.Logic.Modal.Basic
 
 /-!
-# Against wide scope free choice ([ciardelli-guerrini-2026])
+# Ciardelli & Guerrini 2026: Against wide scope free choice
 
-The free-choice reading of "you may A or you may B" does not arise from the
-wide-scope LF `◇A ∨ ◇B`, but from the narrow-scope LF `◇(A ∨ B)`. For
+The **reductionist thesis** ([ciardelli-guerrini-2026]): the free-choice
+reading of "you may A or you may B" does not arise from the wide-scope LF
+`◇A ∨ ◇B`, but from the narrow-scope LF `◇(A ∨ B)`. For possibility over
 disjunction the two LFs are truth-conditionally equivalent
-(`scope_equivalence`), so the scope distinction is invisible to truth
-conditions; it matters only compositionally, because only `◇(A ∨ B)` feeds the
-exhaustification that derives `◇A ∧ ◇B`. The wide-scope LF instead yields an
-*ignorance* reading and does not, on its own, entail free choice
-(`wideScope_underdetermines_fc`). (For conjunction the two LFs are *not*
-equivalent; see §8.)
+(`scope_equivalence`), so the ambiguity is invisible there; the paper's §2
+evidence comes from the configurations where it is visible — must-or-must (5),
+where the narrow LF is a strictly weaker disjunctive obligation, and
+may-and-may (7), where the narrow LF is a strictly stronger conjunctive
+permission. The free-choice reading tracks the narrow LF (only `◇(A ∨ B)`
+feeds the exhaustification that derives `◇A ∧ ◇B`); the wide-scope LF yields
+the ignorance reading ([fusco-2019]'s sluicing argument) and does not entail
+free choice (`wideScope_underdetermines_fc`).
 
-The narrow-scope LF is derived by modal concord [zeijlstra-2007]: modal
+The narrow-scope LF is derived by modal concord ([zeijlstra-2007], §3): modal
 auxiliaries carry uninterpretable features `[u∃/∀-MOD]`; a single silent
 interpretable operator c-commanding the coordination checks both, so only it is
 interpreted, yielding `Δ(A ∘ B)` rather than `ΔA ∘ ΔB`.
 
-`MOD A COORD MOD B` is scope-ambiguous across the board:
+`MOD A COORD MOD B` is scope-ambiguous across the board (the (2)/(5)/(7)
+stimuli live in `Data.Examples.CiardelliGuerrini2026`):
 
 | surface form     | wide-scope LF | narrow-scope LF |
 |------------------|---------------|-----------------|
@@ -38,11 +43,22 @@ the substrate's distribution lemmas directly.
 * `scope_equivalence` — the two disjunction LFs are truth-conditionally equal.
 * `disjunctive_obligation_narrow_weaker` / `_not_wide` — must-or-must: under
   necessity the narrow LF `□(A ∪ B)` is strictly *weaker* than the wide `□A ∨ □B`.
-* `ConcordDerivation` — two `[u-MOD]` auxiliaries checked by one silent operator.
+* `conjunctive_narrow_stronger` — may-and-may: `◇(A ∩ B)` strictly stronger.
+* `ConcordDerivation` — two `[u-MOD]` auxiliaries checked by one silent operator;
+  instantiated as `mayMayConcord`, `mustMustConcord`, and fn. 4's mixed-form
+  `mayCanConcord`.
 * `narrowScope_yields_fc` / `wideScope_underdetermines_fc` — free choice from the
   narrow LF; non-entailment of free choice from the wide LF.
 * `reductionist_thesis` — the two packaged together.
 * `negation_concord_pattern` — cross-negation concord succeeds iff forces are duals.
+
+## References
+
+* [I. Ciardelli, J. Guerrini, *Against wide scope free choice*
+  (2026)][ciardelli-guerrini-2026]
+* [H. Zeijlstra, *Modal concord* (2007)][zeijlstra-2007]
+* [M.-C. Meyer, U. Sauerland, *Covert across-the-board movement revisited*
+  (2017)][meyer-sauerland-2017]
 -/
 
 namespace CiardelliGuerrini2026
@@ -57,14 +73,16 @@ open English.Auxiliaries
 
 /-! ### Truth-conditional equivalence
 
-For disjunction the two LFs collapse: `◇(A ∨ B) ↔ ◇A ∨ ◇B` in standard modal
-logic. This is *the point* of [ciardelli-guerrini-2026] — the scope distinction
-is invisible to truth conditions, and matters only for compositional derivation
-and pragmatic enrichment. (For conjunction the LFs are *not* equivalent; see §8.)
--/
+For possibility over disjunction the two LFs collapse: `◇(A ∨ B) ↔ ◇A ∨ ◇B` in
+standard modal logic. This is why the scope ambiguity is truth-conditionally
+undetectable exactly in the classic free-choice configuration — the readings
+differ only pragmatically there — while must-or-must and may-and-may (below)
+make it visible. -/
 
-/-- The two disjunction LFs are truth-conditionally equivalent: `◇(A ∨ B) ↔ ◇A ∨ ◇B`.
-The central observation of [ciardelli-guerrini-2026]. -/
+/-- The two disjunction LFs are truth-conditionally equivalent:
+`◇(A ∨ B) ↔ ◇A ∨ ◇B` — possibility distributes over disjunction, so
+may-or-may is the one cell of [ciardelli-guerrini-2026]'s paradigm where the
+scope ambiguity is invisible to truth conditions. -/
 theorem scope_equivalence {World : Type*} (A B : Set World) :
     poss (A ∪ B) ↔ poss A ∨ poss B :=
   ⟨λ ⟨w, h⟩ => h.elim (λ h => Or.inl ⟨w, h⟩) (λ h => Or.inr ⟨w, h⟩),
@@ -99,44 +117,6 @@ theorem disjunctive_obligation_not_wide :
   · rintro (h | h)
     · exact absurd (show false = true from h false) (by decide)
     · exact absurd (show true = false from h true) (by decide)
-
-/-! ### Scope-ambiguity data (§2)
-
-`MOD A COORD MOD B` sentences are scope-ambiguous. The illustrative sentences
-record the modal force, which §10 cross-checks against the Fragment; narrow-scope
-*availability* is witnessed structurally by the concord derivations of §3
-(`mayMayConcord`, `mustMustConcord`), whose mere existence as well-typed terms is
-the proof that the two auxiliaries can undergo concord. -/
-
-/-- An illustrative "MOD A COORD MOD B" sentence. -/
-structure ScopeAmbiguityDatum where
-  sentence : String
-  /-- The coordinator: "or" or "and". -/
-  coord : String
-  modalForce : ModalForce
-  /-- The reading dominant in the discussed context. -/
-  dominantReading : String
-  deriving Repr
-
-/-- (2) "You may do A or you may do B" — free choice from the narrow-scope LF. -/
-def mayOrMay : ScopeAmbiguityDatum :=
-  { sentence := "You may do A or you may do B"
-  , coord := "or", modalForce := .possibility
-  , dominantReading := "narrow-scope (free choice)" }
-
-/-- (5) "You must write an essay or you must give a presentation." -/
-def mustOrMust : ScopeAmbiguityDatum :=
-  { sentence := "You must write an essay or you must give a presentation"
-  , coord := "or", modalForce := .necessity
-  , dominantReading := "narrow-scope (disjunctive obligation)" }
-
-/-- (7) "You may go to Bob's party and you may go to Charlie's party." -/
-def mayAndMay : ScopeAmbiguityDatum :=
-  { sentence := "You may go to Bob's party and you may go to Charlie's party"
-  , coord := "and", modalForce := .possibility
-  , dominantReading := "narrow-scope (conjunctive permission)" }
-
-def scopeData : List ScopeAmbiguityDatum := [mayOrMay, mustOrMust, mayAndMay]
 
 /-! ### Modal concord derivation (§3)
 
@@ -242,32 +222,23 @@ def ConcordDerivation.fromAux (a₁ a₂ : Auxiliary)
 
 /-! #### Universal modal properties -/
 
-/-- The modal auxiliaries, the participants in concord. -/
-def modalAuxiliaries : List Auxiliary := modals
-
-/-- Thirteen English modal auxiliaries. -/
-theorem modal_aux_count : modalAuxiliaries.length = 13 := by decide
-
-/-- Modal auxiliaries with a modal feature, those that can form
+/-- Fragment modals with a modal feature — those that can form
 `ConcordDerivation`s. Excludes `dare`, whose meaning the fragment leaves
 unspecified. -/
 def concordCapableModals : List Auxiliary :=
-  modalAuxiliaries.filter (λ a => a.modalFeature.isSome)
+  modals.filter (λ a => a.modalFeature.isSome)
 
-/-- 12 of 13 modal auxiliaries have derivable modal features. -/
-theorem concord_capable_count : concordCapableModals.length = 12 := by decide
-
-/-- Every concord-capable modal's feature is uninterpretable. -/
-theorem concord_capable_all_uninterpretable :
-    concordCapableModals.all (λ a =>
-      decide (a.interpretability == some .uninterpretable)) = true := by
-  decide
+/-- [zeijlstra-2007]'s generalization over the whole Fragment inventory:
+every English modal auxiliary carries its modal feature *uninterpretable* —
+so any of them can be checked by a silent operator. -/
+theorem concordCapable_uninterpretable :
+    ∀ a ∈ concordCapableModals,
+      a.interpretability = some .uninterpretable := by decide
 
 /-- Non-modal auxiliaries have no modal feature — they cannot participate in
 concord at all. -/
-theorem do_no_feature : do_.modalFeature = none := rfl
-theorem be_no_feature : am.modalFeature = none := rfl
-theorem have_no_feature : have_.modalFeature = none := rfl
+theorem nonmodal_no_feature :
+    ∀ a ∈ [do_, am, have_], a.modalFeature = none := by decide
 
 /-! #### Instantiations -/
 
@@ -357,17 +328,10 @@ outstanding problem. The prediction below is therefore about the concord
 generalization. -/
 
 /-- Fragment-derived: the English modals used by [ciardelli-guerrini-2026] are
-modal auxiliaries. -/
-theorem may_is_modal : may ∈ modals := by decide
-theorem must_is_modal : must ∈ modals := by decide
-theorem can_is_modal : can ∈ modals := by decide
-theorem need_is_modal : need ∈ modals := by decide
-
-/-- All these modals carry uninterpretable features in the Fragment. -/
-theorem may_uninterpretable : may.interpretability = some .uninterpretable := by decide
-theorem must_uninterpretable : must.interpretability = some .uninterpretable := by decide
-theorem can_uninterpretable : can.interpretability = some .uninterpretable := by decide
-theorem need_uninterpretable : need.interpretability = some .uninterpretable := by decide
+modal auxiliaries, all carrying uninterpretable features. -/
+theorem paper_modals_uninterpretable :
+    ∀ a ∈ [may, must, can, need],
+      a ∈ modals ∧ a.interpretability = some .uninterpretable := by decide
 
 /-- **The mechanism behind the auxiliary/non-auxiliary contrast**: an *interpreted*
 feature can never be checked. Non-auxiliary modal constructions ("it's ok that",
@@ -501,27 +465,25 @@ theorem conjunctive_narrow_stronger {World : Type*}
   obtain ⟨w, hp, hq⟩ := h
   exact ⟨⟨w, hp⟩, ⟨w, hq⟩⟩
 
-/-! ### Same-feature concord in the fragment
+/-! ### Mixed surface forms: may/can (fn. 4)
 
-[ciardelli-guerrini-2026]'s mechanism for the narrow-scope LF is that two
-auxiliaries carrying the same modal feature are checked by a single silent
-operator (the coordination structure for "you must A or you must B" → □(A ∨ B)),
-leaving one semantic operator. The fragment exhibits the precondition: `must` and
-`have to` both carry `[u∀-MOD]`, so a single `[i∀]` operator checks both. -/
+[alonso-ovalle-2006] objected to narrow-scope-disjunction accounts that free
+choice arises even when the modal takes a different surface form in each
+disjunct: "You may email us or you can reach the Business License office …".
+[ciardelli-guerrini-2026] fn. 4: *may* and *can* carry the same
+uninterpretable feature, so the disjunction inherits it and a single silent
+operator checks both, yielding `◇(email ∨ call)`. The Fragment exhibits the
+precondition. -/
 
-/-- `must` and `have to` carry the same modal feature (both `[u∀-MOD]`) — a
-same-force concord configuration. -/
-theorem must_haveTo_same_feature :
-    must.modalFeature = haveTo.modalFeature := rfl
+/-- "Can" carries `[u∃-MOD]`: possibility force, uninterpretable — the same
+feature as "may". -/
+theorem can_feature_eq :
+    can.modalFeature = some ⟨.possibility, .uninterpretable⟩ := rfl
 
-/-- `have to` carries `[u∀-MOD]`: necessity force, uninterpretable. -/
-theorem haveTo_feature_eq :
-    haveTo.modalFeature = some ⟨.necessity, .uninterpretable⟩ := rfl
-
-/-- The `must`/`have to` concord as a `ConcordDerivation`, derived from the
-Fragment: two `[u∀]` auxiliaries checked by one operator. -/
-def mustHaveToConcord : ConcordDerivation :=
-  .fromAux must haveTo must_feature_eq haveTo_feature_eq rfl rfl rfl
+/-- Fn. 4's mixed-form concord as a `ConcordDerivation`, derived from the
+Fragment: "may … or can …" is checked by one silent `[i∃]` operator. -/
+def mayCanConcord : ConcordDerivation :=
+  .fromAux may can may_feature_eq can_feature_eq rfl rfl rfl
 
 /-- Cross-force concord fails: "must" `[u∀]` cannot be checked by a silent `[i∃-MOD]`
 operator. This predicts no concord between necessity and possibility modals. -/
@@ -530,22 +492,5 @@ theorem must_may_no_concord :
       ⟨may.modalFeature.get!.force, .interpretable⟩
       must.modalFeature.get!)
     = false := by decide
-
-/-! ### Scope-data verification against the Fragment
-
-The `modalForce` field in each `ScopeAmbiguityDatum` is independently verifiable
-against the Fragment's modal-meaning entries. -/
-
-/-- The force in `mayOrMay` matches the Fragment entry for "may". -/
-theorem mayOrMay_force_verified :
-    mayOrMay.modalForce = may.modalFeature.get!.force := rfl
-
-/-- The force in `mustOrMust` matches the Fragment entry for "must". -/
-theorem mustOrMust_force_verified :
-    mustOrMust.modalForce = must.modalFeature.get!.force := rfl
-
-/-- The force in `mayAndMay` matches the Fragment entry for "may". -/
-theorem mayAndMay_force_verified :
-    mayAndMay.modalForce = may.modalFeature.get!.force := rfl
 
 end CiardelliGuerrini2026
