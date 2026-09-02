@@ -23,7 +23,8 @@ proportional analogy (`Studies/HeitmeierChuangBaayen2026`).
 - `cues k w`: the `k`-gram cues of the string `w`.
 - `multiHot inv p`: the indicator row of the units satisfying `p` over an inventory `inv`.
 - `cueVector k inv w`: the row of `C` for `w`.
-- `conceptualize emb`: the additive map from primitive multisets to meaning vectors.
+- `conceptualize emb`: the additive map from primitive multisets to meaning vectors;
+  `conceptualize_pair` is the imputed semantics of a paradigm cell.
 
 ## References
 
@@ -63,5 +64,11 @@ def conceptualize (emb : Prim → V) : Multiset Prim →+ V :=
 
 @[simp] theorem conceptualize_apply (emb : Prim → V) (ps : Multiset Prim) :
     conceptualize emb ps = (ps.map emb).sum := rfl
+
+/-- Conceptualizing a lexeme with one inflectional function is the sum of their vectors — the
+imputed additive semantics of a paradigm cell (eq. 5.3). -/
+@[simp] theorem conceptualize_pair {A B : Type*} (σ : A → V) (ε : B → V) (a : A) (b : B) :
+    conceptualize (Sum.elim σ ε) {Sum.inl a, Sum.inr b} = σ a + ε b := by
+  simp
 
 end DiscriminativeLexicon
