@@ -7,7 +7,7 @@ import Linglib.Fragments.Jarawara.PossessedNouns
 import Linglib.Fragments.Italian.NumberGender
 import Linglib.Fragments.Yanyuwa.Gender
 import Linglib.Fragments.CoastalMarind.Gender
-import Linglib.Semantics.Possession.Relational
+import Linglib.Semantics.Possession.Relationalizer
 import Linglib.Data.Examples.Adamson2024
 
 /-!

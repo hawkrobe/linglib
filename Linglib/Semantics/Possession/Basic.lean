@@ -1,13 +1,14 @@
-import Linglib.Semantics.Possession.Relational
+import Linglib.Semantics.Possession.Relationalizer
+import Linglib.Semantics.Possession.Defs
 import Linglib.Semantics.Quantification.Defs
 
 /-!
 # Possessive descriptions and capabilities
 
 The `Possession` namespace for the semantics of possessive constructions,
-built on the relational-noun substrate of `Semantics/Possession/Relational.lean`
-(`π`, `Ex`, `ExPossessor`); the typological vocabulary is in
-`Semantics/Possession/Typology.lean`. The
+built on the relationalizer substrate of `Semantics/Possession/Relationalizer.lean`
+(`π`, `Ex`, `ExPossessor`) and the classification vocabulary of
+`Semantics/Possession/Defs.lean` (`RelationType`, `Notion`). The
 quantificational layer (`Poss`, `PossW`, narrowing, `descriptionGQ`) is in
 `Possessive/GQ.lean`; the determiner that denotes through these descriptions is
 `Possessive.denote` (`Semantics/Definiteness/DeterminerDenotation.lean`).
@@ -27,8 +28,6 @@ relationalized by a free relation, `π P R x` (the modifier genitive).
   `HasIotaWitness` — composable capability mixins (root namespace, `Add`/`Mul`
   idiom); description types opt into whichever axes they bear.
 * `possesseeSet`, `existsUnique_possessee` — capability-polymorphic consumers.
-* `Possession.RelationType` — the four-way Vikner-Jensen possession
-  taxonomy.
 -/
 
 namespace Possession
@@ -66,22 +65,6 @@ structure Definite (E S : Type*) where
   predicate : E → S → Prop
   /-- The possessee predicate has a unique witness at every situation. -/
   presupposition : ∀ s : S, ∃! x, predicate x s
-
-/-! ### Vikner-Jensen possession taxonomy -/
-
-/-- Four-way lexical taxonomy of possession relations from
-[vikner-jensen-2002] §3.1.2 (their Table 1), reproduced in [barker-2011]. The
-separate "pragmatic" interpretation is not lexical and is not one of these. -/
-inductive RelationType where
-  /-- Inherent relation: lexically argument-structural (the teacher's class). -/
-  | inherent
-  /-- Part-whole relation (the girl's nose, the car's wheel). -/
-  | partWhole
-  /-- Agentive relation (the girl's poem = the poem the girl wrote). -/
-  | agentive
-  /-- Control relation: ownership or legal control (the girl's car). -/
-  | control
-  deriving DecidableEq, Repr
 
 /-! ### Bridge to type ⟨1⟩ quantifiers -/
 
