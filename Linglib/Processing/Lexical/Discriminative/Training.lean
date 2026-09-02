@@ -32,7 +32,8 @@ frequency-informed learning); the optimisation is fixed across theories.
   experience ([heitmeier-2024]'s FIL-EL equivalence, also
   [heitmeier-chuang-axen-baayen-2024]; invertibility-free).
 * `isERMSolution_iff_residualPairing_eq_zero`: the normal equations
-  `SᵀQ(SG − C) = 0` as an invertibility-free iff.
+  `SᵀQ(SG − C) = 0` as an invertibility-free iff; `isERMSolution_iff_forall_coord`
+  is their coordinate form, the finite check that certifies an explicit mapping.
 * `IsERMSolution.apply_eq_of_mem_span` / `exists_apply_ne`: fitted values are
   unique exactly on the span of experienced meanings.
 
@@ -420,6 +421,28 @@ theorem isERMSolution_iff_forall_column (hq : ∀ i, 0 ≤ q i) :
     refine Finset.sum_eq_zero fun j _ => ?_
     simpa using h j ((LinearMap.proj j).comp H)
 
+/-- Coordinate form of the normal equations `SᵀQ(SG − C) = 0`: `G` is an ERM solution iff at
+    every form coordinate `j` the `q`-weighted residual column is orthogonal to every meaning
+    coordinate `k`. -/
+theorem isERMSolution_iff_forall_coord (hq : ∀ i, 0 ≤ q i) :
+    IsERMSolution data q G ↔
+      ∀ (j : Fin n) (k : Fin d),
+        ∑ i, q i * ((G (data.meanings i) j - data.forms i j) * data.meanings i k) = 0 := by
+  rw [isERMSolution_iff_forall_column hq]
+  refine ⟨fun h j k => h j (LinearMap.proj k), fun h j w => ?_⟩
+  have hw : ∀ i, w (data.meanings i) =
+      ∑ k, data.meanings i k * w (fun j => if k = j then 1 else 0) :=
+    fun i => by rw [w.pi_apply_eq_sum_univ]; simp only [smul_eq_mul]
+  simp_rw [hw, Finset.mul_sum]
+  rw [Finset.sum_comm]
+  refine Finset.sum_eq_zero fun k _ => ?_
+  calc ∑ i, q i * ((G (data.meanings i) j - data.forms i j) *
+          (data.meanings i k * w (fun j => if k = j then 1 else 0)))
+      = (∑ i, q i * ((G (data.meanings i) j - data.forms i j) * data.meanings i k)) *
+          w (fun j => if k = j then 1 else 0) := by
+        rw [Finset.sum_mul]; exact Finset.sum_congr rfl fun i _ => by ring
+    _ = 0 := by rw [h j k, zero_mul]
+
 /-- Under positive weights the prediction energy is definite: it vanishes iff
     the predictions vanish on every training meaning. -/
 theorem predictionEnergy_eq_zero_iff (hq : ∀ i, 0 < q i)
@@ -597,21 +620,22 @@ theorem IsTrainedOn.semSup_eq_of_mem_span
   congrFun (IsERMSolution.apply_eq_of_mem_span hq hD hD' hs) j
 
 /-- *Semantic Support for Form* ([gahl-baayen-2024] appendix;
-    [heitmeier-chuang-baayen-2026]) — `semSupWord` over a word's cue
-    coordinates — equals the sum of the observed form values whenever each
-    coordinate is linearly decodable from the meanings. -/
+    [heitmeier-chuang-baayen-2026]) — `semSupWord` at a form vector — equals the observed
+    form's own support whenever each coordinate the form vector touches is linearly decodable
+    from the meanings. -/
 theorem IsTrainedOn.semSupWord_eq_of_decodable
-    (hD : D.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
-    {js : List (Fin n)}
-    (hw : ∀ j ∈ js, ∃ w : MeaningVec d →ₗ[ℝ] ℝ,
+    (hD : D.IsTrainedOn data q) (hq : ∀ i, 0 < q i) {c : FormVec n}
+    (hw : ∀ j, c j ≠ 0 → ∃ w : MeaningVec d →ₗ[ℝ] ℝ,
       ∀ i, w (data.meanings i) = data.forms i j)
     (i : Fin m) :
-    semSupWord D (data.meanings i) js = (js.map fun j => data.forms i j).sum := by
-  unfold semSupWord
-  congr 1
-  refine List.map_congr_left fun j hj => ?_
-  obtain ⟨w, hwj⟩ := hw j hj
-  exact hD.semSup_eq_of_decodable hq hwj i
+    semSupWord D (data.meanings i) c = data.forms i ⬝ᵥ c := by
+  unfold semSupWord dotProduct
+  refine Finset.sum_congr rfl fun j _ => ?_
+  by_cases hc : c j = 0
+  · simp [hc]
+  · obtain ⟨w, hwj⟩ := hw j hc
+    rw [show D.production (data.meanings i) j = semSup D (data.meanings i) j from rfl,
+      hD.semSup_eq_of_decodable hq hwj i]
 
 end LinearDiscriminativeLexicon
 
