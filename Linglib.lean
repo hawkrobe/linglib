@@ -368,7 +368,7 @@ import Linglib.Data.Examples.Bondarenko2022
 import Linglib.Data.Examples.CaoWhiteLassiter2025
 import Linglib.Data.Examples.Charlow2014
 import Linglib.Data.Examples.ChatzikyriakidisEtAl2025
-import Linglib.Data.Examples.ChungMascarenhas2024
+import Linglib.Data.Examples.ChungMascarenhas2023
 import Linglib.Data.Examples.CohenErteschikShir2002
 import Linglib.Data.Examples.Collins2005
 import Linglib.Data.Examples.CondoravdiLauer2016
@@ -1723,9 +1723,7 @@ import Linglib.Semantics.Homogeneity.Usable
 import Linglib.Semantics.Iconicity
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Index
-import Linglib.Semantics.Intensional.Premise
 import Linglib.Semantics.Intensional.Rigidity
-import Linglib.Semantics.Intensional.Situations
 import Linglib.Semantics.Intensional.Variables
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Modality.ActualityEntailments
@@ -1741,6 +1739,7 @@ import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Modality.Kratzer.Ordering
+import Linglib.Semantics.Modality.Kratzer.Premise
 import Linglib.Semantics.Modality.ModalBaseKind
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Semantics.Modality.Narrog
@@ -2067,7 +2066,7 @@ import Linglib.Studies.Chomsky1995
 import Linglib.Studies.ChowErlewine2022
 import Linglib.Studies.ChristopoulosZompi2023
 import Linglib.Studies.ChuangEtAl2026
-import Linglib.Studies.ChungMascarenhas2024
+import Linglib.Studies.ChungMascarenhas2023
 import Linglib.Studies.Ciardelli2022
 import Linglib.Studies.CiardelliGroenendijkRoelofsen2018
 import Linglib.Studies.CiardelliGuerrini2026
@@ -3010,3 +3009,4 @@ import Linglib.Data.Examples.BaleKhanjian2014
 import Linglib.Data.Examples.BaleSchwarz2026
 import Linglib.Data.Examples.Chierchia2006
 import Linglib.Data.Examples.FoxHackl2006
+import Linglib.Data.Examples.CiardelliGuerrini2026

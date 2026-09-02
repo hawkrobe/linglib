@@ -22,7 +22,19 @@ divergence from [ogihara-1996] live in `Studies/Kratzer1998.lean`.
 namespace Tense.Decomposition
 
 open Tense
-open Intensional (Overtness)
+
+/-- Phonological overtness of a referential expression ([kratzer-1998] §3): a zero tense under
+SOT and a pro-drop subject are `zero`; *he* and the German Preterit are `overt`. -/
+inductive Overtness where
+  | overt
+  | zero
+  deriving DecidableEq, Repr, Inhabited
+
+/-- [kratzer-1998]'s locality generalization: an expression locally bound by an agreeing head
+surfaces as zero; a free expression surfaces as overt. -/
+def Overtness.fromBinding : ReferentialMode → (localDomain : Bool) → Overtness
+  | .bound, true => .zero
+  | _, _ => .overt
 
 /-! ### SOT deletion -/
 

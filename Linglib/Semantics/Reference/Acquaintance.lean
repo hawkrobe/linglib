@@ -23,15 +23,15 @@ acquaintance relation rather than a cover, is `Acquaintance.deRe`
 
 ## Reuse
 
-Built on `Intensional.Intension W τ` (`Semantics/Intensional/Rigidity.lean`) — no
-parallel `Concept` type is introduced. The acquaintance predicate is
+Concepts are plain intensions `Idx → Res` — no parallel `Concept` type is introduced.
+The acquaintance predicate is
 `Set.image`-membership; cover exhaustiveness is `Set.SurjOn`. Both are
 mathlib idioms — the only genuinely new content here is naming.
 -/
 
 namespace Reference.Acquaintance
 
-open Intensional (Intension)
+open Intensional (IsRigid isRigid_const)
 
 /-- A conceptual cover ([aloni-2001] §3.2): a set of intensions over
     an evaluation index `Idx` representing the agent's available "ways of
@@ -39,7 +39,7 @@ open Intensional (Intension)
 
     [heim-1994-comments]'s time-concepts are the instance with
     `Idx := KContext W E P T`, `Res := T`. -/
-abbrev Cover (Idx Res : Type*) : Type _ := Set (Intension Idx Res)
+abbrev Cover (Idx Res : Type*) : Type _ := Set (Idx → Res)
 
 /-- A cover is exhaustive on a domain when, at every index, every value
     in the domain is picked out by some concept in the cover.
@@ -56,27 +56,27 @@ def Cover.isExhaustiveOn {Idx Res : Type*} (C : Cover Idx Res)
     Mathlib idiom: `r ∈ ((· p) '' C)` — set-image membership. -/
 def isAcquaintedWith {Idx Res : Type*}
     (r : Res) (C : Cover Idx Res) (p : Idx) : Prop :=
-  r ∈ ((fun (c : Intension Idx Res) => c p) '' C)
+  r ∈ ((fun (c : Idx → Res) => c p) '' C)
 
 /-- [aloni-2001]'s name cover: rigid concepts (one per entity).
-    Each entity is identified by its constant intension `Intension.rigid`.
+    Each entity is identified by its constant intension.
     This is the "de re" cover — entities thought of as themselves. -/
 def nameCover {Idx Res : Type*} (dom : Set Res) : Cover Idx Res :=
-  { c | ∃ r ∈ dom, c = Intension.rigid (W := Idx) r }
+  { c | ∃ r ∈ dom, c = fun _ => r }
 
 /-- Every concept in a name cover is rigid. -/
 theorem nameCover_rigid {Idx Res : Type*} (dom : Set Res) :
-    ∀ c ∈ nameCover (Idx := Idx) dom, Intension.IsRigid c := by
+    ∀ c ∈ nameCover (Idx := Idx) dom, IsRigid c := by
   intro c hc
   obtain ⟨r, _, hcr⟩ := hc
   subst hcr
-  exact Intension.rigid_isRigid r
+  exact isRigid_const r
 
 /-- The name cover is exhaustive over its domain. -/
 theorem nameCover_isExhaustiveOn {Idx Res : Type*} (dom : Set Res) :
     (nameCover (Idx := Idx) dom).isExhaustiveOn dom := by
   intro p r hr
-  refine ⟨Intension.rigid (W := Idx) r, ?_, rfl⟩
+  refine ⟨fun _ => r, ?_, rfl⟩
   exact ⟨r, hr, rfl⟩
 
 /-- An entity in the name cover's domain is acquainted-with via the name
@@ -85,6 +85,6 @@ theorem nameCover_isExhaustiveOn {Idx Res : Type*} (dom : Set Res) :
 theorem nameCover_isAcquaintedWith_of_mem {Idx Res : Type*} (dom : Set Res)
     (r : Res) (hr : r ∈ dom) (p : Idx) :
     isAcquaintedWith r (nameCover (Idx := Idx) dom) p := by
-  refine ⟨Intension.rigid (W := Idx) r, ⟨r, hr, rfl⟩, rfl⟩
+  refine ⟨fun _ => r, ⟨r, hr, rfl⟩, rfl⟩
 
 end Reference.Acquaintance

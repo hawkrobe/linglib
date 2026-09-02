@@ -29,8 +29,8 @@ one of the holder's available ways of identifying — a member of her conceptual
 
 ## This file
 
-* `Concept` / `ConceptGenerator` — over `Intensional.Intension`; a `Concept` *is* an element of an
-  `Acquaintance.Cover`, so acquaintance is membership in the holder's cover.
+* `Concept` / `ConceptGenerator` — intensions over centered worlds; a `Concept` *is* an element
+  of an `Acquaintance.Cover`, so acquaintance is membership in the holder's cover.
 * `sayDeSe` (eq. 76), `sayDeRe`/`claimDeRe` (eq. 77/79b) — the two denotations of *say*, with
   `Reliable` (eq. 82.i, reliability-with-epistemic-overwrite) and `Suitable` (eq. 82 = reliable
   ∧ acquaintance-based-via-cover).
@@ -52,7 +52,6 @@ minimal pronoun, so — unlike *yè* — it takes no long-distance antecedent).
 
 namespace Pearson2015
 
-open Intensional (Intension)
 open Reference.Acquaintance (Cover)
 open Features.Logophoricity (LogophoricRole Logophoric)
 
@@ -63,9 +62,9 @@ open Features.Logophoricity (LogophoricRole Logophoric)
 abbrev Centered (W E : Type*) := W × E
 
 /-- An individual concept à la [percus-sauerland-2003]: a function from centered worlds
-    to individuals (`Intensional.Intension` over `Centered`). This is exactly an element of an
+    to individuals. This is exactly an element of an
     `Acquaintance.Cover (Centered W E) E`. -/
-abbrev Concept (W E : Type*) := Intension (Centered W E) E
+abbrev Concept (W E : Type*) := Centered W E → E
 
 /-- A concept generator: from a *res* to an individual concept. -/
 abbrev ConceptGenerator (W E : Type*) := E → Concept W E

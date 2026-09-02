@@ -153,7 +153,7 @@ theorem pronominalLookup_eq_none_iff {T : Type*} [LT T]
     and resolves to `t` — for any binding `mode`. -/
 theorem pronominalLookup_eq_some_iff_tensePronoun {T : Type*} [LinearOrder T]
     (g : Tense.TemporalAssignment T) (j k : ℕ) (t : T)
-    (mode : Intensional.ReferentialMode) :
+    (mode : Tense.ReferentialMode) :
     pronominalLookup g j k = some t ↔
       (Tense.TensePronoun.mk k Tense.past mode j).fullPresupposition g ∧
       (Tense.TensePronoun.mk k Tense.past mode j).resolve g = t := by
