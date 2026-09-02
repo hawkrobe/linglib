@@ -10,7 +10,7 @@ import Mathlib.Probability.Distributions.Uniform
 
 Compositional threshold semantics plus an RSA model over an urn scenario
 (`N = 10` balls), formalised on mathlib's `PMF` in the same key as
-`Studies/LassiterGoodman2017PMF.lean`. Cognition 186 (2019) 50–71.
+`Studies/LassiterGoodman2017.lean`. Cognition 186 (2019) 50–71.
 
 The architectural novelty is a Hellinger-distance speaker utility (Eq. 16) in
 place of KL divergence. The literal listener `P_LL(s|m) ∝ ⟦m⟧(s) · P_prior(s)`

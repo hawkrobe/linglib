@@ -2403,7 +2403,7 @@ import Linglib.Studies.LaoideKemp2026
 import Linglib.Studies.Larson1988
 import Linglib.Studies.Lassiter2017
 import Linglib.Studies.Lassiter2025
-import Linglib.Studies.LassiterGoodman2017PMF
+import Linglib.Studies.LassiterGoodman2017
 import Linglib.Studies.LeBruynDeSwart2022
 import Linglib.Studies.Lechner2004
 import Linglib.Studies.Levin1993

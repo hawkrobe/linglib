@@ -962,7 +962,7 @@ of Nouwen's actual contribution:
 - **Positive-valence half** (Figure 8): `seq_pleasantly_prefers_moderate`
   — a support fact (`μ_pleasant (deg 6) = 0` licenses no threshold).
 
-## Connection to `LassiterGoodman2017PMF.lean`
+## Connection to `LassiterGoodman2017.lean`
 
 [nouwen-2024] §4 explicitly adopts the [lassiter-goodman-2017]
 RSA framework and modifies it to sequential two-update inference (vs L&G's

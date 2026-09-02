@@ -740,7 +740,7 @@ at most one `i ∈ s` has `x ∈ f i`, so `∑ i ∈ s, (f i).indicator p x ≤ 
 Summing pointwise: `∑' x, (...) ≤ ∑' x, p x = 1` (`PMF.tsum_coe`).
 
 Used by interval-additive sorites bounds in
-`Studies/LassiterGoodman2017PMF.lean` (Eq. 37).
+`Studies/LassiterGoodman2017.lean` (Eq. 37).
 General enough that any disjoint-events probability bound consumer
 can use it. -/
 theorem toOuterMeasure_finset_sum_disjoint_le_one

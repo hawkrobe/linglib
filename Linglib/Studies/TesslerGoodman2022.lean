@@ -1450,7 +1450,7 @@ question. The cross-paper compatibility was previously enforced via
 `personWeight_eq_lassiterGoodman` / `basketballWeight_eq_lassiterGoodman`
 bridge theorems referencing `RSA.LassiterGoodman2017.heightPrior`; those
 were removed when L&G's old bundled-config formalisation was retired.
-The PMF formalisation (`LassiterGoodman2017PMF.lean`) does not duplicate
+The PMF formalisation (`LassiterGoodman2017.lean`) does not duplicate
 the empirical priors. -/
 
 -- ============================================================================

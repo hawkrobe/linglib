@@ -1,15 +1,12 @@
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Core.Probability.JointPosterior
-import Linglib.Studies.CobrerosEtAl2012
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
-# [lassiter-goodman-2017] on mathlib `PMF` — structural shell
-[lassiter-goodman-2017]
+# Lassiter and Goodman 2017: Adjectival vagueness in a Bayesian model of interpretation
 
-L&G 2017 ("Adjectival vagueness in a Bayesian model of interpretation",
-*Synthese* 194:3801-3836) gives a Bayesian/RSA account of vague gradable
+[lassiter-goodman-2017] gives a Bayesian/RSA account of vague gradable
 adjectives. This file formalises the **structural skeleton** of that
 account on mathlib's `PMF`, with explicit acknowledgment of what the
 file does and does not capture.
@@ -60,23 +57,6 @@ posterior.
 - Adams's bound (`adams_uncertainty_bound`, deferred — verbose generic
   probability theorem, not RSA-specific; cf. § Note on Adams below).
 
-## Connection to the bundled formalisation
-
-The bundled-config formalisation in `LassiterGoodman2017.lean`
-(sibling file, in this directory) handles the empirical-fit reproduction
-via interval reflection. Its `defaultCfg.L1 : Utterance → Height →
-ℝ` returns unnormalised real values via the bundled API; it is not
-PMF-shaped.
-
-The two files are **deliberately complementary**, not bridged: this one
-for the structural skeleton + cross-framework positioning, the bundled
-one for numeric simulations of Figs. 5-10. A formal bridge would
-require a PMF-shaped projection of `defaultCfg.L1` (currently absent
-from the bundled API) and isn't load-bearing for either file's
-contribution. The structural bounds proved here apply to *any* PMF over
-thresholds, so any future PMF projection of `defaultCfg.L1` would
-inherit them by construction.
-
 ## Geometry of the sorites bound
 
 L&G 2017 Eq. 37 defines premise probability as an **integral over an
@@ -101,9 +81,9 @@ borderline cases are *one* of several formalised positions in linglib:
 * `Studies/Fine1975.lean` — supervaluation,
   borderline mapped to `Trivalent.indet`, sorites resolved by super-falsity
   of the inductive premise.
-* `Linglib/Semantics/Supervaluation/TCS.lean` —
-  Cobreros-Égré-Ripley-van-Rooij Tolerant/Strict/Classical, sorites
-  resolved by non-transitivity of st-consequence.
+* `Studies/CobrerosEtAl2012.lean` — tolerant, classical and strict truth
+  ([cobreros-etal-2012]), sorites resolved by the non-transitivity of
+  strict-to-tolerant consequence.
 * `Studies/Klein1980.lean` — comparison-class
   delineation.
 * `Studies/Kennedy2007.lean` —
@@ -130,7 +110,7 @@ Equation": `P(if A then B) = P(B|A)`), used for PC-sorites premise
 strengths — neither captured.
 -/
 
-namespace LassiterGoodman2017.PMF
+namespace LassiterGoodman2017
 
 open scoped ENNReal
 
@@ -451,8 +431,8 @@ acceptance** for "X is tall and not tall" applied to the median
 
 `44.7% > 25%`, so a literal-meaning probabilistic account cannot
 reproduce the data. This is the formal expression of the empirical
-challenge that motivated TCS (`Linglib/Semantics/Supervaluation/TCS.lean`,
-[cobreros-etal-2012]), where borderline cases tolerantly satisfy
+challenge that motivated TCS ([cobreros-etal-2012],
+`Studies/CobrerosEtAl2012.lean`), where borderline cases tolerantly satisfy
 `P ∧ ¬P` *as a tolerantly-true proposition* — not via probability
 multiplication.
 
@@ -468,8 +448,8 @@ threshold posterior or the height being judged.
 
 Empirical contrast: [alxatib-pelletier-2011] report 44.7% — well
 above 25% — so the literal-rule prediction is empirically refuted.
-TCS (`[cobreros-etal-2012]`, formalised in
-`Semantics/Supervaluation/TCS.lean`) accommodates the data via
+TCS ([cobreros-etal-2012], `Studies/CobrerosEtAl2012.lean`)
+accommodates the data via
 non-probabilistic tolerant satisfaction. -/
 theorem lg_literal_borderline_bounded {S : Type*} (L1_latent : PMF S) (s : Set S) :
     L1_latent.toOuterMeasure s * (1 - L1_latent.toOuterMeasure s) ≤ (1/4 : ℝ≥0∞) := by
@@ -500,50 +480,4 @@ theorem lg_literal_borderline_bounded {S : Type*} (L1_latent : PMF S) (s : Set S
   -- Now: q * (1 - q) ≤ 1/4 on ℝ via (2q - 1)² ≥ 0
   nlinarith [sq_nonneg (2 * q - 1)]
 
-/-! ## §8. L&G-vs-TCS framework expressivity gap (Lean-checkable reciprocation)
-
-The previous version of this engagement was docstring-prose-only: §7
-above mentions TCS as the framework that handles the data direction
-the literal rule misses, and `Studies/CobrerosEtAl2012.lean`
-docstring mentions L&G's `lg_literal_borderline_bounded` as the empirical
-challenge that motivated TCS — but no Lean theorem connected the two.
-
-The theorem below closes that gap with a **concrete PMF-typed**
-witness of the expressivity divergence: simultaneously, L&G's
-literal-rule prediction is bounded (`≤ 1/4`) AND TCS's
-borderline-contradiction prediction is categorical (true, not
-fractional). The abstract real-arithmetic version of the same gap is
-`CobrerosEtAl2012.tcs_categorical_vs_product_bounded`. Together the two
-make the framework architecture difference visible at theorem level
-from both sides. -/
-
-open CobrerosEtAl2012 (
-  tcs_borderline_contradiction_categorical)
-open Semantics.Supervaluation.TCS (
-  TModel IsBorderline Sat SatMode TCSAtom)
-
-/-- **L&G-vs-TCS framework gap, PMF-typed**: L&G's literal-rule
-    prediction `P(P) · P(¬P)` is bounded above by `1/4` for any PMF
-    (`lg_literal_borderline_bounded`), while TCS's borderline-contradiction
-    prediction is **categorical** — the conjunction is tolerantly true,
-    not a fractional value to be matched.
-
-    The empirical Alxatib-Pelletier 2011 acceptance rate (44.7%) exceeds
-    the L&G literal upper bound (25%), refuting the literal-rule's
-    expressivity at this dataset. TCS's categorical prediction is
-    consistent with the empirical direction. The Lean theorem records
-    both halves of the framework gap simultaneously. -/
-theorem lg_literal_vs_tcs_categorical
-    {S : Type*} (L1_latent : PMF S) (s : Set S)
-    {D Pred : Type*} (M : TModel D Pred) (P : Pred) (a : D)
-    (hb : IsBorderline M P a) :
-    -- L&G literal-rule's framework-level upper bound:
-    L1_latent.toOuterMeasure s * (1 - L1_latent.toOuterMeasure s)
-      ≤ (1/4 : ℝ≥0∞) ∧
-    -- TCS's framework-level categorical prediction:
-    Sat M SatMode.tolerant
-      (.conj (.atom (TCSAtom.pred P a)) (.neg (.atom (TCSAtom.pred P a)))) :=
-  ⟨lg_literal_borderline_bounded L1_latent s,
-   tcs_borderline_contradiction_categorical M P a hb⟩
-
-end LassiterGoodman2017.PMF
+end LassiterGoodman2017

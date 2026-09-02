@@ -36,8 +36,7 @@ namespace Trivalent
 
 open Consequence (MixedConsequence)
 
-/-- Propositional formulas over an atom type
-(`Semantics.Supervaluation.TCSFormula` instantiates it). -/
+/-- Propositional formulas over an atom type (`CobrerosEtAl2012.Formula` instantiates it). -/
 inductive Formula (Atom : Type*) where
   | atom : Atom → Formula Atom
   | neg : Formula Atom → Formula Atom
@@ -86,6 +85,22 @@ def Realize (M : Model Atom) (d : Trivalent.Designation) (φ : Formula Atom) : P
     (φ ψ : Formula Atom) :
     (M ⊨[d] Formula.conj φ ψ) ↔ (M ⊨[d] φ) ∧ (M ⊨[d] ψ) :=
   Trivalent.designated_inf d (eval M φ) (eval M ψ)
+
+/-- Disjunction, defined classically from negation and conjunction. -/
+def disj (φ ψ : Formula Atom) : Formula Atom := .neg (.conj (.neg φ) (.neg ψ))
+
+/-- The material conditional `¬(φ ∧ ¬ψ)`. -/
+def imp (φ ψ : Formula Atom) : Formula Atom := .neg (.conj φ (.neg ψ))
+
+@[simp] theorem realize_disj (M : Model Atom) (d : Trivalent.Designation) (φ ψ : Formula Atom) :
+    (M ⊨[d] φ.disj ψ) ↔ (M ⊨[d] φ) ∨ (M ⊨[d] ψ) := by
+  simp [disj, or_iff_not_imp_left]
+
+/-- A conditional is realized at `d` iff its consequent is whenever its antecedent is realized
+at the dual standard. -/
+@[simp] theorem realize_imp (M : Model Atom) (d : Trivalent.Designation) (φ ψ : Formula Atom) :
+    (M ⊨[d] φ.imp ψ) ↔ ((M ⊨[d.dual] φ) → (M ⊨[d] ψ)) := by
+  simp [imp]
 
 end Formula
 

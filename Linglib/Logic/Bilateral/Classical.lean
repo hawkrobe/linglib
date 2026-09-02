@@ -51,15 +51,14 @@ variable {Model Formula Mode : Type*}
 /-- Satisfaction duality: a negation operation on formulas and a
     dual operation on modes such that:
     - `dual` is an involution (d(d(m)) = m)
-    - `neg` is an involution (¬¬φ = φ)
     - Negation swaps modes: `M ⊨ᵐ ¬φ ↔ M ⊭^{d(m)} φ`
 
-    In TCS, d(t) = s, d(s) = t, d(c) = c, and negation is formula
-    negation. -/
+    Nothing is assumed of `neg` itself, so syntactic negation (where
+    `¬¬φ` and `φ` are distinct formulas) qualifies. In TCS, d(t) = s,
+    d(s) = t, d(c) = c, and negation is formula negation. -/
 structure SatDuality (sat : Model → Mode → Formula → Prop)
     (neg : Formula → Formula) (dual : Mode → Mode) : Prop where
   dual_invol : ∀ m : Mode, dual (dual m) = m
-  neg_invol : ∀ φ : Formula, neg (neg φ) = φ
   neg_swap : ∀ (M : Model) (m : Mode) (φ : Formula),
     sat M m (neg φ) ↔ ¬sat M (dual m) φ
 
