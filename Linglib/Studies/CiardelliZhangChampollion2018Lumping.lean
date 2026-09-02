@@ -54,9 +54,8 @@ because `Follows {notBothUp} lightOff` also fails (again `dd` blocks).
 
 ## Formalization
 
-We use the worlds-only switches model lifted to a `SituationFrame` via
-`Frame.toDiscreteSituationFrame`. Under discrete parthood,
-`Intensional.Lumping.Lumps.discrete_iff` reduces lumping to
+We use the worlds-only switches model under the discrete parthood order
+(`Conditionals.Counterfactual.discreteOrder`), where `Lumps.discrete_iff` reduces lumping to
 joint truth at `w`. This gives a clean (if degenerate) lumping
 behavior: every fact true at `uu` lumps every other fact true at `uu`,
 so the Crucial Set's lumping-closure clause forces any Crucial Set
@@ -84,8 +83,7 @@ The empty Base Set keeps the proofs direct.
 
 namespace CiardelliZhangChampollion2018Lumping
 
-open Intensional
-open Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows)
+open Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows worlds discreteOrder)
 open Conditionals.PremiseSemantic
   (CrucialSet IsCrucialSet wouldCF)
 
@@ -109,45 +107,36 @@ inductive World where
     model — no proper sub-situations.) -/
 instance : PartialOrder World := discreteOrder World
 
-/-- The switches frame promoted to a `SituationFrame` with discrete
-    parthood. -/
-def switchesSituationFrame : SituationFrame where
-  Entity := Unit
-  Index := World
-  order := inferInstance
-
 /-! ## Propositions
 
 Truth-makers at the worlds-only level (every world supports its own
 positive facts; nothing else). -/
 
 /-- "Switch A is up." -/
-def aUp : Set switchesSituationFrame.Index := {.uu, .ud}
+def aUp : Set World := {.uu, .ud}
 /-- "Switch A is down." -/
-def aDn : Set switchesSituationFrame.Index := {.du, .dd}
+def aDn : Set World := {.du, .dd}
 /-- "Switch B is up." -/
-def bUp : Set switchesSituationFrame.Index := {.uu, .du}
+def bUp : Set World := {.uu, .du}
 /-- "Switch B is down." -/
-def bDn : Set switchesSituationFrame.Index := {.ud, .dd}
+def bDn : Set World := {.ud, .dd}
 /-- "At least one switch is down" (= `¬(A ∧ B)`). -/
-def notBothUp : Set switchesSituationFrame.Index := {.ud, .du, .dd}
+def notBothUp : Set World := {.ud, .du, .dd}
 /-- "The light is on" (per the wiring law, holds iff both switches in
     the same position). -/
-def lightOn : Set switchesSituationFrame.Index := {.uu, .dd}
+def lightOn : Set World := {.uu, .dd}
 /-- "The light is off." -/
-def lightOff : Set switchesSituationFrame.Index := {.ud, .du}
+def lightOff : Set World := {.ud, .du}
 
 /-! ## Worlds (maximal situations)
 
 Under the discrete order, every world is maximal. -/
 
-theorem all_isWorld (w : switchesSituationFrame.Index) :
-    IsWorld w := by
-  intro w' hw'
-  exact hw'.symm.le
+theorem all_isWorld (w : World) : IsMax w :=
+  Conditionals.Counterfactual.discrete_isMax World w
 
 theorem worlds_eq_univ :
-    switchesSituationFrame.Worlds = Set.univ := by
+    worlds World = Set.univ := by
   ext w; exact ⟨fun _ => trivial, fun _ => all_isWorld w⟩
 
 /-! ## The Crucial Set collapses to a singleton
@@ -163,14 +152,14 @@ lumping closure further: the only Crucial Set member is `{p}` because
 there are no Fw elements to add. -/
 
 /-- Empty Base Set. -/
-def Fw₀ : Set (Set switchesSituationFrame.Index) := ∅
+def Fw₀ : Set (Set World) := ∅
 
 /-- With an empty Base Set, the Crucial Set for any antecedent
     consistent at *some* world reduces to the singleton `{antecedent}`. -/
 theorem crucialSet_empty_Fw_eq_singleton
-    (p : Set switchesSituationFrame.Index)
-    (hp : (switchesSituationFrame.Worlds ∩ p).Nonempty) :
-    CrucialSet (F := switchesSituationFrame) Fw₀ World.uu p = {{p}} := by
+    (p : Set World)
+    (hp : (worlds World ∩ p).Nonempty) :
+    CrucialSet (S := World) Fw₀ World.uu p = {{p}} := by
   apply Set.eq_singleton_iff_unique_mem.mpr
   refine ⟨?_, ?_⟩
   · -- Membership: {p} ∈ CrucialSet Fw₀ uu p
@@ -209,9 +198,9 @@ switches down means the light is *on* by the wiring). -/
 /-- `dd` is an `aDn`-world where `lightOff` fails — the witness that
     breaks `Follows {aDn} lightOff`. -/
 theorem follows_aDn_lightOff_fails :
-    ¬ Follows (F := switchesSituationFrame) {aDn} lightOff := by
+    ¬ Follows (S := World) {aDn} lightOff := by
   intro h
-  have h_world : (.dd : World) ∈ switchesSituationFrame.Worlds :=
+  have h_world : (.dd : World) ∈ worlds World :=
     all_isWorld _
   have h_aDn : (.dd : World) ∈ aDn := Or.inr rfl
   have h_inter : (.dd : World) ∈ ⋂₀ ({aDn} : Set (Set World)) := by
@@ -222,9 +211,9 @@ theorem follows_aDn_lightOff_fails :
 
 /-- The symmetric witness for `bDn`. -/
 theorem follows_bDn_lightOff_fails :
-    ¬ Follows (F := switchesSituationFrame) {bDn} lightOff := by
+    ¬ Follows (S := World) {bDn} lightOff := by
   intro h
-  have h_world : (.dd : World) ∈ switchesSituationFrame.Worlds :=
+  have h_world : (.dd : World) ∈ worlds World :=
     all_isWorld _
   have h_bDn : (.dd : World) ∈ bDn := Or.inr rfl
   have h_inter : (.dd : World) ∈ ⋂₀ ({bDn} : Set (Set World)) := by
@@ -235,9 +224,9 @@ theorem follows_bDn_lightOff_fails :
 /-- And for `notBothUp` (`¬(A ∧ B)`) — `dd` blocks here too, this
     time *correctly* matching the empirics. -/
 theorem follows_notBothUp_lightOff_fails :
-    ¬ Follows (F := switchesSituationFrame) {notBothUp} lightOff := by
+    ¬ Follows (S := World) {notBothUp} lightOff := by
   intro h
-  have h_world : (.dd : World) ∈ switchesSituationFrame.Worlds :=
+  have h_world : (.dd : World) ∈ worlds World :=
     all_isWorld _
   have h_NAB : (.dd : World) ∈ notBothUp := Or.inr (Or.inr rfl)
   have h_inter : (.dd : World) ∈ ⋂₀ ({notBothUp} : Set (Set World)) := by
@@ -248,15 +237,15 @@ theorem follows_notBothUp_lightOff_fails :
 /-! ### Witnesses of antecedent consistency (for the Crucial Set proofs) -/
 
 private theorem aDn_consistent :
-    (switchesSituationFrame.Worlds ∩ aDn).Nonempty :=
+    (worlds World ∩ aDn).Nonempty :=
   ⟨World.du, all_isWorld _, Or.inl rfl⟩
 
 private theorem bDn_consistent :
-    (switchesSituationFrame.Worlds ∩ bDn).Nonempty :=
+    (worlds World ∩ bDn).Nonempty :=
   ⟨World.ud, all_isWorld _, Or.inl rfl⟩
 
 private theorem notBothUp_consistent :
-    (switchesSituationFrame.Worlds ∩ notBothUp).Nonempty :=
+    (worlds World ∩ notBothUp).Nonempty :=
   ⟨World.ud, all_isWorld _, Or.inl rfl⟩
 
 /-! ### The three headline theorems
@@ -270,12 +259,12 @@ failure); the third is empirically *right* (lumping's lucky catch). -/
     satisfies the antecedent but not the consequent, blocking the
     `Follows` step that the singleton Crucial Set demands. -/
 theorem not_wouldCF_aDn_lightOff :
-    ¬ wouldCF (F := switchesSituationFrame) Fw₀ World.uu aDn lightOff := by
+    ¬ wouldCF (S := World) Fw₀ World.uu aDn lightOff := by
   intro hwould
   have h_singleton := crucialSet_empty_Fw_eq_singleton aDn aDn_consistent
   -- {aDn} is the only Crucial Set member; instantiate
   have h_in_CS : ({aDn} : Set (Set World)) ∈
-      CrucialSet (F := switchesSituationFrame) Fw₀ World.uu aDn := by
+      CrucialSet (S := World) Fw₀ World.uu aDn := by
     rw [h_singleton]; exact rfl
   obtain ⟨A', hA'_in, _, hFollows⟩ := hwould {aDn} h_in_CS
   rw [h_singleton] at hA'_in
@@ -285,11 +274,11 @@ theorem not_wouldCF_aDn_lightOff :
 /-- **Lumping CF wrongly predicts `bDn > OFF` false** (empirically
     ~76% true). Symmetric to the `aDn` case. -/
 theorem not_wouldCF_bDn_lightOff :
-    ¬ wouldCF (F := switchesSituationFrame) Fw₀ World.uu bDn lightOff := by
+    ¬ wouldCF (S := World) Fw₀ World.uu bDn lightOff := by
   intro hwould
   have h_singleton := crucialSet_empty_Fw_eq_singleton bDn bDn_consistent
   have h_in_CS : ({bDn} : Set (Set World)) ∈
-      CrucialSet (F := switchesSituationFrame) Fw₀ World.uu bDn := by
+      CrucialSet (S := World) Fw₀ World.uu bDn := by
     rw [h_singleton]; exact rfl
   obtain ⟨A', hA'_in, _, hFollows⟩ := hwould {bDn} h_in_CS
   rw [h_singleton] at hA'_in
@@ -300,12 +289,12 @@ theorem not_wouldCF_bDn_lightOff :
     (empirically ~20% true, i.e., not-true). Same structural reason
     as the simple cases — the dd-world blocks `Follows`. -/
 theorem not_wouldCF_notBothUp_lightOff :
-    ¬ wouldCF (F := switchesSituationFrame) Fw₀ World.uu notBothUp lightOff := by
+    ¬ wouldCF (S := World) Fw₀ World.uu notBothUp lightOff := by
   intro hwould
   have h_singleton :=
     crucialSet_empty_Fw_eq_singleton notBothUp notBothUp_consistent
   have h_in_CS : ({notBothUp} : Set (Set World)) ∈
-      CrucialSet (F := switchesSituationFrame) Fw₀ World.uu notBothUp := by
+      CrucialSet (S := World) Fw₀ World.uu notBothUp := by
     rw [h_singleton]; exact rfl
   obtain ⟨A', hA'_in, _, hFollows⟩ := hwould {notBothUp} h_in_CS
   rw [h_singleton] at hA'_in
@@ -331,8 +320,8 @@ operators fail on disjoint subsets of the switches counterfactuals. -/
     minimal-change predicts `aDn > OFF` true and `notBothUp > OFF`
     true; the empirics are true / false. -/
 theorem lumping_failure_pattern :
-    ¬ wouldCF (F := switchesSituationFrame) Fw₀ World.uu aDn lightOff ∧
-    ¬ wouldCF (F := switchesSituationFrame) Fw₀ World.uu notBothUp lightOff :=
+    ¬ wouldCF (S := World) Fw₀ World.uu aDn lightOff ∧
+    ¬ wouldCF (S := World) Fw₀ World.uu notBothUp lightOff :=
   ⟨not_wouldCF_aDn_lightOff, not_wouldCF_notBothUp_lightOff⟩
 
 end CiardelliZhangChampollion2018Lumping

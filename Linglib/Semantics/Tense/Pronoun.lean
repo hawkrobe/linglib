@@ -18,10 +18,25 @@ temporal instantiation of `Assignment`; all update laws are mathlib's
 `Function.update` lemmas.
 -/
 
-open Intensional (ReferentialMode)
 open Intensional (Index)
 
 namespace Tense
+
+/-- [partee-1973]'s three-way interpretive classification of a referential expression,
+uniform across pronouns (entity variables) and tenses (temporal variables): anchored to the
+utterance context (*I*, the deictic present), resolved by discourse salience (*he*, the
+narrative past), or bound by a c-commanding operator. -/
+inductive ReferentialMode where
+  | indexical
+  | anaphoric
+  | bound
+  deriving DecidableEq, Repr
+
+/-- Indexical and anaphoric expressions are both free; they differ only in how the free
+variable is resolved. -/
+def ReferentialMode.isFree : ReferentialMode → Bool
+  | .indexical | .anaphoric => true
+  | .bound => false
 
 /-! ### Temporal variable infrastructure ([partee-1973]) -/
 
