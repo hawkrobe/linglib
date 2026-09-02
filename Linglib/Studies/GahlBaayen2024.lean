@@ -24,13 +24,14 @@ scope, and the paper derives nothing formal from its Pearson-correlation homopho
 
 What is stated is the paper's own toy lexicon *time, lime, thyme* (§2.3), worked through the
 substrate's training theory. The endstate map (4) and the frequency-informed map for token
-frequencies 100, 10, 1 (A3) are certified `IsELTrainedOn` and `IsFILTrainedOn` by the
-coordinate normal equations; the support matrix of (A6) and both columns of Table 1 come out
-exactly, the frequency-informed column being `√frequency` times the support the learned map
-alone gives, as it is the fitted value of the `√Q`-scaled regression; the homophones get
-distinct predicted forms from identical triphones (Fig. A2); and the word-to-word map of (6) is,
-exactly, the orthogonal projector onto the row space of `U`, whose diagonal therefore lies in
-`[0, 1]` and dominates its rows and columns as the paper observes.
+frequencies 100, 10, 1 (A3) are the closed forms `(SᵀS)⁻¹SᵀC` and `(SᵀQS)⁻¹SᵀQC` of the normal
+equations (A2), (A4), hence `IsELTrainedOn` and `IsFILTrainedOn`; the support matrix of (A6)
+and both columns of Table 1 come out exactly, the frequency-informed column being `√frequency`
+times the support the learned map alone gives, as it is the fitted value of the `√Q`-scaled
+regression; the homophones get distinct predicted forms from identical triphones (Fig. A2); and
+the word-to-word map of (6) is the pseudoinverse solution `Uᵀ(UUᵀ)⁻¹U` of `UW = U`, an
+orthogonal projector, whose diagonal therefore lies in `[0, 1]` and dominates its rows as the
+paper observes.
 
 ## Main results
 
@@ -112,42 +113,58 @@ def freq : FrequencyVector 3 := ![100, 10, 1]
 The paper fits only the production side of the model, so the comprehension maps below are left
 zero. Mapping matrices act on row vectors, `ĉ = sG` (10), so a production map is `toLin' Gᵀ`. -/
 
-/-- The endstate mapping `G` of (4), exactly: `(SᵀS)⁻¹SᵀC` of (A2), with
-`1181 = 10⁴ · det(SᵀS)`; the paper prints it to two decimals. -/
-def endstateG : Matrix (Fin 2) (Fin 6) ℝ :=
-  (1181 : ℝ)⁻¹ • !![-1410, -1410, -90, -90, 1320, 1320; 4500, 4500, 2800, 2800, -1700, -1700]
+/-- The endstate mapping `G` of (4): the closed form `(SᵀS)⁻¹SᵀC` of (A2). -/
+def endstateG : Matrix (Fin 2) (Fin 6) ℝ := (toy.Sᵀ * toy.S)⁻¹ * (toy.Sᵀ * toy.C)
+
+/-- (4) exactly, with `1181 = 10⁴ · det(SᵀS)`; the paper prints it to two decimals. -/
+theorem endstateG_eq :
+    endstateG = (1181 : ℝ)⁻¹ • !![-1410, -1410, -90, -90, 1320, 1320;
+      4500, 4500, 2800, 2800, -1700, -1700] := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    norm_num [endstateG, Matrix.inv_def, Ring.inverse_eq_inv', Matrix.adjugate_fin_two,
+      Matrix.det_fin_two, Matrix.mul_apply, Fin.sum_univ_succ, toy, toyForms_eq,
+      TrainingExperience.S, TrainingExperience.C]
 
 /-- The DLM at the endstate of learning. -/
 def endstate : LinearDiscriminativeLexicon ℝ (FormVec 6) (MeaningVec 2) where
   comprehension := 0
   production := Matrix.toLin' endstateGᵀ
 
-/-- The frequency-informed mapping, exactly: the solution of the `√Q`-scaled normal equations
-(A4) for the frequencies `freq`, with `16543 = 500 · det(SᵀQS)`. -/
+/-- The frequency-informed mapping: the closed form `(SᵀQS)⁻¹SᵀQC` of (A4) for the
+frequencies `freq`. -/
 def frequencyInformedG : Matrix (Fin 2) (Fin 6) ℝ :=
-  (16543 : ℝ)⁻¹ • !![-20190, -20190, 4230, 4230, 24420, 24420;
-    61920, 61920, 53150, 53150, -8770, -8770]
+  (toy.Sᵀ * freq.Q * toy.S)⁻¹ * (toy.Sᵀ * freq.Q * toy.C)
+
+/-- The frequency-informed mapping exactly, with `16543 = 500 · det(SᵀQS)`. -/
+theorem frequencyInformedG_eq :
+    frequencyInformedG = (16543 : ℝ)⁻¹ • !![-20190, -20190, 4230, 4230, 24420, 24420;
+      61920, 61920, 53150, 53150, -8770, -8770] := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    norm_num [frequencyInformedG, Matrix.inv_def, Ring.inverse_eq_inv', Matrix.adjugate_fin_two,
+      Matrix.det_fin_two, Matrix.mul_apply, Fin.sum_univ_succ, toy, toyForms_eq, freq,
+      TrainingExperience.S, TrainingExperience.C, FrequencyVector.Q, Matrix.diagonal]
 
 /-- The DLM after frequency-informed learning. -/
 def frequencyInformed : LinearDiscriminativeLexicon ℝ (FormVec 6) (MeaningVec 2) where
   comprehension := 0
   production := Matrix.toLin' frequencyInformedGᵀ
 
-/-- The endstate mapping is the substrate's uniform-weight ERM solution: the coordinate normal
-equations (A2) hold. -/
-theorem endstate_isELTrainedOn : endstate.IsELTrainedOn toy := by
-  refine isERMSolution_iff_forall_coord.mpr fun j k => ?_
-  fin_cases j <;> fin_cases k <;>
-    norm_num [toy, toyForms_eq, endstate, endstateG, Matrix.toLin'_apply, Matrix.mulVec, dotProduct,
-      Fin.sum_univ_succ]
+/-- The endstate mapping is the uniform-weight ERM solution, by the closed form of the normal
+equations (A2): `SᵀS` is invertible. -/
+theorem endstate_isELTrainedOn : endstate.IsELTrainedOn toy :=
+  isELSolution_closedForm toy <| by
+    rw [Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero]
+    norm_num [Matrix.det_fin_two, Matrix.mul_apply, Fin.sum_univ_succ, toy, TrainingExperience.S]
 
-/-- The frequency-informed mapping is the substrate's ERM solution under `freq`: the
-`√Q`-scaled normal equations (A4) hold. -/
-theorem frequencyInformed_isFILTrainedOn : frequencyInformed.IsFILTrainedOn toy freq := by
-  refine isERMSolution_iff_forall_coord.mpr fun j k => ?_
-  fin_cases j <;> fin_cases k <;>
-    norm_num [toy, toyForms_eq, freq, frequencyInformed, frequencyInformedG, Matrix.toLin'_apply,
-      Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
+/-- The frequency-informed mapping is the ERM solution under `freq`, by the closed form of the
+`√Q`-scaled normal equations (A4): `SᵀQS` is invertible. -/
+theorem frequencyInformed_isFILTrainedOn : frequencyInformed.IsFILTrainedOn toy freq :=
+  isERMSolution_closedForm toy freq <| by
+    rw [Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero]
+    norm_num [Matrix.det_fin_two, Matrix.mul_apply, Fin.sum_univ_succ, toy, freq,
+      TrainingExperience.S, FrequencyVector.Q, Matrix.diagonal]
 
 /-! ### Semantic support for form -/
 
@@ -170,8 +187,8 @@ theorem supportMatrix_endstate :
       (1181 : ℝ)⁻¹ • !![4080, 906, 4080; 1120, 1916, 1120; 5460, 4026, 5460] := by
   ext i k
   fin_cases i <;> fin_cases k <;>
-    norm_num [supportMatrix, semSupWord, toy, toyForms_eq, endstate, endstateG, Matrix.toLin'_apply,
-      Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
+    norm_num [supportMatrix, semSupWord, toy, toyForms_eq, endstate, endstateG_eq,
+      Matrix.toLin'_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
 
 /-- Table 1, endstate column: `3.455, 1.622, 4.623`. -/
 theorem semanticSupport_endstate :
@@ -204,7 +221,7 @@ theorem semanticSupport_frequencyInformed :
   ext i
   fin_cases i <;>
     norm_num [semanticSupport, supportMatrix, semSupWord, toy, toyForms_eq, frequencyInformed,
-      frequencyInformedG, Matrix.toLin'_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
+      frequencyInformedG_eq, Matrix.toLin'_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
 
 /-- Table 1, frequency-informed column: `39.805, 9.965, 6.225`. -/
 theorem semanticSupportFIL_eq :
@@ -228,9 +245,8 @@ their meaning difference lies outside the production kernel, the neutralization 
 theorem time_sub_thyme_notMem_ker :
     toy.meanings time - toy.meanings thyme ∉ LinearMap.ker endstate.production := fun h => by
   have := congrFun (LinearMap.sub_mem_ker_iff.mp h) 0
-  norm_num [toy, toyForms_eq, endstate, endstateG, time, thyme, Matrix.cons_val_two,
-    Matrix.toLin'_apply,
-    Matrix.mulVec, dotProduct, Fin.sum_univ_succ] at this
+  norm_num [toy, toyForms_eq, endstate, endstateG_eq, time, thyme, Matrix.cons_val_two,
+    Matrix.toLin'_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_succ] at this
 
 /-! ### Contextual independence
 
@@ -253,8 +269,22 @@ def U : Matrix (Fin 5) (Fin 9) ℚ :=
      1, 0, 1, 0, 0, 0, 0, 1, 1;
      1, 0, 1, 0, 1, 0, 0, 1, 0]
 
-/-- The word-to-word map `W` of (6), exactly; the paper prints it to two decimals. -/
-def W : Matrix (Fin 9) (Fin 9) ℚ := (71 : ℚ)⁻¹ •
+/-- The word-to-word map `W` of (6): the pseudoinverse solution `Uᵀ(UUᵀ)⁻¹U` of `UW = U`
+((A8), (A9)), the orthogonal projector onto the row space of `U`. -/
+def W : Matrix (Fin 9) (Fin 9) ℚ := Uᵀ * (U * Uᵀ)⁻¹ * U
+
+/-- The inverse of the Gram matrix `UUᵀ`. -/
+private def gramInv : Matrix (Fin 5) (Fin 5) ℚ := (71 : ℚ)⁻¹ •
+  !![33, -20, -1, -15, 5;
+     -20, 53, -8, 22, -31;
+     -1, -8, 28, -6, 2;
+     -15, 22, -6, 52, -41;
+     5, -31, 2, -41, 61]
+
+private theorem inv_gram : (U * Uᵀ)⁻¹ = gramInv := Matrix.inv_eq_right_inv (by decide +kernel)
+
+/-- (6) exactly; the paper prints it to two decimals. -/
+theorem W_eq : W = (71 : ℚ)⁻¹ •
   !![41, 18, 10, 2, 12, 15, 15, 8, 12;
      18, 46, -6, 13, 7, -9, -9, -19, 7;
      10, -6, 44, 23, -4, -5, -5, 21, -4;
@@ -263,21 +293,22 @@ def W : Matrix (Fin 9) (Fin 9) ℚ := (71 : ℚ)⁻¹ •
      15, -9, -5, -1, -6, 28, 28, -4, -6;
      15, -9, -5, -1, -6, 28, 28, -4, -6;
      8, -19, 21, -10, 11, -4, -4, 31, 11;
-     12, 7, -4, -15, -19, -6, -6, 11, 52]
+     12, 7, -4, -15, -19, -6, -6, 11, 52] := by
+  rw [W, inv_gram]; decide +kernel
 
 /-- `W` solves the paper's equation `UW = U` (A8), exactly where the paper reports agreement
 "up to fifteen decimal digits". -/
-theorem U_mul_W : U * W = U := by decide +kernel
+theorem U_mul_W : U * W = U := by rw [W_eq]; decide +kernel
 
 /-- `W` is symmetric. -/
-theorem isSymm_W : W.IsSymm := by decide +kernel
+theorem isSymm_W : W.IsSymm := by rw [W_eq]; decide +kernel
 
 /-- `W` is idempotent: with symmetry, an orthogonal projector. -/
 theorem isIdempotentElem_W : IsIdempotentElem W := by
-  unfold IsIdempotentElem; decide +kernel
+  unfold IsIdempotentElem; rw [W_eq]; decide +kernel
 
 /-- The diagonal of `W` dominates its rows, as the paper observes of (6). -/
-theorem le_diag_W : ∀ i j, W i j ≤ W i i := by decide +kernel
+theorem le_diag_W : ∀ i j, W i j ≤ W i i := by rw [W_eq]; decide +kernel
 
 /-- The diagonal of `W` lies in `[0, 1]`, the "proportions" of §3.2, because `W` is an
 orthogonal projector. -/
