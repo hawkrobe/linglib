@@ -7,12 +7,7 @@ import Mathlib.Data.Fintype.BigOperators
 
 
 /-!
-# Clark 1983 — Making Sense of Nonce Sense
-[clark-1983] [clark-clark-1979]
-
-Clark, Herbert H. (1983). Making sense of nonce sense. In G.B. Flores d'Arcais
-& R.J. Jarvella (Eds.), *The Process of Language Understanding*, pp. 297–331.
-John Wiley & Sons.
+# Clark 1983: Making sense of nonce sense
 
 ## Core Argument
 
@@ -41,9 +36,7 @@ The argument proceeds in three stages:
 
 The Lean file uses local section headers `§A`–`§L` for navigation; these
 **do not correspond to numbered sections in the paper** (the paper uses
-named, unnumbered sections). Page citations were verified against the PDF
-on 2026-04-24; example attributions for the contextual-expression taxonomy
-in `§B` were corrected at the same time.
+named, unnumbered sections).
 
 ## Substrate hookup
 
@@ -54,15 +47,21 @@ as a request projects to `prepCondition := some .knowledge` — the same
 substrate `Studies/FrancikClark1985.lean` and
 `Studies/RuytenbeekEtAl2017.lean` consume.
 
-The DM bridge in `§I` consumes `DistributedMorphology.categorize` for
-the word syntax [v [n √]] underlying nonce verbs. The LU-RSA bridge in `§H` consumes
-`RSA.Lexicon`.
+`§I` encodes the word syntax [v [n √]] of nonce denominal verbs via the
+substrate `DistributedMorphology.categorize`; `§H` types sense-selection
+and sense-creation parsers over the substrate `RSA.Lexicon` carrier.
 
 The shared mechanism Clark posits in `§K` is operationalized as a typed
 projection: both `IndirectAct` and `DenominalVerbConvention` provide a
 `toGoalHierarchy` function landing in the common `GoalHierarchy` schema.
 The "same mechanism" claim is then a structural identity at the substrate
 level rather than a vacuous law-of-excluded-middle.
+
+## References
+
+* [H. H. Clark, *Making sense of nonce sense* (1983)][clark-1983]
+* [E. V. Clark, H. H. Clark, *When nouns surface as verbs*
+  (1979)][clark-clark-1979]
 -/
 
 namespace Clark1983
@@ -493,17 +492,11 @@ theorem teapot_role_assignment_distinct :
     teapotConvention.parentNounRole ∉ teapotConvention.otherArgRoles :=
   ⟨rfl, rfl, by decide⟩
 
-/-! ## §H. Bridge to LU-RSA ([bergen-levy-goodman-2016])
+/-! ## §H. Sense-selection vs sense-creation as parser types (paper pp. 297–299)
 
-[bergen-levy-goodman-2016]'s LU-RSA operationalizes one dimension of
-Clark's sense-creation: the listener marginalizes over possible lexica.
-
-  L1(w | u) ∝ Σ_L P(L) · S1(u | w, L) · P(w)
-
-The marginalization captures the open-endedness of the sense space. Clark's
-fuller proposal (the three-tier goal hierarchy, `§F`) is richer — LU-RSA
-captures the "what" (multiple possible meanings) but not the "how"
-(hierarchical goal structure). -/
+Clark's contrast typed over the substrate `RSA.Lexicon` carrier: a
+sense-selection parser is a fixed lexicon; a sense-creation parser ranges
+over a space of possible lexica. -/
 
 /-- A sense-selection parser uses a fixed `Lexicon`. -/
 def senseSelectionParser (U W : Type) := Lexicon U W
@@ -533,10 +526,10 @@ theorem sense_creation_strictly_generalizes
   rw [h1, h2] at h_diff
   exact h_diff rfl
 
-/-! ## §I. Bridge to DM recategorization
+/-! ## §I. Denominal-verb word syntax on the DM substrate
 
-DM's word syntax captures the n → v step: the denominal verb is the
-configuration [v [n √]]. The hard part — what the resulting verb
+The substrate word syntax captures the n → v step: the denominal verb is
+the configuration [v [n √]]. The hard part — what the resulting verb
 *means* — is what Clark's convention (`§G`) and the goal hierarchy
 (`§F`) provide. -/
 
@@ -618,7 +611,7 @@ theorem bombeck_is_innovative : bombecksGoalHierarchy.isInnovative := by
   have h' := congr_fun h ⟨true, false⟩
   simp [bombecksGoalHierarchy, stereosDirectMeaning] at h'
 
-/-! ## §K. Bridge to indirect speech acts (paper pp. 319–321)
+/-! ## §K. Indirect speech acts (paper pp. 319–321)
 
 Clark's structural argument: contextual expressions and indirect illocutionary
 acts are understood by the same mechanism — reconstructing the speaker's
@@ -884,9 +877,7 @@ open Classical
     `ownersCommon`; otherwise it falls back to the direct meaning.
 
     This is a simplified model of the pragmatic computation — the
-    `bombecksCG` antecedent bakes in the inference target. A fuller
-    treatment via LU-RSA marginalisation or the `ErkHerbelot2024`
-    PMF-over-scenarios substrate is the natural extension. -/
+    `bombecksCG` antecedent bakes in the inference target. -/
 def stereosMeaning : ContextualMeaning StereosWorld where
   directMeaning := stereosDirectMeaning
   compute := λ cg =>
