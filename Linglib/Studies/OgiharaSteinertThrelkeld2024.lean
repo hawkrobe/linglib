@@ -803,7 +803,6 @@ For each temporal connective, the Fragment's `complementVeridical` field is
 
 namespace OgiharaSteinertThrelkeld2024.VeridicalityBridge
 
-open Core.Order
 open NonemptyInterval
 open Tense Anscombe1964 Karttunen1974 Heinamaki1974
 open English.TemporalExpressions

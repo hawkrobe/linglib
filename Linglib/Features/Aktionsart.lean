@@ -1,4 +1,3 @@
-import Linglib.Core.Order.Boundedness
 
 /-!
 # Features.Aktionsart
@@ -20,11 +19,8 @@ including semelfactives — both first appear in the 1991 1st ed., not the
 1997 2nd ed. cited here). The semelfactive category itself comes from
 Slavic aspectology (Comrie 1976 *Aspect*, not in `references.bib`).
 
-`Telicity.toMereoTag` projects this file's binary `Telicity` onto
-`Core.Scales.Scale.MereoTag`, the canonical cumulative/quantized tag.
-The CUM/QUA/DIV algebra over event predicates lives in
-`Semantics/Events/CEM.lean` — that is the substrate; the
-`Telicity` here is the Smith-flavored derived label.
+The CUM/QUA/DIV algebra over event predicates lives in `Semantics/Mereology.lean`;
+the `Telicity` here is the Smith-flavored lexical label.
 
 Sibling formalizations of competitor lexical-aspect frameworks:
 [bach-1986]; the event-token sort is this `Dynamicity` feature (`Event.sort`);
@@ -59,17 +55,6 @@ inductive Dynamicity where
   | stative  -- no change (know, love, own)
   deriving DecidableEq, Repr, Inhabited
 
-namespace Telicity
-
-/-- Telicity → MereoTag: telic = quantized.
-    Telic predicates are QUA (no proper part of a telic event is telic);
-    atelic predicates are CUM (the sum of two atelic events is atelic). -/
-@[simp]
-def toMereoTag : Telicity → Core.Order.MereoTag
-  | .telic  => .qua
-  | .atelic => .cum
-
-end Telicity
 
 -- ════════════════════════════════════════════════════
 -- § 2. Vendler Class (five-way projection)
@@ -118,16 +103,6 @@ def dynamicity : VendlerClass → Dynamicity
 
 end VendlerClass
 
--- LicensingPipeline instances: per the convention noted in
--- `Core/Scales/Defs.lean` (LicensingPipeline class docstring), instances
--- live with the type they classify. Both compose via
--- `t.toMereoTag.toBoundedness`.
-
-instance : Core.Order.LicensingPipeline Telicity where
-  toBoundedness t := t.toMereoTag.toBoundedness
-
-instance : Core.Order.LicensingPipeline VendlerClass where
-  toBoundedness v := v.telicity.toMereoTag.toBoundedness
 
 /-- States are stative. -/
 theorem state_is_stative : VendlerClass.state.dynamicity = .stative := rfl

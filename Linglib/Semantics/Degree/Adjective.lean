@@ -162,11 +162,11 @@ theorem ieAdmits_closed_minEndpoint : ieAdmits .closed .minEndpoint := Or.inl rf
 theorem ieAdmits_closed_maxEndpoint : ieAdmits .closed .maxEndpoint := Or.inr rfl
 
 
-/-- Interpretive Economy rules out the relative (contextual) standard whenever
-the scale has an endpoint (`Boundedness.IsLicensed`). -/
-theorem not_ieAdmits_contextual_of_isLicensed {b : Boundedness}
-    (h : b.IsLicensed) : ¬ ieAdmits b .contextual := by
-  cases b <;> simp_all [ieAdmits, Boundedness.IsLicensed]
+/-- Interpretive Economy rules out the relative (contextual) standard whenever the scale has
+an endpoint. -/
+theorem not_ieAdmits_contextual_of_ne_open {b : Boundedness} (h : b ≠ .open_) :
+    ¬ ieAdmits b .contextual := by
+  cases b <;> simp_all [ieAdmits]
 
 /-- A boundedness is *Class A* (relative) iff its default standard requires a
 comparison class — i.e. iff the scale is open. Kennedy's *tall*, *expensive*,

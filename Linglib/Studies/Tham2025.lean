@@ -85,7 +85,7 @@ the paper's argument is that disturbance predicates are a uniform class.
 
 namespace Tham2025
 
-open Core.Order (Boundedness LicensingPipeline)
+open Core.Order (Boundedness)
 open Degree (DimensionBindingType GradableAdjective conjunctiveBinding disjunctiveBinding)
 open Degree.Aggregation (weightedScore boolMeasures
   spatialNormalizedScore spatialNormalizedBinding)
@@ -446,10 +446,8 @@ theorem all_disturbance_compatible_with_much :
 -- § 8. Substrate readouts: Fragment scale-types
 -- ════════════════════════════════════════════════════
 
-/-! Verify that the Fragment adjective entries classify disturbance
-    adjectives with the correct `Boundedness` value. These are
-    consumption sites for the substrate, not bridges —
-    `LicensingPipeline.IsLicensed` is called inline. -/
+/-! The Fragment adjective and verb entries for disturbance predicates carry closed
+    scales. -/
 
 theorem cracked_is_closed : Adjectival.cracked.scaleType = .closed := rfl
 theorem dented_is_closed  : Adjectival.dented.scaleType = .closed := rfl
@@ -482,11 +480,6 @@ theorem dent_adj_verb_scale_agree :
 theorem scratch_adj_verb_scale_agree :
     Adjectival.scratched.scaleType =
     (Verbal.scratch.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
-
-/-- Disturbance adjectives are licensed for degree modification by the
-    Kennedy pipeline, just like *full* and *clean*. -/
-theorem cracked_pipeline_licensed :
-    LicensingPipeline.IsLicensed Adjectival.cracked.scaleType := trivial
 
 /-! Interpretive Economy predicts a max-endpoint standard for
     disturbance adjectives (closed → maxEndpoint). This interacts
@@ -562,21 +555,6 @@ theorem crack_break_same_levin_different_vendler :
 theorem shatter_also_achievement :
     Verbal.shatter.toVerb.vendlerClass = some .achievement := rfl
 
-/-- Boundedness convergence: both pipelines agree crack is `.closed`.
-    Achievement and accomplishment are both telic → `.closed`, so the
-    disturbance-specific VendlerClass divergence is invisible at the
-    `Boundedness` granularity. The Kennedy-Levin pipeline is correct
-    about scale closure but wrong about what that closure implies for
-    aspectual class.
-
-    Contrast with `Studies/KennedyLevin2008.lean`,
-    which proves convergence for 12 standard DAs — there, convergence at
-    `Boundedness` ALSO means convergence at `VendlerClass`. For *crack*,
-    only `Boundedness` converges. -/
-theorem crack_boundedness_converges_despite_vendler_divergence :
-    LicensingPipeline.toBoundedness (Verbal.crack.toVerb.degreeAchievementScale.get!) =
-    LicensingPipeline.toBoundedness (Verbal.crack.toVerb.vendlerClass.get!) := rfl
-
 -- ════════════════════════════════════════════════════
 -- § 10. Cross-paper engagement: Hay-Kennedy-Levin matrix
 -- ════════════════════════════════════════════════════
@@ -602,33 +580,6 @@ theorem crack_refutes_strict_hkl_matrix :
       = Boundedness.closed ∧
     crack.verbInX = true ∧
     crack.verbForX = true := ⟨rfl, rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 11. Cross-paper engagement: Kennedy 2007 licensing
--- ════════════════════════════════════════════════════
-
-/-! [kennedy-2007]'s endpoint licensing (`Boundedness.IsLicensed`, run in
-    `Studies/Kennedy2007.lean` on *full*, *wet*, *dry*) extends to disturbance
-    adjectives without modification. The convergence at `Boundedness` is the partner of the
-    §9 divergence at `VendlerClass`: same substrate, different
-    granularity, different verdict. -/
-
-/-- *cracked* shares licensing status with *full* (Kennedy 2007's
-    canonical totally-closed adjective). The convergence is at the
-    `Boundedness` level — both are `.closed`, hence both license degree
-    modification. -/
-theorem cracked_licensing_converges_with_kennedy2007 :
-    LicensingPipeline.IsLicensed Adjectival.cracked.scaleType ↔
-    LicensingPipeline.IsLicensed Adjectival.full.scaleType :=
-  iff_of_true trivial trivial
-
-/-- All three disturbance adjectives converge with Kennedy 2007 at
-    `Boundedness`. -/
-theorem all_disturbance_pipeline_licensed :
-    LicensingPipeline.IsLicensed Adjectival.cracked.scaleType ∧
-    LicensingPipeline.IsLicensed Adjectival.dented.scaleType ∧
-    LicensingPipeline.IsLicensed Adjectival.scratched.scaleType :=
-  ⟨trivial, trivial, trivial⟩
 
 -- ════════════════════════════════════════════════════
 -- § 12. Cross-paper engagement: Sassoon 2013 binding insufficiency

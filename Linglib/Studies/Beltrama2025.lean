@@ -358,25 +358,6 @@ def decentClass : AdjectiveClass := .mildlyPositive
 theorem mpa_not_relative :
     ¬ decentClass.IsRelative := by decide
 
-/-! ### Integration: Kennedy 2007 Licensing Pipeline -/
-
-open Core.Order (LicensingPipeline)
-/-- MPAs sit on the open `.value` scale, so [kennedy-2007]'s scale-structure
-    pipeline does *not* endpoint-license them — they pattern with relative
-    adjectives on scale shape. Their compatibility with *barely* and moderate
-    modifiers (§6.2), and MPA behavior generally, comes from the functional
-    standard, not from a scale endpoint. -/
-theorem mpa_not_endpoint_licensed :
-    ¬ LicensingPipeline.IsLicensed decent.scaleType ∧
-    ¬ LicensingPipeline.IsLicensed acceptable.scaleType ∧
-    ¬ LicensingPipeline.IsLicensed adequate.scaleType := ⟨id, id, id⟩
-
-/-- *good* is likewise not endpoint-licensed (same open scale). The difference
-    between MPAs and *good* is in standard type (functional vs contextual), not
-    in structural licensing. -/
-theorem good_not_endpoint_licensed :
-    ¬ LicensingPipeline.IsLicensed good.scaleType := id
-
 /-! ### Integration: Evaluative Valence -/
 
 open Features (EvaluativeValence)
