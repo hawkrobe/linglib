@@ -1,4 +1,5 @@
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
+import Mathlib.Probability.Distributions.Uniform
 import Mathlib.Data.ENNReal.Operations
 import Mathlib.Data.ENNReal.Inv
 import Linglib.Core.Probability.ENNRealArith
@@ -118,6 +119,16 @@ theorem probOfSet_compl_add (p : PMF α) (s : Set α) [DecidablePred (· ∈ s)]
   exact (PMF.tsum_coe p ▸ tsum_eq_sum (fun a (h : a ∉ Finset.univ) =>
     absurd (Finset.mem_univ a) h)).symm
 
+/-- Under the uniform PMF, the probability of a set is the counting
+ratio `|s| / |α|`. -/
+theorem probOfSet_uniformOfFintype [Nonempty α] (s : Set α)
+    [DecidablePred (· ∈ s)] :
+    (PMF.uniformOfFintype α).probOfSet s
+      = (Finset.univ.filter (· ∈ s)).card / Fintype.card α := by
+  rw [probOfSet_apply, ← Finset.sum_filter]
+  simp [PMF.uniformOfFintype_apply, Finset.sum_const, ENNReal.div_eq_inv_mul,
+    mul_comm]
+
 omit [Fintype α] in
 /-- `condProbSet` is by definition the ratio. Provided as a named lemma
 so consumers can `rw [condProbSet_eq_div]` rather than `unfold` an
@@ -125,6 +136,22 @@ so consumers can `rw [condProbSet_eq_div]` rather than `unfold` an
 theorem condProbSet_eq_div (p : PMF α) (cond target : Set α) :
     p.condProbSet cond target =
       p.probOfSet (cond ∩ target) / p.probOfSet cond := rfl
+
+/-- Under the uniform PMF, conditional probability is the counting ratio
+`|cond ∩ target| / |cond|`. -/
+theorem condProbSet_uniformOfFintype [Nonempty α] (cond target : Set α)
+    [DecidablePred (· ∈ cond)] [DecidablePred (· ∈ (cond ∩ target))] :
+    (PMF.uniformOfFintype α).condProbSet cond target
+      = (Finset.univ.filter (· ∈ cond ∩ target)).card
+          / (Finset.univ.filter (· ∈ cond)).card := by
+  rw [condProbSet_eq_div, probOfSet_uniformOfFintype, probOfSet_uniformOfFintype,
+    div_eq_mul_inv, div_eq_mul_inv,
+    ENNReal.inv_div (Or.inl (ENNReal.natCast_ne_top _))
+      (Or.inl (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)),
+    div_eq_mul_inv, mul_comm ((Fintype.card α : ℝ≥0∞)) _, mul_mul_mul_comm,
+    ENNReal.inv_mul_cancel (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)
+      (ENNReal.natCast_ne_top _),
+    mul_one, ← div_eq_mul_inv]
 
 omit [Fintype α] in
 /-- When `P(cond) = 0`, the conditional probability is `0`. -/
@@ -239,5 +266,14 @@ theorem condExpect_add (p : PMF α) (A : Set α) (f g : α → ℝ≥0∞) :
 theorem condExpect_zero (p : PMF α) (A : Set α) : p.condExpect A 0 = 0 := by
   unfold condExpect
   simp [Set.indicator]
+
+/-- Finset-sum linearity of `condExpect` in the value function. -/
+theorem condExpect_sum {ι : Type*} (p : PMF α) (A : Set α) (s : Finset ι)
+    (f : ι → α → ℝ≥0∞) :
+    p.condExpect A (∑ i ∈ s, f i) = ∑ i ∈ s, p.condExpect A (f i) := by
+  classical
+  induction s using Finset.cons_induction with
+  | empty => simp
+  | cons i s hi ih => rw [Finset.sum_cons, condExpect_add, ih, Finset.sum_cons]
 
 end PMF

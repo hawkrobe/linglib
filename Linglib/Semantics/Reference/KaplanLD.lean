@@ -26,8 +26,7 @@ import Linglib.Semantics.Reference.Basic
 
 namespace Reference.KaplanLD
 
-open Intensional (Intension)
-open Intensional.Intension (rigid IsRigid rigid_isRigid StableCharacter)
+open Intensional (IsRigid isRigid_const)
 open Semantics.Context (KContext ProperContext LocatedContext)
 open _root_.Reference.Basic (Context Character Content)
 
@@ -80,28 +79,28 @@ parameters (world cW, time cT), then rigidify the result.
 
 dthat[α] is an expression whose content at context c is the rigid intension
 constantly returning α's extension at ⟨c_w, c_t⟩. -/
-def dthat {W T τ : Type*} (α : W → T → τ) (cW : W) (cT : T) : Intension W τ :=
-  rigid (α cW cT)
+def dthat {W T τ : Type*} (α : W → T → τ) (cW : W) (cT : T) : W → τ :=
+  fun _ => α cW cT
 
 /-- Simplified world-only dthat (when T is not relevant). -/
-def dthatW {W τ : Type*} (α : Intension W τ) (cW : W) : Intension W τ :=
-  rigid (α cW)
+def dthatW {W τ : Type*} (α : W → τ) (cW : W) : W → τ :=
+  fun _ => α cW
 
 /-- dthat[α] has Stable Content: it is rigid. -/
 theorem dthat_isRigid {W T τ : Type*} (α : W → T → τ) (cW : W) (cT : T) :
     IsRigid (dthat α cW cT) :=
-  rigid_isRigid (α cW cT)
+  isRigid_const (α cW cT)
 
 /-- dthatW[α] is rigid. -/
-theorem dthatW_isRigid {W τ : Type*} (α : Intension W τ) (cW : W) :
+theorem dthatW_isRigid {W τ : Type*} (α : W → τ) (cW : W) :
     IsRigid (dthatW α cW) :=
-  rigid_isRigid (α cW)
+  isRigid_const (α cW)
 
 /-- Remark 3: α = dthat[α] is valid — at the context world, α and
 dthat[α] agree.
 
 For any α and world w, `α w = dthatW α w w`. -/
-theorem alpha_eq_dthat_alpha {W τ : Type*} (α : Intension W τ) (w : W) :
+theorem alpha_eq_dthat_alpha {W τ : Type*} (α : W → τ) (w : W) :
     α w = dthatW α w w := rfl
 
 /-- □(α = dthat[α]) is NOT valid in general: dthat[α] is rigid but α
@@ -110,10 +109,9 @@ may not be. If α varies across worlds, there exists a world w' where
 
 We state this as: given α that varies, the universal closure fails. -/
 theorem box_alpha_eq_dthat_not_valid {W τ : Type*}
-    (α : Intension W τ) (cW w' : W) (h : α w' ≠ α cW) :
+    (α : W → τ) (cW w' : W) (h : α w' ≠ α cW) :
     α w' ≠ dthatW α cW w' := by
-  simp only [dthatW, rigid]
-  exact h
+  simpa [dthatW] using h
 
 /-! ## Indexical Operators (Content Operators, §VI) -/
 

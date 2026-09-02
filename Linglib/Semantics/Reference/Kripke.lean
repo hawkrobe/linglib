@@ -19,9 +19,8 @@ lost" is unambiguous; "The president might have lost" is ambiguous.
 - `essential_rigid_necessary`: essential properties are preserved by rigid designators
 - `rigidification_not_synonymy`: dthat rescues rigidity but destroys meaning-identity
 
-Pure intension algebra (`varying_not_rigid`, `rigid_neq_nonrigid`,
-`rigid_allOrNothing`, `nonrigid_identity_contingent`) lives in
-`Core/Intension.lean` alongside `rigid_identity_necessary`.
+The rigidity predicate and the necessity of identity live in
+`Semantics/Intensional/Rigidity.lean`.
 
 -/
 
@@ -31,9 +30,7 @@ import Linglib.Semantics.Reference.KaplanLD
 
 namespace Reference.Kripke
 
-open Intensional (Intension)
-open Intensional.Intension (IsRigid rigid rigid_isRigid CoRefer CoExtensional
-  rigid_identity_necessary varying_not_rigid rigid_neq_nonrigid)
+open Intensional (IsRigid isRigid_const)
 open _root_.Reference.Basic (properName isDirectlyReferential)
 open _root_.Reference.KaplanLD (dthatW dthatW_isRigid)
 
@@ -48,7 +45,7 @@ This is the narrow-scope reading: the term is inside the modal operator.
 
 "The president might have lost" (de dicto) = at some world w, whoever is
 president at w lost at w. -/
-@[simp] def deDicto {W E : Type*} (P : E → W → Prop) (t : Intension W E)
+@[simp] def deDicto {W E : Type*} (P : E → W → Prop) (t : W → E)
     (w : W) : Prop :=
   P (t w) w
 
@@ -58,7 +55,7 @@ wide-scope reading: the term scopes over the modal operator.
 
 "The president might have lost" (de re) = at some world w, the actual
 president (Nixon) lost at w. -/
-@[simp] def deRe {W E : Type*} (P : E → W → Prop) (t : Intension W E)
+@[simp] def deRe {W E : Type*} (P : E → W → Prop) (t : W → E)
     (w₀ w : W) : Prop :=
   P (t w₀) w
 
@@ -82,7 +79,7 @@ Backward: if a designator is scope-inert for ALL predicates, it must be
 rigid. We witness this by the identity predicate `λ e _ => e = t w₀`,
 which discriminates any referent shift. -/
 theorem rigid_iff_scope_invariant {W E : Type*}
-    (t : Intension W E) (w₀ : W) :
+    (t : W → E) (w₀ : W) :
     IsRigid t ↔ (∀ (P : E → W → Prop) (w : W), deRe P t w₀ w ↔ deDicto P t w) := by
   constructor
   · -- Forward: rigidity → scope-invariance
@@ -106,48 +103,41 @@ At the shifted world, the actual referent satisfies this trivially but
 the shifted referent does not. This is constructive: from the mere fact
 that a term is non-rigid, we build the scope ambiguity. -/
 theorem nonrigid_creates_ambiguity {W E : Type*}
-    (t : Intension W E) (w₀ w₁ : W) (hShift : t w₁ ≠ t w₀) :
+    (t : W → E) (w₀ w₁ : W) (hShift : t w₁ ≠ t w₀) :
     ∃ (P : E → W → Prop), deRe P t w₀ w₁ ∧ ¬ deDicto P t w₁ :=
   ⟨λ e _ => e = t w₀, rfl, hShift⟩
 
 /-- Equivalent form: non-rigidity implies the scope-invariance property fails.
 Contrapositive of the backward direction of `rigid_iff_scope_invariant`. -/
 theorem nonrigid_scope_sensitive {W E : Type*}
-    (t : Intension W E) (w₀ w₁ : W) (hShift : t w₁ ≠ t w₀) :
+    (t : W → E) (w₀ w₁ : W) (hShift : t w₁ ≠ t w₀) :
     ¬ (∀ (P : E → W → Prop) (w : W), deRe P t w₀ w ↔ deDicto P t w) := by
   intro h
   exact hShift ((h (λ e _ => e = t w₀) w₁).mp rfl)
 
 /-! ## The Modal Argument
 
-Kripke's argument against the description theory of names.
-The formal core chains two lemmas from `Intensional.Intension`:
-`varying_not_rigid` (descriptions are non-rigid) and
-`rigid_neq_nonrigid` (rigid ≠ non-rigid). -/
+Kripke's argument against the description theory of names: a description that varies
+across worlds is not rigid, so it is not the rigid name. -/
 
 /-- **Kripke's modal argument.** If a name rigidly designates an entity and
 the associated description varies across worlds, the name is not synonymous
 with the description.
 
-This is the formal refutation of the Frege-Russell description theory of
-names. The proof chains `varying_not_rigid` and `rigid_neq_nonrigid`
-from `Intensional.Intension`. -/
-theorem modal_argument {W E : Type*}
-    (name desc : Intension W E)
-    (hRigid : IsRigid name)
-    (w₁ w₂ : W) (hVaries : desc w₁ ≠ desc w₂) :
-    name ≠ desc :=
-  rigid_neq_nonrigid name desc hRigid (varying_not_rigid desc w₁ w₂ hVaries)
+This is the formal refutation of the Frege-Russell description theory of names. -/
+theorem modal_argument {W E : Type*} (name desc : W → E) (hRigid : IsRigid name)
+    (w₁ w₂ : W) (hVaries : desc w₁ ≠ desc w₂) : name ≠ desc :=
+  fun e => hVaries ((e ▸ hRigid) w₁ w₂)
 
 /-- The modal argument instantiated for proper names: no proper name is
 synonymous with a non-rigid description.
 
 Bridges `properName` from `Reference/Basic.lean` to the modal argument. -/
 theorem properName_neq_description {C W E : Type*}
-    (e : E) (c : C) (desc : Intension W E)
+    (e : E) (c : C) (desc : W → E)
     (w₁ w₂ : W) (hVaries : desc w₁ ≠ desc w₂) :
     (properName (C := C) (W := W) e).character c ≠ desc :=
-  modal_argument _ desc (rigid_isRigid e) w₁ w₂ hVaries
+  modal_argument _ desc (isRigid_const e) w₁ w₂ hVaries
 
 /-! ## Essential and Accidental Properties -/
 
@@ -165,7 +155,7 @@ If P is essential to e, and `name` is a rigid designator of e, then
 `∀ w, P(name(w), w)`. Necessity "attaches to things" (Kripke), and
 rigid designators transparently transmit this necessity. -/
 theorem essential_rigid_necessary {W E : Type*}
-    (e : E) (P : E → W → Prop) (name : Intension W E)
+    (e : E) (P : E → W → Prop) (name : W → E)
     (hRigid : IsRigid name) (hEss : IsEssential e P)
     (w₀ : W) (hRef : name w₀ = e) :
     ∀ w, P (name w) w := by
@@ -177,7 +167,7 @@ theorem essential_rigid_necessary {W E : Type*}
 essential to e, a description that shifts to denote someone else at w₁
 may fail P at w₁. This is why descriptions yield wrong modal predictions. -/
 theorem nonrigid_loses_essential {W E : Type*}
-    (_e : E) (P : E → W → Prop) (desc : Intension W E)
+    (_e : E) (P : E → W → Prop) (desc : W → E)
     (w₁ : W) (hNotP : ¬ P (desc w₁) w₁) :
     ¬ (∀ w, P (desc w) w) :=
   λ h => hNotP (h w₁)
@@ -195,7 +185,7 @@ The description is contingent; the name (after rigidification) is rigid.
 This follows from the modal argument: `dthatW desc w₀` is rigid
 (by `dthatW_isRigid`), `desc` is non-rigid (it varies), so they differ. -/
 theorem rigidification_not_synonymy {W E : Type*}
-    (desc : Intension W E) (w₀ w₁ : W)
+    (desc : W → E) (w₀ w₁ : W)
     (hVaries : desc w₁ ≠ desc w₀) :
     dthatW desc w₀ ≠ desc :=
   modal_argument (dthatW desc w₀) desc (dthatW_isRigid desc w₀) w₁ w₀ hVaries
@@ -209,18 +199,18 @@ not (Nixon might not have existed).
 [kripke-1980]: a strongly rigid designator designates an object
 that exists in every possible world. -/
 def IsStronglyRigid {W E : Type*} (exists_ : E → W → Prop)
-    (f : Intension W E) : Prop :=
+    (f : W → E) : Prop :=
   IsRigid f ∧ ∀ w, exists_ (f w) w
 
 /-- Strongly rigid designators are rigid. -/
 theorem stronglyRigid_isRigid {W E : Type*} {exists_ : E → W → Prop}
-    {f : Intension W E} (h : IsStronglyRigid exists_ f) : IsRigid f :=
+    {f : W → E} (h : IsStronglyRigid exists_ f) : IsRigid f :=
   h.1
 
 /-- `rigid e` is strongly rigid whenever e necessarily exists. -/
 theorem rigid_stronglyRigid {W E : Type*} {exists_ : E → W → Prop}
     (e : E) (hExists : ∀ w, exists_ e w) :
-    IsStronglyRigid exists_ (rigid (W := W) e) :=
-  ⟨rigid_isRigid e, hExists⟩
+    IsStronglyRigid exists_ (fun _ => e) :=
+  ⟨isRigid_const e, hExists⟩
 
 end Reference.Kripke

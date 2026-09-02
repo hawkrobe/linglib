@@ -36,13 +36,14 @@ Omitted: the string-level operations (gender, verb forms), tense (S17), and post
 ## References
 
 * [R. Montague, *The Proper Treatment of Quantification in Ordinary English* (1973)][montague-1973]
-* [D. Dowty, R. Wall, S. Peters, *Introduction to Montague Semantics* (1981)][dowty-wall-peters-1981]
+* [D. Dowty, R. Wall, S. Peters, *Introduction to Montague Semantics*
+  (1981)][dowty-wall-peters-1981]
 -/
 
 namespace Montague1973
 
 open Intensional (Ty Denot)
-open Intensional.Intension (IsRigid rigid_isRigid)
+open Intensional (IsRigid isRigid_const)
 open Quantification (every_sem some_sem)
 open Quantification.Polyadic (iterate surfaceScope inverseScope)
 
@@ -276,15 +277,15 @@ theorem ExtData.interp_logicallyPossible (d : ExtData E) : (d.interp W).Logicall
   find_ext := ⟨fun _ u v => d.find v u, fun _ _ _ => Iff.rfl⟩
 
 @[simp] theorem ExtData.star₁_man (d : ExtData E) (i : W) : star₁ ((d.interp W).man i) = d.man :=
-  funext fun u => propext ⟨And.right, fun h => ⟨rigid_isRigid u, h⟩⟩
+  funext fun u => propext ⟨And.right, fun h => ⟨isRigid_const u, h⟩⟩
 
 @[simp] theorem ExtData.star₁_woman (d : ExtData E) (i : W) :
     star₁ ((d.interp W).woman i) = d.woman :=
-  funext fun u => propext ⟨And.right, fun h => ⟨rigid_isRigid u, h⟩⟩
+  funext fun u => propext ⟨And.right, fun h => ⟨isRigid_const u, h⟩⟩
 
 @[simp] theorem ExtData.star₁_unicorn (d : ExtData E) (i : W) :
     star₁ ((d.interp W).unicorn i) = d.unicorn :=
-  funext fun u => propext ⟨And.right, fun h => ⟨rigid_isRigid u, h⟩⟩
+  funext fun u => propext ⟨And.right, fun h => ⟨isRigid_const u, h⟩⟩
 
 @[simp] theorem ExtData.star₁_walk (d : ExtData E) (i : W) : star₁ ((d.interp W).walk i) = d.walk :=
   rfl

@@ -14,7 +14,7 @@ conditional *denotation* is `P(ψ ∣ φ)`. [douven-2008] provides
 the evidential support theory variant; [kaufmann-2005] [kaufmann-2013] extend to causal premise semantics; [pearl-2013]
 develops the structural-counterfactual face.
 
-[chung-mascarenhas-2024] eq. 44 promotes the consequent from a
+[chung-mascarenhas-2023] eq. 44 promotes the consequent from a
 proposition to a **measure function** `γ : W → ℝ≥0∞`:
 
     ⟦if φ, γ⟧^w = E_w[γ ∣ φ]
@@ -50,7 +50,7 @@ open scoped ENNReal
 
 variable {W : Type*} [Fintype W]
 
-/-- [chung-mascarenhas-2024] compositional conditional:
+/-- [chung-mascarenhas-2023] compositional conditional:
 `⟦if φ, γ⟧^w = E_w[γ ∣ φ]`. Definitionally `condExpect`. -/
 noncomputable abbrev condIf (p : PMF W) (φ : Set W) (γ : W → ℝ≥0∞) : ℝ≥0∞ :=
   p.condExpect φ γ

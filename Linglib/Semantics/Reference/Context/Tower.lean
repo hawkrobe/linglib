@@ -253,15 +253,14 @@ def innermostReader (C : Type*) : AccessPattern C C := ⟨.local, id⟩
   simp only [innermostReader, resolve, DepthSpec.local_resolve,
     ContextTower.contextAt_depth, id_eq]
 
-/-- Bridge to the substrate's `Intension` framework: an `AccessPattern`
-    IS an `Intension (ContextTower C) R` via its `resolve` method. The
-    substrate's `Intension`-based machinery (`Intensional.Intension.IsRigid`,
+/-- An `AccessPattern` IS an intension `ContextTower C → R` via its `resolve` method, so
+    the substrate's rigidity machinery (`Intensional.IsRigid`,
     `IsRigidOn`, the functoriality lemmas in
     `Semantics/Intensional/Rigidity.lean`) thereby applies to access
     patterns. The push-invariance of origin-depth access (`origin_stable`
     above) is the access-pattern analog of the substrate's `IsRigidOn`
     on tower-shift orbits. -/
-def toIntension (ap : AccessPattern C R) : Intensional.Intension (ContextTower C) R :=
+def toIntension (ap : AccessPattern C R) : ContextTower C → R :=
   ap.resolve
 
 @[simp] theorem toIntension_apply (ap : AccessPattern C R) (t : ContextTower C) :

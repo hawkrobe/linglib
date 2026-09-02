@@ -6,6 +6,7 @@ import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.Polyadic
 
 /-!
 # [heim-kratzer-1998]: Type-Driven Composition of Quantifiers
@@ -38,10 +39,13 @@ Evaluated as:
 
 ## Scope ambiguity
 
-"Everybody loves somebody" yields two readings from two QR structures —
+"Every person sees some person" yields two readings from two QR structures —
 surface scope (∀>∃) and inverse scope (∃>∀) — that differ only in which
-quantifier is raised higher. `scope_readings_differ` certifies that the
-two trees compute genuinely distinct propositions in the toy model.
+quantifier is raised higher. The readings are the two linear readings of
+`Quantification.Polyadic`, shared with the quantifying-in analysis of
+`Studies/Montague1973`; `scope_readings_differ` certifies that the two trees
+compute genuinely distinct propositions in the toy model, and
+`inverse_entails_surface` that they are nested rather than independent.
 
 ## Note on `Prop`-valued `.t`
 
@@ -60,6 +64,7 @@ open Syntax
 open Semantics.Composition.Tree
 open Quantification.Quantifier
 open Quantification
+open Quantification.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)
 open Semantics.Montague.ToyLexicon (student_sem person_sem)
 open Minimalist.SyntacticObject
 
@@ -135,15 +140,13 @@ def tree_inverse : Tree Unit String :=
         (.binder 1
           (.bin (.tr 1) (.bin (.leaf "sees") (.tr 2))))))
 
-/-- Surface scope Prop. -/
+/-- The surface-scope reading, `∀ > ∃`: `every` over `some`, with `x sees y`. -/
 abbrev surfaceScopeProp : Prop :=
-  every_sem person_sem
-    (λ x => some_sem person_sem (λ y => ToyLexicon.sees_sem y x))
+  surfaceScope every_sem some_sem person_sem person_sem fun x y => ToyLexicon.sees_sem y x
 
-/-- Inverse scope Prop. -/
+/-- The inverse-scope reading, `∃ > ∀`. -/
 abbrev inverseScopeProp : Prop :=
-  some_sem person_sem
-    (λ y => every_sem person_sem (λ x => ToyLexicon.sees_sem y x))
+  inverseScope every_sem some_sem person_sem person_sem fun x y => ToyLexicon.sees_sem y x
 
 /-- Surface scope is true in the toy model.
 (John sees Mary and Mary sees John — each person sees some person.) -/
@@ -171,11 +174,16 @@ theorem scope_readings_differ : surfaceScopeProp ≠ inverseScopeProp := by
   intro h
   exact inverse_scope_false (h ▸ surface_scope_true)
 
+/-- The readings are nested: the inverse reading entails the surface one (`∃∀ ⊨ ∀∃`), so a
+model can separate them only in the direction the toy model does. -/
+theorem inverse_entails_surface : inverseScopeProp → surfaceScopeProp :=
+  iterate_every_some_of_some_every _ _ _
+
 /-! ### The engine computes the readings
 
-The QR trees and the hand-written `surfaceScopeProp`/`inverseScopeProp` are linked
-by `interp`: running the engine on a tree yields exactly the corresponding reading.
-So the scope-ambiguity result is a fact about the *engine's* output, not a parallel
+The QR trees and the readings `surfaceScopeProp`/`inverseScopeProp` are linked by
+`interp`: running the engine on a tree yields exactly the corresponding reading. So the
+scope-ambiguity result is a fact about the *engine's* output, not a parallel
 re-implementation alongside it. -/
 
 /-- Surface scope: the engine computes the hand-written reading. -/

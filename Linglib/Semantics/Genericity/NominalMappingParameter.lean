@@ -43,10 +43,7 @@ import Linglib.Morphology.Word.Basic
 
 open Morphology (Word)
 
-
-
 namespace Semantics.Kinds.NMP
-
 
 -- Domain Structure (Link's Semilattice)
 
@@ -63,13 +60,11 @@ def Individual.atom {Atom : Type*} (a : Atom) : Individual Atom := {a}
 
 variable (World Atom : Type*)
 
-/-- A property (intension): function from worlds to sets of individuals.
-    This is `Intensional.Intension World (Set (Individual Atom))`. -/
-abbrev Property := Intensional.Intension World (Set (Individual Atom))
+/-- A property (intension): function from worlds to sets of individuals. -/
+abbrev Property := World → Set (Individual Atom)
 
-/-- An individual concept: function from worlds to individuals.
-    This is `Intensional.Intension World (Individual Atom)`. -/
-abbrev IndividualConcept := Intensional.Intension World (Individual Atom)
+/-- An individual concept: function from worlds to individuals. -/
+abbrev IndividualConcept := World → Individual Atom
 
 /--
 Kinds are a special subset of individual concepts.
