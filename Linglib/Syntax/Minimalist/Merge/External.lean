@@ -11,7 +11,7 @@ External Merge (Lemma 1.4.1) on the canonical carrier `ConnesKreimer R (Nonplana
 `of' {S, S'}` to `of' {Nonplanar.node lbl {S, S'}}` (`mergeOp_pair`), and on a workspace with a
 residual part `F̂` avoiding the cuts that extract `S` or `S'`, it factors through the spectator
 components (`mergeOp_factor_out_singleton`, `mergeOp_pair_residual`). The carrier-level form on
-`SyntacticObject` is `SyntacticObject.merge_toForest` in `Merge/SyntacticObject.lean`.
+`SyntacticObject` is `SyntacticObject.mergeOp_node` in `Merge/SyntacticObject.lean`.
 
 The proof of `mergeOp_pair` expands the merge coproduct
 `Δ^ρ({S, S'}) = comulTreeN S * comulTreeN S'`, distributes the primitive-plus-cut split of each

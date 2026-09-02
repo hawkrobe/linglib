@@ -97,13 +97,13 @@ binary tree (subject + predicate). This is the shape consumed by any
 file that wants to compose PVC SCs into larger structures (e.g.
 `embedUnderV` for the full `[VP V [SC DP Prt]]` analysis, as used by
 `HaddicanEtAl2026.pvc_sc`). Stated as a leaf count over the noncomputable
-Merge node (`SyntacticObject.leafCount_merge`) so downstream files can rewrite without
+Merge node (`SyntacticObject.leafCount_node`) so downstream files can rewrite without
 unfolding `pvToSmallClause`. -/
 
 /-- Any PVC small clause is a 2-leaf binary tree (subject + predicate). -/
 theorem pvToSmallClause_toSO_shape (pv : ParticleVerb) (dpId prtId : Nat) :
     (pvToSmallClause pv dpId prtId).toSO.leafCount = 2 := by
-  simp only [pvToSmallClause, SmallClause.toSO, leafCount_merge,
+  simp only [pvToSmallClause, SmallClause.toSO, leafCount_node,
     mkLeafPhon, leafCount_lexLeaf]
 
 /-- The `predCat` field of `pvToSmallClause` agrees with the

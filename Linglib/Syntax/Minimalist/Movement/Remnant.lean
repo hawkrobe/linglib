@@ -23,9 +23,8 @@ reasoning is shared rather than re-stipulated:
 - [aboh-dyakonova-2009]: predicate doubling and parallel chains
   in {Gungbe} and across {Kwa}.
 - [harizanov-gribanova-2017] / [harizanov-gribanova-2019]:
-  alternative analysis (postsyntactic amalgamation), formalized in
-  `Studies/HarizanovGribanova2019Amalgamation.lean`
-  with the syntactic-vs-PF dichotomy.
+  alternative analysis (postsyntactic amalgamation), with the
+  syntactic-vs-PF dichotomy.
 - [van-urk-2024]: cross-linguistic constraints on predicate
   fronting; alternative substantive proposals.
 - [sande-clem-dabkowski-2026]: Guébie particle-fronting in
@@ -66,7 +65,7 @@ trace is overt.
 ## What this substrate does NOT do
 
 It does not (yet) provide a typed bridge to `HeadDisplacement` (the
-syntactic-vs-PF dichotomy in `HarizanovGribanova2019Amalgamation`),
+syntactic-vs-PF dichotomy of [harizanov-gribanova-2019]),
 nor does it state cross-linguistic generalizations about which
 constructions license remnant fronting. Those are downstream Studies
 content. The substrate is intentionally minimal — just enough to type

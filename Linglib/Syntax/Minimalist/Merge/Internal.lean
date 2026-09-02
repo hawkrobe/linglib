@@ -12,7 +12,7 @@ where the first stage `mergeOpUnit mover` selects the Δ^ρ cut on `T` whose cro
 `{mover}`, yielding `mover ⊗ (T/mover)`, and the second stage is External Merge of the mover with
 the deletion quotient. The unit stage `M_{β,1}` is a bookkeeping device that factors Internal
 Merge as a composition, not a stand-alone Merge. The carrier-level form on `SyntacticObject` is
-`SyntacticObject.intMerge_toForest` in `Merge/SyntacticObject.lean`.
+`SyntacticObject.mergeOp_node_im` in `Merge/SyntacticObject.lean`.
 
 ## Main results
 

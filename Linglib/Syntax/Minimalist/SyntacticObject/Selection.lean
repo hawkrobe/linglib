@@ -41,15 +41,12 @@ head functions it is partial: `0` at exocentric nodes.
 
 ## Implementation notes
 
-`SelectionState` is a one-field structure over `Option (LIToken × List Cat)`: the
-`Option` is implementation, `0` is the public spelling of the exocentric failure —
-the absorbing element of [marcolli-chomsky-berwick-2025]'s renormalization reading
-of partial head functions (off-domain values as the "meaningless infinities" of
-computation, their §1.13.2 remark). No `One` (two saturated states multiply to
-`0` — exocentricity is a zero divisor) and no associativity claim, so the
-structure is `CommMagma` + `MulZeroClass` only. **Index-free traces**: a bare
-trace leaf gets the canonical saturated value `.of (mkTraceToken 0) []`;
-`selCheck` reads only the token's category and `outerSel`, both index-independent.
+`SelectionState` is a one-field structure over `Option (LIToken × List Cat)`, so that the
+selection product can be an instance on it: the `Option` is implementation, and `0` is the
+public spelling of the exocentric failure, the off-domain value of a partial head function.
+There is no `One`, since two saturated states multiply to `0`, and no associativity claim, so the
+structure is `CommMagma` + `MulZeroClass` only. A trace leaf gets the saturated value
+`.of (mkTraceToken 0) []`; `selCheck` reads only the token's category and `outerSel`.
 -/
 
 namespace Minimalist
