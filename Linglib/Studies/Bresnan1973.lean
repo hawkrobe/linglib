@@ -1,4 +1,4 @@
-import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Boundedness
 import Linglib.Syntax.Category.Degree.Basic
 
 /-!
@@ -44,7 +44,7 @@ structural fact about the head and the deleted constituent.
 namespace Bresnan1973
 
 open Degree (Head)
-open Core.Order (ScalePolarity)
+open Degree (ScalePolarity)
 
 /-- The two syntactic forms of than-clauses: phrasal "than Bill" vs
     clausal "than Bill is tall". -/

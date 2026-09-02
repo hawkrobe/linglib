@@ -15,7 +15,7 @@ Kennedy classification is exercised at the end of this file.
 namespace English.Predicates.Adjectival
 
 open Degree (AntonymRelation GradableAdjective)
-open Core.Order (Boundedness)
+open Degree (Boundedness)
 open Features (EvaluativeValence)
 open Features (NegationType)
 

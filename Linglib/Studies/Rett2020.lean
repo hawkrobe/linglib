@@ -46,7 +46,6 @@ namespace Rett2020
 
 open Tense Anscombe1964 Karttunen1974 Heinamaki1974
 
-open Core.Order
 open NonemptyInterval
 open Features
 open Features.ChangeOfState
@@ -437,7 +436,6 @@ namespace Rett2020.Examples
 
 open Tense Anscombe1964 Karttunen1974 Heinamaki1974
 
-open Core.Order
 open NonemptyInterval
 open Tense
 

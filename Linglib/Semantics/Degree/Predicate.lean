@@ -2,7 +2,7 @@ import Mathlib.Order.Basic
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Max
 import Mathlib.Tactic.NormNum
-import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Boundedness
 import Linglib.Semantics.Degree.Comparison
 
 /-!
@@ -27,7 +27,6 @@ relation per case.
 
 namespace Degree
 
-open Core.Order
 
 /-! ### Informativity on Scales -/
 

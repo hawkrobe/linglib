@@ -46,7 +46,6 @@ to pragmatic as against semantic coercion.
 namespace AlstottAravind2026
 
 open Tense Rett2020 Data.Examples
-open Core.Order
 
 /-! ### The two theories (§2.1) -/
 

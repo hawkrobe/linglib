@@ -1,5 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Boundedness
 import Linglib.Features.Aktionsart
 import Linglib.Features.PropertyDomain
 import Linglib.Semantics.Degree.Measure.Dimension
@@ -28,7 +28,7 @@ telicity defaults, endpoint licensing) is in
 
 namespace Features
 
-open Core.Order (Boundedness)
+open Degree (Boundedness)
 
 /-- The scalar dimension a gradable predicate measures along — the union
     of the perceptual adjective dimensions and the scalar-change verb
@@ -102,7 +102,7 @@ Absorbed from the retired `Degree/Gradability/Dimension.lean`: the degree
 carrier transports from `Boundedness.degreeShape`, and the Kennedy–Levin
 telicity defaults are theorems about it. -/
 
-open Core.Order (Boundedness)
+open Degree (Boundedness)
 
 /-- Each dimension's degree type — inherited from its boundedness, so the grounding
     transports rather than re-casing per dimension. -/

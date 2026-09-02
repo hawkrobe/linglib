@@ -5,7 +5,7 @@ import Linglib.Semantics.Mereology
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Features.Aktionsart
-import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Boundedness
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Data.Examples.Wellwood2015

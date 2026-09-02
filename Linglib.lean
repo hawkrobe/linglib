@@ -228,7 +228,6 @@ import Linglib.Core.Optimization.System
 import Linglib.Core.Order.AllenRelation
 import Linglib.Core.Order.Antichain
 import Linglib.Core.Order.Argmax
-import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.Branching
 import Linglib.Core.Order.Caratheodory
 import Linglib.Core.Order.Command
@@ -1621,6 +1620,7 @@ import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Aggregation
 import Linglib.Semantics.Degree.Antonymy
 import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Boundedness
 import Linglib.Semantics.Degree.Comparison
 import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Delineation

@@ -22,7 +22,7 @@ pair an adjective is.
 * `ScalePolarity`
 -/
 
-namespace Core.Order
+namespace Degree
 
 /-! ### Scale boundedness -/
 
@@ -110,4 +110,4 @@ inductive ScalePolarity where
   | negative
   deriving DecidableEq, Repr
 
-end Core.Order
+end Degree
