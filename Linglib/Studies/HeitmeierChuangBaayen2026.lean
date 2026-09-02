@@ -1,4 +1,4 @@
-import Linglib.Processing.DiscriminativeLexicon.Coding
+import Linglib.Processing.DiscriminativeLexicon.Realization
 import Linglib.Processing.DiscriminativeLexicon.Training
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 
@@ -12,21 +12,22 @@ as the meaning of *walk* plus a past-tense vector (Table 12.7; conceptualization
 addition, eq. 5.3, §16.3), which regularizes a system into "a reasonable approximation of a truly
 regular system, and for such a system, linear mappings appear to work quite well" (§16.6,
 Table 16.2); but with the meanings of held-out verbs reconstructed this way, "none of the
-irregular verbs was produced correctly" (§12.9). This file states why. Over additive semantics a
-linear map's form table satisfies proportional analogy by construction, so a table violating
-analogy has no linear interpolant and forces positive training loss, and when stem and exponent
-vectors are jointly independent linear realisability is exactly analogy. Over word-specific
-embeddings, by contrast, any table is linearly realisable as soon as the embeddings are linearly
-independent, which fills the irregular-linear cell of Table 16.2. The English past tense at the
-book's letter-trigram coding (§12.9, `cueVector`) is the irregular table: *walk, walked* against
-*go, went*.
+irregular verbs was produced correctly" (§12.9). This file states why, in word-and-paradigm
+terms (`Morphology.IsAnalogicallyRegular`). Over additive semantics a linear map's form table
+satisfies proportional analogy by construction, so a table violating analogy has no linear
+interpolant and forces positive training loss, and when stem and exponent vectors are jointly
+independent a table is the paradigm of some linear DLM iff it is analogically regular. Over
+word-specific embeddings, by contrast, any table is linearly realisable as soon as the
+embeddings are linearly independent, which fills the irregular-linear cell of Table 16.2. The
+English past tense at the book's letter-trigram coding (§12.9, `cueVector`) is the irregular
+table: *walk, walked* against *go, went*.
 
 ## Main results
 
 * `not_exists_linear_of_not_regular`, `pos_weightedLoss_of_not_regular`: an irregular table has
   no linear interpolant over additive semantics and forces positive loss.
-* `exists_linear_iff_isAnalogicallyRegular`: over jointly independent stem and exponent vectors,
-  linear realisability is analogy.
+* `exists_linear_iff_isAnalogicallyRegular`, `exists_paradigm_eq_iff`: over jointly independent
+  stem and exponent vectors, a table is realised by a linear DLM iff it is analogically regular.
 * `exists_linear_of_linearIndependent_words`: over independent word-specific embeddings every
   table is linearly realisable.
 * `pastTense_not_regular`: *walk, walked, go, went* violates analogy.
@@ -39,31 +40,13 @@ book's letter-trigram coding (§12.9, `cueVector`) is the irregular table: *walk
 
 namespace HeitmeierChuangBaayen2026
 
-open DiscriminativeLexicon
+open DiscriminativeLexicon Morphology
 
 variable {d n : ℕ} {Stem Cell : Type*}
-
-/-- A paradigm's form table satisfies **proportional analogy** if the form contrast between two
-cells is the same for every stem (*cat : cats :: dog : dogs*). -/
-def IsAnalogicallyRegular (f : Stem → Cell → FormVec n) : Prop :=
-  ∀ st st' c c', f st c - f st c' = f st' c - f st' c'
 
 /-! ### Additive semantics -/
 
 variable (σ : Stem → MeaningVec d) (ε : Cell → MeaningVec d)
-
-/-- Conceptualizing a paradigm cell from its stem and cell primitives is the imputed additive
-semantics (eq. 5.3, Table 12.7). -/
-@[simp] theorem conceptualize_pair (st : Stem) (c : Cell) :
-    conceptualize (Sum.elim σ ε) {Sum.inl st, Sum.inr c} = σ st + ε c := by
-  simp
-
-/-- Every linear map's paradigm table over additive semantics is analogically regular: the form
-shift of an exponent is stem-independent. -/
-theorem isAnalogicallyRegular_comp (G : MeaningVec d →ₗ[ℝ] FormVec n) :
-    IsAnalogicallyRegular fun st c => G (σ st + ε c) := fun st st' c c' => by
-  simp only [map_add]
-  abel
 
 /-- A table violating proportional analogy has no linear interpolant over additive semantics:
 irregular forms cannot be produced from constructed meanings (§12.9). -/
@@ -71,7 +54,7 @@ theorem not_exists_linear_of_not_regular {f : Stem → Cell → FormVec n}
     (hf : ¬ IsAnalogicallyRegular f) :
     ¬ ∃ G : MeaningVec d →ₗ[ℝ] FormVec n, ∀ st c, G (σ st + ε c) = f st c := by
   rintro ⟨G, hG⟩
-  exact hf (by simpa only [hG] using isAnalogicallyRegular_comp σ ε G)
+  exact hf (by simpa [hG] using (isAnalogicallyRegular_add σ ε).map G.toAddMonoidHom)
 
 /-! ### Interpolation -/
 
@@ -101,17 +84,24 @@ theorem exists_linear_iff_isAnalogicallyRegular [Nonempty Stem] [Nonempty Cell]
     (hind : LinearIndependent ℝ (Sum.elim σ ε)) (f : Stem → Cell → FormVec n) :
     (∃ G : MeaningVec d →ₗ[ℝ] FormVec n, ∀ st c, G (σ st + ε c) = f st c) ↔
       IsAnalogicallyRegular f := by
-  refine ⟨fun ⟨G, hG⟩ => by simpa only [hG] using isAnalogicallyRegular_comp σ ε G,
-    fun hreg => ?_⟩
-  obtain ⟨st₀⟩ := ‹Nonempty Stem›
-  obtain ⟨c₀⟩ := ‹Nonempty Cell›
-  obtain ⟨G, hG⟩ := exists_linear_of_linearIndependent hind
-    (Sum.elim (fun st => f st c₀) fun c => f st₀ c - f st₀ c₀)
+  refine ⟨fun ⟨G, hG⟩ => by
+    simpa [hG] using (isAnalogicallyRegular_add σ ε).map G.toAddMonoidHom, fun hreg => ?_⟩
+  obtain ⟨a, b, hab⟩ := isAnalogicallyRegular_iff_exists_add.1 hreg
+  obtain ⟨G, hG⟩ := exists_linear_of_linearIndependent hind (Sum.elim a b)
   refine ⟨G, fun st c => ?_⟩
-  have hσ : G (σ st) = f st c₀ := hG (Sum.inl st)
-  have hε : G (ε c) = f st₀ c - f st₀ c₀ := hG (Sum.inr c)
-  rw [map_add, hσ, hε, ← hreg st st₀ c c₀]
-  abel
+  have hσ : G (σ st) = a st := hG (Sum.inl st)
+  have hε : G (ε c) = b c := hG (Sum.inr c)
+  rw [map_add, hσ, hε, hab]
+
+/-- On the `Morphology.Realization` interface: a table is the paradigm of some linear DLM over
+jointly independent imputed vectors iff it is analogically regular. -/
+theorem exists_paradigm_eq_iff [Nonempty Stem] [Nonempty Cell]
+    (hind : LinearIndependent ℝ (Sum.elim σ ε)) (f : Stem → Cell → FormVec n) :
+    (∃ D : Linear ℝ (FormVec n) (MeaningVec d), D.paradigm σ ε = f) ↔
+      IsAnalogicallyRegular f := by
+  rw [← exists_linear_iff_isAnalogicallyRegular σ ε hind]
+  refine ⟨fun ⟨D, hD⟩ => ⟨D.production, fun st c => by simpa using congrFun (congrFun hD st) c⟩,
+    fun ⟨G, hG⟩ => ⟨⟨0, G⟩, funext fun st => funext fun c => by simpa using hG st c⟩⟩
 
 /-! ### The English past tense -/
 

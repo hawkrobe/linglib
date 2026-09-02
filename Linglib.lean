@@ -1322,6 +1322,7 @@ import Linglib.Morphology.Morphotactics.MirrorPrinciple
 import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 import Linglib.Morphology.Morphotactics.Template
 import Linglib.Morphology.Nanosyntax.TreeSpellout
+import Linglib.Morphology.Paradigm.Analogy
 import Linglib.Morphology.Paradigm.Basic
 import Linglib.Morphology.Paradigm.Case
 import Linglib.Morphology.Paradigm.Complexity
@@ -1478,6 +1479,7 @@ import Linglib.Processing.DiscriminativeLexicon.Coding
 import Linglib.Processing.DiscriminativeLexicon.Defs
 import Linglib.Processing.DiscriminativeLexicon.Measures
 import Linglib.Processing.DiscriminativeLexicon.Normed
+import Linglib.Processing.DiscriminativeLexicon.Realization
 import Linglib.Processing.DiscriminativeLexicon.Training
 import Linglib.Processing.Expectation.Defs
 import Linglib.Processing.Expectation.InformationValue
