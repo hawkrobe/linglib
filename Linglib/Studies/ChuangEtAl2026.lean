@@ -49,9 +49,9 @@ DLM substrate (`Processing/Lexical/Discriminative/`, [baayen-2019]
 [heitmeier-chuang-baayen-2026]) at the paper's carriers and proves the one
 structural claim the paper itself states (fn. 29,
 `comprehension_not_surjective`). The substrate supplies the rest:
-`dlm_neighbor_centroids_imply_neighbor_contours` (the production map's Lipschitz
+`LinearDiscriminativeLexicon.norm_production_sub_le` (the production map's Lipschitz
 bound — similar embeddings surface as similar contours) and
-`LinearDiscriminativeLexicon.sub_mem_ker_iff` (homophones like *cheng2shi4*
+`LinearMap.sub_mem_ker_iff` (homophones like *cheng2shi4*
 'city' ~ 'computer program' (§2.1) surface distinctly iff their embedding
 difference avoids the production kernel).
 

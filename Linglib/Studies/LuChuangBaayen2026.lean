@@ -1,6 +1,7 @@
 import Linglib.Processing.Lexical.Discriminative.Defs
 import Linglib.Processing.Lexical.Discriminative.Normed
 import Linglib.Studies.ChuangEtAl2026
+import Mathlib.LinearAlgebra.Pi
 
 /-!
 # Lu, Chuang & Baayen (2026): Realization of tones in spontaneous Taiwan Mandarin
@@ -80,7 +81,7 @@ The DLM-side account differs both **architecturally** and
 - **Architecturally**, no rule is invoked. The neutralisation falls out
   of the kernel of the trained meaning→form map. `t3_sandhi_via_kernel`
   below states this as a direct application of the kernel
-  characterisation `LinearDiscriminativeLexicon.sub_mem_ker_iff`.
+  characterisation `LinearMap.sub_mem_ker_iff`.
 - **Predictively**, the DLM accommodates **dialect variation** in
   sandhi completeness without re-stipulating the rule: Taiwan Mandarin's
   complete neutralisation = the kernel-difference holds; Standard
@@ -163,15 +164,14 @@ inductive TonePattern20 where
     The specific patterns `T3_T3` and `T2_T3` are **load-bearing in
     the type signature**: the theorem witnesses the paper's specific
     empirical claim, not a generic two-pattern claim. The body is the
-    kernel characterisation
-    `LinearDiscriminativeLexicon.sub_mem_ker_iff`. -/
+    kernel characterisation `LinearMap.sub_mem_ker_iff`. -/
 theorem t3_sandhi_via_kernel
     (D : LuTaiwanMandarinDLM)
     (centroidOf : TonePattern20 → ContextualEmbedding)
     (h_kernel :
       centroidOf .T3_T3 - centroidOf .T2_T3 ∈ LinearMap.ker D.production) :
     D.production (centroidOf .T3_T3) = D.production (centroidOf .T2_T3) :=
-  D.sub_mem_ker_iff.mp h_kernel
+  LinearMap.sub_mem_ker_iff.mp h_kernel
 
 /-- **Quantitative refinement of `t3_sandhi_via_kernel`.** The exact-
     kernel hypothesis is the limiting case; in real data the centroid
@@ -186,16 +186,23 @@ theorem t3_sandhi_via_kernel
     realizations. For Standard Chinese the bound permits visible
     contour difference, matching the reported incomplete neutralization.
 
-    Lipschitz application of `dlm_neighbor_centroids_imply_neighbor_contours`. -/
+    Lipschitz application of `LinearDiscriminativeLexicon.norm_production_sub_le`. -/
 theorem t3_sandhi_quantitative
     (D : LuTaiwanMandarinDLM)
     (centroidOf : TonePattern20 → ContextualEmbedding) {ε : ℝ}
     (h : ‖centroidOf .T3_T3 - centroidOf .T2_T3‖ ≤ ε) :
     ‖D.production (centroidOf .T3_T3) - D.production (centroidOf .T2_T3)‖ ≤
       ‖D.production.toContinuousLinearMap‖ * ε :=
-  dlm_neighbor_centroids_imply_neighbor_contours D h
+  D.norm_production_sub_le h
 
 /-! ### Dialect flexibility via different production maps -/
+
+/-- The "broadcast coordinate `i`" linear map `e ↦ fun _ => e i`, a non-degenerate witness. -/
+def broadcast {n d : ℕ} (i : Fin d) : MeaningVec d →ₗ[ℝ] FormVec n :=
+  LinearMap.pi fun _ => LinearMap.proj i
+
+@[simp] theorem broadcast_apply {n d : ℕ} (i : Fin d) (e : MeaningVec d) (j : Fin n) :
+    broadcast i e j = e i := rfl
 
 /-- **DLMs accommodate dialect variation in neutralization without
     rule modification.** The same `LinearDiscriminativeLexicon`

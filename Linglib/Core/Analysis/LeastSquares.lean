@@ -1,105 +1,86 @@
+import Mathlib.Analysis.InnerProductSpace.Adjoint
 import Mathlib.Analysis.InnerProductSpace.Projection.Basic
+import Mathlib.Order.Filter.Extr
 
 /-!
 # Least-squares solutions
 
-`IsLeastSquares A b x` says `x` minimises `‖A y − b‖` over the domain of a
-linear map `A` into a real inner product space. Mathlib provides the
-subspace side (`Submodule.starProjection` and its minimality); this file
-packages the pulled-back problem: the first-order characterisation,
-existence, uniqueness of fitted values, and the solution coset.
+`IsLeastSquares A b x` says `x` minimises the residual norm `‖b − A y‖` over the domain of a
+linear map `A` between real inner product spaces. Mathlib characterises the minimisers of a
+continuous linear map by its adjoint
+(`ContinuousLinearMap.forall_norm_sub_apply_le_iff_adjoint_apply_sub_eq_zero`); in finite
+dimension every linear map is continuous, and this file packages the resulting API: the normal
+equations in adjoint and inner-product form, existence by orthogonal projection, uniqueness of
+fitted values, and the solution coset.
 
-`[UPSTREAM]` candidate — mathlib has the ingredients but not the packaging;
-generalises from `ℝ` to `RCLike 𝕜`.
+`[UPSTREAM]` candidate; generalises from `ℝ` to `RCLike 𝕜`.
 
 ## Main declarations
 
-* `IsLeastSquares A b x`: `x` minimises `‖A y − b‖`.
-* `isLeastSquares_iff_inner_eq_zero`: the first-order characterisation —
-  the residual is orthogonal to the range of `A` (the *normal equations*).
-* `exists_isLeastSquares`: solutions exist whenever the range of `A` admits
-  an orthogonal projection (in particular in finite dimension).
-* `IsLeastSquares.map_eq`: fitted values are unique.
-* `IsLeastSquares.iff_map_eq`: the solutions are exactly the preimages of
-  the fitted value.
+* `IsLeastSquares A b x`: `x` minimises `‖b − A y‖`.
+* `isLeastSquares_iff_adjoint_eq_zero`, `isLeastSquares_iff_inner_eq_zero`: the **normal
+  equations** — the adjoint kills the residual, equivalently the residual is orthogonal to the
+  range of `A`.
+* `exists_isLeastSquares`: solutions exist.
+* `IsLeastSquares.map_eq`, `IsLeastSquares.iff_map_eq`: fitted values are unique, and the
+  solutions are exactly the preimages of the fitted value.
 -/
 
 namespace Core
 
 open RealInnerProductSpace
 
-variable {E F : Type*} [AddCommGroup E] [Module ℝ E]
-  [NormedAddCommGroup F] [InnerProductSpace ℝ F]
-  (A : E →ₗ[ℝ] F) (b : F)
+variable {E F : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+  [NormedAddCommGroup F] [InnerProductSpace ℝ F] (A : E →ₗ[ℝ] F) (b : F)
 
-/-- `x` is a **least-squares solution** of `A y ≈ b` if it minimises the
-    residual norm `‖A y − b‖`. -/
-def IsLeastSquares (x : E) : Prop := ∀ y, ‖A x - b‖ ≤ ‖A y - b‖
+/-- `x` is a **least-squares solution** of `A y ≈ b` if it minimises the residual norm
+`‖b − A y‖`. -/
+def IsLeastSquares (x : E) : Prop := IsMinOn (fun y => ‖b - A y‖) Set.univ x
 
-variable {A b}
+variable {A b} [FiniteDimensional ℝ E] [FiniteDimensional ℝ F] {x x' : E}
 
-/-- The first-order characterisation of least squares: `x` is a solution iff
-    the residual `b − A x` is orthogonal to everything `A` can produce —
-    the **normal equations**, with no rank hypothesis. -/
-theorem isLeastSquares_iff_inner_eq_zero {x : E} :
+/-- The normal equations in adjoint form: `x` solves iff the adjoint kills the residual. -/
+theorem isLeastSquares_iff_adjoint_eq_zero :
+    IsLeastSquares A b x ↔ LinearMap.adjoint A (b - A x) = 0 := by
+  have := FiniteDimensional.complete ℝ E
+  have := FiniteDimensional.complete ℝ F
+  rw [IsLeastSquares, isMinOn_univ_iff, LinearMap.adjoint_eq_toCLM_adjoint]
+  simpa using
+    (LinearMap.toContinuousLinearMap A).forall_norm_sub_apply_le_iff_adjoint_apply_sub_eq_zero b x
+
+/-- The normal equations in inner-product form: the residual is orthogonal to the range. -/
+theorem isLeastSquares_iff_inner_eq_zero :
     IsLeastSquares A b x ↔ ∀ y, ⟪b - A x, A y⟫ = 0 := by
-  constructor
-  · intro hx
-    have heq : ‖b - A x‖ = ⨅ w : LinearMap.range A, ‖b - ↑w‖ := by
-      refine le_antisymm (le_ciInf fun w => ?_) ?_
-      · obtain ⟨y, hy⟩ := w.2
-        rw [← hy]
-        simpa [norm_sub_rev] using hx y
-      · have hbdd : BddBelow (Set.range fun w : LinearMap.range A => ‖b - ↑w‖) :=
-          ⟨0, by rintro r ⟨w, rfl⟩; exact norm_nonneg _⟩
-        exact ciInf_le hbdd ⟨A x, LinearMap.mem_range_self A x⟩
-    intro y
-    exact ((LinearMap.range A).norm_eq_iInf_iff_real_inner_eq_zero
-      (LinearMap.mem_range_self A x)).mp heq (A y) (LinearMap.mem_range_self A y)
-  · intro h y
-    have hsq : ‖b - A y‖ ^ 2
-        = ‖b - A x‖ ^ 2 + ‖A x - A y‖ ^ 2 := by
-      have hdecomp : b - A y = (b - A x) + (A x - A y) := by abel
-      rw [hdecomp, norm_add_sq_real, ← map_sub, h (x - y), mul_zero, add_zero]
-    have hle : ‖b - A x‖ ^ 2 ≤ ‖b - A y‖ ^ 2 := by
-      nlinarith [sq_nonneg ‖A x - A y‖]
-    have hroot := Real.sqrt_le_sqrt hle
-    rw [Real.sqrt_sq (norm_nonneg _), Real.sqrt_sq (norm_nonneg _)] at hroot
-    simpa [norm_sub_rev] using hroot
+  rw [isLeastSquares_iff_adjoint_eq_zero]
+  refine ⟨fun h y => ?_, fun h => ext_inner_right ℝ fun y => ?_⟩
+  · rw [← LinearMap.adjoint_inner_left, h, inner_zero_left]
+  · rw [LinearMap.adjoint_inner_left, h, inner_zero_left]
 
-/-- Least-squares solutions exist whenever the range of `A` admits an
-    orthogonal projection — in particular whenever it is finite-dimensional. -/
-theorem exists_isLeastSquares [(LinearMap.range A).HasOrthogonalProjection] :
-    ∃ x, IsLeastSquares A b x := by
-  obtain ⟨x, hx⟩ := LinearMap.mem_range.mp
-    ((LinearMap.range A).starProjection_apply_mem b)
+/-- Least-squares solutions exist. -/
+theorem exists_isLeastSquares : ∃ x, IsLeastSquares A b x := by
+  have : CompleteSpace (LinearMap.range A) := FiniteDimensional.complete ℝ _
+  obtain ⟨x, hx⟩ := LinearMap.mem_range.mp ((LinearMap.range A).starProjection_apply_mem b)
   exact ⟨x, isLeastSquares_iff_inner_eq_zero.mpr fun y => hx ▸
     Submodule.starProjection_inner_eq_zero b (A y) (LinearMap.mem_range_self A y)⟩
 
-/-- Fitted values are unique: any two least-squares solutions produce the
-    same point of the range. -/
-theorem IsLeastSquares.map_eq {x x' : E}
-    (hx : IsLeastSquares A b x) (hx' : IsLeastSquares A b x') :
+/-- Fitted values are unique: any two least-squares solutions map to the same point. -/
+theorem IsLeastSquares.map_eq (hx : IsLeastSquares A b x) (hx' : IsLeastSquares A b x') :
     A x = A x' := by
-  have h := isLeastSquares_iff_inner_eq_zero.mp hx
-  have h' := isLeastSquares_iff_inner_eq_zero.mp hx'
-  have key : ∀ y, ⟪A x - A x', A y⟫ = 0 := fun y => by
-    have hd : A x - A x' = (b - A x') - (b - A x) := by abel
-    rw [hd, inner_sub_left, h y, h' y, sub_zero]
-  have h0 := key (x - x')
-  rw [map_sub] at h0
-  exact sub_eq_zero.mp ((inner_self_eq_zero (𝕜 := ℝ)).mp h0)
+  rw [isLeastSquares_iff_adjoint_eq_zero] at hx hx'
+  have h : LinearMap.adjoint A (A x - A x') = 0 := by
+    rw [show A x - A x' = (b - A x') - (b - A x) by abel, map_sub, hx, hx', sub_zero]
+  rw [← sub_eq_zero, ← inner_self_eq_zero (𝕜 := ℝ)]
+  nth_rewrite 1 [← map_sub]
+  rw [← LinearMap.adjoint_inner_right, h, inner_zero_right]
 
-/-- The least-squares solutions are exactly the preimages of the fitted
-    value: given one solution, another point solves iff it maps to the same
-    place. -/
-theorem IsLeastSquares.iff_map_eq {x x' : E} (hx : IsLeastSquares A b x) :
+/-- The least-squares solutions are exactly the preimages of the fitted value. -/
+theorem IsLeastSquares.iff_map_eq (hx : IsLeastSquares A b x) :
     IsLeastSquares A b x' ↔ A x' = A x :=
-  ⟨fun hx' => hx'.map_eq hx, fun h y => h ▸ hx y⟩
+  ⟨fun hx' => hx'.map_eq hx, fun h => isMinOn_univ_iff.mpr fun y => h ▸ isMinOn_univ_iff.mp hx y⟩
 
 /-- Under an injective design map the least-squares solution is unique. -/
-theorem IsLeastSquares.eq_of_injective (hA : Function.Injective A) {x x' : E}
-    (hx : IsLeastSquares A b x) (hx' : IsLeastSquares A b x') : x = x' :=
+theorem IsLeastSquares.eq_of_injective (hA : Function.Injective A) (hx : IsLeastSquares A b x)
+    (hx' : IsLeastSquares A b x') : x = x' :=
   hA (hx.map_eq hx')
 
 end Core

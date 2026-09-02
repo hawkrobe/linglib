@@ -110,20 +110,18 @@ def frequencyInformed : LinearDiscriminativeLexicon ℝ (FormVec 6) (MeaningVec 
 /-- The endstate mapping is the substrate's uniform-weight ERM solution: the coordinate normal
 equations (A2) hold. -/
 theorem endstate_isELTrainedOn : endstate.IsELTrainedOn toy := by
-  refine (isERMSolution_iff_forall_coord ?_).mpr fun j k => ?_
-  · exact fun _ => zero_le_one
-  · fin_cases j <;> fin_cases k <;>
-      norm_num [toy, endstate, endstateG, uniformFrequency, Matrix.toLin'_apply, Matrix.mulVec,
-        dotProduct, Fin.sum_univ_succ]
+  refine isERMSolution_iff_forall_coord.mpr fun j k => ?_
+  fin_cases j <;> fin_cases k <;>
+    norm_num [toy, endstate, endstateG, Matrix.toLin'_apply, Matrix.mulVec, dotProduct,
+      Fin.sum_univ_succ]
 
 /-- The frequency-informed mapping is the substrate's ERM solution under `freq`: the
 `√Q`-scaled normal equations (A4) hold. -/
 theorem frequencyInformed_isFILTrainedOn : frequencyInformed.IsFILTrainedOn toy freq := by
-  refine (isERMSolution_iff_forall_coord ?_).mpr fun j k => ?_
-  · intro i; fin_cases i <;> norm_num [freq]
-  · fin_cases j <;> fin_cases k <;>
-      norm_num [toy, freq, frequencyInformed, frequencyInformedG, Matrix.toLin'_apply,
-        Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
+  refine isERMSolution_iff_forall_coord.mpr fun j k => ?_
+  fin_cases j <;> fin_cases k <;>
+    norm_num [toy, freq, frequencyInformed, frequencyInformedG, Matrix.toLin'_apply,
+      Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
 
 /-! ### Semantic support for form -/
 
@@ -198,12 +196,12 @@ theorem semanticSupportFIL_thyme_lt_time :
   rw [semanticSupportFIL_eq]; norm_num [time, thyme, Matrix.cons_val_two]
 
 /-- Identical triphones, distinct predicted forms: *time* and *thyme* share a form row, but
-their meaning difference lies outside the production kernel, the neutralization locus of
-`LinearDiscriminativeLexicon.sub_mem_ker_iff`, so their triphones receive different support
+their meaning difference lies outside the production kernel, the neutralization locus
+(`LinearMap.sub_mem_ker_iff`), so their triphones receive different support
 ((A3), Fig. A2; §6.2). -/
 theorem time_sub_thyme_notMem_ker :
     toy.meanings time - toy.meanings thyme ∉ LinearMap.ker endstate.production := fun h => by
-  have := congrFun (endstate.sub_mem_ker_iff.mp h) 0
+  have := congrFun (LinearMap.sub_mem_ker_iff.mp h) 0
   norm_num [toy, endstate, endstateG, time, thyme, Matrix.cons_val_two, Matrix.toLin'_apply,
     Matrix.mulVec, dotProduct, Fin.sum_univ_succ] at this
 
