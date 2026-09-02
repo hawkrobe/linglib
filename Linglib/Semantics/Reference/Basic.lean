@@ -23,9 +23,7 @@ import Linglib.Semantics.Reference.Context.Basic
 
 namespace Reference.Basic
 
-open Intensional (Intension)
-open Intensional.Intension (rigid IsRigid rigid_isRigid evalAt CoRefer CoExtensional
-  rigid_identity_necessary)
+open Intensional (IsRigid isRigid_const)
 
 /-! ## Context and Character -/
 
@@ -45,10 +43,10 @@ structure Context (W : Type*) (E : Type*) where
 Characters represent the *linguistic meaning* of an expression — what any
 competent speaker knows. Content (= intension) represents what is said
 on a particular occasion of use. -/
-abbrev Character (C : Type*) (W : Type*) (E : Type*) := C → Intension W E
+abbrev Character (C : Type*) (W : Type*) (E : Type*) := C → W → E
 
 /-- Content is just an intension — a function from worlds to extensions. -/
-abbrev Content (W : Type*) (E : Type*) := Intension W E
+abbrev Content (W : Type*) (E : Type*) := W → E
 
 /-! ## Referential Profile ([almog-2014]) -/
 
@@ -104,7 +102,7 @@ def constantCharacter {C W E : Type*} (char : Character C W E) : Prop :=
 function returning e). This is the paradigm case of direct reference
 via the designation mechanism. -/
 def properName {C W E : Type*} (e : E) : ReferringExpression C W E :=
-  { character := λ _ => rigid e
+  { character := λ _ => fun _ => e
   , profile := ⟨true, true, false⟩ }
 
 /-- Proper names have constant character. -/
@@ -115,11 +113,11 @@ theorem properName_constantCharacter {C W E : Type*} (e : E) :
 /-- Proper names are directly referential. -/
 theorem properName_isDirectlyReferential {C W E : Type*} (e : E) :
     isDirectlyReferential (properName (C := C) (W := W) e).character :=
-  λ _ => rigid_isRigid e
+  λ _ => isRigid_const e
 
-/-- The content of a proper name equals `rigid e`, connecting to Intensional.Intension. -/
+/-- The content of a proper name is the constant intension at its bearer. -/
 theorem properName_content_eq_rigid {C W E : Type*} (e : E) (c : C) :
-    (properName (W := W) e).character c = rigid e := rfl
+    (properName (W := W) e).character c = fun _ => e := rfl
 
 /-! ## De Jure vs De Facto Rigidity -/
 
@@ -143,18 +141,13 @@ theorem properName_deJureRigid {C W E : Type*} (e : E) :
     IsDeJureRigid (properName (C := C) (W := W) e) :=
   ⟨rfl, properName_isDirectlyReferential e⟩
 
-/-- Two proper names that co-refer are co-extensional (Kripke's argument).
-
-Bridge to `Intensional.Intension.rigid_identity_necessary`: if "Hesperus" and
-"Phosphorus" are both proper names and co-refer at the actual world,
-they have the same content. -/
-theorem properNames_corefer_coextensional {C W E : Type*}
-    (e₁ e₂ : E) (c : C) (w : W)
-    (h : CoRefer ((properName (C := C) (W := W) e₁).character c)
-                 ((properName (W := W) e₂).character c) w) :
-    CoExtensional ((properName (C := C) (W := W) e₁).character c)
-                  ((properName (W := W) e₂).character c) :=
-  rigid_identity_necessary _ _ (rigid_isRigid e₁) (rigid_isRigid e₂) w h
+/-- Two proper names that co-refer at one world have the same content (Kripke's necessity
+of identity, `IsRigid.eq_of_apply_eq`). -/
+theorem properNames_corefer_coextensional {C W E : Type*} (e₁ e₂ : E) (c : C) (w : W)
+    (h : (properName (C := C) (W := W) e₁).character c w =
+      (properName (W := W) e₂).character c w) :
+    (properName (C := C) (W := W) e₁).character c = (properName (W := W) e₂).character c :=
+  (isRigid_const e₁).eq_of_apply_eq (isRigid_const e₂) h
 
 /-! ## Bridge to KContext -/
 

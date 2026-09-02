@@ -21,8 +21,7 @@ import Linglib.Semantics.Reference.Context.Shifts
 
 namespace Reference.Kaplan
 
-open Intensional (Intension)
-open Intensional.Intension (rigid IsRigid rigid_isRigid)
+open Intensional (IsRigid isRigid_const)
 open _root_.Reference.Basic
 open Semantics.Context (KContext)
 
@@ -34,7 +33,7 @@ names), but its content at each context is rigid.
 Example: "I" has a different content when uttered by Alice vs Bob,
 but once we fix the context, the content rigidly picks out the agent. -/
 def indexical {W E : Type*} (charFn : Context W E → E) : ReferringExpression (Context W E) W E :=
-  { character := λ c => rigid (charFn c)
+  { character := λ c => fun _ => charFn c
   , profile := ⟨true, true, false⟩ }
 
 /-- "I": picks out the agent of the context. -/
@@ -44,20 +43,20 @@ def pronI {W E : Type*} : ReferringExpression (Context W E) W E :=
 /-- "I" is directly referential: at every context, its content is rigid. -/
 theorem pronI_directlyReferential {W E : Type*} :
     isDirectlyReferential (pronI (W := W) (E := E)).character :=
-  λ _ => rigid_isRigid _
+  λ _ => isRigid_const _
 
 /-- "You": picks out the addressee of the context (Speas & Tenny's HEARER).
 
     Parallel to `pronI` but uses the full `KContext` (which has `addressee`)
     rather than the simple `Context` (which only has `agent` and `world`). -/
 def pronYou {W E P T : Type*} : ReferringExpression (KContext W E P T) W E :=
-  { character := λ c => rigid c.addressee
+  { character := λ c => fun _ => c.addressee
   , profile := ⟨true, true, false⟩ }
 
 /-- "You" is directly referential: at every context, its content is rigid. -/
 theorem pronYou_directlyReferential {W E P T : Type*} :
     isDirectlyReferential (pronYou (W := W) (E := E) (P := P) (T := T)).character :=
-  λ _ => rigid_isRigid _
+  λ _ => isRigid_const _
 
 /-- Indexicals have non-constant character (in general).
 
@@ -69,7 +68,7 @@ theorem indexical_character_varies {W E : Type*} [Inhabited W]
   intro heq
   have : (indexical charFn).character c₁ default = (indexical charFn).character c₂ default :=
     congrFun heq default
-  simp only [indexical, rigid] at this
+  simp only [indexical] at this
   exact h this
 
 /-! ## Singular Propositions -/
@@ -124,7 +123,7 @@ of a proper name: both produce `rigid e`.
 This connects the PTQ-style `up` (in `Attitude/Intensional.lean`) to the
 Kaplanian `constantCharacter` of a proper name. -/
 theorem constantCharacter_is_up {C W E : Type*} (e : E) (c : C) :
-    (properName (C := C) (W := W) e).character c = rigid e := rfl
+    (properName (C := C) (W := W) e).character c = fun _ => e := rfl
 
 /-! ## Kaplan's Logical Truth: "I am here now" -/
 

@@ -16,11 +16,11 @@ centered context — together with a base-world condition, the temporal instance
 
 ## Implementation notes
 
-Time-concepts are `Intensional.Intension`s from the centered Kaplanian
+Time-concepts are intensions from the centered Kaplanian
 context `Semantics.Context.KContext`
 (`Semantics/Reference/Context/Basic.lean`) — Abusch's `⟨x_self, t_now, w⟩`
 is a three-field projection of the richer context the rest of linglib
-commits to. Rigidity across alternatives is `Intension.IsRigidOn` after
+commits to. Rigidity across alternatives is `IsRigidOn` after
 `KContext.shiftWorldTime`; the alternative set is a bare
 `Set (Index W T)`, so doxastic (Hintikka belief alternatives,
 the Abusch-canonical case) and metaphysical ([klecha-2016] DOX via
@@ -30,10 +30,9 @@ instantiations (`doxasticAlternatives`, `metaphysicalAlternatives`).
 
 namespace Tense.DeRe
 
-open Intensional (Intension Index)
+open Intensional (Index IsRigid IsRigidOn)
 open Semantics.Context (KContext)
 open HistoricalAlternatives (actualHistoryBase)
-
 
 /-! ### Time-concepts -/
 
@@ -43,8 +42,7 @@ open HistoricalAlternatives (actualHistoryBase)
     centered-proposition framework (§3 develops it for individuals via
     the acquaintance relation `R₁ : eeiwt`, eq. 12; §4 applies it to
     times). -/
-abbrev TimeConcept (W E P T : Type*) := Intension (KContext W E P T) T
-
+abbrev TimeConcept (W E P T : Type*) := (KContext W E P T) → T
 
 /-! ### Temporal de re reading -/
 
@@ -72,7 +70,6 @@ variable {W E P T : Type*}
 def actualRes (dr : TemporalDeReReading W E P T) : T :=
   dr.concept dr.holderContext
 
-
 /-! ### Felicity -/
 
 /-- Value-level felicity of a temporal de re reading under a tense
@@ -94,7 +91,7 @@ def IsFelicitousWith [LinearOrder T] (dr : TemporalDeReReading W E P T)
     metaphysical ([klecha-2016] DOX) — see the constructors below. -/
 def IsRigidAcrossAlternatives (dr : TemporalDeReReading W E P T)
     (alternatives : Set (Index W T)) : Prop :=
-  Intension.IsRigidOn (fun s : Index W T =>
+  IsRigidOn (fun s : Index W T =>
     dr.concept (dr.holderContext.shiftWorldTime s))
     alternatives
 
@@ -106,17 +103,16 @@ def IsFelicitous [LinearOrder T] (dr : TemporalDeReReading W E P T)
     (alternatives : Set (Index W T)) (constraint : Finset Ordering) : Prop :=
   dr.IsFelicitousWith constraint ∧ dr.IsRigidAcrossAlternatives alternatives
 
-/-- A rigid time-concept (`Intensional.Intension.IsRigid`) is rigid
+/-- A rigid time-concept (`Intensional.IsRigid`) is rigid
     across any alternative set: pre-composition with `shiftWorldTime`
     preserves rigidity (`IsRigid.precomp`), and full rigidity restricts
     to any set (`IsRigid.isRigidOn`). -/
 theorem isRigidAcrossAlternatives_of_isRigid
     (dr : TemporalDeReReading W E P T)
-    (h : Intension.IsRigid dr.concept)
+    (h : IsRigid dr.concept)
     (alternatives : Set (Index W T)) :
     dr.IsRigidAcrossAlternatives alternatives :=
   (h.precomp dr.holderContext.shiftWorldTime).isRigidOn alternatives
-
 
 /-! ### Alternative-set constructors (modal-base instantiations) -/
 

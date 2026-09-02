@@ -44,8 +44,7 @@ import Linglib.Semantics.Definiteness.Maximality
 
 namespace Reference.Donnellan
 
-open Intensional (Intension)
-open Intensional.Intension (rigid IsRigid rigid_isRigid)
+open Intensional (IsRigid isRigid_const)
 open Presupposition
 open Presupposition.PartialProp
 open _root_.Reference.Basic
@@ -114,12 +113,12 @@ intended individual. "The man drinking a martini is happy" (referential,
 about Jones) is true iff Jones is happy — even if Jones isn't drinking
 a martini.
 
-Note: modeling this as `rigid intended` captures Donnellan's claim about
+Note: modeling this as the constant intension at `intended` captures Donnellan's claim about
 truth conditions. Whether this represents the expression's *semantic*
 content or merely the *speaker's* reference is the Kripke 1977 vs
 Donnellan dispute — see module docstring. -/
-def referentialContent {W E : Type*} (intended : E) : Intension W E :=
-  rigid intended
+def referentialContent {W E : Type*} (intended : E) : W → E :=
+  fun _ => intended
 
 /-- A referential definite description as a `ReferringExpression`.
 
@@ -131,7 +130,7 @@ The profile ⟨false, false, true⟩ records:
   not a structured ⟨individual, property⟩ pair
 - `referentialUse = true`: the speaker has a cognitive fix on the referent -/
 def referentialExpression {C W E : Type*} (intended : E) : ReferringExpression C W E :=
-  { character := λ _ => rigid intended
+  { character := λ _ => fun _ => intended
   , profile := ⟨false, false, true⟩ }
 
 /-! ## Donnellan Divergence -/
@@ -169,7 +168,7 @@ theorem donnellanDivergence {W E : Type*} (d : DonnellanDivergence W E)
     (_hPred : d.predicate d.intended d.world ≠ d.predicate d.actualSatisfier d.world) :
     referentialContent d.intended d.world ≠ d.actualSatisfier := by
   intro heq
-  simp only [referentialContent, rigid] at heq
+  simp only [referentialContent] at heq
   exact d.misfit heq
 
 /-! ## Bridge to Partee's Type-Shifting Triangle -/
