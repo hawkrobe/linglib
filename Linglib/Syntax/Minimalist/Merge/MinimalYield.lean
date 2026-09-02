@@ -80,14 +80,14 @@ theorem em_pair_satisfiesMinimalYield (lbl : α) (S S' : Nonplanar (α ⊕ β)) 
   have hnode : (Nonplanar.node (Sum.inl lbl) {S, S'}).accCount
       = S.accCount + S'.accCount + 2 := Nonplanar.accCount_node_pair (Sum.inl lbl) S S'
   refine ⟨⟨?_, ?_⟩, ?_⟩
-  · simp only [Forest.b₀_singleton, Multiset.insert_eq_cons, Forest.b₀_cons, Forest.b₀_zero]
+  · simp only [Forest.b₀_singleton, Multiset.insert_eq_cons, Forest.b₀_cons]
     omega
   · rw [Forest.alpha_singleton, hnode]
     simp only [Multiset.insert_eq_cons, Forest.alpha_cons, Forest.alpha_singleton]
     omega
   · simp only [Forest.sigma, Forest.b₀_singleton, Forest.alpha_singleton]
     rw [hnode]
-    simp only [Multiset.insert_eq_cons, Forest.b₀_cons, Forest.b₀_singleton, Forest.b₀_zero,
+    simp only [Multiset.insert_eq_cons, Forest.b₀_cons, Forest.b₀_singleton,
       Forest.alpha_cons, Forest.alpha_singleton]
     omega
 
