@@ -1,123 +1,141 @@
-import Linglib.Semantics.Tense.Evidential
 import Linglib.Fragments.Turkish.TAM
-import Linglib.Fragments.Turkish.SuffixTemplate
 import Linglib.Fragments.Turkish.VowelHarmony
 
 /-!
-# Göksel & Kerslake 2005: Turkish Evidential TAM
-[goksel-kerslake-2005] [cumming-2026]
+# Göksel and Kerslake (2005): Turkish suffixation
 
-Bridge between Turkish TAM data and [cumming-2026]'s (S, A, T) evidential
-framework. The key prediction: Turkish -DI and -mIş differ in their
-**evidential perspective constraint** (EPCondition), not primarily in their
-temporal (UPCondition) constraint.
+The reference grammar's account of the form and order of Turkish suffixes, checked
+against the Turkish Fragment. Chapter 3's vowel harmony is derived by the alternations
+of `Turkish.VowelHarmony` from archiphonemic suffixes: the permissible vowel sequences
+of §3.1 are the A-type and I-type resolutions, the last vowel of a disharmonic loan
+decides (*otobüs-ler*), an invariant suffix vowel is skipped and re-triggers
+(*görüyorum*, §3.4), and the palatal l of *gol* fronts its suffix (§3.4). Chapter 8's
+suffix order is licensing by the templates of `Turkish.SuffixTemplate`: the grammar's
+example verbs and nominals are licensed, reversed orders are not, and its rule that
+markers of one position cannot co-occur (§8.2.3) is the template's having no repeated
+slot.
 
-## The -DI / -mIş contrast
+## Main results
 
-- **-DI** (past definite): speaker directly witnessed the event. Evidence
-  was acquired contemporaneously with the event (A overlaps T).
-  EPCondition: `contemporaneous`.
+* `followers_table`: the §3.1 table of permissible vowel sequences.
+* `retriggering`, `palatal_l`: the §3.4 exceptions to harmony, derived rather than listed.
+* `same_position_excluded`: §8.2.3 (i) from `List.nodup_iff_sublist`.
 
-- **-mIş** (evidential): speaker did not witness the event. Evidence
-  was acquired strictly after the event (A > T).
-  EPCondition: `strictDownstream`.
+## References
 
-Both share the same utterance perspective: past (T < S). The evidential
-dimension is what distinguishes them — a prediction from the (S, A, T)
-framework applied to Turkish.
+* [A. Göksel and C. Kerslake, *Turkish: A Comprehensive Grammar* (2005)][goksel-kerslake-2005]
 -/
 
 namespace GokselKerslake2005
 
-open Tense.Evidential
-open Turkish.TAM
+open Turkish.VowelHarmony Turkish.SuffixTemplate Turkish.TAM
+open Phonology (Segment)
 
--- ============================================================================
--- § 1: EP/UP assignments for Turkish TAM
--- ============================================================================
+/-! ### Vowel harmony (Chapter 3) -/
 
-/-- Turkish -DI (witnessed past): contemporaneous evidence acquisition.
-    The speaker was present at the time of the event. -/
-def diEP : EPCondition := .contemporaneous
+/-- The vowels that may follow `v` in a suffix: its A-type and I-type resolutions. -/
+def followers (v : Segment) : List Segment :=
+  [A, I].map fun x => (surface [v, x]).getLastD x
 
-/-- Turkish -mIş (indirect/reportative): strictly downstream evidence.
-    The speaker learned about the event after it occurred. -/
-def mişEP : EPCondition := .strictDownstream
-
-/-- Both -DI and -mIş are past tense: T < S. -/
-def diUP : UPCondition := .past
-def mişUP : UPCondition := .past
-
--- ============================================================================
--- § 2: Predictions
--- ============================================================================
-
-/-- -DI and -mIş share temporal constraint but differ in evidential perspective. -/
-theorem same_tense_different_evidence :
-    diUP = mişUP ∧ diEP ≠ mişEP := by
-  exact ⟨rfl, by decide⟩
-
-/-- -DI is the only category with contemporaneous EP (direct witness). -/
-theorem di_unique_direct : diEP = .contemporaneous := rfl
-
-/-- -mIş EP is strictly downstream — evidence comes after the event. -/
-theorem miş_indirect : mişEP = .strictDownstream := rfl
-
--- ============================================================================
--- § 3: The suffix template (Ch 6, 8, 13-14)
--- ============================================================================
-
-/-! Ordering predictions derived from the Fragment templates
-(`Turkish.SuffixTemplate.verbTemplate`/`nounTemplate`), checked as
-slot-position facts rather than re-typed rank tables. -/
-
-open Turkish.SuffixTemplate
-
-/-- The verbal template has a single TAM slot, so -DI and -mIş — both
-TAM-category suffixes — are in complementary distribution: a simplex
-verb form cannot carry both. -/
-theorem tam_slot_unique :
-    verbTemplate.suffixSlots.count .tam = 1 := by decide
-
-/-- Negation strictly precedes TAM in the template, matching the surface
-order stem-NEG-TAM: every symmetric negative in the TAM inventory spells
-NEG before the TAM suffix (gel-**me**-**di** 'come-NEG-PST'). -/
-theorem negation_precedes_tam :
-    verbTemplate.suffixSlots.idxOf .negation < verbTemplate.suffixSlots.idxOf .tam ∧
-    ∀ e ∈ entries, e.isNegSymmetric → e.negSuffix.data.take 2 = ['-', 'm'] := by decide
-
-/-- The question particle mI fills the outermost verbal slot, following
-agreement: gel-di-**m** **mi**? (come-PST-1SG Q). -/
-theorem question_is_outermost :
-    ∀ s ∈ verbTemplate.suffixSlots,
-      verbTemplate.suffixSlots.idxOf s ≤ verbTemplate.suffixSlots.idxOf .question := by
+/-- §3.1: the permissible vowel sequences, as the grammar tabulates them. -/
+theorem followers_table :
+    followers a = [a, ı] ∧ followers ı = [a, ı] ∧ followers o = [a, u] ∧ followers u = [a, u] ∧
+    followers e = [e, i] ∧ followers i = [e, i] ∧ followers ö = [e, ü] ∧ followers ü = [e, ü] := by
   decide
 
-/-- Nominal ordering: plural before possessive before case
-(ev-**ler**-**im**-**de** 'house-PL-1SG.POSS-LOC'). -/
-theorem noun_slot_order :
-    nounTemplate.suffixSlots.idxOf .plural < nounTemplate.suffixSlots.idxOf .possessive ∧
-    nounTemplate.suffixSlots.idxOf .possessive < nounTemplate.suffixSlots.idxOf .case := by
+/-- §3.2.1: the second-person possessive -(I)n on *kız*, *el*, *kol* and *göz*. -/
+theorem iType :
+    surface ([k, ı, z] ++ possessive2sg) = [k, ı, z, ı, n] ∧
+    surface ([e, l] ++ possessive2sg) = [e, l, i, n] ∧
+    surface ([k, o, l] ++ possessive2sg) = [k, o, l, u, n] ∧
+    surface ([g, ö, z] ++ possessive2sg) = [g, ö, z, ü, n] := by
   decide
 
--- ============================================================================
--- § 4: Vowel harmony resolves TAM suffix vowels
--- ============================================================================
+/-- Chapter 3: the last vowel of a stem decides, so the disharmonic loan *otobüs* takes
+*-ler*. -/
+theorem last_vowel_decides :
+    surface ([o, t, o, b, ü, s] ++ plural) = [o, t, o, b, ü, s, l, e, r] := by
+  decide
 
-open Turkish.VowelHarmony
+/-- §3.2: *üz-ül-dü-nüz* 'you became sad' — rounding copied through three suffixes, and
+the `D` of -DI voiced after `l`. -/
+theorem iterated :
+    surface ([ü, z] ++ passive ++ perfective ++ person2pl) = [ü, z, ü, l, d, ü, n, ü, z] := by
+  decide
 
-/-- The archiphonemic I in progressive -Iyor resolves to 4 surface vowels
-by stem harmony: kol → -ıyor, gel → -iyor, kork → -uyor, göz → -üyor. -/
-theorem progressive_I_resolution :
-    resolveI true  false = ı_vowel ∧
-    resolveI false false = i_vowel ∧
-    resolveI true  true  = u_vowel ∧
-    resolveI false true  = ü_vowel := ⟨rfl, rfl, rfl, rfl⟩
+/-- §3.4 (vi): the `o` of -(I)yor does not harmonize and triggers the person marker,
+*gör-üyor-um*; the invariable -(y)ken, *bak-mış-ken*. -/
+theorem retriggering :
+    surface ([g, ö, r] ++ imperfective ++ person1sg) = [g, ö, r, ü, y, o, r, u, m] ∧
+    surface ([b, a, k] ++ evidential ++ ken) = [b, a, k, m, ı, ş, k, e, n] := by
+  decide
 
-/-- The archiphonemic A in future -(y)AcAK resolves to a/e by palatal
-harmony: kol → -(y)acak, gel → -(y)ecek. -/
-theorem future_A_resolution :
-    resolveA true  = a_vowel ∧
-    resolveA false = e_vowel := ⟨rfl, rfl⟩
+/-- §3.4 (iv): the palatal l of *gol* and *hal* fronts the suffix, *gol-ü* and *hal-im*,
+while rounding still comes from the vowel. -/
+theorem palatal_l :
+    surface ([g, o, l'] ++ possessive3sg) = [g, o, l', ü] ∧
+    surface ([h, a, l'] ++ possessive1sg) = [h, a, l', i, m] := by
+  decide
+
+/-- §6.1.2: the `D` of -DI is `d` after a voiced segment and `t` after a voiceless one,
+*kal-dı* and *düş-tü*. -/
+theorem voicing_of_D :
+    surface ([k, a, l] ++ perfective) = [k, a, l, d, ı] ∧
+    surface ([d, ü, ş] ++ perfective) = [d, ü, ş, t, ü] := by
+  decide
+
+/-- §8.2.2: before -(I)yor the negative's vowel is raised and harmonizes as an I-type
+suffix, *anla-m-ıyor* and *gör-m-üyor*. -/
+theorem negative_raised :
+    surface ([a, n, l, a] ++ [m, I] ++ [y, o, r]) = [a, n, l, a, m, ı, y, o, r] ∧
+    surface ([g, ö, r] ++ [m, I] ++ [y, o, r]) = [g, ö, r, m, ü, y, o, r] := by
+  decide
+
+/-- §8.1 (2) *Ev-ler-imiz-de-ymiş-ler* 'apparently they are at our homes': the nominal
+string with the evidential copula and a person marker. -/
+theorem nominal_predicate :
+    surface ([e, v] ++ plural ++ possessive1pl ++ locative ++ evidentialCopula ++ plural) =
+      [e, v, l, e, r, i, m, i, z, d, e, y, m, i, ş, l, e, r] := by
+  decide
+
+/-! ### The order of suffixes (Chapters 6 and 8) -/
+
+/-- §8.1 (1) *çocuk-lar-ın-a* 'to your children' and §6.3 (2) *diz-ge-ler-im-de* 'on my
+lists': number - possession - case, after a derivational suffix. -/
+theorem nominal :
+    nounTemplate.Licenses [] [.number, .possession, .case] ∧
+    nounTemplate.Licenses [] [.derivational, .number, .possession, .case] := by
+  decide
+
+/-- §8.2 (7) *Döğ-üş-tür-t-ül-me-yebil-iyor-muş-sunuz-dur*: every slot of the finite verb,
+the voice slot filled by four stacked voice suffixes. -/
+theorem finite_verb :
+    verbTemplate.Licenses []
+      [.voice, .negation, Marker.abil.slot, Marker.iyor.slot, Marker.evidentialCopula.slot,
+        .person, .generalizing] := by
+  decide
+
+/-- §8.2.3 (11) *Bitir-e-me-miş-tir*, (12) *Oku-yabil-ecek-miş* and §8.2.3.3 *git-ti-ydi-n*:
+positions 1-3-5, 2-3-4 and 3-4 with a person marker. -/
+theorem tam_positions :
+    verbTemplate.Licenses []
+      [Marker.possibility.slot, .negation, Marker.miş.slot, Marker.dir.slot] ∧
+    verbTemplate.Licenses [] [Marker.abil.slot, Marker.acak.slot, Marker.evidentialCopula.slot] ∧
+    verbTemplate.Licenses [] [Marker.di.slot, Marker.pastCopula.slot, .person] := by
+  decide
+
+/-- The negative follows voice and precedes the tense/aspect/modality marker (§8.2.2), and
+the copular markers follow it (§8.2.3): the reversed orders are unlicensed. -/
+theorem reversed_orders :
+    ¬ verbTemplate.Licenses [] [.negation, .voice] ∧
+    ¬ verbTemplate.Licenses [] [.tam, .negation] ∧
+    ¬ verbTemplate.Licenses [] [.copula, .tam] := by
+  decide
+
+/-- §8.2.3 (i): markers of one position cannot co-occur — the template has no repeated
+slot. -/
+theorem same_position_excluded (m₁ m₂ : Marker) (h : m₁.slot = m₂.slot) :
+    ¬ verbTemplate.Licenses [] [m₁.slot, m₂.slot] :=
+  fun ⟨_, hs⟩ => List.nodup_iff_sublist.1 (by decide) _ (h ▸ hs)
 
 end GokselKerslake2005

@@ -213,6 +213,23 @@ theorem System.transduce_isLeftOSL :
     IsLeftOutputStrictlyLocal 2 sys.transduce :=
   sys.spreadRule.isLeftOutputStrictlyLocal_apply
 
+/-- The harmonized word: `transduce` run over the pattern's tier (`Pattern.OnTier`), with
+off-tier segments copied through — the tier-based strictly local function of
+[burness-mcmullin-2020] whose restriction to the tier is the 2-OSL `transduce`
+(`System.tier_transduceWord`). -/
+def System.transduceWord : List α → List α :=
+  sys.spreadRule.applyOnTier sys.pattern.OnTier
+
+/-- On the tier, `transduceWord` is `transduce`, provided the write keeps a segment on the
+tier. -/
+theorem System.tier_transduceWord
+    (hw : ∀ v s, sys.pattern.OnTier s → sys.pattern.OnTier (sys.write v s)) (w : List α) :
+    sys.pattern.tier (sys.transduceWord w) = sys.transduce (sys.pattern.tier w) :=
+  sys.spreadRule.filter_applyOnTier (fun _ s hs y hy => by
+    simp only [System.spreadRule] at hy
+    split_ifs at hy <;> (try split at hy) <;> (try split at hy) <;>
+      simp only [List.mem_singleton] at hy <;> subst hy <;> first | exact hs | exact hw _ _ hs) w
+
 /-! ### Properties -/
 
 variable {sys val}
