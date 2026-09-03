@@ -1,4 +1,5 @@
 import Linglib.Core.Analysis.LeastSquares
+import Linglib.Core.LinearAlgebra.AffineSpace.Centroid
 import Linglib.Processing.DiscriminativeLexicon.Measures
 import Mathlib.Analysis.InnerProductSpace.Adjoint
 import Mathlib.Analysis.InnerProductSpace.PiL2
@@ -32,15 +33,23 @@ experienced meanings), the solution coset, and the identification of FIL under `
   `existsUnique_isTrained_iff`: fitted values are unique exactly on the span of experience.
 * `isELTrained_sqrtScale_iff`: FIL under `q` is EL on `TrainingExperience.sqrtScale`.
 * `Linear.IsTrainedOn` and the `semSup` transfer theorems.
+* `IsTrained.sum_smul_mul_eq_of_decodable`,
+  `Linear.IsELTrainedOn.production_centroid_eq_of_decodable`: fitted and observed forms agree on
+  every linearly decodable average, so a trained DLM sends the centroid of a linearly decodable
+  set of meanings to the centroid of its forms.
 
 ## References
 
+* [Y.-Y. Chuang, M. J. Bell, Y.-H. Tseng and R. H. Baayen, *Word-specific tonal realizations
+  in Mandarin* (2026)][chuang-bell-tseng-baayen-2026]
 * [S. Gahl and R. H. Baayen, *Time and thyme again* (2024)][gahl-baayen-2024]
 * [M. Heitmeier, *Mappings in the Discriminative Lexicon Model* (2024)][heitmeier-2024]
 * [M. Heitmeier, Y.-Y. Chuang, S. D. Axen and R. H. Baayen, *Frequency effects in linear
   discriminative learning* (2024)][heitmeier-chuang-axen-baayen-2024]
 * [M. Heitmeier, Y.-Y. Chuang and R. H. Baayen, *The Discriminative Lexicon*
   (2026)][heitmeier-chuang-baayen-2026]
+* [Y. Lu, Y.-Y. Chuang and R. H. Baayen, *The realization of tones in spontaneous spoken
+  Taiwan Mandarin* (2026)][lu-chuang-baayen-2026]
 -/
 
 namespace DiscriminativeLexicon
@@ -274,6 +283,15 @@ theorem IsTrained.sum_smul_sub_eq_zero (hG : IsTrained data q G) (w : MeaningVec
         rw [Finset.sum_mul]; exact Finset.sum_congr rfl fun i _ => by ring
     _ = 0 := by rw [hk k, zero_mul]
 
+/-- Whenever membership in a set `P` of usage events is a linear functional of the meanings, the
+`q`-weighted sums of the fitted and of the observed forms over `P` agree. -/
+theorem IsTrained.sum_smul_mul_eq_of_decodable (hG : IsTrained data q G) {P : Finset (Fin m)}
+    {w : MeaningVec d →ₗ[ℝ] ℝ} (hw : ∀ i, w (data.S i) = if i ∈ P then 1 else 0) :
+    ∑ i ∈ P, (q i : ℝ) • (data.S * G) i = ∑ i ∈ P, (q i : ℝ) • data.C i := by
+  simpa only [hw, mul_ite, mul_one, mul_zero, ite_smul, zero_smul, Finset.sum_ite_mem,
+    Finset.univ_inter, smul_sub, Finset.sum_sub_distrib, sub_eq_zero] using
+    hG.sum_smul_sub_eq_zero w
+
 /-! ### Fitted values -/
 
 /-- All trained matrices under positive weights produce the same predicted forms `SG` on the
@@ -440,6 +458,22 @@ theorem IsTrainedOn.semSupWord_eq_of_decodable (hD : D.IsTrainedOn data q) (hq :
   · obtain ⟨w, hwj⟩ := hw j hc
     rw [show D.production (data.S i) j = semSup D (data.S i) j from rfl,
       hD.semSup_eq_of_decodable hq hwj i]
+
+/-! ### Centroids -/
+
+/-- **Centroids under training** ([chuang-bell-tseng-baayen-2026] §3.4, [lu-chuang-baayen-2026]
+§4.4): whenever membership in a nonempty set `P` of usage events is a linear functional of the
+meanings, an EL-trained DLM sends the centroid of `P`'s meanings exactly to the centroid of `P`'s
+observed forms. Linearity alone sends it to the centroid of the predicted forms
+(`LinearMap.map_centroid`); training makes those coincide with the observed ones. -/
+theorem IsELTrainedOn.production_centroid_eq_of_decodable (hD : D.IsELTrainedOn data)
+    {P : Finset (Fin m)} (hP : P.Nonempty) {w : MeaningVec d →ₗ[ℝ] ℝ}
+    (hw : ∀ i, w (data.S i) = if i ∈ P then 1 else 0) :
+    D.production (P.centroid ℝ data.S) = P.centroid ℝ data.C := by
+  have hc : (P.card : ℝ) ≠ 0 := Nat.cast_ne_zero.2 hP.card_pos.ne'
+  have h := IsTrained.sum_smul_mul_eq_of_decodable hD hw
+  simp only [Pi.one_apply, NNReal.coe_one, one_smul, mul_productionMatrix_apply] at h
+  rw [P.centroid_eq_smul_sum data.S hc, P.centroid_eq_smul_sum data.C hc, map_smul, map_sum, h]
 
 end Linear
 
