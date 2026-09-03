@@ -40,6 +40,7 @@ which root types are attested.
 * `exists_hasMannerAndResult`, `manner_result_complementarity_false`
 * `Root.Kinds.typology`, `wellFormed_iff_mem_typology` — the rows of (12) and
   their exhaustiveness
+* `Root.Kinds.attestedCells`, `cells_attested` — the filled cells of (12)
 * `Verb.CosModel.again` and the (25)–(27) reading hierarchy
 
 The thesis predicates and the sublexical *again* operator are carried
@@ -119,6 +120,11 @@ def typology : Finset Root.Kinds :=
     restrictions are its seven rows and `∅`. -/
 theorem wellFormed_iff_mem_typology :
     ∀ s : Root.Kinds, s.WellFormed ↔ s = ∅ ∨ s ∈ typology := by decide
+
+/-- The filled cells of (12), pairs of a closed signature and a position. -/
+def attestedCells : Finset (Root.Kinds × Root.Position) :=
+  {(propertyConcept, .complement), (pureResult, .complement), (causativeResult, .complement),
+   (pureManner, .adjoined), (fullSpec, .adjoined), (fullSpec, .complement)}
 
 end Verb.Root.Kinds
 
@@ -273,32 +279,37 @@ open Verb
 /-! ### The six representative roots -/
 
 /-- √flat — pure state. -/
-def flat : Root := ⟨"flat", {.state "flat"}, {}⟩
+def flat : Root := { name := "flat", entailments := {.state "flat"}, position := some .complement }
 
 /-- √jog — pure manner of motion. -/
-def jog : Root := ⟨"jog", {.manner "jogging-gait"}, {}⟩
+def jog : Root :=
+  { name := "jog", entailments := {.manner "jogging-gait"}, position := some .adjoined }
 
 /-- √blossom — result with no specified manner or cause (an
     internally caused change of state). -/
-def blossom : Root := ⟨"blossom", {.result "flowering"}, {}⟩
+def blossom : Root :=
+  { name := "blossom", entailments := {.result "flowering"}, position := some .complement }
 
 /-- √crack — caused result without specified manner. -/
-def crack : Root := ⟨"crack", {.result "fissured", .cause}, {}⟩
+def crack : Root :=
+  { name := "crack", entailments := {.result "fissured", .cause}, position := some .complement }
 
 /-- √hand — manner + cause + result, adjoined position. The
     possession result is non-cancelable ("Mary handed John the book,
     #but it never came to be on his person", ch. 3 (48)), so it is
     root-entailed rather than implicated. -/
-def hand : Root := ⟨"hand",
-  {.manner "by-hand-transfer",
-   .result "in-recipient-possession",
-   .cause}, {}⟩
+def hand : Root :=
+  { name := "hand",
+    entailments := {.manner "by-hand-transfer", .result "in-recipient-possession", .cause},
+    position := some .adjoined }
 
 /-- √drown — manner of killing (Levin 1993's *crucify, drown, hang,
     electrocute* class; [beavers-koontz-garboden-2020] ch. 4):
     manner + cause + result, complement position. -/
-def drown : Root := ⟨"drown",
-  {.manner "submersion-in-liquid", .result "dead", .cause}, {}⟩
+def drown : Root :=
+  { name := "drown",
+    entailments := {.manner "submersion-in-liquid", .result "dead", .cause},
+    position := some .complement }
 
 /-! ### Kind signatures
 
@@ -344,6 +355,15 @@ theorem hand_closedKinds :
 
 theorem drown_closedKinds :
     drown.closedKinds = Root.Kinds.fullSpec := by decide
+
+/-- Each of the six roots fills a cell of (12). -/
+theorem cells_attested :
+    ∀ r ∈ [flat, jog, blossom, crack, hand, drown],
+      ∃ p, r.position = some p ∧ (r.closedKinds, p) ∈ Root.Kinds.attestedCells := by decide
+
+/-- √hand and √drown share a signature and differ only in position. -/
+theorem hand_drown_differ_in_position :
+    hand.closedKinds = drown.closedKinds ∧ hand.position ≠ drown.position := by decide
 
 /-! ### Falsifying the Bifurcation Thesis -/
 

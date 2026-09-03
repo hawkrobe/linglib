@@ -329,10 +329,9 @@ theorem mismatch_monotone (d : MismatchDimension) (e₁ e₂ : EllipsisType)
 -- § 6. Root Attachment Position
 -- ════════════════════════════════════════════════════
 
-/-- Spine position of a root by its attachment (`Root.Position`,
-    `Semantics/Lexical/Roots/Template.lean`; Marantz, [beavers-koontz-garboden-2020]):
-    change-of-state `.complement` roots sit at `V` (in v's complement),
-    manner/activity `.adjoined` roots at `VP_adj` (outside it). -/
+/-- Spine position of a root by its `Root.Position` ([beavers-koontz-garboden-2020]
+    §4.5), where change-of-state `.complement` roots sit at `V` in v's complement and
+    manner `.adjoined` roots at `VP_adj` outside it. -/
 def rootSpinePos : Root.Position → SpinePos
   | .complement => .V
   | .adjoined => .VP_adj

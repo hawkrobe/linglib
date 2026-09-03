@@ -294,11 +294,9 @@ structure Verb extends
     Verb.Causation, Verb.Attitude where
   /-- [levin-1993] verb class (§§ 9–57). -/
   levinClass : Option LevinClass := none
-  /-- The verb's lexical root — its entailment atoms, derived B&KG kind
-      signature. The content carrier the Verb
-      API integrates around (P-HUB): the verb's signature / change-type
-      are read off *this* root rather than the `levinClass` table. Total, with
-      the trivial root `{}` (no annotation) as the `⊥`. -/
+  /-- The verb's lexical root, from which its kind signature and change type are
+      read rather than from the `levinClass` table. The default `{}` is the
+      unannotated root. -/
   root : Root := {}
   /-- Citation form (cross-linguistic) -/
   form : String
