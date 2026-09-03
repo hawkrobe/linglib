@@ -200,8 +200,8 @@ probability simplex — the mathematical foundation for RSA convergence
 ([zaslavsky-hu-levy-2020]).
 
 The KL machinery used here — `klFinite`, `kl_eq_sum_klFun`, `kl_nonneg` — is
-inlined as private `ι → ℝ` helpers, since mathlib provides only the `PMF` form
-(`PMF.klDiv` / `PMF.toReal_klDiv_eq_sum_log_div`).
+inlined as private `ι → ℝ` helpers; the measure-level form is
+`InformationTheory.toReal_klDiv_eq_sum_log_div`.
 -/
 
 /-- Private `ι → ℝ` discrete KL divergence for the Gibbs proofs in this section. -/
@@ -458,8 +458,8 @@ section Entropy
 /-! ### Shannon entropy and maximum entropy
 
 This section uses the private `ι → ℝ` Shannon entropy (`entropy`, above), since
-softmax is a real-arithmetic construction; consumers wanting the `PMF`-typed form
-can convert via `Core.Probability.Entropy`. -/
+softmax is a real-arithmetic construction; the measure-level form is
+`InformationTheory.measureEntropy`. -/
 
 variable {ι : Type*} [Fintype ι] [Nonempty ι]
 

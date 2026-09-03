@@ -135,7 +135,6 @@ import Linglib.Core.InformationTheory.Hellinger
 import Linglib.Core.InformationTheory.KullbackLeibler.Basic
 import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 import Linglib.Core.InformationTheory.KullbackLeibler.Finite
-import Linglib.Core.InformationTheory.MutualInformation
 import Linglib.Core.Learning.Luce
 import Linglib.Core.Learning.RescorlaWagner
 import Linglib.Core.Learning.WidrowHoff
