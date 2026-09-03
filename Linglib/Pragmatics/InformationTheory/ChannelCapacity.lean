@@ -1,5 +1,5 @@
+import Linglib.Core.InformationTheory.Entropy
 import Linglib.Pragmatics.InformationTheory.Channel
-import Linglib.Core.Probability.Entropy
 
 /-!
 # Channel Capacity and Capacity-Achieving Priors
@@ -25,9 +25,8 @@ file is capacity-specific.
 - `mutualInfo_le_log_card`: `I(W;C) ≤ log |W|`
 - `channelCapacity_le_log_card`: `C* ≤ log |W|`
 
-(KL non-negativity / Gibbs' inequality is `0 ≤ (P.klDiv Q).toReal` by
-`ENNReal.toReal_nonneg` on the PMF API, or `Core.InformationTheory.kl_nonneg`
-on the (ι→ℝ) form. Bridge: `PMF.toReal_klDiv_eq_sum_log_div`.)
+The entropy bound is `InformationTheory.measureEntropy_le_log_card` on the
+measure with masses `q`.
 -/
 
 namespace Pragmatics.InformationTheory
@@ -101,50 +100,21 @@ theorem mutualInfo_eq_log_Z_of_cap (nc : CommChannel C W)
   unfold commPrecision at hcap_c
   linarith
 
-/-- Entropy of a distribution ≤ log of the support size: `H(q) ≤ log |W|`.
-    Follows from Gibbs' inequality (`0 ≤ (q.klDiv u).toReal` by `ENNReal.toReal_nonneg`)
-    applied to `KL(q ‖ uniform)`, plus `PMF.toReal_klDiv_eq_sum_log_div` to expand
-    the discrete sum form. -/
+open MeasureTheory in
+/-- Entropy of a distribution is at most the log of the support size, `H(q) ≤ log |W|`:
+    `measureEntropy_le_log_card` on the measure with masses `q`. -/
 private lemma entropy_le_log_card {ι : Type*} [Fintype ι] (q : ι → ℝ)
     (hq_nonneg : ∀ i, 0 ≤ q i) (hq_sum : ∑ i : ι, q i = 1) :
     -∑ i : ι, q i * log (q i) ≤ log (Fintype.card ι : ℝ) := by
-  by_cases hW : Fintype.card ι = 0
-  · haveI := Fintype.card_eq_zero_iff.mp hW; simp
-  · have hWpos : (0 : ℝ) < ↑(Fintype.card ι) := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hW)
-    have hWne : (Fintype.card ι : ℝ) ≠ 0 := ne_of_gt hWpos
-    let u : ι → ℝ := fun _ => 1 / ↑(Fintype.card ι)
-    have hu_pos : ∀ i, (0 : ℝ) < u i := fun _ => div_pos one_pos hWpos
-    have hu_sum : ∑ i : ι, u i = 1 := by
-      simp [u, sum_const, nsmul_eq_mul, Nat.cast_ne_zero.mpr hW]
-    -- PMF substrate setup: discrete MeasurableSpace.
-    letI : MeasurableSpace ι := ⊤
-    haveI : MeasurableSingletonClass ι :=
-      ⟨fun _ => MeasurableSpace.measurableSet_top⟩
-    -- Construct PMFs from q and u. Both round-trip losslessly (already normalized).
-    have hq_pos : (0 : ℝ) < ∑ i : ι, q i := by rw [hq_sum]; exact one_pos
-    have hu_pos_sum : (0 : ℝ) < ∑ i : ι, u i := by rw [hu_sum]; exact one_pos
-    let q_pmf := PMF.ofRealWeightFn q hq_nonneg hq_pos
-    let u_pmf := PMF.ofRealWeightFn u (fun i => le_of_lt (hu_pos i)) hu_pos_sum
-    have hq_eq : q_pmf.toRealFn = q :=
-      PMF.ofRealWeightFn_toRealFn_eq q hq_nonneg hq_pos hq_sum
-    have hu_eq : u_pmf.toRealFn = u :=
-      PMF.ofRealWeightFn_toRealFn_eq u (fun i => le_of_lt (hu_pos i)) hu_pos_sum hu_sum
-    -- Gibbs' inequality: KL ≥ 0 by type. Discrete sum form via PMF bridge.
-    have hkl_nn : 0 ≤ (q_pmf.klDiv u_pmf).toReal := ENNReal.toReal_nonneg
-    rw [PMF.toReal_klDiv_eq_sum_log_div q_pmf u_pmf (hu_eq ▸ hu_pos)] at hkl_nn
-    rw [hq_eq, hu_eq] at hkl_nn
-    -- hkl_nn : 0 ≤ ∑ q · log(q / u). Same algebra as the original proof.
-    simp_rw [show ∀ i, q i / u i = q i * ↑(Fintype.card ι) from fun i => by simp [u]] at hkl_nn
-    suffices hsplit : ∑ i : ι, q i * log (q i * ↑(Fintype.card ι)) =
-        (∑ i : ι, q i * log (q i)) + log ↑(Fintype.card ι) by linarith
-    have hterm : ∀ i, q i * log (q i * ↑(Fintype.card ι)) =
-        q i * log (q i) + q i * log ↑(Fintype.card ι) := by
-      intro i
-      by_cases hi : q i = 0
-      · simp [hi]
-      · rw [log_mul (ne_of_gt (lt_of_le_of_ne (hq_nonneg i) (Ne.symm hi))) hWne]
-        ring
-    simp_rw [hterm, sum_add_distrib, ← sum_mul, hq_sum, one_mul]
+  let _ : MeasurableSpace ι := ⊤
+  have : MeasurableSingletonClass ι := ⟨fun _ => MeasurableSpace.measurableSet_top⟩
+  let μ : Measure ι := Measure.sum fun i => ENNReal.ofReal (q i) • Measure.dirac i
+  have hμ : IsProbabilityMeasure μ :=
+    (hq_sum ▸ hasSum_fintype q).isProbabilityMeasure_sum_dirac hq_nonneg
+  have h := _root_.InformationTheory.measureEntropy_le_log_card μ
+  rw [_root_.InformationTheory.measureEntropy_eq_sum] at h
+  simpa only [μ, measureReal_def, Measure.sum_smul_dirac_singleton, ENNReal.toReal_ofReal,
+    hq_nonneg, negMulLog, neg_mul, Finset.sum_neg_distrib] using h
 
 /-- `I(W;C) ≤ H(W)`: mutual information ≤ entropy of the marginal word
     distribution. The gap is the conditional entropy `H(W|C) ≥ 0`. -/
