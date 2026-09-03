@@ -47,8 +47,8 @@ in this paper, so the asymmetric stance is encoded honestly.
 
 - Noisy semantics: truth misjudged with probability φ (`noisyConcMeaning`)
 - Belief Alignment utility via the inline discrete sum `∑ p · log(p/q)`
-  (the canonical PMF form is `(P.klDiv Q).toReal`, bridged by
-  `PMF.toReal_klDiv_eq_sum_log_div`; the (VennState → ℝ) form is natural here)
+  (the measure-level form is `InformationTheory.toReal_klDiv_eq_sum_log_div`;
+  the (VennState → ℝ) form is natural here)
 - SC ≡ BA equivalence via `Real.log_div` + sum manipulation (Cover-Thomas
   identity `KL = -H(P) - ∑ P log Q`)
 - "Nothing follows" as vacuous utterance (true in every state)
@@ -180,8 +180,8 @@ noncomputable def stateComScore
     `S₁(u₃ | u₁,u₂) ∝ exp[α · −KL(L₀(·|u₁,u₂) ‖ L₀(·|u₃))]`
 
     Inlined discrete KL `∑ p · log(p/q)` (mathlib-canonical form; the
-    `0 · log 0 = 0` guard collapses for `Real.log`). The PMF-canonical form is
-    `(P.klDiv Q).toReal` via `PMF.toReal_klDiv_eq_sum_log_div`. -/
+    `0 · log 0 = 0` guard collapses for `Real.log`). The measure-level form is
+    `InformationTheory.toReal_klDiv_eq_sum_log_div`. -/
 noncomputable def beliefAlignmentScore
     (premPost : VennState → ℝ) (naivePost : Conclusion → VennState → ℝ)
     (α : ℝ) (c : Conclusion) : ℝ :=
