@@ -23,7 +23,8 @@ are derived in `Studies/GokselKerslake2005.lean`.
 
 * `a`, `e`, `ı`, `i`, `o`, `ö`, `u`, `ü` — the vowels; `A`, `I` — the suffix archiphonemes.
 * `fronting`, `rounding`, `voicing` — the two vowel harmonies and D-voicing.
-* `surface` — the three alternations applied to a word.
+* `surface` — the three alternations applied to a word; the suffixes it applies to are the
+  exponent forms of `Turkish.Morphotactics`.
 
 ## References
 
@@ -84,6 +85,11 @@ def k : Segment := consonant [(.consonantal, true), (.sonorant, false), (.contin
   (.dorsal, true), (.voice, false)]
 def g : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
   (.dorsal, true), (.voice, true)]
+/-- The final K of -(y)AcAK: `k`, or `ğ` before a vowel (Chapter 2). -/
+def K : Segment := consonant [(.consonantal, true), (.sonorant, false), (.dorsal, true),
+  (.voice, false)]
+def c : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
+  (.delayedRelease, true), (.coronal, true), (.anterior, false), (.voice, true)]
 def s : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, true),
   (.strident, true), (.coronal, true), (.anterior, true), (.voice, false)]
 def z : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, true),
@@ -108,42 +114,6 @@ def r : Segment := consonant [(.consonantal, true), (.sonorant, true), (.tap, tr
   (.coronal, true), (.voice, true)]
 def y : Segment := consonant [(.consonantal, false), (.sonorant, true), (.approximant, true),
   (.continuant, true), (.voice, true)]
-
-/-! ### Suffixes
-
-Citation forms after a consonant-final stem; the deletable vowels and buffer `y` of
-§6.1.3 are not represented. -/
-
-/-- -lAr, plural (§8.1.1). -/
-def plural : List Segment := [l, A, r]
-/-- -(I)m, first-person singular possessive (§8.1.2). -/
-def possessive1sg : List Segment := [I, m]
-/-- -(I)n, second-person singular possessive (§8.1.2). -/
-def possessive2sg : List Segment := [I, n]
-/-- -(I)mIz, first-person plural possessive (§8.1.2). -/
-def possessive1pl : List Segment := [I, m, I, z]
-/-- -(s)I, third-person singular possessive (§8.1.2). -/
-def possessive3sg : List Segment := [I]
-/-- -DA, locative (§8.1.3). -/
-def locative : List Segment := [D, A]
-/-- -Il, passive (§8.2.1.2). -/
-def passive : List Segment := [I, l]
-/-- -mA, negative (§8.2.2); before -(I)yor its vowel is raised to I (§8.2.2). -/
-def negative : List Segment := [m, A]
-/-- -DI, perfective (§8.2.3.3). -/
-def perfective : List Segment := [D, I]
-/-- -mIş, perfective/evidential (§8.2.3.3). -/
-def evidential : List Segment := [m, I, ş]
-/-- -(I)yor, imperfective; its `o` does not harmonize (§3.4 (vi)). -/
-def imperfective : List Segment := [I, y, o, r]
-/-- -(y)mIş, the evidential copula (§8.3.2). -/
-def evidentialCopula : List Segment := [y, m, I, ş]
-/-- -(y)ken, converb; invariable (§3.4 (vi)). -/
-def ken : List Segment := [k, e, n]
-/-- -(I)m, first-person singular of the group 2 person markers (§8.4). -/
-def person1sg : List Segment := [I, m]
-/-- -nIz, second-person plural of the group 1 person markers (§8.4). -/
-def person2pl : List Segment := [n, I, z]
 
 /-! ### Alternations -/
 
