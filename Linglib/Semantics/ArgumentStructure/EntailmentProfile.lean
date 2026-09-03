@@ -51,6 +51,14 @@ of feature-set inclusion.
 
 namespace ArgumentStructure
 
+/-- Three-valued volitional involvement of a participant, `neutral` where a form
+leaves it open. -/
+inductive Volitionality where
+  | nonvolitional
+  | neutral
+  | volitional
+  deriving DecidableEq, Repr
+
 /-- The ten entailments defining the proto-roles ([dowty-1991] pp.572–573):
 the first five are Proto-Agent, the last five Proto-Patient. Fields default
 to `false`, so a profile lists only the entailments it imposes. -/

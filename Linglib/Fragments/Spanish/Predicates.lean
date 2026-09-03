@@ -200,11 +200,11 @@ def rasgar : SpanishVerbEntry :=
     licensesStylLE := true,
     levinClass := some .break_,
     root := { profile := {
-      forceMag := some [.low, .moderate]
-      forceDir := some [.unidirectional]
-      patientRob := some [.insubstantial, .flimsy]
-      resultType := some [.separation, .surfaceBreach]
-      agentControl := some [.incompatible, .neutral]
+      forceMag := {.low, .moderate}
+      forceDir := {.unidirectional}
+      patientRob := {.insubstantial, .flimsy}
+      resultType := {.separation, .surfaceBreach}
+      agentControl := {.incompatible, .neutral}
     } } }
 
 /-- *asesinar* "assassinate" — AGENT causer required. No anticausative.

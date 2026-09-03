@@ -84,10 +84,9 @@ structure Root where
   profile : Verb.Root.Profile := {}
   deriving DecidableEq
 
-/-- A `Repr` showing the name, atom count, position, and profile, since `Finset` has
-only an `unsafe` one. -/
-instance : Repr Root :=
-  ⟨λ r _ => repr (r.name, r.entailments.card, r.position, r.profile)⟩
+/-- A `Repr` showing the name, atom count, and position, since `Finset` has only an
+`unsafe` one. -/
+instance : Repr Root := ⟨λ r _ => repr (r.name, r.entailments.card, r.position)⟩
 
 namespace Root
 

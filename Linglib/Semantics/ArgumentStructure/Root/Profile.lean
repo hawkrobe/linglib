@@ -1,231 +1,145 @@
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Root Quality Dimensions
+# Root quality profiles
 
-Within-class root content profiles: ranges over quality dimensions —
-force, robustness, instrument, dimensionality, agent properties. A
-multi-paper synthesis ([talmy-1988], [talmy-2000], [dowty-1991],
-[majid-boster-bowerman-2008], [spalek-mcnally-2026]); no single paper
-carries this profile. Structural entailments (state, manner, result,
-cause) are the separate `Root.Kinds` (`Root/Kinds.lean`).
+The dimensions along which verbs of one class differ in root content, each a
+region of a finite scale rather than a point, since a verb is compatible with a
+range of force levels, patient materials, or result geometries.
+[spalek-mcnally-2026] separate English *tear* from Spanish *rasgar* by patient
+robustness, force direction, and compatibility with careful action;
+[majid-boster-bowerman-2008] sort cutting and breaking events by instrument,
+object dimensionality, and the geometry of the result. `Root.Profile` bundles
+one region per dimension, `univ` where a root says nothing.
 
 ## Main declarations
 
-* `Root.Profile.Range` — within-class variation along a dimension
-* the dimension enums (`ForceLevel`, `Robustness`, `InstrumentType`, …)
-* `Root.Profile` — the bundled profile
+* `Root.Profile.ForceLevel`, `ForceDirection`, `Robustness`, `ResultType`,
+  `InstrumentType`, `ObjectDimensionality`, `AgentControl` — the dimensions
+* `Root.Profile` — a region per dimension
+* `Root.Profile.Overlaps` — the regions meet on every dimension
+
+## References
+
+* [spalek-mcnally-2026]: The anatomy of a verb.
+* [majid-boster-bowerman-2008]: The cross-linguistic categorization of everyday
+  events.
+* [talmy-1988]: Force dynamics in language and cognition.
+* [levin-1993]: English Verb Classes and Alternations.
 -/
 
-namespace Verb
+namespace Verb.Root.Profile
 
-namespace Root.Profile
+/-! ### Dimensions -/
 
-/-! ### Range mechanism -/
-
-/-- Acceptable values along a quality dimension.
-
-    - `none`: the root is unconstrained on this dimension (says nothing)
-    - `some [v₁, v₂, …]`: the root is compatible with exactly these values
-
-    Roots are **regions**, not points: a verb like *tear* is compatible with
-    a range of force levels, not a single one. -/
-abbrev Range (α : Type*) := Option (List α)
-
-namespace Range
-
-variable {α : Type*}
-
-def unconstrained : Range α := none
-
-def only (vs : List α) : Range α := some vs
-
-def isCompatible [BEq α] : Range α → α → Bool
-  | none, _ => true
-  | some vs, v => vs.contains v
-
-def isConstrained : Range α → Bool
-  | none => false
-  | some _ => true
-
-/-- Two ranges overlap if they share at least one value. -/
-def overlaps [BEq α] : Range α → Range α → Bool
-  | none, _ => true
-  | _, none => true
-  | some vs₁, some vs₂ => vs₁.any (vs₂.contains ·)
-
-end Range
-
-end Root.Profile
-
-/-! ### Quality dimensions -/
-
-/-- Magnitude of force involved in the event.
-
-    [talmy-1988] identifies force magnitude as a core parameter of
-    force-dynamic schemas. [spalek-mcnally-2026]: *tear* implies considerable
-    force; *rasgar* implies less (enough to damage something flimsy). -/
+/-- Magnitude of the force involved ([talmy-1988]). -/
 inductive ForceLevel where
-  | none      -- no force component (states)
-  | low       -- gentle / minimal force
-  | moderate  -- typical force
-  | high      -- considerable / violent force
-  deriving DecidableEq, Repr
+  /-- No force component, as in states. -/
+  | zero
+  | low
+  | moderate
+  | high
+  deriving DecidableEq, Fintype, Repr
 
-/-- Spatial pattern of force application.
-
-    [talmy-2000]: force vectors have directional parameters.
-    [spalek-mcnally-2026]: *tear* implies contrary-direction force (pulling
-    apart); *rasgar* implies unidirectional force (gash-like). -/
+/-- Spatial pattern of the force applied ([talmy-2000]), contrary directions for
+*tear* and a single direction for *rasgar* ([spalek-mcnally-2026]). -/
 inductive ForceDirection where
-  | none             -- no directional force component
-  | unidirectional   -- linear / single-direction force (rasgar: gash)
-  | bidirectional    -- contrary directions (tear: pulling apart)
-  | omnidirectional  -- multi-directional (shatter: radiating fracture)
-  deriving DecidableEq, Repr
+  | undirected
+  | unidirectional
+  | bidirectional
+  | omnidirectional
+  deriving DecidableEq, Fintype, Repr
 
-/-- Material substantiality of the affected entity (patient).
-
-    [spalek-mcnally-2026]: the primary dimension distinguishing
-    *tear* (unrestricted) from *rasgar* (flimsy patients only). -/
+/-- Material substantiality of the patient, on which *rasgar* is restricted to
+flimsy patients and *tear* is not ([spalek-mcnally-2026]). -/
 inductive Robustness where
-  | insubstantial  -- states, abstractions (silence, darkness)
-  | flimsy         -- thin solids: fabric, paper, thin plastic
-  | moderate       -- standard solids: rope, muscle, tendons
-  | robust         -- thick solids: bread, cement, bone
-  deriving DecidableEq, Repr
+  | insubstantial
+  | flimsy
+  | moderate
+  | robust
+  deriving DecidableEq, Fintype, Repr
 
-/-- Nature of the physical change produced by the event.
-
-    Grounded in [levin-1993]'s class descriptions and [hale-keyser-1987] notion of "separation in material integrity":
-    - 45.1 Break: loss of material integrity (break, crack, shatter, tear)
-    - 45.2 Bend: change in shape without loss of integrity
-    - 44 Destroy: total destruction (no specific resulting state)
-    - 21 Cut: separation via instrument contact
-    Refined by [beavers-koontz-garboden-2020] on CoS root types.
-    UNVERIFIED: Levin chapter numbers cited from memory. -/
+/-- The physical change produced, after the class descriptions of [levin-1993]
+(§45.1 break, §45.2 bend, §44 destroy, §21.1 cut) and [hale-keyser-1987]'s
+separation in material integrity. -/
 inductive ResultType where
-  | separation      -- loss of integrity via pulling apart (tear)
-  | surfaceBreach   -- gash-like damage to surface (rasgar)
-  | fracture        -- breakage along stress lines (crack, break)
-  | fragmentation   -- complete structural failure (shatter, smash)
-  | deformation     -- shape change, integrity preserved (bend, fold)
-  | totalDestruction -- entity ceases to exist as such (destroy, ruin)
-  deriving DecidableEq, Repr
+  /-- Loss of integrity by pulling apart (*tear*). -/
+  | separation
+  /-- Damage to a surface (*rasgar*, *cut*). -/
+  | surfaceBreach
+  /-- Breakage along stress lines (*crack*, *break*). -/
+  | fracture
+  /-- Complete structural failure (*shatter*, *smash*). -/
+  | fragmentation
+  /-- Change of shape with integrity preserved (*bend*, *fold*). -/
+  | deformation
+  /-- The entity ceases to exist as such (*destroy*). -/
+  | totalDestruction
+  deriving DecidableEq, Fintype, Repr
 
-/-- Type of instrument used in the event.
-
-    [majid-boster-bowerman-2008]: instrument type interacts with object
-    properties to determine the predictability of separation locus (their
-    Dimension 1). Sharp instruments yield predictable separations; blunt
-    instruments and hands yield unpredictable separations.
-
-    [levin-1993]: *cut* verbs specify their instrument
-    (`instrumentSpec = true`); *break* verbs do not.
-    UNVERIFIED: Levin chapter (§21 vs §45.1) cited from memory. -/
+/-- The instrument effecting a separation, which together with the object's
+properties fixes how predictable the locus of separation is
+([majid-boster-bowerman-2008]). -/
 inductive InstrumentType where
-  | sharpBlade    -- knife, scissors, saw, chisel (predictable separation)
-  | bluntImpact   -- hammer, mallet, rock (unpredictable separation)
-  | hands         -- bare hands (tearing, snapping, pulling apart)
-  | none          -- no instrument / unspecified
-  deriving DecidableEq, Repr
+  | sharpBlade
+  | bluntImpact
+  | hands
+  | other
+  deriving DecidableEq, Fintype, Repr
 
-/-- Dimensionality of the affected object (patient).
-
-    [majid-boster-bowerman-2008]: object dimensionality interacts
-    with instrument type and manner of action to determine event
-    categorization cross-linguistically. 1D objects (rope, stick) can
-    be snapped; 2D objects (cloth, paper) can be torn; 3D objects
-    (melon, pot) can be smashed. -/
+/-- Dimensionality of the patient, the rope that snaps, the cloth that tears, or the
+pot that smashes ([majid-boster-bowerman-2008]). -/
 inductive ObjectDimensionality where
-  | oneD          -- elongated: rope, stick, twig, carrot, yarn
-  | twoD          -- flat/flexible: cloth, paper, plate
-  | threeD        -- solid/volumetric: melon, pot, box, orange
-  deriving DecidableEq, Repr
+  | oneD
+  | twoD
+  | threeD
+  deriving DecidableEq, Fintype, Repr
 
-/-- Whether the agent acts with volitional intent.
-
-    [dowty-1991]: Proto-Agent entailment P1 = "volitional involvement
-    in the event or state." [ausensi-yu-smith-2021]: killing verb roots impose
-    specific intentionality requirements on the agent (*murder* requires
-    intentional agent; *kill* does not).
-    [levin-1993]: some *break* verbs "allow unintentional, action
-    interpretations with body-part objects." -/
-inductive Volitionality where
-  | nonvolitional  -- unintentional / accidental
-  | neutral        -- underspecified for volition
-  | volitional     -- intentional / deliberate
-  deriving DecidableEq, Repr
-
-/-- Whether the action can be performed with care and control.
-
-    [dowty-1991]: Proto-Agent entailment P2 = "sentience
-    (and/or perception)," enabling controlled action.
-    [spalek-mcnally-2026]: *tear* is compatible with careful action
-    ("carefully tore the tin foil"); *rasgar* is not
-    ("??rasgaron con cuidado el papel"). -/
+/-- Compatibility with careful, controlled action, which *tear* has and *rasgar*
+lacks ([spalek-mcnally-2026]). -/
 inductive AgentControl where
-  | incompatible  -- incompatible with careful/controlled action
-  | neutral       -- underspecified for control
-  | compatible    -- compatible with careful/controlled action
-  deriving DecidableEq, Repr
+  | incompatible
+  | neutral
+  | compatible
+  deriving DecidableEq, Fintype, Repr
 
-namespace Root
+end Verb.Root.Profile
 
-open Profile (Range)
+namespace Verb.Root
 
-/-- Within-class root content profile.
+open Profile Finset
 
-    Captures **quality** dimensions of root content — force, robustness,
-    agent properties — as opposed to `Root.Kinds`, which captures
-    **structural** entailments (state, manner, result, cause).
-
-    Each dimension is a `Range` of acceptable values; `none` means the
-    root says nothing about that dimension (unconstrained). -/
+/-- A root's quality profile, a region of each dimension, `univ` where the root says
+nothing. -/
 structure Profile where
-  /-- Force magnitude: [talmy-1988]. -/
-  forceMag : Range ForceLevel := none
-  /-- Force directionality: [talmy-2000], [spalek-mcnally-2026]. -/
-  forceDir : Range ForceDirection := none
-  /-- Patient material robustness: [spalek-mcnally-2026]. -/
-  patientRob : Range Robustness := none
-  /-- Type of physical change: [levin-1993], [beavers-koontz-garboden-2020]. -/
-  resultType : Range ResultType := none
-  /-- Agent volitionality: [dowty-1991] P1, [ausensi-yu-smith-2021]. -/
-  agentVolition : Range Volitionality := none
-  /-- Agent control: [dowty-1991] P2, [spalek-mcnally-2026]. -/
-  agentControl : Range AgentControl := none
-  /-- Instrument type the root selects for: [majid-boster-bowerman-2008].
-      *cut* selects for sharp blades; *break* is unspecified. -/
-  instrumentType : Range InstrumentType := none
-  /-- Patient dimensionality: [majid-boster-bowerman-2008].
-      *tear* selects for 2D objects (cloth, paper); *snap* for 1D (stick, twig). -/
-  patientDim : Range ObjectDimensionality := none
-  deriving DecidableEq, BEq, Repr, Inhabited
+  /-- Force magnitude. -/
+  forceMag : Finset ForceLevel := univ
+  /-- Force direction. -/
+  forceDir : Finset ForceDirection := univ
+  /-- Patient robustness. -/
+  patientRob : Finset Robustness := univ
+  /-- The physical change produced. -/
+  resultType : Finset ResultType := univ
+  /-- Compatibility with careful action. -/
+  agentControl : Finset AgentControl := univ
+  /-- The instrument selected for. -/
+  instrumentType : Finset InstrumentType := univ
+  /-- Patient dimensionality. -/
+  patientDim : Finset ObjectDimensionality := univ
+  deriving DecidableEq
 
 namespace Profile
 
-/-- Does a root profile constrain patient properties? -/
-def constrainsPatient (rp : Profile) : Prop :=
-  rp.patientRob.isConstrained = true
+/-- Two profiles overlap when their regions meet on every dimension. -/
+def Overlaps (p q : Profile) : Prop :=
+  ¬ Disjoint p.forceMag q.forceMag ∧ ¬ Disjoint p.forceDir q.forceDir ∧
+    ¬ Disjoint p.patientRob q.patientRob ∧ ¬ Disjoint p.resultType q.resultType ∧
+    ¬ Disjoint p.agentControl q.agentControl ∧
+    ¬ Disjoint p.instrumentType q.instrumentType ∧ ¬ Disjoint p.patientDim q.patientDim
 
-instance (rp : Profile) : Decidable rp.constrainsPatient :=
-  inferInstanceAs (Decidable (_ = true))
-
-/-- Do two root profiles overlap (share at least one compatible event)? -/
-def overlaps (rp₁ rp₂ : Profile) : Prop :=
-  rp₁.forceMag.overlaps rp₂.forceMag = true ∧
-  rp₁.forceDir.overlaps rp₂.forceDir = true ∧
-  rp₁.patientRob.overlaps rp₂.patientRob = true ∧
-  rp₁.resultType.overlaps rp₂.resultType = true ∧
-  rp₁.agentVolition.overlaps rp₂.agentVolition = true ∧
-  rp₁.agentControl.overlaps rp₂.agentControl = true
-
-instance (rp₁ rp₂ : Profile) : Decidable (rp₁.overlaps rp₂) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _ ∧ _ ∧ _))
+instance (p q : Profile) : Decidable (p.Overlaps q) := by unfold Overlaps; infer_instance
 
 end Profile
 
-end Root
-
-end Verb
+end Verb.Root

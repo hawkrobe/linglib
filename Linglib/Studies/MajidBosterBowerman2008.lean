@@ -65,8 +65,10 @@ namespace MajidBosterBowerman2008
 open Verb
 open ArgumentStructure
 open Features
-open InstrumentType ObjectDimensionality Robustness ResultType
-     ForceLevel ForceDirection
+open Verb.Root.Profile
+open Verb.Root.Profile.InstrumentType Verb.Root.Profile.ObjectDimensionality
+  Verb.Root.Profile.Robustness Verb.Root.Profile.ResultType Verb.Root.Profile.ForceLevel
+  Verb.Root.Profile.ForceDirection
 
 -- ════════════════════════════════════════════════════
 -- § 1. Separation Events (stimulus level)
@@ -163,7 +165,7 @@ def clip53_breakStick : SeparationEvent :=
     a sharp blade — it breaches the material through puncture, not clean
     cutting. -/
 def clip45_pokeHole : SeparationEvent :=
-  ⟨.none, .twoD, .flimsy, .surfaceBreach, .low, .unidirectional, false⟩
+  ⟨.other, .twoD, .flimsy, .surfaceBreach, .low, .unidirectional, false⟩
 
 /-- Clip 7: Push chair back from table (reversible separation). -/
 def clip07_pushChair : SeparationEvent :=
@@ -212,8 +214,8 @@ def SeparationEvent.predictability (e : SeparationEvent) : Predictability :=
     | .bidirectional => .low     -- tearing/snapping: unpredictable
     | .omnidirectional => .low   -- smashing by hand: unpredictable
     | .unidirectional => .intermediate  -- karate chop: partly predictable
-    | .none => .low
-  | .none => .low
+    | .undirected => .low
+  | .other => .low
 
 /-- Break subtypes within the low-predictability cluster (Dimension 3).
 
@@ -253,7 +255,7 @@ def SeparationEvent.isMaterialDestruction (e : SeparationEvent) : Bool :=
     Poking a hole in a flat flexible object — distinguished from
     cutting and breaking because the object is not separated into
     pieces. The paper notes this emerged as a distinct cluster in 5/28
-    languages. Our encoding uses `.none` instrument for the twig since
+    languages. Our encoding uses `.other` for the twig since
     `InstrumentType` lacks a `.pointed` variant; the diagnostic feature
     is the combination of surface breach + 2D flexible object. -/
 def SeparationEvent.isPokingHole (e : SeparationEvent) : Bool :=
@@ -263,18 +265,14 @@ def SeparationEvent.isPokingHole (e : SeparationEvent) : Bool :=
 -- § 4. Compatibility with Root.Profile
 -- ════════════════════════════════════════════════════
 
-/-- Is a separation event compatible with a verb root's profile?
+/-- A separation event is compatible with a root's profile when each of its feature
+    values lies in the root's region for that dimension. -/
+def SeparationEvent.CompatibleWith (e : SeparationEvent) (r : Root.Profile) : Prop :=
+  e.force ∈ r.forceMag ∧ e.forceDir ∈ r.forceDir ∧ e.objectRob ∈ r.patientRob ∧
+    e.result ∈ r.resultType ∧ e.instrument ∈ r.instrumentType ∧ e.objectDim ∈ r.patientDim
 
-    An event is compatible iff each of its feature values falls within
-    the root's range for that dimension. Unconstrained dimensions
-    (range = none) accept any value. -/
-def SeparationEvent.compatibleWith (e : SeparationEvent) (r : Root.Profile) : Bool :=
-  r.forceMag.isCompatible e.force &&
-  r.forceDir.isCompatible e.forceDir &&
-  r.patientRob.isCompatible e.objectRob &&
-  r.resultType.isCompatible e.result &&
-  r.instrumentType.isCompatible e.instrument &&
-  r.patientDim.isCompatible e.objectDim
+instance (e : SeparationEvent) (r : Root.Profile) : Decidable (e.CompatibleWith r) := by
+  unfold SeparationEvent.CompatibleWith; infer_instance
 
 -- ════════════════════════════════════════════════════
 -- § 5. Dimension Verification
@@ -514,31 +512,31 @@ open English.Predicates.Verbal
 
 /-- The tear cloth event is compatible with the Fragment *tear* entry. -/
 theorem tearCloth_compatible_tear :
-    clip01_tearCloth.compatibleWith (fragmentProfile tear_) = true := rfl
+    clip01_tearCloth.CompatibleWith (fragmentProfile tear_) := by decide
 
 /-- A cutting event is NOT compatible with the *tear* profile
     (wrong instrument type). -/
 theorem sliceCarrot_incompatible_tear :
-    clip09_sliceCarrot.compatibleWith (fragmentProfile tear_) = false := rfl
+    ¬ clip09_sliceCarrot.CompatibleWith (fragmentProfile tear_) := by decide
 
 /-- Smashing a pot is NOT compatible with the *break* profile
     (fragmentation ≠ fracture — English *smash* covers fragmentation). -/
 theorem smashPot_incompatible_break :
-    clip39_smashPot.compatibleWith (fragmentProfile break_) = false := rfl
+    ¬ clip39_smashPot.CompatibleWith (fragmentProfile break_) := by decide
 
 /-- A snapping event IS compatible with *break* (fracture result, moderate
     force) — English *break* can cover snapping events, though *snap*
     is more specific. -/
 theorem snapTwig_compatible_break :
-    clip19_snapTwig.compatibleWith (fragmentProfile break_) = true := rfl
+    clip19_snapTwig.CompatibleWith (fragmentProfile break_) := by decide
 
 /-- Slicing a carrot is compatible with the *cut* entry. -/
 theorem sliceCarrot_compatible_cut :
-    clip09_sliceCarrot.compatibleWith (fragmentProfile cut) = true := rfl
+    clip09_sliceCarrot.CompatibleWith (fragmentProfile cut) := by decide
 
 /-- Tearing cloth is NOT compatible with the *cut* profile (wrong instrument). -/
 theorem tearCloth_incompatible_cut :
-    clip01_tearCloth.compatibleWith (fragmentProfile cut) = false := rfl
+    ¬ clip01_tearCloth.CompatibleWith (fragmentProfile cut) := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Key Finding: Dimensional Constraint
