@@ -2,144 +2,100 @@ import Linglib.Semantics.ArgumentStructure.Root.Profile
 import Linglib.Semantics.ArgumentStructure.Root.Kinds
 
 /-!
-# Atomic Lexical Entailments and Roots
+# Verbal roots
 
-Lexical entailments are the atomic claims a verbal root makes about
-the events it describes and the participants in those events.
-Following [beavers-koontz-garboden-2020], we treat these as
-*structured atoms* rather than as a fixed feature vector: a **root**
-is a finite collection of such atoms, and its kind signature
-(`Root.Kinds`) is the *derived* set of kinds its atoms realize —
-exposing the Bifurcation Thesis of Roots and Manner/Result
-Complementarity as testable conjectures rather than architectural
-commitments.
+A verbal root of [beavers-koontz-garboden-2020] is a bundle of lexical
+entailments (§5.2.1, after [dowty-1991]): idiosyncratic atoms, each of one of
+the four kinds the book's root typology tracks (§5.4.1, (11)) — a state, a
+manner, a change into a state, or causation. `Root` carries a finite set of
+such atoms and the root's within-class quality profile. Its kind signature
+`Root.kinds` is *derived*, the image of the atoms under `Entailment.kind`, and
+`Root.closedKinds` adds the kinds the book's collocational restrictions force
+(`Root.Kinds.close`); that closure is where the templatic content a root's own
+entailments carry with them (a cracked state entails a change, §5.2.1) enters
+the signature.
 
 ## Main declarations
 
-* `LexEntailment` — labeled atoms; `LexEntailment.kind` projects its
-  B&K-G kind
-* `Root` — a named list of atoms
-* `Root.kinds` — the derived signature; `Root.closedKinds` its
-  collocational closure
-* `Root.HasState`/`HasManner`/`HasResult`/`HasCause` — kind membership
+* `Root.Entailment` — a labelled atom; `Root.Entailment.kind` forgets the label
+* `Root` — name, atoms, quality profile
+* `Root.kinds`, `Root.closedKinds` — the derived and the closed signature
+
+## References
+
+* [beavers-koontz-garboden-2020]: The Roots of Verbal Meaning.
+* [dowty-1991]: Thematic proto-roles and argument selection.
+* [bohnemeyer-2004]: Split intransitivity, linking, and lexical representation.
+* [spalek-mcnally-2026], [majid-boster-bowerman-2008]: the quality dimensions of
+  `Root.Profile`.
 -/
 
 namespace Verb
 
-/-! ### Atomic entailments -/
+/-! ### Atoms -/
 
-/-- An atomic structural claim a verbal root makes — one of the four
-    B&K-G entailment kinds (state, manner, result, cause). The three
-    contentful kinds carry a label; `hasCause` is nullary.
-    `LexEntailment.kind` projects the kind each realizes.
-
-    Participant/proto-role entailments (volition, sentience, movement,
-    affectedness, …) are deliberately *not* modeled here: they are an
-    orthogonal, linking-relevant layer carried by
-    `ArgumentStructure.EntailmentProfile`. -/
-inductive LexEntailment where
-  /-- Attributes a static property (state-kind atom). -/
-  | hasState     (label : String)
-  /-- Specifies the manner in which the action is performed. -/
-  | hasManner    (label : String)
-  /-- Entails change of state to the labelled result. -/
-  | becomesState (label : String)
-  /-- Entails a causing event. Nullary because B&K-G's typology is
-      neutral about *what* causes — only that there is a cause.
-      The cause-type distinction (internal vs external,
-      [bohnemeyer-2004]) is carried separately by
-      `ArgumentStructure.EventStructure.InternalExternalCause`. -/
-  | hasCause
+/-- A lexical entailment a root carries, of one of the four kinds of the root
+typology of [beavers-koontz-garboden-2020] (§5.4.1, (11)). The label names the
+particular state, manner, or result; causation is unlabelled because the
+typology records only that there is a cause (the internal vs external cause
+distinction of [bohnemeyer-2004] is `EventStructure.InternalExternalCause`).
+Participant entailments (volition, sentience, …) are the separate linking layer
+`ArgumentStructure.EntailmentProfile`. -/
+inductive Root.Entailment where
+  /-- The root describes the labelled state. -/
+  | state (label : String)
+  /-- The root describes an action of the labelled manner. -/
+  | manner (label : String)
+  /-- The root entails a change into the labelled state. -/
+  | result (label : String)
+  /-- The root entails causation. -/
+  | cause
   deriving DecidableEq, Repr
 
-namespace LexEntailment
-
-/-- The B&K-G kind an atom realizes. Total — every atom has a kind —
-    but kept `Option`-valued for the closure API (`Closure.lean`),
-    which quantifies over `a.kind = some k`. -/
-def kind : LexEntailment → Option LexKind
-  | hasState _     => some .state
-  | hasManner _    => some .manner
-  | becomesState _ => some .result
-  | hasCause       => some .cause
-
-end LexEntailment
+/-- The kind of an atom: forget its label. -/
+def Root.Entailment.kind : Root.Entailment → LexKind
+  | .state _ => .state
+  | .manner _ => .manner
+  | .result _ => .result
+  | .cause => .cause
 
 /-! ### Roots -/
 
-/-- A verbal root: a name and a finite set of atomic entailments it
-    imposes.
-
-    The set is the root's *base* entailment set — the atoms asserted
-    directly. A closure operation (B&K-G's networks of entailments
-    where one atom may entail another) is layered on top in
-    `Closure.lean`. -/
+/-- A verbal root: its form, the lexical entailments it carries, and its
+within-class quality profile. -/
 structure Root where
-  /-- The root form; `""` for an unnamed annotation (e.g. a quality-profile-only
-      root carried by a verb whose root form is its citation form). -/
+  /-- The root form, `""` when the root is carried anonymously by a verb whose
+  citation form names it. -/
   name : String := ""
-  /-- The B&KG structural-entailment atoms; `∅` where the root's structural
-      content has not been annotated (its `kinds` is then uninformative). -/
-  entailments : Finset LexEntailment := ∅
+  /-- The root's atoms, `∅` where its structural content is unannotated. -/
+  entailments : Finset Verb.Root.Entailment := ∅
   /-- Within-class graded quality dimensions ([spalek-mcnally-2026],
-      [majid-boster-bowerman-2008]); `{}` (all unconstrained) by default. -/
+  [majid-boster-bowerman-2008]); `{}` leaves every dimension unconstrained. -/
   profile : Verb.Root.Profile := {}
   deriving DecidableEq
 
-/-- `Finset` carries no `Repr`, so `Root` cannot `deriving Repr`; we supply
-    one by hand so `Verb` can `deriving Repr` over its `root` field. It shows
-    `name` and `profile` in full plus the `entailments`
-    cardinality — the entailment *set* itself has no computable `Repr`
-    (`Finset`/`Multiset` would need a `LinearOrder` on the elements to render),
-    but this already distinguishes roots that differ in profile, which
-    the old name-only `Repr` collapsed.
-
-    `BEq`/`LawfulBEq` need no hand-rolled instance: both come from the derived
-    `DecidableEq` (line above) via the global `instBEqOfDecidableEq`. -/
-instance : Repr Root :=
-  ⟨fun r _ => repr (r.name, r.entailments.card, r.profile)⟩
+/-- `Finset` has only an `unsafe` `Repr`, so `Root` cannot derive one; this shows
+the name, the number of atoms, and the profile. -/
+instance : Repr Root := ⟨λ r _ => repr (r.name, r.entailments.card, r.profile)⟩
 
 namespace Root
 
-/-- The derived kind signature of a root: the set of kinds its
-    atoms realize. -/
-def kinds (r : Root) : Root.Kinds :=
-  Finset.univ.filter (fun k => ∃ a ∈ r.entailments, a.kind = some k)
+variable (r : Root)
 
-theorem mem_kinds {r : Root} {k : LexKind} :
-    k ∈ r.kinds ↔ ∃ a ∈ r.entailments, a.kind = some k := by
-  simp only [kinds, Finset.mem_filter, Finset.mem_univ, true_and]
+/-- The kind signature of a root: the kinds of its atoms. -/
+def kinds : Kinds := r.entailments.image Entailment.kind
 
-/-- The root entails attribution of some state.
-    `abbrev` (not `def`) so `Decidable`/`simp`/`decide` see through to the
-    underlying `Finset` membership without per-predicate boilerplate. -/
-abbrev HasState (r : Root) : Prop := .state ∈ r.kinds
+variable {r} in
+@[simp] theorem mem_kinds {k : LexKind} : k ∈ r.kinds ↔ ∃ a ∈ r.entailments, a.kind = k :=
+  Finset.mem_image
 
-/-- The root specifies some manner. -/
-abbrev HasManner (r : Root) : Prop := .manner ∈ r.kinds
+/-- The closed signature: `kinds` completed under the collocational restrictions
+of [beavers-koontz-garboden-2020] (`Root.Kinds.close`). -/
+def closedKinds : Kinds := r.kinds.close
 
-/-- The root entails some change of state (B&K-G "result"). -/
-abbrev HasResult (r : Root) : Prop := .result ∈ r.kinds
+theorem kinds_le_closedKinds : r.kinds ≤ r.closedKinds := Kinds.le_close _
 
-/-- The root entails causation. -/
-abbrev HasCause (r : Root) : Prop := .cause ∈ r.kinds
-
-/-! ### The closed signature -/
-
-/-- The closed kind signature: the collocational closure
-    (`Root.Kinds.close`) of the derived signature. Both
-    [beavers-koontz-garboden-2020] restrictions (result→state and
-    cause→result) hold of closed signatures by construction. -/
-def closedKinds (r : Root) : Root.Kinds :=
-  r.kinds.close
-
-theorem closedKinds_wellFormed (r : Root) :
-    r.closedKinds.WellFormed :=
-  Root.Kinds.close_wellFormed _
-
-theorem kinds_le_closed (r : Root) :
-    r.kinds ≤ r.closedKinds :=
-  Root.Kinds.le_close _
+theorem closedKinds_wellFormed : r.closedKinds.WellFormed := Kinds.close_wellFormed _
 
 end Root
 

@@ -167,11 +167,8 @@ def _root_.Verb.Root.template (r : Root) : Template :=
     the [beavers-koontz-garboden-2020] result entailment, bridged to the
     `EventStructure` template diagnostic. -/
 theorem _root_.Verb.Root.template_hasResultState_iff (r : Root) :
-    r.template.HasResultState ↔ LexKind.result ∈ r.closedKinds := by
-  apply ofKinds_hasResultState_iff
-  show Root.Kinds.close r.closedKinds = r.closedKinds
-  unfold Verb.Root.closedKinds
-  exact Root.Kinds.close_idem _
+    r.template.HasResultState ↔ LexKind.result ∈ r.closedKinds :=
+  ofKinds_hasResultState_iff r.closedKinds_wellFormed
 
 end Signature
 
