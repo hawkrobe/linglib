@@ -190,8 +190,8 @@ def Verbalizer.Alloseme.fromRootType : Verb.Root.ChangeType → Verbalizer.Allos
 /-- The bridge preserves the change entailment: eventive v iff the root
 entails change. -/
 theorem Verbalizer.fromRootType_iff_entailsChange (rt : Verb.Root.ChangeType) :
-    (Verbalizer.Alloseme.fromRootType rt).introducesEvent = rt.entailsChange := by
-  cases rt <;> rfl
+    (Verbalizer.Alloseme.fromRootType rt).introducesEvent = true ↔ rt.EntailsChange := by
+  cases rt <;> decide
 
 /-! ### n allosemy -/
 
