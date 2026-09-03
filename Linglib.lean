@@ -290,7 +290,6 @@ import Linglib.Core.Probability.ConditionalProbability
 import Linglib.Core.Probability.Confirmation
 import Linglib.Core.Probability.Constructions
 import Linglib.Core.Probability.CoupledEvaluation
-import Linglib.Core.Probability.DataProcessing
 import Linglib.Core.Probability.Decision.Basic
 import Linglib.Core.Probability.Decision.Blackwell
 import Linglib.Core.Probability.Decision.Duality
@@ -298,7 +297,6 @@ import Linglib.Core.Probability.Decision.ExperimentDesign
 import Linglib.Core.Probability.DirichletMultinomial
 import Linglib.Core.Probability.Distributions.Bernoulli
 import Linglib.Core.Probability.ENNRealArith
-import Linglib.Core.Probability.Entropy
 import Linglib.Core.Probability.Eval
 import Linglib.Core.Probability.EvalLemmas
 import Linglib.Core.Probability.Finite
@@ -307,6 +305,7 @@ import Linglib.Core.Probability.GibbsVariational
 import Linglib.Core.Probability.Gumbel
 import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.JointPosterior
+import Linglib.Core.Probability.Kernel.Composition.Lemmas
 import Linglib.Core.Probability.Kernel.OfWeights
 import Linglib.Core.Probability.Kernel.Posterior
 import Linglib.Core.Probability.UniformOn
