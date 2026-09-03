@@ -5,8 +5,10 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Root kind signatures
 
-The root typology of [beavers-koontz-garboden-2020] (§5.4.1) records which of
-four kinds of lexical entailment a root carries — state, manner, result, cause —
+Which templatic components a root entails, the coarse, between-class half of a
+root's meaning; the fine, within-class half is `Root.Content`. The root typology
+of [beavers-koontz-garboden-2020] (§5.4.1) records which of four kinds of
+lexical entailment a root carries — state, manner, result, cause —
 under two collocational restrictions, that a change entails a state and a cause
 entails a change. The restrictions are the partial order `state ≤ result ≤ cause`
 on `Root.Kind`, with `manner` isolated. A root's kind signature is a

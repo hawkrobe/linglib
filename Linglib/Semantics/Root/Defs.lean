@@ -1,4 +1,4 @@
-import Linglib.Semantics.Root.Profile
+import Linglib.Semantics.Root.Content
 import Linglib.Semantics.Root.Kinds
 import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Semantics.Composition.Ty
@@ -9,7 +9,7 @@ import Linglib.Semantics.Composition.Ty
 A verbal root of [beavers-koontz-garboden-2020] is a bundle of lexical
 entailments (§5.2.1), each of one of the four kinds of `Root.Kind`. `Root`
 carries a finite set of such atoms, its position with respect to the verbalizing
-head `v`, and a within-class quality profile. Its kind signature `Root.kinds` is
+head `v`, and its within-class content. Its kind signature `Root.kinds` is
 the image of the atoms under `Entailment.kind`, and `Root.closedKinds` completes
 it under the collocational restrictions (`Root.Kinds.close`). A root composes
 with `v` either as its complement, the result position of change-of-state roots
@@ -26,7 +26,7 @@ and whether it combines with transitive Voice.
 
 * `Root.Entailment` — a labelled state, manner, or result atom, or causation
 * `Root.Position` — complement of `v` or adjoined to it
-* `Root` — a root's name, atoms, position, quality profile, and annotated
+* `Root` — a root's name, atoms, position, content, and annotated
   valency, semantic type, and transitive-Voice licensing
 * `Root.kinds` — the kinds of a root's atoms; `Root.closedKinds` closes them
 * `Root.changeType` — property-concept or result root, off the closed signature
@@ -38,8 +38,8 @@ and whether it combines with transitive Voice.
 * [beavers-etal-2021]: States and changes of state.
 * [kalyakin-2026]: VP ellipsis and argument structure alternations: Evidence from
   Muira Dargwa complex predicates.
-* [spalek-mcnally-2026], [majid-boster-bowerman-2008]: the quality dimensions of
-  `Root.Profile`.
+* [spalek-mcnally-2026], [majid-boster-bowerman-2008]: the dimensions of
+  `Root.Content`.
 -/
 
 namespace Semantics
@@ -78,7 +78,7 @@ inductive Root.Position where
 
 /-! ### Roots -/
 
-/-- A verbal root, with its lexical entailments, position, and quality profile. -/
+/-- A verbal root, with its lexical entailments, position, and content. -/
 structure Root where
   /-- The root form, `""` when the root is carried anonymously by a verb whose
   citation form names it. -/
@@ -87,9 +87,9 @@ structure Root where
   entailments : Finset Semantics.Root.Entailment := ∅
   /-- The position in which the root composes with `v`, where annotated. -/
   position : Option Semantics.Root.Position := none
-  /-- Within-class graded quality dimensions ([spalek-mcnally-2026],
-  [majid-boster-bowerman-2008]); `{}` leaves every dimension unconstrained. -/
-  profile : Semantics.Root.Profile := {}
+  /-- Within-class content ([spalek-mcnally-2026], [majid-boster-bowerman-2008]); `{}`
+  leaves every dimension unconstrained. -/
+  content : Semantics.Root.Content := {}
   /-- The core-argument positions the root introduces, where annotated ([coon-2019]). -/
   valency : Option ArgumentStructure.Valency := none
   /-- The root's semantic type, where annotated ([coon-2019] (3)). -/
