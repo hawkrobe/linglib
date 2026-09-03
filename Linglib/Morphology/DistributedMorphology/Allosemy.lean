@@ -3,7 +3,7 @@ import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Realization
-import Linglib.Semantics.Root.Classification
+import Linglib.Semantics.Root.ChangeType
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!

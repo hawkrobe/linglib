@@ -18,7 +18,7 @@ Consequences for the nature of roots."
 The entry carries only the distributional class label; the theoretical
 coordinates ([coon-2019]'s `Classification` values — semantic type,
 valency, transitive-Voice licensing) are a derived projection
-`RootClass.toClassification` in `Studies/Coon2019.lean`, following the
+`RootClass.toRoot` in `Studies/Coon2019.lean`, following the
 derived-projection pattern of `Studies/HaninkKoontzGarboden2025.lean`.
 -/
 

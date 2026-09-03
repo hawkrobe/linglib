@@ -1,4 +1,5 @@
-import Linglib.Semantics.Root.Classification
+import Linglib.Semantics.Root.ChangeType
+import Linglib.Semantics.Root.PropertyConcept
 import Linglib.Studies.KoontzGarboden2009
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Semantics.Possession.Relationalizer
@@ -63,7 +64,7 @@ Property concept (PC) roots in Wá·šiw come in two semantic types:
 
 namespace HaninkKoontzGarboden2025
 
-open Verb Semantics.Root
+open Verb Semantics Semantics.Root
 open KoontzGarboden2009.Monotonicity
 open DistributedMorphology (Categorizer)
 open Possession (π)
@@ -274,29 +275,24 @@ theorem within_language_variation :
 
 /-- A Wá·šiw property concept root entry.
 
-    The theory-layer `Classification` is exposed as a *derived projection*
-    `toClassification` rather than a stored field — all PC roots share
-    `valency := ∅`, `changeType := .propertyConcept`, and have
-    `denotationType` determined by `morphClass.denotationType`. Storing it
-    redundantly would invite the encoding-conclusions-as-definitions
-    anti-pattern (CLAUDE.md). -/
+    The semantic root is a *derived projection* `toRoot` rather than a stored
+    field, since every PC root names one state, has empty valency, and has the
+    semantic type its morph class fixes. -/
 structure WasiwPCRoot where
   stem : String
   gloss : String
   morphClass : MorphClass
-  dixonCat : PCClass
+  dixonCat : PropertyConcept.Class
   deriving Repr
 
-/-- The theory-layer `Classification` derived from a Wáshiw PC root.
-    All PC roots are `propertyConcept` (+S −M −R −C) and valency-`∅`; their
-    `denotationType` is determined by `MorphClass.denotationType`. -/
-def WasiwPCRoot.toClassification (w : WasiwPCRoot) : Classification :=
-  { valency := ∅,
-    changeType := .propertyConcept,
+/-- The semantic root of a Wá·šiw PC root: one state atom, so its change type is
+    `propertyConcept`, empty valency, and the semantic type of its morph class. -/
+def WasiwPCRoot.toRoot (w : WasiwPCRoot) : Semantics.Root :=
+  { name := w.stem, entailments := {.state w.gloss}, valency := some ∅,
     denotationType := some w.morphClass.denotationType }
 
 /-- Convenience constructor — kept stable for `sampleRoots` literals. -/
-def mkWasiwRoot (stem gloss : String) (mc : MorphClass) (cat : PCClass) :
+def mkWasiwRoot (stem gloss : String) (mc : MorphClass) (cat : PropertyConcept.Class) :
     WasiwPCRoot :=
   { stem, gloss, morphClass := mc, dixonCat := cat }
 
@@ -362,11 +358,9 @@ def sampleRoots : List WasiwPCRoot := [
 -- § 9. Per-Root Sample Properties
 -- ════════════════════════════════════════════════════
 
-/-! All Wáshiw PC roots are property-concept (`changeType = .propertyConcept`),
-    empty valency, and have a denotation type determined by their morph class
-    — these invariants are *true by construction* of `WasiwPCRoot.toClassification`,
-    so no separate theorems are needed. The theorems below test substantive
-    claims about the sample's *composition*, not its constructor's consistency. -/
+/-! Every Wá·šiw PC root is property-concept, valency-free, and typed by its morph
+    class by construction of `WasiwPCRoot.toRoot`, so the theorems below test the
+    sample's composition rather than its constructor. -/
 
 /-- All color roots are Class 3 — the only fully predictable Dixon
     category ([hanink-koontz-garboden-2025] §7, Appendix). -/
