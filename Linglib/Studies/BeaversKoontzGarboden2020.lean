@@ -259,32 +259,32 @@ open Verb
 /-! ### The six representative roots -/
 
 /-- √flat — pure state. -/
-def flat : Root := ⟨"flat", {.hasState "flat"}, {}⟩
+def flat : Root := ⟨"flat", {.state "flat"}, {}⟩
 
 /-- √jog — pure manner of motion. -/
-def jog : Root := ⟨"jog", {.hasManner "jogging-gait"}, {}⟩
+def jog : Root := ⟨"jog", {.manner "jogging-gait"}, {}⟩
 
 /-- √blossom — result with no specified manner or cause (an
     internally caused change of state). -/
-def blossom : Root := ⟨"blossom", {.becomesState "flowering"}, {}⟩
+def blossom : Root := ⟨"blossom", {.result "flowering"}, {}⟩
 
 /-- √crack — caused result without specified manner. -/
-def crack : Root := ⟨"crack", {.becomesState "fissured", .hasCause}, {}⟩
+def crack : Root := ⟨"crack", {.result "fissured", .cause}, {}⟩
 
 /-- √hand — manner + cause + result, adjoined position. The
     possession result is non-cancelable ("Mary handed John the book,
     #but it never came to be on his person", ch. 3 (48)), so it is
     root-entailed rather than implicated. -/
 def hand : Root := ⟨"hand",
-  {.hasManner "by-hand-transfer",
-   .becomesState "in-recipient-possession",
-   .hasCause}, {}⟩
+  {.manner "by-hand-transfer",
+   .result "in-recipient-possession",
+   .cause}, {}⟩
 
 /-- √drown — manner of killing (Levin 1993's *crucify, drown, hang,
     electrocute* class; [beavers-koontz-garboden-2020] ch. 4):
     manner + cause + result, complement position. -/
 def drown : Root := ⟨"drown",
-  {.hasManner "submersion-in-liquid", .becomesState "dead", .hasCause}, {}⟩
+  {.manner "submersion-in-liquid", .result "dead", .cause}, {}⟩
 
 /-! ### Kind signatures
 

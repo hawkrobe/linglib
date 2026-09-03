@@ -199,10 +199,9 @@ def LevinClass.rootEntailments : LevinClass → Root.Kinds
 earns its place via a theorem that holds for *every* class and breaks if a
 row is changed: every assigned signature is well-formed (collocationally
 closed). Invert any row to an unclosed signature and this fails — the
-grounding is not decorative. Manner/result complementarity of these
-signatures is covered by the canonical kinds-layer theory
-(`Roots/Closure.lean`, `closed_violatesBifurcation_iff`), which quantifies
-over all `Root.Kinds`, so no per-class MRC spot-check is restated here. -/
+grounding is not decorative. Manner/result complementarity is a claim about
+roots, prosecuted over all `Root.Kinds` in `Studies/BeaversKoontzGarboden2020.lean`,
+so no per-class spot-check is restated here. -/
 
 /-- Every Levin class is assigned a well-formed (closed) root signature. -/
 theorem rootEntailments_wellFormed (c : LevinClass) :

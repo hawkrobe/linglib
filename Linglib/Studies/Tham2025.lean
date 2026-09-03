@@ -60,7 +60,7 @@ verb allows only conceptual access (§4.2).
 - §14 Cross-paper engagement: Beavers & Koontz-Garboden 2020 root
      eventivity (Tham §5.1 refutes strict root → deverbal-adjective
      result-state inheritance, against B&KG's `crack : Root :=
-     ⟨"crack", [.becomesState "fissured", .hasCause]⟩`)
+     ⟨"crack", {.result "fissured", .cause}⟩`)
 - §15 Cross-paper engagement: Waldon et al. 2023 normalization contrast
      (substrate-level: shared numerator, divergent denominator)
 - §16 Cross-paper engagement: Solt 2018 SuB reciprocal bridge
@@ -831,8 +831,8 @@ theorem largeVase_score_le_one :
 
 /-! [beavers-koontz-garboden-2020] formalize verbal roots as
     bundles of lexical entailments
-    (`Semantics/Lexical/Roots/Basic.lean`). Their classification
-    of √crack is `[.becomesState "fissured", .hasCause]` — the
+    (`Semantics/ArgumentStructure/Root/Defs.lean`). Their classification
+    of √crack is `{.result "fissured", .cause}` — the
     "result + cause, no manner" base feature signature
     `{.result, .cause}` (`BeaversKoontzGarboden2020.crack`).
 
@@ -841,18 +841,18 @@ theorem largeVase_score_le_one :
     INHERITANCE from this root signature to the deverbal adjective:
     the adjective applies to surfaces that have not undergone the
     CoS event. The substrate-level contrast: B&KG's *crack* root
-    asserts `becomesState` (the verbal entry derived from this root
+    asserts `result` (the verbal entry derived from this root
     inherits it via `Verbal.crack.toVerb.degreeAchievementScale`),
     yet the adjectival side `Tham2025.crack.adjEntailsPrecedingChange`
     is false. -/
 
-/-- B&KG's `crack` root has a result entailment (the `becomesState
+/-- B&KG's `crack` root has a result entailment (the `result
     "fissured"` atom provides it), but Tham's deverbal adjective
     *cracked* does NOT entail a preceding CoS event. Strict result-
     state inheritance from root to deverbal adjective is refuted at
     substrate level. -/
 theorem cracked_adj_refutes_bkg_crack_root_inheritance :
-    BeaversKoontzGarboden2020.crack.HasResult ∧
+    Verb.LexKind.result ∈ BeaversKoontzGarboden2020.crack.kinds ∧
     crack.adjEntailsPrecedingChange = false :=
   ⟨by decide, rfl⟩
 
