@@ -24,6 +24,8 @@ candidate. A bare `C → ℕ` over an opaque candidate type has no family, by de
 * `Constraint.binary` — the indicator constraint of a decidable predicate.
 * `Constraint.comap` — pull a constraint back along a candidate map.
 * `CON C n` — a grammar's constraint set: an indexed family of `n` constraints.
+* `Constraint.joint` / `CON.joint` — joint evaluation on output tuples by
+  constraint summation ([prince-2015], [magri-storme-2021]).
 * `weightedViolations` / `harmonyScore` — the Harmonic-Grammar weighted sum
   `Σⱼ wⱼ · Cⱼ(c)` and its negation `H(c) = -Σⱼ wⱼ · Cⱼ(c)` ([smolensky-legendre-2006]).
 -/
@@ -81,6 +83,24 @@ def Constraint.comap (f : C → D) (con : Constraint D) : Constraint C := con �
 @[simp] theorem Constraint.comap_apply (f : C → D) (con : Constraint D) (c : C) :
     Constraint.comap f con c = con (f c) := rfl
 
+/-! ### Joint evaluation
+
+A **systemic** constraint — \*HOMOPHONY, a distinctiveness constraint — scores a
+whole system of outputs, so its candidate is an output tuple `f : ι → O` assigning
+each input `inputs i` its output. A per-mapping constraint on `I × O` is lifted to
+output tuples by **constraint summation** ([prince-2015], [magri-storme-2021]):
+its violations on `f` are summed over the mappings `(inputs i, f i)`. -/
+
+variable {ι I O : Type*} [Fintype ι]
+
+/-- The joint evaluation of a per-mapping constraint on output tuples: its
+violations summed over the mappings `(inputs i, f i)`. -/
+def Constraint.joint (inputs : ι → I) (con : Constraint (I × O)) : Constraint (ι → O) :=
+  fun f => ∑ i, con (inputs i, f i)
+
+@[simp] theorem Constraint.joint_apply (inputs : ι → I) (con : Constraint (I × O)) (f : ι → O) :
+    con.joint inputs f = ∑ i, con (inputs i, f i) := rfl
+
 /-- A grammar's **constraint set** `CON`: an indexed family of `n` constraints over
 candidates `C` ([prince-smolensky-1993]'s *CON*). A `CON` sends each candidate to a
 `ViolationProfile n` (`buildViolationProfile`, in `Constraints.Profile`); an **OT** grammar then
@@ -88,6 +108,13 @@ ranks the coordinates (a `Ranking n`), a **Harmonic Grammar** weights them (a
 `Fin n → ℝ` vector). Both feed the framework-neutral `Core.Optimization.ConstraintSystem`
 through different decoders (lexicographic argmin vs. softmax). -/
 abbrev CON (C : Type*) (n : ℕ) := Fin n → Constraint C
+
+/-- Joint evaluation of a constraint set, constraint by constraint. -/
+def CON.joint {n : ℕ} (inputs : ι → I) (con : CON (I × O) n) : CON (ι → O) n :=
+  fun j => (con j).joint inputs
+
+@[simp] theorem CON.joint_apply {n : ℕ} (inputs : ι → I) (con : CON (I × O) n) (j : Fin n) :
+    con.joint inputs j = (con j).joint inputs := rfl
 
 /-! ### Harmony (Harmonic Grammar)
 
