@@ -5,9 +5,11 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.InformationTheory.KullbackLeibler.Finite
 import Linglib.Core.MeasureTheory.Measure.Prod
+import Linglib.Core.Probability.Kernel.Composition.Lemmas
 import Linglib.Core.Probability.UniformOn
 import Mathlib.Analysis.Convex.Jensen
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+import Mathlib.InformationTheory.KullbackLeibler.DataProcessing
 
 /-!
 # Entropy of a measure
@@ -34,7 +36,8 @@ conditioning reduces entropy.
 
 * `measureEntropy_le_log_card`: entropy is at most the log of the cardinality;
   `measureEntropy_uniformOn`: the uniform measure attains it.
-* `measureMutualInfo_eq_toReal_klDiv`, `measureMutualInfo_nonneg`.
+* `measureMutualInfo_eq_toReal_klDiv`, `measureMutualInfo_nonneg`,
+  `measureMutualInfo_parallelComp_id_comp_le` (data processing).
 * `chain_rule`, `mutualInfo_eq_entropy_sub_condEntropy`, `condEntropy_le_entropy`.
 
 ## References
@@ -192,6 +195,19 @@ theorem measureMutualInfo_eq_toReal_klDiv : Im[μ] = (klDiv μ (μ.fst.prod μ.s
 theorem measureMutualInfo_nonneg : 0 ≤ Im[μ] := by
   rw [measureMutualInfo_eq_toReal_klDiv]
   exact ENNReal.toReal_nonneg
+
+/-- **Data processing**: pushing the second coordinate through a Markov kernel cannot increase
+mutual information. -/
+theorem measureMutualInfo_parallelComp_id_comp_le {U : Type*} [MeasurableSpace U] [Fintype U]
+    [MeasurableSingletonClass U] (η : Kernel T U) [IsMarkovKernel η] :
+    Im[(Kernel.id ∥ₖ η) ∘ₘ μ] ≤ Im[μ] := by
+  have : Nonempty T := μ.nonempty_of_neZero.map Prod.snd
+  rw [measureMutualInfo_eq_toReal_klDiv, measureMutualInfo_eq_toReal_klDiv,
+    Measure.fst_parallelComp_id_comp, Measure.snd_parallelComp_id_comp,
+    ← Measure.parallelComp_id_comp_prod]
+  exact ENNReal.toReal_mono
+    (klDiv_ne_top_iff.mpr ⟨μ.absolutelyContinuous_fst_prod_snd, .of_finite⟩)
+    (klDiv_comp_right_le _ _ _)
 
 end measureMutualInfo
 

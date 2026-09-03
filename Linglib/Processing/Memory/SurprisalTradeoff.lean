@@ -110,7 +110,7 @@ Key insight: I_t = S_t - S_{t+1}, where S_t is the surprisal when
 the processor remembers only t steps of context. So I_t measures
 the *marginal value* of remembering one more step.
 
-The profile connects to `PMF.mutualInformation`:
+The profile connects to `InformationTheory.measureMutualInfo`:
 each I_t is I(W_n; W_{n+t}), the mutual information between words
 at distance t in the stationary process. -/
 

@@ -3,7 +3,8 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Probability.DataProcessing
+import Linglib.Core.InformationTheory.Entropy
+import Linglib.Core.Probability.ConditionalProbability
 import Linglib.Processing.Memory.LossyContext
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
@@ -48,7 +49,7 @@ relative-clause rate `f` is low, as for English `f ≈ 0.2` but not German
   `0 ≤ pmi` and decreasing when `pmi ≤ 0`.
 * `erasure_zero`, `erasure_one` — the brackets: no erasure recovers plain
   surprisal (§3.5.1); certain erasure recovers the prior (§3.4.2).
-* `mutualInformation_memory_le` — §3.2: the data processing inequality as the
+* `mutualInfo_memJoint_le` — §3.2: the data processing inequality as the
   constraint on all admissible noise distributions.
 * `bayesDifficulty_memJoint_sub_eq`, `bayesDifficulty_le_memJoint` — the
   average form (§3.4.1, Supp. A, at the §3.3 Bayes-optimal comprehender):
@@ -184,20 +185,6 @@ theorem erasure_one (h0 : L.nextProb [] w ≠ 0) (hy : L.nextProb [y] w ≠ 0) :
   rw [expectedSurprisal_erasure L le_rfl h0 hy]
   simp
 
-/-- §3.2's constraint on noise distributions, as the mutual-information form
-    of the data processing inequality: a memory representation generated from
-    the context (Claim 3) carries no more information about the next word than
-    the context itself, whatever the noise distribution. -/
-theorem mutualInformation_memory_le {W C M : Type*}
-    [Fintype W] [Fintype C] [Fintype M]
-    [MeasurableSpace W] [MeasurableSpace C] [MeasurableSpace M]
-    [MeasurableSingletonClass W] [MeasurableSingletonClass C]
-    [MeasurableSingletonClass M] [DecidableEq W] [DecidableEq C]
-    (joint : PMF (W × C)) (mem : C → PMF M) :
-    PMF.mutualInformation (joint.bind fun x => (mem x.2).map (Prod.mk x.1))
-      ≤ PMF.mutualInformation joint :=
-  PMF.mutualInformation_bind_snd_le joint mem
-
 section AverageForm
 
 /-! ### The average form (§3.4.1, Supplementary Material A)
@@ -206,45 +193,80 @@ Averaged over contexts, the difficulty of the Bayes-optimal comprehender
 (§3.3, eqs. (4)–(9)) under lossy memory exceeds its difficulty under
 veridical context by exactly the predictive information lost to memory. -/
 
+open InformationTheory MeasureTheory ProbabilityTheory
+open scoped ProbabilityTheory
+
 variable {W C M : Type*} [Fintype W] [Fintype C] [Fintype M]
   [MeasurableSpace W] [MeasurableSpace C] [MeasurableSpace M]
-  [MeasurableSingletonClass W] [MeasurableSingletonClass C]
-  [MeasurableSingletonClass M] [DecidableEq W] [DecidableEq C] [DecidableEq M]
+  [MeasurableSingletonClass W] [MeasurableSingletonClass C] [MeasurableSingletonClass M]
+  (J : Measure (W × C)) [IsProbabilityMeasure J] (mem : Kernel C M) [IsMarkovKernel mem]
 
 /-- The (word, memory) joint induced by passing the context coordinate through
     the memory encoder (Claims 1 and 3). -/
-noncomputable def memJoint (J : PMF (W × C)) (mem : C → PMF M) : PMF (W × M) :=
-  J.bind fun x => (mem x.2).map (Prod.mk x.1)
+noncomputable def memJoint : Measure (W × M) := (Kernel.id ∥ₖ mem) ∘ₘ J
+
+instance : IsProbabilityMeasure (memJoint J mem) :=
+  inferInstanceAs (IsProbabilityMeasure ((Kernel.id ∥ₖ mem) ∘ₘ J))
+
+/-- §3.2's constraint on noise distributions, as the mutual-information form
+    of the data processing inequality: a memory representation generated from
+    the context (Claim 3) carries no more information about the next word than
+    the context itself, whatever the noise distribution. -/
+theorem mutualInfo_memJoint_le : Im[memJoint J mem] ≤ Im[J] :=
+  measureMutualInfo_parallelComp_id_comp_le J mem
+
+variable {α β : Type*} [Fintype α] [Fintype β] [MeasurableSpace α] [MeasurableSpace β]
+  [MeasurableSingletonClass α] [MeasurableSingletonClass β]
 
 /-- Expected difficulty of the Bayes-optimal comprehender (§3.3): the expected
-    surprisal of predicting the first coordinate from the second under the
-    conditional distribution `PMF.cond`. -/
-noncomputable def bayesDifficulty {α β : Type*} [Fintype α] [Fintype β]
-    [DecidableEq β] (G : PMF (α × β)) : ℝ :=
-  ∑ x : α × β, (G x).toReal * (-Real.log ((G.cond x.2) x.1).toReal)
+    surprisal of predicting the first coordinate from the second. -/
+noncomputable def bayesDifficulty (G : Measure (α × β)) : ℝ :=
+  ∑ x, G.real {x} * -Real.log ((G[|Prod.snd ⁻¹' {x.2}]).real (Prod.fst ⁻¹' {x.1}))
 
 /-- The Bayes-optimal difficulty is the conditional entropy `H(W | ·)`:
-    the entropy chain rule read as an expected surprisal. -/
-theorem bayesDifficulty_eq {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
-    (G : PMF (α × β)) : bayesDifficulty G = G.entropy - G.snd.entropy :=
-  PMF.sum_mul_neg_log_cond G
+    expected surprisal read as the chain rule. -/
+theorem bayesDifficulty_eq (G : Measure (α × β)) [IsProbabilityMeasure G] :
+    bayesDifficulty G = H[Prod.fst | Prod.snd ; G] := by
+  have hfib (a : α) (b : β) :
+      Prod.snd ⁻¹' {b} ∩ Prod.fst ⁻¹' {a} = ({(a, b)} : Set (α × β)) := by
+    ext ⟨_, _⟩; simp [and_comm]
+  have hcond (a : α) (b : β) : (G[|Prod.snd ⁻¹' {b}]).real (Prod.fst ⁻¹' {a})
+      = G.real {(a, b)} / G.real (Prod.snd ⁻¹' {b}) := by
+    rw [measureReal_def, cond_real_apply G (measurable_snd (measurableSet_singleton b)), hfib]
+    rfl
+  have key (a : α) (b : β) :
+      G.real {(a, b)} * -Real.log ((G[|Prod.snd ⁻¹' {b}]).real (Prod.fst ⁻¹' {a}))
+        = G.real (Prod.snd ⁻¹' {b})
+          * Real.negMulLog ((G[|Prod.snd ⁻¹' {b}]).real (Prod.fst ⁻¹' {a})) := by
+    rw [hcond]
+    obtain hq | hq := eq_or_ne (G.real (Prod.snd ⁻¹' {b})) 0
+    · have : G.real {(a, b)} = 0 :=
+        measureReal_mono_null (hfib a b ▸ Set.inter_subset_left) hq (measure_ne_top _ _)
+      simp [this, hq]
+    · simp only [Real.negMulLog]
+      field_simp
+  rw [condEntropy_eq_sum _ measurable_snd, bayesDifficulty, Fintype.sum_prod_type]
+  simp_rw [key]
+  rw [Finset.sum_comm]
+  simp_rw [← Finset.mul_sum, entropy_eq_sum measurable_fst]
+
+private theorem condEntropy_fst_snd (G : Measure (α × β)) [IsProbabilityMeasure G] :
+    H[Prod.fst | Prod.snd ; G] = H[Prod.fst ; G] - Im[G] := by
+  have h := mutualInfo_eq_entropy_sub_condEntropy measurable_fst measurable_snd G
+  rw [mutualInfo_eq_measureMutualInfo measurable_fst measurable_snd,
+    show (fun p : α × β => (p.1, p.2)) = id from rfl, Measure.map_id] at h
+  linarith
 
 /-- **The average form of information locality**: the expected excess
     difficulty of lossy-memory comprehension over veridical-context
     comprehension is exactly the predictive information lost to memory. -/
-theorem bayesDifficulty_memJoint_sub_eq (J : PMF (W × C)) (mem : C → PMF M)
-    (hW : ∀ w, 0 < J.fst.toRealFn w) (hC : ∀ c, 0 < J.snd.toRealFn c)
-    (hM : ∀ m, 0 < (memJoint J mem).snd.toRealFn m) :
-    bayesDifficulty (memJoint J mem) - bayesDifficulty J
-      = PMF.mutualInformation J - PMF.mutualInformation (memJoint J mem) := by
-  have hW' : ∀ w, 0 < (memJoint J mem).fst.toRealFn w := by
-    intro w
-    rw [show (memJoint J mem).fst = J.fst from PMF.fst_bind_snd J mem]
-    exact hW w
-  rw [bayesDifficulty_eq, bayesDifficulty_eq,
-    PMF.mutualInformation_eq_entropy_sum J hW hC,
-    PMF.mutualInformation_eq_entropy_sum (memJoint J mem) hW' hM,
-    show (memJoint J mem).fst = J.fst from PMF.fst_bind_snd J mem]
+theorem bayesDifficulty_memJoint_sub_eq :
+    bayesDifficulty (memJoint J mem) - bayesDifficulty J = Im[J] - Im[memJoint J mem] := by
+  have : Nonempty C := J.nonempty_of_neZero.map Prod.snd
+  have hfst : H[Prod.fst ; memJoint J mem] = H[Prod.fst ; J] := by
+    show Hm[(memJoint J mem).fst] = Hm[J.fst]
+    rw [memJoint, Measure.fst_parallelComp_id_comp]
+  rw [bayesDifficulty_eq, bayesDifficulty_eq, condEntropy_fst_snd, condEntropy_fst_snd, hfst]
   ring
 
 /-- Lossy memory cannot make comprehension easier on average: the expected
@@ -252,14 +274,9 @@ theorem bayesDifficulty_memJoint_sub_eq (J : PMF (W × C)) (mem : C → PMF M)
     context (the §3.4.1 deduction, with the gap given by
     `bayesDifficulty_memJoint_sub_eq` and its sign by the data processing
     inequality). -/
-theorem bayesDifficulty_le_memJoint (J : PMF (W × C)) (mem : C → PMF M)
-    (hW : ∀ w, 0 < J.fst.toRealFn w) (hC : ∀ c, 0 < J.snd.toRealFn c)
-    (hM : ∀ m, 0 < (memJoint J mem).snd.toRealFn m) :
-    bayesDifficulty J ≤ bayesDifficulty (memJoint J mem) := by
-  have hsub := bayesDifficulty_memJoint_sub_eq J mem hW hC hM
-  have hdpi : PMF.mutualInformation (memJoint J mem)
-      ≤ PMF.mutualInformation J :=
-    PMF.mutualInformation_bind_snd_le J mem
+theorem bayesDifficulty_le_memJoint : bayesDifficulty J ≤ bayesDifficulty (memJoint J mem) := by
+  have := bayesDifficulty_memJoint_sub_eq J mem
+  have := mutualInfo_memJoint_le J mem
   linarith
 
 end AverageForm

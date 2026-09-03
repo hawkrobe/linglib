@@ -272,7 +272,7 @@ noncomputable def lhsEntropy (W : MultinomialPCFG G) (a : G.NT) : ℝ :=
   Hm[(W.rulePMF a).toMeasure]
 
 theorem lhsEntropy_nonneg (W : MultinomialPCFG G) (a : G.NT) : 0 ≤ W.lhsEntropy a := by
-  letI : MeasurableSpace (G.RulesWithLHS a) := ⊤
+  let _ : MeasurableSpace (G.RulesWithLHS a) := ⊤
   exact InformationTheory.measureEntropy_nonneg _
 
 /-! ## Count-form factorization ([odonnell-2015] eq 3.5) -/

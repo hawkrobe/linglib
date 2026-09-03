@@ -70,6 +70,13 @@ theorem cond_apply_le_one [IsFiniteMeasure μ] (hs : MeasurableSet s) (e : Set �
         mul_le_mul' le_rfl (measure_mono Set.inter_subset_left)
     _ = 1 := ENNReal.inv_mul_cancel h0 (measure_ne_top μ s)
 
+/-- A conditional of a finite measure is zero or a probability measure. -/
+instance cond_isZeroOrProbabilityMeasure {μ : Measure Ω} [IsFiniteMeasure μ] :
+    IsZeroOrProbabilityMeasure μ[|s] := by
+  rcases eq_or_ne (μ s) 0 with h | h
+  · rw [cond_eq_zero_of_meas_eq_zero h]; infer_instance
+  · have := cond_isProbabilityMeasure (μ := μ) h; infer_instance
+
 /-- Conditional values are finite for finite measures. -/
 theorem cond_apply_ne_top [IsFiniteMeasure μ] (hs : MeasurableSet s) (e : Set Ω) :
     μ[|s] e ≠ ∞ :=
