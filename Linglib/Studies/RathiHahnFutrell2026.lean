@@ -131,7 +131,7 @@ theorem L_fus_eComplexity : L_fus.eComplexity = 4 := by decide
 /-- The cell-1 distribution of L_agg has support of exactly two forms ("C", "D"),
     which means Y₂ takes both values — supporting `H[Y₂_agg] = log 2` (paper
     Appendix A1 step 1). The numerical entropy comparison itself goes through
-    `PMF.conditionalEntropy_le_entropy`; the structural witness
+    `InformationTheory.condEntropy_le_entropy`; the structural witness
     is here. The actual list (with kernel-evaluated rationals) is:
     `[("C", 1/2), ("D", 1/2)]` — the marginal is uniform. -/
 theorem L_agg_cell1_has_two_forms :
@@ -184,16 +184,14 @@ theorem L_clustered_eComplexity_match :
 
 /-! ### Paper Appendix A1: fusion can lower local surprisal
 
-The abstract theorem `fusion_can_lower_marginal_entropy` lives in
-`Processing/Memory/InformationalFusion.lean` and is a
-direct re-export of `PMF.conditionalEntropy_le_entropy`
-(Cover-Thomas 2.6.4).
+The abstract theorem is `InformationTheory.condEntropy_le_entropy`
+(Cover-Thomas 2.6.4), discussed in `Processing/Memory/InformationalFusion.lean`.
 
 The instantiation here exhibits L_fus and L_agg as concrete witnesses:
 both have the same first-character distribution (`L_agg_L_fus_cell0_match`),
 but L_fus's second-character distribution is strictly more concentrated
 (6/8 C vs 4/8 C — see `L_fus_cell1_distribution`), so its marginal Shannon
-entropy is strictly lower. The conclusion follows from `conditionalEntropy_le_entropy`
+entropy is strictly lower. The conclusion follows from `condEntropy_le_entropy`
 applied to the joint (X₁, X₂)-distribution implicit in the toy paradigm
 construction. The numerical strict inequality `H[Y₂_fus] < H[Y₂_agg]` requires
 `Real.log` arithmetic and lives in the abstract substrate; the structural
@@ -210,9 +208,8 @@ theorem L_fus_max_mass_exceeds_L_agg_max_mass :
 
 /-! ### Paper Appendix A2: fusion of independent features increases remote uncertainty
 
-The abstract theorem `agglutination_lowers_remote_uncertainty` lives in
-`InformationalFusion.lean` and exposes `mutualInformation_nonneg`
-(Cover-Thomas 2.6.5) as the building block. The paper's Table 5 gives a
+The abstract building block is `InformationTheory.mutualInfo_nonneg`
+(Cover-Thomas 2.6.5), discussed in `InformationalFusion.lean`. The paper's Table 5 gives a
 3-feature toy with `I[X₁; X₂] = 0` and `I[X₂; X₃] > 0`; we omit the
 3-feature instantiation here as it requires a `ParadigmSystem 3` with 8
 inflection classes — the structural pattern is identical to A1, with the
@@ -489,7 +486,7 @@ system. [rathi-hahn-futrell-2026]'s pairwise informational fusion
 `φ₂(f₁,f₂)` is closely related — both measure paradigm-internal
 predictability. With Phase 3 of the substrate restructure, both consumers
 share `Morphology.ParadigmSystem` and route through
-`PMF.conditionalEntropy`. A formal bridge
+`InformationTheory.condEntropy`. A formal bridge
 `iComplexity ↔ MutualInfoProfile.totalInfo` is left for future work; the
 shared substrate makes such a bridge syntactically straightforward. -/
 

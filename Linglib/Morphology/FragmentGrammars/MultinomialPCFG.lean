@@ -1,6 +1,6 @@
 import Linglib.Core.Computability.ContextFreeGrammar.Tree
 import Linglib.Core.Computability.ContextFreeGrammar.Weighted
-import Linglib.Core.Probability.Entropy
+import Linglib.Core.InformationTheory.Entropy
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Probability.Distributions.Uniform
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -251,31 +251,29 @@ theorem corpusProb_add (W : MultinomialPCFG G)
     data, useful as a reference point and as the `Inhabited` witness.
 
     Maximum-entropy property: for each LHS, this distribution maximizes
-    `PMF.entropy` over the rule bucket. -/
+    entropy over the rule bucket (`InformationTheory.measureEntropy_le_log_card`,
+    attained by `measureEntropy_uniformOn`). -/
 noncomputable def uniform : MultinomialPCFG G where
   rulePMF a := PMF.uniformOfFintype (G.RulesWithLHS a)
 
 noncomputable instance : Inhabited (MultinomialPCFG G) := ⟨uniform⟩
 
-/-! ## Information-theoretic primitives (bridge to `Entropy`)
+/-! ## Per-nonterminal entropy
 
-The per-LHS PMFs let us inherit mathlib's PMF entropy / KL machinery
-directly. These primitives are the integration bridge to processing-cost
-theories (`Processing/Memory/`): rule-weight entropy
-gives the local uncertainty at each nonterminal expansion choice, and
-KL between two MultinomialPCFGs measures how different their
-rule-weight predictions are. -/
+The rule distribution at each nonterminal is a probability measure, so the entropy
+substrate applies directly: rule-weight entropy is the local uncertainty at each
+expansion choice, the hook for processing-cost theories (`Processing/Memory/`). -/
 
-/-- Per-LHS entropy: entropy of the PMF over the rules with the given
-    LHS. The local "uncertainty" of which expansion will be chosen for
-    nonterminal `a`. Inherited via `PMF.entropy`. -/
+open InformationTheory in
+/-- Per-LHS entropy: the entropy of the distribution over the rules with the given
+    LHS, the local uncertainty of which expansion is chosen for nonterminal `a`. -/
 noncomputable def lhsEntropy (W : MultinomialPCFG G) (a : G.NT) : ℝ :=
-  (W.rulePMF a).entropy
+  letI : MeasurableSpace (G.RulesWithLHS a) := ⊤
+  Hm[(W.rulePMF a).toMeasure]
 
-/-- Entropy is nonneg — direct corollary of `PMF.entropy_nonneg`. -/
-theorem lhsEntropy_nonneg (W : MultinomialPCFG G) (a : G.NT) :
-    0 ≤ W.lhsEntropy a :=
-  (W.rulePMF a).entropy_nonneg
+theorem lhsEntropy_nonneg (W : MultinomialPCFG G) (a : G.NT) : 0 ≤ W.lhsEntropy a := by
+  letI : MeasurableSpace (G.RulesWithLHS a) := ⊤
+  exact InformationTheory.measureEntropy_nonneg _
 
 /-! ## Count-form factorization ([odonnell-2015] eq 3.5) -/
 
