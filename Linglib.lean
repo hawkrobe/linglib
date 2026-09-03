@@ -1498,7 +1498,6 @@ import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Semantics.ArgumentStructure.Root.Defs
 import Linglib.Semantics.ArgumentStructure.Root.Kinds
-import Linglib.Semantics.ArgumentStructure.Root.Position
 import Linglib.Semantics.ArgumentStructure.Root.Profile
 import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Semantics.ArgumentStructure.Thematic.Basic
