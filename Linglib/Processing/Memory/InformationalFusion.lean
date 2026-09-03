@@ -58,8 +58,8 @@ them on the paper's toy languages L_agg, L_fus, L_clustered with concrete
 finite distributions, and proves the consequences computationally (`decide`
 on rationals, no `decide`).
 
-The substrate proofs use `Core.InformationTheory.conditionalEntropy_le_entropy`
-(Cover-Thomas 2.6.4) and `mutualInformation_nonneg` (Cover-Thomas 2.6.5).
+The substrate theorems are `InformationTheory.condEntropy_le_entropy`
+(Cover-Thomas 2.6.4) and `InformationTheory.mutualInfo_nonneg` (Cover-Thomas 2.6.5).
 -/
 
 namespace Processing.MemorySurprisal.InformationalFusion
@@ -217,8 +217,8 @@ The Lean abstract statement: for any joint distribution and any function
 `f : α → β` with finite support, the entropy of the marginal of `f(X)` is
 bounded by the entropy of `X`. This is **Cover-Thomas Theorem 2.8.2** (data
 processing inequality for functions). It already follows from
-`conditionalEntropy_le_entropy` (Theorem 2.6.4) plus `H[Y | X] = 0` when Y is a
-deterministic function of X.
+`InformationTheory.condEntropy_le_entropy` (Theorem 2.6.4) plus `H[Y | X] = 0` when
+Y is a deterministic function of X.
 
 The study file specializes this to the paper's specific 4-element joint
 distribution on (X₁, X₂) with the L_agg vs L_fus mappings, computing
@@ -230,19 +230,14 @@ H[Y₂] for each via `decide` on rationals.
     Appendix A1 claim that fusion of correlated features can lower
     marginal entropy of the derived variable.
 
-    The canonical statement lives at `PMF.conditionalEntropy_le_entropy` —
-    `joint.conditionalEntropy ≤ joint.snd.entropy` for any joint
-    PMF on `(α × β)` with strict-positive marginals. Consumers wanting the
-    (ι→ℝ) form construct PMFs via `PMF.ofRealWeightFn` then apply.
-
-    Was previously a re-export of `Core.InformationTheory.conditionalEntropy_le_entropy`;
-    Core deletion via the PMF migration removes the re-export wrapper. -/
+    The canonical statement is `InformationTheory.condEntropy_le_entropy`:
+    `H[X | Y ; μ] ≤ H[X ; μ]` for random variables on a probability space with
+    finite ranges. -/
 
 /-! **A2 (abstract scaffold)**: fusion of independent features cannot lower
     long-range surprisal.
 
-    The canonical statement lives at `PMF.mutualInformation_nonneg` (free from
-    `ENNReal.toReal_nonneg` since `PMF.mutualInformation := (klDiv ...).toReal`).
+    The canonical statement is `InformationTheory.mutualInfo_nonneg`.
     The Rathi 2026 study file uses `decide` on the paper's specific 8-element
     joint distribution to verify the inequality computationally. -/
 

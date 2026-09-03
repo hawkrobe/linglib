@@ -2,7 +2,6 @@ import Linglib.Core.Probability.Finite
 import Linglib.Core.Probability.Marginal
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.Constructions
-import Linglib.Core.InformationTheory.MutualInformation
 import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
@@ -532,13 +531,13 @@ noncomputable def mutualInformation [MeasurableSpace α] [MeasurableSpace β]
   (joint.klDiv (joint.fst.product joint.snd)).toReal
 
 omit [Fintype α] [Fintype β] in
-/-- The discrete mutual information is the `toMeasure` shadow of the
-    measure-level `InformationTheory.mutualInfo`. -/
-theorem mutualInformation_eq_toReal_mutualInfo [MeasurableSpace α]
+/-- The discrete mutual information is the `toMeasure` shadow of the Kullback–Leibler
+    divergence of the joint from the product of its marginals. -/
+theorem mutualInformation_eq_toReal_klDiv [MeasurableSpace α]
     [MeasurableSpace β] (joint : PMF (α × β)) :
-    joint.mutualInformation
-      = (InformationTheory.mutualInfo joint.toMeasure).toReal := by
-  unfold mutualInformation InformationTheory.mutualInfo
+    joint.mutualInformation = (_root_.InformationTheory.klDiv joint.toMeasure
+      (joint.toMeasure.fst.prod joint.toMeasure.snd)).toReal := by
+  unfold mutualInformation
   rw [klDiv_eq_toMeasure_klDiv, toMeasure_fst, toMeasure_snd, toMeasure_product]
 
 omit [Fintype α] [Fintype β] in
