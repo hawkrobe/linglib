@@ -274,10 +274,8 @@ theorem again_distinguishes_vVPE_from_englishVPE :
 
 open Dargwa.ComplexPredicates in
 
-/-- Is a CPr's NV inside vVPE's deletion domain?
-    The fragment's `AnnotatedCPr` stores `Root.Position` (from
-    `Semantics/Lexical/Roots/Template.lean`); this function bridges to the
-    Minimalist `rootInVVPEDomain` from `DeletionDomain.lean`. -/
+/-- Whether a CPr's non-verbal root lies in vVPE's deletion domain, `rootInVVPEDomain`
+    at the position the fragment annotates. -/
 def cprInVVPEDomain (cpr : Dargwa.ComplexPredicates.AnnotatedCPr) : Prop :=
   rootInVVPEDomain cpr.rootPosition
 

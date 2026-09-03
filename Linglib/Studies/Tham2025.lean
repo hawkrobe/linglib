@@ -60,7 +60,7 @@ verb allows only conceptual access (§4.2).
 - §14 Cross-paper engagement: Beavers & Koontz-Garboden 2020 root
      eventivity (Tham §5.1 refutes strict root → deverbal-adjective
      result-state inheritance, against B&KG's `crack : Root :=
-     ⟨"crack", {.result "fissured", .cause}⟩`)
+     { name := "crack", entailments := {.result "fissured", .cause} }`)
 - §15 Cross-paper engagement: Waldon et al. 2023 normalization contrast
      (substrate-level: shared numerator, divergent denominator)
 - §16 Cross-paper engagement: Solt 2018 SuB reciprocal bridge

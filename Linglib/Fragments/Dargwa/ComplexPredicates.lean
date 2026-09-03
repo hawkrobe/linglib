@@ -267,14 +267,9 @@ theorem some_lvs_bound :
 -- § 7: NV Root Position ([kalyakin-2026] §2.2)
 -- ============================================================================
 
-/-- A complex predicate annotated with its NV root position, following
-    Marantz (2009a;b, 2013) as applied to Dargwa by [kalyakin-2026] §2.2.
-
-    Uses `Root.Position` (`Semantics/Lexical/Roots/Template.lean`):
-    - `.complement`: change-of-state roots — *wana* 'warm', *hark* 'open'
-    - `.adjoined`: manner/activity roots — *duc'* 'run', *taˤh* 'jump'
-
-    The vVPE eligibility implications are derived in the study file. -/
+/-- A complex predicate annotated with the position of its non-verbal root
+    ([kalyakin-2026] §2.2), where change-of-state roots such as *wana* 'warm' are
+    complements and manner roots such as *duc'* 'run' are adjoined. -/
 structure AnnotatedCPr where
   lexicalStem : String
   stemGloss : String
