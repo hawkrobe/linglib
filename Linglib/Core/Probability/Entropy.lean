@@ -2,7 +2,6 @@ import Linglib.Core.Probability.Finite
 import Linglib.Core.Probability.Marginal
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.Constructions
-import Linglib.Core.Analysis.SpecialFunctions.Log.NegMulLog
 import Linglib.Core.InformationTheory.MutualInformation
 import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
@@ -117,33 +116,20 @@ theorem entropy_eq_neg_sum_mul_log (p : PMF α) :
     conditional is the joint entropy less the marginal entropy. -/
 theorem sum_snd_mul_entropy_cond [DecidableEq β] (G : PMF (α × β)) :
     ∑ b, (G.snd b).toReal * (G.cond b).entropy = G.entropy - G.snd.entropy := by
-  have key : ∀ b, (G.snd b).toReal * (G.cond b).entropy
-      = ∑ a, (Real.negMulLog (G (a, b)).toReal
-          + (G (a, b)).toReal * Real.log (G.snd b).toReal) := by
-    intro b
+  have key (b : β) : (G.snd b).toReal * (G.cond b).entropy
+      = ∑ a, Real.negMulLog (G (a, b)).toReal - Real.negMulLog (G.snd b).toReal := by
     by_cases hb : G.snd b = 0
-    · rw [hb, ENNReal.toReal_zero, zero_mul]
-      refine (Finset.sum_eq_zero fun a _ => ?_).symm
-      rw [not_not.mp fun hG => snd_apply_ne_zero hG hb, ENNReal.toReal_zero]
-      simp [Real.negMulLog]
-    · rw [entropy, Finset.mul_sum]
-      refine Finset.sum_congr rfl fun a _ => ?_
-      rw [cond_apply G hb a, ENNReal.toReal_div, Real.negMulLog_div _
-        (ENNReal.toReal_ne_zero.mpr ⟨hb, PMF.apply_ne_top _ _⟩)]
-  simp_rw [key, Finset.sum_add_distrib]
-  have h1 : ∑ b, ∑ a, Real.negMulLog (G (a, b)).toReal = G.entropy := by
-    unfold entropy
-    rw [Finset.sum_comm]
-    exact (Fintype.sum_prod_type
-      fun x : α × β => Real.negMulLog (G x).toReal).symm
-  have h2 : ∑ b, ∑ a, (G (a, b)).toReal * Real.log (G.snd b).toReal
-      = -G.snd.entropy := by
-    rw [entropy_eq_neg_sum_mul_log, neg_neg]
-    refine Finset.sum_congr rfl fun b _ => ?_
-    rw [← Finset.sum_mul]
-    exact congrArg (· * Real.log (G.snd b).toReal) (snd_toRealFn_eq_sum G b).symm
-  rw [h1, h2]
-  ring
+    · have hG (a : α) : G (a, b) = 0 := le_zero_iff.mp ((apply_le_snd G (a, b)).trans_eq hb)
+      simp [hb, hG]
+    · have h (a : α) : Real.negMulLog (G (a, b)).toReal
+          = (G.cond b a).toReal * Real.negMulLog (G.snd b).toReal
+            + (G.snd b).toReal * Real.negMulLog (G.cond b a).toReal := by
+        rw [← snd_mul_cond G hb a, ENNReal.toReal_mul, Real.negMulLog_mul]
+      have h1 : ∑ a, (G.cond b a).toReal = 1 := sum_toRealFn_eq_one (G.cond b)
+      simp_rw [h, Finset.sum_add_distrib, ← Finset.sum_mul, ← Finset.mul_sum, h1, entropy]
+      ring
+  simp_rw [key, Finset.sum_sub_distrib, entropy, Fintype.sum_prod_type]
+  rw [Finset.sum_comm]
 
 /-- The expected surprisal of the conditional (Bayes-optimal) predictor of the
     first coordinate from the second is the conditional entropy
