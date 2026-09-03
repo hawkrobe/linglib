@@ -1,25 +1,25 @@
 import Linglib.Fragments.Turkish.Morphotactics
-import Linglib.Fragments.Turkish.VowelHarmony
 
 /-!
 # Göksel and Kerslake (2005): Turkish suffixation
 
 The reference grammar's account of the form and order of Turkish suffixes, checked
 against the Turkish Fragment. Chapter 3's vowel harmony is derived by the alternations
-of `Turkish.Phonology` from archiphonemic suffixes: the permissible vowel sequences
-of §3.1 are the A-type and I-type resolutions, the last vowel of a disharmonic loan
-decides (*otobüs-ler*), an invariant suffix vowel is skipped and re-triggers
-(*görüyorum*, §3.4), and the palatal l of *gol* fronts its suffix (§3.4). Chapter 8's
-suffix order is licensing by the templates of `Turkish.Morphotactics`: the grammar's
-example verbs and nominals are licensed, reversed orders are not, and its rule that
-markers of one position cannot co-occur (§8.2.3) is the template's having no repeated
-slot.
+of `Turkish.Phonology` from the exponent forms of `Turkish.Morphotactics`: the
+permissible vowel sequences of §3.1 are the A-type and I-type resolutions, the last vowel
+of a disharmonic loan decides (*otobüs-ler*), an invariant suffix vowel is skipped and
+re-triggers (*görüyorum*, §3.4), and the palatal l of *gol* fronts its suffix (§3.4).
+Chapter 8's suffix order is licensing by the finite-verb and nominal position-class
+systems: the grammar's example words are licensed with their stacked voice suffixes,
+reversed orders are not, and its rule that markers of one position cannot co-occur
+(§8.2.3) is the position's not being iterable.
 
 ## Main results
 
 * `followers_table`: the §3.1 table of permissible vowel sequences.
 * `retriggering`, `palatal_l`: the §3.4 exceptions to harmony, derived rather than listed.
-* `same_position_excluded`: §8.2.3 (i) from `List.nodup_iff_sublist`.
+* `finite_verb`: §8.2 (7), every slot of the finite verb.
+* `same_position_excluded`: §8.2.3 (i) from `PositionClassSystem.not_licensesIn_pair`.
 
 ## References
 
@@ -28,7 +28,7 @@ slot.
 
 namespace GokselKerslake2005
 
-open Turkish Phonology Morphotactics
+open Turkish Phonology
 
 /-! ### Vowel harmony (Chapter 3) -/
 
@@ -44,43 +44,53 @@ theorem followers_table :
 
 /-- §3.2.1: the second-person possessive -(I)n on *kız*, *el*, *kol* and *göz*. -/
 theorem iType :
-    surface ([k, ı, z] ++ possessive2sg) = [k, ı, z, ı, n] ∧
-    surface ([e, l] ++ possessive2sg) = [e, l, i, n] ∧
-    surface ([k, o, l] ++ possessive2sg) = [k, o, l, u, n] ∧
-    surface ([g, ö, z] ++ possessive2sg) = [g, ö, z, ü, n] := by
+    surface ([k, ı, z] ++ (Nominal.Exponent.possessive (.pn .second .Sing)).form) =
+        [k, ı, z, ı, n] ∧
+    surface ([e, l] ++ (Nominal.Exponent.possessive (.pn .second .Sing)).form) =
+        [e, l, i, n] ∧
+    surface ([k, o, l] ++ (Nominal.Exponent.possessive (.pn .second .Sing)).form) =
+        [k, o, l, u, n] ∧
+    surface ([g, ö, z] ++ (Nominal.Exponent.possessive (.pn .second .Sing)).form) =
+        [g, ö, z, ü, n] := by
   decide
 
 /-- Chapter 3: the last vowel of a stem decides, so the disharmonic loan *otobüs* takes
 *-ler*. -/
 theorem last_vowel_decides :
-    surface ([o, t, o, b, ü, s] ++ plural) = [o, t, o, b, ü, s, l, e, r] := by
+    surface ([o, t, o, b, ü, s] ++ Nominal.Exponent.plural.form) =
+      [o, t, o, b, ü, s, l, e, r] := by
   decide
 
 /-- §3.2: *üz-ül-dü-nüz* 'you became sad' — rounding copied through three suffixes, and
 the `D` of -DI voiced after `l`. -/
 theorem iterated :
-    surface ([ü, z] ++ passive ++ perfective ++ person2pl) = [ü, z, ü, l, d, ü, n, ü, z] := by
+    surface ([ü, z] ++ Verb.Exponent.passive.form ++ Verb.Exponent.di.form ++
+        (Verb.Exponent.person .one (.pn .second .Plur)).form) =
+      [ü, z, ü, l, d, ü, n, ü, z] := by
   decide
 
 /-- §3.4 (vi): the `o` of -(I)yor does not harmonize and triggers the person marker,
-*gör-üyor-um*; the invariable -(y)ken, *bak-mış-ken*. -/
+*gör-üyor-um*; the invariable converb -(y)ken, *bak-mış-ken*. -/
 theorem retriggering :
-    surface ([g, ö, r] ++ imperfective ++ person1sg) = [g, ö, r, ü, y, o, r, u, m] ∧
-    surface ([b, a, k] ++ evidential ++ ken) = [b, a, k, m, ı, ş, k, e, n] := by
+    surface ([g, ö, r] ++ Verb.Exponent.iyor.form ++
+        (Verb.Exponent.person .two (.pn .first .Sing)).form) = [g, ö, r, ü, y, o, r, u, m] ∧
+    surface ([b, a, k] ++ Verb.Exponent.miş.form ++ [k, e, n]) = [b, a, k, m, ı, ş, k, e, n] := by
   decide
 
 /-- §3.4 (iv): the palatal l of *gol* and *hal* fronts the suffix, *gol-ü* and *hal-im*,
 while rounding still comes from the vowel. -/
 theorem palatal_l :
-    surface ([g, o, l'] ++ possessive3sg) = [g, o, l', ü] ∧
-    surface ([h, a, l'] ++ possessive1sg) = [h, a, l', i, m] := by
+    surface ([g, o, l'] ++ (Nominal.Exponent.possessive (.pn .third .Sing)).form) =
+      [g, o, l', ü] ∧
+    surface ([h, a, l'] ++ (Nominal.Exponent.possessive (.pn .first .Sing)).form) =
+      [h, a, l', i, m] := by
   decide
 
 /-- §6.1.2: the `D` of -DI is `d` after a voiced segment and `t` after a voiceless one,
 *kal-dı* and *düş-tü*. -/
 theorem voicing_of_D :
-    surface ([k, a, l] ++ perfective) = [k, a, l, d, ı] ∧
-    surface ([d, ü, ş] ++ perfective) = [d, ü, ş, t, ü] := by
+    surface ([k, a, l] ++ Verb.Exponent.di.form) = [k, a, l, d, ı] ∧
+    surface ([d, ü, ş] ++ Verb.Exponent.di.form) = [d, ü, ş, t, ü] := by
   decide
 
 /-- §8.2.2: before -(I)yor the negative's vowel is raised and harmonizes as an I-type
@@ -91,50 +101,52 @@ theorem negative_raised :
   decide
 
 /-- §8.1 (2) *Ev-ler-imiz-de-ymiş-ler* 'apparently they are at our homes': the nominal
-string with the evidential copula and a person marker. -/
+string, the evidential copula with its buffer `y`, and a group-2 person marker. -/
 theorem nominal_predicate :
-    surface ([e, v] ++ plural ++ possessive1pl ++ locative ++ evidentialCopula ++ plural) =
+    surface ([e, v] ++ Nominal.Exponent.plural.form ++
+        (Nominal.Exponent.possessive (.pn .first .Plur)).form ++ Nominal.Exponent.locative.form ++
+        [y] ++ Verb.Exponent.evidentialCopula.form ++
+        (Verb.Exponent.person .two (.pn .third .Plur)).form) =
       [e, v, l, e, r, i, m, i, z, d, e, y, m, i, ş, l, e, r] := by
   decide
 
-/-! ### The order of suffixes (Chapters 6 and 8) -/
+/-! ### The order of suffixes (Chapter 8) -/
 
-/-- §8.1 (1) *çocuk-lar-ın-a* 'to your children' and §6.3 (2) *diz-ge-ler-im-de* 'on my
-lists': number - possession - case, after a derivational suffix. -/
+/-- §8.1 (1) *çocuk-lar-ın-a* 'to your children': number - possession - case. -/
 theorem nominal :
-    nounTemplate.Licenses [] [.number, .possession, .case] ∧
-    nounTemplate.Licenses [] [.derivational, .number, .possession, .case] := by
+    Nominal.system.Licenses []
+      [⟨_, .plural⟩, ⟨_, .possessive (.pn .second .Sing)⟩, ⟨_, .dative⟩] := by
   decide
 
 /-- §8.2 (7) *Döğ-üş-tür-t-ül-me-yebil-iyor-muş-sunuz-dur*: every slot of the finite verb,
-the voice slot filled by four stacked voice suffixes. -/
+the voice slot filled by four stacked suffixes. -/
 theorem finite_verb :
-    verbTemplate.Licenses []
-      [.voice, .negation, Marker.abil.slot, Marker.iyor.slot, Marker.evidentialCopula.slot,
-        .person, .generalizing] := by
+    Verb.system.Licenses []
+      [⟨_, .reciprocal⟩, ⟨_, .causative⟩, ⟨_, .causative⟩, ⟨_, .passive⟩, ⟨_, .negative⟩,
+        ⟨_, .abil⟩, ⟨_, .iyor⟩, ⟨_, .evidentialCopula⟩, ⟨_, .person .two (.pn .second .Plur)⟩,
+        ⟨_, .dir⟩] := by
   decide
 
 /-- §8.2.3 (11) *Bitir-e-me-miş-tir*, (12) *Oku-yabil-ecek-miş* and §8.2.3.3 *git-ti-ydi-n*:
-positions 1-3-5, 2-3-4 and 3-4 with a person marker. -/
+positions 1-3-5, 2-3-4 and 3-4 with a group-1 person marker. -/
 theorem tam_positions :
-    verbTemplate.Licenses []
-      [Marker.possibility.slot, .negation, Marker.miş.slot, Marker.dir.slot] ∧
-    verbTemplate.Licenses [] [Marker.abil.slot, Marker.acak.slot, Marker.evidentialCopula.slot] ∧
-    verbTemplate.Licenses [] [Marker.di.slot, Marker.pastCopula.slot, .person] := by
+    Verb.system.Licenses [] [⟨_, .possibility⟩, ⟨_, .negative⟩, ⟨_, .miş⟩, ⟨_, .dir⟩] ∧
+    Verb.system.Licenses [] [⟨_, .abil⟩, ⟨_, .acak⟩, ⟨_, .evidentialCopula⟩] ∧
+    Verb.system.Licenses []
+      [⟨_, .di⟩, ⟨_, .pastCopula⟩, ⟨_, .person .one (.pn .second .Sing)⟩] := by
   decide
 
 /-- The negative follows voice and precedes the tense/aspect/modality marker (§8.2.2), and
 the copular markers follow it (§8.2.3): the reversed orders are unlicensed. -/
 theorem reversed_orders :
-    ¬ verbTemplate.Licenses [] [.negation, .voice] ∧
-    ¬ verbTemplate.Licenses [] [.tam, .negation] ∧
-    ¬ verbTemplate.Licenses [] [.copula, .tam] := by
+    ¬ Verb.system.Licenses [] [⟨_, .negative⟩, ⟨_, .causative⟩] ∧
+    ¬ Verb.system.Licenses [] [⟨_, .di⟩, ⟨_, .negative⟩] ∧
+    ¬ Verb.system.Licenses [] [⟨_, .pastCopula⟩, ⟨_, .di⟩] := by
   decide
 
-/-- §8.2.3 (i): markers of one position cannot co-occur — the template has no repeated
-slot. -/
-theorem same_position_excluded (m₁ m₂ : Marker) (h : m₁.slot = m₂.slot) :
-    ¬ verbTemplate.Licenses [] [m₁.slot, m₂.slot] :=
-  fun ⟨_, hs⟩ => List.nodup_iff_sublist.1 (by decide) _ (h ▸ hs)
+/-- §8.2.3 (i): markers of one position cannot co-occur — position 3 is not iterable. -/
+theorem same_position_excluded (m₁ m₂ : Verb.Exponent .tam) :
+    ¬ Verb.system.Licenses [] [⟨_, m₁⟩, ⟨_, m₂⟩] :=
+  fun h => Verb.system.not_licensesIn_pair (by decide : Verb.Slot.tam ≠ .voice) _ m₁ m₂ h.2
 
 end GokselKerslake2005
