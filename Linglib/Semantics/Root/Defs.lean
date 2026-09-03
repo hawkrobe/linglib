@@ -29,11 +29,13 @@ and whether it combines with transitive Voice.
 * `Root` — a root's name, atoms, position, quality profile, and annotated
   valency, semantic type, and transitive-Voice licensing
 * `Root.kinds` — the kinds of a root's atoms; `Root.closedKinds` closes them
+* `Root.changeType` — property-concept or result root, off the closed signature
 
 ## References
 
 * [beavers-koontz-garboden-2020]: The Roots of Verbal Meaning.
 * [coon-2019]: Building verbs in Chuj.
+* [beavers-etal-2021]: States and changes of state.
 * [kalyakin-2026]: VP ellipsis and argument structure alternations: Evidence from
   Muira Dargwa complex predicates.
 * [spalek-mcnally-2026], [majid-boster-bowerman-2008]: the quality dimensions of
@@ -119,6 +121,9 @@ def closedKinds : Kinds := r.kinds.close
 theorem kinds_subset_closedKinds : r.kinds ⊆ r.closedKinds := Kinds.subset_close _
 
 theorem closedKinds_wellFormed : r.closedKinds.WellFormed := Kinds.close_wellFormed _
+
+/-- The change type of a root, read off its closed signature ([beavers-etal-2021]). -/
+def changeType : Option ChangeType := r.closedKinds.changeType
 
 end Root
 

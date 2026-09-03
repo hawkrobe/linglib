@@ -3,7 +3,7 @@ import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Realization
-import Linglib.Semantics.Root.ChangeType
+import Linglib.Semantics.Root.Kinds
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
@@ -189,8 +189,8 @@ def Verbalizer.Alloseme.fromRootType : Semantics.Root.ChangeType → Verbalizer.
 
 /-- The bridge preserves the change entailment: eventive v iff the root
 entails change. -/
-theorem Verbalizer.fromRootType_iff_entailsChange (rt : Semantics.Root.ChangeType) :
-    (Verbalizer.Alloseme.fromRootType rt).introducesEvent = true ↔ rt.EntailsChange := by
+theorem Verbalizer.fromRootType_eventive_iff (rt : Semantics.Root.ChangeType) :
+    (Verbalizer.Alloseme.fromRootType rt).introducesEvent = true ↔ rt = .result := by
   cases rt <;> decide
 
 /-! ### n allosemy -/
