@@ -134,8 +134,8 @@ def run : VerbEntry where
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion
-  root := { profile := {
-    forceMag := {.moderate}
+  root := { content := {
+    force := {.moderate}
     agentControl := {.compatible}
   } }
 
@@ -176,8 +176,8 @@ def eat : VerbEntry where
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .eat
-  root := { profile := {
-    forceMag := {.low, .moderate}
+  root := { content := {
+    force := {.low, .moderate}
     agentControl := {.compatible}
   } }
 
@@ -189,9 +189,9 @@ def kick : VerbEntry := .mkRegular {
   objectEntailments := some contactObject
   vendlerClass := some .activity
   levinClass := some .hit
-  root := { profile := {
-    forceMag := {.moderate, .high}
-    forceDir := {.unidirectional}
+  root := { content := {
+    force := {.moderate, .high}
+    direction := {.unidirectional}
     agentControl := {.neutral, .compatible}
   } } }
 
@@ -810,8 +810,8 @@ def kill : VerbEntry := .mkRegular {
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .murder
-  root := { profile := {
-    resultType := {.totalDestruction}
+  root := { content := {
+    resultGeometry := {.totalDestruction}
     agentControl := {.neutral, .compatible}
   } } }
 
@@ -829,12 +829,12 @@ def break_ : VerbEntry where
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .break_
-  root := { profile := {
-    forceMag := {.moderate, .high}
-    -- forceDir unconstrained: *break* covers snapping (bidirectional),
+  root := { content := {
+    force := {.moderate, .high}
+    -- direction unconstrained: *break* covers snapping (bidirectional),
     -- hammering (omnidirectional), and directed blows (unidirectional)
-    patientRob := {.moderate, .robust}
-    resultType := {.fracture}
+    patientRobustness := {.moderate, .robust}
+    resultGeometry := {.fracture}
     agentControl := {.incompatible, .neutral}
     -- break is unspecified for instrument and object dimensionality
     -- ([majid-boster-bowerman-2008]: Dim 1 low predictability)
@@ -859,14 +859,14 @@ def tear_ : VerbEntry where
   verbIncClass := some .sinc
   causative := some .make
   levinClass := some .break_
-  root := { profile := {
-    forceMag := {.moderate, .high}
-    forceDir := {.bidirectional, .unidirectional}
-    patientRob := {.flimsy, .moderate, .robust}
-    resultType := {.separation}
+  root := { content := {
+    force := {.moderate, .high}
+    direction := {.bidirectional, .unidirectional}
+    patientRobustness := {.flimsy, .moderate, .robust}
+    resultGeometry := {.separation}
     agentControl := {.neutral, .compatible}
-    instrumentType := {.hands}
-    patientDim := {.twoD}
+    instrument := {.hands}
+    patientDimensionality := {.twoD}
   } }
 
 -- ════════════════════════════════════════════════════
@@ -939,10 +939,10 @@ def burn : VerbEntry := .mkRegular {
   verbIncClass := some .sinc
   causative := some .make
   levinClass := some .otherCoS
-  root := { profile := {
-    forceMag := {.moderate, .high}
-    patientRob := {.flimsy, .moderate, .robust}
-    resultType := {.totalDestruction, .deformation}
+  root := { content := {
+    force := {.moderate, .high}
+    patientRobustness := {.flimsy, .moderate, .robust}
+    resultGeometry := {.totalDestruction, .deformation}
     agentControl := {.neutral, .compatible}
   } } }
 
@@ -953,8 +953,8 @@ def destroy : VerbEntry := .mkRegular {
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .destroy
-  root := { profile := {
-    resultType := {.totalDestruction}
+  root := { content := {
+    resultGeometry := {.totalDestruction}
     agentControl := {.neutral, .compatible}
   } } }
 
@@ -969,10 +969,10 @@ def melt : VerbEntry := .mkRegular {
   verbIncClass := some .sinc
   causative := some .make
   levinClass := some .otherCoS
-  root := { profile := {
-    forceMag := {.low, .moderate}
-    patientRob := {.moderate, .robust}
-    resultType := {.deformation}
+  root := { content := {
+    force := {.low, .moderate}
+    patientRobustness := {.moderate, .robust}
+    resultGeometry := {.deformation}
     agentControl := {.compatible}
   } } }
 
@@ -1119,8 +1119,8 @@ def devour : VerbEntry := .mkRegular {
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .devour
-  root := { profile := {
-    forceMag := {.moderate, .high}
+  root := { content := {
+    force := {.moderate, .high}
     agentControl := {.neutral}
   } } }
 
@@ -1178,9 +1178,9 @@ def sweep : VerbEntry where
   subjectEntailments := some wipeManner.subjectProfile
   passivizable := true
   levinClass := some .wipe
-  root := { profile := {
-    forceMag := {.low, .moderate}
-    forceDir := {.unidirectional}
+  root := { content := {
+    force := {.low, .moderate}
+    direction := {.unidirectional}
     agentControl := {.compatible}
   } }
 
@@ -1197,9 +1197,9 @@ def sweep_instr : VerbEntry where
   passivizable := true
   senseTag := .instrumental
   levinClass := some .wipe
-  root := { profile := {
-    forceMag := {.low, .moderate}
-    forceDir := {.unidirectional}
+  root := { content := {
+    force := {.low, .moderate}
+    direction := {.unidirectional}
     agentControl := {.compatible}
   } }
 
@@ -2360,9 +2360,9 @@ def cut : VerbEntry where
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .cut
-  root := { profile := {
-    resultType := {.surfaceBreach}
-    instrumentType := {.sharpBlade}
+  root := { content := {
+    resultGeometry := {.surfaceBreach}
+    instrument := {.sharpBlade}
   } }
 
 /-- "chop" — Levin 21.2 Carve verbs. -/

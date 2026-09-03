@@ -33,10 +33,9 @@ def Verb.derivedUnaccusative (v : Verb) : Bool :=
 def Verb.derivedVendlerClass (v : Verb) : Option VendlerClass :=
   v.vendlerClass <|> v.degreeAchievementScale.map (·.defaultVendlerClass)
 
-/-- The verb's within-class quality profile ([spalek-mcnally-2026]), read off its
-    `root` (where the profile is carried). -/
-def Verb.rootProfile (v : Verb) : Semantics.Root.Profile :=
-  v.root.profile
+/-- The verb's within-class root content ([spalek-mcnally-2026]), read off its `root`. -/
+def Verb.rootContent (v : Verb) : Semantics.Root.Content :=
+  v.root.content
 
 /-- The verb's raw kind signature ([beavers-koontz-garboden-2020]): the
     un-closed atom-kinds of its root, the source of truth for what the verb

@@ -36,13 +36,13 @@ they carve and where they place boundaries.
 
 ## Integration with linglib
 
-The 4 dimensions project onto existing `Root.Profile` features:
+The 4 dimensions project onto existing `Root.Content` features:
 
 | Dimension | Projects onto |
 |-----------|--------------|
-| Dim 1 (predictability) | `instrumentType` × `patientRob` (derived) |
-| Dim 2 (tearing) | `resultType == .separation` ∧ `instrumentType == .hands` |
-| Dim 3 (snap/smash) | `forceDir` (bidirectional vs omnidirectional) |
+| Dim 1 (predictability) | `instrument` × `patientRobustness` (derived) |
+| Dim 2 (tearing) | `resultGeometry == .separation` ∧ `instrument == .hands` |
+| Dim 3 (snap/smash) | `direction` (bidirectional vs omnidirectional) |
 | Dim 4 (poke hole) | specific event type |
 
 Bridge theorems connect to `LevinClass` and `MeaningComponents`:
@@ -54,7 +54,7 @@ Bridge theorems connect to `LevinClass` and `MeaningComponents`:
 ## Design
 
 `SeparationEvent` is a **point** in the same feature space that
-`Root.Profile` defines **regions** over. A verb is compatible with an
+`Root.Content` defines **regions** over. A verb is compatible with an
 event iff the event's feature values fall within the verb root's ranges.
 This captures the many-to-many mapping between events and verbs that
 varies across languages.
@@ -66,10 +66,10 @@ open Verb
 open Semantics
 open ArgumentStructure
 open Features
-open Semantics.Root.Profile
-open Semantics.Root.Profile.InstrumentType Semantics.Root.Profile.ObjectDimensionality
-  Semantics.Root.Profile.Robustness Semantics.Root.Profile.ResultType Semantics.Root.Profile.ForceLevel
-  Semantics.Root.Profile.ForceDirection
+open Semantics.Root.Content
+open Semantics.Root.Content.InstrumentType Semantics.Root.Content.ObjectDimensionality
+  Semantics.Root.Content.Robustness Semantics.Root.Content.ResultGeometry Semantics.Root.Content.ForceLevel
+  Semantics.Root.Content.ForceDirection
 
 -- ════════════════════════════════════════════════════
 -- § 1. Separation Events (stimulus level)
@@ -81,7 +81,7 @@ open Semantics.Root.Profile.InstrumentType Semantics.Root.Profile.ObjectDimensio
     This is the **stimulus level**: each value is a specific point,
     not a range. Corresponds to a single video clip in the experiment.
     Verb roots select *ranges* over these same dimensions
-    (via `Root.Profile`). -/
+    (via `Root.Content`). -/
 structure SeparationEvent where
   /-- Instrument used to effect separation. -/
   instrument : InstrumentType
@@ -90,7 +90,7 @@ structure SeparationEvent where
   /-- Material robustness of the affected object. -/
   objectRob : Robustness
   /-- Physical result type. -/
-  result : ResultType
+  result : ResultGeometry
   /-- Force magnitude. -/
   force : ForceLevel
   /-- Force directionality. -/
@@ -263,16 +263,17 @@ def SeparationEvent.isPokingHole (e : SeparationEvent) : Bool :=
   e.result == .surfaceBreach && e.objectDim == .twoD && e.objectRob == .flimsy
 
 -- ════════════════════════════════════════════════════
--- § 4. Compatibility with Root.Profile
+-- § 4. Compatibility with Root.Content
 -- ════════════════════════════════════════════════════
 
 /-- A separation event is compatible with a root's profile when each of its feature
     values lies in the root's region for that dimension. -/
-def SeparationEvent.CompatibleWith (e : SeparationEvent) (r : Root.Profile) : Prop :=
-  e.force ∈ r.forceMag ∧ e.forceDir ∈ r.forceDir ∧ e.objectRob ∈ r.patientRob ∧
-    e.result ∈ r.resultType ∧ e.instrument ∈ r.instrumentType ∧ e.objectDim ∈ r.patientDim
+def SeparationEvent.CompatibleWith (e : SeparationEvent) (r : Root.Content) : Prop :=
+  e.force ∈ r.force ∧ e.forceDir ∈ r.direction ∧ e.objectRob ∈ r.patientRobustness ∧
+    e.result ∈ r.resultGeometry ∧ e.instrument ∈ r.instrument ∧
+    e.objectDim ∈ r.patientDimensionality
 
-instance (e : SeparationEvent) (r : Root.Profile) : Decidable (e.CompatibleWith r) := by
+instance (e : SeparationEvent) (r : Root.Content) : Decidable (e.CompatibleWith r) := by
   unfold SeparationEvent.CompatibleWith; infer_instance
 
 -- ════════════════════════════════════════════════════
@@ -506,38 +507,38 @@ theorem cut_break_same_template :
 
 open English.Predicates.Verbal in
 /-- Extract the root profile from a Fragment verb entry. -/
-private def fragmentProfile (v : VerbEntry) : Root.Profile :=
-  v.rootProfile
+private def fragmentContent (v : VerbEntry) : Root.Content :=
+  v.rootContent
 
 open English.Predicates.Verbal
 
 /-- The tear cloth event is compatible with the Fragment *tear* entry. -/
 theorem tearCloth_compatible_tear :
-    clip01_tearCloth.CompatibleWith (fragmentProfile tear_) := by decide
+    clip01_tearCloth.CompatibleWith (fragmentContent tear_) := by decide
 
 /-- A cutting event is NOT compatible with the *tear* profile
     (wrong instrument type). -/
 theorem sliceCarrot_incompatible_tear :
-    ¬ clip09_sliceCarrot.CompatibleWith (fragmentProfile tear_) := by decide
+    ¬ clip09_sliceCarrot.CompatibleWith (fragmentContent tear_) := by decide
 
 /-- Smashing a pot is NOT compatible with the *break* profile
     (fragmentation ≠ fracture — English *smash* covers fragmentation). -/
 theorem smashPot_incompatible_break :
-    ¬ clip39_smashPot.CompatibleWith (fragmentProfile break_) := by decide
+    ¬ clip39_smashPot.CompatibleWith (fragmentContent break_) := by decide
 
 /-- A snapping event IS compatible with *break* (fracture result, moderate
     force) — English *break* can cover snapping events, though *snap*
     is more specific. -/
 theorem snapTwig_compatible_break :
-    clip19_snapTwig.CompatibleWith (fragmentProfile break_) := by decide
+    clip19_snapTwig.CompatibleWith (fragmentContent break_) := by decide
 
 /-- Slicing a carrot is compatible with the *cut* entry. -/
 theorem sliceCarrot_compatible_cut :
-    clip09_sliceCarrot.CompatibleWith (fragmentProfile cut) := by decide
+    clip09_sliceCarrot.CompatibleWith (fragmentContent cut) := by decide
 
 /-- Tearing cloth is NOT compatible with the *cut* profile (wrong instrument). -/
 theorem tearCloth_incompatible_cut :
-    ¬ clip01_tearCloth.CompatibleWith (fragmentProfile cut) := by decide
+    ¬ clip01_tearCloth.CompatibleWith (fragmentContent cut) := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Key Finding: Dimensional Constraint
