@@ -103,6 +103,68 @@ def apply (r : OSLRule k α β) (input : List α) : List β :=
   show r.windowOutput [] x ++ r.applyAux _ [] = r.windowOutput [] x
   exact List.append_nil _
 
+/-! ### Application over a tier -/
+
+/-- Auxiliary for `applyOnTier`: thread the output window through the tier only. -/
+def applyOnTierAux (r : OSLRule k α α) (p : α → Prop) [DecidablePred p] :
+    (outputWindow : List α) → (rest : List α) → List α
+  | _, [] => []
+  | outputWindow, x :: xs =>
+    if p x then
+      r.windowOutput outputWindow x
+        ++ applyOnTierAux r p ((outputWindow ++ r.windowOutput outputWindow x).rtake (k - 1)) xs
+    else x :: applyOnTierAux r p outputWindow xs
+
+/-- Apply the rule over the tier `p`: symbols off the tier are copied through and never
+enter the output window, so each on-tier output block depends on the last `k - 1`
+on-tier output symbols — the single-tier case of the tier-based strictly local functions
+of [burness-mcmullin-2020]. Over the total tier this is `apply` (`applyOnTier_true`). -/
+def applyOnTier (r : OSLRule k α α) (p : α → Prop) [DecidablePred p] (input : List α) :
+    List α :=
+  r.applyOnTierAux p [] input
+
+section Tier
+
+variable {p : α → Prop} [DecidablePred p] (r : OSLRule k α α)
+
+@[simp] lemma applyOnTierAux_nil (outputWindow : List α) :
+    r.applyOnTierAux p outputWindow [] = [] := rfl
+
+lemma applyOnTierAux_cons (outputWindow : List α) (x : α) (xs : List α) :
+    r.applyOnTierAux p outputWindow (x :: xs) =
+      if p x then
+        r.windowOutput outputWindow x
+          ++ r.applyOnTierAux p ((outputWindow ++ r.windowOutput outputWindow x).rtake (k - 1)) xs
+      else x :: r.applyOnTierAux p outputWindow xs := rfl
+
+@[simp] lemma applyOnTier_nil : r.applyOnTier p [] = [] := rfl
+
+/-- Over the total tier, `applyOnTier` is `apply`. -/
+theorem applyOnTier_true : r.applyOnTier (fun _ => True) = r.apply := by
+  funext l
+  suffices ∀ w, r.applyOnTierAux (fun _ => True) w l = r.applyAux w l from this []
+  induction l with
+  | nil => exact fun _ => rfl
+  | cons x xs ih => exact fun w => by simp [applyOnTierAux_cons, ih]
+
+/-- Restricted to the tier, `applyOnTier` is `apply` on the tier's projection, provided the
+rule keeps on-tier input on the tier. -/
+theorem filter_applyOnTier (hr : ∀ w x, p x → ∀ y ∈ r.windowOutput w x, p y) (l : List α) :
+    (r.applyOnTier p l).filter (decide <| p ·) = r.apply (l.filter (decide <| p ·)) := by
+  suffices ∀ w, (r.applyOnTierAux p w l).filter (decide <| p ·) =
+      r.applyAux w (l.filter (decide <| p ·)) from this []
+  induction l with
+  | nil => exact fun _ => rfl
+  | cons x xs ih =>
+    intro w
+    by_cases hx : p x
+    · have h : (r.windowOutput w x).filter (decide <| p ·) = r.windowOutput w x :=
+        List.filter_eq_self.2 fun y hy => decide_eq_true (hr w x hx y hy)
+      simp [applyOnTierAux_cons, hx, List.filter_append, h, ih]
+    · simp [applyOnTierAux_cons, hx, ih]
+
+end Tier
+
 end OSLRule
 
 /-- A function `f : List α → List β` is **k-Left-Output-Strictly-Local**

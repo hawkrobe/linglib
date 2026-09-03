@@ -27,6 +27,7 @@ prefix/suffix split encoding a morpheme's position relative to the verb stem.
 ## Main definitions
 
 * `Morphology.AffixTemplate` — a word's prefix/suffix slots over an arbitrary slot type.
+* `Morphology.AffixTemplate.Licenses` — the affix strings a template admits.
 -/
 
 namespace Morphology
@@ -41,5 +42,21 @@ structure AffixTemplate (Slot : Type*) where
   /-- Suffix slots, ordered stem-outward (innermost suffix first). -/
   suffixSlots : List Slot := []
   deriving Repr, DecidableEq
+
+namespace AffixTemplate
+
+variable {Slot : Type*} [DecidableEq Slot] (t : AffixTemplate Slot)
+
+open List in
+/-- A word's affixes are licensed by the template when its prefix and suffix slot
+sequences are sublists of the template's: each slot filled at most once, in template
+order. -/
+def Licenses (pre suf : List Slot) : Prop :=
+  pre <+ t.prefixSlots ∧ suf <+ t.suffixSlots
+
+instance (pre suf : List Slot) : Decidable (t.Licenses pre suf) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+end AffixTemplate
 
 end Morphology

@@ -1,202 +1,180 @@
-import Linglib.Phonology.Segmental.Basic
-import Linglib.Phonology.Segmental.Geometry
-import Linglib.Phonology.Subregular.LocalRewrite
-import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Subregular.Harmony
 
 /-!
-# Turkish Vowel Harmony
-[goksel-kerslake-2005] [rose-walker-2011]
+# Turkish vowel harmony
 
-Turkish has a perfectly symmetric 2x2x2 vowel inventory and a
-**two-dimensional** vowel harmony system ([goksel-kerslake-2005] Ch 3).
+Turkish has one vowel for each combination of [back], [round] and [high], and two
+harmonies over them ([goksel-kerslake-2005] Chapter 3): fronting harmony copies
+[back] from the preceding vowel to a suffix vowel, rounding harmony copies [round]
+to a high suffix vowel. Suffix vowels are archiphonemes: the A of A-type suffixes is
+non-high and unrounded but unspecified for [back] (§3.2.2), the I of I-type suffixes
+is high and unspecified for both (§3.2.1). So the targets of each harmony are the
+vowels lacking its feature, and a suffix vowel specified for it, such as the `o` of
+-(I)yor, is skipped and triggers what follows (§3.4). Consonants are off both tiers,
+except that the palatal l of loans such as *gol* carries [−back] and fronts the
+suffix (§3.4, [clements-sezer-1982]). The suffix-initial D of -DI and -DA copies
+[voice] from the preceding segment (§6.1.2).
 
-## Vowel inventory
+The alternations are `Subregular.Harmony.System`s over `Phonology.Segment`; a
+suffixed word's surface form is their `System.transduceWord`. The grammar's examples
+are derived in `Studies/GokselKerslake2005.lean`.
 
-|          | Front       |             | Back        |             |
-|----------|-------------|-------------|-------------|-------------|
-|          | Unrounded   | Rounded     | Unrounded   | Rounded     |
-| **High** | i           | ü           | ı           | u           |
-| **Non-high** | e       | ö           | a           | o           |
+## Main definitions
 
-## Two harmony dimensions
+* `a`, `e`, `ı`, `i`, `o`, `ö`, `u`, `ü` — the vowels; `A`, `I` — the suffix archiphonemes.
+* `fronting`, `rounding`, `voicing` — the two vowel harmonies and D-voicing.
+* `surface` — the three alternations applied to a word.
 
-1. **Palatal harmony** ([±back]): the last vowel's [back] value spreads to
-   *all* suffix vowels. Determines the **twofold** alternation A -> a/e.
+## References
 
-2. **Labial harmony** ([±round]): the last vowel's [round] value spreads
-   to **[+high] suffix vowels only**. Combined with palatal harmony, this
-   yields the **fourfold** alternation I -> ı/i/u/ü.
-
-## Archiphonemic suffix vowels
-
-Turkish grammars use capital letters for harmonizing suffix vowels:
-- **A** alternates a/e (twofold: [back] only)
-- **I** alternates ı/i/u/ü (fourfold: [back] + [round])
-
-Examples with *ev* 'house' [front, unrounded]:
-  Plural ev-ler (A -> e), Accusative ev-i (I -> i)
-Examples with *göz* 'eye' [front, rounded]:
-  Plural göz-ler (A -> e), Accusative göz-ü (I -> ü)
-Examples with *kol* 'arm' [back, rounded]:
-  Plural kol-lar (A -> a), Accusative kol-u (I -> u)
-
-## Harmony systems ([rose-walker-2011])
-
-Turkish VH decomposes into two `System` instances:
-- `palatalHarmony`: [back] spreads to all suffix vowels (twofold A)
-- `labialHarmony`: [round] spreads to high suffix vowels only (fourfold I)
+* [A. Göksel and C. Kerslake, *Turkish: A Comprehensive Grammar* (2005)][goksel-kerslake-2005]
+* [G. N. Clements and E. Sezer, *Vowel and consonant disharmony in Turkish*][clements-sezer-1982]
 -/
 
 namespace Turkish.VowelHarmony
 
-open Phonology (Segment Feature)
-open Autosegmental (agreeAt)
-open Subregular.Harmony (System triggerValue)
+open Phonology (Segment)
+open Subregular.Harmony (System)
 
--- ============================================================================
--- § 1: Turkish Vowel Inventory (8 vowels)
--- ============================================================================
+/-! ### Segments -/
 
-def i_vowel : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.dorsal, true), (.high, true),
-   (.back, false), (.round, false), (.low, false)]
+/-- The vowel of the given [back], [round] and [high] values. -/
+private def vowel (back round high : Bool) : Segment :=
+  Segment.ofSpecs [(.syllabic, true), (.dorsal, true), (.voice, true),
+    (.back, back), (.round, round), (.high, high)]
 
-def ü_vowel : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.dorsal, true), (.high, true),
-   (.back, false), (.round, true), (.low, false)]
+def a : Segment := vowel true false false
+def e : Segment := vowel false false false
+def ı : Segment := vowel true false true
+def i : Segment := vowel false false true
+def o : Segment := vowel true true false
+def ö : Segment := vowel false true false
+def u : Segment := vowel true true true
+def ü : Segment := vowel false true true
 
-def ı_vowel : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.dorsal, true), (.high, true),
-   (.back, true), (.round, false), (.low, false)]
+/-- The eight vowels. -/
+def vowels : List Segment := [a, e, ı, i, o, ö, u, ü]
 
-def u_vowel : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.dorsal, true), (.high, true),
-   (.back, true), (.round, true), (.low, false)]
+/-- The vowel of A-type suffixes such as -lAr and -mA: unrounded and non-high, its
+backness supplied by fronting harmony (§3.2.2). -/
+def A : Segment :=
+  Segment.ofSpecs [(.syllabic, true), (.dorsal, true), (.voice, true),
+    (.high, false), (.round, false)]
 
-def e_vowel : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.dorsal, true), (.high, false),
-   (.back, false), (.round, false), (.low, false)]
+/-- The vowel of I-type suffixes such as -(I)m and -mIş: high, its backness and rounding
+supplied by the two harmonies (§3.2.1). -/
+def I : Segment :=
+  Segment.ofSpecs [(.syllabic, true), (.dorsal, true), (.voice, true), (.high, true)]
 
-def ö_vowel : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.dorsal, true), (.high, false),
-   (.back, false), (.round, true), (.low, false)]
+/-- A consonant of the given specifications. -/
+private def consonant (specs : List (Phonology.Feature × Bool)) : Segment :=
+  Segment.ofSpecs ((.syllabic, false) :: specs)
 
-def a_vowel : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.dorsal, true), (.high, false),
-   (.back, true), (.round, false), (.low, true)]
+def b : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
+  (.labial, true), (.voice, true)]
+def t : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
+  (.coronal, true), (.anterior, true), (.voice, false)]
+def d : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
+  (.coronal, true), (.anterior, true), (.voice, true)]
+/-- The suffix-initial D of -DI and -DA: `t` after a voiceless consonant, `d` otherwise
+(§6.1.2). -/
+def D : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
+  (.coronal, true), (.anterior, true)]
+def k : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
+  (.dorsal, true), (.voice, false)]
+def g : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
+  (.dorsal, true), (.voice, true)]
+def s : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, true),
+  (.strident, true), (.coronal, true), (.anterior, true), (.voice, false)]
+def z : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, true),
+  (.strident, true), (.coronal, true), (.anterior, true), (.voice, true)]
+def ş : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, true),
+  (.strident, true), (.coronal, true), (.anterior, false), (.voice, false)]
+def v : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, true),
+  (.labial, true), (.voice, true)]
+def h : Segment := consonant [(.consonantal, false), (.sonorant, false), (.continuant, true),
+  (.spreadGlottis, true), (.voice, false)]
+def m : Segment := consonant [(.consonantal, true), (.sonorant, true), (.nasal, true),
+  (.labial, true), (.voice, true)]
+def n : Segment := consonant [(.consonantal, true), (.sonorant, true), (.nasal, true),
+  (.coronal, true), (.voice, true)]
+def l : Segment := consonant [(.consonantal, true), (.sonorant, true), (.lateral, true),
+  (.coronal, true), (.voice, true)]
+/-- The palatal l of loans such as *gol* and *hal*: [−back], so a trigger of fronting
+harmony (§3.4 (iv), [clements-sezer-1982]). -/
+def l' : Segment := consonant [(.consonantal, true), (.sonorant, true), (.lateral, true),
+  (.coronal, true), (.voice, true), (.back, false)]
+def r : Segment := consonant [(.consonantal, true), (.sonorant, true), (.tap, true),
+  (.coronal, true), (.voice, true)]
+def y : Segment := consonant [(.consonantal, false), (.sonorant, true), (.approximant, true),
+  (.continuant, true), (.voice, true)]
 
-def o_vowel : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.dorsal, true), (.high, false),
-   (.back, true), (.round, true), (.low, false)]
+/-! ### Suffixes
 
--- ============================================================================
--- § 2: Harmony System Instances
--- ============================================================================
+Citation forms after a consonant-final stem; the deletable vowels and buffer `y` of
+§6.1.3 are not represented. -/
 
-/-- Palatal harmony: [back] spreads from the last stem vowel to all suffix
-    vowels. Every vowel is both trigger and target; no transparency. -/
-def palatalHarmony : System Segment :=
+/-- -lAr, plural (§8.1.1). -/
+def plural : List Segment := [l, A, r]
+/-- -(I)m, first-person singular possessive (§8.1.2). -/
+def possessive1sg : List Segment := [I, m]
+/-- -(I)n, second-person singular possessive (§8.1.2). -/
+def possessive2sg : List Segment := [I, n]
+/-- -(I)mIz, first-person plural possessive (§8.1.2). -/
+def possessive1pl : List Segment := [I, m, I, z]
+/-- -(s)I, third-person singular possessive (§8.1.2). -/
+def possessive3sg : List Segment := [I]
+/-- -DA, locative (§8.1.3). -/
+def locative : List Segment := [D, A]
+/-- -Il, passive (§8.2.1.2). -/
+def passive : List Segment := [I, l]
+/-- -mA, negative (§8.2.2); before -(I)yor its vowel is raised to I (§8.2.2). -/
+def negative : List Segment := [m, A]
+/-- -DI, perfective (§8.2.3.3). -/
+def perfective : List Segment := [D, I]
+/-- -mIş, perfective/evidential (§8.2.3.3). -/
+def evidential : List Segment := [m, I, ş]
+/-- -(I)yor, imperfective; its `o` does not harmonize (§3.4 (vi)). -/
+def imperfective : List Segment := [I, y, o, r]
+/-- -(y)mIş, the evidential copula (§8.3.2). -/
+def evidentialCopula : List Segment := [y, m, I, ş]
+/-- -(y)ken, converb; invariable (§3.4 (vi)). -/
+def ken : List Segment := [k, e, n]
+/-- -(I)m, first-person singular of the group 2 person markers (§8.4). -/
+def person1sg : List Segment := [I, m]
+/-- -nIz, second-person plural of the group 1 person markers (§8.4). -/
+def person2pl : List Segment := [n, I, z]
+
+/-! ### Alternations -/
+
+/-- Fronting harmony: a suffix vowel unspecified for [back] takes the value of the
+preceding segment specified for it — a vowel, or a palatal `l'`; all other consonants are
+off the tier (§3.1, §3.2). -/
+def fronting : System Segment :=
   System.mk' (feature := .back)
-    (isTrigger     := (·.HasValue .syllabic true))
-    (isTarget      := (·.HasValue .syllabic true))
-    (isTransparent := (λ _ => false))
-    (direction     := .rightward)
+    (isTrigger     := fun s => (s .back).isSome)
+    (isTarget      := fun s => s.HasValue .syllabic true && (s .back).isNone)
+    (isTransparent := fun s => (s .back).isNone && !s.HasValue .syllabic true)
 
-/-- Labial harmony: [round] spreads from the last stem vowel to high suffix
-    vowels only. Every vowel triggers; only [+high] vowels are targets. -/
-def labialHarmony : System Segment :=
+/-- Rounding harmony: a high suffix vowel unspecified for [round] takes the value of the
+preceding vowel; consonants are off the tier (§3.1, §3.2.1). -/
+def rounding : System Segment :=
   System.mk' (feature := .round)
-    (isTrigger     := (·.HasValue .syllabic true))
-    (isTarget      := (λ s => s.HasValue .syllabic true && s.HasValue .high true))
-    (isTransparent := (λ _ => false))
-    (direction     := .rightward)
+    (isTrigger     := fun s => (s .round).isSome)
+    (isTarget      := fun s => s.HasValue .syllabic true && s.HasValue .high true
+                                 && (s .round).isNone)
+    (isTransparent := fun s => !s.HasValue .syllabic true)
 
--- ============================================================================
--- § 3: Archiphoneme Resolution
--- ============================================================================
+/-- Voicing of a suffix-initial `D`: it takes the [voice] of the preceding segment
+(§6.1.2). -/
+def voicing : System Segment :=
+  System.mk' (feature := .voice)
+    (isTrigger     := fun s => (s .voice).isSome)
+    (isTarget      := fun s => (s .voice).isNone)
+    (isTransparent := fun _ => false)
 
-/-- Resolve archiphonemic **A**: twofold alternation a/e controlled by [back].
-    Used for plural -lAr, past -DI, future -(y)AcAK, etc. -/
-def resolveA (back : Bool) : Segment :=
-  if back then a_vowel else e_vowel
-
-/-- Resolve archiphonemic **I**: fourfold alternation ı/i/u/ü
-    controlled by [back] and [round].
-    Used for accusative -(y)I, progressive -Iyor, possessive -(I)m, etc. -/
-def resolveI : Bool → Bool → Segment
-  | true,  false => ı_vowel
-  | false, false => i_vowel
-  | true,  true  => u_vowel
-  | false, true  => ü_vowel
-
--- ============================================================================
--- § 4: Verification
--- ============================================================================
-
--- Back/front classification
-theorem a_is_back : a_vowel.HasValue .back true = true := by decide
-theorem e_is_front : e_vowel.HasValue .back false = true := by decide
-theorem ö_is_front : ö_vowel.HasValue .back false = true := by decide
-theorem u_is_back : u_vowel.HasValue .back true = true := by decide
-
--- Rounding
-theorem ü_is_round : ü_vowel.HasValue .round true = true := by decide
-theorem ı_is_unround : ı_vowel.HasValue .round false = true := by decide
-
--- Height
-theorem i_is_high : i_vowel.HasValue .high true = true := by decide
-theorem a_is_low : a_vowel.HasValue .low true = true := by decide
-
--- Archiphoneme resolution
-theorem resolveA_back : resolveA true = a_vowel := rfl
-theorem resolveA_front : resolveA false = e_vowel := rfl
-theorem resolveI_back_unround : resolveI true false = ı_vowel := rfl
-theorem resolveI_front_round : resolveI false true = ü_vowel := rfl
-theorem resolveI_back_round : resolveI true true = u_vowel := rfl
-theorem resolveI_front_unround : resolveI false false = i_vowel := rfl
-
--- ============================================================================
--- § 5: Harmony System Verification
--- ============================================================================
-
-/-- Palatal harmony extracts [back] from a back-vowel stem. -/
-theorem palatal_back_stem :
-    triggerValue palatalHarmony [a_vowel] = some true := by decide
-
-/-- Palatal harmony extracts [−back] from a front-vowel stem. -/
-theorem palatal_front_stem :
-    triggerValue palatalHarmony [e_vowel] = some false := by decide
-
-/-- Labial harmony extracts [round] from a rounded stem. -/
-theorem labial_round_stem :
-    triggerValue labialHarmony [o_vowel] = some true := by decide
-
-/-- Labial harmony extracts [−round] from an unrounded stem. -/
-theorem labial_unround_stem :
-    triggerValue labialHarmony [ı_vowel] = some false := by decide
-
--- 2D harmony: göz (front, rounded) determines both dimensions
-theorem göz_palatal : triggerValue palatalHarmony [ö_vowel] = some false := by
-  decide
-theorem göz_labial : triggerValue labialHarmony [ö_vowel] = some true := by
-  decide
-
-/-- **OSL transduction harmonizes the suffix** (`System.transduce`, the proved
-    2-OSL function `palatalHarmony.transduce_isLeftOSL`): a [−back] target after
-    a [+back] stem surfaces [+back] — the value propagated from the preceding
-    output segment, the genuine subregular semantics. -/
-theorem palatal_transduce_spreads_back :
-    ((palatalHarmony.transduce [a_vowel, e_vowel])[1]?).bind (fun s => s .back)
-      = some true := by decide
-
--- Cross-backness: a and e disagree on dorsal features
-theorem a_e_dorsal_disagree :
-    agreeAt a_vowel e_vowel .dorsal = false := by decide
-
--- Same-backness: a and o agree on [back]
-theorem a_o_same_back :
-    a_vowel.HasValue .back true = true ∧
-    o_vowel.HasValue .back true = true := ⟨by decide, by decide⟩
+/-- The surface form of a suffixed word: the three alternations applied in turn. -/
+def surface (w : List Segment) : List Segment :=
+  voicing.transduceWord (rounding.transduceWord (fronting.transduceWord w))
 
 end Turkish.VowelHarmony

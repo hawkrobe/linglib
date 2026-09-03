@@ -1,95 +1,76 @@
-import Linglib.Fragments.Turkish.Negation
+import Linglib.Fragments.Turkish.SuffixTemplate
 
 /-!
-# Turkish Tense-Aspect-Modality System
-[goksel-kerslake-2005]
+# Turkish tense, aspect and modality markers
 
-The TAM system is the core of the Turkish verbal paradigm
-([goksel-kerslake-2005] Ch 21, Appendix 2). There are five **basic** TAM
-categories and three **modal** categories, occupying a single paradigmatic slot.
+The tense/aspect/modality markers of a finite verb occupy five positions
+([goksel-kerslake-2005] §8.2.3): the possibility suffix -(y)A (1), the bound
+auxiliaries (2), the markers of tense, aspect and modality proper (3), the copular
+markers (4) and -DIr (5). Markers of one position cannot co-occur, and every finite
+verb but the imperative and the third-person optative carries one of position 3. Their
+meanings are the matter of Chapter 21 and Appendix 2: -DI marks past tense, perfective
+aspect and direct knowledge, -mIş relative past tense, perfective aspect and indirect
+knowledge (evidential modality, §21.4.3), the copular -(y)mIş evidential modality
+alone; -mIş followed by a copular marker or -DIr is perfective only (§8.2.3.3).
+Negation of the aorist is irregular, -mAz for -(A/I)r (§8.2.2; see
+`Turkish.Negation`).
 
-## Key properties
+## References
 
-1. **Evidential -mIş is a TAM marker**, not a separate evidential morpheme.
-   It fills the same paradigmatic slot as -DI (past definite) and cannot
-   co-occur with it.
-
-2. **Aorist negation is asymmetric**: affirmative -(I)r becomes negative -mAz
-   rather than the expected *-mA-(I)r. All other categories use regular
-   -mA- negation (see also `Turkish.Negation`).
-
-3. **Compound tenses** are formed by adding a copular suffix (-DI, -mIş,
-   -(y)sA) to the basic form: *geliyordu* (progressive + past copula).
-
-## Suffix notation
-
-Capital letters indicate vowel harmony alternation
-(see `Turkish.VowelHarmony`):
-- **A** = a/e (twofold), **I** = ı/i/u/ü (fourfold)
-- **D** = d/t (voicing assimilation)
+* [A. Göksel and C. Kerslake, *Turkish: A Comprehensive Grammar* (2005)][goksel-kerslake-2005]
 -/
 
 namespace Turkish.TAM
 
-/-- The eight TAM categories of Turkish. -/
-inductive TAMCategory where
-  | pastDef        -- witnessed/definite past: -DI
-  | evidential     -- indirect/reportative: -(y)mIş
-  | aorist         -- habitual/dispositional: -(I)r
-  | progressive    -- ongoing: -Iyor
-  | future         -- prospective: -(y)AcAK
-  | conditional    -- hypothesis: -(y)sA
-  | optative       -- wish/mild imperative: -(y)A
-  | necessitative  -- obligation: -mAlI
-  deriving DecidableEq, Repr, Inhabited
+open Turkish.SuffixTemplate (VerbSlot)
 
-/-- TAM suffix entry with positive and negative forms. -/
-structure TAMEntry where
-  category : TAMCategory
-  affSuffix : String
-  negSuffix : String
-  /-- Is negation symmetric (neg = stem + -mA- + TAM)? -/
-  isNegSymmetric : Bool
-  deriving Repr, BEq, Inhabited
-
-def entries : List TAMEntry :=
-  [ { category := .pastDef,      affSuffix := "-DI",
-      negSuffix := "-mA-DI",     isNegSymmetric := true }
-  , { category := .evidential,   affSuffix := "-mIş",
-      negSuffix := "-mA-mIş",    isNegSymmetric := true }
-  , { category := .aorist,       affSuffix := "-(I)r",
-      negSuffix := "-mAz",       isNegSymmetric := false }
-  , { category := .progressive,  affSuffix := "-Iyor",
-      negSuffix := "-m-Iyor",    isNegSymmetric := true }
-  , { category := .future,       affSuffix := "-(y)AcAK",
-      negSuffix := "-mA-yAcAK",  isNegSymmetric := true }
-  , { category := .conditional,  affSuffix := "-(y)sA",
-      negSuffix := "-mA-sA",     isNegSymmetric := true }
-  , { category := .optative,     affSuffix := "-(y)A",
-      negSuffix := "-mA-yA",     isNegSymmetric := true }
-  , { category := .necessitative, affSuffix := "-mAlI",
-      negSuffix := "-mA-mAlI",   isNegSymmetric := true }
-  ]
-
--- ============================================================================
--- § Compound tenses
--- ============================================================================
-
-/-- Copular suffixes that combine with basic TAM for compound tenses. -/
-inductive CopulaSuffix where
-  | pastCop         -- -DI: geliyordu 'was coming'
-  | evidentialCop   -- -(y)mIş: geliyormuş 'was apparently coming'
-  | conditionalCop  -- -(y)sA: geliyorsa 'if s/he is coming'
+/-- The tense/aspect/modality markers of §8.2.3, by position. -/
+inductive Marker where
+  /-- -(y)A, possibility; position 1, negative forms only. -/
+  | possibility
+  /-- -(y)Abil, possibility; position 2. -/
+  | abil
+  /-- -(y)Iver, non-premeditative. -/
+  | iver
+  | agel
+  | ayaz
+  | akal
+  | adur
+  /-- -DI, perfective; position 3. -/
+  | di
+  /-- -mIş, perfective/evidential. -/
+  | miş
+  /-- -sA, conditional. -/
+  | sa
+  /-- -(A/I)r, negative -z. -/
+  | aorist
+  /-- -(y)AcAK, future. -/
+  | acak
+  /-- -(I)yor, imperfective. -/
+  | iyor
+  /-- -mAlI, obligative. -/
+  | mali
+  /-- -mAktA, imperfective. -/
+  | makta
+  /-- -(y)A, optative. -/
+  | optative
+  /-- -(y)DI, past copula; position 4. -/
+  | pastCopula
+  /-- -(y)mIş, evidential copula. -/
+  | evidentialCopula
+  /-- -(y)sA, conditional copula. -/
+  | conditionalCopula
+  /-- -DIr, generalizing modality; position 5. -/
+  | dir
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § Verification
--- ============================================================================
-
-/-- The aorist is the only TAM category with asymmetric negation;
-    all others use regular `-mA-` insertion (cf. `Negation.aorist_asymmetric`
-    for the surface-form counterpart). -/
-theorem asymmetric_is_aorist :
-    (entries.filter (! ·.isNegSymmetric)).map (·.category) = [.aorist] := rfl
+/-- The template slot of a marker: positions 1 to 5 are the slots `possibility`,
+`auxiliary`, `tam`, `copula` and `generalizing`. -/
+def Marker.slot : Marker → VerbSlot
+  | .possibility => .possibility
+  | .abil | .iver | .agel | .ayaz | .akal | .adur => .auxiliary
+  | .di | .miş | .sa | .aorist | .acak | .iyor | .mali | .makta | .optative => .tam
+  | .pastCopula | .evidentialCopula | .conditionalCopula => .copula
+  | .dir => .generalizing
 
 end Turkish.TAM
