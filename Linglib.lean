@@ -50,7 +50,6 @@ import Linglib.Core.Algebra.Group.IdempotentPower
 import Linglib.Core.Algebra.Semigroup.Pseudovariety
 import Linglib.Core.Analysis.Convex.Function
 import Linglib.Core.Analysis.LeastSquares
-import Linglib.Core.Analysis.SpecialFunctions.Log.NegMulLog
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.PartitionCat
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
