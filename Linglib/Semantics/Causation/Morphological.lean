@@ -2,7 +2,7 @@ import Mathlib.Order.Nat
 import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Causation.CoerciveImplication
 import Linglib.Semantics.ArgumentStructure.Agentivity
-import Linglib.Semantics.ArgumentStructure.Root.Profile
+import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 
 /-!
 # Morphological Causation: Causative Construction Typology
@@ -48,7 +48,7 @@ Agentivity decomposes into **intentionality × control** (following
 
 - `CauserType.toCausalSource` → `CausalSource` (psych causation)
 - `CauserType.toAgentivity` → `Agentivity` (agentivity lattice)
-- `CauserType.volitionality` → `Volitionality` (root dimensions)
+- `CauserType.volitionality` → `Volitionality` (proto-agent volition)
 - `CauserType.agentivityDegree` → `AgentivityDegree`
 - `CausativeConstruction` bundles complexity + mediation + causer/causee
   restrictions for cross-linguistic comparison
@@ -73,9 +73,8 @@ the external cause entirely, yielding monoeventive structure.
 
 namespace Causation.Morphological
 
-open Verb
 open Causation.Psych (CausalSource)
-open ArgumentStructure (Agentivity)
+open ArgumentStructure (Agentivity Volitionality)
 
 /-! ### Causer Type ([hafeez-2025], [comrie-1989]) -/
 

@@ -135,9 +135,8 @@ def run : VerbEntry where
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion
   root := { profile := {
-    forceMag := some [.moderate]
-    agentVolition := some [.volitional]
-    agentControl := some [.compatible]
+    forceMag := {.moderate}
+    agentControl := {.compatible}
   } }
 
 /-- "arrive" — unaccusative intransitive -/
@@ -178,9 +177,8 @@ def eat : VerbEntry where
   verbIncClass := some .sinc
   levinClass := some .eat
   root := { profile := {
-    forceMag := some [.low, .moderate]
-    agentVolition := some [.volitional]
-    agentControl := some [.compatible]
+    forceMag := {.low, .moderate}
+    agentControl := {.compatible}
   } }
 
 /-- "kick" — transitive -/
@@ -192,10 +190,9 @@ def kick : VerbEntry := .mkRegular {
   vendlerClass := some .activity
   levinClass := some .hit
   root := { profile := {
-    forceMag := some [.moderate, .high]
-    forceDir := some [.unidirectional]
-    agentVolition := some [.neutral, .volitional]
-    agentControl := some [.neutral, .compatible]
+    forceMag := {.moderate, .high}
+    forceDir := {.unidirectional}
+    agentControl := {.neutral, .compatible}
   } } }
 
 /-- "give" — ditransitive, alternates DOC/PP.
@@ -814,9 +811,8 @@ def kill : VerbEntry := .mkRegular {
   causative := some .make
   levinClass := some .murder
   root := { profile := {
-    resultType := some [.totalDestruction]
-    agentVolition := some [.neutral, .volitional]
-    agentControl := some [.neutral, .compatible]
+    resultType := {.totalDestruction}
+    agentControl := {.neutral, .compatible}
   } } }
 
 /-- "break" — thick lexical causative (Levin 45.1 Break Verbs; [embick-2009] break-class).
@@ -834,12 +830,12 @@ def break_ : VerbEntry where
   causative := some .make
   levinClass := some .break_
   root := { profile := {
-    forceMag := some [.moderate, .high]
+    forceMag := {.moderate, .high}
     -- forceDir unconstrained: *break* covers snapping (bidirectional),
     -- hammering (omnidirectional), and directed blows (unidirectional)
-    patientRob := some [.moderate, .robust]
-    resultType := some [.fracture]
-    agentControl := some [.incompatible, .neutral]
+    patientRob := {.moderate, .robust}
+    resultType := {.fracture}
+    agentControl := {.incompatible, .neutral}
     -- break is unspecified for instrument and object dimensionality
     -- ([majid-boster-bowerman-2008]: Dim 1 low predictability)
   } }
@@ -864,13 +860,13 @@ def tear_ : VerbEntry where
   causative := some .make
   levinClass := some .break_
   root := { profile := {
-    forceMag := some [.moderate, .high]
-    forceDir := some [.bidirectional, .unidirectional]
-    patientRob := some [.flimsy, .moderate, .robust]
-    resultType := some [.separation]
-    agentControl := some [.neutral, .compatible]
-    instrumentType := some [.hands]
-    patientDim := some [.twoD]
+    forceMag := {.moderate, .high}
+    forceDir := {.bidirectional, .unidirectional}
+    patientRob := {.flimsy, .moderate, .robust}
+    resultType := {.separation}
+    agentControl := {.neutral, .compatible}
+    instrumentType := {.hands}
+    patientDim := {.twoD}
   } }
 
 -- ════════════════════════════════════════════════════
@@ -944,11 +940,10 @@ def burn : VerbEntry := .mkRegular {
   causative := some .make
   levinClass := some .otherCoS
   root := { profile := {
-    forceMag := some [.moderate, .high]
-    patientRob := some [.flimsy, .moderate, .robust]
-    resultType := some [.totalDestruction, .deformation]
-    agentVolition := some [.neutral, .volitional]
-    agentControl := some [.neutral, .compatible]
+    forceMag := {.moderate, .high}
+    patientRob := {.flimsy, .moderate, .robust}
+    resultType := {.totalDestruction, .deformation}
+    agentControl := {.neutral, .compatible}
   } } }
 
 /-- "destroy" — thin lexical causative (result-only, no manner). -/
@@ -959,9 +954,8 @@ def destroy : VerbEntry := .mkRegular {
   causative := some .make
   levinClass := some .destroy
   root := { profile := {
-    resultType := some [.totalDestruction]
-    agentVolition := some [.neutral, .volitional]
-    agentControl := some [.neutral, .compatible]
+    resultType := {.totalDestruction}
+    agentControl := {.neutral, .compatible}
   } } }
 
 /-- "melt" — thick lexical causative (manner = by heat).
@@ -976,11 +970,10 @@ def melt : VerbEntry := .mkRegular {
   causative := some .make
   levinClass := some .otherCoS
   root := { profile := {
-    forceMag := some [.low, .moderate]
-    patientRob := some [.moderate, .robust]
-    resultType := some [.deformation]
-    agentVolition := some [.neutral, .volitional]
-    agentControl := some [.compatible]
+    forceMag := {.low, .moderate}
+    patientRob := {.moderate, .robust}
+    resultType := {.deformation}
+    agentControl := {.compatible}
   } } }
 
 -- ════════════════════════════════════════════════════
@@ -1127,9 +1120,8 @@ def devour : VerbEntry := .mkRegular {
   verbIncClass := some .sinc
   levinClass := some .devour
   root := { profile := {
-    forceMag := some [.moderate, .high]
-    agentVolition := some [.volitional]
-    agentControl := some [.neutral]
+    forceMag := {.moderate, .high}
+    agentControl := {.neutral}
   } } }
 
 /-- "read" — transitive, no presupposition -/
@@ -1187,10 +1179,9 @@ def sweep : VerbEntry where
   passivizable := true
   levinClass := some .wipe
   root := { profile := {
-    forceMag := some [.low, .moderate]
-    forceDir := some [.unidirectional]
-    agentVolition := some [.volitional]
-    agentControl := some [.compatible]
+    forceMag := {.low, .moderate}
+    forceDir := {.unidirectional}
+    agentControl := {.compatible}
   } }
 
 /-- "sweep" instrument sense — obligatorily agentive, broom lexicalized. -/
@@ -1207,10 +1198,9 @@ def sweep_instr : VerbEntry where
   senseTag := .instrumental
   levinClass := some .wipe
   root := { profile := {
-    forceMag := some [.low, .moderate]
-    forceDir := some [.unidirectional]
-    agentVolition := some [.volitional]
-    agentControl := some [.compatible]
+    forceMag := {.low, .moderate}
+    forceDir := {.unidirectional}
+    agentControl := {.compatible}
   } }
 
 -- ════════════════════════════════════════════════════
@@ -2371,8 +2361,8 @@ def cut : VerbEntry where
   verbIncClass := some .sinc
   levinClass := some .cut
   root := { profile := {
-    resultType := some [.surfaceBreach]
-    instrumentType := some [.sharpBlade]
+    resultType := {.surfaceBreach}
+    instrumentType := {.sharpBlade}
   } }
 
 /-- "chop" — Levin 21.2 Carve verbs. -/
