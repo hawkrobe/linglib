@@ -1223,6 +1223,7 @@ import Linglib.Fragments.Turkish.Coordination
 import Linglib.Fragments.Turkish.Definiteness
 import Linglib.Fragments.Turkish.Evidentiality
 import Linglib.Fragments.Turkish.MedialVerbs
+import Linglib.Fragments.Turkish.Morphotactics
 import Linglib.Fragments.Turkish.Negation
 import Linglib.Fragments.Turkish.Phonology
 import Linglib.Fragments.Turkish.PolarityItems
@@ -1230,8 +1231,6 @@ import Linglib.Fragments.Turkish.Possession
 import Linglib.Fragments.Turkish.Predicates
 import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Fragments.Turkish.Relativization
-import Linglib.Fragments.Turkish.SuffixTemplate
-import Linglib.Fragments.Turkish.TAM
 import Linglib.Fragments.Turkish.VowelHarmony
 import Linglib.Fragments.Turkish.WordOrder
 import Linglib.Fragments.Tuyuca.Evidentiality

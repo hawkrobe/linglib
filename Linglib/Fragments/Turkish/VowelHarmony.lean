@@ -31,10 +31,10 @@ are derived in `Studies/GokselKerslake2005.lean`.
 * [G. N. Clements and E. Sezer, *Vowel and consonant disharmony in Turkish*][clements-sezer-1982]
 -/
 
-namespace Turkish.VowelHarmony
-
 open Phonology (Segment)
 open Subregular.Harmony (System)
+
+namespace Turkish.Phonology
 
 /-! ### Segments -/
 
@@ -177,4 +177,4 @@ def voicing : System Segment :=
 def surface (w : List Segment) : List Segment :=
   voicing.transduceWord (rounding.transduceWord (fronting.transduceWord w))
 
-end Turkish.VowelHarmony
+end Turkish.Phonology

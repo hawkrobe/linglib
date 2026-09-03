@@ -1,4 +1,4 @@
-import Linglib.Fragments.Turkish.TAM
+import Linglib.Fragments.Turkish.Morphotactics
 import Linglib.Fragments.Turkish.VowelHarmony
 
 /-!
@@ -6,11 +6,11 @@ import Linglib.Fragments.Turkish.VowelHarmony
 
 The reference grammar's account of the form and order of Turkish suffixes, checked
 against the Turkish Fragment. Chapter 3's vowel harmony is derived by the alternations
-of `Turkish.VowelHarmony` from archiphonemic suffixes: the permissible vowel sequences
+of `Turkish.Phonology` from archiphonemic suffixes: the permissible vowel sequences
 of §3.1 are the A-type and I-type resolutions, the last vowel of a disharmonic loan
 decides (*otobüs-ler*), an invariant suffix vowel is skipped and re-triggers
 (*görüyorum*, §3.4), and the palatal l of *gol* fronts its suffix (§3.4). Chapter 8's
-suffix order is licensing by the templates of `Turkish.SuffixTemplate`: the grammar's
+suffix order is licensing by the templates of `Turkish.Morphotactics`: the grammar's
 example verbs and nominals are licensed, reversed orders are not, and its rule that
 markers of one position cannot co-occur (§8.2.3) is the template's having no repeated
 slot.
@@ -28,8 +28,7 @@ slot.
 
 namespace GokselKerslake2005
 
-open Turkish.VowelHarmony Turkish.SuffixTemplate Turkish.TAM
-open Phonology (Segment)
+open Turkish Phonology Morphotactics
 
 /-! ### Vowel harmony (Chapter 3) -/
 
