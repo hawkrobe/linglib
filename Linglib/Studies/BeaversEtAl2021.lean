@@ -24,7 +24,7 @@ and the three attested language types.
 ## Main statements
 
 * `bifurcation_fails`: result roots entail change
-  (`Verb.Root.ChangeType.entailsChange`), violating the bifurcation
+  (`Verb.Root.ChangeType.EntailsChange`), violating the bifurcation
   thesis (2).
 * `grand_unification`: the root's change entailment alone determines the
   full package of morphosyntactic correlates ((44), §§3, 6–9).
@@ -236,14 +236,41 @@ def survivesChangeDenial : ChangeType → Bool
 
 /-- Change denial succeeds exactly when the root does not entail change. -/
 theorem survivesChangeDenial_iff (ct : ChangeType) :
-    survivesChangeDenial ct = true ↔ ct.entailsChange = false := by
-  cases ct <;> simp [survivesChangeDenial, ChangeType.entailsChange]
+    survivesChangeDenial ct = true ↔ ¬ ct.EntailsChange := by
+  cases ct <;> simp [survivesChangeDenial, ChangeType.EntailsChange]
+
+/-! ### Sublexical *again* ((14)–(16)) -/
+
+/-- Attachment sites for sublexical *again*: to the root (restitutive) or
+over `v_become` (repetitive). -/
+inductive AgainReading where
+  /-- *again* scopes over the root's state only. -/
+  | restitutive
+  /-- *again* scopes over the change-introducing structure. -/
+  | repetitive
+  deriving DecidableEq, Repr
+
+/-- Available *again* readings by root class: a result root's state itself
+entails change, collapsing low attachment into the repetitive reading. -/
+def againReadings : ChangeType → List AgainReading
+  | .propertyConcept => [.restitutive, .repetitive]
+  | .result => [.repetitive]
+
+/-- Result roots lack the restitutive reading (16). -/
+theorem result_no_restitutive :
+    AgainReading.restitutive ∉ againReadings .result := by
+  simp [againReadings]
+
+/-- PC roots have the restitutive reading (15). -/
+theorem pc_has_restitutive :
+    AgainReading.restitutive ∈ againReadings .propertyConcept := by
+  simp [againReadings]
 
 /-- The change-denial and restitutive-*again* diagnostics ((10)–(11) vs
 (14)–(16)) sort roots identically. -/
 theorem diagnostics_agree (ct : ChangeType) :
-    survivesChangeDenial ct = ct.allowsRestitutiveAgain := by
-  cases ct <;> rfl
+    survivesChangeDenial ct = true ↔ AgainReading.restitutive ∈ againReadings ct := by
+  cases ct <;> simp [survivesChangeDenial, againReadings]
 
 /-! ### Morphosyntactic correlates (§§6–7) -/
 
@@ -266,32 +293,29 @@ single biconditional: result roots lack simple statives (§6), have unmarked
 verbal forms (§7), and lack restitutive *again* (§3.4); PC roots are the
 reverse. -/
 theorem semantic_determines_morphosyntax (ct : ChangeType) :
-    ct.entailsChange = true ↔
+    ct.EntailsChange ↔
     (hasSimpleStative ct = false ∧
      verbalFormIsMarked ct = false ∧
-     ct.allowsRestitutiveAgain = false) := by
-  cases ct <;> simp [ChangeType.entailsChange, hasSimpleStative,
-    verbalFormIsMarked, ChangeType.allowsRestitutiveAgain]
+     AgainReading.restitutive ∉ againReadings ct) := by
+  cases ct <;> simp [ChangeType.EntailsChange, hasSimpleStative,
+    verbalFormIsMarked, againReadings]
 
 /-! ### The bifurcation thesis and its refutation ((2), §§3.6, 9) -/
 
 /-- The bifurcation thesis for roots ([embick-2009], [arad-2005];
 (2)): a component of meaning introduced by a templatic operator cannot be
 part of a root's meaning — so no root should entail change. -/
-def bifurcationThesis (rootEntailsChange : ChangeType → Bool) : Prop :=
-  ∀ ct, rootEntailsChange ct = false
+def bifurcationThesis (rootEntailsChange : ChangeType → Prop) : Prop :=
+  ∀ ct, ¬ rootEntailsChange ct
 
 /-- The paper's main result: result roots entail change, so bifurcation
 fails (§§3.3, 3.6, 9). -/
 theorem bifurcation_fails :
-    ¬ bifurcationThesis ChangeType.entailsChange := by
-  intro h
-  have := h .result
-  simp [ChangeType.entailsChange] at this
+    ¬ bifurcationThesis ChangeType.EntailsChange := fun h => h .result trivial
 
 /-- PC roots on their own are consistent with bifurcation. -/
 theorem pc_roots_consistent_with_bifurcation :
-    ChangeType.entailsChange .propertyConcept = false := rfl
+    ¬ ChangeType.EntailsChange .propertyConcept := id
 
 /-- [beavers-koontz-garboden-2020] strengthen the refutation: roots can
 entail change, causation, and manner simultaneously (√GUILLOTINE, √HAND) —
@@ -323,25 +347,25 @@ inductive Markedness where
 redundant with `v_become`, so its verb is unmarked; a PC root's verb carries
 the change overtly and is marked. -/
 def verbalMarkedness (ct : ChangeType) : Markedness :=
-  if ct.entailsChange then .unmarked else .marked
+  if ct.EntailsChange then .unmarked else .marked
 
 /-- Default realization of the stative head (44b): the mirror image — a PC
 root's stative is basic, a result root's stative must strip nothing and is
 built on the verb. -/
 def stativeMarkedness (ct : ChangeType) : Markedness :=
-  if ct.entailsChange then .marked else .unmarked
+  if ct.EntailsChange then .marked else .unmarked
 
 /-- Verbal and stative markedness are mirror images, so the fourth logically
 possible language type — result roots more marked than PC roots in both
 columns — is predicted not to exist (§8). -/
 theorem markedness_complementarity (ct : ChangeType) :
     verbalMarkedness ct ≠ stativeMarkedness ct := by
-  cases ct <;> simp [verbalMarkedness, stativeMarkedness, ChangeType.entailsChange]
+  cases ct <;> simp [verbalMarkedness, stativeMarkedness, ChangeType.EntailsChange]
 
 /-- Verbal unmarkedness is exactly the change entailment. -/
 theorem markedness_from_semantics (ct : ChangeType) :
-    verbalMarkedness ct = .unmarked ↔ ct.entailsChange = true := by
-  cases ct <;> simp [verbalMarkedness, ChangeType.entailsChange]
+    verbalMarkedness ct = .unmarked ↔ ct.EntailsChange := by
+  cases ct <;> simp [verbalMarkedness, ChangeType.EntailsChange]
 
 /-! ### Language types (§7.2, Table 1)
 
@@ -437,15 +461,15 @@ def templateHasBECOME : Template → Bool
 /-- A root entailing change is associated with a BECOME template even
 though the change comes from the root (§9). -/
 theorem entails_change_implies_become_template (ct : ChangeType)
-    (h : ct.entailsChange = true) :
+    (h : ct.EntailsChange) :
     requiresBECOME ct = true := by
-  cases ct <;> simp_all [ChangeType.entailsChange, requiresBECOME]
+  cases ct <;> simp_all [ChangeType.EntailsChange, requiresBECOME]
 
 /-- A root not requiring BECOME does not entail change. -/
 theorem no_become_implies_no_change (ct : ChangeType)
     (h : requiresBECOME ct = false) :
-    ct.entailsChange = false := by
-  cases ct <;> simp_all [requiresBECOME, ChangeType.entailsChange]
+    ¬ ct.EntailsChange := by
+  cases ct <;> simp_all [requiresBECOME, ChangeType.EntailsChange]
 
 /-- BECOME templates map to the telic Vendler classes. -/
 theorem become_templates_telic :
@@ -484,70 +508,41 @@ def admitsBasicStative : ChangeType → Bool
 
 /-- Admitting (8a) is equivalent to not entailing change. -/
 theorem admitsBasicStative_iff_no_change (ct : ChangeType) :
-    admitsBasicStative ct = true ↔ ct.entailsChange = false := by
-  cases ct <;> simp [admitsBasicStative, ChangeType.entailsChange]
-
-/-! ### Sublexical *again* ((14)–(16)) -/
-
-/-- Attachment sites for sublexical *again*: to the root (restitutive) or
-over `v_become` (repetitive). -/
-inductive AgainReading where
-  /-- *again* scopes over the root's state only. -/
-  | restitutive
-  /-- *again* scopes over the change-introducing structure. -/
-  | repetitive
-  deriving DecidableEq, Repr
-
-/-- Available *again* readings by root class: a result root's state itself
-entails change, collapsing low attachment into the repetitive reading. -/
-def againReadings : ChangeType → List AgainReading
-  | .propertyConcept => [.restitutive, .repetitive]
-  | .result => [.repetitive]
-
-/-- Result roots lack the restitutive reading (16). -/
-theorem result_no_restitutive :
-    AgainReading.restitutive ∉ againReadings .result := by
-  simp [againReadings]
-
-/-- PC roots have the restitutive reading (15). -/
-theorem pc_has_restitutive :
-    AgainReading.restitutive ∈ againReadings .propertyConcept := by
-  simp [againReadings]
+    admitsBasicStative ct = true ↔ ¬ ct.EntailsChange := by
+  cases ct <;> simp [admitsBasicStative, ChangeType.EntailsChange]
 
 /-! ### Grand unification -/
 
 /-- From the root's change entailment alone, all of the paper's
 morphosyntactic predictions follow. -/
 theorem grand_unification (ct : ChangeType) :
-    (ct.entailsChange = true →
+    (ct.EntailsChange →
       hasSimpleStative ct = false ∧
       verbalFormIsMarked ct = false ∧
-      ct.allowsRestitutiveAgain = false ∧
+      AgainReading.restitutive ∉ againReadings ct ∧
       requiresBECOME ct = true ∧
       admitsBasicStative ct = false ∧
       verbalMarkedness ct = .unmarked ∧
       stativeMarkedness ct = .marked) ∧
-    (ct.entailsChange = false →
+    (¬ ct.EntailsChange →
       hasSimpleStative ct = true ∧
       verbalFormIsMarked ct = true ∧
-      ct.allowsRestitutiveAgain = true ∧
+      AgainReading.restitutive ∈ againReadings ct ∧
       requiresBECOME ct = false ∧
       admitsBasicStative ct = true ∧
       verbalMarkedness ct = .marked ∧
       stativeMarkedness ct = .unmarked) := by
   cases ct <;> simp_all [
-    ChangeType.entailsChange, hasSimpleStative,
-    verbalFormIsMarked, ChangeType.allowsRestitutiveAgain,
+    ChangeType.EntailsChange, hasSimpleStative,
+    verbalFormIsMarked, againReadings,
     requiresBECOME, admitsBasicStative,
     verbalMarkedness, stativeMarkedness]
 
 /-- Change entailment determines markedness through the unified
 `Classification`. -/
 theorem root_markedness_from_change (r : Classification) :
-    verbalMarkedness r.changeType = .unmarked ↔ r.entailsChange = true := by
-  cases r with | mk valency changeType _ =>
-  cases changeType <;> simp [Classification.entailsChange,
-    verbalMarkedness, ChangeType.entailsChange]
+    verbalMarkedness r.changeType = .unmarked ↔ r.changeType.EntailsChange :=
+  markedness_from_semantics _
 
 /-- Roots with the same change type behave identically regardless of
 valency: markedness and statives are orthogonal to argument selection. -/
@@ -555,8 +550,8 @@ theorem same_change_same_morphosyntax (r₁ r₂ : Classification)
     (h : r₁.changeType = r₂.changeType) :
     verbalMarkedness r₁.changeType = verbalMarkedness r₂.changeType ∧
     stativeMarkedness r₁.changeType = stativeMarkedness r₂.changeType ∧
-    r₁.entailsChange = r₂.entailsChange := by
-  simp [Classification.entailsChange, h]
+    (r₁.changeType.EntailsChange ↔ r₂.changeType.EntailsChange) := by
+  rw [h]; exact ⟨rfl, rfl, Iff.rfl⟩
 
 /-! ### Chuj root grounding ([coon-2019]) -/
 
@@ -581,18 +576,18 @@ def rootPOS : Classification := RootClass.pos.toClassification
 /-- Chuj √TV result roots instantiate the result-root package: change
 entailed, no simple stative, unmarked verb. -/
 theorem chuj_tv_res_is_result_root :
-    rootTV_res.entailsChange = true ∧
+    rootTV_res.changeType.EntailsChange ∧
     hasSimpleStative rootTV_res.changeType = false ∧
     verbalMarkedness rootTV_res.changeType = .unmarked :=
-  ⟨rfl, rfl, rfl⟩
+  ⟨trivial, rfl, rfl⟩
 
 /-- Chuj √TV PC roots instantiate the PC package: no change entailment,
 simple stative, marked verb. -/
 theorem chuj_tv_pc_is_pc_root :
-    rootTV_pc.entailsChange = false ∧
+    ¬ rootTV_pc.changeType.EntailsChange ∧
     hasSimpleStative rootTV_pc.changeType = true ∧
     verbalMarkedness rootTV_pc.changeType = .marked :=
-  ⟨rfl, rfl, rfl⟩
+  ⟨id, rfl, rfl⟩
 
 /-- The Chuj fragment witnesses cells of the valency × change-type matrix:
 theme-taking roots with and without change entailment, and valency-free
