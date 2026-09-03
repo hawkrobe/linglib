@@ -1,284 +1,211 @@
 import Linglib.Syntax.RelativeClause.Basic
+import Linglib.Fragments.English.Relativization
+import Linglib.Fragments.Hebrew.Relativization
 
 /-!
-# Cinque (2020): a unified double-Headed analysis of relative clauses
-[cinque-2020]
+# Cinque 2020: The Syntax of Relative Clauses
 
-Formalizes the core of [cinque-2020]: all attested relative-clause types
-derive from a single **double-Headed** structure — an *internal* Head and an
-*external* Head (both indefinite `dP`s, smaller than DP), with the relative
-clause merged pre-nominally — via two derivation routes (§1.5):
+Every attested type of relative clause — externally headed post-nominal and pre-nominal,
+internally headed, double-headed, headless, correlative and adjoined — derives from one
+double-headed structure, the clause merged pre-nominally with an external Head, the indefinite
+chunk `dP` of the modified noun's extended projection, and an internal Head, by movement,
+deletion under identity and replacement by a proform (Introduction, §1.5). In a raising
+derivation the internal Head raises to Spec,CP, is the overt Head and licenses deletion of the
+external one ([kayne-1994]), so reconstruction and island effects are detectable; in a matching
+derivation the external Head raises and is overt, and the internal Head is deleted or replaced.
+Deletion is under identity: it is possible only when the internal Head is an exact match of the
+external `dP`, as with the invariant relativizers *that* and *che*, while an internal Head that
+is bigger, a DP or KP or one inside a PP, is categorially distinct and is represented by a
+wh-pronoun or a resumptive (§1.5, Chapter 2). The types merge at increasing heights of the
+nominal extended projection, participial below maximalizing below restrictive below
+kind-defining below non-restrictive (§3.5), and Chapter 4 surveys the six strategies for the
+internal Head: a gap with an invariant relativizer, a relative pronoun, a resumptive, PRO,
+non-reduction and verb-coding.
 
-* **Raising** — the *internal* Head raises to Spec,CP and is the overt Head,
-  licensing deletion of the external Head ([kayne-1994] ch. 8).
-  Reconstruction / island effects are detectable: the overt Head is in a chain
-  with the RC-internal position.
-* **Matching** — the *external* Head raises and is overt, licensing deletion of
-  the internal Head. Reconstruction is not detectable.
+`RC` is the double-headed structure with its derivation, the category `Head` of its internal
+Head, the strategy realizing it, the relativized position and the clause's position;
+`RC.overtHead` and `RC.Reconstructs` follow from the derivation, and `RC.WellFormed` is deletion
+under identity, from which `bigger_head_no_gap_deletion` derives the wh-pronoun or resumptive for
+a Head bigger than `dP`. `RC.realization` projects the structure onto the substrate's
+`RelativeClause.Realization`, and the three worked examples — English *that* on an object,
+English *to whom* on an oblique and Hebrew *she-* with a resumptive on a genitive — project
+onto realizations the English and Hebrew Fragments' markers attest. The tree geometry of
+Spec,CP and the `dP`/DP cartography is not modelled, and PRO and verb-coding are approximated in
+the substrate's inventory of NP_rel types.
 
-Deletion of the internal Head is licit only when it exactly matches the external
-Head (both indefinite `dP`); when the relativized internal Head is bigger — a
-DP/KP, or a DP/KP inside a PP (an oblique) — no deletion is possible and the
-internal Head is realized by a *wh*-pronoun or a resumptive (§1.5).
+## References
 
-The different RC types merge at different heights of the nominal extended
-projection (§3.5): non-restrictives attach above DP (external Head includes
-strong determiners), restrictives lower (external Head = weak determiners only),
-participials lower still. The internal-Head realization "strategies" (ch. 4)
-are gap + invariant relativizer, gap + relative pronoun, resumptive, PRO,
-non-reduction, and verb-coding.
-
-This is the genuine syntactic treatment that **computes** a
-`RelativeClause.Realization` from the reified derivation — the consumer the
-substrate's projection hook was built for. [de-vries-2018] surveys the
-framework-neutral typology this single structure is meant to cover.
-
-## Main declarations
-* `Cinque2020.RC` — the reified double-Headed relative clause.
-* `Cinque2020.RC.realization` — its computed projection onto
-  `RelativeClause.Realization`.
-* `Cinque2020.RC.WellFormed` — the deletion-licensing condition.
-
-## Implementation notes
-The reification stays at the level §1.5 states explicitly (two Heads, derivation
-route, internal-Head category and strategy, merge height); the tree geometry
-(Spec,CP, the `dP`/DP cartography) is below this level and not modelled. PRO and
-the verb-coding strategy have no exact `RelativeClause.NPRelType` counterpart in
-the Keenan-Comrie/WALS inventory the substrate was built from and are
-approximated when projecting.
+* [G. Cinque, *The Syntax of Relative Clauses: A Unified Analysis* (2020)][cinque-2020]
+* [R. S. Kayne, *The Antisymmetry of Syntax* (1994)][kayne-1994]
 -/
 
 namespace Cinque2020
 
 open RelativeClause
 
-/-! ### The two derivations from the single double-Headed structure -/
+/-! ### The two derivations (§1.5) -/
 
-/-- The derivation route ([cinque-2020] §1.5). -/
+/-- Which Head raises and is overt. -/
 inductive Derivation
-  /-- The internal Head raises to Spec,CP and is overt; the external Head is
-      deleted ([kayne-1994]). -/
+  /-- The internal Head raises to Spec,CP and is overt; the external Head is deleted. -/
   | raising
-  /-- The external Head is overt; the internal Head is deleted / a proform. -/
+  /-- The external Head is overt; the internal Head is deleted or replaced by a proform. -/
   | matching
   deriving DecidableEq, Repr
 
-/-- Which of the two Heads surfaces overtly. -/
+/-- The two Heads. -/
 inductive HeadChoice
-  | internal
-  | external
+  | internal | external
   deriving DecidableEq, Repr
 
-/-- The overt Head is fixed by the derivation, not stipulated separately. -/
+/-- The overt Head of a derivation. -/
 def Derivation.overtHead : Derivation → HeadChoice
-  | .raising  => .internal
+  | .raising => .internal
   | .matching => .external
 
-/-! ### The internal Head and its realization strategy -/
-
-/-- Category of the relativized internal Head ([cinque-2020] §1.5).
-    Deletion under identity with the external Head turns on this: only an
-    indefinite `dP` exactly matches the (indefinite `dP`) external Head. -/
-inductive InternalHeadCategory
-  /-- An indefinite `dP` exactly matching the external Head — deletion licit. -/
-  | indefiniteDP
-  /-- A DP/KP, or a DP/KP inside a PP (oblique) — bigger than `dP`, no deletion. -/
-  | biggerDPKP
+/-- A Head as a chunk of the relativized noun's extended projection: the indefinite `dP`, with
+weak determiners only, a DP or KP above it, or either inside a larger phrase such as a PP. -/
+inductive Head
+  | dP
+  | DP
+  | KP
+  /-- A DP or KP inside a larger phrase. -/
+  | inside (h : Head)
   deriving DecidableEq, Repr
 
-/-- Strategies for realizing the internal Head ([cinque-2020] ch. 4). -/
+/-- The external Head is the indefinite `dP`. -/
+def externalHead : Head := .dP
+
+/-! ### Strategies for the internal Head (Chapter 4) -/
+
+/-- The strategies realizing the internal Head. -/
 inductive Strategy
-  /-- Gap + invariant relativizer (English *that*, Italian *che*). -/
+  /-- A gap with an invariant relativizer, English *that*, Italian *che*. -/
   | invariantRelativizer
-  /-- Gap + relative pronoun / adjective (*who*/*which*, Italian *cui*). -/
+  /-- A relative pronoun or adjective, *who* and *which*, Italian *cui*. -/
   | relativePronoun
-  /-- Resumptive pronoun / epithet. -/
+  /-- A resumptive pronoun or epithet. -/
   | resumptive
-  /-- PRO (participial relative clauses). -/
+  /-- PRO, in participial relative clauses. -/
   | pro
-  /-- Full repetition of the Head (non-reduction). -/
+  /-- Full repetition of the Head. -/
   | nonReduction
-  /-- The verb-coding strategy. -/
+  /-- Verb-coding. -/
   | verbCoding
   deriving DecidableEq, Repr
 
-/-- Does this strategy realize the internal Head by *deleting* it under identity
-    with the external Head (the gap + invariant-relativizer case)? Only the
-    invariant-relativizer strategy does. PRO is a null *proform*, not deletion:
-    [cinque-2020] keeps deletion / non-pronunciation distinct from
-    proform-replacement, so PRO is not subject to the exact-match licensing. -/
+/-- The strategy deletes the internal Head under identity with the external one, the gap with an
+invariant relativizer; PRO replaces the Head by a null proform rather than deleting it. -/
 def Strategy.DeletesInternalHead (s : Strategy) : Prop := s = .invariantRelativizer
 
 instance (s : Strategy) : Decidable s.DeletesInternalHead := by
   unfold Strategy.DeletesInternalHead; infer_instance
 
-/-- Project a Cinque strategy onto the substrate `NPRelType`. PRO and
-    verb-coding have no exact counterpart in the substrate inventory and are
-    approximated (PRO ≈ a silent gap; verb-coding ≈ non-reduction). -/
+/-- The strategy's NP_rel type in the substrate's inventory, which has no PRO or verb-coding:
+PRO as a gap, verb-coding as non-reduction. -/
 def Strategy.toNPRelType : Strategy → NPRelType
   | .invariantRelativizer => .gap
-  | .relativePronoun      => .relPronoun
-  | .resumptive           => .resumptive
-  | .pro                  => .gap
-  | .nonReduction         => .nonReduction
-  | .verbCoding           => .nonReduction
+  | .relativePronoun => .relPronoun
+  | .resumptive => .resumptive
+  | .pro => .gap
+  | .nonReduction => .nonReduction
+  | .verbCoding => .nonReduction
 
-/-! ### Relative-clause types and merge height -/
+/-! ### Types and merge height (§3.5) -/
 
-/-- RC types, by increasing height of external merge in the nominal extended
-    projection ([cinque-2020] §3.5): a bigger external Head merges higher. -/
+/-- The types of relative clause, by increasing height of external merge. -/
 inductive RCType
-  | participial
-  | restrictive
-  | maximalizing
-  | kindDefining
-  | nonRestrictive
+  | participial | maximalizing | restrictive | kindDefining | nonRestrictive
   deriving DecidableEq, Repr
 
-/-- Relative merge height (bigger external Head = higher), per [cinque-2020]
-    §3.5: participials lowest (smallest external Head); amount/maximalizing below
-    ordinary restrictives (§3.5.5, presented as a tentative refinement of the
-    §1.5 simplification that they merge alike); kind-defining between restrictives
-    and non-restrictives (§3.5.3); non-restrictives highest (above DP). -/
-def RCType.mergeHeight : RCType → Nat
-  | .participial    => 0
-  | .maximalizing   => 1
-  | .restrictive    => 2
-  | .kindDefining   => 3
+/-- The height of external merge in the nominal extended projection, a bigger external Head
+merging higher: maximalizing below restrictive by the refinement of §3.5.5, kind-defining
+between restrictive and non-restrictive by §3.5.3. -/
+def RCType.mergeHeight : RCType → ℕ
+  | .participial => 0
+  | .maximalizing => 1
+  | .restrictive => 2
+  | .kindDefining => 3
   | .nonRestrictive => 4
 
-/-! ### The reified relative clause -/
+/-! ### The relative clause -/
 
-/-- A relative clause in [cinque-2020]'s unified analysis: the single
-    double-Headed structure (both Heads present by construction), a derivation
-    route, the internal-Head category and realization strategy, the relativized
-    AH position, and the position of the RC w.r.t. the Head. -/
+/-- A relative clause in the double-headed structure: its type, derivation, internal Head and
+the strategy realizing it, the relativized position and the clause's position. -/
 structure RC where
   rcType : RCType
   derivation : Derivation
-  internalHeadCategory : InternalHeadCategory
+  internalHead : Head
   strategy : Strategy
   position : AHPosition
   rcPosition : RCPosition
   deriving Repr
 
-/-- The overt Head of an RC, determined by its derivation. -/
+/-- The overt Head. -/
 def RC.overtHead (r : RC) : HeadChoice := r.derivation.overtHead
 
-/-- Reconstruction / island effects are detectable iff the overt Head is the
-    *internal* one (raising) — it is then in a chain with the RC-internal
-    position ([cinque-2020] §1.5). -/
-def RC.Reconstructs (r : RC) : Prop := r.derivation = .raising
+/-- Reconstruction and island effects are detectable iff the overt Head is the internal one, in
+a chain with the clause-internal position. -/
+def RC.Reconstructs (r : RC) : Prop := r.overtHead = .internal
 
 instance (r : RC) : Decidable r.Reconstructs := by
   unfold RC.Reconstructs; infer_instance
 
-/-- [cinque-2020]'s deletion-licensing condition: the internal Head may be
-    deleted (the gap + invariant-relativizer strategy) only when it exactly
-    matches the external Head (an indefinite `dP`). A bigger internal Head
-    (oblique DP/KP, or DP/KP in a PP) must be spelled out — a relative pronoun
-    or a resumptive. -/
+/-- Deletion under identity: the internal Head may be deleted only when it is an exact match of
+the external Head. -/
 def RC.WellFormed (r : RC) : Prop :=
-  r.strategy.DeletesInternalHead → r.internalHeadCategory = .indefiniteDP
+  r.strategy.DeletesInternalHead → r.internalHead = externalHead
 
 instance (r : RC) : Decidable r.WellFormed := by
   unfold RC.WellFormed; infer_instance
 
-/-- The framework-neutral `RelativeClause.Realization` this derivation projects
-    to — **computed** from the reified structure (the relativized position and
-    the NP_rel type the internal-Head strategy yields), not stipulated. The hook
-    by which Cinque's analysis connects to the relativization substrate. -/
-def RC.realization (r : RC) : Realization :=
-  { position := r.position, npRel := r.strategy.toNPRelType }
+/-- The framework-neutral realization the derivation projects onto. -/
+def RC.realization (r : RC) : Realization := ⟨r.position, r.strategy.toNPRelType⟩
 
-/-! ### Consequences -/
-
-/-- A matching derivation shows no reconstruction ([cinque-2020] §1.5). -/
-theorem matching_not_reconstructs (r : RC) (h : r.derivation = .matching) :
-    ¬ r.Reconstructs := by
-  unfold RC.Reconstructs; rw [h]; decide
-
-/-- **Deletion licensing.** A well-formed RC whose relativized internal Head is
-    bigger than an indefinite `dP` cannot use the gap-deletion (invariant
-    relativizer) strategy — it must spell the internal Head out. -/
+/-- An internal Head bigger than the external `dP` is categorially distinct from it and cannot be
+deleted, so it is a wh-pronoun or a resumptive. -/
 theorem bigger_head_no_gap_deletion (r : RC) (h : r.WellFormed)
-    (hbig : r.internalHeadCategory = .biggerDPKP) :
-    r.strategy ≠ .invariantRelativizer := by
-  intro hs
-  have hd : r.strategy.DeletesInternalHead := hs
-  have hmatch : r.internalHeadCategory = .indefiniteDP := h hd
-  rw [hbig] at hmatch
-  exact absurd hmatch (by decide)
-
-/-- Non-restrictive RCs merge higher than restrictives ([cinque-2020] §3.5). -/
-theorem nonRestrictive_above_restrictive :
-    RCType.restrictive.mergeHeight < RCType.nonRestrictive.mergeHeight := by decide
-
-/-- Participial RCs have the lowest external merge. -/
-theorem participial_lowest (t : RCType) :
-    RCType.participial.mergeHeight ≤ t.mergeHeight := by
-  cases t <;> decide
-
-/-- Amount/maximalizing RCs merge lower (closer to the Head) than ordinary
-    restrictives — [cinque-2020] §3.5.5, presented there as a tentative
-    refinement of the §1.5 simplification that they merge in the same position. -/
-theorem maximalizing_below_restrictive :
-    RCType.maximalizing.mergeHeight < RCType.restrictive.mergeHeight := by decide
+    (hbig : r.internalHead ≠ externalHead) : r.strategy ≠ .invariantRelativizer :=
+  fun hs => hbig (h hs)
 
 /-! ### Worked examples -/
 
-/-- English "the book that John read ___": matching, internal Head exactly
-    matches the external (indefinite `dP`), gap via the invariant relativizer
-    *that*; object relative. -/
+/-- *The book that John read*: matching, the internal Head an exact match, deleted under the
+invariant relativizer. -/
 def englishThatObject : RC :=
-  { rcType := .restrictive, derivation := .matching,
-    internalHeadCategory := .indefiniteDP, strategy := .invariantRelativizer,
-    position := .directObject, rcPosition := .postNominal }
+  ⟨.restrictive, .matching, .dP, .invariantRelativizer, .directObject, .postNominal⟩
 
-example : englishThatObject.WellFormed := by decide
+/-- Its realization, a direct-object gap, is what the English Fragment's *that* attests. -/
+theorem englishThatObject_attested :
+    englishThatObject.WellFormed ∧ ¬ englishThatObject.Reconstructs ∧
+      English.relThat.Covers englishThatObject.realization.position ∧
+      englishThatObject.realization.npRel = English.relThat.npRel := by
+  decide
 
-/-- It **computes** to the substrate realization `(directObject, gap)` — from Cinque's
-    derivation rather than stipulated. -/
-theorem englishThatObject_realization :
-    englishThatObject.realization = { position := .directObject, npRel := .gap } := rfl
-
-/-- "the man to whom I spoke": oblique relativization. The internal Head is
-    bigger than `dP` (a PP-internal DP/KP), so deletion is barred and a relative
-    pronoun is used. -/
+/-- *The man to whom I spoke*: the internal Head, a DP inside a PP, is bigger than `dP`, so it is
+a relative pronoun. -/
 def englishWhomOblique : RC :=
-  { rcType := .restrictive, derivation := .matching,
-    internalHeadCategory := .biggerDPKP, strategy := .relativePronoun,
-    position := .oblique, rcPosition := .postNominal }
+  ⟨.restrictive, .matching, .inside .DP, .relativePronoun, .oblique, .postNominal⟩
 
-example : englishWhomOblique.WellFormed := by decide
-example :
-    englishWhomOblique.realization = { position := .oblique, npRel := .relPronoun } := rfl
+/-- Its realization, an oblique relative pronoun, is what the English Fragment's *whom*
+attests. -/
+theorem englishWhomOblique_attested :
+    englishWhomOblique.WellFormed ∧
+      English.relWhom.Covers englishWhomOblique.realization.position ∧
+      englishWhomOblique.realization.npRel = English.relWhom.npRel := by
+  decide
 
-/-- The deletion-licensing bite: an oblique (bigger) internal Head *cannot* be
-    deleted via the invariant relativizer — that derivation is ill-formed. -/
-theorem oblique_gap_deletion_illFormed :
-    ¬ ({ rcType := .restrictive, derivation := .matching,
-         internalHeadCategory := .biggerDPKP, strategy := .invariantRelativizer,
-         position := .oblique, rcPosition := .postNominal } : RC).WellFormed := by decide
-
-/-- Hebrew resumptive relativization at the genitive: matching, internal Head
-    spelled out as a resumptive pronoun. -/
+/-- Hebrew *she-* with a resumptive at the genitive: the internal Head, a DP inside a DP, is
+replaced by a proform. -/
 def hebrewResumptiveGenitive : RC :=
-  { rcType := .restrictive, derivation := .matching,
-    internalHeadCategory := .biggerDPKP, strategy := .resumptive,
-    position := .genitive, rcPosition := .postNominal }
+  ⟨.restrictive, .matching, .inside .DP, .resumptive, .genitive, .postNominal⟩
 
-example :
-    hebrewResumptiveGenitive.realization = { position := .genitive, npRel := .resumptive } := rfl
-
-/-- A raising derivation (overt Head = internal Head) shows reconstruction. -/
-def englishRaisingObject : RC :=
-  { rcType := .restrictive, derivation := .raising,
-    internalHeadCategory := .indefiniteDP, strategy := .invariantRelativizer,
-    position := .directObject, rcPosition := .postNominal }
-
-example : englishRaisingObject.overtHead = .internal := rfl
-example : englishRaisingObject.Reconstructs := by decide
-example : ¬ englishThatObject.Reconstructs := by decide
+/-- Its realization, a genitive resumptive, is what the Hebrew Fragment's *she-* with a pronoun
+attests. -/
+theorem hebrewResumptiveGenitive_attested :
+    hebrewResumptiveGenitive.WellFormed ∧
+      Hebrew.relSheResumptive.Covers hebrewResumptiveGenitive.realization.position ∧
+      hebrewResumptiveGenitive.realization.npRel = Hebrew.relSheResumptive.npRel := by
+  decide
 
 end Cinque2020
