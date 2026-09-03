@@ -73,9 +73,8 @@ theorem gla_is_sga (r_j η : ℝ) (obs hyp : ℕ) :
     general case ([jaeger-2007] §2, fn. 1). -/
 theorem maxent_convergence_guarantee {ι : Type*} [Fintype ι] [Nonempty ι]
     (s r : ι → ℝ) (y : ι) :
-    ConcaveOn ℝ Set.univ
-      (fun wⱼ => (wⱼ * s y + r y) - logSumExp (wⱼ • s + r)) :=
-  logConditional_concaveOn s r y
+    ConcaveOn ℝ Set.univ (fun wⱼ : ℝ => log (softmax (wⱼ • s + r) y)) :=
+  concaveOn_log_softmax s r y
 
 -- ============================================================================
 -- § 3: Ganging-Up (§3 — shared by MaxEnt and StOT)

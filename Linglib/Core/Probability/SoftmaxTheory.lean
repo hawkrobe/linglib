@@ -30,24 +30,16 @@ to exponential tilting; elementary properties are surveyed in [franke-degen-2023
 * `softmax_argmax_limit`, `softmax_nonmax_limit` — concentration on the argmax as
   rationality → ∞.
 * `bayesian_maximizes` — the Bayesian posterior maximizes expected log-likelihood.
-* `partitionFn_eq_mgf`, `logSumExp_eq_cgf`, `tilted_count_eq_withDensity_softmax` —
-  softmax as the counting-measure case of mathlib's exponential tilting.
+* `convexOn_log_sum_exp`, `concaveOn_log_softmax`, `hasDerivAt_log_softmax` — the
+  log-partition function is convex, so the log-likelihood is concave with
+  derivative observed minus expected feature.
+* `ProbabilityTheory.mgf_count`, `ProbabilityTheory.cgf_count`,
+  `MeasureTheory.tilted_count` — the partition function, log-sum-exp, and softmax
+  as the counting-measure `mgf`, `cgf`, and exponential tilting.
 
 `[UPSTREAM]`: pure-math characterizations of softmax; no linguistics. Quality-and-role
 marker — sits above `Real.softmax`, below the rational-agent framing.
 -/
-
-open Real in
-/-- The partition function `∑ j, exp (s j)` — the moment generating function of
-the scores under counting measure (`partitionFn_eq_mgf`). -/
-noncomputable def partitionFn {ι : Type*} [Fintype ι] (s : ι → ℝ) : ℝ := ∑ j, exp (s j)
-
-open Real in
-/-- Log-sum-exp `log (∑ j, exp (s j))` — the cumulant generating function of the
-scores under counting measure (`logSumExp_eq_cgf`). -/
-noncomputable def logSumExp {ι : Type*} [Fintype ι] (s : ι → ℝ) : ℝ := log (∑ j, exp (s j))
-
-namespace Core
 
 open Real Finset
 
@@ -279,29 +271,23 @@ where vᵤ = log L(m|u) is the listener utility of utterance u. -/
 noncomputable def speakerObj (v : ι → ℝ) (α : ℝ) (s : ι → ℝ) : ℝ :=
   ∑ u, (Real.negMulLog (s u) + α * s u * v u)
 
-/-- The softmax achieves f(s*) = log Z, where Z is the partition function. -/
+/-- The softmax achieves the log-partition function `log ∑ exp (α vᵤ)`. -/
 theorem speakerObj_at_softmax [Nonempty ι] (v : ι → ℝ) (α : ℝ) :
-    speakerObj v α (softmax (α • v)) = logSumExp (α • v) := by
-  unfold speakerObj logSumExp
-  have hlog_softmax : ∀ u, log (softmax (α • v) u) =
-      α * v u - log (partitionFn (α • v)) := by
-    intro u
-    simp only [softmax, partitionFn, Pi.smul_apply, smul_eq_mul]
-    rw [log_div (ne_of_gt (exp_pos _)) (ne_of_gt (Finset.sum_pos
-      (fun j _ => exp_pos _) Finset.univ_nonempty)), log_exp]
-  have hterm : ∀ u, Real.negMulLog (softmax (α • v) u) + α * softmax (α • v) u * v u =
-      softmax (α • v) u * log (partitionFn (α • v)) := by
-    intro u; unfold Real.negMulLog; rw [hlog_softmax]; ring
+    speakerObj v α (softmax (α • v)) = log (∑ u, exp (α * v u)) := by
+  unfold speakerObj
+  have hlog_softmax (u : ι) : log (softmax (α • v) u) = α * v u - log (∑ u, exp (α * v u)) :=
+    log_softmax (α • v) u
+  have hterm (u : ι) : Real.negMulLog (softmax (α • v) u) + α * softmax (α • v) u * v u =
+      softmax (α • v) u * log (∑ u, exp (α * v u)) := by
+    unfold Real.negMulLog; rw [hlog_softmax]; ring
   simp_rw [hterm]
   rw [← Finset.sum_mul, sum_softmax, one_mul]
-  simp only [partitionFn, Pi.smul_apply, smul_eq_mul]
 
-/-- Key identity: speakerObj(s) + KL(s ‖ s*) = logSumExp (= speakerObj(s*)). -/
+/-- Key identity: speakerObj(s) + KL(s ‖ s*) = log-partition (= speakerObj(s*)). -/
 private theorem speakerObj_plus_kl [Nonempty ι] (v : ι → ℝ) (α : ℝ)
     (s : ι → ℝ) (_hs_nonneg : ∀ i, 0 ≤ s i) (hs_sum : ∑ i, s i = 1) :
-    speakerObj v α s + klFinite s (softmax (α • v)) = logSumExp (α • v) := by
-  unfold speakerObj klFinite logSumExp
-  simp only [Pi.smul_apply, smul_eq_mul]
+    speakerObj v α s + klFinite s (softmax (α • v)) = log (∑ j, exp (α * v j)) := by
+  unfold speakerObj klFinite
   rw [← Finset.sum_add_distrib]
   have hterm : ∀ u, (Real.negMulLog (s u) + α * s u * v u) +
       (if s u = 0 then (0 : ℝ) else s u * log (s u / softmax (α • v) u)) =
@@ -332,7 +318,7 @@ theorem gibbs_variational [Nonempty ι] (s : ι → ℝ) (α : ℝ) (p : ι → 
   have hq_pos : ∀ i, 0 < q i := fun i => softmax_pos (α • s) i
   have hq_sum : ∑ i, q i = 1 := sum_softmax (α • s)
   have hkl := kl_nonneg' hp_nonneg hq_pos hp_sum hq_sum
-  have h_logq : ∀ i, Real.log (q i) = α * s i - logSumExp (α • s) := fun i => log_softmax (α • s) i
+  have h_logq : ∀ i, Real.log (q i) = α * s i - log (∑ j, exp (α * s j)) := fun i => log_softmax (α • s) i
   have h_combine : ∀ i,
       Real.negMulLog (p i) +
         (if p i = 0 then (0 : ℝ) else p i * Real.log (p i / q i)) =
@@ -349,17 +335,17 @@ theorem gibbs_variational [Nonempty ι] (s : ι → ℝ) (α : ℝ) (p : ι → 
     unfold klFinite
     rw [← Finset.sum_add_distrib]
     simp_rw [h_combine, Finset.sum_neg_distrib]
-  have h2 : -(∑ i, p i * Real.log (q i)) = -(α * ∑ i, p i * s i) + logSumExp (α • s) := by
-    have : ∑ i, p i * Real.log (q i) = α * ∑ i, p i * s i - logSumExp (α • s) := by
+  have h2 : -(∑ i, p i * Real.log (q i)) = -(α * ∑ i, p i * s i) + log (∑ j, exp (α * s j)) := by
+    have : ∑ i, p i * Real.log (q i) = α * ∑ i, p i * s i - log (∑ j, exp (α * s j)) := by
       simp_rw [h_logq]
-      rw [show ∑ i : ι, p i * (α * s i - logSumExp (α • s)) =
-          ∑ i, (α * (p i * s i) - logSumExp (α • s) * p i) from
+      rw [show ∑ i : ι, p i * (α * s i - log (∑ j, exp (α * s j))) =
+          ∑ i, (α * (p i * s i) - log (∑ j, exp (α * s j)) * p i) from
         Finset.sum_congr rfl fun i _ => by ring]
       rw [Finset.sum_sub_distrib, ← Finset.mul_sum, ← Finset.mul_sum, hp_sum, mul_one]
     linarith
-  have h3 : (∑ i, Real.negMulLog (q i)) + α * ∑ i, q i * s i = logSumExp (α • s) := by
+  have h3 : (∑ i, Real.negMulLog (q i)) + α * ∑ i, q i * s i = log (∑ j, exp (α * s j)) := by
     rw [Finset.mul_sum, ← Finset.sum_add_distrib]
-    rw [show ∑ i : ι, (Real.negMulLog (q i) + α * (q i * s i)) = ∑ i, logSumExp (α • s) * q i from
+    rw [show ∑ i : ι, (Real.negMulLog (q i) + α * (q i * s i)) = ∑ i, log (∑ j, exp (α * s j)) * q i from
       Finset.sum_congr rfl fun i _ => by simp only [Real.negMulLog, h_logq i]; ring]
     rw [← Finset.mul_sum, hq_sum, mul_one]
   linarith
@@ -510,8 +496,8 @@ theorem entropy_le_log_card (p : ι → ℝ)
 /-- Entropy of softmax: H(softmax(s, α)) = log Z - α · 𝔼[s]. -/
 theorem entropy_softmax (s : ι → ℝ) (α : ℝ) :
     entropy Finset.univ (softmax (α • s)) =
-    log (partitionFn (α • s)) - α * ∑ i : ι, softmax (α • s) i * s i := by
-  simp only [entropy, softmax, partitionFn, Real.negMulLog, Pi.smul_apply, smul_eq_mul]
+    log (∑ j, exp (α * s j)) - α * ∑ i : ι, softmax (α • s) i * s i := by
+  simp only [entropy, softmax, Real.negMulLog, Pi.smul_apply, smul_eq_mul]
   have hne : (∑ j : ι, exp (α * s j)) ≠ 0 :=
     ne_of_gt (Finset.sum_pos (fun j _ => exp_pos _) Finset.univ_nonempty)
   have hlog : ∀ i, log (exp (α * s i) / ∑ j : ι, exp (α * s j)) =
@@ -548,7 +534,7 @@ noncomputable def entropyRegObjective (s : ι → ℝ) (α : ℝ) (p : ι → �
 
 /-- The maximum value of the entropy-regularized objective. -/
 theorem entropyRegObjective_softmax (s : ι → ℝ) (α : ℝ) (hα : 0 < α) :
-    entropyRegObjective s α (softmax (α • s)) = (1 / α) * log (partitionFn (α • s)) := by
+    entropyRegObjective s α (softmax (α • s)) = (1 / α) * log (∑ j, exp (α * s j)) := by
   simp only [entropyRegObjective, entropy_softmax]
   have hne : α ≠ 0 := ne_of_gt hα
   field_simp
@@ -601,7 +587,7 @@ theorem softmax_unique_maximizer (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
   set q := softmax (α • s) with hq_def
   have hq_pos : ∀ i, 0 < q i := fun i => softmax_pos (α • s) i
   have hq_sum : ∑ i, q i = 1 := sum_softmax (α • s)
-  -- From speakerObj_plus_kl: speakerObj(p) + KL(p ‖ q) = logSumExp = speakerObj(q) + 0
+  -- From speakerObj_plus_kl: speakerObj(p) + KL(p ‖ q) = log-partition = speakerObj(q) + 0
   have h_p := speakerObj_plus_kl s α p hp_nonneg hp_sum
   have h_q := speakerObj_plus_kl s α q (fun i => le_of_lt (hq_pos i)) hq_sum
   -- KL(q ‖ q) = 0
@@ -612,7 +598,7 @@ theorem softmax_unique_maximizer (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
     have hne : q i ≠ 0 := ne_of_gt (hq_pos i)
     simp [hne]
   rw [hkl_self, add_zero] at h_q
-  -- So KL(p ‖ q) = logSumExp - speakerObj(p) = speakerObj(q) - speakerObj(p)
+  -- So KL(p ‖ q) = log-partition - speakerObj(p) = speakerObj(q) - speakerObj(p)
   have hkl_val : klFinite p q = speakerObj s α q - speakerObj s α p := by linarith
   -- entropyRegObjective equality means speakerObj equality (up to rescaling)
   -- entropyRegObjective = Σ p*s + (1/α) * H(p)
@@ -653,129 +639,21 @@ theorem softmax_minimizes_freeEnergy (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
   simp only [entropyRegObjective] at h
   linarith
 
-/-- The log-partition function is convex in α. -/
-theorem logSumExp_convex (s : ι → ℝ) :
-    ConvexOn ℝ Set.univ (fun α : ℝ => logSumExp (α • s)) := by
+/-! ### The log-partition function
+
+With one weight `α` varying and the other constraints' contributions `r` fixed,
+the log-partition function `α ↦ log ∑ᵢ exp (α sᵢ + rᵢ)` is convex, so the
+log-likelihood `α ↦ log (softmax (α • s + r) y)` of an observation `y` is
+concave, with derivative the observed feature `s y` minus its expectation under
+the model. -/
+
+/-- The log-partition function is convex in the weight. -/
+theorem convexOn_log_sum_exp (s r : ι → ℝ) :
+    ConvexOn ℝ Set.univ fun α : ℝ => log (∑ i, exp (α * s i + r i)) := by
   constructor
   · exact convex_univ
   · intro x _ y _ a b ha hb hab
     simp only [smul_eq_mul]
-    unfold logSumExp
-    simp only [Pi.smul_apply, smul_eq_mul]
-    -- Edge cases: a = 0 or b = 0
-    rcases eq_or_lt_of_le ha with rfl | ha_pos
-    · simp [show b = 1 from by linarith]
-    rcases eq_or_lt_of_le hb with rfl | hb_pos
-    · simp [show a = 1 from by linarith]
-    -- Main case: 0 < a, 0 < b, a + b = 1
-    -- Key step: exp((ax+by)·sᵢ) = exp(x·sᵢ)^a · exp(y·sᵢ)^b
-    have hexp_split : ∀ i, exp ((a * x + b * y) * s i) =
-        (exp (x * s i)) ^ a * (exp (y * s i)) ^ b := by
-      intro i
-      rw [← exp_mul, ← exp_mul]
-      rw [show (a * x + b * y) * s i = x * s i * a + y * s i * b from by ring]
-      rw [exp_add]
-    -- Apply Hölder with p = 1/a, q = 1/b
-    have hpq : a⁻¹.HolderConjugate b⁻¹ := HolderConjugate.inv_inv ha_pos hb_pos hab
-    have holder := Real.inner_le_Lp_mul_Lq_of_nonneg (s := Finset.univ (α := ι)) hpq
-      (f := fun i => (exp (x * s i)) ^ a)
-      (g := fun i => (exp (y * s i)) ^ b)
-      (fun i _ => rpow_nonneg (le_of_lt (exp_pos _)) a)
-      (fun i _ => rpow_nonneg (le_of_lt (exp_pos _)) b)
-    -- Simplify Hölder LHS: ∑ exp(x·sᵢ)^a · exp(y·sᵢ)^b = ∑ exp((ax+by)·sᵢ)
-    conv at holder => lhs; arg 2; ext i; rw [← hexp_split]
-    -- Simplify Hölder RHS powers: (exp(x·sᵢ)^a)^(1/a) = exp(x·sᵢ), etc.
-    have ha_ne : a ≠ 0 := ne_of_gt ha_pos
-    have hb_ne : b ≠ 0 := ne_of_gt hb_pos
-    have hsimp_f : ∀ i, ((exp (x * s i)) ^ a) ^ a⁻¹ = exp (x * s i) := by
-      intro i
-      rw [← rpow_mul (le_of_lt (exp_pos _)), mul_inv_cancel₀ ha_ne, rpow_one]
-    have hsimp_g : ∀ i, ((exp (y * s i)) ^ b) ^ b⁻¹ = exp (y * s i) := by
-      intro i
-      rw [← rpow_mul (le_of_lt (exp_pos _)), mul_inv_cancel₀ hb_ne, rpow_one]
-    simp_rw [hsimp_f, hsimp_g] at holder
-    -- The RHS of holder uses (1 / a⁻¹) and (1 / b⁻¹); simplify to a and b
-    simp only [one_div, inv_inv] at holder
-    -- Take log of both sides (both are positive)
-    have hZ_x : (0 : ℝ) < ∑ i : ι, exp (x * s i) :=
-      Finset.sum_pos (fun i _ => exp_pos _) Finset.univ_nonempty
-    have hZ_y : (0 : ℝ) < ∑ i : ι, exp (y * s i) :=
-      Finset.sum_pos (fun i _ => exp_pos _) Finset.univ_nonempty
-    have hZ_mid : 0 < ∑ j : ι, exp ((a * x + b * y) * s j) :=
-      Finset.sum_pos (fun j _ => exp_pos _) Finset.univ_nonempty
-    have hlog_le := log_le_log hZ_mid holder
-    rw [log_mul (ne_of_gt (rpow_pos_of_pos hZ_x a)) (ne_of_gt (rpow_pos_of_pos hZ_y b)),
-        log_rpow hZ_x, log_rpow hZ_y] at hlog_le
-    linarith
-
-/-- Derivative of log-partition gives expected value:
-    `d/dα log(Σ exp(α sᵢ)) = Σ softmax(s,α)ᵢ · sᵢ`. -/
-theorem deriv_logSumExp (s : ι → ℝ) (α : ℝ) :
-    deriv (fun α => logSumExp (α • s)) α = ∑ i : ι, softmax (α • s) i * s i := by
-  simp only [logSumExp, softmax, Pi.smul_apply, smul_eq_mul]
-  have hZ_ne : (∑ j : ι, exp (α * s j)) ≠ 0 :=
-    ne_of_gt (Finset.sum_pos (fun j _ => exp_pos _) Finset.univ_nonempty)
-  -- Derivative of each exp(α * s j) w.r.t. α
-  have hexp : ∀ j : ι, HasDerivAt (fun a => exp (a * s j))
-      (exp (α * s j) * s j) α := by
-    intro j
-    have h1 : HasDerivAt (fun a => a * s j) (1 * s j) α :=
-      (hasDerivAt_id α).mul_const (s j)
-    have h2 := (Real.hasDerivAt_exp (α * s j)).comp α h1
-    simp only [one_mul] at h2
-    exact h2
-  -- Derivative of the sum
-  have hsum : HasDerivAt (fun a => ∑ j : ι, exp (a * s j))
-      (∑ j : ι, exp (α * s j) * s j) α :=
-    HasDerivAt.fun_sum fun j _ => hexp j
-  -- Derivative of log(sum) via chain rule, then extract
-  rw [(hsum.log hZ_ne).deriv, Finset.sum_div]
-  apply Finset.sum_congr rfl
-  intro i _
-  ring
-
-/-! ### Per-element offsets
-
-These instantiate the plain `logSumExp`/`softmax` at the shifted argument
-`α • s + r`, i.e. `logSumExp (α • s + r) = log Σ exp(α·sᵢ + rᵢ)`. This form
-appears when differentiating the log-partition with respect to a single weight
-`wⱼ` in a multi-constraint grammar, where `sᵢ` is constraint `j`'s contribution
-to candidate `i` and `rᵢ` the contribution of all other constraints (constant in
-`wⱼ`). -/
-
-/-- Derivative of offset log-partition gives weighted expected value:
-    `d/dα log(Σ exp(α·sᵢ + rᵢ)) = Σ softmax(α•s + r)ᵢ · sᵢ`. -/
-theorem hasDerivAt_logSumExpOffset (s r : ι → ℝ) (α : ℝ) :
-    HasDerivAt (fun w => logSumExp (w • s + r))
-      (∑ i : ι, softmax (α • s + r) i * s i) α := by
-  simp only [logSumExp, softmax, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
-  have hZ_ne : (∑ j : ι, exp (α * s j + r j)) ≠ 0 :=
-    ne_of_gt (Finset.sum_pos (fun _ _ => exp_pos _) Finset.univ_nonempty)
-  have hexp : ∀ j : ι, HasDerivAt (fun a => exp (a * s j + r j))
-      (exp (α * s j + r j) * s j) α := by
-    intro j
-    have h1 : HasDerivAt (fun a => a * s j + r j) (s j) α := by
-      have := ((hasDerivAt_id α).mul_const (s j)).add_const (r j)
-      simpa using this
-    exact (Real.hasDerivAt_exp (α * s j + r j)).comp α h1
-  have hsum : HasDerivAt (fun a => ∑ j : ι, exp (a * s j + r j))
-      (∑ j : ι, exp (α * s j + r j) * s j) α :=
-    HasDerivAt.fun_sum fun j _ => hexp j
-  convert hsum.log hZ_ne using 1
-  rw [Finset.sum_div]
-  apply Finset.sum_congr rfl
-  intro i _
-  ring
-
-/-- The offset log-partition function is convex in α. -/
-theorem logSumExpOffset_convex (s r : ι → ℝ) :
-    ConvexOn ℝ Set.univ (fun α : ℝ => logSumExp (α • s + r)) := by
-  constructor
-  · exact convex_univ
-  · intro x _ y _ a b ha hb hab
-    simp only [smul_eq_mul]
-    unfold logSumExp
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     rcases eq_or_lt_of_le ha with rfl | ha_pos
     · simp [show b = 1 from by linarith]
     rcases eq_or_lt_of_le hb with rfl | hb_pos
@@ -814,35 +692,53 @@ theorem logSumExpOffset_convex (s r : ι → ℝ) :
         log_rpow hZ_x, log_rpow hZ_y] at hlog_le
     linarith
 
-/-- The log conditional likelihood `α ↦ (α · sᵧ + rᵧ) − logSumExp(α•s + r)`
-    is concave (affine minus convex). -/
-theorem logConditional_concaveOn (s r : ι → ℝ) (y : ι) :
-    ConcaveOn ℝ Set.univ
-      (fun α => (α * s y + r y) - logSumExp (α • s + r)) := by
-  apply ConcaveOn.sub
-  · constructor
-    · exact convex_univ
-    · intro x _ z _ a b ha hb hab
-      simp only [smul_eq_mul]
-      nlinarith [show a * r y + b * r y = r y from by linear_combination (r y) * hab]
-  · exact logSumExpOffset_convex s r
+/-- The derivative of the log-partition function is the expected feature value. -/
+theorem hasDerivAt_log_sum_exp (s r : ι → ℝ) (α : ℝ) :
+    HasDerivAt (fun α => log (∑ i, exp (α * s i + r i)))
+      (∑ i, softmax (α • s + r) i * s i) α := by
+  simp only [softmax_def, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+  have hZ_ne : (∑ j : ι, exp (α * s j + r j)) ≠ 0 :=
+    ne_of_gt (Finset.sum_pos (fun _ _ => exp_pos _) Finset.univ_nonempty)
+  have hexp : ∀ j : ι, HasDerivAt (fun a => exp (a * s j + r j))
+      (exp (α * s j + r j) * s j) α := by
+    intro j
+    have h1 : HasDerivAt (fun a => a * s j + r j) (s j) α := by
+      have := ((hasDerivAt_id α).mul_const (s j)).add_const (r j)
+      simpa using this
+    exact (Real.hasDerivAt_exp (α * s j + r j)).comp α h1
+  have hsum : HasDerivAt (fun a => ∑ j : ι, exp (a * s j + r j))
+      (∑ j : ι, exp (α * s j + r j) * s j) α :=
+    HasDerivAt.fun_sum fun j _ => hexp j
+  convert hsum.log hZ_ne using 1
+  rw [Finset.sum_div]
+  apply Finset.sum_congr rfl
+  intro i _
+  ring
 
-/-- The derivative of log conditional likelihood `α ↦ (α·sᵧ + rᵧ) − logSumExp(α•s + r)`
-    is the observed feature value minus the expected value:
-    `d/dα = sᵧ − Σᵢ softmax(α•s + r)ᵢ · sᵢ`. -/
-theorem hasDerivAt_logConditional (s r : ι → ℝ) (y : ι) (α : ℝ) :
-    HasDerivAt (fun w => (w * s y + r y) - logSumExp (w • s + r))
-      (s y - ∑ i : ι, softmax (α • s + r) i * s i) α := by
+/-- The log-likelihood `α ↦ log (softmax (α • s + r) y)` is concave: affine minus
+convex. -/
+theorem concaveOn_log_softmax (s r : ι → ℝ) (y : ι) :
+    ConcaveOn ℝ Set.univ fun α : ℝ => log (softmax (α • s + r) y) := by
+  simp only [log_softmax, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+  refine ConcaveOn.sub ⟨convex_univ, fun x _ z _ a b ha hb hab => ?_⟩ (convexOn_log_sum_exp s r)
+  simp only [smul_eq_mul]
+  nlinarith [show a * r y + b * r y = r y from by linear_combination (r y) * hab]
+
+/-- The derivative of the log-likelihood is the observed minus the expected
+feature value. -/
+theorem hasDerivAt_log_softmax (s r : ι → ℝ) (y : ι) (α : ℝ) :
+    HasDerivAt (fun α => log (softmax (α • s + r) y))
+      (s y - ∑ i, softmax (α • s + r) i * s i) α := by
+  simp only [log_softmax, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
   have h_affine : HasDerivAt (fun a => a * s y + r y) (s y) α := by
-    have := ((hasDerivAt_id α).mul_const (s y)).add_const (r y)
-    simpa using this
-  exact h_affine.sub (hasDerivAt_logSumExpOffset s r α)
+    simpa using ((hasDerivAt_id α).mul_const (s y)).add_const (r y)
+  exact h_affine.sub (hasDerivAt_log_sum_exp s r α)
 
 /-- Strong duality: max entropy = min free energy. -/
 theorem max_entropy_duality (s : ι → ℝ) (c : ℝ)
     (α : ℝ) (_hα : 0 < α) (h_constraint : ∑ i : ι, softmax (α • s) i * s i = c) :
     entropy Finset.univ (softmax (α • s)) =
-    log (partitionFn (α • s)) - α * c := by
+    log (∑ j, exp (α * s j)) - α * c := by
   rw [entropy_softmax, h_constraint]
 
 end Entropy
@@ -885,12 +781,12 @@ theorem bayesian_maximizes (w : ι → ℝ) (hw_nonneg : ∀ i, 0 ≤ w i)
     ring
 
 end BayesianOptimality
-/-! ### Connection to exponential tilting and the cumulant generating function
+/-! ### Exponential tilting and the cumulant generating function
 
-Softmax is the finite/counting-measure case of mathlib's exponential-family
-machinery: the partition function is the moment generating function, log-sum-exp
-is the cumulant generating function, and softmax is the density of the
-exponentially-tilted (Esscher / Boltzmann–Gibbs) counting measure. -/
+Softmax is the finite, counting-measure case of mathlib's exponential-family
+machinery: the partition function `∑ i, exp (α * s i)` is the moment generating
+function of the scores, log-sum-exp is the cumulant generating function, and
+softmax is the density of the exponentially tilted counting measure. -/
 
 section Tilting
 
@@ -898,29 +794,23 @@ open MeasureTheory ProbabilityTheory
 
 variable {ι : Type*} [Fintype ι] [MeasurableSpace ι] [MeasurableSingletonClass ι]
 
-/-- The partition function `∑ exp(α·sᵢ)` is the moment generating function of the
-scores under the counting measure. -/
-theorem partitionFn_eq_mgf (s : ι → ℝ) (α : ℝ) :
-    partitionFn (α • s) = mgf s Measure.count α := by
-  simp only [partitionFn, mgf, integral_count, Pi.smul_apply, smul_eq_mul]
+@[simp] theorem ProbabilityTheory.mgf_count (s : ι → ℝ) (α : ℝ) :
+    mgf s Measure.count α = ∑ i, exp (α * s i) := by
+  simp [mgf]
 
-/-- Log-sum-exp is the cumulant generating function of the scores under the
-counting measure. -/
-theorem logSumExp_eq_cgf (s : ι → ℝ) (α : ℝ) :
-    logSumExp (α • s) = cgf s Measure.count α := by
-  simp only [logSumExp, cgf, mgf, integral_count, Pi.smul_apply, smul_eq_mul]
+@[simp] theorem ProbabilityTheory.cgf_count (s : ι → ℝ) (α : ℝ) :
+    cgf s Measure.count α = log (∑ i, exp (α * s i)) := by
+  simp [cgf]
 
-/-- Softmax is the density of the exponentially-tilted counting measure: tilting
-the counting measure by the scores `α·s` yields the measure whose density is
-`softmax (α•s)`. -/
-theorem tilted_count_eq_withDensity_softmax (s : ι → ℝ) (α : ℝ) :
-    Measure.count.tilted (fun i => α * s i) =
-      Measure.count.withDensity (fun i => ENNReal.ofReal (softmax (α • s) i)) := by
-  simp only [Measure.tilted]
-  congr 1
-  funext i
-  simp only [softmax, integral_count, Pi.smul_apply, smul_eq_mul]
+/-- The derivative of the cumulant generating function is the expected score under
+the softmax. -/
+theorem ProbabilityTheory.hasDerivAt_cgf_count [Nonempty ι] (s : ι → ℝ) (α : ℝ) :
+    HasDerivAt (cgf s Measure.count) (∑ i, softmax (α • s) i * s i) α := by
+  simpa [funext (cgf_count s)] using hasDerivAt_log_sum_exp s 0 α
+
+/-- Softmax is the density of the exponentially tilted counting measure. -/
+theorem MeasureTheory.tilted_count (s : ι → ℝ) :
+    Measure.count.tilted s = Measure.count.withDensity fun i => ENNReal.ofReal (softmax s i) := by
+  simp [Measure.tilted, softmax_def]
 
 end Tilting
-
-end Core
