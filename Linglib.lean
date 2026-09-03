@@ -282,9 +282,7 @@ import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.UpperLower.Closure
 import Linglib.Core.Order.UpperLower.Finset
 import Linglib.Core.Order.WellFoundedSet
-import Linglib.Core.Probability.BayesianUpdate
 import Linglib.Core.Probability.Choice.GumbelLuce
-import Linglib.Core.Probability.Choice.RankOrderings
 import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.ConditionalProbability
 import Linglib.Core.Probability.Confirmation
@@ -293,12 +291,8 @@ import Linglib.Core.Probability.CoupledEvaluation
 import Linglib.Core.Probability.Decision.Basic
 import Linglib.Core.Probability.Decision.Blackwell
 import Linglib.Core.Probability.Decision.Duality
-import Linglib.Core.Probability.Decision.ExperimentDesign
 import Linglib.Core.Probability.DirichletMultinomial
 import Linglib.Core.Probability.Distributions.Bernoulli
-import Linglib.Core.Probability.ENNRealArith
-import Linglib.Core.Probability.Eval
-import Linglib.Core.Probability.EvalLemmas
 import Linglib.Core.Probability.Finite
 import Linglib.Core.Probability.Gaussian
 import Linglib.Core.Probability.GibbsVariational
@@ -308,6 +302,7 @@ import Linglib.Core.Probability.JointPosterior
 import Linglib.Core.Probability.Kernel.Composition.Lemmas
 import Linglib.Core.Probability.Kernel.OfWeights
 import Linglib.Core.Probability.Kernel.Posterior
+import Linglib.Core.Probability.Uniform
 import Linglib.Core.Probability.UniformOn
 import Linglib.Core.Probability.LikelihoodRatio
 import Linglib.Core.Probability.LogitChoice
@@ -2256,6 +2251,7 @@ import Linglib.Studies.Haspelmath2007
 import Linglib.Studies.Haspelmath2021
 import Linglib.Studies.Haspelmath2025Root
 import Linglib.Studies.HaugDalrymple2020
+import Linglib.Studies.HawkinsEtAl2025
 import Linglib.Studies.HawkinsGweonGoodman2021
 import Linglib.Studies.HayKennedyLevin1999
 import Linglib.Studies.Hayes1989
@@ -2424,7 +2420,8 @@ import Linglib.Studies.Longobardi2001
 import Linglib.Studies.Longobardi2005
 import Linglib.Studies.LuChuangBaayen2026
 import Linglib.Studies.LuPanDegen2025
-import Linglib.Studies.Luce1959
+import Linglib.Studies.Luce1959.Basic
+import Linglib.Studies.Luce1959.Ranking
 import Linglib.Studies.LuckingGinzburg2022
 import Linglib.Studies.Lucy1994
 import Linglib.Studies.MacuchSilvaEtAl2024

@@ -490,7 +490,10 @@ instance : DecidablePred (· ∈ buy) := λ _ => Nat.decEq _ _
 /-- Uniform prior: P(w) = 1/8 for each world. -/
 noncomputable def prior : PMF World :=
   PMF.ofFintype (λ _ => 1 / 8)
-    (by rw [Fin.sum_univ_eight]; ennreal_arith)
+    (by
+      rw [Fin.sum_univ_eight, ← ENNReal.toReal_eq_toReal_iff' (by simp [ENNReal.add_eq_top])
+        ENNReal.one_ne_top]
+      norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top])
 
 /-! ### § 2: QUD and Denotations -/
 
@@ -581,7 +584,7 @@ private lemma prior_apply (a : World) : prior a = (1 : ℝ≥0∞) / 8 := rfl
 /-- Reduces `prior.probOfSet S` on a decidable subset to an explicit
     8-fold conditional sum. The lifting through `PMF.probOfSet_apply` +
     `Fin.sum_univ_eight` happens once; specialised lemmas then unfold
-    the set predicate and apply `ennreal_arith` on the residual. -/
+    the set predicate and lift the residual through `ENNReal.toReal`. -/
 private lemma prior_probOfSet_expand (S : Set World) [DecidablePred (· ∈ S)] :
     prior.probOfSet S =
       (if (⟨0, by decide⟩ : Fin 8) ∈ S then (1 : ℝ≥0∞)/8 else 0) +
@@ -597,7 +600,7 @@ private lemma prior_probOfSet_expand (S : Set World) [DecidablePred (· ∈ S)] 
 /-- The 8 base probabilities the §6/§7 derivations need. Each follows the
     same pattern: expand via `prior_probOfSet_expand`, unfold the set
     predicate, reduce each `(⟨i, _⟩ : Fin 8).val` to a numeric literal,
-    then discharge the residual ENNReal arithmetic with `ennreal_arith`. -/
+    then discharge the residual arithmetic through `ENNReal.toReal`. -/
 private lemma prior_beautiful : prior.probOfSet beautiful = (1 : ℝ≥0∞) / 2 := by
   rw [prior_probOfSet_expand]
   simp only [beautiful, Set.mem_ofPred_eq,
@@ -610,8 +613,8 @@ private lemma prior_beautiful : prior.probOfSet beautiful = (1 : ℝ≥0∞) / 2
              show ¬ ((⟨6, by decide⟩ : Fin 8).val < 4) by decide,
              show ¬ ((⟨7, by decide⟩ : Fin 8).val < 4) by decide,
              if_true, if_false]
-  ennreal_arith
-
+  rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 private lemma prior_expensive : prior.probOfSet expensive = (1 : ℝ≥0∞) / 2 := by
   rw [prior_probOfSet_expand]
   simp only [expensive, Set.mem_ofPred_eq,
@@ -624,8 +627,8 @@ private lemma prior_expensive : prior.probOfSet expensive = (1 : ℝ≥0∞) / 2
              show (((⟨6, by decide⟩ : Fin 8).val / 2) % 2 = 1) by decide,
              show (((⟨7, by decide⟩ : Fin 8).val / 2) % 2 = 1) by decide,
              if_true, if_false]
-  ennreal_arith
-
+  rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 private lemma prior_buy : prior.probOfSet buy = (1 : ℝ≥0∞) / 8 := by
   rw [prior_probOfSet_expand]
   simp only [buy, Set.mem_ofPred_eq,
@@ -637,8 +640,8 @@ private lemma prior_buy : prior.probOfSet buy = (1 : ℝ≥0∞) / 8 := by
              show ¬ ((⟨6, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨7, by decide⟩ : Fin 8).val = 0) by decide,
              if_true, if_false]
-  ennreal_arith
-
+  rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 private lemma prior_buy_compl : prior.probOfSet (buyᶜ) = (7 : ℝ≥0∞) / 8 := by
   rw [prior_probOfSet_expand]
   simp only [buy, Set.mem_compl_iff, Set.mem_ofPred_eq,
@@ -650,8 +653,8 @@ private lemma prior_buy_compl : prior.probOfSet (buyᶜ) = (7 : ℝ≥0∞) / 8 
              show ¬ ((⟨6, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨7, by decide⟩ : Fin 8).val = 0) by decide,
              not_true, not_false_eq_true, if_true, if_false]
-  ennreal_arith
-
+  rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 private lemma prior_beautiful_inter_buy :
     prior.probOfSet (beautiful ∩ buy) = (1 : ℝ≥0∞) / 8 := by
   rw [prior_probOfSet_expand]
@@ -673,8 +676,8 @@ private lemma prior_beautiful_inter_buy :
              show ¬ ((⟨7, by decide⟩ : Fin 8).val < 4 ∧
                      (⟨7, by decide⟩ : Fin 8).val = 0) by decide,
              if_false]
-  ennreal_arith
-
+  rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 private lemma prior_beautiful_inter_buy_compl :
     prior.probOfSet (beautiful ∩ buyᶜ) = (3 : ℝ≥0∞) / 8 := by
   rw [prior_probOfSet_expand]
@@ -694,8 +697,8 @@ private lemma prior_beautiful_inter_buy_compl :
              show ¬ ((⟨7, by decide⟩ : Fin 8).val < 4 ∧
                      ¬ (⟨7, by decide⟩ : Fin 8).val = 0) by decide,
              if_false]
-  ennreal_arith
-
+  rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 private lemma prior_expensive_inter_buy :
     prior.probOfSet (expensive ∩ buy) = 0 := by
   rw [prior_probOfSet_expand]
@@ -707,8 +710,8 @@ private lemma prior_expensive_inter_buy :
              show ¬ (((⟨5, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
                      (⟨5, by decide⟩ : Fin 8).val = 0) by decide,
              if_false]
-  ennreal_arith
-
+  rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 private lemma prior_expensive_inter_buy_compl :
     prior.probOfSet (expensive ∩ buyᶜ) = (1 : ℝ≥0∞) / 2 := by
   rw [prior_probOfSet_expand]
@@ -728,8 +731,8 @@ private lemma prior_expensive_inter_buy_compl :
              show (((⟨7, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
                    ¬ (⟨7, by decide⟩ : Fin 8).val = 0) by decide,
              if_false]
-  ennreal_arith
-
+  rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 /-! #### Bayesian-evidence facts and `Supports` witnesses -/
 
 /-- `beautiful` is positive evidence for `buy`: P(buy | beautiful) = 1/4 > 1/8 = P(buy). -/
@@ -737,31 +740,31 @@ private lemma beautiful_pos_evidence_buy :
     IsPositiveEvidence beautiful buy prior := by
   show prior.condProbSet beautiful buy > prior.probOfSet buy
   rw [PMF.condProbSet_eq_div, prior_beautiful_inter_buy, prior_beautiful, prior_buy]
-  ennreal_arith
-
+  rw [gt_iff_lt, ← ENNReal.toReal_lt_toReal (by finiteness) (by simp [ENNReal.div_eq_top])]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add]
 /-- `expensive` is positive evidence for `buyᶜ`: P(¬buy | expensive) = 1 > 7/8. -/
 private lemma expensive_pos_evidence_buy_compl :
     IsPositiveEvidence expensive buyᶜ prior := by
   show prior.condProbSet expensive buyᶜ > prior.probOfSet buyᶜ
   rw [PMF.condProbSet_eq_div, prior_expensive_inter_buy_compl, prior_expensive, prior_buy_compl]
-  ennreal_arith
-
+  rw [gt_iff_lt, ← ENNReal.toReal_lt_toReal (by finiteness) (by simp [ENNReal.div_eq_top])]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 /-- `expensive` is NOT positive evidence for `buy`: P(buy | expensive) = 0, fails to
     exceed 1/8 = P(buy). -/
 private lemma expensive_not_pos_evidence_buy :
     ¬ IsPositiveEvidence expensive buy prior := by
   show ¬ prior.condProbSet expensive buy > prior.probOfSet buy
   rw [PMF.condProbSet_eq_div, prior_expensive_inter_buy, prior_expensive, prior_buy]
-  ennreal_arith
-
+  rw [not_lt, ← ENNReal.toReal_le_toReal (by simp) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add]
 /-- `beautiful` is NOT positive evidence for `buyᶜ`: P(¬buy | beautiful) = 3/4 = 6/8,
     fails to exceed 7/8 = P(¬buy). -/
 private lemma beautiful_not_pos_evidence_buy_compl :
     ¬ IsPositiveEvidence beautiful buyᶜ prior := by
   show ¬ prior.condProbSet beautiful buyᶜ > prior.probOfSet buyᶜ
   rw [PMF.condProbSet_eq_div, prior_beautiful_inter_buy_compl, prior_beautiful, prior_buy_compl]
-  ennreal_arith
-
+  rw [not_lt, ← ENNReal.toReal_le_toReal (by simp [ENNReal.div_eq_top]) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 /-- `buy` and `buyᶜ` are nontrivial in this 8-world model. -/
 private lemma buy_ne_empty : (buy : Set World) ≠ ∅ := by
   intro h; have : (⟨0, by decide⟩ : World) ∈ (∅ : Set World) := h ▸ rfl; exact this
