@@ -1,39 +1,48 @@
 import Linglib.Discourse.Commitment.Table
 
 /-!
-# Farkas & Bruce 2010
-[farkas-bruce-2010]
+# Farkas and Bruce 2010: On reacting to assertions and polar questions
 
-The F&B table-model *dynamics* — `assert` / `polarQuestion` / `acceptTop`
-and the plain `dcS` / `dcL` commitment views — live in the substrate
-`Discourse/Commitment/Table.lean`, which is itself the [farkas-bruce-2010]
-table model. This study file records the paper's load-bearing claim about the
-assertion/acceptance split.
+The Table model of [farkas-bruce-2010] is `Commitment.Table`; this file records the claim the
+model is built to make: an assertion proposes rather than updates. It commits its author and
+places its sentence on the Table, projecting confirmation, but leaves the common ground as it
+was — against [stalnaker-1978], where assertion narrows the context set directly — so that
+confirmation and denial can react to it, and a denial leaves the conversation in crisis.
+
+## Main results
+
+* `assert_cg` — assertion does not change the common ground.
+* `assert_not_narrowing` — the Stalnakerian narrowing law fails: `Commitment.Table` is not a
+  `HasAssertion` instance under its own `assert`.
+* `inCrisis_assert_compl` — a denied assertion is a crisis.
+
+## References
+
+* [D. F. Farkas and K. B. Bruce, *On Reacting to Assertions and Polar Questions*
+  (2010)][farkas-bruce-2010]
+* [R. Stalnaker, *Assertion* (1978)][stalnaker-1978]
 -/
 
 namespace FarkasBruce2010
 
-open Discourse.Commitment.Table
+open Commitment
+open Discourse (DiscourseRole)
 
-variable {W : Type*}
+variable {W : Type*} (K : Table DiscourseRole W) (p : Set W)
 
-/-- F&B's assertion does **not** narrow the common ground, in contrast to
-    [stalnaker-1978] where assertion is a direct common-ground update.
-    The pre-assertion `cg` is preserved exactly; acceptance is a separate move
-    (`acceptTop`). -/
-theorem assert_preserves_cg (ds : State W) (p : W → Prop) :
-    (assert ds p).cg = ds.cg :=
-  assert_cg ds p
+/-- Assertion proposes: the common ground is exactly as before (9). -/
+theorem assert_cg : (K.assert .speaker p).cg = K.cg := rfl
 
-/-- F&B's `assert` violates the Stalnakerian narrowing law: a world can
-    survive the assertion of `p` without satisfying `p`, because assertion
-    only proposes (`dcS` + table) and the context set moves at acceptance.
-    This is the formal witness for the non-instance advertised at
-    `HasAssertion` — `State W` does not instantiate it via
-    F&B's own `assert`. -/
+/-- A world can survive the assertion of `p` without satisfying `p`, since only the projected set
+moves; `Commitment.Table` is not a `HasAssertion` instance under its own `assert`. -/
 theorem assert_not_narrowing :
-    ∃ (ds : State Bool) (p : Bool → Prop) (w : Bool),
-      w ∈ (assert ds p).contextSet ∧ ¬ p w :=
-  ⟨.empty, (· = true), false, by simp [DiscourseState.contextSet], Bool.false_ne_true⟩
+    ∃ (K : Table DiscourseRole Bool) (p : Set Bool) (w : Bool),
+      w ∈ (K.assert .speaker p).contextSet ∧ w ∉ p :=
+  ⟨.empty, {true}, false, by simp [Table.contextSet, Table.assert, Table.push, Table.commit],
+    Bool.false_ne_true⟩
+
+/-- The addressee's denial leaves the conversation in crisis (21). -/
+theorem inCrisis_assert_compl : ((K.assert .speaker p).assert .addressee pᶜ).InCrisis :=
+  K.inCrisis_assert_compl .speaker p .addressee
 
 end FarkasBruce2010

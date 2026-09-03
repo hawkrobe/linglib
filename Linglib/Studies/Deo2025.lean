@@ -1,7 +1,7 @@
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Roles
 import Linglib.Discourse.SpeechAct
-import Linglib.Discourse.Commitment.SourceMarked
+import Linglib.Discourse.Commitment.Declarative
 import Linglib.Fragments.Marathi.Particles
 
 /-!
@@ -28,13 +28,11 @@ beyond [farkas-bruce-2010] / [gunlogson-2001]:
 
 * Each interlocutor's discourse commitments split into doxastic vs
   preferential (eq. 17a–c) — formalized at
-  `Discourse.Commitment.CommitmentForce`.
+  `Commitment.Force`.
 * The [gunlogson-2001] source/dependent distinction lifts to
   *both* commitment forces — the 2×2 cross
-  `CommitmentSource × CommitmentForce`. The four cells are exposed as
-  `Discourse.Commitment.TaggedSlate.{dependent, independent,
-  dependentDoxastic, dependentPreferential, independentDoxastic,
-  independentPreferential}`.
+  `Commitment.Source × Commitment.Force`, the four cells being the commitments of each
+  source and force.
 
 Deo's *bərə* convention (eq. 20): the speaker preferentially commits to
 the *meta-proposition* "addressee dependently commits to *p*". The
@@ -60,8 +58,7 @@ commissive only.
 namespace Deo2025
 
 open Discourse
-open Discourse.Commitment
-open Discourse.Gunlogson (GunlogsonState)
+open Commitment
 
 universe u
 
@@ -72,17 +69,15 @@ variable {W : Type u}
 The bərə convention is a higher-order update: the speaker (independent
 source) preferentially commits to the meta-proposition that *p* is in
 the addressee's dependent-commitment slate. The meta-proposition is a
-`GunlogsonState W → Prop`. The corresponding state-update is *not*
-formalized here — it would require lifting `TaggedSlate`'s content type
-to admit scoreboard-relative propositions, a Core refactor outside the
-scope of this study file.
+predicate on commitment sets. The corresponding state update is not formalized here: it
+would need commitment contents that are themselves scoreboard-relative.
 -/
 
 /-- The bərə meta-content: "*p* is among the addressee's dependent
     commitments." This is the proposition the speaker preferentially
     commits to. [deo-2025-bara] (20). -/
-def baraMetaContent (p : W → Prop) (K : GunlogsonState W) : Prop :=
-  p ∈ (K.slateOf .addressee).otherGenerated
+def baraMetaContent (p : Set W) (K : Set (Commitment Discourse.DiscourseRole W)) : Prop :=
+  commit .addressee p .doxastic .otherGenerated ∈ K
 
 /-! ## § 3. Empirical felicity profile (Deo § 2) -/
 

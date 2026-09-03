@@ -42,7 +42,8 @@ that can be genuinely supposed without prior discourse.
 
 namespace Conditionals
 
-open Discourse.Commitment.Table
+open Commitment
+open Discourse (DiscourseRole)
 
 -- Left-Nested Conditional Structure
 
@@ -144,7 +145,7 @@ Interpret an LNC given discourse context and content type.
 
 The main result of [cao-white-lassiter-2025]: bare LNCs default to PC interpretation.
 -/
-noncomputable def interpretLNC {W : Type*} (ds : State W) (lnc : LNC W)
+noncomputable def interpretLNC {W : Type*} (ds : Table DiscourseRole W) (lnc : LNC W)
     (content : InnerConditionalContent) (worlds : List W) : ConditionalType :=
   if content.allowsHCReading then
     -- Modal/generic/quantAdv: can be either HC or PC
@@ -161,7 +162,7 @@ noncomputable def interpretLNC {W : Type*} (ds : State W) (lnc : LNC W)
 /--
 Check if an LNC is felicitous in a given discourse state.
 -/
-noncomputable def lncFelicitous {W : Type*} (ds : State W) (lnc : LNC W)
+noncomputable def lncFelicitous {W : Type*} (ds : Table DiscourseRole W) (lnc : LNC W)
     (content : InnerConditionalContent) (worlds : List W) : Prop :=
   match interpretLNC ds lnc content worlds with
   | .hypothetical => hcFelicitous ds lnc.innerConditional worlds
@@ -175,7 +176,7 @@ noncomputable def lncFelicitous {W : Type*} (ds : State W) (lnc : LNC W)
 When the inner conditional has bare content (no modal/generic/quantAdv),
 the LNC is interpreted as a premise conditional, regardless of discourse.
 -/
-theorem bare_lnc_as_pc {W : Type*} (ds : State W) (lnc : LNC W)
+theorem bare_lnc_as_pc {W : Type*} (ds : Table DiscourseRole W) (lnc : LNC W)
     (worlds : List W) :
     interpretLNC ds lnc .bare worlds = .premise := by
   unfold interpretLNC InnerConditionalContent.allowsHCReading
@@ -187,7 +188,7 @@ theorem bare_lnc_as_pc {W : Type*} (ds : State W) (lnc : LNC W)
 When the inner conditional has modal content, the LNC can be interpreted
 as either HC or PC, depending on discourse context.
 -/
-theorem modal_lnc_allows_hc {W : Type*} (ds : State W) (lnc : LNC W)
+theorem modal_lnc_allows_hc {W : Type*} (ds : Table DiscourseRole W) (lnc : LNC W)
     (worlds : List W)
     (h_no_echo : ¬ echoesDiscourse ds lnc.innerConditional worlds) :
     interpretLNC ds lnc .modal worlds = .hypothetical := by
@@ -197,7 +198,7 @@ theorem modal_lnc_allows_hc {W : Type*} (ds : State W) (lnc : LNC W)
 /--
 **Modal LNCs prefer PC when discourse anchor exists.**
 -/
-theorem modal_lnc_prefers_pc {W : Type*} (ds : State W) (lnc : LNC W)
+theorem modal_lnc_prefers_pc {W : Type*} (ds : Table DiscourseRole W) (lnc : LNC W)
     (worlds : List W)
     (h_echo : echoesDiscourse ds lnc.innerConditional worlds) :
     interpretLNC ds lnc .modal worlds = .premise := by
@@ -237,17 +238,17 @@ namespace AnnotatedLNC
 variable {W : Type*}
 
 /-- Get interpretation in discourse context -/
-noncomputable def interpret (alnc : AnnotatedLNC W) (ds : State W)
+noncomputable def interpret (alnc : AnnotatedLNC W) (ds : Table DiscourseRole W)
     (worlds : List W) : ConditionalType :=
   interpretLNC ds alnc.lnc alnc.content worlds
 
 /-- Check felicity -/
-noncomputable def isFelicitous (alnc : AnnotatedLNC W) (ds : State W)
+noncomputable def isFelicitous (alnc : AnnotatedLNC W) (ds : Table DiscourseRole W)
     (worlds : List W) : Prop :=
   lncFelicitous ds alnc.lnc alnc.content worlds
 
 /-- Get polarity context for inner conditional antecedent -/
-noncomputable def innerAntecedentPolarity (alnc : AnnotatedLNC W) (ds : State W)
+noncomputable def innerAntecedentPolarity (alnc : AnnotatedLNC W) (ds : Table DiscourseRole W)
     (worlds : List W) : ConditionalPolarityContext :=
   ConditionalPolarityContext.fromConditionalType (alnc.interpret ds worlds)
 

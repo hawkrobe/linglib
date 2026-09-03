@@ -52,11 +52,11 @@ This file is sibling to `Discourse/Commitment/Space.lean` (the 2015
 commitment-space framework). The two are independent — neither imports
 the other — and study files target whichever is appropriate:
 
-- `Studies/Krifka2015.lean` consumes `CommitmentSpace`
+- `Studies/Krifka2015.lean` consumes `Commitment.Space`
 - `Studies/Krifka2020.lean` consumes this file
 -/
 
-namespace Discourse.Krifka
+namespace Krifka2020
 
 open Mood (Illocutionary)
 
@@ -151,12 +151,12 @@ structure TypedAssertion (W : Type*) extends LayeredAssertion W where
 theorem default_assertion_informative {W : Type*} (p : Set W) :
     ({ content := p : TypedAssertion W }).updateType = .informative := rfl
 
-end Discourse.Krifka
+end Krifka2020
 
 
 namespace Krifka2020
 
-open Discourse.Krifka
+
 
 -- ════════════════════════════════════════════════════
 -- § 1. Hedges as JP Modifiers

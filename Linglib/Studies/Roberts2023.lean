@@ -9,7 +9,6 @@ import Linglib.Semantics.Mood.SpeechEvent
 import Linglib.Studies.RuytenbeekEtAl2017
 import Mathlib.Data.Fin.Basic
 import Mathlib.Data.List.Sort
-import Linglib.Discourse.Commitment.Basic
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Mood.State
 

@@ -1,5 +1,5 @@
 import Linglib.Discourse.Commitment.Table
-import Linglib.Discourse.Commitment.SourceMarked
+import Linglib.Discourse.Commitment.Declarative
 import Linglib.Discourse.Commitment.Space
 import Linglib.Semantics.Questions.Highlighting
 
@@ -43,7 +43,7 @@ to give a uniform account of the six sentence types in (3)–(8):
    (1) the proposition is added to the table, (2) its informative content
    is added to the speaker's commitments. F_b is the single convention
    that replaces Frege's two force operators (Assertion / Question);
-   §7 defines it explicitly over `Discourse.Commitment.Table.State` and proves
+   §7 defines it explicitly over `Commitment.Table` and proves
    the structural division-of-labor claim that **for unmarked forms,
    the discourse-effect update reduces to F_b alone** (p. 266: "the
    conventional discourse effects of unmarked sentence types ... are
@@ -80,7 +80,7 @@ to give a uniform account of the six sentence types in (3)–(8):
 
 ## Substrate consumed
 
-- `Discourse/Commitment/Table.lean` — `State`, `assert`,
+- `Discourse/Commitment/Table.lean` — `Table`, `assert`,
   `polarQuestion`, `pushItem`, `addCommit`.
 - `Semantics/Highlighting.lean` — `HighlightingContext`,
   `Highlighted`, `AddressesQUD`. Anchored on Roelofsen & Farkas (2015),
@@ -552,14 +552,15 @@ is replacing Frege's two illocutionary force operators (Assertion +
 Question) with a single basic convention of use F_b. F_b is then
 augmented with sentence-type-specific special effects for marked forms.
 
-This section formalizes F_b over `Discourse.Commitment.Table.State` and
+This section formalizes F_b over `Commitment.Table` and
 proves that **for the unmarked forms (falling declaratives + both polar
 interrogatives), the per-form discourse-effect update reduces to F_b
 alone** — the structural Division of Labor (eq. (21a) + p. 266).
 Explicit F_b and the unmarked-equals-F_b reduction structurally
 enforce what the paper states in prose. -/
 
-open Discourse.Commitment.Table
+open Commitment
+open Discourse (DiscourseRole)
 
 /-- F_b — F&R 2017's "basic convention of use" (eq. (48), p. 265).
     Per F&R: "If a discourse participant x utters a declarative or
@@ -583,11 +584,11 @@ open Discourse.Commitment.Table
     and she remains neutral." This is distinct from F&B's
     `polarQuestion`, which omits the trivial-commitment step.
     The vacuity is genuine — see `F_b_int_dcS_growth_is_vacuous` below. -/
-def F_b_dec {W : Type*} (content : Set W) (ds : State W) :
-    State W :=
+def F_b_dec {W : Type*} (content : Set W) (ds : Table DiscourseRole W) :
+    Table DiscourseRole W :=
   -- Single-alternative content {α}: informative content = α.
   -- Add α to commitments(speaker), push {α} as an issue (form .declarative).
-  assert ds content
+  ds.assert .speaker content
 
 /-- F_b for two-alternative (polar) content: alternatives = {α, αᶜ},
     informative content = α ∪ αᶜ = Set.univ. Per F&R eq. (50) p. 267,
@@ -596,9 +597,9 @@ def F_b_dec {W : Type*} (content : Set W) (ds : State W) :
     interrogatives, which skips the vacuous step. The two predictions
     differ in dcS shape but agree on `contextSet` (the Set.univ
     commit doesn't constrain anything; see the vacuity theorem below). -/
-def F_b_int {W : Type*} (content : Set W) (ds : State W) :
-    State W :=
-  (polarQuestion ds content).addCommit .speaker Set.univ
+def F_b_int {W : Type*} (content : Set W) (ds : Table DiscourseRole W) :
+    Table DiscourseRole W :=
+  (ds.polarQuestion content).commit .speaker Set.univ
 
 /-- Update a F&B discourse state by uttering `content` with marker form
     `form`. Follows F&B substrate conventions, which differ from F&R's
@@ -622,13 +623,13 @@ def F_b_int {W : Type*} (content : Set W) (ds : State W) :
 
     Non-paper-canonical forms (interrogative + tag) are no-ops. -/
 def MarkerTriple.update {W : Type*} (form : MarkerTriple)
-    (content : Set W) (ds : State W) : State W :=
+    (content : Set W) (ds : Table DiscourseRole W) : Table DiscourseRole W :=
   match form with
   | ⟨.dec, .closed, false⟩ => F_b_dec content ds
-  | ⟨.int, _, false⟩ => polarQuestion ds content
+  | ⟨.int, _, false⟩ => ds.polarQuestion content
   | ⟨.dec, .rising, false⟩ =>
-      ds.pushItem ⟨.speaker, .addressee, .declarative, [content]⟩
-  | ⟨.dec, _, true⟩ => polarQuestion (assert ds content) content
+      ds.push ⟨.declarative, {content}⟩
+  | ⟨.dec, _, true⟩ => (ds.assert .speaker content).polarQuestion content
   | _ => ds
 
 /-- **Division of Labor (eq. (21a) + p. 266 prose), unmarked falling
@@ -638,7 +639,7 @@ def MarkerTriple.update {W : Type*} (form : MarkerTriple)
     is in §3 of the paper (that no special effects are needed for this
     form); the Lean encoding records that consensus. -/
 theorem update_eq_F_b_dec_falling {W : Type*}
-    (content : Set W) (ds : State W) :
+    (content : Set W) (ds : Table DiscourseRole W) :
     MarkerTriple.fallingDeclarative.update content ds = F_b_dec content ds := rfl
 
 /-- **Substrate divergence on polar interrogatives**: F&B's
@@ -647,11 +648,11 @@ theorem update_eq_F_b_dec_falling {W : Type*}
     requires. Concretely, F&R-verbatim F_b adds Set.univ to dcS; F&B's
     polarQuestion does not. -/
 theorem update_int_vs_F_b_int_diverge_on_dcS {W : Type*}
-    (content : Set W) (ds : State W) :
-    (MarkerTriple.fallingPolarInterrogative.update content ds).dcS =
-      ds.dcS ∧
-    (F_b_int content ds).dcS = Set.univ :: ds.dcS := by
-  refine ⟨rfl, rfl⟩
+    (content : Set W) (ds : Table DiscourseRole W) :
+    (MarkerTriple.fallingPolarInterrogative.update content ds).dc .speaker =
+      ds.dc .speaker ∧
+    (F_b_int content ds).dc .speaker = insert Set.univ (ds.dc .speaker) :=
+  ⟨rfl, by simp [F_b_int]⟩
 
 /-- The divergence in `update_int_vs_F_b_int_diverge_on_dcS` is
     observably inert: F&R's verbatim F_b for polar adds Set.univ to dcS,
@@ -660,53 +661,59 @@ theorem update_int_vs_F_b_int_diverge_on_dcS {W : Type*}
     `polarQuestion`. F&R prose (p. 267): "the speaker makes a
     trivial commitment and she remains neutral." -/
 theorem F_b_int_dcS_growth_is_vacuous {W : Type*}
-    (content : Set W) (ds : State W) :
+    (content : Set W) (ds : Table DiscourseRole W) :
     (F_b_int content ds).contextSet =
-      (polarQuestion ds content).contextSet := by
+      (ds.polarQuestion content).contextSet := by
   -- Both sides differ only in dcS ([Set.univ :: ...] vs [...]), and
   -- contextSet only reads cg, not dcS. So they're equal by rfl.
   rfl
 
 /-- Falling declarative writes to dcS (full commitment, p. 240 table). -/
 theorem fallingDec_writes_dcS {W : Type*}
-    (content : Set W) (ds : State W) :
-    (MarkerTriple.fallingDeclarative.update content ds).dcS = content :: ds.dcS := rfl
+    (content : Set W) (ds : Table DiscourseRole W) :
+    (MarkerTriple.fallingDeclarative.update content ds).dc .speaker =
+      insert content (ds.dc .speaker) := by
+  simp [MarkerTriple.update, MarkerTriple.fallingDeclarative, F_b_dec]
 
 /-- Polar interrogatives (either intonation) do NOT write to dcS
     (neutral, p. 240 table). -/
 theorem polarInt_doesnt_write_dcS_falling {W : Type*}
-    (content : Set W) (ds : State W) :
-    (MarkerTriple.fallingPolarInterrogative.update content ds).dcS = ds.dcS := rfl
+    (content : Set W) (ds : Table DiscourseRole W) :
+    (MarkerTriple.fallingPolarInterrogative.update content ds).dc .speaker = ds.dc .speaker := rfl
 
 theorem polarInt_doesnt_write_dcS_rising {W : Type*}
-    (content : Set W) (ds : State W) :
-    (MarkerTriple.risingPolarInterrogative.update content ds).dcS = ds.dcS := rfl
+    (content : Set W) (ds : Table DiscourseRole W) :
+    (MarkerTriple.risingPolarInterrogative.update content ds).dc .speaker = ds.dc .speaker := rfl
 
 /-- Rising declarative does NOT write to dcS (bias, no full commitment;
     matches p. 240 table classification). -/
 theorem risingDec_doesnt_write_dcS {W : Type*}
-    (content : Set W) (ds : State W) :
-    (MarkerTriple.risingDeclarative.update content ds).dcS = ds.dcS := rfl
+    (content : Set W) (ds : Table DiscourseRole W) :
+    (MarkerTriple.risingDeclarative.update content ds).dc .speaker = ds.dc .speaker := rfl
 
 /-- Tag interrogatives DO write to dcS (the declarative anchor commits;
     the tag separately raises an issue). The "bias" classification on
     p. 240 thus has TWO structurally distinct realizations in F&B
     terms: rising declaratives don't commit, tags do. -/
 theorem tag_writes_dcS_falling {W : Type*}
-    (content : Set W) (ds : State W) :
-    (MarkerTriple.fallingTagInterrogative.update content ds).dcS = content :: ds.dcS := rfl
+    (content : Set W) (ds : Table DiscourseRole W) :
+    (MarkerTriple.fallingTagInterrogative.update content ds).dc .speaker =
+      insert content (ds.dc .speaker) := by
+  simp [MarkerTriple.update, MarkerTriple.fallingTagInterrogative]
 
 theorem tag_writes_dcS_rising {W : Type*}
-    (content : Set W) (ds : State W) :
-    (MarkerTriple.risingTagInterrogative.update content ds).dcS = content :: ds.dcS := rfl
+    (content : Set W) (ds : Table DiscourseRole W) :
+    (MarkerTriple.risingTagInterrogative.update content ds).dc .speaker =
+      insert content (ds.dc .speaker) := by
+  simp [MarkerTriple.update, MarkerTriple.risingTagInterrogative]
 
 /-- All sentence types push at least one issue onto the table.
     The structural common ground per F&B: every utterance is
     table-bearing. -/
 theorem all_paper_forms_push_issue {W : Type*}
-    (content : Set W) (ds : State W) (form : MarkerTriple)
+    (content : Set W) (ds : Table DiscourseRole W) (form : MarkerTriple)
     (h : form ∈ paperSentenceForms) :
-    (form.update content ds).table.length > ds.table.length := by
+    (form.update content ds).stack.length > ds.stack.length := by
   simp only [paperSentenceForms, List.mem_cons, List.not_mem_nil, or_false] at h
   rcases h with h | h | h | h | h | h <;> subst h <;>
     simp only [MarkerTriple.update, MarkerTriple.fallingDeclarative,
@@ -714,7 +721,7 @@ theorem all_paper_forms_push_issue {W : Type*}
         MarkerTriple.risingPolarInterrogative,
         MarkerTriple.fallingTagInterrogative, MarkerTriple.risingTagInterrogative,
         F_b_dec,
-        assert_table, polarQuestion_table, DiscourseState.pushItem_table,
+        Table.assert_stack, Table.polarQuestion_stack, Table.push_stack,
         List.length_cons] <;> omega
 
 /-- The commitment-table classification corresponds to F&B-side
@@ -728,10 +735,10 @@ theorem all_paper_forms_push_issue {W : Type*}
     p. 240 commitment table abstracts over a structural distinction
     that F&B's substrate makes visible. -/
 theorem fullCommitment_iff_dcS_grows {W : Type*}
-    (content : Set W) (ds : State W) (form : MarkerTriple)
+    (content : Set W) (ds : Table DiscourseRole W) (form : MarkerTriple)
     (h : form ∈ paperSentenceForms) :
     commitmentType form = .fullCommitment →
-      (form.update content ds).dcS = content :: ds.dcS := by
+      (form.update content ds).dc .speaker = insert content (ds.dc .speaker) := by
   simp only [paperSentenceForms, List.mem_cons, List.not_mem_nil, or_false] at h
   rcases h with h | h | h | h | h | h <;> subst h <;> intro hc <;>
     simp_all only [commitmentType, MarkerTriple.fallingDeclarative,
@@ -739,14 +746,14 @@ theorem fullCommitment_iff_dcS_grows {W : Type*}
               MarkerTriple.risingPolarInterrogative,
               MarkerTriple.fallingTagInterrogative, MarkerTriple.risingTagInterrogative,
               MarkerTriple.update, F_b_dec,
-              assert_dcS, reduceCtorEq] <;> rfl
+              Table.dc_assert, reduceCtorEq]
 
 /-- Complement direction: `neutral` commitment type ↔ no dcS write. -/
 theorem neutral_iff_dcS_unchanged {W : Type*}
-    (content : Set W) (ds : State W) (form : MarkerTriple)
+    (content : Set W) (ds : Table DiscourseRole W) (form : MarkerTriple)
     (h : form ∈ paperSentenceForms) :
     commitmentType form = .neutral →
-      (form.update content ds).dcS = ds.dcS := by
+      (form.update content ds).dc .speaker = ds.dc .speaker := by
   simp only [paperSentenceForms, List.mem_cons, List.not_mem_nil, or_false] at h
   rcases h with h | h | h | h | h | h <;> subst h <;> intro hc <;>
     simp_all only [commitmentType, MarkerTriple.fallingDeclarative,
@@ -754,7 +761,7 @@ theorem neutral_iff_dcS_unchanged {W : Type*}
               MarkerTriple.risingPolarInterrogative,
               MarkerTriple.fallingTagInterrogative, MarkerTriple.risingTagInterrogative,
               MarkerTriple.update,
-              polarQuestion_dcS, reduceCtorEq]
+              Table.dc_polarQuestion, reduceCtorEq]
 
 -- ════════════════════════════════════════════════════════════════
 -- § 8. Cross-framework divergences
@@ -794,17 +801,16 @@ they claim happens. -/
 
 /-- F&R + F&B prediction for rising declarative: dcS is unchanged. -/
 theorem fr_rising_dec_no_speaker_commitment {W : Type*}
-    (content : Set W) (ds : State W) :
-    (MarkerTriple.risingDeclarative.update content ds).dcS = ds.dcS := rfl
+    (content : Set W) (ds : Table DiscourseRole W) :
+    (MarkerTriple.risingDeclarative.update content ds).dc .speaker = ds.dc .speaker := rfl
 
 /-- Gunlogson 2008 prediction for rising declarative from the empty
     state: the addressee's slate gains exactly one commitment
     (other-generated). Restated from
-    `Discourse/Commitment/SourceMarked.lean` for the cross-framework comparison. -/
+    `Discourse/Commitment/Declarative.lean` for the cross-framework comparison. -/
 theorem gunlogson_rising_dec_writes_addressee {W : Type*} (content : Set W) :
-    ((Discourse.Gunlogson.GunlogsonState.empty :
-        Discourse.Gunlogson.GunlogsonState W).risingDeclarative
-      content).addresseeSlate.commitments.length = 1 := rfl
+    commitmentSet (rising ∅ content) .addressee = content :=
+  (commitmentSet_rising ∅ content).1.trans (by simp)
 
 /-- **Cross-framework state-shape divergence**: F&R + F&B record the
     rising-declarative effect in different state slots than Gunlogson.
@@ -820,18 +826,11 @@ theorem gunlogson_rising_dec_writes_addressee {W : Type*} (content : Set W) :
 theorem fr_vs_gunlogson_rising_dec_state_shape {W : Type*} (content : Set W) :
     -- F&R + F&B from empty state: dcS empty (no speaker commitment recorded)
     (MarkerTriple.risingDeclarative.update content
-        (DiscourseState.empty : State W)).dcS = [] ∧
-    -- Gunlogson from empty state: addressee slate non-empty (addressee
-    -- attribution recorded at the discourse layer)
-    ((Discourse.Gunlogson.GunlogsonState.empty :
-        Discourse.Gunlogson.GunlogsonState W).risingDeclarative
-      content).addresseeSlate.commitments ≠ [] := by
-  refine ⟨rfl, ?_⟩
-  intro h
-  have h1 := gunlogson_rising_dec_writes_addressee (W := W) content
-  rw [h] at h1
-  simp only [List.length_nil] at h1
-  omega
+        (Table.empty : Table DiscourseRole W)).dc .speaker = ∅ ∧
+    -- Gunlogson from empty state: the addressee's commitment set is narrowed to the content
+    commitmentSet (rising ∅ content) .addressee = content :=
+  ⟨by simp [MarkerTriple.update, MarkerTriple.risingDeclarative],
+    gunlogson_rising_dec_writes_addressee content⟩
 
 -- ─────────────────────────────────────────────────────────────────
 -- § 8b. Tag interrogative — F&R + F&B sequential vs Krifka 2015
@@ -860,49 +859,33 @@ sequential signature vs Krifka's single-conjunction signature. -/
     declarative (from the assertion anchor), sequentially stacked. -/
 theorem fr_tag_pushes_two_issues {W : Type*} (content : Set W) :
     (MarkerTriple.fallingTagInterrogative.update content
-        (DiscourseState.empty : State W)).table.length = 2 := rfl
+        (Table.empty : Table DiscourseRole W)).stack.length = 2 := rfl
 
 /-- The two issues F&R + F&B place on the table for a tag are of
     DIFFERENT forms — one interrogative (from the tag's polar
     question), one declarative (from the assertion anchor). -/
 theorem fr_tag_table_forms {W : Type*} (content : Set W) :
     (MarkerTriple.fallingTagInterrogative.update content
-        (DiscourseState.empty : State W)).table.map (·.mood) =
+        (Table.empty : Table DiscourseRole W)).stack.map (·.mood) =
       [.interrogative, .declarative] := rfl
 
-/-- Krifka 2015 prediction for a matching tag: a SINGLE
-    `ComplexSpeechAct.conj` wrapper around two component speech acts.
-    Restated from `Discourse/Commitment/Space.lean` for the
-    cross-framework comparison. -/
-theorem krifka_matching_tag_is_single_conjunction {W : Type*}
-    (φ : W → Prop) :
-    ∃ a b, Discourse.Krifka.matchingTag φ = .conj a b :=
-  ⟨_, _, rfl⟩
+/-- Krifka 2015's matching tag (44): a single move whose root carries both the speaker's and the
+    addressee's commitment to the same content. -/
+theorem krifka_matching_tag_root {W : Type*} (φ : Set W) :
+    (((Space.full ∅).assert .speaker φ).assert .addressee φ).root =
+      insert (Commitment.commit DiscourseRole.addressee φ)
+        (insert (Commitment.commit DiscourseRole.speaker φ) ∅) := rfl
 
-/-- In Krifka's matching tag, the two components share content `φ`
-    (matching the assertion + monopolar-question semantics of "I have
-    won the race, have I?"). Restated from `CommitmentSpace.lean`. -/
-theorem krifka_matching_tag_shared_content {W : Type*} (φ : W → Prop) :
-    (Discourse.Krifka.matchingTag φ).components.map
-      Discourse.Krifka.SpeechAct.content = [φ, φ] := rfl
-
-/-- **Cross-framework structural divergence on tag interrogatives**:
-    F&R + F&B produces a sequence of TWO distinct issues with DIFFERENT
-    forms; Krifka 2015 produces ONE complex speech act wrapping two
-    components with the SAME content. The two signatures cannot be
-    re-reconciled by changing input content — they encode tag
-    interrogatives as fundamentally different mathematical objects. -/
-theorem fr_vs_krifka_tag_structural_divergence {W : Type*} (φ : W → Prop) :
-    -- F&R + F&B: 2 distinct table issues with mixed forms (sequential)
+/-- **Cross-framework structural divergence on tag interrogatives**: F&R + F&B place two
+    distinct items of different forms on the Table; Krifka 2015's conjunction is one space whose
+    root commits both participants to the same content. -/
+theorem fr_vs_krifka_tag_structural_divergence {W : Type*} (φ : Set W) :
     (MarkerTriple.fallingTagInterrogative.update φ
-        (DiscourseState.empty : State W)).table.map (·.mood) =
+        (Table.empty : Table DiscourseRole W)).stack.map (·.mood) =
       [.interrogative, .declarative] ∧
-    -- Krifka: SINGLE complex speech act, NOT a sequence of atoms
-    (∃ a b, Discourse.Krifka.matchingTag φ = .conj a b) ∧
-    -- Krifka's components share content (vs F&R's mixed declarative φ
-    -- and interrogative {φ, φᶜ})
-    (Discourse.Krifka.matchingTag φ).components.map
-      Discourse.Krifka.SpeechAct.content = [φ, φ] :=
-  ⟨rfl, ⟨_, _, rfl⟩, rfl⟩
+    (((Space.full ∅).assert .speaker φ).assert .addressee φ).root =
+      insert (Commitment.commit DiscourseRole.addressee φ)
+        (insert (Commitment.commit DiscourseRole.speaker φ) ∅) :=
+  ⟨rfl, rfl⟩
 
 end FarkasRoelofsen2017
