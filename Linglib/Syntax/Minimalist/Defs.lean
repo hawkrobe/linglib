@@ -81,6 +81,10 @@ structure SimpleLI where
   cat : Cat
   sel : SelStack
   phonForm : String := ""
+  /-- The [wh] feature, read by wh-movement and the multiple-wh-fronting parameter. -/
+  wh : Bool := false
+  /-- The [E] feature: the head's complement is not pronounced ([merchant-2001]). -/
+  ellipsis : Bool := false
   deriving Repr, DecidableEq
 
 /-- A lexical item: a nonempty list of feature bundles, one for a simple item and several for a
@@ -97,14 +101,21 @@ instance : DecidableEq LexicalItem := λ a b =>
     isFalse (by intro heq; cases heq; exact h rfl)
 
 /-- The simple lexical item with one feature bundle. -/
-def LexicalItem.simple (cat : Cat) (sel : SelStack) (phonForm : String := "") : LexicalItem :=
-  ⟨[⟨cat, sel, phonForm⟩], by simp⟩
+def LexicalItem.simple (cat : Cat) (sel : SelStack) (phonForm : String := "") (wh : Bool := false)
+    (ellipsis : Bool := false) : LexicalItem :=
+  ⟨[⟨cat, sel, phonForm, wh, ellipsis⟩], by simp⟩
 
 /-- The outer, projecting category: that of the first feature bundle. -/
 def LexicalItem.outerCat (li : LexicalItem) : Cat := (li.features.head li.nonempty).cat
 
 /-- The outer selectional stack: that of the first feature bundle. -/
 def LexicalItem.outerSel (li : LexicalItem) : SelStack := (li.features.head li.nonempty).sel
+
+/-- The outer [wh] feature: that of the first feature bundle. -/
+def LexicalItem.outerWh (li : LexicalItem) : Bool := (li.features.head li.nonempty).wh
+
+/-- The outer [E] feature: that of the first feature bundle. -/
+def LexicalItem.outerEllipsis (li : LexicalItem) : Bool := (li.features.head li.nonempty).ellipsis
 
 /-- A complex lexical item carries more than one feature bundle. -/
 def LexicalItem.IsComplex (li : LexicalItem) : Prop := 1 < li.features.length
