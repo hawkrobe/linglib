@@ -2,7 +2,6 @@ import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Probability.Distributions.Uniform
 import Mathlib.Data.ENNReal.Operations
 import Mathlib.Data.ENNReal.Inv
-import Linglib.Core.Probability.ENNRealArith
 
 /-!
 # Finite-fintype convenience naming for `Mathlib.PMF`
@@ -27,7 +26,7 @@ A handful of lemmas (positivity, monotonicity, partition, complement,
 finite normalization) are provided for the patterns that recur in
 `Semantics/Questions/Probabilistic.lean` and the corresponding
 `Studies/` files. ENNReal arithmetic at consumer sites
-goes through `ennreal_arith` (see `Linglib.Core.Probability.ENNRealArith`).
+goes through the `ENNReal.toReal` lift.
 -/
 
 namespace PMF

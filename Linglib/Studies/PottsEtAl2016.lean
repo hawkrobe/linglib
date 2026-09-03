@@ -2,7 +2,6 @@ import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Silence
 import Linglib.Core.Probability.Posterior
-import Linglib.Core.Probability.Eval
 import Linglib.Semantics.Alternatives.Lexical
 import Mathlib.Data.ENNReal.Inv
 
@@ -221,7 +220,7 @@ noncomputable def L0 (lex : Lexicon) (u : Utterance) : PMF World :=
   RSA.L0OfPred (utteranceTruth lex) u (ext_nonempty lex u)
 
 /-- Closed-form `L0` value: `ENNReal.ofReal (1 / |extension|)` at true worlds,
-`0` otherwise. The `pmf_eval_simps`-friendly if-form. -/
+`0` otherwise, in the if-form the closed-form reductions use. -/
 theorem L0_apply (lex : Lexicon) (u : Utterance) (w : World) :
     L0 lex u w =
       if utteranceTruth lex u w
@@ -246,8 +245,7 @@ theorem L0_null (lex : Lexicon) (w : World) :
   norm_num
 
 /-- Sum-over-`Utterance` unfolder (silence + the 9 statements), proved by
-`rfl`. Local-tagged for `pmf_eval_simps` so partition sums reduce to a
-concrete 10-term sum. -/
+`rfl`, so partition sums reduce to a concrete 10-term sum. -/
 theorem Utterance_sum_univ {β : Type*} [AddCommMonoid β] (f : Utterance → β) :
     ∑ i, f i =
       f none + (f (some (.every, .all)) + (f (some (.every, .none_)) +
@@ -258,10 +256,8 @@ theorem Utterance_sum_univ {β : Type*} [AddCommMonoid β] (f : Utterance → β
 
 /-! ### Extension cardinalities
 
-Per-`(lexicon, utterance)` extension sizes, `decide`-checked and locally tagged
-for `pmf_eval_simps` so `L0_apply` reduces to concrete `ofReal((c)⁻¹)` values.
-The local tag keeps these private paper-specific cards out of the substrate
-simp set (audit hygiene rule, following `GoodmanStuhlmuller2013`). -/
+Per-`(lexicon, utterance)` extension sizes, `decide`-checked, so `L0_apply`
+reduces to concrete `ofReal((c)⁻¹)` values. -/
 
 private theorem card_w_ea : (RSA.extensionOf (utteranceTruth .weak) (some (.every, .all))).card = 1 := by decide
 private theorem card_w_en : (RSA.extensionOf (utteranceTruth .weak) (some (.every, .none_))).card = 1 := by decide
@@ -284,16 +280,12 @@ private theorem card_s_nn : (RSA.extensionOf (utteranceTruth .strong) (some (.no
 private theorem card_s_ns : (RSA.extensionOf (utteranceTruth .strong) (some (.no, .some_))).card = 4 := by decide
 private theorem card_s_nu : (RSA.extensionOf (utteranceTruth .strong) none).card = 10 := by decide
 
-attribute [local pmf_eval_simps] L0_apply Utterance_sum_univ
-  card_w_ea card_w_en card_w_es card_w_oa card_w_on card_w_os card_w_na card_w_nn card_w_ns card_w_nu
-  card_s_ea card_s_en card_s_es card_s_oa card_s_on card_s_os card_s_na card_s_nn card_s_ns card_s_nu
-
 /-! ### Speaker normaliser `Z`
 
 `S1Belief` with α = 1 and unit cost has score `(L0 u w)^1 · 1 = L0 u w`, so the
 partition function is `Z lex w = ∑' u, L0 lex u w`. Each value is `ofReal` of a
-rational; the closed forms below are computed by `simp +decide only
-[pmf_eval_simps, ...]` (reducing to a sum of concrete `ofReal (c⁻¹)` terms)
+rational; the closed forms below are computed by `simp +decide only [...]`
+(reducing to a sum of concrete `ofReal (c⁻¹)` terms)
 followed by explicit `ENNReal.ofReal_add` folding and `norm_num`. -/
 
 /-- With α = 1 and unit cost, the speaker score is just `L0 lex u w`. -/
@@ -321,33 +313,45 @@ theorem Z_ne_zero (lex : Lexicon) (w : World) :
 -- DE partitions (under "no … some"): NNN, AAA where the comparison lives.
 private theorem Z_w_NNN : Z .weak .NNN = ENNReal.ofReal (47 / 20) := by
   rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  simp +decide only [L0_apply, Utterance_sum_univ, card_w_en, 
+    card_w_na, card_w_ns, card_w_nu, 
+    ↓reduceIte, add_zero, zero_add]
   rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
   congr 1; norm_num
 private theorem Z_s_NNN : Z .strong .NNN = ENNReal.ofReal (8 / 5) := by
   rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  simp +decide only [L0_apply, Utterance_sum_univ, 
+    card_s_en,
+    card_s_na, card_s_ns, card_s_nu,
+    ↓reduceIte, add_zero, zero_add]
   rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
   congr 1; norm_num
 private theorem Z_s_NNA : Z .strong .NNA = ENNReal.ofReal (41 / 60) := by
   rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  simp +decide only [L0_apply, Utterance_sum_univ, 
+    card_s_oa, card_s_ns, card_s_nu,
+    ↓reduceIte, add_zero, zero_add]
   rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
   congr 1; norm_num
 private theorem Z_s_NAA : Z .strong .NAA = ENNReal.ofReal (41 / 60) := by
   rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  simp +decide only [L0_apply, Utterance_sum_univ, 
+    card_s_on, card_s_ns, card_s_nu,
+    ↓reduceIte, add_zero, zero_add]
   rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
   congr 1; norm_num
 private theorem Z_s_AAA : Z .strong .AAA = ENNReal.ofReal (8 / 5) := by
   rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  simp +decide only [L0_apply, Utterance_sum_univ, 
+    card_s_ea, 
+    card_s_nn, card_s_ns, card_s_nu,
+    ↓reduceIte, add_zero, zero_add]
   rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
@@ -355,34 +359,44 @@ private theorem Z_s_AAA : Z .strong .AAA = ENNReal.ofReal (8 / 5) := by
 -- UE partitions (under "every … some"): SSS, SSA, SAA, AAA.
 private theorem Z_w_SSS : Z .weak .SSS = ENNReal.ofReal (17 / 20) := by
   rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  simp +decide only [L0_apply, Utterance_sum_univ, card_w_es, 
+    card_w_na, card_w_nn, card_w_nu, 
+    ↓reduceIte, add_zero, zero_add]
   rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
   congr 1; norm_num
 private theorem Z_s_SSS : Z .strong .SSS = ENNReal.ofReal (8 / 5) := by
   rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  simp +decide only [L0_apply, Utterance_sum_univ, 
+    card_s_es, card_s_na, card_s_nn, card_s_nu,
+    ↓reduceIte, add_zero, zero_add]
   rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
   congr 1; norm_num
 private theorem Z_w_SSA : Z .weak .SSA = ENNReal.ofReal (14 / 15) := by
   rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  simp +decide only [L0_apply, Utterance_sum_univ, card_w_es, card_w_oa,
+    card_w_nn, card_w_nu, 
+    ↓reduceIte, add_zero, zero_add]
   rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
   congr 1; norm_num
 private theorem Z_w_SAA : Z .weak .SAA = ENNReal.ofReal (3 / 5) := by
   rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  simp +decide only [L0_apply, Utterance_sum_univ, card_w_es, 
+    card_w_nn, card_w_nu, 
+    ↓reduceIte, add_zero, zero_add]
   rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
   congr 1; norm_num
 private theorem Z_w_AAA : Z .weak .AAA = ENNReal.ofReal (8 / 5) := by
   rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  simp +decide only [L0_apply, Utterance_sum_univ, card_w_ea, card_w_es, 
+    card_w_nn, card_w_nu, 
+    ↓reduceIte, add_zero, zero_add]
   rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num),
       ← ENNReal.ofReal_add (by norm_num) (by norm_num)]

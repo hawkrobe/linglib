@@ -4,8 +4,8 @@ import Mathlib.Tactic.Simps.Basic
 # The `rsa` simp set
 
 Registered here, separately from the lemmas it tags: Lean cannot use an attribute
-in the same file where it is declared (the same split as `pmf_eval_simps` in
-`Core/Probability/Eval.lean`, and mathlib's `Mathlib/Tactic/Attr/Register.lean`).
+in the same file where it is declared (the same split as mathlib's
+`Mathlib/Tactic/Attr/Register.lean`).
 
 The partition-cancelling RSA decomposition lemmas in `RSA/Operators.lean` and
 `RSA/Canonical.lean` are tagged `@[rsa]`. `simp [rsa]` rewrites an `S1`/`L1`

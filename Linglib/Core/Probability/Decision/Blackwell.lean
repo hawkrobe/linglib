@@ -46,7 +46,7 @@ separation argument (see the implementation notes).
 
 The development is stated entirely over Mathlib's `Kernel` and `bayesRisk` with no further
 dependencies, so it can serve as a `Mathlib.Probability.Decision.Blackwell` candidate. The
-finite, `ℝ`-valued `eig` / `questionUtility` view in `Core.Probability.Decision.ExperimentDesign`
+finite, `ℝ`-valued `eig` / `questionUtility` view in `Studies/HawkinsEtAl2025.lean`
 is a downstream consumer: `eig_deterministicObs_eq_euv` there identifies the deterministic-
 experiment value with [van-rooy-2003]'s question utility, whose refinement monotonicity is the
 partition instance of `bayesRisk_deterministic_le_deterministic_comp` below.

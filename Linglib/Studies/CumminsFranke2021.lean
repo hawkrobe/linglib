@@ -1,5 +1,4 @@
 import Linglib.Pragmatics.DecisionTheoretic.Basic
-import Linglib.Core.Probability.ENNRealArith
 import Mathlib.MeasureTheory.Measure.Prod
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
@@ -117,9 +116,9 @@ private lemma cond_count_ne {s e : Set Band} [DecidablePred (· ∈ s)] [Decidab
 log 6 ≈ 0.78). -/
 theorem bayesFactor_moreThan100 : bayesFactor successContext (moreThan 100) = 6 := by
   rw [bayesFactor_def]
-  refine ENNReal.eq_of_toReal
+  refine (ENNReal.toReal_eq_toReal_iff'
     ((ENNReal.div_lt_top (cond_apply_ne_top _ MeasurableSet.of_discrete _)
-      (cond_count_ne (by decide))).ne) (by finiteness) ?_
+      (cond_count_ne (by decide))).ne) (by finiteness)).mp ?_
   rw [ENNReal.toReal_div, cond_real_apply _ MeasurableSet.of_discrete,
     cond_real_apply _ MeasurableSet.of_discrete]
   simp only [count_apply_fintype, ENNReal.toReal_natCast, Set.mem_inter_iff,
@@ -136,9 +135,9 @@ prints log 11 (see `bayesFactor_moreThan100_toward110`); the ordering against
 `bayesFactor_moreThan100` is the same. -/
 theorem bayesFactor_moreThan110 : bayesFactor successContext (moreThan 110) = 12 := by
   rw [bayesFactor_def]
-  refine ENNReal.eq_of_toReal
+  refine (ENNReal.toReal_eq_toReal_iff'
     ((ENNReal.div_lt_top (cond_apply_ne_top _ MeasurableSet.of_discrete _)
-      (cond_count_ne (by decide))).ne) (by finiteness) ?_
+      (cond_count_ne (by decide))).ne) (by finiteness)).mp ?_
   rw [ENNReal.toReal_div, cond_real_apply _ MeasurableSet.of_discrete,
     cond_real_apply _ MeasurableSet.of_discrete]
   simp only [count_apply_fintype, ENNReal.toReal_natCast, Set.mem_inter_iff,
@@ -156,9 +155,9 @@ toward the goal *more than 110* ("the probability that *more than 100* is true g
 theorem bayesFactor_moreThan100_toward110 :
     bayesFactor ⟨moreThan 110, .of_discrete, .count⟩ (moreThan 100) = 11 := by
   rw [bayesFactor_def]
-  refine ENNReal.eq_of_toReal
+  refine (ENNReal.toReal_eq_toReal_iff'
     ((ENNReal.div_lt_top (cond_apply_ne_top _ MeasurableSet.of_discrete _)
-      (cond_count_ne (by decide))).ne) (by finiteness) ?_
+      (cond_count_ne (by decide))).ne) (by finiteness)).mp ?_
   rw [ENNReal.toReal_div, cond_real_apply _ MeasurableSet.of_discrete,
     cond_real_apply _ MeasurableSet.of_discrete]
   simp only [count_apply_fintype, ENNReal.toReal_natCast, Set.mem_inter_iff,
@@ -299,13 +298,13 @@ theorem assertable_bayesFactor_moreThan100 :
       (Measure.count : Measure Band)[|s] e ≠ ⊤ :=
     fun s e hs => cond_apply_ne_top _ hs e
   rw [assertable_bayesFactor_eval]
-  refine ENNReal.eq_of_toReal
+  refine (ENNReal.toReal_eq_toReal_iff'
     ((ENNReal.div_lt_top
       (ENNReal.add_ne_top.mpr ⟨ENNReal.mul_ne_top ennreal_910_ne_top (hfin _ _ .of_discrete),
         ENNReal.mul_ne_top ennreal_110_ne_top (hfin _ _ .of_discrete)⟩)
       (fun h => absurd (add_eq_zero.mp h).2
         (mul_ne_zero (by norm_num) (cond_count_ne (by decide))))).ne)
-    (by finiteness) ?_
+    (by finiteness)).mp ?_
   rw [ENNReal.toReal_div,
     ENNReal.toReal_add (ENNReal.mul_ne_top ennreal_910_ne_top (hfin _ _ .of_discrete))
       (ENNReal.mul_ne_top ennreal_110_ne_top (hfin _ _ .of_discrete)),
@@ -337,13 +336,13 @@ theorem assertable_bayesFactor_moreThan110 :
       (Measure.count : Measure Band)[|s] e ≠ ⊤ :=
     fun s e hs => cond_apply_ne_top _ hs e
   rw [assertable_bayesFactor_eval]
-  refine ENNReal.eq_of_toReal
+  refine (ENNReal.toReal_eq_toReal_iff'
     ((ENNReal.div_lt_top
       (ENNReal.add_ne_top.mpr ⟨ENNReal.mul_ne_top ennreal_910_ne_top (hfin _ _ .of_discrete),
         ENNReal.mul_ne_top ennreal_110_ne_top (hfin _ _ .of_discrete)⟩)
       (fun h => absurd (add_eq_zero.mp h).2
         (mul_ne_zero (by norm_num) (cond_count_ne (by decide))))).ne)
-    (by finiteness) ?_
+    (by finiteness)).mp ?_
   rw [ENNReal.toReal_div,
     ENNReal.toReal_add (ENNReal.mul_ne_top ennreal_910_ne_top (hfin _ _ .of_discrete))
       (ENNReal.mul_ne_top ennreal_110_ne_top (hfin _ _ .of_discrete)),

@@ -22,9 +22,9 @@ and that adjacent transpositions (`rankProb_swap_div`) and expected rank
 * [R. L. Plackett, *The Analysis of Permutations*][plackett-1975]
 -/
 
-namespace Core
+namespace Luce1959
 
-open BigOperators Finset Real
+open Core BigOperators Finset Real
 
 variable {S A : Type*} [Fintype A] [DecidableEq A]
 
@@ -230,6 +230,7 @@ theorem mem_allRankings_iff (T : Finset A) (ranking : List A) :
 
 /-! ### Decomposition of `allRankings` by first element -/
 
+omit [Fintype A] in
 /-- Cons into allRankings: if `rest ∈ allRankings (T.erase a)` and `a ∈ T`,
     then `a :: rest ∈ allRankings T`. -/
 private theorem cons_mem_allRankings {T : Finset A} {a : A} {rest : List A}
@@ -243,6 +244,7 @@ private theorem cons_mem_allRankings {T : Finset A} {a : A} {rest : List A}
     refine ⟨fun h => ?_, hnd⟩
     exact (Finset.mem_erase.mp (hfs ▸ List.mem_toFinset.mpr h)).1 rfl
 
+omit [Fintype A] in
 /-- Extract first element: if `a :: rest ∈ allRankings T`,
     then `a ∈ T` and `rest ∈ allRankings (T.erase a)`. -/
 private theorem of_cons_mem_allRankings {T : Finset A} {a : A} {rest : List A}
@@ -270,6 +272,7 @@ private theorem allRankings_ne_nil {T : Finset A} (hT : T.Nonempty)
   simp at hr
   exact Finset.Nonempty.ne_empty hT hr.symm
 
+omit [Fintype A] in
 /-- `allRankings T = ⋃_{a ∈ T} image (cons a) (allRankings (T.erase a))`. -/
 private theorem allRankings_eq_biUnion (T : Finset A) (hT : T.Nonempty) :
     allRankings T = T.biUnion (fun a => (allRankings (T.erase a)).image (List.cons a)) := by
@@ -284,6 +287,7 @@ private theorem allRankings_eq_biUnion (T : Finset A) (hT : T.Nonempty) :
   · rintro ⟨a, ha, rest, hrest, rfl⟩
     exact cons_mem_allRankings ha hrest
 
+omit [Fintype A] in
 /-- Cons-images for distinct first elements are disjoint. -/
 private theorem cons_image_pairwise_disjoint (T : Finset A) :
     (T : Set A).PairwiseDisjoint
@@ -293,6 +297,7 @@ private theorem cons_image_pairwise_disjoint (T : Finset A) :
   rintro r ⟨_, _, rfl⟩ ⟨_, _, h⟩
   exact hab (List.cons.inj h).1.symm
 
+omit [Fintype A] in
 /-- Decompose a sum over `allRankings T` by first element. -/
 private theorem sum_allRankings_by_first (T : Finset A) (hT : T.Nonempty)
     (f : List A → ℝ) :
@@ -323,6 +328,7 @@ private theorem score_pos_erase {ra : RationalAction S A} {s : S}
     (a : A) : ∀ b ∈ T.erase a, 0 < ra.score s b :=
   fun b hb => hpos b (Finset.mem_of_mem_erase hb)
 
+omit [DecidableEq A] in
 /-- Score positivity implies nonzero sum over nonempty sets. -/
 private theorem score_sum_ne_zero {ra : RationalAction S A} {s : S}
     {T : Finset A} (hT : T.Nonempty) (hpos : ∀ a ∈ T, 0 < ra.score s a) :
@@ -370,8 +376,7 @@ private theorem rankProb_sum_eq_one_aux (ra : RationalAction S A) (s : S) :
     alternative set, ranking probabilities form a proper distribution.
     Requires strictly positive scores (Luce's ratio scale assumption). -/
 theorem rankProb_sum_eq_one (ra : RationalAction S A) (s : S)
-    (T : Finset A) (hT : T.Nonempty)
-    (hpos : ∀ a ∈ T, 0 < ra.score s a) :
+    (T : Finset A) (hpos : ∀ a ∈ T, 0 < ra.score s a) :
     ∑ r ∈ allRankings T, rankProb ra s r = 1 :=
   rankProb_sum_eq_one_aux ra s T.card T rfl hpos
 
@@ -381,6 +386,7 @@ theorem rankProb_sum_eq_one (ra : RationalAction S A) (s : S)
 noncomputable def rankingsStartingWith (T : Finset A) (a : A) : Finset (List A) :=
   (allRankings T).filter (λ r => r.head? = some a)
 
+omit [Fintype A] in
 /-- Rankings starting with `a` biject with `allRankings (T.erase a)` via cons. -/
 private theorem rankingsStartingWith_eq (T : Finset A) (a : A) (ha : a ∈ T) :
     rankingsStartingWith T a = (allRankings (T.erase a)).image (List.cons a) := by
@@ -508,11 +514,13 @@ noncomputable def expectedRank (ra : RationalAction S A) (s : S)
 
 /-! ### Expected rank monotonicity: infrastructure -/
 
+omit [Fintype A] in
 /-- `rankOf (a :: rest) a = 1`: the first element has rank 1. -/
 private theorem rankOf_cons_self (a : A) (rest : List A) :
     rankOf (a :: rest) a = 1 := by
   simp [rankOf, List.findIdx_cons]
 
+omit [Fintype A] in
 /-- `rankOf (b :: rest) a = rankOf rest a + 1` when `b ≠ a` and `a ∈ rest`. -/
 private theorem rankOf_cons_ne {b a : A} {rest : List A}
     (hne : b ≠ a) (ha : a ∈ rest) :
@@ -606,6 +614,7 @@ private theorem expectedRank_decomp (ra : RationalAction S A) (s : S)
     exact ra.pChoice_sum_eq_one s T (score_sum_ne_zero hT hpos)
   linarith
 
+omit [Fintype A] in
 /-- For `a ∈ T`, `rankOf r a ≥ 1` for any ranking `r ∈ allRankings T`. -/
 private theorem rankOf_ge_one_of_mem {T : Finset A} {a : A} (ha : a ∈ T)
     {r : List A} (hr : r ∈ allRankings T) : 1 ≤ rankOf r a := by
@@ -626,7 +635,7 @@ private theorem expectedRank_ge_one (ra : RationalAction S A) (s : S)
         apply Finset.sum_le_sum; intro r hr
         exact mul_le_mul_of_nonneg_left (by exact_mod_cast rankOf_ge_one_of_mem ha hr)
           (rankProb_nonneg ra s r)
-    _ = 1 := by simp [rankProb_sum_eq_one ra s T hT hpos]
+    _ = 1 := by simp [rankProb_sum_eq_one ra s T hpos]
 
 /-! ### Cross-set monotonicity -/
 
@@ -905,4 +914,4 @@ theorem expectedRank_eq_of_score_eq (ra : RationalAction S A) (s : S)
     have h_sum_eq := Finset.sum_congr rfl h_common
     rw [h_sum_eq, hp_eq, h_cross]
 
-end Core
+end Luce1959

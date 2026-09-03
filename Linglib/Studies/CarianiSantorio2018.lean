@@ -169,8 +169,8 @@ noncomputable def cynthiaPMF : PMF W :=
   PMF.ofFintype (fun _ => (1 : ℝ≥0∞) / 3) (by
     rw [univ_W_eq, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
         Finset.sum_singleton]
-    ennreal_arith)
-
+    rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+    norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top])
 /-- `cynthiaPMF` is supported on `histAlt`: the support lies inside the
     modal parameter. Vacuously true here, since every world is in
     `histAlt` — but the discipline matches the `cognitive_role`
@@ -191,8 +191,8 @@ theorem cynthia_credence_one_third :
       if_neg (show (W.cg) ∉ warriorsCap by decide),
       if_neg (show (W.cn) ∉ warriorsCap by decide)]
   simp only [cynthiaPMF, PMF.ofFintype_apply]
-  ennreal_arith
-
+  rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 /-- The universal-quantifier reading of *will Warriors-cap* is false at
     every world: `histAlt` contains the Giants-cap world `cg` where
     `warriorsCap` is False, so the universal cannot hold. -/
@@ -232,7 +232,8 @@ theorem cap_warriors_credence_one_half :
         if_pos (show (W.cg) ∈ wearsCap by decide),
         if_neg (show (W.cn) ∉ wearsCap by decide)]
     simp only [cynthiaPMF, PMF.ofFintype_apply]
-    ennreal_arith
+    rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+    norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
   have hinter : cynthiaPMF.probOfSet (wearsCap ∩ warriorsCap) = 1/3 := by
     rw [PMF.probOfSet_apply, univ_W_eq, Finset.sum_insert (by decide),
         Finset.sum_insert (by decide), Finset.sum_singleton,
@@ -240,13 +241,13 @@ theorem cap_warriors_credence_one_half :
         if_neg (show (W.cg) ∉ wearsCap ∩ warriorsCap by decide),
         if_neg (show (W.cn) ∉ wearsCap ∩ warriorsCap by decide)]
     simp only [cynthiaPMF, PMF.ofFintype_apply]
-    ennreal_arith
+    rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+    norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
   refine ⟨?_, ?_⟩
-  · rw [hwears, ← pos_iff_ne_zero]; ennreal_arith
-  · rw [PMF.condProbSet_eq_div, hwears, hinter]
-    -- (1/3) / (2/3) = 1/2 in ENNReal — `ennreal_arith` lifts to ℝ
-    ennreal_arith
-
+  · rw [hwears]; simp
+  · rw [PMF.condProbSet_eq_div, hwears, hinter,
+      ← ENNReal.toReal_eq_toReal_iff' (by simp [ENNReal.div_eq_top]) (by finiteness)]
+    norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top]
 /-! ### Conditional excluded middle
 
 Compositional CEM — `(if A, will B) ∨ (if A, will ¬B)` — follows from the single-valuedness of

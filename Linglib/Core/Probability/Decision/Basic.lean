@@ -30,7 +30,7 @@ explanation models) can use decision problems without pulling in the
   The structure itself is constraint-free; theorems assume
   `[Field K] [LinearOrder K] [IsStrictOrderedRing K]`. Studies instantiate
   `K := ℚ` for exact, `decide`-friendly arithmetic;
-  `Core.Probability.Decision.ExperimentDesign` uses `K := ℝ` against `eig`.
+  `Studies/HawkinsEtAl2025.lean` uses `K := ℝ` against `eig`.
 * `DecisionProblem.expectedUtility`, `.value`, `.condExpectedUtility`,
   `.condValue`, `.utilityValue`: `EU(a)`, `V(D)`, `EU(a ∣ C)`, `V(D ∣ C)`,
   and `UV(C) = V(D ∣ C) − V(D)`.
@@ -325,7 +325,7 @@ coarsening a deterministic classifier is a Markov garbling, so the finer partiti
 has lower Bayes risk in every decision problem — is
 `ProbabilityTheory.bayesRisk_deterministic_le_deterministic_comp` in
 `Core.Probability.Decision.Blackwell`, and `eig_deterministicObs_eq_euv` in
-`Core.Probability.Decision.ExperimentDesign` identifies `questionUtility` with the
+`Studies/HawkinsEtAl2025.lean` identifies `questionUtility` with the
 expected value of the corresponding deterministic experiment.
 
 The mathematical core is the **unnormalized cell value** `maxₐ ∑_{w∈c} P(w)·U(w,a)`,

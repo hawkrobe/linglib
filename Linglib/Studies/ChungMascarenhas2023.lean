@@ -212,42 +212,47 @@ private theorem ev_eval {φ : Set World} [DecidablePred (· ∈ φ)]
 
 /-- (19): the expected utility of block-neither is 9. -/
 theorem ev_blockNeither : sumLikelihoods prior idealsRD blockNeither = 9 := by
-  rw [ev_eval (by decide : _ = 18) (by decide : _ = 2)]; ennreal_arith
-
+  rw [ev_eval (by decide : _ = 18) (by decide : _ = 2),
+    ← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 /-- (20): the expected utility of block-A is 5. -/
 theorem ev_blockA : sumLikelihoods prior idealsRD blockA = 5 := by
-  rw [ev_eval (by decide : _ = 10) (by decide : _ = 2)]; ennreal_arith
-
+  rw [ev_eval (by decide : _ = 10) (by decide : _ = 2),
+    ← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 /-- (21): the expected utility of block-B is 5. -/
 theorem ev_blockB : sumLikelihoods prior idealsRD blockB = 5 := by
-  rw [ev_eval (by decide : _ = 10) (by decide : _ = 2)]; ennreal_arith
-
+  rw [ev_eval (by decide : _ = 10) (by decide : _ = 2),
+    ← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 /-- (23): conditionalized on miners-in-A, the expected utility of block-A
 is 10. -/
 theorem ev_inA_blockA :
     sumLikelihoods prior idealsRD (minersInA ∩ blockA) = 10 := by
-  rw [ev_eval (by decide : _ = 10) (by decide : _ = 1)]; ennreal_arith
-
+  rw [ev_eval (by decide : _ = 10) (by decide : _ = 1),
+    ← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 /-- Conditionalized on miners-in-A, the expected utility of block-neither is
 still 9 ("exactly one miner will drown irrespective of the location"). -/
 theorem ev_inA_blockNeither :
     sumLikelihoods prior idealsRD (minersInA ∩ blockNeither) = 9 := by
-  rw [ev_eval (by decide : _ = 9) (by decide : _ = 1)]; ennreal_arith
-
+  rw [ev_eval (by decide : _ = 9) (by decide : _ = 1),
+    ← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 /-- Conditionalized on miners-in-A, the expected utility of block-B is 0. -/
 theorem ev_inA_blockB :
     sumLikelihoods prior idealsRD (minersInA ∩ blockB) = 0 := by
-  rw [ev_eval (by decide : _ = 0) (by decide : _ = 1)]; ennreal_arith
-
+  rw [ev_eval (by decide : _ = 0) (by decide : _ = 1),
+    ← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
+  norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
 /-- (22): *we ought to block neither shaft* — true for any `θ < 9`:
 block-neither is the best good-enough option. -/
 theorem ought_blockNeither {θ : ℝ≥0∞} (hθ : θ < 9) :
     oughtCM prior idealsRD blockNeither {blockA, blockB} θ := by
   refine ⟨ev_blockNeither ▸ hθ, ?_⟩
   rintro ψ (rfl | rfl)
-  · rw [ev_blockA, ev_blockNeither]; ennreal_arith
-  · rw [ev_blockB, ev_blockNeither]; ennreal_arith
-
+  · rw [ev_blockA, ev_blockNeither]; norm_num
+  · rw [ev_blockB, ev_blockNeither]; norm_num
 /-- (24): *if the miners are in shaft A, we ought to block shaft A* — the
 if-clause conditionalizes every expected utility on the antecedent (following
 Lassiter, fn. 16 via Import-Export). True for any `θ < 10`. -/
@@ -256,9 +261,8 @@ theorem ought_if_inA_blockA {θ : ℝ≥0∞} (hθ : θ < 10) :
       {minersInA ∩ blockNeither, minersInA ∩ blockB} θ := by
   refine ⟨ev_inA_blockA ▸ hθ, ?_⟩
   rintro ψ (rfl | rfl)
-  · rw [ev_inA_blockNeither, ev_inA_blockA]; ennreal_arith
-  · rw [ev_inA_blockB, ev_inA_blockA]; ennreal_arith
-
+  · rw [ev_inA_blockNeither, ev_inA_blockA]; norm_num
+  · rw [ev_inA_blockB, ev_inA_blockA]; norm_num
 /-- (26): *we must block neither shaft* — block-neither is the *only*
 good-enough option for any `θ` with `5 ≤ θ < 9` ("it will therefore be trivial
 to find a threshold θ between 5 and 9"). -/
