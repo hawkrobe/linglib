@@ -130,8 +130,10 @@ import Linglib.Core.Data.RoseTree.FilterMap
 import Linglib.Core.Data.RoseTree.Traversable
 import Linglib.Core.Data.Setoid.Basic
 import Linglib.Core.GroupTheory.Congruence.Hom
+import Linglib.Core.InformationTheory.Entropy
 import Linglib.Core.InformationTheory.KullbackLeibler.Basic
 import Linglib.Core.InformationTheory.KullbackLeibler.Cond
+import Linglib.Core.InformationTheory.KullbackLeibler.Finite
 import Linglib.Core.InformationTheory.MutualInformation
 import Linglib.Core.Learning.Luce
 import Linglib.Core.Learning.RescorlaWagner
@@ -163,6 +165,9 @@ import Linglib.Logic.Consequence
 import Linglib.Logic.CylindricAlgebra
 import Linglib.Logic.Duality
 import Linglib.Core.Relation.FactorsThroughOn
+import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
+import Linglib.Core.MeasureTheory.Measure.Decomposition.RadonNikodym
+import Linglib.Core.MeasureTheory.Measure.Prod
 import Linglib.Core.ModelTheory.Binders
 import Linglib.Core.ModelTheory.StructureFamily
 import Linglib.Core.ModelTheory.EhrenfeuchtFraisse

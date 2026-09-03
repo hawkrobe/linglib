@@ -1,3 +1,4 @@
+import Linglib.Core.MeasureTheory.Measure.Prod
 import Mathlib.Probability.Kernel.Posterior
 import Mathlib.MeasureTheory.Measure.Real
 
@@ -149,34 +150,6 @@ theorem compProd_apply_singleton (μ : Measure Ω) [SFinite μ] (κ : Kernel Ω 
     [IsSFiniteKernel κ] (ω : Ω) (θ : Θ) : (μ ⊗ₘ κ) {(ω, θ)} = μ {ω} * κ ω {θ} := by
   rw [← Set.singleton_prod_singleton, compProd_apply_prod (.singleton ω) (.singleton θ),
     lintegral_singleton, mul_comm]
-
-theorem fst_apply_singleton [Fintype Θ] (m : Measure (Ω × Θ)) (ω : Ω) :
-    m.fst {ω} = ∑ θ : Θ, m {(ω, θ)} := by
-  rw [Measure.fst_apply (.singleton ω),
-    show Prod.fst ⁻¹' ({ω} : Set Ω) = ↑(({ω} : Finset Ω) ×ˢ (Finset.univ : Finset Θ)) from by
-      ext ⟨a, θ⟩; simp [eq_comm],
-    ← sum_measure_singleton, Finset.sum_product, Finset.sum_singleton]
-
-theorem snd_apply_singleton [Fintype Ω] (m : Measure (Ω × Θ)) (θ : Θ) :
-    m.snd {θ} = ∑ ω : Ω, m {(ω, θ)} := by
-  rw [Measure.snd_apply (.singleton θ),
-    show Prod.snd ⁻¹' ({θ} : Set Θ) = ↑((Finset.univ : Finset Ω) ×ˢ ({θ} : Finset Θ)) from by
-      ext ⟨a, b⟩; simp [eq_comm],
-    ← sum_measure_singleton, Finset.sum_product]
-  exact Finset.sum_congr rfl fun ω _ => Finset.sum_singleton _ _
-
-/-- The state marginal at a singleton is the mass of the corresponding product event. -/
-theorem fst_real_singleton [Fintype Θ] (m : Measure (Ω × Θ)) (ω : Ω) :
-    m.fst.real {ω} = m.real ↑(({ω} : Finset Ω) ×ˢ (Finset.univ : Finset Θ)) := by
-  rw [measureReal_def, measureReal_def, fst_apply_singleton, ← sum_measure_singleton,
-    Finset.sum_product, Finset.sum_singleton]
-
-/-- The latent marginal at a singleton is the mass of the corresponding product event. -/
-theorem snd_real_singleton [Fintype Ω] (m : Measure (Ω × Θ)) (θ : Θ) :
-    m.snd.real {θ} = m.real ↑((Finset.univ : Finset Ω) ×ˢ ({θ} : Finset Θ)) := by
-  rw [measureReal_def, measureReal_def, snd_apply_singleton, ← sum_measure_singleton,
-    Finset.sum_product]
-  exact congrArg _ (Finset.sum_congr rfl fun ω _ => (Finset.sum_singleton _ _).symm)
 
 end MeasureTheory.Measure
 
