@@ -1,5 +1,5 @@
 import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
-import Linglib.Semantics.ArgumentStructure.Root.Classification
+import Linglib.Semantics.Root.Classification
 import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Syntax.Minimalist.Agree.Checking
 import Linglib.Syntax.Minimalist.Verbal.Voice
@@ -284,7 +284,7 @@ structure VerbalizedRoot where
   /-- The acategorial root. -/
   root : DistributedMorphology.Root
   /-- The root's c-selection content (arity, change-type). -/
-  classification : Verb.Root.Classification
+  classification : Semantics.Root.Classification
   /-- The Semitic template (functional head bundle). -/
   template : SemiticTemplate
   /-- The root label for l-selection lookup. -/
@@ -302,7 +302,7 @@ def VerbalizedRoot.voiceFlavor (vr : VerbalizedRoot) : Flavor :=
 /-- Valency is template-invariant (root-level), unlike l-selection: c-selection
     and l-selection factor differently in the grammar. -/
 theorem valency_template_invariant (rt : DistributedMorphology.Root)
-    (cls : Verb.Root.Classification) (rl : RootLabel)
+    (cls : Semantics.Root.Classification) (rl : RootLabel)
     (t1 t2 : SemiticTemplate) :
     (VerbalizedRoot.mk rt cls t1 rl).classification.valency =
       (VerbalizedRoot.mk rt cls t2 rl).classification.valency := rfl
@@ -337,7 +337,7 @@ theorem voice_distinguishes_templates :
 /-- [kratzer-1996]'s severing instantiated for Semitic: root-level valency is
     template-invariant while the Voice contribution varies by template. -/
 theorem severing_instantiated (rt : DistributedMorphology.Root)
-    (cls : Verb.Root.Classification) (rl : RootLabel) :
+    (cls : Semantics.Root.Classification) (rl : RootLabel) :
     (VerbalizedRoot.mk rt cls .XaYaZ rl).classification.valency =
       (VerbalizedRoot.mk rt cls .XaYYaZ rl).classification.valency ∧
     SemiticTemplate.toVoiceFlavor .XaYaZ ≠ SemiticTemplate.toVoiceFlavor .XaYYaZ :=

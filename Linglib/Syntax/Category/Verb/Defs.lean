@@ -14,8 +14,8 @@ import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Semantics.ArgumentStructure.Root.Defs
-import Linglib.Semantics.ArgumentStructure.Root.Profile
+import Linglib.Semantics.Root.Defs
+import Linglib.Semantics.Root.Profile
 
 /-! # Verb entry — core type
 
@@ -277,10 +277,6 @@ structure Attitude where
 end Verb
 
 section
--- Open the `Verb` namespace so the `root` field below resolves `Root` as
--- `Verb.Root`: inside the `structure Verb` body the `Verb` *type* shadows the
--- `Verb` *namespace*, so a bare `Verb.Root` mis-parses as a field projection.
-open _root_.Verb
 /--
 Cross-linguistic verb core: all semantic fields shared across languages.
 
@@ -297,7 +293,7 @@ structure Verb extends
   /-- The verb's lexical root, from which its kind signature and change type are
       read rather than from the `levinClass` table. The default `{}` is the
       unannotated root. -/
-  root : Root := {}
+  root : Semantics.Root := {}
   /-- Citation form (cross-linguistic) -/
   form : String
   /-- Does the verb denote the performance of an illocutionary act?

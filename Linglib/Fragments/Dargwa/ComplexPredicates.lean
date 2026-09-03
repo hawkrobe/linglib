@@ -1,5 +1,5 @@
 import Linglib.Syntax.Voice.Alternation
-import Linglib.Semantics.ArgumentStructure.Root.Defs
+import Linglib.Semantics.Root.Defs
 
 /-!
 # Dargwa (Tanti / Muira) Complex Predicates [sumbatova-2021]
@@ -39,7 +39,7 @@ Under vVPE, the light verb (v head) survives while the nominal root
 
 namespace Dargwa.ComplexPredicates
 
-open Verb
+open Semantics
 
 -- ============================================================================
 -- § 1: Light Verb Inventory

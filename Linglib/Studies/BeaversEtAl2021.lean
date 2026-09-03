@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
-import Linglib.Semantics.ArgumentStructure.Root.Classification
+import Linglib.Semantics.Root.Classification
 import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.RoleList
@@ -24,7 +24,7 @@ and the three attested language types.
 ## Main statements
 
 * `bifurcation_fails`: result roots entail change
-  (`Verb.Root.ChangeType.EntailsChange`), violating the bifurcation
+  (`Semantics.Root.ChangeType.EntailsChange`), violating the bifurcation
   thesis (2).
 * `grand_unification`: the root's change entailment alone determines the
   full package of morphosyntactic correlates ((44), §§3, 6–9).
@@ -47,7 +47,7 @@ and the three attested language types.
 
 namespace BeaversEtAl2021
 
-open Verb Verb.Root ArgumentStructure ArgumentStructure.EventStructure Features
+open Semantics Semantics.Root ArgumentStructure ArgumentStructure.EventStructure Features
 
 /-! ### Root meanings and subclasses ((5)–(6)) -/
 

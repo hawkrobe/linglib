@@ -48,7 +48,7 @@ adds information beyond what root entailments + template predict:
 
 namespace ArgumentStructure.ArgDerivation
 
-open Verb
+open Semantics
 open ArgumentStructure
 open ArgumentStructure.EventStructure (Template)
 open ArgumentStructure

@@ -3,7 +3,7 @@ import Linglib.Features.Attitudes
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
-import Linglib.Semantics.ArgumentStructure.Root.Kinds
+import Linglib.Semantics.Root.Kinds
 import Linglib.Semantics.ArgumentStructure.EventStructure
 
 /-!
@@ -18,7 +18,7 @@ The `LevinClass` enum and its classification data (`meaningComponents`,
 This file provides the theoretical content that depends on `Root.Kinds`:
 the root signature label, the root–MC comparison enums, and the universal
 consistency/divergence theorems that ground them. `LevinClass` is a *lossy
-realization label*, not a source of truth (that is `Verb.Root.kinds`); the
+realization label*, not a source of truth (that is `Semantics.Root.kinds`); the
 theorems below are the non-decorative grounding — each holds for every class
 and breaks if a table row changes, so per-class `rfl` spot-checks are not
 restated.
@@ -39,8 +39,8 @@ components, plus the universal consistency theorems and divergence witnesses.
 -- ════════════════════════════════════════════════════
 
 section LevinClassMethods
-open Verb
-open Root.Kinds
+open Semantics
+open Semantics.Root.Kinds
 namespace ArgumentStructure
 
 /-- Root kind signature for each Levin class.
@@ -307,7 +307,7 @@ event template and break under a genuine table change. -/
 
 /-- Root structural contribution to meaning components.
     Maps result → changeOfState and manner → mannerSpec. -/
-def _root_.Verb.Root.Kinds.structuralMC (re : Root.Kinds) : MeaningComponents :=
+def _root_.Semantics.Root.Kinds.structuralMC (re : Root.Kinds) : MeaningComponents :=
   { changeOfState := decide (.result ∈ re)
   , contact := false
   , motion := false
@@ -361,7 +361,7 @@ theorem template_resultState_not_iff_resultKind_stateChange :
     `meaningComponents` is not just `structuralMC ∘ rootEntailments`. -/
 theorem structuralMC_diverges_from_meaningComponents :
     ∃ c : LevinClass,
-      (Verb.Root.Kinds.structuralMC c.rootEntailments).changeOfState = true ∧
+      (Semantics.Root.Kinds.structuralMC c.rootEntailments).changeOfState = true ∧
       c.meaningComponents.changeOfState = false :=
   ⟨.give, by decide⟩
 

@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Root.Defs
+import Linglib.Semantics.Root.Defs
 import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Morphology.Exponence.Select
 
@@ -65,7 +65,7 @@ Yucatec roots, diagnostic operators, and attested derivations.
 
 namespace Lucy1994
 
-open Verb ArgumentStructure Morphology
+open Semantics ArgumentStructure Morphology
 
 /-! ### Agent-salient roots (p. 629, ex. (1a)) -/
 

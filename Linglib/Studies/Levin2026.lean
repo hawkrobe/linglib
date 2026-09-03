@@ -64,6 +64,7 @@ does not directly accommodate. This file formalizes the specific case.
 namespace Levin2026
 
 open Verb
+open Semantics
 open Semantics.Context (Index)
 
 open ArgumentStructure

@@ -831,7 +831,7 @@ theorem largeVase_score_le_one :
 
 /-! [beavers-koontz-garboden-2020] formalize verbal roots as
     bundles of lexical entailments
-    (`Semantics/ArgumentStructure/Root/Defs.lean`). Their classification
+    (`Semantics/Root/Defs.lean`). Their classification
     of √crack is `{.result "fissured", .cause}` — the
     "result + cause, no manner" base feature signature
     `{.result, .cause}` (`BeaversKoontzGarboden2020.crack`).
@@ -852,7 +852,7 @@ theorem largeVase_score_le_one :
     state inheritance from root to deverbal adjective is refuted at
     substrate level. -/
 theorem cracked_adj_refutes_bkg_crack_root_inheritance :
-    Verb.Root.Kind.result ∈ BeaversKoontzGarboden2020.crack.kinds ∧
+    Semantics.Root.Kind.result ∈ BeaversKoontzGarboden2020.crack.kinds ∧
     crack.adjEntailsPrecedingChange = false :=
   ⟨by decide, rfl⟩
 

@@ -1,5 +1,5 @@
-import Linglib.Semantics.ArgumentStructure.Root.Profile
-import Linglib.Semantics.ArgumentStructure.Root.Kinds
+import Linglib.Semantics.Root.Profile
+import Linglib.Semantics.Root.Kinds
 
 /-!
 # Verbal roots
@@ -34,7 +34,7 @@ restitutive *again* (§4.5.4) and the deletion site of verbal VP ellipsis
   `Root.Profile`.
 -/
 
-namespace Verb
+namespace Semantics
 
 /-! ### Atoms -/
 
@@ -76,12 +76,12 @@ structure Root where
   citation form names it. -/
   name : String := ""
   /-- The root's atoms, `∅` where its structural content is unannotated. -/
-  entailments : Finset Verb.Root.Entailment := ∅
+  entailments : Finset Semantics.Root.Entailment := ∅
   /-- The position in which the root composes with `v`, where annotated. -/
-  position : Option Verb.Root.Position := none
+  position : Option Semantics.Root.Position := none
   /-- Within-class graded quality dimensions ([spalek-mcnally-2026],
   [majid-boster-bowerman-2008]); `{}` leaves every dimension unconstrained. -/
-  profile : Verb.Root.Profile := {}
+  profile : Semantics.Root.Profile := {}
   deriving DecidableEq
 
 /-- A `Repr` showing the name, atom count, and position, since `Finset` has only an
@@ -109,4 +109,4 @@ theorem closedKinds_wellFormed : r.closedKinds.WellFormed := Kinds.close_wellFor
 
 end Root
 
-end Verb
+end Semantics

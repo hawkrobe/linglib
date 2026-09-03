@@ -1,7 +1,7 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
-import Linglib.Semantics.ArgumentStructure.Root.Defs
+import Linglib.Semantics.Root.Defs
 
 /-!
 # Event Structure Templates
@@ -129,7 +129,7 @@ denotational result entailment and `cause_implies_resultState` are one fact seen
 through the signature. -/
 
 section Signature
-open Verb (Root)
+open Semantics
 
 /-- The event-structure template determined by a root's (closed) kind signature. -/
 def Template.ofKinds (σ : Root.Kinds) : Template :=
@@ -154,13 +154,13 @@ theorem ofKinds_hasResultState_iff {σ : Root.Kinds}
   split_ifs with hc hr hm <;> simp_all [Template.HasResultState]
 
 /-- A root's event-structure template, read off its collocational closure. -/
-def _root_.Verb.Root.template (r : Root) : Template :=
+def _root_.Semantics.Root.template (r : Root) : Template :=
   Template.ofKinds r.closedKinds
 
 /-- A root entails a result state (template-level) iff it carries `result` —
     the [beavers-koontz-garboden-2020] result entailment, bridged to the
     `EventStructure` template diagnostic. -/
-theorem _root_.Verb.Root.template_hasResultState_iff (r : Root) :
+theorem _root_.Semantics.Root.template_hasResultState_iff (r : Root) :
     r.template.HasResultState ↔ Root.Kind.result ∈ r.closedKinds :=
   ofKinds_hasResultState_iff r.closedKinds_wellFormed
 

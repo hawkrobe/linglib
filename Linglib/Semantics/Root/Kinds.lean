@@ -26,7 +26,7 @@ attested rows of the typology's display (12).
 * [beavers-koontz-garboden-2020]: The Roots of Verbal Meaning.
 -/
 
-namespace Verb
+namespace Semantics
 
 /-! ### Kinds -/
 
@@ -121,4 +121,4 @@ def fullSpec : Kinds := univ
 
 end Root.Kinds
 
-end Verb
+end Semantics
