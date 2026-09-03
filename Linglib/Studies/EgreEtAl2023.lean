@@ -1,4 +1,4 @@
-import Linglib.Core.Probability.LogitChoice
+import Linglib.Core.Analysis.SpecialFunctions.Softmax
 import Linglib.Pragmatics.RSA.Operators
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.BigOperators
@@ -36,6 +36,7 @@ LU models cannot derive the triangular shape.
 namespace EgreEtAl2023
 
 open scoped ENNReal
+open Real
 
 -- ============================================================================
 -- Section I: Empirical Data

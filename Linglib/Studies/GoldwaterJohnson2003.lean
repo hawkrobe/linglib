@@ -78,7 +78,7 @@ theorem eq1_is_softmax {I O : Type} [Fintype O] {n : ℕ}
     `logPL(w) = Σⱼ log P_w(yⱼ | xⱼ)`
 
     Each term decomposes as `H(yⱼ, xⱼ) − logSumExp(H(·, xⱼ), 1)` via
-    `softmax_exponential_family`. -/
+    `softmax_eq_exp_sub`. -/
 noncomputable def logPseudoLikelihood {I O : Type} [Fintype O] {n : ℕ}
     (con : CON (I × O) n) (w : Fin n → ℝ)
     (data : List (I × O)) : ℝ :=

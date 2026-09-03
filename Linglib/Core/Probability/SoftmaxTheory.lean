@@ -10,14 +10,14 @@ import Mathlib.Probability.Moments.Basic
 import Mathlib.MeasureTheory.Measure.Tilted
 import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
-import Linglib.Core.Probability.LogitChoice
+import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
 # Softmax: variational, information-theoretic, and limiting characterizations
 
-The deep theory of `softmax` (defined in `Core.Probability.LogitChoice`): why it
+The deep theory of `Real.softmax` (`Core.Analysis.SpecialFunctions.Softmax`): why it
 takes the exponential form, what it optimizes, how it concentrates, and its link
-to exponential tilting.
+to exponential tilting; elementary properties are surveyed in [franke-degen-2023].
 
 ## Main results
 
@@ -34,8 +34,18 @@ to exponential tilting.
   softmax as the counting-measure case of mathlib's exponential tilting.
 
 `[UPSTREAM]`: pure-math characterizations of softmax; no linguistics. Quality-and-role
-marker — sits above `LogitChoice`, below the rational-agent framing.
+marker — sits above `Real.softmax`, below the rational-agent framing.
 -/
+
+open Real in
+/-- The partition function `∑ j, exp (s j)` — the moment generating function of
+the scores under counting measure (`partitionFn_eq_mgf`). -/
+noncomputable def partitionFn {ι : Type*} [Fintype ι] (s : ι → ℝ) : ℝ := ∑ j, exp (s j)
+
+open Real in
+/-- Log-sum-exp `log (∑ j, exp (s j))` — the cumulant generating function of the
+scores under counting measure (`logSumExp_eq_cgf`). -/
+noncomputable def logSumExp {ι : Type*} [Fintype ι] (s : ι → ℝ) : ℝ := log (∑ j, exp (s j))
 
 namespace Core
 
@@ -283,7 +293,7 @@ theorem speakerObj_at_softmax [Nonempty ι] (v : ι → ℝ) (α : ℝ) :
       softmax (α • v) u * log (partitionFn (α • v)) := by
     intro u; unfold Real.negMulLog; rw [hlog_softmax]; ring
   simp_rw [hterm]
-  rw [← Finset.sum_mul, softmax_sum_eq_one, one_mul]
+  rw [← Finset.sum_mul, sum_softmax, one_mul]
   simp only [partitionFn, Pi.smul_apply, smul_eq_mul]
 
 /-- Key identity: speakerObj(s) + KL(s ‖ s*) = logSumExp (= speakerObj(s*)). -/
@@ -320,7 +330,7 @@ theorem gibbs_variational [Nonempty ι] (s : ι → ℝ) (α : ℝ) (p : ι → 
     (∑ i, Real.negMulLog (softmax (α • s) i)) + α * ∑ i, softmax (α • s) i * s i := by
   set q := softmax (α • s)
   have hq_pos : ∀ i, 0 < q i := fun i => softmax_pos (α • s) i
-  have hq_sum : ∑ i, q i = 1 := softmax_sum_eq_one (α • s)
+  have hq_sum : ∑ i, q i = 1 := sum_softmax (α • s)
   have hkl := kl_nonneg' hp_nonneg hq_pos hp_sum hq_sum
   have h_logq : ∀ i, Real.log (q i) = α * s i - logSumExp (α • s) := fun i => log_softmax (α • s) i
   have h_combine : ∀ i,
@@ -420,7 +430,7 @@ theorem softmax_argmax_limit (s : ι → ℝ) (i_max : ι)
     simp only [threshFn, hj, ↓reduceIte] at h1
     linarith
   have htail : 1 - softmax (α • s) i_max = ∑ j ∈ univ.erase i_max, softmax (α • s) j := by
-    rw [← softmax_sum_eq_one (α • s), ← add_sum_erase _ _ (mem_univ i_max)]; ring
+    rw [← sum_softmax (α • s), ← add_sum_erase _ _ (mem_univ i_max)]; ring
   have htail_nonneg : 0 ≤ 1 - softmax (α • s) i_max := by
     rw [htail]; exact sum_nonneg fun j _ => le_of_lt (softmax_pos (α • s) j)
   have htail_strict : 1 - softmax (α • s) i_max < ε := by
@@ -590,7 +600,7 @@ theorem softmax_unique_maximizer (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
     p = softmax (α • s) := by
   set q := softmax (α • s) with hq_def
   have hq_pos : ∀ i, 0 < q i := fun i => softmax_pos (α • s) i
-  have hq_sum : ∑ i, q i = 1 := softmax_sum_eq_one (α • s)
+  have hq_sum : ∑ i, q i = 1 := sum_softmax (α • s)
   -- From speakerObj_plus_kl: speakerObj(p) + KL(p ‖ q) = logSumExp = speakerObj(q) + 0
   have h_p := speakerObj_plus_kl s α p hp_nonneg hp_sum
   have h_q := speakerObj_plus_kl s α q (fun i => le_of_lt (hq_pos i)) hq_sum

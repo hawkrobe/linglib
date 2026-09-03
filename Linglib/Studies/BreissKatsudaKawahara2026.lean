@@ -1,4 +1,4 @@
-import Linglib.Core.Probability.LogitChoice
+import Linglib.Core.Analysis.SpecialFunctions.Softmax
 import Linglib.Phonology.Constraints.Defs
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Fin.VecNotation
