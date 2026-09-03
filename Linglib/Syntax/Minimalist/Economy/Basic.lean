@@ -18,10 +18,9 @@ and lexical resources.
   transderivational variant per [citko-gracanin-yuksek-2025] fn 3.
   The local-economy alternative ([collins-2001]) is not formalized.
 
-- **Pronunciation Economy** ([citko-gracanin-yuksek-2025] p. 27): no
-  PF-affecting operation is vacuous. Checked **per operation**, not on
-  whole-derivation PF before/after — see `pronunciationEconomy`'s
-  docstring for why a whole-derivation `≠` check under-rejects.
+- **Pronunciation Economy** ([citko-gracanin-yuksek-2025]): no application of
+  ellipsis is vacuous. It judges PF objects, so it lives with them:
+  `Minimalist.PronunciationEconomy` in `Linearization/Chain.lean`.
 
 ## Headline (§3): well-foundedness via Dickson's lemma
 
@@ -285,57 +284,5 @@ theorem economy_winner_of_pair {c c' : DerivationCost}
   · exact lt_asymm hlt ((strictlyMoreEconomical_iff_lt _ _).mp halt_lt)
 
 end WellFoundedness
-
-section PronunciationEconomy
-
-/-- A single PF-affecting operation: PF state immediately before vs
-    immediately after the op fires. Used to express
-    [citko-gracanin-yuksek-2025]'s **per-operation** vacuity check
-    (paper p. 27 ex (39); §3 PF reduction).
-
-    Whole-derivation Pronunciation Economy is the conjunction of per-op
-    economy across all PF-affecting operations in the derivation. -/
-structure PFOperation where
-  pfBefore : List String
-  pfAfter : List String
-  deriving Repr, DecidableEq
-
-/-- A PF operation is *vacuous* iff it has no effect on the PF string —
-    e.g., the deletion targets material already unpronounced because a
-    prior deletion removed it (paper p. 32 ex (45c)). -/
-def PFOperation.isVacuous (op : PFOperation) : Prop := op.pfBefore = op.pfAfter
-
-instance (op : PFOperation) : Decidable op.isVacuous := by
-  unfold PFOperation.isVacuous; infer_instance
-
-/-- **Pronunciation Economy** ([citko-gracanin-yuksek-2025] p. 27,
-    ex (39)): no PF-affecting operation in the derivation is vacuous.
-
-    Crucially **per-operation**, not on whole-derivation PF before/after.
-    A whole-derivation `pfBefore ≠ pfAfter` check under-rejects: any
-    derivation containing one non-vacuous deletion plus N vacuous ones
-    would pass, because the non-vacuous deletion alone ensures the whole
-    derivation's PF changes. The paper's centerpiece argument (p. 32
-    ex (45c)) needs to ban exactly that configuration: a CWH structure
-    where a shared C with E-feature deletes two TPs, the second of which
-    is vacuous. -/
-def pronunciationEconomy (ops : List PFOperation) : Prop :=
-  ∀ op ∈ ops, ¬ op.isVacuous
-
-instance (ops : List PFOperation) : Decidable (pronunciationEconomy ops) := by
-  unfold pronunciationEconomy; infer_instance
-
-/-- Pronunciation Economy holds iff no individual operation is vacuous. -/
-theorem pronunciationEconomy_iff_no_vacuous (ops : List PFOperation) :
-    pronunciationEconomy ops ↔ ¬ ∃ op ∈ ops, op.isVacuous := by
-  simp only [pronunciationEconomy, not_exists, not_and]
-
-/-- A derivation with any vacuous op violates Pronunciation Economy. -/
-theorem pronunciationEconomy_violated_of_vacuous {op : PFOperation}
-    {ops : List PFOperation} (hmem : op ∈ ops) (hvac : op.isVacuous) :
-    ¬ pronunciationEconomy ops := by
-  intro h; exact h op hmem hvac
-
-end PronunciationEconomy
 
 end Minimalist
