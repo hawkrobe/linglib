@@ -67,11 +67,11 @@ theorem rumMaxProb_gumbel_eq_softmax (u : ι → ℝ) (hβ : 0 < β) (i : ι) :
   simp_rw [show ∀ j : ι, u j / β = 1 / β * u j from fun j => by ring]
 
 /-- The Gumbel RUM policy sums to 1 over alternatives — inherited from
-    `softmax_sum_eq_one` through `rumMaxProb_gumbel_eq_softmax`. -/
+    `sum_softmax` through `rumMaxProb_gumbel_eq_softmax`. -/
 theorem rumMaxProb_gumbel_sum (u : ι → ℝ) (hβ : 0 < β) :
     ∑ i : ι, rumMaxProb (gumbelPDFReal 0 β) (fun x => cdf (gumbelMeasure 0 β) x) u i = 1 := by
   simp_rw [rumMaxProb_gumbel_eq_softmax _ hβ]
-  exact softmax_sum_eq_one ((1 / β) • u)
+  exact sum_softmax ((1 / β) • u)
 
 end GumbelRUM
 
@@ -85,7 +85,8 @@ end GumbelRUM
 theorem rumMaxProb_gumbel_binary (u : Fin 2 → ℝ) {β : ℝ} (hβ : 0 < β) :
     rumMaxProb (gumbelPDFReal 0 β) (fun x => cdf (gumbelMeasure 0 β) x) u 0 =
       Real.sigmoid ((u 0 - u 1) / β) := by
-  rw [rumMaxProb_gumbel_eq_softmax u hβ 0, softmax_binary]
+  rw [rumMaxProb_gumbel_eq_softmax u hβ 0, softmax_fin_two]
+  simp only [Pi.smul_apply, smul_eq_mul]
   congr 1; ring
 
 /-! ### The Gumbel RUM as a `RationalAction` -/

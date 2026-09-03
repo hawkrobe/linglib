@@ -41,7 +41,7 @@ noncomputable def minScore [Nonempty ι] (s : ι → ℝ) : ℝ :=
 theorem tendsto_softmax_zero [Nonempty ι] (s : ι → ℝ) (i : ι) :
     Tendsto (λ (α : ℝ) => softmax (α • s) i) (𝓝 0) (𝓝 (1 / Fintype.card ι)) := by
   have h : softmax ((0 : ℝ) • s) i = 1 / Fintype.card ι := by
-    rw [zero_smul]; simp only [softmax_zero]
+    rw [zero_smul]; simp
   rw [← h]
   -- softmax α i = exp(α * s i) / Σⱼ exp(α * s j) is continuous in α
   -- Numerator: exp is continuous, mul is continuous
@@ -54,14 +54,14 @@ theorem tendsto_softmax_zero [Nonempty ι] (s : ι → ℝ) (i : ι) :
       intro j _
       exact continuous_exp.comp (continuous_mul_right (s j))
     · intro α
-      exact partitionFn_ne_zero (α • s)
+      exact (sum_exp_pos (α • s)).ne'
   exact hcont.tendsto 0
 
 /-- The ratio of non-max to max probability vanishes as α → ∞. -/
 theorem softmax_ratio_tendsto_zero [Nonempty ι] (s : ι → ℝ)
     (i j : ι) (hij : s i < s j) :
     Tendsto (λ (α : ℝ) => softmax (α • s) i / softmax (α • s) j) atTop (𝓝 0) := by
-  simp only [softmax_odds, Pi.smul_apply, smul_eq_mul]
+  simp only [softmax_div_softmax, Pi.smul_apply, smul_eq_mul]
   -- exp(α * s_i - α * s_j) → 0 when s_i < s_j
   have h : s i - s j < 0 := by linarith
   -- Use Mathlib: exp(x) → 0 as x → -∞, and c * α → -∞ when c < 0
@@ -82,7 +82,7 @@ theorem tendsto_softmax_infty_at_max [Nonempty ι] (s : ι → ℝ)
   set S := Finset.univ.filter (λ j : ι => j ≠ i_max) with hS
   have hsum : ∀ (α : ℝ), softmax (α • s) i_max = 1 - ∑ j ∈ S, softmax (α • s) j := by
     intro α
-    have h := softmax_sum_eq_one (α • s)
+    have h := sum_softmax (α • s)
     rw [← Finset.sum_filter_add_sum_filter_not (s := Finset.univ) (p := (· = i_max))] at h
     have hsimp : Finset.filter (· = i_max) Finset.univ = {i_max} := by
       ext x
@@ -152,7 +152,7 @@ theorem tendsto_softmax_infty_unique_max [Nonempty ι] (s : ι → ℝ)
 theorem log_softmax_ratio_tendsto [Nonempty ι] (s : ι → ℝ)
     (i j : ι) (hij : s i < s j) :
     Tendsto (λ (α : ℝ) => log (softmax (α • s) j / softmax (α • s) i)) atTop atTop := by
-  simp only [log_softmax_odds, Pi.smul_apply, smul_eq_mul]
+  simp only [log_softmax_div_softmax, Pi.smul_apply, smul_eq_mul]
   -- α * s_j - α * s_i → ∞ when s_j > s_i
   have h : 0 < s j - s i := by linarith
   -- Rewrite: α * s j - α * s i = (s j - s i) * α
@@ -213,8 +213,7 @@ theorem entropy_tendsto_max [Nonempty ι] (s : ι → ℝ) :
     unfold entropy maxEntropy
     rw [zero_smul]
     simp_rw [softmax_zero]
-    simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, one_div,
-               Real.log_inv, neg_neg]
+    simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, Real.log_inv]
     have hn : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
     field_simp
   rw [← hval]
@@ -227,7 +226,7 @@ theorem entropy_tendsto_max [Nonempty ι] (s : ι → ℝ) :
       simp only [softmax, Pi.smul_apply, smul_eq_mul]
       exact (continuous_exp.comp (continuous_mul_right (s i))).div
         (continuous_finset_sum _ (fun j _ => continuous_exp.comp (continuous_mul_right (s j))))
-        (fun α => partitionFn_ne_zero (α • s))
+        (fun α => (sum_exp_pos (α • s)).ne')
     have hcont_log : Continuous (fun α => Real.log (softmax (α • s) i)) :=
       Real.continuousOn_log.comp_continuous hcont_sm (fun α => ne_of_gt (softmax_pos (α • s) i))
     exact hcont_sm.mul hcont_log
@@ -262,7 +261,7 @@ theorem softmax_exponential_decay [Nonempty ι] (s : ι → ℝ)
   · exact one_pos
   · intro α _
     -- softmax i = softmax i_max * exp(α(s_i - s_i_max))
-    have hratio := softmax_ratio (α • s) i i_max
+    have hratio := softmax_eq_softmax_mul_exp_sub (α • s) i i_max
     rw [hratio]
     simp only [Pi.smul_apply, smul_eq_mul]
     have hle : softmax (α • s) i_max ≤ 1 := softmax_le_one (α • s) i_max
@@ -286,7 +285,7 @@ theorem softmax_negligible [Nonempty ι] (s : ι → ℝ)
     have h : 0 ≤ (1/gap) * |log ε| := by positivity
     linarith
   -- Direct bound: softmax j = softmax i_max * exp(α(s_j - s_i_max)) ≤ exp(-α * gap)
-  have hratio := softmax_ratio (α • s) j i_max
+  have hratio := softmax_eq_softmax_mul_exp_sub (α • s) j i_max
   have hle_max : softmax (α • s) i_max ≤ 1 := softmax_le_one (α • s) i_max
   have hbound : softmax (α • s) j ≤ exp (-α * (s i_max - s j)) := by
     rw [hratio]

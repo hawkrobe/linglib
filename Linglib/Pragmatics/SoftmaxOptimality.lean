@@ -80,7 +80,7 @@ theorem fromDP_policy_mono {W A : Type*} [Fintype W] [Fintype A] [Nonempty A]
     (RationalAction.fromDecisionProblem dp α).policy () a₂ := by
   simp only [RationalAction.fromDecisionProblem,
              RationalAction.fromSoftmax_policy_eq]
-  exact softmax_mono _ a₁ a₂ (by
+  exact softmax_le_softmax (by
     simpa only [Pi.smul_apply, smul_eq_mul] using mul_le_mul_of_nonneg_left h hα.le)
 
 /-- Strict version: strictly higher EU implies strictly higher probability. -/
@@ -91,7 +91,7 @@ theorem fromDP_policy_strict_mono {W A : Type*} [Fintype W] [Fintype A] [Nonempt
     (RationalAction.fromDecisionProblem dp α).policy () a₂ := by
   simp only [RationalAction.fromDecisionProblem,
              RationalAction.fromSoftmax_policy_eq]
-  exact softmax_strict_mono _ a₁ a₂ (by
+  exact softmax_lt_softmax (by
     simpa only [Pi.smul_apply, smul_eq_mul] using mul_lt_mul_of_pos_left h hα)
 
 -- ============================================================================

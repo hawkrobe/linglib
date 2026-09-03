@@ -1,6 +1,6 @@
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Core.Probability.RandomUtility
-import Linglib.Core.Probability.LogitChoice
+import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
 # Harmony under noise
@@ -139,7 +139,7 @@ theorem normalMaxEnt_choiceProb_eq (con : CON C n) (w : Fin n → ℝ)
 theorem logit_uniformity {ι : Type*} [Fintype ι] [Nonempty ι]
     (s : ι → ℝ) (a b : ι) :
     log (softmax s a / softmax s b) = s a - s b := by
-  rw [log_softmax_odds]
+  rw [log_softmax_div_softmax]
 
 /-- **MaxEnt logit-harmony identity**: the log-odds ratio between two
     candidates equals their harmony score difference.
@@ -160,13 +160,13 @@ theorem maxent_logit_harmony [Fintype C] [Nonempty C]
     `P(a)/P(b) = exp(H(a) − H(b))`
 
     Adding or removing other candidates from the competition doesn't
-    change the ratio. Corollary of `softmax_odds` with α = 1. -/
+    change the ratio. Corollary of `softmax_div_softmax` with α = 1. -/
 theorem maxent_iia [Fintype C] [Nonempty C]
     (con : CON C n) (w : Fin n → ℝ) (a b : C) :
     softmax (harmonyScore con w) a /
     softmax (harmonyScore con w) b =
     exp (harmonyScore con w a - harmonyScore con w b) := by
-  rw [softmax_odds]
+  rw [softmax_div_softmax]
 
 /-! ### Harmony Difference Decomposition -/
 

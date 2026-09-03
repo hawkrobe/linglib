@@ -88,7 +88,7 @@ theorem eq10_logit_harmony {C : Type} [Fintype C] [Nonempty C] {n : ℕ}
 
 /-- MaxEnt ratio independence (IIA): `P(a)/P(b) = exp(H(a) − H(b))`.
     The probability ratio depends only on the candidates' own scores,
-    not on any other candidates. Corollary of `softmax_odds` with α = 1. -/
+    not on any other candidates. Corollary of `softmax_div_softmax` with α = 1. -/
 theorem iia {C : Type} [Fintype C] [Nonempty C] {n : ℕ}
     (con : CON C n) (w : Fin n → ℝ) (a b : C) :
     softmax (harmonyScore con w) a /
@@ -102,14 +102,12 @@ theorem iia {C : Type} [Fintype C] [Nonempty C] {n : ℕ}
 
     `P(0) = 1 / (1 + e^{-(H(0) − H(1))})` = `Real.sigmoid(H(0) − H(1))`
 
-    Corollary of `softmax_binary` with α = 1. -/
+    Corollary of `softmax_fin_two` with α = 1. -/
 theorem eq9_maxent_binary_logistic {n : ℕ}
     (con : CON (Fin 2) n) (w : Fin n → ℝ) :
     softmax (harmonyScore con w) 0 =
-    Real.sigmoid (harmonyScore con w 0 - harmonyScore con w 1) := by
-  have h := softmax_binary (harmonyScore con w) 1
-  rw [one_smul, one_mul] at h
-  rw [h]
+    Real.sigmoid (harmonyScore con w 0 - harmonyScore con w 1) :=
+  softmax_fin_two _
 
 -- ============================================================================
 -- § 3: French Schwa Data (Table (35))

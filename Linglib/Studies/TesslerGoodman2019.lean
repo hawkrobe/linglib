@@ -833,7 +833,7 @@ theorem same_prevalence_opposite_endorsement :
 /-! As α → ∞, the endorsement model sharpens to a categorical decision:
     endorsed generics get probability 1, non-endorsed get probability 0.
 
-    By `rpow_luce_eq_softmax` (Core), every rpow-based Luce choice rule IS
+    By `rpow_div_sum_rpow` (Core), every rpow-based Luce choice rule IS
     softmax over log scores. The endorsement model inherits all softmax
     limit theorems for free. -/
 
@@ -846,12 +846,12 @@ noncomputable def l0Score (prior : Prevalence → ℝ) (u : Utterance) (p : Prev
   prior p * (thresholdCount u p : ℝ)
 
 /-- The endorsement rate equals softmax over log-L0 scores.
-    Immediate from `rpow_luce_eq_softmax`: the endorsement model IS softmax. -/
+    Immediate from `rpow_div_sum_rpow`: the endorsement model IS softmax. -/
 theorem endorsement_eq_softmax (prior : Prevalence → ℝ) (p : Prevalence) (α : ℝ)
     (hl0 : ∀ u, 0 < l0Score prior u p) :
     (l0Score prior .generic p) ^ α / ∑ u : Utterance, (l0Score prior u p) ^ α =
     softmax (α • fun u : Utterance => log (l0Score prior u p)) .generic :=
-  rpow_luce_eq_softmax (fun u => l0Score prior u p) α hl0 .generic
+  rpow_div_sum_rpow hl0 α .generic
 
 /-- When l0_gen > l0_sil (endorsed generic), the endorsement rate → 1
     as α → ∞. Direct corollary of `Softmax.tendsto_softmax_infty_at_max`. -/

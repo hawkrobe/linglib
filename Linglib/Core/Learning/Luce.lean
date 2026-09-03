@@ -42,7 +42,7 @@ proofs share one geometric-series argument.
 
 namespace Core
 
-open Finset Filter
+open Finset Filter Real
 
 section LinearLearning
 

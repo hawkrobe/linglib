@@ -10,7 +10,7 @@ import Mathlib.Probability.Moments.Basic
 import Mathlib.MeasureTheory.Measure.Tilted
 import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
-import Linglib.Core.Probability.LogitChoice
+import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
 # Rational action
@@ -24,7 +24,7 @@ selects actions with probability proportional to a non-negative score — the
 alternatives (IIA): the relative probability of two actions depends only on their
 scores.
 
-The exponential parameterization (`softmax`) lives in `Core.Probability.LogitChoice`,
+The exponential parameterization (`softmax`) lives in `Core.Analysis.SpecialFunctions.Softmax`,
 and its variational / information-theoretic / limiting theory in
 `Core.Probability.SoftmaxTheory` (re-exported here); this file is the agent-framing
 layer on top of those pure-math cores.

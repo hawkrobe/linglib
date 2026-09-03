@@ -1,7 +1,7 @@
 import Linglib.Phonology.Constraints.Harmony
 import Linglib.Phonology.Hiatus
 import Linglib.Fragments.Farsi.Phonology
-import Linglib.Core.Probability.LogitChoice
+import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
 # Storme (2026): systemic constraints in probabilistic grammars
@@ -256,8 +256,8 @@ theorem mono_order :
     predicted 0 .deletion < predicted 0 .epenthesis ∧
       predicted 0 .epenthesis < predicted 0 .hiatus := by
   simp only [predicted_eq_softmax]
-  exact ⟨softmax_strict_mono _ _ _ (by norm_num [ajScore_eq]),
-    softmax_strict_mono _ _ _ (by norm_num [ajScore_eq])⟩
+  exact ⟨softmax_lt_softmax (by norm_num [ajScore_eq]),
+    softmax_lt_softmax (by norm_num [ajScore_eq])⟩
 
 /-- Polysegmental suffix: deletion (.61) over hiatus (.25) over epenthesis
 (.14) — [hutʃɑmun] keeps the suffix recoverable, so \*HOMOPHONY is silent. -/
@@ -265,14 +265,14 @@ theorem poly_order :
     predicted 1 .epenthesis < predicted 1 .hiatus ∧
       predicted 1 .hiatus < predicted 1 .deletion := by
   simp only [predicted_eq_softmax]
-  exact ⟨softmax_strict_mono _ _ _ (by norm_num [ajScore_eq]),
-    softmax_strict_mono _ _ _ (by norm_num [ajScore_eq])⟩
+  exact ⟨softmax_lt_softmax (by norm_num [ajScore_eq]),
+    softmax_lt_softmax (by norm_num [ajScore_eq])⟩
 
 /-- The suffix-length effect of [ariyaee-jurgec-2021]: deletion is less likely
 for the monosegmental suffix (.14) than for the polysegmental one (.61). -/
 theorem deletion_lt_deletion : predicted 0 .deletion < predicted 1 .deletion := by
   simp only [predicted_eq_softmax]
-  refine softmax_lt_softmax_of_single_score_lt ?_ fun o ho => ?_
+  refine softmax_lt_softmax_of_single_lt ?_ fun o ho => ?_
   · norm_num [ajScore_eq]
   · cases o <;> simp_all [ajScore_eq]
 
@@ -282,7 +282,7 @@ polysegmental one: the whole suffix-length effect is the systemic penalty. -/
 theorem log_odds_deletion_sub :
     log (predicted 1 .deletion / predicted 1 .hiatus) -
       log (predicted 0 .deletion / predicted 0 .hiatus) = homophonyWeight := by
-  simp only [predicted_eq_softmax, log_softmax_odds, ajScore_eq]
+  simp only [predicted_eq_softmax, log_softmax_div_softmax, ajScore_eq]
   norm_num [homophonyWeight]
 
 /-- DEP, \*HIATUS and MAX give the two junctures identical violation

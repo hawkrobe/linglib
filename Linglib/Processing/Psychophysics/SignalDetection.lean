@@ -53,7 +53,7 @@ and the observer's "choice" between reporting signal vs noise follows a Luce
 model with `v(signal) / v(noise) = L(x)`. We construct this Luce model as
 `SDTModel.toLuceAt`, defined directly as a `RationalAction.fromGumbelRUM` with
 binary utilities `(d' · x, 0)` and scale `β = 1`. The signal probability and
-odds-ratio properties are then immediate corollaries of `softmax_binary`
+odds-ratio properties are then immediate corollaries of `softmax_fin_two`
 and `RationalAction.fromGumbelRUM_policy` — making the SDT/Gumbel-Luce
 equivalence formally exact for binary detection (UNVERIFIED: [luce-1959]
 §2.E gives this as the original choice-theoretic framing).
@@ -381,7 +381,7 @@ section LuceEmbedding
 The SDT signal/noise choice is a binary Gumbel-Luce RUM: with utilities
 `(d' · x, 0)` and unit Gumbel scale `β = 1`, the Gumbel max-probability reduces
 to the SDT Luce policy exactly. The signal-probability and odds-ratio
-properties below are immediate corollaries of `softmax_binary` and
+properties below are immediate corollaries of `softmax_fin_two` and
 `RationalAction.fromGumbelRUM_policy`. -/
 
 /-- The Gaussian likelihood ratio at observation `x`, given `d'`, in the
@@ -422,7 +422,7 @@ theorem SDTModel.likelihoodRatioAt_pos (m : SDTModel) (x : ℝ) :
     `(L(x), 1)`, the Bayesian-posterior-odds form under uniform prior.
 
     The Luce policy `P("signal" | x) = L(x) / (L(x) + 1)` is then immediate
-    from `softmax_binary` (proved as `toLuceAt_signal_prob` below).
+    from `softmax_fin_two` (proved as `toLuceAt_signal_prob` below).
 
     *Note*: the construction depends on `m.dPrime` and the observation `x`,
     not on `m.criterion`. The criterion enters only at decision time (the
@@ -456,12 +456,12 @@ theorem SDTModel.toLuceAt_odds_ratio (m : SDTModel) (x : ℝ) :
   rw [m.toLuceAt_score_signal, m.toLuceAt_score_noise, div_one]
 
 /-- The Luce signal probability `L(x) / (L(x) + 1)`, derived as a corollary of
-    `softmax_binary` via `RationalAction.fromGumbelRUM_policy`. -/
+    `softmax_fin_two` via `RationalAction.fromGumbelRUM_policy`. -/
 theorem SDTModel.toLuceAt_signal_prob (m : SDTModel) (x : ℝ) :
     (m.toLuceAt x).policy () (0 : Fin 2) =
     m.likelihoodRatioAt x / (m.likelihoodRatioAt x + 1) := by
   have h01 : ¬(1 : Fin 2) = (0 : Fin 2) := by decide
-  rw [SDTModel.toLuceAt, RationalAction.fromGumbelRUM_policy, softmax_binary]
+  rw [SDTModel.toLuceAt, RationalAction.fromGumbelRUM_policy, softmax_fin_two]
   simp only [Pi.smul_apply, smul_eq_mul, Fin.isValue, ↓reduceIte, h01, inv_one, one_mul,
              mul_zero, sub_zero, Real.sigmoid_def, SDTModel.likelihoodRatioAt,
              likelihoodRatio]

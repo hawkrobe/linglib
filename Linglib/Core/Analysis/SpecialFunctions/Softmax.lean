@@ -1,0 +1,199 @@
+import Mathlib.Analysis.SpecialFunctions.Sigmoid
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Data.Fintype.BigOperators
+
+/-!
+# The softmax function
+
+`Real.softmax s i = exp (s i) / ∑ j, exp (s j)`, the normalized exponential of a
+score vector over a finite type: Luce's choice rule with exponential scores
+([luce-1959]), the multinomial logit of [mcfadden-1974], and the
+Boltzmann–Gibbs distribution. An inverse temperature enters by scaling the
+argument, `softmax (α • s)`. With two alternatives it is `Real.sigmoid` of the
+score difference, and `Real.logit` inverts `Real.sigmoid`.
+
+`softmax s` is the density of the exponentially tilted counting measure
+`Measure.count.tilted s`; that face — the partition function as `mgf`,
+log-sum-exp as `cgf` — is `Core.Probability.SoftmaxTheory`.
+
+## Main definitions
+
+* `Real.softmax` — the normalized exponential of a score vector.
+* `Real.logit` — the inverse of `Real.sigmoid`.
+
+## Main results
+
+* `Real.sum_softmax`, `Real.softmax_pos` — `softmax s` is a probability
+  distribution.
+* `Real.softmax_div_softmax`, `Real.log_softmax_div_softmax` — odds are
+  exponentiated score differences (independence of irrelevant alternatives).
+* `Real.softmax_le_softmax_iff`, `Real.softmax_update_strictMono` — monotonicity
+  in the scores.
+* `Real.softmax_add_const` — translation invariance.
+* `Real.softmax_fin_two` — two alternatives give `Real.sigmoid`.
+* `Real.softmax_sum_apply`, `Real.sum_softmax_eval_eq` — a separable score on a
+  product type gives a product distribution, with coordinate marginals.
+* `Real.rpow_div_sum_rpow` — Luce's power rule is softmax of log-scores.
+-/
+
+namespace Real
+
+open Finset
+
+variable {ι : Type*} [Fintype ι]
+
+/-- The softmax function `softmax s i = exp (s i) / ∑ j, exp (s j)`. An inverse
+temperature enters by scaling the argument, `softmax (α • s)`. -/
+noncomputable def softmax (s : ι → ℝ) : ι → ℝ := fun i => exp (s i) / ∑ j, exp (s j)
+
+theorem softmax_def (s : ι → ℝ) (i : ι) : softmax s i = exp (s i) / ∑ j, exp (s j) := rfl
+
+/-- Softmax is invariant under translating every score by the same constant. -/
+theorem softmax_add_const (s : ι → ℝ) (c : ℝ) : softmax (fun i => s i + c) = softmax s := by
+  funext i
+  simp only [softmax_def, exp_add, ← sum_mul]
+  exact mul_div_mul_right _ _ (exp_pos c).ne'
+
+@[simp] theorem softmax_zero : softmax (0 : ι → ℝ) = fun _ => (Fintype.card ι : ℝ)⁻¹ := by
+  funext i; simp [softmax_def, card_univ]
+
+section Nonempty
+
+variable [Nonempty ι] (s : ι → ℝ) (i j : ι)
+
+theorem sum_exp_pos : 0 < ∑ j, exp (s j) := sum_pos (fun _ _ => exp_pos _) univ_nonempty
+
+@[bound] theorem softmax_pos : 0 < softmax s i := div_pos (exp_pos _) (sum_exp_pos s)
+
+@[bound] theorem softmax_nonneg : 0 ≤ softmax s i := (softmax_pos s i).le
+
+@[simp] theorem sum_softmax : ∑ i, softmax s i = 1 := by
+  simp [softmax_def, ← sum_div, (sum_exp_pos s).ne']
+
+@[bound] theorem softmax_le_one : softmax s i ≤ 1 :=
+  (single_le_sum (fun j _ => softmax_nonneg s j) (mem_univ i)).trans_eq (sum_softmax s)
+
+/-- Odds are exponentiated score differences: independence of irrelevant
+alternatives. -/
+theorem softmax_div_softmax : softmax s i / softmax s j = exp (s i - s j) := by
+  rw [softmax_def, softmax_def, div_div_div_cancel_right₀ (sum_exp_pos s).ne', exp_sub]
+
+theorem log_softmax_div_softmax : log (softmax s i / softmax s j) = s i - s j := by
+  rw [softmax_div_softmax, log_exp]
+
+theorem softmax_eq_softmax_mul_exp_sub : softmax s i = softmax s j * exp (s i - s j) :=
+  ((div_eq_iff (softmax_pos s j).ne').1 (softmax_div_softmax s i j)).trans (mul_comm _ _)
+
+theorem log_softmax : log (softmax s i) = s i - log (∑ j, exp (s j)) := by
+  rw [softmax_def, log_div (exp_pos _).ne' (sum_exp_pos s).ne', log_exp]
+
+theorem softmax_eq_exp_sub : softmax s i = exp (s i - log (∑ j, exp (s j))) := by
+  rw [exp_sub, exp_log (sum_exp_pos s)]; rfl
+
+variable {s i j}
+
+theorem softmax_le_softmax_iff : softmax s i ≤ softmax s j ↔ s i ≤ s j := by
+  rw [softmax_def, softmax_def, div_le_div_iff_of_pos_right (sum_exp_pos s), exp_le_exp]
+
+theorem softmax_lt_softmax_iff : softmax s i < softmax s j ↔ s i < s j := by
+  rw [softmax_def, softmax_def, div_lt_div_iff_of_pos_right (sum_exp_pos s), exp_lt_exp]
+
+alias ⟨_, softmax_le_softmax⟩ := softmax_le_softmax_iff
+
+alias ⟨_, softmax_lt_softmax⟩ := softmax_lt_softmax_iff
+
+end Nonempty
+
+section Update
+
+variable [DecidableEq ι] [Nontrivial ι]
+
+/-- `softmax (update s i x) i` is strictly increasing in the score `x`. -/
+theorem softmax_update_strictMono (s : ι → ℝ) (i : ι) :
+    StrictMono fun x => softmax (Function.update s i x) i := by
+  obtain ⟨j, hj⟩ := exists_ne i
+  have hR : 0 < ∑ k ∈ univ.erase i, exp (s k) :=
+    sum_pos (fun _ _ => exp_pos _) ⟨j, mem_erase.2 ⟨hj, mem_univ j⟩⟩
+  have h (x : ℝ) : softmax (Function.update s i x) i =
+      exp x / (exp x + ∑ k ∈ univ.erase i, exp (s k)) := by
+    rw [softmax_def, ← add_sum_erase _ _ (mem_univ i), Function.update_self,
+      sum_congr rfl fun k hk => by rw [Function.update_of_ne (ne_of_mem_erase hk)]]
+  intro x y hxy
+  simp only [h]
+  rw [div_lt_div_iff₀ (by positivity) (by positivity)]
+  nlinarith [mul_lt_mul_of_pos_right (exp_lt_exp.2 hxy) hR]
+
+/-- Raising one score while holding the others fixed raises its probability. -/
+theorem softmax_lt_softmax_of_single_lt {s s' : ι → ℝ} {i : ι} (hlt : s i < s' i)
+    (heq : ∀ j ≠ i, s' j = s j) : softmax s i < softmax s' i := by
+  rw [show s' = Function.update s i (s' i) from Function.eq_update_iff.2 ⟨rfl, heq⟩]
+  conv_lhs => rw [← Function.update_eq_self i s]
+  exact softmax_update_strictMono s i hlt
+
+end Update
+
+/-! ### Two alternatives and the logit -/
+
+/-- With two alternatives, softmax is the logistic function of the score
+difference. -/
+theorem softmax_fin_two (s : Fin 2 → ℝ) : softmax s 0 = sigmoid (s 0 - s 1) := by
+  rw [softmax_def, Fin.sum_univ_two, sigmoid_def, neg_sub, exp_sub,
+    ← div_self (exp_pos (s 0)).ne', ← add_div, inv_div]
+
+/-- The logit function `log (p / (1 - p))`, the inverse of `Real.sigmoid`. -/
+noncomputable def logit (p : ℝ) : ℝ := log (p / (1 - p))
+
+@[simp] theorem logit_sigmoid (x : ℝ) : logit (sigmoid x) = x := by
+  rw [logit, ← sigmoid_neg, ← sigmoid_mul_rexp_neg, div_mul_cancel_left₀ (sigmoid_pos x).ne',
+    ← exp_neg, neg_neg, log_exp]
+
+theorem sigmoid_logit {p : ℝ} (hp : p ∈ Set.Ioo 0 1) : sigmoid (logit p) = p := by
+  obtain ⟨x, rfl⟩ : p ∈ Set.range sigmoid := range_sigmoid ▸ hp
+  rw [logit_sigmoid]
+
+/-- With two alternatives, the log-odds are the score difference. -/
+theorem logit_softmax_fin_two (s : Fin 2 → ℝ) : logit (softmax s 0) = s 0 - s 1 := by
+  rw [softmax_fin_two, logit_sigmoid]
+
+/-- Luce's power rule `f i ^ α / ∑ j, f j ^ α` is the softmax of the scaled
+log-scores. -/
+theorem rpow_div_sum_rpow [Nonempty ι] {f : ι → ℝ} (hf : ∀ i, 0 < f i) (α : ℝ) (i : ι) :
+    f i ^ α / ∑ j, f j ^ α = softmax (α • fun j => log (f j)) i := by
+  have h (j : ι) : f j ^ α = exp (α * log (f j)) := by rw [rpow_def_of_pos (hf j), mul_comm]
+  simp only [h, softmax_def, Pi.smul_apply, smul_eq_mul]
+
+/-! ### Product types
+
+A separable score `s f = ∑ i, c i (f i)` on assignments `f : ι → V` gives a
+softmax that factorizes into the coordinate softmaxes, so marginalizing the joint
+distribution at coordinate `i` recovers `softmax (c i)`. -/
+
+section Pi
+
+variable {V : Type*} [DecidableEq ι] [Fintype V]
+
+/-- The softmax of a separable score is the product of the coordinate softmaxes. -/
+theorem softmax_sum_apply (c : ι → V → ℝ) (f : ι → V) :
+    softmax (fun g : ι → V => ∑ i, c i (g i)) f = ∏ i, softmax (c i) (f i) := by
+  simp only [softmax_def, exp_sum, prod_div_distrib, Fintype.prod_sum]
+
+/-- Marginalizing the softmax of a separable score at coordinate `i` recovers the
+coordinate softmax `softmax (c i)`. -/
+theorem sum_softmax_eval_eq [DecidableEq V] [Nonempty V] (c : ι → V → ℝ) (i : ι) (v : V) :
+    ∑ f with f i = v, softmax (fun g : ι → V => ∑ j, c j (g j)) f = softmax (c i) v := by
+  set F : ι → V → ℝ := fun j w =>
+    if j = i then (if w = v then softmax (c i) v else 0) else softmax (c j) w with hF
+  have h (f : ι → V) : (if f i = v then ∏ j, softmax (c j) (f j) else 0) = ∏ j, F j (f j) := by
+    split_ifs with hf
+    · exact prod_congr rfl fun j _ => by by_cases hj : j = i <;> simp [hF, hj, hf]
+    · exact (prod_eq_zero (mem_univ i) (by simp [hF, hf])).symm
+  have hrest : ∏ j ∈ univ.erase i, ∑ w, F j w = 1 :=
+    prod_eq_one fun j hj => by simp [hF, ne_of_mem_erase hj, sum_softmax]
+  simp only [softmax_sum_apply, sum_filter, h]
+  rw [← Fintype.prod_sum F, ← mul_prod_erase univ _ (mem_univ i), hrest]
+  simp [hF]
+
+end Pi
+
+end Real
