@@ -419,14 +419,11 @@ theorem direct_argument_reasonable_stalnaker {W : Type*}
   direct_argument_reasonable_polymorphic s sel notA B AorB
     h_AorB_decomp h_constraint h_open_notA
 
-/-- **Krifka instance application**: the polymorphic lift fires on
-    the commitment-space framework too. Krifka's `KrifkaState`
-    represents the same dialogue state as a tree of indexed
-    commitments rather than a flat list of propositions, but the
-    direct-argument inference is equally valid — the HasAssertion
-    typeclass abstracts over the representational difference. -/
+/-- The same inference on a commitment space ([krifka-2015]), whose common ground is what its
+root entails: `HasAssertion` abstracts over the representation. -/
 theorem direct_argument_reasonable_krifka {W : Type*}
-    (s : Discourse.Krifka.KrifkaState W) (sel : SelectionFunction W)
+    (s : Commitment.Space (Set (Commitment Discourse.DiscourseRole W)))
+    (sel : SelectionFunction W)
     (notA B AorB : W → Prop)
     (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
     (h_constraint : pragmaticConstraint sel

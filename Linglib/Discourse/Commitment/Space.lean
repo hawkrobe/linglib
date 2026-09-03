@@ -1,1042 +1,337 @@
-import Linglib.Discourse.CommonGround
-import Linglib.Discourse.QUD.Issue
-import Linglib.Discourse.SpeechAct
+import Mathlib.Order.Interval.Set.Basic
 import Linglib.Discourse.Commitment.Basic
+import Linglib.Semantics.Questions.Basic
+import Linglib.Discourse.QUD.Issue
+import Linglib.Discourse.Roles
 
 /-!
-# Commitment Space Semantics
+# Commitment spaces
 
-[krifka-2015] [cohen-krifka-2014]
+A commitment space is a set of discourse states with a least member, its root: the current
+state together with its projected continuations ([cohen-krifka-2014] (22), [krifka-2015] (2),
+[van-der-leer-2026] Definition 8). Over any preorder of states the operations are the same:
+a basic speech act re-roots the space at the updated root and keeps the states above it, which
+on a projected continuation is Cohen and Krifka's restriction `C + A = {c ∈ C | √C + A ⊆ c}`;
+a question keeps the root and proposes continuations; a denegation removes the states an act
+would reach, which is a rooted space exactly when the act is not redundant, so that two
+denegations cancel and de Morgan's laws hold for them ([cohen-krifka-2014] (28), (34)).
 
-Krifka's commitment-space framework: the discourse state is a tree — the
-root (√C) is the current CommonGround holding speaker-indexed commitments `S⊢φ`,
-and continuations are proposed future states from questions.
+Commitment Space Semantics is the instance over sets of `Commitment`s ordered by inclusion,
+where the root is the intersection of the space: assertion `S⊢φ`, refusal `¬S⊢φ`, monopolar,
+bipolar and high-negation questions ([krifka-2015] (14), (27), (23), (39)), and `GRANT φ` as the
+denegation of asserting `¬φ` ([cohen-krifka-2014] (38)). The issue a space raises, its
+`Discourse.HasIssue` projection, is settled by the information states inside some
+continuation's context set.
 
-- Assertion narrows every state with `commit speaker φ`.
-- Monopolar questions add a `commit addressee φ` continuation.
-- Bipolar questions add two non-contradictory sibling continuations
-  (`commit addressee φ` and `commit addressee ¬φ`).
-- High-negation questions (`Didn't I win?`) add a `refuse addressee φ`
-  continuation, distinct from low-negation (`Did I not win?`) which adds
-  `commit addressee ¬φ`.
+## Main definitions
 
-Per-agent commitment slates track individual public commitments, enabling
-the commitment/belief separation (lying, hedging).
+* `Commitment.Space S` — rooted sets of states, with `restrict`, `reroot`, `propose`, `sdiff`,
+  `union`, `denegate`, and the free space `full`.
+* `Space.assert`, `Space.refuse`, `Space.monopolarQuestion`, `Space.bipolarQuestion`,
+  `Space.highNegationQuestion`, `Space.grant` — Commitment Space Semantics.
+* `Space.toIssue` — the issue projection.
 
-## Speaker indexing
+## Main results
 
-The paper's central primitive is the Frege turnstile `S⊢φ` (p. 332):
-assertion is responsibility-undertaking, so what enters the CommonGround is
-"speaker S is committed to the truth of φ", not bare φ. The substrate uses
-`Discourse.Commitment.IndexedCommitment` to model this — the root
-holds indexed commitments, projected to a flat context set via
-`IndexedCommitment.toCommitment` for the CommonGround-as-set view.
+* `Space.reroot_eq_restrict`, `Space.assert_states_of_mem` — a projected assertion is Cohen and
+  Krifka's restriction.
+* `Space.sdiff_sdiff_states`, `Space.union_sdiff_sdiff`, `Space.sdiff_grant_states` — (28), (34)
+  and (40) of [cohen-krifka-2014].
+* `Space.assert_assert_comm`, `Space.full_assert` — assertions commute, and on the free space
+  assertion is the free space of the extended root.
 
-## Sibling files
+## References
 
-`Studies/Krifka2020.lean` houses Krifka 2020's
-TP/JP/ComP/ActP layered-clause framework. The two files are independent
-(neither imports the other); study files target whichever fits.
-
-## Substrate scope
-
-The substrate is **two-role discourse with doxastic/preferential force**.
-Out of scope (would need substrate extensions):
-
-- **Brandom-style scorecards** (Brandom 1994): commitment indexed by both a
-  *keeper* and a *scorer* (per-keeper-per-scorer scoring). The substrate's
-  single `committer : DiscourseRole` is keeper-only.
-- **Searle's full 5-force taxonomy** (assertive, directive, commissive,
-  expressive, declaration): collapsed here to doxastic/preferential per
-  the [lauer-2013] duality. Expressives (wishes, exclamatives) and
-  declarations (performatives) are not modelled.
-- **Time-indexed commitments** (Lauer 2013 PB/PEP carry a `t` index): the
-  substrate has no time index; `rejectFirst` is the closest proxy for
-  rescission. True time-indexed commitment dynamics need a separate layer.
-- **Anderson 2021 distributional CommonGround**: a probability distribution
-  over worlds, hosted as `Measure W` in `Studies/Anderson2021.lean`. It is
-  *not* routed through the commitment-space substrate: a `CommitmentSpace W ℝ`
-  would carry unconstrained per-world reals (no sum-to-one, no normalisation),
-  losing exactly the structure Anderson's entropy/KL criteria depend on. The
-  two models of the conversational scoreboard are kept distinct.
-
-## Citation discipline
-
-Equation/page citations to [krifka-2015] throughout this file (eqs.
-1, 2, 3, 5, 6, 7, 9, 10, 14, 23, 27, 29, 30, 38, 39, 44, 45 with their
-respective pages 329-343) were verified against the SALT 25 paper PDF
-when added (cf. CHANGELOG entries 0.230.652–0.230.654). Flag drift on
-re-audit if substrate operators are renamed or restructured.
-
+* [A. Cohen and M. Krifka, *Superlative quantifiers and meta-speech acts*
+  (2014)][cohen-krifka-2014]
+* [M. Krifka, *Bias in Commitment Space Semantics: Declarative Questions, Negated Questions,
+  and Question Tags* (2015)][krifka-2015]
+* [T. van der Leer, *Commitments, beliefs and expectations in conversation*
+  (2026)][van-der-leer-2026]
 -/
 
-namespace Discourse.Krifka
-
-open Discourse.Commitment
-  (CommitmentSlate IndexedCommitment IndexedWeightedCommitment CommitmentForce
-   HasSupport CommitmentGrade)
-open Discourse (DiscourseRole)
-open Mood (Illocutionary)
-
--- ════════════════════════════════════════════════════
--- § 1. Commitment Space: Tree Structure ([krifka-2015], eq. (2), p. 329)
--- ════════════════════════════════════════════════════
-
-/-- Agent type for two-participant discourse — abbreviation for the
-    framework-agnostic `Discourse.DiscourseRole`. The alias name
-    `KAgent` mirrors Krifka's `S₁`/`S₂` notation; semantically it IS
-    `DiscourseRole` (no separate inductive, no bridge function). -/
-abbrev KAgent := DiscourseRole
-
-/-- A commitment space ([krifka-2015], eq. (2), p. 329).
-
-    A set of commitment states organized as root + continuations:
-
-    - **root** (√C): the current commitment state — a list of speaker-indexed
-      commitments `S⊢φ` (`IndexedCommitment.commit`) or refusals `¬S⊢φ`
-      (`IndexedCommitment.refuse`). All worlds compatible with the
-      `commit`-projected propositions are "live".
-    - **continuations**: proposed future states, each extending the root
-      with additional commitments. Added by questions, resolved by acceptance
-      (one becomes the new root) or rejection (one is pruned).
-
-    ## Correspondence to Krifka's set-theoretic model
-
-    Krifka's eq. (2) p. 329: `C is a commitment space if C is a set of
-    commitment states, ∩C ≠ ∅ and ∩C ∈ C`. The set of states represented
-    by this structure is `root :: continuations` — `root` IS √C (= ∩C,
-    always present as a state in C), and `continuations` are the
-    additional non-root states. Krifka's `{√C} ∪ X` operands in eqs. (23)
-    and (27) correspond to keeping `root` as the always-present floor
-    while unioning state-sets into `continuations`. The `rejectFirst`
-    operation realises Krifka's ℜ retraction (eq. 10, p. 331): pruning a
-    proposed continuation leaves √C as the only remaining floor, which is
-    exactly the `{√C}` disjunct.
-
-    ## Krifka's key operations
-
-    - Assert `C + S⊢φ` (eq. (1) and (3), p. 329): adds `commit S φ` to root
-      and continuations, narrowing every state.
-    - Monopolar question `C + ?φ` (eq. (27), p. 336):
-      `{√C} ∪ (C + S₂⊢φ)` — preserve root, propose addressee committing to φ.
-    - Bipolar question (eq. (23), p. 335):
-      `{√C} ∪ (C + S₂⊢φ) ∪ (C + S₂⊢¬φ)` — two non-contradictory siblings.
-    - Accept: take a continuation as the new root.
-    - Reject: prune a continuation (= return to `{√C}` disjunct).
-
-    The tree structure captures the assertion/question asymmetry:
-    assertions modify the root (the CommonGround changes), while questions only
-    add continuations (the CommonGround is preserved until acceptance). -/
-structure CommitmentSpace (W : Type*) (G : Type*) where
-  /-- Root commitment state √C: indexed commitments currently in the CommonGround.
-      The grade type `G` lets the same shape host binary (G = Prop),
-      distributional (G = ℝ), or credence-bounded (G = ℚ) commitments. -/
-  root : List (IndexedWeightedCommitment W G)
-  /-- Proposed future states. Questions add these; acceptance promotes
-      one to root. Each continuation is a list of indexed commitments
-      that extends (narrows) the root. -/
-  continuations : List (List (IndexedWeightedCommitment W G))
-
-namespace CommitmentSpace
-
-variable {W G : Type*}
-
-/-- The empty commitment space: no commitments, no continuations. -/
-def empty : CommitmentSpace W G := ⟨[], []⟩
-
-/-- Assert weight `weight` on behalf of `committer`
-    ([krifka-2015], eq. (1) and (3), p. 329).
-
-    `C + S⊢φ`: adds `commit committer force weight` to the root and to
-    every continuation. Any accepted continuation will also entail the
-    weight (with the speaker index recorded). The `force` defaults to
-    `.doxastic` (Krifka's standard declarative case); pass `.preferential`
-    for the [lauer-2013] imperative-as-PEP case. -/
-def assert (cs : CommitmentSpace W G) (committer : DiscourseRole)
-           (weight : W → G) (force : CommitmentForce := .doxastic) :
-    CommitmentSpace W G :=
-  let ic : IndexedWeightedCommitment W G :=
-    IndexedWeightedCommitment.commit committer force weight
-  { root := ic :: cs.root
-    continuations := cs.continuations.map (ic :: ·) }
-
-/-- Monopolar question: propose that the **addressee** commit to weight
-    `weight` ([krifka-2015], eq. (27), p. 336).
-
-    `C + ?φ = {√C} ∪ (C + S₂⊢φ)`
-
-    The root stays unchanged (CommonGround preserved). A new continuation is added
-    where the addressee has committed to `weight`. Existing continuations
-    are also extended by the addressee-commitment. The committer is
-    hardcoded to `.addressee` per Krifka's discussion of (30), p. 337:
-    "the ? head identifies the committer as S₂". -/
-def monopolarQuestion (cs : CommitmentSpace W G) (weight : W → G)
-                      (force : CommitmentForce := .doxastic) :
-    CommitmentSpace W G :=
-  let ic : IndexedWeightedCommitment W G :=
-    IndexedWeightedCommitment.commit .addressee force weight
-  { root := cs.root
-    continuations := (ic :: cs.root) :: cs.continuations.map (ic :: ·) }
-
-/-- High-negation polar question ([krifka-2015], §4 around eq. (39), p. 340).
-
-    `Didn't I win?` = monopolar question with negation at the ComP layer
-    (denegation of the addressee's commitment to φ). Proposes that the
-    addressee NOT commit to φ — pragmatically weaker than committing to ¬φ.
-
-    Polymorphic in `G`: the `refuse` constructor's content is always
-    `W → Prop` (a meta-fact about the agent's slate, not a graded weight),
-    so this operator works for any grade type.
-
-    Per [krifka-2015] p. 340: "adding ¬S₂⊢φ to the commitment space
-    precludes commitment to φ, but is compatible with commitment to ¬φ.
-    Hence ¬S₂⊢φ is pragmatically weaker than S₂⊢¬φ." -/
-def negatedQuestionHigh (cs : CommitmentSpace W G) (φ : W → Prop)
-                         (force : CommitmentForce := .doxastic) :
-    CommitmentSpace W G :=
-  let ic : IndexedWeightedCommitment W G :=
-    IndexedWeightedCommitment.refuse .addressee force φ
-  { root := cs.root
-    continuations := (ic :: cs.root) :: cs.continuations.map (ic :: ·) }
-
-/-- The space has no open continuations (no unresolved proposals).
-
-    Renamed from `isSettled` — Krifka has no stability/settledness notion
-    in the paper; questions just "restrict legal continuations" (p. 335).
-    The right characterization of this state is structural, not pragmatic. -/
-def hasNoOpenContinuations : CommitmentSpace W G → Prop
-  | ⟨_, []⟩ => True
-  | ⟨_, _ :: _⟩ => False
-
-instance : DecidablePred (@hasNoOpenContinuations W G) := fun cs => by
-  cases cs with | mk _ conts =>
-    cases conts <;> (unfold hasNoOpenContinuations; infer_instance)
-
-/-- Accept the first continuation: it becomes the new root.
-    The CommonGround is updated to the accepted proposal's content. -/
-def acceptFirst : CommitmentSpace W G → CommitmentSpace W G
-  | ⟨_, c :: rest⟩ => ⟨c, rest⟩
-  | cs => cs
-
-/-- Reject the first continuation: prune it.
-    The CommonGround is unchanged; the proposal is discarded. -/
-def rejectFirst : CommitmentSpace W G → CommitmentSpace W G
-  | ⟨r, _ :: rest⟩ => ⟨r, rest⟩
-  | cs => cs
-
-/-- Denegate a speech act `~A`. Originally introduced by
-    [cohen-krifka-2014] §2 (around eq. (26), p. 51, with full
-    development through eqs. 31–38, pp. 52–53); inherited by
-    [krifka-2015] eq. (5), p. 330.
-
-    `C + ~A = C — [C + A]`: the result keeps √C and prunes the legal
-    continuations that would arise from performing the act `A`. The
-    caller supplies a Prop-valued predicate `actMarker` identifying the
-    commitment that `A` would add to continuations, plus a
-    `DecidablePred` instance for the filter. We keep continuations
-    that do NOT contain a matching commitment.
-
-    Concrete example: `denegate cs (fun ic => ic matches ASSERT(speaker, doxastic, φ))`
-    is `~ASSERT(φ)` — the GRANT(¬φ) of [cohen-krifka-2014] eq. (38).
-
-    Polymorphic in `G`. The predicate-based formulation avoids the
-    soundness issue of trying to decide equality on `W → G` (generally
-    undecidable for infinite W). -/
-def denegate (actMarker : IndexedWeightedCommitment W G → Prop)
-              [DecidablePred actMarker] (cs : CommitmentSpace W G) :
-    CommitmentSpace W G :=
-  { root := cs.root
-    continuations := cs.continuations.filter
-      (fun cont => decide (¬ ∃ ic ∈ cont, actMarker ic)) }
-
-/-- Denegation preserves the root (CommonGround unchanged) — Krifka 2015 p. 330:
-    "denegation does not change the root of the commitment space, but
-    prunes its legal developments." -/
-@[simp]
-theorem denegate_preserves_root (cs : CommitmentSpace W G)
-    (actMarker : IndexedWeightedCommitment W G → Prop)
-    [DecidablePred actMarker] :
-    (cs.denegate actMarker).root = cs.root := rfl
-
-/-- Denegation is idempotent: filtering twice with the same marker is
-    the same as filtering once (`List.filter_filter` over the same
-    predicate). Worth noting because Krifka's set-difference semantics
-    has the same property: `(C - X) - X = C - X`. -/
-theorem denegate_idempotent (cs : CommitmentSpace W G)
-    (actMarker : IndexedWeightedCommitment W G → Prop)
-    [DecidablePred actMarker] :
-    (cs.denegate actMarker).denegate actMarker = cs.denegate actMarker := by
-  cases cs with | mk r conts =>
-    simp only [denegate, List.filter_filter, Bool.and_self]
-
-/-- Denegation never grows the continuation list — `List.filter` is
-    length-monotone. -/
-theorem denegate_continuation_count_le (cs : CommitmentSpace W G)
-    (actMarker : IndexedWeightedCommitment W G → Prop)
-    [DecidablePred actMarker] :
-    (cs.denegate actMarker).continuations.length ≤ cs.continuations.length := by
-  cases cs with | mk r conts =>
-    exact List.length_filter_le _ _
-
-/-- If no continuation matches the marker, denegation is the identity.
-    The substrate-level form of "you can only denegate what's actually
-    in play". -/
-theorem denegate_no_match_eq_self (cs : CommitmentSpace W G)
-    (actMarker : IndexedWeightedCommitment W G → Prop)
-    [DecidablePred actMarker]
-    (h : ∀ cont ∈ cs.continuations, ¬ ∃ ic ∈ cont, actMarker ic) :
-    cs.denegate actMarker = cs := by
-  cases cs with | mk r conts =>
-    simp only [denegate]
-    congr 1
-    apply List.filter_eq_self.mpr
-    intro cont hcont
-    simp only [decide_eq_true_eq]
-    exact h cont hcont
-
-/-- Converse of `denegate_no_match_eq_self`: every continuation that
-    SURVIVES denegation does not match the marker. The structural fact
-    that justifies calling `denegate` "filtering out matching paths". -/
-theorem denegate_surviving_no_match (cs : CommitmentSpace W G)
-    (actMarker : IndexedWeightedCommitment W G → Prop)
-    [DecidablePred actMarker] :
-    ∀ cont ∈ (cs.denegate actMarker).continuations,
-      ¬ ∃ ic ∈ cont, actMarker ic := by
-  intro cont hcont
-  cases cs with | mk r conts =>
-    simp only [denegate, List.mem_filter, decide_eq_true_eq] at hcont
-    exact hcont.2
-
-/-! ### Polymorphic operators via `[CommitmentGrade G]`
-
-The following operators are polymorphic in `G` via the
-`CommitmentGrade` typeclass (`Discourse/Commitment.lean` §4):
-`bipolarQuestion` and `negatedQuestionLow` use `complement` to
-construct the "no" branch; `toContextSet` and the force-aware variants
-use `support` to project per-world weights to `Prop`.
-
-Instances are provided for `G = Prop` (`complement := Not`,
-`support := id`) and `G = Bool` (`complement := !`,
-`support := (· = true)`). For other `G` (ℚ, ℝ), provide the instance
-at the consumer's site.
--/
-
-/-- Bipolar question: propose two sibling continuations, one where the
-    addressee commits to φ and one where the addressee commits to
-    `complement φ` ([krifka-2015], eq. (23), p. 335).
-
-    `C + ?φ_bi = {√C} ∪ (C + S₂⊢φ) ∪ (C + S₂⊢¬φ)`
-
-    Polymorphic in `G` via `[CommitmentGrade G]`'s `complement`. -/
-def bipolarQuestion [CommitmentGrade G] (cs : CommitmentSpace W G)
-    (φ : W → G) : CommitmentSpace W G :=
-  let yes : IndexedWeightedCommitment W G :=
-    .commit .addressee .doxastic φ
-  let no  : IndexedWeightedCommitment W G :=
-    .commit .addressee .doxastic (fun w => CommitmentGrade.complement (φ w))
-  { root := cs.root
-    -- Krifka eq. (23) is symmetric in φ and ¬φ: prior continuations
-    -- propagate through BOTH the yes-branch and the no-branch.
-    continuations := (yes :: cs.root) :: (no :: cs.root) ::
-                      (cs.continuations.map (yes :: ·) ++
-                       cs.continuations.map (no :: ·)) }
-
-/-- Low-negation polar question ([krifka-2015], §4 around eq. (29), p. 339).
-
-    `Did I not win?` = monopolar question with `complement φ` as TP content.
-    Proposes that the addressee commit to ¬φ. Polymorphic in `G` via
-    `[CommitmentGrade G]`'s `complement`. -/
-def negatedQuestionLow [CommitmentGrade G] (cs : CommitmentSpace W G)
-    (φ : W → G) : CommitmentSpace W G :=
-  cs.monopolarQuestion (fun w => CommitmentGrade.complement (φ w))
-
-/-- Context set from root: worlds compatible with all root commitments,
-    projected via `IndexedWeightedCommitment.toCommitment` (which uses
-    the typeclass's `support` predicate per-grade-value).
-
-    Conflates doxastic and preferential commitments — both narrow
-    the context set. For force-aware projections that separate the
-    two attitudes (per [condoravdi-lauer-2012]), use
-    `toDoxasticContextSet` / `toPreferentialContextSet`. -/
-def toContextSet [HasSupport G] (cs : CommitmentSpace W G) :
-    Set W :=
-  fun w => ∀ ic ∈ cs.root, IndexedWeightedCommitment.toCommitment ic w
-
-/-- Doxastic-only context set: worlds compatible with the root's
-    `force = .doxastic` commitments only (preferential commitments are
-    ignored).
-
-    Models [condoravdi-lauer-2012]'s `PB_w(Sp, p)` projection: "the
-    public BELIEFS the speaker is committed to". A declarative assertion
-    contributes here; an imperative utterance does not. -/
-def toDoxasticContextSet [HasSupport G] (cs : CommitmentSpace W G) :
-    Set W :=
-  fun w => ∀ ic ∈ cs.root,
-    ic.force = .doxastic → IndexedWeightedCommitment.toCommitment ic w
-
-/-- Preferential-only context set: worlds compatible with the root's
-    `force = .preferential` commitments only (doxastic commitments are
-    ignored).
-
-    Models [condoravdi-lauer-2012]'s `PEP_w(Sp, p)` projection:
-    "the public PREFERENCES the speaker is committed to act on". An
-    imperative utterance contributes here; a declarative assertion does
-    not. The two projections are independent (Lauer 2013 Ch. 5
-    closure (5.33b) `pep(p) ∈ PB ⟺ p ∈ PEP` is a HIGHER-ORDER
-    interaction not modeled by these flat projections). -/
-def toPreferentialContextSet [HasSupport G] (cs : CommitmentSpace W G) :
-    Set W :=
-  fun w => ∀ ic ∈ cs.root,
-    ic.force = .preferential → IndexedWeightedCommitment.toCommitment ic w
-
-/-- Sanity: the conflated `toContextSet` is the conjunction of the
-    two force-projections. (`refuse` cases project to True regardless
-    of force, so the doxastic and preferential projections agree on them.) -/
-theorem toContextSet_eq_doxastic_and_preferential [HasSupport G]
-    (cs : CommitmentSpace W G) (w : W) :
-    cs.toContextSet w ↔
-      cs.toDoxasticContextSet w ∧ cs.toPreferentialContextSet w := by
-  constructor
-  · intro h
-    refine ⟨?_, ?_⟩
-    · intro ic hic _
-      exact h ic hic
-    · intro ic hic _
-      exact h ic hic
-  · rintro ⟨hd, hp⟩ ic hic
-    cases hf : ic.force
-    · exact hd ic hic hf
-    · exact hp ic hic hf
-
-/-! ### Theorems -/
-
-/-- Empty space has no open continuations. -/
-theorem empty_no_open : (empty : CommitmentSpace W G).hasNoOpenContinuations :=
-  True.intro
-
-/-- Assertion preserves the no-open-continuations property
-    (no new continuations are added by `assert`). -/
-theorem assert_preserves_no_open (cs : CommitmentSpace W G) (_s : DiscourseRole)
-    (_weight : W → G) (h : cs.hasNoOpenContinuations) :
-    (cs.assert _s _weight).hasNoOpenContinuations := by
-  cases cs with | mk r conts =>
-    cases conts with
-    | nil => exact True.intro
-    | cons _ _ => exact h.elim
-
-/-- Monopolar question creates an open continuation
-    (negation of the no-open property). -/
-theorem monopolar_opens (cs : CommitmentSpace W G) (_weight : W → G)
-    (h : cs.hasNoOpenContinuations) :
-    ¬ (cs.monopolarQuestion _weight).hasNoOpenContinuations := by
-  cases cs with | mk r conts =>
-    cases conts with
-    | nil => exact id
-    | cons _ _ => exact h.elim
-
-/-- Accepting a monopolar question's sole continuation re-closes the space. -/
-theorem accept_monopolar_closes (cs : CommitmentSpace W G) (weight : W → G)
-    (h : cs.hasNoOpenContinuations) :
-    (cs.monopolarQuestion weight).acceptFirst.hasNoOpenContinuations := by
-  cases cs with | mk r conts =>
-    cases conts with
-    | nil => exact True.intro
-    | cons _ _ => exact h.elim
-
-/-- Root after assertion (binary case) contains the asserted indexed commitment. -/
-theorem assert_in_root (cs : CommitmentSpace W Prop) (s : DiscourseRole)
-    (φ : W → Prop) :
-    IndexedCommitment.commit s φ ∈ (cs.assert s φ).root := by
-  simp only [assert, IndexedCommitment.commit, List.mem_cons, true_or]
-
-/-- Monopolar question preserves the root (CommonGround unchanged). -/
-@[simp]
-theorem monopolarQuestion_preserves_root (cs : CommitmentSpace W G)
-    (weight : W → G) :
-    (cs.monopolarQuestion weight).root = cs.root := rfl
-
-/-- Bipolar question preserves the root (CommonGround unchanged). -/
-@[simp]
-theorem bipolarQuestion_preserves_root [CommitmentGrade G]
-    (cs : CommitmentSpace W G) (φ : W → G) :
-    (cs.bipolarQuestion φ).root = cs.root := rfl
-
-end CommitmentSpace
-
-/-- Krifka's discourse state: per-agent commitment slates + shared
-    commitment space (tree).
-
-    The commitment space tracks the shared discourse structure: what's in
-    the CommonGround (root) and what's been proposed (continuations). Per-agent
-    slates track individual public commitments, enabling the
-    commitment/belief separation central to Krifka's theory. -/
-structure KrifkaState (W : Type*) where
-  /-- Speaker's individual commitment slate (binary, propositional). -/
-  speakerCS : CommitmentSlate W
-  /-- Addressee's individual commitment slate. -/
-  addresseeCS : CommitmentSlate W
-  /-- Shared commitment space (tree): CommonGround + proposed updates.
-      Binary specialisation `CommitmentSpace W Prop` of the polymorphic
-      `CommitmentSpace W G`. Future graded-state extensions
-      (Lauer-credence, Anderson-distributional) belong in a separate
-      `WeightedKrifkaState W G` rather than here. -/
-  space : CommitmentSpace W Prop
-
-namespace KrifkaState
-
-variable {W : Type*}
-
-/-- Initial state: no commitments, empty space. -/
-def empty : KrifkaState W :=
-  ⟨CommitmentSlate.empty, CommitmentSlate.empty, CommitmentSpace.empty⟩
-
-/-- Krifka's commitment operator `+_S₁ S₁⊢p` ([krifka-2015], eq. (14), p. 332).
-
-    Speaker (default) commits to p, narrowing the entire space and
-    recording on the speaker's slate. Pass `committer := .addressee`
-    for the addressee-commits case. The `force` defaults to `.doxastic`
-    (ofSet assertion); pass `.preferential` for the
-    [condoravdi-lauer-2012] imperative-as-PEP analysis. -/
-def assert (s : KrifkaState W) (p : W → Prop)
-    (committer : DiscourseRole := .speaker)
-    (force : CommitmentForce := .doxastic) : KrifkaState W :=
-  match committer with
-  | .speaker =>
-    { s with
-      speakerCS := s.speakerCS.add p
-      space := s.space.assert .speaker p force }
-  | .addressee =>
-    { s with
-      addresseeCS := s.addresseeCS.add p
-      space := s.space.assert .addressee p force }
-
-/-- Monopolar question ([krifka-2015], eq. (27), p. 336):
-    speaker proposes that addressee commit to φ. -/
-def monopolarQuestion (s : KrifkaState W) (φ : W → Prop) : KrifkaState W :=
-  { s with space := s.space.monopolarQuestion φ }
-
-/-- Bipolar question ([krifka-2015], eq. (23), p. 335):
-    propose two sibling continuations (φ-commit and ¬φ-commit). -/
-def bipolarQuestion (s : KrifkaState W) (φ : W → Prop) : KrifkaState W :=
-  { s with space := s.space.bipolarQuestion φ }
-
-/-- Low-negation polar question ([krifka-2015], §4): `Did I not win?`. -/
-def negatedQuestionLow (s : KrifkaState W) (φ : W → Prop) : KrifkaState W :=
-  { s with space := s.space.negatedQuestionLow φ }
-
-/-- High-negation polar question ([krifka-2015], §4): `Didn't I win?`. -/
-def negatedQuestionHigh (s : KrifkaState W) (φ : W → Prop) : KrifkaState W :=
-  { s with space := s.space.negatedQuestionHigh φ }
-
-/-- Accept the first continuation: it becomes the new CommonGround root. -/
-def acceptContinuation (s : KrifkaState W) : KrifkaState W :=
-  { s with space := s.space.acceptFirst }
-
-/-- Reject the first continuation: prune it. -/
-def rejectContinuation (s : KrifkaState W) : KrifkaState W :=
-  { s with space := s.space.rejectFirst }
-
-/-- Context set: from the commitment space root (= CommonGround), via
-    `IndexedCommitment.toCommitment` projection. -/
-def contextSet (s : KrifkaState W) : Set W :=
-  s.space.toContextSet
-
-/-- The space has no open continuations. -/
-def hasNoOpenContinuations (s : KrifkaState W) : Prop :=
-  s.space.hasNoOpenContinuations
-
-instance : DecidablePred (@hasNoOpenContinuations W) := fun s =>
-  inferInstanceAs (Decidable s.space.hasNoOpenContinuations)
-
-end KrifkaState
-
--- ════════════════════════════════════════════════════
--- § 2. KrifkaState theorems
--- ════════════════════════════════════════════════════
-
-/-- Commitment Closure: assertion immediately narrows the commitment space.
-    The root after asserting φ on behalf of `committer` is the original root
-    with the indexed `commit committer φ` prepended.
-
-    In the tree model, this is definitional: `assert` adds the indexed
-    commitment to all nodes including the root. -/
-theorem commitment_closure {W : Type*} (s : KrifkaState W) (p : W → Prop)
-    (committer : DiscourseRole) :
-    (s.assert p committer).space.root =
-      IndexedCommitment.commit committer p :: s.space.root := by
-  cases committer <;> rfl
-
-/-- Questions don't change the CommonGround: the root is preserved. -/
-theorem monopolarQuestion_preserves_cg {W : Type*} (s : KrifkaState W) (p : W → Prop) :
-    (s.monopolarQuestion p).space.root = s.space.root := rfl
-
-/-- Question then accept ≈ assert (on the root): accepting a monopolar
-    question's sole continuation yields the same CommonGround as the addressee
-    directly asserting φ.
-
-    This connects the two modes of updating: direct assertion (committer
-    imposes) and question-then-accept (speaker proposes, addressee accepts
-    by committing themselves). The roots match because both produce
-    `commit .addressee φ :: root₀`. -/
-theorem monopolarQuestion_accept_eq_assert_addressee_root {W : Type*}
-    (s : KrifkaState W) (p : W → Prop) (h : s.space.hasNoOpenContinuations) :
-    (s.monopolarQuestion p).acceptContinuation.space.root =
-    (s.assert p .addressee).space.root := by
-  cases s with | mk sCS aCS space =>
-    cases space with | mk r conts =>
-      cases conts with
-      | nil => rfl
-      | cons _ _ => exact h.elim
-
--- ════════════════════════════════════════════════════
--- § 3. Actor vs Committer ([krifka-2015], p. 337 discussion of (30))
--- ════════════════════════════════════════════════════
-
-/-- The two discourse roles in a speech act.
-
-    Every speech act has an **actor** (who performs the act) and a
-    **committer** (who undertakes the commitment). These can diverge:
-
-    - Assertion: actor = speaker, committer = speaker
-    - Monopolar question: actor = speaker, committer = addressee
-      (the speaker proposes that the addressee commit)
-
-    Per [krifka-2015] p. 337 around eq. (30): the `?` ActP head
-    identifies the committer as `S₂`, the addressee; the actor of the
-    speech act itself remains `S₁`. -/
-structure ActorCommitter where
-  actor     : KAgent
-  committer : KAgent
-  deriving DecidableEq, Repr
-
-/-- In assertions, speaker is both actor and committer. -/
-def assertionRoles : ActorCommitter :=
-  ⟨.speaker, .speaker⟩
-
-/-- In monopolar questions, speaker acts but addressee commits
-    ([krifka-2015], p. 337 discussion of eq. (30)). -/
-def questionRoles : ActorCommitter :=
-  ⟨.speaker, .addressee⟩
-
-/-- Assertions and questions differ in who commits. -/
-theorem actor_committer_diverge :
-    assertionRoles.actor = questionRoles.actor ∧
-    assertionRoles.committer ≠ questionRoles.committer := by decide
-
--- ════════════════════════════════════════════════════
--- § 4. Speech Act Composition ([krifka-2015], eqs. (6)–(7), p. 330; §5)
--- ════════════════════════════════════════════════════
-
-/-- A speech act in Krifka's framework: ActP content with its
-    discourse function (assertion vs question).
-
-    [krifka-2015] clause structure: ActP > ComP > TP (three layers).
-    [krifka-2020] refines this to ActP > ComP > JP > TP. -/
-structure SpeechAct (W : Type*) where
-  /-- Propositional content (TP layer) -/
-  content : W → Prop
-  /-- Speech act type: assertion (.) or question (?) -/
-  actType : Illocutionary := .declarative
-  /-- Actor/committer assignment -/
-  roles : ActorCommitter := assertionRoles
-
-/-- Construct a monopolar question speech act
-    ([krifka-2015], eq. (27), p. 336):
-    proposes a single continuation where the addressee commits to φ. -/
-def monopolarQuestionAct {W : Type*} (φ : W → Prop) : SpeechAct W :=
-  { content := φ, actType := .interrogative, roles := questionRoles }
-
-/-- Complex speech act: conjunction or disjunction of atomic acts
-    ([krifka-2015], eqs. (6)–(7), p. 330).
-
-    [krifka-2015], §5: question tags involve composition of speech acts.
-    The difference between matching and reverse tags is conjunction vs
-    disjunction:
-    - **conj**: both acts performed as one complex move (matching tag,
-      eq. (44), p. 342)
-    - **disj**: addressee chooses one continuation (reverse tag,
-      eq. (45), p. 343) -/
-inductive ComplexSpeechAct (W : Type*) where
-  /-- A single speech act. -/
-  | atom : SpeechAct W → ComplexSpeechAct W
-  /-- Conjunction: both acts as one complex move (eq. (6), p. 330).
-      "I have won the race, have I?" = ASSERT(rain) & ASK(rain). -/
-  | conj : SpeechAct W → SpeechAct W → ComplexSpeechAct W
-  /-- Disjunction: offer alternative continuations (eq. (7), p. 330).
-      "I have won the race, haven't I?" = ASSERT(φ) ∨ ASK(¬φ). -/
-  | disj : SpeechAct W → SpeechAct W → ComplexSpeechAct W
-
-/-- Extract the component speech acts from a complex speech act. -/
-def ComplexSpeechAct.components {W : Type*} : ComplexSpeechAct W → List (SpeechAct W)
-  | .atom a => [a]
-  | .conj a b => [a, b]
-  | .disj a b => [a, b]
-
-/-- A matching question tag ([krifka-2015], eq. (44), p. 342):
-    conjunction of assertion + monopolar question with same content.
-
-    "I have won the race, have I?" = speaker asserts φ AND asks addressee
-    to confirm. Per Krifka p. 342: "this is **not** a move in which the
-    speaker first makes an assertion and then asks the addressee to make
-    the same assertion. Rather, the two speech acts are first conjoined,
-    and then applied as one complex speech act to the commitment space."
-
-    The committers diverge: speaker for the assertion-leg, addressee for
-    the question-leg. -/
-def matchingTag {W : Type*} (φ : W → Prop) : ComplexSpeechAct W :=
-  .conj
-    { content := φ, actType := .declarative, roles := assertionRoles }
-    (monopolarQuestionAct φ)
-
-/-- A reverse question tag ([krifka-2015], eq. (45), p. 343):
-    disjunction of assertion + monopolar question with opposite content.
-
-    "I have won the race, haven't I?" = speaker offers two continuations.
-    The addressee picks one. -/
-def reverseTag {W : Type*} (φ negφ : W → Prop) : ComplexSpeechAct W :=
-  .disj
-    { content := φ, actType := .declarative, roles := assertionRoles }
-    (monopolarQuestionAct negφ)
-
-/-- In a matching tag, the assertion and question share content. -/
-theorem matching_tag_shared_content {W : Type*} (φ : W → Prop) :
-    (matchingTag φ).components.map SpeechAct.content = [φ, φ] := rfl
-
-/-- In a matching tag, the speaker is actor in both acts. -/
-theorem matching_tag_same_actor {W : Type*} (φ : W → Prop) :
-    (matchingTag φ).components.map (·.roles.actor) = [.speaker, .speaker] := rfl
-
-/-- In a matching tag, the committers differ: speaker for assertion,
-    addressee for question. -/
-theorem matching_tag_committers_diverge {W : Type*} (φ : W → Prop) :
-    (matchingTag φ).components.map (·.roles.committer) = [.speaker, .addressee] := rfl
-
-/-- Matching tags are conjunctions, reverse tags are disjunctions. -/
-theorem tag_type_distinction {W : Type*} (φ negφ : W → Prop) :
-    (∃ a b, matchingTag φ = .conj a b) ∧
-    (∃ a b, reverseTag φ negφ = .disj a b) :=
-  ⟨⟨_, _, rfl⟩, ⟨_, _, rfl⟩⟩
-
-namespace KrifkaState
-
-variable {W : Type*}
-
-/-- Apply a single atomic speech act, dispatching on `actType` and
-    `roles.committer` to the right operator. -/
-def applyAtom (s : KrifkaState W) (a : SpeechAct W) : KrifkaState W :=
-  match a.actType with
-  | .interrogative => s.monopolarQuestion a.content
-  | _ => s.assert a.content a.roles.committer
-
-/-- Apply a complex speech act to a Krifka state.
-
-    For `.conj a b`: per Krifka eq. (6), `[C + 𝔄 & 𝔅] = [C + 𝔄] ∩ [C + 𝔅]
-    ≈ C + 𝔄 + 𝔅 ≈ C + 𝔅 + 𝔄` — sequential composition is the paper's own
-    approximation when there are no anaphoric ties. We compose sequentially.
-
-    For `.disj a b`: speech-act disjunction (eq. (7), p. 330) is
-    `[C + 𝔄] ∪ [C + 𝔅]` on commitment-space sets; the union of two
-    list-shaped continuation structures is non-trivial and may produce
-    a non-rooted space (per Krifka's prose on Figure 5, p. 330). Left
-    as `sorry` to avoid silently returning a wrong answer. Reverse-tag
-    worked examples are blocked on this; the structural theorem
-    `reverse_tag_is_disjunction` does not depend on `applyComplex`. -/
-def applyComplex (s : KrifkaState W) : ComplexSpeechAct W → KrifkaState W
-  | .atom a => s.applyAtom a
-  | .conj a b => (s.applyAtom a).applyAtom b
-  | .disj _ _ => sorry
-  -- TODO: speech-act disjunction (Krifka eq. (7), p. 330) requires lifting
-  -- list-of-list continuations to a set-union semantics; currently no
-  -- consumer needs this. Implement when the first reverse-tag worked
-  -- example lands.
-
-end KrifkaState
-
--- ════════════════════════════════════════════════════
--- § 5. HasCommonGround Instances
--- ════════════════════════════════════════════════════
-
-/-- A polymorphic commitment space projects to the principal common ground of
-    its root, using the `[HasSupport G]` typeclass's `support` projection.
-    Recovers the binary case at `G = Prop` definitionally (via `support := id`
-    in the `Prop` instance). -/
-instance {W G : Type*} [HasSupport G] :
-    HasCommonGround (CommitmentSpace W G) W where
-  commonGround cs := Filter.principal {w | cs.toContextSet w}
-
-/-- A Krifka state projects via the commitment space root. -/
-instance {W : Type*} : HasCommonGround (KrifkaState W) W where
-  commonGround s := Filter.principal {w | s.contextSet w}
-
-/-- KrifkaState common ground agrees with CommitmentSpace common ground. -/
-theorem krifkaState_commonGround_eq_space {W : Type*} (s : KrifkaState W) :
-    commonGround s = commonGround s.space := rfl
-
-open Discourse.Commitment (IndexedWeightedCommitment)
-
-/-- Krifka commitment-space instance for `HasAssertion`: assertion prepends
-    `commit speaker doxastic φ` to the root, whose projection through
-    `HasSupport` narrows the context set by exactly `φ`. -/
-instance instHasAssertion {W : Type*} :
-    HasAssertion (KrifkaState W) W where
-  initial := KrifkaState.empty
-  assert s φ := s.assert φ
-  commonGround_initial := by
-    have h : {w | (KrifkaState.empty : KrifkaState W).contextSet w} = Set.univ :=
-      Set.eq_univ_of_forall fun _ _ hic => absurd hic List.not_mem_nil
-    show Filter.principal {w | (KrifkaState.empty : KrifkaState W).contextSet w} = ⊤
-    rw [h, Filter.principal_univ]
-  commonGround_assert s φ := by
-    show Filter.principal {w | (s.assert φ).contextSet w} =
-      Filter.principal {w | s.contextSet w} ⊓ _
-    rw [Filter.inf_principal]
-    refine congrArg _ ?_
-    ext w
-    rw [Set.mem_inter_iff]
+namespace Commitment
+
+
+/-- A commitment space: a set of states with a least member, its root. -/
+@[ext]
+structure Space (S : Type*) [Preorder S] where
+  states : Set S
+  root : S
+  isLeast : IsLeast states root
+
+namespace Space
+
+section Preorder
+
+variable {S : Type*} [Preorder S] (C : Space S) {c d : S}
+
+theorem root_mem : C.root ∈ C.states := C.isLeast.1
+theorem root_le (hc : c ∈ C.states) : C.root ≤ c := C.isLeast.2 hc
+
+/-- The continuations: the members other than the root. -/
+def continuations : Set S := C.states \ {C.root}
+
+/-- The space with only its root. -/
+def singleton (c : S) : Space S := ⟨{c}, c, isLeast_singleton⟩
+
+/-- The free space on `c`: every state above `c`. -/
+def full (c : S) : Space S := ⟨Set.Ici c, c, isLeast_Ici⟩
+
+/-- `C` restricted to the members above `c`, re-rooted at `c`. -/
+def restrict (hc : c ∈ C.states) : Space S :=
+  ⟨{d ∈ C.states | c ≤ d}, c, ⟨⟨hc, le_rfl⟩, fun _ h => h.2⟩⟩
+
+/-- Re-root `C` at `c`, keeping the members above `c`. -/
+def reroot (c : S) : Space S :=
+  ⟨insert c {d ∈ C.states | c ≤ d}, c, ⟨Set.mem_insert _ _, by
+    rintro d (rfl | ⟨-, hd⟩)
+    · exact le_rfl
+    · exact hd⟩⟩
+
+/-- Keep the root and adjoin the states of `D`, all above the root. -/
+def propose (D : Set S) (h : C.root ∈ lowerBounds D) : Space S :=
+  ⟨insert C.root D, C.root, ⟨Set.mem_insert _ _, by
+    rintro d (rfl | hd)
+    · exact le_rfl
+    · exact h hd⟩⟩
+
+/-- Remove the members of `D`, which must miss the root. -/
+def sdiff (D : Set S) (h : C.root ∉ D) : Space S :=
+  ⟨C.states \ D, C.root, ⟨⟨C.root_mem, h⟩, fun _ hd => C.root_le hd.1⟩⟩
+
+/-- The union of two spaces with the same root. -/
+def union (C D : Space S) (h : C.root = D.root) : Space S :=
+  ⟨C.states ∪ D.states, C.root, ⟨Or.inl C.root_mem, by
+    rintro x (hx | hx)
+    · exact C.root_le hx
+    · exact h ▸ D.root_le hx⟩⟩
+
+@[simp] theorem singleton_states (c : S) : (singleton c).states = {c} := rfl
+@[simp] theorem singleton_root (c : S) : (singleton c).root = c := rfl
+@[simp] theorem full_states (c : S) : (full c).states = Set.Ici c := rfl
+@[simp] theorem full_root (c : S) : (full c).root = c := rfl
+@[simp] theorem restrict_states (hc : c ∈ C.states) :
+    (C.restrict hc).states = {d ∈ C.states | c ≤ d} := rfl
+@[simp] theorem restrict_root (hc : c ∈ C.states) : (C.restrict hc).root = c := rfl
+@[simp] theorem reroot_states (c : S) :
+    (C.reroot c).states = insert c {d ∈ C.states | c ≤ d} := rfl
+@[simp] theorem reroot_root (c : S) : (C.reroot c).root = c := rfl
+@[simp] theorem propose_states (D : Set S) (h : C.root ∈ lowerBounds D) :
+    (C.propose D h).states = insert C.root D := rfl
+@[simp] theorem propose_root (D : Set S) (h : C.root ∈ lowerBounds D) :
+    (C.propose D h).root = C.root := rfl
+@[simp] theorem sdiff_states (D : Set S) (h : C.root ∉ D) : (C.sdiff D h).states = C.states \ D :=
+  rfl
+@[simp] theorem sdiff_root (D : Set S) (h : C.root ∉ D) : (C.sdiff D h).root = C.root := rfl
+@[simp] theorem union_states (C D : Space S) (h : C.root = D.root) :
+    (C.union D h).states = C.states ∪ D.states := rfl
+@[simp] theorem union_root (C D : Space S) (h : C.root = D.root) : (C.union D h).root = C.root :=
+  rfl
+
+theorem root_mem_lowerBounds_reroot (h : C.root ≤ c) :
+    C.root ∈ lowerBounds (C.reroot c).states := by
+  rintro d (rfl | ⟨-, hd⟩)
+  · exact h
+  · exact h.trans hd
+
+/-- Re-rooting at a member is restriction. -/
+theorem reroot_eq_restrict (hc : c ∈ C.states) : C.reroot c = C.restrict hc := by
+  ext x
+  · simp only [reroot_states, restrict_states, Set.mem_insert_iff, Set.mem_ofPred_eq]
+    refine ⟨fun h => ?_, Or.inr⟩
+    rcases h with rfl | h
+    exacts [⟨hc, le_rfl⟩, h]
+  · rfl
+
+/-- Restriction is transitive. -/
+theorem restrict_restrict (hc : c ∈ C.states) (hd : d ∈ (C.restrict hc).states) :
+    (C.restrict hc).restrict hd = C.restrict hd.1 := by
+  ext x
+  · simp only [restrict_states, Set.mem_ofPred_eq]
+    exact ⟨fun ⟨⟨hx, _⟩, hdx⟩ => ⟨hx, hdx⟩, fun ⟨hx, hdx⟩ => ⟨⟨hx, hd.2.trans hdx⟩, hdx⟩⟩
+  · rfl
+
+/-- On the free space, re-rooting above the root is the free space of the new root. -/
+theorem reroot_full (h : c ≤ d) : (full c).reroot d = full d := by
+  ext x
+  · simp only [reroot_states, full_states, Set.mem_insert_iff, Set.mem_ofPred_eq, Set.mem_Ici]
+    refine ⟨fun hx => ?_, fun hx => Or.inr ⟨h.trans hx, hx⟩⟩
+    rcases hx with rfl | hx
+    exacts [le_rfl, hx.2]
+  · rfl
+
+/-- Two denegations cancel ([cohen-krifka-2014] (28)). -/
+theorem sdiff_sdiff_states {D : Set S} (hD : D ⊆ C.states) (h : C.root ∉ D) :
+    C.states \ (C.sdiff D h).states = D :=
+  Set.sdiff_sdiff_cancel_left hD
+
+/-- De Morgan for denegations ([cohen-krifka-2014] (34)): `∼A ∨ ∼B = ∼[A & B]`. -/
+theorem union_sdiff_sdiff (D E : Set S) (hD : C.root ∉ D) (hE : C.root ∉ E) :
+    (C.sdiff D hD).union (C.sdiff E hE) rfl = C.sdiff (D ∩ E) fun h => hD h.1 :=
+  Space.ext Set.sdiff_inter.symm rfl
+
+end Preorder
+
+section PartialOrder
+
+variable {S : Type*} [PartialOrder S] (C : Space S) {c d : S}
+
+/-- The root is the unique least member. -/
+theorem eq_root (h : IsLeast C.states c) : c = C.root := h.unique C.isLeast
+
+/-- Re-rooting twice upward is re-rooting once. -/
+theorem reroot_reroot (h : c ≤ d) : (C.reroot c).reroot d = C.reroot d := by
+  ext x
+  · simp only [reroot_states, Set.mem_insert_iff, Set.mem_ofPred_eq]
     constructor
-    · intro h
-      have head_mem :
-          IndexedWeightedCommitment.commit (G := Prop) .speaker .doxastic φ ∈
-            (s.assert φ).space.root := by
-        simp only [KrifkaState.assert, CommitmentSpace.assert, List.mem_cons, true_or]
-      refine ⟨fun ic hic => h ic ?_, h _ head_mem⟩
-      simp only [KrifkaState.assert, CommitmentSpace.assert, List.mem_cons]
-      exact Or.inr hic
-    · rintro ⟨hs, hφ⟩ ic hic
-      simp only [KrifkaState.assert, CommitmentSpace.assert, List.mem_cons] at hic
-      rcases hic with rfl | hic
-      · exact hφ
-      · exact hs ic hic
+    · rintro (rfl | ⟨rfl | ⟨hx, -⟩, hdx⟩)
+      · exact Or.inl rfl
+      · exact Or.inl (le_antisymm h hdx)
+      · exact Or.inr ⟨hx, hdx⟩
+    · rintro (rfl | ⟨hx, hdx⟩)
+      · exact Or.inl rfl
+      · exact Or.inr ⟨Or.inr ⟨hx, h.trans hdx⟩, hdx⟩
+  · rfl
 
--- ════════════════════════════════════════════════════
--- § 6. Issue projection
--- ════════════════════════════════════════════════════
+end PartialOrder
 
-namespace CommitmentSpace
+end Space
 
-variable {W G : Type*}
 
-section HasSupport
+/-! ### Commitment space semantics -/
 
-variable [HasSupport G]
+namespace Space
 
-/-- Worlds compatible with a single commitment state (a list of indexed
-    commitments). `toContextSet` is `stateSet` of the root. -/
-def stateSet (st : List (IndexedWeightedCommitment W G)) : Set W :=
-  {w | ∀ ic ∈ st, IndexedWeightedCommitment.toCommitment ic w}
+variable {A W : Type*} (C : Space (Set (Commitment A W))) (a : A) (φ : Set W)
+  (force : Commitment.Force)
 
-@[simp] theorem stateSet_cons (ic : IndexedWeightedCommitment W G)
-    (st : List (IndexedWeightedCommitment W G)) :
-    stateSet (ic :: st) =
-      {w | IndexedWeightedCommitment.toCommitment ic w} ∩ stateSet st := by
-  ext w
-  simp [stateSet]
+/-- `C + S⊢φ` ([cohen-krifka-2014] (23), [krifka-2015] (3), (14)): re-root at the root
+extended by `a`'s commitment to `φ`. -/
+def assert (force : Commitment.Force := .doxastic) : Space (Set (Commitment A W)) :=
+  C.reroot (insert ⟨a, φ, .commit, force, .selfGenerated⟩ C.root)
 
-theorem toContextSet_eq_stateSet_root (cs : CommitmentSpace W G) :
-    cs.toContextSet = stateSet cs.root := rfl
+/-- `C + ¬S⊢φ` ([krifka-2015] (39)): re-root at the root extended by `a`'s refusal to commit
+to `φ`. -/
+def refuse (force : Commitment.Force := .doxastic) : Space (Set (Commitment A W)) :=
+  C.reroot (insert ⟨a, φ, .refuse, force, .selfGenerated⟩ C.root)
 
-/-- The issue a commitment space raises. With no open continuations the
-    issue is trivial over the root (ofSet); otherwise an
-    information state settles it iff it lands inside some proposed
-    continuation, within the root's context set. -/
-def toIssue : CommitmentSpace W G → Question W
-  | ⟨root, []⟩ => Question.ofSet (stateSet root)
-  | ⟨root, c :: conts⟩ =>
-    Question.ofLowerSet
-      {i | ∃ st ∈ c :: conts, i ⊆ stateSet root ∩ stateSet st}
-      ⟨c, List.mem_cons_self, Set.empty_subset _⟩
-      (fun _ _ hji ⟨st, hst, hi⟩ => ⟨st, hst, hji.trans hi⟩)
+/-- A monopolar question ([krifka-2015] (27)): keep the root and propose the addressee's
+assertion of `φ`. -/
+def monopolarQuestion : Space (Set (Commitment A W)) :=
+  C.propose (C.assert a φ).states (C.root_mem_lowerBounds_reroot (Set.subset_insert _ _))
 
-@[simp] theorem mem_toIssue_nil {root : List (IndexedWeightedCommitment W G)}
-    {i : Set W} :
-    i ∈ toIssue (⟨root, []⟩ : CommitmentSpace W G) ↔ i ⊆ stateSet root :=
-  Iff.rfl
+/-- A bipolar question ([krifka-2015] (23), (31)): the disjunction of the two monopolar
+questions. -/
+def bipolarQuestion : Space (Set (Commitment A W)) :=
+  (C.monopolarQuestion a φ).union (C.monopolarQuestion a φᶜ) rfl
 
-@[simp] theorem mem_toIssue_cons
-    {root c : List (IndexedWeightedCommitment W G)}
-    {conts : List (List (IndexedWeightedCommitment W G))} {i : Set W} :
-    i ∈ toIssue (⟨root, c :: conts⟩ : CommitmentSpace W G) ↔
-      ∃ st ∈ c :: conts, i ⊆ stateSet root ∩ stateSet st :=
-  Iff.rfl
+/-- A high-negation question ([krifka-2015] (39)): propose the addressee's refusal. -/
+def highNegationQuestion : Space (Set (Commitment A W)) :=
+  C.propose (C.refuse a φ).states (C.root_mem_lowerBounds_reroot (Set.subset_insert _ _))
 
-instance : Discourse.HasIssue (CommitmentSpace W G) W := ⟨toIssue⟩
+/-- Denegation `C + ∼A` ([cohen-krifka-2014] (26), [krifka-2015] (5)): the states not reached by
+`A`, for a non-redundant `A`. -/
+def denegate {S : Type*} [Preorder S] (C : Space S) (act : Space S → Space S)
+    (h : C.root ∉ (act C).states) : Space S :=
+  C.sdiff (act C).states h
 
-/-- Assertion meets the issue with the declarative of the asserted
-    content: on the issue observable, assertion is Stalnakerian. -/
-theorem toIssue_assert (cs : CommitmentSpace W G) (committer : DiscourseRole)
-    (weight : W → G) (force : CommitmentForce) :
-    (cs.assert committer weight force).toIssue =
-      cs.toIssue ⊓ Question.ofSet {w | HasSupport.support (weight w)} := by
-  obtain ⟨root, conts⟩ := cs
-  ext i
-  cases conts with
-  | nil =>
-    show i ⊆ stateSet (_ :: root) ↔ i ⊆ stateSet root ∧ i ⊆ _
-    rw [stateSet_cons, Set.subset_inter_iff]
-    exact and_comm
-  | cons c cs' =>
-    show (∃ st ∈ _ :: cs'.map _, i ⊆ stateSet (_ :: root) ∩ stateSet st) ↔
-      (∃ st ∈ c :: cs', i ⊆ stateSet root ∩ stateSet st) ∧ i ⊆ _
-    constructor
-    · rintro ⟨st', hst', hi⟩
-      rw [List.mem_cons] at hst'
-      rw [stateSet_cons, Set.subset_inter_iff, Set.subset_inter_iff] at hi
-      rcases hst' with rfl | hst'
-      · rw [stateSet_cons, Set.subset_inter_iff] at hi
-        exact ⟨⟨c, List.mem_cons_self,
-          Set.subset_inter hi.1.2 hi.2.2⟩, hi.1.1⟩
-      · obtain ⟨st, hst, rfl⟩ := List.mem_map.mp hst'
-        rw [stateSet_cons, Set.subset_inter_iff] at hi
-        exact ⟨⟨st, List.mem_cons_of_mem _ hst,
-          Set.subset_inter hi.1.2 hi.2.2⟩, hi.1.1⟩
-    · rintro ⟨⟨st, hst, hi⟩, hP⟩
-      rw [Set.subset_inter_iff] at hi
-      rw [List.mem_cons] at hst
-      refine ⟨IndexedWeightedCommitment.commit committer force weight :: st,
-        ?_, ?_⟩
-      · rcases hst with rfl | hst
-        · exact List.mem_cons_self
-        · exact List.mem_cons_of_mem _ (List.mem_map_of_mem hst)
-      · rw [stateSet_cons, stateSet_cons]
-        exact Set.subset_inter (Set.subset_inter hP hi.1)
-          (Set.subset_inter hP hi.2)
+@[simp] theorem assert_root :
+    (C.assert a φ force).root = insert ⟨a, φ, .commit, force, .selfGenerated⟩ C.root := rfl
+@[simp] theorem refuse_root :
+    (C.refuse a φ force).root = insert ⟨a, φ, .refuse, force, .selfGenerated⟩ C.root := rfl
+@[simp] theorem monopolarQuestion_root : (C.monopolarQuestion a φ).root = C.root := rfl
+@[simp] theorem bipolarQuestion_root : (C.bipolarQuestion a φ).root = C.root := rfl
+@[simp] theorem highNegationQuestion_root : (C.highNegationQuestion a φ).root = C.root := rfl
+@[simp] theorem denegate_root {S : Type*} [Preorder S] (C : Space S) (act) (h) :
+    (C.denegate act h).root = C.root := rfl
 
-/-- The issue of a monopolar question is a single proposal — the
-    declarative of the content within the context set. On the issue
-    observable a monopolar question raises no inquisitive issue:
-    Krifka's monopolar bias lives in the commitment structure, below
-    what the issue projection can see. -/
-theorem toIssue_monopolarQuestion (cs : CommitmentSpace W G)
-    (weight : W → G) (force : CommitmentForce) :
-    (cs.monopolarQuestion weight force).toIssue =
-      Question.ofSet
-        ({w | HasSupport.support (weight w)} ∩ cs.toContextSet) := by
-  obtain ⟨root, conts⟩ := cs
-  ext i
-  show (∃ st ∈ _ :: conts.map _, i ⊆ stateSet root ∩ stateSet st) ↔
-    i ⊆ _ ∩ stateSet root
+/-- The root is in the result of an assertion iff the assertion is redundant. -/
+theorem root_mem_assert_iff :
+    C.root ∈ (C.assert a φ force).states ↔
+      (⟨a, φ, .commit, force, .selfGenerated⟩ : Commitment A W) ∈ C.root := by
+  simp only [assert, reroot_states, Set.mem_insert_iff, Set.mem_ofPred_eq, Set.insert_subset_iff,
+    Set.Subset.rfl, and_true]
   constructor
-  · rintro ⟨st', hst', hi⟩
-    rw [List.mem_cons] at hst'
-    rcases hst' with rfl | hst'
-    · rw [stateSet_cons, Set.subset_inter_iff, Set.subset_inter_iff] at hi
-      exact Set.subset_inter hi.2.1 hi.1
-    · obtain ⟨st, _, rfl⟩ := List.mem_map.mp hst'
-      rw [stateSet_cons, Set.subset_inter_iff, Set.subset_inter_iff] at hi
-      exact Set.subset_inter hi.2.1 hi.1
-  · intro hi
-    rw [Set.subset_inter_iff] at hi
-    refine ⟨_ :: root, List.mem_cons_self, ?_⟩
-    rw [stateSet_cons]
-    exact Set.subset_inter hi.2 (Set.subset_inter hi.1 hi.2)
+  · rintro (h | ⟨-, h⟩)
+    · exact Set.insert_eq_self.1 h.symm
+    · exact h
+  · exact fun h => Or.inr ⟨C.root_mem, h⟩
 
-end HasSupport
+/-- `GRANT φ = ∼ASSERT ¬φ` ([cohen-krifka-2014] (38)), for a non-redundant `ASSERT ¬φ`. -/
+def grant (h : (⟨a, φᶜ, .commit, .doxastic, .selfGenerated⟩ : Commitment A W) ∉ C.root) :
+    Space (Set (Commitment A W)) :=
+  C.denegate (·.assert a φᶜ) (mt (C.root_mem_assert_iff a φᶜ .doxastic).1 h)
 
-/-- The issue of a bipolar question is a genuine join: the two answer
-    proposals as alternatives. -/
-theorem toIssue_bipolarQuestion [CommitmentGrade G] (cs : CommitmentSpace W G)
-    (φ : W → G) :
-    (cs.bipolarQuestion φ).toIssue =
-      Question.ofSet ({w | HasSupport.support (φ w)} ∩ cs.toContextSet) ⊔
-        Question.ofSet
-          ({w | HasSupport.support (CommitmentGrade.complement (φ w))} ∩
-            cs.toContextSet) := by
-  obtain ⟨root, conts⟩ := cs
-  ext i
-  show (∃ st ∈ _ :: _ :: (conts.map _ ++ conts.map _),
-      i ⊆ stateSet root ∩ stateSet st) ↔ _ ∨ _
-  constructor
-  · rintro ⟨st', hst', hi⟩
-    rw [List.mem_cons, List.mem_cons, List.mem_append] at hst'
-    rcases hst' with rfl | rfl | hst' | hst'
-    · rw [stateSet_cons, Set.subset_inter_iff, Set.subset_inter_iff] at hi
-      exact Or.inl (Set.subset_inter hi.2.1 hi.1)
-    · rw [stateSet_cons, Set.subset_inter_iff, Set.subset_inter_iff] at hi
-      exact Or.inr (Set.subset_inter hi.2.1 hi.1)
-    · obtain ⟨st, _, rfl⟩ := List.mem_map.mp hst'
-      rw [stateSet_cons, Set.subset_inter_iff, Set.subset_inter_iff] at hi
-      exact Or.inl (Set.subset_inter hi.2.1 hi.1)
-    · obtain ⟨st, _, rfl⟩ := List.mem_map.mp hst'
-      rw [stateSet_cons, Set.subset_inter_iff, Set.subset_inter_iff] at hi
-      exact Or.inr (Set.subset_inter hi.2.1 hi.1)
-  · rintro (hi | hi)
-    · obtain ⟨h1, h2⟩ := Set.subset_inter_iff.mp hi
-      refine ⟨_ :: root, List.mem_cons_self, ?_⟩
-      rw [stateSet_cons]
-      exact Set.subset_inter h2 (Set.subset_inter h1 h2)
-    · obtain ⟨h1, h2⟩ := Set.subset_inter_iff.mp hi
-      refine ⟨_ :: root, List.mem_cons_of_mem _ List.mem_cons_self, ?_⟩
-      rw [stateSet_cons]
-      exact Set.subset_inter h2 (Set.subset_inter h1 h2)
+@[simp] theorem grant_root (h) : (C.grant a φ h).root = C.root := rfl
 
-end CommitmentSpace
+/-- The performative update: the root commits `a` to `φ`. -/
+theorem mem_contents_assert_root : φ ∈ contents (C.assert a φ force).root :=
+  ⟨_, ⟨Set.mem_insert _ _, rfl⟩, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 7. KrifkaState issue laws
--- ════════════════════════════════════════════════════
+/-- The context set narrows by exactly `φ`. -/
+theorem contextSet_assert_root : contextSet (C.assert a φ force).root = φ ∩ contextSet C.root :=
+  contextSet_insert_of_commit rfl
 
-namespace KrifkaState
+/-- Consecutive assertions commute ([cohen-krifka-2014] (31), [krifka-2015] (6)). -/
+theorem assert_assert_comm (b : A) (ψ : Set W) (g : Commitment.Force) :
+    (C.assert a φ force).assert b ψ g = (C.assert b ψ g).assert a φ force := by
+  simp only [assert, reroot_root]
+  rw [reroot_reroot _ (Set.subset_insert _ _), reroot_reroot _ (Set.subset_insert _ _),
+    Set.insert_comm]
 
-variable {W : Type*}
+/-- On the free space, assertion is the free space of the extended root. -/
+theorem full_assert (c : Set (Commitment A W)) :
+    (full c).assert a φ force = full (insert ⟨a, φ, .commit, force, .selfGenerated⟩ c) :=
+  reroot_full (Set.subset_insert _ _)
 
-/-- The issue raised by a Krifka state: from the commitment space. -/
-def toIssue (s : KrifkaState W) : Question W := s.space.toIssue
+/-- A projected assertion is a restriction ([cohen-krifka-2014] (23)). -/
+theorem assert_states_of_mem (h : insert ⟨a, φ, .commit, force, .selfGenerated⟩ C.root ∈ C.states) :
+    (C.assert a φ force).states =
+      {d ∈ C.states | insert ⟨a, φ, .commit, force, .selfGenerated⟩ C.root ⊆ d} := by
+  rw [assert, reroot_eq_restrict _ h, restrict_states]
 
-instance : Discourse.HasIssue (KrifkaState W) W := ⟨toIssue⟩
+/-- `ASSERT φ = ∼GRANT ¬φ` ([cohen-krifka-2014] (40)), for a projected, non-redundant assertion. -/
+theorem sdiff_grant_states
+    (hmem : insert ⟨a, φ, .commit, .doxastic, .selfGenerated⟩ C.root ∈ C.states)
+    (h : (⟨a, φ, .commit, .doxastic, .selfGenerated⟩ : Commitment A W) ∉ C.root) :
+    C.states \ (C.grant a φᶜ (by simpa using h)).states = (C.assert a φ).states := by
+  have : (C.assert a φ).states ⊆ C.states := by
+    rw [assert_states_of_mem _ _ _ _ hmem]; exact fun _ hd => hd.1
+  simp only [grant, denegate, compl_compl]
+  exact C.sdiff_sdiff_states this _
 
-@[simp] theorem toIssue_assert (s : KrifkaState W) (p : W → Prop) :
-    (s.assert p).toIssue = s.toIssue ⊓ Question.ofSet {w | p w} :=
-  CommitmentSpace.toIssue_assert s.space .speaker p .doxastic
+open scoped Classical in
+/-- The issue a space raises: with no continuations, the trivial issue over the root's context
+set; otherwise an information state settles it iff it lies inside some continuation's. -/
+noncomputable def toIssue : Question W :=
+  if C.continuations = ∅ then Question.ofSet (contextSet C.root)
+  else ⨆ c ∈ C.continuations, Question.ofSet (contextSet c)
 
-@[simp] theorem toIssue_monopolarQuestion (s : KrifkaState W) (p : W → Prop) :
-    (s.monopolarQuestion p).toIssue =
-      Question.ofSet ({w | p w} ∩ s.contextSet) :=
-  CommitmentSpace.toIssue_monopolarQuestion s.space p .doxastic
+noncomputable instance : Discourse.HasIssue (Space (Set (Commitment A W))) W := ⟨toIssue⟩
 
-@[simp] theorem toIssue_bipolarQuestion (s : KrifkaState W) (p : W → Prop) :
-    (s.bipolarQuestion p).toIssue =
-      Question.ofSet ({w | p w} ∩ s.contextSet) ⊔
-        Question.ofSet ({w | ¬ p w} ∩ s.contextSet) :=
-  CommitmentSpace.toIssue_bipolarQuestion s.space p
+theorem mem_toIssue_iff {i : Set W} :
+    i ∈ C.toIssue ↔
+      (C.continuations = ∅ ∧ i ⊆ contextSet C.root) ∨ ∃ c ∈ C.continuations, i ⊆ contextSet c := by
+  unfold toIssue
+  split_ifs with h
+  · simp [h, Question.mem_ofSet]
+  · simp only [h, false_and, false_or, Question.mem_biSup_iff, Question.mem_ofSet]
+    refine ⟨fun h' => h'.elim (fun e => ?_) id, Or.inr⟩
+    obtain ⟨c, hc⟩ := Set.nonempty_iff_ne_empty.2 h
+    exact ⟨c, hc, e ▸ Set.empty_subset _⟩
 
-/-- Monopolar questions raise no inquisitive issue: the projection is
-    declarative. The monopolar/bipolar distinction — Krifka's bias
-    thesis — is invisible to the issue observable. -/
-theorem not_isInquisitive_monopolarQuestion (s : KrifkaState W) (p : W → Prop) :
-    ¬ (s.monopolarQuestion p).toIssue.isInquisitive := by
-  rw [toIssue_monopolarQuestion]
-  exact Question.not_isInquisitive_ofSet _
+/-- The common ground of a space is what its root entails; the speaker's assertion is
+Stalnakerian on it. -/
+instance : HasAssertion (Space (Set (Commitment Discourse.DiscourseRole W))) W where
+  commonGround C := slate C.root
+  initial := full ∅
+  assert C φ := C.assert .speaker φ
+  commonGround_initial := slate_empty
+  commonGround_assert _ _ := slate_insert_of_commit rfl
 
-/-- Bipolar questions raise a genuine issue whenever both answers are
-    live in the context set. -/
-theorem isInquisitive_bipolarQuestion (s : KrifkaState W) (p : W → Prop)
-    (h₁ : ∃ w ∈ s.contextSet, p w) (h₂ : ∃ w ∈ s.contextSet, ¬ p w) :
-    (s.bipolarQuestion p).toIssue.isInquisitive := by
-  rw [toIssue_bipolarQuestion]
-  obtain ⟨w₁, hw₁cs, hw₁p⟩ := h₁
-  obtain ⟨w₂, hw₂cs, hw₂p⟩ := h₂
-  intro hmem
-  rw [Question.info_sup, Question.info_ofSet,
-    Question.info_ofSet] at hmem
-  rcases Question.mem_sup.mp hmem with h | h
-  · exact hw₂p (Question.mem_ofSet.mp h (Or.inr ⟨hw₂p, hw₂cs⟩)).1
-  · exact (Question.mem_ofSet.mp h (Or.inl ⟨hw₁p, hw₁cs⟩)).1 hw₁p
+end Space
 
-/-- Bipolar questions preserve informative content: the issue refines
-    the context set without eliminating worlds. -/
-theorem info_toIssue_bipolarQuestion (s : KrifkaState W) (p : W → Prop) :
-    (s.bipolarQuestion p).toIssue.info = s.contextSet := by
-  rw [toIssue_bipolarQuestion, Question.info_sup, Question.info_ofSet,
-    Question.info_ofSet]
-  ext w
-  by_cases hp : p w <;> simp [hp]
 
-/-- Monopolar questions narrow the settled-future content by the
-    proposal: Krifka's bias, visible as informative loss. -/
-theorem info_toIssue_monopolarQuestion (s : KrifkaState W) (p : W → Prop) :
-    (s.monopolarQuestion p).toIssue.info = {w | p w} ∩ s.contextSet := by
-  rw [toIssue_monopolarQuestion, Question.info_ofSet]
 
-end KrifkaState
-
-end Discourse.Krifka
+end Commitment

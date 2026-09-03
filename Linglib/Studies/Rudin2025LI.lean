@@ -484,7 +484,8 @@ simultaneously be both values.
 
 namespace Discourse.QuotationFBOntology
 
-open Discourse.Commitment.Table
+open Commitment
+open Discourse (DiscourseRole)
 open Mood (Illocutionary)
 open Semantics.Quotation.Demonstration
 
@@ -531,12 +532,12 @@ variable {W : Type*}
     - **interrogative**: `polarQuestion` (pushes issue, no commit)
     - **rising declarative**: pushes issue without commit
       (the intermediate prosodic case [rudin-2025b] relies on) -/
-def update (u : FBPerformance W) (s : State W) : State W :=
+def update (u : FBPerformance W) (s : Table DiscourseRole W) : Table DiscourseRole W :=
   match u.rising, u.form with
   | true, _ =>
-      s.pushItem ⟨.speaker, .addressee, .declarative, [u.content]⟩
-  | false, .declarative => assert s u.content
-  | false, _ => polarQuestion s u.content
+      s.push ⟨.declarative, {u.content}⟩
+  | false, .declarative => s.assert .speaker u.content
+  | false, _ => s.polarQuestion u.content
 
 -- ════════════════════════════════════════════════════
 -- § 3. Performance properties (F&B-derived where possible)
@@ -563,14 +564,14 @@ def RisingDecl (u : FBPerformance W) : Prop :=
     branch adds, the rising and interrogative branches do not — so this
     matches the structural classification "non-rising declarative". -/
 def Commits (u : FBPerformance W) : Prop :=
-  u.content ∈ (u.update (DiscourseState.empty : State W)).dcS
+  u.content ∈ (u.update (Table.empty : Table DiscourseRole W)).dc .speaker
 
 /-- **F&B-derived** RaisesIssue: the performance's update grows the
     table. All three branches push to the table, so any well-formed
     speech act raises an issue. (RESP's discriminating power comes
     from `¬ Commits`, not from `RaisesIssue`.) -/
 def RaisesIssue (u : FBPerformance W) : Prop :=
-  (u.update (DiscourseState.empty : State W)).table ≠ []
+  (u.update (Table.empty : Table DiscourseRole W)).stack ≠ []
 
 -- ════════════════════════════════════════════════════
 -- § 4. PerformanceOntology axiom obligations
@@ -587,7 +588,7 @@ theorem loud_not_whispered (u : FBPerformance W) :
 theorem rd_not_commits (u : FBPerformance W) :
     RisingDecl u → ¬ Commits u := by
   rintro ⟨hr, _⟩
-  -- After update with rising=true, dcS = empty.dcS = []
+  -- After update with rising=true, dcS = empty.dc .speaker = []
   simp [Commits, update, hr]
 
 theorem rd_raises_issue (u : FBPerformance W) :
@@ -637,24 +638,21 @@ variable {W : Type*}
     update semantics. -/
 theorem commits_iff (u : FBPerformance W) :
     u.Commits ↔ u.rising = false ∧ u.form = .declarative := by
-  cases hr : u.rising <;> cases hf : u.form <;>
-    simp [Commits, update, hr, hf] <;>
-    first | exact List.not_mem_nil | exact List.mem_cons_self
+  cases hr : u.rising <;> cases hf : u.form <;> simp [Commits, update, hr, hf]
 
 /-- Structural characterization of `RaisesIssue`: every performance
     raises an issue (declarative or interrogative; rising or non-rising).
     The discriminating empirical content lives in `Commits`, not here. -/
 theorem raises_issue_always (u : FBPerformance W) : u.RaisesIssue := by
   unfold RaisesIssue update
-  cases u.rising <;> cases u.form <;> simp [polarQuestion]
+  cases u.rising <;> cases u.form <;> simp [Table.polarQuestion, Table.assert, Table.push]
 
 /-- Bridge: when the performance is a non-rising declarative, its update
-    equals `assert s content`, so `assert_dc_speaker_doxasticContents`
-    applies directly. -/
+    equals `s.assert .speaker content`, so `Table.mem_dc_assert` applies directly. -/
 theorem update_decl_eq_assert (u : FBPerformance W)
     (hr : u.rising = false) (hf : u.form = .declarative)
-    (s : State W) :
-    u.update s = assert s u.content := by
+    (s : Table DiscourseRole W) :
+    u.update s = s.assert .speaker u.content := by
   unfold update
   rw [hr, hf]
 
@@ -667,7 +665,8 @@ namespace Rudin2025LI
 
 open Semantics.Quotation.Demonstration
 open Discourse.QuotationFBOntology
-open Discourse.Commitment.Table
+open Commitment
+open Discourse (DiscourseRole)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Empirical Taxonomy
@@ -851,12 +850,12 @@ def respNonLingmat : FBPerformance Bool :=
 theorem respNonLingmat_resp : (fbOntology Bool).RESP respNonLingmat := by
   refine ⟨?_, ?_⟩
   · -- RaisesIssue
-    show (respNonLingmat.update DiscourseState.empty).table ≠ []
+    show (respNonLingmat.update Table.empty).stack ≠ []
     intro h; cases h
   · -- ¬ Commits
-    show ¬ (respNonLingmat.content ∈ (respNonLingmat.update DiscourseState.empty).dcS)
+    show ¬ (respNonLingmat.content ∈ (respNonLingmat.update Table.empty).dc .speaker)
     intro h
-    exact List.not_mem_nil h
+    simp [FBPerformance.update, respNonLingmat] at h
 
 theorem respNonLingmat_not_lingmat : ¬ (fbOntology Bool).LINGMAT respNonLingmat := by
   intro h
@@ -880,7 +879,7 @@ theorem committingDecl_lingmat : (fbOntology Bool).LINGMAT committingDecl :=
   Or.inl rfl
 
 theorem committingDecl_commits : (fbOntology Bool).Commits committingDecl := by
-  show committingDecl.content ∈ (committingDecl.update DiscourseState.empty).dcS
+  show committingDecl.content ∈ (committingDecl.update Table.empty).dc .speaker
   simp [FBPerformance.update, committingDecl]
 
 /-- A loud committing declarative performance. -/
@@ -894,7 +893,7 @@ theorem committingLoud_lingmat : (fbOntology Bool).LINGMAT committingLoud :=
 theorem committingLoud_loud : (fbOntology Bool).Loud committingLoud := rfl
 
 theorem committingLoud_commits : (fbOntology Bool).Commits committingLoud := by
-  show committingLoud.content ∈ (committingLoud.update DiscourseState.empty).dcS
+  show committingLoud.content ∈ (committingLoud.update Table.empty).dc .speaker
   simp [FBPerformance.update, committingLoud]
 
 /-- A whispered committing declarative performance. -/
@@ -911,7 +910,7 @@ theorem committingWhispered_whispered :
 theorem committingWhispered_commits :
     (fbOntology Bool).Commits committingWhispered := by
   show committingWhispered.content ∈
-       (committingWhispered.update DiscourseState.empty).dcS
+       (committingWhispered.update Table.empty).dc .speaker
   simp [FBPerformance.update, committingWhispered]
 
 /-- A rising-declarative performance (RESP, not committing). -/

@@ -15,7 +15,7 @@ analogue specialises the same reductio to epistemic accessibility.
 
 namespace Hintikka1962
 
-open Discourse.Commitment
+open Commitment
 open ModalLogic (box box_four IsSerial)
 open ModalLogic.Epistemic (knows)
 

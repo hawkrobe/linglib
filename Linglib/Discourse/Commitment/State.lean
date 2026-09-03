@@ -2,6 +2,7 @@ import Mathlib.Data.Set.Basic
 import Linglib.Logic.Modal.Defs
 import Linglib.Logic.Modal.Basic
 import Linglib.Logic.Modal.Epistemic
+import Linglib.Discourse.Commitment.Basic
 
 /-!
 # Commitment states
@@ -15,7 +16,7 @@ into them and every proposition is `C_{a,b}`-free in the thesis's sense.
 
 ## Main definitions
 
-* `Discourse.Commitment.State W A` — the frame.
+* `Commitment.State W A` — the frame.
 * `State.Believes`, `State.Committed` — `B_a`, `C_{a,b}`.
 * `State.restrictCommitment` — the update `c⌈π⌉_{a,b}` (Definition 4): `O_{a,b}` restricted to
   `π`-targets, everything else unchanged.
@@ -32,6 +33,9 @@ into them and every proposition is `C_{a,b}`-free in the thesis's sense.
   informative update.
 * `State.restrictCommitment_eq_self` — the update is idle iff the commitment already holds
   globally.
+* `State.mem_slate_iff` — the propositions `a` is committed to towards `b` at `w` form the
+  principal filter of the `O_{a,b}`-successors, the projection onto the commitment sets of
+  `Commitment.Basic`.
 
 ## References
 
@@ -42,7 +46,7 @@ into them and every proposition is `C_{a,b}`-free in the thesis's sense.
 * [N. Asher and A. Lascarides, *Logics of Conversation* (2003)][asher-lascarides-2003]
 -/
 
-namespace Discourse.Commitment
+namespace Commitment
 
 open ModalLogic (IsKD45Frame IsK45Frame IsEuclidean box)
 open ModalLogic.Epistemic (knows)
@@ -152,6 +156,15 @@ theorem restrictCommitment_restrictCommitment_eq_self_iff (a' b' : A) :
     exact hv.2 ⟨rfl, rfl⟩
   · rw [(c.restrictCommitment_eq_self a b π).2 h.1, (c.restrictCommitment_eq_self a' b' τ).2 h.2]
 
+/-! ### Projection onto commitment sets -/
+
+/-- What `a` is committed to towards `b` at `w`: the principal filter of the `O_{a,b}`-successors
+of `w`. -/
+def slate (c : State W A) (a b : A) (w : W) : Filter W :=
+  Filter.principal {v | c.commitment a b w v}
+
+theorem mem_slate_iff : π ∈ c.slate a b w ↔ c.Committed a b π w := Filter.mem_principal
+
 /-! ### Frame conditions linking belief and commitment -/
 
 /-- **Sincerity** ([van-der-leer-2026] Definition 5, after [asher-lascarides-2003]): for every
@@ -182,4 +195,4 @@ theorem Sincere.believes_of_committed_of_competent (hsin : c.Sincere) (hcomp : c
 
 end State
 
-end Discourse.Commitment
+end Commitment

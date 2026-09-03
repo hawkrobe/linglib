@@ -1,5 +1,4 @@
 import Linglib.Discourse.SpeechAct
-import Linglib.Discourse.Commitment.Basic
 import Linglib.Semantics.Modality.ModalTypes
 
 /-!

@@ -1,5 +1,4 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Commitment.Table
 
 /-!
@@ -30,7 +29,7 @@ disagree.
 
 ## Implementation notes
 
-* Built over `Discourse.Commitment.Table.DiscourseState A W (Set W)`: truth
+* Built over `Commitment.Table A W`: truth
   commitments live in the inherited per-agent slate `dc`, the Table is the
   proposition stack (`I := Set W`), and the common ground is `cg`. Only the
   evidence-type family `evidCommit` is Faller-specific.
@@ -49,7 +48,7 @@ disagree.
 
 namespace Faller2019
 
-open Discourse.Commitment (CommitmentSlate TaggedSlate CommitmentSource)
+open Commitment
 
 /-! ### Goffman 1979 speaker roles -/
 
@@ -116,80 +115,65 @@ inductive EvidenceType where
   | inferential
   deriving DecidableEq, Repr, Inhabited
 
-/-- Faller's discourse structure: the Farkas-Bruce table state — truth
-    commitments in the inherited slate `dc`, a proposition-stack Table, and a
-    common ground — extended with per-evidence-type commitment sets. -/
-structure DiscourseState (A W : Type*)
-    extends Discourse.Commitment.Table.DiscourseState A W (Set W) where
+/-- Faller's discourse structure: the Farkas-Bruce Table — truth commitments among its
+    `commitments`, a proposition stack, and a common ground — extended with per-evidence-type
+    commitment sets. -/
+structure DiscourseState (A W : Type*) extends Commitment.Table A W where
   /-- Per-evidence-type commitment sets per agent (AeC, RepC, BpgC, ...). -/
-  evidCommit : EvidenceType → A → CommitmentSlate W
+  evidCommit : EvidenceType → A → Set (Set W)
 
 namespace DiscourseState
 
 variable {A W : Type*}
 
 /-- The empty discourse state: no commitments, empty Table, trivial CommonGround. -/
-def empty : DiscourseState A W :=
-  { Discourse.Commitment.Table.DiscourseState.empty with
-    evidCommit := fun _ _ => CommitmentSlate.empty }
+def empty : DiscourseState A W := { Commitment.Table.empty with evidCommit := fun _ _ => ∅ }
 
 /-- Agent `a` is truth-committed to `φ` (φ ∈ TC_a). -/
-def CommittedTrue (s : DiscourseState A W) (a : A) (φ : Set W) : Prop :=
-  φ ∈ (s.dc a).toSlate.commitments
+def CommittedTrue (s : DiscourseState A W) (a : A) (φ : Set W) : Prop := φ ∈ s.toTable.dc a
 
 /-- Agent `a` holds `φ` as evidence of type `et` (φ ∈ et-C_a). -/
-def CommittedEvid (s : DiscourseState A W) (et : EvidenceType) (a : A) (φ : Set W) :
-    Prop :=
-  φ ∈ (s.evidCommit et a).commitments
+def CommittedEvid (s : DiscourseState A W) (et : EvidenceType) (a : A) (φ : Set W) : Prop :=
+  φ ∈ s.evidCommit et a
 
 /-- Push a proposition onto the Table. -/
 def pushTable (s : DiscourseState A W) (φ : Set W) : DiscourseState A W :=
-  { s with toDiscourseState := s.toDiscourseState.pushItem φ }
+  { s with toTable := s.toTable.push ⟨.declarative, {φ}⟩ }
 
-/-- Add `φ` to agent `a`'s truth commitments (the inherited slate `dc`), with
-    provenance `src` (default self-generated — the plain-assertion case;
-    `reportativePRESENT` marks the principal's animator-introduced commitment
+/-- Add `φ` to agent `a`'s truth commitments, with provenance `src` (default self-generated — the
+    plain-assertion case; `reportativePRESENT` marks the principal's animator-introduced commitment
     other-generated, per [faller-2019a] fn. 30 / §6.1). -/
-def addTruthCommit [DecidableEq A] (s : DiscourseState A W) (a : A) (φ : Set W)
-    (src : CommitmentSource := .selfGenerated) : DiscourseState A W :=
-  { s with toDiscourseState := s.toDiscourseState.addCommit a φ src }
+def addTruthCommit (s : DiscourseState A W) (a : A) (φ : Set W)
+    (src : Commitment.Source := .selfGenerated) : DiscourseState A W :=
+  { s with toTable := s.toTable.commit a φ src }
 
 /-- Add `φ` to agent `a`'s type-`et` evidential commitments. -/
 def addEvidCommit [DecidableEq A] (s : DiscourseState A W)
     (et : EvidenceType) (a : A) (φ : Set W) : DiscourseState A W where
-  toDiscourseState := s.toDiscourseState
+  toTable := s.toTable
   evidCommit :=
     Function.update s.evidCommit et
-      (Function.update (s.evidCommit et) a ((s.evidCommit et a).add φ))
+      (Function.update (s.evidCommit et) a (insert φ (s.evidCommit et a)))
 
-/-! #### Update API
+@[simp] theorem pushTable_toTable (s : DiscourseState A W) (φ : Set W) :
+    (s.pushTable φ).toTable = s.toTable.push ⟨.declarative, {φ}⟩ := rfl
 
-Per-operator `@[simp]` lemmas, so the headline proofs reduce through this API
-rather than reaching into substrate slate internals.
--/
+@[simp] theorem addTruthCommit_toTable (s : DiscourseState A W) (a : A) (φ : Set W)
+    (src : Commitment.Source) : (s.addTruthCommit a φ src).toTable = s.toTable.commit a φ src :=
+  rfl
 
-@[simp] theorem pushTable_toDiscourseState (s : DiscourseState A W) (φ : Set W) :
-    (s.pushTable φ).toDiscourseState = s.toDiscourseState.pushItem φ := rfl
+@[simp] theorem addEvidCommit_toTable [DecidableEq A] (s : DiscourseState A W)
+    (et : EvidenceType) (a : A) (φ : Set W) : (s.addEvidCommit et a φ).toTable = s.toTable := rfl
 
-@[simp] theorem addTruthCommit_toDiscourseState [DecidableEq A]
-    (s : DiscourseState A W) (a : A) (φ : Set W) (src : CommitmentSource) :
-    (s.addTruthCommit a φ src).toDiscourseState =
-      s.toDiscourseState.addCommit a φ src := rfl
-
-@[simp] theorem addEvidCommit_toDiscourseState [DecidableEq A]
-    (s : DiscourseState A W) (et : EvidenceType) (a : A) (φ : Set W) :
-    (s.addEvidCommit et a φ).toDiscourseState = s.toDiscourseState := rfl
-
-@[simp] theorem addTruthCommit_evidCommit [DecidableEq A]
-    (s : DiscourseState A W) (a : A) (φ : Set W) (src : CommitmentSource) :
-    (s.addTruthCommit a φ src).evidCommit = s.evidCommit := rfl
+@[simp] theorem addTruthCommit_evidCommit (s : DiscourseState A W) (a : A) (φ : Set W)
+    (src : Commitment.Source) : (s.addTruthCommit a φ src).evidCommit = s.evidCommit := rfl
 
 @[simp] theorem pushTable_evidCommit (s : DiscourseState A W) (φ : Set W) :
     (s.pushTable φ).evidCommit = s.evidCommit := rfl
 
 @[simp] theorem addEvidCommit_evidCommit_self [DecidableEq A]
     (s : DiscourseState A W) (et : EvidenceType) (a : A) (φ : Set W) :
-    (s.addEvidCommit et a φ).evidCommit et a = (s.evidCommit et a).add φ := by
+    (s.addEvidCommit et a φ).evidCommit et a = insert φ (s.evidCommit et a) := by
   simp [addEvidCommit]
 
 @[simp] theorem addEvidCommit_evidCommit_of_ne_agent [DecidableEq A]
@@ -198,52 +182,44 @@ rather than reaching into substrate slate internals.
   simp [addEvidCommit, Function.update_of_ne h]
 
 @[simp] theorem addEvidCommit_evidCommit_of_ne_type [DecidableEq A]
-    (s : DiscourseState A W) {et et' : EvidenceType} (h : et' ≠ et) (a : A)
-    (φ : Set W) :
+    (s : DiscourseState A W) {et et' : EvidenceType} (h : et' ≠ et) (a : A) (φ : Set W) :
     (s.addEvidCommit et a φ).evidCommit et' = s.evidCommit et' := by
   simp [addEvidCommit, Function.update_of_ne h]
 
-/-! #### Commitment-membership API -/
-
-@[simp] theorem committedTrue_addTruthCommit_self [DecidableEq A]
-    (s : DiscourseState A W) (a : A) (φ : Set W) (src : CommitmentSource) :
-    (s.addTruthCommit a φ src).CommittedTrue a φ := by
-  simp [CommittedTrue, TaggedSlate.toSlate, TaggedSlate.add]
-
-@[simp] theorem committedTrue_addTruthCommit_of_ne [DecidableEq A]
-    (s : DiscourseState A W) {a b : A} (h : b ≠ a) (φ ψ : Set W)
-    (src : CommitmentSource) :
-    (s.addTruthCommit a φ src).CommittedTrue b ψ ↔ s.CommittedTrue b ψ := by
-  simp [CommittedTrue, h]
-
-@[simp] theorem committedTrue_pushTable (s : DiscourseState A W) (φ ψ : Set W)
-    (a : A) : (s.pushTable φ).CommittedTrue a ψ ↔ s.CommittedTrue a ψ := by
+@[simp] theorem committedTrue_addTruthCommit_self (s : DiscourseState A W) (a : A) (φ : Set W)
+    (src : Commitment.Source) : (s.addTruthCommit a φ src).CommittedTrue a φ := by
   simp [CommittedTrue]
 
-@[simp] theorem committedTrue_addEvidCommit [DecidableEq A]
-    (s : DiscourseState A W) (et : EvidenceType) (a b : A) (φ ψ : Set W) :
+@[simp] theorem committedTrue_addTruthCommit_of_ne (s : DiscourseState A W) {a b : A} (h : b ≠ a)
+    (φ ψ : Set W) (src : Commitment.Source) :
+    (s.addTruthCommit a φ src).CommittedTrue b ψ ↔ s.CommittedTrue b ψ := by
+  simp [CommittedTrue, Commitment.Table.dc_commit_of_ne _ _ _ _ _ h]
+
+@[simp] theorem committedTrue_pushTable (s : DiscourseState A W) (φ ψ : Set W) (a : A) :
+    (s.pushTable φ).CommittedTrue a ψ ↔ s.CommittedTrue a ψ := by
+  simp [CommittedTrue]
+
+@[simp] theorem committedTrue_addEvidCommit [DecidableEq A] (s : DiscourseState A W)
+    (et : EvidenceType) (a b : A) (φ ψ : Set W) :
     (s.addEvidCommit et a φ).CommittedTrue b ψ ↔ s.CommittedTrue b ψ := by
   simp [CommittedTrue]
 
-@[simp] theorem committedEvid_addEvidCommit_self [DecidableEq A]
-    (s : DiscourseState A W) (et : EvidenceType) (a : A) (φ : Set W) :
-    (s.addEvidCommit et a φ).CommittedEvid et a φ := by
-  simp [CommittedEvid, CommitmentSlate.add]
+@[simp] theorem committedEvid_addEvidCommit_self [DecidableEq A] (s : DiscourseState A W)
+    (et : EvidenceType) (a : A) (φ : Set W) : (s.addEvidCommit et a φ).CommittedEvid et a φ := by
+  simp [CommittedEvid]
 
-@[simp] theorem committedEvid_addTruthCommit [DecidableEq A]
-    (s : DiscourseState A W) (et : EvidenceType) (a b : A) (φ ψ : Set W)
-    (src : CommitmentSource) :
+@[simp] theorem committedEvid_addTruthCommit (s : DiscourseState A W) (et : EvidenceType)
+    (a b : A) (φ ψ : Set W) (src : Commitment.Source) :
     (s.addTruthCommit b φ src).CommittedEvid et a ψ ↔ s.CommittedEvid et a ψ := by
   simp [CommittedEvid]
 
-@[simp] theorem committedEvid_pushTable (s : DiscourseState A W) (et : EvidenceType)
-    (a : A) (φ ψ : Set W) :
-    (s.pushTable φ).CommittedEvid et a ψ ↔ s.CommittedEvid et a ψ := by
+@[simp] theorem committedEvid_pushTable (s : DiscourseState A W) (et : EvidenceType) (a : A)
+    (φ ψ : Set W) : (s.pushTable φ).CommittedEvid et a ψ ↔ s.CommittedEvid et a ψ := by
   simp [CommittedEvid]
 
 @[simp] theorem not_committedTrue_empty (a : A) (φ : Set W) :
     ¬ (empty : DiscourseState A W).CommittedTrue a φ := by
-  simp [CommittedTrue, empty, TaggedSlate.toSlate, TaggedSlate.empty]
+  simp [CommittedTrue, empty]
 
 end DiscourseState
 

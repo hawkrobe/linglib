@@ -1,5 +1,4 @@
 import Linglib.Discourse.SpeechAct
-import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.CommonGround
 
 /-!
@@ -40,34 +39,31 @@ about a third party's score.
 
 namespace Brandom1994
 
-open Discourse.Commitment (CommitmentSlate)
-
 /-! ### Deontic status -/
 
 /-- The status a scorekeeper attributes to an interlocutor: what they have committed themselves to,
 and what they are entitled to. -/
 structure NormativeStatus (W : Type*) where
-  commitments : CommitmentSlate W
-  entitlements : CommitmentSlate W
+  commitments : Set (Set W)
+  entitlements : Set (Set W)
 
 namespace NormativeStatus
 variable {W : Type*}
 
 /-- No commitments, no entitlements. -/
-def empty : NormativeStatus W := ⟨CommitmentSlate.empty, CommitmentSlate.empty⟩
+def empty : NormativeStatus W := ⟨∅, ∅⟩
 
 /-- Undertake a commitment. -/
-def commit (ns : NormativeStatus W) (p : W → Prop) : NormativeStatus W :=
-  { ns with commitments := ns.commitments.add p }
+def commit (ns : NormativeStatus W) (p : Set W) : NormativeStatus W :=
+  { ns with commitments := insert p ns.commitments }
 
 /-- Acquire an entitlement. -/
-def entitle (ns : NormativeStatus W) (p : W → Prop) : NormativeStatus W :=
-  { ns with entitlements := ns.entitlements.add p }
+def entitle (ns : NormativeStatus W) (p : Set W) : NormativeStatus W :=
+  { ns with entitlements := insert p ns.entitlements }
 
 /-- Withdraw an entitlement, leaving the commitment in place — what a challenge does. -/
-def withdrawEntitlement [DecidableEq (W → Prop)] (ns : NormativeStatus W) (p : W → Prop) :
-    NormativeStatus W :=
-  { ns with entitlements := ⟨ns.entitlements.commitments.filter (fun q => decide (q ≠ p))⟩ }
+def withdrawEntitlement (ns : NormativeStatus W) (p : Set W) : NormativeStatus W :=
+  { ns with entitlements := ns.entitlements \ {p} }
 
 end NormativeStatus
 
@@ -92,7 +88,7 @@ consequence — one is committed to the consequences of one's commitments whethe
 acknowledged them. -/
 inductive CommittedTo (R : InferentialRole W) (ns : NormativeStatus W) : (W → Prop) → Prop where
   /-- An acknowledged commitment. -/
-  | acknowledged {p} (h : p ∈ ns.commitments.commitments) : CommittedTo R ns p
+  | acknowledged {p} (h : p ∈ ns.commitments) : CommittedTo R ns p
   /-- A consequential commitment, along a committive inference. -/
   | consequential {p q} (hp : CommittedTo R ns p) (hpq : R.committive p q) : CommittedTo R ns q
 
@@ -101,14 +97,14 @@ permissive inference, provided nothing they are committed to rules it out. Entit
 permissive relation, not the committive one, and is defeasible where the committive status is
 not. -/
 def EntitledTo (R : InferentialRole W) (ns : NormativeStatus W) (p : W → Prop) : Prop :=
-  (p ∈ ns.entitlements.commitments ∨
-      ∃ q ∈ ns.entitlements.commitments, R.permissive q p) ∧
+  (p ∈ ns.entitlements ∨
+      ∃ q ∈ ns.entitlements, R.permissive q p) ∧
     ¬ ∃ q, CommittedTo R ns q ∧ R.incompatible p q
 
 /-- A score is in good order when every acknowledged commitment is one the interlocutor is entitled
 to — no commitment stands unvindicated. -/
 def Vindicated (R : InferentialRole W) (ns : NormativeStatus W) : Prop :=
-  ∀ p ∈ ns.commitments.commitments, EntitledTo R ns p
+  ∀ p ∈ ns.commitments, EntitledTo R ns p
 
 /-- Committing to something a claim rules out defeats entitlement to the claim: what the score
 precludes, it is not entitled to. -/
@@ -131,10 +127,10 @@ theorem entitlement_not_closed_under_committive :
       EntitledTo R ns p ∧ R.committive p q ∧ ¬ EntitledTo R ns q := by
   refine ⟨⟨fun a b => a = (fun w => w = true) ∧ b = (fun _ => True), fun _ _ => False,
       fun _ _ => False, by simp⟩,
-    ⟨CommitmentSlate.empty, ⟨[fun w => w = true]⟩⟩, (fun w => w = true), (fun _ => True),
+    ⟨∅, {fun w => w = true}⟩, (fun w => w = true), (fun _ => True),
     ⟨.inl (by simp), by rintro ⟨q, -, hinc⟩; exact hinc⟩, ⟨rfl, rfl⟩, ?_⟩
   rintro ⟨(h | ⟨q, -, hq⟩), -⟩
-  · simp only [List.mem_singleton] at h
+  · simp only [Set.mem_singleton_iff] at h
     have := congrFun h false
     simp at this
   · exact hq
@@ -188,55 +184,54 @@ def defer (s : Score W) (p : W → Prop) : Score W :=
 
 /-- A challenge by the hearer: a demand for reasons, which withdraws the hearer's attribution of
 default entitlement while leaving the attributed commitment standing. -/
-def challenge [DecidableEq (W → Prop)] (s : Score W) (p : W → Prop) : Score W :=
+def challenge (s : Score W) (p : Set W) : Score W :=
   s.update .hearer .speaker (·.withdrawEntitlement p)
 
 /-- Asserting attributes commitment and, by default, entitlement — on every scorecard. -/
-theorem assert_attributes_default_entitlement (s : Score W) (p : W → Prop) (k : Interlocutor) :
-    p ∈ ((assert s p).card k .speaker).commitments.commitments ∧
-      p ∈ ((assert s p).card k .speaker).entitlements.commitments := by
+theorem assert_attributes_default_entitlement (s : Score W) (p : Set W) (k : Interlocutor) :
+    p ∈ ((assert s p).card k .speaker).commitments ∧
+      p ∈ ((assert s p).card k .speaker).entitlements := by
   constructor <;> simp [assert, NormativeStatus.commit, NormativeStatus.entitle,
-    CommitmentSlate.add]
+    Set.mem_insert_iff]
 
 /-- Deferral entitles the hearer to what the speaker asserted, without the hearer having grounds of
 their own. -/
-theorem deferral_entitles_hearer (s : Score W) (p : W → Prop) :
-    p ∈ ((defer (assert s p) p).card .hearer .hearer).entitlements.commitments := by
-  simp [defer, NormativeStatus.entitle, CommitmentSlate.add]
+theorem deferral_entitles_hearer (s : Score W) (p : Set W) :
+    p ∈ ((defer (assert s p) p).card .hearer .hearer).entitlements := by
+  simp [defer, NormativeStatus.entitle, Set.mem_insert_iff]
 
 /-- A challenged assertion is a commitment the hearer no longer grants entitlement to: the
 challenge takes back the default without taking back the commitment. This is the configuration
 that has no counterpart where a context set is all the score records. -/
-theorem challenge_leaves_commitment [DecidableEq (W → Prop)] (s : Score W) (p : W → Prop) :
-    p ∈ ((challenge (assert s p) p).card .hearer .speaker).commitments.commitments ∧
-      p ∉ ((challenge (assert s p) p).card .hearer .speaker).entitlements.commitments := by
+theorem challenge_leaves_commitment (s : Score W) (p : Set W) :
+    p ∈ ((challenge (assert s p) p).card .hearer .speaker).commitments ∧
+      p ∉ ((challenge (assert s p) p).card .hearer .speaker).entitlements := by
   refine ⟨by simp [challenge, assert, NormativeStatus.commit, NormativeStatus.entitle,
-      NormativeStatus.withdrawEntitlement, CommitmentSlate.add], ?_⟩
+      NormativeStatus.withdrawEntitlement, Set.mem_insert_iff], ?_⟩
   simp [challenge, assert, NormativeStatus.commit, NormativeStatus.entitle,
-    NormativeStatus.withdrawEntitlement, CommitmentSlate.add]
+    NormativeStatus.withdrawEntitlement]
 
 /-- Scorekeepers can disagree: after the hearer challenges, the speaker's own scorecard still
 grants entitlement where the hearer's does not, so there is no single score the two share. -/
-theorem scorekeepers_can_disagree [DecidableEq (W → Prop)] (s : Score W) (p : W → Prop) :
-    p ∈ ((challenge (assert s p) p).card .speaker .speaker).entitlements.commitments ∧
-      p ∉ ((challenge (assert s p) p).card .hearer .speaker).entitlements.commitments := by
+theorem scorekeepers_can_disagree (s : Score W) (p : Set W) :
+    p ∈ ((challenge (assert s p) p).card .speaker .speaker).entitlements ∧
+      p ∉ ((challenge (assert s p) p).card .hearer .speaker).entitlements := by
   refine ⟨?_, (challenge_leaves_commitment s p).2⟩
   have hcell : (challenge (assert s p) p).card .speaker .speaker
       = (assert s p).card .speaker .speaker := by
     simp [challenge, Score.update]
   rw [hcell]
-  simp [assert, NormativeStatus.commit, NormativeStatus.entitle, CommitmentSlate.add]
+  simp [assert, NormativeStatus.commit, NormativeStatus.entitle, Set.mem_insert_iff]
 
 /-! ### Projection to a common ground -/
 
 /-- The worlds compatible with everything each interlocutor is self-attributed to be committed to.
 Projecting a score this way is lossy: the disagreement of `scorekeepers_can_disagree` and the
 commitment/entitlement distinction are both invisible in the result. -/
-def contextSet (s : Score W) : W → Prop := fun w =>
-  (s.card .speaker .speaker).commitments.toContextSet w ∧
-    (s.card .hearer .hearer).commitments.toContextSet w
+def contextSet (s : Score W) : Set W :=
+  ⋂₀ (s.card .speaker .speaker).commitments ∩ ⋂₀ (s.card .hearer .hearer).commitments
 
 instance : HasCommonGround (Score W) W where
-  commonGround s := Filter.principal {w | contextSet s w}
+  commonGround s := Filter.principal (contextSet s)
 
 end Brandom1994
