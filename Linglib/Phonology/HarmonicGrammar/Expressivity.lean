@@ -3,7 +3,7 @@ import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Core.Optimization.Evaluation
-import Linglib.Core.Probability.SoftmaxTheory
+import Linglib.Core.Analysis.SpecialFunctions.Softmax
 import Linglib.Core.Optimization.Semiring
 import Linglib.Core.Optimization.Dequantization.LogSumExp.Softmax
 
@@ -293,7 +293,7 @@ theorem ot_lex_imp_higher_harmony {C : Type*}
 /-- **MaxEnt concentration on HG winner**: as α → ∞, MaxEnt probability
     concentrates on the candidate with the highest harmony score.
 
-    This is `softmax_argmax_limit` instantiated with harmony scores.
+    This is `Real.tendsto_softmax_atTop` instantiated with harmony scores.
     The interesting content is in the *hypotheses*: showing that the
     HG winner equals the OT winner (§4). -/
 theorem maxent_concentrates_on_hg_winner {C : Type*} [Fintype C] [Nonempty C]
@@ -302,7 +302,7 @@ theorem maxent_concentrates_on_hg_winner {C : Type*} [Fintype C] [Nonempty C]
     (h_opt : ∀ c, c ≠ c_opt →
       harmonyScore con w c < harmonyScore con w c_opt) :
     Tendsto (fun α : ℝ => softmax (α • harmonyScore con w) c_opt) atTop (𝓝 1) :=
-  softmax_argmax_limit (harmonyScore con w) c_opt h_opt
+  tendsto_softmax_atTop h_opt
 
 /-- **MaxEnt → OT limit** ([smolensky-legendre-2006]): as α → ∞,
     MaxEnt probability concentrates on the OT winner.
@@ -313,7 +313,7 @@ theorem maxent_concentrates_on_hg_winner {C : Type*} [Fintype C] [Nonempty C]
 
     The proof combines:
     1. `ot_lex_imp_higher_harmony`: lex-better ⟹ higher harmony (HG–OT agreement)
-    2. `softmax_argmax_limit`: MaxEnt concentrates on harmony maximizer -/
+    2. `Real.tendsto_softmax_atTop`: MaxEnt concentrates on harmony maximizer -/
 theorem maxent_ot_limit {C : Type*} [Fintype C] [Nonempty C] [DecidableEq C]
     (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M)
     (c_opt : C)
@@ -324,11 +324,8 @@ theorem maxent_ot_limit {C : Type*} [Fintype C] [Nonempty C] [DecidableEq C]
     Tendsto (fun α : ℝ =>
       softmax (α • harmonyScore ranking.get (expWeights ranking.length M)) c_opt)
       atTop (𝓝 1) := by
-  apply softmax_argmax_limit
-  intro c hc
-  exact ot_lex_imp_higher_harmony ranking M hM c_opt c
-    (fun con hcon => ⟨hbound c_opt con hcon, hbound c con hcon⟩)
-    (hlex c hc)
+  exact tendsto_softmax_atTop fun c hc => ot_lex_imp_higher_harmony ranking M hM c_opt c
+    (fun con hcon => ⟨hbound c_opt con hcon, hbound c con hcon⟩) (hlex c hc)
 
 /-! ### The warped-semiring view of the limit -/
 

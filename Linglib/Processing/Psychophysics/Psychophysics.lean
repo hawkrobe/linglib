@@ -12,7 +12,7 @@ and its extension to multi-dimensional stimulus continua.
 Stevens' magnitude estimation experiments yield ψ(s) = k · sⁿ — a power function
 relating physical stimulus intensity to psychological magnitude. Luce shows this
 is not an independent discovery but a **corollary** of the Fechnerian framework
-(`luce_fechnerian_exp` in `RationalAction.lean`) under a change of variables.
+(`luce_fechnerian_exp` in `Core.Probability.SoftmaxTheory`) under a change of variables.
 
 The key insight: if we work with log-intensity `u = log s` rather than raw
 intensity `s`, then the ratio scale `v(s) = C · sⁿ = C · exp(n · log s)`
