@@ -23,12 +23,12 @@ models over weighted features, differing only in what the features measure.
    `con : CON (I × O) n` weighted by `w : Fin n → ℝ` and softmax-decoded.
 
 2. **Log-likelihood** (§2): The learning objective is log pseudo-likelihood,
-   which decomposes as `Σⱼ (H(yⱼ,xⱼ) − logSumExp(H(·,xⱼ)))` — the harmony
+   which decomposes as `Σⱼ (H(yⱼ,xⱼ) − log Σ exp H(·,xⱼ))` — the harmony
    of each observed output minus the log-partition function.
 
 3. **Concavity** (§2): Log-likelihood is concave in each weight
    (`concavity` via `logConditional_concaveOn`). The decomposition
-   `log P(y|x;w) = affine(wⱼ) − logSumExpOffset(s,r,wⱼ)` makes this
+   `log P(y|x;w) = log (softmax (wⱼ • s + r) y)` makes this
    affine minus convex = concave, guaranteeing a unique global maximum.
 
 4. **Learning gradient = E[feature]** (§3): The derivative of log-likelihood
@@ -77,8 +77,8 @@ theorem eq1_is_softmax {I O : Type} [Fintype O] {n : ℕ}
 
     `logPL(w) = Σⱼ log P_w(yⱼ | xⱼ)`
 
-    Each term decomposes as `H(yⱼ, xⱼ) − logSumExp(H(·, xⱼ), 1)` via
-    `softmax_eq_exp_sub`. -/
+    Each term decomposes as `H(yⱼ, xⱼ) − log Σ exp H(·, xⱼ)` via
+    `log_softmax`. -/
 noncomputable def logPseudoLikelihood {I O : Type} [Fintype O] {n : ℕ}
     (con : CON (I × O) n) (w : Fin n → ℝ)
     (data : List (I × O)) : ℝ :=
@@ -100,19 +100,18 @@ noncomputable def regularizedObjective {I O : Type} [Fintype O] {n : ℕ}
     of a single observation is concave in each weight, guaranteeing a
     unique global maximum.
 
-    When all weights except `wⱼ` are held fixed, `log P(y|x;w)` decomposes as
-    `(wⱼ · sᵧ + rᵧ) − logSumExpOffset(s, r, wⱼ)` where `sᵢ = −cⱼ(yᵢ,x)`
-    and `rᵢ = Σₖ≠ⱼ wₖ(−cₖ(yᵢ,x))`. The first term is affine (hence concave);
-    the second is convex (`logSumExpOffset_convex`). Concave − convex = concave.
+    When all weights except `wⱼ` are held fixed, `log P(y|x;w)` is
+    `log (softmax (wⱼ • s + r) y)` where `sᵢ = −cⱼ(yᵢ,x)` and
+    `rᵢ = Σₖ≠ⱼ wₖ(−cₖ(yᵢ,x))`: an affine term minus the convex log-partition
+    function (`convexOn_log_sum_exp`), hence concave.
 
-    This is `logConditional_concaveOn` from `Core.Probability.Choice.RationalAction`. -/
+    This is `concaveOn_log_softmax` from `Core.Probability.SoftmaxTheory`. -/
 theorem concavity {ι : Type*} [Fintype ι] [Nonempty ι] (s r : ι → ℝ) (y : ι) :
-    ConcaveOn ℝ Set.univ
-      (fun wⱼ => (wⱼ * s y + r y) - logSumExp (wⱼ • s + r)) :=
-  logConditional_concaveOn s r y
+    ConcaveOn ℝ Set.univ (fun wⱼ : ℝ => log (softmax (wⱼ • s + r) y)) :=
+  concaveOn_log_softmax s r y
 
 -- ============================================================================
--- § 3: Learning Gradient (connecting to deriv_logSumExp)
+-- § 3: Learning Gradient
 -- ============================================================================
 
 /-- **Learning gradient = observed − expected** (§2, §4.2):
@@ -126,12 +125,12 @@ theorem concavity {ι : Type*} [Fintype ι] [Nonempty ι] (s r : ι → ℝ) (y 
     At the maximum, this derivative is zero, so `sᵧ = E_P[s]`: the
     observed feature value equals the expected feature value.
 
-    This is `hasDerivAt_logConditional` from `Core.Probability.Choice.RationalAction`. -/
+    This is `hasDerivAt_log_softmax` from `Core.Probability.SoftmaxTheory`. -/
 theorem gradient {ι : Type*} [Fintype ι] [Nonempty ι]
     (s r : ι → ℝ) (y : ι) (wⱼ : ℝ) :
-    HasDerivAt (fun w => (w * s y + r y) - logSumExp (w • s + r))
+    HasDerivAt (fun w => log (softmax (w • s + r) y))
       (s y - ∑ i : ι, softmax (wⱼ • s + r) i * s i) wⱼ :=
-  hasDerivAt_logConditional s r y wⱼ
+  hasDerivAt_log_softmax s r y wⱼ
 
 -- ============================================================================
 -- § 4: Wolof Data (Table 1) — Categorical Grammar

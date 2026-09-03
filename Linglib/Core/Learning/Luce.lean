@@ -296,14 +296,13 @@ theorem gla_eq_sga (r_j η : ℝ) (obs hyp : ℕ) :
 /-- SGA converges to the global maximum of a concave objective.
 
 For MaxEnt log-likelihood, the per-weight objective is concave
-(`logConditional_concaveOn` in `RationalAction`), so SGA is guaranteed
-to converge. This is the key advantage of MaxEnt over Stochastic OT,
+(`concaveOn_log_softmax`), so SGA is guaranteed to converge. This is the key advantage of MaxEnt over Stochastic OT,
 where convergence of the GLA is not generally proved. -/
 theorem sga_uses_correct_gradient {ι : Type*} [Fintype ι] [Nonempty ι]
     (s r : ι → ℝ) (y : ι) (wⱼ : ℝ) :
-    HasDerivAt (fun w => (w * s y + r y) - logSumExp (w • s + r))
+    HasDerivAt (fun w => log (softmax (w • s + r) y))
       (s y - ∑ i : ι, softmax (wⱼ • s + r) i * s i) wⱼ :=
-  hasDerivAt_logConditional s r y wⱼ
+  hasDerivAt_log_softmax s r y wⱼ
 
 
 end Core
