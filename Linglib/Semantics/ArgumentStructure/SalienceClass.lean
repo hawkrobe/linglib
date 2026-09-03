@@ -1,4 +1,4 @@
-import Linglib.Semantics.Root.Kinds
+import Linglib.Semantics.Root.Defs
 import Linglib.Semantics.ArgumentStructure.Valency
 
 /-!
@@ -25,6 +25,8 @@ the Chuj root classes.
 * `SalienceClass`
 * `IsAgentSalient`, `IsPatientSalient`, `IsPositional`
 * `SalienceClass.ofKinds` — the pair-level classifier
+* `SalienceClass.ofRoot` — the classifier on an annotated root, agreeing with
+  `ofKinds` on manner-free signatures (`ofRoot_eq_ofKinds`)
 * `SalienceClass.ofKinds_close` — closure invariance on cause-free
   signatures
 -/
@@ -87,6 +89,25 @@ theorem SalienceClass.ofKinds_close_cause :
     ofKinds {.cause} ∅ = none ∧
     ofKinds (Root.Kinds.close {.cause}) ∅ = some .patient := by
   decide
+
+/-- The salience class of a root from its annotation, agent-patient for a root licensing
+transitive Voice and patient for any other root carrying `result` ([lucy-1994];
+[coon-2019] §3.3). A root with neither is left undetermined, since without atoms a manner
+root and a stative one look alike. -/
+def SalienceClass.ofRoot (r : Root) : Option SalienceClass :=
+  if r.licensesTransitiveVoice then some .agentPatient
+  else if Root.Kind.result ∈ r.kinds then some .patient
+  else none
+
+/-- On manner-free signatures the annotation-level classifier agrees with the
+signature-level one, when the root is annotated as licensing transitive Voice exactly
+when its valency has the internal position. -/
+theorem SalienceClass.ofRoot_eq_ofKinds {r : Root} (h : Root.Kind.manner ∉ r.kinds)
+    (hl : r.licensesTransitiveVoice = decide (.internal ∈ v)) :
+    ofRoot r = ofKinds r.kinds v := by
+  simp only [SalienceClass.ofRoot, SalienceClass.ofKinds, IsAgentSalient, IsPatientSalient, h,
+    hl, decide_eq_true_eq]
+  split_ifs <;> simp_all
 
 /-! ### Stem valencies -/
 

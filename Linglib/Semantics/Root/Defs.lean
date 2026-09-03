@@ -1,5 +1,7 @@
 import Linglib.Semantics.Root.Profile
 import Linglib.Semantics.Root.Kinds
+import Linglib.Semantics.ArgumentStructure.Valency
+import Linglib.Semantics.Composition.Ty
 
 /-!
 # Verbal roots
@@ -16,18 +18,22 @@ such as √flat and √drown, or adjoined to it as a modifier, the manner positi
 root typology (§5.4.1, (12)), and an adjoined root escapes both the scope of
 restitutive *again* (§4.5.4) and the deletion site of verbal VP ellipsis
 ([kalyakin-2026] §2.2). Participant entailments are the separate linking layer
-`ArgumentStructure.EntailmentProfile`.
+`ArgumentStructure.EntailmentProfile`. A root may also be annotated with the
+coordinates [coon-2019] classifies root classes by, its valency, semantic type,
+and whether it combines with transitive Voice.
 
 ## Main declarations
 
-* `Root.Entailment` — a labelled atom; `Root.Entailment.kind` forgets the label
-* `Root.Position` — complement or adjoined to `v`
-* `Root` — name, atoms, position, quality profile
-* `Root.kinds`, `Root.closedKinds` — the derived and the closed signature
+* `Root.Entailment` — a labelled state, manner, or result atom, or causation
+* `Root.Position` — complement of `v` or adjoined to it
+* `Root` — a root's name, atoms, position, quality profile, and annotated
+  valency, semantic type, and transitive-Voice licensing
+* `Root.kinds` — the kinds of a root's atoms; `Root.closedKinds` closes them
 
 ## References
 
 * [beavers-koontz-garboden-2020]: The Roots of Verbal Meaning.
+* [coon-2019]: Building verbs in Chuj.
 * [kalyakin-2026]: VP ellipsis and argument structure alternations: Evidence from
   Muira Dargwa complex predicates.
 * [spalek-mcnally-2026], [majid-boster-bowerman-2008]: the quality dimensions of
@@ -82,6 +88,13 @@ structure Root where
   /-- Within-class graded quality dimensions ([spalek-mcnally-2026],
   [majid-boster-bowerman-2008]); `{}` leaves every dimension unconstrained. -/
   profile : Semantics.Root.Profile := {}
+  /-- The core-argument positions the root introduces, where annotated ([coon-2019]). -/
+  valency : Option ArgumentStructure.Valency := none
+  /-- The root's semantic type, where annotated ([coon-2019] (3)). -/
+  denotationType : Option Semantics.Composition.Ty := none
+  /-- Whether the root combines with the transitive-forming v ~ Voice head that merges an
+  agent, the coordinate separating [coon-2019]'s √TV from its unaccusative √ITV (§3.3). -/
+  licensesTransitiveVoice : Bool := false
   deriving DecidableEq
 
 /-- A `Repr` showing the name, atom count, and position, since `Finset` has only an

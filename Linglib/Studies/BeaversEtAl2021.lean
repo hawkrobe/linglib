@@ -1,6 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
-import Linglib.Semantics.Root.Classification
+import Linglib.Semantics.Root.ChangeType
+import Linglib.Semantics.Root.PropertyConcept
 import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.RoleList
@@ -49,24 +50,10 @@ namespace BeaversEtAl2021
 
 open Semantics Semantics.Root ArgumentStructure ArgumentStructure.EventStructure Features
 
-/-! ### Root meanings and subclasses ((5)–(6)) -/
+/-! ### Root meanings and subclasses ((5)–(6))
 
-/-- [dixon-1982]'s basic property types: the property-concept subclasses (5),
-those most often lexicalized as adjectives across languages. -/
-inductive PCSubclass where
-  /-- *large*, *small*, *long*, *short*, *deep*, *wide*, *tall*. -/
-  | dimension
-  /-- *old*. -/
-  | age
-  /-- *bad*, *good*. -/
-  | value
-  /-- *white*, *black*, *red*, *green*, *blue*, *brown*. -/
-  | color
-  /-- *cool*, *warm*, *dry*, *soft*, *hard*, *smooth*. -/
-  | physicalProperty
-  /-- *fast*, *slow*. -/
-  | speed
-  deriving DecidableEq, Repr
+The property-concept subclasses are [dixon-1982]'s classes (`PropertyConcept.Class`); the
+paper samples all but human propensity (fn. 5). -/
 
 /-- Result-root subclasses (6), chosen from [levin-1993] for having likely
 translation equivalents across languages. -/
@@ -145,7 +132,7 @@ structure RootMeaning where
   /-- Property-concept or result root. -/
   rootClass : ChangeType
   /-- Subclass per (5)–(6). -/
-  subclass : Option (PCSubclass ⊕ ResultSubclass) := none
+  subclass : Option (PropertyConcept.Class ⊕ ResultSubclass) := none
   /-- Languages with a simple stative for this root (Table A1). -/
   nSimpleStative : Nat
   /-- Languages with any data for this root (Table A1). -/
@@ -538,15 +525,14 @@ theorem grand_unification (ct : ChangeType) :
     requiresBECOME, admitsBasicStative,
     verbalMarkedness, stativeMarkedness]
 
-/-- Change entailment determines markedness through the unified
-`Classification`. -/
-theorem root_markedness_from_change (r : Classification) :
+/-- Change entailment determines markedness through the root's change type. -/
+theorem root_markedness_from_change (r : Semantics.Root) :
     verbalMarkedness r.changeType = .unmarked ↔ r.changeType.EntailsChange :=
   markedness_from_semantics _
 
 /-- Roots with the same change type behave identically regardless of
 valency: markedness and statives are orthogonal to argument selection. -/
-theorem same_change_same_morphosyntax (r₁ r₂ : Classification)
+theorem same_change_same_morphosyntax (r₁ r₂ : Semantics.Root)
     (h : r₁.changeType = r₂.changeType) :
     verbalMarkedness r₁.changeType = verbalMarkedness r₂.changeType ∧
     stativeMarkedness r₁.changeType = stativeMarkedness r₂.changeType ∧
@@ -557,45 +543,41 @@ theorem same_change_same_morphosyntax (r₁ r₂ : Classification)
 
 open Chuj
 
-/-- The result-root subdivision of [coon-2019]'s √TV class: shared
-coordinates from `RootClass.toClassification`, with only the
-change-entailment column added by the present paper. -/
-def rootTV_res : Classification :=
-  { RootClass.tv.toClassification with changeType := .result }
+/-- [coon-2019]'s √TV class subdivided by the present paper's axis, a result
+root and a property-concept root sharing Coon's coordinates and differing only
+in their atom. -/
+def rootTV : ChangeType → Semantics.Root
+  | .result => { RootClass.tv.toRoot with entailments := {.result "changed"} }
+  | .propertyConcept => { RootClass.tv.toRoot with entailments := {.state "property"} }
 
-/-- The property-concept subdivision of √TV (no change entailment). -/
-def rootTV_pc : Classification :=
-  { RootClass.tv.toClassification with changeType := .propertyConcept }
+/-- The subdivision is orthogonal to Coon's coordinates, since each subdivision
+has the change type it was built for and √TV's valency. -/
+theorem rootTV_changeType (ct : ChangeType) :
+    (rootTV ct).changeType = ct ∧ (rootTV ct).valency = some {.internal} := by
+  cases ct <;> exact ⟨by decide, rfl⟩
 
-/-- Coon's √ITV coordinates, reused unchanged. -/
-def rootITV : Classification := RootClass.itv.toClassification
-
-/-- Coon's √POS coordinates, reused unchanged. -/
-def rootPOS : Classification := RootClass.pos.toClassification
-
-/-- Chuj √TV result roots instantiate the result-root package: change
-entailed, no simple stative, unmarked verb. -/
+/-- Chuj √TV result roots instantiate the result-root package: change entailed,
+no simple stative, unmarked verb. -/
 theorem chuj_tv_res_is_result_root :
-    rootTV_res.changeType.EntailsChange ∧
-    hasSimpleStative rootTV_res.changeType = false ∧
-    verbalMarkedness rootTV_res.changeType = .unmarked :=
-  ⟨trivial, rfl, rfl⟩
+    (rootTV .result).changeType.EntailsChange ∧
+    hasSimpleStative (rootTV .result).changeType = false ∧
+    verbalMarkedness (rootTV .result).changeType = .unmarked := by
+  rw [(rootTV_changeType _).1]; exact ⟨trivial, rfl, rfl⟩
 
-/-- Chuj √TV PC roots instantiate the PC package: no change entailment,
-simple stative, marked verb. -/
+/-- Chuj √TV PC roots instantiate the PC package: no change entailment, simple
+stative, marked verb. -/
 theorem chuj_tv_pc_is_pc_root :
-    ¬ rootTV_pc.changeType.EntailsChange ∧
-    hasSimpleStative rootTV_pc.changeType = true ∧
-    verbalMarkedness rootTV_pc.changeType = .marked :=
-  ⟨id, rfl, rfl⟩
+    ¬ (rootTV .propertyConcept).changeType.EntailsChange ∧
+    hasSimpleStative (rootTV .propertyConcept).changeType = true ∧
+    verbalMarkedness (rootTV .propertyConcept).changeType = .marked := by
+  rw [(rootTV_changeType _).1]; exact ⟨id, rfl, rfl⟩
 
-/-- The Chuj fragment witnesses cells of the valency × change-type matrix:
-theme-taking roots with and without change entailment, and valency-free
-property-concept roots. -/
+/-- Coon's positional class is valency-free, so the Chuj fragment witnesses
+three cells of the valency × change-type matrix. -/
 theorem chuj_witnesses_orthogonality :
-    rootTV_res.valency = {.internal} ∧ rootTV_res.changeType = .result ∧
-    rootTV_pc.valency = {.internal} ∧ rootTV_pc.changeType = .propertyConcept ∧
-    rootPOS.valency = ∅ ∧ rootPOS.changeType = .propertyConcept :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    (rootTV .result).valency = some {.internal} ∧
+    (rootTV .propertyConcept).valency = some {.internal} ∧
+    RootClass.pos.toRoot.valency = some ∅ :=
+  ⟨rfl, rfl, rfl⟩
 
 end BeaversEtAl2021

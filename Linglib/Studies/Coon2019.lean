@@ -1,4 +1,5 @@
-import Linglib.Semantics.Root.Classification
+import Linglib.Semantics.Root.Defs
+import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.Paradigm.Morphome
@@ -17,8 +18,8 @@ arguments. The root lexicon lives in
 
 ## Main declarations
 
-* `Chuj.RootClass.toClassification` — Coon's coordinates for the root
-  classes, as a derived projection.
+* `Chuj.RootClass.toRoot` — Coon's coordinates for the root classes, as a
+  derived projection.
 * `selects`, `isGrammatical` — each head's selection condition on the
   root coordinates; the paradigm table is derived, not stipulated
   (`isGrammatical_table`), and checked against the attested data
@@ -35,26 +36,21 @@ open Semantics.Root
 
 /-! ### Root-class coordinates -/
 
-/-- [coon-2019]'s coordinates for each root class ((3), p. 37), as a
-    derived projection off the class label. The `changeType` column is a
-    representative placeholder — Coon's classes mix change-of-state and
-    non-change roots (p. 60), and [beavers-etal-2021] subdivides √TV on
-    exactly this axis. -/
-def _root_.Chuj.RootClass.toClassification : RootClass → Classification
-  | .tv  => { valency := {.internal}, changeType := .result,
-              denotationType := some (.e ⇒ .s ⇒ .t),
+/-- [coon-2019]'s coordinates for each root class ((3), p. 37), as a derived
+    projection off the class label. No atoms are annotated, since Coon's classes
+    mix change-of-state and non-change roots (p. 60); [beavers-etal-2021]
+    subdivides √TV on that axis. -/
+def _root_.Chuj.RootClass.toRoot : RootClass → Semantics.Root
+  | .tv  => { valency := some {.internal}, denotationType := some (.e ⇒ .s ⇒ .t),
               licensesTransitiveVoice := true }
-  | .itv => { valency := {.internal}, changeType := .propertyConcept,
-              denotationType := some (.e ⇒ .s ⇒ .t) }   -- unaccusative (§3.3)
-  | .pos => { valency := ∅, changeType := .propertyConcept,
-              denotationType := some (.e ⇒ .s ⇒ .d) }   -- [henderson-2017] measure fn
-  | .nom => { valency := ∅, changeType := .propertyConcept,
-              denotationType := some (.e ⇒ .t) }
+  | .itv => { valency := some {.internal}, denotationType := some (.e ⇒ .s ⇒ .t) }
+  | .pos => { valency := some ∅, denotationType := some (.e ⇒ .s ⇒ .d) }
+  | .nom => { valency := some ∅, denotationType := some (.e ⇒ .t) }
 
 /-- A root is unaccusative when it takes an internal argument but does
     not license transitive Voice (§3.3). -/
-def unaccusative (r : Classification) : Bool :=
-  r.valency == {.internal} && !r.licensesTransitiveVoice
+def unaccusative (r : Semantics.Root) : Bool :=
+  r.valency == some {.internal} && !r.licensesTransitiveVoice
 
 /-! ### Selection and the paradigm -/
 
@@ -64,7 +60,7 @@ def unaccusative (r : Classification) : Bool :=
     passives -ch and -j presuppose a transitive stem; -w introduces an
     external argument and rejects exactly the unaccusative class
     (p. 45). -/
-def selects (vs : VoiceSuffix) (r : Classification) : Bool :=
+def selects (vs : VoiceSuffix) (r : Semantics.Root) : Bool :=
   match vs with
   | .null    => r.licensesTransitiveVoice || unaccusative r
   | .ch | .j => r.licensesTransitiveVoice
@@ -75,7 +71,7 @@ def selects (vs : VoiceSuffix) (r : Classification) : Bool :=
     derived transitive stems in -ej, which all four classes form (§2.2),
     or the isolated -j forms on non-transitive roots (ex. (71), p. 71). -/
 def isGrammatical (rc : RootClass) (vs : VoiceSuffix) : Bool :=
-  selects vs rc.toClassification
+  selects vs rc.toRoot
 
 /-- Coon's paradigm table, derived: √TV takes all four voices, √ITV
     only null v, √POS and √NOM only -w. -/
@@ -104,7 +100,7 @@ def _root_.Chuj.VoiceSuffix.categorizer :
 /-- A root class forms bare transitive stems exactly when it licenses
     transitive Voice (§2.2, p. 41). -/
 def formsBareTransitive (rc : RootClass) : Bool :=
-  rc.toClassification.licensesTransitiveVoice
+  rc.toRoot.licensesTransitiveVoice
 
 /-! ### Paradigm data (§§2–5)
 
@@ -406,22 +402,22 @@ theorem nom_agentive :
 /-- √TV and √ITV share semantic type and valency ([davis-1997]; §3.3);
     transitive-Voice licensing alone separates them. -/
 theorem tv_itv_same_type_different_voice :
-    (RootClass.tv.toClassification).denotationType =
-      (RootClass.itv.toClassification).denotationType ∧
-    (RootClass.tv.toClassification).valency =
-      (RootClass.itv.toClassification).valency ∧
-    (RootClass.tv.toClassification).licensesTransitiveVoice ≠
-      (RootClass.itv.toClassification).licensesTransitiveVoice :=
+    (RootClass.tv.toRoot).denotationType =
+      (RootClass.itv.toRoot).denotationType ∧
+    (RootClass.tv.toRoot).valency =
+      (RootClass.itv.toRoot).valency ∧
+    (RootClass.tv.toRoot).licensesTransitiveVoice ≠
+      (RootClass.itv.toRoot).licensesTransitiveVoice :=
   ⟨rfl, rfl, by decide⟩
 
 /-- Only √TV determines a salience class — agent-patient, the cell of
     [lucy-1994]'s Yucatec `=∅` roots; the intransitive classes are
     underdetermined. -/
 theorem salience_of_root_classes :
-    (RootClass.tv.toClassification).salienceClass = some .agentPatient ∧
-    (RootClass.itv.toClassification).salienceClass = none ∧
-    (RootClass.pos.toClassification).salienceClass = none ∧
-    (RootClass.nom.toClassification).salienceClass = none :=
+    ArgumentStructure.SalienceClass.ofRoot RootClass.tv.toRoot = some .agentPatient ∧
+    ArgumentStructure.SalienceClass.ofRoot RootClass.itv.toRoot = none ∧
+    ArgumentStructure.SalienceClass.ofRoot RootClass.pos.toRoot = none ∧
+    ArgumentStructure.SalienceClass.ofRoot RootClass.nom.toRoot = none :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 end Coon2019

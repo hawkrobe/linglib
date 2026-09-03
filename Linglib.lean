@@ -1495,10 +1495,11 @@ import Linglib.Semantics.ArgumentStructure.ParticipantType
 import Linglib.Semantics.ArgumentStructure.PersistenceLevel
 import Linglib.Semantics.ArgumentStructure.Projection
 import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Semantics.Root.Classification
+import Linglib.Semantics.Root.ChangeType
 import Linglib.Semantics.Root.Defs
 import Linglib.Semantics.Root.Kinds
 import Linglib.Semantics.Root.Profile
+import Linglib.Semantics.Root.PropertyConcept
 import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Semantics.ArgumentStructure.Thematic.Basic
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
