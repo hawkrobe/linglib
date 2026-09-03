@@ -32,6 +32,8 @@ log-sum-exp as `cgf` — is `Core.Probability.SoftmaxTheory`.
   in the scores.
 * `Real.softmax_add_const` — translation invariance.
 * `Real.softmax_fin_two` — two alternatives give `Real.sigmoid`.
+* `Real.tendsto_softmax_atTop` — as the inverse temperature grows, softmax
+  concentrates on a strict maximizer.
 * `Real.softmax_sum_apply`, `Real.sum_softmax_eval_eq` — a separable score on a
   product type gives a product distribution, with coordinate marginals.
 * `Real.rpow_div_sum_rpow` — Luce's power rule is softmax of log-scores.
@@ -132,6 +134,35 @@ theorem softmax_lt_softmax_of_single_lt {s s' : ι → ℝ} {i : ι} (hlt : s i 
   exact softmax_update_strictMono s i hlt
 
 end Update
+
+/-! ### Limits in the inverse temperature -/
+
+section Limit
+
+open Filter Topology
+
+variable (s : ι → ℝ) (i : ι)
+
+theorem softmax_eq_inv_sum_exp_sub : softmax s i = (∑ j, exp (s j - s i))⁻¹ := by
+  simp only [softmax_def, exp_sub, ← sum_div, inv_div]
+
+variable {s i}
+
+/-- As the inverse temperature grows, softmax concentrates on a strict maximizer. -/
+theorem tendsto_softmax_atTop (h : ∀ j ≠ i, s j < s i) :
+    Tendsto (fun α : ℝ => softmax (α • s) i) atTop (𝓝 1) := by
+  classical
+  simp only [softmax_eq_inv_sum_exp_sub, Pi.smul_apply, smul_eq_mul, ← mul_sub]
+  have : Tendsto (fun α : ℝ => ∑ j, exp (α * (s j - s i))) atTop
+      (𝓝 (∑ j, if j = i then 1 else 0)) := by
+    refine tendsto_finsetSum _ fun j _ => ?_
+    split_ifs with hj
+    · simp [hj]
+    · simpa [Function.comp_def] using
+        tendsto_exp_atBot.comp (tendsto_id.atTop_mul_const_of_neg (sub_neg.2 (h j hj)))
+  simpa using this.inv₀ (by simp)
+
+end Limit
 
 /-! ### Two alternatives and the logit -/
 

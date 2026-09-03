@@ -1,4 +1,4 @@
-import Linglib.Core.Probability.SoftmaxTheory
+import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
 # Decoders — from scored candidates to probability distributions
@@ -26,8 +26,7 @@ Noise-kernel-based decoders live in `NoiseKernel.lean`.
 
 `softmaxDecoder α` interpolates between soft and hard optimization: as
 `α → ∞`, the softmax distribution concentrates on the unique maximizer
-(when one exists), recovering `argmaxDecoder` — `softmax_argmax_limit` in
-`Core.Probability.Choice.RationalAction`.
+(when one exists), recovering `argmaxDecoder` — `Real.tendsto_softmax_atTop`.
 
 ## Semiring connection
 
@@ -108,7 +107,7 @@ open scoped Classical in
     `score` on `cands`. Deterministic (Dirac on the unique maximizer)
     when the maximum is achieved by exactly one candidate.
 
-    The `α → ∞` limit of `softmaxDecoder` (see `softmax_argmax_limit`). -/
+    The `α → ∞` limit of `softmaxDecoder` (see `Real.tendsto_softmax_atTop`). -/
 noncomputable def argmaxDecoder {Cand : Type*} {Score : Type*} [LinearOrder Score] :
     Decoder Cand Score where
   decode cands score := fun c =>

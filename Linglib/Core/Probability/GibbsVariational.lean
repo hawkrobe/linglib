@@ -26,6 +26,7 @@ by the module docstring of `Mathlib/MeasureTheory/Measure/Tilted.lean`.
 * `InformationTheory.freeEnergy_le_cgf` — the **variational inequality**:
   `freeEnergy μ f q ≤ cgf f μ 1` for every probability measure `q ≪ μ`.
 * `InformationTheory.freeEnergy_tilted` — the bound is **attained** at `μ.tilted f`.
+* `InformationTheory.eq_tilted_of_freeEnergy_eq_cgf` — and only there.
 * `InformationTheory.isGreatest_cgf` — the **variational principle**: `cgf f μ 1` is
   the greatest value of `freeEnergy μ f` over admissible `q`.
 
@@ -106,6 +107,24 @@ theorem freeEnergy_tilted (μ : Measure α) [IsProbabilityMeasure μ] {f : α �
   rw [klDiv_self, ENNReal.toReal_zero] at h
   rw [Measure.freeEnergy]
   linarith
+
+/-- The variational bound is attained only at the Gibbs measure: a probability
+measure `q ≪ μ` with `freeEnergy μ f q = cgf f μ 1` is `μ.tilted f`. From the
+decomposition identity, `KL(q ‖ μ.tilted f) = 0`. -/
+theorem eq_tilted_of_freeEnergy_eq_cgf (μ q : Measure α) [IsProbabilityMeasure μ]
+    [IsProbabilityMeasure q] {f : α → ℝ} (hqμ : q ≪ μ)
+    (h_int_llr : Integrable (llr q μ) q) (h_int_f : Integrable f q)
+    (h_exp : Integrable (fun x => Real.exp (f x)) μ)
+    (h : μ.freeEnergy f q = cgf f μ 1) : q = μ.tilted f := by
+  have : IsProbabilityMeasure (μ.tilted f) := isProbabilityMeasure_tilted h_exp
+  have hkl : (klDiv q (μ.tilted f)).toReal = 0 := by
+    rw [toReal_klDiv_tilted_right μ q hqμ h_int_llr h_int_f h_exp]
+    rw [Measure.freeEnergy] at h
+    linarith
+  have hne : klDiv q (μ.tilted f) ≠ ⊤ := klDiv_ne_top_iff.2
+    ⟨hqμ.trans (absolutelyContinuous_tilted h_exp),
+      integrable_llr_tilted_right hqμ h_int_f h_int_llr h_exp⟩
+  exact klDiv_eq_zero_iff.1 (((ENNReal.toReal_eq_zero_iff _).1 hkl).resolve_right hne)
 
 /-- **Gibbs / Donsker–Varadhan variational principle**: the cumulant generating
 function `cgf f μ 1` is the *greatest* value of the free-energy functional

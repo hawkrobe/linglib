@@ -1,5 +1,6 @@
 import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.SoftmaxTheory
+import Linglib.Core.Probability.GibbsVariational
 import Linglib.Core.Probability.Decision.Basic
 import Linglib.Core.Probability.SoftmaxLimits
 import Mathlib.Data.Rat.Cast.Defs
@@ -19,8 +20,9 @@ explicit by bridging `DecisionProblem` (ℚ) from `DecisionTheory.lean` with
 
 2. **Monotonicity** (§2): Higher EU ⟹ higher choice probability (α > 0).
 
-3. **Entropy-regularized optimality** (§3): The softmax agent uniquely maximizes
-   `∑ p(a)·EU(a) + (1/α)·H(p)` — the Gibbs Variational Principle in
+3. **Entropy-regularized optimality** (§3): The softmax policy is the Gibbs
+   measure of the uniform prior tilted by `α • EU`, hence the unique greatest
+   free-energy distribution — the Gibbs variational principle in
    decision-theoretic language.
 
 4. **Hard-max convergence** (§4): As α → ∞, the softmax agent converges to
@@ -98,39 +100,49 @@ theorem fromDP_policy_strict_mono {W A : Type*} [Fintype W] [Fintype A] [Nonempt
 -- §3. Entropy-Regularized EU Maximality
 -- ============================================================================
 
-/-- The softmax agent uniquely maximizes entropy-regularized expected utility:
-    p* = argmax_p [∑ p(a)·EU(a) + (1/α)·H(p)].
+section Gibbs
 
-This is the decision-theoretic content of the Gibbs Variational Principle.
-The objective `entropyRegObjective` from `RationalAction.lean` is exactly
-`∑ p(a)·s(a) + (1/α)·H(p)` — we just instantiate `s = EU`. -/
-theorem softmax_maximizes_EU_plus_entropy {W A : Type*}
-    [Fintype W] [Fintype A] [Nonempty A]
-    (dp : DecisionTheory.DecisionProblem ℚ W A) {α : ℝ} (hα : 0 < α)
-    (p : A → ℝ) (hp_nn : ∀ a, 0 ≤ p a) (hp_sum : ∑ a, p a = 1) :
-    entropyRegObjective (fun a => expectedUtilityR dp a) α p ≤
-    entropyRegObjective (fun a => expectedUtilityR dp a) α
-      ((RationalAction.fromDecisionProblem dp α).policy () ·) := by
-  -- The policy of fromDecisionProblem equals softmax over EU
-  have hpol : ∀ a, (RationalAction.fromDecisionProblem dp α).policy () a =
-      softmax (α • fun a => expectedUtilityR dp a) a := by
-    intro a
-    exact RationalAction.fromSoftmax_policy_eq _ α () a
-  simp_rw [show (fun a => (RationalAction.fromDecisionProblem dp α).policy () a) =
-    softmax (α • fun a => expectedUtilityR dp a) from funext hpol]
-  exact softmax_maximizes_entropyReg _ α hα p hp_nn hp_sum
+open MeasureTheory ProbabilityTheory InformationTheory
 
-/-- The softmax agent is the UNIQUE maximizer: any distribution achieving
-the same objective value must equal the softmax policy. -/
-theorem softmax_unique_EU_maximizer {W A : Type*}
-    [Fintype W] [Fintype A] [Nonempty A]
-    (dp : DecisionTheory.DecisionProblem ℚ W A) {α : ℝ} (hα : 0 < α)
-    (p : A → ℝ) (hp_nn : ∀ a, 0 ≤ p a) (hp_sum : ∑ a, p a = 1)
-    (h_max : entropyRegObjective (fun a => expectedUtilityR dp a) α p =
-             entropyRegObjective (fun a => expectedUtilityR dp a) α
-               (softmax (α • fun a => expectedUtilityR dp a))) :
-    p = softmax (α • fun a => expectedUtilityR dp a) :=
-  softmax_unique_maximizer _ α hα p hp_nn hp_sum h_max
+variable {W A : Type*} [Fintype W] [Fintype A] [Nonempty A] [MeasurableSpace A]
+  [MeasurableSingletonClass A] (dp : DecisionTheory.DecisionProblem ℚ W A) (α : ℝ)
+
+/-- The softmax policy, as a measure, is the uniform prior tilted by the scaled
+expected utility — the Gibbs measure of `α • EU`. -/
+theorem fromDP_policy_eq_tilted :
+    Measure.count.withDensity
+        (fun a => ENNReal.ofReal ((RationalAction.fromDecisionProblem dp α).policy () a)) =
+      (uniformOn Set.univ).tilted (α • fun a => expectedUtilityR dp a) := by
+  rw [tilted_uniformOn_univ, tilted_count]
+  congr; funext a; exact congrArg ENNReal.ofReal (RationalAction.fromSoftmax_policy_eq _ α () a)
+
+/-- **Gibbs variational principle for the softmax agent**: the softmax policy is
+the greatest free-energy distribution `𝔼_q[α • EU] − KL(q ‖ uniform)` over the
+uniform prior, the greatest value being the cumulant generating function
+(`isGreatest_cgf`, with the integrability conditions automatic on a finite type). -/
+theorem fromDP_isGreatest_freeEnergy :
+    IsGreatest ((uniformOn (Set.univ : Set A)).freeEnergy (α • fun a => expectedUtilityR dp a) ''
+        {q | IsProbabilityMeasure q ∧ q ≪ uniformOn Set.univ})
+      (cgf (α • fun a => expectedUtilityR dp a) (uniformOn Set.univ) 1) := by
+  have := isProbabilityMeasure_uniformOn' (s := (Set.univ : Set A)) Set.finite_univ Set.univ_nonempty
+  have : IsProbabilityMeasure ((uniformOn (Set.univ : Set A)).tilted
+      (α • fun a => expectedUtilityR dp a)) := isProbabilityMeasure_tilted Integrable.of_finite
+  refine ⟨⟨_, ⟨this, tilted_absolutelyContinuous _ _⟩,
+    freeEnergy_tilted _ Integrable.of_finite Integrable.of_finite Integrable.of_finite⟩, ?_⟩
+  rintro x ⟨q, ⟨hq, hqμ⟩, rfl⟩
+  exact freeEnergy_le_cgf _ q hqμ Integrable.of_finite Integrable.of_finite Integrable.of_finite
+
+/-- The greatest free energy is attained only by the softmax policy. -/
+theorem fromDP_eq_tilted_of_freeEnergy_eq (q : Measure A) [IsProbabilityMeasure q]
+    (hq : q ≪ uniformOn Set.univ)
+    (h : (uniformOn (Set.univ : Set A)).freeEnergy (α • fun a => expectedUtilityR dp a) q =
+      cgf (α • fun a => expectedUtilityR dp a) (uniformOn Set.univ) 1) :
+    q = (uniformOn Set.univ).tilted (α • fun a => expectedUtilityR dp a) :=
+  have := isProbabilityMeasure_uniformOn' (s := (Set.univ : Set A)) Set.finite_univ Set.univ_nonempty
+  eq_tilted_of_freeEnergy_eq_cgf _ q hq Integrable.of_finite Integrable.of_finite
+    Integrable.of_finite h
+
+end Gibbs
 
 -- ============================================================================
 -- §4. Hard-Max Convergence
