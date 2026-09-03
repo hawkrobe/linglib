@@ -70,6 +70,7 @@ def catFeatures : Cat → CatFeatures
   | .N     => ⟨false, true⟩    -- [-V, +N]
   | .n     => ⟨false, true⟩    -- [-V, +N] (categorizer/gender, [marantz-2001])
   | .Num   => ⟨false, true⟩    -- [-V, +N] (number, [ritter-1991])
+  | .Dem   => ⟨false, true⟩    -- [-V, +N] (demonstrative, [cinque-2005])
   | .Q     => ⟨false, true⟩    -- [-V, +N] (quantity/classifier, [borer-2005])
   | .D     => ⟨false, true⟩    -- [-V, +N]
   | .K     => ⟨false, true⟩    -- [-V, +N] (inherent case shell, [newman-2024])
@@ -118,7 +119,7 @@ def fValue : Cat → Nat
   | .T | .Q | .Neg | .Mod
   | .Pol | .Asp | .Evid | .Path => 2   -- specification domain (F2)
   | .Fin | .Num | .Nmlz         => 3   -- inner edge / nominalizer (F3)
-  | .Foc | .D                   => 4   -- discourse / referential (F4)
+  | .Foc | .D | .Dem            => 4   -- discourse / referential (F4); DemP ([cinque-2005])
   | .Top | .Rel | .K | .Say     => 5   -- topic field / case shell / say layer (F5); Say > Foc > T ([egressy-2026]), below C
   | .C | .Force                 => 6   -- complementizer/force (F6)
   | .SA                         => 7   -- speech act (F7, [speas-tenny-2003])
@@ -180,7 +181,7 @@ inductive CatFamily where
 def catFamily : Cat → CatFamily
   | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA | .Say
   | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid | .Nmlz => .verbal
-  | .N | .n | .Num | .Q | .D | .K      => .nominal
+  | .N | .n | .Num | .Dem | .Q | .D | .K => .nominal
   | .A | .a                              => .adjectival
   | .P | .Place | .Path                 => .adpositional
 
@@ -224,7 +225,7 @@ structure CategorialFeatures where
 def categorialFeatures : Cat → CategorialFeatures
   | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA | .Say
   | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid | .Nmlz => ⟨false, true⟩   -- [V]
-  | .N | .n | .Num | .Q | .D | .K      => ⟨true, false⟩   -- [N]
+  | .N | .n | .Num | .Dem | .Q | .D | .K => ⟨true, false⟩   -- [N]
   | .A | .a                              => ⟨true, true⟩    -- [N, V]
   | .P | .Place | .Path                 => ⟨false, false⟩  -- default (no features)
 

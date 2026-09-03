@@ -45,6 +45,7 @@ inductive Cat where
   | Place -- locational head ([dendikken-2010]; PlaceP, F1 in adpositional EP)
   | Path  -- directional head ([dendikken-2010] [svenonius-2010]; PathP, F2 in adpositional EP)
   | Num   -- number ([ritter-1991]; NumP between nP and QP/DP)
+  | Dem   -- demonstrative ([cinque-2005]; DemP above NumP in the nominal extended projection)
   | Q     -- quantity / classifier ([borer-2005]; QP between NumP and DP)
   | Voice -- Voice head ([kratzer-1996]; [schaefer-2008])
   | Appl  -- Applicative head ([pylkkanen-2008]; [cuervo-2003])

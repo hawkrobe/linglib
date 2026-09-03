@@ -48,6 +48,7 @@ def epSemanticType : Cat → EPSemanticType
   | .Voice             => .intermediate   -- F1: introduces external argument ([kratzer-1996])
   | .Appl              => .intermediate   -- F1: introduces applied argument ([pylkkanen-2008])
   | .Num               => .intermediate   -- F2: number inflection ([ritter-1991])
+  | .Dem               => .intermediate   -- F4: demonstrative ([cinque-2005])
   | .Q                 => .intermediate   -- F3: quantity/classifier ([borer-2005])
   | .D                 => .entity         -- F4: entity-denoting (in nominal EP)
   | .K                 => .entity         -- F5: case-marked entity ([newman-2024])
@@ -174,7 +175,7 @@ def argumentDomainCat (topCat : Cat) : Cat :=
   match topCat with
   | .C | .Force | .Fin | .Foc | .Top | .Rel | .SA | .Say
   | .T | .Neg | .Mod | .Pol | .Asp | .Evid => .v  -- clausal functional heads → vP is argument domain
-  | .D | .Q | .Num | .K                      => .n  -- nominal functional heads → nP is argument domain
+  | .D | .Dem | .Q | .Num | .K => .n  -- nominal functional heads → nP is argument domain
   | _       => topCat  -- small clause / lexical head → the SC itself is argument domain
 
 /-- Is a category within the argument domain of a given top category?
