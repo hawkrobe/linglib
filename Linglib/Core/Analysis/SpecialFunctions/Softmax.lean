@@ -1,5 +1,6 @@
 import Mathlib.Analysis.SpecialFunctions.Sigmoid
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Data.Fintype.BigOperators
 
@@ -32,8 +33,12 @@ log-sum-exp as `cgf` — is `Core.Probability.SoftmaxTheory`.
   in the scores.
 * `Real.softmax_add_const` — translation invariance.
 * `Real.softmax_fin_two` — two alternatives give `Real.sigmoid`.
-* `Real.tendsto_softmax_atTop` — as the inverse temperature grows, softmax
-  concentrates on a strict maximizer.
+* `Real.tendsto_softmax_nhds_zero`, `Real.tendsto_softmax_atTop`,
+  `Real.tendsto_softmax_atTop_pi`, `Real.tendsto_softmax_atBot` — softmax in
+  the inverse temperature: uniform at `0`, a point mass on a strict maximizer
+  (minimizer) as `α → ∞` (`α → -∞`).
+* `Real.tendsto_sum_negMulLog_softmax_atTop` — its entropy vanishes in the
+  hard limit.
 * `Real.softmax_sum_apply`, `Real.sum_softmax_eval_eq` — a separable score on a
   product type gives a product distribution, with coordinate marginals.
 * `Real.rpow_div_sum_rpow` — Luce's power rule is softmax of log-scores.
@@ -135,7 +140,11 @@ theorem softmax_lt_softmax_of_single_lt {s s' : ι → ℝ} {i : ι} (hlt : s i 
 
 end Update
 
-/-! ### Limits in the inverse temperature -/
+/-! ### Limits in the inverse temperature
+
+`softmax (α • s)` is continuous in the inverse temperature `α`: uniform at
+`α = 0`, concentrating on a strict maximizer as `α → ∞` and on a strict
+minimizer as `α → -∞`, with its entropy vanishing in the limit. -/
 
 section Limit
 
@@ -145,6 +154,22 @@ variable (s : ι → ℝ) (i : ι)
 
 theorem softmax_eq_inv_sum_exp_sub : softmax s i = (∑ j, exp (s j - s i))⁻¹ := by
   simp only [softmax_def, exp_sub, ← sum_div, inv_div]
+
+theorem softmax_le_exp_sub [Nonempty ι] (j : ι) : softmax s i ≤ exp (s i - s j) := by
+  rw [softmax_eq_softmax_mul_exp_sub s i j]
+  exact mul_le_of_le_one_left (exp_pos _).le (softmax_le_one s j)
+
+@[fun_prop]
+theorem continuous_softmax_smul [Nonempty ι] : Continuous fun α : ℝ => softmax (α • s) i := by
+  simp only [softmax_def, Pi.smul_apply, smul_eq_mul]
+  exact (continuous_exp.comp (continuous_mul_const _)).div
+    (continuous_finsetSum _ fun j _ => continuous_exp.comp (continuous_mul_const _))
+    fun α => (sum_exp_pos (α • s)).ne'
+
+/-- At inverse temperature `0`, softmax is uniform. -/
+theorem tendsto_softmax_nhds_zero [Nonempty ι] :
+    Tendsto (fun α : ℝ => softmax (α • s) i) (𝓝 0) (𝓝 (Fintype.card ι : ℝ)⁻¹) := by
+  simpa using (continuous_softmax_smul s i).tendsto 0
 
 variable {s i}
 
@@ -161,6 +186,43 @@ theorem tendsto_softmax_atTop (h : ∀ j ≠ i, s j < s i) :
     · simpa [Function.comp_def] using
         tendsto_exp_atBot.comp (tendsto_id.atTop_mul_const_of_neg (sub_neg.2 (h j hj)))
   simpa using this.inv₀ (by simp)
+
+/-- As the inverse temperature grows, a strictly dominated alternative vanishes. -/
+theorem tendsto_softmax_atTop_of_lt {j : ι} (h : s i < s j) :
+    Tendsto (fun α : ℝ => softmax (α • s) i) atTop (𝓝 0) := by
+  have : Nonempty ι := ⟨i⟩
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds ?_
+    (fun α => softmax_nonneg _ _) (fun α => softmax_le_exp_sub (α • s) i j)
+  simpa [Function.comp_def, ← mul_sub] using
+    tendsto_exp_atBot.comp (tendsto_id.atTop_mul_const_of_neg (sub_neg.2 h))
+
+/-- Softmax converges to the point mass on a strict maximizer. -/
+theorem tendsto_softmax_atTop_pi [DecidableEq ι] (h : ∀ j ≠ i, s j < s i) :
+    Tendsto (fun α : ℝ => softmax (α • s)) atTop (𝓝 (Pi.single i 1)) := by
+  refine tendsto_pi_nhds.2 fun j => ?_
+  by_cases hj : j = i
+  · subst hj; simpa using tendsto_softmax_atTop h
+  · simpa [hj] using tendsto_softmax_atTop_of_lt (h j hj)
+
+/-- As the inverse temperature tends to `-∞`, softmax concentrates on a strict
+minimizer. -/
+theorem tendsto_softmax_atBot (h : ∀ j ≠ i, s i < s j) :
+    Tendsto (fun α : ℝ => softmax (α • s) i) atBot (𝓝 1) := by
+  have := (tendsto_softmax_atTop (s := -s) fun j hj => neg_lt_neg (h j hj)).comp
+    tendsto_neg_atBot_atTop
+  simpa [Function.comp_def] using this
+
+/-- The entropy of softmax vanishes as it concentrates on a strict maximizer. -/
+theorem tendsto_sum_negMulLog_softmax_atTop (h : ∀ j ≠ i, s j < s i) :
+    Tendsto (fun α : ℝ => ∑ j, negMulLog (softmax (α • s) j)) atTop (𝓝 0) := by
+  classical
+  have hc : Continuous fun p : ι → ℝ => ∑ j, negMulLog (p j) :=
+    continuous_finsetSum _ fun j _ => continuous_negMulLog.comp (continuous_apply j)
+  have h0 : ∑ j, negMulLog ((Pi.single i (1 : ℝ) : ι → ℝ) j) = 0 :=
+    sum_eq_zero fun j _ => by by_cases hj : j = i <;> simp [hj]
+  have := (hc.tendsto _).comp (tendsto_softmax_atTop_pi h)
+  simp only [Function.comp_def] at this
+  rwa [h0] at this
 
 end Limit
 
