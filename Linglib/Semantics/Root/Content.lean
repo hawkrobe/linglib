@@ -2,23 +2,26 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Root quality profiles
+# Root content
 
-The dimensions along which verbs of one class differ in root content, each a
-region of a finite scale rather than a point, since a verb is compatible with a
-range of force levels, patient materials, or result geometries.
-[spalek-mcnally-2026] separate English *tear* from Spanish *rasgar* by patient
+What a root says about the action, its result, and the patient, the fine,
+within-class half of a root's meaning; the coarse half, which templatic
+components it entails, is `Root.Kinds`. Each dimension is a region of a finite
+scale rather than a point, since a verb is compatible with a range of force
+levels, patient materials, or result geometries. [spalek-mcnally-2026] separate
+English *tear* from Spanish *rasgar*, two roots of one kind, by patient
 robustness, force direction, and compatibility with careful action;
 [majid-boster-bowerman-2008] sort cutting and breaking events by instrument,
-object dimensionality, and the geometry of the result. `Root.Profile` bundles
+object dimensionality, and the geometry of the result. `Root.Content` bundles
 one region per dimension, `univ` where a root says nothing.
 
 ## Main declarations
 
-* `Root.Profile.ForceLevel`, `ForceDirection`, `Robustness`, `ResultType`,
-  `InstrumentType`, `ObjectDimensionality`, `AgentControl` — the dimensions
-* `Root.Profile` — a region per dimension
-* `Root.Profile.Overlaps` — the regions meet on every dimension
+* `Root.Content.ForceLevel`, `ForceDirection`, `InstrumentType`, `AgentControl` —
+  dimensions of the action; `ResultGeometry` of the result; `Robustness`,
+  `ObjectDimensionality` of the patient
+* `Root.Content` — a region per dimension
+* `Root.Content.Overlaps` — the regions meet on every dimension
 
 ## References
 
@@ -29,7 +32,7 @@ one region per dimension, `univ` where a root says nothing.
 * [levin-1993]: English Verb Classes and Alternations.
 -/
 
-namespace Semantics.Root.Profile
+namespace Semantics.Root.Content
 
 /-! ### Dimensions -/
 
@@ -63,7 +66,7 @@ inductive Robustness where
 /-- The physical change produced, after the class descriptions of [levin-1993]
 (§45.1 break, §45.2 bend, §44 destroy, §21.1 cut) and [hale-keyser-1987]'s
 separation in material integrity. -/
-inductive ResultType where
+inductive ResultGeometry where
   /-- Loss of integrity by pulling apart (*tear*). -/
   | separation
   /-- Damage to a surface (*rasgar*, *cut*). -/
@@ -104,42 +107,42 @@ inductive AgentControl where
   | compatible
   deriving DecidableEq, Fintype, Repr
 
-end Semantics.Root.Profile
+end Semantics.Root.Content
 
 namespace Semantics.Root
 
-open Profile Finset
+open Content Finset
 
-/-- A root's quality profile, a region of each dimension, `univ` where the root says
-nothing. -/
-structure Profile where
-  /-- Force magnitude. -/
-  forceMag : Finset ForceLevel := univ
-  /-- Force direction. -/
-  forceDir : Finset ForceDirection := univ
-  /-- Patient robustness. -/
-  patientRob : Finset Robustness := univ
-  /-- The physical change produced. -/
-  resultType : Finset ResultType := univ
+/-- A root's content, a region of each dimension, `univ` where the root says nothing. -/
+structure Content where
+  /-- Magnitude of the force applied. -/
+  force : Finset ForceLevel := univ
+  /-- Direction of the force applied. -/
+  direction : Finset ForceDirection := univ
+  /-- The instrument selected for. -/
+  instrument : Finset InstrumentType := univ
   /-- Compatibility with careful action. -/
   agentControl : Finset AgentControl := univ
-  /-- The instrument selected for. -/
-  instrumentType : Finset InstrumentType := univ
-  /-- Patient dimensionality. -/
-  patientDim : Finset ObjectDimensionality := univ
+  /-- The physical change produced. -/
+  resultGeometry : Finset ResultGeometry := univ
+  /-- Robustness of the patient. -/
+  patientRobustness : Finset Robustness := univ
+  /-- Dimensionality of the patient. -/
+  patientDimensionality : Finset ObjectDimensionality := univ
   deriving DecidableEq
 
-namespace Profile
+namespace Content
 
-/-- Two profiles overlap when their regions meet on every dimension. -/
-def Overlaps (p q : Profile) : Prop :=
-  ¬ Disjoint p.forceMag q.forceMag ∧ ¬ Disjoint p.forceDir q.forceDir ∧
-    ¬ Disjoint p.patientRob q.patientRob ∧ ¬ Disjoint p.resultType q.resultType ∧
-    ¬ Disjoint p.agentControl q.agentControl ∧
-    ¬ Disjoint p.instrumentType q.instrumentType ∧ ¬ Disjoint p.patientDim q.patientDim
+/-- Two contents overlap when their regions meet on every dimension. -/
+def Overlaps (p q : Content) : Prop :=
+  ¬ Disjoint p.force q.force ∧ ¬ Disjoint p.direction q.direction ∧
+    ¬ Disjoint p.instrument q.instrument ∧ ¬ Disjoint p.agentControl q.agentControl ∧
+    ¬ Disjoint p.resultGeometry q.resultGeometry ∧
+    ¬ Disjoint p.patientRobustness q.patientRobustness ∧
+    ¬ Disjoint p.patientDimensionality q.patientDimensionality
 
-instance (p q : Profile) : Decidable (p.Overlaps q) := by unfold Overlaps; infer_instance
+instance (p q : Content) : Decidable (p.Overlaps q) := by unfold Overlaps; infer_instance
 
-end Profile
+end Content
 
 end Semantics.Root

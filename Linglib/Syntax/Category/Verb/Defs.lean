@@ -15,7 +15,6 @@ import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.Root.Defs
-import Linglib.Semantics.Root.Profile
 
 /-! # Verb entry — core type
 

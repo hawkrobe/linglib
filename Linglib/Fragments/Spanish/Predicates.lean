@@ -199,11 +199,11 @@ def rasgar : SpanishVerbEntry :=
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true,
     levinClass := some .break_,
-    root := { profile := {
-      forceMag := {.low, .moderate}
-      forceDir := {.unidirectional}
-      patientRob := {.insubstantial, .flimsy}
-      resultType := {.separation, .surfaceBreach}
+    root := { content := {
+      force := {.low, .moderate}
+      direction := {.unidirectional}
+      patientRobustness := {.insubstantial, .flimsy}
+      resultGeometry := {.separation, .surfaceBreach}
       agentControl := {.incompatible, .neutral}
     } } }
 
