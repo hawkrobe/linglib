@@ -63,12 +63,13 @@ varies across languages.
 namespace MajidBosterBowerman2008
 
 open Verb
+open Semantics
 open ArgumentStructure
 open Features
-open Verb.Root.Profile
-open Verb.Root.Profile.InstrumentType Verb.Root.Profile.ObjectDimensionality
-  Verb.Root.Profile.Robustness Verb.Root.Profile.ResultType Verb.Root.Profile.ForceLevel
-  Verb.Root.Profile.ForceDirection
+open Semantics.Root.Profile
+open Semantics.Root.Profile.InstrumentType Semantics.Root.Profile.ObjectDimensionality
+  Semantics.Root.Profile.Robustness Semantics.Root.Profile.ResultType Semantics.Root.Profile.ForceLevel
+  Semantics.Root.Profile.ForceDirection
 
 -- ════════════════════════════════════════════════════
 -- § 1. Separation Events (stimulus level)

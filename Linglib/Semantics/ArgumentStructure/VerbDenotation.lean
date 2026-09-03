@@ -41,6 +41,7 @@ anchoring study, `Studies/BeaversKoontzGarboden2020.lean`.
 -/
 
 open ArgumentStructure
+open Semantics
 
 /-! ### The theta-grid (derived from the proto-role profiles) -/
 
@@ -162,6 +163,6 @@ theorem denote_result_from_template (M : CosModel Entity State T)
     (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
   refine M.denote_result_entails_resultState v y x e ?_ h
   show Root.Kind.result ∈ v.root.closedKinds
-  exact (Verb.Root.template_hasResultState_iff v.root).mp ht
+  exact (Semantics.Root.template_hasResultState_iff v.root).mp ht
 
 end Verb.CosModel

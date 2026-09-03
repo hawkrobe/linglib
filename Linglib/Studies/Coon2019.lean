@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Root.Classification
+import Linglib.Semantics.Root.Classification
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.Paradigm.Morphome
@@ -31,7 +31,7 @@ arguments. The root lexicon lives in
 namespace Coon2019
 
 open Chuj
-open Verb.Root
+open Semantics.Root
 
 /-! ### Root-class coordinates -/
 

@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Root.Classification
+import Linglib.Semantics.Root.Classification
 import Linglib.Studies.KoontzGarboden2009
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Semantics.Possession.Relationalizer
@@ -63,7 +63,7 @@ Property concept (PC) roots in Wá·šiw come in two semantic types:
 
 namespace HaninkKoontzGarboden2025
 
-open Verb Verb.Root
+open Verb Semantics.Root
 open KoontzGarboden2009.Monotonicity
 open DistributedMorphology (Categorizer)
 open Possession (π)

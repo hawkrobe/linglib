@@ -27,8 +27,8 @@ Owner-relative roots coexist: the top-level root is a contentful morph
 are explicitly *not* roots); `Morphology.ConsonantalRoot` (this file) is the
 *consonantal melody*; `DistributedMorphology.Root` is the abstract acategorial
 terminal; `Panagiotidis2015.RootFamily` records a category-neutral lexical
-root with its category-stamped derivatives; `Verb.Root`
-(`Semantics/ArgumentStructure/Root/`) is the *lexical-semantic* root. No identification
+root with its category-stamped derivatives; `Semantics.Root`
+(`Semantics/Root/`) is the *lexical-semantic* root. No identification
 between them is substrate — homs live in the studies that assert them.
 -/
 

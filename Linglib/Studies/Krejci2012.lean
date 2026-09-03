@@ -50,9 +50,9 @@ Middle and Ingestive Verbs*. Master's Report, University of Texas at Austin.
 
 namespace Krejci2012
 
-open Verb
+open Semantics
 open ArgumentStructure
-open Root.Kinds
+open Semantics.Root.Kinds
 open Causation.Morphological
 open ArgumentStructure.EventStructure
 open ArgumentStructure.ArgDerivation

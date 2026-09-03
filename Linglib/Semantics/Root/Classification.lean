@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Root.Kinds
+import Linglib.Semantics.Root.Kinds
 import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Semantics.Composition.Ty
@@ -31,7 +31,7 @@ manner-free signatures.
 
 open ArgumentStructure
 
-namespace Verb.Root
+namespace Semantics.Root
 
 /-! ### Change type -/
 
@@ -120,4 +120,4 @@ theorem salienceClass_ofKinds {s : Kinds} (v : Valency) (h : Kind.manner ∉ s) 
 
 end Classification
 
-end Verb.Root
+end Semantics.Root

@@ -1,5 +1,5 @@
 import Linglib.Syntax.Category.Verb.Defs
-import Linglib.Semantics.ArgumentStructure.Root.Defs
+import Linglib.Semantics.Root.Defs
 
 /-! # Verb entry — derived API
 
@@ -35,20 +35,20 @@ def Verb.derivedVendlerClass (v : Verb) : Option VendlerClass :=
 
 /-- The verb's within-class quality profile ([spalek-mcnally-2026]), read off its
     `root` (where the profile is carried). -/
-def Verb.rootProfile (v : Verb) : Verb.Root.Profile :=
+def Verb.rootProfile (v : Verb) : Semantics.Root.Profile :=
   v.root.profile
 
 /-- The verb's raw kind signature ([beavers-koontz-garboden-2020]): the
     un-closed atom-kinds of its root, the source of truth for what the verb
     structurally entails. `Verb.closedKinds` is its collocational closure and
     the root the sole provenance of the kind signature. -/
-def Verb.kinds (v : Verb) : Verb.Root.Kinds :=
+def Verb.kinds (v : Verb) : Semantics.Root.Kinds :=
   v.root.kinds
 
 /-- The verb's closed kind signature ([beavers-koontz-garboden-2020]): the
     collocational closure of `Verb.kinds` (`cause ⟹ result ⟹ state`), which the
-    event-structure spine (`Verb.Root.template`, `CosModel.denote`) runs on. -/
-def Verb.closedKinds (v : Verb) : Verb.Root.Kinds :=
+    event-structure spine (`Semantics.Root.template`, `CosModel.denote`) runs on. -/
+def Verb.closedKinds (v : Verb) : Semantics.Root.Kinds :=
   v.root.closedKinds
 
 /-- Effective subject entailment profile: verb-level override if present,

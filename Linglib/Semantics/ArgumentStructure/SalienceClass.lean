@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Root.Kinds
+import Linglib.Semantics.Root.Kinds
 import Linglib.Semantics.ArgumentStructure.Valency
 
 /-!
@@ -31,7 +31,7 @@ the Chuj root classes.
 
 namespace ArgumentStructure
 
-open Verb
+open Semantics
 
 /-- Lucy's "three large predicate root classes", named for the
     argument(s) the underived root makes salient. Positional roots are

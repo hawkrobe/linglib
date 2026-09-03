@@ -3,7 +3,7 @@ import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Realization
-import Linglib.Semantics.ArgumentStructure.Root.Classification
+import Linglib.Semantics.Root.Classification
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
@@ -183,13 +183,13 @@ def Verbalizer.vocabulary : List (VocabularyItem Feature Verbalizer.Alloseme) :=
 /-- Root change-type conditions v alloseme selection: result roots,
     which entail a prior change, demand the event variable; property
     concept roots do not — the root typology feeding v allosemy. -/
-def Verbalizer.Alloseme.fromRootType : Verb.Root.ChangeType → Verbalizer.Alloseme
+def Verbalizer.Alloseme.fromRootType : Semantics.Root.ChangeType → Verbalizer.Alloseme
   | .result          => .eventive
   | .propertyConcept => .zero
 
 /-- The bridge preserves the change entailment: eventive v iff the root
 entails change. -/
-theorem Verbalizer.fromRootType_iff_entailsChange (rt : Verb.Root.ChangeType) :
+theorem Verbalizer.fromRootType_iff_entailsChange (rt : Semantics.Root.ChangeType) :
     (Verbalizer.Alloseme.fromRootType rt).introducesEvent = true ↔ rt.EntailsChange := by
   cases rt <;> decide
 

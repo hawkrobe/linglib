@@ -29,7 +29,7 @@ one region per dimension, `univ` where a root says nothing.
 * [levin-1993]: English Verb Classes and Alternations.
 -/
 
-namespace Verb.Root.Profile
+namespace Semantics.Root.Profile
 
 /-! ### Dimensions -/
 
@@ -104,9 +104,9 @@ inductive AgentControl where
   | compatible
   deriving DecidableEq, Fintype, Repr
 
-end Verb.Root.Profile
+end Semantics.Root.Profile
 
-namespace Verb.Root
+namespace Semantics.Root
 
 open Profile Finset
 
@@ -142,4 +142,4 @@ instance (p q : Profile) : Decidable (p.Overlaps q) := by unfold Overlaps; infer
 
 end Profile
 
-end Verb.Root
+end Semantics.Root

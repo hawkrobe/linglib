@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Semantics.ArgumentStructure.Root.Defs
+import Linglib.Semantics.Root.Defs
 import Linglib.Syntax.Anaphora.Basic
 
 /-!
@@ -42,7 +42,7 @@ generically for all `DeletionSpine` instances.
 
 namespace Minimalist.Ellipsis
 
-open Verb
+open Semantics
 
 -- ════════════════════════════════════════════════════
 -- § 0. Generic Deletion Spine

@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Root.Defs
+import Linglib.Semantics.Root.Defs
 import Linglib.Semantics.ArgumentStructure.VerbDenotation
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Data.Examples.BeaversKoontzGarboden2020
@@ -57,7 +57,7 @@ they graduate back to the theory layer when a second study lands.
 * [von-stechow-1996]: The different readings of wieder.
 -/
 
-namespace Verb.Root.Kinds
+namespace Semantics.Root.Kinds
 
 /-! ### The two theses, at signature level -/
 
@@ -126,9 +126,9 @@ def attestedCells : Finset (Root.Kinds × Root.Position) :=
   {(propertyConcept, .complement), (pureResult, .complement), (causativeResult, .complement),
    (pureManner, .adjoined), (fullSpec, .adjoined), (fullSpec, .complement)}
 
-end Verb.Root.Kinds
+end Semantics.Root.Kinds
 
-namespace Verb.Root
+namespace Semantics.Root
 
 /-! ### The two theses, at root level -/
 
@@ -172,7 +172,7 @@ def RespectsMannerResultComplementarity (r : Root) : Prop :=
 instance (r : Root) : Decidable r.RespectsMannerResultComplementarity :=
   inferInstanceAs (Decidable (¬ _))
 
-end Verb.Root
+end Semantics.Root
 
 namespace Verb.CosModel
 
@@ -275,6 +275,7 @@ end Verb.CosModel
 namespace BeaversKoontzGarboden2020
 
 open Verb
+open Semantics
 
 /-! ### The six representative roots -/
 
@@ -456,9 +457,9 @@ theorem jog_denote_eq_manner {Entity State T : Type*} [LinearOrder T]
 
 /-! ### The same contrast at the template level ([rappaport-hovav-levin-1998])
 
-`Verb.Root.template` reads the event-structure template off a root's
+`Semantics.Root.template` reads the event-structure template off a root's
 collocational closure; the kinds proven above fix it, and `HasResultState`
-reduces to carrying `result` (`Verb.Root.template_hasResultState_iff`). So the
+reduces to carrying `result` (`Semantics.Root.template_hasResultState_iff`). So the
 denotational result entailment (√crack) and the template result diagnostic are
 *one fact* seen through `kinds`. -/
 
