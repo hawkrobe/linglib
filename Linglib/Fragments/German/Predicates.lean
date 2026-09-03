@@ -1,5 +1,5 @@
 import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Semantics.Root.ChangeType
+import Linglib.Semantics.Root.Kinds
 
 /-!
 # German Predicate Lexicon Fragment

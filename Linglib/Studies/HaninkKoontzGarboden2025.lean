@@ -1,4 +1,4 @@
-import Linglib.Semantics.Root.ChangeType
+import Linglib.Semantics.Root.Defs
 import Linglib.Semantics.Root.PropertyConcept
 import Linglib.Studies.KoontzGarboden2009
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender

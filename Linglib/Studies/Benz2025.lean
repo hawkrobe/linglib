@@ -169,7 +169,7 @@ winner: the more specified eventive entry beats vacuous v exactly when the
 root entails an event, so `Verbalizer.Alloseme.fromRootType` is derived, not
 stipulated. -/
 theorem fromRootType_is_selectBy_winner (rt : Semantics.Root.ChangeType) :
-    (winner? Verbalizer.vocabulary (vContext (decide rt.EntailsChange))).map (·.exponent) =
+    (winner? Verbalizer.vocabulary (vContext (decide (rt = .result)))).map (·.exponent) =
       some (Verbalizer.Alloseme.fromRootType rt) := by
   cases rt <;> rfl
 

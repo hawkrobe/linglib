@@ -12,7 +12,10 @@ entails a change. The restrictions are the partial order `state ≤ result ≤ c
 on `Root.Kind`, with `manner` isolated. A root's kind signature is a
 `Finset Root.Kind`; it is well-formed when it is a lower set of that order, and
 `close` sends any signature to its lower closure. The named signatures are the
-attested rows of the typology's display (12).
+attested rows of the typology's display (12), and `changeType` is
+[beavers-etal-2021]'s coarsening of the change-of-state rows into
+property-concept roots, which name a state, and result roots, whose state
+entails a prior change.
 
 ## Main declarations
 
@@ -20,10 +23,12 @@ attested rows of the typology's display (12).
 * `Root.Kinds`, `Root.Kinds.close`, `Root.Kinds.WellFormed`
 * `Root.Kinds.propertyConcept`, `pureResult`, `causativeResult`, `pureManner`,
   `fullSpec`
+* `Root.ChangeType`, `Root.Kinds.changeType` — property-concept or result root
 
 ## References
 
 * [beavers-koontz-garboden-2020]: The Roots of Verbal Meaning.
+* [beavers-etal-2021]: States and changes of state.
 -/
 
 namespace Semantics
@@ -120,5 +125,31 @@ def pureManner : Kinds := {.manner}
 def fullSpec : Kinds := univ
 
 end Root.Kinds
+
+/-! ### Change type -/
+
+/-- The two types of change-of-state root, property-concept roots naming a gradable
+property (√flat, √red) and result roots naming the state an event brings about
+(√crack, √shatter) ([beavers-etal-2021] §3.1). -/
+inductive Root.ChangeType where
+  | propertyConcept
+  | result
+  deriving DecidableEq, Repr
+
+/-- The change type of a signature, `result` when it carries `result`,
+`propertyConcept` when it carries `state` but not `result`, and undefined for
+signatures naming no state. -/
+def Root.Kinds.changeType (s : Root.Kinds) : Option Root.ChangeType :=
+  if Root.Kind.result ∈ s then some .result
+  else if Root.Kind.state ∈ s then some .propertyConcept
+  else none
+
+theorem Root.Kinds.changeType_eq_some_result {s : Root.Kinds} :
+    s.changeType = some .result ↔ Root.Kind.result ∈ s := by
+  unfold Root.Kinds.changeType; split_ifs <;> simp_all
+
+theorem Root.Kinds.changeType_eq_some_propertyConcept {s : Root.Kinds} :
+    s.changeType = some .propertyConcept ↔ Root.Kind.state ∈ s ∧ Root.Kind.result ∉ s := by
+  unfold Root.Kinds.changeType; split_ifs <;> simp_all
 
 end Semantics
