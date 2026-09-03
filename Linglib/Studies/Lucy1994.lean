@@ -407,7 +407,7 @@ theorem positional_crosscuts_transitiviser_classes :
 
 /-- For cause-free roots — every root in this sample — collocational
     closure does not change the predicted class. -/
-theorem predictedClass_closure_invariant (r : Root) (h : LexKind.cause ∉ r.kinds) :
+theorem predictedClass_closure_invariant (r : Root) (h : Root.Kind.cause ∉ r.kinds) :
     SalienceClass.ofKinds r.closedKinds (valency r) = predictedClass r :=
   SalienceClass.ofKinds_close r.kinds (valency r) h
 

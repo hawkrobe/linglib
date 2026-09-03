@@ -38,6 +38,8 @@ which root types are attested.
 * `flat`, `jog`, `blossom`, `crack`, `hand`, `drown`
 * `exists_violatesBifurcation`, `bifurcation_thesis_false`
 * `exists_hasMannerAndResult`, `manner_result_complementarity_false`
+* `Root.Kinds.typology`, `wellFormed_iff_mem_typology` — the rows of (12) and
+  their exhaustiveness
 * `Verb.CosModel.again` and the (25)–(27) reading hierarchy
 
 The thesis predicates and the sublexical *again* operator are carried
@@ -85,7 +87,7 @@ theorem violatesBifurcation_mono :
     Manner/Result Complementarity ([rappaport-hovav-levin-2010])
     claims no root realizes. -/
 def HasMannerAndResult (s : Root.Kinds) : Prop :=
-  {LexKind.manner, LexKind.result} ≤ s
+  {Root.Kind.manner, Root.Kind.result} ≤ s
 
 instance (s : Root.Kinds) : Decidable s.HasMannerAndResult :=
   inferInstanceAs (Decidable (_ ≤ _))
@@ -105,6 +107,18 @@ theorem hasMannerAndResult_close_iff :
     ∀ s : Root.Kinds,
       (close s).HasMannerAndResult ↔
         s.HasMannerAndResult ∨ (.manner ∈ s ∧ .cause ∈ s) := by decide
+
+/-! ### The typology -/
+
+/-- The seven rows of the typology (12). -/
+def typology : Finset Root.Kinds :=
+  {propertyConcept, pureResult, causativeResult, pureManner, {.state, .manner},
+   {.state, .manner, .result}, fullSpec}
+
+/-- The typology (12) is exhaustive, since the signatures respecting the collocational
+    restrictions are its seven rows and `∅`. -/
+theorem wellFormed_iff_mem_typology :
+    ∀ s : Root.Kinds, s.WellFormed ↔ s = ∅ ∨ s ∈ typology := by decide
 
 end Verb.Root.Kinds
 

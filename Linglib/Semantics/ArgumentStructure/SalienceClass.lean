@@ -76,7 +76,7 @@ def SalienceClass.ofKinds : Option SalienceClass :=
 /-- Collocational closure does not move the transitiviser cut on
     cause-free signatures: the only available closure edge is
     result→state, which no arm of the classifier consults. -/
-theorem SalienceClass.ofKinds_close (h : LexKind.cause ∉ s) :
+theorem SalienceClass.ofKinds_close (h : Root.Kind.cause ∉ s) :
     ofKinds s.close v = ofKinds s v := by
   revert s v; decide
 

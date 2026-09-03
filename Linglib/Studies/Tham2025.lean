@@ -852,7 +852,7 @@ theorem largeVase_score_le_one :
     state inheritance from root to deverbal adjective is refuted at
     substrate level. -/
 theorem cracked_adj_refutes_bkg_crack_root_inheritance :
-    Verb.LexKind.result ∈ BeaversKoontzGarboden2020.crack.kinds ∧
+    Verb.Root.Kind.result ∈ BeaversKoontzGarboden2020.crack.kinds ∧
     crack.adjEntailsPrecedingChange = false :=
   ⟨by decide, rfl⟩
 

@@ -45,7 +45,7 @@ namespace ArgumentStructure
 
 /-- Root kind signature for each Levin class.
 
-    Assignments marked (B&KG) are directly from [beavers-koontz-garboden-2020] Table 12 and Chapters 2–5. Others are inferred from class
+    Assignments marked (B&KG) are directly from [beavers-koontz-garboden-2020] (12) and chapters 2–5. Others are inferred from class
     semantics following B&KG's framework:
     - Externally caused CoS → `causativeResult` (√CRACK pattern)
     - Internally caused CoS → `pureResult` (√BLOSSOM pattern)
@@ -53,33 +53,33 @@ namespace ArgumentStructure
     - MRC violators → `fullSpec` (√HAND/√DROWN pattern)
     - Stative/psychological → `propertyConcept` (√FLAT pattern)
 
-    Classes marked (default) use `minimal` as a conservative placeholder
+    Classes marked (default) use `∅` as a conservative placeholder
     pending detailed study under B&KG's framework. -/
 def LevinClass.rootEntailments : LevinClass → Root.Kinds
   -- §9 Putting: template provides CAUSE+BECOME; root content varies
-  | .put => minimal                -- (default)
+  | .put => ∅                -- (default)
   | .funnel => pureManner          -- manner of channeling
   | .pour => pureManner            -- manner of pouring
   | .coil => pureManner            -- manner of arranging
-  | .sprayLoad => minimal          -- (default)
+  | .sprayLoad => ∅          -- (default)
   -- §10 Removing
-  | .remove => minimal             -- (default)
+  | .remove => ∅             -- (default)
   | .clear => causativeResult      -- externally caused cleared state
   | .wipe => pureManner            -- manner of surface action
-  | .steal => minimal              -- (default)
+  | .steal => ∅              -- (default)
   -- §11 Sending and Carrying
-  | .send => minimal               -- (default)
+  | .send => ∅               -- (default)
   | .carry => pureManner           -- manner of transport
   | .drive => pureManner           -- manner via vehicle
   -- §12 Exerting Force
   | .pushPull => pureManner        -- manner of force application
   -- §13 Change of Possession
   | .give => fullSpec              -- (B&KG Ch.3) √HAND: manner + caused possession change
-  | .contribute => minimal         -- (default) less specified than give
-  | .getObtain => minimal          -- (default)
-  | .exchange => minimal           -- (default)
+  | .contribute => ∅         -- (default) less specified than give
+  | .getObtain => ∅          -- (default)
+  | .exchange => ∅           -- (default)
   -- §14–16
-  | .learn => minimal              -- (default)
+  | .learn => ∅              -- (default)
   | .hold => propertyConcept       -- state of holding
   | .conceal => causativeResult    -- externally caused hidden state
   -- §17 Throwing
@@ -90,7 +90,7 @@ def LevinClass.rootEntailments : LevinClass → Root.Kinds
   -- §19 Poking
   | .poke => pureManner            -- manner of contact
   -- §20 Contact: Touch
-  | .touch => minimal              -- (B&KG) no structural entailments
+  | .touch => ∅              -- (B&KG) no structural entailments
   -- §21 Cutting
   | .cut => fullSpec               -- (B&KG Ch.4) cutting manner + caused separation
   | .carve => fullSpec             -- like cut
@@ -116,26 +116,26 @@ def LevinClass.rootEntailments : LevinClass → Root.Kinds
   | .calve => pureResult           -- internally caused biological process
   -- §29 Predicative Complements
   | .appoint => causativeResult    -- externally caused status change
-  | .characterize => minimal       -- (default)
+  | .characterize => ∅       -- (default)
   | .declare => causativeResult    -- externally caused status change
   -- §30 Perception
-  | .see => minimal                -- (default)
-  | .sight => minimal              -- (default)
+  | .see => ∅                -- (default)
+  | .sight => ∅              -- (default)
   -- §31 Psych-Verbs
   | .amuse => causativeResult      -- stimulus causes psychological CoS
   | .admire => propertyConcept     -- psychological state
   | .marvel => propertyConcept     -- psychological state
   -- §32–34
   | .want => propertyConcept       -- desiderative state
-  | .judgment => minimal           -- (default)
-  | .assessment => minimal         -- (default)
+  | .judgment => ∅           -- (default)
+  | .assessment => ∅         -- (default)
   -- §35 Searching
   | .search => pureManner          -- searching manner
   -- §36 Social Interaction
-  | .socialInteraction => minimal  -- (default)
+  | .socialInteraction => ∅  -- (default)
   -- §37 Communication
-  | .say => minimal                -- (default)
-  | .tell => minimal               -- (default)
+  | .say => ∅                -- (default)
+  | .tell => ∅               -- (default)
   | .mannerOfSpeaking => pureManner -- manner of speaking
   -- §38 Animal Sounds
   | .animalSound => pureManner     -- specific sound manner
@@ -144,8 +144,8 @@ def LevinClass.rootEntailments : LevinClass → Root.Kinds
   | .devour => fullSpec            -- vigorous manner + caused consumption
   | .dine => pureManner            -- social activity manner
   -- §40 Body
-  | .bodyProcess => minimal        -- (default)
-  | .flinch => minimal             -- (default)
+  | .bodyProcess => ∅        -- (default)
+  | .flinch => ∅             -- (default)
   -- §41 Grooming
   | .dress => causativeResult      -- externally caused dressed state
   -- §42 Killing
@@ -165,9 +165,9 @@ def LevinClass.rootEntailments : LevinClass → Root.Kinds
   | .entitySpecificCoS => pureResult -- √BLOSSOM/√RUST: internally caused
   | .calibratableCoS => pureResult -- internally driven scalar change
   -- §46 Lodge
-  | .lodge => minimal              -- (default)
+  | .lodge => ∅              -- (default)
   -- §47 Existence
-  | .exist => minimal              -- (B&KG) pure stative, no root content
+  | .exist => ∅              -- (B&KG) pure stative, no root content
   -- §48 Appearance, Disappearance
   | .appear => pureResult          -- internally caused appearance
   | .disappearance => pureResult   -- internally caused going out of existence
@@ -182,16 +182,16 @@ def LevinClass.rootEntailments : LevinClass → Root.Kinds
   | .vehicleMotion => pureManner   -- vehicle manner
   | .chase => pureManner           -- chasing manner
   -- §52 Avoid
-  | .avoid => minimal              -- (default)
+  | .avoid => ∅              -- (default)
   -- §53 Lingering and Rushing
   | .linger => pureManner          -- temporal manner
   | .rush => pureManner            -- temporal manner
   -- §54 Measure
   | .measure => propertyConcept    -- measurement state
   -- §55 Aspectual
-  | .aspectual => minimal          -- (default) template-level
+  | .aspectual => ∅          -- (default) template-level
   -- §57 Weather
-  | .weather => minimal            -- (default)
+  | .weather => ∅            -- (default)
 
 /-! ### Table soundness (universal)
 
