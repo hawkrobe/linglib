@@ -131,8 +131,8 @@ theorem causative_entails_resultState (M : CosModel Entity State T)
     kinds *select the event template* — the denotational payoff of the signature. -/
 def denote (M : CosModel Entity State T) (v : Verb) (y x : Entity) :
     Event T → Prop :=
-  if LexKind.cause ∈ v.closedKinds then M.causative v y x
-  else if LexKind.result ∈ v.closedKinds then M.inchoative v x
+  if Root.Kind.cause ∈ v.closedKinds then M.causative v y x
+  else if Root.Kind.result ∈ v.closedKinds then M.inchoative v x
   else M.manner v
 
 /-- The denotational payoff of a `.result` root: any verb whose root signature
@@ -143,10 +143,10 @@ def denote (M : CosModel Entity State T) (v : Verb) (y x : Entity) :
     `denote` is the manner core). -/
 theorem denote_result_entails_resultState (M : CosModel Entity State T)
     (v : Verb) (y x : Entity) (e : Event T)
-    (hres : LexKind.result ∈ v.closedKinds)
+    (hres : Root.Kind.result ∈ v.closedKinds)
     (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
   unfold denote at h
-  by_cases hc : LexKind.cause ∈ v.closedKinds
+  by_cases hc : Root.Kind.cause ∈ v.closedKinds
   · rw [if_pos hc] at h
     exact M.causative_entails_resultState v y x e h
   · rw [if_neg hc, if_pos hres] at h
@@ -161,7 +161,7 @@ theorem denote_result_from_template (M : CosModel Entity State T)
     (v : Verb) (ht : v.root.template.HasResultState) (y x : Entity) (e : Event T)
     (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
   refine M.denote_result_entails_resultState v y x e ?_ h
-  show LexKind.result ∈ v.root.closedKinds
+  show Root.Kind.result ∈ v.root.closedKinds
   exact (Verb.Root.template_hasResultState_iff v.root).mp ht
 
 end Verb.CosModel

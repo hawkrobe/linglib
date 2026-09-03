@@ -129,18 +129,18 @@ denotational result entailment and `cause_implies_resultState` are one fact seen
 through the signature. -/
 
 section Signature
-open Verb (LexKind Root)
+open Verb (Root)
 
 /-- The event-structure template determined by a root's (closed) kind signature. -/
 def Template.ofKinds (σ : Root.Kinds) : Template :=
-  if LexKind.cause ∈ σ then .accomplishment
-  else if LexKind.result ∈ σ then .achievement
-  else if LexKind.manner ∈ σ then .activity
+  if Root.Kind.cause ∈ σ then .accomplishment
+  else if Root.Kind.result ∈ σ then .achievement
+  else if Root.Kind.manner ∈ σ then .activity
   else .state
 
 /-- `HasCause` reduces to carrying the `cause` kind. -/
 theorem ofKinds_hasCause_iff (σ : Root.Kinds) :
-    (Template.ofKinds σ).HasCause ↔ LexKind.cause ∈ σ := by
+    (Template.ofKinds σ).HasCause ↔ Root.Kind.cause ∈ σ := by
   unfold Template.ofKinds
   split_ifs <;> simp_all [Template.HasCause]
 
@@ -148,14 +148,8 @@ theorem ofKinds_hasCause_iff (σ : Root.Kinds) :
     reduces to carrying the `result` kind — via `cause` ⟹ `result`. -/
 theorem ofKinds_hasResultState_iff {σ : Root.Kinds}
     (h : σ.WellFormed) :
-    (Template.ofKinds σ).HasResultState ↔ LexKind.result ∈ σ := by
-  have hcr : LexKind.cause ∈ σ → LexKind.result ∈ σ := by
-    intro hc
-    have hr : LexKind.result ∈ Root.Kinds.close σ :=
-      (Root.Kinds.mem_close_iff σ LexKind.result).mpr
-        ⟨LexKind.cause, hc, by decide⟩
-    have he : Root.Kinds.close σ = σ := h
-    rwa [he] at hr
+    (Template.ofKinds σ).HasResultState ↔ Root.Kind.result ∈ σ := by
+  have hcr : Root.Kind.cause ∈ σ → Root.Kind.result ∈ σ := h Root.Kind.LE.result_cause
   unfold Template.ofKinds
   split_ifs with hc hr hm <;> simp_all [Template.HasResultState]
 
@@ -167,7 +161,7 @@ def _root_.Verb.Root.template (r : Root) : Template :=
     the [beavers-koontz-garboden-2020] result entailment, bridged to the
     `EventStructure` template diagnostic. -/
 theorem _root_.Verb.Root.template_hasResultState_iff (r : Root) :
-    r.template.HasResultState ↔ LexKind.result ∈ r.closedKinds :=
+    r.template.HasResultState ↔ Root.Kind.result ∈ r.closedKinds :=
   ofKinds_hasResultState_iff r.closedKinds_wellFormed
 
 end Signature

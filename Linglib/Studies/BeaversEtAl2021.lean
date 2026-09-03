@@ -297,17 +297,17 @@ theorem pc_roots_consistent_with_bifurcation :
 entail change, causation, and manner simultaneously (√GUILLOTINE, √HAND) —
 witnessed by `Root.Kinds.fullSpec`. -/
 theorem bkg_bifurcation_fails_all_dimensions :
-    LexKind.result ∈ Root.Kinds.fullSpec ∧
-    LexKind.cause ∈ Root.Kinds.fullSpec ∧
-    LexKind.manner ∈ Root.Kinds.fullSpec ∧
-    LexKind.state ∈ Root.Kinds.fullSpec := by decide
+    Root.Kind.result ∈ Root.Kinds.fullSpec ∧
+    Root.Kind.cause ∈ Root.Kinds.fullSpec ∧
+    Root.Kind.manner ∈ Root.Kinds.fullSpec ∧
+    Root.Kind.state ∈ Root.Kinds.fullSpec := by decide
 
 /-- Multiple Levin classes witness the stronger bifurcation failure. -/
 theorem bkg_bifurcation_multiple_witnesses :
-    LexKind.result ∈ LevinClass.rootEntailments .cut ∧
-    LexKind.manner ∈ LevinClass.rootEntailments .cut ∧
-    LexKind.cause ∈ LevinClass.rootEntailments .give ∧
-    LexKind.manner ∈ LevinClass.rootEntailments .give := by decide
+    Root.Kind.result ∈ LevinClass.rootEntailments .cut ∧
+    Root.Kind.manner ∈ LevinClass.rootEntailments .cut ∧
+    Root.Kind.cause ∈ LevinClass.rootEntailments .give ∧
+    Root.Kind.manner ∈ LevinClass.rootEntailments .give := by decide
 
 /-! ### Default realization ((44), §8) -/
 

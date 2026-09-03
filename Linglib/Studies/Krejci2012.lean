@@ -205,7 +205,7 @@ Her (37) puts CAUSE in the simple forms of *eat* and *dress*; the substrate's
 of contact is the *presence* of CAUSE, not its source — for [krejci-2012] the
 causer is the coidentified agent itself, and she argues explicitly against
 deriving the causative by adding an external causer ((93) vs. (96)–(97)).
-`learn`'s root is still the substrate's conservative `minimal` placeholder, so
+`learn`'s root is still the substrate's conservative `∅` placeholder, so
 the bridge is stated for *eat* and *dress* only.
 
 The accomplishment template licenses an intransitive (achievement) variant,
@@ -225,7 +225,7 @@ theorem dress_is_causativeResult :
 /-- causativeResult roots carry the `cause` kind — CAUSE is in the simple
     form, as her (37) requires. -/
 theorem causativeResult_entails_cause :
-    LexKind.cause ∈ causativeResult := by decide
+    Root.Kind.cause ∈ causativeResult := by decide
 
 /-- eat roots license the accomplishment template. -/
 theorem eat_licenses_accomplishment :

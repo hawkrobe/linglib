@@ -505,24 +505,24 @@ cross-linguistically (validated across 88 languages).
 /-- PC roots entail state but NOT result — they name properties
     without inherent change. "Flat" is a simple state. -/
 theorem pc_no_result :
-    LexKind.state ∈ propertyConcept ∧
-    LexKind.result ∉ propertyConcept := by decide
+    Root.Kind.state ∈ propertyConcept ∧
+    Root.Kind.result ∉ propertyConcept := by decide
 
 /-- Result roots entail both state AND result — the state is
     inseparable from prior change. "Cracked" entails having
     been cracked. -/
 theorem result_has_change :
-    LexKind.state ∈ pureResult ∧
-    LexKind.result ∈ pureResult ∧
-    LexKind.cause ∉ pureResult := by decide
+    Root.Kind.state ∈ pureResult ∧
+    Root.Kind.result ∈ pureResult ∧
+    Root.Kind.cause ∉ pureResult := by decide
 
 /-- Caused-result roots entail state + result + cause — the
     change must have been externally caused. "Break" entails
     external causation. -/
 theorem caused_result_full :
-    LexKind.state ∈ causativeResult ∧
-    LexKind.result ∈ causativeResult ∧
-    LexKind.cause ∈ causativeResult := by decide
+    Root.Kind.state ∈ causativeResult ∧
+    Root.Kind.result ∈ causativeResult ∧
+    Root.Kind.cause ∈ causativeResult := by decide
 
 /-- The root typology forms an implicational hierarchy:
     cause → result → state. For well-formed signatures this is a
@@ -530,7 +530,8 @@ theorem caused_result_full :
     not a per-signature stipulation. -/
 theorem root_typology_hierarchy :
     ∀ s : Root.Kinds, s.WellFormed →
-      (.cause ∈ s → .result ∈ s) ∧ (.result ∈ s → .state ∈ s) := by decide
+      (.cause ∈ s → .result ∈ s) ∧ (.result ∈ s → .state ∈ s) :=
+  fun _ h => ⟨h Root.Kind.LE.result_cause, h Root.Kind.LE.state_result⟩
 
 /-- PC and result roots differ in licensing predictions:
     PC roots can fill stative templates (simple statives exist);
@@ -541,8 +542,8 @@ theorem pc_result_stative_difference :
     RootLicensesTemplate propertyConcept .state ∧
     RootLicensesTemplate pureResult .state ∧
     -- But result roots entail change (root-level, not template-level)
-    LexKind.result ∉ propertyConcept ∧
-    LexKind.result ∈ pureResult := by decide
+    Root.Kind.result ∉ propertyConcept ∧
+    Root.Kind.result ∈ pureResult := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Summary: Where the Pipeline is Informative
@@ -566,7 +567,7 @@ theorem pc_result_stative_difference :
 The enriched pipeline covers hit, break, cut, mannerOfMotion classes
 exactly — `deriveEnriched` matches `LevinClass.roleList` with no
 override needed. Only amuse, build/create, eat/devour, perception,
-directedMotion, and minimal-rootEntailments classes need overrides.
+directedMotion, and empty-signature classes need overrides.
 
 The full derivational chain:
 

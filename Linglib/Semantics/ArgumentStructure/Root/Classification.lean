@@ -86,7 +86,7 @@ def ChangeType.allowsRestitutiveAgain : ChangeType → Bool
     projection is manner-blind — see `Classification.salienceClass_ofKinds`
     for what survives it. -/
 def ChangeType.ofKinds (s : Root.Kinds) : ChangeType :=
-  if LexKind.result ∈ s then .result else .propertyConcept
+  if Root.Kind.result ∈ s then .result else .propertyConcept
 
 /-- Property concept root subclasses ([dixon-1982]; [beavers-etal-2021]
     ex. 5). [beavers-etal-2021] exclude human propensity from their sample
@@ -160,7 +160,7 @@ def Classification.salienceClass (c : Classification) : Option SalienceClass :=
     necessary: a manner root maps to `.propertyConcept` under
     `ChangeType.ofKinds`, where the annotation coordinates return `none`
     but the signature classifier sees agent salience. -/
-theorem Classification.salienceClass_ofKinds (h : LexKind.manner ∉ s) :
+theorem Classification.salienceClass_ofKinds (h : Root.Kind.manner ∉ s) :
     ({ valency := v, changeType := .ofKinds s,
        licensesTransitiveVoice := decide (.internal ∈ v) } :
       Classification).salienceClass = SalienceClass.ofKinds s v := by

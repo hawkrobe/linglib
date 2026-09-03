@@ -48,7 +48,7 @@ three `EntailmentProfile` projections
 (`Agentivity` P-Agent, this file P-Patient strength → MAP
 (`Studies/Beavers2010.lean`), `PersistenceLevel` → case regions); distinct
 from the surface (`MeaningComponents.changeOfState`) and root
-(`LexKind.result`) change-of-state notions ([beavers-koontz-garboden-2020]).
+(`Root.Kind.result`) change-of-state notions ([beavers-koontz-garboden-2020]).
 -/
 
 namespace ArgumentStructure
