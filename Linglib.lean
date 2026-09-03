@@ -2842,6 +2842,7 @@ import Linglib.Syntax.Minimalist.Case
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.LateMerger
 import Linglib.Syntax.Minimalist.LeftPeriphery
+import Linglib.Syntax.Minimalist.Linearization.Chain
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Linearization.Externalization
 import Linglib.Syntax.Minimalist.Linearization.Replay
