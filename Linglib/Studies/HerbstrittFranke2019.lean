@@ -1,7 +1,8 @@
 import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.JointPosterior
-import Linglib.Core.Probability.Entropy
+import Linglib.Core.InformationTheory.Hellinger
+import Mathlib.InformationTheory.KullbackLeibler.Basic
 import Linglib.Semantics.Modality.EpistemicProbability
 import Mathlib.Probability.Distributions.Uniform
 
@@ -32,9 +33,9 @@ by 1, so the speaker can assert it with bounded disutility.
 
 ## Main results
 
-* `hellinger_admits_what_KL_excludes` — on the witness pair `(pure 9, pure 10)`,
+* `hellinger_admits_what_KL_excludes` — on the witness pair `(dirac 9, dirac 10)`,
   `KL = ∞` but `HD ≤ 1`: the formal content of the Hellinger-vs-KL divergence,
-  via `klDiv_eq_top_when_zero_support` and `hellingerDistSq_le_one`.
+  via `InformationTheory.klDiv_of_not_ac` and `InformationTheory.hellingerDist_le_one`.
 * `statePosterior_apply`, `accessPosterior_apply`, `statePosterior_lt_iff` —
   marginalisations (Eq. 19-20) of the joint posterior, direct corollaries of
   `Core/Probability/JointPosterior`.
@@ -369,72 +370,26 @@ end JointPosterior
 
 HF's central methodological choice: KL divergence makes any message whose
 extension fails to cover the speaker's belief support have infinite
-disutility, so the speaker can never consider it. Hellinger distance is
-uniformly bounded by 1, so all messages have bounded disutility.
+disutility (`InformationTheory.klDiv_of_not_ac`), so the speaker can never
+consider it; the Hellinger distance is bounded by `1`
+(`InformationTheory.hellingerDist_le_one`), so every message has bounded
+disutility. The witness below makes the divergence visible at theorem level:
+a `(P, Q)` pair where KL-utility excludes `Q` as a message choice but
+Hellinger-utility admits it. -/
 
-The two theorems below witness this directly:
-- `klDiv_eq_top_when_zero_support`: KL = ∞ whenever some support point of `P`
-  has zero mass under `Q`.
-- `hellingerDistSq_le_one`: H² ≤ 1 always, so HD ≤ 1.
-
-Together they make the architectural divergence visible at theorem level:
-there exist `(P, Q)` pairs where KL-utility excludes `Q` as a message choice
-but Hellinger-utility admits it. -/
-
-/-- **KL divergence is `∞` when Q has zero mass on P's support**.
-    Direct from mathlib `klDiv_of_not_ac`: KL = ∞ when `P.toMeasure` is
-    not absolutely continuous w.r.t. `Q.toMeasure`. Absolute continuity
-    fails at `s₀` because `Q s₀ = 0` but `P s₀ ≠ 0`. -/
-theorem klDiv_eq_top_when_zero_support {α : Type*} [Fintype α]
-    [MeasurableSpace α] [MeasurableSingletonClass α]
-    (P Q : PMF α) (s₀ : α) (hP : P s₀ ≠ 0) (hQ : Q s₀ = 0) :
-    P.klDiv Q = ∞ := by
-  rw [PMF.klDiv_eq_toMeasure_klDiv]
-  apply _root_.InformationTheory.klDiv_of_not_ac
-  intro hAC
-  have h_meas : MeasurableSet ({s₀} : Set α) := MeasurableSet.singleton s₀
-  have hQs : Q.toMeasure {s₀} = 0 := by
-    rw [PMF.toMeasure_apply_singleton _ _ h_meas]; exact hQ
-  have hPs : P.toMeasure {s₀} = 0 := hAC hQs
-  rw [PMF.toMeasure_apply_singleton _ _ h_meas] at hPs
-  exact hP hPs
-
-/-- **Hellinger squared distance is ≤ 1 on PMFs**: `H²(P, Q) = 1 - BC(P, Q)`
-    where `BC ∈ [0, 1]` (Cauchy-Schwarz on √P, √Q, both with sum-to-1).
-    Bounded above by 1 because `BC ≥ 0`.
-
-    The lower bound `0 ≤ BC` is immediate (each term `√(P·Q) ≥ 0`). -/
-theorem hellingerDistSq_le_one {α : Type*} [Fintype α] (P Q : PMF α) :
-    PMF.hellingerDistSq P Q ≤ 1 := by
-  unfold PMF.hellingerDistSq PMF.bhattacharyyaCoeff
-  have h_bc_nonneg : (0 : ℝ) ≤ ∑ a : α, Real.sqrt (P.toRealFn a * Q.toRealFn a) :=
-    Finset.sum_nonneg (fun a _ => Real.sqrt_nonneg _)
-  linarith
-
-/-- **Hellinger distance is ≤ 1 on PMFs**: by `H = √H²` and `H² ≤ 1`. -/
-theorem hellingerDist_le_one {α : Type*} [Fintype α] (P Q : PMF α) :
-    PMF.hellingerDist P Q ≤ 1 := by
-  unfold PMF.hellingerDist
-  rw [show (1 : ℝ) = Real.sqrt 1 from Real.sqrt_one.symm]
-  exact Real.sqrt_le_sqrt (hellingerDistSq_le_one P Q)
-
-/-- **The architectural divergence (concrete)**: there exist PMFs `P, Q`
-    on `UrnState` such that `KL(P ‖ Q) = ∞` but `HD(P, Q) ≤ 1`.
-
-    Witness: `P = pure 9` (speaker's degenerate belief at 9/10 red),
-    `Q = pure 10` (literal listener for `certainly` — δ on s=10).
-    Under KL: speaker can never say "certainly". Under Hellinger:
-    speaker considers "certainly" with bounded disutility. This is HF's
-    key architectural claim. -/
+open InformationTheory MeasureTheory in
+/-- **The architectural divergence (concrete)**: for `P = dirac 9` (the speaker's
+    degenerate belief at 9/10 red) and `Q = dirac 10` (the literal listener for
+    `certainly`), `KL(P ‖ Q) = ∞` but `HD(P, Q) ≤ 1`. Under KL the speaker can
+    never say "certainly"; under Hellinger she considers it with bounded
+    disutility — HF's key architectural claim. -/
 theorem hellinger_admits_what_KL_excludes :
-    PMF.klDiv (PMF.pure (⟨9, by omega⟩ : UrnState))
-              (PMF.pure (⟨10, by omega⟩ : UrnState)) = ∞ ∧
-    PMF.hellingerDist (PMF.pure (⟨9, by omega⟩ : UrnState))
-                      (PMF.pure (⟨10, by omega⟩ : UrnState)) ≤ 1 := by
-  refine ⟨?_, hellingerDist_le_one _ _⟩
-  apply klDiv_eq_top_when_zero_support _ _ (⟨9, by omega⟩ : UrnState)
-  · rw [PMF.pure_apply, if_pos rfl]; exact one_ne_zero
-  · rw [PMF.pure_apply, if_neg]; intro h; have := Fin.mk.inj_iff.mp h; omega
+    klDiv (Measure.dirac (⟨9, by omega⟩ : UrnState)) (Measure.dirac ⟨10, by omega⟩) = ∞ ∧
+    hellingerDist (Measure.dirac (⟨9, by omega⟩ : UrnState)) (Measure.dirac ⟨10, by omega⟩)
+      ≤ 1 := by
+  refine ⟨klDiv_of_not_ac fun h => ?_, hellingerDist_le_one _ _⟩
+  have := h (s := {⟨9, by omega⟩}) (by simp)
+  simp at this
 
 /-!
 ### Architectural contrast with [goodman-stuhlmuller-2013]
@@ -458,8 +413,7 @@ KL utility this speaker would be excluded from saying "certainly RED";
 under HF's Hellinger utility she can. The empirical evidence (HF's
 production data, Section 5) shows speakers DO say "certainly" at 9/10.
 
-The Bretagnolle–Huber inequality (`PMF.two_hellingerDistSq_le_klDiv` in
-`Core/Probability/Entropy.lean`) gives the formal direction `2 · H² ≤ KL`
+The Bretagnolle–Huber inequality `2 · H² ≤ KL` gives the formal direction
 on the *finite* side: where KL is finite, H² is too, and bounded.
 Hellinger is the strictly weaker (more permissive) divergence — exactly
 what HF wants for the speaker utility. -/
