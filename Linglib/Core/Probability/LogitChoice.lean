@@ -36,6 +36,9 @@ log-sum-exp layer. Quality-and-role marker: pure-math foundation, no linguistics
   differences (the defining IIA property).
 * `softmax_binary` — the two-element case is `Real.sigmoid`.
 * `rpow_luce_eq_softmax` — Luce's `f^α` power rule is softmax of log-scores.
+* `softmax_sum_apply`, `sum_softmax_eval_eq` — a separable score's softmax is
+  the product of the coordinate softmaxes, so its marginals are the coordinate
+  softmaxes.
 -/
 
 open Real Finset
@@ -247,3 +250,36 @@ theorem rpow_luce_eq_softmax [Nonempty ι] (f : ι → ℝ) (α : ℝ)
     rw [rpow_def_of_pos (hf j), mul_comm]
 
 end SoftmaxBasic
+
+/-! ### Softmax on product types
+
+A separable score `s f = ∑ i, c i (f i)` on assignments `f : ι → V` gives a
+softmax that factorizes into the coordinate softmaxes, so marginalizing the joint
+distribution at coordinate `i` recovers `softmax (c i)`. -/
+
+section Pi
+
+variable {ι V : Type*} [Fintype ι] [DecidableEq ι] [Fintype V]
+
+/-- The softmax of a separable score is the product of the coordinate softmaxes. -/
+theorem softmax_sum_apply (c : ι → V → ℝ) (f : ι → V) :
+    softmax (fun g : ι → V => ∑ i, c i (g i)) f = ∏ i, softmax (c i) (f i) := by
+  simp only [softmax, exp_sum, prod_div_distrib, Fintype.prod_sum]
+
+/-- Marginalizing the softmax of a separable score at coordinate `i` recovers the
+coordinate softmax `softmax (c i)`. -/
+theorem sum_softmax_eval_eq [DecidableEq V] [Nonempty V] (c : ι → V → ℝ) (i : ι) (v : V) :
+    ∑ f with f i = v, softmax (fun g : ι → V => ∑ j, c j (g j)) f = softmax (c i) v := by
+  set F : ι → V → ℝ := fun j w =>
+    if j = i then (if w = v then softmax (c i) v else 0) else softmax (c j) w with hF
+  have h (f : ι → V) : (if f i = v then ∏ j, softmax (c j) (f j) else 0) = ∏ j, F j (f j) := by
+    split_ifs with hf
+    · exact prod_congr rfl fun j _ => by by_cases hj : j = i <;> simp [hF, hj, hf]
+    · exact (prod_eq_zero (mem_univ i) (by simp [hF, hf])).symm
+  have hrest : ∏ j ∈ univ.erase i, ∑ w, F j w = 1 :=
+    prod_eq_one fun j hj => by simp [hF, ne_of_mem_erase hj, softmax_sum_eq_one]
+  simp only [softmax_sum_apply, sum_filter, h]
+  rw [← Fintype.prod_sum F, ← mul_prod_erase univ _ (mem_univ i), hrest]
+  simp [hF]
+
+end Pi

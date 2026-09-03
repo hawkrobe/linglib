@@ -17,6 +17,11 @@ Evaluation and order lemmas for `Constraints.harmonyScore` and
 
 * `weightedViolations_cons`, `harmonyScore_cons`: `@[simp]` cons-recursion
   evaluating harmony on literal grammars `![C₀, …]`, `![w₀, …]`.
+* `harmonyScore_congr`: harmony depends only on the violation profile.
+* `harmonyScore_append`, `harmonyScore_joint`: harmony is additive over a
+  concatenated constraint set and, for a jointly evaluated one, over the
+  mappings — constraint summation is innocuous for harmony
+  ([magri-storme-2021]).
 * `weightedViolations_mono`: for `0 ≤ w`, the weighted violation sum is
   monotone in the violation profile.
 * `harmonyScore_le_of_forall_le`, `harmonyDominates_of_lt`: *harmonic
@@ -51,6 +56,32 @@ variable {C : Type*} {n : ℕ}
   have h : (fun j => Matrix.vecCons c₀ con j x) = Matrix.vecCons (c₀ x) fun j => con j x :=
     funext (Fin.cases rfl fun _ => rfl)
   rw [harmonyScore, h, weightedViolations_cons, neg_add, harmonyScore]
+
+@[simp] theorem harmonyScore_zero_weight (con : CON C n) (x : C) : harmonyScore con 0 x = 0 := by
+  simp [harmonyScore, weightedViolations]
+
+/-- Harmony depends only on the violation profile. -/
+theorem harmonyScore_congr {con : CON C n} {w : Fin n → ℝ} {a b : C}
+    (h : ∀ j, con j a = con j b) : harmonyScore con w a = harmonyScore con w b := by
+  simp [harmonyScore, weightedViolations, h]
+
+/-! ### Concatenated and jointly evaluated constraint sets -/
+
+/-- Harmony is additive over a concatenated constraint set and weight vector. -/
+theorem harmonyScore_append {m : ℕ} (c₁ : CON C n) (c₂ : CON C m) (w₁ : Fin n → ℝ)
+    (w₂ : Fin m → ℝ) (x : C) :
+    harmonyScore (Fin.append c₁ c₂) (Fin.append w₁ w₂) x =
+      harmonyScore c₁ w₁ x + harmonyScore c₂ w₂ x := by
+  simp [harmonyScore, weightedViolations, Fin.sum_univ_add, add_comm]
+
+/-- The harmony of a jointly evaluated constraint set is the sum of the mappings'
+harmonies — constraint summation is innocuous for harmony ([magri-storme-2021]). -/
+theorem harmonyScore_joint {ι I O : Type*} [Fintype ι] (inputs : ι → I)
+    (con : CON (I × O) n) (w : Fin n → ℝ) (f : ι → O) :
+    harmonyScore (con.joint inputs) w f = ∑ i, harmonyScore con w (inputs i, f i) := by
+  simp only [harmonyScore, weightedViolations, CON.joint_apply, Constraint.joint_apply,
+    Nat.cast_sum, Finset.mul_sum, Finset.sum_neg_distrib]
+  rw [Finset.sum_comm]
 
 /-! ### Harmonic bounding (Pareto dominance) -/
 

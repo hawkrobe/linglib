@@ -287,7 +287,6 @@ import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.ConditionalProbability
 import Linglib.Core.Probability.Confirmation
 import Linglib.Core.Probability.Constructions
-import Linglib.Core.Probability.CoupledEvaluation
 import Linglib.Core.Probability.Decision.Basic
 import Linglib.Core.Probability.Decision.Blackwell
 import Linglib.Core.Probability.Decision.Duality
