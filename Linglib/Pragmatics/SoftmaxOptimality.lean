@@ -2,7 +2,6 @@ import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.SoftmaxTheory
 import Linglib.Core.Probability.GibbsVariational
 import Linglib.Core.Probability.Decision.Basic
-import Linglib.Core.Probability.SoftmaxLimits
 import Mathlib.Data.Rat.Cast.Defs
 
 /-!
@@ -151,8 +150,7 @@ end Gibbs
 /-- As α → ∞, the softmax agent converges to the EU-optimal deterministic
 policy: the probability of the unique EU-maximizing action → 1.
 
-This is the decision-theoretic content of `tendsto_softmax_infty_at_max`
-from `Softmax.Limits`. -/
+This is the decision-theoretic content of `Real.tendsto_softmax_atTop`. -/
 theorem fromDP_converges_to_optimal {W A : Type*}
     [Fintype W] [Fintype A] [Nonempty A] [DecidableEq A]
     (dp : DecisionTheory.DecisionProblem ℚ W A) (a_opt : A)
@@ -163,7 +161,7 @@ theorem fromDP_converges_to_optimal {W A : Type*}
       softmax (α • fun a => expectedUtilityR dp a) a_opt :=
     fun α => RationalAction.fromSoftmax_policy_eq _ α () a_opt
   simp_rw [hpol]
-  exact Softmax.tendsto_softmax_infty_at_max _ a_opt h_opt
+  exact tendsto_softmax_atTop h_opt
 
 /-- As α → ∞, any non-optimal action gets probability → 0. -/
 theorem fromDP_nonoptimal_vanishes {W A : Type*}
@@ -177,9 +175,7 @@ theorem fromDP_nonoptimal_vanishes {W A : Type*}
       softmax (α' • fun a => expectedUtilityR dp a) a :=
     fun α' => RationalAction.fromSoftmax_policy_eq _ α' () a
   simp_rw [hpol]
-  have hlim := Softmax.tendsto_softmax_infty_unique_max _ a_opt h_opt a
-  simp only [if_neg ha] at hlim
-  exact hlim
+  exact tendsto_softmax_atTop_of_lt (h_opt a ha)
 
 -- ============================================================================
 -- §5. Extracting a Decision Problem from a RationalAction

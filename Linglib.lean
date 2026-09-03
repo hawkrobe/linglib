@@ -312,7 +312,6 @@ import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.RandomUtility
 import Linglib.Core.Probability.Scores
 import Linglib.Core.Probability.Softmax
-import Linglib.Core.Probability.SoftmaxLimits
 import Linglib.Core.Probability.SoftmaxTheory
 import Linglib.Core.Relation.ReflTransGen
 import Linglib.Core.RingTheory.Bialgebra.Basic

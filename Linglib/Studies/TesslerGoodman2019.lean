@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Pragmatics.RSA.Operators
-import Linglib.Core.Probability.SoftmaxLimits
+import Linglib.Core.Analysis.SpecialFunctions.Softmax
 import Linglib.Core.Probability.Finite
 import Mathlib.Data.Rat.Defs
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -837,7 +837,7 @@ theorem same_prevalence_opposite_endorsement :
     softmax over log scores. The endorsement model inherits all softmax
     limit theorems for free. -/
 
-open Core Real BigOperators Finset Filter Topology
+open Real BigOperators Finset Filter Topology
 
 instance : Nonempty Utterance := ⟨.generic⟩
 
@@ -854,32 +854,24 @@ theorem endorsement_eq_softmax (prior : Prevalence → ℝ) (p : Prevalence) (α
   rpow_div_sum_rpow hl0 α .generic
 
 /-- When l0_gen > l0_sil (endorsed generic), the endorsement rate → 1
-    as α → ∞. Direct corollary of `Softmax.tendsto_softmax_infty_at_max`. -/
+    as α → ∞. Direct corollary of `Real.tendsto_softmax_atTop`. -/
 theorem endorsement_tendsto_one (prior : Prevalence → ℝ) (p : Prevalence)
     (hs : 0 < l0Score prior .silent p)
     (h : l0Score prior .silent p < l0Score prior .generic p) :
     Tendsto (fun (α : ℝ) => softmax (α • fun u : Utterance => log (l0Score prior u p)) .generic)
-      atTop (nhds 1) := by
-  apply Softmax.tendsto_softmax_infty_at_max
-  intro j hj
-  cases j with
-  | generic => exact absurd rfl hj
-  | silent => exact Real.log_lt_log hs h
+      atTop (nhds 1) :=
+  tendsto_softmax_atTop fun j hj => by
+    cases j with
+    | generic => exact absurd rfl hj
+    | silent => exact Real.log_lt_log hs h
 
 /-- When l0_gen < l0_sil (non-endorsed generic), the endorsement rate → 0. -/
 theorem endorsement_tendsto_zero (prior : Prevalence → ℝ) (p : Prevalence)
     (hg : 0 < l0Score prior .generic p)
     (h : l0Score prior .generic p < l0Score prior .silent p) :
     Tendsto (fun (α : ℝ) => softmax (α • fun u : Utterance => log (l0Score prior u p)) .generic)
-      atTop (nhds 0) := by
-  have hlim := Softmax.tendsto_softmax_infty_unique_max
-    (fun u : Utterance => log (l0Score prior u p)) .silent
-    (by intro j hj; cases j with
-      | generic => exact Real.log_lt_log hg h
-      | silent => exact absurd rfl hj) .generic
-  simp only [show Utterance.generic = Utterance.silent ↔ False from by decide,
-    ite_false] at hlim
-  exact hlim
+      atTop (nhds 0) :=
+  tendsto_softmax_atTop_of_lt (j := .silent) (Real.log_lt_log hg h)
 
 -- ════════════════════════════════════════════════════════════════════════════════
 -- § 10. Case Study 2: Habitual Language

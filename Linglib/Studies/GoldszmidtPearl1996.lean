@@ -1,6 +1,6 @@
 import Linglib.Logic.SystemZ
 import Linglib.Logic.TweetyNixon
-import Linglib.Core.Probability.SoftmaxLimits
+import Linglib.Core.Analysis.SpecialFunctions.Softmax
 import Mathlib.Algebra.Tropical.BigOperators
 
 /-!
@@ -54,7 +54,7 @@ construction, admissibility, and specificity.
 namespace GoldszmidtPearl1996
 
 open SystemZ TweetyNixon
-open Core Real Finset Filter Topology Tropical BigOperators
+open Real Finset Filter Topology Tropical BigOperators
 
 /-! ### Knowledge Base (rules r₁–r₃ from Example 17) -/
 
@@ -278,17 +278,16 @@ theorem rankToScore_le_of_rank_zero (κ : RankingFunction W)
     approaches a point mass on the most normal world, recovering
     the ranking-based notion of normality.
 
-    Proof: Apply `Softmax.tendsto_softmax_infty_unique_max` with
-    scores s = rankToScore κ. The unique rank-0 world maximizes s
-    (since s(w) = -κ(w) and κ(w₀) = 0 < κ(v) for v ≠ w₀). -/
+    `Real.tendsto_softmax_atTop_pi` with scores s = rankToScore κ: the unique
+    rank-0 world maximizes s, since s(w) = -κ(w) and κ(w₀) = 0 < κ(v) for
+    v ≠ w₀. -/
 theorem softmax_concentrates_unique [Fintype W] [DecidableEq W] [Nonempty W]
     (κ : RankingFunction W) (w₀ : W)
     (h_zero : κ.rank w₀ = 0)
-    (h_unique : ∀ v, v ≠ w₀ → 0 < κ.rank v) (w : W) :
-    Tendsto (fun (α : ℝ) => softmax (α • rankToScore κ) w) atTop
-      (𝓝 (if w = w₀ then 1 else 0)) :=
-  Softmax.tendsto_softmax_infty_unique_max (rankToScore κ) w₀
-    (fun j hj => (rankToScore_lt_iff κ j w₀).mpr (h_zero ▸ h_unique j hj)) w
+    (h_unique : ∀ v, v ≠ w₀ → 0 < κ.rank v) :
+    Tendsto (fun (α : ℝ) => softmax (α • rankToScore κ)) atTop (𝓝 (Pi.single w₀ 1)) :=
+  tendsto_softmax_atTop_pi
+    fun j hj => (rankToScore_lt_iff κ j w₀).mpr (h_zero ▸ h_unique j hj)
 
 /-- Entropy of softmax(rankToScore κ, α) → 0 as α → ∞ (unique rank-0
     case). The distribution becomes maximally concentrated. -/
@@ -296,10 +295,10 @@ theorem entropy_vanishes_unique [Fintype W] [DecidableEq W] [Nonempty W]
     (κ : RankingFunction W) (w₀ : W)
     (h_zero : κ.rank w₀ = 0)
     (h_unique : ∀ v, v ≠ w₀ → 0 < κ.rank v) :
-    Tendsto (fun (α : ℝ) => Softmax.entropy (softmax (α • rankToScore κ))) atTop
+    Tendsto (fun (α : ℝ) => ∑ w, negMulLog (softmax (α • rankToScore κ) w)) atTop
       (𝓝 0) :=
-  Softmax.entropy_tendsto_zero (rankToScore κ) w₀
-    (fun j hj => (rankToScore_lt_iff κ j w₀).mpr (h_zero ▸ h_unique j hj))
+  tendsto_sum_negMulLog_softmax_atTop
+    fun j hj => (rankToScore_lt_iff κ j w₀).mpr (h_zero ▸ h_unique j hj)
 
 /-! #### Ranking Entailment via Minimum Rank -/
 
@@ -365,7 +364,7 @@ no inference   RSA pragmatics     ranking entailment
 ```
 
 At α = 0, the listener has no rationality assumption and
-the posterior is uniform (`Softmax.tendsto_softmax_zero`).
+the posterior is uniform (`Real.tendsto_softmax_nhds_zero`).
 At finite α, the listener performs soft Bayesian inference
 (standard RSA). As α → ∞, the posterior concentrates on
 the most normal worlds (`softmax_concentrates_unique`),
@@ -719,8 +718,7 @@ theorem κz_unique_rank_zero :
     the Tweety scenario: an RSA listener with infinite rationality
     assigns probability 1 to the most normal world. -/
 theorem κz_softmax_concentrates :
-    ∀ w, Tendsto (fun (α : ℝ) => softmax (α • rankToScore κ_z) w)
-      atTop (nhds (if w = .birdFlies then 1 else 0)) :=
+    Tendsto (fun (α : ℝ) => softmax (α • rankToScore κ_z)) atTop (𝓝 (Pi.single .birdFlies 1)) :=
   softmax_concentrates_unique κ_z .birdFlies κz_birdFlies κz_unique_rank_zero
 
 /-- Under κ^z, all minimum-rank bird-worlds fly. This connects
