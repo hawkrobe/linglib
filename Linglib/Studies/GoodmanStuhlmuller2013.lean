@@ -1,9 +1,8 @@
-import Linglib.Core.Probability.DataProcessing
-import Linglib.Core.Probability.Entropy
 import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.Posterior
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.Silence
+import Mathlib.InformationTheory.KullbackLeibler.DataProcessing
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 import Mathlib.Probability.Distributions.Uniform
 
@@ -986,9 +985,9 @@ The paper's **cancellation principle** (informal): as the speaker's
 observation kernel becomes noisier, the listener's posterior moves closer to
 the prior. The universally provable structural content is observation-level:
 if the noisy kernel post-processes the informative one
-(`κ_n s = (κ_i s).bind noise`), the state–observation mutual information
-decreases — a per-state corollary of the data processing inequality
-(`PMF.klDiv_bind_le`).
+(`noise ∘ₖ κ_i`), the state–observation mutual information decreases — a
+per-state corollary of the data processing inequality
+(`InformationTheory.klDiv_comp_right_le`).
 
 The utterance-level form `MI(state; utt_n) ≤ MI(state; utt_i)` is NOT a
 clean DPI corollary: the noisy and informative utterances share the
@@ -999,32 +998,28 @@ theorem. -/
 
 section Cancellation
 
-variable {W Obs : Type*} [Fintype W] [Fintype Obs]
-  [MeasurableSpace W] [MeasurableSingletonClass W]
-  [MeasurableSpace Obs] [MeasurableSingletonClass Obs]
+open InformationTheory MeasureTheory ProbabilityTheory
+open scoped ProbabilityTheory
+
+variable {W Obs : Type*} [Fintype W] [MeasurableSpace W] [MeasurableSpace Obs]
 
 /-- Per-state-decomposed mutual information between state and observation:
-`MI(state; obs) = ∑ s, prior s · KL(κ s ‖ prior.bind κ)` — the
+`MI(state; obs) = ∑ s, prior {s} · KL(κ s ‖ κ ∘ₘ prior)` — the
 conditional-relative-entropy form, which is what makes the per-state DPI
 argument applicable. -/
-noncomputable def mutualInfoStateObs (prior : PMF W) (κ : W → PMF Obs) : ℝ≥0∞ :=
-  ∑ s, prior s * (κ s).klDiv (prior.bind κ)
+noncomputable def mutualInfoStateObs (prior : Measure W) (κ : Kernel W Obs) : ℝ≥0∞ :=
+  ∑ s, prior {s} * klDiv (κ s) (κ ∘ₘ prior)
 
 /-- **Observation-level cancellation (DPI form)**: post-processing the
 observation kernel through a noise channel decreases the mutual information
-between state and observation. `h_ac` is per-state absolute continuity of
-`κ_i s` w.r.t. the informative observation marginal. -/
-theorem mutualInfoStateObs_bind_noise_le
-    (prior : PMF W) (κ_i : W → PMF Obs) (noise : Obs → PMF Obs)
-    (h_ac : ∀ s, MeasureTheory.Measure.AbsolutelyContinuous
-              (κ_i s).toMeasure (prior.bind κ_i).toMeasure) :
-    mutualInfoStateObs prior (fun s => (κ_i s).bind noise)
-      ≤ mutualInfoStateObs prior κ_i := by
+between state and observation. -/
+theorem mutualInfoStateObs_comp_le (prior : Measure W) [IsFiniteMeasure prior]
+    (κ_i : Kernel W Obs) [IsMarkovKernel κ_i] (noise : Kernel Obs Obs) [IsMarkovKernel noise] :
+    mutualInfoStateObs prior (noise ∘ₖ κ_i) ≤ mutualInfoStateObs prior κ_i := by
   unfold mutualInfoStateObs
-  rw [← PMF.bind_bind prior κ_i noise]
-  exact Finset.sum_le_sum fun s _ =>
-    mul_le_mul' (le_refl _)
-      (PMF.klDiv_bind_le (κ_i s) (prior.bind κ_i) noise (h_ac s))
+  simp_rw [← Measure.comp_assoc, Kernel.comp_apply]
+  gcongr with s
+  exact klDiv_comp_right_le _ _ noise
 
 end Cancellation
 
@@ -1040,7 +1035,7 @@ prior). Where the fitted model predicts only a marginal implicature
 (access 2), directions can differ from the plotted predictions.
 
 **They are NOT corollaries of a single information-theoretic cancellation
-theorem.** The provable structural content is `mutualInfoStateObs_bind_noise_le`
+theorem.** The provable structural content is `mutualInfoStateObs_comp_le`
 above; the per-(world-pair) orderings these cells encode are utterance-level
 claims that depend on the specific lex shape, not just on kernel
 informativity. -/
