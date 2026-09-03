@@ -29,27 +29,21 @@ places InqML with dependence logic in the downward-closed, empty-team cell of
 
 ## Main definitions
 
-* `InquisitiveModalModel`, `KripkeModel.toInquisitive`, `Formula`, `support`.
-* `Formula.neg`, `Formula.disj`, `Formula.polarQ`, `Formula.IsClassical`.
-* `truthSet`, `TruthConditional`, `proposition`.
+* `InquisitiveModalModel`: a valuation and a map from worlds to sets of information states, with
+  the induced accessibility `access`; `KripkeModel.toInquisitive` embeds Kripke models.
+* `Formula` and `support`: the language with `□` and `⊞`, and support of a formula by a state.
+* `TruthConditional`: the statements, the formulas whose support is truth at every world.
+* `proposition`: the inquisitive proposition `[φ]_M`, the support set as a `Question`.
 
 ## Main results
 
-* `isLowerSet_support`, `support_empty` — Proposition 3.3.1.
-* `support_singleton_impl`, `support_singleton_neg`, `support_singleton_disj` — Proposition
-  3.1.7.
-* `truthConditional_of_isClassical`, `TruthConditional.conj`, `TruthConditional.impl`,
-  `truthConditional_neg`, `truthConditional_nec`, `truthConditional_ent` — Propositions 3.1.8,
-  3.4.7 and 3.4.8 and their modal cases.
-* `support_neg_neg`, `truthConditional_iff_neg_neg` — Propositions 3.4.9 and 3.4.10.
-* `support_impl_iff_of_truthConditional` — the Ramsey test, Proposition 2.5.2.
-* `mem_proposition`, `proposition_conj`, `proposition_inqDisj`, `proposition_impl`,
-  `proposition_bot`, `info_proposition`, `truthConditional_iff_proposition_eq`,
-  `proposition_neg_neg` — the algebra of propositions, Proposition 3.3.5 and Definition 3.4.1.
-* `support_nec_conj`, `support_nec_impl_nec`, `support_nec_inqDisj`, `support_ent_of_nec`,
-  `support_ent_iff_nec_of_truthConditional`, `support_ent_toInquisitive` — §8.2 and §8.3.
-* `not_supClosed_inqDisj_of_witness`, `soundFor_downwardClosed_inter_empty` — the closure
-  cell.
+* `isLowerSet_support` and `support_empty`: support is persistent and holds at the empty state,
+  so the support set is a proposition on which the connectives are the Heyting operations.
+* `truthConditional_of_isClassical`, `truthConditional_nec` and `truthConditional_ent`: classical
+  and modal formulas are statements, and `truthConditional_iff_neg_neg`: the double negation law
+  holds exactly for statements.
+* `support_nec_inqDisj` and `support_ent_iff_nec_of_truthConditional`: `□` distributes over
+  inquisitive disjunction, and `⊞` agrees with `□` on statements.
 
 ## References
 
