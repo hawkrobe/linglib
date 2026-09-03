@@ -1,28 +1,35 @@
 import Linglib.Semantics.ArgumentStructure.Root.Profile
 import Linglib.Semantics.ArgumentStructure.Root.Kinds
-import Linglib.Semantics.ArgumentStructure.Root.Position
 
 /-!
 # Verbal roots
 
 A verbal root of [beavers-koontz-garboden-2020] is a bundle of lexical
 entailments (§5.2.1), each of one of the four kinds of `Root.Kind`. `Root`
-carries a finite set of such atoms, its position with respect to `v`, and a
-within-class quality profile. Its
-kind signature `Root.kinds` is the image of the atoms under `Entailment.kind`,
-and `Root.closedKinds` completes it under the collocational restrictions
-(`Root.Kinds.close`). Participant entailments are the separate linking layer
+carries a finite set of such atoms, its position with respect to the verbalizing
+head `v`, and a within-class quality profile. Its kind signature `Root.kinds` is
+the image of the atoms under `Entailment.kind`, and `Root.closedKinds` completes
+it under the collocational restrictions (`Root.Kinds.close`). A root composes
+with `v` either as its complement, the result position of change-of-state roots
+such as √flat and √drown, or adjoined to it as a modifier, the manner position of
+√jog and √hand (§4.5.3–4.5.4); position is the second coordinate of the book's
+root typology (§5.4.1, (12)), and an adjoined root escapes both the scope of
+restitutive *again* (§4.5.4) and the deletion site of verbal VP ellipsis
+([kalyakin-2026] §2.2). Participant entailments are the separate linking layer
 `ArgumentStructure.EntailmentProfile`.
 
 ## Main declarations
 
 * `Root.Entailment` — a labelled atom; `Root.Entailment.kind` forgets the label
+* `Root.Position` — complement or adjoined to `v`
 * `Root` — name, atoms, position, quality profile
 * `Root.kinds`, `Root.closedKinds` — the derived and the closed signature
 
 ## References
 
 * [beavers-koontz-garboden-2020]: The Roots of Verbal Meaning.
+* [kalyakin-2026]: VP ellipsis and argument structure alternations: Evidence from
+  Muira Dargwa complex predicates.
 * [spalek-mcnally-2026], [majid-boster-bowerman-2008]: the quality dimensions of
   `Root.Profile`.
 -/
@@ -50,6 +57,16 @@ def Root.Entailment.kind : Root.Entailment → Root.Kind
   | .manner _ => .manner
   | .result _ => .result
   | .cause => .cause
+
+/-! ### Position -/
+
+/-- The position in which a verbal root composes with `v`. -/
+inductive Root.Position where
+  /-- The complement of `v`, the result position. -/
+  | complement
+  /-- Adjoined to `v` as a modifier, the manner position. -/
+  | adjoined
+  deriving DecidableEq, Fintype, Repr
 
 /-! ### Roots -/
 
