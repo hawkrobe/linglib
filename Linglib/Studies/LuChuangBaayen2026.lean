@@ -19,21 +19,22 @@ simply be reclassified, and theoretically: the model predicts forms from meaning
 from forms, and the tone-pattern contours emerge without the model being told the patterns.
 The lab-speech contours of [xu-1997] match the predicted ones for several patterns (Fig. 11).
 
-This file instantiates the DLM at the paper's carriers and derives the model-side half of the
-centroid claim. Linearity alone sends a centroid to the mean of the predicted contours
-(`production_centroid`); training does better: whenever membership in a set of training tokens
-is a linear functional of the embeddings, the least-squares map sends that set's centroid
-exactly to the mean of its target contours (`production_centroid_eq_of_decodable`). The
-paper's centroids weight word types equally rather than tokens (§4.4) and Fig. 9 compares
-against GAMM contours, so the match it reports is approximate; the theorem states what least
-squares guarantees when a tone pattern is linearly recoverable from meaning. The GAMM fits
-and the nearest-neighbour accuracies are outside the Processing scope.
+This file instantiates the DLM at the paper's carriers and states the model-side half of the
+centroid claim at them. Linearity alone sends a centroid to the mean of the predicted contours
+(`LinearMap.map_centroid`); training does better: whenever membership in a set of training
+tokens is a linear functional of the embeddings, the least-squares map sends that set's
+centroid exactly to the mean of its target contours (`production_centroid_eq_of_decodable`,
+the substrate's `Linear.IsELTrainedOn.production_centroid_eq_of_decodable`, shared with
+[chuang-bell-tseng-baayen-2026]'s Fig. 18). The paper's centroids weight word types equally
+rather than tokens (§4.4) and Fig. 9 compares against GAMM contours, so the match it reports
+is approximate; the theorem states what least squares guarantees when a tone pattern is
+linearly recoverable from meaning. The GAMM fits and the nearest-neighbour accuracies are
+outside the Processing scope.
 
 ## Main results
 
-* `production_centroid`: a production map sends a centroid to the mean of the predictions.
 * `production_centroid_eq_of_decodable`: a least-squares-trained map sends the centroid of a
-  linearly decodable set of tokens exactly to the mean of their target contours.
+  linearly decodable tone pattern's tokens exactly to the mean of their target contours.
 
 ## References
 
@@ -65,30 +66,14 @@ abbrev PitchVector : Type := FormVec PitchSampleCount
 contextualized embeddings of [chuang-bell-tseng-baayen-2026] (§4.2). -/
 abbrev TaiwanMandarinDLM : Type := Linear ℝ PitchVector ContextualEmbedding
 
-variable {ι V : Type*} [AddCommGroup V] [Module ℝ V]
-
-/-- The centroid of a finite family of vectors: their mean (§4.4). -/
-noncomputable def centroid (P : Finset ι) (v : ι → V) : V := (P.card : ℝ)⁻¹ • ∑ i ∈ P, v i
-
-/-- A production map sends a centroid of embeddings to the centroid of the predicted contours:
-average contours correspond to average embeddings (§4.5). -/
-theorem production_centroid (D : TaiwanMandarinDLM) (P : Finset ι)
-    (s : ι → ContextualEmbedding) :
-    D.production (centroid P s) = centroid P fun i => D.production (s i) := by
-  simp [centroid, map_sum]
-
-/-- **Centroids under least squares** (§4.4, Fig. 9): if membership in a set `P` of training
-tokens is a linear functional of their embeddings, a least-squares-trained production map sends
-the centroid of `P`'s embeddings exactly to the centroid of `P`'s target contours. -/
+/-- **Centroids under least squares** (§4.4, Fig. 9): if membership in a tone pattern's set `P`
+of training tokens is a linear functional of their embeddings, a least-squares-trained production
+map sends the centroid of `P`'s embeddings exactly to the centroid of `P`'s target contours. -/
 theorem production_centroid_eq_of_decodable {m : ℕ} {D : TaiwanMandarinDLM}
     {data : TrainingExperience m PitchSampleCount CKIPGPT2HiddenDim} (hD : D.IsELTrainedOn data)
-    {P : Finset (Fin m)} {w : ContextualEmbedding →ₗ[ℝ] ℝ}
+    {P : Finset (Fin m)} (hP : P.Nonempty) {w : ContextualEmbedding →ₗ[ℝ] ℝ}
     (hw : ∀ i, w (data.S i) = if i ∈ P then 1 else 0) :
-    D.production (centroid P data.S) = centroid P data.C := by
-  have h := IsTrained.sum_smul_sub_eq_zero hD w
-  simp only [Pi.one_apply, NNReal.coe_one, one_mul, hw, ite_smul, one_smul, zero_smul,
-    Finset.sum_ite_mem, Finset.univ_inter, Linear.mul_productionMatrix_apply,
-    Finset.sum_sub_distrib, sub_eq_zero] at h
-  simp [centroid, map_sum, h]
+    D.production (P.centroid ℝ data.S) = P.centroid ℝ data.C :=
+  hD.production_centroid_eq_of_decodable hP hw
 
 end LuChuangBaayen2026
