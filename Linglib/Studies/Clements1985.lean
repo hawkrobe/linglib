@@ -1,6 +1,5 @@
 import Linglib.Fragments.English.Phonology
-import Linglib.Core.Data.Fintype.Sets
-import Mathlib.Data.Finset.Piecewise
+import Linglib.Phonology.Segmental.Geometry
 
 /-!
 # Clements (1985): the geometry of phonological features
@@ -18,17 +17,15 @@ preaspiration ((6)–(7), after [thrainsson-1978]), Klamath lateral rules ((8)�
 [barker-1964]), Sierra Popoluca nasalisation and release ((15)–(20), after [elson-1947]
 and [steriade-1982]'s Shared Features Convention) and the Kikuyu and palatalisation cases
 of §5, and §4 splits the place features into a primary set P, present in consonants and
-vowels, and a secondary set S, normally absent from plain consonants. Only the root,
-laryngeal, supralaryngeal and place nodes survive into the geometry of
-`Phonology/Segmental/Geometry.lean`; the manner node, which the paper itself flags as
-possibly superfluous, does not.
+vowels, and a secondary set S, normally absent from plain consonants. The tree is an
+instance of the substrate's `FeatureGeometry`; its manner node, which the paper itself
+flags as possibly superfluous, appears in no later geometry (`Studies/Sagey1986.lean`,
+`Studies/HalleVauxWolfe2000.lean`).
 
 ## Main definitions
 
-* `Node`, `Node.parent`, `Node.Dominates`, `Node.features` — the five class nodes of (3),
-  the tree, dominance, and the natural class a node dominates.
-* `classNode?` — the class node each terminal feature hangs from (§4); features the paper
-  does not place have none.
+* `Node`, `Node.parent`, `classNode?` — the five class nodes of (3), the tree, and the class
+  node each terminal feature hangs from (§4); together the `FeatureGeometry` instance.
 * `PlaceSet`, `placeSet?`, `PlaceSet.features` — the primary/secondary split of the place
   features (§4).
 * `Spreading`, `Spreading.features`, `Spreading.apply` — what one rule may spread, the
@@ -37,9 +34,6 @@ possibly superfluous, does not.
 
 ## Main results
 
-* `features_subset_of_dominates`, `disjoint_features` — natural classes nest along
-  dominance and are disjoint across incomparable nodes, so spreading a node leaves its
-  sisters' features untouched (`Spreading.apply_eqOn_of_not_dominates`).
 * `supralaryngeal_subset_of_nasal_of_distributed`,
   `apply_eqOn_supralaryngeal_of_nasal_of_distributed` — every spreading that reaches
   both `[nasal]` and `[distributed]` is total supralaryngeal assimilation, the argument
@@ -50,22 +44,23 @@ possibly superfluous, does not.
   `coronalAssimilation_n_esh` — *tenth*, *eighth*, *hundredth*, *insure* from table (11):
   the target takes the trigger's place features and nothing else.
 * `preaspiration` — spreading the vowel's supralaryngeal node onto the delinked first half
-  of an aspirated geminate keeps the stop's laryngeal features ((7)).
-* `mem_place_features_iff`, `primary_separates_stops` — the place features are P ∪ S, and
-  P alone separates the English stop places (table (22)).
+  of an aspirated geminate keeps the stop's laryngeal features ((7)), by the substrate's
+  disjointness of sister classes.
+* `mem_place_naturalClass_iff`, `primary_separates_stops` — the place features are P ∪ S,
+  and P alone separates the English stop places (table (22)).
 
 ## Implementation notes
 
-`classNode?` is defined on the features the paper names and is `none` elsewhere, so
-`Node.root.features` is the paper's inventory rather than all of [hayes-2009]'s;
-`[labial]` counts as primary by table (22). Spreading is `Finset.piecewise` on a node's
-natural class, so the trigger's unspecified features under the node replace the target's,
-as the delinking convention of (13) requires; single-feature spreading is
-`Features.Bundle.assimilate` (`Spreading.apply_feature`). The English segments are the
-Fragment's; its /r/ is [+anterior] where table (10) has [−anterior, −distributed], so the
-retroflex row of (11) (*tree*, *dream*, *enrol*) is not derived. The SPE rule (14) needs
-α-variables that `Subregular.LocalRewrite` does not provide, so the comparison with (12)
-is stated on the geometric side only.
+`classNode?` is defined on the features the paper names and is `none` elsewhere, so the
+root's natural class is the paper's inventory rather than all of [hayes-2009]'s; `[labial]`
+counts as primary by table (22). Spreading is `Finset.piecewise` on a node's natural class,
+so the trigger's unspecified features under the node replace the target's, as the delinking
+convention of (13) requires; single-feature spreading is `Features.Bundle.assimilate`
+(`Spreading.apply_feature`). The English segments are the Fragment's; its /r/ is
+[+anterior] where table (10) has [−anterior, −distributed], so the retroflex row of (11)
+(*tree*, *dream*, *enrol*) is not derived. The SPE rule (14) needs α-variables that
+`Subregular.LocalRewrite` does not provide, so the comparison with (12) is stated on the
+geometric side only.
 
 ## TODO
 
@@ -91,7 +86,7 @@ is stated on the geometric side only.
 
 namespace Clements1985
 
-open Phonology English.Phonology
+open Phonology Phonology.FeatureGeometry English.Phonology
 
 attribute [local instance] Set.decidableEqOnOfFintype
 
@@ -111,12 +106,17 @@ def parent : Node → Option Node
   | .laryngeal | .supralaryngeal => some .root
   | .manner | .place => some .supralaryngeal
 
-/-- `a` dominates `b`: `a` lies on the path from `b` to the root, `b` included (Appendix);
-the tree has depth two, so the chain is unrolled. -/
-def Dominates (a b : Node) : Prop :=
-  a = b ∨ b.parent = some a ∨ b.parent.bind parent = some a
+/-- A node and its ancestors; the tree has depth two. -/
+def up (n : Node) : Finset Node :=
+  ((List.range 3).filterMap λ i => (· >>= parent)^[i] (some n)).toFinset
 
-instance : DecidableRel Dominates := λ _ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+instance : PartialOrder Node := PartialOrder.lift up (by decide)
+
+instance : DecidableLE Node := λ a b => inferInstanceAs (Decidable (up a ⊆ up b))
+
+instance : OrderBot Node where
+  bot := .root
+  bot_le := by decide
 
 end Node
 
@@ -132,6 +132,10 @@ def classNode? : Feature → Option Node
   | .labial | .coronal | .anterior | .distributed | .high | .back | .round => some .place
   | _ => none
 
+instance : FeatureGeometry Node where
+  isChain_Iic := by unfold IsChain Set.Pairwise; decide +revert
+  node := classNode?
+
 /-- The two sets of place features: P, distinguishing place in consonants, and S,
 distinguishing place in vowels (§4). -/
 inductive PlaceSet where
@@ -145,39 +149,14 @@ def placeSet? : Feature → Option PlaceSet
   | .high | .back | .round => some .secondary
   | _ => none
 
-/-- The natural class of a node: the terminal features it dominates ("each feature
-characterises every node that dominates it", Appendix). -/
-def Node.features (a : Node) : Finset Feature :=
-  Finset.univ.filter λ f => ∃ b, classNode? f = some b ∧ a.Dominates b
-
 /-- The features of a place set. -/
 def PlaceSet.features (π : PlaceSet) : Finset Feature :=
   Finset.univ.filter (placeSet? · = some π)
 
-variable {a b : Node} (f : Feature)
-
-theorem mem_features_iff : f ∈ a.features ↔ ∃ b, classNode? f = some b ∧ a.Dominates b := by
-  simp [Node.features]
-
-/-- The root is characterised by every feature of the representation (Appendix). -/
-theorem mem_root_features_iff : f ∈ Node.root.features ↔ (classNode? f).isSome := by
-  cases f <;> decide
-
 /-- The place features are exactly P ∪ S. -/
-theorem mem_place_features_iff : f ∈ Node.place.features ↔ (placeSet? f).isSome := by
+theorem mem_place_naturalClass_iff (f : Feature) :
+    f ∈ naturalClass Node.place ↔ (placeSet? f).isSome := by
   cases f <;> decide
-
-/-! ### Nesting and disjointness -/
-
-/-- Natural classes nest along dominance. -/
-theorem features_subset_of_dominates (h : a.Dominates b) : b.features ⊆ a.features := by
-  revert a b; decide
-
-/-- Nodes neither of which dominates the other have disjoint natural classes: the sisters
-laryngeal and supralaryngeal, or manner and place, share no feature. -/
-theorem disjoint_features (h₁ : ¬ a.Dominates b) (h₂ : ¬ b.Dominates a) :
-    Disjoint a.features b.features := by
-  revert a b; decide
 
 /-! ### Assimilation as spreading ((5)) -/
 
@@ -195,7 +174,7 @@ variable (σ : Spreading) (src tgt : Segment)
 
 /-- The features a spreading carries. -/
 def features : Spreading → Finset Feature
-  | .node a => a.features
+  | .node a => naturalClass a
   | .feature f => {f}
 
 /-- Spread from `src` onto `tgt`: the carried features take `src`'s values, specified or
@@ -206,20 +185,9 @@ theorem apply_eqOn : Set.EqOn (σ.apply src tgt) src ↑σ.features :=
   λ _ hf => Finset.piecewise_eq_of_mem _ _ _ hf
 
 /-- Single-feature spreading is the bundle primitive `Features.Bundle.assimilate`. -/
-theorem apply_feature : (feature f).apply src tgt = Features.Bundle.assimilate f src tgt :=
+theorem apply_feature (f : Feature) :
+    (feature f).apply src tgt = Features.Bundle.assimilate f src tgt :=
   Finset.piecewise_singleton _ _ _
-
-/-- Spreading a node carries every feature of the nodes it dominates. -/
-theorem apply_eqOn_of_dominates (h : a.Dominates b) :
-    Set.EqOn ((node a).apply src tgt) src ↑b.features :=
-  (apply_eqOn _ src tgt).mono (Finset.coe_subset.2 (features_subset_of_dominates h))
-
-/-- Spreading a node leaves the features of every node it neither dominates nor is
-dominated by untouched. -/
-theorem apply_eqOn_of_not_dominates (h₁ : ¬ a.Dominates b) (h₂ : ¬ b.Dominates a) :
-    Set.EqOn ((node a).apply src tgt) tgt ↑b.features :=
-  λ _ hf =>
-    Finset.piecewise_eq_of_notMem _ _ _ (Finset.disjoint_right.1 (disjoint_features h₁ h₂) hf)
 
 end Spreading
 
@@ -230,22 +198,23 @@ variable (σ : Spreading) (src tgt : Segment)
 /-- Place spreading carries `[anterior]` and `[distributed]` together and leaves `[nasal]`
 alone, so (12) is a single-node rule while its `[αnasal]` variant of (14) is not. -/
 theorem anterior_distributed_subset_place :
-    {Feature.anterior, Feature.distributed} ⊆ Node.place.features := by
+    {Feature.anterior, Feature.distributed} ⊆ naturalClass Node.place := by
   decide
 
-theorem nasal_notMem_place : Feature.nasal ∉ Node.place.features := by decide
+theorem nasal_notMem_place : Feature.nasal ∉ naturalClass Node.place := by decide
 
 /-- No spreading reaches both `[nasal]`, a manner feature, and `[distributed]`, a place
 feature, without carrying the whole supralaryngeal class (§3). -/
 theorem supralaryngeal_subset_of_nasal_of_distributed (h₁ : Feature.nasal ∈ σ.features)
-    (h₂ : Feature.distributed ∈ σ.features) : Node.supralaryngeal.features ⊆ σ.features := by
+    (h₂ : Feature.distributed ∈ σ.features) :
+    naturalClass Node.supralaryngeal ⊆ σ.features := by
   revert σ; decide
 
 /-- A rule assimilating `[nasal]` and `[distributed]` at once is total supralaryngeal
 assimilation. -/
 theorem apply_eqOn_supralaryngeal_of_nasal_of_distributed (h₁ : Feature.nasal ∈ σ.features)
     (h₂ : Feature.distributed ∈ σ.features) :
-    Set.EqOn (σ.apply src tgt) src ↑Node.supralaryngeal.features :=
+    Set.EqOn (σ.apply src tgt) src ↑(naturalClass Node.supralaryngeal) :=
   (σ.apply_eqOn src tgt).mono
     (Finset.coe_subset.2 (supralaryngeal_subset_of_nasal_of_distributed σ h₁ h₂))
 
@@ -260,7 +229,8 @@ theorem eq_root_of_continuant_of_voice (h₁ : Feature.continuant ∈ σ.feature
 one spreading doing both is supralaryngeal, so the paper decomposes it into spirantisation
 and place assimilation. -/
 theorem supralaryngeal_subset_of_anterior_of_continuant (h₁ : Feature.anterior ∈ σ.features)
-    (h₂ : Feature.continuant ∈ σ.features) : Node.supralaryngeal.features ⊆ σ.features := by
+    (h₂ : Feature.continuant ∈ σ.features) :
+    naturalClass Node.supralaryngeal ⊆ σ.features := by
   revert σ; decide
 
 /-! ### English coronal place assimilation ((10)–(13)) -/
@@ -314,9 +284,9 @@ takes the preceding vowel's, so the output shares every supralaryngeal feature w
 vowel and keeps only the stop's laryngeal features `[+spread, −voiced]` — an [h]. Klamath
 (9a) and Sierra Popoluca (16) spread the same node from a lateral and from a nasal. -/
 theorem preaspiration (v c : Segment) :
-    Set.EqOn ((Spreading.node .supralaryngeal).apply v c) v ↑Node.supralaryngeal.features ∧
-      Set.EqOn ((Spreading.node .supralaryngeal).apply v c) c ↑Node.laryngeal.features :=
-  ⟨Spreading.apply_eqOn _ v c, Spreading.apply_eqOn_of_not_dominates v c (by decide) (by decide)⟩
+    Set.EqOn ((Spreading.node .supralaryngeal).apply v c) v ↑(naturalClass Node.supralaryngeal) ∧
+      Set.EqOn ((Spreading.node .supralaryngeal).apply v c) c ↑(naturalClass Node.laryngeal) :=
+  ⟨Spreading.apply_eqOn _ v c, eqOn_piecewise_of_not_le v c (by decide) (by decide)⟩
 
 /-! ### Primary and secondary place features (§4) -/
 

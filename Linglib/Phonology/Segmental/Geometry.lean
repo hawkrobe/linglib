@@ -1,303 +1,206 @@
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Core.Data.Fintype.Sets
-import Mathlib.Logic.Relation
+import Mathlib.Data.Finset.Piecewise
+import Mathlib.Data.Finset.Card
+import Mathlib.Order.Preorder.Chain
+import Mathlib.Order.Interval.Set.Defs
 
 /-!
 # Feature geometry
 
-The class-node tree over the distinctive features: a root node dominating a laryngeal
-and a supralaryngeal node, the latter dominating the soft-palate and the place node, and
-place dominating the articulator nodes labial, coronal and dorsal. The skeleton root >
-laryngeal, supralaryngeal > place is [clements-1985]'s; the soft-palate node and the
-articulators are [sagey-1986]'s, and [clements-1985]'s manner node, which the paper
-itself flags as possibly superfluous, is dropped. Every terminal feature of
-[hayes-2009]'s inventory hangs from one class node, and the natural class of a node is
-the finite set of features it dominates. Spreading a node `n` from `src` onto `tgt` is
-`n.features.piecewise src tgt` and agreement at `n` is `Set.EqOn s₁ s₂ ↑n.features`, so
-node spreading and node agreement are mathlib's `Finset.piecewise` and `Set.EqOn` on the
-natural class rather than operations of their own.
-
-    Root [±syll, ±cons, ±son, ±approx, ±del.rel., ±tap, ±trill]
-    ├── Laryngeal [±voice, ±s.g., ±c.g.]
-    └── Supralaryngeal [±cont]
-        ├── Soft Palate [±nasal]
-        └── Place
-            ├── Labial [±lab, ±round, ±labiodental]
-            ├── Coronal [±cor, ±ant, ±dist, ±lat, ±strid]
-            └── Dorsal [±dor, ±high, ±low, ±front, ±back, ±tense]
+A feature geometry is a finite rooted tree of class nodes with each terminal feature attached
+below at most one node: dominance is `≤`, the root is `⊥`, and every principal downset is a
+chain, so the natural classes (the features a node dominates) are nested along dominance and
+disjoint across incomparable nodes. The class-node idea and the thesis that assimilation
+spreads a single node are [clements-1985]'s; the articulator nodes are [sagey-1986]'s;
+[halle-vaux-wolfe-2000] lists the four innovations since then (Unified Feature Theory,
+Vowel-Place Theory, Partial Spreading, Strict Locality) and records that no consensus exists on
+which to adopt, while [padgett-2002] drops constituency and lets constraints refer to classes as
+sets. Current analyses refer to classes rather than to trees — [brown-meyer-2024]'s
+AGREE[place] is agreement on the place features — so the class-set is the primitive here:
+`FeatureGeometry` is a typeclass any node type can instantiate, natural classes are `Finset`s,
+spreading a class from `src` onto `tgt` is `Finset.piecewise`, and agreement on a class is
+`Set.EqOn`. The only instance in the substrate is the theory-neutral `Feature.Category`
+grouping of [hayes-2009]'s chart (manner, laryngeal, labial, coronal, dorsal under a root),
+with Place the union of the three articulator classes rather than a node; the trees of
+[clements-1985], [sagey-1986] and [halle-vaux-wolfe-2000] are instances in their studies.
 
 ## Main definitions
 
-* `Node`, `Node.parent`, `Node.Dominates` — the class nodes, the tree, and the
-  reflexive-transitive ancestor relation.
-* `Feature.node` — each feature's dominating node.
-* `Node.features` — the natural class a node dominates.
-* `Node.IsArticulator`, `Segment.activeArticulators`, `Segment.IsComplex` — the place
-  articulators and a segment's simultaneous (complex) articulations ([sagey-1986]).
+* `FeatureGeometry` — the class: `isChain_Iic` (principal downsets are chains) and `node`
+  (each feature's class node, if any).
+* `FeatureGeometry.naturalClass` — the features a node dominates.
+* `Feature.Category`, `Feature.category`, `Feature.Category.place` — the consensus grouping
+  and the place class.
+* `Segment.articulators`, `Segment.IsComplex` — designated articulators as features and
+  complex segments.
 
 ## Main results
 
-* `Node.dominates_iff` — dominance unrolls to the depth-≤ 3 parent chain, the decidable
-  face the `decide` facts run through.
-* `IsLaryngeal_iff_laryngeal_DominatedBy`, `IsDorsal_iff_dorsal_DominatedBy` — two flat
-  predicates coincide with single-node dominance; `IsPlace` is only a subset.
-* `Segment.activeArticulators_nodup` — complex-segment well-formedness holds by
-  construction ([sagey-1986]).
+* `naturalClass_anti`, `disjoint_naturalClass` — natural classes shrink along dominance and
+  are disjoint across incomparable nodes.
+* `eqOn_piecewise_of_le`, `eqOn_piecewise_of_not_le` — spreading a node carries every class it
+  dominates and leaves every incomparable class untouched.
+* `mem_naturalClass_bot` — the root's class is every attached feature: total assimilation.
 
 ## Implementation notes
 
-The placement of individual terminals is theory-specific. [clements-1985] puts
-`[consonantal]`, `[sonorant]`, `[continuant]`, `[lateral]`, `[strident]` and `[nasal]`
-under a manner node below supralaryngeal (his geometry is `Studies/Clements1985.lean`);
-[sagey-1986] argues `[continuant]` is articulator-level (`Studies/Sagey1986.lean`); and
-`[lateral]`/`[strident]` sit here under coronal although their manner class
-(`Feature.category`) is manner, so the flat predicates (`Feature.IsPlace` &c.) do not
-coincide with single-node dominance. Total, partial and single-feature assimilation
-([clements-1985]) are `Node.root.features.piecewise`, `n.features.piecewise` for a class
-node `n`, and `({f} : Finset Feature).piecewise`, the last being
-`Features.Bundle.assimilate f` by `Finset.piecewise_singleton`. The association of a
-spread node to several anchors is the tier-association object `AR`
-(`Autosegmental/AR.lean`) and is not recorded on segments here.
+Instances build dominance from a parent function: `up n` is `n` with its ancestors,
+`PartialOrder.lift up` is dominance, the root is `⊥`, and the chain axiom is `decide`d.
+`node` is `Option`-valued so a geometry may leave features unplaced; the consensus grouping is
+total. Spreading an arbitrary set of terminals ([halle-vaux-wolfe-2000]'s partial spreading,
+[padgett-2002]'s partial class behaviour) is `Finset.piecewise` on that set with no further
+apparatus, and single-feature spreading is `Features.Bundle.assimilate`
+(`Finset.piecewise_singleton`). The linking of a spread node to several anchors is the
+tier-association object `AR` (`Autosegmental/AR.lean`), not recorded on segments.
 
 ## References
 
-* [clements-1985] — class nodes, the root/laryngeal/supralaryngeal/place skeleton,
-  assimilation as single-node spreading.
-* [sagey-1986] — the soft-palate and articulator nodes, complex segments.
-* [hayes-2009] — the terminal feature inventory.
+* [clements-1985] — class nodes and single-node spreading.
+* [sagey-1986] — articulator nodes and complex segments.
+* [halle-vaux-wolfe-2000] — the four innovations and the absence of consensus (§1.1),
+  designated articulators as features (§1.2.2), terminal spreading (§1.2.3).
+* [padgett-2002] — feature classes as sets targeted by constraints.
+* [brown-meyer-2024] — AGREE[place] and AGREE[voice] over classes.
+* [hayes-2009] — the feature inventory and its chart grouping.
 -/
-
-namespace Phonology.FeatureGeometry
-
-/-! ### Geometric nodes -/
-
-/-- The class nodes of the feature-geometry tree ([clements-1985]; [sagey-1986]). -/
-inductive Node where
-  /-- The root node, dominating all others. -/
-  | root
-  /-- The laryngeal node: voicing and glottal features. -/
-  | laryngeal
-  /-- The supralaryngeal node, mediating root and place. -/
-  | supralaryngeal
-  /-- The soft-palate (velum) node: nasality. -/
-  | softPalate
-  /-- The place node, over the three oral articulators. -/
-  | place
-  /-- The labial articulator (the lips). -/
-  | labial
-  /-- The coronal articulator (the tongue blade/tip). -/
-  | coronal
-  /-- The dorsal articulator (the tongue body). -/
-  | dorsal
-  deriving DecidableEq, Repr
-
-variable (n m : Node)
-
-/-! ### Tree structure -/
-
-/-- The parent of each node; `root` alone has none. -/
-def Node.parent : Node → Option Node
-  | .root           => none
-  | .laryngeal      => some .root
-  | .supralaryngeal => some .root
-  | .softPalate     => some .supralaryngeal
-  | .place          => some .supralaryngeal
-  | .labial         => some .place
-  | .coronal        => some .place
-  | .dorsal         => some .place
-
-/-- All eight nodes. -/
-def Node.allNodes : List Node :=
-  [.root, .laryngeal, .supralaryngeal, .softPalate, .place, .labial, .coronal, .dorsal]
-
-/-- The children of `n`: the nodes whose parent is `n`. -/
-def Node.children : List Node := allNodes.filter (λ k => k.parent == some n)
-
-/-! ### Dominance -/
-
-/-- `n` dominates `m`: it is `m` or one of its ancestors — the reflexive-transitive
-    closure of "is the parent of", walked up from `m`. Depth-agnostic. -/
-def Node.Dominates : Prop := Relation.ReflTransGen (λ a b => a.parent = some b) m n
-
-/-- Dominance unrolls to the depth-≤ 3 parent chain — the decidable face the
-    `decide` facts below run through. -/
-theorem Node.dominates_iff :
-    n.Dominates m ↔ n = m ∨ m.parent = some n ∨
-      (m.parent.bind Node.parent) = some n ∨
-      ((m.parent.bind Node.parent).bind Node.parent) = some n := by
-  unfold Node.Dominates
-  constructor
-  · intro h
-    induction h with
-    | refl => exact Or.inl rfl
-    | @tail b c _ hbc ih =>
-      rcases ih with rfl | h | h | h
-      · exact Or.inr (Or.inl hbc)
-      · exact Or.inr (Or.inr (Or.inl (by rw [h, Option.bind_some]; exact hbc)))
-      · exact Or.inr (Or.inr (Or.inr (by rw [h, Option.bind_some]; exact hbc)))
-      · exfalso; revert h hbc; cases m <;> cases b <;> cases c <;> decide
-  · rintro (rfl | h | h | h)
-    · exact .refl
-    · exact .single h
-    · obtain ⟨p, hmp, hpn⟩ := Option.bind_eq_some_iff.mp h
-      exact .tail (.single hmp) hpn
-    · obtain ⟨q, hq, hqn⟩ := Option.bind_eq_some_iff.mp h
-      obtain ⟨p, hmp, hpq⟩ := Option.bind_eq_some_iff.mp hq
-      exact .tail (.tail (.single hmp) hpq) hqn
-
-instance : DecidableRel Node.Dominates := λ n m => decidable_of_iff _ (Node.dominates_iff n m).symm
-
-end Phonology.FeatureGeometry
-
-/-! ### Feature-to-node mapping -/
 
 namespace Phonology
 
-open FeatureGeometry
+/-! ### The class -/
 
-/-- Each terminal feature's dominating class node — this geometry's assignment
-    (contested for `[continuant]`/`[nasal]`/`[lateral]`; see the module docstring). -/
-def Feature.node : Feature → Node
-  | .syllabic | .consonantal | .sonorant | .approximant
-  | .delayedRelease | .tap | .trill => .root
-  | .voice | .spreadGlottis | .constrGlottis => .laryngeal
-  | .continuant => .supralaryngeal
-  | .nasal => .softPalate
-  | .labial | .round | .labiodental => .labial
-  | .coronal | .anterior | .distributed | .lateral | .strident => .coronal
-  | .dorsal | .high | .low | .front | .back | .tense => .dorsal
+/-- A feature geometry: a finite rooted tree of class nodes — dominance `≤`, root `⊥`, every
+principal downset a chain — with each terminal feature attached below at most one node. -/
+class FeatureGeometry (N : Type*) [PartialOrder N] [OrderBot N] where
+  /-- Every principal downset is a chain: the nodes dominating a node are linearly ordered. -/
+  isChain_Iic (c : N) : IsChain (· ≤ ·) (Set.Iic c)
+  /-- The class node a terminal feature hangs from, if the geometry places it. -/
+  node : Feature → Option N
 
-/-- Does node `n` dominate the node feature `f` belongs to? -/
-@[reducible] def Feature.DominatedBy (f : Feature) (n : Node) : Prop := n.Dominates f.node
+namespace FeatureGeometry
 
-end Phonology
-
-namespace Phonology.FeatureGeometry
-
-variable (n : Node) (f : Feature)
+variable {N : Type*} [PartialOrder N] [OrderBot N] [FeatureGeometry N] [DecidableLE N]
 
 /-! ### Natural classes -/
 
-/-- The features dominated by `n` — its natural class, the features that pattern
-    together under processes targeting `n`. -/
-def Node.features : Finset Feature := Finset.univ.filter (λ g => n.Dominates g.node)
+/-- The natural class of a node: the features attached at or below it. -/
+def naturalClass (a : N) : Finset Feature :=
+  Finset.univ.filter λ f => ∃ m ∈ (node f : Option N), a ≤ m
 
-instance (s₁ s₂ : Segment) : Decidable (Set.EqOn s₁ s₂ ↑n.features) :=
+variable {a b : N} {f : Feature}
+
+theorem mem_naturalClass : f ∈ naturalClass a ↔ ∃ m ∈ (node f : Option N), a ≤ m := by
+  simp [naturalClass]
+
+/-- The root's class is every attached feature: spreading it is total assimilation. -/
+theorem mem_naturalClass_bot : f ∈ naturalClass (⊥ : N) ↔ (node f : Option N).isSome := by
+  simp [mem_naturalClass, Option.isSome_iff_exists]
+
+/-- Natural classes shrink along dominance. -/
+theorem naturalClass_anti (h : a ≤ b) : naturalClass b ⊆ naturalClass a := λ g hg => by
+  rw [mem_naturalClass] at hg ⊢
+  obtain ⟨m, hm, hbm⟩ := hg
+  exact ⟨m, hm, h.trans hbm⟩
+
+/-- Incomparable nodes have disjoint natural classes. -/
+theorem disjoint_naturalClass (h₁ : ¬ a ≤ b) (h₂ : ¬ b ≤ a) :
+    Disjoint (naturalClass a) (naturalClass b) := by
+  rw [Finset.disjoint_left]
+  intro g hga hgb
+  rw [mem_naturalClass] at hga hgb
+  obtain ⟨m, hm, ham⟩ := hga
+  obtain ⟨m', hm', hbm⟩ := hgb
+  rw [Option.mem_def] at hm hm'
+  rw [hm, Option.some.injEq] at hm'
+  subst hm'
+  rcases eq_or_ne a b with rfl | hab
+  · exact h₁ le_rfl
+  · exact (isChain_Iic m ham hbm hab).elim h₁ h₂
+
+/-! ### Spreading -/
+
+variable (src tgt : Segment)
+
+/-- Spreading node `a` from `src` onto `tgt` carries every class `a` dominates. -/
+theorem eqOn_piecewise_of_le (h : a ≤ b) :
+    Set.EqOn ((naturalClass a).piecewise src tgt) src ↑(naturalClass b) :=
+  λ _ hg => Finset.piecewise_eq_of_mem _ _ _ (naturalClass_anti h hg)
+
+/-- Spreading node `a` leaves every class incomparable with `a` untouched. -/
+theorem eqOn_piecewise_of_not_le (h₁ : ¬ a ≤ b) (h₂ : ¬ b ≤ a) :
+    Set.EqOn ((naturalClass a).piecewise src tgt) tgt ↑(naturalClass b) :=
+  λ _ hg =>
+    Finset.piecewise_eq_of_notMem _ _ _ (Finset.disjoint_right.1 (disjoint_naturalClass h₁ h₂) hg)
+
+instance (s₁ s₂ : Segment) (a : N) : Decidable (Set.EqOn s₁ s₂ ↑(naturalClass a)) :=
   Set.decidableEqOnOfFintype _ _ _
 
-/-! ### Tree structure (verification) -/
+end FeatureGeometry
 
-theorem root_has_no_parent : Node.root.parent = none := rfl
+/-! ### The consensus classification -/
 
-theorem nonroot_has_parent (h : n ≠ .root) : n.parent.isSome = true := by
-  cases n <;> simp_all [Node.parent]
+/-- The theory-neutral grouping of the features, [hayes-2009]'s chart read as [padgett-2002]'s
+classes: the manner and major-class features, the laryngeal features, and the features of the
+three oral articulators, under a root standing for the whole segment. Place is the union of
+the articulator classes and not a node, since whether it is a constituent and how vowel place
+relates to it is where the geometries of `Studies/Clements1985.lean`, `Studies/Sagey1986.lean`
+and `Studies/HalleVauxWolfe2000.lean` part ways. -/
+inductive Feature.Category where
+  | root | manner | laryngeal | labial | coronal | dorsal
+  deriving DecidableEq, Repr, Fintype
 
-theorem allNodes_complete : n ∈ Node.allNodes := by cases n <;> simp [Node.allNodes]
+namespace Feature.Category
 
-/-! ### Flat-predicate subsumption
+/-- Every class hangs from the root. -/
+def parent : Category → Option Category
+  | .root => none
+  | _ => some .root
 
-`IsLaryngeal`/`IsDorsal` coincide with single-node dominance; `IsPlace` is only a
-*subset* (manner features like `[lateral]`/`[strident]` sit geometrically under Coronal). -/
+/-- A class and its ancestors. -/
+def up (c : Category) : Finset Category :=
+  ((List.range 2).filterMap λ i => (· >>= parent)^[i] (some c)).toFinset
 
-theorem IsLaryngeal_iff_laryngeal_DominatedBy : f.IsLaryngeal ↔ f.DominatedBy .laryngeal := by
-  cases f <;> decide
+instance : PartialOrder Category := PartialOrder.lift up (by decide)
 
-theorem IsDorsal_iff_dorsal_DominatedBy : f.IsDorsal ↔ f.DominatedBy .dorsal := by
-  cases f <;> decide
+instance : DecidableLE Category := λ a b => inferInstanceAs (Decidable (up a ⊆ up b))
 
-theorem IsPlace_implies_place_DominatedBy : f.IsPlace → f.DominatedBy .place := by
-  cases f <;> decide
+instance : OrderBot Category where
+  bot := .root
+  bot_le := by decide
 
-theorem lateral_geometrically_under_place : Feature.lateral.DominatedBy .place := by decide
+end Feature.Category
 
-theorem strident_geometrically_under_place : Feature.strident.DominatedBy .place := by decide
+/-- The class of each feature, by [hayes-2009]'s chart. -/
+def Feature.category : Feature → Feature.Category
+  | .syllabic | .consonantal | .sonorant | .approximant | .continuant | .delayedRelease
+  | .nasal | .lateral | .strident | .tap | .trill => .manner
+  | .voice | .spreadGlottis | .constrGlottis => .laryngeal
+  | .labial | .round | .labiodental => .labial
+  | .coronal | .anterior | .distributed => .coronal
+  | .dorsal | .high | .low | .front | .back | .tense => .dorsal
 
-/-!
-## Complex and contour segments
-[sagey-1986]
+instance : FeatureGeometry Feature.Category where
+  isChain_Iic := by unfold IsChain Set.Pairwise; decide +revert
+  node f := some f.category
 
-**Complex segments** have one root node with several *place* articulators active
-simultaneously (e.g. labiovelars [k͡p]); they fill one timing slot and their
-articulations are unordered. **Contour segments** have two root nodes on one timing
-slot, with articulations in sequence (e.g. affricates [ts]). A single-bundle
-`Segment` has one value per feature, so it can host only complex (one-root)
-segments, via `activeArticulators`; sequential contours need the multi-anchor
-autosegmental representation (`Autosegmental/`).
-
-The geometry predicts which complex segments are possible: only those combining
-*distinct* articulators. Palatal–velar stops are impossible (both are dorsal);
-labiovelars are possible (labial and dorsal are independent).
--/
-
-/-! ### Articulator nodes -/
-
-/-- A place articulator — labial, coronal, or dorsal — the independent articulators
-    whose distinct combinations give complex segments ([sagey-1986]). -/
-def Node.IsArticulator : Node → Prop
-  | .labial | .coronal | .dorsal => True
-  | _ => False
-
-instance : DecidablePred Node.IsArticulator :=
-  λ n => by cases n <;> unfold Node.IsArticulator <;> infer_instance
-
-/-- The articulator nodes. -/
-def articulatorNodes : List Node := Node.allNodes.filter (λ n => decide n.IsArticulator)
-
-/-! ### Articulator geometry (verification) -/
-
-/-- Articulators are exactly the leaf nodes. -/
-theorem articulators_are_leaves : ∀ n ∈ articulatorNodes, n.children = [] := by decide
-
-/-- Every articulator is dominated by root. -/
-theorem articulators_under_root : ∀ n ∈ articulatorNodes, Node.root.Dominates n := by decide
-
-/-- Every articulator is dominated by place. -/
-theorem articulators_under_place : ∀ n ∈ articulatorNodes, Node.place.Dominates n := by decide
-
-/-- The three place articulators are pairwise distinct — giving three complex types
-    (labio-coronal, labio-dorsal, corono-dorsal). -/
-theorem place_articulators_distinct :
-    Node.labial ≠ .coronal ∧ Node.labial ≠ .dorsal ∧ Node.coronal ≠ .dorsal := by decide
-
-/-- The soft palate is a *sibling* of place, not under it — so nasal assimilation
-    (spreading soft palate) is independent of place assimilation. -/
-theorem softPalate_not_under_place : ¬ Node.place.Dominates .softPalate := by decide
-
-/-- The soft palate is not an articulator — a velar nasal [ŋ] is simple despite
-    activating both dorsal and soft palate. -/
-theorem softPalate_not_articulator : ¬ Node.softPalate.IsArticulator := by decide
-
-end Phonology.FeatureGeometry
-
-namespace Phonology
-
-open FeatureGeometry (Node articulatorNodes)
-
-variable (s : Segment)
-
-/-! ### Active articulators -/
-
-/-- The articulator nodes with at least one specified feature in `s`. -/
-def Segment.activeArticulators : List Node :=
-  articulatorNodes.filter (λ n => decide (∃ g ∈ n.features, (s g).isSome))
-
-/-- The number of active articulator nodes in `s`. -/
-def Segment.articulatorCount : Nat := s.activeArticulators.length
+open FeatureGeometry in
+/-- The place class: the union of the three articulator classes ([padgett-2002] p. 83's
+"Place simply stands for the set {[labial], [coronal], [dorsal], …}"). -/
+def Feature.Category.place : Finset Feature :=
+  naturalClass labial ∪ naturalClass coronal ∪ naturalClass dorsal
 
 /-! ### Complex segments -/
 
-/-- A complex segment has two or more simultaneously active articulators — e.g. a
-    labiovelar [k͡p] (labial + dorsal). -/
-def Segment.IsComplex : Prop := s.articulatorCount ≥ 2
+/-- The designated articulators of a segment, as the articulator features it is specified `+`
+for ([halle-vaux-wolfe-2000] §1.2.2). -/
+def Segment.articulators (s : Segment) : Finset Feature :=
+  ({.labial, .coronal, .dorsal} : Finset Feature).filter (s · = some true)
 
-instance : DecidablePred Segment.IsComplex := λ _ => inferInstanceAs (Decidable (_ ≥ _))
+/-- A complex segment has more than one designated articulator: the labiovelar [k͡p] carries
+[labial] and [dorsal], the labialised [kʷ] only [dorsal] beside [+round] ([sagey-1986];
+[halle-vaux-wolfe-2000] p. 435). -/
+def Segment.IsComplex (s : Segment) : Prop := 1 < s.articulators.card
 
-/-- **Complex-segment well-formedness holds by construction**: a segment's active
-    articulators are always distinct, being filtered from the duplicate-free
-    `articulatorNodes`. The distinct-articulator condition is a theorem, not a
-    separate constraint ([sagey-1986]). -/
-theorem Segment.activeArticulators_nodup : s.activeArticulators.Nodup := by
-  unfold Segment.activeArticulators
-  exact (by decide : articulatorNodes.Nodup).filter _
+instance : DecidablePred Segment.IsComplex := λ _ => inferInstanceAs (Decidable (1 < _))
 
 end Phonology

@@ -65,34 +65,6 @@ inductive Feature where
 
 namespace Feature
 
-variable (f : Feature)
-
-/-! ### Feature classification -/
-
-/-- The articulator category of a feature: manner/root, laryngeal, or place. -/
-inductive Category where
-  | manner | laryngeal | labial | coronal | dorsal
-  deriving DecidableEq, Repr
-
-/-- The articulator category of each distinctive feature. -/
-def category : Feature → Category
-  | .syllabic | .consonantal | .sonorant | .approximant
-  | .continuant | .delayedRelease | .nasal | .lateral
-  | .strident | .tap | .trill                        => .manner
-  | .voice | .spreadGlottis | .constrGlottis         => .laryngeal
-  | .labial | .round | .labiodental                  => .labial
-  | .coronal | .anterior | .distributed              => .coronal
-  | .dorsal | .high | .low | .front | .back | .tense => .dorsal
-
-/-- Is this a laryngeal feature? -/
-abbrev IsLaryngeal : Prop := f.category = .laryngeal
-
-/-- Is this a dorsal place feature? -/
-abbrev IsDorsal : Prop := f.category = .dorsal
-
-/-- Is this a place feature (any articulator node)? -/
-abbrev IsPlace : Prop := f.category = .labial ∨ f.category = .coronal ∨ f.category = .dorsal
-
 /-! ### Enumeration -/
 
 /-- All features, in declaration order. -/
@@ -130,7 +102,8 @@ variable (s : Segment)
 /-- Does feature `f` have value `v`? -/
 def HasValue (f : Feature) (v : Bool) : Prop := s f = some v
 
-instance (f : Feature) (v : Bool) : Decidable (s.HasValue f v) := inferInstanceAs (Decidable (_ = _))
+instance (f : Feature) (v : Bool) : Decidable (s.HasValue f v) :=
+  inferInstanceAs (Decidable (_ = _))
 
 /-- A segment is **unspecified** for feature `f` iff its value there is `none`. -/
 def Unspecified (f : Feature) : Prop := s f = none

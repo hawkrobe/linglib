@@ -37,7 +37,7 @@ are skipped by `triggerValue` (not triggers) and `harmonizeOne` (not targets).
 namespace Finnish.VowelHarmony
 
 open Phonology (Segment Feature)
-open Phonology.FeatureGeometry (Node)
+open Phonology.FeatureGeometry (naturalClass)
 open Subregular.Harmony (System triggerValue
   harmonizeOne spreadSuffix)
 
@@ -185,7 +185,8 @@ theorem back_with_neutral :
 
 /-- The /a/–/ä/ pair differs only in [back]: dorsal agreement fails
     between them, confirming they belong to different harmony classes. -/
-theorem a_ä_dorsal_disagree : ¬ Set.EqOn a_vowel ä_vowel ↑Node.dorsal.features := by
+theorem a_ä_dorsal_disagree :
+    ¬ Set.EqOn a_vowel ä_vowel ↑(naturalClass Feature.Category.dorsal) := by
   decide
 
 /-- Dorsal agreement holds between /a/ and /o/ (both [+back]). -/

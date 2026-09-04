@@ -12,10 +12,10 @@ PhD dissertation, Massachusetts Institute of Technology.
 
 [sagey-1986] proposes a hierarchical feature geometry organized by
 vocal tract articulator, establishing the labial, coronal, dorsal, and
-soft palate nodes that are now standard in phonological theory
-(`Phonology/Segmental/Geometry.lean`). The geometry predicts which
-multiply-articulated (complex) segments are possible in human language
-(`Phonology/Segmental/Geometry.lean`).
+soft palate nodes (`Node` below, an instance of the substrate's
+`FeatureGeometry`). The geometry predicts which multiply-articulated
+(complex) segments are possible in human language
+(`Segment.IsComplex` in `Phonology/Segmental/Geometry.lean`).
 
 This study file formalizes Sagey-specific contributions that go beyond
 the consensus geometry:
@@ -39,7 +39,7 @@ the consensus geometry:
 -/
 
 open Phonology (Segment Feature)
-open Phonology.FeatureGeometry (Node)
+open Phonology.FeatureGeometry (naturalClass)
 
 namespace Autosegmental
 
@@ -272,6 +272,62 @@ end Autosegmental
 
 namespace Sagey1986
 
+/-! ### The articulator geometry -/
+
+/-- The class nodes: root; laryngeal and supralaryngeal; soft palate and place below
+supralaryngeal; the articulators labial, coronal and dorsal below place. -/
+inductive Node where
+  | root | laryngeal | supralaryngeal | softPalate | place | labial | coronal | dorsal
+  deriving DecidableEq, Repr, Fintype
+
+namespace Node
+
+/-- The node immediately dominating each node; the root alone has none. -/
+def parent : Node → Option Node
+  | .root => none
+  | .laryngeal | .supralaryngeal => some .root
+  | .softPalate | .place => some .supralaryngeal
+  | .labial | .coronal | .dorsal => some .place
+
+/-- A node and its ancestors; the tree has depth three. -/
+def up (n : Node) : Finset Node :=
+  ((List.range 4).filterMap λ i => (· >>= parent)^[i] (some n)).toFinset
+
+instance : PartialOrder Node := PartialOrder.lift up (by decide)
+
+instance : DecidableLE Node := λ a b => inferInstanceAs (Decidable (up a ⊆ up b))
+
+instance : OrderBot Node where
+  bot := .root
+  bot_le := by decide
+
+/-- The articulator nodes — labial, coronal, dorsal — whose distinct combinations give complex
+segments. -/
+def IsArticulator : Node → Prop
+  | .labial | .coronal | .dorsal => True
+  | _ => False
+
+instance : DecidablePred IsArticulator :=
+  λ n => by cases n <;> unfold IsArticulator <;> infer_instance
+
+end Node
+
+/-- The terminal features under each node. TODO: the placement of `[continuant]` under
+supralaryngeal and of `[lateral]`/`[strident]` under coronal is unverified against the
+dissertation. -/
+def node : Feature → Node
+  | .syllabic | .consonantal | .sonorant | .approximant | .delayedRelease | .tap | .trill => .root
+  | .voice | .spreadGlottis | .constrGlottis => .laryngeal
+  | .continuant => .supralaryngeal
+  | .nasal => .softPalate
+  | .labial | .round | .labiodental => .labial
+  | .coronal | .anterior | .distributed | .lateral | .strident => .coronal
+  | .dorsal | .high | .low | .front | .back | .tense => .dorsal
+
+instance : Phonology.FeatureGeometry Node where
+  isChain_Iic := by unfold IsChain Set.Pairwise; decide +revert
+  node f := some (node f)
+
 -- ============================================================================
 -- § 1: Major/Minor Articulator Distinction (Ch. 3)
 -- ============================================================================
@@ -328,7 +384,7 @@ inductive DegreeOfClosure where
 structure ArticulatorSpec where
   node : Node
   closure : DegreeOfClosure
-  node_is_articulator : node.IsArticulator = true
+  node_is_articulator : node.IsArticulator
 
 /-- A click's anterior closure (coronal, full stop). -/
 def click_anterior : ArticulatorSpec where
@@ -352,19 +408,18 @@ def click_posterior : ArticulatorSpec where
     cross-linguistically simpler and more common than place assimilation:
     it involves spreading a smaller constituent. -/
 theorem nasal_assimilation_scope :
-    Node.softPalate.features.card < Node.place.features.card := by
+    (naturalClass Node.softPalate).card < (naturalClass Node.place).card := by
   decide
 
 /-- Nasality is NOT under the place node — spreading place does not
     spread nasality. This is Sagey's core structural argument for the
     soft palate node as a separate constituent. -/
-theorem nasal_not_under_place :
-    ¬ Feature.nasal.DominatedBy .place := by decide
+theorem nasal_not_under_place : Feature.nasal ∉ naturalClass Node.place := by decide
 
 /-- Nasality IS under supralaryngeal (via the soft palate node), so
     total assimilation (spreading supralaryngeal) does spread nasality. -/
-theorem nasal_under_supralaryngeal :
-    Feature.nasal.DominatedBy .supralaryngeal := by decide
+theorem nasal_under_supralaryngeal : Feature.nasal ∈ naturalClass Node.supralaryngeal := by
+  decide
 
 -- ============================================================================
 -- § 4: Nupe Labiovelars
@@ -379,11 +434,6 @@ def nupe_kp_segment : Segment :=
 
 /-- The Nupe /k͡p/ is a complex segment (two active place articulators). -/
 theorem nupe_kp_is_complex : Segment.IsComplex nupe_kp_segment := by decide
-
-/-- The Nupe /k͡p/ is well-formed: its active articulators (labial, dorsal) are
-    distinct — an instance of the by-construction guarantee. -/
-theorem nupe_kp_wf : nupe_kp_segment.activeArticulators.Nodup :=
-  Segment.activeArticulators_nodup _
 
 /-- A simple /p/ (labial only) is not complex. -/
 def simple_p : Segment :=
@@ -404,11 +454,6 @@ def velar_nasal : Segment :=
      (.nasal, true), (.voice, true), (.dorsal, true)]
 
 theorem velar_nasal_not_complex : ¬ Segment.IsComplex velar_nasal := by decide
-
-/-- The velar nasal is well-formed (only one place articulator: dorsal), its
-    active articulators trivially distinct. -/
-theorem velar_nasal_wf : velar_nasal.activeArticulators.Nodup :=
-  Segment.activeArticulators_nodup _
 
 -- ============================================================================
 -- § 5: Impossible Complex Segments (Ch. 2)
