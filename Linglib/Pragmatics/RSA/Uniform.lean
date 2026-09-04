@@ -71,6 +71,20 @@ theorem uniformListener_apply_singleton_ne_zero {c : C} {t : T} (h : t ∈ sem c
   rw [uniformListener_apply_singleton, if_pos h]
   simp
 
+omit [DecidableEq T] in
+/-- At a uniform prior a graded meaning normalizes to its share of the row sum: the prior
+cancels. -/
+theorem literalListener_uniformOn_apply_singleton [Nonempty T] {U : Type*} [MeasurableSpace U]
+    [Countable U] [MeasurableSingletonClass U] (m : U → T → ℝ≥0∞) (u : U) (t : T) :
+    literalListener (uniformOn Set.univ) m u {t} = m u t / ∑ t', m u t' := by
+  rw [literalListener_apply_singleton]
+  have hc : ((Fintype.card T : ℝ≥0∞))⁻¹ ≠ 0 :=
+    ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
+  have hc' : ((Fintype.card T : ℝ≥0∞))⁻¹ ≠ ∞ :=
+    ENNReal.inv_ne_top.mpr (by exact_mod_cast Fintype.card_ne_zero)
+  simp_rw [uniformOn_univ_apply_singleton, ← Finset.sum_mul]
+  exact ENNReal.mul_div_mul_right _ _ hc hc'
+
 /-- The speaker at a uniform prior (eq. 7): best response to `uniformListener` at no cost. -/
 noncomputable abbrev uniformSpeaker (α : ℝ) : Kernel T C := speaker α 1 (uniformListener sem)
 
