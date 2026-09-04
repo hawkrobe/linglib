@@ -2863,7 +2863,6 @@ import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phi.Lattice
 import Linglib.Syntax.Minimalist.Phi.PersonSpace
 import Linglib.Syntax.Minimalist.Phi.Recursion
-import Linglib.Syntax.Minimalist.Position
 import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Syntax.Minimalist.Probe.Phi
 import Linglib.Syntax.Minimalist.Probe.Profile
