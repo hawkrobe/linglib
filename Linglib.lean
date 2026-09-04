@@ -1430,7 +1430,6 @@ import Linglib.Pragmatics.RSA.CombinedUtility
 import Linglib.Pragmatics.RSA.Gibbs
 import Linglib.Pragmatics.RSA.Incremental
 import Linglib.Pragmatics.RSA.LatentOperators
-import Linglib.Pragmatics.RSA.LexicalUncertainty
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.QUD
 import Linglib.Pragmatics.RSA.ScoreChain
@@ -2054,7 +2053,6 @@ import Linglib.Studies.CiardelliZhangChampollion2018
 import Linglib.Studies.Cinque2005
 import Linglib.Studies.Cinque2020
 import Linglib.Studies.CitkoGracaninYuksek2025
-import Linglib.Studies.Clark1983
 import Linglib.Studies.ClausWalch2024
 import Linglib.Studies.ClemDeal2024
 import Linglib.Studies.Clements1985
