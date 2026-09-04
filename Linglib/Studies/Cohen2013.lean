@@ -12,13 +12,14 @@ bear it. Pragmatic triggering leaves the transfer free to apply at any level of
 composition, after Nunberg and Recanati, so "Storks have a favorite nesting area" is
 scopally ambiguous — transfer of the verb leaves the generic under the existential,
 transfer of the whole phrase puts it above (§13.4.1) — though never out of an opaque
-context, since transfer needs the property's intension. Habituals arise by a type-shift: an eventive verb is evaluated at
-intervals while the present tense supplies a moment (after Taylor and Dowty), and the
-shift γ resolves the mismatch at the verb, before the object composes, so "Mary smokes a
-cigarette" keeps the generic under the existential and is odd, while the brand variant is
-fine (§13.4.2). That a type-shift applies only at its trigger site is argued from Partee
-and Rooth's SHIFT: negating a shifted verb differs from shifting a negated one, and only
-the first order is attested (§13.3.1, after the conjunction *needed but didn't buy*).
+context, since transfer needs the property's intension. Habituals arise by a type-shift:
+an eventive verb is evaluated at intervals while the present tense supplies a moment
+(after Taylor and Dowty), and the shift γ resolves the mismatch at the verb, before the
+object composes, so "Mary smokes a cigarette" keeps the generic under the existential and
+is odd, while the brand variant is fine (§13.4.2). That a type-shift applies only at its
+trigger site is argued from Partee and Rooth's SHIFT: negating a shifted verb differs
+from shifting a negated one, and only the first order is attested (§13.3.1, after the
+conjunction *needed but didn't buy*).
 Scope alone also does not exhaust the generic–negation interaction: focus fixes the
 alternative set of Cohen's earlier generic quantifier, so "Cows do not eat [nettles]"
 generalizes with exceptions while "Cows do [not] eat nettles" denies that any cow eats
