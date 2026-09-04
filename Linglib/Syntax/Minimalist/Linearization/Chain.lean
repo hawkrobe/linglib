@@ -22,11 +22,14 @@ silences no pronounceable token an earlier one had not already silenced is vacuo
 configuration [citko-gracanin-yuksek-2025]'s Pronunciation Economy bans. A `v` or `C` projection
 whose edge hosts several wh-specifiers, wh-tokens or their traces, receives the asterisk of the
 multiple-wh-fronting parameter and crashes at PF unless its head is silenced. The cost of the
-object is read off its distinct tokens and nodes: a shared constituent is built once.
+object is read off its terms, the distinct subtrees as MCB's `subtrees` taken each once: the lexical
+leaves are the items drawn and the internal vertices the Merges, so a shared constituent is built
+once.
 
 ## Main definitions
 
 * `ChainLabel`, `tokenList`, `occurrences`, `unboundTraces`, `IsShared`: occurrences and chains.
+* `terms`: the distinct subtrees, a shared constituent's once.
 * `elidedDomains`, `IsSilenced`, `pfPhon`: pronunciation under [E].
 * `IsVacuous`, `PronunciationEconomy`: the ban on vacuous ellipsis.
 * `projection`, `phaseAt`, `IsAsterisked`, `Converges`: the multiple-wh-fronting asterisk.
@@ -112,7 +115,10 @@ def occurrences (tok : LIToken) : List Path :=
   (tokenList t).filterMap λ x => if x.2 = tok then some x.1 else none
 
 /-- The tokens of `t`, each once. -/
-def distinctTokens : List LIToken := ((tokenList t).map (·.2)).eraseDups
+def tokens : Finset LIToken := ((tokenList t).map (·.2)).toFinset
+
+/-- The terms of `t`: its subtrees, a shared constituent's once. -/
+def terms : Finset (RoseTree ChainLabel) := ((vertices t).filterMap t.subtreeAt).toFinset
 
 /-- `tok` is shared, dominated by two mothers: it occurs twice. -/
 def IsShared (tok : LIToken) : Prop := 2 ≤ (occurrences t tok).length
@@ -167,15 +173,15 @@ def pfYield : List LIToken :=
 def pfPhon : List String := (pfYield t).filterMap LIToken.phonForm?
 
 /-- The pronounceable tokens the application at the domain `K` silences. -/
-def silencedBy (K : Path) : List LIToken :=
-  (distinctTokens t).filter λ s => s.phonForm?.isSome ∧ (occurrences t s).any (decide <| K <+: ·)
+def silencedBy (K : Path) : Finset LIToken :=
+  (tokens t).filter λ s => s.phonForm?.isSome ∧ (occurrences t s).any (decide <| K <+: ·)
 
-/-- The application at `K` has no effect on pronunciation: every token it silences an earlier
-application silenced. -/
+/-- The application at `K` has no effect on pronunciation: the earlier applications silenced
+every token it silences. -/
 def IsVacuous (K : Path) : Prop :=
-  ∀ s ∈ silencedBy t K, ∃ K' ∈ (elidedDomains t).takeWhile (· ≠ K), s ∈ silencedBy t K'
+  silencedBy t K ⊆ ((elidedDomains t).takeWhile (· ≠ K)).toFinset.biUnion (silencedBy t)
 
-instance (K : Path) : Decidable (IsVacuous t K) := inferInstanceAs (Decidable (∀ _ ∈ _, _))
+instance (K : Path) : Decidable (IsVacuous t K) := by unfold IsVacuous; infer_instance
 
 /-- **Pronunciation Economy** ([citko-gracanin-yuksek-2025] (39)): no application of ellipsis is
 vacuous. -/
@@ -235,16 +241,12 @@ instance (param : MWFParameter) : Decidable (Converges t param) :=
 
 /-! ### Cost -/
 
-/-- The internal nodes of `t`, a shared constituent's once. -/
-def distinctNodes : List (RoseTree ChainLabel) :=
-  (((vertices t).filterMap t.subtreeAt).filter λ s => decide (s.value = ChainLabel.inner)).eraseDups
-
-/-- The cost of the object: its distinct tokens are the lexical items drawn, its distinct
-internal nodes the Merges, and its elided domains the applications of ellipsis. -/
-def planarCost : DerivationCost where
-  lexicalItems := (distinctTokens t).length
-  mergeOps := (distinctNodes t).length
-  agreeOps := 0
-  ellipsisOps := (elidedDomains t).length
+/-- The cost of the object: its tokens are the lexical items drawn, its internal terms the Merges,
+and its elided domains the applications of ellipsis. -/
+def planarCost : DerivationCost
+  | .lexicalItems => (tokens t).card
+  | .mergeOps => ((terms t).filter λ s => s.value = ChainLabel.inner).card
+  | .agreeOps => 0
+  | .ellipsisOps => (elidedDomains t).length
 
 end Minimalist
