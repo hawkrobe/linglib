@@ -78,84 +78,72 @@ def hasD (s : SyntacticObject) : Bool :=
   | some tok => tok.item.outerCat == .D
   | none => false
 
-private def tC : LIToken := ⟨.simple .C [], 1⟩
-private def tT : LIToken := ⟨.simple .T [], 2⟩
-private def tV : LIToken := ⟨.simple .V [], 3⟩
-private def tv : LIToken := ⟨.simple .v [], 4⟩
-private def tAppl : LIToken := ⟨.simple .Appl [], 5⟩
-private def tP : LIToken := ⟨.simple .P [], 6⟩
-private def tPsr : LIToken := ⟨.simple .D [], 7⟩
-private def tPsm : LIToken := ⟨.simple .N [], 8⟩
-private def tD : LIToken := ⟨.simple .D [], 9⟩
-private def tAgt : LIToken := ⟨.simple .D [], 10⟩
-private def tSubjD : LIToken := ⟨.simple .D [], 11⟩
-private def tSubjN : LIToken := ⟨.simple .N [], 12⟩
-private def tThemeD : LIToken := ⟨.simple .D [], 13⟩
-private def tThemeN : LIToken := ⟨.simple .N [], 14⟩
-private def tPivot : LIToken := ⟨.simple .N [], 15⟩
+private def C₀ : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .C [], 1⟩
+private def T₀ : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .T [], 2⟩
+private def V₀ : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .V [], 3⟩
+private def v₀ : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .v [], 4⟩
+private def Appl₀ : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .Appl [], 5⟩
+private def P₀ : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .P [], 6⟩
+private def Psr : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .D [], 7⟩
+private def Psm : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .N [], 8⟩
+private def D₀ : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .D [], 9⟩
+private def Agt : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .D [], 10⟩
+private def SubjD : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .D [], 11⟩
+private def SubjN : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .N [], 12⟩
+private def ThemeD : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .D [], 13⟩
+private def ThemeN : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .N [], 14⟩
+private def Pivot : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .N [], 15⟩
 
-private def C₀ : SyntacticObject := leaf tC
-private def T₀ : SyntacticObject := leaf tT
-private def Appl₀ : SyntacticObject := leaf tAppl
-private def Psr : SyntacticObject := leaf tPsr
-private def D₀ : SyntacticObject := leaf tD
-private def Agt : SyntacticObject := leaf tAgt
-private def SubjD : SyntacticObject := leaf tSubjD
-private def ThemeD : SyntacticObject := leaf tThemeD
+/-- A non-specific possessive, `{Psr, Psm}`. -/
+private def PossP : PlanarSyntacticObject := {Psr, Psm}
 
-/-- A non-specific possessive, `[PossP Psr Psm]`. -/
-private def possP : PlanarSyntacticObject := tPsr * tPsm
+/-- A specific possessive, `{D⁰, PossP}`. -/
+private def DP : PlanarSyntacticObject := {D₀, PossP}
 
-/-- A specific possessive, `[DP D⁰ [PossP Psr Psm]]`. -/
-private def dp : PlanarSyntacticObject := tD * possP
+/-- A locative PP over a non-specific possessive, `{P, PossP}`. -/
+private def PP : PlanarSyntacticObject := {P₀, PossP}
 
-/-- A locative PP over a non-specific possessive, `[PP P [PossP Psr Psm]]`. -/
-private def pp : PlanarSyntacticObject := tP * possP
+/-- (9c) with a non-specific possessive S_O. -/
+private def unaccPossP : PlanarSyntacticObject := {T₀, {V₀, PossP}}
 
-/-- (9c) with a non-specific possessive S_O: `[TP T⁰ [VP V⁰ PossP]]`. -/
-private def unaccPossP : PlanarSyntacticObject := tT * (tV * possP)
+/-- (9c) with a specific possessive S_O. -/
+private def unaccDP : PlanarSyntacticObject := {T₀, {V₀, DP}}
 
-/-- (9c) with a specific possessive S_O: `[TP T⁰ [VP V⁰ DP]]`. -/
-private def unaccDP : PlanarSyntacticObject := tT * (tV * dp)
+/-- (9a) with a non-specific possessive O. -/
+private def transPossP : PlanarSyntacticObject := {T₀, {Agt, {v₀, {V₀, PossP}}}}
 
-/-- (9a) with a non-specific possessive O: `[TP T⁰ [vP Agt [v' v⁰ [VP V⁰ PossP]]]]`. -/
-private def transPossP : PlanarSyntacticObject := tT * (tAgt * (tv * (tV * possP)))
+/-- (29) the raising applicative under T⁰. -/
+private def raisingAppl : PlanarSyntacticObject := {T₀, {Agt, {v₀, {Appl₀, {V₀, PossP}}}}}
 
-/-- (29) the raising applicative: `[vP Agt [v' v⁰ [ApplP Appl⁰ [VP V⁰ PossP]]]]` under T⁰. -/
-private def raisingAppl : PlanarSyntacticObject := tT * (tAgt * (tv * (tAppl * (tV * possP))))
+/-- (9b) with a locative PP, for a specific or a non-specific S_A. -/
+private def unerg (subj : PlanarSyntacticObject) : PlanarSyntacticObject :=
+  {T₀, {subj, {v₀, {V₀, PP}}}}
 
-/-- (9b) with a locative PP, `[TP T⁰ [vP S_A [v' v⁰ [VP V⁰ PP]]]]`, for a specific or a
-non-specific S_A. -/
-private def unerg (subj : LIToken) : PlanarSyntacticObject := tT * (subj * (tv * (tV * pp)))
+/-- (71) theme over locative, for a specific or a non-specific theme: path verbs, locative
+existentials and locative copulas. -/
+private def themeLoc (theme : PlanarSyntacticObject) : PlanarSyntacticObject :=
+  {T₀, {V₀, {theme, PP}}}
 
-/-- (71) theme over locative, `[TP T⁰ [VP V⁰ [Theme PP]]]`, for a specific or a non-specific
-theme: path verbs, locative existentials and locative copulas. -/
-private def themeLoc (theme : LIToken) : PlanarSyntacticObject := tT * (tV * (theme * pp))
+/-- (83) the experiencer PP merged above the theme. -/
+private def experiencer : PlanarSyntacticObject := {T₀, {PP, {V₀, ThemeD}}}
 
-/-- (83) the experiencer PP merged above the theme, `[TP T⁰ [VP PP [V' V⁰ Theme]]]`. -/
-private def experiencer : PlanarSyntacticObject := tT * (pp * (tV * tThemeD))
-
-/-- (40a) an existential with a bare pivot, `[TP T⁰ [VP V⁰ NP]]`. -/
-private def existential : PlanarSyntacticObject := tT * (tV * tPivot)
+/-- (40a) an existential with a bare pivot. -/
+private def existential : PlanarSyntacticObject := {T₀, {V₀, Pivot}}
 
 /-- The clause under C⁰. -/
-private def cp (tp : PlanarSyntacticObject) : PlanarSyntacticObject := tC * tp
+private def cp (tp : PlanarSyntacticObject) : PlanarSyntacticObject := {C₀, tp}
 
 /-! ### Nominal opacity -/
 
 /-- The possessor of a specific S_O is invisible to C⁰'s wh-probe. -/
-theorem psr_invisible_dp :
-    Invisible nominalOpacity (cp unaccDP) C₀ Psr :=
-  ⟨.N, rfl, by decide⟩
+theorem psr_invisible_dp : Invisible nominalOpacity (cp unaccDP) C₀ Psr := ⟨.N, rfl, by decide⟩
 
 /-- So is the possessor of a non-specific S_O: opacity does not depend on size. -/
-theorem psr_invisible_possP :
-    Invisible nominalOpacity (cp unaccPossP) C₀ Psr :=
+theorem psr_invisible_possP : Invisible nominalOpacity (cp unaccPossP) C₀ Psr :=
   ⟨.N, rfl, by decide⟩
 
 /-- And the possessor inside a locative PP: PP islands follow from nominal opacity. -/
-theorem psr_invisible_pp :
-    Invisible nominalOpacity (cp (themeLoc tThemeN)) C₀ Psr :=
+theorem psr_invisible_pp : Invisible nominalOpacity (cp (themeLoc ThemeN)) C₀ Psr :=
   ⟨.N, rfl, by decide⟩
 
 /-- The D head of a specific possessive is visible, so the whole DP can be pied-piped. -/
@@ -187,20 +175,20 @@ Spec,ApplP. -/
 theorem appl_psr_closest : isClosestGoalIn raisingAppl Appl₀ Psr hasD := by decide
 
 /-- A specific unergative subject stops T⁰ before the possessor inside the locative PP. -/
-theorem unerg_specific_blocks : isClosestGoalIn (unerg tSubjD) T₀ SubjD hasD ∧
-      ¬ isClosestGoalIn (unerg tSubjD) T₀ Psr hasD :=
+theorem unerg_specific_blocks : isClosestGoalIn (unerg SubjD) T₀ SubjD hasD ∧
+      ¬ isClosestGoalIn (unerg SubjD) T₀ Psr hasD :=
   ⟨by decide, by decide⟩
 
 /-- A non-specific unergative subject is no DP, so the possessor is the closest goal. -/
-theorem unerg_nonspecific_psr_closest : isClosestGoalIn (unerg tSubjN) T₀ Psr hasD := by decide
+theorem unerg_nonspecific_psr_closest : isClosestGoalIn (unerg SubjN) T₀ Psr hasD := by decide
 
 /-- A specific theme c-commanding the locative PP raises instead of the possessor. -/
-theorem theme_specific_blocks : isClosestGoalIn (themeLoc tThemeD) T₀ ThemeD hasD ∧
-      ¬ isClosestGoalIn (themeLoc tThemeD) T₀ Psr hasD :=
+theorem theme_specific_blocks : isClosestGoalIn (themeLoc ThemeD) T₀ ThemeD hasD ∧
+      ¬ isClosestGoalIn (themeLoc ThemeD) T₀ Psr hasD :=
   ⟨by decide, by decide⟩
 
 /-- A non-specific theme lets T⁰ reach the possessor inside the PP. -/
-theorem theme_nonspecific_psr_closest : isClosestGoalIn (themeLoc tThemeN) T₀ Psr hasD := by decide
+theorem theme_nonspecific_psr_closest : isClosestGoalIn (themeLoc ThemeN) T₀ Psr hasD := by decide
 
 /-- With the experiencer PP merged above the theme, neither c-commands the other and both are
 closest goals; the experiential reading requires the experiencer to raise. -/
