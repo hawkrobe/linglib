@@ -55,6 +55,18 @@ noncomputable def literalListener (μ : Measure W) (m : U → W → ℝ≥0∞) 
 theorem literalListener_apply (μ : Measure W) (m : U → W → ℝ≥0∞) (u : U) :
     literalListener μ m u = (μ.withDensity (m u))[|Set.univ] := rfl
 
+/-- The literal listener is a subprobability at every event. -/
+theorem literalListener_apply_le_one (μ : Measure W) (m : U → W → ℝ≥0∞) (u : U) (s : Set W) :
+    literalListener μ m u s ≤ 1 := by
+  rw [literalListener_apply, cond_apply MeasurableSet.univ, Set.univ_inter]
+  rcases eq_or_ne (μ.withDensity (m u) Set.univ) 0 with h | h
+  · rw [measure_mono_null (Set.subset_univ s) h, mul_zero]
+    exact zero_le_one
+  · calc (μ.withDensity (m u) Set.univ)⁻¹ * μ.withDensity (m u) s
+        ≤ (μ.withDensity (m u) Set.univ)⁻¹ * μ.withDensity (m u) Set.univ :=
+          mul_le_mul' le_rfl (measure_mono (Set.subset_univ s))
+      _ ≤ 1 := ENNReal.inv_mul_le_one _
+
 /-- On a Boolean meaning the literal listener conditions the prior on the extension. -/
 theorem literalListener_indicator [DiscreteMeasurableSpace W] (μ : Measure W)
     (sem : U → Set W) :
