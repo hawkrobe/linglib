@@ -62,6 +62,12 @@ instance (x y : SyntacticObject) : Decidable (immediatelyContains x y) :=
     Nonplanar.rootChildren_mk, RoseTree.leaf, RoseTree.children, List.map_nil, Multiset.coe_nil,
     Multiset.notMem_zero, not_false_iff]
 
+@[simp] theorem immediatelyContains_traceOf (tok : LIToken) (y : SyntacticObject) :
+    ¬ immediatelyContains (traceOf tok) y := by
+  simp only [immediatelyContains, traceOf, Nonplanar.leaf,
+    Nonplanar.rootChildren_mk, RoseTree.leaf, RoseTree.children, List.map_nil, Multiset.coe_nil,
+    Multiset.notMem_zero, not_false_iff]
+
 @[simp] theorem immediatelyContains_node (l r y : SyntacticObject) :
     immediatelyContains (node l r) y ↔ y = l ∨ y = r := by
   rw [immediatelyContains, node_val, Nonplanar.rootChildren_node,
@@ -83,9 +89,14 @@ theorem isSO_of_mem_subtrees (s : SyntacticObject) : ∀ m ∈ Nonplanar.subtree
     subst hm; exact (lexLeaf tok).2
   | trace =>
     intro m hm
-    rw [show traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
+    rw [show traceLeaf.val = Nonplanar.leaf (Sum.inr none) from rfl,
         Nonplanar.mem_subtrees_leaf] at hm
     subst hm; exact traceLeaf.2
+  | traceOf tok =>
+    intro m hm
+    rw [show (traceOf tok).val = Nonplanar.leaf (Sum.inr (some tok)) from rfl,
+        Nonplanar.mem_subtrees_leaf] at hm
+    subst hm; exact (traceOf tok).2
   | node l r ihl ihr =>
     intro m hm
     rw [node_val, Nonplanar.mem_subtrees_node_pair] at hm
@@ -124,9 +135,13 @@ theorem subtrees_subset_of_mem {w s : SyntacticObject} (h : w ∈ s.subtrees) :
         Nonplanar.mem_subtrees_leaf] at h
     rw [(Subtype.ext h : w = lexLeaf tok)]; exact Multiset.Subset.refl _
   | trace =>
-    rw [mem_subtrees, show traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
+    rw [mem_subtrees, show traceLeaf.val = Nonplanar.leaf (Sum.inr none) from rfl,
         Nonplanar.mem_subtrees_leaf] at h
     rw [(Subtype.ext h : w = traceLeaf)]; exact Multiset.Subset.refl _
+  | traceOf tok =>
+    rw [mem_subtrees, show (traceOf tok).val = Nonplanar.leaf (Sum.inr (some tok)) from rfl,
+        Nonplanar.mem_subtrees_leaf] at h
+    rw [(Subtype.ext h : w = traceOf tok)]; exact Multiset.Subset.refl _
   | node l r ihl ihr =>
     rw [mem_subtrees_node] at h
     rcases h with rfl | hl | hr
@@ -155,7 +170,7 @@ theorem Acc_card (s : SyntacticObject) : (s.Acc).card = Nonplanar.numNodes s.val
 
 @[simp] theorem Acc_traceLeaf : traceLeaf.Acc = 0 := by
   rw [← Multiset.card_eq_zero, Acc_card,
-      show traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
+      show traceLeaf.val = Nonplanar.leaf (Sum.inr none) from rfl,
       Nonplanar.numNodes_leaf]
 
 /-! ### Containment -/
@@ -176,9 +191,10 @@ theorem contains_trans {x y z : SyntacticObject} (hxy : contains x y) (hyz : con
 
 theorem immediatelyContains_lt_weight {x y : SyntacticObject} (h : immediatelyContains x y) :
     Nonplanar.numNodes y.val < Nonplanar.numNodes x.val := by
-  rcases exists_form x with ⟨tok, rfl⟩ | rfl | ⟨l, r, rfl⟩
+  rcases exists_form x with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩
   · exact absurd h (immediatelyContains_lexLeaf tok y)
   · exact absurd h (immediatelyContains_traceLeaf y)
+  · exact absurd h (immediatelyContains_traceOf tok y)
   · rw [immediatelyContains_node] at h
     rw [node_val, Nonplanar.numNodes_node_pair]
     rcases h with rfl | rfl <;> omega
@@ -194,9 +210,10 @@ theorem contains_irrefl (x : SyntacticObject) : ¬ contains x x :=
 
 theorem mem_subtrees_of_immediatelyContains {x y : SyntacticObject}
     (h : immediatelyContains x y) : y ∈ x.subtrees := by
-  rcases exists_form x with ⟨tok, rfl⟩ | rfl | ⟨l, r, rfl⟩
+  rcases exists_form x with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩
   · exact absurd h (immediatelyContains_lexLeaf tok y)
   · exact absurd h (immediatelyContains_traceLeaf y)
+  · exact absurd h (immediatelyContains_traceOf tok y)
   · rw [immediatelyContains_node] at h
     rcases h with heq | heq
     · rw [heq, mem_subtrees_node]
@@ -221,7 +238,11 @@ theorem mem_subtrees_iff_eq_or_contains {x y : SyntacticObject} :
         Nonplanar.mem_subtrees_leaf] at h
     exact Or.inl (Subtype.ext h)
   | trace =>
-    rw [mem_subtrees, show traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
+    rw [mem_subtrees, show traceLeaf.val = Nonplanar.leaf (Sum.inr none) from rfl,
+        Nonplanar.mem_subtrees_leaf] at h
+    exact Or.inl (Subtype.ext h)
+  | traceOf tok =>
+    rw [mem_subtrees, show (traceOf tok).val = Nonplanar.leaf (Sum.inr (some tok)) from rfl,
         Nonplanar.mem_subtrees_leaf] at h
     exact Or.inl (Subtype.ext h)
   | node l r ihl ihr =>
@@ -311,7 +332,7 @@ private def demoL : SyntacticObject :=
 private def demoR : SyntacticObject :=
   ⟨Nonplanar.mk (.node (Sum.inl (mkTraceToken 1)) []), by decide⟩
 private def demoT : SyntacticObject :=
-  ⟨Nonplanar.mk (.node (Sum.inr ())
+  ⟨Nonplanar.mk (.node (Sum.inr none)
     [.node (Sum.inl (mkTraceToken 0)) [], .node (Sum.inl (mkTraceToken 1)) []]), by decide⟩
 
 /-- The root contains its left daughter and not conversely. -/

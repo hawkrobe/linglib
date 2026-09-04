@@ -4,19 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Minimalist.SyntacticObject.Replace
+import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 
 /-!
 # Derivations
 
-An ordered derivation is an initial syntactic object with a sequence of Merge steps. External
-Merge adds an item as the left or right daughter, and Internal Merge raises a mover: the step
-re-merges the mover with the remainder `deleteAccessible mover current`, the current object with
-the mover's occurrences replaced by the trace leaf. Each step applies the carrier node, so the
-derivation's Merge is the workspace Merge by construction, and the node being commutative,
-`emL` and `emR` build the same object; the left-right distinction matters only for the surface
-order, which `Linearization/Replay.lean` recovers on an ordered planar accumulator, since the
-final object is an unordered quotient. Since `node` is noncomputable, so are `Step.apply` and
-`Derivation.final`, while the movers are read off the steps.
+An ordered derivation is an initial syntactic object with a sequence of Merge steps. External Merge
+adds an item as the left or right daughter, and Internal Merge raises a mover: the step re-merges
+the mover with the remainder `deleteAccessible mover current`, the current object with the mover's
+occurrences replaced by the trace of the mover's head. Each step applies the carrier node, so the
+derivation's Merge is the workspace Merge by construction, and the node being commutative, `emL` and
+`emR` build the same object; the left-right distinction matters only for the surface order, which
+`Linearization/Replay.lean` recovers on an ordered planar accumulator, since the final object is an
+unordered quotient. Since `node` is noncomputable, so are `Step.apply` and `Derivation.final`, while
+the movers are read off the steps.
 
 ## Main definitions
 
@@ -37,26 +38,29 @@ namespace SyntacticObject
 
 /-! ### Steps -/
 
-/-- A derivation step. `im` records only the mover; the trace it leaves is the bare trace leaf.
--/
+/-- A derivation step. `im` records only the mover; the trace it leaves is that of its head. -/
 inductive Step where
   /-- External Merge, new item as the left daughter. -/
   | emL (item : SyntacticObject)
   /-- External Merge, new item as the right daughter. -/
   | emR (item : SyntacticObject)
-  /-- Internal Merge: raise `mover`, leaving the bare trace in its place. -/
+  /-- Internal Merge: raise `mover`, leaving the trace of its head in its place. -/
   | im (mover : SyntacticObject)
 
+/-- The trace a moved object leaves: the trace of its head by selection, the bare trace when it
+    has none. -/
+def trace (s : SyntacticObject) : SyntacticObject := s.selHead.elim traceLeaf traceOf
+
 /-- The remainder `T/mover`: the current object with the mover's occurrences replaced by the
-    trace leaf, the remaining tree of an admissible cut ([marcolli-chomsky-berwick-2025],
+    trace of its head, the remaining tree of an admissible cut ([marcolli-chomsky-berwick-2025],
     Definition 1.2.6). For a uniquely accessible mover this is the deletion remainder that
     `Merge.mergeOp_im_composition` extracts; `replace` extends it to a chain of occurrences. -/
 noncomputable def deleteAccessible (mover current : SyntacticObject) : SyntacticObject :=
-  current.replace mover traceLeaf
+  current.replace mover mover.trace
 
 @[simp] theorem deleteAccessible_val (mover current : SyntacticObject) :
     (deleteAccessible mover current).val
-      = Nonplanar.replace mover.val traceLeaf.val current.val := rfl
+      = Nonplanar.replace mover.val mover.trace.val current.val := rfl
 
 /-- Apply a step: External Merge is the node with the item on the given side, Internal Merge the
     node of the remainder and the mover. -/

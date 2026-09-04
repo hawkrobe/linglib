@@ -37,15 +37,21 @@ theorem isSO_replace (target replacement s : SyntacticObject) :
     · exact replacement.2
     · exact (lexLeaf tok).2
   | trace =>
-    rw [show traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl, Nonplanar.replace_leaf]
+    rw [show traceLeaf.val = Nonplanar.leaf (Sum.inr none) from rfl, Nonplanar.replace_leaf]
     split
     · exact replacement.2
     · exact traceLeaf.2
+  | traceOf tok =>
+    rw [show (traceOf tok).val = Nonplanar.leaf (Sum.inr (some tok)) from rfl,
+      Nonplanar.replace_leaf]
+    split
+    · exact replacement.2
+    · exact (traceOf tok).2
   | node l r ihl ihr =>
     rw [node_val, Nonplanar.replace_node_pair]
     split
     · exact replacement.2
-    · show isSO (Nonplanar.node (Sum.inr ())
+    · show isSO (Nonplanar.node (Sum.inr none)
         {Nonplanar.replace target.val replacement.val l.val,
           Nonplanar.replace target.val replacement.val r.val}) = true
       rw [isSO_node_pair, ihl, ihr]; rfl
@@ -83,7 +89,7 @@ theorem replace_lexLeaf_of_ne {tok : LIToken} {target replacement : SyntacticObj
 theorem replace_traceLeaf_of_ne {target replacement : SyntacticObject}
     (h : traceLeaf ≠ target) : replace traceLeaf target replacement = traceLeaf := by
   apply Subtype.ext
-  rw [replace_val, show traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
+  rw [replace_val, show traceLeaf.val = Nonplanar.leaf (Sum.inr none) from rfl,
       Nonplanar.replace_leaf, if_neg]
   exact fun heq => h (Subtype.ext heq)
 

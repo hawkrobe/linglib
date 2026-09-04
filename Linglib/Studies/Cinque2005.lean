@@ -104,14 +104,14 @@ private def tokDem : LIToken := ⟨.simple .Dem [], 4⟩
 /-- The tree contains the overt noun; a trace does not count (7b-vi). -/
 private def hasN : RoseTree SOLabel → Bool
   | .node (.inl t) _ => t == tokN
-  | .node (.inr ()) [l, r] => hasN l || hasN r
-  | .node (.inr ()) _ => false
+  | .node (.inr none) [l, r] => hasN l || hasN r
+  | .node (.inr _) _ => false
 
 /-- The noun is the tree's specifier, `[NP [XP]]` (fn. 21). -/
 private def specHasN : RoseTree SOLabel → Bool
   | .node (.inl t) _ => t == tokN
-  | .node (.inr ()) [l, _] => hasN l
-  | .node (.inr ()) _ => false
+  | .node (.inr none) [l, _] => hasN l
+  | .node (.inr _) _ => false
 
 private def subtrees : RoseTree SOLabel → List (RoseTree SOLabel)
   | t@(.node _ []) => [t]
