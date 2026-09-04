@@ -300,7 +300,7 @@ section Model
 open Numerals
 
 /-- The free space over counting worlds, with no prior commitments. -/
-def rabbits : Space (State DiscourseRole ℕ) := full ∅
+def rabbits : Space (State Discourse.Role ℕ) := full ∅
 
 theorem exactly_id_injective : Function.Injective (exactly (id : ℕ → ℕ)) := by
   intro m k h
@@ -308,7 +308,7 @@ theorem exactly_id_injective : Function.Injective (exactly (id : ℕ → ℕ)) :
   simpa [exactly] using hm rfl
 
 theorem rabbits_root_fresh (m : ℕ) :
-    commit DiscourseRole.speaker (exactly id m)ᶜ ∉ rabbits.root :=
+    commit Discourse.Role.speaker (exactly id m)ᶜ ∉ rabbits.root :=
   Set.notMem_empty _
 
 /-- The derived truth conditions of (1a) are the classical *at least three* ((82)). -/
@@ -330,7 +330,7 @@ theorem two_notMem_rabbits_atLeast :
 /-- The denial of four is not among the speaker's commitments ((53)): that (1a) is true at
 four is implicature, not entailment. -/
 theorem rabbits_atLeast_grant_four :
-    commit DiscourseRole.speaker (exactly id 4)ᶜ ∉
+    commit Discourse.Role.speaker (exactly id 4)ᶜ ∉
       (atLeast rabbits .speaker (exactly id) 3).root := by
   rw [atLeast, commit_mem_exclude_root_iff rabbits .speaker (exactly id) _ rabbits_root_fresh
     exactly_id_injective]
@@ -338,7 +338,7 @@ theorem rabbits_atLeast_grant_four :
 
 /-- Three is the least value the speaker leaves grantable ((48), (60a)). -/
 theorem rabbits_atLeast_isLeast :
-    IsLeast {m | commit DiscourseRole.speaker (exactly id m)ᶜ ∉
+    IsLeast {m | commit Discourse.Role.speaker (exactly id m)ᶜ ∉
       (atLeast rabbits .speaker (exactly id) 3).root} 3 :=
   atLeast_isLeast rabbits .speaker (exactly id) 3 rabbits_root_fresh exactly_id_injective
 
@@ -372,7 +372,7 @@ section Granting
 def raining : Set Bool := {true}
 
 /-- The two-state space: no commitments, or the speaker's assertion of `raining`. -/
-def granting : Space (State DiscourseRole Bool) :=
+def granting : Space (State Discourse.Role Bool) :=
   ⟨{∅, insert (commit .speaker raining) ∅}, ∅, Or.inl rfl,
     by rintro d (rfl | rfl) <;> simp⟩
 
@@ -381,9 +381,9 @@ theorem raining_ne_compl : (raining : Set Bool) ≠ rainingᶜ := fun h =>
 
 theorem granting_consistent : ∀ d ∈ granting.states,
     ¬((⟨.speaker, raining, .commit, .doxastic, .selfGenerated⟩ :
-        Commitment DiscourseRole Bool) ∈ d ∧
+        Commitment Discourse.Role Bool) ∈ d ∧
       (⟨.speaker, rainingᶜ, .commit, .doxastic, .selfGenerated⟩ :
-        Commitment DiscourseRole Bool) ∈ d) := by
+        Commitment Discourse.Role Bool) ∈ d) := by
   rintro d (rfl | rfl) ⟨h₁, h₂⟩
   · exact Set.notMem_empty _ h₁
   · rcases Set.mem_insert_iff.1 h₂ with h₂ | h₂

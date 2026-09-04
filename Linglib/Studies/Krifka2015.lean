@@ -69,10 +69,10 @@ theorem raining_ne_compl : raining ≠ rainingᶜ := fun h =>
   (Set.ext_iff.1 h .rain).1 rfl rfl
 
 /-- The initial commitment space: no commitments, every development licit. -/
-def C₀ : Space (State DiscourseRole Weather) := full ∅
+def C₀ : Space (State Discourse.Role Weather) := full ∅
 
-theorem mem_insert_empty_iff {x y : Commitment DiscourseRole Weather} :
-    x ∈ insert y (∅ : State DiscourseRole Weather) ↔ x = y := by simp
+theorem mem_insert_empty_iff {x y : Commitment Discourse.Role Weather} :
+    x ∈ insert y (∅ : State Discourse.Role Weather) ↔ x = y := by simp
 
 /-! ### Assertion (14) -/
 
@@ -84,7 +84,7 @@ theorem assert_root :
 it was (p. 331). -/
 theorem assert_contextSet_vs_farkasBruce_cg :
     contextSet (C₀.assert .speaker raining).root = raining ∧
-      ((Table.empty : Table DiscourseRole Weather).assert .speaker raining).cg = ⊤ :=
+      ((Table.empty : Table Discourse.Role Weather).assert .speaker raining).cg = ⊤ :=
   ⟨by rw [contextSet_assert_root, show C₀.root = ∅ from rfl, contextSet_empty, Set.inter_univ],
     rfl⟩
 
@@ -124,21 +124,21 @@ theorem highNegation_refusal_mem :
 
 /-- `¬S₂⊢φ` is weaker than `S₂⊢¬φ` (p. 340): a consistent commitment to `¬φ` already excludes
 a commitment to `φ`. -/
-theorem not_mem_slate_of_commit_compl (K : State DiscourseRole Weather)
+theorem not_mem_slate_of_commit_compl (K : State Discourse.Role Weather)
     (h : commit .addressee rainingᶜ ∈ K) (hne : (contextSet (ofCommitter K .addressee)).Nonempty) :
     raining ∉ slate (ofCommitter K .addressee) :=
   not_mem_slate_of_compl_mem _ ⟨_, ⟨⟨h, rfl⟩, rfl⟩, rfl⟩ hne
 
 /-! ### The issue projection -/
 
-theorem contextSet_insert_commit_empty (a : DiscourseRole) (φ : Set Weather) :
-    contextSet (insert (commit a φ) (∅ : State DiscourseRole Weather)) = φ := by
+theorem contextSet_insert_commit_empty (a : Discourse.Role) (φ : Set Weather) :
+    contextSet (insert (commit a φ) (∅ : State Discourse.Role Weather)) = φ := by
   rw [contextSet_insert_of_commit rfl, contextSet_empty, Set.inter_univ]
   rfl
 
 /-- Every continuation of the monopolar question records the addressee's commitment, so its
 context set lies inside `raining`. -/
-theorem monopolar_continuation_subset {c : State DiscourseRole Weather}
+theorem monopolar_continuation_subset {c : State Discourse.Role Weather}
     (hc : c ∈ (C₀.monopolarQuestion .addressee raining).continuations) :
     contextSet c ⊆ raining := by
   obtain ⟨hc, hne⟩ := hc
@@ -170,7 +170,7 @@ theorem monopolar_not_inquisitive :
   exact hmem
 
 /-- Every continuation of the bipolar question records one of the two answers. -/
-theorem bipolar_continuation_subset {c : State DiscourseRole Weather}
+theorem bipolar_continuation_subset {c : State Discourse.Role Weather}
     (hc : c ∈ (C₀.bipolarQuestion .addressee raining).continuations) :
     contextSet c ⊆ raining ∨ contextSet c ⊆ rainingᶜ := by
   obtain ⟨hc, hne⟩ := hc
@@ -250,16 +250,16 @@ theorem table1_columns_differ :
 
 /-! ### Question tags (44), (45) -/
 
-variable (C : Space (State DiscourseRole Weather)) (φ : Set Weather)
+variable (C : Space (State Discourse.Role Weather)) (φ : Set Weather)
 
 /-- A matching tag (44): the conjunction of the assertion with the monopolar question of the same
 content, whose result is the state in which both participants are committed. -/
-def matchingTag : Space (State DiscourseRole Weather) :=
+def matchingTag : Space (State Discourse.Role Weather) :=
   (C.assert .speaker φ).assert .addressee φ
 
 /-- A reverse tag (45): the disjunction of the assertion with the monopolar question of the
 negation, rooted at the current state. -/
-def reverseTag : Space (State DiscourseRole Weather) :=
+def reverseTag : Space (State Discourse.Role Weather) :=
   C.propose ((C.assert .speaker φ).states ∪ (C.monopolarQuestion .addressee φᶜ).states) <| by
     rintro d (hd | rfl | hd)
     · exact C.root_mem_lowerBounds_reroot (Set.subset_insert _ _) hd

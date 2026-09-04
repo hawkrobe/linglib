@@ -138,15 +138,15 @@ The `assert`/`present` distinction is [faller-2002] /
     scope proposition, evidential (not-at-issue) proposition, and
     commits-to-scope flag (`true` for `assert`, `false` for `present`). -/
 structure EvidentialAct (W : Type*) where
-  speaker : DiscourseRole
-  addressee : DiscourseRole
+  speaker : Discourse.Role
+  addressee : Discourse.Role
   scope : Set W
   evidentialContent : Set W
   commitsToScope : Bool
 
 /-- [faller-2002]/[faller-2019a]: `assert(⟨A, N⟩)` commits the
     speaker to both A and N. Used with direct evidentials. -/
-def assert (s a : DiscourseRole) (β : BiLayered W) : EvidentialAct W :=
+def assert (s a : Discourse.Role) (β : BiLayered W) : EvidentialAct W :=
   { speaker := s
   , addressee := a
   , scope := { w | β.atIssue w }
@@ -156,21 +156,21 @@ def assert (s a : DiscourseRole) (β : BiLayered W) : EvidentialAct W :=
 /-- [murray-2014]/[faller-2019a]: `present(⟨A, N⟩)` brings A
     to attention but does NOT commit to A; commits only to N. Used with
     reportative/inferential evidentials. -/
-def present (s a : DiscourseRole) (β : BiLayered W) : EvidentialAct W :=
+def present (s a : Discourse.Role) (β : BiLayered W) : EvidentialAct W :=
   { speaker := s
   , addressee := a
   , scope := { w | β.atIssue w }
   , evidentialContent := { w | β.notAtIssue w }
   , commitsToScope := false }
 
-@[simp] theorem assert_commitsToScope (s a : DiscourseRole) (β : BiLayered W) :
+@[simp] theorem assert_commitsToScope (s a : Discourse.Role) (β : BiLayered W) :
     (assert s a β).commitsToScope = true := rfl
 
-@[simp] theorem present_commitsToScope (s a : DiscourseRole) (β : BiLayered W) :
+@[simp] theorem present_commitsToScope (s a : Discourse.Role) (β : BiLayered W) :
     (present s a β).commitsToScope = false := rfl
 
 theorem assert_present_differ_only_in_scope_commitment
-    (s a : DiscourseRole) (β : BiLayered W) :
+    (s a : Discourse.Role) (β : BiLayered W) :
     (assert s a β).scope = (present s a β).scope ∧
     (assert s a β).evidentialContent = (present s a β).evidentialContent ∧
     (assert s a β).commitsToScope ≠ (present s a β).commitsToScope := by
@@ -184,21 +184,21 @@ theorem assert_present_differ_only_in_scope_commitment
 def EvidentialAct.raisedPropositions (a : EvidentialAct W) : Set (Set W) :=
   if a.commitsToScope then {a.scope} else {a.scope, a.scopeᶜ}
 
-@[simp] theorem assert_raisedPropositions (s a : DiscourseRole) (β : BiLayered W) :
+@[simp] theorem assert_raisedPropositions (s a : Discourse.Role) (β : BiLayered W) :
     (assert s a β).raisedPropositions = {{ w | β.atIssue w }} := by
   simp [EvidentialAct.raisedPropositions, assert]
 
-@[simp] theorem present_raisedPropositions (s a : DiscourseRole) (β : BiLayered W) :
+@[simp] theorem present_raisedPropositions (s a : Discourse.Role) (β : BiLayered W) :
     (present s a β).raisedPropositions =
       ({ { w | β.atIssue w }, { w | β.atIssue w }ᶜ } : Set (Set W)) := by
   simp [EvidentialAct.raisedPropositions, present]
 
-theorem present_raises_polar_negation (s a : DiscourseRole) (β : BiLayered W) :
+theorem present_raises_polar_negation (s a : Discourse.Role) (β : BiLayered W) :
     { w | β.atIssue w }ᶜ ∈ (present s a β).raisedPropositions := by
   simp
 
 theorem assert_does_not_raise_polar_negation
-    (s a : DiscourseRole) (β : BiLayered W) (hne : ∃ w, β.atIssue w) :
+    (s a : Discourse.Role) (β : BiLayered W) (hne : ∃ w, β.atIssue w) :
     { w | β.atIssue w }ᶜ ∉ (assert s a β).raisedPropositions := by
   simp only [assert_raisedPropositions, Set.mem_singleton_iff]
   intro h
@@ -244,20 +244,20 @@ theorem faller_reportative_flavour :
     (fallerCoarseSource .reportative).map IllocutionaryFlavour.ofCoarseSource
       = some .presentFlavour := rfl
 
-def applyDefault (src : CoarseSource) (s a : DiscourseRole) (β : BiLayered W) :
+def applyDefault (src : CoarseSource) (s a : Discourse.Role) (β : BiLayered W) :
     EvidentialAct W :=
   match IllocutionaryFlavour.ofCoarseSource src with
   | .assertFlavour => assert s a β
   | .presentFlavour => present s a β
 
-@[simp] theorem applyDefault_direct (s a : DiscourseRole) (β : BiLayered W) :
+@[simp] theorem applyDefault_direct (s a : Discourse.Role) (β : BiLayered W) :
     applyDefault .direct s a β = assert s a β := rfl
-@[simp] theorem applyDefault_hearsay (s a : DiscourseRole) (β : BiLayered W) :
+@[simp] theorem applyDefault_hearsay (s a : Discourse.Role) (β : BiLayered W) :
     applyDefault .hearsay s a β = present s a β := rfl
-@[simp] theorem applyDefault_inference (s a : DiscourseRole) (β : BiLayered W) :
+@[simp] theorem applyDefault_inference (s a : Discourse.Role) (β : BiLayered W) :
     applyDefault .inference s a β = present s a β := rfl
 
-theorem direct_commits_indirect_does_not (s a : DiscourseRole) (β : BiLayered W) :
+theorem direct_commits_indirect_does_not (s a : Discourse.Role) (β : BiLayered W) :
     (applyDefault .direct s a β).commitsToScope = true ∧
     (applyDefault .hearsay s a β).commitsToScope = false ∧
     (applyDefault .inference s a β).commitsToScope = false :=
@@ -362,7 +362,7 @@ is exercised once in the substrate; here the consequences fall out.
     conditions on the scope: the paper assumes contingent scopes throughout.
     The alternative set is the polar partition `{p, pᶜ}`. -/
 theorem mi_felicitous_after_present
-    (s a : DiscourseRole) (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
+    (s a : Discourse.Role) (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     miFelicitous
       (updateAfterAct (polarQUD p) (present s a (BiLayered.ofProp (· ∈ p))))
       ({p, pᶜ} : Set (Set W))
@@ -391,7 +391,7 @@ theorem mi_felicitous_after_present
     Paper ex. 47 — the contrast that motivates the present/assert
     distinction. -/
 theorem mi_infelicitous_after_assert
-    (s a : DiscourseRole) (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
+    (s a : Discourse.Role) (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     ¬ miFelicitous
         (updateAfterAct (polarQUD p) (assert s a (BiLayered.ofProp (· ∈ p))))
         ({p, pᶜ} : Set (Set W))
@@ -543,7 +543,7 @@ commitment difference, formalised in the substrate's
 -/
 
 theorem direct_commits_reportative_does_not
-    (s a : DiscourseRole) (β : BiLayered W) :
+    (s a : Discourse.Role) (β : BiLayered W) :
     (assert s a β).commitsToScope = true ∧
     (present s a β).commitsToScope = false :=
   ⟨rfl, rfl⟩

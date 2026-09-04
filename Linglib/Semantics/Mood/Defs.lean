@@ -74,7 +74,7 @@ inductive Illocutionary where
 
 /-- The participant with epistemic authority for each force ([lakoff-1970]):
 the addressee for interrogatives, the speaker otherwise. -/
-def Illocutionary.authority : Illocutionary → DiscourseRole
+def Illocutionary.authority : Illocutionary → Discourse.Role
   | .declarative   => .speaker
   | .interrogative  => .addressee
   | .imperative     => .speaker
@@ -110,7 +110,7 @@ def ClauseType.polarQuestion : ClauseType :=
   { force := .interrogative, mood := .indicative }
 
 /-- The epistemic authority of a clause type, via its force. -/
-def ClauseType.authority (ct : ClauseType) : DiscourseRole :=
+def ClauseType.authority (ct : ClauseType) : Discourse.Role :=
   Illocutionary.authority ct.force
 
 /-! ### Mood components -/
