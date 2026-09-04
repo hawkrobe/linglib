@@ -1,5 +1,5 @@
 import Linglib.Phonology.FeatureGeometry
-import Linglib.Phonology.Segmental.Classes
+import Linglib.Phonology.Segmental.FeatureClass
 
 /-!
 # Halle, Vaux and Wolfe (2000): feature spreading and the representation of place
