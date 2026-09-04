@@ -182,6 +182,10 @@ The early stages and the movers of an extended derivation are the original's. -/
     (d.append steps).length = d.length + steps.length := by
   simp [length, append]
 
+@[simp] theorem append_assoc (d : Derivation) (steps steps' : List Step) :
+    (d.append steps).append steps' = d.append (steps ++ steps') := by
+  simp [append]
+
 /-- The first `n ≤ d.length` steps of an extension are `d`'s. -/
 theorem take_append_of_le {d : Derivation} {n : Nat} (h : n ≤ d.length) (steps : List Step) :
     (d.append steps).take n = d.take n := by
@@ -203,6 +207,13 @@ theorem final_append (d : Derivation) (steps : List Step) :
 @[simp] theorem movedItems_append (d : Derivation) (steps : List Step) :
     (d.append steps).movedItems = d.movedItems ++ steps.filterMap Step.mover? := by
   simp [movedItems, append, List.filterMap_append]
+
+/-- A step at index `i` has a mover only if `i` indexes a step. -/
+theorem lt_length_of_mem_mover? {d : Derivation} {i : Nat} {m : SyntacticObject}
+    (h : m ∈ d.steps[i]? >>= Step.mover?) : i < d.length := by
+  by_contra hlt
+  rw [List.getElem?_eq_none (Nat.le_of_not_lt hlt)] at h
+  simp at h
 
 /-! ### The sides of External Merge
 

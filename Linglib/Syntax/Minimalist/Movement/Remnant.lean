@@ -59,10 +59,7 @@ instance (d : Derivation) (i : Nat) : Decidable (d.IsRemnantStep i) := by
 /-- A remnant step of a derivation is one of every extension. -/
 theorem IsRemnantStep.append (h : d.IsRemnantStep i) : (d.append steps).IsRemnantStep i := by
   obtain ⟨m, hm, x, hx, hc⟩ := h
-  have hi : i < d.length := by
-    by_contra hlt
-    rw [List.getElem?_eq_none (Nat.le_of_not_lt hlt)] at hm
-    simp at hm
+  have hi := lt_length_of_mem_mover? hm
   refine ⟨m, ?_, x, ?_, hc⟩
   · rwa [Derivation.append, List.getElem?_append_left hi]
   · rwa [take_append_of_le hi.le]
