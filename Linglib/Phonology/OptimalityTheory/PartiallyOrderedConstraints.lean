@@ -480,6 +480,15 @@ theorem winProb_le_one [IsPartialOrder (Fin n) r] [DecidableRel r] :
   rw [div_le_one (by exact_mod_cast consistentTotalOrders_card_pos r)]
   exact_mod_cast Finset.card_filter_le _ _
 
+/-- `winProb` is monotone under implication of the picking predicates on the
+    consistent rankings. -/
+theorem winProb_mono [DecidableRel r] {i' : Input}
+    (h : ∀ σ, IsConsistent r σ → PicksAt cands vp σ i o → PicksAt cands vp σ i' o') :
+    winProb cands vp r i o ≤ winProb cands vp r i' o' :=
+  div_le_div_of_nonneg_right (Nat.cast_le.mpr (Finset.card_le_card
+    (Finset.monotone_filter_right _ λ σ hσ => h σ (mem_consistentTotalOrders.mp hσ))))
+    (Nat.cast_nonneg _)
+
 /-- With pairwise-distinct violation profiles the picks-fibers over the
     candidate set partition the consistent extensions — the division-free core
     of `sum_winProb_eq_one`. -/
