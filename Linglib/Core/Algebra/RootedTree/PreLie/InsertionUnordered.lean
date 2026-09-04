@@ -8,27 +8,27 @@ import Linglib.Core.Algebra.RootedTree.PreLie.InsertionAddHost
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
 import Linglib.Core.Data.Multiset.Antidiagonal
 import Linglib.Core.Data.RoseTree.DecEq
-import Linglib.Core.Data.RoseTree.Nonplanar
+import Linglib.Core.Data.UnorderedTree.Basic
 import Mathlib.Data.Multiset.Basic
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
-# Nonplanar multi-tree insertion
+# UnorderedTree multi-tree insertion
 
-Lift of `RoseTree.Pathed.insertionForest` through `Nonplanar.mk`.
+Lift of `RoseTree.Pathed.insertionForest` through `UnorderedTree.mk`.
 
 Given two multisets of nonplanar trees `F` (host forest) and `G` (guest
-forest), `Nonplanar.insertionMultiset F G` produces the multiset of all
+forest), `UnorderedTree.insertionMultiset F G` produces the multiset of all
 forests obtained by inserting `G`'s trees at vertices of `F`'s trees,
 summing over all assignments (Foissy 2021 Theorem 5.1).
 
 ## Main results
 
-* `Nonplanar.insertionMultiset_add_host`: multi-graft into a
+* `UnorderedTree.insertionMultiset_add_host`: multi-graft into a
   disjoint-union host decomposes over guest partitions
   ([oudom-guin-2008] Prop 2.7.iii substrate).
-* `Nonplanar.insertionMultiset_antidiagonal`: splits of a multi-graft
+* `UnorderedTree.insertionMultiset_antidiagonal`: splits of a multi-graft
   output factor through splits of host and guests.
 
 ## Implementation note
@@ -51,39 +51,39 @@ would become strictly hierarchical.
 -/
 
 
-namespace RoseTree.Nonplanar
+namespace UnorderedTree
 
 variable {α : Type*}
 
 /-- Multi-tree insertion at the nonplanar level. Given a host forest
-    `F` and guest forest `G` (both `Multiset (Nonplanar α)`), produces
+    `F` and guest forest `G` (both `Multiset (UnorderedTree α)`), produces
     the multiset of all forests obtained by inserting `G`'s trees at
     vertices of `F`'s trees. Defined via list representatives
     (`Multiset.toList`) + tree representatives (`Quotient.out`) +
     `RoseTree.Pathed.insertionForest`. -/
-noncomputable def insertionMultiset (F G : Multiset (Nonplanar α)) :
-    Multiset (Multiset (Nonplanar α)) :=
+noncomputable def insertionMultiset (F G : Multiset (UnorderedTree α)) :
+    Multiset (Multiset (UnorderedTree α)) :=
   let hostTrees : List (RoseTree α) := F.toList.map Quotient.out
   let guestTrees : List (RoseTree α) := G.toList.map Quotient.out
   (RoseTree.Pathed.insertionForest hostTrees guestTrees).map
-    fun L => Multiset.ofList (L.map Nonplanar.mk)
+    fun L => Multiset.ofList (L.map UnorderedTree.mk)
 
 /-- With no guests, the multi-graft leaves `F` unchanged:
     `insertionMultiset F 0 = {F}`. -/
-theorem insertionMultiset_zero_right (F : Multiset (Nonplanar α)) :
-    insertionMultiset F 0 = ({F} : Multiset (Multiset (Nonplanar α))) := by
+theorem insertionMultiset_zero_right (F : Multiset (UnorderedTree α)) :
+    insertionMultiset F 0 = ({F} : Multiset (Multiset (UnorderedTree α))) := by
   unfold insertionMultiset
   rw [Multiset.toList_zero]
   show (RoseTree.Pathed.insertionForest (F.toList.map Quotient.out) []).map
-        (fun L => (Multiset.ofList (L.map Nonplanar.mk) :
-                    Multiset (Nonplanar α))) = ({F} : Multiset _)
+        (fun L => (Multiset.ofList (L.map UnorderedTree.mk) :
+                    Multiset (UnorderedTree α))) = ({F} : Multiset _)
   rw [RoseTree.Pathed.insertionForest_nil_guests, Multiset.map_singleton]
   congr 1
-  have h_map_id : (F.toList.map Quotient.out).map Nonplanar.mk = F.toList := by
+  have h_map_id : (F.toList.map Quotient.out).map UnorderedTree.mk = F.toList := by
     induction F.toList with
     | nil => rfl
     | cons hd tl ih =>
-      show Nonplanar.mk (Quotient.out hd) :: ((tl.map Quotient.out).map Nonplanar.mk) =
+      show UnorderedTree.mk (Quotient.out hd) :: ((tl.map Quotient.out).map UnorderedTree.mk) =
            hd :: tl
       rw [ih]
       congr 1
@@ -93,7 +93,7 @@ theorem insertionMultiset_zero_right (F : Multiset (Nonplanar α)) :
 
 /-- With no host but non-empty guests, no vertices to graft into:
     `insertionMultiset 0 G = 0`. -/
-theorem insertionMultiset_zero_left_of_ne_zero (G : Multiset (Nonplanar α))
+theorem insertionMultiset_zero_left_of_ne_zero (G : Multiset (UnorderedTree α))
     (h : G ≠ 0) :
     insertionMultiset 0 G = 0 := by
   unfold insertionMultiset
@@ -128,7 +128,7 @@ theorem _root_.Multiset.toList_add_perm {β : Type*} (M N : Multiset β) :
 /-- `Quotient.out`-mapped lift of `Multiset.toList_add_perm`: at the tree
     level, `(M + N).toList.map Quotient.out` is Perm to
     `M.toList.map Quotient.out ++ N.toList.map Quotient.out`. -/
-theorem toList_map_quotientOut_add_perm (M N : Multiset (Nonplanar α)) :
+theorem toList_map_quotientOut_add_perm (M N : Multiset (UnorderedTree α)) :
     ((M + N).toList.map Quotient.out).Perm
       (M.toList.map Quotient.out ++ N.toList.map Quotient.out) := by
   rw [← List.map_append]
@@ -174,8 +174,8 @@ private theorem _root_.RoseTree.Pathed.insertionForest_length
     output list `L` has `L.length = (A.toList.map Q.out).length = A.card`
     (via `RoseTree.Pathed.insertionForest_length`); and the cardinality of
     the lifted `Multiset.ofList (L.map mk)` equals `L.length`. -/
-theorem insertionMultiset_card_eq {α : Type*} (A B : Multiset (Nonplanar α))
-    {F' : Multiset (Nonplanar α)} (hF' : F' ∈ insertionMultiset A B) :
+theorem insertionMultiset_card_eq {α : Type*} (A B : Multiset (UnorderedTree α))
+    {F' : Multiset (UnorderedTree α)} (hF' : F' ∈ insertionMultiset A B) :
     F'.card = A.card := by
   unfold insertionMultiset at hF'
   rw [Multiset.mem_map] at hF'
@@ -184,7 +184,7 @@ theorem insertionMultiset_card_eq {α : Type*} (A B : Multiset (Nonplanar α))
     RoseTree.Pathed.insertionForest_length _ _ hL_mem
   rw [← hL_eq]
   -- F'.card = (Multiset.ofList (L.map mk)).card = (L.map mk).length = L.length.
-  show (Multiset.ofList (L.map Nonplanar.mk)).card = A.card
+  show (Multiset.ofList (L.map UnorderedTree.mk)).card = A.card
   rw [Multiset.coe_card, List.length_map, hLlen, List.length_map]
   exact Multiset.length_toList A
 
@@ -213,15 +213,15 @@ private theorem _root_.RoseTree.value_multiGraft
     T.rootValue`. Descends through `insertionForest_singleton` +
     `RoseTree.value_multiGraft`. -/
 theorem insertionMultiset_singleton_rootValue
-    (T : Nonplanar α) (B : Multiset (Nonplanar α))
-    {F' : Multiset (Nonplanar α)} (hF' : F' ∈ insertionMultiset {T} B) :
-    ∃ T' : Nonplanar α, F' = ({T'} : Multiset (Nonplanar α)) ∧
+    (T : UnorderedTree α) (B : Multiset (UnorderedTree α))
+    {F' : Multiset (UnorderedTree α)} (hF' : F' ∈ insertionMultiset {T} B) :
+    ∃ T' : UnorderedTree α, F' = ({T'} : Multiset (UnorderedTree α)) ∧
       T'.rootValue = T.rootValue := by
   unfold insertionMultiset at hF'
   rw [Multiset.mem_map] at hF'
   obtain ⟨L, hL_mem, hL_eq⟩ := hF'
   -- ({T} : Multiset _).toList = [T] via `Multiset.toList_singleton`.
-  have h_toList : ({T} : Multiset (Nonplanar α)).toList.map Quotient.out =
+  have h_toList : ({T} : Multiset (UnorderedTree α)).toList.map Quotient.out =
       [Quotient.out T] := by
     rw [Multiset.toList_singleton]; rfl
   rw [h_toList] at hL_mem
@@ -231,15 +231,15 @@ theorem insertionMultiset_singleton_rootValue
   obtain ⟨T'_tr, hT'_tr_mem, hT'_tr_eq⟩ := hL_mem
   -- T'_tr ∈ insertion (Q.out T) gs, so T'_tr = multiGraft (Q.out T) (choice.zip gs)
   -- for some choice. Hence value T'_tr = value (Q.out T) = T.rootValue.
-  refine ⟨Nonplanar.mk T'_tr, ?_, ?_⟩
-  · -- F' = {Nonplanar.mk T'_tr}: L = [T'_tr], so F' = ofList [mk T'_tr] = {mk T'_tr}.
+  refine ⟨UnorderedTree.mk T'_tr, ?_, ?_⟩
+  · -- F' = {UnorderedTree.mk T'_tr}: L = [T'_tr], so F' = ofList [mk T'_tr] = {mk T'_tr}.
     rw [← hL_eq, ← hT'_tr_eq]
-    show (Multiset.ofList (([T'_tr] : List (RoseTree α)).map Nonplanar.mk) :
-            Multiset (Nonplanar α)) = {Nonplanar.mk T'_tr}
+    show (Multiset.ofList (([T'_tr] : List (RoseTree α)).map UnorderedTree.mk) :
+            Multiset (UnorderedTree α)) = {UnorderedTree.mk T'_tr}
     rfl
   · -- Root value preservation through the tree substrate.
     -- T'_tr ∈ insertion T.out (...): T'_tr = multiGraft T.out pairs for some pairs.
-    rw [Nonplanar.rootValue_mk]
+    rw [UnorderedTree.rootValue_mk]
     -- Unfold `insertion` to extract the choice and reduce value-equality.
     rw [RoseTree.Pathed.insertion_def, Multiset.mem_coe, List.mem_map] at hT'_tr_mem
     obtain ⟨choice, _hchoice_mem, hchoice_eq⟩ := hT'_tr_mem
@@ -250,9 +250,9 @@ theorem insertionMultiset_singleton_rootValue
     -- (Quotient.out T).value = (mk (Quotient.out T)).rootValue by `rootValue_mk`;
     -- mk (Quotient.out T) = T by `T.out_eq`.
     show (Quotient.out T).value = T.rootValue
-    have h_eq : Nonplanar.mk (Quotient.out T) = T := T.out_eq
+    have h_eq : UnorderedTree.mk (Quotient.out T) = T := T.out_eq
     calc (Quotient.out T).value
-        = (Nonplanar.mk (Quotient.out T)).rootValue := (Nonplanar.rootValue_mk _).symm
+        = (UnorderedTree.mk (Quotient.out T)).rootValue := (UnorderedTree.rootValue_mk _).symm
       _ = T.rootValue := by rw [h_eq]
 
 
@@ -264,9 +264,9 @@ private theorem bind_eq_map_sum {γ δ : Type*} (s : Multiset γ)
 
 /-- The `true`-bucket of a zip over `Quotient.out` representatives has
     the nonplanar `true`-bucket as its `mk`-image. -/
-private theorem filterMap_zip_out_mk_t (l : List (Nonplanar α)) (assn : List Bool) :
+private theorem filterMap_zip_out_mk_t (l : List (UnorderedTree α)) (assn : List Bool) :
     (((l.map Quotient.out).zip assn).filterMap
-        (fun p => if p.2 then some p.1 else none)).map Nonplanar.mk =
+        (fun p => if p.2 then some p.1 else none)).map UnorderedTree.mk =
       (l.zip assn).filterMap (fun p => if p.2 then some p.1 else none) := by
   induction l generalizing assn with
   | nil => rfl
@@ -276,17 +276,17 @@ private theorem filterMap_zip_out_mk_t (l : List (Nonplanar α)) (assn : List Bo
     | cons b assn =>
       cases b with
       | true =>
-        show Nonplanar.mk (Quotient.out x) ::
-            ((((l.map Quotient.out).zip assn).filterMap _).map Nonplanar.mk) = _
-        have hx : Nonplanar.mk (Quotient.out x) = x := Quotient.out_eq x
+        show UnorderedTree.mk (Quotient.out x) ::
+            ((((l.map Quotient.out).zip assn).filterMap _).map UnorderedTree.mk) = _
+        have hx : UnorderedTree.mk (Quotient.out x) = x := Quotient.out_eq x
         rw [hx, ih]
         rfl
       | false => exact ih assn
 
 /-- The `false`-bucket analog of `filterMap_zip_out_mk_t`. -/
-private theorem filterMap_zip_out_mk_f (l : List (Nonplanar α)) (assn : List Bool) :
+private theorem filterMap_zip_out_mk_f (l : List (UnorderedTree α)) (assn : List Bool) :
     (((l.map Quotient.out).zip assn).filterMap
-        (fun p => if p.2 then none else some p.1)).map Nonplanar.mk =
+        (fun p => if p.2 then none else some p.1)).map UnorderedTree.mk =
       (l.zip assn).filterMap (fun p => if p.2 then none else some p.1) := by
   induction l generalizing assn with
   | nil => rfl
@@ -297,13 +297,13 @@ private theorem filterMap_zip_out_mk_f (l : List (Nonplanar α)) (assn : List Bo
       cases b with
       | true => exact ih assn
       | false =>
-        show Nonplanar.mk (Quotient.out x) ::
-            ((((l.map Quotient.out).zip assn).filterMap _).map Nonplanar.mk) = _
-        have hx : Nonplanar.mk (Quotient.out x) = x := Quotient.out_eq x
+        show UnorderedTree.mk (Quotient.out x) ::
+            ((((l.map Quotient.out).zip assn).filterMap _).map UnorderedTree.mk) = _
+        have hx : UnorderedTree.mk (Quotient.out x) = x := Quotient.out_eq x
         rw [hx, ih]
         rfl
 
-/-- **NIM-level keystone**: at the Nonplanar multi-insertion level, grafting
+/-- **NIM-level keystone**: at the UnorderedTree multi-insertion level, grafting
     `B` into the singleton host `{node a A'}` decomposes by partitioning
     B's grafting positions into "at the root vertex" (becomes new
     children) vs "in A's subtrees" (recursive NIM).
@@ -316,50 +316,50 @@ private theorem filterMap_zip_out_mk_f (l : List (Nonplanar α)) (assn : List Bo
     powerset partition involution (the mask convention has `true` =
     root guests, while the powerset bind runs over the subtree bucket). -/
 theorem insertionMultiset_singleton_node [DecidableEq α]
-    (a : α) (A' B : Multiset (Nonplanar α)) :
-    Nonplanar.insertionMultiset
-        ({Nonplanar.node a A'} : Multiset (Nonplanar α)) B =
+    (a : α) (A' B : Multiset (UnorderedTree α)) :
+    UnorderedTree.insertionMultiset
+        ({UnorderedTree.node a A'} : Multiset (UnorderedTree α)) B =
       (B.powerset.bind fun B₁ =>
-         (Nonplanar.insertionMultiset A' B₁).map fun F' =>
-           ({Nonplanar.node a (F' + (B - B₁))} : Multiset (Nonplanar α))) := by
+         (UnorderedTree.insertionMultiset A' B₁).map fun F' =>
+           ({UnorderedTree.node a (F' + (B - B₁))} : Multiset (UnorderedTree α))) := by
   -- §1: the canonical planar representative of the host is equivalent to
   -- the visible node on A''s canonical children list.
-  have h_mk2 : Nonplanar.mk (RoseTree.node a (A'.toList.map Quotient.out)) =
-      Nonplanar.node a A' := by
-    rw [← Nonplanar.node_mk_tree_list]
+  have h_mk2 : UnorderedTree.mk (RoseTree.node a (A'.toList.map Quotient.out)) =
+      UnorderedTree.node a A' := by
+    rw [← UnorderedTree.node_mk_tree_list]
     congr 1
     rw [List.map_map,
-        show A'.toList.map (Nonplanar.mk ∘ Quotient.out) = A'.toList from
+        show A'.toList.map (UnorderedTree.mk ∘ Quotient.out) = A'.toList from
           (List.map_congr_left fun x _ => Quotient.out_eq x).trans
             (List.map_id _)]
     exact A'.coe_toList
   have h_equiv : RoseTree.Perm
-      (Quotient.out (Nonplanar.node a A'))
+      (Quotient.out (UnorderedTree.node a A'))
       (RoseTree.node a (A'.toList.map Quotient.out)) :=
-    Nonplanar.mk_eq_mk_iff.mp
-      (((Nonplanar.node a A').out_eq).trans h_mk2.symm)
+    UnorderedTree.mk_eq_mk_iff.mp
+      (((UnorderedTree.node a A').out_eq).trans h_mk2.symm)
   -- §2: unfold NIM; the host list is the singleton of the canonical rep.
-  unfold Nonplanar.insertionMultiset
-  rw [show (({Nonplanar.node a A'} : Multiset (Nonplanar α)).toList.map
+  unfold UnorderedTree.insertionMultiset
+  rw [show (({UnorderedTree.node a A'} : Multiset (UnorderedTree α)).toList.map
         Quotient.out : List (RoseTree α))
-      = [Quotient.out (Nonplanar.node a A')] from by
+      = [Quotient.out (UnorderedTree.node a A')] from by
     rw [Multiset.toList_singleton]
     rfl]
   -- §3: swap the host representative under the msform map.
   have h_host := RoseTree.Pathed.insertionForest_perm_host
     (B.toList.map Quotient.out) (List.Forall₂.cons h_equiv List.Forall₂.nil)
   have h_host' :
-      (RoseTree.Pathed.insertionForest [Quotient.out (Nonplanar.node a A')]
+      (RoseTree.Pathed.insertionForest [Quotient.out (UnorderedTree.node a A')]
           (B.toList.map Quotient.out)).map
-        (fun L => (Multiset.ofList (L.map Nonplanar.mk) :
-          Multiset (Nonplanar α))) =
+        (fun L => (Multiset.ofList (L.map UnorderedTree.mk) :
+          Multiset (UnorderedTree α))) =
       (RoseTree.Pathed.insertionForest
           [RoseTree.node a (A'.toList.map Quotient.out)]
           (B.toList.map Quotient.out)).map
-        (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+        (fun L => Multiset.ofList (L.map UnorderedTree.mk)) := by
     have h2 := congrArg
-      (Multiset.map (fun l : List (Nonplanar α) =>
-        (Multiset.ofList l : Multiset (Nonplanar α)))) h_host
+      (Multiset.map (fun l : List (UnorderedTree α) =>
+        (Multiset.ofList l : Multiset (UnorderedTree α)))) h_host
     rw [Multiset.map_map, Multiset.map_map] at h2
     exact h2
   rw [h_host']
@@ -370,31 +370,31 @@ theorem insertionMultiset_singleton_node [DecidableEq α]
   -- convention has `true` = root guests, so the powerset bind (over the
   -- subtree bucket B₁) is first flipped by the partition involution.
   have h_rhs : (B.powerset.bind fun B₁ =>
-        (Nonplanar.insertionMultiset A' B₁).map fun F' =>
-          ({Nonplanar.node a (F' + (B - B₁))} : Multiset (Nonplanar α))) =
+        (UnorderedTree.insertionMultiset A' B₁).map fun F' =>
+          ({UnorderedTree.node a (F' + (B - B₁))} : Multiset (UnorderedTree α))) =
       (Multiset.ofList
           (RoseTree.Pathed.listChoices [true, false] B.toList.length)).bind
         (fun assn =>
-          (Nonplanar.insertionMultiset A'
+          (UnorderedTree.insertionMultiset A'
               (((B.toList.zip assn).filterMap
-                fun p => if p.2 then none else some p.1 : List (Nonplanar α)) :
-                Multiset (Nonplanar α))).map
-            fun F' => ({Nonplanar.node a (F' +
+                fun p => if p.2 then none else some p.1 : List (UnorderedTree α)) :
+                Multiset (UnorderedTree α))).map
+            fun F' => ({UnorderedTree.node a (F' +
               (((B.toList.zip assn).filterMap
-                fun p => if p.2 then some p.1 else none : List (Nonplanar α)) :
-                Multiset (Nonplanar α)))} : Multiset (Nonplanar α))) := by
+                fun p => if p.2 then some p.1 else none : List (UnorderedTree α)) :
+                Multiset (UnorderedTree α)))} : Multiset (UnorderedTree α))) := by
     -- Step A: flip the partition so the bind variable is the root bucket.
     rw [bind_eq_map_sum]
     rw [Multiset.powerset_partition_swap B
-      (fun B₁ rest => (Nonplanar.insertionMultiset A' B₁).map fun F' =>
-        ({Nonplanar.node a (F' + rest)} : Multiset (Nonplanar α)))]
+      (fun B₁ rest => (UnorderedTree.insertionMultiset A' B₁).map fun F' =>
+        ({UnorderedTree.node a (F' + rest)} : Multiset (UnorderedTree α)))]
     -- Step B: pair form + the powerset↔mask bridge.
     rw [show (B.powerset.map fun s =>
-          (Nonplanar.insertionMultiset A' (B - s)).map fun F' =>
-            ({Nonplanar.node a (F' + s)} : Multiset (Nonplanar α))) =
+          (UnorderedTree.insertionMultiset A' (B - s)).map fun F' =>
+            ({UnorderedTree.node a (F' + s)} : Multiset (UnorderedTree α))) =
         ((B.powerset.map fun s => (s, B - s)).map
-          fun pr => (Nonplanar.insertionMultiset A' pr.2).map fun F' =>
-            ({Nonplanar.node a (F' + pr.1)} : Multiset (Nonplanar α))) from by
+          fun pr => (UnorderedTree.insertionMultiset A' pr.2).map fun F' =>
+            ({UnorderedTree.node a (F' + pr.1)} : Multiset (UnorderedTree α))) from by
       rw [Multiset.map_map]
       rfl]
     rw [show (B.powerset.map fun s => (s, B - s)) =
@@ -402,12 +402,12 @@ theorem insertionMultiset_singleton_node [DecidableEq α]
             (RoseTree.Pathed.listChoices [true, false] B.toList.length)).map
           (fun assn =>
             ((((B.toList.zip assn).filterMap
-                fun p => if p.2 then some p.1 else none : List (Nonplanar α)) :
-                Multiset (Nonplanar α)),
+                fun p => if p.2 then some p.1 else none : List (UnorderedTree α)) :
+                Multiset (UnorderedTree α)),
              (((B.toList.zip assn).filterMap
-                fun p => if p.2 then none else some p.1 : List (Nonplanar α)) :
-                Multiset (Nonplanar α)))) from by
-      conv_lhs => rw [show B = (↑(B.toList) : Multiset (Nonplanar α)) from
+                fun p => if p.2 then none else some p.1 : List (UnorderedTree α)) :
+                Multiset (UnorderedTree α)))) from by
+      conv_lhs => rw [show B = (↑(B.toList) : Multiset (UnorderedTree α)) from
         B.coe_toList.symm]
       rw [← RoseTree.Pathed.listChoices_bridge_powerset_paired (l := B.toList)]]
     rw [Multiset.map_map, ← bind_eq_map_sum]
@@ -421,20 +421,20 @@ theorem insertionMultiset_singleton_node [DecidableEq α]
     (fun p => if p.2 then some p.1 else none) with hgs_t
   set gs_f : List (RoseTree α) := ((B.toList.map Quotient.out).zip assn).filterMap
     (fun p => if p.2 then none else some p.1) with hgs_f
-  set s_t : Multiset (Nonplanar α) := Multiset.ofList
+  set s_t : Multiset (UnorderedTree α) := Multiset.ofList
     ((B.toList.zip assn).filterMap
       (fun p => if p.2 then some p.1 else none)) with hs_t
-  set s_f : Multiset (Nonplanar α) := Multiset.ofList
+  set s_f : Multiset (UnorderedTree α) := Multiset.ofList
     ((B.toList.zip assn).filterMap
       (fun p => if p.2 then none else some p.1)) with hs_f
   -- mk-image facts for the two planar buckets.
-  have h_t_mk : Multiset.ofList (gs_t.map Nonplanar.mk) = s_t := by
+  have h_t_mk : Multiset.ofList (gs_t.map UnorderedTree.mk) = s_t := by
     rw [hgs_t, filterMap_zip_out_mk_t, hs_t]
-  have h_f_perm : (gs_f.map Nonplanar.mk).Perm
-      ((s_f.toList.map Quotient.out).map Nonplanar.mk) := by
+  have h_f_perm : (gs_f.map UnorderedTree.mk).Perm
+      ((s_f.toList.map Quotient.out).map UnorderedTree.mk) := by
     apply Multiset.coe_eq_coe.mp
     rw [hgs_f, filterMap_zip_out_mk_f, List.map_map,
-        show s_f.toList.map (Nonplanar.mk ∘ Quotient.out) = s_f.toList from
+        show s_f.toList.map (UnorderedTree.mk ∘ Quotient.out) = s_f.toList from
           (List.map_congr_left fun x _ => Quotient.out_eq x).trans
             (List.map_id _),
         Multiset.coe_toList, hs_f]
@@ -443,34 +443,34 @@ theorem insertionMultiset_singleton_node [DecidableEq α]
   -- Assemble: fuse post-maps, factor through msform, swap guests, recombine.
   rw [Multiset.map_map]
   calc (RoseTree.Pathed.insertionForest (A'.toList.map Quotient.out) gs_f).map
-        ((((fun L => (Multiset.ofList (L.map Nonplanar.mk) :
-            Multiset (Nonplanar α))) ∘ fun T' => [T']))
+        ((((fun L => (Multiset.ofList (L.map UnorderedTree.mk) :
+            Multiset (UnorderedTree α))) ∘ fun T' => [T']))
           ∘ (fun cs' => RoseTree.node a (gs_t ++ cs')))
       = ((RoseTree.Pathed.insertionForest (A'.toList.map Quotient.out) gs_f).map
-          (fun L => (Multiset.ofList (L.map Nonplanar.mk) :
-            Multiset (Nonplanar α)))).map
-        (fun M => ({Nonplanar.node a (s_t + M)} : Multiset (Nonplanar α))) := by
+          (fun L => (Multiset.ofList (L.map UnorderedTree.mk) :
+            Multiset (UnorderedTree α)))).map
+        (fun M => ({UnorderedTree.node a (s_t + M)} : Multiset (UnorderedTree α))) := by
         rw [Multiset.map_map]
         refine Multiset.map_congr rfl fun cs' _ => ?_
-        show ({Nonplanar.mk (RoseTree.node a (gs_t ++ cs'))} :
-          Multiset (Nonplanar α)) = _
+        show ({UnorderedTree.mk (RoseTree.node a (gs_t ++ cs'))} :
+          Multiset (UnorderedTree α)) = _
         congr 1
-        rw [← Nonplanar.node_mk_tree_list]
+        rw [← UnorderedTree.node_mk_tree_list]
         congr 1
         rw [List.map_append, ← Multiset.coe_add, h_t_mk]
     _ = ((RoseTree.Pathed.insertionForest (A'.toList.map Quotient.out)
             (s_f.toList.map Quotient.out)).map
-          (fun L => (Multiset.ofList (L.map Nonplanar.mk) :
-            Multiset (Nonplanar α)))).map
-        (fun M => ({Nonplanar.node a (s_t + M)} : Multiset (Nonplanar α))) := by
+          (fun L => (Multiset.ofList (L.map UnorderedTree.mk) :
+            Multiset (UnorderedTree α)))).map
+        (fun M => ({UnorderedTree.node a (s_t + M)} : Multiset (UnorderedTree α))) := by
         rw [h_guests]
-    _ = (Nonplanar.insertionMultiset A' s_f).map
-        (fun F' => ({Nonplanar.node a (F' + s_t)} : Multiset (Nonplanar α))) := by
-        unfold Nonplanar.insertionMultiset
+    _ = (UnorderedTree.insertionMultiset A' s_f).map
+        (fun F' => ({UnorderedTree.node a (F' + s_t)} : Multiset (UnorderedTree α))) := by
+        unfold UnorderedTree.insertionMultiset
         rw [Multiset.map_map, Multiset.map_map]
         refine Multiset.map_congr rfl fun L _ => ?_
-        show ({Nonplanar.node a (s_t + Multiset.ofList (L.map Nonplanar.mk))} :
-          Multiset (Nonplanar α)) = _
+        show ({UnorderedTree.node a (s_t + Multiset.ofList (L.map UnorderedTree.mk))} :
+          Multiset (UnorderedTree α)) = _
         rw [add_comm]
         rfl
 
@@ -487,34 +487,34 @@ section
 variable [DecidableEq α]
 
 theorem insertionMultiset_add_host
-    (A B C : Multiset (Nonplanar α)) :
-    Nonplanar.insertionMultiset (A + B) C =
+    (A B C : Multiset (UnorderedTree α)) :
+    UnorderedTree.insertionMultiset (A + B) C =
       (C.powerset.bind fun C₁ =>
-        ((Nonplanar.insertionMultiset A C₁) ×ˢ
-          (Nonplanar.insertionMultiset B (C - C₁))).map
+        ((UnorderedTree.insertionMultiset A C₁) ×ˢ
+          (UnorderedTree.insertionMultiset B (C - C₁))).map
           (fun p => p.1 + p.2)) := by
   -- Steps 1-5: Unfold NIM, apply host-Perm bridge, hostBucketSum bridge, assignment
   -- rewrite, and push msform through the outer bind.
-  unfold Nonplanar.insertionMultiset
+  unfold UnorderedTree.insertionMultiset
   rw [RoseTree.Pathed.insertionForest_perm_host_msform
-        (Nonplanar.toList_map_quotientOut_add_perm A B) (C.toList.map Quotient.out)]
+        (UnorderedTree.toList_map_quotientOut_add_perm A B) (C.toList.map Quotient.out)]
   rw [← RoseTree.Pathed.hostBucketSum_eq_insertionForest]
   rw [RoseTree.Pathed.hostBucketSum_assignment_rewrite]
   rw [Multiset.map_bind, List.length_map]
   simp only [List.nil_append]
-  -- Step 6: Define `msform : List (RoseTree α) → Multiset (Nonplanar α)` as a local
-  -- abbreviation matching `Nonplanar.insertionMultiset`'s post-processing.
-  set msform : List (RoseTree α) → Multiset (Nonplanar α) :=
-    fun L => (Multiset.ofList (L.map Nonplanar.mk)) with hmsform
+  -- Step 6: Define `msform : List (RoseTree α) → Multiset (UnorderedTree α)` as a local
+  -- abbreviation matching `UnorderedTree.insertionMultiset`'s post-processing.
+  set msform : List (RoseTree α) → Multiset (UnorderedTree α) :=
+    fun L => (Multiset.ofList (L.map UnorderedTree.mk)) with hmsform
   -- Step 7: Strategy — define `F : Multiset × Multiset → Multiset Multiset` so:
   --   LHS_inner(assn) = F (↑filter_t (C.toList zip assn), ↑filter_f (...))
   --   RHS_inner(C₁)   = F (C₁, C - C₁)
   -- Then RHS = (C.powerset.map (s ↦ (s, C - s))).bind F = (↑lc).bind (F ∘ ...) by
   -- the powerset bridge. The remaining work is per-assn equality.
-  set F : Multiset (Nonplanar α) × Multiset (Nonplanar α) →
-            Multiset (Multiset (Nonplanar α)) :=
+  set F : Multiset (UnorderedTree α) × Multiset (UnorderedTree α) →
+            Multiset (Multiset (UnorderedTree α)) :=
     fun pair =>
-      Multiset.map (fun p : Multiset (Nonplanar α) × Multiset (Nonplanar α) => p.1 + p.2)
+      Multiset.map (fun p : Multiset (UnorderedTree α) × Multiset (UnorderedTree α) => p.1 + p.2)
         (Multiset.map msform
             (RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList A))
               (List.map Quotient.out pair.1.toList)) ×ˢ
@@ -524,20 +524,20 @@ theorem insertionMultiset_add_host
   -- Step 7a: RHS = (C.powerset.map (s ↦ (s, C - s))).bind F via `← Multiset.bind_map`.
   have h_rhs_step1 :
       ((Multiset.powerset C).bind fun C₁ => F (C₁, C - C₁)) =
-      ((Multiset.powerset C).map (fun s : Multiset (Nonplanar α) => (s, C - s))).bind F := by
+      ((Multiset.powerset C).map (fun s : Multiset (UnorderedTree α) => (s, C - s))).bind F := by
     rw [Multiset.bind_map]
   -- Step 7b: Apply the powerset bridge to convert
   -- `(C.powerset.map (s, C-s))` to `(↑lc).map (filter_t, filter_f)`.
   have h_rhs_step2 :
-      ((Multiset.powerset C).map (fun s : Multiset (Nonplanar α) => (s, C - s))) =
+      ((Multiset.powerset C).map (fun s : Multiset (UnorderedTree α) => (s, C - s))) =
       (Multiset.ofList (RoseTree.Pathed.listChoices [true, false] C.toList.length)).map
         (fun assn : List Bool =>
-          let s_t : Multiset (Nonplanar α) :=
+          let s_t : Multiset (UnorderedTree α) :=
             (C.toList.zip assn).filterMap (fun p => if p.snd then some p.fst else none)
-          let s_f : Multiset (Nonplanar α) :=
+          let s_f : Multiset (UnorderedTree α) :=
             (C.toList.zip assn).filterMap (fun p => if p.snd then none else some p.fst)
           (s_t, s_f)) := by
-    rw [show C = (↑(C.toList) : Multiset (Nonplanar α)) from C.coe_toList.symm]
+    rw [show C = (↑(C.toList) : Multiset (UnorderedTree α)) from C.coe_toList.symm]
     rw [← RoseTree.Pathed.listChoices_bridge_powerset_paired (l := C.toList)]
     simp only [Multiset.coe_toList]
   -- Step 7c: Reshape RHS to (↑lc).bind (F ∘ ...) so we can match per-assn.
@@ -563,12 +563,12 @@ theorem insertionMultiset_add_host
   rw [RoseTree.Pathed.hostBucketSum_nil_remaining, Multiset.map_map]
   -- Step 8b: Unfold F on the RHS and abbreviate the filter results at multiset level.
   rw [hF]
-  set s_t : Multiset (Nonplanar α) :=
+  set s_t : Multiset (UnorderedTree α) :=
     (List.filterMap (fun p => if p.snd = true then some p.fst else none)
-      ((Multiset.toList C).zip assn) : Multiset (Nonplanar α)) with hs_t
-  set s_f : Multiset (Nonplanar α) :=
+      ((Multiset.toList C).zip assn) : Multiset (UnorderedTree α)) with hs_t
+  set s_f : Multiset (UnorderedTree α) :=
     (List.filterMap (fun p => if p.snd = true then none else some p.fst)
-      ((Multiset.toList C).zip assn) : Multiset (Nonplanar α)) with hs_f
+      ((Multiset.toList C).zip assn) : Multiset (UnorderedTree α)) with hs_f
   -- Beta-reduce the let binding on the RHS via `show`.
   show ((RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList A))
             (List.filterMap (fun p => if p.snd = true then some p.fst else none)
@@ -596,17 +596,17 @@ theorem insertionMultiset_add_host
   set ft_canon : List (RoseTree α) := s_t.toList.map Quotient.out with hft_canon
   set ff_canon : List (RoseTree α) := s_f.toList.map Quotient.out with hff_canon
   -- Step 8c.1: List-level: `((l.map Q.out).zip a).filterMap_t.map mk = (l.zip a).filterMap_t`.
-  have h_ft_mk_eq : ft_tree.map Nonplanar.mk =
+  have h_ft_mk_eq : ft_tree.map UnorderedTree.mk =
       (((Multiset.toList C).zip assn).filterMap
-        (fun p => if p.snd then some p.fst else none) : List (Nonplanar α)) := by
-    have h_aux : ∀ (l : List (Nonplanar α)) (a : List Bool),
+        (fun p => if p.snd then some p.fst else none) : List (UnorderedTree α)) := by
+    have h_aux : ∀ (l : List (UnorderedTree α)) (a : List Bool),
         (((l.map Quotient.out).zip a).filterMap (fun p => if p.snd = true then some p.fst else none)).map
-          Nonplanar.mk = (l.zip a).filterMap (fun p => if p.snd = true then some p.fst else none) := by
+          UnorderedTree.mk = (l.zip a).filterMap (fun p => if p.snd = true then some p.fst else none) := by
       intro l a
       induction l generalizing a with
       | nil =>
-        show (((([] : List (Nonplanar α)).map Quotient.out).zip a).filterMap _).map Nonplanar.mk = _
-        rw [show ([] : List (Nonplanar α)).map Quotient.out = [] from rfl]
+        show (((([] : List (UnorderedTree α)).map Quotient.out).zip a).filterMap _).map UnorderedTree.mk = _
+        rw [show ([] : List (UnorderedTree α)).map Quotient.out = [] from rfl]
         rfl
       | cons x rest ih =>
         cases a with
@@ -626,42 +626,42 @@ theorem insertionMultiset_add_host
             -- if true then some Q.out x else none = some (Q.out x); on RHS some x.
             show (Quotient.out x ::
                 ((rest.map Quotient.out).zip a_rest).filterMap
-                  (fun p => if p.snd = true then some p.fst else none)).map Nonplanar.mk =
+                  (fun p => if p.snd = true then some p.fst else none)).map UnorderedTree.mk =
                 x ::
                 (rest.zip a_rest).filterMap
                   (fun p => if p.snd = true then some p.fst else none)
             rw [show ((Quotient.out x ::
                 ((rest.map Quotient.out).zip a_rest).filterMap
-                  (fun p => if p.snd = true then some p.fst else none)).map Nonplanar.mk) =
-                Nonplanar.mk (Quotient.out x) ::
+                  (fun p => if p.snd = true then some p.fst else none)).map UnorderedTree.mk) =
+                UnorderedTree.mk (Quotient.out x) ::
                   (((rest.map Quotient.out).zip a_rest).filterMap
-                    (fun p => if p.snd = true then some p.fst else none)).map Nonplanar.mk from rfl]
+                    (fun p => if p.snd = true then some p.fst else none)).map UnorderedTree.mk from rfl]
             rw [ih a_rest]
             congr 1
             exact x.out_eq
           | false =>
             -- if false then some else none = none; both sides skip.
             show (((rest.map Quotient.out).zip a_rest).filterMap
-                  (fun p => if p.snd = true then some p.fst else none)).map Nonplanar.mk =
+                  (fun p => if p.snd = true then some p.fst else none)).map UnorderedTree.mk =
                 (rest.zip a_rest).filterMap
                   (fun p => if p.snd = true then some p.fst else none)
             exact ih a_rest
-    show (ft_tree.map Nonplanar.mk : List (Nonplanar α)) =
+    show (ft_tree.map UnorderedTree.mk : List (UnorderedTree α)) =
         ((Multiset.toList C).zip assn).filterMap (fun p => if p.snd = true then some p.fst else none)
     exact h_aux C.toList assn
   -- Step 8c.2: Same identity for filter_f.
-  have h_ff_mk_eq : ff_tree.map Nonplanar.mk =
+  have h_ff_mk_eq : ff_tree.map UnorderedTree.mk =
       (((Multiset.toList C).zip assn).filterMap
-        (fun p => if p.snd then none else some p.fst) : List (Nonplanar α)) := by
-    have h_aux : ∀ (l : List (Nonplanar α)) (a : List Bool),
+        (fun p => if p.snd then none else some p.fst) : List (UnorderedTree α)) := by
+    have h_aux : ∀ (l : List (UnorderedTree α)) (a : List Bool),
         (((l.map Quotient.out).zip a).filterMap
-          (fun p => if p.snd = true then none else some p.fst)).map Nonplanar.mk =
+          (fun p => if p.snd = true then none else some p.fst)).map UnorderedTree.mk =
         (l.zip a).filterMap (fun p => if p.snd = true then none else some p.fst) := by
       intro l a
       induction l generalizing a with
       | nil =>
-        show (((([] : List (Nonplanar α)).map Quotient.out).zip a).filterMap _).map Nonplanar.mk = _
-        rw [show ([] : List (Nonplanar α)).map Quotient.out = [] from rfl]
+        show (((([] : List (UnorderedTree α)).map Quotient.out).zip a).filterMap _).map UnorderedTree.mk = _
+        rw [show ([] : List (UnorderedTree α)).map Quotient.out = [] from rfl]
         rfl
       | cons x rest ih =>
         cases a with
@@ -680,7 +680,7 @@ theorem insertionMultiset_add_host
           | true =>
             -- if true then none else some = none; both sides skip.
             show (((rest.map Quotient.out).zip a_rest).filterMap
-                  (fun p => if p.snd = true then none else some p.fst)).map Nonplanar.mk =
+                  (fun p => if p.snd = true then none else some p.fst)).map UnorderedTree.mk =
                 (rest.zip a_rest).filterMap
                   (fun p => if p.snd = true then none else some p.fst)
             exact ih a_rest
@@ -688,56 +688,56 @@ theorem insertionMultiset_add_host
             -- if false then none else some Q.out x = some Q.out x; on RHS some x.
             show (Quotient.out x ::
                 ((rest.map Quotient.out).zip a_rest).filterMap
-                  (fun p => if p.snd = true then none else some p.fst)).map Nonplanar.mk =
+                  (fun p => if p.snd = true then none else some p.fst)).map UnorderedTree.mk =
                 x ::
                 (rest.zip a_rest).filterMap
                   (fun p => if p.snd = true then none else some p.fst)
             rw [show ((Quotient.out x ::
                 ((rest.map Quotient.out).zip a_rest).filterMap
-                  (fun p => if p.snd = true then none else some p.fst)).map Nonplanar.mk) =
-                Nonplanar.mk (Quotient.out x) ::
+                  (fun p => if p.snd = true then none else some p.fst)).map UnorderedTree.mk) =
+                UnorderedTree.mk (Quotient.out x) ::
                   (((rest.map Quotient.out).zip a_rest).filterMap
-                    (fun p => if p.snd = true then none else some p.fst)).map Nonplanar.mk from rfl]
+                    (fun p => if p.snd = true then none else some p.fst)).map UnorderedTree.mk from rfl]
             rw [ih a_rest]
             congr 1
             exact x.out_eq
-    show (ff_tree.map Nonplanar.mk : List (Nonplanar α)) =
+    show (ff_tree.map UnorderedTree.mk : List (UnorderedTree α)) =
         ((Multiset.toList C).zip assn).filterMap (fun p => if p.snd = true then none else some p.fst)
     exact h_aux C.toList assn
   -- Step 8c.3: `(s.toList.map Q.out).map mk = s.toList` (Quotient.out_eq componentwise).
-  have h_ft_canon_mk : ft_canon.map Nonplanar.mk = s_t.toList := by
-    show (s_t.toList.map Quotient.out).map Nonplanar.mk = s_t.toList
+  have h_ft_canon_mk : ft_canon.map UnorderedTree.mk = s_t.toList := by
+    show (s_t.toList.map Quotient.out).map UnorderedTree.mk = s_t.toList
     induction s_t.toList with
     | nil => rfl
     | cons hd tl ih =>
-      show Nonplanar.mk (Quotient.out hd) :: ((tl.map Quotient.out).map Nonplanar.mk) =
+      show UnorderedTree.mk (Quotient.out hd) :: ((tl.map Quotient.out).map UnorderedTree.mk) =
            hd :: tl
       rw [ih]
       congr 1
       exact hd.out_eq
-  have h_ff_canon_mk : ff_canon.map Nonplanar.mk = s_f.toList := by
-    show (s_f.toList.map Quotient.out).map Nonplanar.mk = s_f.toList
+  have h_ff_canon_mk : ff_canon.map UnorderedTree.mk = s_f.toList := by
+    show (s_f.toList.map Quotient.out).map UnorderedTree.mk = s_f.toList
     induction s_f.toList with
     | nil => rfl
     | cons hd tl ih =>
-      show Nonplanar.mk (Quotient.out hd) :: ((tl.map Quotient.out).map Nonplanar.mk) =
+      show UnorderedTree.mk (Quotient.out hd) :: ((tl.map Quotient.out).map UnorderedTree.mk) =
            hd :: tl
       rw [ih]
       congr 1
       exact hd.out_eq
   -- Step 8c.4: Both `(ft_tree.map mk)` and `(ft_canon.map mk)` have multiset image `s_t`,
   -- hence are `Perm`-equivalent (via `Multiset.coe_eq_coe`).
-  have h_ft_eq_coe : (↑(ft_tree.map Nonplanar.mk) : Multiset (Nonplanar α)) = s_t := by
+  have h_ft_eq_coe : (↑(ft_tree.map UnorderedTree.mk) : Multiset (UnorderedTree α)) = s_t := by
     rw [h_ft_mk_eq, hs_t]
-  have h_ff_eq_coe : (↑(ff_tree.map Nonplanar.mk) : Multiset (Nonplanar α)) = s_f := by
+  have h_ff_eq_coe : (↑(ff_tree.map UnorderedTree.mk) : Multiset (UnorderedTree α)) = s_f := by
     rw [h_ff_mk_eq, hs_f]
-  have h_ft_canon_eq_coe : (↑(ft_canon.map Nonplanar.mk) : Multiset (Nonplanar α)) = s_t := by
+  have h_ft_canon_eq_coe : (↑(ft_canon.map UnorderedTree.mk) : Multiset (UnorderedTree α)) = s_t := by
     rw [h_ft_canon_mk]; exact s_t.coe_toList
-  have h_ff_canon_eq_coe : (↑(ff_canon.map Nonplanar.mk) : Multiset (Nonplanar α)) = s_f := by
+  have h_ff_canon_eq_coe : (↑(ff_canon.map UnorderedTree.mk) : Multiset (UnorderedTree α)) = s_f := by
     rw [h_ff_canon_mk]; exact s_f.coe_toList
-  have h_ft_perm : (ft_tree.map Nonplanar.mk).Perm (ft_canon.map Nonplanar.mk) := by
+  have h_ft_perm : (ft_tree.map UnorderedTree.mk).Perm (ft_canon.map UnorderedTree.mk) := by
     rw [← Multiset.coe_eq_coe, h_ft_eq_coe, h_ft_canon_eq_coe]
-  have h_ff_perm : (ff_tree.map Nonplanar.mk).Perm (ff_canon.map Nonplanar.mk) := by
+  have h_ff_perm : (ff_tree.map UnorderedTree.mk).Perm (ff_canon.map UnorderedTree.mk) := by
     rw [← Multiset.coe_eq_coe, h_ff_eq_coe, h_ff_canon_eq_coe]
   -- Step 8c.5: Apply guest-msform invariance to swap `RoseTree`-level guests for canonical.
   have h_iF_A : (RoseTree.Pathed.insertionForest
@@ -769,8 +769,8 @@ theorem insertionMultiset_add_host
   intros b _
   show msform (a ++ b) = msform a + msform b
   rw [hmsform]
-  show (↑((a ++ b).map Nonplanar.mk) : Multiset (Nonplanar α)) =
-       ↑(a.map Nonplanar.mk) + ↑(b.map Nonplanar.mk)
+  show (↑((a ++ b).map UnorderedTree.mk) : Multiset (UnorderedTree α)) =
+       ↑(a.map UnorderedTree.mk) + ↑(b.map UnorderedTree.mk)
   rw [List.map_append, Multiset.coe_add]
 
 end
@@ -802,13 +802,13 @@ private theorem antidiagonal_singleton {β : Type*} (a : β) :
 
 omit [DecidableEq α] in
 /-- A `NIM {T} G` output is always a singleton forest (card 1). This is the
-    `Nonplanar.insertionMultiset_card_eq` specialization to a singleton host. -/
+    `UnorderedTree.insertionMultiset_card_eq` specialization to a singleton host. -/
 private theorem insertionMultiset_singleton_host_singleton
-    (T : Nonplanar α) (G : Multiset (Nonplanar α))
-    {X : Multiset (Nonplanar α)} (hX : X ∈ Nonplanar.insertionMultiset {T} G) :
-    ∃ T' : Nonplanar α, X = {T'} := by
-  have hcard : X.card = ({T} : Multiset (Nonplanar α)).card :=
-    Nonplanar.insertionMultiset_card_eq {T} G hX
+    (T : UnorderedTree α) (G : Multiset (UnorderedTree α))
+    {X : Multiset (UnorderedTree α)} (hX : X ∈ UnorderedTree.insertionMultiset {T} G) :
+    ∃ T' : UnorderedTree α, X = {T'} := by
+  have hcard : X.card = ({T} : Multiset (UnorderedTree α)).card :=
+    UnorderedTree.insertionMultiset_card_eq {T} G hX
   rw [Multiset.card_singleton] at hcard
   exact Multiset.card_eq_one.mp hcard
 
@@ -974,12 +974,12 @@ private theorem antidiagonal_singleton_add {β : Type*} [DecidableEq β] (T' : �
     (peeling one host tree; `NIM({T}, G)` outputs are singleton
     forests, whose antidiagonal is the trivial two-way split). -/
 theorem insertionMultiset_antidiagonal
-    (A G : Multiset (Nonplanar α)) :
-    (Nonplanar.insertionMultiset A G).bind Multiset.antidiagonal =
+    (A G : Multiset (UnorderedTree α)) :
+    (UnorderedTree.insertionMultiset A G).bind Multiset.antidiagonal =
       (Multiset.antidiagonal A).bind (fun pa =>
         (Multiset.antidiagonal G).bind (fun pg =>
-          (Nonplanar.insertionMultiset pa.1 pg.1) ×ˢ
-            (Nonplanar.insertionMultiset pa.2 pg.2))) := by
+          (UnorderedTree.insertionMultiset pa.1 pg.1) ×ˢ
+            (UnorderedTree.insertionMultiset pa.2 pg.2))) := by
   induction A using Multiset.induction_on generalizing G with
   | empty =>
     -- A = 0. Case on G.
@@ -987,20 +987,20 @@ theorem insertionMultiset_antidiagonal
     by_cases hG : G = 0
     · -- G = 0: NIM 0 0 = {0}, antidiag 0 = {(0,0)}. RHS = NIM 0 0 ×ˢ NIM 0 0 = {(0,0)}.
       subst hG
-      rw [Nonplanar.insertionMultiset_zero_right, Multiset.singleton_bind,
+      rw [UnorderedTree.insertionMultiset_zero_right, Multiset.singleton_bind,
           Multiset.antidiagonal_zero, Multiset.singleton_bind,
-          Nonplanar.insertionMultiset_zero_right]
+          UnorderedTree.insertionMultiset_zero_right]
       rfl
     · -- G ≠ 0: LHS = (NIM 0 G).bind antidiag = 0.bind = 0. RHS: each pg has at least one nonzero side.
-      rw [Nonplanar.insertionMultiset_zero_left_of_ne_zero G hG, Multiset.zero_bind]
+      rw [UnorderedTree.insertionMultiset_zero_left_of_ne_zero G hG, Multiset.zero_bind]
       -- RHS: prove the bind is 0 by showing each summand is 0.
       symm
       have h_rhs_eq :
           (Multiset.antidiagonal G).bind (fun pg =>
-              (Nonplanar.insertionMultiset 0 pg.1) ×ˢ
-              (Nonplanar.insertionMultiset 0 pg.2)) =
-          (Multiset.antidiagonal G).bind (fun _ => (0 : Multiset (Multiset (Nonplanar α) ×
-            Multiset (Nonplanar α)))) := by
+              (UnorderedTree.insertionMultiset 0 pg.1) ×ˢ
+              (UnorderedTree.insertionMultiset 0 pg.2)) =
+          (Multiset.antidiagonal G).bind (fun _ => (0 : Multiset (Multiset (UnorderedTree α) ×
+            Multiset (UnorderedTree α)))) := by
         refine Multiset.bind_congr fun pg hpg => ?_
         have hpg_sum : pg.1 + pg.2 = G := Multiset.mem_antidiagonal.mp hpg
         by_cases h1 : pg.1 = 0
@@ -1009,28 +1009,28 @@ theorem insertionMultiset_antidiagonal
             intro h2eq
             apply hG
             rw [← hpg_sum, h1, h2eq]; rfl
-          rw [Nonplanar.insertionMultiset_zero_left_of_ne_zero pg.2 h2,
+          rw [UnorderedTree.insertionMultiset_zero_left_of_ne_zero pg.2 h2,
               Multiset.product_zero]
-        · rw [Nonplanar.insertionMultiset_zero_left_of_ne_zero pg.1 h1,
+        · rw [UnorderedTree.insertionMultiset_zero_left_of_ne_zero pg.1 h1,
               Multiset.zero_product]
       rw [h_rhs_eq, Multiset.bind_zero]
   | cons T A' ih =>
     -- A = T ::ₘ A' = {T} + A'.
-    have h_cons_eq : (T ::ₘ A' : Multiset (Nonplanar α)) = ({T} : Multiset _) + A' := by
+    have h_cons_eq : (T ::ₘ A' : Multiset (UnorderedTree α)) = ({T} : Multiset _) + A' := by
       rw [Multiset.singleton_add]
     -- Step 1: Rewrite LHS via insertionMultiset_add_host.
-    rw [h_cons_eq, Nonplanar.insertionMultiset_add_host {T} A' G]
+    rw [h_cons_eq, UnorderedTree.insertionMultiset_add_host {T} A' G]
     -- LHS = (G.powerset.bind (G₁ ↦ (NIM {T} G₁ ×ˢ NIM A' (G-G₁)).map (·.1+·.2))).bind antidiag
     rw [Multiset.bind_assoc]
     -- LHS = G.powerset.bind (G₁ ↦ ((NIM {T} G₁ ×ˢ NIM A' (G-G₁)).map (·.1+·.2)).bind antidiag)
     -- Step 2: Push antidiag through the .map ↦ bind, expand antidiag (X_T + X_A')
     -- via antidiagonal_singleton_add (since X_T is a singleton).
-    have h_lhs_inner : ∀ G₁ : Multiset (Nonplanar α),
-        (((Nonplanar.insertionMultiset {T} G₁) ×ˢ
-            (Nonplanar.insertionMultiset A' (G - G₁))).map
+    have h_lhs_inner : ∀ G₁ : Multiset (UnorderedTree α),
+        (((UnorderedTree.insertionMultiset {T} G₁) ×ˢ
+            (UnorderedTree.insertionMultiset A' (G - G₁))).map
             (fun p => p.1 + p.2)).bind Multiset.antidiagonal =
-        ((Nonplanar.insertionMultiset {T} G₁).bind fun X_T =>
-            (Nonplanar.insertionMultiset A' (G - G₁)).bind fun X_A' =>
+        ((UnorderedTree.insertionMultiset {T} G₁).bind fun X_T =>
+            (UnorderedTree.insertionMultiset A' (G - G₁)).bind fun X_A' =>
               (Multiset.antidiagonal X_A').map
                   (fun pA' => (pA'.1, X_T + pA'.2)) +
               (Multiset.antidiagonal X_A').map
@@ -1040,8 +1040,8 @@ theorem insertionMultiset_antidiagonal
       rw [Multiset.bind_map]
       -- Goal: (NIM {T} G₁ ×ˢ NIM A' (G-G₁)).bind (p ↦ antidiag (p.1 + p.2)) = (NIM {T} G₁).bind ...
       -- Unfold ×ˢ as bind.
-      show ((Nonplanar.insertionMultiset {T} G₁).bind (fun X_T =>
-              (Nonplanar.insertionMultiset A' (G - G₁)).map (Prod.mk X_T))).bind
+      show ((UnorderedTree.insertionMultiset {T} G₁).bind (fun X_T =>
+              (UnorderedTree.insertionMultiset A' (G - G₁)).map (Prod.mk X_T))).bind
                 (fun p => Multiset.antidiagonal (p.1 + p.2)) = _
       rw [Multiset.bind_assoc]
       refine Multiset.bind_congr fun X_T hX_T => ?_
@@ -1052,12 +1052,12 @@ theorem insertionMultiset_antidiagonal
       subst hT'
       exact antidiagonal_singleton_add T' X_A'
     rw [show (G.powerset.bind fun G₁ =>
-            (((Nonplanar.insertionMultiset {T} G₁) ×ˢ
-                (Nonplanar.insertionMultiset A' (G - G₁))).map
+            (((UnorderedTree.insertionMultiset {T} G₁) ×ˢ
+                (UnorderedTree.insertionMultiset A' (G - G₁))).map
                 (fun p => p.1 + p.2)).bind Multiset.antidiagonal) =
           G.powerset.bind fun G₁ =>
-            ((Nonplanar.insertionMultiset {T} G₁).bind fun X_T =>
-                (Nonplanar.insertionMultiset A' (G - G₁)).bind fun X_A' =>
+            ((UnorderedTree.insertionMultiset {T} G₁).bind fun X_T =>
+                (UnorderedTree.insertionMultiset A' (G - G₁)).bind fun X_A' =>
                   (Multiset.antidiagonal X_A').map
                       (fun pA' => (pA'.1, X_T + pA'.2)) +
                   (Multiset.antidiagonal X_A').map
@@ -1065,19 +1065,19 @@ theorem insertionMultiset_antidiagonal
         from Multiset.bind_congr (fun G₁ _ => h_lhs_inner G₁)]
     -- Step 3: Split LHS into two summands (T-right + T-left) using bind_add via map_add and sum_add.
     -- Strategy: each inner sum splits via bind_congr.
-    have h_split_inner : ∀ G₁ : Multiset (Nonplanar α),
-        ((Nonplanar.insertionMultiset {T} G₁).bind fun X_T =>
-            (Nonplanar.insertionMultiset A' (G - G₁)).bind fun X_A' =>
+    have h_split_inner : ∀ G₁ : Multiset (UnorderedTree α),
+        ((UnorderedTree.insertionMultiset {T} G₁).bind fun X_T =>
+            (UnorderedTree.insertionMultiset A' (G - G₁)).bind fun X_A' =>
               (Multiset.antidiagonal X_A').map
                   (fun pA' => (pA'.1, X_T + pA'.2)) +
               (Multiset.antidiagonal X_A').map
                   (fun pA' => (X_T + pA'.1, pA'.2))) =
-        ((Nonplanar.insertionMultiset {T} G₁).bind fun X_T =>
-            (Nonplanar.insertionMultiset A' (G - G₁)).bind fun X_A' =>
+        ((UnorderedTree.insertionMultiset {T} G₁).bind fun X_T =>
+            (UnorderedTree.insertionMultiset A' (G - G₁)).bind fun X_A' =>
               (Multiset.antidiagonal X_A').map
                   (fun pA' => (pA'.1, X_T + pA'.2))) +
-        ((Nonplanar.insertionMultiset {T} G₁).bind fun X_T =>
-            (Nonplanar.insertionMultiset A' (G - G₁)).bind fun X_A' =>
+        ((UnorderedTree.insertionMultiset {T} G₁).bind fun X_T =>
+            (UnorderedTree.insertionMultiset A' (G - G₁)).bind fun X_A' =>
               (Multiset.antidiagonal X_A').map
                   (fun pA' => (X_T + pA'.1, pA'.2))) := by
       intro G₁
@@ -1086,27 +1086,27 @@ theorem insertionMultiset_antidiagonal
       refine Multiset.bind_congr fun X_T _ => ?_
       rw [← Multiset.bind_add]
     rw [show (G.powerset.bind fun G₁ =>
-            (Nonplanar.insertionMultiset {T} G₁).bind fun X_T =>
-              (Nonplanar.insertionMultiset A' (G - G₁)).bind fun X_A' =>
+            (UnorderedTree.insertionMultiset {T} G₁).bind fun X_T =>
+              (UnorderedTree.insertionMultiset A' (G - G₁)).bind fun X_A' =>
                 (Multiset.antidiagonal X_A').map
                     (fun pA' => (pA'.1, X_T + pA'.2)) +
                 (Multiset.antidiagonal X_A').map
                     (fun pA' => (X_T + pA'.1, pA'.2))) =
           (G.powerset.bind fun G₁ =>
-            (Nonplanar.insertionMultiset {T} G₁).bind fun X_T =>
-              (Nonplanar.insertionMultiset A' (G - G₁)).bind fun X_A' =>
+            (UnorderedTree.insertionMultiset {T} G₁).bind fun X_T =>
+              (UnorderedTree.insertionMultiset A' (G - G₁)).bind fun X_A' =>
                 (Multiset.antidiagonal X_A').map
                     (fun pA' => (pA'.1, X_T + pA'.2))) +
           (G.powerset.bind fun G₁ =>
-            (Nonplanar.insertionMultiset {T} G₁).bind fun X_T =>
-              (Nonplanar.insertionMultiset A' (G - G₁)).bind fun X_A' =>
+            (UnorderedTree.insertionMultiset {T} G₁).bind fun X_T =>
+              (UnorderedTree.insertionMultiset A' (G - G₁)).bind fun X_A' =>
                 (Multiset.antidiagonal X_A').map
                     (fun pA' => (X_T + pA'.1, pA'.2)))
         from by
       rw [← Multiset.bind_add]
       exact Multiset.bind_congr (fun G₁ _ => h_split_inner G₁)]
     -- Step 4: Now rewrite RHS via antidiagonal_cons split into T-right + T-left summands.
-    rw [show (Multiset.antidiagonal ({T} + A' : Multiset (Nonplanar α))) =
+    rw [show (Multiset.antidiagonal ({T} + A' : Multiset (UnorderedTree α))) =
             Multiset.antidiagonal (T ::ₘ A') from by rw [← h_cons_eq],
         Multiset.antidiagonal_cons]
     -- RHS: antidiag (T ::ₘ A') = antidiag A'.map (Prod.map id (cons T)) + antidiag A'.map (Prod.map (cons T) id)
@@ -1124,12 +1124,12 @@ theorem insertionMultiset_antidiagonal
       -- `triple_partition_reindex` to align the G-indexing.
       -- 1) Reorder LHS_T_right using bind_map_comm to expose `antidiag (NIM A' (G-G₁)).bind`.
       rw [show (G.powerset.bind fun G₁ =>
-              (Nonplanar.insertionMultiset {T} G₁).bind fun X_T =>
-                (Nonplanar.insertionMultiset A' (G - G₁)).bind fun X_A' =>
+              (UnorderedTree.insertionMultiset {T} G₁).bind fun X_T =>
+                (UnorderedTree.insertionMultiset A' (G - G₁)).bind fun X_A' =>
                   (Multiset.antidiagonal X_A').map (fun pA' => (pA'.1, X_T + pA'.2))) =
             (G.powerset.bind fun G₁ =>
-              ((Nonplanar.insertionMultiset A' (G - G₁)).bind Multiset.antidiagonal).bind
-                fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+              ((UnorderedTree.insertionMultiset A' (G - G₁)).bind Multiset.antidiagonal).bind
+                fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
                   fun X_T => (pA'.1, X_T + pA'.2)) from by
         refine Multiset.bind_congr fun G₁ _ => ?_
         rw [Multiset.bind_assoc]
@@ -1138,15 +1138,15 @@ theorem insertionMultiset_antidiagonal
         rw [Multiset.bind_map_comm]]
       -- 2) Apply IH on (NIM A' (G - G₁)).bind antidiag.
       rw [show (G.powerset.bind fun G₁ =>
-              ((Nonplanar.insertionMultiset A' (G - G₁)).bind Multiset.antidiagonal).bind
-                fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+              ((UnorderedTree.insertionMultiset A' (G - G₁)).bind Multiset.antidiagonal).bind
+                fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
                   fun X_T => (pA'.1, X_T + pA'.2)) =
             (G.powerset.bind fun G₁ =>
               ((Multiset.antidiagonal A').bind fun pa' =>
                 (Multiset.antidiagonal (G - G₁)).bind fun pg' =>
-                  (Nonplanar.insertionMultiset pa'.1 pg'.1) ×ˢ
-                    (Nonplanar.insertionMultiset pa'.2 pg'.2)).bind
-                fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+                  (UnorderedTree.insertionMultiset pa'.1 pg'.1) ×ˢ
+                    (UnorderedTree.insertionMultiset pa'.2 pg'.2)).bind
+                fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
                   fun X_T => (pA'.1, X_T + pA'.2)) from by
         refine Multiset.bind_congr fun G₁ _ => ?_
         rw [ih (G - G₁)]]
@@ -1154,16 +1154,16 @@ theorem insertionMultiset_antidiagonal
       rw [show (G.powerset.bind fun G₁ =>
               ((Multiset.antidiagonal A').bind fun pa' =>
                 (Multiset.antidiagonal (G - G₁)).bind fun pg' =>
-                  (Nonplanar.insertionMultiset pa'.1 pg'.1) ×ˢ
-                    (Nonplanar.insertionMultiset pa'.2 pg'.2)).bind
-                fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+                  (UnorderedTree.insertionMultiset pa'.1 pg'.1) ×ˢ
+                    (UnorderedTree.insertionMultiset pa'.2 pg'.2)).bind
+                fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
                   fun X_T => (pA'.1, X_T + pA'.2)) =
             (G.powerset.bind fun G₁ =>
               (Multiset.antidiagonal A').bind fun pa' =>
                 (Multiset.antidiagonal (G - G₁)).bind fun pg' =>
-                  ((Nonplanar.insertionMultiset pa'.1 pg'.1) ×ˢ
-                      (Nonplanar.insertionMultiset pa'.2 pg'.2)).bind
-                    fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+                  ((UnorderedTree.insertionMultiset pa'.1 pg'.1) ×ˢ
+                      (UnorderedTree.insertionMultiset pa'.2 pg'.2)).bind
+                    fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
                       fun X_T => (pA'.1, X_T + pA'.2)) from by
         refine Multiset.bind_congr fun G₁ _ => ?_
         rw [Multiset.bind_assoc]
@@ -1173,25 +1173,25 @@ theorem insertionMultiset_antidiagonal
       rw [show (G.powerset.bind fun G₁ =>
               (Multiset.antidiagonal A').bind fun pa' =>
                 (Multiset.antidiagonal (G - G₁)).bind fun pg' =>
-                  ((Nonplanar.insertionMultiset pa'.1 pg'.1) ×ˢ
-                      (Nonplanar.insertionMultiset pa'.2 pg'.2)).bind
-                    fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+                  ((UnorderedTree.insertionMultiset pa'.1 pg'.1) ×ˢ
+                      (UnorderedTree.insertionMultiset pa'.2 pg'.2)).bind
+                    fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
                       fun X_T => (pA'.1, X_T + pA'.2)) =
             (Multiset.antidiagonal A').bind fun pa' =>
               G.powerset.bind fun G₁ =>
                 (Multiset.antidiagonal (G - G₁)).bind fun pg' =>
-                  ((Nonplanar.insertionMultiset pa'.1 pg'.1) ×ˢ
-                      (Nonplanar.insertionMultiset pa'.2 pg'.2)).bind
-                    fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+                  ((UnorderedTree.insertionMultiset pa'.1 pg'.1) ×ˢ
+                      (UnorderedTree.insertionMultiset pa'.2 pg'.2)).bind
+                    fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
                       fun X_T => (pA'.1, X_T + pA'.2)
         from Multiset.bind_bind _ _]
       -- 5) Apply triple_partition_reindex on the G.powerset / antidiag (G - G₁) layer.
       refine Multiset.bind_congr fun pa' _ => ?_
       rw [triple_partition_reindex G
         (fun G₁ x y =>
-          ((Nonplanar.insertionMultiset pa'.1 x) ×ˢ
-              (Nonplanar.insertionMultiset pa'.2 y)).bind
-            (fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+          ((UnorderedTree.insertionMultiset pa'.1 x) ×ˢ
+              (UnorderedTree.insertionMultiset pa'.2 y)).bind
+            (fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
               fun X_T => (pA'.1, X_T + pA'.2)))]
       -- 6) Now LHS form matches RHS form (with bind_bind for G₂/X_T to T ::ₘ pa'.2 NIM).
       -- The RHS form (after bind_map): antidiag G.bind (pg ↦
@@ -1201,25 +1201,25 @@ theorem insertionMultiset_antidiagonal
       -- RHS at this position: NIM pa'.1 pg.1 ×ˢ NIM (T ::ₘ pa'.2) pg.2 (after Prod.map id (cons T)).
       -- The Prod.map id (cons T) pa' has fst = pa'.1 and snd = T ::ₘ pa'.2 = {T} + pa'.2.
       -- Apply insertionMultiset_add_host on the RHS to peel {T} from the second argument.
-      have h_prod_map_id : (Prod.map (id : Multiset (Nonplanar α) → _) (Multiset.cons T) pa') =
+      have h_prod_map_id : (Prod.map (id : Multiset (UnorderedTree α) → _) (Multiset.cons T) pa') =
           (pa'.1, T ::ₘ pa'.2) := rfl
       rw [h_prod_map_id]
       show (pg.2.powerset.bind fun G₂ =>
-              ((Nonplanar.insertionMultiset pa'.1 pg.1) ×ˢ
-                  (Nonplanar.insertionMultiset pa'.2 (pg.2 - G₂))).bind
-                (fun pA' => (Nonplanar.insertionMultiset {T} G₂).map
+              ((UnorderedTree.insertionMultiset pa'.1 pg.1) ×ˢ
+                  (UnorderedTree.insertionMultiset pa'.2 (pg.2 - G₂))).bind
+                (fun pA' => (UnorderedTree.insertionMultiset {T} G₂).map
                   fun X_T => (pA'.1, X_T + pA'.2))) =
-            (Nonplanar.insertionMultiset pa'.1 pg.1) ×ˢ
-              (Nonplanar.insertionMultiset (T ::ₘ pa'.2) pg.2)
+            (UnorderedTree.insertionMultiset pa'.1 pg.1) ×ˢ
+              (UnorderedTree.insertionMultiset (T ::ₘ pa'.2) pg.2)
       -- Apply insertionMultiset_add_host to NIM (T ::ₘ pa'.2) pg.2.
-      rw [show (T ::ₘ pa'.2 : Multiset (Nonplanar α)) = ({T} : Multiset _) + pa'.2 from
+      rw [show (T ::ₘ pa'.2 : Multiset (UnorderedTree α)) = ({T} : Multiset _) + pa'.2 from
             (Multiset.singleton_add T pa'.2).symm,
-          Nonplanar.insertionMultiset_add_host {T} pa'.2 pg.2]
+          UnorderedTree.insertionMultiset_add_host {T} pa'.2 pg.2]
       -- RHS: NIM pa'.1 pg.1 ×ˢ (pg.2.powerset.bind (G₂ ↦ (NIM {T} G₂ ×ˢ NIM pa'.2 (pg.2-G₂)).map (·.1+·.2)))
       -- Need: pg.2.powerset.bind LHS_inner = NIM pa'.1 pg.1 ×ˢ (pg.2.powerset.bind RHS_inner_form).
       -- Use s ×ˢ (t.bind f) = t.bind (b ↦ s ×ˢ f b).
-      rw [show ∀ s : Multiset (Multiset (Nonplanar α)),
-              ∀ tt : Multiset (Nonplanar α) → Multiset (Multiset (Nonplanar α)),
+      rw [show ∀ s : Multiset (Multiset (UnorderedTree α)),
+              ∀ tt : Multiset (UnorderedTree α) → Multiset (Multiset (UnorderedTree α)),
                 s ×ˢ (pg.2.powerset.bind tt) =
                   pg.2.powerset.bind (fun G₂ => s ×ˢ tt G₂) from ?_]
       · refine Multiset.bind_congr fun G₂ _ => ?_
@@ -1228,13 +1228,13 @@ theorem insertionMultiset_antidiagonal
         -- Both sides describe pairs (Y₁, X_T + Y₂) for (Y₁, Y₂, X_T) ∈
         -- NIM pa'.1 pg.1 × NIM pa'.2 (pg.2-G₂) × NIM {T} G₂.
         -- Unfold ×ˢ as bind on both sides.
-        show ((Nonplanar.insertionMultiset pa'.1 pg.1).bind (fun Y₁ =>
-              (Nonplanar.insertionMultiset pa'.2 (pg.2 - G₂)).map (Prod.mk Y₁))).bind
-                (fun pA' => (Nonplanar.insertionMultiset {T} G₂).map
+        show ((UnorderedTree.insertionMultiset pa'.1 pg.1).bind (fun Y₁ =>
+              (UnorderedTree.insertionMultiset pa'.2 (pg.2 - G₂)).map (Prod.mk Y₁))).bind
+                (fun pA' => (UnorderedTree.insertionMultiset {T} G₂).map
                   fun X_T => (pA'.1, X_T + pA'.2)) =
-              (Nonplanar.insertionMultiset pa'.1 pg.1).bind (fun Y₁ =>
-                (((Nonplanar.insertionMultiset {T} G₂).bind fun X_T =>
-                  (Nonplanar.insertionMultiset pa'.2 (pg.2 - G₂)).map (Prod.mk X_T)).map
+              (UnorderedTree.insertionMultiset pa'.1 pg.1).bind (fun Y₁ =>
+                (((UnorderedTree.insertionMultiset {T} G₂).bind fun X_T =>
+                  (UnorderedTree.insertionMultiset pa'.2 (pg.2 - G₂)).map (Prod.mk X_T)).map
                     (fun p => p.1 + p.2)).map (Prod.mk Y₁))
         rw [Multiset.bind_assoc]
         refine Multiset.bind_congr fun Y₁ _ => ?_
@@ -1242,13 +1242,13 @@ theorem insertionMultiset_antidiagonal
         -- Compose the outer (Prod.mk Y₁) and (·.1+·.2) maps + push through bind.
         rw [Multiset.map_map, Multiset.map_bind]
         -- Inside each X_T, compose Prod.mk X_T with (Y₁, ·.1+·.2): Y₂ ↦ (Y₁, X_T + Y₂).
-        rw [show ((Nonplanar.insertionMultiset {T} G₂).bind fun X_T =>
+        rw [show ((UnorderedTree.insertionMultiset {T} G₂).bind fun X_T =>
                 Multiset.map ((Prod.mk Y₁) ∘
-                    fun p : Multiset (Nonplanar α) × Multiset (Nonplanar α) => p.1 + p.2)
+                    fun p : Multiset (UnorderedTree α) × Multiset (UnorderedTree α) => p.1 + p.2)
                   (Multiset.map (Prod.mk X_T)
-                    (Nonplanar.insertionMultiset pa'.2 (pg.2 - G₂)))) =
-              ((Nonplanar.insertionMultiset {T} G₂).bind fun X_T =>
-                (Nonplanar.insertionMultiset pa'.2 (pg.2 - G₂)).map
+                    (UnorderedTree.insertionMultiset pa'.2 (pg.2 - G₂)))) =
+              ((UnorderedTree.insertionMultiset {T} G₂).bind fun X_T =>
+                (UnorderedTree.insertionMultiset pa'.2 (pg.2 - G₂)).map
                   (fun Y₂ => (Y₁, X_T + Y₂))) from by
           refine Multiset.bind_congr fun X_T _ => ?_
           rw [Multiset.map_map]
@@ -1265,12 +1265,12 @@ theorem insertionMultiset_antidiagonal
     · -- Match T-left: pair has X_T on .1. Symmetric to T-right by mirror argument.
       -- Same proof scheme as T-right but with X_T joining the first coord of the pair.
       rw [show (G.powerset.bind fun G₁ =>
-              (Nonplanar.insertionMultiset {T} G₁).bind fun X_T =>
-                (Nonplanar.insertionMultiset A' (G - G₁)).bind fun X_A' =>
+              (UnorderedTree.insertionMultiset {T} G₁).bind fun X_T =>
+                (UnorderedTree.insertionMultiset A' (G - G₁)).bind fun X_A' =>
                   (Multiset.antidiagonal X_A').map (fun pA' => (X_T + pA'.1, pA'.2))) =
             (G.powerset.bind fun G₁ =>
-              ((Nonplanar.insertionMultiset A' (G - G₁)).bind Multiset.antidiagonal).bind
-                fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+              ((UnorderedTree.insertionMultiset A' (G - G₁)).bind Multiset.antidiagonal).bind
+                fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
                   fun X_T => (X_T + pA'.1, pA'.2)) from by
         refine Multiset.bind_congr fun G₁ _ => ?_
         rw [Multiset.bind_assoc]
@@ -1278,31 +1278,31 @@ theorem insertionMultiset_antidiagonal
         refine Multiset.bind_congr fun X_A' _ => ?_
         rw [Multiset.bind_map_comm]]
       rw [show (G.powerset.bind fun G₁ =>
-              ((Nonplanar.insertionMultiset A' (G - G₁)).bind Multiset.antidiagonal).bind
-                fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+              ((UnorderedTree.insertionMultiset A' (G - G₁)).bind Multiset.antidiagonal).bind
+                fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
                   fun X_T => (X_T + pA'.1, pA'.2)) =
             (G.powerset.bind fun G₁ =>
               ((Multiset.antidiagonal A').bind fun pa' =>
                 (Multiset.antidiagonal (G - G₁)).bind fun pg' =>
-                  (Nonplanar.insertionMultiset pa'.1 pg'.1) ×ˢ
-                    (Nonplanar.insertionMultiset pa'.2 pg'.2)).bind
-                fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+                  (UnorderedTree.insertionMultiset pa'.1 pg'.1) ×ˢ
+                    (UnorderedTree.insertionMultiset pa'.2 pg'.2)).bind
+                fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
                   fun X_T => (X_T + pA'.1, pA'.2)) from by
         refine Multiset.bind_congr fun G₁ _ => ?_
         rw [ih (G - G₁)]]
       rw [show (G.powerset.bind fun G₁ =>
               ((Multiset.antidiagonal A').bind fun pa' =>
                 (Multiset.antidiagonal (G - G₁)).bind fun pg' =>
-                  (Nonplanar.insertionMultiset pa'.1 pg'.1) ×ˢ
-                    (Nonplanar.insertionMultiset pa'.2 pg'.2)).bind
-                fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+                  (UnorderedTree.insertionMultiset pa'.1 pg'.1) ×ˢ
+                    (UnorderedTree.insertionMultiset pa'.2 pg'.2)).bind
+                fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
                   fun X_T => (X_T + pA'.1, pA'.2)) =
             (G.powerset.bind fun G₁ =>
               (Multiset.antidiagonal A').bind fun pa' =>
                 (Multiset.antidiagonal (G - G₁)).bind fun pg' =>
-                  ((Nonplanar.insertionMultiset pa'.1 pg'.1) ×ˢ
-                      (Nonplanar.insertionMultiset pa'.2 pg'.2)).bind
-                    fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+                  ((UnorderedTree.insertionMultiset pa'.1 pg'.1) ×ˢ
+                      (UnorderedTree.insertionMultiset pa'.2 pg'.2)).bind
+                    fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
                       fun X_T => (X_T + pA'.1, pA'.2)) from by
         refine Multiset.bind_congr fun G₁ _ => ?_
         rw [Multiset.bind_assoc]
@@ -1311,16 +1311,16 @@ theorem insertionMultiset_antidiagonal
       rw [show (G.powerset.bind fun G₁ =>
               (Multiset.antidiagonal A').bind fun pa' =>
                 (Multiset.antidiagonal (G - G₁)).bind fun pg' =>
-                  ((Nonplanar.insertionMultiset pa'.1 pg'.1) ×ˢ
-                      (Nonplanar.insertionMultiset pa'.2 pg'.2)).bind
-                    fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+                  ((UnorderedTree.insertionMultiset pa'.1 pg'.1) ×ˢ
+                      (UnorderedTree.insertionMultiset pa'.2 pg'.2)).bind
+                    fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
                       fun X_T => (X_T + pA'.1, pA'.2)) =
             (Multiset.antidiagonal A').bind fun pa' =>
               G.powerset.bind fun G₁ =>
                 (Multiset.antidiagonal (G - G₁)).bind fun pg' =>
-                  ((Nonplanar.insertionMultiset pa'.1 pg'.1) ×ˢ
-                      (Nonplanar.insertionMultiset pa'.2 pg'.2)).bind
-                    fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+                  ((UnorderedTree.insertionMultiset pa'.1 pg'.1) ×ˢ
+                      (UnorderedTree.insertionMultiset pa'.2 pg'.2)).bind
+                    fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
                       fun X_T => (X_T + pA'.1, pA'.2)
         from Multiset.bind_bind _ _]
       -- For T-left RHS: antidiag G.bind (pg ↦ NIM (T ::ₘ pa'.1) pg.1 ×ˢ NIM pa'.2 pg.2).
@@ -1328,65 +1328,65 @@ theorem insertionMultiset_antidiagonal
       refine Multiset.bind_congr fun pa' _ => ?_
       rw [triple_partition_reindex_flip G
         (fun G₁ x y =>
-          ((Nonplanar.insertionMultiset pa'.1 x) ×ˢ
-              (Nonplanar.insertionMultiset pa'.2 y)).bind
-            (fun pA' => (Nonplanar.insertionMultiset {T} G₁).map
+          ((UnorderedTree.insertionMultiset pa'.1 x) ×ˢ
+              (UnorderedTree.insertionMultiset pa'.2 y)).bind
+            (fun pA' => (UnorderedTree.insertionMultiset {T} G₁).map
               fun X_T => (X_T + pA'.1, pA'.2)))]
       refine Multiset.bind_congr fun pg _ => ?_
-      have h_prod_map_id : (Prod.map (Multiset.cons T) (id : Multiset (Nonplanar α) → _) pa') =
+      have h_prod_map_id : (Prod.map (Multiset.cons T) (id : Multiset (UnorderedTree α) → _) pa') =
           (T ::ₘ pa'.1, pa'.2) := rfl
       rw [h_prod_map_id]
       show (pg.1.powerset.bind fun G₂ =>
-              ((Nonplanar.insertionMultiset pa'.1 (pg.1 - G₂)) ×ˢ
-                  (Nonplanar.insertionMultiset pa'.2 pg.2)).bind
-                (fun pA' => (Nonplanar.insertionMultiset {T} G₂).map
+              ((UnorderedTree.insertionMultiset pa'.1 (pg.1 - G₂)) ×ˢ
+                  (UnorderedTree.insertionMultiset pa'.2 pg.2)).bind
+                (fun pA' => (UnorderedTree.insertionMultiset {T} G₂).map
                   fun X_T => (X_T + pA'.1, pA'.2))) =
-            (Nonplanar.insertionMultiset (T ::ₘ pa'.1) pg.1) ×ˢ
-              (Nonplanar.insertionMultiset pa'.2 pg.2)
+            (UnorderedTree.insertionMultiset (T ::ₘ pa'.1) pg.1) ×ˢ
+              (UnorderedTree.insertionMultiset pa'.2 pg.2)
       -- Apply insertionMultiset_add_host on NIM (T ::ₘ pa'.1) pg.1.
-      rw [show (T ::ₘ pa'.1 : Multiset (Nonplanar α)) = ({T} : Multiset _) + pa'.1 from
+      rw [show (T ::ₘ pa'.1 : Multiset (UnorderedTree α)) = ({T} : Multiset _) + pa'.1 from
             (Multiset.singleton_add T pa'.1).symm,
-          Nonplanar.insertionMultiset_add_host {T} pa'.1 pg.1]
+          UnorderedTree.insertionMultiset_add_host {T} pa'.1 pg.1]
       -- RHS: (pg.1.powerset.bind (G₂ ↦ (NIM {T} G₂ ×ˢ NIM pa'.1 (pg.1-G₂)).map (·.1+·.2))) ×ˢ NIM pa'.2 pg.2
       -- Use (s.bind f) ×ˢ t = s.bind (a ↦ f a ×ˢ t).
-      rw [show ∀ s : Multiset (Multiset (Nonplanar α)),
-              ∀ tt : Multiset (Nonplanar α) → Multiset (Multiset (Nonplanar α)),
+      rw [show ∀ s : Multiset (Multiset (UnorderedTree α)),
+              ∀ tt : Multiset (UnorderedTree α) → Multiset (Multiset (UnorderedTree α)),
                 (pg.1.powerset.bind tt) ×ˢ s =
                   pg.1.powerset.bind (fun G₂ => tt G₂ ×ˢ s) from ?_]
       · refine Multiset.bind_congr fun G₂ _ => ?_
         -- Goal: ((NIM pa'.1 (pg.1-G₂)) ×ˢ NIM pa'.2 pg.2).bind (pA' ↦ NIM {T} G₂.map (X_T ↦ (X_T + pA'.1, pA'.2)))
         --     = ((NIM {T} G₂ ×ˢ NIM pa'.1 (pg.1-G₂)).map (·.1+·.2)) ×ˢ NIM pa'.2 pg.2
         -- Unfold ×ˢ everywhere.
-        show ((Nonplanar.insertionMultiset pa'.1 (pg.1 - G₂)).bind (fun Y₁ =>
-              (Nonplanar.insertionMultiset pa'.2 pg.2).map (Prod.mk Y₁))).bind
-                (fun pA' => (Nonplanar.insertionMultiset {T} G₂).map
+        show ((UnorderedTree.insertionMultiset pa'.1 (pg.1 - G₂)).bind (fun Y₁ =>
+              (UnorderedTree.insertionMultiset pa'.2 pg.2).map (Prod.mk Y₁))).bind
+                (fun pA' => (UnorderedTree.insertionMultiset {T} G₂).map
                   fun X_T => (X_T + pA'.1, pA'.2)) =
-            (Multiset.map (fun p : Multiset (Nonplanar α) × Multiset (Nonplanar α) => p.1 + p.2)
-                ((Nonplanar.insertionMultiset {T} G₂).bind (fun X_T =>
-                  (Nonplanar.insertionMultiset pa'.1 (pg.1 - G₂)).map (Prod.mk X_T)))).bind
-              (fun first => (Nonplanar.insertionMultiset pa'.2 pg.2).map (Prod.mk first))
+            (Multiset.map (fun p : Multiset (UnorderedTree α) × Multiset (UnorderedTree α) => p.1 + p.2)
+                ((UnorderedTree.insertionMultiset {T} G₂).bind (fun X_T =>
+                  (UnorderedTree.insertionMultiset pa'.1 (pg.1 - G₂)).map (Prod.mk X_T)))).bind
+              (fun first => (UnorderedTree.insertionMultiset pa'.2 pg.2).map (Prod.mk first))
         -- Reformulate LHS: bind, bind_map, bind.
         rw [Multiset.bind_assoc]
         -- Goal: NIM pa'.1 (pg.1-G₂).bind (Y₁ ↦ ((NIM pa'.2 pg.2).map (Prod.mk Y₁)).bind (pA' ↦ NIM {T} G₂.map (...)))
-        rw [show ((Nonplanar.insertionMultiset pa'.1 (pg.1 - G₂)).bind (fun Y₁ =>
-                ((Nonplanar.insertionMultiset pa'.2 pg.2).map (Prod.mk Y₁)).bind
-                  (fun pA' => (Nonplanar.insertionMultiset {T} G₂).map
+        rw [show ((UnorderedTree.insertionMultiset pa'.1 (pg.1 - G₂)).bind (fun Y₁ =>
+                ((UnorderedTree.insertionMultiset pa'.2 pg.2).map (Prod.mk Y₁)).bind
+                  (fun pA' => (UnorderedTree.insertionMultiset {T} G₂).map
                     fun X_T => (X_T + pA'.1, pA'.2)))) =
-              (Nonplanar.insertionMultiset pa'.1 (pg.1 - G₂)).bind (fun Y₁ =>
-                (Nonplanar.insertionMultiset pa'.2 pg.2).bind (fun Y₂ =>
-                  (Nonplanar.insertionMultiset {T} G₂).map
+              (UnorderedTree.insertionMultiset pa'.1 (pg.1 - G₂)).bind (fun Y₁ =>
+                (UnorderedTree.insertionMultiset pa'.2 pg.2).bind (fun Y₂ =>
+                  (UnorderedTree.insertionMultiset {T} G₂).map
                     fun X_T => (X_T + Y₁, Y₂))) from by
           refine Multiset.bind_congr fun Y₁ _ => ?_
           rw [Multiset.bind_map]]
         -- RHS: Push map p.1+p.2 through inner bind, then bind outer.
-        rw [show (Multiset.map (fun p : Multiset (Nonplanar α) × Multiset (Nonplanar α) =>
+        rw [show (Multiset.map (fun p : Multiset (UnorderedTree α) × Multiset (UnorderedTree α) =>
                   p.1 + p.2)
-                ((Nonplanar.insertionMultiset {T} G₂).bind (fun X_T =>
-                  (Nonplanar.insertionMultiset pa'.1 (pg.1 - G₂)).map (Prod.mk X_T)))).bind
-              (fun first => (Nonplanar.insertionMultiset pa'.2 pg.2).map (Prod.mk first)) =
-              ((Nonplanar.insertionMultiset {T} G₂).bind fun X_T =>
-                (Nonplanar.insertionMultiset pa'.1 (pg.1 - G₂)).bind fun Y₁ =>
-                  (Nonplanar.insertionMultiset pa'.2 pg.2).map (fun Y₂ => (X_T + Y₁, Y₂)))
+                ((UnorderedTree.insertionMultiset {T} G₂).bind (fun X_T =>
+                  (UnorderedTree.insertionMultiset pa'.1 (pg.1 - G₂)).map (Prod.mk X_T)))).bind
+              (fun first => (UnorderedTree.insertionMultiset pa'.2 pg.2).map (Prod.mk first)) =
+              ((UnorderedTree.insertionMultiset {T} G₂).bind fun X_T =>
+                (UnorderedTree.insertionMultiset pa'.1 (pg.1 - G₂)).bind fun Y₁ =>
+                  (UnorderedTree.insertionMultiset pa'.2 pg.2).map (fun Y₂ => (X_T + Y₁, Y₂)))
             from by
           rw [Multiset.map_bind, Multiset.bind_assoc]
           refine Multiset.bind_congr fun X_T _ => ?_
@@ -1396,12 +1396,12 @@ theorem insertionMultiset_antidiagonal
         -- Now LHS: NIM pa'.1.bind (Y₁ ↦ NIM pa'.2.bind (Y₂ ↦ NIM {T} G₂.map (X_T ↦ (X_T + Y₁, Y₂))))
         -- RHS: NIM {T} G₂.bind (X_T ↦ NIM pa'.1.bind (Y₁ ↦ NIM pa'.2.map (Y₂ ↦ (X_T + Y₁, Y₂))))
         -- Step a: Apply bind_map_comm to swap Y₂ and X_T inside Y₁.
-        rw [show ((Nonplanar.insertionMultiset pa'.1 (pg.1 - G₂)).bind fun Y₁ =>
-              (Nonplanar.insertionMultiset pa'.2 pg.2).bind (fun Y₂ =>
-                (Nonplanar.insertionMultiset {T} G₂).map fun X_T => (X_T + Y₁, Y₂))) =
-            ((Nonplanar.insertionMultiset pa'.1 (pg.1 - G₂)).bind fun Y₁ =>
-              (Nonplanar.insertionMultiset {T} G₂).bind (fun X_T =>
-                (Nonplanar.insertionMultiset pa'.2 pg.2).map fun Y₂ => (X_T + Y₁, Y₂)))
+        rw [show ((UnorderedTree.insertionMultiset pa'.1 (pg.1 - G₂)).bind fun Y₁ =>
+              (UnorderedTree.insertionMultiset pa'.2 pg.2).bind (fun Y₂ =>
+                (UnorderedTree.insertionMultiset {T} G₂).map fun X_T => (X_T + Y₁, Y₂))) =
+            ((UnorderedTree.insertionMultiset pa'.1 (pg.1 - G₂)).bind fun Y₁ =>
+              (UnorderedTree.insertionMultiset {T} G₂).bind (fun X_T =>
+                (UnorderedTree.insertionMultiset pa'.2 pg.2).map fun Y₂ => (X_T + Y₁, Y₂)))
             from by
           refine Multiset.bind_congr fun Y₁ _ => ?_
           rw [Multiset.bind_map_comm]]
@@ -1416,4 +1416,4 @@ theorem insertionMultiset_antidiagonal
 
 end
 
-end RoseTree.Nonplanar
+end UnorderedTree

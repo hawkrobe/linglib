@@ -1,10 +1,10 @@
-import Linglib.Core.Data.RoseTree.Nonplanar
+import Linglib.Core.Data.UnorderedTree.Basic
 import Linglib.Core.Data.RoseTree.DecEq
 import Mathlib.Data.Multiset.Bind
 import Linglib.Core.Data.RoseTree.Basic
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
 # Admissible-cut enumeration on rose trees
@@ -14,7 +14,7 @@ The combinatorics of admissible cuts, independent of the Hopf-algebra
 structures built on it in `Core/Algebra/RootedTree/Coproduct/`: the
 policy-parameterized enumeration (`cutSummandsG`), its Δ^ρ instance
 (`cutSummandsP`) and Δ^c instance (`extractC`, `cutSummandsCP`), the
-projections to `RoseTree.Nonplanar` with their `Perm`-invariance
+projections to `UnorderedTree` with their `Perm`-invariance
 (`cutSummandsN`, `cutSummandsCN`), and the single-cut count
 (`countSingleCutsRho`).
 
@@ -333,19 +333,19 @@ theorem cutListSummandsP_cons' (t : RoseTree α) (ts : List (RoseTree α)) :
     cutListSummandsP (t :: ts) =
       (augActionP t ×ˢ cutListSummandsP ts).map combineP_fn := by
   rw [cutListSummandsP_cons]; rfl
-/-! ## Projection of cut summands and descent to `Nonplanar`
+/-! ## Projection of cut summands and descent to `UnorderedTree`
 
-To descend Δ^ρ from `RoseTree` to `Nonplanar`, we need a Nonplanar-side
+To descend Δ^ρ from `RoseTree` to `UnorderedTree`, we need a UnorderedTree-side
 cut-summand multiset that is `Perm`-invariant. The strategy:
 project each tree-level cut summand through `mk` componentwise, then prove
 the resulting multiset depends on `T : RoseTree α` only through `mk T`.
 
 The proof factors through three layers:
 - **Pointwise projection** (`projSummand`, `projForest`, `projAugAction`):
-  the per-element `Nonplanar.mk` lifts.
+  the per-element `UnorderedTree.mk` lifts.
 - **Combine factoring** (`cutListSummandsP_cons_proj`): the cons case of
   `cutListSummandsP` distributes over the projection, giving a clean
-  cartesian-product recursion at the `Nonplanar` level.
+  cartesian-product recursion at the `UnorderedTree` level.
 - **Headline recursion** (`cutSummandsP_proj_perm` with its `PermList`
   companion `cutListSummandsP_proj_permList`, and the derived
   `cutListSummandsP_proj_componentwise`): structural recursion over the
@@ -356,53 +356,53 @@ The proof factors through three layers:
 
 /-- Project a tree-level cut summand to a nonplanar one. -/
 def projSummand : Multiset (RoseTree α) × RoseTree α →
-    Multiset (Nonplanar α) × Nonplanar α :=
-  fun p => (p.1.map Nonplanar.mk, Nonplanar.mk p.2)
+    Multiset (UnorderedTree α) × UnorderedTree α :=
+  fun p => (p.1.map UnorderedTree.mk, UnorderedTree.mk p.2)
 
 /-- Project a `cutListSummandsP` summand to nonplanar level, discarding
     the list-order of the remainder children. The discarded order doesn't
     affect the eventual `mk (.node a remainder)`, since `mk` is invariant
     under children-list permutation (`RoseTree.Perm.node_of_perm`). -/
 def projForest : Multiset (RoseTree α) × List (RoseTree α) →
-    Multiset (Nonplanar α) × Multiset (Nonplanar α) :=
-  fun p => (p.1.map Nonplanar.mk, Multiset.ofList (p.2.map Nonplanar.mk))
+    Multiset (UnorderedTree α) × Multiset (UnorderedTree α) :=
+  fun p => (p.1.map UnorderedTree.mk, Multiset.ofList (p.2.map UnorderedTree.mk))
 
 /-- Project an `augActionP` summand to nonplanar level (per-child decision). -/
 def projAugAction : Multiset (RoseTree α) × Option (RoseTree α) →
-    Multiset (Nonplanar α) × Option (Nonplanar α) :=
-  fun p => (p.1.map Nonplanar.mk, p.2.map Nonplanar.mk)
+    Multiset (UnorderedTree α) × Option (UnorderedTree α) :=
+  fun p => (p.1.map UnorderedTree.mk, p.2.map UnorderedTree.mk)
 
 /-- Bridge: applying `cutSummandsP_node`'s wrapper `(p.1, .node a p.2)`
     then `projSummand` factors through `projForest` followed by the
-    `Nonplanar.node a` smart constructor. -/
+    `UnorderedTree.node a` smart constructor. -/
 theorem projSummand_node_factors (a : α) (p : Multiset (RoseTree α) × List (RoseTree α)) :
     projSummand (p.1, .node a p.2) =
-      ((projForest p).1, Nonplanar.node a (projForest p).2) := by
-  show (p.1.map Nonplanar.mk, Nonplanar.mk (.node a p.2)) =
-       (p.1.map Nonplanar.mk, Nonplanar.node a (Multiset.ofList (p.2.map Nonplanar.mk)))
+      ((projForest p).1, UnorderedTree.node a (projForest p).2) := by
+  show (p.1.map UnorderedTree.mk, UnorderedTree.mk (.node a p.2)) =
+       (p.1.map UnorderedTree.mk, UnorderedTree.node a (Multiset.ofList (p.2.map UnorderedTree.mk)))
   congr 1
-  exact (Nonplanar.node_mk_tree_list a p.2).symm
+  exact (UnorderedTree.node_mk_tree_list a p.2).symm
 
 /-! ### Combine factoring through projection
 
 The cons case of `cutListSummandsP` combines a per-child decision
 (`augActionP`) with the cut-summands of the remaining children. This
-combination distributes over the `Nonplanar` projection: the "projected
+combination distributes over the `UnorderedTree` projection: the "projected
 combiner" `innerCombinerProj` operates on
 `(Forest × Option) × (Forest × Multiset)` and matches `projForest` of
 the inline tree-level combiner. The headline result is
 `cutListSummandsP_cons_proj`, which expresses the cons case of the
 projected `cutListSummandsP` as a clean cartesian product at the
-Nonplanar level. -/
+UnorderedTree level. -/
 
-/-- The Nonplanar-level combiner: given a per-child decision and the
+/-- The UnorderedTree-level combiner: given a per-child decision and the
     accumulated cuts of the remaining children, produce the merged
     (cut forest, remainder multiset) pair. Mirrors the inline lambda in
     `cutListSummandsP`'s cons case but operates on `Multiset` remainders. -/
 def innerCombinerProj :
-    (Multiset (Nonplanar α) × Option (Nonplanar α)) ×
-    (Multiset (Nonplanar α) × Multiset (Nonplanar α)) →
-    Multiset (Nonplanar α) × Multiset (Nonplanar α)
+    (Multiset (UnorderedTree α) × Option (UnorderedTree α)) ×
+    (Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) →
+    Multiset (UnorderedTree α) × Multiset (UnorderedTree α)
   | ((F, Option.none), (G, ms)) => (F + G, ms)
   | ((F, Option.some r), (G, ms)) => (F + G, r ::ₘ ms)
 
@@ -418,23 +418,24 @@ private theorem projForest_innerCombiner_apply
   obtain ⟨⟨F, dec⟩, ⟨G, list⟩⟩ := p
   cases dec with
   | none =>
-    show ((F + G).map Nonplanar.mk, Multiset.ofList (list.map Nonplanar.mk)) =
-         (F.map Nonplanar.mk + G.map Nonplanar.mk, Multiset.ofList (list.map Nonplanar.mk))
+    show ((F + G).map UnorderedTree.mk, Multiset.ofList (list.map UnorderedTree.mk)) =
+         (F.map UnorderedTree.mk + G.map UnorderedTree.mk, Multiset.ofList
+           (list.map UnorderedTree.mk))
     rw [Multiset.map_add]
   | some r =>
-    show ((F + G).map Nonplanar.mk, Multiset.ofList ((r :: list).map Nonplanar.mk)) =
-         (F.map Nonplanar.mk + G.map Nonplanar.mk,
-          Nonplanar.mk r ::ₘ Multiset.ofList (list.map Nonplanar.mk))
+    show ((F + G).map UnorderedTree.mk, Multiset.ofList ((r :: list).map UnorderedTree.mk)) =
+         (F.map UnorderedTree.mk + G.map UnorderedTree.mk,
+          UnorderedTree.mk r ::ₘ Multiset.ofList (list.map UnorderedTree.mk))
     rw [Multiset.map_add]
     rfl
 
 /-- Pointwise: `projAugAction` of `augActionP old` is determined by the
-    Nonplanar projection of the cut summands plus the equality of the
-    `Nonplanar.mk`-projection of the trees themselves (needed for the
+    UnorderedTree projection of the cut summands plus the equality of the
+    `UnorderedTree.mk`-projection of the trees themselves (needed for the
     extract-whole element of `augActionP`). -/
 private theorem augActionP_proj_eq_of_step_data
     {old new : RoseTree α}
-    (h_mk : Nonplanar.mk old = Nonplanar.mk new)
+    (h_mk : UnorderedTree.mk old = UnorderedTree.mk new)
     (h_proj : (cutSummandsP old).map projSummand =
               (cutSummandsP new).map projSummand) :
     (augActionP old).map projAugAction =
@@ -442,10 +443,10 @@ private theorem augActionP_proj_eq_of_step_data
   rw [augActionP_eq, augActionP_eq, Multiset.map_cons, Multiset.map_cons]
   congr 1
   · -- First element (extract-whole): projAugAction ({old}, none) = ({mk old}, none)
-    show (({old} : Multiset (RoseTree α)).map Nonplanar.mk,
-          (Option.none : Option (RoseTree α)).map Nonplanar.mk) =
-         (({new} : Multiset (RoseTree α)).map Nonplanar.mk,
-          (Option.none : Option (RoseTree α)).map Nonplanar.mk)
+    show (({old} : Multiset (RoseTree α)).map UnorderedTree.mk,
+          (Option.none : Option (RoseTree α)).map UnorderedTree.mk) =
+         (({new} : Multiset (RoseTree α)).map UnorderedTree.mk,
+          (Option.none : Option (RoseTree α)).map UnorderedTree.mk)
     rw [Multiset.map_singleton, Multiset.map_singleton, h_mk]
   · -- Tail: projAugAction-of-projection = (s.1, some s.2) ∘ projSummand
     rw [Multiset.map_map, Multiset.map_map]
@@ -453,7 +454,7 @@ private theorem augActionP_proj_eq_of_step_data
     -- Rewrite this composed function as (fun s => (s.1, some s.2)) ∘ projSummand
     have eq_fn : (projAugAction (α := α)) ∘
         (fun (p : Multiset (RoseTree α) × RoseTree α) => (p.1, Option.some p.2)) =
-        (fun (s : Multiset (Nonplanar α) × Nonplanar α) => (s.1, Option.some s.2)) ∘
+        (fun (s : Multiset (UnorderedTree α) × UnorderedTree α) => (s.1, Option.some s.2)) ∘
         (projSummand (α := α)) := by
       funext p
       rfl
@@ -482,7 +483,7 @@ private theorem map_prodMap_product {α β γ δ : Type*}
 /-! ### Headline factoring: cons case of projected `cutListSummandsP` -/
 
 /-- The projected `cutListSummandsP` on a cons list factors as a clean
-    cartesian product at the Nonplanar level. This is the key lemma
+    cartesian product at the UnorderedTree level. This is the key lemma
     enabling all subsequent invariance proofs. -/
 theorem cutListSummandsP_cons_proj (t : RoseTree α) (ts : List (RoseTree α)) :
     (cutListSummandsP (t :: ts)).map projForest =
@@ -533,8 +534,8 @@ private theorem cutListSummandsP_proj_tail_lift (d : RoseTree α)
     the accumulated rest) at the projected level is symmetric in the
     first two decision arguments. -/
 theorem innerCombinerProj_swap_args
-    (a b : Multiset (Nonplanar α) × Option (Nonplanar α))
-    (c : Multiset (Nonplanar α) × Multiset (Nonplanar α)) :
+    (a b : Multiset (UnorderedTree α) × Option (UnorderedTree α))
+    (c : Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) :
     innerCombinerProj (a, innerCombinerProj (b, c)) =
     innerCombinerProj (b, innerCombinerProj (a, c)) := by
   obtain ⟨Fa, da⟩ := a
@@ -559,7 +560,7 @@ theorem innerCombinerProj_swap_args
            (Fb + (Fa + Fc), rb ::ₘ ra ::ₘ mc)
       have hF : Fa + (Fb + Fc) = Fb + (Fa + Fc) := by
         rw [← add_assoc, ← add_assoc, add_comm Fa Fb]
-      have hM : (ra ::ₘ rb ::ₘ mc : Multiset (Nonplanar α)) = rb ::ₘ ra ::ₘ mc :=
+      have hM : (ra ::ₘ rb ::ₘ mc : Multiset (UnorderedTree α)) = rb ::ₘ ra ::ₘ mc :=
         Multiset.cons_swap ra rb mc
       rw [hF, hM]
 
@@ -567,8 +568,8 @@ theorem innerCombinerProj_swap_args
     is symmetric in the first two factors. The substantive content of
     `cutListSummandsP_proj_perm`'s `swap` case. -/
 theorem swap_double_combinerProj
-    (A B : Multiset (Multiset (Nonplanar α) × Option (Nonplanar α)))
-    (C : Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α))) :
+    (A B : Multiset (Multiset (UnorderedTree α) × Option (UnorderedTree α)))
+    (C : Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α))) :
     (A ×ˢ (B ×ˢ C).map innerCombinerProj).map innerCombinerProj =
     (B ×ˢ (A ×ˢ C).map innerCombinerProj).map innerCombinerProj := by
   -- Convert both sides to triple-bind form, swap outer two binds via
@@ -626,7 +627,7 @@ theorem cutListSummandsP_proj_perm
 /-! ### Headline: `Perm` + `PermList` recursion
 
 Structural recursion over the mutual `Perm`/`PermList`. The `node` case lifts
-the companion's list-level equality through the `Nonplanar.node a` wrapper; the
+the companion's list-level equality through the `UnorderedTree.node a` wrapper; the
 `PermList.cons` case changes the head child then the tail; the `PermList.swap`
 case reorders identical siblings (`cutListSummandsP_proj_perm`). -/
 
@@ -643,8 +644,8 @@ theorem cutSummandsP_proj_perm :
     have eq_fn :
         (projSummand (α := α)) ∘
           (fun (p : Multiset (RoseTree α) × List (RoseTree α)) => (p.1, .node a p.2)) =
-        (fun (pf : Multiset (Nonplanar α) × Multiset (Nonplanar α)) =>
-          (pf.1, Nonplanar.node a pf.2)) ∘ (projForest (α := α)) := by
+        (fun (pf : Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) =>
+          (pf.1, UnorderedTree.node a pf.2)) ∘ (projForest (α := α)) := by
       funext p
       exact projSummand_node_factors a p
     rw [eq_fn, ← Multiset.map_map, ← Multiset.map_map, hL]
@@ -658,7 +659,7 @@ private theorem cutListSummandsP_proj_permList :
   | _, _, @RoseTree.PermList.cons _ c d cs' ds' hcd hs => by
     have h_aug : (augActionP c).map projAugAction =
                  (augActionP d).map projAugAction :=
-      augActionP_proj_eq_of_step_data (Nonplanar.mk_eq_mk_iff.mpr hcd)
+      augActionP_proj_eq_of_step_data (UnorderedTree.mk_eq_mk_iff.mpr hcd)
         (cutSummandsP_proj_perm hcd)
     have step1 : (cutListSummandsP (c :: cs')).map projForest =
                  (cutListSummandsP (d :: cs')).map projForest :=
@@ -681,27 +682,27 @@ theorem cutListSummandsP_proj_componentwise
       (cutListSummandsP ds).map projForest :=
   cutListSummandsP_proj_permList (RoseTree.PermList.of_forall₂ h)
 
-/-! ### Δ^ρ on Nonplanar via descent
+/-! ### Δ^ρ on UnorderedTree via descent
 
 The `cutSummandsP_proj_perm` invariance lifts `cutSummandsP`
-through `Nonplanar.lift`, giving a well-defined `cutSummandsN`. The
+through `UnorderedTree.lift`, giving a well-defined `cutSummandsN`. The
 tree-level coproduct `comulTreeN` then extends multiplicatively to a
 forest-level monoid hom and finally to the algebra hom `comulAlgHomN`. -/
 
-/-- The **Nonplanar cut-summand multiset**, defined via `Nonplanar.lift`
+/-- The **UnorderedTree cut-summand multiset**, defined via `UnorderedTree.lift`
     using the `cutSummandsP_proj_perm` invariance. -/
 noncomputable def cutSummandsN :
-    Nonplanar α → Multiset (Multiset (Nonplanar α) × Nonplanar α) :=
-  Nonplanar.lift (fun T => (cutSummandsP T).map projSummand)
+    UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α) :=
+  UnorderedTree.lift (fun T => (cutSummandsP T).map projSummand)
     (fun _ _ h => cutSummandsP_proj_perm h)
 
 @[simp] theorem cutSummandsN_mk (T : RoseTree α) :
-    cutSummandsN (Nonplanar.mk T) = (cutSummandsP T).map projSummand := rfl
+    cutSummandsN (UnorderedTree.mk T) = (cutSummandsP T).map projSummand := rfl
 
 /-- The cut summands of a leaf: only the empty cut `(0, leaf a)`. -/
 theorem cutSummandsN_leaf (a : α) :
-    cutSummandsN (Nonplanar.leaf a : Nonplanar α) =
-      ({((0 : Multiset (Nonplanar α)), Nonplanar.leaf a)} : Multiset _) := by
+    cutSummandsN (UnorderedTree.leaf a : UnorderedTree α) =
+      ({((0 : Multiset (UnorderedTree α)), UnorderedTree.leaf a)} : Multiset _) := by
   show (cutSummandsP (RoseTree.leaf a)).map (projSummand (α := α)) = _
   rw [show RoseTree.leaf a = RoseTree.node a [] from rfl, cutSummandsP_node,
       cutListSummandsP_nil, Multiset.map_singleton, Multiset.map_singleton]
@@ -710,35 +711,35 @@ theorem cutSummandsN_leaf (a : α) :
 /-- Number of Δ^ρ cut summands of `T` whose cut forest is `{T₁}` and whose
     remainder tree is `T₂` — the Δ^ρ analog of the count `c^T_{T₁,T₂}` of
     [marcolli-chomsky-berwick-2025]. -/
-noncomputable def countSingleCutsRho [DecidableEq α] (T T₁ T₂ : Nonplanar α) : ℕ :=
-  (cutSummandsN T).countP fun p => p.1 = ({T₁} : Multiset (Nonplanar α)) ∧ p.2 = T₂
+noncomputable def countSingleCutsRho [DecidableEq α] (T T₁ T₂ : UnorderedTree α) : ℕ :=
+  (cutSummandsN T).countP fun p => p.1 = ({T₁} : Multiset (UnorderedTree α)) ∧ p.2 = T₂
 
 variable {β : Type*}
 
 /-! ### `augActionN` and `cutForestSummandsN` substrate
 
-`cutForestSummandsN F` is the Nonplanar-level multiset of
+`cutForestSummandsN F` is the UnorderedTree-level multiset of
 `(cut_forest, remainder_forest)` pairs ranging over per-tree decisions
 on the forest `F`. Each per-tree decision (`augActionN T`) is either
 "extract `T` whole" (pair `({T}, none)`) or "recurse with a cut summand
 of `T`" (pair `(s.1, some s.2)` for `s ∈ cutSummandsN T`).
 
-Defined recursively at the Nonplanar level via `Multiset.foldr`, with
+Defined recursively at the UnorderedTree level via `Multiset.foldr`, with
 the `LeftCommutative` obligation discharged by `swap_double_combinerProj`
 (the per-tree-decision swap symmetry, established for the tree-level
 projection in §3 above and reused here verbatim). -/
 
-/-- Per-tree decision multiset at the Nonplanar level: extract this tree
+/-- Per-tree decision multiset at the UnorderedTree level: extract this tree
     whole (`({T}, none)`), or recurse into a cut summand. -/
-noncomputable def augActionN (T : Nonplanar α) :
-    Multiset (Multiset (Nonplanar α) × Option (Nonplanar α)) :=
-  (({T} : Multiset (Nonplanar α)), Option.none) ::ₘ
+noncomputable def augActionN (T : UnorderedTree α) :
+    Multiset (Multiset (UnorderedTree α) × Option (UnorderedTree α)) :=
+  (({T} : Multiset (UnorderedTree α)), Option.none) ::ₘ
     (cutSummandsN T).map (fun s => (s.1, Option.some s.2))
 
 /-- Bridge to the tree-level `augActionP`: at a tree-level lift, `augActionN`
     agrees with `(augActionP T).map projAugAction`. -/
 theorem augActionN_mk (T : RoseTree α) :
-    augActionN (Nonplanar.mk T) = (augActionP T).map projAugAction := by
+    augActionN (UnorderedTree.mk T) = (augActionP T).map projAugAction := by
   unfold augActionN
   simp only [cutSummandsN_mk, augActionP_eq, Multiset.map_cons, Multiset.map_map]
   rfl
@@ -746,9 +747,9 @@ theorem augActionN_mk (T : RoseTree α) :
 /-- Multiset.foldr combiner for `cutForestSummandsN`: combine a per-tree
     decision with the accumulated cuts of the remaining trees via the
     cartesian product and `innerCombinerProj`. -/
-private noncomputable def cutForestCombinerN (T : Nonplanar α)
-    (acc : Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α))) :
-    Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α)) :=
+private noncomputable def cutForestCombinerN (T : UnorderedTree α)
+    (acc : Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α))) :
+    Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) :=
   (augActionN T ×ˢ acc).map innerCombinerProj
 
 /-- The combiner is left-commutative — discharged by `swap_double_combinerProj`,
@@ -757,20 +758,20 @@ private instance : LeftCommutative (cutForestCombinerN (α := α)) where
   left_comm _ _ _ := swap_double_combinerProj _ _ _
 
 /-- The **forest cut summand multiset**: every per-tree decision tuple on
-    `F : Multiset (Nonplanar α)` produces a pair `(cut_forest, remainder_forest)`,
+    `F : Multiset (UnorderedTree α)` produces a pair `(cut_forest, remainder_forest)`,
     and `cutForestSummandsN F` enumerates them all (as a multiset). The
-    public Nonplanar-level analog of `(cutListSummandsP ps).map projForest`,
+    public UnorderedTree-level analog of `(cutListSummandsP ps).map projForest`,
     independent of the tree-level list representation. -/
-noncomputable def cutForestSummandsN (F : Multiset (Nonplanar α)) :
-    Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α)) :=
+noncomputable def cutForestSummandsN (F : Multiset (UnorderedTree α)) :
+    Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) :=
   Multiset.foldr cutForestCombinerN
-    ({((0 : Multiset (Nonplanar α)), (0 : Multiset (Nonplanar α)))} : Multiset _) F
+    ({((0 : Multiset (UnorderedTree α)), (0 : Multiset (UnorderedTree α)))} : Multiset _) F
 
 @[simp] theorem cutForestSummandsN_zero :
-    cutForestSummandsN (0 : Multiset (Nonplanar α)) =
-      ({((0 : Multiset (Nonplanar α)), (0 : Multiset (Nonplanar α)))} : Multiset _) := rfl
+    cutForestSummandsN (0 : Multiset (UnorderedTree α)) =
+      ({((0 : Multiset (UnorderedTree α)), (0 : Multiset (UnorderedTree α)))} : Multiset _) := rfl
 
-@[simp] theorem cutForestSummandsN_cons (T : Nonplanar α) (F : Multiset (Nonplanar α)) :
+@[simp] theorem cutForestSummandsN_cons (T : UnorderedTree α) (F : Multiset (UnorderedTree α)) :
     cutForestSummandsN (T ::ₘ F) =
       (augActionN T ×ˢ cutForestSummandsN F).map innerCombinerProj := by
   show Multiset.foldr cutForestCombinerN _ (T ::ₘ F) = _
@@ -781,50 +782,50 @@ noncomputable def cutForestSummandsN (F : Multiset (Nonplanar α)) :
 
 The tree-level substrate `cutListSummandsP` (defined on `List (RoseTree α)`)
 evaluates `cutForestSummandsN` on a tree-level list rep and characterizes
-cuts of a Nonplanar node (`cutSummandsN_node`). -/
+cuts of a UnorderedTree node (`cutSummandsN_node`). -/
 
 /-- `cutForestSummandsN` evaluated on a tree-level list rep agrees with the
     tree-level `cutListSummandsP` projected through `projForest`. By
     induction on `ps` using `cutListSummandsP_cons_proj` and
     `augActionN_mk`. -/
 theorem cutForestSummandsN_via_planar_list (ps : List (RoseTree α)) :
-    cutForestSummandsN (Multiset.ofList (ps.map Nonplanar.mk)) =
+    cutForestSummandsN (Multiset.ofList (ps.map UnorderedTree.mk)) =
       (cutListSummandsP ps).map projForest := by
   induction ps with
   | nil =>
-    show cutForestSummandsN (0 : Multiset (Nonplanar α)) = _
+    show cutForestSummandsN (0 : Multiset (UnorderedTree α)) = _
     rw [cutForestSummandsN_zero, cutListSummandsP_nil, Multiset.map_singleton]
     rfl
   | cons p ps' ih =>
-    show cutForestSummandsN (Nonplanar.mk p ::ₘ Multiset.ofList (ps'.map Nonplanar.mk)) = _
+    show cutForestSummandsN (UnorderedTree.mk p ::ₘ Multiset.ofList (ps'.map UnorderedTree.mk)) = _
     rw [cutForestSummandsN_cons, ih, augActionN_mk]
     exact (cutListSummandsP_cons_proj p ps').symm
 
 /-- Cuts of a node decompose via the tree-level `cutListSummandsP` projected
     through `projForest` — the tree-level-list-rep form of `cutSummandsN_node`.
-    The map `(p ↦ (p.1, Nonplanar.node a p.2))` re-grafts the remainder
+    The map `(p ↦ (p.1, UnorderedTree.node a p.2))` re-grafts the remainder
     children onto a fresh root with label `a`. -/
 theorem cutSummandsN_node_planar_list (a : α) (ps : List (RoseTree α)) :
-    cutSummandsN (Nonplanar.node a (Multiset.ofList (ps.map Nonplanar.mk))) =
+    cutSummandsN (UnorderedTree.node a (Multiset.ofList (ps.map UnorderedTree.mk))) =
       ((cutListSummandsP ps).map projForest).map
-        (fun pf => (pf.1, Nonplanar.node a pf.2)) := by
-  rw [Nonplanar.node_mk_tree_list]
+        (fun pf => (pf.1, UnorderedTree.node a pf.2)) := by
+  rw [UnorderedTree.node_mk_tree_list]
   show (cutSummandsP (RoseTree.node a ps)).map (projSummand (α := α)) = _
   rw [cutSummandsP_node, Multiset.map_map, Multiset.map_map]
   apply Multiset.map_congr rfl
   intro p _
-  show (p.1.map Nonplanar.mk, Nonplanar.mk (.node a p.2)) =
-       ((projForest p).1, Nonplanar.node a (projForest p).2)
-  rw [← Nonplanar.node_mk_tree_list]
+  show (p.1.map UnorderedTree.mk, UnorderedTree.mk (.node a p.2)) =
+       ((projForest p).1, UnorderedTree.node a (projForest p).2)
+  rw [← UnorderedTree.node_mk_tree_list]
   rfl
 
-/-- Cuts of `Nonplanar.node a F` decompose along the per-tree decisions
+/-- Cuts of `UnorderedTree.node a F` decompose along the per-tree decisions
     of `F`: each pair `(cf, rem) ∈ cutForestSummandsN F` gives a cut
-    summand `(cf, Nonplanar.node a rem)`. The Nonplanar-level form. -/
-@[simp] theorem cutSummandsN_node (a : α) (F : Multiset (Nonplanar α)) :
-    cutSummandsN (Nonplanar.node a F) =
-      (cutForestSummandsN F).map (fun pf => (pf.1, Nonplanar.node a pf.2)) := by
-  induction F using Nonplanar.forest_inductionOn with
+    summand `(cf, UnorderedTree.node a rem)`. The UnorderedTree-level form. -/
+@[simp] theorem cutSummandsN_node (a : α) (F : Multiset (UnorderedTree α)) :
+    cutSummandsN (UnorderedTree.node a F) =
+      (cutForestSummandsN F).map (fun pf => (pf.1, UnorderedTree.node a pf.2)) := by
+  induction F using UnorderedTree.forest_inductionOn with
   | h ps => rw [cutSummandsN_node_planar_list, ← cutForestSummandsN_via_planar_list]
 
 /-! ### `traceLeaf` — placeholder for a cut subtree -/
@@ -923,7 +924,7 @@ Mirrors `Coproduct/Pruning.lean`'s descent of `cutSummandsP`,
 but for the generic `cutSummandsG` (which uses a `List`-shaped per-cut
 remainder rather than `Option`). The descent applies whenever the
 `extract` policy is invariant under `RoseTree.Perm` modulo
-`Nonplanar.mk`. For Δ^c (`extractC (τ ∘ Nonplanar.mk)`) this follows
+`UnorderedTree.mk`. For Δ^c (`extractC (τ ∘ UnorderedTree.mk)`) this follows
 from `Perm.value_eq`. -/
 
 /-! ### Pointwise projection for the G-form -/
@@ -931,35 +932,35 @@ from `Perm.value_eq`. -/
 /-- Project a `cutListSummandsG` summand to nonplanar level, discarding
     the list-order of the remainder by sending to `Multiset`. -/
 private def projForestG : Multiset (RoseTree α) × List (RoseTree α) →
-    Multiset (Nonplanar α) × Multiset (Nonplanar α) :=
-  fun p => (p.1.map Nonplanar.mk, Multiset.ofList (p.2.map Nonplanar.mk))
+    Multiset (UnorderedTree α) × Multiset (UnorderedTree α) :=
+  fun p => (p.1.map UnorderedTree.mk, Multiset.ofList (p.2.map UnorderedTree.mk))
 
 /-! ### Bridge: `projSummand` factors through `projForestG` + `node` -/
 
 /-- Applying the `cutSummandsG_node` wrapper `(p.1, .node a p.2)` then
     `projSummand` factors through `projForestG` followed by the
-    `Nonplanar.node a` smart constructor. -/
+    `UnorderedTree.node a` smart constructor. -/
 private theorem projSummandG_node_factors (a : α)
     (p : Multiset (RoseTree α) × List (RoseTree α)) :
     projSummand (α := α) (p.1, .node a p.2) =
-      ((projForestG p).1, Nonplanar.node a (projForestG p).2) := by
-  show (p.1.map Nonplanar.mk, Nonplanar.mk (.node a p.2)) =
-       (p.1.map Nonplanar.mk,
-        Nonplanar.node a (Multiset.ofList (p.2.map Nonplanar.mk)))
+      ((projForestG p).1, UnorderedTree.node a (projForestG p).2) := by
+  show (p.1.map UnorderedTree.mk, UnorderedTree.mk (.node a p.2)) =
+       (p.1.map UnorderedTree.mk,
+        UnorderedTree.node a (Multiset.ofList (p.2.map UnorderedTree.mk)))
   congr 1
-  exact (Nonplanar.node_mk_tree_list a p.2).symm
+  exact (UnorderedTree.node_mk_tree_list a p.2).symm
 
 /-! ### Combiner factoring
 
 The cons case of `cutListSummandsG` adds the cut forest and concatenates
-the remainder lists. At the Nonplanar level (via `projForestG`), the
+the remainder lists. At the UnorderedTree level (via `projForestG`), the
 remainder concatenation becomes multiset addition. -/
 
-/-- The Nonplanar-level combiner: clean addition on both components. -/
+/-- The UnorderedTree-level combiner: clean addition on both components. -/
 def combinerProjG :
-    (Multiset (Nonplanar α) × Multiset (Nonplanar α)) ×
-    (Multiset (Nonplanar α) × Multiset (Nonplanar α)) →
-    Multiset (Nonplanar α) × Multiset (Nonplanar α)
+    (Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) ×
+    (Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) →
+    Multiset (UnorderedTree α) × Multiset (UnorderedTree α)
   | ((F1, m1), (F2, m2)) => (F1 + F2, m1 + m2)
 
 /-- Pointwise: `projForestG` of an applied tree-level combiner equals
@@ -970,14 +971,14 @@ private theorem projForestG_combine_apply
     projForestG (p.1.1 + p.2.1, p.1.2 ++ p.2.2) =
       combinerProjG (projForestG p.1, projForestG p.2) := by
   obtain ⟨⟨F1, l1⟩, ⟨F2, l2⟩⟩ := p
-  show ((F1 + F2).map Nonplanar.mk,
-        Multiset.ofList ((l1 ++ l2).map Nonplanar.mk)) =
-       (F1.map Nonplanar.mk + F2.map Nonplanar.mk,
-        Multiset.ofList (l1.map Nonplanar.mk) +
-        Multiset.ofList (l2.map Nonplanar.mk))
+  show ((F1 + F2).map UnorderedTree.mk,
+        Multiset.ofList ((l1 ++ l2).map UnorderedTree.mk)) =
+       (F1.map UnorderedTree.mk + F2.map UnorderedTree.mk,
+        Multiset.ofList (l1.map UnorderedTree.mk) +
+        Multiset.ofList (l2.map UnorderedTree.mk))
   rw [Multiset.map_add]
   congr 1
-  show Multiset.ofList ((l1 ++ l2).map Nonplanar.mk) = _
+  show Multiset.ofList ((l1 ++ l2).map UnorderedTree.mk) = _
   rw [List.map_append]
   rfl
 
@@ -997,7 +998,7 @@ theorem map_prodMap_product_G {α' β' γ δ : Type*}
 /-! ### Headline factoring: cons case of projected `cutListSummandsG` -/
 
 /-- The projected `cutListSummandsG` on a cons list factors as a clean
-    cartesian product at the Nonplanar level via `combinerProjG`. -/
+    cartesian product at the UnorderedTree level via `combinerProjG`. -/
 private theorem cutListSummandsG_cons_proj
     (extract : RoseTree α → Option (List (RoseTree α)))
     (t : RoseTree α) (ts : List (RoseTree α)) :
@@ -1013,24 +1014,24 @@ private theorem cutListSummandsG_cons_proj
 /-! ### Extract-policy invariance
 
 The hypothesis on the `extract` policy: its return value, projected
-component-wise through `Nonplanar.mk`, is the same on `Perm`-equal
-inputs. For Δ^c (`extractC (τ ∘ Nonplanar.mk)`) this holds because the
+component-wise through `UnorderedTree.mk`, is the same on `Perm`-equal
+inputs. For Δ^c (`extractC (τ ∘ UnorderedTree.mk)`) this holds because the
 root label and the τ value are both `Perm`-invariant. -/
 
-/-- An extract policy is **`Nonplanar.mk`-invariant** if its return
-    value, projected componentwise through `Nonplanar.mk`, depends on
-    its input only through `Nonplanar.mk`. -/
+/-- An extract policy is **`UnorderedTree.mk`-invariant** if its return
+    value, projected componentwise through `UnorderedTree.mk`, depends on
+    its input only through `UnorderedTree.mk`. -/
 def ExtractInvariant (extract : RoseTree α → Option (List (RoseTree α))) : Prop :=
-  ∀ t s : RoseTree α, Nonplanar.mk t = Nonplanar.mk s →
-    (extract t).map (List.map (Nonplanar.mk (α := α))) =
-      (extract s).map (List.map (Nonplanar.mk (α := α)))
+  ∀ t s : RoseTree α, UnorderedTree.mk t = UnorderedTree.mk s →
+    (extract t).map (List.map (UnorderedTree.mk (α := α))) =
+      (extract s).map (List.map (UnorderedTree.mk (α := α)))
 
 /-- `augActionG`-projection invariance under the descent hypothesis. -/
 private theorem augActionG_proj_eq_of_step_data
     {extract : RoseTree α → Option (List (RoseTree α))}
     (hExt : ExtractInvariant extract)
     {old new : RoseTree α}
-    (h_mk : Nonplanar.mk old = Nonplanar.mk new)
+    (h_mk : UnorderedTree.mk old = UnorderedTree.mk new)
     (h_proj : (cutSummandsG extract old).map projSummand =
               (cutSummandsG extract new).map projSummand) :
     (augActionG extract old).map projForestG =
@@ -1082,19 +1083,19 @@ private theorem augActionG_proj_eq_of_step_data
              Multiset.map projForestG
                 ({(({new} : Multiset (RoseTree α)), rNew)} : Multiset _)
         rw [Multiset.map_singleton, Multiset.map_singleton]
-        show ({(({old} : Multiset (RoseTree α)).map Nonplanar.mk,
-                Multiset.ofList (rOld.map Nonplanar.mk))} :
-              Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α))) =
-             {(({new} : Multiset (RoseTree α)).map Nonplanar.mk,
-                Multiset.ofList (rNew.map Nonplanar.mk))}
+        show ({(({old} : Multiset (RoseTree α)).map UnorderedTree.mk,
+                Multiset.ofList (rOld.map UnorderedTree.mk))} :
+              Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α))) =
+             {(({new} : Multiset (RoseTree α)).map UnorderedTree.mk,
+                Multiset.ofList (rNew.map UnorderedTree.mk))}
         rw [Multiset.map_singleton, Multiset.map_singleton, h_mk, hExtEq]
   · -- Inherited branch: projForestG of (p.1, [p.2]) = ((projSummand p).1, ↑[(projSummand p).2])
     rw [Multiset.map_map, Multiset.map_map]
     have eq_fn :
         (projForestG (α := α)) ∘
           (fun (p : Multiset (RoseTree α) × RoseTree α) => (p.1, [p.2])) =
-        (fun (s : Multiset (Nonplanar α) × Nonplanar α) =>
-          (s.1, (Multiset.ofList [s.2] : Multiset (Nonplanar α)))) ∘
+        (fun (s : Multiset (UnorderedTree α) × UnorderedTree α) =>
+          (s.1, (Multiset.ofList [s.2] : Multiset (UnorderedTree α)))) ∘
         (projSummand (α := α)) := by
       funext p
       rfl
@@ -1138,10 +1139,10 @@ private theorem cutListSummandsG_proj_tail_lift
 /-! ### Swap symmetry for `combinerProjG` -/
 
 /-- Triple-combiner symmetry: combining three projected pieces at the
-    Nonplanar level is symmetric in the first two factors. -/
+    UnorderedTree level is symmetric in the first two factors. -/
 theorem combinerProjG_swap_args
-    (a b : Multiset (Nonplanar α) × Multiset (Nonplanar α))
-    (c : Multiset (Nonplanar α) × Multiset (Nonplanar α)) :
+    (a b : Multiset (UnorderedTree α) × Multiset (UnorderedTree α))
+    (c : Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) :
     combinerProjG (a, combinerProjG (b, c)) =
     combinerProjG (b, combinerProjG (a, c)) := by
   obtain ⟨Fa, ma⟩ := a
@@ -1155,8 +1156,8 @@ theorem combinerProjG_swap_args
     symmetric in the first two factors. The substantive content of
     `cutListSummandsG_proj_perm`'s `swap` case. -/
 theorem swap_double_combinerProjG
-    (A B : Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α)))
-    (C : Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α))) :
+    (A B : Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α)))
+    (C : Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α))) :
     (A ×ˢ (B ×ˢ C).map combinerProjG).map combinerProjG =
     (B ×ˢ (A ×ˢ C).map combinerProjG).map combinerProjG := by
   have lhs :
@@ -1211,7 +1212,7 @@ private theorem cutListSummandsG_proj_perm
 /-! ### Headline: `Perm` + `PermList` recursion
 
 Structural recursion over the mutual `Perm`/`PermList`. The `node` case lifts
-the companion's list-level equality through the `Nonplanar.node a` wrapper; the
+the companion's list-level equality through the `UnorderedTree.node a` wrapper; the
 `PermList.cons` case changes the head child (via `cutSummandsG_proj_perm` and
 `augActionG_proj_eq_of_step_data`) then the tail; the `PermList.swap` case is
 the identical-siblings reorder (`cutListSummandsG_proj_perm`). -/
@@ -1232,8 +1233,8 @@ theorem cutSummandsG_proj_perm
     have eq_fn :
         (projSummand (α := α)) ∘
           (fun (p : Multiset (RoseTree α) × List (RoseTree α)) => (p.1, .node a p.2)) =
-        (fun (pf : Multiset (Nonplanar α) × Multiset (Nonplanar α)) =>
-          (pf.1, Nonplanar.node a pf.2)) ∘ (projForestG (α := α)) := by
+        (fun (pf : Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) =>
+          (pf.1, UnorderedTree.node a pf.2)) ∘ (projForestG (α := α)) := by
       funext p
       exact projSummandG_node_factors a p
     rw [eq_fn, ← Multiset.map_map, ← Multiset.map_map, hL]
@@ -1249,7 +1250,7 @@ private theorem cutListSummandsG_proj_permList
         (cutListSummandsG extract ds).map projForestG
   | _, _, .nil => rfl
   | _, _, @RoseTree.PermList.cons _ c d cs' ds' hcd hs => by
-    have h_mk : Nonplanar.mk c = Nonplanar.mk d := Nonplanar.mk_eq_mk_iff.mpr hcd
+    have h_mk : UnorderedTree.mk c = UnorderedTree.mk d := UnorderedTree.mk_eq_mk_iff.mpr hcd
     have h_aug : (augActionG extract c).map projForestG =
                  (augActionG extract d).map projForestG :=
       augActionG_proj_eq_of_step_data hExt h_mk (cutSummandsG_proj_perm hExt hcd)
@@ -1277,35 +1278,35 @@ generic coproduct expands as a single sum over these
 /-- All cut summands of a tree as (crown, trunk-forest) pairs: the full
     cut `({T}, 0)` plus each summand of `cuts T` with a singleton trunk. -/
 noncomputable def treeCutsG
-    (cuts : Nonplanar α → Multiset (Multiset (Nonplanar α) × Nonplanar α))
-    (T : Nonplanar α) :
-    Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α)) :=
+    (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
+    (T : UnorderedTree α) :
+    Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) :=
   ({T}, 0) ::ₘ (cuts T).map (fun p => (p.1, {p.2}))
 
 /-- Convolution-of-cuts is left-commutative (it is the symmetric
     `combinerProjG`); needed for `Multiset.foldr`. -/
 instance instLeftCommConvCut : LeftCommutative
-    (fun (s acc : Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α))) =>
+    (fun (s acc : Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α))) =>
       (s ×ˢ acc).map combinerProjG) :=
   ⟨fun a b c => swap_double_combinerProjG a b c⟩
 
 /-- Forest-level cut enumeration: `combinerProjG`-convolution of
     `treeCutsG` over the component trees. -/
 noncomputable def forestCutsG
-    (cuts : Nonplanar α → Multiset (Multiset (Nonplanar α) × Nonplanar α))
-    (F : Multiset (Nonplanar α)) :
-    Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α)) :=
+    (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
+    (F : Multiset (UnorderedTree α)) :
+    Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) :=
   (F.map (treeCutsG cuts)).foldr
     (fun s acc => (s ×ˢ acc).map combinerProjG) {(0, 0)}
 
 theorem forestCutsG_zero
-    (cuts : Nonplanar α → Multiset (Multiset (Nonplanar α) × Nonplanar α)) :
-    forestCutsG cuts (0 : Multiset (Nonplanar α)) = {(0, 0)} := by
+    (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α)) :
+    forestCutsG cuts (0 : Multiset (UnorderedTree α)) = {(0, 0)} := by
   unfold forestCutsG; simp
 
 theorem forestCutsG_cons
-    (cuts : Nonplanar α → Multiset (Multiset (Nonplanar α) × Nonplanar α))
-    (T : Nonplanar α) (F : Multiset (Nonplanar α)) :
+    (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
+    (T : UnorderedTree α) (F : Multiset (UnorderedTree α)) :
     forestCutsG cuts (T ::ₘ F) =
       (treeCutsG cuts T ×ˢ forestCutsG cuts F).map combinerProjG := by
   unfold forestCutsG
@@ -1324,10 +1325,10 @@ private theorem map_map_product_left {α' β' γ δ : Type*}
 /-- The Option-encoded per-tree decisions `augActionN` map onto the
     forest-encoded `treeCutsG cutSummandsN` (`none` ↦ empty trunk,
     `some` ↦ singleton trunk). -/
-private theorem treeCutsG_cutSummandsN (T : Nonplanar α) :
+private theorem treeCutsG_cutSummandsN (T : UnorderedTree α) :
     treeCutsG cutSummandsN T =
       (augActionN T).map
-        (fun d => (d.1, d.2.elim 0 (fun r => ({r} : Multiset (Nonplanar α))))) := by
+        (fun d => (d.1, d.2.elim 0 (fun r => ({r} : Multiset (UnorderedTree α))))) := by
   unfold treeCutsG augActionN
   simp only [Multiset.map_cons, Multiset.map_map]
   rfl
@@ -1337,7 +1338,7 @@ private theorem treeCutsG_cutSummandsN (T : Nonplanar α) :
     `treeCutsG cutSummandsN` (forest-encoded) enumerate the same
     per-tree decisions, and `innerCombinerProj` matches `combinerProjG`
     across the encoding. -/
-theorem cutForestSummandsN_eq_forestCutsG (F : Multiset (Nonplanar α)) :
+theorem cutForestSummandsN_eq_forestCutsG (F : Multiset (UnorderedTree α)) :
     cutForestSummandsN F = forestCutsG cutSummandsN F := by
   induction F using Multiset.induction with
   | empty => rw [cutForestSummandsN_zero, forestCutsG_zero]
@@ -1353,7 +1354,7 @@ theorem cutForestSummandsN_eq_forestCutsG (F : Multiset (Nonplanar α)) :
 
 /-! ### Trace specialization
 
-The Δ^c policy `extractC (τ ∘ Nonplanar.mk)` is `ExtractInvariant`:
+The Δ^c policy `extractC (τ ∘ UnorderedTree.mk)` is `ExtractInvariant`:
 - For `Sum.inl _`-rooted inputs, `extractC` returns `some [traceLeaf (τ (mk t))]`.
 - For `Sum.inr _`-rooted inputs, `extractC` returns `none`.
 
@@ -1361,12 +1362,12 @@ Both cases are determined by the root label and the τ value, both of
 which are `Perm`-invariant. -/
 
 /-- The Δ^c extract policy is `ExtractInvariant`. -/
-theorem extractC_mkComp_invariant (τ : Nonplanar (α ⊕ β) → β) :
-    ExtractInvariant (extractC (τ ∘ Nonplanar.mk)) := by
+theorem extractC_mkComp_invariant (τ : UnorderedTree (α ⊕ β) → β) :
+    ExtractInvariant (extractC (τ ∘ UnorderedTree.mk)) := by
   intro t s hmk
   -- Root labels match (perm-invariant), so the extractC branches match.
   have hlabel : t.value = s.value := by
-    have heq : RoseTree.Perm t s := Nonplanar.mk_eq_mk_iff.mp hmk
+    have heq : RoseTree.Perm t s := UnorderedTree.mk_eq_mk_iff.mp hmk
     exact RoseTree.Perm.value_eq heq
   -- Destructure both trees as nodes; rewrite root labels via hlabel.
   obtain ⟨at_, cs_t⟩ := t
@@ -1376,43 +1377,43 @@ theorem extractC_mkComp_invariant (τ : Nonplanar (α ⊕ β) → β) :
   -- Now both have root label at_. Case-split on at_.
   cases at_ with
   | inl a =>
-    show (extractC (τ ∘ Nonplanar.mk) (RoseTree.node (Sum.inl a) cs_t)).map _ =
-         (extractC (τ ∘ Nonplanar.mk) (RoseTree.node (Sum.inl a) cs_s)).map _
+    show (extractC (τ ∘ UnorderedTree.mk) (RoseTree.node (Sum.inl a) cs_t)).map _ =
+         (extractC (τ ∘ UnorderedTree.mk) (RoseTree.node (Sum.inl a) cs_s)).map _
     simp only [extractC_inl, Option.map_some]
     -- Goal: some [mk (traceLeaf (τ (mk t)))] = some [mk (traceLeaf (τ (mk s)))]
     -- Reduces to: τ (mk t) = τ (mk s), which is congrArg τ hmk.
-    have : (τ ∘ Nonplanar.mk) (RoseTree.node (Sum.inl a) cs_t) =
-           (τ ∘ Nonplanar.mk) (RoseTree.node (Sum.inl a) cs_s) := by
-      show τ (Nonplanar.mk _) = τ (Nonplanar.mk _)
+    have : (τ ∘ UnorderedTree.mk) (RoseTree.node (Sum.inl a) cs_t) =
+           (τ ∘ UnorderedTree.mk) (RoseTree.node (Sum.inl a) cs_s) := by
+      show τ (UnorderedTree.mk _) = τ (UnorderedTree.mk _)
       exact congrArg τ hmk
     rw [this]
   | inr b =>
-    show (extractC (τ ∘ Nonplanar.mk) (RoseTree.node (Sum.inr b) cs_t)).map _ =
-         (extractC (τ ∘ Nonplanar.mk) (RoseTree.node (Sum.inr b) cs_s)).map _
+    show (extractC (τ ∘ UnorderedTree.mk) (RoseTree.node (Sum.inr b) cs_t)).map _ =
+         (extractC (τ ∘ UnorderedTree.mk) (RoseTree.node (Sum.inr b) cs_s)).map _
     simp only [extractC_inr, Option.map_none]
 
 /-- Δ^c cut-summand-projection invariance under `Perm`. -/
-theorem cutSummandsCP_proj_perm (τ : Nonplanar (α ⊕ β) → β)
+theorem cutSummandsCP_proj_perm (τ : UnorderedTree (α ⊕ β) → β)
     {t s : RoseTree (α ⊕ β)} (h : RoseTree.Perm t s) :
-    (cutSummandsCP (τ ∘ Nonplanar.mk) t).map projSummand =
-      (cutSummandsCP (τ ∘ Nonplanar.mk) s).map projSummand :=
+    (cutSummandsCP (τ ∘ UnorderedTree.mk) t).map projSummand =
+      (cutSummandsCP (τ ∘ UnorderedTree.mk) s).map projSummand :=
   cutSummandsG_proj_perm (extractC_mkComp_invariant τ) h
 
-/-! ### Descent of `cutSummandsCP` through `Nonplanar.mk` -/
+/-! ### Descent of `cutSummandsCP` through `UnorderedTree.mk` -/
 
-/-- The Nonplanar Δ^c cut summands, descended from `cutSummandsCP` via
-    `Nonplanar.lift` using the descent invariance
+/-- The UnorderedTree Δ^c cut summands, descended from `cutSummandsCP` via
+    `UnorderedTree.lift` using the descent invariance
     `cutSummandsCP_proj_perm`. -/
-noncomputable def cutSummandsCN (τ : Nonplanar (α ⊕ β) → β) :
-    Nonplanar (α ⊕ β) → Multiset (Multiset (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) :=
-  Nonplanar.lift
-    (fun T => (ConnesKreimer.cutSummandsCP (τ ∘ Nonplanar.mk) T).map
+noncomputable def cutSummandsCN (τ : UnorderedTree (α ⊕ β) → β) :
+    UnorderedTree (α ⊕ β) → Multiset (Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) :=
+  UnorderedTree.lift
+    (fun T => (ConnesKreimer.cutSummandsCP (τ ∘ UnorderedTree.mk) T).map
       ConnesKreimer.projSummand)
     (fun _ _ h => ConnesKreimer.cutSummandsCP_proj_perm τ h)
 
-@[simp] theorem cutSummandsCN_mk (τ : Nonplanar (α ⊕ β) → β) (T : RoseTree (α ⊕ β)) :
-    cutSummandsCN τ (Nonplanar.mk T) =
-      (ConnesKreimer.cutSummandsCP (τ ∘ Nonplanar.mk) T).map
+@[simp] theorem cutSummandsCN_mk (τ : UnorderedTree (α ⊕ β) → β) (T : RoseTree (α ⊕ β)) :
+    cutSummandsCN τ (UnorderedTree.mk T) =
+      (ConnesKreimer.cutSummandsCP (τ ∘ UnorderedTree.mk) T).map
         ConnesKreimer.projSummand := rfl
 
 /-- `Σ (wᵢ − 1) + card = Σ wᵢ` for tree-level forests (each `wᵢ ≥ 1`). -/
@@ -1431,19 +1432,19 @@ private theorem sum_map_numNodes_sub_one_add_card {γ : Type*}
 /-- Edge conservation for Δ^c cut summands: the trace marker replaces
     the cut subtree by a unit-weight leaf, so crown edges plus trunk
     weight recover the tree weight exactly. Descends
-    `cutSummandsG_numNodes` through `Nonplanar.mk`. -/
-theorem cutSummandsCN_edgeCount (τ : Nonplanar (α ⊕ β) → β)
-    (T : Nonplanar (α ⊕ β)) :
+    `cutSummandsG_numNodes` through `UnorderedTree.mk`. -/
+theorem cutSummandsCN_edgeCount (τ : UnorderedTree (α ⊕ β) → β)
+    (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T,
       Forest.edgeCount p.1 + p.2.numNodes = T.numNodes := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = Nonplanar.mk T₀ :=
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
     ⟨T.out, (Quotient.out_eq T).symm⟩
   intro p hp
   rw [cutSummandsCN_mk] at hp
   obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
   rw [cutSummandsCP_def] at hq
   have hext : ∀ (t : RoseTree (α ⊕ β)) r,
-      extractC (τ ∘ Nonplanar.mk) t = some r →
+      extractC (τ ∘ UnorderedTree.mk) t = some r →
       (r.map RoseTree.numNodes).sum = 1 := by
     intro t r h
     cases t with
@@ -1452,7 +1453,7 @@ theorem cutSummandsCN_edgeCount (τ : Nonplanar (α ⊕ β) → β)
       | inl a =>
         rw [extractC_inl] at h
         obtain rfl := (Option.some.injEq _ _ ▸ h :
-          [traceLeaf ((τ ∘ Nonplanar.mk)
+          [traceLeaf ((τ ∘ UnorderedTree.mk)
             (RoseTree.node (Sum.inl a) cs))] = r)
         simp [traceLeaf]
       | inr b =>
@@ -1460,13 +1461,13 @@ theorem cutSummandsCN_edgeCount (τ : Nonplanar (α ⊕ β) → β)
         exact absurd h (by simp)
   have h := cutSummandsG_numNodes _ hext T₀ q hq
   have hsub := sum_map_numNodes_sub_one_add_card q.1
-  show Forest.edgeCount (q.1.map Nonplanar.mk) +
-      (Nonplanar.mk q.2).numNodes = (Nonplanar.mk T₀).numNodes
-  rw [Nonplanar.numNodes_mk, Nonplanar.numNodes_mk]
-  rw [show Forest.edgeCount (q.1.map Nonplanar.mk) =
+  show Forest.edgeCount (q.1.map UnorderedTree.mk) +
+      (UnorderedTree.mk q.2).numNodes = (UnorderedTree.mk T₀).numNodes
+  rw [UnorderedTree.numNodes_mk, UnorderedTree.numNodes_mk]
+  rw [show Forest.edgeCount (q.1.map UnorderedTree.mk) =
       ((q.1.map (fun t => RoseTree.numNodes t - 1)).sum) from by
-    show ((q.1.map Nonplanar.mk).map
-        (fun T => Nonplanar.numNodes T - 1)).sum = _
+    show ((q.1.map UnorderedTree.mk).map
+        (fun T => UnorderedTree.numNodes T - 1)).sum = _
     rw [Multiset.map_map]
     rfl]
   omega
@@ -1622,35 +1623,35 @@ theorem augActionG_filter_empty
 
 end
 
-/-- Nonplanar-level descent: the unique cut summand of `cutSummandsCN τ T`
+/-- UnorderedTree-level descent: the unique cut summand of `cutSummandsCN τ T`
     with empty cut forest is `(0, T)`. -/
 theorem cutSummandsCN_filter_empty
-    (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β)) :
+    (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree (α ⊕ β)) :
     (cutSummandsCN τ T).filter (fun p => p.1.card = 0) =
-      ({((0 : Multiset (Nonplanar (α ⊕ β))), T)} : Multiset _) := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = Nonplanar.mk T₀ :=
+      ({((0 : Multiset (UnorderedTree (α ⊕ β))), T)} : Multiset _) := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
     ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
   rw [cutSummandsCN_mk, Multiset.filter_map]
-  -- `(projSummand p).1.card = (p.1.map Nonplanar.mk).card = p.1.card`; use filter_congr.
+  -- `(projSummand p).1.card = (p.1.map UnorderedTree.mk).card = p.1.card`; use filter_congr.
   have hcongr :
       Multiset.filter
-          ((fun p : Multiset (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β) => p.1.card = 0) ∘
+          ((fun p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β) => p.1.card = 0) ∘
             projSummand (α := α ⊕ β))
-          (cutSummandsCP (τ ∘ Nonplanar.mk) T₀) =
+          (cutSummandsCP (τ ∘ UnorderedTree.mk) T₀) =
       Multiset.filter (fun p : Multiset (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β) => p.1.card = 0)
-          (cutSummandsCP (τ ∘ Nonplanar.mk) T₀) := by
+          (cutSummandsCP (τ ∘ UnorderedTree.mk) T₀) := by
     apply Multiset.filter_congr
     intro p _
-    show (p.1.map Nonplanar.mk).card = 0 ↔ p.1.card = 0
+    show (p.1.map UnorderedTree.mk).card = 0 ↔ p.1.card = 0
     rw [Multiset.card_map]
   rw [hcongr]
   show Multiset.map projSummand
         (Multiset.filter (fun p : Multiset (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β) => p.1.card = 0)
-          (cutSummandsG (extractC (τ ∘ Nonplanar.mk)) T₀)) = _
-  rw [cutSummandsG_filter_empty (extractC (τ ∘ Nonplanar.mk)) T₀,
+          (cutSummandsG (extractC (τ ∘ UnorderedTree.mk)) T₀)) = _
+  rw [cutSummandsG_filter_empty (extractC (τ ∘ UnorderedTree.mk)) T₀,
       Multiset.map_singleton]
-  show ((((0 : Multiset (RoseTree (α ⊕ β))).map Nonplanar.mk : Multiset (Nonplanar (α ⊕ β))),
-         Nonplanar.mk T₀) : Multiset (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) ::ₘ 0 = _
+  show ((((0 : Multiset (RoseTree (α ⊕ β))).map UnorderedTree.mk : Multiset (UnorderedTree (α ⊕ β))),
+         UnorderedTree.mk T₀) : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) ::ₘ 0 = _
   rw [Multiset.map_zero]
   rfl
 

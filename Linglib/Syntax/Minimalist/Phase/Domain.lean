@@ -35,7 +35,7 @@ out of the formalization.
 
 namespace Minimalist
 
-open RoseTree RoseTree.Nonplanar SyntacticObject
+open RoseTree UnorderedTree SyntacticObject
 
 namespace SyntacticObject
 

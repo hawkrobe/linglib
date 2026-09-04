@@ -97,31 +97,31 @@ def leafFeatures (t : RoseTree (F ⊕ Unit)) : Multiset F :=
 
 /-- The feature bundle of a morphological object: the set of features at
 its leaves, the root label of [senturia-marcolli-2025] Definition 2.1. -/
-def bundle (S : Nonplanar (F ⊕ Unit)) : Finset F :=
+def bundle (S : UnorderedTree (F ⊕ Unit)) : Finset F :=
   (S.leaves.filterMap Sum.getLeft?).toFinset
 
 @[simp] theorem bundle_mk (t : RoseTree (F ⊕ Unit)) :
-    bundle (Nonplanar.mk t) = (leafFeatures t).toFinset := rfl
+    bundle (UnorderedTree.mk t) = (leafFeatures t).toFinset := rfl
 
 @[simp] theorem bundle_leaf (f : F) :
-    bundle (Nonplanar.leaf (.inl f)) = {f} := by
-  rw [show bundle (Nonplanar.leaf (.inl f)) = ({f} : Multiset F).toFinset from rfl]
+    bundle (UnorderedTree.leaf (.inl f)) = {f} := by
+  rw [show bundle (UnorderedTree.leaf (.inl f)) = ({f} : Multiset F).toFinset from rfl]
   exact Multiset.toFinset_singleton f
 
 @[simp] theorem bundle_leaf_inr :
-    bundle (Nonplanar.leaf (.inr () : F ⊕ Unit)) = ∅ := rfl
+    bundle (UnorderedTree.leaf (.inr () : F ⊕ Unit)) = ∅ := rfl
 
 /-- The multiset of leaf features of a morphological object; `bundle` is
 its underlying set. Fission with an overlapping partition duplicates
 features, which only the multiset records. -/
-def features (S : Nonplanar (F ⊕ Unit)) : Multiset F :=
+def features (S : UnorderedTree (F ⊕ Unit)) : Multiset F :=
   S.leaves.filterMap Sum.getLeft?
 
 omit [DecidableEq F] in
 @[simp] theorem features_mk (t : RoseTree (F ⊕ Unit)) :
-    features (Nonplanar.mk t) = leafFeatures t := rfl
+    features (UnorderedTree.mk t) = leafFeatures t := rfl
 
-theorem bundle_eq_toFinset_features (S : Nonplanar (F ⊕ Unit)) :
+theorem bundle_eq_toFinset_features (S : UnorderedTree (F ⊕ Unit)) :
     bundle S = (features S).toFinset := rfl
 
 /-- A structural vertex contributes nothing to the bundle: the leaf
@@ -153,16 +153,16 @@ is why fusion is the one DM operation available inside syntax. -/
 
 /-- Fusion of two morphological objects: the magma product, grafting
 both under a structural root ([senturia-marcolli-2025] Definition 5.2). -/
-noncomputable def fuse (S₁ S₂ : Nonplanar (F ⊕ Unit)) : Nonplanar (F ⊕ Unit) :=
-  Nonplanar.node (.inr ()) {S₁, S₂}
+noncomputable def fuse (S₁ S₂ : UnorderedTree (F ⊕ Unit)) : UnorderedTree (F ⊕ Unit) :=
+  UnorderedTree.node (.inr ()) {S₁, S₂}
 
 /-- The fused bundle is the union of the input bundles — the labeling
 law itself, so fusion needs nothing beyond the magma. -/
-theorem bundle_fuse (S₁ S₂ : Nonplanar (F ⊕ Unit)) :
+theorem bundle_fuse (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     bundle (fuse S₁ S₂) = bundle S₁ ∪ bundle S₂ := by
   refine Quotient.inductionOn₂ S₁ S₂ fun p q => ?_
-  show bundle (Nonplanar.node (.inr ()) {Nonplanar.mk p, Nonplanar.mk q}) = _
-  rw [Nonplanar.node_pair_mk]
+  show bundle (UnorderedTree.node (.inr ()) {UnorderedTree.mk p, UnorderedTree.mk q}) = _
+  rw [UnorderedTree.node_pair_mk]
   simp only [bundle_mk, leafFeatures_node_inr, List.map_cons, List.map_nil,
     List.sum_cons, List.sum_nil, add_zero, Multiset.toFinset_add]
   rfl
@@ -170,11 +170,11 @@ theorem bundle_fuse (S₁ S₂ : Nonplanar (F ⊕ Unit)) :
 omit [DecidableEq F] in
 /-- Fusion is additive on the feature multiset: nothing is lost,
 duplicated, or created. -/
-theorem features_fuse (S₁ S₂ : Nonplanar (F ⊕ Unit)) :
+theorem features_fuse (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     features (fuse S₁ S₂) = features S₁ + features S₂ := by
   refine Quotient.inductionOn₂ S₁ S₂ fun p q => ?_
-  show features (Nonplanar.node (.inr ()) {Nonplanar.mk p, Nonplanar.mk q}) = _
-  rw [Nonplanar.node_pair_mk]
+  show features (UnorderedTree.node (.inr ()) {UnorderedTree.mk p, UnorderedTree.mk q}) = _
+  rw [UnorderedTree.node_pair_mk]
   simp only [features_mk, leafFeatures_node_inr, List.map_cons, List.map_nil,
     List.sum_cons, List.sum_nil, add_zero]
   rfl
@@ -200,8 +200,8 @@ def keep (C : Finset F) : F ⊕ Unit → Option (F ⊕ Unit)
 construction of a single fission output ([senturia-marcolli-2025]
 Definition 5.6, with `C = Bᵢ ∪ A`). `none` only for a single leaf
 outside `C`. -/
-def restrict (C : Finset F) (S : Nonplanar (F ⊕ Unit)) :
-    Option (Nonplanar (F ⊕ Unit)) :=
+def restrict (C : Finset F) (S : UnorderedTree (F ⊕ Unit)) :
+    Option (UnorderedTree (F ⊕ Unit)) :=
   S.filterMap (keep C)
 
 private theorem sum_leafFeatures_filterMap (C : Finset F)
@@ -253,10 +253,10 @@ private theorem leafFeatures_filterMap_keep (C : Finset F)
 kept features: the vertex law `B_w ∩ (Bᵢ ∪ A)` of
 [senturia-marcolli-2025] Definition 5.6, at the root. -/
 theorem bundle_restrict {C : Finset F} {t : RoseTree (F ⊕ Unit)}
-    (ht : IsMorphological t) {S' : Nonplanar (F ⊕ Unit)}
-    (h : restrict C (Nonplanar.mk t) = some S') :
-    bundle S' = bundle (Nonplanar.mk t) ∩ C := by
-  rw [restrict, Nonplanar.filterMap_mk] at h
+    (ht : IsMorphological t) {S' : UnorderedTree (F ⊕ Unit)}
+    (h : restrict C (UnorderedTree.mk t) = some S') :
+    bundle S' = bundle (UnorderedTree.mk t) ∩ C := by
+  rw [restrict, UnorderedTree.filterMap_mk] at h
   cases hc : t.filterMap (keep C) with
   | none => rw [hc, Option.map_none] at h; exact absurd h (by simp)
   | some t' =>
@@ -271,9 +271,9 @@ theorem bundle_restrict {C : Finset F} {t : RoseTree (F ⊕ Unit)}
 multiset, `none` counting as empty. -/
 theorem features_restrict (C : Finset F) {t : RoseTree (F ⊕ Unit)}
     (ht : IsMorphological t) :
-    (restrict C (Nonplanar.mk t)).elim 0 features
-      = (features (Nonplanar.mk t)).filter (· ∈ C) := by
-  rw [restrict, Nonplanar.filterMap_mk]
+    (restrict C (UnorderedTree.mk t)).elim 0 features
+      = (features (UnorderedTree.mk t)).filter (· ∈ C) := by
+  rw [restrict, UnorderedTree.filterMap_mk]
   have key := leafFeatures_filterMap_keep C ht
   cases hc : t.filterMap (keep C) with
   | none => rw [hc, Option.elim_none] at key; simpa using key
@@ -284,10 +284,10 @@ both outputs: the residue of a discontinuously realized bundle is
 pronounced on both exponents. -/
 theorem restrict_copies_shared {A C₁ C₂ : Finset F}
     (h₁ : A ⊆ C₁) (h₂ : A ⊆ C₂) {t : RoseTree (F ⊕ Unit)}
-    (ht : IsMorphological t) {S₁' S₂' : Nonplanar (F ⊕ Unit)}
-    (e₁ : restrict C₁ (Nonplanar.mk t) = some S₁')
-    (e₂ : restrict C₂ (Nonplanar.mk t) = some S₂') :
-    A ∩ bundle (Nonplanar.mk t) ⊆ bundle S₁' ∩ bundle S₂' := by
+    (ht : IsMorphological t) {S₁' S₂' : UnorderedTree (F ⊕ Unit)}
+    (e₁ : restrict C₁ (UnorderedTree.mk t) = some S₁')
+    (e₂ : restrict C₂ (UnorderedTree.mk t) = some S₂') :
+    A ∩ bundle (UnorderedTree.mk t) ⊆ bundle S₁' ∩ bundle S₂' := by
   rw [bundle_restrict ht e₁, bundle_restrict ht e₂]
   intro f hf
   simp only [Finset.mem_inter] at hf ⊢
@@ -306,11 +306,11 @@ algebra, which lives in the second slice. -/
 /-- Fission followed by fusion restores the bundle: the trace-maintaining
 impoverishment composite leaves the feature content intact. -/
 theorem bundle_fuse_restrict {C₁ C₂ : Finset F} {t : RoseTree (F ⊕ Unit)}
-    (ht : IsMorphological t) (hcover : bundle (Nonplanar.mk t) ⊆ C₁ ∪ C₂)
-    {S₁' S₂' : Nonplanar (F ⊕ Unit)}
-    (e₁ : restrict C₁ (Nonplanar.mk t) = some S₁')
-    (e₂ : restrict C₂ (Nonplanar.mk t) = some S₂') :
-    bundle (fuse S₁' S₂') = bundle (Nonplanar.mk t) := by
+    (ht : IsMorphological t) (hcover : bundle (UnorderedTree.mk t) ⊆ C₁ ∪ C₂)
+    {S₁' S₂' : UnorderedTree (F ⊕ Unit)}
+    (e₁ : restrict C₁ (UnorderedTree.mk t) = some S₁')
+    (e₂ : restrict C₂ (UnorderedTree.mk t) = some S₂') :
+    bundle (fuse S₁' S₂') = bundle (UnorderedTree.mk t) := by
   rw [bundle_fuse, bundle_restrict ht e₁, bundle_restrict ht e₂,
     ← Finset.inter_union_distrib_left, Finset.inter_eq_left.mpr hcover]
 
@@ -334,10 +334,10 @@ private def exTree : RoseTree (Feat ⊕ Unit) :=
 five-leaf object: `φ` is realized on both sides, so the composite is not
 the original four-leaf tree even though its bundle is
 (`bundle_fuse_restrict`). -/
-theorem fuse_restrict_ne (S₁' S₂' : Nonplanar (Feat ⊕ Unit))
-    (e₁ : restrict {.phi, .gamma} (Nonplanar.mk exTree) = some S₁')
-    (e₂ : restrict {.phi, .alpha, .beta} (Nonplanar.mk exTree) = some S₂') :
-    fuse S₁' S₂' ≠ Nonplanar.mk exTree := by
+theorem fuse_restrict_ne (S₁' S₂' : UnorderedTree (Feat ⊕ Unit))
+    (e₁ : restrict {.phi, .gamma} (UnorderedTree.mk exTree) = some S₁')
+    (e₂ : restrict {.phi, .alpha, .beta} (UnorderedTree.mk exTree) = some S₂') :
+    fuse S₁' S₂' ≠ UnorderedTree.mk exTree := by
   have c₁ : exTree.filterMap (keep {.phi, .gamma})
       = some (.node (.inr ()) [.node (.inr ()) [.node (.inl .phi) []],
           .node (.inr ()) [.node (.inl .gamma) []]]) := by decide
@@ -345,15 +345,15 @@ theorem fuse_restrict_ne (S₁' S₂' : Nonplanar (Feat ⊕ Unit))
       = some (.node (.inr ()) [.node (.inr ()) [.node (.inl .phi) [],
           .node (.inl .alpha) []], .node (.inr ()) [.node (.inl .beta) []]]) := by
     decide
-  rw [restrict, Nonplanar.filterMap_mk, c₁, Option.map_some,
+  rw [restrict, UnorderedTree.filterMap_mk, c₁, Option.map_some,
     Option.some.injEq] at e₁
-  rw [restrict, Nonplanar.filterMap_mk, c₂, Option.map_some,
+  rw [restrict, UnorderedTree.filterMap_mk, c₂, Option.map_some,
     Option.some.injEq] at e₂
   subst e₁ e₂
-  rw [fuse, Nonplanar.node_pair_mk]
+  rw [fuse, UnorderedTree.node_pair_mk]
   intro hcontra
-  have := congrArg Nonplanar.numLeaves hcontra
-  rw [Nonplanar.numLeaves_mk, Nonplanar.numLeaves_mk] at this
+  have := congrArg UnorderedTree.numLeaves hcontra
+  rw [UnorderedTree.numLeaves_mk, UnorderedTree.numLeaves_mk] at this
   exact absurd this (by decide)
 
 /-! ### The syntax-morphology correspondence and morphosyntactic trees
@@ -382,37 +382,37 @@ its datum together with the inserted morphological object, `none` where
 morphology was obliterated ([senturia-marcolli-2025] Definition 3.4; the
 empty insertion is Remark 5.12). -/
 abbrev Morphosyntactic (F Λ : Type*) :=
-  Nonplanar ((Λ × Option (Nonplanar (F ⊕ Unit))) ⊕ Unit)
+  UnorderedTree ((Λ × Option (UnorderedTree (F ⊕ Unit))) ⊕ Unit)
 
 variable {Λ : Type*}
 
 /-- A leaf of a morphosyntactic tree: a syntactic datum with an optional
 morphological insertion. -/
-def insertion (lex : Λ) (mo : Option (Nonplanar (F ⊕ Unit))) :
+def insertion (lex : Λ) (mo : Option (UnorderedTree (F ⊕ Unit))) :
     Morphosyntactic F Λ :=
-  Nonplanar.leaf (.inl (lex, mo))
+  UnorderedTree.leaf (.inl (lex, mo))
 
 /-- The forgetful projection to the syntactic tree: drop the inserted
 morphology. This is [senturia-marcolli-2025] Definition 3.9's morphism
 of algebras over the Merge operad, in labeled form. -/
-def toSyntactic : Morphosyntactic F Λ → Nonplanar (Λ ⊕ Unit) :=
-  Nonplanar.map (Sum.map Prod.fst id)
+def toSyntactic : Morphosyntactic F Λ → UnorderedTree (Λ ⊕ Unit) :=
+  UnorderedTree.map (Sum.map Prod.fst id)
 
 omit [DecidableEq F] in
 @[simp] theorem toSyntactic_insertion (lex : Λ)
-    (mo : Option (Nonplanar (F ⊕ Unit))) :
-    toSyntactic (insertion lex mo) = Nonplanar.leaf (.inl lex) :=
-  Nonplanar.map_leaf _ _
+    (mo : Option (UnorderedTree (F ⊕ Unit))) :
+    toSyntactic (insertion lex mo) = UnorderedTree.leaf (.inl lex) :=
+  UnorderedTree.map_leaf _ _
 
 /-- The feature content of one leaf label. -/
-def insertionFeatures : (Λ × Option (Nonplanar (F ⊕ Unit))) ⊕ Unit → Multiset F
+def insertionFeatures : (Λ × Option (UnorderedTree (F ⊕ Unit))) ⊕ Unit → Multiset F
   | .inl (_, some S) => features S
   | .inl (_, none) => 0
   | .inr _ => 0
 
 omit [DecidableEq F] in
 @[simp] theorem insertionFeatures_inl (lex : Λ)
-    (mo : Option (Nonplanar (F ⊕ Unit))) :
+    (mo : Option (UnorderedTree (F ⊕ Unit))) :
     insertionFeatures (.inl (lex, mo)) = mo.elim 0 features := by
   cases mo <;> rfl
 
@@ -423,7 +423,7 @@ def msFeatures (T : Morphosyntactic F Λ) : Multiset F :=
 
 omit [DecidableEq F] in
 @[simp] theorem msFeatures_insertion (lex : Λ)
-    (mo : Option (Nonplanar (F ⊕ Unit))) :
+    (mo : Option (UnorderedTree (F ⊕ Unit))) :
     msFeatures (insertion lex mo) = mo.elim 0 features := by
   simp [msFeatures, insertion]
 
@@ -433,12 +433,12 @@ def Matched (Γ : FeatureCorrespondence F Λ) (T : Morphosyntactic F Λ) : Prop 
   ∀ lex S, .inl (lex, some S) ∈ T.leaves → Γ.matching (bundle S) lex
 
 theorem matched_insertion_iff (Γ : FeatureCorrespondence F Λ) (lex : Λ)
-    (S : Nonplanar (F ⊕ Unit)) :
+    (S : UnorderedTree (F ⊕ Unit)) :
     Matched Γ (insertion lex (some S)) ↔ Γ.matching (bundle S) lex := by
   constructor
   · exact fun h => h lex S (by simp [insertion])
   · intro h lex' S' hmem
-    simp only [insertion, Nonplanar.leaves_leaf, Multiset.mem_singleton,
+    simp only [insertion, UnorderedTree.leaves_leaf, Multiset.mem_singleton,
       Sum.inl.injEq, Prod.mk.injEq, Option.some.injEq] at hmem
     obtain ⟨rfl, rfl⟩ := hmem
     exact h
@@ -454,28 +454,28 @@ one — the movable syntax-morphology boundary — while `msFeatures`
 records what happens to the feature content. -/
 
 private theorem leaves_node_pair_leaf {α : Type*} (a x y : α) :
-    (Nonplanar.node a {Nonplanar.leaf x, Nonplanar.leaf y}).leaves = {x, y} := by
-  rw [show (Nonplanar.leaf x : Nonplanar α) = Nonplanar.mk (.node x []) from rfl,
-    show (Nonplanar.leaf y : Nonplanar α) = Nonplanar.mk (.node y []) from rfl,
-    Nonplanar.node_pair_mk, Nonplanar.leaves_mk, leaves_node_cons]
+    (UnorderedTree.node a {UnorderedTree.leaf x, UnorderedTree.leaf y}).leaves = {x, y} := by
+  rw [show (UnorderedTree.leaf x : UnorderedTree α) = UnorderedTree.mk (.node x []) from rfl,
+    show (UnorderedTree.leaf y : UnorderedTree α) = UnorderedTree.mk (.node y []) from rfl,
+    UnorderedTree.node_pair_mk, UnorderedTree.leaves_mk, leaves_node_cons]
   simp
 
 /-- The application site of fusion: a syntactic cherry with insertions
 at both leaves. -/
-noncomputable def fusionSite (lex₁ lex₂ : Λ) (S₁ S₂ : Nonplanar (F ⊕ Unit)) :
+noncomputable def fusionSite (lex₁ lex₂ : Λ) (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     Morphosyntactic F Λ :=
-  Nonplanar.node (.inr ()) {insertion lex₁ (some S₁), insertion lex₂ (some S₂)}
+  UnorderedTree.node (.inr ()) {insertion lex₁ (some S₁), insertion lex₂ (some S₂)}
 
 /-- The application site of fission on `S` along the kept sets `C₁, C₂`:
 a syntactic cherry whose leaves carry the two restrictions; an empty
 restriction is an empty insertion. -/
 noncomputable def fissionSite (lex₁ lex₂ : Λ) (C₁ C₂ : Finset F)
-    (S : Nonplanar (F ⊕ Unit)) : Morphosyntactic F Λ :=
-  Nonplanar.node (.inr ())
+    (S : UnorderedTree (F ⊕ Unit)) : Morphosyntactic F Λ :=
+  UnorderedTree.node (.inr ())
     {insertion lex₁ (restrict C₁ S), insertion lex₂ (restrict C₂ S)}
 
 omit [DecidableEq F] in
-theorem msFeatures_fusionSite (lex₁ lex₂ : Λ) (S₁ S₂ : Nonplanar (F ⊕ Unit)) :
+theorem msFeatures_fusionSite (lex₁ lex₂ : Λ) (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     msFeatures (fusionSite lex₁ lex₂ S₁ S₂) = features S₁ + features S₂ := by
   rw [msFeatures, fusionSite, insertion, insertion, leaves_node_pair_leaf]
   simp
@@ -486,7 +486,7 @@ insertion, under whichever of the two data projects (the head function's
 choice in [senturia-marcolli-2025] Definition 5.2), carries exactly what
 the cherry carried. -/
 theorem msFeatures_fuse (lexHead lex₁ lex₂ : Λ)
-    (S₁ S₂ : Nonplanar (F ⊕ Unit)) :
+    (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     msFeatures (insertion lexHead (some (fuse S₁ S₂)))
       = msFeatures (fusionSite lex₁ lex₂ S₁ S₂) := by
   rw [msFeatures_insertion, Option.elim_some, features_fuse,
@@ -496,41 +496,41 @@ omit [DecidableEq F] in
 /-- Fusion raises the syntax-morphology boundary: the syntactic
 projection collapses from a cherry to a single leaf while the feature
 content stays constant (`msFeatures_fuse`). -/
-theorem toSyntactic_fusionSite (lex₁ lex₂ : Λ) (S₁ S₂ : Nonplanar (F ⊕ Unit)) :
+theorem toSyntactic_fusionSite (lex₁ lex₂ : Λ) (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     toSyntactic (fusionSite lex₁ lex₂ S₁ S₂)
-      = Nonplanar.node (.inr ())
-          {Nonplanar.leaf (.inl lex₁), Nonplanar.leaf (.inl lex₂)} := by
+      = UnorderedTree.node (.inr ())
+          {UnorderedTree.leaf (.inl lex₁), UnorderedTree.leaf (.inl lex₂)} := by
   rw [fusionSite,
     show (insertion lex₁ (some S₁) : Morphosyntactic F Λ)
-      = Nonplanar.mk (.node (.inl (lex₁, some S₁)) []) from rfl,
+      = UnorderedTree.mk (.node (.inl (lex₁, some S₁)) []) from rfl,
     show (insertion lex₂ (some S₂) : Morphosyntactic F Λ)
-      = Nonplanar.mk (.node (.inl (lex₂, some S₂)) []) from rfl,
-    Nonplanar.node_pair_mk, toSyntactic, Nonplanar.map_mk,
+      = UnorderedTree.mk (.node (.inl (lex₂, some S₂)) []) from rfl,
+    UnorderedTree.node_pair_mk, toSyntactic, UnorderedTree.map_mk,
     show RoseTree.map (Sum.map Prod.fst id)
         (.node (.inr ()) [.node (.inl (lex₁, some S₁)) [],
           .node (.inl (lex₂, some S₂)) []])
       = .node (.inr ()) [.node (.inl lex₁) [], .node (.inl lex₂) []] from rfl,
-    show (Nonplanar.leaf (.inl lex₁) : Nonplanar (Λ ⊕ Unit))
-      = Nonplanar.mk (.node (.inl lex₁) []) from rfl,
-    show (Nonplanar.leaf (.inl lex₂) : Nonplanar (Λ ⊕ Unit))
-      = Nonplanar.mk (.node (.inl lex₂) []) from rfl,
-    Nonplanar.node_pair_mk]
+    show (UnorderedTree.leaf (.inl lex₁) : UnorderedTree (Λ ⊕ Unit))
+      = UnorderedTree.mk (.node (.inl lex₁) []) from rfl,
+    show (UnorderedTree.leaf (.inl lex₂) : UnorderedTree (Λ ⊕ Unit))
+      = UnorderedTree.mk (.node (.inl lex₂) []) from rfl,
+    UnorderedTree.node_pair_mk]
 
 /-- The necessary condition for fusion: the fused site is matched exactly
 when the union of the two bundles matches the projecting datum
 ([senturia-marcolli-2025]'s condition `(B_{v₁} ∪ B_{v₂}, α_v) ∈ Γ_SM`
 following Definition 5.2). -/
 theorem matched_fused_iff (Γ : FeatureCorrespondence F Λ) (lexHead : Λ)
-    (S₁ S₂ : Nonplanar (F ⊕ Unit)) :
+    (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     Matched Γ (insertion lexHead (some (fuse S₁ S₂)))
       ↔ Γ.matching (bundle S₁ ∪ bundle S₂) lexHead := by
   rw [matched_insertion_iff, bundle_fuse]
 
 theorem msFeatures_fissionSite (lex₁ lex₂ : Λ) (C₁ C₂ : Finset F)
     {t : RoseTree (F ⊕ Unit)} (ht : IsMorphological t) :
-    msFeatures (fissionSite lex₁ lex₂ C₁ C₂ (Nonplanar.mk t))
-      = (features (Nonplanar.mk t)).filter (· ∈ C₁)
-        + (features (Nonplanar.mk t)).filter (· ∈ C₂) := by
+    msFeatures (fissionSite lex₁ lex₂ C₁ C₂ (UnorderedTree.mk t))
+      = (features (UnorderedTree.mk t)).filter (· ∈ C₁)
+        + (features (UnorderedTree.mk t)).filter (· ∈ C₂) := by
   rw [msFeatures, fissionSite, insertion, insertion, leaves_node_pair_leaf]
   simp [features_restrict _ ht]
 
@@ -542,15 +542,15 @@ features of discontinuous agreement come to be pronounced twice. -/
 theorem msFeatures_fission_partition (lex₁ lex₂ : Λ) {C₁ C₂ : Finset F}
     (hdisj : Disjoint C₁ C₂) {t : RoseTree (F ⊕ Unit)}
     (ht : IsMorphological t)
-    (hcover : ∀ f ∈ features (Nonplanar.mk t), f ∈ C₁ ∪ C₂) :
-    msFeatures (fissionSite lex₁ lex₂ C₁ C₂ (Nonplanar.mk t))
-      = features (Nonplanar.mk t) := by
+    (hcover : ∀ f ∈ features (UnorderedTree.mk t), f ∈ C₁ ∪ C₂) :
+    msFeatures (fissionSite lex₁ lex₂ C₁ C₂ (UnorderedTree.mk t))
+      = features (UnorderedTree.mk t) := by
   rw [msFeatures_fissionSite _ _ _ _ ht, Multiset.filter_add_filter]
-  have h₁ : (features (Nonplanar.mk t)).filter (fun f => f ∈ C₁ ∨ f ∈ C₂)
-      = features (Nonplanar.mk t) :=
+  have h₁ : (features (UnorderedTree.mk t)).filter (fun f => f ∈ C₁ ∨ f ∈ C₂)
+      = features (UnorderedTree.mk t) :=
     Multiset.filter_eq_self.mpr fun f hf => by
       simpa [Finset.mem_union] using hcover f hf
-  have h₂ : (features (Nonplanar.mk t)).filter (fun f => f ∈ C₁ ∧ f ∈ C₂)
+  have h₂ : (features (UnorderedTree.mk t)).filter (fun f => f ∈ C₁ ∧ f ∈ C₂)
       = 0 :=
     Multiset.filter_eq_nil.mpr fun f _ hf =>
       Finset.disjoint_left.mp hdisj hf.1 hf.2
@@ -561,8 +561,8 @@ output ([senturia-marcolli-2025] Proposition 5.20, first case) bounds
 the feature content by the original. -/
 theorem msFeatures_impoverish_le (lex : Λ) (kept : Finset F)
     {t : RoseTree (F ⊕ Unit)} (ht : IsMorphological t) :
-    msFeatures (insertion lex (restrict kept (Nonplanar.mk t)))
-      ≤ msFeatures (insertion lex (some (Nonplanar.mk t))) := by
+    msFeatures (insertion lex (restrict kept (UnorderedTree.mk t)))
+      ≤ msFeatures (insertion lex (some (UnorderedTree.mk t))) := by
   rw [msFeatures_insertion, msFeatures_insertion, Option.elim_some,
     features_restrict _ ht]
   exact Multiset.filter_le _ _
@@ -572,7 +572,7 @@ omit [DecidableEq F] in
 and its datum stay in place — [senturia-marcolli-2025]'s reading of
 Proposition 5.13, on which no morphology is inserted and the syntactic
 tree is untouched. -/
-theorem toSyntactic_obliterate (lex : Λ) (S : Nonplanar (F ⊕ Unit)) :
+theorem toSyntactic_obliterate (lex : Λ) (S : UnorderedTree (F ⊕ Unit)) :
     toSyntactic (insertion lex none : Morphosyntactic F Λ)
       = toSyntactic (insertion lex (some S)) := by
   rw [toSyntactic_insertion, toSyntactic_insertion]
@@ -599,13 +599,13 @@ inductive Step (R : Morphosyntactic F Λ → Morphosyntactic F Λ → Prop) :
     Morphosyntactic F Λ → Morphosyntactic F Λ → Prop
   | here {T T'} : R T T' → Step R T T'
   | congr {x} {cs : Multiset (Morphosyntactic F Λ)} {T T'} : Step R T T' →
-      Step R (Nonplanar.node x (T ::ₘ cs)) (Nonplanar.node x (T' ::ₘ cs))
+      Step R (UnorderedTree.node x (T ::ₘ cs)) (UnorderedTree.node x (T' ::ₘ cs))
 
 /-- The fusion site relation: a syntactic cherry over two insertions
 rewrites to a single insertion of the magma product, projecting one of
 the two data. -/
 inductive FuseAt : Morphosyntactic F Λ → Morphosyntactic F Λ → Prop
-  | mk (lexHead lex₁ lex₂ : Λ) (S₁ S₂ : Nonplanar (F ⊕ Unit))
+  | mk (lexHead lex₁ lex₂ : Λ) (S₁ S₂ : UnorderedTree (F ⊕ Unit))
       (hhead : lexHead = lex₁ ∨ lexHead = lex₂) :
       FuseAt (fusionSite lex₁ lex₂ S₁ S₂) (insertion lexHead (some (fuse S₁ S₂)))
 
@@ -617,22 +617,22 @@ inductive FissAt : Morphosyntactic F Λ → Morphosyntactic F Λ → Prop
   | mk (lex lex₁ lex₂ : Λ) (A B₁ B₂ : Finset F) {t : RoseTree (F ⊕ Unit)}
       (ht : IsMorphological t) (hlex : lex = lex₁ ∨ lex = lex₂)
       (h₁ : Disjoint A B₁) (h₂ : Disjoint A B₂) (h₁₂ : Disjoint B₁ B₂)
-      (hcover : ∀ f ∈ features (Nonplanar.mk t), f ∈ A ∪ B₁ ∪ B₂) :
-      FissAt (insertion lex (some (Nonplanar.mk t)))
-        (fissionSite lex₁ lex₂ (B₁ ∪ A) (B₂ ∪ A) (Nonplanar.mk t))
+      (hcover : ∀ f ∈ features (UnorderedTree.mk t), f ∈ A ∪ B₁ ∪ B₂) :
+      FissAt (insertion lex (some (UnorderedTree.mk t)))
+        (fissionSite lex₁ lex₂ (B₁ ∪ A) (B₂ ∪ A) (UnorderedTree.mk t))
 
 /-- The impoverishment site relation: the insertion is replaced by one
 of its fission outputs. -/
 inductive ImpovAt : Morphosyntactic F Λ → Morphosyntactic F Λ → Prop
   | mk (lex : Λ) (kept : Finset F) {t : RoseTree (F ⊕ Unit)}
       (ht : IsMorphological t) :
-      ImpovAt (insertion lex (some (Nonplanar.mk t)))
-        (insertion lex (restrict kept (Nonplanar.mk t)))
+      ImpovAt (insertion lex (some (UnorderedTree.mk t)))
+        (insertion lex (restrict kept (UnorderedTree.mk t)))
 
 /-- The obliteration site relation: the insertion is emptied, the
 syntactic leaf and its datum staying in place. -/
 inductive OblitAt : Morphosyntactic F Λ → Morphosyntactic F Λ → Prop
-  | mk (lex : Λ) (mo : Option (Nonplanar (F ⊕ Unit))) :
+  | mk (lex : Λ) (mo : Option (UnorderedTree (F ⊕ Unit))) :
       OblitAt (insertion lex mo) (insertion lex none)
 
 /-- Fission duplicates exactly the copied residue: with `B ∖ A`
@@ -642,14 +642,14 @@ content invariance (`msFeatures_fission_partition`). -/
 theorem msFeatures_fissionSite_copy (lex₁ lex₂ : Λ) {A B₁ B₂ : Finset F}
     (h₁ : Disjoint A B₁) (h₂ : Disjoint A B₂) (h₁₂ : Disjoint B₁ B₂)
     {t : RoseTree (F ⊕ Unit)} (ht : IsMorphological t)
-    (hcover : ∀ f ∈ features (Nonplanar.mk t), f ∈ A ∪ B₁ ∪ B₂) :
-    msFeatures (fissionSite lex₁ lex₂ (B₁ ∪ A) (B₂ ∪ A) (Nonplanar.mk t))
-      = features (Nonplanar.mk t)
-        + (features (Nonplanar.mk t)).filter (· ∈ A) := by
+    (hcover : ∀ f ∈ features (UnorderedTree.mk t), f ∈ A ∪ B₁ ∪ B₂) :
+    msFeatures (fissionSite lex₁ lex₂ (B₁ ∪ A) (B₂ ∪ A) (UnorderedTree.mk t))
+      = features (UnorderedTree.mk t)
+        + (features (UnorderedTree.mk t)).filter (· ∈ A) := by
   rw [msFeatures_fissionSite _ _ _ _ ht]
   refine Multiset.ext.mpr fun f => ?_
   have hcnt : f ∉ A → f ∉ B₁ → f ∉ B₂ →
-      Multiset.count f (features (Nonplanar.mk t)) = 0 := by
+      Multiset.count f (features (UnorderedTree.mk t)) = 0 := by
     intro nA nB₁ nB₂
     refine Multiset.count_eq_zero.mpr fun hf => ?_
     rcases Finset.mem_union.mp (hcover f hf) with h | h
@@ -673,21 +673,21 @@ theorem msFeatures_fissionSite_copy (lex₁ lex₂ : Λ) {A B₁ B₂ : Finset F
 /-! ### Feature bookkeeping along the semigroups -/
 
 omit [DecidableEq F] in
-private theorem msFeatures_node_cons (x : (Λ × Option (Nonplanar (F ⊕ Unit))) ⊕ Unit)
+private theorem msFeatures_node_cons (x : (Λ × Option (UnorderedTree (F ⊕ Unit))) ⊕ Unit)
     (T : Morphosyntactic F Λ) (cs : Multiset (Morphosyntactic F Λ)) :
-    msFeatures (Nonplanar.node x (T ::ₘ cs))
+    msFeatures (UnorderedTree.node x (T ::ₘ cs))
       = msFeatures T
-        + (((cs.map Nonplanar.leaves).sum).map insertionFeatures).sum := by
-  rw [msFeatures, Nonplanar.leaves_node_cons, Multiset.map_add,
+        + (((cs.map UnorderedTree.leaves).sum).map insertionFeatures).sum := by
+  rw [msFeatures, UnorderedTree.leaves_node_cons, Multiset.map_add,
     Multiset.sum_add, msFeatures]
 
 omit [DecidableEq F] in
-private theorem numLeaves_node_cons (x : (Λ × Option (Nonplanar (F ⊕ Unit))) ⊕ Unit)
+private theorem numLeaves_node_cons (x : (Λ × Option (UnorderedTree (F ⊕ Unit))) ⊕ Unit)
     (T : Morphosyntactic F Λ) (cs : Multiset (Morphosyntactic F Λ)) :
-    (Nonplanar.node x (T ::ₘ cs)).numLeaves
-      = T.numLeaves + Multiset.card ((cs.map Nonplanar.leaves).sum) := by
-  rw [← Nonplanar.card_leaves, Nonplanar.leaves_node_cons, Multiset.card_add,
-    Nonplanar.card_leaves]
+    (UnorderedTree.node x (T ::ₘ cs)).numLeaves
+      = T.numLeaves + Multiset.card ((cs.map UnorderedTree.leaves).sum) := by
+  rw [← UnorderedTree.card_leaves, UnorderedTree.leaves_node_cons, Multiset.card_add,
+    UnorderedTree.card_leaves]
 
 omit [DecidableEq F] in
 theorem FuseAt.msFeatures_eq {T T' : Morphosyntactic F Λ} (h : FuseAt T T') :
@@ -762,7 +762,7 @@ theorem Step.numLeaves_fuse {T T' : Morphosyntactic F Λ}
     cases h with
     | mk lexHead lex₁ lex₂ S₁ S₂ hhead =>
       rw [show (insertion lexHead (some (fuse S₁ S₂)) : Morphosyntactic F Λ).numLeaves
-          = 1 from rfl, ← Nonplanar.card_leaves, fusionSite, insertion, insertion,
+          = 1 from rfl, ← UnorderedTree.card_leaves, fusionSite, insertion, insertion,
         leaves_node_pair_leaf]
       rfl
   | congr _ ih => rw [numLeaves_node_cons, numLeaves_node_cons]; omega
@@ -775,8 +775,8 @@ theorem Step.numLeaves_fiss {T T' : Morphosyntactic F Λ}
   | here h =>
     cases h with
     | mk lex lex₁ lex₂ A B₁ B₂ ht hlex h₁ h₂ h₁₂ hcover =>
-      rw [show (insertion lex (some (Nonplanar.mk _)) : Morphosyntactic F Λ).numLeaves
-          = 1 from rfl, ← Nonplanar.card_leaves, fissionSite, insertion, insertion,
+      rw [show (insertion lex (some (UnorderedTree.mk _)) : Morphosyntactic F Λ).numLeaves
+          = 1 from rfl, ← UnorderedTree.card_leaves, fissionSite, insertion, insertion,
         leaves_node_pair_leaf]
       rfl
   | congr _ ih => rw [numLeaves_node_cons, numLeaves_node_cons]; omega

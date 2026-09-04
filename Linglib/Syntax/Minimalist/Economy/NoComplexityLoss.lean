@@ -15,7 +15,7 @@ quotient is strictly lighter than its source.
 
 ## Implementation notes
 
-The book grades by leaf count. We grade by `Nonplanar.numNodes`, the canonical Connes–Kreimer
+The book grades by leaf count. We grade by `UnorderedTree.numNodes`, the canonical Connes–Kreimer
 grading: the deletion coproduct conserves it exactly (`cutSummandsN_numNodes`) for every cut,
 with none of the nullary-node corrections leaf count incurs when a node loses all its children
 under a multi-edge cut. The condition is a nondecreasing one, and vertex count delivers every
@@ -42,14 +42,14 @@ deletion quotient's weight is strictly smaller than its source.
 namespace Minimalist
 
 open scoped TensorProduct
-open RoseTree RoseTree.Nonplanar ConnesKreimer
+open RoseTree UnorderedTree ConnesKreimer
 
 /-- **M-C-B Definition 1.6.2 (book p. 64), existential form.** A workspace
     transformation `F → F'` satisfies No Complexity Loss if some component
     map `Φ₀` lands in `F'` and never decreases `weight` (the vertex-count
     Hopf grading; see the module docstring on the grading choice). -/
-def NoComplexityLoss {α : Type*} (F F' : Forest (Nonplanar α)) : Prop :=
-  ∃ (Φ₀ : ∀ T, T ∈ F → Nonplanar α),
+def NoComplexityLoss {α : Type*} (F F' : Forest (UnorderedTree α)) : Prop :=
+  ∃ (Φ₀ : ∀ T, T ∈ F → UnorderedTree α),
     (∀ T (h : T ∈ F), Φ₀ T h ∈ F') ∧
     (∀ T (h : T ∈ F), (Φ₀ T h).numNodes ≥ T.numNodes)
 
@@ -62,15 +62,15 @@ def NoComplexityLoss {α : Type*} (F F' : Forest (Nonplanar α)) : Prop :=
     which is greater than or equal to both deg(T_i) and deg(T_j). All the
     remaining components of the workspace not used by Merge maintain the
     same degree." -/
-theorem NoComplexityLoss.em_case1 {α : Type*} [DecidableEq (Nonplanar α)]
-    (lbl : α) (S S' : Nonplanar α) (Fhat : Forest (Nonplanar α)) :
-    NoComplexityLoss (({S, S'} : Forest (Nonplanar α)) + Fhat)
-               (({Nonplanar.node lbl {S, S'}} : Forest (Nonplanar α)) + Fhat) := by
-  refine ⟨fun T _ => if T = S ∨ T = S' then Nonplanar.node lbl {S, S'} else T, ?_, ?_⟩
+theorem NoComplexityLoss.em_case1 {α : Type*} [DecidableEq (UnorderedTree α)]
+    (lbl : α) (S S' : UnorderedTree α) (Fhat : Forest (UnorderedTree α)) :
+    NoComplexityLoss (({S, S'} : Forest (UnorderedTree α)) + Fhat)
+               (({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) + Fhat) := by
+  refine ⟨fun T _ => if T = S ∨ T = S' then UnorderedTree.node lbl {S, S'} else T, ?_, ?_⟩
   -- (a) image is in F'
   · intro T hT
-    show (if T = S ∨ T = S' then Nonplanar.node lbl {S, S'} else T)
-            ∈ ({Nonplanar.node lbl {S, S'}} : Forest (Nonplanar α)) + Fhat
+    show (if T = S ∨ T = S' then UnorderedTree.node lbl {S, S'} else T)
+            ∈ ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) + Fhat
     by_cases hcase : T = S ∨ T = S'
     · rw [if_pos hcase]
       exact Multiset.mem_add.mpr (Or.inl (Multiset.mem_singleton.mpr rfl))
@@ -78,17 +78,17 @@ theorem NoComplexityLoss.em_case1 {α : Type*} [DecidableEq (Nonplanar α)]
       have hT_Fhat : T ∈ Fhat := by
         rcases Multiset.mem_add.mp hT with hT_pair | hT_Fhat
         · exfalso; apply hcase
-          rw [show ({S, S'} : Forest (Nonplanar α)) = S ::ₘ {S'} from rfl,
+          rw [show ({S, S'} : Forest (UnorderedTree α)) = S ::ₘ {S'} from rfl,
               Multiset.mem_cons, Multiset.mem_singleton] at hT_pair
           exact hT_pair
         · exact hT_Fhat
       exact Multiset.mem_add.mpr (Or.inr hT_Fhat)
   -- (b) weight nondecreasing
   · intro T _
-    show (if T = S ∨ T = S' then Nonplanar.node lbl {S, S'} else T).numNodes ≥ T.numNodes
+    show (if T = S ∨ T = S' then UnorderedTree.node lbl {S, S'} else T).numNodes ≥ T.numNodes
     by_cases hcase : T = S ∨ T = S'
-    · rw [if_pos hcase, Nonplanar.numNodes_node,
-          show ({S, S'} : Forest (Nonplanar α)) = S ::ₘ {S'} from rfl,
+    · rw [if_pos hcase, UnorderedTree.numNodes_node,
+          show ({S, S'} : Forest (UnorderedTree α)) = S ::ₘ {S'} from rfl,
           Multiset.map_cons, Multiset.sum_cons, Multiset.map_singleton, Multiset.sum_singleton]
       rcases hcase with rfl | rfl <;> omega
     · rw [if_neg hcase]
@@ -105,22 +105,22 @@ theorem NoComplexityLoss.em_case1 {α : Type*} [DecidableEq (Nonplanar α)]
 
     No `T ≠ β` hypothesis is required (cf. `mergeOp_im_composition`, which
     needs it for non-degeneracy of the algebraic sum, not for NCL). -/
-theorem NoComplexityLoss.im {α : Type*} (lbl : α) (β T Q : Nonplanar α)
-    (p0 : Forest (Nonplanar α) × Nonplanar α) (hp0 : p0 ∈ cutSummandsN T)
-    (h_cf : p0.1 = ({β} : Forest (Nonplanar α)))
+theorem NoComplexityLoss.im {α : Type*} (lbl : α) (β T Q : UnorderedTree α)
+    (p0 : Forest (UnorderedTree α) × UnorderedTree α) (hp0 : p0 ∈ cutSummandsN T)
+    (h_cf : p0.1 = ({β} : Forest (UnorderedTree α)))
     (h_remainder : p0.2 = Q) :
-    NoComplexityLoss (({T} : Forest (Nonplanar α)))
-               (({Nonplanar.node lbl {Q, β}} : Forest (Nonplanar α))) := by
-  refine ⟨fun _ _ => Nonplanar.node lbl {Q, β}, ?_, ?_⟩
+    NoComplexityLoss (({T} : Forest (UnorderedTree α)))
+               (({UnorderedTree.node lbl {Q, β}} : Forest (UnorderedTree α))) := by
+  refine ⟨fun _ _ => UnorderedTree.node lbl {Q, β}, ?_, ?_⟩
   -- (a) image is in {M(Q, β)}
   · intro _ _; exact Multiset.mem_singleton.mpr rfl
   -- (b) weight nondecreasing: (M(Q, β)).numNodes = 1 + T.numNodes ≥ T.numNodes
   · intro T' hT'
     rw [Multiset.mem_singleton] at hT'
     subst T'
-    show (Nonplanar.node lbl {Q, β}).numNodes ≥ T.numNodes
-    rw [Nonplanar.numNodes_node,
-        show ({Q, β} : Forest (Nonplanar α)) = Q ::ₘ {β} from rfl,
+    show (UnorderedTree.node lbl {Q, β}).numNodes ≥ T.numNodes
+    rw [UnorderedTree.numNodes_node,
+        show ({Q, β} : Forest (UnorderedTree α)) = Q ::ₘ {β} from rfl,
         Multiset.map_cons, Multiset.sum_cons, Multiset.map_singleton, Multiset.sum_singleton]
     have h_cons := cutSummandsN_numNodes T p0 hp0
     rw [h_cf] at h_cons
@@ -138,14 +138,14 @@ theorem NoComplexityLoss.im {α : Type*} (lbl : α) (β T Q : Nonplanar α)
     is needed for the negative direction: a Sideward operation might satisfy
     `NoComplexityLoss` via some non-canonical map, but its canonical map (each
     root to where its image lives) fails. -/
-def NoComplexityLoss.Map {α : Type*} (F F' : Forest (Nonplanar α))
-    (Φ_0 : ∀ T, T ∈ F → Nonplanar α) : Prop :=
+def NoComplexityLoss.Map {α : Type*} (F F' : Forest (UnorderedTree α))
+    (Φ_0 : ∀ T, T ∈ F → UnorderedTree α) : Prop :=
   (∀ T (h : T ∈ F), Φ_0 T h ∈ F') ∧
   (∀ T (h : T ∈ F), (Φ_0 T h).numNodes ≥ T.numNodes)
 
 /-- Strict form ⇒ existential form. -/
 theorem NoComplexityLoss.of_map {α : Type*}
-    {F F' : Forest (Nonplanar α)} {Φ_0 : ∀ T, T ∈ F → Nonplanar α}
+    {F F' : Forest (UnorderedTree α)} {Φ_0 : ∀ T, T ∈ F → UnorderedTree α}
     (h : NoComplexityLoss.Map F F' Φ_0) : NoComplexityLoss F F' :=
   ⟨Φ_0, h.1, h.2⟩
 
@@ -153,13 +153,13 @@ theorem NoComplexityLoss.of_map {α : Type*}
     weight difference; NCL ⇔ all values `≥ 0` (matches `NoComplexityLoss.Map.2`).
     `Int`-valued so violations surface as negative numbers rather than being
     clamped by ℕ-subtraction. -/
-def NoComplexityLoss.degreeLoss {α : Type*} {F : Forest (Nonplanar α)}
-    (Φ_0 : ∀ T, T ∈ F → Nonplanar α) (T : Nonplanar α) (h : T ∈ F) : Int :=
+def NoComplexityLoss.degreeLoss {α : Type*} {F : Forest (UnorderedTree α)}
+    (Φ_0 : ∀ T, T ∈ F → UnorderedTree α) (T : UnorderedTree α) (h : T ∈ F) : Int :=
   ((Φ_0 T h).numNodes : Int) - T.numNodes
 
 /-- NCL inequality (eq. 1.6.3) per component restated via `NoComplexityLoss.degreeLoss`. -/
 theorem NoComplexityLoss.map_iff_degreeLoss_nonneg {α : Type*}
-    {F F' : Forest (Nonplanar α)} (Φ_0 : ∀ T, T ∈ F → Nonplanar α)
+    {F F' : Forest (UnorderedTree α)} (Φ_0 : ∀ T, T ∈ F → UnorderedTree α)
     (h_image : ∀ T (h : T ∈ F), Φ_0 T h ∈ F') :
     NoComplexityLoss.Map F F' Φ_0 ↔ ∀ T (h : T ∈ F), NoComplexityLoss.degreeLoss Φ_0 T h ≥ 0 := by
   unfold NoComplexityLoss.Map NoComplexityLoss.degreeLoss
@@ -175,21 +175,21 @@ theorem NoComplexityLoss.map_iff_degreeLoss_nonneg {α : Type*}
     MCB (book p. 72): "the root of the component T is mapped … to the root
     of the component T/T_v in the new workspace F', with deg(T/T_v) <
     deg(T); thus, it violates the No Complexity Loss constraint." -/
-theorem NoComplexityLoss.not_map_sideward_2b {α : Type*} [DecidableEq (Nonplanar α)]
-    (lbl : α) (T_i T_j β T_j_q : Nonplanar α)
-    (p_j : Forest (Nonplanar α) × Nonplanar α) (hp_j : p_j ∈ cutSummandsN T_j)
-    (h_cf : p_j.1 = ({β} : Forest (Nonplanar α)))
+theorem NoComplexityLoss.not_map_sideward_2b {α : Type*} [DecidableEq (UnorderedTree α)]
+    (lbl : α) (T_i T_j β T_j_q : UnorderedTree α)
+    (p_j : Forest (UnorderedTree α) × UnorderedTree α) (hp_j : p_j ∈ cutSummandsN T_j)
+    (h_cf : p_j.1 = ({β} : Forest (UnorderedTree α)))
     (h_rd : p_j.2 = T_j_q)
     (h_distinct : T_i ≠ T_j) :
-    ¬ NoComplexityLoss.Map ({T_i, T_j} : Forest (Nonplanar α))
-                    ({Nonplanar.node lbl {T_i, β}, T_j_q} : Forest (Nonplanar α))
-        (fun T _ => if T = T_i then Nonplanar.node lbl {T_i, β} else T_j_q) := by
+    ¬ NoComplexityLoss.Map ({T_i, T_j} : Forest (UnorderedTree α))
+                    ({UnorderedTree.node lbl {T_i, β}, T_j_q} : Forest (UnorderedTree α))
+        (fun T _ => if T = T_i then UnorderedTree.node lbl {T_i, β} else T_j_q) := by
   intro h_ncl
-  have h_T_j_mem : T_j ∈ ({T_i, T_j} : Forest (Nonplanar α)) :=
+  have h_T_j_mem : T_j ∈ ({T_i, T_j} : Forest (UnorderedTree α)) :=
     Multiset.mem_cons_of_mem (Multiset.mem_singleton.mpr rfl)
   have h_neq : T_j ≠ T_i := fun h => h_distinct h.symm
   have h_ineq :
-      (if T_j = T_i then Nonplanar.node lbl {T_i, β} else T_j_q).numNodes ≥ T_j.numNodes :=
+      (if T_j = T_i then UnorderedTree.node lbl {T_i, β} else T_j_q).numNodes ≥ T_j.numNodes :=
     h_ncl.2 T_j h_T_j_mem
   rw [if_neg h_neq] at h_ineq
   have h_cons := cutSummandsN_numNodes T_j p_j hp_j
@@ -206,17 +206,17 @@ theorem NoComplexityLoss.not_map_sideward_2b {α : Type*} [DecidableEq (Nonplana
     conservation is exact here even though leaf count would not be —
     `cutSummandsN_numNodes` holds for the 2-edge crown directly.) -/
 theorem NoComplexityLoss.not_map_sideward_3a {α : Type*}
-    (lbl : α) (T_i a b T_iq : Nonplanar α)
-    (p_i : Forest (Nonplanar α) × Nonplanar α) (hp_i : p_i ∈ cutSummandsN T_i)
-    (h_cf : p_i.1 = ({a, b} : Forest (Nonplanar α)))
+    (lbl : α) (T_i a b T_iq : UnorderedTree α)
+    (p_i : Forest (UnorderedTree α) × UnorderedTree α) (hp_i : p_i ∈ cutSummandsN T_i)
+    (h_cf : p_i.1 = ({a, b} : Forest (UnorderedTree α)))
     (h_rd : p_i.2 = T_iq) :
-    ¬ NoComplexityLoss.Map ({T_i} : Forest (Nonplanar α))
-                    ({Nonplanar.node lbl {a, b}, T_iq} : Forest (Nonplanar α))
+    ¬ NoComplexityLoss.Map ({T_i} : Forest (UnorderedTree α))
+                    ({UnorderedTree.node lbl {a, b}, T_iq} : Forest (UnorderedTree α))
         (fun _ _ => T_iq) := by
   intro h_ncl
   have h_ineq : T_iq.numNodes ≥ T_i.numNodes := h_ncl.2 T_i (Multiset.mem_singleton.mpr rfl)
   have h_cons := cutSummandsN_numNodes T_i p_i hp_i
-  rw [h_cf, show ({a, b} : Forest (Nonplanar α)) = a ::ₘ {b} from rfl,
+  rw [h_cf, show ({a, b} : Forest (UnorderedTree α)) = a ::ₘ {b} from rfl,
       Multiset.map_cons, Multiset.sum_cons, Multiset.map_singleton, Multiset.sum_singleton,
       h_rd] at h_cons
   have h_a_pos := a.numNodes_pos
@@ -227,13 +227,13 @@ theorem NoComplexityLoss.not_map_sideward_3a {α : Type*}
     Workspace `{T_i, T_j} → {M(a, b), T_i/a, T_j/b}`. The canonical map
     sends `T_i ↦ T_i/a` (and `T_j ↦ T_j/b`); the `T_i/a = T_iq` component
     strictly drops weight, so NCL fails already at `T_i`. -/
-theorem NoComplexityLoss.not_map_sideward_3b {α : Type*} [DecidableEq (Nonplanar α)]
-    (lbl : α) (T_i T_j a b T_iq T_jq : Nonplanar α)
-    (p_i : Forest (Nonplanar α) × Nonplanar α) (hp_i : p_i ∈ cutSummandsN T_i)
-    (h_cf_i : p_i.1 = ({a} : Forest (Nonplanar α)))
+theorem NoComplexityLoss.not_map_sideward_3b {α : Type*} [DecidableEq (UnorderedTree α)]
+    (lbl : α) (T_i T_j a b T_iq T_jq : UnorderedTree α)
+    (p_i : Forest (UnorderedTree α) × UnorderedTree α) (hp_i : p_i ∈ cutSummandsN T_i)
+    (h_cf_i : p_i.1 = ({a} : Forest (UnorderedTree α)))
     (h_rd_i : p_i.2 = T_iq) :
-    ¬ NoComplexityLoss.Map ({T_i, T_j} : Forest (Nonplanar α))
-                    ({Nonplanar.node lbl {a, b}, T_iq, T_jq} : Forest (Nonplanar α))
+    ¬ NoComplexityLoss.Map ({T_i, T_j} : Forest (UnorderedTree α))
+                    ({UnorderedTree.node lbl {a, b}, T_iq, T_jq} : Forest (UnorderedTree α))
         (fun T _ => if T = T_i then T_iq else T_jq) := by
   intro h_ncl
   have h_ineq : (if T_i = T_i then T_iq else T_jq).numNodes ≥ T_i.numNodes :=

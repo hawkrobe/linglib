@@ -124,23 +124,23 @@ abbrev SyntacticObject.headCat (so : SyntacticObject) : Option Cat := outerCatC 
 
 /-! ## Binary-node leaf/node counts
 
-`SyntacticObject.merge` is noncomputable (the `Nonplanar` carrier
+`SyntacticObject.merge` is noncomputable (the `UnorderedTree` carrier
 round-trips through `Quotient.out`), so `decide`/`rfl` can't read back the
 shape of a `node`-built tree. These two lemmas give the structural facts
 study files need — a binary node has the summed leaf count of its children
 and exactly one more internal node — by quotient induction, mirroring
-`Nonplanar.numNodes_node`. -/
+`UnorderedTree.numNodes_node`. -/
 
-open RoseTree RoseTree.Nonplanar in
-private theorem _root_.RoseTree.Nonplanar.numLeaves_node_pair {α : Type*} (a : α)
-    (c d : Nonplanar α) :
-    (Nonplanar.node a {c, d}).numLeaves = c.numLeaves + d.numLeaves := by
+open RoseTree UnorderedTree in
+private theorem _root_.UnorderedTree.numLeaves_node_pair {α : Type*} (a : α)
+    (c d : UnorderedTree α) :
+    (UnorderedTree.node a {c, d}).numLeaves = c.numLeaves + d.numLeaves := by
   refine Quotient.inductionOn₂ c d fun pc pd => ?_
-  show (Nonplanar.node a {Nonplanar.mk pc, Nonplanar.mk pd}).numLeaves
-      = (Nonplanar.mk pc).numLeaves + (Nonplanar.mk pd).numLeaves
-  rw [show ({Nonplanar.mk pc, Nonplanar.mk pd} : Multiset (Nonplanar α))
-        = Multiset.ofList ([pc, pd].map Nonplanar.mk) from rfl, Nonplanar.node_mk_tree_list]
-  simp only [Nonplanar.numLeaves_mk, RoseTree.numLeaves_node, List.map_cons, List.map_nil,
+  show (UnorderedTree.node a {UnorderedTree.mk pc, UnorderedTree.mk pd}).numLeaves
+      = (UnorderedTree.mk pc).numLeaves + (UnorderedTree.mk pd).numLeaves
+  rw [show ({UnorderedTree.mk pc, UnorderedTree.mk pd} : Multiset (UnorderedTree α))
+        = Multiset.ofList ([pc, pd].map UnorderedTree.mk) from rfl, UnorderedTree.node_mk_tree_list]
+  simp only [UnorderedTree.numLeaves_mk, RoseTree.numLeaves_node, List.map_cons, List.map_nil,
     List.sum_cons, List.sum_nil]
   have hc := RoseTree.numLeaves_pos pc
   omega
@@ -148,7 +148,7 @@ private theorem _root_.RoseTree.Nonplanar.numLeaves_node_pair {α : Type*} (a : 
 /-- Leaf count of a binary Merge node is the sum of its children's. -/
 theorem SyntacticObject.leafCount_node (l r : SyntacticObject) :
     (merge l r).leafCount = l.leafCount + r.leafCount := by
-  rw [leafCount, merge_val, RoseTree.Nonplanar.numLeaves_node_pair]; rfl
+  rw [leafCount, merge_val, UnorderedTree.numLeaves_node_pair]; rfl
 
 /-- A syntactic object qualifies as a small-clause predicate iff its
     head category is one of [dendikken-1995]'s four SC-licensed

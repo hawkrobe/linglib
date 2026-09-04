@@ -39,7 +39,7 @@ The demonstrative is `Cat.Dem`.
 
 namespace Cinque2005
 
-open Minimalist SyntacticObject RoseTree RoseTree.Nonplanar
+open Minimalist SyntacticObject RoseTree UnorderedTree
 
 /-! ### The orders and their frequencies (6) -/
 
@@ -139,7 +139,7 @@ private def step (m : LIToken) (st : Stage) : List Stage :=
   let p := PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf m) st.planar
   ⟨d, p, st.marks, st.raises⟩ ::
     ((subtrees st.planar.val).filter hasN).filterMap fun s =>
-      if h : IsSyntacticObject (Nonplanar.mk s) then
+      if h : IsSyntacticObject (UnorderedTree.mk s) then
         (p.moveLeft (PlanarSyntacticObject.toSyntacticObject ⟨s, h⟩)).map fun p' =>
           ⟨⟨d.initial, d.steps ++ [.im (PlanarSyntacticObject.toSyntacticObject ⟨s, h⟩)]⟩, p',
             (markOf st.planar.val s).toList ++ st.marks, st.raises + 1⟩

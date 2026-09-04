@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.RoseTree.Nonplanar
+import Linglib.Core.Data.UnorderedTree.Basic
 
 open RoseTree
 
@@ -13,14 +13,14 @@ open RoseTree
 `RoseTree.filterMap (f : α → Option β)` relabels a rose tree along `f`,
 recursively dropping every subtree whose root label maps to `none`; the
 result is `none` iff the root itself is dropped. The rose-tree analogue
-of `List.filterMap`, with `RoseTree.Nonplanar.filterMap` its descent
+of `List.filterMap`, with `UnorderedTree.filterMap` its descent
 through the `Perm` quotient.
 
 ## Main definitions
 
 * `RoseTree.filterMap`, `RoseTree.filterMapList` — the mutual tree /
   children-list partial maps.
-* `RoseTree.Nonplanar.filterMap` — the descent through the `Perm`
+* `UnorderedTree.filterMap` — the descent through the `Perm`
   quotient.
 
 ## Main results
@@ -147,18 +147,18 @@ theorem RoseTree.filterMapList_some (g : α → β) :
 
 end
 
-/-! ## Descent to `Nonplanar`
+/-! ## Descent to `UnorderedTree`
 
-`RoseTree.filterMap f ∘ Nonplanar.mk` is well-defined modulo `Perm`:
+`RoseTree.filterMap f ∘ UnorderedTree.mk` is well-defined modulo `Perm`:
 `Perm` permutes children, `filterMapList` commutes with permutations up
-to `List.Perm`, and child-list order collapses at the `Nonplanar.mk`
+to `List.Perm`, and child-list order collapses at the `UnorderedTree.mk`
 level. -/
 
 /-- The Perm-invariant filterMap-then-mk composition, lifted through the
-    quotient by `RoseTree.Nonplanar.filterMap`. -/
+    quotient by `UnorderedTree.filterMap`. -/
 private def filterMapQuotient (f : α → Option β) (t : RoseTree α) :
-    Option (Nonplanar β) :=
-  (RoseTree.filterMap f t).map Nonplanar.mk
+    Option (UnorderedTree β) :=
+  (RoseTree.filterMap f t).map UnorderedTree.mk
 
 mutual
 
@@ -167,15 +167,15 @@ private theorem filterMapQuotient_perm (f : α → Option β) :
     ∀ {t t' : RoseTree α}, RoseTree.Perm t t' →
       filterMapQuotient f t = filterMapQuotient f t'
   | _, _, @RoseTree.Perm.node _ a cs ds h => by
-    show ((RoseTree.filterMap f (.node a cs)).map Nonplanar.mk) =
-         ((RoseTree.filterMap f (.node a ds)).map Nonplanar.mk)
+    show ((RoseTree.filterMap f (.node a cs)).map UnorderedTree.mk) =
+         ((RoseTree.filterMap f (.node a ds)).map UnorderedTree.mk)
     rw [RoseTree.filterMap_node, RoseTree.filterMap_node]
     cases f a with
     | none => rfl
     | some b =>
       simp only [Option.map_some]
       congr 1
-      exact Nonplanar.mk_eq_mk_iff.mpr
+      exact UnorderedTree.mk_eq_mk_iff.mpr
         (RoseTree.Perm.node (filterMapList_permList f h))
   | _, _, .trans h₁ h₂ =>
     (filterMapQuotient_perm f h₁).trans (filterMapQuotient_perm f h₂)
@@ -188,8 +188,8 @@ private theorem filterMapList_permList (f : α → Option β) :
         (RoseTree.filterMapList f ds)
   | _, _, .nil => .nil
   | _, _, @RoseTree.PermList.cons _ c d cs' ds' hcd hs => by
-    have hq : (RoseTree.filterMap f c).map Nonplanar.mk =
-              (RoseTree.filterMap f d).map Nonplanar.mk :=
+    have hq : (RoseTree.filterMap f c).map UnorderedTree.mk =
+              (RoseTree.filterMap f d).map UnorderedTree.mk :=
       filterMapQuotient_perm f hcd
     rw [RoseTree.filterMapList_eq_filterMap, RoseTree.filterMapList_eq_filterMap]
     cases hc : RoseTree.filterMap f c with
@@ -209,7 +209,7 @@ private theorem filterMapList_permList (f : α → Option β) :
         rw [List.filterMap_cons_some hc, List.filterMap_cons_some hd,
             ← RoseTree.filterMapList_eq_filterMap,
             ← RoseTree.filterMapList_eq_filterMap]
-        exact RoseTree.PermList.cons (Nonplanar.mk_eq_mk_iff.mp hq)
+        exact RoseTree.PermList.cons (UnorderedTree.mk_eq_mk_iff.mp hq)
           (filterMapList_permList f hs)
   | _, _, .swap c d cs => by
     rw [RoseTree.filterMapList_eq_filterMap, RoseTree.filterMapList_eq_filterMap]
@@ -220,16 +220,16 @@ private theorem filterMapList_permList (f : α → Option β) :
 
 end
 
-/-- Partially relabel a `Nonplanar` tree, dropping subtrees whose root
+/-- Partially relabel a `UnorderedTree` tree, dropping subtrees whose root
     label maps to `none`. -/
-def RoseTree.Nonplanar.filterMap (f : α → Option β) :
-    Nonplanar α → Option (Nonplanar β) :=
+def UnorderedTree.filterMap (f : α → Option β) :
+    UnorderedTree α → Option (UnorderedTree β) :=
   Quotient.lift (filterMapQuotient f) (fun _ _ h => filterMapQuotient_perm f h)
 
-@[simp] theorem RoseTree.Nonplanar.filterMap_mk (f : α → Option β)
+@[simp] theorem UnorderedTree.filterMap_mk (f : α → Option β)
     (t : RoseTree α) :
-    Nonplanar.filterMap f (Nonplanar.mk t) =
-      (RoseTree.filterMap f t).map Nonplanar.mk := rfl
+    UnorderedTree.filterMap f (UnorderedTree.mk t) =
+      (RoseTree.filterMap f t).map UnorderedTree.mk := rfl
 
 /-! ## The `Sum.getLeft?` roundtrip -/
 
@@ -241,12 +241,12 @@ def RoseTree.Nonplanar.filterMap (f : α → Option β) :
       show (Sum.getLeft? ∘ (Sum.inl : α → α ⊕ β)) = (fun a => some (id a)) from rfl,
       RoseTree.filterMap_some, RoseTree.id_map]
 
-/-- `Nonplanar` version of `RoseTree.filterMap_getLeft?_map_inl`. -/
-@[simp] theorem RoseTree.Nonplanar.filterMap_getLeft?_map_inl (T : Nonplanar α) :
-    Nonplanar.filterMap Sum.getLeft?
-        (Nonplanar.map (Sum.inl : α → α ⊕ β) T) = some T := by
+/-- `UnorderedTree` version of `RoseTree.filterMap_getLeft?_map_inl`. -/
+@[simp] theorem UnorderedTree.filterMap_getLeft?_map_inl (T : UnorderedTree α) :
+    UnorderedTree.filterMap Sum.getLeft?
+        (UnorderedTree.map (Sum.inl : α → α ⊕ β) T) = some T := by
   refine Quotient.inductionOn T fun t => ?_
-  show Nonplanar.filterMap Sum.getLeft?
-      (Nonplanar.map Sum.inl (Nonplanar.mk t)) = some (Nonplanar.mk t)
-  rw [Nonplanar.map_mk, Nonplanar.filterMap_mk, RoseTree.filterMap_getLeft?_map_inl]
+  show UnorderedTree.filterMap Sum.getLeft?
+      (UnorderedTree.map Sum.inl (UnorderedTree.mk t)) = some (UnorderedTree.mk t)
+  rw [UnorderedTree.map_mk, UnorderedTree.filterMap_mk, RoseTree.filterMap_getLeft?_map_inl]
   rfl

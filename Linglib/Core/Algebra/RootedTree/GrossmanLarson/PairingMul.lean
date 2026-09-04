@@ -7,7 +7,7 @@ import Linglib.Core.Algebra.BigOperators.Multiset
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
 # The pairing product rule for the Grossman-Larson product
@@ -16,8 +16,8 @@ open RoseTree RoseTree.Nonplanar
 `pairing_product_of'_mul_of'` — the GL-product/CK-product duality at
 the pairing level: `⟨A ⋆ B, C₁ · C₂⟩` decomposes over independent
 splits of `A` and `B`. Combines the insertion split law
-`Nonplanar.insertionMultiset_antidiagonal`
-(`PreLie/InsertionNonplanar.lean`) with the pairing product rule
+`UnorderedTree.insertionMultiset_antidiagonal`
+(`PreLie/InsertionUnordered.lean`) with the pairing product rule
 `pairing_of'_mul` (`GrossmanLarson/Pairing.lean`); substrate for the
 GL/CK duality theorem `pairing_gl_eq_pairing_coproduct_Rho`
 (`Coproduct/PruningDuality.lean`).
@@ -181,35 +181,35 @@ private theorem quadBind_middle_swap {β γ : Type*} (B : Multiset β)
 /-- Index multiset of GL-product outputs: forests `X + (B' − H)` over
     `H ⊆ B'` and `X ∈ NIM(A', H)`. `product (of' A') (of' B')` is the
     formal sum of `of'` over this multiset (`of'_mul_of'_nim_form`). -/
-private noncomputable def productIdx (A' B' : Forest (Nonplanar α)) :
-    Multiset (Forest (Nonplanar α)) :=
+private noncomputable def productIdx (A' B' : Forest (UnorderedTree α)) :
+    Multiset (Forest (UnorderedTree α)) :=
   B'.powerset.bind (fun H =>
-    (Nonplanar.insertionMultiset A' H).map (fun X => X + (B' - H)))
+    (UnorderedTree.insertionMultiset A' H).map (fun X => X + (B' - H)))
 
 /-- Antidiagonal form of `productIdx`. -/
-private theorem productIdx_eq_antidiagonal (A' B' : Forest (Nonplanar α)) :
+private theorem productIdx_eq_antidiagonal (A' B' : Forest (UnorderedTree α)) :
     productIdx A' B' =
       (Multiset.antidiagonal B').bind (fun u =>
-        (Nonplanar.insertionMultiset A' u.2).map (fun X => X + u.1)) := by
+        (UnorderedTree.insertionMultiset A' u.2).map (fun X => X + u.1)) := by
   unfold productIdx
   exact powerset_bind_eq_antidiagonal_bind B'
-    (fun H Bf => (Nonplanar.insertionMultiset A' H).map (fun X => X + Bf))
+    (fun H Bf => (UnorderedTree.insertionMultiset A' H).map (fun X => X + Bf))
 
 /-- `pairing (product (of' A') (of' B')) z` as a `productIdx`-indexed sum. -/
-private theorem pairing_product_of'_expand (A' B' : Forest (Nonplanar α))
-    (z : ConnesKreimer R (Nonplanar α)) :
+private theorem pairing_product_of'_expand (A' B' : Forest (UnorderedTree α))
+    (z : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) (product (ConnesKreimer.of' A') (ConnesKreimer.of' B')) z =
       ((productIdx A' B').map (fun W =>
         pairing (R := R) (ConnesKreimer.of' W) z)).sum := by
   have hexp : product (ConnesKreimer.of' (R := R) A') (ConnesKreimer.of' B') =
       (((productIdx A' B').map (fun W => ConnesKreimer.of' (R := R) W)).sum :
-        ConnesKreimer R (Nonplanar α)) := by
+        ConnesKreimer R (UnorderedTree α)) := by
     show ((of' (R := R) A' : GrossmanLarson R α) * of' B' : GrossmanLarson R α) = _
     rw [of'_mul_of'_nim_form]
     show (((B'.powerset.bind fun H =>
-        (Nonplanar.insertionMultiset A' H).map fun X =>
+        (UnorderedTree.insertionMultiset A' H).map fun X =>
           ConnesKreimer.of' (R := R) (X + (B' - H))).sum :
-        ConnesKreimer R (Nonplanar α))) = _
+        ConnesKreimer R (UnorderedTree α))) = _
     unfold productIdx
     rw [Multiset.map_bind]
     congr 1
@@ -227,32 +227,32 @@ private theorem pairing_product_of'_expand (A' B' : Forest (Nonplanar α))
 /-- **Index identity**: the cut-split index multiset of `A ⋆ B` against a
     two-factor product equals the doubly-split product index. The multiset
     backbone of `pairing_product_of'_mul_of'`. -/
-private theorem productIdx_mul_split (A B : Forest (Nonplanar α)) :
+private theorem productIdx_mul_split (A B : Forest (UnorderedTree α)) :
     (B.powerset.bind (fun B₁ =>
-       (Nonplanar.insertionMultiset A B₁).bind (fun X =>
+       (UnorderedTree.insertionMultiset A B₁).bind (fun X =>
          Multiset.antidiagonal (X + (B - B₁))))) =
       (Multiset.antidiagonal A ×ˢ Multiset.antidiagonal B).bind (fun pq =>
         productIdx pq.1.1 pq.2.1 ×ˢ productIdx pq.1.2 pq.2.2) := by
   -- Step A+B+C+D: inner antidiagonal split + Lemma G, per B₁.
   have stepACD : ∀ B₁ ∈ B.powerset,
-      ((Nonplanar.insertionMultiset A B₁).bind (fun X =>
+      ((UnorderedTree.insertionMultiset A B₁).bind (fun X =>
         Multiset.antidiagonal (X + (B - B₁)))) =
       (Multiset.antidiagonal A).bind (fun pa =>
         (Multiset.antidiagonal B₁).bind (fun pH =>
           (Multiset.antidiagonal (B - B₁)).bind (fun q =>
-            (Nonplanar.insertionMultiset pa.1 pH.1 ×ˢ
-              Nonplanar.insertionMultiset pa.2 pH.2).map
+            (UnorderedTree.insertionMultiset pa.1 pH.1 ×ˢ
+              UnorderedTree.insertionMultiset pa.2 pH.2).map
               (fun pX => (pX.1 + q.1, pX.2 + q.2))))) := by
     intro B₁ _
-    have h1 : ((Nonplanar.insertionMultiset A B₁).bind (fun X =>
+    have h1 : ((UnorderedTree.insertionMultiset A B₁).bind (fun X =>
           Multiset.antidiagonal (X + (B - B₁)))) =
-        ((Nonplanar.insertionMultiset A B₁).bind Multiset.antidiagonal).bind
+        ((UnorderedTree.insertionMultiset A B₁).bind Multiset.antidiagonal).bind
           (fun p => (Multiset.antidiagonal (B - B₁)).map
             (fun q => (p.1 + q.1, p.2 + q.2))) := by
       rw [Multiset.bind_assoc]
       refine Multiset.bind_congr fun X _ => ?_
       exact Multiset.antidiagonal_add X (B - B₁)
-    rw [h1, Nonplanar.insertionMultiset_antidiagonal, Multiset.bind_assoc]
+    rw [h1, UnorderedTree.insertionMultiset_antidiagonal, Multiset.bind_assoc]
     refine Multiset.bind_congr fun pa _ => ?_
     rw [Multiset.bind_assoc]
     refine Multiset.bind_congr fun pH _ => ?_
@@ -262,12 +262,12 @@ private theorem productIdx_mul_split (A B : Forest (Nonplanar α)) :
   -- Step E: pull the antidiagonal-A bind out front.
   rw [Multiset.bind_bind]
   -- Step F+G+H: per pa, reorganize the B-part into quadBind form and swap.
-  have stepB : ∀ pa : Forest (Nonplanar α) × Forest (Nonplanar α),
+  have stepB : ∀ pa : Forest (UnorderedTree α) × Forest (UnorderedTree α),
       (B.powerset.bind (fun B₁ =>
         (Multiset.antidiagonal B₁).bind (fun pH =>
           (Multiset.antidiagonal (B - B₁)).bind (fun q =>
-            (Nonplanar.insertionMultiset pa.1 pH.1 ×ˢ
-              Nonplanar.insertionMultiset pa.2 pH.2).map
+            (UnorderedTree.insertionMultiset pa.1 pH.1 ×ˢ
+              UnorderedTree.insertionMultiset pa.2 pH.2).map
               (fun pX => (pX.1 + q.1, pX.2 + q.2)))))) =
       (Multiset.antidiagonal B).bind (fun pb =>
         productIdx pa.1 pb.1 ×ˢ productIdx pa.2 pb.2) := by
@@ -276,20 +276,20 @@ private theorem productIdx_mul_split (A B : Forest (Nonplanar α)) :
     rw [powerset_bind_eq_antidiagonal_bind B (fun B₁ Bf =>
       (Multiset.antidiagonal B₁).bind (fun pH =>
         (Multiset.antidiagonal Bf).bind (fun q =>
-          (Nonplanar.insertionMultiset pa.1 pH.1 ×ˢ
-            Nonplanar.insertionMultiset pa.2 pH.2).map
+          (UnorderedTree.insertionMultiset pa.1 pH.1 ×ˢ
+            UnorderedTree.insertionMultiset pa.2 pH.2).map
             (fun pX => (pX.1 + q.1, pX.2 + q.2)))))]
     -- Commute the two inner antidiagonal binds to reach quadBind shape.
-    have hcomm : ∀ pb : Forest (Nonplanar α) × Forest (Nonplanar α),
+    have hcomm : ∀ pb : Forest (UnorderedTree α) × Forest (UnorderedTree α),
         ((Multiset.antidiagonal pb.2).bind (fun pH =>
           (Multiset.antidiagonal pb.1).bind (fun q =>
-            (Nonplanar.insertionMultiset pa.1 pH.1 ×ˢ
-              Nonplanar.insertionMultiset pa.2 pH.2).map
+            (UnorderedTree.insertionMultiset pa.1 pH.1 ×ˢ
+              UnorderedTree.insertionMultiset pa.2 pH.2).map
               (fun pX => (pX.1 + q.1, pX.2 + q.2))))) =
         ((Multiset.antidiagonal pb.1).bind (fun q =>
           (Multiset.antidiagonal pb.2).bind (fun pH =>
-            (Nonplanar.insertionMultiset pa.1 pH.1 ×ˢ
-              Nonplanar.insertionMultiset pa.2 pH.2).map
+            (UnorderedTree.insertionMultiset pa.1 pH.1 ×ˢ
+              UnorderedTree.insertionMultiset pa.2 pH.2).map
               (fun pX => (pX.1 + q.1, pX.2 + q.2))))) := by
       intro pb
       exact Multiset.bind_bind _ _
@@ -298,20 +298,20 @@ private theorem productIdx_mul_split (A B : Forest (Nonplanar α)) :
     rw [show ((Multiset.antidiagonal B).bind (fun pb =>
         (Multiset.antidiagonal pb.1).bind (fun q =>
           (Multiset.antidiagonal pb.2).bind (fun pH =>
-            (Nonplanar.insertionMultiset pa.1 pH.1 ×ˢ
-              Nonplanar.insertionMultiset pa.2 pH.2).map
+            (UnorderedTree.insertionMultiset pa.1 pH.1 ×ˢ
+              UnorderedTree.insertionMultiset pa.2 pH.2).map
               (fun pX => (pX.1 + q.1, pX.2 + q.2)))))) =
       quadBind B (fun a b c d =>
-        (Nonplanar.insertionMultiset pa.1 c ×ˢ
-          Nonplanar.insertionMultiset pa.2 d).map
+        (UnorderedTree.insertionMultiset pa.1 c ×ˢ
+          UnorderedTree.insertionMultiset pa.2 d).map
           (fun pX => (pX.1 + a, pX.2 + b))) from rfl]
     rw [quadBind_middle_swap]
     -- Unfold back and match against productIdx ×ˢ productIdx.
     show ((Multiset.antidiagonal B).bind (fun pb =>
         (Multiset.antidiagonal pb.1).bind (fun u =>
           (Multiset.antidiagonal pb.2).bind (fun v =>
-            (Nonplanar.insertionMultiset pa.1 u.2 ×ˢ
-              Nonplanar.insertionMultiset pa.2 v.2).map
+            (UnorderedTree.insertionMultiset pa.1 u.2 ×ˢ
+              UnorderedTree.insertionMultiset pa.2 v.2).map
               (fun pX => (pX.1 + u.1, pX.2 + v.1)))))) = _
     refine Multiset.bind_congr fun pb _ => ?_
     rw [productIdx_eq_antidiagonal, productIdx_eq_antidiagonal,
@@ -345,7 +345,7 @@ private theorem productIdx_mul_split (A B : Forest (Nonplanar α)) :
     index multiset `productIdx`; the multiset backbone is
     `productIdx_mul_split`, whose combinatorial heart is the middle-four
     interchange `quadBind_middle_swap`. -/
-theorem pairing_product_of'_mul_of' (A B C₁ C₂ : Forest (Nonplanar α)) :
+theorem pairing_product_of'_mul_of' (A B C₁ C₂ : Forest (UnorderedTree α)) :
     pairing (R := R)
         (product (ConnesKreimer.of' A) (ConnesKreimer.of' B))
         (ConnesKreimer.of' C₁ * ConnesKreimer.of' C₂) =
@@ -357,7 +357,7 @@ theorem pairing_product_of'_mul_of' (A B C₁ C₂ : Forest (Nonplanar α)) :
             (product (ConnesKreimer.of' pq.1.2) (ConnesKreimer.of' pq.2.2))
             (ConnesKreimer.of' C₂))).sum := by
   -- φ evaluates a split pair against (C₁, C₂).
-  set φ : Forest (Nonplanar α) × Forest (Nonplanar α) → R :=
+  set φ : Forest (UnorderedTree α) × Forest (UnorderedTree α) → R :=
     fun p => pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
       pairing (R := R) (ConnesKreimer.of' p.2) (ConnesKreimer.of' C₂) with hφ
   -- LHS = sum of φ over the cut-split index multiset.
@@ -365,7 +365,7 @@ theorem pairing_product_of'_mul_of' (A B C₁ C₂ : Forest (Nonplanar α)) :
         (product (ConnesKreimer.of' A) (ConnesKreimer.of' B))
         (ConnesKreimer.of' C₁ * ConnesKreimer.of' C₂) =
       (((B.powerset.bind (fun B₁ =>
-        (Nonplanar.insertionMultiset A B₁).bind (fun X =>
+        (UnorderedTree.insertionMultiset A B₁).bind (fun X =>
           Multiset.antidiagonal (X + (B - B₁)))))).map φ).sum := by
     rw [pairing_product_of'_expand]
     unfold productIdx

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
 # FormSet operators `FS^(k)` — MCB Def 1.16.1
@@ -84,75 +84,75 @@ Distinct from Δ^c / Δ^d / Δ^ρ (which extract subforests). Coassoc +
 algebra-hom by construction — no Foissy axiom needed. -/
 
 /-- Per-tree primitive coproduct: `T ↦ ofTree T ⊗ 1 + 1 ⊗ ofTree T`. -/
-noncomputable def primTensor (T : Nonplanar α) :
-    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
-  ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)) +
-    (1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R] ofTree T
+noncomputable def primTensor (T : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
+  ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
+    (1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] ofTree T
 
 /-- Forest-level primitive coproduct: `F ↦ ∏_{T ∈ F} primTensor T`. -/
-noncomputable def comulPrimForest (F : Forest (Nonplanar α)) :
-    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+noncomputable def comulPrimForest (F : Forest (UnorderedTree α)) :
+    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   (F.map (primTensor (R := R))).prod
 
 @[simp] theorem comulPrimForest_zero :
-    comulPrimForest (R := R) (0 : Forest (Nonplanar α)) = 1 := by
+    comulPrimForest (R := R) (0 : Forest (UnorderedTree α)) = 1 := by
   simp only [comulPrimForest, Multiset.map_zero, Multiset.prod_zero]
 
-@[simp] theorem comulPrimForest_add (F G : Forest (Nonplanar α)) :
+@[simp] theorem comulPrimForest_add (F G : Forest (UnorderedTree α)) :
     comulPrimForest (R := R) (F + G) =
       comulPrimForest (R := R) F * comulPrimForest (R := R) G := by
   unfold comulPrimForest
   rw [Multiset.map_add, Multiset.prod_add]
 
-/-- `comulPrimForest` as a `Multiplicative (Forest (Nonplanar α)) →* …`. -/
+/-- `comulPrimForest` as a `Multiplicative (Forest (UnorderedTree α)) →* …`. -/
 noncomputable def comulPrimMonoidHom :
-    Multiplicative (Forest (Nonplanar α)) →*
-      (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) where
+    Multiplicative (Forest (UnorderedTree α)) →*
+      (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) where
   toFun F := comulPrimForest (R := R) F.toAdd
   map_one' := comulPrimForest_zero
   map_mul' F G := comulPrimForest_add F.toAdd G.toAdd
 
 /-- The **primitive coproduct** `Δ_P` as an algebra hom. -/
 noncomputable def comulPrim :
-    ConnesKreimer R (Nonplanar α) →ₐ[R]
-      ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+    ConnesKreimer R (UnorderedTree α) →ₐ[R]
+      ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   ConnesKreimer.lift comulPrimMonoidHom
 
-@[simp] theorem comulPrim_apply_of' (F : Forest (Nonplanar α)) :
+@[simp] theorem comulPrim_apply_of' (F : Forest (UnorderedTree α)) :
     comulPrim (R := R) (α := α) (of' F) = comulPrimForest F := by
   rw [comulPrim, ConnesKreimer.lift_of']
   rfl
 
-@[simp] theorem comulPrim_apply_ofTree (T : Nonplanar α) :
+@[simp] theorem comulPrim_apply_ofTree (T : UnorderedTree α) :
     comulPrim (R := R) (α := α) (ofTree T) =
-      ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)) +
-        (1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R] ofTree T := by
+      ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
+        (1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] ofTree T := by
   unfold ofTree
   rw [comulPrim_apply_of']
-  show comulPrimForest ({T} : Forest (Nonplanar α)) = _
-  show (Multiset.map (primTensor (R := R)) ({T} : Multiset (Nonplanar α))).prod = _
+  show comulPrimForest ({T} : Forest (UnorderedTree α)) = _
+  show (Multiset.map (primTensor (R := R)) ({T} : Multiset (UnorderedTree α))).prod = _
   rw [Multiset.map_singleton, Multiset.prod_singleton]
   rfl
 
 /-! ### The k-component projection `Π_(k)` (MCB book p. 142)
 
 `γ_(k)(F) = F` if F has exactly `k` components, else 0. Linearly
-extended to `ConnesKreimer R (Nonplanar α)`. Then `Π_(k) = γ_(k) ⊗ id`
+extended to `ConnesKreimer R (UnorderedTree α)`. Then `Π_(k) = γ_(k) ⊗ id`
 on the left channel of the coproduct output. -/
 
-/-- The **k-component projection** `γ_(k)` on `ConnesKreimer R (Nonplanar α)`:
+/-- The **k-component projection** `γ_(k)` on `ConnesKreimer R (UnorderedTree α)`:
     on basis `of' F`, returns `of' F` if `F.card = k`, else 0. -/
 noncomputable def projectKComponent (k : ℕ) :
-    ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   ConnesKreimer.linearLift
-    (fun F => if F.card = k then (of' F : ConnesKreimer R (Nonplanar α)) else 0)
+    (fun F => if F.card = k then (of' F : ConnesKreimer R (UnorderedTree α)) else 0)
 
-@[simp] theorem projectKComponent_of'_eq (k : ℕ) (F : Forest (Nonplanar α))
+@[simp] theorem projectKComponent_of'_eq (k : ℕ) (F : Forest (UnorderedTree α))
     (h : F.card = k) :
     projectKComponent (R := R) k (of' F) = of' F := by
   rw [projectKComponent, ConnesKreimer.linearLift_of', if_pos h]
 
-@[simp] theorem projectKComponent_of'_ne (k : ℕ) (F : Forest (Nonplanar α))
+@[simp] theorem projectKComponent_of'_ne (k : ℕ) (F : Forest (UnorderedTree α))
     (h : F.card ≠ k) :
     projectKComponent (R := R) k (of' F) = 0 := by
   rw [projectKComponent, ConnesKreimer.linearLift_of', if_neg h]
@@ -165,9 +165,9 @@ operator `B` (MCB Def 1.3.2) is `bPlusLin` (`Coproduct/Pruning.lean`). -/
 
 /-- The CK multiplication as a LinearMap from `H ⊗ H → H`. -/
 noncomputable def mulLin :
-    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) →ₗ[R]
-      ConnesKreimer R (Nonplanar α) :=
-  LinearMap.mul' R (ConnesKreimer R (Nonplanar α))
+    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
+      ConnesKreimer R (UnorderedTree α) :=
+  LinearMap.mul' R (ConnesKreimer R (UnorderedTree α))
 
 /-- **MCB Def 1.16.1**: the FormSet operator `FS^(k)` of arity `k`,
     parameterized by a root label `a : α` for the grafting operator `B`.
@@ -178,7 +178,7 @@ noncomputable def mulLin :
     we don't enforce this here, since the formula is well-defined for
     any `k ≥ 0`. -/
 noncomputable def formSet (a : α) (k : ℕ) :
-    ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   mulLin (R := R) (α := α) ∘ₗ
     ((bPlusLin (R := R) a).rTensor _) ∘ₗ
     ((projectKComponent (R := R) k).rTensor _) ∘ₗ
@@ -186,7 +186,7 @@ noncomputable def formSet (a : α) (k : ℕ) :
 
 /-! ### Basic API + sanity tests -/
 
-@[simp] theorem formSet_apply (a : α) (k : ℕ) (x : ConnesKreimer R (Nonplanar α)) :
+@[simp] theorem formSet_apply (a : α) (k : ℕ) (x : ConnesKreimer R (UnorderedTree α)) :
     formSet (R := R) a k x =
       mulLin (((bPlusLin (R := R) a).rTensor _)
         (((projectKComponent (R := R) k).rTensor _) (comulPrim x))) := rfl
@@ -194,29 +194,29 @@ noncomputable def formSet (a : α) (k : ℕ) :
 /-- On a singleton tree `T`, `Δ_P(T) = T ⊗ 1 + 1 ⊗ T`. The left channel
     has cardinality 1 (`{T}.card`) and cardinality 0 (empty forest).
     For `k = 1`, only the `T ⊗ 1` summand survives Π_(1); grafting gives
-    `ofTree (Nonplanar.node a {T}) ⊗ 1`, and `⊔` produces
-    `ofTree (Nonplanar.node a {T})`. -/
-example (a : α) (T : Nonplanar α) :
+    `ofTree (UnorderedTree.node a {T}) ⊗ 1`, and `⊔` produces
+    `ofTree (UnorderedTree.node a {T})`. -/
+example (a : α) (T : UnorderedTree α) :
     formSet (R := R) a 1 (ofTree T) =
-      ofTree (Nonplanar.node a ({T} : Forest (Nonplanar α))) := by
+      ofTree (UnorderedTree.node a ({T} : Forest (UnorderedTree α))) := by
   show mulLin (((bPlusLin (R := R) a).rTensor _)
         (((projectKComponent (R := R) 1).rTensor _) (comulPrim (ofTree T)))) = _
   rw [comulPrim_apply_ofTree]
   -- Distribute rTensor / mulLin over the sum and reduce.
   have h1 : projectKComponent (R := R) 1 (ofTree T) = ofTree T := by
-    have : (({T} : Forest (Nonplanar α))).card = 1 := by
+    have : (({T} : Forest (UnorderedTree α))).card = 1 := by
       simp [Multiset.card_singleton]
-    exact projectKComponent_of'_eq 1 ({T} : Forest (Nonplanar α)) this
-  have h0 : projectKComponent (R := R) 1 (1 : ConnesKreimer R (Nonplanar α)) = 0 := by
-    have hne : ((0 : Forest (Nonplanar α))).card ≠ 1 := by simp
-    have := projectKComponent_of'_ne (R := R) 1 (0 : Forest (Nonplanar α)) hne
+    exact projectKComponent_of'_eq 1 ({T} : Forest (UnorderedTree α)) this
+  have h0 : projectKComponent (R := R) 1 (1 : ConnesKreimer R (UnorderedTree α)) = 0 := by
+    have hne : ((0 : Forest (UnorderedTree α))).card ≠ 1 := by simp
+    have := projectKComponent_of'_ne (R := R) 1 (0 : Forest (UnorderedTree α)) hne
     simpa using this
   simp only [map_add, LinearMap.rTensor_tmul, h1, h0,
              TensorProduct.zero_tmul, add_zero, mulLin,
              LinearMap.mul'_apply, mul_one]
   -- Bridge via `ofTree T = of' {T}`.
-  show bPlusLin (R := R) a (of' ({T} : Forest (Nonplanar α))) = _
-  exact bPlusLin_of' a ({T} : Forest (Nonplanar α))
+  show bPlusLin (R := R) a (of' ({T} : Forest (UnorderedTree α))) = _
+  exact bPlusLin_of' a ({T} : Forest (UnorderedTree α))
 
 end ConnesKreimer
 

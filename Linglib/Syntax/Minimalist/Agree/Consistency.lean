@@ -20,8 +20,8 @@ checking over all substructures" (§3.1.5).
 
 This file instantiates that map for **feature consistency** in the Boolean (parsing) semiring of
 §3.5: the target `Consistency = {inconsistent, consistent}` with `∨`/`∧`. The syntactic object `S`
-(a `Nonplanar Vertex` subtree, `Vertex = LIToken ⊕ Option LIToken`) embeds into the Hopf algebra
-via `ofTree S.val` (no head decoration — the single MCB carrier, `FreeCommMagma`/`toNonplanar`
+(a `UnorderedTree Vertex` subtree, `Vertex = LIToken ⊕ Option LIToken`) embeds into the Hopf algebra
+via `ofTree S.val` (no head decoration — the single MCB carrier, `FreeCommMagma`/`toUnorderedTree`
 retired). A local feature character `φ` is renormalized by the weight-`+1` semiring Birkhoff
 factorization (`ConnesKreimer.SemiringRenorm`) into the consistency map `φ₊`.
 
@@ -41,7 +41,7 @@ structural proof.
 
 namespace Minimalist
 
-open RoseTree RoseTree.Nonplanar ConnesKreimer SyntacticObject
+open RoseTree UnorderedTree ConnesKreimer SyntacticObject
 
 /-! ### The Boolean consistency semiring -/
 
@@ -102,12 +102,12 @@ end Consistency
 /-! ### The SyntacticObject → Hopf algebra bridge -/
 
 /-- The syntactic object as an element of the Connes–Kreimer Hopf algebra over `ℕ`: the singleton
-    forest of its underlying nonplanar tree `S.val : Nonplanar Vertex`. The base ring is `ℕ`
+    forest of its underlying nonplanar tree `S.val : UnorderedTree Vertex`. The base ring is `ℕ`
     (every commutative semiring, including `Consistency`, is an `ℕ`-algebra; a Boolean target is
     not a `ℤ`-algebra). This is the bridge on which a consistency character acts — no head
-    decoration, since the single MCB carrier already *is* a `Nonplanar Vertex` subtype. -/
+    decoration, since the single MCB carrier already *is* a `UnorderedTree Vertex` subtype. -/
 noncomputable def SyntacticObject.toCK (S : SyntacticObject) :
-    ConnesKreimer ℕ (Nonplanar Vertex) :=
+    ConnesKreimer ℕ (UnorderedTree Vertex) :=
   ofTree S.val
 
 /-! ### The feature-consistency map -/
@@ -120,7 +120,7 @@ open scoped TensorProduct
     initially chosen assignment of semantic values so as to incorporate the consistency checking
     over all substructures" — superseding the retired per-feature checking lifecycle. -/
 noncomputable def featureConsistency
-    (φ : ConnesKreimer ℕ (Nonplanar Vertex) →ₗ[ℕ] Consistency)
+    (φ : ConnesKreimer ℕ (UnorderedTree Vertex) →ₗ[ℕ] Consistency)
     (RB : RotaBaxterSemiring Consistency) (S : SyntacticObject) : Consistency :=
   SemiringRenorm.birkhoffPlusTree φ RB S.val
 
@@ -130,7 +130,7 @@ noncomputable def featureConsistency
     `S.toCK`, the convolution of the Bogolyubov counterterm `φ₋` with the character `φ` recovers the
     consistency verdict. Needs `φ` unital. -/
 theorem featureConsistency_eq_convMul
-    (φ : ConnesKreimer ℕ (Nonplanar Vertex) →ₗ[ℕ] Consistency)
+    (φ : ConnesKreimer ℕ (UnorderedTree Vertex) →ₗ[ℕ] Consistency)
     (RB : RotaBaxterSemiring Consistency) (hφ : φ 1 = 1) (S : SyntacticObject) :
     LinearMap.mul' ℕ Consistency
         ((TensorProduct.map (SemiringRenorm.birkhoffMinus φ RB).toLinearMap φ)
@@ -152,16 +152,16 @@ head-following toy model — deliberately the simplest illustration; §3.2.2 ref
 /-- **The head-probe value on a tree** `Υ_{s,h}` ([marcolli-chomsky-berwick-2025] eq. (3.2.1)): the
     probe `Υ` applied to `T`'s §1.13 selection head (`selCheckN`); `inconsistent` (`−∞`) when `T`
     has no well-defined head (off the endocentric domain). -/
-def headProbeTree (Υ : LIToken → Consistency) (T : Nonplanar Vertex) : Consistency :=
+def headProbeTree (Υ : LIToken → Consistency) (T : UnorderedTree Vertex) : Consistency :=
   (selCheckN T).head.elim Consistency.inconsistent Υ
 
 /-- `Υ_{s,h}` extended multiplicatively to forests (the semiring character of Lemma 3.2.5): a
     workspace is consistent iff each of its trees is. Mirrors `birkhoffMinusMonoidHom`. -/
 def headProbeMonoidHom (Υ : LIToken → Consistency) :
-    Multiplicative (Forest (Nonplanar Vertex)) →* Consistency where
+    Multiplicative (Forest (UnorderedTree Vertex)) →* Consistency where
   toFun F := (F.toAdd.map (headProbeTree Υ)).prod
   map_one' := by
-    show ((0 : Forest (Nonplanar Vertex)).map _).prod = 1
+    show ((0 : Forest (UnorderedTree Vertex)).map _).prod = 1
     rw [Multiset.map_zero, Multiset.prod_zero]
   map_mul' F G := by
     show ((F.toAdd + G.toAdd).map (headProbeTree Υ)).prod =
@@ -172,16 +172,16 @@ def headProbeMonoidHom (Υ : LIToken → Consistency) :
     Lemma 3.2.5) as an algebra hom `H →ₐ[ℕ] Consistency`: the unrenormalized feature assignment
     whose Birkhoff renormalization is the consistency map. -/
 noncomputable def headProbeChar (Υ : LIToken → Consistency) :
-    ConnesKreimer ℕ (Nonplanar Vertex) →ₐ[ℕ] Consistency :=
+    ConnesKreimer ℕ (UnorderedTree Vertex) →ₐ[ℕ] Consistency :=
   ConnesKreimer.lift (headProbeMonoidHom Υ)
 
 @[simp] theorem headProbeChar_apply_of' (Υ : LIToken → Consistency)
-    (F : Forest (Nonplanar Vertex)) :
+    (F : Forest (UnorderedTree Vertex)) :
     headProbeChar Υ (of' F) = (F.map (headProbeTree Υ)).prod := by
   rw [headProbeChar, ConnesKreimer.lift_of']
   rfl
 
-@[simp] theorem headProbeChar_apply_ofTree (Υ : LIToken → Consistency) (T : Nonplanar Vertex) :
+@[simp] theorem headProbeChar_apply_ofTree (Υ : LIToken → Consistency) (T : UnorderedTree Vertex) :
     headProbeChar Υ (ofTree T) = headProbeTree Υ T := by
   unfold ofTree
   rw [headProbeChar_apply_of', Multiset.map_singleton, Multiset.prod_singleton]

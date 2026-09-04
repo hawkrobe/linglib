@@ -10,7 +10,7 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 import Linglib.Core.Combinatorics.RootedTree.CutFilterMap
 import Linglib.Core.Data.RoseTree.FilterMap
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
 # The deletion coproduct Δ^d
@@ -25,7 +25,7 @@ trace-placeholder leaves.
 ## Main definitions
 
 * `ConnesKreimer.eraseTracesAlgHom` — `Π_{d,c}` as an algebra hom
-  `ConnesKreimer R (Nonplanar (α ⊕ β)) →ₐ[R] ConnesKreimer R (Nonplanar α)`,
+  `ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₐ[R] ConnesKreimer R (UnorderedTree α)`,
   induced by the tree-level partial map (`Core/Data/RoseTree/FilterMap.lean`)
   via `ConnesKreimer.mapDomainAlgHom`.
 * `ConnesKreimer.embedInlAlgHom` — the `Sum.inl` embedding as an algebra hom.
@@ -44,7 +44,7 @@ trace-placeholder leaves.
 composes with a second projection `Π_{d,p}` contracting degree-1
 vertices to restore binary structure, and their comparison
 `Δ^d = (id ⊗ Π_{d,p}) ∘ Δ^ρ` holds only weakly (Lemma 1.2.12, a
-distance-≤-1 multiplicity discrepancy). On n-ary `Nonplanar` trees
+distance-≤-1 multiplicity discrepancy). On n-ary `UnorderedTree` trees
 `Π_{d,p}` is the identity, the erasure alone defines Δ^d, and the Δ^ρ
 comparison is an exact equality. We erase on both tensor channels so the
 target carrier is uniformly trace-free; on the embedded trace-free
@@ -70,47 +70,47 @@ variable {R : Type*} [CommSemiring R] {α β : Type*}
 
 /-- The **trace-erasure algebra hom** `Π_{d,c}`: erase trace subtrees componentwise across each basis
     forest, dropping trace-rooted trees
-    (`Multiset.filterMapAddMonoidHom (Nonplanar.filterMap Sum.getLeft?)`), lifted
+    (`Multiset.filterMapAddMonoidHom (UnorderedTree.filterMap Sum.getLeft?)`), lifted
     through `ConnesKreimer.mapDomainAlgHom`. -/
 noncomputable def eraseTracesAlgHom :
-    ConnesKreimer R (Nonplanar (α ⊕ β)) →ₐ[R] ConnesKreimer R (Nonplanar α) :=
+    ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₐ[R] ConnesKreimer R (UnorderedTree α) :=
   ConnesKreimer.mapDomainAlgHom
-    (Multiset.filterMapAddMonoidHom (Nonplanar.filterMap Sum.getLeft?))
+    (Multiset.filterMapAddMonoidHom (UnorderedTree.filterMap Sum.getLeft?))
 
-@[simp] theorem eraseTracesAlgHom_of' (F : Forest (Nonplanar (α ⊕ β))) :
+@[simp] theorem eraseTracesAlgHom_of' (F : Forest (UnorderedTree (α ⊕ β))) :
     eraseTracesAlgHom (R := R) (of' F) =
-      of' (R := R) (F.filterMap (Nonplanar.filterMap Sum.getLeft?)) := by
+      of' (R := R) (F.filterMap (UnorderedTree.filterMap Sum.getLeft?)) := by
   rw [eraseTracesAlgHom, ConnesKreimer.mapDomainAlgHom_of']
   rfl
 
 /-- `eraseTracesAlgHom` on a single tree: the trace-erased tree if the root
     survives, `1` if the root is a trace placeholder. -/
-@[simp] theorem eraseTracesAlgHom_ofTree (T : Nonplanar (α ⊕ β)) :
+@[simp] theorem eraseTracesAlgHom_ofTree (T : UnorderedTree (α ⊕ β)) :
     eraseTracesAlgHom (R := R) (ofTree T) =
-      (Nonplanar.filterMap Sum.getLeft? T).elim 1 ofTree := by
-  rw [show (ofTree T : ConnesKreimer R (Nonplanar (α ⊕ β))) = of' {T} from rfl,
+      (UnorderedTree.filterMap Sum.getLeft? T).elim 1 ofTree := by
+  rw [show (ofTree T : ConnesKreimer R (UnorderedTree (α ⊕ β))) = of' {T} from rfl,
       eraseTracesAlgHom_of',
-      show ({T} : Forest (Nonplanar (α ⊕ β))) = T ::ₘ 0 from rfl,
+      show ({T} : Forest (UnorderedTree (α ⊕ β))) = T ::ₘ 0 from rfl,
       Multiset.filterMap_cons, Multiset.filterMap_zero, add_zero]
-  cases Nonplanar.filterMap Sum.getLeft? T with
+  cases UnorderedTree.filterMap Sum.getLeft? T with
   | none => simp [of'_zero]
   | some t' => simp [of'_singleton]
 
 /-! ## Sum.inl embedding
 
 The embedding `α → α ⊕ β` lifts componentwise to trees and forests via
-`RoseTree.map` / `Nonplanar.map` / `Multiset.map`. -/
+`RoseTree.map` / `UnorderedTree.map` / `Multiset.map`. -/
 
 /-- The **`Sum.inl` embedding algebra hom**: relabel every basis forest
     componentwise along `Sum.inl`, embedding trace-free trees into the
     marked alphabet. -/
 noncomputable def embedInlAlgHom :
-    ConnesKreimer R (Nonplanar α) →ₐ[R] ConnesKreimer R (Nonplanar (α ⊕ β)) :=
-  ConnesKreimer.mapDomainAlgHom (Multiset.mapAddMonoidHom (Nonplanar.map Sum.inl))
+    ConnesKreimer R (UnorderedTree α) →ₐ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=
+  ConnesKreimer.mapDomainAlgHom (Multiset.mapAddMonoidHom (UnorderedTree.map Sum.inl))
 
-@[simp] theorem embedInlAlgHom_of' (F : Forest (Nonplanar α)) :
+@[simp] theorem embedInlAlgHom_of' (F : Forest (UnorderedTree α)) :
     embedInlAlgHom (R := R) (β := β) (of' F) =
-      of' (R := R) (F.map (Nonplanar.map Sum.inl)) := by
+      of' (R := R) (F.map (UnorderedTree.map Sum.inl)) := by
   rw [embedInlAlgHom, ConnesKreimer.mapDomainAlgHom_of']
   rfl
 
@@ -120,34 +120,34 @@ noncomputable def embedInlAlgHom :
     the round trip. -/
 theorem eraseTracesAlgHom_comp_embedInlAlgHom :
     (eraseTracesAlgHom (R := R) (α := α) (β := β)).comp embedInlAlgHom =
-      AlgHom.id R (ConnesKreimer R (Nonplanar α)) := by
+      AlgHom.id R (ConnesKreimer R (UnorderedTree α)) := by
   apply ConnesKreimer.algHom_ext
   intro F
   show eraseTracesAlgHom (embedInlAlgHom (of' F)) = of' F
   rw [embedInlAlgHom_of', eraseTracesAlgHom_of', Multiset.filterMap_map,
-      show ((Nonplanar.filterMap Sum.getLeft? ∘ Nonplanar.map Sum.inl :
-              Nonplanar α → Option (Nonplanar α))) = some from
-        funext fun T => Nonplanar.filterMap_getLeft?_map_inl T,
+      show ((UnorderedTree.filterMap Sum.getLeft? ∘ UnorderedTree.map Sum.inl :
+              UnorderedTree α → Option (UnorderedTree α))) = some from
+        funext fun T => UnorderedTree.filterMap_getLeft?_map_inl T,
       Multiset.filterMap_some]
 
 /-! ## Δ^d definition
 
 `comulDN := (Π_{d,c} ⊗ Π_{d,c}) ∘ Δ^c` — MCB Lemma 1.3.10 by
-construction. Target carrier is `Nonplanar α` (trace-free). -/
+construction. Target carrier is `UnorderedTree α` (trace-free). -/
 
-/-- The **Δ^d coproduct on `ConnesKreimer R (Nonplanar (α ⊕ β))`** as an
+/-- The **Δ^d coproduct on `ConnesKreimer R (UnorderedTree (α ⊕ β))`** as an
     algebra hom, with trace-erasure applied to both channels of
     `comulCAlgHomN τ`. -/
-noncomputable def comulDN (τ : Nonplanar (α ⊕ β) → β) :
-    ConnesKreimer R (Nonplanar (α ⊕ β)) →ₐ[R]
-      ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+noncomputable def comulDN (τ : UnorderedTree (α ⊕ β) → β) :
+    ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₐ[R]
+      ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R) (α := α) (β := β))
     eraseTracesAlgHom).comp (comulCAlgHomN τ)
 
 /-! ## Equivalence with Δ^ρ via embedding
 
 The substantive MCB-correspondence: starting from a trace-free
-`T : Nonplanar α` and embedding into `Nonplanar (α ⊕ β)` via `Sum.inl`,
+`T : UnorderedTree α` and embedding into `UnorderedTree (α ⊕ β)` via `Sum.inl`,
 applying `comulDN` (= Δ^c then erasure) gives the same result as applying
 `comulAlgHomN` (Δ^ρ) directly.
 
@@ -156,13 +156,13 @@ rebinarize step on the right channel; in our n-ary substrate, the
 erasure is enough. -/
 
 /-- `eraseTracesAlgHom` applied to an embedded single tree recovers the
-    tree: single-tree form of `Nonplanar.filterMap_getLeft?_map_inl`. -/
+    tree: single-tree form of `UnorderedTree.filterMap_getLeft?_map_inl`. -/
 private theorem eraseTracesAlgHom_ofTree_map_inl
-    (T : Nonplanar α) :
+    (T : UnorderedTree α) :
     eraseTracesAlgHom (R := R) (β := β)
-        (ofTree (Nonplanar.map Sum.inl T)) =
+        (ofTree (UnorderedTree.map Sum.inl T)) =
       ofTree T := by
-  rw [eraseTracesAlgHom_ofTree, Nonplanar.filterMap_getLeft?_map_inl]
+  rw [eraseTracesAlgHom_ofTree, UnorderedTree.filterMap_getLeft?_map_inl]
   rfl
 
 /-! ### The cut-summand tensor builder
@@ -175,16 +175,16 @@ domain. -/
 
 private noncomputable def optionCutTensor
     (q : Multiset (Option (RoseTree α)) × Option (RoseTree α)) :
-    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
-  (of' (q.1.filterMap (Option.map Nonplanar.mk)) : ConnesKreimer R (Nonplanar α))
-    ⊗ₜ[R] (q.2.map Nonplanar.mk).elim 1 ofTree
+    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
+  (of' (q.1.filterMap (Option.map UnorderedTree.mk)) : ConnesKreimer R (UnorderedTree α))
+    ⊗ₜ[R] (q.2.map UnorderedTree.mk).elim 1 ofTree
 
 /-- The `(Π ⊗ Π)`-image of a projected Δ^c summand is `optionCutTensor` of its
     filtered form. -/
 private theorem optionCutTensor_filterMap
     (p : Multiset (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β)) :
-    eraseTracesAlgHom (R := R) (of' (p.1.map Nonplanar.mk)) ⊗ₜ[R]
-        eraseTracesAlgHom (ofTree (Nonplanar.mk p.2)) =
+    eraseTracesAlgHom (R := R) (of' (p.1.map UnorderedTree.mk)) ⊗ₜ[R]
+        eraseTracesAlgHom (ofTree (UnorderedTree.mk p.2)) =
       optionCutTensor (R := R)
         (Prod.map (Multiset.map (RoseTree.filterMap Sum.getLeft?))
           (RoseTree.filterMap Sum.getLeft?) p) := by
@@ -193,44 +193,44 @@ private theorem optionCutTensor_filterMap
   · rw [eraseTracesAlgHom_of', Prod.map_fst, Multiset.filterMap_map,
         Multiset.filterMap_map]
     rfl
-  · rw [eraseTracesAlgHom_ofTree, Nonplanar.filterMap_mk, Prod.map_snd]
+  · rw [eraseTracesAlgHom_ofTree, UnorderedTree.filterMap_mk, Prod.map_snd]
 
 /-- On `some`-embedded Δ^ρ summands, `optionCutTensor` is the plain summand
     tensor. -/
 private theorem optionCutTensor_some (p : Multiset (RoseTree α) × RoseTree α) :
     optionCutTensor (R := R) (Prod.map (Multiset.map some) some p) =
-      (of' (p.1.map Nonplanar.mk) : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
-        ofTree (Nonplanar.mk p.2) := by
+      (of' (p.1.map UnorderedTree.mk) : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R]
+        ofTree (UnorderedTree.mk p.2) := by
   unfold optionCutTensor
   congr 1
   · rw [Prod.map_fst, Multiset.filterMap_map,
-        show (Option.map Nonplanar.mk ∘ (some : RoseTree α → Option (RoseTree α)))
-          = (some ∘ (Nonplanar.mk : RoseTree α → Nonplanar α)) from rfl,
+        show (Option.map UnorderedTree.mk ∘ (some : RoseTree α → Option (RoseTree α)))
+          = (some ∘ (UnorderedTree.mk : RoseTree α → UnorderedTree α)) from rfl,
         Multiset.filterMap_eq_map]
 
-/-! ### Lift from tree-level to Nonplanar -/
+/-! ### Lift from tree-level to UnorderedTree -/
 
 /-- The `(Π ⊗ Π)`-image of a projected Δ^c summand tensor, as a composed
     map: `optionCutTensor` after the summand filter. -/
 private theorem optionCutTensor_filterMap_comp :
     (((Algebra.TensorProduct.map (eraseTracesAlgHom (R := R) (α := α) (β := β))
         eraseTracesAlgHom) ∘
-      (fun p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β) =>
+      (fun p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β) =>
         of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)) ∘ projSummand) =
     (optionCutTensor (R := R)) ∘
       (Prod.map (Multiset.map (RoseTree.filterMap Sum.getLeft?))
         (RoseTree.filterMap Sum.getLeft?)) := by
   funext p
   show (Algebra.TensorProduct.map eraseTracesAlgHom eraseTracesAlgHom)
-      (of' (p.1.map Nonplanar.mk) ⊗ₜ[R] ofTree (Nonplanar.mk p.2)) = _
+      (of' (p.1.map UnorderedTree.mk) ⊗ₜ[R] ofTree (UnorderedTree.mk p.2)) = _
   rw [Algebra.TensorProduct.map_tmul]
   exact optionCutTensor_filterMap p
 
 /-- The plain Δ^ρ summand tensor, as a composed map: `optionCutTensor` after
     the `some` embedding. -/
 private theorem optionCutTensor_some_comp :
-    ((fun p : Forest (Nonplanar α) × Nonplanar α =>
-        (of' (R := R) p.1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R] ofTree p.2) ∘
+    ((fun p : Forest (UnorderedTree α) × UnorderedTree α =>
+        (of' (R := R) p.1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] ofTree p.2) ∘
       projSummand) =
     (optionCutTensor (R := R)) ∘ (Prod.map (Multiset.map some) some) := by
   funext p
@@ -239,20 +239,20 @@ private theorem optionCutTensor_some_comp :
 /-- Per-tree form of the Δ^ρ comparison, descended from the cut-summand
     identity `cutSummandsCP_map_inl_filterMap` through the quotient. -/
 private theorem eraseTraces_comulCTreeN_map_inl
-    (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar α) :
+    (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree α) :
     (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R) (α := α) (β := β))
-        eraseTracesAlgHom) (comulCTreeN τ (Nonplanar.map Sum.inl T)) =
+        eraseTracesAlgHom) (comulCTreeN τ (UnorderedTree.map Sum.inl T)) =
       comulTreeN T := by
   refine Quotient.inductionOn T fun t => ?_
   show (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R)) eraseTracesAlgHom)
-        (comulCTreeN τ (Nonplanar.mk (RoseTree.map Sum.inl t))) =
-      comulTreeN (Nonplanar.mk t)
+        (comulCTreeN τ (UnorderedTree.mk (RoseTree.map Sum.inl t))) =
+      comulTreeN (UnorderedTree.mk t)
   unfold comulCTreeN comulTreeNG comulTreeN
   rw [map_add]
   congr 1
   · rw [Algebra.TensorProduct.map_tmul, map_one]
     congr 1
-    exact eraseTracesAlgHom_ofTree_map_inl (Nonplanar.mk t)
+    exact eraseTracesAlgHom_ofTree_map_inl (UnorderedTree.mk t)
   · rw [map_multiset_sum
           (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R)) eraseTracesAlgHom),
         cutSummandsCN_mk, cutSummandsN_mk,
@@ -263,9 +263,9 @@ private theorem eraseTraces_comulCTreeN_map_inl
 /-- Forest-level form of the Δ^ρ comparison: the per-tree form lifted
     multiplicatively. -/
 private theorem eraseTraces_comulCForestN_map_inl
-    (τ : Nonplanar (α ⊕ β) → β) (F : Forest (Nonplanar α)) :
+    (τ : UnorderedTree (α ⊕ β) → β) (F : Forest (UnorderedTree α)) :
     (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R) (α := α) (β := β))
-        eraseTracesAlgHom) (comulCForestN τ (F.map (Nonplanar.map Sum.inl))) =
+        eraseTracesAlgHom) (comulCForestN τ (F.map (UnorderedTree.map Sum.inl))) =
       comulForestN F := by
   induction F using Multiset.induction with
   | empty =>
@@ -274,9 +274,9 @@ private theorem eraseTraces_comulCForestN_map_inl
     rw [Multiset.map_cons, comulForestN_cons]
     -- comulCForestN τ (T_embed ::ₘ F'_embed) = comulCTreeN τ T_embed * comulCForestN τ F'_embed
     have hcons : comulCForestN (R := R) τ
-        (Nonplanar.map Sum.inl T ::ₘ F'.map (Nonplanar.map Sum.inl)) =
-        comulCTreeN τ (Nonplanar.map Sum.inl T) *
-          comulCForestN (R := R) τ (F'.map (Nonplanar.map Sum.inl)) :=
+        (UnorderedTree.map Sum.inl T ::ₘ F'.map (UnorderedTree.map Sum.inl)) =
+        comulCTreeN τ (UnorderedTree.map Sum.inl T) *
+          comulCForestN (R := R) τ (F'.map (UnorderedTree.map Sum.inl)) :=
       comulForestNG_cons _ _ _
     rw [hcons, map_mul, eraseTraces_comulCTreeN_map_inl, ih]
 
@@ -285,7 +285,7 @@ private theorem eraseTraces_comulCForestN_map_inl
     [marcolli-chomsky-berwick-2025] comparison
     `Δ^d = (id ⊗ Π_{d,p}) ∘ Δ^ρ`, exact here because the rebinarize step
     `Π_{d,p}` is the identity. -/
-theorem comulDN_embedInl_eq_comulAlgHomN (τ : Nonplanar (α ⊕ β) → β) :
+theorem comulDN_embedInl_eq_comulAlgHomN (τ : UnorderedTree (α ⊕ β) → β) :
     (comulDN (R := R) τ).comp (embedInlAlgHom (R := R) (β := β)) =
       comulAlgHomN := by
   apply ConnesKreimer.algHom_ext

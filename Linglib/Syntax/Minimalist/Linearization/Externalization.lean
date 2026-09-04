@@ -60,7 +60,7 @@ for head–complement structure but does not model specifier placement (that nee
 
 namespace Minimalist
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-- Place the head daughter's yield on the convention side: `.initial` → head-yield
     first, `.final` → head-yield last. -/

@@ -3,9 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.RoseTree.Nonplanar
+import Linglib.Core.Data.UnorderedTree.Basic
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
 # Contracting unary vertices of a rose tree
@@ -18,7 +18,7 @@ number of unary vertices.
 ## Main definitions
 
 * `RoseTree.contractUnary`, `RoseTree.numUnary`: the contraction and the unary-vertex
-  count, with descents to the `Nonplanar` quotient.
+  count, with descents to the `UnorderedTree` quotient.
 
 ## Main results
 
@@ -149,37 +149,37 @@ theorem Perm.contractUnary {t s : RoseTree α} (h : Perm t s) :
 
 end RoseTree
 
-/-! ### Descent to `Nonplanar` -/
+/-! ### Descent to `UnorderedTree` -/
 
-namespace RoseTree.Nonplanar
+namespace UnorderedTree
 
 variable {α : Type*}
 
 /-- The number of unary vertices of a nonplanar tree. -/
-def numUnary : Nonplanar α → ℕ :=
-  Nonplanar.lift RoseTree.numUnary fun _ _ h => RoseTree.numUnary_perm h
+def numUnary : UnorderedTree α → ℕ :=
+  UnorderedTree.lift RoseTree.numUnary fun _ _ h => RoseTree.numUnary_perm h
 
 @[simp] theorem numUnary_mk (t : RoseTree α) : (mk t).numUnary = t.numUnary := rfl
 
 /-- Contract every unary vertex into its child. -/
-def contractUnary : Nonplanar α → Nonplanar α :=
+def contractUnary : UnorderedTree α → UnorderedTree α :=
   Quotient.map RoseTree.contractUnary fun _ _ h => h.contractUnary
 
 @[simp] theorem contractUnary_mk (t : RoseTree α) :
     contractUnary (mk t) = mk t.contractUnary := rfl
 
 /-- Each contracted unary vertex removes exactly one vertex. -/
-theorem numNodes_contractUnary_add_numUnary (t : Nonplanar α) :
+theorem numNodes_contractUnary_add_numUnary (t : UnorderedTree α) :
     (contractUnary t).numNodes + t.numUnary = t.numNodes :=
   Quotient.inductionOn t fun p => RoseTree.numNodes_contractUnary_add_numUnary p
 
 /-- After contraction no unary vertices remain. -/
-@[simp] theorem numUnary_contractUnary (t : Nonplanar α) : (contractUnary t).numUnary = 0 :=
+@[simp] theorem numUnary_contractUnary (t : UnorderedTree α) : (contractUnary t).numUnary = 0 :=
   Quotient.inductionOn t fun p => RoseTree.numUnary_contractUnary p
 
 /-- `contractUnary` is idempotent. -/
-@[simp] theorem contractUnary_idem (t : Nonplanar α) :
+@[simp] theorem contractUnary_idem (t : UnorderedTree α) :
     contractUnary (contractUnary t) = contractUnary t :=
   Quotient.inductionOn t fun p => congrArg mk (RoseTree.contractUnary_idem p)
 
-end RoseTree.Nonplanar
+end UnorderedTree

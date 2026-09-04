@@ -9,7 +9,7 @@ import Mathlib.Data.Multiset.Powerset
 /-!
 # Host-append decomposition for `RoseTree`-level multi-tree insertion
 
-The `RoseTree`-level substrate for `Nonplanar.insertionMultiset_add_host`:
+The `RoseTree`-level substrate for `UnorderedTree.insertionMultiset_add_host`:
 multi-graft into a concatenated host list `host_A ++ host_B`
 decomposes as a sum over boolean assignments of guests to either
 `host_A` or `host_B`, with each side recursively multi-grafted
@@ -29,8 +29,8 @@ cartesian-product leaf; `hostBucketSum_assignment_rewrite` is derived
 from the general identity via `hostBucketSum_eq_kBucketSum`. The bridge
 `hostBucketSum_eq_insertionForest` is proved by induction on `host_A`.
 
-This is the `RoseTree`-level companion to the `Nonplanar.insertionMultiset_add_host`
-combinatorial identity (`InsertionNonplanar.lean`) behind the
+This is the `RoseTree`-level companion to the `UnorderedTree.insertionMultiset_add_host`
+combinatorial identity (`InsertionUnordered.lean`) behind the
 Oudom-Guin Prop 2.7.iii proof.
 
 ## Status
@@ -42,7 +42,7 @@ namespace RoseTree
 
 namespace Pathed
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 variable {α : Type*}
 
@@ -348,9 +348,9 @@ private theorem hostBucketSum_nil_A
 
 /-! ## §3: 3-bucket aggregator and the full bridge
 
-The headline `RoseTree`-level identity. Combined with the Nonplanar lift below
-(via `Quotient.out` + host-Perm invariance lifted through `Nonplanar.mk`),
-this yields the substrate for `Nonplanar.insertionMultiset_add_host`.
+The headline `RoseTree`-level identity. Combined with the UnorderedTree lift below
+(via `Quotient.out` + host-Perm invariance lifted through `UnorderedTree.mk`),
+this yields the substrate for `UnorderedTree.insertionMultiset_add_host`.
 
 The proof goes by induction on `host_A`. The base case (`host_A = []`)
 is `hostBucketSum_nil_A` (above). The inductive case `host_A = T :: F_A`
@@ -810,7 +810,7 @@ theorem hostBucketSum_eq_insertionForest (host_A host_B guests : List (RoseTree 
 
 `insertionForest` is invariant under permutation of host trees, but only at
 the level where output lists are wrapped via `Multiset.ofList ∘ List.map mk`
-(i.e., the level used by `Nonplanar.insertionMultiset`). The list structure
+(i.e., the level used by `UnorderedTree.insertionMultiset`). The list structure
 of inner outputs (which is host-position-correlated) is discarded by this
 outer wrapper, allowing host trees to be permuted without changing the
 multiset-of-multiset image.
@@ -821,11 +821,11 @@ is a singleton `[T₂]`, swapping the T-bucket with the F_A-bucket gives a
 configuration symmetric in (T₁, T₂) at the multiset level. -/
 
 /-- Helper: `msform L = Multiset.ofList (L.map mk)`. The output level
-    of `Nonplanar.insertionMultiset`'s inner map. Cons distributes:
+    of `UnorderedTree.insertionMultiset`'s inner map. Cons distributes:
     `msform (T :: L) = mk T ::ₘ msform L`. -/
 private theorem msform_cons (T : RoseTree α) (L : List (RoseTree α)) :
-    (Multiset.ofList ((T :: L).map Nonplanar.mk) : Multiset (Nonplanar α)) =
-      Nonplanar.mk T ::ₘ Multiset.ofList (L.map Nonplanar.mk) := by
+    (Multiset.ofList ((T :: L).map UnorderedTree.mk) : Multiset (UnorderedTree α)) =
+      UnorderedTree.mk T ::ₘ Multiset.ofList (L.map UnorderedTree.mk) := by
   rw [List.map_cons]
   rfl
 
@@ -846,9 +846,9 @@ private theorem hostTripleSum_singleton_swap_msform
     (T₁ T₂ : RoseTree α) (F : List (RoseTree α)) :
     ∀ (pre_T pre_FA pre_B remaining : List (RoseTree α)),
     (hostTripleSum T₁ [T₂] F pre_T pre_FA pre_B remaining).map
-        (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+        (fun L => Multiset.ofList (L.map UnorderedTree.mk)) =
     (hostTripleSum T₂ [T₁] F pre_FA pre_T pre_B remaining).map
-        (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+        (fun L => Multiset.ofList (L.map UnorderedTree.mk)) := by
   intro pre_T pre_FA pre_B remaining
   induction remaining generalizing pre_T pre_FA pre_B with
   | nil =>
@@ -863,9 +863,9 @@ private theorem hostTripleSum_singleton_swap_msform
     refine Multiset.bind_congr fun T₂' _ => ?_
     refine Multiset.bind_congr fun T₁' _ => ?_
     refine Multiset.map_congr rfl fun B _ => ?_
-    show (Multiset.ofList ((T₁' :: [T₂'] ++ B).map Nonplanar.mk) :
-            Multiset (Nonplanar α)) =
-         Multiset.ofList ((T₂' :: [T₁'] ++ B).map Nonplanar.mk)
+    show (Multiset.ofList ((T₁' :: [T₂'] ++ B).map UnorderedTree.mk) :
+            Multiset (UnorderedTree α)) =
+         Multiset.ofList ((T₂' :: [T₁'] ++ B).map UnorderedTree.mk)
     rw [show T₁' :: [T₂'] ++ B = T₁' :: T₂' :: B from rfl]
     rw [show T₂' :: [T₁'] ++ B = T₂' :: T₁' :: B from rfl]
     rw [msform_cons, msform_cons, msform_cons, msform_cons]
@@ -890,9 +890,9 @@ private theorem hostTripleSum_singleton_swap_msform
 private theorem insertionForest_swap_host_msform
     (T₁ T₂ : RoseTree α) (F gs : List (RoseTree α)) :
     (insertionForest (T₁ :: T₂ :: F) gs).map
-        (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+        (fun L => Multiset.ofList (L.map UnorderedTree.mk)) =
     (insertionForest (T₂ :: T₁ :: F) gs).map
-        (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+        (fun L => Multiset.ofList (L.map UnorderedTree.mk)) := by
   -- Bridge LHS: insertionForest (T₁ :: T₂ :: F) gs = hostTripleSum T₁ [T₂] F [] [] [] gs.
   have hL : insertionForest (T₁ :: T₂ :: F) gs =
       hostTripleSum T₁ [T₂] F [] [] [] gs := by
@@ -919,15 +919,15 @@ private theorem insertionForest_swap_host_msform
     trees are permuted, the `(insertionForest host gs).map (Multiset.ofList ∘ List.map mk)`
     is unchanged.
 
-    This is the key invariance used by `Nonplanar.insertionMultiset_add_host`
-    (and similar Nonplanar-side lifts) to bridge `(A + B).toList.map Q.out`
+    This is the key invariance used by `UnorderedTree.insertionMultiset_add_host`
+    (and similar UnorderedTree-side lifts) to bridge `(A + B).toList.map Q.out`
     with `A.toList.map Q.out ++ B.toList.map Q.out`. -/
 theorem insertionForest_perm_host_msform
     {host host' : List (RoseTree α)} (h : host.Perm host') (gs : List (RoseTree α)) :
     (insertionForest host gs).map
-        (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+        (fun L => Multiset.ofList (L.map UnorderedTree.mk)) =
     (insertionForest host' gs).map
-        (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+        (fun L => Multiset.ofList (L.map UnorderedTree.mk)) := by
   induction h generalizing gs with
   | nil => rfl
   | @cons x l l' _ ih =>
@@ -942,11 +942,11 @@ theorem insertionForest_perm_host_msform
     rw [Multiset.map_map, Multiset.map_map]
     -- Convert (msform ∘ (T' :: ·)) = ((mk T' ::ₘ ·) ∘ msform) via msform_cons.
     rw [show ((fun L : List (RoseTree α) =>
-              (Multiset.ofList (L.map Nonplanar.mk) : Multiset (Nonplanar α))) ∘
+              (Multiset.ofList (L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) ∘
                 (fun F' : List (RoseTree α) => T' :: F')) =
-            ((fun M : Multiset (Nonplanar α) => Nonplanar.mk T' ::ₘ M) ∘
+            ((fun M : Multiset (UnorderedTree α) => UnorderedTree.mk T' ::ₘ M) ∘
               (fun L : List (RoseTree α) =>
-                (Multiset.ofList (L.map Nonplanar.mk) : Multiset (Nonplanar α)))) from by
+                (Multiset.ofList (L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))) from by
           funext F'
           exact msform_cons T' F']
     -- Now: (insertionForest l filter_f).map ((mk T' ::ₘ ·) ∘ msform)
@@ -963,7 +963,7 @@ For a list `l : List β`, bit-vectors of length `|l|` enumerate sublists
 of `l` (the elements where the bit is true). At the multiset level, the
 collection of `(filter_t, filter_f)` pairs over all bit-vectors equals
 the collection of `(s, ↑l - s)` over `s ∈ (↑l).powerset`. Used by
-`Nonplanar.insertionMultiset_add_host` to bridge the
+`UnorderedTree.insertionMultiset_add_host` to bridge the
 `hostBucketSum_assignment_rewrite` form (bind over bit-vectors) with
 the `C.powerset.bind` form on the RHS. -/
 
@@ -1184,7 +1184,7 @@ theorem listChoices_bridge_powerset_paired {β : Type*} [DecidableEq β]
 `(insertionForest host gs).map msform` depends only on the multiset image
 of `gs.map mk`, not on the `RoseTree` representatives or order. This combines
 guest-Perm invariance + guest-Perm invariance into a single lemma
-matching the level used by `Nonplanar.insertionMultiset`. -/
+matching the level used by `UnorderedTree.insertionMultiset`. -/
 
 /-- General `Perm` lifting: if `(l₁.map f).Perm (l₂.map f)`, there exists
     a `RoseTree` list `l_mid` such that `l₁.Perm l_mid` and `l_mid.map f = l₂.map f`
@@ -1246,8 +1246,8 @@ private theorem bucketSlice_preserves_perm
 private theorem insertionForest_forall₂_perm_guests
     (F : List (RoseTree α)) {Ts Ts' : List (RoseTree α)}
     (h : List.Forall₂ Perm Ts Ts') :
-    (insertionForest F Ts).map (List.map Nonplanar.mk) =
-    (insertionForest F Ts').map (List.map Nonplanar.mk) := by
+    (insertionForest F Ts).map (List.map UnorderedTree.mk) =
+    (insertionForest F Ts').map (List.map UnorderedTree.mk) := by
   induction F generalizing Ts Ts' with
   | nil =>
     cases h with
@@ -1273,37 +1273,37 @@ private theorem insertionForest_forall₂_perm_guests
       exact bucketSlice_preserves_perm h assn false
     rw [Multiset.map_bind, Multiset.map_bind]
     simp only [Multiset.map_map, Function.comp, List.map_cons]
-    let f_T : Nonplanar α → Multiset (List (Nonplanar α)) := fun mk_T_ins =>
+    let f_T : UnorderedTree α → Multiset (List (UnorderedTree α)) := fun mk_T_ins =>
       (insertionForest F_h ((Ts.zip assn).filterMap
           (fun p => if p.snd then none else some p.fst))).map
-        (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk)
-    let f_T' : Nonplanar α → Multiset (List (Nonplanar α)) := fun mk_T_ins =>
+        (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
+    let f_T' : UnorderedTree α → Multiset (List (UnorderedTree α)) := fun mk_T_ins =>
       (insertionForest F_h ((Ts'.zip assn).filterMap
           (fun p => if p.snd then none else some p.fst))).map
-        (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk)
-    change (insertion T_h _).bind (fun T_ins => f_T (Nonplanar.mk T_ins)) =
-           (insertion T_h _).bind (fun T_ins => f_T' (Nonplanar.mk T_ins))
+        (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
+    change (insertion T_h _).bind (fun T_ins => f_T (UnorderedTree.mk T_ins)) =
+           (insertion T_h _).bind (fun T_ins => f_T' (UnorderedTree.mk T_ins))
     rw [← Multiset.bind_map, ← Multiset.bind_map]
     rw [insertion_forall₂_perm_guests T_h h_ft]
     refine Multiset.bind_congr fun mk_T_ins _ => ?_
     show (insertionForest F_h ((Ts.zip assn).filterMap
               (fun p => if p.snd then none else some p.fst))).map
-            (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk) =
+            (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk) =
          (insertionForest F_h ((Ts'.zip assn).filterMap
               (fun p => if p.snd then none else some p.fst))).map
-            (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk)
-    rw [show (fun F_ins : List (RoseTree α) => mk_T_ins :: F_ins.map Nonplanar.mk) =
-            ((fun L : List (Nonplanar α) => mk_T_ins :: L) ∘ List.map Nonplanar.mk) from rfl]
+            (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
+    rw [show (fun F_ins : List (RoseTree α) => mk_T_ins :: F_ins.map UnorderedTree.mk) =
+            ((fun L : List (UnorderedTree α) => mk_T_ins :: L) ∘ List.map UnorderedTree.mk) from rfl]
     rw [← Multiset.map_map, ← Multiset.map_map]
     rw [ih_F h_ff]
 
 /-- **Combined guest invariance** at the multiset-of-multiset level. -/
 theorem insertionForest_msform_invariance_guests [DecidableEq α]
     (host : List (RoseTree α)) {gs1 gs2 : List (RoseTree α)}
-    (h : (gs1.map Nonplanar.mk).Perm (gs2.map Nonplanar.mk)) :
-    (insertionForest host gs1).map (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
-    (insertionForest host gs2).map (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
-  obtain ⟨gs_mid, hperm_planar, hmap_eq⟩ := perm_lift_through_map Nonplanar.mk h
+    (h : (gs1.map UnorderedTree.mk).Perm (gs2.map UnorderedTree.mk)) :
+    (insertionForest host gs1).map (fun L => Multiset.ofList (L.map UnorderedTree.mk)) =
+    (insertionForest host gs2).map (fun L => Multiset.ofList (L.map UnorderedTree.mk)) := by
+  obtain ⟨gs_mid, hperm_planar, hmap_eq⟩ := perm_lift_through_map UnorderedTree.mk h
   have h_forall : List.Forall₂ Perm gs_mid gs2 := by
     have hlen : gs_mid.length = gs2.length := by
       have := congrArg List.length hmap_eq
@@ -1319,27 +1319,27 @@ theorem insertionForest_msform_invariance_guests [DecidableEq α]
       | nil => simp at hlen
       | cons b gs2_rest =>
         rw [List.map_cons, List.map_cons] at hmap_eq
-        have h_head : Nonplanar.mk a = Nonplanar.mk b :=
+        have h_head : UnorderedTree.mk a = UnorderedTree.mk b :=
           (List.cons.injEq _ _ _ _).mp hmap_eq |>.left
-        have h_tail : gs_mid_rest.map Nonplanar.mk = gs2_rest.map Nonplanar.mk :=
+        have h_tail : gs_mid_rest.map UnorderedTree.mk = gs2_rest.map UnorderedTree.mk :=
           (List.cons.injEq _ _ _ _).mp hmap_eq |>.right
         have hlen_rest : gs_mid_rest.length = gs2_rest.length := by simpa using hlen
-        exact List.Forall₂.cons (Nonplanar.mk_eq_mk_iff.mp h_head)
+        exact List.Forall₂.cons (UnorderedTree.mk_eq_mk_iff.mp h_head)
           (ih h_tail hlen_rest)
-  have step1 : (insertionForest host gs1).map (List.map Nonplanar.mk) =
-               (insertionForest host gs_mid).map (List.map Nonplanar.mk) :=
+  have step1 : (insertionForest host gs1).map (List.map UnorderedTree.mk) =
+               (insertionForest host gs_mid).map (List.map UnorderedTree.mk) :=
     insertionForest_perm_guests host hperm_planar
-  have step2 : (insertionForest host gs_mid).map (List.map Nonplanar.mk) =
-               (insertionForest host gs2).map (List.map Nonplanar.mk) :=
+  have step2 : (insertionForest host gs_mid).map (List.map UnorderedTree.mk) =
+               (insertionForest host gs2).map (List.map UnorderedTree.mk) :=
     insertionForest_forall₂_perm_guests host h_forall
-  have h_combined : (insertionForest host gs1).map (List.map Nonplanar.mk) =
-                    (insertionForest host gs2).map (List.map Nonplanar.mk) :=
+  have h_combined : (insertionForest host gs1).map (List.map UnorderedTree.mk) =
+                    (insertionForest host gs2).map (List.map UnorderedTree.mk) :=
     step1.trans step2
   have hwrap : ∀ (s : Multiset (List (RoseTree α))),
       s.map (fun L : List (RoseTree α) =>
-        (Multiset.ofList (L.map Nonplanar.mk) : Multiset (Nonplanar α))) =
-      (s.map (List.map Nonplanar.mk)).map (fun L : List (Nonplanar α) =>
-        (Multiset.ofList L : Multiset (Nonplanar α))) := by
+        (Multiset.ofList (L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
+      (s.map (List.map UnorderedTree.mk)).map (fun L : List (UnorderedTree α) =>
+        (Multiset.ofList L : Multiset (UnorderedTree α))) := by
     intro s
     rw [Multiset.map_map]
     rfl

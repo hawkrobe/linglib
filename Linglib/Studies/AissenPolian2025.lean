@@ -33,7 +33,7 @@ judgment type off the same search, and the paper's examples are the rows, over w
 namespace AissenPolian2025
 
 open Minimalist SyntacticObject
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-! ### Probes -/
 

@@ -40,7 +40,7 @@ harmonic order (`Linearization/Externalization.lean`) and Fox–Pesetsky cyclic 
 
 namespace Minimalist
 
-open RoseTree RoseTree.Nonplanar SyntacticObject
+open RoseTree UnorderedTree SyntacticObject
 
 /-! ### Operations on ordered trees -/
 
@@ -58,7 +58,7 @@ def planarYield : RoseTree Vertex → List LIToken
 
 /-- The subtree projects to `target`: its unordered tree is `target`'s. -/
 def projEqP (target : SyntacticObject) (s : RoseTree Vertex) : Bool :=
-  decide (Nonplanar.mk s = target.val)
+  decide (UnorderedTree.mk s = target.val)
 
 /-- The leftmost, root-first subtree satisfying `p`. -/
 def planarFindP? (p : RoseTree Vertex → Bool) : RoseTree Vertex → Option (RoseTree Vertex)
@@ -76,10 +76,10 @@ def planarReplaceWhereP (p : RoseTree Vertex → Bool) (rep : RoseTree Vertex) :
   | t@(.node _ _)      => if p t then rep else t
 
 private theorem projEqP_eq {target : SyntacticObject} {s : RoseTree Vertex}
-    (h : projEqP target s = true) : Nonplanar.mk s = target.val := of_decide_eq_true h
+    (h : projEqP target s = true) : UnorderedTree.mk s = target.val := of_decide_eq_true h
 
 private theorem not_projEqP {target : SyntacticObject} {s : RoseTree Vertex}
-    (h : ¬ projEqP target s = true) : Nonplanar.mk s ≠ target.val := by
+    (h : ¬ projEqP target s = true) : UnorderedTree.mk s ≠ target.val := by
   rw [projEqP, decide_eq_true_eq] at h; exact h
 
 /-- A subtree raised by `planarFindP?` satisfies the predicate. -/
@@ -123,26 +123,26 @@ private theorem planarFindP?_wellFormed {p : RoseTree Vertex → Bool} {t s : Ro
   | case6 => exact absurd h (by simp)
 
 /-- The ordered replacement by a well-formed leaf `rep` projecting to `R` forgets to the
-    structural substitution `Nonplanar.replace target R` and stays well-formed. -/
+    structural substitution `UnorderedTree.replace target R` and stays well-formed. -/
 private theorem replaceWhereP_mk (target : SyntacticObject) {rep : RoseTree Vertex}
-    {R : SyntacticObject} (hrep : wellFormed rep = true) (hmkr : Nonplanar.mk rep = R.val)
+    {R : SyntacticObject} (hrep : wellFormed rep = true) (hmkr : UnorderedTree.mk rep = R.val)
     {t : RoseTree Vertex} (ht : wellFormed t = true) :
-    Nonplanar.mk (planarReplaceWhereP (projEqP target) rep t)
-        = Nonplanar.replace target.val R.val (Nonplanar.mk t)
+    UnorderedTree.mk (planarReplaceWhereP (projEqP target) rep t)
+        = UnorderedTree.replace target.val R.val (UnorderedTree.mk t)
       ∧ wellFormed (planarReplaceWhereP (projEqP target) rep t) = true := by
   fun_induction planarReplaceWhereP (projEqP target) rep t with
   | case1 _ hp =>
     refine ⟨?_, hrep⟩
-    rw [projEqP_eq hp, Nonplanar.replace_self]; exact hmkr
+    rw [projEqP_eq hp, UnorderedTree.replace_self]; exact hmkr
   | case2 b hp =>
     refine ⟨?_, ht⟩
-    rw [show Nonplanar.mk (RoseTree.node b []) = Nonplanar.leaf b from rfl,
-      Nonplanar.replace_leaf, if_neg]
-    rw [show Nonplanar.leaf b = Nonplanar.mk (RoseTree.node b []) from rfl]
+    rw [show UnorderedTree.mk (RoseTree.node b []) = UnorderedTree.leaf b from rfl,
+      UnorderedTree.replace_leaf, if_neg]
+    rw [show UnorderedTree.leaf b = UnorderedTree.mk (RoseTree.node b []) from rfl]
     exact not_projEqP hp
   | case3 _ _ _ hp =>
     refine ⟨?_, hrep⟩
-    rw [projEqP_eq hp, Nonplanar.replace_self]; exact hmkr
+    rw [projEqP_eq hp, UnorderedTree.replace_self]; exact hmkr
   | case4 a l r hp ihl ihr =>
     have hcase : a = Sum.inr none := by
       match a with
@@ -153,9 +153,10 @@ private theorem replaceWhereP_mk (target : SyntacticObject) {rep : RoseTree Vert
     obtain ⟨ihle, ihls⟩ := ihl hl'
     obtain ⟨ihre, ihrs⟩ := ihr hr'
     refine ⟨?_, by rw [wellFormed_merge, ihls, ihrs]; rfl⟩
-    have hne : Nonplanar.node (Sum.inr none) {Nonplanar.mk l, Nonplanar.mk r} ≠ target.val := by
+    have hne : UnorderedTree.node (Sum.inr none) {UnorderedTree.mk l, UnorderedTree.mk r}
+      ≠ target.val := by
       rw [← merge_mk_raw]; exact not_projEqP hp
-    rw [merge_mk_raw, ihle, ihre, merge_mk_raw, Nonplanar.replace_node_pair, if_neg hne]
+    rw [merge_mk_raw, ihle, ihre, merge_mk_raw, UnorderedTree.replace_node_pair, if_neg hne]
   | case5 _ cs hnil hpair _ =>
     rcases wellFormed_length ht with hlen | hlen
     · exact absurd (List.length_eq_zero_iff.mp hlen) hnil
@@ -165,12 +166,12 @@ private theorem replaceWhereP_mk (target : SyntacticObject) {rep : RoseTree Vert
     · exact absurd (List.length_eq_zero_iff.mp hlen) hnil
     · obtain ⟨x, y, rfl⟩ := List.length_eq_two.mp hlen; exact absurd rfl (hpair x y)
 where
-  /-- `Nonplanar.mk` of the ordered binary node is the unordered binary node. -/
+  /-- `UnorderedTree.mk` of the ordered binary node is the unordered binary node. -/
   merge_mk_raw (a b : RoseTree Vertex) :
-      Nonplanar.mk (RoseTree.node (Sum.inr none) [a, b])
-        = Nonplanar.node (Sum.inr none) {Nonplanar.mk a, Nonplanar.mk b} := by
-    rw [show ({Nonplanar.mk a, Nonplanar.mk b} : Multiset (Nonplanar Vertex))
-          = Multiset.ofList ([a, b].map Nonplanar.mk) from rfl, Nonplanar.node_mk_tree_list]
+      UnorderedTree.mk (RoseTree.node (Sum.inr none) [a, b])
+        = UnorderedTree.node (Sum.inr none) {UnorderedTree.mk a, UnorderedTree.mk b} := by
+    rw [show ({UnorderedTree.mk a, UnorderedTree.mk b} : Multiset (UnorderedTree Vertex))
+          = Multiset.ofList ([a, b].map UnorderedTree.mk) from rfl, UnorderedTree.node_mk_tree_list]
 
 /-! ### The replay on ordered objects -/
 
@@ -275,8 +276,8 @@ end SyntacticObject.Derivation
 private theorem SyntacticObject.merge_ne_trace (l r : SyntacticObject) : merge l r ≠ trace := by
   intro heq
   have ha : (merge l r).val.rootChildren = trace.val.rootChildren := by rw [heq]
-  rw [merge_val, Nonplanar.rootChildren_node] at ha
-  simp only [trace, Nonplanar.leaf_def, Nonplanar.rootChildren_mk,
+  rw [merge_val, UnorderedTree.rootChildren_node] at ha
+  simp only [trace, UnorderedTree.leaf_def, UnorderedTree.rootChildren_mk,
     RoseTree.children, Multiset.insert_eq_cons] at ha
   exact Multiset.cons_ne_zero ha
 

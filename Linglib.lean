@@ -41,7 +41,7 @@ import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionAddHost
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
-import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNonplanar
+import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
 import Linglib.Core.Algebra.RootedTree.Primitive
 import Linglib.Core.Algebra.RotaBaxter
@@ -123,7 +123,6 @@ import Linglib.Core.Data.RoseTree.Count
 import Linglib.Core.Data.RoseTree.DecEq
 import Linglib.Core.Data.RoseTree.Get
 import Linglib.Core.Data.RoseTree.Leaves
-import Linglib.Core.Data.RoseTree.Nonplanar
 import Linglib.Core.Data.RoseTree.Perm
 import Linglib.Core.Data.RoseTree.Replace
 import Linglib.Core.Data.RoseTree.Subtree
@@ -218,6 +217,7 @@ import Linglib.Logic.Temporal.Basic
 import Linglib.Logic.Temporal.Defs
 import Linglib.Logic.Temporal.Soundness
 import Linglib.Core.Data.Trivalent
+import Linglib.Core.Data.UnorderedTree.Basic
 import Linglib.Core.Order.Bilattice.Kleene
 import Linglib.Logic.Trivalent.Prop3
 import Linglib.Logic.TweetyNixon

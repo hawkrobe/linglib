@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Data.Multiset.Rel
-import Linglib.Core.Data.RoseTree.Nonplanar
+import Linglib.Core.Data.UnorderedTree.Basic
 
 /-!
 # Decidable equality of nonplanar rose trees
@@ -12,7 +12,7 @@ import Linglib.Core.Data.RoseTree.Nonplanar
 Two rose trees represent the same nonplanar tree exactly when they are equal up to
 reordering the children of every vertex (`RoseTree.Perm`). This file shows that the
 relation is decidable, and computably so: the decision procedure reduces in the kernel,
-so concrete `Nonplanar` equalities close by `decide`.
+so concrete `UnorderedTree` equalities close by `decide`.
 
 ## Main definitions
 
@@ -23,7 +23,7 @@ so concrete `Nonplanar` equalities close by `decide`.
 
 - `RoseTree.eqv_iff_perm`: `eqv` decides `Perm`.
 - `RoseTree.instDecidableRelPerm`: the resulting `DecidableRel Perm`.
-- `Nonplanar.instDecidableEq`: decidable equality on the quotient, via
+- `UnorderedTree.instDecidableEq`: decidable equality on the quotient, via
   `Quotient.decidableEq`.
 
 ## Implementation notes
@@ -38,7 +38,7 @@ correctness from `Core/Data/Multiset/Rel.lean`.
 
 namespace RoseTree
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 variable {α : Type*} [DecidableEq α] {cs ds : List (RoseTree α)} {t s : RoseTree α}
 
@@ -107,10 +107,10 @@ private theorem sizeOf_children_lt {a : α} {N : ℕ} (h : sizeOf (RoseTree.node
 /-- `eqv` decides equality in the quotient, by induction on a size bound: on the
     children, the inductive hypothesis converts `eqv` to equality of `mk`-images, whose
     symmetry and transitivity discharge the completeness hypotheses of the matcher,
-    while `Nonplanar.mk_node_eq_mk_node_iff` inverts `mk`-equality at the node. -/
+    while `UnorderedTree.mk_node_eq_mk_node_iff` inverts `mk`-equality at the node. -/
 private theorem eqv_iff_mk_eq :
     ∀ N, ∀ t s : RoseTree α, sizeOf t < N → sizeOf s < N →
-      (eqv t s = true ↔ Nonplanar.mk t = Nonplanar.mk s) := by
+      (eqv t s = true ↔ UnorderedTree.mk t = UnorderedTree.mk s) := by
   intro N
   induction N with
   | zero => exact fun _ _ hst _ => absurd hst (Nat.not_lt_zero _)
@@ -118,7 +118,7 @@ private theorem eqv_iff_mk_eq :
     rintro ⟨a, cs⟩ ⟨b, ds⟩ hst hss
     have hcsN := sizeOf_children_lt hst
     have hdsN := sizeOf_children_lt hss
-    rw [eqv_node_iff, Nonplanar.mk_node_eq_mk_node_iff,
+    rw [eqv_node_iff, UnorderedTree.mk_node_eq_mk_node_iff,
         ← Multiset.map_coe, ← Multiset.map_coe, ← Multiset.rel_eq, Multiset.rel_map]
     refine and_congr_right fun _ => ⟨fun h => (rel_of_go h).mono
       (fun x hx y hy hxy => (ih x y (hcsN x hx) (hdsN y hy)).mp hxy), fun h => ?_⟩
@@ -130,10 +130,10 @@ private theorem eqv_iff_mk_eq :
 
 /-- `eqv` decides `Perm`: two ordered trees are `eqv`-related iff they are equal up
     to reordering the children of every vertex. Composite of `eqv_iff_mk_eq` (at a
-    sum-of-sizes bound) with `Nonplanar.mk_eq_mk_iff`. -/
+    sum-of-sizes bound) with `UnorderedTree.mk_eq_mk_iff`. -/
 theorem eqv_iff_perm : eqv t s = true ↔ Perm t s :=
   ((eqv_iff_mk_eq (sizeOf t + sizeOf s + 1) t s (by omega) (by omega)).trans
-    Nonplanar.mk_eq_mk_iff)
+    UnorderedTree.mk_eq_mk_iff)
 
 /-- `Perm` is decidable, computably so: decided by `eqv`, which reduces in the
     kernel. -/
@@ -145,14 +145,14 @@ instance : DecidableRel ((· ≈ ·) : RoseTree α → RoseTree α → Prop) :=
 
 end RoseTree
 
-namespace RoseTree.Nonplanar
+namespace UnorderedTree
 
 variable {α : Type*} [DecidableEq α]
 
 /-- Equality of nonplanar trees — equality up to child reordering — is decidable and
     computable: `Quotient.decidableEq` over `RoseTree.eqv` on representatives, which
-    reduces in the kernel, so concrete `Nonplanar` equalities close by `decide`. -/
-instance instDecidableEq : DecidableEq (Nonplanar α) :=
+    reduces in the kernel, so concrete `UnorderedTree` equalities close by `decide`. -/
+instance instDecidableEq : DecidableEq (UnorderedTree α) :=
   inferInstanceAs (DecidableEq (Quotient (RoseTree.isSetoid (α := α))))
 
-end RoseTree.Nonplanar
+end UnorderedTree

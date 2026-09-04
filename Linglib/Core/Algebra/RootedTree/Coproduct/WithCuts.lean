@@ -1,13 +1,13 @@
 import Linglib.Core.Algebra.BigOperators.Multiset
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Combinatorics.RootedTree.Cut
-import Linglib.Core.Data.RoseTree.Nonplanar
+import Linglib.Core.Data.UnorderedTree.Basic
 import Mathlib.RingTheory.Bialgebra.Basic
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
-# Generic admissible-cut coproduct on `ConnesKreimer R (Nonplanar α)`
+# Generic admissible-cut coproduct on `ConnesKreimer R (UnorderedTree α)`
 [marcolli-chomsky-berwick-2025]
 
 The three MCB coproducts — Δ^ρ (pruning), Δ^c (contraction/trace), Δ^d
@@ -45,35 +45,35 @@ variable {R : Type*} [CommSemiring R] {α : Type*}
     enumeration `cuts`. Specializing `cuts` to `cutSummandsN` gives Δ^ρ, to
     `cutSummandsCN τ` gives Δ^c, to the deletion enumeration gives Δ^d. -/
 noncomputable def comulTreeNG
-    (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α))
-    (T : Nonplanar α) :
-    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
-  ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α))
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
+    (T : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
+  ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α))
   + ((cuts T).map (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
 
 /-- Forest-level generic coproduct (multiplicative extension). -/
 noncomputable def comulForestNG
-    (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α))
-    (F : Forest (Nonplanar α)) :
-    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
+    (F : Forest (UnorderedTree α)) :
+    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   (F.map (comulTreeNG (R := R) cuts)).prod
 
 @[simp] theorem comulForestNG_zero
-    (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α)) :
-    comulForestNG (R := R) cuts (0 : Forest (Nonplanar α)) = 1 := by
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) :
+    comulForestNG (R := R) cuts (0 : Forest (UnorderedTree α)) = 1 := by
   simp only [comulForestNG, Multiset.map_zero, Multiset.prod_zero]
 
 @[simp] theorem comulForestNG_add
-    (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α))
-    (F G : Forest (Nonplanar α)) :
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
+    (F G : Forest (UnorderedTree α)) :
     comulForestNG (R := R) cuts (F + G) =
       comulForestNG (R := R) cuts F * comulForestNG (R := R) cuts G := by
   unfold comulForestNG
   rw [Multiset.map_add, Multiset.prod_add]
 
 @[simp] theorem comulForestNG_cons
-    (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α))
-    (T : Nonplanar α) (F : Forest (Nonplanar α)) :
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
+    (T : UnorderedTree α) (F : Forest (UnorderedTree α)) :
     comulForestNG (R := R) cuts (T ::ₘ F) =
       comulTreeNG (R := R) cuts T * comulForestNG (R := R) cuts F := by
   unfold comulForestNG
@@ -81,9 +81,9 @@ noncomputable def comulForestNG
 
 /-- Forest-level generic coproduct as a `MonoidHom` on the additive forest monoid. -/
 noncomputable def comulMonoidHomNG
-    (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α)) :
-    Multiplicative (Forest (Nonplanar α)) →*
-      (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) where
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) :
+    Multiplicative (Forest (UnorderedTree α)) →*
+      (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) where
   toFun F := comulForestNG (R := R) cuts F.toAdd
   map_one' := comulForestNG_zero cuts
   map_mul' F G := comulForestNG_add cuts F.toAdd G.toAdd
@@ -91,25 +91,25 @@ noncomputable def comulMonoidHomNG
 /-- The **generic admissible-cut coproduct as an algebra hom**, parameterized by
     the cut enumeration `cuts`. -/
 noncomputable def comulAlgHomNG
-    (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α)) :
-    ConnesKreimer R (Nonplanar α) →ₐ[R]
-      ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) :
+    ConnesKreimer R (UnorderedTree α) →ₐ[R]
+      ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   ConnesKreimer.lift (comulMonoidHomNG cuts)
 
 @[simp] theorem comulAlgHomNG_apply_of'
-    (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α))
-    (F : Forest (Nonplanar α)) :
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
+    (F : Forest (UnorderedTree α)) :
     comulAlgHomNG (R := R) cuts (of' F) = comulForestNG cuts F := by
   rw [comulAlgHomNG, ConnesKreimer.lift_of']
   rfl
 
 @[simp] theorem comulAlgHomNG_apply_ofTree
-    (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α))
-    (T : Nonplanar α) :
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
+    (T : UnorderedTree α) :
     comulAlgHomNG (R := R) cuts (ofTree T) = comulTreeNG cuts T := by
-  rw [show (ofTree T : ConnesKreimer R (Nonplanar α)) = of' ({T} : Forest (Nonplanar α))
+  rw [show (ofTree T : ConnesKreimer R (UnorderedTree α)) = of' ({T} : Forest (UnorderedTree α))
         from rfl, comulAlgHomNG_apply_of',
-      show ({T} : Forest (Nonplanar α)) = T ::ₘ (0 : Forest (Nonplanar α)) from rfl,
+      show ({T} : Forest (UnorderedTree α)) = T ::ₘ (0 : Forest (UnorderedTree α)) from rfl,
       comulForestNG_cons, comulForestNG_zero, mul_one]
 
 /-! ### The generic coproduct as a sum over cut convolutions
@@ -122,12 +122,12 @@ single-sum expansions serve the Δ^ρ cocycle substrate
 (`Coproduct/Trace.lean`). -/
 
 /-- Tensor-product factor of a (crown, trunk) cut pair. -/
-noncomputable def cutTensor (p : Forest (Nonplanar α) × Forest (Nonplanar α)) :
-    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+noncomputable def cutTensor (p : Forest (UnorderedTree α) × Forest (UnorderedTree α)) :
+    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   of' (R := R) p.1 ⊗ₜ[R] of' p.2
 
 /-- `cutTensor` is multiplicative over the cut convolution `combinerProjG`. -/
-theorem cutTensor_combinerProjG (p q : Forest (Nonplanar α) × Forest (Nonplanar α)) :
+theorem cutTensor_combinerProjG (p q : Forest (UnorderedTree α) × Forest (UnorderedTree α)) :
     cutTensor (R := R) (combinerProjG (p, q)) = cutTensor p * cutTensor q := by
   obtain ⟨F1, m1⟩ := p
   obtain ⟨F2, m2⟩ := q
@@ -137,8 +137,8 @@ theorem cutTensor_combinerProjG (p q : Forest (Nonplanar α) × Forest (Nonplana
 
 /-- `comulTreeNG` as a single multiset sum over `treeCutsG`. -/
 theorem comulTreeNG_eq_sum
-    (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α))
-    (T : Nonplanar α) :
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
+    (T : UnorderedTree α) :
     comulTreeNG (R := R) cuts T =
       ((treeCutsG cuts T).map (cutTensor (R := R))).sum := by
   unfold comulTreeNG treeCutsG
@@ -147,15 +147,15 @@ theorem comulTreeNG_eq_sum
 
 /-- `comulForestNG` as a single multiset sum over `forestCutsG`. -/
 theorem comulForestNG_eq_sum
-    (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α))
-    (F : Forest (Nonplanar α)) :
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
+    (F : Forest (UnorderedTree α)) :
     comulForestNG (R := R) cuts F =
       ((forestCutsG cuts F).map (cutTensor (R := R))).sum := by
   induction F using Multiset.induction with
   | empty =>
     rw [comulForestNG_zero, forestCutsG_zero, Multiset.map_singleton,
         Multiset.sum_singleton]
-    show (1 : _) = of' (R := R) (0 : Forest (Nonplanar α)) ⊗ₜ[R] of' 0
+    show (1 : _) = of' (R := R) (0 : Forest (UnorderedTree α)) ⊗ₜ[R] of' 0
     rw [of'_zero, Algebra.TensorProduct.one_def]
   | cons T F ih =>
     rw [comulForestNG_cons, comulTreeNG_eq_sum, ih, forestCutsG_cons,
@@ -176,19 +176,19 @@ carrier (`instBialgebraRho`, the Hopf algebra of
 
 set_option linter.unusedVariables false in
 variable (R) in
-/-- Type synonym for `ConnesKreimer R (Nonplanar α)` carrying the generic
+/-- Type synonym for `ConnesKreimer R (UnorderedTree α)` carrying the generic
 admissible-cut coproduct at the fixed policy `cuts`. -/
-def WithCuts (cuts : Nonplanar α → Multiset (Multiset (Nonplanar α) × Nonplanar α)) :
+def WithCuts (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α)) :
     Type _ :=
-  ConnesKreimer R (Nonplanar α)
+  ConnesKreimer R (UnorderedTree α)
 
-variable (cuts : Nonplanar α → Multiset (Multiset (Nonplanar α) × Nonplanar α))
+variable (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
 
 noncomputable instance : CommSemiring (WithCuts R cuts) :=
-  inferInstanceAs (CommSemiring (ConnesKreimer R (Nonplanar α)))
+  inferInstanceAs (CommSemiring (ConnesKreimer R (UnorderedTree α)))
 
 noncomputable instance : Algebra R (WithCuts R cuts) :=
-  inferInstanceAs (Algebra R (ConnesKreimer R (Nonplanar α)))
+  inferInstanceAs (Algebra R (ConnesKreimer R (UnorderedTree α)))
 
 /-- Admissibility of a cut policy: the generic coproduct `comulAlgHomNG cuts` is
 coassociative and counital, uniformly in the coefficient ring. Gates the
@@ -197,20 +197,20 @@ pattern). -/
 class IsAdmissibleCuts : Prop where
   coassoc : ∀ (R : Type*) [CommRing R] [CharZero R] [NoZeroDivisors R],
     (Algebra.TensorProduct.assoc R R R
-        (ConnesKreimer R (Nonplanar α)) (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α))).toAlgHom.comp
+        (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α))
+        (ConnesKreimer R (UnorderedTree α))).toAlgHom.comp
       ((Algebra.TensorProduct.map (comulAlgHomNG (R := R) cuts)
-        (AlgHom.id R (ConnesKreimer R (Nonplanar α)))).comp (comulAlgHomNG cuts)) =
-    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+        (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))).comp (comulAlgHomNG cuts)) =
+    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (comulAlgHomNG (R := R) cuts)).comp (comulAlgHomNG cuts)
   counit_rTensor : ∀ (R : Type*) [CommSemiring R],
     (Algebra.TensorProduct.map (counit (R := R))
-        (AlgHom.id R (ConnesKreimer R (Nonplanar α)))).comp (comulAlgHomNG cuts) =
-      (Algebra.TensorProduct.lid R (ConnesKreimer R (Nonplanar α))).symm.toAlgHom
+        (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))).comp (comulAlgHomNG cuts) =
+      (Algebra.TensorProduct.lid R (ConnesKreimer R (UnorderedTree α))).symm.toAlgHom
   counit_lTensor : ∀ (R : Type*) [CommSemiring R],
-    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
         (counit (R := R))).comp (comulAlgHomNG cuts) =
-      (Algebra.TensorProduct.rid R R (ConnesKreimer R (Nonplanar α))).symm.toAlgHom
+      (Algebra.TensorProduct.rid R R (ConnesKreimer R (UnorderedTree α))).symm.toAlgHom
 
 /-- The generic admissible-cut bialgebra on the marked carrier: any admissible
 policy yields `Bialgebra R (WithCuts R cuts)`. Δ^c is recovered at

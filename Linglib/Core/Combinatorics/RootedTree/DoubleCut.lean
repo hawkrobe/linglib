@@ -1,5 +1,5 @@
 import Linglib.Core.Combinatorics.RootedTree.Cut
-import Linglib.Core.Data.RoseTree.Nonplanar
+import Linglib.Core.Data.UnorderedTree.Basic
 import Mathlib.Tactic.Abel
 
 /-!
@@ -8,10 +8,10 @@ import Mathlib.Tactic.Abel
 
 The combinatorial heart of Δ^c coassociativity: both `(Δ^c ⊗ id) ∘ Δ^c` and
 `(id ⊗ Δ^c) ∘ Δ^c` enumerate ordered pairs of nested admissible cuts of a
-tree, and under trace coherence the two enumerations agree as Nonplanar
+tree, and under trace coherence the two enumerations agree as UnorderedTree
 multisets. This file proves that agreement at the **planar** level (where
 `cutSummandsCP` recurses structurally); `Coproduct/Trace.lean`
-descends it through `Nonplanar.mk` to close the Nonplanar `doubleCut_eq`.
+descends it through `UnorderedTree.mk` to close the UnorderedTree `doubleCut_eq`.
 
 ## Main results
 
@@ -28,7 +28,7 @@ descends it through `Nonplanar.mk` to close the Nonplanar `doubleCut_eq`.
 `[UPSTREAM]` candidate.
 -/
 
-open RoseTree RoseTree.Nonplanar ConnesKreimer
+open RoseTree UnorderedTree ConnesKreimer
 
 namespace DoubleCut
 
@@ -145,9 +145,9 @@ def dcForestRHSP (τ : RoseTree (α ⊕ β) → β) (F : FP (α ⊕ β)) :
 
 /-- Projection of a triple of planar forests to nonplanar (mod planar order). -/
 def proj3 (q : FP (α ⊕ β) × FP (α ⊕ β) × FP (α ⊕ β)) :
-    Multiset (Nonplanar (α ⊕ β)) × Multiset (Nonplanar (α ⊕ β)) ×
-      Multiset (Nonplanar (α ⊕ β)) :=
-  (q.1.map Nonplanar.mk, q.2.1.map Nonplanar.mk, q.2.2.map Nonplanar.mk)
+    Multiset (UnorderedTree (α ⊕ β)) × Multiset (UnorderedTree (α ⊕ β)) ×
+      Multiset (UnorderedTree (α ⊕ β)) :=
+  (q.1.map UnorderedTree.mk, q.2.1.map UnorderedTree.mk, q.2.2.map UnorderedTree.mk)
 
 /-! ### Basic recursions for forestCutsP -/
 
@@ -477,10 +477,10 @@ multiplicative over `clconv`. -/
 
 /-- Projection of a (crown, mid, remainder-list) triple to nonplanar. -/
 def proj3L (q : FP (α ⊕ β) × FP (α ⊕ β) × List (RoseTree (α ⊕ β))) :
-    Multiset (Nonplanar (α ⊕ β)) × Multiset (Nonplanar (α ⊕ β)) ×
-      Multiset (Nonplanar (α ⊕ β)) :=
-  (q.1.map Nonplanar.mk, q.2.1.map Nonplanar.mk,
-    Multiset.ofList (q.2.2.map Nonplanar.mk))
+    Multiset (UnorderedTree (α ⊕ β)) × Multiset (UnorderedTree (α ⊕ β)) ×
+      Multiset (UnorderedTree (α ⊕ β)) :=
+  (q.1.map UnorderedTree.mk, q.2.1.map UnorderedTree.mk,
+    Multiset.ofList (q.2.2.map UnorderedTree.mk))
 
 theorem proj3L_add (a a' b b' : FP (α ⊕ β)) (l l' : List (RoseTree (α ⊕ β))) :
     proj3L (a + a', b + b', l ++ l') = proj3L (a, b, l) + proj3L (a', b', l') := by
@@ -567,7 +567,7 @@ the tail IH. `coassA` (per-child) reduces to `coassL` of the child's
 children with `TraceCoherent` reconciling the extract-whole marker. -/
 
 /-- RoseTree trace coherence: `τ` of a cut trunk equals `τ` of the tree. The
-    descent of `TraceCoherent` (Nonplanar) along `Nonplanar.mk`. -/
+    descent of `TraceCoherent` (UnorderedTree) along `UnorderedTree.mk`. -/
 def TraceCoherentP (τ : RoseTree (α ⊕ β) → β) : Prop :=
   ∀ t : RoseTree (α ⊕ β), ∀ p ∈ cutSummandsCP τ t, τ p.2 = τ t
 
@@ -582,12 +582,12 @@ theorem Cl_singleton (τ : RoseTree (α ⊕ β) → β) (t : RoseTree (α ⊕ β
 theorem proj3L_list_wrap (a' : α ⊕ β) (x y : FP (α ⊕ β)) (l : List (RoseTree (α ⊕ β))) :
     proj3L (x, y, [RoseTree.node a' l])
       = ((proj3L (x, y, l)).1, (proj3L (x, y, l)).2.1,
-          ({Nonplanar.node a' (proj3L (x, y, l)).2.2} : Multiset (Nonplanar (α ⊕ β)))) := by
+          ({UnorderedTree.node a' (proj3L (x, y, l)).2.2} : Multiset (UnorderedTree (α ⊕ β)))) := by
   unfold proj3L
   simp only [List.map_cons, List.map_nil]
-  rw [show (Multiset.ofList [Nonplanar.mk (RoseTree.node a' l)])
-        = ({Nonplanar.mk (RoseTree.node a' l)} : Multiset (Nonplanar (α ⊕ β))) from rfl,
-      ← Nonplanar.node_mk_tree_list]
+  rw [show (Multiset.ofList [UnorderedTree.mk (RoseTree.node a' l)])
+        = ({UnorderedTree.mk (RoseTree.node a' l)} : Multiset (UnorderedTree (α ⊕ β))) from rfl,
+      ← UnorderedTree.node_mk_tree_list]
 
 /-- Splitting a `bind` whose body is a sum. -/
 private theorem bind_add_split {γ : Type*} (S : Multiset γ)
@@ -613,7 +613,7 @@ private theorem bind_cons_splitL {γ : Type*} (S : Multiset γ)
 theorem dcl_INH_wrap (τ : RoseTree (α ⊕ β) → β) (a' : α ⊕ β) (cs'' : List (RoseTree (α ⊕ β))) :
     (dcl τ ((Cl τ cs'').map (fun p => (p.1, ([RoseTree.node a' p.2] : List (RoseTree (α ⊕ β))))))).map proj3L
       = ((dcl τ (Cl τ cs'')).map proj3L).map
-          (fun z => (z.1, z.2.1, ({Nonplanar.node a' z.2.2} : Multiset (Nonplanar (α ⊕ β))))) := by
+          (fun z => (z.1, z.2.1, ({UnorderedTree.node a' z.2.2} : Multiset (UnorderedTree (α ⊕ β))))) := by
   rw [dclN_eq, dclN_eq, Multiset.bind_map, Multiset.map_bind]
   apply Multiset.bind_congr; intro p _
   rw [Multiset.map_map]
@@ -626,7 +626,7 @@ theorem dcr_nonEW_wrap (τ : RoseTree (α ⊕ β) → β) (a' : α ⊕ β) (cs''
     ((Cl τ cs'').bind (fun p => (Cl τ p.2).map
         (fun p'' => (p.1, p''.1, ([RoseTree.node a' p''.2] : List (RoseTree (α ⊕ β))))))).map proj3L
       = ((dcr τ (Cl τ cs'')).map proj3L).map
-          (fun z => (z.1, z.2.1, ({Nonplanar.node a' z.2.2} : Multiset (Nonplanar (α ⊕ β))))) := by
+          (fun z => (z.1, z.2.1, ({UnorderedTree.node a' z.2.2} : Multiset (UnorderedTree (α ⊕ β))))) := by
   rw [dcrN_eq, Multiset.map_bind, Multiset.map_bind]
   apply Multiset.bind_congr; intro p _
   rw [Multiset.map_map, Multiset.map_map]
@@ -782,10 +782,10 @@ private theorem proj3_node_wrap (a : α ⊕ β)
     (q : FP (α ⊕ β) × FP (α ⊕ β) × List (RoseTree (α ⊕ β))) :
     proj3 (q.1, q.2.1, ({RoseTree.node a q.2.2} : FP (α ⊕ β)))
       = ((proj3L q).1, (proj3L q).2.1,
-          ({Nonplanar.node a (proj3L q).2.2} : Multiset (Nonplanar (α ⊕ β)))) := by
+          ({UnorderedTree.node a (proj3L q).2.2} : Multiset (UnorderedTree (α ⊕ β)))) := by
   unfold proj3 proj3L
   simp only [Multiset.map_singleton]
-  rw [Nonplanar.node_mk_tree_list]
+  rw [UnorderedTree.node_mk_tree_list]
 
 /-- The `node a`-wrap on planar triples, projected, equals the nonplanar
     `node a`-wrap on projected triples. -/
@@ -793,7 +793,7 @@ private theorem map_node_wrap_proj3 (a : α ⊕ β)
     (M : Multiset (FP (α ⊕ β) × FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
     (M.map (fun q => (q.1, q.2.1, ({RoseTree.node a q.2.2} : FP (α ⊕ β))))).map proj3
       = (M.map proj3L).map (fun z => (z.1, z.2.1,
-          ({Nonplanar.node a z.2.2} : Multiset (Nonplanar (α ⊕ β))))) := by
+          ({UnorderedTree.node a z.2.2} : Multiset (UnorderedTree (α ⊕ β))))) := by
   rw [Multiset.map_map, Multiset.map_map]
   apply Multiset.map_congr rfl; intro q _
   exact proj3_node_wrap a q

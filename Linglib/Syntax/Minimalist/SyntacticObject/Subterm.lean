@@ -37,7 +37,7 @@ membership, which makes it decidable. Sisterhood and c-command are relative to a
 
 namespace Minimalist
 
-open RoseTree RoseTree.Nonplanar SyntacticObject
+open RoseTree UnorderedTree SyntacticObject
 
 namespace SyntacticObject
 
@@ -45,32 +45,32 @@ namespace SyntacticObject
 
 /-- `y` is one of `x`'s root daughters. -/
 def immediatelyContains (x y : SyntacticObject) : Prop :=
-  y.val ∈ Nonplanar.rootChildren x.val
+  y.val ∈ UnorderedTree.rootChildren x.val
 
 instance (x y : SyntacticObject) : Decidable (immediatelyContains x y) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
 @[simp] theorem immediatelyContains_leaf (tok : LIToken) (y : SyntacticObject) :
     ¬ immediatelyContains (SyntacticObject.leaf tok) y := by
-  simp only [immediatelyContains, leaf, Nonplanar.leaf,
-    Nonplanar.rootChildren_mk, RoseTree.leaf, RoseTree.children, List.map_nil, Multiset.coe_nil,
+  simp only [immediatelyContains, leaf, UnorderedTree.leaf,
+    UnorderedTree.rootChildren_mk, RoseTree.leaf, RoseTree.children, List.map_nil, Multiset.coe_nil,
     Multiset.notMem_zero, not_false_iff]
 
 @[simp] theorem immediatelyContains_trace (y : SyntacticObject) :
     ¬ immediatelyContains trace y := by
-  simp only [immediatelyContains, trace, Nonplanar.leaf,
-    Nonplanar.rootChildren_mk, RoseTree.leaf, RoseTree.children, List.map_nil, Multiset.coe_nil,
+  simp only [immediatelyContains, trace, UnorderedTree.leaf,
+    UnorderedTree.rootChildren_mk, RoseTree.leaf, RoseTree.children, List.map_nil, Multiset.coe_nil,
     Multiset.notMem_zero, not_false_iff]
 
 @[simp] theorem immediatelyContains_traceOf (tok : LIToken) (y : SyntacticObject) :
     ¬ immediatelyContains (traceOf tok) y := by
-  simp only [immediatelyContains, traceOf, Nonplanar.leaf,
-    Nonplanar.rootChildren_mk, RoseTree.leaf, RoseTree.children, List.map_nil, Multiset.coe_nil,
+  simp only [immediatelyContains, traceOf, UnorderedTree.leaf,
+    UnorderedTree.rootChildren_mk, RoseTree.leaf, RoseTree.children, List.map_nil, Multiset.coe_nil,
     Multiset.notMem_zero, not_false_iff]
 
 @[simp] theorem immediatelyContains_merge (l r y : SyntacticObject) :
     immediatelyContains (merge l r) y ↔ y = l ∨ y = r := by
-  rw [immediatelyContains, merge_val, Nonplanar.rootChildren_node,
+  rw [immediatelyContains, merge_val, UnorderedTree.rootChildren_node,
       Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton]
   exact ⟨fun h => h.imp Subtype.ext Subtype.ext,
          fun h => h.imp (congrArg Subtype.val) (congrArg Subtype.val)⟩
@@ -80,27 +80,28 @@ end SyntacticObject
 /-! ### Subterms -/
 
 /-- The subtrees of a syntactic object are syntactic objects. -/
-theorem isSyntacticObject_of_mem_subtrees (s : SyntacticObject) : ∀ m ∈ Nonplanar.subtrees s.val,
+theorem isSyntacticObject_of_mem_subtrees (s : SyntacticObject) :
+    ∀ m ∈ UnorderedTree.subtrees s.val,
     IsSyntacticObject m := by
   induction s using ind with
   | leaf tok =>
     intro m hm
-    rw [show (SyntacticObject.leaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
-        Nonplanar.mem_subtrees_leaf] at hm
+    rw [show (SyntacticObject.leaf tok).val = UnorderedTree.leaf (Sum.inl tok) from rfl,
+        UnorderedTree.mem_subtrees_leaf] at hm
     subst hm; exact (SyntacticObject.leaf tok).2
   | trace =>
     intro m hm
-    rw [show trace.val = Nonplanar.leaf (Sum.inr none) from rfl,
-        Nonplanar.mem_subtrees_leaf] at hm
+    rw [show trace.val = UnorderedTree.leaf (Sum.inr none) from rfl,
+        UnorderedTree.mem_subtrees_leaf] at hm
     subst hm; exact trace.2
   | traceOf tok =>
     intro m hm
-    rw [show (traceOf tok).val = Nonplanar.leaf (Sum.inr (some tok)) from rfl,
-        Nonplanar.mem_subtrees_leaf] at hm
+    rw [show (traceOf tok).val = UnorderedTree.leaf (Sum.inr (some tok)) from rfl,
+        UnorderedTree.mem_subtrees_leaf] at hm
     subst hm; exact (traceOf tok).2
   | merge l r ihl ihr =>
     intro m hm
-    rw [merge_val, Nonplanar.mem_subtrees_node_pair] at hm
+    rw [merge_val, UnorderedTree.mem_subtrees_node_pair] at hm
     rcases hm with rfl | hl | hr
     · exact (merge l r).2
     · exact ihl m hl
@@ -110,21 +111,21 @@ namespace SyntacticObject
 
 /-- All subterms of a syntactic object, the root included. -/
 def subtrees (s : SyntacticObject) : Multiset SyntacticObject :=
-  (Nonplanar.subtrees s.val).pmap (fun m h => ⟨m, h⟩) (isSyntacticObject_of_mem_subtrees s)
+  (UnorderedTree.subtrees s.val).pmap (fun m h => ⟨m, h⟩) (isSyntacticObject_of_mem_subtrees s)
 
 @[simp] theorem mem_subtrees {x s : SyntacticObject} :
-    x ∈ s.subtrees ↔ x.val ∈ Nonplanar.subtrees s.val := by
+    x ∈ s.subtrees ↔ x.val ∈ UnorderedTree.subtrees s.val := by
   rw [subtrees, Multiset.mem_pmap]
   constructor
   · rintro ⟨m, hm, he⟩; rw [← he]; exact hm
   · intro h; exact ⟨x.val, h, Subtype.ext rfl⟩
 
 theorem self_mem_subtrees (s : SyntacticObject) : s ∈ s.subtrees := by
-  rw [mem_subtrees]; exact Nonplanar.self_mem_subtrees s.val
+  rw [mem_subtrees]; exact UnorderedTree.self_mem_subtrees s.val
 
 @[simp] theorem mem_subtrees_merge {x l r : SyntacticObject} :
     x ∈ (merge l r).subtrees ↔ x = merge l r ∨ x ∈ l.subtrees ∨ x ∈ r.subtrees := by
-  rw [mem_subtrees, merge_val, Nonplanar.mem_subtrees_node_pair, ← mem_subtrees, ← mem_subtrees]
+  rw [mem_subtrees, merge_val, UnorderedTree.mem_subtrees_node_pair, ← mem_subtrees, ← mem_subtrees]
   exact Iff.or ⟨fun h => Subtype.ext h, fun h => by rw [h, merge_val]⟩ Iff.rfl
 
 /-- A subterm of a subterm of `s` is a subterm of `s`. -/
@@ -132,16 +133,17 @@ theorem subtrees_subset_of_mem {w s : SyntacticObject} (h : w ∈ s.subtrees) :
     w.subtrees ⊆ s.subtrees := by
   induction s using ind with
   | leaf tok =>
-    rw [mem_subtrees, show (SyntacticObject.leaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
-        Nonplanar.mem_subtrees_leaf] at h
+    rw [mem_subtrees, show (SyntacticObject.leaf tok).val = UnorderedTree.leaf
+      (Sum.inl tok) from rfl,
+        UnorderedTree.mem_subtrees_leaf] at h
     rw [(Subtype.ext h : w = SyntacticObject.leaf tok)]; exact Multiset.Subset.refl _
   | trace =>
-    rw [mem_subtrees, show trace.val = Nonplanar.leaf (Sum.inr none) from rfl,
-        Nonplanar.mem_subtrees_leaf] at h
+    rw [mem_subtrees, show trace.val = UnorderedTree.leaf (Sum.inr none) from rfl,
+        UnorderedTree.mem_subtrees_leaf] at h
     rw [(Subtype.ext h : w = trace)]; exact Multiset.Subset.refl _
   | traceOf tok =>
-    rw [mem_subtrees, show (traceOf tok).val = Nonplanar.leaf (Sum.inr (some tok)) from rfl,
-        Nonplanar.mem_subtrees_leaf] at h
+    rw [mem_subtrees, show (traceOf tok).val = UnorderedTree.leaf (Sum.inr (some tok)) from rfl,
+        UnorderedTree.mem_subtrees_leaf] at h
     rw [(Subtype.ext h : w = traceOf tok)]; exact Multiset.Subset.refl _
   | merge l r ihl ihr =>
     rw [mem_subtrees_merge] at h
@@ -151,8 +153,8 @@ theorem subtrees_subset_of_mem {w s : SyntacticObject} (h : w ∈ s.subtrees) :
     · intro z hz; rw [mem_subtrees_merge]; exact Or.inr (Or.inr (ihr hr hz))
 
 /-- One subterm per vertex. -/
-theorem subtrees_card (s : SyntacticObject) : (s.subtrees).card = Nonplanar.numNodes s.val := by
-  rw [subtrees, Multiset.card_pmap, Nonplanar.card_subtrees]
+theorem subtrees_card (s : SyntacticObject) : (s.subtrees).card = UnorderedTree.numNodes s.val := by
+  rw [subtrees, Multiset.card_pmap, UnorderedTree.card_subtrees]
 
 /-! ### Accessible terms -/
 
@@ -160,19 +162,19 @@ theorem subtrees_card (s : SyntacticObject) : (s.subtrees).card = Nonplanar.numN
 def Acc (s : SyntacticObject) : Multiset SyntacticObject := s.subtrees - {s}
 
 /-- `#Acc s = #V s − 1`. -/
-theorem Acc_card (s : SyntacticObject) : (s.Acc).card = Nonplanar.numNodes s.val - 1 := by
+theorem Acc_card (s : SyntacticObject) : (s.Acc).card = UnorderedTree.numNodes s.val - 1 := by
   rw [Acc, Multiset.card_sub (Multiset.singleton_le.mpr (self_mem_subtrees s)),
       subtrees_card, Multiset.card_singleton]
 
 @[simp] theorem Acc_leaf (tok : LIToken) : (SyntacticObject.leaf tok).Acc = 0 := by
   rw [← Multiset.card_eq_zero, Acc_card,
-      show (SyntacticObject.leaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
-      Nonplanar.numNodes_leaf]
+      show (SyntacticObject.leaf tok).val = UnorderedTree.leaf (Sum.inl tok) from rfl,
+      UnorderedTree.numNodes_leaf]
 
 @[simp] theorem Acc_trace : trace.Acc = 0 := by
   rw [← Multiset.card_eq_zero, Acc_card,
-      show trace.val = Nonplanar.leaf (Sum.inr none) from rfl,
-      Nonplanar.numNodes_leaf]
+      show trace.val = UnorderedTree.leaf (Sum.inr none) from rfl,
+      UnorderedTree.numNodes_leaf]
 
 /-! ### Containment -/
 
@@ -191,17 +193,17 @@ theorem contains_trans {x y z : SyntacticObject} (hxy : contains x y) (hyz : con
   | trans x y w himm _ ih => exact .trans x z w himm (ih hyz)
 
 theorem immediatelyContains_lt_weight {x y : SyntacticObject} (h : immediatelyContains x y) :
-    Nonplanar.numNodes y.val < Nonplanar.numNodes x.val := by
+    UnorderedTree.numNodes y.val < UnorderedTree.numNodes x.val := by
   rcases exists_form x with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩
   · exact absurd h (immediatelyContains_leaf tok y)
   · exact absurd h (immediatelyContains_trace y)
   · exact absurd h (immediatelyContains_traceOf tok y)
   · rw [immediatelyContains_merge] at h
-    rw [merge_val, Nonplanar.numNodes_node_pair]
+    rw [merge_val, UnorderedTree.numNodes_node_pair]
     rcases h with rfl | rfl <;> omega
 
 theorem contains_lt_weight {x y : SyntacticObject} (h : contains x y) :
-    Nonplanar.numNodes y.val < Nonplanar.numNodes x.val := by
+    UnorderedTree.numNodes y.val < UnorderedTree.numNodes x.val := by
   induction h with
   | imm _ _ himm => exact immediatelyContains_lt_weight himm
   | trans _ _ _ himm _ ih => exact lt_trans ih (immediatelyContains_lt_weight himm)
@@ -235,16 +237,17 @@ theorem mem_subtrees_iff_eq_or_contains {x y : SyntacticObject} :
     mem_subtrees_of_contains⟩
   induction x using ind with
   | leaf tok =>
-    rw [mem_subtrees, show (SyntacticObject.leaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
-        Nonplanar.mem_subtrees_leaf] at h
+    rw [mem_subtrees, show (SyntacticObject.leaf tok).val = UnorderedTree.leaf
+      (Sum.inl tok) from rfl,
+        UnorderedTree.mem_subtrees_leaf] at h
     exact Or.inl (Subtype.ext h)
   | trace =>
-    rw [mem_subtrees, show trace.val = Nonplanar.leaf (Sum.inr none) from rfl,
-        Nonplanar.mem_subtrees_leaf] at h
+    rw [mem_subtrees, show trace.val = UnorderedTree.leaf (Sum.inr none) from rfl,
+        UnorderedTree.mem_subtrees_leaf] at h
     exact Or.inl (Subtype.ext h)
   | traceOf tok =>
-    rw [mem_subtrees, show (traceOf tok).val = Nonplanar.leaf (Sum.inr (some tok)) from rfl,
-        Nonplanar.mem_subtrees_leaf] at h
+    rw [mem_subtrees, show (traceOf tok).val = UnorderedTree.leaf (Sum.inr (some tok)) from rfl,
+        UnorderedTree.mem_subtrees_leaf] at h
     exact Or.inl (Subtype.ext h)
   | merge l r ihl ihr =>
     rw [mem_subtrees_merge] at h
@@ -329,11 +332,11 @@ end SyntacticObject
 /-! ### Carrier tests -/
 
 private def demoL : SyntacticObject :=
-  ⟨Nonplanar.mk (.node (Sum.inl (mkTraceToken 0)) []), by decide⟩
+  ⟨UnorderedTree.mk (.node (Sum.inl (mkTraceToken 0)) []), by decide⟩
 private def demoR : SyntacticObject :=
-  ⟨Nonplanar.mk (.node (Sum.inl (mkTraceToken 1)) []), by decide⟩
+  ⟨UnorderedTree.mk (.node (Sum.inl (mkTraceToken 1)) []), by decide⟩
 private def demoT : SyntacticObject :=
-  ⟨Nonplanar.mk (.node (Sum.inr none)
+  ⟨UnorderedTree.mk (.node (Sum.inr none)
     [.node (Sum.inl (mkTraceToken 0)) [], .node (Sum.inl (mkTraceToken 1)) []]), by decide⟩
 
 /-- The root contains its left daughter and not conversely. -/

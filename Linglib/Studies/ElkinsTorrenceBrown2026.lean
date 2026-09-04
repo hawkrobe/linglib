@@ -436,7 +436,7 @@ theorem dir_spellout_eqya :
 
 section Derivation
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-- Leaf tokens for the SJO Mam transitive-CP derivation. -/
 private def obliqueTok : LIToken := ⟨.simple .D [] "jawu'", 1⟩

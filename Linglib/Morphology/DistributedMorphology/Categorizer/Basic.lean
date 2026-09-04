@@ -83,16 +83,16 @@ are bare. -/
 tree whose leaves are acategorial roots or heads and whose internal
 vertices are bare. -/
 abbrev WordStructure (H : Type*) :=
-  Nonplanar ((Root ⊕ H) ⊕ Unit)
+  UnorderedTree ((Root ⊕ H) ⊕ Unit)
 
 variable {H : Type*}
 
 /-- The structure consisting of a bare root. -/
 def ofRoot (r : Root) : WordStructure H :=
-  Nonplanar.leaf (.inl (.inl r))
+  UnorderedTree.leaf (.inl (.inl r))
 
 /-- The structure consisting of a bare head. -/
-def ofHead (h : H) : WordStructure H := Nonplanar.leaf (.inl (.inr h))
+def ofHead (h : H) : WordStructure H := UnorderedTree.leaf (.inl (.inr h))
 
 /-- Merge a categorizing head with a structure: the configuration [h T].
 Categorization is `categorize h (ofRoot r)`; re-categorization is
@@ -101,7 +101,7 @@ another `categorize` on top — *to shelve* is
 derivation (*happi-ness* a → n, *boy-ish* n → a) is simply another
 instance, with no inventory of re-categorization types to extend. -/
 noncomputable def categorize (h : H) (T : WordStructure H) : WordStructure H :=
-  Nonplanar.node (.inr ()) (ofHead h ::ₘ {T})
+  UnorderedTree.node (.inr ()) (ofHead h ::ₘ {T})
 
 /-- The root leaves: the List-1 content of a word structure. -/
 def roots (T : WordStructure H) : Multiset Root :=
@@ -132,7 +132,7 @@ verb-object idioms, ergative splits), in contrast with l-selection,
 which varies with the functional structure (`Hewett2026`). -/
 theorem roots_categorize (h : H) (T : WordStructure H) :
     roots (categorize h T) = roots T := by
-  rw [categorize, roots, Nonplanar.leaves_node_cons, Multiset.filterMap_add,
+  rw [categorize, roots, UnorderedTree.leaves_node_cons, Multiset.filterMap_add,
     show Multiset.filterMap (fun x => x.getLeft?.bind Sum.getLeft?)
       (ofHead h : WordStructure H).leaves
       = (0 : Multiset Root) from rfl]
@@ -141,7 +141,7 @@ theorem roots_categorize (h : H) (T : WordStructure H) :
 /-- Each categorization contributes exactly its head. -/
 theorem heads_categorize (h : H) (T : WordStructure H) :
     heads (categorize h T) = h ::ₘ heads T := by
-  rw [categorize, heads, Nonplanar.leaves_node_cons, Multiset.filterMap_add]
+  rw [categorize, heads, UnorderedTree.leaves_node_cons, Multiset.filterMap_add]
   rw [show Multiset.filterMap (fun x => x.getLeft?.bind Sum.getRight?)
       (ofHead h : WordStructure H).leaves = {h} from rfl]
   simp [heads, Multiset.singleton_add]
@@ -149,9 +149,9 @@ theorem heads_categorize (h : H) (T : WordStructure H) :
 /-- Each categorization adds one leaf. -/
 theorem numLeaves_categorize (h : H) (T : WordStructure H) :
     (categorize h T).numLeaves = T.numLeaves + 1 := by
-  rw [← Nonplanar.card_leaves, categorize, Nonplanar.leaves_node_cons,
+  rw [← UnorderedTree.card_leaves, categorize, UnorderedTree.leaves_node_cons,
     Multiset.card_add]
-  simp [ofHead, Nonplanar.card_leaves, Nat.add_comm]
+  simp [ofHead, UnorderedTree.card_leaves, Nat.add_comm]
 
 /-- Outermost headedness: the structure is the head itself, or was built
 by merging it last. -/
@@ -174,7 +174,7 @@ even when the outermost head agrees: [v [n √SHELF]] (*to shelve*) is not
 category label hides ([harley-2014] §2, §4). -/
 theorem categorize_categorize_ne (h₁ h₂ h₃ : H) (T : WordStructure H) :
     categorize h₁ (categorize h₂ T) ≠ categorize h₃ T := fun he => by
-  have := congrArg Nonplanar.numLeaves he
+  have := congrArg UnorderedTree.numLeaves he
   rw [numLeaves_categorize, numLeaves_categorize, numLeaves_categorize] at this
   omega
 

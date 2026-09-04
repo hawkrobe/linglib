@@ -5,9 +5,9 @@ import Linglib.Syntax.Minimalist.Merge.External
 
 Realizes M-C-B Lemmas 1.4.4 + 1.4.5 (book pp. 54-55) for the three
 Sideward-flavored cases of §1.4.1 on the canonical carrier
-`ConnesKreimer R (Nonplanar α)`, using the Δ^ρ deletion coproduct
+`ConnesKreimer R (UnorderedTree α)`, using the Δ^ρ deletion coproduct
 `comulAlgHomN` (cuts are the `cutSummandsN` multiset; crowns are
-`Forest (Nonplanar α)`, remainders bare `Nonplanar α`).
+`Forest (UnorderedTree α)`, remainders bare `UnorderedTree α`).
 
 ## Cut identification
 
@@ -39,35 +39,35 @@ For each case 2b, 3a, 3b:
 namespace Minimalist.Merge
 
 open scoped TensorProduct
-open RoseTree RoseTree.Nonplanar ConnesKreimer
+open RoseTree UnorderedTree ConnesKreimer
 
 /-! ### Matching-cut multisets -/
 
 /-- Cut summands of `T` whose crown forest is the singleton `{β}` (single
     accessible-term extraction). -/
-noncomputable def matchingSingleEdgeCutsN {α : Type*} [DecidableEq (Nonplanar α)]
-    (T β : Nonplanar α) : Multiset (Forest (Nonplanar α) × Nonplanar α) :=
-  (cutSummandsN T).filter (fun p => p.1 = ({β} : Forest (Nonplanar α)))
+noncomputable def matchingSingleEdgeCutsN {α : Type*} [DecidableEq (UnorderedTree α)]
+    (T β : UnorderedTree α) : Multiset (Forest (UnorderedTree α) × UnorderedTree α) :=
+  (cutSummandsN T).filter (fun p => p.1 = ({β} : Forest (UnorderedTree α)))
 
 /-- Cut summands of `T` whose crown forest is `{α_t, β}` (two accessible
     terms, case 3(a)). -/
-noncomputable def matchingTwoEdgeCutsN {α : Type*} [DecidableEq (Nonplanar α)]
-    (T α_t β : Nonplanar α) : Multiset (Forest (Nonplanar α) × Nonplanar α) :=
-  (cutSummandsN T).filter (fun p => p.1 = ({α_t, β} : Forest (Nonplanar α)))
+noncomputable def matchingTwoEdgeCutsN {α : Type*} [DecidableEq (UnorderedTree α)]
+    (T α_t β : UnorderedTree α) : Multiset (Forest (UnorderedTree α) × UnorderedTree α) :=
+  (cutSummandsN T).filter (fun p => p.1 = ({α_t, β} : Forest (UnorderedTree α)))
 
 /-! ### Sum-reduction helpers -/
 
 /-- A prefixed singleton crown matches the pair `{a, β}` iff the crown is
     `{β}`. The condition-rewriting workhorse for the surviving Sideward
     cross-terms. -/
-private theorem prefix_pair_eq_iff {α : Type*} [DecidableEq (Nonplanar α)]
-    (a β : Nonplanar α) (F : Forest (Nonplanar α)) :
-    (({a} : Forest (Nonplanar α)) + F = ({a, β} : Forest (Nonplanar α)))
-      ↔ F = ({β} : Forest (Nonplanar α)) := by
+private theorem prefix_pair_eq_iff {α : Type*} [DecidableEq (UnorderedTree α)]
+    (a β : UnorderedTree α) (F : Forest (UnorderedTree α)) :
+    (({a} : Forest (UnorderedTree α)) + F = ({a, β} : Forest (UnorderedTree α)))
+      ↔ F = ({β} : Forest (UnorderedTree α)) := by
   constructor
   · intro h
-    have h' : ({a} : Forest (Nonplanar α)) + F
-            = ({a} : Forest (Nonplanar α)) + ({β} : Forest (Nonplanar α)) := h
+    have h' : ({a} : Forest (UnorderedTree α)) + F
+            = ({a} : Forest (UnorderedTree α)) + ({β} : Forest (UnorderedTree α)) := h
     exact Multiset.add_right_inj.mp h'
   · intro h; rw [h]; rfl
 
@@ -75,9 +75,9 @@ private theorem prefix_pair_eq_iff {α : Type*} [DecidableEq (Nonplanar α)]
     `if p.1 = K then N * ofTree p.2 else 0` summand contributes `N * ofTree
     p.2` exactly when `p.1 = K`. -/
 private theorem ite_mul_sum_eq_mul_filter_sum {R : Type*} [CommSemiring R]
-    {α : Type*} [DecidableEq (Nonplanar α)]
-    (s : Multiset (Forest (Nonplanar α) × Nonplanar α))
-    (K : Forest (Nonplanar α)) (N : ConnesKreimer R (Nonplanar α)) :
+    {α : Type*} [DecidableEq (UnorderedTree α)]
+    (s : Multiset (Forest (UnorderedTree α) × UnorderedTree α))
+    (K : Forest (UnorderedTree α)) (N : ConnesKreimer R (UnorderedTree α)) :
     (s.map (fun p => if p.1 = K then N * ofTree (R := R) p.2 else 0)).sum
       = N * ((s.filter (fun p => p.1 = K)).map (fun p => ofTree (R := R) p.2)).sum := by
   induction s using Multiset.induction with
@@ -93,15 +93,15 @@ private theorem ite_mul_sum_eq_mul_filter_sum {R : Type*} [CommSemiring R]
     cut-sum factors into `N` times the two single matching-cut sums. Proven
     by two applications of `ite_mul_sum_eq_mul_filter_sum`. -/
 private theorem ite_and_double_sum_eq {R : Type*} [CommSemiring R]
-    {α : Type*} [DecidableEq (Nonplanar α)]
-    (s t : Multiset (Forest (Nonplanar α) × Nonplanar α))
-    (Kα Kβ : Forest (Nonplanar α)) (N : ConnesKreimer R (Nonplanar α)) :
+    {α : Type*} [DecidableEq (UnorderedTree α)]
+    (s t : Multiset (Forest (UnorderedTree α) × UnorderedTree α))
+    (Kα Kβ : Forest (UnorderedTree α)) (N : ConnesKreimer R (UnorderedTree α)) :
     (s.map (fun p => (t.map (fun q =>
         if p.1 = Kα ∧ q.1 = Kβ
           then N * (ofTree (R := R) p.2 * ofTree (R := R) q.2) else 0)).sum)).sum
       = N * ((s.filter (fun p => p.1 = Kα)).map (fun p => ofTree (R := R) p.2)).sum
           * ((t.filter (fun q => q.1 = Kβ)).map (fun q => ofTree (R := R) q.2)).sum := by
-  have step1 : ∀ p : Forest (Nonplanar α) × Nonplanar α,
+  have step1 : ∀ p : Forest (UnorderedTree α) × UnorderedTree α,
       (t.map (fun q => if p.1 = Kα ∧ q.1 = Kβ
           then N * (ofTree (R := R) p.2 * ofTree (R := R) q.2) else 0)).sum
       = (if p.1 = Kα then N * ofTree (R := R) p.2 else 0)
@@ -136,51 +136,53 @@ private theorem ite_and_double_sum_eq {R : Type*} [CommSemiring R]
     (T_j/β)`. Only the `prim T_i × cut T_j` cross-term survives; the other
     three vanish. -/
 theorem mergeOp_sideward_2b_general_pair {R : Type*} [CommSemiring R]
-    {α : Type*} [DecidableEq (Nonplanar α)] (lbl : α) (T_i T_j β : Nonplanar α)
+    {α : Type*} [DecidableEq (UnorderedTree α)] (lbl : α) (T_i T_j β : UnorderedTree α)
     (h_T_j_no_T_i : ∀ p ∈ cutSummandsN T_j, T_i ∉ p.1)
     (h_distinct : T_i ≠ T_j)
     (h_β_ne_Tj : β ≠ T_j) :
-    mergeOp (R := R) lbl T_i β (of' ({T_i, T_j} : Forest (Nonplanar α)))
-      = of' ({Nonplanar.node lbl {T_i, β}} : Forest (Nonplanar α))
+    mergeOp (R := R) lbl T_i β (of' ({T_i, T_j} : Forest (UnorderedTree α)))
+      = of' ({UnorderedTree.node lbl {T_i, β}} : Forest (UnorderedTree α))
         * ((matchingSingleEdgeCutsN T_j β).map (fun p => ofTree (R := R) p.2)).sum := by
   show (mergePost (R := R) (α := α) lbl T_i β ∘ₗ comulAlgHomN.toLinearMap)
-       (of' ({T_i, T_j} : Forest (Nonplanar α))) = _
+       (of' ({T_i, T_j} : Forest (UnorderedTree α))) = _
   rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulAlgHomN_apply_of',
-      show comulForestN (R := R) ({T_i, T_j} : Forest (Nonplanar α))
+      show comulForestN (R := R) ({T_i, T_j} : Forest (UnorderedTree α))
           = comulTreeN (R := R) T_i * comulTreeN (R := R) T_j from by
-        rw [show ({T_i, T_j} : Forest (Nonplanar α)) = T_i ::ₘ ({T_j} : Forest (Nonplanar α))
+        rw [show ({T_i, T_j} : Forest (UnorderedTree α)) = T_i ::ₘ ({T_j} : Forest
+          (UnorderedTree α))
               from rfl, comulForestN_cons,
-            show ({T_j} : Forest (Nonplanar α)) = T_j ::ₘ (0 : Forest (Nonplanar α))
+            show ({T_j} : Forest (UnorderedTree α)) = T_j ::ₘ (0 : Forest (UnorderedTree α))
               from rfl, comulForestN_cons, comulForestN_zero, mul_one]]
   unfold comulTreeN comulTreeNG
   rw [add_mul, mul_add, mul_add]
   simp only [map_add]
   -- Term 1 (prim T_i × prim T_j): vanishes (T_j ≠ β).
   have h_pp : mergePost (R := R) (α := α) lbl T_i β
-        ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)))
-          * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)))) = 0 := by
+        ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))
+          * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))) = 0 := by
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← of'_singleton, ← of'_singleton,
         ← of'_add, mergePost_basis_tensor, if_neg]
     intro h_eq
     apply h_β_ne_Tj
-    have h' : ({T_i} : Forest (Nonplanar α)) + ({T_j} : Forest (Nonplanar α))
-            = ({T_i} : Forest (Nonplanar α)) + ({β} : Forest (Nonplanar α)) := h_eq
+    have h' : ({T_i} : Forest (UnorderedTree α)) + ({T_j} : Forest (UnorderedTree α))
+            = ({T_i} : Forest (UnorderedTree α)) + ({β} : Forest (UnorderedTree α)) := h_eq
     exact (Multiset.singleton_inj.mp (Multiset.add_right_inj.mp h')).symm
   -- Term 2 (prim T_i × cut T_j): the surviving matching sum.
   have h_ps : mergePost (R := R) (α := α) lbl T_i β
-        ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)))
+        ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))
           * ((cutSummandsN T_j).map (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum)
-      = of' ({Nonplanar.node lbl {T_i, β}} : Forest (Nonplanar α))
+      = of' ({UnorderedTree.node lbl {T_i, β}} : Forest (UnorderedTree α))
         * ((matchingSingleEdgeCutsN T_j β).map (fun p => ofTree (R := R) p.2)).sum := by
     rw [← Multiset.sum_map_mul_left, _root_.map_multiset_sum, Multiset.map_map]
     refine Eq.trans (congrArg Multiset.sum (Multiset.map_congr rfl fun p _ => ?_))
-      (ite_mul_sum_eq_mul_filter_sum (cutSummandsN T_j) ({β} : Forest (Nonplanar α))
-        (of' ({Nonplanar.node lbl {T_i, β}} : Forest (Nonplanar α))))
+      (ite_mul_sum_eq_mul_filter_sum (cutSummandsN T_j) ({β} : Forest (UnorderedTree α))
+        (of' ({UnorderedTree.node lbl {T_i, β}} : Forest (UnorderedTree α))))
     show mergePost (R := R) (α := α) lbl T_i β
-        ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)))
+        ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))
           * (of' (R := R) p.1 ⊗ₜ[R] ofTree p.2))
-      = if p.1 = ({β} : Forest (Nonplanar α))
-          then of' ({Nonplanar.node lbl {T_i, β}} : Forest (Nonplanar α)) * ofTree (R := R) p.2
+      = if p.1 = ({β} : Forest (UnorderedTree α))
+          then of' ({UnorderedTree.node lbl {T_i, β}} : Forest (UnorderedTree α)) * ofTree
+            (R := R) p.2
           else 0
     rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, ← of'_singleton, ← of'_add,
         mergePost_basis_tensor]
@@ -188,19 +190,19 @@ theorem mergeOp_sideward_2b_general_pair {R : Type*} [CommSemiring R]
   -- Term 3 (cut T_i × prim T_j): vanishes (T_j ∉ {T_i, β}).
   have h_sp : mergePost (R := R) (α := α) lbl T_i β
         (((cutSummandsN T_i).map (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
-          * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)))) = 0 := by
+          * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))) = 0 := by
     rw [← Multiset.sum_map_mul_right, _root_.map_multiset_sum, Multiset.map_map]
     refine Multiset.sum_eq_zero fun x hx => ?_
     obtain ⟨p, _, rfl⟩ := Multiset.mem_map.mp hx
     show mergePost (R := R) (α := α) lbl T_i β
           ((of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)
-            * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)))) = 0
+            * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))) = 0
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← of'_singleton, ← of'_add,
         mergePost_basis_tensor, if_neg]
     intro h_eq
-    have h_T_j_mem : T_j ∈ p.1 + ({T_j} : Forest (Nonplanar α)) :=
+    have h_T_j_mem : T_j ∈ p.1 + ({T_j} : Forest (UnorderedTree α)) :=
       Multiset.mem_add.mpr (Or.inr (Multiset.mem_singleton.mpr rfl))
-    rw [h_eq, show ({T_i, β} : Forest (Nonplanar α)) = T_i ::ₘ ({β} : Forest (Nonplanar α))
+    rw [h_eq, show ({T_i, β} : Forest (UnorderedTree α)) = T_i ::ₘ ({β} : Forest (UnorderedTree α))
           from rfl, Multiset.mem_cons, Multiset.mem_singleton] at h_T_j_mem
     rcases h_T_j_mem with h | h
     · exact h_distinct h.symm
@@ -234,15 +236,15 @@ theorem mergeOp_sideward_2b_general_pair {R : Type*} [CommSemiring R]
     Corollary of `mergeOp_sideward_2b_general_pair` when β has a unique
     matching cut `p0` on `T_j` (the matching multiset is `{p0}`). -/
 theorem mergeOp_sideward_2b_pair {R : Type*} [CommSemiring R]
-    {α : Type*} [DecidableEq (Nonplanar α)] (lbl : α)
-    (T_i T_j β T_j_q : Nonplanar α) (p0 : Forest (Nonplanar α) × Nonplanar α)
+    {α : Type*} [DecidableEq (UnorderedTree α)] (lbl : α)
+    (T_i T_j β T_j_q : UnorderedTree α) (p0 : Forest (UnorderedTree α) × UnorderedTree α)
     (h_filter : matchingSingleEdgeCutsN T_j β = {p0})
     (h_remainder : p0.2 = T_j_q)
     (h_T_j_no_T_i : ∀ p ∈ cutSummandsN T_j, T_i ∉ p.1)
     (h_distinct : T_i ≠ T_j)
     (h_β_ne_Tj : β ≠ T_j) :
-    mergeOp (R := R) lbl T_i β (of' ({T_i, T_j} : Forest (Nonplanar α)))
-      = of' ({Nonplanar.node lbl {T_i, β}, T_j_q} : Forest (Nonplanar α)) := by
+    mergeOp (R := R) lbl T_i β (of' ({T_i, T_j} : Forest (UnorderedTree α)))
+      = of' ({UnorderedTree.node lbl {T_i, β}, T_j_q} : Forest (UnorderedTree α)) := by
   rw [mergeOp_sideward_2b_general_pair lbl T_i T_j β h_T_j_no_T_i h_distinct
         h_β_ne_Tj, h_filter, Multiset.map_singleton, Multiset.sum_singleton, h_remainder,
       ← of'_singleton, ← of'_add]
@@ -252,17 +254,17 @@ theorem mergeOp_sideward_2b_pair {R : Type*} [CommSemiring R]
     Lemma 1.4.4, p. 54). Generalization of `mergeOp_sideward_2b_pair` via the
     factor-out pattern, parameterised on `(S, S') = (T_i, β)`. -/
 theorem mergeOp_sideward_2b {R : Type*} [CommSemiring R]
-    {α : Type*} [DecidableEq (Nonplanar α)] (lbl : α)
-    (T_i T_j β T_j_q : Nonplanar α) (p0 : Forest (Nonplanar α) × Nonplanar α)
-    (Fhat : Forest (Nonplanar α))
+    {α : Type*} [DecidableEq (UnorderedTree α)] (lbl : α)
+    (T_i T_j β T_j_q : UnorderedTree α) (p0 : Forest (UnorderedTree α) × UnorderedTree α)
+    (Fhat : Forest (UnorderedTree α))
     (h_filter : matchingSingleEdgeCutsN T_j β = {p0})
     (h_remainder : p0.2 = T_j_q)
     (h_T_j_no_T_i : ∀ p ∈ cutSummandsN T_j, T_i ∉ p.1)
     (h_distinct : T_i ≠ T_j)
     (h_β_ne_Tj : β ≠ T_j)
-    (h_F_disjoint : CutAvoidingForest ({T_i, β} : Forest (Nonplanar α)) Fhat) :
-    mergeOp (R := R) lbl T_i β (of' (({T_i, T_j} : Forest (Nonplanar α)) + Fhat))
-      = of' (({Nonplanar.node lbl {T_i, β}, T_j_q} : Forest (Nonplanar α)) + Fhat) := by
+    (h_F_disjoint : CutAvoidingForest ({T_i, β} : Forest (UnorderedTree α)) Fhat) :
+    mergeOp (R := R) lbl T_i β (of' (({T_i, T_j} : Forest (UnorderedTree α)) + Fhat))
+      = of' (({UnorderedTree.node lbl {T_i, β}, T_j_q} : Forest (UnorderedTree α)) + Fhat) := by
   induction Fhat using Multiset.induction with
   | empty =>
     rw [add_zero, add_zero]
@@ -272,18 +274,20 @@ theorem mergeOp_sideward_2b {R : Type*} [CommSemiring R]
     have hT_S := h_F_disjoint.head T_i (by simp)
     have hT_S' := h_F_disjoint.head β (by simp)
     have ih' := ih h_F_disjoint.of_cons
-    have h_lhs_eq : ({T_i, T_j} : Forest (Nonplanar α)) + T ::ₘ Fhat'
-                  = ({T} : Forest (Nonplanar α))
-                    + (({T_i, T_j} : Forest (Nonplanar α)) + Fhat') := by
-      rw [show T ::ₘ Fhat' = ({T} : Forest (Nonplanar α)) + Fhat' from rfl]; abel
-    have h_rhs_eq : ({Nonplanar.node lbl {T_i, β}, T_j_q} : Forest (Nonplanar α)) + T ::ₘ Fhat'
-                  = ({T} : Forest (Nonplanar α))
-                    + (({Nonplanar.node lbl {T_i, β}, T_j_q} : Forest (Nonplanar α)) + Fhat') := by
-      rw [show T ::ₘ Fhat' = ({T} : Forest (Nonplanar α)) + Fhat' from rfl]; abel
-    rw [h_lhs_eq, h_rhs_eq, of'_add (R := R) ({T} : Forest (Nonplanar α)) _,
-        of'_add (R := R) ({T} : Forest (Nonplanar α)) _,
+    have h_lhs_eq : ({T_i, T_j} : Forest (UnorderedTree α)) + T ::ₘ Fhat'
+                  = ({T} : Forest (UnorderedTree α))
+                    + (({T_i, T_j} : Forest (UnorderedTree α)) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : Forest (UnorderedTree α)) + Fhat' from rfl]; abel
+    have h_rhs_eq : ({UnorderedTree.node lbl {T_i, β}, T_j_q} : Forest (UnorderedTree α)) + T
+      ::ₘ Fhat'
+                  = ({T} : Forest (UnorderedTree α))
+                    + (({UnorderedTree.node lbl {T_i, β}, T_j_q} : Forest
+                      (UnorderedTree α)) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : Forest (UnorderedTree α)) + Fhat' from rfl]; abel
+    rw [h_lhs_eq, h_rhs_eq, of'_add (R := R) ({T} : Forest (UnorderedTree α)) _,
+        of'_add (R := R) ({T} : Forest (UnorderedTree α)) _,
         mergeOp_factor_out_singleton lbl hT_S hT_S']
-    exact congrArg (of' (R := R) ({T} : Forest (Nonplanar α)) * ·) ih'
+    exact congrArg (of' (R := R) ({T} : Forest (UnorderedTree α)) * ·) ih'
 
 /-! ### Case 3(b): M(α, β) plus T_i/α and T_j/β -/
 
@@ -295,58 +299,60 @@ theorem mergeOp_sideward_2b {R : Type*} [CommSemiring R]
     cross-term survives; the count argument forces each surviving crown pair
     to be `({α_t}, {β})`. -/
 theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
-    {α : Type*} [DecidableEq (Nonplanar α)] (lbl : α) (T_i T_j α_t β : Nonplanar α)
+    {α : Type*} [DecidableEq (UnorderedTree α)] (lbl : α) (T_i T_j α_t β : UnorderedTree α)
     (h_T_i_no_β : ∀ p ∈ cutSummandsN T_i, β ∉ p.1)
     (h_T_j_no_α : ∀ p ∈ cutSummandsN T_j, α_t ∉ p.1)
     (h_α_ne_Ti : α_t ≠ T_i) (h_α_ne_Tj : α_t ≠ T_j)
     (h_β_ne_Ti : β ≠ T_i) (h_β_ne_Tj : β ≠ T_j)
     (h_α_ne_β : α_t ≠ β) :
-    mergeOp (R := R) lbl α_t β (of' ({T_i, T_j} : Forest (Nonplanar α)))
-      = of' ({Nonplanar.node lbl {α_t, β}} : Forest (Nonplanar α))
+    mergeOp (R := R) lbl α_t β (of' ({T_i, T_j} : Forest (UnorderedTree α)))
+      = of' ({UnorderedTree.node lbl {α_t, β}} : Forest (UnorderedTree α))
         * ((matchingSingleEdgeCutsN T_i α_t).map (fun p => ofTree (R := R) p.2)).sum
         * ((matchingSingleEdgeCutsN T_j β).map (fun p => ofTree (R := R) p.2)).sum := by
   show (mergePost (R := R) (α := α) lbl α_t β ∘ₗ comulAlgHomN.toLinearMap)
-       (of' ({T_i, T_j} : Forest (Nonplanar α))) = _
+       (of' ({T_i, T_j} : Forest (UnorderedTree α))) = _
   rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulAlgHomN_apply_of',
-      show comulForestN (R := R) ({T_i, T_j} : Forest (Nonplanar α))
+      show comulForestN (R := R) ({T_i, T_j} : Forest (UnorderedTree α))
           = comulTreeN (R := R) T_i * comulTreeN (R := R) T_j from by
-        rw [show ({T_i, T_j} : Forest (Nonplanar α)) = T_i ::ₘ ({T_j} : Forest (Nonplanar α))
+        rw [show ({T_i, T_j} : Forest (UnorderedTree α)) = T_i ::ₘ ({T_j} : Forest
+          (UnorderedTree α))
               from rfl, comulForestN_cons,
-            show ({T_j} : Forest (Nonplanar α)) = T_j ::ₘ (0 : Forest (Nonplanar α))
+            show ({T_j} : Forest (UnorderedTree α)) = T_j ::ₘ (0 : Forest (UnorderedTree α))
               from rfl, comulForestN_cons, comulForestN_zero, mul_one]]
   unfold comulTreeN comulTreeNG
   rw [add_mul, mul_add, mul_add]
   simp only [map_add]
   -- Term 1 (prim × prim): vanishes (T_i ∉ {α_t, β}).
   have h_pp : mergePost (R := R) (α := α) lbl α_t β
-        ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)))
-          * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)))) = 0 := by
+        ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))
+          * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))) = 0 := by
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← of'_singleton, ← of'_singleton,
         ← of'_add, mergePost_basis_tensor, if_neg]
     intro h_eq
-    have h_T_i_mem : T_i ∈ ({T_i} : Forest (Nonplanar α)) + ({T_j} : Forest (Nonplanar α)) :=
+    have h_T_i_mem : T_i ∈ ({T_i} : Forest (UnorderedTree α)) + ({T_j} : Forest
+      (UnorderedTree α)) :=
       Multiset.mem_add.mpr (Or.inl (Multiset.mem_singleton.mpr rfl))
-    rw [h_eq, show ({α_t, β} : Forest (Nonplanar α)) = α_t ::ₘ ({β} : Forest (Nonplanar α))
+    rw [h_eq, show ({α_t, β} : Forest (UnorderedTree α)) = α_t ::ₘ ({β} : Forest (UnorderedTree α))
           from rfl, Multiset.mem_cons, Multiset.mem_singleton] at h_T_i_mem
     rcases h_T_i_mem with h | h
     · exact h_α_ne_Ti h.symm
     · exact h_β_ne_Ti h.symm
   -- Term 2 (prim T_i × cut T_j): vanishes (T_i ∉ {α_t, β}).
   have h_ps : mergePost (R := R) (α := α) lbl α_t β
-        ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)))
+        ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))
           * ((cutSummandsN T_j).map (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum) = 0 := by
     rw [← Multiset.sum_map_mul_left, _root_.map_multiset_sum, Multiset.map_map]
     refine Multiset.sum_eq_zero fun x hx => ?_
     obtain ⟨p, _, rfl⟩ := Multiset.mem_map.mp hx
     show mergePost (R := R) (α := α) lbl α_t β
-          ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)))
+          ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))
             * (of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)) = 0
     rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, ← of'_singleton, ← of'_add,
         mergePost_basis_tensor, if_neg]
     intro h_eq
-    have h_T_i_mem : T_i ∈ ({T_i} : Forest (Nonplanar α)) + p.1 :=
+    have h_T_i_mem : T_i ∈ ({T_i} : Forest (UnorderedTree α)) + p.1 :=
       Multiset.mem_add.mpr (Or.inl (Multiset.mem_singleton.mpr rfl))
-    rw [h_eq, show ({α_t, β} : Forest (Nonplanar α)) = α_t ::ₘ ({β} : Forest (Nonplanar α))
+    rw [h_eq, show ({α_t, β} : Forest (UnorderedTree α)) = α_t ::ₘ ({β} : Forest (UnorderedTree α))
           from rfl, Multiset.mem_cons, Multiset.mem_singleton] at h_T_i_mem
     rcases h_T_i_mem with h | h
     · exact h_α_ne_Ti h.symm
@@ -354,19 +360,19 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
   -- Term 3 (cut T_i × prim T_j): vanishes (T_j ∉ {α_t, β}).
   have h_sp : mergePost (R := R) (α := α) lbl α_t β
         (((cutSummandsN T_i).map (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
-          * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)))) = 0 := by
+          * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))) = 0 := by
     rw [← Multiset.sum_map_mul_right, _root_.map_multiset_sum, Multiset.map_map]
     refine Multiset.sum_eq_zero fun x hx => ?_
     obtain ⟨p, _, rfl⟩ := Multiset.mem_map.mp hx
     show mergePost (R := R) (α := α) lbl α_t β
           ((of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)
-            * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)))) = 0
+            * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))) = 0
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← of'_singleton, ← of'_add,
         mergePost_basis_tensor, if_neg]
     intro h_eq
-    have h_T_j_mem : T_j ∈ p.1 + ({T_j} : Forest (Nonplanar α)) :=
+    have h_T_j_mem : T_j ∈ p.1 + ({T_j} : Forest (UnorderedTree α)) :=
       Multiset.mem_add.mpr (Or.inr (Multiset.mem_singleton.mpr rfl))
-    rw [h_eq, show ({α_t, β} : Forest (Nonplanar α)) = α_t ::ₘ ({β} : Forest (Nonplanar α))
+    rw [h_eq, show ({α_t, β} : Forest (UnorderedTree α)) = α_t ::ₘ ({β} : Forest (UnorderedTree α))
           from rfl, Multiset.mem_cons, Multiset.mem_singleton] at h_T_j_mem
     rcases h_T_j_mem with h | h
     · exact h_α_ne_Tj h.symm
@@ -375,35 +381,35 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
   have h_ss : mergePost (R := R) (α := α) lbl α_t β
         (((cutSummandsN T_i).map (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
           * ((cutSummandsN T_j).map (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum)
-      = of' ({Nonplanar.node lbl {α_t, β}} : Forest (Nonplanar α))
+      = of' ({UnorderedTree.node lbl {α_t, β}} : Forest (UnorderedTree α))
         * ((matchingSingleEdgeCutsN T_i α_t).map (fun p => ofTree (R := R) p.2)).sum
         * ((matchingSingleEdgeCutsN T_j β).map (fun p => ofTree (R := R) p.2)).sum := by
     rw [← Multiset.sum_map_mul_right, _root_.map_multiset_sum, Multiset.map_map]
     refine Eq.trans (congrArg Multiset.sum (Multiset.map_congr rfl fun p hp => ?_))
       (ite_and_double_sum_eq (cutSummandsN T_i) (cutSummandsN T_j)
-        ({α_t} : Forest (Nonplanar α)) ({β} : Forest (Nonplanar α))
-        (of' ({Nonplanar.node lbl {α_t, β}} : Forest (Nonplanar α))))
+        ({α_t} : Forest (UnorderedTree α)) ({β} : Forest (UnorderedTree α))
+        (of' ({UnorderedTree.node lbl {α_t, β}} : Forest (UnorderedTree α))))
     show mergePost (R := R) (α := α) lbl α_t β
         ((of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)
           * ((cutSummandsN T_j).map (fun q => of' (R := R) q.1 ⊗ₜ[R] ofTree q.2)).sum)
       = ((cutSummandsN T_j).map (fun q =>
-          if p.1 = ({α_t} : Forest (Nonplanar α)) ∧ q.1 = ({β} : Forest (Nonplanar α))
-            then of' ({Nonplanar.node lbl {α_t, β}} : Forest (Nonplanar α))
+          if p.1 = ({α_t} : Forest (UnorderedTree α)) ∧ q.1 = ({β} : Forest (UnorderedTree α))
+            then of' ({UnorderedTree.node lbl {α_t, β}} : Forest (UnorderedTree α))
                   * (ofTree (R := R) p.2 * ofTree (R := R) q.2)
             else 0)).sum
     rw [← Multiset.sum_map_mul_left, _root_.map_multiset_sum, Multiset.map_map]
     refine congrArg Multiset.sum (Multiset.map_congr rfl fun q hq => ?_)
     show mergePost (R := R) (α := α) lbl α_t β
         ((of' (R := R) p.1 ⊗ₜ[R] ofTree p.2) * (of' (R := R) q.1 ⊗ₜ[R] ofTree q.2))
-      = if p.1 = ({α_t} : Forest (Nonplanar α)) ∧ q.1 = ({β} : Forest (Nonplanar α))
-          then of' ({Nonplanar.node lbl {α_t, β}} : Forest (Nonplanar α))
+      = if p.1 = ({α_t} : Forest (UnorderedTree α)) ∧ q.1 = ({β} : Forest (UnorderedTree α))
+          then of' ({UnorderedTree.node lbl {α_t, β}} : Forest (UnorderedTree α))
                 * (ofTree (R := R) p.2 * ofTree (R := R) q.2)
           else 0
     rw [Algebra.TensorProduct.tmul_mul_tmul, ← of'_add, mergePost_basis_tensor]
-    by_cases h_sum : p.1 + q.1 = ({α_t, β} : Forest (Nonplanar α))
+    by_cases h_sum : p.1 + q.1 = ({α_t, β} : Forest (UnorderedTree α))
     · rw [if_pos h_sum]
-      have h_split : p.1 = ({α_t} : Forest (Nonplanar α)) ∧
-                     q.1 = ({β} : Forest (Nonplanar α)) := by
+      have h_split : p.1 = ({α_t} : Forest (UnorderedTree α)) ∧
+                     q.1 = ({β} : Forest (UnorderedTree α)) := by
         refine ⟨?_, ?_⟩
         · apply Multiset.ext.mpr
           intro x
@@ -412,7 +418,7 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
           by_cases hx_α : x = α_t
           · subst hx_α
             rw [Multiset.count_singleton_self]
-            have h_target : Multiset.count x ({x, β} : Forest (Nonplanar α)) = 1 := by
+            have h_target : Multiset.count x ({x, β} : Forest (UnorderedTree α)) = 1 := by
               simp [h_α_ne_β]
             rw [h_target] at h_count
             have h_q : Multiset.count x q.1 = 0 :=
@@ -423,8 +429,8 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
             · subst hx_β
               exact Multiset.count_eq_zero.mpr (h_T_i_no_β p hp)
             · have h_target_zero :
-                  Multiset.count x ({α_t, β} : Forest (Nonplanar α)) = 0 := by
-                show Multiset.count x (α_t ::ₘ ({β} : Forest (Nonplanar α))) = 0
+                  Multiset.count x ({α_t, β} : Forest (UnorderedTree α)) = 0 := by
+                show Multiset.count x (α_t ::ₘ ({β} : Forest (UnorderedTree α))) = 0
                 rw [Multiset.count_cons, Multiset.count_singleton, if_neg hx_α, if_neg hx_β]
               omega
         · apply Multiset.ext.mpr
@@ -434,7 +440,7 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
           by_cases hx_β : x = β
           · subst hx_β
             rw [Multiset.count_singleton_self]
-            have h_target : Multiset.count x ({α_t, x} : Forest (Nonplanar α)) = 1 := by
+            have h_target : Multiset.count x ({α_t, x} : Forest (UnorderedTree α)) = 1 := by
               simp [Ne.symm h_α_ne_β]
             rw [h_target] at h_count
             have h_p : Multiset.count x p.1 = 0 :=
@@ -445,14 +451,14 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
             · subst hx_α
               exact Multiset.count_eq_zero.mpr (h_T_j_no_α q hq)
             · have h_target_zero :
-                  Multiset.count x ({α_t, β} : Forest (Nonplanar α)) = 0 := by
-                show Multiset.count x (α_t ::ₘ ({β} : Forest (Nonplanar α))) = 0
+                  Multiset.count x ({α_t, β} : Forest (UnorderedTree α)) = 0 := by
+                show Multiset.count x (α_t ::ₘ ({β} : Forest (UnorderedTree α))) = 0
                 rw [Multiset.count_cons, Multiset.count_singleton, if_neg hx_α, if_neg hx_β]
               omega
       rw [if_pos h_split]
     · rw [if_neg h_sum,
-          if_neg (show ¬ (p.1 = ({α_t} : Forest (Nonplanar α)) ∧
-                          q.1 = ({β} : Forest (Nonplanar α)))
+          if_neg (show ¬ (p.1 = ({α_t} : Forest (UnorderedTree α)) ∧
+                          q.1 = ({β} : Forest (UnorderedTree α)))
             from fun ⟨hc, hc'⟩ => h_sum (by rw [hc, hc']; rfl))]
   rw [h_pp, h_ps, h_sp, h_ss]
   simp only [zero_add, add_zero]
@@ -461,9 +467,9 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
     Corollary of `mergeOp_sideward_3b_general_pair` when both α and β have
     unique matching cuts `p_α`, `p_β`. -/
 theorem mergeOp_sideward_3b_pair {R : Type*} [CommSemiring R]
-    {α : Type*} [DecidableEq (Nonplanar α)] (lbl : α)
-    (T_i T_j α_t β T_i_q T_j_q : Nonplanar α)
-    (p_α p_β : Forest (Nonplanar α) × Nonplanar α)
+    {α : Type*} [DecidableEq (UnorderedTree α)] (lbl : α)
+    (T_i T_j α_t β T_i_q T_j_q : UnorderedTree α)
+    (p_α p_β : Forest (UnorderedTree α) × UnorderedTree α)
     (h_filter_α : matchingSingleEdgeCutsN T_i α_t = {p_α})
     (h_filter_β : matchingSingleEdgeCutsN T_j β = {p_β})
     (h_remainder_α : p_α.2 = T_i_q)
@@ -473,8 +479,8 @@ theorem mergeOp_sideward_3b_pair {R : Type*} [CommSemiring R]
     (h_α_ne_Ti : α_t ≠ T_i) (h_α_ne_Tj : α_t ≠ T_j)
     (h_β_ne_Ti : β ≠ T_i) (h_β_ne_Tj : β ≠ T_j)
     (h_α_ne_β : α_t ≠ β) :
-    mergeOp (R := R) lbl α_t β (of' ({T_i, T_j} : Forest (Nonplanar α)))
-      = of' ({Nonplanar.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (Nonplanar α)) := by
+    mergeOp (R := R) lbl α_t β (of' ({T_i, T_j} : Forest (UnorderedTree α)))
+      = of' ({UnorderedTree.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (UnorderedTree α)) := by
   rw [mergeOp_sideward_3b_general_pair lbl T_i T_j α_t β h_T_i_no_β h_T_j_no_α h_α_ne_Ti
         h_α_ne_Tj h_β_ne_Ti h_β_ne_Tj h_α_ne_β,
       h_filter_α, h_filter_β, Multiset.map_singleton, Multiset.sum_singleton,
@@ -486,9 +492,9 @@ theorem mergeOp_sideward_3b_pair {R : Type*} [CommSemiring R]
     Lemma 1.4.4, p. 54). Generalization of `mergeOp_sideward_3b_pair` via the
     factor-out pattern, parameterised on `(S, S') = (α_t, β)`. -/
 theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R]
-    {α : Type*} [DecidableEq (Nonplanar α)] (lbl : α)
-    (T_i T_j α_t β T_i_q T_j_q : Nonplanar α)
-    (p_α p_β : Forest (Nonplanar α) × Nonplanar α) (Fhat : Forest (Nonplanar α))
+    {α : Type*} [DecidableEq (UnorderedTree α)] (lbl : α)
+    (T_i T_j α_t β T_i_q T_j_q : UnorderedTree α)
+    (p_α p_β : Forest (UnorderedTree α) × UnorderedTree α) (Fhat : Forest (UnorderedTree α))
     (h_filter_α : matchingSingleEdgeCutsN T_i α_t = {p_α})
     (h_filter_β : matchingSingleEdgeCutsN T_j β = {p_β})
     (h_remainder_α : p_α.2 = T_i_q)
@@ -498,9 +504,9 @@ theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R]
     (h_α_ne_Ti : α_t ≠ T_i) (h_α_ne_Tj : α_t ≠ T_j)
     (h_β_ne_Ti : β ≠ T_i) (h_β_ne_Tj : β ≠ T_j)
     (h_α_ne_β : α_t ≠ β)
-    (h_F_disjoint : CutAvoidingForest ({α_t, β} : Forest (Nonplanar α)) Fhat) :
-    mergeOp (R := R) lbl α_t β (of' (({T_i, T_j} : Forest (Nonplanar α)) + Fhat))
-      = of' (({Nonplanar.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (Nonplanar α)) + Fhat) := by
+    (h_F_disjoint : CutAvoidingForest ({α_t, β} : Forest (UnorderedTree α)) Fhat) :
+    mergeOp (R := R) lbl α_t β (of' (({T_i, T_j} : Forest (UnorderedTree α)) + Fhat))
+      = of' (({UnorderedTree.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (UnorderedTree α)) + Fhat) := by
   induction Fhat using Multiset.induction with
   | empty =>
     rw [add_zero, add_zero]
@@ -511,19 +517,19 @@ theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R]
     have hT_S := h_F_disjoint.head α_t (by simp)
     have hT_S' := h_F_disjoint.head β (by simp)
     have ih' := ih h_F_disjoint.of_cons
-    have h_lhs_eq : ({T_i, T_j} : Forest (Nonplanar α)) + T ::ₘ Fhat'
-                  = ({T} : Forest (Nonplanar α))
-                    + (({T_i, T_j} : Forest (Nonplanar α)) + Fhat') := by
-      rw [show T ::ₘ Fhat' = ({T} : Forest (Nonplanar α)) + Fhat' from rfl]; abel
+    have h_lhs_eq : ({T_i, T_j} : Forest (UnorderedTree α)) + T ::ₘ Fhat'
+                  = ({T} : Forest (UnorderedTree α))
+                    + (({T_i, T_j} : Forest (UnorderedTree α)) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : Forest (UnorderedTree α)) + Fhat' from rfl]; abel
     have h_rhs_eq :
-        ({Nonplanar.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (Nonplanar α)) + T ::ₘ Fhat'
-          = ({T} : Forest (Nonplanar α))
-            + (({Nonplanar.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (Nonplanar α)) + Fhat') := by
-      rw [show T ::ₘ Fhat' = ({T} : Forest (Nonplanar α)) + Fhat' from rfl]; abel
-    rw [h_lhs_eq, h_rhs_eq, of'_add (R := R) ({T} : Forest (Nonplanar α)) _,
-        of'_add (R := R) ({T} : Forest (Nonplanar α)) _,
+        ({UnorderedTree.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (UnorderedTree α)) + T ::ₘ Fhat'
+          = ({T} : Forest (UnorderedTree α))
+            + (({UnorderedTree.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (UnorderedTree α)) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : Forest (UnorderedTree α)) + Fhat' from rfl]; abel
+    rw [h_lhs_eq, h_rhs_eq, of'_add (R := R) ({T} : Forest (UnorderedTree α)) _,
+        of'_add (R := R) ({T} : Forest (UnorderedTree α)) _,
         mergeOp_factor_out_singleton lbl hT_S hT_S']
-    exact congrArg (of' (R := R) ({T} : Forest (Nonplanar α)) * ·) ih'
+    exact congrArg (of' (R := R) ({T} : Forest (UnorderedTree α)) * ·) ih'
 
 /-! ### Case 3(a): both accessible terms from the same component -/
 
@@ -533,26 +539,26 @@ theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R]
     `mergeOp lbl α_t β` on the single-component workspace `{T_i}` produces a
     sum over all 2-edge cuts of `T_i` whose crown is `{α_t, β}`. -/
 theorem mergeOp_sideward_3a_general_pair {R : Type*} [CommSemiring R]
-    {α : Type*} [DecidableEq (Nonplanar α)] (lbl : α) (T_i α_t β : Nonplanar α)
+    {α : Type*} [DecidableEq (UnorderedTree α)] (lbl : α) (T_i α_t β : UnorderedTree α)
     (h_α_ne_Ti : α_t ≠ T_i) (h_β_ne_Ti : β ≠ T_i) :
-    mergeOp (R := R) lbl α_t β (of' ({T_i} : Forest (Nonplanar α)))
-      = of' ({Nonplanar.node lbl {α_t, β}} : Forest (Nonplanar α))
+    mergeOp (R := R) lbl α_t β (of' ({T_i} : Forest (UnorderedTree α)))
+      = of' ({UnorderedTree.node lbl {α_t, β}} : Forest (UnorderedTree α))
         * ((matchingTwoEdgeCutsN T_i α_t β).map (fun p => ofTree (R := R) p.2)).sum := by
   show (mergePost (R := R) (α := α) lbl α_t β ∘ₗ comulAlgHomN.toLinearMap)
-       (of' ({T_i} : Forest (Nonplanar α))) = _
+       (of' ({T_i} : Forest (UnorderedTree α))) = _
   rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply,
-      show comulAlgHomN (R := R) (α := α) (of' ({T_i} : Forest (Nonplanar α)))
+      show comulAlgHomN (R := R) (α := α) (of' ({T_i} : Forest (UnorderedTree α)))
           = comulTreeN (R := R) T_i from comulAlgHomN_apply_ofTree T_i]
   unfold comulTreeN comulTreeNG
   rw [map_add]
   -- Prim term vanishes (T_i ∉ {α_t, β}).
   rw [show mergePost (R := R) (α := α) lbl α_t β
-        (ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α))) = 0 from by
-      rw [show (ofTree T_i : ConnesKreimer R (Nonplanar α)) = of' ({T_i} : Forest (Nonplanar α))
+        (ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α))) = 0 from by
+      rw [show (ofTree T_i : ConnesKreimer R (UnorderedTree α)) = of' ({T_i} : Forest (UnorderedTree α))
             from rfl, mergePost_basis_tensor, if_neg]
       intro h_eq
-      have h_T_i_mem : T_i ∈ ({T_i} : Forest (Nonplanar α)) := Multiset.mem_singleton.mpr rfl
-      rw [h_eq, show ({α_t, β} : Forest (Nonplanar α)) = α_t ::ₘ ({β} : Forest (Nonplanar α))
+      have h_T_i_mem : T_i ∈ ({T_i} : Forest (UnorderedTree α)) := Multiset.mem_singleton.mpr rfl
+      rw [h_eq, show ({α_t, β} : Forest (UnorderedTree α)) = α_t ::ₘ ({β} : Forest (UnorderedTree α))
             from rfl, Multiset.mem_cons, Multiset.mem_singleton] at h_T_i_mem
       rcases h_T_i_mem with h | h
       · exact h_α_ne_Ti h.symm
@@ -560,11 +566,11 @@ theorem mergeOp_sideward_3a_general_pair {R : Type*} [CommSemiring R]
   rw [zero_add, _root_.map_multiset_sum, Multiset.map_map]
   refine Eq.trans (congrArg Multiset.sum (Multiset.map_congr rfl fun p _ => ?_))
     (ite_mul_sum_eq_mul_filter_sum (cutSummandsN T_i)
-      ({α_t, β} : Forest (Nonplanar α))
-      (of' ({Nonplanar.node lbl {α_t, β}} : Forest (Nonplanar α))))
+      ({α_t, β} : Forest (UnorderedTree α))
+      (of' ({UnorderedTree.node lbl {α_t, β}} : Forest (UnorderedTree α))))
   show mergePost (R := R) (α := α) lbl α_t β (of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)
-    = if p.1 = ({α_t, β} : Forest (Nonplanar α))
-        then of' ({Nonplanar.node lbl {α_t, β}} : Forest (Nonplanar α)) * ofTree (R := R) p.2
+    = if p.1 = ({α_t, β} : Forest (UnorderedTree α))
+        then of' ({UnorderedTree.node lbl {α_t, β}} : Forest (UnorderedTree α)) * ofTree (R := R) p.2
         else 0
   rw [mergePost_basis_tensor]
 
@@ -572,13 +578,13 @@ theorem mergeOp_sideward_3a_general_pair {R : Type*} [CommSemiring R]
     Corollary of `mergeOp_sideward_3a_general_pair` when the 2-edge cut
     producing `{α_t, β}` is uniquely witnessed by `p0`. -/
 theorem mergeOp_sideward_3a_pair {R : Type*} [CommSemiring R]
-    {α : Type*} [DecidableEq (Nonplanar α)] (lbl : α)
-    (T_i α_t β T_i_q : Nonplanar α) (p0 : Forest (Nonplanar α) × Nonplanar α)
+    {α : Type*} [DecidableEq (UnorderedTree α)] (lbl : α)
+    (T_i α_t β T_i_q : UnorderedTree α) (p0 : Forest (UnorderedTree α) × UnorderedTree α)
     (h_filter : matchingTwoEdgeCutsN T_i α_t β = {p0})
     (h_remainder : p0.2 = T_i_q)
     (h_α_ne_Ti : α_t ≠ T_i) (h_β_ne_Ti : β ≠ T_i) :
-    mergeOp (R := R) lbl α_t β (of' ({T_i} : Forest (Nonplanar α)))
-      = of' ({Nonplanar.node lbl {α_t, β}, T_i_q} : Forest (Nonplanar α)) := by
+    mergeOp (R := R) lbl α_t β (of' ({T_i} : Forest (UnorderedTree α)))
+      = of' ({UnorderedTree.node lbl {α_t, β}, T_i_q} : Forest (UnorderedTree α)) := by
   rw [mergeOp_sideward_3a_general_pair lbl T_i α_t β h_α_ne_Ti h_β_ne_Ti, h_filter,
       Multiset.map_singleton, Multiset.sum_singleton, h_remainder, ← of'_singleton, ← of'_add]
   rfl
@@ -587,15 +593,15 @@ theorem mergeOp_sideward_3a_pair {R : Type*} [CommSemiring R]
     Lemma 1.4.5, p. 55). Generalization of `mergeOp_sideward_3a_pair` via the
     factor-out pattern, parameterised on `(S, S') = (α_t, β)`. -/
 theorem mergeOp_sideward_3a {R : Type*} [CommSemiring R]
-    {α : Type*} [DecidableEq (Nonplanar α)] (lbl : α)
-    (T_i α_t β T_i_q : Nonplanar α) (p0 : Forest (Nonplanar α) × Nonplanar α)
-    (Fhat : Forest (Nonplanar α))
+    {α : Type*} [DecidableEq (UnorderedTree α)] (lbl : α)
+    (T_i α_t β T_i_q : UnorderedTree α) (p0 : Forest (UnorderedTree α) × UnorderedTree α)
+    (Fhat : Forest (UnorderedTree α))
     (h_filter : matchingTwoEdgeCutsN T_i α_t β = {p0})
     (h_remainder : p0.2 = T_i_q)
     (h_α_ne_Ti : α_t ≠ T_i) (h_β_ne_Ti : β ≠ T_i)
-    (h_F_disjoint : CutAvoidingForest ({α_t, β} : Forest (Nonplanar α)) Fhat) :
-    mergeOp (R := R) lbl α_t β (of' (({T_i} : Forest (Nonplanar α)) + Fhat))
-      = of' (({Nonplanar.node lbl {α_t, β}, T_i_q} : Forest (Nonplanar α)) + Fhat) := by
+    (h_F_disjoint : CutAvoidingForest ({α_t, β} : Forest (UnorderedTree α)) Fhat) :
+    mergeOp (R := R) lbl α_t β (of' (({T_i} : Forest (UnorderedTree α)) + Fhat))
+      = of' (({UnorderedTree.node lbl {α_t, β}, T_i_q} : Forest (UnorderedTree α)) + Fhat) := by
   induction Fhat using Multiset.induction with
   | empty =>
     rw [add_zero, add_zero]
@@ -605,17 +611,17 @@ theorem mergeOp_sideward_3a {R : Type*} [CommSemiring R]
     have hT_S := h_F_disjoint.head α_t (by simp)
     have hT_S' := h_F_disjoint.head β (by simp)
     have ih' := ih h_F_disjoint.of_cons
-    have h_lhs_eq : ({T_i} : Forest (Nonplanar α)) + T ::ₘ Fhat'
-                  = ({T} : Forest (Nonplanar α))
-                    + (({T_i} : Forest (Nonplanar α)) + Fhat') := by
-      rw [show T ::ₘ Fhat' = ({T} : Forest (Nonplanar α)) + Fhat' from rfl]; abel
-    have h_rhs_eq : ({Nonplanar.node lbl {α_t, β}, T_i_q} : Forest (Nonplanar α)) + T ::ₘ Fhat'
-                  = ({T} : Forest (Nonplanar α))
-                    + (({Nonplanar.node lbl {α_t, β}, T_i_q} : Forest (Nonplanar α)) + Fhat') := by
-      rw [show T ::ₘ Fhat' = ({T} : Forest (Nonplanar α)) + Fhat' from rfl]; abel
-    rw [h_lhs_eq, h_rhs_eq, of'_add (R := R) ({T} : Forest (Nonplanar α)) _,
-        of'_add (R := R) ({T} : Forest (Nonplanar α)) _,
+    have h_lhs_eq : ({T_i} : Forest (UnorderedTree α)) + T ::ₘ Fhat'
+                  = ({T} : Forest (UnorderedTree α))
+                    + (({T_i} : Forest (UnorderedTree α)) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : Forest (UnorderedTree α)) + Fhat' from rfl]; abel
+    have h_rhs_eq : ({UnorderedTree.node lbl {α_t, β}, T_i_q} : Forest (UnorderedTree α)) + T ::ₘ Fhat'
+                  = ({T} : Forest (UnorderedTree α))
+                    + (({UnorderedTree.node lbl {α_t, β}, T_i_q} : Forest (UnorderedTree α)) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : Forest (UnorderedTree α)) + Fhat' from rfl]; abel
+    rw [h_lhs_eq, h_rhs_eq, of'_add (R := R) ({T} : Forest (UnorderedTree α)) _,
+        of'_add (R := R) ({T} : Forest (UnorderedTree α)) _,
         mergeOp_factor_out_singleton lbl hT_S hT_S']
-    exact congrArg (of' (R := R) ({T} : Forest (Nonplanar α)) * ·) ih'
+    exact congrArg (of' (R := R) ({T} : Forest (UnorderedTree α)) * ·) ih'
 
 end Minimalist.Merge

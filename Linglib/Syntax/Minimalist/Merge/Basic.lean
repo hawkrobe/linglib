@@ -7,21 +7,21 @@ import Mathlib.RingTheory.TensorProduct.Maps
 # Merge operator on the Connes–Kreimer bialgebra of nonplanar forests
 
 Per [marcolli-chomsky-berwick-2025] §1.3 (Definitions 1.3.1, 1.3.2, 1.3.4),
-the linguistic **Merge operator** `M_{S,S'}` for a pair `(S, S') : Nonplanar α`
+the linguistic **Merge operator** `M_{S,S'}` for a pair `(S, S') : UnorderedTree α`
 of accessible terms is the composition
 
   M_{S,S'} = ⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ Δ
 
-on the canonical carrier `ConnesKreimer R (Nonplanar α)`, where:
+on the canonical carrier `ConnesKreimer R (UnorderedTree α)`, where:
 
 - `Δ` is the merge coproduct (`comulAlgHomN`, the Δ^ρ deletion coproduct);
 - `δ_{S,S'}` selects coproduct terms whose left channel equals the 2-element
   forest `{S, S'}` (Def 1.3.1);
 - `B ⊗ id` grafts on the left channel: replaces the 2-element forest `{S, S'}`
-  with the binary tree `Nonplanar.node lbl {S, S'}` (the label `lbl` of the new
+  with the binary tree `UnorderedTree.node lbl {S, S'}` (the label `lbl` of the new
   root is a parameter — the operator layer is agnostic to which label decorates
   the grafted node);
-- `⊔` is multiplication on `ConnesKreimer R (Nonplanar α)` (forest disjoint
+- `⊔` is multiplication on `ConnesKreimer R (UnorderedTree α)` (forest disjoint
   union, the algebra structure).
 
 This file builds the building blocks (`gammaMatch`, `deltaMatch`, `graftBinaryAt`)
@@ -47,14 +47,14 @@ binary Δ^d `+2` is a rebinarization artifact).
 namespace Minimalist.Merge
 
 open scoped TensorProduct
-open RoseTree RoseTree.Nonplanar ConnesKreimer
+open RoseTree UnorderedTree ConnesKreimer
 
-variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq (Nonplanar α)]
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq (UnorderedTree α)]
 
 /-! ## §1: γ_{S,S'} matching projection (M-C-B Def 1.3.1)
 
-For a fixed pair `(S, S') : Nonplanar α`, `gammaMatch S S'` is the linear
-endomorphism of `ConnesKreimer R (Nonplanar α)` that projects onto the basis
+For a fixed pair `(S, S') : UnorderedTree α`, `gammaMatch S S'` is the linear
+endomorphism of `ConnesKreimer R (UnorderedTree α)` that projects onto the basis
 element `of' {S, S'}`:
 
   gammaMatch S S' (of' F) = if F = {S, S'} then of' F else 0
@@ -64,18 +64,18 @@ itself and every other basis vector to zero. -/
 
 /-- The matching projection γ_{S,S'} (M-C-B Def 1.3.1): keeps the coefficient
     of the `{S, S'}` basis element, sends everything else to zero. -/
-noncomputable def gammaMatch (S S' : Nonplanar α) :
-    ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
+noncomputable def gammaMatch (S S' : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   ConnesKreimer.linearLift
-    (fun F => if F = ({S, S'} : Forest (Nonplanar α)) then of' F else 0)
+    (fun F => if F = ({S, S'} : Forest (UnorderedTree α)) then of' F else 0)
 
 /-- **γ_{S,S'} acts as a basis-vector projection**: on the basis element
     `of' F`, it returns `of' F` if `F = {S, S'}` and `0` otherwise.
     M-C-B Def 1.3.1. -/
-theorem gammaMatch_apply_singleton (S S' : Nonplanar α)
-    (F : Forest (Nonplanar α)) :
+theorem gammaMatch_apply_singleton (S S' : UnorderedTree α)
+    (F : Forest (UnorderedTree α)) :
     gammaMatch (R := R) S S' (of' F) =
-      if F = ({S, S'} : Forest (Nonplanar α)) then of' F else 0 := by
+      if F = ({S, S'} : Forest (UnorderedTree α)) then of' F else 0 := by
   rw [gammaMatch, ConnesKreimer.linearLift_of']
 
 /-! ## §2: δ_{S,S'} matching on the left tensor channel (M-C-B Def 1.3.1)
@@ -85,15 +85,15 @@ the left channel of the coproduct output. -/
 
 /-- The matching operator δ_{S,S'} on tensored coproduct output: applies
     `gammaMatch S S'` to the left channel and identity to the right. -/
-noncomputable def deltaMatch (S S' : Nonplanar α) :
-    (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) →ₗ[R]
-      (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :=
+noncomputable def deltaMatch (S S' : UnorderedTree α) :
+    (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) →ₗ[R]
+      (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :=
   TensorProduct.map (gammaMatch (R := R) S S') LinearMap.id
 
 /-! ## §3: B grafting for binary Merge (M-C-B Def 1.3.2 + Lemma 1.3.3)
 
 `graftBinaryAt lbl S S'` replaces the 2-element forest `{S, S'}` (basis element)
-with the binary tree `Nonplanar.node lbl {S, S'}` (also a basis element). All
+with the binary tree `UnorderedTree.node lbl {S, S'}` (also a basis element). All
 other basis elements map to zero — we only need this specialized form because
 the Merge action's preceding `δ_{S,S'}` step restricts the left channel to
 multiples of `{S, S'}` anyway.
@@ -103,22 +103,22 @@ agnostic to which label decorates the new node (consumers supply the lexical
 head). -/
 
 /-- The grafting operator B specialized at the pair `(S, S')` with root label
-    `lbl`: maps the basis element `{S, S'}` to `Nonplanar.node lbl {S, S'}`, all
+    `lbl`: maps the basis element `{S, S'}` to `UnorderedTree.node lbl {S, S'}`, all
     other basis elements to zero. M-C-B Lemma 1.3.3 for binary Merge. -/
-noncomputable def graftBinaryAt (lbl : α) (S S' : Nonplanar α) :
-    ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
+noncomputable def graftBinaryAt (lbl : α) (S S' : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   ConnesKreimer.linearLift
-    (fun F => if F = ({S, S'} : Forest (Nonplanar α))
-      then of' ({Nonplanar.node lbl {S, S'}} : Forest (Nonplanar α)) else 0)
+    (fun F => if F = ({S, S'} : Forest (UnorderedTree α))
+      then of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) else 0)
 
 /-- **B grafts on basis vectors**: on `of' F`, returns
-    `of' {Nonplanar.node lbl {S, S'}}` if `F = {S, S'}`, and `0` otherwise.
+    `of' {UnorderedTree.node lbl {S, S'}}` if `F = {S, S'}`, and `0` otherwise.
     Same shape as `gammaMatch_apply_singleton` with a different target. -/
-theorem graftBinaryAt_apply_singleton (lbl : α) (S S' : Nonplanar α)
-    (F : Forest (Nonplanar α)) :
+theorem graftBinaryAt_apply_singleton (lbl : α) (S S' : UnorderedTree α)
+    (F : Forest (UnorderedTree α)) :
     graftBinaryAt (R := R) lbl S S' (of' F) =
-      if F = ({S, S'} : Forest (Nonplanar α))
-        then of' ({Nonplanar.node lbl {S, S'}} : Forest (Nonplanar α))
+      if F = ({S, S'} : Forest (UnorderedTree α))
+        then of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α))
         else 0 := by
   rw [graftBinaryAt, ConnesKreimer.linearLift_of']
 
@@ -130,38 +130,38 @@ The chain:
 
 1. `Δ^ρ` (`comulAlgHomN`) extracts accessible cuts (deletion remainder)
 2. `δ_{S,S'}` filters to terms where the cut forest equals `{S, S'}`
-3. `(B ⊗ id)` grafts `{S, S'}` into `Nonplanar.node lbl {S, S'}` on the left
+3. `(B ⊗ id)` grafts `{S, S'}` into `UnorderedTree.node lbl {S, S'}` on the left
 4. `⊔` multiplies the two channels back into a single workspace
 
 When no admissible cut produces `{S, S'}` as its cut forest, all terms are
 killed by `δ_{S,S'}` and `mergeOp lbl S S' F = 0`. -/
 
-/-- Multiplication on `ConnesKreimer R (Nonplanar α)` lifted to a linear map.
+/-- Multiplication on `ConnesKreimer R (UnorderedTree α)` lifted to a linear map.
     Wraps mathlib's `Algebra.TensorProduct.lmul'`. -/
 noncomputable def mulLin :
-    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) →ₗ[R]
-      ConnesKreimer R (Nonplanar α) :=
-  (Algebra.TensorProduct.lmul' (S := ConnesKreimer R (Nonplanar α)) R).toLinearMap
+    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
+      ConnesKreimer R (UnorderedTree α) :=
+  (Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R).toLinearMap
 
 /-- **Post-coproduct chain** `⊔ ∘ (B ⊗ id) ∘ δ_{S,S'}` as a single named linear
     map. `mergeOp` factors as `mergePost lbl S S' ∘ comulAlgHomN.toLinearMap`. -/
-noncomputable def mergePost (lbl : α) (S S' : Nonplanar α) :
-    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) →ₗ[R]
-      ConnesKreimer R (Nonplanar α) :=
+noncomputable def mergePost (lbl : α) (S S' : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
+      ConnesKreimer R (UnorderedTree α) :=
   mulLin (R := R) (α := α)
     ∘ₗ TensorProduct.map (graftBinaryAt (R := R) lbl S S') LinearMap.id
     ∘ₗ deltaMatch (R := R) S S'
 
 /-- The Merge operator `M_{S,S'}` per M-C-B Def 1.3.4 (with root label `lbl`).
     Factors as `mergePost lbl S S' ∘ comulAlgHomN`. -/
-noncomputable def mergeOp (lbl : α) (S S' : Nonplanar α) :
-    ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
+noncomputable def mergeOp (lbl : α) (S S' : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   mergePost (R := R) (α := α) lbl S S' ∘ₗ comulAlgHomN.toLinearMap
 
 /-! ## §5: Post-coproduct chain on basis tensors
 
 `mergePost lbl S S'` evaluated on an elementary tensor `of' F ⊗ r` is:
-- `of' {Nonplanar.node lbl {S, S'}} * r` if `F = {S, S'}`
+- `of' {UnorderedTree.node lbl {S, S'}} * r` if `F = {S, S'}`
 - `0` otherwise
 
 This is the **load-bearing fact** for proving algebraic Merge agrees with
@@ -170,28 +170,28 @@ linguistic `Step.apply`: every basis-tensor term in the coproduct expansion of
 
 /-- The post-coproduct chain `mergePost lbl S S'` evaluated on a basis tensor
     `of' F ⊗ r`. -/
-theorem mergePost_basis_tensor (lbl : α) (S S' : Nonplanar α)
-    (F : Forest (Nonplanar α)) (r : ConnesKreimer R (Nonplanar α)) :
+theorem mergePost_basis_tensor (lbl : α) (S S' : UnorderedTree α)
+    (F : Forest (UnorderedTree α)) (r : ConnesKreimer R (UnorderedTree α)) :
     mergePost (R := R) (α := α) lbl S S' (of' F ⊗ₜ[R] r)
-      = if F = ({S, S'} : Forest (Nonplanar α))
-          then of' ({Nonplanar.node lbl {S, S'}} : Forest (Nonplanar α)) * r
+      = if F = ({S, S'} : Forest (UnorderedTree α))
+          then of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) * r
           else 0 := by
   unfold mergePost deltaMatch
   rw [LinearMap.comp_apply, LinearMap.comp_apply,
       TensorProduct.map_tmul, LinearMap.id_apply, gammaMatch_apply_singleton]
-  by_cases hF : F = ({S, S'} : Forest (Nonplanar α))
+  by_cases hF : F = ({S, S'} : Forest (UnorderedTree α))
   · subst hF
     rw [if_pos rfl, TensorProduct.map_tmul, LinearMap.id_apply,
         graftBinaryAt_apply_singleton, if_pos rfl, if_pos rfl]
-    show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (Nonplanar α)) R _ = _
+    show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R _ = _
     exact Algebra.TensorProduct.lmul'_apply_tmul _ _
   · rw [if_neg hF, TensorProduct.zero_tmul, if_neg hF]
     simp only [map_zero]
 
-omit [DecidableEq (Nonplanar α)] in
+omit [DecidableEq (UnorderedTree α)] in
 /-- Left-multiplying a `single` basis vector by `of' F` concatenates forests:
     `of' F * single G r = single (F + G) r`. -/
-private theorem of'_mul_single (F G : Forest (Nonplanar α)) (r : R) :
+private theorem of'_mul_single (F G : Forest (UnorderedTree α)) (r : R) :
     of' (R := R) F * single G r = single (F + G) r := by
   rw [smul_single_one G r, mul_smul_comm]
   change r • (of' (R := R) F * of' G) = single (F + G) r
@@ -201,20 +201,20 @@ private theorem of'_mul_single (F G : Forest (Nonplanar α)) (r : R) :
 /-- **General γ_{S,S'}-vanishing on a left-multiplied forest**: if `F` is NOT a
     sub-multiset of `{S, S'}`, then `γ_{S,S'}(of' F * a) = 0` for any `a`.
 
-    The hypothesis `¬ F ≤ ({S, S'} : Forest (Nonplanar α))` says `F` cannot
+    The hypothesis `¬ F ≤ ({S, S'} : Forest (UnorderedTree α))` says `F` cannot
     embed into `{S, S'}` as a sub-multiset: since `F ≤ F + G` always, every
     forest `F + G` produced by left-multiplication misses the `{S, S'}` basis
     element that `γ_{S,S'}` reads. -/
-theorem gammaMatch_mul_eq_zero_of_not_le (S S' : Nonplanar α)
-    (F : Forest (Nonplanar α))
-    (hF : ¬ F ≤ ({S, S'} : Forest (Nonplanar α)))
-    (a : ConnesKreimer R (Nonplanar α)) :
+theorem gammaMatch_mul_eq_zero_of_not_le (S S' : UnorderedTree α)
+    (F : Forest (UnorderedTree α))
+    (hF : ¬ F ≤ ({S, S'} : Forest (UnorderedTree α)))
+    (a : ConnesKreimer R (UnorderedTree α)) :
     gammaMatch (R := R) S S' (of' F * a) = 0 := by
   induction a using ConnesKreimer.induction_linear with
   | zero => rw [mul_zero, map_zero]
   | add g h hg hh => rw [mul_add, map_add, hg, hh, add_zero]
   | single G r =>
-    have hne : F + G ≠ ({S, S'} : Forest (Nonplanar α)) :=
+    have hne : F + G ≠ ({S, S'} : Forest (UnorderedTree α)) :=
       fun heq => hF (heq ▸ Multiset.le_add_right F G)
     rw [of'_mul_single, gammaMatch]
     simp only [ConnesKreimer.linearLift_single]
@@ -222,15 +222,15 @@ theorem gammaMatch_mul_eq_zero_of_not_le (S S' : Nonplanar α)
 
 /-- **Disjoint-singleton vanishing of γ_{S,S'}** (corollary): if `T ≠ S` and
     `T ≠ S'`, then `γ_{S,S'}(of' {T} * a) = 0`. -/
-theorem gammaMatch_singleton_mul_eq_zero (S S' T : Nonplanar α)
-    (hT_ne_S : T ≠ S) (hT_ne_S' : T ≠ S') (a : ConnesKreimer R (Nonplanar α)) :
-    gammaMatch (R := R) S S' (of' ({T} : Forest (Nonplanar α)) * a) = 0 := by
+theorem gammaMatch_singleton_mul_eq_zero (S S' T : UnorderedTree α)
+    (hT_ne_S : T ≠ S) (hT_ne_S' : T ≠ S') (a : ConnesKreimer R (UnorderedTree α)) :
+    gammaMatch (R := R) S S' (of' ({T} : Forest (UnorderedTree α)) * a) = 0 := by
   apply gammaMatch_mul_eq_zero_of_not_le
   intro h_le
-  have hT_mem : T ∈ ({S, S'} : Forest (Nonplanar α)) :=
+  have hT_mem : T ∈ ({S, S'} : Forest (UnorderedTree α)) :=
     Multiset.subset_of_le h_le (Multiset.mem_singleton.mpr rfl)
   have : T = S ∨ T = S' := by
-    rw [show ({S, S'} : Forest (Nonplanar α)) = S ::ₘ ({S'} : Forest (Nonplanar α))
+    rw [show ({S, S'} : Forest (UnorderedTree α)) = S ::ₘ ({S'} : Forest (UnorderedTree α))
         from rfl, Multiset.mem_cons, Multiset.mem_singleton] at hT_mem
     exact hT_mem
   rcases this with h | h
@@ -245,10 +245,10 @@ theorem gammaMatch_singleton_mul_eq_zero (S S' T : Nonplanar α)
     Eliminates cross-terms in the F̂-residual generalization of `mergeOp_pair`:
     any term whose LEFT contribution is a forest `F` that doesn't fit inside
     `{S, S'}` vanishes after `mergePost`. -/
-theorem mergePost_left_mul_eq_zero_of_not_le (lbl : α) (S S' : Nonplanar α)
-    (F : Forest (Nonplanar α)) (b : ConnesKreimer R (Nonplanar α))
-    (hF : ¬ F ≤ ({S, S'} : Forest (Nonplanar α)))
-    (z : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+theorem mergePost_left_mul_eq_zero_of_not_le (lbl : α) (S S' : UnorderedTree α)
+    (F : Forest (UnorderedTree α)) (b : ConnesKreimer R (UnorderedTree α))
+    (hF : ¬ F ≤ ({S, S'} : Forest (UnorderedTree α)))
+    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     mergePost (R := R) (α := α) lbl S S' ((of' (R := R) F ⊗ₜ[R] b) * z) = 0 := by
   induction z using TensorProduct.induction_on with
   | zero => simp
@@ -272,11 +272,11 @@ theorem mergePost_left_mul_eq_zero_of_not_le (lbl : α) (S S' : Nonplanar α)
     Load-bearing for the F̂-residual generalization of `mergeOp_pair`: the
     all-empty-cut term of the residual coproduct has the form `1 ⊗ F̂`, so this
     propagates the residual workspace through the chain unchanged. -/
-theorem mergePost_right_one_tmul (lbl : α) (S S' : Nonplanar α)
-    (z : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))
-    (y : ConnesKreimer R (Nonplanar α)) :
+theorem mergePost_right_one_tmul (lbl : α) (S S' : UnorderedTree α)
+    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
+    (y : ConnesKreimer R (UnorderedTree α)) :
     mergePost (R := R) (α := α) lbl S S'
-        (z * ((1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R] y))
+        (z * ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] y))
       = mergePost (R := R) (α := α) lbl S S' z * y := by
   induction z using TensorProduct.induction_on with
   | zero => simp
@@ -288,8 +288,8 @@ theorem mergePost_right_one_tmul (lbl : α) (S S' : Nonplanar α)
         TensorProduct.map_tmul, LinearMap.id_apply, TensorProduct.map_tmul,
         LinearMap.id_apply, TensorProduct.map_tmul, LinearMap.id_apply,
         TensorProduct.map_tmul, LinearMap.id_apply]
-    show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (Nonplanar α)) R _
-       = Algebra.TensorProduct.lmul' (S := ConnesKreimer R (Nonplanar α)) R _ * _
+    show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R _
+       = Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R _ * _
     rw [Algebra.TensorProduct.lmul'_apply_tmul,
         Algebra.TensorProduct.lmul'_apply_tmul, mul_assoc]
   | add z1 z2 ih1 ih2 =>
@@ -321,32 +321,32 @@ manipulation; that name does NOT signal a stand-alone Merge. -/
 /-- The single-element matching projection `γ_{β, 1}`: keeps the coefficient of
     the `{β}` basis element, sends everything else to zero. Same shape as
     `gammaMatch` but with a singleton target. -/
-noncomputable def gammaMatchSingle (β : Nonplanar α) :
-    ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
+noncomputable def gammaMatchSingle (β : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   ConnesKreimer.linearLift
-    (fun F => if F = ({β} : Forest (Nonplanar α)) then of' F else 0)
+    (fun F => if F = ({β} : Forest (UnorderedTree α)) then of' F else 0)
 
 /-- **`γ_{β, 1}` acts as a basis-vector projection**: on `of' F`, returns `of' F`
     if `F = {β}`, and `0` otherwise. Singleton counterpart of
     `gammaMatch_apply_singleton`. -/
-theorem gammaMatchSingle_apply_singleton (β : Nonplanar α)
-    (F : Forest (Nonplanar α)) :
+theorem gammaMatchSingle_apply_singleton (β : UnorderedTree α)
+    (F : Forest (UnorderedTree α)) :
     gammaMatchSingle (R := R) β (of' F) =
-      if F = ({β} : Forest (Nonplanar α)) then of' F else 0 := by
+      if F = ({β} : Forest (UnorderedTree α)) then of' F else 0 := by
   rw [gammaMatchSingle, ConnesKreimer.linearLift_of']
 
 /-- The matching operator `δ_{β, 1}` on tensored coproduct output: applies
     `gammaMatchSingle β` to the left channel, identity to the right. -/
-noncomputable def deltaMatchSingle (β : Nonplanar α) :
-    (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) →ₗ[R]
-      (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :=
+noncomputable def deltaMatchSingle (β : UnorderedTree α) :
+    (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) →ₗ[R]
+      (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :=
   TensorProduct.map (gammaMatchSingle (R := R) β) LinearMap.id
 
 /-- Post-coproduct chain for `M_{β, 1}`: `⊔ ∘ δ_{β, 1}`. NO grafting step
     (book p. 50: `B(β ⊔ 1) = β` is the identity). Parallel to `mergePost`. -/
-noncomputable def mergePostUnit (β : Nonplanar α) :
-    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) →ₗ[R]
-      ConnesKreimer R (Nonplanar α) :=
+noncomputable def mergePostUnit (β : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
+      ConnesKreimer R (UnorderedTree α) :=
   mulLin (R := R) (α := α) ∘ₗ deltaMatchSingle (R := R) β
 
 /-- The "Merge-with-unit" operator `M_{β, 1}` per
@@ -356,8 +356,8 @@ noncomputable def mergePostUnit (β : Nonplanar α) :
     NOT a Merge operation in its own right (book p. 52): only exists as part of
     `M_{T/β, β} ∘ M_{β, 1}`. The name is a substrate convenience for stating
     Prop 1.4.2's composition equation algebraically. -/
-noncomputable def mergeOpUnit (β : Nonplanar α) :
-    ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
+noncomputable def mergeOpUnit (β : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   mergePostUnit (R := R) (α := α) β ∘ₗ comulAlgHomN.toLinearMap
 
 /-- `mergePostUnit` evaluated on a basis tensor `of' F ⊗ r`:
@@ -365,40 +365,40 @@ noncomputable def mergeOpUnit (β : Nonplanar α) :
     - returns `0` otherwise.
 
     Singleton counterpart of `mergePost_basis_tensor`; one fewer step. -/
-theorem mergePostUnit_basis_tensor (β : Nonplanar α)
-    (F : Forest (Nonplanar α)) (r : ConnesKreimer R (Nonplanar α)) :
+theorem mergePostUnit_basis_tensor (β : UnorderedTree α)
+    (F : Forest (UnorderedTree α)) (r : ConnesKreimer R (UnorderedTree α)) :
     mergePostUnit (R := R) (α := α) β (of' F ⊗ₜ[R] r)
-      = if F = ({β} : Forest (Nonplanar α))
-          then of' ({β} : Forest (Nonplanar α)) * r
+      = if F = ({β} : Forest (UnorderedTree α))
+          then of' ({β} : Forest (UnorderedTree α)) * r
           else 0 := by
   unfold mergePostUnit deltaMatchSingle
   rw [LinearMap.comp_apply, TensorProduct.map_tmul, LinearMap.id_apply,
       gammaMatchSingle_apply_singleton]
-  by_cases hF : F = ({β} : Forest (Nonplanar α))
+  by_cases hF : F = ({β} : Forest (UnorderedTree α))
   · subst hF
     rw [if_pos rfl, if_pos rfl]
-    show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (Nonplanar α)) R _ = _
+    show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R _ = _
     exact Algebra.TensorProduct.lmul'_apply_tmul _ _
   · rw [if_neg hF, TensorProduct.zero_tmul, if_neg hF]
-    show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (Nonplanar α)) R 0 = 0
+    show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R 0 = 0
     exact map_zero _
 
 /-- **Sanity check**: `mergeOpUnit β` on the empty workspace `(1 : ConnesKreimer
-    R (Nonplanar α))` is zero. `1 = of' 0` is the multiplicative unit / empty
+    R (UnorderedTree α))` is zero. `1 = of' 0` is the multiplicative unit / empty
     workspace; `δ_{β, 1}` projects on `{β} ≠ 0`, so all cuts are killed.
     Confirms M-C-B's caveat: `M_{β, 1}` requires β to be present. -/
-theorem mergeOpUnit_one (β : Nonplanar α) :
-    mergeOpUnit (R := R) β (1 : ConnesKreimer R (Nonplanar α)) = 0 := by
+theorem mergeOpUnit_one (β : UnorderedTree α) :
+    mergeOpUnit (R := R) β (1 : ConnesKreimer R (UnorderedTree α)) = 0 := by
   show mergePostUnit (R := R) (α := α) β
-        (comulAlgHomN (1 : ConnesKreimer R (Nonplanar α))) = 0
+        (comulAlgHomN (1 : ConnesKreimer R (UnorderedTree α))) = 0
   rw [map_one]
   show mergePostUnit (R := R) (α := α) β
-        (of' (R := R) (0 : Forest (Nonplanar α))
-          ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α))) = 0
+        (of' (R := R) (0 : Forest (UnorderedTree α))
+          ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α))) = 0
   rw [mergePostUnit_basis_tensor]
   rw [if_neg (by
     intro h
-    have : (0 : Forest (Nonplanar α)).card = ({β} : Forest (Nonplanar α)).card := by
+    have : (0 : Forest (UnorderedTree α)).card = ({β} : Forest (UnorderedTree α)).card := by
       rw [h]
     simp only [Multiset.card_zero, Multiset.card_singleton] at this
     omega)]
@@ -408,22 +408,23 @@ theorem mergeOpUnit_one (β : Nonplanar α) :
 /-- The generic Merge operator `M_{S,S'}^{cuts}` over a cut enumeration `cuts`:
     `mergePost lbl S S' ∘ comulAlgHomNG cuts`. Only the coproduct varies with `cuts`; the
     post-chain of graft, δ-projection, and multiplication is shared. -/
-noncomputable def mergeOpG (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α))
-    (lbl : α) (S S' : Nonplanar α) :
-    ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
+noncomputable def mergeOpG (cuts : UnorderedTree α → Multiset (Forest
+    (UnorderedTree α) × UnorderedTree α))
+    (lbl : α) (S S' : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   mergePost (R := R) (α := α) lbl S S' ∘ₗ (comulAlgHomNG cuts).toLinearMap
 
 /-- The Δ^ρ operator `mergeOp` is the generic operator at `cuts := cutSummandsN`. -/
-theorem mergeOp_eq_G (lbl : α) (S S' : Nonplanar α) :
+theorem mergeOp_eq_G (lbl : α) (S S' : UnorderedTree α) :
     mergeOp (R := R) lbl S S' = mergeOpG (R := R) cutSummandsN lbl S S' := rfl
 
-omit [DecidableEq (Nonplanar α)] in
+omit [DecidableEq (UnorderedTree α)] in
 /-- The Δ^c (trace) Merge operator, the generic operator at `cuts := cutSummandsCN τ`. Its
     quotients carry a trace leaf at each cut site at the cut depth, so the Minimal-Search cost
     `Cut.depthC` is recoverable from them. -/
-noncomputable def mergeOpC {β : Type*} [DecidableEq (Nonplanar (α ⊕ β))]
-    (τ : Nonplanar (α ⊕ β) → β) (lbl : α ⊕ β) (S S' : Nonplanar (α ⊕ β)) :
-    ConnesKreimer R (Nonplanar (α ⊕ β)) →ₗ[R] ConnesKreimer R (Nonplanar (α ⊕ β)) :=
+noncomputable def mergeOpC {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
+    (τ : UnorderedTree (α ⊕ β) → β) (lbl : α ⊕ β) (S S' : UnorderedTree (α ⊕ β)) :
+    ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=
   mergeOpG (R := R) (cutSummandsCN τ) lbl S S'
 
 end Minimalist.Merge

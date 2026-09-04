@@ -35,7 +35,7 @@ namespace RoseTree
 
 namespace Pathed
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 variable {α : Type*}
 
