@@ -4,6 +4,7 @@ import Linglib.Fragments.TobaBatak.Basic
 import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Syntax.Minimalist.Movement.Freezing
 import Linglib.Syntax.Minimalist.Movement.Reconstruction
+import Linglib.Syntax.Minimalist.Movement.Remnant
 
 /-!
 # Cole and Hermon 2008: VP raising in a VOS language
@@ -36,10 +37,11 @@ patient bind it but never the converse.
 
 The derivation is a `Derivation` on the syntactic-object carrier, freezing and binding at a
 stage are the substrate's `Derivation.Frozen`, `CCommandsAt` and `BindsAtSomeStage`, and the
-paper's examples are the rows: `vos_hypothesis_only` and `derivational_only` single out, among
-the candidate analyses of word order and of binding, the paper's own, `table1` derives its
-three grades, `stageAt_sides` and `surface_sides` are the §6 claim over every attachment
-choice, and `english_passive` the §7 contrast.
+paper's examples are the rows: `vos_remnant` says that the raised VoiceP is a remnant,
+`vos_hypothesis_only` and `derivational_only` single out, among the candidate analyses of word
+order and of binding, the paper's own, `table1` derives its three grades, `stageAt_sides` and
+`surface_sides` are the §6 claim over every attachment choice, and `english_passive` the §7
+contrast.
 
 ## Implementation notes
 
@@ -261,6 +263,13 @@ theorem ex81_orders :
 /-- The SVO ditransitive (85), S-V-O-IO. -/
 theorem ex85_svoi :
     ex85.svo.surfacePhon = ["si-John", "mang-", "alean", "aha", "tu si-Mary"] := by decide
+
+/-- VoiceP raising is remnant movement (§4.1–§4.2): the raised VoiceP holds the traces of the
+verb, Voice, the pivot and, in (56), the goal. -/
+theorem vos_remnant :
+    ex49.vos.IsRemnantStep (ex49.svoStage.length + 1) ∧
+      ex56.vos.IsRemnantStep (ex56.svoStage.length + 1) := by
+  decide
 
 /-! ### Every clause goes through a VOS stage (§5) -/
 

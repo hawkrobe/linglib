@@ -30,7 +30,7 @@ is their (44): harmony iff V is spelled out inside vP.
   particle's surface value ((12)–(13)), and the (46)/(47) ranking as a tableau.
 * `FrozenATR`, `guebiePICMode`: the per-cycle harmony record (§6.1) and the PIC
   stance (§6.2).
-* `guebiePredicateDoubling`: the §3 movement witnesses.
+* `guebieFronting`: the §3 movement witness, their (31) on the carrier.
 * `HarmonyProfile`, `WolofShape`: the §7 prediction schema — trigger and target
   co-spelled-out low, movement after — instantiated by Guébie and Wolof.
 
@@ -42,8 +42,8 @@ is their (44): harmony iff V is spelled out inside vP.
   linearizes; the §6.2 escape-hatch counterfactual crashes.
 * `optimal_eq_surfaceATR`, `PartSAuxOV_atr_persists_through_fronting`: the ranking
   derives the surface value, and it survives the CP cycle.
-* `guebie_VDIS_positive_instance`: doubling is narrow-syntactic ((25)–(30),
-  contra [landau-2006]).
+* `guebie_remnant_fronting`: the verb moves and the VP fronts as a remnant, so doubling
+  is narrow-syntactic ((25)–(30), contra [landau-2006]).
 * `guebie_profile`, `wolof_profile`, `wolof_discontinuous`: both languages
   instantiate the §7 schema ([sy-2005], [martinovic-2019]).
 
@@ -285,48 +285,32 @@ theorem guebie_PIC_admits_remnant_movement (φ : Minimalist.Phase)
 Three diagnostics: successive cyclicity ((25)–(26)), island sensitivity
 ((27)–(28)), and island creation ((29)–(30)). This registers Guébie beside
 [harizanov-gribanova-2019]'s Russian as a construction whose verb doubling is syntactic,
-against [landau-2006]'s PF-driven Hebrew analysis. The witnesses are schematic: the
-fronted remnant is an evacuation trace plus the verb copy, per their (31). -/
+against [landau-2006]'s PF-driven Hebrew analysis. The witness is the schematic derivation
+of their (31): the verb raises out of the VP and the remnant, the particle over the verb's
+trace, fronts to Spec,CP; the carrier pronounces no trace, so the doubling, the lower copy
+spelled out for recoverability per [koopman-1997], lies beyond it. -/
 
-open Minimalist (SyntacticObject LIToken)
-open Minimalist.Movement (RemnantFronting PredicateDoubling properRemnant)
+open Minimalist (SyntacticObject LIToken PlanarSyntacticObject)
 open Minimalist.SyntacticObject
 
-private def guebieVerbTok : LIToken := ⟨.simple .V [], 1⟩
-private def guebieVerbLeaf : SyntacticObject := leaf guebieVerbTok
+private def V₀ : LIToken := ⟨.simple .V [], 1⟩
+private def Part₀ : LIToken := ⟨.simple .P [], 2⟩
+private def T₀ : LIToken := ⟨.simple .T [], 3⟩
+private def C₀ : LIToken := ⟨.simple .C [], 4⟩
 
-/-- The remnant VP of the verb-doubling configuration ((31)): an evacuation trace
-    plus the verb copy, pronounced for recoverability per [koopman-1997]. -/
-private def guebieFrontedVP : SyntacticObject :=
-  ↑(Minimalist.PlanarSyntacticObject.trace * guebieVerbTok)
+/-- The remnant VP of (31): the particle over the verb's trace. -/
+private def remnantVP : PlanarSyntacticObject :=
+  {PlanarSyntacticObject.leaf Part₀, PlanarSyntacticObject.traceOf V₀}
 
-private def guebieLandingTok : LIToken := ⟨.simple .C [], 2⟩
-private def guebieLandingSite : SyntacticObject := leaf guebieLandingTok
+/-- (31) on the carrier: the verb Merges with the particle and raises to T, and the remnant
+    VP fronts to Spec,CP. -/
+def guebieFronting : Derivation :=
+  ⟨V₀, [.em .left Part₀, .em .left T₀, .im V₀, .em .left C₀, .im remnantVP]⟩
 
-/-- The Guébie predicate-fronting witness: V evacuates, the remnant VP fronts to
-    Spec,CP, and the trace is pronounced — verb doubling. -/
-def guebiePredicateDoubling : PredicateDoubling :=
-  { frontedXP        := guebieFrontedVP
-    evacuatedHeads   := [guebieVerbLeaf]
-    landingSite      := guebieLandingSite
-    verb             := guebieVerbLeaf
-    verb_evacuated   := List.mem_singleton.mpr rfl
-    trace_pronounced := true }
-
-/-- The evacuated verb sat inside the fronted remnant. -/
-theorem guebie_properRemnant :
-    properRemnant guebiePredicateDoubling.toRemnantFronting := by decide
-
-/-- On the carrier, Internal Merge leaves a trace at the deeper position
-    ([marcolli-chomsky-berwick-2025] §1.4.3); surface doubling is the pronunciation
-    of both positions. -/
-def guebieFrontingDerivation : Derivation :=
-  { initial := guebieFrontedVP
-    steps   := [.im guebieVerbLeaf] }
-
-/-- The verb is a mover of the Guébie derivation, so its doubling is syntactic (§3's
-    diagnostics; decidable from the derivation structure). -/
-theorem guebie_verb_moved : guebieVerbLeaf ∈ guebieFrontingDerivation.movedItems := by
+/-- The verb is a mover and the VP fronts as a remnant: the doubling configuration is built
+    in the narrow syntax (§3's diagnostics), decidable from the derivation. -/
+theorem guebie_remnant_fronting :
+    (V₀ : SyntacticObject) ∈ guebieFronting.movedItems ∧ guebieFronting.IsRemnantStep 4 := by
   decide
 
 /-! ### The §7 prediction and the Wolof parallel

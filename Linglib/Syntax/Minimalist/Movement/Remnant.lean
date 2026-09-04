@@ -1,154 +1,70 @@
-import Linglib.Syntax.Minimalist.Phase.Basic
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
+import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 
 /-!
-# Remnant XP Movement
-[koopman-1997] [aboh-dyakonova-2009] [van-urk-2024]
+# Remnant movement
 
-A constituent X′ moves to Spec,FocP (or Spec,CP) **after** some
-sub-constituent Y has independently moved out of X′. The fronted X′
-is a *remnant* of the original XP — what's left after Y evacuated.
-The classic empirical signature is **predicate doubling**: the verb
-appears twice — once at the head of its own movement chain (e.g. in T)
-and once inside the fronted remnant VP (where its trace is spelled
-out for recoverability).
+A constituent moves after part of it has moved out, so what fronts is a remnant carrying the
+trace of what left it: [koopman-1997]'s predicate clefts in Vata and Nweh, where the VP fronts
+after the verb has raised, the Gungbe and Kwa predicate doubling of [aboh-dyakonova-2009], the
+constraints on predicate fronting [van-urk-2024] surveys, Toba Batak's VoiceP raising after the
+goal and the subject have evacuated it ([cole-hermon-2008], `Studies/ColeHermon2008.lean`), and
+Guébie's particle fronting after the verb has left the VP ([sande-clem-dabkowski-2026],
+`Studies/SandeClemDabkowski2026.lean`). On a derivation
+the notion is exact: step `i` fronts a remnant when its mover contains the trace the head of an
+earlier mover left. Whether the evacuee's lower copy is pronounced inside the remnant, the verb
+doubling of predicate clefts, is a matter of chain pronunciation, phonological for
+[landau-2006] and syntactic for [koopman-1997] and [harizanov-gribanova-2017]; the carrier
+pronounces no trace and does not decide it. Remnant movement is the converse of smuggling
+(`Movement/Smuggling.lean`, [collins-2005]), in which the larger constituent moves with the
+smaller one still inside it.
 
-## Where this substrate is consumed
+## Main definitions
 
-Remnant-XP movement is referenced informally across multiple existing
-Studies files; this substrate centralizes the construct so that the
-reasoning is shared rather than re-stipulated:
+* `Minimalist.SyntacticObject.Derivation.IsRemnantStep`
 
-- [koopman-1997] (originator): predicate clefts in Vata (Kru)
-  and Nweh (Grassfields Bantu) — VP fronts after V→T head movement.
-- [aboh-dyakonova-2009]: predicate doubling and parallel chains
-  in {Gungbe} and across {Kwa}.
-- [harizanov-gribanova-2017] / [harizanov-gribanova-2019]:
-  alternative analysis (postsyntactic amalgamation), with the
-  syntactic-vs-PF dichotomy.
-- [van-urk-2024]: cross-linguistic constraints on predicate
-  fronting; alternative substantive proposals.
-- [sande-clem-dabkowski-2026]: Guébie particle-fronting in
-  predicate clefts — the fronted constituent is the remnant VP after
-  V → v → T head movement and object shift, leaving only the particle
-  in the remnant.
-- [cole-hermon-2008]: {Toba Batak} VoiceP raising after the goal and
-  the subject evacuate, derived step by step on the syntactic-object
-  carrier in `Studies/ColeHermon2008.lean`, where the fronted remnant
-  holds the evacuees' traces rather than the evacuees.
+## Main results
 
-## Design
+* `Minimalist.SyntacticObject.Derivation.IsRemnantStep.append`: a remnant step of a derivation
+  is one of every extension.
 
-`RemnantFronting` records three pieces:
-- `frontedXP`: the larger constituent that lands in Spec,Foc/CP
-- `evacuatedHeads`: the sub-constituents (typically heads) that moved
-  out of `frontedXP` *before* it fronted
-- `landingSite`: where `frontedXP` lands
+## References
 
-`properRemnant` is the structural predicate that the fronted XP no
-longer literally contains the evacuated heads as overt material — the
-characteristic property of "remnant" movement, which distinguishes it
-from non-remnant XP fronting (where the whole XP, contents intact,
-moves).
-
-For verb-doubling derivations, the evacuated head (V) leaves a trace
-inside the fronted XP that may be spelled out for recoverability.
-[landau-2006] argues this recoverability requirement is purely
-phonological; [koopman-1997] and [harizanov-gribanova-2017]
-take it to be a syntactic chain property. The substrate does not
-adjudicate — the predicate `properRemnant` is silent on whether the
-trace is overt.
-
-## What this substrate does NOT do
-
-It does not (yet) provide a typed bridge to `HeadDisplacement` (the
-syntactic-vs-PF dichotomy of [harizanov-gribanova-2019]),
-nor does it state cross-linguistic generalizations about which
-constructions license remnant fronting. Those are downstream Studies
-content. The substrate is intentionally minimal — just enough to type
-the construct so per-paper analyses share vocabulary.
-
-## Relationship to `Movement/Smuggling.lean`
-
-Sibling file `Smuggling.lean` ([collins-2005]) covers a different
-XP-movement variant: a constituent YP containing XP moves *with* XP
-inside it to a position c-commanding an intervener W (smuggling XP
-past W). Remnant fronting is the converse: a sub-element Y has been
-evacuated *before* the larger constituent fronts. They share the
-structural feature "large XP moves" but differ in whether the
-sub-constituent has been extracted (remnant) or remains inside
-(smuggling). The substrates are not unified because the structural
-preconditions differ; consumers should pick the one that matches
-their analysis. SCD 2026's predicate-fronting is remnant; Collins
-2005's passive-via-smuggling is smuggling.
+* [koopman-1997]
+* [aboh-dyakonova-2009]
+* [van-urk-2024]
+* [landau-2006]
+* [harizanov-gribanova-2017]
+* [collins-2005]
+* [cole-hermon-2008]
+* [sande-clem-dabkowski-2026]
 -/
 
-namespace Minimalist.Movement
+namespace Minimalist.SyntacticObject.Derivation
 
-open SyntacticObject
+variable {d : Derivation} {steps : List Step} {i : Nat}
 
--- ============================================================================
--- § 1: Remnant Fronting Record
--- ============================================================================
+/-- Step `i` of `d` fronts a remnant: its mover contains the trace left by an earlier mover. -/
+def IsRemnantStep (d : Derivation) (i : Nat) : Prop :=
+  ∃ m ∈ d.steps[i]? >>= Step.mover?, ∃ x ∈ (d.take i).movedItems, contains m x.headTrace
 
-/-- A remnant XP movement: `frontedXP` lands at `landingSite` after
-    `evacuatedHeads` have moved out of it. -/
-structure RemnantFronting where
-  /-- The larger constituent that fronts (typically VP, vP, VoiceP,
-      or — under [harizanov-gribanova-2017] — AspP). -/
-  frontedXP : SyntacticObject
-  /-- Heads that moved out of `frontedXP` before it fronted (typically
-      V, sometimes also Object). Listed in evacuation order. -/
-  evacuatedHeads : List SyntacticObject
-  /-- Landing position of `frontedXP` (typically Spec,FocP or Spec,CP). -/
-  landingSite : SyntacticObject
+instance (d : Derivation) (i : Nat) : Decidable (d.IsRemnantStep i) := by
+  unfold IsRemnantStep; infer_instance
 
--- ============================================================================
--- § 2: Proper Remnant Predicate
--- ============================================================================
+/-- A remnant step of a derivation is one of every extension. -/
+theorem IsRemnantStep.append (h : d.IsRemnantStep i) : (d.append steps).IsRemnantStep i := by
+  obtain ⟨m, hm, x, hx, hc⟩ := h
+  have hi : i < d.length := by
+    by_contra hlt
+    rw [List.getElem?_eq_none (Nat.le_of_not_lt hlt)] at hm
+    simp at hm
+  refine ⟨m, ?_, x, ?_, hc⟩
+  · rwa [Derivation.append, List.getElem?_append_left hi]
+  · rwa [take_append_of_le hi.le]
 
-/-- Structural definition of a *proper* remnant: every head listed in
-    `evacuatedHeads` originally sat inside `frontedXP` (so it actually
-    evacuated; vacuous evacuations don't count).
-
-    This is the substrate-side commitment that justifies the term
-    "remnant" — the fronted XP is the original XP minus the evacuated
-    sub-constituents. The predicate is silent on whether the evacuated
-    heads' traces are spelled out (verb doubling vs. silent copy) — that
-    is a per-construction choice. -/
-def properRemnant (rf : RemnantFronting) : Prop :=
-  ∀ h ∈ rf.evacuatedHeads, contains rf.frontedXP h
-
-instance (rf : RemnantFronting) : Decidable (properRemnant rf) := by
-  unfold properRemnant; infer_instance
-
--- ============================================================================
--- § 3: Predicate Doubling Schema ([koopman-1997])
--- ============================================================================
-
-/-- A predicate-doubling derivation: V undergoes head movement to T (or
-    higher), and the remnant VP — containing V's trace, possibly
-    pronounced — fronts to Spec,CP. The pronounced lower copy is what
-    yields surface verb doubling.
-
-    This is the canonical Koopman-1997 schema instantiated in Vata,
-    Nweh, and (per [sande-clem-dabkowski-2026]) Guébie. -/
-structure PredicateDoubling extends RemnantFronting where
-  /-- The verbal head V whose movement creates the doubling. -/
-  verb : SyntacticObject
-  /-- V is among the evacuated heads (otherwise this isn't doubling). -/
-  verb_evacuated : verb ∈ evacuatedHeads
-  /-- The verb's trace inside `frontedXP` is pronounced (= verb doubling).
-      Per [landau-2006] this is a phonological recoverability
-      requirement; per [koopman-1997] and [harizanov-gribanova-2017]
-      it reflects syntactic chain pronunciation rules. The substrate
-      records the empirical fact without taking sides. -/
-  trace_pronounced : Bool
-
-/-- Verb doubling implies the verb evacuated, hence by `properRemnant`
-    sat originally inside the fronted XP. -/
-theorem predicateDoubling_verb_in_frontedXP
-    (pd : PredicateDoubling) (h : properRemnant pd.toRemnantFronting) :
-    contains pd.frontedXP pd.verb :=
-  h pd.verb pd.verb_evacuated
-
-end Minimalist.Movement
+end Minimalist.SyntacticObject.Derivation
