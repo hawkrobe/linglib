@@ -174,7 +174,7 @@ noncomputable def headHom : SyntacticObject →ₙ* LinearizationState side :=
     check — two morphisms agreeing on the leaves (`hom_ext`). -/
 theorem sel_comp_headHom :
     LinearizationState.sel.comp (headHom side) = selCheckHom :=
-  hom_ext (fun _ => rfl) rfl
+  hom_ext (fun _ => rfl) rfl (fun _ => rfl)
 
 /-- The surface token order under head-side convention `side`
     ([marcolli-chomsky-berwick-2025] §1.12.1): the yield readout of the

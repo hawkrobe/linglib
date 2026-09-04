@@ -43,14 +43,20 @@ variable {β : Type*}
 /-- The node algebra of a magma-with-zero: lexical leaf ↦ `ℓ`, trace leaf ↦ `τ`,
     bare binary node ↦ `*`, off-carrier arities ↦ `0`. -/
 def mergeAlgebra [Mul β] [Zero β] (ℓ : LIToken → β) (τ : β) : SOLabel → List β → β
-  | .inl tok, _     => ℓ tok
-  | .inr (), []     => τ
-  | .inr (), [x, y] => x * y
-  | .inr (), _      => 0
+  | .inl tok, _       => ℓ tok
+  | .inr _, []        => τ
+  | .inr none, [x, y] => x * y
+  | .inr _, _         => 0
+
+/-- The trace of a token is a leaf: any daughters put it off the carrier. -/
+private theorem mergeAlgebra_some [Mul β] [Zero β] (ℓ : LIToken → β) (τ : β) (tok : LIToken)
+    (l : List β) : mergeAlgebra ℓ τ (Sum.inr (some tok)) l = if l.isEmpty then τ else 0 := by
+  match l with
+  | [] | [_] | [_, _] | _ :: _ :: _ :: _ => rfl
 
 /-- A daughter list of three or more is off the carrier. -/
 private theorem mergeAlgebra_big [Mul β] [Zero β] {ℓ : LIToken → β} {τ : β} {l : List β}
-    (h : 2 < l.length) : mergeAlgebra ℓ τ (Sum.inr ()) l = 0 := by
+    (h : 2 < l.length) : mergeAlgebra ℓ τ (Sum.inr none) l = 0 := by
   match l with
   | _ :: _ :: _ :: _ => rfl
   | [] | [_] | [_, _] => simp at h
@@ -62,8 +68,10 @@ theorem mergeAlgebra_perm [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : 
   cases a with
   | inl tok => rfl
   | inr u =>
-    cases u
-    exact h.congr_arity₂ (fun x y => _root_.mul_comm x y) fun _ h => mergeAlgebra_big h
+    cases u with
+    | none => exact h.congr_arity₂ (fun x y => _root_.mul_comm x y) fun _ h => mergeAlgebra_big h
+    | some tok =>
+      simp only [mergeAlgebra_some, List.isEmpty_iff_length_eq_zero, h.length_eq]
 
 /-- The induced algebra on the nonplanar carrier: the catamorphism descends by
     `mergeAlgebra_perm`. -/
@@ -78,7 +86,7 @@ def liftN [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) : Nonplanar 
 /-- The nonplanar magma law: Merge multiplies values. -/
 theorem liftN_node [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
     (a b : Nonplanar SOLabel) :
-    liftN ℓ τ (Nonplanar.node (Sum.inr ()) {a, b}) = liftN ℓ τ a * liftN ℓ τ b := by
+    liftN ℓ τ (Nonplanar.node (Sum.inr none) {a, b}) = liftN ℓ τ a * liftN ℓ τ b := by
   refine Nonplanar.inductionOn₂ a b fun pa pb => ?_
   rw [Nonplanar.node_pair_mk]
   exact rfl
@@ -92,6 +100,9 @@ def liftFun [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) (s : Synta
 
 @[simp] theorem liftFun_traceLeaf [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) :
     liftFun ℓ τ traceLeaf = τ := rfl
+
+@[simp] theorem liftFun_traceOf [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
+    (tok : LIToken) : liftFun ℓ τ (traceOf tok) = τ := rfl
 
 @[simp] theorem liftFun_node [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
     (l r : SyntacticObject) :
@@ -113,11 +124,13 @@ noncomputable def lift [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
     equal. -/
 theorem hom_ext [Mul β] {f g : SyntacticObject →ₙ* β}
     (hlex : ∀ tok, f (lexLeaf tok) = g (lexLeaf tok))
-    (htrace : f traceLeaf = g traceLeaf) : f = g :=
+    (htrace : f traceLeaf = g traceLeaf) (htraceOf : ∀ tok, f (traceOf tok) = g (traceOf tok)) :
+    f = g :=
   MulHom.ext fun s => by
     induction s using SyntacticObject.ind with
     | lex tok => exact hlex tok
     | trace => exact htrace
+    | traceOf tok => exact htraceOf tok
     | node l r ihl ihr =>
       rw [show node l r = l * r from rfl, map_mul, map_mul, ihl, ihr]
 
