@@ -20,8 +20,8 @@ checking over all substructures" (§3.1.5).
 
 This file instantiates that map for **feature consistency** in the Boolean (parsing) semiring of
 §3.5: the target `Consistency = {inconsistent, consistent}` with `∨`/`∧`. The syntactic object `S`
-(a `Nonplanar SOLabel` subtree, `SOLabel = LIToken ⊕ Option LIToken`) embeds into the Hopf algebra via
-`ofTree S.val` (no head decoration — the single MCB carrier, `FreeCommMagma`/`toNonplanar`
+(a `Nonplanar SOLabel` subtree, `SOLabel = LIToken ⊕ Option LIToken`) embeds into the Hopf algebra
+via `ofTree S.val` (no head decoration — the single MCB carrier, `FreeCommMagma`/`toNonplanar`
 retired). A local feature character `φ` is renormalized by the weight-`+1` semiring Birkhoff
 factorization (`ConnesKreimer.SemiringRenorm`) into the consistency map `φ₊`.
 

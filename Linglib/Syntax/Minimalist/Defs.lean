@@ -5,14 +5,14 @@ import Linglib.Data.UD.Basic
 /-!
 # The lexical alphabet of syntactic objects
 
-The leaves of syntactic objects are drawn from `SO₀`, the lexical items and syntactic features.
-This file defines that alphabet: categorial features `Cat`, a selectional stack `SelStack`
-consumed left to right, the feature bundle `SimpleLI` of a category and its selectional
-requirements, `LexicalItem` as a nonempty list of bundles (a head that has incorporated another
-carries both), and `LIToken`, an instantiated lexical item. It is carrier-agnostic; the carrier
-built over `LIToken ⊕ Option LIToken` is `SyntacticObject/Basic.lean`. `LIToken.selects` is c-selection
-between tokens, `ConventionDir` the harmonic head-side parameter, and `uposToCat` the map from
-Universal Dependencies part-of-speech tags into `Cat`.
+The leaves of syntactic objects are drawn from `SO₀`, the lexical items and syntactic features. This
+file defines that alphabet: categorial features `Cat`, a selectional stack `SelStack` consumed left
+to right, the feature bundle `SimpleLI` of a category and its selectional requirements,
+`LexicalItem` as a nonempty list of bundles (a head that has incorporated another carries both), and
+`LIToken`, an instantiated lexical item. It is carrier-agnostic; the carrier built over `LIToken ⊕
+Option LIToken` is `SyntacticObject/Basic.lean`. `LIToken.selects` is c-selection between tokens,
+`ConventionDir` the harmonic head-side parameter, and `uposToCat` the map from Universal
+Dependencies part-of-speech tags into `Cat`.
 
 ## Main definitions
 

@@ -120,7 +120,8 @@ instance : DecidableEq SyntacticObject := Subtype.instDecidableEq
 def SyntacticObject.lexLeaf (tok : LIToken) : SyntacticObject := ⟨Nonplanar.leaf (Sum.inl tok), rfl⟩
 
 /-- The trace leaf: a childless bare vertex, the mark an admissible cut leaves in the remaining
-    tree ([marcolli-chomsky-berwick-2025], Definition 1.2.6). It carries no index; `traceOf` is the indexed trace. -/
+    tree ([marcolli-chomsky-berwick-2025], Definition 1.2.6). It carries no index; `traceOf` is the
+    indexed trace. -/
 def SyntacticObject.traceLeaf : SyntacticObject := ⟨Nonplanar.leaf (Sum.inr none), by decide⟩
 
 /-- The trace of `tok`. -/
