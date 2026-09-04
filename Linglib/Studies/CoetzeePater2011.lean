@@ -27,37 +27,6 @@ We derive table (12) and the rates of table (13) from the POC substrate, prove t
 restriction for every distribution over rankings, and check the MaxEnt-HG and variable-rule
 computations of tables (23) and (25).
 
-## Main definitions
-
-* `deletionRate`, `morphDeletionRate`, `tejanoPrime`: tables (10) and (7), and the invented
-  dialect of §4.4.
-* `con`, `vp`, `cands`: the constraints of (11) and their POC shape.
-* `Deletes`, `system`, `deletionProb`, `ranked`: what a ranking does, the system it
-  generates, the POC rate (9) under a grammar, and the single-ranking grammars of table (13).
-* `HGDeletes`, `maxEnt`, `maxEntProb`, `aave`, `tejanoPrimeW`: the HG optimum, the MaxEnt-HG
-  grammar and its deletion probability, and the weights of table (23).
-* `loanwordDevoicing`: the tableaux (18)–(19) as a realization problem.
-* `variableRule`: the variable-rule probability (24).
-
-## Main results
-
-* `deletes_preC_iff`, `deletes_preV_iff`, `deletes_pause_iff`, `image_system`: the crucial
-  rankings and the five systems of table (12).
-* `deletionProb_discrete_preV`, `deletionProb_maxPreV_starCT` and their siblings: the rates
-  of table (13).
-* `deletes_preC_of_deletes`, `sum_le_sum_preC`, `deletionProb_le_preC`,
-  `tejanoPrime_not_poc`: pre-consonantal deletion is highest under every distribution over
-  rankings.
-* `hg_system_mem`, `exists_hg_of_mem`, `hgDeletes_neg`: non-negative HG generates exactly
-  the systems of table (12) (footnote 8), and a negative weight one more.
-* `loanwordDevoicing_realizedByWeighting`, `loanwordDevoicing_not_isOTRealizable`: the
-  weights of (19) realize the loanword pattern and no ranking does.
-* `maxEntProb_eq_sigmoid`, `half_lt_maxEntProb_iff`, `maxEntProb_le_preC`, `aave_ordering`,
-  `tejanoPrimeW_ordering`: MaxEnt-HG as the logistic of the harmony difference, and the
-  weights of table (23).
-* `variableRule_tejano_preV`, `variableRule_informal`, `variableRule_half`: (26), (27), and
-  the fit of any rates by one factor group.
-
 ## Implementation notes
 
 Locators follow the ROA-946 draft of 6 October 2009. Constraint indices follow (11):
