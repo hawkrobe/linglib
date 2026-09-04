@@ -189,7 +189,7 @@ def arg? : Arg → Option LIToken
 
 /-- The pivot, the argument the voice raises to subject position: the agent in the active and
 the patient in the passive. -/
-def pivot : LIToken := if c.voice.pivotRole = .agent then c.agent else c.patient
+def pivot : LIToken := if c.voice.promotes = .agent then c.agent else c.patient
 
 /-- The sides of the paper's own trees (50) and (57): complements on the right; the light verb,
 the agent, Voice and, in a ditransitive, the patient, [larson-1988]'s specifier of VP, on the
