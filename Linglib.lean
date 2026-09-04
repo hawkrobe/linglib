@@ -2220,6 +2220,7 @@ import Linglib.Studies.HahnDegenFutrell2021
 import Linglib.Studies.HahnDegenFutrell2021Morphology
 import Linglib.Studies.Hale2001
 import Linglib.Studies.HalleMarantz1993
+import Linglib.Studies.HalleVauxWolfe2000
 import Linglib.Studies.Halpert2012
 import Linglib.Studies.Halpert2019
 import Linglib.Studies.HalpertHammerly2026
