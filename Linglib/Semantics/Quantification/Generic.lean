@@ -23,10 +23,11 @@ quantification" characterization the genericity literature ([nickel-2009],
 not of generics in general.
 
 The per-paper operators are shown EQUAL to these schemas in the study files
-(`Cohen1999.cohenGEN_univ_eq_most_sem`, `Nickel2009.nickelGEN_univ_eq_genWays`),
+(`Cohen1999.gen_univ_eq_most_sem`, `Nickel2009.nickelGEN_univ_eq_genWays`),
 so the unification subsumes them rather than paralleling them. Those bridges are
 to the operators *as linglib formalizes them*, inheriting their documented
-simplifications (Cohen's `cohenGEN` is the absolute reading only; `genWays` takes
+simplifications (Cohen's `gen` is the absolute reading with the alternative set at
+its extensional disjunction; `genWays` takes
 Nickel's modal "ways" at their actual extension).
 
 ## Main definitions

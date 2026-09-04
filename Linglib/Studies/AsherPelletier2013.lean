@@ -149,9 +149,9 @@ def flat (W : Type*) : NormalWorlds W := ⟨λ _ p => p, λ _ _ => subset_rfl⟩
 /-- The majority account verifies *Cats have tails* on a margin just over half; the modal
     account does not, since a normal case lacks a tail. -/
 theorem cohen_too_weak :
-    Cohen1999.cohenGEN (Finset.univ : Finset (Fin 20)) (λ _ => True) tailed ∧
+    Cohen1999.gen (Finset.univ : Finset (Fin 20)) (λ _ => True) (λ _ => True) tailed ∧
       ¬ (flat (Fin 20)).cond Set.univ {w | tailed w} 0 := by
-  refine ⟨(Cohen1999.cohen_iff_thresholdGt _ _ _ (by decide)).mpr (by decide), λ h => ?_⟩
+  refine ⟨(Cohen1999.gen_iff_thresholdGt _ _ _ _ (by decide)).mpr (by decide), λ h => ?_⟩
   exact absurd (h (Set.mem_univ (11 : Fin 20))) (by decide)
 
 variable {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]

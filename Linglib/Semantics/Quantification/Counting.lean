@@ -139,6 +139,58 @@ instance noOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop)
     [DecidablePred R] [DecidablePred S] : Decidable (noOn s R S) := by
   unfold noOn; infer_instance
 
+/-! ### Characterizations of counting and prevalence -/
+
+theorem countOn_congr {α : Type*} {s : Finset α} {P Q : α → Prop}
+    [DecidablePred P] [DecidablePred Q] (h : ∀ x ∈ s, P x ↔ Q x) :
+    countOn s P = countOn s Q :=
+  congrArg Finset.card (Finset.filter_congr h)
+
+theorem countOn_eq_zero_iff {α : Type*} {s : Finset α} {P : α → Prop} [DecidablePred P] :
+    countOn s P = 0 ↔ ∀ x ∈ s, ¬ P x := by
+  simp [countOn, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+
+theorem countOn_pos_iff {α : Type*} {s : Finset α} {P : α → Prop} [DecidablePred P] :
+    0 < countOn s P ↔ ∃ x ∈ s, P x := by
+  simp [countOn, Finset.card_pos, Finset.filter_nonempty_iff]
+
+section Prevalence
+
+variable {α : Type*} {s : Finset α} {R S : α → Prop} [DecidablePred R] [DecidablePred S]
+
+/-- A prevalence of `1` over an inhabited reference class is the relativized universal. -/
+theorem prevalenceOn_eq_one_iff (hR : 0 < countOn s R) :
+    prevalenceOn s R S = 1 ↔ everyOn s R S := by
+  unfold prevalenceOn
+  rw [if_neg hR.ne', div_eq_one_iff_eq (by exact_mod_cast hR.ne'), Nat.cast_inj]
+  constructor
+  · intro h x hx hRx
+    by_contra hS
+    have hpos : 0 < countOn s (fun x => R x ∧ ¬ S x) := countOn_pos_iff.mpr ⟨x, hx, hRx, hS⟩
+    have := countOn_decompose s R S
+    omega
+  · intro h
+    exact countOn_congr fun x hx => ⟨And.left, fun hRx => ⟨hRx, h x hx hRx⟩⟩
+
+/-- A prevalence of `0` over an inhabited reference class is the relativized `no`. -/
+theorem prevalenceOn_eq_zero_iff (hR : 0 < countOn s R) :
+    prevalenceOn s R S = 0 ↔ noOn s R S := by
+  unfold prevalenceOn
+  rw [if_neg hR.ne', div_eq_zero_iff,
+    or_iff_left (by exact_mod_cast hR.ne' : ((countOn s R : ℚ)) ≠ 0),
+    Nat.cast_eq_zero, countOn_eq_zero_iff]
+  exact ⟨fun h x hx hRx hS => h x hx ⟨hRx, hS⟩, fun h x hx hRS => h x hx hRS.1 hRS.2⟩
+
+/-- A positive prevalence over an inhabited reference class is the relativized existential. -/
+theorem prevalenceOn_pos_iff (hR : 0 < countOn s R) :
+    0 < prevalenceOn s R S ↔ someOn s R S := by
+  unfold prevalenceOn
+  rw [if_neg hR.ne', lt_div_iff₀ (by exact_mod_cast hR), zero_mul, Nat.cast_pos,
+    countOn_pos_iff]
+  exact Iff.rfl
+
+end Prevalence
+
 /-- Count of elements satisfying a predicate, via `Finset.univ.filter`.
     The `Finset.univ` specialization of `countOn`. -/
 def count {α : Type*} [Fintype α] (P : α → Prop) [DecidablePred P] : Nat :=

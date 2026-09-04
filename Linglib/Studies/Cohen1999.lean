@@ -1,322 +1,307 @@
-import Linglib.Semantics.Genericity.Basic
 import Linglib.Semantics.Quantification.Counting
 
 /-!
-# [cohen-1999a]: Probability-Based Generic Quantification
+# Cohen (1999): Think Generic!
 
-Ariel Cohen, *Think Generic! The Meaning and Use of Generic Sentences*, 1999.
+Cohen's inductivist semantics makes a generic sentence a probability judgment: gen(ψ, φ) is
+true iff the conditional probability of the scope, given the restrictor and the disjunction
+of a set of alternatives to the scope, exceeds one half (definition 1, p. 37). "Mammals
+bear live young" is evaluated over the mammals that procreate in some way, so no majority
+among all mammals is required, and Thomason's "People have a hard time finding CMU" is
+evaluated over the people who sought it. Generics are further ambiguous between this
+absolute reading and a relative one whose threshold is the average probability of the scope
+over the alternatives; the relative reading verifies "Bulgarians are good weightlifters"
+and, since its threshold depends on individuals outside the restrictor, it is not
+conservative (definition 3, pp. 55–56). The probability is a relative frequency in the
+limit, which imposes two constraints. The reference class may not be explicitly bounded
+(§4.4.2), and it must be homogeneous: unrestricted homogeneity is degenerate, since
+partitioning by the scope itself separates any mixed reference class (definition 4 and
+Salmon's argument, pp. 81–82), so the final truth conditions demand the majority within
+every inhabited cell of every salient partition of the restrictor (definition 5, p. 83).
+"Mammals are female" then fails under the sex partition however many mammals are female
+(§4.4.6). Frequency adverbs apply other thresholds to the same conditional probability —
+always 1, never 0, sometimes non-zero, usually the same one half as gen — and respect only
+the temporal partition, which is why "Primary school teachers are usually female" is true
+while the bare generic is not (definition 10, p. 128; §6.2.3).
 
-## Core Proposal
+We state the three definitions over finite models, derive the degeneracy of unrestricted
+homogeneity, the conservativity of the absolute reading and a non-conservativity witness
+for the relative one, the recovery of the relativized classical quantifiers at the
+frequency-adverb thresholds, and the paper's key examples.
 
-Cohen proposes that the generic quantifier GEN is a probability operator:
+## Implementation notes
 
-    GEN(P, Q) is true iff P(Q | P) > 0.5
+Page and definition numbers follow the CSLI edition, a light revision of the 1996
+dissertation that renames its independent and dependent readings absolute and relative.
+The alternative set enters the truth conditions only through its extensional disjunction
+and the relative threshold, so it is carried as a single predicate. A conditional
+probability with an empty reference class is undefined in the paper (p. 37, §5.6) and is
+the junk value `0` of `Quantification.prevalenceOn` here; theorems carry the non-emptiness
+hypothesis, and a salient cell with an empty reference class imposes no condition.
 
-That is, a generic "Ps are Q" is true iff the conditional probability of
-an object having property Q, given that it has property P, exceeds 0.5.
+## TODO
 
-This contrasts with the frequency adverb *always*, which requires
-P(Q | P) = 1.
+* The unboundedness constraint (§4.4.2) and lawlikeness (§4.4.3) restrict which sentences
+  express generics at all — a matter of reference classes conceivable as unlimited, with no
+  content over a fixed finite model — and are not stated.
+* Chapter 5's calculus of alternatives (absolute determinables, focus, the connectives) and
+  chapter 7's default reasoning are not formalized; the alternative set is taken as given,
+  as in §3.2.
 
-## Connection to Threshold Semantics
+## References
 
-Cohen's GEN is a special case of threshold semantics with θ = 1/2. The
-conditional probability P(Q | P) is `prevalenceOn` (the proportion of
-restrictor-satisfying elements where the scope holds — the analogue of
-`Rel.edgeDensity`), and `cohenGEN` is `prevalenceOn > 1/2`. The
-division-free, kernel-decidable cross-multiplied form is
-`thresholdGtOn _ _ _ 1 2`; the two agree (`cohen_iff_thresholdGt`).
-
-## Homogeneity Constraint
-
-Cohen introduces a **homogeneity** presupposition: the conditional
-probability P(Q | P) must be uniform across all suitable partitions
-of the domain. If the domain splits into subgroups with different
-rates, the generic presupposition fails and the sentence is neither
-true nor false.
-
-This constraint is discussed in the introduction to *Genericity*
-(Mari, Beyssade, Del Prete, OUP 2013):
-
-> "A homogeneity requirement is introduced as a presupposition of
-> generics and frequency statements, according to which the relative
-> probability in every part of a suitable partition of any admissible
-> history H must be the same as the probability in the whole H."
-
-## Nickel's Critique ([nickel-2009])
-
-[nickel-2009] shows that even with homogeneity, the majority-based
-view cannot handle conjunctive generics like "Elephants live in Africa
-and Asia." If this is equivalent to the conjunction "Elephants live in
-Africa AND Elephants live in Asia," then both conjuncts would need to
-hold with probability > 0.5, which is impossible if the populations
-are disjoint. See `Studies/Nickel2009.lean`, which states the
-divergence as a theorem against `cohenGEN`.
+* [A. Cohen, *Think Generic! The Meaning and Use of Generic Sentences* (1999)][cohen-1999a]
+* [W. C. Salmon, *Objectively Homogeneous Reference Classes* (1977)][salmon-1977]
+* [R. Thomason, *Theories of Nonmonotonicity and Natural Language Generics*
+  (1988)][thomason-1988]
+* [G. N. Carlson, *Reference to Kinds in English* (1977)][carlson-1977]
 -/
 
 namespace Cohen1999
 
-open Genericity (Situation)
-open Quantification (prevalenceOn countOn everyOn thresholdGtOn thresholdGtOn_iff_prevalenceOn
-  mostOn thresholdGtOn_one_two_iff_mostOn Proportional mostOn_univ_proportional
-  count count_decompose)
+open Quantification
 
-/-! ### Cohen's Probability-Based GEN
+variable {α : Type*} (domain : Finset α) (ψ alt φ : α → Prop)
+variable [DecidablePred ψ] [DecidablePred alt] [DecidablePred φ]
 
-The operators are polymorphic over the domain carrier (`prevalenceOn` is), so
-the same `cohenGEN` applies to situation-based models (here) and entity-based
-models ([nickel-2009]). -/
+/-- Cohen's generic quantifier on its absolute reading (definition 1, p. 37): the
+conditional probability of the scope `φ`, given the restrictor `ψ` and the disjunction
+`alt` of the alternatives to the scope, exceeds one half. -/
+def gen : Prop :=
+  1 / 2 < prevalenceOn domain (fun x => ψ x ∧ alt x) φ
 
-/-- Cohen's GEN: a generic "Ps are Q" is true iff the conditional probability
-    P(Q | P) exceeds 0.5. `prevalenceOn domain restrictor scope` is that
-    conditional probability, so Cohen's GEN is `prevalenceOn > 1/2`. -/
-def cohenGEN {α : Type*} (domain : Finset α) (restrictor scope : α → Prop)
-    [DecidablePred restrictor] [DecidablePred scope] : Prop :=
-  prevalenceOn domain restrictor scope > 1 / 2
+instance : Decidable (gen domain ψ alt φ) := by unfold gen; infer_instance
 
-instance {α : Type*} (domain : Finset α) (restrictor scope : α → Prop)
-    [DecidablePred restrictor] [DecidablePred scope] :
-    Decidable (cohenGEN domain restrictor scope) := by unfold cohenGEN; infer_instance
+/-- The relative reading (definition 3, p. 56): the restrictor raises the probability of
+the scope above its average over the alternatives. -/
+def genRelative : Prop :=
+  prevalenceOn domain alt φ < prevalenceOn domain (fun x => ψ x ∧ alt x) φ
 
-/-- Cohen's GEN agrees with the division-free, kernel-decidable threshold form
-    `thresholdGtOn … 1 2` whenever the restrictor is satisfied somewhere. -/
-theorem cohen_iff_thresholdGt {α : Type*} (domain : Finset α) (restrictor scope : α → Prop)
-    [DecidablePred restrictor] [DecidablePred scope] (hR : 0 < countOn domain restrictor) :
-    cohenGEN domain restrictor scope ↔ thresholdGtOn domain restrictor scope 1 2 := by
-  rw [cohenGEN, thresholdGtOn_iff_prevalenceOn domain restrictor scope 1 2 (by norm_num) hR]
+instance : Decidable (genRelative domain ψ alt φ) := by unfold genRelative; infer_instance
+
+/-- The final truth conditions (definition 5, p. 83): the absolute threshold within every
+salient cell whose reference class is inhabited. -/
+def genSalient {ι : Type*} (cells : ι → α → Prop) [∀ i, DecidablePred (cells i)] : Prop :=
+  ∀ i, 0 < countOn domain (fun x => (ψ x ∧ cells i x) ∧ alt x) →
+    gen domain (fun x => ψ x ∧ cells i x) alt φ
+
+/-- A frequency adverb applies its lexical requirement to the same conditional probability
+(definition 10, p. 128); gen carries the requirement `(1 / 2 < ·)`, synonymous with
+usually. -/
+def freq (R : ℚ → Prop) : Prop :=
+  R (prevalenceOn domain (fun x => ψ x ∧ alt x) φ)
+
+/-- Unrestricted homogeneity (definition 4, p. 81, after Salmon): every inhabited
+sub-reference class preserves the conditional probability of the scope. -/
+def Homogeneous : Prop :=
+  ∀ (part : α → Prop) [DecidablePred part],
+    0 < countOn domain (fun x => ψ x ∧ part x) →
+    prevalenceOn domain (fun x => ψ x ∧ part x) φ = prevalenceOn domain ψ φ
+
+/-! ### The absolute reading and the majority quantifier -/
+
+/-- The absolute reading in division-free, kernel-decidable form. -/
+theorem gen_iff_thresholdGt (hR : 0 < countOn domain (fun x => ψ x ∧ alt x)) :
+    gen domain ψ alt φ ↔ thresholdGtOn domain (fun x => ψ x ∧ alt x) φ 1 2 := by
+  rw [gen, thresholdGtOn_iff_prevalenceOn _ _ _ 1 2 (by norm_num) hR]
   norm_num
 
-/-! ### Cohen's GEN is proportional majority quantification
+/-- Over an inhabited reference class the absolute reading is the majority quantifier on
+the restricted domain. -/
+theorem gen_iff_mostOn (hR : 0 < countOn domain (fun x => ψ x ∧ alt x)) :
+    gen domain ψ alt φ ↔ mostOn domain (fun x => ψ x ∧ alt x) φ :=
+  (gen_iff_thresholdGt domain ψ alt φ hR).trans (thresholdGtOn_one_two_iff_mostOn _ _ _)
 
-Cohen's θ = 1/2 GEN is, over a non-empty restrictor domain, **exactly** the
-canonical majority quantifier `mostOn` — the θ = 1/2 threshold is the cutpoint
-*at* the `1 : 1` cell ratio. It therefore inherits `Proportional` from the GQ
-substrate. This is the precise content of "generics as majority quantification"
-— and exactly the claim the genericity literature rejects: real generics are
-**not** majority statements (`cohen_wrong_on_mosquitoes`; [nickel-2009];
-[leslie-2008]; [tessler-goodman-2019]). The theorems below state what is *true
-of Cohen's operator*, not of generics in general. -/
+/-- gen is the adverb usually (definition 10, p. 128; p. 131). -/
+theorem gen_iff_freq : gen domain ψ alt φ ↔ freq domain ψ alt φ (1 / 2 < ·) :=
+  Iff.rfl
 
-/-- Cohen's GEN over a non-empty restrictor domain is exactly the canonical
-    majority quantifier `mostOn` (strictly more `R∧S` than `R∧¬S`): θ = 1/2 is
-    the `1 : 1` cell-ratio cutpoint (`thresholdGtOn_one_two_iff_mostOn`). -/
-theorem cohen_iff_mostOn {α : Type*} (domain : Finset α) (restrictor scope : α → Prop)
-    [DecidablePred restrictor] [DecidablePred scope] (hR : 0 < countOn domain restrictor) :
-    cohenGEN domain restrictor scope ↔ mostOn domain restrictor scope :=
-  (cohen_iff_thresholdGt domain restrictor scope hR).trans
-    (thresholdGtOn_one_two_iff_mostOn domain restrictor scope)
+/-- The absolute reading is conservative: intersecting the scope with the restrictor
+changes nothing (p. 54, after Wilkinson). -/
+theorem gen_conservativity :
+    gen domain ψ alt (fun x => ψ x ∧ φ x) ↔ gen domain ψ alt φ := by
+  unfold gen prevalenceOn
+  rw [countOn_congr (P := fun x => (ψ x ∧ alt x) ∧ ψ x ∧ φ x)
+    (Q := fun x => (ψ x ∧ alt x) ∧ φ x) fun x _ => by tauto]
+
+/-! ### The generalized-quantifier interface
+
+Over the whole carrier with trivial alternatives the absolute reading is the majority
+generalized quantifier, hence proportional: its truth depends only on the two cell counts.
+The relativized readings are exactly what departs from this. -/
+
+/-- With trivial alternatives over the whole carrier, gen is `most`. -/
+theorem gen_univ_eq_most_sem {β : Type*} [Fintype β] (R S : β → Prop)
+    [DecidablePred R] [DecidablePred S] (hR : 0 < countOn Finset.univ R) :
+    gen Finset.univ R (fun _ => True) S ↔ Quantification.most_sem R S := by
+  have hR' : 0 < countOn Finset.univ (fun x => R x ∧ True) := by
+    rwa [countOn_congr (P := fun x => R x ∧ True) (Q := R) fun x _ => by simp]
+  rw [gen_iff_mostOn _ _ _ _ hR', ← Quantification.mostOn_univ]
+  unfold mostOn
+  rw [countOn_congr (P := fun x => (R x ∧ True) ∧ S x) (Q := fun x => R x ∧ S x)
+      fun x _ => by tauto,
+    countOn_congr (P := fun x => (R x ∧ True) ∧ ¬ S x) (Q := fun x => R x ∧ ¬ S x)
+      fun x _ => by tauto]
 
 open Classical in
-/-- Cohen's majority GEN over the whole (finite) carrier is a **proportional**
-    quantifier ([peters-westerstahl-2006]): its truth depends only on the ratio
-    |R∩S| : |R∖S|. Inherited from `mostOn_univ_proportional` via `cohen_iff_mostOn`,
-    not re-proved.
-
-    This proportionality is a property of Cohen's *majority* operator, **not** of
-    generics in general — the prevalence asymmetry ([leslie-2008];
-    `TesslerGoodman2019.same_prevalence_opposite_endorsement`) shows real generic
-    endorsement is *not* ratio-determined. -/
-theorem cohen_proportional {α : Type*} [Fintype α] :
-    Proportional (fun (R S : α → Prop) => cohenGEN Finset.univ R S) := by
+/-- With trivial alternatives over the whole carrier, gen is proportional
+([peters-westerstahl-2006]) — a property of this operator that the genericity literature's
+counterexamples to majority accounts target. -/
+theorem gen_proportional {β : Type*} [Fintype β] :
+    Proportional (fun R S : β → Prop => gen Finset.univ R (fun _ => True) S) := by
   intro R₁ S₁ R₂ S₂ tt₁ tf₁ tt₂ tf₂ h1 h2 hcross
-  show cohenGEN Finset.univ R₁ S₁ ↔ cohenGEN Finset.univ R₂ S₂
+  show gen Finset.univ R₁ _ S₁ ↔ gen Finset.univ R₂ _ S₂
   have hR1 : 0 < countOn Finset.univ R₁ := by
     show 0 < count (fun x => R₁ x); rw [count_decompose R₁ S₁]; exact h1
   have hR2 : 0 < countOn Finset.univ R₂ := by
     show 0 < count (fun x => R₂ x); rw [count_decompose R₂ S₂]; exact h2
-  rw [cohen_iff_mostOn Finset.univ R₁ S₁ hR1, cohen_iff_mostOn Finset.univ R₂ S₂ hR2]
+  rw [gen_univ_eq_most_sem R₁ S₁ hR1, gen_univ_eq_most_sem R₂ S₂ hR2,
+    ← Quantification.mostOn_univ, ← Quantification.mostOn_univ]
   exact mostOn_univ_proportional R₁ S₁ R₂ S₂ h1 h2 hcross
 
-/-! ### Generic-quantifier interface
+/-! ### Homogeneity is degenerate unrestricted (definition 4, p. 82) -/
 
-`cohenGEN` over the whole carrier IS the majority generalized quantifier
-`Quantification.most_sem`, slotting Cohen's absolute reading into the `GQ`
-framework (`Quantification.Generic`) alongside `genNormalcy` / `genWays`. -/
+/-- Salmon's two trivial cases are the only homogeneous reference classes: partitioning by
+the scope itself separates any mixed one (p. 82). Hence definition 5 restricts the
+partitions to the salient ones. -/
+theorem homogeneous_iff (hR : 0 < countOn domain ψ) :
+    Homogeneous domain ψ φ ↔ noOn domain ψ φ ∨ everyOn domain ψ φ := by
+  constructor
+  · intro h
+    by_cases hno : noOn domain ψ φ
+    · exact Or.inl hno
+    · refine Or.inr ?_
+      obtain ⟨x, hx, hψx, hφx⟩ : ∃ x ∈ domain, ψ x ∧ φ x := by
+        by_contra hc
+        exact hno fun y hy hψ hφ => hc ⟨y, hy, hψ, hφ⟩
+      have hpos : 0 < countOn domain (fun y => ψ y ∧ φ y) :=
+        countOn_pos_iff.mpr ⟨x, hx, hψx, hφx⟩
+      have h1 : prevalenceOn domain (fun y => ψ y ∧ φ y) φ = 1 :=
+        (prevalenceOn_eq_one_iff hpos).mpr fun y _ hy => hy.2
+      exact (prevalenceOn_eq_one_iff hR).mp ((h φ hpos).symm.trans h1)
+  · rintro (hno | hall) part _ hpart
+    · rw [(prevalenceOn_eq_zero_iff hpart).mpr fun y hy hRy => hno y hy hRy.1,
+        (prevalenceOn_eq_zero_iff hR).mpr hno]
+    · rw [(prevalenceOn_eq_one_iff hpart).mpr fun y hy hRy => hall y hy hRy.1,
+        (prevalenceOn_eq_one_iff hR).mpr hall]
 
-/-- Cohen's absolute-reading GEN over the whole carrier is exactly the majority
-    generalized quantifier `most_sem` — the `GQ`-interface form of `cohenGEN`.
-    The bare `P(Q | P) > ½` truth condition only: the homogeneity presupposition
-    (`homogeneous`) and the relative reading are not part of it. -/
-theorem cohenGEN_univ_eq_most_sem {α : Type*} [Fintype α] (R S : α → Prop)
-    [DecidablePred R] [DecidablePred S] (hR : 0 < countOn Finset.univ R) :
-    cohenGEN Finset.univ R S ↔ Quantification.most_sem R S := by
-  rw [cohen_iff_mostOn Finset.univ R S hR, Quantification.mostOn_univ]
+/-! ### Frequency adverbs (definition 10, p. 128)
 
-/-- Cohen's "always": no exceptions — every restrictor-element satisfies the scope.
-    For a non-empty restrictor domain this is exactly P(Q | P) = 1; stated as the
-    decidable universal `everyOn` rather than the (non-kernel-decidable) ℚ equality. -/
-def cohenAlways {α : Type*} (domain : Finset α) (restrictor scope : α → Prop)
-    [DecidablePred restrictor] [DecidablePred scope] : Prop :=
-  everyOn domain restrictor scope
+At the extreme thresholds the relativized classical quantifiers reappear; sometimes is the
+existential, so a generic over an empty reference class entails nothing (§5.6). -/
 
-instance {α : Type*} (domain : Finset α) (restrictor scope : α → Prop)
-    [DecidablePred restrictor] [DecidablePred scope] :
-    Decidable (cohenAlways domain restrictor scope) := by unfold cohenAlways; infer_instance
+/-- always: probability 1 is the relativized universal. -/
+theorem freq_eq_one_iff (hR : 0 < countOn domain (fun x => ψ x ∧ alt x)) :
+    freq domain ψ alt φ (· = 1) ↔ everyOn domain (fun x => ψ x ∧ alt x) φ :=
+  prevalenceOn_eq_one_iff hR
 
-/-! ### Homogeneity Constraint -/
+/-- never: probability 0 is the relativized `no`. -/
+theorem freq_eq_zero_iff (hR : 0 < countOn domain (fun x => ψ x ∧ alt x)) :
+    freq domain ψ alt φ (· = 0) ↔ noOn domain (fun x => ψ x ∧ alt x) φ :=
+  prevalenceOn_eq_zero_iff hR
 
-/-- Cohen's homogeneity constraint: the conditional probability P(scope | restrictor)
-    must be the same in every non-empty sub-partition of the domain.
+/-- sometimes: positive probability is the relativized existential. -/
+theorem freq_pos_iff (hR : 0 < countOn domain (fun x => ψ x ∧ alt x)) :
+    freq domain ψ alt φ (0 < ·) ↔ someOn domain (fun x => ψ x ∧ alt x) φ :=
+  prevalenceOn_pos_iff hR
 
-    Formally: for any sub-predicate `part`, if there are restrictor-satisfying
-    elements in that partition, the proportion of scope-satisfying elements among
-    `restrictor ∧ part` elements equals the overall proportion among `restrictor`
-    elements — i.e. P(Q | P ∧ Pᵢ) = P(Q | P) for all partition cells Pᵢ.
+/-! ### People have a hard time finding CMU (§3.2.1, after Thomason)
 
-    When homogeneity fails, the generic presupposition fails and the sentence
-    is neither true nor false. -/
-def homogeneous {α : Type*} (domain : Finset α) (restrictor scope : α → Prop)
-    [DecidablePred restrictor] [DecidablePred scope] : Prop :=
-  ∀ (part : α → Prop) [DecidablePred part],
-    0 < countOn domain (fun x => restrictor x ∧ part x) →
-    prevalenceOn domain (fun x => restrictor x ∧ part x) scope =
-    prevalenceOn domain restrictor scope
+Twenty people, five of whom sought the university: four found it with difficulty, one with
+ease. The alternatives — the levels of difficulty of the search — restrict the reference
+class to the seekers, so the generic holds with no majority among people. -/
 
-/-- A generic assertion according to Cohen: the prevalence exceeds 0.5
-    AND the homogeneity presupposition is satisfied. -/
-structure CohenGenericJudgment (α : Type*) where
-  domain : Finset α
-  restrictor : α → Prop
-  scope : α → Prop
-  [restrictorDec : DecidablePred restrictor]
-  [scopeDec : DecidablePred scope]
-  holds : Prop := @cohenGEN α domain restrictor scope restrictorDec scopeDec
-  presupposition : Prop := @homogeneous α domain restrictor scope restrictorDec scopeDec
+abbrev soughtCMU : Fin 20 → Prop := (·.val < 5)
+abbrev hardTime : Fin 20 → Prop := (·.val < 4)
 
-/-! ### Examples -/
-
-section DogsBark
-
-/-- Ten situations: 8 with a barking dog, 2 with a sleeping dog. -/
-def dogSituations : Finset Situation :=
-  ((List.range 10).map (fun n => (⟨n⟩ : Situation))).toFinset
-
-abbrev isDog : Situation → Prop := fun _ => True
-
-abbrev barks : Situation → Prop := fun s => s.id < 8
-
-/-- The data: 8 of 10 dog-cases bark (prevalence 8/10 = 4/5). -/
-example : countOn dogSituations (fun s => isDog s ∧ barks s) = 8 ∧
-    countOn dogSituations isDog = 10 := by decide
-
-/-- "Dogs bark" is true on Cohen's account: prevalence 8/10 > 1/2. -/
-example : cohenGEN dogSituations isDog barks :=
-  (cohen_iff_thresholdGt dogSituations isDog barks (by decide)).mpr (by decide)
-
-/-- "Dogs always bark" is false: cases 8 and 9 don't bark. -/
-example : ¬ cohenAlways dogSituations isDog barks := by decide
-
-end DogsBark
-
-section BirdsFly
-
-/-- Ten cases: 8 flying, 2 non-flying (penguins, ostriches). -/
-def birdSituations : Finset Situation :=
-  ((List.range 10).map (fun n => (⟨n⟩ : Situation))).toFinset
-
-abbrev isBird : Situation → Prop := fun _ => True
-
-abbrev flies : Situation → Prop := fun s => s.id < 8
-
-/-- "Birds fly" is true: prevalence 8/10 > 1/2. -/
-example : cohenGEN birdSituations isBird flies :=
-  (cohen_iff_thresholdGt birdSituations isBird flies (by decide)).mpr (by decide)
-
-end BirdsFly
-
-/-! ### Cohen GEN vs the relativized universal -/
-
-/-- When the relativized universal is true (all normal restrictor-cases satisfy
-    scope) and the restrictor cases are a majority, Cohen's GEN is also true.
-    Agreement in the typical case. -/
-theorem everyOn_true_majority_implies_cohen {α : Type*}
-    (domain : Finset α) (normal restrictor scope : α → Prop)
-    [DecidablePred normal] [DecidablePred restrictor] [DecidablePred scope]
-    (_hUniv : everyOn domain (fun x => normal x ∧ restrictor x) scope)
-    (hMajority : prevalenceOn domain restrictor scope > 1 / 2)
-    : cohenGEN domain restrictor scope := hMajority
-
-/-!
-## Cohen's Advantage over Traditional GEN
-
-Traditional GEN has a hidden **normalcy** parameter that does all the
-explanatory work. Cohen's probability-based GEN eliminates this parameter:
-the threshold 0.5 is fixed, and the truth value is determined by observable
-prevalence.
-
-However, Cohen's approach faces its own challenges:
-
-1. **Rare property generics**: "Mosquitoes carry malaria" is judged true
-   despite prevalence well below 50%.
-
-2. **Conjunctive generics**: [nickel-2009]'s "Elephants live in Africa
-   and Asia" shows the majority-based view predicts the wrong truth conditions
-   for conjoined habitat claims.
-
-3. **Striking property generics**: "Sharks attack swimmers" — low prevalence
-   but judged true. [tessler-goodman-2019]'s RSA account handles this
-   via pragmatic reasoning over priors, not a fixed threshold.
--/
-
-section RareProperty
-
-/-- Ten cases: only 1 carries malaria (a low-prevalence property). -/
-def mosquitoSituations : Finset Situation :=
-  ((List.range 10).map (fun n => (⟨n⟩ : Situation))).toFinset
-
-abbrev isMosquito : Situation → Prop := fun _ => True
-
-abbrev carriesMalaria : Situation → Prop := fun s => s.id = 0
-
-/-- "Mosquitoes carry malaria" is FALSE on Cohen's account (prevalence 1/10 < 1/2),
-    even though speakers judge it true. -/
-example : ¬ cohenGEN mosquitoSituations isMosquito carriesMalaria := by
-  rw [cohen_iff_thresholdGt mosquitoSituations isMosquito carriesMalaria (by decide)]
+theorem cmu_gen : gen Finset.univ (fun _ => True) soughtCMU hardTime := by
+  rw [gen_iff_thresholdGt _ _ _ _ (by decide)]
   decide
 
-/-- Cohen's prediction conflicts with empirical judgments ([leslie-2008]):
-    "Mosquitos carry malaria" has prevalence ~1/100 but judgment ~85/100 (clearly
-    true). Cohen predicts false (1/100 < 1/2). -/
-theorem cohen_wrong_on_mosquitoes :
-    (1 : ℚ) / 100 < 1 / 2 ∧ (85 : ℚ) / 100 > 1 / 2 := by
-  constructor <;> norm_num
+theorem cmu_no_majority : ¬ gen Finset.univ (fun _ => True) (fun _ => True) hardTime := by
+  rw [gen_iff_thresholdGt _ _ _ _ (by decide)]
+  decide
 
-end RareProperty
+/-! ### Mammals bear live young; mammals are not female (§3.2.1 p. 33, §4.4.6 p. 91)
 
-section HomogeneityFailure
+Twenty mammals, eight of which procreate: six bear live young, two lay eggs. Eleven are
+female, among them every procreator. Relativized to the forms of procreation, the first
+generic is true though bearers are a minority of all mammals, and the male cell of the sex
+partition is empty of procreators, so definition 5 agrees. The second clears definition 1
+on the female majority alone but fails definition 5, since the male cell is inhabited and
+contains no female — the paper's resolution of the contrast with different alternatives and
+the sex partition. By definition 10 the same threshold read as the adverb usually ignores
+the non-temporal partition (§6.2.3), so "usually female" stays true. -/
 
-/-- A domain that VIOLATES homogeneity: urban vs rural dogs.
-    Urban dogs bark more (all 5 bark), rural dogs bark less (1 of 5 barks).
-    Overall prevalence = 6/10, but the partition into urban/rural shows
-    different rates (5/5 vs 1/5). -/
-def mixedDogSituations : Finset Situation :=
-  ((List.range 10).map (fun n => (⟨n⟩ : Situation))).toFinset
+abbrev procreates : Fin 20 → Prop := (·.val < 8)
+abbrev bearsLive : Fin 20 → Prop := (·.val < 6)
+abbrev female : Fin 20 → Prop := (·.val < 11)
 
-abbrev allDogs : Situation → Prop := fun _ => True
+/-- The sex partition: the females and the males. -/
+abbrev sexCell : Bool → Fin 20 → Prop := fun b x => if b then female x else ¬ female x
 
--- barks iff urban (id<5, all bark) or the one rural barker (id=5): i.e. id < 6
-abbrev mixedBarks : Situation → Prop := fun s => s.id < 6
+theorem bearsLive_gen : gen Finset.univ (fun _ => True) procreates bearsLive := by
+  rw [gen_iff_thresholdGt _ _ _ _ (by decide)]
+  decide
 
-abbrev urbanPartition : Situation → Prop := fun s => s.id < 5
+theorem bearsLive_no_majority :
+    ¬ gen Finset.univ (fun _ => True) (fun _ => True) bearsLive := by
+  rw [gen_iff_thresholdGt _ _ _ _ (by decide)]
+  decide
 
-/-- The data: overall 6/10 bark; urban cell 5/5; rural cell 1/5. -/
-example : countOn mixedDogSituations (fun s => allDogs s ∧ mixedBarks s) = 6 ∧
-    countOn mixedDogSituations allDogs = 10 ∧
-    countOn mixedDogSituations (fun s => (allDogs s ∧ urbanPartition s) ∧ mixedBarks s) = 5 ∧
-    countOn mixedDogSituations (fun s => allDogs s ∧ urbanPartition s) = 5 := by decide
+theorem bearsLive_genSalient :
+    genSalient Finset.univ (fun _ => True) procreates bearsLive sexCell := by
+  intro i hi
+  cases i
+  · exact absurd hi (by decide)
+  · rw [gen_iff_thresholdGt _ _ _ _ (by decide)]
+    decide
 
-/-- The generic "Dogs bark" passes Cohen's > 1/2 test (overall 6/10). -/
-example : cohenGEN mixedDogSituations allDogs mixedBarks :=
-  (cohen_iff_thresholdGt mixedDogSituations allDogs mixedBarks (by decide)).mpr (by decide)
+theorem female_gen : gen Finset.univ (fun _ => True) (fun _ => True) female := by
+  rw [gen_iff_thresholdGt _ _ _ _ (by decide)]
+  decide
 
-/-- ...but homogeneity FAILS: the urban rate (5/5) differs from the overall rate
-    (6/10), witnessed by cross-multiplication `5·10 ≠ 6·5`. -/
-theorem homogeneity_fails_mixed :
-    countOn mixedDogSituations (fun s => (allDogs s ∧ urbanPartition s) ∧ mixedBarks s) *
-      countOn mixedDogSituations allDogs ≠
-    countOn mixedDogSituations (fun s => allDogs s ∧ mixedBarks s) *
-      countOn mixedDogSituations (fun s => allDogs s ∧ urbanPartition s) := by decide
+theorem female_not_genSalient :
+    ¬ genSalient Finset.univ (fun _ => True) (fun _ => True) female sexCell := by
+  intro h
+  have h1 := h false (by decide)
+  rw [gen_iff_thresholdGt _ _ _ _ (by decide)] at h1
+  exact absurd h1 (by decide)
 
-end HomogeneityFailure
+/-! ### Relative readings (§3.4.3–3.4.4, pp. 54–56)
+
+Twenty people, fifteen of them weightlifters: the five Bulgarians all lift, two of them
+well; one of the ten other lifters is good. A Bulgarian lifter is likelier than an
+arbitrary one to be good, though no majority of Bulgarian lifters is. In the soccer
+variant, where the lousy players concentrate outside Brazil, the relative reading correctly
+rejects "Brazilians are lousy soccer players" yet accepts the sentence with its scope
+intersected with the restrictor, whose average is lower — so the reading is not
+conservative. -/
+
+abbrev bulgarian : Fin 20 → Prop := (·.val < 5)
+abbrev lifter : Fin 20 → Prop := (·.val < 15)
+abbrev goodLifter : Fin 20 → Prop := fun x => x.val < 2 ∨ x.val = 5
+
+theorem bulgarians_relative : genRelative Finset.univ bulgarian lifter goodLifter := by
+  decide +kernel
+
+theorem bulgarians_not_absolute : ¬ gen Finset.univ bulgarian lifter goodLifter := by
+  rw [gen_iff_thresholdGt _ _ _ _ (by decide)]
+  decide
+
+abbrev brazilian : Fin 20 → Prop := (·.val < 5)
+abbrev soccerPlayer : Fin 20 → Prop := (·.val < 15)
+abbrev lousy : Fin 20 → Prop := fun x => x.val = 0 ∨ (5 ≤ x.val ∧ x.val < 13)
+
+theorem brazilians_relative_rejected :
+    ¬ genRelative Finset.univ brazilian soccerPlayer lousy := by
+  decide +kernel
+
+/-- The relative reading is not conservative (p. 55): intersecting the scope with the
+restrictor flips the verdict. -/
+theorem genRelative_not_conservative :
+    ¬ (genRelative Finset.univ brazilian soccerPlayer (fun x => brazilian x ∧ lousy x) ↔
+        genRelative Finset.univ brazilian soccerPlayer lousy) := by
+  decide +kernel
 
 end Cohen1999

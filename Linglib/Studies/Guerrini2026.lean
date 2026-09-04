@@ -461,16 +461,17 @@ treat the same data as a quantifier. These theorems put the analyses on shared
 models and show they disagree on truth value and ontology. -/
 
 /-- **DKP vs [cohen-1999a], one shared 7-of-10 model.** Cohen's majority `Gen`
-    judges it true (7/10 > 1/2) as a *proportional quantifier* (`cohen_proportional`);
+    judges it true (7/10 > 1/2) as a *proportional quantifier* (`gen_proportional`);
     the DKP parse is a trivalent gap with no `Gen`. Same datum, opposite ontology. -/
 theorem dkp_vs_cohen_disagree :
     (¬ distributiveKindPred (fun _ => (Finset.univ : Finset (Fin 10)))
         (fun a (_ : Fin 1) => a.val < 7) (0 : Fin 1)) ∧
     (¬ noneSatisfy (fun (a : Fin 10) (_ : Fin 1) => a.val < 7) Finset.univ (0 : Fin 1)) ∧
-    Cohen1999.cohenGEN (Finset.univ : Finset (Fin 10)) (fun _ => True) (fun a => a.val < 7) ∧
+    Cohen1999.gen (Finset.univ : Finset (Fin 10)) (fun _ => True) (fun _ => True)
+      (fun a => a.val < 7) ∧
     involvesGen .distributiveKindPred = false := by
   refine ⟨by decide, by decide, ?_, rfl⟩
-  rw [Cohen1999.cohen_iff_thresholdGt _ _ _ (by decide)]; decide
+  rw [Cohen1999.gen_iff_thresholdGt _ _ _ _ (by decide)]; decide
 
 /-- Habitat of an elephant in [nickel-2009]'s shared model (6 African, 4 Asian). -/
 inductive Habitat | africa | asia deriving DecidableEq, Repr
@@ -492,8 +493,10 @@ theorem ckp_vs_gen_on_elephants :
     involvesGen .cumulativeKindPred = false ∧
     Nickel2009.nickelConjunctiveGEN Nickel2009.elephants Nickel2009.elephantNormalIn
       Nickel2009.ways Nickel2009.isElephant Nickel2009.livesInAfrica Nickel2009.livesInAsia ∧
-    ¬ Cohen1999.cohenGEN Nickel2009.elephants Nickel2009.isElephant Nickel2009.livesInAsia := by
+    ¬ Cohen1999.gen Nickel2009.elephants Nickel2009.isElephant
+      (fun e => Nickel2009.livesInAfrica e ∨ Nickel2009.livesInAsia e)
+      Nickel2009.livesInAsia := by
   refine ⟨by decide, rfl, by decide, ?_⟩
-  rw [Cohen1999.cohen_iff_thresholdGt _ _ _ (by decide)]; decide
+  rw [Cohen1999.gen_iff_thresholdGt _ _ _ _ (by decide)]; decide
 
 end Guerrini2026
