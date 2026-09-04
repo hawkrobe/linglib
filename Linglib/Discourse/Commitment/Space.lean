@@ -349,7 +349,7 @@ theorem mem_toIssue_iff {i : Set W} :
 
 /-- The common ground of a space is what its root entails; the speaker's assertion is
 Stalnakerian on it. -/
-instance : HasAssertion (Space (State DiscourseRole W)) W where
+instance : HasAssertion (Space (State Discourse.Role W)) W where
   commonGround C := slate C.root
   initial := full ∅
   assert C φ := C.assert .speaker φ

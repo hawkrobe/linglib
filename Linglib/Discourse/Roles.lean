@@ -9,19 +9,21 @@ entities.
 
 This file exists separately from `Discourse/SpeechAct.lean`
 to break a would-be cycle between `Semantics/Mood/Defs.lean` (which
-needs `DiscourseRole` for `Illocutionary.authority`) and the act-side material in
+needs `Discourse.Role` for `Illocutionary.authority`) and the act-side material in
 `SpeechAct.lean` (which extends `Illocutionary` with Searle
 classes and direction of fit).
 -/
 
+namespace Discourse
+
 /-- The two fundamental discourse participants. `.addressee` matches
     `KContext.addressee` (not `.listener` as in `DynamicSemantics`). -/
-inductive DiscourseRole where
+inductive Role where
   | speaker
   | addressee
   deriving DecidableEq, Repr, Inhabited
 
-namespace DiscourseRole
+namespace Role
 
 open Semantics.Context
 
@@ -30,7 +32,7 @@ variable {W E P T : Type*} (tower : ContextTower (KContext W E P T))
 /-- Resolve a discourse role to a concrete entity via a `ContextTower`,
     reading from the origin (speech-act context).
     `.speaker → tower.origin.agent`, `.addressee → tower.origin.addressee`. -/
-def resolve : DiscourseRole → E
+def resolve : Role → E
   | .speaker   => tower.origin.agent
   | .addressee => tower.origin.addressee
 
@@ -40,8 +42,10 @@ theorem resolve_addressee : resolve tower .addressee = tower.origin.addressee :=
 
 /-- Discourse role resolution is invariant under tower push: discourse
     roles reflect speech-act participants (from origin), not embedded ones. -/
-theorem resolve_push (σ : ContextShift (KContext W E P T)) (r : DiscourseRole) :
+theorem resolve_push (σ : ContextShift (KContext W E P T)) (r : Role) :
     resolve (tower.push σ) r = resolve tower r := by
   cases r <;> simp only [resolve, ContextTower.push_origin]
 
-end DiscourseRole
+end Role
+
+end Discourse

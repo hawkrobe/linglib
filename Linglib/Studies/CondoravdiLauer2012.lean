@@ -37,20 +37,20 @@ inductive AddrPosture
 def isSitting : Set AddrPosture := {.sitting}
 
 /-- *The addressee is sitting.* -/
-def declarative : State DiscourseRole AddrPosture := {commit .speaker isSitting}
+def declarative : State Discourse.Role AddrPosture := {commit .speaker isSitting}
 
 /-- *Sit down!* -/
-def imperative : State DiscourseRole AddrPosture :=
+def imperative : State Discourse.Role AddrPosture :=
   {commit .speaker isSitting .preferential}
 
-theorem ofForce_singleton_self (c : Commitment DiscourseRole AddrPosture) (f : Force)
+theorem ofForce_singleton_self (c : Commitment Discourse.Role AddrPosture) (f : Force)
     (h : c.force = f) : ofForce {c} f = {c} := by
   ext d
   simp only [ofForce, Set.mem_ofPred_eq, Set.mem_singleton_iff, and_iff_left_iff_imp]
   rintro rfl
   exact h
 
-theorem ofForce_singleton_of_ne (c : Commitment DiscourseRole AddrPosture) {f : Force}
+theorem ofForce_singleton_of_ne (c : Commitment Discourse.Role AddrPosture) {f : Force}
     (h : c.force ≠ f) : ofForce {c} f = ∅ := by
   ext d
   simp only [ofForce, Set.mem_ofPred_eq, Set.mem_singleton_iff, Set.mem_empty_iff_false,
@@ -58,7 +58,7 @@ theorem ofForce_singleton_of_ne (c : Commitment DiscourseRole AddrPosture) {f : 
   rintro rfl
   exact h
 
-theorem contextSet_singleton_commit (c : Commitment DiscourseRole AddrPosture)
+theorem contextSet_singleton_commit (c : Commitment Discourse.Role AddrPosture)
     (h : c.polarity = .commit) : contextSet {c} = c.content := by
   have : contents {c} = {c.content} := by
     ext φ

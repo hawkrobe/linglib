@@ -531,7 +531,7 @@ variable {W : Type*}
     - **interrogative**: `polarQuestion` (pushes issue, no commit)
     - **rising declarative**: pushes issue without commit
       (the intermediate prosodic case [rudin-2025b] relies on) -/
-def update (u : FBPerformance W) (s : Table DiscourseRole W) : Table DiscourseRole W :=
+def update (u : FBPerformance W) (s : Table Discourse.Role W) : Table Discourse.Role W :=
   match u.rising, u.form with
   | true, _ =>
       s.push ⟨.declarative, {u.content}⟩
@@ -563,14 +563,14 @@ def RisingDecl (u : FBPerformance W) : Prop :=
     branch adds, the rising and interrogative branches do not — so this
     matches the structural classification "non-rising declarative". -/
 def Commits (u : FBPerformance W) : Prop :=
-  u.content ∈ (u.update (Table.empty : Table DiscourseRole W)).dc .speaker
+  u.content ∈ (u.update (Table.empty : Table Discourse.Role W)).dc .speaker
 
 /-- **F&B-derived** RaisesIssue: the performance's update grows the
     table. All three branches push to the table, so any well-formed
     speech act raises an issue. (RESP's discriminating power comes
     from `¬ Commits`, not from `RaisesIssue`.) -/
 def RaisesIssue (u : FBPerformance W) : Prop :=
-  (u.update (Table.empty : Table DiscourseRole W)).stack ≠ []
+  (u.update (Table.empty : Table Discourse.Role W)).stack ≠ []
 
 -- ════════════════════════════════════════════════════
 -- § 4. PerformanceOntology axiom obligations
@@ -650,7 +650,7 @@ theorem raises_issue_always (u : FBPerformance W) : u.RaisesIssue := by
     equals `s.assert .speaker content`, so `Table.mem_dc_assert` applies directly. -/
 theorem update_decl_eq_assert (u : FBPerformance W)
     (hr : u.rising = false) (hf : u.form = .declarative)
-    (s : Table DiscourseRole W) :
+    (s : Table Discourse.Role W) :
     u.update s = s.assert .speaker u.content := by
   unfold update
   rw [hr, hf]

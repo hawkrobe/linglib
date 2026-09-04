@@ -36,16 +36,16 @@ self-generated, the `Commitment.Source` coordinate.
 namespace Commitment
 
 
-variable {W : Type*} (K : State DiscourseRole W) (x : DiscourseRole) (p : Set W)
+variable {W : Type*} (K : State Discourse.Role W) (x : Discourse.Role) (p : Set W)
 
 /-- `cs_X` (60): the worlds compatible with `x`'s public commitments. -/
 def commitmentSet : Set W := contextSet (ofCommitter K x)
 
 /-- A falling declarative (78): the speaker commits to `p`. -/
-def falling : State DiscourseRole W := insert (commit .speaker p) K
+def falling : State Discourse.Role W := insert (commit .speaker p) K
 
 /-- A rising declarative (77): the addressee is committed to `p`, attributed by the speaker. -/
-def rising : State DiscourseRole W :=
+def rising : State Discourse.Role W :=
   insert (commit .addressee p .doxastic .otherGenerated) K
 
 /-- (63): `p` is a commitment of `x`. -/
@@ -68,7 +68,7 @@ def IsBiased : Prop := IsControversial K pᶜ ∧ ¬ IsControversial K p
 /-- (68): the context is neutral with respect to `p`. -/
 def IsNeutral : Prop := ¬ IsControversial K p ∧ ¬ IsControversial K pᶜ
 
-theorem ofCommitter_insert_of_eq (c : Commitment DiscourseRole W) (h : c.committer = x) :
+theorem ofCommitter_insert_of_eq (c : Commitment Discourse.Role W) (h : c.committer = x) :
     ofCommitter (insert c K) x = insert c (ofCommitter K x) := by
   ext d
   simp only [ofCommitter, Set.mem_ofPred_eq, Set.mem_insert_iff]
@@ -80,7 +80,7 @@ theorem ofCommitter_insert_of_eq (c : Commitment DiscourseRole W) (h : c.committ
     · exact ⟨Or.inl rfl, h⟩
     · exact ⟨Or.inr hd, hc⟩
 
-theorem ofCommitter_insert_of_ne (c : Commitment DiscourseRole W) (h : c.committer ≠ x) :
+theorem ofCommitter_insert_of_ne (c : Commitment Discourse.Role W) (h : c.committer ≠ x) :
     ofCommitter (insert c K) x = ofCommitter K x := by
   ext d
   simp only [ofCommitter, Set.mem_ofPred_eq, Set.mem_insert_iff]
@@ -92,7 +92,7 @@ theorem ofCommitter_insert_of_ne (c : Commitment DiscourseRole W) (h : c.committ
     exact ⟨Or.inr hd, hc⟩
 
 @[simp] theorem commitmentSet_empty :
-    commitmentSet (∅ : State DiscourseRole W) x = Set.univ := by
+    commitmentSet (∅ : State Discourse.Role W) x = Set.univ := by
   simp [commitmentSet, ofCommitter]
 
 /-- A falling declarative narrows the speaker's commitment set by its content and leaves the

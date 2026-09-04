@@ -27,7 +27,7 @@ namespace FarkasBruce2010
 
 open Commitment
 
-variable {W : Type*} (K : Table DiscourseRole W) (p : Set W)
+variable {W : Type*} (K : Table Discourse.Role W) (p : Set W)
 
 /-- Assertion proposes: the common ground is exactly as before (9). -/
 theorem assert_cg : (K.assert .speaker p).cg = K.cg := rfl
@@ -35,7 +35,7 @@ theorem assert_cg : (K.assert .speaker p).cg = K.cg := rfl
 /-- A world can survive the assertion of `p` without satisfying `p`, since only the projected set
 moves; `Commitment.Table` is not a `HasAssertion` instance under its own `assert`. -/
 theorem assert_not_narrowing :
-    ∃ (K : Table DiscourseRole Bool) (p : Set Bool) (w : Bool),
+    ∃ (K : Table Discourse.Role Bool) (p : Set Bool) (w : Bool),
       w ∈ (K.assert .speaker p).contextSet ∧ w ∉ p :=
   ⟨.empty, {true}, false, by simp [Table.contextSet, Table.assert, Table.push, Table.commit],
     Bool.false_ne_true⟩
