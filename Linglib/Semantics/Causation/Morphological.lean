@@ -52,7 +52,7 @@ Agentivity decomposes into **intentionality × control** (following
 - `CauserType.agentivityDegree` → `AgentivityDegree`
 - `CausativeConstruction` bundles complexity + mediation + causer/causee
   restrictions for cross-linguistic comparison
-- `comrie_monotone` formalizes the compact-diffuse correlation
+- `CausativeConstruction.ComrieMonotone` formalizes the compact-diffuse correlation
 
 ## Intransitivization ([krejci-2012])
 
@@ -144,12 +144,14 @@ inductive Mediation where
   | indirect  -- causer acts through intermediary/causee
   deriving DecidableEq, Repr
 
-/-- Numeric rank: direct (0) < indirect (1). Used in `comrie_monotone`
-    to express the co-variation of complexity and indirectness as a
-    proper ordering rather than a disjunction. -/
+/-- Numeric rank: direct (0) < indirect (1). -/
 def Mediation.rank : Mediation → Nat
   | .direct   => 0
   | .indirect => 1
+
+/-- Direct < indirect: the directness scale. -/
+instance : LinearOrder Mediation :=
+  LinearOrder.lift' Mediation.rank (λ a b h => by cases a <;> cases b <;> simp_all [Mediation.rank])
 
 /-! ### Causative Complexity ([comrie-1989], morphological typology) -/
 
@@ -241,10 +243,12 @@ structure SemanticPrototype where
     construction B, then A encodes at least as direct causation as B.
 
     More compact morphology correlates with more direct causation:
-    compactness and directness co-vary monotonically. Stated as an
-    ordering on mediation rank (direct = 0 < indirect = 1). -/
-def comrie_monotone (c1 c2 : CausativeConstruction) : Prop :=
-  c1.complexity < c2.complexity → c1.mediation.rank ≤ c2.mediation.rank
+    compactness and directness co-vary monotonically. -/
+def CausativeConstruction.ComrieMonotone (c1 c2 : CausativeConstruction) : Prop :=
+  c1.complexity < c2.complexity → c1.mediation ≤ c2.mediation
+
+instance (c1 c2 : CausativeConstruction) : Decidable (c1.ComrieMonotone c2) :=
+  inferInstanceAs (Decidable (_ → _))
 
 /-! ### Causee Marking Hierarchy ([comrie-1989], Ch 8) -/
 
@@ -274,6 +278,11 @@ def CauseeSlot.rank : CauseeSlot → Nat
   | .indirectObject => 1
   | .oblique        => 0
 
+/-- Oblique < indirect object < direct object: the grammatical-relations hierarchy. -/
+instance : LinearOrder CauseeSlot :=
+  LinearOrder.lift' CauseeSlot.rank
+    (λ a b h => by cases a <;> cases b <;> simp_all [CauseeSlot.rank])
+
 /-- Predict causee slot from base verb valency.
 
     [comrie-1989]: the causee occupies the highest available slot
@@ -291,7 +300,7 @@ def causeeDemotion : Nat → CauseeSlot
     Proved for the bounded range 1 ≤ v1 < v2 ≤ 3. -/
 theorem causee_demotion_monotone :
     ∀ v1 v2 : Fin 4, v1.val ≥ 1 → v1 < v2 →
-    (causeeDemotion v2.val).rank ≤ (causeeDemotion v1.val).rank := by
+    causeeDemotion v2.val ≤ causeeDemotion v1.val := by
   decide
 
 /-! ### Bridges to Existing Infrastructure -/

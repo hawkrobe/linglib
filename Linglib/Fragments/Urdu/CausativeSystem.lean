@@ -311,14 +311,14 @@ theorem mcv_between :
 -- ════════════════════════════════════════════════════
 
 /-- Lexical (compact, direct) vs. MCV (morphological, indirect):
-    Comrie's monotonicity holds (direct.rank 0 ≤ indirect.rank 1). -/
-theorem comrie_lexErg_mcv : comrie_monotone lexErg.construction mcv.construction := by
-  intro _; decide
+    Comrie's monotonicity holds (direct ≤ indirect). -/
+theorem comrie_lexErg_mcv : lexErg.construction.ComrieMonotone mcv.construction := by
+  decide
 
 /-- Lexical (compact, direct) vs. periphrastic ADV (direct):
-    Comrie's monotonicity holds (direct.rank 0 ≤ direct.rank 0). -/
-theorem comrie_lexErg_adv : comrie_monotone lexErg.construction adv.construction := by
-  intro _; decide
+    Comrie's monotonicity holds (direct ≤ direct). -/
+theorem comrie_lexErg_adv : lexErg.construction.ComrieMonotone adv.construction := by
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. System Properties
