@@ -45,15 +45,15 @@ def nounToSO (n : NounEntry) (id : Nat) : SyntacticObject :=
   if n.proper then mkLeafPhon .D [] n.formSg id else mkLeafPhon .N [] n.formSg id
 
 /-- "John sees Mary" as a Minimalist Merge derivation: *see*'s complement
-    is *Mary* (`emR`), then *John* is added as specifier (`emL`). -/
+    is *Mary* (`em .right`), then *John* is added as specifier (`em .left`). -/
 def john_sees_mary : Derivation :=
   { initial := verbToSO English.Predicates.Verbal.see 31
-    steps   := [.emR (nounToSO English.Nouns.mary 11),
-                .emL (nounToSO English.Nouns.john 10)] }
+    steps   := [.em .right (nounToSO English.Nouns.mary 11),
+                .em .left (nounToSO English.Nouns.john 10)] }
 
 /-- The phonological yield of `john_sees_mary` is the SVO string
-    "John sees Mary": the Minimalist derivation (built by `emR` then
-    `emL` over `verbToSO`/`nounToSO`) linearizes subject-verb-object via the
+    "John sees Mary": the Minimalist derivation (built by `em .right` then
+    `em .left` over `verbToSO`/`nounToSO`) linearizes subject-verb-object via the
     derivation-grounded computable externalization (`SyntacticObject.Derivation.surfacePhon`). -/
 theorem models_svo_word_order :
     String.intercalate " " john_sees_mary.surfacePhon = "John sees Mary" := by decide

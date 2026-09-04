@@ -10,10 +10,10 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 
 [marcolli-chomsky-berwick-2025] §1.12. `SyntacticObject.Derivation.final` is an unordered
 object, so the surface left-to-right order is not recoverable from it, but a `Derivation`
-records the planarization choices: `emL` and `im` place material on the left edge, `emR` on
-the right, MCB's externalization section `σ_L` fixed by the derivation rather than by a
-noncanonical choice of representative. `Derivation.externalize?` replays the steps on an
-ordered accumulator, a `PlanarSyntacticObject`, so surface orders `decide`; it is partial by
+records the planarization choices: `em .left` and `im` place material on the left edge,
+`em .right` on the right, MCB's externalization section `σ_L` fixed by the derivation rather
+than by a noncanonical choice of representative. `Derivation.externalize?` replays the steps on
+an ordered accumulator, a `PlanarSyntacticObject`, so surface orders `decide`; it is partial by
 design, `none` when a merged item is complex or a mover is absent. Traces are unpronounced,
 dropped by the yield. The faithfulness theorem `externalize?_faithful` says the replay commutes
 with forgetting the order: whenever it succeeds, its result is the derived object itself, so the
@@ -247,8 +247,8 @@ end PlanarSyntacticObject
 def externStep (acc? : Option PlanarSyntacticObject) (step : Step) :
     Option PlanarSyntacticObject :=
   acc?.bind fun acc => match step with
-    | .emL item => item.toPlanarLeaf?.map (PlanarSyntacticObject.merge · acc)
-    | .emR item => item.toPlanarLeaf?.map (PlanarSyntacticObject.merge acc ·)
+    | .em .left item => item.toPlanarLeaf?.map (PlanarSyntacticObject.merge · acc)
+    | .em .right item => item.toPlanarLeaf?.map (PlanarSyntacticObject.merge acc ·)
     | .im mover => acc.moveLeft mover
 
 namespace SyntacticObject.Derivation
@@ -305,22 +305,24 @@ private theorem externStep_toSyntacticObject {acc p' : PlanarSyntacticObject} {s
     (h : externStep (some acc) step = some p') :
     p'.toSyntacticObject = step.apply acc.toSyntacticObject := by
   cases step with
-  | emL item =>
-    change item.toPlanarLeaf?.map (PlanarSyntacticObject.merge · acc) = some p' at h
-    rcases hip : item.toPlanarLeaf? with _ | ip
-    · rw [hip, Option.map_none] at h; exact absurd h (by simp)
-    · rw [hip, Option.map_some] at h
-      obtain rfl := Option.some.inj h
-      rw [Step.apply, PlanarSyntacticObject.toSyntacticObject_merge,
-        toPlanarLeaf?_toSyntacticObject hip]
-  | emR item =>
-    change item.toPlanarLeaf?.map (PlanarSyntacticObject.merge acc ·) = some p' at h
-    rcases hip : item.toPlanarLeaf? with _ | ip
-    · rw [hip, Option.map_none] at h; exact absurd h (by simp)
-    · rw [hip, Option.map_some] at h
-      obtain rfl := Option.some.inj h
-      rw [Step.apply, PlanarSyntacticObject.toSyntacticObject_merge,
-        toPlanarLeaf?_toSyntacticObject hip]
+  | em side item =>
+    cases side with
+    | left =>
+      change item.toPlanarLeaf?.map (PlanarSyntacticObject.merge · acc) = some p' at h
+      rcases hip : item.toPlanarLeaf? with _ | ip
+      · rw [hip, Option.map_none] at h; exact absurd h (by simp)
+      · rw [hip, Option.map_some] at h
+        obtain rfl := Option.some.inj h
+        rw [Step.apply_em_left, PlanarSyntacticObject.toSyntacticObject_merge,
+          toPlanarLeaf?_toSyntacticObject hip]
+    | right =>
+      change item.toPlanarLeaf?.map (PlanarSyntacticObject.merge acc ·) = some p' at h
+      rcases hip : item.toPlanarLeaf? with _ | ip
+      · rw [hip, Option.map_none] at h; exact absurd h (by simp)
+      · rw [hip, Option.map_some] at h
+        obtain rfl := Option.some.inj h
+        rw [Step.apply_em_right, PlanarSyntacticObject.toSyntacticObject_merge,
+          toPlanarLeaf?_toSyntacticObject hip]
   | im mover =>
     change acc.moveLeft mover = some p' at h
     rw [Step.apply]; exact PlanarSyntacticObject.toSyntacticObject_moveLeft h
@@ -385,11 +387,12 @@ private def xAN : SyntacticObject :=
     (PlanarSyntacticObject.leaf ⟨.simple .N [], 1⟩)).toSyntacticObject
 
 /-- No movement: `Dem Num A N`. -/
-private def xDerivBase : Derivation := ⟨xN, [.emL xA, .emL xNum, .emL xD]⟩
+private def xDerivBase : Derivation := ⟨xN, [.em .left xA, .em .left xNum, .em .left xD]⟩
 /-- Raise N around A, pied-pipe `[N A]` around Num: `Dem N A Num`. -/
-private def xDerivO : Derivation := ⟨xN, [.emL xA, .im xN, .emL xNum, .im xNAt, .emL xD]⟩
+private def xDerivO : Derivation :=
+  ⟨xN, [.em .left xA, .im xN, .em .left xNum, .im xNAt, .em .left xD]⟩
 /-- Pied-pipe `[A N]` around Num, no sub-raise: `Dem A N Num`. -/
-private def xDerivN : Derivation := ⟨xN, [.emL xA, .emL xNum, .im xAN, .emL xD]⟩
+private def xDerivN : Derivation := ⟨xN, [.em .left xA, .em .left xNum, .im xAN, .em .left xD]⟩
 
 example : xDerivBase.surfaceCats = [.D, .Num, .A, .N] := by decide
 example : xDerivO.surfaceCats = [.D, .N, .A, .Num] := by decide

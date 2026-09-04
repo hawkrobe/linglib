@@ -2853,6 +2853,8 @@ import Linglib.Syntax.Minimalist.Merge.SyntacticObject
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Minimalist.Movement.DegreeMovement
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
+import Linglib.Syntax.Minimalist.Movement.Freezing
+import Linglib.Syntax.Minimalist.Movement.Reconstruction
 import Linglib.Syntax.Minimalist.Movement.Remnant
 import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Syntax.Minimalist.Movement.VerbMovementParameter

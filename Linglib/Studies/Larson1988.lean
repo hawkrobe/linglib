@@ -121,9 +121,9 @@ private def ppToMaryP : PlanarSyntacticObject := tok_to * tok_mary
 def obliqueDative : Derivation :=
   { initial := V_send
     steps := [
-      .emR (ppToMaryP),  -- [V' send [PP to Mary]]
-      .emL DP_letter,                 -- [VP a_letter [V' send [PP to Mary]]]
-      .emL DP_john                    -- [VP John [VP a_letter [V' send [PP to Mary]]]]
+      .em .right (ppToMaryP),  -- [V' send [PP to Mary]]
+      .em .left DP_letter,                 -- [VP a_letter [V' send [PP to Mary]]]
+      .em .left DP_john                    -- [VP John [VP a_letter [V' send [PP to Mary]]]]
     ] }
 
 /-- The oblique dative result tree: `[John [letter [send [to Mary]]]]`.
@@ -168,10 +168,10 @@ Derivation steps:
 def docDativeShift : Derivation :=
   { initial := V_send
     steps := [
-      .emR (ppToMaryP),  -- [V' send [PP to Mary]]
-      .emL DP_letter,                 -- [VP a_letter [V' send [PP to Mary]]]
+      .em .right (ppToMaryP),  -- [V' send [PP to Mary]]
+      .em .left DP_letter,                 -- [VP a_letter [V' send [PP to Mary]]]
       .im DP_mary,                    -- DATIVE SHIFT: Mary moves to Spec
-      .emL DP_john                    -- [VP John [VP Mary_i [VP a_letter ...]]]
+      .em .left DP_john                    -- [VP John [VP Mary_i [VP a_letter ...]]]
     ] }
 
 /-- The DOC result tree: Mary, internally merged, sits at the left edge of
@@ -213,8 +213,8 @@ and Dative Shift share the same structural operation. -/
 def standardPassive : Derivation :=
   { initial := V_kick
     steps := [
-      .emR DP_ball,   -- [V' kicked [DP the ball]]
-      .emL DP_john,   -- [VP John [V' kicked [DP the ball]]]
+      .em .right DP_ball,   -- [V' kicked [DP the ball]]
+      .em .left DP_john,   -- [VP John [V' kicked [DP the ball]]]
       .im DP_ball     -- PASSIVE: ball promoted to Spec
     ] }
 
@@ -455,9 +455,9 @@ private def tok_to2     : LIToken := ‚ü®.simple .P [.D] (phonForm := "to"), 323‚
 def indirectPassive : Derivation :=
   { initial := V_sent
     steps := [
-      .emR (tok_to2 * tok_mary2 : PlanarSyntacticObject),
+      .em .right (tok_to2 * tok_mary2 : PlanarSyntacticObject),
                        -- [V' sent [PP to Mary]]
-      .emL DP_letter2, -- [VP a_letter [V' sent [PP to Mary]]]
+      .em .left DP_letter2, -- [VP a_letter [V' sent [PP to Mary]]]
       .im DP_mary2,    -- DATIVE SHIFT: Mary to inner Spec
       .im DP_mary2     -- PASSIVE: Mary to outer Spec (subject)
     ] }

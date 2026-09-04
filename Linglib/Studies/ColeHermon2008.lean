@@ -2,8 +2,8 @@ import Mathlib.Data.Fin.VecNotation
 import Linglib.Data.Examples.ColeHermon2008
 import Linglib.Fragments.TobaBatak.Basic
 import Linglib.Semantics.ArgumentStructure.Valency
-import Linglib.Syntax.Minimalist.Linearization.Replay
-import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
+import Linglib.Syntax.Minimalist.Movement.Freezing
+import Linglib.Syntax.Minimalist.Movement.Reconstruction
 
 /-!
 # Cole and Hermon 2008: VP raising in a VOS language
@@ -34,13 +34,12 @@ surface order, which the paper takes as grounds to propose that Merge is unorder
 a by-product of Move. English, whose passive agent is an adjunct below the patient, lets the
 patient bind it but never the converse.
 
-The derivation is a `Derivation` on the syntactic-object carrier with its stages read by the
-replay, `Frozen` is containment in a moved constituent, `CCommandsAt` c-command at a stage
-and `BindsAtSomeStage` at some stage, and the paper's examples are the rows:
-`vos_hypothesis_only` and `derivational_only` single out, among the candidate analyses of
-word order and of binding, the paper's own, `table1` derives its three grades, `stageAt_sides`
-and `surface_sides` are the §6 claim over every attachment choice, and `english_passive` the
-§7 contrast.
+The derivation is a `Derivation` on the syntactic-object carrier, freezing and binding at a
+stage are the substrate's `Derivation.Frozen`, `CCommandsAt` and `BindsAtSomeStage`, and the
+paper's examples are the rows: `vos_hypothesis_only` and `derivational_only` single out, among
+the candidate analyses of word order and of binding, the paper's own, `table1` derives its
+three grades, `stageAt_sides` and `surface_sides` are the §6 claim over every attachment
+choice, and `english_passive` the §7 contrast.
 
 ## Implementation notes
 
@@ -59,10 +58,9 @@ and `surface_sides` are the §6 claim over every attachment choice, and `english
   fronts it. The wh-step itself is not modelled: freezing asks whether the argument sits in a
   constituent some step of the derivation moved, which the remnant, carrying the evacuees'
   traces, decides; fn. 18's caveat on extraction from moved complements is the paper's.
-* Binding and freezing are stated on the derivation's own stages: the replay's object at a
-  stage forgets to `Derivation.stageAt`, so a c-command fact decided on the replay is one
-  about the unordered syntactic object. A stage whose replay fails c-commands nothing; the
-  surface-order theorems witness that every derivation here replays.
+* Binding at a stage is decided on the replay, which forgets to the derivation's own stage; a
+  stage whose replay fails c-commands nothing, and the surface-order theorems witness that
+  every derivation here replays.
 * The rows record their configuration in paper features; the theorems decode it into a
   schematic clause and compare the derivation's prediction with the row's judgment.
 
@@ -84,7 +82,6 @@ and `surface_sides` are the §6 claim over every attachment choice, and `english
 * [P. Schachter, *Semantic-Role-Based Syntax in Toba Batak* (1984)][schachter-1984]
 * [N. Sugamoto, *Reflexives in Toba Batak* (1984)][sugamoto-1984]
 * [R. K. Larson, *On the Double Object Construction* (1988)][larson-1988]
-* [J. R. Ross, *Constraints on Variables in Syntax* (1967)][ross-1967]
 * [C. Collins, *A Smuggling Approach to the Passive in English* (2005)][collins-2005]
 -/
 
@@ -93,37 +90,6 @@ namespace ColeHermon2008
 open Minimalist SyntacticObject
 open TobaBatak (Voice)
 open Data.Examples (LinguisticExample)
-
-/-! ### Stages, freezing and binding -/
-
-/-- `x` c-commands `y` at stage `n` of `d`: in the ordered object the replay reaches after `n`
-steps, which forgets to `d.stageAt n`. -/
-def CCommandsAt (d : Derivation) (n : ℕ) (x y : SyntacticObject) : Prop :=
-  ∃ p ∈ (d.take n).externalize?, cCommandsIn p x y
-
-instance (d : Derivation) (n : ℕ) (x y : SyntacticObject) : Decidable (CCommandsAt d n x y) := by
-  unfold CCommandsAt; infer_instance
-
-/-- The stage the predicate looks at is the derivation's own. -/
-theorem CCommandsAt.cCommandsIn_stageAt {d : Derivation} {n : ℕ} {x y : SyntacticObject}
-    (h : CCommandsAt d n x y) : cCommandsIn (d.stageAt n) x y :=
-  let ⟨_, hp, hc⟩ := h
-  d.externalize?_take_faithful n hp ▸ hc
-
-/-- Derivational binding, the paper's optional reconstruction (fn. 28): the antecedent
-c-commands the reflexive at some stage of the derivation. -/
-def BindsAtSomeStage (d : Derivation) (x y : SyntacticObject) : Prop :=
-  ∃ n ≤ d.length, CCommandsAt d n x y
-
-instance (d : Derivation) (x y : SyntacticObject) : Decidable (BindsAtSomeStage d x y) := by
-  unfold BindsAtSomeStage; infer_instance
-
-/-- `x` is frozen in `d`: it sits inside a constituent the derivation has moved, an island for
-later extraction (§4, after [ross-1967]'s Sentential Subject Constraint). -/
-def Frozen (d : Derivation) (x : SyntacticObject) : Prop := ∃ m ∈ d.movedItems, contains m x
-
-instance (d : Derivation) (x : SyntacticObject) : Decidable (Frozen d x) := by
-  unfold Frozen; infer_instance
 
 /-! ### The clause and its derivations (§4.1–§4.2) -/
 
@@ -161,11 +127,8 @@ private def v₀ : LIToken := ⟨.simple .v [], 6⟩
 /-- The `i`-th functional head F, for `i ≥ 1`. -/
 private def F (i : ℕ) : LIToken := ⟨.simple .T [], 6 + i⟩
 
-/-- The side at which each of the five base Merges attaches its item, `true` on the left. -/
-abbrev Sides := Fin 5 → Bool
-
-/-- External Merge on the side `left`. -/
-def em (left : Bool) (item : SyntacticObject) : Step := if left then .emL item else .emR item
+/-- The side at which each of the five base Merges attaches its item. -/
+abbrev Sides := Fin 5 → Side
 
 namespace Clause
 
@@ -194,14 +157,15 @@ def pivot : LIToken := if c.voice.promotes = .agent then c.agent else c.patient
 /-- The sides of the paper's own trees (50) and (57): complements on the right; the light verb,
 the agent, Voice and, in a ditransitive, the patient, [larson-1988]'s specifier of VP, on the
 left. -/
-def paperSides : Sides := ![false, c.goal.isSome, true, true, true]
+def paperSides : Sides :=
+  ![.right, if c.goal.isSome then .left else .right, .left, .left, .left]
 
 /-- The base (50), (57), `{Voice, {Agent, {v, VP}}}`: the verb takes the patient, or the goal
 and then the patient, then the light verb, the agent and Voice, each Merge on the side `σ`
 gives. -/
 def base (σ : Sides) : List Step :=
-  c.goal.toList.map (em (σ 0)) ++
-    [em (σ 1) c.patient, em (σ 2) v₀, em (σ 3) c.agent, em (σ 4) c.voiceHead]
+  c.goal.toList.map (Step.em (σ 0)) ++
+    [.em (σ 1) c.patient, .em (σ 2) v₀, .em (σ 3) c.agent, .em (σ 4) c.voiceHead]
 
 /-- The verb adjoins to Voice, (51)–(52): the verb raises and Voice raises over it. -/
 def verbToVoice : List Step := [.im c.verb, .im c.voiceHead]
@@ -209,7 +173,7 @@ def verbToVoice : List Step := [.im c.verb, .im c.voiceHead]
 /-- The goal, then the pivot, raise to specifiers of F, (59)–(60), (63)–(64), (72)–(73): the
 order of extraction that places the goal after the subject. -/
 def evacuate : List Step :=
-  (c.goal.toList.flatMap fun pp => [.emL (F 1), .im pp]) ++ [.emL (F 2), .im c.pivot]
+  (c.goal.toList.flatMap fun pp => [.em .left (F 1), .im pp]) ++ [.em .left (F 2), .im c.pivot]
 
 /-- The remnant VoiceP that raises, (55), (61): Voice and the verb over their traces, the pivot
 and the goal replaced by theirs. -/
@@ -230,23 +194,24 @@ def svoStage (σ : Sides := c.paperSides) : Derivation :=
 /-- The VOS derivation, (55), (61), (65), (74), (77): the remnant VoiceP raises over the
 evacuated goal and pivot. -/
 def vos (σ : Sides := c.paperSides) : Derivation :=
-  ⟨c.verb, (c.svoStage σ).steps ++ [.emL (F 3), .im c.remnant]⟩
+  (c.svoStage σ).append [.em .left (F 3), .im c.remnant]
 
 /-- The SVO derivation under the VOS Hypothesis, (83)–(84): the pivot raises once more, past
 the fronted VoiceP. -/
 def svo (σ : Sides := c.paperSides) : Derivation :=
-  ⟨c.verb, (c.vos σ).steps ++ [.emL (F 4), .im c.pivot]⟩
+  (c.vos σ).append [.em .left (F 4), .im c.pivot]
 
 /-- The SVO derivation under the SVO Hypothesis (§5), for which the paper draws no tree: the
 pivot raises and VoiceP, the goal inside it, stays. -/
 def svoInPlace (σ : Sides := c.paperSides) : Derivation :=
-  ⟨c.verb, c.base σ ++ c.verbToVoice ++ [.emL (F 2), .im c.pivot]⟩
+  ⟨c.verb, c.base σ ++ c.verbToVoice ++ [.em .left (F 2), .im c.pivot]⟩
 
 /-- The marked V-O-IO-S order (14), the pivot extracted before the goal; fn. 25 derives the
 adverbial (16) the same way. -/
 def vois (σ : Sides := c.paperSides) : Derivation :=
-  ⟨c.verb, c.base σ ++ c.verbToVoice ++ [.emL (F 1), .im c.pivot] ++
-    (c.goal.toList.flatMap fun pp => [.emL (F 2), .im pp]) ++ [.emL (F 3), .im c.remnant]⟩
+  ⟨c.verb, c.base σ ++ c.verbToVoice ++ [.em .left (F 1), .im c.pivot] ++
+    (c.goal.toList.flatMap fun pp => [.em .left (F 2), .im pp]) ++
+    [.em .left (F 3), .im c.remnant]⟩
 
 end Clause
 
@@ -300,16 +265,14 @@ theorem ex85_svoi :
 /-! ### Every clause goes through a VOS stage (§5) -/
 
 /-- The SVO derivation extends the VOS derivation. -/
-theorem svo_take_vos (c : Clause) (σ : Sides) : (c.svo σ).take (c.vos σ).length = c.vos σ := by
-  unfold Derivation.take
-  rw [Derivation.length, Clause.svo, List.take_left]
-  rfl
+theorem svo_take_vos (c : Clause) (σ : Sides) : (c.svo σ).take (c.vos σ).length = c.vos σ :=
+  Derivation.take_length_append _ _
 
 /-- Freezing is the same in SVO and VOS clauses: the further raising of the pivot, a leaf,
 freezes nothing. -/
 theorem frozen_svo_iff (c : Clause) (σ : Sides) (x : SyntacticObject) :
-    Frozen (c.svo σ) x ↔ Frozen (c.vos σ) x := by
-  simp [Frozen, Derivation.movedItems, Clause.svo, List.filterMap_append]
+    (c.svo σ).Frozen x ↔ (c.vos σ).Frozen x := by
+  simp [Clause.svo, Derivation.frozen_append_iff]
 
 /-! ### The rows -/
 
@@ -372,7 +335,7 @@ def clause (e : Extraction) : Clause :=
 /-- The prediction under a hypothesis: a fronted wh-phrase is licit exactly when it is not
 frozen; in situ it is unconstrained. -/
 def Licit (e : Extraction) (hyp : OrderHypothesis) : Prop :=
-  e.fronted → ∃ x ∈ e.clause.arg? e.extracted, ¬ Frozen (e.clause.derivation hyp e.order) x
+  e.fronted → ∃ x ∈ e.clause.arg? e.extracted, ¬ (e.clause.derivation hyp e.order).Frozen x
 
 instance (e : Extraction) (hyp : OrderHypothesis) : Decidable (e.Licit hyp) := by
   unfold Licit; infer_instance
@@ -451,10 +414,9 @@ inductive BindingTheory
 
 /-- The condition licenses the configuration. -/
 def BindingTheory.Licenses : BindingTheory → Reflexivization → Prop
-  | .surface, a => ∃ p ∈ a.pair?, CCommandsAt a.derivation a.derivation.length p.1 p.2
-  | .lastSVOStage, a =>
-      ∃ p ∈ a.pair?, CCommandsAt a.clause.svoStage a.clause.svoStage.length p.1 p.2
-  | .derivational, a => ∃ p ∈ a.pair?, BindsAtSomeStage a.derivation p.1 p.2
+  | .surface, a => ∃ p ∈ a.pair?, a.derivation.BindsAtSurface p.1 p.2
+  | .lastSVOStage, a => ∃ p ∈ a.pair?, a.clause.svoStage.BindsAtSurface p.1 p.2
+  | .derivational, a => ∃ p ∈ a.pair?, a.derivation.BindsAtSomeStage p.1 p.2
   | .semanticHierarchy, a => Outranks a.antecedent.role a.reflexive.role
 
 instance (th : BindingTheory) (a : Reflexivization) : Decidable (th.Licenses a) := by
@@ -494,25 +456,20 @@ patient once the verb has adjoined to Voice, stage 6, and not once the patient h
 patient c-commands the agent once raised and not before, and neither does at the surface, once
 VoiceP has raised. -/
 theorem passive_stages :
-    (CCommandsAt ex67.vos 6 ex67.agent ex67.patient ∧
-      ¬ CCommandsAt ex67.vos ex67.svoStage.length ex67.agent ex67.patient) ∧
-    (¬ CCommandsAt ex67.vos 6 ex67.patient ex67.agent ∧
-      CCommandsAt ex67.vos ex67.svoStage.length ex67.patient ex67.agent) ∧
-    (¬ CCommandsAt ex67.vos ex67.vos.length ex67.agent ex67.patient ∧
-      ¬ CCommandsAt ex67.vos ex67.vos.length ex67.patient ex67.agent) := by
+    (ex67.vos.CCommandsAt 6 ex67.agent ex67.patient ∧
+      ¬ ex67.vos.CCommandsAt ex67.svoStage.length ex67.agent ex67.patient) ∧
+    (¬ ex67.vos.CCommandsAt 6 ex67.patient ex67.agent ∧
+      ex67.vos.CCommandsAt ex67.svoStage.length ex67.patient ex67.agent) ∧
+    (¬ ex67.vos.BindsAtSurface ex67.agent ex67.patient ∧
+      ¬ ex67.vos.BindsAtSurface ex67.patient ex67.agent) := by
   decide
 
 /-! ### Merge is unordered (§6) -/
 
-/-- External Merge on either side has the same leftward form. -/
-@[simp] theorem leftward_em (left : Bool) (item : SyntacticObject) :
-    (em left item).leftward = .emL item := by
-  cases left <;> rfl
-
 /-- Up to the sides of its Merges, the VOS derivation is one derivation. -/
 theorem vos_leftward (c : Clause) (σ σ' : Sides) :
     (c.vos σ).leftward = (c.vos σ').leftward := by
-  simp [Derivation.leftward, Clause.vos, Clause.svoStage, Clause.base]
+  simp [Derivation.leftward, Derivation.append, Clause.vos, Clause.svoStage, Clause.base]
 
 /-- The sides at which the base Merges attach change no stage of the derivation, so binding,
 which reads the stages, cannot see them ((89)–(94)). -/
@@ -522,9 +479,8 @@ theorem stageAt_sides (c : Clause) (σ σ' : Sides) (n : ℕ) :
 
 /-- Nor can freezing, which reads the movers. -/
 theorem frozen_sides (c : Clause) (σ σ' : Sides) (x : SyntacticObject) :
-    Frozen (c.vos σ) x ↔ Frozen (c.vos σ') x := by
-  unfold Frozen
-  rw [← Derivation.movedItems_leftward, vos_leftward c σ σ', Derivation.movedItems_leftward]
+    (c.vos σ).Frozen x ↔ (c.vos σ').Frozen x := by
+  rw [← Derivation.frozen_leftward_iff, vos_leftward c σ σ', Derivation.frozen_leftward_iff]
 
 /-- Nor the surface order (56): every one of the thirty-two attachments, (57), (91) and, up to
 the omitted XP, (89) among them, externalizes to V-O-S-IO. -/
@@ -542,7 +498,8 @@ private def byHimself : LIToken := ⟨.simple .P [] (phonForm := "by himself"), 
 agent an adjunct, a *by*-phrase leaf below it, and no argument in Spec,vP, since the passive
 participle projects none; the patient raises to Spec,FP, Spec,TP in English. -/
 def englishPassive : Derivation :=
-  ⟨wasInjured, [.emR byHimself, .emL theBoy, .emL v₀, .emL (F 1), .im theBoy]⟩
+  ⟨wasInjured,
+    [.em .right byHimself, .em .left theBoy, .em .left v₀, .em .left (F 1), .im theBoy]⟩
 
 /-- (95) externalizes. -/
 theorem english_order :
@@ -566,7 +523,7 @@ in Toba Batak; the paper remarks, without arguing it, that if this treatment of 
 right, [collins-2005]'s smuggling derivation, in which the passive agent is Merged as in the
 active, cannot be maintained. -/
 theorem english_passive : ∀ row ∈ Examples.all, ∀ p ∈ englishPair? row,
-    (row.judgment ≠ .ungrammatical ↔ BindsAtSomeStage englishPassive p.1 p.2) := by
+    (row.judgment ≠ .ungrammatical ↔ englishPassive.BindsAtSomeStage p.1 p.2) := by
   decide
 
 end ColeHermon2008
