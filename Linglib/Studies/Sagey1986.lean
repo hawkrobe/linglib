@@ -1,5 +1,4 @@
 import Linglib.Phonology.Segmental.Geometry
-import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Core.Order.Interval
@@ -41,7 +40,6 @@ the consensus geometry:
 
 open Phonology (Segment Feature)
 open Phonology.FeatureGeometry (Node)
-open Autosegmental (agreeAt)
 
 namespace Autosegmental
 
@@ -354,7 +352,7 @@ def click_posterior : ArticulatorSpec where
     cross-linguistically simpler and more common than place assimilation:
     it involves spreading a smaller constituent. -/
 theorem nasal_assimilation_scope :
-    Node.softPalate.features.length < Node.place.features.length := by
+    Node.softPalate.features.card < Node.place.features.card := by
   decide
 
 /-- Nasality is NOT under the place node — spreading place does not
