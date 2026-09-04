@@ -8,396 +8,333 @@ import Linglib.Studies.Deal2024
 import Linglib.Syntax.Case.Dependent
 
 /-!
-# Dependent Case by Agree: Ergative in Shawi [clem-deal-2024]
+# Dependent case by Agree: ergative in Shawi
 
-[clem-deal-2024] argue that ergative case in Shawi (Kawapanan; Peru)
-arises when v Agrees with the *subject after the object*: the subject
-serves as the **second goal** for the v probe, receiving a goal-flag
-bundle that includes the object's φ-features. The ergative suffix `-ri`
-spells out the φ-root of that bundle, and the optional "object agreement
-on subject" (OAgr-on-S) morpheme spells out the inner φ-features of the
-same bundle.
+[clem-deal-2024] derive the Shawi ergative suffix *-ri* from Agree. The probe on v is
+[deal-2024]'s strictly descending grammar, [INT:φ, SAT:SPKR] with [PART] interacting dynamically:
+it Agrees with a visible object and then, when the person hierarchy permits, with the subject, and
+goal flagging carries the object's φ-features onto the subject, where *-ri* realizes the φ root
+of the flag and object agreement on the subject realizes the rest. Ergative is thus the case of a
+probe's second goal, and its distribution over Table 4 follows from the run of the probe over
+the goals v can see: a high object and then the subject, or the subject alone when a
+third-person object stays inside the categorizing v phase. Section 5 generalizes: a probe on v
+yields ergative and a probe on T accusative, the person split of a language is the grammar of
+its probe, and so global case splits range over the hierarchy effects of agreement (Tables 6–7).
 
-The distribution of `-ri` in Shawi is a **strictly descending** /
-ultrastrong PCC pattern (1>2>3). [clem-deal-2024]'s final generalization
-(their (10), p. 274) is: ergative appears when the subject is at least as
-high as the object on the person hierarchy 1>2>3 *and both arguments are
-in the same syntactic domain*. The hierarchy half is exactly [deal-2024]'s
-`strictlyDescending` grammar (`SAT:[SPKR]`, `DynINT:[PART]↑`), already
-formalized in `Deal2024.lean`; the same-domain half is the object's
-visibility to the v probe (`objectVisible`).
+## Main definitions
 
-`predictsErgative` realizes both factors. Note it follows the [deal-2024]
-mechanism the paper adopts, not the loose prose of (10): a 1st-person
-object satisfies `SAT:[SPKR]` and halts the probe, so `predictsErgative`
-predicts *no* ergative at the reflexive 1→1 cell, even though "at least as
-high as" (1 ≥ 1) would admit it. Shawi data do not document the reflexive
-1→1/2→2 cells — Table 4 (p. 285) has no such rows — so this is a prediction
-of the mechanism, not a tested fact.
+* `flag`, `DependentCase`: the goal flag a probe deposits on the last goal it reaches, and
+  dependent case as a flag carrying an earlier goal's φ-features.
+* `positions`, `goals`: the positions open to a Shawi object by its person and surface syntax,
+  and the goals v meets for an object in either position.
+* `Ergative`, `marking`: ergative on the subject, and Table 4's obligatory, optional and
+  impossible cells.
+* `oagrOnS`: object agreement on the subject, the object-agreement exponent of the flag.
+* `Locus`: the probe on v or on T, ordering the goals of a transitive clause.
 
-This study file does five things:
+## Main results
 
-1. **Map** the Shawi clause to the Deal-2024 PCC framing: the lower goal
-   (DO) is the object, the higher / second goal (IO) is the subject.
-2. **Predict** the distribution of `-ri` over the cells of
-   [clem-deal-2024] Table 4 (p. 285) from the existing `strictlyDescending`
-   grammar plus the high/low ambiguity for 3rd-person objects (the source
-   of "(✓)" optionality).
-3. **Ground** the predictions in the privative person geometry shared
-   with [deal-2024]'s `dpBears` (and via that, with
-   [pancheva-zubizarreta-2018]'s `satisfiesProminence` and
-   [bejar-rezac-2009]'s `personSpec`).
-4. **Bridge** to the existing person-rank order via
-   `Deal2024.sd_off_diagonal_iff_outranks` — the Shawi pattern's
-   1>2>3 hierarchy is exactly the one that fell out of Deal-2024.
-5. **Counterexample** the configurational case rules [clem-deal-2024]
-   discusses (§1 (1), after [baker-2015]; §4.1 (37), a
-   [barany-sheehan-2024]-style rule) by running linglib's *own* formalized
-   dependent-case algorithm (`Case.assignCases`) on Shawi cells,
-   rather than a local strawman.
+* `dependentCase_iff_isLicit`: with two goals, dependent case on the second is [deal-2024]'s
+  licit Agree with both, so the PCC typology transfers to case splits.
+* `halt_of_spkr_object`, `narrow_of_part_object`, `flag_of_third_object`, `flag_of_low_object`:
+  the derivations (15), (17) and (19), (22), and (24) behind Table 4.
+* `table4`, `marking_optional_iff`, `ergative_of_fronted_or_dropped`: the distribution of
+  ergative, optionality as the structural ambiguity of third-person objects, and obligatory
+  ergative with a fronted or dropped object.
+* `oagrOnS_isSome`: object agreement on the subject only under ergative, and off the diagonal
+  only for a first-person subject and a second-person object.
+* `rule1_overgenerates`, `no_1_3_2_hierarchy`: the configurational rule fires where Shawi has
+  no ergative, and no grammar of the probe space yields a 1>3>2 hierarchy.
+* `dependentCase_noPCC`, `dependentCase_strong_iff`, `dependentCase_weak_iff`,
+  `dependentCase_sd_iff`, `dependentCase_sd_off_diagonal_iff`: Tables 6–7, the four splits in
+  either locus.
 
-Genuinely new machinery — bidirectional Agree (goal flagging),
-Distributed-Morphology Vocabulary Insertion, Kinyalolo's Constraint —
-is *not* introduced here. The study file derives Shawi's empirical
-table from infrastructure linglib already has, and flags the new
-machinery as a separate follow-up.
+## Implementation notes
+
+* Table 4 has no reflexive rows. The mechanism predicts ergative at 2→2 and none at 1→1, where a
+  first-person object satisfies the probe, so the paper's "at least as high as" and its claim
+  that object agreement on the subject is overt only at 1→2 are stated here off the diagonal;
+  the paper expects the anaphor agreement effect to interfere there (§5.3).
+* Locators are the paper's example and table numbers.
+
+## References
+
+* [clem-deal-2024]
+* [deal-2024]
+* [bejar-rezac-2009]
+* [baker-2015]
+* [barany-sheehan-2024]
+* [baker-vinokurova-2010]
+* [deal-2010]
+* [clem-2019]
+* [valenzuela-2011]
+* [maslova-2003]
+* [van-urk-2015]
 -/
 
 namespace ClemDeal2024
 
-open Minimalist (decomposePerson)
+open Deal2024
 
-open Deal2024 (DealGrammar isLicit strictlyDescending dpBears
-  sd_off_diagonal_iff_outranks)
-open Kawapanan.Shawi (ObjectPosition ObjectSyntax Phi mustBeHigh
-  ergativeMarker oagrOnSMarker objectSyntaxLicit)
-open Case (NP assignCases getCaseOf)
+/-! ### Dependent case as the flag of a second goal -/
 
--- ============================================================================
--- § 1: Mapping Shawi to Deal-2024
--- ============================================================================
+/-- The goal flag a probe of grammar `g` deposits on the last of `goals` when it walks them in
+    order: `none` if it never Agrees with that goal, otherwise the goals it Agreed with before,
+    whose φ-features it carries and transfers there with its own ((31)). -/
+def flag (g : DealGrammar) (goals : List Person) : Option (List Person) :=
+  let agreed := (runProbe g goals).agreed
+  let last := goals.length - 1
+  if last ∈ agreed then some ((agreed.filter (· < last)).filterMap λ i => goals[i]?) else none
 
-/-- The v probe in Shawi sits between the object (lower) and the subject
-    (higher). Cyclic Agree (Béjar & Rezac 2009) makes the object the
-    first goal (G1 ≡ DO in Deal-2024 terms) and the subject the second
-    goal (G2 ≡ IO). [clem-deal-2024] (13) (cyclic expansion), (15)–(19). -/
-def shawiGrammar : DealGrammar := strictlyDescending
+/-- Dependent case ((31), (34), (43)): the last goal's flag carries the φ-features of an earlier
+    goal, the structure a dependent-case vocabulary item realizes. -/
+def DependentCase (g : DealGrammar) (goals : List Person) : Prop :=
+  ∃ p l, flag g goals = some (p :: l)
 
-/-- Shawi's surface 1>2>3 pattern is what Deal-2024 calls strictly
-    descending. This is a definitional alignment (a drift guard), not a
-    discovery — hence an anonymous `example`. -/
-example : shawiGrammar = strictlyDescending := rfl
+instance (g : DealGrammar) (goals : List Person) : Decidable (DependentCase g goals) :=
+  match h : flag g goals with
+  | some (p :: l) => isTrue ⟨p, l, h⟩
+  | some [] => isFalse λ ⟨_, _, h'⟩ => by simp [h] at h'
+  | none => isFalse λ ⟨_, _, h'⟩ => by simp [h] at h'
 
--- ============================================================================
--- § 2: The two factors of the ergative prediction
--- ============================================================================
+/-- With two goals, dependent case on the second is [deal-2024]'s licit Agree with both, the
+    probe meeting the first goal in the direct-object slot and the second in the indirect-object
+    slot. -/
+theorem dependentCase_iff_isLicit (g : DealGrammar) (g₁ g₂ : Person) :
+    DependentCase g [g₁, g₂] ↔ isLicit g g₂ g₁ = true := by
+  obtain ⟨sat, dyn⟩ := g
+  rcases sat with _ | (_ | _ | _ | _) <;> cases dyn <;> cases g₁ <;> cases g₂ <;> decide
 
-/-- Whether v can interact with the object as G1. 3rd-person *low*
-    objects sit inside the inner v_cat phase and are invisible to the
-    v probe ([clem-deal-2024] §3.2, (24), (30)). Every other object —
-    local-person (1/2, including the clusivity cells) and high-positioned
-    3rd-person — is visible.
+/-! ### Shawi: the v probe and the position of the object -/
 
-    Two notes on the wildcard. (i) `objectVisible .first .low` and
-    `objectVisible .second .low` return `true` vacuously: local-person
-    objects never occupy the low position (`mustBeHigh` is `true` for
-    them), so the case is structurally inaccessible. (ii) The impersonal
-    `.zero` and the clusivity cells `.firstInclusive`/`.firstExclusive`
-    fall through to `true`; only the bare `.third` low cell is invisible,
-    matching the paper's treatment of 3rd-person objects as the persons
-    that show no overt object agreement and may stay low. -/
-def objectVisible : Person → ObjectPosition → Bool
-  | .third, .low => false
-  | _, _         => true
+/-- Where a Shawi object sits ((30)): in the specifier of the categorizing v, above the phase
+    boundary and visible to the v probe, or in its base position inside that phase, invisible
+    to it. -/
+inductive ObjectPosition
+  | high
+  | low
+  deriving DecidableEq, Repr
 
-/-- Predict whether `-ri` surfaces on the subject of a transitive clause
-    with the given subject person, object person, and object position.
+/-- The surface syntax of an object: after the subject (SOV or SVO), fronted over it (OSV), or
+    dropped. -/
+inductive ObjectSyntax
+  | inSitu
+  | fronted
+  | dropped
+  deriving DecidableEq, Repr
 
-    Two factors must coincide:
-    1. The object must be visible to v (`objectVisible`).
-    2. The probe must successfully Agree with the subject as a
-       *second* goal — exactly Deal-2024's `isLicit` for the strictly
-       descending grammar. -/
-def predictsErgative (subj obj : Person) (pos : ObjectPosition) : Bool :=
-  objectVisible obj pos && isLicit shawiGrammar subj obj
+/-- The positions open to an object of person `p` with surface syntax `x` (§3.2): local persons
+    move to the high position obligatorily and third persons optionally; fronting over the
+    subject ((26b)) and pro-drop ((21a), as in Dinka [van-urk-2015]) require it. -/
+def positions (p : Person) : ObjectSyntax → List ObjectPosition
+  | .inSitu => if p.IsSAP then [.high] else [.high, .low]
+  | .fronted | .dropped => [.high]
 
--- ============================================================================
--- § 3: Feature-geometry-grounded characterizations
--- ============================================================================
+/-- The goals the v probe meets, in order ([bejar-rezac-2009]'s cyclic expansion, (13)): a high
+    object and then the subject ((22)), or the subject alone when the object is low or absent
+    ((24)). -/
+def goals (subj obj : Person) : ObjectPosition → List Person
+  | .high => [obj, subj]
+  | .low => [subj]
 
-/-- 1P object always satisfies SAT:[SPKR], halting the probe before it
-    reaches the subject — ergative is impossible regardless of the
-    subject's features or the object's position. [clem-deal-2024]
-    (7a–b), (14a–b), §3 derivation in (15). -/
-theorem erg_with_1p_obj_blocked (subj : Person) (pos : ObjectPosition) :
-    predictsErgative subj .first pos = false := by
-  cases subj <;> cases pos <;> rfl
+/-- Ergative on the subject: v, with [INT:φ, SAT:SPKR] and [PART] interacting dynamically
+    (`Deal2024.strictlyDescending`, §3.1), Agrees with the subject as its second goal, and *-ri*
+    realizes the φ root of the flag it leaves there ((34)). -/
+def Ergative (subj obj : Person) (pos : ObjectPosition) : Prop :=
+  DependentCase strictlyDescending (goals subj obj pos)
 
-/-- 2P high object: lacks [SPKR] (no SAT halt) but bears [PART],
-    triggering dynamic narrowing. The subject is then visible as G2
-    only if it bears [PART] — i.e., is itself local-person.
-    [clem-deal-2024] §3.2, (16). -/
-theorem erg_with_2p_obj_iff_subj_part (subj : Person) :
-    predictsErgative subj .second .high = dpBears subj .part := by
-  cases subj <;> rfl
+instance (subj obj : Person) (pos : ObjectPosition) : Decidable (Ergative subj obj pos) :=
+  inferInstanceAs (Decidable (DependentCase _ _))
 
-/-- 3P high object: lacks [SPKR] *and* lacks [PART], so the probe
-    neither halts nor narrows. The subject is visible as G2 regardless
-    of its features. [clem-deal-2024] (8), (22). -/
-theorem erg_with_3p_obj_high_always (subj : Person) :
-    predictsErgative subj .third .high = true := by
-  cases subj <;> rfl
+/-! ### The derivations behind Table 4 -/
 
-/-- 3P low object: invisible to v. The probe finds only the subject as
-    G1; no goal-flag bundle reaches the subject. [clem-deal-2024]
-    (24). -/
-theorem erg_with_3p_obj_low_blocked (subj : Person) :
-    predictsErgative subj .third .low = false := by
-  cases subj <;> rfl
+/-- (15): a first-person object bears [SPKR] and satisfies the probe, which halts; the subject is
+    never reached, whatever its person. -/
+theorem halt_of_spkr_object (subj obj : Person) (h : dpBears obj .spkr = true) :
+    (runProbe strictlyDescending [obj, subj]).satisfied = true ∧
+      flag strictlyDescending [obj, subj] = none := by
+  revert h; cases obj <;> cases subj <;> decide
 
--- ============================================================================
--- § 4: Hierarchy-rank bridge — inheriting Deal-2024's characterization
--- ============================================================================
+/-- (17) and (19): a second-person object lacks [SPKR] but bears [PART], so the probe is not
+    satisfied but narrows to [INT:PART]; it then reaches the subject exactly when the subject
+    bears [PART]. -/
+theorem narrow_of_part_object (subj obj : Person) (h₁ : dpBears obj .spkr = false)
+    (h₂ : dpBears obj .part = true) :
+    (runProbe strictlyDescending [obj, subj]).int = .part ∧
+      (flag strictlyDescending [obj, subj] = some [obj] ↔ dpBears subj .part = true) := by
+  revert h₁ h₂; cases obj <;> cases subj <;> decide
 
-/-- For non-diagonal (subject ≠ object) configurations with a visible
-    object, ergative on the subject coincides with the subject
-    *outranking* the object on the 1>2>3 person hierarchy.
-    Inherits [deal-2024]'s `sd_off_diagonal_iff_outranks` —
-    Shawi's hierarchy effect is exactly the one that fell out of
-    Deal-2024 on independent grounds. -/
-theorem erg_off_diagonal_iff_subj_outranks_obj
-    (subj obj : Person)
-    (h_neq : decomposePerson subj ≠ decomposePerson obj) :
-    predictsErgative subj obj .high = true ↔
-      subj.prominence > obj.prominence := by
-  have h_vis : objectVisible obj .high = true := by cases obj <;> rfl
-  unfold predictsErgative
-  rw [h_vis, Bool.true_and]
-  exact sd_off_diagonal_iff_outranks subj obj h_neq
+/-- (22): a third-person object neither satisfies nor narrows the probe, so the subject is
+    reached whatever its person. -/
+theorem flag_of_third_object (subj obj : Person) (h : dpBears obj .part = false) :
+    flag strictlyDescending [obj, subj] = some [obj] := by
+  revert h; cases obj <;> cases subj <;> decide
 
--- ============================================================================
--- § 5: Cell-by-cell verification of Table 4
--- ============================================================================
+/-- (24): with a low or absent object the probe expands and Agrees with the subject alone; the
+    subject is Agreed with but is not a second goal, so its flag is empty and there is no
+    ergative ((25)). -/
+theorem flag_of_low_object (subj : Person) : flag strictlyDescending [subj] = some [] := by
+  cases subj <;> decide
 
-/-- [clem-deal-2024] Table 4 (p. 285) — the full ergative distribution by
-    person of subject and object, here with the high/low split of the
-    3rd-person-object rows giving 10 cells. Each reduces by `rfl` from
-    `predictsErgative`. Table 4 lists 7 (subject, object) person pairs; it
-    has no reflexive 1→1 or 2→2 rows (see the header note on the 1→1
-    mechanism prediction). -/
+theorem not_ergative_low (subj obj : Person) : ¬ Ergative subj obj .low := by
+  rintro ⟨p, l, h⟩
+  simp [goals, flag_of_low_object] at h
+
+/-! ### Table 4 -/
+
+/-- The three values of a Table 4 cell. -/
+inductive Marking
+  | obligatory
+  | optional
+  | impossible
+  deriving DecidableEq, Repr
+
+/-- Table 4's cell for a subject and an in-situ object: ergative in every position open to the
+    object, in some, or in none. -/
+def marking (subj obj : Person) : Marking :=
+  if ∀ pos ∈ positions obj .inSitu, Ergative subj obj pos then .obligatory
+  else if ∃ pos ∈ positions obj .inSitu, Ergative subj obj pos then .optional
+  else .impossible
+
+/-- Table 4: obligatory at 1→2, impossible at 2→1, 3→1 and 3→2, optional with a third-person
+    object. -/
 theorem table4 :
-    predictsErgative .first  .second .high = true  ∧  -- a   1→2      obligatory
-    predictsErgative .first  .third  .high = true  ∧  -- b   1→3 high present
-    predictsErgative .first  .third  .low  = false ∧  -- b   1→3 low  absent
-    predictsErgative .second .first  .high = false ∧  -- c   2→1      impossible
-    predictsErgative .second .third  .high = true  ∧  -- d   2→3 high present
-    predictsErgative .second .third  .low  = false ∧  -- d   2→3 low  absent
-    predictsErgative .third  .first  .high = false ∧  -- e   3→1      impossible
-    predictsErgative .third  .second .high = false ∧  -- f   3→2      impossible
-    predictsErgative .third  .third  .high = true  ∧  -- g   3→3 high present
-    predictsErgative .third  .third  .low  = false :=  -- g   3→3 low  absent
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Optionality is exactly the `(✓)` cells: 1→3, 2→3, 3→3. -/
-theorem optionality_only_with_3p_object (subj obj : Person) :
-    (predictsErgative subj obj .high ≠ predictsErgative subj obj .low) →
-    obj = .third := by
-  cases obj <;> cases subj <;> decide
-
--- ============================================================================
--- § 6: Local-person objects: position is forced
--- ============================================================================
-
-/-- For any local-person object, the position parameter is irrelevant
-    to the prediction: ergative depends only on `isLicit shawiGrammar`.
-    Reason: `objectVisible` is `true` for any non-3P object regardless
-    of position. -/
-theorem local_object_position_irrelevant
-    (subj obj : Person) (h : obj.IsSAP) (pos : ObjectPosition) :
-    predictsErgative subj obj pos = isLicit shawiGrammar subj obj := by
-  cases obj <;> first | rfl | exact h.elim
-
-/-- Bookkeeping: for any local-person object, the Fragment-level
-    `mustBeHigh` constraint forces the high position, which is exactly
-    what the probe-visibility analysis presupposes. -/
-theorem local_object_must_be_high (p : Person) (h : p.IsSAP) :
-    mustBeHigh p = true := by
-  cases p <;> first | rfl | exact h.elim
-
--- ============================================================================
--- § 7: Configurational case as a foil (paper §1, §4.1)
--- ============================================================================
-
-/-- A Shawi monotransitive mapped to a dependent-case Spell-Out domain:
-    the subject c-commands the object (earlier = structurally higher), and
-    neither bears lexical case. Person-blind, exactly as a configurational
-    case rule is. -/
-def shawiDomain (_subj _obj : Person) : List NP :=
-  [⟨"subj", none⟩, ⟨"obj", none⟩]
-
-/-- Baker's configurational rule for ergative ([baker-2015]; [clem-deal-2024]
-    (1)): "if there are two distinct NPs in the same spell-out domain such
-    that NP1 c-commands NP2, then value the case feature of NP1 as ergative
-    unless NP2 has already been marked for case." Rather than restate this
-    as a local strawman, we *run* linglib's own dependent-case algorithm —
-    `Case.assignCases .ergative`, which values the higher of two
-    caseless NPs ergative — over the Shawi domain. -/
-def configErg (subj obj : Person) : Bool :=
-  getCaseOf "subj" (assignCases .ergative (shawiDomain subj obj)) == some .erg
-
-/-- The configurational rule is person-blind: `assignCases .ergative` values
-    *every* transitive subject ergative, regardless of person. -/
-theorem configErg_person_blind (subj obj : Person) :
-    configErg subj obj = true := by cases subj <;> cases obj <;> decide
-
-/-- It therefore overgenerates exactly where Shawi bans `-ri` because the
-    object outranks the subject. 2→1: [clem-deal-2024] (7a). This is the
-    paper's own argument against rule (1). -/
-theorem configurational_rule_overgenerates_2_to_1 :
-    configErg .second .first = true ∧
-    predictsErgative .second .first .high = false := by decide
-
-/-- And 3→1: [clem-deal-2024] (7b). -/
-theorem configurational_rule_overgenerates_3_to_1 :
-    configErg .third .first = true ∧
-    predictsErgative .third .first .high = false := by decide
-
-/-- The augmented configurational rule [clem-deal-2024] (37) writes the
-    person hierarchy into rule (1) itself: NP1 gets ergative when it
-    c-commands a caseless NP2 *and* "NP1 is at least as high as NP2 on the
-    person hierarchy 1>2>3" — note `≥` (the paper's "at least as high as"),
-    so it fires on the person diagonal too. This is [clem-deal-2024]'s
-    rendering of an option explored by [barany-sheehan-2024]; linglib has no
-    formalized person-augmented configurational rule, consistent with the
-    paper's third concern (§4.1) that such rules face no principled limit on
-    the hierarchies they may stipulate. -/
-def augmentedConfigErg (subj obj : Person) : Bool :=
-  decide (subj.prominence ≥ obj.prominence)
-
-/-- [clem-deal-2024] do *not* refute (37) empirically — they grant it "is
-    simple to state" (§4.1), and it is descriptively adequate: on every
-    documented (high-object) cell of Table 4 it predicts exactly the
-    Agree analysis. -/
-theorem augmented_config_matches_on_documented_cells :
-    (augmentedConfigErg .first  .second = predictsErgative .first  .second .high) ∧
-    (augmentedConfigErg .first  .third  = predictsErgative .first  .third  .high) ∧
-    (augmentedConfigErg .second .first  = predictsErgative .second .first  .high) ∧
-    (augmentedConfigErg .second .third  = predictsErgative .second .third  .high) ∧
-    (augmentedConfigErg .third  .first  = predictsErgative .third  .first  .high) ∧
-    (augmentedConfigErg .third  .second = predictsErgative .third  .second .high) ∧
-    (augmentedConfigErg .third  .third  = predictsErgative .third  .third  .high) := by
+    marking .first .second = .obligatory ∧ marking .first .third = .optional ∧
+    marking .second .first = .impossible ∧ marking .second .third = .optional ∧
+    marking .third .first = .impossible ∧ marking .third .second = .impossible ∧
+    marking .third .third = .optional := by
   decide
 
-/-- The paper's objections to (37) are architectural, not empirical (§4.1):
-    a person-augmented configurational rule (i) severs the case↔agreement
-    (OAgr-on-S) connection, (ii) cannot unify the case-split person hierarchy
-    with the identical hierarchy seen in agreement (e.g. Spanish
-    ditransitives), and (iii) places no principled limit on which hierarchies
-    a case rule may stipulate. linglib's internal counterpart is *expressive*:
-    being a rule over person alone, (37) is blind to object position, so it
-    cannot produce the position-conditioned optionality of 3rd-person objects
-    (Table 4 rows b, d, g; (8), (23)). It predicts ergative for 3→3 (3 ≥ 3) —
-    the high-object reading, (22) — but has no way to derive the low-object,
-    no-ergative reading, (24), that the Agree analysis gets from object
-    visibility. -/
-theorem augmented_config_blind_to_object_position :
-    augmentedConfigErg .third .third = true ∧
-    predictsErgative .third .third .high = true ∧
-    predictsErgative .third .third .low = false := by decide
+/-- Optionality is the structural ambiguity of a third-person object ((23) against (24)): a cell
+    is optional exactly when the object may stay low. -/
+theorem marking_optional_iff (subj obj : Person) :
+    marking subj obj = .optional ↔ ¬ obj.IsSAP := by
+  cases subj <;> cases obj <;> decide
 
--- ============================================================================
--- § 8: Object syntax — overt-postverbal blocked under ergative
--- ============================================================================
+/-- (20)–(21), (26): a third-person object fronted over the subject or dropped has moved high, and
+    ergative becomes obligatory. -/
+theorem ergative_of_fronted_or_dropped (subj : Person) (x : ObjectSyntax) (hx : x ≠ .inSitu) :
+    ∀ pos ∈ positions .third x, Ergative subj .third pos := by
+  cases x <;> first | exact absurd rfl hx | (cases subj <;> decide)
 
-/-- [clem-deal-2024] (9), (21): when the subject bears `-ri`,
-    the object cannot remain overt-postverbal. This combines the
-    Fragment-level `objectSyntaxLicit` with the predictedness of
-    ergative — a high-object subject that outranks the object forces
-    the object out of postverbal position (to OSV or *pro*-drop). -/
-theorem outranking_subj_blocks_postverbal_obj
-    (subj obj : Person)
-    (h_neq : decomposePerson subj ≠ decomposePerson obj)
-    (h_rank : subj.prominence > obj.prominence) :
-    objectSyntaxLicit (predictsErgative subj obj .high) .overtPostverbal = false := by
-  have h_erg : predictsErgative subj obj .high = true :=
-    (erg_off_diagonal_iff_subj_outranks_obj subj obj h_neq).mpr h_rank
-  rw [h_erg]
-  rfl
+/-! ### Object agreement on the subject -/
 
-/-- The fronted (OSV) and *pro*-drop options remain licit regardless
-    of whether the subject bears `-ri`. -/
-theorem fronted_and_prodropped_always_licit
-    (subj obj : Person) (pos : ObjectPosition) :
-    objectSyntaxLicit (predictsErgative subj obj pos) .overtFronted = true ∧
-    objectSyntaxLicit (predictsErgative subj obj pos) .proDropped = true :=
-  ⟨rfl, rfl⟩
+/-- Object agreement on the subject: the object-agreement exponent of the person the subject's
+    flag carries, with the object's number ((36)), realizing the [PART, v] remainder of the flag
+    once *-ri* has realized its φ root (§3.3). -/
+def oagrOnS (subj obj : Person) (n : Number) (pos : ObjectPosition) : Option String :=
+  (flag strictlyDescending (goals subj obj pos)).bind λ
+    | [o] => Kawapanan.Shawi.objectMarker o n
+    | _ => none
 
--- ============================================================================
--- § 9: OAgr-on-S correlation ([clem-deal-2024] §2, §3.3, fn. 7)
--- ============================================================================
+/-- Object agreement on the subject only if the subject is ergative (§2, fn. 7), and, off the
+    diagonal, overt only for a first-person subject and a second-person object (§3.3): a
+    third-person object has no exponent, and no other pair lets the subject Agree. -/
+theorem oagrOnS_isSome {subj obj : Person} {n : Number} {pos : ObjectPosition}
+    (hne : Minimalist.decomposePerson subj ≠ Minimalist.decomposePerson obj)
+    (h : (oagrOnS subj obj n pos).isSome) :
+    Ergative subj obj pos ∧ dpBears subj .spkr = true ∧ obj = .second := by
+  revert hne h; cases subj <;> cases obj <;> cases n <;> cases pos <;> decide
 
-/-! "Object agreement on subject" (OAgr-on-S) can spell out the inner
-φ-features of the goal-flag bundle that `-ri` exposes; if no such bundle is
-present (i.e. no ergative), there is nothing for the OAgr-on-S morpheme to
-attach to. [clem-deal-2024]'s empirical generalization (§2, p. 274, with
-footnote 7, elaborated in §3.3) is that OAgr-on-S obtains *only if* the
-subject is ergative — an *only if*, not an *iff*: an ergative subject may
-appear with or without OAgr-on-S.
+/-- (12): a first-person exclusive augmented subject with a second-person augmented object bears
+    *-ri* and the object's marker; (11): a second-person subject with a first-person object bears
+    neither; (23a): a third-person object leaves *-ri* nothing to accompany. -/
+theorem oagrOnS_examples :
+    oagrOnS .firstExclusive .second .augmented .high = some "-((n)ke)ma'" ∧
+    oagrOnS .second .firstExclusive .minimal .high = none ∧
+    Ergative .firstExclusive .third .high ∧
+    oagrOnS .firstExclusive .third .minimal .high = none := by
+  decide
 
-We deliberately do **not** ship a separate `oagrOnSAvailable` predicate.
-Its availability coincides with `predictsErgative` only *by construction*
-here, so a definition `oagrOnSAvailable := predictsErgative` plus a "bridge"
-theorem would merely rename `predictsErgative` and re-export its theorems.
-The substantive content — the only-if/not-iff asymmetry — is not derivable
-without the goal-flagging machinery flagged in §11; until then it is an
-empirical generalization *about* `predictsErgative`, not a separate object. -/
+/-! ### Configurational rules (§1, §4.1) -/
 
--- ============================================================================
--- § 10: Bridges — Shawi inherits Deal-2024 cell counts
--- ============================================================================
+/-- Rule (1) ([baker-2015]) values the higher of two caseless NPs in one domain ergative whatever
+    their persons, as `Case.assignCases` does; Shawi withholds ergative at 2→1, 3→1 and 3→2
+    with the object in v's domain ((7a–c)). -/
+theorem rule1_overgenerates :
+    Case.getCaseOf "S" (Case.assignCases .ergative [{ label := "S" }, { label := "O" }]) =
+      some .erg ∧
+    ¬ Ergative .second .first .high ∧ ¬ Ergative .third .first .high ∧
+    ¬ Ergative .third .second .high := by
+  decide
 
-/-- Across the 9 (subject, object) cells, the strictly-descending
-    grammar licenses 5 — exactly the 5 cells where ergative is licit
-    in Shawi (rows a, b, d, g of Table 4, with row b/d/g being the
-    high-object subcases). Derived from `Deal2024.sd_licit_count`. -/
-theorem shawi_licit_count :
-    Deal2024.licitCount shawiGrammar = 5 :=
-  Deal2024.sd_licit_count
+/-- No grammar of [deal-2024]'s probe space yields a 1>3>2 hierarchy (§4.1): none makes 3→2 a
+    second-goal configuration while 2→3 is not, since a third-person first goal neither
+    satisfies nor narrows the probe. Rule (37) of [barany-sheehan-2024]'s kind, whose hierarchy
+    is stipulated, has no such limit. -/
+theorem no_1_3_2_hierarchy (g : DealGrammar) (h : DependentCase g [.second, .third]) :
+    DependentCase g [.third, .second] := by
+  obtain ⟨sat, dyn⟩ := g
+  revert h; rcases sat with _ | (_ | _ | _ | _) <;> cases dyn <;> decide
 
-/-- Among the high-object cells, predicted ergative coincides with
-    `isLicit` on the strictly-descending grammar — Shawi inherits the
-    Deal-2024 typology wholesale once we condition on "object visible
-    to v". -/
-theorem high_object_matches_deal2024 (subj obj : Person) :
-    predictsErgative subj obj .high = isLicit shawiGrammar subj obj := by
-  cases obj <;> rfl
+/-! ### The typology of global case splits (§5) -/
 
--- ============================================================================
--- § 11: What is *not* yet formalized
--- ============================================================================
+/-- Where the probe sits: on v, between object and subject, so the object is its first goal and
+    the dependent case of the subject is ergative ((40)); or on T above both, so the subject is
+    first and the dependent case of the object is accusative ((41)). -/
+inductive Locus
+  | v
+  | T
+  deriving DecidableEq, Repr
 
-/-! ## Follow-ups
+/-- The goals of a transitive clause in the order a probe at `l` meets them. -/
+def Locus.goals : Locus → Person → Person → List Person
+  | .v, subj, obj => [obj, subj]
+  | .T, subj, obj => [subj, obj]
 
-`[clem-deal-2024]`'s analysis crucially depends on three pieces of
-machinery that linglib does not yet have:
+/-- Dependent case without a split (§5.1): an insatiable probe with no dynamic interaction
+    Agrees with both arguments whatever their persons, ergative on v (Nez Perce [deal-2010],
+    Amahuaca [clem-2019]) and accusative on T (Sakha, [baker-vinokurova-2010]). -/
+theorem dependentCase_noPCC (l : Locus) (subj obj : Person) :
+    DependentCase noPCC (l.goals subj obj) := by
+  cases l <;> cases subj <;> cases obj <;> decide
 
-1. **Bidirectional Agree (goal flagging)** — the probe-to-goal direction
-   of feature transfer. Without this, the claim that `-ri` *is* the
-   object's φ-features (rather than a primitive [ERG]) cannot be stated
-   structurally. `Syntax/Minimalism/Agree.lean` currently
-   models only valuation (goal→probe).
-2. **Distributed Morphology / Vocabulary Insertion** — for the VI rule
-   `ri ↔ φ / ___ [φ,D]` ([clem-deal-2024] (34)) and Kinyalolo's
-   Constraint impoverishment ((35)). The `Core/Lexical/MorphRule.lean`
-   skeleton is Bybee-flavored and does not yet capture context-sensitive
-   realization.
-3. **Feature provenance** — distinguishing "native" features on a goal
-   from features deposited there by Agree ([clem-deal-2024] fn. 23).
-   Required to state the ergative VI without overgenerating.
+/-- Table 7, strong PCC: dependent case iff the first goal is third person, on the subject when
+    the object is third (Shiwilu, [valenzuela-2011]) and on the object when the subject is third
+    (Yurok). -/
+theorem dependentCase_strong_iff (g₁ g₂ : Person) :
+    DependentCase strong [g₁, g₂] ↔ dpBears g₁ .part = false := by
+  cases g₁ <;> cases g₂ <;> decide
 
-Once (1)–(3) are in place, the OAgr-on-S generalization noted in §9 —
-currently an empirical *only if* *about* `predictsErgative` — can be
-derived as a theorem, including the only-if/not-iff asymmetry.
--/
+/-- Shiwilu (45a), (46b): no ergative at 1→2, ergative at 3→3. -/
+example : ¬ DependentCase strong (Locus.v.goals .first .second) ∧
+    DependentCase strong (Locus.v.goals .third .third) := by decide
+
+/-- Table 7, weak PCC: dependent case unless the first goal is local and the second is third, so
+    on the object except in local→third (Kolyma Yukaghir, [maslova-2003]). -/
+theorem dependentCase_weak_iff (g₁ g₂ : Person) :
+    DependentCase weak [g₁, g₂] ↔
+      (dpBears g₁ .part = true → dpBears g₂ .part = true) := by
+  cases g₁ <;> cases g₂ <;> decide
+
+/-- Table 7, strictly descending: dependent case iff the first goal lacks [SPKR] and the second
+    bears [PART] whenever the first does. -/
+theorem dependentCase_sd_iff (g₁ g₂ : Person) :
+    DependentCase strictlyDescending [g₁, g₂] ↔
+      dpBears g₁ .spkr = false ∧ (dpBears g₁ .part = true → dpBears g₂ .part = true) := by
+  cases g₁ <;> cases g₂ <;> decide
+
+/-- Off the diagonal the strictly descending split is the hierarchy 1>2>3: dependent case iff the
+    second goal outranks the first, the subject over the object with the probe on v (Shawi) and
+    the object over the subject with it on T (Kashmiri, fn. 42). -/
+theorem dependentCase_sd_off_diagonal_iff (g₁ g₂ : Person)
+    (h : Minimalist.decomposePerson g₁ ≠ Minimalist.decomposePerson g₂) :
+    DependentCase strictlyDescending [g₁, g₂] ↔ g₂.prominence > g₁.prominence :=
+  (dependentCase_iff_isLicit _ _ _).trans (sd_off_diagonal_iff_outranks g₂ g₁ h.symm)
+
+/-- Kolyma Yukaghir accusative ((52)): *-ul* realizes [φ, PART] in the object's flag and *-gele*
+    its φ root, so the form records whether the subject T Agreed with first was a local
+    person. -/
+def kolymaYukaghirAccusative (subj obj : Person) : Option String :=
+  (flag weak (Locus.T.goals subj obj)).bind λ
+    | [s] => some (if dpBears s .part then "-ul" else "-gele")
+    | _ => none
+
+/-- (49): *-gele* at 3→1, *-ul* at 1→2, and no accusative at 1→3. -/
+theorem kolymaYukaghirAccusative_49 :
+    kolymaYukaghirAccusative .third .first = some "-gele" ∧
+    kolymaYukaghirAccusative .first .second = some "-ul" ∧
+    kolymaYukaghirAccusative .first .third = none := by
+  decide
 
 end ClemDeal2024
