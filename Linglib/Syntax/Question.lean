@@ -23,8 +23,7 @@ WordOrder).
   with [citko-gracanin-yuksek-2025]'s tri-valued refinement
   splitting non-MWF into vP-only vs both-edges asterisk languages)
 - `PhaseEdge`: which phase edge an asterisk lands on
-- `EdgeAsterisk`/`MWFViolation`/`EllipsisRepairsMWF`: Prop predicates
-  derived from `MWFParameter`
+- `EdgeAsterisk`: the asterisk a phase edge receives, derived from `MWFParameter`
 
 ## Theory-laden caveats
 
@@ -274,42 +273,6 @@ instance (p : MWFParameter) (e : PhaseEdge) (n : Nat) :
   cases p <;> cases e <;> unfold EdgeAsterisk <;> infer_instance
 
 end MWFParameter
-
-/-- A multiple-wh-fronting violation: *some* phase edge incurs an
-    asterisk for `n` wh-specifiers. -/
-def MWFViolation (p : MWFParameter) (n : Nat) : Prop :=
-  p.EdgeAsterisk .vP n ∨ p.EdgeAsterisk .CP n
-
-instance (p : MWFParameter) (n : Nat) : Decidable (MWFViolation p n) := by
-  unfold MWFViolation; infer_instance
-
-/-- Ellipsis of the vP edge repairs an MWF violation iff doing so
-    eliminates every asterisk — i.e., there is no surviving CP-edge
-    asterisk. In `nonFrontsVPOnly` languages, deleting the vP edge
-    removes the only asterisk; in `nonFrontsBothEdges`, the CP-edge
-    asterisk survives. -/
-def EllipsisRepairsMWF (p : MWFParameter) (n : Nat) (vpEdgeDeleted : Bool) : Prop :=
-  ¬ MWFViolation p n ∨ (vpEdgeDeleted = true ∧ ¬ p.EdgeAsterisk .CP n)
-
-instance (p : MWFParameter) (n : Nat) (vpDel : Bool) :
-    Decidable (EllipsisRepairsMWF p n vpDel) := by
-  unfold EllipsisRepairsMWF; infer_instance
-
-/-- Single wh-specifier never triggers an MWF violation. -/
-theorem single_wh_no_violation (p : MWFParameter) :
-    ¬ MWFViolation p 1 := by
-  cases p <;> decide
-
-/-- Zero wh-specifiers never trigger an MWF violation. -/
-theorem zero_wh_no_violation (p : MWFParameter) :
-    ¬ MWFViolation p 0 := by
-  cases p <;> decide
-
-/-- MWF languages never have violations. -/
-theorem mwf_language_no_violation (p : MWFParameter)
-    (h : p.AllowsMWF) (n : Nat) : ¬ MWFViolation p n := by
-  cases p <;> simp_all [MWFParameter.AllowsMWF, MWFViolation,
-    MWFParameter.EdgeAsterisk]
 
 end Syntax.Question
 
