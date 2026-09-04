@@ -36,7 +36,6 @@ The Searle-class and direction-of-fit API for `Illocutionary` is in
 
 namespace Mood
 
-open Discourse (DiscourseRole)
 
 /-! ### Grammatical mood -/
 

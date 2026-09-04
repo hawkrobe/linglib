@@ -43,7 +43,6 @@ that can be genuinely supposed without prior discourse.
 namespace Conditionals
 
 open Commitment
-open Discourse (DiscourseRole)
 
 -- Left-Nested Conditional Structure
 

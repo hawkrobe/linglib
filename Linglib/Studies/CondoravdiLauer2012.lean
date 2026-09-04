@@ -26,7 +26,6 @@ preferential one does not, and conversely for an imperative.
 namespace CondoravdiLauer2012
 
 open Commitment
-open Discourse (DiscourseRole)
 
 /-- Whether the addressee is sitting. -/
 inductive AddrPosture

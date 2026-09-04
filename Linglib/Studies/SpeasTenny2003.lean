@@ -39,7 +39,7 @@ the content.
 
 - **Semantics/Context/Tower.lean**: `KContext.agent` = SPEAKER,
   `KContext.addressee` = HEARER; P-roles resolve through the canonical
-  `Discourse.resolveRole` over a `ContextTower`.
+  `DiscourseRole.resolve` over a `ContextTower`.
 - **Phase.lean**: `isPhaseHeadOf .SA` — SAP is the highest phase.
 - **ExtendedProjection/Basic.lean**: `fValue .SA = 7 > fValue .C = 6`.
 - **Semantics/Mood/Defs.lean**: the configurational seat-of-knowledge
@@ -178,7 +178,7 @@ def seatOfKnowledge (m : SAPMood) : PRole :=
 /-- Map P-roles to framework-agnostic discourse roles.
     SPEAKER → speaker, HEARER → addressee, SEAT OF KNOWLEDGE → speaker
     (default; use `seatOfKnowledge` for mood-sensitive resolution). -/
-def PRole.toDiscourseRole : PRole → Discourse.DiscourseRole
+def PRole.toDiscourseRole : PRole → DiscourseRole
   | .speaker         => .speaker
   | .hearer          => .addressee
   | .seatOfKnowledge => .speaker  -- default; varies by mood
@@ -212,11 +212,11 @@ theorem seatOfKnowledge_agrees_with_authority_off_imperative
 /-! ### Context grounding -/
 
 /-- Resolve a P-role to a discourse participant through a `ContextTower`,
-    reusing the canonical `Discourse.resolveRole` (which reads from the
+    reusing the canonical `DiscourseRole.resolve` (which reads from the
     speech-act origin). SEAT OF KNOWLEDGE resolves through its default
     discourse role; use `resolvePRoleInMood` for mood-sensitive resolution. -/
 def resolvePRole {W E P T : Type*} (tower : ContextTower (KContext W E P T)) (r : PRole) : E :=
-  Discourse.resolveRole tower r.toDiscourseRole
+  DiscourseRole.resolve tower r.toDiscourseRole
 
 /-- Mood-sensitive role resolution: SEAT OF KNOWLEDGE is resolved through
     `seatOfKnowledge` before mapping to a participant. -/
@@ -236,12 +236,12 @@ theorem resolvePRole_hearer {W E P T : Type*} (tower : ContextTower (KContext W 
 /-- **Key Claim 4 as a theorem.** P-roles are resolved from the SPEECH-ACT
     context (SAP is the highest phase), so resolution is invariant under
     context shift / embedding — inherited from
-    `Discourse.resolveRole_shift_invariant`. -/
+    `DiscourseRole.resolve_push`. -/
 theorem resolvePRole_shift_invariant {W E P T : Type*}
     (tower : ContextTower (KContext W E P T)) (σ : ContextShift (KContext W E P T))
     (r : PRole) :
     resolvePRole (tower.push σ) r = resolvePRole tower r := by
-  simp only [resolvePRole, Discourse.resolveRole_shift_invariant]
+  simp only [resolvePRole, DiscourseRole.resolve_push]
 
 /-- In declaratives the seat of knowledge resolves to the speaker (agent). -/
 theorem seatOfKnowledge_declarative_resolves {W E P T : Type*}

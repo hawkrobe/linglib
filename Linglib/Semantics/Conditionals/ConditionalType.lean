@@ -33,7 +33,6 @@ This explains why PCs block NPIs despite being semantically DE!
 
 namespace Conditionals
 open Commitment
-open Discourse (DiscourseRole)
 
 -- Conditional Type: HC vs PC
 

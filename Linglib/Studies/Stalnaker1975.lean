@@ -422,7 +422,7 @@ theorem direct_argument_reasonable_stalnaker {W : Type*}
 /-- The same inference on a commitment space ([krifka-2015]), whose common ground is what its
 root entails: `HasAssertion` abstracts over the representation. -/
 theorem direct_argument_reasonable_krifka {W : Type*}
-    (s : Commitment.Space (Commitment.State Discourse.DiscourseRole W))
+    (s : Commitment.Space (Commitment.State DiscourseRole W))
     (sel : SelectionFunction W)
     (notA B AorB : W → Prop)
     (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
