@@ -187,14 +187,12 @@ theorem cwh_nonpaired : unboundTraces cwh = [] := by decide
 /-- The shared C′ carries a copy of each wh-phrase into the other conjunct. -/
 theorem cwhBulk_paired : Paired cwhBulk := by decide
 
-theorem cwh_beats_ellipsis : strictlyMoreEconomical (planarCost cwh) (planarCost cwhEllipsis) := by
-  decide
-theorem cwhBulk_beats_cwh : strictlyMoreEconomical (planarCost cwhBulk) (planarCost cwh) := by
-  decide
+theorem cwh_beats_ellipsis : planarCost cwh < planarCost cwhEllipsis := by decide
+theorem cwhBulk_beats_cwh : planarCost cwhBulk < planarCost cwh := by decide
 /-- The null complementizer of (14) adds structure and nothing to pronunciation. -/
-theorem cwh_beats_nullC : strictlyMoreEconomical (planarCost cwh) (planarCost cwhNullC) := by decide
+theorem cwh_beats_nullC : planarCost cwh < planarCost cwhNullC := by decide
 theorem cwhEmbedded_beats_twoC :
-    strictlyMoreEconomical (planarCost cwhEmbedded) (planarCost cwhEmbeddedTwoC) := by decide
+    planarCost cwhEmbedded < planarCost cwhEmbeddedTwoC := by decide
 
 /-- The shared C′ sends both wh-phrases through one vP edge, asterisked in English and
 pronounced. -/
@@ -208,9 +206,8 @@ theorem cwh_converges : Converges cwh englishA ∧ Converges cwh englishB := by 
 theorem cs_pf : pfPhon cs = ["what", "when"] := by decide
 theorem csEllipsis_pf : pfPhon csEllipsis = pfPhon cs := by decide
 theorem cs_paired : Paired cs := by decide
-theorem cs_beats_ellipsis : strictlyMoreEconomical (planarCost cs) (planarCost csEllipsis) := by
-  decide
-theorem cs_beats_twoC : strictlyMoreEconomical (planarCost cs) (planarCost csTwoC) := by decide
+theorem cs_beats_ellipsis : planarCost cs < planarCost csEllipsis := by decide
+theorem cs_beats_twoC : planarCost cs < planarCost csTwoC := by decide
 
 /-- The shared vP edge hosts two wh-specifiers: the asterisk of (26b). -/
 theorem cs_asterisked :
@@ -242,12 +239,11 @@ theorem csnr_pf : pfPhon csnr = pfPhon cs := by decide
 theorem csnr_economy : PronunciationEconomy csnr ∧ ¬ Paired csnr := by decide
 /-- Two [E] complementizers over shared material elide it twice. -/
 theorem csnrTwoE_vacuous : ¬ PronunciationEconomy csnrTwoE := by decide
-theorem csnr_beats_twoE : strictlyMoreEconomical (planarCost csnr) (planarCost csnrTwoE) := by
-  decide
+theorem csnr_beats_twoE : planarCost csnr < planarCost csnrTwoE := by decide
 /-- The nonpaired sluice is the cheapest nonpaired object respecting Pronunciation Economy: the
 shared [E] complementizer of (45c) draws one token fewer but elides vacuously. -/
 theorem csnr_optimal : ∀ t ∈ [csSharedC, csnrTwoE],
-    strictlyMoreEconomical (planarCost csnr) (planarCost t) ∨ ¬ PronunciationEconomy t := by decide
+    planarCost csnr < planarCost t ∨ ¬ PronunciationEconomy t := by decide
 /-- Footnote 30: the verb, shared, occurs in the second conjunct outside the elided TP and is
 silenced all the same, so the object cannot surface as a coordinated wh-question. -/
 theorem csnr_silences_shared :
@@ -301,13 +297,13 @@ theorem rnrMixed_pf : pfPhon rnrMixed =
     ["Alice", "must", "Iris", "ought to be", "working", "on", "different", "topics"] := by decide
 theorem rnrElided_pf : pfPhon rnrElided = pfPhon rnrMixed := by decide
 theorem rnrMixed_beats_elided :
-    strictlyMoreEconomical (planarCost rnrMixed) (planarCost rnrElided) := by decide
+    planarCost rnrMixed < planarCost rnrElided := by decide
 
 theorem rnrShared_pf : pfPhon rnrShared =
     ["Alice", "must", "Iris", "should", "work", "on", "different", "topics"] := by decide
 theorem rnrShared_isShared : IsShared rnrShared work := by decide
 /-- With matching verbs, ellipsis is no longer an option. -/
 theorem rnrShared_beats_mixed :
-    strictlyMoreEconomical (planarCost rnrShared) (planarCost rnrMatchedMixed) := by decide
+    planarCost rnrShared < planarCost rnrMatchedMixed := by decide
 
 end CitkoGracaninYuksek2025
