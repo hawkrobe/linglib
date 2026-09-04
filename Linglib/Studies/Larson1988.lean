@@ -49,7 +49,7 @@ so
 are proved over the `SyntacticObject.Derivation` directly.
 
 The c-command asymmetries are stated over the **derived tree built
-planar-first** (`(PlanarSyntacticObject.merge …).toSyntacticObject`), i.e. the very tree each
+ordered**, as a product of tokens coerced to a syntactic object, i.e. the very tree each
 derivation produces, written out explicitly per the file's prose diagrams.
 This is faithful: the derivation records the operations; the planar tree
 is its result, and c-command (`SyntacticObject.cCommandsIn`) reduces on it.
@@ -103,8 +103,7 @@ private def tok_kick   : LIToken := ⟨.simple .V [.D] (phonForm := "kicked"), 3
 private def tok_ball   : LIToken := ⟨.simple .D [] (phonForm := "the ball"), 311⟩
 
 /-- The `[PP to Mary]` constituent as a planar subtree. -/
-private def ppToMaryP : PlanarSyntacticObject := PlanarSyntacticObject.merge
-    (PlanarSyntacticObject.leaf tok_to) (PlanarSyntacticObject.leaf tok_mary)
+private def ppToMaryP : PlanarSyntacticObject := tok_to * tok_mary
 
 -- ============================================================================
 -- § 2: Oblique Dative Derivation
@@ -122,18 +121,16 @@ private def ppToMaryP : PlanarSyntacticObject := PlanarSyntacticObject.merge
 def obliqueDative : Derivation :=
   { initial := V_send
     steps := [
-      .emR (PlanarSyntacticObject.toSyntacticObject ppToMaryP),  -- [V' send [PP to Mary]]
+      .emR (ppToMaryP),  -- [V' send [PP to Mary]]
       .emL DP_letter,                 -- [VP a_letter [V' send [PP to Mary]]]
       .emL DP_john                    -- [VP John [VP a_letter [V' send [PP to Mary]]]]
     ] }
 
 /-- The oblique dative result tree: `[John [letter [send [to Mary]]]]`.
     Built planar-first; this is exactly what `obliqueDative` produces. -/
-def obliqueDativeTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_john)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_letter)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_send) ppToMaryP)))
+def obliqueDativeTree : PlanarSyntacticObject :=
+  
+    (tok_john * (tok_letter * (tok_send * ppToMaryP)))
 
 -- Oblique dative c-command predictions
 
@@ -171,7 +168,7 @@ Derivation steps:
 def docDativeShift : Derivation :=
   { initial := V_send
     steps := [
-      .emR (PlanarSyntacticObject.toSyntacticObject ppToMaryP),  -- [V' send [PP to Mary]]
+      .emR (ppToMaryP),  -- [V' send [PP to Mary]]
       .emL DP_letter,                 -- [VP a_letter [V' send [PP to Mary]]]
       .im DP_mary,                    -- DATIVE SHIFT: Mary moves to Spec
       .emL DP_john                    -- [VP John [VP Mary_i [VP a_letter ...]]]
@@ -180,14 +177,9 @@ def docDativeShift : Derivation :=
 /-- The DOC result tree: Mary, internally merged, sits at the left edge of
     the shell, asymmetrically c-commanding the theme; the original Mary
     position is the bare trace. `[John [Mary [letter [send [to t]]]]]`. -/
-def docDativeShiftTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_john)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_mary)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_letter)
-          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_send)
-            (PlanarSyntacticObject.merge
-              (PlanarSyntacticObject.leaf tok_to) PlanarSyntacticObject.trace)))))
+def docDativeShiftTree : PlanarSyntacticObject :=
+  
+    (tok_john * (tok_mary * (tok_letter * (tok_send * (tok_to * PlanarSyntacticObject.trace)))))
 
 -- DOC c-command predictions: the asymmetries are REVERSED
 
@@ -228,12 +220,9 @@ def standardPassive : Derivation :=
 
 /-- The passive result tree: the ball (promoted) sits above John (demoted),
     leaving a trace in object position. `[ball [John [kicked t]]]`. -/
-def standardPassiveTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_ball)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_john)
-        (PlanarSyntacticObject.merge
-          (PlanarSyntacticObject.leaf tok_kick) PlanarSyntacticObject.trace)))
+def standardPassiveTree : PlanarSyntacticObject :=
+  
+    (tok_ball * (tok_john * (tok_kick * PlanarSyntacticObject.trace)))
 
 -- Passive c-command: promoted object c-commands demoted subject
 
@@ -466,8 +455,7 @@ private def tok_to2     : LIToken := ⟨.simple .P [.D] (phonForm := "to"), 323�
 def indirectPassive : Derivation :=
   { initial := V_sent
     steps := [
-      .emR (PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
-        (PlanarSyntacticObject.leaf tok_to2) (PlanarSyntacticObject.leaf tok_mary2))),
+      .emR (tok_to2 * tok_mary2 : PlanarSyntacticObject),
                        -- [V' sent [PP to Mary]]
       .emL DP_letter2, -- [VP a_letter [V' sent [PP to Mary]]]
       .im DP_mary2,    -- DATIVE SHIFT: Mary to inner Spec
@@ -484,14 +472,10 @@ def indirectPassive : Derivation :=
     (The single-trace abbreviation `[Mary [letter [sent [to t]]]]` collapses the
     intermediate landing site; it gives the same Mary-c-commands-letter
     asymmetry but is *not* what the two-step derivation emits.) -/
-def indirectPassiveTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_mary2)
-      (PlanarSyntacticObject.merge PlanarSyntacticObject.trace
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_letter2)
-          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_sent)
-            (PlanarSyntacticObject.merge
-              (PlanarSyntacticObject.leaf tok_to2) PlanarSyntacticObject.trace)))))
+def indirectPassiveTree : PlanarSyntacticObject :=
+  
+    (tok_mary2 * (PlanarSyntacticObject.trace * (tok_letter2 * (tok_sent * (tok_to2 *
+      PlanarSyntacticObject.trace)))))
 
 /-- In the indirect passive, the promoted IO (Mary) c-commands the
     stranded DO (a letter). -/

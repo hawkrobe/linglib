@@ -450,17 +450,11 @@ private def cTok       : LIToken := ⟨.simple .C [.T] "", 6⟩
     so concrete `decide`-able trees use the planar DSL): the oblique DP undergoes
     successive-cyclic Ā-movement, surfacing at Spec,CP with a trace lower down.
     Structure: `[CP oblique [C' C [TP T [VoiceP oblique [Voice' Voice [VP V obj]]]]]]`. -/
-private def cp : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf obliqueTok)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf cTok)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tTok)
-          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf obliqueTok)
-            (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf voiceTok)
-              (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf verbTok)
-                (PlanarSyntacticObject.leaf objectTok)))))))
+private def cp : PlanarSyntacticObject :=
+  
+    (obliqueTok * (cTok * (tTok * (obliqueTok * (voiceTok * (verbTok * objectTok))))))
 
-theorem derivation_tree_size : cp.nodeCount = 6 := by decide
+theorem derivation_tree_size : cp.toSyntacticObject.nodeCount = 6 := by decide
 
 theorem voice_has_uOblique :
     mamVoice.features.hasUnvaluedFeature .oblique = true := by decide

@@ -157,9 +157,8 @@ def subjectAtSpecVoiceP : SyntacticObject := leaf subjectToken
 /-- A trace at the base position after movement (distinct LIToken). -/
 def subjectTrace : SyntacticObject := leaf subjectTraceToken
 
-/-! The trees below are built **planar-first** via the DSL
-  (`PlanarSyntacticObject.toSyntacticObject`
-    / `PlanarSyntacticObject.merge` / `PlanarSyntacticObject.leaf`) because the smart Merge
+/-! The trees below are built **ordered**, as products of tokens coerced to syntactic
+    objects, because the smart Merge
     `SyntacticObject.merge` is
     noncomputable; planar construction keeps the `decide` PIC proofs
     reducing. -/
@@ -167,22 +166,15 @@ def subjectTrace : SyntacticObject := leaf subjectTraceToken
 /-- The Voice projection with NO Spec,VoiceP — subject remains in vP.
     Structure: `voice (subject v)`. Voice is the phase; its complement
     is the entire vP, which contains the subject. -/
-def voiceP_noSpec : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
-    (PlanarSyntacticObject.leaf voiceToken)
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf subjectToken)
-      (PlanarSyntacticObject.leaf vToken)))
+def voiceP_noSpec : PlanarSyntacticObject :=
+   (voiceToken * (subjectToken * vToken))
 
 /-- The Voice projection with subject at Spec,VoiceP (phase edge).
     Structure: `subject (voice (trace v))`. The OUTER node is not the
     phase; the inner `voice (trace v)` is the phase, and the subject
     (sister to it) is at the edge. -/
-def voiceP_withSpec : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
-    (PlanarSyntacticObject.leaf subjectToken)
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf voiceToken)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf subjectTraceToken)
-        (PlanarSyntacticObject.leaf vToken))))
+def voiceP_withSpec : PlanarSyntacticObject :=
+   (subjectToken * (voiceToken * (subjectTraceToken * vToken)))
 
 /-- The Voice phase for `voiceP_noSpec`: phase head `voiceToken`, tree
     `voiceP_noSpec`. Its interior (= the head's c-command domain, the
@@ -198,26 +190,15 @@ def voicePhase_withSpec : Phase :=
   { tree := voiceP_withSpec, head := voiceToken }
 
 /-- The full Aux-V tree (T > Asp > Voice > vP) with subject in situ. -/
-def auxVTree_inSitu : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
-    (PlanarSyntacticObject.leaf tToken)
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf aspToken)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf voiceToken)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf subjectToken)
-          (PlanarSyntacticObject.leaf vToken)))))
+def auxVTree_inSitu : PlanarSyntacticObject :=
+   (tToken * (aspToken * (voiceToken * (subjectToken * vToken))))
 
 /-- The full Aux-V tree with subject moved to Spec,VoiceP. T's probe will
     additionally attract the subject to Spec,TP — that movement is the
     derivational step we don't model here; the salient question is just
     whether T's probe *finds* the subject under PIC. -/
-def auxVTree_subjectMoved : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
-    (PlanarSyntacticObject.leaf tToken)
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf aspToken)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf subjectToken)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf voiceToken)
-          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf subjectTraceToken)
-            (PlanarSyntacticObject.leaf vToken))))))
+def auxVTree_subjectMoved : PlanarSyntacticObject :=
+   (tToken * (aspToken * (subjectToken * (voiceToken * (subjectTraceToken * vToken)))))
 
 end Sample
 

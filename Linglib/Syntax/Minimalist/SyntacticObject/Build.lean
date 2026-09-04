@@ -38,6 +38,39 @@ noncomputable instance : Mul SyntacticObject := ⟨merge⟩
 
 theorem mul_comm (l r : SyntacticObject) : l * r = r * l := merge_comm l r
 
+/-- A lexical item is a leaf. -/
+instance : Coe LIToken SyntacticObject := ⟨leaf⟩
+
+end SyntacticObject
+
+namespace PlanarSyntacticObject
+
+/-- `l * r = merge l r`: Merge on the ordered carrier, in the given order. -/
+instance : Mul PlanarSyntacticObject := ⟨merge⟩
+
+@[simp] theorem mul_def (l r : PlanarSyntacticObject) : l * r = merge l r := rfl
+
+/-- A lexical item is a leaf. -/
+instance : Coe LIToken PlanarSyntacticObject := ⟨leaf⟩
+
+/-- An ordered object is an object. -/
+instance : Coe PlanarSyntacticObject SyntacticObject := ⟨toSyntacticObject⟩
+
+/-- Forgetting the order is a homomorphism of magmas. -/
+def toSyntacticObjectHom : PlanarSyntacticObject →ₙ* SyntacticObject :=
+  ⟨toSyntacticObject, toSyntacticObject_merge⟩
+
+@[simp] theorem toSyntacticObjectHom_apply (p : PlanarSyntacticObject) :
+    toSyntacticObjectHom p = p.toSyntacticObject := rfl
+
+@[simp] theorem toSyntacticObject_mul (l r : PlanarSyntacticObject) :
+    (l * r).toSyntacticObject = l.toSyntacticObject * r.toSyntacticObject :=
+  toSyntacticObject_merge l r
+
+end PlanarSyntacticObject
+
+namespace SyntacticObject
+
 /-! ### Lexical leaves from features -/
 
 /-- A lexical leaf from a category and selectional stack. -/

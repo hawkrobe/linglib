@@ -109,14 +109,8 @@ def to_tok : LIToken := ⟨.simple .P [.D] "to", 409⟩
 /-- The double object structure `[Ozzy [v [gave [a girl [Appl every telescope]]]]]`: the first
 object is the argument of the applicative head, merged above the projection containing the second,
 so it asymmetrically c-commands it. -/
-def docTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf subj_tok)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf v_tok)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf gave_tok)
-          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf goal_tok)
-            (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf appl_tok)
-            (PlanarSyntacticObject.leaf theme_tok))))))
+def docTree : PlanarSyntacticObject :=
+  (subj_tok * (v_tok * (gave_tok * (goal_tok * (appl_tok * theme_tok)))))
 
 /-- The quantifiers competing for attraction in the double object construction. -/
 def docQuantifiers : List SyntacticObject := [leaf goal_tok, leaf theme_tok]
@@ -146,28 +140,19 @@ theorem doc_not_ambiguous : ¬ Ambiguous docTree (leaf v_tok) docQuantifiers := 
 
 /-- The locative structure `[Ozzy [v [gave [every telescope [to a girl]]]]]`: the direct object and
 the PP are co-arguments of the same head, hence sisters, and c-command each other. -/
-def locativeTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf subj_tok)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf v_tok)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf gave_tok)
-          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf theme_tok)
-            (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf to_tok)
-            (PlanarSyntacticObject.leaf goal_tok))))))
+def locativeTree : PlanarSyntacticObject :=
+  (subj_tok * (v_tok * (gave_tok * (theme_tok * (to_tok * goal_tok)))))
+
+/-- The PP that pied-pipes the goal. -/
+def ppToGoal : PlanarSyntacticObject := to_tok * goal_tok
 
 /-- The candidates in the locative: the direct object, and the PP that pied-pipes the goal. -/
-def locativeQuantifiers : List SyntacticObject :=
-  [leaf theme_tok, PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
-    (PlanarSyntacticObject.leaf to_tok) (PlanarSyntacticObject.leaf goal_tok))]
+def locativeQuantifiers : List SyntacticObject := [leaf theme_tok, ppToGoal]
 
 /-- Direct object and PP c-command each other, so neither asymmetrically c-commands the other. -/
 theorem locative_mutual_cCommand :
-    cCommandsIn locativeTree (leaf theme_tok)
-        (PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
-          (PlanarSyntacticObject.leaf to_tok) (PlanarSyntacticObject.leaf goal_tok))) ∧
-      cCommandsIn locativeTree (PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
-        (PlanarSyntacticObject.leaf to_tok) (PlanarSyntacticObject.leaf goal_tok)))
-        (leaf theme_tok) := by
+    cCommandsIn locativeTree (leaf theme_tok) ppToGoal ∧
+      cCommandsIn locativeTree ppToGoal (leaf theme_tok) := by
   constructor <;> decide
 
 /-- Either candidate may be attracted first, so the locative is ambiguous: *I gave a doll to each
@@ -188,13 +173,8 @@ theorem subject_not_attractable :
 
 /-- The passive of a double object construction: with no external argument, the goal raises to the
 subject position, out of the attractor's domain, leaving the theme as the only candidate. -/
-def passiveTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf goal_tok)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf v_tok)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf gave_tok)
-          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf appl_tok)
-          (PlanarSyntacticObject.leaf theme_tok)))))
+def passiveTree : PlanarSyntacticObject :=
+  (goal_tok * (v_tok * (gave_tok * (appl_tok * theme_tok))))
 
 /-- In the passive the derived subject is no longer attractable while the theme is, so Shortest
 imposes no order between them and the ambiguity returns: *a (different) girl was given every

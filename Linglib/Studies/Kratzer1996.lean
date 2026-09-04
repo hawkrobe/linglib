@@ -75,40 +75,27 @@ def DP_door_t   : LIToken := ⟨.simple .D     []    "the door",   217⟩
 
 /-- Transitive: "John broke the vase"
     `[VoiceP John [Voice' Voice_AG [vP v [VP broke [DP the vase]]]]]` -/
-def transitiveTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf DP_john_t)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf voice_ag_t)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf v_head_t)
-          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf V_broke_t)
-            (PlanarSyntacticObject.leaf DP_vase_t)))))
+def transitiveTree : PlanarSyntacticObject :=
+  
+    (DP_john_t * (voice_ag_t * (v_head_t * (V_broke_t * DP_vase_t))))
 
 /-- Anticausative: "The vase broke"
     `[VoiceP Voice_∅ [vP v [VP broke [DP the vase]]]]` -/
-def anticausativeTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf voice_nth_t)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf v_head_t)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf V_broke_t)
-          (PlanarSyntacticObject.leaf DP_vase_t))))
+def anticausativeTree : PlanarSyntacticObject :=
+  
+    (voice_nth_t * (v_head_t * (V_broke_t * DP_vase_t)))
 
 /-- Unaccusative: "The ship sank"
     `[VoiceP Voice_∅ [vP v [VP sank [DP the ship]]]]` -/
-def unaccusativeTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf voice_nth_t)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf v_head_t)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf V_sank_t)
-          (PlanarSyntacticObject.leaf DP_ship_t))))
+def unaccusativeTree : PlanarSyntacticObject :=
+  
+    (voice_nth_t * (v_head_t * (V_sank_t * DP_ship_t)))
 
 /-- Middle: "The door opened"
     `[VoiceP Voice_MID [vP v [VP opened [DP the door]]]]` -/
-def middleTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf voice_mid_t)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf v_head_t)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf V_opened_t)
-          (PlanarSyntacticObject.leaf DP_door_t))))
+def middleTree : PlanarSyntacticObject :=
+  
+    (voice_mid_t * (v_head_t * (V_opened_t * DP_door_t)))
 
 -- C-command predictions
 
