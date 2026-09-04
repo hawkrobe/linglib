@@ -1,3 +1,4 @@
+import Linglib.Syntax.Minimalist.Movement.Reconstruction
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
@@ -10,10 +11,14 @@ import Linglib.Syntax.Minimalist.Verbal.Voice
 > or intervener for the MLC / Relativized Minimality ([rizzi-1990])). If YP moves to a
 > position c-commanding W, we say that YP **smuggles** XP past W.
 
-The canonical application is passive: PartP (containing the object) moves
+On a derivation the definition is the step predicate
+`SyntacticObject.Derivation.IsSmugglingStep`: the mover of the step contains `XP`, which `W`
+c-commands before the step, and after it the mover c-commands `W` and `W` no longer c-commands
+`XP`. The canonical application is passive: PartP (containing the object) moves
 to Spec-VoiceP, smuggling the object past the external argument in Spec-vP.
 The object can then raise to Spec-TP without violating Relativized Minimality ([rizzi-1990]),
-because the intervening external argument no longer c-commands it.
+because the intervening external argument no longer c-commands it
+(`Studies/Collins2005.lean`).
 
 [storment-2026] extends this to quotative inversion (QI): VP moves
 to Spec-VoiceP, making the theme subject accessible to T⁰ for Case
@@ -31,12 +36,44 @@ This connects to `Voice.Head.IsPhasal`:
 - `Voice.agentive.IsPhasal` → vP is a phase → complement frozen → no smuggling
 - `¬ Voice.anticausative.IsPhasal` → vP is not a phase → complement extractable.
 
-[collins-2005] makes the same point: "neither the moved PartP nor
-an unaccusative vP are strong phases."
+[collins-2005] §5 draws the phase line differently for the passive: its v is a v*, since it
+has an external argument, and the moved PartP behaves like an unaccusative vP ("neither the
+moved PartP nor an unaccusative vP are strong phases"), so Voice rather than v is the head
+whose specifier is the escape hatch.
 
 -/
 
 namespace Minimalist
+
+/-! ### Smuggling on a derivation -/
+
+namespace SyntacticObject.Derivation
+
+variable {d : Derivation} {steps : List Step} {i : Nat} {xp w : SyntacticObject}
+
+/-- Step `i` of `d` smuggles `xp` past `w` ([collins-2005] (34)): its mover contains `xp`,
+which `w` c-commands before the step, and after it the mover c-commands `w` and `w` no longer
+c-commands `xp`. The paper's `W` blocks a relation between `xp` and a probe `Z`; here the
+blocking is `w`'s c-command of `xp`, and the probe is the consumer's to supply. -/
+def IsSmugglingStep (d : Derivation) (i : Nat) (xp w : SyntacticObject) : Prop :=
+  ∃ m ∈ d.steps[i]? >>= Step.mover?,
+    contains m xp ∧ d.CCommandsAt i w xp ∧ d.CCommandsAt (i + 1) m w ∧
+      ¬ d.CCommandsAt (i + 1) w xp
+
+instance (d : Derivation) (i : Nat) (xp w : SyntacticObject) :
+    Decidable (d.IsSmugglingStep i xp w) := by
+  unfold IsSmugglingStep; infer_instance
+
+/-- A smuggling step of a derivation is one of every extension. -/
+theorem IsSmugglingStep.append (h : d.IsSmugglingStep i xp w) :
+    (d.append steps).IsSmugglingStep i xp w := by
+  obtain ⟨m, hm, hc, h₁, h₂, h₃⟩ := h
+  have hi := lt_length_of_mem_mover? hm
+  refine ⟨m, by rwa [Derivation.append, List.getElem?_append_left hi], hc,
+    (cCommandsAt_append_of_le hi.le).2 h₁, (cCommandsAt_append_of_le hi).2 h₂,
+    λ h => h₃ ((cCommandsAt_append_of_le hi).1 h)⟩
+
+end SyntacticObject.Derivation
 
 -- ============================================================================
 -- § 1: Smuggling Availability
@@ -196,10 +233,10 @@ theorem smuggling_shared_precondition :
     Voice.passive.permitsSmuggling = true ∧
     Voice.anticausative.permitsSmuggling = true := by decide
 
-/-- Passive Voice checks Case but does not assign θ (feature
-    dissociation). This is what makes passive v defective (non-phase):
-    Case-checking is the property that distinguishes v* from v
-    ([chomsky-2001], [collins-2005] p. 96). -/
+/-- Passive Voice checks Case but does not assign θ, the feature dissociation of
+    [collins-2005]'s (31)–(32); the non-phase status recorded here is the substrate's
+    reading of Case-checking as what distinguishes v* from v ([chomsky-2001]), whereas the
+    paper keeps passive v a v* and lets Voice provide the escape hatch (§5). -/
 theorem passive_dissociation_enables_smuggling :
     Voice.passive.ChecksCase ∧
     ¬ Voice.passive.IsPhasal ∧
