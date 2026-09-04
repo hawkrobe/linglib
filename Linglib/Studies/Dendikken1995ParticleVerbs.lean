@@ -104,7 +104,7 @@ unfolding `pvToSmallClause`. -/
 theorem pvToSmallClause_toSO_shape (pv : ParticleVerb) (dpId prtId : Nat) :
     (pvToSmallClause pv dpId prtId).toSO.leafCount = 2 := by
   simp only [pvToSmallClause, SmallClause.toSO, leafCount_node,
-    mkLeafPhon, leafCount_lexLeaf]
+    mkLeafPhon, leafCount_leaf]
 
 /-- The `predCat` field of `pvToSmallClause` agrees with the
     `predicate.headCat` reading — the well-formedness invariant
