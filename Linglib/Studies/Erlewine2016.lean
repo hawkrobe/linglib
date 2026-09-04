@@ -1,5 +1,4 @@
 import Linglib.Fragments.Mayan.Kaqchikel.Extraction
-import Linglib.Syntax.Minimalist.Position
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Studies.CoonMateoPedroPreminger2014
