@@ -12,15 +12,16 @@ feature attached below at most one node: dominance is `≤`, the root is `⊥`, 
 downset is a chain, and the natural class of a node is the finite set of features it
 dominates, so natural classes are nested along dominance and disjoint across incomparable
 nodes. The class-node idea and the thesis that assimilation spreads one node are
-[clements-1985]'s; [halle-vaux-wolfe-2000] records that no consensus exists among the later
-revisions and lets rules spread any set of terminals, and [padgett-2002] drops constituency
+Clements's; Halle, Vaux and Wolfe record that no consensus exists among the later
+revisions and lets rules spread any set of terminals, and Padgett drops constituency
 altogether and lets constraints refer to classes as sets, which is how current analyses use
-them ([brown-meyer-2024]'s AGREE[place]). The class-set is therefore the primitive: spreading
+them (Brown and Meyer's AGREE[place]). The class-set is therefore the primitive: spreading
 a class from `src` onto `tgt` is `Finset.piecewise`, agreement on a class is `Set.EqOn`, and a
 geometry is an instance naming which sets are natural. The feature type is a parameter, so an
 instance may range over a binary inventory, over feature tokens indexed by position as in
-Vowel-Place Theory, over privative elements, or over tone features; the segmental instances
-are `Phonology/Segmental/Geometry.lean` and the studies of the trees they formalize.
+Vowel-Place Theory, over privative elements, or over tone features; the flat segmental
+classes are `Phonology/Segmental/Classes.lean`, and the trees of Clements, Sagey
+and Halle, Vaux and Wolfe are instances in their studies.
 
 ## Main definitions
 
@@ -42,7 +43,7 @@ The feature type is an `outParam`: a node type determines its features. Instance
 dominance from a parent function: `up n` is `n` with its ancestors, `PartialOrder.lift up` is
 dominance, the root is `⊥`, and the chain axiom is `decide`d. `node` is `Option`-valued so a
 geometry may leave features unplaced. Spreading an arbitrary set of terminals
-([halle-vaux-wolfe-2000]'s partial spreading, [padgett-2002]'s partial class behaviour) is
+(Halle, Vaux and Wolfe's partial spreading, Padgett's partial class behaviour) is
 `Finset.piecewise` on that set with no further apparatus, and single-feature spreading is
 `Features.Bundle.assimilate` (`Finset.piecewise_singleton`). The linking of a spread node to
 several anchors is the tier-association object `AR` (`Autosegmental/AR.lean`), not recorded
@@ -50,11 +51,13 @@ on feature bundles.
 
 ## References
 
-* [clements-1985] — class nodes and single-node spreading.
-* [halle-vaux-wolfe-2000] — the four revisions and the absence of consensus (§1.1), terminal
-  spreading (§1.2.3).
-* [padgett-2002] — feature classes as sets targeted by constraints.
-* [brown-meyer-2024] — AGREE[place] and AGREE[voice] over classes.
+* [G. N. Clements, *The Geometry of Phonological Features* (1985)][clements-1985]
+* [M. Halle, B. Vaux and A. Wolfe, *On Feature Spreading and the Representation of Place of
+  Articulation* (2000)][halle-vaux-wolfe-2000]
+* [J. Padgett, *Feature Classes in Phonology* (2002)][padgett-2002]
+* [J. Brown and J. Meyer, *Assimilation and Morpheme Boundaries in Mgira* (2024)][brown-meyer-2024]
+* [E. C. Sagey, *The Representation of Features and Relations in Non-Linear Phonology*
+  (1986)][sagey-1986]
 -/
 
 namespace Phonology
