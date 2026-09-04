@@ -3,7 +3,7 @@ import Linglib.Core.Data.Fintype.Sets
 import Mathlib.Data.Finset.Card
 
 /-!
-# Segmental feature classes
+# Feature classes
 
 The grouping of Hayes's features by the sections of his feature chapter — manner
 (§4.4, including the sonority features), laryngeal (§4.7), and the three major articulators
@@ -26,22 +26,22 @@ Designated articulators are the articulator features a segment is specified for
 
 ## Main definitions
 
-* `Feature.Category`, `Feature.category` — the five groups and each feature's group.
-* `Feature.Category.features`, `Feature.Category.place` — a group's features, and the place
-  class as the union of the articulator groups.
+* `FeatureClass`, `Feature.featureClass` — the five classes and each feature's class.
+* `FeatureClass.features`, `FeatureClass.place` — a class's features, and the place class as
+  the union of the articulator classes.
 * `Segment.articulators`, `Segment.IsComplex` — designated articulators and complex segments.
 
 ## Main results
 
-* `Feature.Category.mem_features`, `Feature.Category.mem_place` — membership in a group and
-  in the place class.
+* `FeatureClass.mem_features`, `FeatureClass.mem_place` — membership in a class and in the
+  place class.
 
 ## Implementation notes
 
 The contested placements are Hayes's: [strident] and [lateral] are coronal where
 Gussenhoven and Jacobs, Davenport and Hannahs and Clements make them manner
 features, and [tense] is a vowel feature under dorsal where the tree-drawing textbooks give
-[ATR] its own radical or pharyngeal node. Agreement on a group or on the place class is
+[ATR] its own radical or pharyngeal node. Agreement on a class or on the place class is
 decidable, so AGREE-style facts about Fragment segments close by `decide`.
 
 ## References
@@ -64,16 +64,16 @@ decidable, so AGREE-style facts about Fragment segments close by `decide`.
 
 namespace Phonology
 
-/-! ### The groups -/
+/-! ### The classes -/
 
-/-- Hayes's five feature groups: manner, laryngeal, and the three major articulators. -/
-inductive Feature.Category where
+/-- Hayes's five feature classes: manner, laryngeal, and the three major articulators. -/
+inductive FeatureClass where
   | manner | laryngeal | labial | coronal | dorsal
   deriving DecidableEq, Repr, Fintype
 
-/-- The group of each feature, by the sections of Hayes's feature chapter (see the
-module docstring). -/
-def Feature.category : Feature → Feature.Category
+/-- The class of each feature, by the sections of Hayes's feature chapter (see the module
+docstring). -/
+def Feature.featureClass : Feature → FeatureClass
   | .syllabic | .consonantal | .sonorant | .approximant | .continuant | .delayedRelease
   | .nasal | .tap | .trill => .manner
   | .voice | .spreadGlottis | .constrGlottis => .laryngeal
@@ -81,30 +81,31 @@ def Feature.category : Feature → Feature.Category
   | .coronal | .anterior | .distributed | .strident | .lateral => .coronal
   | .dorsal | .high | .low | .front | .back | .tense => .dorsal
 
-namespace Feature.Category
+namespace FeatureClass
 
-/-- The features of a group. -/
-def features (c : Category) : Finset Feature := Finset.univ.filter (·.category = c)
+/-- The features of a class. -/
+def features (c : FeatureClass) : Finset Feature := Finset.univ.filter (·.featureClass = c)
 
-/-- The place class: the union of the three articulator groups (Padgett p. 83's "Place
+/-- The place class: the union of the three articulator classes (Padgett p. 83's "Place
 simply stands for the set {[labial], [coronal], [dorsal], …}"). -/
 def place : Finset Feature := labial.features ∪ coronal.features ∪ dorsal.features
 
-variable {f : Feature} {c : Category}
+variable {f : Feature} {c : FeatureClass}
 
-theorem mem_features : f ∈ c.features ↔ f.category = c := by simp [features]
+theorem mem_features : f ∈ c.features ↔ f.featureClass = c := by simp [features]
 
 theorem mem_place :
-    f ∈ place ↔ f.category = .labial ∨ f.category = .coronal ∨ f.category = .dorsal := by
+    f ∈ place ↔
+      f.featureClass = .labial ∨ f.featureClass = .coronal ∨ f.featureClass = .dorsal := by
   simp [place, mem_features]
 
-instance (s₁ s₂ : Segment) (c : Category) : Decidable (Set.EqOn s₁ s₂ ↑c.features) :=
+instance (s₁ s₂ : Segment) (c : FeatureClass) : Decidable (Set.EqOn s₁ s₂ ↑c.features) :=
   Set.decidableEqOnOfFintype _ _ _
 
 instance (s₁ s₂ : Segment) : Decidable (Set.EqOn s₁ s₂ ↑place) :=
   Set.decidableEqOnOfFintype _ _ _
 
-end Feature.Category
+end FeatureClass
 
 /-! ### Complex segments -/
 

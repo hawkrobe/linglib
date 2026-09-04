@@ -20,7 +20,7 @@ a class from `src` onto `tgt` is `Finset.piecewise`, agreement on a class is `Se
 geometry is an instance naming which sets are natural. The feature type is a parameter, so an
 instance may range over a binary inventory, over feature tokens indexed by position as in
 Vowel-Place Theory, over privative elements, or over tone features; the flat segmental
-classes are `Phonology/Segmental/Classes.lean`, and the trees of Clements, Sagey
+classes are `Phonology/Segmental/FeatureClass.lean`, and the trees of Clements, Sagey
 and Halle, Vaux and Wolfe are instances in their studies.
 
 ## Main definitions
