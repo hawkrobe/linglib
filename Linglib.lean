@@ -1391,7 +1391,7 @@ import Linglib.Phonology.Subregular.TierRule
 import Linglib.Phonology.Subregular.TierStrictlyLocal
 import Linglib.Phonology.Subregular.Transduction
 import Linglib.Phonology.Segmental.Basic
-import Linglib.Phonology.Segmental.Classes
+import Linglib.Phonology.Segmental.FeatureClass
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Phonology.Segmental.ElementTheory
 import Linglib.Phonology.Tone.Basic
