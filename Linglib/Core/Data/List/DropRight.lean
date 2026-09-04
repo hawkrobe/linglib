@@ -60,6 +60,11 @@ theorem rtake_append_of_le_length {n : ℕ} (l₁ l₂ : List α) (h : n ≤ l�
   rw [rdrop_eq_reverse_drop_reverse, rtake_eq_reverse_take_reverse, ← reverse_append,
     take_append_drop, reverse_reverse]
 
+/-- A nonempty right window ends where the list ends. -/
+theorem getLast?_rtake (l : List α) {n : ℕ} (h : 1 ≤ n) : (l.rtake n).getLast? = l.getLast? := by
+  rw [List.rtake_eq_reverse_take_reverse, List.getLast?_reverse, List.head?_take,
+    if_neg (by omega), List.head?_reverse]
+
 /-- Taking a suffix of a suffix takes the shorter of the two. -/
 theorem rtake_rtake (m n : ℕ) (l : List α) : (l.rtake n).rtake m = l.rtake (min m n) := by
   simp [rtake_eq_reverse_take_reverse, take_take]

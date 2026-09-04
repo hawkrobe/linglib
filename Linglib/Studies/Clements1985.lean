@@ -1,5 +1,6 @@
 import Linglib.Fragments.English.Phonology
 import Linglib.Phonology.FeatureGeometry
+import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
 # Clements (1985): the geometry of phonological features
@@ -30,7 +31,9 @@ flags as possibly superfluous, is dropped by the later geometries formalized her
   features (§4).
 * `Spreading`, `Spreading.features`, `Spreading.apply` — what one rule may spread, the
   root, a class node or one feature ((5)), and the assimilation it effects.
-* `CoronalAssimilation.Applies`, `coronalAssimilation` — the English rule (12).
+* `rule12`, `rule14`, `rule14Nasal` — the English rule (12) as a local rewrite rule copying
+  the place class, its SPE statement (14) copying `[anterior]` and `[distributed]`, and the
+  `[αnasal]` variant the paper contrasts with it.
 
 ## Main results
 
@@ -40,9 +43,12 @@ flags as possibly superfluous, is dropped by the later geometries formalized her
   against the `[αnasal]` variant of (14); `eq_root_of_continuant_of_voice` is the Kikuyu
   case of §5.1 and `supralaryngeal_subset_of_anterior_of_continuant` the palatalisation
   case of §5.2.
-* `coronalAssimilation_n_θ`, `coronalAssimilation_t_θ`, `coronalAssimilation_d_θ`,
-  `coronalAssimilation_n_esh` — *tenth*, *eighth*, *hundredth*, *insure* from table (11):
-  the target takes the trigger's place features and nothing else.
+* `rule12_n_θ`, `rule12_t_θ`, `rule12_d_θ`, `rule12_n_esh` — *tenth*, *eighth*,
+  *hundredth*, *insure* from table (11): the target takes the trigger's place features and
+  nothing else; `rule12_n_p` and `rule12_s_θ` are the non-sites.
+* `rule14_n_θ`, `rule14_n_esh`, `no_spreading_nasal_distributed` — (14) agrees with (12) on
+  the English data, but its alpha-variables accept the `[αnasal]` variant that no single-node
+  spreading can express.
 * `preaspiration` — spreading the vowel's supralaryngeal node onto the delinked first half
   of an aspirated geminate keeps the stop's laryngeal features ((7)), by the substrate's
   disjointness of sister classes.
@@ -58,9 +64,9 @@ so the trigger's unspecified features under the node replace the target's, as th
 convention of (13) requires; single-feature spreading is `Features.Bundle.assimilate`
 (`Spreading.apply_feature`). The English segments are the Fragment's; its /r/ is
 [+anterior] where table (10) has [−anterior, −distributed], so the retroflex row of (11)
-(*tree*, *dream*, *enrol*) is not derived. The SPE rule (14) needs α-variables that
-`Subregular.LocalRewrite` does not provide, so the comparison with (12) is stated on the
-geometric side only.
+(*tree*, *dream*, *enrol*) is not derived. The SPE rule (14) is `Effect.copyRight` on the
+two-feature set and (12) the same effect on the place class, so the comparison is between
+the sets a rule may copy, not between formalisms.
 
 ## TODO
 
@@ -86,7 +92,7 @@ geometric side only.
 
 namespace Clements1985
 
-open Phonology Phonology.FeatureGeometry English.Phonology
+open Phonology Phonology.FeatureGeometry English.Phonology Subregular.LocalRewrite
 
 attribute [local instance] Set.decidableEqOnOfFintype
 
@@ -233,49 +239,61 @@ theorem supralaryngeal_subset_of_anterior_of_continuant (h₁ : Feature.anterior
     naturalClass Node.supralaryngeal ⊆ σ.features := by
   revert σ; decide
 
-/-! ### English coronal place assimilation ((10)–(13)) -/
+/-! ### English coronal place assimilation ((10)–(14)) -/
 
-namespace CoronalAssimilation
+/-- Rule (12) as a local rewrite rule: a `[−continuant, +coronal, +anterior]` target, one of
+/t d n/, takes the place node of a following `[+consonantal, +coronal]` segment. -/
+def rule12 : Rule where
+  target := Segment.ofSpecs [(.continuant, false), (.coronal, true), (.anterior, true)]
+  effect := .copyRight (naturalClass Node.place)
+  rightContext := [.seg (Segment.ofSpecs [(.consonantal, true), (.coronal, true)])]
 
-/-- The structural description of (12): a `[−continuant, +coronal, +anterior]` target, one
-of /t d n/, before a `[+consonantal, +coronal]` trigger. -/
-def Applies (tgt trg : Segment) : Prop :=
-  tgt.HasValue .continuant false ∧ tgt.HasValue .coronal true ∧ tgt.HasValue .anterior true ∧
-    trg.HasValue .consonantal true ∧ trg.HasValue .coronal true
+/-- The SPE statement (14): the same target before a `[+coronal]` segment copies that
+segment's `[anterior]` and `[distributed]` by alpha-variables. -/
+def rule14 : Rule where
+  target := Segment.ofSpecs [(.coronal, true), (.anterior, true), (.continuant, false)]
+  effect := .copyRight {Feature.anterior, Feature.distributed}
+  rightContext := [.seg (Segment.ofSpecs [(.coronal, true)])]
 
-instance : DecidableRel Applies := λ _ _ => inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _ ∧ _))
-
-end CoronalAssimilation
-
-/-- Rule (12): where its structural description holds, spread the trigger's place node onto
-the target. -/
-def coronalAssimilation (tgt trg : Segment) : Segment :=
-  if CoronalAssimilation.Applies tgt trg then (Spreading.node .place).apply trg tgt else tgt
+/-- The variant of (14) with `[αnasal]` for `[αanterior]`: "no more and no less ordinary" as
+an SPE rule, and unattested. -/
+def rule14Nasal : Rule := { rule14 with effect := .copyRight {Feature.nasal, Feature.distributed} }
 
 /-- *tenth*: /n/ before /θ/ takes `[+distributed]` and nothing else — a dental nasal. -/
-theorem coronalAssimilation_n_θ : coronalAssimilation n θ = n.setFeature .distributed true := by
-  decide
+theorem rule12_n_θ : rule12.apply [n, θ] = [n.setFeature .distributed true, θ] := by decide
 
 /-- *eighth*: /t/ before /θ/. -/
-theorem coronalAssimilation_t_θ : coronalAssimilation t θ = t.setFeature .distributed true := by
-  decide
+theorem rule12_t_θ : rule12.apply [t, θ] = [t.setFeature .distributed true, θ] := by decide
 
 /-- *hundredth*: /d/ before /θ/. -/
-theorem coronalAssimilation_d_θ : coronalAssimilation d θ = d.setFeature .distributed true := by
-  decide
+theorem rule12_d_θ : rule12.apply [d, θ] = [d.setFeature .distributed true, θ] := by decide
 
 /-- *insure*: /n/ before /ʃ/ is postalveolar, `[−anterior, +distributed]`, and still a
 non-strident nasal, `[strident]` and `[nasal]` being manner features. -/
-theorem coronalAssimilation_n_esh :
-    coronalAssimilation n esh = (n.setFeature .anterior false).setFeature .distributed true := by
+theorem rule12_n_esh :
+    rule12.apply [n, esh] = [(n.setFeature .anterior false).setFeature .distributed true, esh] := by
   decide
 
 /-- A labial trigger is no site: *impossible* falls to the separate nasal assimilation
 rule. -/
-example : ¬ CoronalAssimilation.Applies n p := by decide
+theorem rule12_n_p : rule12.apply [n, p] = [n, p] := by decide
 
 /-- A fricative target is no site: the rule affects the stops /t d n/ only. -/
-example : ¬ CoronalAssimilation.Applies s θ := by decide
+theorem rule12_s_θ : rule12.apply [s, θ] = [s, θ] := by decide
+
+/-- On the English data (14) is not distinguishable from (12). -/
+theorem rule14_n_θ : rule14.apply [n, θ] = rule12.apply [n, θ] := by decide
+
+theorem rule14_n_esh : rule14.apply [n, esh] = rule12.apply [n, esh] := by decide
+
+/-- What separates them: the `[αnasal]` variant is a rule of the same form and applies, while
+no single-node spreading carries `[nasal]` and `[distributed]` without the whole
+supralaryngeal class (`supralaryngeal_subset_of_nasal_of_distributed`). -/
+theorem no_spreading_nasal_distributed :
+    ∀ σ : Spreading, σ.features ≠ {Feature.nasal, Feature.distributed} := by
+  decide
+
+theorem rule14Nasal_n_θ : rule14Nasal.apply [n, θ] ≠ [n, θ] := by decide
 
 /-! ### Supralaryngeal spreading: Icelandic preaspiration ((6)–(7)) -/
 
