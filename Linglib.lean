@@ -1335,6 +1335,7 @@ import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.Constraints.Directional
 import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.Constraints.Profile
+import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.HarmonicGrammar.Expressivity
 import Linglib.Phonology.HarmonicGrammar.Noise
 import Linglib.Phonology.Hiatus

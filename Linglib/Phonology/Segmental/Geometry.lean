@@ -1,150 +1,54 @@
 import Linglib.Phonology.Segmental.Defs
-import Linglib.Core.Data.Fintype.Sets
-import Mathlib.Data.Finset.Piecewise
-import Mathlib.Data.Finset.Card
-import Mathlib.Order.Preorder.Chain
-import Mathlib.Order.Interval.Set.Defs
+import Linglib.Phonology.FeatureGeometry
 
 /-!
-# Feature geometry
+# Segmental feature classes
 
-A feature geometry is a finite rooted tree of class nodes with each terminal feature attached
-below at most one node: dominance is `≤`, the root is `⊥`, and every principal downset is a
-chain, so the natural classes (the features a node dominates) are nested along dominance and
-disjoint across incomparable nodes. The class-node idea and the thesis that assimilation
-spreads a single node are [clements-1985]'s; the articulator nodes are [sagey-1986]'s;
-[halle-vaux-wolfe-2000] lists the four innovations since then (Unified Feature Theory,
-Vowel-Place Theory, Partial Spreading, Strict Locality) and records that no consensus exists on
-which to adopt, while [padgett-2002] drops constituency and lets constraints refer to classes as
-sets. Current analyses refer to classes rather than to trees — [brown-meyer-2024]'s
-AGREE[place] is agreement on the place features — so the class-set is the primitive here:
-`FeatureGeometry` is a typeclass any node type can instantiate, natural classes are `Finset`s,
-spreading a class from `src` onto `tgt` is `Finset.piecewise`, and agreement on a class is
-`Set.EqOn`. The only instance in the substrate is the theory-neutral `Feature.Category`
-grouping of [hayes-2009]'s chart (manner, laryngeal, labial, coronal, dorsal under a root),
-with Place the union of the three articulator classes rather than a node; the trees of
-[clements-1985], [sagey-1986] and [halle-vaux-wolfe-2000] are instances in their studies.
+The theory-neutral grouping of [hayes-2009]'s features — the manner and major-class features,
+the laryngeal features, and the features of the three oral articulators, under a root
+standing for the whole segment — as an instance of `FeatureGeometry`, with Place the union of
+the articulator classes rather than a node. Whether Place is a constituent, where
+[continuant] and [nasal] attach, and how vowel place relates to consonant place is where the
+geometries of [clements-1985], [sagey-1986] and [halle-vaux-wolfe-2000] part ways, so each is
+an instance in its study and the substrate commits to none. Designated articulators are the
+articulator features a segment is specified for ([halle-vaux-wolfe-2000] §1.2.2), and a
+complex segment has more than one ([sagey-1986]). Agreement on the place class,
+[brown-meyer-2024]'s AGREE[place], is `Set.EqOn` on `Feature.Category.place`.
 
 ## Main definitions
 
-* `FeatureGeometry` — the class: `isChain_Iic` (principal downsets are chains) and `node`
-  (each feature's class node, if any).
-* `FeatureGeometry.naturalClass` — the features a node dominates.
-* `Feature.Category`, `Feature.category`, `Feature.Category.place` — the consensus grouping
-  and the place class.
-* `Segment.articulators`, `Segment.IsComplex` — designated articulators as features and
-  complex segments.
-
-## Main results
-
-* `naturalClass_anti`, `disjoint_naturalClass` — natural classes shrink along dominance and
-  are disjoint across incomparable nodes.
-* `eqOn_piecewise_of_le`, `eqOn_piecewise_of_not_le` — spreading a node carries every class it
-  dominates and leaves every incomparable class untouched.
-* `mem_naturalClass_bot` — the root's class is every attached feature: total assimilation.
+* `Feature.Category`, `Feature.category` — the consensus grouping and its `FeatureGeometry`
+  instance.
+* `Feature.Category.place` — the place class, the union of the three articulator classes.
+* `Segment.articulators`, `Segment.IsComplex` — designated articulators and complex segments.
 
 ## Implementation notes
 
-Instances build dominance from a parent function: `up n` is `n` with its ancestors,
-`PartialOrder.lift up` is dominance, the root is `⊥`, and the chain axiom is `decide`d.
-`node` is `Option`-valued so a geometry may leave features unplaced; the consensus grouping is
-total. Spreading an arbitrary set of terminals ([halle-vaux-wolfe-2000]'s partial spreading,
-[padgett-2002]'s partial class behaviour) is `Finset.piecewise` on that set with no further
-apparatus, and single-feature spreading is `Features.Bundle.assimilate`
-(`Finset.piecewise_singleton`). The linking of a spread node to several anchors is the
-tier-association object `AR` (`Autosegmental/AR.lean`), not recorded on segments.
+The instance follows the recipe of `Phonology/FeatureGeometry.lean`: a parent function, `up`,
+`PartialOrder.lift`, and the chain axiom by `decide`. The grouping is total, so the root's class
+is the whole inventory.
 
 ## References
 
-* [clements-1985] — class nodes and single-node spreading.
-* [sagey-1986] — articulator nodes and complex segments.
-* [halle-vaux-wolfe-2000] — the four innovations and the absence of consensus (§1.1),
-  designated articulators as features (§1.2.2), terminal spreading (§1.2.3).
-* [padgett-2002] — feature classes as sets targeted by constraints.
-* [brown-meyer-2024] — AGREE[place] and AGREE[voice] over classes.
 * [hayes-2009] — the feature inventory and its chart grouping.
+* [padgett-2002] — Place as the set of place features (p. 83).
+* [sagey-1986] — articulator nodes and complex segments.
+* [halle-vaux-wolfe-2000] — designated articulators as features (§1.2.2), [k͡p] against [kʷ]
+  (p. 435).
+* [clements-1985] — the class-node geometry the instances descend from.
+* [brown-meyer-2024] — AGREE[place] over the place class.
 -/
 
 namespace Phonology
 
-/-! ### The class -/
-
-/-- A feature geometry: a finite rooted tree of class nodes — dominance `≤`, root `⊥`, every
-principal downset a chain — with each terminal feature attached below at most one node. -/
-class FeatureGeometry (N : Type*) [PartialOrder N] [OrderBot N] where
-  /-- Every principal downset is a chain: the nodes dominating a node are linearly ordered. -/
-  isChain_Iic (c : N) : IsChain (· ≤ ·) (Set.Iic c)
-  /-- The class node a terminal feature hangs from, if the geometry places it. -/
-  node : Feature → Option N
-
-namespace FeatureGeometry
-
-variable {N : Type*} [PartialOrder N] [OrderBot N] [FeatureGeometry N] [DecidableLE N]
-
-/-! ### Natural classes -/
-
-/-- The natural class of a node: the features attached at or below it. -/
-def naturalClass (a : N) : Finset Feature :=
-  Finset.univ.filter λ f => ∃ m ∈ (node f : Option N), a ≤ m
-
-variable {a b : N} {f : Feature}
-
-theorem mem_naturalClass : f ∈ naturalClass a ↔ ∃ m ∈ (node f : Option N), a ≤ m := by
-  simp [naturalClass]
-
-/-- The root's class is every attached feature: spreading it is total assimilation. -/
-theorem mem_naturalClass_bot : f ∈ naturalClass (⊥ : N) ↔ (node f : Option N).isSome := by
-  simp [mem_naturalClass, Option.isSome_iff_exists]
-
-/-- Natural classes shrink along dominance. -/
-theorem naturalClass_anti (h : a ≤ b) : naturalClass b ⊆ naturalClass a := λ g hg => by
-  rw [mem_naturalClass] at hg ⊢
-  obtain ⟨m, hm, hbm⟩ := hg
-  exact ⟨m, hm, h.trans hbm⟩
-
-/-- Incomparable nodes have disjoint natural classes. -/
-theorem disjoint_naturalClass (h₁ : ¬ a ≤ b) (h₂ : ¬ b ≤ a) :
-    Disjoint (naturalClass a) (naturalClass b) := by
-  rw [Finset.disjoint_left]
-  intro g hga hgb
-  rw [mem_naturalClass] at hga hgb
-  obtain ⟨m, hm, ham⟩ := hga
-  obtain ⟨m', hm', hbm⟩ := hgb
-  rw [Option.mem_def] at hm hm'
-  rw [hm, Option.some.injEq] at hm'
-  subst hm'
-  rcases eq_or_ne a b with rfl | hab
-  · exact h₁ le_rfl
-  · exact (isChain_Iic m ham hbm hab).elim h₁ h₂
-
-/-! ### Spreading -/
-
-variable (src tgt : Segment)
-
-/-- Spreading node `a` from `src` onto `tgt` carries every class `a` dominates. -/
-theorem eqOn_piecewise_of_le (h : a ≤ b) :
-    Set.EqOn ((naturalClass a).piecewise src tgt) src ↑(naturalClass b) :=
-  λ _ hg => Finset.piecewise_eq_of_mem _ _ _ (naturalClass_anti h hg)
-
-/-- Spreading node `a` leaves every class incomparable with `a` untouched. -/
-theorem eqOn_piecewise_of_not_le (h₁ : ¬ a ≤ b) (h₂ : ¬ b ≤ a) :
-    Set.EqOn ((naturalClass a).piecewise src tgt) tgt ↑(naturalClass b) :=
-  λ _ hg =>
-    Finset.piecewise_eq_of_notMem _ _ _ (Finset.disjoint_right.1 (disjoint_naturalClass h₁ h₂) hg)
-
-instance (s₁ s₂ : Segment) (a : N) : Decidable (Set.EqOn s₁ s₂ ↑(naturalClass a)) :=
-  Set.decidableEqOnOfFintype _ _ _
-
-end FeatureGeometry
+open FeatureGeometry
 
 /-! ### The consensus classification -/
 
 /-- The theory-neutral grouping of the features, [hayes-2009]'s chart read as [padgett-2002]'s
 classes: the manner and major-class features, the laryngeal features, and the features of the
 three oral articulators, under a root standing for the whole segment. Place is the union of
-the articulator classes and not a node, since whether it is a constituent and how vowel place
-relates to it is where the geometries of `Studies/Clements1985.lean`, `Studies/Sagey1986.lean`
-and `Studies/HalleVauxWolfe2000.lean` part ways. -/
+the articulator classes and not a node. -/
 inductive Feature.Category where
   | root | manner | laryngeal | labial | coronal | dorsal
   deriving DecidableEq, Repr, Fintype
@@ -179,11 +83,10 @@ def Feature.category : Feature → Feature.Category
   | .coronal | .anterior | .distributed => .coronal
   | .dorsal | .high | .low | .front | .back | .tense => .dorsal
 
-instance : FeatureGeometry Feature.Category where
+instance : FeatureGeometry Feature Feature.Category where
   isChain_Iic := by unfold IsChain Set.Pairwise; decide +revert
   node f := some f.category
 
-open FeatureGeometry in
 /-- The place class: the union of the three articulator classes ([padgett-2002] p. 83's
 "Place simply stands for the set {[labial], [coronal], [dorsal], …}"). -/
 def Feature.Category.place : Finset Feature :=

@@ -100,7 +100,7 @@ def node : Feature → Option Node
   | .voice | .spreadGlottis | .constrGlottis => some .larynx
   | .tense => none
 
-instance : FeatureGeometry Node where
+instance : FeatureGeometry Feature Node where
   isChain_Iic := by unfold IsChain Set.Pairwise; decide +revert
   node := node
 

@@ -18,7 +18,7 @@ preaspiration ((6)–(7), after [thrainsson-1978]), Klamath lateral rules ((8)�
 and [steriade-1982]'s Shared Features Convention) and the Kikuyu and palatalisation cases
 of §5, and §4 splits the place features into a primary set P, present in consonants and
 vowels, and a secondary set S, normally absent from plain consonants. The tree is an
-instance of the substrate's `FeatureGeometry`; its manner node, which the paper itself
+instance of `Phonology/FeatureGeometry.lean`; its manner node, which the paper itself
 flags as possibly superfluous, appears in no later geometry (`Studies/Sagey1986.lean`,
 `Studies/HalleVauxWolfe2000.lean`).
 
@@ -132,7 +132,7 @@ def classNode? : Feature → Option Node
   | .labial | .coronal | .anterior | .distributed | .high | .back | .round => some .place
   | _ => none
 
-instance : FeatureGeometry Node where
+instance : FeatureGeometry Feature Node where
   isChain_Iic := by unfold IsChain Set.Pairwise; decide +revert
   node := classNode?
 
