@@ -817,7 +817,7 @@ prevalence). [leslie-2008] documents the empirical observation;
     |R∩S| : |R∖S| — i.e. no `Proportional` quantifier, every counting quantifier
     in `Quantification.Counting` including `mostOn` — can capture generic
     endorsement. This is exactly where the majority view fails: contrast
-    `Cohen1999.cohen_proportional`, which shows Cohen's θ = 1/2 GEN *is* proportional
+    `Cohen1999.gen_proportional`, which shows Cohen's θ = 1/2 GEN *is* proportional
     (and hence cannot exhibit this asymmetry). -/
 theorem same_prevalence_opposite_endorsement :
     (S1gen (priorR laysEggsPrior) (prevPct 50) .generic >

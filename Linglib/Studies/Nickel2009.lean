@@ -161,6 +161,9 @@ abbrev bearSA : Entity → Prop := fun e => e.id ≥ 5 ∧ e.id < 10
 abbrev bearEU : Entity → Prop := fun e => e.id ≥ 10 ∧ e.id < 15
 abbrev bearAS : Entity → Prop := fun e => e.id ≥ 15
 
+/-- The disjunction of the habitat alternatives: every bear lives somewhere. -/
+abbrev bearHabitat : Entity → Prop := fun e => bearNA e ∨ bearSA e ∨ bearEU e ∨ bearAS e
+
 def bearWays : Finset NormalcyWay := {⟨1⟩, ⟨2⟩, ⟨3⟩, ⟨4⟩}
 
 abbrev bearNormalIn : Entity → NormalcyWay → Prop := fun e w =>
@@ -191,23 +194,25 @@ theorem ways_incompatible :
 
 /-! ### The majority view fails where Nickel's succeeds
 
-The headline contrast, now a theorem over a **shared** model citing
-[cohen-1999a]'s `cohenGEN` directly (not a local re-implementation). The majority
-view fails on the conjunction because the Asia conjunct has prevalence 4/10 < 1/2;
-Nickel's view succeeds. Per the chronology rule this comparison lives in the later
-paper (Nickel 2009 > Cohen 1999), which is the one that draws it. -/
+The headline contrast, a theorem over a **shared** model citing [cohen-1999a]'s
+`gen` directly, with the habitats as the alternative set. The majority view fails
+on the conjunction because the Asia conjunct has prevalence 4/10 < 1/2; Nickel's
+view succeeds. Per the chronology rule this comparison lives in the later paper
+(Nickel 2009 > Cohen 1999), which is the one that draws it. -/
 
 /-- Cohen's majority GEN is false for "Elephants live in Asia" (prevalence 4/10). -/
 theorem cohen_fails_elephant_asia :
-    ¬ Cohen1999.cohenGEN elephants isElephant livesInAsia := by
-  rw [Cohen1999.cohen_iff_thresholdGt elephants isElephant livesInAsia (by decide)]
+    ¬ Cohen1999.gen elephants isElephant
+      (fun e => livesInAfrica e ∨ livesInAsia e) livesInAsia := by
+  rw [Cohen1999.gen_iff_thresholdGt _ _ _ _ (by decide)]
   decide
 
 /-- **Cohen vs Nickel on the conjunctive generic, over one shared model.** The
     majority view fails (Asia is a minority habitat) while Nickel's way-indexed view
     succeeds — exactly the divergence Nickel's paper draws against Cohen. -/
 theorem cohen_fails_nickel_succeeds_on_conjunction :
-    ¬ Cohen1999.cohenGEN elephants isElephant livesInAsia ∧
+    ¬ Cohen1999.gen elephants isElephant
+      (fun e => livesInAfrica e ∨ livesInAsia e) livesInAsia ∧
     nickelConjunctiveGEN elephants elephantNormalIn ways
       isElephant livesInAfrica livesInAsia := by
   refine ⟨cohen_fails_elephant_asia, ?_⟩
@@ -216,12 +221,12 @@ theorem cohen_fails_nickel_succeeds_on_conjunction :
 /-- The bears conjunction (2a) fails even harder for the majority view: every one of
     the four habitats is a 25% minority. -/
 theorem cohen_fails_all_bear_habitats :
-    ¬ Cohen1999.cohenGEN bears isBear bearNA ∧
-    ¬ Cohen1999.cohenGEN bears isBear bearSA ∧
-    ¬ Cohen1999.cohenGEN bears isBear bearEU ∧
-    ¬ Cohen1999.cohenGEN bears isBear bearAS := by
+    ¬ Cohen1999.gen bears isBear bearHabitat bearNA ∧
+    ¬ Cohen1999.gen bears isBear bearHabitat bearSA ∧
+    ¬ Cohen1999.gen bears isBear bearHabitat bearEU ∧
+    ¬ Cohen1999.gen bears isBear bearHabitat bearAS := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    · rw [Cohen1999.cohen_iff_thresholdGt _ _ _ (by decide)]; decide
+    · rw [Cohen1999.gen_iff_thresholdGt _ _ _ _ (by decide)]; decide
 
 /-! ### Connection to Traditional GEN -/
 
