@@ -108,6 +108,16 @@ theorem predict_softmax_eq_of_score_eq {α : ℝ}
     s.predict c1 = s.predict c2 := by
   rw [predict_softmax_of_mem _ hd h1, predict_softmax_of_mem _ hd h2, heq]
 
+/-- With two candidates, the softmax prediction is the logistic function of
+    the scaled score difference. -/
+theorem predict_softmax_pair [DecidableEq Cand] {α : ℝ} (hd : s.decoder = softmaxDecoder α)
+    {a b : Cand} (hab : a ≠ b) (hc : s.candidates = {a, b}) :
+    s.predict a = Real.sigmoid (α * (s.score a - s.score b)) := by
+  rw [predict_softmax_of_mem _ hd (hc ▸ Finset.mem_insert_self a {b}), hc, Finset.sum_pair hab,
+    Real.sigmoid_def, show -(α * (s.score a - s.score b)) = α * s.score b - α * s.score a by
+      ring,
+    Real.exp_sub, one_add_div (Real.exp_pos _).ne', inv_div]
+
 /-- For a system whose decoder is `softmaxDecoder α`, predicted
     probabilities sum to 1 over the (non-empty) candidate set.
     Specialises `predict_sum_eq_one` so consumers needn't supply
