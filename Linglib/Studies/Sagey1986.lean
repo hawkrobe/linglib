@@ -12,8 +12,8 @@ PhD dissertation, Massachusetts Institute of Technology.
 
 [sagey-1986] proposes a hierarchical feature geometry organized by
 vocal tract articulator, establishing the labial, coronal, dorsal, and
-soft palate nodes (`Node` below, an instance of the substrate's
-`FeatureGeometry`). The geometry predicts which multiply-articulated
+soft palate nodes (`Node` below, an instance of
+`Phonology/FeatureGeometry.lean`). The geometry predicts which multiply-articulated
 (complex) segments are possible in human language
 (`Segment.IsComplex` in `Phonology/Segmental/Geometry.lean`).
 
@@ -324,7 +324,7 @@ def node : Feature → Node
   | .coronal | .anterior | .distributed | .lateral | .strident => .coronal
   | .dorsal | .high | .low | .front | .back | .tense => .dorsal
 
-instance : Phonology.FeatureGeometry Node where
+instance : Phonology.FeatureGeometry Feature Node where
   isChain_Iic := by unfold IsChain Set.Pairwise; decide +revert
   node f := some (node f)
 
