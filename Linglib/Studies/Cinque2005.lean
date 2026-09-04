@@ -135,7 +135,7 @@ structure Stage where
 /-- Merge the modifier `m` above the current object, then optionally raise a subtree containing
 the overt noun to the left edge. -/
 private def step (m : LIToken) (st : Stage) : List Stage :=
-  let d : Derivation := ⟨st.derivation.initial, st.derivation.steps ++ [.emL (leaf m)]⟩
+  let d : Derivation := ⟨st.derivation.initial, st.derivation.steps ++ [.em .left (leaf m)]⟩
   let p := m * st.planar
   ⟨d, p, st.marks, st.raises⟩ ::
     ((subtrees st.planar.val).filter hasN).filterMap fun s =>
