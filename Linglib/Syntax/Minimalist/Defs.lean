@@ -10,7 +10,7 @@ This file defines that alphabet: categorial features `Cat`, a selectional stack 
 consumed left to right, the feature bundle `SimpleLI` of a category and its selectional
 requirements, `LexicalItem` as a nonempty list of bundles (a head that has incorporated another
 carries both), and `LIToken`, an instantiated lexical item. It is carrier-agnostic; the carrier
-built over `LIToken ⊕ Unit` is `SyntacticObject/Basic.lean`. `LIToken.selects` is c-selection
+built over `LIToken ⊕ Option LIToken` is `SyntacticObject/Basic.lean`. `LIToken.selects` is c-selection
 between tokens, `ConventionDir` the harmonic head-side parameter, and `uposToCat` the map from
 Universal Dependencies part-of-speech tags into `Cat`.
 

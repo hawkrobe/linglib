@@ -10,7 +10,7 @@ import Linglib.Syntax.Minimalist.Workspace.Basic
 # Merge on the syntactic-object carrier
 
 Merge on the carrier is the bare binary node `SyntacticObject.node` with root label
-`Sum.inr ()`. This file identifies it with the algebraic Merge operator of `Merge/Basic.lean` on
+`Sum.inr none`. This file identifies it with the algebraic Merge operator of `Merge/Basic.lean` on
 workspaces lifted along `of'`: External Merge of two objects is `mergeOp_pair`, and Internal
 Merge of a mover with its remainder is the two-stage composition `mergeOp_im_composition`, given
 the unique Δ^ρ cut extracting the mover.
@@ -33,7 +33,7 @@ open RoseTree RoseTree.Nonplanar ConnesKreimer
 /-- External Merge on the carrier is the algebraic Merge with the bare root label on the
     two-object workspace. -/
 theorem mergeOp_node (S S' : SyntacticObject) :
-    Merge.mergeOp (R := ℤ) (Sum.inr ()) S.val S'.val
+    Merge.mergeOp (R := ℤ) (Sum.inr none) S.val S'.val
         (of' ({S.val, S'.val} : Forest (Nonplanar SOLabel)))
       = of' (R := ℤ) ({(node S S').val} : Forest (Nonplanar SOLabel)) := by
   rw [Merge.mergeOp_pair, node_val]
@@ -46,12 +46,12 @@ theorem mergeOp_node_im (mover remainder T : SyntacticObject)
         (fun p => p.1 = ({mover.val} : Forest (Nonplanar SOLabel))) = {p0})
     (h_remainder : p0.2 = remainder.val)
     (hT : T.val ≠ mover.val) :
-    Merge.mergeOp (R := ℤ) (Sum.inr ()) remainder.val mover.val
+    Merge.mergeOp (R := ℤ) (Sum.inr none) remainder.val mover.val
         (Merge.mergeOpUnit (R := ℤ) mover.val
           (of' ({T.val} : Forest (Nonplanar SOLabel))))
       = of' (R := ℤ)
           ({(node remainder mover).val} : Forest (Nonplanar SOLabel)) := by
-  rw [Merge.mergeOp_im_composition (Sum.inr ()) mover.val T.val remainder.val
+  rw [Merge.mergeOp_im_composition (Sum.inr none) mover.val T.val remainder.val
         p0 h_filter h_remainder hT, node_val]
 
 end Minimalist.SyntacticObject

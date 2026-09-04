@@ -151,7 +151,7 @@ theorem SelectionState.head_mul {r : LIToken}
 /-! ### Selection check on the carriers -/
 
 /-- The selection algebra: the `SyntacticObject.mergeAlgebra` of token + `outerSel`
-    leaves and the saturated, index-free trace. -/
+    leaves and the saturated trace, indexed or not. -/
 def selNode : SOLabel → List SelectionState → SelectionState :=
   mergeAlgebra (fun tok => .of tok tok.item.outerSel) (.of (mkTraceToken 0) [])
 
@@ -182,7 +182,7 @@ def selCheckN : Nonplanar SOLabel → SelectionState :=
     selCheckN (Nonplanar.mk p) = selCheckPlanar p := rfl
 
 theorem selCheckN_node (a b : Nonplanar SOLabel) :
-    selCheckN (Nonplanar.node (Sum.inr ()) {a, b}) = selCheckN a * selCheckN b :=
+    selCheckN (Nonplanar.node (Sum.inr none) {a, b}) = selCheckN a * selCheckN b :=
   liftN_node _ _ a b
 
 /-! ### The selection-driven head on `SyntacticObject` -/

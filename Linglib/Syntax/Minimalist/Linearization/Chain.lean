@@ -28,7 +28,7 @@ once.
 
 ## Main definitions
 
-* `ChainLabel`, `tokenList`, `occurrences`, `unboundTraces`, `IsShared`: occurrences and chains.
+* `tokenList`, `occurrences`, `unboundTraces`, `IsShared`: occurrences and chains.
 * `terms`: the distinct subtrees, a shared constituent's once.
 * `elidedDomains`, `IsSilenced`, `pfPhon`: pronunciation under [E].
 * `IsVacuous`, `PronunciationEconomy`: the ban on vacuous ellipsis.
@@ -48,67 +48,31 @@ once.
 
 namespace Minimalist
 
-open RoseTree RoseTree.Pathed
+open RoseTree RoseTree.Pathed SyntacticObject
 open Syntax.Question (MWFParameter PhaseEdge)
 
-/-! ### Objects with indexed traces -/
-
-/-- The label of a position in a planar object with indexed traces: a token, the trace of a
-moved token, or an internal node. -/
-inductive ChainLabel
-  | token (tok : LIToken)
-  | trace (tok : LIToken)
-  | inner
-  deriving DecidableEq, Repr
-
-namespace ChainLabel
-
-/-- The token at a token position. -/
-def token? : ChainLabel → Option LIToken
-  | token tok => some tok
-  | _ => none
-
-/-- The token at a trace position. -/
-def trace? : ChainLabel → Option LIToken
-  | trace tok => some tok
-  | _ => none
-
-/-- Forget the indices: the planar object of `Linearization/Replay.lean`. -/
-def toSOLabel : ChainLabel → SOLabel
-  | token tok => .inl tok
-  | trace _ | inner => .inr ()
-
-end ChainLabel
-
-/-- A token position. -/
-def leafC (tok : LIToken) : RoseTree ChainLabel := .node (.token tok) []
-
-/-- The trace of `tok`. -/
-def traceC (tok : LIToken) : RoseTree ChainLabel := .node (.trace tok) []
-
-/-- The Merge of two objects. -/
-def nodeC (l r : RoseTree ChainLabel) : RoseTree ChainLabel := .node .inner [l, r]
+/-! ### Occurrences and chains -/
 
 mutual
 /-- The positions whose label `f` accepts, with their paths, left to right. -/
-def positions (f : ChainLabel → Option LIToken) : RoseTree ChainLabel → List (Path × LIToken)
+def positions (f : SOLabel → Option LIToken) : RoseTree SOLabel → List (Path × LIToken)
   | .node a cs => match f a with
     | some tok => [([], tok)]
     | none => positionsAux f 0 cs
 /-- Auxiliary: the positions in a children list from index `i`. -/
-def positionsAux (f : ChainLabel → Option LIToken) :
-    ℕ → List (RoseTree ChainLabel) → List (Path × LIToken)
+def positionsAux (f : SOLabel → Option LIToken) :
+    ℕ → List (RoseTree SOLabel) → List (Path × LIToken)
   | _, [] => []
   | i, c :: cs => (positions f c).map (λ x => (i :: x.1, x.2)) ++ positionsAux f (i + 1) cs
 end
 
 /-- The tokens with their paths, left to right. -/
-def tokenList : RoseTree ChainLabel → List (Path × LIToken) := positions ChainLabel.token?
+def tokenList : RoseTree SOLabel → List (Path × LIToken) := positions (Sum.elim some λ _ => none)
 
 /-- The traces with their paths, left to right. -/
-def traceList : RoseTree ChainLabel → List (Path × LIToken) := positions ChainLabel.trace?
+def traceList : RoseTree SOLabel → List (Path × LIToken) := positions (Sum.elim (λ _ => none) id)
 
-variable (t : RoseTree ChainLabel)
+variable (t : RoseTree SOLabel)
 
 /-- The occurrences of `tok`. -/
 def occurrences (tok : LIToken) : List Path :=
@@ -118,7 +82,7 @@ def occurrences (tok : LIToken) : List Path :=
 def tokens : Finset LIToken := ((tokenList t).map (·.2)).toFinset
 
 /-- The terms of `t`: its subtrees, a shared constituent's once. -/
-def terms : Finset (RoseTree ChainLabel) := ((vertices t).filterMap t.subtreeAt).toFinset
+def terms : Finset (RoseTree SOLabel) := ((vertices t).filterMap t.subtreeAt).toFinset
 
 /-- `tok` is shared, dominated by two mothers: it occurs twice. -/
 def IsShared (tok : LIToken) : Prop := 2 ≤ (occurrences t tok).length
@@ -194,32 +158,32 @@ instance : Decidable (PronunciationEconomy t) := inferInstanceAs (Decidable (∀
 /-- The specifiers and head of the projection of a head of category `c`: down the right spine,
 the left daughters above the head, which is the first selecting item met; `none` when that item
 has another category or the spine ends first. -/
-def projection (c : Cat) : RoseTree ChainLabel → Option (List (RoseTree ChainLabel) × LIToken)
-  | .node .inner [.node (.token tok) [], r] =>
+def projection (c : Cat) : RoseTree SOLabel → Option (List (RoseTree SOLabel) × LIToken)
+  | .node (.inr none) [.node (.inl tok) [], r] =>
       if tok.item.outerSel = [] then
-        (projection c r).map λ x => (leafC tok :: x.1, x.2)
+        (projection c r).map λ x => (leafP tok :: x.1, x.2)
       else if tok.item.outerCat = c then some ([], tok) else none
-  | .node .inner [l, r] => (projection c r).map λ x => (l :: x.1, x.2)
+  | .node (.inr none) [l, r] => (projection c r).map λ x => (l :: x.1, x.2)
   | _ => none
 
 /-- The head of a constituent: the token or trace at a leaf, else the first selecting item down
 the right spine. -/
-def headToken? : RoseTree ChainLabel → Option LIToken
-  | .node (.token tok) _ | .node (.trace tok) _ => some tok
-  | .node .inner [.node (.token tok) [], r] =>
+def headToken? : RoseTree SOLabel → Option LIToken
+  | .node (.inl tok) _ | .node (.inr (some tok)) _ => some tok
+  | .node (.inr none) [.node (.inl tok) [], r] =>
       if tok.item.outerSel = [] then headToken? r else some tok
-  | .node .inner [_, r] => headToken? r
-  | .node .inner _ => none
+  | .node (.inr none) [_, r] => headToken? r
+  | .node (.inr none) _ => none
 
 /-- The constituent is a wh-specifier: its head is a wh-token or its trace. -/
-def IsWhSpecifier (s : RoseTree ChainLabel) : Prop :=
+def IsWhSpecifier (s : RoseTree SOLabel) : Prop :=
   ∃ tok ∈ (headToken? s).toList, tok.item.outerWh = true
 
-instance (s : RoseTree ChainLabel) : Decidable (IsWhSpecifier s) :=
+instance (s : RoseTree SOLabel) : Decidable (IsWhSpecifier s) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The phase at `p`, a `v` or `C` projection: its edge, specifiers and head. -/
-def phaseAt (p : Path) : Option (PhaseEdge × List (RoseTree ChainLabel) × LIToken) :=
+def phaseAt (p : Path) : Option (PhaseEdge × List (RoseTree SOLabel) × LIToken) :=
   (t.subtreeAt p).bind λ s =>
     ((projection .v s).map λ x => (PhaseEdge.vP, x)).or
       ((projection .C s).map λ x => (PhaseEdge.CP, x))
@@ -245,7 +209,7 @@ instance (param : MWFParameter) : Decidable (Converges t param) :=
 and its elided domains the applications of ellipsis. -/
 def planarCost : DerivationCost
   | .lexicalItems => (tokens t).card
-  | .mergeOps => ((terms t).filter λ s => s.value = ChainLabel.inner).card
+  | .mergeOps => ((terms t).filter λ s => s.isLeaf = false).card
   | .agreeOps => 0
   | .ellipsisOps => (elidedDomains t).length
 

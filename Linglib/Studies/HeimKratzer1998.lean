@@ -284,9 +284,8 @@ Traces left by movement are interpreted as variables bound by
 
 #### Trace convention
 
-On the index-free `SyntacticObject` carrier ([marcolli-chomsky-berwick-2025] Def 1.2.1,
-chain identity is workspace-level) a trace is the **single** bare trace leaf
-`SyntacticObject.traceLeaf`, recognized by `SyntacticObject.isTrace`. The semantic trace *index* `n`
+On the `SyntacticObject` carrier ([marcolli-chomsky-berwick-2025] Def 1.2.1) a trace is here
+the bare trace leaf `SyntacticObject.traceLeaf`, recognized by `SyntacticObject.isTrace`. The semantic trace *index* `n`
 is
 not carried by the leaf: it is supplied by the binder (λ-abstraction) at the
 landing site, exactly as in the H&K rule ⟦t_n⟧^g = g(n). The interpretation
@@ -346,7 +345,7 @@ def soSemanticType (so : Minimalist.SyntacticObject) : Option Ty :=
 /--
 Interpret a trace leaf in a syntactic object at a given index.
 
-On the index-free `SyntacticObject` carrier the trace leaf carries no index; the binder at
+The bare trace leaf carries no index; the binder at
 the landing site supplies `n` (H&K's ⟦t_n⟧^g = g(n)). Returns `none` when `so`
 is not the trace leaf.
 -/
@@ -361,11 +360,7 @@ def interpSOTrace {E : Type} (n : ℕ) (so : Minimalist.SyntacticObject) :
 /-- A lexical leaf is not a trace, so it gets no carrier-level type. -/
 @[simp] theorem soSemanticType_lexLeaf (tok : Minimalist.LIToken) :
     soSemanticType (lexLeaf tok) = none := by
-  have hne : ¬ isTrace (lexLeaf tok) := by
-    intro h
-    have hg := congrArg getLIToken h
-    rw [getLIToken_lexLeaf, getLIToken_traceLeaf] at hg
-    exact Option.some_ne_none tok hg
+  have hne : ¬ isTrace (lexLeaf tok) := not_isTrace_lexLeaf tok
   simp only [soSemanticType, if_neg hne]
 
 -- ============================================================================

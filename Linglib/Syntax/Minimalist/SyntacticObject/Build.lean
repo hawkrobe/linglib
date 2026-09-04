@@ -14,7 +14,7 @@ obligation is discharged by `decide`; `SyntacticObject.node_mk` relates such a b
 so theorems stated over `node` apply to it. Merge on the carrier is the node itself, written
 `*`: External Merge of two objects, and the re-merge of a mover with the remainder in Internal
 Merge. The accessors read the root token, leaf and node counts, and the trace predicate; since
-the trace leaf carries no index, `isTrace` is equality with `traceLeaf`.
+`isTrace` recognizes the trace leaves, bare or indexed.
 
 ## Main definitions
 
@@ -34,9 +34,12 @@ namespace SyntacticObject
 /-- A planar lexical leaf. -/
 abbrev leafP (tok : LIToken) : RoseTree SOLabel := .node (Sum.inl tok) []
 /-- The planar trace leaf. -/
-abbrev traceP : RoseTree SOLabel := .node (Sum.inr ()) []
+abbrev traceP : RoseTree SOLabel := .node (Sum.inr none) []
+
+/-- The planar trace of `tok`. -/
+abbrev traceOfP (tok : LIToken) : RoseTree SOLabel := .node (Sum.inr (some tok)) []
 /-- A planar bare binary node. -/
-abbrev nodeP (l r : RoseTree SOLabel) : RoseTree SOLabel := .node (Sum.inr ()) [l, r]
+abbrev nodeP (l r : RoseTree SOLabel) : RoseTree SOLabel := .node (Sum.inr none) [l, r]
 
 /-- The syntactic object of a well-formed planar tree; on a concrete tree the obligation is
     discharged by `decide`. -/
@@ -78,22 +81,35 @@ def mkLeafPhon (cat : Cat) (sel : SelStack) (phon : String) (id : Nat) : Syntact
 def getLIToken (s : SyntacticObject) : Option LIToken :=
   match Nonplanar.rootValue s.val with
   | .inl tok => some tok
-  | .inr () => none
+  | .inr _ => none
 
 @[simp] theorem getLIToken_lexLeaf (tok : LIToken) : (lexLeaf tok).getLIToken = some tok := rfl
 
 @[simp] theorem getLIToken_traceLeaf : traceLeaf.getLIToken = none := rfl
 
+@[simp] theorem getLIToken_traceOf (tok : LIToken) : (traceOf tok).getLIToken = none := rfl
+
+theorem traceOf_ne_traceLeaf (tok : LIToken) : traceOf tok ≠ traceLeaf := by
+  intro h
+  have h' : (Sum.inr (some tok) : SOLabel) = Sum.inr none :=
+    congrArg (fun s : SyntacticObject => Nonplanar.rootValue s.val) h
+  simp at h'
+
 @[simp] theorem getLIToken_node (l r : SyntacticObject) : (node l r).getLIToken = none := by
   rw [getLIToken, node_val, Nonplanar.rootValue_node]
 
-/-- `isTrace s ↔ s = traceLeaf`, since the trace leaf carries no index. -/
-def isTrace (s : SyntacticObject) : Prop := s = traceLeaf
+/-- A trace leaf, bare or indexed. -/
+def isTrace (s : SyntacticObject) : Prop :=
+  (Nonplanar.rootValue s.val).isRight = true ∧ Nonplanar.numNodes s.val = 1
 
-instance (s : SyntacticObject) : Decidable (isTrace s) :=
-  inferInstanceAs (Decidable (_ = _))
+instance (s : SyntacticObject) : Decidable (isTrace s) := inferInstanceAs (Decidable (_ ∧ _))
 
-@[simp] theorem isTrace_traceLeaf : isTrace traceLeaf := rfl
+@[simp] theorem isTrace_traceOf (tok : LIToken) : isTrace (traceOf tok) := ⟨rfl, rfl⟩
+
+@[simp] theorem not_isTrace_lexLeaf (tok : LIToken) : ¬ isTrace (lexLeaf tok) := fun h =>
+  Bool.false_ne_true h.1
+
+@[simp] theorem isTrace_traceLeaf : isTrace traceLeaf := ⟨rfl, rfl⟩
 
 /-- The number of leaves, traces included. -/
 def leafCount (s : SyntacticObject) : Nat := Nonplanar.numLeaves s.val
@@ -138,14 +154,14 @@ example : isTrace traceLeaf ∧ ¬ isTrace (lexLeaf (mkTraceToken 0)) := by deci
 /-- A bare binary node over a lexical leaf and a bare trace, the shape of an Internal-Merge
     result, is a syntactic object. -/
 example :
-    IsSO (Nonplanar.mk (.node (Sum.inr ())
-      [.leaf (Sum.inl (mkTraceToken 0)), .leaf (Sum.inr ())])) := by decide
+    IsSO (Nonplanar.mk (.node (Sum.inr none)
+      [.leaf (Sum.inl (mkTraceToken 0)), .leaf (Sum.inr none)])) := by decide
 /-- A lexical item with children is rejected: lexical items are leaves. -/
 example :
-    ¬ IsSO (Nonplanar.mk (.node (Sum.inl (mkTraceToken 0)) [.leaf (Sum.inr ())])) := by decide
+    ¬ IsSO (Nonplanar.mk (.node (Sum.inl (mkTraceToken 0)) [.leaf (Sum.inr none)])) := by decide
 /-- A ternary bare node is rejected: syntactic objects are binary. -/
 example :
-    ¬ IsSO (Nonplanar.mk (.node (Sum.inr ())
-      [.leaf (Sum.inr ()), .leaf (Sum.inr ()), .leaf (Sum.inr ())])) := by decide
+    ¬ IsSO (Nonplanar.mk (.node (Sum.inr none)
+      [.leaf (Sum.inr none), .leaf (Sum.inr none), .leaf (Sum.inr none)])) := by decide
 
 end Minimalist

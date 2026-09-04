@@ -23,11 +23,11 @@ the second deletion silences nothing new, and it forces the nonpaired sluice to 
 complementizers, only one bearing [E]. In right node raising the same economy prefers sharing
 the pivot to building it twice and, when the verbs match, sharing the verb phrase to eliding it.
 
-Each candidate is a planar object of `Linearization/Chain.lean`, and forgetting its trace indices
-a syntactic object of `SyntacticObject/Basic.lean`: a token at two positions is shared, a moved
-wh-phrase leaves indexed traces at the vP edge and its base position, and the coordinator is left
-out, so a string is its conjuncts' words. The predictions decide: the pronounced strings, the
-unbound traces that carry the paired reading, the asterisks, and the costs the winners beat.
+Each candidate is a planar syntactic object with the chains of `Linearization/Chain.lean`: a token
+at two positions is shared, a moved wh-phrase leaves the traces of its head at the vP edge and its
+base position, and the coordinator is left out, so a string is its conjuncts' words. The predictions
+decide: the pronounced strings, the unbound traces that carry the paired reading, the asterisks, and
+the costs the winners beat.
 
 ## References
 
@@ -39,7 +39,7 @@ unbound traces that carry the paired reading, the asterisks, and the costs the w
 
 namespace CitkoGracaninYuksek2025
 
-open Minimalist RoseTree RoseTree.Pathed
+open Minimalist Minimalist.SyntacticObject RoseTree RoseTree.Pathed
 open Syntax.Question (MWFParameter)
 
 /-! ### The lexicon -/
@@ -78,51 +78,51 @@ def saw := tok 20 .V [.D] "saw"
 
 /-- `[CP wh [C′ c [TP subj [T′ T [vP wh [v′ v VP]]]]]]`: the wh-phrase moved through the edge of
 vP. -/
-def clause (wh c subj T v : LIToken) (VP : RoseTree ChainLabel) : RoseTree ChainLabel :=
-  nodeC (leafC wh) (nodeC (leafC c)
-    (nodeC (leafC subj) (nodeC (leafC T) (nodeC (traceC wh) (nodeC (leafC v) VP)))))
+def clause (wh c subj T v : LIToken) (VP : RoseTree SOLabel) : RoseTree SOLabel :=
+  nodeP (leafP wh) (nodeP (leafP c)
+    (nodeP (leafP subj) (nodeP (leafP T) (nodeP (traceOfP wh) (nodeP (leafP v) VP)))))
 
 /-- Non-bulk sharing under the complementizers `c₁` and `c₂`: each wh-phrase in its own
 conjunct, the subject, T, v and verb shared ((10b), (14), (16b), (38d), (45b), (46b)). -/
-def nonBulk (c₁ c₂ : LIToken) : RoseTree ChainLabel :=
-  nodeC (clause what c₁ you T v (nodeC (leafC teach) (traceC what)))
-    (clause when c₂ you T v (nodeC (leafC teach) (traceC when)))
+def nonBulk (c₁ c₂ : LIToken) : RoseTree SOLabel :=
+  nodeP (clause what c₁ you T v (nodeP (leafP teach) (traceOfP what)))
+    (clause when c₂ you T v (nodeP (leafP teach) (traceOfP when)))
 
 /-- Bulk sharing: one C′ under both wh-phrases, both of which moved through its vP edge ((12b),
 (20b)). -/
-def bulk (c : LIToken) : RoseTree ChainLabel :=
-  let c' := nodeC (leafC c) (nodeC (leafC you) (nodeC (leafC T) (nodeC (traceC what)
-    (nodeC (traceC when)
-      (nodeC (leafC v) (nodeC (nodeC (leafC teach) (traceC what)) (traceC when)))))))
-  nodeC (nodeC (leafC what) c') (nodeC (leafC when) c')
+def bulk (c : LIToken) : RoseTree SOLabel :=
+  let c' := nodeP (leafP c) (nodeP (leafP you) (nodeP (leafP T) (nodeP (traceOfP what)
+    (nodeP (traceOfP when)
+      (nodeP (leafP v) (nodeP (nodeP (leafP teach) (traceOfP what)) (traceOfP when)))))))
+  nodeP (nodeP (leafP what) c') (nodeP (leafP when) c')
 
 /-- Footnote 21's alternative to `bulk`: a shared TP under two complementizers. -/
-def bulkTP (c₁ c₂ : LIToken) : RoseTree ChainLabel :=
-  let tp := nodeC (leafC you) (nodeC (leafC T) (nodeC (traceC what)
-    (nodeC (traceC when)
-      (nodeC (leafC v) (nodeC (nodeC (leafC teach) (traceC what)) (traceC when))))))
-  nodeC (nodeC (leafC what) (nodeC (leafC c₁) tp)) (nodeC (leafC when) (nodeC (leafC c₂) tp))
+def bulkTP (c₁ c₂ : LIToken) : RoseTree SOLabel :=
+  let tp := nodeP (leafP you) (nodeP (leafP T) (nodeP (traceOfP what)
+    (nodeP (traceOfP when)
+      (nodeP (leafP v) (nodeP (nodeP (leafP teach) (traceOfP what)) (traceOfP when))))))
+  nodeP (nodeP (leafP what) (nodeP (leafP c₁) tp)) (nodeP (leafP when) (nodeP (leafP c₂) tp))
 
 /-- Two clauses from separate tokens, the first elided under its [E] complementizer with its
 auxiliary in T, as the Sluicing-COMP generalization requires of a sluice: the ellipsis analysis
 of the coordinated wh-question (11b). -/
-def cwhEllipsis : RoseTree ChainLabel :=
-  nodeC (nodeC (leafC what) (nodeC (leafC cE) (nodeC (leafC you) (nodeC (leafC shouldT)
-      (nodeC (traceC what) (nodeC (leafC v) (nodeC (leafC teach) (traceC what))))))))
-    (clause when should you' T' v' (nodeC (leafC teach') (traceC when)))
+def cwhEllipsis : RoseTree SOLabel :=
+  nodeP (nodeP (leafP what) (nodeP (leafP cE) (nodeP (leafP you) (nodeP (leafP shouldT)
+      (nodeP (traceOfP what) (nodeP (leafP v) (nodeP (leafP teach) (traceOfP what))))))))
+    (clause when should you' T' v' (nodeP (leafP teach') (traceOfP when)))
 
 /-- Two clauses from separate tokens, both elided, the second's object the pronoun of vehicle
 change: the double-ellipsis analysis of the coordinated sluice (19b). -/
-def csEllipsis : RoseTree ChainLabel :=
-  nodeC (clause what cE you T v (nodeC (leafC teach) (traceC what)))
-    (clause when cE' you' T' v' (nodeC (nodeC (leafC teach') (leafC it)) (traceC when)))
+def csEllipsis : RoseTree SOLabel :=
+  nodeP (clause what cE you T v (nodeP (leafP teach) (traceOfP what)))
+    (clause when cE' you' T' v' (nodeP (nodeP (leafP teach') (leafP it)) (traceOfP when)))
 
 /-- A multiple question, both wh-phrases fronted through the vP edge: (28b), and the multiple
 sluice (29b) under an [E] complementizer. -/
-def multipleQuestion (c : LIToken) : RoseTree ChainLabel :=
-  nodeC (leafC who) (nodeC (leafC what) (nodeC (leafC c) (nodeC (traceC who) (nodeC (leafC T)
-    (nodeC (traceC who)
-      (nodeC (traceC what) (nodeC (leafC v) (nodeC (leafC saw) (traceC what)))))))))
+def multipleQuestion (c : LIToken) : RoseTree SOLabel :=
+  nodeP (leafP who) (nodeP (leafP what) (nodeP (leafP c) (nodeP (traceOfP who) (nodeP (leafP T)
+    (nodeP (traceOfP who)
+      (nodeP (traceOfP what) (nodeP (leafP v) (nodeP (leafP saw) (traceOfP what)))))))))
 
 /-- The coordinated wh-question (10b), its complementizer shared. -/
 abbrev cwh := nonBulk should should
@@ -152,7 +152,7 @@ abbrev csnr := nonBulk cE c
 
 /-- The paired reading: the second conjunct holds an unbound trace of the first conjunct's
 wh-phrase, the copy that vehicle change reads as an E-type pronoun (footnote 20). -/
-def Paired (t : RoseTree ChainLabel) : Prop :=
+def Paired (t : RoseTree SOLabel) : Prop :=
   ∃ x ∈ unboundTraces t, x.2 = what ∧ x.1.head? = some 1
 
 instance : DecidablePred Paired := λ _ => inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -161,7 +161,7 @@ instance : DecidablePred Paired := λ _ => inferInstanceAs (Decidable (∃ _ ∈
 theorem candidates_isSO : ∀ t ∈ [cwh, cwhEllipsis, cwhBulk, cwhNullC, cwhNullCSecond, cwhEmbedded,
       cwhEmbeddedTwoC, cwhTwoAux, cs, csTwoC, csEllipsis, csSharedC, csnrTwoE, csnr,
       multipleQuestion c, multipleQuestion cE],
-    isSOPlanar (t.map ChainLabel.toSOLabel) = true := by decide
+    isSOPlanar t = true := by decide
 
 /-! ### The multiple-wh-fronting parameter (27) by language -/
 
@@ -275,29 +275,29 @@ def different' := tok 33 .A (phon := "different")
 def topics' := tok 34 .N (phon := "topics")
 
 /-- The pivot, `on different topics`. -/
-def pivot : RoseTree ChainLabel := nodeC (leafC on) (nodeC (leafC different) (leafC topics))
+def pivot : RoseTree SOLabel := nodeP (leafP on) (nodeP (leafP different) (leafP topics))
 
 /-- `[TP subj [T′ T VP]]`. -/
-def tp (subj T : LIToken) (VP : RoseTree ChainLabel) : RoseTree ChainLabel :=
-  nodeC (leafC subj) (nodeC (leafC T) VP)
+def tp (subj T : LIToken) (VP : RoseTree SOLabel) : RoseTree SOLabel :=
+  nodeP (leafP subj) (nodeP (leafP T) VP)
 
 /-- (53b), after the pruning of [belk-neeleman-philip-2023] that removes the shared pivot from
 the first conjunct: the first verb phrase, the bare verb, elided under [E] on `must`. -/
-def rnrMixed : RoseTree ChainLabel :=
-  nodeC (tp alice mustE (leafC work)) (tp iris oughtToBe (nodeC (leafC working) pivot))
+def rnrMixed : RoseTree SOLabel :=
+  nodeP (tp alice mustE (leafP work)) (tp iris oughtToBe (nodeP (leafP working) pivot))
 /-- (54): the first verb phrase built with its own pivot and elided. -/
-def rnrElided : RoseTree ChainLabel :=
-  nodeC
+def rnrElided : RoseTree SOLabel :=
+  nodeP
     (tp alice mustE
-      (nodeC (leafC work) (nodeC (leafC on') (nodeC (leafC different') (leafC topics')))))
-    (tp iris oughtToBe (nodeC (leafC working) pivot))
+      (nodeP (leafP work) (nodeP (leafP on') (nodeP (leafP different') (leafP topics')))))
+    (tp iris oughtToBe (nodeP (leafP working) pivot))
 /-- (55b): with matching verbs, the verb phrase shared. -/
-def rnrShared : RoseTree ChainLabel :=
-  let VP := nodeC (leafC work) pivot
-  nodeC (tp alice must VP) (tp iris shouldRNR VP)
+def rnrShared : RoseTree SOLabel :=
+  let VP := nodeP (leafP work) pivot
+  nodeP (tp alice must VP) (tp iris shouldRNR VP)
 /-- The rival of (55b) with the shape of (53b). -/
-def rnrMatchedMixed : RoseTree ChainLabel :=
-  nodeC (tp alice mustE (leafC work)) (tp iris shouldRNR (nodeC (leafC working) pivot))
+def rnrMatchedMixed : RoseTree SOLabel :=
+  nodeP (tp alice mustE (leafP work)) (tp iris shouldRNR (nodeP (leafP working) pivot))
 
 theorem rnrMixed_pf : pfPhon rnrMixed =
     ["Alice", "must", "Iris", "ought to be", "working", "on", "different", "topics"] := by decide
