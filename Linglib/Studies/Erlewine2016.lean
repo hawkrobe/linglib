@@ -49,10 +49,9 @@ and long-distance subject extraction places AF on the *embedded* verb,
 whose subject makes the too-local first step, while the matrix verb,
 whose own subject has not moved, must stay transitive.
 
-### Connection to Position.lean
+### Spec-to-Spec anti-locality
 
-The `specToSpecAntiLocality` predicate (Position.lean) formalizes
-the constraint that blocks the transitive derivation: movement from
+The constraint that blocks the transitive derivation: movement from
 Spec,XP to Spec,YP is blocked when YP immediately dominates XP. In
 Kaqchikel, XP = TP and YP = CP. SSAL traces to [abels-2003]'s
 anti-locality theory, with refinements in [boskovic-1997] and
@@ -85,8 +84,7 @@ Both Kaqchikel and Toba Batak have extraction restrictions derived
 from anti-locality in predicate-fronting contexts, but the repair
 strategies differ: Toba Batak restricts extraction to the pivot
 position (structural restriction), while Kaqchikel repairs the
-derivation via AF (alternation strategy). Both use
-`specToSpecAntiLocality` from Position.lean.
+derivation via AF (alternation strategy).
 -/
 
 namespace Erlewine2016
@@ -237,21 +235,21 @@ theorem transitive_worse_on_ssal :
     ssalConstraint .transitiveExtraction >
       ssalConstraint .agentFocusExtraction := by decide
 
-/-! ### Anti-locality predicate grounding -/
+/-! ### Anti-locality grounding -/
 
-/-- The transitive candidate's violation profile reflects
-    `specToSpecAntiLocality` from Position.lean. The SSAL constraint
-    assigns 1 violation to the transitive candidate and 0 to AF,
-    grounding the OT violation count in the structural predicate. -/
+/-- The transitive candidate's violation profile reflects Spec-to-Spec
+    anti-locality. The SSAL constraint assigns 1 violation to the
+    transitive candidate and 0 to AF, grounding the OT violation count
+    in the structural constraint. -/
 theorem antilocality_grounded :
     ssalConstraint .transitiveExtraction = 1 ∧
     ssalConstraint .agentFocusExtraction = 0 :=
   ⟨rfl, rfl⟩
 
 /-- AF wins because it has 0 violations of the highest-ranked constraint.
-    The connection to `specToSpecAntiLocality`: the transitive derivation
-    would require movement from Spec,TP to Spec,CP where CP immediately
-    dominates TP — exactly what the predicate bans. AF avoids this
+    The transitive derivation would require movement from Spec,TP to
+    Spec,CP where CP immediately dominates TP — exactly what the
+    constraint bans. AF avoids this
     by not placing the agent in Spec,TP at all. -/
 theorem antilocality_drives_af :
     ssalConstraint .agentFocusExtraction = 0 ∧
