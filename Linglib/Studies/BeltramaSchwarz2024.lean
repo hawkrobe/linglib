@@ -60,7 +60,7 @@ namespace BeltramaSchwarz2024
 open SocialMeaning.IndexicalField
 open SocialMeaning.SCM
 open SocialMeaning.EckertMontague
-open Semantics.Numerals.Precision
+open Numerals.Precision
 open Data.Examples (LinguisticExample)
 
 /-! ### Conditions -/
@@ -183,7 +183,7 @@ def speakerHalo (c : PersonaCondition) (n : Nat) : ℚ :=
 
 /-- The stimulus numeral's default halo: `haloWidth 200 = 10`. -/
 theorem haloWidth_stated : haloWidth statedAmount = 10 := by
-  have hs : Semantics.Numerals.Roundness.roundnessScore 200 = 6 := by decide
+  have hs : Numerals.Roundness.roundnessScore 200 = 6 := by decide
   unfold haloWidth statedAmount
   rw [hs]; norm_num
 
@@ -231,7 +231,7 @@ theorem personaShift_stated :
 theorem no_shift_on_sharp (c : PersonaCondition) :
     personaShift c displayedAmount = 0 := by
   have h0 : haloWidth displayedAmount = 0 := by
-    have hs : Semantics.Numerals.Roundness.roundnessScore 207 = 0 := by decide
+    have hs : Numerals.Roundness.roundnessScore 207 = 0 := by decide
     unfold haloWidth displayedAmount
     rw [hs]; norm_num
   rcases c with _ | p <;> simp [personaShift, speakerHalo, h0, sign_zero]

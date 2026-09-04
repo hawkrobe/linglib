@@ -51,7 +51,7 @@ structural face on `RSA`/`PMF.posterior` operators:
 
 Truth conditions are grounded compositionally (`every_sem`,
 `ScopeDerivation`) and in the named numeral meanings of
-`Semantics.Numerals`. The kernel faces use `PMF.ofScores` over ℚ≥0 score
+`Numerals`. The kernel faces use `PMF.ofScores` over ℚ≥0 score
 chains at α = 1 (§3.2; costs cancel, fn. 8) with L0 taking no world prior
 (fn. 6); the structural faces are parametric in α (the
 parametric-prior layer is TODO). Developmental claim
@@ -204,7 +204,7 @@ theorem numeral_inverse_not_entails_surface :
 /-! ### Numeral-semantics grounding -/
 
 /-! Connects S&P's `twoNotTruth` truth conditions to linglib's numeral
-semantics infrastructure (named meanings in `Semantics.Numerals`).
+semantics infrastructure (named meanings in `Numerals`).
 
 The truth conditions in the data file are grounded in the named meanings:
 - Exact surface: "exactly 2 didn't jump" = `bareMeaning 2 (4 - w)`
@@ -217,7 +217,7 @@ Convergent evidence for exact semantics from [kennedy-2015]
 (acquisition data — children reject "two" at w=3).
 -/
 
-open Semantics.Numerals (bareMeaning atLeastMeaning)
+open Numerals (bareMeaning atLeastMeaning)
 
 /-- Exact surface: "exactly two didn't jump" (out of 4) ↔ exactly two jumped.
     Matches `bareMeaning 2` applied to the complement count (4 - w). -/
@@ -262,7 +262,7 @@ theorem lowerBound_preserves_negation_scope :
 theorem typeshift_resolves_tension :
     Degree.typeLower bareMeaning 2 2 ↔
     atLeastMeaning 2 2 :=
-  Semantics.Numerals.typeLower_bareMeaning_iff 2 2
+  Numerals.typeLower_bareMeaning_iff 2 2
 
 /-! ## The every-not model (§3) -/
 

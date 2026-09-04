@@ -30,7 +30,7 @@ the 2-ness and multiple-of-10 credible intervals overlap.
   non-standard base (dozens, minutes)
 -/
 
-namespace Semantics.Numerals.Roundness
+namespace Numerals.Roundness
 
 /-! ### k-ness primitives -/
 
@@ -167,4 +167,4 @@ theorem score_ge_two_of_div10 (n : ℕ) (h10 : 10 ∣ n) :
   rw [roundnessScore, if_pos h5, if_pos h10]
   omega
 
-end Semantics.Numerals.Roundness
+end Numerals.Roundness

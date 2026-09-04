@@ -78,18 +78,18 @@ def stimRound : Nat := 50
 
 /-- 49 has zero roundness — no imprecise reading is possible. -/
 theorem stim_precise_not_round :
-    Semantics.Numerals.Roundness.roundnessScore stimPrecise = 0 := by decide
+    Numerals.Roundness.roundnessScore stimPrecise = 0 := by decide
 
 /-- 50 is highly round (score 5) — imprecise readings are available. -/
 theorem stim_round_is_round :
-    Semantics.Numerals.Roundness.roundnessScore stimRound = 5 := by decide
+    Numerals.Roundness.roundnessScore stimRound = 5 := by decide
 
-open Semantics.Numerals.Precision in
+open Numerals.Precision in
 /-- 49 gets the exact precision mode. -/
 theorem precise_stim_is_exact :
     inferPrecisionMode stimPrecise = .exact := by decide
 
-open Semantics.Numerals.Precision in
+open Numerals.Precision in
 /-- 50 gets the approximate precision mode. -/
 theorem round_stim_is_approximate :
     inferPrecisionMode stimRound = .approximate := by decide
@@ -105,7 +105,7 @@ theorem about_is_tolerance_modifier :
     tolerance modifier: non-round is `.precise` regardless of modifier; round is
     `.underspecified` bare and `.approximate` under a modifier. -/
 def classifyVariant (n : Nat) (hasToleranceModifier : Bool) : Variant :=
-  if Semantics.Numerals.Roundness.roundnessScore n < 2 then .precise
+  if Numerals.Roundness.roundnessScore n < 2 then .precise
   else if hasToleranceModifier then .approximate
   else .underspecified
 
@@ -124,17 +124,17 @@ theorem classify_50_about :
 /-- Non-round numerals collapse the three-way contrast to `.precise`: nothing is left for
     social perception to modulate. -/
 theorem non_round_collapses (n : Nat)
-    (h : Semantics.Numerals.Roundness.roundnessScore n < 2) :
+    (h : Numerals.Roundness.roundnessScore n < 2) :
     classifyVariant n true = .precise ∧ classifyVariant n false = .precise := by
   unfold classifyVariant; constructor <;> simp [if_pos h]
 
 /-- Round numerals support the full three-way contrast: bare is underspecified, modified is
     approximate. -/
 theorem round_supports_contrast (n : Nat)
-    (h : Semantics.Numerals.Roundness.roundnessScore n ≥ 2) :
+    (h : Numerals.Roundness.roundnessScore n ≥ 2) :
     classifyVariant n false = .underspecified ∧
     classifyVariant n true = .approximate := by
-  have h' : ¬(Semantics.Numerals.Roundness.roundnessScore n < 2) := by omega
+  have h' : ¬(Numerals.Roundness.roundnessScore n < 2) := by omega
   unfold classifyVariant; constructor <;> simp [if_neg h']
 
 /-! ### Cell means -/

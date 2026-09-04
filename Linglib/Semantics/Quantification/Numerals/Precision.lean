@@ -28,7 +28,7 @@ pragmatic halo, [krifka-2007]'s approximate interpretation.
   score threshold are stipulations of this formalisation.
 -/
 
-namespace Semantics.Numerals.Precision
+namespace Numerals.Precision
 
 /-- Precision mode for numeral interpretation: which of
 [kao-etal-2014-hyperbole]'s two meaning projections applies. -/
@@ -107,4 +107,4 @@ example : inferPrecisionMode 7 = .exact := by decide          -- score 0 < 2
 example : inferPrecisionMode 99 = .exact := by decide         -- score 0 < 2
 example : inferPrecisionMode 15 = .exact := by decide  -- score 1 < 2 (see caveat above)
 
-end Semantics.Numerals.Precision
+end Numerals.Precision

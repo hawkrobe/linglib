@@ -35,8 +35,8 @@ properties the book sets aside as non-diagnostic of salience.
 
 namespace Cummins2015
 
-open Constraints OptimalityTheory Semantics.Numerals.Roundness
-open Semantics.Numerals.Precision (inferPrecisionMode
+open Constraints OptimalityTheory Numerals.Roundness
+open Numerals.Precision (inferPrecisionMode
   inferPrecisionMode_eq_approximate_of_ten_dvd)
 
 /-! ### NSAL: numeral salience as missing k-ness types -/

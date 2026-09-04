@@ -105,10 +105,10 @@ def PriceState.round : PriceState → PriceState
 /-- `PriceState.round` is the substrate rounding map: composing with `value`
 gives `Precision.roundToNearest` at the paper's base 10. -/
 theorem round_value_eq_roundToNearest (p : PriceState) :
-    (p.round.value : ℚ) = Semantics.Numerals.Precision.roundToNearest p.value := by
+    (p.round.value : ℚ) = Numerals.Precision.roundToNearest p.value := by
   cases p <;>
     norm_num [PriceState.round, PriceState.value,
-      Semantics.Numerals.Precision.roundToNearest]
+      Numerals.Precision.roundToNearest]
 
 /-- Binary affect: speaker has notable opinion, or none. -/
 inductive Affect where
@@ -256,14 +256,14 @@ def project (g : Goal) (w : World) : ℕ :=
 the substrate `Precision.projectPrecision .exact`. -/
 theorem project_price_eq (w : World) :
     (project .price w : ℚ) =
-      Semantics.Numerals.Precision.projectPrecision .exact w.1.value := rfl
+      Numerals.Precision.projectPrecision .exact w.1.value := rfl
 
 /-- The `approxPrice` goal projects by the paper's approximate meaning
 projection `f_a`: the substrate `Precision.projectPrecision .approximate`
 at base 10. -/
 theorem project_approxPrice_eq (w : World) :
     (project .approxPrice w : ℚ) =
-      Semantics.Numerals.Precision.projectPrecision .approximate w.1.value :=
+      Numerals.Precision.projectPrecision .approximate w.1.value :=
   round_value_eq_roundToNearest w.1
 
 /-- QUD-projected L0: sum of L0Weight over the QUD-equivalence class of `w`

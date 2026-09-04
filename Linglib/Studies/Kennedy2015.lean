@@ -59,7 +59,7 @@ needs `w = 4` to be non-trivial).
 
 namespace Kennedy2015
 
-open Semantics.Numerals
+open Numerals
 open Alternatives (asymStrongerOn)
 
 -- ============================================================================

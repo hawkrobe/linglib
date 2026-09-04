@@ -39,7 +39,7 @@ namespace Haslinger2025
 
 namespace Numerals
 
-open Semantics.Numerals.Roundness
+open Numerals.Roundness
 
 /--
 Numeral imprecision datum: context-dependent exactness.
@@ -47,7 +47,7 @@ Numeral imprecision datum: context-dependent exactness.
 structure NumeralImprecisionDatum where
   /-- The numeral -/
   numeral : Nat
-  /-- Roundness grade (from `Semantics.Numerals.Roundness`) -/
+  /-- Roundness grade (from `Numerals.Roundness`) -/
   roundness : RoundnessGrade
   /-- Sentence frame -/
   sentenceFrame : String
@@ -218,7 +218,7 @@ structure ApproximatelyDatum where
   bareSentence : String
   /-- Approximately sentence -/
   approxSentence : String
-  /-- Roundness grade (from `Semantics.Numerals.Roundness`) -/
+  /-- Roundness grade (from `Numerals.Roundness`) -/
   roundness : RoundnessGrade
   /-- Is approximately acceptable with this numeral? -/
   approxNatural : Bool
