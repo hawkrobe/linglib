@@ -49,7 +49,7 @@ so
 are proved over the `SyntacticObject.Derivation` directly.
 
 The c-command asymmetries are stated over the **derived tree built
-planar-first** (`SyntacticObject.ofPlanar (SyntacticObject.nodeP …)`), i.e. the very tree each
+planar-first** (`SyntacticObject.ofPlanar (Planar.merge …)`), i.e. the very tree each
 derivation produces, written out explicitly per the file's prose diagrams.
 This is faithful: the derivation records the operations; the planar tree
 is its result, and c-command (`SyntacticObject.cCommandsIn`) reduces on it.
@@ -103,7 +103,7 @@ private def tok_kick   : LIToken := ⟨.simple .V [.D] (phonForm := "kicked"), 3
 private def tok_ball   : LIToken := ⟨.simple .D [] (phonForm := "the ball"), 311⟩
 
 /-- The `[PP to Mary]` constituent as a planar subtree. -/
-private def ppToMaryP : RoseTree SOLabel := nodeP (leafP tok_to) (leafP tok_mary)
+private def ppToMaryP : Planar := Planar.merge (Planar.leaf tok_to) (Planar.leaf tok_mary)
 
 -- ============================================================================
 -- § 2: Oblique Dative Derivation
@@ -130,9 +130,9 @@ def obliqueDative : Derivation :=
     Built planar-first; this is exactly what `obliqueDative` produces. -/
 def obliqueDativeTree : SyntacticObject :=
   ofPlanar
-    (nodeP (leafP tok_john)
-      (nodeP (leafP tok_letter)
-        (nodeP (leafP tok_send) ppToMaryP)))
+    (Planar.merge (Planar.leaf tok_john)
+      (Planar.merge (Planar.leaf tok_letter)
+        (Planar.merge (Planar.leaf tok_send) ppToMaryP)))
 
 -- Oblique dative c-command predictions
 
@@ -181,11 +181,11 @@ def docDativeShift : Derivation :=
     position is the bare trace. `[John [Mary [letter [send [to t]]]]]`. -/
 def docDativeShiftTree : SyntacticObject :=
   ofPlanar
-    (nodeP (leafP tok_john)
-      (nodeP (leafP tok_mary)
-        (nodeP (leafP tok_letter)
-          (nodeP (leafP tok_send)
-            (nodeP (leafP tok_to) traceP)))))
+    (Planar.merge (Planar.leaf tok_john)
+      (Planar.merge (Planar.leaf tok_mary)
+        (Planar.merge (Planar.leaf tok_letter)
+          (Planar.merge (Planar.leaf tok_send)
+            (Planar.merge (Planar.leaf tok_to) Planar.trace)))))
 
 -- DOC c-command predictions: the asymmetries are REVERSED
 
@@ -228,9 +228,9 @@ def standardPassive : Derivation :=
     leaving a trace in object position. `[ball [John [kicked t]]]`. -/
 def standardPassiveTree : SyntacticObject :=
   ofPlanar
-    (nodeP (leafP tok_ball)
-      (nodeP (leafP tok_john)
-        (nodeP (leafP tok_kick) traceP)))
+    (Planar.merge (Planar.leaf tok_ball)
+      (Planar.merge (Planar.leaf tok_john)
+        (Planar.merge (Planar.leaf tok_kick) Planar.trace)))
 
 -- Passive c-command: promoted object c-commands demoted subject
 
@@ -462,7 +462,7 @@ private def tok_to2     : LIToken := ⟨.simple .P [.D] (phonForm := "to"), 323�
 def indirectPassive : Derivation :=
   { initial := V_sent
     steps := [
-      .emR (ofPlanar (nodeP (leafP tok_to2) (leafP tok_mary2))),
+      .emR (ofPlanar (Planar.merge (Planar.leaf tok_to2) (Planar.leaf tok_mary2))),
                        -- [V' sent [PP to Mary]]
       .emL DP_letter2, -- [VP a_letter [V' sent [PP to Mary]]]
       .im DP_mary2,    -- DATIVE SHIFT: Mary to inner Spec
@@ -481,11 +481,11 @@ def indirectPassive : Derivation :=
     asymmetry but is *not* what the two-step derivation emits.) -/
 def indirectPassiveTree : SyntacticObject :=
   ofPlanar
-    (nodeP (leafP tok_mary2)
-      (nodeP traceP
-        (nodeP (leafP tok_letter2)
-          (nodeP (leafP tok_sent)
-            (nodeP (leafP tok_to2) traceP)))))
+    (Planar.merge (Planar.leaf tok_mary2)
+      (Planar.merge Planar.trace
+        (Planar.merge (Planar.leaf tok_letter2)
+          (Planar.merge (Planar.leaf tok_sent)
+            (Planar.merge (Planar.leaf tok_to2) Planar.trace)))))
 
 /-- In the indirect passive, the promoted IO (Mary) c-commands the
     stranded DO (a letter). -/

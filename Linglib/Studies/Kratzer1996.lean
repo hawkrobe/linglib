@@ -77,34 +77,34 @@ def DP_door_t   : LIToken := ⟨.simple .D     []    "the door",   217⟩
     `[VoiceP John [Voice' Voice_AG [vP v [VP broke [DP the vase]]]]]` -/
 def transitiveTree : SyntacticObject :=
   ofPlanar
-    (nodeP (leafP DP_john_t)
-      (nodeP (leafP voice_ag_t)
-        (nodeP (leafP v_head_t)
-          (nodeP (leafP V_broke_t) (leafP DP_vase_t)))))
+    (Planar.merge (Planar.leaf DP_john_t)
+      (Planar.merge (Planar.leaf voice_ag_t)
+        (Planar.merge (Planar.leaf v_head_t)
+          (Planar.merge (Planar.leaf V_broke_t) (Planar.leaf DP_vase_t)))))
 
 /-- Anticausative: "The vase broke"
     `[VoiceP Voice_∅ [vP v [VP broke [DP the vase]]]]` -/
 def anticausativeTree : SyntacticObject :=
   ofPlanar
-    (nodeP (leafP voice_nth_t)
-      (nodeP (leafP v_head_t)
-        (nodeP (leafP V_broke_t) (leafP DP_vase_t))))
+    (Planar.merge (Planar.leaf voice_nth_t)
+      (Planar.merge (Planar.leaf v_head_t)
+        (Planar.merge (Planar.leaf V_broke_t) (Planar.leaf DP_vase_t))))
 
 /-- Unaccusative: "The ship sank"
     `[VoiceP Voice_∅ [vP v [VP sank [DP the ship]]]]` -/
 def unaccusativeTree : SyntacticObject :=
   ofPlanar
-    (nodeP (leafP voice_nth_t)
-      (nodeP (leafP v_head_t)
-        (nodeP (leafP V_sank_t) (leafP DP_ship_t))))
+    (Planar.merge (Planar.leaf voice_nth_t)
+      (Planar.merge (Planar.leaf v_head_t)
+        (Planar.merge (Planar.leaf V_sank_t) (Planar.leaf DP_ship_t))))
 
 /-- Middle: "The door opened"
     `[VoiceP Voice_MID [vP v [VP opened [DP the door]]]]` -/
 def middleTree : SyntacticObject :=
   ofPlanar
-    (nodeP (leafP voice_mid_t)
-      (nodeP (leafP v_head_t)
-        (nodeP (leafP V_opened_t) (leafP DP_door_t))))
+    (Planar.merge (Planar.leaf voice_mid_t)
+      (Planar.merge (Planar.leaf v_head_t)
+        (Planar.merge (Planar.leaf V_opened_t) (Planar.leaf DP_door_t))))
 
 -- C-command predictions
 

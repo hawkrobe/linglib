@@ -111,10 +111,11 @@ object is the argument of the applicative head, merged above the projection cont
 so it asymmetrically c-commands it. -/
 def docTree : SyntacticObject :=
   ofPlanar
-    (nodeP (leafP subj_tok)
-      (nodeP (leafP v_tok)
-        (nodeP (leafP gave_tok)
-          (nodeP (leafP goal_tok) (nodeP (leafP appl_tok) (leafP theme_tok))))))
+    (Planar.merge (Planar.leaf subj_tok)
+      (Planar.merge (Planar.leaf v_tok)
+        (Planar.merge (Planar.leaf gave_tok)
+          (Planar.merge (Planar.leaf goal_tok) (Planar.merge (Planar.leaf appl_tok)
+            (Planar.leaf theme_tok))))))
 
 /-- The quantifiers competing for attraction in the double object construction. -/
 def docQuantifiers : List SyntacticObject := [lexLeaf goal_tok, lexLeaf theme_tok]
@@ -146,20 +147,21 @@ theorem doc_not_ambiguous : ¬ Ambiguous docTree (lexLeaf v_tok) docQuantifiers 
 the PP are co-arguments of the same head, hence sisters, and c-command each other. -/
 def locativeTree : SyntacticObject :=
   ofPlanar
-    (nodeP (leafP subj_tok)
-      (nodeP (leafP v_tok)
-        (nodeP (leafP gave_tok)
-          (nodeP (leafP theme_tok) (nodeP (leafP to_tok) (leafP goal_tok))))))
+    (Planar.merge (Planar.leaf subj_tok)
+      (Planar.merge (Planar.leaf v_tok)
+        (Planar.merge (Planar.leaf gave_tok)
+          (Planar.merge (Planar.leaf theme_tok) (Planar.merge (Planar.leaf to_tok)
+            (Planar.leaf goal_tok))))))
 
 /-- The candidates in the locative: the direct object, and the PP that pied-pipes the goal. -/
 def locativeQuantifiers : List SyntacticObject :=
-  [lexLeaf theme_tok, ofPlanar (nodeP (leafP to_tok) (leafP goal_tok))]
+  [lexLeaf theme_tok, ofPlanar (Planar.merge (Planar.leaf to_tok) (Planar.leaf goal_tok))]
 
 /-- Direct object and PP c-command each other, so neither asymmetrically c-commands the other. -/
 theorem locative_mutual_cCommand :
     cCommandsIn locativeTree (lexLeaf theme_tok)
-        (ofPlanar (nodeP (leafP to_tok) (leafP goal_tok))) ∧
-      cCommandsIn locativeTree (ofPlanar (nodeP (leafP to_tok) (leafP goal_tok)))
+        (ofPlanar (Planar.merge (Planar.leaf to_tok) (Planar.leaf goal_tok))) ∧
+      cCommandsIn locativeTree (ofPlanar (Planar.merge (Planar.leaf to_tok) (Planar.leaf goal_tok)))
         (lexLeaf theme_tok) := by
   constructor <;> decide
 
@@ -183,9 +185,10 @@ theorem subject_not_attractable :
 subject position, out of the attractor's domain, leaving the theme as the only candidate. -/
 def passiveTree : SyntacticObject :=
   ofPlanar
-    (nodeP (leafP goal_tok)
-      (nodeP (leafP v_tok)
-        (nodeP (leafP gave_tok) (nodeP (leafP appl_tok) (leafP theme_tok)))))
+    (Planar.merge (Planar.leaf goal_tok)
+      (Planar.merge (Planar.leaf v_tok)
+        (Planar.merge (Planar.leaf gave_tok) (Planar.merge (Planar.leaf appl_tok)
+          (Planar.leaf theme_tok)))))
 
 /-- In the passive the derived subject is no longer attractable while the theme is, so Shortest
 imposes no order between them and the ambiguity returns: *a (different) girl was given every

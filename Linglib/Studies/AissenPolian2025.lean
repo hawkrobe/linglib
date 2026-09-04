@@ -105,67 +105,74 @@ private def SubjD : SyntacticObject := lexLeaf tSubjD
 private def ThemeD : SyntacticObject := lexLeaf tThemeD
 
 /-- A non-specific possessive, `[PossP Psr Psm]`. -/
-private def possP : RoseTree SOLabel := nodeP (leafP tPsr) (leafP tPsm)
+private def possP : Planar := Planar.merge (Planar.leaf tPsr) (Planar.leaf tPsm)
 
 /-- A specific possessive, `[DP D⁰ [PossP Psr Psm]]`. -/
-private def dp : RoseTree SOLabel := nodeP (leafP tD) possP
+private def dp : Planar := Planar.merge (Planar.leaf tD) possP
 
 /-- A locative PP over a non-specific possessive, `[PP P [PossP Psr Psm]]`. -/
-private def pp : RoseTree SOLabel := nodeP (leafP tP) possP
+private def pp : Planar := Planar.merge (Planar.leaf tP) possP
 
 /-- (9c) with a non-specific possessive S_O: `[TP T⁰ [VP V⁰ PossP]]`. -/
-private def unaccPossP : RoseTree SOLabel := nodeP (leafP tT) (nodeP (leafP tV) possP)
+private def unaccPossP : Planar := Planar.merge (Planar.leaf tT) (Planar.merge
+  (Planar.leaf tV) possP)
 
 /-- (9c) with a specific possessive S_O: `[TP T⁰ [VP V⁰ DP]]`. -/
-private def unaccDP : RoseTree SOLabel := nodeP (leafP tT) (nodeP (leafP tV) dp)
+private def unaccDP : Planar := Planar.merge (Planar.leaf tT) (Planar.merge (Planar.leaf tV) dp)
 
 /-- (9a) with a non-specific possessive O: `[TP T⁰ [vP Agt [v' v⁰ [VP V⁰ PossP]]]]`. -/
-private def transPossP : RoseTree SOLabel :=
-  nodeP (leafP tT) (nodeP (leafP tAgt) (nodeP (leafP tv) (nodeP (leafP tV) possP)))
+private def transPossP : Planar :=
+  Planar.merge (Planar.leaf tT) (Planar.merge (Planar.leaf tAgt) (Planar.merge (Planar.leaf tv)
+    (Planar.merge (Planar.leaf tV) possP)))
 
 /-- (29) the raising applicative: `[vP Agt [v' v⁰ [ApplP Appl⁰ [VP V⁰ PossP]]]]` under T⁰. -/
-private def raisingAppl : RoseTree SOLabel :=
-  nodeP (leafP tT)
-    (nodeP (leafP tAgt) (nodeP (leafP tv) (nodeP (leafP tAppl) (nodeP (leafP tV) possP))))
+private def raisingAppl : Planar :=
+  Planar.merge (Planar.leaf tT)
+    (Planar.merge (Planar.leaf tAgt) (Planar.merge (Planar.leaf tv) (Planar.merge
+      (Planar.leaf tAppl)
+      (Planar.merge (Planar.leaf tV) possP))))
 
 /-- (9b) with a locative PP, `[TP T⁰ [vP S_A [v' v⁰ [VP V⁰ PP]]]]`, for a specific or a
 non-specific S_A. -/
-private def unerg (subj : LIToken) : RoseTree SOLabel :=
-  nodeP (leafP tT) (nodeP (leafP subj) (nodeP (leafP tv) (nodeP (leafP tV) pp)))
+private def unerg (subj : LIToken) : Planar :=
+  Planar.merge (Planar.leaf tT) (Planar.merge (Planar.leaf subj) (Planar.merge (Planar.leaf tv)
+    (Planar.merge (Planar.leaf tV) pp)))
 
 /-- (71) theme over locative, `[TP T⁰ [VP V⁰ [Theme PP]]]`, for a specific or a non-specific
 theme: path verbs, locative existentials and locative copulas. -/
-private def themeLoc (theme : LIToken) : RoseTree SOLabel :=
-  nodeP (leafP tT) (nodeP (leafP tV) (nodeP (leafP theme) pp))
+private def themeLoc (theme : LIToken) : Planar :=
+  Planar.merge (Planar.leaf tT) (Planar.merge (Planar.leaf tV) (Planar.merge
+    (Planar.leaf theme) pp))
 
 /-- (83) the experiencer PP merged above the theme, `[TP T⁰ [VP PP [V' V⁰ Theme]]]`. -/
-private def experiencer : RoseTree SOLabel :=
-  nodeP (leafP tT) (nodeP pp (nodeP (leafP tV) (leafP tThemeD)))
+private def experiencer : Planar :=
+  Planar.merge (Planar.leaf tT) (Planar.merge pp (Planar.merge (Planar.leaf tV)
+    (Planar.leaf tThemeD)))
 
 /-- (40a) an existential with a bare pivot, `[TP T⁰ [VP V⁰ NP]]`. -/
-private def existential : RoseTree SOLabel :=
-  nodeP (leafP tT) (nodeP (leafP tV) (leafP tPivot))
+private def existential : Planar :=
+  Planar.merge (Planar.leaf tT) (Planar.merge (Planar.leaf tV) (Planar.leaf tPivot))
 
 /-! ### Nominal opacity -/
 
 /-- The possessor of a specific S_O is invisible to C⁰'s wh-probe. -/
 theorem psr_invisible_dp :
-    Invisible nominalOpacity (ofPlanar (nodeP (leafP tC) unaccDP)) C₀ Psr :=
+    Invisible nominalOpacity (ofPlanar (Planar.merge (Planar.leaf tC) unaccDP)) C₀ Psr :=
   ⟨.N, rfl, by decide⟩
 
 /-- So is the possessor of a non-specific S_O: opacity does not depend on size. -/
 theorem psr_invisible_possP :
-    Invisible nominalOpacity (ofPlanar (nodeP (leafP tC) unaccPossP)) C₀ Psr :=
+    Invisible nominalOpacity (ofPlanar (Planar.merge (Planar.leaf tC) unaccPossP)) C₀ Psr :=
   ⟨.N, rfl, by decide⟩
 
 /-- And the possessor inside a locative PP: PP islands follow from nominal opacity. -/
 theorem psr_invisible_pp :
-    Invisible nominalOpacity (ofPlanar (nodeP (leafP tC) (themeLoc tThemeN))) C₀ Psr :=
+    Invisible nominalOpacity (ofPlanar (Planar.merge (Planar.leaf tC) (themeLoc tThemeN))) C₀ Psr :=
   ⟨.N, rfl, by decide⟩
 
 /-- The D head of a specific possessive is visible, so the whole DP can be pied-piped. -/
 theorem dHead_visible :
-    ¬ Invisible nominalOpacity (ofPlanar (nodeP (leafP tC) unaccDP)) C₀ D₀ :=
+    ¬ Invisible nominalOpacity (ofPlanar (Planar.merge (Planar.leaf tC) unaccDP)) C₀ D₀ :=
   fun ⟨_, hh, hb⟩ => by
     simp only [nominalOpacity, Option.some.injEq] at hh
     exact absurd (hh ▸ hb) (by decide)

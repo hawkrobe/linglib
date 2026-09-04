@@ -11,7 +11,7 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
 A workspace is a forest, a finite multiset, of syntactic objects. The forest product is disjoint
 union with unit the empty forest, so a workspace is exactly what `of'` lifts into the Hopf algebra
-`ConnesKreimer ℤ (Nonplanar SOLabel)`. A moved element occupies repeated isomorphic components,
+`ConnesKreimer ℤ (Nonplanar Vertex)`. A moved element occupies repeated isomorphic components,
 and the number of copies is the chain's multiplicity (`Workspace.chainMultiplicity`): chain
 identity lives at the workspace level, with no index on the trace leaf. Merge on workspaces and
 its identity with the algebraic Merge operator are in `Merge/SyntacticObject.lean`.

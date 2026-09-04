@@ -22,7 +22,7 @@ of a node is supplied by a head function, not stored on the tree.
 
 ## Main definitions
 
-* `Minimalist.SOLabel`, `Minimalist.IsSO`, `Minimalist.SyntacticObject`
+* `Minimalist.SyntacticObject.Vertex`, `Minimalist.IsSyntacticObject`, `Minimalist.SyntacticObject`
 * `Minimalist.SyntacticObject.lexLeaf`, `traceLeaf`, `node`: the three shapes.
 
 ## Main results
@@ -42,75 +42,99 @@ namespace Minimalist
 
 open RoseTree RoseTree.Nonplanar
 
-/-- The label alphabet: a lexical token on a leaf, the bare marker `Sum.inr none` on an index-free
-    trace leaf or an internal node, the two told apart by arity, or the trace of a token. -/
-abbrev SOLabel : Type := LIToken ⊕ Option LIToken
+/-- A vertex: a lexical token on a leaf, the bare marker `Sum.inr none` on an index-free trace
+    leaf or an internal node, the two told apart by arity, or the trace of a token. -/
+abbrev SyntacticObject.Vertex : Type := LIToken ⊕ Option LIToken
 
-/-! ### Well-formedness `IsSO` (binary, lexical/trace leaves, bare internals) -/
+/-- The ordered form of a syntactic object: a planar tree of vertices. -/
+abbrev Planar : Type := RoseTree SyntacticObject.Vertex
+
+open SyntacticObject
+
+/-- A lexical leaf. -/
+abbrev Planar.leaf (tok : LIToken) : Planar := .node (Sum.inl tok) []
+
+/-- The bare trace. -/
+abbrev Planar.trace : Planar := .node (Sum.inr none) []
+
+/-- The trace of `tok`. -/
+abbrev Planar.traceOf (tok : LIToken) : Planar := .node (Sum.inr (some tok)) []
+
+/-- The Merge of two planar objects. -/
+abbrev Planar.merge (l r : Planar) : Planar := .node (Sum.inr none) [l, r]
+
+/-! ### Well-formedness `IsSyntacticObject` (binary, lexical/trace leaves, bare internals) -/
 
 mutual
 /-- Well-formedness of a planar tree: a lexical vertex is a leaf, and a bare vertex is either
     childless or binary with well-formed children. -/
-def isSOPlanar : RoseTree SOLabel → Bool
+def Planar.isSyntacticObject : Planar → Bool
   | .node (.inl _) cs  => cs.isEmpty
   | .node (.inr (some _)) cs => cs.isEmpty
-  | .node (.inr none) cs => (cs.length == 0 || cs.length == 2) && isSOPlanarList cs
+  | .node (.inr none) cs => (cs.length == 0 || cs.length == 2) && Planar.isSyntacticObjectList cs
 /-- Every tree in the list is well-formed. -/
-def isSOPlanarList : List (RoseTree SOLabel) → Bool
+def Planar.isSyntacticObjectList : List (Planar) → Bool
   | []      => true
-  | c :: cs => isSOPlanar c && isSOPlanarList cs
+  | c :: cs => Planar.isSyntacticObject c && Planar.isSyntacticObjectList cs
 end
 
-/-! ### `isSOPlanar` is `Perm`-invariant (so it lifts) -/
+/-! ### `Planar.isSyntacticObject` is `Perm`-invariant (so it lifts) -/
 
-/-- Congruence for `isSOPlanar` at a node whose children agree in length and in
-    `isSOPlanarList`: a lexical label reads only the emptiness (via length), a bare
-    label only the arity check (length) and the recursive `isSOPlanarList`. -/
-private theorem isSOPlanar_node_congr {a : SOLabel} {cs ds : List (RoseTree SOLabel)}
-    (hlen : cs.length = ds.length) (hlist : isSOPlanarList cs = isSOPlanarList ds) :
-    isSOPlanar (.node a cs) = isSOPlanar (.node a ds) := by
+/-- Congruence for `Planar.isSyntacticObject` at a node whose children agree in length and in
+    `Planar.isSyntacticObjectList`: a lexical label reads only the emptiness (via length), a bare
+    label only the arity check (length) and the recursive `Planar.isSyntacticObjectList`. -/
+private theorem Planar.isSyntacticObject_node_congr {a : Vertex} {cs ds : List (Planar)}
+    (hlen : cs.length = ds.length) (hlist : Planar.isSyntacticObjectList cs
+      = Planar.isSyntacticObjectList ds) :
+    Planar.isSyntacticObject (.node a cs) = Planar.isSyntacticObject (.node a ds) := by
   match a with
-  | .inr none => simp only [isSOPlanar, hlen, hlist]
+  | .inr none => simp only [Planar.isSyntacticObject, hlen, hlist]
   | .inl _ | .inr (some _) =>
-    simp only [isSOPlanar]
+    simp only [Planar.isSyntacticObject]
     rw [Bool.eq_iff_iff]
     simp only [List.isEmpty_iff_length_eq_zero, hlen]
 
 mutual
-/-- `isSOPlanar` is invariant under `Perm`, hence descends to the quotient. At a node
+/-- `Planar.isSyntacticObject` is invariant under `Perm`, hence descends to the quotient. At a node
     the arity check is fixed by the equal children lengths and the recursive check by
     the `PermList` companion. -/
-theorem isSOPlanar_perm : ∀ {t s : RoseTree SOLabel}, RoseTree.Perm t s →
-    isSOPlanar t = isSOPlanar s
-  | _, _, .node h => isSOPlanar_node_congr h.length_eq (isSOPlanarList_permList h)
-  | _, _, .trans h₁ h₂ => (isSOPlanar_perm h₁).trans (isSOPlanar_perm h₂)
+theorem Planar.isSyntacticObject_perm : ∀ {t s : Planar}, RoseTree.Perm t s →
+    Planar.isSyntacticObject t = Planar.isSyntacticObject s
+  | _, _, .node h => Planar.isSyntacticObject_node_congr h.length_eq
+    (Planar.isSyntacticObjectList_permList h)
+  | _, _, .trans h₁ h₂ => (Planar.isSyntacticObject_perm h₁).trans
+    (Planar.isSyntacticObject_perm h₂)
 
-/-- `isSOPlanarList` is a conjunction over children, hence `PermList`-invariant. -/
-theorem isSOPlanarList_permList : ∀ {cs ds : List (RoseTree SOLabel)},
-    RoseTree.PermList cs ds → isSOPlanarList cs = isSOPlanarList ds
+/-- `Planar.isSyntacticObjectList` is a conjunction over children, hence `PermList`-invariant. -/
+theorem Planar.isSyntacticObjectList_permList : ∀ {cs ds : List (Planar)},
+    RoseTree.PermList cs ds → Planar.isSyntacticObjectList cs = Planar.isSyntacticObjectList ds
   | _, _, .nil => rfl
   | _, _, .cons h hs => by
-    simp only [isSOPlanarList, isSOPlanar_perm h, isSOPlanarList_permList hs]
-  | _, _, .swap _ _ _ => by simp only [isSOPlanarList, Bool.and_left_comm]
-  | _, _, .trans h₁ h₂ => (isSOPlanarList_permList h₁).trans (isSOPlanarList_permList h₂)
+    simp only [Planar.isSyntacticObjectList, Planar.isSyntacticObject_perm h,
+      Planar.isSyntacticObjectList_permList hs]
+  | _, _, .swap _ _ _ => by simp only [Planar.isSyntacticObjectList, Bool.and_left_comm]
+  | _, _, .trans h₁ h₂ => (Planar.isSyntacticObjectList_permList h₁).trans
+    (Planar.isSyntacticObjectList_permList h₂)
 end
 
-/-! ### The carrier: `IsSO` on `Nonplanar` + the `SyntacticObject` subtype -/
+/-! ### The carrier: `IsSyntacticObject` on `Nonplanar` + the `SyntacticObject` subtype -/
 
-/-- Well-formedness on the nonplanar carrier, lifted from `isSOPlanar`. -/
-def isSO : Nonplanar SOLabel → Bool :=
-  Nonplanar.lift isSOPlanar (fun _ _ h => isSOPlanar_perm h)
+/-- Well-formedness on the nonplanar carrier, lifted from `Planar.isSyntacticObject`. -/
+def isSyntacticObject : Nonplanar Vertex → Bool :=
+  Nonplanar.lift Planar.isSyntacticObject (fun _ _ h => Planar.isSyntacticObject_perm h)
 
-@[simp] theorem isSO_mk (t : RoseTree SOLabel) : isSO (Nonplanar.mk t) = isSOPlanar t := rfl
+@[simp] theorem isSyntacticObject_mk (t : Planar) : isSyntacticObject (Nonplanar.mk t)
+    = Planar.isSyntacticObject t := rfl
 
-/-- A nonplanar tree over `SOLabel` is a syntactic object when it is binary with lexical or
+/-- A nonplanar tree over `Vertex` is a syntactic object when it is binary with lexical or
     trace leaves and bare internal vertices. -/
-def IsSO (t : Nonplanar SOLabel) : Prop := isSO t = true
+def IsSyntacticObject (t : Nonplanar Vertex) : Prop := isSyntacticObject t = true
 
-instance : DecidablePred IsSO := fun t => inferInstanceAs (Decidable (isSO t = true))
+instance : DecidablePred IsSyntacticObject := fun t => inferInstanceAs (Decidable
+    (isSyntacticObject t = true))
 
-/-- The syntactic objects: the well-formed nonplanar trees over `SOLabel`. -/
-def SyntacticObject : Type := { t : Nonplanar SOLabel // IsSO t }
+/-- The syntactic objects: the well-formed nonplanar trees over `Vertex`. -/
+def SyntacticObject : Type := { t : Nonplanar Vertex // IsSyntacticObject t }
 
 instance : DecidableEq SyntacticObject := Subtype.instDecidableEq
 
@@ -129,16 +153,17 @@ def SyntacticObject.traceOf (tok : LIToken) : SyntacticObject :=
   ⟨Nonplanar.leaf (Sum.inr (some tok)), rfl⟩
 
 /-- A bare binary node is well-formed exactly when both daughters are. -/
-theorem isSO_node_pair (a b : Nonplanar SOLabel) :
-    isSO (Nonplanar.node (Sum.inr none) ({a, b} : Multiset (Nonplanar SOLabel)))
-      = (isSO a && isSO b) := by
+theorem isSyntacticObject_node_pair (a b : Nonplanar Vertex) :
+    isSyntacticObject (Nonplanar.node (Sum.inr none) ({a, b} : Multiset (Nonplanar Vertex)))
+      = (isSyntacticObject a && isSyntacticObject b) := by
   refine Quotient.inductionOn₂ a b fun pa pb => ?_
-  show isSO (Nonplanar.node (Sum.inr none) {Nonplanar.mk pa, Nonplanar.mk pb})
-      = (isSO (Nonplanar.mk pa) && isSO (Nonplanar.mk pb))
-  rw [show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar SOLabel))
+  show isSyntacticObject (Nonplanar.node (Sum.inr none) {Nonplanar.mk pa, Nonplanar.mk pb})
+      = (isSyntacticObject (Nonplanar.mk pa) && isSyntacticObject (Nonplanar.mk pb))
+  rw [show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar Vertex))
         = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl,
       Nonplanar.node_mk_tree_list]
-  simp only [isSO_mk, isSOPlanar, isSOPlanarList, List.length_cons, List.length_nil,
+  simp only [isSyntacticObject_mk, Planar.isSyntacticObject, Planar.isSyntacticObjectList,
+    List.length_cons, List.length_nil,
              Nat.reduceAdd, Nat.reduceBEq, Bool.or_true, Bool.true_and, Bool.and_true]
 
 /-- The bare binary node over two syntactic objects: Merge on the carrier, also written `*`.
@@ -146,34 +171,35 @@ theorem isSO_node_pair (a b : Nonplanar SOLabel) :
     results are built planar-first and related by `node_mk`. -/
 noncomputable def SyntacticObject.node (l r : SyntacticObject) : SyntacticObject :=
   ⟨Nonplanar.node (Sum.inr none) {l.val, r.val}, by
-    show isSO (Nonplanar.node (Sum.inr none) {l.val, r.val}) = true
-    have hl : isSO l.val = true := l.2
-    have hr : isSO r.val = true := r.2
-    rw [isSO_node_pair, hl, hr, Bool.and_self]⟩
+    show isSyntacticObject (Nonplanar.node (Sum.inr none) {l.val, r.val}) = true
+    have hl : isSyntacticObject l.val = true := l.2
+    have hr : isSyntacticObject r.val = true := r.2
+    rw [isSyntacticObject_node_pair, hl, hr, Bool.and_self]⟩
 
 @[simp] theorem SyntacticObject.node_val (l r : SyntacticObject) :
     (SyntacticObject.node l r).val = Nonplanar.node (Sum.inr none) {l.val, r.val} := rfl
 
 /-- A node of two planar-built objects is the planar binary node, so concrete results are
     `decide`-able. -/
-theorem SyntacticObject.node_mk (pl pr : RoseTree SOLabel)
-    (hl : IsSO (Nonplanar.mk pl)) (hr : IsSO (Nonplanar.mk pr)) :
+theorem SyntacticObject.node_mk (pl pr : Planar)
+    (hl : IsSyntacticObject (Nonplanar.mk pl)) (hr : IsSyntacticObject (Nonplanar.mk pr)) :
     (SyntacticObject.node ⟨Nonplanar.mk pl, hl⟩ ⟨Nonplanar.mk pr, hr⟩).val
       = Nonplanar.mk (.node (Sum.inr none) [pl, pr]) := by
   rw [SyntacticObject.node_val,
-      show ({Nonplanar.mk pl, Nonplanar.mk pr} : Multiset (Nonplanar SOLabel))
+      show ({Nonplanar.mk pl, Nonplanar.mk pr} : Multiset (Nonplanar Vertex))
         = Multiset.ofList ([pl, pr].map Nonplanar.mk) from rfl,
       Nonplanar.node_mk_tree_list]
 
 /-! ### Induction and case analysis -/
 
 /-- The children of a well-formed node are well-formed. -/
-theorem isSOPlanar_of_mem {cs : List (RoseTree SOLabel)} (h : isSOPlanarList cs = true) :
-    ∀ c ∈ cs, isSOPlanar c = true := by
+theorem Planar.isSyntacticObject_of_mem {cs : List (Planar)} (h : Planar.isSyntacticObjectList cs
+    = true) :
+    ∀ c ∈ cs, Planar.isSyntacticObject c = true := by
   induction cs with
   | nil => intro _ hc; exact absurd hc List.not_mem_nil
   | cons hd tl ih =>
-    rw [isSOPlanarList, Bool.and_eq_true] at h
+    rw [Planar.isSyntacticObjectList, Bool.and_eq_true] at h
     intro c hc
     rcases List.mem_cons.mp hc with rfl | hmem
     · exact h.1
@@ -188,37 +214,39 @@ theorem SyntacticObject.ind {motive : SyntacticObject → Prop}
     (traceOf : ∀ tok, motive (SyntacticObject.traceOf tok))
     (node : ∀ l r : SyntacticObject, motive l → motive r → motive (SyntacticObject.node l r))
     (s : SyntacticObject) : motive s := by
-  suffices H : ∀ n (p : RoseTree SOLabel) (hp : IsSO (Nonplanar.mk p)),
+  suffices H : ∀ n (p : Planar) (hp : IsSyntacticObject (Nonplanar.mk p)),
       p.numNodes = n → motive ⟨Nonplanar.mk p, hp⟩ by
     obtain ⟨t, ht⟩ := s
-    refine Quotient.inductionOn (motive := fun t => ∀ (ht : IsSO t), motive ⟨t, ht⟩)
+    refine Quotient.inductionOn (motive := fun t => ∀ (ht : IsSyntacticObject t), motive ⟨t, ht⟩)
       t (fun p ht => H p.numNodes p ht rfl) ht
   intro n
   induction n using Nat.strong_induction_on with
   | _ n IH =>
     rintro ⟨lbl, cs⟩ hp hw
-    have hpl : isSOPlanar (RoseTree.node lbl cs) = true := hp
+    have hpl : Planar.isSyntacticObject (RoseTree.node lbl cs) = true := hp
     cases lbl with
     | inl tok =>
-      rw [isSOPlanar] at hpl
+      rw [Planar.isSyntacticObject] at hpl
       rcases cs with _ | ⟨c, cs'⟩
       · exact lex tok
       · simp at hpl
     | inr u =>
       cases u with
       | some tok =>
-        rw [isSOPlanar] at hpl
+        rw [Planar.isSyntacticObject] at hpl
         rcases cs with _ | ⟨c, cs'⟩
         · exact traceOf tok
         · simp at hpl
       | none =>
-      rw [isSOPlanar, Bool.and_eq_true] at hpl
+      rw [Planar.isSyntacticObject, Bool.and_eq_true] at hpl
       obtain ⟨hlen, hlist⟩ := hpl
       rcases cs with _ | ⟨pl, _ | ⟨pr, _ | ⟨x, rest⟩⟩⟩
       · exact trace
       · simp at hlen
-      · have hl : isSOPlanar pl = true := isSOPlanar_of_mem hlist pl (by simp)
-        have hr : isSOPlanar pr = true := isSOPlanar_of_mem hlist pr (by simp)
+      · have hl : Planar.isSyntacticObject pl = true := Planar.isSyntacticObject_of_mem hlist pl
+          (by simp)
+        have hr : Planar.isSyntacticObject pr = true := Planar.isSyntacticObject_of_mem hlist pr
+          (by simp)
         have hnode : (⟨Nonplanar.mk (RoseTree.node (Sum.inr none) [pl, pr]), hp⟩ : SyntacticObject)
             = SyntacticObject.node ⟨Nonplanar.mk pl, hl⟩ ⟨Nonplanar.mk pr, hr⟩ :=
           Subtype.ext (SyntacticObject.node_mk pl pr hl hr).symm

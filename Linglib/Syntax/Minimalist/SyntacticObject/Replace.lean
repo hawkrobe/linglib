@@ -28,8 +28,8 @@ namespace Minimalist
 open RoseTree RoseTree.Nonplanar SyntacticObject
 
 /-- Substitution preserves well-formedness. -/
-theorem isSO_replace (target replacement s : SyntacticObject) :
-    IsSO (Nonplanar.replace target.val replacement.val s.val) := by
+theorem isSyntacticObject_replace (target replacement s : SyntacticObject) :
+    IsSyntacticObject (Nonplanar.replace target.val replacement.val s.val) := by
   induction s using ind with
   | lex tok =>
     rw [show (lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl, Nonplanar.replace_leaf]
@@ -51,16 +51,17 @@ theorem isSO_replace (target replacement s : SyntacticObject) :
     rw [node_val, Nonplanar.replace_node_pair]
     split
     · exact replacement.2
-    · show isSO (Nonplanar.node (Sum.inr none)
+    · show isSyntacticObject (Nonplanar.node (Sum.inr none)
         {Nonplanar.replace target.val replacement.val l.val,
           Nonplanar.replace target.val replacement.val r.val}) = true
-      rw [isSO_node_pair, ihl, ihr]; rfl
+      rw [isSyntacticObject_node_pair, ihl, ihr]; rfl
 
 namespace SyntacticObject
 
 /-- Replace every subterm of `s` equal to `target` by `replacement`. -/
 noncomputable def replace (s target replacement : SyntacticObject) : SyntacticObject :=
-  ⟨Nonplanar.replace target.val replacement.val s.val, isSO_replace target replacement s⟩
+  ⟨Nonplanar.replace target.val replacement.val s.val,
+    isSyntacticObject_replace target replacement s⟩
 
 @[simp] theorem replace_val (s target replacement : SyntacticObject) :
     (replace s target replacement).val = Nonplanar.replace target.val replacement.val s.val := rfl
