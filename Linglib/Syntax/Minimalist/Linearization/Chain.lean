@@ -55,34 +55,34 @@ open Syntax.Question (MWFParameter PhaseEdge)
 
 mutual
 /-- The positions whose label `f` accepts, with their paths, left to right. -/
-def positions (f : Vertex → Option LIToken) : Planar → List (Path × LIToken)
+def positions (f : Vertex → Option LIToken) : RoseTree Vertex → List (Path × LIToken)
   | .node a cs => match f a with
     | some tok => [([], tok)]
     | none => positionsAux f 0 cs
 /-- Auxiliary: the positions in a children list from index `i`. -/
 def positionsAux (f : Vertex → Option LIToken) :
-    ℕ → List (Planar) → List (Path × LIToken)
+    ℕ → List (RoseTree Vertex) → List (Path × LIToken)
   | _, [] => []
   | i, c :: cs => (positions f c).map (λ x => (i :: x.1, x.2)) ++ positionsAux f (i + 1) cs
 end
 
 /-- The tokens with their paths, left to right. -/
-def tokenList : Planar → List (Path × LIToken) := positions (Sum.elim some λ _ => none)
+def tokenList : RoseTree Vertex → List (Path × LIToken) := positions (Sum.elim some λ _ => none)
 
 /-- The traces with their paths, left to right. -/
-def traceList : Planar → List (Path × LIToken) := positions (Sum.elim (λ _ => none) id)
+def traceList : RoseTree Vertex → List (Path × LIToken) := positions (Sum.elim (λ _ => none) id)
 
-variable (t : Planar)
+variable (t : PlanarSyntacticObject)
 
 /-- The occurrences of `tok`. -/
 def occurrences (tok : LIToken) : List Path :=
-  (tokenList t).filterMap λ x => if x.2 = tok then some x.1 else none
+  (tokenList t.val).filterMap λ x => if x.2 = tok then some x.1 else none
 
 /-- The tokens of `t`, each once. -/
-def tokens : Finset LIToken := ((tokenList t).map (·.2)).toFinset
+def tokens : Finset LIToken := ((tokenList t.val).map (·.2)).toFinset
 
 /-- The terms of `t`: its subtrees, a shared constituent's once. -/
-def terms : Finset (Planar) := ((vertices t).filterMap t.subtreeAt).toFinset
+def terms : Finset (RoseTree Vertex) := ((vertices t.val).filterMap t.val.subtreeAt).toFinset
 
 /-- `tok` is shared, dominated by two mothers: it occurs twice. -/
 def IsShared (tok : LIToken) : Prop := 2 ≤ (occurrences t tok).length
@@ -101,7 +101,7 @@ instance (x : Path × LIToken) : Decidable (IsBound t x) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The unbound traces: seen from their positions, copies without their antecedents. -/
-def unboundTraces : List (Path × LIToken) := (traceList t).filter (¬ IsBound t ·)
+def unboundTraces : List (Path × LIToken) := (traceList t.val).filter (¬ IsBound t ·)
 
 /-- The occurrence at which `tok` is pronounced: its last. -/
 def pronouncedAt (tok : LIToken) : Option Path := (occurrences t tok).getLast?
@@ -113,13 +113,14 @@ def complementPath (p : Path) : Path := p.dropLast ++ [1 - p.getLastD 0]
 
 /-- The [E] heads. -/
 def eHeads : List Path :=
-  (tokenList t).filterMap λ x => if x.2.item.outerEllipsis then some x.1 else none
+  (tokenList t.val).filterMap λ x => if x.2.item.outerEllipsis then some x.1 else none
 
 /-- The elided domains, one per distinct complement of an [E] head, in the order of the heads:
 a shared head over one shared complement applies once, over two complements twice. -/
 def elidedDomains : List Path :=
   ((eHeads t).map complementPath).foldl
-    (λ acc p => if acc.any (λ q => t.subtreeAt q = t.subtreeAt p) then acc else acc ++ [p]) []
+    (λ acc p => if acc.any (λ q => t.val.subtreeAt q = t.val.subtreeAt p) then acc else acc ++ [p])
+      []
 
 /-- `tok` is silenced: one of its occurrences lies in an elided domain. -/
 def IsSilenced (tok : LIToken) : Prop :=
@@ -130,7 +131,7 @@ instance (tok : LIToken) : Decidable (IsSilenced t tok) :=
 
 /-- The pronounced tokens, left to right: each at its last occurrence, unless silenced. -/
 def pfYield : List LIToken :=
-  (tokenList t).filterMap λ x =>
+  (tokenList t.val).filterMap λ x =>
     if pronouncedAt t x.2 = some x.1 ∧ ¬ IsSilenced t x.2 then some x.2 else none
 
 /-- The pronounced forms, left to right. -/
@@ -158,17 +159,17 @@ instance : Decidable (PronunciationEconomy t) := inferInstanceAs (Decidable (∀
 /-- The specifiers and head of the projection of a head of category `c`: down the right spine,
 the left daughters above the head, which is the first selecting item met; `none` when that item
 has another category or the spine ends first. -/
-def projection (c : Cat) : Planar → Option (List (Planar) × LIToken)
+def projection (c : Cat) : RoseTree Vertex → Option (List (RoseTree Vertex) × LIToken)
   | .node (.inr none) [.node (.inl tok) [], r] =>
       if tok.item.outerSel = [] then
-        (projection c r).map λ x => (Planar.leaf tok :: x.1, x.2)
+        (projection c r).map λ x => (.node (.inl tok) [] :: x.1, x.2)
       else if tok.item.outerCat = c then some ([], tok) else none
   | .node (.inr none) [l, r] => (projection c r).map λ x => (l :: x.1, x.2)
   | _ => none
 
 /-- The head of a constituent: the token or trace at a leaf, else the first selecting item down
 the right spine. -/
-def headToken? : Planar → Option LIToken
+def headToken? : RoseTree Vertex → Option LIToken
   | .node (.inl tok) _ | .node (.inr (some tok)) _ => some tok
   | .node (.inr none) [.node (.inl tok) [], r] =>
       if tok.item.outerSel = [] then headToken? r else some tok
@@ -176,15 +177,15 @@ def headToken? : Planar → Option LIToken
   | .node (.inr none) _ => none
 
 /-- The constituent is a wh-specifier: its head is a wh-token or its trace. -/
-def IsWhSpecifier (s : Planar) : Prop :=
+def IsWhSpecifier (s : RoseTree Vertex) : Prop :=
   ∃ tok ∈ (headToken? s).toList, tok.item.outerWh = true
 
-instance (s : Planar) : Decidable (IsWhSpecifier s) :=
+instance (s : RoseTree Vertex) : Decidable (IsWhSpecifier s) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The phase at `p`, a `v` or `C` projection: its edge, specifiers and head. -/
-def phaseAt (p : Path) : Option (PhaseEdge × List (Planar) × LIToken) :=
-  (t.subtreeAt p).bind λ s =>
+def phaseAt (p : Path) : Option (PhaseEdge × List (RoseTree Vertex) × LIToken) :=
+  (t.val.subtreeAt p).bind λ s =>
     ((projection .v s).map λ x => (PhaseEdge.vP, x)).or
       ((projection .C s).map λ x => (PhaseEdge.CP, x))
 
@@ -198,7 +199,7 @@ instance (param : MWFParameter) (p : Path) : Decidable (IsAsterisked t param p) 
 
 /-- The object converges at PF: the head of every asterisked phase is silenced. -/
 def Converges (param : MWFParameter) : Prop :=
-  ∀ p ∈ vertices t, IsAsterisked t param p → ∀ x ∈ (phaseAt t p).toList, IsSilenced t x.2.2
+  ∀ p ∈ vertices t.val, IsAsterisked t param p → ∀ x ∈ (phaseAt t p).toList, IsSilenced t x.2.2
 
 instance (param : MWFParameter) : Decidable (Converges t param) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))

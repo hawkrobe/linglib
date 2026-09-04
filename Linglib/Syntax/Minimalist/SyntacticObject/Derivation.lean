@@ -49,35 +49,35 @@ inductive Step where
 
 /-- The trace a moved object leaves: the trace of its head by selection, the bare trace when it
     has none. -/
-def trace (s : SyntacticObject) : SyntacticObject := s.selHead.elim traceLeaf traceOf
+def headTrace (s : SyntacticObject) : SyntacticObject := s.selHead.elim trace traceOf
 
 /-- The remainder `T/mover`: the current object with the mover's occurrences replaced by the
     trace of its head, the remaining tree of an admissible cut ([marcolli-chomsky-berwick-2025],
     Definition 1.2.6). For a uniquely accessible mover this is the deletion remainder that
     `Merge.mergeOp_im_composition` extracts; `replace` extends it to a chain of occurrences. -/
 noncomputable def deleteAccessible (mover current : SyntacticObject) : SyntacticObject :=
-  current.replace mover mover.trace
+  current.replace mover mover.headTrace
 
 @[simp] theorem deleteAccessible_val (mover current : SyntacticObject) :
     (deleteAccessible mover current).val
-      = Nonplanar.replace mover.val mover.trace.val current.val := rfl
+      = Nonplanar.replace mover.val mover.headTrace.val current.val := rfl
 
 /-- Apply a step: External Merge is the node with the item on the given side, Internal Merge the
     node of the remainder and the mover. -/
 noncomputable def Step.apply (step : Step) (current : SyntacticObject) : SyntacticObject :=
   match step with
-  | .emL item  => node item current
-  | .emR item  => node current item
-  | .im mover  => node (deleteAccessible mover current) mover
+  | .emL item  => merge item current
+  | .emR item  => merge current item
+  | .im mover  => merge (deleteAccessible mover current) mover
 
 theorem Step.apply_emL (item current : SyntacticObject) :
-    (Step.emL item).apply current = node item current := rfl
+    (Step.emL item).apply current = merge item current := rfl
 
 theorem Step.apply_emR (item current : SyntacticObject) :
-    (Step.emR item).apply current = node current item := rfl
+    (Step.emR item).apply current = merge current item := rfl
 
 theorem Step.apply_im (mover current : SyntacticObject) :
-    (Step.im mover).apply current = node (deleteAccessible mover current) mover := rfl
+    (Step.im mover).apply current = merge (deleteAccessible mover current) mover := rfl
 
 /-- `emL` and `emR` build the same object; they differ only at externalization. -/
 theorem Step.apply_emL_eq_emR (item current : SyntacticObject) :
@@ -126,7 +126,7 @@ end SyntacticObject
 
 /-! ### Carrier tests -/
 
-private def demoTok (i : Nat) : SyntacticObject := lexLeaf ⟨.simple .N [], i⟩
+private def demoTok (i : Nat) : SyntacticObject := SyntacticObject.leaf ⟨.simple .N [], i⟩
 
 example :
     (Derivation.mk (demoTok 0)

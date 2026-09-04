@@ -151,16 +151,16 @@ variable (side : ConventionDir)
 def linearizationState (s : SyntacticObject) : LinearizationState side :=
   liftFun (fun tok => .of tok tok.item.outerSel [tok]) (.of (mkTraceToken 0) [] []) s
 
-@[simp] theorem linearizationState_lexLeaf (tok : LIToken) :
-    (lexLeaf tok).linearizationState side = .of tok tok.item.outerSel [tok] := rfl
+@[simp] theorem linearizationState_leaf (tok : LIToken) :
+    (SyntacticObject.leaf tok).linearizationState side = .of tok tok.item.outerSel [tok] := rfl
 
-@[simp] theorem linearizationState_traceLeaf :
-    traceLeaf.linearizationState side = .of (mkTraceToken 0) [] [] := rfl
+@[simp] theorem linearizationState_trace :
+    trace.linearizationState side = .of (mkTraceToken 0) [] [] := rfl
 
 @[simp] theorem linearizationState_node (l r : SyntacticObject) :
-    (node l r).linearizationState side =
+    (merge l r).linearizationState side =
       l.linearizationState side * r.linearizationState side :=
-  liftFun_node _ _ l r
+  liftFun_merge _ _ l r
 
 /-- The head function as a morphism of magmas ([marcolli-chomsky-berwick-2025]
     §1.13's algebraic frame): Merge multiplies constituents, `h` multiplies states. -/
@@ -186,10 +186,10 @@ def linearize (s : SyntacticObject) : Option (List LIToken) :=
 def phonYield (s : SyntacticObject) : Option (List String) :=
   (s.linearize side).map (·.filterMap LIToken.phonForm?)
 
-@[simp] theorem linearize_lexLeaf (tok : LIToken) :
-    (lexLeaf tok).linearize side = some [tok] := rfl
+@[simp] theorem linearize_leaf (tok : LIToken) :
+    (SyntacticObject.leaf tok).linearize side = some [tok] := rfl
 
-@[simp] theorem linearize_traceLeaf : traceLeaf.linearize side = some [] := rfl
+@[simp] theorem linearize_trace : trace.linearize side = some [] := rfl
 
 end SyntacticObject
 

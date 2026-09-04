@@ -39,7 +39,7 @@ the costs the winners beat.
 
 namespace CitkoGracaninYuksek2025
 
-open Minimalist Minimalist.Planar RoseTree.Pathed
+open Minimalist Minimalist.PlanarSyntacticObject RoseTree.Pathed
 open Syntax.Question (MWFParameter)
 
 /-! ### The lexicon -/
@@ -78,26 +78,26 @@ def saw := tok 20 .V [.D] "saw"
 
 /-- `[CP wh [C′ c [TP subj [T′ T [vP wh [v′ v VP]]]]]]`: the wh-phrase moved through the edge of
 vP. -/
-def clause (wh c subj T v : LIToken) (VP : Planar) : Planar :=
+def clause (wh c subj T v : LIToken) (VP : PlanarSyntacticObject) : PlanarSyntacticObject :=
   merge (leaf wh) (merge (leaf c)
     (merge (leaf subj) (merge (leaf T) (merge (traceOf wh) (merge (leaf v) VP)))))
 
 /-- Non-bulk sharing under the complementizers `c₁` and `c₂`: each wh-phrase in its own
 conjunct, the subject, T, v and verb shared ((10b), (14), (16b), (38d), (45b), (46b)). -/
-def nonBulk (c₁ c₂ : LIToken) : Planar :=
+def nonBulk (c₁ c₂ : LIToken) : PlanarSyntacticObject :=
   merge (clause what c₁ you T v (merge (leaf teach) (traceOf what)))
     (clause when c₂ you T v (merge (leaf teach) (traceOf when)))
 
 /-- Bulk sharing: one C′ under both wh-phrases, both of which moved through its vP edge ((12b),
 (20b)). -/
-def bulk (c : LIToken) : Planar :=
+def bulk (c : LIToken) : PlanarSyntacticObject :=
   let c' := merge (leaf c) (merge (leaf you) (merge (leaf T) (merge (traceOf what)
     (merge (traceOf when)
       (merge (leaf v) (merge (merge (leaf teach) (traceOf what)) (traceOf when)))))))
   merge (merge (leaf what) c') (merge (leaf when) c')
 
 /-- Footnote 21's alternative to `bulk`: a shared TP under two complementizers. -/
-def bulkTP (c₁ c₂ : LIToken) : Planar :=
+def bulkTP (c₁ c₂ : LIToken) : PlanarSyntacticObject :=
   let tp := merge (leaf you) (merge (leaf T) (merge (traceOf what)
     (merge (traceOf when)
       (merge (leaf v) (merge (merge (leaf teach) (traceOf what)) (traceOf when))))))
@@ -106,20 +106,20 @@ def bulkTP (c₁ c₂ : LIToken) : Planar :=
 /-- Two clauses from separate tokens, the first elided under its [E] complementizer with its
 auxiliary in T, as the Sluicing-COMP generalization requires of a sluice: the ellipsis analysis
 of the coordinated wh-question (11b). -/
-def cwhEllipsis : Planar :=
+def cwhEllipsis : PlanarSyntacticObject :=
   merge (merge (leaf what) (merge (leaf cE) (merge (leaf you) (merge (leaf shouldT)
       (merge (traceOf what) (merge (leaf v) (merge (leaf teach) (traceOf what))))))))
     (clause when should you' T' v' (merge (leaf teach') (traceOf when)))
 
 /-- Two clauses from separate tokens, both elided, the second's object the pronoun of vehicle
 change: the double-ellipsis analysis of the coordinated sluice (19b). -/
-def csEllipsis : Planar :=
+def csEllipsis : PlanarSyntacticObject :=
   merge (clause what cE you T v (merge (leaf teach) (traceOf what)))
     (clause when cE' you' T' v' (merge (merge (leaf teach') (leaf it)) (traceOf when)))
 
 /-- A multiple question, both wh-phrases fronted through the vP edge: (28b), and the multiple
 sluice (29b) under an [E] complementizer. -/
-def multipleQuestion (c : LIToken) : Planar :=
+def multipleQuestion (c : LIToken) : PlanarSyntacticObject :=
   merge (leaf who) (merge (leaf what) (merge (leaf c) (merge (traceOf who) (merge (leaf T)
     (merge (traceOf who)
       (merge (traceOf what) (merge (leaf v) (merge (leaf saw) (traceOf what)))))))))
@@ -152,16 +152,11 @@ abbrev csnr := nonBulk cE c
 
 /-- The paired reading: the second conjunct holds an unbound trace of the first conjunct's
 wh-phrase, the copy that vehicle change reads as an E-type pronoun (footnote 20). -/
-def Paired (t : Planar) : Prop :=
+def Paired (t : PlanarSyntacticObject) : Prop :=
   ∃ x ∈ unboundTraces t, x.2 = what ∧ x.1.head? = some 1
 
 instance : DecidablePred Paired := λ _ => inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- The candidates are syntactic objects. -/
-theorem candidates_isSO : ∀ t ∈ [cwh, cwhEllipsis, cwhBulk, cwhNullC, cwhNullCSecond, cwhEmbedded,
-      cwhEmbeddedTwoC, cwhTwoAux, cs, csTwoC, csEllipsis, csSharedC, csnrTwoE, csnr,
-      multipleQuestion c, multipleQuestion cE],
-    Planar.isSyntacticObject t = true := by decide
 
 /-! ### The multiple-wh-fronting parameter (27) by language -/
 
@@ -217,7 +212,7 @@ theorem cs_beats_twoC : planarCost cs < planarCost csTwoC := by decide
 
 /-- The shared vP edge hosts two wh-specifiers: the asterisk of (26b). -/
 theorem cs_asterisked :
-    ∃ p ∈ vertices cs, IsAsterisked cs englishA p ∧ IsAsterisked cs englishB p := by decide
+    ∃ p ∈ vertices cs.val, IsAsterisked cs englishA p ∧ IsAsterisked cs englishB p := by decide
 /-- Elided, the asterisked edge never reaches PF. -/
 theorem cs_converges : Converges cs englishA ∧ Converges cs englishB := by decide
 
@@ -275,28 +270,28 @@ def different' := tok 33 .A (phon := "different")
 def topics' := tok 34 .N (phon := "topics")
 
 /-- The pivot, `on different topics`. -/
-def pivot : Planar := merge (leaf on) (merge (leaf different) (leaf topics))
+def pivot : PlanarSyntacticObject := merge (leaf on) (merge (leaf different) (leaf topics))
 
 /-- `[TP subj [T′ T VP]]`. -/
-def tp (subj T : LIToken) (VP : Planar) : Planar :=
+def tp (subj T : LIToken) (VP : PlanarSyntacticObject) : PlanarSyntacticObject :=
   merge (leaf subj) (merge (leaf T) VP)
 
 /-- (53b), after the pruning of [belk-neeleman-philip-2023] that removes the shared pivot from
 the first conjunct: the first verb phrase, the bare verb, elided under [E] on `must`. -/
-def rnrMixed : Planar :=
+def rnrMixed : PlanarSyntacticObject :=
   merge (tp alice mustE (leaf work)) (tp iris oughtToBe (merge (leaf working) pivot))
 /-- (54): the first verb phrase built with its own pivot and elided. -/
-def rnrElided : Planar :=
+def rnrElided : PlanarSyntacticObject :=
   merge
     (tp alice mustE
       (merge (leaf work) (merge (leaf on') (merge (leaf different') (leaf topics')))))
     (tp iris oughtToBe (merge (leaf working) pivot))
 /-- (55b): with matching verbs, the verb phrase shared. -/
-def rnrShared : Planar :=
+def rnrShared : PlanarSyntacticObject :=
   let VP := merge (leaf work) pivot
   merge (tp alice must VP) (tp iris shouldRNR VP)
 /-- The rival of (55b) with the shape of (53b). -/
-def rnrMatchedMixed : Planar :=
+def rnrMatchedMixed : PlanarSyntacticObject :=
   merge (tp alice mustE (leaf work)) (tp iris shouldRNR (merge (leaf working) pivot))
 
 theorem rnrMixed_pf : pfPhon rnrMixed =

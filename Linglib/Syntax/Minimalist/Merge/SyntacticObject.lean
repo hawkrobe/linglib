@@ -9,7 +9,7 @@ import Linglib.Syntax.Minimalist.Workspace.Basic
 /-!
 # Merge on the syntactic-object carrier
 
-Merge on the carrier is the bare binary node `SyntacticObject.node` with root label
+Merge on the carrier is the bare binary node `SyntacticObject.merge` with root label
 `Sum.inr none`. This file identifies it with the algebraic Merge operator of `Merge/Basic.lean` on
 workspaces lifted along `of'`: External Merge of two objects is `mergeOp_pair`, and Internal
 Merge of a mover with its remainder is the two-stage composition `mergeOp_im_composition`, given
@@ -35,12 +35,12 @@ open RoseTree RoseTree.Nonplanar ConnesKreimer
 theorem mergeOp_node (S S' : SyntacticObject) :
     Merge.mergeOp (R := ℤ) (Sum.inr none) S.val S'.val
         (of' ({S.val, S'.val} : Forest (Nonplanar Vertex)))
-      = of' (R := ℤ) ({(node S S').val} : Forest (Nonplanar Vertex)) := by
-  rw [Merge.mergeOp_pair, node_val]
+      = of' (R := ℤ) ({(merge S S').val} : Forest (Nonplanar Vertex)) := by
+  rw [Merge.mergeOp_pair, merge_val]
 
 /-- Internal Merge on the carrier is the two-stage algebraic Merge, given the unique Δ^ρ cut `p0`
     of `T` extracting `mover` with remainder `remainder`. -/
-theorem mergeOp_node_im (mover remainder T : SyntacticObject)
+theorem mergeOp_merge_im (mover remainder T : SyntacticObject)
     (p0 : Forest (Nonplanar Vertex) × Nonplanar Vertex)
     (h_filter : (cutSummandsN T.val).filter
         (fun p => p.1 = ({mover.val} : Forest (Nonplanar Vertex))) = {p0})
@@ -50,8 +50,8 @@ theorem mergeOp_node_im (mover remainder T : SyntacticObject)
         (Merge.mergeOpUnit (R := ℤ) mover.val
           (of' ({T.val} : Forest (Nonplanar Vertex))))
       = of' (R := ℤ)
-          ({(node remainder mover).val} : Forest (Nonplanar Vertex)) := by
+          ({(merge remainder mover).val} : Forest (Nonplanar Vertex)) := by
   rw [Merge.mergeOp_im_composition (Sum.inr none) mover.val T.val remainder.val
-        p0 h_filter h_remainder hT, node_val]
+        p0 h_filter h_remainder hT, merge_val]
 
 end Minimalist.SyntacticObject

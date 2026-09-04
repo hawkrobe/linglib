@@ -293,15 +293,17 @@ open Minimalist.Movement (RemnantFronting PredicateDoubling properRemnant)
 open Minimalist.SyntacticObject
 
 private def guebieVerbTok : LIToken := ⟨.simple .V [], 1⟩
-private def guebieVerbLeaf : SyntacticObject := lexLeaf guebieVerbTok
+private def guebieVerbLeaf : SyntacticObject := leaf guebieVerbTok
 
 /-- The remnant VP of the verb-doubling configuration ((31)): an evacuation trace
     plus the verb copy, pronounced for recoverability per [koopman-1997]. -/
 private def guebieFrontedVP : SyntacticObject :=
-  ofPlanar (Minimalist.Planar.merge Minimalist.Planar.trace (Minimalist.Planar.leaf guebieVerbTok))
+  Minimalist.PlanarSyntacticObject.toSyntacticObject
+    (Minimalist.PlanarSyntacticObject.merge Minimalist.PlanarSyntacticObject.trace
+      (Minimalist.PlanarSyntacticObject.leaf guebieVerbTok))
 
 private def guebieLandingTok : LIToken := ⟨.simple .C [], 2⟩
-private def guebieLandingSite : SyntacticObject := lexLeaf guebieLandingTok
+private def guebieLandingSite : SyntacticObject := leaf guebieLandingTok
 
 /-- The Guébie predicate-fronting witness: V evacuates, the remnant VP fronts to
     Spec,CP, and the trace is pronounced — verb doubling. -/

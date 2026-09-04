@@ -362,8 +362,8 @@ def DP_wife_t   := mkLeafPhon .D     []      "wife"        409
 def DP_food_t   := mkLeafPhon .D     []      "food"        410
 
 /-! Planar leaf tokens, used to build the concrete trees the c-command
-    theorems reason over (Merge `SyntacticObject.node` is noncomputable; trees are
-    built planar-first via `SyntacticObject.ofPlanar`). -/
+    theorems reason over (Merge `SyntacticObject.merge` is noncomputable; trees are
+    built planar-first via `PlanarSyntacticObject.toSyntacticObject`). -/
 
 private def t_voice_ag  : LIToken := ⟨.simple .Voice [.V] (phonForm := "Voice[AG]"), 400⟩
 private def t_appl_low  : LIToken := ⟨.simple .Appl [.D] (phonForm := "Appl[LOW]"), 402⟩
@@ -390,12 +390,13 @@ private def t_DP_food   : LIToken := ⟨.simple .D [] (phonForm := "food"), 410�
     asymmetry that IO asymmetrically c-commands DO. Built planar-first
     so the c-command theorems `decide`. -/
 def ditransitiveTree : SyntacticObject :=
-  ofPlanar
-    (Planar.merge (Planar.leaf t_DP_john)
-      (Planar.merge (Planar.leaf t_voice_ag)
-        (Planar.merge (Planar.leaf t_V_sent)
-          (Planar.merge (Planar.leaf t_DP_mary)
-            (Planar.merge (Planar.leaf t_appl_low) (Planar.leaf t_DP_letter))))))
+  PlanarSyntacticObject.toSyntacticObject
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_DP_john)
+      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_voice_ag)
+        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_V_sent)
+          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_DP_mary)
+            (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_appl_low)
+              (PlanarSyntacticObject.leaf t_DP_letter))))))
 
 /-- High applicative benefactive (Chaga pattern): "he ate food for wife"
 
@@ -406,12 +407,13 @@ def ditransitiveTree : SyntacticObject :=
     theme). High Appl is attested in Bantu languages (Chaga, Luganda,
     Venda) and Albanian, but NOT in English. -/
 def benefactiveTree : SyntacticObject :=
-  ofPlanar
-    (Planar.merge (Planar.leaf t_DP_john)
-      (Planar.merge (Planar.leaf t_voice_ag)
-        (Planar.merge (Planar.leaf t_DP_wife)
-          (Planar.merge (Planar.leaf t_appl_high)
-            (Planar.merge (Planar.leaf t_V_eat) (Planar.leaf t_DP_food))))))
+  PlanarSyntacticObject.toSyntacticObject
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_DP_john)
+      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_voice_ag)
+        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_DP_wife)
+          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_appl_high)
+            (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_V_eat)
+              (PlanarSyntacticObject.leaf t_DP_food))))))
 
 -- ============================================================================
 -- § 3: C-command Predictions

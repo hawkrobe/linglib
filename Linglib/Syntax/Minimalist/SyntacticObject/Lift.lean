@@ -80,11 +80,11 @@ def liftN [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) : Nonplanar 
     fun _ _ h => RoseTree.fold_perm (fun a _ _ h' => mergeAlgebra_perm ℓ τ a h') h
 
 @[simp] theorem liftN_mk [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
-    (p : Planar) :
+    (p : RoseTree Vertex) :
     liftN ℓ τ (Nonplanar.mk p) = RoseTree.fold (mergeAlgebra ℓ τ) p := rfl
 
 /-- The nonplanar magma law: Merge multiplies values. -/
-theorem liftN_node [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
+theorem liftN_merge [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
     (a b : Nonplanar Vertex) :
     liftN ℓ τ (Nonplanar.node (Sum.inr none) {a, b}) = liftN ℓ τ a * liftN ℓ τ b := by
   refine Nonplanar.inductionOn₂ a b fun pa pb => ?_
@@ -95,27 +95,27 @@ theorem liftN_node [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
 def liftFun [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) (s : SyntacticObject) : β :=
   liftN ℓ τ s.val
 
-@[simp] theorem liftFun_lexLeaf [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
-    (tok : LIToken) : liftFun ℓ τ (lexLeaf tok) = ℓ tok := rfl
+@[simp] theorem liftFun_leaf [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
+    (tok : LIToken) : liftFun ℓ τ (SyntacticObject.leaf tok) = ℓ tok := rfl
 
-@[simp] theorem liftFun_traceLeaf [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) :
-    liftFun ℓ τ traceLeaf = τ := rfl
+@[simp] theorem liftFun_trace [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) :
+    liftFun ℓ τ trace = τ := rfl
 
 @[simp] theorem liftFun_traceOf [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
     (tok : LIToken) : liftFun ℓ τ (traceOf tok) = τ := rfl
 
-@[simp] theorem liftFun_node [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
+@[simp] theorem liftFun_merge [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
     (l r : SyntacticObject) :
-    liftFun ℓ τ (node l r) = liftFun ℓ τ l * liftFun ℓ τ r := by
-  show liftN ℓ τ (node l r).val = liftN ℓ τ l.val * liftN ℓ τ r.val
-  rw [node_val, liftN_node]
+    liftFun ℓ τ (merge l r) = liftFun ℓ τ l * liftFun ℓ τ r := by
+  show liftN ℓ τ (merge l r).val = liftN ℓ τ l.val * liftN ℓ τ r.val
+  rw [merge_val, liftN_merge]
 
 /-- The universal property, existence half (cf. `FreeMagma.lift`): leaf data
     extends to a morphism of magmas out of the carrier. -/
 noncomputable def lift [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) :
     SyntacticObject →ₙ* β where
   toFun := liftFun ℓ τ
-  map_mul' := liftFun_node ℓ τ
+  map_mul' := liftFun_merge ℓ τ
 
 @[simp] theorem lift_apply [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
     (s : SyntacticObject) : lift ℓ τ s = liftFun ℓ τ s := rfl
@@ -123,15 +123,15 @@ noncomputable def lift [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
 /-- The universal property, uniqueness half: morphisms agreeing on the leaves are
     equal. -/
 theorem hom_ext [Mul β] {f g : SyntacticObject →ₙ* β}
-    (hlex : ∀ tok, f (lexLeaf tok) = g (lexLeaf tok))
-    (htrace : f traceLeaf = g traceLeaf) (htraceOf : ∀ tok, f (traceOf tok) = g (traceOf tok)) :
+    (hlex : ∀ tok, f (SyntacticObject.leaf tok) = g (SyntacticObject.leaf tok))
+    (htrace : f trace = g trace) (htraceOf : ∀ tok, f (traceOf tok) = g (traceOf tok)) :
     f = g :=
   MulHom.ext fun s => by
     induction s using SyntacticObject.ind with
-    | lex tok => exact hlex tok
+    | leaf tok => exact hlex tok
     | trace => exact htrace
     | traceOf tok => exact htraceOf tok
-    | node l r ihl ihr =>
-      rw [show node l r = l * r from rfl, map_mul, map_mul, ihl, ihr]
+    | merge l r ihl ihr =>
+      rw [show merge l r = l * r from rfl, map_mul, map_mul, ihl, ihr]
 
 end Minimalist.SyntacticObject

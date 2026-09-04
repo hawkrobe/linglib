@@ -37,7 +37,7 @@ abbrev Workspace : Type := Forest SyntacticObject
 def Workspace.chainMultiplicity (S : SyntacticObject) (W : Workspace) : Nat := W.count S
 
 /-- Two isomorphic components form a chain of two. -/
-example : Workspace.chainMultiplicity SyntacticObject.traceLeaf
-    {SyntacticObject.traceLeaf, SyntacticObject.traceLeaf} = 2 := by decide
+example : Workspace.chainMultiplicity SyntacticObject.trace
+    {SyntacticObject.trace, SyntacticObject.trace} = 2 := by decide
 
 end Minimalist

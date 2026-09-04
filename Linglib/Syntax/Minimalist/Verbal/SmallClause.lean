@@ -79,12 +79,12 @@ structure SmallClause where
 
 /-- Build the syntactic object for a small clause: `[SC Subj Pred]`. -/
 noncomputable def SmallClause.toSO (sc : SmallClause) : SyntacticObject :=
-  node sc.subject sc.predicate
+  merge sc.subject sc.predicate
 
 /-- Embed a small clause under a verb: `V [SC Subj Pred]`. -/
 noncomputable def SmallClause.embedUnderV (v : SyntacticObject) (sc : SmallClause) :
     SyntacticObject :=
-  node v sc.toSO
+  merge v sc.toSO
 
 /-- The construction type name for each SC predicate category. -/
 def SCPredCategory.constructionName : SCPredCategory → String
@@ -124,7 +124,7 @@ abbrev SyntacticObject.headCat (so : SyntacticObject) : Option Cat := outerCatC 
 
 /-! ## Binary-node leaf/node counts
 
-`SyntacticObject.node` is noncomputable (the `Nonplanar` carrier
+`SyntacticObject.merge` is noncomputable (the `Nonplanar` carrier
 round-trips through `Quotient.out`), so `decide`/`rfl` can't read back the
 shape of a `node`-built tree. These two lemmas give the structural facts
 study files need — a binary node has the summed leaf count of its children
@@ -147,8 +147,8 @@ private theorem _root_.RoseTree.Nonplanar.numLeaves_node_pair {α : Type*} (a : 
 
 /-- Leaf count of a binary Merge node is the sum of its children's. -/
 theorem SyntacticObject.leafCount_node (l r : SyntacticObject) :
-    (node l r).leafCount = l.leafCount + r.leafCount := by
-  rw [leafCount, node_val, RoseTree.Nonplanar.numLeaves_node_pair]; rfl
+    (merge l r).leafCount = l.leafCount + r.leafCount := by
+  rw [leafCount, merge_val, RoseTree.Nonplanar.numLeaves_node_pair]; rfl
 
 /-- A syntactic object qualifies as a small-clause predicate iff its
     head category is one of [dendikken-1995]'s four SC-licensed
@@ -181,18 +181,18 @@ noncomputable instance : DecidablePred IsSmallClause := fun so => by
 
 /-- `IsSmallClause` at a node: the predicate is either daughter. -/
 theorem isSmallClause_node (l r : SyntacticObject) :
-    IsSmallClause (node l r) ↔ (IsSmallClausePredicate l ∨ IsSmallClausePredicate r) := by
+    IsSmallClause (merge l r) ↔ (IsSmallClausePredicate l ∨ IsSmallClausePredicate r) := by
   unfold IsSmallClause
   constructor
   · rintro ⟨pred, himm, hpred⟩
-    rw [immediatelyContains_node] at himm
+    rw [immediatelyContains_merge] at himm
     rcases himm with rfl | rfl
     · exact Or.inl hpred
     · exact Or.inr hpred
   · intro h
     rcases h with hl | hr
-    · exact ⟨l, (immediatelyContains_node l r l).mpr (Or.inl rfl), hl⟩
-    · exact ⟨r, (immediatelyContains_node l r r).mpr (Or.inr rfl), hr⟩
+    · exact ⟨l, (immediatelyContains_merge l r l).mpr (Or.inl rfl), hl⟩
+    · exact ⟨r, (immediatelyContains_merge l r r).mpr (Or.inr rfl), hr⟩
 
 /-- Round-trip: any `SmallClause` whose stored `predCat` agrees with
     its `predicate`'s actual head category yields a `SyntacticObject`

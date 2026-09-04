@@ -89,7 +89,7 @@ combine it with English's binding-class classifier.
 /-! #### C-command from tree geometry -/
 
 /-- Convert a word to a Minimalist lexical-item token (UPOS mapped to `Cat`,
-    phonological form attached). The smart Merge `SyntacticObject.node` is noncomputable, so
+    phonological form attached). The smart Merge `SyntacticObject.merge` is noncomputable, so
     concrete trees are built planar-first from these tokens and `decide`d over. -/
 private def wordTok (w : Word) (id : Nat) : LIToken :=
   ⟨.simple (uposToCat w.cat) [] w.form, id⟩
@@ -99,17 +99,18 @@ private def wordTok (w : Word) (id : Nat) : LIToken :=
     `{subj, verb}`. C-command follows from the geometry. Built planar-first so
     the containment / c-command decision procedures reduce. -/
 def toSyntacticObject (clause : SimpleClause) : SyntacticObject :=
-  let subjP := Planar.leaf (wordTok clause.subject 0)
-  let verbP := Planar.leaf (wordTok clause.verb 1)
+  let subjP := PlanarSyntacticObject.leaf (wordTok clause.subject 0)
+  let verbP := PlanarSyntacticObject.leaf (wordTok clause.verb 1)
   match clause.object with
-  | none => ofPlanar (Planar.merge subjP verbP)
-  | some obj => ofPlanar (Planar.merge subjP (Planar.merge verbP (Planar.leaf (wordTok obj 2))))
+  | none => PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge subjP verbP)
+  | some obj => PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge subjP
+    (PlanarSyntacticObject.merge verbP (PlanarSyntacticObject.leaf (wordTok obj 2))))
 
 private def subjectSO (clause : SimpleClause) : SyntacticObject :=
-  lexLeaf (wordTok clause.subject 0)
+  leaf (wordTok clause.subject 0)
 
 private def objectSO? (clause : SimpleClause) : Option SyntacticObject :=
-  clause.object.map fun obj => lexLeaf (wordTok obj 2)
+  clause.object.map fun obj => leaf (wordTok obj 2)
 
 /-- Subject c-commands object: in `{subj, {verb, obj}}`, the subject's sister
     `{verb, obj}` contains the object. -/

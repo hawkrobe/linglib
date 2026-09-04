@@ -95,84 +95,99 @@ private def tThemeD : LIToken := ⟨.simple .D [], 13⟩
 private def tThemeN : LIToken := ⟨.simple .N [], 14⟩
 private def tPivot : LIToken := ⟨.simple .N [], 15⟩
 
-private def C₀ : SyntacticObject := lexLeaf tC
-private def T₀ : SyntacticObject := lexLeaf tT
-private def Appl₀ : SyntacticObject := lexLeaf tAppl
-private def Psr : SyntacticObject := lexLeaf tPsr
-private def D₀ : SyntacticObject := lexLeaf tD
-private def Agt : SyntacticObject := lexLeaf tAgt
-private def SubjD : SyntacticObject := lexLeaf tSubjD
-private def ThemeD : SyntacticObject := lexLeaf tThemeD
+private def C₀ : SyntacticObject := leaf tC
+private def T₀ : SyntacticObject := leaf tT
+private def Appl₀ : SyntacticObject := leaf tAppl
+private def Psr : SyntacticObject := leaf tPsr
+private def D₀ : SyntacticObject := leaf tD
+private def Agt : SyntacticObject := leaf tAgt
+private def SubjD : SyntacticObject := leaf tSubjD
+private def ThemeD : SyntacticObject := leaf tThemeD
 
 /-- A non-specific possessive, `[PossP Psr Psm]`. -/
-private def possP : Planar := Planar.merge (Planar.leaf tPsr) (Planar.leaf tPsm)
+private def possP : PlanarSyntacticObject := PlanarSyntacticObject.merge
+    (PlanarSyntacticObject.leaf tPsr) (PlanarSyntacticObject.leaf tPsm)
 
 /-- A specific possessive, `[DP D⁰ [PossP Psr Psm]]`. -/
-private def dp : Planar := Planar.merge (Planar.leaf tD) possP
+private def dp : PlanarSyntacticObject := PlanarSyntacticObject.merge
+    (PlanarSyntacticObject.leaf tD) possP
 
 /-- A locative PP over a non-specific possessive, `[PP P [PossP Psr Psm]]`. -/
-private def pp : Planar := Planar.merge (Planar.leaf tP) possP
+private def pp : PlanarSyntacticObject := PlanarSyntacticObject.merge
+    (PlanarSyntacticObject.leaf tP) possP
 
 /-- (9c) with a non-specific possessive S_O: `[TP T⁰ [VP V⁰ PossP]]`. -/
-private def unaccPossP : Planar := Planar.merge (Planar.leaf tT) (Planar.merge
-  (Planar.leaf tV) possP)
+private def unaccPossP : PlanarSyntacticObject := PlanarSyntacticObject.merge
+    (PlanarSyntacticObject.leaf tT) (PlanarSyntacticObject.merge
+  (PlanarSyntacticObject.leaf tV) possP)
 
 /-- (9c) with a specific possessive S_O: `[TP T⁰ [VP V⁰ DP]]`. -/
-private def unaccDP : Planar := Planar.merge (Planar.leaf tT) (Planar.merge (Planar.leaf tV) dp)
+private def unaccDP : PlanarSyntacticObject := PlanarSyntacticObject.merge
+    (PlanarSyntacticObject.leaf tT) (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tV) dp)
 
 /-- (9a) with a non-specific possessive O: `[TP T⁰ [vP Agt [v' v⁰ [VP V⁰ PossP]]]]`. -/
-private def transPossP : Planar :=
-  Planar.merge (Planar.leaf tT) (Planar.merge (Planar.leaf tAgt) (Planar.merge (Planar.leaf tv)
-    (Planar.merge (Planar.leaf tV) possP)))
+private def transPossP : PlanarSyntacticObject :=
+  PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tT) (PlanarSyntacticObject.merge
+    (PlanarSyntacticObject.leaf tAgt) (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tv)
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tV) possP)))
 
 /-- (29) the raising applicative: `[vP Agt [v' v⁰ [ApplP Appl⁰ [VP V⁰ PossP]]]]` under T⁰. -/
-private def raisingAppl : Planar :=
-  Planar.merge (Planar.leaf tT)
-    (Planar.merge (Planar.leaf tAgt) (Planar.merge (Planar.leaf tv) (Planar.merge
-      (Planar.leaf tAppl)
-      (Planar.merge (Planar.leaf tV) possP))))
+private def raisingAppl : PlanarSyntacticObject :=
+  PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tT)
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tAgt) (PlanarSyntacticObject.merge
+      (PlanarSyntacticObject.leaf tv) (PlanarSyntacticObject.merge
+      (PlanarSyntacticObject.leaf tAppl)
+      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tV) possP))))
 
 /-- (9b) with a locative PP, `[TP T⁰ [vP S_A [v' v⁰ [VP V⁰ PP]]]]`, for a specific or a
 non-specific S_A. -/
-private def unerg (subj : LIToken) : Planar :=
-  Planar.merge (Planar.leaf tT) (Planar.merge (Planar.leaf subj) (Planar.merge (Planar.leaf tv)
-    (Planar.merge (Planar.leaf tV) pp)))
+private def unerg (subj : LIToken) : PlanarSyntacticObject :=
+  PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tT) (PlanarSyntacticObject.merge
+    (PlanarSyntacticObject.leaf subj) (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tv)
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tV) pp)))
 
 /-- (71) theme over locative, `[TP T⁰ [VP V⁰ [Theme PP]]]`, for a specific or a non-specific
 theme: path verbs, locative existentials and locative copulas. -/
-private def themeLoc (theme : LIToken) : Planar :=
-  Planar.merge (Planar.leaf tT) (Planar.merge (Planar.leaf tV) (Planar.merge
-    (Planar.leaf theme) pp))
+private def themeLoc (theme : LIToken) : PlanarSyntacticObject :=
+  PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tT) (PlanarSyntacticObject.merge
+    (PlanarSyntacticObject.leaf tV) (PlanarSyntacticObject.merge
+    (PlanarSyntacticObject.leaf theme) pp))
 
 /-- (83) the experiencer PP merged above the theme, `[TP T⁰ [VP PP [V' V⁰ Theme]]]`. -/
-private def experiencer : Planar :=
-  Planar.merge (Planar.leaf tT) (Planar.merge pp (Planar.merge (Planar.leaf tV)
-    (Planar.leaf tThemeD)))
+private def experiencer : PlanarSyntacticObject :=
+  PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tT) (PlanarSyntacticObject.merge pp
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tV)
+    (PlanarSyntacticObject.leaf tThemeD)))
 
 /-- (40a) an existential with a bare pivot, `[TP T⁰ [VP V⁰ NP]]`. -/
-private def existential : Planar :=
-  Planar.merge (Planar.leaf tT) (Planar.merge (Planar.leaf tV) (Planar.leaf tPivot))
+private def existential : PlanarSyntacticObject :=
+  PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tT) (PlanarSyntacticObject.merge
+    (PlanarSyntacticObject.leaf tV) (PlanarSyntacticObject.leaf tPivot))
 
 /-! ### Nominal opacity -/
 
 /-- The possessor of a specific S_O is invisible to C⁰'s wh-probe. -/
 theorem psr_invisible_dp :
-    Invisible nominalOpacity (ofPlanar (Planar.merge (Planar.leaf tC) unaccDP)) C₀ Psr :=
+    Invisible nominalOpacity (PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
+      (PlanarSyntacticObject.leaf tC) unaccDP)) C₀ Psr :=
   ⟨.N, rfl, by decide⟩
 
 /-- So is the possessor of a non-specific S_O: opacity does not depend on size. -/
 theorem psr_invisible_possP :
-    Invisible nominalOpacity (ofPlanar (Planar.merge (Planar.leaf tC) unaccPossP)) C₀ Psr :=
+    Invisible nominalOpacity (PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
+      (PlanarSyntacticObject.leaf tC) unaccPossP)) C₀ Psr :=
   ⟨.N, rfl, by decide⟩
 
 /-- And the possessor inside a locative PP: PP islands follow from nominal opacity. -/
 theorem psr_invisible_pp :
-    Invisible nominalOpacity (ofPlanar (Planar.merge (Planar.leaf tC) (themeLoc tThemeN))) C₀ Psr :=
+    Invisible nominalOpacity (PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
+      (PlanarSyntacticObject.leaf tC) (themeLoc tThemeN))) C₀ Psr :=
   ⟨.N, rfl, by decide⟩
 
 /-- The D head of a specific possessive is visible, so the whole DP can be pied-piped. -/
 theorem dHead_visible :
-    ¬ Invisible nominalOpacity (ofPlanar (Planar.merge (Planar.leaf tC) unaccDP)) C₀ D₀ :=
+    ¬ Invisible nominalOpacity (PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
+      (PlanarSyntacticObject.leaf tC) unaccDP)) C₀ D₀ :=
   fun ⟨_, hh, hb⟩ => by
     simp only [nominalOpacity, Option.some.injEq] at hh
     exact absurd (hh ▸ hb) (by decide)
@@ -181,51 +196,55 @@ theorem dHead_visible :
 
 /-- The possessor of a non-specific S_O is T⁰'s closest D-goal: it raises to Spec,TP and can
 strand the possessum. -/
-theorem unacc_possP_psr_closest : isClosestGoalIn (ofPlanar unaccPossP) T₀ Psr hasD := by
+theorem unacc_possP_psr_closest : isClosestGoalIn
+    (PlanarSyntacticObject.toSyntacticObject unaccPossP) T₀ Psr hasD := by
   decide
 
 /-- In a specific S_O the D layer is the closer goal: the whole DP raises and the possessor is
 shielded. -/
 theorem unacc_dp_dHead_closest :
-    isClosestGoalIn (ofPlanar unaccDP) T₀ D₀ hasD ∧
-      ¬ isClosestGoalIn (ofPlanar unaccDP) T₀ Psr hasD :=
+    isClosestGoalIn (PlanarSyntacticObject.toSyntacticObject unaccDP) T₀ D₀ hasD ∧
+      ¬ isClosestGoalIn (PlanarSyntacticObject.toSyntacticObject unaccDP) T₀ Psr hasD :=
   ⟨by decide, by decide⟩
 
 /-- The agent of a transitive is the closer goal, so the possessor of O cannot reach Spec,TP. -/
 theorem trans_agt_closest :
-    isClosestGoalIn (ofPlanar transPossP) T₀ Agt hasD ∧
-      ¬ isClosestGoalIn (ofPlanar transPossP) T₀ Psr hasD :=
+    isClosestGoalIn (PlanarSyntacticObject.toSyntacticObject transPossP) T₀ Agt hasD ∧
+      ¬ isClosestGoalIn (PlanarSyntacticObject.toSyntacticObject transPossP) T₀ Psr hasD :=
   ⟨by decide, by decide⟩
 
 /-- In the raising applicative the possessor of O is Appl⁰'s closest D-goal: it externalizes to
 Spec,ApplP. -/
-theorem appl_psr_closest : isClosestGoalIn (ofPlanar raisingAppl) Appl₀ Psr hasD := by decide
+theorem appl_psr_closest : isClosestGoalIn
+    (PlanarSyntacticObject.toSyntacticObject raisingAppl) Appl₀ Psr hasD := by decide
 
 /-- A specific unergative subject stops T⁰ before the possessor inside the locative PP. -/
 theorem unerg_specific_blocks :
-    isClosestGoalIn (ofPlanar (unerg tSubjD)) T₀ SubjD hasD ∧
-      ¬ isClosestGoalIn (ofPlanar (unerg tSubjD)) T₀ Psr hasD :=
+    isClosestGoalIn (PlanarSyntacticObject.toSyntacticObject (unerg tSubjD)) T₀ SubjD hasD ∧
+      ¬ isClosestGoalIn (PlanarSyntacticObject.toSyntacticObject (unerg tSubjD)) T₀ Psr hasD :=
   ⟨by decide, by decide⟩
 
 /-- A non-specific unergative subject is no DP, so the possessor is the closest goal. -/
-theorem unerg_nonspecific_psr_closest : isClosestGoalIn (ofPlanar (unerg tSubjN)) T₀ Psr hasD := by
+theorem unerg_nonspecific_psr_closest : isClosestGoalIn (PlanarSyntacticObject.toSyntacticObject
+    (unerg tSubjN)) T₀ Psr hasD := by
   decide
 
 /-- A specific theme c-commanding the locative PP raises instead of the possessor. -/
 theorem theme_specific_blocks :
-    isClosestGoalIn (ofPlanar (themeLoc tThemeD)) T₀ ThemeD hasD ∧
-      ¬ isClosestGoalIn (ofPlanar (themeLoc tThemeD)) T₀ Psr hasD :=
+    isClosestGoalIn (PlanarSyntacticObject.toSyntacticObject (themeLoc tThemeD)) T₀ ThemeD hasD ∧
+      ¬ isClosestGoalIn (PlanarSyntacticObject.toSyntacticObject (themeLoc tThemeD)) T₀ Psr hasD :=
   ⟨by decide, by decide⟩
 
 /-- A non-specific theme lets T⁰ reach the possessor inside the PP. -/
 theorem theme_nonspecific_psr_closest :
-    isClosestGoalIn (ofPlanar (themeLoc tThemeN)) T₀ Psr hasD := by decide
+    isClosestGoalIn (PlanarSyntacticObject.toSyntacticObject
+      (themeLoc tThemeN)) T₀ Psr hasD := by decide
 
 /-- With the experiencer PP merged above the theme, neither c-commands the other and both are
 closest goals; the experiential reading requires the experiencer to raise. -/
 theorem experiencer_both_closest :
-    isClosestGoalIn (ofPlanar experiencer) T₀ Psr hasD ∧
-      isClosestGoalIn (ofPlanar experiencer) T₀ ThemeD hasD :=
+    isClosestGoalIn (PlanarSyntacticObject.toSyntacticObject experiencer) T₀ Psr hasD ∧
+      isClosestGoalIn (PlanarSyntacticObject.toSyntacticObject experiencer) T₀ ThemeD hasD :=
   ⟨by decide, by decide⟩
 
 /-! ### Judgment type -/
@@ -246,10 +265,12 @@ def judgment (root probe : SyntacticObject) : JudgmentType :=
   if ∃ g ∈ root.subtrees, isClosestGoalIn root probe g hasD then .categorical else .thetic
 
 /-- An existential with a bare pivot contains no DP: the clause is thetic. -/
-theorem existential_thetic : judgment (ofPlanar existential) T₀ = .thetic := by decide
+theorem existential_thetic : judgment (PlanarSyntacticObject.toSyntacticObject existential) T₀
+    = .thetic := by decide
 
 /-- Predicative possession is categorical, with the possessor as ψ-subject. -/
-theorem possession_categorical : judgment (ofPlanar unaccPossP) T₀ = .categorical := by decide
+theorem possession_categorical : judgment (PlanarSyntacticObject.toSyntacticObject unaccPossP) T₀
+    = .categorical := by decide
 
 /-! ### The paper's examples -/
 
