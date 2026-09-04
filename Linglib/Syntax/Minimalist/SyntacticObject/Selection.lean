@@ -152,36 +152,36 @@ theorem SelectionState.head_mul {r : LIToken}
 
 /-- The selection algebra: the `SyntacticObject.mergeAlgebra` of token + `outerSel`
     leaves and the saturated trace, indexed or not. -/
-def selNode : SOLabel → List SelectionState → SelectionState :=
+def selNode : Vertex → List SelectionState → SelectionState :=
   mergeAlgebra (fun tok => .of tok tok.item.outerSel) (.of (mkTraceToken 0) [])
 
 /-- `selNode` is invariant under permutation of the daughter states. -/
-theorem selNode_perm (a : SOLabel) {l₁ l₂ : List SelectionState} (h : l₁.Perm l₂) :
+theorem selNode_perm (a : Vertex) {l₁ l₂ : List SelectionState} (h : l₁.Perm l₂) :
     selNode a l₁ = selNode a l₂ :=
   mergeAlgebra_perm _ _ a h
 
 /-- Selection check on a planar tree: the catamorphism of `selNode`. -/
-def selCheckPlanar : RoseTree SOLabel → SelectionState :=
+def selCheckPlanar : Planar → SelectionState :=
   RoseTree.fold selNode
 
 /-- Reduction of `selCheckPlanar` at a node: fold the algebra over the daughters. -/
-theorem selCheckPlanar_node (a : SOLabel) (cs : List (RoseTree SOLabel)) :
+theorem selCheckPlanar_node (a : Vertex) (cs : List (Planar)) :
     selCheckPlanar (RoseTree.node a cs) = selNode a (cs.map selCheckPlanar) :=
   RoseTree.fold_node ..
 
 /-- `selCheckPlanar` is `Perm`-invariant, so it descends to the quotient. -/
-theorem selCheckPlanar_perm {t s : RoseTree SOLabel} (h : RoseTree.Perm t s) :
+theorem selCheckPlanar_perm {t s : Planar} (h : RoseTree.Perm t s) :
     selCheckPlanar t = selCheckPlanar s :=
   RoseTree.fold_perm (fun a _ _ h' => selNode_perm a h') h
 
 /-- Selection check on the nonplanar carrier. -/
-def selCheckN : Nonplanar SOLabel → SelectionState :=
+def selCheckN : Nonplanar Vertex → SelectionState :=
   liftN (fun tok => .of tok tok.item.outerSel) (.of (mkTraceToken 0) [])
 
-@[simp] theorem selCheckN_mk (p : RoseTree SOLabel) :
+@[simp] theorem selCheckN_mk (p : Planar) :
     selCheckN (Nonplanar.mk p) = selCheckPlanar p := rfl
 
-theorem selCheckN_node (a b : Nonplanar SOLabel) :
+theorem selCheckN_node (a b : Nonplanar Vertex) :
     selCheckN (Nonplanar.node (Sum.inr none) {a, b}) = selCheckN a * selCheckN b :=
   liftN_node _ _ a b
 

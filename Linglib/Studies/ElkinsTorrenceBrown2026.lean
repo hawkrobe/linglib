@@ -452,12 +452,12 @@ private def cTok       : LIToken := ⟨.simple .C [.T] "", 6⟩
     Structure: `[CP oblique [C' C [TP T [VoiceP oblique [Voice' Voice [VP V obj]]]]]]`. -/
 private def cp : SyntacticObject :=
   ofPlanar
-    (nodeP (leafP obliqueTok)
-      (nodeP (leafP cTok)
-        (nodeP (leafP tTok)
-          (nodeP (leafP obliqueTok)
-            (nodeP (leafP voiceTok)
-              (nodeP (leafP verbTok) (leafP objectTok)))))))
+    (Planar.merge (Planar.leaf obliqueTok)
+      (Planar.merge (Planar.leaf cTok)
+        (Planar.merge (Planar.leaf tTok)
+          (Planar.merge (Planar.leaf obliqueTok)
+            (Planar.merge (Planar.leaf voiceTok)
+              (Planar.merge (Planar.leaf verbTok) (Planar.leaf objectTok)))))))
 
 theorem derivation_tree_size : cp.nodeCount = 6 := by decide
 

@@ -55,24 +55,24 @@ open Syntax.Question (MWFParameter PhaseEdge)
 
 mutual
 /-- The positions whose label `f` accepts, with their paths, left to right. -/
-def positions (f : SOLabel → Option LIToken) : RoseTree SOLabel → List (Path × LIToken)
+def positions (f : Vertex → Option LIToken) : Planar → List (Path × LIToken)
   | .node a cs => match f a with
     | some tok => [([], tok)]
     | none => positionsAux f 0 cs
 /-- Auxiliary: the positions in a children list from index `i`. -/
-def positionsAux (f : SOLabel → Option LIToken) :
-    ℕ → List (RoseTree SOLabel) → List (Path × LIToken)
+def positionsAux (f : Vertex → Option LIToken) :
+    ℕ → List (Planar) → List (Path × LIToken)
   | _, [] => []
   | i, c :: cs => (positions f c).map (λ x => (i :: x.1, x.2)) ++ positionsAux f (i + 1) cs
 end
 
 /-- The tokens with their paths, left to right. -/
-def tokenList : RoseTree SOLabel → List (Path × LIToken) := positions (Sum.elim some λ _ => none)
+def tokenList : Planar → List (Path × LIToken) := positions (Sum.elim some λ _ => none)
 
 /-- The traces with their paths, left to right. -/
-def traceList : RoseTree SOLabel → List (Path × LIToken) := positions (Sum.elim (λ _ => none) id)
+def traceList : Planar → List (Path × LIToken) := positions (Sum.elim (λ _ => none) id)
 
-variable (t : RoseTree SOLabel)
+variable (t : Planar)
 
 /-- The occurrences of `tok`. -/
 def occurrences (tok : LIToken) : List Path :=
@@ -82,7 +82,7 @@ def occurrences (tok : LIToken) : List Path :=
 def tokens : Finset LIToken := ((tokenList t).map (·.2)).toFinset
 
 /-- The terms of `t`: its subtrees, a shared constituent's once. -/
-def terms : Finset (RoseTree SOLabel) := ((vertices t).filterMap t.subtreeAt).toFinset
+def terms : Finset (Planar) := ((vertices t).filterMap t.subtreeAt).toFinset
 
 /-- `tok` is shared, dominated by two mothers: it occurs twice. -/
 def IsShared (tok : LIToken) : Prop := 2 ≤ (occurrences t tok).length
@@ -158,17 +158,17 @@ instance : Decidable (PronunciationEconomy t) := inferInstanceAs (Decidable (∀
 /-- The specifiers and head of the projection of a head of category `c`: down the right spine,
 the left daughters above the head, which is the first selecting item met; `none` when that item
 has another category or the spine ends first. -/
-def projection (c : Cat) : RoseTree SOLabel → Option (List (RoseTree SOLabel) × LIToken)
+def projection (c : Cat) : Planar → Option (List (Planar) × LIToken)
   | .node (.inr none) [.node (.inl tok) [], r] =>
       if tok.item.outerSel = [] then
-        (projection c r).map λ x => (leafP tok :: x.1, x.2)
+        (projection c r).map λ x => (Planar.leaf tok :: x.1, x.2)
       else if tok.item.outerCat = c then some ([], tok) else none
   | .node (.inr none) [l, r] => (projection c r).map λ x => (l :: x.1, x.2)
   | _ => none
 
 /-- The head of a constituent: the token or trace at a leaf, else the first selecting item down
 the right spine. -/
-def headToken? : RoseTree SOLabel → Option LIToken
+def headToken? : Planar → Option LIToken
   | .node (.inl tok) _ | .node (.inr (some tok)) _ => some tok
   | .node (.inr none) [.node (.inl tok) [], r] =>
       if tok.item.outerSel = [] then headToken? r else some tok
@@ -176,14 +176,14 @@ def headToken? : RoseTree SOLabel → Option LIToken
   | .node (.inr none) _ => none
 
 /-- The constituent is a wh-specifier: its head is a wh-token or its trace. -/
-def IsWhSpecifier (s : RoseTree SOLabel) : Prop :=
+def IsWhSpecifier (s : Planar) : Prop :=
   ∃ tok ∈ (headToken? s).toList, tok.item.outerWh = true
 
-instance (s : RoseTree SOLabel) : Decidable (IsWhSpecifier s) :=
+instance (s : Planar) : Decidable (IsWhSpecifier s) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The phase at `p`, a `v` or `C` projection: its edge, specifiers and head. -/
-def phaseAt (p : Path) : Option (PhaseEdge × List (RoseTree SOLabel) × LIToken) :=
+def phaseAt (p : Path) : Option (PhaseEdge × List (Planar) × LIToken) :=
   (t.subtreeAt p).bind λ s =>
     ((projection .v s).map λ x => (PhaseEdge.vP, x)).or
       ((projection .C s).map λ x => (PhaseEdge.CP, x))

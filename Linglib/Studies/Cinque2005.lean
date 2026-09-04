@@ -102,18 +102,18 @@ private def tokNum : LIToken := ⟨.simple .Num [], 3⟩
 private def tokDem : LIToken := ⟨.simple .Dem [], 4⟩
 
 /-- The tree contains the overt noun; a trace does not count (7b-vi). -/
-private def hasN : RoseTree SOLabel → Bool
+private def hasN : Planar → Bool
   | .node (.inl t) _ => t == tokN
   | .node (.inr none) [l, r] => hasN l || hasN r
   | .node (.inr _) _ => false
 
 /-- The noun is the tree's specifier, `[NP [XP]]` (fn. 21). -/
-private def specHasN : RoseTree SOLabel → Bool
+private def specHasN : Planar → Bool
   | .node (.inl t) _ => t == tokN
   | .node (.inr none) [l, _] => hasN l
   | .node (.inr _) _ => false
 
-private def subtrees : RoseTree SOLabel → List (RoseTree SOLabel)
+private def subtrees : Planar → List (Planar)
   | t@(.node _ []) => [t]
   | t@(.node _ [l, r]) => t :: (subtrees l ++ subtrees r)
   | t@(.node _ _) => [t]
@@ -121,14 +121,14 @@ private def subtrees : RoseTree SOLabel → List (RoseTree SOLabel)
 /-- The marked option used by raising `s` past a modifier whose complement is `c`: the whole
 complement pied-pipes, of the whose-picture type when the noun is its specifier and of the
 picture-of-who type otherwise, and a proper part strands the rest. -/
-private def markOf (c s : RoseTree SOLabel) : Option Marked :=
+private def markOf (c s : Planar) : Option Marked :=
   if s == c then (if specHasN s then none else some .pictureOfWho) else some .withoutPiedPiping
 
 /-- A stage of the enumeration: the derivation, its ordered form, the marked options of its raises
 and their number. -/
 structure Stage where
   derivation : Derivation
-  planar : RoseTree SOLabel
+  planar : Planar
   marks : List Marked
   raises : ℕ
 
@@ -136,10 +136,10 @@ structure Stage where
 the overt noun to the left edge. -/
 private def step (m : LIToken) (st : Stage) : List Stage :=
   let d : Derivation := ⟨st.derivation.initial, st.derivation.steps ++ [.emL (lexLeaf m)]⟩
-  let p := nodeP (leafP m) st.planar
+  let p := Planar.merge (Planar.leaf m) st.planar
   ⟨d, p, st.marks, st.raises⟩ ::
     ((subtrees st.planar).filter hasN).filterMap fun s =>
-      if h : isSOPlanar s = true then
+      if h : Planar.isSyntacticObject s = true then
         (moveLeftPlanarP p (ofPlanar s h)).map fun p' =>
           ⟨⟨d.initial, d.steps ++ [.im (ofPlanar s h)]⟩, p',
             (markOf st.planar s).toList ++ st.marks, st.raises + 1⟩
@@ -148,7 +148,7 @@ private def step (m : LIToken) (st : Stage) : List Stage :=
 /-- The derivations (7) allows: the noun Merged with A, Num and Dem in turn, with an optional
 raise after each. -/
 def stages : List Stage :=
-  [⟨⟨lexLeaf tokN, []⟩, leafP tokN, [], 0⟩].flatMap (step tokA) |>.flatMap (step tokNum)
+  [⟨⟨lexLeaf tokN, []⟩, Planar.leaf tokN, [], 0⟩].flatMap (step tokA) |>.flatMap (step tokNum)
     |>.flatMap (step tokDem)
 
 /-- The surface order of a stage, read by the substrate's externalization. -/

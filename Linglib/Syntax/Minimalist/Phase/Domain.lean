@@ -149,7 +149,7 @@ sits on (the carrier is unordered) — so the phase head is the selector. -/
 /-- A two-leaf bare node over the given tokens (built planar-first via the DSL;
     `SyntacticObject.node` is noncomputable). -/
 private def clause (head comp : LIToken) : SyntacticObject :=
-  ofPlanar (nodeP (leafP head) (leafP comp))
+  ofPlanar (Planar.merge (Planar.leaf head) (Planar.leaf comp))
 
 /-- A C selecting a T projects C: the node is a **C-phase**, not a v-phase. -/
 example :
@@ -180,7 +180,7 @@ private def tTok : LIToken := ⟨.simple .T [.V], 1⟩
 private def vTok : LIToken := ⟨.simple .V [], 2⟩
 
 private def cP : SyntacticObject :=
-  ofPlanar (nodeP (leafP cTok) (nodeP (leafP tTok) (leafP vTok)))
+  ofPlanar (Planar.merge (Planar.leaf cTok) (Planar.merge (Planar.leaf tTok) (Planar.leaf vTok)))
 
 /-- C heads a nontrivial phase (it projects over the TP). -/
 example : isPhaseHead cP cTok := by decide

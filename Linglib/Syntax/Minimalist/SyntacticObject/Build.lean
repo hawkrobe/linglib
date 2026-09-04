@@ -9,16 +9,17 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 # Building and reading syntactic objects
 
 The node constructor is noncomputable, so concrete syntactic objects are built planar-first with
-`leafP`, `traceP`, and `nodeP` and quotiented once by `ofPlanar`, whose well-formedness
-obligation is discharged by `decide`; `SyntacticObject.node_mk` relates such a build to `node`,
-so theorems stated over `node` apply to it. Merge on the carrier is the node itself, written
-`*`: External Merge of two objects, and the re-merge of a mover with the remainder in Internal
-Merge. The accessors read the root token, leaf and node counts, and the trace predicate; since
-`isTrace` recognizes the trace leaves, bare or indexed.
+`Planar.leaf`, `Planar.trace`, and `Planar.merge` and quotiented once by `ofPlanar`, whose
+well-formedness obligation is discharged by `decide`; `SyntacticObject.node_mk` relates such a build
+to `node`, so theorems stated over `node` apply to it. Merge on the carrier is the node itself,
+written `*`: External Merge of two objects, and the re-merge of a mover with the remainder in
+Internal Merge. The accessors read the root token, leaf and node counts, and the trace predicate;
+since `isTrace` recognizes the trace leaves, bare or indexed.
 
 ## Main definitions
 
-* `Minimalist.SyntacticObject.ofPlanar`, `leafP`, `traceP`, `nodeP`: planar construction.
+* `Minimalist.SyntacticObject.ofPlanar`, `Planar.leaf`, `Planar.trace`, `Planar.merge`: planar
+construction.
 * `Minimalist.SyntacticObject.mkLeaf`, `mkLeafPhon`: lexical leaves from features.
 * `Minimalist.SyntacticObject.getLIToken`, `isTrace`, `leafCount`, `nodeCount`, `IsLeaf`.
 -/
@@ -31,25 +32,15 @@ namespace SyntacticObject
 
 /-! ### Computable planar construction DSL -/
 
-/-- A planar lexical leaf. -/
-abbrev leafP (tok : LIToken) : RoseTree SOLabel := .node (Sum.inl tok) []
-/-- The planar trace leaf. -/
-abbrev traceP : RoseTree SOLabel := .node (Sum.inr none) []
-
-/-- The planar trace of `tok`. -/
-abbrev traceOfP (tok : LIToken) : RoseTree SOLabel := .node (Sum.inr (some tok)) []
-/-- A planar bare binary node. -/
-abbrev nodeP (l r : RoseTree SOLabel) : RoseTree SOLabel := .node (Sum.inr none) [l, r]
-
 /-- The syntactic object of a well-formed planar tree; on a concrete tree the obligation is
     discharged by `decide`. -/
-def ofPlanar (p : RoseTree SOLabel) (h : isSOPlanar p = true :=
+def ofPlanar (p : Planar) (h : Planar.isSyntacticObject p = true :=
   by first | rfl | decide) : SyntacticObject :=
   ⟨Nonplanar.mk p, h⟩
 
-@[simp] theorem ofPlanar_leafP (tok : LIToken) : ofPlanar (leafP tok) = lexLeaf tok := rfl
+@[simp] theorem ofPlanar_leafP (tok : LIToken) : ofPlanar (Planar.leaf tok) = lexLeaf tok := rfl
 
-@[simp] theorem ofPlanar_traceP : ofPlanar traceP = traceLeaf := rfl
+@[simp] theorem ofPlanar_traceP : ofPlanar Planar.trace = traceLeaf := rfl
 
 /-- The default syntactic object is the trace leaf. -/
 instance : Inhabited SyntacticObject := ⟨traceLeaf⟩
@@ -91,7 +82,7 @@ def getLIToken (s : SyntacticObject) : Option LIToken :=
 
 theorem traceOf_ne_traceLeaf (tok : LIToken) : traceOf tok ≠ traceLeaf := by
   intro h
-  have h' : (Sum.inr (some tok) : SOLabel) = Sum.inr none :=
+  have h' : (Sum.inr (some tok) : Vertex) = Sum.inr none :=
     congrArg (fun s : SyntacticObject => Nonplanar.rootValue s.val) h
   simp at h'
 
@@ -141,10 +132,10 @@ end SyntacticObject
 /-! ### Carrier tests -/
 
 private def demoVP : SyntacticObject :=
-  ofPlanar (nodeP (leafP (mkTraceToken 0)) (leafP (mkTraceToken 1)))
+  ofPlanar (Planar.merge (Planar.leaf (mkTraceToken 0)) (Planar.leaf (mkTraceToken 1)))
 
 /-- The DSL-built tree is a genuine syntactic object. -/
-example : IsSO demoVP.val := by decide
+example : IsSyntacticObject demoVP.val := by decide
 /-- Its head token reads back via `getLIToken` of the left leaf. -/
 example : (lexLeaf (mkTraceToken 0)).getLIToken = some (mkTraceToken 0) := by decide
 /-- It has two leaves and one internal node. -/
@@ -154,14 +145,15 @@ example : isTrace traceLeaf ∧ ¬ isTrace (lexLeaf (mkTraceToken 0)) := by deci
 /-- A bare binary node over a lexical leaf and a bare trace, the shape of an Internal-Merge
     result, is a syntactic object. -/
 example :
-    IsSO (Nonplanar.mk (.node (Sum.inr none)
+    IsSyntacticObject (Nonplanar.mk (.node (Sum.inr none)
       [.leaf (Sum.inl (mkTraceToken 0)), .leaf (Sum.inr none)])) := by decide
 /-- A lexical item with children is rejected: lexical items are leaves. -/
 example :
-    ¬ IsSO (Nonplanar.mk (.node (Sum.inl (mkTraceToken 0)) [.leaf (Sum.inr none)])) := by decide
+    ¬ IsSyntacticObject (Nonplanar.mk (.node (Sum.inl (mkTraceToken 0)) [.leaf
+      (Sum.inr none)])) := by decide
 /-- A ternary bare node is rejected: syntactic objects are binary. -/
 example :
-    ¬ IsSO (Nonplanar.mk (.node (Sum.inr none)
+    ¬ IsSyntacticObject (Nonplanar.mk (.node (Sum.inr none)
       [.leaf (Sum.inr none), .leaf (Sum.inr none), .leaf (Sum.inr none)])) := by decide
 
 end Minimalist

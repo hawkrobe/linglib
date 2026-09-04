@@ -747,7 +747,7 @@ theorem impersonal_passive_converges : passiveV.features.hasD = false := rfl
 -- c-commands the other → symmetric binding (either can passivize).
 
 -- Concrete trees are built **planar-first**
--- (`SyntacticObject.ofPlanar`/`SyntacticObject.nodeP`/`SyntacticObject.leafP`)
+-- (`SyntacticObject.ofPlanar`/`Planar.merge`/`Planar.leaf`)
 -- because Merge (`SyntacticObject.node`) is noncomputable; the c-command decision procedure
 -- then reduces under `decide`. Each leaf is a lexical leaf over a token, and the
 -- tree references the same tokens via the planar DSL so the two match
@@ -768,10 +768,10 @@ private def DO₁ : LIToken := tok .D "DO" 13
 private def XP₁ : LIToken := tok .P "to-Mary" 14
 
 def lowXPTree : SyntacticObject :=
-  ofPlanar (nodeP (leafP agent₁)
-    (nodeP (leafP v₁)
-      (nodeP (leafP DO₁)
-        (nodeP (leafP V₁) (leafP XP₁)))))
+  ofPlanar (Planar.merge (Planar.leaf agent₁)
+    (Planar.merge (Planar.leaf v₁)
+      (Planar.merge (Planar.leaf DO₁)
+        (Planar.merge (Planar.leaf V₁) (Planar.leaf XP₁)))))
 
 -- DOC ditransitive: V: [·D·], v: [·D·][·X·][·V·]
 -- Structure: [vP VP [vP agent [v' v IO]]]
@@ -785,9 +785,9 @@ private def DO₂ : LIToken := tok .D "DO" 23
 private def IO₂ : LIToken := tok .D "IO" 24
 
 def docTree : SyntacticObject :=
-  ofPlanar (nodeP (nodeP (leafP V₂) (leafP DO₂))
-    (nodeP (leafP agent₂)
-      (nodeP (leafP v₂) (leafP IO₂))))
+  ofPlanar (Planar.merge (Planar.merge (Planar.leaf V₂) (Planar.leaf DO₂))
+    (Planar.merge (Planar.leaf agent₂)
+      (Planar.merge (Planar.leaf v₂) (Planar.leaf IO₂))))
 
 -- § 10a: Internal argument binding asymmetry
 

@@ -80,7 +80,8 @@ end SyntacticObject
 /-! ### Subterms -/
 
 /-- The subtrees of a syntactic object are syntactic objects. -/
-theorem isSO_of_mem_subtrees (s : SyntacticObject) : ∀ m ∈ Nonplanar.subtrees s.val, IsSO m := by
+theorem isSyntacticObject_of_mem_subtrees (s : SyntacticObject) : ∀ m ∈ Nonplanar.subtrees s.val,
+    IsSyntacticObject m := by
   induction s using ind with
   | lex tok =>
     intro m hm
@@ -109,7 +110,7 @@ namespace SyntacticObject
 
 /-- All subterms of a syntactic object, the root included. -/
 def subtrees (s : SyntacticObject) : Multiset SyntacticObject :=
-  (Nonplanar.subtrees s.val).pmap (fun m h => ⟨m, h⟩) (isSO_of_mem_subtrees s)
+  (Nonplanar.subtrees s.val).pmap (fun m h => ⟨m, h⟩) (isSyntacticObject_of_mem_subtrees s)
 
 @[simp] theorem mem_subtrees {x s : SyntacticObject} :
     x ∈ s.subtrees ↔ x.val ∈ Nonplanar.subtrees s.val := by

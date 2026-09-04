@@ -42,7 +42,7 @@ variable {β : Type*}
 
 /-- The node algebra of a magma-with-zero: lexical leaf ↦ `ℓ`, trace leaf ↦ `τ`,
     bare binary node ↦ `*`, off-carrier arities ↦ `0`. -/
-def mergeAlgebra [Mul β] [Zero β] (ℓ : LIToken → β) (τ : β) : SOLabel → List β → β
+def mergeAlgebra [Mul β] [Zero β] (ℓ : LIToken → β) (τ : β) : Vertex → List β → β
   | .inl tok, _       => ℓ tok
   | .inr _, []        => τ
   | .inr none, [x, y] => x * y
@@ -63,7 +63,7 @@ private theorem mergeAlgebra_big [Mul β] [Zero β] {ℓ : LIToken → β} {τ :
 
 /-- `mergeAlgebra` is invariant under permutation of the daughter values: only the
     binary shape is order-sensitive, and there `mul_comm` applies. -/
-theorem mergeAlgebra_perm [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) (a : SOLabel)
+theorem mergeAlgebra_perm [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) (a : Vertex)
     {l₁ l₂ : List β} (h : l₁.Perm l₂) : mergeAlgebra ℓ τ a l₁ = mergeAlgebra ℓ τ a l₂ := by
   cases a with
   | inl tok => rfl
@@ -75,17 +75,17 @@ theorem mergeAlgebra_perm [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : 
 
 /-- The induced algebra on the nonplanar carrier: the catamorphism descends by
     `mergeAlgebra_perm`. -/
-def liftN [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) : Nonplanar SOLabel → β :=
+def liftN [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) : Nonplanar Vertex → β :=
   Nonplanar.lift (RoseTree.fold (mergeAlgebra ℓ τ))
     fun _ _ h => RoseTree.fold_perm (fun a _ _ h' => mergeAlgebra_perm ℓ τ a h') h
 
 @[simp] theorem liftN_mk [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
-    (p : RoseTree SOLabel) :
+    (p : Planar) :
     liftN ℓ τ (Nonplanar.mk p) = RoseTree.fold (mergeAlgebra ℓ τ) p := rfl
 
 /-- The nonplanar magma law: Merge multiplies values. -/
 theorem liftN_node [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
-    (a b : Nonplanar SOLabel) :
+    (a b : Nonplanar Vertex) :
     liftN ℓ τ (Nonplanar.node (Sum.inr none) {a, b}) = liftN ℓ τ a * liftN ℓ τ b := by
   refine Nonplanar.inductionOn₂ a b fun pa pb => ?_
   rw [Nonplanar.node_pair_mk]

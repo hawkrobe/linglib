@@ -391,11 +391,11 @@ private def t_DP_food   : LIToken := ⟨.simple .D [] (phonForm := "food"), 410�
     so the c-command theorems `decide`. -/
 def ditransitiveTree : SyntacticObject :=
   ofPlanar
-    (nodeP (leafP t_DP_john)
-      (nodeP (leafP t_voice_ag)
-        (nodeP (leafP t_V_sent)
-          (nodeP (leafP t_DP_mary)
-            (nodeP (leafP t_appl_low) (leafP t_DP_letter))))))
+    (Planar.merge (Planar.leaf t_DP_john)
+      (Planar.merge (Planar.leaf t_voice_ag)
+        (Planar.merge (Planar.leaf t_V_sent)
+          (Planar.merge (Planar.leaf t_DP_mary)
+            (Planar.merge (Planar.leaf t_appl_low) (Planar.leaf t_DP_letter))))))
 
 /-- High applicative benefactive (Chaga pattern): "he ate food for wife"
 
@@ -407,11 +407,11 @@ def ditransitiveTree : SyntacticObject :=
     Venda) and Albanian, but NOT in English. -/
 def benefactiveTree : SyntacticObject :=
   ofPlanar
-    (nodeP (leafP t_DP_john)
-      (nodeP (leafP t_voice_ag)
-        (nodeP (leafP t_DP_wife)
-          (nodeP (leafP t_appl_high)
-            (nodeP (leafP t_V_eat) (leafP t_DP_food))))))
+    (Planar.merge (Planar.leaf t_DP_john)
+      (Planar.merge (Planar.leaf t_voice_ag)
+        (Planar.merge (Planar.leaf t_DP_wife)
+          (Planar.merge (Planar.leaf t_appl_high)
+            (Planar.merge (Planar.leaf t_V_eat) (Planar.leaf t_DP_food))))))
 
 -- ============================================================================
 -- § 3: C-command Predictions

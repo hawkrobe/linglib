@@ -284,13 +284,11 @@ Traces left by movement are interpreted as variables bound by
 
 #### Trace convention
 
-On the `SyntacticObject` carrier ([marcolli-chomsky-berwick-2025] Def 1.2.1) a trace is here
-the bare trace leaf `SyntacticObject.traceLeaf`, recognized by `SyntacticObject.isTrace`. The semantic trace *index* `n`
-is
-not carried by the leaf: it is supplied by the binder (λ-abstraction) at the
-landing site, exactly as in the H&K rule ⟦t_n⟧^g = g(n). The interpretation
-functions below therefore take the index as an explicit argument.
--/
+On the `SyntacticObject` carrier ([marcolli-chomsky-berwick-2025] Def 1.2.1) a trace is here the
+bare trace leaf `SyntacticObject.traceLeaf`, recognized by `SyntacticObject.isTrace`. The semantic
+trace *index* `n` is not carried by the leaf: it is supplied by the binder (λ-abstraction) at the
+landing site, exactly as in the H&K rule ⟦t_n⟧^g = g(n). The interpretation functions below
+therefore take the index as an explicit argument. -/
 
 -- ============================================================================
 -- Trace Interpretation (H&K Ch. 5, 7)

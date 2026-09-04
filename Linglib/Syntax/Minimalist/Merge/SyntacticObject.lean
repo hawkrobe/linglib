@@ -34,23 +34,23 @@ open RoseTree RoseTree.Nonplanar ConnesKreimer
     two-object workspace. -/
 theorem mergeOp_node (S S' : SyntacticObject) :
     Merge.mergeOp (R := ℤ) (Sum.inr none) S.val S'.val
-        (of' ({S.val, S'.val} : Forest (Nonplanar SOLabel)))
-      = of' (R := ℤ) ({(node S S').val} : Forest (Nonplanar SOLabel)) := by
+        (of' ({S.val, S'.val} : Forest (Nonplanar Vertex)))
+      = of' (R := ℤ) ({(node S S').val} : Forest (Nonplanar Vertex)) := by
   rw [Merge.mergeOp_pair, node_val]
 
 /-- Internal Merge on the carrier is the two-stage algebraic Merge, given the unique Δ^ρ cut `p0`
     of `T` extracting `mover` with remainder `remainder`. -/
 theorem mergeOp_node_im (mover remainder T : SyntacticObject)
-    (p0 : Forest (Nonplanar SOLabel) × Nonplanar SOLabel)
+    (p0 : Forest (Nonplanar Vertex) × Nonplanar Vertex)
     (h_filter : (cutSummandsN T.val).filter
-        (fun p => p.1 = ({mover.val} : Forest (Nonplanar SOLabel))) = {p0})
+        (fun p => p.1 = ({mover.val} : Forest (Nonplanar Vertex))) = {p0})
     (h_remainder : p0.2 = remainder.val)
     (hT : T.val ≠ mover.val) :
     Merge.mergeOp (R := ℤ) (Sum.inr none) remainder.val mover.val
         (Merge.mergeOpUnit (R := ℤ) mover.val
-          (of' ({T.val} : Forest (Nonplanar SOLabel))))
+          (of' ({T.val} : Forest (Nonplanar Vertex))))
       = of' (R := ℤ)
-          ({(node remainder mover).val} : Forest (Nonplanar SOLabel)) := by
+          ({(node remainder mover).val} : Forest (Nonplanar Vertex)) := by
   rw [Merge.mergeOp_im_composition (Sum.inr none) mover.val T.val remainder.val
         p0 h_filter h_remainder hT, node_val]
 
