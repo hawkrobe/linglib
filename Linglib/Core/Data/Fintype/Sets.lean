@@ -6,14 +6,14 @@ Authors: Robert Hawkins
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# Set-subset decidability over finite types
+# Set-relation decidability over finite types
 
-`Set.decidableSubsetOfFintype` derives `Decidable (s ⊆ t)` from `Fintype`
-plus decidable membership. Deliberately a `def`, not an `instance`,
-following mathlib's `Set.decidableMemOfFintype`: global `Decidable`
-instances on `Set` relations risk instance loops and higher-order
-`DecidablePred` searches. Activate with
-`attribute [local instance] Set.decidableSubsetOfFintype`.
+`Set.decidableSubsetOfFintype` derives `Decidable (s ⊆ t)`, and
+`Set.decidableEqOnOfFintype` derives `Decidable (Set.EqOn f g s)`, from `Fintype`
+plus decidable membership. Deliberately `def`s, not `instance`s, following
+mathlib's `Set.decidableMemOfFintype`: global `Decidable` instances on `Set`
+relations risk instance loops and higher-order `DecidablePred` searches.
+Activate with `attribute [local instance] Set.decidableSubsetOfFintype`.
 -/
 
 /-- `Decidable (s ⊆ t)` from `Fintype` plus decidable membership.
@@ -23,3 +23,11 @@ def Set.decidableSubsetOfFintype {α : Type*} [Fintype α]
     (s t : Set α) [DecidablePred (· ∈ s)] [DecidablePred (· ∈ t)] :
     Decidable (s ⊆ t) :=
   show Decidable (∀ ⦃a⦄, a ∈ s → a ∈ t) from inferInstance
+
+/-- `Decidable (Set.EqOn f g s)` from `Fintype` plus decidable membership.
+Not an instance; activate locally. -/
+@[implicit_reducible]
+def Set.decidableEqOnOfFintype {α β : Type*} [Fintype α] [DecidableEq β]
+    (f g : α → β) (s : Set α) [DecidablePred (· ∈ s)] :
+    Decidable (Set.EqOn f g s) :=
+  show Decidable (∀ ⦃a⦄, a ∈ s → f a = g a) from inferInstance

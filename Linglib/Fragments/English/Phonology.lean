@@ -10,7 +10,7 @@ defined using the SPE formalism from `Subregular.LocalRewrite`.
 
 ## Segments
 
-Core inventory for demo alternations: /p t k b d m n ŋ s w r æ ɪ ə/.
+Core inventory for demo alternations: /p t k b d m n ŋ s θ ʃ w r æ ɪ ə/.
 
 ## Rules
 
@@ -62,19 +62,19 @@ def d : Segment := Segment.ofSpecs
 /-- /m/: bilabial nasal -/
 def m : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, true), (Feature.nasal, true),
+   (Feature.sonorant, true), (Feature.continuant, false), (Feature.nasal, true),
    (Feature.voice, true), (Feature.labial, true)]
 
 /-- /n/: alveolar nasal -/
 def n : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, true), (Feature.nasal, true),
+   (Feature.sonorant, true), (Feature.continuant, false), (Feature.nasal, true),
    (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, true)]
 
 /-- /ŋ/: velar nasal -/
 def ŋ : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, true), (Feature.nasal, true),
+   (Feature.sonorant, true), (Feature.continuant, false), (Feature.nasal, true),
    (Feature.voice, true), (Feature.dorsal, true)]
 
 /-- /s/: voiceless alveolar fricative -/
@@ -83,6 +83,20 @@ def s : Segment := Segment.ofSpecs
    (Feature.sonorant, false), (Feature.continuant, true),
    (Feature.voice, false), (Feature.coronal, true), (Feature.anterior, true),
    (Feature.strident, true)]
+
+/-- /θ/: voiceless dental fricative -/
+def θ : Segment := Segment.ofSpecs
+  [(Feature.syllabic, false), (Feature.consonantal, true),
+   (Feature.sonorant, false), (Feature.continuant, true),
+   (Feature.voice, false), (Feature.coronal, true), (Feature.anterior, true),
+   (Feature.distributed, true), (Feature.strident, false)]
+
+/-- /ʃ/: voiceless postalveolar fricative -/
+def esh : Segment := Segment.ofSpecs
+  [(Feature.syllabic, false), (Feature.consonantal, true),
+   (Feature.sonorant, false), (Feature.continuant, true),
+   (Feature.voice, false), (Feature.coronal, true), (Feature.anterior, false),
+   (Feature.distributed, true), (Feature.strident, true)]
 
 /-- /w/: labial-velar glide -/
 def w : Segment := Segment.ofSpecs

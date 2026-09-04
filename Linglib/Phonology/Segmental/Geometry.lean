@@ -1,12 +1,21 @@
 import Linglib.Phonology.Segmental.Defs
+import Linglib.Core.Data.Fintype.Sets
 import Mathlib.Logic.Relation
 
 /-!
 # Feature geometry
-[clements-1985] [sagey-1986]
 
-The hierarchical organization of phonological features as autosegmental class
-nodes ([clements-hume-1995]):
+The class-node tree over the distinctive features: a root node dominating a laryngeal
+and a supralaryngeal node, the latter dominating the soft-palate and the place node, and
+place dominating the articulator nodes labial, coronal and dorsal. The skeleton root >
+laryngeal, supralaryngeal > place is [clements-1985]'s; the soft-palate node and the
+articulators are [sagey-1986]'s, and [clements-1985]'s manner node, which the paper
+itself flags as possibly superfluous, is dropped. Every terminal feature of
+[hayes-2009]'s inventory hangs from one class node, and the natural class of a node is
+the finite set of features it dominates. Spreading a node `n` from `src` onto `tgt` is
+`n.features.piecewise src tgt` and agreement at `n` is `Set.EqOn s₁ s₂ ↑n.features`, so
+node spreading and node agreement are mathlib's `Finset.piecewise` and `Set.EqOn` on the
+natural class rather than operations of their own.
 
     Root [±syll, ±cons, ±son, ±approx, ±del.rel., ±tap, ±trill]
     ├── Laryngeal [±voice, ±s.g., ±c.g.]
@@ -17,33 +26,45 @@ nodes ([clements-hume-1995]):
             ├── Coronal [±cor, ±ant, ±dist, ±lat, ±strid]
             └── Dorsal [±dor, ±high, ±low, ±front, ±back, ±tense]
 
-The constituency from Root down to the three Place articulators is the consensus
-of [clements-1985] and [sagey-1986]. The placement of individual terminals —
-notably `[continuant]`, `[nasal]`, and `[lateral]`/`[strident]` — is theory-specific
-and contested: [sagey-1986] argues `[continuant]` is articulator-level, against its
-Supralaryngeal placement here (the divergence is formalized in `Studies/Sagey1986.lean`).
-A feature's geometric node is also distinct from its manner-class (`Feature.category`):
-`[lateral]` attaches under Coronal yet is a manner feature, so the flat predicates
-(`Feature.IsPlace` &c.) do not coincide with single-node dominance.
-
 ## Main definitions
 
-* `Node`, `Node.parent`, `Node.Dominates` — the class nodes, the tree,
-  and the reflexive-transitive ancestor relation.
-* `Feature.node` — each feature's dominating node (this geometry's assignment;
-  rivals live in their study files).
+* `Node`, `Node.parent`, `Node.Dominates` — the class nodes, the tree, and the
+  reflexive-transitive ancestor relation.
+* `Feature.node` — each feature's dominating node.
 * `Node.features` — the natural class a node dominates.
-* `Node.IsArticulator`, `Segment.activeArticulators`, `Segment.IsComplex` — the
-  place articulators and a segment's simultaneous (complex) articulations.
+* `Node.IsArticulator`, `Segment.activeArticulators`, `Segment.IsComplex` — the place
+  articulators and a segment's simultaneous (complex) articulations ([sagey-1986]).
 
 ## Main results
 
-* `Node.dominates_iff` — dominance unrolls to the depth-≤ 3 parent chain, the
-  decidable face the `decide` facts run through.
-* `IsLaryngeal_iff_laryngeal_DominatedBy`, `IsDorsal_iff_dorsal_DominatedBy` — two
-  flat predicates coincide with single-node dominance; `IsPlace` is only a subset.
+* `Node.dominates_iff` — dominance unrolls to the depth-≤ 3 parent chain, the decidable
+  face the `decide` facts run through.
+* `IsLaryngeal_iff_laryngeal_DominatedBy`, `IsDorsal_iff_dorsal_DominatedBy` — two flat
+  predicates coincide with single-node dominance; `IsPlace` is only a subset.
 * `Segment.activeArticulators_nodup` — complex-segment well-formedness holds by
   construction ([sagey-1986]).
+
+## Implementation notes
+
+The placement of individual terminals is theory-specific. [clements-1985] puts
+`[consonantal]`, `[sonorant]`, `[continuant]`, `[lateral]`, `[strident]` and `[nasal]`
+under a manner node below supralaryngeal (his geometry is `Studies/Clements1985.lean`);
+[sagey-1986] argues `[continuant]` is articulator-level (`Studies/Sagey1986.lean`); and
+`[lateral]`/`[strident]` sit here under coronal although their manner class
+(`Feature.category`) is manner, so the flat predicates (`Feature.IsPlace` &c.) do not
+coincide with single-node dominance. Total, partial and single-feature assimilation
+([clements-1985]) are `Node.root.features.piecewise`, `n.features.piecewise` for a class
+node `n`, and `({f} : Finset Feature).piecewise`, the last being
+`Features.Bundle.assimilate f` by `Finset.piecewise_singleton`. The association of a
+spread node to several anchors is the tier-association object `AR`
+(`Autosegmental/AR.lean`) and is not recorded on segments here.
+
+## References
+
+* [clements-1985] — class nodes, the root/laryngeal/supralaryngeal/place skeleton,
+  assimilation as single-node spreading.
+* [sagey-1986] — the soft-palate and articulator nodes, complex segments.
+* [hayes-2009] — the terminal feature inventory.
 -/
 
 namespace Phonology.FeatureGeometry
@@ -159,7 +180,10 @@ variable (n : Node) (f : Feature)
 
 /-- The features dominated by `n` — its natural class, the features that pattern
     together under processes targeting `n`. -/
-def Node.features : List Feature := Feature.allFeatures.filter (λ g => decide (n.Dominates g.node))
+def Node.features : Finset Feature := Finset.univ.filter (λ g => n.Dominates g.node)
+
+instance (s₁ s₂ : Segment) : Decidable (Set.EqOn s₁ s₂ ↑n.features) :=
+  Set.decidableEqOnOfFintype _ _ _
 
 /-! ### Tree structure (verification) -/
 
@@ -170,18 +194,6 @@ theorem nonroot_has_parent (h : n ≠ .root) : n.parent.isSome = true := by
 
 theorem allNodes_complete : n ∈ Node.allNodes := by cases n <;> simp [Node.allNodes]
 
-/-! ### Natural class sizes
-[hayes-2009]'s complete 26-feature inventory. -/
-
-theorem root_features_count : Node.root.features.length = 26 := rfl
-theorem laryngeal_features_count : Node.laryngeal.features.length = 3 := rfl
-theorem supralaryngeal_features_count : Node.supralaryngeal.features.length = 16 := rfl
-theorem softPalate_features_count : Node.softPalate.features.length = 1 := rfl
-theorem place_features_count : Node.place.features.length = 14 := rfl
-theorem labial_features_count : Node.labial.features.length = 3 := rfl
-theorem coronal_features_count : Node.coronal.features.length = 5 := rfl
-theorem dorsal_features_count : Node.dorsal.features.length = 6 := rfl
-
 /-! ### Flat-predicate subsumption
 
 `IsLaryngeal`/`IsDorsal` coincide with single-node dominance; `IsPlace` is only a
@@ -190,9 +202,11 @@ theorem dorsal_features_count : Node.dorsal.features.length = 6 := rfl
 theorem IsLaryngeal_iff_laryngeal_DominatedBy : f.IsLaryngeal ↔ f.DominatedBy .laryngeal := by
   cases f <;> decide
 
-theorem IsDorsal_iff_dorsal_DominatedBy : f.IsDorsal ↔ f.DominatedBy .dorsal := by cases f <;> decide
+theorem IsDorsal_iff_dorsal_DominatedBy : f.IsDorsal ↔ f.DominatedBy .dorsal := by
+  cases f <;> decide
 
-theorem IsPlace_implies_place_DominatedBy : f.IsPlace → f.DominatedBy .place := by cases f <;> decide
+theorem IsPlace_implies_place_DominatedBy : f.IsPlace → f.DominatedBy .place := by
+  cases f <;> decide
 
 theorem lateral_geometrically_under_place : Feature.lateral.DominatedBy .place := by decide
 
@@ -231,8 +245,6 @@ def articulatorNodes : List Node := Node.allNodes.filter (λ n => decide n.IsArt
 
 /-! ### Articulator geometry (verification) -/
 
-theorem articulatorNodes_count : articulatorNodes.length = 3 := rfl
-
 /-- Articulators are exactly the leaf nodes. -/
 theorem articulators_are_leaves : ∀ n ∈ articulatorNodes, n.children = [] := by decide
 
@@ -267,7 +279,7 @@ variable (s : Segment)
 
 /-- The articulator nodes with at least one specified feature in `s`. -/
 def Segment.activeArticulators : List Node :=
-  articulatorNodes.filter (λ n => n.features.any (λ g => (s g).isSome))
+  articulatorNodes.filter (λ n => decide (∃ g ∈ n.features, (s g).isSome))
 
 /-- The number of active articulator nodes in `s`. -/
 def Segment.articulatorCount : Nat := s.activeArticulators.length

@@ -1330,7 +1330,6 @@ import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.NormalForm
 import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Realization
-import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.Constraints.Directional

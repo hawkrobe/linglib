@@ -18,7 +18,8 @@ feature content of a pronoun is a lower set of the dominance order; markedness
 is node count; and an organizing node with no dependent receives its default
 daughter — Speaker, Minimal, Inanimate — by rule. Person and number cells are
 assigned their geometries, the contrastive Minimal node being present only in
-inventories that activate it.
+inventories that activate it. The tree is of the same formal type as the
+phonological feature geometries of [clements-1985] and [sagey-1986].
 
 ## Main definitions
 
@@ -42,6 +43,8 @@ inventories that activate it.
 * [H. Harley, *Hug a tree*][harley-1994]
 * [M. McGinnis, *Agree and Fission in Georgian plurals*][mcginnis-2013]
 * [G. N. Clements, *The geometry of phonological features*][clements-1985]
+* [E. Sagey, *The representation of features and relations in non-linear
+  phonology*][sagey-1986]
 -/
 
 namespace Phi.Geometry

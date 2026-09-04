@@ -1,7 +1,6 @@
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Segmental.Geometry
 import Linglib.Phonology.Subregular.LocalRewrite
-import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Subregular.Harmony
 
 /-!
@@ -39,7 +38,6 @@ namespace Finnish.VowelHarmony
 
 open Phonology (Segment Feature)
 open Phonology.FeatureGeometry (Node)
-open Autosegmental (SharingRep agreeAt)
 open Subregular.Harmony (System triggerValue
   harmonizeOne spreadSuffix)
 
@@ -187,8 +185,8 @@ theorem back_with_neutral :
 
 /-- The /a/–/ä/ pair differs only in [back]: dorsal agreement fails
     between them, confirming they belong to different harmony classes. -/
-theorem a_ä_dorsal_disagree :
-    agreeAt a_vowel ä_vowel .dorsal = false := by decide
+theorem a_ä_dorsal_disagree : ¬ Set.EqOn a_vowel ä_vowel ↑Node.dorsal.features := by
+  decide
 
 /-- Dorsal agreement holds between /a/ and /o/ (both [+back]). -/
 theorem a_o_dorsal_agree_on_back :
