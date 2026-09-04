@@ -4,16 +4,20 @@ import Linglib.Phonology.FeatureGeometry
 /-!
 # Segmental feature classes
 
-The theory-neutral grouping of [hayes-2009]'s features — the manner and major-class features,
-the laryngeal features, and the features of the three oral articulators, under a root
-standing for the whole segment — as an instance of `FeatureGeometry`, with Place the union of
-the articulator classes rather than a node. Whether Place is a constituent, where
-[continuant] and [nasal] attach, and how vowel place relates to consonant place is where the
-geometries of [clements-1985], [sagey-1986] and [halle-vaux-wolfe-2000] part ways, so each is
-an instance in its study and the substrate commits to none. Designated articulators are the
-articulator features a segment is specified for ([halle-vaux-wolfe-2000] §1.2.2), and a
-complex segment has more than one ([sagey-1986]). Agreement on the place class,
-[brown-meyer-2024]'s AGREE[place], is `Set.EqOn` on `Feature.Category.place`.
+The theory-neutral grouping of [hayes-2009]'s features by the sections of his feature
+chapter — manner, laryngeal, and the three major articulators with their dependents, under
+a root standing for the whole segment — as an instance of `FeatureGeometry`, with Place the
+union of the articulator classes rather than a node. Whether Place is a constituent, where
+[continuant], [nasal], [strident] and [lateral] attach, and how vowel place relates to
+consonant place is where the geometries of [clements-1985], [sagey-1986] and
+[halle-vaux-wolfe-2000] part ways, and where current textbooks part ways too: [hayes-2009]
+counts [strident] and [lateral] among the coronal features and presents no tree, while
+[gussenhoven-jacobs-2017] makes them manner features and reaches the consensus tree of
+[broe-1992] only in its final chapter, so each tree is an instance in its study and the
+substrate commits to none. Designated articulators are the articulator features a segment is
+specified for ([halle-vaux-wolfe-2000] §1.2.2), and a complex segment has more than one
+([sagey-1986]). Agreement on the place class, [brown-meyer-2024]'s AGREE[place], is `Set.EqOn`
+on `Feature.Category.place`.
 
 ## Main definitions
 
@@ -26,11 +30,16 @@ complex segment has more than one ([sagey-1986]). Agreement on the place class,
 
 The instance follows the recipe of `Phonology/FeatureGeometry.lean`: a parent function, `up`,
 `PartialOrder.lift`, and the chain axiom by `decide`. The grouping is total, so the root's class
-is the whole inventory.
+is the whole inventory. The textbook consensus tree of [broe-1992] as [gussenhoven-jacobs-2017]
+draws it (root with [consonantal] and [sonorant]; laryngeal; supralaryngeal over the manner
+features and a place node over labial, coronal, dorsal and radical, the last carrying [tense])
+is a candidate instance for a study anchored to [broe-1992], not part of the substrate.
 
 ## References
 
-* [hayes-2009] — the feature inventory and its chart grouping.
+* [hayes-2009] — the feature inventory and the grouping of its feature chapter (§§4.4–4.7).
+* [gussenhoven-jacobs-2017] — the flat grouping of chapters 5–6 and the tree of chapter 14.
+* [broe-1992] — the consensus tree.
 * [padgett-2002] — Place as the set of place features (p. 83).
 * [sagey-1986] — articulator nodes and complex segments.
 * [halle-vaux-wolfe-2000] — designated articulators as features (§1.2.2), [k͡p] against [kʷ]
@@ -74,13 +83,17 @@ instance : OrderBot Category where
 
 end Feature.Category
 
-/-- The class of each feature, by [hayes-2009]'s chart. -/
+/-- The class of each feature, by the sections of [hayes-2009]'s feature chapter: manner
+(§4.4, including the sonority features), laryngeal (§4.7), and the three major articulators
+(§4.6.1) with their dependents — [round] and [labiodental] under labial (§4.6.3), [anterior],
+[distributed], [strident] and [lateral] under coronal (§4.6.2), and the vowel features (§4.5)
+under dorsal (§4.6.4). -/
 def Feature.category : Feature → Feature.Category
   | .syllabic | .consonantal | .sonorant | .approximant | .continuant | .delayedRelease
-  | .nasal | .lateral | .strident | .tap | .trill => .manner
+  | .nasal | .tap | .trill => .manner
   | .voice | .spreadGlottis | .constrGlottis => .laryngeal
   | .labial | .round | .labiodental => .labial
-  | .coronal | .anterior | .distributed => .coronal
+  | .coronal | .anterior | .distributed | .strident | .lateral => .coronal
   | .dorsal | .high | .low | .front | .back | .tense => .dorsal
 
 instance : FeatureGeometry Feature Feature.Category where
