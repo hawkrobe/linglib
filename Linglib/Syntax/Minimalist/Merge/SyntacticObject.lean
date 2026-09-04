@@ -28,29 +28,29 @@ the unique Δ^ρ cut extracting the mover.
 
 namespace Minimalist.SyntacticObject
 
-open RoseTree RoseTree.Nonplanar ConnesKreimer
+open RoseTree UnorderedTree ConnesKreimer
 
 /-- External Merge on the carrier is the algebraic Merge with the bare root label on the
     two-object workspace. -/
 theorem mergeOp_node (S S' : SyntacticObject) :
     Merge.mergeOp (R := ℤ) (Sum.inr none) S.val S'.val
-        (of' ({S.val, S'.val} : Forest (Nonplanar Vertex)))
-      = of' (R := ℤ) ({(merge S S').val} : Forest (Nonplanar Vertex)) := by
+        (of' ({S.val, S'.val} : Forest (UnorderedTree Vertex)))
+      = of' (R := ℤ) ({(merge S S').val} : Forest (UnorderedTree Vertex)) := by
   rw [Merge.mergeOp_pair, merge_val]
 
 /-- Internal Merge on the carrier is the two-stage algebraic Merge, given the unique Δ^ρ cut `p0`
     of `T` extracting `mover` with remainder `remainder`. -/
 theorem mergeOp_merge_im (mover remainder T : SyntacticObject)
-    (p0 : Forest (Nonplanar Vertex) × Nonplanar Vertex)
+    (p0 : Forest (UnorderedTree Vertex) × UnorderedTree Vertex)
     (h_filter : (cutSummandsN T.val).filter
-        (fun p => p.1 = ({mover.val} : Forest (Nonplanar Vertex))) = {p0})
+        (fun p => p.1 = ({mover.val} : Forest (UnorderedTree Vertex))) = {p0})
     (h_remainder : p0.2 = remainder.val)
     (hT : T.val ≠ mover.val) :
     Merge.mergeOp (R := ℤ) (Sum.inr none) remainder.val mover.val
         (Merge.mergeOpUnit (R := ℤ) mover.val
-          (of' ({T.val} : Forest (Nonplanar Vertex))))
+          (of' ({T.val} : Forest (UnorderedTree Vertex))))
       = of' (R := ℤ)
-          ({(merge remainder mover).val} : Forest (Nonplanar Vertex)) := by
+          ({(merge remainder mover).val} : Forest (UnorderedTree Vertex)) := by
   rw [Merge.mergeOp_im_composition (Sum.inr none) mover.val T.val remainder.val
         p0 h_filter h_remainder hT, merge_val]
 

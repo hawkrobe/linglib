@@ -22,7 +22,7 @@ leaves, bare or indexed.
 
 namespace Minimalist
 
-open RoseTree RoseTree.Nonplanar SyntacticObject
+open RoseTree UnorderedTree SyntacticObject
 
 namespace SyntacticObject
 
@@ -52,7 +52,7 @@ def mkLeafPhon (cat : Cat) (sel : SelStack) (phon : String) (id : Nat) : Syntact
 
 /-- The lexical token at the root, if the root is a lexical leaf. -/
 def getLIToken (s : SyntacticObject) : Option LIToken :=
-  match Nonplanar.rootValue s.val with
+  match UnorderedTree.rootValue s.val with
   | .inl tok => some tok
   | .inr _ => none
 
@@ -66,15 +66,15 @@ def getLIToken (s : SyntacticObject) : Option LIToken :=
 theorem traceOf_ne_trace (tok : LIToken) : traceOf tok ≠ trace := by
   intro h
   have h' : (Sum.inr (some tok) : Vertex) = Sum.inr none :=
-    congrArg (fun s : SyntacticObject => Nonplanar.rootValue s.val) h
+    congrArg (fun s : SyntacticObject => UnorderedTree.rootValue s.val) h
   simp at h'
 
 @[simp] theorem getLIToken_merge (l r : SyntacticObject) : (merge l r).getLIToken = none := by
-  rw [getLIToken, merge_val, Nonplanar.rootValue_node]
+  rw [getLIToken, merge_val, UnorderedTree.rootValue_node]
 
 /-- A trace leaf, bare or indexed. -/
 def isTrace (s : SyntacticObject) : Prop :=
-  (Nonplanar.rootValue s.val).isRight = true ∧ Nonplanar.numNodes s.val = 1
+  (UnorderedTree.rootValue s.val).isRight = true ∧ UnorderedTree.numNodes s.val = 1
 
 instance (s : SyntacticObject) : Decidable (isTrace s) := inferInstanceAs (Decidable (_ ∧ _))
 
@@ -86,7 +86,7 @@ instance (s : SyntacticObject) : Decidable (isTrace s) := inferInstanceAs (Decid
 @[simp] theorem isTrace_trace : isTrace trace := ⟨rfl, rfl⟩
 
 /-- The number of leaves, traces included. -/
-def leafCount (s : SyntacticObject) : Nat := Nonplanar.numLeaves s.val
+def leafCount (s : SyntacticObject) : Nat := UnorderedTree.numLeaves s.val
 
 /-- `IsLeaf s ↔ s.leafCount = 1`: a lexical or trace leaf. -/
 def IsLeaf (s : SyntacticObject) : Prop := s.leafCount = 1
@@ -105,7 +105,7 @@ instance : Repr SyntacticObject where
       else f!"⟨SyntacticObject merge, {s.leafCount} leaves⟩"
 
 /-- `nodeCount s = leafCount s - 1`, the number of internal vertices of a full binary tree. -/
-def nodeCount (s : SyntacticObject) : Nat := Nonplanar.numLeaves s.val - 1
+def nodeCount (s : SyntacticObject) : Nat := UnorderedTree.numLeaves s.val - 1
 
 @[simp] theorem leafCount_leaf (tok : LIToken) : (SyntacticObject.leaf tok).leafCount = 1 := rfl
 @[simp] theorem leafCount_trace : trace.leafCount = 1 := rfl
@@ -130,15 +130,15 @@ example : isTrace SyntacticObject.trace ∧ ¬ isTrace (SyntacticObject.leaf
 /-- A bare binary node over a lexical leaf and a bare trace, the shape of an Internal-Merge
     result, is a syntactic object. -/
 example :
-    IsSyntacticObject (Nonplanar.mk (.node (Sum.inr none)
+    IsSyntacticObject (UnorderedTree.mk (.node (Sum.inr none)
       [.leaf (Sum.inl (mkTraceToken 0)), .leaf (Sum.inr none)])) := by decide
 /-- A lexical item with children is rejected: lexical items are leaves. -/
 example :
-    ¬ IsSyntacticObject (Nonplanar.mk (.node (Sum.inl (mkTraceToken 0)) [.leaf
+    ¬ IsSyntacticObject (UnorderedTree.mk (.node (Sum.inl (mkTraceToken 0)) [.leaf
       (Sum.inr none)])) := by decide
 /-- A ternary bare node is rejected: syntactic objects are binary. -/
 example :
-    ¬ IsSyntacticObject (Nonplanar.mk (.node (Sum.inr none)
+    ¬ IsSyntacticObject (UnorderedTree.mk (.node (Sum.inr none)
       [.leaf (Sum.inr none), .leaf (Sum.inr none), .leaf (Sum.inr none)])) := by decide
 
 end Minimalist

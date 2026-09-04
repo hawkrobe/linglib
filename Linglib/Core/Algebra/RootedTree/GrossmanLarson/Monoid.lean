@@ -7,7 +7,7 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
 # Grossman-Larson monoid structure
@@ -44,7 +44,7 @@ private theorem product_assoc_int (x y z : GrossmanLarson ℤ α) :
     through `ConnesKreimer.map` base change — along `ℕ → ℤ` by
     injectivity, then along `Nat.cast : ℕ → R`. -/
 theorem mul_assoc_basis {R : Type*} [CommSemiring R]
-    (F₁ F₂ F₃ : Forest (Nonplanar α)) :
+    (F₁ F₂ F₃ : Forest (UnorderedTree α)) :
     ((of' F₁ : GrossmanLarson R α) * of' F₂) * of' F₃ =
       of' F₁ * (of' F₂ * of' F₃) := by
   have hℕ : ((of' F₁ : GrossmanLarson ℕ α) * of' F₂) * of' F₃ =
@@ -61,11 +61,11 @@ theorem mul_assoc {R : Type*} [CommSemiring R]
     (x y z : GrossmanLarson R α) :
     x * y * z = x * (y * z) := by
   show product (product x y) z = product x (product y z)
-  have h₁ : ∀ F₁ F₂ : Forest (Nonplanar α),
+  have h₁ : ∀ F₁ F₂ : Forest (UnorderedTree α),
       product (product (of' (R := R) F₁) (of' F₂)) =
         (product (of' F₁)).comp (product (of' F₂)) := fun F₁ F₂ =>
     ConnesKreimer.lhom_ext' fun F₃ => mul_assoc_basis F₁ F₂ F₃
-  have h₂ : ∀ (F₁ : Forest (Nonplanar α)) (w : GrossmanLarson R α),
+  have h₂ : ∀ (F₁ : Forest (UnorderedTree α)) (w : GrossmanLarson R α),
       (product.flip w).comp (product (of' (R := R) F₁)) =
         (product (of' F₁)).comp (product.flip w) := fun F₁ w =>
     ConnesKreimer.lhom_ext' fun F₂ => LinearMap.congr_fun (h₁ F₁ F₂) w

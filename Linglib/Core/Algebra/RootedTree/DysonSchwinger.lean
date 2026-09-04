@@ -5,10 +5,10 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
-# Dyson-Schwinger equations on `ConnesKreimer R (Nonplanar α)` — MCB §1.17
+# Dyson-Schwinger equations on `ConnesKreimer R (UnorderedTree α)` — MCB §1.17
 [marcolli-chomsky-berwick-2025]
 
 MCB §1.17 ("Merge and Combinatorial Recursions in Physics") draws a
@@ -79,32 +79,32 @@ For a linear endomorphism `P : H →ₗ[R] H` and a root label `a : α`,
 /-- The **Dyson-Schwinger map** `T_{P,a}(X) := B+_a(P(X))` for a linear
     operator `P` and root label `a`. -/
 noncomputable def dsMap
-    (P : ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α))
+    (P : ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α))
     (a : α) :
-    ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   bPlusLin (R := R) a ∘ₗ P
 
 @[simp] theorem dsMap_apply
-    (P : ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α))
-    (a : α) (X : ConnesKreimer R (Nonplanar α)) :
+    (P : ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α))
+    (a : α) (X : ConnesKreimer R (UnorderedTree α)) :
     dsMap P a X = bPlusLin (R := R) a (P X) := rfl
 
 /-- **MCB Eq 1.17.2**: an element `X : H` is a **Dyson-Schwinger
     solution** for the pair `(P, a)` if it is a fixed point of the
     DS map, i.e., `X = B+_a(P(X))`. -/
 def IsDSSolution
-    (P : ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α))
-    (a : α) (X : ConnesKreimer R (Nonplanar α)) : Prop :=
+    (P : ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α))
+    (a : α) (X : ConnesKreimer R (UnorderedTree α)) : Prop :=
   X = dsMap P a X
 
 theorem IsDSSolution.def
-    (P : ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α))
-    (a : α) (X : ConnesKreimer R (Nonplanar α)) :
+    (P : ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α))
+    (a : α) (X : ConnesKreimer R (UnorderedTree α)) :
     IsDSSolution P a X ↔ X = bPlusLin (R := R) a (P X) := Iff.rfl
 
 /-- `dsMap` is additive in `P`. -/
 theorem dsMap_add
-    (P Q : ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α))
+    (P Q : ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α))
     (a : α) :
     dsMap (P + Q) a = dsMap P a + dsMap Q a := by
   refine LinearMap.ext fun X => ?_
@@ -114,7 +114,7 @@ theorem dsMap_add
 
 /-- `dsMap` commutes with scalar multiplication. -/
 theorem dsMap_smul (r : R)
-    (P : ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α))
+    (P : ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α))
     (a : α) :
     dsMap (r • P) a = r • dsMap P a := by
   refine LinearMap.ext fun X => ?_
@@ -123,17 +123,17 @@ theorem dsMap_smul (r : R)
 
 /-- `dsMap` is zero on the zero operator. -/
 @[simp] theorem dsMap_zero (a : α) :
-    dsMap (0 : ConnesKreimer R (Nonplanar α) →ₗ[R]
-                ConnesKreimer R (Nonplanar α)) a = 0 := by
+    dsMap (0 : ConnesKreimer R (UnorderedTree α) →ₗ[R]
+                ConnesKreimer R (UnorderedTree α)) a = 0 := by
   refine LinearMap.ext fun X => ?_
-  show bPlusLin (R := R) a ((0 : ConnesKreimer R (Nonplanar α) →ₗ[R] _) X) = 0
+  show bPlusLin (R := R) a ((0 : ConnesKreimer R (UnorderedTree α) →ₗ[R] _) X) = 0
   rw [LinearMap.zero_apply, map_zero]
 
 /-- For the zero operator `P = 0`, the unique DS solution is `X = 0`
     (since `dsMap 0 a X = B+_a(0) = 0` for all `X`). -/
-theorem isDSSolution_zero_iff_zero (a : α) (X : ConnesKreimer R (Nonplanar α)) :
-    IsDSSolution (0 : ConnesKreimer R (Nonplanar α) →ₗ[R]
-                      ConnesKreimer R (Nonplanar α)) a X ↔ X = 0 := by
+theorem isDSSolution_zero_iff_zero (a : α) (X : ConnesKreimer R (UnorderedTree α)) :
+    IsDSSolution (0 : ConnesKreimer R (UnorderedTree α) →ₗ[R]
+                      ConnesKreimer R (UnorderedTree α)) a X ↔ X = 0 := by
   unfold IsDSSolution
   rw [dsMap_zero, LinearMap.zero_apply]
 
@@ -144,19 +144,19 @@ MCB Eq 1.17.3 (`X = M(X, X)`). Not a `dsMap` instance — multiplication
 by `X` is bilinear, not linear, so this lives outside the linear DS
 framework.
 
-The two-tree-product solution `X = ofTree (Nonplanar.node a {T, T})`
+The two-tree-product solution `X = ofTree (UnorderedTree.node a {T, T})`
 for a fixed `T` is structurally a "two-children-with-same-subtree"
 recursion. -/
 
 /-- The **quadratic Dyson-Schwinger** predicate: `X = B+_a(X * X)`.
     Algebraic analog of MCB Eq 1.17.3 `X = M(X, X)`. -/
-def IsQuadDSSolution (a : α) (X : ConnesKreimer R (Nonplanar α)) : Prop :=
+def IsQuadDSSolution (a : α) (X : ConnesKreimer R (UnorderedTree α)) : Prop :=
   X = bPlusLin (R := R) a (X * X)
 
 /-- `0` is trivially a quadratic-DS solution (since `0 * 0 = 0` and
     `B+_a(0) = 0`). -/
 theorem zero_isQuadDSSolution (a : α) :
-    IsQuadDSSolution (R := R) a (0 : ConnesKreimer R (Nonplanar α)) := by
+    IsQuadDSSolution (R := R) a (0 : ConnesKreimer R (UnorderedTree α)) := by
   unfold IsQuadDSSolution
   rw [mul_zero, map_zero]
 
@@ -164,16 +164,16 @@ theorem zero_isQuadDSSolution (a : α) :
 
 /-- Sanity: for `P = id`, the DS map is exactly `B+_a`. -/
 example (a : α) :
-    dsMap (LinearMap.id : ConnesKreimer R (Nonplanar α) →ₗ[R]
-              ConnesKreimer R (Nonplanar α)) a =
+    dsMap (LinearMap.id : ConnesKreimer R (UnorderedTree α) →ₗ[R]
+              ConnesKreimer R (UnorderedTree α)) a =
       bPlusLin (R := R) a := by
   refine LinearMap.ext fun X => ?_
   show bPlusLin (R := R) a
-        ((LinearMap.id : ConnesKreimer R (Nonplanar α) →ₗ[R] _) X) =
+        ((LinearMap.id : ConnesKreimer R (UnorderedTree α) →ₗ[R] _) X) =
        bPlusLin (R := R) a X
   rw [LinearMap.id_apply]
 
-/-- Sanity: a leaf `ofTree (Nonplanar.leaf a)` is the DS solution of
+/-- Sanity: a leaf `ofTree (UnorderedTree.leaf a)` is the DS solution of
     `(id, a)` shifted by the zero-arity base case. The fixed-point
     equation `X = B+_a(X)` at `X = 0` reduces to `0 = B+_a(0) = 0`,
     which holds; at `X = ofTree (leaf a)`, it would require
@@ -181,12 +181,12 @@ example (a : α) :
     which fails (the LHS has 1 vertex, the RHS has 2). So `0` is the
     unique solution among basis vectors. -/
 example (a : α) :
-    IsDSSolution (LinearMap.id : ConnesKreimer R (Nonplanar α) →ₗ[R]
-                      ConnesKreimer R (Nonplanar α))
-                  a (0 : ConnesKreimer R (Nonplanar α)) := by
+    IsDSSolution (LinearMap.id : ConnesKreimer R (UnorderedTree α) →ₗ[R]
+                      ConnesKreimer R (UnorderedTree α))
+                  a (0 : ConnesKreimer R (UnorderedTree α)) := by
   unfold IsDSSolution
-  show (0 : ConnesKreimer R (Nonplanar α)) =
-       dsMap LinearMap.id a (0 : ConnesKreimer R (Nonplanar α))
+  show (0 : ConnesKreimer R (UnorderedTree α)) =
+       dsMap LinearMap.id a (0 : ConnesKreimer R (UnorderedTree α))
   rw [dsMap_apply, LinearMap.id_apply, map_zero]
 
 end ConnesKreimer

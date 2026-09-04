@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.PreLie.Graft
-import Linglib.Core.Data.RoseTree.Nonplanar
+import Linglib.Core.Data.UnorderedTree.Basic
 import Mathlib.Data.Multiset.Bind
 
 /-!
@@ -41,7 +41,7 @@ namespace RoseTree
 
 namespace Pathed
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 variable {α : Type*}
 
@@ -274,9 +274,9 @@ machinery. The pair type changes from `Vertex t × RoseTree α` to
 /-- Multi-graft aggregator with an explicit pair pre (path-based). -/
 private def pairSum (t : RoseTree α)
     (pre : List (Path × RoseTree α))
-    (Ts : List (RoseTree α)) : Multiset (Nonplanar α) :=
+    (Ts : List (RoseTree α)) : Multiset (UnorderedTree α) :=
   Multiset.ofList ((listChoices (vertices t) Ts.length).map
-    fun c => Nonplanar.mk (multiGraft t (pre ++ c.zip Ts)))
+    fun c => UnorderedTree.mk (multiGraft t (pre ++ c.zip Ts)))
 
 private theorem pairSum_cons (t : RoseTree α)
     (pre : List (Path × RoseTree α))
@@ -292,8 +292,8 @@ private theorem pairSum_cons (t : RoseTree α)
   apply congrArg Multiset.ofList
   apply List.map_congr_left
   intro c_rest _
-  show Nonplanar.mk (multiGraft t (pre ++ (v :: c_rest).zip (x :: rest))) =
-       Nonplanar.mk (multiGraft t ((pre ++ [(v, x)]) ++ c_rest.zip rest))
+  show UnorderedTree.mk (multiGraft t (pre ++ (v :: c_rest).zip (x :: rest))) =
+       UnorderedTree.mk (multiGraft t ((pre ++ [(v, x)]) ++ c_rest.zip rest))
   have h_args : pre ++ (v :: c_rest).zip (x :: rest) =
                 (pre ++ [(v, x)]) ++ c_rest.zip rest := by
     rw [List.zip_cons_cons, List.append_assoc]
@@ -310,7 +310,7 @@ private theorem pairSum_pre_perm (t : RoseTree α)
   congr 1
   apply List.map_congr_left
   intro c _
-  apply Nonplanar.mk_eq_mk_iff.mpr
+  apply UnorderedTree.mk_eq_mk_iff.mpr
   exact multiGraft_perm_pair t (h.append_right _)
 
 /-- Two unfoldings of `pairSum_cons` packed into a normal form for the
@@ -356,8 +356,8 @@ private theorem pairSum_perm_guests (t : RoseTree α)
 /-- Single-tree `insertion` is `mk`-invariant under `List.Perm` of guests. -/
 private theorem insertion_perm_guests (t : RoseTree α)
     {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
-    (insertion t Ts).map Nonplanar.mk =
-      (insertion t Ts').map Nonplanar.mk := by
+    (insertion t Ts).map UnorderedTree.mk =
+      (insertion t Ts').map UnorderedTree.mk := by
   have := pairSum_perm_guests t [] h
   unfold pairSum at this
   simpa [insertion_def, Multiset.map_coe, List.map_map, Function.comp_def] using this
@@ -365,15 +365,15 @@ private theorem insertion_perm_guests (t : RoseTree α)
 /-- Guest-list `Forall₂ Perm` lifts to `insertion mk`-equality. -/
 theorem insertion_forall₂_perm_guests (t : RoseTree α)
     {Ts Ts' : List (RoseTree α)} (h : List.Forall₂ Perm Ts Ts') :
-    (insertion t Ts).map Nonplanar.mk =
-      (insertion t Ts').map Nonplanar.mk := by
+    (insertion t Ts).map UnorderedTree.mk =
+      (insertion t Ts').map UnorderedTree.mk := by
   have hlen : Ts.length = Ts'.length := h.length_eq
   rw [insertion_def, insertion_def, Multiset.map_coe, Multiset.map_coe,
       List.map_map, List.map_map, hlen]
   congr 1
   apply List.map_congr_left
   intro choice _
-  apply Nonplanar.mk_eq_mk_iff.mpr
+  apply UnorderedTree.mk_eq_mk_iff.mpr
   -- multiGraft t (choice.zip Ts) ~ multiGraft t (choice.zip Ts')
   -- via List.Forall₂ for the pair (fst eq, snd perm)
   exact multiGraft_perm_pair_Forall₂ t (zip_pair_Forall₂ choice h)
@@ -1099,7 +1099,7 @@ private theorem insertion_eq_of_pathBij {t t' : RoseTree α}
     (hf_graft : ∀ pairs, Perm (multiGraft t pairs)
                                       (multiGraft t' (pairs.map (Prod.map f id))))
     (Ts : List (RoseTree α)) :
-    (insertion t Ts).map Nonplanar.mk = (insertion t' Ts).map Nonplanar.mk := by
+    (insertion t Ts).map UnorderedTree.mk = (insertion t' Ts).map UnorderedTree.mk := by
   rw [insertion_def, insertion_def, Multiset.map_coe, Multiset.map_coe,
       List.map_map, List.map_map]
   refine Quot.sound ?_
@@ -1111,13 +1111,13 @@ private theorem insertion_eq_of_pathBij {t t' : RoseTree α}
   -- LHS values agree with t'-multiGraft after relabel; RHS values are just t'-multiGraft.
   have step1 :
       ((listChoices (vertices t) Ts.length).map
-          (fun choice => Nonplanar.mk (multiGraft t (choice.zip Ts)))).Perm
+          (fun choice => UnorderedTree.mk (multiGraft t (choice.zip Ts)))).Perm
       ((listChoices (vertices t) Ts.length).map
-          (fun choice => Nonplanar.mk (multiGraft t' ((choice.map f).zip Ts)))) := by
+          (fun choice => UnorderedTree.mk (multiGraft t' ((choice.map f).zip Ts)))) := by
     apply List.Perm.of_eq
     apply List.map_congr_left
     intro choice _
-    apply Nonplanar.mk_eq_mk_iff.mpr
+    apply UnorderedTree.mk_eq_mk_iff.mpr
     have h_mge := hf_graft (choice.zip Ts)
     have h_zip : (choice.zip Ts).map (Prod.map f id) = (choice.map f).zip Ts := by
       simp [List.zip_map_left]
@@ -1125,10 +1125,10 @@ private theorem insertion_eq_of_pathBij {t t' : RoseTree α}
     exact h_mge
   have step2 :
       ((listChoices (vertices t) Ts.length).map
-          (fun choice => Nonplanar.mk (multiGraft t' ((choice.map f).zip Ts)))).Perm
+          (fun choice => UnorderedTree.mk (multiGraft t' ((choice.map f).zip Ts)))).Perm
       ((listChoices (vertices t') Ts.length).map
-          (fun choice => Nonplanar.mk (multiGraft t' (choice.zip Ts)))) := by
-    have := hlc_perm.map (fun choice => Nonplanar.mk (multiGraft t' (choice.zip Ts)))
+          (fun choice => UnorderedTree.mk (multiGraft t' (choice.zip Ts)))) := by
+    have := hlc_perm.map (fun choice => UnorderedTree.mk (multiGraft t' (choice.zip Ts)))
     rw [List.map_map] at this
     exact this
   exact step1.trans step2
@@ -1196,28 +1196,28 @@ end
 /-- `insertion T Ts` is `mk`-invariant under `Perm` of the host. -/
 private theorem insertion_perm_host (Ts : List (RoseTree α))
     {t t' : RoseTree α} (h : Perm t t') :
-    (insertion t Ts).map Nonplanar.mk =
-      (insertion t' Ts).map Nonplanar.mk := by
+    (insertion t Ts).map UnorderedTree.mk =
+      (insertion t' Ts).map UnorderedTree.mk := by
   obtain ⟨f, hf_perm, hf_graft⟩ := hasPathBij_of_perm h
   exact insertion_eq_of_pathBij f hf_perm hf_graft Ts
 
 /-- `List.Forall₂ Perm` lifts to `List` equality after mapping by
-    `Nonplanar.mk` — used for the `Ts = []` base case of forest host
+    `UnorderedTree.mk` — used for the `Ts = []` base case of forest host
     invariance. -/
 private theorem map_mk_eq_of_forall2_perm {F F' : List (RoseTree α)}
     (h : List.Forall₂ Perm F F') :
-    F.map Nonplanar.mk = F'.map Nonplanar.mk := by
+    F.map UnorderedTree.mk = F'.map UnorderedTree.mk := by
   induction h with
   | nil => rfl
-  | cons hd_pe _ ih => simp [Nonplanar.mk_eq_mk_iff.mpr hd_pe, ih]
+  | cons hd_pe _ ih => simp [UnorderedTree.mk_eq_mk_iff.mpr hd_pe, ih]
 
 /-- Forest host invariance: `Forall₂ Perm F F'` lifts to
     `mk`-equality of `insertionForest F Ts` and `insertionForest F' Ts`. -/
 theorem insertionForest_perm_host
     (Ts : List (RoseTree α)) {F F' : List (RoseTree α)}
     (h : List.Forall₂ Perm F F') :
-    (insertionForest F Ts).map (List.map Nonplanar.mk) =
-      (insertionForest F' Ts).map (List.map Nonplanar.mk) := by
+    (insertionForest F Ts).map (List.map UnorderedTree.mk) =
+      (insertionForest F' Ts).map (List.map UnorderedTree.mk) := by
   induction h generalizing Ts with
   | nil =>
     cases Ts with
@@ -1227,7 +1227,7 @@ theorem insertionForest_perm_host
     cases Ts with
     | nil =>
       simp [insertionForest_cons_host_nil_guests, Multiset.map_singleton,
-            List.map_cons, Nonplanar.mk_eq_mk_iff.mpr hd_pe,
+            List.map_cons, UnorderedTree.mk_eq_mk_iff.mpr hd_pe,
             map_mk_eq_of_forall2_perm tail_pe]
     | cons T_g Ts_inner =>
       rw [insertionForest_cons_cons, insertionForest_cons_cons]
@@ -1235,25 +1235,25 @@ theorem insertionForest_perm_host
       refine Multiset.bind_congr fun assign _ => ?_
       rw [Multiset.map_bind, Multiset.map_bind]
       simp only [Multiset.map_map, Function.comp, List.map_cons]
-      let f_T : Nonplanar α → Multiset (List (Nonplanar α)) :=
+      let f_T : UnorderedTree α → Multiset (List (UnorderedTree α)) :=
         fun mk_T_ins =>
           (insertionForest F_tail (((T_g :: Ts_inner).zip assign).filterMap fun p =>
               if p.snd then none else some p.fst)).map
-            (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk)
-      let f_T' : Nonplanar α → Multiset (List (Nonplanar α)) :=
+            (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
+      let f_T' : UnorderedTree α → Multiset (List (UnorderedTree α)) :=
         fun mk_T_ins =>
           (insertionForest F'_tail (((T_g :: Ts_inner).zip assign).filterMap fun p =>
               if p.snd then none else some p.fst)).map
-            (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk)
-      change (insertion T _).bind (fun T_ins => f_T (Nonplanar.mk T_ins)) =
-             (insertion T' _).bind (fun T_ins => f_T' (Nonplanar.mk T_ins))
+            (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
+      change (insertion T _).bind (fun T_ins => f_T (UnorderedTree.mk T_ins)) =
+             (insertion T' _).bind (fun T_ins => f_T' (UnorderedTree.mk T_ins))
       rw [← Multiset.bind_map, ← Multiset.bind_map]
       rw [insertion_perm_host _ hd_pe]
       refine Multiset.bind_congr fun mk_T_ins _ => ?_
-      show (insertionForest F_tail _).map (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk) =
-           (insertionForest F'_tail _).map (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk)
-      rw [show (fun F_ins : List (RoseTree α) => mk_T_ins :: F_ins.map Nonplanar.mk) =
-              ((fun L : List (Nonplanar α) => mk_T_ins :: L) ∘ List.map Nonplanar.mk) from rfl]
+      show (insertionForest F_tail _).map (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk) =
+           (insertionForest F'_tail _).map (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
+      rw [show (fun F_ins : List (RoseTree α) => mk_T_ins :: F_ins.map UnorderedTree.mk) =
+              ((fun L : List (UnorderedTree α) => mk_T_ins :: L) ∘ List.map UnorderedTree.mk) from rfl]
       rw [← Multiset.map_map, ← Multiset.map_map]
       rw [ih]
 
@@ -1449,13 +1449,13 @@ private theorem forestPairSum_eq_insertionForest (F : List (RoseTree α))
 private theorem forestPairSum_pre_perm_mk
     (T : RoseTree α) (F_tail : List (RoseTree α))
     (ih_F : ∀ {Ts Ts' : List (RoseTree α)} (_ : Ts.Perm Ts'),
-            (insertionForest F_tail Ts).map (List.map Nonplanar.mk) =
-            (insertionForest F_tail Ts').map (List.map Nonplanar.mk))
+            (insertionForest F_tail Ts).map (List.map UnorderedTree.mk) =
+            (insertionForest F_tail Ts').map (List.map UnorderedTree.mk))
     {pre_T pre_T' pre_F pre_F' : List (RoseTree α)}
     (hT : pre_T.Perm pre_T') (hF : pre_F.Perm pre_F')
     (Ts : List (RoseTree α)) :
-    (forestPairSum (T :: F_tail) pre_T pre_F Ts).map (List.map Nonplanar.mk) =
-    (forestPairSum (T :: F_tail) pre_T' pre_F' Ts).map (List.map Nonplanar.mk) := by
+    (forestPairSum (T :: F_tail) pre_T pre_F Ts).map (List.map UnorderedTree.mk) =
+    (forestPairSum (T :: F_tail) pre_T' pre_F' Ts).map (List.map UnorderedTree.mk) := by
   induction Ts generalizing pre_T pre_T' pre_F pre_F' with
   | nil =>
     rw [forestPairSum_cons_F_nil_remaining, forestPairSum_cons_F_nil_remaining,
@@ -1466,19 +1466,19 @@ private theorem forestPairSum_pre_perm_mk
     --     (insertionForest F_tail pre_F).map (fun F' => mk T' :: F'.map mk)
     -- Refactor: factor mk T' out, then use insertion_perm_guests + ih_F
     rw [show (fun T' : RoseTree α =>
-              ((insertionForest F_tail pre_F).map fun F' => T' :: F').map (List.map Nonplanar.mk)) =
+              ((insertionForest F_tail pre_F).map fun F' => T' :: F').map (List.map UnorderedTree.mk)) =
             (fun T' : RoseTree α =>
-              ((insertionForest F_tail pre_F).map (List.map Nonplanar.mk)).map
-                (fun L => Nonplanar.mk T' :: L))
+              ((insertionForest F_tail pre_F).map (List.map UnorderedTree.mk)).map
+                (fun L => UnorderedTree.mk T' :: L))
             from by
           funext T'
           rw [Multiset.map_map, Multiset.map_map]
           rfl]
     rw [show (fun T' : RoseTree α =>
-              ((insertionForest F_tail pre_F').map fun F' => T' :: F').map (List.map Nonplanar.mk)) =
+              ((insertionForest F_tail pre_F').map fun F' => T' :: F').map (List.map UnorderedTree.mk)) =
             (fun T' : RoseTree α =>
-              ((insertionForest F_tail pre_F').map (List.map Nonplanar.mk)).map
-                (fun L => Nonplanar.mk T' :: L))
+              ((insertionForest F_tail pre_F').map (List.map UnorderedTree.mk)).map
+                (fun L => UnorderedTree.mk T' :: L))
             from by
           funext T'
           rw [Multiset.map_map, Multiset.map_map]
@@ -1490,17 +1490,17 @@ private theorem forestPairSum_pre_perm_mk
     -- = ((insertion T pre_T).map mk).bind (fun mk_T' => ((insertionForest F_tail pre_F').map (List.map mk)).map (fun L => mk_T' :: L))
     -- via Multiset.bind_map reversed
     rw [show (insertion T pre_T).bind (fun T' : RoseTree α =>
-              ((insertionForest F_tail pre_F').map (List.map Nonplanar.mk)).map
-                (fun L => Nonplanar.mk T' :: L)) =
-            ((insertion T pre_T).map Nonplanar.mk).bind (fun mk_T' =>
-              ((insertionForest F_tail pre_F').map (List.map Nonplanar.mk)).map
+              ((insertionForest F_tail pre_F').map (List.map UnorderedTree.mk)).map
+                (fun L => UnorderedTree.mk T' :: L)) =
+            ((insertion T pre_T).map UnorderedTree.mk).bind (fun mk_T' =>
+              ((insertionForest F_tail pre_F').map (List.map UnorderedTree.mk)).map
                 (fun L => mk_T' :: L))
             from by rw [Multiset.bind_map]]
     rw [show (insertion T pre_T').bind (fun T' : RoseTree α =>
-              ((insertionForest F_tail pre_F').map (List.map Nonplanar.mk)).map
-                (fun L => Nonplanar.mk T' :: L)) =
-            ((insertion T pre_T').map Nonplanar.mk).bind (fun mk_T' =>
-              ((insertionForest F_tail pre_F').map (List.map Nonplanar.mk)).map
+              ((insertionForest F_tail pre_F').map (List.map UnorderedTree.mk)).map
+                (fun L => UnorderedTree.mk T' :: L)) =
+            ((insertion T pre_T').map UnorderedTree.mk).bind (fun mk_T' =>
+              ((insertionForest F_tail pre_F').map (List.map UnorderedTree.mk)).map
                 (fun L => mk_T' :: L))
             from by rw [Multiset.bind_map]]
     -- Apply insertion_perm_guests on (insertion T pre_T).map mk = (insertion T pre_T').map mk
@@ -1546,11 +1546,11 @@ private theorem forestPairSum_cons_cons_unfold (F : List (RoseTree α))
 private theorem forestPairSum_swap_mk
     (T : RoseTree α) (F_tail : List (RoseTree α))
     (ih_F : ∀ {Ts Ts' : List (RoseTree α)} (_ : Ts.Perm Ts'),
-            (insertionForest F_tail Ts).map (List.map Nonplanar.mk) =
-            (insertionForest F_tail Ts').map (List.map Nonplanar.mk))
+            (insertionForest F_tail Ts).map (List.map UnorderedTree.mk) =
+            (insertionForest F_tail Ts').map (List.map UnorderedTree.mk))
     (pre_T pre_F : List (RoseTree α)) (a b : RoseTree α) (rest : List (RoseTree α)) :
-    (forestPairSum (T :: F_tail) pre_T pre_F (a :: b :: rest)).map (List.map Nonplanar.mk) =
-    (forestPairSum (T :: F_tail) pre_T pre_F (b :: a :: rest)).map (List.map Nonplanar.mk) := by
+    (forestPairSum (T :: F_tail) pre_T pre_F (a :: b :: rest)).map (List.map UnorderedTree.mk) =
+    (forestPairSum (T :: F_tail) pre_T pre_F (b :: a :: rest)).map (List.map UnorderedTree.mk) := by
   rw [forestPairSum_cons_cons_unfold, forestPairSum_cons_cons_unfold]
   -- Push .map mk through both nested binds on both sides
   rw [Multiset.map_bind]
@@ -1571,9 +1571,9 @@ private theorem forestPairSum_swap_mk
   · cases b₂
     · -- F, F: pre_F PERM
       change (forestPairSum (T :: F_tail) pre_T ((pre_F ++ [a]) ++ [b]) rest).map
-                (List.map Nonplanar.mk) =
+                (List.map UnorderedTree.mk) =
               (forestPairSum (T :: F_tail) pre_T ((pre_F ++ [b]) ++ [a]) rest).map
-                (List.map Nonplanar.mk)
+                (List.map UnorderedTree.mk)
       exact forestPairSum_pre_perm_mk T F_tail ih_F
         (List.Perm.refl pre_T)
         (by
@@ -1587,9 +1587,9 @@ private theorem forestPairSum_swap_mk
       rfl
     · -- T, T: pre_T PERM
       change (forestPairSum (T :: F_tail) ((pre_T ++ [a]) ++ [b]) pre_F rest).map
-                (List.map Nonplanar.mk) =
+                (List.map UnorderedTree.mk) =
               (forestPairSum (T :: F_tail) ((pre_T ++ [b]) ++ [a]) pre_F rest).map
-                (List.map Nonplanar.mk)
+                (List.map UnorderedTree.mk)
       exact forestPairSum_pre_perm_mk T F_tail ih_F
         (by
           rw [List.append_assoc, List.append_assoc]
@@ -1601,12 +1601,12 @@ private theorem forestPairSum_swap_mk
 private theorem forestPairSum_perm_remaining_mk
     (T : RoseTree α) (F_tail : List (RoseTree α))
     (ih_F : ∀ {Ts Ts' : List (RoseTree α)} (_ : Ts.Perm Ts'),
-            (insertionForest F_tail Ts).map (List.map Nonplanar.mk) =
-            (insertionForest F_tail Ts').map (List.map Nonplanar.mk))
+            (insertionForest F_tail Ts).map (List.map UnorderedTree.mk) =
+            (insertionForest F_tail Ts').map (List.map UnorderedTree.mk))
     (pre_T pre_F : List (RoseTree α))
     {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
-    (forestPairSum (T :: F_tail) pre_T pre_F Ts).map (List.map Nonplanar.mk) =
-    (forestPairSum (T :: F_tail) pre_T pre_F Ts').map (List.map Nonplanar.mk) := by
+    (forestPairSum (T :: F_tail) pre_T pre_F Ts).map (List.map UnorderedTree.mk) =
+    (forestPairSum (T :: F_tail) pre_T pre_F Ts').map (List.map UnorderedTree.mk) := by
   induction h generalizing pre_T pre_F with
   | nil => rfl
   | @cons x rest rest' _ ih =>
@@ -1626,8 +1626,8 @@ private theorem forestPairSum_perm_remaining_mk
     `mk`-equality of `insertionForest`. -/
 theorem insertionForest_perm_guests
     (F : List (RoseTree α)) {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
-    (insertionForest F Ts).map (List.map Nonplanar.mk) =
-      (insertionForest F Ts').map (List.map Nonplanar.mk) := by
+    (insertionForest F Ts).map (List.map UnorderedTree.mk) =
+      (insertionForest F Ts').map (List.map UnorderedTree.mk) := by
   induction F generalizing Ts Ts' with
   | nil =>
     cases hTs : Ts with

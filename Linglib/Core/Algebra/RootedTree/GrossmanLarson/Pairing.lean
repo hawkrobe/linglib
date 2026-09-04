@@ -9,21 +9,21 @@ import Mathlib.RingTheory.TensorProduct.Basic
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Mathlib.Tactic.Ring
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
 # The symmetry-weighted GL/CK pairing
 [foissy-typed-decorated-rooted-trees-2018]
 [grossman-larson-1989]
 
-The pairing `⟨·, ·⟩ : H →ₗ H →ₗ R` on `H = ConnesKreimer R (Nonplanar α)`
+The pairing `⟨·, ·⟩ : H →ₗ H →ₗ R` on `H = ConnesKreimer R (UnorderedTree α)`
 (Foissy 2018 §4.2), *symmetry-weighted* on the forest basis:
 
 ```
 ⟨of' F, of' G⟩ = if F = G then |Aut(F)| else 0
 ```
 
-with the automorphism count `Nonplanar.forestAutCard`
+with the automorphism count `UnorderedTree.forestAutCard`
 (`Core/Combinatorics/RootedTree/Aut.lean`) as the weight. This is the
 pairing under which the GL product and the pruning coproduct Δ^ρ are
 adjoint (`Coproduct/PruningDuality.lean`).
@@ -54,23 +54,23 @@ omit [DecidableEq α] in
     public `pairing` is this transported through the Connes-Kreimer
     structure's `toFinsuppAlgEquiv`. -/
 private noncomputable def pairingAux :
-    (Forest (Nonplanar α) →₀ R) →ₗ[R] (Forest (Nonplanar α) →₀ R) →ₗ[R] R :=
-  Finsupp.lift _ R (Forest (Nonplanar α)) (fun F =>
-    Finsupp.lift R R (Forest (Nonplanar α)) (fun G =>
+    (Forest (UnorderedTree α) →₀ R) →ₗ[R] (Forest (UnorderedTree α) →₀ R) →ₗ[R] R :=
+  Finsupp.lift _ R (Forest (UnorderedTree α)) (fun F =>
+    Finsupp.lift R R (Forest (UnorderedTree α)) (fun G =>
       if F = G then (forestAutCard F : R) else 0))
 
-private theorem pairingAux_single_single (F G : Forest (Nonplanar α)) :
+private theorem pairingAux_single_single (F G : Forest (UnorderedTree α)) :
     pairingAux (R := R) (Finsupp.single F 1) (Finsupp.single G 1) =
       (if F = G then (forestAutCard F : R) else 0) := by
-  show (Finsupp.lift _ R (Forest (Nonplanar α)) (fun F' =>
-    Finsupp.lift R R (Forest (Nonplanar α)) (fun G' =>
+  show (Finsupp.lift _ R (Forest (UnorderedTree α)) (fun F' =>
+    Finsupp.lift R R (Forest (UnorderedTree α)) (fun G' =>
       if F' = G' then (forestAutCard F' : R) else 0)))
-    (Finsupp.single F 1 : Forest (Nonplanar α) →₀ R) (Finsupp.single G 1) = _
+    (Finsupp.single F 1 : Forest (UnorderedTree α) →₀ R) (Finsupp.single G 1) = _
   rw [Finsupp.lift_apply, Finsupp.sum_single_index]
   · rw [one_smul]
-    show (Finsupp.lift R R (Forest (Nonplanar α)) (fun G' =>
+    show (Finsupp.lift R R (Forest (UnorderedTree α)) (fun G' =>
         if F = G' then (forestAutCard F : R) else 0))
-        (Finsupp.single G 1 : Forest (Nonplanar α) →₀ R) = _
+        (Finsupp.single G 1 : Forest (UnorderedTree α) →₀ R) = _
     rw [Finsupp.lift_apply, Finsupp.sum_single_index]
     · simp only [one_smul]
     · simp
@@ -82,18 +82,18 @@ omit [DecidableEq α] in
     (in `R`, via `Nat.cast`). Bilinearly extended, transported from the
     forest-basis `pairingAux` through `ConnesKreimer.toFinsuppAlgEquiv`. -/
 noncomputable def pairing :
-    ConnesKreimer R (Nonplanar α) →ₗ[R]
-      ConnesKreimer R (Nonplanar α) →ₗ[R] R :=
+    ConnesKreimer R (UnorderedTree α) →ₗ[R]
+      ConnesKreimer R (UnorderedTree α) →ₗ[R] R :=
   pairingAux.compl₁₂
     ((AddMonoidAlgebra.coeffLinearEquiv R).toLinearMap.comp
-      (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := Nonplanar α)).toLinearMap)
+      (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := UnorderedTree α)).toLinearMap)
     ((AddMonoidAlgebra.coeffLinearEquiv R).toLinearMap.comp
-      (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := Nonplanar α)).toLinearMap)
+      (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := UnorderedTree α)).toLinearMap)
 
-private theorem pairing_apply (x y : ConnesKreimer R (Nonplanar α)) :
+private theorem pairing_apply (x y : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) x y = pairingAux x.toFinsupp.coeff y.toFinsupp.coeff := rfl
 
-@[simp] theorem pairing_of'_of' (F G : Forest (Nonplanar α)) :
+@[simp] theorem pairing_of'_of' (F G : Forest (UnorderedTree α)) :
     pairing (R := R) (ConnesKreimer.of' (R := R) F)
                      (ConnesKreimer.of' (R := R) G) =
       (if F = G then (forestAutCard F : R) else 0) := by
@@ -103,7 +103,7 @@ private theorem pairing_apply (x y : ConnesKreimer R (Nonplanar α)) :
 /-- The pairing is symmetric. Reduces by bilinearity to the basis case,
     where `pairing_of'_of'` shows both sides are `if F = G then
     forestAutCard F else 0` — same value (the `F = G` case forces it). -/
-theorem pairing_symm (x y : ConnesKreimer R (Nonplanar α)) :
+theorem pairing_symm (x y : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) x y = pairing y x := by
   refine ConnesKreimer.induction_linear x ?_ ?_ ?_
   · rw [LinearMap.map_zero, LinearMap.zero_apply, LinearMap.map_zero]
@@ -126,41 +126,41 @@ theorem pairing_symm (x y : ConnesKreimer R (Nonplanar α)) :
         simp [h, h']
 
 /-- The pairing vanishes on `0`. Free from linearity. -/
-@[simp] theorem pairing_zero_left (y : ConnesKreimer R (Nonplanar α)) :
+@[simp] theorem pairing_zero_left (y : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) 0 y = 0 := by
   simp only [LinearMap.map_zero, LinearMap.zero_apply]
 
 /-- The pairing vanishes on `0` (right). -/
-@[simp] theorem pairing_zero_right (x : ConnesKreimer R (Nonplanar α)) :
+@[simp] theorem pairing_zero_right (x : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) x 0 = 0 :=
   LinearMap.map_zero _
 
 /-- Pairing against the unit extracts the counit (the coefficient of the
     empty forest): `⟨w, 1⟩ = ε w`. -/
-theorem pairing_one_right (w : ConnesKreimer R (Nonplanar α)) :
-    pairing (R := R) w (1 : ConnesKreimer R (Nonplanar α)) =
-      (ConnesKreimer.counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) w := by
-  have h : (pairing (R := R)).flip (1 : ConnesKreimer R (Nonplanar α)) =
-      (ConnesKreimer.counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R).toLinearMap :=
+theorem pairing_one_right (w : ConnesKreimer R (UnorderedTree α)) :
+    pairing (R := R) w (1 : ConnesKreimer R (UnorderedTree α)) =
+      (ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R) w := by
+  have h : (pairing (R := R)).flip (1 : ConnesKreimer R (UnorderedTree α)) =
+      (ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R).toLinearMap :=
     ConnesKreimer.lhom_ext' fun F => by
       show pairing (R := R) (ConnesKreimer.of' F)
-          (ConnesKreimer.of' (0 : Forest (Nonplanar α))) =
-        (ConnesKreimer.counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
+          (ConnesKreimer.of' (0 : Forest (UnorderedTree α))) =
+        (ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
           (ConnesKreimer.of' F)
       rw [pairing_of'_of', ConnesKreimer.counit_of']
-      by_cases h : F = (0 : Forest (Nonplanar α))
+      by_cases h : F = (0 : Forest (UnorderedTree α))
       · subst h
         rw [if_pos rfl, if_pos Multiset.card_zero]
-        show ((Nonplanar.forestAutCard (0 : Forest (Nonplanar α)) : ℕ) : R) = 1
-        rw [Nonplanar.forestAutCard_zero, Nat.cast_one]
+        show ((UnorderedTree.forestAutCard (0 : Forest (UnorderedTree α)) : ℕ) : R) = 1
+        rw [UnorderedTree.forestAutCard_zero, Nat.cast_one]
       · rw [if_neg h, if_neg (by simpa [Multiset.card_eq_zero] using h)]
   exact LinearMap.congr_fun h w
 
 /-- Each pairing against a basis element `of' G` extracts the coefficient
     of `G` in `x`, weighted by `forestAutCard G`. Proof: reduce to basis
     via `Finsupp.induction_linear` on `x`, then `pairing_of'_of'`. -/
-theorem pairing_apply_of' (x : ConnesKreimer R (Nonplanar α))
-    (G : Forest (Nonplanar α)) :
+theorem pairing_apply_of' (x : ConnesKreimer R (UnorderedTree α))
+    (G : Forest (UnorderedTree α)) :
     pairing (R := R) x (ConnesKreimer.of' G) =
       x.coeff G * (forestAutCard G : R) := by
   refine ConnesKreimer.induction_linear x ?_ ?_ ?_
@@ -187,14 +187,14 @@ theorem pairing_apply_of' (x : ConnesKreimer R (Nonplanar α))
     Holds for any commutative ring with characteristic 0 and no zero
     divisors (e.g. `ℤ`, `ℚ`, `ℝ`, `ℂ`, any field of char 0). -/
 theorem pairing_nondegenerate
-    [CharZero R] [NoZeroDivisors R] (x : ConnesKreimer R (Nonplanar α))
+    [CharZero R] [NoZeroDivisors R] (x : ConnesKreimer R (UnorderedTree α))
     (h : ∀ y, pairing (R := R) x y = 0) : x = 0 := by
   refine ConnesKreimer.ext_coeff fun G => ?_
   rw [ConnesKreimer.coeff_zero]
   have hG : pairing (R := R) x (ConnesKreimer.of' G) = 0 := h _
   rw [pairing_apply_of'] at hG
-  have hauts_ne : (Nonplanar.forestAutCard G : R) ≠ 0 :=
-    Nat.cast_ne_zero.mpr (Nonplanar.forestAutCard_pos G).ne'
+  have hauts_ne : (UnorderedTree.forestAutCard G : R) ≠ 0 :=
+    Nat.cast_ne_zero.mpr (UnorderedTree.forestAutCard_pos G).ne'
   rcases mul_eq_zero.mp hG with hx | hx
   · exact hx
   · exact absurd hx hauts_ne
@@ -204,7 +204,7 @@ variable {R : Type*} [CommRing R] [CharZero R] [NoZeroDivisors R]
 
 /-- Separation form of `pairing_nondegenerate`: elements pairing equally
     against everything are equal. -/
-theorem ext_pairing_right {x y : ConnesKreimer R (Nonplanar α)}
+theorem ext_pairing_right {x y : ConnesKreimer R (UnorderedTree α)}
     (h : ∀ z, pairing (R := R) x z = pairing y z) : x = y :=
   sub_eq_zero.mp <| pairing_nondegenerate _ fun z => by
     rw [map_sub, LinearMap.sub_apply, h, sub_self]
@@ -217,7 +217,7 @@ Pairing against a CK product decomposes over the two-sided sub-multiset
 splits of the first argument (`Multiset.antidiagonal`) — the
 symmetry-weighted pairing turns CK multiplication into the split
 coproduct. The combinatorial heart is the multinomial identity
-`Nonplanar.forestAutCard_add` (`Aut.lean`). Computationally validated
+`UnorderedTree.forestAutCard_add` (`Aut.lean`). Computationally validated
 (`scratch/validate_duality.lean`, V2 battery). -/
 
 /-- **Pairing product rule** (basis form):
@@ -225,8 +225,8 @@ coproduct. The combinatorial heart is the multinomial identity
 
     Only the split `(C₁, C₂)` survives the diagonal pairing, with
     multiplicity `count (C₁,C₂) (antidiagonal W)`; the autCard weights
-    recombine via `Nonplanar.forestAutCard_add`. -/
-theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (Nonplanar α)) :
+    recombine via `UnorderedTree.forestAutCard_add`. -/
+theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (UnorderedTree α)) :
     pairing (R := R) (ConnesKreimer.of' W)
         (ConnesKreimer.of' C₁ * ConnesKreimer.of' C₂) =
       ((Multiset.antidiagonal W).map (fun p =>
@@ -303,15 +303,15 @@ theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (Nonplanar α)) :
     rw [nsmul_eq_mul]
     -- Goal: ↑(forestAutCard (C₁+C₂)) = ↑(count ...) * (↑(forestAutCard C₁) * ↑(forestAutCard C₂))
     -- Use S1 cast to R.
-    have hS1 := Nonplanar.forestAutCard_add C₁ C₂
+    have hS1 := UnorderedTree.forestAutCard_add C₁ C₂
     have hcast := congr_arg (Nat.cast (R := R)) hS1
     push_cast at hcast
     -- hcast : ↑forestAutCard (C₁+C₂) = ↑count * (↑forestAutCard C₁ * ↑forestAutCard C₂)
-    -- `forestAutCard` here is the GL re-export of `Nonplanar.forestAutCard`.
-    show (Nonplanar.forestAutCard (C₁ + C₂) : R) =
+    -- `forestAutCard` here is the GL re-export of `UnorderedTree.forestAutCard`.
+    show (UnorderedTree.forestAutCard (C₁ + C₂) : R) =
         ((Multiset.count (C₁, C₂) (Multiset.antidiagonal (C₁ + C₂)) : ℕ) : R) *
-          ((Nonplanar.forestAutCard C₁ : R) * (Nonplanar.forestAutCard C₂ : R))
-    -- Decidable instances on Forest = Multiset (Nonplanar α) are unique up to
+          ((UnorderedTree.forestAutCard C₁ : R) * (UnorderedTree.forestAutCard C₂ : R))
+    -- Decidable instances on Forest = Multiset (UnorderedTree α) are unique up to
     -- propositional equality; `convert` closes the residual.
     convert hcast using 4
   · -- W ≠ C₁ + C₂. LHS = 0. The if now uses the ambient instance.
@@ -342,15 +342,15 @@ theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (Nonplanar α)) :
 /-- **Pairing product rule** (bilinear form): pairing a basis vector
     against a product decomposes over the antidiagonal splits of the
     basis forest. Bilinear extension of `pairing_of'_mul_of'`. -/
-theorem pairing_of'_mul (W : Forest (Nonplanar α))
-    (z₁ z₂ : ConnesKreimer R (Nonplanar α)) :
+theorem pairing_of'_mul (W : Forest (UnorderedTree α))
+    (z₁ z₂ : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) (ConnesKreimer.of' W) (z₁ * z₂) =
       ((Multiset.antidiagonal W).map (fun p =>
         pairing (R := R) (ConnesKreimer.of' p.1) z₁ *
         pairing (R := R) (ConnesKreimer.of' p.2) z₂)).sum := by
   -- First extend in z₂ at basis z₁, then in z₁.
-  have aux : ∀ (C₁ : Forest (Nonplanar α))
-      (z₂ : ConnesKreimer R (Nonplanar α)),
+  have aux : ∀ (C₁ : Forest (UnorderedTree α))
+      (z₂ : ConnesKreimer R (UnorderedTree α)),
       pairing (R := R) (ConnesKreimer.of' W)
           (ConnesKreimer.of' C₁ * z₂) =
         ((Multiset.antidiagonal W).map (fun p =>
@@ -359,19 +359,19 @@ theorem pairing_of'_mul (W : Forest (Nonplanar α))
     intro C₁ z₂
     refine ConnesKreimer.induction_linear z₂ ?_ ?_ ?_
     · show pairing (R := R) (ConnesKreimer.of' W)
-          (ConnesKreimer.of' C₁ * (0 : ConnesKreimer R (Nonplanar α))) =
+          (ConnesKreimer.of' C₁ * (0 : ConnesKreimer R (UnorderedTree α))) =
         ((Multiset.antidiagonal W).map (fun p =>
           pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
           pairing (R := R) (ConnesKreimer.of' p.2)
-            (0 : ConnesKreimer R (Nonplanar α)))).sum
+            (0 : ConnesKreimer R (UnorderedTree α)))).sum
       rw [mul_zero, map_zero]
       symm
       refine Multiset.sum_eq_zero fun r hr => ?_
       obtain ⟨p, _, rfl⟩ := Multiset.mem_map.mp hr
       rw [map_zero, mul_zero]
     · intro a b iha ihb
-      let a' : ConnesKreimer R (Nonplanar α) := a
-      let b' : ConnesKreimer R (Nonplanar α) := b
+      let a' : ConnesKreimer R (UnorderedTree α) := a
+      let b' : ConnesKreimer R (UnorderedTree α) := b
       show pairing (R := R) (ConnesKreimer.of' W)
           (ConnesKreimer.of' C₁ * (a' + b')) =
         ((Multiset.antidiagonal W).map (fun p =>
@@ -405,10 +405,10 @@ theorem pairing_of'_mul (W : Forest (Nonplanar α))
       rw [Multiset.sum_map_mul_left]
   refine ConnesKreimer.induction_linear z₁ ?_ ?_ ?_
   · show pairing (R := R) (ConnesKreimer.of' W)
-        ((0 : ConnesKreimer R (Nonplanar α)) * z₂) =
+        ((0 : ConnesKreimer R (UnorderedTree α)) * z₂) =
       ((Multiset.antidiagonal W).map (fun p =>
         pairing (R := R) (ConnesKreimer.of' p.1)
-          (0 : ConnesKreimer R (Nonplanar α)) *
+          (0 : ConnesKreimer R (UnorderedTree α)) *
         pairing (R := R) (ConnesKreimer.of' p.2) z₂)).sum
     rw [zero_mul, map_zero]
     symm
@@ -416,8 +416,8 @@ theorem pairing_of'_mul (W : Forest (Nonplanar α))
     obtain ⟨p, _, rfl⟩ := Multiset.mem_map.mp hr
     rw [map_zero, zero_mul]
   · intro a b iha ihb
-    let a' : ConnesKreimer R (Nonplanar α) := a
-    let b' : ConnesKreimer R (Nonplanar α) := b
+    let a' : ConnesKreimer R (UnorderedTree α) := a
+    let b' : ConnesKreimer R (UnorderedTree α) := b
     show pairing (R := R) (ConnesKreimer.of' W) ((a' + b') * z₂) =
       ((Multiset.antidiagonal W).map (fun p =>
         pairing (R := R) (ConnesKreimer.of' p.1) (a' + b') *
@@ -468,27 +468,27 @@ combinatorial statement. -/
     `pair = TP.lift pairing : H ⊗ H →ₗ R`; contract via `mul' R R`;
     curry the result.
 
-    Decoration-free: works on `ConnesKreimer R (Nonplanar α)` for any
+    Decoration-free: works on `ConnesKreimer R (UnorderedTree α)` for any
     `α`. Consumed by the Δ^ρ duality (`Coproduct/PruningDuality.lean`). -/
 noncomputable def pairing₂ :
-    (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) →ₗ[R]
-    (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) →ₗ[R] R :=
-  let pair : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)
+    (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) →ₗ[R]
+    (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) →ₗ[R] R :=
+  let pair : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)
                 →ₗ[R] R :=
     TensorProduct.lift pairing
   TensorProduct.curry <|
     LinearMap.mul' R R ∘ₗ
       TensorProduct.map pair pair ∘ₗ
       (TensorProduct.tensorTensorTensorComm R
-        (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α))).toLinearMap
+        (ConnesKreimer R (UnorderedTree α))
+        (ConnesKreimer R (UnorderedTree α))
+        (ConnesKreimer R (UnorderedTree α))
+        (ConnesKreimer R (UnorderedTree α))).toLinearMap
 
 /-- Evaluation of `pairing₂` on pure tensors: `pairing₂ (x ⊗ y) (w ⊗ z) =
     pairing x w * pairing y z`. -/
 @[simp] theorem pairing₂_tmul_tmul
-    (x y w z : ConnesKreimer R (Nonplanar α)) :
+    (x y w z : ConnesKreimer R (UnorderedTree α)) :
     pairing₂ (R := R) (x ⊗ₜ y) (w ⊗ₜ z) =
       pairing x w * pairing y z := by
   rfl
@@ -504,30 +504,30 @@ noncomputable def pairing₂ :
     Implementation: pairing on the first factor times `pairing₂` on the
     second factor; both extended bilinearly. -/
 noncomputable def pairing₃ :
-    (ConnesKreimer R (Nonplanar α) ⊗[R]
-      (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))) →ₗ[R]
-    (ConnesKreimer R (Nonplanar α) ⊗[R]
-      (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))) →ₗ[R] R :=
-  let pair1 : ConnesKreimer R (Nonplanar α) ⊗[R]
-                ConnesKreimer R (Nonplanar α) →ₗ[R] R :=
+    (ConnesKreimer R (UnorderedTree α) ⊗[R]
+      (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))) →ₗ[R]
+    (ConnesKreimer R (UnorderedTree α) ⊗[R]
+      (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))) →ₗ[R] R :=
+  let pair1 : ConnesKreimer R (UnorderedTree α) ⊗[R]
+                ConnesKreimer R (UnorderedTree α) →ₗ[R] R :=
     TensorProduct.lift pairing
-  let pair2 : (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))
-                ⊗[R] (ConnesKreimer R (Nonplanar α) ⊗[R]
-                      ConnesKreimer R (Nonplanar α)) →ₗ[R] R :=
+  let pair2 : (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
+                ⊗[R] (ConnesKreimer R (UnorderedTree α) ⊗[R]
+                      ConnesKreimer R (UnorderedTree α)) →ₗ[R] R :=
     TensorProduct.lift pairing₂
   TensorProduct.curry <|
     LinearMap.mul' R R ∘ₗ
       TensorProduct.map pair1 pair2 ∘ₗ
       (TensorProduct.tensorTensorTensorComm R
-        (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α) ⊗[R]
-          ConnesKreimer R (Nonplanar α))).toLinearMap
+        (ConnesKreimer R (UnorderedTree α))
+        (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
+        (ConnesKreimer R (UnorderedTree α))
+        (ConnesKreimer R (UnorderedTree α) ⊗[R]
+          ConnesKreimer R (UnorderedTree α))).toLinearMap
 
 /-- Evaluation of `pairing₃` on pure tensors. -/
 @[simp] theorem pairing₃_tmul_tmul_tmul
-    (a b c x y z : ConnesKreimer R (Nonplanar α)) :
+    (a b c x y z : ConnesKreimer R (UnorderedTree α)) :
     pairing₃ (R := R) (a ⊗ₜ (b ⊗ₜ c)) (x ⊗ₜ (y ⊗ₜ z)) =
       pairing a x *
         (pairing b y * pairing c z) := by
@@ -546,9 +546,9 @@ pure-tensor case where `pairing₃_tmul_tmul_tmul` and
     factors as `pairing₂ (x ⊗ y) U * pairing z' c`. Generic in `α`
     (the trace decoration is irrelevant). -/
 lemma pairing₃_assoc_tmul
-    (x y z' : ConnesKreimer R (Nonplanar α))
-    (U : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))
-    (c : ConnesKreimer R (Nonplanar α)) :
+    (x y z' : ConnesKreimer R (UnorderedTree α))
+    (U : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
+    (c : ConnesKreimer R (UnorderedTree α)) :
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
         ((TensorProduct.assoc R _ _ _) (U ⊗ₜ[R] c)) =
       pairing₂ (R := R) (x ⊗ₜ[R] y) U * pairing z' c := by
@@ -563,8 +563,8 @@ lemma pairing₃_assoc_tmul
 /-- `pairing₃ (x ⊗ (y ⊗ z'))` on a `(a ⊗ S)`-shape tensor: factors as
     `pairing x a * pairing₂ (y ⊗ z') S`. Generic in `α`. -/
 lemma pairing₃_tmul_apply
-    (x y z' a : ConnesKreimer R (Nonplanar α))
-    (S : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+    (x y z' a : ConnesKreimer R (UnorderedTree α))
+    (S : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z')) (a ⊗ₜ[R] S) =
       pairing x a * pairing₂ (R := R) (y ⊗ₜ[R] z') S := by
   induction S using TensorProduct.induction_on with
@@ -584,8 +584,8 @@ natural basis of `CK = (Forest T) →₀ R`. -/
     (of' G) * pairing₂ s t` for arbitrary `s, t ∈ CK ⊗ CK`. Proven via
     `TensorProduct.induction_on` on `s` and `t`, reducing to the pure-tensor
     case where `pairing₃_tmul_tmul_tmul` and `pairing₂_tmul_tmul` agree. -/
-private theorem pairing₃_of'_tmul_of'_tmul (F G : Forest (Nonplanar α))
-    (s t : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+private theorem pairing₃_of'_tmul_of'_tmul (F G : Forest (UnorderedTree α))
+    (s t : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     pairing₃ (R := R)
         (ConnesKreimer.of' F ⊗ₜ[R] s)
         (ConnesKreimer.of' G ⊗ₜ[R] t) =
@@ -612,25 +612,25 @@ private theorem pairing₃_of'_tmul_of'_tmul (F G : Forest (Nonplanar α))
     `CK = (Forest T) →₀ R`. -/
 private theorem pairing₂_nondegenerate
     [CharZero R] [NoZeroDivisors R]
-    (U : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))
-    (h : ∀ x y : ConnesKreimer R (Nonplanar α),
+    (U : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
+    (h : ∀ x y : ConnesKreimer R (UnorderedTree α),
       pairing₂ (R := R) (x ⊗ₜ[R] y) U = 0) : U = 0 := by
   classical
-  let ℬ : Module.Basis (Forest (Nonplanar α)) R (ConnesKreimer R (Nonplanar α)) :=
+  let ℬ : Module.Basis (Forest (UnorderedTree α)) R (ConnesKreimer R (UnorderedTree α)) :=
     ConnesKreimer.basisSingleOne
-  obtain ⟨c, hc⟩ : ∃ c : Forest (Nonplanar α) →₀ ConnesKreimer R (Nonplanar α),
+  obtain ⟨c, hc⟩ : ∃ c : Forest (UnorderedTree α) →₀ ConnesKreimer R (UnorderedTree α),
       c.sum (fun F U_F => ℬ F ⊗ₜ[R] U_F) = U :=
     TensorProduct.eq_repr_basis_left ℬ U
-  have hℬ : ∀ G : Forest (Nonplanar α),
-      (ℬ G : ConnesKreimer R (Nonplanar α)) = ConnesKreimer.of' G := fun _ =>
+  have hℬ : ∀ G : Forest (UnorderedTree α),
+      (ℬ G : ConnesKreimer R (UnorderedTree α)) = ConnesKreimer.of' G := fun _ =>
     ConnesKreimer.basisSingleOne_apply _
   have hc_zero : ∀ F, c F = 0 := by
     intro F
     apply pairing_nondegenerate (c F)
     intro y
     rw [pairing_symm]
-    have h_aut_ne : (Nonplanar.forestAutCard F : R) ≠ 0 :=
-      Nat.cast_ne_zero.mpr (Nonplanar.forestAutCard_pos F).ne'
+    have h_aut_ne : (UnorderedTree.forestAutCard F : R) ≠ 0 :=
+      Nat.cast_ne_zero.mpr (UnorderedTree.forestAutCard_pos F).ne'
     have h_eval := h (ConnesKreimer.of' F) y
     rw [← hc] at h_eval
     rw [map_finsuppSum (pairing₂ (R := R) (ConnesKreimer.of' F ⊗ₜ[R] y))] at h_eval
@@ -649,28 +649,28 @@ private theorem pairing₂_nondegenerate
     along the basis of the outer tensor factor. -/
 theorem pairing₃_nondegenerate
     [CharZero R] [NoZeroDivisors R]
-    (U : ConnesKreimer R (Nonplanar α) ⊗[R]
-          (ConnesKreimer R (Nonplanar α) ⊗[R]
-            ConnesKreimer R (Nonplanar α)))
+    (U : ConnesKreimer R (UnorderedTree α) ⊗[R]
+          (ConnesKreimer R (UnorderedTree α) ⊗[R]
+            ConnesKreimer R (UnorderedTree α)))
     (h : ∀ t, pairing₃ (R := R) t U = 0) : U = 0 := by
   classical
-  let ℬ : Module.Basis (Forest (Nonplanar α)) R
-        (ConnesKreimer R (Nonplanar α)) :=
+  let ℬ : Module.Basis (Forest (UnorderedTree α)) R
+        (ConnesKreimer R (UnorderedTree α)) :=
     ConnesKreimer.basisSingleOne
-  obtain ⟨c, hc⟩ : ∃ c : Forest (Nonplanar α) →₀
-        (ConnesKreimer R (Nonplanar α) ⊗[R]
-          ConnesKreimer R (Nonplanar α)),
+  obtain ⟨c, hc⟩ : ∃ c : Forest (UnorderedTree α) →₀
+        (ConnesKreimer R (UnorderedTree α) ⊗[R]
+          ConnesKreimer R (UnorderedTree α)),
       c.sum (fun F U_F => ℬ F ⊗ₜ[R] U_F) = U :=
     TensorProduct.eq_repr_basis_left ℬ U
-  have hℬ : ∀ G : Forest (Nonplanar α),
-      (ℬ G : ConnesKreimer R (Nonplanar α)) = ConnesKreimer.of' G :=
+  have hℬ : ∀ G : Forest (UnorderedTree α),
+      (ℬ G : ConnesKreimer R (UnorderedTree α)) = ConnesKreimer.of' G :=
     fun _ => ConnesKreimer.basisSingleOne_apply _
   have hc_zero : ∀ F, c F = 0 := by
     intro F
     apply pairing₂_nondegenerate (c F)
     intro x y
-    have h_aut_ne : (Nonplanar.forestAutCard F : R) ≠ 0 :=
-      Nat.cast_ne_zero.mpr (Nonplanar.forestAutCard_pos F).ne'
+    have h_aut_ne : (UnorderedTree.forestAutCard F : R) ≠ 0 :=
+      Nat.cast_ne_zero.mpr (UnorderedTree.forestAutCard_pos F).ne'
     have h_eval := h (ConnesKreimer.of' F ⊗ₜ[R] (x ⊗ₜ[R] y))
     rw [← hc] at h_eval
     rw [map_finsuppSum

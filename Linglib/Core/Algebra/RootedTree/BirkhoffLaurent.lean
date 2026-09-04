@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 import Linglib.Core.Algebra.RotaBaxterLaurent
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
 # Birkhoff renormalization of Laurent-series characters  `[UPSTREAM]`
@@ -40,7 +40,7 @@ namespace ConnesKreimer
 open LaurentSeries
 
 variable {R : Type*} [CommRing R] {α : Type*}
-  (φ : ConnesKreimer R (Nonplanar α) →ₐ[R] LaurentSeries R)
+  (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] LaurentSeries R)
 
 /-! ### A nonpolar character has trivial Bogolyubov negative part -/
 
@@ -50,7 +50,7 @@ variable {R : Type*} [CommRing R] {α : Type*}
     `φ₋` is `0` by the recursive hypothesis — killing that term — and the trivial cut contributes the
     nonpolar trunk value `φ(ofTree …)`, so `R` annihilates the whole Bogolyubov preparation. -/
 theorem birkhoffMinusTree_eq_zero_of_nonpolar
-    (hφ : ∀ T : Nonplanar α, polarHahn (φ (ofTree T)) = 0) (T : Nonplanar α) :
+    (hφ : ∀ T : UnorderedTree α, polarHahn (φ (ofTree T)) = 0) (T : UnorderedTree α) :
     birkhoffMinusTree φ.toLinearMap rotaBaxterPolar T = 0 := by
   rw [birkhoffMinusTree_eq_neg_op_prep, birkhoffPrepTree_unfold, neg_eq_zero, map_multiset_sum]
   apply Multiset.sum_eq_zero
@@ -72,7 +72,7 @@ decreasing_by exact cutSummandsN_subtree_depth_lt T p.1 p.2 hp Tᵢ hTᵢ
 /-- **The renormalized character lands in `A[[t]]`** ([marcolli-chomsky-berwick-2025] Prop. 3.5.6's
     `ψt,+ : H → DM[[t]]`): for *any* character `φ`, the renormalized part `φ₊(T) = (1−R)(φ̃(T))` is
     **nonpolar** — `R·φ₊(T) = 0` — because `R` is idempotent, so `φ₊` is in the range of `1 − R`. -/
-theorem polarHahn_birkhoffPlusTree (T : Nonplanar α) :
+theorem polarHahn_birkhoffPlusTree (T : UnorderedTree α) :
     polarHahn (birkhoffPlusTree φ.toLinearMap rotaBaxterPolar T) = 0 := by
   unfold birkhoffPlusTree
   rw [rotaBaxterPolar_op_apply, polarHahn_sub_self]
@@ -80,7 +80,7 @@ theorem polarHahn_birkhoffPlusTree (T : Nonplanar α) :
 /-- **`φ₊ : H → A[[t]]` on every workspace** (Prop. 3.5.6, forest level): the renormalized character
     is nonpolar on each forest basis element, being the product of the nonpolar per-tree renormalized
     parts (the nonpolar series form a subalgebra). -/
-theorem polarHahn_birkhoffPlus_of' (F : Forest (Nonplanar α)) :
+theorem polarHahn_birkhoffPlus_of' (F : Forest (UnorderedTree α)) :
     polarHahn (birkhoffPlus φ.toLinearMap rotaBaxterPolar (of' F)) = 0 := by
   rw [birkhoffPlus_apply_of']
   induction F using Multiset.induction with

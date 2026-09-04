@@ -4,7 +4,7 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.PairingMul
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
 # GL/CK duality for the pruning coproduct
@@ -54,8 +54,8 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     pairing₂ (u ⊗ B⁻_a v) V`. `TensorProduct.induction_on` +
     `bMinusLin_pairing_adjoint`. -/
 private lemma pairing₂_lTensor_bPlusLin (a : α)
-    (u v : ConnesKreimer R (Nonplanar α))
-    (V : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+    (u v : ConnesKreimer R (UnorderedTree α))
+    (V : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     pairing₂ (R := R) (u ⊗ₜ[R] v)
         ((LinearMap.lTensor _ (bPlusLin (R := R) a)) V) =
       pairing₂ (R := R) (u ⊗ₜ[R] (bMinusLin (R := R) a v)) V := by
@@ -73,8 +73,8 @@ private lemma pairing₂_lTensor_bPlusLin (a : α)
     independent antidiagonal splits of the two basis forests. Tensor
     counterpart of `pairing_of'_mul`, aligned with the
     index order of `pairing_product_of'_mul_of'`. -/
-private lemma pairing₂_of'_of'_mul (A B : Forest (Nonplanar α))
-    (U V : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+private lemma pairing₂_of'_of'_mul (A B : Forest (UnorderedTree α))
+    (U V : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     pairing₂ (R := R) (ConnesKreimer.of' B ⊗ₜ[R] ConnesKreimer.of' A) (U * V) =
       ((Multiset.antidiagonal A ×ˢ Multiset.antidiagonal B).map (fun pq =>
         pairing₂ (R := R)
@@ -146,16 +146,16 @@ private lemma pairing₂_of'_of'_mul (A B : Forest (Nonplanar α))
 
     (`y` against pruned crowns, `x` against root trunks). -/
 theorem pairing_gl_eq_pairing_coproduct_Rho
-    (x y z : ConnesKreimer R (Nonplanar α)) :
+    (x y z : ConnesKreimer R (UnorderedTree α)) :
     pairing
         (product x y) z =
       pairing₂ (R := R)
         (y ⊗ₜ[R] x)
         (comulAlgHomN (R := R) z) := by
   -- Core statement at basis `z = of' C`, strong induction on total weight.
-  suffices core : ∀ (n : ℕ) (C : Forest (Nonplanar α)),
-      (C.map Nonplanar.numNodes).sum = n →
-      ∀ x y : ConnesKreimer R (Nonplanar α),
+  suffices core : ∀ (n : ℕ) (C : Forest (UnorderedTree α)),
+      (C.map UnorderedTree.numNodes).sum = n →
+      ∀ x y : ConnesKreimer R (UnorderedTree α),
       pairing (R := R)
           (product x y) (ConnesKreimer.of' C) =
         pairing₂ (R := R) (y ⊗ₜ[R] x)
@@ -173,12 +173,12 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
     · -- Base: C = 0, both sides are counits.
       subst hC0
       rw [ConnesKreimer.of'_zero,
-          show comulAlgHomN (R := R) (1 : ConnesKreimer R (Nonplanar α)) = 1 from
+          show comulAlgHomN (R := R) (1 : ConnesKreimer R (UnorderedTree α)) = 1 from
             map_one _,
-          show (1 : ConnesKreimer R (Nonplanar α) ⊗[R]
-              ConnesKreimer R (Nonplanar α)) =
-            (1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
-              (1 : ConnesKreimer R (Nonplanar α)) from
+          show (1 : ConnesKreimer R (UnorderedTree α) ⊗[R]
+              ConnesKreimer R (UnorderedTree α)) =
+            (1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R]
+              (1 : ConnesKreimer R (UnorderedTree α)) from
             Algebra.TensorProduct.one_def,
           pairing₂_tmul_tmul, pairing_one_right, pairing_one_right,
           pairing_one_right]
@@ -189,68 +189,68 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
       · -- Single tree: C = {T}, T = B⁺_a W; the B⁻ recurrences match.
         subst hC'0
         -- Weight bookkeeping: (rootChildren T) is one lighter than T.
-        have hwT : ((T ::ₘ (0 : Forest (Nonplanar α))).map
-            Nonplanar.numNodes).sum = T.numNodes := by
+        have hwT : ((T ::ₘ (0 : Forest (UnorderedTree α))).map
+            UnorderedTree.numNodes).sum = T.numNodes := by
           rw [Multiset.map_cons, Multiset.map_zero, Multiset.sum_cons,
               Multiset.sum_zero]
           omega
         have hTn : T.numNodes = n := by rw [← hwT, hC]
         have hwW : T.numNodes =
-            1 + ((Nonplanar.rootChildren T).map Nonplanar.numNodes).sum := by
-          conv_lhs => rw [← Nonplanar.node_eta T]
-          rw [Nonplanar.numNodes_node]
-        have hWlt : ((Nonplanar.rootChildren T).map Nonplanar.numNodes).sum < n := by
+            1 + ((UnorderedTree.rootChildren T).map UnorderedTree.numNodes).sum := by
+          conv_lhs => rw [← UnorderedTree.node_eta T]
+          rw [UnorderedTree.numNodes_node]
+        have hWlt : ((UnorderedTree.rootChildren T).map UnorderedTree.numNodes).sum < n := by
           omega
         -- Convert `of' {T}` to `B⁺_a (of' W)`.
-        have hofT : (ConnesKreimer.of' (R := R) (T ::ₘ (0 : Forest (Nonplanar α))) :
-            ConnesKreimer R (Nonplanar α)) =
-            bPlusLin (R := R) (Nonplanar.rootValue T)
-              (ConnesKreimer.of' (Nonplanar.rootChildren T)) := by
-          rw [bPlusLin_of', Nonplanar.node_eta]
+        have hofT : (ConnesKreimer.of' (R := R) (T ::ₘ (0 : Forest (UnorderedTree α))) :
+            ConnesKreimer R (UnorderedTree α)) =
+            bPlusLin (R := R) (UnorderedTree.rootValue T)
+              (ConnesKreimer.of' (UnorderedTree.rootChildren T)) := by
+          rw [bPlusLin_of', UnorderedTree.node_eta]
           rfl
         rw [hofT]
         -- LHS: the B⁺/B⁻ recurrence.
         rw [pairing_apply_bPlus_gl_mul]
         -- RHS: the Hochschild cocycle + adjoint.
         rw [show comulAlgHomN (R := R)
-              (bPlusLin (R := R) (Nonplanar.rootValue T)
-                (ConnesKreimer.of' (Nonplanar.rootChildren T))) =
+              (bPlusLin (R := R) (UnorderedTree.rootValue T)
+                (ConnesKreimer.of' (UnorderedTree.rootChildren T))) =
             comulTreeN (R := R)
-              (Nonplanar.node (Nonplanar.rootValue T)
-                (Nonplanar.rootChildren T)) from by
+              (UnorderedTree.node (UnorderedTree.rootValue T)
+                (UnorderedTree.rootChildren T)) from by
           rw [bPlusLin_of', comulAlgHomN_apply_ofTree]]
         rw [comulTreeN_node_cocycle, map_add, pairing₂_tmul_tmul,
             pairing₂_lTensor_bPlusLin]
         -- Term 1: adjoint identity; Term 2: induction hypothesis.
-        rw [show comulForestN (R := R) (Nonplanar.rootChildren T) =
+        rw [show comulForestN (R := R) (UnorderedTree.rootChildren T) =
             comulAlgHomN (R := R)
-              (ConnesKreimer.of' (Nonplanar.rootChildren T)) from
+              (ConnesKreimer.of' (UnorderedTree.rootChildren T)) from
           (comulAlgHomN_apply_of' _).symm]
-        rw [← IH _ hWlt (Nonplanar.rootChildren T) rfl
-            (bMinusLin (R := R) (Nonplanar.rootValue T) x) y]
+        rw [← IH _ hWlt (UnorderedTree.rootChildren T) rfl
+            (bMinusLin (R := R) (UnorderedTree.rootValue T) x) y]
         rw [show (ConnesKreimer.ofTree (R := R)
-              (Nonplanar.node (Nonplanar.rootValue T)
-                (Nonplanar.rootChildren T)) :
-              ConnesKreimer R (Nonplanar α)) =
-            bPlusLin (R := R) (Nonplanar.rootValue T)
-              (ConnesKreimer.of' (Nonplanar.rootChildren T)) from
+              (UnorderedTree.node (UnorderedTree.rootValue T)
+                (UnorderedTree.rootChildren T)) :
+              ConnesKreimer R (UnorderedTree α)) =
+            bPlusLin (R := R) (UnorderedTree.rootValue T)
+              (ConnesKreimer.of' (UnorderedTree.rootChildren T)) from
           (bPlusLin_of' _ _).symm]
         rw [← bMinusLin_pairing_adjoint, pairing_one_right]
         ring
       · -- Multi-tree: C = T ::ₘ C' with C' ≠ 0; split and use both
         -- product rules + the induction hypothesis at both factors.
         -- Weight bookkeeping.
-        have hsum : T.numNodes + (C'.map Nonplanar.numNodes).sum = n := by
+        have hsum : T.numNodes + (C'.map UnorderedTree.numNodes).sum = n := by
           rw [← hC, Multiset.map_cons, Multiset.sum_cons]
-        have hT2pos : 0 < Nonplanar.numNodes T₂ := Nonplanar.numNodes_pos T₂
-        have hC'ge : Nonplanar.numNodes T₂ ≤ (C'.map Nonplanar.numNodes).sum :=
+        have hT2pos : 0 < UnorderedTree.numNodes T₂ := UnorderedTree.numNodes_pos T₂
+        have hC'ge : UnorderedTree.numNodes T₂ ≤ (C'.map UnorderedTree.numNodes).sum :=
           Multiset.single_le_sum (fun _ _ => Nat.zero_le _) _
             (Multiset.mem_map_of_mem _ hT₂)
-        have hTpos : 0 < T.numNodes := Nonplanar.numNodes_pos T
-        have hTlt : ((({T} : Forest (Nonplanar α))).map Nonplanar.numNodes).sum < n := by
+        have hTpos : 0 < T.numNodes := UnorderedTree.numNodes_pos T
+        have hTlt : ((({T} : Forest (UnorderedTree α))).map UnorderedTree.numNodes).sum < n := by
           rw [Multiset.map_singleton, Multiset.sum_singleton]
           omega
-        have hC'lt : (C'.map Nonplanar.numNodes).sum < n := by omega
+        have hC'lt : (C'.map UnorderedTree.numNodes).sum < n := by omega
         -- Reduce x, y to basis vectors (both sides are bilinear in (x, y)).
         refine ConnesKreimer.induction_linear x ?_ ?_ ?_
         · simp only [TensorProduct.tmul_zero, map_zero, LinearMap.zero_apply]
@@ -258,7 +258,7 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
           simp only [TensorProduct.tmul_add, map_add, LinearMap.add_apply]
           exact congrArg₂ (· + ·) iha ihb
         · intro A rA
-          rw [show (ConnesKreimer.single A rA : ConnesKreimer R (Nonplanar α)) =
+          rw [show (ConnesKreimer.single A rA : ConnesKreimer R (UnorderedTree α)) =
                 rA • (ConnesKreimer.of' (R := R) A) from
               ConnesKreimer.smul_single_one A rA]
           simp only [TensorProduct.tmul_smul, map_smul, LinearMap.smul_apply]
@@ -269,21 +269,21 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
             simp only [TensorProduct.add_tmul, map_add, LinearMap.add_apply]
             exact congrArg₂ (· + ·) iha ihb
           · intro B rB
-            rw [show (ConnesKreimer.single B rB : ConnesKreimer R (Nonplanar α)) =
+            rw [show (ConnesKreimer.single B rB : ConnesKreimer R (UnorderedTree α)) =
                   rB • (ConnesKreimer.of' (R := R) B) from
                 ConnesKreimer.smul_single_one B rB]
             simp only [← TensorProduct.smul_tmul', map_smul, LinearMap.smul_apply]
             refine congrArg (rB • ·) ?_
             -- Basis case: split off the head tree and use both product rules.
             have hsplit : (ConnesKreimer.of' (R := R) (T ::ₘ C') :
-                ConnesKreimer R (Nonplanar α)) =
-                ConnesKreimer.of' ({T} : Forest (Nonplanar α)) *
+                ConnesKreimer R (UnorderedTree α)) =
+                ConnesKreimer.of' ({T} : Forest (UnorderedTree α)) *
                   ConnesKreimer.of' C' := by
               rw [← ConnesKreimer.of'_add, Multiset.singleton_add]
             rw [hsplit, pairing_product_of'_mul_of',
                 map_mul, pairing₂_of'_of'_mul]
             refine congrArg Multiset.sum (Multiset.map_congr rfl fun pq _ => ?_)
-            rw [IH _ hTlt ({T} : Forest (Nonplanar α)) rfl
+            rw [IH _ hTlt ({T} : Forest (UnorderedTree α)) rfl
                   (ConnesKreimer.of' pq.1.1) (ConnesKreimer.of' pq.2.1),
                 IH _ hC'lt C' rfl
                   (ConnesKreimer.of' pq.1.2) (ConnesKreimer.of' pq.2.2)]
@@ -299,8 +299,8 @@ live in `GrossmanLarson/Monoid.lean`. -/
 /-- One duality application under `assoc ∘ rTensor Δ^ρ` (crossed
     orientation: the inner coproduct expansion produces `y ⋆ x`). -/
 private lemma pairing₃_assoc_rTensor_comul_rho
-    (x y z' : ConnesKreimer R (Nonplanar α))
-    (V : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+    (x y z' : ConnesKreimer R (UnorderedTree α))
+    (V : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
         ((TensorProduct.assoc R _ _ _)
           ((comulAlgHomN (R := R)).toLinearMap.rTensor _ V)) =
@@ -316,8 +316,8 @@ private lemma pairing₃_assoc_rTensor_comul_rho
 /-- One duality application under `lTensor Δ^ρ` (crossed orientation:
     produces `z' ⋆ y`). -/
 private lemma pairing₃_lTensor_comul_rho
-    (x y z' : ConnesKreimer R (Nonplanar α))
-    (W : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+    (x y z' : ConnesKreimer R (UnorderedTree α))
+    (W : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
         ((comulAlgHomN (R := R)).toLinearMap.lTensor _ W) =
       pairing₂ (R := R) (x ⊗ₜ[R] product z' y) W := by
@@ -332,7 +332,7 @@ private lemma pairing₃_lTensor_comul_rho
 /-- **Associativity of the GL product, pairing form**: the two triple
     products pair equally against everything — Δ^ρ coassociativity
     (`comulRhoN_coassoc`) pushed through the duality twice on each side. -/
-theorem pairing_product_assoc (x y z w : ConnesKreimer R (Nonplanar α)) :
+theorem pairing_product_assoc (x y z w : ConnesKreimer R (UnorderedTree α)) :
     pairing (product x (product y z)) w =
       pairing (product (product x y) z) w :=
   calc pairing (product x (product y z)) w

@@ -43,7 +43,7 @@ the vocabulary the two carriers share, `leaf`, `trace`, `traceOf` and `merge`.
 
 namespace Minimalist
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-- A vertex: a lexical token on a leaf, the bare marker `Sum.inr none` on an index-free trace
     leaf or an internal node, the two told apart by arity, or the trace of a token. -/
@@ -125,22 +125,22 @@ end SyntacticObject
 
 /-- An unordered tree over `Vertex` is a syntactic object when its ordered representatives are
     well-formed: binary, with lexical or trace leaves and bare internal vertices. -/
-def IsSyntacticObject (t : Nonplanar SyntacticObject.Vertex) : Prop :=
-  Nonplanar.lift SyntacticObject.wellFormed (fun _ _ h => SyntacticObject.wellFormed_perm h) t
+def IsSyntacticObject (t : UnorderedTree SyntacticObject.Vertex) : Prop :=
+  UnorderedTree.lift SyntacticObject.wellFormed (fun _ _ h => SyntacticObject.wellFormed_perm h) t
     = true
 
 instance : DecidablePred IsSyntacticObject := fun _ => inferInstanceAs (Decidable (_ = true))
 
 @[simp] theorem isSyntacticObject_mk (t : RoseTree SyntacticObject.Vertex) :
-    IsSyntacticObject (Nonplanar.mk t) ↔ SyntacticObject.wellFormed t = true := Iff.rfl
+    IsSyntacticObject (UnorderedTree.mk t) ↔ SyntacticObject.wellFormed t = true := Iff.rfl
 
 /-- The syntactic objects: the well-formed unordered trees over `Vertex`. -/
-def SyntacticObject : Type := { t : Nonplanar SyntacticObject.Vertex // IsSyntacticObject t }
+def SyntacticObject : Type := { t : UnorderedTree SyntacticObject.Vertex // IsSyntacticObject t }
 
 /-- The planar syntactic objects: the well-formed ordered trees over `Vertex`,
     [marcolli-chomsky-berwick-2025] §1.12's planar embeddings. -/
 def PlanarSyntacticObject : Type :=
-  { t : RoseTree SyntacticObject.Vertex // IsSyntacticObject (Nonplanar.mk t) }
+  { t : RoseTree SyntacticObject.Vertex // IsSyntacticObject (UnorderedTree.mk t) }
 
 instance : DecidableEq SyntacticObject := Subtype.instDecidableEq
 
@@ -151,48 +151,49 @@ instance : DecidableEq PlanarSyntacticObject := Subtype.instDecidableEq
 namespace SyntacticObject
 
 /-- A lexical leaf. -/
-def leaf (tok : LIToken) : SyntacticObject := ⟨Nonplanar.leaf (Sum.inl tok), rfl⟩
+def leaf (tok : LIToken) : SyntacticObject := ⟨UnorderedTree.leaf (Sum.inl tok), rfl⟩
 
 /-- The bare trace: a childless bare vertex, the mark an admissible cut leaves in the remaining
     tree ([marcolli-chomsky-berwick-2025], Definition 1.2.6). It carries no index; `traceOf` is
     the indexed trace. -/
-def trace : SyntacticObject := ⟨Nonplanar.leaf (Sum.inr none), by decide⟩
+def trace : SyntacticObject := ⟨UnorderedTree.leaf (Sum.inr none), by decide⟩
 
 /-- The trace of `tok`. -/
-def traceOf (tok : LIToken) : SyntacticObject := ⟨Nonplanar.leaf (Sum.inr (some tok)), rfl⟩
+def traceOf (tok : LIToken) : SyntacticObject := ⟨UnorderedTree.leaf (Sum.inr (some tok)), rfl⟩
 
 /-- A bare binary node is a syntactic object exactly when both daughters are. -/
-theorem isSyntacticObject_merge_iff (a b : Nonplanar Vertex) :
-    IsSyntacticObject (Nonplanar.node (Sum.inr none) {a, b}) ↔
+theorem isSyntacticObject_merge_iff (a b : UnorderedTree Vertex) :
+    IsSyntacticObject (UnorderedTree.node (Sum.inr none) {a, b}) ↔
       IsSyntacticObject a ∧ IsSyntacticObject b := by
   refine Quotient.inductionOn₂ a b fun pa pb => ?_
-  show IsSyntacticObject (Nonplanar.node (Sum.inr none) {Nonplanar.mk pa, Nonplanar.mk pb}) ↔
-    IsSyntacticObject (Nonplanar.mk pa) ∧ IsSyntacticObject (Nonplanar.mk pb)
-  rw [show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar Vertex))
-        = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl, Nonplanar.node_mk_tree_list]
+  show IsSyntacticObject (UnorderedTree.node (Sum.inr none) {UnorderedTree.mk pa,
+    UnorderedTree.mk pb}) ↔
+    IsSyntacticObject (UnorderedTree.mk pa) ∧ IsSyntacticObject (UnorderedTree.mk pb)
+  rw [show ({UnorderedTree.mk pa, UnorderedTree.mk pb} : Multiset (UnorderedTree Vertex))
+        = Multiset.ofList ([pa, pb].map UnorderedTree.mk) from rfl, UnorderedTree.node_mk_tree_list]
   exact (isSyntacticObject_mk _).trans (by rw [wellFormed_merge, Bool.and_eq_true]; exact Iff.rfl)
 
 /-- Merge on the carrier, the bare binary node over two syntactic objects, also written `*`.
-    Noncomputable, since it goes through the smart constructor `Nonplanar.node`; concrete results
-    are built ordered and forgotten by `PlanarSyntacticObject.toSyntacticObject`. -/
+    Noncomputable, since it goes through the smart constructor `UnorderedTree.node`; concrete
+    results are built ordered and forgotten by `PlanarSyntacticObject.toSyntacticObject`. -/
 noncomputable def merge (l r : SyntacticObject) : SyntacticObject :=
-  ⟨Nonplanar.node (Sum.inr none) {l.val, r.val}, (isSyntacticObject_merge_iff _ _).2 ⟨l.2, r.2⟩⟩
+  ⟨UnorderedTree.node (Sum.inr none) {l.val, r.val}, (isSyntacticObject_merge_iff _ _).2 ⟨l.2, r.2⟩⟩
 
 @[simp] theorem merge_val (l r : SyntacticObject) :
-    (merge l r).val = Nonplanar.node (Sum.inr none) {l.val, r.val} := rfl
+    (merge l r).val = UnorderedTree.node (Sum.inr none) {l.val, r.val} := rfl
 
 theorem merge_comm (l r : SyntacticObject) : merge l r = merge r l :=
   Subtype.ext (by rw [merge_val, merge_val, Multiset.pair_comm])
 
 /-- Merge of two ordered-built objects is the ordered binary node, so concrete results reduce. -/
 theorem merge_mk (pl pr : RoseTree Vertex)
-    (hl : IsSyntacticObject (Nonplanar.mk pl)) (hr : IsSyntacticObject (Nonplanar.mk pr)) :
-    (merge ⟨Nonplanar.mk pl, hl⟩ ⟨Nonplanar.mk pr, hr⟩).val
-      = Nonplanar.mk (.node (Sum.inr none) [pl, pr]) := by
+    (hl : IsSyntacticObject (UnorderedTree.mk pl)) (hr : IsSyntacticObject (UnorderedTree.mk pr)) :
+    (merge ⟨UnorderedTree.mk pl, hl⟩ ⟨UnorderedTree.mk pr, hr⟩).val
+      = UnorderedTree.mk (.node (Sum.inr none) [pl, pr]) := by
   rw [merge_val,
-      show ({Nonplanar.mk pl, Nonplanar.mk pr} : Multiset (Nonplanar Vertex))
-        = Multiset.ofList ([pl, pr].map Nonplanar.mk) from rfl,
-      Nonplanar.node_mk_tree_list]
+      show ({UnorderedTree.mk pl, UnorderedTree.mk pr} : Multiset (UnorderedTree Vertex))
+        = Multiset.ofList ([pl, pr].map UnorderedTree.mk) from rfl,
+      UnorderedTree.node_mk_tree_list]
 
 end SyntacticObject
 
@@ -223,10 +224,10 @@ def merge (l r : PlanarSyntacticObject) : PlanarSyntacticObject :=
     (merge l r).val = .node (Sum.inr none) [l.val, r.val] := rfl
 
 /-- Forgetting the order: the quotient map to the syntactic object. -/
-def toSyntacticObject (p : PlanarSyntacticObject) : SyntacticObject := ⟨Nonplanar.mk p.val, p.2⟩
+def toSyntacticObject (p : PlanarSyntacticObject) : SyntacticObject := ⟨UnorderedTree.mk p.val, p.2⟩
 
 @[simp] theorem toSyntacticObject_val (p : PlanarSyntacticObject) :
-    p.toSyntacticObject.val = Nonplanar.mk p.val := rfl
+    p.toSyntacticObject.val = UnorderedTree.mk p.val := rfl
 
 @[simp] theorem toSyntacticObject_leaf (tok : LIToken) :
     (leaf tok).toSyntacticObject = SyntacticObject.leaf tok := rfl
@@ -256,8 +257,8 @@ theorem ind {motive : SyntacticObject → Prop}
     (traceOf : ∀ tok, motive (traceOf tok))
     (merge : ∀ l r : SyntacticObject, motive l → motive r → motive (merge l r))
     (s : SyntacticObject) : motive s := by
-  suffices H : ∀ n (p : RoseTree Vertex) (hp : IsSyntacticObject (Nonplanar.mk p)),
-      p.numNodes = n → motive ⟨Nonplanar.mk p, hp⟩ by
+  suffices H : ∀ n (p : RoseTree Vertex) (hp : IsSyntacticObject (UnorderedTree.mk p)),
+      p.numNodes = n → motive ⟨UnorderedTree.mk p, hp⟩ by
     obtain ⟨t, ht⟩ := s
     refine Quotient.inductionOn (motive := fun t => ∀ (ht : IsSyntacticObject t), motive ⟨t, ht⟩)
       t (fun p ht => H p.numNodes p ht rfl) ht
@@ -287,8 +288,9 @@ theorem ind {motive : SyntacticObject → Prop}
       · simp at hlen
       · have hl : wellFormed pl = true := wellFormed_of_mem hlist pl (by simp)
         have hr : wellFormed pr = true := wellFormed_of_mem hlist pr (by simp)
-        have hmerge : (⟨Nonplanar.mk (RoseTree.node (Sum.inr none) [pl, pr]), hp⟩ : SyntacticObject)
-            = SyntacticObject.merge ⟨Nonplanar.mk pl, hl⟩ ⟨Nonplanar.mk pr, hr⟩ :=
+        have hmerge : (⟨UnorderedTree.mk (RoseTree.node (Sum.inr none) [pl, pr]), hp⟩
+          : SyntacticObject)
+            = SyntacticObject.merge ⟨UnorderedTree.mk pl, hl⟩ ⟨UnorderedTree.mk pr, hr⟩ :=
           Subtype.ext (merge_mk pl pr hl hr).symm
         rw [hmerge]
         simp only [RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,

@@ -19,7 +19,7 @@ sibling `Coproduct/` files and `HopfAlgebra.lean`.
 
 ## Main declarations
 
-* `Nonplanar.Forest`: forests as multisets of trees; multiset addition is
+* `UnorderedTree.Forest`: forests as multisets of trees; multiset addition is
   disjoint union.
 * `ConnesKreimer`: one-field wrapper around
   `AddMonoidAlgebra R (Forest T)`.
@@ -53,9 +53,9 @@ A **forest** is a multiset of trees. Multiset addition is the disjoint
 union (forest concatenation). -/
 
 /-- A forest of T-shaped trees: finite multiset. -/
-abbrev RoseTree.Nonplanar.Forest (T : Type*) : Type _ := Multiset T
+abbrev UnorderedTree.Forest (T : Type*) : Type _ := Multiset T
 
-open RoseTree RoseTree.Nonplanar
+open UnorderedTree
 
 /-! ## The carrier -/
 

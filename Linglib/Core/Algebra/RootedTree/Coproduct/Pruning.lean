@@ -1,11 +1,11 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Linglib.Core.Combinatorics.RootedTree.Cut
-import Linglib.Core.Data.RoseTree.Nonplanar
+import Linglib.Core.Data.UnorderedTree.Basic
 import Mathlib.LinearAlgebra.TensorProduct.Basic
 import Mathlib.RingTheory.Bialgebra.Basic
 import Mathlib.RingTheory.TensorProduct.Maps
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
 # The pruning coproduct Δ^ρ
@@ -41,9 +41,9 @@ deletes cut subtrees outright, unlike the trace variant Δ^c
 ## Implementation notes
 
 `B+` only well-defines on unordered children
-(`Multiset (Nonplanar α) → Nonplanar α`); on planar trees it would need
+(`Multiset (UnorderedTree α) → UnorderedTree α`); on planar trees it would need
 a canonical ordering — hence the cocycle and everything downstream live
-at the `Nonplanar` level. The clean-coassoc route through the cocycle
+at the `UnorderedTree` level. The clean-coassoc route through the cocycle
 does not generalize to Δ^c (B+ is not a 1-cocycle for the trace
 variant, which instead uses the direct double-cut bijection).
 
@@ -63,7 +63,7 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommSemiring R] {α : Type*}
 
-/-! ## Nonplanar tree- and forest-level Δ^ρ
+/-! ## UnorderedTree tree- and forest-level Δ^ρ
 
 Definitional instantiations of the generic admissible-cut coproduct
 (`Coproduct/WithCuts.lean`) at the Δ^ρ enumeration `cutSummandsN`. -/
@@ -71,51 +71,51 @@ Definitional instantiations of the generic admissible-cut coproduct
 /-- The **nonplanar tree-level Δ^ρ**: `comulTreeNG` at
     `cuts := cutSummandsN`. -/
 noncomputable def comulTreeN :
-    Nonplanar α →
-      ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+    UnorderedTree α →
+      ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   comulTreeNG cutSummandsN
 
 /-- The nonplanar forest-level Δ^ρ (multiplicative extension). -/
 noncomputable def comulForestN :
-    Forest (Nonplanar α) →
-      ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+    Forest (UnorderedTree α) →
+      ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   comulForestNG cutSummandsN
 
 @[simp] theorem comulForestN_zero :
-    comulForestN (R := R) (0 : Forest (Nonplanar α)) = 1 :=
+    comulForestN (R := R) (0 : Forest (UnorderedTree α)) = 1 :=
   comulForestNG_zero _
 
-@[simp] theorem comulForestN_add (F G : Forest (Nonplanar α)) :
+@[simp] theorem comulForestN_add (F G : Forest (UnorderedTree α)) :
     comulForestN (R := R) (F + G) =
       comulForestN (R := R) F * comulForestN (R := R) G :=
   comulForestNG_add _ F G
 
 /-- Recursive formula: `comulForestN (T ::ₘ F) = comulTreeN T * comulForestN F`. -/
-@[simp] theorem comulForestN_cons (T : Nonplanar α) (F : Forest (Nonplanar α)) :
+@[simp] theorem comulForestN_cons (T : UnorderedTree α) (F : Forest (UnorderedTree α)) :
     comulForestN (R := R) (T ::ₘ F) =
       comulTreeN (R := R) T * comulForestN (R := R) F :=
   comulForestNG_cons _ T F
 
-/-- The **Δ^ρ coproduct on `ConnesKreimer R (Nonplanar α)`** as an
+/-- The **Δ^ρ coproduct on `ConnesKreimer R (UnorderedTree α)`** as an
     algebra hom: `comulAlgHomNG` at `cuts := cutSummandsN`. -/
 noncomputable def comulAlgHomN :
-    ConnesKreimer R (Nonplanar α) →ₐ[R]
-      ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+    ConnesKreimer R (UnorderedTree α) →ₐ[R]
+      ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   comulAlgHomNG cutSummandsN
 
-@[simp] theorem comulAlgHomN_apply_of' (F : Forest (Nonplanar α)) :
+@[simp] theorem comulAlgHomN_apply_of' (F : Forest (UnorderedTree α)) :
     comulAlgHomN (R := R) (α := α) (of' F) = comulForestN F :=
   comulAlgHomNG_apply_of' _ F
 
-@[simp] theorem comulAlgHomN_apply_ofTree (T : Nonplanar α) :
+@[simp] theorem comulAlgHomN_apply_ofTree (T : UnorderedTree α) :
     comulAlgHomN (R := R) (α := α) (ofTree T) = comulTreeN T :=
   comulAlgHomNG_apply_ofTree _ T
 
 /-! ## Hochschild 1-cocycle for `B+_a`
 
-`B+_a : Forest (Nonplanar α) → Nonplanar α` is the smart constructor
-`Nonplanar.node a`. Linearly extended to `bPlusLin a : H →ₗ[R] H` (sending
-basis element `of' F` to `ofTree (Nonplanar.node a F)`), it satisfies
+`B+_a : Forest (UnorderedTree α) → UnorderedTree α` is the smart constructor
+`UnorderedTree.node a`. Linearly extended to `bPlusLin a : H →ₗ[R] H` (sending
+basis element `of' F` to `ofTree (UnorderedTree.node a F)`), it satisfies
 the **Hochschild 1-cocycle** property (Foissy / MCB §1.2.11):
 
   Δ^ρ ∘ B+_a = (·) ⊗ 1 ∘ B+_a + (id ⊗ B+_a) ∘ Δ^ρ
@@ -131,23 +131,23 @@ coassociativity (§A.7-δ): the subalgebra `A := {x | (Δ ⊗ id)(Δ x) =
 
 /-! ### B+_a as a linear map -/
 
-/-- The **B+_a linear map**: linearly extend the smart constructor `Nonplanar.node a`
-    to an `R`-linear endomorphism of `ConnesKreimer R (Nonplanar α)`,
-    sending the basis element `of' F` to `ofTree (Nonplanar.node a F)`. -/
+/-- The **B+_a linear map**: linearly extend the smart constructor `UnorderedTree.node a`
+    to an `R`-linear endomorphism of `ConnesKreimer R (UnorderedTree α)`,
+    sending the basis element `of' F` to `ofTree (UnorderedTree.node a F)`. -/
 noncomputable def bPlusLin (a : α) :
-    ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
-  ConnesKreimer.linearLift (fun F => ofTree (Nonplanar.node a F))
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
+  ConnesKreimer.linearLift (fun F => ofTree (UnorderedTree.node a F))
 
-@[simp] theorem bPlusLin_of' (a : α) (F : Forest (Nonplanar α)) :
-    bPlusLin (R := R) a (of' F) = ofTree (Nonplanar.node a F) := by
+@[simp] theorem bPlusLin_of' (a : α) (F : Forest (UnorderedTree α)) :
+    bPlusLin (R := R) a (of' F) = ofTree (UnorderedTree.node a F) := by
   rw [bPlusLin, ConnesKreimer.linearLift_of']
 
 @[simp] theorem bPlusLin_one (a : α) :
-    bPlusLin (R := R) a (1 : ConnesKreimer R (Nonplanar α)) =
-      ofTree (Nonplanar.leaf a) := by
+    bPlusLin (R := R) a (1 : ConnesKreimer R (UnorderedTree α)) =
+      ofTree (UnorderedTree.leaf a) := by
   show bPlusLin (R := R) a (of' 0) = _
   rw [bPlusLin_of']
-  show ofTree (Nonplanar.node a 0) = ofTree (Nonplanar.leaf a)
+  show ofTree (UnorderedTree.node a 0) = ofTree (UnorderedTree.leaf a)
   rfl
 
 /-! ### `comulForestN` as a sum over forest cuts
@@ -161,7 +161,7 @@ decompose along the per-tree decisions of `cutForestSummandsN`, and
     `of' cf ⊗ of' rem` over `(cf, rem) ∈ cutForestSummandsN F`: the generic
     `comulForestNG_eq_sum` at `cuts := cutSummandsN`, transported along
     `cutForestSummandsN_eq_forestCutsG`. -/
-theorem comulForestN_eq_sum (F : Forest (Nonplanar α)) :
+theorem comulForestN_eq_sum (F : Forest (UnorderedTree α)) :
     comulForestN (R := R) F = ((cutForestSummandsN F).map
       (fun pf => of' (R := R) pf.1 ⊗ₜ[R] of' (R := R) pf.2)).sum := by
   rw [cutForestSummandsN_eq_forestCutsG]
@@ -172,41 +172,41 @@ theorem comulForestN_eq_sum (F : Forest (Nonplanar α)) :
 /-- The tree-level coproduct on a leaf:
     `comulTreeN (leaf a) = ofTree (leaf a) ⊗ 1 + 1 ⊗ ofTree (leaf a)`. -/
 theorem comulTreeN_leaf (a : α) :
-    comulTreeN (R := R) (Nonplanar.leaf a) =
-      ofTree (Nonplanar.leaf a) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)) +
-      (1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R] ofTree (Nonplanar.leaf a) := by
+    comulTreeN (R := R) (UnorderedTree.leaf a) =
+      ofTree (UnorderedTree.leaf a) ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
+      (1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] ofTree (UnorderedTree.leaf a) := by
   unfold comulTreeN comulTreeNG
   rw [cutSummandsN_leaf, Multiset.map_singleton, Multiset.sum_singleton, of'_zero]
 
 /-- The **Hochschild 1-cocycle property of B+_a**, on basis elements:
     for every forest `F`, the coproduct of the grafted tree
-    `Nonplanar.node a F` decomposes as the explicit primitive term plus
+    `UnorderedTree.node a F` decomposes as the explicit primitive term plus
     the right-channel B+ application of `comulForestN F`. Proven via
     the substrate `cutSummandsN_node` (cuts of a node decompose along
     `cutForestSummandsN F`) and `comulForestN_eq_sum` (forest coproduct
     expands as the matching multiset sum); the `LinearMap.lTensor`
     distributes over the sum via `map_multiset_sum`, and the per-summand
     check reduces to `LinearMap.lTensor_tmul` + `bPlusLin_of'`. -/
-theorem comulTreeN_node_cocycle (a : α) (F : Forest (Nonplanar α)) :
-    comulTreeN (R := R) (Nonplanar.node a F) =
-      ofTree (Nonplanar.node a F) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)) +
+theorem comulTreeN_node_cocycle (a : α) (F : Forest (UnorderedTree α)) :
+    comulTreeN (R := R) (UnorderedTree.node a F) =
+      ofTree (UnorderedTree.node a F) ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
       (LinearMap.lTensor _ (bPlusLin (R := R) a)) (comulForestN F) := by
   unfold comulTreeN comulTreeNG
   rw [cutSummandsN_node, comulForestN_eq_sum,
-      map_multiset_sum (LinearMap.lTensor (ConnesKreimer R (Nonplanar α))
+      map_multiset_sum (LinearMap.lTensor (ConnesKreimer R (UnorderedTree α))
         (bPlusLin (R := R) a))]
   simp only [Multiset.map_map]
   refine congr_arg (_ + ·) (congr_arg Multiset.sum
     (Multiset.map_congr rfl (fun pf _ => ?_)))
-  show of' (R := R) pf.1 ⊗ₜ[R] ofTree (Nonplanar.node a pf.2) =
-       (LinearMap.lTensor (ConnesKreimer R (Nonplanar α)) (bPlusLin (R := R) a))
+  show of' (R := R) pf.1 ⊗ₜ[R] ofTree (UnorderedTree.node a pf.2) =
+       (LinearMap.lTensor (ConnesKreimer R (UnorderedTree α)) (bPlusLin (R := R) a))
          (of' (R := R) pf.1 ⊗ₜ[R] of' (R := R) pf.2)
   rw [LinearMap.lTensor_tmul, bPlusLin_of']
 
 /-- The cocycle, lifted to the algebra-hom level on tree basis elements. -/
-theorem comulAlgHomN_bPlusLin_cocycle (a : α) (F : Forest (Nonplanar α)) :
+theorem comulAlgHomN_bPlusLin_cocycle (a : α) (F : Forest (UnorderedTree α)) :
     comulAlgHomN (R := R) (bPlusLin (R := R) a (of' F)) =
-      bPlusLin (R := R) a (of' F) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)) +
+      bPlusLin (R := R) a (of' F) ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
       (LinearMap.lTensor _ (bPlusLin (R := R) a)) (comulAlgHomN (of' F)) := by
   rw [bPlusLin_of', comulAlgHomN_apply_ofTree, comulAlgHomN_apply_of']
   exact comulTreeN_node_cocycle a F
@@ -228,13 +228,13 @@ Pure `TensorProduct.induction_on` calculation; both sides reduce to
 `counit x ⊗ B+_a y` on simple tensors. Used in the tree-level counit law. -/
 
 private theorem counit_rTensor_lTensor_bPlus_apply (a : α)
-    (z : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     (Algebra.TensorProduct.map (counit (R := R))
-        (AlgHom.id R (ConnesKreimer R (Nonplanar α))))
+        (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
       ((LinearMap.lTensor _ (bPlusLin (R := R) a)) z) =
     (LinearMap.lTensor R (bPlusLin (R := R) a))
       ((Algebra.TensorProduct.map (counit (R := R))
-        (AlgHom.id R (ConnesKreimer R (Nonplanar α)))) z) := by
+        (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))) z) := by
   induction z using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero, map_zero]
   | tmul x y =>
@@ -246,17 +246,17 @@ private theorem counit_rTensor_lTensor_bPlus_apply (a : α)
 /-! ### Tree-level counit law (depth induction)
 
 `(counit ⊗ id)(Δ T) = 1 ⊗ T` for every nonplanar tree `T`. Strong induction
-on `T.depth`: present `T` as `Nonplanar.node a F` via a planar rep, then the
+on `T.depth`: present `T` as `UnorderedTree.node a F` via a planar rep, then the
 cocycle `comulTreeN_node_cocycle`, the commutation
 `counit_rTensor_lTensor_bPlus_apply`, and the forest law on the strictly
 shallower children close the goal. -/
 
-private theorem comulForestN_counit_rTensor (F : Forest (Nonplanar α))
+private theorem comulForestN_counit_rTensor (F : Forest (UnorderedTree α))
     (hF : ∀ T ∈ F, (Algebra.TensorProduct.map (counit (R := R))
-        (AlgHom.id R (ConnesKreimer R (Nonplanar α)))) (comulTreeN T) =
+        (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))) (comulTreeN T) =
       (1 : R) ⊗ₜ ofTree T) :
     (Algebra.TensorProduct.map (counit (R := R))
-        (AlgHom.id R (ConnesKreimer R (Nonplanar α))))
+        (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
       (comulForestN F) = (1 : R) ⊗ₜ of' F := by
   induction F using Multiset.induction with
   | empty =>
@@ -266,17 +266,17 @@ private theorem comulForestN_counit_rTensor (F : Forest (Nonplanar α))
     have hT := hF T (Multiset.mem_cons_self T F')
     rw [comulForestN_cons, map_mul, hT, ih',
         Algebra.TensorProduct.tmul_mul_tmul, mul_one,
-        show (ofTree T : ConnesKreimer R (Nonplanar α)) * of' F' =
+        show (ofTree T : ConnesKreimer R (UnorderedTree α)) * of' F' =
               of' (T ::ₘ F') from by
-          rw [show (T ::ₘ F' : Forest (Nonplanar α)) = {T} + F' from
+          rw [show (T ::ₘ F' : Forest (UnorderedTree α)) = {T} + F' from
                 (Multiset.singleton_add T F').symm,
               of'_add, of'_singleton]]
 
-private theorem comulForestN_counit_lTensor (F : Forest (Nonplanar α))
-    (hF : ∀ T ∈ F, (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+private theorem comulForestN_counit_lTensor (F : Forest (UnorderedTree α))
+    (hF : ∀ T ∈ F, (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
         (counit (R := R))) (comulTreeN T) =
       ofTree T ⊗ₜ (1 : R)) :
-    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
         (counit (R := R)))
       (comulForestN F) = of' F ⊗ₜ (1 : R) := by
   induction F using Multiset.induction with
@@ -287,20 +287,20 @@ private theorem comulForestN_counit_lTensor (F : Forest (Nonplanar α))
     have hT := hF T (Multiset.mem_cons_self T F')
     rw [comulForestN_cons, map_mul, hT, ih',
         Algebra.TensorProduct.tmul_mul_tmul, one_mul,
-        show (ofTree T : ConnesKreimer R (Nonplanar α)) * of' F' =
+        show (ofTree T : ConnesKreimer R (UnorderedTree α)) * of' F' =
               of' (T ::ₘ F') from by
-          rw [show (T ::ₘ F' : Forest (Nonplanar α)) = {T} + F' from
+          rw [show (T ::ₘ F' : Forest (UnorderedTree α)) = {T} + F' from
                 (Multiset.singleton_add T F').symm,
               of'_add, of'_singleton]]
 
-private theorem comulTreeN_counit_rTensor (T : Nonplanar α) :
+private theorem comulTreeN_counit_rTensor (T : UnorderedTree α) :
     (Algebra.TensorProduct.map (counit (R := R))
-        (AlgHom.id R (ConnesKreimer R (Nonplanar α))))
+        (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
       (comulTreeN T) = (1 : R) ⊗ₜ ofTree T := by
   -- Strong induction on T.depth.
-  suffices aux : ∀ n : ℕ, ∀ T : Nonplanar α, T.depth = n →
+  suffices aux : ∀ n : ℕ, ∀ T : UnorderedTree α, T.depth = n →
       (Algebra.TensorProduct.map (counit (R := R))
-          (AlgHom.id R (ConnesKreimer R (Nonplanar α))))
+          (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
         (comulTreeN T) = (1 : R) ⊗ₜ ofTree T by
     exact aux T.depth T rfl
   intro n
@@ -308,32 +308,32 @@ private theorem comulTreeN_counit_rTensor (T : Nonplanar α) :
   | _ n IH =>
     intro T hT
     -- Pick a tree-level rep T = mk (.node a children).
-    obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = Nonplanar.mk T₀ :=
+    obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = UnorderedTree.mk T₀ :=
       ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
     obtain ⟨a, children⟩ := T₀
-    rw [show (Nonplanar.mk (RoseTree.node a children) : Nonplanar α) =
-        Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk))
-        from (Nonplanar.node_mk_tree_list a children).symm]
+    rw [show (UnorderedTree.mk (RoseTree.node a children) : UnorderedTree α) =
+        UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk))
+        from (UnorderedTree.node_mk_tree_list a children).symm]
     -- Use cocycle.
     rw [comulTreeN_node_cocycle, map_add]
     -- First summand vanishes via counit_ofTree.
     rw [show (Algebra.TensorProduct.map (counit (R := R))
-            (AlgHom.id R (ConnesKreimer R (Nonplanar α))))
-          (ofTree (Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk))) ⊗ₜ
-            (1 : ConnesKreimer R (Nonplanar α))) = 0 from by
+            (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
+          (ofTree (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk))) ⊗ₜ
+            (1 : ConnesKreimer R (UnorderedTree α))) = 0 from by
       rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, counit_ofTree,
           TensorProduct.zero_tmul], zero_add]
     -- Second summand: commutation + forest law.
     rw [counit_rTensor_lTensor_bPlus_apply,
         comulForestN_counit_rTensor (R := R)
-          (Multiset.ofList (children.map Nonplanar.mk))
+          (Multiset.ofList (children.map UnorderedTree.mk))
           (fun T' hT' => by
             apply IH T'.depth ?_ T' rfl
-            have hlt := Nonplanar.depth_lt_of_mem T' _ hT' a
-            rw [show (Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk)) :
-                  Nonplanar α) =
-                Nonplanar.mk (RoseTree.node a children) from
-                Nonplanar.node_mk_tree_list a children] at hlt
+            have hlt := UnorderedTree.depth_lt_of_mem T' _ hT' a
+            rw [show (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk)) :
+                  UnorderedTree α) =
+                UnorderedTree.mk (RoseTree.node a children) from
+                UnorderedTree.node_mk_tree_list a children] at hlt
             rw [hT] at hlt
             exact hlt),
         LinearMap.lTensor_tmul, bPlusLin_of']
@@ -342,22 +342,22 @@ private theorem comulTreeN_counit_rTensor (T : Nonplanar α) :
     span of `ofTree`s on non-leaf trees, all of which have card-1 forests
     so counit kills them. Proven by reducing the linear-map equality to
     basis vectors via `ConnesKreimer.lhom_ext`, then computing on `of' F`. -/
-private theorem counit_bPlusLin (a : α) (y : ConnesKreimer R (Nonplanar α)) :
+private theorem counit_bPlusLin (a : α) (y : ConnesKreimer R (UnorderedTree α)) :
     counit (R := R) (bPlusLin (R := R) a y) = 0 := by
   -- Both maps are R-linear; reduce to checking equality of the composite with 0
   -- as a LinearMap, then evaluate at y.
   have h : ((counit (R := R)).toLinearMap.comp (bPlusLin (R := R) a) :
-           ConnesKreimer R (Nonplanar α) →ₗ[R] R) = 0 := by
+           ConnesKreimer R (UnorderedTree α) →ₗ[R] R) = 0 := by
     apply ConnesKreimer.lhom_ext
     intro F r
     show counit (bPlusLin a (ConnesKreimer.single F r)) = (0 : R)
     -- Convert `single F r` to `r • of' F`, then push through linearity.
-    have hr : (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α))
-              = (r : R) • (of' F : ConnesKreimer R (Nonplanar α)) :=
+    have hr : (ConnesKreimer.single F r : ConnesKreimer R (UnorderedTree α))
+              = (r : R) • (of' F : ConnesKreimer R (UnorderedTree α)) :=
       ConnesKreimer.smul_single_one F r
     rw [hr]
     -- Force re-elaboration through Module-flavored smul.
-    change counit (R := R) (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (Nonplanar α)))) =
+    change counit (R := R) (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (UnorderedTree α)))) =
            (0 : R)
     rw [(bPlusLin (R := R) a).map_smul, bPlusLin_of',
         _root_.map_smul (counit (R := R)) r, counit_ofTree, smul_zero]
@@ -365,36 +365,36 @@ private theorem counit_bPlusLin (a : α) (y : ConnesKreimer R (Nonplanar α)) :
   have := congrFun (congrArg DFunLike.coe h) y
   simpa using this
 
-private theorem comulTreeN_counit_lTensor (T : Nonplanar α) :
-    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+private theorem comulTreeN_counit_lTensor (T : UnorderedTree α) :
+    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
         (counit (R := R)))
       (comulTreeN T) = ofTree T ⊗ₜ (1 : R) := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = Nonplanar.mk T₀ :=
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = UnorderedTree.mk T₀ :=
     ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
   obtain ⟨a, children⟩ := T₀
-  rw [show (Nonplanar.mk (RoseTree.node a children) : Nonplanar α) =
-      Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk))
-      from (Nonplanar.node_mk_tree_list a children).symm]
+  rw [show (UnorderedTree.mk (RoseTree.node a children) : UnorderedTree α) =
+      UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk))
+      from (UnorderedTree.node_mk_tree_list a children).symm]
   -- Use cocycle: comulTreeN T = ofTree T ⊗ 1 + (id ⊗ bPlusLin a)(comulForestN F).
   rw [comulTreeN_node_cocycle, map_add]
   -- First summand: (id ⊗ counit)(ofTree T ⊗ 1) = ofTree T ⊗ counit(1) = ofTree T ⊗ 1.
   rw [show (Algebra.TensorProduct.map
-            (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+            (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
             (counit (R := R)))
-        (ofTree (Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk))) ⊗ₜ
-          (1 : ConnesKreimer R (Nonplanar α))) =
-      ofTree (Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk))) ⊗ₜ
+        (ofTree (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk))) ⊗ₜ
+          (1 : ConnesKreimer R (UnorderedTree α))) =
+      ofTree (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk))) ⊗ₜ
         (1 : R) from by
     rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one]]
   -- Second summand: (id ⊗ counit) ∘ (lTensor (bPlusLin a)) z is zero,
   -- because counit ∘ bPlusLin a = 0 (any tree from B+_a has counit 0).
   rw [show (Algebra.TensorProduct.map
-            (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+            (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
             (counit (R := R)))
         ((LinearMap.lTensor _ (bPlusLin (R := R) a))
-          (comulForestN (Multiset.ofList (children.map Nonplanar.mk)))) = 0 from by
+          (comulForestN (Multiset.ofList (children.map UnorderedTree.mk)))) = 0 from by
     generalize comulForestN (R := R)
-      (Multiset.ofList (children.map Nonplanar.mk)) = z
+      (Multiset.ofList (children.map UnorderedTree.mk)) = z
     induction z using TensorProduct.induction_on with
     | zero => rw [map_zero, map_zero]
     | tmul x y =>
@@ -411,23 +411,23 @@ the tree-level laws. -/
 
 theorem counit_rTensor_comulAlgHomN :
     (Algebra.TensorProduct.map (counit (R := R)) (AlgHom.id R _)).comp comulAlgHomN =
-      (Algebra.TensorProduct.lid R (ConnesKreimer R (Nonplanar α))).symm.toAlgHom := by
+      (Algebra.TensorProduct.lid R (ConnesKreimer R (UnorderedTree α))).symm.toAlgHom := by
   apply ConnesKreimer.algHom_ext
   intro F
   show (Algebra.TensorProduct.map (counit (R := R))
-          (AlgHom.id R (ConnesKreimer R (Nonplanar α)))) (comulAlgHomN (of' F)) =
-       (Algebra.TensorProduct.lid R (ConnesKreimer R (Nonplanar α))).symm (of' F)
+          (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))) (comulAlgHomN (of' F)) =
+       (Algebra.TensorProduct.lid R (ConnesKreimer R (UnorderedTree α))).symm (of' F)
   rw [comulAlgHomN_apply_of', Algebra.TensorProduct.lid_symm_apply]
   exact comulForestN_counit_rTensor F (fun T _ => comulTreeN_counit_rTensor T)
 
 theorem counit_lTensor_comulAlgHomN :
     (Algebra.TensorProduct.map (AlgHom.id R _) (counit (R := R))).comp comulAlgHomN =
-      (Algebra.TensorProduct.rid R R (ConnesKreimer R (Nonplanar α))).symm.toAlgHom := by
+      (Algebra.TensorProduct.rid R R (ConnesKreimer R (UnorderedTree α))).symm.toAlgHom := by
   apply ConnesKreimer.algHom_ext
   intro F
-  show (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+  show (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
           (counit (R := R))) (comulAlgHomN (of' F)) =
-       (Algebra.TensorProduct.rid R R (ConnesKreimer R (Nonplanar α))).symm (of' F)
+       (Algebra.TensorProduct.rid R R (ConnesKreimer R (UnorderedTree α))).symm (of' F)
   rw [comulAlgHomN_apply_of', Algebra.TensorProduct.rid_symm_apply]
   exact comulForestN_counit_lTensor F (fun T _ => comulTreeN_counit_lTensor T)
 
@@ -448,9 +448,9 @@ pairing or nondegeneracy input. -/
 /-- The "compute coassociativity left-hand side" algebra hom:
     `x ↦ assoc((Δ ⊗ id)(Δ x))`. -/
 noncomputable def coassocLHS :
-    ConnesKreimer R (Nonplanar α) →ₐ[R]
-      ConnesKreimer R (Nonplanar α) ⊗[R]
-        (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :=
+    ConnesKreimer R (UnorderedTree α) →ₐ[R]
+      ConnesKreimer R (UnorderedTree α) ⊗[R]
+        (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :=
   (Algebra.TensorProduct.assoc R R R _ _ _).toAlgHom.comp
     ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
       (AlgHom.id R _)).comp comulAlgHomN)
@@ -458,19 +458,19 @@ noncomputable def coassocLHS :
 /-- The "compute coassociativity right-hand side" algebra hom:
     `x ↦ (id ⊗ Δ)(Δ x)`. -/
 noncomputable def coassocRHS :
-    ConnesKreimer R (Nonplanar α) →ₐ[R]
-      ConnesKreimer R (Nonplanar α) ⊗[R]
-        (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :=
-  (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+    ConnesKreimer R (UnorderedTree α) →ₐ[R]
+      ConnesKreimer R (UnorderedTree α) ⊗[R]
+        (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :=
+  (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
     (comulAlgHomN (R := R) (α := α))).comp comulAlgHomN
 
 /-- The **Foissy coassociativity subalgebra**: elements where the two
     sides of coassociativity agree. By Foissy's clean argument
     (`coassocSubalg_eq_top`), this is all of `H`. -/
-noncomputable def coassocSubalg : Subalgebra R (ConnesKreimer R (Nonplanar α)) :=
+noncomputable def coassocSubalg : Subalgebra R (ConnesKreimer R (UnorderedTree α)) :=
   AlgHom.equalizer (coassocLHS (R := R) (α := α)) coassocRHS
 
-theorem mem_coassocSubalg (x : ConnesKreimer R (Nonplanar α)) :
+theorem mem_coassocSubalg (x : ConnesKreimer R (UnorderedTree α)) :
     x ∈ coassocSubalg (R := R) (α := α) ↔ coassocLHS x = coassocRHS x :=
   AlgHom.mem_equalizer _ _ _
 
@@ -483,16 +483,16 @@ by their action on basis vectors `of' F = ConnesKreimer.single F 1`). -/
 
 /-- The cocycle, extended to arbitrary `x : H` via linearity. -/
 theorem comulAlgHomN_bPlusLin_cocycle_general (a : α)
-    (x : ConnesKreimer R (Nonplanar α)) :
+    (x : ConnesKreimer R (UnorderedTree α)) :
     comulAlgHomN (bPlusLin (R := R) a x) =
-      bPlusLin (R := R) a x ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)) +
+      bPlusLin (R := R) a x ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
       (LinearMap.lTensor _ (bPlusLin (R := R) a)) (comulAlgHomN x) := by
   -- LHS and RHS are both R-linear in x. Reduce to checking on ConnesKreimer.single F r
   -- (= r • of' F), then to F = of' F (r = 1) via scalar linearity, then apply cocycle.
   have heq :
       ((comulAlgHomN (R := R) (α := α)).toLinearMap.comp (bPlusLin (R := R) a) :
-        ConnesKreimer R (Nonplanar α) →ₗ[R]
-          ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) =
+        ConnesKreimer R (UnorderedTree α) →ₗ[R]
+          ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) =
       ((TensorProduct.mk R _ _).flip 1).comp (bPlusLin (R := R) a) +
       (LinearMap.lTensor _ (bPlusLin (R := R) a)).comp
         (comulAlgHomN (R := R) (α := α)).toLinearMap := by
@@ -504,14 +504,14 @@ theorem comulAlgHomN_bPlusLin_cocycle_general (a : α)
     show comulAlgHomN.toLinearMap (bPlusLin a (ConnesKreimer.single F r)) =
          (TensorProduct.mk R _ _).flip 1 (bPlusLin a (ConnesKreimer.single F r)) +
          LinearMap.lTensor _ (bPlusLin a) (comulAlgHomN.toLinearMap (ConnesKreimer.single F r))
-    have hr : ConnesKreimer.single F r = (r : R) • (of' F : ConnesKreimer R (Nonplanar α)) := ConnesKreimer.smul_single_one F r
+    have hr : ConnesKreimer.single F r = (r : R) • (of' F : ConnesKreimer R (UnorderedTree α)) := ConnesKreimer.smul_single_one F r
     rw [hr]
     -- Force re-elaboration through Module-flavored smul:
-    change comulAlgHomN.toLinearMap (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (Nonplanar α)))) =
+    change comulAlgHomN.toLinearMap (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (UnorderedTree α)))) =
            (TensorProduct.mk R _ _).flip 1
-              (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (Nonplanar α)))) +
+              (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (UnorderedTree α)))) +
            LinearMap.lTensor _ (bPlusLin a)
-              (comulAlgHomN.toLinearMap ((r : R) • (of' F : ConnesKreimer R (Nonplanar α))))
+              (comulAlgHomN.toLinearMap ((r : R) • (of' F : ConnesKreimer R (UnorderedTree α))))
     rw [(bPlusLin (R := R) a).map_smul,
         (comulAlgHomN (R := R) (α := α)).toLinearMap.map_smul,
         AlgHom.toLinearMap_apply, AlgHom.toLinearMap_apply,
@@ -526,7 +526,7 @@ theorem comulAlgHomN_bPlusLin_cocycle_general (a : α)
     change (r : R) • (LinearMap.lTensor _ (bPlusLin (R := R) a))
               (comulAlgHomN (of' F)) =
            (LinearMap.lTensor _ (bPlusLin (R := R) a))
-              (comulAlgHomN ((r : R) • (of' F : ConnesKreimer R (Nonplanar α))))
+              (comulAlgHomN ((r : R) • (of' F : ConnesKreimer R (UnorderedTree α))))
     rw [_root_.map_smul (comulAlgHomN (R := R) (α := α)), (LinearMap.lTensor _ (bPlusLin (R := R) a)).map_smul]
   exact congr($heq x)
 
@@ -561,13 +561,13 @@ Three commutation/identity lemmas for the substantive Foissy bit:
   (id ⊗ id ⊗ B+) ∘ (id ⊗ Δ)(z)`, by cocycle on the right factor of `(id ⊗ B+)(z)`. -/
 
 private theorem comulAlgHomN_lTensor_bPlus_commute (a : α)
-    (z : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     (Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
-        (AlgHom.id R (ConnesKreimer R (Nonplanar α))))
+        (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
       ((LinearMap.lTensor _ (bPlusLin (R := R) a)) z) =
     (LinearMap.lTensor _ (bPlusLin (R := R) a))
       ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
-        (AlgHom.id R (ConnesKreimer R (Nonplanar α)))) z) := by
+        (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))) z) := by
   induction z using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero, map_zero]
   | tmul x y =>
@@ -577,14 +577,14 @@ private theorem comulAlgHomN_lTensor_bPlus_commute (a : α)
   | add z₁ z₂ ih₁ ih₂ => rw [map_add, map_add, ih₁, ih₂, map_add, map_add]
 
 private theorem assoc_lTensor_bPlus_commute (a : α)
-    (z : (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) ⊗[R]
-          ConnesKreimer R (Nonplanar α)) :
-    (Algebra.TensorProduct.assoc R R R (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α)) (ConnesKreimer R (Nonplanar α)))
+    (z : (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) ⊗[R]
+          ConnesKreimer R (UnorderedTree α)) :
+    (Algebra.TensorProduct.assoc R R R (ConnesKreimer R (UnorderedTree α))
+        (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α)))
       ((LinearMap.lTensor _ (bPlusLin (R := R) a)) z) =
     (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlusLin (R := R) a)))
-      ((Algebra.TensorProduct.assoc R R R (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α)) (ConnesKreimer R (Nonplanar α))) z) := by
+      ((Algebra.TensorProduct.assoc R R R (ConnesKreimer R (UnorderedTree α))
+        (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α))) z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul w c =>
@@ -603,16 +603,16 @@ private theorem assoc_lTensor_bPlus_commute (a : α)
     rw [ih₁, ih₂]
 
 private theorem lTensor_id_Δ_bPlus_eq (a : α)
-    (z : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
-    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
+    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
         (comulAlgHomN (R := R) (α := α)))
       ((LinearMap.lTensor _ (bPlusLin (R := R) a)) z) =
-    (Algebra.TensorProduct.assoc R R R (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α)) (ConnesKreimer R (Nonplanar α)))
+    (Algebra.TensorProduct.assoc R R R (ConnesKreimer R (UnorderedTree α))
+        (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α)))
       ((LinearMap.lTensor _ (bPlusLin (R := R) a) z) ⊗ₜ
-        (1 : ConnesKreimer R (Nonplanar α))) +
+        (1 : ConnesKreimer R (UnorderedTree α))) +
     (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlusLin (R := R) a)))
-      ((Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+      ((Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
         (comulAlgHomN (R := R) (α := α))) z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
@@ -630,7 +630,7 @@ private theorem lTensor_id_Δ_bPlus_eq (a : α)
     rw [ih₁, ih₂]
     abel
 
-theorem bPlus_mem_coassocSubalg (a : α) (x : ConnesKreimer R (Nonplanar α))
+theorem bPlus_mem_coassocSubalg (a : α) (x : ConnesKreimer R (UnorderedTree α))
     (hx : x ∈ coassocSubalg (R := R) (α := α)) :
     bPlusLin (R := R) a x ∈ coassocSubalg (R := R) (α := α) := by
   rw [mem_coassocSubalg] at hx ⊢
@@ -655,12 +655,12 @@ theorem bPlus_mem_coassocSubalg (a : α) (x : ConnesKreimer R (Nonplanar α))
   rw [show (Algebra.TensorProduct.assoc R R R _ _ _)
         ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
           (AlgHom.id R _)) (bPlusLin (R := R) a x ⊗ₜ
-            (1 : ConnesKreimer R (Nonplanar α)))) =
-      (bPlusLin (R := R) a x) ⊗ₜ ((1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ
-        (1 : ConnesKreimer R (Nonplanar α))) +
+            (1 : ConnesKreimer R (UnorderedTree α)))) =
+      (bPlusLin (R := R) a x) ⊗ₜ ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ
+        (1 : ConnesKreimer R (UnorderedTree α))) +
       (Algebra.TensorProduct.assoc R R R _ _ _)
         ((LinearMap.lTensor _ (bPlusLin (R := R) a))
-          (comulAlgHomN x) ⊗ₜ (1 : ConnesKreimer R (Nonplanar α))) from by
+          (comulAlgHomN x) ⊗ₜ (1 : ConnesKreimer R (UnorderedTree α))) from by
     rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply,
         comulAlgHomN_bPlusLin_cocycle_general, TensorProduct.add_tmul, map_add,
         Algebra.TensorProduct.assoc_tmul]]
@@ -669,10 +669,10 @@ theorem bPlus_mem_coassocSubalg (a : α) (x : ConnesKreimer R (Nonplanar α))
   -- RHS first term: (map id Δ)(Bx ⊗ 1) = Bx ⊗ Δ(1) = Bx ⊗ (1 ⊗ 1).
   rw [show (Algebra.TensorProduct.map (AlgHom.id R _)
             (comulAlgHomN (R := R) (α := α)))
-          (bPlusLin (R := R) a x ⊗ₜ (1 : ConnesKreimer R (Nonplanar α))) =
+          (bPlusLin (R := R) a x ⊗ₜ (1 : ConnesKreimer R (UnorderedTree α))) =
         (bPlusLin (R := R) a x) ⊗ₜ
-          ((1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ
-            (1 : ConnesKreimer R (Nonplanar α))) from by
+          ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ
+            (1 : ConnesKreimer R (UnorderedTree α))) from by
     rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one,
         Algebra.TensorProduct.one_def]]
   -- RHS second term: use cocycle-driven identity `lTensor_id_Δ_bPlus_eq`.
@@ -696,12 +696,12 @@ theorem bPlus_mem_coassocSubalg (a : α) (x : ConnesKreimer R (Nonplanar α))
 /-- Helper: `of' F` is in `coassocSubalg` whenever every `ofTree T` for `T ∈ F` is.
     By Multiset.induction on F using `of'_singleton`, `of'_zero`, `of'_add`, plus
     subalgebra closure under * and 1. -/
-private theorem of'_mem_coassocSubalg_of_trees (F : Forest (Nonplanar α))
+private theorem of'_mem_coassocSubalg_of_trees (F : Forest (UnorderedTree α))
     (h : ∀ T ∈ F, ofTree T ∈ coassocSubalg (R := R) (α := α)) :
     of' (R := R) F ∈ coassocSubalg (R := R) (α := α) := by
   induction F using Multiset.induction with
   | empty =>
-    rw [show ((0 : Forest (Nonplanar α)) : Forest (Nonplanar α)) = (0 : Forest (Nonplanar α)) from rfl,
+    rw [show ((0 : Forest (UnorderedTree α)) : Forest (UnorderedTree α)) = (0 : Forest (UnorderedTree α)) from rfl,
         of'_zero]
     exact one_mem _
   | cons T F' ih =>
@@ -709,17 +709,17 @@ private theorem of'_mem_coassocSubalg_of_trees (F : Forest (Nonplanar α))
     have hF' : ∀ T' ∈ F', ofTree T' ∈ coassocSubalg (R := R) (α := α) :=
       fun T' hT' => h T' (Multiset.mem_cons_of_mem hT')
     have ih' := ih hF'
-    rw [show ((T ::ₘ F') : Forest (Nonplanar α)) = ({T} + F') from rfl, of'_add, of'_singleton]
+    rw [show ((T ::ₘ F') : Forest (UnorderedTree α)) = ({T} + F') from rfl, of'_add, of'_singleton]
     exact mul_mem hT ih'
 
-/-- Every Nonplanar tree's `ofTree` lies in `coassocSubalg`. By strong
+/-- Every UnorderedTree tree's `ofTree` lies in `coassocSubalg`. By strong
     induction on tree depth: leaves are `B+_a 1` (closed under `B+_a` from `1`);
     nodes are `B+_a (of' F)` where `of' F` is a product of `ofTree` of smaller-depth
     trees. -/
-theorem ofTree_mem_coassocSubalg (T : Nonplanar α) :
+theorem ofTree_mem_coassocSubalg (T : UnorderedTree α) :
     ofTree T ∈ coassocSubalg (R := R) (α := α) := by
   -- Strong induction on T.depth.
-  suffices aux : ∀ n : ℕ, ∀ T : Nonplanar α, T.depth = n →
+  suffices aux : ∀ n : ℕ, ∀ T : UnorderedTree α, T.depth = n →
       ofTree T ∈ coassocSubalg (R := R) (α := α) by
     exact aux T.depth T rfl
   intro n
@@ -727,35 +727,35 @@ theorem ofTree_mem_coassocSubalg (T : Nonplanar α) :
   | _ n IH =>
     intro T hT
     -- Pick a planar rep T = mk (RoseTree.node a children).
-    obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = Nonplanar.mk T₀ :=
+    obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = UnorderedTree.mk T₀ :=
       ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
     obtain ⟨a, children⟩ := T₀
-    -- T = mk (.node a children) = Nonplanar.node a (Multiset.ofList (children.map mk))
-    rw [show (Nonplanar.mk (RoseTree.node a children) : Nonplanar α) =
-        Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk))
-        from (Nonplanar.node_mk_tree_list a children).symm]
-    -- ofTree (Nonplanar.node a F) = bPlusLin a (of' F) by bPlusLin_of'.
-    rw [show ofTree (Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk)))
-            = bPlusLin (R := R) a (of' (Multiset.ofList (children.map Nonplanar.mk)))
+    -- T = mk (.node a children) = UnorderedTree.node a (Multiset.ofList (children.map mk))
+    rw [show (UnorderedTree.mk (RoseTree.node a children) : UnorderedTree α) =
+        UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk))
+        from (UnorderedTree.node_mk_tree_list a children).symm]
+    -- ofTree (UnorderedTree.node a F) = bPlusLin a (of' F) by bPlusLin_of'.
+    rw [show ofTree (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk)))
+            = bPlusLin (R := R) a (of' (Multiset.ofList (children.map UnorderedTree.mk)))
             from (bPlusLin_of' a _).symm]
     apply bPlus_mem_coassocSubalg
     -- of' F ∈ coassocSubalg, where F = Multiset.ofList (children.map mk).
     apply of'_mem_coassocSubalg_of_trees
     intro T' hT'
     -- T' ∈ Multiset.ofList (children.map mk). Use IH on T'.depth < (mk (.node a children)).depth.
-    have hT'_depth : T'.depth < (Nonplanar.mk (RoseTree.node a children)).depth := by
-      have := Nonplanar.depth_lt_of_mem T'
-        (Multiset.ofList (children.map Nonplanar.mk)) hT' a
-      rw [show (Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk)) : Nonplanar α) =
-          Nonplanar.mk (RoseTree.node a children) from
-          Nonplanar.node_mk_tree_list a children] at this
+    have hT'_depth : T'.depth < (UnorderedTree.mk (RoseTree.node a children)).depth := by
+      have := UnorderedTree.depth_lt_of_mem T'
+        (Multiset.ofList (children.map UnorderedTree.mk)) hT' a
+      rw [show (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk)) : UnorderedTree α) =
+          UnorderedTree.mk (RoseTree.node a children) from
+          UnorderedTree.node_mk_tree_list a children] at this
       exact this
     rw [hT] at hT'_depth
     exact IH T'.depth hT'_depth T' rfl
 
 /-! ### `coassocSubalg = ⊤`
 
-Since `H` is generated as an algebra by `{ofTree T | T : Nonplanar α}` and
+Since `H` is generated as an algebra by `{ofTree T | T : UnorderedTree α}` and
 each generator is in `coassocSubalg`, the subalgebra is the whole thing. -/
 
 theorem coassocSubalg_eq_top :
@@ -769,8 +769,8 @@ theorem coassocSubalg_eq_top :
     exact add_mem hf hg
   · intro F r
     -- ConnesKreimer.single F r = r • of' F ∈ coassocSubalg via algebraMap.
-    show (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α)) ∈ _
-    rw [show (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α)) = r • of' F from
+    show (ConnesKreimer.single F r : ConnesKreimer R (UnorderedTree α)) ∈ _
+    rw [show (ConnesKreimer.single F r : ConnesKreimer R (UnorderedTree α)) = r • of' F from
         ConnesKreimer.smul_single_one F r]
     exact Subalgebra.smul_mem _ (of'_mem_coassocSubalg_of_trees F
       (fun T _ => ofTree_mem_coassocSubalg T)) r
@@ -790,20 +790,20 @@ theorem coassocLHS_eq_coassocRHS :
   exact (mem_coassocSubalg x).mp h
 
 theorem comulAlgHomN_coassoc_algHom :
-    (Algebra.TensorProduct.assoc R R R (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α)) (ConnesKreimer R (Nonplanar α))).toAlgHom.comp
+    (Algebra.TensorProduct.assoc R R R (ConnesKreimer R (UnorderedTree α))
+        (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α))).toAlgHom.comp
       ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
         (AlgHom.id R _)).comp comulAlgHomN) =
-    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (comulAlgHomN (R := R) (α := α))).comp comulAlgHomN :=
   coassocLHS_eq_coassocRHS
 
 /-- Coassociativity of Δ^ρ (LinearMap form). -/
 theorem comulRhoN_coassoc :
     (TensorProduct.assoc R
-        (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α))).toLinearMap ∘ₗ
+        (ConnesKreimer R (UnorderedTree α))
+        (ConnesKreimer R (UnorderedTree α))
+        (ConnesKreimer R (UnorderedTree α))).toLinearMap ∘ₗ
       (comulAlgHomN (R := R) (α := α)).toLinearMap.rTensor _ ∘ₗ
       (comulAlgHomN (R := R) (α := α)).toLinearMap =
     (comulAlgHomN (R := R) (α := α)).toLinearMap.lTensor _ ∘ₗ
@@ -812,21 +812,21 @@ theorem comulRhoN_coassoc :
 
 end CoassocFoissy
 
-/-- The Δ^ρ **`Bialgebra`** on `ConnesKreimer R (Nonplanar α)`
+/-- The Δ^ρ **`Bialgebra`** on `ConnesKreimer R (UnorderedTree α)`
     ([marcolli-chomsky-berwick-2025] Lemma 1.2.11), over any `CommSemiring`. -/
 noncomputable instance instBialgebraRho :
-    Bialgebra R (ConnesKreimer R (Nonplanar α)) :=
-  Bialgebra.ofAlgHom (A := ConnesKreimer R (Nonplanar α)) comulAlgHomN counit
+    Bialgebra R (ConnesKreimer R (UnorderedTree α)) :=
+  Bialgebra.ofAlgHom (A := ConnesKreimer R (UnorderedTree α)) comulAlgHomN counit
     comulAlgHomN_coassoc_algHom
     counit_rTensor_comulAlgHomN
     counit_lTensor_comulAlgHomN
 
 /-- The coproduct of `instBialgebraRho` is `comulAlgHomN`. -/
-theorem coalgebra_comul_apply (x : ConnesKreimer R (Nonplanar α)) :
+theorem coalgebra_comul_apply (x : ConnesKreimer R (UnorderedTree α)) :
     Coalgebra.comul (R := R) x = comulAlgHomN x := rfl
 
 /-- The counit of `instBialgebraRho` is `ConnesKreimer.counit`. -/
-theorem coalgebra_counit_apply (x : ConnesKreimer R (Nonplanar α)) :
+theorem coalgebra_counit_apply (x : ConnesKreimer R (UnorderedTree α)) :
     CoalgebraStruct.counit (R := R) x = counit x := rfl
 
 /-! ### GL/CK duality: downstream

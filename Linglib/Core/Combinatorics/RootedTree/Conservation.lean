@@ -8,13 +8,13 @@ import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Data.RoseTree.Count
 import Mathlib.Algebra.Order.BigOperators.Group.Multiset
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
 # Measures and conservation laws for the cut enumerations
 
 The trace-marker leaf statistics on `RoseTree (α ⊕ β)` and
-`Nonplanar (α ⊕ β)` (`traceLeafCount`, `traceDepthSum` — `Sum.inr` marks a
+`UnorderedTree (α ⊕ β)` (`traceLeafCount`, `traceDepthSum` — `Sum.inr` marks a
 trace), and the size bookkeeping of the trace-preserving cut enumeration
 `cutSummandsCN`: a cut summand splits a tree into a *crown forest* `p.1`
 and a *trunk* `p.2` carrying one trace-marker leaf per cut.
@@ -116,57 +116,57 @@ theorem traceLeafCount_le_traceDepthSum_of_inl (a : α) (cs : List (RoseTree (α
 end RoseTree
 
 
-namespace RoseTree.Nonplanar
+namespace UnorderedTree
 
 variable {α β : Type*}
 
 /-- The number of `Sum.inr`-labeled (trace-marker) leaves of a nonplanar tree. -/
-def traceLeafCount : Nonplanar (α ⊕ β) → ℕ := leafCountP (·.isRight = true)
+def traceLeafCount : UnorderedTree (α ⊕ β) → ℕ := leafCountP (·.isRight = true)
 
 @[simp] theorem traceLeafCount_mk (t : RoseTree (α ⊕ β)) :
     (mk t).traceLeafCount = t.traceLeafCount := rfl
 
 @[simp] theorem traceLeafCount_leaf_inl (a : α) :
-    (leaf (Sum.inl a) : Nonplanar (α ⊕ β)).traceLeafCount = 0 := by
+    (leaf (Sum.inl a) : UnorderedTree (α ⊕ β)).traceLeafCount = 0 := by
   simp [traceLeafCount]
 
 @[simp] theorem traceLeafCount_leaf_inr (b : β) :
-    (leaf (Sum.inr b) : Nonplanar (α ⊕ β)).traceLeafCount = 1 := by
+    (leaf (Sum.inr b) : UnorderedTree (α ⊕ β)).traceLeafCount = 1 := by
   simp [traceLeafCount]
 
-@[simp] theorem traceLeafCount_node_inl (a : α) (F : Multiset (Nonplanar (α ⊕ β))) :
-    (Nonplanar.node (Sum.inl a) F).traceLeafCount
-      = (F.map Nonplanar.traceLeafCount).sum :=
+@[simp] theorem traceLeafCount_node_inl (a : α) (F : Multiset (UnorderedTree (α ⊕ β))) :
+    (UnorderedTree.node (Sum.inl a) F).traceLeafCount
+      = (F.map UnorderedTree.traceLeafCount).sum :=
   leafCountP_node_of_not _ _ F (by simp)
 
 /-- The depth-weighted trace-marker count of a nonplanar tree. -/
-def traceDepthSum : Nonplanar (α ⊕ β) → ℕ := leafDepthSumP (·.isRight = true)
+def traceDepthSum : UnorderedTree (α ⊕ β) → ℕ := leafDepthSumP (·.isRight = true)
 
 @[simp] theorem traceDepthSum_mk (t : RoseTree (α ⊕ β)) :
     (mk t).traceDepthSum = t.traceDepthSum := rfl
 
 @[simp] theorem traceDepthSum_leaf_inl (a : α) :
-    (leaf (Sum.inl a) : Nonplanar (α ⊕ β)).traceDepthSum = 0 := by
+    (leaf (Sum.inl a) : UnorderedTree (α ⊕ β)).traceDepthSum = 0 := by
   simp [traceDepthSum]
 
 @[simp] theorem traceDepthSum_leaf_inr (b : β) :
-    (leaf (Sum.inr b) : Nonplanar (α ⊕ β)).traceDepthSum = 0 := by
+    (leaf (Sum.inr b) : UnorderedTree (α ⊕ β)).traceDepthSum = 0 := by
   simp [traceDepthSum]
 
-@[simp] theorem traceDepthSum_node_inl (a : α) (F : Multiset (Nonplanar (α ⊕ β))) :
-    (Nonplanar.node (Sum.inl a) F).traceDepthSum
+@[simp] theorem traceDepthSum_node_inl (a : α) (F : Multiset (UnorderedTree (α ⊕ β))) :
+    (UnorderedTree.node (Sum.inl a) F).traceDepthSum
       = (F.map (fun c => c.traceDepthSum + c.traceLeafCount)).sum :=
   leafDepthSumP_node _ _ F
 
-theorem traceLeafCount_lt_numNodes_of_rootInl (t : Nonplanar (α ⊕ β)) (x : α)
+theorem traceLeafCount_lt_numNodes_of_rootInl (t : UnorderedTree (α ⊕ β)) (x : α)
     (h : t.rootValue = Sum.inl x) : t.traceLeafCount < t.numNodes :=
   leafCountP_lt_numNodes_of_not_root _ t (by rw [h]; simp)
 
-theorem traceLeafCount_le_traceDepthSum_of_rootInl (t : Nonplanar (α ⊕ β)) (x : α)
+theorem traceLeafCount_le_traceDepthSum_of_rootInl (t : UnorderedTree (α ⊕ β)) (x : α)
     (h : t.rootValue = Sum.inl x) : t.traceLeafCount ≤ t.traceDepthSum :=
   leafCountP_le_leafDepthSumP_of_not_root _ t (by rw [h]; simp)
 
-end RoseTree.Nonplanar
+end UnorderedTree
 
 namespace ConnesKreimer
 
@@ -379,60 +379,60 @@ private theorem extractC_numNodes_sum_one (τ : RoseTree (α ⊕ β) → β) :
     | inr b => rw [extractC_inr] at h; exact absurd h (by simp)
 
 
-/-! ### Nonplanar descent -/
+/-! ### UnorderedTree descent -/
 
 variable {α β : Type*}
 
 /-- **Trace-leaf conservation** for the nonplanar Δ^c cuts: each contraction
     adds exactly one `Sum.inr` leaf to the trunk (MCB Lemma 1.6.3). -/
-theorem cutSummandsCN_traceLeafCount (τ : Nonplanar (α ⊕ β) → β)
-    (T : Nonplanar (α ⊕ β)) :
+theorem cutSummandsCN_traceLeafCount (τ : UnorderedTree (α ⊕ β) → β)
+    (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T,
-      (p.1.map Nonplanar.traceLeafCount).sum + p.2.traceLeafCount =
+      (p.1.map UnorderedTree.traceLeafCount).sum + p.2.traceLeafCount =
         T.traceLeafCount + Multiset.card p.1 := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = Nonplanar.mk T₀ :=
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
     ⟨T.out, (Quotient.out_eq T).symm⟩
   intro p hp
   rw [cutSummandsCN_mk, ConnesKreimer.cutSummandsCP_def] at hp
   obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
   have hcons := ConnesKreimer.cutSummandsG_traceLeafCount _
-    (ConnesKreimer.extractC_traceLeafCount_sum_one (τ ∘ Nonplanar.mk)) T₀ q hq
-  show ((q.1.map Nonplanar.mk).map Nonplanar.traceLeafCount).sum +
-      (Nonplanar.mk q.2).traceLeafCount =
-    (Nonplanar.mk T₀).traceLeafCount + Multiset.card (q.1.map Nonplanar.mk)
-  rw [Nonplanar.traceLeafCount_mk, Nonplanar.traceLeafCount_mk, Multiset.card_map,
+    (ConnesKreimer.extractC_traceLeafCount_sum_one (τ ∘ UnorderedTree.mk)) T₀ q hq
+  show ((q.1.map UnorderedTree.mk).map UnorderedTree.traceLeafCount).sum +
+      (UnorderedTree.mk q.2).traceLeafCount =
+    (UnorderedTree.mk T₀).traceLeafCount + Multiset.card (q.1.map UnorderedTree.mk)
+  rw [UnorderedTree.traceLeafCount_mk, UnorderedTree.traceLeafCount_mk, Multiset.card_map,
       Multiset.map_map,
-      show q.1.map (Nonplanar.traceLeafCount ∘ Nonplanar.mk) =
+      show q.1.map (UnorderedTree.traceLeafCount ∘ UnorderedTree.mk) =
           q.1.map RoseTree.traceLeafCount from
-        Multiset.map_congr rfl (fun x _ => Nonplanar.traceLeafCount_mk x)]
+        Multiset.map_congr rfl (fun x _ => UnorderedTree.traceLeafCount_mk x)]
   exact hcons
 
 /-- **Weight (vertex) conservation** for the nonplanar Δ^c cuts: crown
     vertices plus trunk vertices recover the tree vertices plus one
     replacement trace leaf per cut (MCB Lemma 1.6.3). -/
-theorem cutSummandsCN_numNodes (τ : Nonplanar (α ⊕ β) → β)
-    (T : Nonplanar (α ⊕ β)) :
+theorem cutSummandsCN_numNodes (τ : UnorderedTree (α ⊕ β) → β)
+    (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T,
-      (p.1.map Nonplanar.numNodes).sum + p.2.numNodes =
+      (p.1.map UnorderedTree.numNodes).sum + p.2.numNodes =
         T.numNodes + Multiset.card p.1 := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = Nonplanar.mk T₀ :=
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
     ⟨T.out, (Quotient.out_eq T).symm⟩
   intro p hp
   rw [cutSummandsCN_mk, ConnesKreimer.cutSummandsCP_def] at hp
   obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
   have hcons := ConnesKreimer.cutSummandsG_numNodes _
-    (ConnesKreimer.extractC_numNodes_sum_one (τ ∘ Nonplanar.mk)) T₀ q hq
-  show ((q.1.map Nonplanar.mk).map Nonplanar.numNodes).sum +
-      (Nonplanar.mk q.2).numNodes =
-    (Nonplanar.mk T₀).numNodes + Multiset.card (q.1.map Nonplanar.mk)
-  rw [Nonplanar.numNodes_mk, Nonplanar.numNodes_mk, Multiset.card_map, Multiset.map_map,
-      show q.1.map (Nonplanar.numNodes ∘ Nonplanar.mk) = q.1.map RoseTree.numNodes from
-        Multiset.map_congr rfl (fun x _ => Nonplanar.numNodes_mk x)]
+    (ConnesKreimer.extractC_numNodes_sum_one (τ ∘ UnorderedTree.mk)) T₀ q hq
+  show ((q.1.map UnorderedTree.mk).map UnorderedTree.numNodes).sum +
+      (UnorderedTree.mk q.2).numNodes =
+    (UnorderedTree.mk T₀).numNodes + Multiset.card (q.1.map UnorderedTree.mk)
+  rw [UnorderedTree.numNodes_mk, UnorderedTree.numNodes_mk, Multiset.card_map, Multiset.map_map,
+      show q.1.map (UnorderedTree.numNodes ∘ UnorderedTree.mk) = q.1.map RoseTree.numNodes from
+        Multiset.map_congr rfl (fun x _ => UnorderedTree.numNodes_mk x)]
   exact hcons
 
 /-- The **number of contractions** in a Δ^c cut summand: one per extracted
     crown component (MCB; `numContractions` in the legacy `AdmissibleCut`). -/
-def Cut.numContractions (p : Multiset (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) : ℕ :=
+def Cut.numContractions (p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) : ℕ :=
   Multiset.card p.1
 
 /-- The **Minimal-Search depth** of a Δ^c cut summand (MCB §1.5.2): the total
@@ -443,7 +443,7 @@ def Cut.numContractions (p : Multiset (Nonplanar (α ⊕ β)) × Nonplanar (α �
     same value and cancels it (cost 0); Sideward Merge incurs it uncancelled
     (cost > 0, `Cut.depthC_pos`). Depends only on the trunk `p.2`, like
     `Cut.numContractions` depends only on the crown. -/
-def Cut.depthC (p : Multiset (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) : ℕ :=
+def Cut.depthC (p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) : ℕ :=
   p.2.traceDepthSum
 
 /-- **Lexical (non-trace) vertex conservation**: combining weight and
@@ -451,44 +451,44 @@ def Cut.depthC (p : Multiset (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) :
     from the lexical count exactly when the vertex it replaced is removed,
     so non-trace vertices are conserved with no correction term. Stated
     additively to avoid truncated ℕ subtraction. -/
-theorem cutSummandsCN_lexical_conservation (τ : Nonplanar (α ⊕ β) → β)
-    (T : Nonplanar (α ⊕ β)) :
+theorem cutSummandsCN_lexical_conservation (τ : UnorderedTree (α ⊕ β) → β)
+    (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T,
-      (p.1.map Nonplanar.traceLeafCount).sum + p.2.traceLeafCount + T.numNodes =
-        (p.1.map Nonplanar.numNodes).sum + p.2.numNodes + T.traceLeafCount := by
+      (p.1.map UnorderedTree.traceLeafCount).sum + p.2.traceLeafCount + T.numNodes =
+        (p.1.map UnorderedTree.numNodes).sum + p.2.numNodes + T.traceLeafCount := by
   intro p hp
   have hw := cutSummandsCN_numNodes τ T p hp
   have ht := cutSummandsCN_traceLeafCount τ T p hp
   omega
 
-/-- **Crown trace leaves bounded by the source's**, descended to `Nonplanar`:
+/-- **Crown trace leaves bounded by the source's**, descended to `UnorderedTree`:
     the extracted crown forest of a Δ^c cut has no more trace markers than `T`.
     (Each crown component is a subtree of `T`.) -/
-theorem cutSummandsCN_crown_traceLeafCount_le (τ : Nonplanar (α ⊕ β) → β)
-    (T : Nonplanar (α ⊕ β)) :
+theorem cutSummandsCN_crown_traceLeafCount_le (τ : UnorderedTree (α ⊕ β) → β)
+    (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T,
-      (p.1.map Nonplanar.traceLeafCount).sum ≤ T.traceLeafCount := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = Nonplanar.mk T₀ :=
+      (p.1.map UnorderedTree.traceLeafCount).sum ≤ T.traceLeafCount := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
     ⟨T.out, (Quotient.out_eq T).symm⟩
   intro p hp
   rw [cutSummandsCN_mk, ConnesKreimer.cutSummandsCP_def] at hp
   obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
   have hle := ConnesKreimer.cutSummandsG_crown_traceLeafCount_le
-    (ConnesKreimer.extractC (τ ∘ Nonplanar.mk)) T₀ q hq
-  show ((q.1.map Nonplanar.mk).map Nonplanar.traceLeafCount).sum ≤
-    (Nonplanar.mk T₀).traceLeafCount
-  rw [Nonplanar.traceLeafCount_mk, Multiset.map_map,
-      show q.1.map (Nonplanar.traceLeafCount ∘ Nonplanar.mk) =
+    (ConnesKreimer.extractC (τ ∘ UnorderedTree.mk)) T₀ q hq
+  show ((q.1.map UnorderedTree.mk).map UnorderedTree.traceLeafCount).sum ≤
+    (UnorderedTree.mk T₀).traceLeafCount
+  rw [UnorderedTree.traceLeafCount_mk, Multiset.map_map,
+      show q.1.map (UnorderedTree.traceLeafCount ∘ UnorderedTree.mk) =
           q.1.map RoseTree.traceLeafCount from
-        Multiset.map_congr rfl (fun x _ => Nonplanar.traceLeafCount_mk x)]
+        Multiset.map_congr rfl (fun x _ => UnorderedTree.traceLeafCount_mk x)]
   exact hle
 
 /-- **Each Δ^c contraction leaves ≥ 1 trace marker in the trunk** (MCB Lemma
     1.6.3 corollary): the trunk's trace count is at least the number of cuts.
     From trace-leaf conservation (`Σtrace(crown) + trace(trunk) = trace(T) + #cuts`)
     and the crown bound (`Σtrace(crown) ≤ trace(T)`). -/
-theorem cutSummandsCN_trunk_traceLeafCount_ge_card (τ : Nonplanar (α ⊕ β) → β)
-    (T : Nonplanar (α ⊕ β)) :
+theorem cutSummandsCN_trunk_traceLeafCount_ge_card (τ : UnorderedTree (α ⊕ β) → β)
+    (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T, Multiset.card p.1 ≤ p.2.traceLeafCount := by
   intro p hp
   have hcons := cutSummandsCN_traceLeafCount τ T p hp
@@ -555,26 +555,26 @@ theorem extractC_ne_none_imp_inl (τ : RoseTree (α ⊕ β) → β) (t : RoseTre
 
 /-- Crown components of a Δ^c cut are lexical-rooted, hence have strictly
     more vertices than trace leaves. -/
-theorem cutSummandsCN_crown_traceLeafCount_lt_numNodes (τ : Nonplanar (α ⊕ β) → β)
-    (T : Nonplanar (α ⊕ β)) :
+theorem cutSummandsCN_crown_traceLeafCount_lt_numNodes (τ : UnorderedTree (α ⊕ β) → β)
+    (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T, ∀ Tv ∈ p.1, Tv.traceLeafCount < Tv.numNodes := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = Nonplanar.mk T₀ :=
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
     ⟨T.out, (Quotient.out_eq T).symm⟩
   intro p hp Tv hTv
   rw [cutSummandsCN_mk, ConnesKreimer.cutSummandsCP_def] at hp
   obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-  change Tv ∈ q.1.map Nonplanar.mk at hTv
+  change Tv ∈ q.1.map UnorderedTree.mk at hTv
   obtain ⟨Tv₀, hTv₀, rfl⟩ := Multiset.mem_map.mp hTv
   have hne := ConnesKreimer.cutSummandsG_crown_isSome _ T₀ q hq Tv₀ hTv₀
-  obtain ⟨a, cs, rfl⟩ := ConnesKreimer.extractC_ne_none_imp_inl (τ ∘ Nonplanar.mk) Tv₀ hne
-  rw [Nonplanar.traceLeafCount_mk, Nonplanar.numNodes_mk]
+  obtain ⟨a, cs, rfl⟩ := ConnesKreimer.extractC_ne_none_imp_inl (τ ∘ UnorderedTree.mk) Tv₀ hne
+  rw [UnorderedTree.traceLeafCount_mk, UnorderedTree.numNodes_mk]
   exact RoseTree.traceLeafCount_lt_numNodes_of_inl a cs
 
 /-- A Δ^c cut never touches the root: the trunk keeps the tree's root label. -/
-theorem cutSummandsCN_trunk_rootValue (τ : Nonplanar (α ⊕ β) → β)
-    (T : Nonplanar (α ⊕ β)) :
+theorem cutSummandsCN_trunk_rootValue (τ : UnorderedTree (α ⊕ β) → β)
+    (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T, p.2.rootValue = T.rootValue := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = Nonplanar.mk T₀ :=
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
     ⟨T.out, (Quotient.out_eq T).symm⟩
   intro p hp
   rw [cutSummandsCN_mk, ConnesKreimer.cutSummandsCP_def] at hp
@@ -583,18 +583,18 @@ theorem cutSummandsCN_trunk_rootValue (τ : Nonplanar (α ⊕ β) → β)
   | node a cs =>
     rw [ConnesKreimer.cutSummandsG_node] at hq
     obtain ⟨q', hq', rfl⟩ := Multiset.mem_map.mp hq
-    show (Nonplanar.mk (RoseTree.node a q'.2)).rootValue =
-      (Nonplanar.mk (RoseTree.node a cs)).rootValue
-    rw [Nonplanar.rootValue_mk, Nonplanar.rootValue_mk, RoseTree.value_node,
+    show (UnorderedTree.mk (RoseTree.node a q'.2)).rootValue =
+      (UnorderedTree.mk (RoseTree.node a cs)).rootValue
+    rw [UnorderedTree.rootValue_mk, UnorderedTree.rootValue_mk, RoseTree.value_node,
         RoseTree.value_node]
 
 /-! ### Minimal-Search depth of a proper cut -/
 
 /-- A proper Δ^c cut of a lexical-rooted tree has trunk trace-depth at least one: the trunk keeps
     the lexical root, so each of its fresh trace markers sits at depth at least one. -/
-theorem Cut.depthC_pos (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β)) (a₀ : α)
+theorem Cut.depthC_pos (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree (α ⊕ β)) (a₀ : α)
     (hT : T.rootValue = Sum.inl a₀)
-    (p : Multiset (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
+    (p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
     (hproper : p.1 ≠ 0) :
     1 ≤ Cut.depthC p := by
   have htrunk_root : p.2.rootValue = Sum.inl a₀ :=
@@ -602,7 +602,7 @@ theorem Cut.depthC_pos (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α �
   have h1 : Multiset.card p.1 ≤ p.2.traceLeafCount :=
     cutSummandsCN_trunk_traceLeafCount_ge_card τ T p hp
   have h2 : p.2.traceLeafCount ≤ p.2.traceDepthSum :=
-    Nonplanar.traceLeafCount_le_traceDepthSum_of_rootInl p.2 a₀ htrunk_root
+    UnorderedTree.traceLeafCount_le_traceDepthSum_of_rootInl p.2 a₀ htrunk_root
   have h3 : 1 ≤ Multiset.card p.1 := by
     rw [Nat.one_le_iff_ne_zero, Ne, Multiset.card_eq_zero]; exact hproper
   show 1 ≤ p.2.traceDepthSum
@@ -690,27 +690,27 @@ theorem augActionP_numNodes :
 end
 
 /-- Vertex conservation for the nonplanar deletion cuts. -/
-theorem cutSummandsN_numNodes (T : Nonplanar α) :
+theorem cutSummandsN_numNodes (T : UnorderedTree α) :
     ∀ p ∈ cutSummandsN T,
-      (p.1.map Nonplanar.numNodes).sum + p.2.numNodes = T.numNodes := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = Nonplanar.mk T₀ :=
+      (p.1.map UnorderedTree.numNodes).sum + p.2.numNodes = T.numNodes := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = UnorderedTree.mk T₀ :=
     ⟨T.out, (Quotient.out_eq T).symm⟩
   intro p hp
   rw [cutSummandsN_mk] at hp
   obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
   have hcons := cutSummandsP_numNodes T₀ q hq
-  show ((q.1.map Nonplanar.mk).map Nonplanar.numNodes).sum + (Nonplanar.mk q.2).numNodes
-    = (Nonplanar.mk T₀).numNodes
-  rw [Nonplanar.numNodes_mk, Nonplanar.numNodes_mk, Multiset.map_map,
-      show q.1.map (Nonplanar.numNodes ∘ Nonplanar.mk) = q.1.map RoseTree.numNodes from
-        Multiset.map_congr rfl (fun x _ => Nonplanar.numNodes_mk x)]
+  show ((q.1.map UnorderedTree.mk).map UnorderedTree.numNodes).sum + (UnorderedTree.mk q.2).numNodes
+    = (UnorderedTree.mk T₀).numNodes
+  rw [UnorderedTree.numNodes_mk, UnorderedTree.numNodes_mk, Multiset.map_map,
+      show q.1.map (UnorderedTree.numNodes ∘ UnorderedTree.mk) = q.1.map RoseTree.numNodes from
+        Multiset.map_congr rfl (fun x _ => UnorderedTree.numNodes_mk x)]
   exact hcons
 
 /-- No deletion cut extracts the whole tree as its crown; the full-tree extraction is the
     separate primitive term of the coproduct. -/
-theorem cutSummandsN_crown_ne_singleton (T : Nonplanar α)
-    (p : Multiset (Nonplanar α) × Nonplanar α) (hp : p ∈ cutSummandsN T) :
-    p.1 ≠ ({T} : Multiset (Nonplanar α)) := by
+theorem cutSummandsN_crown_ne_singleton (T : UnorderedTree α)
+    (p : Multiset (UnorderedTree α) × UnorderedTree α) (hp : p ∈ cutSummandsN T) :
+    p.1 ≠ ({T} : Multiset (UnorderedTree α)) := by
   intro hcrown
   have hw := cutSummandsN_numNodes T p hp
   rw [hcrown] at hw
@@ -719,33 +719,33 @@ theorem cutSummandsN_crown_ne_singleton (T : Nonplanar α)
   omega
 
 /-- No deletion cut of `T` has `T` itself among its crown components. -/
-theorem cutSummandsN_self_not_mem_crown (T : Nonplanar α)
-    (p : Multiset (Nonplanar α) × Nonplanar α) (hp : p ∈ cutSummandsN T) :
+theorem cutSummandsN_self_not_mem_crown (T : UnorderedTree α)
+    (p : Multiset (UnorderedTree α) × UnorderedTree α) (hp : p ∈ cutSummandsN T) :
     T ∉ p.1 := by
   intro hT_mem
   have hw := cutSummandsN_numNodes T p hp
   have hp2 := p.2.numNodes_pos
-  have h_le : T.numNodes ≤ (p.1.map Nonplanar.numNodes).sum :=
+  have h_le : T.numNodes ≤ (p.1.map UnorderedTree.numNodes).sum :=
     Multiset.le_sum_of_mem (Multiset.mem_map_of_mem _ hT_mem)
   omega
 
 /-- Deleting one subtree `mover` and rebinarizing the remainder removes two edges: the subtree's
     own edge and the contracted parent. `numUnary p.2 = 1` says the cut was a single edge at a
     binary node. -/
-theorem cutSummandsN_numEdges_single_deletion (T : Nonplanar α)
-    (p : Multiset (Nonplanar α) × Nonplanar α) (hp : p ∈ cutSummandsN T)
-    (mover : Nonplanar α) (hcard : p.1 = {mover}) (huc : p.2.numUnary = 1) :
-    T.numEdges = mover.numEdges + (Nonplanar.contractUnary p.2).numEdges + 2 := by
+theorem cutSummandsN_numEdges_single_deletion (T : UnorderedTree α)
+    (p : Multiset (UnorderedTree α) × UnorderedTree α) (hp : p ∈ cutSummandsN T)
+    (mover : UnorderedTree α) (hcard : p.1 = {mover}) (huc : p.2.numUnary = 1) :
+    T.numEdges = mover.numEdges + (UnorderedTree.contractUnary p.2).numEdges + 2 := by
   have hw := cutSummandsN_numNodes T p hp
-  have hcu := Nonplanar.numNodes_contractUnary_add_numUnary p.2
+  have hcu := UnorderedTree.numNodes_contractUnary_add_numUnary p.2
   have hmT := T.numNodes_pos
   have hmm := mover.numNodes_pos
   have hmp := p.2.numNodes_pos
-  have hmc := (Nonplanar.contractUnary p.2).numNodes_pos
+  have hmc := (UnorderedTree.contractUnary p.2).numNodes_pos
   rw [hcard] at hw
   simp only [Multiset.map_singleton, Multiset.sum_singleton] at hw
   rw [huc] at hcu
-  simp only [Nonplanar.numEdges]
+  simp only [UnorderedTree.numEdges]
   omega
 
 end ConnesKreimer

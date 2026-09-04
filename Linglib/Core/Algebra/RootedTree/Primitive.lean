@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
 import Linglib.Core.RingTheory.Bialgebra.Primitive
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
 # Dual-primitive functionals on the Connes-Kreimer bialgebra
@@ -42,7 +42,7 @@ namespace ConnesKreimer
 open scoped TensorProduct
 open Coalgebra Bialgebra WithConv
 
-variable {R : Type*} [CommRing R] {α : Type*} (T T₁ T₂ : Nonplanar α)
+variable {R : Type*} [CommRing R] {α : Type*} (T T₁ T₂ : UnorderedTree α)
 
 /-! ### Single-tree deltas are dual primitives -/
 
@@ -54,21 +54,21 @@ variable [CharZero R] [NoZeroDivisors R]
 bialgebraic content of [marcolli-chomsky-berwick-2025]'s observation (book
 p. 79) that primitives in the dual are exactly the single-tree deltas. -/
 theorem lcoeff_singleton_isDualPrimitive :
-    IsDualPrimitive R (lcoeff R ({T} : Forest (Nonplanar α))) := by
+    IsDualPrimitive R (lcoeff R ({T} : Forest (UnorderedTree α))) := by
   classical
   refine ⟨by rw [← of'_zero, lcoeff_apply, coeff_of',
     if_neg (Multiset.zero_ne_singleton T)], ?_⟩
-  have key : (LinearMap.mul R (ConnesKreimer R (Nonplanar α))).compr₂ (lcoeff R {T}) =
-      (lcoeff R ({T} : Forest (Nonplanar α))).smulRight CoalgebraStruct.counit +
+  have key : (LinearMap.mul R (ConnesKreimer R (UnorderedTree α))).compr₂ (lcoeff R {T}) =
+      (lcoeff R ({T} : Forest (UnorderedTree α))).smulRight CoalgebraStruct.counit +
         (CoalgebraStruct.counit).smulRight (lcoeff R {T}) := by
     refine lhom_ext' fun F => lhom_ext' fun G => ?_
     simp only [LinearMap.compr₂_apply, LinearMap.mul_apply', LinearMap.add_apply,
       LinearMap.smulRight_apply, LinearMap.smul_apply, smul_eq_mul, coalgebra_counit_apply]
     rw [← of'_add]
     simp only [lcoeff_apply, coeff_of', counit_of', ite_zero_mul_ite_zero, one_mul]
-    have hiff : F + G = ({T} : Forest (Nonplanar α)) ↔
-        (F = ({T} : Forest (Nonplanar α)) ∧ G.card = 0) ∨
-          (F.card = 0 ∧ G = ({T} : Forest (Nonplanar α))) := by
+    have hiff : F + G = ({T} : Forest (UnorderedTree α)) ↔
+        (F = ({T} : Forest (UnorderedTree α)) ∧ G.card = 0) ∨
+          (F.card = 0 ∧ G = ({T} : Forest (UnorderedTree α))) := by
       constructor
       · intro hFG
         have hcard : F.card + G.card = 1 := by
@@ -80,8 +80,8 @@ theorem lcoeff_singleton_isDualPrimitive :
         · rw [Multiset.card_eq_zero.mp hG, add_zero]
         · rw [Multiset.card_eq_zero.mp hF, zero_add]
     simp only [hiff]
-    by_cases h₁ : F = ({T} : Forest (Nonplanar α)) ∧ G.card = 0 <;>
-      by_cases h₂ : F.card = 0 ∧ G = ({T} : Forest (Nonplanar α))
+    by_cases h₁ : F = ({T} : Forest (UnorderedTree α)) ∧ G.card = 0 <;>
+      by_cases h₂ : F.card = 0 ∧ G = ({T} : Forest (UnorderedTree α))
     · simp_all
     · simp_all
     · simp_all
@@ -93,8 +93,8 @@ theorem lcoeff_singleton_isDualPrimitive :
 deltas lie in the Lie subalgebra of dual primitives (so their brackets do too,
 by `LieSubalgebra.lie_mem`). -/
 theorem toConv_lcoeff_singleton_mem_dualPrimitives :
-    toConv (lcoeff R ({T} : Forest (Nonplanar α))) ∈
-      dualPrimitives R (ConnesKreimer R (Nonplanar α)) :=
+    toConv (lcoeff R ({T} : Forest (UnorderedTree α))) ∈
+      dualPrimitives R (ConnesKreimer R (UnorderedTree α)) :=
   lcoeff_singleton_isDualPrimitive T
 
 /-! ### The explicit count formula -/
@@ -103,7 +103,7 @@ theorem toConv_lcoeff_singleton_mem_dualPrimitives :
 single-tree basis vector counts the Δ^ρ cut summands of `T` extracting `{T₁}`
 and leaving `T₂`. -/
 theorem convMul_lcoeff_singleton_apply_ofTree :
-    (toConv (lcoeff R {T₁}) * toConv (lcoeff R ({T₂} : Forest (Nonplanar α))))
+    (toConv (lcoeff R {T₁}) * toConv (lcoeff R ({T₂} : Forest (UnorderedTree α))))
         (ofTree T) =
       countSingleCutsRho T T₁ T₂ := by
   classical
@@ -118,7 +118,7 @@ theorem convMul_lcoeff_singleton_apply_ofTree :
   | empty => simp
   | cons q s ih =>
     rw [Multiset.map_cons, Multiset.sum_cons, Multiset.filter_cons, ih]
-    by_cases h : q.1 = ({T₁} : Forest (Nonplanar α)) ∧ q.2 = T₂ <;> simp [h, add_comm]
+    by_cases h : q.1 = ({T₁} : Forest (UnorderedTree α)) ∧ q.2 = T₂ <;> simp [h, add_comm]
 
 /-- The commutator of two single-tree delta functionals, evaluated at a tree
 `T`, is the antisymmetrized count of single Δ^ρ cuts of `T` with cut forest
@@ -127,7 +127,7 @@ theorem convMul_lcoeff_singleton_apply_ofTree :
 `c^T_{T₁,T₂} − c^T_{T₂,T₁}` is stated for the trace-leaf coproduct `Δ^c`,
 which agrees under the trace-erasure projection (`eraseTracesAlgHom`). -/
 theorem lie_lcoeff_singleton_apply_ofTree :
-    ⁅toConv (lcoeff R {T₁}), toConv (lcoeff R ({T₂} : Forest (Nonplanar α)))⁆
+    ⁅toConv (lcoeff R {T₁}), toConv (lcoeff R ({T₂} : Forest (UnorderedTree α)))⁆
         (ofTree T) =
       (countSingleCutsRho T T₁ T₂ : R) - countSingleCutsRho T T₂ T₁ := by
   simp only [Ring.lie_def, ofConv_sub, LinearMap.sub_apply,

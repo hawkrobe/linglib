@@ -36,7 +36,7 @@ lexical-leaf value and a trace value, and inherit `Perm`-invariance from
 
 namespace Minimalist.SyntacticObject
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 variable {β : Type*}
 
@@ -75,20 +75,20 @@ theorem mergeAlgebra_perm [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : 
 
 /-- The induced algebra on the nonplanar carrier: the catamorphism descends by
     `mergeAlgebra_perm`. -/
-def liftN [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) : Nonplanar Vertex → β :=
-  Nonplanar.lift (RoseTree.fold (mergeAlgebra ℓ τ))
+def liftN [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) : UnorderedTree Vertex → β :=
+  UnorderedTree.lift (RoseTree.fold (mergeAlgebra ℓ τ))
     fun _ _ h => RoseTree.fold_perm (fun a _ _ h' => mergeAlgebra_perm ℓ τ a h') h
 
 @[simp] theorem liftN_mk [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
     (p : RoseTree Vertex) :
-    liftN ℓ τ (Nonplanar.mk p) = RoseTree.fold (mergeAlgebra ℓ τ) p := rfl
+    liftN ℓ τ (UnorderedTree.mk p) = RoseTree.fold (mergeAlgebra ℓ τ) p := rfl
 
 /-- The nonplanar magma law: Merge multiplies values. -/
 theorem liftN_merge [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
-    (a b : Nonplanar Vertex) :
-    liftN ℓ τ (Nonplanar.node (Sum.inr none) {a, b}) = liftN ℓ τ a * liftN ℓ τ b := by
-  refine Nonplanar.inductionOn₂ a b fun pa pb => ?_
-  rw [Nonplanar.node_pair_mk]
+    (a b : UnorderedTree Vertex) :
+    liftN ℓ τ (UnorderedTree.node (Sum.inr none) {a, b}) = liftN ℓ τ a * liftN ℓ τ b := by
+  refine UnorderedTree.inductionOn₂ a b fun pa pb => ?_
+  rw [UnorderedTree.node_pair_mk]
   exact rfl
 
 /-- The induced map on syntactic objects, unbundled — computable, `decide`-friendly. -/

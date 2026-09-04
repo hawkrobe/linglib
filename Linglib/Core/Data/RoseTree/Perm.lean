@@ -11,7 +11,7 @@ import Linglib.Core.Data.Multiset.Rel
 
 `RoseTree.Perm t s` says the trees agree up to reordering the children of every
 vertex — the n-ary tree analogue of `List.Perm`, and the identity criterion of the
-unordered quotient (`Nonplanar`, built downstream). Mirroring `List.Perm`,
+unordered quotient (`UnorderedTree`, built downstream). Mirroring `List.Perm`,
 transitivity is a constructor while reflexivity and symmetry are theorems, and the
 list-level companion `PermList` (`List.Perm` with elements compared by `Perm`
 instead of `Eq`) is mutually inductive with it, in the `fold`/`foldList` pattern.

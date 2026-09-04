@@ -50,7 +50,7 @@ transformations, as `ψt` does, the polar part is the sum over the divergent one
 
 namespace Minimalist.MinimalYield
 
-open RoseTree RoseTree.Nonplanar ConnesKreimer LaurentSeries
+open RoseTree UnorderedTree ConnesKreimer LaurentSeries
 
 variable {α β R : Type*} [CommRing R]
 
@@ -58,7 +58,7 @@ variable {α β R : Type*} [CommRing R]
 
 section Gradings
 
-variable (F F' : Forest (Nonplanar (α ⊕ β)))
+variable (F F' : Forest (UnorderedTree (α ⊕ β)))
 
 /-- `δb₀ F F' = b₀ F − b₀ F'`, nonnegative iff `F → F'` does not diverge. -/
 def δb₀ : ℤ := (Multiset.card F : ℤ) - Multiset.card F'
@@ -92,15 +92,15 @@ end Gradings
 /-! ### The character `ϕt` -/
 
 /-- The value of `ϕt` on a tree: `t^{α(T)}`. -/
-noncomputable def gradingMonomialTree (T : Nonplanar α) : LaurentSeries R :=
+noncomputable def gradingMonomialTree (T : UnorderedTree α) : LaurentSeries R :=
   HahnSeries.single (T.numEdges : ℤ) 1
 
 /-- `ϕt` on forests, multiplicative over disjoint union. -/
 noncomputable def gradingMonoidHom :
-    Multiplicative (Forest (Nonplanar α)) →* LaurentSeries R where
+    Multiplicative (Forest (UnorderedTree α)) →* LaurentSeries R where
   toFun F := (F.toAdd.map (gradingMonomialTree (R := R))).prod
   map_one' := by
-    show ((0 : Forest (Nonplanar α)).map _).prod = 1
+    show ((0 : Forest (UnorderedTree α)).map _).prod = 1
     rw [Multiset.map_zero, Multiset.prod_zero]
   map_mul' F G := by
     show ((F.toAdd + G.toAdd).map (gradingMonomialTree (R := R))).prod =
@@ -108,16 +108,16 @@ noncomputable def gradingMonoidHom :
     rw [Multiset.map_add, Multiset.prod_add]
 
 /-- The character `ϕt : H →ₐ[R] LaurentSeries R`, `ϕt(F) = t^{α(F)}`. -/
-noncomputable def gradingChar : ConnesKreimer R (Nonplanar α) →ₐ[R] LaurentSeries R :=
+noncomputable def gradingChar : ConnesKreimer R (UnorderedTree α) →ₐ[R] LaurentSeries R :=
   ConnesKreimer.lift gradingMonoidHom
 
-@[simp] theorem gradingChar_apply_of' (F : Forest (Nonplanar α)) :
+@[simp] theorem gradingChar_apply_of' (F : Forest (UnorderedTree α)) :
     gradingChar (R := R) (of' F) = (F.map (gradingMonomialTree (R := R))).prod := by
   rw [gradingChar, ConnesKreimer.lift_of']
   rfl
 
 /-- `ϕt(F) = t^{α(F)}`, since `α` is additive over forests. -/
-theorem prod_gradingMonomialTree (F : Forest (Nonplanar α)) :
+theorem prod_gradingMonomialTree (F : Forest (UnorderedTree α)) :
     (F.map (gradingMonomialTree (R := R))).prod = HahnSeries.single (Forest.numEdges F : ℤ) 1 := by
   induction F using Multiset.induction with
   | empty => rw [Multiset.map_zero, Multiset.prod_zero, Forest.numEdges_zero]; rfl
@@ -126,11 +126,11 @@ theorem prod_gradingMonomialTree (F : Forest (Nonplanar α)) :
       HahnSeries.single_mul_single, one_mul, Forest.numEdges_cons]
     push_cast; rfl
 
-theorem gradingChar_apply_of'_eq (F : Forest (Nonplanar α)) :
+theorem gradingChar_apply_of'_eq (F : Forest (UnorderedTree α)) :
     gradingChar (R := R) (of' F) = HahnSeries.single (Forest.numEdges F : ℤ) 1 := by
   rw [gradingChar_apply_of', prod_gradingMonomialTree]
 
-@[simp] theorem gradingChar_apply_ofTree (T : Nonplanar α) :
+@[simp] theorem gradingChar_apply_ofTree (T : UnorderedTree α) :
     gradingChar (R := R) (ofTree T) = HahnSeries.single (T.numEdges : ℤ) 1 := by
   unfold ofTree
   rw [gradingChar_apply_of', Multiset.map_singleton, Multiset.prod_singleton]
@@ -139,12 +139,12 @@ theorem gradingChar_apply_of'_eq (F : Forest (Nonplanar α)) :
 /-! ### `ϕt` is nonpolar -/
 
 /-- `ϕt` is nonpolar on every forest, since `α(F) ≥ 0`. -/
-theorem polarHahn_gradingChar_of' (F : Forest (Nonplanar α)) :
+theorem polarHahn_gradingChar_of' (F : Forest (UnorderedTree α)) :
     polarHahn (gradingChar (R := R) (of' F)) = 0 := by
   rw [gradingChar_apply_of'_eq, polarHahn_single,
     if_neg (by omega : ¬ ((Forest.numEdges F : ℤ) < 0))]
 
-theorem polarHahn_gradingChar_ofTree (T : Nonplanar α) :
+theorem polarHahn_gradingChar_ofTree (T : UnorderedTree α) :
     polarHahn (gradingChar (R := R) (ofTree T)) = 0 := by
   rw [gradingChar_apply_ofTree, polarHahn_single,
     if_neg (by omega : ¬ ((T.numEdges : ℤ) < 0))]
@@ -152,16 +152,16 @@ theorem polarHahn_gradingChar_ofTree (T : Nonplanar α) :
 /-! ### Birkhoff renormalization -/
 
 /-- The Bogolyubov negative part of `ϕt` vanishes on every tree. -/
-theorem birkhoffMinusTree_gradingChar (T : Nonplanar α) :
+theorem birkhoffMinusTree_gradingChar (T : UnorderedTree α) :
     birkhoffMinusTree (gradingChar (R := R)).toLinearMap rotaBaxterPolar T = 0 :=
   birkhoffMinusTree_eq_zero_of_nonpolar gradingChar (fun T => polarHahn_gradingChar_ofTree T) T
 
 /-- The renormalized character `ϕt,+ = birkhoffPlus ϕt`. -/
-noncomputable def renormGradingChar : ConnesKreimer R (Nonplanar α) →ₐ[R] LaurentSeries R :=
+noncomputable def renormGradingChar : ConnesKreimer R (UnorderedTree α) →ₐ[R] LaurentSeries R :=
   birkhoffPlus (gradingChar (R := R)).toLinearMap rotaBaxterPolar
 
 /-- `ϕt,+` coincides with the Bogolyubov preparation of `ϕt` on every tree. -/
-theorem birkhoffPlusTree_gradingChar (T : Nonplanar α) :
+theorem birkhoffPlusTree_gradingChar (T : UnorderedTree α) :
     birkhoffPlusTree (gradingChar (R := R)).toLinearMap rotaBaxterPolar T
       = birkhoffPrepTree (gradingChar (R := R)).toLinearMap rotaBaxterPolar T := by
   rw [birkhoffPlusTree_eq_prep_add_minus, birkhoffMinusTree_gradingChar, add_zero]

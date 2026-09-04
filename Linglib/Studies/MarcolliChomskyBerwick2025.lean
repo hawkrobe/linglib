@@ -20,11 +20,11 @@ holds its concrete examples, kernel-checked against that substrate.
 
 namespace MarcolliChomskyBerwick2025
 
-open RoseTree RoseTree.Nonplanar Minimalist SyntacticObject
+open RoseTree UnorderedTree Minimalist SyntacticObject
 
 /-- A determiner over a noun: `D` selects `N`, so `D` projects. -/
 private def theDog : SyntacticObject :=
-  ⟨Nonplanar.mk (.node (Sum.inr none)
+  ⟨UnorderedTree.mk (.node (Sum.inr none)
     [.node (Sum.inl ⟨.simple .D [.N] (phonForm := "the"), 0⟩) [],
      .node (Sum.inl ⟨.simple .N [] (phonForm := "dog"), 1⟩) []]), by decide⟩
 
@@ -40,7 +40,7 @@ example : theDog.phonYield .final = some ["dog", "the"] := by decide
 /-- Exocentric Merge: two saturated `N`s, neither selecting the other — no head,
     no order ([marcolli-chomsky-berwick-2025] §1.13.2). -/
 private def exoNN : SyntacticObject :=
-  ⟨Nonplanar.mk (.node (Sum.inr none)
+  ⟨UnorderedTree.mk (.node (Sum.inr none)
     [.node (Sum.inl ⟨.simple .N [] (phonForm := "cats"), 0⟩) [],
      .node (Sum.inl ⟨.simple .N [] (phonForm := "dogs"), 1⟩) []]), by decide⟩
 

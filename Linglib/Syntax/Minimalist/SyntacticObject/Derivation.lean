@@ -32,7 +32,7 @@ the movers are read off the steps.
 
 namespace Minimalist
 
-open RoseTree RoseTree.Nonplanar SyntacticObject
+open RoseTree UnorderedTree SyntacticObject
 
 namespace SyntacticObject
 
@@ -60,7 +60,7 @@ noncomputable def deleteAccessible (mover current : SyntacticObject) : Syntactic
 
 @[simp] theorem deleteAccessible_val (mover current : SyntacticObject) :
     (deleteAccessible mover current).val
-      = Nonplanar.replace mover.val mover.headTrace.val current.val := rfl
+      = UnorderedTree.replace mover.val mover.headTrace.val current.val := rfl
 
 /-- Apply a step: External Merge is the node with the item on the given side, Internal Merge the
     node of the remainder and the mover. -/

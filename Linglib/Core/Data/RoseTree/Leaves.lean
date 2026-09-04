@@ -3,12 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.RoseTree.Nonplanar
+import Linglib.Core.Data.UnorderedTree.Basic
 import Mathlib.Algebra.Order.Group.Multiset
 import Mathlib.Algebra.Order.BigOperators.Group.List
 import Mathlib.Algebra.Order.Group.Nat
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
 # Leaf projections of a rose tree
@@ -21,7 +21,7 @@ open RoseTree RoseTree.Nonplanar
 ## Main definitions
 
 * `RoseTree.leavesWithDepth`, `RoseTree.leaves`: the projections, with descents
-  `Nonplanar.leavesWithDepth` and `Nonplanar.leaves`.
+  `UnorderedTree.leavesWithDepth` and `UnorderedTree.leaves`.
 
 ## Main results
 
@@ -131,45 +131,45 @@ theorem leaves_perm {t s : RoseTree α} (h : Perm t s) : t.leaves = s.leaves :=
 
 end RoseTree
 
-/-! ### Descent to `Nonplanar` -/
+/-! ### Descent to `UnorderedTree` -/
 
-namespace RoseTree.Nonplanar
+namespace UnorderedTree
 
 variable {α : Type*} (a : α)
 
 /-- The leaves of a nonplanar tree, each paired with its distance from the root. -/
-def leavesWithDepth : Nonplanar α → Multiset (α × ℕ) :=
-  Nonplanar.lift RoseTree.leavesWithDepth fun _ _ => RoseTree.leavesWithDepth_perm
+def leavesWithDepth : UnorderedTree α → Multiset (α × ℕ) :=
+  UnorderedTree.lift RoseTree.leavesWithDepth fun _ _ => RoseTree.leavesWithDepth_perm
 
 @[simp] theorem leavesWithDepth_mk (t : RoseTree α) :
     (mk t).leavesWithDepth = t.leavesWithDepth := rfl
 
 /-- The multiset of leaf labels of a nonplanar tree. -/
-def leaves (t : Nonplanar α) : Multiset α := t.leavesWithDepth.map Prod.fst
+def leaves (t : UnorderedTree α) : Multiset α := t.leavesWithDepth.map Prod.fst
 
 @[simp] theorem leaves_mk (t : RoseTree α) : (mk t).leaves = t.leaves := rfl
 
 @[simp] theorem leavesWithDepth_leaf :
-    (leaf a : Nonplanar α).leavesWithDepth = {(a, 0)} := rfl
+    (leaf a : UnorderedTree α).leavesWithDepth = {(a, 0)} := rfl
 
-@[simp] theorem leaves_leaf : (leaf a : Nonplanar α).leaves = {a} := rfl
+@[simp] theorem leaves_leaf : (leaf a : UnorderedTree α).leaves = {a} := rfl
 
 /-- The projection has one element per leaf. -/
-theorem card_leavesWithDepth (t : Nonplanar α) :
+theorem card_leavesWithDepth (t : UnorderedTree α) :
     Multiset.card t.leavesWithDepth = t.numLeaves :=
   Quotient.inductionOn t fun p => RoseTree.card_leavesWithDepth p
 
 /-- The number of leaf labels is the number of leaves. -/
-theorem card_leaves (t : Nonplanar α) : Multiset.card t.leaves = t.numLeaves := by
+theorem card_leaves (t : UnorderedTree α) : Multiset.card t.leaves = t.numLeaves := by
   rw [leaves, Multiset.card_map, card_leavesWithDepth]
 
 /-- A leaf is a vertex. -/
-theorem numLeaves_le_numNodes (t : Nonplanar α) : t.numLeaves ≤ t.numNodes :=
+theorem numLeaves_le_numNodes (t : UnorderedTree α) : t.numLeaves ≤ t.numNodes :=
   Quotient.inductionOn t fun p => RoseTree.numLeaves_le_numNodes p
 
 /-- The leaf labels of a branching node are the concatenation of its
-children's: `Nonplanar` counterpart of `RoseTree.leaves_node_cons`. -/
-theorem leaves_node_cons (T : Nonplanar α) (cs : Multiset (Nonplanar α)) :
+children's: `UnorderedTree` counterpart of `RoseTree.leaves_node_cons`. -/
+theorem leaves_node_cons (T : UnorderedTree α) (cs : Multiset (UnorderedTree α)) :
     (node a (T ::ₘ cs)).leaves = T.leaves + (cs.map leaves).sum := by
   refine forest_inductionOn cs fun ps => ?_
   refine Quotient.inductionOn T fun t => ?_
@@ -178,4 +178,4 @@ theorem leaves_node_cons (T : Nonplanar α) (cs : Multiset (Nonplanar α)) :
   rw [node_mk_tree_list, leaves_mk, RoseTree.leaves_node_cons]
   simp [List.map_map, Function.comp_def]
 
-end RoseTree.Nonplanar
+end UnorderedTree

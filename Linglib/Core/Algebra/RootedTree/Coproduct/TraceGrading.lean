@@ -5,14 +5,14 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
 # Edge-count grading of the Δ^c bialgebra
 [marcolli-chomsky-berwick-2025]
 
-The graded subspaces of `ConnesKreimer R (Nonplanar (α ⊕ β))` under the
-edge-count grading (`Forest.edgeCount`, `Core/Data/RoseTree/Nonplanar.lean`),
+The graded subspaces of `ConnesKreimer R (UnorderedTree (α ⊕ β))` under the
+edge-count grading (`Forest.edgeCount`, `Core/Data/RoseTree/UnorderedTree.lean`),
 with the coproduct half of the grading compatibility
 (`comulCAlgHomN_of'_mem_gradedSpan`) — the graded content of Lemma 1.2.10.
 
@@ -45,12 +45,12 @@ product half is edge-count additivity over disjoint union
 machinery is `cutSummandsCN_edgeCount`
 (`Core/Combinatorics/RootedTree/Cut.lean`). -/
 
-/-- **Graded piece V_n**: the subspace of `ConnesKreimer R (Nonplanar X)`
+/-- **Graded piece V_n**: the subspace of `ConnesKreimer R (UnorderedTree X)`
     spanned by forests with exactly `n` edges. -/
 noncomputable def gradedPiece (X : Type*) (n : ℕ) :
-    Submodule R (ConnesKreimer R (Nonplanar X)) :=
+    Submodule R (ConnesKreimer R (UnorderedTree X)) :=
   Submodule.span R
-    {x | ∃ F : Forest (Nonplanar X),
+    {x | ∃ F : Forest (UnorderedTree X),
       Forest.edgeCount F = n ∧ x = ConnesKreimer.of' F}
 
 /-! ### Homogeneous tensor span at fixed total edge degree -/
@@ -59,16 +59,16 @@ noncomputable def gradedPiece (X : Type*) (n : ℕ) :
     `n` — the homogeneous degree-`n` piece of the tensor square through
     which Δ^c factors. -/
 private noncomputable def gradedTensorSpan (n : ℕ) :
-    Submodule R (ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
-      ConnesKreimer R (Nonplanar (α ⊕ β))) :=
-  Submodule.span R {y | ∃ F₁ F₂ : Forest (Nonplanar (α ⊕ β)),
+    Submodule R (ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
+      ConnesKreimer R (UnorderedTree (α ⊕ β))) :=
+  Submodule.span R {y | ∃ F₁ F₂ : Forest (UnorderedTree (α ⊕ β)),
     Forest.edgeCount F₁ + Forest.edgeCount F₂ = n ∧
     y = ConnesKreimer.of' F₁ ⊗ₜ[R] ConnesKreimer.of' F₂}
 
 /-- Multiplicativity of the graded tensor spans: degrees add. -/
 private theorem gradedTensorSpan_mul {m k : ℕ}
-    {u v : ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
-      ConnesKreimer R (Nonplanar (α ⊕ β))}
+    {u v : ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
+      ConnesKreimer R (UnorderedTree (α ⊕ β))}
     (hu : u ∈ gradedTensorSpan (R := R) (α := α) (β := β) m)
     (hv : v ∈ gradedTensorSpan (R := R) (α := α) (β := β) k) :
     u * v ∈ gradedTensorSpan (R := R) (α := α) (β := β) (m + k) := by
@@ -90,15 +90,15 @@ private theorem gradedTensorSpan_mul {m k : ℕ}
 
 /-- Tree-level membership: `Δ^c` of a single tree is homogeneous of
     degree the tree's edge count. -/
-private theorem comulCTreeN_mem (τ : Nonplanar (α ⊕ β) → β)
-    (T : Nonplanar (α ⊕ β)) :
+private theorem comulCTreeN_mem (τ : UnorderedTree (α ⊕ β) → β)
+    (T : UnorderedTree (α ⊕ β)) :
     comulCTreeN (R := R) τ T ∈
       gradedTensorSpan (R := R) (α := α) (β := β) (T.numNodes - 1) := by
   unfold comulCTreeN comulTreeNG
   refine Submodule.add_mem _ ?_ ?_
   · refine Submodule.subset_span ⟨{T}, 0, ?_, ?_⟩
     · rw [Forest.edgeCount_singleton]
-      show T.numNodes - 1 + Forest.edgeCount (0 : Forest (Nonplanar (α ⊕ β))) =
+      show T.numNodes - 1 + Forest.edgeCount (0 : Forest (UnorderedTree (α ⊕ β))) =
         T.numNodes - 1
       show T.numNodes - 1 + 0 = T.numNodes - 1
       omega
@@ -108,15 +108,15 @@ private theorem comulCTreeN_mem (τ : Nonplanar (α ⊕ β) → β)
     intro c hc
     obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hc
     have hcons := cutSummandsCN_edgeCount τ T p hp
-    have hpos := Nonplanar.numNodes_pos p.2
+    have hpos := UnorderedTree.numNodes_pos p.2
     refine Submodule.subset_span ⟨p.1, {p.2}, ?_, rfl⟩
     rw [Forest.edgeCount_singleton]
     omega
 
 /-- Forest-level membership: `Δ^c` of a forest is homogeneous of degree
     its edge count. -/
-private theorem comulCForestN_mem (τ : Nonplanar (α ⊕ β) → β)
-    (F : Forest (Nonplanar (α ⊕ β))) :
+private theorem comulCForestN_mem (τ : UnorderedTree (α ⊕ β) → β)
+    (F : Forest (UnorderedTree (α ⊕ β))) :
     comulCForestN (R := R) τ F ∈
       gradedTensorSpan (R := R) (α := α) (β := β) (Forest.edgeCount F) := by
   induction F using Multiset.induction_on with
@@ -138,10 +138,10 @@ private theorem comulCForestN_mem (τ : Nonplanar (α ⊕ β) → β)
     `comulCN_coassoc`, this gives the lemma's graded bialgebra structure on
     `V^c(𝔉_{SO_0})`. -/
 theorem comulCAlgHomN_of'_mem_gradedSpan
-    (τ : Nonplanar (α ⊕ β) → β) (F : Forest (Nonplanar (α ⊕ β))) :
+    (τ : UnorderedTree (α ⊕ β) → β) (F : Forest (UnorderedTree (α ⊕ β))) :
     comulCAlgHomN (R := R) τ (ConnesKreimer.of' F) ∈
       Submodule.span R {y | ∃ (i j : ℕ) (_hi : i + j = Forest.edgeCount F)
-        (xi yi : ConnesKreimer R (Nonplanar (α ⊕ β))),
+        (xi yi : ConnesKreimer R (UnorderedTree (α ⊕ β))),
         xi ∈ gradedPiece (α ⊕ β) i ∧
         yi ∈ gradedPiece (α ⊕ β) j ∧
         y = xi ⊗ₜ[R] yi} := by

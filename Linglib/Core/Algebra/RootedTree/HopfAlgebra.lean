@@ -4,10 +4,10 @@ import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 import Mathlib.RingTheory.Coalgebra.Convolution
 
-open RoseTree RoseTree.Nonplanar
+open RoseTree UnorderedTree
 
 /-!
-# `HopfAlgebra R (ConnesKreimer R (Nonplanar α))` — Foissy Connes-Kreimer Hopf algebra
+# `HopfAlgebra R (ConnesKreimer R (UnorderedTree α))` — Foissy Connes-Kreimer Hopf algebra
 [marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 Completes Phase A.7 by upgrading the `Bialgebra` instance from
@@ -30,7 +30,7 @@ formula uses negation; the `Bialgebra` instance only needs `CommSemiring`).
 ## Status
 
 `[UPSTREAM]` candidate. Sorry-free. The full `HopfAlgebra R (ConnesKreimer R
-(Nonplanar α))` instance is now realized via the right-antipode +
+(UnorderedTree α))` instance is now realized via the right-antipode +
 `WithConv.left_inv_eq_right_inv` route — the Sweedler/Kassel argument that
 mathlib uses internally for `IsGroupLikeElem` but does not yet expose as a
 generic constructor. Mathlib has no generic graded-connected bialgebra → Hopf
@@ -51,10 +51,10 @@ file is a candidate factoring of Foissy's specific recursion.
   `multiset_filter_product` helper. Substrate for the right-antipode
   cancellation.
 - **Antipode on a tree** (`antipodeTreeN`): well-founded recursion on
-  `Nonplanar.depth`, using the closed form
+  `UnorderedTree.depth`, using the closed form
   `S(T) = -Σ over cutSummandsN T of (Π S(Tᵢ)) · ofTree rem`.
 - **Right antipode** (`antipodeRightTreeN`): well-founded recursion on
-  `Nonplanar.numNodes`, using the dual form `R(T) = -ofTree T - Σ_{cf ≠ 0}
+  `UnorderedTree.numNodes`, using the dual form `R(T) = -ofTree T - Σ_{cf ≠ 0}
   of'(cf) · R(rem)`. The lTensor cancellation falls out of `_unfold` plus
   `cutSummandsN_filter_card_zero`.
 - **Antipodes as AlgHoms** (`antipodeAlgHomN`, `antipodeRightAlgHomN`):
@@ -155,31 +155,31 @@ private theorem cutListSummandsP_subtree_depth_le :
 
 end
 
-/-! ### Nonplanar version (descent via tree-level rep) -/
+/-! ### UnorderedTree version (descent via tree-level rep) -/
 
-/-- For any `(cf, rem) ∈ cutSummandsN T` (any tree `T : Nonplanar α`), every
+/-- For any `(cf, rem) ∈ cutSummandsN T` (any tree `T : UnorderedTree α`), every
     tree `T_i ∈ cf` has strictly smaller depth than `T`. The strict bound
     comes from the fact that `cf`'s trees are subtrees of cs₀ of `T`
     (whose depth is `T.depth - 1`), and via the empty-cut term `(0, T)`'s
     `cf = 0` (no `T_i` to consider). -/
-theorem cutSummandsN_subtree_depth_lt (T : Nonplanar α)
-    (cf : Forest (Nonplanar α)) (rem : Nonplanar α)
+theorem cutSummandsN_subtree_depth_lt (T : UnorderedTree α)
+    (cf : Forest (UnorderedTree α)) (rem : UnorderedTree α)
     (h_mem : (cf, rem) ∈ cutSummandsN T)
-    (T_i : Nonplanar α) (h_T_i : T_i ∈ cf) : T_i.depth < T.depth := by
+    (T_i : UnorderedTree α) (h_T_i : T_i ∈ cf) : T_i.depth < T.depth := by
   -- Pick a tree-level rep T = mk T₀.
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = Nonplanar.mk T₀ :=
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = UnorderedTree.mk T₀ :=
     ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
   rw [cutSummandsN_mk, Multiset.mem_map] at h_mem
   obtain ⟨⟨cf_p, rem_p⟩, h_mem_p, h_proj⟩ := h_mem
   -- h_proj : projSummand ⟨cf_p, rem_p⟩ = (cf, rem) reduces to (cf_p.map mk, mk rem_p) = (cf, rem).
   -- Extract first component via congrArg.
-  have h_cf : cf_p.map Nonplanar.mk = cf := congrArg Prod.fst h_proj
-  show T_i.depth < (Nonplanar.mk T₀).depth
-  rw [Nonplanar.depth_mk]
+  have h_cf : cf_p.map UnorderedTree.mk = cf := congrArg Prod.fst h_proj
+  show T_i.depth < (UnorderedTree.mk T₀).depth
+  rw [UnorderedTree.depth_mk]
   rw [← h_cf, Multiset.mem_map] at h_T_i
   obtain ⟨T_i_p, h_T_i_p_mem, rfl⟩ := h_T_i
-  show (Nonplanar.mk T_i_p).depth < T₀.depth
-  rw [Nonplanar.depth_mk]
+  show (UnorderedTree.mk T_i_p).depth < T₀.depth
+  rw [UnorderedTree.depth_mk]
   -- Use tree-level lemma: T_i_p.depth ≤ T₀.depth - 1.
   -- Strategy: T₀ = .node a cs₀ for some a, cs₀. cf_p ∈ cutListSummandsP cs₀.
   -- T_i_p ∈ cf_p means T_i_p.depth ≤ (cs₀'s max depth) = T₀.depth - 1.
@@ -203,20 +203,20 @@ recurses on the remainder, whose weight strictly decreases for nontrivial cuts. 
 /-- For nontrivial cuts (cf nonempty), the remainder has strictly smaller
     weight than the source tree. Substrate for the right-antipode
     well-founded recursion. -/
-private theorem cutSummandsN_rem_numNodes_lt (T : Nonplanar α)
-    (cf : Forest (Nonplanar α)) (rem : Nonplanar α)
+private theorem cutSummandsN_rem_numNodes_lt (T : UnorderedTree α)
+    (cf : Forest (UnorderedTree α)) (rem : UnorderedTree α)
     (h_mem : (cf, rem) ∈ cutSummandsN T) (h_nonempty : cf ≠ 0) :
     rem.numNodes < T.numNodes := by
   -- Pick a tree-level rep T = mk T₀.
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = Nonplanar.mk T₀ :=
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = UnorderedTree.mk T₀ :=
     ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
   rw [cutSummandsN_mk, Multiset.mem_map] at h_mem
   obtain ⟨⟨cf_p, rem_p⟩, h_mem_p, h_proj⟩ := h_mem
   -- h_proj : projSummand (cf_p, rem_p) = (cf, rem), i.e., (cf_p.map mk, mk rem_p) = (cf, rem).
-  have h_cf : cf_p.map Nonplanar.mk = cf := congrArg Prod.fst h_proj
-  have h_rem : Nonplanar.mk rem_p = rem := congrArg Prod.snd h_proj
-  show rem.numNodes < (Nonplanar.mk T₀).numNodes
-  rw [Nonplanar.numNodes_mk, ← h_rem, Nonplanar.numNodes_mk]
+  have h_cf : cf_p.map UnorderedTree.mk = cf := congrArg Prod.fst h_proj
+  have h_rem : UnorderedTree.mk rem_p = rem := congrArg Prod.snd h_proj
+  show rem.numNodes < (UnorderedTree.mk T₀).numNodes
+  rw [UnorderedTree.numNodes_mk, ← h_rem, UnorderedTree.numNodes_mk]
   -- Goal: rem_p.numNodes < T₀.numNodes.
   -- Use tree-level conservation: cf_p.numNodes + rem_p.numNodes = T₀.numNodes (where cf_p.numNodes = sum).
   have h_eq : (cf_p.map RoseTree.numNodes).sum + rem_p.numNodes = T₀.numNodes :=
@@ -338,10 +338,10 @@ end
     `cutSummandsN T`. Descent from the tree-level uniqueness lemma. Public: consumed
     by `Minimalist.Merge.mergeOp_factor_out_singleton` to isolate the surviving
     empty-cut summand. -/
-lemma cutSummandsN_filter_card_zero (T : Nonplanar α) :
+lemma cutSummandsN_filter_card_zero (T : UnorderedTree α) :
     (cutSummandsN T).filter (fun pf => pf.1.card = 0) = {(0, T)} := by
   -- Pick a tree-level rep T = mk T₀.
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = Nonplanar.mk T₀ :=
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = UnorderedTree.mk T₀ :=
     ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
   rw [cutSummandsN_mk, Multiset.filter_map]
   -- Beta-reduce composed predicate: (·.1.card = 0) ∘ projSummand
@@ -365,7 +365,7 @@ set_option linter.unusedVariables false in
     formula summing over all cut summands. The membership proofs `h_mem`
     and `h_T_i` (warned-unused by the linter inside the lambda body) are
     consumed by `decreasing_by` to discharge the well-foundedness obligation. -/
-noncomputable def antipodeTreeN (T : Nonplanar α) : ConnesKreimer R (Nonplanar α) :=
+noncomputable def antipodeTreeN (T : UnorderedTree α) : ConnesKreimer R (UnorderedTree α) :=
   - ((cutSummandsN T).attach.map (fun ⟨pf, h_mem⟩ =>
       (pf.1.attach.map (fun ⟨T_i, h_T_i⟩ =>
         antipodeTreeN T_i)).prod * ofTree pf.2)).sum
@@ -379,11 +379,11 @@ decreasing_by
     to forests. Packaged as a `MonoidHom` to enable lifting via
     `AddMonoidAlgebra.lift`. -/
 noncomputable def antipodeMonoidHomN :
-    Multiplicative (Forest (Nonplanar α)) →* ConnesKreimer R (Nonplanar α) where
+    Multiplicative (Forest (UnorderedTree α)) →* ConnesKreimer R (UnorderedTree α) where
   toFun F := (F.toAdd.map (antipodeTreeN (R := R))).prod
   map_one' := by
-    show (((1 : Multiplicative (Forest (Nonplanar α))).toAdd).map _).prod = 1
-    show ((0 : Forest (Nonplanar α)).map _).prod = 1
+    show (((1 : Multiplicative (Forest (UnorderedTree α))).toAdd).map _).prod = 1
+    show ((0 : Forest (UnorderedTree α)).map _).prod = 1
     rw [Multiset.map_zero, Multiset.prod_zero]
   map_mul' F G := by
     show ((F * G).toAdd.map (antipodeTreeN (R := R))).prod =
@@ -395,7 +395,7 @@ noncomputable def antipodeMonoidHomN :
 /-- The **antipode as an algebra hom** `S : H →ₐ[R] H`. Since `H` is
     commutative, the antipode is a (not anti-)algebra hom. -/
 noncomputable def antipodeAlgHomN :
-    ConnesKreimer R (Nonplanar α) →ₐ[R] ConnesKreimer R (Nonplanar α) :=
+    ConnesKreimer R (UnorderedTree α) →ₐ[R] ConnesKreimer R (UnorderedTree α) :=
   ConnesKreimer.lift antipodeMonoidHomN
 
 /-! ### Right antipode (lTensor recursion)
@@ -414,8 +414,8 @@ set_option linter.unusedVariables false in
 /-- The **right antipode on a single nonplanar tree**: defined to satisfy the
     lTensor axiom by direct cancellation. Recurses on `rem` for nontrivial
     cuts (well-founded by `cutSummandsN_rem_numNodes_lt`). -/
-noncomputable def antipodeRightTreeN (T : Nonplanar α) :
-    ConnesKreimer R (Nonplanar α) :=
+noncomputable def antipodeRightTreeN (T : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) :=
   -ofTree T - ((cutSummandsN T).attach.map (fun ⟨pf, h_mem⟩ =>
     if h_card : pf.1.card ≠ 0 then
       of' pf.1 * antipodeRightTreeN pf.2
@@ -429,10 +429,10 @@ decreasing_by
 
 /-- The **forest-level right antipode**: multiplicative extension. -/
 noncomputable def antipodeRightMonoidHomN :
-    Multiplicative (Forest (Nonplanar α)) →* ConnesKreimer R (Nonplanar α) where
+    Multiplicative (Forest (UnorderedTree α)) →* ConnesKreimer R (UnorderedTree α) where
   toFun F := (F.toAdd.map (antipodeRightTreeN (R := R))).prod
   map_one' := by
-    show ((0 : Forest (Nonplanar α)).map _).prod = 1
+    show ((0 : Forest (UnorderedTree α)).map _).prod = 1
     rw [Multiset.map_zero, Multiset.prod_zero]
   map_mul' F G := by
     show ((F.toAdd + G.toAdd).map (antipodeRightTreeN (R := R))).prod =
@@ -441,36 +441,36 @@ noncomputable def antipodeRightMonoidHomN :
 
 /-- The **right antipode as an algebra hom** `R : H →ₐ[R] H`. -/
 noncomputable def antipodeRightAlgHomN :
-    ConnesKreimer R (Nonplanar α) →ₐ[R] ConnesKreimer R (Nonplanar α) :=
+    ConnesKreimer R (UnorderedTree α) →ₐ[R] ConnesKreimer R (UnorderedTree α) :=
   ConnesKreimer.lift antipodeRightMonoidHomN
 
-@[simp] theorem antipodeRightAlgHomN_apply_of' (F : Forest (Nonplanar α)) :
+@[simp] theorem antipodeRightAlgHomN_apply_of' (F : Forest (UnorderedTree α)) :
     antipodeRightAlgHomN (R := R) (of' F) =
       (F.map (antipodeRightTreeN (R := R))).prod := by
   rw [antipodeRightAlgHomN, ConnesKreimer.lift_of']
   rfl
 
-@[simp] theorem antipodeRightAlgHomN_apply_ofTree (T : Nonplanar α) :
+@[simp] theorem antipodeRightAlgHomN_apply_ofTree (T : UnorderedTree α) :
     antipodeRightAlgHomN (R := R) (ofTree T) = antipodeRightTreeN T := by
   unfold ofTree
   rw [antipodeRightAlgHomN_apply_of', Multiset.map_singleton, Multiset.prod_singleton]
 
-@[simp] theorem antipodeAlgHomN_apply_of' (F : Forest (Nonplanar α)) :
+@[simp] theorem antipodeAlgHomN_apply_of' (F : Forest (UnorderedTree α)) :
     antipodeAlgHomN (R := R) (of' F) = (F.map (antipodeTreeN (R := R))).prod := by
   rw [antipodeAlgHomN, ConnesKreimer.lift_of']
   rfl
 
-@[simp] theorem antipodeAlgHomN_apply_ofTree (T : Nonplanar α) :
+@[simp] theorem antipodeAlgHomN_apply_ofTree (T : UnorderedTree α) :
     antipodeAlgHomN (R := R) (ofTree T) = antipodeTreeN T := by
   unfold ofTree
   rw [antipodeAlgHomN_apply_of', Multiset.map_singleton, Multiset.prod_singleton]
 
 /-- The recursive lTensor equation for the right antipode, in non-`attach`-decorated
     form. Mirrors `antipodeTreeN_unfold` but for the lTensor recursion. -/
-theorem antipodeRightTreeN_unfold (T : Nonplanar α) :
+theorem antipodeRightTreeN_unfold (T : UnorderedTree α) :
     antipodeRightTreeN (R := R) T = -ofTree T - ((cutSummandsN T).map
       (fun pf => if pf.1.card ≠ 0 then of' pf.1 * antipodeRightTreeN pf.2
-                 else (0 : ConnesKreimer R (Nonplanar α)))).sum := by
+                 else (0 : ConnesKreimer R (UnorderedTree α)))).sum := by
   conv_lhs => rw [antipodeRightTreeN]
   -- Body: -ofTree T - ((cutSummandsN T).attach.map (fun ⟨pf, h_mem⟩ =>
   --   if h_card : pf.1.card ≠ 0 then of' pf.1 * antipodeRightTreeN pf.2 else 0)).sum
@@ -481,17 +481,17 @@ theorem antipodeRightTreeN_unfold (T : Nonplanar α) :
         (fun (pf : { x // x ∈ cutSummandsN T }) =>
           if pf.val.1.card ≠ 0 then
             of' pf.val.1 * antipodeRightTreeN pf.val.2
-          else (0 : ConnesKreimer R (Nonplanar α)))).sum = _
+          else (0 : ConnesKreimer R (UnorderedTree α)))).sum = _
   congr 1
   exact congrArg Multiset.sum (@Multiset.attach_map_val'
-    (Forest (Nonplanar α) × Nonplanar α) _ (cutSummandsN T)
+    (Forest (UnorderedTree α) × UnorderedTree α) _ (cutSummandsN T)
     (fun pf => if pf.1.card ≠ 0 then of' pf.1 * antipodeRightTreeN pf.2
-               else (0 : ConnesKreimer R (Nonplanar α))))
+               else (0 : ConnesKreimer R (UnorderedTree α))))
 
 /-- The recursive Foissy equation, in non-`attach`-decorated form. The
     `attach`-style def above keeps the membership info for well-foundedness;
     this unfold strips it for downstream proofs. -/
-theorem antipodeTreeN_unfold (T : Nonplanar α) :
+theorem antipodeTreeN_unfold (T : UnorderedTree α) :
     antipodeTreeN (R := R) T = - ((cutSummandsN T).map
       (fun pf => (pf.1.map (antipodeTreeN (R := R))).prod * ofTree pf.2)).sum := by
   conv_lhs => rw [antipodeTreeN]
@@ -513,47 +513,47 @@ theorem antipodeTreeN_unfold (T : Nonplanar α) :
   -- Step 2: strip the outer attach. Use attach_map_val' with explicit `f` to
   -- ensure unification picks up the lambda even with `↑pf` vs `pf.val` notation.
   exact congrArg Multiset.sum (@Multiset.attach_map_val'
-    (Forest (Nonplanar α) × Nonplanar α) _ (cutSummandsN T)
+    (Forest (UnorderedTree α) × UnorderedTree α) _ (cutSummandsN T)
     (fun pf => (pf.1.map (antipodeTreeN (R := R))).prod * ofTree pf.2))
 
 /-- Sum decomposition: pulling out the empty-cut summand from `Σ over cutSummandsN T`
     of `of'(cf) * R(rem)` gives `R(T)` (since `of'(0) = 1` and the empty cut is unique). -/
-private lemma R_sum_decomp_empty_cut (T : Nonplanar α) :
+private lemma R_sum_decomp_empty_cut (T : UnorderedTree α) :
     ((cutSummandsN T).map
-      (fun (p : Forest (Nonplanar α) × Nonplanar α) =>
+      (fun (p : Forest (UnorderedTree α) × UnorderedTree α) =>
         of' (R := R) p.1 * antipodeRightTreeN p.2)).sum =
     antipodeRightTreeN T +
     (((cutSummandsN T).filter
-        (fun (p : Forest (Nonplanar α) × Nonplanar α) => p.1.card ≠ 0)).map
-      (fun (p : Forest (Nonplanar α) × Nonplanar α) =>
+        (fun (p : Forest (UnorderedTree α) × UnorderedTree α) => p.1.card ≠ 0)).map
+      (fun (p : Forest (UnorderedTree α) × UnorderedTree α) =>
         of' (R := R) p.1 * antipodeRightTreeN p.2)).sum := by
   conv_lhs => rw [← Multiset.filter_add_not
-    (fun (p : Forest (Nonplanar α) × Nonplanar α) => p.1.card = 0)
+    (fun (p : Forest (UnorderedTree α) × UnorderedTree α) => p.1.card = 0)
     (cutSummandsN T)]
   rw [Multiset.map_add, Multiset.sum_add]
   rw [cutSummandsN_filter_card_zero, Multiset.map_singleton, Multiset.sum_singleton]
   rw [of'_zero, one_mul]
 
 /-- The if-form sum used by `antipodeRightTreeN_unfold` equals the cf≠0-filter sum. -/
-private lemma R_if_sum_eq_filter_sum (T : Nonplanar α) :
+private lemma R_if_sum_eq_filter_sum (T : UnorderedTree α) :
     ((cutSummandsN T).map
-      (fun (p : Forest (Nonplanar α) × Nonplanar α) =>
+      (fun (p : Forest (UnorderedTree α) × UnorderedTree α) =>
         if p.1.card ≠ 0 then of' (R := R) p.1 * antipodeRightTreeN p.2
-        else (0 : ConnesKreimer R (Nonplanar α)))).sum =
+        else (0 : ConnesKreimer R (UnorderedTree α)))).sum =
     (((cutSummandsN T).filter
-        (fun (p : Forest (Nonplanar α) × Nonplanar α) => p.1.card ≠ 0)).map
-      (fun (p : Forest (Nonplanar α) × Nonplanar α) =>
+        (fun (p : Forest (UnorderedTree α) × UnorderedTree α) => p.1.card ≠ 0)).map
+      (fun (p : Forest (UnorderedTree α) × UnorderedTree α) =>
         of' (R := R) p.1 * antipodeRightTreeN p.2)).sum := by
   conv_lhs => rw [← Multiset.filter_add_not
-    (fun (p : Forest (Nonplanar α) × Nonplanar α) => p.1.card = 0)
+    (fun (p : Forest (UnorderedTree α) × UnorderedTree α) => p.1.card = 0)
     (cutSummandsN T)]
   rw [Multiset.map_add, Multiset.sum_add]
   -- (filter cf=0).map (if cf≠0 then ... else 0) — each value is 0 since cf.card=0
   have h_zero : ((((cutSummandsN T).filter
-        (fun (p : Forest (Nonplanar α) × Nonplanar α) => p.1.card = 0)).map
-      (fun (p : Forest (Nonplanar α) × Nonplanar α) =>
+        (fun (p : Forest (UnorderedTree α) × UnorderedTree α) => p.1.card = 0)).map
+      (fun (p : Forest (UnorderedTree α) × UnorderedTree α) =>
         if p.1.card ≠ 0 then of' (R := R) p.1 * antipodeRightTreeN p.2
-        else (0 : ConnesKreimer R (Nonplanar α)))).sum) = 0 := by
+        else (0 : ConnesKreimer R (UnorderedTree α)))).sum) = 0 := by
     apply Multiset.sum_eq_zero
     intros x h_x
     rw [Multiset.mem_map] at h_x
@@ -575,9 +575,9 @@ follows directly from `antipodeTreeN_unfold` — no further induction is
 needed. The summands of the antipode definition exactly cancel the summands
 produced by `(lift S id) ∘ comulTreeN T`. -/
 
-private theorem antipodeAlgHomN_axiom_tree (T : Nonplanar α) :
+private theorem antipodeAlgHomN_axiom_tree (T : UnorderedTree α) :
     (Algebra.TensorProduct.lift (antipodeAlgHomN (R := R))
-      (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+      (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (fun _ _ => Commute.all _ _)) (comulTreeN T) = 0 := by
   -- Step 1: unfold comulTreeN and distribute the lift over the addition.
   unfold comulTreeN comulTreeNG
@@ -586,7 +586,7 @@ private theorem antipodeAlgHomN_axiom_tree (T : Nonplanar α) :
   -- Goal: antipodeTreeN T + (lift _ _ _)(Σ of' cf ⊗ ofTree rem) = 0.
   -- Step 2: distribute the lift through the multiset sum + simplify each tensor.
   rw [show (Algebra.TensorProduct.lift (antipodeAlgHomN (R := R))
-            (AlgHom.id R (ConnesKreimer R (Nonplanar α))) (fun _ _ => Commute.all _ _))
+            (AlgHom.id R (ConnesKreimer R (UnorderedTree α))) (fun _ _ => Commute.all _ _))
             (((cutSummandsN T).map
               (fun p => of' (R := R) p.1 ⊗ₜ ofTree p.2)).sum) =
           ((cutSummandsN T).map
@@ -603,8 +603,8 @@ private theorem antipodeAlgHomN_axiom_tree (T : Nonplanar α) :
 /-- The right antipode satisfies the lTensor axiom on a single tree by direct
     cancellation: pulling out the empty-cut summand exposes `R(T)`, then
     `antipodeRightTreeN_unfold` substitutes and the rest cancels. -/
-private theorem antipodeRightAlgHomN_axiom_tree (T : Nonplanar α) :
-    (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+private theorem antipodeRightAlgHomN_axiom_tree (T : UnorderedTree α) :
+    (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (antipodeRightAlgHomN (R := R))
       (fun _ _ => Commute.all _ _)) (comulTreeN T) = 0 := by
   -- Step 1: unfold comulTreeN and distribute the lift over the addition.
@@ -612,12 +612,12 @@ private theorem antipodeRightAlgHomN_axiom_tree (T : Nonplanar α) :
   rw [map_add, Algebra.TensorProduct.lift_tmul, AlgHom.id_apply, map_one, mul_one]
   -- Goal: ofTree T + (lift id R)(Σ of' cf ⊗ ofTree rem) = 0.
   -- Step 2: distribute the lift through the multiset sum.
-  rw [show (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+  rw [show (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
             (antipodeRightAlgHomN (R := R)) (fun _ _ => Commute.all _ _))
             (((cutSummandsN T).map
               (fun p => of' (R := R) p.1 ⊗ₜ ofTree p.2)).sum) =
           ((cutSummandsN T).map
-            (fun (p : Forest (Nonplanar α) × Nonplanar α) =>
+            (fun (p : Forest (UnorderedTree α) × UnorderedTree α) =>
               of' (R := R) p.1 * antipodeRightTreeN p.2)).sum from by
     rw [_root_.map_multiset_sum, Multiset.map_map]
     refine congr_arg Multiset.sum (Multiset.map_congr rfl (fun p _ => ?_))
@@ -641,11 +641,11 @@ so it factors through `comulForestN (T ::ₘ F') = comulTreeN T * comulForestN F
 The tree case `(lift S id _)(comulTreeN T) = 0` (from §3) makes the cons step
 produce `0 · _ = 0`, matching `counit(of' (T ::ₘ F')) = 0`. -/
 
-private theorem antipodeAlgHomN_axiom_forest (F : Forest (Nonplanar α)) :
+private theorem antipodeAlgHomN_axiom_forest (F : Forest (UnorderedTree α)) :
     (Algebra.TensorProduct.lift (antipodeAlgHomN (R := R))
-      (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+      (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (fun _ _ => Commute.all _ _)) (comulForestN F) =
-    (algebraMap R (ConnesKreimer R (Nonplanar α))) (counit (of' F)) := by
+    (algebraMap R (ConnesKreimer R (UnorderedTree α))) (counit (of' F)) := by
   induction F using Multiset.induction with
   | empty =>
     -- LHS: comulForestN 0 = 1, then lift(1) = 1.
@@ -669,21 +669,21 @@ algebra-hom equality `HopfAlgebra.ofAlgHom` consumes. Reduces via
 
 /-- Wrapper of `antipodeAlgHomN_axiom_forest` stated at `comulAlgHomN (of' F)`
     instead of `comulForestN F`. The two are equal by `comulAlgHomN_apply_of'`. -/
-private theorem antipodeAlgHomN_axiom_at_of' (F : Forest (Nonplanar α)) :
+private theorem antipodeAlgHomN_axiom_at_of' (F : Forest (UnorderedTree α)) :
     (Algebra.TensorProduct.lift (antipodeAlgHomN (R := R))
-      (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+      (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (fun _ _ => Commute.all _ _)) (comulAlgHomN (of' F)) =
-    (algebraMap R (ConnesKreimer R (Nonplanar α))) (counit (of' F)) := by
+    (algebraMap R (ConnesKreimer R (UnorderedTree α))) (counit (of' F)) := by
   rw [comulAlgHomN_apply_of']
   exact antipodeAlgHomN_axiom_forest F
 
 private theorem antipode_rTensor_axiom [DecidableEq α] [CharZero R] [NoZeroDivisors R] :
     (Algebra.TensorProduct.lift (antipodeAlgHomN (R := R))
-      (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+      (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (fun _ _ => Commute.all _ _)).comp
-      (Bialgebra.comulAlgHom R (ConnesKreimer R (Nonplanar α))) =
-    (Algebra.ofId R (ConnesKreimer R (Nonplanar α))).comp
-      (Bialgebra.counitAlgHom R (ConnesKreimer R (Nonplanar α))) := by
+      (Bialgebra.comulAlgHom R (ConnesKreimer R (UnorderedTree α))) =
+    (Algebra.ofId R (ConnesKreimer R (UnorderedTree α))).comp
+      (Bialgebra.counitAlgHom R (ConnesKreimer R (UnorderedTree α))) := by
   apply ConnesKreimer.algHom_ext
   intro F
   -- Defeq: comp.apply, Bialgebra.comulAlgHom = AlgHom.ofLinearMap comul = comulAlgHomN,
@@ -692,11 +692,11 @@ private theorem antipode_rTensor_axiom [DecidableEq α] [CharZero R] [NoZeroDivi
 
 /-- R satisfies the lTensor axiom on a forest. Mirror of `antipodeAlgHomN_axiom_forest`
     via Multiset.induction; the tree-case kills the first factor. -/
-private theorem antipodeRightAlgHomN_axiom_forest (F : Forest (Nonplanar α)) :
-    (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+private theorem antipodeRightAlgHomN_axiom_forest (F : Forest (UnorderedTree α)) :
+    (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (antipodeRightAlgHomN (R := R))
       (fun _ _ => Commute.all _ _)) (comulForestN F) =
-    (algebraMap R (ConnesKreimer R (Nonplanar α))) (counit (of' F)) := by
+    (algebraMap R (ConnesKreimer R (UnorderedTree α))) (counit (of' F)) := by
   induction F using Multiset.induction with
   | empty =>
     rw [comulForestN_zero, map_one, of'_zero, map_one, map_one]
@@ -707,23 +707,23 @@ private theorem antipodeRightAlgHomN_axiom_forest (F : Forest (Nonplanar α)) :
     simp [Multiset.card_cons]
 
 /-- AlgHom-form lTensor axiom for R, stated at `comulAlgHomN (of' F)`. -/
-private theorem antipodeRightAlgHomN_axiom_at_of' (F : Forest (Nonplanar α)) :
-    (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+private theorem antipodeRightAlgHomN_axiom_at_of' (F : Forest (UnorderedTree α)) :
+    (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (antipodeRightAlgHomN (R := R))
       (fun _ _ => Commute.all _ _)) (comulAlgHomN (of' F)) =
-    (algebraMap R (ConnesKreimer R (Nonplanar α))) (counit (of' F)) := by
+    (algebraMap R (ConnesKreimer R (UnorderedTree α))) (counit (of' F)) := by
   rw [comulAlgHomN_apply_of']
   exact antipodeRightAlgHomN_axiom_forest F
 
 /-- The right antipode satisfies the lTensor antipode axiom as an `AlgHom` equality.
     This is the lTensor analogue of `antipode_rTensor_axiom`, but for R rather than S. -/
 private theorem antipodeRight_lTensor_axiom [DecidableEq α] [CharZero R] [NoZeroDivisors R] :
-    (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+    (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (antipodeRightAlgHomN (R := R))
       (fun _ _ => Commute.all _ _)).comp
-      (Bialgebra.comulAlgHom R (ConnesKreimer R (Nonplanar α))) =
-    (Algebra.ofId R (ConnesKreimer R (Nonplanar α))).comp
-      (Bialgebra.counitAlgHom R (ConnesKreimer R (Nonplanar α))) := by
+      (Bialgebra.comulAlgHom R (ConnesKreimer R (UnorderedTree α))) =
+    (Algebra.ofId R (ConnesKreimer R (UnorderedTree α))).comp
+      (Bialgebra.counitAlgHom R (ConnesKreimer R (UnorderedTree α))) := by
   apply ConnesKreimer.algHom_ext
   intro F
   exact antipodeRightAlgHomN_axiom_at_of' F
@@ -742,11 +742,11 @@ respectively, so `left_inv_eq_right_inv` gives `S = R` as linear maps. By
     `μ ∘ map f g` on every tensor. The linear-map form is what `WithConv`
     convolution uses; the AlgHom-form is what our axioms are stated in. -/
 private lemma lift_eq_mulPrime_comp_map
-    (f g : ConnesKreimer R (Nonplanar α) →ₐ[R] ConnesKreimer R (Nonplanar α))
+    (f g : ConnesKreimer R (UnorderedTree α) →ₐ[R] ConnesKreimer R (UnorderedTree α))
     (comm : ∀ a b, Commute (f a) (g b)) (z :
-      ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+      ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     Algebra.TensorProduct.lift f g comm z =
-    LinearMap.mul' R (ConnesKreimer R (Nonplanar α))
+    LinearMap.mul' R (ConnesKreimer R (UnorderedTree α))
       (TensorProduct.map f.toLinearMap g.toLinearMap z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
@@ -760,11 +760,11 @@ private lemma lift_eq_mulPrime_comp_map
     is equivalent to `toConv f.toLinearMap * toConv g.toLinearMap = 1` in `WithConv`.
     Used to derive both `S * id = 1` and `id * R = 1` from the tree-level axioms. -/
 private lemma withConv_mul_eq_one_of_axiom [DecidableEq α] [CharZero R] [NoZeroDivisors R]
-    (f g : ConnesKreimer R (Nonplanar α) →ₐ[R] ConnesKreimer R (Nonplanar α))
+    (f g : ConnesKreimer R (UnorderedTree α) →ₐ[R] ConnesKreimer R (UnorderedTree α))
     (h_axiom : (Algebra.TensorProduct.lift f g (fun _ _ => Commute.all _ _)).comp
-        (Bialgebra.comulAlgHom R (ConnesKreimer R (Nonplanar α))) =
-      (Algebra.ofId R (ConnesKreimer R (Nonplanar α))).comp
-        (Bialgebra.counitAlgHom R (ConnesKreimer R (Nonplanar α)))) :
+        (Bialgebra.comulAlgHom R (ConnesKreimer R (UnorderedTree α))) =
+      (Algebra.ofId R (ConnesKreimer R (UnorderedTree α))).comp
+        (Bialgebra.counitAlgHom R (ConnesKreimer R (UnorderedTree α)))) :
     (WithConv.toConv f.toLinearMap : WithConv _) * WithConv.toConv g.toLinearMap = 1 := by
   apply WithConv.ext
   apply LinearMap.ext
@@ -789,21 +789,21 @@ private theorem antipodeAlgHomN_eq_antipodeRightAlgHomN
       antipodeRight_lTensor_axiom)
 
 private theorem antipodeAlgHomN_axiom_at_of'_lTensor
-    [DecidableEq α] [CharZero R] [NoZeroDivisors R] (F : Forest (Nonplanar α)) :
-    (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+    [DecidableEq α] [CharZero R] [NoZeroDivisors R] (F : Forest (UnorderedTree α)) :
+    (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (antipodeAlgHomN (R := R))
       (fun _ _ => Commute.all _ _)) (comulAlgHomN (of' F)) =
-    (algebraMap R (ConnesKreimer R (Nonplanar α))) (counit (of' F)) := by
+    (algebraMap R (ConnesKreimer R (UnorderedTree α))) (counit (of' F)) := by
   rw [antipodeAlgHomN_eq_antipodeRightAlgHomN]
   exact antipodeRightAlgHomN_axiom_at_of' F
 
 private theorem antipode_lTensor_axiom [DecidableEq α] [CharZero R] [NoZeroDivisors R] :
-    (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+    (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (antipodeAlgHomN (R := R))
       (fun _ _ => Commute.all _ _)).comp
-      (Bialgebra.comulAlgHom R (ConnesKreimer R (Nonplanar α))) =
-    (Algebra.ofId R (ConnesKreimer R (Nonplanar α))).comp
-      (Bialgebra.counitAlgHom R (ConnesKreimer R (Nonplanar α))) := by
+      (Bialgebra.comulAlgHom R (ConnesKreimer R (UnorderedTree α))) =
+    (Algebra.ofId R (ConnesKreimer R (UnorderedTree α))).comp
+      (Bialgebra.counitAlgHom R (ConnesKreimer R (UnorderedTree α))) := by
   apply ConnesKreimer.algHom_ext
   intro F
   exact antipodeAlgHomN_axiom_at_of'_lTensor F
@@ -814,7 +814,7 @@ Assemble the Bialgebra (from CoproductNonplanar.lean) + antipode + axioms via
 mathlib's `HopfAlgebra.ofAlgHom`. -/
 
 noncomputable instance [DecidableEq α] [CharZero R] [NoZeroDivisors R] :
-    HopfAlgebra R (ConnesKreimer R (Nonplanar α)) :=
+    HopfAlgebra R (ConnesKreimer R (UnorderedTree α)) :=
   HopfAlgebra.ofAlgHom antipodeAlgHomN
     antipode_rTensor_axiom
     antipode_lTensor_axiom

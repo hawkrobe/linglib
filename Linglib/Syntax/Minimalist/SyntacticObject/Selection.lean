@@ -51,7 +51,7 @@ structure is `CommMagma` + `MulZeroClass` only. A trace leaf gets the saturated 
 
 namespace Minimalist
 
-open RoseTree RoseTree.Nonplanar SyntacticObject
+open RoseTree UnorderedTree SyntacticObject
 
 /-! ### The selection state -/
 
@@ -175,14 +175,14 @@ theorem selCheckPlanar_perm {t s : RoseTree Vertex} (h : RoseTree.Perm t s) :
   RoseTree.fold_perm (fun a _ _ h' => selNode_perm a h') h
 
 /-- Selection check on the nonplanar carrier. -/
-def selCheckN : Nonplanar Vertex → SelectionState :=
+def selCheckN : UnorderedTree Vertex → SelectionState :=
   liftN (fun tok => .of tok tok.item.outerSel) (.of (mkTraceToken 0) [])
 
 @[simp] theorem selCheckN_mk (p : RoseTree Vertex) :
-    selCheckN (Nonplanar.mk p) = selCheckPlanar p := rfl
+    selCheckN (UnorderedTree.mk p) = selCheckPlanar p := rfl
 
-theorem selCheckN_node (a b : Nonplanar Vertex) :
-    selCheckN (Nonplanar.node (Sum.inr none) {a, b}) = selCheckN a * selCheckN b :=
+theorem selCheckN_node (a b : UnorderedTree Vertex) :
+    selCheckN (UnorderedTree.node (Sum.inr none) {a, b}) = selCheckN a * selCheckN b :=
   liftN_merge _ _ a b
 
 /-! ### The selection-driven head on `SyntacticObject` -/
