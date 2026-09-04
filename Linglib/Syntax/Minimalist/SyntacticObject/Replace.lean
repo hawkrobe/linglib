@@ -16,7 +16,7 @@ because substitution preserves the arity of every vertex. The copy-theory use is
 the Merge-algebraic Internal Merge is the coproduct composition of `Merge/Internal.lean`, with
 traces as cut remainders and chains held at the workspace level, and `replace` supports the
 transformational view that study files are written in. It is noncomputable; concrete cases
-reduce by `replace_self`, `replace_node_of_ne`, and the leaf lemmas.
+reduce by `replace_self`, `replace_merge_of_ne`, and the leaf lemmas.
 
 ## Main definitions
 
