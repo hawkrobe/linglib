@@ -37,16 +37,16 @@ namespace Commitment
 
 open Discourse (DiscourseRole)
 
-variable {W : Type*} (K : Set (Commitment DiscourseRole W)) (x : DiscourseRole) (p : Set W)
+variable {W : Type*} (K : State DiscourseRole W) (x : DiscourseRole) (p : Set W)
 
 /-- `cs_X` (60): the worlds compatible with `x`'s public commitments. -/
 def commitmentSet : Set W := contextSet (ofCommitter K x)
 
 /-- A falling declarative (78): the speaker commits to `p`. -/
-def falling : Set (Commitment DiscourseRole W) := insert (commit .speaker p) K
+def falling : State DiscourseRole W := insert (commit .speaker p) K
 
 /-- A rising declarative (77): the addressee is committed to `p`, attributed by the speaker. -/
-def rising : Set (Commitment DiscourseRole W) :=
+def rising : State DiscourseRole W :=
   insert (commit .addressee p .doxastic .otherGenerated) K
 
 /-- (63): `p` is a commitment of `x`. -/
@@ -93,7 +93,7 @@ theorem ofCommitter_insert_of_ne (c : Commitment DiscourseRole W) (h : c.committ
     exact ⟨Or.inr hd, hc⟩
 
 @[simp] theorem commitmentSet_empty :
-    commitmentSet (∅ : Set (Commitment DiscourseRole W)) x = Set.univ := by
+    commitmentSet (∅ : State DiscourseRole W) x = Set.univ := by
   simp [commitmentSet, ofCommitter]
 
 /-- A falling declarative narrows the speaker's commitment set by its content and leaves the

@@ -38,10 +38,10 @@ inductive AddrPosture
 def isSitting : Set AddrPosture := {.sitting}
 
 /-- *The addressee is sitting.* -/
-def declarative : Set (Commitment DiscourseRole AddrPosture) := {commit .speaker isSitting}
+def declarative : State DiscourseRole AddrPosture := {commit .speaker isSitting}
 
 /-- *Sit down!* -/
-def imperative : Set (Commitment DiscourseRole AddrPosture) :=
+def imperative : State DiscourseRole AddrPosture :=
   {commit .speaker isSitting .preferential}
 
 theorem ofForce_singleton_self (c : Commitment DiscourseRole AddrPosture) (f : Force)

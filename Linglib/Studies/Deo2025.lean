@@ -76,7 +76,7 @@ would need commitment contents that are themselves scoreboard-relative.
 /-- The bərə meta-content: "*p* is among the addressee's dependent
     commitments." This is the proposition the speaker preferentially
     commits to. [deo-2025-bara] (20). -/
-def baraMetaContent (p : Set W) (K : Set (Commitment Discourse.DiscourseRole W)) : Prop :=
+def baraMetaContent (p : Set W) (K : State Discourse.DiscourseRole W) : Prop :=
   commit .addressee p .doxastic .otherGenerated ∈ K
 
 /-! ## § 3. Empirical felicity profile (Deo § 2) -/

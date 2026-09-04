@@ -5,7 +5,7 @@ import Linglib.Logic.Modal.Epistemic
 import Linglib.Discourse.Commitment.Basic
 
 /-!
-# Commitment states
+# Belief–commitment frames
 
 The multi-relational Kripke frame of [van-der-leer-2026] (Definition 2): per-agent belief
 accessibility `B_a`, the KD45 doxastic frame of [hintikka-1962], and pair-indexed commitment
@@ -16,24 +16,24 @@ into them and every proposition is `C_{a,b}`-free in the thesis's sense.
 
 ## Main definitions
 
-* `Commitment.State W A` — the frame.
-* `State.Believes`, `State.Committed` — `B_a`, `C_{a,b}`.
-* `State.restrictCommitment` — the update `c⌈π⌉_{a,b}` (Definition 4): `O_{a,b}` restricted to
+* `Commitment.Frame W A` — the frame.
+* `Frame.Believes`, `Frame.Committed` — `B_a`, `C_{a,b}`.
+* `Frame.restrictCommitment` — the update `c⌈π⌉_{a,b}` (Definition 4): `O_{a,b}` restricted to
   `π`-targets, everything else unchanged.
-* `State.Sincere`, `State.Competent` — the frame conditions of Definition 5, after
+* `Frame.Sincere`, `Frame.Competent` — the frame conditions of Definition 5, after
   [asher-lascarides-2003]: belief is contained in commitment; the addressee's belief is
   contained in the speaker's.
 
 ## Main results
 
-* `State.committed_restrictCommitment` — the performative update, `c⌈π⌉_{a,b} ⊨ C_{a,b} π`.
-* `State.Sincere.believes_of_committed`, `State.Competent.believes_of_believes`,
-  `State.Sincere.believes_of_committed_of_competent` — Theorem 26: commitment transfers to
+* `Frame.committed_restrictCommitment` — the performative update, `c⌈π⌉_{a,b} ⊨ C_{a,b} π`.
+* `Frame.Sincere.believes_of_committed`, `Frame.Competent.believes_of_believes`,
+  `Frame.Sincere.believes_of_committed_of_competent` — Theorem 26: commitment transfers to
   the speaker's belief under Sincerity and on to the addressee's under Competence, the
   informative update.
-* `State.restrictCommitment_eq_self` — the update is idle iff the commitment already holds
+* `Frame.restrictCommitment_eq_self` — the update is idle iff the commitment already holds
   globally.
-* `State.mem_slate_iff` — the propositions `a` is committed to towards `b` at `w` form the
+* `Frame.mem_slate_iff` — the propositions `a` is committed to towards `b` at `w` form the
   principal filter of the `O_{a,b}`-successors, the projection onto the commitment sets of
   `Commitment.Basic`.
 
@@ -53,10 +53,10 @@ open ModalLogic.Epistemic (knows)
 
 variable {W A : Type*}
 
-/-- A commitment state ([van-der-leer-2026] Definition 2): KD45 belief per agent and K45
-commitment per ordered agent pair. -/
+/-- The belief–commitment frame of [van-der-leer-2026] (Definition 2, there a *commitment
+state*): KD45 belief per agent and K45 commitment per ordered agent pair. -/
 @[ext]
-structure State (W A : Type*) where
+structure Frame (W A : Type*) where
   /-- `a`'s doxastic accessibility. -/
   belief : A → W → W → Prop
   /-- `commitment a b w v`: at `w`, `v` satisfies everything `a` is committed towards `b` to. -/
@@ -64,16 +64,16 @@ structure State (W A : Type*) where
   belief_kd45 : ∀ a, IsKD45Frame (belief a)
   commitment_k45 : ∀ a b, IsK45Frame (commitment a b)
 
-namespace State
+namespace Frame
 
-variable (c : State W A) (a b : A) (π τ : Set W) (w : W)
+variable (c : Frame W A) (a b : A) (π τ : Set W) (w : W)
 
 instance (a : A) : IsKD45Frame (c.belief a) := c.belief_kd45 a
 
 instance (a b : A) : IsK45Frame (c.commitment a b) := c.commitment_k45 a b
 
 /-- Every world is accessible from every world. -/
-instance : Inhabited (State W A) :=
+instance : Inhabited (Frame W A) :=
   ⟨{ belief _ _ _ := True
      commitment _ _ _ _ := True
      belief_kd45 _ := { serial := fun w => ⟨w, trivial⟩
@@ -84,7 +84,7 @@ instance : Inhabited (State W A) :=
 
 /-- `c⌈π⌉_{a,b}` ([van-der-leer-2026] Definition 4): `O_{a,b}` restricted to `π`-targets,
 `O_{a,b} ∩ {(w, v) | v ∈ π}`; the other relations are unchanged. -/
-def restrictCommitment : State W A where
+def restrictCommitment : Frame W A where
   belief := c.belief
   commitment a' b' w v := c.commitment a' b' w v ∧ (a' = a ∧ b' = b → v ∈ π)
   belief_kd45 := c.belief_kd45
@@ -108,7 +108,7 @@ theorem restrictCommitment_commitment_le (a' b' : A) :
 
 theorem restrictCommitment_restrictCommitment :
     (c.restrictCommitment a b π).restrictCommitment a b τ = c.restrictCommitment a b (π ∩ τ) := by
-  refine State.ext rfl (funext fun a' => funext fun b' => funext fun w =>
+  refine Frame.ext rfl (funext fun a' => funext fun b' => funext fun w =>
     funext fun v => propext ?_)
   simp only [restrictCommitment, Set.mem_inter_iff]
   tauto
@@ -140,7 +140,7 @@ theorem restrictCommitment_eq_self : c.restrictCommitment a b π = c ↔ ∀ w, 
     rw [← h] at hv
     exact hv.2 ⟨rfl, rfl⟩
   · intro h
-    refine State.ext rfl (funext fun a' => funext fun b' => funext fun w =>
+    refine Frame.ext rfl (funext fun a' => funext fun b' => funext fun w =>
       funext fun v => propext ?_)
     exact ⟨And.left, fun hc => ⟨hc, fun ⟨ha, hb⟩ => by subst ha hb; exact h w v hc⟩⟩
 
@@ -160,7 +160,7 @@ theorem restrictCommitment_restrictCommitment_eq_self_iff (a' b' : A) :
 
 /-- What `a` is committed to towards `b` at `w`: the principal filter of the `O_{a,b}`-successors
 of `w`. -/
-def slate (c : State W A) (a b : A) (w : W) : Filter W :=
+def slate (c : Frame W A) (a b : A) (w : W) : Filter W :=
   Filter.principal {v | c.commitment a b w v}
 
 theorem mem_slate_iff : π ∈ c.slate a b w ↔ c.Committed a b π w := Filter.mem_principal
@@ -193,6 +193,6 @@ theorem Sincere.believes_of_committed_of_competent (hsin : c.Sincere) (hcomp : c
     c.Committed a b π w → c.Believes b π w :=
   fun hcom => hcomp.believes_of_believes (hsin.believes_of_committed hcom)
 
-end State
+end Frame
 
 end Commitment
