@@ -31,7 +31,7 @@ lexical-leaf value and a trace value, and inherit `Perm`-invariance from
 
 * `Minimalist.SyntacticObject.hom_ext`: morphisms of magmas out of
   `SyntacticObject` agreeing on lexical and trace leaves are equal.
-* `Minimalist.SyntacticObject.liftN_node`: the nonplanar magma law.
+* `Minimalist.SyntacticObject.liftN_merge`: the magma law on the unordered carrier.
 -/
 
 namespace Minimalist.SyntacticObject
