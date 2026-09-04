@@ -41,6 +41,14 @@ theorem mul_comm (l r : SyntacticObject) : l * r = r * l := merge_comm l r
 /-- A lexical item is a leaf. -/
 instance : Coe LIToken SyntacticObject := ⟨leaf⟩
 
+/-- Merge in braces, as [marcolli-chomsky-berwick-2025] writes it: `{l, r} = merge l r`, with
+    `{s} = s`. -/
+noncomputable instance : Insert SyntacticObject SyntacticObject := ⟨merge⟩
+
+instance : Singleton SyntacticObject SyntacticObject := ⟨id⟩
+
+@[simp] theorem insert_def (l r : SyntacticObject) : ({l, r} : SyntacticObject) = merge l r := rfl
+
 end SyntacticObject
 
 namespace PlanarSyntacticObject
@@ -66,6 +74,21 @@ def toSyntacticObjectHom : PlanarSyntacticObject →ₙ* SyntacticObject :=
 @[simp] theorem toSyntacticObject_mul (l r : PlanarSyntacticObject) :
     (l * r).toSyntacticObject = l.toSyntacticObject * r.toSyntacticObject :=
   toSyntacticObject_merge l r
+
+/-! ### Merge in braces
+
+[marcolli-chomsky-berwick-2025] writes Merge as set formation, `{α, β}`. Lean's `{a, b}` is
+`insert a {b}`, so with `{p} = p` the object `{T, {V, PossP}}` is `T * (V * PossP)`, in the given
+order; its elements are objects, a head entering as its leaf. -/
+
+instance : Singleton PlanarSyntacticObject PlanarSyntacticObject := ⟨id⟩
+
+instance : Insert PlanarSyntacticObject PlanarSyntacticObject := ⟨merge⟩
+
+@[simp] theorem singleton_def (p : PlanarSyntacticObject) : ({p} : PlanarSyntacticObject) = p := rfl
+
+@[simp] theorem insert_def (l r : PlanarSyntacticObject) :
+    ({l, r} : PlanarSyntacticObject) = merge l r := rfl
 
 end PlanarSyntacticObject
 
