@@ -32,7 +32,7 @@ The example rows record the inference profile the analysis answers to.
 
 namespace AloniVanOrmondt2023
 
-open QBSML BSML Semantics.Numerals Data.Examples FirstOrder Language
+open QBSML BSML Numerals Data.Examples FirstOrder Language
 
 /-! ### Superlative modifiers as disjunctions -/
 

@@ -50,7 +50,7 @@ interval endpoint; see `Degree.Comparison.boundary_mem`.
 Precision/halo machinery lives in `Numerals/Precision.lean`.
 -/
 
-namespace Semantics.Numerals
+namespace Numerals
 
 -- ============================================================================
 -- Section 1: Modifier Classification
@@ -423,4 +423,4 @@ theorem denote_at_boundary {E α : Type*} [LinearOrder α]
   rw [Degree.Comparison.mem_over, ← Degree.Comparison.mem_interval, h,
     Degree.Comparison.boundary_mem]
 
-end Semantics.Numerals
+end Numerals

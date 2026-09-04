@@ -23,7 +23,7 @@ interacts with communicative goals.
 
 namespace WoodinEtAl2024
 
-open Semantics.Numerals.Roundness
+open Numerals.Roundness
 
 /-! ### β coefficients from the negative binomial regression (§4.2, [woodin-etal-2023]) -/
 

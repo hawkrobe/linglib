@@ -26,7 +26,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace English.NumeralModifiers
 
-open Semantics.Numerals
+open Numerals
 
 /--
 Semantic type of a numeral modifier.

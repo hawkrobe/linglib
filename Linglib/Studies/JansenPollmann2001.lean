@@ -65,7 +65,7 @@ rule, as does the FA operationalization itself.
 
 namespace JansenPollmann2001
 
-open Semantics.Numerals.Roundness
+open Numerals.Roundness
 
 /-! ### The principle of favourite quantities (their pp. 200–201) -/
 

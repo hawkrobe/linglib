@@ -26,7 +26,7 @@ namespace Gunlogson2001
 open Commitment
 open Discourse (DiscourseRole)
 
-variable {W : Type*} (K : Set (Commitment DiscourseRole W)) (p : Set W)
+variable {W : Type*} (K : State DiscourseRole W) (p : Set W)
 
 /-- A rising declarative narrows the addressee's commitment set, attributing `p`, and leaves the
 speaker's untouched. -/

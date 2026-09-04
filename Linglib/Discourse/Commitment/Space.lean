@@ -16,9 +16,10 @@ a question keeps the root and proposes continuations; a denegation removes the s
 would reach, which is a rooted space exactly when the act is not redundant, so that two
 denegations cancel and de Morgan's laws hold for them ([cohen-krifka-2014] (28), (34)).
 
-Commitment Space Semantics is the instance over sets of `Commitment`s ordered by inclusion,
-where the root is the intersection of the space: assertion `S⊢φ`, refusal `¬S⊢φ`, monopolar,
-bipolar and high-negation questions ([krifka-2015] (14), (27), (23), (39)), and `GRANT φ` as the
+Commitment Space Semantics is the instance over commitment states (`Commitment.State`, sets of
+`Commitment`s ordered by inclusion), where the root is the intersection of the space: assertion
+`S⊢φ`, refusal `¬S⊢φ`, monopolar, bipolar and high-negation questions ([krifka-2015] (14), (27),
+(23), (39)), and `GRANT φ` as the
 denegation of asserting `¬φ` ([cohen-krifka-2014] (38)). The issue a space raises, its
 `Discourse.HasIssue` projection, is settled by the information states inside some
 continuation's context set.
@@ -37,6 +38,8 @@ continuation's context set.
   Krifka's restriction.
 * `Space.sdiff_sdiff_states`, `Space.union_sdiff_sdiff`, `Space.sdiff_grant_states` — (28), (34)
   and (40) of [cohen-krifka-2014].
+* `Space.root_mem_grant`, `Space.assert_states_subset_grant` — a grant includes but does not
+  enforce the assertion ((39) of [cohen-krifka-2014]).
 * `Space.assert_assert_comm`, `Space.full_assert` — assertions commute, and on the free space
   assertion is the free space of the extended root.
 
@@ -203,31 +206,31 @@ end Space
 
 namespace Space
 
-variable {A W : Type*} (C : Space (Set (Commitment A W))) (a : A) (φ : Set W)
+variable {A W : Type*} (C : Space (State A W)) (a : A) (φ : Set W)
   (force : Commitment.Force)
 
 /-- `C + S⊢φ` ([cohen-krifka-2014] (23), [krifka-2015] (3), (14)): re-root at the root
 extended by `a`'s commitment to `φ`. -/
-def assert (force : Commitment.Force := .doxastic) : Space (Set (Commitment A W)) :=
+def assert (force : Commitment.Force := .doxastic) : Space (State A W) :=
   C.reroot (insert ⟨a, φ, .commit, force, .selfGenerated⟩ C.root)
 
 /-- `C + ¬S⊢φ` ([krifka-2015] (39)): re-root at the root extended by `a`'s refusal to commit
 to `φ`. -/
-def refuse (force : Commitment.Force := .doxastic) : Space (Set (Commitment A W)) :=
+def refuse (force : Commitment.Force := .doxastic) : Space (State A W) :=
   C.reroot (insert ⟨a, φ, .refuse, force, .selfGenerated⟩ C.root)
 
 /-- A monopolar question ([krifka-2015] (27)): keep the root and propose the addressee's
 assertion of `φ`. -/
-def monopolarQuestion : Space (Set (Commitment A W)) :=
+def monopolarQuestion : Space (State A W) :=
   C.propose (C.assert a φ).states (C.root_mem_lowerBounds_reroot (Set.subset_insert _ _))
 
 /-- A bipolar question ([krifka-2015] (23), (31)): the disjunction of the two monopolar
 questions. -/
-def bipolarQuestion : Space (Set (Commitment A W)) :=
+def bipolarQuestion : Space (State A W) :=
   (C.monopolarQuestion a φ).union (C.monopolarQuestion a φᶜ) rfl
 
 /-- A high-negation question ([krifka-2015] (39)): propose the addressee's refusal. -/
-def highNegationQuestion : Space (Set (Commitment A W)) :=
+def highNegationQuestion : Space (State A W) :=
   C.propose (C.refuse a φ).states (C.root_mem_lowerBounds_reroot (Set.subset_insert _ _))
 
 /-- Denegation `C + ∼A` ([cohen-krifka-2014] (26), [krifka-2015] (5)): the states not reached by
@@ -260,10 +263,33 @@ theorem root_mem_assert_iff :
 
 /-- `GRANT φ = ∼ASSERT ¬φ` ([cohen-krifka-2014] (38)), for a non-redundant `ASSERT ¬φ`. -/
 def grant (h : (⟨a, φᶜ, .commit, .doxastic, .selfGenerated⟩ : Commitment A W) ∉ C.root) :
-    Space (Set (Commitment A W)) :=
+    Space (State A W) :=
   C.denegate (·.assert a φᶜ) (mt (C.root_mem_assert_iff a φᶜ .doxastic).1 h)
 
 @[simp] theorem grant_root (h) : (C.grant a φ h).root = C.root := rfl
+
+/-- The grant keeps the root: it does not enforce the assertion ([cohen-krifka-2014] (39)). -/
+theorem root_mem_grant (h) : C.root ∈ (C.grant a φ h).states :=
+  ⟨C.root_mem, mt (C.root_mem_assert_iff a φᶜ .doxastic).1 h⟩
+
+/-- On a space whose states never carry both a commitment and its denial, every state reached
+by asserting `φ` survives granting `φ`: the grant includes the assertion ([cohen-krifka-2014]
+(39), p. 54). -/
+theorem assert_states_subset_grant
+    (hmem : insert ⟨a, φ, .commit, .doxastic, .selfGenerated⟩ C.root ∈ C.states)
+    (hcons : ∀ d ∈ C.states, ¬((⟨a, φ, .commit, .doxastic, .selfGenerated⟩ : Commitment A W) ∈ d ∧
+      (⟨a, φᶜ, .commit, .doxastic, .selfGenerated⟩ : Commitment A W) ∈ d))
+    (h : (⟨a, φᶜ, .commit, .doxastic, .selfGenerated⟩ : Commitment A W) ∉ C.root) :
+    (C.assert a φ).states ⊆ (C.grant a φ h).states := by
+  have key : ∀ d ∈ C.states,
+      (⟨a, φ, .commit, .doxastic, .selfGenerated⟩ : Commitment A W) ∈ d →
+        d ∉ (C.assert a φᶜ).states := by
+    rintro d hd hφ (heq | ⟨-, hsub⟩)
+    · exact hcons d hd ⟨hφ, heq ▸ Set.mem_insert _ _⟩
+    · exact hcons d hd ⟨hφ, hsub (Set.mem_insert _ _)⟩
+  rintro d (rfl | ⟨hd, hsub⟩)
+  · exact ⟨hmem, key _ hmem (Set.mem_insert _ _)⟩
+  · exact ⟨hd, key _ hd (hsub (Set.mem_insert _ _))⟩
 
 /-- The performative update: the root commits `a` to `φ`. -/
 theorem mem_contents_assert_root : φ ∈ contents (C.assert a φ force).root :=
@@ -281,7 +307,7 @@ theorem assert_assert_comm (b : A) (ψ : Set W) (g : Commitment.Force) :
     Set.insert_comm]
 
 /-- On the free space, assertion is the free space of the extended root. -/
-theorem full_assert (c : Set (Commitment A W)) :
+theorem full_assert (c : State A W) :
     (full c).assert a φ force = full (insert ⟨a, φ, .commit, force, .selfGenerated⟩ c) :=
   reroot_full (Set.subset_insert _ _)
 
@@ -308,7 +334,7 @@ noncomputable def toIssue : Question W :=
   if C.continuations = ∅ then Question.ofSet (contextSet C.root)
   else ⨆ c ∈ C.continuations, Question.ofSet (contextSet c)
 
-noncomputable instance : Discourse.HasIssue (Space (Set (Commitment A W))) W := ⟨toIssue⟩
+noncomputable instance : Discourse.HasIssue (Space (State A W)) W := ⟨toIssue⟩
 
 theorem mem_toIssue_iff {i : Set W} :
     i ∈ C.toIssue ↔
@@ -323,7 +349,7 @@ theorem mem_toIssue_iff {i : Set W} :
 
 /-- The common ground of a space is what its root entails; the speaker's assertion is
 Stalnakerian on it. -/
-instance : HasAssertion (Space (Set (Commitment Discourse.DiscourseRole W))) W where
+instance : HasAssertion (Space (State Discourse.DiscourseRole W)) W where
   commonGround C := slate C.root
   initial := full ∅
   assert C φ := C.assert .speaker φ

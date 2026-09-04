@@ -1,11 +1,11 @@
 import Linglib.Discourse.Commitment.Space
-import Linglib.Discourse.Commitment.State
+import Linglib.Discourse.Commitment.Frame
 
 /-!
 # van der Leer 2026: Speech Act Logic
 
 [van-der-leer-2026] is a propositional dynamic logic of speech acts over the commitment states
-of `Commitment.State`. Belief `B_a` and commitment `C_{a,b}` are modal operators; an
+of `Commitment.Frame`. Belief `B_a` and commitment `C_{a,b}` are modal operators; an
 assertion is the update `c⌈π⌉_{a,b}` that creates a commitment, the performative update of
 [krifka-2024a], which Sincerity and Competence pass on to beliefs, the informative update —
 keeping common belief and commitment apart, as [bary-2025] demands. The projected discourse is
@@ -22,7 +22,7 @@ expectations: a cooperative act is admissible and every act is possible, but not
 * `sincereRestrict` — the sincere update `c⌈π⌉^sin_{a,b}` (Definition 6), partial as in
   footnote 18.
 * `CooperativeContinuation` (`⊏`, Definition 7); a commitment space (Definition 8) is
-  `Commitment.Space (State W A)` under the partial order `⊑`.
+  `Commitment.Space (Frame W A)` under the partial order `⊑`.
 * `SpeechAct` (Definition 20), `update` (Definitions 10, 19, 21–24).
 * `Violation`, `Cooperative`, `Admissible` (Definitions 15–17).
 
@@ -30,7 +30,7 @@ expectations: a cooperative act is admissible and every act is possible, but not
 
 * `committed_assert` (Theorem 25) with the acknowledgment corollaries
   `believes_committed_assert` and `committed_committed_assert`; Theorem 26 is
-  `State.Sincere.believes_of_committed_of_competent`.
+  `Frame.Sincere.believes_of_committed_of_competent`.
 * `committed_believes_of_sincere`, `exists_committed_believes_not_committed` (Theorem 27):
   under Sincerity a commitment entails a commitment to the corresponding belief, but not
   conversely — [krifka-2024b]'s "The buffet is open" is stronger than "I believe the buffet
@@ -84,7 +84,7 @@ variable {W A : Type*}
 
 section States
 
-variable (c : State W A) (a b : A) (π : Set W) (w : W)
+variable (c : Frame W A) (a b : A) (π : Set W) (w : W)
 
 /-- Positive introspection of commitment: `C_{a,b} π → C_{a,b} C_{a,b} π`. -/
 theorem committed_committed (h : c.Committed a b π w) :
@@ -105,7 +105,7 @@ def MutuallyBelieved : Prop :=
   everyoneKnows c.belief Set.univ (· ∈ π) w
 
 theorem mutuallyBelieved_iff : MutuallyBelieved c π w ↔ ∀ a, c.Believes a π w := by
-  simp [MutuallyBelieved, State.Believes, everyoneKnows_iff]
+  simp [MutuallyBelieved, Frame.Believes, everyoneKnows_iff]
 
 /-- `π` is mutually committed to at `w` (§2.2): it holds at every world some commitment
 relation reaches. -/
@@ -113,12 +113,12 @@ def MutuallyCommitted : Prop :=
   everyoneKnows (fun p : A × A => c.commitment p.1 p.2) Set.univ (· ∈ π) w
 
 theorem mutuallyCommitted_iff : MutuallyCommitted c π w ↔ ∀ a b, c.Committed a b π w := by
-  simp [MutuallyCommitted, State.Committed, knows, everyoneKnows_iff, Prod.forall]
+  simp [MutuallyCommitted, Frame.Committed, knows, everyoneKnows_iff, Prod.forall]
 
 /-- The sincere update `c⌈π⌉^sin_{a,b}` (Definition 6): `c⌈π⌉_{a,b}` with `a`'s belief narrowed
 to the new `O_{a,b}`-edges. It is partial (footnote 18): `h` keeps the narrowed belief serial. -/
 def sincereRestrict
-    (h : ∀ w, ∃ v, c.belief a w v ∧ c.commitment a b w v ∧ v ∈ π) : State W A where
+    (h : ∀ w, ∃ v, c.belief a w v ∧ c.commitment a b w v ∧ v ∈ π) : Frame W A where
   belief x w v := c.belief x w v ∧ (x = a → (c.restrictCommitment a b π).commitment a b w v)
   commitment := (c.restrictCommitment a b π).commitment
   belief_kd45 x :=
@@ -159,7 +159,7 @@ theorem believes_sincereRestrict
 
 /-- Definition 4 alone need not preserve Sincerity. -/
 theorem exists_sincere_not_sincere_restrictCommitment :
-    ∃ (c : State Bool Unit) (π : Set Bool),
+    ∃ (c : Frame Bool Unit) (π : Set Bool),
       c.Sincere ∧ ¬ (c.restrictCommitment () () π).Sincere :=
   ⟨default, {true}, fun _ _ _ _ _ => trivial,
     fun h => Bool.false_ne_true ((h () () true false trivial).2 ⟨rfl, rfl⟩)⟩
@@ -171,7 +171,7 @@ theorem committed_believes_of_sincere {w : W} (hs : c.Sincere) (h : c.Committed 
 
 /-- Both agents believe only `true`, at either world, and are committed to nothing: a sincere
 state in which, at `false`, `C_{a,b} B_a {true}` holds but `C_{a,b} {true}` fails. -/
-def buffet : State Bool Bool where
+def buffet : Frame Bool Bool where
   belief _ _ v := v = true
   commitment _ _ _ _ := True
   belief_kd45 _ := { serial := fun _ => ⟨true, rfl⟩
@@ -182,7 +182,7 @@ def buffet : State Bool Bool where
 
 /-- Theorem 27(2): `C_{a,b} B_a π → C_{a,b} π` is not valid over sincere states. -/
 theorem exists_committed_believes_not_committed :
-    ∃ (c : State Bool Bool) (a b : Bool) (π : Set Bool) (w : Bool),
+    ∃ (c : Frame Bool Bool) (a b : Bool) (π : Set Bool) (w : Bool),
       c.Sincere ∧ c.Committed a b {v | c.Believes a π v} w ∧ ¬ c.Committed a b π w :=
   ⟨buffet, true, false, {true}, false, fun _ _ _ _ _ => trivial, fun _ _ _ hu => hu,
     fun h => Bool.false_ne_true (h false trivial)⟩
@@ -194,7 +194,7 @@ end States
 /-- `c ⊏ c'`: `c'` is a cooperative continuation of `c` (Definition 7): beliefs and commitments
 narrow, every commitment relation of `c'` is non-empty, and some commitment relation narrows
 strictly. -/
-structure CooperativeContinuation (c c' : State W A) : Prop where
+structure CooperativeContinuation (c c' : Frame W A) : Prop where
   belief_le : ∀ a, c'.belief a ≤ c.belief a
   commitment_le : ∀ a b, c'.commitment a b ≤ c.commitment a b
   commitment_nonempty : ∀ a b, ∃ w v, c'.commitment a b w v
@@ -207,7 +207,7 @@ scoped infix:50 " ⊑ " => ReflGen CooperativeContinuation
 
 namespace CooperativeContinuation
 
-variable {c c' d : State W A}
+variable {c c' d : Frame W A}
 
 theorem ne (h : c ⊏ c') : c ≠ c' :=
   fun e => let ⟨_, _, _, _, h₁, h₂⟩ := h.commitment_lt; h₂ (e ▸ h₁)
@@ -225,14 +225,14 @@ theorem of_restrictCommitment {a b : A} {π : Set W} (h : c.restrictCommitment a
     c ⊏ c' :=
   h.of_le (fun _ => le_rfl) (c.restrictCommitment_commitment_le a b π)
 
-instance : IsTrans (State W A) CooperativeContinuation where
+instance : IsTrans (Frame W A) CooperativeContinuation where
   trans _ _ _ h₁ h₂ := h₂.of_le h₁.belief_le h₁.commitment_le
 
 end CooperativeContinuation
 
 section Order
 
-variable {c c' : State W A}
+variable {c c' : Frame W A}
 
 theorem commitment_le_of_le (h : c ⊑ c') (a b : A) : c'.commitment a b ≤ c.commitment a b := by
   rcases h with _ | h
@@ -249,8 +249,8 @@ theorem eq_of_le_of_le (h : c ⊑ c') (h' : c' ⊑ c) : c = c' := by
 end Order
 
 /-- The cooperative-continuation order on states: `⊑` as `≤`, `⊏` as `<`. A commitment space
-(Definition 8) is then a `Commitment.Space (State W A)`. -/
-scoped instance : PartialOrder (State W A) where
+(Definition 8) is then a `Commitment.Space (Frame W A)`. -/
+scoped instance : PartialOrder (Frame W A) where
   le c c' := c ⊑ c'
   lt c c' := c ⊏ c'
   le_refl _ := ReflGen.refl
@@ -263,11 +263,11 @@ scoped instance : PartialOrder (State W A) where
         · exact absurd ReflGen.refl h'
         · exact h⟩
 
-variable (C : Space (State W A)) {c : State W A} (a b : A) (π : Set W) (w : W)
+variable (C : Space (Frame W A)) {c : Frame W A} (a b : A) (π : Set W) (w : W)
 
 /-- A restriction `x⌈σ⌉_{d,e}` that belongs to `C` lies above `x` — unless it is the root and
 differs from `x`, since the root need not have non-empty commitment relations. -/
-theorem le_restrictCommitment_of_mem {x : State W A} {d e : A} {σ : Set W}
+theorem le_restrictCommitment_of_mem {x : Frame W A} {d e : A} {σ : Set W}
     (hmem : x.restrictCommitment d e σ ∈ C.states)
     (hroot : x.restrictCommitment d e σ = C.root → x.restrictCommitment d e σ = x) :
     x ⊑ x.restrictCommitment d e σ := by
@@ -279,13 +279,13 @@ theorem le_restrictCommitment_of_mem {x : State W A} {d e : A} {σ : Set W}
     · exact h.commitment_nonempty
   · by_contra hcon
     push Not at hcon
-    exact heq (State.ext rfl (funext fun a' => funext fun b' => funext fun w =>
+    exact heq (Frame.ext rfl (funext fun a' => funext fun b' => funext fun w =>
       funext fun v => propext ⟨(x.restrictCommitment_commitment_le d e σ a' b' w v ·),
         hcon a' b' w v⟩))
 
 /-- `C[assert_{a,b}(π)]` (Definition 10): the root commits `a` to `π` towards `b`; the
 continuations are the members of `C` above the state in which `b` has confirmed. -/
-def assert : Space (State W A) where
+def assert : Space (Frame W A) where
   states := insert (C.root.restrictCommitment a b π)
     {c ∈ C.states | (C.root.restrictCommitment a b π).restrictCommitment b a π ⊑ c}
   root := C.root.restrictCommitment a b π
@@ -300,19 +300,19 @@ def assert : Space (State W A) where
 
 /-- `C[question_{a,b}(π)]` (Definition 19): the root is kept; the continuations are the members
 of `C` in which `b` has answered `π` or `¬π`. -/
-def question : Space (State W A) :=
+def question : Space (Frame W A) :=
   C.propose ({c ∈ C.states | C.root.restrictCommitment b a π ⊑ c} ∪
       {c ∈ C.states | C.root.restrictCommitment b a πᶜ ⊑ c}) <| by
     rintro c (⟨hc, -⟩ | ⟨hc, -⟩) <;> exact C.root_le hc
 
 /-- `C[∼α]` (Definition 22) for `D = C[α]`: `D`'s states are removed, the root is kept. -/
-def denegate (D : Space (State W A)) : Space (State W A) :=
+def denegate (D : Space (Frame W A)) : Space (Frame W A) :=
   C.propose (C.states \ D.states) fun _ hc => C.root_le hc.1
 
 
 /-- `V_{a,b}` (Definition 16): `a`'s commitment relation towards `b` is empty — `a` is committed
 to a contradiction. -/
-def Violation (c : State W A) (a b : A) : Prop :=
+def Violation (c : Frame W A) (a b : A) : Prop :=
   ∀ w v, ¬ c.commitment a b w v
 
 /-- The language of actions (Definition 20): assertion, polar question, the empty act `⊖`,
@@ -325,12 +325,12 @@ inductive SpeechAct (W A : Type*)
   | seq (α β : SpeechAct W A)
   | cond (π : Set W) (α β : SpeechAct W A)
 
-variable (C : Space (State W A)) (a b : A) (π τ : Set W) (w : W) (α : SpeechAct W A)
+variable (C : Space (Frame W A)) (a b : A) (π τ : Set W) (w : W) (α : SpeechAct W A)
 
 open scoped Classical in
 /-- `C[α]` (Definitions 10, 19, 21–24). The conditional tests its antecedent at the root, where a
 world-set holds iff it is `Set.univ`. -/
-noncomputable def update : SpeechAct W A → Space (State W A) → Space (State W A)
+noncomputable def update : SpeechAct W A → Space (Frame W A) → Space (Frame W A)
   | .assert a b π, C => assert C a b π
   | .question a b π, C => question C a b π
   | .empty, C => C
@@ -346,7 +346,7 @@ noncomputable def update : SpeechAct W A → Space (State W A) → Space (State 
     update (.seq α β) C = update β (update α C) := rfl
 @[simp] theorem root_assert : (assert C a b π).root = C.root.restrictCommitment a b π := rfl
 @[simp] theorem root_question : (question C a b π).root = C.root := rfl
-@[simp] theorem root_denegate (D : Space (State W A)) : (denegate C D).root = C.root := rfl
+@[simp] theorem root_denegate (D : Space (Frame W A)) : (denegate C D).root = C.root := rfl
 
 /-- Lemma 28: no speech act enlarges a commitment relation of the root. -/
 theorem root_update_commitment_le :
@@ -388,7 +388,7 @@ theorem assert_assert_of_subset (h : π ⊆ τ) :
     update (.assert a b τ) (update (.assert a b π) C) = update (.assert a b π) C := by
   have hroot : (C.root.restrictCommitment a b π).restrictCommitment a b τ =
       C.root.restrictCommitment a b π := by
-    rw [State.restrictCommitment_restrictCommitment, Set.inter_eq_left.2 h]
+    rw [Frame.restrictCommitment_restrictCommitment, Set.inter_eq_left.2 h]
   refine Space.ext (Set.ext fun c => ?_) hroot
   simp only [update, assert, hroot, Set.mem_insert_iff, Set.mem_ofPred_eq]
   refine ⟨fun hc => hc.elim Or.inl And.left, fun hc => ?_⟩
@@ -398,7 +398,7 @@ theorem assert_assert_of_subset (h : π ⊆ τ) :
   rcases (Relation.reflGen_iff _ _ _).1 hle with rfl | hlt
   · have hx : ((C.root.restrictCommitment a b π).restrictCommitment b a τ).restrictCommitment
         b a π = (C.root.restrictCommitment a b π).restrictCommitment b a π := by
-      rw [State.restrictCommitment_restrictCommitment, Set.inter_eq_right.2 h]
+      rw [Frame.restrictCommitment_restrictCommitment, Set.inter_eq_right.2 h]
     rw [← hx] at hc ⊢
     refine le_restrictCommitment_of_mem C hc fun e => ?_
     rw [hx] at e ⊢
@@ -435,7 +435,7 @@ theorem admissible_of_cooperative (h : Cooperative C α) : Admissible C α := by
 /-- Theorem 34(3): admissible speech acts need not be cooperative — nothing is cooperative in a
 space without continuations. -/
 theorem exists_admissible_not_cooperative :
-    ∃ (C : Space (State Bool Unit)) (α : SpeechAct Bool Unit),
+    ∃ (C : Space (Frame Bool Unit)) (α : SpeechAct Bool Unit),
       Admissible C α ∧ ¬ Cooperative C α :=
   ⟨Space.singleton default, .assert () () {true}, fun _ _ h => h false true ⟨trivial, fun _ => rfl⟩,
     fun ⟨_, _, hc, hlt, _⟩ => hlt.ne hc.symm⟩
@@ -459,7 +459,7 @@ theorem cooperative_assert_of_not_committed [Nonempty W] (hab : a ≠ b)
     Cooperative (update (.assert a b π) C) (.assert b a π) := by
   obtain ⟨w⟩ := ‹Nonempty W›
   have h' := h w
-  simp only [State.Committed, ModalLogic.box, not_forall] at h'
+  simp only [Frame.Committed, ModalLogic.box, not_forall] at h'
   obtain ⟨v, hwv, hvπ⟩ := h'
   have h₁ : (C.root.restrictCommitment a b π).commitment b a w v :=
     (C.root.restrictCommitment_other a b π w (fun e => hab e.1.symm) v).2 hwv
@@ -477,7 +477,7 @@ theorem cooperative_assert_of_not_committed [Nonempty W] (hab : a ≠ b)
 theorem question_assert :
     update (.question a b π) (update (.assert b a π) C) = update (.assert b a π) C := by
   refine Space.ext (Set.ext fun c => ?_) rfl
-  simp only [update, question, root_assert, State.restrictCommitment_restrictCommitment,
+  simp only [update, question, root_assert, Frame.restrictCommitment_restrictCommitment,
     Set.inter_self]
   refine ⟨fun hc => ?_, fun hc => Or.inr (Or.inl ⟨hc, (assert C b a π).root_le hc⟩)⟩
   rcases hc with rfl | ⟨hc, -⟩ | ⟨hc, -⟩

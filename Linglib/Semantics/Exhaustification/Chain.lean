@@ -21,7 +21,7 @@ Measurement crash).
 
 The two lemmas are the two halves of one case split — does a next-stronger
 alternative exist? — instantiated across the numeral literature:
-`Semantics.Numerals.exhNumeral` (Horn's 'exactly', the step-1 instance on
+`Numerals.exhNumeral` (Horn's 'exactly', the step-1 instance on
 ℕ), granularity-`g` scalar alternatives in both bound directions
 (`Studies/Mihoc2019`), the dense crash (`Studies/FoxHackl2006`),
 and grain-size-indexed precisification families ([thomas-deo-2020]'s

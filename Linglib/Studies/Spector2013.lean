@@ -48,7 +48,7 @@ generalizations about numeral interpretation (§5, (41a–c)):
 
 namespace Spector2013
 
-open Semantics.Numerals
+open Numerals
 open Exhaustification (innocent predToFinset altsFromPreds)
 
 -- ============================================================================

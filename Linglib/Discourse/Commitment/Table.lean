@@ -52,7 +52,7 @@ discourse commitments, and the common ground. -/
 @[ext]
 structure Table (A W : Type*) where
   stack : List (Table.Item W)
-  commitments : Set (Commitment A W)
+  commitments : State A W
   cg : Filter W
 
 namespace Table

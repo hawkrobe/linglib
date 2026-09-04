@@ -24,7 +24,7 @@ places the maximum of the degree predicate in the *complement* of the extent,
 [at-sup] inside it. The four modified forms are cross-pairings (*more than* =
 [comp]+much, *less than* = [comp]+little, *at least* = [at-sup]+**little**,
 *at most* = [at-sup]+**much**), and the truth conditions provably reduce to
-the Hackl/Kennedy meanings — here the named meanings of `Semantics.Numerals`,
+the Hackl/Kennedy meanings — here the named meanings of `Numerals`,
 so the reduction theorems double as bridges to the [kennedy-2015] spine.
 Alternatives fall out of the truth conditions: σA replaces the numeral with a
 scalemate; DA replaces the set the maximum is asserted to fall in — the
@@ -57,7 +57,7 @@ obliterates the next-stronger alternative.
 ## Main results
 
 - `compTC_much_iff` … `atSupTC_much_iff`: the reductions to the
-  `Semantics.Numerals` named meanings (her Ch. 2 (32)–(33))
+  `Numerals` named meanings (her Ch. 2 (32)–(33))
 - `Form.tc_iff_rel`: the Op × Extent factorization lands on `Comparison.rel`
 - `comp_excludes_boundary` / `atSup_includes_boundary`: the Class A/B
   strict/non-strict split ([geurts-nouwen-2007], [nouwen-2010]) as
@@ -118,25 +118,25 @@ def atSupTC (f : ℕ → Set ℕ) (n maxD : ℕ) : Prop := maxD ∈ f n
 /-! ### Reduction to the Kennedy spine (her Ch. 2 (32)–(33))
 
 The four cross-pairings recover exactly the named meanings of
-`Semantics.Numerals`. That *at least* pairs with `little` and *at most* with
+`Numerals`. That *at least* pairs with `little` and *at most* with
 `much` — inverting the pairing of the comparatives — is what captures the
 shared `much`/`little` morphology across CMNs and SMNs. -/
 
 theorem compTC_much_iff (n maxD : ℕ) :
-    compTC much n maxD ↔ Semantics.Numerals.moreThanMeaning n maxD := by
-  simp [compTC, Semantics.Numerals.moreThanMeaning, Comparison.rel]
+    compTC much n maxD ↔ Numerals.moreThanMeaning n maxD := by
+  simp [compTC, Numerals.moreThanMeaning, Comparison.rel]
 
 theorem compTC_little_iff (n maxD : ℕ) :
-    compTC little n maxD ↔ Semantics.Numerals.fewerThanMeaning n maxD := by
-  simp [compTC, Semantics.Numerals.fewerThanMeaning, Comparison.rel]
+    compTC little n maxD ↔ Numerals.fewerThanMeaning n maxD := by
+  simp [compTC, Numerals.fewerThanMeaning, Comparison.rel]
 
 theorem atSupTC_little_iff (n maxD : ℕ) :
-    atSupTC little n maxD ↔ Semantics.Numerals.atLeastMeaning n maxD := by
-  simp [atSupTC, Semantics.Numerals.atLeastMeaning, Comparison.rel]
+    atSupTC little n maxD ↔ Numerals.atLeastMeaning n maxD := by
+  simp [atSupTC, Numerals.atLeastMeaning, Comparison.rel]
 
 theorem atSupTC_much_iff (n maxD : ℕ) :
-    atSupTC much n maxD ↔ Semantics.Numerals.atMostMeaning n maxD := by
-  simp [atSupTC, Semantics.Numerals.atMostMeaning, Comparison.rel]
+    atSupTC much n maxD ↔ Numerals.atMostMeaning n maxD := by
+  simp [atSupTC, Numerals.atMostMeaning, Comparison.rel]
 
 /-! ### Assertion forms (her §2.6)
 
@@ -186,9 +186,9 @@ abbrev Form.atMost (n : ℕ) : Form := .modified .atSup .much n
 
 /-- Truth conditions of a form, as a predicate on the maximum of the degree
 predicate. Bare numerals get the lower-bounded Horn meaning
-(`Semantics.Numerals.atLeastMeaning`; her §2.3, following [horn-1972]). -/
+(`Numerals.atLeastMeaning`; her §2.3, following [horn-1972]). -/
 def Form.tc : Form → ℕ → Prop
-  | .bare n, maxD => Semantics.Numerals.atLeastMeaning n maxD
+  | .bare n, maxD => Numerals.atLeastMeaning n maxD
   | .modified .comp f n, maxD => compTC f.set n maxD
   | .modified .atSup f n, maxD => atSupTC f.set n maxD
 
@@ -235,7 +235,7 @@ theorem Form.tc_iff_rel (φ : Form) (maxD : ℕ) :
       omega
 
 @[simp] theorem tc_bare (n maxD : ℕ) : (Form.bare n).tc maxD ↔ n ≤ maxD := by
-  simp [Form.tc, Semantics.Numerals.atLeastMeaning, Comparison.rel]
+  simp [Form.tc, Numerals.atLeastMeaning, Comparison.rel]
 
 @[simp] theorem tc_moreThan (n maxD : ℕ) :
     (Form.moreThan n).tc maxD ↔ n < maxD := by
@@ -256,7 +256,7 @@ theorem Form.tc_iff_rel (φ : Form) (maxD : ℕ) :
 /-! ### Class A/B strictness from the decomposition
 
 The Class A (strict) / Class B (non-strict) split of [geurts-nouwen-2007]
-and [nouwen-2010] — `Semantics.Numerals.ModifierClass` — derived from
+and [nouwen-2010] — `Numerals.ModifierClass` — derived from
 complement-vs-extent through `Comparison.boundary_mem`, rather than
 stipulated per modifier. -/
 
@@ -335,27 +335,27 @@ instance (g : ℕ) (φ : Form) (maxD : ℕ) : Decidable (φ.exhSigma g maxD) :=
   inferInstanceAs (Decidable (φ.tc maxD ∧ ¬ (φ.strongerAlt g).tc maxD))
 
 /-- At granularity 1 on a bare numeral, her `O_σA` *is* the spine's
-`Semantics.Numerals.exhNumeral` — and hence, via
+`Numerals.exhNumeral` — and hence, via
 `Spector2013.exhNumeral_eq_innocent_exh`, Fox-2007 innocent exclusion.
 `exhSigma` is its generalization to arbitrary granularity and to the
 upper-bounding scalemate direction. -/
 theorem exhSigma_bare_eq_exhNumeral (n maxD : ℕ) :
-    (Form.bare n).exhSigma 1 maxD ↔ Semantics.Numerals.exhNumeral n maxD :=
+    (Form.bare n).exhSigma 1 maxD ↔ Numerals.exhNumeral n maxD :=
   Iff.rfl
 
 /-- The *at least* form agrees with the bare form under `O_σA` at
 granularity 1 — both are `exhNumeral`. -/
 theorem exhSigma_atLeast_eq_exhNumeral (n maxD : ℕ) :
-    (Form.atLeast n).exhSigma 1 maxD ↔ Semantics.Numerals.exhNumeral n maxD := by
-  simp [Form.exhSigma, Form.strongerAlt, Semantics.Numerals.exhNumeral,
-    Semantics.Numerals.atLeastMeaning, Comparison.rel]
+    (Form.atLeast n).exhSigma 1 maxD ↔ Numerals.exhNumeral n maxD := by
+  simp [Form.exhSigma, Form.strongerAlt, Numerals.exhNumeral,
+    Numerals.atLeastMeaning, Comparison.rel]
 
 /-- Her Ch. 3 (2): `O_σA`(bare n) = 'exactly n' — the classical Horn
 derivation. -/
 theorem exhSigma_bare_g1 (n maxD : ℕ) :
     (Form.bare n).exhSigma 1 maxD ↔ maxD = n := by
-  rw [exhSigma_bare_eq_exhNumeral, Semantics.Numerals.exhNumeral_iff_bare,
-    Semantics.Numerals.bareMeaning_def]
+  rw [exhSigma_bare_eq_exhNumeral, Numerals.exhNumeral_iff_bare,
+    Numerals.bareMeaning_def]
 
 /-- Her Ch. 3 (24): `O_σA`(more than n) = 'exactly n+1' — unwelcome. -/
 theorem exhSigma_moreThan_g1 (n maxD : ℕ) :
