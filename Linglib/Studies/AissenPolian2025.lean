@@ -78,21 +78,21 @@ def hasD (s : SyntacticObject) : Bool :=
   | some tok => tok.item.outerCat == .D
   | none => false
 
-private def C₀ : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .C [], 1⟩
-private def T₀ : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .T [], 2⟩
-private def V₀ : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .V [], 3⟩
-private def v₀ : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .v [], 4⟩
-private def Appl₀ : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .Appl [], 5⟩
-private def P₀ : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .P [], 6⟩
-private def Psr : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .D [], 7⟩
-private def Psm : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .N [], 8⟩
-private def D₀ : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .D [], 9⟩
-private def Agt : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .D [], 10⟩
-private def SubjD : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .D [], 11⟩
-private def SubjN : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .N [], 12⟩
-private def ThemeD : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .D [], 13⟩
-private def ThemeN : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .N [], 14⟩
-private def Pivot : PlanarSyntacticObject := PlanarSyntacticObject.leaf ⟨.simple .N [], 15⟩
+private def C₀ : PlanarSyntacticObject := .leaf ⟨.simple .C [], 1⟩
+private def T₀ : PlanarSyntacticObject := .leaf ⟨.simple .T [], 2⟩
+private def V₀ : PlanarSyntacticObject := .leaf ⟨.simple .V [], 3⟩
+private def v₀ : PlanarSyntacticObject := .leaf ⟨.simple .v [], 4⟩
+private def Appl₀ : PlanarSyntacticObject := .leaf ⟨.simple .Appl [], 5⟩
+private def P₀ : PlanarSyntacticObject := .leaf ⟨.simple .P [], 6⟩
+private def Psr : PlanarSyntacticObject := .leaf ⟨.simple .D [], 7⟩
+private def Psm : PlanarSyntacticObject := .leaf ⟨.simple .N [], 8⟩
+private def D₀ : PlanarSyntacticObject := .leaf ⟨.simple .D [], 9⟩
+private def Agt : PlanarSyntacticObject := .leaf ⟨.simple .D [], 10⟩
+private def SubjD : PlanarSyntacticObject := .leaf ⟨.simple .D [], 11⟩
+private def SubjN : PlanarSyntacticObject := .leaf ⟨.simple .N [], 12⟩
+private def ThemeD : PlanarSyntacticObject := .leaf ⟨.simple .D [], 13⟩
+private def ThemeN : PlanarSyntacticObject := .leaf ⟨.simple .N [], 14⟩
+private def Pivot : PlanarSyntacticObject := .leaf ⟨.simple .N [], 15⟩
 
 /-- A non-specific possessive, `{Psr, Psm}`. -/
 private def PossP : PlanarSyntacticObject := {Psr, Psm}
