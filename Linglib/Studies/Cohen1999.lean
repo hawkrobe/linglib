@@ -54,7 +54,7 @@ hypothesis, and a salient cell with an empty reference class imposes no conditio
 * [W. C. Salmon, *Objectively Homogeneous Reference Classes* (1977)][salmon-1977]
 * [R. Thomason, *Theories of Nonmonotonicity and Natural Language Generics*
   (1988)][thomason-1988]
-* [G. N. Carlson, *Reference to Kinds in English* (1977)][carlson-1977]
+* [G. N. Carlson, *Reference to Kinds in English* (1977)][carlson-1977a]
 -/
 
 namespace Cohen1999
@@ -123,6 +123,13 @@ theorem gen_conservativity :
   unfold gen prevalenceOn
   rw [countOn_congr (P := fun x => (ψ x ∧ alt x) ∧ ψ x ∧ φ x)
     (Q := fun x => (ψ x ∧ alt x) ∧ φ x) fun x _ => by tauto]
+
+/-- A generic whose scope exhausts its alternatives is true on any inhabited reference
+class — the reading of refutation statements, whose negation denies existence (§5.7). -/
+theorem gen_self (hR : 0 < countOn domain (fun x => ψ x ∧ φ x)) :
+    gen domain ψ φ φ := by
+  rw [gen, (prevalenceOn_eq_one_iff hR).mpr fun y _ hy => hy.2]
+  norm_num
 
 /-! ### The generalized-quantifier interface
 
