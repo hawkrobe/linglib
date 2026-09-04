@@ -99,12 +99,11 @@ private def wordTok (w : Word) (id : Nat) : LIToken :=
     `{subj, verb}`. C-command follows from the geometry. Built planar-first so
     the containment / c-command decision procedures reduce. -/
 def toSyntacticObject (clause : SimpleClause) : SyntacticObject :=
-  let subjP := PlanarSyntacticObject.leaf (wordTok clause.subject 0)
-  let verbP := PlanarSyntacticObject.leaf (wordTok clause.verb 1)
+  let subjP : PlanarSyntacticObject := wordTok clause.subject 0
+  let verbP : PlanarSyntacticObject := wordTok clause.verb 1
   match clause.object with
-  | none => PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge subjP verbP)
-  | some obj => PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge subjP
-    (PlanarSyntacticObject.merge verbP (PlanarSyntacticObject.leaf (wordTok obj 2))))
+  | none => ↑(subjP * verbP)
+  | some obj => ↑(subjP * (verbP * wordTok obj 2))
 
 private def subjectSO (clause : SimpleClause) : SyntacticObject :=
   leaf (wordTok clause.subject 0)

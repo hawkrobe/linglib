@@ -39,8 +39,7 @@ On the MCB-faithful `SyntacticObject` carrier, Merge (`SyntacticObject.merge`/`*
 so `SyntacticObject.Derivation.final`/`.stageAt` do not `decide`. The computable layers —
 `movedItems` and the externalized surface order (`surfacePhon`) — are proved
 over the `SyntacticObject.Derivation` directly. The c-command predictions are stated over
-the **derived/base trees built planar-first** (`(PlanarSyntacticObject.merge
-…)`),
+the **derived/base trees built ordered** (products of tokens),
 i.e. the very trees each derivation produces, written out explicitly per the
 prose diagrams; c-command (`SyntacticObject.cCommandsIn`) reduces on those.
 
@@ -127,13 +126,11 @@ private def tok_t          : LIToken := ⟨.simple .T [.v], 5⟩
 
 /-- The VP constituent `[VP V Obj]` — the phrase that raises. Built
     planar-first so containment over it `decide`s. -/
-def vp : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
-    (PlanarSyntacticObject.leaf tok_mangatuk) (PlanarSyntacticObject.leaf tok_biangi))
+def vp : PlanarSyntacticObject :=
+   (tok_mangatuk * tok_biangi)
 
 /-- The VP as a planar subtree (for embedding in larger result trees). -/
-private def vpP : PlanarSyntacticObject := PlanarSyntacticObject.merge
-    (PlanarSyntacticObject.leaf tok_mangatuk) (PlanarSyntacticObject.leaf tok_biangi)
+private def vpP : PlanarSyntacticObject := tok_mangatuk * tok_biangi
 
 -- ============================================================================
 -- § 2: Toba Batak VOS Derivation
@@ -159,22 +156,16 @@ def tobaBatakVOS : Derivation :=
 
 /-- The VOS **base** tree at stage 4 (pre-movement):
     `[TP T [vP Subj [v' v [VP V Obj]]]]`. Built planar-first. -/
-def tobaBatakBaseTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_t)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_dakdanakan)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_v) vpP)))
+def tobaBatakBaseTree : PlanarSyntacticObject :=
+  
+    (tok_t * (tok_dakdanakan * (tok_v * vpP)))
 
 /-- The VOS **derived** tree after VP-raising:
     `[TP [VP V Obj] [T' T [vP Subj [v' v tVP]]]]`. The raised VP sits at
     the left edge; the original VP position is the bare trace. -/
-def tobaBatakDerivedTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge vpP
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_t)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_dakdanakan)
-          (PlanarSyntacticObject.merge
-            (PlanarSyntacticObject.leaf tok_v) PlanarSyntacticObject.trace))))
+def tobaBatakDerivedTree : PlanarSyntacticObject :=
+  
+    (vpP * (tok_t * (tok_dakdanakan * (tok_v * PlanarSyntacticObject.trace))))
 
 -- ============================================================================
 -- § 3: English SVO Derivation (Comparison)
@@ -208,13 +199,9 @@ def englishSVO : Derivation :=
 /-- The English SVO **base** tree at stage 4 (pre-movement):
     `[TP T [vP John [v' v [VP saw Mary]]]]`. Built planar-first; same shape
     as `tobaBatakBaseTree`, modulo lexical content. -/
-def englishBaseTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_t2)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_john_en)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_v2)
-          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_saw)
-            (PlanarSyntacticObject.leaf tok_mary_en)))))
+def englishBaseTree : PlanarSyntacticObject :=
+  
+    (tok_t2 * (tok_john_en * (tok_v2 * (tok_saw * tok_mary_en))))
 
 -- ============================================================================
 -- § 4: Word Order Predictions
@@ -234,8 +221,9 @@ theorem english_is_svo :
     noncomputable on the `SyntacticObject` carrier; the planar-built base trees are the
     trees those stages produce). -/
 theorem same_base_counts :
-    tobaBatakBaseTree.nodeCount = englishBaseTree.nodeCount ∧
-    tobaBatakBaseTree.leafCount = englishBaseTree.leafCount := by
+    tobaBatakBaseTree.toSyntacticObject.nodeCount = englishBaseTree.toSyntacticObject.nodeCount ∧
+    tobaBatakBaseTree.toSyntacticObject.leafCount
+      = englishBaseTree.toSyntacticObject.leafCount := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-- Toba Batak moves the VP (one moved item). -/
@@ -604,11 +592,9 @@ private def tok_v_pass     : LIToken := ⟨.simple .v [.V], 24⟩
 private def tok_t_pass     : LIToken := ⟨.simple .T [.v], 25⟩
 
 /-- The passive VP: `[VP patient [V' V agent-PP]]`. Built planar-first. -/
-def vp_passive : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_boy) (PlanarSyntacticObject.merge
-      (PlanarSyntacticObject.leaf tok_injured)
-      (PlanarSyntacticObject.leaf tok_by_himself)))
+def vp_passive : PlanarSyntacticObject :=
+  
+    (tok_boy * (tok_injured * tok_by_himself))
 
 /-- English passive derivation (trees 97–100 of the paper).
 
@@ -632,14 +618,10 @@ def englishPassive : Derivation :=
     `[TP patient [T' T [vP v [VP t [V' V agent]]]]]`. The patient (raised)
     sits at the top edge above its base trace; the agent is a low
     complement of V. -/
-def englishPassiveDerivedTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_boy)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_t_pass)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_v_pass)
-          (PlanarSyntacticObject.merge PlanarSyntacticObject.trace
-            (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_injured)
-              (PlanarSyntacticObject.leaf tok_by_himself))))))
+def englishPassiveDerivedTree : PlanarSyntacticObject :=
+  
+    (tok_boy * (tok_t_pass * (tok_v_pass * (PlanarSyntacticObject.trace * (tok_injured *
+      tok_by_himself)))))
 
 /-- English passive yields patient-verb-agent surface order. -/
 theorem english_passive_order :

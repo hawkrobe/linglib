@@ -136,7 +136,7 @@ structure Stage where
 the overt noun to the left edge. -/
 private def step (m : LIToken) (st : Stage) : List Stage :=
   let d : Derivation := ⟨st.derivation.initial, st.derivation.steps ++ [.emL (leaf m)]⟩
-  let p := PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf m) st.planar
+  let p := m * st.planar
   ⟨d, p, st.marks, st.raises⟩ ::
     ((subtrees st.planar.val).filter hasN).filterMap fun s =>
       if h : IsSyntacticObject (UnorderedTree.mk s) then

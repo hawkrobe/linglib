@@ -363,7 +363,7 @@ def DP_food_t   := mkLeafPhon .D     []      "food"        410
 
 /-! Planar leaf tokens, used to build the concrete trees the c-command
     theorems reason over (Merge `SyntacticObject.merge` is noncomputable; trees are
-    built planar-first via `PlanarSyntacticObject.toSyntacticObject`). -/
+    built ordered, as products of tokens, and coerced). -/
 
 private def t_voice_ag  : LIToken := ⟨.simple .Voice [.V] (phonForm := "Voice[AG]"), 400⟩
 private def t_appl_low  : LIToken := ⟨.simple .Appl [.D] (phonForm := "Appl[LOW]"), 402⟩
@@ -389,14 +389,9 @@ private def t_DP_food   : LIToken := ⟨.simple .D [] (phonForm := "food"), 410�
     complement of Appl. This derives the [barss-lasnik-1986]
     asymmetry that IO asymmetrically c-commands DO. Built planar-first
     so the c-command theorems `decide`. -/
-def ditransitiveTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_DP_john)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_voice_ag)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_V_sent)
-          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_DP_mary)
-            (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_appl_low)
-              (PlanarSyntacticObject.leaf t_DP_letter))))))
+def ditransitiveTree : PlanarSyntacticObject :=
+  
+    (t_DP_john * (t_voice_ag * (t_V_sent * (t_DP_mary * (t_appl_low * t_DP_letter)))))
 
 /-- High applicative benefactive (Chaga pattern): "he ate food for wife"
 
@@ -406,14 +401,9 @@ def ditransitiveTree : SyntacticObject :=
     benefactive (wife) is in Spec-ApplP, relating to the event (not the
     theme). High Appl is attested in Bantu languages (Chaga, Luganda,
     Venda) and Albanian, but NOT in English. -/
-def benefactiveTree : SyntacticObject :=
-  PlanarSyntacticObject.toSyntacticObject
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_DP_john)
-      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_voice_ag)
-        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_DP_wife)
-          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_appl_high)
-            (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf t_V_eat)
-              (PlanarSyntacticObject.leaf t_DP_food))))))
+def benefactiveTree : PlanarSyntacticObject :=
+  
+    (t_DP_john * (t_voice_ag * (t_DP_wife * (t_appl_high * (t_V_eat * t_DP_food)))))
 
 -- ============================================================================
 -- § 3: C-command Predictions

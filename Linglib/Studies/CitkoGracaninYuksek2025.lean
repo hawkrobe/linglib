@@ -79,50 +79,44 @@ def saw := tok 20 .V [.D] "saw"
 /-- `[CP wh [C′ c [TP subj [T′ T [vP wh [v′ v VP]]]]]]`: the wh-phrase moved through the edge of
 vP. -/
 def clause (wh c subj T v : LIToken) (VP : PlanarSyntacticObject) : PlanarSyntacticObject :=
-  merge (leaf wh) (merge (leaf c)
-    (merge (leaf subj) (merge (leaf T) (merge (traceOf wh) (merge (leaf v) VP)))))
+  wh * (c * (subj * (T * (traceOf wh * (v * VP)))))
 
 /-- Non-bulk sharing under the complementizers `c₁` and `c₂`: each wh-phrase in its own
 conjunct, the subject, T, v and verb shared ((10b), (14), (16b), (38d), (45b), (46b)). -/
 def nonBulk (c₁ c₂ : LIToken) : PlanarSyntacticObject :=
-  merge (clause what c₁ you T v (merge (leaf teach) (traceOf what)))
-    (clause when c₂ you T v (merge (leaf teach) (traceOf when)))
+  (clause what c₁ you T v (teach * traceOf what)) * (clause when c₂ you T v (teach * traceOf when))
 
 /-- Bulk sharing: one C′ under both wh-phrases, both of which moved through its vP edge ((12b),
 (20b)). -/
 def bulk (c : LIToken) : PlanarSyntacticObject :=
-  let c' := merge (leaf c) (merge (leaf you) (merge (leaf T) (merge (traceOf what)
-    (merge (traceOf when)
-      (merge (leaf v) (merge (merge (leaf teach) (traceOf what)) (traceOf when)))))))
-  merge (merge (leaf what) c') (merge (leaf when) c')
+  let c' := c * (you * (T * (traceOf what * (traceOf when * (v * ((teach * traceOf what) *
+    traceOf when))))))
+  (what * c') * (when * c')
 
 /-- Footnote 21's alternative to `bulk`: a shared TP under two complementizers. -/
 def bulkTP (c₁ c₂ : LIToken) : PlanarSyntacticObject :=
-  let tp := merge (leaf you) (merge (leaf T) (merge (traceOf what)
-    (merge (traceOf when)
-      (merge (leaf v) (merge (merge (leaf teach) (traceOf what)) (traceOf when))))))
-  merge (merge (leaf what) (merge (leaf c₁) tp)) (merge (leaf when) (merge (leaf c₂) tp))
+  let tp := you * (T * (traceOf what * (traceOf when * (v * ((teach * traceOf what) *
+    traceOf when)))))
+  (what * (c₁ * tp)) * (when * (c₂ * tp))
 
 /-- Two clauses from separate tokens, the first elided under its [E] complementizer with its
 auxiliary in T, as the Sluicing-COMP generalization requires of a sluice: the ellipsis analysis
 of the coordinated wh-question (11b). -/
 def cwhEllipsis : PlanarSyntacticObject :=
-  merge (merge (leaf what) (merge (leaf cE) (merge (leaf you) (merge (leaf shouldT)
-      (merge (traceOf what) (merge (leaf v) (merge (leaf teach) (traceOf what))))))))
-    (clause when should you' T' v' (merge (leaf teach') (traceOf when)))
+  (what * (cE * (you * (shouldT * (traceOf what * (v * (teach * traceOf what))))))) *
+    (clause when should you' T' v' (teach' * traceOf when))
 
 /-- Two clauses from separate tokens, both elided, the second's object the pronoun of vehicle
 change: the double-ellipsis analysis of the coordinated sluice (19b). -/
 def csEllipsis : PlanarSyntacticObject :=
-  merge (clause what cE you T v (merge (leaf teach) (traceOf what)))
-    (clause when cE' you' T' v' (merge (merge (leaf teach') (leaf it)) (traceOf when)))
+  (clause what cE you T v (teach * traceOf what)) * (clause when cE' you' T' v' ((teach' * it) *
+    traceOf when))
 
 /-- A multiple question, both wh-phrases fronted through the vP edge: (28b), and the multiple
 sluice (29b) under an [E] complementizer. -/
 def multipleQuestion (c : LIToken) : PlanarSyntacticObject :=
-  merge (leaf who) (merge (leaf what) (merge (leaf c) (merge (traceOf who) (merge (leaf T)
-    (merge (traceOf who)
-      (merge (traceOf what) (merge (leaf v) (merge (leaf saw) (traceOf what)))))))))
+  who * (what * (c * (traceOf who * (T * (traceOf who * (traceOf what * (v * (saw *
+    traceOf what))))))))
 
 /-- The coordinated wh-question (10b), its complementizer shared. -/
 abbrev cwh := nonBulk should should
@@ -270,29 +264,29 @@ def different' := tok 33 .A (phon := "different")
 def topics' := tok 34 .N (phon := "topics")
 
 /-- The pivot, `on different topics`. -/
-def pivot : PlanarSyntacticObject := merge (leaf on) (merge (leaf different) (leaf topics))
+def pivot : PlanarSyntacticObject := on * (different * topics)
 
 /-- `[TP subj [T′ T VP]]`. -/
 def tp (subj T : LIToken) (VP : PlanarSyntacticObject) : PlanarSyntacticObject :=
-  merge (leaf subj) (merge (leaf T) VP)
+  subj * (T * VP)
 
 /-- (53b), after the pruning of [belk-neeleman-philip-2023] that removes the shared pivot from
 the first conjunct: the first verb phrase, the bare verb, elided under [E] on `must`. -/
 def rnrMixed : PlanarSyntacticObject :=
-  merge (tp alice mustE (leaf work)) (tp iris oughtToBe (merge (leaf working) pivot))
+  (tp alice mustE (leaf work)) * (tp iris oughtToBe (working * pivot))
 /-- (54): the first verb phrase built with its own pivot and elided. -/
 def rnrElided : PlanarSyntacticObject :=
   merge
     (tp alice mustE
-      (merge (leaf work) (merge (leaf on') (merge (leaf different') (leaf topics')))))
-    (tp iris oughtToBe (merge (leaf working) pivot))
+      (work * (on' * (different' * topics'))))
+    (tp iris oughtToBe (working * pivot))
 /-- (55b): with matching verbs, the verb phrase shared. -/
 def rnrShared : PlanarSyntacticObject :=
-  let VP := merge (leaf work) pivot
-  merge (tp alice must VP) (tp iris shouldRNR VP)
+  let VP := work * pivot
+  (tp alice must VP) * (tp iris shouldRNR VP)
 /-- The rival of (55b) with the shape of (53b). -/
 def rnrMatchedMixed : PlanarSyntacticObject :=
-  merge (tp alice mustE (leaf work)) (tp iris shouldRNR (merge (leaf working) pivot))
+  (tp alice mustE (leaf work)) * (tp iris shouldRNR (working * pivot))
 
 theorem rnrMixed_pf : pfPhon rnrMixed =
     ["Alice", "must", "Iris", "ought to be", "working", "on", "different", "topics"] := by decide

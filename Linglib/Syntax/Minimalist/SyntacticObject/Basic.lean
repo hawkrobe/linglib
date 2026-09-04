@@ -151,7 +151,7 @@ instance : DecidableEq PlanarSyntacticObject := Subtype.instDecidableEq
 namespace SyntacticObject
 
 /-- A lexical leaf. -/
-def leaf (tok : LIToken) : SyntacticObject := ⟨UnorderedTree.leaf (Sum.inl tok), rfl⟩
+@[coe] def leaf (tok : LIToken) : SyntacticObject := ⟨UnorderedTree.leaf (Sum.inl tok), rfl⟩
 
 /-- The bare trace: a childless bare vertex, the mark an admissible cut leaves in the remaining
     tree ([marcolli-chomsky-berwick-2025], Definition 1.2.6). It carries no index; `traceOf` is
@@ -202,7 +202,7 @@ namespace PlanarSyntacticObject
 open SyntacticObject (Vertex wellFormed wellFormed_merge)
 
 /-- A lexical leaf. -/
-def leaf (tok : LIToken) : PlanarSyntacticObject := ⟨.node (Sum.inl tok) [], rfl⟩
+@[coe] def leaf (tok : LIToken) : PlanarSyntacticObject := ⟨.node (Sum.inl tok) [], rfl⟩
 
 /-- The bare trace. -/
 def trace : PlanarSyntacticObject := ⟨.node (Sum.inr none) [], by decide⟩
@@ -224,7 +224,8 @@ def merge (l r : PlanarSyntacticObject) : PlanarSyntacticObject :=
     (merge l r).val = .node (Sum.inr none) [l.val, r.val] := rfl
 
 /-- Forgetting the order: the quotient map to the syntactic object. -/
-def toSyntacticObject (p : PlanarSyntacticObject) : SyntacticObject := ⟨UnorderedTree.mk p.val, p.2⟩
+@[coe] def toSyntacticObject (p : PlanarSyntacticObject)
+  : SyntacticObject := ⟨UnorderedTree.mk p.val, p.2⟩
 
 @[simp] theorem toSyntacticObject_val (p : PlanarSyntacticObject) :
     p.toSyntacticObject.val = UnorderedTree.mk p.val := rfl

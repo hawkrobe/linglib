@@ -298,9 +298,7 @@ private def guebieVerbLeaf : SyntacticObject := leaf guebieVerbTok
 /-- The remnant VP of the verb-doubling configuration ((31)): an evacuation trace
     plus the verb copy, pronounced for recoverability per [koopman-1997]. -/
 private def guebieFrontedVP : SyntacticObject :=
-  Minimalist.PlanarSyntacticObject.toSyntacticObject
-    (Minimalist.PlanarSyntacticObject.merge Minimalist.PlanarSyntacticObject.trace
-      (Minimalist.PlanarSyntacticObject.leaf guebieVerbTok))
+  ↑(Minimalist.PlanarSyntacticObject.trace * guebieVerbTok)
 
 private def guebieLandingTok : LIToken := ⟨.simple .C [], 2⟩
 private def guebieLandingSite : SyntacticObject := leaf guebieLandingTok
