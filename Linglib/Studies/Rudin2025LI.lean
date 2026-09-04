@@ -485,7 +485,6 @@ simultaneously be both values.
 namespace Discourse.QuotationFBOntology
 
 open Commitment
-open Discourse (DiscourseRole)
 open Mood (Illocutionary)
 open Semantics.Quotation.Demonstration
 
@@ -666,7 +665,6 @@ namespace Rudin2025LI
 open Semantics.Quotation.Demonstration
 open Discourse.QuotationFBOntology
 open Commitment
-open Discourse (DiscourseRole)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Empirical Taxonomy

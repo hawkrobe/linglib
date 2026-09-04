@@ -123,7 +123,6 @@ theorem composeI_eq_composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β :
 
 open Semantics.Highlighting (HighlightingContext Highlighted AddressesQUD addSalient)
 open Evidential
-open Discourse (DiscourseRole)
 
 variable {W : Type*}
 

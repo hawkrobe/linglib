@@ -560,7 +560,6 @@ Explicit F_b and the unmarked-equals-F_b reduction structurally
 enforce what the paper states in prose. -/
 
 open Commitment
-open Discourse (DiscourseRole)
 
 /-- F_b — F&R 2017's "basic convention of use" (eq. (48), p. 265).
     Per F&R: "If a discourse participant x utters a declarative or

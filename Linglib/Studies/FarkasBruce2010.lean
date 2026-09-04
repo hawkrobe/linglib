@@ -26,7 +26,6 @@ confirmation and denial can react to it, and a denial leaves the conversation in
 namespace FarkasBruce2010
 
 open Commitment
-open Discourse (DiscourseRole)
 
 variable {W : Type*} (K : Table DiscourseRole W) (p : Set W)
 

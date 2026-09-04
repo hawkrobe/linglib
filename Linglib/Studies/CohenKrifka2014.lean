@@ -298,7 +298,6 @@ not among the commitments ((53)), and three is the least grantable value ((48)).
 section Model
 
 open Numerals
-open Discourse (DiscourseRole)
 
 /-- The free space over counting worlds, with no prior commitments. -/
 def rabbits : Space (State DiscourseRole ℕ) := full ∅
@@ -368,7 +367,6 @@ states while asserting reaches only the second. -/
 
 section Granting
 
-open Discourse (DiscourseRole)
 
 /-- It is raining, over two weather worlds. -/
 def raining : Set Bool := {true}

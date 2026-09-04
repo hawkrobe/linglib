@@ -51,7 +51,6 @@ negation (45).
 namespace Krifka2015
 
 open Commitment Commitment.Space
-open Discourse (DiscourseRole)
 open Questions.Bias (ContextualEvidence)
 open Features (Acceptability)
 

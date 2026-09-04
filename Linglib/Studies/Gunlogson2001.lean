@@ -24,7 +24,6 @@ addressee, which is what the two updates do.
 namespace Gunlogson2001
 
 open Commitment
-open Discourse (DiscourseRole)
 
 variable {W : Type*} (K : State DiscourseRole W) (p : Set W)
 

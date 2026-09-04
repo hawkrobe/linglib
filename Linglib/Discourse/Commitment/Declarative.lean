@@ -35,7 +35,6 @@ self-generated, the `Commitment.Source` coordinate.
 
 namespace Commitment
 
-open Discourse (DiscourseRole)
 
 variable {W : Type*} (K : State DiscourseRole W) (x : DiscourseRole) (p : Set W)
 
