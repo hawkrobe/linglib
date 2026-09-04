@@ -23,11 +23,11 @@ the second deletion silences nothing new, and it forces the nonpaired sluice to 
 complementizers, only one bearing [E]. In right node raising the same economy prefers sharing
 the pivot to building it twice and, when the verbs match, sharing the verb phrase to eliding it.
 
-Each candidate is a planar object of `Linearization/Chain.lean`: a token at two positions is
-shared, a moved wh-phrase leaves indexed traces at the vP edge and its base position, and the
-coordinator is left out, so a string is its conjuncts' words. The predictions decide: the
-pronounced strings, the unbound traces that carry the paired reading, the asterisks, and the
-costs the winners beat.
+Each candidate is a planar object of `Linearization/Chain.lean`, and forgetting its trace indices
+a syntactic object of `SyntacticObject/Basic.lean`: a token at two positions is shared, a moved
+wh-phrase leaves indexed traces at the vP edge and its base position, and the coordinator is left
+out, so a string is its conjuncts' words. The predictions decide: the pronounced strings, the
+unbound traces that carry the paired reading, the asterisks, and the costs the winners beat.
 
 ## References
 
@@ -156,6 +156,12 @@ def Paired (t : RoseTree ChainLabel) : Prop :=
   ∃ x ∈ unboundTraces t, x.2 = what ∧ x.1.head? = some 1
 
 instance : DecidablePred Paired := λ _ => inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-- The candidates are syntactic objects. -/
+theorem candidates_isSO : ∀ t ∈ [cwh, cwhEllipsis, cwhBulk, cwhNullC, cwhNullCSecond, cwhEmbedded,
+      cwhEmbeddedTwoC, cwhTwoAux, cs, csTwoC, csEllipsis, csSharedC, csnrTwoE, csnr,
+      multipleQuestion c, multipleQuestion cE],
+    isSOPlanar (t.map ChainLabel.toSOLabel) = true := by decide
 
 /-! ### The multiple-wh-fronting parameter (27) by language -/
 

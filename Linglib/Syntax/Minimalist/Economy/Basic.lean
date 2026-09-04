@@ -1,22 +1,23 @@
 import Mathlib.Data.DFinsupp.WellFounded
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Order.Hom.Basic
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Derivational economy
 
 Economy of derivation ([chomsky-1991], [chomsky-1995]) compares the derivations that converge on
-the same string with the same interpretation and keeps the least costly. The cost of a derivation
-is the number of lexical items it draws, of Merge operations, of Agree operations and of
-applications of ellipsis, the four counts [citko-gracanin-yuksek-2025] weigh when they argue that
-multidominance is more economical than ellipsis; a derivation is more economical than another when
-it is no worse on every count and better on one, the product order on `ℕ⁴`. That order is
-well-founded (Dickson's lemma, `Pi.wellFoundedLT`), so every reference set has a winner
-(`WellFoundedLT.exists_minimal`).
+the same string with the same interpretation and keeps the least costly. A cost is a count per
+dimension: the lexical items drawn and the Merge operations, which are the distinct terms of the
+object built, its lexical leaves and its internal vertices each once, so that a shared constituent
+is built once; and the Agree operations and applications of ellipsis that
+[citko-gracanin-yuksek-2025] weigh alongside them. Costs are ordered pointwise: a derivation is
+more economical than another when it is no worse on every dimension and better on one. The order
+is well-founded (Dickson's lemma, `Pi.wellFoundedLT`), so every reference set has a winner
+(`WellFoundedLT.exists_minimal`). The cost of a planar object is read off its terms by
+`Minimalist.planarCost` in `Linearization/Chain.lean`.
 
 ## Main definitions
 
-* `DerivationCost`: the four counts, partially ordered as their profile in `Fin 4 → ℕ`.
+* `CostDimension`, `DerivationCost`: the dimensions and a count per dimension.
 
 ## References
 
@@ -27,41 +28,20 @@ well-founded (Dickson's lemma, `Pi.wellFoundedLT`), so every reference set has a
 
 namespace Minimalist
 
-/-- The cost of a derivation: the lexical items drawn, the Merge operations, the Agree operations
-and the applications of ellipsis. -/
-structure DerivationCost where
-  lexicalItems : ℕ
-  mergeOps : ℕ
-  agreeOps : ℕ
-  ellipsisOps : ℕ
-  deriving Repr, DecidableEq
+/-- The dimensions of derivational cost. -/
+inductive CostDimension
+  | lexicalItems
+  | mergeOps
+  | agreeOps
+  | ellipsisOps
+  deriving DecidableEq, Fintype, Repr
 
-namespace DerivationCost
+/-- The cost of a derivation: a count per dimension, ordered pointwise. -/
+abbrev DerivationCost := CostDimension → ℕ
 
-/-- The four counts as a vector. -/
-def profile (c : DerivationCost) : Fin 4 → ℕ :=
-  ![c.lexicalItems, c.mergeOps, c.agreeOps, c.ellipsisOps]
-
-theorem profile_injective : Function.Injective profile := by
-  rintro ⟨_, _, _, _⟩ ⟨_, _, _, _⟩ h
-  simp_all [profile, Matrix.vecCons_inj]
-
-/-- A cost is at most another when it is at most on every count. -/
-instance : PartialOrder DerivationCost := PartialOrder.lift profile profile_injective
-
-instance : DecidableLE DerivationCost := λ a b =>
-  inferInstanceAs (Decidable (∀ i, a.profile i ≤ b.profile i))
+instance : DecidableLE DerivationCost := λ a b => inferInstanceAs (Decidable (∀ i, a i ≤ b i))
 
 instance : DecidableLT DerivationCost := λ a b =>
   decidable_of_iff (a ≤ b ∧ ¬ b ≤ a) lt_iff_le_not_ge.symm
-
-/-- The costs embed in `Fin 4 → ℕ`. -/
-def profileEmbedding : DerivationCost ↪o (Fin 4 → ℕ) := ⟨⟨profile, profile_injective⟩, Iff.rfl⟩
-
-/-- Dickson's lemma: no derivation is beaten by an infinite descent of ever more economical
-ones. -/
-instance : WellFoundedLT DerivationCost := profileEmbedding.wellFoundedLT
-
-end DerivationCost
 
 end Minimalist
