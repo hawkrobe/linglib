@@ -31,14 +31,10 @@ reasoning is shared rather than re-stipulated:
   predicate clefts — the fronted constituent is the remnant VP after
   V → v → T head movement and object shift, leaving only the particle
   in the remnant.
-- [cole-hermon-2008] (informal use): {Toba Batak} VoiceP raising
-  + remnant movement in `Studies/ColeHermon2008.lean`.
-- [erlewine-2018] (informal use): predicate fronting in
-  `Studies/Erlewine2018.lean`.
-
-TODO: migrate informal consumers to import this substrate. The
-extraction-without-migration pattern follows mathlib practice — the
-substrate lands now and consumers migrate incrementally.
+- [cole-hermon-2008]: {Toba Batak} VoiceP raising after the goal and
+  the subject evacuate, derived step by step on the syntactic-object
+  carrier in `Studies/ColeHermon2008.lean`, where the fronted remnant
+  holds the evacuees' traces rather than the evacuees.
 
 ## Design
 

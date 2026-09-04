@@ -8,25 +8,19 @@ import Linglib.Syntax.Voice.Basic
 Morphosyntactic data for Toba Batak (Austronesian, Sumatra) relevant
 to the extraction restriction and pivot system.
 
-Toba Batak has predicate-initial word order (derived by predicate
-fronting) and an extraction restriction: only the "pivot" — the
-voice-determined, clause-peripheral argument — can undergo Ā-movement.
+Toba Batak is predicate-initial, with an extraction restriction: only the
+"pivot" — the voice-determined, clause-peripheral argument — can undergo
+Ā-movement. Analyses of the restriction live in the studies that propose
+them ([cole-hermon-2008], [erlewine-2018]).
 
 ## Voice System
 
 Unlike Philippine-type Austronesian languages (Tagalog, Seediq), Toba
 Batak does not have a full voice/Case system with multiple voices. Two
-voice morphemes determine which argument is the pivot (= subject):
+voice prefixes determine which argument is the pivot (= subject):
 
-- **Actor Voice (AV)**: agent is the pivot
-- **Object Voice (OV)**: patient/theme is the pivot
-
-The restriction on extraction follows from nominal licensing: only the
-pivot (Case-licensed by T's [PROBE:D] in Spec,TP) can undergo
-Ā-movement; a non-pivot DP fronted to Spec,CP would lack a Case
-licensor. This is NOT a voice-as-Case system in
-the Philippine sense; it is a structural consequence of how probing
-and Case assignment interact with predicate fronting.
+- **Actor Voice (AV)**, *mang-*: agent is the pivot
+- **Object Voice (OV)**, *di-*: patient/theme is the pivot
 
 -/
 
@@ -50,6 +44,11 @@ inductive Voice where
 def Voice.pivotRole : Voice → ThetaRole
   | .av => .agent
   | .ov => .patient
+
+/-- The voice prefix, *mang-* (with its phonologically conditioned variants) or *di-*. -/
+def Voice.affix : Voice → String
+  | .av => "mang-"
+  | .ov => "di-"
 
 -- ============================================================================
 -- § 2: Extraction Judgment
@@ -138,9 +137,7 @@ inductive Site where
 /-- Only the pivot (= surface subject) can be extracted; the AV vs OV
     voice alternation on the verb determines which thematic role
     occupies the pivot, so subject extraction is marked by the verb's
-    voice form. The restriction derives from predicate fronting +
-    nominal licensing: non-pivot DPs in Spec,CP lack a Case licensor
-    ([erlewine-2018], §4). -/
+    voice form. -/
 def realize : ExtractionTarget → List (Features.Reflex Site)
   | .subject => [.morpheme .verb]
   | _ => []

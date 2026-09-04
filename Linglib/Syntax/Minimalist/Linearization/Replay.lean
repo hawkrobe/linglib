@@ -358,6 +358,12 @@ theorem SyntacticObject.Derivation.externalize?_faithful (d : Derivation)
     rw [foldl_externStep_toSyntacticObject d.steps h, toPlanarLeaf?_toSyntacticObject hinit]
     rfl
 
+/-- Faithfulness for a prefix: a successful replay of the first `n` steps forgets to stage `n`. -/
+theorem SyntacticObject.Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
+    {p : PlanarSyntacticObject} (h : (d.take n).externalize? = some p) :
+    p.toSyntacticObject = d.stageAt n :=
+  externalize?_faithful (d.take n) h
+
 /-! ### The [cinque-2005] pied-piping contrast
 
 Phrasal pied-piping preserves the moved constituent's internal order: raising N around A and
