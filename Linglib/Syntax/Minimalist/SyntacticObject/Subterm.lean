@@ -211,6 +211,17 @@ theorem contains_lt_weight {x y : SyntacticObject} (h : contains x y) :
 theorem contains_irrefl (x : SyntacticObject) : ¬ contains x x :=
   fun h => absurd (contains_lt_weight h) (lt_irrefl _)
 
+@[simp] theorem contains_leaf (tok : LIToken) (y : SyntacticObject) :
+    ¬ contains (SyntacticObject.leaf tok) y :=
+  fun h => by cases h <;> exact immediatelyContains_leaf _ _ ‹_›
+
+@[simp] theorem contains_trace (y : SyntacticObject) : ¬ contains trace y :=
+  fun h => by cases h <;> exact immediatelyContains_trace _ ‹_›
+
+@[simp] theorem contains_traceOf (tok : LIToken) (y : SyntacticObject) :
+    ¬ contains (traceOf tok) y :=
+  fun h => by cases h <;> exact immediatelyContains_traceOf _ _ ‹_›
+
 theorem mem_subtrees_of_immediatelyContains {x y : SyntacticObject}
     (h : immediatelyContains x y) : y ∈ x.subtrees := by
   rcases exists_form x with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩

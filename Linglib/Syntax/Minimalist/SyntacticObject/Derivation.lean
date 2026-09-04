@@ -22,7 +22,8 @@ the movers are read off the steps.
 ## Main definitions
 
 * `Minimalist.SyntacticObject.Step`, `Step.apply`, `deleteAccessible`
-* `Minimalist.SyntacticObject.Derivation`, `Derivation.final`, `stageAt`, `movedItems`
+* `Minimalist.SyntacticObject.Derivation`, `Derivation.final`, `stageAt`, `movedItems`, `take`,
+  `leftward`
 
 ## References
 
@@ -84,6 +85,27 @@ theorem Step.apply_emL_eq_emR (item current : SyntacticObject) :
     (Step.emL item).apply current = (Step.emR item).apply current :=
   mul_comm item current
 
+/-- The step with its External Merge on the left; Internal Merge is unchanged. -/
+def Step.leftward : Step → Step
+  | .emR item => .emL item
+  | step => step
+
+@[simp] theorem Step.leftward_emL (item : SyntacticObject) : (Step.emL item).leftward = .emL item :=
+  rfl
+
+@[simp] theorem Step.leftward_emR (item : SyntacticObject) : (Step.emR item).leftward = .emL item :=
+  rfl
+
+@[simp] theorem Step.leftward_im (mover : SyntacticObject) : (Step.im mover).leftward = .im mover :=
+  rfl
+
+/-- A step and its leftward form build the same object. -/
+theorem Step.apply_leftward (step : Step) (current : SyntacticObject) :
+    step.leftward.apply current = step.apply current := by
+  cases step with
+  | emR item => exact Step.apply_emL_eq_emR item current
+  | emL _ | im _ => rfl
+
 /-! ### Derivations -/
 
 /-- An initial syntactic object with a sequence of steps. -/
@@ -112,13 +134,38 @@ def movedItems (d : Derivation) : List SyntacticObject :=
     | .im mover => some mover
     | _ => none
 
+/-- The first `n` steps. -/
+def take (d : Derivation) (n : Nat) : Derivation := ⟨d.initial, d.steps.take n⟩
 
 @[simp] theorem stageAt_zero (d : Derivation) : d.stageAt 0 = d.initial := by
   simp [stageAt]
 
-
 theorem stageAt_length (d : Derivation) : d.stageAt d.steps.length = d.final := by
   simp [stageAt, final, List.take_length]
+
+@[simp] theorem final_take (d : Derivation) (n : Nat) : (d.take n).final = d.stageAt n := rfl
+
+/-! ### The sides of External Merge
+
+The node being commutative, the derived object does not depend on the sides at which External
+Merge attaches the items; `leftward` is the normal form, and the stages and movers of a
+derivation are those of its normal form. -/
+
+/-- The derivation with every External Merge on the left. -/
+def leftward (d : Derivation) : Derivation := ⟨d.initial, d.steps.map Step.leftward⟩
+
+@[simp] theorem stageAt_leftward (d : Derivation) (n : Nat) :
+    d.leftward.stageAt n = d.stageAt n := by
+  simp only [stageAt, leftward, ← List.map_take, List.foldl_map, Step.apply_leftward]
+
+@[simp] theorem final_leftward (d : Derivation) : d.leftward.final = d.final := by
+  simp only [final, leftward, List.foldl_map, Step.apply_leftward]
+
+@[simp] theorem movedItems_leftward (d : Derivation) : d.leftward.movedItems = d.movedItems := by
+  simp only [movedItems, leftward, List.filterMap_map]
+  congr 1
+  funext step
+  cases step <;> rfl
 
 end Derivation
 
