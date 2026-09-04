@@ -41,7 +41,7 @@ import Linglib.Semantics.ArgumentStructure.Linking
 
 ## Carrier note (P4 single-carrier flip)
 
-The MCB-faithful `SyntacticObject` carrier makes Merge (`SyntacticObject.node`/`*`) noncomputable,
+The MCB-faithful `SyntacticObject` carrier makes Merge (`SyntacticObject.merge`/`*`) noncomputable,
 so
 `SyntacticObject.Derivation.final` (the folded result tree) does not `decide`. The
 *movement bookkeeping* (`movedItems`) and the *externalized surface order*
@@ -49,7 +49,7 @@ so
 are proved over the `SyntacticObject.Derivation` directly.
 
 The c-command asymmetries are stated over the **derived tree built
-planar-first** (`SyntacticObject.ofPlanar (Planar.merge …)`), i.e. the very tree each
+planar-first** (`(PlanarSyntacticObject.merge …).toSyntacticObject`), i.e. the very tree each
 derivation produces, written out explicitly per the file's prose diagrams.
 This is faithful: the derivation records the operations; the planar tree
 is its result, and c-command (`SyntacticObject.cCommandsIn`) reduces on it.
@@ -103,7 +103,8 @@ private def tok_kick   : LIToken := ⟨.simple .V [.D] (phonForm := "kicked"), 3
 private def tok_ball   : LIToken := ⟨.simple .D [] (phonForm := "the ball"), 311⟩
 
 /-- The `[PP to Mary]` constituent as a planar subtree. -/
-private def ppToMaryP : Planar := Planar.merge (Planar.leaf tok_to) (Planar.leaf tok_mary)
+private def ppToMaryP : PlanarSyntacticObject := PlanarSyntacticObject.merge
+    (PlanarSyntacticObject.leaf tok_to) (PlanarSyntacticObject.leaf tok_mary)
 
 -- ============================================================================
 -- § 2: Oblique Dative Derivation
@@ -121,7 +122,7 @@ private def ppToMaryP : Planar := Planar.merge (Planar.leaf tok_to) (Planar.leaf
 def obliqueDative : Derivation :=
   { initial := V_send
     steps := [
-      .emR (ofPlanar ppToMaryP),  -- [V' send [PP to Mary]]
+      .emR (PlanarSyntacticObject.toSyntacticObject ppToMaryP),  -- [V' send [PP to Mary]]
       .emL DP_letter,                 -- [VP a_letter [V' send [PP to Mary]]]
       .emL DP_john                    -- [VP John [VP a_letter [V' send [PP to Mary]]]]
     ] }
@@ -129,10 +130,10 @@ def obliqueDative : Derivation :=
 /-- The oblique dative result tree: `[John [letter [send [to Mary]]]]`.
     Built planar-first; this is exactly what `obliqueDative` produces. -/
 def obliqueDativeTree : SyntacticObject :=
-  ofPlanar
-    (Planar.merge (Planar.leaf tok_john)
-      (Planar.merge (Planar.leaf tok_letter)
-        (Planar.merge (Planar.leaf tok_send) ppToMaryP)))
+  PlanarSyntacticObject.toSyntacticObject
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_john)
+      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_letter)
+        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_send) ppToMaryP)))
 
 -- Oblique dative c-command predictions
 
@@ -170,7 +171,7 @@ Derivation steps:
 def docDativeShift : Derivation :=
   { initial := V_send
     steps := [
-      .emR (ofPlanar ppToMaryP),  -- [V' send [PP to Mary]]
+      .emR (PlanarSyntacticObject.toSyntacticObject ppToMaryP),  -- [V' send [PP to Mary]]
       .emL DP_letter,                 -- [VP a_letter [V' send [PP to Mary]]]
       .im DP_mary,                    -- DATIVE SHIFT: Mary moves to Spec
       .emL DP_john                    -- [VP John [VP Mary_i [VP a_letter ...]]]
@@ -180,12 +181,13 @@ def docDativeShift : Derivation :=
     the shell, asymmetrically c-commanding the theme; the original Mary
     position is the bare trace. `[John [Mary [letter [send [to t]]]]]`. -/
 def docDativeShiftTree : SyntacticObject :=
-  ofPlanar
-    (Planar.merge (Planar.leaf tok_john)
-      (Planar.merge (Planar.leaf tok_mary)
-        (Planar.merge (Planar.leaf tok_letter)
-          (Planar.merge (Planar.leaf tok_send)
-            (Planar.merge (Planar.leaf tok_to) Planar.trace)))))
+  PlanarSyntacticObject.toSyntacticObject
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_john)
+      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_mary)
+        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_letter)
+          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_send)
+            (PlanarSyntacticObject.merge
+              (PlanarSyntacticObject.leaf tok_to) PlanarSyntacticObject.trace)))))
 
 -- DOC c-command predictions: the asymmetries are REVERSED
 
@@ -227,10 +229,11 @@ def standardPassive : Derivation :=
 /-- The passive result tree: the ball (promoted) sits above John (demoted),
     leaving a trace in object position. `[ball [John [kicked t]]]`. -/
 def standardPassiveTree : SyntacticObject :=
-  ofPlanar
-    (Planar.merge (Planar.leaf tok_ball)
-      (Planar.merge (Planar.leaf tok_john)
-        (Planar.merge (Planar.leaf tok_kick) Planar.trace)))
+  PlanarSyntacticObject.toSyntacticObject
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_ball)
+      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_john)
+        (PlanarSyntacticObject.merge
+          (PlanarSyntacticObject.leaf tok_kick) PlanarSyntacticObject.trace)))
 
 -- Passive c-command: promoted object c-commands demoted subject
 
@@ -403,7 +406,8 @@ def allDativeVerbs : List DativeVerbEntry :=
     do not (V assigns only Beneficiary, *to*'s Goal is non-redundant). -/
 theorem recoverability_predicts_dative_shift :
     (allDativeVerbs.filter recoverable).map (·.verb) = ["give", "send", "promise"] ∧
-    (allDativeVerbs.filter (! recoverable ·)).map (·.verb) = ["donate", "distribute", "contribute"] := by
+    (allDativeVerbs.filter (! recoverable ·)).map (·.verb) = ["donate", "distribute",
+      "contribute"] := by
   constructor <;> decide
 
 -- ============================================================================
@@ -462,7 +466,8 @@ private def tok_to2     : LIToken := ⟨.simple .P [.D] (phonForm := "to"), 323�
 def indirectPassive : Derivation :=
   { initial := V_sent
     steps := [
-      .emR (ofPlanar (Planar.merge (Planar.leaf tok_to2) (Planar.leaf tok_mary2))),
+      .emR (PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
+        (PlanarSyntacticObject.leaf tok_to2) (PlanarSyntacticObject.leaf tok_mary2))),
                        -- [V' sent [PP to Mary]]
       .emL DP_letter2, -- [VP a_letter [V' sent [PP to Mary]]]
       .im DP_mary2,    -- DATIVE SHIFT: Mary to inner Spec
@@ -480,12 +485,13 @@ def indirectPassive : Derivation :=
     intermediate landing site; it gives the same Mary-c-commands-letter
     asymmetry but is *not* what the two-step derivation emits.) -/
 def indirectPassiveTree : SyntacticObject :=
-  ofPlanar
-    (Planar.merge (Planar.leaf tok_mary2)
-      (Planar.merge Planar.trace
-        (Planar.merge (Planar.leaf tok_letter2)
-          (Planar.merge (Planar.leaf tok_sent)
-            (Planar.merge (Planar.leaf tok_to2) Planar.trace)))))
+  PlanarSyntacticObject.toSyntacticObject
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_mary2)
+      (PlanarSyntacticObject.merge PlanarSyntacticObject.trace
+        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_letter2)
+          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf tok_sent)
+            (PlanarSyntacticObject.merge
+              (PlanarSyntacticObject.leaf tok_to2) PlanarSyntacticObject.trace)))))
 
 /-- In the indirect passive, the promoted IO (Mary) c-commands the
     stranded DO (a letter). -/

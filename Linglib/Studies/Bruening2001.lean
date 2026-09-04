@@ -110,33 +110,34 @@ def to_tok : LIToken := ⟨.simple .P [.D] "to", 409⟩
 object is the argument of the applicative head, merged above the projection containing the second,
 so it asymmetrically c-commands it. -/
 def docTree : SyntacticObject :=
-  ofPlanar
-    (Planar.merge (Planar.leaf subj_tok)
-      (Planar.merge (Planar.leaf v_tok)
-        (Planar.merge (Planar.leaf gave_tok)
-          (Planar.merge (Planar.leaf goal_tok) (Planar.merge (Planar.leaf appl_tok)
-            (Planar.leaf theme_tok))))))
+  PlanarSyntacticObject.toSyntacticObject
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf subj_tok)
+      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf v_tok)
+        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf gave_tok)
+          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf goal_tok)
+            (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf appl_tok)
+            (PlanarSyntacticObject.leaf theme_tok))))))
 
 /-- The quantifiers competing for attraction in the double object construction. -/
-def docQuantifiers : List SyntacticObject := [lexLeaf goal_tok, lexLeaf theme_tok]
+def docQuantifiers : List SyntacticObject := [leaf goal_tok, leaf theme_tok]
 
 /-- The first object asymmetrically c-commands the second ([barss-lasnik-1986]). -/
 theorem doc_goal_asym_theme :
-    asymCCommandsIn docTree (lexLeaf goal_tok) (lexLeaf theme_tok) := by decide
+    asymCCommandsIn docTree (leaf goal_tok) (leaf theme_tok) := by decide
 
 /-- Only the first object may be attracted first, so the derivation fixes the base order and the
 second object cannot come to scope over the first: *I gave a (#different) child each doll*. -/
 theorem doc_frozen :
-    LicensedFirst docTree (lexLeaf v_tok) docQuantifiers (lexLeaf goal_tok) ∧
-      ¬ LicensedFirst docTree (lexLeaf v_tok) docQuantifiers (lexLeaf theme_tok) :=
+    LicensedFirst docTree (leaf v_tok) docQuantifiers (leaf goal_tok) ∧
+      ¬ LicensedFirst docTree (leaf v_tok) docQuantifiers (leaf theme_tok) :=
   ⟨by decide,
-    not_licensedFirst_of_asymCCommand (y := lexLeaf goal_tok) (by simp [docQuantifiers])
+    not_licensedFirst_of_asymCCommand (y := leaf goal_tok) (by simp [docQuantifiers])
       (by decide) doc_goal_asym_theme⟩
 
 /-- No two candidates may be attracted first: the double object construction is unambiguous. -/
-theorem doc_not_ambiguous : ¬ Ambiguous docTree (lexLeaf v_tok) docQuantifiers := by
+theorem doc_not_ambiguous : ¬ Ambiguous docTree (leaf v_tok) docQuantifiers := by
   rintro ⟨x, hx, y, hy, hne, hlx, hly⟩
-  have hcases : ∀ z ∈ docQuantifiers, z = lexLeaf goal_tok ∨ z = lexLeaf theme_tok := by
+  have hcases : ∀ z ∈ docQuantifiers, z = leaf goal_tok ∨ z = leaf theme_tok := by
     simp [docQuantifiers]
   rcases hcases x hx with rfl | rfl <;> rcases hcases y hy with rfl | rfl
   exacts [hne rfl, doc_frozen.2 hly, doc_frozen.2 hlx, hne rfl]
@@ -146,28 +147,32 @@ theorem doc_not_ambiguous : ¬ Ambiguous docTree (lexLeaf v_tok) docQuantifiers 
 /-- The locative structure `[Ozzy [v [gave [every telescope [to a girl]]]]]`: the direct object and
 the PP are co-arguments of the same head, hence sisters, and c-command each other. -/
 def locativeTree : SyntacticObject :=
-  ofPlanar
-    (Planar.merge (Planar.leaf subj_tok)
-      (Planar.merge (Planar.leaf v_tok)
-        (Planar.merge (Planar.leaf gave_tok)
-          (Planar.merge (Planar.leaf theme_tok) (Planar.merge (Planar.leaf to_tok)
-            (Planar.leaf goal_tok))))))
+  PlanarSyntacticObject.toSyntacticObject
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf subj_tok)
+      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf v_tok)
+        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf gave_tok)
+          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf theme_tok)
+            (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf to_tok)
+            (PlanarSyntacticObject.leaf goal_tok))))))
 
 /-- The candidates in the locative: the direct object, and the PP that pied-pipes the goal. -/
 def locativeQuantifiers : List SyntacticObject :=
-  [lexLeaf theme_tok, ofPlanar (Planar.merge (Planar.leaf to_tok) (Planar.leaf goal_tok))]
+  [leaf theme_tok, PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
+    (PlanarSyntacticObject.leaf to_tok) (PlanarSyntacticObject.leaf goal_tok))]
 
 /-- Direct object and PP c-command each other, so neither asymmetrically c-commands the other. -/
 theorem locative_mutual_cCommand :
-    cCommandsIn locativeTree (lexLeaf theme_tok)
-        (ofPlanar (Planar.merge (Planar.leaf to_tok) (Planar.leaf goal_tok))) ∧
-      cCommandsIn locativeTree (ofPlanar (Planar.merge (Planar.leaf to_tok) (Planar.leaf goal_tok)))
-        (lexLeaf theme_tok) := by
+    cCommandsIn locativeTree (leaf theme_tok)
+        (PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
+          (PlanarSyntacticObject.leaf to_tok) (PlanarSyntacticObject.leaf goal_tok))) ∧
+      cCommandsIn locativeTree (PlanarSyntacticObject.toSyntacticObject (PlanarSyntacticObject.merge
+        (PlanarSyntacticObject.leaf to_tok) (PlanarSyntacticObject.leaf goal_tok)))
+        (leaf theme_tok) := by
   constructor <;> decide
 
 /-- Either candidate may be attracted first, so the locative is ambiguous: *I gave a doll to each
 child* has both readings. -/
-theorem locative_ambiguous : Ambiguous locativeTree (lexLeaf v_tok) locativeQuantifiers := by
+theorem locative_ambiguous : Ambiguous locativeTree (leaf v_tok) locativeQuantifiers := by
   refine ambiguous_of_mutual_cCommand (by simp [locativeQuantifiers])
     (by simp [locativeQuantifiers]) (by decide) (by decide) (by decide)
     locative_mutual_cCommand.1 locative_mutual_cCommand.2 ?_
@@ -179,23 +184,24 @@ theorem locative_ambiguous : Ambiguous locativeTree (lexLeaf v_tok) locativeQuan
 competes with the objects for attraction — which is why either object can take scope over it even
 where the two objects' relative scope is frozen. -/
 theorem subject_not_attractable :
-    ¬ Attractable docTree (lexLeaf v_tok) (lexLeaf subj_tok) := by decide
+    ¬ Attractable docTree (leaf v_tok) (leaf subj_tok) := by decide
 
 /-- The passive of a double object construction: with no external argument, the goal raises to the
 subject position, out of the attractor's domain, leaving the theme as the only candidate. -/
 def passiveTree : SyntacticObject :=
-  ofPlanar
-    (Planar.merge (Planar.leaf goal_tok)
-      (Planar.merge (Planar.leaf v_tok)
-        (Planar.merge (Planar.leaf gave_tok) (Planar.merge (Planar.leaf appl_tok)
-          (Planar.leaf theme_tok)))))
+  PlanarSyntacticObject.toSyntacticObject
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf goal_tok)
+      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf v_tok)
+        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf gave_tok)
+          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf appl_tok)
+          (PlanarSyntacticObject.leaf theme_tok)))))
 
 /-- In the passive the derived subject is no longer attractable while the theme is, so Shortest
 imposes no order between them and the ambiguity returns: *a (different) girl was given every
 telescope*. -/
 theorem passive_ambiguous :
-    ¬ Attractable passiveTree (lexLeaf v_tok) (lexLeaf goal_tok) ∧
-      Attractable passiveTree (lexLeaf v_tok) (lexLeaf theme_tok) := by
+    ¬ Attractable passiveTree (leaf v_tok) (leaf goal_tok) ∧
+      Attractable passiveTree (leaf v_tok) (leaf theme_tok) := by
   constructor <;> decide
 
 end Bruening2001

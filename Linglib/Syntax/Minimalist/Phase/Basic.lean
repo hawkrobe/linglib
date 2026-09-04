@@ -160,7 +160,7 @@ variable {P : Type*}
 /-- A trigger applies to a phase iff its `selector` matches the phase head (the head
 leaf `ph.head`, as a leaf SyntacticObject). -/
 def Trigger.appliesTo (tr : Trigger P) (ph : Phase) : Bool :=
-  tr.selector (lexLeaf ph.head)
+  tr.selector (SyntacticObject.leaf ph.head)
 
 /-- The *first* registered trigger whose `selector` matches the phase head —
 first-match encodes lexicographic precedence (the elsewhere ordering of

@@ -182,10 +182,10 @@ def anchoredGiveComb : Bud.Tree (Color LIToken) :=
     structure of *Brian gave the book to Mary*. -/
 theorem realize_anchoredGiveComb :
     realize (anchoredGiveComb brian gave theBook toMary) =
-      some ((SyntacticObject.lexLeaf brian).node
-        ((SyntacticObject.lexLeaf theBook).node
-          ((SyntacticObject.lexLeaf toMary).node
-            (SyntacticObject.lexLeaf gave)))) := rfl
+      some ((SyntacticObject.leaf brian).merge
+        ((SyntacticObject.leaf theBook).merge
+          ((SyntacticObject.leaf toMary).merge
+            (SyntacticObject.leaf gave)))) := rfl
 
 /-- A movement landing site above the anchored comb realizes to the same
     syntactic object: the empty-tree marker exists only for the

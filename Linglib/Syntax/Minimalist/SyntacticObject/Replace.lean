@@ -12,7 +12,7 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Build
 `SyntacticObject.replace s target replacement` substitutes every subterm of `s` equal to
 `target` by `replacement`; it is `Nonplanar.replace` closed under well-formedness, which holds
 because substitution preserves the arity of every vertex. The copy-theory use is
-`s.replace mover traceLeaf`, leaving a trace where a mover was. This is a structural operation:
+`s.replace mover trace`, leaving a trace where a mover was. This is a structural operation:
 the Merge-algebraic Internal Merge is the coproduct composition of `Merge/Internal.lean`, with
 traces as cut remainders and chains held at the workspace level, and `replace` supports the
 transformational view that study files are written in. It is noncomputable; concrete cases
@@ -31,30 +31,28 @@ open RoseTree RoseTree.Nonplanar SyntacticObject
 theorem isSyntacticObject_replace (target replacement s : SyntacticObject) :
     IsSyntacticObject (Nonplanar.replace target.val replacement.val s.val) := by
   induction s using ind with
-  | lex tok =>
-    rw [show (lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl, Nonplanar.replace_leaf]
+  | leaf tok =>
+    rw [show (SyntacticObject.leaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
+      Nonplanar.replace_leaf]
     split
     · exact replacement.2
-    · exact (lexLeaf tok).2
+    · exact (SyntacticObject.leaf tok).2
   | trace =>
-    rw [show traceLeaf.val = Nonplanar.leaf (Sum.inr none) from rfl, Nonplanar.replace_leaf]
+    rw [show trace.val = Nonplanar.leaf (Sum.inr none) from rfl, Nonplanar.replace_leaf]
     split
     · exact replacement.2
-    · exact traceLeaf.2
+    · exact trace.2
   | traceOf tok =>
     rw [show (traceOf tok).val = Nonplanar.leaf (Sum.inr (some tok)) from rfl,
       Nonplanar.replace_leaf]
     split
     · exact replacement.2
     · exact (traceOf tok).2
-  | node l r ihl ihr =>
-    rw [node_val, Nonplanar.replace_node_pair]
+  | merge l r ihl ihr =>
+    rw [merge_val, Nonplanar.replace_node_pair]
     split
     · exact replacement.2
-    · show isSyntacticObject (Nonplanar.node (Sum.inr none)
-        {Nonplanar.replace target.val replacement.val l.val,
-          Nonplanar.replace target.val replacement.val r.val}) = true
-      rw [isSyntacticObject_node_pair, ihl, ihr]; rfl
+    · exact (isSyntacticObject_merge_iff _ _).2 ⟨ihl, ihr⟩
 
 namespace SyntacticObject
 
@@ -71,34 +69,35 @@ noncomputable def replace (s target replacement : SyntacticObject) : SyntacticOb
   Subtype.ext (by rw [replace_val, Nonplanar.replace_self])
 
 /-- At a node other than the target, substitution recurses into both daughters. -/
-theorem replace_node_of_ne {l r target replacement : SyntacticObject} (h : node l r ≠ target) :
-    replace (node l r) target replacement
-      = node (replace l target replacement) (replace r target replacement) := by
+theorem replace_merge_of_ne {l r target replacement : SyntacticObject} (h : merge l r ≠ target) :
+    replace (merge l r) target replacement
+      = merge (replace l target replacement) (replace r target replacement) := by
   apply Subtype.ext
-  rw [replace_val, node_val, Nonplanar.replace_node_pair, if_neg, node_val, replace_val,
+  rw [replace_val, merge_val, Nonplanar.replace_node_pair, if_neg, merge_val, replace_val,
     replace_val]
-  rw [← node_val]
+  rw [← merge_val]
   exact fun heq => h (Subtype.ext heq)
 
 theorem replace_lexLeaf_of_ne {tok : LIToken} {target replacement : SyntacticObject}
-    (h : lexLeaf tok ≠ target) : replace (lexLeaf tok) target replacement = lexLeaf tok := by
+    (h : SyntacticObject.leaf tok ≠ target) : replace (SyntacticObject.leaf tok) target replacement
+      = SyntacticObject.leaf tok := by
   apply Subtype.ext
-  rw [replace_val, show (lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
+  rw [replace_val, show (SyntacticObject.leaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
       Nonplanar.replace_leaf, if_neg]
   exact fun heq => h (Subtype.ext heq)
 
 theorem replace_traceLeaf_of_ne {target replacement : SyntacticObject}
-    (h : traceLeaf ≠ target) : replace traceLeaf target replacement = traceLeaf := by
+    (h : trace ≠ target) : replace trace target replacement = trace := by
   apply Subtype.ext
-  rw [replace_val, show traceLeaf.val = Nonplanar.leaf (Sum.inr none) from rfl,
+  rw [replace_val, show trace.val = Nonplanar.leaf (Sum.inr none) from rfl,
       Nonplanar.replace_leaf, if_neg]
   exact fun heq => h (Subtype.ext heq)
 
 /-- Moving the daughter `r` out of `[l r]` and leaving a trace yields `[l′ t]`, with `l′` the
     substituted left daughter; a tree is never its own daughter, taken here as a hypothesis. -/
-example (l r : SyntacticObject) (h : node l r ≠ r) :
-    replace (node l r) r traceLeaf = node (replace l r traceLeaf) traceLeaf := by
-  rw [replace_node_of_ne h, replace_self]
+example (l r : SyntacticObject) (h : merge l r ≠ r) :
+    replace (merge l r) r trace = merge (replace l r trace) trace := by
+  rw [replace_merge_of_ne h, replace_self]
 
 end SyntacticObject
 

@@ -161,16 +161,16 @@ theorem selNode_perm (a : Vertex) {l₁ l₂ : List SelectionState} (h : l₁.Pe
   mergeAlgebra_perm _ _ a h
 
 /-- Selection check on a planar tree: the catamorphism of `selNode`. -/
-def selCheckPlanar : Planar → SelectionState :=
+def selCheckPlanar : RoseTree Vertex → SelectionState :=
   RoseTree.fold selNode
 
 /-- Reduction of `selCheckPlanar` at a node: fold the algebra over the daughters. -/
-theorem selCheckPlanar_node (a : Vertex) (cs : List (Planar)) :
+theorem selCheckPlanar_node (a : Vertex) (cs : List (RoseTree Vertex)) :
     selCheckPlanar (RoseTree.node a cs) = selNode a (cs.map selCheckPlanar) :=
   RoseTree.fold_node ..
 
 /-- `selCheckPlanar` is `Perm`-invariant, so it descends to the quotient. -/
-theorem selCheckPlanar_perm {t s : Planar} (h : RoseTree.Perm t s) :
+theorem selCheckPlanar_perm {t s : RoseTree Vertex} (h : RoseTree.Perm t s) :
     selCheckPlanar t = selCheckPlanar s :=
   RoseTree.fold_perm (fun a _ _ h' => selNode_perm a h') h
 
@@ -178,12 +178,12 @@ theorem selCheckPlanar_perm {t s : Planar} (h : RoseTree.Perm t s) :
 def selCheckN : Nonplanar Vertex → SelectionState :=
   liftN (fun tok => .of tok tok.item.outerSel) (.of (mkTraceToken 0) [])
 
-@[simp] theorem selCheckN_mk (p : Planar) :
+@[simp] theorem selCheckN_mk (p : RoseTree Vertex) :
     selCheckN (Nonplanar.mk p) = selCheckPlanar p := rfl
 
 theorem selCheckN_node (a b : Nonplanar Vertex) :
     selCheckN (Nonplanar.node (Sum.inr none) {a, b}) = selCheckN a * selCheckN b :=
-  liftN_node _ _ a b
+  liftN_merge _ _ a b
 
 /-! ### The selection-driven head on `SyntacticObject` -/
 
@@ -205,12 +205,13 @@ def checkedSel : Option (List Cat) := s.selCheck.residual
     exocentric nodes. -/
 def outerCatC : Option Cat := s.selHead.map (·.item.outerCat)
 
-@[simp] theorem selCheck_lexLeaf : (lexLeaf tok).selCheck = .of tok tok.item.outerSel := rfl
+@[simp] theorem selCheck_leaf : (SyntacticObject.leaf tok).selCheck
+    = .of tok tok.item.outerSel := rfl
 
-@[simp] theorem selCheck_traceLeaf : traceLeaf.selCheck = .of (mkTraceToken 0) [] := rfl
+@[simp] theorem selCheck_trace : trace.selCheck = .of (mkTraceToken 0) [] := rfl
 
 @[simp] theorem selCheck_node (l r : SyntacticObject) :
-    (node l r).selCheck = l.selCheck * r.selCheck := liftFun_node _ _ l r
+    (merge l r).selCheck = l.selCheck * r.selCheck := liftFun_merge _ _ l r
 
 /-- `selCheck` as a morphism of magmas ([marcolli-chomsky-berwick-2025] §1.13's
     algebraic frame): the `lift` of the leaf data. -/
@@ -219,17 +220,18 @@ noncomputable def selCheckHom : SyntacticObject →ₙ* SelectionState :=
 
 @[simp] theorem selCheckHom_apply : selCheckHom s = s.selCheck := rfl
 
-@[simp] theorem selHead_lexLeaf : (lexLeaf tok).selHead = some tok := rfl
+@[simp] theorem selHead_leaf : (SyntacticObject.leaf tok).selHead = some tok := rfl
 
 /-- **Endocentricity**: a node's projecting head is one of its daughters' heads —
     bare-phrase-structure projection ([chomsky-1995-bare] §4, abstracted as
     [marcolli-chomsky-berwick-2025] Definition 1.13.6 / Lemma 1.13.7). -/
-theorem selHead_node {l r : SyntacticObject} {h : LIToken} (hlr : (node l r).selHead = some h) :
+theorem selHead_node {l r : SyntacticObject} {h : LIToken} (hlr : (merge l r).selHead = some h) :
     l.selHead = some h ∨ r.selHead = some h := by
   simp only [selHead, selCheck_node] at hlr ⊢
   exact SelectionState.head_mul hlr
 
-@[simp] theorem outerCatC_lexLeaf : (lexLeaf tok).outerCatC = some tok.item.outerCat := rfl
+@[simp] theorem outerCatC_leaf : (SyntacticObject.leaf tok).outerCatC
+    = some tok.item.outerCat := rfl
 
 end SyntacticObject
 

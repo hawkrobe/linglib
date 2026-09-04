@@ -43,8 +43,8 @@ its structural conditions are read off one tree and one assignment. -/
 def headBundle (feats : LIToken → FeatureBundle) (s : SyntacticObject) : FeatureBundle :=
   (s.selHead.map feats).getD ⊥
 
-@[simp] theorem headBundle_lexLeaf (feats : LIToken → FeatureBundle) (tok : LIToken) :
-    headBundle feats (lexLeaf tok) = feats tok := rfl
+@[simp] theorem headBundle_leaf (feats : LIToken → FeatureBundle) (tok : LIToken) :
+    headBundle feats (SyntacticObject.leaf tok) = feats tok := rfl
 
 /-- Valid Agree under a feature assignment: `probe` c-commands `goal` in
     `root`, the probe's head bears an unvalued `t`-slot, and the goal's head

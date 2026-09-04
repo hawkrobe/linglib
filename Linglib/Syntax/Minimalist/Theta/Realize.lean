@@ -56,17 +56,17 @@ theorem derives_node_of_thetaLocal {c : Color L}
     (and, degenerately, by bare-grid leaves, which do not occur in trees
     with terminal inputs). -/
 noncomputable def realize : Bud.Tree (Color LIToken) → Option SyntacticObject
-  | .leaf (.lex tok _) => some (.lexLeaf tok)
+  | .leaf (.lex tok _) => some (.leaf tok)
   | .leaf _ => none
   | .node _ l r =>
       match realize l, realize r with
-      | some L, some R => some (L.node R)
+      | some L, some R => some (L.merge R)
       | some L, none => some L
       | none, some R => some R
       | none, none => none
 
 @[simp] theorem realize_leaf_lex (tok : LIToken) (g : List PolarizedRole) :
-    realize (.leaf (.lex tok g)) = some (.lexLeaf tok) := rfl
+    realize (.leaf (.lex tok g)) = some (.leaf tok) := rfl
 
 @[simp] theorem realize_leaf_emptyTree :
     realize (.leaf .emptyTree) = none := rfl
@@ -77,7 +77,7 @@ noncomputable def realize : Bud.Tree (Color LIToken) → Option SyntacticObject
 theorem realize_node_some_some {l r : Bud.Tree (Color LIToken)}
     {c : Color LIToken} {L R : SyntacticObject} (hl : realize l = some L)
     (hr : realize r = some R) :
-    realize (.node c l r) = some (L.node R) := by
+    realize (.node c l r) = some (L.merge R) := by
   simp [realize, hl, hr]
 
 /-- The unit law `M(T, 1) = T`: a movement landing site realizes to its

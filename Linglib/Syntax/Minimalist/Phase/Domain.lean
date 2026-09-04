@@ -29,7 +29,7 @@ decidable P2 substrate (`subtrees`/`Acc`/`containsOrEq`/`areSistersIn`/`cCommand
 
 The keystone identity: the **interior Φ°_ℓ (Def 1.14.3) is the phase head's
 c-command domain**, `{T_v ∈ Acc(T) | T_v ⊆ T_{s_ℓ}} = Acc.filter (cCommandsIn …
-(lexLeaf ℓ))` — the standard "complement domain = head's c-command domain" falling
+(leaf ℓ))` — the standard "complement domain = head's c-command domain" falling
 out of the formalization.
 -/
 
@@ -49,9 +49,9 @@ namespace SyntacticObject
     `isPhaseHeadOf .D` ([citko-2014]); SA — `isPhaseHeadOf .SA`. -/
 def isPhaseHeadOf (c : Cat) (s : SyntacticObject) : Bool := s.outerCatC == some c
 
-@[simp] theorem isPhaseHeadOf_lexLeaf (c : Cat) (tok : LIToken) :
-    isPhaseHeadOf c (lexLeaf tok) = (tok.item.outerCat == c) := by
-  rw [isPhaseHeadOf, outerCatC_lexLeaf]; rfl
+@[simp] theorem isPhaseHeadOf_leaf (c : Cat) (tok : LIToken) :
+    isPhaseHeadOf c (SyntacticObject.leaf tok) = (tok.item.outerCat == c) := by
+  rw [isPhaseHeadOf, outerCatC_leaf]; rfl
 
 /-! ### The phase domain (MCB Def 1.14.2–1.14.3)
 
@@ -63,10 +63,10 @@ subterm API (`subtrees`/`Acc`/`containsOrEq`/`areSistersIn`/`cCommandsIn`), so i
 
 /-- **L_Φ(T)** ([marcolli-chomsky-berwick-2025] Def 1.14.3 eq 1.14.1): `ℓ` is a
     **phase head** in `T` when its projection path γ_ℓ is nontrivial — the leaf
-    `lexLeaf ℓ` has a mother whose head is still `ℓ` (so γ_ℓ reaches an internal
+    `leaf ℓ` has a mother whose head is still `ℓ` (so γ_ℓ reaches an internal
     vertex). Read off `selHead` at the mother; section-free. -/
 def isPhaseHead (T : SyntacticObject) (ℓ : LIToken) : Prop :=
-  ∃ n ∈ T.subtrees, immediatelyContains n (lexLeaf ℓ) ∧ n.selHead = some ℓ
+  ∃ n ∈ T.subtrees, immediatelyContains n (SyntacticObject.leaf ℓ) ∧ n.selHead = some ℓ
 
 instance (T : SyntacticObject) (ℓ : LIToken) : Decidable (isPhaseHead T ℓ) :=
   Multiset.decidableExistsMultiset
@@ -94,11 +94,11 @@ def phase (T : SyntacticObject) (ℓ : LIToken) : Multiset SyntacticObject :=
     accessible terms; the part the PIC freezes ("Z is the interior of the phase").
 
     This **is the phase head's c-command domain**: `T_v ⊆ T_{s_ℓ}` exactly when the
-    sister of `ℓ` contains-or-equals `T_v`, i.e. `cCommandsIn T (lexLeaf ℓ) T_v`
+    sister of `ℓ` contains-or-equals `T_v`, i.e. `cCommandsIn T (leaf ℓ) T_v`
     (#798). The textbook "complement domain = head's c-command domain", by
     construction — and `Acc(T) = T.Acc` (non-root). -/
 def phaseInterior (T : SyntacticObject) (ℓ : LIToken) : Multiset SyntacticObject :=
-  T.Acc.filter (fun Tv => cCommandsIn T (lexLeaf ℓ) Tv)
+  T.Acc.filter (fun Tv => cCommandsIn T (SyntacticObject.leaf ℓ) Tv)
 
 /-- **The edge ∂Φ_ℓ** ([marcolli-chomsky-berwick-2025] Def 1.14.3 eq 1.14.4):
     `{T_v ∈ Acc'(T) | T_v ⊆ T_{v_ℓ} ∧ T_v ⊄ T_{s_ℓ}}` — the phase content not in
@@ -126,7 +126,7 @@ instance (T : SyntacticObject) (ℓ : LIToken) (goal : SyntacticObject) :
 /-- **The interior is the phase head's (non-root) c-command domain** — the keystone
     identity (MCB Def 1.14.3, "Z is the interior of the phase"). -/
 @[simp] theorem mem_phaseInterior {T : SyntacticObject} {ℓ : LIToken} {Tv : SyntacticObject} :
-    Tv ∈ T.phaseInterior ℓ ↔ Tv ∈ T.Acc ∧ T.cCommandsIn (lexLeaf ℓ) Tv :=
+    Tv ∈ T.phaseInterior ℓ ↔ Tv ∈ T.Acc ∧ T.cCommandsIn (SyntacticObject.leaf ℓ) Tv :=
   Multiset.mem_filter
 
 @[simp] theorem mem_phaseEdge {T : SyntacticObject} {ℓ : LIToken} {Tv : SyntacticObject} :
@@ -135,7 +135,7 @@ instance (T : SyntacticObject) (ℓ : LIToken) (goal : SyntacticObject) :
 
 /-- The PIC freezes exactly the head's (non-root) c-command domain. -/
 theorem Impenetrable_iff {T : SyntacticObject} {ℓ : LIToken} {goal : SyntacticObject} :
-    Impenetrable T ℓ goal ↔ goal ∈ T.Acc ∧ T.cCommandsIn (lexLeaf ℓ) goal :=
+    Impenetrable T ℓ goal ↔ goal ∈ T.Acc ∧ T.cCommandsIn (SyntacticObject.leaf ℓ) goal :=
   mem_phaseInterior
 
 end SyntacticObject
@@ -147,9 +147,10 @@ left head c-selects the right: the selector projects, regardless of which side i
 sits on (the carrier is unordered) — so the phase head is the selector. -/
 
 /-- A two-leaf bare node over the given tokens (built planar-first via the DSL;
-    `SyntacticObject.node` is noncomputable). -/
+    `SyntacticObject.merge` is noncomputable). -/
 private def clause (head comp : LIToken) : SyntacticObject :=
-  ofPlanar (Planar.merge (Planar.leaf head) (Planar.leaf comp))
+  (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf head)
+    (PlanarSyntacticObject.leaf comp)).toSyntacticObject
 
 /-- A C selecting a T projects C: the node is a **C-phase**, not a v-phase. -/
 example :
@@ -180,18 +181,19 @@ private def tTok : LIToken := ⟨.simple .T [.V], 1⟩
 private def vTok : LIToken := ⟨.simple .V [], 2⟩
 
 private def cP : SyntacticObject :=
-  ofPlanar (Planar.merge (Planar.leaf cTok) (Planar.merge (Planar.leaf tTok) (Planar.leaf vTok)))
+  (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf cTok) (PlanarSyntacticObject.merge
+    (PlanarSyntacticObject.leaf tTok) (PlanarSyntacticObject.leaf vTok))).toSyntacticObject
 
 /-- C heads a nontrivial phase (it projects over the TP). -/
 example : isPhaseHead cP cTok := by decide
 
 /-- The embedded `V` is in C's complement domain — **frozen** by the PIC. -/
-example : Impenetrable cP cTok (lexLeaf vTok) := by decide
+example : Impenetrable cP cTok (SyntacticObject.leaf vTok) := by decide
 
 /-- The phase head `C` is at the **edge** — *not* frozen (it can still probe out). -/
-example : ¬ Impenetrable cP cTok (lexLeaf cTok) := by decide
+example : ¬ Impenetrable cP cTok (SyntacticObject.leaf cTok) := by decide
 
 /-- …and `C` sits in the edge, not the interior. -/
-example : lexLeaf cTok ∈ cP.phaseEdge cTok := by decide
+example : SyntacticObject.leaf cTok ∈ cP.phaseEdge cTok := by decide
 
 end Minimalist

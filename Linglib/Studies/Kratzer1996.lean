@@ -56,7 +56,7 @@ section TreeDerivations
 
 open Minimalist SyntacticObject
 
--- Leaf tokens (the smart Merge `SyntacticObject.node` is noncomputable, so concrete trees
+-- Leaf tokens (the smart Merge `SyntacticObject.merge` is noncomputable, so concrete trees
 -- are built planar-first from `LIToken`s and `decide`d over).
 
 def voice_ag_t  : LIToken := ⟨.simple .Voice [.v]  "Voice[AG]",  200⟩
@@ -76,73 +76,77 @@ def DP_door_t   : LIToken := ⟨.simple .D     []    "the door",   217⟩
 /-- Transitive: "John broke the vase"
     `[VoiceP John [Voice' Voice_AG [vP v [VP broke [DP the vase]]]]]` -/
 def transitiveTree : SyntacticObject :=
-  ofPlanar
-    (Planar.merge (Planar.leaf DP_john_t)
-      (Planar.merge (Planar.leaf voice_ag_t)
-        (Planar.merge (Planar.leaf v_head_t)
-          (Planar.merge (Planar.leaf V_broke_t) (Planar.leaf DP_vase_t)))))
+  PlanarSyntacticObject.toSyntacticObject
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf DP_john_t)
+      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf voice_ag_t)
+        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf v_head_t)
+          (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf V_broke_t)
+            (PlanarSyntacticObject.leaf DP_vase_t)))))
 
 /-- Anticausative: "The vase broke"
     `[VoiceP Voice_∅ [vP v [VP broke [DP the vase]]]]` -/
 def anticausativeTree : SyntacticObject :=
-  ofPlanar
-    (Planar.merge (Planar.leaf voice_nth_t)
-      (Planar.merge (Planar.leaf v_head_t)
-        (Planar.merge (Planar.leaf V_broke_t) (Planar.leaf DP_vase_t))))
+  PlanarSyntacticObject.toSyntacticObject
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf voice_nth_t)
+      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf v_head_t)
+        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf V_broke_t)
+          (PlanarSyntacticObject.leaf DP_vase_t))))
 
 /-- Unaccusative: "The ship sank"
     `[VoiceP Voice_∅ [vP v [VP sank [DP the ship]]]]` -/
 def unaccusativeTree : SyntacticObject :=
-  ofPlanar
-    (Planar.merge (Planar.leaf voice_nth_t)
-      (Planar.merge (Planar.leaf v_head_t)
-        (Planar.merge (Planar.leaf V_sank_t) (Planar.leaf DP_ship_t))))
+  PlanarSyntacticObject.toSyntacticObject
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf voice_nth_t)
+      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf v_head_t)
+        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf V_sank_t)
+          (PlanarSyntacticObject.leaf DP_ship_t))))
 
 /-- Middle: "The door opened"
     `[VoiceP Voice_MID [vP v [VP opened [DP the door]]]]` -/
 def middleTree : SyntacticObject :=
-  ofPlanar
-    (Planar.merge (Planar.leaf voice_mid_t)
-      (Planar.merge (Planar.leaf v_head_t)
-        (Planar.merge (Planar.leaf V_opened_t) (Planar.leaf DP_door_t))))
+  PlanarSyntacticObject.toSyntacticObject
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf voice_mid_t)
+      (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf v_head_t)
+        (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf V_opened_t)
+          (PlanarSyntacticObject.leaf DP_door_t))))
 
 -- C-command predictions
 
 /-- Agent c-commands theme in the transitive. -/
 theorem transitive_agent_ccommands_theme :
-    cCommandsIn transitiveTree (lexLeaf DP_john_t) (lexLeaf DP_vase_t) := by decide
+    cCommandsIn transitiveTree (leaf DP_john_t) (leaf DP_vase_t) := by decide
 
 /-- Theme does NOT c-command agent. -/
 theorem transitive_theme_not_ccommands_agent :
-    ¬ cCommandsIn transitiveTree (lexLeaf DP_vase_t) (lexLeaf DP_john_t) := by decide
+    ¬ cCommandsIn transitiveTree (leaf DP_vase_t) (leaf DP_john_t) := by decide
 
 /-- Anticausative contains theme but no agent DP. -/
 theorem anticausative_contains_theme :
-    contains anticausativeTree (lexLeaf DP_vase_t) := by decide
+    contains anticausativeTree (leaf DP_vase_t) := by decide
 
 /-- Unaccusative contains theme. -/
 theorem unaccusative_contains_theme :
-    contains unaccusativeTree (lexLeaf DP_ship_t) := by decide
+    contains unaccusativeTree (leaf DP_ship_t) := by decide
 
 /-- Middle contains theme. -/
 theorem middle_contains_theme :
-    contains middleTree (lexLeaf DP_door_t) := by decide
+    contains middleTree (leaf DP_door_t) := by decide
 
 -- Causative alternation
 
 /-- The transitive and anticausative share the VP core:
     both contain V("broke") and DP("the vase"). -/
 theorem causative_pair_shared_vp :
-    contains transitiveTree (lexLeaf V_broke_t) ∧
-    contains transitiveTree (lexLeaf DP_vase_t) ∧
-    contains anticausativeTree (lexLeaf V_broke_t) ∧
-    contains anticausativeTree (lexLeaf DP_vase_t) := by
+    contains transitiveTree (leaf V_broke_t) ∧
+    contains transitiveTree (leaf DP_vase_t) ∧
+    contains anticausativeTree (leaf V_broke_t) ∧
+    contains anticausativeTree (leaf DP_vase_t) := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- The transitive has an agent DP; the anticausative does not. -/
 theorem causative_pair_agent_contrast :
-    contains transitiveTree (lexLeaf DP_john_t) ∧
-    ¬ contains anticausativeTree (lexLeaf DP_john_t) := by
+    contains transitiveTree (leaf DP_john_t) ∧
+    ¬ contains anticausativeTree (leaf DP_john_t) := by
   constructor <;> decide
 
 /-- Voice determines the alternation: agentive assigns θ,
