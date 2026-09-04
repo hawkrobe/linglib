@@ -1,9 +1,10 @@
-import Linglib.Phonology.Segmental.Geometry
+import Linglib.Phonology.FeatureGeometry
+import Linglib.Phonology.Segmental.Classes
 
 /-!
 # Halle, Vaux and Wolfe (2000): feature spreading and the representation of place
 
-[halle-vaux-wolfe-2000] reviews the four innovations proposed since [clements-1985] — Unified
+Halle, Vaux and Wolfe review the four innovations proposed since Clements — Unified
 Feature Theory, Vowel-Place Theory, Partial Spreading and Strict Locality — records that no
 consensus exists on which to adopt (§1.1), and proposes Revised Articulator Theory, which keeps
 Partial Spreading and rejects the other three. Its tree (1) groups the features of the six
@@ -18,7 +19,7 @@ only names the natural sets.
 
 ## Main definitions
 
-* `Node`, `Node.parent`, `node` — tree (1) as a `FeatureGeometry` instance over [hayes-2009]'s
+* `Node`, `Node.parent`, `node` — tree (1) as a `FeatureGeometry` instance over Hayes's
   inventory.
 * `kp`, `kw` — the feature complements of the labiovelar and the labialised velar (p. 435).
 
@@ -32,7 +33,7 @@ only names the natural sets.
 
 ## Implementation notes
 
-Features of [hayes-2009]'s inventory absent from (1) are placed by the paper's own
+Features of Hayes's inventory absent from (1) are placed by the paper's own
 articulator-bound/free criterion (§1.2): [approximant], [delayed release], [tap], [trill] and
 [syllabic] are articulator-free and go to the root, [labiodental] to Lips, [front] to Tongue
 Body, and [voice], executed by the larynx, to Larynx; [tense] is left unplaced, since the paper's
@@ -47,10 +48,12 @@ tongue-root features are [ATR] and [RTR] and Hayes's [tense] is not identified w
 
 ## References
 
-* [halle-vaux-wolfe-2000]
-* [clements-1985] — the class-node geometry the paper revises.
-* [sagey-1986] — the articulator model it descends from.
-* [hayes-2009] — the feature inventory.
+* [M. Halle, B. Vaux and A. Wolfe, *On Feature Spreading and the Representation of Place of
+  Articulation* (2000)][halle-vaux-wolfe-2000]
+* [G. N. Clements, *The Geometry of Phonological Features* (1985)][clements-1985]
+* [B. P. Hayes, *Introductory Phonology* (2009)][hayes-2009]
+* [E. C. Sagey, *The Representation of Features and Relations in Non-Linear Phonology*
+  (1986)][sagey-1986]
 -/
 
 namespace HalleVauxWolfe2000
@@ -88,7 +91,7 @@ instance : OrderBot Node where
 
 end Node
 
-/-- The terminal features of (1), read over [hayes-2009]'s inventory (see the module
+/-- The terminal features of (1), read over Hayes's inventory (see the module
 docstring for the features the paper does not list). -/
 def node : Feature → Option Node
   | .consonantal | .sonorant | .continuant | .strident | .lateral

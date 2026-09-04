@@ -1,4 +1,5 @@
-import Linglib.Phonology.Segmental.Geometry
+import Linglib.Phonology.FeatureGeometry
+import Linglib.Phonology.Segmental.Classes
 import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Core.Order.Interval
@@ -15,7 +16,7 @@ vocal tract articulator, establishing the labial, coronal, dorsal, and
 soft palate nodes (`Node` below, an instance of
 `Phonology/FeatureGeometry.lean`). The geometry predicts which multiply-articulated
 (complex) segments are possible in human language
-(`Segment.IsComplex` in `Phonology/Segmental/Geometry.lean`).
+(`Segment.IsComplex` in `Phonology/Segmental/Classes.lean`).
 
 This study file formalizes Sagey-specific contributions that go beyond
 the consensus geometry:

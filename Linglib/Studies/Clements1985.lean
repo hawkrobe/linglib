@@ -1,26 +1,26 @@
 import Linglib.Fragments.English.Phonology
-import Linglib.Phonology.Segmental.Geometry
+import Linglib.Phonology.FeatureGeometry
 
 /-!
 # Clements (1985): the geometry of phonological features
 
-[clements-1985] replaces the SPE feature matrix by a tree of class nodes: a root node
+Clements replaces the SPE feature matrix by a tree of class nodes: a root node
 linked to the CV tier, a laryngeal and a supralaryngeal node below it, a manner and a
 place node below supralaryngeal, and each terminal feature hanging from one class node
 (his (3) and Appendix; §4 gives the content of each node). Assimilation is the spreading
-of one node ((5), after [mohanan-1983]), so the theory admits three types, total (the
+of one node ((5), after Mohanan), so the theory admits three types, total (the
 root), partial (a class node) and single-feature, and a rule that must reach two
 features with no common class node below supralaryngeal is total supralaryngeal
 assimilation, which is why the SPE rule (14) with `[αnasal]` in place of `[αanterior]`
 is unattested. The evidence is English coronal place assimilation ((10)–(13)), Icelandic
-preaspiration ((6)–(7), after [thrainsson-1978]), Klamath lateral rules ((8)–(9), after
-[barker-1964]), Sierra Popoluca nasalisation and release ((15)–(20), after [elson-1947]
-and [steriade-1982]'s Shared Features Convention) and the Kikuyu and palatalisation cases
+preaspiration ((6)–(7), after Thráinsson), Klamath lateral rules ((8)–(9), after
+Barker), Sierra Popoluca nasalisation and release ((15)–(20), after Elson
+and Steriade's Shared Features Convention) and the Kikuyu and palatalisation cases
 of §5, and §4 splits the place features into a primary set P, present in consonants and
 vowels, and a secondary set S, normally absent from plain consonants. The tree is an
 instance of `Phonology/FeatureGeometry.lean`; its manner node, which the paper itself
-flags as possibly superfluous, appears in no later geometry (`Studies/Sagey1986.lean`,
-`Studies/HalleVauxWolfe2000.lean`).
+flags as possibly superfluous, is dropped by the later geometries formalized here
+(`Studies/Sagey1986.lean`, `Studies/HalleVauxWolfe2000.lean`).
 
 ## Main definitions
 
@@ -52,7 +52,7 @@ flags as possibly superfluous, appears in no later geometry (`Studies/Sagey1986.
 ## Implementation notes
 
 `classNode?` is defined on the features the paper names and is `none` elsewhere, so the
-root's natural class is the paper's inventory rather than all of [hayes-2009]'s; `[labial]`
+root's natural class is the paper's inventory rather than all of Hayes's; `[labial]`
 counts as primary by table (22). Spreading is `Finset.piecewise` on a node's natural class,
 so the trigger's unspecified features under the node replace the target's, as the delinking
 convention of (13) requires; single-feature spreading is `Features.Bundle.assimilate`
@@ -74,14 +74,14 @@ geometric side only.
 
 ## References
 
-* [clements-1985]
-* [mohanan-1983] — the root node and the three assimilation types.
-* [thrainsson-1978] — Icelandic preaspiration.
-* [barker-1964] — Klamath.
-* [elson-1947] — Sierra Popoluca.
-* [steriade-1982] — the Shared Features Convention and Kolami epenthesis.
-* [chomsky-halle-1968] — the rule format of (14).
-* [hayes-2009] — the Fragment's feature inventory.
+* [G. N. Clements, *The Geometry of Phonological Features* (1985)][clements-1985]
+* [K. P. Mohanan, *The Structure of the Melody* (1983)][mohanan-1983]
+* [H. Thráinsson, *On the Phonology of Icelandic Preaspiration* (1978)][thrainsson-1978]
+* [M. A. R. Barker, *Klamath Grammar* (1964)][barker-1964]
+* [B. Elson, *Sierra Popoluca Syllable Structure* (1947)][elson-1947]
+* [D. Steriade, *Greek Prosodies and the Nature of Syllabification* (1982)][steriade-1982]
+* [B. P. Hayes, *Introductory Phonology* (2009)][hayes-2009]
+* [N. Chomsky and M. Halle, *The Sound Pattern of English* (1968)][chomsky-halle-1968]
 -/
 
 namespace Clements1985
@@ -162,7 +162,7 @@ theorem mem_place_naturalClass_iff (f : Feature) :
 
 /-- What an assimilation rule spreads: the root node (total assimilation), a class node
 (partial assimilation) or a single feature (single-feature assimilation), after
-[mohanan-1983]; a rule spreading more than one node costs more. -/
+Mohanan; a rule spreading more than one node costs more. -/
 inductive Spreading where
   | node (a : Node)
   | feature (f : Feature)
