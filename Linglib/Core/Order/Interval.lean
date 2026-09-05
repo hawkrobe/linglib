@@ -1,7 +1,8 @@
+import Mathlib.Order.Hom.WithTopBot
 import Mathlib.Order.Interval.Basic
 
 /-!
-# Relational vocabulary for nonempty intervals
+# Relational vocabulary for intervals
 
 [allen-1983] [kamp-reyle-1993] [klein-1994]
 [pancheva-2003] [sagey-1986] [smith-1997]
@@ -17,6 +18,12 @@ Containment, the subinterval order, and point intervals are mathlib's
 own API: `t ∈ i` (`mem_def`), `i₁ ≤ i₂` (`le_def`), `i₁ < i₂`
 (strict containment, see `lt_def`), `pure t`.
 
+The same vocabulary on mathlib's `Interval α`, the closed intervals with
+the null interval `⊥`, where `≤` is inclusion and `⊓` intersection:
+`Interval.Precedes` is [allen-1983]'s *before*, a left endpoint is
+`IsLeast` of the coerced set, `NonemptyInterval.withTop` embeds a bounded
+interval into `WithTop α`, and `Interval.Ici a` is the ray from `a` to the
+end of time.
 -/
 
 namespace NonemptyInterval
@@ -183,4 +190,132 @@ theorem overlaps_not_transitive :
 
 end LinearOrder
 
+/-! ### Embedding into `WithTop` -/
+
+section WithTop
+
+variable {α : Type*} [Preorder α]
+
+/-- An interval of `α` as an interval of `WithTop α`. -/
+def withTop (i : NonemptyInterval α) : NonemptyInterval (WithTop α) :=
+  i.map WithTop.coeOrderHom.toOrderHom
+
+@[simp] theorem fst_withTop (i : NonemptyInterval α) : i.withTop.fst = ↑i.fst := rfl
+
+@[simp] theorem snd_withTop (i : NonemptyInterval α) : i.withTop.snd = ↑i.snd := rfl
+
+@[simp] theorem mem_withTop {i : NonemptyInterval α} {x : WithTop α} :
+    x ∈ i.withTop ↔ ↑i.fst ≤ x ∧ x ≤ ↑i.snd :=
+  Iff.rfl
+
+/-- The embedding preserves and reflects containment. -/
+@[simp] theorem withTop_le_withTop {i j : NonemptyInterval α} : i.withTop ≤ j.withTop ↔ i ≤ j := by
+  simp [le_def]
+
+end WithTop
+
 end NonemptyInterval
+
+/-! ### Intervals with a null element -/
+
+namespace Interval
+
+section PartialOrder
+
+variable {α : Type*} [PartialOrder α] {s t : Interval α} {i j : NonemptyInterval α} {a b x : α}
+
+/-- `s` precedes `t`: every element of `s` is below every element of `t` ([allen-1983]'s
+*before*), vacuously so at the null interval. -/
+def Precedes (s t : Interval α) : Prop := ∀ ⦃x⦄, x ∈ s → ∀ ⦃y⦄, y ∈ t → x < y
+
+@[simp] theorem notMem_bot : x ∉ (⊥ : Interval α) := by
+  simp [← SetLike.mem_coe]
+
+/-- A nonempty interval lies within `s` exactly when its endpoints do. -/
+theorem coe_le_iff : (↑i : Interval α) ≤ s ↔ i.fst ∈ s ∧ i.snd ∈ s := by
+  induction s using recBotCoe with
+  | bot => exact iff_of_false (λ h => WithBot.coe_ne_bot (le_bot_iff.1 h)) (λ h => notMem_bot h.1)
+  | coe j =>
+    refine ⟨λ h => ?_, λ ⟨h₁, h₂⟩ => WithBot.coe_le_coe.2 (NonemptyInterval.le_def.2
+      ⟨(NonemptyInterval.mem_def.1 h₁).1, (NonemptyInterval.mem_def.1 h₂).2⟩)⟩
+    obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 (WithBot.coe_le_coe.1 h)
+    exact ⟨NonemptyInterval.mem_def.2 ⟨h₁, le_trans i.fst_le_snd h₂⟩,
+      NonemptyInterval.mem_def.2 ⟨le_trans h₁ i.fst_le_snd, h₂⟩⟩
+
+@[simp] theorem pure_le_iff : pure a ≤ s ↔ a ∈ s := by
+  simp [← coe_subset_coe]
+
+/-- The left endpoint is the least element. -/
+theorem isLeast_coe_fst : IsLeast (↑(↑i : Interval α) : Set α) i.fst :=
+  ⟨NonemptyInterval.mem_def.2 ⟨le_rfl, i.fst_le_snd⟩, λ _ hx => (NonemptyInterval.mem_def.1 hx).1⟩
+
+theorem isLeast_pure : IsLeast (↑(pure a : Interval α) : Set α) a := isLeast_coe_fst
+
+/-- Nonempty intervals precede exactly when the one ends before the other starts, the
+endpoint form of the relation. -/
+theorem precedes_coe_coe : (↑i : Interval α).Precedes ↑j ↔ i.precedes j :=
+  ⟨λ h => h (NonemptyInterval.mem_def.2 ⟨i.fst_le_snd, le_rfl⟩)
+      (NonemptyInterval.mem_def.2 ⟨le_rfl, j.fst_le_snd⟩),
+    λ h _ hx _ hy => lt_of_le_of_lt (NonemptyInterval.mem_def.1 hx).2
+      (lt_of_lt_of_le h (NonemptyInterval.mem_def.1 hy).1)⟩
+
+@[simp] theorem precedes_pure_pure : (pure a).Precedes (pure b) ↔ a < b := precedes_coe_coe
+
+end PartialOrder
+
+section Lattice
+
+variable {α : Type*} [Lattice α] {s t : Interval α} {x : α}
+
+theorem not_disjoint_iff : ¬ Disjoint s t ↔ ∃ x, x ∈ s ∧ x ∈ t := by
+  simp only [← disjoint_coe, Set.not_disjoint_iff, SetLike.mem_coe]
+
+/-- Nonempty intervals meet exactly when they overlap, the endpoint form of the relation. -/
+theorem not_disjoint_coe_coe {i j : NonemptyInterval α} :
+    ¬ Disjoint (↑i : Interval α) ↑j ↔ i.overlaps j := by
+  rw [not_disjoint_iff]
+  constructor
+  · rintro ⟨x, hx, hy⟩
+    exact ⟨le_trans (NonemptyInterval.mem_def.1 hx).1 (NonemptyInterval.mem_def.1 hy).2,
+      le_trans (NonemptyInterval.mem_def.1 hy).1 (NonemptyInterval.mem_def.1 hx).2⟩
+  · rintro ⟨h₁, h₂⟩
+    exact ⟨i.fst ⊔ j.fst, NonemptyInterval.mem_def.2 ⟨le_sup_left, sup_le i.fst_le_snd h₂⟩,
+      NonemptyInterval.mem_def.2 ⟨le_sup_right, sup_le h₁ j.fst_le_snd⟩⟩
+
+variable [DecidableLE α]
+
+@[simp] theorem mem_inf : x ∈ s ⊓ t ↔ x ∈ s ∧ x ∈ t := by
+  simp [← SetLike.mem_coe]
+
+end Lattice
+
+/-! ### Rays to the end of time -/
+
+section WithTop
+
+variable {α : Type*} [PartialOrder α] {i : NonemptyInterval α} {a b : α} {x : WithTop α}
+
+/-- The interval from `a` to the end of time, `[a, ⊤]`. -/
+def Ici (a : α) : Interval (WithTop α) := ↑(⟨(↑a, ⊤), le_top⟩ : NonemptyInterval (WithTop α))
+
+@[simp] theorem mem_Ici : x ∈ Ici a ↔ ↑a ≤ x := by
+  simp [Ici, NonemptyInterval.mem_def]
+
+@[simp] theorem Ici_le_Ici : Ici a ≤ Ici b ↔ b ≤ a := by
+  simp [Ici, NonemptyInterval.le_def]
+
+theorem antitone_Ici : Antitone (Ici : α → Interval (WithTop α)) := λ _ _ h => Ici_le_Ici.2 h
+
+theorem isLeast_Ici : IsLeast (↑(Ici a) : Set (WithTop α)) ↑a := isLeast_coe_fst
+
+@[simp] theorem pure_le_Ici : pure (↑b : WithTop α) ≤ Ici a ↔ a ≤ b := by
+  simp
+
+/-- A bounded interval precedes the ray from `a` exactly when it ends before `a`. -/
+theorem precedes_withTop_Ici :
+    (↑i.withTop : Interval (WithTop α)).Precedes (Ici a) ↔ i.snd < a := by
+  rw [Ici, precedes_coe_coe]; simp [NonemptyInterval.precedes]
+
+end WithTop
+
+end Interval

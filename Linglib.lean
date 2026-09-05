@@ -1508,6 +1508,7 @@ import Linglib.Semantics.ArgumentStructure.VerbDenotation
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 import Linglib.Semantics.Aspect.AtomDist
 import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Instantiation
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.Aspect.Composition
 import Linglib.Semantics.Aspect.Cumulativity

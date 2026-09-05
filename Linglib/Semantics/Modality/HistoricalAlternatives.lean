@@ -18,6 +18,8 @@ perfectly match it in matters of particular fact up to that time
   `isMaximalHistory` : interval predicates indexing the situation-base slices;
 * `historicalBase`, `actualHistoryBase`, `futureHistoryBase` : the temporal
   slices of the historical modal base;
+* `ofDatedFacts` : the relation determined by a stock of dated facts, worlds agreeing up to a
+  time when they agree on every fact dated at or before it;
 * `histEquiv` : historical equivalence `≃_t` of [condoravdi-2002];
 * `metaphysicalBase` : the equivalence class of the evaluation world under `≃_t`;
 * `toTWFrame` : a relation with `HistoricalProperties`, viewed as a
@@ -25,6 +27,7 @@ perfectly match it in matters of particular fact up to that time
 
 ## Main results
 
+* `historicalProperties_ofDatedFacts` : agreement on dated facts has the standard properties;
 * `upperLimitConstraintModal_implies_value` : the Upper Limit Constraint
   ([abusch-1997]) is derived from `actualHistoryBase` membership;
 * `alternatives_antitone`, `metaphysicalBase_antitone` : the metaphysical base
@@ -182,6 +185,21 @@ structure HistoricalProperties [LE T]
   trans : h.transitive
   /-- Agreement is preserved for earlier times -/
   backwards : h.backwardsClosed
+
+/-- The historical alternatives determined by a stock of dated facts: worlds agree up to a time
+    when they agree on every fact dated at or before it, the world-time model of
+    [thomason-1984]. -/
+def ofDatedFacts [LE T] {F : Type*} (time : F → T) (holds : W → F → Prop) :
+    HistoricalAlternatives W T :=
+  λ s => {w' | ∀ f, time f ≤ s.time → (holds s.world f ↔ holds w' f)}
+
+/-- Agreement on dated facts is an equivalence at every time and is preserved backward. -/
+theorem historicalProperties_ofDatedFacts [Preorder T] {F : Type*} (time : F → T)
+    (holds : W → F → Prop) : HistoricalProperties (ofDatedFacts time holds) where
+  refl _ _ _ := Iff.rfl
+  symm _ _ _ h f hf := (h f hf).symm
+  trans _ _ _ _ h₁ h₂ f hf := (h₁ f hf).trans (h₂ f hf)
+  backwards _ _ _ _ hle h f hf := h f (le_trans hf hle)
 
 /-- A temporal proposition: true or false at each situation. The
     situation-semantic analog of `Prop' W`. -/
