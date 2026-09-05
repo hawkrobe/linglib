@@ -3,7 +3,6 @@ import Linglib.Data.Examples.LevinRappaportHovav1995
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
@@ -43,13 +42,15 @@ open Minimalist Minimalist.Voice
 
 /-! ### Verb ↔ smuggling interface
 
-The bridge from `Verb`'s lexical fields to the smuggling operators
-(`Syntax/Minimalist/Movement/Smuggling.lean`). Single-consumer substrate
-carried here with its anchoring study. -/
+The bridge from `Verb`'s lexical fields to the smuggling derivation (§4): a verb licenses
+quotative inversion when its Voice is not a phase head, so that the VP can move to
+Spec,VoiceP, and it has a complement to move. Single-consumer substrate carried here with its
+anchoring study. -/
 
-/-- A verb has a syntactic complement iff its `complementType` is anything
-    other than `.none`. -/
-def hasComplement (v : Verb) : Bool := v.complementType != .none
+/-- A verb has a syntactic complement: its `complementType` is anything other than `.none`. -/
+def HasComplement (v : Verb) : Prop := v.complementType ≠ .none
+
+instance (v : Verb) : Decidable v.HasComplement := inferInstanceAs (Decidable (_ ≠ _))
 
 /-- The Voice head determined by a verb's derived unaccusativity:
     non-thematic (anticausative) for unaccusatives, agentive for
@@ -57,17 +58,11 @@ def hasComplement (v : Verb) : Bool := v.complementType != .none
 def voiceFor (v : Verb) : Head :=
   if v.derivedUnaccusative then anticausative else agentive
 
-/-- Derived prediction: does the verb license quotative inversion?
-    (§4: smuggling requires non-phase Voice + a complement to smuggle.) -/
-def derivedQI (v : Verb) : Bool :=
-  licensesQI v.voiceFor v.hasComplement
+/-- The derived prediction: the verb licenses quotative inversion, its Voice being no phase
+    head and its complement there to move (§4). -/
+def DerivesQI (v : Verb) : Prop := ¬ v.voiceFor.IsPhasal ∧ v.HasComplement
 
-/-- A verb licenses QI iff its derived Voice permits smuggling and it
-    has a complement to smuggle. -/
-theorem derivedQI_iff (v : Verb) :
-    v.derivedQI = true ↔ v.voiceFor.permitsSmuggling = true ∧ v.hasComplement = true := by
-  unfold derivedQI licensesQI
-  simp only [Bool.and_eq_true]
+instance (v : Verb) : Decidable v.DerivesQI := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Unaccusative verbs project non-thematic (anticausative) Voice. -/
 theorem voiceFor_of_unaccusative (v : Verb)
@@ -80,19 +75,15 @@ theorem voiceFor_of_unergative (v : Verb)
   unfold voiceFor; simp [h]
 
 /-- An unaccusative verb with a complement licenses QI. -/
-theorem derivedQI_of_unaccusative_with_complement (v : Verb)
-    (hu : v.derivedUnaccusative = true) (hc : v.hasComplement = true) :
-    v.derivedQI = true := by
-  rw [derivedQI_iff, voiceFor_of_unaccusative v hu]
-  exact ⟨nonthematic_permits_smuggling, hc⟩
+theorem derivesQI_of_unaccusative_with_complement (v : Verb)
+    (hu : v.derivedUnaccusative = true) (hc : v.HasComplement) : v.DerivesQI :=
+  ⟨by rw [voiceFor_of_unaccusative v hu]; decide, hc⟩
 
-/-- An unergative verb cannot license QI (regardless of complement),
-    because agentive Voice blocks smuggling. -/
-theorem derivedQI_blocked_when_unergative (v : Verb)
-    (hu : v.derivedUnaccusative = false) : v.derivedQI = false := by
-  unfold derivedQI
-  rw [voiceFor_of_unergative v hu]
-  exact agentive_blocks_qi _
+/-- An unergative verb cannot license QI whatever its complement: agentive Voice is a phase
+    head. -/
+theorem not_derivesQI_of_unergative (v : Verb) (hu : v.derivedUnaccusative = false) :
+    ¬ v.DerivesQI :=
+  λ h => h.1 (by rw [voiceFor_of_unergative v hu]; decide)
 
 end Verb
 
@@ -197,7 +188,7 @@ theorem speak_levinClass : speak.levinClass = some .mannerOfSpeaking := rfl
 
 /-! ## §8. Smuggling derivation of QI
 
-`Verb.derivedQI` (defined above)
+`Verb.DerivesQI` (defined above)
 derives QI licensing from two independently
 motivated properties: (1) Voice is non-phase (= unaccusative);
 (2) verb has a complement (the quote).
@@ -208,23 +199,23 @@ predicted to license QI; agentive `speak`/`talk` is correctly predicted
 to block QI; unaccusative `arrive` (no complement) is correctly
 predicted not to license QI (it requires LI, not QI). -/
 
-theorem mos_unaccusatives_derivedQI :
-    ∀ v ∈ mosUnaccusatives, v.toVerb.derivedQI = true := by
-  intro v hv; fin_cases hv <;> rfl
+theorem mos_unaccusatives_derivesQI :
+    ∀ v ∈ mosUnaccusatives, v.toVerb.DerivesQI := by
+  intro v hv; fin_cases hv <;> decide
 
-theorem communication_unergatives_derivedQI :
-    ∀ v ∈ communicationUnergatives, v.toVerb.derivedQI = false := by
-  intro v hv; fin_cases hv <;> rfl
+theorem communication_unergatives_derivesQI :
+    ∀ v ∈ communicationUnergatives, ¬ v.toVerb.DerivesQI := by
+  intro v hv; fin_cases hv <;> decide
 
 /-- `arrive` is unaccusative but has no complement: doesn't license QI.
     This is correct — `*"arrived Mary"` requires a fronted locative
     (LI), not a fronted quote (QI). -/
-theorem arrive_no_qi : arrive.toVerb.derivedQI = false := rfl
+theorem arrive_no_qi : ¬ arrive.toVerb.DerivesQI := by decide
 
 /-- Consistency: each (QI row, verb) pair has its judgment matching
-    `derivedQI`. Pairs the rows of `Data/Examples/Storment2026.json`
+    `DerivesQI`. Pairs the rows of `Data/Examples/Storment2026.json`
     with the smuggling prediction. -/
-theorem qi_data_matches_derivedQI :
+theorem qi_data_matches_derivesQI :
     ∀ p ∈ ([(Examples.qi_whisper,    whisper.toVerb),
             (Examples.qi_murmur,     murmur.toVerb),
             (Examples.qi_shout,      shout.toVerb),
@@ -243,7 +234,7 @@ theorem qi_data_matches_derivedQI :
             (Examples.qi_speak,      speak.toVerb),
             (Examples.qi_talk,       talk.toVerb)] :
             List (LinguisticExample × Verb)),
-      (p.1.judgment = .acceptable) ↔ (p.2.derivedQI = true) := by
+      (p.1.judgment = .acceptable) ↔ p.2.DerivesQI := by
   intro p hp; fin_cases hp <;> decide
 
 /-! ## §9. QI ∥ LI distributional contrasts (Storment §6)
@@ -390,9 +381,8 @@ canonical instance lives in `Syntax/Minimalism/Movement/
 InverseVoice.lean`; here we just affirm membership. -/
 
 theorem qi_is_inverse_voice :
-    Minimalist.qiCanonical.kind = .quotativeInversion ∧
-    Minimalist.qiCanonical.licensed = true :=
-  ⟨rfl, rfl⟩
+    Minimalist.qiCanonical.kind = .quotativeInversion ∧ Minimalist.qiCanonical.Licensed := by
+  decide
 
 theorem qi_li_share_voice :
     Minimalist.qiCanonical.voice = Minimalist.liCanonical.voice :=

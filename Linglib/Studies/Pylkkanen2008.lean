@@ -2,7 +2,6 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
 import Linglib.Data.WALS.Features.F109A
@@ -110,7 +109,7 @@ different positions in the two systems.
 The orthogonality of the two predicates `IsExternalArgIntroducer` and
 `IsSmugglingProjection` (defined below) reflects this: a `Head`
 instance can satisfy one, both, or neither. Linglib's `Head`
-structure encodes both axes (`assignsTheta` and `permitsSmuggling`)
+structure encodes both axes (`AssignsTheta` and `IsPhasal`)
 independently, accommodating both views simultaneously.
 
 ## Where this meta-bridge sits
@@ -138,13 +137,14 @@ instance (v : Head) : Decidable (IsExternalArgIntroducer v) := by
 
 /-- **Collins / Storment view**: a Voice head is "doing its job" iff
     it permits smuggling (it is the structural landing site for a
-    constituent moving past an in-situ external argument).
+    constituent moving past an in-situ external argument), which on
+    [storment-2026]'s reading means it is not a phase head.
     [collins-2005], [storment-2026]. -/
 def IsSmugglingProjection (v : Head) : Prop :=
-  v.permitsSmuggling = true
+  ¬ v.IsPhasal
 
-instance (v : Head) : Decidable (IsSmugglingProjection v) := by
-  unfold IsSmugglingProjection; infer_instance
+instance (v : Head) : Decidable (IsSmugglingProjection v) :=
+  inferInstanceAs (Decidable (¬ _))
 
 /-! #### The two views are orthogonal
 
