@@ -1,4 +1,5 @@
 import Mathlib.Order.Defs.Unbundled
+import Mathlib.Order.Preorder.Chain
 import Mathlib.Data.Set.Lattice
 import Mathlib.Data.Rat.Defs
 import Linglib.Features.Attitudes
@@ -11,21 +12,28 @@ The two mathematizations of preference that attitude semantics runs
 on, gathered: qualitative preference *orderings* on propositions and
 quantitative preference *degrees* measured against thresholds.
 
-A **preference structure** ([condoravdi-lauer-2012] (65)) is a pair
-`⟨P, ≺⟩` where `P ⊆ ℘(W)` is a set of propositions and `≺` is a strict
-partial order — the mathematical spine of Condoravdi & Lauer's
-effective-preference framework ([condoravdi-lauer-2011], [lauer-2013],
+A **preference structure** ([condoravdi-lauer-2012] (28),
+[condoravdi-lauer-2016] (65)) is a pair `⟨P, ≺⟩` where `P ⊆ ℘(W)` is a
+set of propositions and `≺` is a strict partial order — the
+mathematical spine of Condoravdi & Lauer's effective-preference
+framework ([condoravdi-lauer-2011], [lauer-2013],
 [condoravdi-lauer-2016]), consumed by the *want* semantics in
 `Desire.lean` and the dynamic necessity operator of
-`Semantics/Dynamic/UpdateSemantics/Necessity.lean`. `maxElts` (their
-eq. 70) collects the maximal elements. Relative to an information
-state `B`, `consistent` (eq. 66) demands that any subfamily of
-preferences jointly incompatible with `B` contain a strictly ranked
-pair, and `realistic` (eq. 67) — derivable from consistency
-(`consistent_implies_realistic`, their fn. 30) — demands every
-preference be belief-compatible. `maxElts_pair_belief_compatible` is
-the conflicting-desires blocker: two maximal preferences of a
-consistent structure meet inside `B`. `maxInducedLe` is the
+`Semantics/Dynamic/UpdateSemantics/Necessity.lean`. `maxElts`
+([condoravdi-lauer-2016] (70)) collects the maximal elements. Relative
+to an information state `B`, `Consistent` (their (66)) demands that
+any subfamily of preferences jointly incompatible with `B` contain a
+strictly ranked pair, and `Realistic` (their (67)) — derivable from
+consistency (`Consistent.realistic`, their fn. 30) — demands every
+preference be belief-compatible. A preference incompatible with a
+maximal one is ranked strictly below it
+(`Consistent.prec_of_mem_maxElts`), so the maximal preferences of a
+consistent structure are jointly belief-compatible
+(`Consistent.inter_sInter_maxElts_nonempty` and, for a pair, the
+conflicting-desires blocker
+`Consistent.inter_inter_nonempty_of_mem_maxElts`), and a chain of
+realistic preferences is consistent
+(`consistent_of_realistic_of_isChain`). `maxInducedLe` is the
 world-side preorder induced by maximal preferences, the Kratzer-style
 ([kratzer-1981]) derivation of a world ordering from an ordering
 source.
@@ -84,47 +92,71 @@ theorem maxElts_subset_prefs : P.maxElts ⊆ P.prefs := fun _ h => h.1
 /-- Consistency w.r.t. an information state `B`: any subfamily of
     preferences whose joint realization is incompatible with `B`
     contains a strictly ranked pair. -/
-def consistent (B : Set W) : Prop :=
-  ∀ X : Set (Set W), X ⊆ P.prefs → B ∩ ⋂ p ∈ X, p = ∅ →
-    ∃ p ∈ X, ∃ q ∈ X, P.prec p q
+def Consistent (B : Set W) : Prop :=
+  ∀ X ⊆ P.prefs, B ∩ ⋂₀ X = ∅ → ∃ p ∈ X, ∃ q ∈ X, P.prec p q
 
 /-- Realism w.r.t. an information state: every preference is
     belief-compatible. -/
-def realistic (B : Set W) : Prop :=
+def Realistic (B : Set W) : Prop :=
   ∀ p ∈ P.prefs, p ∩ B ≠ ∅
+
+section Consistent
+
+variable {P} {B : Set W}
 
 /-- Realism follows from consistency via the singleton-`X` case combined
     with irreflexivity. -/
-theorem consistent_implies_realistic {B : Set W} (hC : P.consistent B) :
-    P.realistic B := by
+theorem Consistent.realistic (hC : P.Consistent B) : P.Realistic B := by
   intro p hp hpB
-  obtain ⟨q, hq, r, hr, hqr⟩ := hC {p} (Set.singleton_subset_iff.mpr hp) (by
-    rw [Set.biInter_singleton, Set.inter_comm]; exact hpB)
-  rw [Set.mem_singleton_iff] at hq hr
-  rw [hq, hr] at hqr
-  exact irrefl_of P.prec p hqr
+  obtain ⟨_, rfl, _, rfl, hqr⟩ := hC {p} (Set.singleton_subset_iff.2 hp)
+    (by rw [Set.sInter_singleton, Set.inter_comm]; exact hpB)
+  exact irrefl_of P.prec _ hqr
 
-/-- Pair belief-consistency of maximal preferences: given `consistent B`,
-    two maximal preferences cannot have an empty intersection w.r.t. `B`.
-    The four cases of the consistency conclusion are blocked by
-    irreflexivity (diagonal pairs) and maximality (off-diagonal pairs). -/
-theorem maxElts_pair_belief_compatible {B : Set W} (hC : P.consistent B)
-    {φ ψ : Set W} (hφ : φ ∈ P.maxElts) (hψ : ψ ∈ P.maxElts) :
-    (φ ∩ ψ) ∩ B ≠ ∅ := by
-  intro hEmpty
-  obtain ⟨hφP, hφmax⟩ := hφ
-  obtain ⟨hψP, hψmax⟩ := hψ
-  have hX_sub : ({φ, ψ} : Set (Set W)) ⊆ P.prefs :=
-    Set.insert_subset hφP (Set.singleton_subset_iff.mpr hψP)
-  have hX_int : B ∩ ⋂ p ∈ ({φ, ψ} : Set (Set W)), p = ∅ := by
-    rw [Set.biInter_pair, Set.inter_comm]; exact hEmpty
-  obtain ⟨p, hpX, q, hqX, hpq⟩ := hC _ hX_sub hX_int
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hpX hqX
-  rcases hpX with hp | hp <;> rcases hqX with hq | hq <;> rw [hp, hq] at hpq
-  · exact irrefl_of P.prec φ hpq
-  · exact hφmax ψ hψP hpq
-  · exact hψmax φ hφP hpq
-  · exact irrefl_of P.prec ψ hpq
+/-- A consistent structure has a nonempty information state: the empty subfamily. -/
+theorem Consistent.nonempty (hC : P.Consistent B) : B.Nonempty :=
+  Set.nonempty_iff_ne_empty.2 λ h =>
+    let ⟨_, hp, _⟩ := hC ∅ (Set.empty_subset _) (by rw [Set.sInter_empty, Set.inter_univ]; exact h)
+    hp
+
+/-- A preference incompatible with a maximal one is ranked strictly below it. -/
+theorem Consistent.prec_of_mem_maxElts (hC : P.Consistent B) {p q : Set W} (hp : p ∈ P.maxElts)
+    (hq : q ∈ P.prefs) (h : B ∩ (p ∩ q) = ∅) : P.prec q p := by
+  obtain ⟨x, hx, y, hy, hxy⟩ := hC {p, q}
+    (Set.insert_subset hp.1 (Set.singleton_subset_iff.2 hq)) (by rwa [Set.sInter_pair])
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx hy
+  rcases hx with rfl | rfl <;> rcases hy with rfl | rfl
+  exacts [absurd hxy (irrefl_of P.prec _), absurd hxy (hp.2 _ hq), hxy,
+    absurd hxy (irrefl_of P.prec _)]
+
+/-- The maximal preferences of a consistent structure are jointly belief-compatible. -/
+theorem Consistent.inter_sInter_maxElts_nonempty (hC : P.Consistent B) :
+    (B ∩ ⋂₀ P.maxElts).Nonempty :=
+  Set.nonempty_iff_ne_empty.2 λ h =>
+    let ⟨_, hp, _, hq, hpq⟩ := hC _ P.maxElts_subset_prefs h
+    hp.2 _ hq.1 hpq
+
+/-- Two maximal preferences of a consistent structure are jointly belief-compatible: the
+    conflicting-desires blocker. -/
+theorem Consistent.inter_inter_nonempty_of_mem_maxElts (hC : P.Consistent B) {φ ψ : Set W}
+    (hφ : φ ∈ P.maxElts) (hψ : ψ ∈ P.maxElts) : (B ∩ (φ ∩ ψ)).Nonempty :=
+  hC.inter_sInter_maxElts_nonempty.mono <| Set.inter_subset_inter_right _ <|
+    Set.subset_inter (Set.sInter_subset_of_mem hφ) (Set.sInter_subset_of_mem hψ)
+
+/-- A chain of realistic preferences is consistent. -/
+theorem consistent_of_realistic_of_isChain (hR : P.Realistic B) (hc : IsChain P.prec P.prefs)
+    (hB : B.Nonempty) : P.Consistent B := by
+  intro X hX hXB
+  by_contra h
+  have hs : X.Subsingleton := λ p hp q hq =>
+    by_contra λ hne => (hc (hX hp) (hX hq) hne).elim (λ hpq => h ⟨p, hp, q, hq, hpq⟩)
+      (λ hqp => h ⟨q, hq, p, hp, hqp⟩)
+  rcases hs.eq_empty_or_singleton with rfl | ⟨p, rfl⟩
+  · rw [Set.sInter_empty, Set.inter_univ] at hXB
+    exact hB.ne_empty hXB
+  · rw [Set.sInter_singleton, Set.inter_comm] at hXB
+    exact hR p (hX (Set.mem_singleton p)) hXB
+
+end Consistent
 
 /-! ### The world preorder induced by maximal preferences -/
 

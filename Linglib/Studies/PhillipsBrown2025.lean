@@ -452,7 +452,7 @@ theorem modern_wants_avoidNuclearWar :
 
 [condoravdi-lauer-2016]'s exact-match want over an *effective* —
 pointwise consistent — preferential background is jointly
-belief-consistent (`PreferenceStructure.maxElts_pair_belief_compatible`):
+belief-consistent (`PreferenceStructure.Consistent.inter_inter_nonempty_of_mem_maxElts`):
 if both `Preferential.Want P a φ w` and `Preferential.Want P a ψ w` hold, then
 `(φ ∩ ψ) ∩ B(a, w) ≠ ∅`. Specialized to `ψ = φᶜ`, the conclusion
 becomes `∅ ∩ B(a, w) ≠ ∅`, which is contradictory. So C&L *forbids*
@@ -477,15 +477,12 @@ desire, but they make non-overlapping claims. -/
 theorem condoravdiLauer_blocks_simultaneous_pq_and_negpq
     {Agent W : Type} {B : Agent → W → Set W}
     (P : Agent → W → PreferenceStructure W)
-    (hC : ∀ a w, (P a w).consistent (B a w))
+    (hC : ∀ a w, (P a w).Consistent (B a w))
     (a : Agent) (φ : Set W) (w : W)
     (hφ : Preferential.Want P a φ w) (hnegφ : Preferential.Want P a φᶜ w) :
-    False := by
-  have h := (P a w).maxElts_pair_belief_compatible (hC a w) hφ hnegφ
-  apply h
-  ext x
-  simp only [Set.mem_inter_iff, Set.mem_empty_iff_false, iff_false, not_and]
-  exact fun ⟨h1, h2⟩ _ => h2 h1
+    False :=
+  ((hC a w).inter_inter_nonempty_of_mem_maxElts hφ hnegφ).ne_empty
+    (by rw [Set.inter_compl_self, Set.inter_empty])
 
 /-! ### The belief-based class and its no-go (paper §2)
 

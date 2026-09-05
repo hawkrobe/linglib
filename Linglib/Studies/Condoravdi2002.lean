@@ -409,11 +409,6 @@ theorem zones_iff : ∀ s : Scope, ∀ z : Zone, z ∈ s.zones ↔ s.Sat z := by
 
 /-! ### The rows -/
 
-/-- The value of a row's feature, read through a table. -/
-private def parse? {α : Type*} (table : List (String × α)) (row : LinguisticExample)
-    (key : String) : Option α :=
-  (row.feature? key).bind (List.lookup · table)
-
 private def scopes : List (String × Scope) :=
   [("modal", .modal), ("modalPerf", .modalPerf), ("perfModal", .perfModal)]
 
@@ -430,9 +425,9 @@ structure Adverbial where
 /-- The configuration an adverbial row records. -/
 def Adverbial.ofRow (row : LinguisticExample) : Option Adverbial := do
   guard (row.feature? "construction" = some "adverb")
-  return ⟨← parse? scopes row "scope",
-    ← parse? [("eventive", Event.Kind.action), ("stative", .state)] row "sort",
-    ← parse? [("past", Zone.past), ("present", .present), ("future", .future)] row "adverb"⟩
+  return ⟨← row.parse? "scope" scopes,
+    ← row.parse? "sort" [("eventive", Event.Kind.action), ("stative", .state)],
+    ← row.parse? "adverb" [("past", Zone.past), ("present", .present), ("future", .future)]⟩
 
 /-- The adverbial patterns of [1], [2], [29], [34] and [35]: a frame adverbial is deviant
 exactly when its zone lies outside the scoping's satisfiable cells, `zones_iff`; the one
@@ -462,11 +457,10 @@ structure Reading where
 reading available. -/
 def Reading.ofRow (row : LinguisticExample) : Option (Reading × Bool) := do
   guard (row.feature? "construction" = some "reading")
-  return (⟨← parse? scopes row "scope",
-    ← parse? [("past", Zone.past), ("present", .present), ("future", .future)] row "reference",
-    ← parse? [("settled", Context.settled), ("open", .unsettled), ("none", .absent)] row
-      "context"⟩,
-    ← parse? [("available", true), ("unavailable", false)] row "metaphysical")
+  return (⟨← row.parse? "scope" scopes,
+    ← row.parse? "reference" [("past", Zone.past), ("present", .present), ("future", .future)],
+    ← row.parse? "context" [("settled", Context.settled), ("open", .unsettled), ("none", .absent)]⟩,
+    ← row.parse? "metaphysical" [("available", true), ("unavailable", false)])
 
 /-- The metaphysical base is assignable: the instantiation is neither in the past of the
 perspective, `settled_perf`, nor at the present, `settled_present`, nor settled by the
@@ -495,7 +489,7 @@ def Complement.property : Complement → SortedProperty Unit Unit
 /-- A sortal row: the complement of *already* or *yet*. -/
 def Complement.ofRow (row : LinguisticExample) : Option Complement := do
   guard (row.feature? "construction" = some "sortal")
-  return ← parse? [("eventive", Complement.eventive), ("perfect", .perfect)] row "complement"
+  return ← row.parse? "complement" [("eventive", Complement.eventive), ("perfect", .perfect)]
 
 /-- The sortal restriction of [14] and [15]: *already* and *yet* are acceptable exactly on the
 complements where `phase` is defined, the perfect of an eventive predicate among them. -/
@@ -511,7 +505,7 @@ inductive Phase
 /-- A phase row: the adverb scoping over the possibility modal. -/
 def Phase.ofRow (row : LinguisticExample) : Option Phase := do
   guard (row.feature? "construction" = some "phase")
-  return ← parse? [("already", Phase.already), ("still", .still)] row "adverb"
+  return ← row.parse? "adverb" [("already", Phase.already), ("still", .still)]
 
 /-- The scopings of [36], [37] and [40]: *still* over a possibility modal is acceptable and
 *already* is not, `still_may` and `not_already_may`. -/
@@ -538,8 +532,8 @@ def Phase.order : Phase → Order
 /-- A German row: the order and the adverb. -/
 def Order.ofRow (row : LinguisticExample) : Option (Order × Phase) := do
   guard (row.feature? "construction" = some "german")
-  return (← parse? [("modalHave", Order.modalHave), ("hadModal", .hadModal)] row "order",
-    ← parse? [("schon", Phase.already), ("noch", .still)] row "adverb")
+  return (← row.parse? "order" [("modalHave", Order.modalHave), ("hadModal", .hadModal)],
+    ← row.parse? "adverb" [("schon", Phase.already), ("noch", .still)])
 
 /-- The German pattern [38]: acceptable exactly when the syntax realizes the order the adverb
 requires. -/

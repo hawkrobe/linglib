@@ -304,10 +304,6 @@ def Clause.derivation (c : Clause) : OrderHypothesis → WordOrder → Derivatio
 
 /-- The value of a row's feature, read through a table; `List.lookup` keeps key and value in
 one universe. -/
-private def parse? {α : Type} (table : List (String × α)) (row : LinguisticExample)
-    (key : String) : Option α :=
-  row.feature? key >>= (List.lookup · table)
-
 private def voices : List (String × Voice) := [("active", .av), ("passive", .ov)]
 private def orders : List (String × WordOrder) := [("VOS", .vos), ("SVO", .svo)]
 private def args : List (String × Arg) :=
@@ -352,9 +348,9 @@ instance (e : Extraction) (hyp : OrderHypothesis) : Decidable (e.Licit hyp) := b
 /-- The configuration a row records. -/
 def ofRow (row : LinguisticExample) : Option Extraction := do
   guard (row.feature? "construction" = some "extraction")
-  return ⟨← parse? voices row "voice", ← parse? orders row "order",
-    ← parse? [("monotransitive", false), ("ditransitive", true)] row "transitivity",
-    ← parse? args row "extracted", ← parse? [("fronted", true), ("inSitu", false)] row "wh"⟩
+  return ⟨← row.parse? "voice" voices, ← row.parse? "order" orders,
+    ← row.parse? "transitivity" [("monotransitive", false), ("ditransitive", true)],
+    ← row.parse? "extracted" args, ← row.parse? "wh" [("fronted", true), ("inSitu", false)]⟩
 
 end Extraction
 
@@ -410,8 +406,8 @@ def derivation (a : Reflexivization) : Derivation := a.clause.derivation .vosHyp
 /-- The configuration a row records. -/
 def ofRow (row : LinguisticExample) : Option Reflexivization := do
   guard (row.feature? "construction" = some "binding" ∧ row.language = tobaBatak)
-  return ⟨← parse? voices row "voice", ← parse? orders row "order",
-    ← parse? args row "antecedent", ← parse? args row "reflexive"⟩
+  return ⟨← row.parse? "voice" voices, ← row.parse? "order" orders,
+    ← row.parse? "antecedent" args, ← row.parse? "reflexive" args⟩
 
 end Reflexivization
 
@@ -456,7 +452,7 @@ def Reflexivization.grade (a : Reflexivization) : Grade :=
 
 /-- Table 1 derived: each row's grade. -/
 theorem table1 : ∀ row ∈ Examples.all, ∀ a ∈ Reflexivization.ofRow row,
-    ∀ g ∈ parse? [("A", Grade.typeA), ("B", .typeB), ("C", .typeC)] row "tableOne",
+    ∀ g ∈ row.parse? "tableOne" [("A", Grade.typeA), ("B", .typeB), ("C", .typeC)],
       a.grade = g := by
   decide
 
@@ -522,8 +518,8 @@ def englishPair? (row : LinguisticExample) : Option (SyntacticObject × Syntacti
     | .patient => some theBoy
     | .agent => some byHimself
     | _ => none
-  let antecedent ← slot (← parse? args row "antecedent")
-  let reflexive ← slot (← parse? args row "reflexive")
+  let antecedent ← slot (← row.parse? "antecedent" args)
+  let reflexive ← slot (← row.parse? "reflexive" args)
   return (antecedent, reflexive)
 
 /-- (95)–(96): the patient binds the agent, which never c-commands it. Raising the patient

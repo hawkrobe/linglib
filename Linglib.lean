@@ -371,6 +371,7 @@ import Linglib.Data.Examples.ChatzikyriakidisEtAl2025
 import Linglib.Data.Examples.ChungMascarenhas2023
 import Linglib.Data.Examples.CohenErteschikShir2002
 import Linglib.Data.Examples.Collins2005
+import Linglib.Data.Examples.CondoravdiLauer2012
 import Linglib.Data.Examples.CondoravdiLauer2016
 import Linglib.Data.Examples.Declerck1991
 import Linglib.Data.Examples.DelPinal2015

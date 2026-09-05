@@ -160,11 +160,6 @@ theorem CaseSystem.discriminates_two_case_iff (c : CaseSystem) :
 
 /-! ### The rows -/
 
-/-- The value of a row's feature, read through a table. -/
-private def parse? {α : Type*} (table : List (String × α)) (row : LinguisticExample)
-    (key : String) : Option α :=
-  (row.feature? key).bind (List.lookup · table)
-
 /-- The rows the book accepts. -/
 def acceptable : List LinguisticExample := Examples.all.filter (·.judgment = .acceptable)
 
@@ -203,15 +198,14 @@ def Marking.ofRow (row : LinguisticExample) : List Marking :=
   if row.feature? "construction" = some "marking" ∧ row.feature? "parameter" = none then
     [(Primitive.A, "A."), (.P, "P.")].filterMap λ (role, p) => do
       return ⟨role,
-        parse? [("speaker", AnimacyRank.speaker), ("addressee", .addressee), ("human", .human),
-          ("higherAnimal", .higherAnimal), ("discreteInanimate", .discreteInanimate)]
-          row (p ++ "animacy"),
-        parse? [("personalPronoun", DefinitenessLevel.personalPronoun),
+        row.parse? (p ++ "animacy") [("speaker", AnimacyRank.speaker), ("addressee", .addressee),
+          ("human", .human), ("higherAnimal", .higherAnimal),
+          ("discreteInanimate", .discreteInanimate)],
+        row.parse? (p ++ "definiteness") [("personalPronoun", DefinitenessLevel.personalPronoun),
           ("properName", .properName), ("definite", .definite),
-          ("indefiniteSpecific", .indefiniteSpecific), ("nonSpecific", .nonSpecific)]
-          row (p ++ "definiteness"),
-        ← parse? [("marked", Marked.marked), ("optional", .optional), ("unmarked", .unmarked)]
-          row (p ++ "marked")⟩
+          ("indefiniteSpecific", .indefiniteSpecific), ("nonSpecific", .nonSpecific)],
+        ← row.parse? (p ++ "marked")
+          [("marked", Marked.marked), ("optional", .optional), ("unmarked", .unmarked)]⟩
   else []
 
 /-- `m₁` marks the same role as `m₂` and is at most as prominent on every scale both cite. -/
@@ -276,9 +270,9 @@ structure Causative where
 /-- The configuration a causative or control row records. -/
 def Causative.ofRow (row : LinguisticExample) : Option Causative := do
   guard (row.feature? "construction" ∈ [some "causative", some "control"])
-  return ⟨← parse? [("1", 1), ("2", 2), ("3", 3)] row "valency",
-    ← parse? [("directObject", .directObject), ("indirectObject", .indirectObject),
-      ("oblique", .oblique)] row "causee",
+  return ⟨← row.parse? "valency" [("1", 1), ("2", 2), ("3", 3)],
+    ← row.parse? "causee" [("directObject", .directObject), ("indirectObject", .indirectObject),
+      ("oblique", .oblique)],
     ← parameters.lookup row.language⟩
 
 /-- The paradigm position: the highest the base verb's arguments leave free. -/
@@ -336,9 +330,9 @@ structure Controlled where
 /-- The configuration a control row records. -/
 def Controlled.ofRow (row : LinguisticExample) : Option Controlled := do
   guard (row.feature? "construction" = some "control")
-  return ⟨← parse? [("less", Control.less), ("more", .more)] row "control",
-    ← parse? [("directObject", .directObject), ("indirectObject", .indirectObject),
-      ("oblique", .oblique)] row "causee"⟩
+  return ⟨← row.parse? "control" [("less", Control.less), ("more", .more)],
+    ← row.parse? "causee" [("directObject", .directObject), ("indirectObject", .indirectObject),
+      ("oblique", .oblique)]⟩
 
 /-- The control hierarchy, (8)–(9) and (23)–(28): within a language, the causee retaining more
 control takes the position lower on the hierarchy, and a language offers the pair. -/
@@ -356,9 +350,10 @@ theorem control_rows :
 /-- The causative construction a row records: its formal complexity and its mediation. -/
 def CausativeConstruction.ofRow (row : LinguisticExample) : Option CausativeConstruction := do
   guard (row.feature? "construction" = some "compactness")
-  return ⟨← parse? [("lexical", CausativeComplexity.lexical), ("morphological", .morphological),
-      ("analytic", .periphrastic)] row "complexity",
-    ← parse? [("direct", Mediation.direct), ("indirect", .indirect)] row "mediation", none, none⟩
+  return ⟨← row.parse? "complexity"
+      [("lexical", CausativeComplexity.lexical), ("morphological", .morphological),
+      ("analytic", .periphrastic)],
+    ← row.parse? "mediation" [("direct", Mediation.direct), ("indirect", .indirect)], none, none⟩
 
 /-- Within a language, the more compact causative is the more appropriate to direct
 causation, Nivkh (6)–(7) and the English *broke* ~ *brought it about* pair: the substrate's
@@ -404,11 +399,10 @@ structure Grouped where
 /-- The configuration a grouping row records. -/
 def Grouped.ofRow (row : LinguisticExample) : Option Grouped := do
   guard (row.feature? "construction" = some "grouping")
-  return ⟨← parse? [("coordination", Test.coordination), ("imperative", .imperative),
+  return ⟨← row.parse? "test" [("coordination", Test.coordination), ("imperative", .imperative),
       ("indirectCommand", .indirectCommand), ("resultative", .resultative),
-      ("infinitive", .infinitive)] row "test",
-    ← parse? [("withA", Grouping.withA), ("withP", .withP), ("neither", .neither)] row
-      "grouping"⟩
+      ("infinitive", .infinitive)],
+    ← row.parse? "grouping" [("withA", Grouping.withA), ("withP", .withP), ("neither", .neither)]⟩
 
 /-- The imperative groups S with A in every language with rows, Dyirbal included, the Nivkh
 resultative groups S with P, and yet each bias is a tendency: the English resultative keeps
