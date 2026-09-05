@@ -344,23 +344,24 @@ object, freeing the phase-edge escape hatch
 ([coon-mateo-pedro-preminger-2014]); Kaqchikel's AF avoids the
 too-local Spec,TP → Spec,CP step at the cost of Set A agreement
 ([erlewine-2016], for whom the case-based account is the principal
-foil). Both share the underlying problem — agentive Voice is a phase
-head trapping the subject — and the same surface effect, loss of
-Set A. -/
+foil). Both assume a phasal vP, but only the case-based account has
+the object trap the subject there; Erlewine's subject sits at the
+edge and the problem is the too-local next step. The two share the
+surface effect, loss of Set A. -/
 
 open CoonMateoPedroPreminger2014 in
-/-- Q'anjob'al AF Voice checks case; Kaqchikel's regular Voice does NOT.
-    This is the core parametric difference: Q'anjob'al's AF is a
+/-- Q'anjob'al AF Voice checks case; Kaqchikel's regular agentive Voice
+    does NOT. This is the core parametric difference: Q'anjob'al's AF is a
     case-assigning repair, while Kaqchikel's AF is a locality repair. -/
 theorem af_mechanism_contrast :
-    voiceAF.checksCase = true ∧
-    kaqVoice.checksCase = false := ⟨rfl, rfl⟩
+    voiceAF.ChecksCase ∧ ¬ agentive.ChecksCase := by decide
 
 open CoonMateoPedroPreminger2014 in
-/-- Both languages share the underlying problem: agentive Voice is a
-    phase head, creating a locality boundary that traps the subject. -/
-theorem shared_phase_problem :
-    agentive.IsPhasal ∧ kaqVoice.IsPhasal := by decide
+/-- Kaqchikel's regular Voice is the agentive phase head that traps the
+    subject in both languages; Q'anjob'al's Agent Focus Voice is the head
+    that is not. -/
+theorem af_voice_phase_contrast :
+    agentive.IsPhasal ∧ ¬ voiceAF.IsPhasal := by decide
 
 /-- Both Q'anjob'al and Kaqchikel are HIGH-ABS languages that mark
     transitive-subject extraction. -/

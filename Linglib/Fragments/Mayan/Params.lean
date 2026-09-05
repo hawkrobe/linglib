@@ -42,8 +42,8 @@ syntactic ergativity while LOW-ABS languages do not.
 * `Mayan.ExponentTable`, `Mayan.ExponentTable.IsThirdSgZero`: agreement
   paradigms over φ-cells and the null-3sg predicate.
 * `Mayan.MarkerLinearity`: prefixal / suffixal / either marker linearity.
-* `Mayan`, `Mayan.isStandard`, `Mayan.caseAt`: the language registry
-  and the case-assignment dispatcher.
+* `Mayan`, `Mayan.isStandard`, `Mayan.caseAt`, `Mayan.glottocode`: the language
+  registry, the case-assignment dispatcher and the Glottolog key.
 
 ## Implementation notes
 
@@ -343,6 +343,17 @@ inductive MarkerLinearity where
     theorems quantified by `∀ lang ∈ Mayan.all`. -/
 def all : List Mayan :=
   [.Chol, .Qanjobal, .Kaqchikel, .Tseltal, .Tsotsil, .Mam, .Kiche, .Yukatek]
+
+/-- The Glottolog code of a registered language, the key `Data/Examples` rows carry. -/
+def glottocode : Mayan → String
+  | .Chol => "chol1282"
+  | .Qanjobal => "qanj1241"
+  | .Kaqchikel => "kaqc1270"
+  | .Tseltal => "tzel1254"
+  | .Tsotsil => "tzot1259"
+  | .Mam => "mamm1241"
+  | .Kiche => "kich1262"
+  | .Yukatek => "yuca1254"
 
 /-- The Mayan languages with the standard ergative-absolutive base
     (perfective ergative; Set B 3sg null per K&N reconstruction). Mam is

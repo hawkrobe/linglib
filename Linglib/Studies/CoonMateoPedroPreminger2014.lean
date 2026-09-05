@@ -1,7 +1,5 @@
-import Linglib.Features.Case.Basic
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Minimalist.Phase.Basic
-import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
+import Linglib.Syntax.Extraction
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.Extraction
 import Linglib.Fragments.Mayan.Chol.Agreement
@@ -14,841 +12,436 @@ import Linglib.Fragments.Mayan.Mam.Extraction
 import Linglib.Fragments.Mayan.Kiche.Agreement
 import Linglib.Fragments.Mayan.Kiche.Extraction
 import Linglib.Fragments.Mayan.Yukatek.Agreement
-import Linglib.Syntax.Clause.ArgumentRole
+import Linglib.Data.Examples.CoonMateoPedroPreminger2014
 
 /-!
-# Coon, Mateo Pedro & Preminger (2014) [coon-mateo-pedro-preminger-2014]
+# Coon, Mateo Pedro and Preminger 2014: case and extraction asymmetries in Mayan
 
-The role of Case in A-bar extraction asymmetries: Evidence from Mayan.
-*Linguistic Variation* 14(2), 179–242.
+[coon-mateo-pedro-preminger-2014] argue that the ban on extracting transitive subjects in some
+morphologically ergative languages, syntactic ergativity, is not a property of the ergative
+subject but a locality problem in licensing the object. Following Legate and Aldridge, every
+ergative language licenses the transitive subject from v, but the object is licensed either by
+Infl, so that absolutive is nominative, or by v, so that it is a default, and in Mayan the two
+settings are read off the position of the absolutive morpheme: high, on the aspect marker, or
+low, on the verb stem. Since Infl sits outside the phasal transitive verb phrase, an object it
+licenses must raise through the phrase's single escape hatch and so traps the subject generated
+below it, while an object licensed by v stays put and the subject is free, which derives Tada's
+generalization that high-absolutive languages extract subjects only through a special
+construction, and predicts that absolutive objects survive in non-finite clauses of low- but
+not high-absolutive languages. The Q'anjob'al Agent Focus suffix -on is a marked Voice that
+licenses the object itself, so that v is intransitive, non-phasal and marked with the
+intransitive status suffix, and the same suffix licenses the object of a non-finite embedded
+transitive, the Crazy Antipassive; both are a last resort, so in a finite extraction clause
+Agent Focus fails with reflexive, extended reflexive and bare objects, which are
+pseudo-incorporated and need no Case, while those very objects let the subject extract from a
+regular transitive.
 
-## Core Claim
+## Implementation notes
 
-Syntactic ergativity — the ban on A-bar extracting transitive subjects in
-languages like Q'anjob'al — is not about properties of the ergative NP.
-It is a **locality problem in case assignment to the absolutive object**.
+A clause is its case locus, finiteness, verb phrase, extracted argument and, for the Chuj
+contrast, whether an adverb separates the verb from its object; convergence asks that the
+object and the intransitive subject be licensed, that an extracting subject not be trapped,
+that a Case-checking Voice be a last resort and that a pseudo-incorporated object be adjacent.
+Of the three factors the conclusion lists, the phasehood of the transitive verb phrase is the
+Voice head's, while a subject generated inside it and a single escape hatch are built into
+trapping as the paper assumes them. The substrate's single Voice head stands in for the
+paper's pair of v, which carries phasehood and the status suffix, and Voice, which introduces
+the agent: the regular transitive is agentive Voice, Agent Focus the agentive head with Case
+checking and phasehood overridden off, the antipassive its own flavor. The last resort is the
+paper's later formulation, that the marked Voice merges only where the object would otherwise
+have no source of Case or trap the extracting subject, compared against the derivation with
+regular Voice; that is definitional and not derived from a ranking. Rows carry the paper's
+high or low classification of their language, checked against the fragments' value where the
+language is registered; the absolutive on an intransitive subject needs finite Infl, and the
+ergative on one is left to the nominalized non-finite clause without a model of
+nominalization. Kaqchikel Agent Focus, the nominal-stem and passive strategies for non-finite
+transitives, and the constructions of the section on other extractions from the verb phrase
+are recorded as data without a configuration.
 
-In HIGH-ABS languages (ABS=NOM), Infl⁰ assigns absolutive case. The
-transitive object must raise out of vP to receive this case, passing
-through the single escape hatch at the vP phase edge — **trapping** the
-subject. In LOW-ABS languages (ABS=DEF), v⁰ assigns absolutive locally
-within vP. The escape hatch is free and the subject extracts without issue.
+## TODO
 
-## The Agent Focus Construction
+- The person restriction on Agent Focus (72) is not modelled; a focused 1st person agent is
+  recorded as a regular transitive without extraction, the paper's tentative suggestion.
+- Agent Focus with reflexive objects in non-finite clauses, which the paper's fn. 31 records
+  and leaves unexplained, does not converge here either.
+- The extraction of low adverbs and the instrumental voice (§5.3) are not modelled.
 
-Q'anjob'al's AF morpheme *-on* is analyzed as a marked variant of Voice⁰
-that assigns structural case to the internal argument (the transitive
-object). When Voice⁰_AF assigns case, Infl⁰ is freed to assign case to
-the subject. With the escape hatch unoccupied, the subject can extract.
-The intransitive status suffix *-i* surfaces because AF Voice is non-phasal
-(intransitive v⁰).
+## References
 
-## The Crazy Antipassive
-
-The same *-on* morpheme appears in Q'anjob'al non-finite embedded
-transitives — environments where Infl⁰ is absent and thus cannot assign
-case to objects. The *-on* provides the needed case source, further
-supporting its role as a case-assigner.
-
-## Three Factors for Syntactic Ergativity in Q'anjob'al
-
-1. Transitive vP is phasal (constitutes a locality domain)
-2. The transitive subject is generated below vP (in Spec,VoiceP)
-3. There is only a single specifier available for extraction out of vP
+* [J. Coon, P. Mateo Pedro and O. Preminger, *The role of Case in A-bar extraction
+  asymmetries: Evidence from Mayan* (2014)][coon-mateo-pedro-preminger-2014]
+* [J. A. Legate, *Morphological and abstract Case* (2008)][legate-2008]
+* [E. Aldridge, *Ergativity and word order in Austronesian languages* (2004)][aldridge-2004]
+* [H. Tada, *A/A-bar partition in derivation* (1993)][tada-1993]
+* [F. Ordóñez, *The antipassive in Jacaltec: A last resort strategy* (1995)][ordonez-1995]
+* [B. Stiebels, *Agent focus in Mayan languages* (2006)][stiebels-2006]
+* [H. Harley, *External arguments and the Mirror Principle* (2013)][harley-2013]
+* [D. Massam, *Pseudo noun incorporation in Niuean* (2001)][massam-2001]
+* [T. W. Larsen and W. M. Norman, *Correlates of ergativity in Mayan grammar*
+  (1979)][larsen-norman-1979]
+* [J. Aissen, *On the syntax of agent focus in K'ichee'* (2011)][aissen-2011]
+* [Y. Imanishi, *Default ergative* (2014)][imanishi-2014]
+* [L. Hou, *Agent focus in Chuj reflexive constructions* (2013)][hou-2013]
+* [N. Chomsky, *Derivation by phase* (2001)][chomsky-2001]
 -/
 
 namespace CoonMateoPedroPreminger2014
 
-open Minimalist Minimalist.Voice
-open Mayan (ABSPosition CaseLocus toCaseLocus)
+open Minimalist Minimalist.Voice Mayan Extraction Data.Examples
 
--- § 1 uses `CaseLocus` and `toCaseLocus` from `Mayan.Params`.
+/-! ### Clauses -/
 
--- ============================================================================
--- § 2: Legate (2008) Abstract Case Decomposition
--- ============================================================================
-
-/-- Abstract case features assigned by functional heads. Following
-    [legate-2008], "absolutive" is not an abstract case but a descriptive
-    cover term for the morphological form shared by transitive objects and
-    intransitive subjects. The actual abstract cases are:
-
-    - **NOM**: assigned by Infl⁰ (to intransitive subjects universally,
-      and to transitive objects in ABS=NOM languages)
-    - **ACC**: assigned by v⁰ (to transitive objects in ABS=DEF languages)
-    - **ERG**: assigned by v⁰ (to transitive subjects universally) -/
-inductive AbstractCase where
-  | nom   -- from Infl⁰
-  | acc   -- from v⁰ (object)
-  | erg   -- from v⁰ (subject)
+/-- What a transitive verb takes as its object. -/
+inductive Object where
+  /-- A full DP: it needs structural Case and satisfies the EPP of v. -/
+  | dp
+  /-- A reflexive, extended reflexive or bare NP: pseudo-incorporated, needing neither (§5.2). -/
+  | caseless
+  /-- An object licensed inside its own oblique phrase: the demoted patient of an antipassive
+  (59) or the relational-noun complement of a Mam infinitive (39a). -/
+  | oblique
   deriving DecidableEq, Repr
 
-/-- Which functional head assigns each abstract case. -/
-inductive FunctionalHead where
-  | infl  -- Infl⁰
-  | v     -- v⁰ (transitive)
-  deriving DecidableEq, Repr
+/-- Agent Focus as the marked Voice (66): agentive Voice that also assigns structural Case to
+the object, so no ergative is assigned, v is intransitive and non-phasal, and the status suffix
+is *-i*. -/
+def voiceAF : Head := { agentive with phaseOverride := some false, checksCase := true }
+
+/-- The antipassive Voice (59): the patient is oblique and v intransitive. -/
+def voiceAP : Head := { flavor := .antipassive, hasD := true }
+
+/-- The verb phrase of a clause: an intransitive with the marker series of its sole argument,
+or a transitive with its Voice and its object. -/
+inductive Predicate where
+  | intransitive (marking : MarkerSet)
+  | transitive (voice : Head) (object : Object)
+  deriving DecidableEq
+
+/-- A clause: the locus of the object's Case, finiteness, the verb phrase, the argument
+extracted, and whether an adverb separates the verb from its object. -/
+structure Clause where
+  /-- Which head licenses transitive objects, read off the absolutive's position (24). -/
+  locus : CaseLocus
+  /-- Whether the clause has finite Infl, the preverbal aspect marker. -/
+  finite : Bool
+  /-- The verb phrase. -/
+  predicate : Predicate
+  /-- The argument A-bar extracted, if any. -/
+  extracted : Option ArgumentRole := none
+  /-- Whether adverbial material separates the verb from its object (81). -/
+  separated : Bool := false
+  deriving DecidableEq
+
+namespace Predicate
+
+/-- The Voice head of a transitive verb phrase. -/
+def voice? : Predicate → Option Head
+  | .transitive v _ => some v
+  | .intransitive _ => none
+
+/-- The object of a transitive verb phrase. -/
+def object? : Predicate → Option Object
+  | .transitive _ o => some o
+  | .intransitive _ => none
+
+/-- The marker series of an intransitive subject. -/
+def marking? : Predicate → Option MarkerSet
+  | .intransitive m => some m
+  | .transitive _ _ => none
+
+/-- The same verb phrase under regular transitive Voice, the derivation Agent Focus competes
+with. -/
+def regular : Predicate → Predicate
+  | .transitive _ o => .transitive agentive o
+  | p => p
+
+/-- The verb phrase is phasal: its Voice head is, standing in for the transitive v whose
+phasehood covaries with its ergative assignment and status suffix (55). -/
+def IsPhasal (p : Predicate) : Prop := ∃ v ∈ p.voice?, v.IsPhasal
+
+/-- The Voice checks the object's Case: Agent Focus. -/
+def ChecksCase (p : Predicate) : Prop := ∃ v ∈ p.voice?, v.ChecksCase
+
+/-- The object raises to the edge of the verb phrase: Case is assigned within the phase and
+Infl sits outside it, so a full DP object of a high-abs clause must reach the edge (51), which
+the EPP of high-abs eventive v keeps true under Agent Focus (66); a low-abs object stays in
+situ (52). -/
+def Raises (p : Predicate) (locus : CaseLocus) : Prop := p.object? = some .dp ∧ locus = .absNom
+
+/-- The object's Case is available (27): Voice checks it, v assigns it, or finite Infl does; a
+caseless or oblique object needs none. The low-abs non-finite cell takes the embedded clause
+to contain v, which the paper's fn. 12 leaves open. -/
+def ObjectLicensed (p : Predicate) (locus : CaseLocus) (finite : Bool) : Prop :=
+  p.object? = some .dp → p.ChecksCase ∨ locus = .absDef ∨ finite = true
+
+/-- The absolutive on an intransitive subject needs finite Infl ((32), (33)); the
+ergative/possessive marking of a non-finite one is the nominalization's. -/
+def SubjectLicensed (p : Predicate) (finite : Bool) : Prop :=
+  p.marking? = some .setB → finite = true
+
+/-- A pseudo-incorporated object stays adjacent to the verb, the Chuj contrast (81); the paper's
+fn. 28 notes that the word-order reflex does not hold of Q'anjob'al extended reflexives. -/
+def Adjacent (p : Predicate) (separated : Bool) : Prop :=
+  p.object? = some .caseless → separated = false
+
+instance (p : Predicate) : Decidable p.IsPhasal := by unfold IsPhasal; infer_instance
+instance (p : Predicate) : Decidable p.ChecksCase := by unfold ChecksCase; infer_instance
+instance (p : Predicate) (l : CaseLocus) : Decidable (p.Raises l) := by
+  unfold Raises; infer_instance
+instance (p : Predicate) (l : CaseLocus) (b : Bool) : Decidable (p.ObjectLicensed l b) := by
+  unfold ObjectLicensed; infer_instance
+instance (p : Predicate) (b : Bool) : Decidable (p.SubjectLicensed b) := by
+  unfold SubjectLicensed; infer_instance
+instance (p : Predicate) (b : Bool) : Decidable (p.Adjacent b) := by
+  unfold Adjacent; infer_instance
+
+end Predicate
+
+/-! ### Trapping (§3.2, (89)) -/
+
+/-- The subject is trapped (53): the raised object takes the single escape hatch of the phasal
+verb phrase, inside which the subject is generated, the three factors of (89). -/
+def Trapped (c : Clause) : Prop := c.predicate.IsPhasal ∧ c.predicate.Raises c.locus
+
+instance (c : Clause) : Decidable (Trapped c) := by unfold Trapped; infer_instance
 
-def AbstractCase.assigner : AbstractCase → FunctionalHead
-  | .nom => .infl
-  | .acc => .v
-  | .erg => .v
+/-- A non-phasal verb phrase traps nothing: the antipassive and Agent Focus. -/
+theorem not_trapped_of_not_phasal {c : Clause} (h : ¬ c.predicate.IsPhasal) : ¬ Trapped c :=
+  λ ht => h ht.1
 
-/-- ERG is always from v⁰, NOM is always from Infl⁰. -/
-theorem erg_from_v : AbstractCase.erg.assigner = .v := rfl
-theorem nom_from_infl : AbstractCase.nom.assigner = .infl := rfl
+/-- A verb phrase whose object does not raise traps nothing: caseless and oblique objects. -/
+theorem not_trapped_of_not_raises {c : Clause} (h : ¬ c.predicate.Raises c.locus) :
+    ¬ Trapped c :=
+  λ ht => h ht.2
 
-/-- The abstract case assigned to the transitive object depends on the
-    case locus parameter. -/
-def objectAbstractCase : CaseLocus → AbstractCase
-  | .absNom => .nom   -- Infl⁰ assigns NOM to object
-  | .absDef => .acc   -- v⁰ assigns ACC to object
+/-- In a low-abs language nothing is trapped (52): the object never raises. -/
+theorem not_trapped_of_absDef {c : Clause} (h : c.locus = .absDef) : ¬ Trapped c :=
+  not_trapped_of_not_raises λ hr => by simp [Predicate.Raises, h] at hr
 
-/-- Transitive subjects always receive ERG from v⁰, regardless of
-    case locus. This uniformity is the paper's key insight: the
-    variation is in how *objects* are licensed, not subjects. -/
-def subjectAbstractCase (_locus : CaseLocus) : AbstractCase := .erg
+/-- Syntactic ergativity: the subject of a finite regular transitive with a full DP object is
+trapped when extracted (21c). -/
+def SyntacticallyErgative (locus : CaseLocus) : Prop :=
+  Trapped ⟨locus, true, .transitive agentive .dp, some .A, false⟩
 
-theorem subject_case_uniform (l1 l2 : CaseLocus) :
-    subjectAbstractCase l1 = subjectAbstractCase l2 := rfl
+instance (locus : CaseLocus) : Decidable (SyntacticallyErgative locus) :=
+  inferInstanceAs (Decidable (Trapped _))
 
--- ============================================================================
--- § 3: Case Assignment Configuration
--- ============================================================================
-
-/-- Does the object need to move out of vP for case? The object must escape
-    the vP phase domain to reach Infl⁰ iff case is assigned by Infl⁰. -/
-def objectMustExitVP (locus : CaseLocus) : Bool :=
-  match locus with
-  | .absNom => true   -- Infl⁰ is outside the vP phase boundary
-  | .absDef => false  -- v⁰ is inside the vP phase domain
-
-/-- The object case assigner determines whether the object is licensed
-    inside or outside vP. -/
-def objectCaseIsExternal (locus : CaseLocus) : Bool :=
-  (objectAbstractCase locus).assigner == .infl
-
--- ============================================================================
--- § 4: The Trapping Mechanism
--- ============================================================================
-
-/-- When the transitive object exits vP through the phase edge (Spec,vP),
-    it occupies the single escape hatch. The subject, base-generated in
-    Spec,VoiceP (below the vP phase boundary), cannot exit the phase
-    domain because the escape hatch is occupied.
-
-    This is the paper's core contribution: the ban on extracting
-    transitive subjects follows from a locality problem in how case is
-    assigned to *objects*, not from any property of the ergative subject
-    itself. -/
-def subjectTrapped (locus : CaseLocus) (transitive : Bool) : Bool :=
-  transitive && objectMustExitVP locus
-
-/-- Syntactic ergativity: the ban on A-bar extraction of transitive
-    subjects. Predicted to occur iff the language is ABS=NOM (HIGH-ABS). -/
-def hasSyntacticErgativity (locus : CaseLocus) : Bool :=
-  subjectTrapped locus true
-
-theorem absNom_has_syntactic_ergativity :
-    hasSyntacticErgativity .absNom = true := rfl
-
-theorem absDef_no_syntactic_ergativity :
-    hasSyntacticErgativity .absDef = false := rfl
-
-/-- Intransitive subjects are NEVER trapped, regardless of case locus:
-    there is no transitive object to occupy the escape hatch. This
-    correctly predicts that intransitive subjects extract freely in
-    both HIGH-ABS and LOW-ABS languages. -/
-theorem intransitive_subject_never_trapped (locus : CaseLocus) :
-    subjectTrapped locus false = false := by
-  cases locus <;> rfl
-
--- ============================================================================
--- § 5: Agent Focus (Voice⁰_AF)
--- ============================================================================
-
-/-- Agent Focus Voice: a marked variant of Voice⁰ that assigns structural
-    case to the internal argument (the transitive object).
-
-    Following [ordonez-1995] on Popti', *-on* assigns case to the
-    object. Unlike regular transitive Voice, AF Voice is NOT a phase head:
-    its v⁰ is the intransitive variety (non-phasal), explaining why the
-    intransitive status suffix *-i* surfaces rather than transitive *-V'*.
-
-    AF is a "last-resort" strategy, akin to English *of*-insertion: the
-    marked variant of Voice⁰ is merged only when the normal derivation
-    (with regular transitive Voice) would crash — i.e., when the subject
-    must be A-bar extracted. -/
-def voiceAF : Head :=
-  { flavor := .agentive
-  , hasD := true
-  , phaseOverride := some false  -- intransitive v⁰: NOT phasal (Mam AF)
-  , checksCase := true }         -- assigns case to object
-
-/-- AF Voice assigns case to the object. -/
-theorem af_assigns_case : voiceAF.ChecksCase := by decide
-
-/-- AF Voice is NOT a phase head (intransitive v⁰). -/
-theorem af_not_phase : ¬ voiceAF.IsPhasal := by decide
-
-/-- AF Voice still introduces an external argument (the agent). -/
-theorem af_introduces_agent : voiceAF.AssignsTheta := by decide
-
-/-- AF Voice circumvents the trapping mechanism because it assigns case to
-    the object (so the object need not move to Spec,vP) AND because AF's v⁰
-    is non-phasal (so vP is not a locality domain). Either property alone
-    would free the subject, but both hold simultaneously for AF Voice. -/
-def AfCircumventsTrapping : Prop :=
-  voiceAF.ChecksCase ∧ ¬ voiceAF.IsPhasal
-
-instance : Decidable AfCircumventsTrapping := by
-  unfold AfCircumventsTrapping; infer_instance
-
-theorem af_frees_subject : AfCircumventsTrapping := by decide
-
-/-- The case-assignment property alone is what frees extraction: when
-    Voice checks case, the object receives case inside vP and need not
-    move to the escape hatch. This is the paper's primary explanation
-    for why AF circumvents the extraction ban. -/
-def CaseAloneFreesExtraction (v : Head) : Prop :=
-  v.ChecksCase
-
-instance (v : Head) : Decidable (CaseAloneFreesExtraction v) := by
-  unfold CaseAloneFreesExtraction; infer_instance
-
-theorem af_case_frees : CaseAloneFreesExtraction voiceAF := by decide
-
-/-- The non-phasal status explains AF's *morphology* (intransitive
-    status suffix *-i*) rather than the extraction facts. Since AF's v⁰
-    is intransitive, no ergative case is assigned to the subject. -/
-theorem af_morphology_from_phase :
-    ¬ voiceAF.IsPhasal := by decide
-
-/-- Contrast with regular transitive Voice: phasal, does NOT check case. -/
-theorem regular_voice_traps :
-    agentive.IsPhasal ∧ ¬ agentive.ChecksCase := by decide
-
--- ============================================================================
--- § 6: Non-Finite Predictions
--- ============================================================================
-
-/-- In non-finite embedded clauses, Infl⁰ is absent (no aspect marking).
-    This makes predictions depending on the case locus:
-
-    - **ABS=NOM**: transitive objects cannot be licensed (Infl⁰ absent).
-      They require *-on* ("Crazy Antipassive") or detransitivization.
-    - **ABS=DEF**: transitive objects are licensed by v⁰ (present even
-      without Infl⁰). They are fine in non-finite clauses.
-
-    Intransitive subjects lose absolutive case in BOTH types (Infl⁰ assigns
-    NOM to intransitive subjects universally in Mayan). -/
-def objectLicensedInNonFinite (locus : CaseLocus) : Bool :=
-  match locus with
-  | .absNom => false  -- Infl⁰ absent → no case source for object
-  | .absDef => true   -- v⁰ present → object licensed
-
-theorem absNom_objects_unlicensed_nonfinite :
-    objectLicensedInNonFinite .absNom = false := rfl
-
-theorem absDef_objects_licensed_nonfinite :
-    objectLicensedInNonFinite .absDef = true := rfl
-
-/-- Intransitive subjects are unlicensed in non-finite clauses regardless
-    of case locus, because Infl⁰ (the universal NOM assigner for
-    intransitive S) is absent. -/
-def intranSLicensedInNonFinite (_locus : CaseLocus) : Bool := false
-
-theorem intranS_unlicensed_nonfinite (locus : CaseLocus) :
-    intranSLicensedInNonFinite locus = false := rfl
-
--- ============================================================================
--- § 7: Caseless Objects
--- ============================================================================
-
-/-- Some objects do not require structural case: reflexive objects,
-    extended reflexive objects, and bare (determinerless) NPs. These
-    are licensed by pseudo-incorporation into the verb stem (§5.2).
-
-    Extended reflexives (possessor bound by subject, e.g., *s-na?*
-    '3ERG-house') are formally identical to reflexives — the possessed
-    nominal has lost its independent referential meaning.
-
-    Prediction: AF is impossible with caseless objects. Since AF exists
-    precisely to assign case to the object, it is vacuous (and thus
-    blocked as last-resort) when the object needs no case. -/
-inductive ObjectType where
-  | fullDP             -- requires structural case
-  | reflexive          -- caseless (incorporated)
-  | extendedReflexive  -- caseless (possessor bound by subject)
-  | bareNP             -- caseless (pseudo-incorporated)
-  deriving DecidableEq, Repr
-
-def ObjectType.needsCase : ObjectType → Bool
-  | .fullDP            => true
-  | .reflexive         => false
-  | .extendedReflexive => false
-  | .bareNP            => false
-
-/-- AF is available iff the object needs case. -/
-def afAvailable (obj : ObjectType) : Bool := obj.needsCase
-
-theorem af_available_fullDP : afAvailable .fullDP = true := rfl
-theorem af_unavailable_reflexive : afAvailable .reflexive = false := rfl
-theorem af_unavailable_extReflexive : afAvailable .extendedReflexive = false := rfl
-theorem af_unavailable_bareNP : afAvailable .bareNP = false := rfl
-
-/-- When the object is caseless, regular transitive Voice is used even
-    for agent extraction: the object remains inside vP (no case-driven
-    movement) and does not block the escape hatch. The subject is
-    NOT trapped. -/
-def caselessObjectFreesSubject (obj : ObjectType) : Bool :=
-  !obj.needsCase
-
-theorem reflexive_frees_subject :
-    caselessObjectFreesSubject .reflexive = true := rfl
-
--- ============================================================================
--- § 8: Bridge to Existing Fragments
--- ============================================================================
-
-/-- Q'anjob'al is a HIGH-ABS language with syntactic ergativity. -/
-theorem qanjobal_has_syntactic_ergativity :
-    hasSyntacticErgativity (.absNom) = true := rfl
-
-/-- Chol is a LOW-ABS language without syntactic ergativity. -/
-theorem chol_no_syntactic_ergativity :
-    hasSyntacticErgativity (.absDef) = false := rfl
-
-/-- Q'anjob'al's ergative alignment matches the standard pattern:
-    transitive agent = ERG, transitive object = ABS. -/
-theorem qanjobal_erg_alignment :
-    (Mayan.caseQanjobalan .Perf) .A = .erg ∧
-    (Mayan.caseQanjobalan .Perf) .P = .abs := ⟨rfl, rfl⟩
-
-/-- Chol's ergative alignment matches the same standard pattern. -/
-theorem chol_erg_alignment :
-    (Mayan.caseChol .Perf) .A = .erg ∧
-    (Mayan.caseChol .Perf) .P = .abs := ⟨rfl, rfl⟩
-
-/-- Despite sharing ergative morphology, Q'anjob'al and Chol differ in
-    whether agent extraction is banned. The difference traces to their
-    distinct case loci, not to properties of the ergative NP. -/
-theorem shared_morphology_different_syntax :
-    -- Same ergative case on agent
-    (Mayan.caseQanjobalan .Perf) .A =
-      (Mayan.caseChol .Perf) .A ∧
-    -- But different syntactic ergativity predictions
-    hasSyntacticErgativity .absNom ≠ hasSyntacticErgativity .absDef :=
-  ⟨rfl, by decide⟩
-
-/-- Fragment-grounded ABSPosition: Q'anjob'al is HIGH-ABS. -/
-theorem qanjobal_high_abs :
-    Qanjobal.absPosition = .high := rfl
-
-/-- Fragment-grounded ABSPosition: Chol is LOW-ABS. -/
-theorem chol_low_abs :
-    Chol.absPosition = .low := rfl
-
-/-- The fragment ABSPosition values derive the correct syntactic
-    ergativity predictions: Q'anjob'al has it, Chol does not.
-    This grounds Tada's Generalization in fragment data rather than
-    hard-coded table entries. -/
-theorem fragments_ground_tada :
-    hasSyntacticErgativity (toCaseLocus Qanjobal.absPosition) = true ∧
-    hasSyntacticErgativity (toCaseLocus Chol.absPosition) = false :=
-  ⟨rfl, rfl⟩
-
-/-- Absolutive structural position (HIGH-ABS / LOW-ABS) indexed by Mayan
-    language, routed to the per-language Fragment value. The substantive
-    parameter for Tada's Generalization. -/
-def absPositionOf : Mayan → ABSPosition
-  | .Chol      => Chol.absPosition
-  | .Qanjobal  => Qanjobal.absPosition
-  | .Kaqchikel => Kaqchikel.absPosition
-  | .Tseltal   => Tseltal.absPosition
-  | .Tsotsil   => Tsotsil.absPosition
-  | .Mam       => Mam.absPosition
-  | .Kiche     => Kiche.absPosition
-  | .Yukatek   => Yukatek.absPosition
-
-/-- **Tada's Generalization, parameterized form**: a Mayan language
-    exhibits syntactic ergativity (the analytical predicate from §4)
-    **iff** it is HIGH-ABS. Quantified over `Mayan`
-    via the Fragment-routed `absPositionOf` dispatcher.
-
-    Replaces the per-language enumeration in `fragments_ground_tada`
-    with a single quantified theorem that scales as the `Mayan`
-    registry grows. -/
-theorem mayan_tada (lang : Mayan) :
-    hasSyntacticErgativity (toCaseLocus (absPositionOf lang)) = true ↔
-      absPositionOf lang = ABSPosition.high := by
-  cases lang <;> decide
-
-/-- The analytical high/low-ABS classification matches the morphological
-    verb template: a language is HIGH-ABS iff Set B precedes the root in
-    `Mayan.template` — the observable ground of the absolutive
-    parameter. -/
-theorem absPosition_matches_template (lang : Mayan) :
-    absPositionOf lang = Mayan.templateABSPosition lang := by
-  cases lang <;> rfl
-
-/-- Q'anjob'al's extraction data is consistent with the prediction:
-    agent extraction is marked (requires AF morphology in regular
-    transitives). The substantive claim lives at `extractionProfile`'s
-    `markedPositions := [.subject]` field. -/
-theorem qanjobal_extraction_consistent :
-    Extraction.Marked Qanjobal.Extraction.realize .subject := by decide
-
-/-- Chol's extraction data is consistent: no Agent Focus morphology
-    required (every argument extracts freely under the absent strategy). -/
-theorem chol_extraction_consistent :
-    Chol.Extraction.strategy = .unmarked := rfl
-
-/-- Q'anjob'al's AF form carries the intransitive status suffix, matching
-    the prediction that AF Voice is non-phasal (intransitive v⁰). -/
-theorem qanjobal_af_itv :
-    Qanjobal.agentFocusForm.statusSuffix = .itv := rfl
-
-/-- The Crazy Antipassive form is identical to AF: same *-on* morpheme,
-    same intransitive status suffix. Supports the unified analysis of
-    *-on* as a case-assigner in environments where case is otherwise
-    unavailable. -/
-theorem crazy_ap_unified :
-    Qanjobal.crazyAntipassiveForm = Qanjobal.agentFocusForm := rfl
-
-/-- Non-finite absolutive asymmetry in Chol: objects are available
-    (v⁰ assigns case) but intransitive subjects are not (Infl⁰ absent).
-    Follows from LOW-ABS: v⁰ handles objects, Infl⁰ handles intransitives. -/
-theorem chol_nonfinite_predictions :
-    Chol.absObjectInNonFinite = true ∧
-    Chol.absIntranSInNonFinite = false := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 9: Tada's Generalization (theoretical derivation)
--- ============================================================================
-
-/-- Tada's Generalization is now DERIVED from the case-assignment
-    analysis rather than merely stated as a correlation. The observable
-    parameter `ABSPosition` maps to `CaseLocus`, which determines whether
-    syntactic ergativity arises. -/
-theorem tada_derived_high :
-    hasSyntacticErgativity (toCaseLocus .high) = true := rfl
-
-theorem tada_derived_low :
-    hasSyntacticErgativity (toCaseLocus .low) = false := rfl
-
-/-- The morphological observation (ABSPosition) and the syntactic
-    observation (extraction asymmetry) are connected through the
-    case-assignment locus: for both values of the parameter, the
-    predicted syntactic ergativity matches what Tada's table reports
-    for the non-outlier languages. -/
-theorem tada_from_case_theory (pos : ABSPosition) :
-    hasSyntacticErgativity (toCaseLocus pos) =
-      (pos == .high) := by
-  cases pos <;> rfl
-
--- ============================================================================
--- § 9a: Tada's Generalization (empirical table)
--- ============================================================================
-
-/-- A Mayan language's observable extraction behavior. -/
-structure MayanExtractionDatum where
-  name : String
-  absPosition : ABSPosition
-  /-- Does the language ban A-bar extraction of transitive subjects? -/
-  hasExtractionAsymmetry : Bool
-  deriving DecidableEq, Repr
-
-/-- Tada's Generalization data (table (19) of [coon-mateo-pedro-preminger-2014],
-    extending [tada-1993]).
-
-    For the seven languages with linglib Fragments, `absPosition` and the
-    extraction-asymmetry flag are routed through the Fragment values
-    (`absPosition`, `extractionProfile`) rather than duplicated here.
-
-    The two noted outliers are Yucatec and Ixil (LOW-ABS with extraction
-    asymmetries). Yucatec's AF differs significantly from other Mayan AF;
-    Ixil's absolutive morphemes behave like full pronominal forms. -/
-def tadasTable : List MayanExtractionDatum :=
-  -- HIGH-ABS, +extraction asymmetries
-  [ ⟨"Q'anjob'al",  Qanjobal.absPosition,
-      decide (Extraction.Marked Qanjobal.Extraction.realize .subject)⟩
-  , ⟨"Akatek",      .high, true⟩
-  , ⟨"Popti'",      .high, true⟩
-  , ⟨"Chuj",        .high, true⟩
-  , ⟨"Q'eqchi'",    .high, true⟩
-  , ⟨"Uspantek",    .high, true⟩
-  , ⟨"Poqomchi'",   .high, true⟩
-  , ⟨"Poqomam",     .high, true⟩
-  , ⟨"K'ichee'",    Kiche.absPosition,
-      decide (Extraction.Marked Kiche.Extraction.realize .subject)⟩
-  , ⟨"Kaqchikel",   Kaqchikel.absPosition,
-      decide (Extraction.Marked Kaqchikel.Extraction.realize .subject)⟩
-  , ⟨"Tz'utujil",   .high, true⟩
-  , ⟨"Sakapultek",  .high, true⟩
-  , ⟨"Sipakapense", .high, true⟩
-  , ⟨"Mam",         Mam.absPosition,
-      decide (Extraction.Marked Mam.Extraction.realize .subject)⟩
-  , ⟨"Awakatek",    .high, true⟩
-  -- LOW-ABS, +extraction asymmetries (outliers)
-  , ⟨"Yucatec",     .low,  true⟩
-  , ⟨"Ixil",        .low,  true⟩
-  -- LOW-ABS, -extraction asymmetries
-  , ⟨"Lakantun",    .low,  false⟩
-  , ⟨"Mopan",       .low,  false⟩
-  , ⟨"Itzaj",       .low,  false⟩
-  , ⟨"Chol",        Chol.absPosition,
-      decide (Extraction.Marked Chol.Extraction.realize .subject)⟩
-  , ⟨"Chontal",     .low,  false⟩
-  , ⟨"Tseltal",     Tseltal.absPosition,
-      decide (Extraction.Marked Tseltal.Extraction.realize .subject)⟩
-  , ⟨"Tsotsil",     Tsotsil.absPosition,
-      decide (Extraction.Marked Tsotsil.Extraction.realize .subject)⟩
-  , ⟨"Tojol-ab'al", .low,  false⟩ ]
-
-/-- All HIGH-ABS languages in the sample exhibit extraction asymmetries. -/
-theorem high_abs_all_have_asymmetries :
-    (tadasTable.filter (fun l => l.absPosition == .high)).all
-      (fun l => l.hasExtractionAsymmetry) = true := by decide
-
-/-- All LOW-ABS languages except the two noted outliers lack
-    extraction asymmetries. -/
-theorem low_abs_mostly_lack_asymmetries :
-    (tadasTable.filter (fun l => l.absPosition == .low &&
-      l.name != "Yucatec" && l.name != "Ixil")).all
-      (fun l => !l.hasExtractionAsymmetry) = true := by decide
-
-/-- No HIGH-ABS language lacks extraction asymmetries (unattested cell). -/
-theorem high_abs_none_lack_asymmetries :
-    (tadasTable.filter (fun l => l.absPosition == .high &&
-      !l.hasExtractionAsymmetry)).length = 0 := by decide
-
--- ============================================================================
--- § 10: Three Factors for Syntactic Ergativity
--- ============================================================================
-
-/-- The three factors that combine to produce the ban on extracting
-    transitive subjects in Q'anjob'al. All three are necessary; removing
-    any one would free the subject. -/
-structure SyntacticErgativityFactors where
-  /-- I. Transitive vP is phasal (locality domain). -/
-  vPIsPhasal : Bool
-  /-- II. The transitive subject is generated below vP. -/
-  subjectBelowVP : Bool
-  /-- III. Only a single specifier available for extraction out of vP. -/
-  singleEscapeHatch : Bool
-  deriving DecidableEq, Repr
-
-def SyntacticErgativityFactors.producesTrapping (f : SyntacticErgativityFactors) : Bool :=
-  f.vPIsPhasal && f.subjectBelowVP && f.singleEscapeHatch
-
-/-- Q'anjob'al instantiates all three factors. -/
-def qanjobalFactors : SyntacticErgativityFactors :=
-  { vPIsPhasal := true, subjectBelowVP := true, singleEscapeHatch := true }
-
-theorem qanjobal_all_three : qanjobalFactors.producesTrapping = true := rfl
-
-/-- Removing any single factor would free the subject. -/
-theorem factor1_necessary :
-    ({ qanjobalFactors with vPIsPhasal := false }).producesTrapping = false := rfl
-
-theorem factor2_necessary :
-    ({ qanjobalFactors with subjectBelowVP := false }).producesTrapping = false := rfl
-
-theorem factor3_necessary :
-    ({ qanjobalFactors with singleEscapeHatch := false }).producesTrapping = false := rfl
-
-/-- Agentive Voice is a phase head — this is factor I. -/
-theorem voice_phase_is_factor1 :
-    agentive.IsPhasal := by decide
-
-/-- AF removes factor I: AF Voice is not phasal. With a non-phasal vP,
-    there is no locality boundary trapping the subject. -/
-theorem af_removes_factor1 :
-    ¬ voiceAF.IsPhasal := by decide
-
--- ============================================================================
--- § 11: Morphological × Syntactic Ergativity Typology
--- ============================================================================
-
-/-- The paper's table (10): morphological ergativity and syntactic ergativity
-    are logically independent. Morphological ergativity is shared by all Mayan
-    languages; syntactic ergativity (the extraction ban) arises only in
-    ABS=NOM (HIGH-ABS) languages.
-
-    |                        | +morph.erg | -morph.erg |
-    |------------------------|-----------|-----------|
-    | +syntactic ergativity  | Q'anjob'al | unattested |
-    | -syntactic ergativity  | Chol       | English    |
-
-    The [-morph,+syn] cell is predicted unattested: syntactic ergativity
-    requires Infl⁰ to assign case to the object, which only arises in
-    morphologically ergative systems. -/
-structure ErgativityTypology where
-  morphErg : Bool
-  synErg  : Bool
-  deriving DecidableEq, Repr
-
-def qanjobalTypology : ErgativityTypology := ⟨true, true⟩
-def cholTypology : ErgativityTypology := ⟨true, false⟩
-def englishTypology : ErgativityTypology := ⟨false, false⟩
-
-/-- Morphological ergativity is necessary but not sufficient for syntactic
-    ergativity. Q'anjob'al and Chol are both morphologically ergative but
-    differ in syntactic ergativity. -/
-theorem morph_erg_necessary_not_sufficient :
-    qanjobalTypology.morphErg = cholTypology.morphErg ∧
-    qanjobalTypology.synErg ≠ cholTypology.synErg := ⟨rfl, by decide⟩
-
-/-- The [-morph.erg, +syn.erg] cell is predicted unattested:
-    syntactic ergativity requires HIGH-ABS (Infl⁰ licensing objects),
-    which entails morphological ergativity. -/
-def predictedUnattested (t : ErgativityTypology) : Bool :=
-  !t.morphErg && t.synErg
-
-theorem unattested_cell :
-    predictedUnattested ⟨false, true⟩ = true := rfl
-
-theorem attested_cells :
-    predictedUnattested qanjobalTypology = false ∧
-    predictedUnattested cholTypology = false ∧
-    predictedUnattested englishTypology = false := ⟨rfl, rfl, rfl⟩
-
-/-- The +morph.erg column of table (10), grounded in Fragment data:
-    every formalised Mayan language with the standard ergative-absolutive
-    base assigns case canonically ergatively (A → ERG, S/P → ABS) in the
-    perfective. The `isStandard` hypothesis scopes around San Juan Atitán
-    Mam, whose perfective is morphologically tripartite (see
-    `Mayan.isStandard` and `Studies/Scott2023.lean`). -/
-theorem mayan_perfective_ergative
-    (lang : Mayan) (h : lang.isStandard = true)
-    (r : ArgumentRole) :
-    Mayan.caseAt lang .Perf r = Alignment.ergative.assignCase r := by
-  cases lang <;> first | rfl | (simp [Mayan.isStandard] at h)
-
-/-- Set B (absolutive) exponent table indexed by Mayan language, routed
-    to the per-language Fragment paradigm — the exponent-side companion
-    of `absPositionOf`. -/
-def setBExponentOf : Mayan → Mayan.ExponentTable
-  | .Chol      => Chol.setBExponent
-  | .Qanjobal  => Qanjobal.setBExponent
-  | .Kaqchikel => Kaqchikel.setBExponent
-  | .Tseltal   => Tseltal.setBExponent
-  | .Tsotsil   => Tsotsil.setBExponent
-  | .Mam       => Mam.setBExponent
-  | .Kiche     => Kiche.setBExponent
-  | .Yukatek   => Yukatek.setBExponent
-
-/-- Null third-singular absolutive across the standard Mayan branches:
-    every registered language with the standard ergative-absolutive base
-    has a morphologically null 3sg Set B slot ([kaufman-norman-1984]
-    Table 8 reconstruction). San Juan Atitán Mam (`isStandard = false`)
-    is the exception — its default `tz'=` surfaces there ([scott-2023]
-    §3.3.2). Grounded in the fragments via `setBExponentOf`; the
-    notation-agnostic null predicate is
-    `Mayan.ExponentTable.IsThirdSgZero`. -/
-theorem mayan_p3sg_abs_null (lang : Mayan) (h : lang.isStandard = true) :
-    (setBExponentOf lang).IsThirdSgZero := by
-  cases lang <;> first | decide | (simp [Mayan.isStandard] at h)
-
--- ============================================================================
--- § 12: Person-Conditioned AF (bridge)
--- ============================================================================
-
-/-- AF is restricted to 3rd person agents in Q'anjob'al (§5.1, ex. 72).
-    The fragment's `PersonRestriction` captures this. The theoretical
-    explanation: 1st/2nd person pronouns may be base-generated in Spec,CP
-    (following Baker 2008), so they never need to extract *through* the
-    vP phase edge — the trapping problem does not arise for them.
-
-    The Crazy Antipassive, by contrast, is NOT person-restricted: it
-    applies in ALL non-finite embedded transitives regardless of the
-    person of the subject, because the trigger there is the absence of
-    Infl⁰ (not extraction through a phase edge). -/
-theorem af_person_restriction :
-    Qanjobal.PersonRestriction.third.requiresAF = true ∧
-    Qanjobal.PersonRestriction.first.requiresAF = false := ⟨rfl, rfl⟩
-
-theorem crazy_ap_no_person_restriction :
-    Qanjobal.PersonRestriction.first.requiresCrazyAP = true ∧
-    Qanjobal.PersonRestriction.third.requiresCrazyAP = true := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 13: vP-Internal Extraction Ban
--- ============================================================================
-
-/-- The paper's §5.3 prediction: in HIGH-ABS languages, not only subjects
-    but NOTHING generated inside a transitive vP (besides the object itself)
-    should be able to escape. The object's movement to Spec,vP for case
-    renders the single escape hatch occupied — trapping everything inside
-    the phase domain.
-
-    This distinguishes the case-based account from ergative-property
-    accounts: the latter predict only subjects are banned; the former
-    predicts a general vP-internal extraction restriction. -/
-inductive VPInternalElement where
-  | subject       -- transitive subject (in Spec,VoiceP)
-  | lowAdverb     -- manner adverb (adjoined below vP)
-  | secondObject  -- second object in DOC (if it existed)
-  deriving DecidableEq, Repr
-
-/-- Can this vP-internal element escape a transitive vP in a HIGH-ABS
-    language? None can — the escape hatch is occupied by the object. -/
-def VPInternalElement.canEscapeHighABS : VPInternalElement → Bool
-  | .subject      => false
-  | .lowAdverb    => false
-  | .secondObject => false
-
-/-- In a LOW-ABS language, the escape hatch is free. -/
-def VPInternalElement.canEscapeLowABS : VPInternalElement → Bool
-  | .subject      => true
-  | .lowAdverb    => true
-  | .secondObject => true
-
-theorem vp_internal_ban_high_abs :
-    VPInternalElement.subject.canEscapeHighABS = false ∧
-    VPInternalElement.lowAdverb.canEscapeHighABS = false ∧
-    VPInternalElement.secondObject.canEscapeHighABS = false := ⟨rfl, rfl, rfl⟩
-
-theorem vp_internal_free_low_abs :
-    VPInternalElement.subject.canEscapeLowABS = true ∧
-    VPInternalElement.lowAdverb.canEscapeLowABS = true ∧
-    VPInternalElement.secondObject.canEscapeLowABS = true := ⟨rfl, rfl, rfl⟩
-
-/-- Double-object constructions are systematically absent in HIGH-ABS
-    languages (Q'anjob'al, Kaqchikel) but present in LOW-ABS Chol (via
-    applicative). This is consistent with the general vP-internal ban. -/
-def hasDoubleObjectConstruction (locus : CaseLocus) : Bool :=
-  match locus with
-  | .absNom => false
-  | .absDef => true
-
-theorem doc_absent_high_abs : hasDoubleObjectConstruction .absNom = false := rfl
-theorem doc_present_low_abs : hasDoubleObjectConstruction .absDef = true := rfl
-
--- ============================================================================
--- § 14: Reflexive → No AF → Free Extraction (end-to-end)
--- ============================================================================
-
-/-- End-to-end argumentation chain for reflexive objects (§5.2):
-    1. Reflexive objects are caseless (pseudo-incorporated)
-    2. AF exists to assign case → AF is vacuous with caseless objects
-    3. With no case-driven movement, the object stays in situ
-    4. The escape hatch is unoccupied
-    5. The subject is free to extract using regular transitive Voice
-    6. Therefore: reflexive + agent extraction = regular transitive form -/
-theorem reflexive_end_to_end :
-    -- Reflexive needs no case
-    ObjectType.reflexive.needsCase = false ∧
-    -- AF unavailable (vacuous, blocked as last-resort)
-    afAvailable .reflexive = false ∧
-    -- Object doesn't occupy escape hatch → subject not trapped
-    caselessObjectFreesSubject .reflexive = true := ⟨rfl, rfl, rfl⟩
-
-/-- Extended reflexives (possessor bound by subject) pattern with
-    reflexives: caseless, AF impossible, subject extracts freely.
-    Examples (75a)–(76a) of [coon-mateo-pedro-preminger-2014]. -/
-theorem extReflexive_end_to_end :
-    ObjectType.extendedReflexive.needsCase = false ∧
-    afAvailable .extendedReflexive = false ∧
-    caselessObjectFreesSubject .extendedReflexive = true := ⟨rfl, rfl, rfl⟩
-
-/-- Contrast: full DP object requires case → AF needed → AF available. -/
-theorem fullDP_end_to_end :
-    ObjectType.fullDP.needsCase = true ∧
-    afAvailable .fullDP = true ∧
-    caselessObjectFreesSubject .fullDP = false := ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 15: Phase Bridge
--- ============================================================================
-
-/-- The trapping mechanism is grounded in Phase theory: regular transitive
-    Voice is a phase head (v*), so vP constitutes a locality domain under
-    the PIC. AF Voice is NOT a phase head, so it does not create a phase
-    boundary — the complement remains accessible.
-
-    This connects `IsPhasal` on `Head` to the Phase module's
-    `isPhaseHeadOf .C`/`isPhaseHeadOf .Voice` selectors. -/
-theorem voice_phase_bridge :
-    agentive.IsPhasal ∧ ¬ voiceAF.IsPhasal ∧
-    ¬ passive.IsPhasal ∧ ¬ anticausative.IsPhasal := by decide
-
-/-- Phase headedness partitions Voice into {trapping, non-trapping}: a
-    Voice head traps the subject iff it is a phase head AND does not
-    itself check case (freeing Infl⁰ to do so). -/
-def VoiceTrapsSubject (v : Head) (locus : CaseLocus) : Prop :=
-  v.IsPhasal ∧ ¬ v.ChecksCase ∧ objectMustExitVP locus = true
-
-instance (v : Head) (locus : CaseLocus) :
-    Decidable (VoiceTrapsSubject v locus) := by
-  unfold VoiceTrapsSubject; infer_instance
-
-theorem agent_voice_traps_absNom :
-    VoiceTrapsSubject agentive .absNom := by decide
-
-theorem agent_voice_free_absDef :
-    ¬ VoiceTrapsSubject agentive .absDef := by decide
-
-theorem af_voice_never_traps (locus : CaseLocus) :
-    ¬ VoiceTrapsSubject voiceAF locus := by
+/-- Tada's generalization derived (19), (24): a language bans subject extraction exactly when
+Infl licenses the object. -/
+theorem syntacticallyErgative_iff (locus : CaseLocus) :
+    SyntacticallyErgative locus ↔ locus = .absNom := by
   cases locus <;> decide
 
--- ============================================================================
--- § 16: Case Bridge
--- ============================================================================
+/-! ### Case configurations (their (3), (10)) -/
 
-/-- The paper's `AbstractCase` maps to the framework's `Case`. -/
-def AbstractCase.toCoreCase : AbstractCase → Case
-  | .nom => .nom
-  | .acc => .acc
-  | .erg => .erg
+/-- The heads that assign structural Case (5). -/
+inductive Licenser where
+  | infl
+  | v
+  deriving DecidableEq, Repr
 
-/-- The mapping preserves the assigner structure: ERG comes from v⁰,
-    NOM comes from Infl⁰, and the object case depends on the parameter. -/
-theorem coreCase_bridge_object (locus : CaseLocus) :
-    (objectAbstractCase locus).toCoreCase =
-      match locus with
-      | .absNom => .nom
-      | .absDef => .acc := by
-  cases locus <;> rfl
+/-- A clausal Case configuration (3): the licenser of the transitive subject and of the
+object, where Infl licenses at most one of them. -/
+structure Configuration where
+  /-- The head licensing the transitive subject. -/
+  subject : Licenser
+  /-- The head licensing the transitive object. -/
+  object : Licenser
+  /-- Infl licenses at most one argument. -/
+  infl_once : subject = .infl → object = .v
 
-theorem coreCase_bridge_subject (locus : CaseLocus) :
-    (subjectAbstractCase locus).toCoreCase = .erg := rfl
+/-- Morphological ergativity: v licenses the transitive subject. -/
+def Configuration.MorphologicallyErgative (k : Configuration) : Prop := k.subject = .v
 
--- ============================================================================
--- § 17: Kaqchikel Voice / ClauseSpine
--- ============================================================================
+/-- The object's Case locus, by the head licensing the object. -/
+def Licenser.locus : Licenser → CaseLocus
+  | .infl => .absNom
+  | .v => .absDef
 
-/-! Theory-laden Voice/ClauseSpine apparatus for Kaqchikel, graduated out
-    of the Kaqchikel fragment. Voice-flavor analysis is
-    the [coon-mateo-pedro-preminger-2014] side of the same author
-    cluster's Mayan work ([preminger-2014]'s Ch 4 covers the agreement
-    side; CMP 2014 covers the case/Voice side). The Q'anjob'al-vs-Kaqchikel
-    mechanism comparison consuming these heads lives in
-    `Studies/Erlewine2016.lean` — the chronologically later paper, for
-    which the case-based account is the principal foil. -/
+/-- Table (10): syntactic ergativity entails morphological ergativity, since Infl licensing the
+object leaves the subject to v. -/
+theorem morphologicallyErgative_of_syntacticallyErgative (k : Configuration)
+    (h : SyntacticallyErgative k.object.locus) : k.MorphologicallyErgative := by
+  rw [syntacticallyErgative_iff] at h
+  cases hs : k.subject
+  · simp [k.infl_once hs, Licenser.locus] at h
+  · exact hs
 
-/-- Both the transitive and AF derivations project the same clausal spine
-    (CP > TP > vP > VP). The difference is in the v head: transitive v
-    introduces the agent in Spec,vP; AF v does not. -/
-def kaqClauseSpine : ClauseSpine := ClauseSpine.cP
+/-- The converse fails (10): the default-absolutive configuration is morphologically but not
+syntactically ergative. -/
+theorem absDef_not_syntacticallyErgative :
+    (⟨.v, .v, nofun⟩ : Configuration).MorphologicallyErgative ∧
+      ¬ SyntacticallyErgative Licenser.v.locus :=
+  ⟨rfl, by decide⟩
 
-/-- Kaqchikel agentive Voice/v head (parallel to Mam's Voice). Present
-    in the transitive derivation; absent or altered in AF.
-    Phasehood is the load-bearing property for §18's cross-language bridge:
-    agentive Voice is a phase head (flavor default), creating the locality
-    boundary that traps the subject in HIGH-ABS Mayan languages
-    (CMP 2014 §4–§5). -/
-def kaqVoice : Head :=
-  { flavor := .agentive
-  , hasD := true }
+/-! ### Convergence: licensing, extraction and the last resort (§4, §5) -/
 
-/-- Kaqchikel clause projects Voice. -/
-theorem kaq_has_voice : kaqClauseSpine.projects .Voice = true := by
+/-- The same clause under regular transitive Voice. -/
+def Clause.regular (c : Clause) : Clause := { c with predicate := c.predicate.regular }
+
+/-- The regular derivation crashes: its object is unlicensed, or its extracting subject is
+trapped. -/
+def RegularCrashes (c : Clause) : Prop :=
+  ¬ c.regular.predicate.ObjectLicensed c.locus c.finite ∨
+    (c.extracted = some .A ∧ Trapped c.regular)
+
+instance (c : Clause) : Decidable (RegularCrashes c) := by unfold RegularCrashes; infer_instance
+
+/-- Agent Focus is a last resort ([ordonez-1995]; §4.2, §5.1): the Case-checking Voice merges
+only where the object would otherwise lack a source of Case or trap the extracting subject. -/
+def LastResort (c : Clause) : Prop := c.predicate.ChecksCase → RegularCrashes c
+
+instance (c : Clause) : Decidable (LastResort c) := inferInstanceAs (Decidable (_ → _))
+
+/-- A clause converges: its object and intransitive subject are licensed, an extracted subject
+is not trapped, a Case-checking Voice is a last resort, and a pseudo-incorporated object is
+adjacent to the verb. -/
+def Converges (c : Clause) : Prop :=
+  c.predicate.ObjectLicensed c.locus c.finite ∧ c.predicate.SubjectLicensed c.finite ∧
+    (c.extracted = some .A → ¬ Trapped c) ∧ LastResort c ∧ c.predicate.Adjacent c.separated
+
+instance (c : Clause) : Decidable (Converges c) := by unfold Converges; infer_instance
+
+/-- Non-finite licensing (27): a regular transitive object survives without Infl exactly in a
+low-abs language, and an absolutive intransitive subject only under finite Infl. -/
+theorem nonfinite_licensing (locus : CaseLocus) :
+    ((Predicate.transitive agentive .dp).ObjectLicensed locus false ↔ locus = .absDef) ∧
+      ¬ (Predicate.intransitive .setB).SubjectLicensed false := by
+  cases locus <;> decide
+
+/-- Agent Focus in a high-abs language: it frees the extracting subject (67) and licenses the
+object of a non-finite transitive (70), and the regular derivation crashes in both, so it is
+a last resort in both; the same object under regular Voice is trapped or unlicensed. -/
+theorem agent_focus :
+    Converges ⟨.absNom, true, .transitive voiceAF .dp, some .A, false⟩ ∧
+    ¬ Converges ⟨.absNom, true, .transitive agentive .dp, some .A, false⟩ ∧
+    Converges ⟨.absNom, false, .transitive voiceAF .dp, none, false⟩ ∧
+    ¬ Converges ⟨.absNom, false, .transitive agentive .dp, none, false⟩ := by
   decide
 
-/-- Kaqchikel Voice is agentive. -/
-theorem kaq_voice_is_agentive : kaqVoice.flavor = .agentive := rfl
+/-- The last resort bars Agent Focus where nothing crashes: in a finite clause without subject
+extraction, in a low-abs language, and with a caseless object (75b), which instead lets the
+subject extract from a regular transitive (75a). -/
+theorem last_resort :
+    ¬ Converges ⟨.absNom, true, .transitive voiceAF .dp, none, false⟩ ∧
+    ¬ Converges ⟨.absDef, true, .transitive voiceAF .dp, some .A, false⟩ ∧
+    ¬ Converges ⟨.absNom, true, .transitive voiceAF .caseless, some .A, false⟩ ∧
+    Converges ⟨.absNom, true, .transitive agentive .caseless, some .A, false⟩ := by
+  decide
+
+/-- The antipassive frees the subject (60), on either count: its verb phrase is intransitive,
+and its oblique patient never raises to the edge. -/
+theorem antipassive_frees (locus : CaseLocus) :
+    ¬ (Predicate.transitive voiceAP .oblique).IsPhasal ∧
+      ¬ (Predicate.transitive voiceAP .oblique).Raises locus ∧
+        ¬ Trapped ⟨locus, true, .transitive voiceAP .oblique, some .A, false⟩ := by
+  cases locus <;> decide
+
+/-! ### The Mayan fragments (§2.1, §2.2) -/
+
+/-- The absolutive's position in each registered language, routed to its fragment. -/
+def absPositionOf : Mayan → ABSPosition
+  | .Chol => Chol.absPosition
+  | .Qanjobal => Qanjobal.absPosition
+  | .Kaqchikel => Kaqchikel.absPosition
+  | .Tseltal => Tseltal.absPosition
+  | .Tsotsil => Tsotsil.absPosition
+  | .Mam => Mam.absPosition
+  | .Kiche => Kiche.absPosition
+  | .Yukatek => Yukatek.absPosition
+
+/-- The fragments' classification agrees with the verb template (16): high iff Set B precedes
+the stem. -/
+theorem absPosition_matches_template (lang : Mayan) :
+    absPositionOf lang = templateABSPosition lang := by
+  cases lang <;> rfl
+
+/-- Whether a registered fragment marks transitive-subject extraction on the verb; the Yukatek
+fragment records no extraction reflexes. -/
+def MarksSubjectExtraction : Mayan → Prop
+  | .Chol => Marked Chol.Extraction.realize .subject
+  | .Qanjobal => Marked Qanjobal.Extraction.realize .subject
+  | .Kaqchikel => Marked Kaqchikel.Extraction.realize .subject
+  | .Tseltal => Marked Tseltal.Extraction.realize .subject
+  | .Tsotsil => Marked Tsotsil.Extraction.realize .subject
+  | .Mam => Marked Mam.Extraction.realize .subject
+  | .Kiche => Marked Kiche.Extraction.realize .subject
+  | .Yukatek => False
+
+instance : ∀ lang : Mayan, Decidable (MarksSubjectExtraction lang)
+  | .Chol | .Qanjobal | .Kaqchikel | .Tseltal | .Tsotsil | .Mam | .Kiche =>
+      inferInstanceAs (Decidable (Marked _ _))
+  | .Yukatek => inferInstanceAs (Decidable False)
+
+/-- Tada's generalization over the fragments (19): a registered language marks subject
+extraction exactly when its absolutive is high, as the trapping derivation predicts. Table
+(19) omits Tsotsil, whose two absolutive series resist the classification (fn. 8), and lists
+Yucatec as an outlier whose Agent Focus fn. 9 reanalyses; the Yukatek fragment records no
+extraction reflexes, so both stay outside the theorem. -/
+theorem mayan_tada : ∀ lang ∈ Mayan.all, lang ≠ .Tsotsil → lang ≠ .Yukatek →
+    (MarksSubjectExtraction lang ↔ SyntacticallyErgative (toCaseLocus (absPositionOf lang))) := by
+  decide
+
+/-- Set B exponents in each registered language, routed to its fragment. -/
+def setBExponentOf : Mayan → ExponentTable
+  | .Chol => Chol.setBExponent
+  | .Qanjobal => Qanjobal.setBExponent
+  | .Kaqchikel => Kaqchikel.setBExponent
+  | .Tseltal => Tseltal.setBExponent
+  | .Tsotsil => Tsotsil.setBExponent
+  | .Mam => Mam.setBExponent
+  | .Kiche => Kiche.setBExponent
+  | .Yukatek => Yukatek.setBExponent
+
+/-- Every registered language with the standard ergative-absolutive base assigns case
+ergatively in the perfective (§2.1); San Juan Atitán Mam, tripartite, is the exception
+recorded at `Mayan.isStandard`. -/
+theorem mayan_perfective_ergative (lang : Mayan) (h : lang.isStandard = true) (r : ArgumentRole) :
+    caseAt lang .Perf r = Alignment.ergative.assignCase r := by
+  cases lang <;> first | rfl | nomatch h
+
+/-- Third person singular absolutive is null across the standard branches (13); Mam's default
+Set B surfaces there. -/
+theorem mayan_p3sg_abs_null (lang : Mayan) (h : lang.isStandard = true) :
+    (setBExponentOf lang).IsThirdSgZero := by
+  cases lang <;> first | decide | nomatch h
+
+/-! ### The paper's examples -/
+
+private def absPositions : List (String × ABSPosition) := [("high", .high), ("low", .low)]
+
+private def objects : List (String × Object) :=
+  [("dp", .dp), ("caseless", .caseless), ("oblique", .oblique)]
+
+/-- The verb phrase a row describes. -/
+private def Predicate.ofRow (row : LinguisticExample) : Option Predicate := do
+  match ← row.feature? "predicate" with
+  | "intransitive" =>
+      Predicate.intransitive <$> row.parse? "marking" [("abs", MarkerSet.setB), ("erg", .setA)]
+  | "transitive" => Predicate.transitive agentive <$> row.parse? "object" objects
+  | "agentFocus" => Predicate.transitive voiceAF <$> row.parse? "object" objects
+  | "antipassive" => Predicate.transitive voiceAP <$> row.parse? "object" objects
+  | _ => none
+
+/-- The clause a row describes, its locus read off the paper's classification of its
+language. -/
+def Clause.ofRow (row : LinguisticExample) : Option Clause := do
+  let pos ← row.parse? "absPosition" absPositions
+  let finite ← row.parse? "finite" [("yes", true), ("no", false)]
+  let predicate ← Predicate.ofRow row
+  return ⟨toCaseLocus pos, finite, predicate,
+    row.parse? "extracted" [("S", ArgumentRole.S), ("A", .A), ("P", .P)],
+    decide (row.feature? "separated" = some "yes")⟩
+
+/-- Every analysed example is grammatical exactly when its clause converges. -/
+theorem analysed_rows : ∀ row ∈ Examples.all, (row.feature? "predicate").isSome = true →
+    ∃ c ∈ Clause.ofRow row, (row.judgment = .acceptable ↔ Converges c) := by
+  decide
+
+/-- The rows' classification of a registered language agrees with its fragment. -/
+theorem rows_match_fragments : ∀ row ∈ Examples.all, ∀ lang ∈ Mayan.all,
+    lang.glottocode = row.language →
+      row.parse? "absPosition" absPositions = some (absPositionOf lang) := by
+  decide
 
 end CoonMateoPedroPreminger2014
