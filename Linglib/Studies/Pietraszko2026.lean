@@ -370,7 +370,7 @@ phaseOverride : Option Bool)` typology cells:
 - agentive + override-true: Pietraszko 2026, this file —
   `Sample.voiceWithEPP`
 - agentive + override-false: [coon-2019] (Chol intransitive),
-  [coon-mateo-pedro-preminger-2014] (Mam Agent Focus)
+  [coon-mateo-pedro-preminger-2014] (Q'anjob'al Agent Focus)
 - passive + override-true: [erlewine-sommerlot-2025] (Malayic
   di-passive, bare passive)
 
@@ -393,7 +393,7 @@ theorem typology_cell_pietraszko :
     Sample.voiceWithEPP.IsPhasal := by decide
 
 /-- **Cell 3**: agentive flavor + `phaseOverride := some false` =
-    Mam Agent Focus ([coon-mateo-pedro-preminger-2014]). Override forces
+    Q'anjob'al Agent Focus ([coon-mateo-pedro-preminger-2014]). Override forces
     non-phasal against the agentive flavor default. -/
 theorem typology_cell_agent_focus :
     CoonMateoPedroPreminger2014.voiceAF.flavor = Flavor.agentive ∧

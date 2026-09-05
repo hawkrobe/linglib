@@ -354,37 +354,40 @@ theorem mayan_hindi_same_split : mayanSplit = Alignment.hindiSplit := rfl
 -- § 11: Cross-Study Bridge ([coon-mateo-pedro-preminger-2014])
 -- ============================================================================
 
-open CoonMateoPedroPreminger2014 (hasSyntacticErgativity)
 open Mayan (toCaseLocus)
 
+open CoonMateoPedroPreminger2014 in
 /-- Imanishi's RON determines the accusative-side alignment (this study),
     while CMP2014's CaseLocus determines syntactic ergativity (ergative side).
     Together they form the full Mayan parameterization: RON for the
     accusative side, ABSPosition→CaseLocus for the ergative side. -/
 theorem cmp2014_ergativity_from_params (p : MayanParams) :
-    hasSyntacticErgativity (toCaseLocus p.absPos) = (p.absPos == .high) := by
-  cases p.absPos <;> rfl
+    SyntacticallyErgative (toCaseLocus p.absPos) ↔ p.absPos = .high := by
+  rw [syntacticallyErgative_iff]; cases p.absPos <;> simp [toCaseLocus]
 
+open CoonMateoPedroPreminger2014 in
 /-- The two studies agree on Kaqchikel: RON active + HIGH-ABS = syntactic
     ergativity + Kaqchikel-type accusative alignment. -/
 theorem kaqchikel_full_profile :
     deriveAccPattern kaqchikelParams = kaqchikelPattern ∧
-    hasSyntacticErgativity (toCaseLocus kaqchikelParams.absPos) = true :=
-  ⟨rfl, rfl⟩
+    SyntacticallyErgative (toCaseLocus kaqchikelParams.absPos) :=
+  ⟨rfl, by decide⟩
 
+open CoonMateoPedroPreminger2014 in
 /-- The two studies agree on Chol: RON inactive + LOW-ABS = no syntactic
     ergativity + Chol-type accusative alignment. -/
 theorem chol_full_profile :
     deriveAccPattern cholParams = cholPattern ∧
-    hasSyntacticErgativity (toCaseLocus cholParams.absPos) = false :=
-  ⟨rfl, rfl⟩
+    ¬ SyntacticallyErgative (toCaseLocus cholParams.absPos) :=
+  ⟨rfl, by decide⟩
 
+open CoonMateoPedroPreminger2014 in
 /-- Q'anjob'al shows that the two dimensions are independent: HIGH-ABS
     (like Kaqchikel) but RON inactive (like Chol). Syntactic ergativity
     yes, but Chol-type accusative alignment. -/
 theorem qanjobal_cross_cutting :
-    hasSyntacticErgativity (toCaseLocus qanjobalParams.absPos) = true ∧
+    SyntacticallyErgative (toCaseLocus qanjobalParams.absPos) ∧
     deriveAccPattern qanjobalParams = cholPattern :=
-  ⟨rfl, rfl⟩
+  ⟨by decide, rfl⟩
 
 end Imanishi2020
