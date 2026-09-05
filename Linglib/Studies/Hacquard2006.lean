@@ -47,11 +47,11 @@ open Data.Examples (LinguisticExample)
 The anchoring event fixes the evaluation time: speech-bound modals sit at
 the utterance time, aspect-bound ones at the time provided by tense. The
 map factors through the substrate's binding maps, and its codomain has no
-future case. It agrees with [condoravdi-2002]'s `ModalReading.perspective`
+future case. It agrees with [condoravdi-2002]'s `Scope.perspective`
 classification — the "might (already/still) have won" ambiguity (176)
 recast positionally; the settledness consequences are proved in
-`Studies/Condoravdi2002.lean` (`modal_over_perf_blocks_metaphysical`,
-`counterfactual_widens_domain`). -/
+`Studies/Condoravdi2002.lean` (`not_diverse_of_settled`,
+`may_persists_backward`). -/
 
 /-- Perspective of the anchoring event in a past-tense clause: only the
 speech event sits at utterance time. -/
@@ -64,10 +64,10 @@ def positionPerspective (pos : ModalPosition) : TemporalPerspective :=
   binderPerspective pos.defaultBinder
 
 -- pins the agreement with [condoravdi-2002]'s reading classification
-open Condoravdi2002 (ModalReading) in
+open Condoravdi2002 (Scope) in
 example :
-    positionPerspective .aboveAsp = ModalReading.epistemic.perspective ∧
-    positionPerspective .belowAsp = ModalReading.counterfactual.perspective :=
+    positionPerspective .aboveAsp = Scope.modalPerf.perspective ∧
+    positionPerspective .belowAsp = Scope.perfModal.perspective :=
   ⟨rfl, rfl⟩
 
 /-- The same modal (*devoir*, *pouvoir*) gets different temporal

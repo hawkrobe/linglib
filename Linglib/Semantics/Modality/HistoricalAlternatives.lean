@@ -8,7 +8,7 @@ import Linglib.Logic.Temporal.Basic
 
 The **historical alternatives** of a world at a time are the worlds that
 perfectly match it in matters of particular fact up to that time
-([lewis-1979], [cariani-santorio-2018]).
+([lewis-1979-time-arrow], [cariani-santorio-2018]).
 
 ## Main definitions
 
@@ -334,7 +334,7 @@ def histEquiv (history : HistoricalAlternatives W T) (t : T)
 
 /-- `histEquiv history t` is an equivalence relation when `history` satisfies the
     standard properties ([condoravdi-2002]). -/
-def histEquiv_equivalence {history : HistoricalAlternatives W T}
+theorem histEquiv_equivalence {history : HistoricalAlternatives W T}
     (hRefl : history.reflexive) (hSymm : history.symmetric)
     (hTrans : history.transitive) (t : T) :
     Equivalence (histEquiv history t) where
@@ -350,7 +350,7 @@ def histSetoid {history : HistoricalAlternatives W T}
   iseqv := histEquiv_equivalence hRefl hSymm hTrans t
 
 /-- `histEquiv_equivalence` from bundled `HistoricalProperties`. -/
-def histEquiv_equivalence' {history : HistoricalAlternatives W T} [LE T]
+theorem histEquiv_equivalence' {history : HistoricalAlternatives W T} [LE T]
     (hp : HistoricalProperties history) (t : T) :
     Equivalence (histEquiv history t) :=
   histEquiv_equivalence hp.refl hp.symm hp.trans t

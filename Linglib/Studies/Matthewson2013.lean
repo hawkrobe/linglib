@@ -22,10 +22,9 @@ are formalized here against the existing infrastructure:
    *obligatory* with circumstantial modals and *optional* (only for
    future orientation) with epistemics. This contradicts
    [condoravdi-2002]'s English analysis, where prospectivity is
-   baked into `may`. Structurally: Gitksan *imaa* would be modeled with
-   `Condoravdi2002.mayCore` (point evaluation), English *might* with
-   `Condoravdi2002.may` (forward expansion). The relationship between
-   them is `Condoravdi2002.may_of_mayCore_dynamic`. We do not introduce
+   baked into `may`. Structurally: Gitksan *imaa* would evaluate its
+   prejacent at the point of the perspective, English *might* through
+   `Condoravdi2002.MAY` (forward expansion to `Ref.ray`). We do not introduce
    alias defs for the Gitksan/English projection here — that is a
    downstream choice that should land in a typed compositional `dim`
    operator (planned, see `ProspectiveMarkerPolicy` discussion in the
@@ -91,8 +90,8 @@ theorem mixed_system :
     `Fragments/Gitksan/Modals.lean` (`requiresDim_imaa_*`,
     `requiresDim_gat_*`, `requiresDim_circumstantial`,
     `dim_flavor_asymmetry`). The deeper structural claim — that
-    Gitksan modals project to `Condoravdi2002.mayCore` rather than
-    `Condoravdi2002.may` — is currently expressed in the module
+    Gitksan modals evaluate at the point rather than through
+    `Condoravdi2002.MAY`'s forward interval — is currently expressed in the module
     docstring above; making it a typed compositional theorem requires
     promoting `dim` to a Theories-level operator. -/
 
