@@ -2986,3 +2986,4 @@ import Linglib.Data.Examples.FoxHackl2006
 import Linglib.Data.Examples.CiardelliGuerrini2026
 import Linglib.Data.Examples.ColeHermon2008
 import Linglib.Data.Examples.Comrie1989
+import Linglib.Data.Examples.Condoravdi2002
