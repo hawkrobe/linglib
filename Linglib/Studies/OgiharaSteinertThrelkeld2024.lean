@@ -358,8 +358,8 @@ theorem after_veridicality_derived {P Q : Event T → Prop} (h : eventAfter P Q)
 satisfies it. -/
 theorem before_nonveridicality_derived :
     ∃ (P Q : Event ℤ → Prop), eventBefore P Q ∧ ¬ ∃ e : Event ℤ, Q e :=
-  ⟨fun e => e = ⟨⟨⟨0, 1⟩, by decide⟩, .dynamic⟩, fun _ => False,
-    ⟨⟨⟨⟨0, 1⟩, by decide⟩, .dynamic⟩, rfl, fun _ h => h.elim⟩, fun ⟨_, h⟩ => h⟩
+  ⟨fun e => e = ⟨⟨⟨0, 1⟩, by decide⟩, .action⟩, fun _ => False,
+    ⟨⟨⟨⟨0, 1⟩, by decide⟩, .action⟩, rfl, fun _ h => h.elim⟩, fun ⟨_, h⟩ => h⟩
 
 /-- Both connectives commit to the main clause. -/
 theorem eventBefore_veridical_main {P Q : Event T → Prop} (h : eventBefore P Q) :
@@ -390,8 +390,8 @@ theorem not_eventBefore_of_anscombe :
     ¬ ∀ (P Q : Event ℤ → Prop),
       Anscombe.beforeEver (eventDenotation P) (eventDenotation Q) → eventBefore P Q := by
   intro h
-  let eP : Event ℤ := ⟨⟨⟨1, 5⟩, by decide⟩, .dynamic⟩
-  let eQ : Event ℤ := ⟨⟨⟨3, 8⟩, by decide⟩, .dynamic⟩
+  let eP : Event ℤ := ⟨⟨⟨1, 5⟩, by decide⟩, .action⟩
+  let eQ : Event ℤ := ⟨⟨⟨3, 8⟩, by decide⟩, .action⟩
   have hansc : Anscombe.beforeEver (eventDenotation (· = eP)) (eventDenotation (· = eQ)) := by
     refine ⟨1, ?_, ?_⟩
     · rw [timeTrace_eventDenotation]
@@ -413,10 +413,10 @@ theorem not_eventBefore_of_anscombe :
     - arriving event at time 0
     O&ST predicts: after(leave, arrive) holds (τ(arrive) ≺ τ(leave)). -/
 theorem scenario_after_punctual :
-    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩
-    let arrive : Event ℤ := ⟨⟨⟨0, 0⟩, le_refl _⟩, .dynamic⟩
+    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .action⟩
+    let arrive : Event ℤ := ⟨⟨⟨0, 0⟩, le_refl _⟩, .action⟩
     eventAfter (· = leave) (· = arrive) := by
-  refine ⟨⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩, ⟨⟨⟨0, 0⟩, le_refl _⟩, .dynamic⟩, rfl, rfl, ?_⟩
+  refine ⟨⟨⟨⟨1, 1⟩, le_refl _⟩, .action⟩, ⟨⟨⟨0, 0⟩, le_refl _⟩, .action⟩, rfl, rfl, ?_⟩
   simp [NonemptyInterval.precedes, Event.τ]
 
 /-- Scenario: "He left₁ before she arrived₃" with punctual events.
@@ -424,19 +424,19 @@ theorem scenario_after_punctual :
     - arriving event at time 3
     O&ST predicts: before(leave, arrive) holds (τ(leave) ≺ τ(arrive)). -/
 theorem scenario_before_punctual :
-    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩
-    let arrive : Event ℤ := ⟨⟨⟨3, 3⟩, le_refl _⟩, .dynamic⟩
+    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .action⟩
+    let arrive : Event ℤ := ⟨⟨⟨3, 3⟩, le_refl _⟩, .action⟩
     eventBefore (· = leave) (· = arrive) := by
-  refine ⟨⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩, rfl, ?_⟩
+  refine ⟨⟨⟨⟨1, 1⟩, le_refl _⟩, .action⟩, rfl, ?_⟩
   intro e₂ rfl
   simp [NonemptyInterval.precedes, Event.τ]
 
 /-- Scenario: "The bomb exploded₅ before anyone defused it" (nobody defused it).
     O&ST predicts: before(explode, defuse) holds vacuously (no defuse-events). -/
 theorem scenario_before_counterfactual :
-    let explode : Event ℤ := ⟨⟨⟨5, 5⟩, le_refl _⟩, .dynamic⟩
+    let explode : Event ℤ := ⟨⟨⟨5, 5⟩, le_refl _⟩, .action⟩
     eventBefore (· = explode) (fun _ => False) := by
-  exact ⟨⟨⟨⟨5, 5⟩, le_refl _⟩, .dynamic⟩, rfl, fun _ h => h.elim⟩
+  exact ⟨⟨⟨⟨5, 5⟩, le_refl _⟩, .action⟩, rfl, fun _ h => h.elim⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 13: Cross-Level Projection Verification
@@ -445,15 +445,15 @@ theorem scenario_before_counterfactual :
 /-- The punctual after-scenario projects correctly through eventDenotation:
     O&ST.after implies Anscombe.after on the projected interval sets. -/
 theorem scenario_after_projects :
-    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩
-    let arrive : Event ℤ := ⟨⟨⟨0, 0⟩, le_refl _⟩, .dynamic⟩
+    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .action⟩
+    let arrive : Event ℤ := ⟨⟨⟨0, 0⟩, le_refl _⟩, .action⟩
     Anscombe.after (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
   anscombe_after_of_eventAfter scenario_after_punctual
 
 /-- The punctual before-scenario projects correctly through eventDenotation. -/
 theorem scenario_before_projects :
-    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩
-    let arrive : Event ℤ := ⟨⟨⟨3, 3⟩, le_refl _⟩, .dynamic⟩
+    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .action⟩
+    let arrive : Event ℤ := ⟨⟨⟨3, 3⟩, le_refl _⟩, .action⟩
     Anscombe.beforeEver (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
   anscombe_before_of_eventBefore scenario_before_punctual
 

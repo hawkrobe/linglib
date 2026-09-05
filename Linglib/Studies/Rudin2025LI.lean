@@ -799,7 +799,7 @@ postulates hold by `rfl`. The discriminator for verb classes is
 witnesses and exclusions. -/
 
 /-- A canonical event for each verb class, indexed by `runtime.start`. -/
-def E (n : ℕ) : Event ℕ := ⟨⟨⟨n, n⟩, le_refl _⟩, .dynamic⟩
+def E (n : ℕ) : Event ℕ := ⟨⟨⟨n, n⟩, le_refl _⟩, .action⟩
 
 /-- The REENACT relation: per verb-class events have different REENACT
     targets, chosen so the postulates' universal quantifiers reduce to

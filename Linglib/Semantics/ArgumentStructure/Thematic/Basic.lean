@@ -41,10 +41,10 @@ class ThematicAxioms (Entity T : Type*) [LinearOrder T]
     (frame : ThematicFrame Entity T) where
   /-- Agents only participate in actions (dynamic events). -/
   agent_selects_action : ∀ (x : Entity) (e : Event T),
-    frame.agent x e → e.sort = .dynamic
+    frame.agent x e → e.sort = .action
   /-- Holders only participate in states. -/
   holder_selects_state : ∀ (x : Entity) (e : Event T),
-    frame.holder x e → e.sort = .stative
+    frame.holder x e → e.sort = .state
   /-- Each event has at most one agent. -/
   agent_unique : ∀ (x y : Entity) (e : Event T),
     frame.agent x e → frame.agent y e → x = y

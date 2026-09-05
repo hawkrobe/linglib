@@ -396,7 +396,7 @@ theorem impf_subdomain_entailed (P : W → Event T → Prop)
     ⟨le_trans hImpf.1 hτ'.1, le_trans hτ'.2 hImpf.2⟩
   -- By SUB, any event with runtime τ' is a P-event
   -- sort defaults to .action; the proof doesn't reference .sort
-  exact ⟨⟨τ', .dynamic⟩, ⟨le_refl _, le_refl _⟩, hSub e w hP τ' h_sub_e ⟨τ', .dynamic⟩ rfl⟩
+  exact ⟨⟨τ', .action⟩, ⟨le_refl _, le_refl _⟩, hSub e w hP τ' h_sub_e ⟨τ', .action⟩ rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 11. Bridge: Constant's Observation

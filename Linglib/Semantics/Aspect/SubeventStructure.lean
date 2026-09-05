@@ -206,7 +206,7 @@ theorem impf_phasePred {T : Type*} [LinearOrder T]
   simp only [IMPF, phasePred, Event.τ]
   constructor
   · rintro ⟨e, hSub, rfl⟩; exact hSub
-  · intro h; exact ⟨⟨phase, .dynamic⟩, h, rfl⟩
+  · intro h; exact ⟨⟨phase, .action⟩, h, rfl⟩
 
 /-- PRFV applied to a phase predicate reduces to the phase interval being
     contained in the reference time. -/
@@ -216,7 +216,7 @@ theorem prfv_phasePred {T : Type*} [LinearOrder T]
   simp only [PRFV, phasePred, Event.τ]
   constructor
   · rintro ⟨e, hSub, rfl⟩; exact hSub
-  · intro h; exact ⟨⟨phase, .dynamic⟩, h, rfl⟩
+  · intro h; exact ⟨⟨phase, .action⟩, h, rfl⟩
 
 /-! ### ViewpointAspect ↔ Decomposition Bridge -/
 

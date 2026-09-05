@@ -134,7 +134,7 @@ theorem prfvDen_not_subinterval_closed :
       t ∈ prfvDen P → ∀ t', t' ≤ t → t' ∈ prfvDen P := by
   intro h
   -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .dynamic⟩
+  let e₀ : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .action⟩
   let P : Unit → Event ℤ → Prop := fun _ e => e = e₀
   let sub : NonemptyInterval ℤ := ⟨⟨1, 3⟩, by omega⟩
   have hrt : e₀.τ ∈ prfvDen P := ⟨e₀, rfl, rfl⟩
@@ -196,7 +196,7 @@ theorem impfDen_singleton_eq_stativeDenotation
   constructor
   · rintro ⟨e, hSub, rfl⟩; exact hSub
     -- sort defaults to .action; the proof doesn't reference .sort
-  · intro h; exact ⟨⟨i, .dynamic⟩, h, rfl⟩
+  · intro h; exact ⟨⟨i, .action⟩, h, rfl⟩
 
 /-- For a single event, the PRFV denotation is exactly the accomplishment
     denotation (singleton containing just the runtime). -/
@@ -209,7 +209,7 @@ theorem prfvDen_singleton_eq_accomplishmentDenotation
   constructor
   · rintro ⟨e, rfl, rfl⟩; rfl
     -- sort is irrelevant here (defaults to .dynamic); the proof never reads .sort
-  · intro h; exact ⟨⟨i, .dynamic⟩, rfl, h.symm⟩
+  · intro h; exact ⟨⟨i, .action⟩, rfl, h.symm⟩
 
 -- ============================================================================
 -- § 5: Time Traces Coincide
@@ -279,7 +279,7 @@ theorem scope_readings_distinct :
     ∃ (A : Unit → Event ℤ → Prop) (B : RunTimes ℤ),
       wideScopeNotUntil A B ∧ ¬ narrowScopeNotUntil A B := by
   -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .dynamic⟩
+  let e₀ : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .action⟩
   let A : Unit → Event ℤ → Prop := fun _ e => e = e₀
   let iB : NonemptyInterval ℤ := ⟨⟨7, 7⟩, by omega⟩
   let B : RunTimes ℤ := {iB}
@@ -306,7 +306,7 @@ theorem scope_readings_independent :
     ∃ (A : Unit → Event ℤ → Prop) (B : RunTimes ℤ),
       ¬ wideScopeNotUntil A B ∧ narrowScopeNotUntil A B := by
   -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨⟨5, 10⟩, by omega⟩, .dynamic⟩
+  let e₀ : Event ℤ := ⟨⟨⟨5, 10⟩, by omega⟩, .action⟩
   let A : Unit → Event ℤ → Prop := fun _ e => e = e₀
   let iB : NonemptyInterval ℤ := ⟨⟨3, 7⟩, by omega⟩
   let B : RunTimes ℤ := {iB}

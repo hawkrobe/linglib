@@ -188,14 +188,14 @@ theorem imperfective_paradox_possible
   have hSub := hall P
   -- Construct an event e₁ with runtime [t₁, t₂]; P holds (finish = t₂)
   -- sort is irrelevant here (defaults to .dynamic); the proof never reads .sort
-  let e₁ : Event T := ⟨⟨⟨t₁, t₂⟩, le_of_lt hlt⟩, .dynamic⟩
+  let e₁ : Event T := ⟨⟨⟨t₁, t₂⟩, le_of_lt hlt⟩, .action⟩
   have hPe₁ : P w e₁ := rfl
   -- [t₁, t₁] is a subinterval of [t₁, t₂]
   let sub : NonemptyInterval T := ⟨⟨t₁, t₁⟩, le_refl t₁⟩
   have hSI : sub ≤ e₁.τ := NonemptyInterval.le_def.mpr ⟨le_refl t₁, le_of_lt hlt⟩
   -- SIP says P must hold for any event with runtime [t₁, t₁]
   -- sort is irrelevant here (defaults to .dynamic); the proof never reads .sort
-  let e₂ : Event T := ⟨sub, .dynamic⟩
+  let e₂ : Event T := ⟨sub, .action⟩
   have hPe₂ := hSub e₁ w hPe₁ sub hSI e₂ rfl
   -- But P w e₂ means t₁ = t₂, contradicting t₁ < t₂
   exact absurd hPe₂ (ne_of_lt hlt)

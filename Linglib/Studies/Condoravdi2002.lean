@@ -56,7 +56,6 @@ paper's examples as rows.
 namespace Condoravdi2002
 
 open Aspect HistoricalAlternatives Data.Examples
-open Features (Dynamicity)
 open Modality (TemporalPerspective TemporalOrientation)
 
 variable {W T : Type*} [LinearOrder T] {P : W → Event T → Prop} {Q Q' : SortedProperty W T}
@@ -384,7 +383,7 @@ def Scope.Sat (s : Scope) (z : Zone) : Prop :=
 
 private theorem winOn_at (d : ℤ) {r : Interval (WithTop ℤ)} (h : Interval.pure ↑d ≤ r) :
     At r () (.eventive (winOn d)) :=
-  ⟨⟨_, .dynamic⟩, rfl, h⟩
+  ⟨⟨_, .action⟩, rfl, h⟩
 
 /-- The zone table is the satisfiability table: a scoping admits a period exactly when its
 sentence about that period can be true, the deviant cells being `frame_modal_past` and
@@ -439,7 +438,7 @@ structure Adverbial where
   /-- The scoping. -/
   scope : Scope
   /-- The sort of the predicate. -/
-  sort : Dynamicity
+  sort : Event.Kind
   /-- The zone of the period. -/
   zone : Zone
 
@@ -447,7 +446,7 @@ structure Adverbial where
 def Adverbial.ofRow (row : LinguisticExample) : Option Adverbial := do
   guard (row.feature? "construction" = some "adverb")
   return ⟨← parse? scopes row "scope",
-    ← parse? [("eventive", Dynamicity.dynamic), ("stative", .stative)] row "sort",
+    ← parse? [("eventive", Event.Kind.action), ("stative", .state)] row "sort",
     ← parse? [("past", Zone.past), ("present", .present), ("future", .future)] row "adverb"⟩
 
 /-- The adverbial patterns of [1], [2], [29], [34] and [35]: a frame adverbial is deviant
@@ -457,7 +456,7 @@ the semantics admits by an event within the present. -/
 theorem adverb_rows : ∀ row ∈ Examples.all, ∀ a ∈ Adverbial.ofRow row,
     (row.judgment = .ungrammatical ↔ a.zone ∉ a.scope.zones) ∧
       (row.judgment = .questionable ↔
-        a.scope = .modal ∧ a.sort = .dynamic ∧ a.zone = .present) := by
+        a.scope = .modal ∧ a.sort = .action ∧ a.zone = .present) := by
   decide
 
 /-- What the context says about the issue. -/

@@ -260,7 +260,7 @@ theorem existential_eq_perf_prfv {T : Type*} [LinearOrder T]
   constructor
   · rintro ⟨pts, hR, hSub⟩
     -- sort defaults to .action; the proof doesn't reference .sort
-    exact ⟨pts, hR, ⟨d.runtime, .dynamic⟩, hSub, rfl⟩
+    exact ⟨pts, hR, ⟨d.runtime, .action⟩, hSub, rfl⟩
   · rintro ⟨pts, hR, e, hSub, heq⟩
     exact ⟨pts, hR, heq ▸ hSub⟩
 
@@ -276,7 +276,7 @@ theorem universal_eq_perf_unbounded {T : Type*} [LinearOrder T]
   constructor
   · rintro ⟨pts, hR, hSub⟩
     -- sort defaults to .action; the proof doesn't reference .sort
-    exact ⟨pts, hR, ⟨d.runtime, .dynamic⟩, hSub, rfl⟩
+    exact ⟨pts, hR, ⟨d.runtime, .action⟩, hSub, rfl⟩
   · rintro ⟨pts, hR, e, hSub, heq⟩
     exact ⟨pts, hR, heq ▸ hSub⟩
 

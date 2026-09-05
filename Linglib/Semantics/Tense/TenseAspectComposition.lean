@@ -247,7 +247,7 @@ theorem earlier_lb_not_weaker_impf :
   intro hall
   -- Counterexample: event runtime [1,5], tLB₁=0, tLB₂=2, tc=4
   -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨⟨1, 5⟩, by omega⟩, .dynamic⟩
+  let e₀ : Event ℤ := ⟨⟨⟨1, 5⟩, by omega⟩, .action⟩
   let V : Unit → Event ℤ → Prop := fun _ e => e = e₀
   -- Premise: PERF_XN(IMPF(V), {2})(⟨(), 4⟩)
   -- PTS = [2,4], event [1,5]: [2,4] ⊂ [1,5] ✓

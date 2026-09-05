@@ -187,7 +187,7 @@ theorem agent_is_agentive_subfeature {Entity T : Type*} [LinearOrder T]
     [ax : ThematicAxioms Entity T frame]
     (x : Entity) (e : Event T)
     (h : frame.agent x e) :
-    profile.hasAgentive x e ∧ e.sort = .dynamic :=
+    profile.hasAgentive x e ∧ e.sort = .action :=
   ⟨link.agent_implies_agentive x e h, ax.agent_selects_action x e h⟩
 
 -- ════════════════════════════════════════════════════
@@ -272,16 +272,16 @@ theorem make_lexicalizes_sufficient_initiative :
 
     Witness: "John is standing" — volitive (John can stop standing)
     but stative (no change over the interval). The do-test passes
-    via the volitive feature, even though e.sort =.state.
+    via the volitive feature, even though e.sort = .state.
 
     This shows the do-test is strictly broader than Parsons' `agent`
-    role, which requires e.sort =.action. -/
+    role, which requires e.sort = .action. -/
 theorem stative_can_pass_doTest :
     ∃ (profile : AgentivityProfile Unit ℤ) (x : Unit) (e : Event ℤ),
-      e.sort = .stative ∧ passesDoTest x e profile := by
+      e.sort = .state ∧ passesDoTest x e profile := by
   -- Witness: a profile where () has volitive in a stative event
   refine ⟨⟨λ _ _ => True, λ _ _ => False, λ _ _ => False, λ _ _ => False⟩,
-          (), ⟨⟨⟨0, 10⟩, by omega⟩, .stative⟩, rfl, ?_⟩
+          (), ⟨⟨⟨0, 10⟩, by omega⟩, .state⟩, rfl, ?_⟩
   exact Or.inl trivial
 
 /-- Parsons' `agent_selects_action` is NOT contradicted by stative
@@ -298,7 +298,7 @@ theorem agent_selects_action_consistent {Entity T : Type*} [LinearOrder T]
     {frame : ThematicFrame Entity T}
     [ax : ThematicAxioms Entity T frame]
     (x : Entity) (e : Event T)
-    (hState : e.sort = .stative)
+    (hState : e.sort = .state)
     (hAgent : frame.agent x e) :
     False := by
   have hAction := ax.agent_selects_action x e hAgent
