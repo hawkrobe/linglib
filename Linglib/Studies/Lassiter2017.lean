@@ -109,10 +109,10 @@ theorem conflict_concrete :
 
 /-! ## §3. Cross-paper bridge: [condoravdi-lauer-2016]
 
-C&L's `PreferenceStructure.maxElts_pair_belief_compatible` says that
+C&L's `PreferenceStructure.Consistent.inter_inter_nonempty_of_mem_maxElts` says that
 for any preferential background `P` pointwise consistent with the
 belief state, `Preferential.Want P a φ w ∧ Preferential.Want P a ψ w`
-implies `(φ ∩ ψ) ∩ B(a, w) ≠ ∅`.
+implies `(B(a, w) ∩ (φ ∩ ψ)).Nonempty`.
 Specialized to `ψ = φᶜ`: the intersection is empty, so simultaneous
 truth is impossible.
 
@@ -125,10 +125,10 @@ configuration. The two frameworks make orthogonal predictions on the
 theorem condoravdiLauer_blocks_lassiter_witness
     {Agent : Type} {B : Agent → W → Set W}
     (P : Agent → W → PreferenceStructure W)
-    (hC : ∀ a w, (P a w).consistent (B a w))
+    (hC : ∀ a w, (P a w).Consistent (B a w))
     (a : Agent) (w : W) (φ : Set W)
     (hφ : Preferential.Want P a φ w) (hnegφ : Preferential.Want P a φᶜ w) : False :=
-  (P a w).maxElts_pair_belief_compatible (hC a w) hφ hnegφ (by simp)
+  ((hC a w).inter_inter_nonempty_of_mem_maxElts hφ hnegφ).ne_empty (by simp)
 
 /-! ## §4. Cross-paper bridge: [heim-1992]
 

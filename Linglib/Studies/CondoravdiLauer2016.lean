@@ -47,7 +47,7 @@ paper-specific; tracked in
 
 * `Semantics/Attitudes/Desire/Preferential.lean` — `Preferential.Want`;
   `Semantics/Attitudes/Preference.lean` —
-  `maxElts_pair_belief_compatible` (the load-bearing lemma).
+  `Consistent.inter_inter_nonempty_of_mem_maxElts` (the load-bearing lemma).
 * `Studies/vonFintelIatridou2005.lean` — vF&I's
   primary-secondary ordering source analysis that C&L 2016 critiques
   (paper § 3.2.2).
@@ -155,23 +155,14 @@ private theorem singletonPS_mem_maxElts (φ : Set World) :
     φ ∈ (singletonPS φ).maxElts :=
   ⟨rfl, fun _ _ h => h⟩
 
-/-- Consistency of a singleton preference structure: the unique
-preference must be belief-compatible. Pure algebra; the consistency
-hypothesis reduces to ruling out two cases on `X ⊆ {φ}`. -/
+/-- Consistency of a singleton preference structure: a one-element
+chain of a belief-compatible preference. -/
 private theorem singletonPS_consistent_of_nonempty
     (φ : Set World) (B : Set World) (hNE : (φ ∩ B).Nonempty) :
-    (singletonPS φ).consistent B := by
-  intro X hXsub hEmpty
-  exfalso
-  rcases Set.subset_singleton_iff_eq.mp hXsub with hX | hX
-  · -- X = ∅; ⋂ p ∈ ∅, p = univ; B ∩ univ = B; hEmpty forces B = ∅
-    rw [hX] at hEmpty
-    simp only [Set.mem_empty_iff_false, Set.iInter_of_empty, Set.iInter_univ,
-               Set.inter_univ] at hEmpty
-    exact hNE.ne_empty (by rw [hEmpty]; simp)
-  · -- X = {φ}; B ∩ φ = ∅, contradicting hNE
-    rw [hX, Set.biInter_singleton] at hEmpty
-    exact hNE.ne_empty (by rw [Set.inter_comm]; exact hEmpty)
+    (singletonPS φ).Consistent B :=
+  PreferenceStructure.consistent_of_realistic_of_isChain
+    (λ _ hp => by rw [Set.mem_singleton_iff.1 hp]; exact hNE.ne_empty)
+    (Set.pairwise_singleton _ _) (hNE.mono Set.inter_subset_right)
 
 /-- The preferential background: Hoboken-preferring at `w₀`,
 Harlem-preferring at `w₁`. Uses `if`-on-decidable equality to keep the
@@ -182,7 +173,7 @@ def prefBg : Unit → World → PreferenceStructure World :=
 /-- `prefBg` is Ad's *effective* preference function (C&L (68)):
 pointwise consistent with the belief state. -/
 theorem prefBg_consistent (u : Unit) (w : World) :
-    (prefBg u w).consistent (belAd u w) := by
+    (prefBg u w).Consistent (belAd u w) := by
   unfold prefBg belAd
   split
   · exact singletonPS_consistent_of_nonempty Hoboken Set.univ ⟨0, by simp [Hoboken]⟩
@@ -197,17 +188,13 @@ theorem hoboken_wanted_at_wActual :
 
 /-- The crux: at `wActual`, Ad does NOT effectively prefer Harlem. Two
 maximal preferences of a consistent structure must meet inside the
-belief state (`maxElts_pair_belief_compatible`), but
+belief state (`Consistent.inter_inter_nonempty_of_mem_maxElts`), but
 Hoboken ∩ Harlem = ∅. -/
 theorem harlem_not_wanted_at_wActual :
-    ¬ Preferential.Want prefBg () Harlem wActual := by
-  intro hHarlem
-  have h := (prefBg () wActual).maxElts_pair_belief_compatible
-    (prefBg_consistent () wActual) hoboken_wanted_at_wActual hHarlem
-  apply h
-  rw [show Hoboken ∩ Harlem = ∅ by
-    rw [Set.inter_comm]; exact harlem_inter_hoboken_eq_empty]
-  simp
+    ¬ Preferential.Want prefBg () Harlem wActual := λ hHarlem =>
+  ((prefBg_consistent () wActual).inter_inter_nonempty_of_mem_maxElts hoboken_wanted_at_wActual
+    hHarlem).ne_empty
+    (by rw [Set.inter_comm Hoboken, harlem_inter_hoboken_eq_empty, Set.inter_empty])
 
 /-- Speaker's modal base: knows the actual world. `fBelS(w) = {w}` is
 the simplest realization of "speaker's true beliefs" — the standard

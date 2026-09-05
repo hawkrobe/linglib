@@ -1,3 +1,4 @@
+import Mathlib.Tactic.TypeStar
 import Linglib.Features.Acceptability
 
 /-!
@@ -180,6 +181,11 @@ def glossLine (e : LinguisticExample) : List String :=
 /-- Value of a `paperFeatures` key, if present. -/
 def feature? (e : LinguisticExample) (key : String) : Option String :=
   e.paperFeatures.lookup key
+
+/-- Value of a `paperFeatures` key, read through a table. -/
+def parse? {α : Type*} (e : LinguisticExample) (key : String) (table : List (String × α)) :
+    Option α :=
+  (e.feature? key).bind (List.lookup · table)
 
 end LinguisticExample
 

@@ -12,7 +12,7 @@ reverse inclusion gives a preference satisfied *if* `φ` holds (`WantSufficient`
 success-oriented reading), which is downward entailing in `φ`; inclusion gives a
 preference satisfied *only if* `φ` holds (`WantNecessary`, their Quine–Hintikka reading),
 which is upward entailing. Blocking of simultaneous `want φ` and `want ¬φ` over a
-consistent background is `PreferenceStructure.maxElts_pair_belief_compatible`.
+consistent background is `PreferenceStructure.Consistent.inter_inter_nonempty_of_mem_maxElts`.
 -/
 
 namespace Desire.Preferential

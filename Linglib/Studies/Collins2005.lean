@@ -299,11 +299,6 @@ theorem by_selects_vP :
 
 /-! ### The rows -/
 
-/-- The value of a row's feature, read through a table. -/
-private def parse? {α : Type*} (table : List (String × α)) (row : LinguisticExample)
-    (key : String) : Option α :=
-  (row.feature? key).bind (List.lookup · table)
-
 private def bools : List (String × Bool) := [("true", true), ("false", false)]
 
 /-- The clause a row records. -/
@@ -329,9 +324,9 @@ structure Order where
 def Order.ofRow (row : LinguisticExample) : Option Order := do
   guard (row.feature? "construction" = some "passive")
   return ⟨← Clause.ofRow row,
-    ← parse? [("partP", .partP), ("headMovement", .headMovement), ("inSitu", .inSitu)] row
-      "analysis",
-    (parse? bools row "evacuated").getD false⟩
+    ← row.parse? "analysis"
+      [("partP", .partP), ("headMovement", .headMovement), ("inSitu", .inSitu)],
+    (row.parse? "evacuated" bools).getD false⟩
 
 /-- A word-order row is grammatical exactly when the analysis that derives its string
 converges: PartP movement does, head movement and no movement leave the external argument
@@ -395,10 +390,10 @@ structure Licensing where
 def Licensing.ofRow (row : LinguisticExample) : Option Licensing := do
   guard (row.feature? "construction" = some "licensing")
   let positions := [("external", Position.external), ("pp", .pp)]
-  return ⟨← Clause.ofRow row, ← parse? bools row "evacuated",
-    ← parse? [("npi", Dependency.npi), ("other", .other), ("variable", .variable),
-      ("reflexive", .reflexive), ("pronoun", .pronoun), ("name", .name)] row "dependency",
-    ← parse? positions row "antecedent", ← parse? positions row "dependent"⟩
+  return ⟨← Clause.ofRow row, ← row.parse? "evacuated" bools,
+    ← row.parse? "dependency" [("npi", Dependency.npi), ("other", .other), ("variable", .variable),
+      ("reflexive", .reflexive), ("pronoun", .pronoun), ("name", .name)],
+    ← row.parse? "antecedent" positions, ← row.parse? "dependent" positions⟩
 
 /-- The judgment the configuration predicts on the PartP-movement derivation. -/
 def Licensing.predict? (c : Licensing) : Option Features.Judgment := do
@@ -438,8 +433,8 @@ instance (c : Participle) : Decidable c.Licensed := inferInstanceAs (Decidable (
 /-- The configuration a row records. -/
 def Participle.ofRow (row : LinguisticExample) : Option Participle := do
   guard (row.feature? "construction" = some "participle")
-  return ⟨← parse? [("have", Auxiliary.have), ("be", .be), ("none", .bare)] row "auxiliary",
-    ← parse? bools row "voiceP"⟩
+  return ⟨← row.parse? "auxiliary" [("have", Auxiliary.have), ("be", .be), ("none", .bare)],
+    ← row.parse? "voiceP" bools⟩
 
 /-- The auxiliary paradigm (23) and the participial modifiers (27): a participle clause is
 acceptable exactly when its participle has one licenser. -/

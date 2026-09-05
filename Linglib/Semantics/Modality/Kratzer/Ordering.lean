@@ -174,6 +174,19 @@ theorem empty_ordering_emptyBackground (f : ModalBase W) (w : W) :
   unfold emptyBackground
   exact empty_ordering_simple f w
 
+/-- A best world verifying a member of the ordering source that excludes `p` stays best when
+`p` is added: no `p`-world is at least as good, since it fails the member, and the other worlds
+are ordered as before. -/
+theorem mem_bestWorlds_cons {f : ModalBase W} {g : OrderingSource W} {p q : W → Prop} {w u : W}
+    (hq : q ∈ g w) (hpq : ∀ v, q v → ¬ p v) (hu : u ∈ bestWorlds f g w) (huq : q u) :
+    u ∈ bestWorlds f (λ v => p :: g v) w := by
+  refine ⟨hu.1, λ v hv hvu => ?_⟩
+  have hvq : q v := hvu q (List.mem_cons_of_mem p hq) huq
+  intro r hr
+  rcases List.mem_cons.1 hr with rfl | hr
+  · exact λ hrv => absurd hrv (hpq v hvq)
+  · exact hu.2 hv (λ r' hr' => hvu r' (List.mem_cons_of_mem p hr')) r hr
+
 /-- A modal base is realistic iff every world is accessible from
 itself. -/
 theorem isRealistic_iff_mem_accessible (f : ModalBase W) :

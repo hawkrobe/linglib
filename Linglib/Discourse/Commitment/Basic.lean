@@ -28,6 +28,9 @@ onto the Stalnakerian common ground of `Discourse/CommonGround.lean` by `Commitm
 * `Commitment.ker_slate` — the context set is the kernel of the slate.
 * `Commitment.contextSet_insert_of_commit` — a new commitment intersects the context set with
   its content.
+* `Commitment.contextSet_ofForce_insert_of_eq_of_commit`,
+  `Commitment.contextSet_ofForce_insert_of_ne` — a new commitment narrows the context set of
+  its own attitude and no other.
 
 ## References
 
@@ -192,6 +195,25 @@ theorem slate_insert_of_commit {c : Commitment A W} (h : c.polarity = .commit) :
 theorem contextSet_insert_of_commit {c : Commitment A W} (h : c.polarity = .commit) :
     contextSet (insert c K) = c.content ∩ contextSet K := by
   simp [contextSet, contents_insert_of_commit h]
+
+theorem ofForce_insert_of_eq {c : Commitment A W} {f : Force} (h : c.force = f) :
+    ofForce (insert c K) f = insert c (ofForce K f) :=
+  Set.insert_inter_of_mem h
+
+theorem ofForce_insert_of_ne {c : Commitment A W} {f : Force} (h : c.force ≠ f) :
+    ofForce (insert c K) f = ofForce K f :=
+  Set.insert_inter_of_notMem h
+
+/-- A new commitment to the attitude `f` intersects the `f`-context set with its content. -/
+theorem contextSet_ofForce_insert_of_eq_of_commit {c : Commitment A W} {f : Force}
+    (hf : c.force = f) (hp : c.polarity = .commit) :
+    contextSet (ofForce (insert c K) f) = c.content ∩ contextSet (ofForce K f) := by
+  rw [ofForce_insert_of_eq hf, contextSet_insert_of_commit hp]
+
+/-- A new commitment to another attitude leaves the `f`-context set alone. -/
+theorem contextSet_ofForce_insert_of_ne {c : Commitment A W} {f : Force} (h : c.force ≠ f) :
+    contextSet (ofForce (insert c K) f) = contextSet (ofForce K f) :=
+  congrArg contextSet (ofForce_insert_of_ne h)
 
 /-- The context set is the meet of the doxastic and the preferential context sets. -/
 theorem contextSet_eq_inter_ofForce :
