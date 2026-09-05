@@ -1,674 +1,437 @@
+import Linglib.Data.Examples.Comrie1989
 import Linglib.Features.Prominence
-import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Semantics.Causation.Morphological
-import Linglib.Syntax.Case.Alignment
-import Linglib.Studies.Dixon1994
-import Linglib.Studies.Aissen2003
-import Linglib.Fragments.Dargwa.ComplexPredicates
-import Linglib.Syntax.Clause.ArgumentRole
-import Linglib.Features.Person.Basic
 
 /-!
-# Comrie (1989) [comrie-1989]
+# Comrie 1989: Language Universals and Linguistic Typology
 
-Language Universals and Linguistic Typology: Syntax and Morphology.
-2nd ed. University of Chicago Press.
-
-Bridge study file connecting linglib's independently formalized typological
-hierarchies and proving they cohere as [comrie-1989]'s synthesis claims.
-
-## Cross-hierarchy unity (Chs 5–9)
-
-[comrie-1989]'s central methodological point: the **same** prominence
-hierarchies (animacy, definiteness, person) recur across multiple
-grammatical domains:
-
-- **Case marking** (Ch 6): Differential Object Marking driven by
-  animacy/definiteness ([aissen-2003] in `Case.Studies.Aissen2003`).
-  `Features.Prominence.AnimacyLevel` is the shared type.
-- **Alignment** (Ch 5–6): Split ergativity conditioned by
-  [silverstein-1976]'s hierarchy (`Alignment.Typology`).
-  Same `AnimacyLevel` type governs the split threshold.
-- **Relativization** (Ch 7): The [keenan-comrie-1977] Accessibility
-  Hierarchy orders grammatical relations by extraction accessibility
-  (`Syntax.RelativeClause.Basic`, `FillerGap.Studies.KeenanComrie1977`).
-  The AH positions (Subject > DO > IO > OBL) mirror the GR hierarchy
-  that governs causee demotion.
-- **Causatives** (Ch 8): Morphological complexity correlates with semantic
-  directness (`Causation.Morphological`); causee
-  marking follows the GR hierarchy (`CauseeSlot`).
-
-The shared infrastructure in `Features.Prominence` ensures the animacy
-connection is structural — by construction, not by theorem. The GR
-hierarchy parallel between the AH and causee demotion is proved below.
-
-## Subject as a cluster concept (Ch 5)
-
-[comrie-1989] argues that "subject" is not a primitive grammatical
-relation but a **bundle** of coding and behavioral properties that converge
-in accusative languages and diverge under ergativity (§1a below). Coding
-properties (case, agreement, word order) are the "surface" identification
-of the subject NP; behavioral properties (conjunction reduction,
-reflexivization, raising, equi-deletion, relativization accessibility)
-are the "deep" cross-clausal tests. In morphologically ergative languages
-the two diverge: coding picks out S=P (absolutive) while behavioral tests
-still pick out S=A. Full convergence on S=P (syntactic ergativity,
-Dyirbal subordinate clauses) is rare.
-
-## Relative clauses and the AH (Ch 7)
-
-Relativization typology is formalized in
-`KeenanComrie1977` and
-`Syntax.RelativeClause.Basic`. The AH concerns accessibility to
-extraction — a filler-gap dependency — which is why the study file
-lives under `FillerGap/`. Non-extraction relative clause types
-(correlatives, internally-headed RCs) fall outside the AH's scope:
-[comrie-1989] discusses them but they do not participate in the
+Three of the book's chapters make claims sharp enough to state. Case marking (chapter 6) serves
+first to discriminate the two arguments of a transitive clause: of the five ways the primitives
+S, A and P can share cases, only the nominative–accusative and ergative–absolutive systems keep
+A and P apart with two cases, which is why those two are the widespread ones, the tripartite
+system spending a case on a distinction it does not need and the neutral and the A/P-against-S
+systems failing to make the one that matters. The same function explains differential marking:
+the agent of a transitive clause is typically more animate and more definite than its patient,
+so marking is spent on the departures, a P high on the hierarchies or an A low on them, and
+each language's marking is monotone in prominence, Russian and Polish by animacy, Turkish and
+Persian by definiteness, Hindi and Spanish by both, Dyirbal marking its As downward and its Ps
+upward from the same cut between first and second person pronouns and the rest of the animacy
 hierarchy.
+
+In causatives (chapter 8) the causee takes the highest position on the hierarchy subject >
+direct object > indirect object > oblique that the base verb's arguments leave free, as Turkish
+shows for intransitive, transitive and ditransitive bases; languages may in addition double a
+filled position, Sanskrit a direct object and Turkish an indirect object, or demote further
+than required, French by *par*, and the analysis of the oblique causee as a passive fails for
+Turkish, where passive applies to every transitive verb but the oblique causee only to
+ditransitive bases, and for Hungarian, which has an oblique causee and no passive expressing
+its agent in that case. Where a language offers two cases for the causee, the one lower on
+the hierarchy encodes the causee that retains more control, Hungarian instrumental over
+accusative, Japanese dative over accusative, Kannada instrumental over dative; and within a
+language the more compact a causative's form, the more direct the causation it expresses.
+Subject (chapter 5) is a prototype, the intersection of agent and topic, so that constructions
+tied to agents, such as imperative addressee deletion, group S with A even in Dyirbal,
+constructions tied to affected participants, such as the Nivkh resultative, group S with P,
+both as tendencies, and constructions tied to neither, such as coordination, vary: S with A in
+English, S with P in Dyirbal, neither in Chukchi.
+
+The case systems are the equivalence relations on the three primitives, `caseSystem_of_equivalence`
+that the five are all of them and `discriminates_two_case_iff` that two of them are the
+economical discriminating ones; the book's examples are the rows, over which `marking_monotone`
+is the information-flow prediction, `causee_rows` and `passive_analysis_fails` the hierarchy
+against its rival, `control_rows` the control hierarchy, `compactness_rows` the directness
+correlation through the substrate's monotonicity, and `bias_rows`, `coordination_rows` and
+`mixed_rows` the prototype's predictions.
+
+## Implementation notes
+
+* A marking row records, for each argument the book discusses, the scales the book invokes
+  for that language and the marking its position takes, obligatory, optional or none;
+  monotonicity is read over pairs of acceptable rows of one language and role in the product
+  order of the substrate's fine-grained animacy hierarchy, which places the first and second
+  person pronouns above other humans as the book does, and its definiteness scale, a scale the
+  row does not cite constraining nothing. A row whose marking the book attributes to a
+  parameter beside the hierarchies, Polish's male-human cut, carries a `parameter` feature and
+  has no marking.
+* The departures from the paradigm case are per-language parameters: which positions a
+  language doubles, whether it demotes further than required, and whether it has a passive,
+  the last consulted only by the rival analysis and stated by the book for Turkish, French and
+  Hungarian; Sanskrit's and Kannada's passives are textbook facts.
+* The prototype's predictions are stated through the bias of a construction type, agent-linked
+  or patient-linked, which the book gives as the explanation; a control complement, the
+  Chukchi infinitive construction, favours S with A on the book's account, and coordination
+  has no bias.
+
+## TODO
+
+* The book's four-grade definiteness continuum, complete identifiability > definite superset >
+  discourse relevance > neither, is coarsened onto the substrate's scale, which merges the
+  middle two grades; Persian (23) and Turkish (25) are therefore indefinite specific.
+* The book says Sanskrit has no dative causee at all, a position the hierarchy skips; the
+  parameters record only doubling and further demotion, and no row tests the gap.
+* The doubling universal of §8.2, that the possibilities for doubling increase down the
+  hierarchy, needs more languages than the book's rows give.
+* Chapter 9's animacy hierarchy is prose here: the Navajo *yi-* ~ *bi-* alternation, Chukchi
+  number and the Tangut and Southern Tiwa agreement data would need agreement substrate.
+* The Russian numeral continuum of §5.2 and Greenberg's Universal 38 on the unmarkedness of the
+  S case (§6.1) are not stated.
+
+## References
+
+* [B. Comrie, *Language Universals and Linguistic Typology* (1989)][comrie-1989]
+* [B. Comrie, *Ergativity* (1978)][comrie-1978]
+* [M. Silverstein, *Hierarchy of Features and Ergativity* (1976)][silverstein-1976]
+* [R. M. W. Dixon, *The Dyirbal Language of North Queensland* (1972)][dixon-1972]
 -/
 
 namespace Comrie1989
 
--- ============================================================================
--- § 1: Shared Animacy Scale
--- ============================================================================
+open Features.Prominence Causation.Morphological Data.Examples
 
-/-! ### Cross-domain unity of the animacy hierarchy
+/-! ### The discriminatory function of case (§6.1) -/
 
-The `AnimacyLevel` type in `Features.Prominence` is imported by both
-`Dixon1994` (Silverstein's split ergativity) and
-`Aissen2003` (DOM via OT). This is structural
-grounding: the same 3-level hierarchy (human > animate > inanimate)
-governs both phenomena, with no possibility of drift between separate
-definitions.
+/-- The three primitives of case marking: the intransitive subject, and the agent and patient
+of the transitive clause. -/
+inductive Primitive
+  | S | A | P
+  deriving DecidableEq, Repr, Fintype
 
-The same pattern holds for `DefinitenessLevel` and `Person` — all
-three prominence scales are defined once in `Features.Prominence` and
-imported by every downstream module. -/
+/-- The five logically possible case systems: which primitives share a case. -/
+inductive CaseSystem
+  | neutral | nominativeAccusative | ergativeAbsolutive | tripartite | apAgainstS
+  deriving DecidableEq, Repr, Fintype
 
-open Features.Prominence (AnimacyLevel)
-open Alignment (AlignmentType)
+/-- The cases of a system, as the sets of primitives each marks. -/
+def CaseSystem.blocks : CaseSystem → Finset (Finset Primitive)
+  | .neutral => {{.S, .A, .P}}
+  | .nominativeAccusative => {{.S, .A}, {.P}}
+  | .ergativeAbsolutive => {{.S, .P}, {.A}}
+  | .tripartite => {{.S}, {.A}, {.P}}
+  | .apAgainstS => {{.A, .P}, {.S}}
 
--- ============================================================================
--- § 1a: Subject Property Bundles (Ch 5)
--- ============================================================================
+/-- Two primitives take the same case. -/
+def CaseSystem.Same (c : CaseSystem) (x y : Primitive) : Prop := ∃ b ∈ c.blocks, x ∈ b ∧ y ∈ b
 
-/-- Coding properties: how the subject NP is morphologically marked.
-    These are "surface" properties visible from case and agreement alone. -/
-inductive CodingProperty where
-  | caseMarking       -- receives nominative/absolutive case
-  | verbAgreement     -- triggers person/number agreement on finite verb
-  | wordOrderPosition -- occupies canonical subject position
+instance (c : CaseSystem) (x y : Primitive) : Decidable (c.Same x y) :=
+  inferInstanceAs (Decidable (∃ b ∈ c.blocks, x ∈ b ∧ y ∈ b))
+
+/-- The number of cases. -/
+def CaseSystem.caseCount (c : CaseSystem) : ℕ := c.blocks.card
+
+/-- The system discriminates the two arguments of a transitive clause. -/
+def CaseSystem.Discriminates (c : CaseSystem) : Prop := ¬ c.Same .A .P
+
+instance (c : CaseSystem) : Decidable c.Discriminates := inferInstanceAs (Decidable (¬ _))
+
+/-- The reflexive symmetric relation with the given values on the three pairs. -/
+private def rel (sa sp ap : Bool) : Primitive → Primitive → Bool
+  | .S, .A | .A, .S => sa
+  | .S, .P | .P, .S => sp
+  | .A, .P | .P, .A => ap
+  | _, _ => true
+
+private theorem exhaustive_bool : ∀ sa sp ap : Bool, (sa → sp → ap) → (sa → ap → sp) →
+    (sp → ap → sa) → ∃ c : CaseSystem, ∀ x y, rel sa sp ap x y ↔ c.Same x y := by
+  decide
+
+/-- Every equivalence relation on the primitives is one of the five systems. -/
+theorem caseSystem_of_equivalence (r : Primitive → Primitive → Prop) (h : Equivalence r) :
+    ∃ c : CaseSystem, ∀ x y, r x y ↔ c.Same x y := by
+  classical
+  have hs : ∀ x y, r x y ↔ r y x := λ _ _ => ⟨h.symm, h.symm⟩
+  obtain ⟨c, hc⟩ := exhaustive_bool (decide (r .S .A)) (decide (r .S .P)) (decide (r .A .P))
+    (by simpa using λ h₁ h₂ => h.trans (h.symm h₁) h₂) (by simpa using λ h₁ => h.trans h₁)
+    (by simpa using λ h₁ h₂ => h.trans h₁ (h.symm h₂))
+  refine ⟨c, λ x y => (?_ : r x y ↔ _).trans (hc x y)⟩
+  cases x <;> cases y <;> simp [rel, h.refl _, hs .A .S, hs .P .S, hs .P .A]
+
+/-- The systems that discriminate A from P are all but the neutral and the A/P-against-S
+ones. -/
+theorem CaseSystem.discriminates_iff (c : CaseSystem) :
+    c.Discriminates ↔ c ≠ .neutral ∧ c ≠ .apAgainstS := by
+  cases c <;> decide
+
+/-- The systems discriminating A from P with two cases are the nominative–accusative and the
+ergative–absolutive ones, the widespread systems; the tripartite system marks S apart for no
+discriminatory gain. -/
+theorem CaseSystem.discriminates_two_case_iff (c : CaseSystem) :
+    c.Discriminates ∧ c.caseCount = 2 ↔ c = .nominativeAccusative ∨ c = .ergativeAbsolutive := by
+  cases c <;> decide
+
+/-! ### The rows -/
+
+/-- The value of a row's feature, read through a table. -/
+private def parse? {α : Type*} (table : List (String × α)) (row : LinguisticExample)
+    (key : String) : Option α :=
+  (row.feature? key).bind (List.lookup · table)
+
+/-- The rows the book accepts. -/
+def acceptable : List LinguisticExample := Examples.all.filter (·.judgment = .acceptable)
+
+/-! ### Differential marking and the natural information flow (§6.2) -/
+
+/-- The marking an argument's position takes: none, optional, or obligatory. -/
+inductive Marked
+  | unmarked | optional | marked
   deriving DecidableEq, Repr
 
-/-- Behavioral properties: how the subject NP participates in
-    syntactic operations that span clause boundaries. These are
-    the "deep" properties that motivate a grammatical-relation analysis. -/
-inductive BehavioralProperty where
-  | conjunctionReduction  -- deleted/omitted NP under coordination
-  | reflexivization       -- antecedent of clause-bound reflexives
-  | raisingTarget         -- NP that raises to higher clause
-  | equiDeletion          -- controlled PRO in complement clause
-  | relativizationAccess  -- most accessible on AH
+/-- Optional marking sits between unmarked and marked. -/
+def Marked.toNat : Marked → ℕ
+  | .unmarked => 0
+  | .optional => 1
+  | .marked => 2
+
+instance : LinearOrder Marked :=
+  LinearOrder.lift' Marked.toNat (λ a b h => by cases a <;> cases b <;> simp_all [Marked.toNat])
+
+/-- One argument's marking in a row: its role, its place on the scales the book invokes for
+the language, and the marking its position takes. -/
+structure Marking where
+  /-- A or P; S, taking the unmarked case, has no row. -/
+  role : Primitive
+  /-- The argument's animacy, where the language's marking consults it. -/
+  animacy : Option AnimacyRank
+  /-- The argument's definiteness, where the language's marking consults it. -/
+  definiteness : Option DefinitenessLevel
+  /-- The marking the position takes. -/
+  marked : Marked
+
+/-- The markings a row records, one per argument whose marking it gives, under the key
+prefixes `A.` and `P.`; a row whose marking the book attributes to a parameter beside the
+hierarchies has none. -/
+def Marking.ofRow (row : LinguisticExample) : List Marking :=
+  if row.feature? "construction" = some "marking" ∧ row.feature? "parameter" = none then
+    [(Primitive.A, "A."), (.P, "P.")].filterMap λ (role, p) => do
+      return ⟨role,
+        parse? [("speaker", AnimacyRank.speaker), ("addressee", .addressee), ("human", .human),
+          ("higherAnimal", .higherAnimal), ("discreteInanimate", .discreteInanimate)]
+          row (p ++ "animacy"),
+        parse? [("personalPronoun", DefinitenessLevel.personalPronoun),
+          ("properName", .properName), ("definite", .definite),
+          ("indefiniteSpecific", .indefiniteSpecific), ("nonSpecific", .nonSpecific)]
+          row (p ++ "definiteness"),
+        ← parse? [("marked", Marked.marked), ("optional", .optional), ("unmarked", .unmarked)]
+          row (p ++ "marked")⟩
+  else []
+
+/-- `m₁` marks the same role as `m₂` and is at most as prominent on every scale both cite. -/
+def Marking.AtMost (m₁ m₂ : Marking) : Prop :=
+  m₁.role = m₂.role ∧ (∀ a₁ ∈ m₁.animacy, ∀ a₂ ∈ m₂.animacy, a₁ ≤ a₂) ∧
+    ∀ d₁ ∈ m₁.definiteness, ∀ d₂ ∈ m₂.definiteness, d₁ ≤ d₂
+
+instance (m₁ m₂ : Marking) : Decidable (m₁.AtMost m₂) := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The information-flow prediction: within a language, the special case on P is monotone up
+the prominence scales and the special case on A monotone down them, (7)–(27) of chapter 6:
+Russian and Polish by animacy, Turkish and Persian by definiteness, Hindi and Spanish by
+both, and Dyirbal on both roles from the cut between first and second person pronouns and
+the rest of the hierarchy. -/
+theorem marking_monotone : ∀ r₁ ∈ acceptable, ∀ m₁ ∈ Marking.ofRow r₁,
+    ∀ r₂ ∈ acceptable.filter (·.language = r₁.language), ∀ m₂ ∈ Marking.ofRow r₂,
+      m₁.AtMost m₂ →
+        (m₁.role = .P → m₁.marked ≤ m₂.marked) ∧ (m₁.role = .A → m₂.marked ≤ m₁.marked) := by
+  decide
+
+/-- The prediction has content in both directions: some P is outranked by another of its
+language and carries less marking, and some A is outranked and carries more. -/
+theorem marking_contrast : ∀ role : Primitive, role ≠ .S →
+    ∃ r₁ ∈ acceptable, ∃ r₂ ∈ acceptable, r₁.language = r₂.language ∧
+      ∃ m₁ ∈ Marking.ofRow r₁, ∃ m₂ ∈ Marking.ofRow r₂, m₁.role = role ∧ m₁.AtMost m₂ ∧
+        (role = .P → m₁.marked < m₂.marked) ∧ (role = .A → m₂.marked < m₁.marked) := by
+  decide
+
+/-! ### The causee hierarchy (§8.2) -/
+
+/-- A language's departures from the paradigm case. -/
+structure Parameters where
+  /-- The positions the language lets a causee double. -/
+  doubles : List CauseeSlot
+  /-- Whether the causee may take a position below the paradigm one. -/
+  extended : Bool
+  /-- Whether the language has a passive expressing its agent in the oblique case of the
+  causee, which the rival analysis consults. -/
+  passive : Bool
+
+/-- The parameters of the languages with causative rows: Turkish doubles indirect objects and
+never demotes further, Sanskrit doubles direct objects and demotes to the instrumental,
+French, Hungarian, Japanese and Kannada demote further, and Hungarian has no passive. -/
+def parameters : List (String × Parameters) :=
+  [("nucl1301", { doubles := [.indirectObject], extended := false, passive := true }),
+    ("sans1269", { doubles := [.directObject], extended := true, passive := true }),
+    ("stan1290", { doubles := [], extended := true, passive := true }),
+    ("hung1274", { doubles := [], extended := true, passive := false }),
+    ("nucl1643", { doubles := [], extended := true, passive := true }),
+    ("nucl1305", { doubles := [], extended := true, passive := true })]
+
+/-- A causative row's configuration: the base verb's valency, the causee's position, and the
+language's parameters. -/
+structure Causative where
+  /-- The base verb's valency. -/
+  valency : ℕ
+  /-- The position the causee takes. -/
+  causee : CauseeSlot
+  /-- The language's parameters. -/
+  params : Parameters
+
+/-- The configuration a causative or control row records. -/
+def Causative.ofRow (row : LinguisticExample) : Option Causative := do
+  guard (row.feature? "construction" ∈ [some "causative", some "control"])
+  return ⟨← parse? [("1", 1), ("2", 2), ("3", 3)] row "valency",
+    ← parse? [("directObject", .directObject), ("indirectObject", .indirectObject),
+      ("oblique", .oblique)] row "causee",
+    ← parameters.lookup row.language⟩
+
+/-- The paradigm position: the highest the base verb's arguments leave free. -/
+def Causative.paradigm (c : Causative) : CauseeSlot := causeeDemotion c.valency
+
+/-- The causee doubles a filled position the language permits. -/
+def Causative.Doubles (c : Causative) : Prop := c.causee ∈ c.params.doubles ∧ c.paradigm < c.causee
+
+instance (c : Causative) : Decidable c.Doubles := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The hierarchy analysis admits the causee's position: the paradigm case, a doubled
+position, or a lower one where the language demotes further. -/
+def Causative.HierarchyAdmits (c : Causative) : Prop :=
+  c.causee = c.paradigm ∨ c.Doubles ∨ (c.params.extended ∧ c.causee < c.paradigm)
+
+instance (c : Causative) : Decidable c.HierarchyAdmits := inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The rival analysis of the oblique causee as a passive agent: the paradigm case, a doubled
+position, or the oblique of a transitive base wherever the language has a passive. -/
+def Causative.PassiveAdmits (c : Causative) : Prop :=
+  c.causee = c.paradigm ∨ c.Doubles ∨ (c.params.passive ∧ 2 ≤ c.valency ∧ c.causee = .oblique)
+
+instance (c : Causative) : Decidable c.PassiveAdmits := inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The Turkish paradigm (12)–(16), the doubling of (17)–(18), the further demotion of (20)
+and of the control alternatives, and the exclusion of (22): the hierarchy with the language's
+parameters admits exactly the positions the languages accept. -/
+theorem causee_rows : ∀ row ∈ Examples.all, ∀ c ∈ Causative.ofRow row,
+    (row.judgment = .acceptable ↔ c.HierarchyAdmits) := by
+  decide
+
+/-- The passive analysis admits (22), the oblique causee of a transitive base in Turkish, which
+the language rejects although it passivizes every transitive verb, and excludes the
+instrumental causee of Hungarian (9), whose base is intransitive and whose language has no
+passive expressing the agent in that case. -/
+theorem passive_analysis_fails :
+    (∃ row ∈ Examples.all, ∃ c ∈ Causative.ofRow row,
+      c.PassiveAdmits ∧ row.judgment = .ungrammatical) ∧
+      ∃ row ∈ Examples.all, ∃ c ∈ Causative.ofRow row,
+        ¬ c.PassiveAdmits ∧ row.judgment = .acceptable := by
+  decide
+
+/-- Whether a causee retains less or more control. -/
+inductive Control
+  | less | more
   deriving DecidableEq, Repr
 
-/-- All coding properties (for finite enumeration). -/
-def CodingProperty.all : List CodingProperty :=
-  [.caseMarking, .verbAgreement, .wordOrderPosition]
-
-/-- All behavioral properties (for finite enumeration). -/
-def BehavioralProperty.all : List BehavioralProperty :=
-  [.conjunctionReduction, .reflexivization, .raisingTarget,
-   .equiDeletion, .relativizationAccess]
-
-/-- A subject property bundle: for each property, which NP grouping
-    it picks out in a given language.
-
-    - `true` = S=A grouping (accusative pattern for that property)
-    - `false` = S=P grouping (ergative pattern for that property)
-
-    A language's "subject" is well-defined when all properties agree;
-    it is a non-primitive cluster concept when they diverge. -/
-structure SubjectPropertyBundle where
-  coding : CodingProperty → Bool
-  behavioral : BehavioralProperty → Bool
-
-/-- Accusative convergence: all properties pick out S=A.
-    English, Latin, Russian, Japanese, etc. -/
-def accusativeBundle : SubjectPropertyBundle where
-  coding := λ _ => true
-  behavioral := λ _ => true
-
-/-- Morphological ergativity with accusative syntax: coding picks S=P
-    (absolutive case/agreement), but behavioral tests pick S=A.
-    This is the common pattern in "ergative" languages: Dyirbal main
-    clauses, many Australian and Mayan languages. -/
-def morphErgativityBundle : SubjectPropertyBundle where
-  coding := λ _ => false
-  behavioral := λ _ => true
-
-/-- Full (syntactic) ergativity: both coding AND behavioral properties
-    pick out S=P. Rare cross-linguistically; Dyirbal subordinate clauses
-    are the classic example. -/
-def syntacticErgativityBundle : SubjectPropertyBundle where
-  coding := λ _ => false
-  behavioral := λ _ => false
-
-/-- Whether all subject properties converge on the same NP.
-    Convergence means all coding and behavioral properties agree on either
-    S=A (accusative) or S=P (ergative). Divergence — some properties
-    picking S=A and others S=P — means "subject" is not a unitary concept
-    in that language. -/
-def SubjectPropertyBundle.converges (b : SubjectPropertyBundle) : Bool :=
-  let allVals := CodingProperty.all.map b.coding ++
-                 BehavioralProperty.all.map b.behavioral
-  allVals.all (· == true) || allVals.all (· == false)
-
--- ============================================================================
--- § 2: Alignment → Differential Marking Direction
--- ============================================================================
-
-/-- Accusative alignment implies P is differentially marked (the patient
-    receives overt case marking to distinguish it from S). This connects
-    [comrie-1989] Ch 5–6 to the DOM patterns in [aissen-2003]:
-    in an accusative language, it is the **P** role whose marking is
-    sensitive to prominence (animate/definite Ps get marked, inanimates
-    don't). -/
-theorem accusative_marks_P :
-    AlignmentType.accusative.marksPatient := by decide
-
-/-- Ergative alignment implies A is differentially marked. In an
-    ergative language, it is the **A** role whose marking is
-    prominence-sensitive — less prominent As (full NPs, inanimates)
-    get ergative marking. -/
-theorem ergative_marks_A :
-    AlignmentType.ergative.marksAgent := by decide
-
-/-- Neutral alignment marks neither A nor P distinctly. -/
-theorem neutral_marks_neither :
-    ¬ AlignmentType.neutral.marksAgent ∧
-    ¬ AlignmentType.neutral.marksPatient := by decide
-
-/-- The directionality of differential marking follows from alignment:
-    accusative systems differentially mark the low-default role (P),
-    ergative systems differentially mark the high-default role (A).
-    This mirrors the polarity of marking in `Features.Prominence`:
-    P is low-default, A is high-default. -/
-theorem marking_polarity_matches_alignment :
-    ArgumentRole.P.IsLowDefault ∧
-    ArgumentRole.A.IsHighDefault := ⟨Or.inl rfl, Or.inl rfl⟩
-
--- ============================================================================
--- § 2a: Deriving Subject Properties from Alignment
--- ============================================================================
-
-/-! ### Alignment predicts subject property convergence
-
-[comrie-1989] Ch 5: alignment type predicts whether subject
-properties converge. In accusative languages, all properties pick S=A.
-In ergative languages, coding properties pick S=P; whether behavioral
-properties also pick S=P (**syntactic** ergativity, rare) or S=A
-(**morphological** ergativity, common) is a parametric dimension.
-
-The `toSubjectBundle` function derives the predicted subject property
-bundle from alignment type, so the three canonical bundles of §1a become
-consequences of alignment classification rather than independent
-definitions. -/
-
-/-- Derive the predicted subject property bundle from alignment type.
-    Non-ergative alignment → all properties S=A (accusative bundle).
-    Ergative → coding S=P, behavioral parametric. -/
-def toSubjectBundle (a : AlignmentType)
-    (syntacticErg : Bool := false) : SubjectPropertyBundle :=
-  match a with
-  | .ergative =>
-    if syntacticErg then syntacticErgativityBundle
-    else morphErgativityBundle
-  | _ => accusativeBundle
-
-/-- Accusative alignment derives the accusative bundle. -/
-theorem accusative_derives_bundle :
-    toSubjectBundle .accusative = accusativeBundle := rfl
-
-/-- Ergative alignment (default) derives morphological ergativity bundle. -/
-theorem morphErg_derives_bundle :
-    toSubjectBundle .ergative = morphErgativityBundle := rfl
-
-/-- Ergative alignment with syntacticErg=true derives syntactic ergativity. -/
-theorem syntacticErg_derives_bundle :
-    toSubjectBundle .ergative (syntacticErg := true)
-    = syntacticErgativityBundle := rfl
-
--- ============================================================================
--- § 3: Subject Property Convergence under Alignment
--- ============================================================================
-
-/-- In accusative languages, all subject properties converge on S=A.
-    [comrie-1989] Ch 5: "In accusative languages... the notion
-    of subject is reasonably clear." -/
-theorem accusative_subject_converges :
-    accusativeBundle.converges = true := by decide
-
-/-- In morphologically ergative languages, subject properties diverge:
-    coding picks S=P (absolutive), behavioral picks S=A.
-    [comrie-1989] Ch 5: "In ergative languages, the various
-    properties do not necessarily converge." -/
-theorem morphErg_subject_diverges :
-    morphErgativityBundle.converges = false := by decide
-
-/-- In syntactically ergative languages (Dyirbal subordinate clauses),
-    subject properties converge on S=P — full ergativity.
-    This is the rare case where even behavioral tests track absolutive. -/
-theorem syntacticErg_subject_converges :
-    syntacticErgativityBundle.converges = true := by decide
-
--- ============================================================================
--- § 3a: Per-Language Subject Property Predictions
--- ============================================================================
-
-/-! ### Alignment profiles predict subject property convergence
-
-Each language's alignment profile (from `Dixon1994`)
-generates a predicted subject property bundle via `toSubjectBundle`.
-These theorems verify the predictions against the known typological
-facts for each language:
-
-- **Accusative** languages (English, Japanese): derived bundle converges.
-- **Morphologically ergative** languages (Basque, Dargwa, Hindi-Urdu):
-  derived bundle diverges (coding ≠ behavioral).
-- **Syntactically ergative** languages (Dyirbal): must set
-  `syntacticErg := true` to get a converging bundle.
-
-The `syntacticErg` parameter captures the rare/common ergativity
-distinction that [comrie-1989] Ch 5 identifies as central. -/
-
-open Dixon1994
-  (english dyirbal basque hindiUrdu dargwa japanese)
-
-/-- English: accusative NP alignment → derived bundle converges. -/
-theorem english_subject_from_alignment :
-    (toSubjectBundle english.npAlignment).converges = true := by decide
-
-/-- Japanese: accusative NP alignment → derived bundle converges. -/
-theorem japanese_subject_from_alignment :
-    (toSubjectBundle japanese.npAlignment).converges = true := by decide
-
-/-- Basque: ergative alignment → default (morphological) derived bundle
-    diverges, correctly predicting that coding and behavioral properties
-    pick different NPs. -/
-theorem basque_morphErg_diverges :
-    (toSubjectBundle basque.npAlignment).converges = false := by decide
-
-/-- Basque's derived bundle is exactly the morphological ergativity
-    bundle: coding picks S=P, behavioral picks S=A. -/
-theorem basque_bundle_is_morphErg :
-    toSubjectBundle basque.npAlignment = morphErgativityBundle := rfl
-
-/-- Dargwa: consistently ergative → morphological ergativity predicted. -/
-theorem dargwa_bundle_is_morphErg :
-    toSubjectBundle dargwa.npAlignment = morphErgativityBundle := rfl
-
-/-- Hindi-Urdu: ergative NP alignment → morphological ergativity predicted.
-    The split-ergative conditioning (perfective → ERG) is orthogonal to
-    subject property convergence: even in perfective clauses, behavioral
-    properties track S=A. -/
-theorem hindiUrdu_morphErg_diverges :
-    (toSubjectBundle hindiUrdu.npAlignment).converges = false := by decide
-
-/-- Dyirbal: ergative NP alignment → default (morphological) prediction
-    diverges. But Dyirbal is one of the rare **syntactically ergative**
-    languages ([dixon-1972]): even behavioral properties
-    (coordination deletion) track S=P. -/
-theorem dyirbal_default_diverges :
-    (toSubjectBundle dyirbal.npAlignment).converges = false := by decide
-
-/-- Dyirbal with syntacticErg=true → derived bundle converges,
-    correctly predicting full syntactic ergativity. -/
-theorem dyirbal_syntacticErg_converges :
-    (toSubjectBundle dyirbal.npAlignment (syntacticErg := true)).converges
-    = true := by decide
-
--- ============================================================================
--- § 4: Causative Hierarchies
--- ============================================================================
-
-open Causation.Morphological
-    (CausativeComplexity CausativeConstruction Mediation comrie_monotone
-     CauseeSlot causeeDemotion)
-
-/-- [comrie-1989]'s compact-to-analytic and direct-to-indirect
-    dimensions are connected: a compact+direct construction and a
-    periphrastic+indirect construction satisfy the monotonicity
-    predicate. -/
-theorem compact_direct_vs_periphrastic_indirect :
-    comrie_monotone
-      ⟨.lexical, .direct, none, none⟩
-      ⟨.periphrastic, .indirect, none, none⟩ := by
-  intro _; decide
-
--- The earlier `song_multiclause_both_periphrastic` theorem was a Song-1996-vs-
--- Comrie-1989 cross-paper bridge; it was relocated to
--- `Studies/Song1996.lean` per the chronology rule
--- (Comrie 1989 cannot cite Song 1996 — the bridge belongs in the later paper).
-
-/-- Causee demotion: intransitive base → causee gets DO (rank 2),
-    transitive base → causee gets IO (rank 1). The causee is demoted
-    as base valency increases. -/
-theorem intransitive_causee_above_transitive_causee :
-    (causeeDemotion 1).rank > (causeeDemotion 2).rank := by decide
-
--- ============================================================================
--- § 5: The Accessibility Hierarchy as a GR Hierarchy
--- ============================================================================
-
-open RelativeClause (AHPosition)
-
-/-- The top of the AH is the subject position — [comrie-1989] Ch 7:
-    "A language must be able to relativize subjects" (HC₁). The subject
-    is the most accessible position on the hierarchy. -/
-theorem subject_is_ah_top :
-    AHPosition.subject.rank = 6 ∧
-    ∀ p : AHPosition, p.rank ≤ AHPosition.subject.rank := by
-  constructor
-  · rfl
-  · intro p; cases p <;> simp [AHPosition.rank]
-
-/-- The AH mirrors the GR hierarchy used in causee marking:
-    Subject > Direct Object > Indirect Object > Oblique.
-    The same ordering governs both relativization accessibility and
-    causee demotion — positions higher on the hierarchy are both more
-    accessible to relativization and filled first in causativization. -/
-theorem ah_mirrors_causee_hierarchy :
-    AHPosition.subject.rank > AHPosition.directObject.rank ∧
-    AHPosition.directObject.rank > AHPosition.indirectObject.rank ∧
-    AHPosition.indirectObject.rank > AHPosition.oblique.rank := by
-  exact ⟨by decide, by decide, by decide⟩
-
--- ============================================================================
--- § 5a: CauseeSlot ↔ AHPosition — Shared GR Hierarchy
--- ============================================================================
-
-/-! ### The GR hierarchy underlying both causee demotion and relativization
-
-[comrie-1989] observes that the **same** grammatical relation
-hierarchy governs both causee demotion (Ch 8) and relativization
-accessibility (Ch 7):
-
-    Subject > Direct Object > Indirect Object > Oblique
-
-`CauseeSlot` (in `Causation.Morphological`) and
-`AHPosition` (in `Syntax.RelativeClause.Basic`) encode overlapping
-portions of this hierarchy independently. The bridge function
-`causeeToAH` maps causee slots to their corresponding AH positions,
-and the order-preservation theorem proves the mapping is monotone —
-confirming that the two hierarchies are structurally the same. -/
-
-/-- Map causee slots to their corresponding AH positions.
-    Both encode the same GR hierarchy; this bridge makes the
-    connection explicit. -/
-def causeeToAH : CauseeSlot → AHPosition
-  | .directObject   => .directObject
-  | .indirectObject => .indirectObject
-  | .oblique        => .oblique
-
-/-- The mapping preserves ordering: higher causee rank ↔ higher AH rank. -/
-theorem causee_ah_order_preserved (s1 s2 : CauseeSlot) :
-    s1.rank > s2.rank ↔ (causeeToAH s1).rank > (causeeToAH s2).rank := by
-  cases s1 <;> cases s2 <;> simp [CauseeSlot.rank, causeeToAH, AHPosition.rank]
-
-/-- Causee demotion follows the AH: the slots assigned by `causeeDemotion`
-    correspond to exactly the AH positions below subject. -/
-theorem causeeDemotion_maps_to_ah :
-    causeeToAH (causeeDemotion 1) = .directObject ∧
-    causeeToAH (causeeDemotion 2) = .indirectObject ∧
-    causeeToAH (causeeDemotion 3) = .oblique := ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 6: Dargwa Causee Data — Fragment Bridge
--- ============================================================================
-
-/-! ### Dargwa causative system bridges to Comrie's causee hierarchy
-
-Dargwa (Tanti) has a productive causative morpheme *-aq*
-([sumbatova-2021] §4.5.7). The Dargwa fragment
-(`Dargwa.ComplexPredicates`) records:
-
-- Intransitive base: causee appears in **absolutive** = direct object slot
-- Transitive base: causee appears in **elative** = oblique slot
-
-Comrie's hierarchy predicts IO for transitive bases, but Dargwa
-skips the IO position and demotes directly to oblique (elative).
-This is consistent with monotonicity — the actual slot is at most
-as high as the predicted slot — but represents a language-specific
-choice to use a spatial case rather than a dative/IO. -/
-
-open Dargwa.ComplexPredicates (causStandUp causDig CausativeEntry)
-
-/-- Map Dargwa causee case to CauseeSlot based on base verb transitivity.
-    Intransitive base → DO (absolutive in Dargwa);
-    transitive base → OBL (elative in Dargwa). -/
-def dargwaCauseeSlot (e : CausativeEntry) : CauseeSlot :=
-  if e.baseTransitive then .oblique else .directObject
-
-/-- Dargwa intransitive causative: causee = DO, exactly matching
-    Comrie's prediction (`causeeDemotion 1`). -/
-theorem dargwa_intr_matches_prediction :
-    dargwaCauseeSlot causStandUp = causeeDemotion 1 := rfl
-
-/-- Dargwa transitive causative: causee = OBL, one step below
-    Comrie's prediction of IO (`causeeDemotion 2`). Dargwa uses elative
-    (a spatial/oblique case) rather than dative/IO. -/
-theorem dargwa_tr_more_demoted :
-    (dargwaCauseeSlot causDig).rank < (causeeDemotion 2).rank := by decide
-
-/-- Dargwa preserves Comrie's monotonicity: intransitive causee
-    outranks transitive causee on the GR hierarchy. -/
-theorem dargwa_causee_monotone :
-    (dargwaCauseeSlot causStandUp).rank >
-    (dargwaCauseeSlot causDig).rank := by decide
-
-/-- Dargwa causee slots map to the same AH positions as the
-    cross-linguistic generalization. -/
-theorem dargwa_causee_on_ah :
-    causeeToAH (dargwaCauseeSlot causStandUp) = .directObject ∧
-    causeeToAH (dargwaCauseeSlot causDig) = .oblique := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 7: Alignment × Differential Object Marking
--- ============================================================================
-
-/-! ### The alignment–DOM correlation ([comrie-1989] Ch 6)
-
-[comrie-1989] observes that alignment type determines which argument
-role undergoes differential marking:
-
-- **Accusative** (S=A vs P): P is the distinctly-marked role → DOM expected
-- **Ergative** (S=P vs A): A is the distinctly-marked role → DSM expected
-- **Neutral** (S=A=P): no role distinction → no differential marking
-- **Tripartite** (S≠A≠P): both A and P distinct → both possible
-
-This correlation was later derived formally by [de-hoop-malchukov-2008]
-via the Primary Actant Immunity Principle: the argument encoded like the
-intransitive S resists differential marking, leaving the non-primary
-argument available for prominence-sensitive marking.
-
-The critical structural point: the **same** prominence hierarchies
-(`AnimacyLevel`, `DefinitenessLevel`) that condition split ergativity
-([silverstein-1976]) also condition DOM ([aissen-2003]). This
-connection is built in by construction — both import `Features.Prominence`. -/
-
-open Features.Prominence (DefinitenessLevel)
-open Features.Prominence (MarkingPattern)
-open Aissen2003 (spanishDOM turkishDOM hindiDOM noDOM)
-
-/-- Russian: the accusative of animates is realized by the genitive form —
-    animacy-based differential marking of P. Not part of [aissen-2003]'s
-    sample; formalized here for [comrie-1989]'s alignment–DOM consistency
-    check. -/
-def russianDOM : MarkingPattern := .animacyAtLeast .animate
-open Dixon1994 (russian turkish dyirbalSplit)
-open Alignment (AlignmentFamily Aspect hindiSplit)
-
-/-- Whether DOM (differential P marking) is expected given alignment.
-    Structurally identical to `AlignmentType.marksPatient`: exactly
-    the alignments that mark P distinctly from S predict DOM. -/
-abbrev domExpected (a : AlignmentType) : Prop := a.marksPatient
-
-/-- Whether DSM (differential A marking) is expected given alignment.
-    Structurally identical to `AlignmentType.marksAgent`. -/
-abbrev dsmExpected (a : AlignmentType) : Prop := a.marksAgent
-
-/-- DOM expectation = patient marking. -/
-theorem dom_iff_marks_patient (a : AlignmentType) :
-    domExpected a ↔ a.marksPatient := Iff.rfl
-
-/-- DSM expectation = agent marking. -/
-theorem dsm_iff_marks_agent (a : AlignmentType) :
-    dsmExpected a ↔ a.marksAgent := Iff.rfl
-
-/-- Accusative predicts DOM (not DSM); ergative predicts DSM (not DOM).
-    [comrie-1989] Ch 6 / [de-hoop-malchukov-2008] §4. -/
-theorem acc_dom_erg_dsm :
-    domExpected .accusative ∧ ¬ dsmExpected .accusative ∧
-    ¬ domExpected .ergative ∧ dsmExpected .ergative := by decide
-
-/-- The pattern marks at least one prominence cell. -/
-def HasAnyMarking (dom : MarkingPattern) : Prop :=
-  ∃ a d, dom a d = true
-
-instance : DecidablePred HasAnyMarking := λ dom => by
-  unfold HasAnyMarking; infer_instance
-
--- ============================================================================
--- § 7a: Per-Language DOM × Alignment Consistency
--- ============================================================================
-
-/-! ### Testing the alignment–DOM prediction against language data
-
-Languages with both an `AlignmentProfile` (from `Alignment.Typology`)
-and a DOM `MarkingPattern` can be tested: accusative
-alignment predicts DOM; ergative predicts DSM instead.
-
-- **Turkish**: accusative + DOM (definiteness-based) → consistent
-- **Russian**: accusative + DOM (animacy-based) → consistent
-- **Hindi-Urdu**: ergative NP alignment + DOM (ko) — addressed in §7b
-- **Spanish**: neutral NP alignment + DOM (a-marking) — DOM operates
-  independently of the alignment system (on top of a caseless base) -/
-
-/-- Turkish: accusative alignment → DOM expected; DOM present. -/
-theorem turkish_dom_consistent :
-    domExpected turkish.npAlignment ∧ HasAnyMarking turkishDOM :=
-  ⟨by decide, by decide⟩
-
-/-- Russian: accusative alignment → DOM expected; DOM present. -/
-theorem russian_dom_consistent :
-    domExpected russian.npAlignment ∧ HasAnyMarking russianDOM :=
-  ⟨by decide, by decide⟩
-
-/-- No-DOM languages with neutral alignment: DOM not expected,
-    and no DOM exists. Doubly consistent. -/
-theorem neutral_no_dom :
-    ¬ domExpected .neutral ∧ ¬ HasAnyMarking noDOM :=
-  ⟨by decide, by decide⟩
-
--- ============================================================================
--- § 7b: Split Ergativity × DOM Interaction
--- ============================================================================
-
-/-! ### Split ergativity creates alignment zones with different DOM predictions
-
-In split-ergative languages, alignment varies across conditions (aspect,
-animacy, person). Each zone has its own prediction:
-
-- **Accusative zone**: P is distinct → DOM expected
-- **Ergative zone**: P groups with S → DOM not expected (DSM instead)
-
-Hindi-Urdu is the key test case: perfective → ergative (subject gets
-`-ne`), imperfective → accusative. Per-zone PaIP prediction: DOM
-expected only in the imperfective. But Hindi's `-ko` marking applies
-in **both** aspects. The ko-marked object receives differential marking
-regardless of whether the clause is ergative or accusative.
-
-The split-ergativity × DOM interaction demonstrates that the same
-prominence hierarchies operate at two levels simultaneously:
-1. **Macro level**: aspect conditions the alignment split
-2. **Micro level**: animacy/definiteness conditions DOM within each zone -/
-
-/-- In a split-ergative system, DOM availability in each zone
-    tracks the alignment of that zone. -/
-def domInZone (family : AlignmentFamily) : Bool :=
-  match family with
-  | .accusative => true
-  | .ergative   => false
-
-/-- Hindi imperfective: accusative zone → DOM expected. -/
-theorem hindi_impfv_dom :
-    domInZone (hindiSplit.alignment .imperfective) = true := rfl
-
-/-- Hindi perfective: ergative zone → DOM not expected. -/
-theorem hindi_pfv_no_dom :
-    domInZone (hindiSplit.alignment .perfective) = false := rfl
-
-/-- Hindi actually has DOM (ko-marking) that applies across both
-    aspects. The empirical profile exceeds the per-zone prediction:
-    ko operates on top of the case system, not within it. -/
-theorem hindi_has_dom_across_aspects :
-    HasAnyMarking hindiDOM := by decide
-
-/-- Dyirbal's animacy-based split creates analogous zones: inanimates
-    get ergative alignment (DOM not expected), animates get accusative
-    (DOM expected). The split threshold and DOM threshold operate
-    over the same `AnimacyLevel` type. -/
-theorem dyirbal_split_dom_zones :
-    domInZone (dyirbalSplit.alignment .inanimate) = false ∧
-    domInZone (dyirbalSplit.alignment .human) = true := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 7c: Shared Prominence Scales
--- ============================================================================
-
-/-! ### Structural unity: same hierarchies condition both phenomena
-
-The animacy hierarchy operates in two independent grammatical systems:
-
-1. **Split ergativity** ([silverstein-1976]): `AnimacyLevel` determines
-   which NPs get ergative vs accusative alignment. In Dyirbal,
-   `inanimate → ergative`, `human/animate → accusative`.
-2. **DOM** ([aissen-2003]): `AnimacyLevel` determines which objects get
-   overt marking. In Spanish, definite human objects are marked, inanimates
-   unmarked.
-
-Both are monotone cutoffs on the **same** linearly ordered type. A change
-to `AnimacyLevel` propagates automatically to both systems. This is
-[comrie-1989]'s central methodological point: the same hierarchies
-recur across grammatical domains. -/
-
-/-- The animacy hierarchy governs both split ergativity and DOM.
-    Dyirbal uses it for the ergative split; Spanish uses it for DOM.
-    Both are monotone in the same ordered type. -/
-theorem animacy_governs_split_and_dom :
-    -- Split ergativity: inanimate below threshold (ergative)
-    dyirbalSplit.alignment .inanimate = .ergative ∧
-    -- Split ergativity: human above threshold (accusative)
-    dyirbalSplit.alignment .human = .accusative ∧
-    -- DOM: definite human objects obligatorily marked
-    spanishDOM .human .definite = true ∧
-    -- DOM: inanimate objects never obligatorily marked
-    spanishDOM .inanimate .definite = false := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Hindi-Urdu's bidimensional DOM uses BOTH prominence scales:
-    human objects need only indefinite-specific status for obligatory
-    ko-marking, while animates must be pronouns or proper names. The
-    staircase cutoff operates jointly on
-    `AnimacyLevel × DefinitenessLevel`. -/
-theorem hindi_bidimensional_dom :
-    -- Human + indefinite specific: marked
-    hindiDOM .human .indefiniteSpecific = true ∧
-    -- Animate + indefinite specific: NOT marked
-    hindiDOM .animate .indefiniteSpecific = false ∧
-    -- Animate + proper name: marked
-    hindiDOM .animate .properName = true ∧
-    -- Inanimate: never obligatorily marked regardless of definiteness
-    hindiDOM .inanimate .personalPronoun = false := ⟨rfl, rfl, rfl, rfl⟩
+/-- A control row's configuration: the control the causee retains and its position. -/
+structure Controlled where
+  /-- The control the causee retains. -/
+  control : Control
+  /-- The position the causee takes. -/
+  causee : CauseeSlot
+
+/-- The configuration a control row records. -/
+def Controlled.ofRow (row : LinguisticExample) : Option Controlled := do
+  guard (row.feature? "construction" = some "control")
+  return ⟨← parse? [("less", Control.less), ("more", .more)] row "control",
+    ← parse? [("directObject", .directObject), ("indirectObject", .indirectObject),
+      ("oblique", .oblique)] row "causee"⟩
+
+/-- The control hierarchy, (8)–(9) and (23)–(28): within a language, the causee retaining more
+control takes the position lower on the hierarchy, and a language offers the pair. -/
+theorem control_rows :
+    (∀ r₁ ∈ Examples.all, ∀ c₁ ∈ Controlled.ofRow r₁,
+      ∀ r₂ ∈ Examples.all.filter (·.language = r₁.language), ∀ c₂ ∈ Controlled.ofRow r₂,
+        c₁.control = .less → c₂.control = .more → c₂.causee < c₁.causee) ∧
+      ∃ r₁ ∈ Examples.all, ∃ r₂ ∈ Examples.all, r₁.language = r₂.language ∧
+        ∃ c₁ ∈ Controlled.ofRow r₁, ∃ c₂ ∈ Controlled.ofRow r₂,
+          c₁.control = .less ∧ c₂.control = .more := by
+  decide
+
+/-! ### Compactness and directness (§8.1) -/
+
+/-- The causative construction a row records: its formal complexity and its mediation. -/
+def CausativeConstruction.ofRow (row : LinguisticExample) : Option CausativeConstruction := do
+  guard (row.feature? "construction" = some "compactness")
+  return ⟨← parse? [("lexical", CausativeComplexity.lexical), ("morphological", .morphological),
+      ("analytic", .periphrastic)] row "complexity",
+    ← parse? [("direct", Mediation.direct), ("indirect", .indirect)] row "mediation", none, none⟩
+
+/-- Within a language, the more compact causative is the more appropriate to direct
+causation, Nivkh (6)–(7) and the English *broke* ~ *brought it about* pair: the substrate's
+monotonicity on every pair of rows, and a pair strictly ordered on both scales. -/
+theorem compactness_rows :
+    (∀ r₁ ∈ Examples.all, ∀ c₁ ∈ CausativeConstruction.ofRow r₁,
+      ∀ r₂ ∈ Examples.all.filter (·.language = r₁.language),
+        ∀ c₂ ∈ CausativeConstruction.ofRow r₂, c₁.ComrieMonotone c₂) ∧
+      ∃ r₁ ∈ Examples.all, ∃ r₂ ∈ Examples.all, r₁.language = r₂.language ∧
+        ∃ c₁ ∈ CausativeConstruction.ofRow r₁, ∃ c₂ ∈ CausativeConstruction.ofRow r₂,
+          c₁.complexity < c₂.complexity ∧ c₁.mediation < c₂.mediation := by
+  decide
+
+/-! ### Subject as a prototype (chapter 5) -/
+
+/-- Which argument of a transitive clause a construction groups with S: A, P, or neither,
+where either may be omitted. -/
+inductive Grouping
+  | withA | withP | neither
+  deriving DecidableEq, Repr, Fintype
+
+/-- The constructions tested. -/
+inductive Test
+  | coordination | imperative | indirectCommand | resultative | infinitive
+  deriving DecidableEq, Repr, Fintype
+
+/-- The prototype's prediction: a construction tied to agents, the deletion of an imperative's
+addressee or of the recipient of an indirect command, and a control complement such as the
+Chukchi infinitive construction, favour S with A; one tied to affected participants, the
+resultative, favours S with P; coordination, tied to neither, is free to vary (§5.3–§5.4). -/
+def Test.bias : Test → Option Grouping
+  | .imperative | .indirectCommand | .infinitive => some .withA
+  | .resultative => some .withP
+  | .coordination => none
+
+/-- A grouping row's configuration. -/
+structure Grouped where
+  /-- The construction. -/
+  test : Test
+  /-- The grouping it shows. -/
+  grouping : Grouping
+
+/-- The configuration a grouping row records. -/
+def Grouped.ofRow (row : LinguisticExample) : Option Grouped := do
+  guard (row.feature? "construction" = some "grouping")
+  return ⟨← parse? [("coordination", Test.coordination), ("imperative", .imperative),
+      ("indirectCommand", .indirectCommand), ("resultative", .resultative),
+      ("infinitive", .infinitive)] row "test",
+    ← parse? [("withA", Grouping.withA), ("withP", .withP), ("neither", .neither)] row
+      "grouping"⟩
+
+/-- The imperative groups S with A in every language with rows, Dyirbal included, the Nivkh
+resultative groups S with P, and yet each bias is a tendency: the English resultative keeps
+its A, and Dyirbal's indirect commands, agent-tied like its imperatives, keep S with P. -/
+theorem bias_rows :
+    (∀ row ∈ Examples.all, ∀ g ∈ Grouped.ofRow row, g.test = .imperative →
+      g.grouping = .withA) ∧
+      (∃ row ∈ Examples.all, ∃ g ∈ Grouped.ofRow row,
+        g.test = .resultative ∧ g.grouping = .withP) ∧
+      ∀ b : Grouping, b ≠ .neither → ∃ row ∈ Examples.all, ∃ g ∈ Grouped.ofRow row,
+        g.test.bias = some b ∧ g.grouping ≠ b := by
+  decide
+
+/-- Coordination, tied to neither prototype property, realizes every grouping: S with A in
+English, S with P in Dyirbal, neither in Chukchi. -/
+theorem coordination_rows : ∀ gr : Grouping, ∃ row ∈ Examples.all, ∃ g ∈ Grouped.ofRow row,
+    g.test = .coordination ∧ g.grouping = gr := by
+  decide
+
+/-- A language can be mixed: Chukchi's coordination restricts nothing while its infinitive
+construction groups S with A. -/
+theorem mixed_rows : ∃ r₁ ∈ Examples.all, ∃ r₂ ∈ Examples.all, r₁.language = r₂.language ∧
+    ∃ g₁ ∈ Grouped.ofRow r₁, ∃ g₂ ∈ Grouped.ofRow r₂, g₁.grouping ≠ g₂.grouping := by
+  decide
 
 end Comrie1989
