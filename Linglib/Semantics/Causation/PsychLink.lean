@@ -6,9 +6,9 @@ import Linglib.Semantics.Conditionals.Counterfactual
 /-!
 # Psych Verb Causal Links
 
-[kim-2024] [allen-1983] [bach-1986] Formal integration of [kim-2024]'s maintenance relation with existing [lewis-1973]
-infrastructure: temporal intervals, event sorts,
-and counterfactual semantics.
+Formal integration of [kim-2024]'s maintenance relation with existing infrastructure:
+[allen-1983]'s temporal intervals, [bach-1986]'s event sorts, and [lewis-1973]'s
+counterfactual semantics.
 
 Kim's core claim: stative Class II psych verbs involve a
 **maintenance** causal relation, not eventive causation. The two flavors
@@ -22,7 +22,7 @@ differ along three dimensions:
 | Counterfactual | effect persists after cause ceases | effect ceases with cause |
 
 The first three properties are formalized using existing Linglib types:
-`Event.Kind`, `NonemptyInterval.precedes`/`.overlaps`.
+`Event.Kind`, `Interval.Precedes` and `Disjoint`.
 The fourth uses `universalCounterfactual` from `Counterfactual.lean`.
 
 ## Key results
@@ -57,7 +57,7 @@ structure PsychCausalLink (T : Type*) [LinearOrder T] where
       Maintenance: [CAUSE [STATE]] — no. -/
   involvesTransition : Bool
   /-- Temporal constraint on the runtimes of cause and effect -/
-  temporalConstraint : NonemptyInterval T → NonemptyInterval T → Prop
+  temporalConstraint : Interval T → Interval T → Prop
 
 /-! ### Eventive and Maintenance Links -/
 
@@ -71,7 +71,7 @@ def eventiveLink (T : Type*) [LinearOrder T] : PsychCausalLink T :=
   { causeSort := .action
     effectSort := .action
     involvesTransition := true
-    temporalConstraint := NonemptyInterval.precedes }
+    temporalConstraint := Interval.Precedes }
 
 /-- Maintenance causation: a mental representation MAINTAINS a
     psychological state. Cause and effect are temporally contemporaneous.
@@ -89,7 +89,7 @@ def maintenanceLink (T : Type*) [LinearOrder T] : PsychCausalLink T :=
   { causeSort := .state
     effectSort := .state
     involvesTransition := false
-    temporalConstraint := NonemptyInterval.overlaps }
+    temporalConstraint := λ s t => ¬ Disjoint s t }
 
 /-! ### CausalSource → PsychCausalLink -/
 
@@ -104,30 +104,30 @@ def CausalSource.toLink (T : Type*) [LinearOrder T] :
 /-! ### Temporal Theorems -/
 
 /-- Maintenance is temporally symmetric: if cause overlaps effect,
-    effect overlaps cause. Delegates to `NonemptyInterval.overlaps_symm`. -/
+    effect overlaps cause. -/
 theorem maintenance_temporal_symmetric {T : Type*} [LinearOrder T]
-    (i₁ i₂ : NonemptyInterval T)
-    (h : (maintenanceLink T).temporalConstraint i₁ i₂) :
-    (maintenanceLink T).temporalConstraint i₂ i₁ :=
-  NonemptyInterval.overlaps_symm h
+    (s t : Interval T)
+    (h : (maintenanceLink T).temporalConstraint s t) :
+    (maintenanceLink T).temporalConstraint t s :=
+  λ hd => h hd.symm
 
 /-- Eventive causation is temporally irreflexive: no eventuality
-    can precede itself. Delegates to `NonemptyInterval.precedes_irrefl`. -/
+    can precede itself. -/
 theorem eventive_temporal_irrefl {T : Type*} [LinearOrder T]
     (i : NonemptyInterval T) :
-    ¬ (eventiveLink T).temporalConstraint i i :=
-  NonemptyInterval.precedes_irrefl i
+    ¬ (eventiveLink T).temporalConstraint ↑i ↑i :=
+  λ h => NonemptyInterval.precedes_irrefl i (Interval.precedes_coe_coe.1 h)
 
 /-- Precedence and overlap are mutually exclusive: if cause precedes
     effect, they cannot overlap. This is the structural basis for the
     eventive/stative dichotomy — the two temporal configurations are
-    incompatible for any given pair of eventualities.
-    Delegates to `NonemptyInterval.precedes_not_overlaps`. -/
+    incompatible for any given pair of eventualities. -/
 theorem precedes_excludes_overlap {T : Type*} [LinearOrder T]
     (i₁ i₂ : NonemptyInterval T)
-    (h : (eventiveLink T).temporalConstraint i₁ i₂) :
-    ¬ (maintenanceLink T).temporalConstraint i₁ i₂ :=
-  NonemptyInterval.precedes_not_overlaps h
+    (h : (eventiveLink T).temporalConstraint ↑i₁ ↑i₂) :
+    ¬ (maintenanceLink T).temporalConstraint ↑i₁ ↑i₂ :=
+  λ hn => NonemptyInterval.precedes_not_overlaps (Interval.precedes_coe_coe.1 h)
+    (Interval.not_disjoint_coe_coe.1 hn)
 
 /-! ### Event Sort Properties -/
 
@@ -232,7 +232,7 @@ theorem dependent_excludes_persistent {W : Type*} [DecidableEq W] [Fintype W]
     [kim-2024], formalized using existing infrastructure:
 
     (a) Relates two eventualities — both are states (`Event.Kind.state`)
-    (b) Temporal contemporaneity — `NonemptyInterval.overlaps`
+    (b) Temporal contemporaneity — the runtimes are not disjoint
     (c) No transition — effect is a persisting state, not a change
 
     Property (c) is formalized structurally (no BECOME) rather than
@@ -246,7 +246,7 @@ theorem maintenance_three_properties {T : Type*} [LinearOrder T] :
     (maintenanceLink T).causeSort = .state ∧
     (maintenanceLink T).effectSort = .state ∧
     -- (b) Temporal contemporaneity (overlaps, not precedes)
-    (maintenanceLink T).temporalConstraint = NonemptyInterval.overlaps ∧
+    (maintenanceLink T).temporalConstraint = (λ s t => ¬ Disjoint s t) ∧
     -- (c) No transition (no BECOME)
     (maintenanceLink T).involvesTransition = false :=
   ⟨rfl, rfl, rfl, rfl⟩
