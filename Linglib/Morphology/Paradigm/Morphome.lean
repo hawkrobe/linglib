@@ -81,7 +81,8 @@ theorem isMorphome_syncretismClass (p : Cell → F) (Natural : Set Cell → Prop
 /-! ### Shared exponents in segmented realizations
 
 Whole-form kernels cannot see a *piece* shared across cells whose full
-forms differ (Chuj -aj inside *-chaj* and *-waj*, `Studies/Coon2019`).
+forms differ (a suffix shared by two segmented stems, like Chuj -aj
+inside *-chaj* and *-waj*).
 For a realization map valued in exponent sequences, `exponentCells`
 tracks a piece's distribution; whether that distribution is a natural
 class is then the same question `IsMorphome` asks of whole-form

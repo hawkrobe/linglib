@@ -15,10 +15,7 @@ separate and arity-free — positional roots cross-cut the transitiviser
 classes rather than forming a fourth case.
 
 Originates with [lucy-1994] (Yucatec `=t`, `=∅`, `=s`); the Yucatec
-instantiation with attested derivations is `Studies/Lucy1994.lean`, and
-`Studies/Coon2019.lean` consumes the annotation-level hom
-(`Classification.salienceClass` in `Verb/Root/Classification.lean`) for
-the Chuj root classes.
+instantiation with attested derivations is `Studies/Lucy1994.lean`.
 
 ## Main declarations
 
