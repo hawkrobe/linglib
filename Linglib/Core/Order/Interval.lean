@@ -311,11 +311,37 @@ theorem isLeast_Ici : IsLeast (↑(Ici a) : Set (WithTop α)) ↑a := isLeast_co
 @[simp] theorem pure_le_Ici : pure (↑b : WithTop α) ≤ Ici a ↔ a ≤ b := by
   simp
 
+/-- An interval lies within the ray from `a` exactly when all its times are at or after `a`. -/
+theorem le_Ici_iff {s : Interval (WithTop α)} : s ≤ Ici a ↔ ∀ x ∈ s, ↑a ≤ x := by
+  simp [← coe_subset_coe, Set.subset_def]
+
+/-- A bounded interval lies within the ray from `a` exactly when it starts at or after `a`. -/
+theorem withTop_le_Ici : (↑i.withTop : Interval (WithTop α)) ≤ Ici a ↔ a ≤ i.fst := by
+  simp only [coe_le_iff, NonemptyInterval.fst_withTop, NonemptyInterval.snd_withTop, mem_Ici,
+    WithTop.coe_le_coe]
+  exact ⟨And.left, λ h => ⟨h, le_trans h i.fst_le_snd⟩⟩
+
 /-- A bounded interval precedes the ray from `a` exactly when it ends before `a`. -/
 theorem precedes_withTop_Ici :
     (↑i.withTop : Interval (WithTop α)).Precedes (Ici a) ↔ i.snd < a := by
   rw [Ici, precedes_coe_coe]; simp [NonemptyInterval.precedes]
 
+/-- A bounded interval precedes the point `a` exactly when it ends before `a`. -/
+theorem precedes_withTop_pure :
+    (↑i.withTop : Interval (WithTop α)).Precedes (pure ↑a) ↔ i.snd < a := by
+  rw [pure, precedes_coe_coe]; simp [NonemptyInterval.precedes]
+
 end WithTop
+
+section WithTopLattice
+
+variable {α : Type*} [Lattice α] {i : NonemptyInterval α} {a : α}
+
+/-- A bounded interval meets the ray from `a` exactly when it ends at or after `a`. -/
+theorem not_disjoint_withTop_Ici :
+    ¬ Disjoint (↑i.withTop : Interval (WithTop α)) (Ici a) ↔ a ≤ i.snd := by
+  rw [Ici, not_disjoint_coe_coe]; simp [NonemptyInterval.overlaps]
+
+end WithTopLattice
 
 end Interval

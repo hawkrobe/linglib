@@ -19,6 +19,8 @@ the stative clause.
 ## Main results
 
 * `Aspect.At.mono` — instantiation of an eventuality is monotone in the interval.
+* `Aspect.at_Ici_eventive_iff`, `Aspect.at_Ici_stative_iff` — instantiation at a ray: the event
+  starts no earlier, the state persists at or past.
 * `Aspect.at_eventive_withTop_iff_prfv` — on a bounded interval, eventive instantiation is
   `PRFV`.
 
@@ -76,6 +78,16 @@ theorem At.mono (hQ : Q.IsEventuality) (h : r ≤ r') (hr : At r w Q) : At r' w 
     obtain ⟨e, he, hd⟩ := hr
     exact ⟨e, he, λ hd' => hd (hd'.mono_right h)⟩
   | temporal R => exact hQ.elim
+
+/-- An event is instantiated at the ray from `t` when it starts no earlier than `t`. -/
+@[simp] theorem at_Ici_eventive_iff {t : T} :
+    At (Interval.Ici t) w (.eventive P) ↔ ∃ e, P w e ∧ t ≤ e.τ.fst := by
+  simp [At, Interval.withTop_le_Ici]
+
+/-- A state is instantiated at the ray from `t` when it persists at or past `t`. -/
+@[simp] theorem at_Ici_stative_iff {t : T} :
+    At (Interval.Ici t) w (.stative P) ↔ ∃ e, P w e ∧ t ≤ e.τ.snd := by
+  simp [At, Interval.not_disjoint_withTop_Ici]
 
 /-- On a bounded interval, eventive instantiation is the perfective viewpoint. -/
 theorem at_eventive_withTop_iff_prfv {i : NonemptyInterval T} :

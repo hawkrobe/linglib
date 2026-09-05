@@ -82,11 +82,11 @@ def WOLL (MB : W → T → Set W) (Q : SortedProperty W T) : SortedProperty W T 
   .temporal λ w t => ∃ t₀ : T, IsLeast (t : Set (WithTop T)) ↑t₀ ∧
     ∀ w' ∈ MB w t₀, At (Interval.Ici t₀) w' Q
 
-/-- A frame adverbial such as *yesterday*: instantiation within the intersection of the
-reference interval with the period named, undefined on properties of times. -/
-def frame (period : Interval (WithTop T)) : SortedProperty W T → Option (SortedProperty W T)
-  | .temporal _ => none
-  | Q => some (.temporal λ w t => At (t ⊓ period) w Q)
+/-- A frame adverbial such as *yesterday*, on a property of eventualities: instantiation within
+the intersection of the reference interval with the period named. The paper leaves it undefined
+on properties of times, which the theorems carry as `IsEventuality`. -/
+def frame (period : Interval (WithTop T)) (Q : SortedProperty W T) : SortedProperty W T :=
+  .temporal λ w t => At (t ⊓ period) w Q
 
 /-- *Already*, *yet* and *still*: the identity on properties of states and of times, undefined
 on properties of events. -/
@@ -94,48 +94,65 @@ def phase : SortedProperty W T → Option (SortedProperty W T)
   | .eventive _ => none
   | Q => some Q
 
-/-- A frame adverbial applies to a property of eventualities. -/
-theorem isEventuality_of_frame {period : Interval (WithTop T)} (hf : frame period Q = some Q') :
-    Q.IsEventuality := by
-  cases Q <;> trivial
-
-/-- Instantiation of the framed property is instantiation within the period. -/
-theorem at_of_frame {period : Interval (WithTop T)} (hf : frame period Q = some Q')
-    (h : At r w Q') : At (r ⊓ period) w Q := by
-  cases Q <;> cases hf <;> exact h
-
-/-! ### The three readings -/
+/-! ### Characterizations -/
 
 variable {MB : W → T → Set W} {now : T}
+
+/-- MAY at a nonempty interval: the base is taken at the interval's start. -/
+theorem at_coe_may_iff {i : NonemptyInterval (WithTop T)} :
+    At ↑i w (MAY MB Q) ↔ ∃ t₀ : T, i.fst = ↑t₀ ∧ ∃ w' ∈ MB w t₀, At (Interval.Ici t₀) w' Q :=
+  exists_congr λ _ => and_congr_left λ _ =>
+    ⟨λ h => (h.unique Interval.isLeast_coe_fst).symm, λ h => h ▸ Interval.isLeast_coe_fst⟩
+
+/-- MAY at the present: some world of the base at the present has the property throughout the
+forward interval. -/
+@[simp] theorem pres_may_iff :
+    PRES now (MAY MB Q) w ↔ ∃ w' ∈ MB w now, At (Interval.Ici now) w' Q := by
+  rw [PRES, Interval.pure, at_coe_may_iff]
+  constructor
+  · rintro ⟨t₀, ht₀, h⟩
+    obtain rfl : t₀ = now := (WithTop.coe_eq_coe.1 ht₀).symm
+    exact h
+  · exact λ h => ⟨now, rfl, h⟩
+
+/-- The perfect of an event at a ray: the event ended before the ray starts. -/
+@[simp] theorem at_Ici_perf_eventive_iff {t : T} :
+    At (Interval.Ici t) w (PERF (.eventive P)) ↔ ∃ e, P w e ∧ e.τ.snd < t := by
+  constructor
+  · rintro ⟨t', ht', e, he, hle⟩
+    exact ⟨e, he, WithTop.coe_lt_coe.1
+      (ht' (Interval.coe_le_iff.1 hle).2 (Interval.mem_Ici.2 le_rfl))⟩
+  · rintro ⟨e, he, h⟩
+    exact ⟨e.τ.withTop, Interval.precedes_withTop_Ici.2 h, e, he, le_rfl⟩
+
+/-- The perfect over MAY at the present: some past time has, in some world of the base at that
+time, the property throughout that time's forward interval. -/
+@[simp] theorem pres_perf_may_iff :
+    PRES now (PERF (MAY MB Q)) w ↔ ∃ t' < now, ∃ w' ∈ MB w t', At (Interval.Ici t') w' Q := by
+  constructor
+  · rintro ⟨i, hi, hat⟩
+    obtain ⟨t', hfst, w', hw', h⟩ := at_coe_may_iff.1 hat
+    refine ⟨t', WithTop.coe_lt_coe.1 (hi ?_ (Interval.mem_pure.2 rfl)), w', hw', h⟩
+    exact hfst ▸ Interval.isLeast_coe_fst.1
+  · rintro ⟨t', ht', w', hw', h⟩
+    exact ⟨(NonemptyInterval.pure t').withTop, Interval.precedes_withTop_pure.2 ht',
+      at_coe_may_iff.2 ⟨t', rfl, w', hw', h⟩⟩
+
+/-! ### The three readings -/
 
 /-- A modal for the present with an eventive predicate, *he might run*: some world of the base
 at the present has the event starting no earlier than the present. Future orientation is
 obligatory. -/
 theorem pres_may_eventive_iff :
     PRES now (MAY MB (.eventive P)) w ↔ ∃ w' ∈ MB w now, ∃ e, P w' e ∧ now ≤ e.τ.fst := by
-  simp only [PRES, MAY, At, Interval.coe_le_iff, NonemptyInterval.fst_withTop,
-    NonemptyInterval.snd_withTop, Interval.mem_Ici, WithTop.coe_le_coe]
-  constructor
-  · rintro ⟨t₀, ht₀, w', hw', e, he, h, -⟩
-    obtain rfl : t₀ = now := WithTop.coe_eq_coe.1 (ht₀.unique Interval.isLeast_pure)
-    exact ⟨w', hw', e, he, h⟩
-  · rintro ⟨w', hw', e, he, h⟩
-    exact ⟨now, Interval.isLeast_pure, w', hw', e, he, h, le_trans h e.τ.fst_le_snd⟩
+  simp
 
 /-- A modal for the present with a stative predicate, *he might be here*: some world of the base
 at the present has the state persisting at or past the present. The state may have started
 earlier, so future orientation is optional. -/
 theorem pres_may_stative_iff :
     PRES now (MAY MB (.stative P)) w ↔ ∃ w' ∈ MB w now, ∃ e, P w' e ∧ now ≤ e.τ.snd := by
-  simp only [PRES, MAY, At, Interval.not_disjoint_iff, NonemptyInterval.mem_coe_interval,
-    NonemptyInterval.mem_withTop, Interval.mem_Ici]
-  constructor
-  · rintro ⟨t₀, ht₀, w', hw', e, he, x, ⟨-, hx⟩, hx'⟩
-    obtain rfl : t₀ = now := WithTop.coe_eq_coe.1 (ht₀.unique Interval.isLeast_pure)
-    exact ⟨w', hw', e, he, WithTop.coe_le_coe.1 (le_trans hx' hx)⟩
-  · rintro ⟨w', hw', e, he, h⟩
-    exact ⟨now, Interval.isLeast_pure, w', hw', e, he, ↑e.τ.snd,
-      ⟨WithTop.coe_le_coe.2 e.τ.fst_le_snd, le_rfl⟩, WithTop.coe_le_coe.2 h⟩
+  simp
 
 /-- The modal over the perfect, *he may have won*: some world of the base at the present has
 the event ending before the present. Present perspective, past orientation: the epistemic
@@ -143,15 +160,7 @@ reading. -/
 theorem pres_may_perf_eventive_iff :
     PRES now (MAY MB (PERF (.eventive P))) w ↔
       ∃ w' ∈ MB w now, ∃ e, P w' e ∧ e.τ.snd < now := by
-  simp only [PRES, MAY, PERF, At]
-  constructor
-  · rintro ⟨t₀, ht₀, w', hw', t', ht', e, he, hle⟩
-    obtain rfl : t₀ = now := WithTop.coe_eq_coe.1 (ht₀.unique Interval.isLeast_pure)
-    refine ⟨w', hw', e, he, WithTop.coe_lt_coe.1 (ht' ?_ (Interval.mem_Ici.2 le_rfl))⟩
-    exact (Interval.coe_le_iff.1 hle).2
-  · rintro ⟨w', hw', e, he, h⟩
-    exact ⟨now, Interval.isLeast_pure, w', hw', e.τ.withTop,
-      Interval.precedes_withTop_Ici.2 h, e, he, le_rfl⟩
+  simp
 
 /-- The perfect over the modal, *he might have won*: some past time has, in some world of the
 base at that time, the event starting no earlier than it. Past perspective, future
@@ -159,40 +168,31 @@ orientation: the counterfactual reading, Mondadori's future in the past. -/
 theorem pres_perf_may_eventive_iff :
     PRES now (PERF (MAY MB (.eventive P))) w ↔
       ∃ t' < now, ∃ w' ∈ MB w t', ∃ e, P w' e ∧ t' ≤ e.τ.fst := by
-  simp only [PRES, PERF, MAY, At, Interval.coe_le_iff, NonemptyInterval.fst_withTop,
-    NonemptyInterval.snd_withTop, Interval.mem_Ici, WithTop.coe_le_coe]
-  constructor
-  · rintro ⟨t'', ht'', t', ht', w', hw', e, he, h, -⟩
-    refine ⟨t', ?_, w', hw', e, he, h⟩
-    exact WithTop.coe_lt_coe.1 (ht'' ht'.1 (Interval.mem_pure.2 rfl))
-  · rintro ⟨t', ht', w', hw', e, he, h⟩
-    exact ⟨(NonemptyInterval.pure t').withTop,
-      Interval.precedes_coe_coe.2 (WithTop.coe_lt_coe.2 ht'), t', Interval.isLeast_pure, w',
-      hw', e, he, h, le_trans h e.τ.fst_le_snd⟩
+  simp
 
 /-! ### Frame adverbials -/
 
 /-- A modal for the present rejects a period wholly before the present, *he may win
 yesterday*: the forward interval meets it in the null interval. -/
-theorem frame_modal_past {period : Interval (WithTop T)}
-    (hp : period.Precedes (Interval.Ici now)) (hf : frame period Q = some Q') :
-    ¬ PRES now (MAY MB Q') w := by
-  rintro ⟨t₀, ht₀, w', -, h⟩
-  obtain rfl : t₀ = now := WithTop.coe_eq_coe.1 (ht₀.unique Interval.isLeast_pure)
-  obtain ⟨x, hx⟩ := exists_mem_of_at (isEventuality_of_frame hf) (at_of_frame hf h)
+theorem frame_modal_past (hQ : Q.IsEventuality) {period : Interval (WithTop T)}
+    (hp : period.Precedes (Interval.Ici now)) : ¬ PRES now (MAY MB (frame period Q)) w := by
+  simp only [pres_may_iff]
+  rintro ⟨w', -, h⟩
+  obtain ⟨x, hx⟩ := exists_mem_of_at hQ h
   simp only [Interval.mem_inf] at hx
   exact lt_irrefl _ (hp hx.2 hx.1)
 
 /-- The modal over the perfect rejects a period lying at or after the present, *he must have
 been available next month* and *it must have been raining now*: the interval the perfect
 supplies precedes the present, and so the period. -/
-theorem frame_modalPerf_nonpast {period : Interval (WithTop T)} (hp : ∀ y ∈ period, ↑now ≤ y)
-    (hf : frame period Q = some Q') : ¬ PRES now (MAY MB (PERF Q')) w := by
-  rintro ⟨t₀, ht₀, w', -, t', ht', h⟩
-  obtain rfl : t₀ = now := WithTop.coe_eq_coe.1 (ht₀.unique Interval.isLeast_pure)
-  obtain ⟨x, hx⟩ := exists_mem_of_at (isEventuality_of_frame hf) (at_of_frame hf h)
+theorem frame_modalPerf_nonpast (hQ : Q.IsEventuality) {period : Interval (WithTop T)}
+    (hp : period ≤ Interval.Ici now) : ¬ PRES now (MAY MB (PERF (frame period Q))) w := by
+  simp only [pres_may_iff]
+  rintro ⟨w', -, t', ht', h⟩
+  obtain ⟨x, hx⟩ := exists_mem_of_at hQ h
   simp only [Interval.mem_inf] at hx
-  exact lt_irrefl _ (lt_of_lt_of_le (ht' hx.1 (Interval.mem_Ici.2 le_rfl)) (hp _ hx.2))
+  exact lt_irrefl _
+    (lt_of_lt_of_le (ht' hx.1 (Interval.mem_Ici.2 le_rfl)) (Interval.le_Ici_iff.1 hp _ hx.2))
 
 /-! ### Live options shrink -/
 
@@ -203,19 +203,16 @@ whose presupposition is a prior negative phase, cannot, *he may already win*; re
 is why *he may win this game* is false once he has lost. -/
 theorem may_antitone {history : HistoricalAlternatives W T}
     (hBC : history.backwardsClosed) (hQ : Q.IsEventuality) :
-    Antitone λ t : T => At (Interval.pure ↑t) w (MAY (metaphysicalBase history) Q) := by
-  rintro t' t h ⟨t₀, ht₀, w', hw', hat⟩
-  obtain rfl : t₀ = t := WithTop.coe_eq_coe.1 (ht₀.unique Interval.isLeast_pure)
-  exact ⟨t', Interval.isLeast_pure, w', metaphysicalBase_antitone hBC w h hw',
-    hat.mono hQ (Interval.antitone_Ici h)⟩
+    Antitone λ t : T => PRES t (MAY (metaphysicalBase history) Q) w := by
+  simp only [pres_may_iff]
+  rintro t' t h ⟨w', hw', hat⟩
+  exact ⟨w', metaphysicalBase_antitone hBC w h hw', hat.mono hQ (Interval.antitone_Ici h)⟩
 
 /-- The prior-phase half of Löbner's presupposition of *already*: a prior negative phase. -/
-def AlreadyPresup (Q : SortedProperty W T) (w : W) (now : T) : Prop :=
-  ∃ t' < now, ¬ At (Interval.pure ↑t') w Q
+def AlreadyPresup (Q : SortedProperty W T) (w : W) (now : T) : Prop := ∃ t' < now, ¬ PRES t' Q w
 
 /-- The prior-phase half of Löbner's presupposition of *still*: a prior positive phase. -/
-def StillPresup (Q : SortedProperty W T) (w : W) (now : T) : Prop :=
-  ∃ t' < now, At (Interval.pure ↑t') w Q
+def StillPresup (Q : SortedProperty W T) (w : W) (now : T) : Prop := ∃ t' < now, PRES t' Q w
 
 /-- *He may already win*: the presupposition of *already* over a metaphysical possibility
 contradicts its assertion. -/
@@ -275,12 +272,9 @@ theorem settled_perf {history : HistoricalAlternatives W T} (h : FixesPast histo
 /-- Instantiation at the present, a stative with *now*, is settled in every common ground: the
 forward interval restricted to the present is the present. -/
 theorem settled_present {history : HistoricalAlternatives W T} (h : FixesPast history Q)
-    (hf : frame (Interval.pure ↑t) Q = some Q') (cg : Set W) :
-    settled history cg t (λ w => At (Interval.Ici t) w Q') := by
-  intro w _ w' hw'
-  cases Q <;> cases hf
-  all_goals
-    exact h t w w' hw' _ λ x hx => (Interval.mem_pure.1 (Interval.mem_inf.1 hx).2).le
+    (cg : Set W) (t : T) :
+    settled history cg t (λ w => At (Interval.Ici t) w (frame (Interval.pure ↑t) Q)) :=
+  λ w _ w' hw' => h t w w' hw' _ λ _ hx => (Interval.mem_pure.1 (Interval.mem_inf.1 hx).2).le
 
 omit [LinearOrder T] in
 /-- A common ground that settles a property fails the diversity condition for the metaphysical
@@ -307,8 +301,7 @@ theorem counterfactual_outside_cg {history : HistoricalAlternatives W T} {cg : S
     (hcf : PRES t₀ (PERF (MAY (metaphysicalBase history) Q)) w)
     (hnow : ∀ t' < t₀, ∀ w' ∈ metaphysicalBase history w t₀, ¬ At (Interval.Ici t') w' Q) :
     ∃ t' < t₀, ∃ w' ∉ cg, w' ∈ metaphysicalBase history w t' ∧ At (Interval.Ici t') w' Q := by
-  obtain ⟨t'', ht'', t', ht', w', hw', hat⟩ := hcf
-  have hlt : t' < t₀ := WithTop.coe_lt_coe.1 (ht'' ht'.1 (Interval.mem_pure.2 rfl))
+  obtain ⟨t', hlt, w', hw', hat⟩ := pres_perf_may_iff.1 hcf
   exact ⟨t', hlt, w', h w hw t' hlt.le w' hw' (λ hmem => hnow t' hlt w' hmem hat), hw', hat⟩
 
 /-! ### Perspective and orientation -/
@@ -379,7 +372,7 @@ def Scope.zones : Scope → Finset Zone
 /-- In the model, the scoping's sentence about a winning on the zone's day, framed by that day
 and uttered on day 0, is true. -/
 def Scope.Sat (s : Scope) (z : Zone) : Prop :=
-  ∃ Q ∈ frame z.period (.eventive (winOn z.day)), PRES 0 (s.lf anyWorld Q) ()
+  PRES 0 (s.lf anyWorld (frame z.period (.eventive (winOn z.day)))) ()
 
 private theorem winOn_at (d : ℤ) {r : Interval (WithTop ℤ)} (h : Interval.pure ↑d ≤ r) :
     At r () (.eventive (winOn d)) :=
@@ -390,37 +383,29 @@ sentence about that period can be true, the deviant cells being `frame_modal_pas
 `frame_modalPerf_nonpast`, the others witnessed. -/
 theorem zones_iff : ∀ s : Scope, ∀ z : Zone, z ∈ s.zones ↔ s.Sat z := by
   intro s z
-  cases s <;> cases z
-  · refine iff_of_false (by decide) ?_
-    rintro ⟨Q, hQ, h⟩
-    refine frame_modal_past ?_ (Option.mem_def.1 hQ) h
-    exact λ x hx y hy => lt_of_le_of_lt (Interval.mem_pure.1 hx).le
-      (lt_of_lt_of_le (WithTop.coe_lt_coe.2 (by decide)) (Interval.mem_Ici.1 hy))
-  · exact iff_of_true (by decide) ⟨_, rfl, 0, Interval.isLeast_pure, (), trivial,
-      winOn_at 0 (le_inf (Interval.pure_le_Ici.2 le_rfl) le_rfl)⟩
-  · exact iff_of_true (by decide) ⟨_, rfl, 0, Interval.isLeast_pure, (), trivial,
-      winOn_at 1 (le_inf (Interval.pure_le_Ici.2 (by decide)) le_rfl)⟩
-  · exact iff_of_true (by decide) ⟨_, rfl, 0, Interval.isLeast_pure, (), trivial,
+  cases s <;> cases z <;> simp only [Scope.Sat, Scope.lf]
+  · refine iff_of_false (by decide) (frame_modal_past ?_ λ x hx y hy => ?_)
+    · trivial
+    · exact lt_of_le_of_lt (Interval.mem_pure.1 hx).le
+        (lt_of_lt_of_le (WithTop.coe_lt_coe.2 (by decide)) (Interval.mem_Ici.1 hy))
+  · exact iff_of_true (by decide) (pres_may_iff.2 ⟨(), trivial,
+      winOn_at 0 (le_inf (Interval.pure_le_Ici.2 le_rfl) le_rfl)⟩)
+  · exact iff_of_true (by decide) (pres_may_iff.2 ⟨(), trivial,
+      winOn_at 1 (le_inf (Interval.pure_le_Ici.2 (by decide)) le_rfl)⟩)
+  · exact iff_of_true (by decide) (pres_may_iff.2 ⟨(), trivial,
       (NonemptyInterval.pure (-1)).withTop, Interval.precedes_withTop_Ici.2 (by decide),
-      winOn_at (-1) (le_inf le_rfl le_rfl)⟩
-  · refine iff_of_false (by decide) ?_
-    rintro ⟨Q, hQ, h⟩
-    exact frame_modalPerf_nonpast (λ y hy => (Interval.mem_pure.1 hy).ge) (Option.mem_def.1 hQ)
-      h
-  · refine iff_of_false (by decide) ?_
-    rintro ⟨Q, hQ, h⟩
-    refine frame_modalPerf_nonpast (λ y hy => ?_) (Option.mem_def.1 hQ) h
-    rw [Interval.mem_pure.1 hy]
-    exact WithTop.coe_le_coe.2 (by decide)
-  · exact iff_of_true (by decide) ⟨_, rfl, (NonemptyInterval.pure (-1)).withTop,
-      Interval.precedes_coe_coe.2 (by decide), -1, Interval.isLeast_pure, (), trivial,
-      winOn_at (-1) (le_inf (Interval.pure_le_Ici.2 le_rfl) le_rfl)⟩
-  · exact iff_of_true (by decide) ⟨_, rfl, (NonemptyInterval.pure (-1)).withTop,
-      Interval.precedes_coe_coe.2 (by decide), -1, Interval.isLeast_pure, (), trivial,
-      winOn_at 0 (le_inf (Interval.pure_le_Ici.2 (by decide)) le_rfl)⟩
-  · exact iff_of_true (by decide) ⟨_, rfl, (NonemptyInterval.pure (-1)).withTop,
-      Interval.precedes_coe_coe.2 (by decide), -1, Interval.isLeast_pure, (), trivial,
-      winOn_at 1 (le_inf (Interval.pure_le_Ici.2 (by decide)) le_rfl)⟩
+      winOn_at (-1) (le_inf le_rfl le_rfl)⟩)
+  · refine iff_of_false (by decide) (frame_modalPerf_nonpast ?_ (Interval.pure_le_Ici.2 le_rfl))
+    trivial
+  · refine iff_of_false (by decide)
+      (frame_modalPerf_nonpast ?_ (Interval.pure_le_Ici.2 (by decide)))
+    trivial
+  · exact iff_of_true (by decide) (pres_perf_may_iff.2 ⟨-1, by decide, (), trivial,
+      winOn_at (-1) (le_inf (Interval.pure_le_Ici.2 le_rfl) le_rfl)⟩)
+  · exact iff_of_true (by decide) (pres_perf_may_iff.2 ⟨-1, by decide, (), trivial,
+      winOn_at 0 (le_inf (Interval.pure_le_Ici.2 (by decide)) le_rfl)⟩)
+  · exact iff_of_true (by decide) (pres_perf_may_iff.2 ⟨-1, by decide, (), trivial,
+      winOn_at 1 (le_inf (Interval.pure_le_Ici.2 (by decide)) le_rfl)⟩)
 
 /-! ### The rows -/
 

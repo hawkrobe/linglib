@@ -225,7 +225,7 @@ variable {T : Type*} [LinearOrder T]
     per-verb stipulation. -/
 theorem external_predicts_precedence :
     (CausalSource.toLink T .external).temporalConstraint =
-      NonemptyInterval.precedes ∧
+      Interval.Precedes ∧
     (CausalSource.toLink T .external).involvesTransition = true :=
   ⟨rfl, rfl⟩
 
@@ -234,7 +234,7 @@ theorem external_predicts_precedence :
     Cause and effect coexist (maintenance relation). -/
 theorem internal_predicts_overlap :
     (CausalSource.toLink T .internal).temporalConstraint =
-      NonemptyInterval.overlaps ∧
+      (λ s t => ¬ Disjoint s t) ∧
     (CausalSource.toLink T .internal).involvesTransition = false :=
   ⟨rfl, rfl⟩
 
@@ -244,7 +244,7 @@ theorem internal_predicts_overlap :
 theorem frighten_temporal :
     frighten.causalSource = some .external ∧
     (CausalSource.toLink T .external).temporalConstraint =
-      NonemptyInterval.precedes ∧
+      Interval.Precedes ∧
     (CausalSource.toLink T .external).involvesTransition = true :=
   ⟨rfl, rfl, rfl⟩
 
@@ -253,7 +253,7 @@ theorem frighten_temporal :
 theorem concern_temporal :
     concern.causalSource = some .internal ∧
     (CausalSource.toLink T .internal).temporalConstraint =
-      NonemptyInterval.overlaps ∧
+      (λ s t => ¬ Disjoint s t) ∧
     (CausalSource.toLink T .internal).involvesTransition = false :=
   ⟨rfl, rfl, rfl⟩
 
@@ -264,9 +264,9 @@ theorem concern_temporal :
 theorem uph_causal_link_level :
     -- Different temporal behavior
     (CausalSource.toLink T .external).temporalConstraint =
-      NonemptyInterval.precedes ∧
+      Interval.Precedes ∧
     (CausalSource.toLink T .internal).temporalConstraint =
-      NonemptyInterval.overlaps ∧
+      (λ s t => ¬ Disjoint s t) ∧
     -- Different event structure
     (CausalSource.toLink T .external).involvesTransition = true ∧
     (CausalSource.toLink T .internal).involvesTransition = false :=
