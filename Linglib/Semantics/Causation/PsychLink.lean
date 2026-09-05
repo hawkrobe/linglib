@@ -22,7 +22,7 @@ differ along three dimensions:
 | Counterfactual | effect persists after cause ceases | effect ceases with cause |
 
 The first three properties are formalized using existing Linglib types:
-`Features.Dynamicity`, `NonemptyInterval.precedes`/`.overlaps`.
+`Event.Kind`, `NonemptyInterval.precedes`/`.overlaps`.
 The fourth uses `universalCounterfactual` from `Counterfactual.lean`.
 
 ## Key results
@@ -49,9 +49,9 @@ open Conditionals.Counterfactual (universalCounterfactual)
     causation (representation → state persistence). -/
 structure PsychCausalLink (T : Type*) [LinearOrder T] where
   /-- Ontological sort of the causing eventuality -/
-  causeSort : Features.Dynamicity
+  causeSort : Event.Kind
   /-- Ontological sort of the caused eventuality -/
-  effectSort : Features.Dynamicity
+  effectSort : Event.Kind
   /-- Does the effect involve a transition (BECOME in [rappaport-hovav-levin-1998])?
       Eventive: [CAUSE [BECOME [STATE]]] — yes.
       Maintenance: [CAUSE [STATE]] — no. -/
@@ -68,8 +68,8 @@ structure PsychCausalLink (T : Type*) [LinearOrder T] where
     Example: "The noise frightened John" — the noise event happens,
     THEN John enters the frightened state. -/
 def eventiveLink (T : Type*) [LinearOrder T] : PsychCausalLink T :=
-  { causeSort := .dynamic
-    effectSort := .dynamic
+  { causeSort := .action
+    effectSort := .action
     involvesTransition := true
     temporalConstraint := NonemptyInterval.precedes }
 
@@ -86,8 +86,8 @@ def eventiveLink (T : Type*) [LinearOrder T] : PsychCausalLink T :=
     (b) Temporal contemporaneity (τ(cause) overlaps τ(effect))
     (c) Counterfactual dependence (effect ceases when cause ceases) -/
 def maintenanceLink (T : Type*) [LinearOrder T] : PsychCausalLink T :=
-  { causeSort := .stative
-    effectSort := .stative
+  { causeSort := .state
+    effectSort := .state
     involvesTransition := false
     temporalConstraint := NonemptyInterval.overlaps }
 
@@ -133,13 +133,13 @@ theorem precedes_excludes_overlap {T : Type*} [LinearOrder T]
 
 /-- Maintenance relates two states ([kim-2024] property (a)). -/
 theorem maintenance_both_states {T : Type*} [LinearOrder T] :
-    (maintenanceLink T).causeSort = .stative ∧
-    (maintenanceLink T).effectSort = .stative := ⟨rfl, rfl⟩
+    (maintenanceLink T).causeSort = .state ∧
+    (maintenanceLink T).effectSort = .state := ⟨rfl, rfl⟩
 
 /-- Eventive causation relates two dynamic eventualities. -/
 theorem eventive_both_dynamic {T : Type*} [LinearOrder T] :
-    (eventiveLink T).causeSort = .dynamic ∧
-    (eventiveLink T).effectSort = .dynamic := ⟨rfl, rfl⟩
+    (eventiveLink T).causeSort = .action ∧
+    (eventiveLink T).effectSort = .action := ⟨rfl, rfl⟩
 
 /-- Maintenance involves no transition (no BECOME). -/
 theorem maintenance_no_transition {T : Type*} [LinearOrder T] :
@@ -151,8 +151,8 @@ theorem eventive_has_transition {T : Type*} [LinearOrder T] :
 
 /-- The two causal flavors assign opposite values on every dimension. -/
 theorem flavors_differ_on_all_dimensions {T : Type*} [LinearOrder T] :
-    (eventiveLink T).causeSort = .dynamic ∧
-    (maintenanceLink T).causeSort = .stative ∧
+    (eventiveLink T).causeSort = .action ∧
+    (maintenanceLink T).causeSort = .state ∧
     (eventiveLink T).involvesTransition = true ∧
     (maintenanceLink T).involvesTransition = false :=
   ⟨rfl, rfl, rfl, rfl⟩
@@ -231,7 +231,7 @@ theorem dependent_excludes_persistent {W : Type*} [DecidableEq W] [Fintype W]
 /-- The three defining properties of maintenance causation from
     [kim-2024], formalized using existing infrastructure:
 
-    (a) Relates two eventualities — both are states (`Features.Dynamicity.stative`)
+    (a) Relates two eventualities — both are states (`Event.Kind.state`)
     (b) Temporal contemporaneity — `NonemptyInterval.overlaps`
     (c) No transition — effect is a persisting state, not a change
 
@@ -243,8 +243,8 @@ theorem dependent_excludes_persistent {W : Type*} [DecidableEq W] [Fintype W]
     for WHY maintenance-caused states are counterfactually dependent. -/
 theorem maintenance_three_properties {T : Type*} [LinearOrder T] :
     -- (a) Both eventualities are states
-    (maintenanceLink T).causeSort = .stative ∧
-    (maintenanceLink T).effectSort = .stative ∧
+    (maintenanceLink T).causeSort = .state ∧
+    (maintenanceLink T).effectSort = .state ∧
     -- (b) Temporal contemporaneity (overlaps, not precedes)
     (maintenanceLink T).temporalConstraint = NonemptyInterval.overlaps ∧
     -- (c) No transition (no BECOME)

@@ -1,5 +1,6 @@
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Events.Basic
+import Linglib.Features.Aktionsart
 
 /-!
 # Stratified Reference [champollion-2017]

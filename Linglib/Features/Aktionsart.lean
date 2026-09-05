@@ -23,7 +23,8 @@ The CUM/QUA/DIV algebra over event predicates lives in `Semantics/Mereology.lean
 the `Telicity` here is the Smith-flavored lexical label.
 
 Sibling formalizations of competitor lexical-aspect frameworks:
-[bach-1986]; the event-token sort is this `Dynamicity` feature (`Event.sort`);
+[bach-1986]'s event-token sort is `Event.Kind` in `Semantics/Events/Basic.lean`, of which this
+lexical feature is the verb-entry label;
 [krifka-1989]/[krifka-1998] CUM/QUA/DIV in
 `Semantics/Events/CEM.lean`; [dowty-1979] SIP in
 `Semantics/Aspect/SubintervalProperty.lean`;

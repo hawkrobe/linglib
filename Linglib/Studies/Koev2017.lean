@@ -362,17 +362,17 @@ def LearningScenario.toEvidentialProp (s : LearningScenario ℤ)
 /-! ### Concrete Scenarios -/
 
 /-- Described event: interval [0, 5]. -/
-def describedEvent : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .dynamic⟩
+def describedEvent : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .action⟩
 
 /-- Learning event (indirect): interval [10, 15] — strictly later. -/
-def learningEventIndirect : Event ℤ := ⟨⟨⟨10, 15⟩, by omega⟩, .stative⟩
+def learningEventIndirect : Event ℤ := ⟨⟨⟨10, 15⟩, by omega⟩, .state⟩
 
 /-- Learning event (direct witness): interval [2, 4] — overlaps described. -/
-def learningEventDirect : Event ℤ := ⟨⟨⟨2, 4⟩, by omega⟩, .stative⟩
+def learningEventDirect : Event ℤ := ⟨⟨⟨2, 4⟩, by omega⟩, .state⟩
 
 /-- Learning event (spatial distance): interval [0, 5] — same time,
     different place (smoke from chimney). -/
-def learningEventSpatial : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .stative⟩
+def learningEventSpatial : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .state⟩
 
 /-- Indirect evidence scenario: described event [0,5], learning event [10,15]. -/
 def indirectScenario : LearningScenario ℤ where

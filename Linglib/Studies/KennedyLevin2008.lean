@@ -326,7 +326,7 @@ theorem atelic_of_noMaxOrder [NoMaxOrder δ] :
     ¬ ∃ g : δ, Quantized (reachesSome (δ := δ)) g := by
   rintro ⟨g, hg⟩
   obtain ⟨b, hb⟩ := exists_gt g
-  have hbg : b = g := hg Patient.mk ⟨⟨⟨b, b⟩, le_refl b⟩, .dynamic⟩ ⟨_, rfl⟩
+  have hbg : b = g := hg Patient.mk ⟨⟨⟨b, b⟩, le_refl b⟩, .action⟩ ⟨_, rfl⟩
   exact absurd hbg hb.ne'
 
 /-- Synthesis: with a greatest degree, the telic reading builds the Beavers

@@ -1,7 +1,6 @@
 import Mathlib.Order.Basic
 import Mathlib.Data.Set.Image
 import Linglib.Core.Order.Interval
-import Linglib.Features.Aktionsart
 
 /-!
 # Neo-Davidsonian Event Semantics
@@ -13,10 +12,10 @@ events; thematic roles are independent two-place predicates
 
 ## Main definitions
 
-* `Event` — the unified event type: a runtime interval + `Features.Dynamicity` sort
+* `Event.Kind` — the two sorts of eventualities, actions and states ([bach-1986])
+* `Event` — the unified event type: a runtime interval + its sort
 * `Event.τ` — temporal trace function
 * `Event.isAction` / `Event.isState` — decidable `Prop` sort predicates
-  (the `dynamic` / `stative` poles of `Features.Dynamicity`)
 * `Event.isPunctual` / `Event.isDurative` — decidable `Prop` duration predicates
 * `Event.existsClosure` — Davidsonian existential closure
 * `Event.Mereology` — part-of typeclass with τ-monotonicity + sort-preservation
@@ -32,7 +31,9 @@ sense, non-state) has largely collapsed in current practice —
 [champollion-2017] and [zhao-2025] both use "event"
 generically with sort/aktionsart as an inherent attribute. Tense-aspect
 code that doesn't care about sort simply doesn't reference `.sort`;
-sortless construction sites default to `.dynamic`.
+sortless construction sites default to `.action`. The lexical feature
+`Features.Dynamicity` labels verb entries; the sort here is the ontological
+attribute of a token.
 
 ## References
 
@@ -43,16 +44,19 @@ sortless construction sites default to `.dynamic`.
 * [liefke-2024] §4.3 (manner ontology)
 -/
 
-open Features
+/-- The two sorts of eventualities: actions, which involve change, and states, which do not
+([bach-1986]). -/
+inductive Event.Kind where
+  | action
+  | state
+  deriving DecidableEq, Repr
 
 /-- An event: a temporal individual with ontological sort. -/
 structure Event (T : Type*) [LinearOrder T] where
   /-- The temporal extent of this event -/
   runtime : NonemptyInterval T
-  /-- Ontological sort (aktionsart): `dynamic` or `stative` ([bach-1986]).
-      This is the `Features.Dynamicity` feature — the action/state distinction
-      at the event-token level. -/
-  sort : Features.Dynamicity
+  /-- Ontological sort: action or state ([bach-1986]). -/
+  sort : Event.Kind
 
 namespace Event
 
@@ -67,19 +71,19 @@ def τ (e : Event T) : NonemptyInterval T :=
 
 /-! ### Sort predicates -/
 
-/-- Is this event an action (dynamic event)? -/
+/-- Is this event an action? -/
 def isAction (e : Event T) : Prop :=
-  e.sort = .dynamic
+  e.sort = .action
 
-/-- Is this event a state (stative event)? -/
+/-- Is this event a state? -/
 def isState (e : Event T) : Prop :=
-  e.sort = .stative
+  e.sort = .state
 
 instance : DecidablePred (isAction (T := T)) :=
-  fun e => decEq e.sort .dynamic
+  fun e => decEq e.sort .action
 
 instance : DecidablePred (isState (T := T)) :=
-  fun e => decEq e.sort .stative
+  fun e => decEq e.sort .state
 
 /-- `isAction` and `isState` are complementary. -/
 theorem isAction_iff_not_isState (e : Event T) :
@@ -215,11 +219,11 @@ end Denotation
 
 /-- Example: a running event from time 1 to 5. -/
 def exampleRun : Event ℤ :=
-  ⟨⟨⟨1, 5⟩, by omega⟩, .dynamic⟩
+  ⟨⟨⟨1, 5⟩, by omega⟩, .action⟩
 
 /-- Example: a knowing state from time 0 to 10. -/
 def exampleKnow : Event ℤ :=
-  ⟨⟨⟨0, 10⟩, by omega⟩, .stative⟩
+  ⟨⟨⟨0, 10⟩, by omega⟩, .state⟩
 
 /-- The run event is an action. -/
 theorem exampleRun_isAction : exampleRun.isAction := rfl

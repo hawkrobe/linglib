@@ -216,7 +216,7 @@ def intentionHolds {E W T : Type*} [LinearOrder T]
     (causeStar : Event T → Event T → W → Prop)
     (agent : E) (P : E → W → Event T → Prop) (w : W) : Prop :=
   ∃ s : Event T,
-    s.sort = .stative ∧ isIntention s w ∧ holder agent s w ∧
+    s.sort = .state ∧ isIntention s w ∧ holder agent s w ∧
     ∀ p ∈ content s, ∃ e : Event T, causeStar s e p.1 ∧ P p.2 p.1 e
 
 /-- Plain belief reports need no causal self-reference: the complement

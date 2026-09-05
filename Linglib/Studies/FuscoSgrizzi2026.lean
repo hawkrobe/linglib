@@ -197,7 +197,7 @@ def CausativeAttitude.denote (v : CausativeAttitude E T)
     (P : Event T → Prop) : Prop :=
   ∃ e e' : Event T,
     v.verbPred e ∧ v.isAgent e v.agent ∧ v.isPatient e v.experiencer ∧
-    v.cause e e' ∧ e'.sort = .stative ∧
+    v.cause e e' ∧ e'.sort = .state ∧
     v.isExperiencer e' v.experiencer ∧ P e'
 
 /-- Belief reading: the CP complement is existentially closed into a

@@ -234,12 +234,12 @@ section Examples
 /-- The base event. -/
 private def ev₁ : Event ℤ where
   runtime := ⟨⟨0, 5⟩, by omega⟩
-  sort := .dynamic
+  sort := .action
 
 /-- The prefixed event. -/
 private def ev₂ : Event ℤ where
   runtime := ⟨⟨10, 15⟩, by omega⟩
-  sort := .dynamic
+  sort := .action
 
 private theorem ev₁_precedes_ev₂ : (Event.τ ev₁).precedes (Event.τ ev₂) := by
   show (5 : ℤ) < 10; omega
