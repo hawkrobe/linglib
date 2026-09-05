@@ -67,6 +67,10 @@ theorem restricted_accessible_eq (f : ModalBase W) (α : W → Prop) (w : W) :
     · exact hα
     · exact hAcc p hp'
 
+theorem mem_accessibleWorlds_restrictedBase {f : ModalBase W} {α : W → Prop} {w v : W} :
+    v ∈ accessibleWorlds (restrictedBase f α) w ↔ v ∈ accessibleWorlds f w ∧ α v :=
+  Set.ext_iff.1 (restricted_accessible_eq f α w) v
+
 /-! ## Main bridge theorems -/
 
 /-- **Restrictor = Strict conditional**.

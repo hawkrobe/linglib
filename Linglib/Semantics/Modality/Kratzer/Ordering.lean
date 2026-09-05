@@ -187,6 +187,7 @@ theorem mem_bestWorlds_cons {f : ModalBase W} {g : OrderingSource W} {p q : W �
   · exact λ hrv => absurd hrv (hpq v hvq)
   · exact hu.2 hv (λ r' hr' => hvu r' (List.mem_cons_of_mem p hr')) r hr
 
+
 /-- A modal base is realistic iff every world is accessible from
 itself. -/
 theorem isRealistic_iff_mem_accessible (f : ModalBase W) :
@@ -225,6 +226,13 @@ theorem bestAmong_superset {sub sup : Set W} {ordering : List (W → Prop)} {w' 
     (hBest : w' ∈ bestAmong sup ordering)
     (hMem : w' ∈ sub) :
     w' ∈ bestAmong sub ordering :=
-  ⟨hMem, fun v hv hle => hBest.2 v (hSub hv) hle⟩
+  Core.Order.Normality.mem_optimal_of_subset hSub hBest hMem
+
+/-- A best world of a modal base is a best world of any narrower modal base it is accessible
+under. -/
+theorem mem_bestWorlds_of_subset {f f' : ModalBase W} {g : OrderingSource W} {w u : W}
+    (h : accessibleWorlds f' w ⊆ accessibleWorlds f w) (hu : u ∈ bestWorlds f g w)
+    (hu' : u ∈ accessibleWorlds f' w) : u ∈ bestWorlds f' g w :=
+  bestAmong_superset h hu hu'
 
 end Modality.Kratzer

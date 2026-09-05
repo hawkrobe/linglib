@@ -196,6 +196,13 @@ theorem simpleNecessity_mono {f f' : ModalBase W} {p : W → Prop} {w : W}
     (h : f w ⊆ f' w) (hNec : simpleNecessity f p w) : simpleNecessity f' p w :=
   fun w' hw' => hNec w' (accessibleWorlds_anti h hw')
 
+/-- Adding `p` to an ordering source that holds a proposition incompatible with `p` makes nothing
+necessary that a best world verifying the latter fails. -/
+theorem not_necessity_cons {f : ModalBase W} {g : OrderingSource W} {p q r : W → Prop} {w u : W}
+    (hq : q ∈ g w) (hpq : ∀ v, q v → ¬ p v) (hu : u ∈ bestWorlds f g w) (huq : q u)
+    (hur : ¬ r u) : ¬ necessity f (λ v => p :: g v) r w :=
+  λ h => hur (h u (mem_bestWorlds_cons hq hpq hu huq))
+
 /-! ### Frame conditions on `kratzerR` -/
 
 /-- A realistic modal base gives reflexive accessibility. -/
