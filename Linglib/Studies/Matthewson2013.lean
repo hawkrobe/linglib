@@ -24,7 +24,7 @@ are formalized here against the existing infrastructure:
    [condoravdi-2002]'s English analysis, where prospectivity is
    baked into `may`. Structurally: Gitksan *imaa* would evaluate its
    prejacent at the point of the perspective, English *might* through
-   `Condoravdi2002.MAY` (forward expansion to `Ref.ray`). We do not introduce
+   `Condoravdi2002.MAY` (forward expansion to `Interval.Ici`). We do not introduce
    alias defs for the Gitksan/English projection here — that is a
    downstream choice that should land in a typed compositional `dim`
    operator (planned, see `ProspectiveMarkerPolicy` discussion in the
