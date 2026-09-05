@@ -135,7 +135,7 @@ theorem deal_licenses_lei : ∀ g ∈ [Deal2024.weak, Deal2024.strong],
 /-- Feature gluttony, read over agreement person, licenses accusative LEI: a third person dative
 and a third person accusative do not glutton the Weak probe. -/
 theorem gluttony_licenses_lei :
-    Morphosyntactic (λ p q => ¬ CoonKeine2021.pccViolation CoonKeine2021.weakProbe false p q)
+    Morphosyntactic (λ p q => ¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe false p q)
       lui lei_formal := by
   decide
 
@@ -183,9 +183,11 @@ open CoonKeine2021 in
 not glutton the person probe where second plural *ihr* does; a singular subject gluttons the
 number probe against plural SIE. -/
 theorem assumed_identity :
-    (∀ p ∈ German.Pronouns.sie_polite.person, ¬ Gluttonous weakProbe [dpPl .third, dpPl p]) ∧
-      (∀ p ∈ German.Pronouns.ihr.person, Gluttonous weakProbe [dpPl .third, dpPl p]) ∧
-      GluttonousOn numBears numProbe [dp .third, dpPl .third] :=
-  ⟨by decide, by decide, no_number_case_constraint.2.2.1⟩
+    (∀ p ∈ German.Pronouns.sie_polite.person,
+      ¬ Gluttonous Goal.personSegments weakProbe [dpPl .third, dpPl p]) ∧
+      (∀ p ∈ German.Pronouns.ihr.person,
+        Gluttonous Goal.personSegments weakProbe [dpPl .third, dpPl p]) ∧
+      Gluttonous Goal.numberSegments (numberProbe weakProbe) [dp .third, dpPl .third] := by
+  decide
 
 end AdamsonZompi2025

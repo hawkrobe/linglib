@@ -649,10 +649,10 @@ open CoonKeine2021 in
 theorem strong_weak_match_gluttony :
     (∀ io ∈ grid3, ∀ do_ ∈ grid3,
       (isLicit strong io do_ = true ↔
-        ¬ pccViolation weakProbe true io do_)) ∧
+        ¬ PCCViolation weakProbe true io do_)) ∧
     (∀ io ∈ grid3, ∀ do_ ∈ grid3,
       (isLicit weak io do_ = true ↔
-        ¬ pccViolation weakProbe false io do_)) := by
+        ¬ PCCViolation weakProbe false io do_)) := by
   decide
 
 open CoonKeine2021 in
@@ -661,9 +661,9 @@ open CoonKeine2021 in
 theorem mefirst_diverges_from_gluttony :
     (∀ io ∈ grid3, ∀ do_ ∈ grid3, (io, do_) ≠ (.first, .first) →
       (isLicit meFirst io do_ = true ↔
-        ¬ pccViolation meFirstProbe false io do_)) ∧
+        ¬ PCCViolation meFirstProbe false io do_)) ∧
     isLicit meFirst .first .first = false ∧
-    ¬ pccViolation meFirstProbe false .first .first := by
+    ¬ PCCViolation meFirstProbe false .first .first := by
   decide
 
 end Deal2024

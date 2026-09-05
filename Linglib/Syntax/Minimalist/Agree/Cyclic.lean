@@ -29,12 +29,15 @@ The interaction of probe articulation and cyclic Agree derives:
 
 ## Person Geometries
 
-Two attested geometries for the innermost feature:
+Three geometries for the innermost feature:
 
 - **Standard (1>2>3)**: [speaker] distinguishes 1st from 2nd. Used by
   Basque, Georgian ([bejar-rezac-2009] Table 2B).
 - **Addressee (2>1>3)**: [addressee] distinguishes 2nd from 1st. Used by
   Nishnaabemwin, Mohawk ([bejar-rezac-2009] Table 2C).
+- **Branching**: [speaker] and [addressee] are sister leaves under
+  [participant], so 1st and 2nd person are equally specified
+  ([harley-ritter-2002]; the geometry of [coon-keine-2021]).
 
 ## Person Licensing and Repair
 
@@ -91,8 +94,8 @@ open Minimalist (DecomposedPerson decomposePerson)
 
     Segments are privative features organized in a containment hierarchy.
     Every person value bears [π]; SAPs additionally bear [participant];
-    the innermost feature ([speaker] or [addressee]) distinguishes
-    1st from 2nd person. -/
+    the innermost features ([speaker], [addressee]) distinguish
+    1st from 2nd person, one or both per geometry. -/
 inductive Segment where
   | pi          -- [π] — present on all persons
   | participant -- [participant] — present on 1st and 2nd
@@ -107,10 +110,13 @@ inductive Segment where
 /-- Which feature distinguishes 1st from 2nd person.
 
     - `standard`: [speaker] distinguishes 1st (Basque, Georgian)
-    - `addressee`: [addressee] distinguishes 2nd (Nishnaabemwin, Mohawk) -/
+    - `addressee`: [addressee] distinguishes 2nd (Nishnaabemwin, Mohawk)
+    - `branching`: [speaker] and [addressee] are sister leaves under
+      [participant] ([harley-ritter-2002]; [coon-keine-2021]) -/
 inductive Geometry where
   | standard   -- 1>2>3: 1st person most specified
   | addressee  -- 2>1>3: 2nd person most specified
+  | branching  -- 1st and 2nd person equally specified, by distinct leaves
   deriving DecidableEq, Repr
 
 /-- The person specification for a given person value under a geometry.
@@ -119,16 +125,11 @@ inductive Geometry where
 def personSpec (geom : Geometry) : Person → List Segment
   | .third | .zero => [.pi]
   | .first | .firstInclusive | .firstExclusive => match geom with
-    | .standard  => [.pi, .participant, .speaker]
+    | .standard | .branching => [.pi, .participant, .speaker]
     | .addressee => [.pi, .participant]
   | .second => match geom with
     | .standard  => [.pi, .participant]
-    | .addressee => [.pi, .participant, .addressee]
-
-/-- The most specified person under a given geometry. -/
-def mostSpecified : Geometry → Person
-  | .standard  => .first
-  | .addressee => .second
+    | .addressee | .branching => [.pi, .participant, .addressee]
 
 -- ============================================================================
 -- § 3: Probe Articulation
@@ -147,7 +148,7 @@ abbrev _root_.Minimalist.Probe.Articulation := List Segment
 def flatProbe : Probe.Articulation := [.pi]
 
 /-- Partial probe: [uπ, uParticipant]. Distinguishes SAP from 3P.
-    Geometry-independent: [participant] is the same in both geometries. -/
+    Geometry-independent: [participant] is the same in every geometry. -/
 def partialProbe : Probe.Articulation := [.pi, .participant]
 
 /-- Full probe in standard geometry: [uπ, uParticipant, uSpeaker]. -/
@@ -165,7 +166,8 @@ def fullProbeAddr : Probe.Articulation := [.pi, .participant, .addressee]
     [bejar-rezac-2009] parameterize crosslinguistic variation by
     two choices: (1) which geometry organizes the innermost feature, and
     (2) how articulated the probe is. The full probe depends on the
-    geometry (standard uses [speaker], addressee uses [addressee]). -/
+    geometry (standard uses [speaker], addressee uses [addressee], the
+    branching geometry has both leaves). -/
 structure AgreementSystem where
   geometry : Geometry
   probe : Probe.Articulation
@@ -469,6 +471,10 @@ theorem std_participant_matches_decomposed (p : Person) :
     (decomposePerson p).hasParticipant := by
   cases p <;> decide
 
+/-- Every person bears [π] under every geometry. -/
+theorem pi_mem_personSpec (geom : Geometry) (p : Person) : Segment.pi ∈ personSpec geom p := by
+  cases geom <;> cases p <;> decide
+
 /-- In the standard geometry, 3rd person has exactly one segment ([π]). -/
 theorem std_third_singleton :
     personSpec .standard .third = [.pi] := rfl
@@ -516,8 +522,8 @@ theorem flat_all_inverse (geom : Geometry) (ea ia : Person) :
 
 section PartialProbe
 
-/-- Partial probe: same behavior in both geometries, since [participant]
-    is geometry-independent. -/
+/-- Partial probe: same behavior in the standard and addressee geometries,
+    since [participant] is geometry-independent. -/
 theorem partial_geometry_invariant (ea ia : Person) :
     agreementValue .standard partialProbe ea ia =
     agreementValue .addressee partialProbe ea ia := by
@@ -659,20 +665,16 @@ theorem same_person_ia_controls (geom : Geometry) (probe : Probe.Articulation)
     omega
   rw [h]; rfl
 
-/-- The most specified person always controls against 3P (standard). -/
-theorem most_specified_controls_vs_third_std :
-    agreementValue .standard fullProbeStd (mostSpecified .standard) .third =
-      mostSpecified .standard ∧
-    agreementValue .standard fullProbeStd .third (mostSpecified .standard) =
-      mostSpecified .standard := by
+/-- The most specified person, 1st, always controls against 3P (standard). -/
+theorem first_controls_vs_third_std :
+    agreementValue .standard fullProbeStd .first .third = .first ∧
+    agreementValue .standard fullProbeStd .third .first = .first := by
   constructor <;> decide
 
-/-- The most specified person always controls against 3P (addressee). -/
-theorem most_specified_controls_vs_third_addr :
-    agreementValue .addressee fullProbeAddr (mostSpecified .addressee) .third =
-      mostSpecified .addressee ∧
-    agreementValue .addressee fullProbeAddr .third (mostSpecified .addressee) =
-      mostSpecified .addressee := by
+/-- The most specified person, 2nd, always controls against 3P (addressee). -/
+theorem second_controls_vs_third_addr :
+    agreementValue .addressee fullProbeAddr .second .third = .second ∧
+    agreementValue .addressee fullProbeAddr .third .second = .second := by
   constructor <;> decide
 
 /-- The direct/inverse split exhaustively partitions the paradigm:
