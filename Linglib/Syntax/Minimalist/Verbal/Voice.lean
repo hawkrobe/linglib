@@ -19,7 +19,8 @@ Voice heads introduce (or fail to introduce) external arguments
   onto neighboring substrates: `alternation` ([creissels-2025] coding-frame
   operation), `thetaRole`, `defaultPhasal`, `recipFormation` ([siloni-2012]).
 * `Head` — a flavor plus featural and per-construction properties, with the
-  predicate API `IsPhasal`/`AssignsTheta`/`HasSemantics`.
+  predicate API `IsPhasal`/`AssignsTheta`/`HasSemantics`/`IntroducesExternal`/
+  `ExternalImplicit`.
 * `buildDecomposition` — the Voice–VerbHead bridge: Voice contributes vDO
   when it assigns θ; CAUSE belongs to the root ([cuervo-2003],
   [pylkkanen-2008]).
@@ -46,7 +47,7 @@ inductive Flavor where
   /-- Introduces a causer ([schaefer-2008] Voice_CAUSE). -/
   | causer
   /-- Semantically vacuous, no θ-role, [D] for PF marking (Romance
-      anticausative SE, Chuj *-j*; [munoz-perez-2026]). -/
+      anticausative SE; [munoz-perez-2026]). -/
   | nonThematic
   /-- No specifier, no semantics (dispositional middles). -/
   | expletive
@@ -483,6 +484,18 @@ def Params.assignsTheta? (p : Params) : Option Bool :=
   | some .thematicExistential => some true
   | some .expletive           => some false
   | none                      => none
+
+/-- Introduces an external argument, overt or existentially bound: the Prop form of
+    `Params.assignsTheta?`, broader than `AssignsTheta`. -/
+def Head.IntroducesExternal (v : Head) : Prop := v.params.assignsTheta? = some true
+
+instance (v : Head) : Decidable v.IntroducesExternal := inferInstanceAs (Decidable (_ = _))
+
+/-- Introduces its external argument as an implicit, existentially bound one ([+∃x]). -/
+def Head.ExternalImplicit (v : Head) : Prop :=
+  v.params.extArgSemantics = some .thematicExistential
+
+instance (v : Head) : Decidable v.ExternalImplicit := inferInstanceAs (Decidable (_ = _))
 
 /-- Baseline phasehood in the parameter grid: a θ-marked specifier
     ([+D, +λx arg]) makes a phase ([collins-2005]/[chomsky-2001]). -/

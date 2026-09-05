@@ -16,10 +16,10 @@ Consequences for the nature of roots."
 ## Implementation notes
 
 The entry carries only the distributional class label; the theoretical
-coordinates ([coon-2019]'s `Classification` values — semantic type,
-valency, transitive-Voice licensing) are a derived projection
-`RootClass.toRoot` in `Studies/Coon2019.lean`, following the
-derived-projection pattern of `Studies/HaninkKoontzGarboden2025.lean`.
+coordinates ([coon-2019]'s (3): semantic type, valency, transitive-Voice
+licensing) are a derived projection `RootClass.toRoot` in
+`Studies/Coon2019.lean`, following the derived-projection pattern of
+`Studies/HaninkKoontzGarboden2025.lean`.
 -/
 
 namespace Chuj
@@ -63,6 +63,10 @@ def il    : ChujRoot := ⟨"il",    "see", .tv⟩     -- ex. (10d), p. 41
 def ch'ak : ChujRoot := ⟨"ch'ak", "fell", .tv⟩   -- ex. (63a), p. 68
 def b'o'  : ChujRoot := ⟨"b'o'",  "make", .tv⟩   -- ex. (62), p. 68
 def man   : ChujRoot := ⟨"man",   "buy", .tv⟩    -- ex. (59a), p. 67
+def kal   : ChujRoot := ⟨"kal",   "stir", .tv⟩   -- ex. (29a), p. 52
+def tzil  : ChujRoot := ⟨"tzil",  "tear", .tv⟩   -- ex. (35a), p. 54
+def yam   : ChujRoot := ⟨"yam",   "catch", .tv⟩  -- ex. (60a), p. 67
+def mak   : ChujRoot := ⟨"mak",   "close", .tv⟩  -- ex. (70a), p. 71
 
 /-! ### √ITV roots (Table (5), p. 39) -/
 
@@ -71,6 +75,12 @@ def way   : ChujRoot := ⟨"way",   "sleep", .itv⟩
 def k'ey  : ChujRoot := ⟨"k'ey",  "ascend", .itv⟩
 def jaw   : ChujRoot := ⟨"jaw",   "arrive", .itv⟩
 def ok'   : ChujRoot := ⟨"ok'",   "cry", .itv⟩
+
+/-! ### √ITV roots from examples (not in Table (5)) -/
+
+def b'ey  : ChujRoot := ⟨"b'ey",  "walk", .itv⟩     -- ex. (7c), p. 40
+def ul    : ChujRoot := ⟨"ul",    "dissolve", .itv⟩ -- ex. (48a), p. 61
+def el    : ChujRoot := ⟨"el",    "leave", .itv⟩    -- ex. (57), p. 66
 
 /-! ### √POS roots (Table (5), p. 39; Table (20), p. 47) -/
 
@@ -81,6 +91,7 @@ def lich' : ChujRoot := ⟨"lich'", "extended", .pos⟩
 def b'ul  : ChujRoot := ⟨"b'ul",  "gathered", .pos⟩
 def kot   : ChujRoot := ⟨"kot",   "on four legs", .pos⟩   -- Table (20)
 def tel   : ChujRoot := ⟨"tel",   "lying down", .pos⟩     -- Table (20)
+def chet  : ChujRoot := ⟨"chet",  "on two legs", .pos⟩    -- Table (20)
 
 /-! ### √NOM roots (Table (5), p. 39; Table (17), p. 46) -/
 
@@ -91,15 +102,16 @@ def winak    : ChujRoot := ⟨"winak",    "man", .nom⟩
 def chanhal  : ChujRoot := ⟨"chanhal",  "dance", .nom⟩
 def at'is    : ChujRoot := ⟨"at'is",    "sneeze", .nom⟩   -- Table (17)
 def tz'ib'   : ChujRoot := ⟨"tz'ib'",   "writing", .nom⟩  -- Table (17)
+def patan    : ChujRoot := ⟨"patan",    "cleared land", .nom⟩ -- Table (17)
 
 /-! ### Root lists -/
 
 /-- The full root inventory. -/
 def allRoots : List ChujRoot :=
-  [xik, chonh, jax, chel, tek', mak', il, ch'ak, b'o', man,
-   b'at, way, k'ey, jaw, ok',
-   chot, jenh, chek', lich', b'ul, kot, tel,
-   pat, k'atzitz, ixim, winak, chanhal, at'is, tz'ib']
+  [xik, chonh, jax, chel, tek', mak', il, ch'ak, b'o', man, kal, tzil, yam, mak,
+   b'at, way, k'ey, jaw, ok', b'ey, ul, el,
+   chot, jenh, chek', lich', b'ul, kot, tel, chet,
+   pat, k'atzitz, ixim, winak, chanhal, at'is, tz'ib', patan]
 
 /-- All √TV roots. -/
 def tvRoots : List ChujRoot := allRoots.filter (·.class' == .tv)

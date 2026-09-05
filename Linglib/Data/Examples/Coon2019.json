@@ -1,23 +1,73 @@
 [
   {
-    "id": "coon2019_10a",
-    "source": {"bibkey": "coon-2019", "paperLabel": "(10a)"},
+    "id": "coon2019_4a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(4a)"},
     "language": "chuj1250",
-    "primaryText": "Ix-ach-ko-chel-a'.",
+    "primaryText": "Ix-in-xik-w-i k'atzitz.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ix-ach-ko-chel-a'", "PFV-B2S-A1P-hug-TV"]
+      ["Ix-in-xik-w-i", "PFV-B1S-chop-AG-IV"],
+      ["k'atzitz", "wood"]
     ],
-    "translation": "We hugged you.",
+    "translation": "I wood-chopped.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["rootForm", "chel"],
-      ["voice", "null"]
+      ["construction", "stem"],
+      ["rootForm", "xik"],
+      ["head", "w"],
+      ["internal", "np"],
+      ["aj", "no"]
     ],
-    "comment": "Transitive root in a bare transitive stem (sect. 2.2, p. 41)."
+    "comment": "A transitive root under -w with a bare NP theme: the incorporation antipassive."
+  },
+  {
+    "id": "coon2019_4b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(4b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-in-chanhal-w-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-in-chanhal-w-i", "PFV-B1S-dance-AG-IV"]
+    ],
+    "translation": "I danced.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "chanhal"],
+      ["head", "w"],
+      ["internal", "none"],
+      ["aj", "no"]
+    ],
+    "comment": "A nominal root under -w: an unergative."
+  },
+  {
+    "id": "coon2019_4c",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(4c)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-in-chot-w-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-in-chot-w-i", "PFV-B1S-crouched-AG-IV"]
+    ],
+    "translation": "I hopped along crouched down.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "chot"],
+      ["head", "w"],
+      ["internal", "none"],
+      ["aj", "no"]
+    ],
+    "comment": "A positional root under -w."
   },
   {
     "id": "coon2019_7a",
@@ -34,10 +84,202 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["construction", "stem"],
       ["rootForm", "way"],
-      ["voice", "null"]
+      ["head", "intransitive"],
+      ["internal", "dp"],
+      ["aj", "no"]
     ],
-    "comment": "Intransitive root in an intransitive stem with null v (sect. 2.1, p. 40)."
+    "comment": "An intransitive root in an intransitive stem, with the null v/Voice⁰ head of §2.1."
+  },
+  {
+    "id": "coon2019_7c",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(7c)"},
+    "language": "chuj1250",
+    "primaryText": "Ol-in-b'ey-ok.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ol-in-b'ey-ok", "PROSP-B1S-walk-IRR"]
+    ],
+    "translation": "I will walk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "b'ey"],
+      ["head", "intransitive"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": "The irrealis status suffix in the prospective."
+  },
+  {
+    "id": "coon2019_10a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(10a)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-ach-ko-chel-a'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-ach-ko-chel-a'", "PFV-B2S-A1P-hug-TV"]
+    ],
+    "translation": "We hugged you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "chel"],
+      ["head", "transitive"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": "A transitive root in a bare transitive stem, §2.2."
+  },
+  {
+    "id": "coon2019_10c",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(10c)"},
+    "language": "chuj1250",
+    "primaryText": "Tz-in-jax ixim ixim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tz-in-jax", "IPFV-A1S-grind"],
+      ["ixim", "CLF"],
+      ["ixim", "corn"]
+    ],
+    "translation": "I grind the corn.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "jax"],
+      ["head", "transitive"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": "The transitive status suffix is dropped before postverbal material."
+  },
+  {
+    "id": "coon2019_11b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(11b)"},
+    "language": "chuj1250",
+    "primaryText": "Ok-ko-tz'ib'-ej ch'anh hu'um.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ok-ko-tz'ib'-ej", "PROSP-A1P-writing-DTV"],
+      ["ch'anh", "CLF"],
+      ["hu'um", "book"]
+    ],
+    "translation": "We will write the book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "derivedTransitive"],
+      ["rootForm", "tz'ib'"]
+    ],
+    "comment": "A zero-derived transitive from a nominal root, with the derived-transitive status suffix -ej; outside the four v/Voice⁰ heads."
+  },
+  {
+    "id": "coon2019_14a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(14a)"},
+    "language": "chuj1250",
+    "primaryText": "Chot-an em nok' k'ok'on.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Chot-an", "crouched-STAT"],
+      ["em", "DIR.down"],
+      ["nok'", "CLF"],
+      ["k'ok'on", "frog"]
+    ],
+    "translation": "The frog is crouched down/squat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stative"],
+      ["rootForm", "chot"]
+    ],
+    "comment": "A positional root in a stative -an stem, the diagnostic for the class, §2.4."
+  },
+  {
+    "id": "coon2019_19a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(19a)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-at'is-w-i ix unin.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-at'is-w-i", "PFV-sneeze-AG-IV"],
+      ["ix", "CLF"],
+      ["unin", "child"]
+    ],
+    "translation": "The girl sneezed.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "at'is"],
+      ["head", "w"],
+      ["internal", "none"],
+      ["aj", "no"]
+    ],
+    "comment": "A denominal unergative, (17)."
+  },
+  {
+    "id": "coon2019_19b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(19b)"},
+    "language": "chuj1250",
+    "primaryText": "Ol-ach-patan-w-ok.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ol-ach-patan-w-ok", "PROSP-B2S-cleared.land-AG-IRR"]
+    ],
+    "translation": "You will clear land.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "patan"],
+      ["head", "w"],
+      ["internal", "none"],
+      ["aj", "no"]
+    ],
+    "comment": "The -w stem with the irrealis status suffix in place of -i, footnote 9."
+  },
+  {
+    "id": "coon2019_22a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(22a)"},
+    "language": "chuj1250",
+    "primaryText": "Tz-kot-w-i ix nene.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tz-kot-w-i", "IPFV-on.four.legs-AG-IV"],
+      ["ix", "CLF"],
+      ["nene", "baby"]
+    ],
+    "translation": "The baby crawls.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "kot"],
+      ["head", "w"],
+      ["internal", "none"],
+      ["aj", "no"]
+    ],
+    "comment": "A positional root in a -w verb stem, (20)."
   },
   {
     "id": "coon2019_23a",
@@ -46,7 +288,9 @@
     "primaryText": "Ix-chot-w-i nok' k'ok'on.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ix-chot-w-i", "PFV-crouched-AG-IV"], ["nok'", "CLF"], ["k'ok'on", "frog"]
+      ["Ix-chot-w-i", "PFV-crouched-AG-IV"],
+      ["nok'", "CLF"],
+      ["k'ok'on", "frog"]
     ],
     "translation": "The frog hopped.",
     "context": "",
@@ -54,71 +298,543 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["construction", "stem"],
       ["rootForm", "chot"],
-      ["voice", "w"]
+      ["head", "w"],
+      ["internal", "none"],
+      ["aj", "no"]
     ],
-    "comment": "Positional root verbalized by -w (agentive intransitive, p. 48)."
+    "comment": "The agentive intransitive whose structure is (23b): -w in v/Voice⁰ introduces the external argument without assigning ergative case."
   },
   {
-    "id": "coon2019_16b",
-    "source": {"bibkey": "coon-2019", "paperLabel": "(16b)"},
+    "id": "coon2019_26a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(26a)"},
     "language": "chuj1250",
-    "primaryText": "Ix-in-chanhal-w-i.",
+    "primaryText": "Ix-ko-xik te' k'atzitz.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ix-in-chanhal-w-i", "PFV-B1S-dance-AG-IV"]
+      ["Ix-ko-xik", "PFV-A1P-chop"],
+      ["te'", "CLF"],
+      ["k'atzitz", "wood"]
     ],
-    "translation": "I danced.",
+    "translation": "We chopped the wood.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["rootForm", "chanhal"],
-      ["voice", "w"]
+      ["construction", "stem"],
+      ["rootForm", "xik"],
+      ["head", "transitive"],
+      ["internal", "dp"],
+      ["aj", "no"]
     ],
-    "comment": "Nominal root verbalized by -w (denominal agentive intransitive, p. 45)."
+    "comment": "The transitive member of the transitive ~ incorporation antipassive pair."
   },
   {
-    "id": "coon2019_62",
-    "source": {"bibkey": "coon-2019", "paperLabel": "(62)"},
+    "id": "coon2019_26b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(26b)"},
     "language": "chuj1250",
-    "primaryText": "Tz-b'o'-ch-aj s-wa'el winh nhulej tik yuj heb' ix.",
+    "primaryText": "Ix-onh-xik-w-i k'atzitz.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Tz-b'o'-ch-aj", "IPFV-make-PASS-DIV"], ["s-wa'el", "A3S-food"], ["winh", "CLF"],
-      ["nhulej", "brother"], ["tik", "DEM"], ["y-uj", "A3S-RN.by"], ["heb'", "PL"], ["ix", "CLF"]
+      ["Ix-onh-xik-w-i", "PFV-B1P-chop-AG-IV"],
+      ["k'atzitz", "wood"]
     ],
-    "translation": "The brother's food is made by them.",
+    "translation": "We wood-chopped.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["rootForm", "b'o'"],
-      ["voice", "ch"]
+      ["construction", "stem"],
+      ["rootForm", "xik"],
+      ["head", "w"],
+      ["internal", "np"],
+      ["aj", "no"]
     ],
-    "comment": "-chaj passive with the implicit agent realized as an oblique yuj phrase (sect. 4.1.1, p. 68; from Buenrostro 2013)."
+    "comment": "The incorporation antipassive: a single Set B marker, a classifierless theme."
   },
   {
-    "id": "coon2019_59a",
-    "source": {"bibkey": "coon-2019", "paperLabel": "(59a)"},
+    "id": "coon2019_28a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(28a)"},
     "language": "chuj1250",
-    "primaryText": "S-k'apak-il chi' tz-man-j-i.",
+    "primaryText": "Ol-in-man-w-ok jun kaxlan.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["S-k'apak-il", "A3S-cloth-NML"], ["chi'", "DEM"], ["tz-man-j-i", "IPFV-buy-PASS-IV"]
+      ["Ol-in-man-w-ok", "PROSP-B1S-buy-AG-IRR"],
+      ["jun", "one"],
+      ["kaxlan", "chicken"]
     ],
-    "translation": "It's his cloth that is bought.",
+    "translation": "We will buy one chicken.",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["construction", "stem"],
       ["rootForm", "man"],
-      ["voice", "j"]
+      ["head", "w"],
+      ["internal", "dp"],
+      ["aj", "no"]
     ],
-    "comment": "Agentless -j passive (sect. 4.1.2, p. 67)."
+    "comment": "A numeral makes the theme a full DP, which the -w stem cannot license."
+  },
+  {
+    "id": "coon2019_28b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(28b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-onh-chonh-w-i wakax tik.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-onh-chonh-w-i", "PFV-B1P-sell-AG-IV"],
+      ["wakax", "cow"],
+      ["tik", "DEM"]
+    ],
+    "translation": "We sold this cow.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "chonh"],
+      ["head", "w"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": "A demonstrative makes the theme a full DP."
+  },
+  {
+    "id": "coon2019_28c",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(28c)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-onh-jax-w-i ixim ixim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-onh-jax-w-i", "PFV-B1P-grind-AG-IV"],
+      ["ixim", "CLF"],
+      ["ixim", "corn"]
+    ],
+    "translation": "We grind the corn.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "jax"],
+      ["head", "w"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": "A noun classifier makes the theme a full DP."
+  },
+  {
+    "id": "coon2019_29a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(29a)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-in-kal-w-i hin-kape.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-in-kal-w-i", "PFV-B1S-stir-AG-IV"],
+      ["hin-kape", "A1S-cafe"]
+    ],
+    "translation": "I stirred my coffee.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "kal"],
+      ["head", "w"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": "A possessed theme is a full DP."
+  },
+  {
+    "id": "coon2019_29b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(29b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-in-il-w-i hach.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-in-il-w-i", "PFV-B1S-see-AG-IV"],
+      ["hach", "B2S"]
+    ],
+    "translation": "I saw you.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "il"],
+      ["head", "w"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": "A pronominal theme is a full DP."
+  },
+  {
+    "id": "coon2019_30",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(30)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-in-man-w-i niwak kaxlan.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-in-man-w-i", "PFV-B1S-buy-AG-IV"],
+      ["niwak", "fat"],
+      ["kaxlan", "chicken"]
+    ],
+    "translation": "I fat chicken-bought.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "man"],
+      ["head", "w"],
+      ["internal", "np"],
+      ["aj", "no"]
+    ],
+    "comment": "A true adjective keeps the theme a bare NP, against Maxwell's compound analysis."
+  },
+  {
+    "id": "coon2019_31",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(31)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-in-man-w-i onh. Yaxto anh.",
+    "discourseSegments": ["Ix-in-man-w-i onh.", "#Yaxto anh."],
+    "glossedTokens": [
+      ["Ix-in-man-w-i", "PFV-B1S-buy-AG-IV"],
+      ["onh", "avocado"],
+      ["Yaxto", "ripe"],
+      ["anh", "CLF"]
+    ],
+    "translation": "I avocado-bought. It was ripe. / They were ripe.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "opacity"],
+      ["rootForm", "man"]
+    ],
+    "comment": "(31a) with the continuation (31b): the incorporated NP is discourse opaque, so the classifier pronoun cannot pick it up."
+  },
+  {
+    "id": "coon2019_34b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(34b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-ach-way-m-it-w-i nene.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-ach-way-m-it-w-i", "PFV-B2S-sleep-APPL-SUF-AG-IV"],
+      ["nene", "baby"]
+    ],
+    "translation": "You accompanied babies to sleep.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "derivedTransitive"],
+      ["rootForm", "way"]
+    ],
+    "comment": "No incorporation antipassive from a derived transitive stem, whatever the suffix order: -w attaches to roots."
+  },
+  {
+    "id": "coon2019_35b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(35b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-onh-tzil-ch-it-w-i hu'um.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-onh-tzil-ch-it-w-i", "PFV-B1P-tear-PLUR-SUF-AG-IV"],
+      ["hu'um", "paper"]
+    ],
+    "translation": "We tore and tore up papers.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "derivedTransitive"],
+      ["rootForm", "tzil"]
+    ],
+    "comment": "Nor from a pluractional derived transitive."
+  },
+  {
+    "id": "coon2019_36b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(36b)"},
+    "language": "chuj1250",
+    "primaryText": "Tz-chonh-w-i ix ix onh.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tz-chonh-w-i", "IPFV-sell-AG-IV"],
+      ["ix", "CLF"],
+      ["ix", "woman"],
+      ["onh", "avocado"]
+    ],
+    "translation": "The woman avocado-sells.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "adjacency"],
+      ["rootForm", "chonh"]
+    ],
+    "comment": "The bare NP must be stem-adjacent; compare (36a) with the theme before the subject."
+  },
+  {
+    "id": "coon2019_37",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(37)"},
+    "language": "chuj1250",
+    "primaryText": "Tz-in-chonh-w-i anh onh.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tz-in-chonh-w-i", "IPFV-B1S-sell-AG-IV"],
+      ["anh", "CLF"],
+      ["onh", "avocado"]
+    ],
+    "translation": "I avocado-sell.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "chonh"],
+      ["head", "w"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": "A full DP theme cannot be licensed once Infl⁰ licenses the external argument, §3.2.2."
+  },
+  {
+    "id": "coon2019_38",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(38)"},
+    "language": "chuj1250",
+    "primaryText": "Tz-in-chonh-w-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tz-in-chonh-w-i", "IPFV-B1S-sell-AG-IV"]
+    ],
+    "translation": "I sell.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "chonh"],
+      ["head", "w"],
+      ["internal", "none"],
+      ["aj", "no"]
+    ],
+    "comment": "A transitive root must compose with a complement: the incorporation antipassive requires its bare NP."
+  },
+  {
+    "id": "coon2019_39a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(39a)"},
+    "language": "chuj1250",
+    "primaryText": "Tz-in-chanhal-w-i salsa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tz-in-chanhal-w-i", "IPFV-B1S-dance-AG-IV"],
+      ["salsa", "salsa"]
+    ],
+    "translation": "I salsa-dance.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "chanhal"],
+      ["head", "w"],
+      ["internal", "np"],
+      ["aj", "no"]
+    ],
+    "comment": "A nominal root under -w takes no complement."
+  },
+  {
+    "id": "coon2019_39b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(39b)"},
+    "language": "chuj1250",
+    "primaryText": "Tz-in-chanhal-w-i t'a salsa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tz-in-chanhal-w-i", "IPFV-B1S-dance-AG-IV"],
+      ["t'a", "PREP"],
+      ["salsa", "salsa"]
+    ],
+    "translation": "I dance salsa.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "chanhal"],
+      ["head", "w"],
+      ["internal", "none"],
+      ["aj", "no"]
+    ],
+    "comment": "With a preposition the nominal is an adjunct."
+  },
+  {
+    "id": "coon2019_42a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(42a)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-ko-chonh anh onh.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-ko-chonh", "PFV-A1P-sell"],
+      ["anh", "CLF"],
+      ["onh", "avocado"]
+    ],
+    "translation": "We sold the avocado.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "chonh"],
+      ["head", "transitive"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": "The DP theme saturates the root by Functional Application, (43)."
+  },
+  {
+    "id": "coon2019_42b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(42b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-onh-chonh-w-i onh.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-onh-chonh-w-i", "PFV-B1P-sell-AG-IV"],
+      ["onh", "avocado"]
+    ],
+    "translation": "We sold avocados.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "chonh"],
+      ["head", "w"],
+      ["internal", "np"],
+      ["aj", "no"]
+    ],
+    "comment": "The bare NP restricts the root and Existential Closure applies at once, (44)."
+  },
+  {
+    "id": "coon2019_47a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(47a)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-b'at winh unin.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-b'at", "PFV-go"],
+      ["winh", "CLF"],
+      ["unin", "child"]
+    ],
+    "translation": "The boy left.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "b'at"],
+      ["head", "intransitive"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": "An intransitive root, unaccusative, with the null head."
+  },
+  {
+    "id": "coon2019_47b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(47b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-b'at-w-i winh unin.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-b'at-w-i", "PFV-go-AG-IV"],
+      ["winh", "CLF"],
+      ["unin", "child"]
+    ],
+    "translation": "The boy left.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "b'at"],
+      ["head", "w"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": "No -w on an intransitive root: its external argument would take Infl⁰ and leave the internal argument unlicensed, §3.3."
+  },
+  {
+    "id": "coon2019_48a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(48a)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-ul atz'am atz'am.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-ul", "PFV-dissolve"],
+      ["atz'am", "CLF"],
+      ["atz'am", "salt"]
+    ],
+    "translation": "The salt dissolved.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "ul"],
+      ["head", "intransitive"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coon2019_48b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(48b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-in-ul-w-i atz'am.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-in-ul-w-i", "PFV-B1S-dissolve-AG-IV"],
+      ["atz'am", "salt"]
+    ],
+    "translation": "I salt-dissolved.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "ul"],
+      ["head", "w"],
+      ["internal", "np"],
+      ["aj", "no"]
+    ],
+    "comment": "Unaccusative subjects do not incorporate in Chuj, so the internal argument of an intransitive root is always a full DP."
   },
   {
     "id": "coon2019_54a",
@@ -127,7 +843,8 @@
     "primaryText": "Ix-in-jax-w-i ixim.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ix-in-jax-w-i", "PFV-B1S-grind-AG-IV"], ["ixim", "corn"]
+      ["Ix-in-jax-w-i", "PFV-B1S-grind-AG-IV"],
+      ["ixim", "corn"]
     ],
     "translation": "I corn-ground.",
     "context": "",
@@ -135,21 +852,55 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["construction", "stem"],
       ["rootForm", "jax"],
-      ["voice", "w"],
-      ["antipassiveType", "incorporation"]
+      ["head", "w"],
+      ["internal", "np"],
+      ["aj", "no"]
     ],
-    "comment": "Incorporation antipassive: overt bare-NP theme, no -aj (p. 64)."
+    "comment": "The incorporation antipassive, without -aj."
+  },
+  {
+    "id": "coon2019_54b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(54b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-in-jax-w-i t'a ixim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-in-jax-w-i", "PFV-B1S-grind-AG-IV"],
+      ["t'a", "PREP"],
+      ["ixim", "corn"]
+    ],
+    "translation": "I ground corn. / I did some grinding.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Ix-in-jax-w-i.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "jax"],
+      ["head", "w"],
+      ["internal", "none"],
+      ["aj", "no"]
+    ],
+    "comment": "The incorporation antipassive admits neither an oblique theme nor none at all; the paper stars the form with and without the PP."
   },
   {
     "id": "coon2019_55b",
-    "source": {"bibkey": "coon-2019", "paperLabel": "(55b)"},
+    "source": {"bibkey": "dayley-1981", "paperLabel": "p. 36"},
+    "reportedIn": {"bibkey": "coon-2019", "paperLabel": "(55b)"},
     "language": "chuj1250",
     "primaryText": "Ix-mak'-waj ix Malin t'a waj Xun.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ix-mak'-waj", "PFV-hit-AP"], ["ix", "CLF"], ["Malin", "Maria"], ["t'a", "PREP"],
-      ["waj", "CLF"], ["Xun", "Juan"]
+      ["Ix-mak'-waj", "PFV-hit-AP"],
+      ["ix", "CLF"],
+      ["Malin", "Maria"],
+      ["t'a", "PREP"],
+      ["waj", "CLF"],
+      ["Xun", "Juan"]
     ],
     "translation": "Maria did some hitting to John.",
     "context": "",
@@ -157,11 +908,141 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["construction", "stem"],
       ["rootForm", "mak'"],
-      ["voice", "w"],
-      ["antipassiveType", "absolutive"]
+      ["head", "w"],
+      ["internal", "implicit"],
+      ["aj", "yes"]
     ],
-    "comment": "Absolutive antipassive in -waj: implicit or oblique theme, -aj present (p. 65; from Dayley 1981: 36)."
+    "comment": "The absolutive antipassive: an implicit theme, optionally an oblique, and -aj."
+  },
+  {
+    "id": "coon2019_55c",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(55c)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-in-man-waj-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-in-man-waj-i", "PFV-B1S-buy-AP-IV"]
+    ],
+    "translation": "I did some buying.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "man"],
+      ["head", "w"],
+      ["internal", "implicit"],
+      ["aj", "yes"]
+    ],
+    "comment": "The absolutive antipassive with the theme omitted."
+  },
+  {
+    "id": "coon2019_57b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(57b)"},
+    "language": "chuj1250",
+    "primaryText": "Tas ix-el-k'-aj-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tas", "what"],
+      ["ix-el-k'-aj-i", "PFV-leave-SUF-DIV-IV"]
+    ],
+    "translation": "What was stolen?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "derivedIntransitive"],
+      ["rootForm", "el"]
+    ],
+    "comment": "-aj on a stem derived in -k', Hopkins's decomposition of the -C-aj suffixes, §4.1."
+  },
+  {
+    "id": "coon2019_59a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(59a)"},
+    "language": "chuj1250",
+    "primaryText": "S-k'apak-il chi' tz-man-j-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["S-k'apak-il", "A3S-cloth-NML"],
+      ["chi'", "DEM"],
+      ["tz-man-j-i", "IPFV-buy-PASS-IV"]
+    ],
+    "translation": "It's his cloth that is bought.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "man"],
+      ["head", "j"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": "The agentless passive in -j: no external argument at all."
+  },
+  {
+    "id": "coon2019_60a",
+    "source": {"bibkey": "buenrostro-2013", "paperLabel": "p. 113"},
+    "reportedIn": {"bibkey": "coon-2019", "paperLabel": "(60a)"},
+    "language": "chuj1250",
+    "primaryText": "Jun winh unin chi' ix-yam-chaj-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jun", "one"],
+      ["winh", "CLF"],
+      ["unin", "child"],
+      ["chi'", "DEM"],
+      ["ix-yam-chaj-i", "PFV-catch-PASS-IV"]
+    ],
+    "translation": "That boy was caught.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "yam"],
+      ["head", "ch"],
+      ["internal", "dp"],
+      ["aj", "yes"]
+    ],
+    "comment": "The passive in -chaj, decomposed into -ch and -aj."
+  },
+  {
+    "id": "coon2019_62",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(62)"},
+    "language": "chuj1250",
+    "primaryText": "Tz-b'o'-ch-aj s-wa'el winh nhulej tik y-uj heb' ix.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tz-b'o'-ch-aj", "IPFV-make-PASS-DIV"],
+      ["s-wa'el", "A3S-food"],
+      ["winh", "CLF"],
+      ["nhulej", "brother"],
+      ["tik", "DEM"],
+      ["y-uj", "A3S-RN.by"],
+      ["heb'", "PL"],
+      ["ix", "CLF"]
+    ],
+    "translation": "The brother's food is made by them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "b'o'"],
+      ["head", "ch"],
+      ["internal", "dp"],
+      ["aj", "yes"],
+      ["oblique", "agent"]
+    ],
+    "comment": "The implicit agent of -ch realized in an oblique -uj phrase. From Buenrostro 2013."
   },
   {
     "id": "coon2019_63a",
@@ -170,7 +1051,9 @@
     "primaryText": "Sk'annhej sk'o'ol winh ix-ch'ak-chaj te' te'.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Sk'annhej sk'o'ol winh", "on.purpose"], ["ix-ch'ak-chaj", "PFV-fell-PASS"], ["te'", "CLF"],
+      ["Sk'annhej sk'o'ol winh", "on.purpose"],
+      ["ix-ch'ak-chaj", "PFV-fell-PASS"],
+      ["te'", "CLF"],
       ["te'", "tree"]
     ],
     "translation": "The tree was felled on purpose.",
@@ -179,11 +1062,127 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["construction", "diagnostic"],
       ["rootForm", "ch'ak"],
-      ["voice", "ch"],
+      ["head", "ch"],
       ["diagnostic", "agentAdverb"]
     ],
-    "comment": "Agent-oriented adverb licensed by the -chaj passive's implicit agent (sect. 4.1.1, p. 68). Sk'annhej sk'o'ol winh 'on purpose' is literally a possessed noun phrase (fn. 26)."
+    "comment": "An agent-oriented adverb with the -chaj passive."
+  },
+  {
+    "id": "coon2019_63b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(63b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-ch'ak-chaj te' te' yik s-b'o' te' pat.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-ch'ak-chaj", "PFV-fell-PASS"],
+      ["te'", "CLF"],
+      ["te'", "tree"],
+      ["yik", "for"],
+      ["s-b'o'", "A3-make"],
+      ["te'", "CLF"],
+      ["pat", "house"]
+    ],
+    "translation": "The tree was felled in order to build a house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "diagnostic"],
+      ["rootForm", "ch'ak"],
+      ["head", "ch"],
+      ["diagnostic", "purposeClause"]
+    ],
+    "comment": "Control into a purpose clause with the -chaj passive."
+  },
+  {
+    "id": "coon2019_65a",
+    "source": {"bibkey": "buenrostro-2013", "paperLabel": "p. 207"},
+    "reportedIn": {"bibkey": "coon-2019", "paperLabel": "(65a)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-b'o'-j-i waj Xun y-uj anh.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-b'o'-j-i", "PFV-cure-PASS-IV"],
+      ["waj", "CLF"],
+      ["Xun", "Juan"],
+      ["y-uj", "A3S-RN.by"],
+      ["anh", "medicine"]
+    ],
+    "translation": "Juan was cured by the medicine.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "b'o'"],
+      ["head", "j"],
+      ["internal", "dp"],
+      ["aj", "no"],
+      ["oblique", "cause"]
+    ],
+    "comment": "The oblique of an agentless passive is a cause, here inanimate."
+  },
+  {
+    "id": "coon2019_66a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(66a)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-b'o'-ch-aj te' pat y-uj winh winak.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-b'o'-ch-aj", "PFV-make-PASS-DIV"],
+      ["te'", "CLF"],
+      ["pat", "house"],
+      ["y-uj", "A3S-RN.by"],
+      ["winh", "CLF"],
+      ["winak", "man"]
+    ],
+    "translation": "The house was made by the man.",
+    "context": "The man built the house with his own two hands.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "b'o'"],
+      ["head", "ch"],
+      ["internal", "dp"],
+      ["aj", "yes"],
+      ["oblique", "agent"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coon2019_66b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(66b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-b'o'-j-i te' pat y-uj winh winak.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-b'o'-j-i", "PFV-make-PASS-IV"],
+      ["te'", "CLF"],
+      ["pat", "house"],
+      ["y-uj", "A3S-RN.by"],
+      ["winh", "CLF"],
+      ["winak", "man"]
+    ],
+    "translation": "The house was made thanks to the man.",
+    "context": "The man purchased the materials and paid a carpenter to build the house, but did not himself do any building.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "b'o'"],
+      ["head", "j"],
+      ["internal", "dp"],
+      ["aj", "no"],
+      ["oblique", "cause"]
+    ],
+    "comment": ""
   },
   {
     "id": "coon2019_67a",
@@ -192,8 +1191,10 @@
     "primaryText": "Sk'annhej sk'o'ol winh ix-ch'ak-j-i te' te'.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Sk'annhej sk'o'ol winh", "on.purpose"], ["ix-ch'ak-j-i", "PFV-fell-PASS-IV"],
-      ["te'", "CLF"], ["te'", "tree"]
+      ["Sk'annhej sk'o'ol winh", "on.purpose"],
+      ["ix-ch'ak-j-i", "PFV-fell-PASS-IV"],
+      ["te'", "CLF"],
+      ["te'", "tree"]
     ],
     "translation": "The tree was felled on purpose.",
     "context": "",
@@ -201,10 +1202,470 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["construction", "diagnostic"],
       ["rootForm", "ch'ak"],
-      ["voice", "j"],
+      ["head", "j"],
       ["diagnostic", "agentAdverb"]
     ],
-    "comment": "Agent-oriented adverb blocked in the agentless -j passive: no thematic agent, implicit or otherwise (sect. 4.1.2, p. 70)."
+    "comment": "No agent-oriented adverb with the agentless passive."
+  },
+  {
+    "id": "coon2019_67b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(67b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-ch'ak-j-i te' te' yik s-b'o' te' pat.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-ch'ak-j-i", "PFV-fell-PASS-IV"],
+      ["te'", "CLF"],
+      ["te'", "tree"],
+      ["yik", "for"],
+      ["s-b'o'", "A3-make"],
+      ["te'", "CLF"],
+      ["pat", "house"]
+    ],
+    "translation": "The tree was felled in order to build a house.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "diagnostic"],
+      ["rootForm", "ch'ak"],
+      ["head", "j"],
+      ["diagnostic", "purposeClause"]
+    ],
+    "comment": "No control into a purpose clause with the agentless passive."
+  },
+  {
+    "id": "coon2019_70a",
+    "source": {"bibkey": "buenrostro-2013", "paperLabel": "p. 207"},
+    "reportedIn": {"bibkey": "coon-2019", "paperLabel": "(70a)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-s-mak te' pwerta ik'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-s-mak", "PFV-A3S-close"],
+      ["te'", "CLF"],
+      ["pwerta", "door"],
+      ["ik'", "wind"]
+    ],
+    "translation": "The wind closed the door.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "causer"],
+      ["rootForm", "mak"],
+      ["head", "transitive"]
+    ],
+    "comment": "Inanimate causers are dispreferred as transitive subjects, so -j introduces no implicit causer either."
+  },
+  {
+    "id": "coon2019_70b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(70b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-mak-j-i te' pwerta y-uj ik'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-mak-j-i", "PFV-close-PASS-IV"],
+      ["te'", "CLF"],
+      ["pwerta", "door"],
+      ["y-uj", "A3S-RN.by"],
+      ["ik'", "wind"]
+    ],
+    "translation": "The door closed because of the wind.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "mak"],
+      ["head", "j"],
+      ["internal", "dp"],
+      ["aj", "no"],
+      ["oblique", "cause"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coon2019_71",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(71)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-al-j-i ko-chi'ich.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-al-j-i", "PFV-heavy-PASS-IV"],
+      ["ko-chi'ich", "A1P-moon"]
+    ],
+    "translation": "The moon grew larger (waxed).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "isolated"],
+      ["head", "j"]
+    ],
+    "comment": "-j on the adjectival root al 'heavy', an inchoative: -j verbalizes without introducing any external argument. From Hopkins 2012a; outside the four root classes."
+  },
+  {
+    "id": "coon2019_72a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(72a)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-in-tek'-w-i t'a pelota.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-in-tek'-w-i", "PFV-B1S-kick-AG-IV"],
+      ["t'a", "PREP"],
+      ["pelota", "ball"]
+    ],
+    "translation": "I ball-kicked.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "tek'"],
+      ["head", "w"],
+      ["internal", "none"],
+      ["aj", "no"]
+    ],
+    "comment": "The incorporation antipassive prohibits an oblique theme; the bare NP variant is fine."
+  },
+  {
+    "id": "coon2019_72b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(72b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-in-tek'-w-aj t'a nok' pelota.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-in-tek'-w-aj", "PFV-B1S-kick-AG-DIV"],
+      ["t'a", "PREP"],
+      ["nok'", "CLF"],
+      ["pelota", "ball"]
+    ],
+    "translation": "I did kicking to the ball.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "tek'"],
+      ["head", "w"],
+      ["internal", "implicit"],
+      ["aj", "yes"]
+    ],
+    "comment": "The absolutive antipassive requires the preposition on its oblique theme."
+  },
+  {
+    "id": "coon2019_73a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(73a)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-in-b'o'-j-i h-u'uj.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-in-b'o'-j-i", "PFV-B1S-cure-PASS-IV"],
+      ["h-u'uj", "A2S-RN.by"]
+    ],
+    "translation": "I was cured thanks to you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "b'o'"],
+      ["head", "j"],
+      ["internal", "dp"],
+      ["aj", "no"],
+      ["oblique", "cause"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coon2019_73b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(73b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-in-b'o'-ch-aj h-u'uj.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-in-b'o'-ch-aj", "PFV-B1S-cure-PASS-DIV"],
+      ["h-u'uj", "A2S-RN.by"]
+    ],
+    "translation": "I was cured by you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "b'o'"],
+      ["head", "ch"],
+      ["internal", "dp"],
+      ["aj", "yes"],
+      ["oblique", "agent"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coon2019_74a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(74a)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-man-ch-aj ixim wa'il.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-man-ch-aj", "PFV-buy-PASS-DIV"],
+      ["ixim", "CLF"],
+      ["wa'il", "tortilla"]
+    ],
+    "translation": "The tortillas were bought.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "man"],
+      ["head", "ch"],
+      ["internal", "dp"],
+      ["aj", "yes"]
+    ],
+    "comment": "A passive with an implicit agent, structure (74b)."
+  },
+  {
+    "id": "coon2019_75a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(75a)"},
+    "language": "chuj1250",
+    "primaryText": "Tz-in-man-w-aj-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tz-in-man-w-aj-i", "IPFV-B1S-buy-AG-DIV-IV"]
+    ],
+    "translation": "I do buying.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "man"],
+      ["head", "w"],
+      ["internal", "implicit"],
+      ["aj", "yes"]
+    ],
+    "comment": "An absolutive antipassive with an implicit patient, structure (75b)."
+  },
+  {
+    "id": "coon2019_79a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(79a)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-a-jax ixim ixim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-a-jax", "PFV-A2S-grind"],
+      ["ixim", "CLF"],
+      ["ixim", "corn"]
+    ],
+    "translation": "You ground the corn.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "jax"],
+      ["head", "transitive"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": "Table (78a): the external argument licensed by v/Voice⁰, the internal by Infl⁰."
+  },
+  {
+    "id": "coon2019_79b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(79b)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-jax-ch-aj ixim ixim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-jax-ch-aj", "PFV-grind-PASS-DIV"],
+      ["ixim", "CLF"],
+      ["ixim", "corn"]
+    ],
+    "translation": "The corn was ground.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "jax"],
+      ["head", "ch"],
+      ["internal", "dp"],
+      ["aj", "yes"]
+    ],
+    "comment": "Table (78b): an implicit agent, bound by -aj."
+  },
+  {
+    "id": "coon2019_79c",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(79c)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-jax-j-i ixim ixim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-jax-j-i", "PFV-grind-PASS-IV"],
+      ["ixim", "CLF"],
+      ["ixim", "corn"]
+    ],
+    "translation": "The corn was ground.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "jax"],
+      ["head", "j"],
+      ["internal", "dp"],
+      ["aj", "no"]
+    ],
+    "comment": "Table (78c): no external argument. The paper glosses the stem PFV-corn-PASS-IV, a slip for grind."
+  },
+  {
+    "id": "coon2019_79d",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(79d)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-ach-jax-w-aj-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-ach-jax-w-aj-i", "PFV-B2S-grind-AG-DIV-IV"]
+    ],
+    "translation": "You did some grinding.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "jax"],
+      ["head", "w"],
+      ["internal", "implicit"],
+      ["aj", "yes"]
+    ],
+    "comment": "Table (78d): the external argument licensed by Infl⁰, the internal argument implicit."
+  },
+  {
+    "id": "coon2019_79e",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(79e)"},
+    "language": "chuj1250",
+    "primaryText": "Ix-ach-jax-w-i ixim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ix-ach-jax-w-i", "PFV-B2S-grind-AG-IV"],
+      ["ixim", "corn"]
+    ],
+    "translation": "You corn-ground.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "stem"],
+      ["rootForm", "jax"],
+      ["head", "w"],
+      ["internal", "np"],
+      ["aj", "no"]
+    ],
+    "comment": "Table (78d): the internal argument a bare NP."
+  },
+  {
+    "id": "coon2019_51a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(51a)"},
+    "language": "chol1282",
+    "primaryText": "Tyi majl-iy-oñ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tyi", "PFV"],
+      ["majl-iy-oñ", "go-IV-B1"]
+    ],
+    "translation": "I went.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "chol"],
+      ["stem", "unaccusative"]
+    ],
+    "comment": "Ch'ol: an intransitive root in an unaccusative stem."
+  },
+  {
+    "id": "coon2019_51b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(51b)"},
+    "language": "chol1282",
+    "primaryText": "Tyi soñ(-w)-iy-oñ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tyi", "PFV"],
+      ["soñ(-w)-iy-oñ", "dance-AG-IV-B1"]
+    ],
+    "translation": "I danced.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "chol"],
+      ["stem", "agentiveIntransitive"]
+    ],
+    "comment": "Ch'ol has no -w and no agentive intransitive stems: a nominal root cannot form an intransitive stem."
+  },
+  {
+    "id": "coon2019_52a",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(52a)"},
+    "language": "chol1282",
+    "primaryText": "Tyi k-cha'l-e soñ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tyi", "PFV"],
+      ["k-cha'l-e", "A1-do-DTV"],
+      ["soñ", "dance"]
+    ],
+    "translation": "I danced.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "chol"],
+      ["stem", "lightVerb"]
+    ],
+    "comment": "A verbal noun needs a light verb to serve as a predicate."
+  },
+  {
+    "id": "coon2019_53b",
+    "source": {"bibkey": "coon-2019", "paperLabel": "(53b)"},
+    "language": "chol1282",
+    "primaryText": "Tyi k-cha'l-e wuts'-pisil.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tyi", "PFV"],
+      ["k-cha'l-e", "A1-do-DTV"],
+      ["wuts'-pisil", "wash-clothes"]
+    ],
+    "translation": "I clothes-washed.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "chol"],
+      ["stem", "lightVerb"]
+    ],
+    "comment": "Ch'ol's incorporation antipassive is a nominal stem under a light verb."
   }
 ]
