@@ -43,6 +43,21 @@ theorem mem_optimal {p : Preorder W} {d : Set W} {w : W} :
 
 theorem optimal_subset (p : Preorder W) (d : Set W) : optimal p d ⊆ d := fun _ h => h.1
 
+/-- A world optimal in a domain is optimal in any subdomain it belongs to. -/
+theorem mem_optimal_of_subset {p : Preorder W} {d e : Set W} {w : W} (h : d ⊆ e)
+    (hw : w ∈ optimal p e) (hd : w ∈ d) : w ∈ optimal p d :=
+  Minimal.mono hw (λ _ hv => h hv) hd
+
+/-- Under a criteria-derived order, when some world of the domain satisfies every criterion,
+the optimal worlds are exactly those. -/
+theorem optimal_ofCriteria_eq {C : Type*} {sat : W → C → Prop} {criteria : Set C} {d : Set W}
+    (hex : ∃ w ∈ d, ∀ c ∈ criteria, sat w c) :
+    optimal (Preorder.ofCriteria sat criteria) d = {w ∈ d | ∀ c ∈ criteria, sat w c} :=
+  let ⟨_, hv, hsat⟩ := hex
+  Set.ext λ _ =>
+    ⟨λ ⟨hw, hopt⟩ => ⟨hw, λ c hc => hopt hv (λ c' hc' _ => hsat c' hc') c hc (hsat c hc)⟩,
+      λ ⟨hw, hall⟩ => ⟨hw, λ _ _ _ c hc _ => hall c hc⟩⟩
+
 /-- A preorder is **connected** (total) if every two worlds are comparable. -/
 def connected (p : Preorder W) : Prop := ∀ w v, p.le w v ∨ p.le v w
 

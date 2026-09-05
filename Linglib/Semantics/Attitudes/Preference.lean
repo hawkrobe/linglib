@@ -4,6 +4,7 @@ import Mathlib.Data.Set.Lattice
 import Mathlib.Data.Rat.Defs
 import Linglib.Features.Attitudes
 import Linglib.Semantics.Attitudes.Distributivity
+import Linglib.Core.Order.Normality
 
 /-!
 # Preference in attitude semantics
@@ -33,10 +34,13 @@ consistent structure are jointly belief-compatible
 conflicting-desires blocker
 `Consistent.inter_inter_nonempty_of_mem_maxElts`), and a chain of
 realistic preferences is consistent
-(`consistent_of_realistic_of_isChain`). `maxInducedLe` is the
+(`consistent_of_realistic_of_isChain`). `maxPreorder` is the
 world-side preorder induced by maximal preferences, the Kratzer-style
 ([kratzer-1981]) derivation of a world ordering from an ordering
-source.
+source, and `best` its optimal worlds in a domain, exactly the worlds
+realizing every maximal preference when there are any
+(`best_eq_of_nonempty`); `discrete` is the unranked structure on a set of
+preferences and `single` its one-preference case.
 
 A **preferential predicate** ([villalta-2008]) measures preference as
 a degree: ⟦x V p⟧(C) = μ(x, p) > θ(C), for a preference degree
@@ -160,19 +164,44 @@ end Consistent
 
 /-! ### The world preorder induced by maximal preferences -/
 
-/-- The world-level preorder induced by maximal preferences:
-    `maxInducedLe w v` iff `w` verifies every maximal preference that
-    `v` verifies. -/
-def maxInducedLe : W → W → Prop :=
-  fun w v => ∀ p ∈ P.maxElts, v ∈ p → w ∈ p
+/-- The world preorder induced by the maximal preferences, [kratzer-1981]'s ordering-source
+    construction with `maxElts` as the source: `w ≤ v` iff `w` verifies every maximal
+    preference that `v` verifies. -/
+@[reducible] def maxPreorder : Preorder W := Preorder.ofCriteria (· ∈ ·) P.maxElts
 
-theorem maxInducedLe_refl (w : W) :
-    P.maxInducedLe w w := fun _ _ hw => hw
+theorem maxPreorder_le_iff {w v : W} :
+    P.maxPreorder.le w v ↔ ∀ p ∈ P.maxElts, v ∈ p → w ∈ p :=
+  Iff.rfl
 
-theorem maxInducedLe_trans {w v u : W}
-    (hwv : P.maxInducedLe w v) (hvu : P.maxInducedLe v u) :
-    P.maxInducedLe w u :=
-  fun p hp hu => hwv p hp (hvu p hp hu)
+/-- The worlds of `F` that best realize the maximal preferences. -/
+def best (F : Set W) : Set W := Core.Order.Normality.optimal P.maxPreorder F
+
+/-- When some world of `F` realizes every maximal preference, the best worlds of `F` are
+    exactly those. -/
+theorem best_eq_of_nonempty {F : Set W} (h : (F ∩ ⋂₀ P.maxElts).Nonempty) :
+    P.best F = F ∩ ⋂₀ P.maxElts :=
+  Core.Order.Normality.optimal_ofCriteria_eq h
+
+/-! ### Unranked preferences -/
+
+/-- The structure with the preferences `S` and no ranking: every preference is maximal. -/
+def discrete (S : Set (Set W)) : PreferenceStructure W where
+  prefs := S
+  prec _ _ := False
+  isStrictOrder := { irrefl := λ _ h => h, trans := λ _ _ _ h _ => h }
+
+@[simp] theorem maxElts_discrete (S : Set (Set W)) : (discrete S).maxElts = S :=
+  Set.ext λ _ => ⟨And.left, λ h => ⟨h, λ _ _ h => h⟩⟩
+
+/-- The structure with the single preference `p`. -/
+abbrev single (p : Set W) : PreferenceStructure W := discrete {p}
+
+@[simp] theorem maxElts_single (p : Set W) : (single p).maxElts = {p} := maxElts_discrete _
+
+theorem consistent_single {p B : Set W} (h : (p ∩ B).Nonempty) : (single p).Consistent B :=
+  consistent_of_realistic_of_isChain
+    (λ _ hq => by rw [Set.mem_singleton_iff.1 hq]; exact h.ne_empty)
+    (Set.pairwise_singleton _ _) (h.mono Set.inter_subset_right)
 
 end PreferenceStructure
 

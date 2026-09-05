@@ -194,18 +194,6 @@ def Coherent (u : Use) (d : Denial) : Prop :=
   ∃ (S : PreferenceStructure W) (p q : Set W),
     S.Consistent Set.univ ∧ u.Holds S p ∧ p ∩ q = ∅ ∧ d.Against S q
 
-/-- One preference. -/
-private def single (p : Set W) : PreferenceStructure W where
-  prefs := {p}
-  prec _ _ := False
-  isStrictOrder := { irrefl := λ _ h => h, trans := λ _ _ _ h _ => h }
-
-private theorem single_consistent {p : Set W} (hp : p.Nonempty) :
-    (single p).Consistent Set.univ :=
-  PreferenceStructure.consistent_of_realistic_of_isChain
-    (λ _ hq => by rw [Set.mem_singleton_iff.1 hq, Set.inter_univ]; exact hp.ne_empty)
-    (Set.pairwise_singleton _ _) (hp.mono (Set.subset_univ p))
-
 /-- Two preferences, the first ranked strictly above the second. -/
 private def pair {p q : Set W} (h : p ≠ q) : PreferenceStructure W where
   prefs := {p, q}
@@ -243,10 +231,12 @@ theorem coherent_iff [Nontrivial W] {u : Use} {d : Denial} :
     exact Or.inr (Or.inr ⟨λ hw => concession_not_want hC (hp ha) (hq hd) hpq' (hqm hw),
       λ hu => (advice_compatible hC (hb hu) (hp ha) (hq hd)).ne_empty hpq'⟩)
   · rintro (rfl | rfl | ⟨hw, hu⟩)
-    · exact ⟨single {x}, {x}, {y}, single_consistent ⟨x, Set.mem_singleton x⟩,
+    · exact ⟨PreferenceStructure.single {x}, {x}, {y},
+        PreferenceStructure.consistent_single ⟨x, Set.mem_singleton x, Set.mem_univ x⟩,
         ⟨λ _ => ⟨Set.mem_singleton _, λ _ _ h => h⟩, λ _ _ _ h => h⟩, hxy', λ h => absurd rfl h,
         nofun⟩
-    · exact ⟨single {y}, {x}, {y}, single_consistent ⟨y, Set.mem_singleton y⟩,
+    · exact ⟨PreferenceStructure.single {y}, {x}, {y},
+        PreferenceStructure.consistent_single ⟨y, Set.mem_singleton y, Set.mem_univ y⟩,
         ⟨λ h => absurd rfl h, nofun⟩, hxy', λ _ => Set.mem_singleton _,
         λ _ => ⟨Set.mem_singleton _, λ _ _ h => h⟩⟩
     · exact ⟨pair hne, {x}, {y}, pair_consistent ⟨x, Set.mem_singleton x⟩
@@ -279,7 +269,7 @@ stays best, so the common ground does not come to entail *must p*, §5.2. -/
 theorem todo_not_must {f : ModalBase W} {g : OrderingSource W} {φ ψ : W → Prop} {u : W}
     (hψ : ψ ∈ g w) (hφψ : ∀ v, ψ v → ¬ φ v) (hu : u ∈ bestWorlds f g w) (huψ : ψ u) :
     ¬ necessity f (λ v => φ :: g v) φ w :=
-  λ h => hφψ u huψ (h u (mem_bestWorlds_cons hψ hφψ hu huψ))
+  not_necessity_cons hψ hφψ hu huψ (hφψ u huψ)
 
 /-! ### The rows
 
