@@ -1,0 +1,3802 @@
+[
+  {
+    "id": "coonkeine2021_3a",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(3a)"
+    },
+    "language": "basq1248",
+    "primaryText": "Zu-k harakina-ri liburua saldu d-i-o-zu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Zu-k",
+        "you-ERG"
+      ],
+      [
+        "harakina-ri",
+        "butcher-DAT"
+      ],
+      [
+        "liburua",
+        "book.ABS"
+      ],
+      [
+        "saldu",
+        "sold"
+      ],
+      [
+        "d-i-o-zu",
+        "3ABS-AUX-3DAT-2ERG"
+      ]
+    ],
+    "translation": "You have sold the book to the butcher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ditransitive"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "3DAT > 3ABS. Judgment from Jon Ander Mendia (their fn. 3)."
+  },
+  {
+    "id": "coonkeine2021_3b",
+    "source": {
+      "bibkey": "laka-1993",
+      "paperLabel": "p. 27"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(3b)"
+    },
+    "language": "basq1248",
+    "primaryText": "Zu-k ni-ri liburua saldu d-i-da-zu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Zu-k",
+        "you-ERG"
+      ],
+      [
+        "ni-ri",
+        "me-DAT"
+      ],
+      [
+        "liburua",
+        "book.ABS"
+      ],
+      [
+        "saldu",
+        "sold"
+      ],
+      [
+        "d-i-da-zu",
+        "3ABS-AUX-1DAT-2ERG"
+      ]
+    ],
+    "translation": "You have sold the book to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ditransitive"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "1"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "1DAT > 3ABS."
+  },
+  {
+    "id": "coonkeine2021_3c",
+    "source": {
+      "bibkey": "laka-1993",
+      "paperLabel": "p. 27"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(3c)"
+    },
+    "language": "basq1248",
+    "primaryText": "Zu-k harakina-ri ni saldu n-(a)i-o-zu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Zu-k",
+        "you-ERG"
+      ],
+      [
+        "harakina-ri",
+        "butcher-DAT"
+      ],
+      [
+        "ni",
+        "me.ABS"
+      ],
+      [
+        "saldu",
+        "sold"
+      ],
+      [
+        "n-(a)i-o-zu",
+        "1ABS-AUX-3DAT-2ERG"
+      ]
+    ],
+    "translation": "You have sold me to the butcher.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ditransitive"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "*3DAT > 1ABS; repeated as (10a)."
+  },
+  {
+    "id": "coonkeine2021_3d",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(3d)"
+    },
+    "language": "basq1248",
+    "primaryText": "Haiek ni-ri zu saldu z-ai-da-te.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Haiek",
+        "they.ERG"
+      ],
+      [
+        "ni-ri",
+        "me-DAT"
+      ],
+      [
+        "zu",
+        "you.ABS"
+      ],
+      [
+        "saldu",
+        "sold"
+      ],
+      [
+        "z-ai-da-te",
+        "2ABS-AUX-1DAT-3ERG"
+      ]
+    ],
+    "translation": "They have sold you to me.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ditransitive"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "1"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "2"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "*1DAT > 2ABS; repeated as (35). Judgment from Jon Ander Mendia (their fn. 3)."
+  },
+  {
+    "id": "coonkeine2021_10b",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(10b)"
+    },
+    "language": "basq1248",
+    "primaryText": "Gaizki iruditzen -zai-t zu-k harakina-ri ni sal-tze-a.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Gaizki",
+        "wrong"
+      ],
+      [
+        "iruditzen",
+        "look.IPFV"
+      ],
+      [
+        "-zai-t",
+        "3ABS-AUX-1DAT"
+      ],
+      [
+        "zu-k",
+        "you-ERG"
+      ],
+      [
+        "harakina-ri",
+        "butcher-DAT"
+      ],
+      [
+        "ni",
+        "me.ABS"
+      ],
+      [
+        "sal-tze-a",
+        "sell-NMLZ-ART.ABS"
+      ]
+    ],
+    "translation": "It seems wrong to me for you to sell me to the butcher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "nonfinite"
+      ],
+      [
+        "probe",
+        "none"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "3DAT > 1ABS inside a case-marked nominalized clause; neither object is agreed with or clitic-doubled."
+  },
+  {
+    "id": "coonkeine2021_10c",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(10c)"
+    },
+    "language": "basq1248",
+    "primaryText": "Zu-k harakina-ri ni sal-tze-n probatu d-u-zu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Zu-k",
+        "you-ERG"
+      ],
+      [
+        "harakina-ri",
+        "butcher-DAT"
+      ],
+      [
+        "ni",
+        "me.ABS"
+      ],
+      [
+        "sal-tze-n",
+        "sell-NMLZ-LOC"
+      ],
+      [
+        "probatu",
+        "attempted"
+      ],
+      [
+        "d-u-zu",
+        "3ABS-AUX-2ERG"
+      ]
+    ],
+    "translation": "You have attempted to sell me to the butcher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "nonfinite"
+      ],
+      [
+        "probe",
+        "none"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "3DAT > 1ABS inside an adpositional clause."
+  },
+  {
+    "id": "coonkeine2021_37a",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(37a)"
+    },
+    "language": "basq1248",
+    "primaryText": "Ni Itxaso-ri gustatzen n-atzai-o.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ni",
+        "me.ABS"
+      ],
+      [
+        "Itxaso-ri",
+        "Itxaso-DAT"
+      ],
+      [
+        "gustatzen",
+        "like.IPFV"
+      ],
+      [
+        "n-atzai-o",
+        "1ABS-AUX-3DAT"
+      ]
+    ],
+    "translation": "Itxaso likes me.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "datAbs"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "*3DAT > 1ABS: the dative experiencer c-commands the absolutive."
+  },
+  {
+    "id": "coonkeine2021_37b",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(37b)"
+    },
+    "language": "basq1248",
+    "primaryText": "Itxaso ni-ri etortzen -zai-t.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Itxaso",
+        "Itxaso.ABS"
+      ],
+      [
+        "ni-ri",
+        "me-DAT"
+      ],
+      [
+        "etortzen",
+        "come.IPFV"
+      ],
+      [
+        "-zai-t",
+        "3ABS-AUX-1DAT"
+      ]
+    ],
+    "translation": "Itxaso comes to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "absDat"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "lowerOpaque",
+        "yes"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "3ABS > 1DAT: with a motion-plus-location verb the absolutive c-commands the dative."
+  },
+  {
+    "id": "coonkeine2021_41",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(41)"
+    },
+    "language": "basq1248",
+    "primaryText": "Zu-k merkataria-ri liburuak saldu d-i-zki-o-zu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Zu-k",
+        "you-ERG"
+      ],
+      [
+        "merkataria-ri",
+        "merchant-DAT"
+      ],
+      [
+        "liburuak",
+        "book.PL.ABS"
+      ],
+      [
+        "saldu",
+        "sold"
+      ],
+      [
+        "d-i-zki-o-zu",
+        "3ABS-AUX-PL-3DAT-2ERG"
+      ]
+    ],
+    "translation": "You have sold the books to the merchant.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ditransitive"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "pl"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "3SG.DAT > 3PL.ABS: the direct object is more specified for number, with no hierarchy effect."
+  },
+  {
+    "id": "coonkeine2021_50",
+    "source": {
+      "bibkey": "rezac-2008",
+      "paperLabel": "p. 81"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(50)"
+    },
+    "language": "basq1248",
+    "primaryText": "Itxaso-ri zu-k gustatzen d-i-o-zu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Itxaso-ri",
+        "Itxaso-DAT"
+      ],
+      [
+        "zu-k",
+        "you-ERG"
+      ],
+      [
+        "gustatzen",
+        "like.IPFV"
+      ],
+      [
+        "d-i-o-zu",
+        "3ABS-AUX-3DAT-2ERG"
+      ]
+    ],
+    "translation": "Itxaso likes you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "*zu (you.ABS)",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "repair"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "2"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "lowerShielded",
+        "yes"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "The absolutive internal argument advances to ergative, moving around the person probe; the unadvanced absolutive *zu* would be a 3DAT > 2ABS configuration as in (37a)."
+  },
+  {
+    "id": "coonkeine2021_24",
+    "source": {
+      "bibkey": "bonet-1991",
+      "paperLabel": "p. 178"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(24)"
+    },
+    "language": "stan1289",
+    "primaryText": "En Josep, te 'l va recomenar la Mireia.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "En",
+        "the"
+      ],
+      [
+        "Josep",
+        "Josep"
+      ],
+      [
+        "te",
+        "2DAT.CL"
+      ],
+      [
+        "'l",
+        "3ACC.CL"
+      ],
+      [
+        "va recomenar",
+        "recommended"
+      ],
+      [
+        "la",
+        "the"
+      ],
+      [
+        "Mireia",
+        "Mireia"
+      ]
+    ],
+    "translation": "She (Mireia) recommended him (Josep) to you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ditransitive"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "2"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "2 > 3."
+  },
+  {
+    "id": "coonkeine2021_28",
+    "source": {
+      "bibkey": "bonet-1991",
+      "paperLabel": "p. 179"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(28)"
+    },
+    "language": "stan1289",
+    "primaryText": "A en Josep, te li va recomanar la Mireia.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "A",
+        "to"
+      ],
+      [
+        "en",
+        "the"
+      ],
+      [
+        "Josep",
+        "Josep"
+      ],
+      [
+        "te",
+        "2ACC.CL"
+      ],
+      [
+        "li",
+        "3DAT.CL"
+      ],
+      [
+        "va recomanar",
+        "recommended"
+      ],
+      [
+        "la",
+        "the"
+      ],
+      [
+        "Mireia",
+        "Mireia"
+      ]
+    ],
+    "translation": "She (Mireia) recommended you to him (Josep).",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ditransitive"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "2"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "*3 > 2."
+  },
+  {
+    "id": "coonkeine2021_31_2_1",
+    "source": {
+      "bibkey": "bonet-1991",
+      "paperLabel": "p. 179"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(31)"
+    },
+    "language": "stan1289",
+    "primaryText": "Te'm van recomanar per a la feina.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Te'm",
+        "2CL.1CL"
+      ],
+      [
+        "van recomanar",
+        "recommended"
+      ],
+      [
+        "per a",
+        "for"
+      ],
+      [
+        "la",
+        "the"
+      ],
+      [
+        "feina",
+        "job"
+      ]
+    ],
+    "translation": "They recommended me to you for the job.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "2 > 1",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "1 > 2",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "construction",
+        "ditransitive"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "2"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "The 2 > 1 reading of the cluster."
+  },
+  {
+    "id": "coonkeine2021_31_1_2",
+    "source": {
+      "bibkey": "bonet-1991",
+      "paperLabel": "p. 179"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(31)"
+    },
+    "language": "stan1289",
+    "primaryText": "Te'm van recomanar per a la feina.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Te'm",
+        "2CL.1CL"
+      ],
+      [
+        "van recomanar",
+        "recommended"
+      ],
+      [
+        "per a",
+        "for"
+      ],
+      [
+        "la",
+        "the"
+      ],
+      [
+        "feina",
+        "job"
+      ]
+    ],
+    "translation": "They recommended you to me for the job.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "2 > 1",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "1 > 2",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "construction",
+        "ditransitive"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "1"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "2"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "The 1 > 2 reading of the cluster."
+  },
+  {
+    "id": "coonkeine2021_44a",
+    "source": {
+      "bibkey": "stegovec-2020",
+      "paperLabel": "p. 264"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(44a)"
+    },
+    "language": "slov1268",
+    "primaryText": "Mama mu ga bo predstavila.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mama",
+        "Mom"
+      ],
+      [
+        "mu",
+        "3M.DAT"
+      ],
+      [
+        "ga",
+        "3M.ACC"
+      ],
+      [
+        "bo",
+        "will"
+      ],
+      [
+        "predstavila",
+        "introduce"
+      ]
+    ],
+    "translation": "Mom will introduce him to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ditransitive"
+      ],
+      [
+        "probe",
+        "branching"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "3DAT > 3ACC. The dative and accusative clitics reorder freely; the person restriction targets whichever is structurally lower. The branching probe over transparent datives is the analysis of fn. 26 for the Strong PCC variety Stegovec reports."
+  },
+  {
+    "id": "coonkeine2021_44a_me",
+    "source": {
+      "bibkey": "stegovec-2020",
+      "paperLabel": "p. 264"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(44a)"
+    },
+    "language": "slov1268",
+    "primaryText": "Mama mu me bo predstavila.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mama",
+        "Mom"
+      ],
+      [
+        "mu",
+        "3M.DAT"
+      ],
+      [
+        "me",
+        "1ACC"
+      ],
+      [
+        "bo",
+        "will"
+      ],
+      [
+        "predstavila",
+        "introduce"
+      ]
+    ],
+    "translation": "Mom will introduce me to him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ditransitive"
+      ],
+      [
+        "probe",
+        "branching"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "*3DAT > 1ACC."
+  },
+  {
+    "id": "coonkeine2021_44a_te",
+    "source": {
+      "bibkey": "stegovec-2020",
+      "paperLabel": "p. 264"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(44a)"
+    },
+    "language": "slov1268",
+    "primaryText": "Mama mu te bo predstavila.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mama",
+        "Mom"
+      ],
+      [
+        "mu",
+        "3M.DAT"
+      ],
+      [
+        "te",
+        "2ACC"
+      ],
+      [
+        "bo",
+        "will"
+      ],
+      [
+        "predstavila",
+        "introduce"
+      ]
+    ],
+    "translation": "Mom will introduce you to him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ditransitive"
+      ],
+      [
+        "probe",
+        "branching"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "2"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "*3DAT > 2ACC."
+  },
+  {
+    "id": "coonkeine2021_44b",
+    "source": {
+      "bibkey": "stegovec-2020",
+      "paperLabel": "p. 264"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(44b)"
+    },
+    "language": "slov1268",
+    "primaryText": "Mama ga mu bo predstavila.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mama",
+        "Mom"
+      ],
+      [
+        "ga",
+        "3M.ACC"
+      ],
+      [
+        "mu",
+        "3M.DAT"
+      ],
+      [
+        "bo",
+        "will"
+      ],
+      [
+        "predstavila",
+        "introduce"
+      ]
+    ],
+    "translation": "Mom will introduce him to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "reverse"
+      ],
+      [
+        "probe",
+        "branching"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "3ACC > 3DAT: the direct object has moved above the indirect object."
+  },
+  {
+    "id": "coonkeine2021_44b_mi",
+    "source": {
+      "bibkey": "stegovec-2020",
+      "paperLabel": "p. 264"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(44b)"
+    },
+    "language": "slov1268",
+    "primaryText": "Mama ga mi bo predstavila.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mama",
+        "Mom"
+      ],
+      [
+        "ga",
+        "3M.ACC"
+      ],
+      [
+        "mi",
+        "1DAT"
+      ],
+      [
+        "bo",
+        "will"
+      ],
+      [
+        "predstavila",
+        "introduce"
+      ]
+    ],
+    "translation": "Mom will introduce him to me.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "reverse"
+      ],
+      [
+        "probe",
+        "branching"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "*3ACC > 1DAT."
+  },
+  {
+    "id": "coonkeine2021_44b_ti",
+    "source": {
+      "bibkey": "stegovec-2020",
+      "paperLabel": "p. 264"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(44b)"
+    },
+    "language": "slov1268",
+    "primaryText": "Mama ga ti bo predstavila.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mama",
+        "Mom"
+      ],
+      [
+        "ga",
+        "3M.ACC"
+      ],
+      [
+        "ti",
+        "2DAT"
+      ],
+      [
+        "bo",
+        "will"
+      ],
+      [
+        "predstavila",
+        "introduce"
+      ]
+    ],
+    "translation": "Mom will introduce him to you.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "reverse"
+      ],
+      [
+        "probe",
+        "branching"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "2"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "*3ACC > 2DAT."
+  },
+  {
+    "id": "coonkeine2021_46a",
+    "source": {
+      "bibkey": "anagnostopoulou-2003",
+      "paperLabel": "p. 311"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(46a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Paul me lui présentera.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Paul",
+        "Paul"
+      ],
+      [
+        "me",
+        "CL.1SG"
+      ],
+      [
+        "lui",
+        "CL.3SG"
+      ],
+      [
+        "présentera",
+        "will.introduce"
+      ]
+    ],
+    "translation": "Paul will introduce me to him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ditransitive"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "*3DAT > 1ACC; French is a Strong PCC language (table 1)."
+  },
+  {
+    "id": "coonkeine2021_46b",
+    "source": {
+      "bibkey": "anagnostopoulou-2003",
+      "paperLabel": "p. 311"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(46b)"
+    },
+    "language": "stan1290",
+    "primaryText": "Paul me présentera à lui.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Paul",
+        "Paul"
+      ],
+      [
+        "me",
+        "CL.1SG"
+      ],
+      [
+        "présentera",
+        "will.introduce"
+      ],
+      [
+        "à",
+        "to"
+      ],
+      [
+        "lui",
+        "him"
+      ]
+    ],
+    "translation": "Paul will introduce me to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "repair"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "higherShielded",
+        "yes"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "The indirect object is realized as a full PP, inaccessible to the probe."
+  },
+  {
+    "id": "coonkeine2021_48a",
+    "source": {
+      "bibkey": "anagnostopoulou-2017b",
+      "paperLabel": "pp. 3004, 3006"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(48a)"
+    },
+    "language": "mode1248",
+    "primaryText": "Tha tu se stilune.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Tha",
+        "FUT"
+      ],
+      [
+        "tu",
+        "CL.GEN.3SG.M"
+      ],
+      [
+        "se",
+        "CL.ACC.2SG"
+      ],
+      [
+        "stilune",
+        "send.3PL"
+      ]
+    ],
+    "translation": "They will send you to him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ditransitive"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "2"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "*3DAT > 2ACC; Greek is a Strong PCC language (table 1)."
+  },
+  {
+    "id": "coonkeine2021_48b",
+    "source": {
+      "bibkey": "anagnostopoulou-2017b",
+      "paperLabel": "pp. 3004, 3006"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(48b)"
+    },
+    "language": "mode1248",
+    "primaryText": "Tha tu stilune esena.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Tha",
+        "FUT"
+      ],
+      [
+        "tu",
+        "CL.GEN.3SG.M"
+      ],
+      [
+        "stilune",
+        "send.3PL"
+      ],
+      [
+        "esena",
+        "you.ACC"
+      ]
+    ],
+    "translation": "They will send you to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "repair"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "2"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "lowerShielded",
+        "yes"
+      ],
+      [
+        "aftermath",
+        "clitic"
+      ]
+    ],
+    "comment": "The direct object is a strong pronoun, which does not cliticize."
+  },
+  {
+    "id": "coonkeine2021_51a",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(51a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Du bist Martin.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Du",
+        "you.NOM"
+      ],
+      [
+        "bist",
+        "are"
+      ],
+      [
+        "Martin",
+        "Martin.NOM"
+      ]
+    ],
+    "translation": "You are Martin.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "copula"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "2"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "germanPresent"
+      ]
+    ],
+    "comment": "2 > 3. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades."
+  },
+  {
+    "id": "coonkeine2021_51b",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(51b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Martin ist du.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Martin",
+        "Martin.NOM"
+      ],
+      [
+        "ist",
+        "is"
+      ],
+      [
+        "du",
+        "you.NOM"
+      ]
+    ],
+    "translation": "Martin is you.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "copula"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "2"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "germanPresent"
+      ]
+    ],
+    "comment": "*3 > 2, marked *? by the authors; repeated as (56). Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades."
+  },
+  {
+    "id": "coonkeine2021_52a",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(52a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Die Kinder sind der Baum.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Die",
+        "the"
+      ],
+      [
+        "Kinder",
+        "children.NOM"
+      ],
+      [
+        "sind",
+        "are"
+      ],
+      [
+        "der",
+        "the"
+      ],
+      [
+        "Baum",
+        "tree.NOM"
+      ]
+    ],
+    "translation": "The children are the tree.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "copula"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "pl"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "germanPresent"
+      ]
+    ],
+    "comment": "PL > SG. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades."
+  },
+  {
+    "id": "coonkeine2021_52b",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(52b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Maria ist die Bäume.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Maria",
+        "Maria.NOM"
+      ],
+      [
+        "ist",
+        "is"
+      ],
+      [
+        "die",
+        "the"
+      ],
+      [
+        "Bäume",
+        "trees.NOM"
+      ]
+    ],
+    "translation": "Maria is the trees.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "copula"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "pl"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "germanPresent"
+      ]
+    ],
+    "comment": "*SG > PL, marked *? by the authors; repeated as (63). Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades."
+  },
+  {
+    "id": "coonkeine2021_54a",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(54a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Martin scheint du zu sein.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Martin",
+        "Martin.NOM"
+      ],
+      [
+        "scheint",
+        "seems"
+      ],
+      [
+        "du",
+        "you.NOM"
+      ],
+      [
+        "zu",
+        "to"
+      ],
+      [
+        "sein",
+        "be"
+      ]
+    ],
+    "translation": "Martin seems to be you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "nonfinite"
+      ],
+      [
+        "probe",
+        "none"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "2"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "germanPresent"
+      ]
+    ],
+    "comment": "3 > 2 inside a nonfinite clause, which has no agreeing T; the paper gives no derivation. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades."
+  },
+  {
+    "id": "coonkeine2021_54b",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(54b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Maria scheint die Bäume zu sein.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Maria",
+        "Maria.NOM"
+      ],
+      [
+        "scheint",
+        "seems"
+      ],
+      [
+        "die",
+        "the"
+      ],
+      [
+        "Bäume",
+        "trees.NOM"
+      ],
+      [
+        "zu",
+        "to"
+      ],
+      [
+        "sein",
+        "be"
+      ]
+    ],
+    "translation": "Maria seems to be the trees.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "nonfinite"
+      ],
+      [
+        "probe",
+        "none"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "pl"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "germanPresent"
+      ]
+    ],
+    "comment": "SG > PL inside a nonfinite clause, which has no agreeing T; the paper gives no derivation. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades."
+  },
+  {
+    "id": "coonkeine2021_fn32_ia",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "fn. 32 (ia)"
+    },
+    "language": "stan1295",
+    "primaryText": "Martin war ich.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Martin",
+        "Martin.NOM"
+      ],
+      [
+        "war",
+        "was.3SG/1SG"
+      ],
+      [
+        "ich",
+        "I.NOM"
+      ]
+    ],
+    "translation": "Martin was me.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "copula"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "germanPast"
+      ]
+    ],
+    "comment": "3 > 1 in the past tense, where the verb is syncretic between 1SG and 3SG. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades."
+  },
+  {
+    "id": "coonkeine2021_68a",
+    "source": {
+      "bibkey": "bhatia-bhatt-2019",
+      "paperLabel": "p. 3"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(68a)"
+    },
+    "language": "hind1269",
+    "primaryText": "aaj-se mẼ Ramesh hũ:",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "aaj-se",
+        "today-from"
+      ],
+      [
+        "mẼ",
+        "I"
+      ],
+      [
+        "Ramesh",
+        "Ramesh"
+      ],
+      [
+        "hũ:",
+        "be.PRS.1SG"
+      ]
+    ],
+    "translation": "From today onward, I am Ramesh.",
+    "context": "A Bollywood movie where two people are swapping identities.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "copula"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "1"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "hindiPresent"
+      ]
+    ],
+    "comment": "1 > 3: the speaker takes on the role of a third person."
+  },
+  {
+    "id": "coonkeine2021_68b",
+    "source": {
+      "bibkey": "bhatia-bhatt-2019",
+      "paperLabel": "p. 3"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(68b)"
+    },
+    "language": "hind1269",
+    "primaryText": "aaj-se Ramesh mẼ hai",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "aaj-se",
+        "today-from"
+      ],
+      [
+        "Ramesh",
+        "Ramesh"
+      ],
+      [
+        "mẼ",
+        "I"
+      ],
+      [
+        "hai",
+        "be.PRS.3SG"
+      ]
+    ],
+    "translation": "From today onward, Ramesh is me.",
+    "context": "A Bollywood movie where someone is swapping identities with me.",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {
+        "form": "aaj-se Ramesh mẼ hũ:",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "copula"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "hindiPresent"
+      ]
+    ],
+    "comment": "*3 > 1 with either agreement form."
+  },
+  {
+    "id": "coonkeine2021_69a",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(69a)"
+    },
+    "language": "hind1269",
+    "primaryText": "is naaTak-mẽ do log Ram hẼ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "is",
+        "this"
+      ],
+      [
+        "naaTak-mẽ",
+        "play-in"
+      ],
+      [
+        "do",
+        "two"
+      ],
+      [
+        "log",
+        "people"
+      ],
+      [
+        "Ram",
+        "Ram"
+      ],
+      [
+        "hẼ",
+        "be.PRS.3PL"
+      ]
+    ],
+    "translation": "In this play, two people are Ram.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "copula"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "pl"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "hindiPresent"
+      ]
+    ],
+    "comment": "PL > SG. Judgment from Rajesh Bhatt (p.c.)."
+  },
+  {
+    "id": "coonkeine2021_69b",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(69b)"
+    },
+    "language": "hind1269",
+    "primaryText": "is naaTak-mẽ Ram do paatr hai",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "is",
+        "this"
+      ],
+      [
+        "naaTak-mẽ",
+        "play-in"
+      ],
+      [
+        "Ram",
+        "Ram"
+      ],
+      [
+        "do",
+        "two"
+      ],
+      [
+        "paatr",
+        "characters"
+      ],
+      [
+        "hai",
+        "be.PRS.3SG"
+      ]
+    ],
+    "translation": "In this play, Ram is two characters.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "copula"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "pl"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "hindiPresent"
+      ]
+    ],
+    "comment": "SG > PL, marked ?? by the authors. Judgment from Rajesh Bhatt (p.c.)."
+  },
+  {
+    "id": "coonkeine2021_fn34_i",
+    "source": {
+      "bibkey": "bhatia-bhatt-2019",
+      "paperLabel": "p. 6"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "fn. 34 (i)"
+    },
+    "language": "hind1269",
+    "primaryText": "us din mẼ Ramesh tha: aur Ramesh mẼ tha:",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "us",
+        "that"
+      ],
+      [
+        "din",
+        "day"
+      ],
+      [
+        "mẼ",
+        "I"
+      ],
+      [
+        "Ramesh",
+        "Ramesh"
+      ],
+      [
+        "tha:",
+        "be.PST.M.SG"
+      ],
+      [
+        "aur",
+        "and"
+      ],
+      [
+        "Ramesh",
+        "Ramesh"
+      ],
+      [
+        "mẼ",
+        "I"
+      ],
+      [
+        "tha:",
+        "be.PST.M.SG"
+      ]
+    ],
+    "translation": "That day I was Ramesh and Ramesh was me.",
+    "context": "A Bollywood movie where I swapped identities with Ramesh.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "copula"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "hindiPast"
+      ]
+    ],
+    "comment": "The second conjunct is 3 > 1; the past auxiliary expresses no person distinctions."
+  },
+  {
+    "id": "coonkeine2021_70a",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(70a)"
+    },
+    "language": "braz1246",
+    "primaryText": "Eu sou ele.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Eu",
+        "I"
+      ],
+      [
+        "sou",
+        "am"
+      ],
+      [
+        "ele",
+        "he"
+      ]
+    ],
+    "translation": "I am he.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "copula"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "1"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "portuguesePresent"
+      ]
+    ],
+    "comment": "1 > 3. Judgment from Filipe Hisao Kobayashi (p.c.)."
+  },
+  {
+    "id": "coonkeine2021_70b",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(70b)"
+    },
+    "language": "braz1246",
+    "primaryText": "Ele é eu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ele",
+        "he"
+      ],
+      [
+        "é",
+        "is"
+      ],
+      [
+        "eu",
+        "I"
+      ]
+    ],
+    "translation": "He is I.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "copula"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "portuguesePresent"
+      ]
+    ],
+    "comment": "*3 > 1. Judgment from Filipe Hisao Kobayashi (p.c.)."
+  },
+  {
+    "id": "coonkeine2021_71",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(71)"
+    },
+    "language": "icel1247",
+    "primaryText": "Hann er þú.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Hann",
+        "he.NOM"
+      ],
+      [
+        "er",
+        "is.3SG"
+      ],
+      [
+        "þú",
+        "you.SG.NOM"
+      ]
+    ],
+    "translation": "He is you.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "copula"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "lower",
+        "2"
+      ]
+    ],
+    "comment": "3 > 2, marked but possible according to a reviewer; the authors offer no account."
+  },
+  {
+    "id": "coonkeine2021_72",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(72)"
+    },
+    "language": "icel1247",
+    "primaryText": "Hann er trén.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Hann",
+        "he.NOM"
+      ],
+      [
+        "er",
+        "is.3SG"
+      ],
+      [
+        "trén",
+        "trees.NOM"
+      ]
+    ],
+    "translation": "He is the trees.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "copula"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "pl"
+      ]
+    ],
+    "comment": "SG > PL, marked but possible according to a reviewer; the authors offer no account."
+  },
+  {
+    "id": "coonkeine2021_73",
+    "source": {
+      "bibkey": "sigurdsson-holmberg-2008",
+      "paperLabel": "p. 260"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(73)"
+    },
+    "language": "icel1247",
+    "primaryText": "að henni líkaði þeir",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "að",
+        "that"
+      ],
+      [
+        "henni",
+        "her.DAT"
+      ],
+      [
+        "líkaði",
+        "liked.3SG"
+      ],
+      [
+        "þeir",
+        "they.NOM"
+      ]
+    ],
+    "translation": "that she liked them",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "datNom"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "pl"
+      ]
+    ],
+    "comment": "Default 3SG agreement with a plural nominative object, available in many varieties."
+  },
+  {
+    "id": "coonkeine2021_74",
+    "source": {
+      "bibkey": "sigurdsson-1996",
+      "paperLabel": "p. 1"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(74)"
+    },
+    "language": "icel1247",
+    "primaryText": "Henni leiddust strákarnir.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Henni",
+        "her.DAT"
+      ],
+      [
+        "leiddust",
+        "bored.3PL"
+      ],
+      [
+        "strákarnir",
+        "the.boys.NOM"
+      ]
+    ],
+    "translation": "She found the boys boring.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "datNom"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "pl"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "icelandicMediopassivePast"
+      ]
+    ],
+    "comment": "3 > 3PL: the verb agrees with the nominative object."
+  },
+  {
+    "id": "coonkeine2021_76a",
+    "source": {
+      "bibkey": "sigurdsson-holmberg-2008",
+      "paperLabel": "p. 270"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(76a)"
+    },
+    "language": "icel1247",
+    "primaryText": "Henni leiddumst við.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Henni",
+        "her.DAT"
+      ],
+      [
+        "leiddumst",
+        "bored.1PL"
+      ],
+      [
+        "við",
+        "we.NOM"
+      ]
+    ],
+    "translation": "She found us boring.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "datNom"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "pl"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "icelandicMediopassivePast"
+      ]
+    ],
+    "comment": "*3 > 1PL."
+  },
+  {
+    "id": "coonkeine2021_76b",
+    "source": {
+      "bibkey": "sigurdsson-1996",
+      "paperLabel": "p. 33"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(76b)"
+    },
+    "language": "icel1247",
+    "primaryText": "Henni líkaðir þú.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Henni",
+        "her.DAT"
+      ],
+      [
+        "líkaðir",
+        "like.2SG"
+      ],
+      [
+        "þú",
+        "you.SG"
+      ]
+    ],
+    "translation": "She likes you.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "datNom"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "2"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "icelandicLikaPast"
+      ]
+    ],
+    "comment": "*3 > 2SG; the verb form is the past 2SG beside 3SG líkaði of (73)."
+  },
+  {
+    "id": "coonkeine2021_77",
+    "source": {
+      "bibkey": "sigurdsson-holmberg-2008",
+      "paperLabel": "p. 271"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(77)"
+    },
+    "language": "icel1247",
+    "primaryText": "Hún vonaðist auðvitað til að leiðast við ekki mikið.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Hún",
+        "she"
+      ],
+      [
+        "vonaðist",
+        "hoped"
+      ],
+      [
+        "auðvitað",
+        "of.course"
+      ],
+      [
+        "til",
+        "for"
+      ],
+      [
+        "að",
+        "to"
+      ],
+      [
+        "leiðast",
+        "find.boring.INF"
+      ],
+      [
+        "við",
+        "we.NOM"
+      ],
+      [
+        "ekki",
+        "not"
+      ],
+      [
+        "mikið",
+        "much"
+      ]
+    ],
+    "translation": "She of course hoped not to find us very boring.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "nonfinite"
+      ],
+      [
+        "probe",
+        "none"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "pl"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "icelandicMediopassivePast"
+      ]
+    ],
+    "comment": "A dative PRO with a 1PL nominative object in a control clause, also with þið 'you' and þeir 'they'; judged quite acceptable, the ? reflecting other factors."
+  },
+  {
+    "id": "coonkeine2021_78a",
+    "source": {
+      "bibkey": "hrafnbjargarson-2002",
+      "paperLabel": "p. 2"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(78a)"
+    },
+    "language": "icel1247",
+    "primaryText": "Mér þykja þau góð í fótbolta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mér",
+        "me.DAT"
+      ],
+      [
+        "þykja",
+        "think.3PL"
+      ],
+      [
+        "þau",
+        "they.NOM"
+      ],
+      [
+        "góð",
+        "good"
+      ],
+      [
+        "í",
+        "in"
+      ],
+      [
+        "fótbolta",
+        "soccer"
+      ]
+    ],
+    "translation": "I think they are good at soccer.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "datNom"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "1"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "3"
+      ],
+      [
+        "lowerNumber",
+        "pl"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "icelandicThykjaPresent"
+      ]
+    ],
+    "comment": "The matrix verb agrees with the nominative DP of the embedded small clause."
+  },
+  {
+    "id": "coonkeine2021_78b_agree",
+    "source": {
+      "bibkey": "hrafnbjargarson-2002",
+      "paperLabel": "p. 2"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(78b)"
+    },
+    "language": "icel1247",
+    "primaryText": "Ykkur þyki ég góður í fótbolta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ykkur",
+        "you.PL.DAT"
+      ],
+      [
+        "þyki",
+        "think.1SG"
+      ],
+      [
+        "ég",
+        "I.NOM"
+      ],
+      [
+        "góður",
+        "good"
+      ],
+      [
+        "í",
+        "in"
+      ],
+      [
+        "fótbolta",
+        "soccer"
+      ]
+    ],
+    "translation": "You think I am good at soccer.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "datNom"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "2"
+      ],
+      [
+        "higherNumber",
+        "pl"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "icelandicThykjaPresent"
+      ]
+    ],
+    "comment": "The agreeing form is ruled out: agreement with the 1SG nominative."
+  },
+  {
+    "id": "coonkeine2021_78b",
+    "source": {
+      "bibkey": "hrafnbjargarson-2002",
+      "paperLabel": "p. 2"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(78b)"
+    },
+    "language": "icel1247",
+    "primaryText": "Ykkur þykir ég góður í fótbolta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ykkur",
+        "you.PL.DAT"
+      ],
+      [
+        "þykir",
+        "think.3SG"
+      ],
+      [
+        "ég",
+        "I.NOM"
+      ],
+      [
+        "góður",
+        "good"
+      ],
+      [
+        "í",
+        "in"
+      ],
+      [
+        "fótbolta",
+        "soccer"
+      ]
+    ],
+    "translation": "You think I am good at soccer.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "datNom"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "2"
+      ],
+      [
+        "higherNumber",
+        "pl"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "sg"
+      ],
+      [
+        "lowerShielded",
+        "yes"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "icelandicThykjaPresent"
+      ]
+    ],
+    "comment": "The verb agrees with the embedded clause as a whole instead of the nominative DP."
+  },
+  {
+    "id": "coonkeine2021_84a",
+    "source": {
+      "bibkey": "sigurdsson-holmberg-2008",
+      "paperLabel": "p. 270"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(84a)"
+    },
+    "language": "icel1247",
+    "primaryText": "Henni virtust þið eitthvað einkennilegir.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Henni",
+        "her.DAT"
+      ],
+      [
+        "virtust",
+        "seemed.2PL/3PL"
+      ],
+      [
+        "þið",
+        "you.PL.NOM"
+      ],
+      [
+        "eitthvað",
+        "somewhat"
+      ],
+      [
+        "einkennilegir",
+        "strange"
+      ]
+    ],
+    "translation": "You seemed somewhat strange to her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "datNom"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "2"
+      ],
+      [
+        "lowerNumber",
+        "pl"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "icelandicMediopassivePast"
+      ]
+    ],
+    "comment": "3 > 2PL: the 2PL form is syncretic with the 3PL form."
+  },
+  {
+    "id": "coonkeine2021_84b",
+    "source": {
+      "bibkey": "sigurdsson-holmberg-2008",
+      "paperLabel": "p. 270"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(84b)"
+    },
+    "language": "icel1247",
+    "primaryText": "Henni virtumst við eitthvað einkennilegir.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Henni",
+        "her.DAT"
+      ],
+      [
+        "virtumst",
+        "seemed.1PL"
+      ],
+      [
+        "við",
+        "we.NOM"
+      ],
+      [
+        "eitthvað",
+        "somewhat"
+      ],
+      [
+        "einkennilegir",
+        "strange"
+      ]
+    ],
+    "translation": "We seemed somewhat strange to her.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "datNom"
+      ],
+      [
+        "probe",
+        "weak"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "sg"
+      ],
+      [
+        "higherOpaque",
+        "yes"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "pl"
+      ],
+      [
+        "aftermath",
+        "agreement"
+      ],
+      [
+        "paradigm",
+        "icelandicMediopassivePast"
+      ]
+    ],
+    "comment": "*3 > 1PL: the 1PL form is not syncretic with 3rd person agreement."
+  },
+  {
+    "id": "coonkeine2021_86",
+    "source": {
+      "bibkey": "sigurdsson-2004a",
+      "paperLabel": "p. 86"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(86)"
+    },
+    "language": "icel1247",
+    "primaryText": "Þeir mundu vera taldir vera sagðir hafa verið kosnir.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Þeir",
+        "they.NOM.M.PL"
+      ],
+      [
+        "mundu",
+        "would"
+      ],
+      [
+        "vera",
+        "be"
+      ],
+      [
+        "taldir",
+        "believed.NOM.M.PL"
+      ],
+      [
+        "vera",
+        "be"
+      ],
+      [
+        "sagðir",
+        "said.NOM.M.PL"
+      ],
+      [
+        "hafa",
+        "have"
+      ],
+      [
+        "verið",
+        "been"
+      ],
+      [
+        "kosnir",
+        "elected.NOM.M.PL"
+      ]
+    ],
+    "translation": "They would be believed to be said to have been elected.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "participles"
+      ],
+      [
+        "higher",
+        "3"
+      ],
+      [
+        "higherNumber",
+        "pl"
+      ]
+    ],
+    "comment": "Several probes agree with one DP: no probe agrees with more than one DP."
+  },
+  {
+    "id": "coonkeine2021_fn37_i",
+    "source": {
+      "bibkey": "sigurdsson-2006",
+      "paperLabel": "p. 223"
+    },
+    "reportedIn": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "fn. 37 (i)"
+    },
+    "language": "icel1247",
+    "primaryText": "Það erum bara við.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Það",
+        "it"
+      ],
+      [
+        "erum",
+        "are.1PL"
+      ],
+      [
+        "bara",
+        "only"
+      ],
+      [
+        "við",
+        "we.NOM"
+      ]
+    ],
+    "translation": "It's only us.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "expletive"
+      ],
+      [
+        "lower",
+        "1"
+      ],
+      [
+        "lowerNumber",
+        "pl"
+      ]
+    ],
+    "comment": "Reverse Predicate Agreement: the expletive lacks φ-features, so the probe agrees only with the 1PL nominative."
+  }
+]
