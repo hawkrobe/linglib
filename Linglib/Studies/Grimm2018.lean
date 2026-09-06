@@ -55,7 +55,7 @@ Formalizes the core framework of:
   values — vindicating the value space of `Features/Number/Basic.lean`.
 * Each class carries a `Number.System` (`WelshClass.system` etc.), so
   Grimm's classes plug into the implicational universals; this generalizes
-  the two-class `CountMassNumberInteraction` of `Studies/Corbett2000.lean`.
+  the count-against-mass split of [corbett-2000] to a system per class.
 * English's binary partition is `Features.MassCount`
   (`english_matches_massCount`) — the binary feature becomes the 2-cell
   instance of the scale, not a primitive.
@@ -350,7 +350,7 @@ theorem dagaare_inverse_marking :
 /-! ### Classes carry number systems
 
 A countability class determines which `Number` values its nouns contrast —
-the per-class generalization of `Corbett2000.CountMassNumberInteraction`
+the per-class generalization of [corbett-2000]'s count-against-mass split
 (count system vs. mass system). All class systems satisfy the implicational
 universals. -/
 

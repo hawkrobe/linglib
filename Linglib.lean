@@ -770,6 +770,7 @@ import Linglib.Fragments.Basque.Postsyntax
 import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Basque.Relativization
 import Linglib.Fragments.Basque.WordOrder
+import Linglib.Fragments.Bayso.Number
 import Linglib.Fragments.Bulgarian.Clause
 import Linglib.Fragments.Burmese.Negation
 import Linglib.Fragments.Burmeso.ObjectAgreement
@@ -3004,3 +3005,4 @@ import Linglib.Data.Examples.Coppock2018
 import Linglib.Data.Examples.CoppockBeaver2015
 import Linglib.Data.Examples.Corbett1991
 import Linglib.Data.Examples.Corbett1998
+import Linglib.Data.Examples.Corbett2000
