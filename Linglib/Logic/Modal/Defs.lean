@@ -53,6 +53,12 @@ theorem box_and (p q : W → Prop) (w : W) :
     □[R] (fun v => p v ∧ q v) w ↔ □[R] p w ∧ □[R] q w := by
   simp only [box, imp_and, forall_and]
 
+/-- Necessity depends only on the worlds accessed: two worlds accessing the same worlds
+carry the same box. -/
+theorem box_congr_left {R : W → W → Prop} {p : W → Prop} {w w' : W}
+    (h : ∀ v, R w v ↔ R w' v) : □[R] p w ↔ □[R] p w' :=
+  forall_congr' fun v => imp_congr_left (h v)
+
 /-! ### Frame conditions -/
 
 /-- `R` is **serial** if every world accesses at least one world. -/
