@@ -4,7 +4,7 @@ import Linglib.Semantics.Quantification.Counting
 /-!
 # Traditional Generic Semantics (GEN Operator)
 
-[tessler-goodman-2019] [chierchia-1995] [krifka-etal-1995]
+[tessler-goodman-2019] [chierchia-1995a] [krifka-etal-1995]
 
 This module formalizes the traditional covert GEN operator posited for
 generic sentences like "Dogs bark", "Birds fly", etc.
@@ -48,7 +48,7 @@ restrict the interpretation index, not the world index. See
 
 ## Comparison with RSA Treatment
 
-[tessler-goodman-2019] and [chierchia-1995] eliminate GEN via threshold semantics:
+[tessler-goodman-2019] and [chierchia-1995a] eliminate GEN via threshold semantics:
 - Generic is true iff prevalence exceeds threshold
 - Threshold is uncertain, inferred pragmatically
 - Prior over prevalence varies by property

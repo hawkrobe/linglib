@@ -32,8 +32,9 @@ refset/compset/maxset framework).
   monotone-decreasing forms).
 * `ParticularWC_Exist`, `ParticularWC_No`, `ParticularWC_FewComp` —
   particular (anaphora-exposing) witness conditions.
-* `AnaphoraRef`, `QuantName`, `anaphoraAvailable` — per-quantifier
-  anaphora-set predictions (REFSET / MAXSET / COMPSET).
+* `AnaphoraRef`, `WitnessCondition`, `QuantName`, `anaphoraAvailable` —
+  per-quantifier anaphora-set predictions (REFSET / MAXSET / COMPSET),
+  derived from the witness conditions each quantifier uses.
 * `witnessGQ_exist`, `witnessGQ_every` — induced classical
   generalised-quantifier denotations.
 
@@ -60,10 +61,11 @@ refset/compset/maxset framework).
   `decide` close finite cardinality goals. Type-valued witness conditions
   (`ParticularWC_*`, `GeneralWC_*`) coexist for the proof-relevant
   predicates used in compositional semantics.
-* Anaphora-availability is encoded as a finite enumeration
-  (`anaphoraAvailable : QuantName → List AnaphoraRef`) rather than a
-  derived predicate. The list is empirical (Cooper §7.4.1 Table); the
-  Lean encoding is for downstream `decide`-based dispatch.
+* Anaphora-availability (`anaphoraAvailable`) is derived from the
+  witness conditions [cooper-2023] §7.4 assigns to each quantifier
+  relation (`QuantName.conditions`) and the paths their witnesses
+  provide (`WitnessCondition.anaphora`); `Studies.Cooper2023` checks it
+  against the book's examples.
 -/
 
 namespace Quantification
@@ -179,21 +181,29 @@ structure GeneralWC_Decr (P Q : E → Type)
 
 /-- Particular witness condition for `exist(P, Q)`: a specific
 individual `x` witnessing both `P` and `Q`. The `x`-field enables REFSET
-(singular) anaphora ("A dog barked. It heard an intruder."). -/
+(singular) anaphora ("A dog barked. It heard an intruder.",
+[cooper-2023] §7.4.1 (103d)). -/
 structure ParticularWC_Exist (P Q : E → Type) where
   x : E
   pWit : P x
   qWit : Q x
 
-/-- Particular witness condition for `no(P, Q)`: every `P`-entity fails
-to bear `Q`. With `everyʷ(P)` as the witness set, predicts MAXSET
-anaphora ("No dog barked. They were all asleep."). -/
+/-- `exist(P, Q)` is witnessed iff the extensions of `P` and `Q` overlap. -/
+theorem nonempty_particularWC_exist_iff (P Q : E → Type) :
+    Nonempty (ParticularWC_Exist P Q) ↔ ∃ a, Nonempty (P a) ∧ Nonempty (Q a) :=
+  ⟨λ ⟨w⟩ => ⟨w.x, ⟨w.pWit⟩, ⟨w.qWit⟩⟩, λ ⟨a, ⟨p⟩, ⟨q⟩⟩ => ⟨⟨a, p, q⟩⟩⟩
+
+/-- Particular witness condition for `no(P, Q)`: every `P`-entity
+precludes `Q`, the function into the negated type of [cooper-2023]
+§7.4 (70). Its witness set, `everyʷ(P)`, is what complement set
+anaphora picks up ("No dog barked. They were all busy gnawing on a
+bone.", (71)). -/
 structure ParticularWC_No (P Q : E → Type) where
-  f : (a : E) → P a → IsEmpty (Q a)
+  f : (a : E) → P a → Q a → Empty
 
 /-- Particular witness condition for `few` with complement: a set of
 `P`-entities all lacking `Q`. Predicts COMPSET anaphora ("Few dogs
-barked. They slept through."). -/
+barked. They did not hear the intruder.", [cooper-2023] §7.4.1 (113d)). -/
 structure ParticularWC_FewComp (P Q : E → Type) [DecidableEq E] where
   X : Finset E
   allP : ∀ a ∈ X, Nonempty (P a)
@@ -218,42 +228,77 @@ def particular_no_implies_general [DecidableEq E]
     (P Q : E → Type) (h : ParticularWC_No P Q)
     (Pd : E → Prop) :
     GeneralWC_Decr P Q (IsNoW Pd) :=
-  ⟨∅, rfl,
-   λ a hP hQ => ((h.f a hP.some).false hQ.some).elim⟩
+  ⟨∅, rfl, λ a hP hQ => (h.f a hP.some hQ.some).elim⟩
 
 /-! ### Anaphora-set predictions
 
-The witness-set architecture predicts which anaphora sets each
-quantifier makes available ([cooper-2023] §7.4.1, Table). -/
+Which anaphora sets a quantified noun phrase makes available follows
+from the paths a witness for its content provides ([cooper-2023] §7.4,
+§7.4.1): the content's `restr` field is the property's extension,
+MAXSET; the individual field of the particular existential condition
+and the set field of a general condition are objects with both
+properties, REFSET; and the set field of a condition whose function
+maps into negated types, the particular conditions for `no` and for
+`few`, is objects with the first property but not the second, COMPSET. -/
 
-/-- Anaphora-set kinds reachable from a quantified noun phrase. -/
+/-- Anaphora-set kinds reachable from a quantified noun phrase, the
+REFSET, MAXSET and COMPSET of [moxey-sanford-1987]. -/
 inductive AnaphoraRef where
   /-- REFSET: the witness individual or set ("A dog barked. It heard
-  an intruder."). -/
+  an intruder.", [cooper-2023] §7.4.1 (103d)). -/
   | refset
-  /-- MAXSET: the full extension ("Every dog barked. They heard an
-  intruder."). -/
+  /-- MAXSET: the full extension ("Every dog barked. They had been
+  disturbed by the intruder.", [cooper-2023] §7.4 (73)). -/
   | maxset
-  /-- COMPSET: the complement witness set ("Few dogs barked. They slept
-  through."). -/
+  /-- COMPSET: the complement witness set ("Few dogs barked. They did
+  not hear the intruder.", [cooper-2023] §7.4.1 (113d)). -/
   | compset
   deriving DecidableEq, Repr
+
+/-- The witness conditions of [cooper-2023] §7.4 by the paths their
+witnesses provide. -/
+inductive WitnessCondition where
+  /-- (59a): a witness set and a function from it into the scope. -/
+  | generalIncr
+  /-- (59b): a witness set and a function into it from the objects with
+  both properties. -/
+  | generalDecr
+  /-- (63): an individual with both properties. -/
+  | particularExist
+  /-- (70): the set of all objects with the first property, each
+  precluding the scope. -/
+  | particularNo
+  /-- (85)–(86): a complement witness set, each member precluding the
+  scope. -/
+  | particularFewComp
+  deriving DecidableEq, Repr
+
+/-- The anaphora set a condition's witness provides beyond the content's
+`restr` field. -/
+def WitnessCondition.anaphora : WitnessCondition → AnaphoraRef
+  | .generalIncr | .generalDecr | .particularExist => .refset
+  | .particularNo | .particularFewComp => .compset
 
 /-- The English fragment's quantifier names. -/
 inductive QuantName where
   | exist | existPl | no | every | most | many | few | aFew
   deriving DecidableEq, Repr
 
-/-- Per-quantifier anaphora-set predictions ([cooper-2023] §7.4.1). -/
-def anaphoraAvailable : QuantName → List AnaphoraRef
-  | .exist   => [.refset]
-  | .existPl => [.refset, .maxset]
-  | .no      => [.maxset, .compset]
-  | .every   => [.maxset]
-  | .most    => [.maxset]
-  | .many    => [.maxset]
-  | .few     => [.refset, .maxset, .compset]
-  | .aFew    => [.refset, .maxset]
+/-- The witness conditions [cooper-2023] §7.4 uses for each quantifier
+relation: the particular ones for `exist` (63) and `no` (70), the
+general one elsewhere, and for `few` the general (79)–(80) and the
+particular (85)–(86) as alternatives. -/
+def QuantName.conditions : QuantName → List WitnessCondition
+  | .exist => [.particularExist]
+  | .existPl | .every | .most | .many | .aFew => [.generalIncr]
+  | .no => [.particularNo]
+  | .few => [.generalDecr, .particularFewComp]
+
+/-- The anaphora sets a quantified noun phrase makes available: MAXSET
+from the content's `restr` field, and the set of each of its witness
+conditions. -/
+def anaphoraAvailable (q : QuantName) : List AnaphoraRef :=
+  .maxset :: q.conditions.map WitnessCondition.anaphora
 
 /-! ### Induced classical GQ denotations -/
 
@@ -318,7 +363,7 @@ theorem particularWC_no_to_witnessGQ [DecidableEq E]
   intro x hPx hQx
   have hP' := (hP x).mp hPx
   have hQ' := (hQ x).mp hQx
-  exact (w.f x hP'.some).false hQ'.some
+  exact (w.f x hP'.some hQ'.some).elim
 
 /-! ### Complement witness sets and the few / a_few contrast -/
 

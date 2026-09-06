@@ -47,7 +47,7 @@ same argument — the bridge theorems just haven't been written yet.
 |---|---|---|
 | ~~DPL ([groenendijk-stokhof-1991])~~ | moved to Proved bridges | see `DynamicSemantics.lean` |
 | PLA ([dekker-2012]) | `exists_ i φ` | `cylindrify i (⟦φ⟧)` |
-| DynamicGQ ([chierchia-1995]) | `{p \| ∃ x, P x ∧ p.2 = q.2.update v x}` | `cylindrify v P` |
+| DynamicGQ ([chierchia-1995b]) | `{p \| ∃ x, P x ∧ p.2 = q.2.update v x}` | `cylindrify v P` |
 | Bilateral Update ([aloni-2022]) | `exists_ x domain φ` | `cylindrify x (domain ∩ φ)` |
 | PIP ([keshet-abney-2024]) | `exists_ v domain body` | `cylindrify v (domain ∩ body)` |
 | File Change ([heim-1982]) | indefinite extends Dom, widens Sat | `cylindrify n (⟦φ⟧)` |
