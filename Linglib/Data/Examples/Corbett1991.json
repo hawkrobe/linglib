@@ -1,0 +1,5415 @@
+[
+  {
+    "id": "corbett1991_3.1",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 3 (1)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "ètogo gorodiški",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "èt-ogo",
+        "this-GEN.SG.MASC"
+      ],
+      [
+        "gorod-išk-i",
+        "town-DIMINUTIVE-GEN.SG"
+      ]
+    ],
+    "translation": "of this little town",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The diminutive suffix moves gorod 'town' into declension II without changing its masculine gender: the assignment rules disregard affective suffixes."
+  },
+  {
+    "id": "corbett1991_3.2",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 3 (2)"
+    },
+    "reportedIn": null,
+    "language": "swah1253",
+    "primaryText": "kikapu kikubwa kimoja kilianguka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kikapu",
+        "basket"
+      ],
+      [
+        "kikubwa",
+        "large"
+      ],
+      [
+        "kimoja",
+        "one"
+      ],
+      [
+        "kilianguka",
+        "fell"
+      ]
+    ],
+    "translation": "One large basket fell.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "kikapu"
+      ],
+      [
+        "concord",
+        "7/8"
+      ]
+    ],
+    "comment": "Adjective, numeral and verb carry the class 7 prefix ki-, as does the noun: overt gender."
+  },
+  {
+    "id": "corbett1991_3.3",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 3 (3)"
+    },
+    "reportedIn": null,
+    "language": "swah1253",
+    "primaryText": "vikapu vikubwa vitatu vilianguka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "vikapu",
+        "baskets"
+      ],
+      [
+        "vikubwa",
+        "large"
+      ],
+      [
+        "vitatu",
+        "three"
+      ],
+      [
+        "vilianguka",
+        "fell"
+      ]
+    ],
+    "translation": "Three large baskets fell.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "kikapu"
+      ],
+      [
+        "concord",
+        "7/8"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_3.4",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 3 (4)"
+    },
+    "reportedIn": null,
+    "language": "swah1253",
+    "primaryText": "mtu amepotea",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mtu",
+        "person"
+      ],
+      [
+        "amepotea",
+        "is.missing"
+      ]
+    ],
+    "translation": "A person is missing.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "mtu"
+      ],
+      [
+        "concord",
+        "1/2"
+      ]
+    ],
+    "comment": "The noun prefix m- and the verbal prefix a- differ: prefixes on the noun do not always match the agreement forms."
+  },
+  {
+    "id": "corbett1991_3.5",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 3 (5)"
+    },
+    "reportedIn": null,
+    "language": "swah1253",
+    "primaryText": "kifaru mdogo alikuwa hapa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kifaru",
+        "rhinoceros"
+      ],
+      [
+        "m-dogo",
+        "1-small"
+      ],
+      [
+        "a-likuwa",
+        "1-was"
+      ],
+      [
+        "hapa",
+        "here"
+      ]
+    ],
+    "translation": "A small rhinoceros was here.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "kifaru"
+      ],
+      [
+        "concord",
+        "1/2"
+      ]
+    ],
+    "comment": "A class 7 prefix on the noun with class 1 agreements: the noun is in gender 1/2 by the agreements it takes, whatever its prefix."
+  },
+  {
+    "id": "corbett1991_3.6",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 3 (6)"
+    },
+    "reportedIn": null,
+    "language": "swah1253",
+    "primaryText": "kiboko mkubwa ameanguka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kiboko",
+        "hippopotamus"
+      ],
+      [
+        "m-kubwa",
+        "1-big"
+      ],
+      [
+        "a-meanguka",
+        "1-has.fallen"
+      ]
+    ],
+    "translation": "The big hippopotamus has fallen.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "kiboko"
+      ],
+      [
+        "concord",
+        "1/2"
+      ]
+    ],
+    "comment": "Morphologically 7/8, but an animate, so 1/2 concords: the semantic rule takes precedence over the morphological rules."
+  },
+  {
+    "id": "corbett1991_3.7",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 3 (7)"
+    },
+    "reportedIn": null,
+    "language": "swah1253",
+    "primaryText": "kiboko kikubwa kimeanguka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kiboko",
+        "hippopotamus"
+      ],
+      [
+        "ki-kubwa",
+        "7-big"
+      ],
+      [
+        "ki-meanguka",
+        "7-has.fallen"
+      ]
+    ],
+    "translation": "The big hippopotamus has fallen.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "kiboko"
+      ],
+      [
+        "concord",
+        "7/8"
+      ]
+    ],
+    "comment": "Starred; acceptable only if the hippopotamus is a toy, that is, not animate."
+  },
+  {
+    "id": "corbett1991_6.1",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (1)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "un grand garçon",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a big boy",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "une grande garçon",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Same morphosyntactic form, domain and target: garçon and jardin take identical agreements and belong to one agreement class."
+  },
+  {
+    "id": "corbett1991_6.2",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (2)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "un grand jardin",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a big garden",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "une grande jardin",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_6.3",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (3)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "une grande femme",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a big woman",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "un grand femme",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_6.4",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (4)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "une grande fleur",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a big flower",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "un grand fleur",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "femme and fleur form the second agreement class."
+  },
+  {
+    "id": "corbett1991_6.5",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (5)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "bărbatul e bun",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "bărbatul",
+        "man.the"
+      ],
+      [
+        "e",
+        "is"
+      ],
+      [
+        "bun",
+        "good"
+      ]
+    ],
+    "translation": "The man is good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "bărbat"
+      ],
+      [
+        "number",
+        "singular"
+      ],
+      [
+        "form",
+        "zero"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_6.6",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (6)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "scaunul e bun",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "scaunul",
+        "chair.the"
+      ],
+      [
+        "e",
+        "is"
+      ],
+      [
+        "bun",
+        "good"
+      ]
+    ],
+    "translation": "The chair is good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "scaun"
+      ],
+      [
+        "number",
+        "singular"
+      ],
+      [
+        "form",
+        "zero"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_6.7",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (7)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "fata e bună",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "fata",
+        "girl.the"
+      ],
+      [
+        "e",
+        "is"
+      ],
+      [
+        "bună",
+        "good"
+      ]
+    ],
+    "translation": "The girl is good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "fată"
+      ],
+      [
+        "number",
+        "singular"
+      ],
+      [
+        "form",
+        "ă"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_6.8",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (8)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "bărbații sînt buni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "bărbații",
+        "men.the"
+      ],
+      [
+        "sînt",
+        "are"
+      ],
+      [
+        "buni",
+        "good"
+      ]
+    ],
+    "translation": "The men are good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "bărbat"
+      ],
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "form",
+        "i"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_6.9",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (9)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "scaunele sînt bune",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "scaunele",
+        "chairs.the"
+      ],
+      [
+        "sînt",
+        "are"
+      ],
+      [
+        "bune",
+        "good"
+      ]
+    ],
+    "translation": "The chairs are good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "scaun"
+      ],
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "form",
+        "e"
+      ]
+    ],
+    "comment": "scaun takes the same form as bărbat in the singular and as fată in the plural: three agreement classes with two target genders in each number."
+  },
+  {
+    "id": "corbett1991_6.10",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (10)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "fetele sînt bune",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "fetele",
+        "girls.the"
+      ],
+      [
+        "sînt",
+        "are"
+      ],
+      [
+        "bune",
+        "good"
+      ]
+    ],
+    "translation": "The girls are good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "fată"
+      ],
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "form",
+        "e"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_6.11",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (11)"
+    },
+    "reportedIn": null,
+    "language": "roma1326",
+    "primaryText": "sgarscheivla ei la paupradad",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "sgarscheivla",
+        "wretched.FEM"
+      ],
+      [
+        "ei",
+        "is"
+      ],
+      [
+        "la",
+        "the"
+      ],
+      [
+        "paupradad",
+        "poverty"
+      ]
+    ],
+    "translation": "The poverty is wretched.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Surselvan; predicative adjectives take -s for masculine, -a for feminine controllers."
+  },
+  {
+    "id": "corbett1991_6.12",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (12)"
+    },
+    "reportedIn": null,
+    "language": "roma1326",
+    "primaryText": "in urezi ei sesalzaus",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "in",
+        "a"
+      ],
+      [
+        "urezi",
+        "storm"
+      ],
+      [
+        "ei",
+        "is"
+      ],
+      [
+        "sesalzaus",
+        "arisen.MASC"
+      ]
+    ],
+    "translation": "A storm has arisen.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_6.13",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (13)"
+    },
+    "reportedIn": null,
+    "language": "roma1326",
+    "primaryText": "igl ei sesalzau in urezi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "igl",
+        "there"
+      ],
+      [
+        "ei",
+        "is"
+      ],
+      [
+        "sesalzau",
+        "arisen.NEUTRAL"
+      ],
+      [
+        "in",
+        "a"
+      ],
+      [
+        "urezi",
+        "storm"
+      ]
+    ],
+    "translation": "There has arisen a storm.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The -Ø form occurs with controllers unspecified for gender and number and never with a noun-headed controller: a neutral target gender, one of the two non-lexical genders."
+  },
+  {
+    "id": "corbett1991_6.14",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (14)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "mu-nyumba mu-kutentha",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mu-nyumba",
+        "LOC-house"
+      ],
+      [
+        "mu-kutentha",
+        "LOC-is.hot"
+      ]
+    ],
+    "translation": "It is hot in the house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Chichewa: the locative prefix mu- on the verb is a minor target gender with no nouns regularly assigned to a corresponding controller gender."
+  },
+  {
+    "id": "corbett1991_6.15",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (15)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "mojego djadju",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "my uncle (accusative)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "moj djadja",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "mojego djadi",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Nominative, accusative and genitive: the noun itself takes -u in the accusative, yet the masculine modifier shows accusative-genitive syncretism, so animacy is not a case change on the whole phrase but a subgender."
+  },
+  {
+    "id": "corbett1991_6.16",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (16)"
+    },
+    "reportedIn": null,
+    "language": "nort2699",
+    "primaryText": "iddar ma'sur",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "two men",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Kolami: the numerals 'two', 'three' and 'four' have a form for female humans beside the male-human and other forms, but they alone do: overdifferentiated targets, which do not induce a third gender."
+  },
+  {
+    "id": "corbett1991_6.17",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (17)"
+    },
+    "reportedIn": null,
+    "language": "nort2699",
+    "primaryText": "iral pillakul",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "two women",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_6.18",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (18)"
+    },
+    "reportedIn": null,
+    "language": "nort2699",
+    "primaryText": "indig sidl",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "two buffaloes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_6.19",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (19)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "novyj vrač",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "nov-yj",
+        "new-MASC"
+      ],
+      [
+        "vrač",
+        "doctor"
+      ]
+    ],
+    "translation": "the new doctor",
+    "context": "The doctor is a woman.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "vrač"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "More common than the feminine."
+  },
+  {
+    "id": "corbett1991_6.20",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (20)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "novaja vrač",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "nov-aja",
+        "new-FEM"
+      ],
+      [
+        "vrač",
+        "doctor"
+      ]
+    ],
+    "translation": "the new doctor",
+    "context": "The doctor is a woman.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "vrač"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_6.21",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (21)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "vrač rabotal",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "vrač",
+        "doctor"
+      ],
+      [
+        "rabotal-ø",
+        "worked-MASC"
+      ]
+    ],
+    "translation": "the doctor worked",
+    "context": "The doctor is a woman.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "vrač"
+      ],
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_6.22",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (22)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "vrač rabotala",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "vrač",
+        "doctor"
+      ],
+      [
+        "rabotal-a",
+        "worked-FEM"
+      ]
+    ],
+    "translation": "the doctor worked",
+    "context": "The doctor is a woman.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "vrač"
+      ],
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "In the predicate the feminine is somewhat more common."
+  },
+  {
+    "id": "corbett1991_6.23",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (23)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "naš vrač prišla",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "naš-Ø",
+        "our-MASC"
+      ],
+      [
+        "vrač",
+        "doctor"
+      ],
+      [
+        "prišl-a",
+        "came-FEM"
+      ]
+    ],
+    "translation": "our doctor came",
+    "context": "The doctor is a woman.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Masculine and feminine agreement with one and the same noun at once: only the notion of consistent agreement pattern separates the two."
+  },
+  {
+    "id": "corbett1991_6.24",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (24)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The Canberra, which has just docked, is a fine ship. It sails again on Friday.",
+    "discourseSegments": [
+      "The Canberra, which has just docked, is a fine ship.",
+      "It sails again on Friday."
+    ],
+    "glossedTokens": [],
+    "translation": "The Canberra, which has just docked, is a fine ship. It sails again on Friday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "boat"
+      ],
+      [
+        "target",
+        "relativePronoun"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "Boat nouns take the neuter pattern."
+  },
+  {
+    "id": "corbett1991_6.25",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (25)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I sailed on the Canberra. She's a fine ship.",
+    "discourseSegments": [
+      "I sailed on the Canberra.",
+      "She's a fine ship."
+    ],
+    "glossedTokens": [],
+    "translation": "I sailed on the Canberra. She's a fine ship.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "boat"
+      ],
+      [
+        "target",
+        "personalPronoun"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_6.26",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (26)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The Canberra, who is a fine ship...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The Canberra, who is a fine ship...",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "boat"
+      ],
+      [
+        "target",
+        "relativePronoun"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "Boat nouns take agreements from two consistent patterns without taking all the forms of both."
+  },
+  {
+    "id": "corbett1991_6.27",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (27)"
+    },
+    "reportedIn": null,
+    "language": "mbaa1245",
+    "primaryText": "djü (6i) úmà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "djü",
+        "woman"
+      ],
+      [
+        "(6i)",
+        "ANIM"
+      ],
+      [
+        "úmà",
+        "1.one"
+      ]
+    ],
+    "translation": "one woman",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Mba: the optional animate marker beside class 1 agreement."
+  },
+  {
+    "id": "corbett1991_6.28",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (28)"
+    },
+    "reportedIn": null,
+    "language": "mbaa1245",
+    "primaryText": "ngbà úmà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ngbà",
+        "song"
+      ],
+      [
+        "úmà",
+        "1.one"
+      ]
+    ],
+    "translation": "one song",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "For an inanimate taking the same numeral form the optional element is not available."
+  },
+  {
+    "id": "corbett1991_6.29",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (29)"
+    },
+    "reportedIn": null,
+    "language": "mbaa1245",
+    "primaryText": "kíá (bi) kíma",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kíá",
+        "snake"
+      ],
+      [
+        "(bi)",
+        "ANIM"
+      ],
+      [
+        "k-íma",
+        "5-one"
+      ]
+    ],
+    "translation": "one snake",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_6.30",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 6 (30)"
+    },
+    "reportedIn": null,
+    "language": "mbaa1245",
+    "primaryText": "kåsà kímà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kåsà",
+        "leaf"
+      ],
+      [
+        "k-ímà",
+        "5-one"
+      ]
+    ],
+    "translation": "one leaf",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Class 5 agreement as in (29), but no animate marker: attributive agreement and the optional marker together yield eleven agreement classes."
+  },
+  {
+    "id": "corbett1991_8.1",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (1)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Sa Sainteté n'est pas si ombrageuse de s'en formaliser",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "His Holiness is not so touchy as to take offence.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "frenchTitles"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "Hermant, quoted by Grevisse; the predicate ombrageuse is feminine too."
+  },
+  {
+    "id": "corbett1991_8.2",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (2)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Sa Sainteté, avec laquelle je viens de parler...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "His Holiness, with whom I have just been speaking...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "frenchTitles"
+      ],
+      [
+        "target",
+        "relativePronoun"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.3",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (3)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Votre Majesté partira quand elle voudra",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Your Majesty will leave when he (literally 'she') wishes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "frenchTitles"
+      ],
+      [
+        "target",
+        "personalPronoun"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "Voltaire, quoted by Grevisse: the feminine pronoun though the king is addressed."
+  },
+  {
+    "id": "corbett1991_8.4",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (4)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Sa Majesté fut inquiète, et de nouveau il envoya La Varenne à son ministre",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "His Majesty was worried, and again he sent La Varenne to his minister.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "frenchTitles"
+      ],
+      [
+        "target",
+        "personalPronoun"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "J. and J. Tharaud, quoted by Grevisse: a masculine pronoun, possible only here."
+  },
+  {
+    "id": "corbett1991_8.5",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (5)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "das Mädchen, das ich gesehen habe...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "das",
+        "the.NEUT"
+      ],
+      [
+        "Mädchen",
+        "girl"
+      ],
+      [
+        "das",
+        "that.NEUT"
+      ],
+      [
+        "ich",
+        "I"
+      ],
+      [
+        "gesehen",
+        "seen"
+      ],
+      [
+        "habe",
+        "have"
+      ]
+    ],
+    "translation": "the girl I saw...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "mädchen"
+      ],
+      [
+        "target",
+        "relativePronoun"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "Attributive modifier and relative pronoun neuter."
+  },
+  {
+    "id": "corbett1991_8.6",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (6)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Schau dir dieses Mädchen an, wie gut sie Tennis spielt",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Do look at this girl, see how well she plays tennis.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Schau dir dieses Mädchen an, wie gut es Tennis spielt",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "mädchen"
+      ],
+      [
+        "target",
+        "personalPronoun"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "The personal pronoun allows both the neuter and the feminine; the older the girl, the likelier the feminine."
+  },
+  {
+    "id": "corbett1991_8.10",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (10)"
+    },
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Su Majestad suprema",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "His Supreme Majesty",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "spanishTitles"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.11",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (11)"
+    },
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Su Majestad está contento",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "His Majesty is happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "spanishTitles"
+      ],
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.12a",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (12)"
+    },
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "A Su Majestad suprema, el cual está muy contento aquí en Valencia, le recibieron con muchos aplausos.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "His Supreme Majesty, who is very happy here in Valencia, was received with much applause.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "spanishTitles"
+      ],
+      [
+        "target",
+        "relativePronoun"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "The compound relative el cual is masculine."
+  },
+  {
+    "id": "corbett1991_8.12b",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (12)"
+    },
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Él se mostró muy emocionado.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He showed himself very moved.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "spanishTitles"
+      ],
+      [
+        "target",
+        "personalPronoun"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "The personal pronoun continuing (12) is masculine."
+  },
+  {
+    "id": "corbett1991_8.13",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (13)"
+    },
+    "reportedIn": null,
+    "language": "goan1235",
+    "primaryText": "joniči awoy aylě",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "joniči",
+        "John's.FEM"
+      ],
+      [
+        "awoy",
+        "mother"
+      ],
+      [
+        "aylě",
+        "came.NEUT"
+      ]
+    ],
+    "translation": "John's mother came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "konkani"
+      ],
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "Konkani: neuter agreement for young or relatively younger females is the new semantic agreement; the possessive keeps the feminine."
+  },
+  {
+    "id": "corbett1991_8.14",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (14)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Ivanova - xorošij vrač",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ivanova",
+        "Ivanova"
+      ],
+      [
+        "xoroš-ij",
+        "good-MASC"
+      ],
+      [
+        "vrač",
+        "doctor"
+      ]
+    ],
+    "translation": "Ivanova is a good doctor.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "vrač"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "Panov's survey: of 3,835 respondents 16.9 per cent chose the feminine (15)."
+  },
+  {
+    "id": "corbett1991_8.15",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (15)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Ivanova - xorošaja vrač",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ivanova",
+        "Ivanova"
+      ],
+      [
+        "xoroš-aja",
+        "good-FEM"
+      ],
+      [
+        "vrač",
+        "doctor"
+      ]
+    ],
+    "translation": "Ivanova is a good doctor.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "vrač"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.16",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (16)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "vrač prišel",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "vrač",
+        "doctor"
+      ],
+      [
+        "prišel-Ø",
+        "came-MASC"
+      ]
+    ],
+    "translation": "The doctor came.",
+    "context": "A woman doctor is intended.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "vrač"
+      ],
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.17",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (17)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "vrač prišla",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "vrač",
+        "doctor"
+      ],
+      [
+        "prišl-a",
+        "came-FEM"
+      ]
+    ],
+    "translation": "The doctor came.",
+    "context": "A woman doctor is intended.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "vrač"
+      ],
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "Of 3,806 respondents 51.7 per cent chose the feminine."
+  },
+  {
+    "id": "corbett1991_8.18",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (18)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Èkskursovod pered vami. On podnjal ruku.",
+    "discourseSegments": [
+      "Èkskursovod pered vami.",
+      "On podnjal ruku."
+    ],
+    "glossedTokens": [],
+    "translation": "Your guide is in front of you. He has lifted his hand.",
+    "context": "Red Square, May 1988: the guide and the speaker were both women.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "vrač"
+      ],
+      [
+        "target",
+        "personalPronoun"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "The masculine pronoun is possible even here, though the feminine is what we would normally expect."
+  },
+  {
+    "id": "corbett1991_8.19",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (19)"
+    },
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Mlade kalfe su se uozbiljile",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mlad-e",
+        "young-FEM.PL"
+      ],
+      [
+        "kalfe",
+        "journeymen"
+      ],
+      [
+        "su",
+        "are"
+      ],
+      [
+        "se",
+        "selves"
+      ],
+      [
+        "uozbiljil-e",
+        "made.serious-FEM.PL"
+      ]
+    ],
+    "translation": "The young journeymen became serious.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "gazde"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "Andrić; feminine attributive and predicate with a plural gazda-type noun."
+  },
+  {
+    "id": "corbett1991_8.20",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (20)"
+    },
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "jednog i drugog su podsticali moćni paše",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Powerful pashas goaded both of them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "gazde"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "Masculine attributive and preposed predicate."
+  },
+  {
+    "id": "corbett1991_8.21",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (21)"
+    },
+    "reportedIn": null,
+    "language": "poli1260",
+    "primaryText": "te łajdaki znowu mnie oszukały!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "te",
+        "those.NON_MASC_PERS"
+      ],
+      [
+        "łajdaki",
+        "wretches"
+      ],
+      [
+        "znowu",
+        "again"
+      ],
+      [
+        "mnie",
+        "me"
+      ],
+      [
+        "oszukały",
+        "cheated.NON_MASC_PERS"
+      ]
+    ],
+    "translation": "Those wretches have cheated me again!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "łajdaki"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "Ewa Jaworska's judgments; the predicate is non-masculine personal too."
+  },
+  {
+    "id": "corbett1991_8.22",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (22)"
+    },
+    "reportedIn": null,
+    "language": "poli1260",
+    "primaryText": "te łajdaki które mnie oszukały...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "those wretches who cheated me...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "łajdaki"
+      ],
+      [
+        "target",
+        "relativePronoun"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "The relative pronoun was accepted only in the non-masculine personal form."
+  },
+  {
+    "id": "corbett1991_8.23",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (23)"
+    },
+    "reportedIn": null,
+    "language": "poli1260",
+    "primaryText": "te łajdaki zepsuły mi radio do reszty! Oni już ci kiedyś zepsuli telewizor.",
+    "discourseSegments": [
+      "te łajdaki zepsuły mi radio do reszty!",
+      "Oni już ci kiedyś zepsuli telewizor."
+    ],
+    "glossedTokens": [],
+    "translation": "Those wretches have ruined my radio! They have already damaged your television.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "łajdaki"
+      ],
+      [
+        "target",
+        "personalPronoun"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "The anaphoric personal pronoun is masculine personal."
+  },
+  {
+    "id": "corbett1991_8.24",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (24)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "ona xorošij/xorošaja vrač",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She is a good doctor.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "vrač"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "Nominative: both forms."
+  },
+  {
+    "id": "corbett1991_8.25",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (25)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "k xorošemu vraču",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "k",
+        "to"
+      ],
+      [
+        "xoroš-emu",
+        "good-MASC.DAT"
+      ],
+      [
+        "vraču",
+        "doctor"
+      ]
+    ],
+    "translation": "to a good doctor",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "vrač"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "In the oblique cases syntactic agreement is normal; the feminine is less common than in the nominative."
+  },
+  {
+    "id": "corbett1991_8.26",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (26)"
+    },
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "njihovi strane vođe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "njihov-i",
+        "their-MASC.PL"
+      ],
+      [
+        "stran-e",
+        "foreign-FEM.PL"
+      ],
+      [
+        "vođe",
+        "leaders"
+      ]
+    ],
+    "translation": "their foreign leaders",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "near",
+        "syntactic"
+      ],
+      [
+        "far",
+        "semantic"
+      ]
+    ],
+    "comment": "Stacked attributives: the further target shows semantic agreement."
+  },
+  {
+    "id": "corbett1991_8.27",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (27)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "ngwazi yathu yoyamba",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ngwazi",
+        "hero"
+      ],
+      [
+        "y-athu",
+        "9-our"
+      ],
+      [
+        "y-oyamba",
+        "9-first"
+      ]
+    ],
+    "translation": "our first hero",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "near",
+        "syntactic"
+      ],
+      [
+        "far",
+        "syntactic"
+      ]
+    ],
+    "comment": "ngwazi has the morphology of gender 9/10 and denotes a human."
+  },
+  {
+    "id": "corbett1991_8.28",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (28)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "ngwazi wathu woyamba",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ngwazi",
+        "hero"
+      ],
+      [
+        "w-athu",
+        "1-our"
+      ],
+      [
+        "w-oyamba",
+        "1-first"
+      ]
+    ],
+    "translation": "our first hero",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "near",
+        "semantic"
+      ],
+      [
+        "far",
+        "semantic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.29",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (29)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "ngwazi yathu woyamba",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ngwazi",
+        "hero"
+      ],
+      [
+        "y-athu",
+        "9-our"
+      ],
+      [
+        "w-oyamba",
+        "1-first"
+      ]
+    ],
+    "translation": "our first hero",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "near",
+        "syntactic"
+      ],
+      [
+        "far",
+        "semantic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.30",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (30)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "ngwazi wathu yoyamba",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ngwazi",
+        "hero"
+      ],
+      [
+        "w-athu",
+        "1-our"
+      ],
+      [
+        "y-oyamba",
+        "9-first"
+      ]
+    ],
+    "translation": "our first hero",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "near",
+        "semantic"
+      ],
+      [
+        "far",
+        "syntactic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.31",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (31)"
+    },
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Sarajlije su igrale bolje i gotovo potpuno dominirali terenom",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The Sarajevans played better and dominated the field almost completely.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "near",
+        "syntactic"
+      ],
+      [
+        "far",
+        "semantic"
+      ]
+    ],
+    "comment": "Parallel predicates: the nearer feminine, the further masculine."
+  },
+  {
+    "id": "corbett1991_8.35",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (35)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "tu n'arriveras jamais à la faire entrer dans la voiture",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You'll never get it into the car.",
+    "context": "John is trying to get a large table into the boot of his car; Mary speaks.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "No antecedent: the deictic pronoun takes the gender of the basic-level term, table, feminine."
+  },
+  {
+    "id": "corbett1991_8.36",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (36)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "tu n'arriveras jamais à le faire entrer dans la voiture",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You'll never get it into the car.",
+    "context": "John is trying to get a desk into the boot of his car; Mary speaks.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "bureau 'desk' is masculine."
+  },
+  {
+    "id": "corbett1991_8.38",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (38)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Wenn du die Mutter von dem Bolzen lösen willst, musst du IHN festhalten und SIE nach rechts drehen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If you want to loosen the nut from the bolt you must hold IT and turn IT to the right.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Bosch: stressed pronouns must denote male and female, so the sentence is out with the nut and the bolt."
+  },
+  {
+    "id": "corbett1991_8.39",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (39)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Der Mann stritt sich mit seiner Freundin, weil SIE noch in ein anderes Lokal wollte und ER keine Lust mehr hatte.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The man had a row with his girlfriend, because SHE wanted to go on to another pub and HE didn't feel like it any more.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.40",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (40)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "kamwana kokongola kakugona",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kamwana",
+        "small.child"
+      ],
+      [
+        "ko-kongola",
+        "12-pretty"
+      ],
+      [
+        "ka-ku-gona",
+        "12-PRES-sleep"
+      ]
+    ],
+    "translation": "The pretty small child is sleeping.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "kamwana"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.41",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (41)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "kamwana akongola akugona",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kamwana",
+        "small.child"
+      ],
+      [
+        "a-kongola",
+        "1-pretty"
+      ],
+      [
+        "a-ku-gona",
+        "1-PRES-sleep"
+      ]
+    ],
+    "translation": "The pretty small child is sleeping.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "kamwana"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.42",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (42)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "kamwana kamene kakugona",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kamwana",
+        "small.child"
+      ],
+      [
+        "ka-mene",
+        "12-who"
+      ],
+      [
+        "ka-ku-gona",
+        "12-PRES-sleep"
+      ]
+    ],
+    "translation": "The small child who is sleeping.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "kamwana"
+      ],
+      [
+        "target",
+        "relativePronoun"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.43",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (43)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "kamwana amene akugona",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kamwana",
+        "small.child"
+      ],
+      [
+        "a-mene",
+        "1-who"
+      ],
+      [
+        "a-ku-gona",
+        "1-PRES-sleep"
+      ]
+    ],
+    "translation": "The small child who is sleeping.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "kamwana"
+      ],
+      [
+        "target",
+        "relativePronoun"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.44",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (44)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "kamwana kamene kamagona munyumba umu kamene kamapita ku sukulu ku London, mai ake amamukonda iye",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The small child who sleeps in this house who goes to school in London, its mother loves it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "kamwana kamene kamagona munyumba umu kamene kamapita ku sukulu ku London, mai ake amakakonda iko",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "kamwana"
+      ],
+      [
+        "target",
+        "personalPronoun"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "Gender 1/2 forms of the object pronoun and marker are possible when the target is sufficiently separated from the controller; the 12/13 forms remain available."
+  },
+  {
+    "id": "corbett1991_8.45",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (45)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "chitsilu chimene chimagona munyumba umu chimene chimapita ku sukulu ku London, galu wake amamukonda iye",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The fool who sleeps in this house who goes to school in London, his dog loves him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {
+        "form": "chitsilu chimene chimagona munyumba umu chimene chimapita ku sukulu ku London, galu wake amachikonda icho",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "With chitsilu, morphologically 7/8, the switch to semantic agreement is not possible at this distance."
+  },
+  {
+    "id": "corbett1991_8.46",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (46)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "chitsilu chimene chimagona munyumba umu chimene chimapita ku sukulu ku London, galu wake amachikonda ndipo mai ake amabvomeradi kuti anamuona iye akuyenda ndi galu yo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The fool who sleeps in this house, who goes to school in London, his dog loves him and indeed his mother agrees that she saw him walking his dog.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Further removed from the antecedent, semantic agreement becomes possible."
+  },
+  {
+    "id": "corbett1991_8.47",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (47)"
+    },
+    "reportedIn": null,
+    "language": "swah1253",
+    "primaryText": "rafiki yangu amefika",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "rafiki",
+        "friend"
+      ],
+      [
+        "y-angu",
+        "9-my"
+      ],
+      [
+        "a-mefika",
+        "1-arrived"
+      ]
+    ],
+    "translation": "My friend has arrived.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "attributivePossessive"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "Morphologically 9/10 and animate: class 1 verb agreement, but the attributive possessive may take syntactic class 9 agreement."
+  },
+  {
+    "id": "corbett1991_8.48",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (48)"
+    },
+    "reportedIn": null,
+    "language": "swah1253",
+    "primaryText": "rafiki zangu wamefika",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "rafiki",
+        "friends"
+      ],
+      [
+        "z-angu",
+        "10-my"
+      ],
+      [
+        "wa-mefika",
+        "2-arrived"
+      ]
+    ],
+    "translation": "My friends have arrived.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "attributivePossessive"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.49",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (49)"
+    },
+    "reportedIn": null,
+    "language": "swah1253",
+    "primaryText": "rafiki mwema wangu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "rafiki",
+        "friend"
+      ],
+      [
+        "mw-ema",
+        "1-good"
+      ],
+      [
+        "w-angu",
+        "1-my"
+      ]
+    ],
+    "translation": "my good friend",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "near",
+        "semantic"
+      ],
+      [
+        "far",
+        "semantic"
+      ]
+    ],
+    "comment": "With another modifier intervening, the possessive takes animate concord."
+  },
+  {
+    "id": "corbett1991_8.50",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (50)"
+    },
+    "reportedIn": null,
+    "language": "swah1253",
+    "primaryText": "rafiki mwema yangu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "rafiki",
+        "friend"
+      ],
+      [
+        "mw-ema",
+        "1-good"
+      ],
+      [
+        "y-angu",
+        "9-my"
+      ]
+    ],
+    "translation": "my good friend",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "near",
+        "semantic"
+      ],
+      [
+        "far",
+        "syntactic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.51",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (51)"
+    },
+    "reportedIn": null,
+    "language": "swah1253",
+    "primaryText": "ng'ombe zangu wamefika",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ng'ombe",
+        "cows"
+      ],
+      [
+        "z-angu",
+        "10-my"
+      ],
+      [
+        "wa-mefika",
+        "2-arrived"
+      ]
+    ],
+    "translation": "My cows arrived.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Acceptable but not preferred in urban Swahili, where w-angu is preferred: for those speakers ng'ombe is in gender 1/2, for the others a hybrid."
+  },
+  {
+    "id": "corbett1991_8.52a",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (52)"
+    },
+    "reportedIn": null,
+    "language": "kimb1241",
+    "primaryText": "kilumba kina",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kilumba",
+        "girl"
+      ],
+      [
+        "ki-na",
+        "7-that"
+      ]
+    ],
+    "translation": "that girl",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "kilumba"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "Kimbundu, Mbaka dialect."
+  },
+  {
+    "id": "corbett1991_8.52b",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (52)"
+    },
+    "reportedIn": null,
+    "language": "kimb1241",
+    "primaryText": "kilumba una",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kilumba",
+        "girl"
+      ],
+      [
+        "u-na",
+        "1-that"
+      ]
+    ],
+    "translation": "that girl",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "kilumba"
+      ],
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.53a",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (53)"
+    },
+    "reportedIn": null,
+    "language": "kimb1241",
+    "primaryText": "kilumba kina kiamwiza",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kilumba",
+        "girl"
+      ],
+      [
+        "ki-na",
+        "7-that"
+      ],
+      [
+        "ki-amwiza",
+        "7-come"
+      ]
+    ],
+    "translation": "That girl is coming.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "kilumba"
+      ],
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.53b",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (53)"
+    },
+    "reportedIn": null,
+    "language": "kimb1241",
+    "primaryText": "kilumba kina uamwiza",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kilumba",
+        "girl"
+      ],
+      [
+        "ki-na",
+        "7-that"
+      ],
+      [
+        "u-amwiza",
+        "1-come"
+      ]
+    ],
+    "translation": "That girl is coming.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hybrid",
+        "kilumba"
+      ],
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_8.54a",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (54)"
+    },
+    "reportedIn": null,
+    "language": "kami1256",
+    "primaryText": "mbudzi dzangu wagomba ng'ombe dzako",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mbudzi",
+        "goats"
+      ],
+      [
+        "dz-angu",
+        "10-my"
+      ],
+      [
+        "wa-gomba",
+        "2-attacked"
+      ],
+      [
+        "ng'ombe",
+        "cows"
+      ],
+      [
+        "dz-ako",
+        "10-your"
+      ]
+    ],
+    "translation": "My goats attacked your cows.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "Kami: semantic agreement is obligatory in the predicate."
+  },
+  {
+    "id": "corbett1991_8.54b",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (54)"
+    },
+    "reportedIn": null,
+    "language": "kami1256",
+    "primaryText": "mbudzi dzangu dzigomba ng'ombe dzako",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "My goats attacked your cows.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "Syntactic agreement of the predicate was not accepted."
+  },
+  {
+    "id": "corbett1991_8.55",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (55)"
+    },
+    "reportedIn": null,
+    "language": "kami1256",
+    "primaryText": "ng'ombe dzangu nhulu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "my big cows",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "ng'ombe dzangu wakulu",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": "For attributives other than the possessive both forms are accepted; the possessive dz-angu is syntactic only, a finer division of the hierarchy."
+  },
+  {
+    "id": "corbett1991_8.56",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 8 (56)"
+    },
+    "reportedIn": null,
+    "language": "mako1251",
+    "primaryText": "Bang'ombe aßa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ba-ng'ombe",
+        "2-cows"
+      ],
+      [
+        "a-ßa",
+        "2-these"
+      ]
+    ],
+    "translation": "these cows",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Makonde, Mawia dialect: nouns formerly in 9/10 take the class 2 prefix in the plural, morphological adjustment to the new gender."
+  },
+  {
+    "id": "corbett1991_9.1",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (1)"
+    },
+    "reportedIn": null,
+    "language": "czec1258",
+    "primaryText": "Já a ty zůstaneme doma",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Já",
+        "I"
+      ],
+      [
+        "a",
+        "and"
+      ],
+      [
+        "ty",
+        "you"
+      ],
+      [
+        "zůstan-eme",
+        "will.stay-1ST.PL"
+      ],
+      [
+        "doma",
+        "at.home"
+      ]
+    ],
+    "translation": "You and I will stay at home.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Person resolution: first person takes precedence over second."
+  },
+  {
+    "id": "corbett1991_9.2",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (2)"
+    },
+    "reportedIn": null,
+    "language": "czec1258",
+    "primaryText": "bratr a já se učíme hrát na klavír",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "My brother and I are learning to play the piano.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.3",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (3)"
+    },
+    "reportedIn": null,
+    "language": "czec1258",
+    "primaryText": "tvůj otec a ty jste si podobni",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Your father and you are alike.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "No first person conjunct: the second person determines the form."
+  },
+  {
+    "id": "corbett1991_9.4",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (4)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "Tonček in Igor sta prizadevna",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Tonček",
+        "Tonček"
+      ],
+      [
+        "in",
+        "and"
+      ],
+      [
+        "Igor",
+        "Igor"
+      ],
+      [
+        "sta",
+        "are.DUAL"
+      ],
+      [
+        "prizadevn-a",
+        "assiduous-DUAL"
+      ]
+    ],
+    "translation": "Tonček and Igor are assiduous.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "numbers",
+        "sg+sg"
+      ],
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": "Two singulars conjoined take the dual."
+  },
+  {
+    "id": "corbett1991_9.5",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (5)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "Tonček, Igor in Marina so prizadevni",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Tonček, Igor and Marina are assiduous.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "numbers",
+        "sg+sg+sg"
+      ],
+      [
+        "number",
+        "plural"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.6",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (6)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "Marta in njegova brata bodo prišli",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Marta and his (Igor's) two brothers will come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "numbers",
+        "sg+du"
+      ],
+      [
+        "number",
+        "plural"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.7",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (7)"
+    },
+    "reportedIn": null,
+    "language": "swah1253",
+    "primaryText": "kiti na mguu wa meza umevunjika",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ki-ti",
+        "7-chair"
+      ],
+      [
+        "na",
+        "and"
+      ],
+      [
+        "m-guu",
+        "3-leg"
+      ],
+      [
+        "wa",
+        "of"
+      ],
+      [
+        "meza",
+        "table"
+      ],
+      [
+        "u-mevunjika",
+        "3-be.broken"
+      ]
+    ],
+    "translation": "The chair and the leg of the table are broken.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The verb agrees with the nearer conjunct only: no resolution."
+  },
+  {
+    "id": "corbett1991_9.8",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (8)"
+    },
+    "reportedIn": null,
+    "language": "swah1253",
+    "primaryText": "mguu wa meza na kiti kimevunjika",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The leg of the table and the chair are broken.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Reversing the conjuncts changes the agreement: again the nearer conjunct."
+  },
+  {
+    "id": "corbett1991_9.10",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (10)"
+    },
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "toj službi su bile posvećene njene misli i njena osećanja...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "To this job were devoted her thoughts and her feelings.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Andrić: with the target preceding, the verb agrees with the nearer feminine conjunct; the resolved form would be masculine."
+  },
+  {
+    "id": "corbett1991_9.12",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (12)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "groza in strah je prevzela vso vas",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "groza",
+        "horror.FEM.SG"
+      ],
+      [
+        "in",
+        "and"
+      ],
+      [
+        "strah",
+        "fear.MASC.SG"
+      ],
+      [
+        "je",
+        "is"
+      ],
+      [
+        "prevzel-a",
+        "seized-FEM.SG"
+      ],
+      [
+        "vso",
+        "whole"
+      ],
+      [
+        "vas",
+        "village"
+      ]
+    ],
+    "translation": "Horror and fear seized the whole village.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Lenček: agreement with the first conjunct, not the nearer; the resolved form would be the masculine dual."
+  },
+  {
+    "id": "corbett1991_9.14",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (14)"
+    },
+    "reportedIn": null,
+    "language": "tami1289",
+    "primaryText": "raamanum murukanum vantaanka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "raaman-um",
+        "Raman-and"
+      ],
+      [
+        "murukan-um",
+        "Murugan-and"
+      ],
+      [
+        "va-nt-aanka",
+        "come-PAST-3RD.PL.RATIONAL"
+      ]
+    ],
+    "translation": "Raman and Murugan came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "masc+masc"
+      ],
+      [
+        "resolved",
+        "rational"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.15",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (15)"
+    },
+    "reportedIn": null,
+    "language": "tami1289",
+    "primaryText": "akkaavum tankacciyum innekki kooyilukku pooraanka",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Elder sister and younger sister are going to the temple today.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "fem+fem"
+      ],
+      [
+        "resolved",
+        "rational"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.16",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (16)"
+    },
+    "reportedIn": null,
+    "language": "tami1289",
+    "primaryText": "akkaavum annanum neettu vantaanka",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Elder sister and elder brother came yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "fem+masc"
+      ],
+      [
+        "resolved",
+        "rational"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.17",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (17)"
+    },
+    "reportedIn": null,
+    "language": "tami1289",
+    "primaryText": "naayum puuneyum vantatunka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "naay-um",
+        "dog-and"
+      ],
+      [
+        "puune-yum",
+        "cat-and"
+      ],
+      [
+        "va-nt-atunka",
+        "come-PAST-3RD.PL.NEUT"
+      ]
+    ],
+    "translation": "The dog and the cat came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "neut+neut"
+      ],
+      [
+        "resolved",
+        "neuter"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.18",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (18)"
+    },
+    "reportedIn": null,
+    "language": "tami1289",
+    "primaryText": "raamanum naayum vantaanka",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Raman and the dog came.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "masc+neut"
+      ],
+      [
+        "resolved",
+        "rational"
+      ]
+    ],
+    "comment": "A rational conjoined with a non-rational: an alternative construction must be used, though some speakers allow the rational plural colloquially."
+  },
+  {
+    "id": "corbett1991_9.19",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (19)"
+    },
+    "reportedIn": null,
+    "language": "telu1262",
+    "primaryText": "tallii kuuturuu vaccaeru",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mother and daughter came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Telugu: the rational plural, as in Tamil."
+  },
+  {
+    "id": "corbett1991_9.22",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (22)"
+    },
+    "reportedIn": null,
+    "language": "telu1262",
+    "primaryText": "kukkaa pillii vaccaeyi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A dog and a cat came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.23",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (23)"
+    },
+    "reportedIn": null,
+    "language": "telu1262",
+    "primaryText": "aaviDaa kukkaa vaccaeru",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She and the dog came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Not uncommon colloquially, though a different construction is more common."
+  },
+  {
+    "id": "corbett1991_9.24",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (24)"
+    },
+    "reportedIn": null,
+    "language": "arch1244",
+    "primaryText": "dija-wu x̌̄onnōl-u x̥̌̄ak b-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "dija-wu",
+        "father.I-and"
+      ],
+      [
+        "x̌̄onnōl-u",
+        "mother.II-and"
+      ],
+      [
+        "x̥̌̄ak",
+        "near"
+      ],
+      [
+        "b-i",
+        "I/II.PL-are"
+      ]
+    ],
+    "translation": "Father and mother are near.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "rational+rational"
+      ],
+      [
+        "resolved",
+        "I/II"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.25",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (25)"
+    },
+    "reportedIn": null,
+    "language": "arch1244",
+    "primaryText": "dija-wu dogi-wu x̥̌̄ak b-i",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Father and the donkey are near.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "rational+nonrational"
+      ],
+      [
+        "resolved",
+        "I/II"
+      ]
+    ],
+    "comment": "A gender III conjunct does not affect the agreement."
+  },
+  {
+    "id": "corbett1991_9.26",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (26)"
+    },
+    "reportedIn": null,
+    "language": "arch1244",
+    "primaryText": "dija-wu motōl-u x̥̌̄ak b-i",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Father and the kid are near.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "rational+nonrational"
+      ],
+      [
+        "resolved",
+        "I/II"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.27",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (27)"
+    },
+    "reportedIn": null,
+    "language": "arch1244",
+    "primaryText": "dija-wu marzi-k'olōr-u x̥̌̄ak b-i",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Father and the loom are near.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "rational+nonrational"
+      ],
+      [
+        "resolved",
+        "I/II"
+      ]
+    ],
+    "comment": "An inanimate conjunct too: the significant factor is a conjunct denoting a rational."
+  },
+  {
+    "id": "corbett1991_9.28",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (28)"
+    },
+    "reportedIn": null,
+    "language": "arch1244",
+    "primaryText": "dogi-wu motōl-u x̥̌̄ak Ø-i",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The donkey and the kid are near.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "nonrational+nonrational"
+      ],
+      [
+        "resolved",
+        "III/IV"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.29",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (29)"
+    },
+    "reportedIn": null,
+    "language": "arch1244",
+    "primaryText": "dogi-wu marzi-k'olōr-u x̥̌̄ak Ø-i",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The donkey and the loom are near.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "nonrational+nonrational"
+      ],
+      [
+        "resolved",
+        "III/IV"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.30",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (30)"
+    },
+    "reportedIn": null,
+    "language": "arch1244",
+    "primaryText": "xalq'-u dogi-wu x̥̌̄ak b-i",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The people and the donkey are near.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "rational+nonrational"
+      ],
+      [
+        "resolved",
+        "I/II"
+      ]
+    ],
+    "comment": "xalq' 'people' takes gender III agreement in the singular yet resolves as a rational: the rules are semantic, not gender-based."
+  },
+  {
+    "id": "corbett1991_9.31",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (31)"
+    },
+    "reportedIn": null,
+    "language": "gand1255",
+    "primaryText": "omukazi, essajja ne oluana baalabwa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "omu-kazi",
+        "1-woman"
+      ],
+      [
+        "es-sajja",
+        "5-fat.man"
+      ],
+      [
+        "ne",
+        "and"
+      ],
+      [
+        "olu-ana",
+        "11-thin.child"
+      ],
+      [
+        "ba-alabwa",
+        "2-were.seen"
+      ]
+    ],
+    "translation": "The woman, the fat man and the thin child were seen.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "human+human+human"
+      ],
+      [
+        "resolved",
+        "2"
+      ]
+    ],
+    "comment": "Givón's Luganda data: only one conjunct is in gender 1/2, yet class 2 resolves."
+  },
+  {
+    "id": "corbett1991_9.32",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (32)"
+    },
+    "reportedIn": null,
+    "language": "gand1255",
+    "primaryText": "ekkazi, akaana ne olusajja baalabwa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The fat woman, the small child and the tall man were seen.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "human+human+human"
+      ],
+      [
+        "resolved",
+        "2"
+      ]
+    ],
+    "comment": "No conjunct in gender 1/2: the class 2 form is semantically motivated."
+  },
+  {
+    "id": "corbett1991_9.33",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (33)"
+    },
+    "reportedIn": null,
+    "language": "gand1255",
+    "primaryText": "ente, omusu, ekibe ne elyato bialabwa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The cow, the wild cat, the jackal and the canoe were seen.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "nonhuman+nonhuman+nonhuman+nonhuman"
+      ],
+      [
+        "resolved",
+        "8"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.34",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (34)"
+    },
+    "reportedIn": null,
+    "language": "gand1255",
+    "primaryText": "omusajja ne embwaye biagwa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The man and his dog fell down.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Human and non-human conjoined with the class 8 form: unnatural; the comitative construction (36) is preferred."
+  },
+  {
+    "id": "corbett1991_9.35",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (35)"
+    },
+    "reportedIn": null,
+    "language": "gand1255",
+    "primaryText": "omusajja ne embwaye baagwa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The man and his dog fell down.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "human+nonhuman"
+      ],
+      [
+        "resolved",
+        "2"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.36",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (36)"
+    },
+    "reportedIn": null,
+    "language": "gand1255",
+    "primaryText": "omusajja yagwa ne embwaye",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The man fell down with his dog.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The comitative: a simple subject, and resolution is avoided."
+  },
+  {
+    "id": "corbett1991_9.37",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (37)"
+    },
+    "reportedIn": null,
+    "language": "bemb1257",
+    "primaryText": "imfumu na ishilu baaliile",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The chief and the lunatic left.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Chibemba: the same rules."
+  },
+  {
+    "id": "corbett1991_9.38",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (38)"
+    },
+    "reportedIn": null,
+    "language": "bemb1257",
+    "primaryText": "icitabo, ubusanshi na ulubalala fili kuno",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The book, the bed and the peanut are here.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.39",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (39)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "malalanje ndi masamba akubvunda",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The oranges and leaves are rotting.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Two plural nouns of gender 5/6 with the plural form of that gender: no number resolution and so no gender resolution, agreement with the nearest conjunct."
+  },
+  {
+    "id": "corbett1991_9.40",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (40)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "amphaka ndi agalu akuthamanga",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The cats and dogs are running.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.41",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (41)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "amphaka ndi malalanje ali uko",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The cats and the oranges are there.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Plural nouns of different genders taking the same target gender form: that form is used, so the rule refers to target genders."
+  },
+  {
+    "id": "corbett1991_9.42",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (42)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "ana ndi malalanje akusowa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The children and the oranges are missing.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Even a human and a non-human conjoined."
+  },
+  {
+    "id": "corbett1991_9.43",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (43)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "un livre et un cahier neufs",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a new book and exercise book",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "masc+masc"
+      ],
+      [
+        "resolved",
+        "masc"
+      ]
+    ],
+    "comment": "Grevisse."
+  },
+  {
+    "id": "corbett1991_9.44",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (44)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "la misère et la ruine générales",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the general poverty and ruin",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "fem+fem"
+      ],
+      [
+        "resolved",
+        "fem"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.45",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (45)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "un père et une mère excellents",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "an excellent father and mother",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "masc+fem"
+      ],
+      [
+        "resolved",
+        "masc"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.46",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (46)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "un savoir et une adresse merveilleux",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a marvellous knowledge and skill",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "masc+fem"
+      ],
+      [
+        "resolved",
+        "masc"
+      ]
+    ],
+    "comment": "The rules apply alike to animates and inanimates."
+  },
+  {
+    "id": "corbett1991_9.47",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (47)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "Tonček in Marina sta prizadevna",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Tonček and Marina are assiduous.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "masc+fem"
+      ],
+      [
+        "resolved",
+        "masc"
+      ],
+      [
+        "numbers",
+        "sg+sg"
+      ],
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": "Lenček's Slovene data."
+  },
+  {
+    "id": "corbett1991_9.48",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (48)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "Tonček in to dekletce sta prizadevna",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Tonček and that little girl are assiduous.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "masc+neut"
+      ],
+      [
+        "resolved",
+        "masc"
+      ],
+      [
+        "numbers",
+        "sg+sg"
+      ],
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.49",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (49)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "ta streha in gnezdo na njej mi bosta ostala v spominu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "That roof and the nest on it will remain in my memory.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "fem+neut"
+      ],
+      [
+        "resolved",
+        "masc"
+      ],
+      [
+        "numbers",
+        "sg+sg"
+      ],
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.50",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (50)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "to drevo in gnezdo na njem mi bosta ostala v spominu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "That tree and the nest on it will remain in my memory.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "neut+neut"
+      ],
+      [
+        "resolved",
+        "masc"
+      ],
+      [
+        "numbers",
+        "sg+sg"
+      ],
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": "Two neuter singulars take a masculine dual."
+  },
+  {
+    "id": "corbett1991_9.51",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (51)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "Marina in Marta sta prizadevni",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Marina and Marta are assiduous.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "fem+fem"
+      ],
+      [
+        "resolved",
+        "fem"
+      ],
+      [
+        "numbers",
+        "sg+sg"
+      ],
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.52",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (52)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "to okno, drevo in gnezdo v njem mi bodo ostali v spominu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "That window, tree and nest in it will remain in my memory.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "neut+neut+neut"
+      ],
+      [
+        "resolved",
+        "masc"
+      ],
+      [
+        "numbers",
+        "sg+sg+sg"
+      ],
+      [
+        "number",
+        "plural"
+      ]
+    ],
+    "comment": "All conjuncts neuter, yet the masculine plural: number resolution, triggered by the singular conjuncts, brings gender resolution with it."
+  },
+  {
+    "id": "corbett1991_9.53",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (53)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "Marina, Marta in Marjanca so prizadevne",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Marina, Marta and Marjanca are assiduous.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "fem+fem+fem"
+      ],
+      [
+        "resolved",
+        "fem"
+      ],
+      [
+        "numbers",
+        "sg+sg+sg"
+      ],
+      [
+        "number",
+        "plural"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.54",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (54)"
+    },
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "ta sećanja i razmatranja sve su više ustupala mesto novim utiscima",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Those memories and reflections increasingly gave way to new impressions.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Andrić: neuter plurals only, so no number resolution and no gender resolution; the neuter plural is agreement with the nearer conjunct."
+  },
+  {
+    "id": "corbett1991_9.55",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (55)"
+    },
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "sve njegove molbe i uveravanja nisu pomagali ništa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "All his prayers and assurances did not help at all.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Feminine and neuter plurals with a masculine predicate: conjuncts requiring different target gender forms trigger gender resolution on their own."
+  },
+  {
+    "id": "corbett1991_9.56",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (56)"
+    },
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "þau (drengurinn og telpan) eru þreytt",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "They (the boy and the girl) are tired.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "masc+fem"
+      ],
+      [
+        "resolved",
+        "neut"
+      ]
+    ],
+    "comment": "Icelandic: the neuter plural for any mixture of genders."
+  },
+  {
+    "id": "corbett1991_9.57",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (57)"
+    },
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "ég sá á og lamb, bæði svört",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I saw a ewe and a lamb, both black.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "fem+neut"
+      ],
+      [
+        "resolved",
+        "neut"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.58",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (58)"
+    },
+    "reportedIn": null,
+    "language": "poli1260",
+    "primaryText": "siostry i matka czytały",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The sisters and mother were reading.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "fem+fem"
+      ],
+      [
+        "resolved",
+        "nonMascPers"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.59",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (59)"
+    },
+    "reportedIn": null,
+    "language": "poli1260",
+    "primaryText": "brat, siostry i matka czytali",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The brother, sisters and mother were reading.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "mascPers+fem+fem"
+      ],
+      [
+        "resolved",
+        "mascPers"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.60",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (60)"
+    },
+    "reportedIn": null,
+    "language": "poli1260",
+    "primaryText": "Hania i Reks bawili się piłką",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Hania and Rex were playing with a ball.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Rex is a dog: no masculine personal conjunct, yet the masculine personal form for almost all of Zieniukowa's informants, by the optional rules."
+  },
+  {
+    "id": "corbett1991_9.61",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (61)"
+    },
+    "reportedIn": null,
+    "language": "poli1260",
+    "primaryText": "pies i kot jedli na podwórzu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The dog and the cat were eating in the yard.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Two masculine animates: the masculine personal form for the majority, the non-masculine personal for seven informants."
+  },
+  {
+    "id": "corbett1991_9.62",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (62)"
+    },
+    "reportedIn": null,
+    "language": "poli1260",
+    "primaryText": "mama, córeczka i wózek ukazali się nagle",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The mother, daughter and pram appeared suddenly.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "mama, córeczka i wózek ukazały się nagle",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Informants were equally divided between the masculine personal and the non-masculine personal form."
+  },
+  {
+    "id": "corbett1991_9.63",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (63)"
+    },
+    "reportedIn": null,
+    "language": "lati1261",
+    "primaryText": "quam pridem pater mihi et mater mortui essent",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "How long ago my father and mother had died.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "masc.human+fem.human"
+      ],
+      [
+        "resolved",
+        "masc"
+      ]
+    ],
+    "comment": "Kühner and Stegmann: persons of mixed gender take the masculine."
+  },
+  {
+    "id": "corbett1991_9.64",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (64)"
+    },
+    "reportedIn": null,
+    "language": "lati1261",
+    "primaryText": "murus et porta de caelo tacta erant",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The wall and the gate have been struck by lightning.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "masc.inanimate+fem.inanimate"
+      ],
+      [
+        "resolved",
+        "neut"
+      ]
+    ],
+    "comment": "Mixed gender without persons takes the neuter."
+  },
+  {
+    "id": "corbett1991_9.65",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (65)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "fata şi femeia sînt fericite",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The girl and the woman are happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "fată+femeie"
+      ],
+      [
+        "resolved",
+        "fem"
+      ]
+    ],
+    "comment": "Mallinson's Romanian data."
+  },
+  {
+    "id": "corbett1991_9.66",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (66)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "băiatul şi bărbatul sînt fericiţi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The boy and the man are happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "băiat+bărbat"
+      ],
+      [
+        "resolved",
+        "masc"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.67",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (67)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "acest băiat şi această fată sînt frumoşi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This boy and this girl are happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "băiat+fată"
+      ],
+      [
+        "resolved",
+        "masc"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.68",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (68)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "uşa şi peretele... ele...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The door and the wall... they...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "uşă+perete"
+      ],
+      [
+        "resolved",
+        "fem"
+      ]
+    ],
+    "comment": "Gruiţă's examples with personal pronouns: for mixed genders of inanimates the feminine."
+  },
+  {
+    "id": "corbett1991_9.69",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (69)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "peretele şi scaunul... ele...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The wall and the chair... they...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "perete+scaun"
+      ],
+      [
+        "resolved",
+        "fem"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.70",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (70)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "scaunul şi masa... ele...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The chair and the table... they...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "scaun+masă"
+      ],
+      [
+        "resolved",
+        "fem"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.71",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (71)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "nucul şi prunul... ei...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The walnut tree and the plum tree... they...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "nuc+prun"
+      ],
+      [
+        "resolved",
+        "masc"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.72",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (72)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "frigiderul şi televizorul... ele...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The refrigerator and the television... they...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "frigider+televizor"
+      ],
+      [
+        "resolved",
+        "fem"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.73",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (73)"
+    },
+    "reportedIn": null,
+    "language": "roma1327",
+    "primaryText": "uşa şi masa... ele...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The door and the table... they...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "uşă+masă"
+      ],
+      [
+        "resolved",
+        "fem"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.74",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (74)"
+    },
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "znanje i intuicija su kod njega sarađivali i dopunjavali se",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Knowledge and intuition worked together in him and supplemented each other.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Andrić: feminine and neuter conjoined take the masculine."
+  },
+  {
+    "id": "corbett1991_9.75",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (75)"
+    },
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "njegovo mesto u razvitku kasabe i njegovo značenje u životu kasabalija bili su onakvi kako smo ih napred ukratko opisali",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "His place in the development of the town and his importance in the life of the inhabitants were such as we described them briefly before.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Neuters conjoined take the masculine plural."
+  },
+  {
+    "id": "corbett1991_9.76",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (76)"
+    },
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "opreznost, suptilnost i pedanterija tih bezbrojnih poruka zbunjivale su mladića",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The discretion, subtlety and pedantry of these innumerable assignments perplexed the young man.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "All conjuncts feminine: feminine agreement, as in Slovene."
+  },
+  {
+    "id": "corbett1991_9.77",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (77)"
+    },
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "vređali su ga nebriga i lakomislenost Tahir-begova",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Tahir-beg's carelessness and capriciousness offended him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Gudkov: a masculine predicate with feminine conjuncts, one of the -Ø declension; all such examples denote inanimates, so the condition is semantic."
+  },
+  {
+    "id": "corbett1991_9.78",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (78)"
+    },
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "štula i štaka bili su sve što je tadašnja medicina mogla da mu pruži",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A wooden leg and a crutch were all that medical science of that time could offer him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Popović: feminine nouns in -a with masculine agreement, inanimates again."
+  },
+  {
+    "id": "corbett1991_9.79",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (79)"
+    },
+    "reportedIn": null,
+    "language": "ojib1241",
+    "primaryText": "akik mi:nawa: bikwak indaya:wa:g",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have a pail and an arrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "animate+animate"
+      ],
+      [
+        "resolved",
+        "animate"
+      ]
+    ],
+    "comment": "Delisle's Ojibwa data: grammatically animate nouns conjoined take animate agreement."
+  },
+  {
+    "id": "corbett1991_9.80",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (80)"
+    },
+    "reportedIn": null,
+    "language": "ojib1241",
+    "primaryText": "ji:ma:n mi:nawa: abwi indaya:nan",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have a boat and a paddle.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "inanimate+inanimate"
+      ],
+      [
+        "resolved",
+        "inanimate"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.81",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (81)"
+    },
+    "reportedIn": null,
+    "language": "ojib1241",
+    "primaryText": "akik mi:nawa: ji:ma:n indaya:nan",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have a pail and a boat.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "animate+inanimate"
+      ],
+      [
+        "resolved",
+        "inanimate"
+      ]
+    ],
+    "comment": "Animate and inanimate may not be conjoined, whatever the verb form."
+  },
+  {
+    "id": "corbett1991_9.82",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (82)"
+    },
+    "reportedIn": null,
+    "language": "ojib1241",
+    "primaryText": "akik mi:nawa: ji:ma:n indaya:wa:g",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have a pail and a boat.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "animate+inanimate"
+      ],
+      [
+        "resolved",
+        "animate"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1991_9.83",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (83)"
+    },
+    "reportedIn": null,
+    "language": "ojib1241",
+    "primaryText": "mo:koma:n mi:nawa: opwa:gan atewan ado:powining",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The knife and the pipe are on the table.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "A younger speaker accepts a grammatically animate but biologically inanimate noun conjoined with an inanimate, with inanimate subject agreement."
+  },
+  {
+    "id": "corbett1991_9.84",
+    "source": {
+      "bibkey": "corbett-1991",
+      "paperLabel": "ch. 9 (84)"
+    },
+    "reportedIn": null,
+    "language": "ojib1241",
+    "primaryText": "opwa:gan mi:nawa: asema: abiwag ado:powining",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The pipe and the tobacco are on the table.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "When all conjuncts are grammatically animate, grammatical gender counts."
+  }
+]

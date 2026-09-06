@@ -107,6 +107,11 @@ def byk    : RussianNoun :=
   { form := "byk",    gloss := "bull",    attestedGender := .masculine, isNaturalGender := true }
 def korova : RussianNoun :=
   { form := "korova", gloss := "cow",     attestedGender := .feminine,  isNaturalGender := true }
+/-- *djadja* 'uncle': declension II like most feminines, masculine by sex ([wade-2020];
+    [corbett-1991]). -/
+def djadja : RussianNoun :=
+  { form := "djadja", gloss := "uncle", attestedGender := .masculine, isNaturalGender := true
+  , declClass := some .II }
 
 -- ============================================================================
 -- § 4: Remainder — Declension-Class Correlation ([kramer-2020] ex. 18)
@@ -160,7 +165,7 @@ def vrač : RussianNoun :=
 -- ============================================================================
 
 def semanticCoreNouns : List RussianNoun :=
-  [otec, mat', brat, sestra, byk, korova]
+  [otec, mat', brat, sestra, byk, korova, djadja]
 
 def remainderNouns : List RussianNoun :=
   [zakon, škola, kost', vino, znamja, put']

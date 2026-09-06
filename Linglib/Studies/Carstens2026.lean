@@ -234,14 +234,14 @@ theorem dm_bridge_faithful (s : GenderStatus) :
     (toDMInterpretability s == .i) = s.isInterpretable := by
   cases s <;> rfl
 
-/-- Bantu `SemanticCore` → typological `SemanticBasis` bridge.
+/-- Bantu `SemanticCore` → typological `Criterion` bridge.
     [carstens-2026]'s cores map to [kramer-2020]'s
     core semantic bases. All are `isCore = true`.
 
     The [non-human] core (Shona 7/8) maps to `.humanness` because
     Shona's system is organized around the human/non-human distinction.
     Xhosa's finer [animal] and [inanimate] cores map to `.animacy`. -/
-def toSemanticBasis : SemanticCore → Corbett1991.SemanticBasis
+def toSemanticBasis : SemanticCore → Corbett1991.Criterion
   | .human     => .humanness
   | .animal    => .animacy
   | .inanimate => .animacy
