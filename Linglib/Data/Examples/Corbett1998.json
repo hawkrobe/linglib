@@ -1,0 +1,1173 @@
+[
+  {
+    "id": "corbett1998_s1",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "§1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I'm parked on the hill",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "I'm",
+        "I.am"
+      ],
+      [
+        "parked",
+        "parked"
+      ],
+      [
+        "on",
+        "on"
+      ],
+      [
+        "the",
+        "the"
+      ],
+      [
+        "hill",
+        "hill"
+      ]
+    ],
+    "translation": "My car is parked on the hill.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "I is parked on the hill",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The pronoun refers to the car, but agreement with the referent is impossible: semantic information alone does not determine agreement."
+  },
+  {
+    "id": "corbett1998_1",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(1)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "nov-yj avtomobil'",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "nov-yj",
+        "new-SG.MASC"
+      ],
+      [
+        "avtomobil'",
+        "car"
+      ]
+    ],
+    "translation": "a new car",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "masc"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "ending",
+        "yj"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1998_2",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(2)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "nov-aja mašina",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "nov-aja",
+        "new-SG.FEM"
+      ],
+      [
+        "mašina",
+        "car"
+      ]
+    ],
+    "translation": "a new car",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "fem"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "ending",
+        "aja"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1998_3",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(3)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "nov-oe taksi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "nov-oe",
+        "new-SG.NEUT"
+      ],
+      [
+        "taksi",
+        "taxi"
+      ]
+    ],
+    "translation": "a new taxi",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "neut"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "ending",
+        "oe"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1998_4",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(4)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "nov-ye avtomobil-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "nov-ye",
+        "new-PL"
+      ],
+      [
+        "avtomobil-i",
+        "car-PL"
+      ]
+    ],
+    "translation": "new cars",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "masc"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "ending",
+        "ye"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1998_5",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(5)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "v nov-om avtomobil-e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "v",
+        "in"
+      ],
+      [
+        "nov-om",
+        "new-SG.LOC.MASC"
+      ],
+      [
+        "avtomobil-e",
+        "car-SG.LOC"
+      ]
+    ],
+    "translation": "in a new car",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "masc"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "case",
+        "loc"
+      ]
+    ],
+    "comment": "The preposition governs the locative, which noun and adjective both take: covariance imposed on both alike, not agreement."
+  },
+  {
+    "id": "corbett1998_s2.3a",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "§2.3"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "ja beru",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ja",
+        "I"
+      ],
+      [
+        "beru",
+        "take.1SG"
+      ]
+    ],
+    "translation": "I take",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "person",
+        "1"
+      ]
+    ],
+    "comment": "Person is inherent to the pronoun and marked on the verb."
+  },
+  {
+    "id": "corbett1998_s2.3b",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "§2.3"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "ty bereš'",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ty",
+        "you"
+      ],
+      [
+        "bereš'",
+        "take.2SG"
+      ]
+    ],
+    "translation": "you take",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "person",
+        "2"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1998_s2.3c",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "§2.3"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "on beret",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "on",
+        "he"
+      ],
+      [
+        "beret",
+        "take.3SG"
+      ]
+    ],
+    "translation": "he takes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "person",
+        "3"
+      ]
+    ],
+    "comment": "Also ona beret 'she takes'."
+  },
+  {
+    "id": "corbett1998_6",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(6)"
+    },
+    "reportedIn": null,
+    "language": "nucl1622",
+    "primaryText": "e-pe anem e-pe akek ka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "e-pe",
+        "I-the"
+      ],
+      [
+        "anem",
+        "man"
+      ],
+      [
+        "e-pe",
+        "I-the"
+      ],
+      [
+        "akek",
+        "light.I"
+      ],
+      [
+        "ka",
+        "is"
+      ]
+    ],
+    "translation": "the man is light",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "I"
+      ],
+      [
+        "adjective",
+        "akek"
+      ],
+      [
+        "demonstrative",
+        "e-pe"
+      ]
+    ],
+    "comment": "The adjective marks gender by its infixed vowel."
+  },
+  {
+    "id": "corbett1998_7",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(7)"
+    },
+    "reportedIn": null,
+    "language": "nucl1622",
+    "primaryText": "u-pe anum u-pe akuk ka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "u-pe",
+        "II-the"
+      ],
+      [
+        "anum",
+        "woman"
+      ],
+      [
+        "u-pe",
+        "II-the"
+      ],
+      [
+        "akuk",
+        "light.II"
+      ],
+      [
+        "ka",
+        "is"
+      ]
+    ],
+    "translation": "the woman is light",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "II"
+      ],
+      [
+        "adjective",
+        "akuk"
+      ],
+      [
+        "demonstrative",
+        "u-pe"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1998_8",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(8)"
+    },
+    "reportedIn": null,
+    "language": "nucl1622",
+    "primaryText": "e-pe de e-pe akak ka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "e-pe",
+        "III-the"
+      ],
+      [
+        "de",
+        "wood"
+      ],
+      [
+        "e-pe",
+        "III-the"
+      ],
+      [
+        "akak",
+        "light.III"
+      ],
+      [
+        "ka",
+        "is"
+      ]
+    ],
+    "translation": "the wood is light",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "III"
+      ],
+      [
+        "adjective",
+        "akak"
+      ],
+      [
+        "demonstrative",
+        "e-pe"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1998_9",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(9)"
+    },
+    "reportedIn": null,
+    "language": "nucl1622",
+    "primaryText": "i-pe behaw i-pe akik ka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "i-pe",
+        "IV-the"
+      ],
+      [
+        "behaw",
+        "pole"
+      ],
+      [
+        "i-pe",
+        "IV-the"
+      ],
+      [
+        "akik",
+        "light.IV"
+      ],
+      [
+        "ka",
+        "is"
+      ]
+    ],
+    "translation": "the pole is light",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "IV"
+      ],
+      [
+        "adjective",
+        "akik"
+      ],
+      [
+        "demonstrative",
+        "i-pe"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1998_10",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(10)"
+    },
+    "reportedIn": null,
+    "language": "arch1244",
+    "primaryText": "d-as̄-a-r-ej-r-u-t̄u-r x̌anna",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "d-as̄-a-r-ej-r-u-t̄u-r",
+        "II-of.me-SELF-II-SUFFIX-II-SUFFIX-ADJ-II"
+      ],
+      [
+        "x̌anna",
+        "wife"
+      ]
+    ],
+    "translation": "my own (emphatic) wife",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "II"
+      ],
+      [
+        "slots",
+        "4"
+      ]
+    ],
+    "comment": "A prefixed marker d-, a suffixed -r and two internal -r-, all for the same controller in the same features: four slots, the most found on one target."
+  },
+  {
+    "id": "corbett1998_11",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(11)"
+    },
+    "reportedIn": null,
+    "language": "soma1255",
+    "primaryText": "ìnan-kii baa y-imid",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ìnan-kii",
+        "boy-the.SG.MASC"
+      ],
+      [
+        "baa",
+        "FOCUS.MARKER"
+      ],
+      [
+        "y-imid",
+        "SG.MASC-came"
+      ]
+    ],
+    "translation": "the boy (!) came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "ìnan"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "article",
+        "kii"
+      ],
+      [
+        "verb",
+        "y"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1998_12",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(12)"
+    },
+    "reportedIn": null,
+    "language": "soma1255",
+    "primaryText": "inán-tii baa t-imid",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "inán-tii",
+        "girl-the.SG.FEM"
+      ],
+      [
+        "baa",
+        "FOCUS.MARKER"
+      ],
+      [
+        "t-imid",
+        "SG.FEM-came"
+      ]
+    ],
+    "translation": "the girl (!) came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "inán"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "article",
+        "tii"
+      ],
+      [
+        "verb",
+        "t"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1998_13",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(13)"
+    },
+    "reportedIn": null,
+    "language": "soma1255",
+    "primaryText": "inammá-dii baa y-imid",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "inammá-dii",
+        "boys-the.PL.MASC"
+      ],
+      [
+        "baa",
+        "FOCUS.MARKER"
+      ],
+      [
+        "y-imid",
+        "PL-came"
+      ]
+    ],
+    "translation": "the boys (!) came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "ìnan"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "article",
+        "tii"
+      ],
+      [
+        "verb",
+        "y"
+      ]
+    ],
+    "comment": "-dii is -tii after a vowel."
+  },
+  {
+    "id": "corbett1998_14",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(14)"
+    },
+    "reportedIn": null,
+    "language": "soma1255",
+    "primaryText": "ináma-hii baa y-imid",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ináma-hii",
+        "girls-the.PL.FEM"
+      ],
+      [
+        "baa",
+        "FOCUS.MARKER"
+      ],
+      [
+        "y-imid",
+        "PL-came"
+      ]
+    ],
+    "translation": "the girls (!) came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "inán"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "article",
+        "kii"
+      ],
+      [
+        "verb",
+        "y"
+      ]
+    ],
+    "comment": "-hii is -kii after a vowel other than i."
+  },
+  {
+    "id": "corbett1998_s3.2a",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "§3.2"
+    },
+    "reportedIn": null,
+    "language": "soma1255",
+    "primaryText": "nin-kii",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "nin-kii",
+        "man-the.SG.MASC"
+      ]
+    ],
+    "translation": "the man",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "nin"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "article",
+        "kii"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1998_s3.2b",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "§3.2"
+    },
+    "reportedIn": null,
+    "language": "soma1255",
+    "primaryText": "niman-kii",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "niman-kii",
+        "men-the.PL.MASC"
+      ]
+    ],
+    "translation": "the men",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "nin"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "article",
+        "kii"
+      ]
+    ],
+    "comment": "A masculine noun with a reduplicated plural keeps the singular article: not all nouns are in the polarity system."
+  },
+  {
+    "id": "corbett1998_s4a",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "§4"
+    },
+    "reportedIn": null,
+    "language": "lakk1252",
+    "primaryText": "q̄at-lu-wu-n-m-aj",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "q̄at-lu-wu-n-m-aj",
+        "house-OBLIQUE-IN-LATIVE-III-ALLATIVE"
+      ]
+    ],
+    "translation": "into the house",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "caseMarkedNoun"
+      ],
+      [
+        "gender",
+        "III"
+      ]
+    ],
+    "comment": "The allative marker brings an agreement slot with it: a case-marked noun agrees."
+  },
+  {
+    "id": "corbett1998_s4b",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "§4"
+    },
+    "reportedIn": null,
+    "language": "darg1241",
+    "primaryText": "bidra-li-če-b",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "bidra-li-če-b",
+        "bucket-OBLIQUE-SUPER-III"
+      ]
+    ],
+    "translation": "on the bucket",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "caseMarkedNoun"
+      ],
+      [
+        "gender",
+        "III"
+      ]
+    ],
+    "comment": "The essive has no marker of its own; the agreement slot signals the case."
+  },
+  {
+    "id": "corbett1998_15",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(15)"
+    },
+    "reportedIn": null,
+    "language": "arch1244",
+    "primaryText": "d-ez buwa ǩ'anši d-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "d-ez",
+        "II-me.DAT"
+      ],
+      [
+        "buwa",
+        "mother"
+      ],
+      [
+        "ǩ'anši",
+        "like"
+      ],
+      [
+        "d-i",
+        "II-is"
+      ]
+    ],
+    "translation": "I like mother",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "pronoun"
+      ],
+      [
+        "gender",
+        "II"
+      ]
+    ],
+    "comment": "The dative subject pronoun has an agreement slot and agrees with the object, as the verb does."
+  },
+  {
+    "id": "corbett1998_16",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(16)"
+    },
+    "reportedIn": null,
+    "language": "arch1244",
+    "primaryText": "b-ez dogi ǩ'anši b-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "b-ez",
+        "III-me"
+      ],
+      [
+        "dogi",
+        "donkey"
+      ],
+      [
+        "ǩ'anši",
+        "like"
+      ],
+      [
+        "b-i",
+        "III-is"
+      ]
+    ],
+    "translation": "I like the donkey",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "pronoun"
+      ],
+      [
+        "gender",
+        "III"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett1998_17",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(17)"
+    },
+    "reportedIn": null,
+    "language": "uppe1395",
+    "primaryText": "wón je pisał",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "wón",
+        "he"
+      ],
+      [
+        "je",
+        "is.3SG"
+      ],
+      [
+        "pisał",
+        "written.SG.MASC"
+      ]
+    ],
+    "translation": "he wrote",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "finiteVerb",
+        "number,person"
+      ],
+      [
+        "participle",
+        "number,gender"
+      ]
+    ],
+    "comment": "The finite verb agrees in number and person, the participle in number and gender."
+  },
+  {
+    "id": "corbett1998_18",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(18)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "ma-lalanje ndi ma-samba a-kubvunda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ma-lalanje",
+        "6-orange"
+      ],
+      [
+        "ndi",
+        "and"
+      ],
+      [
+        "ma-samba",
+        "6-leaf"
+      ],
+      [
+        "a-kubvunda",
+        "6-be.rotting"
+      ]
+    ],
+    "translation": "the oranges and leaves are rotting",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunct1",
+        "ma-lalanje"
+      ],
+      [
+        "conjunct2",
+        "ma-samba"
+      ],
+      [
+        "prefix",
+        "a"
+      ]
+    ],
+    "comment": "Two plural nouns of one gender take its plural form rather than the zi- the general rule for non-humans predicts."
+  },
+  {
+    "id": "corbett1998_19",
+    "source": {
+      "bibkey": "corbett-1998",
+      "paperLabel": "(19)"
+    },
+    "reportedIn": null,
+    "language": "nyan1308",
+    "primaryText": "a-mphaka ndi ma-lalanje a-li uko",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "a-mphaka",
+        "2-cat"
+      ],
+      [
+        "ndi",
+        "and"
+      ],
+      [
+        "ma-lalanje",
+        "6-orange"
+      ],
+      [
+        "a-li",
+        "GN-be"
+      ],
+      [
+        "uko",
+        "there"
+      ]
+    ],
+    "translation": "the cats and the oranges are there",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunct1",
+        "a-mphaka"
+      ],
+      [
+        "conjunct2",
+        "ma-lalanje"
+      ],
+      [
+        "prefix",
+        "a"
+      ]
+    ],
+    "comment": "Plural nouns of different genders whose subject forms coincide take that form; zi- may be an alternative."
+  }
+]

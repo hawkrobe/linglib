@@ -2,7 +2,7 @@ import Linglib.Features.Gender.Basic
 
 /-!
 # Russian Noun Gender
-[wade-2020] [corbett-1991] [kramer-2020] [kramer-2015]
+[wade-2020] [corbett-1991] [kramer-2020] [kramer-2015] [corbett-1998]
 
 Russian has three surface genders: masculine, feminine, neuter. Gender
 is partly determined by the referent's biological sex (semantic core)
@@ -210,6 +210,26 @@ def Value.pastConcord : Value → PastConcord
   | .masc => .zero
   | .fem  => .a
   | .neut => .o
+
+/-- The nominative endings of a hard-stem adjective such as *novyj* 'new': *-yj*, *-aja*,
+*-oe* by gender in the singular, *-ye* for all three in the plural ([wade-2020];
+[corbett-1998]). -/
+inductive AdjEnding where
+  | yj
+  | aja
+  | oe
+  | ye
+  deriving DecidableEq, Repr, Fintype
+
+/-- The nominative ending by gender and number. -/
+def Value.adjEnding : Value → Bool → AdjEnding
+  | .masc, false => .yj
+  | .fem, false => .aja
+  | .neut, false => .oe
+  | _, true => .ye
+
+/-- The singular ending alone distinguishes the three genders. -/
+theorem faithful_adjEnding : Function.Injective (Value.adjEnding · false) := by decide
 
 /-- The Russian gender system over its own carrier: full comparative
     labelling; neuter is the morphosyntactic default (the all-others

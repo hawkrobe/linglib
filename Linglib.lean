@@ -779,6 +779,7 @@ import Linglib.Fragments.Cantonese.Determiners
 import Linglib.Fragments.Cantonese.Particles
 import Linglib.Fragments.Cantonese.Predicates
 import Linglib.Fragments.Cantonese.ResultativeComplements
+import Linglib.Fragments.Chichewa.Gender
 import Linglib.Fragments.Chichewa.Reciprocals
 import Linglib.Fragments.CoastalMarind.Gender
 import Linglib.Fragments.Danish.V2
@@ -1014,6 +1015,7 @@ import Linglib.Fragments.Latin.Adjectives
 import Linglib.Fragments.Latin.Case
 import Linglib.Fragments.Latin.Comparison
 import Linglib.Fragments.Latin.Coordination
+import Linglib.Fragments.Latin.Gender
 import Linglib.Fragments.Latin.Indefinites
 import Linglib.Fragments.Latin.Phonology
 import Linglib.Fragments.Latvian.IndeterminatePronouns
@@ -1167,6 +1169,7 @@ import Linglib.Fragments.Slavic.Slovenian.QuestionParticles
 import Linglib.Fragments.Slavic.Sorbian.Case
 import Linglib.Fragments.Slavic.Ukrainian.Case
 import Linglib.Fragments.Slavic.Ukrainian.QuestionParticles
+import Linglib.Fragments.Somali.Gender
 import Linglib.Fragments.Spanish.Binominals
 import Linglib.Fragments.Spanish.Clitics
 import Linglib.Fragments.Spanish.Gender
@@ -2999,3 +3002,4 @@ import Linglib.Data.Examples.Cooper2023
 import Linglib.Data.Examples.Coppock2018
 import Linglib.Data.Examples.CoppockBeaver2015
 import Linglib.Data.Examples.Corbett1991
+import Linglib.Data.Examples.Corbett1998

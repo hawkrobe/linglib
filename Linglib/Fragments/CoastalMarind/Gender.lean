@@ -5,11 +5,14 @@ import Mathlib.Tactic.DeriveFintype
 
 The four genders of Coastal Marind (Anim, New Guinea) after Olsson's description as tabulated in
 [adamson-2024]: the demonstrative and similative agreement forms, and the nouns whose form
-alternates overtly by gender, among them *nanVh* 'face', which takes the gender of its possessor.
+alternates overtly by gender, among them *nanVh* 'face', which takes the gender of its possessor;
+and the adjective *ak-k* 'light', which marks gender by its infixed vowel ([corbett-1998],
+where *-pe* is glossed as the article).
 
 ## References
 
 * [adamson-2024]
+* [G. G. Corbett, *Morphology and agreement* (1998)][corbett-1998]
 -/
 
 namespace CoastalMarind
@@ -35,6 +38,13 @@ def similative : Gender → Option String
   | .gI => some "hi"
   | .gII => some "hu"
   | _ => none
+
+/-- The adjective *ak-k* 'light', its infixed vowel *-e-*, *-u-*, *-a-*, *-i-* by gender. -/
+def light : Gender → String
+  | .gI => "akek"
+  | .gII => "akuk"
+  | .gIII => "akak"
+  | .gIV => "akik"
 
 /-- A noun with overt gender alternation: its gender I, gender II, and plural forms. -/
 structure Alternating where

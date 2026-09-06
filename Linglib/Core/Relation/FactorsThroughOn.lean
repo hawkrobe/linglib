@@ -79,6 +79,10 @@ instance {g : α → γ} {f : α → β} {s : Set α}
     Decidable (FactorsThroughOn g f s) := by
   unfold FactorsThroughOn; infer_instance
 
+instance {g : α → γ} {f : α → β} [Fintype α] [DecidableEq β] [DecidableEq γ] :
+    Decidable (FactorsThrough g f) := by
+  unfold FactorsThrough; infer_instance
+
 /-- A function that factors through another takes no more values. -/
 theorem FactorsThrough.card_range_le [Finite α] {g : α → γ} {f : α → β}
     (h : FactorsThrough g f) : Nat.card (Set.range g) ≤ Nat.card (Set.range f) := by

@@ -13,6 +13,7 @@ import Linglib.Fragments.Afar.Gender
 import Linglib.Fragments.Romanian.Gender
 import Linglib.Fragments.Slavic.Russian.Gender
 import Linglib.Fragments.Hausa.Gender
+import Linglib.Fragments.Latin.Gender
 import Linglib.Data.Examples.Corbett1991
 
 /-!
@@ -56,8 +57,8 @@ semantic than its assignment. The judgments the book reports are the rows of
 * Resolution rules apply to a list of conjunct descriptors and return no form when no rule
   applies, the book's ineffable coordinations; the descriptors are genders, semantic
   features, or fragment nouns as each language requires. Optional rules are recorded as
-  rows. The gender carriers of French, German, Lak, Slovene, Icelandic, Latin and Ojibwa
-  are declared in the study, there being no fragments for them.
+  rows. The gender carriers of French, German, Lak, Slovene, Icelandic and Ojibwa are
+  declared in the study, there being no fragments for them.
 * Not modelled: the psycholinguistic evidence of chapter 4, the morphology of agreement and
   its limits in chapter 5, syncretism and neutral agreement in chapter 7, the diachrony of
   chapters 8 to 10, Russian acronyms and indeclinables, Chichewa's target-gender rule for
@@ -431,13 +432,13 @@ def Crossed (sg : N → F) (pl : N → F') : Prop :=
 variable [Fintype N] [DecidableEq F] [DecidableEq F'] (sg : N → F) (pl : N → F')
 
 instance : Decidable (Parallel sg pl) := by
-  unfold Parallel Function.FactorsThrough; infer_instance
+  unfold Parallel; infer_instance
 
 instance : Decidable (Convergent sg pl) := by
-  unfold Convergent Function.FactorsThrough; infer_instance
+  unfold Convergent; infer_instance
 
 instance : Decidable (Crossed sg pl) := by
-  unfold Crossed Function.FactorsThrough; infer_instance
+  unfold Crossed; infer_instance
 
 end AgreementClasses
 
@@ -970,11 +971,7 @@ end Icelandic
 
 namespace Latin
 
-inductive Value where
-  | masc
-  | fem
-  | neut
-  deriving DecidableEq, Repr, Fintype
+open _root_.Latin.Gender
 
 /-- A conjunct: its gender and whether it denotes a human. -/
 abbrev Conjunct := Value × Bool
@@ -1125,9 +1122,9 @@ theorem polish_rows : ∀ row ∈ Examples.all, row.language = "poli1260" →
 
 theorem latin_rows : ∀ row ∈ Examples.all, row.language = "lati1261" →
     ∀ cs ∈ row.parse? "conjuncts" [("masc.human+fem.human",
-      [((Latin.Value.masc, true) : Latin.Conjunct), (.fem, true)]),
+      [((Latin.Gender.Value.masc, true) : Latin.Conjunct), (.fem, true)]),
       ("masc.inanimate+fem.inanimate", [(.masc, false), (.fem, false)])],
-      ∀ g ∈ row.parse? "resolved" [("masc", Latin.Value.masc), ("neut", .neut)],
+      ∀ g ∈ row.parse? "resolved" [("masc", Latin.Gender.Value.masc), ("neut", .neut)],
         (row.judgment = .acceptable ↔ resolve Latin.rules cs = some g) := by
   decide +kernel
 
