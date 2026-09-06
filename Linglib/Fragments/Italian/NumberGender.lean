@@ -1,4 +1,4 @@
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Category.Noun.Basic
 import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
@@ -21,46 +21,49 @@ inductive PluralClass where
   | regular
   deriving DecidableEq, Repr, Fintype
 
-/-- A noun with its singular and plural forms and genders. -/
-structure Noun where
-  formSg : String
+/-- A noun with its singular form and gender, its plural form and gender, and its plural
+class. -/
+structure Noun extends GenderedNoun Gender where
+  /-- The plural form. -/
   formPl : String
-  gloss : String
-  sgGender : Gender
+  /-- The gender of the plural. -/
   plGender : Gender
+  /-- The plural class. -/
   pluralClass : PluralClass
   deriving DecidableEq, Repr
 
+instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
+
 /-- The *-a* plurals. -/
 def aPlurals : List Noun :=
-  [⟨"braccio", "braccia", "arm", .masculine, .feminine, .aPlural⟩,
-    ⟨"budello", "budella", "intestine", .masculine, .feminine, .aPlural⟩,
-    ⟨"cervello", "cervella", "brain", .masculine, .feminine, .aPlural⟩,
-    ⟨"ciglio", "ciglia", "eyelash", .masculine, .feminine, .aPlural⟩,
-    ⟨"corno", "corna", "horn", .masculine, .feminine, .aPlural⟩,
-    ⟨"dito", "dita", "finger", .masculine, .feminine, .aPlural⟩,
-    ⟨"fondamento", "fondamenta", "foundation", .masculine, .feminine, .aPlural⟩,
-    ⟨"ginocchio", "ginocchia", "knee", .masculine, .feminine, .aPlural⟩,
-    ⟨"grido", "grida", "shout", .masculine, .feminine, .aPlural⟩,
-    ⟨"labbro", "labbra", "lip", .masculine, .feminine, .aPlural⟩,
-    ⟨"lenzuolo", "lenzuola", "sheet", .masculine, .feminine, .aPlural⟩,
-    ⟨"membro", "membra", "limb", .masculine, .feminine, .aPlural⟩,
-    ⟨"miglio", "miglia", "mile", .masculine, .feminine, .aPlural⟩,
-    ⟨"muro", "mura", "wall", .masculine, .feminine, .aPlural⟩,
-    ⟨"osso", "ossa", "bone", .masculine, .feminine, .aPlural⟩,
-    ⟨"paio", "paia", "pair", .masculine, .feminine, .aPlural⟩,
-    ⟨"riso", "risa", "laugh", .masculine, .feminine, .aPlural⟩,
-    ⟨"sopracciglio", "sopracciglia", "eyebrow", .masculine, .feminine, .aPlural⟩,
-    ⟨"strido", "strida", "shriek", .masculine, .feminine, .aPlural⟩,
-    ⟨"uovo", "uova", "egg", .masculine, .feminine, .aPlural⟩,
-    ⟨"urlo", "urla", "howl", .masculine, .feminine, .aPlural⟩]
+  [⟨⟨⟨"braccio", "arm"⟩, .masculine, false⟩, "braccia", .feminine, .aPlural⟩,
+    ⟨⟨⟨"budello", "intestine"⟩, .masculine, false⟩, "budella", .feminine, .aPlural⟩,
+    ⟨⟨⟨"cervello", "brain"⟩, .masculine, false⟩, "cervella", .feminine, .aPlural⟩,
+    ⟨⟨⟨"ciglio", "eyelash"⟩, .masculine, false⟩, "ciglia", .feminine, .aPlural⟩,
+    ⟨⟨⟨"corno", "horn"⟩, .masculine, false⟩, "corna", .feminine, .aPlural⟩,
+    ⟨⟨⟨"dito", "finger"⟩, .masculine, false⟩, "dita", .feminine, .aPlural⟩,
+    ⟨⟨⟨"fondamento", "foundation"⟩, .masculine, false⟩, "fondamenta", .feminine, .aPlural⟩,
+    ⟨⟨⟨"ginocchio", "knee"⟩, .masculine, false⟩, "ginocchia", .feminine, .aPlural⟩,
+    ⟨⟨⟨"grido", "shout"⟩, .masculine, false⟩, "grida", .feminine, .aPlural⟩,
+    ⟨⟨⟨"labbro", "lip"⟩, .masculine, false⟩, "labbra", .feminine, .aPlural⟩,
+    ⟨⟨⟨"lenzuolo", "sheet"⟩, .masculine, false⟩, "lenzuola", .feminine, .aPlural⟩,
+    ⟨⟨⟨"membro", "limb"⟩, .masculine, false⟩, "membra", .feminine, .aPlural⟩,
+    ⟨⟨⟨"miglio", "mile"⟩, .masculine, false⟩, "miglia", .feminine, .aPlural⟩,
+    ⟨⟨⟨"muro", "wall"⟩, .masculine, false⟩, "mura", .feminine, .aPlural⟩,
+    ⟨⟨⟨"osso", "bone"⟩, .masculine, false⟩, "ossa", .feminine, .aPlural⟩,
+    ⟨⟨⟨"paio", "pair"⟩, .masculine, false⟩, "paia", .feminine, .aPlural⟩,
+    ⟨⟨⟨"riso", "laugh"⟩, .masculine, false⟩, "risa", .feminine, .aPlural⟩,
+    ⟨⟨⟨"sopracciglio", "eyebrow"⟩, .masculine, false⟩, "sopracciglia", .feminine, .aPlural⟩,
+    ⟨⟨⟨"strido", "shriek"⟩, .masculine, false⟩, "strida", .feminine, .aPlural⟩,
+    ⟨⟨⟨"uovo", "egg"⟩, .masculine, false⟩, "uova", .feminine, .aPlural⟩,
+    ⟨⟨⟨"urlo", "howl"⟩, .masculine, false⟩, "urla", .feminine, .aPlural⟩]
 
 /-- Regular plurals. -/
 def regulars : List Noun :=
-  [⟨"libro", "libri", "book", .masculine, .masculine, .regular⟩,
-    ⟨"ragazzo", "ragazzi", "boy", .masculine, .masculine, .regular⟩,
-    ⟨"casa", "case", "house", .feminine, .feminine, .regular⟩,
-    ⟨"ragazza", "ragazze", "girl", .feminine, .feminine, .regular⟩]
+  [⟨⟨⟨"libro", "book"⟩, .masculine, false⟩, "libri", .masculine, .regular⟩,
+    ⟨⟨⟨"ragazzo", "boy"⟩, .masculine, true⟩, "ragazzi", .masculine, .regular⟩,
+    ⟨⟨⟨"casa", "house"⟩, .feminine, false⟩, "case", .feminine, .regular⟩,
+    ⟨⟨⟨"ragazza", "girl"⟩, .feminine, true⟩, "ragazze", .feminine, .regular⟩]
 
 end Italian.NumberGender
 

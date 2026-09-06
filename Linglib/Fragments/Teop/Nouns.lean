@@ -1,4 +1,4 @@
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Teop nouns
@@ -27,33 +27,35 @@ def Gender.toGender : Gender → _root_.Gender
   | .gI => .animate
   | .gII => .inanimate
 
+instance : HasGender Gender := ⟨λ g => ↑g.toGender⟩
+
 /-- A noun with its gloss and the gender it takes unpossessed. -/
-structure Noun where
-  form : String
-  gloss : String
-  gender : Gender
-  deriving DecidableEq, Repr
+abbrev Noun := GenderedNoun Gender
 
 /-- Gender I nouns. -/
 def genderINouns : List Noun :=
-  [⟨"moon", "woman", .gI⟩, ⟨"beikoo", "child", .gI⟩, ⟨"keusu", "rat", .gI⟩,
-    ⟨"naovana", "bird", .gI⟩, ⟨"overe", "coconut", .gI⟩, ⟨"pauna", "banana", .gI⟩,
-    ⟨"kepaa", "clay pot", .gI⟩, ⟨"anoo", "peeler (pearl shell)", .gI⟩,
-    ⟨"taba'ani", "food", .gI⟩, ⟨"tahii", "sea", .gI⟩, ⟨"huan", "rain", .gI⟩,
-    ⟨"uruuru", "love", .gI⟩]
+  [⟨⟨"moon", "woman"⟩, .gI, false⟩, ⟨⟨"beikoo", "child"⟩, .gI, false⟩,
+    ⟨⟨"keusu", "rat"⟩, .gI, false⟩, ⟨⟨"naovana", "bird"⟩, .gI, false⟩,
+    ⟨⟨"overe", "coconut"⟩, .gI, false⟩, ⟨⟨"pauna", "banana"⟩, .gI, false⟩,
+    ⟨⟨"kepaa", "clay pot"⟩, .gI, false⟩, ⟨⟨"anoo", "peeler (pearl shell)"⟩, .gI, false⟩,
+    ⟨⟨"taba'ani", "food"⟩, .gI, false⟩, ⟨⟨"tahii", "sea"⟩, .gI, false⟩,
+    ⟨⟨"huan", "rain"⟩, .gI, false⟩, ⟨⟨"uruuru", "love"⟩, .gI, false⟩]
 
 /-- Gender II nouns. -/
 def genderIINouns : List Noun :=
-  [⟨"paka", "leaf", .gII⟩, ⟨"pus", "stump", .gII⟩, ⟨"hinahoo", "taro planting stick", .gII⟩,
-    ⟨"sinivi", "canoe", .gII⟩, ⟨"overe", "coconut palm", .gII⟩, ⟨"overe", "banana tree", .gII⟩,
-    ⟨"kurita", "octopus", .gII⟩, ⟨"demdem", "snail", .gII⟩, ⟨"paku", "feast", .gII⟩,
-    ⟨"suraa", "fire", .gII⟩, ⟨"giigii", "shooting star", .gII⟩, ⟨"koara", "language", .gII⟩]
+  [⟨⟨"paka", "leaf"⟩, .gII, false⟩, ⟨⟨"pus", "stump"⟩, .gII, false⟩,
+    ⟨⟨"hinahoo", "taro planting stick"⟩, .gII, false⟩, ⟨⟨"sinivi", "canoe"⟩, .gII, false⟩,
+    ⟨⟨"overe", "coconut palm"⟩, .gII, false⟩, ⟨⟨"overe", "banana tree"⟩, .gII, false⟩,
+    ⟨⟨"kurita", "octopus"⟩, .gII, false⟩, ⟨⟨"demdem", "snail"⟩, .gII, false⟩,
+    ⟨⟨"paku", "feast"⟩, .gII, false⟩, ⟨⟨"suraa", "fire"⟩, .gII, false⟩,
+    ⟨⟨"giigii", "shooting star"⟩, .gII, false⟩, ⟨⟨"koara", "language"⟩, .gII, false⟩]
 
 /-- Body-part nouns, gender II unpossessed and gender I with an inalienable possessor. -/
 def bodyPartNouns : List Noun :=
-  [⟨"bina", "spleen", .gII⟩, ⟨"kuri", "hand", .gII⟩, ⟨"iru", "back of head", .gII⟩,
-    ⟨"vuha", "heart", .gII⟩, ⟨"ihu", "nose", .gII⟩, ⟨"revasin", "blood", .gII⟩,
-    ⟨"hena", "name", .gII⟩, ⟨"moo", "leg", .gII⟩]
+  [⟨⟨"bina", "spleen"⟩, .gII, false⟩, ⟨⟨"kuri", "hand"⟩, .gII, false⟩,
+    ⟨⟨"iru", "back of head"⟩, .gII, false⟩, ⟨⟨"vuha", "heart"⟩, .gII, false⟩,
+    ⟨⟨"ihu", "nose"⟩, .gII, false⟩, ⟨⟨"revasin", "blood"⟩, .gII, false⟩,
+    ⟨⟨"hena", "name"⟩, .gII, false⟩, ⟨⟨"moo", "leg"⟩, .gII, false⟩]
 
 /-- Body-part nouns whose unpossessed form carries the suffix *-na*. -/
 def derelationalized : List String := ["moo-na", "kuri-na", "ihu-na"]

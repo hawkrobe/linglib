@@ -1,5 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Tamil noun gender
@@ -26,32 +26,24 @@ inductive Value where
 
 /-- A Tamil noun with the agreement it takes and the two semantic facts the gender tracks:
 whether the referent is rational, and whether the gender comes from the referent's sex. -/
-structure Noun where
-  form : String
-  gloss : String
-  /-- The agreement the noun takes. -/
-  attestedGender : Value
+structure Noun extends GenderedNoun Value where
   /-- Whether the referent is rational: a human or a deity. -/
   rational : Bool
-  /-- Whether the gender comes from the referent's sex. -/
-  isNaturalGender : Bool
   deriving DecidableEq, Repr
 
-abbrev Noun.gender (n : Noun) : Value := n.attestedGender
-
-def aaN : Noun := ⟨"aaN", "man", .masc, true, true⟩
-def civaN : Noun := ⟨"CivaN", "Shiva", .masc, true, true⟩
-def peN : Noun := ⟨"peN", "woman", .fem, true, true⟩
-def kaali : Noun := ⟨"kaali", "Kali", .fem, true, true⟩
-def maram : Noun := ⟨"maram", "tree", .neut, false, false⟩
-def viiTu : Noun := ⟨"viiTu", "house", .neut, false, false⟩
-def raaman : Noun := ⟨"raaman", "Raman", .masc, true, true⟩
-def murukan : Noun := ⟨"murukan", "Murugan", .masc, true, true⟩
-def akkaa : Noun := ⟨"akkaa", "elder sister", .fem, true, true⟩
-def tankacci : Noun := ⟨"tankacci", "younger sister", .fem, true, true⟩
-def annan : Noun := ⟨"annan", "elder brother", .masc, true, true⟩
-def naay : Noun := ⟨"naay", "dog", .neut, false, false⟩
-def puune : Noun := ⟨"puune", "cat", .neut, false, false⟩
+def aaN : Noun := ⟨⟨⟨"aaN", "man"⟩, .masc, true⟩, true⟩
+def civaN : Noun := ⟨⟨⟨"CivaN", "Shiva"⟩, .masc, true⟩, true⟩
+def peN : Noun := ⟨⟨⟨"peN", "woman"⟩, .fem, true⟩, true⟩
+def kaali : Noun := ⟨⟨⟨"kaali", "Kali"⟩, .fem, true⟩, true⟩
+def maram : Noun := ⟨⟨⟨"maram", "tree"⟩, .neut, false⟩, false⟩
+def viiTu : Noun := ⟨⟨⟨"viiTu", "house"⟩, .neut, false⟩, false⟩
+def raaman : Noun := ⟨⟨⟨"raaman", "Raman"⟩, .masc, true⟩, true⟩
+def murukan : Noun := ⟨⟨⟨"murukan", "Murugan"⟩, .masc, true⟩, true⟩
+def akkaa : Noun := ⟨⟨⟨"akkaa", "elder sister"⟩, .fem, true⟩, true⟩
+def tankacci : Noun := ⟨⟨⟨"tankacci", "younger sister"⟩, .fem, true⟩, true⟩
+def annan : Noun := ⟨⟨⟨"annan", "elder brother"⟩, .masc, true⟩, true⟩
+def naay : Noun := ⟨⟨⟨"naay", "dog"⟩, .neut, false⟩, false⟩
+def puune : Noun := ⟨⟨⟨"puune", "cat"⟩, .neut, false⟩, false⟩
 
 def allNouns : List Noun :=
   [aaN, civaN, peN, kaali, maram, viiTu, raaman, murukan, akkaa, tankacci, annan, naay, puune]
@@ -87,10 +79,13 @@ def system : Gender.System Value where
   default := .neut
 
 /-- Every noun gets its controller gender. -/
-def assigned : Gender.System.Assigned Noun Value := { system with assign := Noun.gender }
+def assigned : Gender.System.Assigned Noun Value := { system with assign := (·.gender) }
+
+instance : HasGender Value := ⟨λ g => system.label g⟩
+
+instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
 
 /-- Singular verb agreement alone distinguishes the three genders. -/
-theorem faithful_sgConcord : Gender.Faithful (λ (g : Value) (_ : Unit) => g.sgConcord) := by
-  decide
+theorem faithful_sgConcord : Function.Injective Value.sgConcord := by decide
 
 end Tamil.Gender

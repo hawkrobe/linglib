@@ -1,5 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Somali noun gender
@@ -50,32 +50,23 @@ def Value.verbPrefix : Value → Bool → VerbPrefix
   | _, _ => .y
 
 /-- A Somali noun with its gender, its plural stem, and whether that plural is reduplicated. -/
-structure Noun where
-  /-- The citation form. -/
-  form : String
-  /-- The gloss. -/
-  gloss : String
-  /-- The agreement the noun takes. -/
-  attestedGender : Value
+structure Noun extends GenderedNoun Value where
   /-- The plural stem. -/
   plural : String
   /-- Whether the plural is formed by reduplication, keeping the singular article. -/
   reduplicatedPlural : Bool
   deriving DecidableEq, Repr
 
-/-- The gender the noun controls. -/
-abbrev Noun.gender (n : Noun) : Value := n.attestedGender
-
 /-- The article a noun takes in each number; a reduplicated plural keeps the singular's. -/
 def Noun.article (n : Noun) (plural : Bool) : Article :=
   n.gender.article (plural && !n.reduplicatedPlural)
 
 /-- *ìnan* 'boy'. -/
-def inan : Noun := ⟨"ìnan", "boy", .masc, "inammá", false⟩
+def inan : Noun := ⟨⟨⟨"ìnan", "boy"⟩, .masc, true⟩, "inammá", false⟩
 /-- *inán* 'girl'. -/
-def inan' : Noun := ⟨"inán", "girl", .fem, "ináma", false⟩
+def inan' : Noun := ⟨⟨⟨"inán", "girl"⟩, .fem, true⟩, "ináma", false⟩
 /-- *nin* 'man', with the reduplicated plural *niman*. -/
-def nin : Noun := ⟨"nin", "man", .masc, "niman", true⟩
+def nin : Noun := ⟨⟨⟨"nin", "man"⟩, .masc, true⟩, "niman", true⟩
 
 /-- The nouns the sources cite. -/
 def allNouns : List Noun := [inan, inan', nin]

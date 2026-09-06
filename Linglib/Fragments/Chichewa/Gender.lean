@@ -1,5 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Chichewa noun gender
@@ -42,33 +42,25 @@ def Value.plSubjPrefix : Value → SubjPrefix
   | .g1_2 | .g5_6 => .a
   | .g7_8 => .zi
 
-/-- A plural noun with its gender and whether it denotes humans. -/
-structure Noun where
-  /-- The plural form, with its class prefix. -/
-  form : String
-  /-- The gloss. -/
-  gloss : String
-  /-- The agreement the noun takes. -/
-  attestedGender : Value
+/-- A plural noun, its form carrying its class prefix, with its gender and whether it
+denotes humans. -/
+structure Noun extends GenderedNoun Value where
   /-- Whether the noun denotes humans. -/
   human : Bool
   deriving DecidableEq, Repr
 
-/-- The gender the noun controls. -/
-abbrev Noun.gender (n : Noun) : Value := n.attestedGender
-
 /-- *a-mphaka* 'cats': gender 1/2 without denoting humans. -/
-def mphaka : Noun := ⟨"a-mphaka", "cats", .g1_2, false⟩
+def mphaka : Noun := { form := "a-mphaka", gloss := "cats", gender := .g1_2, human := false }
 /-- *a-galu* 'dogs'. -/
-def galu : Noun := ⟨"a-galu", "dogs", .g1_2, false⟩
+def galu : Noun := { form := "a-galu", gloss := "dogs", gender := .g1_2, human := false }
 /-- *a-na* 'children'. -/
-def ana : Noun := ⟨"a-na", "children", .g1_2, true⟩
+def ana : Noun := { form := "a-na", gloss := "children", gender := .g1_2, human := true }
 /-- *ma-lalanje* 'oranges'. -/
-def lalanje : Noun := ⟨"ma-lalanje", "oranges", .g5_6, false⟩
+def lalanje : Noun := { form := "ma-lalanje", gloss := "oranges", gender := .g5_6, human := false }
 /-- *ma-samba* 'leaves'. -/
-def samba : Noun := ⟨"ma-samba", "leaves", .g5_6, false⟩
+def samba : Noun := { form := "ma-samba", gloss := "leaves", gender := .g5_6, human := false }
 /-- *zipewa* 'hats'. -/
-def zipewa : Noun := ⟨"zipewa", "hats", .g7_8, false⟩
+def zipewa : Noun := { form := "zipewa", gloss := "hats", gender := .g7_8, human := false }
 
 /-- The nouns the sources cite. -/
 def allNouns : List Noun := [mphaka, galu, ana, lalanje, samba, zipewa]
