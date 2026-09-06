@@ -1,0 +1,5415 @@
+[
+  {
+    "id": "corbett2000_2.1",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (1)"
+    },
+    "reportedIn": null,
+    "language": "bais1246",
+    "primaryText": "lúban foofe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "lúban",
+        "lion.GENERAL"
+      ],
+      [
+        "foofe",
+        "watched.1.SG"
+      ]
+    ],
+    "translation": "I watched lion (one or more)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "lúban"
+      ],
+      [
+        "number",
+        "general"
+      ],
+      [
+        "form",
+        "lúban"
+      ]
+    ],
+    "comment": "The general form is outside the number system."
+  },
+  {
+    "id": "corbett2000_2.2",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (2)"
+    },
+    "reportedIn": null,
+    "language": "bais1246",
+    "primaryText": "lubán-titi foofe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "lubán-titi",
+        "lion-SG"
+      ],
+      [
+        "foofe",
+        "watched.1.SG"
+      ]
+    ],
+    "translation": "I watched a lion",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "lúban"
+      ],
+      [
+        "number",
+        "singular"
+      ],
+      [
+        "form",
+        "lubántiti"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_2.3",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (3)"
+    },
+    "reportedIn": null,
+    "language": "bais1246",
+    "primaryText": "luban-jaa foofe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "luban-jaa",
+        "lion-PAUCAL"
+      ],
+      [
+        "foofe",
+        "watched.1.SG"
+      ]
+    ],
+    "translation": "I watched a few lions",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "lúban"
+      ],
+      [
+        "number",
+        "paucal"
+      ],
+      [
+        "form",
+        "lubanjaa"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_2.4",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (4)"
+    },
+    "reportedIn": null,
+    "language": "bais1246",
+    "primaryText": "luban-jool foofe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "luban-jool",
+        "lion-PL"
+      ],
+      [
+        "foofe",
+        "watched.1.SG"
+      ]
+    ],
+    "translation": "I watched (a lot of) lions",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "lúban"
+      ],
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "form",
+        "lubanjool"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_2.8",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (8)"
+    },
+    "reportedIn": null,
+    "language": "pula1262",
+    "primaryText": "ko biini tun waawi marde beere",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ko",
+        "PARTICLE"
+      ],
+      [
+        "biini",
+        "bottle"
+      ],
+      [
+        "tun",
+        "only"
+      ],
+      [
+        "waawi",
+        "can.PERFV"
+      ],
+      [
+        "marde",
+        "preserve"
+      ],
+      [
+        "beere",
+        "beer"
+      ]
+    ],
+    "translation": "only a bottle/bottles can preserve beer",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "general"
+      ]
+    ],
+    "comment": "The suffixless form of a Fouta Jalon noun expresses general meaning."
+  },
+  {
+    "id": "corbett2000_2.9",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (9)"
+    },
+    "reportedIn": null,
+    "language": "pula1262",
+    "primaryText": "nyaari peay",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "nyaari",
+        "cat(s)"
+      ],
+      [
+        "peay",
+        "scratch"
+      ]
+    ],
+    "translation": "a cat scratches/cats scratch",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "general"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_2.10",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (10)"
+    },
+    "reportedIn": null,
+    "language": "pula1262",
+    "primaryText": "pucc-u latay",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pucc-u",
+        "horse-SG"
+      ],
+      [
+        "latay",
+        "kick"
+      ]
+    ],
+    "translation": "a horse kicks/horses kick",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "singular"
+      ]
+    ],
+    "comment": "The unsuffixed form would be one syllable, so the singular expresses the general meaning."
+  },
+  {
+    "id": "corbett2000_2.13",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (13)"
+    },
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Kooen ni wa inu ga iru rasii.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Kooen",
+        "park"
+      ],
+      [
+        "ni",
+        "in"
+      ],
+      [
+        "wa",
+        "TOPIC"
+      ],
+      [
+        "inu",
+        "dog"
+      ],
+      [
+        "ga",
+        "SUBJ"
+      ],
+      [
+        "iru",
+        "be"
+      ],
+      [
+        "rasii",
+        "seems"
+      ]
+    ],
+    "translation": "It seems there is a dog/are some dogs in the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "general"
+      ]
+    ],
+    "comment": "Without marking the noun does not specify number; inu-tati makes the plural clear."
+  },
+  {
+    "id": "corbett2000_2.14",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (14)"
+    },
+    "reportedIn": null,
+    "language": "even1260",
+    "primaryText": "zawod-la bəj gurgə̄wci-n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "zawod-la",
+        "factory-LOC"
+      ],
+      [
+        "bəj",
+        "man"
+      ],
+      [
+        "gurgə̄wci-n",
+        "work-3.SG"
+      ]
+    ],
+    "translation": "in the factory, a man works/men work",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "general"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_2.15",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (15)"
+    },
+    "reportedIn": null,
+    "language": "even1260",
+    "primaryText": "tala asi gurgə̄wci-n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "tala",
+        "here"
+      ],
+      [
+        "asi",
+        "woman"
+      ],
+      [
+        "gurgə̄wci-n",
+        "work-3.SG"
+      ]
+    ],
+    "translation": "here a woman works/women work",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "general"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_2.16",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (16)"
+    },
+    "reportedIn": null,
+    "language": "taga1270",
+    "primaryText": "mga aso",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mga",
+        "PLURAL"
+      ],
+      [
+        "aso",
+        "dog"
+      ]
+    ],
+    "translation": "dogs",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "plural"
+      ]
+    ],
+    "comment": "The clitic indicates plurality; its absence leaves singular or general meaning."
+  },
+  {
+    "id": "corbett2000_2.32",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (32)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "nóge me bolijo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "nóge",
+        "foot.PL"
+      ],
+      [
+        "me",
+        "1.SG.ACC"
+      ],
+      [
+        "bolijo",
+        "hurt.PL"
+      ]
+    ],
+    "translation": "my feet hurt",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "referents",
+        "2"
+      ]
+    ],
+    "comment": "Two feet, and the dual is not required: the Slovene dual is facultative for nouns."
+  },
+  {
+    "id": "corbett2000_2.33",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (33)"
+    },
+    "reportedIn": null,
+    "language": "long1395",
+    "primaryText": "m-arua goni pilu na, ara goni-a pilu-i liva'a-na pilu ni boo-i m-arua na'i-a i ei",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "m-arua",
+        "CONJ-3.DUAL"
+      ],
+      [
+        "goni",
+        "build"
+      ],
+      [
+        "pilu",
+        "fence"
+      ],
+      [
+        "na",
+        "PERFV"
+      ],
+      [
+        "ara",
+        "3.PL"
+      ],
+      [
+        "goni-a",
+        "build-3.SG.OBJ"
+      ],
+      [
+        "pilu-i",
+        "fence-SG"
+      ],
+      [
+        "liva'a-na",
+        "like-3.SG"
+      ],
+      [
+        "pilu",
+        "fence"
+      ],
+      [
+        "ni",
+        "LIG"
+      ],
+      [
+        "boo-i",
+        "pig-SG"
+      ],
+      [
+        "m-arua",
+        "CONJ-3.DUAL"
+      ],
+      [
+        "na'i-a",
+        "put-3.SG.OBJ"
+      ],
+      [
+        "i",
+        "LOC"
+      ],
+      [
+        "ei",
+        "there"
+      ]
+    ],
+    "translation": "and they both built a fence, they built a fence like a pig fence and they both put it there",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The plural subject pronoun ara stands for the dual once the number is established."
+  },
+  {
+    "id": "corbett2000_2.34",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (34)"
+    },
+    "reportedIn": null,
+    "language": "pira1253",
+    "primaryText": "hiapióxio soxóá xo-ó-xio",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hiapióxio",
+        "3"
+      ],
+      [
+        "soxóá",
+        "already"
+      ],
+      [
+        "xo-ó-xio",
+        "jungle-LOC-DIR"
+      ]
+    ],
+    "translation": "He already went to the jungle / They already went to the jungle",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The third person pronoun has no plural form: Pirahã has no number category."
+  },
+  {
+    "id": "corbett2000_2.35",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (35)"
+    },
+    "reportedIn": null,
+    "language": "pira1253",
+    "primaryText": "ti gíxai pí-o ahá-p-i-í",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ti",
+        "1"
+      ],
+      [
+        "gíxai",
+        "2"
+      ],
+      [
+        "pí-o",
+        "also-OBL"
+      ],
+      [
+        "ahá-p-i-í",
+        "go-IMPRFV-PROX-COMPLETE.CERTAINTY"
+      ]
+    ],
+    "translation": "You and I will go (i.e. we will go)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Plurality is expressed by conjoining pronouns."
+  },
+  {
+    "id": "corbett2000_2.23",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 2 (23)"
+    },
+    "reportedIn": null,
+    "language": "surs1246",
+    "primaryText": "gimhat káwán",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "gimhat",
+        "1.EXCL.QUADRAL"
+      ],
+      [
+        "káwán",
+        "maternal.uncle:nephew/niece"
+      ]
+    ],
+    "translation": "we four who are in an uncle-nephew/niece relationship",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The form labelled quadral is used of four and more, and with dyad terms: a greater paucal."
+  },
+  {
+    "id": "corbett2000_3.2",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (2)"
+    },
+    "reportedIn": null,
+    "language": "slav1253",
+    "primaryText": "se-ya se-ya-ke",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "se-ya",
+        "1.SG-son"
+      ],
+      [
+        "se-ya-ke",
+        "1.SG-son-PL"
+      ]
+    ],
+    "translation": "my son; my sons",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "kin"
+      ],
+      [
+        "marking",
+        "optional"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_3.3",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (3)"
+    },
+    "reportedIn": null,
+    "language": "slav1253",
+    "primaryText": "t'eere t'eere-ke",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "t'eere",
+        "girl"
+      ],
+      [
+        "t'eere-ke",
+        "girl-PL"
+      ]
+    ],
+    "translation": "girl; girls, group of girls",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "human"
+      ],
+      [
+        "marking",
+        "optional"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_3.4",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (4)"
+    },
+    "reportedIn": null,
+    "language": "slav1253",
+    "primaryText": "lį lį-ke",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "lį",
+        "dog"
+      ],
+      [
+        "lį-ke",
+        "dog-PL"
+      ]
+    ],
+    "translation": "dog; dogs",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "higherAnimal"
+      ],
+      [
+        "marking",
+        "optional"
+      ]
+    ],
+    "comment": "Dogs are treated as honorary humans."
+  },
+  {
+    "id": "corbett2000_3.5",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (5)"
+    },
+    "reportedIn": null,
+    "language": "gunw1252",
+    "primaryText": "Abanmani-na-ng bininj",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Abanmani-na-ng",
+        "1.MIN/3.UNIT.AUG-see-PAST.PRFV"
+      ],
+      [
+        "bininj",
+        "man"
+      ]
+    ],
+    "translation": "I saw the two men",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "human"
+      ],
+      [
+        "agreement",
+        "obligatory"
+      ]
+    ],
+    "comment": "The human object's number is coded on the verb, not on the noun."
+  },
+  {
+    "id": "corbett2000_3.6",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (6)"
+    },
+    "reportedIn": null,
+    "language": "gunw1252",
+    "primaryText": "Duruk ginga ba-bayeng ba-ngune-ng na-wern-gen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Duruk",
+        "dog"
+      ],
+      [
+        "ginga",
+        "crocodile"
+      ],
+      [
+        "ba-bayeng",
+        "3.MIN/3.MIN-bite.PAST.PRFV"
+      ],
+      [
+        "ba-ngune-ng",
+        "3.MIN/3.MIN-eat-PAST.PRFV"
+      ],
+      [
+        "na-wern-gen",
+        "MASC-many-GEN"
+      ]
+    ],
+    "translation": "The/a crocodile has eaten all the dogs / the many dogs",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "higherAnimal"
+      ],
+      [
+        "agreement",
+        "excluded"
+      ]
+    ],
+    "comment": "The verb keeps the minimal form for a non-human object however many dogs."
+  },
+  {
+    "id": "corbett2000_3.7",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (7)"
+    },
+    "reportedIn": null,
+    "language": "nucl1622",
+    "primaryText": "e-pe patur e-pe akek ka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "e-pe",
+        "I-DEF"
+      ],
+      [
+        "patur",
+        "boy"
+      ],
+      [
+        "e-pe",
+        "I-DEF"
+      ],
+      [
+        "akek",
+        "light.I"
+      ],
+      [
+        "ka",
+        "be"
+      ]
+    ],
+    "translation": "that boy is light (not heavy)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "I"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_3.8",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (8)"
+    },
+    "reportedIn": null,
+    "language": "nucl1622",
+    "primaryText": "u-pe kivasom u-pe akuk ka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "u-pe",
+        "II-DEF"
+      ],
+      [
+        "kivasom",
+        "daughter"
+      ],
+      [
+        "u-pe",
+        "II-DEF"
+      ],
+      [
+        "akuk",
+        "light.II"
+      ],
+      [
+        "ka",
+        "be"
+      ]
+    ],
+    "translation": "that daughter is light",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "II"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_3.9",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (9)"
+    },
+    "reportedIn": null,
+    "language": "nucl1622",
+    "primaryText": "i-pe patur i-pe akik ka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "i-pe",
+        "PL-DEF"
+      ],
+      [
+        "patur",
+        "boy.PL"
+      ],
+      [
+        "i-pe",
+        "PL-DEF"
+      ],
+      [
+        "akik",
+        "light.PL"
+      ],
+      [
+        "ka",
+        "be"
+      ]
+    ],
+    "translation": "those boys are light",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "I"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_3.10",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (10)"
+    },
+    "reportedIn": null,
+    "language": "nucl1622",
+    "primaryText": "i-pe kivasom i-pe akik ka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "i-pe",
+        "PL-DEF"
+      ],
+      [
+        "kivasom",
+        "daughter"
+      ],
+      [
+        "i-pe",
+        "PL-DEF"
+      ],
+      [
+        "akik",
+        "light.PL"
+      ],
+      [
+        "ka",
+        "be"
+      ]
+    ],
+    "translation": "those daughters are light",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "II"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_3.11",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (11)"
+    },
+    "reportedIn": null,
+    "language": "nucl1622",
+    "primaryText": "e-pe de e-pe akak ka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "e-pe",
+        "III-DEF"
+      ],
+      [
+        "de",
+        "wood"
+      ],
+      [
+        "e-pe",
+        "III-DEF"
+      ],
+      [
+        "akak",
+        "light.III"
+      ],
+      [
+        "ka",
+        "be"
+      ]
+    ],
+    "translation": "that wood is light / those pieces of wood are light",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "III"
+      ]
+    ],
+    "comment": "Genders III and IV, the inanimates, have no distinct plural."
+  },
+  {
+    "id": "corbett2000_3.12",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (12)"
+    },
+    "reportedIn": null,
+    "language": "nucl1622",
+    "primaryText": "i-pe behau i-pe akik ka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "i-pe",
+        "IV-DEF"
+      ],
+      [
+        "behau",
+        "pole"
+      ],
+      [
+        "i-pe",
+        "IV-DEF"
+      ],
+      [
+        "akik",
+        "light.IV"
+      ],
+      [
+        "ka",
+        "be"
+      ]
+    ],
+    "translation": "that pole is light / those poles are light",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "IV"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_3.13",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (13)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "This sheep has been cloned.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "This",
+        "this.SG"
+      ],
+      [
+        "sheep",
+        "sheep"
+      ],
+      [
+        "has",
+        "has"
+      ],
+      [
+        "been",
+        "been"
+      ],
+      [
+        "cloned",
+        "cloned"
+      ]
+    ],
+    "translation": "This sheep has been cloned.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "sheep"
+      ],
+      [
+        "morphology",
+        "no"
+      ],
+      [
+        "syntax",
+        "yes"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_3.14",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (14)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "These sheep have been cloned.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "These",
+        "this.PL"
+      ],
+      [
+        "sheep",
+        "sheep"
+      ],
+      [
+        "have",
+        "have"
+      ],
+      [
+        "been",
+        "been"
+      ],
+      [
+        "cloned",
+        "cloned"
+      ]
+    ],
+    "translation": "These sheep have been cloned.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "sheep"
+      ],
+      [
+        "morphology",
+        "no"
+      ],
+      [
+        "syntax",
+        "yes"
+      ]
+    ],
+    "comment": "The noun does not mark number; its agreements are regular."
+  },
+  {
+    "id": "corbett2000_3.15",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (15)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "This peesh has been fed.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "This",
+        "this.SG"
+      ],
+      [
+        "peesh",
+        "peesh"
+      ],
+      [
+        "has",
+        "has"
+      ],
+      [
+        "been",
+        "been"
+      ],
+      [
+        "fed",
+        "fed"
+      ]
+    ],
+    "translation": "This peesh has been fed.",
+    "context": "A hypothetical noun peesh 'cloned sheep'.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "This peeshes has been fed.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The grammatical reversal of sheep, regular in marking and irregular in agreement, is claimed impossible."
+  },
+  {
+    "id": "corbett2000_3.17",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (17)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We observed three elephant in the game park.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "We",
+        "we"
+      ],
+      [
+        "observed",
+        "observed"
+      ],
+      [
+        "three",
+        "three"
+      ],
+      [
+        "elephant",
+        "elephant"
+      ],
+      [
+        "in",
+        "in"
+      ],
+      [
+        "the",
+        "the"
+      ],
+      [
+        "game",
+        "game"
+      ],
+      [
+        "park",
+        "park"
+      ]
+    ],
+    "translation": "We observed three elephant in the game park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "elephant"
+      ],
+      [
+        "morphology",
+        "no"
+      ]
+    ],
+    "comment": "Hunted animals take a zero plural in some circumstances."
+  },
+  {
+    "id": "corbett2000_3.18",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (18)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The elephant are downwind of us.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "The",
+        "the"
+      ],
+      [
+        "elephant",
+        "elephant"
+      ],
+      [
+        "are",
+        "are"
+      ],
+      [
+        "downwind",
+        "downwind"
+      ],
+      [
+        "of",
+        "of"
+      ],
+      [
+        "us",
+        "us"
+      ]
+    ],
+    "translation": "The elephant are downwind of us.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "elephant"
+      ],
+      [
+        "syntax",
+        "yes"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_3.19",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (19)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "you can do that yourself",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "you",
+        "you"
+      ],
+      [
+        "can",
+        "can"
+      ],
+      [
+        "do",
+        "do"
+      ],
+      [
+        "that",
+        "that"
+      ],
+      [
+        "yourself",
+        "yourself"
+      ]
+    ],
+    "translation": "you can do that yourself",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "you"
+      ],
+      [
+        "number",
+        "singular"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_3.20",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (20)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "you can do that yourselves",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "you",
+        "you"
+      ],
+      [
+        "can",
+        "can"
+      ],
+      [
+        "do",
+        "do"
+      ],
+      [
+        "that",
+        "that"
+      ],
+      [
+        "yourselves",
+        "yourselves"
+      ]
+    ],
+    "translation": "you can do that yourselves",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "you"
+      ],
+      [
+        "number",
+        "plural"
+      ]
+    ],
+    "comment": "The reflexive shows that you distinguishes singular and plural by agreement."
+  },
+  {
+    "id": "corbett2000_3.21",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (21)"
+    },
+    "reportedIn": null,
+    "language": "muna1247",
+    "primaryText": "ihintu-umu o-kala-amu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ihintu-umu",
+        "2-PL"
+      ],
+      [
+        "o-kala-amu",
+        "2-go-PL"
+      ]
+    ],
+    "translation": "you go",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "addressee"
+      ],
+      [
+        "agreement",
+        "obligatory"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_3.22",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (22)"
+    },
+    "reportedIn": null,
+    "language": "muna1247",
+    "primaryText": "bara-hi-no no-hali",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "bara-hi-no",
+        "good-PL-his"
+      ],
+      [
+        "no-hali",
+        "3.SG.REALIS-expensive"
+      ]
+    ],
+    "translation": "his goods are expensive",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "discreteInanimate"
+      ],
+      [
+        "agreement",
+        "excluded"
+      ]
+    ],
+    "comment": "An inanimate noun with a plural marker takes singular agreement."
+  },
+  {
+    "id": "corbett2000_3.23",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (23)"
+    },
+    "reportedIn": null,
+    "language": "muna1247",
+    "primaryText": "o kadadi-hi no-rato-mo/do-rato-mo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "o",
+        "ART"
+      ],
+      [
+        "kadadi-hi",
+        "animal-PL"
+      ],
+      [
+        "no-rato-mo/do-rato-mo",
+        "3.SG.REALIS-arrive-PERFV/3.PL.REALIS-arrive-PERFV"
+      ]
+    ],
+    "translation": "the animals have arrived",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "lowerAnimal"
+      ],
+      [
+        "agreement",
+        "optional"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_3.24",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (24)"
+    },
+    "reportedIn": null,
+    "language": "miya1266",
+    "primaryText": "tə̀vam tsə́r",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "tə̀vam",
+        "woman.PL"
+      ],
+      [
+        "tsə́r",
+        "two"
+      ]
+    ],
+    "translation": "two women",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "ám tsər",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "human"
+      ],
+      [
+        "marking",
+        "obligatory"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_3.25",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (25)"
+    },
+    "reportedIn": null,
+    "language": "miya1266",
+    "primaryText": "zə̀kiyáyàw vaatlə",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "zə̀kiyáyàw",
+        "stone.PL"
+      ],
+      [
+        "vaatlə",
+        "five"
+      ]
+    ],
+    "translation": "five stones",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "zə́kiy vaatlə",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "discreteInanimate"
+      ],
+      [
+        "marking",
+        "optional"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_3.26",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (26)"
+    },
+    "reportedIn": null,
+    "language": "miya1266",
+    "primaryText": "níykin dzáfə",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "níykin",
+        "this.PL"
+      ],
+      [
+        "dzáfə",
+        "man.PL"
+      ]
+    ],
+    "translation": "these men",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "human"
+      ],
+      [
+        "agreement",
+        "obligatory"
+      ]
+    ],
+    "comment": "The higher group takes plural agreement, sheep included: níykin təmakwìy."
+  },
+  {
+    "id": "corbett2000_3.27",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (27)"
+    },
+    "reportedIn": null,
+    "language": "miya1266",
+    "primaryText": "nákən víyayúwawàw",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "nákən",
+        "this.SG.MASC"
+      ],
+      [
+        "víyayúwawàw",
+        "fireplace.PL"
+      ]
+    ],
+    "translation": "these fireplaces",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "discreteInanimate"
+      ],
+      [
+        "agreement",
+        "excluded"
+      ]
+    ],
+    "comment": "A plural-marked inanimate takes agreement in gender, not number."
+  },
+  {
+    "id": "corbett2000_3.28",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 3 (28)"
+    },
+    "reportedIn": null,
+    "language": "miya1266",
+    "primaryText": "tákən tlərkáyayàw",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "tákən",
+        "this.SG.FEM"
+      ],
+      [
+        "tlərkáyayàw",
+        "calabash.PL"
+      ]
+    ],
+    "translation": "these calabashes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "discreteInanimate"
+      ],
+      [
+        "agreement",
+        "excluded"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_4.1",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 4 (1)"
+    },
+    "reportedIn": null,
+    "language": "hebr1245",
+    "primaryText": "ha-yom ʕavar maher",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ha-yom",
+        "DEF-day"
+      ],
+      [
+        "ʕavar",
+        "pass.PAST.3.SG.MASC"
+      ],
+      [
+        "maher",
+        "quickly"
+      ]
+    ],
+    "translation": "the day passed quickly",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "controller",
+        "singular"
+      ],
+      [
+        "target",
+        "singular"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_4.2",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 4 (2)"
+    },
+    "reportedIn": null,
+    "language": "hebr1245",
+    "primaryText": "ha-yom-ayim ʕavru maher",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ha-yom-ayim",
+        "DEF-day-DUAL"
+      ],
+      [
+        "ʕavru",
+        "pass.PAST.3.PL"
+      ],
+      [
+        "maher",
+        "quickly"
+      ]
+    ],
+    "translation": "the two days passed quickly",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "controller",
+        "dual"
+      ],
+      [
+        "target",
+        "plural"
+      ]
+    ],
+    "comment": "The minor dual takes plural agreement: dual and plural pattern together."
+  },
+  {
+    "id": "corbett2000_4.3",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 4 (3)"
+    },
+    "reportedIn": null,
+    "language": "hebr1245",
+    "primaryText": "ha-yam-im ʕavru maher",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ha-yam-im",
+        "DEF-day-PL"
+      ],
+      [
+        "ʕavru",
+        "pass.PAST.3.PL"
+      ],
+      [
+        "maher",
+        "quickly"
+      ]
+    ],
+    "translation": "the days passed quickly",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "controller",
+        "plural"
+      ],
+      [
+        "target",
+        "plural"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_4.4",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 4 (4)"
+    },
+    "reportedIn": null,
+    "language": "hung1274",
+    "primaryText": "János",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "János",
+        "John"
+      ]
+    ],
+    "translation": "John",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "singular"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_4.5",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 4 (5)"
+    },
+    "reportedIn": null,
+    "language": "hung1274",
+    "primaryText": "János-ok",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "János-ok",
+        "John-PL"
+      ]
+    ],
+    "translation": "Johns (more than one person called John)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "plural"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_4.6",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 4 (6)"
+    },
+    "reportedIn": null,
+    "language": "hung1274",
+    "primaryText": "János-ék",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "János-ék",
+        "John-ASSOC.PL"
+      ]
+    ],
+    "translation": "John and associates, John and his group",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "associative",
+        "yes"
+      ]
+    ],
+    "comment": "The associative is a category distinct from number."
+  },
+  {
+    "id": "corbett2000_4.12",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 4 (12)"
+    },
+    "reportedIn": null,
+    "language": "cent2127",
+    "primaryText": "cuna",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "cuna",
+        "Chuna"
+      ]
+    ],
+    "translation": "Chuna",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "singular"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_4.13",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 4 (13)"
+    },
+    "reportedIn": null,
+    "language": "cent2127",
+    "primaryText": "cunankut ayag-tu-t",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "cunankut",
+        "Chuna.ASSOC.PL"
+      ],
+      [
+        "ayag-tu-t",
+        "go-INDIC-3.PL"
+      ]
+    ],
+    "translation": "Chuna and his family/friends left",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "associative",
+        "yes"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_4.14",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 4 (14)"
+    },
+    "reportedIn": null,
+    "language": "cent2127",
+    "primaryText": "cunankuk ayag-tu-k",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "cunankuk",
+        "Chuna.ASSOC.DU"
+      ],
+      [
+        "ayag-tu-k",
+        "go-INDIC-3.DU"
+      ]
+    ],
+    "translation": "Chuna and his friend left",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "dual"
+      ],
+      [
+        "associative",
+        "yes"
+      ]
+    ],
+    "comment": "The associative combines with the dual as with the plural, its morpheme -nku- separate from the number morphemes -k and -t."
+  },
+  {
+    "id": "corbett2000_4.15",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 4 (15)"
+    },
+    "reportedIn": null,
+    "language": "cent2127",
+    "primaryText": "cunankuk arnaq=llu ayag-tu-k",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "cunankuk",
+        "Chuna.ASSOC.DU"
+      ],
+      [
+        "arnaq=llu",
+        "woman=too"
+      ],
+      [
+        "ayag-tu-k",
+        "go-INDIC-3.DU"
+      ]
+    ],
+    "translation": "Chuna and the woman left",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "dual"
+      ],
+      [
+        "associative",
+        "yes"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_4.27",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 4 (27)"
+    },
+    "reportedIn": null,
+    "language": "astu1245",
+    "primaryText": "la maéra tába sék-o",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "la",
+        "DEF.SG.FEM"
+      ],
+      [
+        "maéra",
+        "wood"
+      ],
+      [
+        "tába",
+        "was"
+      ],
+      [
+        "sék-o",
+        "dry-MASS"
+      ]
+    ],
+    "translation": "the wood (mass) was dry",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "mass"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_4.28",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 4 (28)"
+    },
+    "reportedIn": null,
+    "language": "astu1245",
+    "primaryText": "la maéra tába sék-a",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "la",
+        "DEF.SG.FEM"
+      ],
+      [
+        "maéra",
+        "wood"
+      ],
+      [
+        "tába",
+        "was"
+      ],
+      [
+        "sék-a",
+        "dry-SG.FEM"
+      ]
+    ],
+    "translation": "the (piece of) wood was dry",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "gender"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_4.29",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 4 (29)"
+    },
+    "reportedIn": null,
+    "language": "astu1245",
+    "primaryText": "el kafé négr-o",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "el",
+        "DEF.SG.MASC"
+      ],
+      [
+        "kafé",
+        "coffee"
+      ],
+      [
+        "négr-o",
+        "black-MASS"
+      ]
+    ],
+    "translation": "the black coffee",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "mass"
+      ]
+    ],
+    "comment": "The article agrees in gender, the postnominal adjective in mass."
+  },
+  {
+    "id": "corbett2000_4.30",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 4 (30)"
+    },
+    "reportedIn": null,
+    "language": "astu1245",
+    "primaryText": "la boróna négr-o",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "la",
+        "DEF.SG.FEM"
+      ],
+      [
+        "boróna",
+        "cornbread"
+      ],
+      [
+        "négr-o",
+        "black-MASS"
+      ]
+    ],
+    "translation": "the black cornbread",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "mass"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_5.21",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 5 (21)"
+    },
+    "reportedIn": null,
+    "language": "kiow1266",
+    "primaryText": "cę̂· gyà-tʰɔ́n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "cę̂·",
+        "horse"
+      ],
+      [
+        "gyà-tʰɔ́n",
+        "1.SG.AGT/SG.OBJ-find.PERFV"
+      ]
+    ],
+    "translation": "I found a horse",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "animate"
+      ],
+      [
+        "number",
+        "singular"
+      ],
+      [
+        "inverse",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_5.22",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 5 (22)"
+    },
+    "reportedIn": null,
+    "language": "kiow1266",
+    "primaryText": "cę̂· nèn-tʰɔ́n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "cę̂·",
+        "horse"
+      ],
+      [
+        "nèn-tʰɔ́n",
+        "1.SG.AGT/DUAL.OBJ-find.PERFV"
+      ]
+    ],
+    "translation": "I found two horses",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "animate"
+      ],
+      [
+        "number",
+        "dual"
+      ],
+      [
+        "inverse",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_5.23",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 5 (23)"
+    },
+    "reportedIn": null,
+    "language": "kiow1266",
+    "primaryText": "cę̂·-gɔ́ dé-tʰɔ́n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "cę̂·-gɔ́",
+        "horse.INV"
+      ],
+      [
+        "dé-tʰɔ́n",
+        "1.SG.AGT/INV.OBJ-find.PERFV"
+      ]
+    ],
+    "translation": "I found some horses",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "animate"
+      ],
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "inverse",
+        "yes"
+      ]
+    ],
+    "comment": "The verb's object marking distinguishes singular, dual and inverse."
+  },
+  {
+    "id": "corbett2000_5.40",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 5 (40)"
+    },
+    "reportedIn": null,
+    "language": "hopi1249",
+    "primaryText": "Pam wari",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Pam",
+        "that.SG"
+      ],
+      [
+        "wari",
+        "run.PERFV.SG"
+      ]
+    ],
+    "translation": "He/she ran",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "pronoun",
+        "sg"
+      ],
+      [
+        "verb",
+        "sg"
+      ],
+      [
+        "number",
+        "singular"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_5.41",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 5 (41)"
+    },
+    "reportedIn": null,
+    "language": "hopi1249",
+    "primaryText": "Puma yùutu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Puma",
+        "that.PL"
+      ],
+      [
+        "yùutu",
+        "run.PERFV.PL"
+      ]
+    ],
+    "translation": "They (plural) ran",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "pronoun",
+        "pl"
+      ],
+      [
+        "verb",
+        "pl"
+      ],
+      [
+        "number",
+        "plural"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_5.42",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 5 (42)"
+    },
+    "reportedIn": null,
+    "language": "hopi1249",
+    "primaryText": "Puma wari",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Puma",
+        "that.PL"
+      ],
+      [
+        "wari",
+        "run.PERFV.SG"
+      ]
+    ],
+    "translation": "They (two) ran",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "pronoun",
+        "pl"
+      ],
+      [
+        "verb",
+        "sg"
+      ],
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": "Plural pronoun and singular verb construct the dual."
+  },
+  {
+    "id": "corbett2000_5.43",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 5 (43)"
+    },
+    "reportedIn": null,
+    "language": "zuni1245",
+    "primaryText": "ʔa:i ʔa:-kya",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʔa:i",
+        "DUAL"
+      ],
+      [
+        "ʔa:-kya",
+        "go-past"
+      ]
+    ],
+    "translation": "they (two) went",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_5.44",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 5 (44)"
+    },
+    "reportedIn": null,
+    "language": "zuni1245",
+    "primaryText": "hon ʔa:i ʔa:-kya",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hon",
+        "1.PL.NOM"
+      ],
+      [
+        "ʔa:i",
+        "DUAL"
+      ],
+      [
+        "ʔa:-kya",
+        "go-past"
+      ]
+    ],
+    "translation": "we (two) went",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_5.45",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 5 (45)"
+    },
+    "reportedIn": null,
+    "language": "zuni1245",
+    "primaryText": "hon ʔa:-kya",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hon",
+        "1.PL.NOM"
+      ],
+      [
+        "ʔa:-kya",
+        "go-past"
+      ]
+    ],
+    "translation": "we (two) went",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": "The dual marker dropped: plural pronoun and unmarked verb construct the dual."
+  },
+  {
+    "id": "corbett2000_5.46",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 5 (46)"
+    },
+    "reportedIn": null,
+    "language": "zuni1245",
+    "primaryText": "hoʔ ʔa:w-a:-kya",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hoʔ",
+        "1.SG.NOM"
+      ],
+      [
+        "ʔa:w-a:-kya",
+        "PL-go-past"
+      ]
+    ],
+    "translation": "we (two) went",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Singular pronoun with plural verb is ungrammatical in any interpretation."
+  },
+  {
+    "id": "corbett2000_5.47",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 5 (47)"
+    },
+    "reportedIn": null,
+    "language": "zuni1245",
+    "primaryText": "hon ʔa:w-a:-kya",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hon",
+        "1.PL.NOM"
+      ],
+      [
+        "ʔa:w-a:-kya",
+        "PL-go-past"
+      ]
+    ],
+    "translation": "we went",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "plural"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_5.48",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 5 (48)"
+    },
+    "reportedIn": null,
+    "language": "zuni1245",
+    "primaryText": "ʔa:w-akcek(ʔi) ʔa:-kya",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʔa:w-akcek(ʔi)",
+        "PL-boy"
+      ],
+      [
+        "ʔa:-kya",
+        "go-past"
+      ]
+    ],
+    "translation": "two boys went",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": "Constructed number with nouns too."
+  },
+  {
+    "id": "corbett2000_5.49",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 5 (49)"
+    },
+    "reportedIn": null,
+    "language": "zuni1245",
+    "primaryText": "ʔa:w-akcek(ʔi) ʔa:i ʔa:-kya",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʔa:w-akcek(ʔi)",
+        "PL-boy"
+      ],
+      [
+        "ʔa:i",
+        "DUAL"
+      ],
+      [
+        "ʔa:-kya",
+        "go-past"
+      ]
+    ],
+    "translation": "two boys went",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.1",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (1)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "on rasskazyva-et tebe tak-ie anekdot-y?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "on",
+        "3.SG.MASC"
+      ],
+      [
+        "rasskazyva-et",
+        "tell-3.SG"
+      ],
+      [
+        "tebe",
+        "2.SG.DAT"
+      ],
+      [
+        "tak-ie",
+        "such-PL.ACC"
+      ],
+      [
+        "anekdot-y",
+        "joke-PL.ACC"
+      ]
+    ],
+    "translation": "Does he tell you such jokes?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Number on the noun, by agreement in the noun phrase, and on the verb: type B."
+  },
+  {
+    "id": "corbett2000_6.2",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (2)"
+    },
+    "reportedIn": null,
+    "language": "amel1241",
+    "primaryText": "dana (age) ho-ig-a",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "dana",
+        "man"
+      ],
+      [
+        "(age)",
+        "3.PL"
+      ],
+      [
+        "ho-ig-a",
+        "come-3.PL-TODAY'S.PAST"
+      ]
+    ],
+    "translation": "the men came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Number must be indicated on the verb and may be on the noun: type C."
+  },
+  {
+    "id": "corbett2000_6.4",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (4)"
+    },
+    "reportedIn": null,
+    "language": "bais1246",
+    "primaryText": "lúban hudure",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "lúban",
+        "lion.GENERAL"
+      ],
+      [
+        "hudure",
+        "slept"
+      ]
+    ],
+    "translation": "lion(s) slept",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "lúban"
+      ],
+      [
+        "number",
+        "general"
+      ],
+      [
+        "concord",
+        "masc"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.5",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (5)"
+    },
+    "reportedIn": null,
+    "language": "bais1246",
+    "primaryText": "lubán-titi hudure",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "lubán-titi",
+        "lion-SG"
+      ],
+      [
+        "hudure",
+        "slept"
+      ]
+    ],
+    "translation": "a single/particular lion slept",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "lúban"
+      ],
+      [
+        "number",
+        "singular"
+      ],
+      [
+        "concord",
+        "masc"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.6",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (6)"
+    },
+    "reportedIn": null,
+    "language": "bais1246",
+    "primaryText": "luban-jaa hudureene",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "luban-jaa",
+        "lion-PAUCAL"
+      ],
+      [
+        "hudureene",
+        "slept"
+      ]
+    ],
+    "translation": "a few lions slept",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "lúban"
+      ],
+      [
+        "number",
+        "paucal"
+      ],
+      [
+        "concord",
+        "plural"
+      ]
+    ],
+    "comment": "Paucal nouns take the form the plural pronoun takes."
+  },
+  {
+    "id": "corbett2000_6.7",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (7)"
+    },
+    "reportedIn": null,
+    "language": "bais1246",
+    "primaryText": "luban-jool hudure",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "luban-jool",
+        "lion-PL"
+      ],
+      [
+        "hudure",
+        "slept"
+      ]
+    ],
+    "translation": "lions slept",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "lúban"
+      ],
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "concord",
+        "masc"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.8",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (8)"
+    },
+    "reportedIn": null,
+    "language": "bais1246",
+    "primaryText": "kimbír hudurte",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kimbír",
+        "bird.GENERAL"
+      ],
+      [
+        "hudurte",
+        "slept"
+      ]
+    ],
+    "translation": "bird(s) slept",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "kimbír"
+      ],
+      [
+        "number",
+        "general"
+      ],
+      [
+        "concord",
+        "fem"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.9",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (9)"
+    },
+    "reportedIn": null,
+    "language": "bais1246",
+    "primaryText": "kimbír-titi hudurte",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kimbír-titi",
+        "bird-SG"
+      ],
+      [
+        "hudurte",
+        "slept"
+      ]
+    ],
+    "translation": "a single/particular bird slept",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "kimbír"
+      ],
+      [
+        "number",
+        "singular"
+      ],
+      [
+        "concord",
+        "fem"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.10",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (10)"
+    },
+    "reportedIn": null,
+    "language": "bais1246",
+    "primaryText": "kimbir-jaa hudureene",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kimbir-jaa",
+        "bird-PAUCAL"
+      ],
+      [
+        "hudureene",
+        "slept"
+      ]
+    ],
+    "translation": "a few birds slept",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "kimbír"
+      ],
+      [
+        "number",
+        "paucal"
+      ],
+      [
+        "concord",
+        "plural"
+      ]
+    ],
+    "comment": "Paucal nouns take the form the plural pronoun takes."
+  },
+  {
+    "id": "corbett2000_6.11",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (11)"
+    },
+    "reportedIn": null,
+    "language": "bais1246",
+    "primaryText": "kimbir-jool hudure",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kimbir-jool",
+        "bird-PL"
+      ],
+      [
+        "hudure",
+        "slept"
+      ]
+    ],
+    "translation": "birds slept",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "noun",
+        "kimbír"
+      ],
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "concord",
+        "masc"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.12",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (12)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "For Bill to make it to a 9 o'clock class is amazing.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "For",
+        "for"
+      ],
+      [
+        "Bill",
+        "Bill"
+      ],
+      [
+        "to",
+        "to"
+      ],
+      [
+        "make",
+        "make"
+      ],
+      [
+        "it",
+        "it"
+      ],
+      [
+        "to",
+        "to"
+      ],
+      [
+        "a",
+        "a"
+      ],
+      [
+        "9",
+        "9"
+      ],
+      [
+        "o'clock",
+        "o'clock"
+      ],
+      [
+        "class",
+        "class"
+      ],
+      [
+        "is",
+        "is"
+      ],
+      [
+        "amazing",
+        "amazing"
+      ]
+    ],
+    "translation": "For Bill to make it to a 9 o'clock class is amazing.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "default",
+        "singular"
+      ],
+      [
+        "language",
+        "stan1293"
+      ]
+    ],
+    "comment": "A clause as controller has no number; the verb takes the default singular."
+  },
+  {
+    "id": "corbett2000_6.14",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (14)"
+    },
+    "reportedIn": null,
+    "language": "kiow1266",
+    "primaryText": "khí·dêl gyà-sál",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "khí·dêl",
+        "yesterday"
+      ],
+      [
+        "gyà-sál",
+        "PL-hot"
+      ]
+    ],
+    "translation": "yesterday it was hot",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "default",
+        "plural"
+      ],
+      [
+        "language",
+        "kiow1266"
+      ]
+    ],
+    "comment": "Kiowa uses the plural as the default number."
+  },
+  {
+    "id": "corbett2000_6.15",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (15)"
+    },
+    "reportedIn": null,
+    "language": "norw1258",
+    "primaryText": "pannekaker er godt",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pannekaker",
+        "pancakes"
+      ],
+      [
+        "er",
+        "COP"
+      ],
+      [
+        "godt",
+        "good.SG.NEUT"
+      ]
+    ],
+    "translation": "Having pancakes is good",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Singular default agreement with a plural noun read generically."
+  },
+  {
+    "id": "corbett2000_6.16",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (16)"
+    },
+    "reportedIn": null,
+    "language": "hebr1245",
+    "primaryText": "ha-samim ze bə'aya",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ha-samim",
+        "the drugs.PL.MASC"
+      ],
+      [
+        "ze",
+        "this.SG.MASC"
+      ],
+      [
+        "bə'aya",
+        "problem"
+      ]
+    ],
+    "translation": "drugs is a problem",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.17",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (17)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "the committee have decided",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "the",
+        "the"
+      ],
+      [
+        "committee",
+        "committee"
+      ],
+      [
+        "have",
+        "have.PL"
+      ],
+      [
+        "decided",
+        "decided"
+      ]
+    ],
+    "translation": "the committee have decided",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "British English; singular in form, plural in agreement."
+  },
+  {
+    "id": "corbett2000_6.19a",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (19)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "this committee",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "this",
+        "this.SG"
+      ],
+      [
+        "committee",
+        "committee"
+      ]
+    ],
+    "translation": "this committee",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.19b",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (19)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "these committee",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "these",
+        "this.PL"
+      ],
+      [
+        "committee",
+        "committee"
+      ]
+    ],
+    "translation": "these committee",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.20a",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (20)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The committee has decided.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "The",
+        "the"
+      ],
+      [
+        "committee",
+        "committee"
+      ],
+      [
+        "has",
+        "has.SG"
+      ],
+      [
+        "decided",
+        "decided"
+      ]
+    ],
+    "translation": "The committee has decided.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.20b",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (20)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The committee have decided.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "The",
+        "the"
+      ],
+      [
+        "committee",
+        "committee"
+      ],
+      [
+        "have",
+        "have.PL"
+      ],
+      [
+        "decided",
+        "decided"
+      ]
+    ],
+    "translation": "The committee have decided.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "predicate"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.21a",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (21)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "the committee, which has decided",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "the",
+        "the"
+      ],
+      [
+        "committee",
+        "committee"
+      ],
+      [
+        "which",
+        "which"
+      ],
+      [
+        "has",
+        "has.SG"
+      ],
+      [
+        "decided",
+        "decided"
+      ]
+    ],
+    "translation": "the committee, which has decided",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "relativePronoun"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.21b",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (21)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "the committee, who have decided",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "the",
+        "the"
+      ],
+      [
+        "committee",
+        "committee"
+      ],
+      [
+        "who",
+        "who"
+      ],
+      [
+        "have",
+        "have.PL"
+      ],
+      [
+        "decided",
+        "decided"
+      ]
+    ],
+    "translation": "the committee, who have decided",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "relativePronoun"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.22a",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (22)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The committee ... It ...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "The",
+        "the"
+      ],
+      [
+        "committee",
+        "committee"
+      ],
+      [
+        "It",
+        "it"
+      ]
+    ],
+    "translation": "The committee ... It ...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "personalPronoun"
+      ],
+      [
+        "agreement",
+        "syntactic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.22b",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (22)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The committee ... They ...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "The",
+        "the"
+      ],
+      [
+        "committee",
+        "committee"
+      ],
+      [
+        "They",
+        "they"
+      ]
+    ],
+    "translation": "The committee ... They ...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "personalPronoun"
+      ],
+      [
+        "agreement",
+        "semantic"
+      ]
+    ],
+    "comment": "Speakers of American English admit the plural here too."
+  },
+  {
+    "id": "corbett2000_6.23",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (23)"
+    },
+    "reportedIn": null,
+    "language": "samo1305",
+    "primaryText": "Ua momoe uma le aiga.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ua",
+        "PERFV"
+      ],
+      [
+        "momoe",
+        "sleep.PL"
+      ],
+      [
+        "uma",
+        "all"
+      ],
+      [
+        "le",
+        "ART.SG"
+      ],
+      [
+        "aiga",
+        "family"
+      ]
+    ],
+    "translation": "The whole family were asleep.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The article is singular, the verb plural."
+  },
+  {
+    "id": "corbett2000_6.24",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (24)"
+    },
+    "reportedIn": null,
+    "language": "samo1305",
+    "primaryText": "'A tēte'i le 'au-pua'a ...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "'A",
+        "but"
+      ],
+      [
+        "tēte'i",
+        "suddenly.awake.PL"
+      ],
+      [
+        "le",
+        "ART.SG"
+      ],
+      [
+        "'au-pua'a",
+        "COLL-pig"
+      ]
+    ],
+    "translation": "When the pigs suddenly awake ...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.25",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (25)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Góša pr'ijéxal'i!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Góša",
+        "Gosha"
+      ],
+      [
+        "pr'ijéxal'i",
+        "arrived.PAST.PL"
+      ]
+    ],
+    "translation": "Gosha and his family have arrived!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Talitsk dialect: associative meaning by plural agreement alone."
+  },
+  {
+    "id": "corbett2000_6.26",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (26)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "moj brat tam tóža žýl'i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "moj",
+        "my.SG"
+      ],
+      [
+        "brat",
+        "brother.SG"
+      ],
+      [
+        "tam",
+        "there"
+      ],
+      [
+        "tóža",
+        "also"
+      ],
+      [
+        "žýl'i",
+        "lived.PL"
+      ]
+    ],
+    "translation": "my brother and his family also lived there",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Syntactic agreement of the attributive modifier, semantic in the predicate."
+  },
+  {
+    "id": "corbett2000_6.28",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (28)"
+    },
+    "reportedIn": null,
+    "language": "mace1250",
+    "primaryText": "Vie ste stanal-e nervozen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Vie",
+        "You"
+      ],
+      [
+        "ste",
+        "are.PL"
+      ],
+      [
+        "stanal-e",
+        "become-PL"
+      ],
+      [
+        "nervozen",
+        "nervous.SG"
+      ]
+    ],
+    "translation": "You have become nervous",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "adjective"
+      ],
+      [
+        "agreement",
+        "singular"
+      ]
+    ],
+    "comment": "Honorific vie: the finite verb and participle plural, the adjective singular."
+  },
+  {
+    "id": "corbett2000_6.28v",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (28)"
+    },
+    "reportedIn": null,
+    "language": "mace1250",
+    "primaryText": "Vie ste stanal-e nervozen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Vie",
+        "You"
+      ],
+      [
+        "ste",
+        "are.PL"
+      ],
+      [
+        "stanal-e",
+        "become-PL"
+      ],
+      [
+        "nervozen",
+        "nervous.SG"
+      ]
+    ],
+    "translation": "You have become nervous",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "participle"
+      ],
+      [
+        "agreement",
+        "plural"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.29",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (29)"
+    },
+    "reportedIn": null,
+    "language": "mace1250",
+    "primaryText": "Vie ste mnogu dobar",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Vie",
+        "You"
+      ],
+      [
+        "ste",
+        "are.PL"
+      ],
+      [
+        "mnogu",
+        "very"
+      ],
+      [
+        "dobar",
+        "kind.SG"
+      ]
+    ],
+    "translation": "You are very kind",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "adjective"
+      ],
+      [
+        "agreement",
+        "singular"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.29v",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (29)"
+    },
+    "reportedIn": null,
+    "language": "mace1250",
+    "primaryText": "Vie ste mnogu dobri",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Vie",
+        "You"
+      ],
+      [
+        "ste",
+        "are.PL"
+      ],
+      [
+        "mnogu",
+        "very"
+      ],
+      [
+        "dobri",
+        "kind.PL"
+      ]
+    ],
+    "translation": "You are very kind",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "adjective"
+      ],
+      [
+        "agreement",
+        "plural"
+      ]
+    ],
+    "comment": "The plural adjective is the less preferred variant."
+  },
+  {
+    "id": "corbett2000_6.30",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (30)"
+    },
+    "reportedIn": null,
+    "language": "mace1250",
+    "primaryText": "Vie ste mi prijatel.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Vie",
+        "You"
+      ],
+      [
+        "ste",
+        "are.PL"
+      ],
+      [
+        "mi",
+        "1.DAT"
+      ],
+      [
+        "prijatel",
+        "friend.SG"
+      ]
+    ],
+    "translation": "You are my friend.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "noun"
+      ],
+      [
+        "agreement",
+        "singular"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.31",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (31)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Teper' na nej byl sinij kostjum i novaja belaja bluzka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Teper'",
+        "now"
+      ],
+      [
+        "na",
+        "on"
+      ],
+      [
+        "nej",
+        "her"
+      ],
+      [
+        "byl",
+        "was.SG.MASC"
+      ],
+      [
+        "sinij",
+        "blue"
+      ],
+      [
+        "kostjum",
+        "dress.SG.MASC"
+      ],
+      [
+        "i",
+        "and"
+      ],
+      [
+        "novaja",
+        "new"
+      ],
+      [
+        "belaja",
+        "white"
+      ],
+      [
+        "bluzka",
+        "blouse.SG.FEM"
+      ]
+    ],
+    "translation": "She was now wearing a blue dress and a new white blouse",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunctAgreement",
+        "nearest"
+      ]
+    ],
+    "comment": "Agreement with the nearest conjunct, which is also the first."
+  },
+  {
+    "id": "corbett2000_6.32",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (32)"
+    },
+    "reportedIn": null,
+    "language": "kash1274",
+    "primaryText": "Odraza i strach czierowôł jego postępkama",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Odraza",
+        "revulsion.SG.FEM"
+      ],
+      [
+        "i",
+        "and"
+      ],
+      [
+        "strach",
+        "fear.SG.MASC"
+      ],
+      [
+        "czierowôł",
+        "directed.SG.MASC"
+      ],
+      [
+        "jego",
+        "his"
+      ],
+      [
+        "postępkama",
+        "actions"
+      ]
+    ],
+    "translation": "Revulsion and fear directed his actions.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunctAgreement",
+        "nearest"
+      ]
+    ],
+    "comment": "With the controller preceding, the nearest conjunct is the last."
+  },
+  {
+    "id": "corbett2000_6.33",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (33)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "knjige in peresa so se podražil-e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "knjige",
+        "book.PL.FEM"
+      ],
+      [
+        "in",
+        "and"
+      ],
+      [
+        "peresa",
+        "pen.PL.NEUT"
+      ],
+      [
+        "so",
+        "AUX.PL"
+      ],
+      [
+        "se",
+        "REFL"
+      ],
+      [
+        "podražil-e",
+        "got.dear-PL.FEM"
+      ]
+    ],
+    "translation": "books and pens have become more expensive",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunctAgreement",
+        "first"
+      ]
+    ],
+    "comment": "Agreement with the first, most distant conjunct; resolution would give the masculine plural."
+  },
+  {
+    "id": "corbett2000_6.34",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (34)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "Tonček in Marina sta prizadevn-a",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Tonček",
+        "Tonček.SG.MASC"
+      ],
+      [
+        "in",
+        "and"
+      ],
+      [
+        "Marina",
+        "Marina.SG.FEM"
+      ],
+      [
+        "sta",
+        "be.DU"
+      ],
+      [
+        "prizadevn-a",
+        "assiduous-DU.MASC"
+      ]
+    ],
+    "translation": "Tonček and Marina are assiduous",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunctAgreement",
+        "all"
+      ],
+      [
+        "conjuncts",
+        "sg+sg"
+      ],
+      [
+        "resolved",
+        "dual"
+      ]
+    ],
+    "comment": "The dual cannot agree with one conjunct: agreement with all."
+  },
+  {
+    "id": "corbett2000_6.35",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (35)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "Milka in njeno tele sta bil-a zunaj",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Milka",
+        "Milka.SG.FEM"
+      ],
+      [
+        "in",
+        "and"
+      ],
+      [
+        "njeno",
+        "her"
+      ],
+      [
+        "tele",
+        "calf.SG.NEUT"
+      ],
+      [
+        "sta",
+        "AUX.DU"
+      ],
+      [
+        "bil-a",
+        "been-DU.MASC"
+      ],
+      [
+        "zunaj",
+        "outside"
+      ]
+    ],
+    "translation": "Milka and her calf were outside",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunctAgreement",
+        "all"
+      ],
+      [
+        "conjuncts",
+        "sg+sg"
+      ],
+      [
+        "resolved",
+        "dual"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.36",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (36)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "dve teleti in eno žrebe so bil-i zunaj",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "dve",
+        "two"
+      ],
+      [
+        "teleti",
+        "calf.DU.NEUT"
+      ],
+      [
+        "in",
+        "and"
+      ],
+      [
+        "eno",
+        "one"
+      ],
+      [
+        "žrebe",
+        "foal.SG.NEUT"
+      ],
+      [
+        "so",
+        "AUX.PL"
+      ],
+      [
+        "bil-i",
+        "been-PL.MASC"
+      ],
+      [
+        "zunaj",
+        "outside"
+      ]
+    ],
+    "translation": "Two calves and a foal were outside",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunctAgreement",
+        "all"
+      ],
+      [
+        "conjuncts",
+        "du+sg"
+      ],
+      [
+        "resolved",
+        "plural"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.37",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (37)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "Marina, Marta in Marjanca so prizadevn-e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Marina",
+        "Marina.SG.FEM"
+      ],
+      [
+        "Marta",
+        "Marta.SG.FEM"
+      ],
+      [
+        "in",
+        "and"
+      ],
+      [
+        "Marjanca",
+        "Marjanca.SG.FEM"
+      ],
+      [
+        "so",
+        "be.PL"
+      ],
+      [
+        "prizadevn-e",
+        "assiduous-PL.FEM"
+      ]
+    ],
+    "translation": "Marina, Marta and Marjanca are assiduous",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunctAgreement",
+        "all"
+      ],
+      [
+        "conjuncts",
+        "sg+sg+sg"
+      ],
+      [
+        "resolved",
+        "plural"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.38",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (38)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Marija zadumalas' ob ostavlenn-yx muž-e i dočer-i: kak oni tam, čto s nimi?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Marija",
+        "Maria"
+      ],
+      [
+        "zadumalas'",
+        "thought"
+      ],
+      [
+        "ob",
+        "about"
+      ],
+      [
+        "ostavlenn-yx",
+        "left.behind-PL.LOC"
+      ],
+      [
+        "muž-e",
+        "husband-SG.LOC"
+      ],
+      [
+        "i",
+        "and"
+      ],
+      [
+        "dočer-i",
+        "daughter-SG.LOC"
+      ],
+      [
+        "kak",
+        "how"
+      ],
+      [
+        "oni",
+        "they"
+      ],
+      [
+        "tam",
+        "there"
+      ],
+      [
+        "čto",
+        "what"
+      ],
+      [
+        "s",
+        "with"
+      ],
+      [
+        "nimi",
+        "them"
+      ]
+    ],
+    "translation": "Maria thought about the husband and daughter she had left behind, and wondered how they were and what was happening to them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "conjunctAgreement",
+        "all"
+      ]
+    ],
+    "comment": "Resolution in attributive position, the less favoured option in Russian."
+  },
+  {
+    "id": "corbett2000_6.39",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (39)"
+    },
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Èt-a vzyskatel'nost', samokritičnost' tože raspolagal-i k nemu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Èt-a",
+        "This-SG.FEM"
+      ],
+      [
+        "vzyskatel'nost'",
+        "exactingness"
+      ],
+      [
+        "samokritičnost'",
+        "self-criticalness"
+      ],
+      [
+        "tože",
+        "also"
+      ],
+      [
+        "raspolagal-i",
+        "disposed-PL"
+      ],
+      [
+        "k",
+        "to"
+      ],
+      [
+        "nemu",
+        "him"
+      ]
+    ],
+    "translation": "This exactingness and self-criticalness also disposed me favourably towards him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "target",
+        "attributive"
+      ],
+      [
+        "conjunctAgreement",
+        "nearest"
+      ]
+    ],
+    "comment": "Singular attributive agreement with plural predicate agreement."
+  },
+  {
+    "id": "corbett2000_6.40a",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (40)"
+    },
+    "reportedIn": null,
+    "language": "hung1274",
+    "primaryText": "John és Jill megérkezt-ek.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "John",
+        "John"
+      ],
+      [
+        "és",
+        "and"
+      ],
+      [
+        "Jill",
+        "Jill"
+      ],
+      [
+        "megérkezt-ek",
+        "arrived-PL"
+      ]
+    ],
+    "translation": "John and Jill arrived.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "animate",
+        "yes"
+      ],
+      [
+        "agreement",
+        "plural"
+      ]
+    ],
+    "comment": "The plural is preferred."
+  },
+  {
+    "id": "corbett2000_6.40b",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (40)"
+    },
+    "reportedIn": null,
+    "language": "hung1274",
+    "primaryText": "John és Jill megérkezett.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "John",
+        "John"
+      ],
+      [
+        "és",
+        "and"
+      ],
+      [
+        "Jill",
+        "Jill"
+      ],
+      [
+        "megérkezett",
+        "arrived.SG"
+      ]
+    ],
+    "translation": "John and Jill arrived.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "animate",
+        "yes"
+      ],
+      [
+        "agreement",
+        "singular"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.41a",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (41)"
+    },
+    "reportedIn": null,
+    "language": "hung1274",
+    "primaryText": "A könyv és a kommentár megérkezett.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "A",
+        "ART"
+      ],
+      [
+        "könyv",
+        "book"
+      ],
+      [
+        "és",
+        "and"
+      ],
+      [
+        "a",
+        "ART"
+      ],
+      [
+        "kommentár",
+        "commentary"
+      ],
+      [
+        "megérkezett",
+        "arrived.SG"
+      ]
+    ],
+    "translation": "The book and the commentary arrived.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "animate",
+        "no"
+      ],
+      [
+        "agreement",
+        "singular"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.41b",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (41)"
+    },
+    "reportedIn": null,
+    "language": "hung1274",
+    "primaryText": "A könyv és a kommentár megérkezt-ek.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "A",
+        "ART"
+      ],
+      [
+        "könyv",
+        "book"
+      ],
+      [
+        "és",
+        "and"
+      ],
+      [
+        "a",
+        "ART"
+      ],
+      [
+        "kommentár",
+        "commentary"
+      ],
+      [
+        "megérkezt-ek",
+        "arrived-PL"
+      ]
+    ],
+    "translation": "The book and the commentary arrived.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "animate",
+        "no"
+      ],
+      [
+        "agreement",
+        "plural"
+      ]
+    ],
+    "comment": "Without animate conjuncts resolution is not possible."
+  },
+  {
+    "id": "corbett2000_6.42a",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (42)"
+    },
+    "reportedIn": null,
+    "language": "moro1292",
+    "primaryText": "Mša ʕumar w ʕali",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mša",
+        "left.SG.MASC"
+      ],
+      [
+        "ʕumar",
+        "Omar"
+      ],
+      [
+        "w",
+        "and"
+      ],
+      [
+        "ʕali",
+        "Ali"
+      ]
+    ],
+    "translation": "Omar and Ali left",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbFirst",
+        "yes"
+      ],
+      [
+        "conjunctAgreement",
+        "nearest"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.42b",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (42)"
+    },
+    "reportedIn": null,
+    "language": "moro1292",
+    "primaryText": "Mšaw ʕumar w ʕali",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mšaw",
+        "left.PL"
+      ],
+      [
+        "ʕumar",
+        "Omar"
+      ],
+      [
+        "w",
+        "and"
+      ],
+      [
+        "ʕali",
+        "Ali"
+      ]
+    ],
+    "translation": "Omar and Ali left",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbFirst",
+        "yes"
+      ],
+      [
+        "conjunctAgreement",
+        "all"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.43a",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (43)"
+    },
+    "reportedIn": null,
+    "language": "moro1292",
+    "primaryText": "ʕumar w ʕali mšaw",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʕumar",
+        "Omar"
+      ],
+      [
+        "w",
+        "and"
+      ],
+      [
+        "ʕali",
+        "Ali"
+      ],
+      [
+        "mšaw",
+        "left.PL"
+      ]
+    ],
+    "translation": "Omar and Ali left",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbFirst",
+        "no"
+      ],
+      [
+        "conjunctAgreement",
+        "all"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.43b",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (43)"
+    },
+    "reportedIn": null,
+    "language": "moro1292",
+    "primaryText": "ʕumar w ʕali mša",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʕumar",
+        "Omar"
+      ],
+      [
+        "w",
+        "and"
+      ],
+      [
+        "ʕali",
+        "Ali"
+      ],
+      [
+        "mša",
+        "left.SG.MASC"
+      ]
+    ],
+    "translation": "Omar and Ali left",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbFirst",
+        "no"
+      ],
+      [
+        "conjunctAgreement",
+        "nearest"
+      ]
+    ],
+    "comment": "With the controller preceding, only agreement with all conjuncts is possible."
+  },
+  {
+    "id": "corbett2000_6.44a",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (44)"
+    },
+    "reportedIn": null,
+    "language": "moro1292",
+    "primaryText": "l-kas w z-zlafa thərrəsu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "l-kas",
+        "DEF-glass.MASC"
+      ],
+      [
+        "w",
+        "and"
+      ],
+      [
+        "z-zlafa",
+        "DEF-bowl.FEM"
+      ],
+      [
+        "thərrəsu",
+        "broke.PL"
+      ]
+    ],
+    "translation": "the glass and the bowl broke",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbFirst",
+        "no"
+      ],
+      [
+        "conjunctAgreement",
+        "all"
+      ]
+    ],
+    "comment": "Inanimate conjuncts too: resolution is required by precedence alone."
+  },
+  {
+    "id": "corbett2000_6.44b",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (44)"
+    },
+    "reportedIn": null,
+    "language": "moro1292",
+    "primaryText": "l-kas w z-zlafa thərrsat",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "l-kas",
+        "DEF-glass.MASC"
+      ],
+      [
+        "w",
+        "and"
+      ],
+      [
+        "z-zlafa",
+        "DEF-bowl.FEM"
+      ],
+      [
+        "thərrsat",
+        "broke.SG.FEM"
+      ]
+    ],
+    "translation": "the glass and the bowl broke",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbFirst",
+        "no"
+      ],
+      [
+        "conjunctAgreement",
+        "nearest"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.45",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (45)"
+    },
+    "reportedIn": null,
+    "language": "afar1241",
+    "primaryText": "kàa-kee tèt temeete/yemeeten",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kàa-kee",
+        "he-and"
+      ],
+      [
+        "tèt",
+        "she"
+      ],
+      [
+        "temeete/yemeeten",
+        "came.SG.FEM/came.PL"
+      ]
+    ],
+    "translation": "he and she came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The feminine singular is the default, the nearest conjunct being absolutive; the plural is resolution."
+  },
+  {
+    "id": "corbett2000_6.46",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (46)"
+    },
+    "reportedIn": null,
+    "language": "afar1241",
+    "primaryText": "tèt-kee kàa temeete/yemeeten",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "tèt-kee",
+        "she-and"
+      ],
+      [
+        "kàa",
+        "he"
+      ],
+      [
+        "temeete/yemeeten",
+        "came.SG.FEM/came.PL"
+      ]
+    ],
+    "translation": "she and he came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.49",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (49)"
+    },
+    "reportedIn": null,
+    "language": "afar1241",
+    "primaryText": "woò baacoytaa-kee kày barra temeete/yemeeten",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "woò",
+        "that"
+      ],
+      [
+        "baacoytaa-kee",
+        "poor.man.SG.MASC-and"
+      ],
+      [
+        "kày",
+        "his"
+      ],
+      [
+        "barra",
+        "wife.SG.FEM"
+      ],
+      [
+        "temeete/yemeeten",
+        "came.SG.FEM/came.PL"
+      ]
+    ],
+    "translation": "that poor man and his wife came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "animacy",
+        "human"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "corbett2000_6.50",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (50)"
+    },
+    "reportedIn": null,
+    "language": "afar1241",
+    "primaryText": "wàkrii-kee yangùla kudde/?kuden",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "wàkrii-kee",
+        "jackal.SG.MASC-and"
+      ],
+      [
+        "yangùla",
+        "hyena.SG.MASC"
+      ],
+      [
+        "kudde/?kuden",
+        "ran.away.SG.FEM/ran.away.PL"
+      ]
+    ],
+    "translation": "the jackal and the hyena ran away",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "animacy",
+        "animal"
+      ]
+    ],
+    "comment": "Resolution is less certain with non-human animates."
+  },
+  {
+    "id": "corbett2000_6.51",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (51)"
+    },
+    "reportedIn": null,
+    "language": "afar1241",
+    "primaryText": "daroò-kee cadò tummurruqe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "daroò-kee",
+        "grain.SG.FEM-and"
+      ],
+      [
+        "cadò",
+        "meat.SG.FEM"
+      ],
+      [
+        "tummurruqe",
+        "have.finished.SG.FEM"
+      ]
+    ],
+    "translation": "the grain and meat have run out",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "daroò-kee cadò yummurruqen",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "animacy",
+        "inanimate"
+      ]
+    ],
+    "comment": "With inanimates the default is the norm."
+  },
+  {
+    "id": "corbett2000_6.52",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (52)"
+    },
+    "reportedIn": null,
+    "language": "bela1254",
+    "primaryText": "dzed z unukam laviŭ rybu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "dzed",
+        "grandfather"
+      ],
+      [
+        "z",
+        "with"
+      ],
+      [
+        "unukam",
+        "grandson.SG.INST"
+      ],
+      [
+        "laviŭ",
+        "catch.PAST.SG.MASC"
+      ],
+      [
+        "rybu",
+        "fish"
+      ]
+    ],
+    "translation": "grandfather and grandson were fishing",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Comitative: agreement with the head alone."
+  },
+  {
+    "id": "corbett2000_6.53",
+    "source": {
+      "bibkey": "corbett-2000",
+      "paperLabel": "ch. 6 (53)"
+    },
+    "reportedIn": null,
+    "language": "bela1254",
+    "primaryText": "brat z sjastroju pajšl-i u tèatr",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "brat",
+        "brother"
+      ],
+      [
+        "z",
+        "with"
+      ],
+      [
+        "sjastroju",
+        "sister.SG.INST"
+      ],
+      [
+        "pajšl-i",
+        "go.PAST.PL"
+      ],
+      [
+        "u",
+        "to"
+      ],
+      [
+        "tèatr",
+        "theatre"
+      ]
+    ],
+    "translation": "brother and sister went to the theatre",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Comitative: plural agreement for the pair."
+  }
+]
