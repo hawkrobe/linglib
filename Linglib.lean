@@ -2992,3 +2992,4 @@ import Linglib.Data.Examples.Condoravdi2002
 import Linglib.Data.Examples.CoonKeine2021
 import Linglib.Data.Examples.CoonMateoPedroPreminger2014
 import Linglib.Data.Examples.Cooper2023
+import Linglib.Data.Examples.Coppock2018

@@ -1,130 +1,132 @@
 import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.Setoid.Basic
+import Mathlib.Tactic.DeriveFintype
 import Mathlib.Order.BooleanSubalgebra
 import Mathlib.Order.Hom.CompleteLattice
 import Linglib.Logic.Modal.Defs
 import Linglib.Logic.Trivalent.Prop3
-import Linglib.Semantics.Presupposition.Basic
+import Linglib.Data.Examples.Coppock2018
 
 /-!
-# Coppock 2018: outlook-based semantics
-[coppock-2018]
+# Coppock's outlook-based semantics
 
-[coppock-2018]'s relativism for statements of opinion: *outlooks* — refinements of worlds
-that settle matters of opinion as well as fact — **replace** possible worlds as circumstances
-of evaluation, rather than supplementing them with a judge as in world-judge relativism
-([lasersohn-2005]). A proposition is a function from outlooks to three truth values
-(`Prop3 Ω`, with [coppock-2018]'s Weak Kleene connectives available as `Trivalent.meetWeak`/
-`Trivalent.joinWeak`/`Trivalent.neg`); it is *objective* when its truth value never splits within
-a world's refinement class, *discretionary* when it does, and *strongly discretionary* when
-it splits within every world's class. Faultless disagreement ([kolbel-2003]) then falls out:
-two agents can accept and reject the same strongly discretionary proposition at one outlook
-(genuine disagreement) while neither violates the norm of accuracy (no world makes such a
-proposition objectively false). The subjective attitude verb *tycka* 'think[opinion]'
-presupposes strong discretionariness of its complement relative to the common ground; the
-paper's ∂-operator rendering of that presupposition is played here by the project-canonical
-`PartialProp`.
+Statements of opinion are evaluated at outlooks, refinements of possible worlds that settle
+matters of opinion as well as of fact, in place of worlds supplemented with a judge. A
+proposition is a function from outlooks to three truth values; it is objective when no
+world's refinements split it into true and false, discretionary when some world's do, and
+strongly discretionary when every world's do, each notion relative to an information state.
+Faultless disagreement follows: asserting a proposition puts one at fault only if it is
+objectively false at the world of the context, which no strongly discretionary proposition
+ever is, while two agents whose doxastic states over outlooks accept and reject it genuinely
+disagree. The Swedish subjective attitude verb *tycka* differs from *think* only in
+presupposing, through the ∂ operator of the paper's Weak Kleene logic, that its complement
+is strongly discretionary relative to the common ground, and the paper offers, as a parallel
+to Kennedy and Willer, that *find* and *consider* would demand strong and mere
+discretionariness. The paper's four-outlook model of accessibility and its Swedish and
+English judgments are the rows of `Data/Examples/Coppock2018.json`, against which the
+conditions on the three verbs are checked.
 
-The formal fragment's syntax (types, translations `⤳`), the context-set parameter sequence,
-and the §4 pragmatics (assertion-as-proposal, seeking a common outlook) are not modelled.
-`Studies/Kubota2026.lean` borrows the outlook *term* for its two-layered outlook-marker
-denotation; the apparatus here is the paper's own, where outlook-relativity is a property of
-at-issue discretionary content. [kennedy-willer-2016]'s counterstance contingency appears
-via the paper's translation: radically counterstance-contingent = strongly discretionary.
+## Implementation notes
 
-## Main definitions
+* The refinement relation is a map `ρ : Ω → W`, whose fibres are the refinement classes;
+  that every world has an inhabited class, implicit in the paper's set-based definition of
+  strong discretionariness and in its footnote 8, is the hypothesis `Function.Surjective ρ`
+  where it matters. The classification predicates take the information state as a
+  parameter, the unrelativised notions being the case of the universal state.
+* The objective propositions of §3.1 form a Boolean subalgebra of the powerset of the
+  outlooks, the image of the powerset of the worlds under preimage, and are order-isomorphic
+  to it when every world is refined, the paper's footnote 8.
+* Acceptance is the Kripke box over the agent's accessibility relation on outlooks, from
+  `Logic/Modal/Defs.lean`, and rejection the box of falsity, stronger than the paper's
+  gloss "holds in none" on a trivalent proposition but the reading its analysis of (38)
+  uses. *Think* and *tycka* are trivalent propositions built with the Weak Kleene
+  conjunction and ∂ of `Core/Data/Trivalent.lean`, so that presupposition projection
+  through negation is the logic's rather than a stipulation.
+* The formal fragment's syntax and translations (§5.1, §5.3), the context-of-utterance
+  parameter, and the §4 pragmatics of assertion as a proposal are not modelled.
 
-* `Objective`, `objective_iff_fiberInvariant`, `objective_iff_preimage_image` —
-  set-of-outlooks propositions (§3.1): objective = union of refinement classes =
-  fiber-invariant = saturated under the refinement map. `objectiveSubalgebra` bundles the
-  objective propositions as a `BooleanSubalgebra` of the powerset of `Ω`, and
-  `objectiveOrderIso` realizes the paper's note that it is isomorphic to the powerset of
-  the worlds. The classification predicates carry `Decidable` instances for finite models.
-* `Objective3`, `Discretionary3`, `StronglyDiscretionary3` — the revised three-valued
-  classification, plus the information-state-relativized `ObjectiveIn`/`DiscretionaryIn`/
-  `StronglyDiscretionaryIn`.
-* `Accepts`, `Rejects`, `DisagreeAt`, `Opinionated` — doxastic accessibility as a binary
-  relation on outlooks (§5's `R_a`), acceptance as the Kripke box (`ModalLogic.box`).
-* `AtFault` — the norm of accuracy: asserting what is objectively false at the context world.
-* `think`, `tycka` — the attitude verbs as `PartialProp`s: same assertion (doxastic
-  acceptance), differing only in *tycka*'s strong-discretionariness presupposition.
+## TODO
 
-## Main results
-
-* `stronglyDiscretionary3_never_atFault` — a strongly discretionary proposition never puts
-  its asserter at fault: the faultlessness half of faultless disagreement.
-* `chili_disagreement`, `tasty_never_atFault` — the chili dialogue in a four-outlook model:
-  genuine disagreement about *tasty* with neither party at fault; contrast `opera_atFault`
-  (objective propositions do incur fault) and the *sexy linguist* hybrid (discretionary but
-  not strongly so, hence world-level falsity).
-* `think_tycka_same_assertion`, `tycka_presup_survives_neg` — *tycka* differs from *think*
-  only in its presupposition, and that presupposition projects through negation.
-* `tycka_undefined_of_objectiveIn` — an objective complement yields presupposition failure
-  (the *"#I think[opinion] it's Tuesday"* effect).
-* `stronglyDiscretionaryIn_discretionaryIn` — strong discretionariness entails
-  discretionariness on nonempty restricted classes: [coppock-2018]'s translation of
-  [kennedy-willer-2016]'s *find* (radical) vs *consider* (mere counterstance contingency).
+* The felicity conditions on coordination and quantification under *tycka* ((20)–(27))
+  need the issues raised by the complement, which the paper leaves to a theory of manner;
+  their rows carry no model classification.
+* A world-judge relativist rendering of the same data (§2, §3.4, §3.5.2) would let the
+  contrast on opinionatedness (38) be stated as a theorem rather than prose.
+* The paper argues (33) over the outlooks where its presupposition holds; on an open
+  information state its own definition fails at the other world, so the row's common ground
+  entails the presupposition, and the general condition on states wants stating.
+* The prose on Fig. 2 says that from `o₁₀` and `o₀₀` agent `a` reaches "the one in which
+  both `p` and `q` hold" while also rejecting `q`; the figure has `a` reach `o₁₀`, which the
+  model follows.
+* The footnote 8 isomorphism holds only when every world is refined; the paper does not
+  state the hypothesis.
+* Footnote 15 reports the presupposition filtered in a conditional, which the Weak Kleene
+  connectives cannot do; the Middle Kleene conjunction of the substrate could, and the
+  contrast wants stating as a theorem.
+* [kennedy-willer-2022]'s pragmatic reworking of counterstance contingency and
+  [anand-korotkova-2022]'s *de re* readings of *find* are the data on which the strong
+  against mere discretionariness split could be tested rather than coded.
 
 ## References
 
-[coppock-2018] [kolbel-2003] [lasersohn-2005] [kennedy-willer-2016] [kleene-1952]
-[beaver-krahmer-2001]
+* [E. Coppock, *Outlook-based semantics* (2018)][coppock-2018]
+* [M. Kölbel, *Truth Without Objectivity* (2002)][kolbel-2002]
+* [M. Kölbel, *Faultless disagreement* (2003)][kolbel-2003]
+* [P. Lasersohn, *Context dependence, disagreement, and predicates of personal taste*
+  (2005)][lasersohn-2005]
+* [C. Kennedy, M. Willer, *Subjective attitudes and counterstance contingency*
+  (2016)][kennedy-willer-2016]
+* [D. Beaver, E. Krahmer, *A Partial Account of Presupposition Projection*
+  (2001)][beaver-krahmer-2001]
+* [S. C. Kleene, *Introduction to Metamathematics* (1952)][kleene-1952]
+* [K. J. Sæbø, *Judgment Ascriptions* (2009)][saebo-2009]
+* [T. Stephenson, *Judge Dependence, Epistemic Modals, and Predicates of Personal Taste*
+  (2007)][stephenson-2007]
+* [C. Kennedy, M. Willer, *Familiarity Inferences, Subjective Attitudes and Counterstance
+  Contingency* (2022)][kennedy-willer-2022]
+* [P. Anand, N. Korotkova, *How to Theorize about Subjective Language* (2022)][anand-korotkova-2022]
 -/
 
 namespace Coppock2018
 
-open Trivalent (Prop3)
-open ModalLogic (box)
-open Presupposition
+open Trivalent ModalLogic
 
-variable {W Ω : Type*}
+variable {W Ω : Type*} (ρ : Ω → W) (R : Ω → Ω → Prop) (p : Prop3 Ω) (C : Set Ω)
 
-/-! ### Refinement and objectivity (§3.1)
+/-! ### Refinement and objective propositions (§3.1)
 
-Outlooks refine worlds: each outlook settles all the facts its world settles, plus matters
-of opinion. The refinement structure is a map `ρ : Ω → W`; the *refinement class* of `w` is
-the fiber `ρ ⁻¹' {w}`, so classes are automatically mutually non-overlapping and in
-one-to-one correspondence with (inhabited fibers of) worlds — [coppock-2018]'s `∝`. -/
+Outlooks refine worlds: each settles the facts of its world and the matters of opinion
+besides. The refinement structure is a map from outlooks to worlds, the refinement class of a
+world being its fibre, so classes are disjoint and in one-to-one correspondence with the
+refined worlds, the paper's `∝`. -/
 
-variable (ρ : Ω → W)
-
-/-- A set-of-outlooks proposition is **objective** when it corresponds to a set of possible
-worlds: a union of refinement classes, i.e. a preimage of a set of worlds. -/
+/-- A set of outlooks is an objective proposition when it corresponds to a set of worlds, a
+union of refinement classes: a preimage of a set of worlds. A discretionary proposition is
+one that is not. -/
 def Objective (O : Set Ω) : Prop := ∃ V : Set W, O = ρ ⁻¹' V
 
-/-- A **discretionary** proposition doesn't "color within the lines": it is not objective. -/
-def Discretionary (O : Set Ω) : Prop := ¬ Objective ρ O
-
-/-- Objectivity is invariance across each refinement class: an outlook proposition is
-objective iff membership depends only on the refined world. -/
-theorem objective_iff_fiberInvariant (O : Set Ω) :
+/-- Objectivity is invariance across each refinement class: membership depends only on the
+refined world. -/
+theorem objective_iff_forall_mem_iff (O : Set Ω) :
     Objective ρ O ↔ ∀ o o', ρ o = ρ o' → (o ∈ O ↔ o' ∈ O) := by
   constructor
   · rintro ⟨V, rfl⟩ o o' h
-    simp [Set.mem_preimage, h]
+    simp [h]
   · intro h
     refine ⟨ρ '' O, Set.Subset.antisymm (λ o ho => ⟨o, ho, rfl⟩) ?_⟩
     rintro o ⟨o', ho', heq⟩
     exact (h o' o heq).mp ho'
 
-/-- Objectivity is *saturation* under the refinement map: `O` already contains every outlook
-that shares a world with one of its members. -/
+/-- Objectivity is saturation under the refinement map: the proposition already contains
+every outlook sharing a world with one of its members. -/
 theorem objective_iff_preimage_image (O : Set Ω) :
     Objective ρ O ↔ ρ ⁻¹' (ρ '' O) = O := by
   refine ⟨λ h => Set.Subset.antisymm ?_ (Set.subset_preimage_image ρ O), λ h => ⟨ρ '' O, h.symm⟩⟩
   rintro o ⟨o', ho', heq⟩
-  exact ((objective_iff_fiberInvariant ρ O).mp h o' o heq).mp ho'
+  exact ((objective_iff_forall_mem_iff ρ O).mp h o' o heq).mp ho'
 
-/-- Only the kernel of the refinement map matters: objectivity is constancy on the classes
-of `Setoid.ker ρ`. (The worlds beyond the fibers are inert — `W` could be replaced by
-`Quotient (Setoid.ker ρ)` without loss.) -/
-theorem objective_iff_ker_invariant (O : Set Ω) :
-    Objective ρ O ↔ ∀ o o', Setoid.ker ρ o o' → (o ∈ O ↔ o' ∈ O) :=
-  objective_iff_fiberInvariant ρ O
-
-/-- The objective propositions form a Boolean subalgebra of the powerset of `Ω`: the image
-of the powerset of `W` under `Set.preimage ρ` bundled as a bounded-lattice homomorphism, so
-closure under `⊔`/`⊓`/`ᶜ` is inherited wholesale rather than proved operation-by-operation. -/
+/-- The objective propositions form a Boolean subalgebra of the powerset of the outlooks:
+the image of the powerset of the worlds under preimage, so closure under `⊔`, `⊓` and `ᶜ` is
+inherited wholesale. -/
 def objectiveSubalgebra : BooleanSubalgebra (Set Ω) :=
   .map (CompleteLatticeHom.setPreimage ρ).toBoundedLatticeHom ⊤
 
@@ -132,286 +134,438 @@ def objectiveSubalgebra : BooleanSubalgebra (Set Ω) :=
     O ∈ objectiveSubalgebra ρ ↔ Objective ρ O := by
   simp [objectiveSubalgebra, Objective, eq_comm]
 
-/-- When every world is refined by some outlook — [coppock-2018]'s `∝` pairs each world with
-an *inhabited* refinement class — the objective subalgebra is order-isomorphic to the
-powerset of the worlds (and an order iso between Boolean algebras preserves the whole
-Boolean structure). -/
-def objectiveOrderIso (hρ : Function.Surjective ρ) :
-    Set W ≃o objectiveSubalgebra ρ where
+/-- When every world is refined by some outlook, the objective subalgebra is order-isomorphic
+to the powerset of the worlds, the paper's footnote 8. -/
+def objectiveOrderIso (hρ : Function.Surjective ρ) : Set W ≃o objectiveSubalgebra ρ where
   toFun V := ⟨ρ ⁻¹' V, (mem_objectiveSubalgebra ρ).mpr ⟨V, rfl⟩⟩
   invFun O := ρ '' O.1
-  left_inv V := Set.image_preimage_eq V hρ
+  left_inv V := hρ.image_preimage V
   right_inv O := Subtype.ext
     ((objective_iff_preimage_image ρ O.1).mp ((mem_objectiveSubalgebra ρ).mp O.2))
-  map_rel_iff' {V₁ V₂} :=
-    Set.preimage_subset_preimage_iff (by rw [hρ.range_eq]; exact Set.subset_univ V₁)
+  map_rel_iff' := hρ.preimage_subset_preimage_iff
 
-/-! ### The revised three-valued classification (§3.5)
+/-! ### The three-valued classification relative to an information state (§3.5)
 
-To carry presupposition, propositions become total functions from outlooks to `{T, F, #}` —
-`Prop3 Ω`. The classification now quantifies over truth-value splits within refinement
-classes. -/
+To carry presupposition, propositions are total functions from outlooks to true, false and
+undefined; an information state is a set of outlooks, and the classification quantifies over
+each refinement class restricted to the state. The unrelativised notions of the paper are the
+case of the universal state. -/
 
-/-- `p` is **objectively true at** `w`: true at every refinement of `w`. -/
-def ObjectivelyTrueAt (p : Prop3 Ω) (w : W) : Prop := ∀ o, ρ o = w → p o = .true
+/-- `p` is objectively false at `w`: false at every refinement of `w`. -/
+def ObjectivelyFalseAt (w : W) : Prop := ∀ o, ρ o = w → p o = .false
 
-/-- `p` is **objectively false at** `w`: false at every refinement of `w`. -/
-def ObjectivelyFalseAt (p : Prop3 Ω) (w : W) : Prop := ∀ o, ρ o = w → p o = .false
+/-- Objective relative to `C`: no refinement class restricted to `C` assigns `p` both true
+and false. -/
+def ObjectiveOn : Prop := ∀ o ∈ C, ∀ o' ∈ C, ρ o = ρ o' → p o = .true → p o' ≠ .false
 
-/-- **Objective** (revised): no world has refinements assigning `p` both `T` and `F`. -/
-def Objective3 (p : Prop3 Ω) : Prop :=
-    ∀ o o', ρ o = ρ o' → p o = .true → p o' ≠ .false
+/-- Discretionary relative to `C`: some refinement class restricted to `C` assigns `p` both
+true and false. -/
+def DiscretionaryOn : Prop := ∃ o ∈ C, ∃ o' ∈ C, ρ o = ρ o' ∧ p o = .true ∧ p o' = .false
 
-/-- **Discretionary** (revised): some world has refinements assigning `p` both `T` and `F`. -/
-def Discretionary3 (p : Prop3 Ω) : Prop :=
-    ∃ o o', ρ o = ρ o' ∧ p o = .true ∧ p o' = .false
-
-/-- **Strongly discretionary** (revised): every world's refinements split `p` into `T` and
-`F` — the proposition makes a cut across *all* the worlds. -/
-def StronglyDiscretionary3 (p : Prop3 Ω) : Prop :=
-    ∀ w, ∃ o o', ρ o = w ∧ ρ o' = w ∧ p o = .true ∧ p o' = .false
+/-- Strongly discretionary relative to `C`: every refinement class the state leaves nonempty
+assigns `p` both true and false, a cut within every world the state leaves open. -/
+def StronglyDiscretionaryOn : Prop :=
+  ∀ w, (∃ o ∈ C, ρ o = w) → ∃ o ∈ C, ∃ o' ∈ C, ρ o = w ∧ ρ o' = w ∧ p o = .true ∧ p o' = .false
 
 /-- Discretionary is exactly the failure of objective. -/
-theorem discretionary3_iff_not_objective3 (p : Prop3 Ω) :
-    Discretionary3 ρ p ↔ ¬ Objective3 ρ p := by
-  unfold Discretionary3 Objective3
-  push Not
-  rfl
+theorem discretionaryOn_iff_not_objectiveOn : DiscretionaryOn ρ p C ↔ ¬ ObjectiveOn ρ p C := by
+  simp [DiscretionaryOn, ObjectiveOn]
+
+/-- Strong discretionariness entails discretionariness on any nonempty state: the paper's
+rendering of Kennedy and Willer, on which *find* demands radical counterstance contingency
+and *consider* mere counterstance contingency, so whatever embeds under *find* embeds under
+*consider*. -/
+theorem StronglyDiscretionaryOn.discretionaryOn (h : StronglyDiscretionaryOn ρ p C)
+    (hC : C.Nonempty) : DiscretionaryOn ρ p C :=
+  let ⟨o₀, ho₀⟩ := hC
+  let ⟨o, ho, o', ho', hwo, hwo', ht, hf⟩ := h (ρ o₀) ⟨o₀, ho₀, rfl⟩
+  ⟨o, ho, o', ho', hwo.trans hwo'.symm, ht, hf⟩
+
+/-- On the universal state, when every world is refined, strong discretionariness is the
+paper's unrelativised definition: every world's refinements split `p`. -/
+theorem stronglyDiscretionaryOn_univ_iff (hρ : Function.Surjective ρ) :
+    StronglyDiscretionaryOn ρ p Set.univ ↔
+      ∀ w, ∃ o o', ρ o = w ∧ ρ o' = w ∧ p o = .true ∧ p o' = .false :=
+  ⟨λ h w => let ⟨o, _, o', _, h₁, h₂, h₃, h₄⟩ := h w (let ⟨o, ho⟩ := hρ w; ⟨o, trivial, ho⟩)
+    ⟨o, o', h₁, h₂, h₃, h₄⟩,
+   λ h w _ => let ⟨o, o', h₁, h₂, h₃, h₄⟩ := h w; ⟨o, trivial, o', trivial, h₁, h₂, h₃, h₄⟩⟩
+
+/-- For a bivalent proposition the revised classification agrees with the set-based one of
+§3.1 on its positive extension. -/
+theorem objectiveOn_univ_iff_objective_posExt (h : p.isBivalent) :
+    ObjectiveOn ρ p Set.univ ↔ Objective ρ p.posExt := by
+  rw [objective_iff_forall_mem_iff]
+  constructor
+  · intro hobj o o' hoo'
+    have key : ∀ a b, ρ a = ρ b → p a = .true → p b = .true := λ a b hab ha =>
+      (h b).resolve_right (hobj a trivial b trivial hab ha)
+    exact ⟨key o o' hoo', key o' o hoo'.symm⟩
+  · intro hinv o _ o' _ hoo' ht hf
+    exact nomatch ((hinv o o' hoo').1 ht).symm.trans hf
 
 section Decidability
 
-/-! The classification predicates are finitely checkable, so they carry `Decidable`
-instances (delegating to the definitional quantifier forms) — model verifications below are
-bare `decide`s. -/
+variable [Fintype Ω] [DecidableEq W] [DecidablePred (· ∈ C)]
 
-variable [Fintype Ω] [DecidableEq W] (p : Prop3 Ω)
+instance (w : W) : Decidable (ObjectivelyFalseAt ρ p w) := by
+  unfold ObjectivelyFalseAt; infer_instance
 
-instance (w : W) : Decidable (ObjectivelyTrueAt ρ p w) :=
-  inferInstanceAs (Decidable (∀ o, ρ o = w → p o = .true))
+instance : Decidable (ObjectiveOn ρ p C) := by unfold ObjectiveOn; infer_instance
 
-instance (w : W) : Decidable (ObjectivelyFalseAt ρ p w) :=
-  inferInstanceAs (Decidable (∀ o, ρ o = w → p o = .false))
+instance : Decidable (DiscretionaryOn ρ p C) := by unfold DiscretionaryOn; infer_instance
 
-instance : Decidable (Objective3 ρ p) :=
-  inferInstanceAs (Decidable (∀ o o', ρ o = ρ o' → p o = .true → p o' ≠ .false))
-
-instance : Decidable (Discretionary3 ρ p) :=
-  inferInstanceAs (Decidable (∃ o o', ρ o = ρ o' ∧ p o = .true ∧ p o' = .false))
-
-instance [Fintype W] : Decidable (StronglyDiscretionary3 ρ p) :=
-  inferInstanceAs
-    (Decidable (∀ w, ∃ o o', ρ o = w ∧ ρ o' = w ∧ p o = .true ∧ p o' = .false))
+instance [Fintype W] : Decidable (StronglyDiscretionaryOn ρ p C) := by
+  unfold StronglyDiscretionaryOn; infer_instance
 
 end Decidability
-
-/-- Strong discretionariness entails discretionariness whenever some world exists. -/
-theorem StronglyDiscretionary3.discretionary3 {p : Prop3 Ω} [Nonempty W]
-    (h : StronglyDiscretionary3 ρ p) : Discretionary3 ρ p :=
-  let ⟨o, o', ho, ho', ht, hf⟩ := h (Classical.arbitrary W)
-  ⟨o, o', ho.trans ho'.symm, ht, hf⟩
-
-/-! ### Relativization to an information state (§3.5)
-
-Discretionariness for *tycka* is evaluated against the common ground: an **information
-state** is a set of outlooks `C`, and the classification quantifies over the `C`-restricted
-refinement classes `ρ ⁻¹' {w} ∩ C`. -/
-
-variable (C : Set Ω)
-
-/-- **Objective relative to `C`**: no `C`-restricted refinement class splits `p`. -/
-def ObjectiveIn (p : Prop3 Ω) : Prop :=
-    ∀ o ∈ C, ∀ o' ∈ C, ρ o = ρ o' → p o = .true → p o' ≠ .false
-
-/-- **Discretionary relative to `C`**: some `C`-restricted refinement class splits `p`. -/
-def DiscretionaryIn (p : Prop3 Ω) : Prop :=
-    ∃ o ∈ C, ∃ o' ∈ C, ρ o = ρ o' ∧ p o = .true ∧ p o' = .false
-
-/-- **Strongly discretionary relative to `C`**: every nonempty `C`-restricted refinement
-class splits `p` — the proposition makes a cut within every world the state leaves open. -/
-def StronglyDiscretionaryIn (p : Prop3 Ω) : Prop :=
-    ∀ w, (ρ ⁻¹' {w} ∩ C).Nonempty →
-      ∃ o ∈ C, ∃ o' ∈ C, ρ o = w ∧ ρ o' = w ∧ p o = .true ∧ p o' = .false
-
-/-- Strong discretionariness entails discretionariness on any state leaving a world open —
-[coppock-2018]'s rendering of [kennedy-willer-2016]: *find* demands radical counterstance
-contingency (strong discretionariness), *consider* mere counterstance contingency
-(discretionariness), so whatever embeds under *find* embeds under *consider*. -/
-theorem stronglyDiscretionaryIn_discretionaryIn {p : Prop3 Ω}
-    (h : StronglyDiscretionaryIn ρ C p) {w : W} (hw : (ρ ⁻¹' {w} ∩ C).Nonempty) :
-    DiscretionaryIn ρ C p :=
-  let ⟨o, ho, o', ho', hwo, hwo', ht, hf⟩ := h w hw
-  ⟨o, ho, o', ho', hwo.trans hwo'.symm, ht, hf⟩
 
 /-! ### The norm of accuracy and faultlessness (§3.2)
 
-Being *at fault* is relative to a world (the world of the context of utterance — contexts
-determine worlds, not outlooks): one is at fault for expressing `φ` iff `φ` is objectively
-false at that world. A strongly discretionary proposition is never objectively false at any
-world, so no speaker of one is ever at fault — the faultlessness half of faultless
-disagreement; genuine contradiction is supplied by the propositions being complements. -/
+Being at fault is relative to the world of the context of utterance, which determines a
+world and not an outlook: one is at fault for asserting a proposition iff it is objectively
+false there. A strongly discretionary proposition is true at some refinement of every world
+the state leaves open, so no one is ever at fault for asserting it, the faultlessness half of
+faultless disagreement; contradiction is supplied by the propositions being complements. -/
 
-/-- The **norm of accuracy**: an asserter of `p` is at fault at `w` iff `p` is objectively
-false at `w`. -/
-def AtFault (p : Prop3 Ω) (w : W) : Prop := ObjectivelyFalseAt ρ p w
+/-- `p` splits `w`: some refinement makes it true and another false. A disagreement about
+`p` at such a world is faultless, the paper's footnote 12. -/
+def SplitsAt (w : W) : Prop := (∃ o, ρ o = w ∧ p o = .true) ∧ ∃ o, ρ o = w ∧ p o = .false
 
-instance [Fintype Ω] [DecidableEq W] (p : Prop3 Ω) (w : W) : Decidable (AtFault ρ p w) :=
-  inferInstanceAs (Decidable (ObjectivelyFalseAt ρ p w))
+/-- The norm of accuracy: at a world the proposition splits, no asserter of it is at fault. -/
+theorem SplitsAt.not_objectivelyFalseAt {w : W} (h : SplitsAt ρ p w) :
+    ¬ ObjectivelyFalseAt ρ p w := λ hf =>
+  let ⟨⟨o, hwo, ht⟩, _⟩ := h
+  nomatch (hf o hwo).symm.trans ht
 
-/-- A strongly discretionary proposition never puts its asserter at fault: every world has
-a refinement where it is true. -/
-theorem stronglyDiscretionary3_never_atFault {p : Prop3 Ω}
-    (h : StronglyDiscretionary3 ρ p) (w : W) : ¬ AtFault ρ p w :=
-  λ hfault =>
-    let ⟨o, _, hwo, _, ht, _⟩ := h w
-    by simp [hfault o hwo] at ht
+/-- A strongly discretionary proposition splits every world the state leaves open, so any
+disagreement about it there is faultless. -/
+theorem splitsAt_of_stronglyDiscretionaryOn (h : StronglyDiscretionaryOn ρ p C) {w : W}
+    (hw : ∃ o ∈ C, ρ o = w) : SplitsAt ρ p w :=
+  let ⟨o, _, o', _, hwo, hwo', ht, hf⟩ := h w hw
+  ⟨⟨o, hwo, ht⟩, ⟨o', hwo', hf⟩⟩
 
-/-! ### Doxastic states, acceptance, and disagreement (§3.3)
+/-- A strongly discretionary proposition is never objectively false at a world the state
+leaves open: its asserter is never at fault. -/
+theorem not_objectivelyFalseAt_of_stronglyDiscretionaryOn (h : StronglyDiscretionaryOn ρ p C)
+    {w : W} (hw : ∃ o ∈ C, ρ o = w) : ¬ ObjectivelyFalseAt ρ p w :=
+  (splitsAt_of_stronglyDiscretionaryOn ρ p C h hw).not_objectivelyFalseAt
 
-An agent's accessibility is a binary relation on outlooks ([coppock-2018] §5's `R_a`); the
-doxastic state at `o` is the set of outlooks it reaches (states vary from outlook to
-outlook, since whether an agent holds a belief is itself settled by outlooks). To *accept*
-a proposition is for it to hold throughout one's accessible outlooks — the Kripke box
-(`ModalLogic.box`) over outlooks with the proposition's truth as valuation. -/
+/-! ### Doxastic states, acceptance and disagreement (§3.3)
 
-/-- An agent with accessibility `R` **accepts** `p` at `o`: `p` holds at every accessible
+An agent's doxastic state at an outlook is the set of outlooks accessible from it, so states
+vary from outlook to outlook: whether an agent holds a belief is itself settled by outlooks.
+To accept a proposition is for it to hold throughout one's accessible outlooks, the Kripke
+box over outlooks with the proposition's truth as valuation. -/
+
+/-- An agent with accessibility `R` accepts `p` at `o`: `p` is true at every accessible
 outlook. -/
-def Accepts (R : Ω → Ω → Prop) (p : Prop3 Ω) : Ω → Prop := box R (p · = .true)
+def Accepts : Ω → Prop := box R (p · = .true)
 
-/-- An agent with accessibility `R` **rejects** `p` at `o`: `p` fails at every accessible
-outlook. Rejection is stronger than non-acceptance. -/
-def Rejects (R : Ω → Ω → Prop) (p : Prop3 Ω) : Ω → Prop := box R (p · = .false)
+/-- An agent with accessibility `R` rejects `p` at `o`: `p` is false at every accessible
+outlook, which is stronger than not accepting it. -/
+def Rejects : Ω → Prop := box R (p · = .false)
 
-/-- Two agents **disagree** about `p` at `o` when one accepts it and the other rejects it. -/
-def DisagreeAt (R₁ R₂ : Ω → Ω → Prop) (p : Prop3 Ω) (o : Ω) : Prop :=
-    Accepts R₁ p o ∧ Rejects R₂ p o
+/-- Two agents disagree about `p` at `o` when one accepts it and the other rejects it. -/
+def DisagreeAt (R₁ R₂ : Ω → Ω → Prop) (o : Ω) : Prop := Accepts R₁ p o ∧ Rejects R₂ p o
 
-/-- An agent is **opinionated** about `p` at `o` when they accept or reject it; lack of
-opinionatedness — both live possibilities — is the state *tycka*-reports deny without
-contradiction ([coppock-2018] (38)). -/
-def Opinionated (R : Ω → Ω → Prop) (p : Prop3 Ω) (o : Ω) : Prop :=
-    Accepts R p o ∨ Rejects R p o
+/-- An agent is opinionated about `p` at `o` when they accept or reject it; the paper's (38)
+denies opinionatedness without contradiction. -/
+def Opinionated (o : Ω) : Prop := Accepts R p o ∨ Rejects R p o
+
+/-- An accessibility relation is a matter of fact when it depends on an outlook only through
+the world it refines: the paper's assumption that whether an agent holds a belief is settled
+by worlds. -/
+def ObjectiveRel : Prop := ∀ o o' o'', ρ o = ρ o' → (R o o'' ↔ R o' o'')
+
+/-- Acceptance under a factual accessibility relation is constant across a refinement class,
+so disagreement at an outlook is disagreement at its world. -/
+theorem accepts_iff_of_objectiveRel (hR : ObjectiveRel ρ R) {o o' : Ω} (h : ρ o = ρ o') :
+    Accepts R p o ↔ Accepts R p o' :=
+  box_congr_left λ o'' => hR o o' o'' h
 
 section Decidability
 
-variable [Fintype Ω] (R : Ω → Ω → Prop) [DecidableRel R] (p : Prop3 Ω) (o : Ω)
+variable [Fintype Ω] [DecidableRel R] (o : Ω)
 
-instance : Decidable (Accepts R p o) :=
-  inferInstanceAs (Decidable (∀ o', R o o' → p o' = .true))
+instance : Decidable (Accepts R p o) := by unfold Accepts box; infer_instance
 
-instance : Decidable (Rejects R p o) :=
-  inferInstanceAs (Decidable (∀ o', R o o' → p o' = .false))
+instance : Decidable (Rejects R p o) := by unfold Rejects box; infer_instance
 
-instance (R₂ : Ω → Ω → Prop) [DecidableRel R₂] : Decidable (DisagreeAt R R₂ p o) :=
-  inferInstanceAs (Decidable (Accepts R p o ∧ Rejects R₂ p o))
+instance (R₂ : Ω → Ω → Prop) [DecidableRel R₂] : Decidable (DisagreeAt p R R₂ o) := by
+  unfold DisagreeAt; infer_instance
 
-instance : Decidable (Opinionated R p o) :=
-  inferInstanceAs (Decidable (Accepts R p o ∨ Rejects R p o))
+instance : Decidable (Opinionated R p o) := by unfold Opinionated; infer_instance
+
+instance [DecidableEq W] : Decidable (ObjectiveRel ρ R) := by unfold ObjectiveRel; infer_instance
 
 end Decidability
 
-/-! ### The chili dialogue: faultless disagreement in a four-outlook model
-
-Four outlooks `(tasty?, opera?) : Bool × Bool` refine two worlds according to the objective
-coordinate (whether the speaker is an opera singer); tastiness cuts across both refinement
-classes. John accepts *the chili is tasty*, Mary rejects it: genuine disagreement, and by
-`stronglyDiscretionary3_never_atFault` neither is at fault. The objective proposition
-*I am an opera singer* contrasts on both counts, and the *sexy linguist* hybrid
-([coppock-2018] (10)) is discretionary without being strongly so — false at every
-refinement of a world where John is not a linguist, so assertable at fault. -/
-
-/-- Chili-model outlooks: (chili is tasty?, speaker is an opera singer?). -/
-abbrev ChiliOutlook := Bool × Bool
-
-/-- The refinement map: outlooks refine worlds that settle only the objective coordinate. -/
-def chiliWorld : ChiliOutlook → Bool := Prod.snd
-
-/-- *The chili is tasty* — settled by the discretionary coordinate. -/
-def tasty : Prop3 ChiliOutlook := λ o => .ofBool o.1
-
-/-- *I am an opera singer* — settled by the objective coordinate. -/
-def opera : Prop3 ChiliOutlook := λ o => .ofBool o.2
-
-/-- *John is a sexy linguist* with world = linguisthood: true only where both coordinates
-hold, reading the objective coordinate as *John is a linguist* ([coppock-2018] (10)). -/
-def sexyLinguist : Prop3 ChiliOutlook := λ o => .ofBool (o.1 && o.2)
-
-example : StronglyDiscretionary3 chiliWorld tasty := by decide
-example : Objective3 chiliWorld opera := by decide
-
-/-- The hybrid is discretionary (it cuts the linguist-world's refinements) … -/
-example : Discretionary3 chiliWorld sexyLinguist := by decide
-
-/-- … but not strongly discretionary: it is uniformly false among refinements of the
-non-linguist world. -/
-example : ¬ StronglyDiscretionary3 chiliWorld sexyLinguist := by decide
-
-/-- John's doxastic state: only tasty-outlooks accessible. -/
-abbrev johnR : ChiliOutlook → ChiliOutlook → Prop := λ _ o' => o'.1 = true
-
-/-- Mary's doxastic state: only non-tasty-outlooks accessible. -/
-abbrev maryR : ChiliOutlook → ChiliOutlook → Prop := λ _ o' => o'.1 = false
-
-/-- An unopinionated agent: every outlook accessible (`⊤`,
-inlined for decidability). -/
-abbrev openR : ChiliOutlook → ChiliOutlook → Prop := λ _ _ => True
-
-/-- **The chili dialogue is a genuine disagreement**: at every outlook, John accepts *tasty*
-and Mary rejects it. -/
-theorem chili_disagreement : ∀ o, DisagreeAt johnR maryR tasty o := by decide
-
-/-- **… and it is faultless**: no world makes *tasty* objectively false, so neither party
-violates the norm of accuracy. -/
-theorem tasty_never_atFault (w : Bool) : ¬ AtFault chiliWorld tasty w :=
-  stronglyDiscretionary3_never_atFault chiliWorld (by decide) w
-
-/-- **The doctor-dialogue contrast**: objective propositions do incur fault — asserting
-*I am an opera singer* at the non-singer world violates the norm of accuracy. -/
-example : AtFault chiliWorld opera false := by decide
-
-/-- The hybrid incurs fault at the non-linguist world ([coppock-2018] on (10)). -/
-example : AtFault chiliWorld sexyLinguist false := by decide
-
-/-- Lack of opinionatedness is representable: the open-minded agent neither accepts nor
-rejects *tasty* — the consistency of [coppock-2018] (38), which totally-opinionated-judge
-frameworks wrongly rule out. -/
-theorem open_agent_unopinionated : ∀ o, ¬ Opinionated openR tasty o := by decide
-
 /-! ### Subjective attitude verbs (§3.5, §5)
 
-English *think* and Swedish *tycka* 'think[opinion]' are both doxastic-acceptance operators;
-the only difference is that *tycka* carries a presupposition that its complement is strongly
-discretionary relative to the common ground — `∂(discretionary(φ)) ∧ □φ`. The ∂-operator's
-role is played by `PartialProp`'s presupposition field (the project-canonical rendering of
-partiality); the presupposition is outlook-independent because discretionariness is a global
-property of `p` against `C`. -/
+English *think* and Swedish *tycka* 'think[opinion]' both denote doxastic acceptance; *tycka*
+alone carries the presupposition that its complement is strongly discretionary relative to the
+information state, (32) `∂(discretionary(φ)) ∧ □φ` in the paper's Weak Kleene logic, on
+which an undefined conjunct makes the conjunction undefined. -/
 
-/-- *think*: bare doxastic acceptance, no presupposition. -/
-def think (R : Ω → Ω → Prop) (p : Prop3 Ω) : PartialProp Ω :=
-  ⟨λ _ => True, Accepts R p⟩
+variable [DecidablePred (Accepts R p)]
 
-/-- *tycka* 'think[opinion]': doxastic acceptance, presupposing that the complement is
-strongly discretionary relative to the information state `C`. -/
-def tycka (R : Ω → Ω → Prop) (p : Prop3 Ω) : PartialProp Ω :=
-  ⟨λ _ => StronglyDiscretionaryIn ρ C p, Accepts R p⟩
+/-- *think* (31): bare doxastic acceptance. -/
+def think : Prop3 Ω := λ o => ofProp (Accepts R p o)
 
-/-- *think* and *tycka* assert the same thing — the verbs differ only in *tycka*'s
-discretionariness presupposition. -/
-theorem think_tycka_same_assertion (R : Ω → Ω → Prop) (p : Prop3 Ω) :
-    (think R p).assertion = (tycka ρ C R p).assertion := rfl
+variable [Decidable (StronglyDiscretionaryOn ρ p C)]
 
-/-- *tycka*'s subjectivity requirement projects through negation (via `PartialProp.neg`):
-*"#I don't think[opinion] it's Tuesday"* is as bad as the unnegated version. -/
-theorem tycka_presup_survives_neg (R : Ω → Ω → Prop) (p : Prop3 Ω) :
-    (PartialProp.neg (tycka ρ C R p)).presup = (tycka ρ C R p).presup := rfl
+/-- *tycka* (32): the presupposition that the complement is strongly discretionary relative
+to `C`, conjoined by Weak Kleene conjunction with acceptance. -/
+def tycka : Prop3 Ω := λ o =>
+  meetWeak (presuppose (ofProp (StronglyDiscretionaryOn ρ p C))) (ofProp (Accepts R p o))
 
-/-- An objective complement is presupposition failure for *tycka*, given that the state
-leaves some world's refinements open in a way `p` actually cuts — the
-*"#I think[opinion] it's Tuesday / that she's a doctor"* effect. -/
-theorem tycka_undefined_of_objectiveIn {p : Prop3 Ω} (hobj : ObjectiveIn ρ C p)
-    {w : W} (hw : (ρ ⁻¹' {w} ∩ C).Nonempty) (R : Ω → Ω → Prop) (o : Ω) :
-    ¬ (tycka ρ C R p).presup o :=
-  λ h =>
-    let ⟨o₁, ho₁, o₂, ho₂, hw₁, hw₂, ht, hf⟩ := h w hw
+variable (o : Ω)
+
+/-- A *tycka* report is undefined exactly when its complement is not strongly discretionary
+relative to the state: the subjectivity requirement is a presupposition, (28)–(29). -/
+theorem tycka_eq_indet_iff : tycka ρ R p C o = .indet ↔ ¬ StronglyDiscretionaryOn ρ p C := by
+  simp [tycka, meetWeak_presuppose_eq_indet_iff]
+
+/-- A *tycka* report is true iff its complement is strongly discretionary and the agent
+accepts it. -/
+theorem tycka_eq_true_iff :
+    tycka ρ R p C o = .true ↔ StronglyDiscretionaryOn ρ p C ∧ Accepts R p o := by
+  simp [tycka, meetWeak_presuppose_eq_true_iff]
+
+/-- *tycka* and *think* agree wherever the former is defined: the verbs differ only in the
+presupposition. -/
+theorem tycka_eq_think_of_ne_indet (h : tycka ρ R p C o ≠ .indet) :
+    tycka ρ R p C o = think R p o := by
+  have hS := not_not.1 ((tycka_eq_indet_iff ρ R p C o).not.1 h)
+  simp only [tycka, think, hS, ofProp_true, presuppose_true, meetWeak_true_left]
+
+/-- The presupposition projects through negation: *I don't think[opinion] it's Tuesday* is
+undefined in the same states as the unnegated report, (28). -/
+theorem neg_tycka_eq_indet_iff :
+    neg (tycka ρ R p C o) = .indet ↔ ¬ StronglyDiscretionaryOn ρ p C :=
+  neg_eq_indet_iff.trans (tycka_eq_indet_iff ρ R p C o)
+
+/-- An objective complement is presupposition failure for *tycka* on any nonempty state:
+the *#I think[opinion] it's Tuesday* effect, (2b), (28). -/
+theorem tycka_eq_indet_of_objectiveOn (hobj : ObjectiveOn ρ p C) (hC : C.Nonempty) :
+    tycka ρ R p C o = .indet :=
+  (tycka_eq_indet_iff ρ R p C o).2 λ h =>
+    let ⟨o₀, ho₀⟩ := hC
+    let ⟨o₁, ho₁, o₂, ho₂, hw₁, hw₂, ht, hf⟩ := h (ρ o₀) ⟨o₀, ho₀, rfl⟩
     hobj o₁ ho₁ o₂ ho₂ (hw₁.trans hw₂.symm) ht hf
+
+/-! ### The chili model (§3.3, Fig. 2)
+
+Four outlooks `o_pq` settle whether the chili is tasty, `p`, and whether the speaker is an
+opera singer, `q`; worlds settle only `q`. Agent `a` reaches from every outlook the one
+tasty outlook of its world, and agent `b` reaches the non-tasty singer outlook from the
+singer world and both tasty outlooks from the other, so `a` accepts `p` everywhere while
+`b` accepts it in the non-singer world and rejects it in the singer world: the two disagree
+about `p` at `o₁₁` and `o₀₁` and agree about `q` there, and `b` is unopinionated about `q`
+elsewhere. Both relations are matters of fact, so acceptance is constant across each
+refinement class. The hybrid (10) and the presupposing complements (33) and (34), for which
+the paper gives no model, are read on the same two coordinates. -/
+
+namespace Chili
+
+/-- An outlook `(tasty?, singer?)`. -/
+abbrev Outlook := Bool × Bool
+
+/-- Worlds settle the objective coordinate. -/
+def world : Outlook → Bool := Prod.snd
+
+/-- `p`, *the chili is tasty*. -/
+def tasty : Prop3 Outlook := λ o => ofBool o.1
+
+/-- `q`, *I am an opera singer*. -/
+def opera : Prop3 Outlook := λ o => ofBool o.2
+
+/-- *John is a sexy linguist* (10), the objective coordinate read as linguisthood. -/
+def sexyLinguist : Prop3 Outlook := λ o => ofBool (o.1 && o.2)
+
+/-- *It's terrible that he dumped her* (33): defined only where he did, the objective
+coordinate, and then settled by the discretionary one. -/
+def terribleDumped : Prop3 Outlook := λ o => if o.2 then ofBool o.1 else .indet
+
+/-- *She doesn't care that he is an idiot* (34): defined only where he is, the discretionary
+coordinate, and then settled by the objective one. -/
+def caresNotIdiot : Prop3 Outlook := λ o => if o.1 then ofBool o.2 else .indet
+
+/-- Agent `a` reaches the tasty outlook of the current world. -/
+def accessA : Outlook → Outlook → Prop := λ o o' => o' = (.true, o.2)
+
+instance : DecidableRel accessA := λ _ _ => by unfold accessA; infer_instance
+
+/-- Agent `b` reaches the non-tasty outlook from the singer world and both tasty outlooks
+from the other. -/
+def accessB : Outlook → Outlook → Prop :=
+  λ o o' => (o.2 = .true → o' = (.false, .true)) ∧ (o.2 = .false → o'.1 = .true)
+
+instance : DecidableRel accessB := λ _ _ => by unfold accessB; infer_instance
+
+theorem objectiveRel_accessA : ObjectiveRel world accessA := by decide
+
+theorem objectiveRel_accessB : ObjectiveRel world accessB := by decide
+
+/-- The information states of the model: open, or with the objective coordinate given, or
+with the discretionary one given. -/
+inductive CommonGround
+  | open | objectiveGiven | discretionaryGiven
+  deriving DecidableEq, Fintype
+
+/-- The outlooks a common ground leaves open. -/
+def CommonGround.toSet : CommonGround → Set Outlook
+  | .open => Set.univ
+  | .objectiveGiven => {o | o.2 = .true}
+  | .discretionaryGiven => {o | o.1 = .true}
+
+instance (cg : CommonGround) : DecidablePred (· ∈ cg.toSet) := by
+  cases cg <;> simp only [CommonGround.toSet] <;> infer_instance
+
+/-- *Tasty* is strongly discretionary. -/
+theorem stronglyDiscretionaryOn_tasty : StronglyDiscretionaryOn world tasty Set.univ := by
+  decide
+
+/-- *Opera singer* is objective. -/
+theorem objectiveOn_opera : ObjectiveOn world opera Set.univ := by decide
+
+/-- The hybrid (10) is discretionary, cutting the linguist world's refinements. -/
+theorem discretionaryOn_sexyLinguist : DiscretionaryOn world sexyLinguist Set.univ := by
+  decide
+
+/-- The hybrid is not strongly discretionary: false at every refinement of the non-linguist
+world. -/
+theorem not_stronglyDiscretionaryOn_sexyLinguist :
+    ¬ StronglyDiscretionaryOn world sexyLinguist Set.univ := by
+  decide
+
+/-- The hybrid is strongly discretionary once the linguist world is given: *Ebba tycker att
+Jonas är en sexig lingvist* (15)–(17) is acceptable only in a context where Jonas is taken
+to be a linguist. -/
+theorem stronglyDiscretionaryOn_sexyLinguist_objectiveGiven :
+    StronglyDiscretionaryOn world sexyLinguist CommonGround.objectiveGiven.toSet := by
+  decide
+
+/-- Presupposition placement, (33): a discretionary assertion with an objective
+presupposition is strongly discretionary once the presupposition is given. -/
+theorem stronglyDiscretionaryOn_terribleDumped_objectiveGiven :
+    StronglyDiscretionaryOn world terribleDumped CommonGround.objectiveGiven.toSet := by
+  decide
+
+/-- Presupposition placement, (34): an objective assertion with a discretionary
+presupposition is strongly discretionary on no information state. -/
+theorem not_stronglyDiscretionaryOn_caresNotIdiot (cg : CommonGround) :
+    ¬ StronglyDiscretionaryOn world caresNotIdiot cg.toSet := by
+  decide +revert
+
+/-- `a` accepts `p` everywhere. -/
+theorem accepts_accessA_tasty (o : Outlook) : Accepts accessA tasty o := by decide +revert
+
+/-- `b` accepts `p` exactly in the non-singer world and rejects it exactly in the singer
+world. -/
+theorem accepts_accessB_tasty_iff (o : Outlook) : Accepts accessB tasty o ↔ o.2 = .false := by
+  decide +revert
+
+theorem rejects_accessB_tasty_iff (o : Outlook) : Rejects accessB tasty o ↔ o.2 = .true := by
+  decide +revert
+
+/-- The two disagree about `p` exactly in the singer world, `o₁₁` and `o₀₁`. -/
+theorem disagreeAt_tasty_iff (o : Outlook) :
+    DisagreeAt tasty accessA accessB o ↔ o.2 = .true := by
+  decide +revert
+
+/-- Both accept `q` in the singer world; in the other, `a` rejects it and `b` is
+unopinionated, so they never disagree about `q`. -/
+theorem accepts_accessA_opera_iff (o : Outlook) : Accepts accessA opera o ↔ o.2 = .true := by
+  decide +revert
+
+theorem accepts_accessB_opera_iff (o : Outlook) : Accepts accessB opera o ↔ o.2 = .true := by
+  decide +revert
+
+theorem rejects_accessA_opera_iff (o : Outlook) : Rejects accessA opera o ↔ o.2 = .false := by
+  decide +revert
+
+theorem not_opinionated_accessB_opera (o : Outlook) (h : o.2 = .false) :
+    ¬ Opinionated accessB opera o := by
+  revert o; decide
+
+theorem not_disagreeAt_opera (o : Outlook) :
+    ¬ DisagreeAt opera accessA accessB o ∧ ¬ DisagreeAt opera accessB accessA o := by
+  decide +revert
+
+/-- The chili dialogue (3) is faultless: no world makes *tasty* objectively false. -/
+theorem not_objectivelyFalseAt_tasty (w : Bool) : ¬ ObjectivelyFalseAt world tasty w :=
+  not_objectivelyFalseAt_of_stronglyDiscretionaryOn world tasty Set.univ
+    stronglyDiscretionaryOn_tasty ⟨(.true, w), trivial, rfl⟩
+
+/-- The doctor dialogue (6) contrast: asserting *I am an opera singer* in the non-singer
+world violates the norm of accuracy. -/
+theorem objectivelyFalseAt_opera : ObjectivelyFalseAt world opera .false := by decide
+
+/-- So does asserting the hybrid (10) where John is no linguist, (12). -/
+theorem objectivelyFalseAt_sexyLinguist : ObjectivelyFalseAt world sexyLinguist .false := by
+  decide
+
+/-- *Tycka* reports of *tasty* are defined everywhere and true for `a`. -/
+theorem tycka_tasty (o : Outlook) : tycka world accessA tasty Set.univ o = .true := by
+  decide +revert
+
+/-- *Tycka* reports of *opera singer* are undefined. -/
+theorem tycka_opera (o : Outlook) : tycka world accessA opera Set.univ o = .indet := by
+  decide +revert
+
+end Chili
+
+/-! ### The paper's judgments
+
+The rows of `Data/Examples/Coppock2018.json` with a `complement` feature denote a
+proposition of the chili model, their `commonGround` feature an information state, and their
+`verb` a subjective attitude verb: *tycka* under the paper's condition (19), *find* and
+*consider* under the parallel it offers to Kennedy and Willer. Which predicates are
+discretionary is the theory's lexical assumption, as the paper says of *doctor* and *tasty*,
+so the rows with a bare taste or factual complement check consistency only; the predictions
+are the model theorems above, the hybrid rescued by a common ground ((15)–(17)),
+presupposition placement ((33) against (34)) and the split of *find* from *consider* on the
+hybrid (37). -/
+
+/-- The model proposition a row's complement denotes. -/
+def complements : List (String × Prop3 Chili.Outlook) :=
+  [("discretionary", Chili.tasty), ("objective", Chili.opera), ("hybrid", Chili.sexyLinguist),
+    ("presupObjective", Chili.terribleDumped), ("presupDiscretionary", Chili.caresNotIdiot)]
+
+/-- The common ground a row names. -/
+def commonGrounds : List (String × Chili.CommonGround) :=
+  [("open", .open), ("objectiveGiven", .objectiveGiven),
+    ("discretionaryGiven", .discretionaryGiven)]
+
+/-- The condition a subjective attitude verb places on its complement: strong
+discretionariness, or mere discretionariness. -/
+inductive VerbCondition
+  | strong | mere
+  deriving DecidableEq
+
+/-- The condition as a predicate on a proposition of the chili model relative to a state. -/
+def VerbCondition.Holds : VerbCondition → Prop3 Chili.Outlook → Set Chili.Outlook → Prop
+  | .strong, p, C => StronglyDiscretionaryOn Chili.world p C
+  | .mere, p, C => DiscretionaryOn Chili.world p C
+
+instance (vc : VerbCondition) (p : Prop3 Chili.Outlook) (cg : Chili.CommonGround) :
+    Decidable (vc.Holds p cg.toSet) := by
+  cases vc <;> simp only [VerbCondition.Holds] <;> infer_instance
+
+/-- *tycka* demands strong discretionariness (19); that *find* demands the same and
+*consider* mere discretionariness is the parallel to Kennedy and Willer the paper offers,
+leaving the difference between the verbs open. -/
+def verbConditions : List (String × VerbCondition) :=
+  [("tycka", .strong), ("find", .strong), ("consider", .mere)]
+
+/-- Row consistency: a subjective attitude report is acceptable exactly when its complement
+meets the verb's condition relative to the common ground, open unless the row names one. A
+complement the model does not read fails the check outright. -/
+theorem verb_rows : ∀ row ∈ Examples.all, ∀ vc ∈ row.parse? "verb" verbConditions,
+    ∀ c ∈ row.feature? "complement", ∃ p ∈ complements.lookup c,
+      ∃ cg ∈ commonGrounds.lookup ((row.feature? "commonGround").getD "open"),
+        (row.judgment = .acceptable ↔ vc.Holds p cg.toSet) := by
+  decide
 
 end Coppock2018

@@ -111,6 +111,9 @@ def neg : Trivalent → Trivalent
 
 @[simp] theorem neg_indet : neg .indet = .indet := rfl
 
+@[simp] theorem neg_eq_indet_iff {a : Trivalent} : neg a = .indet ↔ a = .indet := by
+  cases a <;> decide
+
 theorem neg_involutive : Function.Involutive (neg : Trivalent → Trivalent) := neg_neg
 
 /-- Strong Kleene negation is antitone (order-reversing). -/
@@ -236,6 +239,22 @@ def ofBool : Bool → Trivalent
   | Bool.false => .false
 
 instance : Coe Bool Trivalent := ⟨ofBool⟩
+
+/-- The value of a decidable proposition: `true` or `false`, never `indet`. -/
+def ofProp (P : Prop) [Decidable P] : Trivalent := ofBool (decide P)
+
+@[simp] theorem ofProp_eq_true_iff {P : Prop} [Decidable P] : ofProp P = .true ↔ P := by
+  by_cases h : P <;> simp [ofProp, ofBool, h]
+
+@[simp] theorem ofProp_eq_false_iff {P : Prop} [Decidable P] : ofProp P = .false ↔ ¬ P := by
+  by_cases h : P <;> simp [ofProp, ofBool, h]
+
+@[simp] theorem ofProp_ne_indet {P : Prop} [Decidable P] : ofProp P ≠ .indet := by
+  by_cases h : P <;> simp [ofProp, ofBool, h]
+
+@[simp] theorem ofProp_true [Decidable True] : ofProp True = .true := ofProp_eq_true_iff.2 trivial
+
+@[simp] theorem ofProp_false [Decidable False] : ofProp False = .false := ofProp_eq_false_iff.2 id
 
 /-- A value is defined when it is not `indet`. -/
 def isDefined : Trivalent → Prop
@@ -407,6 +426,18 @@ def presuppose : Trivalent → Trivalent
 @[simp] theorem presuppose_true : presuppose .true = .true := rfl
 @[simp] theorem presuppose_false : presuppose .false = .indet := rfl
 @[simp] theorem presuppose_indet : presuppose .indet = .indet := rfl
+
+@[simp] theorem meetWeak_true_left (a : Trivalent) : meetWeak .true a = a := by cases a <;> rfl
+
+/-- A presupposed conjunct makes the Weak Kleene conjunction undefined unless it is true. -/
+theorem meetWeak_presuppose_eq_indet_iff (a b : Trivalent) :
+    meetWeak (presuppose a) b = .indet ↔ a ≠ .true ∨ b = .indet := by
+  cases a <;> cases b <;> decide
+
+/-- The Weak Kleene conjunction with a presupposed conjunct is true iff both are. -/
+theorem meetWeak_presuppose_eq_true_iff (a b : Trivalent) :
+    meetWeak (presuppose a) b = .true ↔ a = .true ∧ b = .true := by
+  cases a <;> cases b <;> decide
 
 /-- Meta-asserting a presupposed value falsifies undefinedness: `𝒜 ∘ ∂` sends
 exactly `.true` to `.true`. -/
