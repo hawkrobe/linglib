@@ -13,7 +13,7 @@ argument (complement of the lexical core) and the external argument
 positions an argument-introducing locus (root, functional head,
 derivational operator) contributes. Valencies form the Boolean lattice
 `Finset ArgPosition`; introducers compose by `∪`, and valency-changing
-operations ([creissels-2025]) are maps on the lattice.
+operations ([creissels-2024]) are maps on the lattice.
 
 [coon-2019]'s division of labor is stated as predicates over valencies
 (`IsRootValency`, `IsVoiceValency`), not baked into a type: roots

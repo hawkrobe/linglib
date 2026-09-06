@@ -16,7 +16,7 @@ Voice heads introduce (or fail to introduce) external arguments
 ## Main definitions
 
 * `Flavor` — the guise typology (after [schaefer-2008]), with projections
-  onto neighboring substrates: `alternation` ([creissels-2025] coding-frame
+  onto neighboring substrates: `alternation` ([creissels-2024] coding-frame
   operation), `thetaRole`, `defaultPhasal`, `recipFormation` ([siloni-2012]).
 * `Head` — a flavor plus featural and per-construction properties, with the
   predicate API `IsPhasal`/`AssignsTheta`/`HasSemantics`/`IntroducesExternal`/
@@ -72,7 +72,7 @@ inductive Flavor where
 
 /-! ### Flavor projections -/
 
-/-- The [creissels-2025] valency alternation each flavor realizes; `none`
+/-- The [creissels-2024] valency alternation each flavor realizes; `none`
     when the coding frame is untouched or the effect is not a valency
     operation. -/
 def Flavor.alternation : Flavor → Option _root_.Voice.ValencyAlternation

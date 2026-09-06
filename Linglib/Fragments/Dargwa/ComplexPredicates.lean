@@ -212,7 +212,7 @@ theorem tr_causative_elat_causee :
     never controls person or gender agreement). Only available in
     imperfective forms. Affective verbs are excluded.
 
-    This maps to [creissels-2025]'s `antipassivization`: A is
+    This maps to [creissels-2024]'s `antipassivization`: A is
     maintained (becomes S), P is denucleativized. -/
 def antipassive : Voice.ValencyAlternation :=
   Voice.antipassivization
@@ -223,7 +223,7 @@ def antipassive : Voice.ValencyAlternation :=
     This is characteristic of verbs denoting situations that can occur with
     or without an agent (break, open, fill).
 
-    Maps to [creissels-2025]'s `P_ambitransitivity`: uncoded
+    Maps to [creissels-2024]'s `P_ambitransitivity`: uncoded
     decausativization where S = initial P. -/
 def pLability : Voice.AmbitransitivityType :=
   .P_ambitransitivity

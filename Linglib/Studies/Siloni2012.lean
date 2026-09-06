@@ -253,7 +253,7 @@ Reciprocalization eliminates the internal argument position and leaves the
 subject carrying both profiles' entailments — a bundled complex role in
 the lexicon ((35)–(36)), two separately assigned roles in the syntax
 ((43)). On the Dowty substrate the profile content is `EntailmentProfile`'s
-join over a transitive `RoleList`; realizes [creissels-2025]'s
+join over a transitive `RoleList`; realizes the valency substrate's
 `Voice.reciprocalization` coding-frame operation (both core roles
 cumulated, derived construction intransitive). -/
 
