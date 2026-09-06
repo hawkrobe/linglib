@@ -2991,3 +2991,4 @@ import Linglib.Data.Examples.Comrie1989
 import Linglib.Data.Examples.Condoravdi2002
 import Linglib.Data.Examples.CoonKeine2021
 import Linglib.Data.Examples.CoonMateoPedroPreminger2014
+import Linglib.Data.Examples.Cooper2023

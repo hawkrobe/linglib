@@ -1212,7 +1212,7 @@
   subfield  = {semantics/dynamic},
   role      = {cited},
   validated = {true},
-  sources   = {Studies/HaugDalrymple2020.lean;Studies/Spector2025.lean}
+  sources   = {Studies/HaugDalrymple2020.lean;Studies/Spector2025.lean;Studies/Cooper2023.lean}
 }
 @article{cremers-wilcox-spector-2023,
   author    = {Cremers, Alexandre and Wilcox, Ethan G. and Spector, Benjamin},
@@ -5608,7 +5608,7 @@
 @article{kanazawa-1994,
   author    = {Kanazawa, Makoto},
   year      = {1994},
-  title     = {Weak vs.\\ Strong Readings of Donkey Sentences},
+  title     = {Weak vs.\\ Strong Readings of Donkey Sentences and Monotonicity Inference in a Dynamic Setting},
   journal   = {Linguistics and Philosophy},
   volume    = {17},
   number    = {2},
@@ -5617,7 +5617,7 @@
   role      = {cited},
   doi       = {10.1007/bf00984775},
   validated = {true},
-  sources   = {Studies/Cooper2023/Basic.lean;Studies/Cooper2023/Ch8.lean}
+  sources   = {Studies/Cooper2023.lean}
 }% REF: Fagin, R., Halpern, J., Moses, Y. & Vardi, M. (1995). Reasoning about Knowledge. MIT Press.
 @article{fagin-halpern-1994,
   author    = {Fagin, Ronald and Halpern, Joseph Y.},
@@ -14052,7 +14052,7 @@
   validated = {true},
   sources   = {Semantics/Quantification/DomainRestriction.lean}
 }% REF: Chierchia, G. (1995). Individual-Level Predicates as Inherent Generics.
-@incollection{chierchia-1995,
+@incollection{chierchia-1995a,
   author    = {Chierchia, Gennaro},
   year      = {1995},
   title     = {Individual-Level Predicates as Inherent Generics},
@@ -14064,7 +14064,7 @@
     validated = {true},
   subfield  = {semantics/lexical},
   role      = {cited},
-  sources   = {Studies/Cooper2023/Ch8.lean;Core/Logic/CylindricAlgebra.lean;Semantics/Genericity/Basic.lean}
+  sources   = {Semantics/Genericity/Basic.lean}
 }% REF: Cutting, J.E. & Vishton, P.M. (1995). Perceiving layout and knowing distances.
 @incollection{cutting-vishton-1995,
   author    = {Cutting, James and Vishton, Peter},
@@ -15189,7 +15189,7 @@
   subfield  = {semantics/compositional},
   role      = {cited},
   validated = {true},
-  sources   = {Studies/ChatzikyriakidisEtAl2025.lean}
+  sources   = {Studies/ChatzikyriakidisEtAl2025.lean;Studies/Cooper2023.lean}
 }% REF: Hintikka, J. (1969). Knowledge and Belief.
 @book{hamblin-1970,
   author    = {Hamblin, Charles L.},
@@ -41782,4 +41782,89 @@
   subfield  = {syntax},
   role      = {cited},
   sources   = {Studies/CoonMateoPedroPreminger2014.lean;Data/Examples/CoonMateoPedroPreminger2014.json}
+}
+@article{evans-1980,
+  author    = {Evans, Gareth},
+  year      = {1980},
+  title     = {Pronouns},
+  journal   = {Linguistic Inquiry},
+  volume    = {11},
+  pages     = {337--362},
+  subfield  = {semantics/anaphora},
+  role      = {cited},
+  sources   = {Data/Examples/Cooper2023.json}
+}
+@incollection{cooper-1979,
+  author    = {Cooper, Robin},
+  year      = {1979},
+  title     = {The Interpretation of Pronouns},
+  booktitle = {Selections from the Third {Groningen} Round Table},
+  series    = {Syntax and Semantics},
+  volume    = {10},
+  editor    = {Heny, Frank and Schnelle, Helmut},
+  publisher = {Academic Press},
+  pages     = {61--92},
+  subfield  = {semantics/anaphora},
+  role      = {cited},
+  sources   = {Data/Examples/Cooper2023.json}
+}
+@incollection{schubert-pelletier-1989,
+  author    = {Schubert, Lenhart K. and Pelletier, Francis Jeffry},
+  year      = {1989},
+  title     = {Generically Speaking, or, Using Discourse Representation Theory to Interpret Generics},
+  booktitle = {Properties, Types and Meaning, Volume {II}: Semantic Issues},
+  editor    = {Chierchia, Gennaro and Partee, Barbara H. and Turner, Raymond},
+  publisher = {Kluwer},
+  pages     = {193--268},
+  doi       = {10.1007/978-94-009-2723-0_6},
+  subfield  = {semantics/genericity},
+  role      = {cited},
+  sources   = {Data/Examples/Cooper2023.json}
+}
+@book{chierchia-1995b,
+  author    = {Chierchia, Gennaro},
+  year      = {1995},
+  title     = {Dynamics of Meaning: Anaphora, Presupposition, and the Theory of Grammar},
+  publisher = {University of Chicago Press},
+  doi       = {10.7208/chicago/9780226104515.001.0001},
+  subfield  = {semantics/dynamic},
+  role      = {cited},
+  sources   = {Studies/Cooper2023.lean;Data/Examples/Cooper2023.json;Logic/CylindricAlgebra.lean}
+}
+@article{moxey-sanford-1987,
+  author    = {Moxey, Linda M. and Sanford, Anthony J.},
+  year      = {1987},
+  title     = {Quantifiers and Focus},
+  journal   = {Journal of Semantics},
+  volume    = {5},
+  number    = {3},
+  pages     = {189--206},
+  doi       = {10.1093/jos/5.3.189},
+  subfield  = {semantics/anaphora},
+  role      = {cited},
+  sources   = {Semantics/Quantification/Witness.lean}
+}
+@article{denic-sudo-2022,
+  author    = {Deni\'{c}, Milica and Sudo, Yasutada},
+  year      = {2022},
+  title     = {Donkey Anaphora in Non-Monotonic Environments},
+  journal   = {Journal of Semantics},
+  volume    = {39},
+  number    = {3},
+  pages     = {443--474},
+  doi       = {10.1093/jos/ffac005},
+  subfield  = {semantics/anaphora},
+  role      = {cited},
+  sources   = {Studies/Cooper2023.lean}
+}
+@book{portner-2009,
+  author    = {Portner, Paul},
+  year      = {2009},
+  title     = {Modality},
+  series    = {Oxford Surveys in Semantics and Pragmatics},
+  volume    = {1},
+  publisher = {Oxford University Press},
+  subfield  = {semantics/modality},
+  role      = {cited},
+  sources   = {Data/Examples/Cooper2023.json}
 }

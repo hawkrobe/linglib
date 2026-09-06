@@ -1,0 +1,1126 @@
+[
+  {
+    "id": "cooper2023_3_89",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 3, (89)"
+    },
+    "language": "stan1293",
+    "primaryText": "A conductor is Dudamel",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A conductor is Dudamel",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "chapter",
+        "3"
+      ],
+      [
+        "phenomenon",
+        "predication"
+      ]
+    ],
+    "comment": "Marked # by Cooper: truth-conditionally equivalent to Dudamel is a conductor by the compositional contents (94), but the construction-based content conductor(d) (92a) is available only to the latter."
+  },
+  {
+    "id": "cooper2023_6_25",
+    "source": {
+      "bibkey": "portner-2009",
+      "paperLabel": "p. 49"
+    },
+    "reportedIn": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 6, (25)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary should eat her broccoli",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary should eat her broccoli",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "deontic",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "bouletic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "6"
+      ],
+      [
+        "phenomenon",
+        "modality"
+      ]
+    ],
+    "comment": "Portner's example: bouletic when the fact that Mary loves broccoli is at issue, deontic when children are to eat everything on their plates; the deontic and the bouletic topos (28) each witness the necessity (29)."
+  },
+  {
+    "id": "cooper2023_7_27",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (27)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every dog ran into the field. They had seen the rabbits.",
+    "discourseSegments": [
+      "Every dog ran into the field.",
+      "They had seen the rabbits."
+    ],
+    "glossedTokens": [],
+    "translation": "Every dog ran into the field. They had seen the rabbits.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "maxset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "every"
+      ]
+    ],
+    "comment": "Plural discourse anaphora to a universal antecedent: a bare function witness for every yields no witness set for they to pick up."
+  },
+  {
+    "id": "cooper2023_7_64",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (64)"
+    },
+    "language": "stan1293",
+    "primaryText": "A dog is barking. It is right outside my window",
+    "discourseSegments": [
+      "A dog is barking.",
+      "It is right outside my window"
+    ],
+    "glossedTokens": [],
+    "translation": "A dog is barking. It is right outside my window",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "refset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "a"
+      ]
+    ],
+    "comment": "Singular anaphora to the x-field of the particular witness (63)."
+  },
+  {
+    "id": "cooper2023_7_66",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (66)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some dogs are barking. They are right outside my window.",
+    "discourseSegments": [
+      "Some dogs are barking.",
+      "They are right outside my window."
+    ],
+    "glossedTokens": [],
+    "translation": "Some dogs are barking. They are right outside my window.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "refset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "some"
+      ]
+    ],
+    "comment": "Plural anaphora to the witness set of the general condition (65); no particular condition is needed."
+  },
+  {
+    "id": "cooper2023_7_71",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (71)"
+    },
+    "language": "stan1293",
+    "primaryText": "No dog barked. They were all busy gnawing on a bone.",
+    "discourseSegments": [
+      "No dog barked.",
+      "They were all busy gnawing on a bone."
+    ],
+    "glossedTokens": [],
+    "translation": "No dog barked. They were all busy gnawing on a bone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "compset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "no"
+      ]
+    ],
+    "comment": "They picks up the witness set of type every-w(dog'), the dogs which did not bark: complement set anaphora (Moxey and Sanford), evidence for the particular condition (70) over the general one (67)."
+  },
+  {
+    "id": "cooper2023_7_73",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (73)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every dog barked. They had been disturbed by the intruder.",
+    "discourseSegments": [
+      "Every dog barked.",
+      "They had been disturbed by the intruder."
+    ],
+    "glossedTokens": [],
+    "translation": "Every dog barked. They had been disturbed by the intruder.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "maxset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "every"
+      ]
+    ],
+    "comment": "Plural discourse anaphora predicted by the general condition (72)."
+  },
+  {
+    "id": "cooper2023_7_75",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (75)"
+    },
+    "language": "stan1293",
+    "primaryText": "Most dogs bark when somebody unknown comes into their territory. They are disturbed by an intruder.",
+    "discourseSegments": [
+      "Most dogs bark when somebody unknown comes into their territory.",
+      "They are disturbed by an intruder."
+    ],
+    "glossedTokens": [],
+    "translation": "Most dogs bark when somebody unknown comes into their territory. They are disturbed by an intruder.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "refset",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "maxset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "most"
+      ]
+    ],
+    "comment": "They refers to the witness set containing most dogs (REFSET) or to dogs in general (MAXSET); Cooper leaves the source of the MAXSET reading unresolved."
+  },
+  {
+    "id": "cooper2023_7_76",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (76)"
+    },
+    "language": "stan1293",
+    "primaryText": "Most dogs bark when somebody unknown comes into their territory. They never feel threatened whatever happens.",
+    "discourseSegments": [
+      "Most dogs bark when somebody unknown comes into their territory.",
+      "They never feel threatened whatever happens."
+    ],
+    "glossedTokens": [],
+    "translation": "Most dogs bark when somebody unknown comes into their territory. They never feel threatened whatever happens.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "compset",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "most"
+      ]
+    ],
+    "comment": "Cooper's # marks the COMPSET reading: they cannot refer to the dogs which do not bark (Nouwen), consistent with the general condition (74)."
+  },
+  {
+    "id": "cooper2023_7_87",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (87)"
+    },
+    "language": "stan1293",
+    "primaryText": "Few dogs in the kennels barked. They didn't hear the intruder.",
+    "discourseSegments": [
+      "Few dogs in the kennels barked.",
+      "They didn't hear the intruder."
+    ],
+    "glossedTokens": [],
+    "translation": "Few dogs in the kennels barked. They didn't hear the intruder.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "compset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "few"
+      ]
+    ],
+    "comment": "COMPSET anaphora predicted by the particular condition (85)–(86) with the complement witness set."
+  },
+  {
+    "id": "cooper2023_7_88",
+    "source": {
+      "bibkey": "evans-1980",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (88)"
+    },
+    "language": "stan1293",
+    "primaryText": "Few congressmen admire Kennedy, and they are very junior.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Few congressmen admire Kennedy, and they are very junior.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "refset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "few"
+      ]
+    ],
+    "comment": "Quoted by Cooper from Nouwen's discussion of Evans: REFSET anaphora with few, predicted by the general condition (79)–(80) rather than the particular one."
+  },
+  {
+    "id": "cooper2023_7_91",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (91)"
+    },
+    "language": "stan1293",
+    "primaryText": "A few dogs barked. They had heard the intruder.",
+    "discourseSegments": [
+      "A few dogs barked.",
+      "They had heard the intruder."
+    ],
+    "glossedTokens": [],
+    "translation": "A few dogs barked. They had heard the intruder.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "refset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "a few"
+      ]
+    ],
+    "comment": "REFSET anaphora predicted by the general condition (89)–(90)."
+  },
+  {
+    "id": "cooper2023_7_92",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (92)"
+    },
+    "language": "stan1293",
+    "primaryText": "A few dogs barked. They hadn't heard the intruder",
+    "discourseSegments": [
+      "A few dogs barked.",
+      "They hadn't heard the intruder"
+    ],
+    "glossedTokens": [],
+    "translation": "A few dogs barked. They hadn't heard the intruder",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "compset",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "a few"
+      ]
+    ],
+    "comment": "Cooper's # marks the COMPSET reading: they cannot refer to the dogs that did not bark, since only the general condition is available."
+  },
+  {
+    "id": "cooper2023_7_103a",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (103a)"
+    },
+    "language": "stan1293",
+    "primaryText": "A dog barked. They do when they notice an intruder.",
+    "discourseSegments": [
+      "A dog barked.",
+      "They do when they notice an intruder."
+    ],
+    "glossedTokens": [],
+    "translation": "A dog barked. They do when they notice an intruder.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "maxset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "a"
+      ]
+    ],
+    "comment": "They is dogs in general, the restr path of the content (102); Cooper: we could potentially have all of the anaphora in (103)."
+  },
+  {
+    "id": "cooper2023_7_103d",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (103d)"
+    },
+    "language": "stan1293",
+    "primaryText": "A dog barked. It heard an intruder.",
+    "discourseSegments": [
+      "A dog barked.",
+      "It heard an intruder."
+    ],
+    "glossedTokens": [],
+    "translation": "A dog barked. It heard an intruder.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "refset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "a"
+      ]
+    ],
+    "comment": "It is the dog which barked, the x-field of the witness (100)."
+  },
+  {
+    "id": "cooper2023_7_108a",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (108a)"
+    },
+    "language": "stan1293",
+    "primaryText": "No dog barked. They normally do when they notice an intruder.",
+    "discourseSegments": [
+      "No dog barked.",
+      "They normally do when they notice an intruder."
+    ],
+    "glossedTokens": [],
+    "translation": "No dog barked. They normally do when they notice an intruder.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "maxset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "no"
+      ]
+    ],
+    "comment": "They is dogs in general, the restr path of the content (107)."
+  },
+  {
+    "id": "cooper2023_7_108d",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (108d)"
+    },
+    "language": "stan1293",
+    "primaryText": "No dog barked. They did not hear the intruder.",
+    "discourseSegments": [
+      "No dog barked.",
+      "They did not hear the intruder."
+    ],
+    "glossedTokens": [],
+    "translation": "No dog barked. They did not hear the intruder.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "compset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "no"
+      ]
+    ],
+    "comment": "They is the dogs which did not bark, the X-field of the witness (106)."
+  },
+  {
+    "id": "cooper2023_7_113a",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (113a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Few dogs barked. They normally do when they notice an intruder.",
+    "discourseSegments": [
+      "Few dogs barked.",
+      "They normally do when they notice an intruder."
+    ],
+    "glossedTokens": [],
+    "translation": "Few dogs barked. They normally do when they notice an intruder.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "maxset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "few"
+      ]
+    ],
+    "comment": "They is dogs in general, the restr path of the content (112)."
+  },
+  {
+    "id": "cooper2023_7_113d",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 7, (113d)"
+    },
+    "language": "stan1293",
+    "primaryText": "Few dogs barked. They did not hear the intruder.",
+    "discourseSegments": [
+      "Few dogs barked.",
+      "They did not hear the intruder."
+    ],
+    "glossedTokens": [],
+    "translation": "Few dogs barked. They did not hear the intruder.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "compset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "7"
+      ],
+      [
+        "quantifier",
+        "few"
+      ]
+    ],
+    "comment": "They is the dogs which did not bark, the X-field of the witness (111); Cooper notes, after an anonymous referee, a possible garden-path effect on this reading."
+  },
+  {
+    "id": "cooper2023_8_1",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 8, (1)"
+    },
+    "language": "stan1293",
+    "primaryText": "every boy hugged a dog",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "every boy hugged a dog",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "every > a",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "a > every",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "8"
+      ],
+      [
+        "phenomenon",
+        "scope"
+      ]
+    ],
+    "comment": "(1a) every boy is such that there is a dog he hugged, (1b) there is a dog every boy hugged: the content type has both as witnesses."
+  },
+  {
+    "id": "cooper2023_8_2a",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 8, (2a)"
+    },
+    "language": "stan1293",
+    "primaryText": "a boy hugged every dog",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a boy hugged every dog",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "a > every",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "every > a",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "8"
+      ],
+      [
+        "phenomenon",
+        "scope"
+      ]
+    ],
+    "comment": "(2b) is the reading with the boy outermost; the wide scope of every dog comes from storage (17) and retrieval (19)."
+  },
+  {
+    "id": "cooper2023_8_46a",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 8, (46a)"
+    },
+    "language": "stan1293",
+    "primaryText": "No dog which chases a cat catches it",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "No dog which chases a cat catches it",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "it = a cat",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "8"
+      ],
+      [
+        "phenomenon",
+        "donkey anaphora"
+      ]
+    ],
+    "comment": "Donkey anaphora treated as discourse anaphora within the scope property (54)–(55): no dog catches any cat it chases."
+  },
+  {
+    "id": "cooper2023_8_46b",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 8, (46b)"
+    },
+    "language": "stan1293",
+    "primaryText": "No dog which chases every cat catches it",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "No dog which chases every cat catches it",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "it = every cat",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "8"
+      ],
+      [
+        "phenomenon",
+        "donkey anaphora"
+      ]
+    ],
+    "comment": "Cooper: it is difficult to relate the singular pronoun to every cat, as in the discourse anaphora of (46d)."
+  },
+  {
+    "id": "cooper2023_8_46c",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 8, (46c)"
+    },
+    "language": "stan1293",
+    "primaryText": "No dog which chases every cat catches them",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "No dog which chases every cat catches them",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "them = every cat",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "8"
+      ],
+      [
+        "phenomenon",
+        "donkey anaphora"
+      ]
+    ],
+    "comment": "The plural pronoun relates to every cat, as in the discourse anaphora of (46e)."
+  },
+  {
+    "id": "cooper2023_8_46d",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 8, (46d)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every cat miaowed. It wanted milk.",
+    "discourseSegments": [
+      "Every cat miaowed.",
+      "It wanted milk."
+    ],
+    "glossedTokens": [],
+    "translation": "Every cat miaowed. It wanted milk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "it = every cat",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "8"
+      ],
+      [
+        "phenomenon",
+        "discourse anaphora"
+      ]
+    ],
+    "comment": "Cooper: it is difficult to relate the singular pronoun to every cat."
+  },
+  {
+    "id": "cooper2023_8_46e",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 8, (46e)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every cat miaowed. They wanted milk.",
+    "discourseSegments": [
+      "Every cat miaowed.",
+      "They wanted milk."
+    ],
+    "glossedTokens": [],
+    "translation": "Every cat miaowed. They wanted milk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "maxset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "8"
+      ],
+      [
+        "quantifier",
+        "every"
+      ]
+    ],
+    "comment": "The plural pronoun relates easily to every cat."
+  },
+  {
+    "id": "cooper2023_8_56a",
+    "source": {
+      "bibkey": "schubert-pelletier-1989",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 8, (56a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every person who had a dime put it in the parking meter",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every person who had a dime put it in the parking meter",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "weak",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "strong",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "8"
+      ],
+      [
+        "phenomenon",
+        "donkey anaphora"
+      ]
+    ],
+    "comment": "Does not suggest that anyone who had several dimes put them all in the meter: the weak reading, from the existential purification (59)."
+  },
+  {
+    "id": "cooper2023_8_56b",
+    "source": {
+      "bibkey": "cooper-1979",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 8, (56b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every man who has a daughter thinks she is the most beautiful girl in the world",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every man who has a daughter thinks she is the most beautiful girl in the world",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "weak",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "strong",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "8"
+      ],
+      [
+        "phenomenon",
+        "donkey anaphora"
+      ]
+    ],
+    "comment": "Does not commit a man with two daughters to the contradictory belief that each is the one most beautiful girl."
+  },
+  {
+    "id": "cooper2023_8_57",
+    "source": {
+      "bibkey": "chierchia-1995b",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 8, (57)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every man who owned a slave owned his offspring",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every man who owned a slave owned his offspring",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "strong",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "weak",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "8"
+      ],
+      [
+        "phenomenon",
+        "donkey anaphora"
+      ]
+    ],
+    "comment": "A modification of an example in Heim (1990), which Chierchia uses to argue for the strong reading, from the universal purification (60), (66): one man owning a slave but not the slave's offspring falsifies it. Cooper finds the case of a slave with several offspring, one owned by somebody else, unclear."
+  },
+  {
+    "id": "cooper2023_8_67",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 8, (67)"
+    },
+    "language": "stan1293",
+    "primaryText": "Sam likes him",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Sam likes him",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "him = Sam",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "8"
+      ],
+      [
+        "phenomenon",
+        "binding"
+      ]
+    ],
+    "comment": "Principle B: him cannot be anaphorically related to Sam within the clause, though the two may refer to the same individual, as when Sam likes the person described on a page he does not realise is about himself."
+  },
+  {
+    "id": "cooper2023_8_man_walked",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 8, §8.3, (37)–(44)"
+    },
+    "language": "stan1293",
+    "primaryText": "A man walked. He whistled.",
+    "discourseSegments": [
+      "A man walked.",
+      "He whistled."
+    ],
+    "glossedTokens": [],
+    "translation": "A man walked. He whistled.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "refset",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "8"
+      ],
+      [
+        "quantifier",
+        "a"
+      ]
+    ],
+    "comment": "Cross-sentential anaphora: the previous content is merged into the context under the label for the previous utterance and the pronoun's path identified with the man's."
+  },
+  {
+    "id": "cooper2023_8_no_girl",
+    "source": {
+      "bibkey": "cooper-2023",
+      "paperLabel": "Ch. 8, §8.3, (30)–(36)"
+    },
+    "language": "stan1293",
+    "primaryText": "No girl thinks she failed",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "No girl thinks she failed",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "she bound by no girl",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "chapter",
+        "8"
+      ],
+      [
+        "phenomenon",
+        "binding"
+      ]
+    ],
+    "comment": "The stored no girl leaves a pronoun path in the context which anaphoric combination relates to she; retrieval quantifies over the property of being a girl who thinks she failed."
+  }
+]
