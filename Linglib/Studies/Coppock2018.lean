@@ -324,13 +324,13 @@ variable (o : Ω)
 /-- A *tycka* report is undefined exactly when its complement is not strongly discretionary
 relative to the state: the subjectivity requirement is a presupposition, (28)–(29). -/
 theorem tycka_eq_indet_iff : tycka ρ R p C o = .indet ↔ ¬ StronglyDiscretionaryOn ρ p C := by
-  simp [tycka, meetWeak_presuppose_eq_indet_iff]
+  simp [tycka]
 
 /-- A *tycka* report is true iff its complement is strongly discretionary and the agent
 accepts it. -/
 theorem tycka_eq_true_iff :
     tycka ρ R p C o = .true ↔ StronglyDiscretionaryOn ρ p C ∧ Accepts R p o := by
-  simp [tycka, meetWeak_presuppose_eq_true_iff]
+  simp [tycka]
 
 /-- *tycka* and *think* agree wherever the former is defined: the verbs differ only in the
 presupposition. -/

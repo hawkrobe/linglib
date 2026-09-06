@@ -128,7 +128,8 @@ variable [DecidableRel (Exclusive (E := E))] {P : Prop3 E} {x : E}
 theorem only_eq_true_iff : only P x = .true ↔ P x = .true ∧ Exclusive P x := by simp [only]
 
 theorem only_eq_false_iff : only P x = .false ↔ P x = .true ∧ ∃ y, y ≠ x ∧ P y = .true := by
-  simp only [only, meetWeak_presuppose_eq_false_iff, ofProp_eq_false_iff, not_exclusive_iff]
+  simp only [only, meetWeak_eq_false_iff, presuppose_ne_false, presuppose_eq_indet_iff,
+    ofProp_eq_false_iff, not_exclusive_iff, false_and, false_or, ne_eq, not_not]
 
 /-- *Only* presupposes its prejacent. -/
 theorem only_eq_indet_iff : only P x = .indet ↔ P x ≠ .true := by simp [only]
