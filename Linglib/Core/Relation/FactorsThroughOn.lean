@@ -1,6 +1,8 @@
 import Mathlib.Logic.Function.Basic
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Set.Finite.Range
+import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
 # Factor-through on a subset
@@ -21,6 +23,8 @@ equality of `g a` and `g b`.
   restricts to any subset.
 * `Function.not_factorsThroughOn_iff_exists_witness`: refutation by a
   pair of in-set points agreeing on `f` and differing on `g`.
+* `Function.FactorsThrough.card_range_le`: a function that factors through
+  another takes no more values.
 -/
 
 namespace Function
@@ -74,5 +78,12 @@ instance {g : α → γ} {f : α → β} {s : Set α}
     [Fintype α] [DecidablePred (· ∈ s)] [DecidableEq β] [DecidableEq γ] :
     Decidable (FactorsThroughOn g f s) := by
   unfold FactorsThroughOn; infer_instance
+
+/-- A function that factors through another takes no more values. -/
+theorem FactorsThrough.card_range_le [Finite α] {g : α → γ} {f : α → β}
+    (h : FactorsThrough g f) : Nat.card (Set.range g) ≤ Nat.card (Set.range f) := by
+  refine Nat.card_le_card_of_surjective (λ b => ⟨g b.2.choose, b.2.choose, rfl⟩) ?_
+  rintro ⟨_, a, rfl⟩
+  exact ⟨⟨f a, a, rfl⟩, Subtype.ext (h (⟨a, rfl⟩ : ∃ a', f a' = f a).choose_spec)⟩
 
 end Function

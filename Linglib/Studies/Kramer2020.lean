@@ -25,7 +25,7 @@ semantic core from the structural account alone.
 ## Main definitions
 
 * `IsCore`, `SatisfiesSemanticCore`: the properties of (3) and the
-  generalization (2) over [corbett-1991]'s profiles.
+  generalization (2) over [corbett-1991]'s survey of assignment systems.
 * `Remainder`: a language's core and remainder genders and the cells of
   Table 2.
 * `declensionGender`: [corbett-1991]'s declension rule (18) for Russian.
@@ -56,7 +56,6 @@ semantic core from the structural account alone.
 
 namespace Kramer2020
 
-open Corbett1991 (SemanticBasis Profile allProfiles)
 open scoped DistributedMorphology.VocabularyItem
 open DistributedMorphology
 open Spanish.Gender (SpanishNoun)
@@ -66,20 +65,20 @@ open Russian.Gender (DeclClass)
 
 /-- The minimal properties of (3): animacy, humanness, and social gender or
 biological sex. -/
-def IsCore : SemanticBasis → Prop
+def IsCore : Corbett1991.Criterion → Prop
   | .animacy | .humanness | .sex => True
-  | .shape | .rationality => False
+  | _ => False
 
 instance : DecidablePred IsCore := fun b => by cases b <;> unfold IsCore <;> infer_instance
 
 /-- The semantic core generalization (2): a language with gender assigns it
 to some nouns by a property of (3). -/
-def SatisfiesSemanticCore (p : Profile) : Prop :=
-  p.rawCount = 0 ∨ ∃ b ∈ p.semanticBases, IsCore b
+def SatisfiesSemanticCore (e : Corbett1991.SurveyEntry) : Prop := ∃ b ∈ e.criteria, IsCore b
 
-instance : DecidablePred SatisfiesSemanticCore := fun _ => inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred SatisfiesSemanticCore := λ _ => by
+  unfold SatisfiesSemanticCore; infer_instance
 
-theorem semantic_core_holds : ∀ p ∈ allProfiles, SatisfiesSemanticCore p := by decide
+theorem semantic_core_holds : ∀ e ∈ Corbett1991.survey, SatisfiesSemanticCore e := by decide
 
 /-! ### Remainder nouns (§2.3.1) -/
 

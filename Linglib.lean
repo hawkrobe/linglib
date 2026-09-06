@@ -749,6 +749,7 @@ import Linglib.Features.WordOrder
 import Linglib.Fragments.ASL.Classifiers
 import Linglib.Fragments.ASL.Height
 import Linglib.Fragments.Abkhaz.Evidentiality
+import Linglib.Fragments.Afar.Gender
 import Linglib.Fragments.Adyghe.Clause
 import Linglib.Fragments.Akan.Determiners
 import Linglib.Fragments.Akan.Phonology
@@ -1115,6 +1116,7 @@ import Linglib.Fragments.Romance.Italian.Predicates
 import Linglib.Fragments.Romance.Italian.Reciprocals
 import Linglib.Fragments.Romance.Spanish.Predicates
 import Linglib.Fragments.Romance.Spanish.Reciprocals
+import Linglib.Fragments.Romanian.Gender
 import Linglib.Fragments.Romanian.MoodChoice
 import Linglib.Fragments.Sesotho.Morph
 import Linglib.Fragments.Shan.Classifiers
@@ -1181,6 +1183,7 @@ import Linglib.Fragments.Statimcets.Modals
 import Linglib.Fragments.Swahili.Adposition
 import Linglib.Fragments.Swahili.Basic
 import Linglib.Fragments.Swahili.Comparison
+import Linglib.Fragments.Swahili.Nouns
 import Linglib.Fragments.Swahili.Phonology
 import Linglib.Fragments.Swahili.Possession
 import Linglib.Fragments.Swahili.Predicates
@@ -1197,6 +1200,7 @@ import Linglib.Fragments.Tagalog.Pronouns
 import Linglib.Fragments.Tagalog.Relativization
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Tamil.Case
+import Linglib.Fragments.Tamil.Gender
 import Linglib.Fragments.Tamil.Pronouns
 import Linglib.Fragments.Tangale.Phonology
 import Linglib.Fragments.Tangale.TAM
@@ -2994,3 +2998,4 @@ import Linglib.Data.Examples.CoonMateoPedroPreminger2014
 import Linglib.Data.Examples.Cooper2023
 import Linglib.Data.Examples.Coppock2018
 import Linglib.Data.Examples.CoppockBeaver2015
+import Linglib.Data.Examples.Corbett1991
