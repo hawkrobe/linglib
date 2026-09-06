@@ -6,7 +6,7 @@ import Linglib.Syntax.Clause.ArgumentRole
 # Valency Alternation Typology
 
 [comrie-1989] [dixon-1994] [dixon-aikhenvald-2000] [song-1996]
-[creissels-2025] [levin-1993]
+[creissels-2024] [levin-1993]
 
 A framework-neutral vocabulary for describing valency alternations
 cross-linguistically. The underlying typology of valency-changing operations —
@@ -14,31 +14,31 @@ causative, anticausative/decausative, passive, antipassive, applicative,
 reflexive/reciprocal, and the increase or decrease of core arguments — is the
 cross-framework consensus of [comrie-1989], [dixon-1994] on
 ergativity and A/S/P, [dixon-aikhenvald-2000]'s *Changing Valency*, and
-[song-1996] on causatives. [creissels-2025] provides the modern
+[song-1996] on causatives. [creissels-2024] provides the modern
 synthesis and the nucleativization/denucleativization terminology used here;
 [levin-1993] supplies the English diathesis-alternation inventory bridged
 in the final section.
 
 This file is substrate: it defines the alternation *types*. Per-paper data and
 cross-linguistic distributions live in the consuming study files (e.g.
-`Studies/Creissels2025.lean`).
+`Studies/Creissels2024.lean`).
 
 Within `Syntax/Voice/` this file owns the **valency axis** (what happens to
 the coding frame); `Basic.lean` owns the **pivot axis** (which argument is
 the privileged one — orthogonal to valency, as Austronesian symmetrical
 voice shows); `Middle.lean` is the interaction case. "Voice" in
-[creissels-2025]'s sense is the *coded* subset of the alternations here
+[creissels-2024]'s sense is the *coded* subset of the alternations here
 (`AlternationMarking.isVoice`); the Voice functional head of Minimalist
 syntax projects onto these operations via
 `Voice.Flavor.alternation` (`Syntax/Minimalist/Verbal/Voice.lean`).
 
 ## TR-roles
 
-[creissels-2025] §1.3.3 defines Transitivity-Related roles (A, P, S, X)
-as *constructional* properties of nominal terms, not semantic roles. A is
-"the nominal term whose coding matches the agent of a prototypical transitive
-verb" — it's defined by coding (flagging, indexation, order), anchored to
-semantic prototypes. These are already captured by `ArgumentRole`
+[creissels-2024] §1.3.3 defines Transitivity-Related roles (A, P, S, X)
+as *constructional* properties of nominal terms, not semantic roles: A is
+the nominal term of a transitive clause coded like the agent of a
+prototypical transitive verb — defined by coding (flagging, indexation,
+order), anchored to semantic prototypes. These are already captured by `ArgumentRole`
 (S, A, P, R, T). This file adds X (oblique) as a `TermRole` classifying
 `ArgumentRole` with the non-core case.
 
@@ -59,7 +59,7 @@ nucleativized or denucleativized, and what TR-roles they acquire.
 alternation patterns. Each maps to a `ValencyAlternation` that specifies
 the structural effect. The key distinction: Levin alternations are often
 *uncoded* (flexivalency — no verbal morphology marks the alternation),
-while [creissels-2025]'s voice alternations are *coded* (marked by
+while [creissels-2024]'s voice alternations are *coded* (marked by
 verbal morphology). The `marking` field captures this.
 -/
 
@@ -71,7 +71,7 @@ open ArgumentStructure (DiathesisAlternation)
 -- § 1. Nominal-term roles (§1.3.3)
 -- ════════════════════════════════════════════════════
 
-/-- Role of a nominal term of a verbal clause in [creissels-2025]'s binary
+/-- Role of a nominal term of a verbal clause in [creissels-2024]'s binary
     core-term system: the core roles S, A, P, plus X for obliques.
     §1.3.3: "OBLIQUE NOMINAL TERMS (or simply OBLIQUES),
     symbolized as X, are defined as nominal terms of verbal clauses that do
@@ -311,30 +311,33 @@ def pApplicativization : ValencyAlternation :=
 
 /-- D-applicativization (§14.1.3): a non-nuclear
     participant is nucleativized as a dative oblique (a special oblique
-    type with core-term-like properties in many languages). -/
+    type with core-term-like properties in many languages); the initial A or S
+    is maintained whether the base is transitive or intransitive. -/
 def dApplicativization : ValencyAlternation :=
   { name := "D-applicativization"
   , fateOfA := .maintained
   , fateOfP := .maintained
-  , fateOfS := .na
+  , fateOfS := .maintained
   , newParticipant := some .X
   , initialTransitive := none
   , derivedTransitive := none }
 
 /-- X-applicativization (§14.1.4): a non-nuclear
-    participant is nucleativized as an ordinary oblique. -/
+    participant is nucleativized as an ordinary oblique; the initial A or S is
+    maintained whether the base is transitive or intransitive. -/
 def xApplicativization : ValencyAlternation :=
   { name := "X-applicativization"
   , fateOfA := .maintained
   , fateOfP := .maintained
-  , fateOfS := .na
+  , fateOfS := .maintained
   , newParticipant := some .X
   , initialTransitive := none
   , derivedTransitive := none }
 
 /-- A/S-nucleativization of obliques (§8.3.4.1):
     an oblique participant (e.g., an instrument) takes over the A or S role
-    in the derived construction. The nucleativized participant does NOT
+    in the derived construction, and the initial A cannot be expressed,
+    understood as non-specific. The nucleativized participant does NOT
     outrank the initial A/S in agentivity (distinguishing this from
     causativization).
 
@@ -342,7 +345,7 @@ def xApplicativization : ValencyAlternation :=
     'The gun will be used to kill antelopes' — instrument nucleativized as A. -/
 def asNucleativizationOfObliques : ValencyAlternation :=
   { name := "A/S-nucleativization of obliques"
-  , fateOfA := .maintained  -- initial A maintained (or .na if intransitive)
+  , fateOfA := .denucleativized  -- the initial A loses A coding but stays implied
   , fateOfP := .maintained
   , fateOfS := .na
   , newParticipant := some .A  -- oblique promoted to A
@@ -353,10 +356,10 @@ def asNucleativizationOfObliques : ValencyAlternation :=
     of a concernee (external possessor / adversely affected party) into
     the A role. The initial construction may be transitive or intransitive.
 
-    When initial is intransitive: S is maintained (becomes P-like), concernee
+    When initial is intransitive: S is converted into P, concernee
     becomes A, derived construction is transitive.
-    When initial is transitive: A is maintained, P is maintained, concernee
-    becomes an additional A-like participant.
+    When initial is transitive: the initial A is converted into P or
+    denucleativized and the concernee takes over the role of A.
 
     Example: Central Alaskan Yupik *Kit'-i-aqa kicaq*
     'I had the anchor sunk (me negatively affected)' — concernee as A. -/
@@ -427,7 +430,7 @@ structure ObligatoryCodingProfile where
     §8.2: cross-linguistically, voice markers are
     polysemous — the same morpheme may mark multiple voice alternation types.
     For example, Russian *-sja* marks reflexivization, reciprocalization,
-    passivization, and antipassivization (§8.2, ex. 8). -/
+    passivization, and antipassivization (§1.1.3, ex. 8). -/
 structure VoiceMarkerProfile where
   /-- Language name -/
   language : String
@@ -513,9 +516,13 @@ theorem reciprocalization_cumulates :
 theorem pApplicativization_increases :
     pApplicativization.isValencyIncreasing = true := rfl
 
-/-- A/S-nucleativization of obliques is valency-increasing. -/
-theorem as_nucleativization_increases :
-    asNucleativizationOfObliques.isValencyIncreasing = true := rfl
+/-- A/S-nucleativization of obliques nucleativizes the oblique and denucleativizes the
+    initial A, so it is neither valency-increasing nor valency-decreasing. -/
+theorem as_nucleativization_neutral :
+    asNucleativizationOfObliques.involvesNucleativization = true ∧
+    asNucleativizationOfObliques.involvesDenucleativization = true ∧
+    asNucleativizationOfObliques.isValencyIncreasing = false ∧
+    asNucleativizationOfObliques.isValencyDecreasing = false := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- Portative derivation is valency-increasing, like causativization and
     applicativization, but cannot be reduced to either (§8.3.7). -/

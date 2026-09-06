@@ -2087,7 +2087,7 @@ import Linglib.Studies.CoppockBeaver2015
 import Linglib.Studies.Corbett1991
 import Linglib.Studies.Corbett1998
 import Linglib.Studies.Corbett2000
-import Linglib.Studies.Creissels2025
+import Linglib.Studies.Creissels2024
 import Linglib.Studies.CremersWilcoxSpector2023
 import Linglib.Studies.Cresswell1976
 import Linglib.Studies.Cruse1973
@@ -3006,3 +3006,4 @@ import Linglib.Data.Examples.CoppockBeaver2015
 import Linglib.Data.Examples.Corbett1991
 import Linglib.Data.Examples.Corbett1998
 import Linglib.Data.Examples.Corbett2000
+import Linglib.Data.Examples.Creissels2024

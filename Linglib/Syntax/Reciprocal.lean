@@ -104,7 +104,7 @@ def Strategy.isNominal (s : Strategy) : Bool :=
 
 open Voice in
 /-- The coding-frame operation a strategy realizes: grammatical verb-marking
-strategies apply [creissels-2025]'s denucleativizing `reciprocalization`. -/
+strategies apply [creissels-2024]'s denucleativizing `reciprocalization`. -/
 def Strategy.alternation : Strategy → Option ValencyAlternation
   | .recipClitic | .verbalAffix | .verbalAuxiliary | .compoundVerb =>
       some reciprocalization

@@ -421,7 +421,7 @@ theorem deletion_not_monotonic :
 -- § 8. Bridge: Reflexivization ↔ ValencyAlternation
 -- ════════════════════════════════════════════════════
 
-/-! [koontz-garboden-2009]'s core claim is that what [creissels-2025]
+/-! [koontz-garboden-2009]'s core claim is that what the valency substrate
     calls `decausativization` (A suppressed from participant structure) is
     semantically `reflexivization` (A and P cumulated). The structural
     effect looks like decausativization — the derived construction is
