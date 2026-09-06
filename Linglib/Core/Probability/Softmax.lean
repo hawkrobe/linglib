@@ -2,6 +2,7 @@ import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Probability.Distributions.Uniform
 import Mathlib.MeasureTheory.Measure.Tilted
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
+import Mathlib.Analysis.SpecialFunctions.Sigmoid
 
 /-!
 # Softmax distribution on PMFs
@@ -271,3 +272,21 @@ theorem softmax_natMul_log_apply {α : Type*} [Fintype α] (n : ℕ) (w : α →
   simp_rw [softmaxWeight_natMul_log_eq_pow]
 
 end PMF
+
+/-! ## Two applicable atoms -/
+
+/-- The softmax of one of two real scores is the logistic function of their difference. -/
+theorem Real.exp_div_add_exp_eq_sigmoid (x y : ℝ) :
+    Real.exp x / (Real.exp x + Real.exp y) = Real.sigmoid (x - y) := by
+  have hx := Real.exp_pos x
+  have hy := Real.exp_pos y
+  rw [Real.sigmoid_def, neg_sub, Real.exp_sub]
+  field_simp
+
+/-- The `ℝ≥0∞` form of `Real.exp_div_add_exp_eq_sigmoid`: the softmax mass of an atom when
+exactly one other atom is applicable. -/
+theorem ENNReal.ofReal_exp_div_add_ofReal_exp (x y : ℝ) :
+    ENNReal.ofReal (Real.exp x) / (ENNReal.ofReal (Real.exp x) + ENNReal.ofReal (Real.exp y)) =
+      ENNReal.ofReal (Real.sigmoid (x - y)) := by
+  rw [← ENNReal.ofReal_add (Real.exp_pos x).le (Real.exp_pos y).le,
+    ← ENNReal.ofReal_div_of_pos (by positivity), Real.exp_div_add_exp_eq_sigmoid]

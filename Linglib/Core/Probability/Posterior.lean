@@ -516,6 +516,38 @@ theorem posterior_le_iff_score_le {α β : Type*} (κ : α → PMF β) (μ : PMF
   rw [← not_lt, ← not_lt, not_iff_not]
   exact posterior_lt_iff_score_lt κ μ b h a₂ a₁
 
+/-- **The posterior exceeds the prior** at `a` exactly when the likelihood of the observation
+at `a` exceeds its marginal likelihood. -/
+theorem lt_posterior_iff_marginal_lt {α β : Type*} (κ : α → PMF β) (μ : PMF α) (b : β)
+    (h : marginal κ μ b ≠ 0) {a : α} (ha : μ a ≠ 0) :
+    μ a < posterior κ μ b h a ↔ marginal κ μ b < κ a b := by
+  rw [posterior_apply, ← div_eq_mul_inv,
+    ENNReal.lt_div_iff_mul_lt (Or.inl h) (Or.inl (marginal_ne_top κ μ b)),
+    ENNReal.mul_lt_mul_iff_right ha (PMF.apply_ne_top μ a)]
+
+/-- **The posterior falls below the prior** at `a` exactly when the likelihood of the
+observation at `a` falls below its marginal likelihood. -/
+theorem posterior_lt_iff_lt_marginal {α β : Type*} (κ : α → PMF β) (μ : PMF α) (b : β)
+    (h : marginal κ μ b ≠ 0) {a : α} (ha : μ a ≠ 0) :
+    posterior κ μ b h a < μ a ↔ κ a b < marginal κ μ b := by
+  rw [posterior_apply, ← div_eq_mul_inv,
+    ENNReal.div_lt_iff (Or.inl h) (Or.inl (marginal_ne_top κ μ b)),
+    ENNReal.mul_lt_mul_iff_right ha (PMF.apply_ne_top μ a)]
+
+/-- The `≤` companion of `lt_posterior_iff_marginal_lt`. -/
+theorem le_posterior_iff_marginal_le {α β : Type*} (κ : α → PMF β) (μ : PMF α) (b : β)
+    (h : marginal κ μ b ≠ 0) {a : α} (ha : μ a ≠ 0) :
+    μ a ≤ posterior κ μ b h a ↔ marginal κ μ b ≤ κ a b := by
+  rw [← not_lt, ← not_lt, not_iff_not]
+  exact posterior_lt_iff_lt_marginal κ μ b h ha
+
+/-- The `≤` companion of `posterior_lt_iff_lt_marginal`. -/
+theorem posterior_le_iff_le_marginal {α β : Type*} (κ : α → PMF β) (μ : PMF α) (b : β)
+    (h : marginal κ μ b ≠ 0) {a : α} (ha : μ a ≠ 0) :
+    posterior κ μ b h a ≤ μ a ↔ κ a b ≤ marginal κ μ b := by
+  rw [← not_lt, ← not_lt, not_iff_not]
+  exact lt_posterior_iff_marginal_lt κ μ b h ha
+
 /-- **Set-version of `posterior_lt_iff_score_lt`**: comparing the
 outer-measure-of-Finset values of a posterior at two `Finset`s reduces to
 comparing the corresponding conditional joint sums. The shared
