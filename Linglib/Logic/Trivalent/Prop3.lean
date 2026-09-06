@@ -88,6 +88,12 @@ theorem isBivalent_iff_gapExt_eq_empty (p : Prop3 W) :
   simp only [isBivalent, Set.eq_empty_iff_forall_notMem, mem_gapExt]
   exact forall_congr' fun w => by cases p w <;> simp
 
+theorem isBivalent_iff_forall_ne_indet (p : Prop3 W) : p.isBivalent ↔ ∀ w, p w ≠ .indet :=
+  forall_congr' λ w => by cases p w <;> simp
+
+theorem isBivalent.ne_indet {p : Prop3 W} (h : p.isBivalent) (w : W) : p w ≠ .indet :=
+  (isBivalent_iff_forall_ne_indet p).1 h w
+
 /-! ### Extensions under meta-assertion -/
 
 @[simp] theorem posExt_metaAssert (p : Prop3 W) :
@@ -110,6 +116,59 @@ theorem isBivalent_iff_gapExt_eq_empty (p : Prop3 W) :
 /-- Meta-assertion produces a bivalent proposition. -/
 theorem isBivalent_metaAssert (p : Prop3 W) : p.metaAssert.isBivalent := by
   intro w; simp only [metaAssert_apply]; cases p w <;> simp
+
+/-! ### Quantifiers
+
+The universal quantifier of [haug-2014], adopted by [coppock-beaver-2015] and
+[cooper-2023]: undefined only when every instance is, false when some instance is, and
+true otherwise, so that a quantified presupposition projects existentially. The
+existential is its dual. -/
+
+open Classical in
+/-- Haug's universal quantifier over a trivalent predicate. -/
+noncomputable def forall' (p : Prop3 W) : Trivalent :=
+  if ∀ w, p w = .indet then .indet else if ∃ w, p w = .false then .false else .true
+
+/-- The existential quantifier, the dual of `forall'`. -/
+noncomputable def exists' (p : Prop3 W) : Trivalent := neg (forall' (λ w => neg (p w)))
+
+@[simp] theorem forall'_eq_indet_iff (p : Prop3 W) : forall' p = .indet ↔ ∀ w, p w = .indet := by
+  unfold forall'; split_ifs <;> simp_all
+
+@[simp] theorem forall'_eq_false_iff (p : Prop3 W) : forall' p = .false ↔ ∃ w, p w = .false := by
+  unfold forall'; split_ifs <;> simp_all
+
+@[simp] theorem forall'_eq_true_iff (p : Prop3 W) :
+    forall' p = .true ↔ (∃ w, p w ≠ .indet) ∧ ∀ w, p w ≠ .false := by
+  unfold forall'; split_ifs <;> simp_all
+
+@[simp] theorem exists'_eq_indet_iff (p : Prop3 W) : exists' p = .indet ↔ ∀ w, p w = .indet := by
+  simp only [exists', neg_eq_indet_iff, forall'_eq_indet_iff]
+
+@[simp] theorem exists'_eq_true_iff (p : Prop3 W) : exists' p = .true ↔ ∃ w, p w = .true := by
+  simp only [exists', neg_eq_true_iff, forall'_eq_false_iff, neg_eq_false_iff]
+
+@[simp] theorem exists'_eq_false_iff (p : Prop3 W) :
+    exists' p = .false ↔ (∃ w, p w ≠ .indet) ∧ ∀ w, p w ≠ .true := by
+  simp only [exists', neg_eq_false_iff, forall'_eq_true_iff, ne_eq, neg_eq_indet_iff]
+
+/-- An existentially quantified presupposition is true or undefined, never false. -/
+theorem exists'_presuppose_ne_false (p : Prop3 W) :
+    exists' (λ w => presuppose (p w)) ≠ .false := by
+  simp
+
+/-- Quantifier Projection ([coppock-beaver-2015]'s appendix): over bivalent `φ` and `ψ`, a
+presupposition under the existential projects as an existentially quantified
+presupposition. -/
+theorem exists'_meetWeak_presuppose {φ ψ : Prop3 W} (hφ : φ.isBivalent) (hψ : ψ.isBivalent) :
+    exists' (λ w => meetWeak (presuppose (φ w)) (ψ w)) =
+      meetWeak (exists' (λ w => presuppose (φ w))) (exists' (λ w => meetWeak (φ w) (ψ w))) := by
+  refine eq_of_indet_iff_of_true_iff ?_ ?_
+  · simp only [exists'_eq_indet_iff, meetWeak_eq_indet_iff, presuppose_eq_indet_iff, hφ.ne_indet,
+      hψ.ne_indet, or_false]
+    exact ⟨Or.inl, λ h => h.elim id λ h w => (h w).elim⟩
+  · simp only [exists'_eq_true_iff, meetWeak_eq_true_iff, presuppose_eq_true_iff]
+    exact ⟨λ ⟨w, h⟩ => ⟨⟨w, h.1⟩, w, h⟩, λ h => h.2⟩
 
 end Prop3
 

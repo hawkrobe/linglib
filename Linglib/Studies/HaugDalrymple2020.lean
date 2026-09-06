@@ -590,7 +590,7 @@ theorem R_u_reciprocity_no_diagonal :
     the default property bundle, while SMH commits to narrow only.
 
     Related principles cited by paper §6: the Maximal Interpretation
-    Hypothesis of [sabato-winter-2012] and [winter-2001]
+    Hypothesis of [sabato-winter-2012] and [winter-2001a]
     (p. 54), the typicality-constrained MA of [poortman-struiksma-kerem-friedmann-winter-2018]
     (p. 54), the anaphora-as-exhaustive principle of [kadmon-1990]
     (p. 54), and the experimental evidence of [majewski-2014]

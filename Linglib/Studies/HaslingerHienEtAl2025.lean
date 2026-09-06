@@ -22,7 +22,7 @@ readings: the reading falls out from the algebraic structure of the restrictor
 element → [−dist]). This *derives* the empirical **Distributivity–Number
 Generalization** (DNG): a singular count complement forces [+dist], a plural
 complement forces [−dist] — a strengthening of [gil-1995]'s implicational
-universal (cf. also [winter-2001]). The distributive readings that [−dist]
+universal (cf. also [winter-2001a]). The distributive readings that [−dist]
 forms additionally allow come from a VP-level distributivity operator
 ([link-1987]), not from the quantifier.
 
