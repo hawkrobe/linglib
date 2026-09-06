@@ -477,20 +477,6 @@ theorem meetWeak_assoc (a b c : Trivalent) :
     meetWeak a b = .false ↔ (a = .false ∧ b ≠ .indet) ∨ (a ≠ .indet ∧ b = .false) := by
   cases a <;> cases b <;> decide
 
-/-- A presupposed conjunct makes the Weak Kleene conjunction undefined unless it is true. -/
-theorem meetWeak_presuppose_eq_indet_iff (a b : Trivalent) :
-    meetWeak (presuppose a) b = .indet ↔ a ≠ .true ∨ b = .indet := by simp
-
-/-- The Weak Kleene conjunction with a presupposed conjunct is true iff both are. -/
-theorem meetWeak_presuppose_eq_true_iff (a b : Trivalent) :
-    meetWeak (presuppose a) b = .true ↔ a = .true ∧ b = .true := by simp
-
-/-- The Weak Kleene conjunction with a presupposed conjunct is false iff the presupposition
-holds and the other conjunct is false. -/
-theorem meetWeak_presuppose_eq_false_iff (a b : Trivalent) :
-    meetWeak (presuppose a) b = .false ↔ a = .true ∧ b = .false := by
-  cases a <;> cases b <;> decide
-
 /-- Negation passes through a Weak Kleene conjunction whose first conjunct is never false. -/
 theorem neg_meetWeak_of_ne_false {a : Trivalent} (h : a ≠ .false) (b : Trivalent) :
     neg (meetWeak a b) = meetWeak a (neg b) := by
