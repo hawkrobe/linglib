@@ -145,7 +145,8 @@ def system : System where
   vocabulary := threeWay
 
 /-- An inanimate's bundle: interpretable CLASS beside its arbitrary gender. -/
-def inanimate (n : Noun) : Bundle Node := system.conceptual .thing ++ system.arbitrary n.gender
+def inanimate (n : Greek.StandardModern.Gender.Noun) : Bundle Node :=
+  system.conceptual .thing ++ system.arbitrary n.gender
 
 theorem fem_entails_masc : system.geometry.Entails .fem .masc := by decide
 
@@ -265,7 +266,8 @@ def system : System where
     | _ => .cls
   vocabulary := threeWay
 
-def inanimate (n : Noun) : Bundle Node := system.conceptual .thing ++ system.arbitrary n.gender
+def inanimate (n : Icelandic.Gender.Noun) : Bundle Node :=
+  system.conceptual .thing ++ system.arbitrary n.gender
 
 theorem fem_not_entails_masc : ¬ system.geometry.Entails .fem .masc := by decide
 
@@ -318,7 +320,7 @@ def system : System where
     [[.fem, .anim, .masc, .indiv] ⟷ .feminine, [.anim, .masc, .indiv] ⟷ .masculine,
       [.indiv] ⟷ .masculine, [] ⟷ .neuter]
 
-def inanimate (n : Noun) : Bundle Node :=
+def inanimate (n : Serbian.Gender.Noun) : Bundle Node :=
   system.conceptual (if n.gender = .neuter then .mass else .thing) ++ system.arbitrary n.gender
 
 /-- *Muškarac i žena su sretni*. -/

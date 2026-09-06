@@ -1,4 +1,5 @@
-import Linglib.Features.Gender.Basic
+import Mathlib.Tactic.DeriveFintype
+import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Russian Noun Gender
@@ -10,11 +11,11 @@ and partly by morphological declension class.
 
 ## Theory-neutral data layer
 
-The Fragment carries empirical fields per entry:
+Each entry is a `GenderedNoun` over the three controller genders, with a
+declension class besides:
 
-- `attestedGender : Gender` — the agreement-trigger fact
-  (verified against [wade-2020]). Three values for Russian:
-  masculine, feminine, neuter.
+- `gender : Value` — the agreement-trigger fact (verified against
+  [wade-2020]).
 - `isNaturalGender : Bool` — whether the gender comes from the
   referent's biological sex.
 - `declClass : Option DeclClass` — Russian-specific morphological
@@ -47,10 +48,25 @@ Class III neuter group.
 
 namespace Russian.Gender
 
+-- ============================================================================
+-- § 1: Genders and Declension Classes ([wade-2020])
+-- ============================================================================
 
--- ============================================================================
--- § 1: Declension Classes ([wade-2020])
--- ============================================================================
+/-- Russian's three controller genders — the carrier of its
+    `Gender.System` ([corbett-1991]; [kramer-2015] ch. 7). -/
+inductive Value where
+  | masc
+  | fem
+  | neut
+  deriving DecidableEq, Repr, Fintype
+
+/-- The comparative label of each gender. -/
+def Value.toLabel : Value → Gender
+  | .masc => .masculine
+  | .fem => .feminine
+  | .neut => .neuter
+
+instance : HasGender Value := ⟨λ g => genderOf g.toLabel⟩
 
 /-- Russian declension classes. Gender correlates with class but neither
     fully determines the other ([corbett-1991];
@@ -66,69 +82,46 @@ inductive DeclClass where
 -- § 2: Russian Noun (theory-neutral schema)
 -- ============================================================================
 
-/-- A Russian noun. Empirical agreement-gender + natural-gender +
-    optional declension class. No commitment to any specific theoretical
-    framework — Kramer's DM categorizing head, Corbett's controller-target
-    are projections in `Studies/`. -/
-structure RussianNoun where
-  form : String
-  gloss : String
-  /-- Empirical agreement-trigger fact ([wade-2020]). -/
-  attestedGender : Gender
-  /-- True iff the gender comes from biological sex of the referent.
-      For *vrač* 'doctor' (hybrid) the morphological gender is encoded
-      here as masculine; the hybrid female-referent agreement is the
-      datum `Kramer2020.hybridTargets`. -/
-  isNaturalGender : Bool
+/-- A Russian noun: its gender, whether that gender comes from the
+    referent's sex, and its declension class. No commitment to any
+    specific theoretical framework — Kramer's DM categorizing head and
+    Corbett's controller-target classification are projections in
+    `Studies/`. For *vrač* 'doctor' (hybrid) the morphological gender is
+    encoded; the hybrid female-referent agreement is the datum
+    `Kramer2020.hybridTargets`. -/
+structure Noun extends GenderedNoun Value where
   /-- Optional declension class. Semantic-core nouns may omit since
       their gender is determined by the referent. -/
   declClass : Option DeclClass := none
   deriving DecidableEq, Repr
 
-namespace RussianNoun
-
-abbrev gender (n : RussianNoun) : Gender := n.attestedGender
-
-end RussianNoun
+instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
 
 -- ============================================================================
 -- § 3: Semantic Core ([kramer-2020] ex. 17)
 -- ============================================================================
 
-def otec   : RussianNoun :=
-  { form := "otec",   gloss := "father",  attestedGender := .masculine, isNaturalGender := true }
-def mat'   : RussianNoun :=
-  { form := "mat'",   gloss := "mother",  attestedGender := .feminine,  isNaturalGender := true }
-def brat   : RussianNoun :=
-  { form := "brat",   gloss := "brother", attestedGender := .masculine, isNaturalGender := true }
-def sestra : RussianNoun :=
-  { form := "sestra", gloss := "sister",  attestedGender := .feminine,  isNaturalGender := true }
-def byk    : RussianNoun :=
-  { form := "byk",    gloss := "bull",    attestedGender := .masculine, isNaturalGender := true }
-def korova : RussianNoun :=
-  { form := "korova", gloss := "cow",     attestedGender := .feminine,  isNaturalGender := true }
+def otec : Noun := { form := "otec", gloss := "father", gender := .masc, isNaturalGender := true }
+def mat' : Noun := { form := "mat'", gloss := "mother", gender := .fem, isNaturalGender := true }
+def brat : Noun := { form := "brat", gloss := "brother", gender := .masc, isNaturalGender := true }
+def sestra : Noun :=
+  { form := "sestra", gloss := "sister", gender := .fem, isNaturalGender := true }
+def byk : Noun := { form := "byk", gloss := "bull", gender := .masc, isNaturalGender := true }
+def korova : Noun := { form := "korova", gloss := "cow", gender := .fem, isNaturalGender := true }
 /-- *djadja* 'uncle': declension II like most feminines, masculine by sex ([wade-2020];
     [corbett-1991]). -/
-def djadja : RussianNoun :=
-  { form := "djadja", gloss := "uncle", attestedGender := .masculine, isNaturalGender := true
+def djadja : Noun :=
+  { form := "djadja", gloss := "uncle", gender := .masc, isNaturalGender := true
   , declClass := some .II }
 
 -- ============================================================================
 -- § 4: Remainder — Declension-Class Correlation ([kramer-2020] ex. 18)
 -- ============================================================================
 
-def zakon : RussianNoun :=
-  { form := "zakon", gloss := "law",    attestedGender := .masculine
-  , isNaturalGender := false, declClass := some .I }
-def škola : RussianNoun :=
-  { form := "škola", gloss := "school", attestedGender := .feminine
-  , isNaturalGender := false, declClass := some .II }
-def kost' : RussianNoun :=
-  { form := "kost'", gloss := "bone",   attestedGender := .feminine
-  , isNaturalGender := false, declClass := some .III }
-def vino  : RussianNoun :=
-  { form := "vino",  gloss := "wine",   attestedGender := .neuter
-  , isNaturalGender := false, declClass := some .IV }
+def zakon : Noun := { form := "zakon", gloss := "law", gender := .masc, declClass := some .I }
+def škola : Noun := { form := "škola", gloss := "school", gender := .fem, declClass := some .II }
+def kost' : Noun := { form := "kost'", gloss := "bone", gender := .fem, declClass := some .III }
+def vino : Noun := { form := "vino", gloss := "wine", gender := .neut, declClass := some .IV }
 
 -- ============================================================================
 -- § 5: Class III Exceptions ([kramer-2020] ex. 19)
@@ -136,16 +129,13 @@ def vino  : RussianNoun :=
 
 /-- *znamja* 'banner': Class III but neuter, not feminine (the -мя
     neuter group; [corbett-1991]; [kramer-2020] ex. 19a). -/
-def znamja : RussianNoun :=
-  { form := "znamja", gloss := "banner", attestedGender := .neuter
-  , isNaturalGender := false, declClass := some .III }
+def znamja : Noun :=
+  { form := "znamja", gloss := "banner", gender := .neut, declClass := some .III }
 
 /-- *put'* 'way': the only masculine noun in Class III
     ([wade-2020] §6397: "путь is qualified by masculine adjectives";
     [corbett-1991]; [kramer-2020] ex. 19b). -/
-def put'   : RussianNoun :=
-  { form := "put'", gloss := "way", attestedGender := .masculine
-  , isNaturalGender := false, declClass := some .III }
+def put' : Noun := { form := "put'", gloss := "way", gender := .masc, declClass := some .III }
 
 -- ============================================================================
 -- § 6: Hybrid Noun ([kramer-2020] ex. 15–16)
@@ -156,21 +146,19 @@ def put'   : RussianNoun :=
     (verified at [wade-2020] "Врач обязана…" with feminine-agreeing
     predicate). The Fragment encodes morphological gender; the hybrid
     behavior is the datum `Kramer2020.hybridTargets`. -/
-def vrač : RussianNoun :=
-  { form := "vrač", gloss := "doctor", attestedGender := .masculine
-  , isNaturalGender := false, declClass := some .I }
+def vrač : Noun := { form := "vrač", gloss := "doctor", gender := .masc, declClass := some .I }
 
 -- ============================================================================
 -- § 7: Inventory
 -- ============================================================================
 
-def semanticCoreNouns : List RussianNoun :=
+def semanticCoreNouns : List Noun :=
   [otec, mat', brat, sestra, byk, korova, djadja]
 
-def remainderNouns : List RussianNoun :=
+def remainderNouns : List Noun :=
   [zakon, škola, kost', vino, znamja, put']
 
-def allNouns : List RussianNoun :=
+def allNouns : List Noun :=
   semanticCoreNouns ++ remainderNouns ++ [vrač]
 
 -- ============================================================================
@@ -179,23 +167,13 @@ def allNouns : List RussianNoun :=
 
 /-- Declension class does not determine gender: *znamja* and *kost'*
     share Class III but differ in surface gender (the Class III
-    counter-correlation [corbett-1991] highlights). Stated
-    directly over `attestedGender` (no DM intermediary). -/
+    counter-correlation [corbett-1991] highlights). -/
 theorem declClass_ne_gender :
-    znamja.declClass = kost'.declClass ∧
-    znamja.attestedGender ≠ kost'.attestedGender := ⟨rfl, by decide⟩
+    znamja.declClass = kost'.declClass ∧ znamja.gender ≠ kost'.gender := ⟨rfl, by decide⟩
 
 -- ============================================================================
 -- § 9: Gender System (`Gender.System` instantiation)
 -- ============================================================================
-
-/-- Russian's three controller genders — the carrier of its
-    `Gender.System` ([corbett-1991]; [kramer-2015] ch. 7). -/
-inductive Value where
-  | masc
-  | fem
-  | neut
-  deriving DecidableEq, Repr, Fintype
 
 /-- Past-tense verbal concord exponents: *-∅* / *-a* / *-o*
     ([wade-2020]). Evidence type for `Gender.Faithful`. -/
@@ -236,48 +214,26 @@ theorem faithful_adjEnding : Function.Injective (Value.adjEnding · false) := by
     nouns like *vino* of [corbett-1991]'s declension rule surface neuter,
     at `Kramer2020.declensionGender`). -/
 def system : Gender.System Value where
-  label := fun g => match g with
-    | .masc => some .masculine
-    | .fem  => some .feminine
-    | .neut => some .neuter
+  label := λ g => some g.toLabel
   default := .neut
 
-/-- Comparative label → controller gender (ingestion). -/
-def Value.ofLabel : Gender → Value
-  | .feminine => .fem
-  | .neuter   => .neut
-  | _         => .masc
-
-/-- Controller gender of a noun, from the attested agreement fact. For
-    the hybrid *vrač* this is the morphological masculine; the
+/-- The assigned system: every noun gets its controller gender. For the
+    hybrid *vrač* this is the morphological masculine; the
     female-referent agreement alternation is the datum
     `Kramer2020.hybridTargets`. -/
-def RussianNoun.controllerGender (n : RussianNoun) : Value :=
-  Value.ofLabel n.attestedGender
-
-/-- The assigned system: every noun gets its controller gender. -/
-def assigned : Gender.System.Assigned RussianNoun Value :=
-  { system with assign := RussianNoun.controllerGender }
+def assigned : Gender.System.Assigned Noun Value := { system with assign := (·.gender) }
 
 /-- The carrier is faithful to the past-tense concord evidence:
     *-∅* / *-a* / *-o* distinguishes all three genders on a single
-    target. [corbett-1991]'s genders-are-agreement-classes criterion,
-    discharged via `Gender.Faithful`. -/
-theorem faithful_pastConcord :
-    Gender.Faithful (fun (g : Value) (_ : Unit) => g.pastConcord) := by decide
-
-/-- Label ∘ assign recovers the attested gender across the inventory. -/
-theorem system_label_assign :
-    ∀ n ∈ allNouns,
-      system.label n.controllerGender = some n.attestedGender := by decide
+    target. [corbett-1991]'s genders-are-agreement-classes criterion. -/
+theorem faithful_pastConcord : Function.Injective Value.pastConcord := by decide
 
 /-- [kramer-2015]'s (7ii) / [dahl-2000]'s generalization instantiated:
-    on the natural-gender core, assignment factors through the attested
-    gender (= referent sex on that core). The hybrid *vrač* and the
+    the natural-gender nouns form a semantic core, their gender being the
+    referent-sex classification. The hybrid *vrač* and the
     declension-class remainder are outside the core. -/
 theorem assigned_semanticCore :
-    assigned.SemanticCore {n | n.isNaturalGender = true}
-      (·.attestedGender) := by
-  exact ⟨⟨mat', rfl⟩, fun a b _ _ h => congrArg Value.ofLabel h⟩
+    assigned.SemanticCore {n | n.isNaturalGender = true} (·.gender) :=
+  ⟨⟨mat', rfl⟩, λ _ _ _ _ h => h⟩
 
 end Russian.Gender

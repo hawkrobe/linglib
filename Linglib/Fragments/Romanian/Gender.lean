@@ -1,5 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Romanian noun gender
@@ -27,31 +27,23 @@ inductive Value where
 
 /-- A Romanian noun with its controller gender and whether it denotes an animate, and if so
 whether its gender comes from the referent's sex. -/
-structure Noun where
-  form : String
-  gloss : String
-  /-- The agreement the noun takes. -/
-  attestedGender : Value
+structure Noun extends GenderedNoun Value where
   /-- Whether the noun denotes an animate. -/
   animate : Bool
-  /-- Whether the gender comes from the referent's sex. -/
-  isNaturalGender : Bool
   deriving DecidableEq, Repr
 
-abbrev Noun.gender (n : Noun) : Value := n.attestedGender
-
-def barbat : Noun := ⟨"bărbat", "man", .masc, true, true⟩
-def fata : Noun := ⟨"fată", "girl", .fem, true, true⟩
-def scaun : Noun := ⟨"scaun", "chair", .neut, false, false⟩
-def femeie : Noun := ⟨"femeie", "woman", .fem, true, true⟩
-def baiat : Noun := ⟨"băiat", "boy", .masc, true, true⟩
-def usa : Noun := ⟨"uşă", "door", .fem, false, false⟩
-def perete : Noun := ⟨"perete", "wall", .masc, false, false⟩
-def masa : Noun := ⟨"masă", "table", .fem, false, false⟩
-def nuc : Noun := ⟨"nuc", "walnut tree", .masc, false, false⟩
-def prun : Noun := ⟨"prun", "plum tree", .masc, false, false⟩
-def frigider : Noun := ⟨"frigider", "refrigerator", .neut, false, false⟩
-def televizor : Noun := ⟨"televizor", "television", .neut, false, false⟩
+def barbat : Noun := ⟨⟨⟨"bărbat", "man"⟩, .masc, true⟩, true⟩
+def fata : Noun := ⟨⟨⟨"fată", "girl"⟩, .fem, true⟩, true⟩
+def scaun : Noun := ⟨⟨⟨"scaun", "chair"⟩, .neut, false⟩, false⟩
+def femeie : Noun := ⟨⟨⟨"femeie", "woman"⟩, .fem, true⟩, true⟩
+def baiat : Noun := ⟨⟨⟨"băiat", "boy"⟩, .masc, true⟩, true⟩
+def usa : Noun := ⟨⟨⟨"uşă", "door"⟩, .fem, false⟩, false⟩
+def perete : Noun := ⟨⟨⟨"perete", "wall"⟩, .masc, false⟩, false⟩
+def masa : Noun := ⟨⟨⟨"masă", "table"⟩, .fem, false⟩, false⟩
+def nuc : Noun := ⟨⟨⟨"nuc", "walnut tree"⟩, .masc, false⟩, false⟩
+def prun : Noun := ⟨⟨⟨"prun", "plum tree"⟩, .masc, false⟩, false⟩
+def frigider : Noun := ⟨⟨⟨"frigider", "refrigerator"⟩, .neut, false⟩, false⟩
+def televizor : Noun := ⟨⟨⟨"televizor", "television"⟩, .neut, false⟩, false⟩
 
 def allNouns : List Noun :=
   [barbat, fata, scaun, femeie, baiat, usa, perete, masa, nuc, prun, frigider, televizor]

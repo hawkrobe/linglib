@@ -308,7 +308,7 @@ def numberPosition : PluralClass → NumberPosition
 reach. -/
 theorem gender_change_iff_local :
     ∀ n ∈ aPlurals ++ regulars,
-      n.sgGender ≠ n.plGender ↔
+      n.gender ≠ n.plGender ↔
         genderLocalityHypothesis (numberPosition n.pluralClass).toPosition = true := by
   decide
 

@@ -304,18 +304,18 @@ namespace Chichewa
 open _root_.Chichewa.Gender Corbett1991
 
 /-- Coordinated plural nouns that would take one target form take it. -/
-def sharedFormRules : List (Rule Noun SubjPrefix) :=
+def sharedFormRules : List (Rule Chichewa.Gender.Noun SubjPrefix) :=
   [⟨.all, (·.gender.plSubjPrefix = .a), .a⟩, ⟨.all, (·.gender.plSubjPrefix = .zi), .zi⟩]
 
 /-- The regular rule: humans take the plural of gender 1/2 and the rest the plural of 7/8. -/
-def semanticRules : List (Rule Noun SubjPrefix) :=
+def semanticRules : List (Rule Chichewa.Gender.Noun SubjPrefix) :=
   [⟨.all, (·.human = true), .a⟩, Rule.otherwise .zi]
 
 /-- The shared form is preferred; the regular rule applies where there is none. -/
-def rules : List (Rule Noun SubjPrefix) := sharedFormRules ++ semanticRules
+def rules : List (Rule Chichewa.Gender.Noun SubjPrefix) := sharedFormRules ++ semanticRules
 
 /-- Syncretism licenses agreement, (18) and (19): conjuncts sharing a form take it. -/
-theorem resolve_of_shared {cs : List Noun} (hne : cs ≠ []) {f : SubjPrefix}
+theorem resolve_of_shared {cs : List Chichewa.Gender.Noun} (hne : cs ≠ []) {f : SubjPrefix}
     (h : ∀ c ∈ cs, c.gender.plSubjPrefix = f) : resolve rules cs = some f := by
   obtain ⟨c, hc⟩ := List.exists_mem_of_ne_nil cs hne
   simp only [rules, sharedFormRules, List.cons_append, List.nil_append]
@@ -326,7 +326,7 @@ theorem resolve_of_shared {cs : List Noun} (hne : cs ≠ []) {f : SubjPrefix}
     · exact λ h' => absurd ((h' c hc).symm.trans (h c hc)) (by decide)
 
 /-- Were the forms not syncretic, the regular rule would apply. -/
-theorem resolve_of_ne {cs : List Noun} (ha : ∃ c ∈ cs, c.gender.plSubjPrefix ≠ .a)
+theorem resolve_of_ne {cs : List Chichewa.Gender.Noun} (ha : ∃ c ∈ cs, c.gender.plSubjPrefix ≠ .a)
     (hz : ∃ c ∈ cs, c.gender.plSubjPrefix ≠ .zi) : resolve rules cs = resolve semanticRules cs := by
   obtain ⟨a, ha, ha'⟩ := ha
   obtain ⟨z, hz, hz'⟩ := hz
@@ -335,7 +335,7 @@ theorem resolve_of_ne {cs : List Noun} (ha : ∃ c ∈ cs, c.gender.plSubjPrefix
   simp [rules, sharedFormRules, resolve, Rule.Applies, h₁, h₂]
 
 /-- The regular rule on its own: gender 1/2 for humans, 7/8 for the rest. -/
-theorem resolve_semanticRules (cs : List Noun) :
+theorem resolve_semanticRules (cs : List Chichewa.Gender.Noun) :
     resolve semanticRules cs = some (if ∀ c ∈ cs, c.human = true then .a else .zi) := by
   unfold semanticRules
   split_ifs with hh

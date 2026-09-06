@@ -219,7 +219,7 @@ namespace Tamil
 open _root_.Tamil.Gender
 
 /-- What the rules read: rationality, and the natural gender of a sex-differentiable noun. -/
-def sem (n : Noun) : Bool × Option Value :=
+def sem (n : Tamil.Gender.Noun) : Bool × Option Value :=
   (n.rational, if n.isNaturalGender then some n.gender else none)
 
 /-- Table 2.1: male rationals masculine, female rationals feminine, the residue neuter. -/
@@ -256,7 +256,7 @@ inductive Declension where
 
 /-- The fragment's declension classes under Corbett's typing: *znamja* and *put'* are of the
 irregular third declension. -/
-def declension (n : RussianNoun) : Option Declension :=
+def declension (n : Russian.Gender.Noun) : Option Declension :=
   if n = znamja ∨ n = put' then some .irregularIII else
     n.declClass.map λ
       | .I => .I
@@ -265,8 +265,8 @@ def declension (n : RussianNoun) : Option Declension :=
       | .IV => .IV
 
 /-- The natural gender of a sex-differentiable noun. -/
-def sem (n : RussianNoun) : Option Value :=
-  if n.isNaturalGender then some n.controllerGender else none
+def sem (n : Russian.Gender.Noun) : Option Value :=
+  if n.isNaturalGender then some n.gender else none
 
 /-- The rules of §3.1.1 for declinable nouns: males masculine and females feminine; then
 declension I masculine, declensions II and III feminine, the rest neuter. The rules for
@@ -282,7 +282,7 @@ def system : AssignmentSystem (Option Value) (Option Declension) Value where
 /-- The rules assign every noun of the fragment its gender, *put'* excepted, which the book
 leaves as an isolated exception with an irregular lexical marker. -/
 theorem assign_eq_gender :
-    ∀ n ∈ allNouns, n ≠ put' → system.assign sem declension n = n.controllerGender := by
+    ∀ n ∈ allNouns, n ≠ put' → system.assign sem declension n = n.gender := by
   decide
 
 /-- *djadja* 'uncle': the morphological rule would make it feminine, the semantic rule makes
@@ -305,7 +305,7 @@ namespace Swahili
 open _root_.Swahili
 
 /-- What the semantic rules read: evaluative derivation and animacy. -/
-def sem (n : Noun) : Option Evaluative × Bool := (n.evaluative, n.animate)
+def sem (n : Swahili.Noun) : Option Evaluative × Bool := (n.evaluative, n.animate)
 
 /-- The rules of §3.1.2: augmentatives to 5/6, diminutives to 7/8, remaining animates to
 1/2; then each morphological class to its own gender, over the fragment's five genders (the
@@ -340,7 +340,7 @@ namespace Afar
 open _root_.Afar.Gender
 
 /-- The natural gender of a sex-differentiable noun. -/
-def sem (n : Noun) : Option Value := if n.isNaturalGender then some n.gender else none
+def sem (n : Afar.Gender.Noun) : Option Value := if n.isNaturalGender then some n.gender else none
 
 /-- Sex first; then a citation form ending in an accented vowel is feminine, the rest
 masculine. -/
@@ -369,7 +369,7 @@ namespace Hausa
 open _root_.Hausa
 
 /-- The natural gender of a sex-differentiable noun. -/
-def sem (n : Noun) : Option Gender := if n.isNaturalGender then some n.gender else none
+def sem (n : Hausa.Noun) : Option Gender := if n.isNaturalGender then some n.gender else none
 
 /-- Sex first; then a noun in *-ā* is feminine, the rest masculine. -/
 def system : AssignmentSystem (Option Gender) Bool Gender where
@@ -1003,13 +1003,14 @@ namespace Romanian
 open _root_.Romanian.Gender
 
 /-- Whether a noun denotes a male animate. -/
-def MaleAnimate (n : Noun) : Prop := n.animate ∧ n.isNaturalGender ∧ n.gender = .masc
+def MaleAnimate (n : Romanian.Gender.Noun) : Prop :=
+  n.animate ∧ n.isNaturalGender ∧ n.gender = .masc
 
 instance : DecidablePred MaleAnimate := λ _ => by unfold MaleAnimate; infer_instance
 
 /-- §9.5, collapsed: a male animate, masculine; all masculine, masculine; otherwise
 feminine, over the fragment's nouns. -/
-def rules : List (Rule Noun Value) :=
+def rules : List (Rule Romanian.Gender.Noun Value) :=
   [⟨.any, MaleAnimate, .masc⟩, ⟨.all, (·.gender = .masc), .masc⟩, Rule.otherwise .fem]
 
 /-- (69): a masculine and a neuter inanimate resolve to the feminine, the form the neuter

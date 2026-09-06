@@ -1,4 +1,5 @@
 import Linglib.Fragments.Swahili.Basic
+import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Swahili nouns
@@ -25,89 +26,83 @@ inductive Evaluative where
 
 /-- A Swahili noun: its morphological class (the prefixes on the noun), the gender whose
 agreements it controls, and whether it denotes an animate. -/
-structure Noun where
-  form : String
-  gloss : String
+structure Noun extends GenderedNoun Gender where
   /-- The class pair whose prefixes the noun carries. -/
   morphClass : Gender
-  /-- The class pair whose agreements the noun controls. -/
-  attestedGender : Gender
   /-- Whether the noun denotes an animate. -/
   animate : Bool
   /-- Augmentative or diminutive derivation, if any. -/
   evaluative : Option Evaluative := none
   deriving DecidableEq, Repr
 
-abbrev Noun.gender (n : Noun) : Gender := n.attestedGender
-
 def kikapu : Noun :=
   { form := "kikapu", gloss := "basket", morphClass := .genderD,
-    attestedGender := .genderD, animate := false }
+    gender := .genderD, animate := false }
 def kiti : Noun :=
   { form := "kiti", gloss := "stool", morphClass := .genderD,
-    attestedGender := .genderD, animate := false }
+    gender := .genderD, animate := false }
 def mti : Noun :=
   { form := "mti", gloss := "tree", morphClass := .genderB,
-    attestedGender := .genderB, animate := false }
+    gender := .genderB, animate := false }
 def mguu : Noun :=
   { form := "mguu", gloss := "leg", morphClass := .genderB,
-    attestedGender := .genderB, animate := false }
+    gender := .genderB, animate := false }
 def nyumba : Noun :=
   { form := "nyumba", gloss := "house", morphClass := .genderE,
-    attestedGender := .genderE, animate := false }
+    gender := .genderE, animate := false }
 def mtu : Noun :=
   { form := "mtu", gloss := "person", morphClass := .genderA,
-    attestedGender := .genderA, animate := true }
+    gender := .genderA, animate := true }
 def mwalimu : Noun :=
   { form := "mwalimu", gloss := "teacher", morphClass := .genderA,
-    attestedGender := .genderA, animate := true }
+    gender := .genderA, animate := true }
 def mnyama : Noun :=
   { form := "mnyama", gloss := "animal", morphClass := .genderA,
-    attestedGender := .genderA, animate := true }
+    gender := .genderA, animate := true }
 def mdudu : Noun :=
   { form := "mdudu", gloss := "insect", morphClass := .genderA,
-    attestedGender := .genderA, animate := true }
+    gender := .genderA, animate := true }
 /-- *kifaru* 'rhinoceros': class 7 prefix, class 1/2 agreements. -/
 def kifaru : Noun :=
   { form := "kifaru", gloss := "rhinoceros", morphClass := .genderD,
-    attestedGender := .genderA, animate := true }
+    gender := .genderA, animate := true }
 /-- *kiboko* 'hippopotamus': class 7 prefix, class 1/2 agreements. -/
 def kiboko : Noun :=
   { form := "kiboko", gloss := "hippopotamus", morphClass := .genderD,
-    attestedGender := .genderA, animate := true }
+    gender := .genderA, animate := true }
 def mjusi : Noun :=
   { form := "mjusi", gloss := "lizard", morphClass := .genderB,
-    attestedGender := .genderA, animate := true }
+    gender := .genderA, animate := true }
 def jogoo : Noun :=
   { form := "jogoo", gloss := "rooster", morphClass := .genderC,
-    attestedGender := .genderA, animate := true }
+    gender := .genderA, animate := true }
 def kipofu : Noun :=
   { form := "kipofu", gloss := "blind person", morphClass := .genderD,
-    attestedGender := .genderA, animate := true }
+    gender := .genderA, animate := true }
 def tembo : Noun :=
   { form := "tembo", gloss := "elephant", morphClass := .genderE,
-    attestedGender := .genderA, animate := true }
+    gender := .genderA, animate := true }
 def nyoka : Noun :=
   { form := "nyoka", gloss := "snake", morphClass := .genderE,
-    attestedGender := .genderA, animate := true }
+    gender := .genderA, animate := true }
 def rafiki : Noun :=
   { form := "rafiki", gloss := "friend", morphClass := .genderE,
-    attestedGender := .genderA, animate := true }
+    gender := .genderA, animate := true }
 def ngombe : Noun :=
   { form := "ng'ombe", gloss := "cow", morphClass := .genderE,
-    attestedGender := .genderA, animate := true }
+    gender := .genderA, animate := true }
 /-- *joka* 'giant snake', the augmentative of *nyoka*. -/
 def joka : Noun :=
   { form := "joka", gloss := "giant snake", morphClass := .genderC,
-    attestedGender := .genderC, animate := true, evaluative := some .augmentative }
+    gender := .genderC, animate := true, evaluative := some .augmentative }
 /-- *kitoto* 'baby', the diminutive of *mtoto* 'child'. -/
 def kitoto : Noun :=
   { form := "kitoto", gloss := "baby", morphClass := .genderD,
-    attestedGender := .genderD, animate := true, evaluative := some .diminutive }
+    gender := .genderD, animate := true, evaluative := some .diminutive }
 /-- *kijoka* 'tiny snake', the diminutive of *joka*. -/
 def kijoka : Noun :=
   { form := "kijoka", gloss := "tiny snake", morphClass := .genderD,
-    attestedGender := .genderD, animate := true, evaluative := some .diminutive }
+    gender := .genderD, animate := true, evaluative := some .diminutive }
 
 def allNouns : List Noun :=
   [kikapu, kiti, mti, mguu, nyumba, mtu, mwalimu, mnyama, mdudu, kifaru, kiboko, mjusi, jogoo,
