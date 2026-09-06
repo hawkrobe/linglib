@@ -114,6 +114,12 @@ def neg : Trivalent → Trivalent
 @[simp] theorem neg_eq_indet_iff {a : Trivalent} : neg a = .indet ↔ a = .indet := by
   cases a <;> decide
 
+@[simp] theorem neg_eq_true_iff {a : Trivalent} : neg a = .true ↔ a = .false := by
+  cases a <;> decide
+
+@[simp] theorem neg_eq_false_iff {a : Trivalent} : neg a = .false ↔ a = .true := by
+  cases a <;> decide
+
 theorem neg_involutive : Function.Involutive (neg : Trivalent → Trivalent) := neg_neg
 
 /-- Strong Kleene negation is antitone (order-reversing). -/
@@ -391,6 +397,16 @@ def meetWeak : Trivalent → Trivalent → Trivalent
 theorem joinWeak_comm (a b : Trivalent) : joinWeak a b = joinWeak b a := by
   cases a <;> cases b <;> rfl
 
+/-- The Weak Kleene disjunction is undefined iff a disjunct is. -/
+theorem joinWeak_eq_indet_iff (a b : Trivalent) :
+    joinWeak a b = .indet ↔ a = .indet ∨ b = .indet := by
+  cases a <;> cases b <;> decide
+
+/-- The Weak Kleene disjunction is false iff both disjuncts are. -/
+theorem joinWeak_eq_false_iff (a b : Trivalent) :
+    joinWeak a b = .false ↔ a = .false ∧ b = .false := by
+  cases a <;> cases b <;> decide
+
 theorem meetWeak_comm (a b : Trivalent) : meetWeak a b = meetWeak b a := by
   cases a <;> cases b <;> rfl
 
@@ -427,17 +443,68 @@ def presuppose : Trivalent → Trivalent
 @[simp] theorem presuppose_false : presuppose .false = .indet := rfl
 @[simp] theorem presuppose_indet : presuppose .indet = .indet := rfl
 
+@[simp] theorem presuppose_eq_true_iff {a : Trivalent} : presuppose a = .true ↔ a = .true := by
+  cases a <;> decide
+
+@[simp] theorem presuppose_eq_indet_iff {a : Trivalent} : presuppose a = .indet ↔ a ≠ .true := by
+  cases a <;> decide
+
+@[simp] theorem presuppose_ne_false (a : Trivalent) : presuppose a ≠ .false := by cases a <;> decide
+
 @[simp] theorem meetWeak_true_left (a : Trivalent) : meetWeak .true a = a := by cases a <;> rfl
+
+@[simp] theorem meetWeak_indet_left (a : Trivalent) : meetWeak .indet a = .indet := rfl
+
+@[simp] theorem meetWeak_indet_right (a : Trivalent) : meetWeak a .indet = .indet := by
+  cases a <;> rfl
+
+theorem meetWeak_assoc (a b c : Trivalent) :
+    meetWeak (meetWeak a b) c = meetWeak a (meetWeak b c) := by
+  cases a <;> cases b <;> cases c <;> rfl
+
+/-- The Weak Kleene conjunction is undefined iff a conjunct is. -/
+@[simp] theorem meetWeak_eq_indet_iff (a b : Trivalent) :
+    meetWeak a b = .indet ↔ a = .indet ∨ b = .indet := by
+  cases a <;> cases b <;> decide
+
+/-- The Weak Kleene conjunction is true iff both conjuncts are. -/
+@[simp] theorem meetWeak_eq_true_iff (a b : Trivalent) :
+    meetWeak a b = .true ↔ a = .true ∧ b = .true := by
+  cases a <;> cases b <;> decide
+
+/-- The Weak Kleene conjunction is false iff a conjunct is false and the other is defined. -/
+@[simp] theorem meetWeak_eq_false_iff (a b : Trivalent) :
+    meetWeak a b = .false ↔ (a = .false ∧ b ≠ .indet) ∨ (a ≠ .indet ∧ b = .false) := by
+  cases a <;> cases b <;> decide
 
 /-- A presupposed conjunct makes the Weak Kleene conjunction undefined unless it is true. -/
 theorem meetWeak_presuppose_eq_indet_iff (a b : Trivalent) :
-    meetWeak (presuppose a) b = .indet ↔ a ≠ .true ∨ b = .indet := by
-  cases a <;> cases b <;> decide
+    meetWeak (presuppose a) b = .indet ↔ a ≠ .true ∨ b = .indet := by simp
 
 /-- The Weak Kleene conjunction with a presupposed conjunct is true iff both are. -/
 theorem meetWeak_presuppose_eq_true_iff (a b : Trivalent) :
-    meetWeak (presuppose a) b = .true ↔ a = .true ∧ b = .true := by
+    meetWeak (presuppose a) b = .true ↔ a = .true ∧ b = .true := by simp
+
+/-- The Weak Kleene conjunction with a presupposed conjunct is false iff the presupposition
+holds and the other conjunct is false. -/
+theorem meetWeak_presuppose_eq_false_iff (a b : Trivalent) :
+    meetWeak (presuppose a) b = .false ↔ a = .true ∧ b = .false := by
   cases a <;> cases b <;> decide
+
+/-- Negation passes through a Weak Kleene conjunction whose first conjunct is never false. -/
+theorem neg_meetWeak_of_ne_false {a : Trivalent} (h : a ≠ .false) (b : Trivalent) :
+    neg (meetWeak a b) = meetWeak a (neg b) := by
+  revert h; cases a <;> cases b <;> decide
+
+/-- Negation projection: a presupposed conjunct passes through negation. -/
+theorem neg_meetWeak_presuppose (a b : Trivalent) :
+    neg (meetWeak (presuppose a) b) = meetWeak (presuppose a) (neg b) :=
+  neg_meetWeak_of_ne_false (presuppose_ne_false a) b
+
+/-- Two values agree once they agree on being undefined and on being true. -/
+theorem eq_of_indet_iff_of_true_iff {a b : Trivalent} (h₁ : a = .indet ↔ b = .indet)
+    (h₂ : a = .true ↔ b = .true) : a = b := by
+  revert h₁ h₂; cases a <;> cases b <;> decide
 
 /-- Meta-asserting a presupposed value falsifies undefinedness: `𝒜 ∘ ∂` sends
 exactly `.true` to `.true`. -/

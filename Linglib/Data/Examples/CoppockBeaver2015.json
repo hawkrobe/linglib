@@ -1,0 +1,3420 @@
+[
+  {
+    "id": "coppockbeaver2015_1",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(1)"
+    },
+    "language": "russ1263",
+    "primaryText": "Anna čitaet knigu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Anna",
+        "Anna"
+      ],
+      [
+        "čitaet",
+        "is-reading"
+      ],
+      [
+        "knigu",
+        "book"
+      ]
+    ],
+    "translation": "Anna is reading a/the book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "determinate",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "indeterminate",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "bare nominal"
+      ]
+    ],
+    "comment": "Both readings available without articles: the shifts iota and ex do the work."
+  },
+  {
+    "id": "coppockbeaver2015_4a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(4a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is tall, handsome and the love of my life.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John is tall, handsome and the love of my life.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "predicative definite"
+      ]
+    ],
+    "comment": "A definite coordinates with predicative adjectives."
+  },
+  {
+    "id": "coppockbeaver2015_4b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(4b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The love of my life is tall, handsome, and John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The love of my life is tall, handsome, and John.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "predicative definite"
+      ]
+    ],
+    "comment": "A proper name does not."
+  },
+  {
+    "id": "coppockbeaver2015_5",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1293",
+    "primaryText": "John considers this woman the queen of the world.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John considers this woman the queen of the world.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "John considers this woman competent.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "John considers this woman a good teacher.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "John considers this woman his girlfriend.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "John considers this woman Mary.",
+        "judgment": "ungrammatical"
+      },
+      {
+        "form": "John considers this woman some particular queen.",
+        "judgment": "ungrammatical"
+      },
+      {
+        "form": "John considers this woman you.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "predicative definite"
+      ]
+    ],
+    "comment": "Printed as (5a) with the acceptable fillers braced and (5b) with the starred ones: consider selects predicates, which definite, indefinite and possessive descriptions and adjectives supply, and names, some-indefinites and pronouns do not."
+  },
+  {
+    "id": "coppockbeaver2015_7a",
+    "source": {
+      "bibkey": "winter-2001b",
+      "paperLabel": "p. 177ff."
+    },
+    "reportedIn": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(7a)"
+    },
+    "language": "stan1293",
+    "primaryText": "A great man and a good father has passed away.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A great man and a good father has passed away.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "appositional conjunction"
+      ]
+    ],
+    "comment": "Singular agreement: the conjunction describes one individual."
+  },
+  {
+    "id": "coppockbeaver2015_7b",
+    "source": {
+      "bibkey": "winter-2001b",
+      "paperLabel": "p. 177ff."
+    },
+    "reportedIn": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(7b)"
+    },
+    "language": "stan1293",
+    "primaryText": "My great opponent and the hero of my youth has passed away.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "My great opponent and the hero of my youth has passed away.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "appositional conjunction"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_7c",
+    "source": {
+      "bibkey": "winter-2001b",
+      "paperLabel": "p. 177ff."
+    },
+    "reportedIn": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(7c)"
+    },
+    "language": "stan1293",
+    "primaryText": "A great man and the best magician in New Jersey has passed away.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A great man and the best magician in New Jersey has passed away.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "appositional conjunction"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_8a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(8a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Dr. Jekyll and Mr. Hyde have passed away.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Dr. Jekyll and Mr. Hyde have passed away.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Dr. Jekyll and Mr. Hyde has passed away.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "appositional conjunction"
+      ]
+    ],
+    "comment": "Printed as have/*has: proper names do not participate in appositional conjunction even when co-referential."
+  },
+  {
+    "id": "coppockbeaver2015_8b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(8b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some great man and some good father have passed away.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Some great man and some good father have passed away.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Some great man and some good father has passed away.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "appositional conjunction"
+      ]
+    ],
+    "comment": "Printed as have/*has: some-indefinites do not participate either."
+  },
+  {
+    "id": "coppockbeaver2015_10",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(10)"
+    },
+    "language": "stan1293",
+    "primaryText": "He's not the ambassador to Spain—there are two.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He's not the ambassador to Spain—there are two.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "restrictor",
+        "multiple"
+      ]
+    ],
+    "comment": "Infelicitous without heavy stress on the: uniqueness is not targetable by ordinary negation, against the Russellian entry (52a)."
+  },
+  {
+    "id": "coppockbeaver2015_11",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(11)"
+    },
+    "language": "stan1293",
+    "primaryText": "There are two ambassadors to Spain; therefore, he is not the ambassador to Spain.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "There are two ambassadors to Spain; therefore, he is not the ambassador to Spain.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "restrictor",
+        "multiple"
+      ]
+    ],
+    "comment": "Infelicitous without heavy stress on the."
+  },
+  {
+    "id": "coppockbeaver2015_12a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(12a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I know that this is at least one of the reasons. Is it the reason?",
+    "discourseSegments": [
+      "I know that this is at least one of the reasons.",
+      "#Is it the reason?"
+    ],
+    "glossedTokens": [],
+    "translation": "I know that this is at least one of the reasons. Is it the reason?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "restrictor",
+        "multiple"
+      ]
+    ],
+    "comment": "The is not interchangeable with the only, against the Russellian entry, on which the two coincide."
+  },
+  {
+    "id": "coppockbeaver2015_12b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(12b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I know that this is at least one of the reasons. Is it the only reason?",
+    "discourseSegments": [
+      "I know that this is at least one of the reasons.",
+      "Is it the only reason?"
+    ],
+    "glossedTokens": [],
+    "translation": "I know that this is at least one of the reasons. Is it the only reason?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "restrictor",
+        "only"
+      ]
+    ],
+    "comment": "The only P satisfies weak uniqueness trivially, so the presupposition of the is met."
+  },
+  {
+    "id": "coppockbeaver2015_13",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(13)"
+    },
+    "language": "stan1293",
+    "primaryText": "The greatest French soldier is the king of France.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The greatest French soldier is the king of France.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "predicative definite"
+      ]
+    ],
+    "comment": "Predicted simply false on the predicative reading: predicative definites presuppose no existence."
+  },
+  {
+    "id": "coppockbeaver2015_14",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(14)"
+    },
+    "language": "stan1293",
+    "primaryText": "The king of France is the greatest French soldier.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The king of France is the greatest French soldier.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "argumental definite"
+      ]
+    ],
+    "comment": "Predicted to lack a truth value: the argumental definite is determinate and presupposes existence; the paper finds the contrast with (13) subtle."
+  },
+  {
+    "id": "coppockbeaver2015_15a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(15a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Scott is the only author of Waverley.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Scott is the only author of Waverley.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "one author",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "anti-uniqueness"
+      ]
+    ],
+    "comment": "Implies that there is one author of Waverley."
+  },
+  {
+    "id": "coppockbeaver2015_15b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(15b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Scott is not the only author of Waverley.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Scott is not the only author of Waverley.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "more than one author",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "anti-uniqueness"
+      ]
+    ],
+    "comment": "The anti-uniqueness effect: the most prominent interpretation has more than one author, so no existence presupposition for the only author, (64)."
+  },
+  {
+    "id": "coppockbeaver2015_15c",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(15c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Is Scott the only author of Waverley?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Is Scott the only author of Waverley?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "at least one author",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "anti-uniqueness"
+      ]
+    ],
+    "comment": "There may be multiple authors."
+  },
+  {
+    "id": "coppockbeaver2015_15d",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(15d)"
+    },
+    "language": "stan1293",
+    "primaryText": "If Scott is the only author of Waverley, then…",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If Scott is the only author of Waverley, then…",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "at least one author",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "anti-uniqueness"
+      ]
+    ],
+    "comment": "There may be multiple authors."
+  },
+  {
+    "id": "coppockbeaver2015_16",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(16)"
+    },
+    "language": "stan1293",
+    "primaryText": "You're not the queen of the world.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You're not the queen of the world.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "no existence implication"
+      ]
+    ],
+    "comment": "No commitment to a queen of the world."
+  },
+  {
+    "id": "coppockbeaver2015_17",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(17)"
+    },
+    "language": "stan1293",
+    "primaryText": "Seven is not the largest prime number.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Seven is not the largest prime number.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "no existence implication"
+      ]
+    ],
+    "comment": "No commitment to a largest prime number; superlatives lack only's inference pattern."
+  },
+  {
+    "id": "coppockbeaver2015_18",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(18)"
+    },
+    "language": "stan1293",
+    "primaryText": "Lack of supply is not the sole cause of Britain's housing crisis.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Lack of supply is not the sole cause of Britain's housing crisis.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "anti-uniqueness"
+      ]
+    ],
+    "comment": "Naturally occurring; sole patterns with only."
+  },
+  {
+    "id": "coppockbeaver2015_19",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(19)"
+    },
+    "language": "stan1293",
+    "primaryText": "Search engine optimization is not the single thing to think about with regards to search engine ranking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Search engine optimization is not the single thing to think about with regards to search engine ranking.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "anti-uniqueness"
+      ]
+    ],
+    "comment": "Naturally occurring; single patterns with only."
+  },
+  {
+    "id": "coppockbeaver2015_20",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(20)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is worthwhile to visit Kuala Lumpur to see the future of modern Asia, but it is not the one reason to visit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is worthwhile to visit Kuala Lumpur to see the future of modern Asia, but it is not the one reason to visit.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "anti-uniqueness"
+      ]
+    ],
+    "comment": "Naturally occurring; one patterns with only."
+  },
+  {
+    "id": "coppockbeaver2015_21",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(21)"
+    },
+    "language": "stan1293",
+    "primaryText": "Dean Hall doesn't have the exclusive right to open-world multiplayer zombie apocalypse simulators, you know.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Dean Hall doesn't have the exclusive right to open-world multiplayer zombie apocalypse simulators, you know.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "anti-uniqueness"
+      ]
+    ],
+    "comment": "Naturally occurring: Dean Hall has the right and so do others, so the exclusive right does not exist."
+  },
+  {
+    "id": "coppockbeaver2015_24",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(24)"
+    },
+    "language": "stan1293",
+    "primaryText": "The golden mountain does not exist.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The golden mountain does not exist.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "narrow existence"
+      ]
+    ],
+    "comment": "Felt to be true: no narrow existence presupposition."
+  },
+  {
+    "id": "coppockbeaver2015_25",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(25)"
+    },
+    "language": "stan1293",
+    "primaryText": "Max wanted a train set for Christmas but when he opened his presents, the train set wasn't there.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Max wanted a train set for Christmas but when he opened his presents, the train set wasn't there.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "narrow existence"
+      ]
+    ],
+    "comment": "Adapted by the paper from Cooper (1978): the description picks out no actual object."
+  },
+  {
+    "id": "coppockbeaver2015_26",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(26)"
+    },
+    "language": "stan1293",
+    "primaryText": "I forgot to buy the wine.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I forgot to buy the wine.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "narrow existence"
+      ]
+    ],
+    "comment": "Due to Robin Cooper, p.c."
+  },
+  {
+    "id": "coppockbeaver2015_27",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(27)"
+    },
+    "language": "stan1293",
+    "primaryText": "We cancelled the May meeting.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "We cancelled the May meeting.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "narrow existence"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_28",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(28)"
+    },
+    "language": "stan1293",
+    "primaryText": "Captain James Cook finally disproved the existence of the Northwest Passage in 1778.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Captain James Cook finally disproved the existence of the Northwest Passage in 1778.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "narrow existence"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_29",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(29)"
+    },
+    "language": "stan1293",
+    "primaryText": "Sue and Jane both scored goals, so Jane didn't score the only goal. It wasn't a bicycle-kick, either.",
+    "discourseSegments": [
+      "Sue and Jane both scored goals, so Jane didn't score the only goal.",
+      "#It wasn't a bicycle-kick, either."
+    ],
+    "glossedTokens": [],
+    "translation": "Sue and Jane both scored goals, so Jane didn't score the only goal. It wasn't a bicycle-kick, either.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "broad existence"
+      ]
+    ],
+    "comment": "The only goal is no antecedent for it: broad existence fails under anti-uniqueness."
+  },
+  {
+    "id": "coppockbeaver2015_30",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(30)"
+    },
+    "language": "stan1293",
+    "primaryText": "Max wanted a train set for Christmas but when he opened his presents, the train set wasn't there. His parents had forgotten to buy it.",
+    "discourseSegments": [
+      "Max wanted a train set for Christmas but when he opened his presents, the train set wasn't there.",
+      "His parents had forgotten to buy it."
+    ],
+    "glossedTokens": [],
+    "translation": "Max wanted a train set for Christmas but when he opened his presents, the train set wasn't there. His parents had forgotten to buy it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "broad existence"
+      ]
+    ],
+    "comment": "The train set antecedes it though it lacks narrow existence."
+  },
+  {
+    "id": "coppockbeaver2015_31",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(31)"
+    },
+    "language": "stan1293",
+    "primaryText": "We cancelled the May meeting. It was deemed unnecessary.",
+    "discourseSegments": [
+      "We cancelled the May meeting.",
+      "It was deemed unnecessary."
+    ],
+    "glossedTokens": [],
+    "translation": "We cancelled the May meeting. It was deemed unnecessary.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "broad existence"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_32",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(32)"
+    },
+    "language": "stan1293",
+    "primaryText": "Captain James Cook disproved the existence of the Northwest Passage in 1778. It was not included on maps after that.",
+    "discourseSegments": [
+      "Captain James Cook disproved the existence of the Northwest Passage in 1778.",
+      "It was not included on maps after that."
+    ],
+    "glossedTokens": [],
+    "translation": "Captain James Cook disproved the existence of the Northwest Passage in 1778. It was not included on maps after that.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "broad existence"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_33",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(33)"
+    },
+    "language": "stan1293",
+    "primaryText": "Sam is looking for the train set. Which train set? The one he was promised for Christmas.",
+    "discourseSegments": [
+      "A: Sam is looking for the train set.",
+      "B: Which train set?",
+      "A: The one he was promised for Christmas."
+    ],
+    "glossedTokens": [],
+    "translation": "Sam is looking for the train set. Which train set? The one he was promised for Christmas.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "broad existence"
+      ]
+    ],
+    "comment": "Cooper's dialogue, coherent with no particular train set promised: the which question diagnoses broad existence."
+  },
+  {
+    "id": "coppockbeaver2015_34",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(34)"
+    },
+    "language": "stan1293",
+    "primaryText": "Sue and Jane both scored goals, so Jane didn't score the only goal. Which goal?",
+    "discourseSegments": [
+      "A: Sue and Jane both scored goals, so Jane didn't score the only goal.",
+      "B: #Which goal?"
+    ],
+    "glossedTokens": [],
+    "translation": "Sue and Jane both scored goals, so Jane didn't score the only goal. Which goal?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "broad existence"
+      ]
+    ],
+    "comment": "The only goal has no broad existence presupposition."
+  },
+  {
+    "id": "coppockbeaver2015_38",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(38)"
+    },
+    "language": "stan1293",
+    "primaryText": "I don't consider Scott the only author of Waverley.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I don't consider Scott the only author of Waverley.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "multiple authors",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "equative",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "anti-uniqueness"
+      ]
+    ],
+    "comment": "Under consider, which selects a predicate, no equative-like reading with a presupposed unique author is available."
+  },
+  {
+    "id": "coppockbeaver2015_40a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(40a)"
+    },
+    "language": "stan1293",
+    "primaryText": "He is neither handsome nor the only man you'll ever meet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He is neither handsome nor the only man you'll ever meet.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "anti-uniqueness"
+      ]
+    ],
+    "comment": "No reading presupposing exactly one man the addressee will meet."
+  },
+  {
+    "id": "coppockbeaver2015_40b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(40b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary is neither stupid nor the only person to have made this mistake.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary is neither stupid nor the only person to have made this mistake.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "anti-uniqueness"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_41a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(41a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Meanwhile, the Enterprise computer has fallen in love with Captain Kirk and considers him the only person in the universe.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Meanwhile, the Enterprise computer has fallen in love with Captain Kirk and considers him the only person in the universe.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "anti-uniqueness"
+      ]
+    ],
+    "comment": "Naturally occurring: no implication that exactly one person is in the universe, with no global inconsistency to force local accommodation."
+  },
+  {
+    "id": "coppockbeaver2015_41c",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(41c)"
+    },
+    "language": "stan1293",
+    "primaryText": "One political wag characterized him as the only man in America who could get away with wearing a toga.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "One political wag characterized him as the only man in America who could get away with wearing a toga.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "anti-uniqueness"
+      ]
+    ],
+    "comment": "Naturally occurring."
+  },
+  {
+    "id": "coppockbeaver2015_42",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(42)"
+    },
+    "language": "stan1293",
+    "primaryText": "THE king of France does not exist—there are two.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "THE king of France does not exist—there are two.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "The king of France does not exist—there are two.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "uniqueness at issue"
+      ]
+    ],
+    "comment": "Printed as {THE/#The}: stress makes uniqueness at issue."
+  },
+  {
+    "id": "coppockbeaver2015_43",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(43)"
+    },
+    "language": "stan1293",
+    "primaryText": "THE man who can best her in a battle of wits does not exist—there are two.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "THE man who can best her in a battle of wits does not exist—there are two.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "The man who can best her in a battle of wits does not exist—there are two.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "uniqueness at issue"
+      ]
+    ],
+    "comment": "Printed as {THE/#The}."
+  },
+  {
+    "id": "coppockbeaver2015_44a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(44a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I don't know whether iguanas have hearts, but is that the heart?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I don't know whether iguanas have hearts, but is that the heart?",
+    "context": "An iguana has been dissected and an observer points to an unidentified part.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "restrictor",
+        "uniqueIfAny"
+      ]
+    ],
+    "comment": "Felicitous under the assumption that iguanas have only one heart if any."
+  },
+  {
+    "id": "coppockbeaver2015_44b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(44b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I don't know whether iguanas have bones, but is that the bone?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I don't know whether iguanas have bones, but is that the bone?",
+    "context": "An iguana has been dissected and an observer points to an unidentified part.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "restrictor",
+        "multiple"
+      ]
+    ],
+    "comment": "Infelicitous under the assumption that iguanas have multiple bones if any."
+  },
+  {
+    "id": "coppockbeaver2015_45a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(45a)"
+    },
+    "language": "stan1293",
+    "primaryText": "That's definitely not the heart. Iguanas don't have hearts.",
+    "discourseSegments": [
+      "That's definitely not the heart.",
+      "Iguanas don't have hearts."
+    ],
+    "glossedTokens": [],
+    "translation": "That's definitely not the heart. Iguanas don't have hearts.",
+    "context": "An iguana has been dissected and an observer points to an unidentified part.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "restrictor",
+        "uniqueIfAny"
+      ]
+    ],
+    "comment": "Uniqueness without existence under negation."
+  },
+  {
+    "id": "coppockbeaver2015_45b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(45b)"
+    },
+    "language": "stan1293",
+    "primaryText": "That's definitely not the bone. Iguanas don't have bones.",
+    "discourseSegments": [
+      "#That's definitely not the bone.",
+      "Iguanas don't have bones."
+    ],
+    "glossedTokens": [],
+    "translation": "That's definitely not the bone. Iguanas don't have bones.",
+    "context": "An iguana has been dissected and an observer points to an unidentified part.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "restrictor",
+        "multiple"
+      ]
+    ],
+    "comment": "The mass reading of bone that can rescue (46b) is less accessible here, where the plural bones also occurs (fn. 17)."
+  },
+  {
+    "id": "coppockbeaver2015_46a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(46a)"
+    },
+    "language": "stan1293",
+    "primaryText": "If that's the heart, then this must be a blood vessel.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If that's the heart, then this must be a blood vessel.",
+    "context": "An iguana has been dissected and an observer points to an unidentified part.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "restrictor",
+        "uniqueIfAny"
+      ]
+    ],
+    "comment": "The uniqueness presupposition projects from the antecedent of a conditional."
+  },
+  {
+    "id": "coppockbeaver2015_46b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(46b)"
+    },
+    "language": "stan1293",
+    "primaryText": "If that's the bone, then this must be a tendon.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If that's the bone, then this must be a tendon.",
+    "context": "An iguana has been dissected and an observer points to an unidentified part.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "restrictor",
+        "multiple"
+      ]
+    ],
+    "comment": "May become felicitous with bone understood as a mass term (fn. 17)."
+  },
+  {
+    "id": "coppockbeaver2015_47a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(47a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The baby's fully developed hand wrapped itself around the finger of the surgeon.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The baby's fully developed hand wrapped itself around the finger of the surgeon.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "weak definite"
+      ]
+    ],
+    "comment": "Barker's possessive weak definite, accompanied by a picture of the surgeon with all ten fingers; the paper defers to an alternative mode of composition."
+  },
+  {
+    "id": "coppockbeaver2015_47b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(47b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The baby's fully developed hand wrapped itself around the finger of the surgeon's.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The baby's fully developed hand wrapped itself around the finger of the surgeon's.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "weak definite"
+      ]
+    ],
+    "comment": "The double genitive variant is unacceptable."
+  },
+  {
+    "id": "coppockbeaver2015_48",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(48)"
+    },
+    "language": "stan1293",
+    "primaryText": "He is standing at the corner of the intersection.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He is standing at the corner of the intersection.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "weak definite"
+      ]
+    ],
+    "comment": "Intersections have four corners."
+  },
+  {
+    "id": "coppockbeaver2015_54",
+    "source": {
+      "bibkey": "winter-2001b",
+      "paperLabel": "(24)"
+    },
+    "reportedIn": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(54)"
+    },
+    "language": "stan1293",
+    "primaryText": "John and Mary are exactly zero friends of mine.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John and Mary are exactly zero friends of mine.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "be shift"
+      ]
+    ],
+    "comment": "Winter's example: the be shift would give it a coherent reading, so the predicative case is taken as basic instead."
+  },
+  {
+    "id": "coppockbeaver2015_66",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(66)"
+    },
+    "language": "stan1293",
+    "primaryText": "Scott is the only author of Waverley.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Scott is the only author of Waverley.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Scott is an only author of Waverley.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "blocking"
+      ]
+    ],
+    "comment": "Printed as {the/*an}: the indefinite is blocked by Maximize Presupposition, since the only P satisfies weak uniqueness."
+  },
+  {
+    "id": "coppockbeaver2015_67",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(67)"
+    },
+    "language": "stan1293",
+    "primaryText": "In China it is common for every student in a class to be an only child.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "In China it is common for every student in a class to be an only child.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "blocking"
+      ]
+    ],
+    "comment": "An only child is licensed because only child, read relationally, lacks weak uniqueness."
+  },
+  {
+    "id": "coppockbeaver2015_68",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(68)"
+    },
+    "language": "stan1293",
+    "primaryText": "Over the past 29 years, I've tried to contact everyone I can around the world who's been an only survivor of a large plane crash.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Over the past 29 years, I've tried to contact everyone I can around the world who's been an only survivor of a large plane crash.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "blocking"
+      ]
+    ],
+    "comment": "Naturally occurring, after an archetype pointed out by Roger Levy: the crash scopes inside the description (69), which then holds of as many individuals as there are crashes with a single survivor, so the is not licensed on that derivation."
+  },
+  {
+    "id": "coppockbeaver2015_73a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(73a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I don't know how many books Frida has written. But as it happens, I'm now reading a book she wrote.",
+    "discourseSegments": [
+      "I don't know how many books Frida has written.",
+      "But as it happens, I'm now reading a book she wrote."
+    ],
+    "glossedTokens": [],
+    "translation": "I don't know how many books Frida has written. But as it happens, I'm now reading a book she wrote.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "I don't know how many books Frida has written. But as it happens, I'm now reading the book she wrote.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "blocking"
+      ],
+      [
+        "contextUniqueness",
+        "open"
+      ]
+    ],
+    "comment": "Printed as (a/#the): the context leaves uniqueness open, so the definite's update is undefined and the indefinite is not blocked."
+  },
+  {
+    "id": "coppockbeaver2015_73b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(73b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Frida has written exactly one book. But as it happens, I'm now reading the book she wrote.",
+    "discourseSegments": [
+      "Frida has written exactly one book.",
+      "But as it happens, I'm now reading the book she wrote."
+    ],
+    "glossedTokens": [],
+    "translation": "Frida has written exactly one book. But as it happens, I'm now reading the book she wrote.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Frida has written exactly one book. But as it happens, I'm now reading a book she wrote.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "blocking"
+      ],
+      [
+        "contextUniqueness",
+        "given"
+      ]
+    ],
+    "comment": "Printed as (#a/the): after the first sentence every world of the context has exactly one book, both updates coincide, and the definite blocks the indefinite."
+  },
+  {
+    "id": "coppockbeaver2015_76a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(76a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's possible that the ghost in Hans's attic is being noisy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's possible that the ghost in Hans's attic is being noisy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "determinate definite"
+      ]
+    ],
+    "comment": "Elbourne's objection to the Russellian analysis: commits the speaker to a ghost, unlike (76b), so the two are not equivalent."
+  },
+  {
+    "id": "coppockbeaver2015_76b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(76b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's possible that there is exactly one ghost in Hans's attic and it is being noisy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's possible that there is exactly one ghost in Hans's attic and it is being noisy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "determinate definite"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_77a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(77a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Chris saw the (only) invited talk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Chris saw the (only) invited talk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "argumental definite"
+      ]
+    ],
+    "comment": "Implies exactly one invited talk."
+  },
+  {
+    "id": "coppockbeaver2015_77b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(77b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Chris didn't see the (only) invited talk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Chris didn't see the (only) invited talk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "argumental definite"
+      ]
+    ],
+    "comment": "Still implies exactly one invited talk: existence and uniqueness presupposed."
+  },
+  {
+    "id": "coppockbeaver2015_78a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(78a)"
+    },
+    "language": "stan1293",
+    "primaryText": "That was the only invited talk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "That was the only invited talk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "predicative definite"
+      ]
+    ],
+    "comment": "Affirms that there was a single invited talk."
+  },
+  {
+    "id": "coppockbeaver2015_78b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(78b)"
+    },
+    "language": "stan1293",
+    "primaryText": "That wasn't the only invited talk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "That wasn't the only invited talk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "predicative definite"
+      ]
+    ],
+    "comment": "Does not imply a single invited talk."
+  },
+  {
+    "id": "coppockbeaver2015_79a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(79a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Chris saw an invited talk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Chris saw an invited talk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "indefinite"
+      ]
+    ],
+    "comment": "Implies at least one invited talk."
+  },
+  {
+    "id": "coppockbeaver2015_79b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(79b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Chris didn't see an invited talk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Chris didn't see an invited talk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "indefinite"
+      ]
+    ],
+    "comment": "No entailment that there were any invited talks."
+  },
+  {
+    "id": "coppockbeaver2015_80a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(80a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Anna didn't give the only invited talk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Anna didn't give the only invited talk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "anti-uniqueness",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "determinate",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "argumental anti-uniqueness"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": "Anti-uniqueness reading: more than one invited talk, one of which Anna gave; determinate reading: exactly one, which Anna did not give. With nuclear stress on only, only the former, (99)."
+  },
+  {
+    "id": "coppockbeaver2015_80b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(80b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Anna didn't see the only invited talk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Anna didn't see the only invited talk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "determinate",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "anti-uniqueness",
+        "judgment": "marginal"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "argumental anti-uniqueness"
+      ],
+      [
+        "verb",
+        "other"
+      ]
+    ],
+    "comment": "Implies exactly one invited talk; the anti-uniqueness reading becomes at most marginally available with stress on only, (99)."
+  },
+  {
+    "id": "coppockbeaver2015_81a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(81a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary didn't score the only goal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary didn't score the only goal.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "anti-uniqueness",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "determinate",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "argumental anti-uniqueness"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_81b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(81b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary didn't cheer for the only goal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary didn't cheer for the only goal.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "determinate",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "argumental anti-uniqueness"
+      ],
+      [
+        "verb",
+        "other"
+      ]
+    ],
+    "comment": "Implies exactly one goal."
+  },
+  {
+    "id": "coppockbeaver2015_82a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(82a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary didn't bring the only chocolate cake.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary didn't bring the only chocolate cake.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "anti-uniqueness",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "determinate",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "argumental anti-uniqueness"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_82b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(82b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary didn't taste the only chocolate cake.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary didn't taste the only chocolate cake.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "determinate",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "argumental anti-uniqueness"
+      ],
+      [
+        "verb",
+        "other"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_83a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(83a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary didn't have the only beautiful dress there.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary didn't have the only beautiful dress there.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "anti-uniqueness",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "determinate",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "argumental anti-uniqueness"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_83b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(83b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary didn't admire the only beautiful dress there.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary didn't admire the only beautiful dress there.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "determinate",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "argumental anti-uniqueness"
+      ],
+      [
+        "verb",
+        "other"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_95",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(95)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every student saw a long film with Marlene Dietrich in it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every student saw a long film with Marlene Dietrich in it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "indeterminate",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "determinate",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "no determinate indefinite"
+      ]
+    ],
+    "comment": "The indefinite under every has only the indeterminate reading: had uniqueness held in the context, the would have been used."
+  },
+  {
+    "id": "coppockbeaver2015_97a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(97a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's possible that the grandfather clock in Hans's attic is making a noise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's possible that the grandfather clock in Hans's attic is making a noise.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "determinate definite"
+      ]
+    ],
+    "comment": "Suggests the speaker takes there to be a grandfather clock in the attic: the iota reading is preferred by Type Simplicity."
+  },
+  {
+    "id": "coppockbeaver2015_97b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(97b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's possible that there is a grandfather clock in Hans's attic and it is making a noise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's possible that there is a grandfather clock in Hans's attic and it is making a noise.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "determinate definite"
+      ]
+    ],
+    "comment": "Does not."
+  },
+  {
+    "id": "coppockbeaver2015_101a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(101a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary didn't write the only decent paper.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary didn't write the only decent paper.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "anti-uniqueness",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "argumental anti-uniqueness"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": "A verb of creation: implies multiple decent papers."
+  },
+  {
+    "id": "coppockbeaver2015_101b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(101b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary didn't read the only decent paper.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary didn't read the only decent paper.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "anti-uniqueness",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "argumental anti-uniqueness"
+      ],
+      [
+        "verb",
+        "other"
+      ]
+    ],
+    "comment": "Not a verb of creation: no anti-uniqueness reading absent supporting context."
+  },
+  {
+    "id": "coppockbeaver2015_102a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(102a)"
+    },
+    "language": "stan1293",
+    "primaryText": "There are at least seven cakes. If Maria brings a cake, that will make eight.",
+    "discourseSegments": [
+      "There are at least seven cakes.",
+      "If Maria brings a cake, that will make eight."
+    ],
+    "glossedTokens": [],
+    "translation": "There are at least seven cakes. If Maria brings a cake, that will make eight.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": "The arithmetic inference is felicitous: the verb introduces entities."
+  },
+  {
+    "id": "coppockbeaver2015_102b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(102b)"
+    },
+    "language": "stan1293",
+    "primaryText": "There are at least seven cakes. If Maria takes a cake, that will make eight.",
+    "discourseSegments": [
+      "There are at least seven cakes.",
+      "#If Maria takes a cake, that will make eight."
+    ],
+    "glossedTokens": [],
+    "translation": "There are at least seven cakes. If Maria takes a cake, that will make eight.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "other"
+      ]
+    ],
+    "comment": "The arithmetic inference is infelicitous: the verb does not introduce entities."
+  },
+  {
+    "id": "coppockbeaver2015_103a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(103a)"
+    },
+    "language": "stan1293",
+    "primaryText": "There are at least seven books. If Maria writes a book, that will make eight.",
+    "discourseSegments": [
+      "There are at least seven books.",
+      "If Maria writes a book, that will make eight."
+    ],
+    "glossedTokens": [],
+    "translation": "There are at least seven books. If Maria writes a book, that will make eight.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": "The arithmetic inference is felicitous: the verb introduces entities."
+  },
+  {
+    "id": "coppockbeaver2015_103b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(103b)"
+    },
+    "language": "stan1293",
+    "primaryText": "There are at least seven books. If Maria reads a book, that will make eight.",
+    "discourseSegments": [
+      "There are at least seven books.",
+      "#If Maria reads a book, that will make eight."
+    ],
+    "glossedTokens": [],
+    "translation": "There are at least seven books. If Maria reads a book, that will make eight.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "other"
+      ]
+    ],
+    "comment": "The arithmetic inference is infelicitous: the verb does not introduce entities."
+  },
+  {
+    "id": "coppockbeaver2015_104a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(104a)"
+    },
+    "language": "stan1293",
+    "primaryText": "There have been at least seven strapless dresses on the runway. If Maria wears a strapless dress, that will make eight.",
+    "discourseSegments": [
+      "There have been at least seven strapless dresses on the runway.",
+      "If Maria wears a strapless dress, that will make eight."
+    ],
+    "glossedTokens": [],
+    "translation": "There have been at least seven strapless dresses on the runway. If Maria wears a strapless dress, that will make eight.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": "The arithmetic inference is felicitous: the verb introduces entities."
+  },
+  {
+    "id": "coppockbeaver2015_104b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(104b)"
+    },
+    "language": "stan1293",
+    "primaryText": "There have been at least seven strapless dresses on the runway. If Maria likes a strapless dress, that will make eight.",
+    "discourseSegments": [
+      "There have been at least seven strapless dresses on the runway.",
+      "#If Maria likes a strapless dress, that will make eight."
+    ],
+    "glossedTokens": [],
+    "translation": "There have been at least seven strapless dresses on the runway. If Maria likes a strapless dress, that will make eight.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "other"
+      ]
+    ],
+    "comment": "The arithmetic inference is infelicitous: the verb does not introduce entities."
+  },
+  {
+    "id": "coppockbeaver2015_105a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(105a)"
+    },
+    "language": "stan1293",
+    "primaryText": "There are at least seven BMWs in the neighborhood. If Maria has a BMW, that will make eight.",
+    "discourseSegments": [
+      "There are at least seven BMWs in the neighborhood.",
+      "If Maria has a BMW, that will make eight."
+    ],
+    "glossedTokens": [],
+    "translation": "There are at least seven BMWs in the neighborhood. If Maria has a BMW, that will make eight.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": "The arithmetic inference is felicitous: the verb introduces entities."
+  },
+  {
+    "id": "coppockbeaver2015_105b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(105b)"
+    },
+    "language": "stan1293",
+    "primaryText": "There are at least seven BMWs in the neighborhood. If Maria cleans a BMW, that will make eight.",
+    "discourseSegments": [
+      "There are at least seven BMWs in the neighborhood.",
+      "#If Maria cleans a BMW, that will make eight."
+    ],
+    "glossedTokens": [],
+    "translation": "There are at least seven BMWs in the neighborhood. If Maria cleans a BMW, that will make eight.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "other"
+      ]
+    ],
+    "comment": "The arithmetic inference is infelicitous: the verb does not introduce entities."
+  },
+  {
+    "id": "coppockbeaver2015_106a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(106a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Nobody baked any brownies. Some of them are made with nuts.",
+    "discourseSegments": [
+      "Nobody baked any brownies.",
+      "#Some of them are made with nuts."
+    ],
+    "glossedTokens": [],
+    "translation": "Nobody baked any brownies. Some of them are made with nuts.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": "Under negation an entity-introducing verb leaves no existence implication for its indefinite object, so the anaphor fails."
+  },
+  {
+    "id": "coppockbeaver2015_106b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(106b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Nobody tasted any brownies. Some of them are made with nuts.",
+    "discourseSegments": [
+      "Nobody tasted any brownies.",
+      "Some of them are made with nuts."
+    ],
+    "glossedTokens": [],
+    "translation": "Nobody tasted any brownies. Some of them are made with nuts.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "other"
+      ]
+    ],
+    "comment": "For other verbs the existence implication survives negation."
+  },
+  {
+    "id": "coppockbeaver2015_107a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(107a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Nobody painted any pictures. They were landscapes.",
+    "discourseSegments": [
+      "Nobody painted any pictures.",
+      "#They were landscapes."
+    ],
+    "glossedTokens": [],
+    "translation": "Nobody painted any pictures. They were landscapes.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": "Under negation an entity-introducing verb leaves no existence implication for its indefinite object, so the anaphor fails."
+  },
+  {
+    "id": "coppockbeaver2015_107b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(107b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Nobody disliked any pictures. They were landscapes.",
+    "discourseSegments": [
+      "Nobody disliked any pictures.",
+      "They were landscapes."
+    ],
+    "glossedTokens": [],
+    "translation": "Nobody disliked any pictures. They were landscapes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "other"
+      ]
+    ],
+    "comment": "For other verbs the existence implication survives negation."
+  },
+  {
+    "id": "coppockbeaver2015_108a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(108a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Nobody found any foreign cars. All of them were made in Italy.",
+    "discourseSegments": [
+      "Nobody found any foreign cars.",
+      "#All of them were made in Italy."
+    ],
+    "glossedTokens": [],
+    "translation": "Nobody found any foreign cars. All of them were made in Italy.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": "Under negation an entity-introducing verb leaves no existence implication for its indefinite object, so the anaphor fails."
+  },
+  {
+    "id": "coppockbeaver2015_108b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(108b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Nobody scratched any foreign cars. All of them were made in Italy.",
+    "discourseSegments": [
+      "Nobody scratched any foreign cars.",
+      "All of them were made in Italy."
+    ],
+    "glossedTokens": [],
+    "translation": "Nobody scratched any foreign cars. All of them were made in Italy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "other"
+      ]
+    ],
+    "comment": "For other verbs the existence implication survives negation."
+  },
+  {
+    "id": "coppockbeaver2015_109a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(109a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Nobody ran any businesses. They were well-established and profitable.",
+    "discourseSegments": [
+      "Nobody ran any businesses.",
+      "#They were well-established and profitable."
+    ],
+    "glossedTokens": [],
+    "translation": "Nobody ran any businesses. They were well-established and profitable.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": "Under negation an entity-introducing verb leaves no existence implication for its indefinite object, so the anaphor fails."
+  },
+  {
+    "id": "coppockbeaver2015_109b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(109b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Nobody opposed any businesses. They were well-established and profitable.",
+    "discourseSegments": [
+      "Nobody opposed any businesses.",
+      "They were well-established and profitable."
+    ],
+    "glossedTokens": [],
+    "translation": "Nobody opposed any businesses. They were well-established and profitable.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "other"
+      ]
+    ],
+    "comment": "For other verbs the existence implication survives negation."
+  },
+  {
+    "id": "coppockbeaver2015_110",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(110)"
+    },
+    "language": "stan1293",
+    "primaryText": "If John sees a sparrow, that will make eight.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If John sees a sparrow, that will make eight.",
+    "context": "A bird-watching expedition in which the participants are keeping track of how many birds have been seen.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "entity-introducing diagnostic"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": "See is entity-introducing in this frame."
+  },
+  {
+    "id": "coppockbeaver2015_111",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(111)"
+    },
+    "language": "stan1293",
+    "primaryText": "He indeed saw that sparrow. But he didn't see the only sparrow—Sue had seen another one earlier!",
+    "discourseSegments": [
+      "He indeed saw that sparrow.",
+      "But he didn't see the only sparrow—Sue had seen another one earlier!"
+    ],
+    "glossedTokens": [],
+    "translation": "He indeed saw that sparrow. But he didn't see the only sparrow—Sue had seen another one earlier!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "anti-uniqueness",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "argumental anti-uniqueness"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": "Due to a reviewer: anti-uniqueness with see in its entity-introducing sense."
+  },
+  {
+    "id": "coppockbeaver2015_112a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(112a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary's pet rabbit is in the cage and Mary's pet rabbit is outside the cage.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary's pet rabbit is in the cage and Mary's pet rabbit is outside the cage.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "test",
+        "negation"
+      ],
+      [
+        "expression",
+        "possessive"
+      ],
+      [
+        "verdict",
+        "contradictory"
+      ]
+    ],
+    "comment": "Löbner's negation test: an argumental possessive with a definite possessor behaves as a term."
+  },
+  {
+    "id": "coppockbeaver2015_112b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(112b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some rabbit is in the cage and some rabbit is outside the cage.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Some rabbit is in the cage and some rabbit is outside the cage.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "test",
+        "negation"
+      ],
+      [
+        "expression",
+        "some"
+      ],
+      [
+        "verdict",
+        "notContradictory"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_113a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(113a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary's pet rabbit is from South Africa and Mary's pet rabbit is a secret agent.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary's pet rabbit is from South Africa and Mary's pet rabbit is a secret agent.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "test",
+        "conjunction"
+      ],
+      [
+        "expression",
+        "possessive"
+      ],
+      [
+        "verdict",
+        "equivalent"
+      ]
+    ],
+    "comment": "Equivalent to: Mary's pet rabbit is a secret agent from South Africa."
+  },
+  {
+    "id": "coppockbeaver2015_113b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(113b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some rabbit is from South Africa and some rabbit is a secret agent.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Some rabbit is from South Africa and some rabbit is a secret agent.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "test",
+        "conjunction"
+      ],
+      [
+        "expression",
+        "some"
+      ],
+      [
+        "verdict",
+        "notEquivalent"
+      ]
+    ],
+    "comment": "Not equivalent to: Some rabbit is a secret agent from South Africa."
+  },
+  {
+    "id": "coppockbeaver2015_114a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(114a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The rabbit in the cage is Mary's pet and the rabbit sitting just outside the cage is Mary's pet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The rabbit in the cage is Mary's pet and the rabbit sitting just outside the cage is Mary's pet.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "test",
+        "negation"
+      ],
+      [
+        "expression",
+        "predicativePossessive"
+      ],
+      [
+        "verdict",
+        "notContradictory"
+      ]
+    ],
+    "comment": "Predicative possessives pattern with predicative indefinites, not definites: no uniqueness requirement."
+  },
+  {
+    "id": "coppockbeaver2015_114b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(114b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The rabbit in the cage is a pet Mary owns and the rabbit sitting just outside the cage is a pet Mary owns.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The rabbit in the cage is a pet Mary owns and the rabbit sitting just outside the cage is a pet Mary owns.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "test",
+        "negation"
+      ],
+      [
+        "expression",
+        "predicativeIndefinite"
+      ],
+      [
+        "verdict",
+        "notContradictory"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_114c",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(114c)"
+    },
+    "language": "stan1293",
+    "primaryText": "The rabbit in the cage is the pet Mary owns and the rabbit sitting just outside the cage is the pet Mary owns.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The rabbit in the cage is the pet Mary owns and the rabbit sitting just outside the cage is the pet Mary owns.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "test",
+        "negation"
+      ],
+      [
+        "expression",
+        "predicativeDefinite"
+      ],
+      [
+        "verdict",
+        "contradictory"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_115a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(115a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The rabbit from South Africa is Mary's pet and the Indonesian cat is Mary's pet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The rabbit from South Africa is Mary's pet and the Indonesian cat is Mary's pet.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "test",
+        "conjunction"
+      ],
+      [
+        "expression",
+        "predicativePossessive"
+      ],
+      [
+        "verdict",
+        "notEquivalent"
+      ]
+    ],
+    "comment": "Not equivalent to: Mary has a South African pet rabbit which is also an Indonesian cat."
+  },
+  {
+    "id": "coppockbeaver2015_115b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(115b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The rabbit from South Africa is a pet Mary owns and the Indonesian cat is a pet Mary owns.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The rabbit from South Africa is a pet Mary owns and the Indonesian cat is a pet Mary owns.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "test",
+        "conjunction"
+      ],
+      [
+        "expression",
+        "predicativeIndefinite"
+      ],
+      [
+        "verdict",
+        "notEquivalent"
+      ]
+    ],
+    "comment": "Not equivalent to: Mary has a South African pet rabbit which is also an Indonesian cat."
+  },
+  {
+    "id": "coppockbeaver2015_115c",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(115c)"
+    },
+    "language": "stan1293",
+    "primaryText": "The rabbit from South Africa is the pet Mary owns and the Indonesian cat is the pet Mary owns.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The rabbit from South Africa is the pet Mary owns and the Indonesian cat is the pet Mary owns.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "test",
+        "conjunction"
+      ],
+      [
+        "expression",
+        "predicativeDefinite"
+      ],
+      [
+        "verdict",
+        "equivalent"
+      ]
+    ],
+    "comment": "Equivalent to: Mary has a South African pet rabbit which is also an Indonesian cat."
+  },
+  {
+    "id": "coppockbeaver2015_116a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(116a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Is that your bicycle?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Is that your bicycle?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive"
+      ]
+    ],
+    "comment": "Does not presuppose that the hearer has only one bicycle: (117) is a felicitous reply."
+  },
+  {
+    "id": "coppockbeaver2015_116b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(116b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Is that the bicycle you own?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Is that the bicycle you own?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive"
+      ]
+    ],
+    "comment": "(117) would not be a felicitous reply."
+  },
+  {
+    "id": "coppockbeaver2015_117",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(117)"
+    },
+    "language": "stan1293",
+    "primaryText": "Yes, and that one there is also mine.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Yes, and that one there is also mine.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive"
+      ]
+    ],
+    "comment": "A reply to (116a) but not to (116b)."
+  },
+  {
+    "id": "coppockbeaver2015_118a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(118a)"
+    },
+    "language": "stan1293",
+    "primaryText": "This is the state's property, and so is that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This is the state's property, and so is that.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_118b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(118b)"
+    },
+    "language": "stan1293",
+    "primaryText": "This is the property that the state owns, and so is that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This is the property that the state owns, and so is that.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_119a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(119a)"
+    },
+    "language": "stan1293",
+    "primaryText": "This is Jane's work, and so is that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This is Jane's work, and so is that.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_119b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(119b)"
+    },
+    "language": "stan1293",
+    "primaryText": "This is the work that Jane did, and so is that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This is the work that Jane did, and so is that.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockbeaver2015_120",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(120)"
+    },
+    "language": "stan1293",
+    "primaryText": "Trotsky is 100% the king's horse.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Trotsky is 100% the king's horse.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Trotsky is 100% Superman.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive"
+      ]
+    ],
+    "comment": "Printed as {the king's horse/#Superman}: the modifier excludes the equative reading, and the king may have several horses."
+  },
+  {
+    "id": "coppockbeaver2015_121",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(121)"
+    },
+    "language": "stan1293",
+    "primaryText": "Trotsky is to some extent the king's horse.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Trotsky is to some extent the king's horse.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Trotsky is to some extent Superman.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive"
+      ]
+    ],
+    "comment": "Printed as {the king's horse/#Superman}."
+  },
+  {
+    "id": "coppockbeaver2015_122",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(122)"
+    },
+    "language": "stan1293",
+    "primaryText": "He is tall, dark, handsome, and my cousin (alas!).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He is tall, dark, handsome, and my cousin (alas!).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive"
+      ]
+    ],
+    "comment": "The speaker may have several cousins."
+  },
+  {
+    "id": "coppockbeaver2015_123a",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(123a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I consider this your problem.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I consider this your problem.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive"
+      ]
+    ],
+    "comment": "Does not convey that the addressee has only one problem."
+  },
+  {
+    "id": "coppockbeaver2015_123b",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(123b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I consider this the problem you have.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I consider this the problem you have.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive"
+      ]
+    ],
+    "comment": "Conveys that the addressee has only one problem."
+  },
+  {
+    "id": "coppockbeaver2015_124",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(124)"
+    },
+    "language": "stan1293",
+    "primaryText": "That wasn't John's only contribution.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "That wasn't John's only contribution.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "multiple contributions",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive anti-uniqueness"
+      ]
+    ],
+    "comment": "Predicative possessives show anti-uniqueness, so they presuppose no existence."
+  },
+  {
+    "id": "coppockbeaver2015_125",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(125)"
+    },
+    "language": "stan1293",
+    "primaryText": "That wasn't Mary's fault!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "That wasn't Mary's fault!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive"
+      ]
+    ],
+    "comment": "Does not imply that anything was Mary's fault."
+  },
+  {
+    "id": "coppockbeaver2015_126",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(126)"
+    },
+    "language": "stan1293",
+    "primaryText": "Is that your eighteen-wheeler that's blocking the entrance? No!",
+    "discourseSegments": [
+      "A: Is that your eighteen-wheeler that's blocking the entrance?",
+      "B: No!"
+    ],
+    "glossedTokens": [],
+    "translation": "Is that your eighteen-wheeler that's blocking the entrance? No!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive"
+      ]
+    ],
+    "comment": "Does not imply that speaker B owns an eighteen-wheeler."
+  },
+  {
+    "id": "coppockbeaver2015_131",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(131)"
+    },
+    "language": "stan1293",
+    "primaryText": "Green card holders don't just take from the USA, nor do they make their only contribution through taxes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Green card holders don't just take from the USA, nor do they make their only contribution through taxes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "multiple contributions",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive anti-uniqueness"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": "Attested: an argumental possessive with an indeterminate reading, (134)."
+  },
+  {
+    "id": "coppockbeaver2015_132",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(132)"
+    },
+    "language": "stan1293",
+    "primaryText": "The Grinch didn't make his only appearance when he attempted to steal Christmas. Dr. Seuss reprised the character in two more books: …",
+    "discourseSegments": [
+      "The Grinch didn't make his only appearance when he attempted to steal Christmas.",
+      "Dr. Seuss reprised the character in two more books: …"
+    ],
+    "glossedTokens": [],
+    "translation": "The Grinch didn't make his only appearance when he attempted to steal Christmas. Dr. Seuss reprised the character in two more books: …",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "multiple appearances",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "possessive anti-uniqueness"
+      ],
+      [
+        "verb",
+        "entityIntroducing"
+      ]
+    ],
+    "comment": "Attested: analysed as (133)–(134) with ex over the possessive."
+  },
+  {
+    "id": "coppockbeaver2015_135",
+    "source": {
+      "bibkey": "coppock-beaver-2015",
+      "paperLabel": "(135)"
+    },
+    "language": "croa1245",
+    "primaryText": "Rajka nije bila jedini predavač: Megan je isto održala predavanje.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Rajka was not the only speaker: Megan also gave a talk",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "indeterminate",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "bare nominal"
+      ]
+    ],
+    "comment": "Croatian, for which the paper thanks Rajka Smiljanic: a bare nominal with the indeterminate reading that the only speaker has in English."
+  }
+]
