@@ -50,6 +50,7 @@ import Linglib.Core.Algebra.Group.IdempotentPower
 import Linglib.Core.Algebra.Semigroup.Pseudovariety
 import Linglib.Core.Analysis.Convex.Function
 import Linglib.Core.Analysis.LeastSquares
+import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 import Linglib.Core.Analysis.SpecialFunctions.Softmax
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.PartitionCat
@@ -301,6 +302,7 @@ import Linglib.Core.Probability.Gumbel
 import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.JointPosterior
 import Linglib.Core.Probability.Kernel.Composition.Lemmas
+import Linglib.Core.Probability.Kernel.Mixture
 import Linglib.Core.Probability.Kernel.OfWeights
 import Linglib.Core.Probability.Kernel.Posterior
 import Linglib.Core.Probability.Uniform

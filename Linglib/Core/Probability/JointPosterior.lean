@@ -87,45 +87,6 @@ theorem posterior_fst_lt_iff
   -- Both sides are `(...) / marginal κ joint c`. Shared denominator cancels via div_lt_div_iff_left.
   exact ENNReal.div_lt_div_iff_left h (marginal_ne_top κ joint c)
 
-/-- **The marginalized posterior exceeds the marginalized prior** at `a` exactly when the
-conditional joint mass of the fibre over `a` exceeds the prior mass times the marginal
-likelihood. -/
-theorem fst_lt_posterior_fst_iff
-    (κ : (α × β) → PMF γ) (joint : PMF (α × β)) (c : γ)
-    (h : marginal κ joint c ≠ 0) (a : α) :
-    joint.fst a < (posterior κ joint c h).fst a
-      ↔ joint.fst a * marginal κ joint c < ∑ b : β, joint (a, b) * κ (a, b) c := by
-  rw [posterior_fst_apply,
-    ENNReal.lt_div_iff_mul_lt (Or.inl h) (Or.inl (marginal_ne_top κ joint c))]
-
-/-- **The marginalized posterior falls below the marginalized prior** at `a` exactly when the
-conditional joint mass of the fibre over `a` falls below the prior mass times the marginal
-likelihood. -/
-theorem posterior_fst_lt_fst_iff
-    (κ : (α × β) → PMF γ) (joint : PMF (α × β)) (c : γ)
-    (h : marginal κ joint c ≠ 0) (a : α) :
-    (posterior κ joint c h).fst a < joint.fst a
-      ↔ (∑ b : β, joint (a, b) * κ (a, b) c) < joint.fst a * marginal κ joint c := by
-  rw [posterior_fst_apply, ENNReal.div_lt_iff (Or.inl h) (Or.inl (marginal_ne_top κ joint c))]
-
-/-- The `≤` companion of `fst_lt_posterior_fst_iff`. -/
-theorem fst_le_posterior_fst_iff
-    (κ : (α × β) → PMF γ) (joint : PMF (α × β)) (c : γ)
-    (h : marginal κ joint c ≠ 0) (a : α) :
-    joint.fst a ≤ (posterior κ joint c h).fst a
-      ↔ joint.fst a * marginal κ joint c ≤ ∑ b : β, joint (a, b) * κ (a, b) c := by
-  rw [← not_lt, ← not_lt, not_iff_not]
-  exact posterior_fst_lt_fst_iff κ joint c h a
-
-/-- The `≤` companion of `posterior_fst_lt_fst_iff`. -/
-theorem posterior_fst_le_fst_iff
-    (κ : (α × β) → PMF γ) (joint : PMF (α × β)) (c : γ)
-    (h : marginal κ joint c ≠ 0) (a : α) :
-    (posterior κ joint c h).fst a ≤ joint.fst a
-      ↔ (∑ b : β, joint (a, b) * κ (a, b) c) ≤ joint.fst a * marginal κ joint c := by
-  rw [← not_lt, ← not_lt, not_iff_not]
-  exact fst_lt_posterior_fst_iff κ joint c h a
-
 /-- **Companion `≤` form** of `posterior_fst_lt_iff`. -/
 theorem posterior_fst_le_iff
     (κ : (α × β) → PMF γ) (joint : PMF (α × β)) (c : γ)

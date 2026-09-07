@@ -127,6 +127,82 @@ theorem posterior_real_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω 
   rw [measureReal_def, posterior_apply_singleton κ μ hx, ENNReal.toReal_div, ENNReal.toReal_mul,
     measureReal_def, measureReal_def, measureReal_def]
 
+/-- The posterior exceeds the prior at a state exactly when the state's likelihood of the
+observation exceeds the observation's marginal. -/
+theorem real_lt_posterior_real_singleton_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) {ω : Ω}
+    (hω : μ {ω} ≠ 0) :
+    μ.real {ω} < ((κ†μ) x).real {ω} ↔ (κ ∘ₘ μ).real {x} < (κ ω).real {x} := by
+  have hm : 0 < (κ ∘ₘ μ).real {x} := ENNReal.toReal_pos hx (measure_ne_top _ _)
+  have hμ : 0 < μ.real {ω} := ENNReal.toReal_pos hω (measure_ne_top _ _)
+  rw [posterior_real_singleton κ μ hx, lt_div_iff₀ hm, mul_lt_mul_iff_of_pos_left hμ]
+
+/-- The posterior falls below the prior at a state exactly when the state's likelihood of the
+observation falls below the observation's marginal. -/
+theorem posterior_real_singleton_lt_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) {ω : Ω}
+    (hω : μ {ω} ≠ 0) :
+    ((κ†μ) x).real {ω} < μ.real {ω} ↔ (κ ω).real {x} < (κ ∘ₘ μ).real {x} := by
+  have hm : 0 < (κ ∘ₘ μ).real {x} := ENNReal.toReal_pos hx (measure_ne_top _ _)
+  have hμ : 0 < μ.real {ω} := ENNReal.toReal_pos hω (measure_ne_top _ _)
+  rw [posterior_real_singleton κ μ hx, div_lt_iff₀ hm, mul_lt_mul_iff_of_pos_left hμ]
+
+/-! ### Priors carried by two atoms
+
+The `_of_pair` lemmas assume the prior's support lies in a pair `{ω, ω'}`, so that the
+observation's marginal has two terms and the comparison of the posterior with the prior at
+one atom is the comparison of the two likelihoods. -/
+
+section Pair
+
+variable [Fintype Ω] {ω ω' : Ω} (hne : ω ≠ ω') (hsupp : ∀ ω'', μ {ω''} ≠ 0 → ω'' = ω ∨ ω'' = ω')
+include hne hsupp
+
+omit [StandardBorelSpace Ω] [Nonempty Ω] in
+/-- Under a prior carried by two atoms, the observation's marginal is the prior-weighted sum
+of the two likelihoods. -/
+theorem _root_.MeasureTheory.Measure.comp_real_singleton_of_pair (x : 𝓧) :
+    (κ ∘ₘ μ).real {x} = μ.real {ω} * (κ ω).real {x} + μ.real {ω'} * (κ ω').real {x} := by
+  rw [Measure.comp_real_singleton]
+  exact Fintype.sum_eq_add ω ω' hne λ c hc => by
+    rw [measureReal_def, of_not_not (mt (hsupp c) (not_or.mpr hc)), ENNReal.toReal_zero, zero_mul]
+
+omit [StandardBorelSpace Ω] [Nonempty Ω] [IsFiniteKernel κ] in
+/-- A probability measure carried by two atoms puts mass one on them together. -/
+theorem _root_.MeasureTheory.measureReal_singleton_add_singleton_of_pair
+    [IsProbabilityMeasure μ] : μ.real {ω} + μ.real {ω'} = 1 := by
+  have h := measure_univ (μ := μ)
+  rw [← Finset.coe_univ, ← sum_measure_singleton,
+    Fintype.sum_eq_add ω ω' hne (λ c hc => of_not_not (mt (hsupp c) (not_or.mpr hc)))] at h
+  rw [measureReal_def, measureReal_def,
+    ← ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _), h, ENNReal.toReal_one]
+
+variable [IsProbabilityMeasure μ] {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (hω : μ {ω} ≠ 0)
+  (hω' : μ {ω'} ≠ 0)
+include hx hω hω'
+
+/-- Under a prior carried by two atoms, the posterior exceeds the prior at one of them exactly
+when its likelihood of the observation exceeds the other's. -/
+theorem real_lt_posterior_real_singleton_iff_of_pair :
+    μ.real {ω} < ((κ†μ) x).real {ω} ↔ (κ ω').real {x} < (κ ω).real {x} := by
+  have h1 := measureReal_singleton_add_singleton_of_pair μ hne hsupp
+  have h2 : 0 < μ.real {ω'} := ENNReal.toReal_pos hω' (measure_ne_top _ _)
+  rw [real_lt_posterior_real_singleton_iff κ μ hx hω,
+    Measure.comp_real_singleton_of_pair κ μ hne hsupp,
+    show μ.real {ω} = 1 - μ.real {ω'} by linarith]
+  constructor <;> intro h <;> nlinarith
+
+/-- Under a prior carried by two atoms, the posterior falls below the prior at one of them
+exactly when its likelihood of the observation falls below the other's. -/
+theorem posterior_real_singleton_lt_iff_of_pair :
+    ((κ†μ) x).real {ω} < μ.real {ω} ↔ (κ ω).real {x} < (κ ω').real {x} := by
+  have h1 := measureReal_singleton_add_singleton_of_pair μ hne hsupp
+  have h2 : 0 < μ.real {ω'} := ENNReal.toReal_pos hω' (measure_ne_top _ _)
+  rw [posterior_real_singleton_lt_iff κ μ hx hω,
+    Measure.comp_real_singleton_of_pair κ μ hne hsupp,
+    show μ.real {ω} = 1 - μ.real {ω'} by linarith]
+  constructor <;> intro h <;> nlinarith
+
+end Pair
+
 /-- A single state of positive prior mass and positive emission witnesses a
 positive observation marginal. -/
 theorem comp_apply_singleton_ne_zero {Ω' 𝓧' : Type*} [MeasurableSpace Ω']
@@ -157,14 +233,34 @@ namespace ProbabilityTheory
 
 variable {𝓧 : Type*} [MeasurableSpace 𝓧] [MeasurableSingletonClass 𝓧]
 
+section Prod
+
+variable {A B : Type*} [MeasurableSpace A] [MeasurableSpace B] [MeasurableSingletonClass A]
+  [MeasurableSingletonClass B] [StandardBorelSpace A] [Nonempty A] [StandardBorelSpace B]
+  [Nonempty B] (κ : Kernel (A × B) 𝓧) (μ : Measure (A × B)) [IsFiniteMeasure μ]
+  [IsFiniteKernel κ] {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0)
+include hx
+
+/-- The state marginal of the posterior over a product parameter space, on reals:
+prior-weighted likelihoods pooled over the latent, normalized by the observation marginal. -/
+theorem posterior_fst_real_singleton [Fintype B] (a : A) :
+    ((κ†μ) x).fst.real {a}
+      = (∑ b, μ.real {(a, b)} * (κ (a, b)).real {x}) / (κ ∘ₘ μ).real {x} := by
+  rw [Measure.fst_real_singleton_eq_sum, Finset.sum_div]
+  exact Finset.sum_congr rfl λ b _ => posterior_real_singleton κ μ hx (a, b)
+
+/-- The latent marginal of the posterior over a product parameter space, on reals:
+prior-weighted likelihoods pooled over the states, normalized by the observation marginal. -/
+theorem posterior_snd_real_singleton [Fintype A] (b : B) :
+    ((κ†μ) x).snd.real {b}
+      = (∑ a, μ.real {(a, b)} * (κ (a, b)).real {x}) / (κ ∘ₘ μ).real {x} := by
+  rw [Measure.snd_real_singleton_eq_sum, Finset.sum_div]
+  exact Finset.sum_congr rfl λ a _ => posterior_real_singleton κ μ hx (a, b)
+
 /-- Marginal listener preference over a product parameter space, on reals:
 for latent-in-the-state models, the observation's marginal cancels and the
 latent pools. -/
-theorem posterior_fst_real_lt_iff {A B : Type*} [MeasurableSpace A] [MeasurableSpace B]
-    [MeasurableSingletonClass A] [MeasurableSingletonClass B] [Fintype B]
-    [StandardBorelSpace A] [Nonempty A] [StandardBorelSpace B] [Nonempty B]
-    (κ : Kernel (A × B) 𝓧) (μ : Measure (A × B)) [IsFiniteMeasure μ] [IsFiniteKernel κ]
-    {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (a₁ a₂ : A) :
+theorem posterior_fst_real_lt_iff [Fintype B] (a₁ a₂ : A) :
     ((κ†μ) x).fst.real {a₁} < ((κ†μ) x).fst.real {a₂}
       ↔ (∑ b, μ.real {(a₁, b)} * (κ (a₁, b)).real {x})
           < ∑ b, μ.real {(a₂, b)} * (κ (a₂, b)).real {x} := by
@@ -188,11 +284,7 @@ theorem posterior_fst_real_lt_iff {A B : Type*} [MeasurableSpace A] [MeasurableS
 
 /-- Marginal listener preference over the latent component of a product
 parameter space, on reals: the states pool. -/
-theorem posterior_snd_real_lt_iff {A B : Type*} [MeasurableSpace A] [MeasurableSpace B]
-    [MeasurableSingletonClass A] [MeasurableSingletonClass B] [Fintype A]
-    [StandardBorelSpace A] [Nonempty A] [StandardBorelSpace B] [Nonempty B]
-    (κ : Kernel (A × B) 𝓧) (μ : Measure (A × B)) [IsFiniteMeasure μ] [IsFiniteKernel κ]
-    {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (b₁ b₂ : B) :
+theorem posterior_snd_real_lt_iff [Fintype A] (b₁ b₂ : B) :
     ((κ†μ) x).snd.real {b₁} < ((κ†μ) x).snd.real {b₂}
       ↔ (∑ a, μ.real {(a, b₁)} * (κ (a, b₁)).real {x})
           < ∑ a, μ.real {(a, b₂)} * (κ (a, b₂)).real {x} := by
@@ -213,5 +305,7 @@ theorem posterior_snd_real_lt_iff {A B : Type*} [MeasurableSpace A] [MeasurableS
       ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))]
   simp_rw [ENNReal.toReal_mul]
   exact Iff.rfl
+
+end Prod
 
 end ProbabilityTheory

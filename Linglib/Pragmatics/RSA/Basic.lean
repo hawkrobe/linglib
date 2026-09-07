@@ -95,6 +95,29 @@ theorem literalListener_indicator_apply_singleton_of_notMem [DiscreteMeasurableS
   rw [literalListener_indicator, Kernel.ofFunOfCountable_apply, cond_apply .of_discrete,
     Set.inter_comm, Set.singleton_inter_eq_empty.mpr h, measure_empty, mul_zero]
 
+/-- A tautology leaves a probability prior unchanged. -/
+theorem literalListener_indicator_apply_singleton_of_eq_univ [DiscreteMeasurableSpace W]
+    (μ : Measure W) [IsProbabilityMeasure μ] (sem : U → Set W) {u : U} (h : sem u = Set.univ)
+    (w : W) : literalListener μ (λ u => (sem u).indicator 1) u {w} = μ {w} := by
+  rw [literalListener_indicator_apply_singleton μ sem (by rw [h]; exact Set.mem_univ w), h,
+    measure_univ, inv_one, one_mul]
+
+/-- An utterance true at one state only puts all its mass there. -/
+theorem literalListener_indicator_apply_singleton_of_eq_singleton [DiscreteMeasurableSpace W]
+    (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) {u : U} {w : W} (h : sem u = {w})
+    (hμ : μ {w} ≠ 0) : literalListener μ (λ u => (sem u).indicator 1) u {w} = 1 := by
+  rw [literalListener_indicator_apply_singleton μ sem (by rw [h]; exact Set.mem_singleton w), h,
+    ENNReal.inv_mul_cancel hμ (measure_ne_top _ _)]
+
+/-- The literal listener of an utterance with a positive-mass extension is a probability
+measure. -/
+theorem literalListener_indicator_apply_univ [DiscreteMeasurableSpace W] (μ : Measure W)
+    [IsFiniteMeasure μ] (sem : U → Set W) {u : U} (h : μ (sem u) ≠ 0) :
+    literalListener μ (λ u => (sem u).indicator 1) u Set.univ = 1 := by
+  rw [literalListener_indicator, Kernel.ofFunOfCountable_apply]
+  have := cond_isProbabilityMeasure h
+  exact measure_univ
+
 /-- On a finite-mass extension the literal listener is a subprobability at members. -/
 theorem literalListener_indicator_apply_singleton_le_one [DiscreteMeasurableSpace W]
     (μ : Measure W) (sem : U → Set W) {u : U} (hfin : μ (sem u) ≠ ∞) {w : W} (h : w ∈ sem u) :
@@ -152,11 +175,9 @@ theorem speaker_apply_singleton_eq_zero {α : ℝ} (hα : 0 < α) {cost : U → 
 /-- A literally true utterance is produced with positive mass. -/
 theorem speaker_apply_singleton_ne_zero {α : ℝ} (hα : 0 ≤ α) {cost : U → ℝ≥0∞}
     (hc0 : ∀ u, cost u ≠ 0) (hctop : ∀ u, cost u ≠ ∞) {L : Kernel U W} {w : W}
-    (hle : ∀ u', L u' {w} ≤ 1) {u : U} (h : L u {w} ≠ 0) : speaker α cost L w {u} ≠ 0 := by
-  rw [speaker_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or]
-  exact ⟨mul_ne_zero (weight_rpow_ne_zero hα h) (hc0 u),
-    ENNReal.sum_ne_top.mpr fun u' _ =>
-      ENNReal.mul_ne_top (weight_rpow_ne_top hα (hle u')) (hctop u')⟩
+    (hle : ∀ u', L u' {w} ≤ 1) {u : U} (h : L u {w} ≠ 0) : speaker α cost L w {u} ≠ 0 :=
+  Kernel.ofWeights_apply_singleton_ne_zero (mul_ne_zero (weight_rpow_ne_zero hα h) (hc0 u))
+    fun u' => ENNReal.mul_ne_top (weight_rpow_ne_top hα (hle u')) (hctop u')
 
 /-- A state with a unique applicable utterance produces it with certainty. -/
 theorem speaker_apply_singleton_eq_one {α : ℝ} (hα : 0 < α) {cost : U → ℝ≥0∞} {u : U}
