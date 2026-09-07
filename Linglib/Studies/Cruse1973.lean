@@ -1,356 +1,196 @@
-import Linglib.Semantics.ArgumentStructure.Thematic.Defs
-import Linglib.Semantics.ArgumentStructure.Thematic.Basic
-import Linglib.Semantics.Causation.CoerciveImplication
-import Linglib.Semantics.Causation.Interpretation
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.ArgumentStructure.EnergySource
+import Linglib.Data.Examples.Cruse1973
 
 /-!
-# [cruse-1973] Agentivity Decomposition
+# Some thoughts on agentivity
 
-[cruse-1973] "Some Thoughts on Agentivity" argues that agentivity is not a
-single feature but decomposes into 4 independent sub-features:
+Cruse replaces the referential definitions of agentivity, Fillmore's animate perceived
+instigator and Gruber's wilful source, by an entailment test: a noun is a doer in a sentence
+when the sentence entails that the noun did something. The test admits inanimate doers,
+process verbs and statives, against the received opinions, so doing is heterogeneous: at
+least four features each suffice for it, the volitive, the effective, the initiative and the
+agentive, an instrument being none of them, and each has contextual diagnostics of its own.
 
-| Feature    | Cruse's gloss                         | Example              |
-|------------|---------------------------------------|----------------------|
-| volitive   | an act of will is stated or implied   | John deliberately…   |
-| effective  | force from position/motion/energy     | The bullet smashed…  |
-| initiative | initiating action by command          | The warder marched…  |
-| agentive   | using own body's internal energy      | John ran             |
+We check the paper's examples against its diagnostics: normality in each frame is what the
+noun's features predict, the three counterexamples to the received opinions are among the
+data, and the volitive and the effective alone each make a doer.
 
-The **do-test** ("NP did something") passes iff at least one feature is
-present. [parsons-1990] neo-Davidsonian `agent` role captures specifically
-the `agentive` sub-feature (own energy + dynamic), which is strictly
-narrower than passing the do-test.
+## References
 
-This analysis has been superseded by [grimm-2011]'s agentivity lattice
-(formalized in `Semantics/ArgumentStructure/Agentivity.lean`), which organizes proto-agent
-entailments into a lattice with privative features. The Cruse decomposition
-is preserved here as a historically important precursor.
-
-## Connections
-
-- `ThematicRoles.ThematicFrame.agent` — Parsons' agent captures Cruse's `agentive_`
-- `CoerciveImplication.ActionType` — initiative ↔ volitional action
-- `Causative` — initiative ↔ causative constructions
-- `VendlerClass` / `DiagnosticResult` — aspect diagnostics
-
-## Aspect bridge
-
-The do-test prediction for each Vendler class is derived from the agentivity
-theory: the do-test accepts durative dynamic classes (activity, accomplishment)
-and is marginal for others.
+* [D. A. Cruse, *Some thoughts on agentivity* (1973)][cruse-1973]
+* [C. J. Fillmore, *The case for case* (1968)][fillmore-1968]
+* [J. S. Gruber, *Look and see* (1967)][gruber-1967]
+* [M. A. K. Halliday, *Notes on transitivity and theme in English: part 1*
+  (1967)][halliday-1967]
+* [M. A. K. Halliday, *Notes on transitivity and theme in English: part 3*
+  (1968)][halliday-1968]
+* [J. Lyons, *Structural semantics* (1963)][lyons-1963]
+* [J. Lyons, *Introduction to theoretical linguistics* (1968)][lyons-1968]
+* [J. M. Anderson, *The grammar of case* (1971)][anderson-1971]
+* [W. L. Chafe, *Meaning and the structure of language* (1970)][chafe-1970]
 -/
 
 namespace Cruse1973
 
 open ArgumentStructure
-open Causation.CoerciveImplication
-open Features
-open ArgumentStructure
-open Features
 
--- ════════════════════════════════════════════════════
--- § 1. Agentivity Features ([cruse-1973] pp.17–21)
--- ════════════════════════════════════════════════════
+/-- The doing features the paper attributes to a noun in relation to its verb. -/
+structure Profile where
+  /-- An act of will is stated or implied. -/
+  volitive : Bool := false
+  /-- The action is initiated by giving a command. -/
+  initiative : Bool := false
+  /-- The source of the noun's energy, if it bears force. -/
+  energy : Option EnergySource := none
+  deriving DecidableEq
 
-/-- The four independent sub-features of agentivity ([cruse-1973] pp.17–21).
+/-- A doer: any feature suffices, an instrument's borrowed energy excepted. -/
+def Profile.IsDoer (p : Profile) : Prop :=
+  p.volitive = true ∨ p.initiative = true ∨ ∃ s ∈ p.energy, s.IsSelfEnergetic
 
-    Cruse argues that "agentivity" is not a single binary feature but
-    decomposes into at least four independent components, each with
-    distinct linguistic diagnostics. -/
-inductive AgentivityFeature where
-  /-- **Volitive**: an act of will is stated or implied (Cruse p.18).
-      "John deliberately drifted downstream." -/
-  | volitive
-  /-- **Effective**: force deriving from position, motion, or kinetic
-      energy (Cruse p.19). "The bullet smashed the collar-bone." -/
-  | effective
-  /-- **Initiative**: initiating action by command or instruction to
-      another agent (Cruse p.19). "The warder marched the prisoners." -/
-  | initiative
-  /-- **Agentive**: use of one's own body's internal energy source
-      (Cruse p.20). "John ran." The prototypical agent feature. -/
-  | agentive_
-  deriving DecidableEq, Repr
+instance : DecidablePred Profile.IsDoer := λ _ => by unfold Profile.IsDoer; infer_instance
 
-/-- An agentivity profile assigns Prop-valued feature predicates over
-    entity–event pairs for each of Cruse's four sub-features.
+/-- The frames the paper places a sentence in. -/
+inductive Frame where
+  /-- *What X did was …*, for a subject. -/
+  | doForm
+  /-- *What happened to X was that …*, for a subject. -/
+  | happenForm
+  /-- *X VP entails X did something*, or the normality of *X VP: it therefore follows that X did
+  something*, for a subject or an object. -/
+  | entails
+  /-- A purpose phrase *in order to …*. -/
+  | purpose
+  /-- The imperative. -/
+  | imperative
+  /-- Modification by *carefully*. -/
+  | carefully
+  /-- Reflexivization of an ergative verb used intransitively, or *V oneself Adj* for a
+  non-ergative, with minor rather than considerable semantic effects. -/
+  | reflexive
+  /-- A manner adverb of energy output, *powerfully*, *vigorously* or *energetically*, for
+  gross physical actions. -/
+  | manner
+  /-- Transitive *fly* with the noun as its object. -/
+  | causative
+  /-- A context denying a precondition of initiation by command. -/
+  | initiativeDenial
+  /-- The progressive form, Lyons's criterion for stativity. -/
+  | progressive
+  /-- The sentence itself. -/
+  | plain
+  deriving DecidableEq
 
-    Each field `hasF x e` means "entity x exhibits feature F in event e". -/
-structure AgentivityProfile (Entity T : Type*) [LinearOrder T] where
-  /-- Does x exhibit an act of will in e? -/
-  hasVolitive : Entity → Event T → Prop
-  /-- Does x exert force (from position/motion/energy) in e? -/
-  hasEffective : Entity → Event T → Prop
-  /-- Does x initiate action by command/instruction in e? -/
-  hasInitiative : Entity → Event T → Prop
-  /-- Does x use own body's internal energy in e? -/
-  hasAgentive : Entity → Event T → Prop
+/-- Normality of a sentence in a frame as the paper's diagnostics predict it from the noun's
+profile. The paper claims only that each feature suffices for the *do* form; that a noun with
+no feature is no doer is read off its happen-sentences. The sentence itself is normal, and
+the progressive, tied to stativity rather than to the profile, is left normal, no progressive
+example carrying a profile. -/
+def Frame.Normal (t : Frame) (p : Profile) : Prop :=
+  match t with
+  | .doForm | .entails => p.IsDoer
+  | .happenForm => ¬ p.IsDoer
+  | .purpose | .imperative => p.volitive = true
+  | .carefully => p.volitive = true ∧ p.energy = some .internal
+  | .reflexive | .manner | .causative => p.energy = some .internal
+  | .initiativeDenial => p.initiative = false
+  | .progressive | .plain => True
 
--- ════════════════════════════════════════════════════
--- § 2. The Do-Test ([cruse-1973] pp.13–14)
--- ════════════════════════════════════════════════════
+instance : DecidableRel Frame.Normal := λ t _ => by
+  cases t <;> simp only [Frame.Normal] <;> infer_instance
 
-/-- The do-test ([cruse-1973] pp.13–14): "NP VP" entails "NP did something"
-    iff at least one agentivity sub-feature is present.
+/-- Lyons's verb classes at issue in the received opinions. -/
+inductive VerbClass where
+  /-- An obligatorily process verb, *die*. -/
+  | process
+  /-- A stative verb, *stand*, *have*. -/
+  | stative
+  deriving DecidableEq
 
-    This is the disjunction of all four features. -/
-def passesDoTest {Entity T : Type*} [LinearOrder T]
-    (x : Entity) (e : Event T)
-    (profile : AgentivityProfile Entity T) : Prop :=
-  profile.hasVolitive x e ∨ profile.hasEffective x e ∨
-  profile.hasInitiative x e ∨ profile.hasAgentive x e
+/-! ### The paper's examples -/
 
-/-- The do-test is equivalent to the 4-way disjunction (definitional). -/
-theorem passesDo_iff_or {Entity T : Type*} [LinearOrder T]
-    (x : Entity) (e : Event T) (p : AgentivityProfile Entity T) :
-    passesDoTest x e p ↔
-    (p.hasVolitive x e ∨ p.hasEffective x e ∨
-     p.hasInitiative x e ∨ p.hasAgentive x e) :=
-  Iff.rfl
+/-- The frames by their `paperFeatures` labels. -/
+def Frame.labels : List (String × Frame) :=
+  [("do", .doForm), ("happen", .happenForm), ("entails", .entails), ("purpose", .purpose),
+   ("imperative", .imperative), ("carefully", .carefully), ("reflexive", .reflexive),
+   ("manner", .manner), ("causative", .causative), ("initiativeDenial", .initiativeDenial),
+   ("progressive", .progressive), ("plain", .plain)]
 
--- ════════════════════════════════════════════════════
--- § 3. Feature Independence (Cruse's key examples)
--- ════════════════════════════════════════════════════
+/-- The profiles by their `paperFeatures` labels. -/
+def Profile.labels : List (String × Profile) :=
+  [("", {}), ("volitive", { volitive := true }), ("initiative", { initiative := true }),
+   ("agentive", { energy := some .internal }), ("effective", { energy := some .imparted }),
+   ("instrumental", { energy := some .instrumental }),
+   ("volitive+agentive", { volitive := true, energy := some .internal })]
 
-/-- Axiom class witnessing that the four agentivity features are
-    logically independent: each can be present without the others.
+/-- An example of the paper: its frame, the profile of its noun, and the judgment, the paper's
+query mark read as questionable and a failed entailment as one. -/
+structure Datum where
+  frame : Frame
+  /-- The profile attributed to the noun, if any; the stative and neutralized examples carry
+  none. -/
+  profile : Option Profile
+  /-- Whether the attribution is the study's rather than the paper's. -/
+  inferred : Bool
+  /-- Whether the noun is marked inanimate. -/
+  inanimate : Bool
+  /-- The verb's class, where a received opinion is at issue. -/
+  verbClass : Option VerbClass
+  /-- Whether *do* and *happen* are neutralized, as in *why does the door do that*. -/
+  neutralized : Bool
+  judgment : Features.Judgment
 
-    - `volitive_without_agentive`: "John deliberately drifted downstream"
-      (will present, no own-energy expenditure)
-    - `effective_without_volitive`: "The bullet smashed the collar-bone"
-      (force present, no will)
-    - `initiative_without_agentive_`: "The warder marched the prisoners"
-      (command present, prisoners do the marching)
-    - `agentive_without_initiative`: "John ran"
-      (own energy, no command to another) -/
-class CruseIndependence (Entity T : Type*) [LinearOrder T]
-    (profile : AgentivityProfile Entity T) where
-  /-- Volitive without agentive: "John deliberately drifted downstream" -/
-  volitive_without_agentive :
-    ∃ (x : Entity) (e : Event T),
-      profile.hasVolitive x e ∧ ¬ profile.hasAgentive x e
-  /-- Effective without volitive: "The bullet smashed the collar-bone" -/
-  effective_without_volitive :
-    ∃ (x : Entity) (e : Event T),
-      profile.hasEffective x e ∧ ¬ profile.hasVolitive x e
-  /-- Initiative without agentive: "The warder marched the prisoners" -/
-  initiative_without_agentive_ :
-    ∃ (x : Entity) (e : Event T),
-      profile.hasInitiative x e ∧ ¬ profile.hasAgentive x e
-  /-- Agentive without initiative: "John ran" -/
-  agentive_without_initiative :
-    ∃ (x : Entity) (e : Event T),
-      profile.hasAgentive x e ∧ ¬ profile.hasInitiative x e
+/-- An example read into its frame, profile and judgment. -/
+def datum (e : Data.Examples.LinguisticExample) : Option Datum := do
+  pure { frame := ← e.parse? "frame" Frame.labels
+         profile := e.parse? "features" Profile.labels
+         inferred := decide (e.feature? "inferred" = some "true")
+         inanimate := decide (e.feature? "animate" = some "false")
+         verbClass := e.parse? "verbClass" [("process", .process), ("stative", .stative)]
+         neutralized := decide (e.feature? "neutralized" = some "true")
+         judgment := e.judgment }
 
--- ════════════════════════════════════════════════════
--- § 4. Bridge to ThematicFrame.agent ([parsons-1990])
--- ════════════════════════════════════════════════════
+/-- Every example names its frame. -/
+theorem isSome_datum : ∀ e ∈ Examples.all, (datum e).isSome := by decide
 
-/-- Link between Parsons' `agent` role and Cruse's `agentive_` sub-feature.
+/-- The paper's examples. -/
+def data : List Datum := Examples.all.filterMap datum
 
-    The Parsonian `agent(x,e)` captures specifically the own-energy
-    sub-feature: an agent uses its own body's internal energy source.
-    This is strictly narrower than the full do-test. -/
-class AgentAgentiveLink (Entity T : Type*) [LinearOrder T]
-    (frame : ThematicFrame Entity T)
-    (profile : AgentivityProfile Entity T) where
-  /-- Parsons' agent implies Cruse's agentive_ feature. -/
-  agent_implies_agentive : ∀ (x : Entity) (e : Event T),
-    frame.agent x e → profile.hasAgentive x e
+/-- A sentence is normal in its frame exactly when its noun's profile predicts it,
+neutralization aside. -/
+theorem acceptable_iff_normal : ∀ d ∈ data, d.neutralized = false →
+    ∀ p ∈ d.profile, (d.judgment = .acceptable ↔ d.frame.Normal p) := by
+  decide
 
-/-- Parsons' agent(x,e) entails passesDoTest(x,e), since agentive_ is
-    one of the four disjuncts.
+/-! ### Against the received opinions -/
 
-    In any model where agent → hasAgentive, the result follows
-    immediately from the fact that agentive_ is the fourth disjunct. -/
-theorem agent_implies_passesDo {Entity T : Type*} [LinearOrder T]
-    {frame : ThematicFrame Entity T}
-    {profile : AgentivityProfile Entity T}
-    [link : AgentAgentiveLink Entity T frame profile]
-    (x : Entity) (e : Event T)
-    (h : frame.agent x e) :
-    passesDoTest x e profile := by
-  exact Or.inr (Or.inr (Or.inr (link.agent_implies_agentive x e h)))
+/-- An inanimate noun is a doer: the wind, the computer, the bullet. -/
+theorem exists_inanimate_doer :
+    ∃ d ∈ data, d.inanimate = true ∧ d.frame = .doForm ∧ d.judgment = .acceptable := by decide
 
-/-- Parsons' `agent` role captures specifically Cruse's `agentive_`
-    sub-feature (own energy, dynamic), not the full do-test notion.
+/-- A process verb has a *do*-interpretation: dying in order to save us. -/
+theorem exists_process_doer :
+    ∃ d ∈ data, d.verbClass = some .process ∧ d.frame = .doForm ∧ d.judgment = .acceptable := by
+  decide
 
-    This is stated as: any model satisfying `AgentAgentiveLink` and
-    `ThematicAxioms` has agent entail agentive_ (from the link) and
-    agent entail action (from the axioms). Together these characterize
-    the prototypical "own-energy + dynamic" combination. -/
-theorem agent_is_agentive_subfeature {Entity T : Type*} [LinearOrder T]
-    {frame : ThematicFrame Entity T}
-    {profile : AgentivityProfile Entity T}
-    [link : AgentAgentiveLink Entity T frame profile]
-    [ax : ThematicAxioms Entity T frame]
-    (x : Entity) (e : Event T)
-    (h : frame.agent x e) :
-    profile.hasAgentive x e ∧ e.sort = .action :=
-  ⟨link.agent_implies_agentive x e h, ax.agent_selects_action x e h⟩
+/-- A stative verb has a *do*-interpretation: standing, having one's passport ready. -/
+theorem exists_stative_doer :
+    ∃ d ∈ data, d.verbClass = some .stative ∧ d.frame = .doForm ∧ d.judgment = .acceptable := by
+  decide
 
--- ════════════════════════════════════════════════════
--- § 5. Bridge to ActionType (CoerciveImplication)
--- ════════════════════════════════════════════════════
+/-! ### The heterogeneity of doing -/
 
-/-- Map agentivity features to CoerciveImplication's ActionType.
+/-- The volitive alone makes a doer on the paper's own attribution: drifting so as to avoid
+enemy territory. -/
+theorem exists_volitive_doer : ∃ d ∈ data, d.inferred = false ∧
+    d.profile = some { volitive := true } ∧ d.frame = .doForm ∧ d.judgment = .acceptable := by
+  decide
 
-    - volitive → Volitional (Cruse: act of will ↔ N&L: volitional action)
-    - effective → NonVolitional (force without will)
-    - initiative → Volitional (initiating by command is volitional for initiator)
-    - agentive_ → Ambiguous (own energy can be volitional or habitual) -/
-def AgentivityFeature.toActionType : AgentivityFeature → ActionType
-  | .volitive   => .Volitional
-  | .effective   => .NonVolitional
-  | .initiative  => .Volitional
-  | .agentive_   => .Ambiguous
-
-/-- Volitive maps to Volitional. -/
-theorem volitive_toActionType :
-    AgentivityFeature.volitive.toActionType = .Volitional := rfl
-
-/-- Effective maps to NonVolitional. -/
-theorem effective_toActionType :
-    AgentivityFeature.effective.toActionType = .NonVolitional := rfl
-
-/-- Initiative maps to Volitional. -/
-theorem initiative_toActionType :
-    AgentivityFeature.initiative.toActionType = .Volitional := rfl
-
-/-- Agentive maps to Ambiguous. -/
-theorem agentive_toActionType :
-    AgentivityFeature.agentive_.toActionType = .Ambiguous := rfl
-
-/-- Coercive implication ([nadathur-lauer-2020]) arises exactly when the causee's
-    action is volitional — i.e., when the causee has at least the
-    volitive sub-feature.
-
-    This bridges Cruse's agentivity decomposition to N&L's coercion
-    analysis: "X made Y do Z" implies coercion when Z is volitional
-    for Y, which Cruse would analyze as Y having the volitive feature. -/
-theorem coercion_requires_volitive :
-    ∀ (f : AgentivityFeature),
-      f.toActionType = .Volitional ↔
-      (f = .volitive ∨ f = .initiative) := by
-  intro f
-  cases f <;> simp [AgentivityFeature.toActionType]
-
--- ════════════════════════════════════════════════════
--- § 6. Bridge to Causative (Initiative)
--- ════════════════════════════════════════════════════
-
-/-- Cruse's initiative feature (initiating action by command) corresponds
-    to causative constructions where the subject causes an agentive action
-    by the object.
-
-    "The warder marched the prisoners" → the warder has initiative,
-    the prisoners are the agentive doers. This pattern is lexicalized by
-    `Causative.make` and `.force`: the subject (causer) initiates,
-    the object (causee) performs the action.
-
-    The bridge: initiative ↔ {make, force} builders, where the causer
-    has initiative and the causee has agentive_. -/
-structure InitiativeCausativeLink (Entity T : Type*) [LinearOrder T]
-    (profile : AgentivityProfile Entity T) where
-  /-- In a causative construction, the causer has initiative. -/
-  causer_has_initiative : ∀ (causer causee : Entity) (e : Event T),
-    profile.hasInitiative causer e → ¬ profile.hasAgentive causer e →
-    -- The causee is the one with agentive_ (doing the action)
-    profile.hasAgentive causee e
-
-/-- The make builder asserts sufficiency — the initiator's action
-    is sufficient for the causee to act. -/
-theorem make_lexicalizes_sufficient_initiative :
-    Causative.make.AssertsSufficiency := .inl rfl
-
--- ════════════════════════════════════════════════════
--- § 7. Stative Do-Verbs (Challenge to agent_selects_action)
--- ════════════════════════════════════════════════════
-
-/-- There exist stative eventualities that pass the do-test.
-
-    Witness: "John is standing" — volitive (John can stop standing)
-    but stative (no change over the interval). The do-test passes
-    via the volitive feature, even though e.sort = .state.
-
-    This shows the do-test is strictly broader than Parsons' `agent`
-    role, which requires e.sort = .action. -/
-theorem stative_can_pass_doTest :
-    ∃ (profile : AgentivityProfile Unit ℤ) (x : Unit) (e : Event ℤ),
-      e.sort = .state ∧ passesDoTest x e profile := by
-  -- Witness: a profile where () has volitive in a stative event
-  refine ⟨⟨λ _ _ => True, λ _ _ => False, λ _ _ => False, λ _ _ => False⟩,
-          (), ⟨⟨⟨0, 10⟩, by omega⟩, .state⟩, rfl, ?_⟩
-  exact Or.inl trivial
-
-/-- Parsons' `agent_selects_action` is NOT contradicted by stative
-    do-verbs, because `agent` captures the narrower `agentive_`
-    feature (own energy → dynamic), while the do-test also detects
-    `volitive` which can apply to states.
-
-    Formally: given `ThematicAxioms` (which assert agent → action),
-    and `AgentAgentiveLink` (which assert agent → agentive_), if an
-    entity is agent of a stative event we get a contradiction — so
-    no stative event has a Parsonian agent. The do-test still passes
-    for statives via other features (volitive, effective). -/
-theorem agent_selects_action_consistent {Entity T : Type*} [LinearOrder T]
-    {frame : ThematicFrame Entity T}
-    [ax : ThematicAxioms Entity T frame]
-    (x : Entity) (e : Event T)
-    (hState : e.sort = .state)
-    (hAgent : frame.agent x e) :
-    False := by
-  have hAction := ax.agent_selects_action x e hAgent
-  rw [hState] at hAction
-  exact absurd hAction (by decide)
-
--- ════════════════════════════════════════════════════
--- § 8. Diagnostic Predictions (Aspect Bridge)
--- ════════════════════════════════════════════════════
-
-/-- Predict the do-test result for each Vendler class.
-
-    - **State** → marginal: some pass (stand, sit, hold — via volitive)
-      but most don't (know, love — no agentivity features)
-    - **Activity** → accept: paradigmatic do-sentences ("John ran" →
-      "What John did was run")
-    - **Achievement** → marginal: some pass ("die in order to save…"
-      — arguably volitive), most don't
-    - **Accomplishment** → accept: all dynamic + extended → do-test -/
-def doTestPrediction : VendlerClass → DiagnosticResult
-  | .state         => .marginal
-  | .activity      => .accept
-  | .achievement   => .marginal
-  | .accomplishment => .accept
-  | .semelfactive  => .accept    -- "What John did was cough" (agentive, dynamic)
-
-/-- The do-test accepts exactly the non-stative dynamic classes
-    (activity, accomplishment, semelfactive). -/
-theorem doTest_accepts_dynamic (c : VendlerClass) :
-    doTestPrediction c = .accept ↔
-    (c.dynamicity = .dynamic ∧ c ≠ .achievement) := by
-  cases c <;> simp [doTestPrediction, VendlerClass.dynamicity]
-
-/-- Passing the do-test (for a whole Vendler class, not marginal)
-    implies either a dynamic event or a volitive state.
-
-    Formally: if a Vendler class fully accepts the do-test (not just
-    marginally), then it must be dynamic. Statives only get marginal
-    because the do-test passes only for select volitive statives. -/
-theorem doTest_accept_implies_dynamic (c : VendlerClass) :
-    doTestPrediction c = .accept → c.dynamicity = .dynamic := by
-  cases c <;> simp [doTestPrediction, VendlerClass.dynamicity]
-
-/-- The do-test and imperative test agree on activities and
-    accomplishments (both diagnostics accept dynamic durative events).
-    They diverge on states (do-test: marginal; imperative: reject)
-    and achievements (do-test: marginal; imperative: marginal — but
-    for different reasons). -/
-theorem doTest_agrees_imperative_for_dynamic_durative (c : VendlerClass)
-    (hDyn : c.dynamicity = .dynamic) (hDur : c.duration = .durative) :
-    doTestPrediction c = imperativePrediction c := by
-  cases c <;> simp_all [doTestPrediction, imperativePrediction,
-    VendlerClass.dynamicity, VendlerClass.duration]
+/-- The effective alone makes a doer on the paper's own attribution: the flying stone breaking
+the window. The agentive alone, as in sneezing, rests on the study's attribution. -/
+theorem exists_effective_doer : ∃ d ∈ data, d.inferred = false ∧
+    d.profile = some { energy := some .imparted } ∧ d.frame = .doForm ∧
+    d.judgment = .acceptable := by
+  decide
 
 end Cruse1973

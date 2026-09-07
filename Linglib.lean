@@ -1496,6 +1496,7 @@ import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 import Linglib.Semantics.ArgumentStructure.CaseRegion
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.EnergySource
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.LevinClass
@@ -3010,3 +3011,4 @@ import Linglib.Data.Examples.Corbett1998
 import Linglib.Data.Examples.Corbett2000
 import Linglib.Data.Examples.Creissels2024
 import Linglib.Data.Examples.Cresswell1976
+import Linglib.Data.Examples.Cruse1973
