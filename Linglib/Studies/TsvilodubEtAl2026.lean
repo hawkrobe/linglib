@@ -1,6 +1,5 @@
-import Linglib.Pragmatics.RSA.Canonical
+import Linglib.Pragmatics.RSA.Basic
 import Linglib.Core.Probability.Decision.Basic
-import Linglib.Core.Probability.Constructions
 import Linglib.Studies.DongEtAl2026PMF
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -51,13 +50,16 @@ Parameter provenance (Bayesian posterior means fitted to Exp 1): δ_L = 0.32,
 uncertainty), τ = 3.60, c = 0.18. The gate-level prediction theorems hold
 for all `τ > 0` and `c`, so the fitted values matter only through the
 orderings `δ_S < ε_L < δ_L < ε_H ≤ 1/2`. In the RSA section `exhVal = 1 − δ`
-and the priors 83 : 17 and 51 : 49 are `(1 − ε) : ε`; α = 1 there is this
-file's choice (the paper's α has prior N(5, 1)) — the strict-preference
-theorems are stated for any α > 0.
+and the priors 83 : 17 and 51 : 49 are `(1 − ε) : ε`, unnormalised, since the
+posterior kernel normalises; α = 1 there is this file's choice (the paper's
+α has prior N(5, 1)) — the strict-preference theorems are stated for any
+α > 0. The softmax policy and the goal-conditioned speaker are
+`RSA.speakerOfScore`, the score speaker of the kernel pipeline.
 -/
 
 namespace TsvilodubEtAl2026
 
+open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal
 open Core.DecisionTheory Core.DecisionTheory.DecisionProblem
 
@@ -128,7 +130,9 @@ theorem evpi_nonneg {W A : Type*} [Fintype W] [DecidableEq W]
 
 /-- The questioner's latent goal. -/
 inductive Goal where | g₁ | g₂
-  deriving DecidableEq, Repr, Fintype
+  deriving DecidableEq, Repr, Fintype, Nonempty
+
+instance : MeasurableSpace Goal := ⊤
 
 /-- Available non-CQ responses: targeted mention-some answers and the safe
 exhaustive answer. -/
@@ -138,6 +142,7 @@ inductive Response where
   deriving DecidableEq, Repr, Fintype
 
 instance : Nonempty Response := ⟨.exh⟩
+instance : MeasurableSpace Response := ⊤
 
 /-- The paper's parameterized decision problem: `P(g₂) = ε` (uncertainty),
 matching mention-some worth 1, mismatching 0, exhaustive `1 − δ` (cost). -/
@@ -152,9 +157,13 @@ def dp (ε δ : ℚ) : DecisionProblem ℚ Goal Response where
     | .g₁ => 1 - ε
     | .g₂ => ε
 
-private theorem sum_goal (f : Goal → ℚ) : (∑ g : Goal, f g) = f .g₁ + f .g₂ := by
-  rw [show (Finset.univ : Finset Goal) = {.g₁, .g₂} from by decide,
-      Finset.sum_insert (by decide), Finset.sum_singleton]
+private theorem sum_goal {β : Type*} [AddCommMonoid β] (f : Goal → β) :
+    (∑ g : Goal, f g) = f .g₁ + f .g₂ := by
+  rw [show ∑ g, f g = f .g₁ + (f .g₂ + 0) from rfl, add_zero]
+
+private theorem sum_response {β : Type*} [AddCommMonoid β] (f : Response → β) :
+    (∑ r : Response, f r) = f .ms1 + f .ms2 + f .exh := by
+  rw [show ∑ r, f r = f .ms1 + (f .ms2 + (f .exh + 0)) from rfl, add_zero, add_assoc]
 
 theorem eu_ms1 (ε δ : ℚ) : expectedUtility (dp ε δ) .ms1 = 1 - ε := by
   simp only [expectedUtility, sum_goal, dp]; ring
@@ -168,25 +177,28 @@ theorem eu_exh (ε δ : ℚ) : expectedUtility (dp ε δ) .exh = 1 - δ := by
 /-! ### The behavioral policy π = SoftMax(α · EU)
 
 The paper's π softmaxes the goal-*marginal* expected utility — the agent
-acts under its own uncertainty. Instantiated as the canonical softmax
-speaker over the `(ε, δ)`-indexed state space. -/
+acts under its own uncertainty. Instantiated as the score speaker over the
+`(ε, δ)`-indexed condition space. -/
 
-/-- Score for the canonical speaker: `α · EU(r)` at condition `(ε, δ)`. -/
+/-- Score for the policy: `α · EU(r)` at condition `(ε, δ)`. -/
 noncomputable def policyScore (α : ℝ) (p : ℚ × ℚ) (r : Response) : EReal :=
   ((α * ((expectedUtility (dp p.1 p.2) r : ℚ) : ℝ) : ℝ) : EReal)
 
-instance (α : ℝ) : RSA.Canonical.ViableSpeaker (policyScore α) where
-  no_top _ _ := EReal.coe_ne_top _
-  some_finite _ := ⟨.exh, EReal.coe_ne_bot _⟩
+/-- The paper's behavioral policy `π(r) = SoftMax(α · EU(r))`, a kernel from
+conditions `(ε, δ)` to responses. -/
+noncomputable def policy (α : ℝ) : Kernel (ℚ × ℚ) Response := RSA.speakerOfScore (policyScore α)
 
-/-- The paper's behavioral policy `π(r) = SoftMax(α · EU(r))`. -/
-noncomputable def policy (α : ℝ) (ε δ : ℚ) : PMF Response :=
-  RSA.Canonical.S1 (policyScore α) (ε, δ)
+/-- Policy preference at a condition is expected-utility comparison. -/
+theorem policy_real_singleton_lt_iff (α : ℝ) (p : ℚ × ℚ) (r r' : Response) :
+    (policy α p).real {r} < (policy α p).real {r'} ↔ policyScore α p r < policyScore α p r' :=
+  have htop : ∀ u, policyScore α p u ≠ ⊤ := λ _ => EReal.coe_ne_top _
+  have h0 : ∃ u, policyScore α p u ≠ ⊥ := ⟨.exh, EReal.coe_ne_bot _⟩
+  RSA.speakerOfScore_real_singleton_lt_iff htop h0
 
 private theorem policy_lt_policy {α : ℝ} (hα : 0 < α) {ε δ : ℚ} {r₁ r₂ : Response}
     (h : expectedUtility (dp ε δ) r₁ < expectedUtility (dp ε δ) r₂) :
-    policy α ε δ r₁ < policy α ε δ r₂ := by
-  rw [policy, RSA.Canonical.S1_prefers_iff]
+    (policy α (ε, δ)).real {r₁} < (policy α (ε, δ)).real {r₂} := by
+  rw [policy_real_singleton_lt_iff]
   exact EReal.coe_lt_coe (mul_lt_mul_of_pos_left (by exact_mod_cast h) hα)
 
 /-- **The uncertainty flip**: once uncertainty exceeds the exhaustive cost
@@ -195,7 +207,8 @@ the paper's "act safe under uncertainty" effect (fitted:
 δ_L = 0.32 < ε_H = 0.49). -/
 theorem policy_prefers_exh_of_uncertain {α : ℝ} (hα : 0 < α) {ε δ : ℚ}
     (h₁ : δ < ε) (h₂ : ε ≤ 1/2) :
-    policy α ε δ .ms1 < policy α ε δ .exh ∧ policy α ε δ .ms2 < policy α ε δ .exh :=
+    (policy α (ε, δ)).real {.ms1} < (policy α (ε, δ)).real {.exh} ∧
+      (policy α (ε, δ)).real {.ms2} < (policy α (ε, δ)).real {.exh} :=
   ⟨policy_lt_policy hα (by rw [eu_ms1, eu_exh]; linarith),
    policy_lt_policy hα (by rw [eu_ms2, eu_exh]; linarith)⟩
 
@@ -203,7 +216,8 @@ theorem policy_prefers_exh_of_uncertain {α : ℝ} (hα : 0 < α) {ε δ : ℚ}
 wins (fitted: ε_L = 0.17 < δ_L = 0.32). -/
 theorem policy_prefers_ms1_of_confident {α : ℝ} (hα : 0 < α) {ε δ : ℚ}
     (h₁ : ε < δ) (h₂ : ε < 1/2) :
-    policy α ε δ .exh < policy α ε δ .ms1 ∧ policy α ε δ .ms2 < policy α ε δ .ms1 :=
+    (policy α (ε, δ)).real {.exh} < (policy α (ε, δ)).real {.ms1} ∧
+      (policy α (ε, δ)).real {.ms2} < (policy α (ε, δ)).real {.ms1} :=
   ⟨policy_lt_policy hα (by rw [eu_exh, eu_ms1]; linarith),
    policy_lt_policy hα (by rw [eu_ms2, eu_ms1]; linarith)⟩
 
@@ -379,32 +393,30 @@ inductive Reaction where
   | act (r : Response)
   deriving DecidableEq, Repr
 
+instance : MeasurableSpace Reaction := ⊤
+
 /-- The paper's layered mixture: clarify with probability `q`, otherwise
 act according to the behavioral policy. -/
-noncomputable def layered (q : ℝ≥0) (hq : q ≤ 1) (pol : PMF Response) : PMF Reaction :=
-  PMF.mix q hq (pol.map .act) (PMF.pure .cq)
+noncomputable def layered (q : ℝ≥0∞) (pol : Measure Response) : Measure Reaction :=
+  (1 - q) • pol.map Reaction.act + q • Measure.dirac .cq
 
-theorem layered_apply_cq (q : ℝ≥0) (hq : q ≤ 1) (pol : PMF Response) :
-    layered q hq pol .cq = q := by
-  simp [layered, PMF.map_apply,
-    show ∀ r : Response, Reaction.cq ≠ .act r from fun r => by simp]
+theorem layered_apply_cq (q : ℝ≥0∞) (pol : Measure Response) : layered q pol {.cq} = q := by
+  rw [layered, Measure.add_apply, Measure.smul_apply, Measure.smul_apply, smul_eq_mul,
+    smul_eq_mul, Measure.map_apply .of_discrete (.singleton _),
+    show Reaction.act ⁻¹' {Reaction.cq} = ∅ from by ext r; simp, measure_empty, mul_zero,
+    Measure.dirac_apply_of_mem (Set.mem_singleton _), mul_one, zero_add]
 
-theorem layered_apply_act (q : ℝ≥0) (hq : q ≤ 1) (pol : PMF Response) (r : Response) :
-    layered q hq pol (.act r) = (1 - (q : ℝ≥0∞)) * pol r := by
-  have hmap : pol.map Reaction.act (.act r) = pol r := by
-    rw [PMF.map_apply]
-    simp only [Reaction.act.injEq]
-    exact (tsum_eq_single r fun r' hne => if_neg fun h => hne h.symm).trans (if_pos rfl)
-  simp [layered, hmap]
+theorem layered_apply_act (q : ℝ≥0∞) (pol : Measure Response) (r : Response) :
+    layered q pol {.act r} = (1 - q) * pol {r} := by
+  rw [layered, Measure.add_apply, Measure.smul_apply, Measure.smul_apply, smul_eq_mul,
+    smul_eq_mul, Measure.map_apply .of_discrete (.singleton _),
+    show Reaction.act ⁻¹' {Reaction.act r} = {r} from by ext r'; simp,
+    Measure.dirac_apply' _ (.singleton _), Set.indicator_of_notMem (by simp), mul_zero, add_zero]
 
 /-- The full reaction policy at condition `(ε, δ)`: gate by the logistic of
 the expected regret, then act by the softmax policy. -/
-noncomputable def reaction (τ c α : ℝ) (ε δ : ℚ) : PMF Reaction :=
-  layered (Real.toNNReal (cqProb τ c ε δ))
-    (by
-      rw [← Real.toNNReal_one]
-      exact Real.toNNReal_mono (cqGate_le_one _ _ _))
-    (policy α ε δ)
+noncomputable def reaction (τ c α : ℝ) (ε δ : ℚ) : Measure Reaction :=
+  layered (ENNReal.ofReal (cqProb τ c ε δ)) (policy α (ε, δ))
 
 /-! ### RSA reinterpretation: the post-clarification speaker and a listener
 
@@ -413,7 +425,7 @@ goal-*conditioned* speaker — softmax of `U(g, ·)` with inapplicable
 responses gated to `⊥` — is the ε → 0 / post-clarification limit of `π`,
 and coincides with [hawkins-etal-2025]'s action-utility respondent R₁ at
 β = 1, w_c = 0 (their `responseTruth` gate). Inverting it with a Bayesian
-listener connects the model to the canonical RSA pipeline; the paper itself
+listener connects the model to the kernel RSA pipeline; the paper itself
 has no listener. -/
 
 /-- Does response `r` address goal `g`? ([hawkins-etal-2025]'s `responseTruth`.) -/
@@ -436,20 +448,18 @@ responses, `⊥` (softmax weight 0) otherwise. -/
 noncomputable def util (exhVal α : ℝ) : Goal → Response → EReal :=
   fun g r => if respApplies r g then ((α * actVal exhVal r g : ℝ) : EReal) else (⊥ : EReal)
 
-instance instViable (exhVal α : ℝ) : RSA.Canonical.ViableSpeaker (util exhVal α) where
-  no_top g r := by
-    unfold util
-    split
-    · exact EReal.coe_ne_top _
-    · exact bot_ne_top
-  some_finite g := ⟨.exh, by
-    unfold util
-    rw [if_pos (show respApplies .exh g = true by cases g <;> rfl)]
-    exact EReal.coe_ne_bot _⟩
+theorem util_ne_top (exhVal α : ℝ) (g : Goal) (r : Response) : util exhVal α g r ≠ ⊤ := by
+  unfold util
+  split
+  · exact EReal.coe_ne_top _
+  · exact bot_ne_top
 
 /-- The goal-conditioned (post-clarification) speaker. -/
-noncomputable def speaker (exhVal α : ℝ) : Goal → PMF Response :=
-  RSA.Canonical.S1 (util exhVal α)
+noncomputable def speaker (exhVal α : ℝ) : Kernel Goal Response :=
+  RSA.speakerOfScore (util exhVal α)
+
+instance (exhVal α : ℝ) : IsFiniteKernel (speaker exhVal α) :=
+  inferInstanceAs (IsFiniteKernel (RSA.speakerOfScore _))
 
 private theorem util_applies {exhVal α : ℝ} {r : Response} {g : Goal}
     (h : respApplies r g = true) :
@@ -461,31 +471,35 @@ private theorem util_inapplies {exhVal α : ℝ} {r : Response} {g : Goal}
   unfold util; rw [if_neg (by simp [h])]
 
 private theorem speaker_ne_zero {exhVal α : ℝ} {g : Goal} {r : Response}
-    (h : respApplies r g = true) : speaker exhVal α g r ≠ 0 :=
-  RSA.Canonical.S1_ne_zero (util exhVal α)
-    (by rw [util_applies h]; exact EReal.coe_ne_bot _)
+    (h : respApplies r g = true) : speaker exhVal α g {r} ≠ 0 :=
+  RSA.speakerOfScore_apply_singleton_ne_zero
+    (by rw [util_applies h]; exact EReal.coe_ne_bot _) (util_ne_top exhVal α g)
 
 private theorem speaker_eq_zero {exhVal α : ℝ} {g : Goal} {r : Response}
-    (h : respApplies r g = false) : speaker exhVal α g r = 0 := by
-  have hbot : util exhVal α g r = ⊥ := util_inapplies h
-  unfold speaker RSA.Canonical.S1
-  rw [PMF.apply_eq_zero_iff, PMF.support_softmax]
-  simp [hbot]
+    (h : respApplies r g = false) : speaker exhVal α g {r} = 0 :=
+  RSA.speakerOfScore_apply_singleton_eq_zero (util_inapplies h)
+
+/-- Speaker preference at a goal is utility comparison. -/
+theorem speaker_real_singleton_lt_iff (exhVal α : ℝ) (g : Goal) (r r' : Response) :
+    (speaker exhVal α g).real {r} < (speaker exhVal α g).real {r'} ↔
+      util exhVal α g r < util exhVal α g r' :=
+  RSA.speakerOfScore_real_singleton_lt_iff (util_ne_top exhVal α g)
+    ⟨.exh, by rw [util_applies (by cases g <;> rfl)]; exact EReal.coe_ne_bot _⟩
 
 /-- Knowing the goal, the speaker prefers the targeted answer over the
 exhaustive one whenever the exhaustive answer carries any cost
 (`exhVal < 1`), for any α > 0. -/
 theorem S1_g1_prefers_ms1 {exhVal α : ℝ} (hα : 0 < α) (hv : exhVal < 1) :
-    speaker exhVal α .g₁ .exh < speaker exhVal α .g₁ .ms1 := by
-  rw [speaker, RSA.Canonical.S1_prefers_iff,
+    (speaker exhVal α .g₁).real {.exh} < (speaker exhVal α .g₁).real {.ms1} := by
+  rw [speaker_real_singleton_lt_iff,
       util_applies (show respApplies .exh .g₁ = true from rfl),
       util_applies (show respApplies .ms1 .g₁ = true from rfl)]
   exact EReal.coe_lt_coe (by simp only [actVal]; nlinarith)
 
 /-- The speaker never produces a mismatching answer: its utility is `⊥`. -/
 theorem S1_g1_avoids_ms2 (exhVal α : ℝ) :
-    speaker exhVal α .g₁ .ms2 < speaker exhVal α .g₁ .ms1 := by
-  rw [speaker, RSA.Canonical.S1_prefers_iff,
+    (speaker exhVal α .g₁).real {.ms2} < (speaker exhVal α .g₁).real {.ms1} := by
+  rw [speaker_real_singleton_lt_iff,
       util_inapplies (show respApplies .ms2 .g₁ = false by decide),
       util_applies (show respApplies .ms1 .g₁ = true from rfl)]
   exact EReal.bot_lt_coe _
@@ -495,126 +509,108 @@ theorem S1_g1_avoids_ms2 (exhVal α : ℝ) :
 viable when the option space is small) is Exp 1's option-space cost effect
 (predictions 3–4; the credible negative effect of space size on exhaustive
 rates). It is a cross-model comparison outside the single-distribution
-`S1_prefers_iff` vocabulary; at the policy level the same effect is `eu_exh`
-monotone in δ. -/
+`speaker_real_singleton_lt_iff` vocabulary; at the policy level the same
+effect is `eu_exh` monotone in δ. -/
 
-/-- The questioner's prior over goals, `(1 − ε) : ε`, normalised. -/
+/-- The questioner's prior weight over goals, `(1 − ε) : ε`. -/
 noncomputable def priorWeight (pg1 pg2 : ℝ) : Goal → ℝ≥0∞
   | .g₁ => ENNReal.ofReal pg1
   | .g₂ => ENNReal.ofReal pg2
 
-private theorem priorWeight_tsum (pg1 pg2 : ℝ) :
-    (∑' g, priorWeight pg1 pg2 g) = ENNReal.ofReal pg1 + ENNReal.ofReal pg2 := by
-  rw [tsum_fintype, show (Finset.univ : Finset Goal) = {Goal.g₁, Goal.g₂} from by decide,
-      Finset.sum_insert (by decide), Finset.sum_singleton]
-  rfl
+/-- The world prior, unnormalised: the posterior kernel normalises. -/
+noncomputable def worldPrior (pg1 pg2 : ℝ) : Measure Goal :=
+  ∑ g, priorWeight pg1 pg2 g • Measure.dirac g
 
-/-- The world prior, normalised to a PMF. -/
-noncomputable def worldPrior (pg1 pg2 : ℝ) (h1 : 0 < pg1) (_h2 : 0 < pg2) : PMF Goal :=
-  PMF.normalize (priorWeight pg1 pg2)
-    (by rw [priorWeight_tsum]
-        exact ((ENNReal.ofReal_pos.mpr h1).trans_le le_self_add).ne')
-    (by rw [priorWeight_tsum]
-        exact ENNReal.add_ne_top.mpr ⟨ENNReal.ofReal_ne_top, ENNReal.ofReal_ne_top⟩)
+theorem worldPrior_apply_singleton (pg1 pg2 : ℝ) (g : Goal) :
+    worldPrior pg1 pg2 {g} = priorWeight pg1 pg2 g :=
+  Measure.sum_smul_dirac_apply_singleton _ g
+
+instance (pg1 pg2 : ℝ) : IsFiniteMeasure (worldPrior pg1 pg2) :=
+  ⟨by
+    rw [worldPrior, Measure.finsetSum_apply]
+    exact ENNReal.sum_lt_top.mpr λ g _ => by
+      rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply_of_mem (Set.mem_univ _), mul_one]
+      cases g <;> exact ENNReal.ofReal_lt_top⟩
 
 private theorem worldPrior_ne_zero {pg1 pg2 : ℝ} (h1 : 0 < pg1) (h2 : 0 < pg2) (g : Goal) :
-    worldPrior pg1 pg2 h1 h2 g ≠ 0 := by
-  rw [worldPrior, PMF.normalize_apply]
-  refine mul_ne_zero ?_ (ENNReal.inv_ne_zero.mpr ?_)
-  · cases g
-    · exact (ENNReal.ofReal_pos.mpr h1).ne'
-    · exact (ENNReal.ofReal_pos.mpr h2).ne'
-  · rw [priorWeight_tsum]
-    exact ENNReal.add_ne_top.mpr ⟨ENNReal.ofReal_ne_top, ENNReal.ofReal_ne_top⟩
+    worldPrior pg1 pg2 {g} ≠ 0 := by
+  rw [worldPrior_apply_singleton]
+  cases g
+  · exact (ENNReal.ofReal_pos.mpr h1).ne'
+  · exact (ENNReal.ofReal_pos.mpr h2).ne'
 
 /-- The questioner as Bayesian listener (this file's extension): the
 posterior over goals given the response. -/
-noncomputable def listener (exhVal pg1 pg2 α : ℝ) (h1 : 0 < pg1) (h2 : 0 < pg2)
-    (r : Response)
-    (h : PMF.marginal (speaker exhVal α) (worldPrior pg1 pg2 h1 h2) r ≠ 0) :
-    PMF Goal :=
-  PMF.posterior (speaker exhVal α) (worldPrior pg1 pg2 h1 h2) r h
+noncomputable def listener (exhVal pg1 pg2 α : ℝ) : Kernel Response Goal :=
+  (speaker exhVal α)†(worldPrior pg1 pg2)
 
-private theorem marginal_ne_zero_at {exhVal pg1 pg2 α : ℝ} (h1 : 0 < pg1) (h2 : 0 < pg2)
+private theorem comp_speaker_ne_zero {exhVal pg1 pg2 α : ℝ} (h1 : 0 < pg1) (h2 : 0 < pg2)
     (g : Goal) {r : Response} (hr : respApplies r g = true) :
-    PMF.marginal (speaker exhVal α) (worldPrior pg1 pg2 h1 h2) r ≠ 0 :=
-  PMF.marginal_ne_zero _ _ _ (worldPrior_ne_zero h1 h2 g) (speaker_ne_zero hr)
+    (speaker exhVal α ∘ₘ worldPrior pg1 pg2) {r} ≠ 0 :=
+  comp_apply_singleton_ne_zero _ _ (worldPrior_ne_zero h1 h2 g) (speaker_ne_zero hr)
+
+/-- Listener preference between two goals is comparison of prior-weighted speaker masses. -/
+private theorem listener_real_lt_iff {exhVal pg1 pg2 α : ℝ} {r : Response}
+    (hr : (speaker exhVal α ∘ₘ worldPrior pg1 pg2) {r} ≠ 0) (g g' : Goal) :
+    (listener exhVal pg1 pg2 α r).real {g} < (listener exhVal pg1 pg2 α r).real {g'} ↔
+      (worldPrior pg1 pg2).real {g} * (speaker exhVal α g).real {r} <
+        (worldPrior pg1 pg2).real {g'} * (speaker exhVal α g').real {r} := by
+  simpa only [listener, Finset.coe_singleton, Finset.sum_singleton] using
+    posterior_real_finset_lt_iff (speaker exhVal α) (worldPrior pg1 pg2) hr {g} {g'}
 
 /-- The listener hearing ms1 infers g₁ with certainty (ms1 is never
 produced for g₂). Prior 83 : 17 = (1 − ε_L) : ε_L. -/
 theorem L1_ms1_infers_g1 :
-    listener (68/100) 83 17 1 (by norm_num) (by norm_num) .ms1
-        (marginal_ne_zero_at (by norm_num) (by norm_num) .g₁ rfl) .g₂
-      < listener (68/100) 83 17 1 (by norm_num) (by norm_num) .ms1
-        (marginal_ne_zero_at (by norm_num) (by norm_num) .g₁ rfl) .g₁ := by
-  rw [listener, PMF.posterior_lt_iff_score_lt,
-      speaker_eq_zero (show respApplies .ms1 .g₂ = false by decide), mul_zero]
-  exact pos_iff_ne_zero.mpr
-    (mul_ne_zero (worldPrior_ne_zero (by norm_num) (by norm_num) .g₁)
-      (speaker_ne_zero rfl))
+    (listener (68/100) 83 17 1 .ms1).real {.g₂} < (listener (68/100) 83 17 1 .ms1).real {.g₁} := by
+  rw [listener_real_lt_iff (comp_speaker_ne_zero (by norm_num) (by norm_num) .g₁ rfl),
+    measureReal_def (μ := speaker _ _ .g₂),
+    speaker_eq_zero (show respApplies .ms1 .g₂ = false by decide), ENNReal.toReal_zero, mul_zero]
+  exact mul_pos (ENNReal.toReal_pos (worldPrior_ne_zero (by norm_num) (by norm_num) .g₁)
+    (measure_ne_top _ _)) (ENNReal.toReal_pos (speaker_ne_zero rfl) (measure_ne_top _ _))
 
 /-- Targeted responses stay fully informative even at high uncertainty
 (prior 51 : 49 = (1 − ε_H) : ε_H). -/
 theorem L1_high_ms1_still_certain :
-    listener (68/100) 51 49 1 (by norm_num) (by norm_num) .ms1
-        (marginal_ne_zero_at (by norm_num) (by norm_num) .g₁ rfl) .g₂
-      < listener (68/100) 51 49 1 (by norm_num) (by norm_num) .ms1
-        (marginal_ne_zero_at (by norm_num) (by norm_num) .g₁ rfl) .g₁ := by
-  rw [listener, PMF.posterior_lt_iff_score_lt,
-      speaker_eq_zero (show respApplies .ms1 .g₂ = false by decide), mul_zero]
-  exact pos_iff_ne_zero.mpr
-    (mul_ne_zero (worldPrior_ne_zero (by norm_num) (by norm_num) .g₁)
-      (speaker_ne_zero rfl))
+    (listener (68/100) 51 49 1 .ms1).real {.g₂} < (listener (68/100) 51 49 1 .ms1).real {.g₁} := by
+  rw [listener_real_lt_iff (comp_speaker_ne_zero (by norm_num) (by norm_num) .g₁ rfl),
+    measureReal_def (μ := speaker _ _ .g₂),
+    speaker_eq_zero (show respApplies .ms1 .g₂ = false by decide), ENNReal.toReal_zero, mul_zero]
+  exact mul_pos (ENNReal.toReal_pos (worldPrior_ne_zero (by norm_num) (by norm_num) .g₁)
+    (measure_ne_top _ _)) (ENNReal.toReal_pos (speaker_ne_zero rfl) (measure_ne_top _ _))
 
 /-- The speaker's exhaustive-answer probability is goal-symmetric: the
 utility multisets at g₁ and g₂ coincide under the ms1 ↔ ms2 swap. -/
 private theorem speaker_exh_symm (exhVal α : ℝ) :
-    speaker exhVal α .g₁ .exh = speaker exhVal α .g₂ .exh := by
-  unfold speaker RSA.Canonical.S1
-  rw [PMF.softmax_apply, PMF.softmax_apply]
-  congr 1
-  rw [show (Finset.univ : Finset Response) = {.ms1, .ms2, .exh} from by decide,
-      Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-      Finset.sum_singleton, Finset.sum_insert (by decide),
-      Finset.sum_insert (by decide), Finset.sum_singleton,
-      PMF.softmaxWeight_apply, PMF.softmaxWeight_apply, PMF.softmaxWeight_apply,
-      PMF.softmaxWeight_apply, PMF.softmaxWeight_apply, PMF.softmaxWeight_apply,
-      util_applies (show respApplies .ms1 .g₁ = true from rfl),
-      util_inapplies (show respApplies .ms2 .g₁ = false by decide),
-      util_applies (show respApplies .exh .g₁ = true from rfl),
-      util_inapplies (show respApplies .ms1 .g₂ = false by decide),
-      util_applies (show respApplies .ms2 .g₂ = true from rfl),
-      util_applies (show respApplies .exh .g₂ = true from rfl)]
-  show EReal.exp _ + (EReal.exp ⊥ + EReal.exp _)
-    = EReal.exp ⊥ + (EReal.exp _ + EReal.exp _)
+    speaker exhVal α .g₁ {.exh} = speaker exhVal α .g₂ {.exh} := by
+  rw [speaker, RSA.speakerOfScore_apply_singleton, RSA.speakerOfScore_apply_singleton,
+    sum_response, sum_response,
+    util_applies (show respApplies .ms1 .g₁ = true from rfl),
+    util_inapplies (show respApplies .ms2 .g₁ = false by decide),
+    util_applies (show respApplies .exh .g₁ = true from rfl),
+    util_inapplies (show respApplies .ms1 .g₂ = false by decide),
+    util_applies (show respApplies .ms2 .g₂ = true from rfl),
+    util_applies (show respApplies .exh .g₂ = true from rfl)]
   have hms : actVal exhVal .ms1 .g₁ = actVal exhVal .ms2 .g₂ := rfl
   have hexh : actVal exhVal .exh .g₁ = actVal exhVal .exh .g₂ := rfl
-  rw [hms, hexh]
-  ring
+  rw [hms, hexh, EReal.exp_bot, add_zero, zero_add]
+
+private theorem speaker_real_exh_symm (exhVal α : ℝ) :
+    (speaker exhVal α .g₁).real {.exh} = (speaker exhVal α .g₂).real {.exh} := by
+  rw [measureReal_def, measureReal_def, speaker_exh_symm]
 
 /-- The exhaustive answer transmits the prior: `S1(exh | ·)` is
 goal-symmetric, so the listener's posterior given exh is the prior,
 83 : 17. -/
 theorem L1_exh_transmits_prior :
-    listener (68/100) 83 17 1 (by norm_num) (by norm_num) .exh
-        (marginal_ne_zero_at (by norm_num) (by norm_num) .g₁ (by decide)) .g₂
-      < listener (68/100) 83 17 1 (by norm_num) (by norm_num) .exh
-        (marginal_ne_zero_at (by norm_num) (by norm_num) .g₁ (by decide)) .g₁ := by
-  rw [listener, PMF.posterior_lt_iff_score_lt, ← speaker_exh_symm]
-  rw [mul_comm (worldPrior 83 17 _ _ .g₂), mul_comm (worldPrior 83 17 _ _ .g₁)]
-  refine (ENNReal.mul_lt_mul_iff_right
-    (speaker_ne_zero (show respApplies .exh .g₁ = true from rfl))
-    (PMF.apply_ne_top _ _)).mpr ?_
-  rw [worldPrior, PMF.normalize_apply, PMF.normalize_apply]
-  refine (ENNReal.mul_lt_mul_iff_left
-    (ENNReal.inv_ne_zero.mpr (by
-      rw [priorWeight_tsum]
-      exact ENNReal.add_ne_top.mpr ⟨ENNReal.ofReal_ne_top, ENNReal.ofReal_ne_top⟩))
-    (ENNReal.inv_ne_top.mpr (by
-      rw [priorWeight_tsum]
-      exact ((ENNReal.ofReal_pos.mpr (by norm_num : (0:ℝ) < 83)).trans_le
-        le_self_add).ne'))).mpr ?_
-  show ENNReal.ofReal 17 < ENNReal.ofReal 83
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
+    (listener (68/100) 83 17 1 .exh).real {.g₂} < (listener (68/100) 83 17 1 .exh).real {.g₁} := by
+  rw [listener_real_lt_iff (comp_speaker_ne_zero (by norm_num) (by norm_num) .g₁ (by decide)),
+    ← speaker_real_exh_symm, measureReal_def (μ := worldPrior _ _),
+    measureReal_def (μ := worldPrior _ _), worldPrior_apply_singleton, worldPrior_apply_singleton]
+  refine mul_lt_mul_of_pos_right ?_
+    (ENNReal.toReal_pos (speaker_ne_zero (show respApplies .exh .g₁ = true from rfl))
+      (measure_ne_top _ _))
+  show (ENNReal.ofReal 17).toReal < (ENNReal.ofReal 83).toReal
+  rw [ENNReal.toReal_ofReal (by norm_num), ENNReal.toReal_ofReal (by norm_num)]
+  norm_num
 
 end TsvilodubEtAl2026
