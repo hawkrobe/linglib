@@ -2,92 +2,75 @@ import Linglib.Semantics.Tense.Evidential
 import Linglib.Semantics.Tense.Decomposition
 
 /-!
-# English Tense Fragment ([cumming-2026] + [lakoff-1970])
-[cumming-2026] [lakoff-1970] [kratzer-1998]
+# English tense fragment
+[cumming-2026] [winans-2016] [cumming-winans-2021] [kratzer-1998]
 
-Paradigm entries for English tense forms from [cumming-2026], Tables 20 and 22.
-Each entry specifies evidential perspective (EP) and utterance perspective (UP)
-constraints via `EPCondition` and `UPCondition` enums.
-
-## Cumming Entries
+Paradigm cells for the English tense forms of [cumming-2026], the nonfuture and future
+forms of its table (20) and the past- and present-directed *will* forms of its table (22),
+each with its constraints on evidential and utterance perspective, followed by
+[kratzer-1998]'s surface-tense decomposition of the simple past. The future cell of table
+(20) and the bare *will* of table (22) are one cell.
 
 | Form              | EP constraint | UP constraint | Nonfuture? |
 |-------------------|---------------|---------------|------------|
 | simple past       | T ≤ A         | T < S         | yes        |
 | present prog      | T ≤ A         | T = S         | yes        |
 | future (will)     | (none)        | S < T         | no         |
-| will have V-ed    | A < T         | S < T         | no         |
+| will have V-ed    | A < T         | T < S         | no         |
 | will now be V-ing | A < T         | T = S         | no         |
-| will (bare)       | (none)        | S < T         | no         |
 
+The printed table (22) gives *will have* the utterance perspective T > S; the text and the
+example of the Fed's meeting require a past event, recorded here.
 -/
 
-open Tense
 open Tense
 
 namespace English.Tense
 
 open _root_.Tense.Evidential
 
--- ════════════════════════════════════════════════════
--- § 1. table (20): Simple Past, Present Progressive, Future
--- ════════════════════════════════════════════════════
+/-! ### Nonfuture and future forms (table (20)) -/
 
-/-- English simple past: T ≤ A (downstream), T < S (past). -/
+/-- English simple past: evidence downstream of a past event. -/
 def simplePast : TAMEEntry where
   label := "simple past"
   ep := .downstream
   up := .past
 
-/-- English present progressive: T ≤ A (downstream), T = S (present). -/
+/-- English present progressive: evidence downstream of a present event. -/
 def presentProg : TAMEEntry where
   label := "present progressive"
   ep := .downstream
   up := .present
 
-/-- English future (will): no EP constraint, S < T (future). -/
-def future : TAMEEntry where
+/-- English future *will*: no evidential constraint on a future event. -/
+def will : TAMEEntry where
   label := "future (will)"
   ep := .unconstrained
   up := .future
 
--- ════════════════════════════════════════════════════
--- § 2. table (22): Will-Forms
--- ════════════════════════════════════════════════════
+/-! ### The past- and present-directed *will* forms (table (22))
 
-/-- English "will have V-ed": A < T (prospective), S < T (future). -/
+The restriction to inference from facts not causally downstream of the event is
+[winans-2016]'s and [cumming-winans-2021]'s. -/
+
+/-- The past-directed *will have V-ed*: prospective evidence for a past event. -/
 def willHave : TAMEEntry where
   label := "will have V-ed"
   ep := .prospective
-  up := .future
+  up := .past
 
-/-- English "will now be V-ing": A < T (prospective), T = S (present). -/
+/-- The present-directed *will now be V-ing*: prospective evidence for a present event. -/
 def willNow : TAMEEntry where
   label := "will now be V-ing"
   ep := .prospective
   up := .present
 
-/-- English bare "will": no EP constraint, S < T (future). -/
-def willBare : TAMEEntry where
-  label := "will (bare)"
-  ep := .unconstrained
-  up := .future
-
--- ════════════════════════════════════════════════════
--- § 3. Collection
--- ════════════════════════════════════════════════════
-
-/-- All English tense paradigm entries. -/
+/-- The English paradigm cells. -/
 def allEntries : List TAMEEntry :=
-  [simplePast, presentProg, future, willHave, willNow, willBare]
+  [simplePast, presentProg, will, willHave, willNow]
 
-/-- English nonfuture entries. -/
-def nonfutureEntries : List TAMEEntry :=
-  allEntries.filter (decide ·.IsNonfuture)
-
--- ════════════════════════════════════════════════════
--- § 6. Surface Tense ([kratzer-1998])
--- ════════════════════════════════════════════════════
+/-! ### Surface tense ([kratzer-1998]) -/
 
 open _root_.Tense.Decomposition
 open _root_.Tense

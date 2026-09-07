@@ -542,8 +542,9 @@ def indirectFrame : EvidentialFrame ℤ where
 
 /-- Cumming's downstream evidence (T ≤ A) holds for the indirect frame —
     the temporal special case of Koev's △. -/
-theorem indirect_downstream : downstreamEvidence indirectFrame := by
-  unfold downstreamEvidence indirectFrame indirectScenario describedEvent learningEventIndirect
+theorem indirect_downstream : indirectFrame.Downstream := by
+  unfold EvidentialFrame.Downstream indirectFrame indirectScenario describedEvent
+    learningEventIndirect
   simp only [Event.τ]
   omega
 
