@@ -1,5 +1,7 @@
+import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 import Linglib.Core.Probability.Kernel.OfWeights
 import Linglib.Core.Probability.Kernel.Posterior
+import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
 /-!
 # The Rational Speech Act pipeline on probability kernels
@@ -18,6 +20,9 @@ quantify over them. The uniform-prior Boolean specialization with its decision p
 
 * `RSA.literalListener` — eq. 1: the prior reweighted by the meaning.
 * `RSA.speaker` — eqs. 2/6–7: `ProbabilityTheory.Kernel.ofWeights` of `L ^ α · cost`.
+* `RSA.speakerOfScore` — the softmax of an extended-real utility, `⊥` marking the
+  inapplicable utterances; `RSA.speaker` is its instance at the informativity utility
+  (`RSA.speaker_eq_speakerOfScore`).
 * `RSA.pragmaticListener` — eq. 3: `(speaker α cost L)†μ`.
 * `RSA.jointListener` — eqs. 18b/21b: the posterior over (state, choice) given the heard
   form; `.fst` is the state listener, `.snd` the choice posterior.
@@ -222,6 +227,88 @@ theorem speaker_real_singleton_lt_iff {α : ℝ} (hα : 0 ≤ α) {cost : U → 
     (fun h => let ⟨u₀, hu₀⟩ := h0; hu₀ (Finset.sum_eq_zero_iff.mp h u₀ (Finset.mem_univ _)))
     (ENNReal.sum_ne_top.mpr fun u _ =>
       ENNReal.mul_ne_top (weight_rpow_ne_top hα (hle u)) (hctop u))
+
+/-! #### Score speakers
+
+The softmax of an extended-real utility: row `w` is proportional to `exp (score w u)`, so an
+utterance of score `⊥`, one literally false at `w` or excluded by a quality gate, is never
+produced, and the rationality lives inside the score. Speakers whose utility is not the
+informativity utility, such as belief-, question- or politeness-weighted ones, are score
+speakers; the power-weight speaker is the score speaker at the informativity utility. -/
+
+section ScoreSpeaker
+
+variable (score : W → U → EReal)
+
+/-- The score speaker: row `w` is proportional to the exponential of the score. -/
+noncomputable def speakerOfScore : Kernel W U := Kernel.ofWeights λ w u => EReal.exp (score w u)
+
+@[simp] theorem speakerOfScore_apply_singleton (w : W) (u : U) :
+    speakerOfScore score w {u} = EReal.exp (score w u) / ∑ u', EReal.exp (score w u') :=
+  Kernel.ofWeights_apply_singleton _ w u
+
+instance : IsFiniteKernel (speakerOfScore score) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+
+variable {score}
+
+omit [MeasurableSingletonClass U] in
+/-- The score speaker is a probability kernel whenever every state has an applicable
+utterance and no score is `⊤`. -/
+theorem isMarkovKernel_speakerOfScore (h0 : ∀ w, ∃ u, score w u ≠ ⊥)
+    (htop : ∀ w u, score w u ≠ ⊤) : IsMarkovKernel (speakerOfScore score) :=
+  Kernel.isMarkovKernel_ofWeights (λ w => (h0 w).imp λ _ hu => mt EReal.exp_eq_zero_iff.mp hu)
+    λ w u => mt EReal.exp_eq_top_iff.mp (htop w u)
+
+/-- An utterance of score `⊥` is never produced. -/
+theorem speakerOfScore_apply_singleton_eq_zero {w : W} {u : U} (h : score w u = ⊥) :
+    speakerOfScore score w {u} = 0 :=
+  Kernel.ofWeights_apply_singleton_eq_zero (by rw [h, EReal.exp_bot])
+
+/-- An applicable utterance is produced with positive mass when no score is `⊤`. -/
+theorem speakerOfScore_apply_singleton_ne_zero {w : W} {u : U} (h : score w u ≠ ⊥)
+    (htop : ∀ u', score w u' ≠ ⊤) : speakerOfScore score w {u} ≠ 0 :=
+  Kernel.ofWeights_apply_singleton_ne_zero (mt EReal.exp_eq_zero_iff.mp h)
+    λ u' => mt EReal.exp_eq_top_iff.mp (htop u')
+
+/-- Row preference of the score speaker is score comparison; the normalization cancels. -/
+theorem speakerOfScore_real_singleton_lt_iff {w : W} (htop : ∀ u, score w u ≠ ⊤)
+    (h0 : ∃ u, score w u ≠ ⊥) {u u' : U} :
+    (speakerOfScore score w).real {u} < (speakerOfScore score w).real {u'} ↔
+      score w u < score w u' := by
+  rw [speakerOfScore, Kernel.ofWeights_real_singleton_lt_iff w
+      (λ h => let ⟨u₀, hu₀⟩ := h0
+        hu₀ (EReal.exp_eq_zero_iff.mp (Finset.sum_eq_zero_iff.mp h u₀ (Finset.mem_univ _))))
+      (ENNReal.sum_ne_top.mpr λ u _ => mt EReal.exp_eq_top_iff.mp (htop u)),
+    EReal.exp_lt_exp_iff]
+
+/-- When exactly two utterances are applicable at a state, the share of one is the logistic
+function of the score difference. -/
+theorem speakerOfScore_real_singleton_of_pair {w : W} {u u' : U} (huu' : u ≠ u')
+    (hu : score w u ≠ ⊥) (hu' : score w u' ≠ ⊥) (htop : ∀ v, score w v ≠ ⊤)
+    (hsupp : ∀ v, score w v ≠ ⊥ → v = u ∨ v = u') :
+    (speakerOfScore score w).real {u} =
+      Real.sigmoid ((score w u).toReal - (score w u').toReal) := by
+  rw [speakerOfScore, Kernel.ofWeights_real_singleton_of_pair w huu'
+      (λ v => mt EReal.exp_eq_top_iff.mp (htop v))
+      (λ v hv => hsupp v (mt EReal.exp_eq_zero_iff.mpr hv)),
+    ← EReal.coe_toReal (htop u) hu, ← EReal.coe_toReal (htop u') hu', EReal.exp_coe,
+    EReal.exp_coe, ENNReal.toReal_ofReal (Real.exp_pos _).le,
+    ENNReal.toReal_ofReal (Real.exp_pos _).le, Real.exp_div_add_exp_eq_sigmoid, EReal.toReal_coe,
+    EReal.toReal_coe]
+
+omit [MeasurableSingletonClass U] in
+/-- The power-weight speaker is the score speaker at the informativity utility: the log of the
+listener's mass scaled by the rationality, plus the log of the cost factor. -/
+theorem speaker_eq_speakerOfScore (α : ℝ) (cost : U → ℝ≥0∞) (L : Kernel U W) :
+    speaker α cost L =
+      speakerOfScore λ w u => ENNReal.log (L u {w}) * α + ENNReal.log (cost u) := by
+  unfold speaker speakerOfScore
+  congr 1
+  funext w u
+  rw [EReal.exp_add, EReal.exp_mul, ENNReal.exp_log, ENNReal.exp_log]
+
+end ScoreSpeaker
 
 /-! #### Pragmatic listeners -/
 
