@@ -217,16 +217,14 @@ def cresswellSetoid {E : Type*} (φ : E → E → Prop) : Setoid E where
 abbrev CresswellDegree {E : Type*} (φ : E → E → Prop) : Type _ :=
   Quotient (cresswellSetoid φ)
 
-/-- The induced comparison on degrees; well-definedness is
-    [cresswell-1976]'s own consistency proof for (4.2). -/
-def CresswellDegree.rel {E : Type*} {φ : E → E → Prop} :
-    CresswellDegree φ → CresswellDegree φ → Prop :=
-  Quotient.lift₂ φ fun _ b c _ hac hbd =>
-    propext ((hac.1 b).trans (hbd.2 c))
+/-- The comparison a relation induces on its degrees, `⟦a⟧ < ⟦b⟧` iff `φ b a`, strict exactly
+when `φ` is; well-definedness is [cresswell-1976]'s own consistency proof for (4.2). -/
+instance {E : Type*} {φ : E → E → Prop} : LT (CresswellDegree φ) :=
+  ⟨Quotient.lift₂ (λ a b => φ b a) λ a₁ _ _ b₂ hac hbd => propext ((hbd.1 a₁).trans (hac.2 b₂))⟩
 
 /-- [cresswell-1976] (4.2): `ā >_φ b̄ iff φ(a, b)`. -/
-@[simp] theorem CresswellDegree.rel_mk {E : Type*} {φ : E → E → Prop} (a b : E) :
-    CresswellDegree.rel (⟦a⟧ : CresswellDegree φ) ⟦b⟧ ↔ φ a b :=
+@[simp] theorem CresswellDegree.mk_lt_mk {E : Type*} {φ : E → E → Prop} {a b : E} :
+    (⟦a⟧ : CresswellDegree φ) < ⟦b⟧ ↔ φ b a :=
   Iff.rfl
 
 /-- On a preorder, φ-indistinguishability under `≤` is mathlib's
