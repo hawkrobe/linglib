@@ -35,7 +35,14 @@ computation.
 
 * `Tableau.mem_optimal_iff` / `Tableau.optimal_nonempty` / `Tableau.optimal_subset` —
   the winner characterization; winners exist.
-* `Tableau.optimal_eq_singleton_iff` — sole winner ⟺ strict domination.
+* `Tableau.optimal_eq_singleton_iff` / `Tableau.optimal_eq_singleton_iff_pair` — sole
+  winner ⟺ strict domination.
+* `Tableau.ofPerm_profile_lt_iff` / `Tableau.ofPerm_profile_lt_iff_exists_dominates` — a
+  candidate beats another under a ranking iff the most dominant constraint distinguishing
+  them prefers it, iff some constraint preferring it dominates every constraint preferring
+  the other.
+* `Tableau.notMem_optimal_of_lt` / `Tableau.ofPerm_notMem_optimal_of_lt` — harmonic
+  bounding: a candidate beaten pointwise never wins.
 * `Tableau.ofPerm_zero_mem_optimal` / `Tableau.ofRanking_zero_mem_optimal` /
   `Tableau.ofRanking_zero_mem_optimal_allRankings` — a candidate with no violations
   wins under any (every) ranking.
@@ -95,6 +102,17 @@ theorem optimal_eq_singleton_iff {m : C} (hm : m ∈ t.candidates) :
     t.optimal = {m} ↔ ∀ c ∈ t.candidates, c ≠ m → t.profile m < t.profile c :=
   argMinSet_eq_singleton_iff hm
 
+/-- A two-candidate tableau has sole winner `c` iff `c` strictly lex-dominates `d`. -/
+theorem optimal_eq_singleton_iff_pair {d : C} (hcand : t.candidates = {c, d}) (hne : c ≠ d) :
+    t.optimal = {c} ↔ t.profile c < t.profile d := by
+  rw [optimal_eq_singleton_iff (by rw [hcand]; exact Finset.mem_insert_self _ _), hcand]
+  simp [hne.symm]
+
+/-- A candidate strictly lex-dominated by a competitor is no winner. -/
+theorem notMem_optimal_of_lt {d : C} (hc : c ∈ t.candidates) (h : t.profile c < t.profile d) :
+    d ∉ t.optimal :=
+  λ hd => (le_of_mem_optimal hd hc).not_gt h
+
 /-! ### Tableau constructors -/
 
 variable (con : CON C n) (r : Ranking n) (candidates : List C)
@@ -104,7 +122,7 @@ variable (con : CON C n) (r : Ranking n) (candidates : List C)
 `r : Ranking n`: priority position `p` reads constraint `r p`, so coordinate `0` of the
 lexicographic profile is the most dominant constraint. Candidates are deduplicated via
 `List.toFinset`. -/
-def ofPerm (h : candidates ≠ [] := by decide) : Tableau C n where
+def ofPerm (h : candidates ≠ [] := by first | decide | simp) : Tableau C n where
   candidates := candidates.toFinset
   profile c := buildViolationProfile (fun p => con (r p)) c
   nonempty := (candidates.exists_mem_of_ne_nil h).imp fun _ ha => List.mem_toFinset.mpr ha
@@ -113,7 +131,7 @@ def ofPerm (h : candidates ≠ [] := by decide) : Tableau C n where
 list, list order being priority (position `0` most dominant): `Tableau.ofPerm` under the
 identity ranking. Study files use this as
 `(Tableau.ofRanking candidates ranking h).optimal = {.winner}`. -/
-def ofRanking (h : candidates ≠ [] := by decide) : Tableau C ranking.length :=
+def ofRanking (h : candidates ≠ [] := by first | decide | simp) : Tableau C ranking.length :=
   ofPerm ranking.get (Equiv.refl _) candidates h
 
 /-- Build a `Tableau C ranking.length` whose candidates are every inhabitant of the finite
@@ -166,6 +184,42 @@ theorem ofRanking_optimal_mem (hc : c ∈ (ofRanking candidates ranking h).optim
 /-- Candidates in `(Tableau.ofPerm ...).optimal` belong to the original list. -/
 theorem ofPerm_optimal_mem (hc : c ∈ (ofPerm con r candidates h).optimal) :
     c ∈ candidates := List.mem_toFinset.mp (optimal_subset hc)
+
+/-- Under a ranking, one candidate beats another iff the most dominant constraint that
+distinguishes them prefers it. -/
+theorem ofPerm_profile_lt_iff {d : C} :
+    (ofPerm con r candidates h).profile c < (ofPerm con r candidates h).profile d ↔
+      ∃ i, (∀ j, r.Dominates j i → con j c = con j d) ∧ con i c < con i d :=
+  ⟨λ ⟨p, hp, hlt⟩ => ⟨r p, λ j hj => by
+      simpa using hp (r.symm j) (by simpa [Ranking.Dominates] using hj), hlt⟩,
+    λ ⟨i, hi, hlt⟩ => ⟨r.symm i, λ q hq => hi (r q) (by simpa [Ranking.Dominates] using hq),
+      by simpa using hlt⟩⟩
+
+/-- The elementary ranking condition: one candidate beats another iff some constraint
+preferring it dominates every constraint preferring the other. -/
+theorem ofPerm_profile_lt_iff_exists_dominates {d : C} :
+    (ofPerm con r candidates h).profile c < (ofPerm con r candidates h).profile d ↔
+      ∃ i, con i c < con i d ∧ ∀ j, con j d < con j c → r.Dominates i j := by
+  refine ⟨λ hlt => ?_, λ ⟨i, hi, hd⟩ => ?_⟩
+  · obtain ⟨i, hi, hlt⟩ := ofPerm_profile_lt_iff.1 hlt
+    refine ⟨i, hlt, λ j hj => ?_⟩
+    rcases lt_trichotomy (r.symm i) (r.symm j) with h | h | h
+    · exact h
+    · obtain rfl := r.symm.injective h
+      exact absurd hj hlt.asymm
+    · exact absurd (hi j h) hj.ne'
+  · refine lt_of_le_of_ne (not_lt.1 λ hlt => ?_) λ heq => ?_
+    · obtain ⟨j, hj, hlt⟩ := ofPerm_profile_lt_iff.1 hlt
+      exact absurd (hj i (hd j hlt)) hi.ne'
+    · exact hi.ne (by simpa using congrArg (· (r.symm i)) heq)
+
+/-- Harmonic bounding: a candidate beaten pointwise on the constraint set by a competitor is
+optimal under no ranking of the set. -/
+theorem ofPerm_notMem_optimal_of_lt {d : C} (hc : c ∈ candidates)
+    (hlt : (con · c) < (con · d)) : d ∉ (ofPerm con r candidates h).optimal :=
+  notMem_optimal_of_lt (List.mem_toFinset.2 hc) <| Pi.toLex_strictMono <| by
+    obtain ⟨hle, i, hi⟩ := Pi.lt_def.1 hlt
+    exact Pi.lt_def.2 ⟨λ p => hle (r p), r.symm i, by simpa using hi⟩
 
 /-! ### Top-constraint optimality -/
 

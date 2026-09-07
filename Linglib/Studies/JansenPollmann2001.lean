@@ -34,33 +34,19 @@ members of an arithmetic sequence whose ratio and first member are
 `1×10ⁿ`, `2×10ⁿ`, or `½×10ⁿ`. Quarters, which do round single numbers
 (2½-ness), are absent from pairs (`quarter_unit_not_seqRatio`).
 
-Their p. 198 definition allows the zeroth power (`hasKnessOrig`);
-`Roundness.HasKness` follows [woodin-etal-2023]'s b ≥ 1 restriction
-(their fn. 3). The divergence matters downstream: under the original,
-15 has 5-ness (`fifteen_has_orig_fiveness`) — roundness that the
-restricted variant, and hence `Precision.inferPrecisionMode`, misses at
-15, 45, …. Reading this paper also corrected `Roundness`'s 10-ness: it is
-the k = 1 family (divisors 10, 100, …) — their own example "70 has only
-10-ness" — not the k = 10 family.
+Their definition allows the zeroth power (`Roundness.HasKness`);
+`Roundness.roundnessScore` follows [woodin-etal-2023]'s b ≥ 1
+restriction, which is k-ness with k scaled by ten. The divergence matters
+downstream: under the original, 15 has 5-ness
+(`fifteen_hasKness_five_not_fifty`) — roundness that the restricted variant,
+and hence `Precision.inferPrecisionMode`, misses at 15, 45, …. Their
+10-ness is the k = 1 family (divisors 10, 100, …) — their own example
+"70 has only 10-ness" — not the k = 10 family.
 
 Their regression (frequency from magnitude n⁻¹, n⁻² plus the four
 properties, R² = 0.968, p. 200) stays prose per the no-regression-theorems
 rule, as does the FA operationalization itself.
 
-## Main definitions
-
-- `QuantityOp`, `IsFavUnit`: doubling/halving over decimal base powers
-- `SeqRatio`, `SeqPair`: the revised sequence rule
-- `hasKnessOrig`: their original (b ≥ 0) k-ness
-
-## Main results
-
-- `favUnit_iff`: the favourite units are exactly the four k-families
-- `not_favUnit_three_mul_pow`: the 3-family is not derivable — why the
-  inventory stops at four properties
-- `quarter_unit_not_seqRatio`: quarters round single numbers, not pairs
-- their p. 198 examples and p. 196 pair judgments, checked by `decide`
-- `fifteen_has_orig_fiveness`: the b ≥ 0 vs b ≥ 1 divergence at 15
 -/
 
 namespace JansenPollmann2001
@@ -176,42 +162,22 @@ sequence ratio — their pp. 197, 199–200 asymmetry. -/
 theorem quarter_unit_not_seqRatio : IsFavUnit 25 ∧ ¬ SeqRatio 25 :=
   ⟨⟨.halfAgain, 2, by norm_num [QuantityOp.apply]⟩, by decide⟩
 
-/-! ### The original k-ness and the b ≥ 1 restriction (their p. 198) -/
+/-! ### k-ness and the b ≥ 1 restriction -/
 
-/-- Their original k-ness: `n ∈ [k × (1–9 × 10ᵇ)]` with `b ≥ 0` — 10-ness
-is `k = 1`. `Roundness.HasKness` is this with [woodin-etal-2023]'s
-`b ≥ 1` restriction. Search bounded as there. -/
-def hasKnessOrig (n k : ℕ) : Prop :=
-  ∃ b < 11, ∃ m < 10, 1 ≤ m ∧ n = m * k * 10 ^ b
-
-instance (n k : ℕ) : Decidable (hasKnessOrig n k) :=
-  inferInstanceAs (Decidable (∃ b < 11, ∃ m < 10, _ ∧ _))
-
-/-- The restricted variant entails the original. -/
-theorem hasKnessOrig_of_hasKness {n k : ℕ} (h : HasKness n k) :
-    hasKnessOrig n k :=
-  let ⟨b, hb, _, hm⟩ := h
-  ⟨b, hb, hm⟩
-
--- Their p. 198 examples, under the original definition: "40 has 10-ness,
--- 2-ness, and 5-ness; 8 has 10-ness and 2-ness but no 5-ness; 300 has
--- 10-ness and 5-ness but no 2-ness; 70 has only 10-ness; 61 has none."
-example : hasKnessOrig 40 1 ∧ hasKnessOrig 40 2 ∧ hasKnessOrig 40 5 := by
-  decide
-example : hasKnessOrig 8 1 ∧ hasKnessOrig 8 2 ∧ ¬ hasKnessOrig 8 5 := by
-  decide
-example : hasKnessOrig 300 1 ∧ hasKnessOrig 300 5 ∧ ¬ hasKnessOrig 300 2 := by
-  decide
-example : hasKnessOrig 70 1 ∧ ¬ hasKnessOrig 70 2 ∧ ¬ hasKnessOrig 70 5 := by
-  decide
-example : ¬ hasKnessOrig 61 1 ∧ ¬ hasKnessOrig 61 2 ∧ ¬ hasKnessOrig 61 5 := by
-  decide
+-- Their examples: "40 has 10-ness, 2-ness, and 5-ness; 8 has 10-ness and
+-- 2-ness but no 5-ness; 300 has 10-ness and 5-ness but no 2-ness; 70 has
+-- only 10-ness; 61 has none."
+example : HasKness 1 40 ∧ HasKness 2 40 ∧ HasKness 5 40 := by decide
+example : HasKness 1 8 ∧ HasKness 2 8 ∧ ¬ HasKness 5 8 := by decide
+example : HasKness 1 300 ∧ HasKness 5 300 ∧ ¬ HasKness 2 300 := by decide
+example : HasKness 1 70 ∧ ¬ HasKness 2 70 ∧ ¬ HasKness 5 70 := by decide
+example : ¬ HasKness 1 61 ∧ ¬ HasKness 2 61 ∧ ¬ HasKness 5 61 := by decide
 
 /-- The divergence that matters downstream: under the original definition
-15 has 5-ness (15 = 3 × 5 × 10⁰), which the b ≥ 1 variant drops — the
-source of the 15/45-idealization noted at
+15 has 5-ness (15 = 3 × 5 × 10⁰), which the b ≥ 1 variant, 50-ness,
+drops — the source of the 15/45-idealization noted at
 `Precision.inferPrecisionMode`. -/
-theorem fifteen_has_orig_fiveness : hasKnessOrig 15 5 ∧ ¬ HasKness 15 5 := by
+theorem fifteen_hasKness_five_not_fifty : HasKness 5 15 ∧ ¬ HasKness 50 15 := by
   decide
 
 /-! ### 10-ness as expression shape ([hurford-1975]) -/
@@ -220,16 +186,14 @@ theorem fifteen_has_orig_fiveness : hasKnessOrig 15 5 ∧ ¬ HasKness 15 5 := by
 value of a digit×base PHRASE — [hurford-1975]'s `[NUMBER M]` with a digit
 NUMBER and a pure ten-power M (*forty*, *four hundred*, …). The
 favourite-quantity properties are facts about numeral expression shape. -/
-theorem hasKness_one_iff_phrase (n : ℕ) :
-    HasKness n 1 ↔ ∃ m ≤ 8, ∃ k ≤ 9,
+theorem hasKness_ten_iff_phrase (n : ℕ) :
+    HasKness 10 n ↔ ∃ m ≤ 8, ∃ k,
       n = (Syntax.Numeral.Phrase.mk (.tally m) (.tenPow k)).value := by
   simp only [Syntax.Numeral.Phrase.value_tally_tenPow]
   constructor
-  · rintro ⟨b, hb, hb1, m, hm, hm1, rfl⟩
-    exact ⟨m - 1, by omega, b - 1, by omega, by
-      rw [Nat.sub_add_cancel hm1, Nat.sub_add_cancel hb1, mul_one]⟩
-  · rintro ⟨m, hm, k, hk, rfl⟩
-    exact ⟨k + 1, by omega, by omega, m + 1, by omega, by omega, by
-      rw [mul_one]⟩
+  · rintro ⟨b, m, hm1, hm, rfl⟩
+    exact ⟨m - 1, by omega, b, by rw [Nat.sub_add_cancel hm1, Nat.mul_assoc, ← Nat.pow_succ']⟩
+  · rintro ⟨m, hm, k, rfl⟩
+    exact ⟨k, m + 1, by omega, by omega, by rw [Nat.mul_assoc, Nat.pow_succ']⟩
 
 end JansenPollmann2001
