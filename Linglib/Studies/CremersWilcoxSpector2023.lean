@@ -8,65 +8,21 @@ import Linglib.Semantics.Exhaustification.Finite
 # Exhaustivity and anti-exhaustivity in the Rational Speech Act framework
 
 A listener who hears *A* where *A and B* was available infers that B is false. In the
-baseline Rational Speech Act model the inference can reverse: a prior biased towards the
-world where both A and B hold makes the literal listener already expect that world on
-hearing *A*, so the speaker uses the cheap *A* there rather than in the world where only A
-holds, and the pragmatic listener raises the probability of both A and B above her prior.
+baseline Rational Speech Act model a prior biased towards the world of both A and B reverses
+the inference: the listener is anti-exhaustive exactly when the log odds of the prior exceed
+the cost disadvantage of *A and not B* over *A and B*, whatever the rationality. Lexical
+uncertainty over free strengthenings and the wonky-world models stay anti-exhaustive for
+suitable priors, while grammatical lexical uncertainty, the lexical-intentions speaker and
+the supervaluationist speaker keep the posterior of both below the prior whenever *A and B*
+costs no more than *A and not B*. The experiment finds no anti-exhaustivity.
 
-Over two worlds and the messages *A*, *A and B* and *A and not B*, the speaker prefers *A* to
-*A and B* in the world of both exactly when the information *A and B* would add, the negated
-log prior, is not worth its cost, and the listener is anti-exhaustive exactly when the log
-odds of the prior exceed the cost disadvantage of *A and not B* over *A and B*, a condition
-independent of the rationality parameter.
-
-The models that lift a parameter of the baseline divide by whether they block this. Lexical
-uncertainty over free strengthenings, where *A* may mean *A and B*, and the wonky-world
-models, where the listener doubts the speaker's prior, remain anti-exhaustive for suitable
-priors, the Bayesian wonky model exactly when a wonkiness-weighted difference of logistic
-values is positive. Lexical uncertainty restricted to the grammatical exhaustification of
-*A*, the lexical-intentions speaker who chooses a message together with its interpretation,
-and the supervaluationist speaker who addresses a question under discussion and averages
-over the interpretations, all keep the posterior of both A and B below its prior whenever
-*A and B* costs no more than *A and not B*, the supervaluationist model for every cost.
-
-The experiment found no anti-exhaustivity in production or in comprehension; the wonky and
-supervaluationist models fit best, and once the two conjunctions are constrained to cost the
-same the models that cannot block anti-exhaustivity fall behind.
-
-## Implementation notes
-
-* Meanings are interpretation functions on the three messages; the exhaustified one is
-  derived by innocent exclusion from the substrate rather than stipulated.
-* The literal listener is the substrate's prior conditioned on the extension, the speaker
-  its power-weight best response with the rationality as exponent and the exponentiated costs
-  as factors, so that the paper's exponentiated utility is a power of the literal listener
-  times a cost factor, and the pragmatic listener is mathlib's posterior kernel. Lexical
-  uncertainty and the Bayesian wonky model average the speaker over the latent as a mixture
-  of kernels, the lexical-intentions speaker is pushed forward along the message coordinate,
-  and the supervaluationist and non-Bayesian wonky listeners are posteriors over a joint
-  state, as the paper's numbered definitions have them.
-* Every result is stated on reals for an arbitrary prior in the open unit interval, positive
-  rationality and arbitrary costs of the two conjunctions, as in the paper's appendix; the
-  supervaluationist listener takes any prior on the questions that gives the fine one
-  positive probability, while its speaker fixes the two interpretations equiprobable, as the
-  paper's fits do. The supervaluationist speaker's weight is the geometric mean of the two
-  interpretations' literal listeners on the cell of the question, times the cost factor; the
-  prior of the question, common to every message, is left out.
-* The paper's anti-exhaustivity is the posterior of both A and B exceeding the prior; the
-  substrate's comparison of a posterior with its prior reduces it, over two worlds, to the
-  comparison of the two likelihoods of *A*, and the closed forms of those likelihoods are
-  logistic functions of utility differences. The non-Bayesian wonky model's anti-exhaustivity
-  is reduced to the paper's rational inequality, which the paper resolves numerically.
+We state each model on the substrate's kernel face and prove the paper's conditions on reals
+for an arbitrary prior, rationality and costs.
 
 ## TODO
 
-* The non-Bayesian wonky model's limits in the prior for positive wonkiness, anti-exhaustive
-  as the prior tends to zero and exhaustive as it tends to one, are not proved.
-* The Bayesian wonky model's threshold on the wonkiness, the limit of its condition as the
-  prior tends to one, is not derived from the condition.
-* Higher-order speakers and listeners, at which anti-exhaustivity can reappear in the
-  grammatical models, the second-level analyses of the supervaluationist model, and the model
-  fits are prose.
+* The non-Bayesian wonky model's limits in the prior and the Bayesian wonky model's
+  wonkiness threshold are not derived.
 
 ## References
 
