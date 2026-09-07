@@ -1,85 +1,69 @@
 import Linglib.Semantics.Tense.Evidential
 
 /-!
-# Korean Evidential Fragment
+# Korean evidential fragment
 [cumming-2026]
 
-Paradigm entries for Korean tense-evidential morphology from [cumming-2026],
-paradigm tables (18) (-te) and (19) (-ney). Korean is notable for morphologically encoding
-evidential perspective independently of utterance perspective.
-
-## -te vs -ney
-
-Both markers distinguish retrospective/contemporaneous/prospective EP, but
-their UP constraints differ:
-- **-te**: UP is always T < S (past-shifted)
-- **-ney**: UP tracks speech-time more tightly (T < S, T = S, S < T)
-
-This EP/UP factorization is verified in `Studies/Cumming2026.lean`.
-
+Paradigm cells for Korean tense under the evidentials *-te* (table (18)) and *-ney*
+(table (19)) of [cumming-2026], following [lee-2011] and [lee-2013]: under either
+evidential, tense fixes the evidential perspective, while *-te* places the sensory evidence
+in the past of speech and *-ney* at speech, so that the utterance perspective is derived. The
+printed rows of table (19) are labelled *-te* under the *-ney* heading.
 -/
 
 namespace Korean.Evidentials
 
 open Tense.Evidential
 
--- ════════════════════════════════════════════════════
--- § 1. Korean -te (table (18))
--- ════════════════════════════════════════════════════
+/-! ### *-te* (table (18)) -/
 
-/-- Korean -te PAST: T < A (strict downstream), T < S (past). -/
+/-- Past under *-te*: the event precedes the past sensory evidence. -/
 def tePast : TAMEEntry where
   label := "-te PAST"
   ep := .strictDownstream
   up := .past
 
-/-- Korean -te PRESENT: T = A (contemporaneous), T < S (past). -/
+/-- Present under *-te*: the event coincides with the past sensory evidence. -/
 def tePresent : TAMEEntry where
   label := "-te PRES"
   ep := .contemporaneous
   up := .past
 
-/-- Korean -te FUTURE: A < T (prospective). -/
+/-- Future under *-te*: prospective evidence, the utterance perspective open. -/
 def teFuture : TAMEEntry where
   label := "-te FUT"
   ep := .prospective
   up := .unconstrained
 
--- ════════════════════════════════════════════════════
--- § 2. Korean -ney (table (19))
--- ════════════════════════════════════════════════════
+/-! ### *-ney* (table (19)) -/
 
-/-- Korean -ney PAST: T < A (strict downstream), T < S (past). -/
+/-- Past under *-ney*: the event precedes the present sensory evidence. -/
 def neyPast : TAMEEntry where
   label := "-ney PAST"
   ep := .strictDownstream
   up := .past
 
-/-- Korean -ney PRESENT: T = A (contemporaneous), T = S (present). -/
+/-- Present under *-ney*: the event coincides with the present sensory evidence. -/
 def neyPresent : TAMEEntry where
   label := "-ney PRES"
   ep := .contemporaneous
   up := .present
 
-/-- Korean -ney FUTURE: A < T (prospective), S < T (future). -/
+/-- Future under *-ney*: prospective present evidence for a future event. -/
 def neyFuture : TAMEEntry where
   label := "-ney FUT"
   ep := .prospective
   up := .future
 
--- ════════════════════════════════════════════════════
--- § 3. Collections
--- ════════════════════════════════════════════════════
-
-/-- All Korean -te entries. -/
+/-- The cells under *-te*. -/
 def teEntries : List TAMEEntry :=
   [tePast, tePresent, teFuture]
 
-/-- All Korean -ney entries. -/
+/-- The cells under *-ney*. -/
 def neyEntries : List TAMEEntry :=
   [neyPast, neyPresent, neyFuture]
 
-/-- All Korean evidential entries. -/
+/-- The Korean evidential cells. -/
 def allEntries : List TAMEEntry :=
   teEntries ++ neyEntries
 

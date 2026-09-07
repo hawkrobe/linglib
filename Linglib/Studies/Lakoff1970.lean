@@ -378,7 +378,7 @@ theorem false_past_is_temporally_present (f : TensePerspective T)
 theorem false_past_satisfies_up_present (f : TensePerspective ℤ)
     (h : falsePast f) :
     UPCondition.present.toConstraint f.toEvidentialFrame :=
-  h.1
+  (Tense.compare_mem_present _ _).2 h.1
 
 theorem false_past_classified_correctly [LinearOrder T]
     (f : TensePerspective T) (h : falsePast f) :

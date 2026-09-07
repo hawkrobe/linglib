@@ -1,38 +1,31 @@
 import Linglib.Semantics.Tense.Evidential
 
 /-!
-# Bulgarian Evidential Fragment
+# Bulgarian evidential fragment
 [cumming-2026]
 
-Paradigm entries for Bulgarian tense-evidential morphology from [cumming-2026],
-table (17). The -l participle interacts with tense to encode evidential perspective.
-
-## Entries
-
-| Form       | EP constraint | UP constraint | Nonfuture? |
-|------------|---------------|---------------|------------|
-| NFUT + -l  | T ≤ A         | T ≤ S         | yes        |
-| FUT + -l   | A < T         | (none)        | no         |
-
+Paradigm cells for Bulgarian tense under the evidential *-l* (table (17)) of
+[cumming-2026], following [koev-2017]: the nonfuture requires evidence downstream of the
+event, the future prospective evidence, and the event may lie in the past under either.
 -/
 
 namespace Bulgarian.Evidentials
 
 open Tense.Evidential
 
-/-- Bulgarian NFUT + -l: T ≤ A (downstream), T ≤ S (nonfuture). -/
+/-- Nonfuture under *-l*: downstream evidence for a nonfuture event. -/
 def nfutL : TAMEEntry where
   label := "NFUT + -l"
   ep := .downstream
   up := .nonfuture
 
-/-- Bulgarian FUT + -l: A < T (prospective). -/
+/-- Future under *-l*: prospective evidence, the utterance perspective open. -/
 def futL : TAMEEntry where
   label := "FUT + -l"
   ep := .prospective
   up := .unconstrained
 
-/-- All Bulgarian evidential entries. -/
+/-- The Bulgarian evidential cells. -/
 def allEntries : List TAMEEntry :=
   [nfutL, futL]
 
