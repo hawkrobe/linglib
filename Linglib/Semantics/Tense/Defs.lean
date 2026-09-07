@@ -18,8 +18,21 @@ spine, and derived categories are `Finset` complements and unions (*nonfuture* i
 * `nonpast` = `{.eq, .gt}` (ref ≥ perspective — the present-or-future union, [klecha-2016])
 
 The `compare_mem_*` simp lemmas reduce each constraint to `<`/`=`/`≤` on the underlying order, so
-downstream proofs bottom out in mathlib's order API.
+downstream proofs bottom out in mathlib's order API. Cells compose: `comp R S` collects the
+orderings of `a` to `c` compatible with `a` to `b` in `R` and `b` to `c` in `S`, so a relation
+between non-adjacent times is derived by `compare_mem_comp`.
 -/
+
+/-- The orderings of `a` to `c` compatible with an ordering of `a` to `b` and one of `b` to `c`
+in a linear order. -/
+def Ordering.comp : Ordering → Ordering → Finset Ordering
+  | .lt, .lt => {.lt}
+  | .lt, .eq => {.lt}
+  | .lt, .gt => ⊤
+  | .eq, o => {o}
+  | .gt, .lt => ⊤
+  | .gt, .eq => {.gt}
+  | .gt, .gt => {.gt}
 
 namespace Tense
 
@@ -57,5 +70,23 @@ variable {T : Type*} [LinearOrder T]
 
 @[simp] theorem compare_mem_nonpast (r p : T) : compare r p ∈ nonpast ↔ p ≤ r := by
   rw [nonpast_eq_compl_past, Finset.mem_compl, compare_mem_past, not_lt]
+
+/-- Composition of cells: the orderings of `a` to `c` compatible with `a` to `b` in `R` and
+`b` to `c` in `S`. -/
+def comp (R S : Finset Ordering) : Finset Ordering :=
+  Finset.univ.filter λ o => ∃ r ∈ R, ∃ s ∈ S, o ∈ r.comp s
+
+theorem compare_mem_comp_compare (a b c : T) :
+    compare a c ∈ (compare a b).comp (compare b c) := by
+  rcases h₁ : compare a b with _ | _ | _ <;> rcases h₂ : compare b c with _ | _ | _ <;>
+    simp only [compare_lt_iff_lt, compare_eq_iff_eq, compare_gt_iff_gt] at h₁ h₂ <;>
+    simp [Ordering.comp, compare_lt_iff_lt, compare_gt_iff_gt, h₁, h₂] <;>
+    first
+      | exact h₁.trans h₂ | exact h₂.trans h₁ | exact h₁.trans_eq h₂ | exact h₁.trans_lt h₂
+      | exact h₂.symm.trans_lt h₁
+
+theorem compare_mem_comp {R S : Finset Ordering} {a b c : T} (h₁ : compare a b ∈ R)
+    (h₂ : compare b c ∈ S) : compare a c ∈ comp R S :=
+  Finset.mem_filter.2 ⟨Finset.mem_univ _, _, h₁, _, h₂, compare_mem_comp_compare a b c⟩
 
 end Tense

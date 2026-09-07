@@ -1,264 +1,172 @@
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.Korean.Evidentials
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
-import Linglib.Semantics.Modality.Kernel
-import Linglib.Semantics.Evidential.Epistemicity
-import Linglib.Studies.Zheng2025
+import Linglib.Data.Examples.Cumming2026
 
 /-!
-# Cumming (2026): Tense and evidence — verification theorems
-[cumming-2026]
+# Tense and evidence
 
-Verification theorems for the cross-linguistic nonfuture-downstream
-generalization of [cumming-2026]. Paradigm data (the paper's tables
-(17)–(20) and (22)) lives in the Fragment files; this file imports them and
-proves the empirical predictions.
+Ninan observed that a future-tense sentence can be asserted on prior inferential grounds
+while the past-tense sentence about the same event, uttered once the event has passed on the
+same grounds, cannot, although the two are true in the same circumstances. In Cumming's
+version, *Alma will enjoy the meal* is assertible before the meal and *Alma enjoyed the meal*
+is not the next day, yet *Alma will have enjoyed the meal* is, which tells against an
+epistemic account of the asymmetry. Cumming's explanation is linguistic and amends
+Cariani's: the constraint that the speaker's evidence be causally downstream of the event
+described, which Cariani places on every predicate and lets modals obviate, belongs to the
+nonfuture tenses of English as non-truth-conditional meaning, and the future forms lack it.
+The evidential paradigms of Korean and Bulgarian show the same recruitment of tense. Under
+the evidentials *-te*, *-ney* and *-l*, tense fixes the evidential perspective, the relation
+of the event to the acquisition of the evidence; *-te* and *-ney* place the acquisition in the
+past of speech and at speech, and for *-l* it suffices that evidence is acquired by the time
+of speech; and the utterance perspective, the ordinary contribution of tense, is derived:
+present evidence that is prospective is evidence for a future event, downstream evidence
+acquired by the time of speech is evidence for a nonfuture event, and past evidence that is
+prospective leaves the utterance perspective open. The past- and present-directed *will have*
+and *will now* carry the prospective constraint with a past or present utterance perspective.
+No language should have a true future restricted to downstream evidence, since the speaker
+would have to acquire the evidence after speaking. Where Cariani's account offers the
+downstream constraint or its obviation, Korean under *-te* and the English *will* forms show a
+third option, the positive restriction to prospective evidence. Planned or scheduled events
+are exempt from both perspectives, as in the futurate.
 
-## Main results
+We derive the utterance-perspective column of the Korean and Bulgarian paradigms as the
+composition of the evidential-perspective column with the cell relating the acquisition of
+the evidence to speech, show that the future cells leave the utterance perspective open,
+prove that a downstream-restricted future is unsatisfiable and that the prospective cells lie
+beyond obviation, and check the paper's felicity judgments against the paradigm cells on the
+frames its scenarios fix.
 
-* `nonfuture_downstream`: any paradigm entry whose EP constraint is
-  nonfuture entails T ≤ A (downstream evidence), with per-entry
-  verification anchors and corollaries
-* `future_no_downstream`: future entries impose no downstream requirement
-* `korean_te_ney_up_diverge`: -te and -ney present share one EP constraint
-  but differ in UP — EP and UP factorize independently in the morphology
-* `tense_modal_evidential_parallel`: the tense constraint and
-  [von-fintel-gillies-2010]'s `kernelMust` presupposition hold jointly in
-  the [zheng-2025] raincoat scenario
+## Implementation notes
+
+* Paradigm cells are the fragments' rows, each an evidential-perspective and an
+  utterance-perspective constraint on a frame of speech, acquisition and event times, read
+  temporally as in the paper's tables. Cumming's own constraint is causal, and he declines
+  the temporal reading of Lee's and Koev's accounts; evidence temporally after but causally
+  independent of the event, or before it yet downstream, as the rewatched film of footnote
+  9, is not represented.
+* The cells relating acquisition to speech, the past for *-te*, the present for *-ney*, and
+  the nonfuture for *-l* as for any assertion, are the paper's; the utterance perspective is
+  their composition with the evidential perspective by the substrate's cell composition.
+* The paper calls the constraint non-truth-conditional and a felicity condition; the
+  substrate renders it as a presupposition, and the shared assertion of cells differing in
+  tense holds there by construction rather than being derived.
+* The felicity data enter each scenario's times as small integers on one line; scenarios
+  the paper does not spell out are reconstructed and say so. The futurate exemption is
+  recorded as a flag on the planned or scheduled examples rather than derived, since the
+  paper leaves the criterion for it open.
+* The unmarked pattern of §7, the ranking of evidential sources and the acquaintance
+  inference, is prose.
+
+## TODO
+
+* Causal downstreamness, on which the paper's decisive cases turn, needs a relation between
+  the evidence-acquiring event and the described event with the temporal constraint as a
+  consequence.
+
+## References
+
+* [S. Cumming, *Tense and evidence* (2026)][cumming-2026]
+* [D. Ninan, *Assertion, evidence, and the future* (2022)][ninan-2022]
+* [F. Cariani, *The modal future* (2021)][cariani-2021]
+* [F. Cariani, *Future-past asymmetries, evidential grounding, and projection*
+  (2022)][cariani-2022]
+* [J. Lee, *Evidentiality and its interaction with tense: evidence from Korean*
+  (2011)][lee-2011]
+* [J. Lee, *Temporal constraints on the meaning of evidentiality* (2013)][lee-2013]
+* [T. Koev, *Evidentiality, learning events and spatiotemporal distance* (2017)][koev-2017]
+* [L. Winans, *Inferences of will* (2016)][winans-2016]
+* [S. Cumming, L. Winans, *Counterfactuals and abduction* (2021)][cumming-winans-2021]
+* [L. Matthewson, *Evidence type, evidence location, evidence strength*
+  (2020)][matthewson-2020]
 -/
 
 namespace Cumming2026
 
-open Tense.Evidential
-open English.Tense
-open Korean.Evidentials
-open Bulgarian.Evidentials
+open Tense Tense.Evidential Korean.Evidentials Bulgarian.Evidentials
 
-/-! ### Cross-linguistic collection -/
+/-- A frame with the perspective and reference times at speech. -/
+def frame (s a t : ℤ) : EvidentialFrame ℤ :=
+  { speechTime := s, perspectiveTime := s, referenceTime := s, eventTime := t,
+    acquisitionTime := a }
 
-/-- All paradigm entries across the three languages. -/
+/-! ### Utterance perspective derived (§3) -/
+
+/-- Under *-te*, past sensory evidence, each cell's utterance perspective is the composition
+of its evidential perspective with the past ((18)). -/
+theorem te_up_eq_comp : ∀ p ∈ teEntries, p.up.toRelation = comp p.ep.toRelation past := by
+  decide
+
+/-- Under *-ney*, present sensory evidence, each cell's utterance perspective is the
+composition of its evidential perspective with the present ((19)): present evidence that is
+prospective is for a future event. -/
+theorem ney_up_eq_comp : ∀ p ∈ neyEntries, p.up.toRelation = comp p.ep.toRelation present := by
+  decide
+
+/-- Under *-l*, with the evidence acquired by the time of speech, each cell's utterance
+perspective is the composition of its evidential perspective with the nonfuture ((17)):
+downstream evidence is for a nonfuture event. -/
+theorem l_up_eq_comp :
+    ∀ p ∈ Bulgarian.Evidentials.allEntries, p.up.toRelation = comp p.ep.toRelation futureᶜ := by
+  decide
+
+/-- Prospective evidence acquired in the past of speech leaves the utterance perspective
+open: the future under *-te* is compatible with a past, present or future event. -/
+theorem comp_future_past : comp future past = ⊤ := by decide
+
+/-- Prospective evidence acquired by the time of speech leaves the utterance perspective
+open: the future under *-l* describes yesterday's forecast rain ((16)). -/
+theorem comp_future_compl_future : comp future futureᶜ = ⊤ := by decide
+
+/-! ### Beyond obviation, and the unmarked pattern (§5, §7) -/
+
+/-- Korean under *-te* restricts the evidence to the prospective, an option that neither the
+downstream constraint nor its obviation provides. -/
+theorem exists_te_prospective : ∃ p ∈ teEntries, p.ep = .prospective := by decide
+
+/-- The English *will* forms restrict the evidence to the prospective. -/
+theorem exists_will_prospective : ∃ p ∈ English.Tense.allEntries, p.ep = .prospective := by
+  decide
+
+/-- No true future restricted to downstream evidence: evidence acquired by the time of speech
+and downstream of the event places the event no later than speech. -/
+theorem not_speechTime_lt_eventTime {f : EvidentialFrame ℤ} (hd : f.Downstream)
+    (hA : f.Acquired) : ¬ f.speechTime < f.eventTime :=
+  not_lt.2 (f.eventTime_le_speechTime hd hA)
+
+/-! ### The felicity judgments -/
+
+/-- The paradigm cells of the three languages. -/
 def allParadigms : List TAMEEntry :=
-  English.Tense.allEntries ++
-  Korean.Evidentials.allEntries ++
-  Bulgarian.Evidentials.allEntries
+  English.Tense.allEntries ++ Korean.Evidentials.allEntries ++ Bulgarian.Evidentials.allEntries
 
-/-- Nonfuture paradigm entries (across all languages). -/
-def nonfutureParadigms : List TAMEEntry :=
-  allParadigms.filter (decide ·.IsNonfuture)
+/-- A felicity judgment of the paper: the paradigm cell, the frame the scenario fixes, whether
+the event is planned or scheduled, and the judgment. -/
+structure Datum where
+  cell : TAMEEntry
+  frame : EvidentialFrame ℤ
+  scheduled : Bool
+  judgment : Features.Judgment
 
-/-- Future paradigm entries (across all languages). -/
-def futureParadigms : List TAMEEntry :=
-  allParadigms.filter (decide ¬ ·.IsNonfuture)
+/-- An example's judgment together with its cell and the scenario's times. -/
+def datum (e : Data.Examples.LinguisticExample) : Option Datum := do
+  let cell ← allParadigms.find? (·.label == (← e.feature? "form"))
+  let s ← e.nat? "speechTime"
+  let a ← e.nat? "acquisitionTime"
+  let t ← e.nat? "eventTime"
+  pure { cell, frame := frame s a t,
+         scheduled := decide (e.feature? "scheduled" = some "true"), judgment := e.judgment }
 
-/-! ### Per-entry nonfuture verification -/
+/-- Every example names a cell and a scenario. -/
+theorem datum_isSome : ∀ e ∈ Examples.all, (datum e).isSome := by decide
 
-/-- English simple past is nonfuture (EP = downstream). -/
-theorem simplePast_nonfuture : simplePast.IsNonfuture := by decide
+/-- The paper's felicity judgments. -/
+def data : List Datum := Examples.all.filterMap datum
 
-/-- English present progressive is nonfuture (EP = downstream). -/
-theorem presentProg_nonfuture : presentProg.IsNonfuture := by decide
-
-/-- Korean -te PAST is nonfuture (EP = strictDownstream). -/
-theorem tePast_nonfuture : tePast.IsNonfuture := by decide
-
-/-- Korean -te PRESENT is nonfuture (EP = contemporaneous). -/
-theorem tePresent_nonfuture : tePresent.IsNonfuture := by decide
-
-/-- Korean -ney PAST is nonfuture (EP = strictDownstream). -/
-theorem neyPast_nonfuture : neyPast.IsNonfuture := by decide
-
-/-- Korean -ney PRESENT is nonfuture (EP = contemporaneous). -/
-theorem neyPresent_nonfuture : neyPresent.IsNonfuture := by decide
-
-/-- Bulgarian NFUT + -l is nonfuture (EP = downstream). -/
-theorem nfutL_nonfuture : nfutL.IsNonfuture := by decide
-
-/-! ### Master downstream theorem -/
-
-/-- Any paradigm entry whose EP constraint is nonfuture entails T ≤ A
-    (downstream evidence). -/
-theorem nonfuture_downstream (p : TAMEEntry) (f : EvidentialFrame ℤ)
-    (h_nf : p.IsNonfuture) (h_ep : p.epConstraint f) :
-    downstreamEvidence f :=
-  EPCondition.nonfuture_implies_downstream p.ep f h_nf h_ep
-
-/-! ### Per-entry downstream corollaries -/
-
-/-- English simple past EP entails downstream evidence. -/
-theorem simplePast_downstream (f : EvidentialFrame ℤ) :
-    simplePast.epConstraint f → downstreamEvidence f :=
-  nonfuture_downstream simplePast f simplePast_nonfuture
-
-/-- English present progressive EP entails downstream evidence. -/
-theorem presentProg_downstream (f : EvidentialFrame ℤ) :
-    presentProg.epConstraint f → downstreamEvidence f :=
-  nonfuture_downstream presentProg f presentProg_nonfuture
-
-/-- Korean -te PAST EP entails downstream evidence. -/
-theorem tePast_downstream (f : EvidentialFrame ℤ) :
-    tePast.epConstraint f → downstreamEvidence f :=
-  nonfuture_downstream tePast f tePast_nonfuture
-
-/-- Korean -te PRESENT EP entails downstream evidence. -/
-theorem tePresent_downstream (f : EvidentialFrame ℤ) :
-    tePresent.epConstraint f → downstreamEvidence f :=
-  nonfuture_downstream tePresent f tePresent_nonfuture
-
-/-- Korean -ney PAST EP entails downstream evidence. -/
-theorem neyPast_downstream (f : EvidentialFrame ℤ) :
-    neyPast.epConstraint f → downstreamEvidence f :=
-  nonfuture_downstream neyPast f neyPast_nonfuture
-
-/-- Korean -ney PRESENT EP entails downstream evidence. -/
-theorem neyPresent_downstream (f : EvidentialFrame ℤ) :
-    neyPresent.epConstraint f → downstreamEvidence f :=
-  nonfuture_downstream neyPresent f neyPresent_nonfuture
-
-/-- Bulgarian NFUT + -l EP entails downstream evidence. -/
-theorem nfutL_downstream (f : EvidentialFrame ℤ) :
-    nfutL.epConstraint f → downstreamEvidence f :=
-  nonfuture_downstream nfutL f nfutL_nonfuture
-
-/-! ### Future counterexample -/
-
-/-- Future entries do not require downstream evidence: the EP constraint
-    is either trivially true (English bare future) or imposes A < T
-    (prospective), which is the opposite of T ≤ A. -/
-theorem future_no_downstream :
-    English.Tense.future.epConstraint ⟨⟨10, 10, 0, 5⟩, 0⟩ ∧
-    ¬ downstreamEvidence ⟨⟨10, 10, 0, 5⟩, 0⟩ := by
-  refine ⟨Finset.mem_univ _, ?_⟩
-  simp [downstreamEvidence]
-
-/-! ### Korean EP/UP factorization -/
-
-/-- The two present-tense evidentials impose the same EP constraint (T = A)
-    but different UP constraints (-te: T < S; -ney: T = S), witnessed in both
-    directions: EP and UP vary independently in the morphology
-    ([cumming-2026], tables (18)–(19)). -/
-theorem korean_te_ney_up_diverge :
-    tePresent.ep = neyPresent.ep ∧
-    (∃ f : EvidentialFrame ℤ,
-      tePresent.upConstraint f ∧ ¬ neyPresent.upConstraint f) ∧
-    (∃ f : EvidentialFrame ℤ,
-      neyPresent.upConstraint f ∧ ¬ tePresent.upConstraint f) := by
-  refine ⟨rfl, ⟨⟨⟨0, 0, 0, -1⟩, -1⟩, ?_, ?_⟩, ⟨⟨⟨0, 0, 0, 0⟩, 0⟩, ?_, ?_⟩⟩
-  · show (-1 : ℤ) < 0; omega
-  · show ¬ ((-1 : ℤ) = 0); omega
-  · show (0 : ℤ) = 0; rfl
-  · show ¬ ((0 : ℤ) < 0); omega
-
-/-! ### Tense-modal evidentiality bridge
-
-[cumming-2026] observes that the "fake future" *will*-forms closely
-resemble epistemic *must*: both require the prejacent to follow from the
-evidence rather than being directly observed. The
-[von-fintel-gillies-2010] kernel semantics states the modal side as a
-presupposition that the kernel does not directly settle the prejacent; the
-tense side is the nonfuture downstream constraint (T ≤ A). The
-[zheng-2025] dripping-raincoat scenario (from `Studies/Zheng2025.lean`)
-witnesses both at once: the raincoat evidence is causally downstream of the
-rain, and the kernel `{wearingRaincoat}` does not settle `isRaining`. -/
-
-open Modality
-open Modality.Kratzer (propIntersection)
-open Zheng2025 (World wearingRaincoat isRaining raincoatK
-  raincoat_nandao_felicitous)
-
-/-- A concrete evidential frame for the raincoat scenario:
-    S = 0 (speech time now), T = -2 (rain event in the past),
-    R = 0, A = -1 (evidence acquired between event and speech). -/
-def raincoatFrame : EvidentialFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := 0
-  eventTime := -2
-  acquisitionTime := -1
-
-/-- The raincoat evidence is downstream: T ≤ A (-2 ≤ -1). -/
-theorem raincoat_downstream : downstreamEvidence raincoatFrame := by
-  show (-2 : ℤ) ≤ -1; omega
-
-/-- The raincoat kernel doesn't settle isRaining — the third conjunct of
-    [zheng-2025]'s nandao-felicity theorem. -/
-theorem raincoat_not_settled :
-    ¬ raincoatK.directlySettles isRaining :=
-  raincoat_nandao_felicitous.2.2
-
-/-- In the raincoat scenario, downstream evidence (T ≤ A) co-occurs with the
-    kernel not settling the prejacent. -/
-theorem downstream_implies_must_defined :
-    downstreamEvidence raincoatFrame ∧
-    (kernelMust raincoatK isRaining).presup World.rain :=
-  ⟨raincoat_downstream, raincoat_not_settled⟩
-
-/-- Both Cumming's nonfuture constraint and VF&G's `kernelMust`
-    presupposition hold simultaneously for the same scenario: the raincoat
-    evidence is downstream (T ≤ A) and the kernel does not settle
-    `isRaining`. -/
-theorem tense_modal_evidential_parallel :
-    downstreamEvidence raincoatFrame ∧
-    (kernelMust raincoatK isRaining).presup World.rain ∧
-    ¬(kernelMust raincoatK isRaining).assertion World.rain := by
-  refine ⟨raincoat_downstream, raincoat_not_settled, ?_⟩
-  intro hAll
-  have hw1 : World.sprinkler ∈ propIntersection raincoatK.props := by
-    intro p hp
-    rcases List.mem_singleton.mp hp with rfl
-    exact show wearingRaincoat .sprinkler by decide
-  exact (by decide : ¬ isRaining World.sprinkler) (hAll hw1)
-
-private theorem isRaining_settles_isRaining :
-    (⟨[isRaining]⟩ : Kernel World).directlySettles isRaining :=
-  ⟨isRaining, by simp, Or.inl subset_rfl⟩
-
-/-- When evidence is direct, the kernel settles the prejacent — `kernelMust`
-    is undefined — and downstream is trivially satisfied (T = A); the speaker
-    uses bare assertion, not *must*. -/
-theorem direct_evidence_blocks_both :
-    let directK : Kernel World := ⟨[isRaining]⟩
-    directK.directlySettles isRaining ∧
-    ¬(kernelMust directK isRaining).presup World.rain ∧
-    let directFrame : EvidentialFrame ℤ :=
-      { speechTime := 0, perspectiveTime := 0, referenceTime := 0,
-        eventTime := -1, acquisitionTime := -1 }
-    downstreamEvidence directFrame := by
-  refine ⟨isRaining_settles_isRaining, ?_, ?_⟩
-  · intro h
-    exact h isRaining_settles_isRaining
-  · show (-1 : ℤ) ≤ -1; omega
-
-/-! ### Epistemic authority bridge -/
-
-open Epistemicity
-
-/-- Strong assertions (ego + direct) correspond to settling kernels.
-    When the speaker has privileged access AND direct evidence, the
-    kernel settles the prejacent — 'must' is infelicitous, bare
-    assertion is used. -/
-theorem strong_assertion_settles :
-    strongAssertion.source = .direct ∧
-    strongAssertion.authority = .ego ∧
-    let directK : Kernel World := ⟨[isRaining]⟩
-    directK.directlySettles isRaining :=
-  ⟨rfl, rfl, isRaining_settles_isRaining⟩
-
-/-- Inferential claims (nonparticipant + inference) correspond to
-    non-settling kernels with must-defined presuppositions — the
-    canonical 'must' profile. -/
-theorem inferential_claim_must_profile :
-    inferentialClaim.source = .inference ∧
-    inferentialClaim.authority = .nonparticipant ∧
-    ¬ raincoatK.directlySettles isRaining ∧
-    (kernelMust raincoatK isRaining).presup World.rain :=
-  ⟨rfl, rfl, raincoat_not_settled, raincoat_not_settled⟩
-
-/-- Ego pairs with direct evidence and nonparticipant with inference in
-    the Epistemicity profiles. -/
-theorem authority_source_correlation :
-    strongAssertion.authority = .ego ∧ strongAssertion.source = .direct ∧
-    inferentialClaim.authority = .nonparticipant ∧
-    inferentialClaim.source = .inference :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- An assertion is felicitous exactly when its cell's two constraints hold on the scenario's
+frame, planned or scheduled events exempt (§6). -/
+theorem judgment_iff : ∀ d ∈ data, d.judgment = .acceptable ↔
+    d.scheduled ∨ (d.cell.ep.toConstraint d.frame ∧ d.cell.up.toConstraint d.frame) := by
+  decide
 
 end Cumming2026
