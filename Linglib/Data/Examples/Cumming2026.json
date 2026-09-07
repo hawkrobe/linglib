@@ -1,0 +1,614 @@
+[
+  {
+    "id": "cumming2026_1",
+    "source": {"bibkey": "cumming-2026", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Alma will enjoy the meal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Alma will enjoy the meal.",
+    "context": "Alma is about to eat a meal the speaker has good grounds for thinking she will enjoy: she enjoyed it when the speaker prepared it before, the speaker has sampled it, and it tastes good.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "future (will)"],
+      ["acquisitionTime", "0"],
+      ["speechTime", "1"],
+      ["eventTime", "2"]
+    ],
+    "comment": "Assertible on prior inferential grounds; Cumming's version of Ninan's case.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_2_prior",
+    "source": {"bibkey": "cumming-2026", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Alma enjoyed the meal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Alma enjoyed the meal.",
+    "context": "The next day, with only the prior inferential grounds of (1).",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "simple past"],
+      ["acquisitionTime", "0"],
+      ["eventTime", "2"],
+      ["speechTime", "3"]
+    ],
+    "comment": "Asserting it would suggest further, post-prandial grounds.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_2_downstream",
+    "source": {"bibkey": "cumming-2026", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Alma enjoyed the meal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Alma enjoyed the meal.",
+    "context": "Alma told the speaker after the meal that she enjoyed it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "simple past"],
+      ["eventTime", "2"],
+      ["acquisitionTime", "3"],
+      ["speechTime", "4"]
+    ],
+    "comment": "Hearsay causally downstream of the event; direct witnessing and the empty plate are the paper's other downstream grounds.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_4a",
+    "source": {"bibkey": "cumming-2026", "paperLabel": "(4a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Alma will have enjoyed the meal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Alma will have enjoyed the meal.",
+    "context": "The next day, with only the prior inferential grounds of (1).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "will have V-ed"],
+      ["acquisitionTime", "0"],
+      ["eventTime", "2"],
+      ["speechTime", "3"]
+    ],
+    "comment": "Felicitous though the grounds have not changed since (1).",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_11c",
+    "source": {"bibkey": "cumming-2026", "paperLabel": "(11c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Alma will be enjoying the meal (right now).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Alma will be enjoying the meal (right now).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "will now be V-ing"],
+      ["acquisitionTime", "0"],
+      ["eventTime", "2"],
+      ["speechTime", "2"]
+    ],
+    "comment": "The constraint is absent when the future form speaks about the present; the scenario, during the meal on the prior inferential grounds of (1), is reconstructed.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_12b",
+    "source": {"bibkey": "cumming-2026", "paperLabel": "(12b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Alma is enjoying the meal (right now).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Alma is enjoying the meal (right now).",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "present progressive"],
+      ["acquisitionTime", "0"],
+      ["eventTime", "2"],
+      ["speechTime", "2"]
+    ],
+    "comment": "Ninan's observation that present-tense sentences too cannot be asserted on prior inferential grounds; the scenario, during the meal on the prior inferential grounds of (1), is reconstructed.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_21a_inferential",
+    "source": {"bibkey": "cumming-2026", "paperLabel": "(21a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The Fed will have raised interest rates at today's meeting.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The Fed will have raised interest rates at today's meeting.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "will have V-ed"],
+      ["acquisitionTime", "0"],
+      ["eventTime", "1"],
+      ["speechTime", "2"]
+    ],
+    "comment": "Felicitous only with a non-abductive inferential justification; the scenario, after the meeting on economic indicators known beforehand, is reconstructed from (3a).",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_21a_abductive",
+    "source": {"bibkey": "cumming-2026", "paperLabel": "(21a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The Fed will have raised interest rates at today's meeting.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The Fed will have raised interest rates at today's meeting.",
+    "context": "After the meeting, having just read in the evening paper that the rates were raised.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "will have V-ed"],
+      ["eventTime", "1"],
+      ["acquisitionTime", "2"],
+      ["speechTime", "3"]
+    ],
+    "comment": "No good on evidence causally downstream of the meeting.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_13a",
+    "source": {"bibkey": "lee-2013", "paperLabel": "(1a)"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(13a)"},
+    "language": "kore1280",
+    "primaryText": "Pi-ka o-∅-te-la.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pi-ka", "rain-NOM"], ["o-∅-te-la", "fall-PRES-te-DECL"]
+    ],
+    "translation": "[I made a sensory observation that] it was raining.",
+    "context": "Yenghi saw it raining yesterday; now she says.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "-te PRES"],
+      ["eventTime", "1"],
+      ["acquisitionTime", "1"],
+      ["speechTime", "2"]
+    ],
+    "comment": "Present tense under -te: the sensory evidence is contemporaneous with the event.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_13b",
+    "source": {"bibkey": "lee-2013", "paperLabel": "(1b)"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(13b)"},
+    "language": "kore1280",
+    "primaryText": "Pi-ka o-ass-te-la.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pi-ka", "rain-NOM"], ["o-ass-te-la", "fall-PAST-te-DECL"]
+    ],
+    "translation": "[I inferred (from the acquired sensory evidence) that] it had rained.",
+    "context": "Yenghi saw yesterday that the ground was wet; now she says.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "-te PAST"],
+      ["eventTime", "0"],
+      ["acquisitionTime", "1"],
+      ["speechTime", "2"]
+    ],
+    "comment": "Past tense under -te: the event precedes the sensory evidence.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_13c",
+    "source": {"bibkey": "lee-2013", "paperLabel": "(1c)"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(13c)"},
+    "language": "kore1280",
+    "primaryText": "Pi-ka o-kyess-te-la.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pi-ka", "rain-NOM"], ["o-kyess-te-la", "fall-FUT-te-DECL"]
+    ],
+    "translation": "[I inferred (from the acquired sensory evidence) that] it would rain.",
+    "context": "Yenghi saw the overcast sky yesterday; now she says.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "-te FUT"],
+      ["acquisitionTime", "1"],
+      ["eventTime", "2"],
+      ["speechTime", "3"]
+    ],
+    "comment": "Future tense under -te: forward-looking inferential evidence for an event that has since come and gone.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_14a",
+    "source": {"bibkey": "lee-2011", "paperLabel": "(65b)"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(14a)"},
+    "language": "kore1280",
+    "primaryText": "Cikum pi-ka o-∅-ney.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Cikum", "now"], ["pi-ka", "rain-NOM"], ["o-∅-ney", "fall-PRES-ney.DECL"]
+    ],
+    "translation": "[I see that] it is raining now.",
+    "context": "Chelswu sees it raining now and says.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "-ney PRES"],
+      ["eventTime", "2"],
+      ["acquisitionTime", "2"],
+      ["speechTime", "2"]
+    ],
+    "comment": "Under -ney the sensory evidence is present, so the present tense settles both perspectives.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_14b",
+    "source": {"bibkey": "lee-2011", "paperLabel": "(67b)"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(14b)"},
+    "language": "kore1280",
+    "primaryText": "Cokum cen-ey pi-ka o-ass-ney.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Cokum", "little"], ["cen-ey", "ago-at"], ["pi-ka", "rain-NOM"],
+      ["o-ass-ney", "fall-PAST-ney.DECL"]
+    ],
+    "translation": "[I infer that] it rained a minute ago.",
+    "context": "Chelswu sees the wet ground now and says.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "-ney PAST"],
+      ["eventTime", "1"],
+      ["acquisitionTime", "2"],
+      ["speechTime", "2"]
+    ],
+    "comment": "Past tense under -ney: the event precedes the present sensory evidence.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_14c",
+    "source": {"bibkey": "lee-2011", "paperLabel": "(69b)"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(14c)"},
+    "language": "kore1280",
+    "primaryText": "Onul pam-ey pi-ka o-kyess-ney.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Onul", "today"], ["pam-ey", "night-at"], ["pi-ka", "rain-NOM"],
+      ["o-kyess-ney", "fall-FUT-ney.DECL"]
+    ],
+    "translation": "[I infer that] it will rain tonight.",
+    "context": "Chelswu sees the cloudy sky now and says.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "-ney FUT"],
+      ["acquisitionTime", "2"],
+      ["speechTime", "2"],
+      ["eventTime", "3"]
+    ],
+    "comment": "Future tense under -ney: present evidence that is prospective is for a future event.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_15_nfut",
+    "source": {"bibkey": "koev-2017", "paperLabel": "(24)"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(15)"},
+    "language": "bulg1262",
+    "primaryText": "Včera v Pariz valja-∅-l-o.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Včera", "yesterday"], ["v", "in"], ["Pariz", "Paris"],
+      ["valja-∅-l-o", "rain-NFUT-EV-NEUT"]
+    ],
+    "translation": "Yesterday, it rained in Paris, I inferred/heard.",
+    "context": "You learned earlier today that it had rained yesterday in Paris.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "NFUT + -l"],
+      ["eventTime", "1"],
+      ["acquisitionTime", "2"],
+      ["speechTime", "3"]
+    ],
+    "comment": "Nonfuture under -l: the evidence is downstream of the event.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_15_fut",
+    "source": {"bibkey": "koev-2017", "paperLabel": "(24)"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(15)"},
+    "language": "bulg1262",
+    "primaryText": "Včera v Pariz štja-l-o da vali.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Včera", "yesterday"], ["v", "in"], ["Pariz", "Paris"], ["štja-l-o", "will-EV-NEUT"],
+      ["da", "to"], ["vali", "rain"]
+    ],
+    "translation": "Yesterday, it rained in Paris, I inferred/heard.",
+    "context": "You learned earlier today that it had rained yesterday in Paris.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "FUT + -l"],
+      ["eventTime", "1"],
+      ["acquisitionTime", "2"],
+      ["speechTime", "3"]
+    ],
+    "comment": "Future under -l requires prospective evidence, which the scenario lacks.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_16_fut",
+    "source": {"bibkey": "koev-2017", "paperLabel": "(25)"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(16)"},
+    "language": "bulg1262",
+    "primaryText": "Včera v Pariz štja-l-o da vali.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Včera", "yesterday"], ["v", "in"], ["Pariz", "Paris"], ["štja-l-o", "will-EV-NEUT"],
+      ["da", "to"], ["vali", "rain"]
+    ],
+    "translation": "Yesterday, it was going to rain in Paris, I inferred/heard.",
+    "context": "The day before yesterday you watched the weather forecast and learned that it was going to rain yesterday in Paris.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "FUT + -l"],
+      ["acquisitionTime", "0"],
+      ["eventTime", "1"],
+      ["speechTime", "2"]
+    ],
+    "comment": "The future appears on a sentence describing an event in the past.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_16_nfut",
+    "source": {"bibkey": "koev-2017", "paperLabel": "(25)"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(16)"},
+    "language": "bulg1262",
+    "primaryText": "Včera v Pariz valja-∅-l-o.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Včera", "yesterday"], ["v", "in"], ["Pariz", "Paris"],
+      ["valja-∅-l-o", "rain-NFUT-EV-NEUT"]
+    ],
+    "translation": "Yesterday, it was going to rain in Paris, I inferred/heard.",
+    "context": "The day before yesterday you watched the weather forecast and learned that it was going to rain yesterday in Paris.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "NFUT + -l"],
+      ["acquisitionTime", "0"],
+      ["eventTime", "1"],
+      ["speechTime", "2"]
+    ],
+    "comment": "Nonfuture under -l requires downstream evidence, which a forecast is not.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_33a",
+    "source": {"bibkey": "koev-2017", "paperLabel": "(15)"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(33a)"},
+    "language": "bulg1262",
+    "primaryText": "Utre v Sofia valja-∅-l-o.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Utre", "tomorrow"], ["v", "in"], ["Sofia", "Sofia"], ["valja-∅-l-o", "rain-NFUT-EV-NEUT"]
+    ],
+    "translation": "Tomorrow it rains in Sofia, I gather.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "NFUT + -l"],
+      ["acquisitionTime", "2"],
+      ["speechTime", "2"],
+      ["eventTime", "3"]
+    ],
+    "comment": "Nonfuture evidential sentences are restricted to events in the present or past of speech time; the acquisition time is stipulated at speech.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_33b",
+    "source": {"bibkey": "koev-2017", "paperLabel": "(16)"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(33b)"},
+    "language": "bulg1262",
+    "primaryText": "Utre toj bi-∅-l v Sofia.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Utre", "tomorrow"], ["toj", "he"], ["bi-∅-l", "be-NFUT-EV"], ["v", "in"],
+      ["Sofia", "Sofia"]
+    ],
+    "translation": "Tomorrow he is in Sofia, I gather.",
+    "context": "The speaker knows only of the plan.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "NFUT + -l"],
+      ["acquisitionTime", "2"],
+      ["speechTime", "2"],
+      ["eventTime", "3"],
+      ["scheduled", "true"]
+    ],
+    "comment": "A planned event is exempt from both the utterance and the evidential perspective of the nonfuture evidential.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_34",
+    "source": {"bibkey": "lee-2013", "paperLabel": "(9a)"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(34)"},
+    "language": "kore1280",
+    "primaryText": "Obama-ka nayewu-ey hankwuk-ey o-∅-te-la.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Obama-ka", "Obama-NOM"], ["nayewu-ey", "next.week-at"], ["hankwuk-ey", "Korea-to"],
+      ["o-∅-te-la", "come-PRES-te-DECL"]
+    ],
+    "translation": "[I inferred (from the acquired sensory evidence) that] Obama is coming to Korea next week.",
+    "context": "Yenghi read the newspaper yesterday, which mentioned Obama's visit to Korea next week; now she says.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "-te PRES"],
+      ["acquisitionTime", "1"],
+      ["speechTime", "2"],
+      ["eventTime", "5"],
+      ["scheduled", "true"]
+    ],
+    "comment": "A scheduled event that the speaker has not witnessed takes the present tense under -te.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_28b",
+    "source": {"bibkey": "ninan-2022", "paperLabel": "p. 433"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(28b)"},
+    "language": "stan1293",
+    "primaryText": "He spent the weekend in New York.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He spent the weekend in New York.",
+    "context": "Jack told the speaker on Thursday that he was leaving the next day for a weekend in New York; on Monday, without having heard from him, the speaker is asked how Jack is doing.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "simple past"],
+      ["acquisitionTime", "0"],
+      ["eventTime", "1"],
+      ["speechTime", "2"],
+      ["scheduled", "true"]
+    ],
+    "comment": "A planned event exempt from the downstream requirement of the simple past.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_29",
+    "source": {"bibkey": "cariani-2021", "paperLabel": "p. 262"},
+    "reportedIn": {"bibkey": "cumming-2026", "paperLabel": "(29)"},
+    "language": "stan1293",
+    "primaryText": "Simona returned them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Simona returned them.",
+    "context": "At 1 p.m. Simona told Akari she would be at the library at 2 p.m. to return some books; at 2:30 p.m. Jess asks Akari whether the books were returned.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "simple past"],
+      ["acquisitionTime", "0"],
+      ["eventTime", "1"],
+      ["speechTime", "2"],
+      ["scheduled", "true"]
+    ],
+    "comment": "A scheduled event exempt from the downstream requirement of the simple past.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_30",
+    "source": {"bibkey": "cumming-2026", "paperLabel": "(30)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Alma is enjoying the meal tonight.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Alma is enjoying the meal tonight.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "present progressive"],
+      ["acquisitionTime", "2"],
+      ["speechTime", "2"],
+      ["eventTime", "3"]
+    ],
+    "comment": "The present tense normally requires the event to overlap the present; the acquisition time is stipulated at speech.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_31a",
+    "source": {"bibkey": "cumming-2026", "paperLabel": "(31a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Jack is spending next weekend in New York.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jack is spending next weekend in New York.",
+    "context": "The scenario of (28).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "present progressive"],
+      ["acquisitionTime", "0"],
+      ["speechTime", "1"],
+      ["eventTime", "2"],
+      ["scheduled", "true"]
+    ],
+    "comment": "The futurate present: a planned future event described with the present tense.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "cumming2026_31b",
+    "source": {"bibkey": "cumming-2026", "paperLabel": "(31b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Simona is returning the books later today.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Simona is returning the books later today.",
+    "context": "The scenario of (29).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "present progressive"],
+      ["acquisitionTime", "0"],
+      ["speechTime", "1"],
+      ["eventTime", "2"],
+      ["scheduled", "true"]
+    ],
+    "comment": "The futurate present: a scheduled event described with the present tense.",
+    "metaLanguage": "stan1293"
+  }
+]

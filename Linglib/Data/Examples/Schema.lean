@@ -187,6 +187,14 @@ def parse? {α : Type*} (e : LinguisticExample) (key : String) (table : List (St
     Option α :=
   (e.feature? key).bind (List.lookup · table)
 
+/-- Value of a `paperFeatures` key as a decimal numeral, read by a structural fold so that
+`decide` can evaluate it. -/
+def nat? (e : LinguisticExample) (key : String) : Option Nat :=
+  (e.feature? key).bind λ s =>
+    if s.toList ≠ [] ∧ s.toList.all Char.isDigit then
+      some (s.toList.foldl (λ n c => 10 * n + (c.toNat - '0'.toNat)) 0)
+    else none
+
 end LinguisticExample
 
 end Data.Examples

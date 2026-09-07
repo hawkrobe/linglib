@@ -3,59 +3,43 @@ import Linglib.Semantics.Evidential.Source
 import Linglib.Features.Mirativity
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Mood.Defs
-import Linglib.Semantics.Reference.Context.Shifts
 
 /-!
-# Tense and Evidence
-[cumming-2026] [reichenbach-1947]
+# Tense and evidence
 
-[cumming-2026] argues that English
-nonfuture tenses encode an evidential constraint: the speaker's evidence must
-be causally downstream of the described event. The formal backbone is a triple
-(S, A, T) — speech time, evidence-acquisition time, topic-event time — with
-language-specific ordering constraints on these parameters.
+Cumming's frame for a tense-evidential paradigm has three times, of speech, of the
+acquisition of the speaker's evidence, and of the topic event; here it is the library's
+Reichenbach frame with an acquisition time added. A cell of a paradigm constrains two
+relations: the evidential perspective, between the event and the acquisition of the
+evidence, and the utterance perspective, between the event and the speech time, each a cell
+of the tense partition. Nonfuture tenses require evidence downstream of the event, while
+future forms leave the evidential perspective free or require prospective evidence, and
+where an evidential fixes the relation of the acquisition to speech, the utterance
+perspective is the composition of the two cells. The constraints are read temporally, as in
+Cumming's tables; his own constraint is causal, and the temporal reading of Lee's and Koev's
+accounts is one he, Cariani and Huijsmans criticize. The constraint is not part of what is
+asserted: the library renders it as a presupposition, so that a cell's meaning presupposes
+its evidential perspective and asserts the bare content.
 
-## The (S, A, T) System
+## Main definitions
 
-Extending Reichenbach's (S, R, E), Cumming adds **A** (evidence-acquisition
-time): the time at which the speaker acquires the evidence grounding the
-assertion. Nonfuture tenses (past, present) impose T ≤ A — evidence is
-*downstream* of the event. Future tense lifts this constraint.
+* `EvidentialFrame` — the Reichenbach frame with an acquisition time, with the predicates
+  `Downstream` and `Acquired`.
+* `EPCondition`, `UPCondition` — the attested constraint shapes on the two perspectives,
+  each a cell of the tense partition read as a predicate on frames by `toConstraint`.
+* `TAMEEntry` — a paradigm cell: a label with its two constraints and optional mood and
+  mirativity, and its `meaning` as a presuppositional proposition.
+* `TAMEEntry.up_toConstraint_of_comp` — the utterance perspective derived by composition.
+* `EPCondition.downstream_of_isNonfuture` — nonfuture cells require downstream evidence.
 
-## Cross-linguistic Data
+## References
 
-The paper's paradigm tables (17)–(20) and (22) show that Bulgarian (-l),
-Korean (-te, -ney), and English tense morphology systematically interacts
-with evidential perspective. Paradigm data is in
-`Fragments/{English/Tense, Korean/Evidentials, Bulgarian/Evidentials}`;
-verification theorems are in `Studies/Cumming2026.lean`.
-
-## EP/UP Constraint Enums
-
-`EPCondition` and `UPCondition` enumerate the distinct constraint shapes
-attested across the three languages. Each has a `toConstraint` method that
-recovers the predicate over `EvidentialFrame ℤ`. This replaces the earlier
-design where paradigm entries stored opaque lambdas.
-
-## Connection to Modal Evidentiality
-
-The tense evidential constraint parallels [von-fintel-gillies-2010]
-`kernelMust` presupposition: both accounts now speak through
-`Evidential` (the perspective taxonomy here, the
-`CoarseSource.IsIndirect` restriction in `Studies/VonFintelGillies2010.lean`).
-A frame-level bridge between the two phenomena has not been built.
-
-## Connection to Evidential
-
-`EPCondition` is a `HasEvidentialPerspective` instance: each of the five EP
-constraint shapes maps to (an `Option` of) the canonical `EvidentialPerspective`
-classification in `Evidential`. `EPCondition.IsNonfuture` and
-`TAMEEntry.IsNonfuture` are dot-notation aliases for the typeclass-derived
-`Evidential.IsNonfuture` predicate.
-
+* [S. Cumming, *Tense and evidence* (2026)][cumming-2026]
+* [F. Cariani, *Future-past asymmetries, evidential grounding, and projection*
+  (2022)][cariani-2022]
+* [M. Huijsmans, *Timing of evidence and epistemic modal claims* (2025)][huijsmans-2025]
+* [H. Reichenbach, *Elements of symbolic logic* (1947)][reichenbach-1947]
 -/
-
-open Tense
 
 namespace Tense.Evidential
 
@@ -64,52 +48,75 @@ open _root_.Evidential
 open Features.Mirativity
 open Presupposition
 
-/-! ### Evidential Frame -/
+variable {T : Type*}
 
-/-- Cumming's (S, A, T) frame. Extends Reichenbach with an evidence-acquisition
-    time A. S = speechTime, T = eventTime, A = acquisitionTime. The existing
-    referenceTime (R) stays — it governs utterance perspective independently. -/
+/-! ### Frames -/
+
+/-- Reichenbach's frame with the time at which the speaker acquires the evidence grounding
+the assertion. -/
 structure EvidentialFrame (T : Type*) extends ReichenbachFrame T where
-  /-- Evidence-acquisition time (A): when the speaker acquires the evidence
-      grounding the assertion. -/
+  /-- The time at which the speaker acquires the evidence for the assertion. -/
   acquisitionTime : T
 
-/-! ### EP Constraint Enum -/
+namespace EvidentialFrame
 
-/-- Evidential perspective constraint shapes attested across English, Korean,
-    and Bulgarian ([cumming-2026], paradigm tables (17)–(20) and (22)). Each
-    value corresponds to a distinct ordering on T vs A. -/
+/-- Evidence downstream of the event, read temporally as in Cumming's tables: the event
+precedes or coincides with the acquisition of the evidence. -/
+def Downstream [LE T] (f : EvidentialFrame T) : Prop := f.eventTime ≤ f.acquisitionTime
+
+/-- The evidence is acquired by the time of speech. -/
+def Acquired [LE T] (f : EvidentialFrame T) : Prop := f.acquisitionTime ≤ f.speechTime
+
+instance [LE T] [DecidableLE T] (f : EvidentialFrame T) : Decidable f.Downstream :=
+  inferInstanceAs (Decidable (f.eventTime ≤ f.acquisitionTime))
+
+instance [LE T] [DecidableLE T] (f : EvidentialFrame T) : Decidable f.Acquired :=
+  inferInstanceAs (Decidable (f.acquisitionTime ≤ f.speechTime))
+
+/-- Downstream evidence acquired by the time of speech is evidence for a nonfuture event. -/
+theorem eventTime_le_speechTime [Preorder T] {f : EvidentialFrame T} (hd : f.Downstream)
+    (hA : f.Acquired) : f.eventTime ≤ f.speechTime :=
+  le_trans hd hA
+
+end EvidentialFrame
+
+/-! ### Evidential perspective -/
+
+/-- The attested constraints on the evidential perspective, the relation of the event to the
+acquisition of the evidence, across English, Korean and Bulgarian. -/
 inductive EPCondition where
-  /-- T ≤ A: evidence downstream of event (English past/progressive, Bulgarian NFUT). -/
+  /-- The event precedes or coincides with the acquisition: English past and progressive,
+  Bulgarian nonfuture. -/
   | downstream
-  /-- T < A: strict downstream (Korean -te PAST, -ney PAST). -/
+  /-- The event precedes the acquisition: Korean *-te* and *-ney* with the past. -/
   | strictDownstream
-  /-- T = A: contemporaneous evidence (Korean -te PRES, -ney PRES). -/
+  /-- The event coincides with the acquisition: Korean *-te* and *-ney* with the present. -/
   | contemporaneous
-  /-- A < T: prospective evidence (Korean -te FUT, -ney FUT, English will-have/will-now, Bulgarian FUT). -/
+  /-- The acquisition precedes the event: the Korean and Bulgarian future evidentials and
+  the English *will have* and *will now*. -/
   | prospective
-  /-- No EP constraint (English bare future/will). -/
+  /-- No constraint: the English future. -/
   | unconstrained
   deriving DecidableEq, Repr
 
-/-- Underlying comparison category: `EPCondition` is a domain-flavored selector
-    over the tense-cell partition (`Tense/Defs.lean`). The evidential
-    vocabulary (downstream/prospective/…) maps onto the abstract
-    past/future/… comparison cells; the slot pair is
-    `(eventTime, acquisitionTime)`. -/
+/-- The cell of the tense partition an evidential-perspective constraint selects, on the
+pair of event and acquisition times. -/
 def EPCondition.toRelation : EPCondition → Finset Ordering
   | .downstream       => futureᶜ
   | .strictDownstream => past
   | .contemporaneous  => present
-  | .prospective      => future         -- A < T, i.e. T > A
+  | .prospective      => future
   | .unconstrained    => ⊤
 
-/-- Recover the predicate over `EvidentialFrame ℤ` from an `EPCondition`. -/
-def EPCondition.toConstraint (e : EPCondition) (f : EvidentialFrame ℤ) : Prop :=
+/-- The evidential-perspective constraint as a predicate on frames. -/
+def EPCondition.toConstraint [LinearOrder T] (e : EPCondition) (f : EvidentialFrame T) : Prop :=
   compare f.eventTime f.acquisitionTime ∈ e.toRelation
 
-/-- Map EP constraint shapes to `EvidentialPerspective` where applicable.
-    Unconstrained has no single perspective. -/
+instance [LinearOrder T] (e : EPCondition) (f : EvidentialFrame T) :
+    Decidable (e.toConstraint f) :=
+  inferInstanceAs (Decidable (_ ∈ _))
+
+/-- The evidential perspective a constraint shape projects to, if any. -/
 def EPCondition.toEvidentialPerspective : EPCondition → Option EvidentialPerspective
   | .downstream => some .retrospective
   | .strictDownstream => some .retrospective
@@ -120,199 +127,89 @@ def EPCondition.toEvidentialPerspective : EPCondition → Option EvidentialPersp
 instance : HasEvidentialPerspective EPCondition where
   toEvidentialPerspective := EPCondition.toEvidentialPerspective
 
-/-- Dot-notation alias for the typeclass-derived `Evidential.IsNonfuture`
-    on EP constraint shapes. Downstream, strict downstream, and contemporaneous
-    all project to retrospective/contemporaneous; prospective and unconstrained
-    do not. -/
-def EPCondition.IsNonfuture (e : EPCondition) : Prop :=
-  Evidential.IsNonfuture e
+/-- A nonfuture constraint shape requires downstream evidence. -/
+theorem EPCondition.downstream_of_isNonfuture [LinearOrder T] {ep : EPCondition}
+    {f : EvidentialFrame T} (h : Evidential.IsNonfuture ep) (hf : ep.toConstraint f) :
+    f.Downstream := by
+  cases ep <;> simp only [toConstraint, toRelation, Finset.mem_compl, compare_mem_past,
+    compare_mem_present, compare_mem_future, not_lt] at hf
+  exacts [hf, hf.le, hf.le, absurd h (by decide), absurd h (by decide)]
 
-instance : DecidablePred EPCondition.IsNonfuture :=
-  fun _ => inferInstanceAs (Decidable (Evidential.IsNonfuture _))
+/-! ### Utterance perspective -/
 
-/-! ### UP Constraint Enum -/
-
-/-- Utterance perspective constraint shapes attested across the three
-    languages. Each value corresponds to a distinct ordering
-    on T vs S. -/
+/-- The attested constraints on the utterance perspective, the relation of the event to the
+speech time. -/
 inductive UPCondition where
-  /-- T < S: past. -/
+  /-- The event precedes speech. -/
   | past
-  /-- T = S: present. -/
+  /-- The event coincides with speech. -/
   | present
-  /-- S < T: future. -/
+  /-- Speech precedes the event. -/
   | future
-  /-- T ≤ S: nonfuture (Bulgarian NFUT). -/
+  /-- The event precedes or coincides with speech: Bulgarian nonfuture. -/
   | nonfuture
-  /-- No UP constraint. -/
+  /-- No constraint. -/
   | unconstrained
   deriving DecidableEq, Repr
 
-/-- Recover the predicate over `EvidentialFrame ℤ` from a `UPCondition`. -/
-def UPCondition.toConstraint : UPCondition → EvidentialFrame ℤ → Prop
-  | .past => λ f => f.eventTime < f.speechTime
-  | .present => λ f => f.eventTime = f.speechTime
-  | .future => λ f => f.speechTime < f.eventTime
-  | .nonfuture => λ f => f.eventTime ≤ f.speechTime
-  | .unconstrained => λ _ => True
+/-- The cell of the tense partition an utterance-perspective constraint selects, on the pair
+of event and speech times. -/
+def UPCondition.toRelation : UPCondition → Finset Ordering
+  | .past          => Tense.past
+  | .present       => Tense.present
+  | .future        => Tense.future
+  | .nonfuture     => Tense.futureᶜ
+  | .unconstrained => ⊤
 
-/-! ### Tense-Evidential Paradigm -/
+/-- The utterance-perspective constraint as a predicate on frames. -/
+def UPCondition.toConstraint [LinearOrder T] (u : UPCondition) (f : EvidentialFrame T) : Prop :=
+  compare f.eventTime f.speechTime ∈ u.toRelation
 
-/-- A row in a tense-aspect-mood-evidentiality paradigm table.
-    Generalizes [cumming-2026]'s tense-evidential paradigm tables
-    ((17)–(20), (22)) with optional mood and mirativity fields, enabling
-    unified TAME fragment entries. Existing `{ label, ep, up }` constructions still
-    work because `mood` and `mirative` have default values (`none`). -/
+instance [LinearOrder T] (u : UPCondition) (f : EvidentialFrame T) :
+    Decidable (u.toConstraint f) :=
+  inferInstanceAs (Decidable (_ ∈ _))
+
+/-! ### Paradigm cells -/
+
+/-- A cell of a tense-aspect-mood-evidentiality paradigm: its label, its constraints on the
+two perspectives, and optional mood and mirativity. -/
 structure TAMEEntry where
-  /-- Morphological label (e.g., "simple past", "-te PAST") -/
+  /-- The morphological label of the cell. -/
   label : String
-  /-- Evidential perspective constraint: T vs A -/
+  /-- The constraint on the evidential perspective. -/
   ep : EPCondition
-  /-- Utterance perspective constraint: T vs S -/
+  /-- The constraint on the utterance perspective. -/
   up : UPCondition
-  /-- Grammatical mood (indicative, subjunctive), if specified -/
+  /-- The grammatical mood, if specified. -/
   mood : Option Mood.Grammatical := none
-  /-- Mirativity value (expected, unexpected, neutral), if specified -/
+  /-- The mirativity value, if specified. -/
   mirative : Option MirativityValue := none
 
 instance : HasEvidentialPerspective TAMEEntry where
   toEvidentialPerspective p := toEvidentialPerspective p.ep
 
-/-- Dot-notation alias for the typeclass-derived `Evidential.IsNonfuture`
-    on TAME paradigm rows. A row is nonfuture iff its EP constraint is. -/
-def TAMEEntry.IsNonfuture (p : TAMEEntry) : Prop :=
-  Evidential.IsNonfuture p
+namespace TAMEEntry
 
-instance : DecidablePred TAMEEntry.IsNonfuture :=
-  fun _ => inferInstanceAs (Decidable (Evidential.IsNonfuture _))
+variable [LinearOrder T]
 
-/-- The EP constraint as a predicate over `EvidentialFrame ℤ`. -/
-def TAMEEntry.epConstraint (p : TAMEEntry) :
-    EvidentialFrame ℤ → Prop :=
-  p.ep.toConstraint
+/-- Where the cell's utterance-perspective cell is the composition of its
+evidential-perspective cell with a cell relating acquisition to speech, the utterance
+perspective follows from the evidential perspective and that relation. -/
+theorem up_toConstraint_of_comp {p : TAMEEntry} {R : Finset Ordering}
+    (h : p.up.toRelation = comp p.ep.toRelation R) {f : EvidentialFrame T}
+    (hE : p.ep.toConstraint f) (hR : compare f.acquisitionTime f.speechTime ∈ R) :
+    p.up.toConstraint f := by
+  unfold UPCondition.toConstraint
+  rw [h]
+  exact compare_mem_comp hE hR
 
-/-- The UP constraint as a predicate over `EvidentialFrame ℤ`. -/
-def TAMEEntry.upConstraint (p : TAMEEntry) :
-    EvidentialFrame ℤ → Prop :=
-  p.up.toConstraint
+/-- The meaning of a cell at a frame, with the evidential-perspective constraint rendered as
+a presupposition and the content asserted; the utterance perspective is left to the tense. -/
+@[simps] def meaning {W : Type*} (p : TAMEEntry) (f : EvidentialFrame T) (φ : W → Prop) :
+    PartialProp W where
+  presup _ := p.ep.toConstraint f
+  assertion := φ
 
-/-! ### Core Predicates -/
-
-/-- Cumming's constraint (10): evidence is downstream of the event.
-    T ≤ A — the event precedes (or coincides with) evidence acquisition. -/
-def downstreamEvidence (f : EvidentialFrame ℤ) : Prop :=
-  f.eventTime ≤ f.acquisitionTime
-
-/-! ### Generic Downstream Lemma -/
-
-/-- Any nonfuture EP constraint entails downstream evidence (T ≤ A).
-    One proof, six cases — the three nonfuture cases follow from ≤, <, =
-    respectively; the three non-nonfuture cases are eliminated by `h_nf`. -/
-theorem EPCondition.nonfuture_implies_downstream
-    (ep : EPCondition) (f : EvidentialFrame ℤ)
-    (h_nf : ep.IsNonfuture) (h_ep : ep.toConstraint f) :
-    downstreamEvidence f := by
-  cases ep with
-  | downstream =>
-      simp only [toConstraint, toRelation, Finset.mem_compl, compare_mem_future,
-        not_lt] at h_ep
-      exact h_ep
-  | strictDownstream =>
-      simp only [toConstraint, toRelation, compare_mem_past] at h_ep
-      exact le_of_lt h_ep
-  | contemporaneous =>
-      simp only [toConstraint, toRelation, compare_mem_present] at h_ep
-      exact le_of_eq h_ep
-  | prospective => exact absurd h_nf (by decide)
-  | unconstrained => exact absurd h_nf (by decide)
-
-/-! ### Presuppositional Nonfuture Meaning -/
-
-/-- Nonfuture meaning as a presuppositional proposition:
-    the presupposition is that evidence is downstream (T ≤ A); the assertion
-    is the bare propositional content p.
-
-    This captures the non-truth-conditional status of the evidential
-    constraint: it is a felicity condition (presupposition), not part
-    of what is asserted. Parameterized over an arbitrary world type `W`. -/
-def nonfutureMeaning {W : Type*} (f : EvidentialFrame ℤ) (p : Bool) : PartialProp W where
-  presup := λ _ => decide (f.eventTime ≤ f.acquisitionTime)
-  assertion := λ _ => p
-
-/-- The presupposition of nonfutureMeaning checks downstream evidence. -/
-theorem nonfutureMeaning_presup {W : Type*} (f : EvidentialFrame ℤ) (p : Bool) (w : W) :
-    (nonfutureMeaning f p).presup w = decide (f.eventTime ≤ f.acquisitionTime) := rfl
-
-/-! ### Tower Integration: Evidential Shift -/
-
-/-!
-### Evidential Shift as Tower Push
-
-[cumming-2026]'s key insight is that nonfuture tenses encode an evidential
-constraint: T ≤ A (evidence is downstream of the event). In the tower
-framework, this is modeled as a property of the local context at the
-tense's depth: the evidence-acquisition time at that tower layer must be
-downstream of the event time.
-
-The `evidentialShift` changes the evidence-acquisition time in the context,
-modeling the operator that introduces a new evidential perspective (e.g.,
-a hearsay report shifts the acquisition time to report time).
--/
-
-section TowerEvidential
-
-variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
-
-/-- Evidential shift: changes the time coordinate to the evidence-acquisition
-    time. When the temporal coordinate of a `KContext` represents the
-    evidence-acquisition time (Cumming's A), this shift moves A to a new value.
-
-    In the tower framework, a hearsay report pushes an evidential shift
-    that sets A to the time of the report. -/
-def evidentialTimeShift (acquisitionTime : T) :
-    Semantics.Context.ContextShift (Semantics.Context.KContext W E P T) where
-  apply := λ c => { c with time := acquisitionTime }
-  label := .evidential
-
-/-- Pushing an evidential shift sets the time to the acquisition time. -/
-@[simp] theorem evidentialTimeShift_sets_time
-    (acquisitionTime : T) (c : Semantics.Context.KContext W E P T) :
-    ((evidentialTimeShift (W := W) (E := E) (P := P) acquisitionTime).apply c).time =
-      acquisitionTime := rfl
-
-/-- Cumming's downstream evidence constraint as a property of the tower's
-    local context: at the tense's depth, the event time must not exceed
-    the acquisition time (the time coordinate at that layer).
-
-    This bridges Cumming's frame-level constraint `T ≤ A` to the tower's
-    depth-indexed context. -/
-def downstreamAtDepth [Preorder T]
-    (tower : Semantics.Context.ContextTower (Semantics.Context.KContext W E P T))
-    (eventTime : T) (depth : ℕ) : Prop :=
-  eventTime ≤ (tower.contextAt depth).time
-
-/-- In a root tower whose origin time is the acquisition time,
-    `downstreamAtDepth` at depth 0 is equivalent to the frame-level
-    `downstreamEvidence` constraint. -/
-theorem downstreamAtDepth_root_eq [Preorder T]
-    (c : Semantics.Context.KContext W E P T)
-    (eventTime : T) :
-    downstreamAtDepth (Semantics.Context.ContextTower.root c) eventTime 0 ↔
-      eventTime ≤ c.time := by
-  simp only [downstreamAtDepth, Semantics.Context.ContextTower.root_contextAt]
-
-/-- The downstream constraint is preserved by nondecreasing shifts:
-    if T ≤ A holds at depth k, and the shift at depth k doesn't decrease
-    the time coordinate, then T ≤ A still holds after the shift. -/
-theorem downstream_preserved_by_nondecreasing_shift [Preorder T]
-    (tower : Semantics.Context.ContextTower (Semantics.Context.KContext W E P T))
-    (σ : Semantics.Context.ContextShift (Semantics.Context.KContext W E P T))
-    (eventTime : T) (k : ℕ)
-    (h_downstream : downstreamAtDepth tower eventTime k)
-    (h_nondecreasing : (tower.contextAt k).time ≤ (σ.apply (tower.contextAt k)).time) :
-    eventTime ≤ (σ.apply (tower.contextAt k)).time :=
-  le_trans h_downstream h_nondecreasing
-
-end TowerEvidential
+end TAMEEntry
 
 end Tense.Evidential
