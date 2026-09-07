@@ -1,3 +1,4 @@
+import Linglib.Semantics.ArgumentStructure.EnergySource
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.Projection
 import Linglib.Semantics.ArgumentStructure.LevinClass
@@ -136,19 +137,23 @@ inductive Effector where
   | displacedEntity
   deriving DecidableEq, Repr
 
-/-- Self-energetic force-bearers that qualify as **effectors** in the
-strict sense (p.25). These are the kinds of subjects basic-*sweep*
-allows in the non-agentive simple transitive frame. -/
-def Effector.IsSelfEnergetic : Effector → Prop
-  | .agent              => True   -- via intentional control
-  | .naturalPhenomenon  => True
-  | .projectile         => True
-  | .machine            => True
-  | .instrument         => False  -- requires agent
-  | .displacedEntity    => False  -- not a force-bearer
+/-- The energy source of each kind of subject: agents, natural phenomena and machines their
+own, projectiles energy imparted by an unmentioned causer, instruments the energy of the
+agent using them; a displaced entity bears no force. -/
+def Effector.energySource : Effector → Option EnergySource
+  | .agent | .naturalPhenomenon | .machine => some .internal
+  | .projectile => some .imparted
+  | .instrument => some .instrumental
+  | .displacedEntity => none
+
+/-- Self-energetic force-bearers that qualify as **effectors** in the strict sense (p.25),
+the kinds of subjects basic-*sweep* allows in the non-agentive simple transitive frame: those
+bearing force from an energy source not supplied by a user. -/
+def Effector.IsSelfEnergetic (e : Effector) : Prop :=
+  ∃ s, e.energySource = some s ∧ s.IsSelfEnergetic
 
 instance (e : Effector) : Decidable e.IsSelfEnergetic := by
-  cases e <;> unfold Effector.IsSelfEnergetic <;> infer_instance
+  unfold Effector.IsSelfEnergetic; infer_instance
 
 /-- An effector qualifies as a basic-*sweep* simple-transitive subject
 under the contact-determines-AR derivation (p.24-25) iff it is
@@ -329,13 +334,13 @@ syntactic frame, not on the effector classification.
 [rissman-vanputten-majid-2022]: body parts as instrument-like
 extensions of the subject. -/
 theorem basicSweep_simple_transitive_admits_agent :
-    Effector.agent.QualifiesAsSimpleTransitiveSubject := trivial
+    Effector.agent.QualifiesAsSimpleTransitiveSubject := by decide
 
 /-- An instrument or body part by itself cannot be a basic-*sweep* simple
 transitive subject (p.21: *body part and instrument options are not
 found* without an agent). They are not self-energetic. -/
 theorem basicSweep_rejects_bare_instrument :
-    ¬ Effector.instrument.QualifiesAsSimpleTransitiveSubject := id
+    ¬ Effector.instrument.QualifiesAsSimpleTransitiveSubject := by decide
 
 /-! ### Obligatory agentivity in broom-*sweep* -/
 
@@ -403,7 +408,7 @@ theorem resultative_restriction_falsified :
     -- The result phrase is not part of the derived structure
     -- (no result-state field in MotionContactES; no causer needed).
     ¬ basicSweep.IsLexicallySaturated :=
-  ⟨rfl, trivial, id⟩
+  ⟨rfl, by decide, id⟩
 
 /-! ### Routine-activity narrowing -/
 
