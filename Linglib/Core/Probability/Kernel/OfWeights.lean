@@ -64,6 +64,26 @@ noncomputable def ofWeights (w : α → β → ℝ≥0∞) : Kernel α β :=
   rw [Measure.smul_apply, smul_eq_mul, Measure.sum_smul_dirac_apply_singleton,
     ENNReal.div_eq_inv_mul]
 
+/-- A zero weight gives zero mass. -/
+theorem ofWeights_apply_singleton_eq_zero {w : α → β → ℝ≥0∞} {a : α} {b : β} (h : w a b = 0) :
+    ofWeights w a {b} = 0 := by
+  rw [ofWeights_apply_singleton, h, ENNReal.zero_div]
+
+/-- A nonzero weight in a row of finite weights gives positive mass. -/
+theorem ofWeights_apply_singleton_ne_zero {w : α → β → ℝ≥0∞} {a : α} {b : β} (h : w a b ≠ 0)
+    (htop : ∀ c, w a c ≠ ∞) : ofWeights w a {b} ≠ 0 := by
+  rw [ofWeights_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or]
+  exact ⟨h, ENNReal.sum_ne_top.mpr λ c _ => htop c⟩
+
+/-- In a row with exactly two nonzero weights, both finite, the real mass of one is its share
+of the two. -/
+theorem ofWeights_real_singleton_of_pair {w : α → β → ℝ≥0∞} (a : α) {b b' : β} (hbb' : b ≠ b')
+    (htop : ∀ c, w a c ≠ ∞) (hsupp : ∀ c, w a c ≠ 0 → c = b ∨ c = b') :
+    (ofWeights w a).real {b} = (w a b).toReal / ((w a b).toReal + (w a b').toReal) := by
+  rw [measureReal_def, ofWeights_apply_singleton,
+    Fintype.sum_eq_add b b' hbb' (λ c hc => of_not_not (mt (hsupp c) (not_or.mpr hc))),
+    ENNReal.toReal_div, ENNReal.toReal_add (htop b) (htop b')]
+
 /-- The mass of a finite event under a weight-kernel row. -/
 theorem ofWeights_apply_finset (w : α → β → ℝ≥0∞) (a : α) (E : Finset β) :
     ofWeights w a ↑E = (∑ b ∈ E, w a b) / ∑ b, w a b := by
@@ -75,6 +95,11 @@ theorem ofWeights_real_finset (w : α → β → ℝ≥0∞) (a : α) (hw : ∀ 
     (ofWeights w a).real ↑E = (∑ b ∈ E, (w a b).toReal) / ∑ b, (w a b).toReal := by
   rw [measureReal_def, ofWeights_apply_finset, ENNReal.toReal_div,
     ENNReal.toReal_sum fun b _ => hw b, ENNReal.toReal_sum fun b _ => hw b]
+
+/-- The real mass of an atom under a weight-kernel row with finite weights. -/
+theorem ofWeights_real_singleton (w : α → β → ℝ≥0∞) (a : α) (hw : ∀ b, w a b ≠ ∞) (b : β) :
+    (ofWeights w a).real {b} = (w a b).toReal / ∑ b', (w a b').toReal := by
+  rw [← Finset.coe_singleton, ofWeights_real_finset w a hw, Finset.sum_singleton]
 
 /-- The real mass of a decidable event under a weight-kernel row with finite weights. -/
 theorem ofWeights_real_setOf (w : α → β → ℝ≥0∞) (a : α) (hw : ∀ b, w a b ≠ ∞) (p : β → Prop)

@@ -118,42 +118,6 @@ noncomputable def rsaUtility (L0 : W → U → ℝ≥0∞) (cost : U → ℝ) (�
     (w : W) (u : U) : EReal :=
   (α : EReal) * (ENNReal.log (L0 w u) - (cost u : EReal))
 
-/-- The standard utility is `⊥` at an inapplicable utterance and otherwise the real
-`α·(log L0 − cost)`. -/
-theorem rsaUtility_eq (L0 : W → U → ℝ≥0∞) (cost : U → ℝ) {α : ℝ} (hα : 0 < α) {w : W} {u : U}
-    (hL : L0 w u ≠ ⊤) :
-    rsaUtility L0 cost α w u =
-      if L0 w u = 0 then ⊥ else ((α * (Real.log (L0 w u).toReal - cost u) : ℝ) : EReal) := by
-  unfold rsaUtility
-  split_ifs with h
-  · rw [h, ENNReal.log_zero, EReal.bot_sub, EReal.mul_bot_of_pos (by exact_mod_cast hα)]
-  · rw [ENNReal.log_pos_real h hL]; norm_cast
-
-/-- The standard utility is viable when the literal listener is finite and every world has an
-applicable utterance. -/
-theorem viableSpeaker_rsaUtility (L0 : W → U → ℝ≥0∞) (cost : U → ℝ) {α : ℝ} (hα : 0 < α)
-    (hL : ∀ w u, L0 w u ≠ ⊤) (hw : ∀ w, ∃ u, L0 w u ≠ 0) :
-    ViableSpeaker (rsaUtility L0 cost α) where
-  no_top w u := by
-    rw [rsaUtility_eq L0 cost hα (hL w u)]
-    split_ifs
-    · exact bot_ne_top
-    · exact EReal.coe_ne_top _
-  some_finite w := (hw w).imp λ u hu => by
-    rw [rsaUtility_eq L0 cost hα (hL w u), if_neg hu]; exact EReal.coe_ne_bot _
-
-/-- The softmax weight of the standard utility: `0` at an inapplicable utterance and otherwise
-`exp (α·(log L0 − cost))`. -/
-theorem softmaxWeight_rsaUtility (L0 : W → U → ℝ≥0∞) (cost : U → ℝ) {α : ℝ} (hα : 0 < α)
-    {w : W} {u : U} (hL : L0 w u ≠ ⊤) :
-    PMF.softmaxWeight (rsaUtility L0 cost α w) u =
-      if L0 w u = 0 then 0
-      else ENNReal.ofReal (Real.exp (α * (Real.log (L0 w u).toReal - cost u))) := by
-  rw [PMF.softmaxWeight_apply, rsaUtility_eq L0 cost hα hL]
-  split_ifs
-  · exact EReal.exp_bot
-  · exact EReal.exp_coe _
-
 end StandardSpeaker
 
 /-! ### Pragmatic listener -/

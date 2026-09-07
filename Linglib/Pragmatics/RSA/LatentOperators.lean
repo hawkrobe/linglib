@@ -1,4 +1,3 @@
-import Linglib.Core.Probability.JointPosterior
 import Linglib.Pragmatics.RSA.Operators
 
 /-!
@@ -290,12 +289,6 @@ of the joint posterior. -/
 noncomputable def jointListener {U : Type*} (S1 : W × L → PMF U) (μ : PMF (W × L))
     (u : U) (h : PMF.marginal S1 μ u ≠ 0) : PMF W :=
   (PMF.posterior S1 μ u h).map Prod.fst
-
-/-- Closed form of the joint-prior listener: the latent-summed score over the marginal. -/
-theorem jointListener_apply {U : Type*} [Fintype W] [Fintype L] [DecidableEq W]
-    (S1 : W × L → PMF U) (μ : PMF (W × L)) (u : U) (h : PMF.marginal S1 μ u ≠ 0) (w : W) :
-    jointListener S1 μ u h w = (∑ l, μ (w, l) * S1 (w, l) u) / PMF.marginal S1 μ u :=
-  PMF.posterior_fst_apply S1 μ u h w
 
 /-- **Inequality decomposition for `jointListener`** — joint-prior analogue of
 `posterior_lt_iff_kernel_lt_of_uniform`; the marginal normaliser cancels. -/
