@@ -1,6 +1,6 @@
-import Linglib.Pragmatics.RSA.Canonical
+import Linglib.Pragmatics.RSA.Basic
+import Linglib.Core.Probability.UniformOn
 import Linglib.Features.Subjectivity
-import Mathlib.Probability.Distributions.Uniform
 
 /-!
 # [yoon-etal-2020] — Polite speech emerges from competing social goals
@@ -20,13 +20,12 @@ listener jointly inferring state and goal weight,
 with `U_S2 = ω_inf·ln P_L1(s|w) + ω_soc·E_{P_L1}[V(s)] +
 ω_pres·ln P_L1(φ̂|w) − c·l(w)`.
 
-Instantiated on the canonical pipeline: the S1 speaker is
-`RSA.Canonical.S1` over `(state × φ)` speaker situations, and the pragmatic
-listener is `RSA.Canonical.L1`, the joint posterior over
-`HeartState × Phi` — the paper's eq. (4) by construction, with the
-`U_pres` marginal available as `.snd`. The paper's L0-gate (utterances
-with zero literal fit are unavailable to informativity-sensitive speakers)
-is the `⊥`-utility branch.
+Instantiated on the kernel pipeline: the S1 speaker is `RSA.speakerOfScore`
+over `(state × φ)` speaker situations, and the pragmatic listener is the
+posterior kernel of that speaker against the uniform joint prior, the
+paper's eq. (4) by construction, with the `U_pres` marginal available as
+`.snd`. The paper's L0-gate (utterances with zero literal fit are
+unavailable to informativity-sensitive speakers) is the `⊥`-score branch.
 
 ## Main statements
 
@@ -70,8 +69,8 @@ tactic's interval arithmetic merely could not separate the sides).
 
 namespace YoonEtAl2020
 
+open MeasureTheory ProbabilityTheory
 open scoped ENNReal
-open RSA.Canonical
 
 /-! ### States, utterances, goals -/
 
@@ -79,6 +78,8 @@ open RSA.Canonical
 inductive HeartState where
   | h0 | h1 | h2 | h3
   deriving DecidableEq, Repr, Inhabited, Fintype
+
+instance : MeasurableSpace HeartState := ⊤
 
 /-- Subjective value `V(s)`: the paper's linear state-value mapping. -/
 def subjectiveValue : HeartState → ℚ
@@ -92,6 +93,8 @@ inductive Utterance where
   | terrible | bad | good | amazing
   | notTerrible | notBad | notGood | notAmazing
   deriving DecidableEq, Repr, Inhabited, Fintype
+
+instance : MeasurableSpace Utterance := ⊤
 
 /-- Is this a negated utterance? -/
 def Utterance.isNegated : Utterance → Bool
@@ -108,6 +111,8 @@ inductive GoalCondition where
 inductive Phi where
   | p0 | p25 | p50 | p75 | p100
   deriving DecidableEq, Repr, Inhabited, Fintype
+
+instance : MeasurableSpace Phi := ⊤
 
 /-- The rational value of each φ level. -/
 def Phi.val : Phi → ℚ
@@ -190,21 +195,25 @@ def ev (u : Utterance) : ℚ := ∑ s : HeartState, l0Val u s * subjectiveValue 
 
 private theorem ev_terrible : ev .terrible = 29/76 := by
   rw [ev, sum_hearts]
-  norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, subjectiveValue, show Fintype.card HeartState = 4 from rfl]
+  norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, subjectiveValue,
+    show Fintype.card HeartState = 4 from rfl]
 
 private theorem ev_notTerrible : ev .notTerrible = 53/24 := by
   rw [ev, sum_hearts]
-  norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, subjectiveValue, show Fintype.card HeartState = 4 from rfl]
+  norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, subjectiveValue,
+    show Fintype.card HeartState = 4 from rfl]
 
 private theorem ev_amazing : ev .amazing = 39/14 := by
   rw [ev, sum_hearts]
-  norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, subjectiveValue, show Fintype.card HeartState = 4 from rfl]
+  norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, subjectiveValue,
+    show Fintype.card HeartState = 4 from rfl]
 
 private theorem ev_notAmazing : ev .notAmazing = 69/70 := by
   rw [ev, sum_hearts]
-  norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, subjectiveValue, show Fintype.card HeartState = 4 from rfl]
+  norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, subjectiveValue,
+    show Fintype.card HeartState = 4 from rfl]
 
-/-! ### The S1 speaker on the canonical pipeline -/
+/-! ### The S1 speaker as a score speaker -/
 
 /-- S1 utility (the paper's
 `U_S1 = φ·ln P_L0(s|w) + (1−φ)·E_{P_L0}[V] − c·l(w)`, `c = 1`), as an
@@ -217,36 +226,6 @@ noncomputable def util (α : ℝ) (p : HeartState × Phi) (u : Utterance) : ERea
   else ((α * ((Phi.val p.2 : ℝ) * Real.log (l0Val u p.1 : ℝ)
     + (1 - (Phi.val p.2 : ℝ)) * (ev u : ℝ)
     - (utteranceCost u : ℝ)) : ℝ) : EReal)
-
-instance (α : ℝ) : ViableSpeaker (util α) where
-  no_top _ _ := by
-    unfold util
-    split
-    · exact bot_ne_top
-    · exact EReal.coe_ne_top _
-  some_finite p := by
-    obtain ⟨s, φ⟩ := p
-    cases s
-    · exact ⟨.terrible, by
-        unfold util
-        rw [if_neg (by norm_num [meaning, softSemantics])]
-        exact EReal.coe_ne_bot _⟩
-    · exact ⟨.bad, by
-        unfold util
-        rw [if_neg (by norm_num [meaning, softSemantics])]
-        exact EReal.coe_ne_bot _⟩
-    · exact ⟨.good, by
-        unfold util
-        rw [if_neg (by norm_num [meaning, softSemantics])]
-        exact EReal.coe_ne_bot _⟩
-    · exact ⟨.amazing, by
-        unfold util
-        rw [if_neg (by norm_num [meaning, softSemantics])]
-        exact EReal.coe_ne_bot _⟩
-
-/-- The S1 speaker: the canonical softmax speaker over `util`. -/
-noncomputable def speaker (α : ℝ) : HeartState × Phi → PMF Utterance :=
-  S1 (util α)
 
 private theorem util_ungated {α : ℝ} {s : HeartState} {φ : Phi} {u : Utterance}
     (h : ¬(meaning u s = 0 ∧ φ ≠ .p0)) :
@@ -261,6 +240,42 @@ private theorem util_gated {α : ℝ} {s : HeartState} {φ : Phi} {u : Utterance
   unfold util
   rw [if_pos ⟨h0, hφ⟩]
 
+/-- No utility is infinite. -/
+theorem util_ne_top (α : ℝ) (p : HeartState × Phi) (u : Utterance) : util α p u ≠ ⊤ := by
+  unfold util
+  split
+  · exact bot_ne_top
+  · exact EReal.coe_ne_top _
+
+/-- Every situation has an applicable utterance: the direct adjective true at its state. -/
+theorem util_exists_ne_bot (α : ℝ) (p : HeartState × Phi) : ∃ u, util α p u ≠ ⊥ := by
+  obtain ⟨s, φ⟩ := p
+  cases s
+  · exact ⟨.terrible, by
+      rw [util_ungated (by norm_num [meaning, softSemantics])]
+      exact EReal.coe_ne_bot _⟩
+  · exact ⟨.bad, by
+      rw [util_ungated (by norm_num [meaning, softSemantics])]
+      exact EReal.coe_ne_bot _⟩
+  · exact ⟨.good, by
+      rw [util_ungated (by norm_num [meaning, softSemantics])]
+      exact EReal.coe_ne_bot _⟩
+  · exact ⟨.amazing, by
+      rw [util_ungated (by norm_num [meaning, softSemantics])]
+      exact EReal.coe_ne_bot _⟩
+
+/-- The S1 speaker: the score speaker over `util`. -/
+noncomputable def speaker (α : ℝ) : Kernel (HeartState × Phi) Utterance :=
+  RSA.speakerOfScore (util α)
+
+instance (α : ℝ) : IsFiniteKernel (speaker α) :=
+  inferInstanceAs (IsFiniteKernel (RSA.speakerOfScore _))
+
+/-- Speaker preference at a situation is utility comparison. -/
+theorem speaker_real_singleton_lt_iff (α : ℝ) (p : HeartState × Phi) (u u' : Utterance) :
+    (speaker α p).real {u} < (speaker α p).real {u'} ↔ util α p u < util α p u' :=
+  RSA.speakerOfScore_real_singleton_lt_iff (util_ne_top α p) (util_exists_ne_bot α p)
+
 /-! ### S1 findings (Figure 2, S1 facets) — structural, every α > 0 -/
 
 /-- **The pure-social speaker prefers indirect speech** at the worst state:
@@ -268,9 +283,8 @@ private theorem util_gated {α : ℝ} {s : HeartState} {φ : Phi} {u : Utterance
 A pure expected-value comparison: the social gain `E[V]` of the indirect
 form (53/24 vs 29/76) exceeds its one-word extra cost. -/
 theorem social_prefers_indirect {α : ℝ} (hα : 0 < α) :
-    speaker α (.h0, .p0) .terrible < speaker α (.h0, .p0) .notTerrible := by
-  rw [speaker, S1_prefers_iff,
-      util_ungated (by simp), util_ungated (by simp)]
+    (speaker α (.h0, .p0)).real {.terrible} < (speaker α (.h0, .p0)).real {.notTerrible} := by
+  rw [speaker_real_singleton_lt_iff, util_ungated (by simp), util_ungated (by simp)]
   refine EReal.coe_lt_coe (mul_lt_mul_of_pos_left ?_ hα)
   rw [ev_terrible, ev_notTerrible]
   norm_num [Phi.val, utteranceCost]
@@ -279,9 +293,8 @@ theorem social_prefers_indirect {α : ℝ} (hα : 0 < α) :
 amazing" beats "it wasn't amazing" (same cost direction reversed: here the
 positive form is both kinder and cheaper). -/
 theorem social_prefers_positive {α : ℝ} (hα : 0 < α) :
-    speaker α (.h0, .p0) .notAmazing < speaker α (.h0, .p0) .amazing := by
-  rw [speaker, S1_prefers_iff,
-      util_ungated (by simp), util_ungated (by simp)]
+    (speaker α (.h0, .p0)).real {.notAmazing} < (speaker α (.h0, .p0)).real {.amazing} := by
+  rw [speaker_real_singleton_lt_iff, util_ungated (by simp), util_ungated (by simp)]
   refine EReal.coe_lt_coe (mul_lt_mul_of_pos_left ?_ hα)
   rw [ev_amazing, ev_notAmazing]
   norm_num [Phi.val, utteranceCost]
@@ -291,8 +304,8 @@ state: "it wasn't terrible" is literally false at zero hearts (graded
 meaning 0), so the L0-gate excludes it for any informativity-sensitive
 speaker. -/
 theorem informative_prefers_direct (α : ℝ) :
-    speaker α (.h0, .p100) .notTerrible < speaker α (.h0, .p100) .terrible := by
-  rw [speaker, S1_prefers_iff,
+    (speaker α (.h0, .p100)).real {.notTerrible} < (speaker α (.h0, .p100)).real {.terrible} := by
+  rw [speaker_real_singleton_lt_iff,
       util_gated (by norm_num [meaning, softSemantics]) (by decide),
       util_ungated (by norm_num [meaning, softSemantics])]
   exact EReal.bot_lt_coe _
@@ -301,8 +314,8 @@ theorem informative_prefers_direct (α : ℝ) :
 false indirect form — a gate fact about the discretized model, not a claim
 of the paper's. -/
 theorem slight_informativity_prefers_direct (α : ℝ) :
-    speaker α (.h0, .p25) .notTerrible < speaker α (.h0, .p25) .terrible := by
-  rw [speaker, S1_prefers_iff,
+    (speaker α (.h0, .p25)).real {.notTerrible} < (speaker α (.h0, .p25)).real {.terrible} := by
+  rw [speaker_real_singleton_lt_iff,
       util_gated (by norm_num [meaning, softSemantics]) (by decide),
       util_ungated (by norm_num [meaning, softSemantics])]
   exact EReal.bot_lt_coe _
@@ -312,16 +325,18 @@ best state: "amazing" beats "not amazing" at three hearts — a genuine
 log-monotonicity comparison (`P_L0(s₃|amazing) = 47/56 > 1/70 =
 P_L0(s₃|not amazing)`), with cost also favouring the direct form. -/
 theorem informative_prefers_direct_positive {α : ℝ} (hα : 0 < α) :
-    speaker α (.h3, .p100) .notAmazing < speaker α (.h3, .p100) .amazing := by
-  rw [speaker, S1_prefers_iff,
+    (speaker α (.h3, .p100)).real {.notAmazing} < (speaker α (.h3, .p100)).real {.amazing} := by
+  rw [speaker_real_singleton_lt_iff,
       util_ungated (by norm_num [meaning, softSemantics]),
       util_ungated (by norm_num [meaning, softSemantics])]
   refine EReal.coe_lt_coe (mul_lt_mul_of_pos_left ?_ hα)
   have hlog : Real.log ((l0Val .notAmazing .h3 : ℚ) : ℝ)
       < Real.log ((l0Val .amazing .h3 : ℚ) : ℝ) := by
     apply Real.log_lt_log
-    · norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, show Fintype.card HeartState = 4 from rfl]
-    · norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, show Fintype.card HeartState = 4 from rfl]
+    · norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics,
+        show Fintype.card HeartState = 4 from rfl]
+    · norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics,
+        show Fintype.card HeartState = 4 from rfl]
   simp only [Phi.val]
   norm_num [utteranceCost]
   linarith [hlog]
@@ -330,19 +345,20 @@ theorem informative_prefers_direct_positive {α : ℝ} (hα : 0 < α) :
 
 /-- Uniform joint prior over `state × φ` (the paper's uniform `P(s)` and
 uniform `P(φ)`, discretized). -/
-noncomputable def prior : PMF (HeartState × Phi) := PMF.uniformOfFintype _
+noncomputable def prior : Measure (HeartState × Phi) := uniformOn Set.univ
 
-theorem prior_pos (p : HeartState × Phi) : prior p ≠ 0 :=
-  (prior.mem_support_iff p).mp (PMF.mem_support_uniformOfFintype p)
+instance : IsProbabilityMeasure prior := inferInstanceAs (IsProbabilityMeasure (uniformOn _))
+
+theorem prior_ne_zero (p : HeartState × Phi) : prior {p} ≠ 0 :=
+  uniformOn_univ_singleton_ne_zero p
 
 /-- Every utterance is literally compatible with some state, so every
-utterance has positive marginal probability. -/
-theorem marginal_ne_zero (α : ℝ) (u : Utterance) :
-    PMF.marginal (speaker α) prior u ≠ 0 := by
-  have key : ∀ (s : HeartState), meaning u s ≠ 0 →
-      PMF.marginal (speaker α) prior u ≠ 0 := fun s hs =>
-    PMF.marginal_ne_zero _ _ _ (prior_pos (s, .p100))
-      (S1_ne_zero (util α) (by rw [util_ungated (by simp [hs])]; exact EReal.coe_ne_bot _))
+utterance is heard with positive probability. -/
+theorem comp_speaker_ne_zero (α : ℝ) (u : Utterance) : (speaker α ∘ₘ prior) {u} ≠ 0 := by
+  have key : ∀ (s : HeartState), meaning u s ≠ 0 → (speaker α ∘ₘ prior) {u} ≠ 0 := λ s hs =>
+    comp_apply_singleton_ne_zero _ _ (prior_ne_zero (s, .p100))
+      (RSA.speakerOfScore_apply_singleton_ne_zero
+        (by rw [util_ungated (by simp [hs])]; exact EReal.coe_ne_bot _) (util_ne_top α _))
   cases u
   · exact key .h0 (by norm_num [meaning, softSemantics])
   · exact key .h0 (by norm_num [meaning, softSemantics])
@@ -357,8 +373,7 @@ theorem marginal_ne_zero (α : ℝ) (u : Utterance) :
 posterior over `(state, φ)` given the utterance. The state marginal
 (`.fst`) is `P_L1(s|w)`; the φ marginal (`.snd`) is `P_L1(φ|w)`, the
 quantity inside the paper's presentational utility (eq. (3)). -/
-noncomputable def listener (α : ℝ) (u : Utterance) : PMF (HeartState × Phi) :=
-  L1 (speaker α) prior u (marginal_ne_zero α u)
+noncomputable def listener (α : ℝ) : Kernel Utterance (HeartState × Phi) := (speaker α)†prior
 
 /-! ### L1 state inferences (prose)
 
@@ -398,10 +413,10 @@ hence inside S2's α-scaling), as in the paper's Figure 4 — correcting the
 previous version, which moved it outside as an utterance prior. -/
 noncomputable def s2Utility (α c : ℝ) (W : S2Weights) (s : HeartState)
     (u : Utterance) : ℝ :=
-  (W.wInf : ℝ) * Real.log (((listener α u).fst s).toReal)
+  (W.wInf : ℝ) * Real.log ((listener α u).fst.real {s})
     + (W.wSoc : ℝ)
-        * ∑ s' : HeartState, ((listener α u).fst s').toReal * (subjectiveValue s' : ℝ)
-    + (W.wPres : ℝ) * Real.log (((listener α u).snd W.phiHat).toReal)
+        * ∑ s' : HeartState, (listener α u).fst.real {s'} * (subjectiveValue s' : ℝ)
+    + (W.wPres : ℝ) * Real.log ((listener α u).snd.real {W.phiHat})
     - c * (utteranceCost u : ℝ)
 
 /-! ### S2 findings (prose, independently recomputed)
