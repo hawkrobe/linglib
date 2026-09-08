@@ -4,7 +4,7 @@ import Linglib.Fragments.Japanese.Prosody
 import Linglib.Data.Examples.BeckmanPierrehumbert1986
 
 /-!
-# Intonational structure in Japanese and English
+# Beckman and Pierrehumbert (1986): Intonational structure in Japanese and English
 
 [beckman-pierrehumbert-1986] give Japanese and English one sparse-tone prosodic hierarchy:
 pitch accents group into accentual phrases with at most one accent each, accentual phrases
