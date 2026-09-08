@@ -1,87 +1,458 @@
-import Mathlib.Data.Rat.Defs
-import Mathlib.Algebra.Order.Ring.Rat
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.Field.Basic
-import Linglib.Semantics.Degree.Adjective
+import Mathlib.Algebra.Order.Ring.Rat
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Data.Matrix.Mul
+import Mathlib.Order.Antisymmetrization
+import Mathlib.Order.Defs.Unbundled
+import Linglib.Core.Order.TotalPreorder
 
 /-!
-# Dimensional Aggregation for Multidimensional Predicates
-[dambrosio-hedden-2024] [sassoon-2013] [waldon-etal-2023]
-[sassoon-fadlon-2017] [tham-2025] [solt-2018-proportional]
+# Dimensional aggregation
 
-General mechanisms for combining dimensional assessments into overall
-predicate application. These apply to any multi-dimensional predicate —
-gradable adjectives (Sassoon, D'Ambrosio-Hedden), artifact nouns
-(Waldon, Sassoon-Fadlon), disturbance predicates (Tham), and
-proportional measures for vague quantity expressions (Solt).
+A multidimensional predicate applies to an object, or ranks two objects, according to how the
+objects stand on several underlying dimensions. Two aggregation vocabularies share this file.
 
-Aggregation is analogous to preference aggregation in social choice theory.
-Arrow's impossibility theorem and its escape routes characterize the
-available aggregation functions:
+*Rules*, in the value-function framework of [sen-1970] as [dambrosio-hedden-2024] transposes it
+to dimensions: a profile assigns each object its vector of dimensional values, and a rule sends
+profiles to an overall relation on the objects, read `x ⪰ y`. Sen's informational requirements
+are invariance under a class of transformation vectors (strictly increasing maps, common-unit
+positive affine maps, similarities). Arrow's conditions ([arrow-1950]) and the strong Pareto,
+Pareto-indifference and anonymity conditions are predicates on rules. Four classical rules are
+stated with the conditions they meet or fail: majority ([may-1952]) meets every Arrow condition
+but weak-ordering outputs, which Condorcet's cycle refutes; the Pareto rule ([weymark-1984]) is
+a quasi-ordering that leaves every trade-off incomparable; the utilitarian rule meets every
+Arrow condition but ordinal invariance, failing even ratio-scale invariance; the Cobb–Douglas
+rule ([tsui-weymark-1997]) is ratio-scale invariant on non-negative profiles.
 
-- **Counting** (§1): x is F iff ≥k dimensions are satisfied.
-  Subsumes Sassoon's conjunctive (k=n) and disjunctive (k=1).
-- **Majority** (§1): x is F iff a strict majority of dimensions are satisfied.
-- **Weighted** (§2): x is F iff Σᵢ wᵢ·fᵢ(x) ≥ θ (utilitarian aggregation).
-  Subsumes Waldon et al.'s eq. 8.
-- **Spatially-normalized weighted** (§2): x is F iff (Σᵢ wᵢ·fᵢ(x)) / s(x) ≥ θ,
-  where s : α → K is a host-extent measure on an ordered field `K`. Tham 2025's eq. 47b for
-  physical disturbance adjectives.
-- **Multiplicative** (§4): x is F iff Πᵢ fᵢ(x) ≥ θ (Cobb-Douglas aggregation).
-  Sassoon-Fadlon argue natural kinds compose multiplicatively.
+*Scores* for the positive form: a weighted sum of dimensional measures ([waldon-etal-2023]),
+its normalisation by the host's spatial extent ([tham-2025], [solt-2018-proportional]), and
+the multiplicative composition of [sassoon-fadlon-2017].
 
-Plus §6 Sassoon 2013 subsumption theorems showing all binding types
-reduce to counting aggregation.
+## Implementation notes
+
+* A rule is total on profiles, so Arrow's unrestricted-domain condition is built in; a domain
+  restriction, such as the non-negative profiles the Cobb–Douglas rule needs, is a hypothesis
+  of the statement.
+* Outputs are bare relations, because majority rule is not transitive; a weak-ordering-valued
+  rule bundles into `Core.Order.TotalPreorder`. `AsymmRel` is the strict part of a relation and
+  mathlib's `AntisymmRel` its indifference part.
+
+## TODO
+
+* The scores index dimensions by lists. Restating them over `ι → K`, so that the utilitarian
+  rule compares `weightedScore`s, awaits the cleanse of their consumers.
+
+## References
+
+* [K. J. Arrow, *A difficulty in the concept of social welfare* (1951)][arrow-1950]
+* [J. D'Ambrosio and B. Hedden, *Multidimensional adjectives* (2024)][dambrosio-hedden-2024]
+* [K. O. May, *A set of independent necessary and sufficient conditions for simple majority
+  decision* (1952)][may-1952]
+* [G. W. Sassoon and J. Fadlon, *The role of dimensions in classification under predicates
+  predicts their status in degree constructions* (2017)][sassoon-fadlon-2017]
+* [A. K. Sen, *Collective choice and social welfare* (1970)][sen-1970]
+* [S. Solt, *Proportional comparatives and relative scales* (2018)][solt-2018-proportional]
+* [S. W. Tham, *Multidimensionality and the scalar components of physical disturbance
+  predicates* (2025)][tham-2025]
+* [K.-Y. Tsui and J. A. Weymark, *Social welfare orderings for ratio-scale measurable
+  utilities* (1997)][tsui-weymark-1997]
+* [B. Waldon, C. Condoravdi, B. Levin and J. Degen, *On the context dependence of artifact
+  noun interpretation* (2023)][waldon-etal-2023]
+* [J. A. Weymark, *Arrow's theorem with social quasi-orderings* (1984)][weymark-1984]
 -/
+
+/-- The asymmetric part of a relation: `r a b` and not `r b a`. Mathlib's `AntisymmRel r` is
+the symmetric part. -/
+def AsymmRel {α : Type*} (r : α → α → Prop) (a b : α) : Prop := r a b ∧ ¬ r b a
+
+instance {α : Type*} (r : α → α → Prop) [DecidableRel r] (a b : α) :
+    Decidable (AsymmRel r a b) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 namespace Degree.Aggregation
 
-variable {α K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
+open Finset
 
-/-! ### Counting Aggregation -/
+variable {ι α K : Type*}
 
-/-- Counting aggregation: x satisfies the predicate iff at least `k` of
-    the dimension predicates in `dims` return `true` for `x`.
+/-- A profile: each object's vector of values, one per dimension. -/
+abbrev Profile (ι α K : Type*) := α → ι → K
 
-    Generalizes [sassoon-2013]'s binding types:
-    - `k = dims.length` → conjunctive (∀ dims)
-    - `k = 1` → disjunctive (∃ dim)
-    - intermediate `k` → mixed / "dimension counting" -/
-def countBinding (k : Nat) (dims : List (α → Bool)) (x : α) : Bool :=
-  decide ((dims.filter (fun d => d x)).length ≥ k)
+/-- An aggregation rule: a relation on the objects, read `x ⪰ y`, for each profile. -/
+abbrev Rule (ι α K : Type*) := Profile ι α K → α → α → Prop
 
-/-- Majority binding: x satisfies the predicate iff a strict majority
-    of dimensions are satisfied. May's theorem (1952) characterizes this
-    as the unique aggregation rule satisfying neutrality, anonymity, and
-    positive responsiveness. -/
-def majorityBinding (dims : List (α → Bool)) (x : α) : Bool :=
-  decide (2 * (dims.filter (fun d => d x)).length > dims.length)
+/-- Apply a vector of transformations, one per dimension, to a profile. -/
+def Profile.transform (f : ι → K → K) (v : Profile ι α K) : Profile ι α K :=
+  λ x i => f i (v x i)
 
-/-! ### Weighted Aggregation (over an ordered field) -/
+/-! ### Informational invariance -/
+
+/-- Invariance of a rule under a class of transformation vectors. -/
+def Invariant (T : Set (ι → K → K)) (a : Rule ι α K) : Prop :=
+  ∀ f ∈ T, ∀ v, a (v.transform f) = a v
+
+theorem Invariant.mono {S T : Set (ι → K → K)} (h : S ⊆ T) {a : Rule ι α K}
+    (ha : Invariant T a) : Invariant S a :=
+  λ f hf => ha f (h hf)
+
+/-- Vectors of strictly increasing transformations; invariance under them is ordinal
+non-comparability. -/
+def ordinal [Preorder K] : Set (ι → K → K) := {f | ∀ i, StrictMono (f i)}
+
+section Cardinal
+
+variable [Semiring K] [PartialOrder K]
+
+/-- Common-unit positive affine transformation vectors; invariance under them is cardinal unit
+comparability. -/
+def cardinalUnit : Set (ι → K → K) :=
+  {f | ∃ a : K, 0 < a ∧ ∃ b : ι → K, ∀ i t, f i t = a * t + b i}
+
+/-- Similarity transformation vectors; invariance under them is ratio-scale
+non-comparability. -/
+def ratio : Set (ι → K → K) := {f | ∃ a : ι → K, (∀ i, 0 < a i) ∧ ∀ i t, f i t = a i * t}
+
+variable [IsStrictOrderedRing K]
+
+theorem cardinalUnit_subset_ordinal : cardinalUnit ⊆ (ordinal : Set (ι → K → K)) := by
+  rintro f ⟨a, ha, b, hf⟩ i s t hst
+  simp only [hf]
+  exact add_lt_add_left (mul_lt_mul_of_pos_left hst ha) _
+
+theorem ratio_subset_ordinal : ratio ⊆ (ordinal : Set (ι → K → K)) := by
+  rintro f ⟨a, ha, hf⟩ i s t hst
+  simp only [hf]
+  exact mul_lt_mul_of_pos_left hst (ha i)
+
+end Cardinal
+
+/-! ### Conditions on rules -/
+
+section Conditions
+
+variable (a : Rule ι α K)
+
+/-- Pareto indifference: objects with the same vector of values are indifferent. -/
+def ParetoIndifferent : Prop := ∀ v x y, v x = v y → AntisymmRel (a v) x y
+
+/-- Independence of irrelevant alternatives: the verdict on a pair depends only on the vectors
+of that pair. -/
+def Independent : Prop := ∀ v w x y, v x = w x → v y = w y → (a v x y ↔ a w x y)
+
+/-- Every output is transitive. -/
+def Transitive : Prop := ∀ v, IsTrans α (a v)
+
+/-- Every output is complete. -/
+def Complete : Prop := ∀ v, Std.Total (a v)
+
+/-- Every output is a weak ordering, a complete preorder. -/
+def WeakOrderValued : Prop := Transitive a ∧ Complete a
+
+/-- Every output is a quasi-ordering, a preorder. -/
+def QuasiOrderValued : Prop := ∀ v, IsPreorder α (a v)
+
+/-- Anonymity: permuting the dimensions leaves the output unchanged. -/
+def Anonymous : Prop := ∀ (σ : Equiv.Perm ι) v, a (λ x => v x ∘ σ) = a v
+
+variable {a}
+
+/-- The output of a weak-ordering-valued rule at a profile, as a bundled total preorder. -/
+def WeakOrderValued.toTotalPreorder (h : WeakOrderValued a) (v : Profile ι α K) :
+    Core.Order.TotalPreorder α :=
+  haveI := h.1 v
+  haveI := h.2 v
+  ⟨a v, IsPreorder.mk, h.2 v⟩
+
+theorem WeakOrderValued.lt_toTotalPreorder (h : WeakOrderValued a) (v : Profile ι α K) :
+    (h.toTotalPreorder v).lt = AsymmRel (a v) :=
+  rfl
+
+theorem WeakOrderValued.quasiOrderValued (h : WeakOrderValued a) : QuasiOrderValued a :=
+  λ v =>
+    haveI := h.1 v
+    haveI := h.2 v
+    IsPreorder.mk
+
+variable (a) [Preorder K]
+
+/-- Weak Pareto: an object ranked strictly above another on every dimension is strictly
+preferred. -/
+def WeakPareto : Prop := ∀ v x y, (∀ i, v y i < v x i) → AsymmRel (a v) x y
+
+/-- Strong Pareto: an object ranked weakly above another on every dimension is weakly
+preferred, and strictly so if some dimension ranks it strictly above. -/
+def StrongPareto : Prop :=
+  ∀ v x y, v y ≤ v x → a v x y ∧ ((∃ i, v y i < v x i) → AsymmRel (a v) x y)
+
+/-- Dimension `i` is a dictator: its strict rankings are the strict overall rankings. -/
+def IsDictator (i : ι) : Prop := ∀ v x y, v y i < v x i → AsymmRel (a v) x y
+
+/-- No dimension is a dictator. -/
+def NonDictatorial : Prop := ∀ i, ¬ IsDictator a i
+
+end Conditions
+
+/-! ### Majority rule -/
+
+section Majority
+
+variable [Fintype ι] [LinearOrder K]
+
+/-- Majority rule: `x ⪰ y` iff at least as many dimensions rank `x` weakly above `y` as rank
+`y` weakly above `x`. -/
+def majority : Rule ι α K := λ v x y => #{i | v x i ≤ v y i} ≤ #{i | v y i ≤ v x i}
+
+instance (v : Profile ι α K) : DecidableRel (majority v) := λ _ _ => by
+  unfold majority; infer_instance
+
+theorem majority_weakPareto [Nonempty ι] : WeakPareto (majority : Rule ι α K) := by
+  intro v x y h
+  have h₁ : ({i | v x i ≤ v y i} : Finset ι) = ∅ := filter_false_of_mem λ i _ => (h i).not_ge
+  have h₂ : ({i | v y i ≤ v x i} : Finset ι) = univ := filter_true_of_mem λ i _ => (h i).le
+  simp [AsymmRel, majority, h₁, h₂, Fintype.card_ne_zero]
+
+theorem majority_independent : Independent (majority : Rule ι α K) := by
+  intro v w x y hx hy
+  simp only [majority, hx, hy]
+
+theorem majority_ordinalInvariant : Invariant ordinal (majority : Rule ι α K) := by
+  intro f hf v
+  funext x y
+  simp only [majority, Profile.transform, (hf _).le_iff_le]
+
+theorem majority_anonymous : Anonymous (majority : Rule ι α K) := by
+  intro σ v
+  funext x y
+  have h : ∀ z w : α, #{i | v z (σ i) ≤ v w (σ i)} = #{i | v z i ≤ v w i} :=
+    λ z w => card_equiv σ (by simp)
+  simp only [majority, Function.comp_apply, h]
+
+theorem majority_paretoIndifferent : ParetoIndifferent (majority : Rule ι α K) := by
+  intro v x y h
+  simp [AntisymmRel, majority, h]
+
+theorem majority_nonDictatorial [Nontrivial ι] [Nontrivial α] [Nontrivial K] :
+    NonDictatorial (majority : Rule ι α K) := by
+  intro i hi
+  obtain ⟨j, hj⟩ := exists_ne i
+  obtain ⟨x, y, hxy⟩ := exists_pair_ne α
+  obtain ⟨k, k', hk⟩ : ∃ k k' : K, k < k' := by
+    obtain ⟨k, k', h⟩ := exists_pair_ne K
+    exact h.lt_or_gt.elim (λ h => ⟨k, k', h⟩) (λ h => ⟨k', k, h⟩)
+  classical
+  let v : Profile ι α K := λ z l => if (z = x ∧ l = i) ∨ (z = y ∧ l = j) then k' else k
+  have hv : v y i < v x i := by simp [v, hxy.symm, hj.symm, hk]
+  have e₁ : ({l | v x l ≤ v y l} : Finset ι) = univ.erase i := by
+    rw [← filter_ne']
+    refine filter_congr λ l _ => ?_
+    by_cases hl : l = i <;> by_cases hl' : l = j <;>
+      simp [v, hl, hl', hxy, hxy.symm, hj, hj.symm, hk.le, hk.not_ge]
+  have e₂ : ({l | v y l ≤ v x l} : Finset ι) = univ.erase j := by
+    rw [← filter_ne']
+    refine filter_congr λ l _ => ?_
+    by_cases hl : l = i <;> by_cases hl' : l = j <;>
+      simp [v, hl, hl', hxy, hxy.symm, hj, hj.symm, hk.le, hk.not_ge]
+  have hcard : #(univ.erase i) = #(univ.erase j) := by
+    rw [card_erase_of_mem (mem_univ _), card_erase_of_mem (mem_univ _)]
+  have := hi v x y hv
+  simp only [AsymmRel, majority, e₁, e₂, hcard, le_refl, not_true, and_false] at this
+
+/-- Condorcet's profile: three dimensions ranking three objects cyclically. -/
+def condorcet : Profile (Fin 3) (Fin 3) ℕ := ![![2, 0, 1], ![1, 2, 0], ![0, 1, 2]]
+
+/-- Condorcet's paradox: majority rule ranks the three objects in a strict cycle. -/
+theorem majority_condorcet :
+    AsymmRel (majority condorcet) 0 1 ∧ AsymmRel (majority condorcet) 1 2 ∧
+      AsymmRel (majority condorcet) 2 0 := by
+  decide
+
+/-- Majority rule does not output transitive relations. -/
+theorem not_transitive_majority : ¬ Transitive (majority : Rule (Fin 3) (Fin 3) ℕ) := by
+  intro h
+  obtain ⟨h₀₁, h₁₂, h₂₀⟩ := majority_condorcet
+  exact h₂₀.2 ((h condorcet).trans 0 1 2 h₀₁.1 h₁₂.1)
+
+end Majority
+
+/-! ### The Pareto rule -/
+
+section Pareto
+
+variable [Preorder K]
+
+/-- The Pareto rule: `x ⪰ y` iff every dimension ranks `x` weakly above `y`. -/
+def paretoRule : Rule ι α K := λ v x y => v y ≤ v x
+
+theorem paretoRule_quasiOrderValued : QuasiOrderValued (paretoRule : Rule ι α K) :=
+  λ _ => { refl := λ _ => le_rfl, trans := λ _ _ _ h h' => h'.trans h }
+
+theorem paretoRule_strongPareto : StrongPareto (paretoRule : Rule ι α K) :=
+  λ _ _ _ h => ⟨h, λ ⟨i, hi⟩ => ⟨h, λ h' => (h' i).not_gt hi⟩⟩
+
+theorem paretoRule_paretoIndifferent : ParetoIndifferent (paretoRule : Rule ι α K) :=
+  λ _ _ _ h => ⟨h.ge, h.le⟩
+
+theorem paretoRule_independent : Independent (paretoRule : Rule ι α K) := by
+  intro v w x y hx hy
+  simp only [paretoRule, hx, hy]
+
+theorem paretoRule_anonymous : Anonymous (paretoRule : Rule ι α K) := by
+  intro σ v
+  funext x y
+  simp only [paretoRule, Pi.le_def, Function.comp_apply]
+  exact propext ⟨λ h i => by simpa using h (σ.symm i), λ h i => h _⟩
+
+/-- A trade-off, one dimension ranking `x` strictly above `y` and another `y` above `x`, is
+incomparable under the Pareto rule. -/
+theorem paretoRule_incomparable {v : Profile ι α K} {x y : α} {i j : ι} (hi : v y i < v x i)
+    (hj : v x j < v y j) : ¬ paretoRule v x y ∧ ¬ paretoRule v y x :=
+  ⟨λ h => (h j).not_gt hj, λ h => (h i).not_gt hi⟩
+
+end Pareto
+
+theorem paretoRule_ordinalInvariant [LinearOrder K] :
+    Invariant ordinal (paretoRule : Rule ι α K) := by
+  intro f hf v
+  funext x y
+  simp only [paretoRule, Profile.transform, Pi.le_def, (hf _).le_iff_le]
+
+/-! ### The utilitarian rule -/
+
+section Utilitarian
+
+variable [Fintype ι] [Field K] [LinearOrder K]
+
+/-- The utilitarian rule with weights `c`: `x ⪰ y` iff the weighted sum of values favours
+`x`. -/
+def utilitarian (c : ι → K) : Rule ι α K := λ v x y => c ⬝ᵥ v y ≤ c ⬝ᵥ v x
+
+variable (c : ι → K)
+
+theorem utilitarian_weakOrderValued : WeakOrderValued (utilitarian c : Rule ι α K) :=
+  ⟨λ _ => ⟨λ _ _ _ h h' => h'.trans h⟩, λ _ => ⟨λ _ _ => le_total _ _⟩⟩
+
+theorem utilitarian_paretoIndifferent : ParetoIndifferent (utilitarian c : Rule ι α K) := by
+  intro v x y h
+  simp [AntisymmRel, utilitarian, h]
+
+theorem utilitarian_independent : Independent (utilitarian c : Rule ι α K) := by
+  intro v w x y hx hy
+  simp only [utilitarian, hx, hy]
+
+variable [IsStrictOrderedRing K]
+
+theorem utilitarian_weakPareto (hc : ∀ i, 0 ≤ c i) (hpos : ∃ i, 0 < c i) :
+    WeakPareto (utilitarian c : Rule ι α K) := by
+  intro v x y h
+  obtain ⟨i, hi⟩ := hpos
+  have : c ⬝ᵥ v y < c ⬝ᵥ v x :=
+    sum_lt_sum (λ i _ => mul_le_mul_of_nonneg_left (h i).le (hc i))
+      ⟨i, mem_univ _, mul_lt_mul_of_pos_left (h i) hi⟩
+  exact ⟨this.le, this.not_ge⟩
+
+theorem utilitarian_cardinalUnitInvariant :
+    Invariant cardinalUnit (utilitarian c : Rule ι α K) := by
+  rintro f ⟨s, hs, b, hf⟩ v
+  funext x y
+  have key : ∀ z, (v.transform f) z = s • v z + b := λ z => funext λ i => by
+    simp [Profile.transform, hf]
+  simp only [utilitarian, key, dotProduct_add, dotProduct_smul, smul_eq_mul,
+    add_le_add_iff_right, mul_le_mul_iff_of_pos_left hs]
+
+theorem utilitarian_nonDictatorial [Nontrivial α] (h₂ : ∀ i, ∃ j, j ≠ i ∧ 0 < c j) :
+    NonDictatorial (utilitarian c : Rule ι α K) := by
+  intro i hi
+  obtain ⟨j, hji, hj⟩ := h₂ i
+  obtain ⟨x, y, hxy⟩ := exists_pair_ne α
+  classical
+  let v : Profile ι α K := λ z =>
+    if z = x then Pi.single i (c j) else if z = y then Pi.single j (c i + c j) else 0
+  have hv : v y i < v x i := by simp [v, hxy.symm, hji.symm, hj]
+  have hx : c ⬝ᵥ v x = c i * c j := by simp [v]
+  have hy : c ⬝ᵥ v y = c j * (c i + c j) := by simp [v, hxy.symm]
+  have := (hi v x y hv).1
+  simp only [utilitarian, hx, hy, mul_add, mul_comm (c j) (c i)] at this
+  exact (lt_add_of_pos_right _ (mul_pos hj hj)).not_ge this
+
+/-- With two positive weights the utilitarian rule is not even ratio-scale invariant: rescaling
+one dimension breaks a tie. -/
+theorem not_ratioInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j) (hi : 0 < c i)
+    (hj : 0 < c j) : ¬ Invariant ratio (utilitarian c : Rule ι α K) := by
+  intro h
+  obtain ⟨x, y, hxy⟩ := exists_pair_ne α
+  classical
+  let v : Profile ι α K := λ z =>
+    if z = x then Pi.single i (c j) else if z = y then Pi.single j (c i) else 0
+  let f : ι → K → K := λ l t => if l = j then 2 * t else t
+  have hf : f ∈ ratio := ⟨λ l => if l = j then 2 else 1,
+    λ l => by dsimp only; split_ifs <;> norm_num, λ l t => by simp only [f]; split_ifs <;> simp⟩
+  have hx : (v.transform f) x = Pi.single i (c j) := funext λ l => by
+    simp only [Profile.transform, v, f, if_true, Pi.single_apply]
+    split_ifs <;> simp_all
+  have hy : (v.transform f) y = Pi.single j (2 * c i) := funext λ l => by
+    simp only [Profile.transform, v, f, hxy.symm, if_false, if_true, Pi.single_apply]
+    split_ifs <;> simp_all
+  have := congrFun (congrFun (h f hf v) x) y
+  simp only [utilitarian, hx, hy, v, if_true, hxy.symm, if_false, dotProduct_single,
+    mul_comm (c j) (c i), eq_iff_iff] at this
+  have hpos := mul_pos hi hj
+  exact (this.2 le_rfl).not_gt (by linarith)
+
+theorem not_ordinalInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j) (hi : 0 < c i)
+    (hj : 0 < c j) : ¬ Invariant ordinal (utilitarian c : Rule ι α K) :=
+  λ h => not_ratioInvariant_utilitarian c hij hi hj (h.mono ratio_subset_ordinal)
+
+end Utilitarian
+
+/-! ### The Cobb–Douglas rule -/
+
+section CobbDouglas
+
+variable [Fintype ι] (c : ι → ℝ)
+
+/-- The Cobb–Douglas rule with exponents `c`: `x ⪰ y` iff the weighted geometric product of
+values favours `x`. -/
+def cobbDouglas : Rule ι α ℝ := λ v x y => ∏ i, v y i ^ c i ≤ ∏ i, v x i ^ c i
+
+theorem cobbDouglas_weakOrderValued : WeakOrderValued (cobbDouglas c : Rule ι α ℝ) :=
+  ⟨λ _ => ⟨λ _ _ _ h h' => h'.trans h⟩, λ _ => ⟨λ _ _ => le_total _ _⟩⟩
+
+theorem cobbDouglas_paretoIndifferent : ParetoIndifferent (cobbDouglas c : Rule ι α ℝ) := by
+  intro v x y h
+  simp [AntisymmRel, cobbDouglas, h]
+
+theorem cobbDouglas_independent : Independent (cobbDouglas c : Rule ι α ℝ) := by
+  intro v w x y hx hy
+  simp only [cobbDouglas, hx, hy]
+
+/-- On non-negative profiles the Cobb–Douglas rule is ratio-scale invariant. -/
+theorem cobbDouglas_transform_of_nonneg {f : ι → ℝ → ℝ} (hf : f ∈ ratio) {v : Profile ι α ℝ}
+    (hv : ∀ x i, 0 ≤ v x i) : cobbDouglas c (v.transform f) = cobbDouglas c v := by
+  obtain ⟨s, hs, hf⟩ := hf
+  funext x y
+  simp only [cobbDouglas, Profile.transform, hf, Real.mul_rpow (hs _).le (hv _ _),
+    prod_mul_distrib]
+  exact propext (mul_le_mul_iff_of_pos_left (prod_pos λ i _ => Real.rpow_pos_of_pos (hs i) _))
+
+end CobbDouglas
+
+/-! ### Scores for the positive form -/
+
+section Scores
+
+variable [Field K] [LinearOrder K] [IsStrictOrderedRing K]
 
 /-- Lift Bool dimension predicates to `K`-valued measure functions.
-    Each `d : α → Bool` becomes `fun x => if d x then 1 else 0`. -/
+    Each `d : α → Bool` becomes `λ x => if d x then 1 else 0`. -/
 def boolMeasures (dims : List (α → Bool)) : List (α → K) :=
-  dims.map (fun d x => if d x then 1 else 0)
+  dims.map (λ d x => if d x then 1 else 0)
 
 /-- Weighted score: Σᵢ wᵢ · fᵢ(x), where each fᵢ : α → K is a
-    measure function along one dimension.
-
-    This is the unified core: [waldon-etal-2023]'s eq. (8) uses
-    `K`-valued measures directly; [dambrosio-hedden-2024]'s Bool
-    dimensions are the special case via `boolMeasures`. -/
+    measure function along one dimension ([waldon-etal-2023]'s eq. (8)). -/
 def weightedScore (weights : List K) (measures : List (α → K)) (x : α) : K :=
-  (weights.zip measures).foldl (fun acc (w, f) => acc + w * f x) 0
-
-/-- Weighted binding (Bool dimensions): x is F iff its weighted score
-    over Bool-lifted measures exceeds threshold θ. -/
-def weightedBinding (weights : List K) (θ : K)
-    (dims : List (α → Bool)) (x : α) : Bool :=
-  decide (weightedScore weights (boolMeasures dims) x ≥ θ)
-
-/-- Weighted binding over continuous `K`-valued measures. -/
-def weightedBindingQ (weights : List K) (θ : K)
-    (measures : List (α → K)) (x : α) : Bool :=
-  decide (weightedScore weights measures x ≥ θ)
+  (weights.zip measures).foldl (λ acc (w, f) => acc + w * f x) 0
 
 /-- Spatially-normalized weighted score: (Σᵢ wᵢ·fᵢ(x)) / s(x).
 
@@ -104,19 +475,12 @@ def spatialNormalizedBinding (weights : List K) (θ : K)
     (dims : List (α → Bool)) (spatial : α → K) (x : α) : Bool :=
   decide (spatialNormalizedScore weights (boolMeasures dims) spatial x ≥ θ)
 
-/-! ### Properties -/
-
-/-- Counting with threshold 0 is always satisfied (vacuously true). -/
-theorem countBinding_zero (dims : List (α → Bool)) (x : α) :
-    countBinding 0 dims x = true := by
-  simp [countBinding]
-
 /-- The spatial-normalization reduces to plain weighted score when
     `spatial x = 1` (constant unit host extent). -/
 @[simp]
 theorem spatialNormalizedScore_unit (weights : List K) (measures : List (α → K))
     (x : α) :
-    spatialNormalizedScore weights measures (fun _ => 1) x =
+    spatialNormalizedScore weights measures (λ _ => 1) x =
       weightedScore weights measures x := by
   unfold spatialNormalizedScore
   split_ifs with h
@@ -124,20 +488,16 @@ theorem spatialNormalizedScore_unit (weights : List K) (measures : List (α → 
   · exact div_one _
 
 omit [IsStrictOrderedRing K] in
-/-- Spatial normalization at a zero-extent host returns 0. Documents the
-    edge-case convention: a host with no spatial extent cannot exhibit a
-    physical disturbance, so the predicate is vacuously not satisfied. -/
+/-- Spatial normalisation at a zero-extent host returns 0: a host with no spatial extent
+exhibits no disturbance. -/
 @[simp]
 theorem spatialNormalizedScore_zero (weights : List K) (measures : List (α → K))
     (spatial : α → K) (x : α) (h : spatial x = 0) :
     spatialNormalizedScore weights measures spatial x = 0 := by
   simp [spatialNormalizedScore, h]
 
-/-- **Bounded-by-one normalization** (mathlib-style structural property).
-    When the weighted-score numerator is bounded by the spatial-extent
-    denominator, the normalized score is at most 1. This makes Tham
-    2025's "boundedness from spatial extent" claim (§3.4) into a
-    structural theorem rather than a stipulation. -/
+/-- A weighted score bounded by the host's spatial extent normalises to at most 1:
+[tham-2025]'s boundedness from spatial extent. -/
 theorem spatialNormalizedScore_le_one
     (weights : List K) (measures : List (α → K))
     (spatial : α → K) (x : α)
@@ -148,11 +508,9 @@ theorem spatialNormalizedScore_le_one
   rw [if_neg hpos.ne']
   exact div_le_one_of_le₀ hsum hpos.le
 
-/-- **Nonnegativity of normalized score**. When the weighted score is
-    nonnegative and the spatial extent is nonnegative, the normalized
-    score is nonnegative. Combined with `spatialNormalizedScore_le_one`,
-    this places the score in `[0, 1]` — the "fraction of the totality"
-    intuition Tham 2025 §3.4 and Solt 2018 eq. 21 both require. -/
+/-- A nonnegative weighted score over a nonnegative extent normalises to a nonnegative score;
+with `spatialNormalizedScore_le_one` it lies in `[0, 1]`, the fraction of the totality of
+[tham-2025] and [solt-2018-proportional]. -/
 theorem spatialNormalizedScore_nonneg
     (weights : List K) (measures : List (α → K))
     (spatial : α → K) (x : α)
@@ -164,83 +522,13 @@ theorem spatialNormalizedScore_nonneg
   · rw [if_pos h]
   · rw [if_neg h]; exact div_nonneg hnum hspatial
 
-/-! ### Multiplicative Aggregation (Cobb-Douglas) -/
-
 /-- Multiplicative (Cobb-Douglas) score: Πᵢ fᵢ(x).
     [sassoon-fadlon-2017] argue natural kind nouns compose
     multiplicatively: failure on ANY single dimension kills membership.
     Contrast with additive `weightedScore` for artifact nouns. -/
 def multiplicativeScore (measures : List (α → K)) (x : α) : K :=
-  measures.foldl (fun acc f => acc * f x) 1
+  measures.foldl (λ acc f => acc * f x) 1
 
-/-! ### Classification -/
-
-/-- Classification of dimensional aggregation mechanisms.
-    Each type corresponds to an escape route from Arrow's impossibility. -/
-inductive AggregationType where
-  /-- Threshold counting (rejects WO via non-transitivity or incompleteness). -/
-  | counting
-  /-- Weighted sum / utilitarian (rejects ONC, accepts interval scale IUC). -/
-  | utilitarian
-  /-- Weighted product / Cobb-Douglas (rejects ONC, accepts ratio scale RNC). -/
-  | cobbDouglas
-  deriving Repr, DecidableEq
-
-/-! ### Sassoon 2013 Subsumption Theorems -/
-
-private theorem all_eq_decide_filter_ge_length :
-    ∀ (dims : List (α → Bool)) (x : α),
-      dims.all (· x) = decide ((dims.filter (fun d => d x)).length ≥ dims.length)
-  | [], _ => rfl
-  | d :: ds, x => by
-    have ih := all_eq_decide_filter_ge_length ds x
-    simp only [List.all_cons, List.length_cons]
-    cases hd : d x
-    · rw [@List.filter_cons_of_neg _ (· x) d ds (by simp [hd])]
-      simp only [Bool.false_and]
-      exact (decide_eq_false_iff_not.mpr (by
-        have := List.length_filter_le (· x) ds; omega)).symm
-    · rw [@List.filter_cons_of_pos _ (· x) d ds hd]
-      simp only [Bool.true_and, List.length_cons, ih]
-      exact decide_eq_decide.mpr (by omega)
-
-private theorem any_eq_decide_filter_ge_one :
-    ∀ (dims : List (α → Bool)) (x : α),
-      dims.any (· x) = decide ((dims.filter (fun d => d x)).length ≥ 1)
-  | [], _ => rfl
-  | d :: ds, x => by
-    simp only [List.any_cons]
-    cases hd : d x
-    · rw [@List.filter_cons_of_neg _ (· x) d ds (by simp [hd])]
-      simp only [Bool.false_or]
-      exact any_eq_decide_filter_ge_one ds x
-    · rw [@List.filter_cons_of_pos _ (· x) d ds hd]
-      simp only [Bool.true_or, List.length_cons]
-      exact (decide_eq_true_iff.mpr (by omega)).symm
-
-/-- Conjunctive binding = counting with threshold k = dims.length.
-    [sassoon-2013]'s ∀-binding is a special case of counting. -/
-theorem conjunctive_is_countAll (dims : List (α → Bool)) (x : α) :
-    Degree.conjunctiveBinding dims x = countBinding dims.length dims x :=
-  all_eq_decide_filter_ge_length dims x
-
-/-- Disjunctive binding = counting with threshold k = 1.
-    [sassoon-2013]'s ∃-binding is a special case of counting. -/
-theorem disjunctive_is_countOne (dims : List (α → Bool)) (x : α) :
-    Degree.disjunctiveBinding dims x = countBinding 1 dims x :=
-  any_eq_decide_filter_ge_one dims x
-
-/-- [sassoon-2013]'s binding types all map to counting aggregation.
-    The key gap: Sassoon has no utilitarian or Cobb-Douglas mechanism. -/
-def toAggregationType : Degree.DimensionBindingType → AggregationType
-  | .conjunctive => .counting
-  | .disjunctive => .counting
-  | .mixed => .counting
-
-/-- All of Sassoon 2013's binding types are counting aggregation. -/
-theorem sassoon_all_counting :
-    ∀ b : Degree.DimensionBindingType,
-      toAggregationType b = AggregationType.counting := by
-  intro b; cases b <;> rfl
+end Scores
 
 end Degree.Aggregation
