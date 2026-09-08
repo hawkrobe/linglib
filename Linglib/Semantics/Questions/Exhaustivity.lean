@@ -1,3 +1,4 @@
+import Mathlib.Data.Finset.Basic
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Resolution
 
@@ -282,6 +283,39 @@ def IsStrongestRelTrueAnswer (M : Set W) (p : Set W) : Prop :=
 
 /-- Relativized exhaustivity: a strongest true member relative to `M` exists. -/
 def relExh (M : Set W) : Prop := ∃ p, IsStrongestRelTrueAnswer H w M p
+
+/-! ### Finite Hamblin sets
+
+A finite family of finite propositions is the carrier on which the
+presupposition is decidable; `ofFinset` places it in the `Set (Set W)` API. -/
+
+section Finite
+
+/-- The Hamblin set of a finite family of finite propositions. -/
+def ofFinset (F : Finset (Finset W)) : Set (Set W) := ((↑) : Finset W → Set W) '' ↑F
+
+@[simp] theorem mem_ofFinset {F : Finset (Finset W)} {p : Set W} :
+    p ∈ ofFinset F ↔ ∃ q ∈ F, ↑q = p := by
+  simp [ofFinset]
+
+theorem isExhaustivelyResolvable_ofFinset_iff (F : Finset (Finset W)) (w : W) :
+    IsExhaustivelyResolvable (ofFinset F) w ↔ ∃ p ∈ F, w ∈ p ∧ ∀ q ∈ F, w ∈ q → p ⊆ q := by
+  constructor
+  · rintro ⟨p, ⟨hp, hw⟩, hmin⟩
+    obtain ⟨p', hp', rfl⟩ := mem_ofFinset.1 hp
+    exact ⟨p', hp', hw, fun q hq hwq =>
+      Finset.coe_subset.1 (hmin ⟨mem_ofFinset.2 ⟨q, hq, rfl⟩, hwq⟩)⟩
+  · rintro ⟨p, hp, hw, hmin⟩
+    refine ⟨↑p, ⟨mem_ofFinset.2 ⟨p, hp, rfl⟩, hw⟩, ?_⟩
+    rintro q ⟨hq, hwq⟩
+    obtain ⟨q', hq', rfl⟩ := mem_ofFinset.1 hq
+    exact Finset.coe_subset.2 (hmin q' hq' hwq)
+
+instance [DecidableEq W] (F : Finset (Finset W)) (w : W) :
+    Decidable (IsExhaustivelyResolvable (ofFinset F) w) :=
+  decidable_of_iff _ (isExhaustivelyResolvable_ofFinset_iff F w).symm
+
+end Finite
 
 /-! ### Polar and declarative questions -/
 

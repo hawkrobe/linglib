@@ -1,5 +1,6 @@
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Semantics.Quantification.Generators
+import Linglib.Semantics.Questions.Exhaustivity
 import Linglib.Studies.AlonsoOvalleMenendezBenito2010
 import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
 
@@ -16,8 +17,9 @@ interrogatives keeps atoms only (42) (`neutral`, `atoms`); and *-ro* restricts t
 selection function to singletons (52), the `IsSingleton` functions of
 [alonso-ovalle-menendez-benito-2010], which collapses ⊓ and ⊔ to individual answers
 (`hamblinRo`, `hamblinRo_neutral`). Dayal's answerhood operator (8) presupposes a maximally
-strong true answer (`Resolvable`); a plural answer is available iff the presupposition holds
-in a world where two atoms were bought (`farsi`, (40)/(45)/(53)/(55)).
+strong true answer (`Questions.IsExhaustivelyResolvable` on the finite Hamblin set); a plural
+answer is available iff the presupposition holds in a world where two atoms were bought
+(`farsi`, (40)/(45)/(53)/(55)).
 
 The background pattern of §2 — English bare vs. singular and plural complex interrogatives
 under Dayal's atoms-only domains and the presuppositional exhaustifier (15) — is
@@ -42,7 +44,7 @@ removes (`modal_gq`, (58)–(63)); collective predicates need pluralities in the
 
 namespace AlonsoOvalleMoghiseh2025b
 
-open Quantification Data.Examples Finset
+open Quantification Questions Data.Examples Finset
 
 /-! ### Entities, worlds, and answers -/
 
@@ -98,21 +100,15 @@ def hamblin (D : Finset Entity) : Finset (Finset W) :=
 union of the Hamblin sets over the singleton subdomains. -/
 def hamblinRo (D : Finset Entity) : Finset (Finset W) := D.biUnion fun e => hamblin P {e}
 
-/-- Dayal's exhaustivity presupposition (8): some true member of the Hamblin set entails
-every true member. -/
-def Resolvable (H : Finset (Finset W)) (w : W) : Prop :=
-  ∃ p ∈ H, w ∈ p ∧ ∀ q ∈ H, w ∈ q → p ⊆ q
-
-instance (H : Finset (Finset W)) (w : W) : Decidable (Resolvable H w) :=
-  inferInstanceAs (Decidable (∃ p ∈ H, _ ∧ ∀ q ∈ H, _ → _))
-
-/-- The worlds where the question's presupposition holds. -/
-def dom (H : Finset (Finset W)) : Finset W := univ.filter (Resolvable H)
+/-- The worlds where the question's presupposition (8) holds. -/
+def dom (H : Finset (Finset W)) : Finset W :=
+  univ.filter (IsExhaustivelyResolvable (ofFinset H))
 
 /-- EXHp (15): `φ` is defined and every alternative `ψ` with a stronger presupposition is
 undefined. -/
 def ExhP (φ ψ : Finset (Finset W)) (w : W) : Prop :=
-  Resolvable φ w ∧ (dom ψ ⊂ dom φ → ¬ Resolvable ψ w)
+  IsExhaustivelyResolvable (ofFinset φ) w ∧
+    (dom ψ ⊂ dom φ → ¬ IsExhaustivelyResolvable (ofFinset ψ) w)
 
 instance (φ ψ : Finset (Finset W)) (w : W) : Decidable (ExhP φ ψ w) :=
   inferInstanceAs (Decidable (_ ∧ (_ → _)))
@@ -122,6 +118,16 @@ instance (φ ψ : Finset (Finset W)) (w : W) : Decidable (ExhP φ ψ w) :=
 /-- The worlds a singular and a plural answer describe. -/
 abbrev one : World := {0}
 abbrev two : World := {0, 1}
+
+/-- Whether a singular and a plural answer are available: the presupposition (8) holds in the
+world where one atom was bought and in the world where two were. -/
+def answers (H : Finset (Finset World)) : Bool × Bool :=
+  (decide (IsExhaustivelyResolvable (ofFinset H) one),
+    decide (IsExhaustivelyResolvable (ofFinset H) two))
+
+/-- The answers available through EXHp (15) of `φ` against its alternative `ψ`. -/
+def exhAnswers (φ ψ : Finset (Finset World)) : Bool × Bool :=
+  (decide (ExhP φ ψ one), decide (ExhP φ ψ two))
 
 /-- (53)/(55): over a singleton subdomain ⊓ and ⊔ collapse, so the *-ro* Hamblin sets contain
 the individual answers only — with the plurality for the neutral domain. -/
@@ -133,26 +139,27 @@ theorem hamblinRo_neutral :
 (12)–(13) only a singular answer, and plural complex ones (14)–(15), whose singular
 alternative has the stronger presupposition, only a plural one. -/
 theorem dayal_english :
-    (Resolvable (hamblinRo bought neutral) one ∧ Resolvable (hamblinRo bought neutral) two) ∧
-      (Resolvable (hamblinRo bought atoms) one ∧ ¬ Resolvable (hamblinRo bought atoms) two) ∧
+    answers (hamblinRo bought neutral) = (true, true) ∧
+      answers (hamblinRo bought atoms) = (true, false) ∧
       dom (hamblinRo bought atoms) ⊂ dom (hamblinRo bought neutral) ∧
-      (¬ ExhP (hamblinRo bought neutral) (hamblinRo bought atoms) one ∧
-        ExhP (hamblinRo bought neutral) (hamblinRo bought atoms) two) := by decide
+      exhAnswers (hamblinRo bought neutral) (hamblinRo bought atoms) = (false, true) := by
+  decide
 
 /-- (19): over atoms alone a Spanish singular bare interrogative wrongly presupposes
 uniqueness; ranging over their conjunctions and disjunctions admits the plural answer. -/
 theorem spanish_gq :
-    ¬ Resolvable (hamblinRo bought atoms) two ∧ Resolvable (hamblin bought atoms) two := by
+    answers (hamblinRo bought atoms) = (true, false) ∧
+      answers (hamblin bought atoms) = (true, true) := by
   decide
 
 /-- (40), (45): singular bare and complex interrogatives allow both answers; (53): so does
 the *-ro* bare interrogative, through the plurality; (55): the *-ro* complex interrogative
 allows only the singular answer. -/
 theorem farsi :
-    (Resolvable (hamblin bought neutral) one ∧ Resolvable (hamblin bought neutral) two) ∧
-      (Resolvable (hamblin bought atoms) one ∧ Resolvable (hamblin bought atoms) two) ∧
-      (Resolvable (hamblinRo bought neutral) one ∧ Resolvable (hamblinRo bought neutral) two) ∧
-      (Resolvable (hamblinRo bought atoms) one ∧ ¬ Resolvable (hamblinRo bought atoms) two) := by
+    answers (hamblin bought neutral) = (true, true) ∧
+      answers (hamblin bought atoms) = (true, true) ∧
+      answers (hamblinRo bought neutral) = (true, true) ∧
+      answers (hamblinRo bought atoms) = (true, false) := by
   decide
 
 /-! ### Questions with *must* (30)–(36) and collective predicates (56)–(57) -/
@@ -184,8 +191,9 @@ instance (H : Finset (Finset World)) (A : Finset World) : Decidable (ResolvableA
 
 /-- The question with *must* is resolvable at a deontic world iff its buy-world Hamblin set
 is resolvable at the permitted worlds. -/
-theorem resolvable_image_box (H : Finset (Finset World)) (A : Base) :
-    Resolvable (H.image box) A ↔ ResolvableAt H A.1 := by
+theorem isExhaustivelyResolvable_image_box (H : Finset (Finset World)) (A : Base) :
+    IsExhaustivelyResolvable (ofFinset (H.image box)) A ↔ ResolvableAt H A.1 := by
+  rw [isExhaustivelyResolvable_ofFinset_iff]
   constructor
   · rintro ⟨_, hP, hA, hmax⟩
     obtain ⟨p, hp, rfl⟩ := Finset.mem_image.1 hP
@@ -203,11 +211,11 @@ def freeChoice : Base := ⟨{{0}, {1}}, by decide⟩
 only □(b₁ ∨ b₂) is true in the free-choice scenario, so the presupposition holds iff the
 interrogative ranges over disjunctions — which *-ro* removes, (62)–(63). -/
 theorem modal_gq :
-    (Resolvable ((hamblin bought neutral).image box) freeChoice ∧
-        Resolvable ((hamblin bought atoms).image box) freeChoice) ∧
-      (¬ Resolvable ((hamblinRo bought neutral).image box) freeChoice ∧
-        ¬ Resolvable ((hamblinRo bought atoms).image box) freeChoice) := by
-  simp only [resolvable_image_box]; decide
+    (IsExhaustivelyResolvable (ofFinset ((hamblin bought neutral).image box)) freeChoice ∧
+        IsExhaustivelyResolvable (ofFinset ((hamblin bought atoms).image box)) freeChoice) ∧
+      (¬ IsExhaustivelyResolvable (ofFinset ((hamblinRo bought neutral).image box)) freeChoice ∧
+        ¬ IsExhaustivelyResolvable (ofFinset ((hamblinRo bought atoms).image box)) freeChoice) := by
+  simp only [isExhaustivelyResolvable_image_box]; decide
 
 /-- *Mixed together*: a collective predicate, true of a plurality that was bought. -/
 def mixed (e : Entity) (w : World) : Prop := 2 ≤ e.card ∧ e ⊆ w
@@ -218,8 +226,10 @@ instance (e : Entity) : DecidablePred (mixed e) :=
 /-- (56)–(57): a collective predicate has a true answer over the neutral domain, with or
 without *-ro*, and none over the atoms. -/
 theorem collective :
-    (Resolvable (hamblin mixed neutral) two ∧ Resolvable (hamblinRo mixed neutral) two) ∧
-      (¬ Resolvable (hamblin mixed atoms) two ∧ ¬ Resolvable (hamblinRo mixed atoms) two) := by
+    answers (hamblin mixed neutral) = (false, true) ∧
+      answers (hamblinRo mixed neutral) = (false, true) ∧
+      answers (hamblin mixed atoms) = (false, false) ∧
+      answers (hamblinRo mixed atoms) = (false, false) := by
   decide
 
 /-! ### The paper's answer judgments -/
@@ -242,9 +252,8 @@ interrogative goes through EXHp against its singular alternative, the others thr
 def predicted (row : LinguisticExample) : Option (Bool × Bool) :=
   match row.feature? "language", row.feature? "type" with
   | some "English", some "PCI" =>
-    some (decide (ExhP (hamblinRo bought neutral) (hamblinRo bought atoms) one),
-      decide (ExhP (hamblinRo bought neutral) (hamblinRo bought atoms) two))
-  | _, _ => (hamblinOf row).map fun H => (decide (Resolvable H one), decide (Resolvable H two))
+    some (exhAnswers (hamblinRo bought neutral) (hamblinRo bought atoms))
+  | _, _ => (hamblinOf row).map answers
 
 /-- A row's answer judgments, read off its `singular answer`/`plural answer` readings. -/
 def observed (row : LinguisticExample) : Bool × Bool :=
@@ -260,7 +269,8 @@ theorem rows_agree :
 example : (Examples.all.filter fun row => (predicted row).isSome).length = 16 := by decide +kernel
 
 /-- (60)–(63): the embedded questions are felicitous in (59) iff their interrogative ranges
-over disjunctions (`resolvable_image_box` relates this to the modalized question). -/
+over disjunctions (`isExhaustivelyResolvable_image_box` relates this to the modalized
+question). -/
 theorem scenario_rows :
     ∀ row ∈ Examples.all, row.feature? "scenario" = some "freeChoice59" →
       (hamblinOf row).map (fun H => decide (ResolvableAt H freeChoice.1)) =
