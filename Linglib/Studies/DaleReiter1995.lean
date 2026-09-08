@@ -2,8 +2,10 @@ import Linglib.Features.PropertyDomain
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fintype.Sum
+import Mathlib.Data.List.MinMax
 import Mathlib.Data.Nat.Choose.Basic
 import Mathlib.Order.Interval.Finset.Nat
+import Mathlib.Order.Minimal
 
 /-!
 # Dale and Reiter, computational interpretations of the Gricean maxims (1995)
@@ -19,14 +21,11 @@ psycholinguistic observations: speakers include unnecessary modifiers, which onl
 and incremental algorithms produce, and speakers begin an expression before they have
 finished scanning the distractors, which only the incremental algorithm allows.
 
-We define distinguishing descriptions and the four interpretations with a finite contrast
-set, prove that a shortest description satisfies both of Reiter's rules while the greedy and
-incremental algorithms can return unnecessary pairs, evaluate the exhaustive count of
-§3.1.1, and run the seven-cup example of §3.1.2, the white-bird example of §3.2.1 and the
-two dogs and the cat of §2.2 and §4.4 through the algorithms of Figs. 3 and 6. Fig. 6's
-output is proved to rule out every distractor, to add only pairs the user knows to hold or
-the basic-level head noun, never retracting one, and, under the accuracy user model of
-§4.5, to be a distinguishing description.
+We define distinguishing descriptions and the four readings with a finite contrast set, prove
+that a shortest description satisfies Reiter's two rules while the greedy and incremental
+algorithms return unnecessary pairs on the paper's own examples, and prove that Fig. 6's
+output rules out every distractor, never retracts a pair and, under §4.5's accuracy user
+model, is a distinguishing description.
 
 ## Implementation notes
 
@@ -53,7 +52,8 @@ variable {E A V : Type*}
 
 /-! ### Distinguishing descriptions (§2.2) -/
 
-/-- A knowledge base (§4.1): the value an entity has for an attribute, if it has one. -/
+/-- The value an entity has for an attribute in the host's knowledge base, if it has one
+(§4.1). -/
 abbrev KB (E A V : Type*) := E → A → Option V
 
 /-- The semantic content of a referring expression, a set of attribute-value pairs (§2.2). -/
@@ -65,8 +65,8 @@ def Applies (kb : KB E A V) (x : E) (p : A × V) : Prop := kb x p.1 = some p.2
 instance [DecidableEq V] (kb : KB E A V) (x : E) (p : A × V) : Decidable (Applies kb x p) := by
   unfold Applies; infer_instance
 
-/-- A distinguishing description of `r` against the contrast set `C` (3): every pair holds
-of `r` (C1) and every distractor fails some pair (C2). -/
+/-- A distinguishing description of `r` against the contrast set `C`, every pair holding of
+`r` and every distractor failing some pair ((3), conditions C1 and C2). -/
 def Distinguishing (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) : Prop :=
   (∀ p ∈ L, Applies kb r p) ∧ ∀ c ∈ C, ∃ p ∈ L, ¬ Applies kb c p
 
@@ -78,8 +78,8 @@ instance [DecidableEq V] (kb : KB E A V) (r : E) (C : Finset E) (L : Description
 def rulesOut [DecidableEq V] (kb : KB E A V) (C : Finset E) (p : A × V) : Finset E :=
   C.filter (¬ Applies kb · p)
 
-/-- Finding a distinguishing description is a set-cover problem: the pairs' `rulesOut` sets
-must cover the contrast set (§2.2). -/
+/-- A description distinguishes when its pairs' `rulesOut` sets cover the contrast set, the
+set-cover problem of §2.2. -/
 theorem distinguishing_iff_biUnion [DecidableEq E] [DecidableEq V] (kb : KB E A V) (r : E)
     (C : Finset E) (L : Description A V) :
     Distinguishing kb r C L ↔
@@ -92,9 +92,8 @@ theorem distinguishing_iff_biUnion [DecidableEq E] [DecidableEq V] (kb : KB E A 
 
 variable (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V)
 
-/-- Full Brevity (§3.1.1): a shortest distinguishing description. -/
-def IsShortest : Prop :=
-  Distinguishing kb r C L ∧ ∀ L', Distinguishing kb r C L' → L.card ≤ L'.card
+/-- A distinguishing description of least cardinality, the Full Brevity reading (§3.1.1). -/
+abbrev IsShortest : Prop := MinimalFor (Distinguishing kb r C) card L
 
 variable {kb r C L}
 
@@ -102,24 +101,24 @@ variable {kb r C L}
 description nor any single pair distinguishes. -/
 theorem isShortest_of_card_two (hL : Distinguishing kb r C L) (h2 : L.card = 2)
     (h0 : ¬ Distinguishing kb r C ∅) (h1 : ∀ p, ¬ Distinguishing kb r C {p}) :
-    IsShortest kb r C L := by
-  refine ⟨hL, λ L' hL' => ?_⟩
-  by_contra hlt
-  have : L'.card = 0 ∨ L'.card = 1 := by omega
-  rcases this with h | h
-  · obtain rfl := card_eq_zero.mp h
-    exact h0 hL'
-  · obtain ⟨p, rfl⟩ := card_eq_one.mp h
-    exact h1 p hL'
+    IsShortest kb r C L :=
+  minimalFor_iff_forall_lt.mpr ⟨hL, λ L' hlt hL' => by
+    have : L'.card = 0 ∨ L'.card = 1 := by omega
+    rcases this with h | h
+    · obtain rfl := card_eq_zero.mp h
+      exact h0 hL'
+    · obtain ⟨p, rfl⟩ := card_eq_one.mp h
+      exact h1 p hL'⟩
 
 variable (kb r C L) [DecidableEq A] [DecidableEq V]
 
-/-- Reiter's No Unnecessary Components (§3.1.3): a distinguishing description none of
-whose pairs can be dropped. -/
+/-- A distinguishing description none of whose pairs can be dropped, Reiter's No Unnecessary
+Components rule (§3.1.3). -/
 def NoUnnecessary : Prop :=
   Distinguishing kb r C L ∧ ∀ p ∈ L, ¬ Distinguishing kb r C (L.erase p)
 
-/-- Reiter's Local Brevity (§3.1.3): no set of pairs can be replaced by a single new pair. -/
+/-- A description with no unnecessary pair in which no set of pairs can be replaced by a
+single new pair, Reiter's Local Brevity rule (§3.1.3). -/
 def LocallyBrief : Prop :=
   NoUnnecessary kb r C L ∧
     ∀ S ⊆ L, 2 ≤ S.card → ∀ p, ¬ Distinguishing kb r C (insert p (L \ S))
@@ -128,62 +127,73 @@ instance : Decidable (NoUnnecessary kb r C L) := by unfold NoUnnecessary; infer_
 
 variable {kb r C L}
 
-/-- A shortest description has no unnecessary pair: Full Brevity never includes an
+/-- Reiter's first rule is subset-minimality among distinguishing descriptions. -/
+theorem noUnnecessary_iff_minimal :
+    NoUnnecessary kb r C L ↔ Minimal (Distinguishing kb r C) L := by
+  refine ⟨λ h => ⟨h.1, λ L' hL' hle => ?_⟩, λ h => ⟨h.1, λ p hp hd => ?_⟩⟩
+  · by_contra hne
+    obtain ⟨p, hp, hp'⟩ := not_subset.mp hne
+    refine h.2 p hp ⟨λ q hq => h.1.1 q (mem_of_mem_erase hq), λ c hc => ?_⟩
+    obtain ⟨q, hq, hcq⟩ := hL'.2 c hc
+    exact ⟨q, mem_erase.mpr ⟨λ h => hp' (h ▸ hq), hle hq⟩, hcq⟩
+  · exact notMem_erase p L (h.2 hd (erase_subset p L) hp)
+
+/-- A shortest description has no unnecessary pair, so Full Brevity never includes an
 unnecessary modifier (§3.2.1). -/
 theorem IsShortest.noUnnecessary (h : IsShortest kb r C L) : NoUnnecessary kb r C L :=
-  ⟨h.1, λ p hp hd => absurd (h.2 _ hd) (not_le.mpr (by
-    have := card_pos.mpr ⟨p, hp⟩
-    rw [card_erase_of_mem hp]; omega))⟩
+  ⟨h.1, λ _ hp => h.not_prop_of_lt (card_erase_lt_of_mem hp)⟩
 
 /-- A shortest description is locally brief. -/
 theorem IsShortest.locallyBrief (h : IsShortest kb r C L) : LocallyBrief kb r C L :=
-  ⟨h.noUnnecessary, λ S hS hS2 p hd => absurd (h.2 _ hd) (not_le.mpr (by
+  ⟨h.noUnnecessary, λ S hS hS2 p => h.not_prop_of_lt (by
     have h₁ := card_insert_le p (L \ S)
     have h₂ := card_sdiff_of_subset hS
     have h₃ := card_le_card hS
-    omega))⟩
+    omega)⟩
 
 /-- Descriptions the exhaustive Full Brevity search checks, with `na` available attributes
 and a shortest description of `nl` pairs (§3.1.1). -/
 def fullBrevitySteps (na nl : ℕ) : ℕ := ∑ i ∈ Icc 1 nl, na.choose i
 
-/-- The paper's counts: six for §2.2's example, 175, over 6,000 and over 2,000,000. -/
+/-- The paper's four counts, six for §2.2's example, 175, over 6,000 and over 2,000,000. -/
 theorem fullBrevitySteps_values :
     fullBrevitySteps 3 2 = 6 ∧ fullBrevitySteps 10 3 = 175 ∧
       6000 < fullBrevitySteps 20 4 ∧ 2000000 < fullBrevitySteps 50 5 := by
   decide +kernel
 
-/-- The first element of a list minimizing `f`. -/
-private def argmin {α : Type*} (f : α → ℕ) : List α → Option α
-  | [] => none
-  | a :: l => some (l.foldl (λ b c => if f c < f b then c else b) a)
-
-private def greedyAux [DecidableEq E] (kb : KB E A V) :
+variable (kb) in
+private def greedyAux :
     ℕ → Finset E → List (A × V) → Description A V → Option (Description A V)
-  | 0, C, _, L => if C = ∅ then some L else none
+  | 0, C, _, L => if C.Nonempty then none else some L
   | n + 1, C, P, L =>
-    if C = ∅ then some L
-    else match argmin (λ p => (C.filter (Applies kb · p)).card) P with
+    if C.Nonempty then
+      match P.argmin (λ p => (C.filter (Applies kb · p)).card) with
       | none => none
-      | some p => greedyAux kb n (C.filter (Applies kb · p)) (P.erase p) (insert p L)
+      | some p => greedyAux n (C.filter (Applies kb · p)) (P.erase p) (insert p L)
+    else some L
 
-/-- Fig. 3's Greedy Heuristic: from the properties `P` true of the referent, add the one
-leaving the fewest distractors, the first in `P` on a tie, until none remain, failing when
-`P` runs out. -/
-def greedy [DecidableEq E] (kb : KB E A V) (C : Finset E) (P : List (A × V)) :
-    Option (Description A V) :=
-  greedyAux kb P.length C P ∅
+variable (kb C) in
+/-- Fig. 3's Greedy Heuristic, which from the properties `P` true of the referent adds the
+one leaving the fewest distractors, the first in `P` on a tie, until none remain, and fails
+when `P` runs out. -/
+def greedy (P : List (A × V)) : Option (Description A V) := greedyAux kb P.length C P ∅
 
 end Brevity
 
 /-! ### The Incremental Algorithm (§4, Fig. 6) -/
 
+/-- The three values of Fig. 6's UserKnows (§4.1): the user knows the pair holds of the
+entity, knows it does not, or neither. -/
+inductive Knowledge where
+  | holds | fails | unknown
+  deriving DecidableEq, Repr
+
 section Incremental
 
 variable {E A V : Type*}
 
-/-- The host system's interface (§4.1): the head-noun attribute, basic-level values, the
-value taxonomies and the user model. -/
+/-- The head-noun attribute, basic-level values, value taxonomies and user model the host
+system supplies (§4.1). -/
 structure Domain (E A V : Type*) where
   /-- The attribute realized as the head noun (§2.2). -/
   type : A
@@ -194,9 +204,8 @@ structure Domain (E A V : Type*) where
   /-- The child of a value in the attribute's taxonomy that still subsumes the entity's own
   value (MoreSpecificValue). -/
   moreSpecific : E → A → V → Option V
-  /-- Whether the user knows the pair to hold of the entity, knows it not to, or neither
-  (UserKnows). -/
-  userKnows : E → A → V → Option Bool
+  /-- What the user knows of the pair holding of the entity (UserKnows). -/
+  userKnows : E → A → V → Knowledge
 
 namespace Domain
 
@@ -209,18 +218,29 @@ def flat [DecidableEq V] (kb : KB E A V) (type : A) : Domain E A V where
   depth := 0
   basicLevel := kb
   moreSpecific _ _ _ := none
-  userKnows x a v := (kb x a).map λ w => decide (w = v)
+  userKnows x a v := match kb x a with
+    | some w => if w = v then .holds else .fails
+    | none => .unknown
+
+/-- Under the accuracy user model, what the user knows is what the knowledge base records. -/
+theorem flat_userKnows [DecidableEq V] {kb : KB E A V} {t : A} (x : E) (a : A) (v : V) :
+    ((flat kb t).userKnows x a v = .holds ↔ kb x a = some v) ∧
+      ((flat kb t).userKnows x a v = .fails ↔ ∃ w, kb x a = some w ∧ w ≠ v) := by
+  simp only [flat]
+  split
+  · next w hw => by_cases hwv : w = v <;> simp [hw, hwv]
+  · next hw => simp [hw]
 
 /-- The remaining distractors the user knows not to bear the pair (Fig. 6, RulesOut). -/
 def rulesOut (C : Finset E) (a : A) (v : V) : Finset E :=
-  C.filter λ x => d.userKnows x a v = some false
+  C.filter λ x => d.userKnows x a v = .fails
 
-/-- Fig. 6's FindBestValue: the initial value when the user knows it to hold of `r`, refined
+/-- Fig. 6's FindBestValue, the initial value when the user knows it to hold of `r`, refined
 to a more specific value only when that rules out more distractors. -/
 def findBestValue (r : E) (C : Finset E) (a : A) : ℕ → V → Option V
-  | 0, v => if d.userKnows r a v = some true then some v else none
+  | 0, v => if d.userKnows r a v = .holds then some v else none
   | n + 1, v =>
-    if d.userKnows r a v = some true then
+    if d.userKnows r a v = .holds then
       some <| match d.moreSpecific r a v with
         | none => v
         | some more =>
@@ -230,49 +250,9 @@ def findBestValue (r : E) (C : Finset E) (a : A) : ℕ → V → Option V
             if (d.rulesOut C a v).card < (d.rulesOut C a new).card then new else v
     else none
 
-section
-
-variable [DecidableEq A] [DecidableEq V]
-
-/-- One attribute of Fig. 6's loop: the best value for `a` is kept when it rules out a
-remaining distractor, and those distractors are removed. -/
-def step [DecidableEq E] (r : E) (a : A) (C : Finset E) (L : Description A V) :
-    Finset E × Description A V :=
-  match d.basicLevel r a with
-  | none => (C, L)
-  | some b =>
-    match d.findBestValue r C a d.depth b with
-    | none => (C, L)
-    | some v =>
-      if (d.rulesOut C a v).Nonempty then (C \ d.rulesOut C a v, insert (a, v) L) else (C, L)
-
-/-- Fig. 6's return: a head noun is always included, the basic-level type added without a
-`UserKnows` check. -/
-def withType (r : E) (L : Description A V) : Description A V :=
-  if ∃ p ∈ L, p.1 = d.type then L
-  else match d.basicLevel r d.type with
-    | none => L
-    | some b => insert (d.type, b) L
-
-variable [DecidableEq E]
-
-/-- Fig. 6's loop over the preferred attributes. -/
-def go (r : E) : Finset E → List A → Description A V → Option (Description A V)
-  | _, [], _ => none
-  | C, a :: rest, L =>
-    let s := d.step r a C L
-    if s.1 = ∅ then some (d.withType r s.2) else go r s.1 rest s.2
-
-/-- Fig. 6's MakeReferringExpression: the Incremental Algorithm over the preferred
-attributes `P`, failing when they run out before the contrast set does. -/
-def makeReferringExpression (r : E) (C : Finset E) (P : List A) :
-    Option (Description A V) :=
-  d.go r C P ∅
-
-omit [DecidableEq A] [DecidableEq V] [DecidableEq E] in
 /-- `FindBestValue` returns only values the user knows to hold of the referent. -/
 theorem findBestValue_userKnows (r : E) (C : Finset E) (a : A) :
-    ∀ (n : ℕ) (v w : V), d.findBestValue r C a n v = some w → d.userKnows r a w = some true
+    ∀ (n : ℕ) (v w : V), d.findBestValue r C a n v = some w → d.userKnows r a w = .holds
   | 0, v, w, h => by
     simp only [findBestValue] at h
     split_ifs at h with hv
@@ -290,10 +270,53 @@ theorem findBestValue_userKnows (r : E) (C : Finset E) (a : A) :
         · exact findBestValue_userKnows r C a n _ new hnew
         · exact hv
 
-/-- A pair the algorithm may add for `r`: known to the user to hold of it, or the head
-noun's basic-level value. -/
-def Admissible (r : E) (p : A × V) : Prop :=
-  d.userKnows r p.1 p.2 = some true ∨ d.basicLevel r p.1 = some p.2
+section
+
+variable [DecidableEq A] [DecidableEq V]
+
+/-- Fig. 6's return, which always includes a head noun, the basic-level type added without a
+`UserKnows` check. -/
+def withType (r : E) (L : Description A V) : Description A V :=
+  if ∃ p ∈ L, p.1 = d.type then L
+  else match d.basicLevel r d.type with
+    | none => L
+    | some b => insert (d.type, b) L
+
+/-- The return never retracts a pair. -/
+theorem withType_subset (r : E) (L : Description A V) : L ⊆ d.withType r L := by
+  unfold withType
+  split_ifs
+  · exact subset_rfl
+  · split
+    · exact subset_rfl
+    · exact subset_insert _ _
+
+/-- The return adds at most the basic-level head noun. -/
+theorem withType_mem (r : E) (L : Description A V) {p : A × V} (hp : p ∈ d.withType r L) :
+    p ∈ L ∨ d.basicLevel r p.1 = some p.2 := by
+  unfold withType at hp
+  split_ifs at hp
+  · exact .inl hp
+  · split at hp
+    · exact .inl hp
+    next b hb =>
+      rcases mem_insert.mp hp with rfl | hp
+      · exact .inr hb
+      · exact .inl hp
+
+variable [DecidableEq E]
+
+/-- One attribute of Fig. 6's loop, whose best value is kept when it rules out a remaining
+distractor, those distractors being removed. -/
+def step (r : E) (a : A) (C : Finset E) (L : Description A V) :
+    Finset E × Description A V :=
+  match d.basicLevel r a with
+  | none => (C, L)
+  | some b =>
+    match d.findBestValue r C a d.depth b with
+    | none => (C, L)
+    | some v =>
+      if (d.rulesOut C a v).Nonempty then (C \ d.rulesOut C a v, insert (a, v) L) else (C, L)
 
 /-- A step never retracts a pair (§4.3). -/
 theorem step_subset (r : E) (a : A) (C : Finset E) (L : Description A V) :
@@ -309,7 +332,7 @@ theorem step_subset (r : E) (a : A) (C : Finset E) (L : Description A V) :
 
 /-- A step adds only pairs the user knows to hold of the referent. -/
 theorem step_mem (r : E) (a : A) (C : Finset E) (L : Description A V) {p : A × V}
-    (hp : p ∈ (d.step r a C L).2) : p ∈ L ∨ d.userKnows r p.1 p.2 = some true := by
+    (hp : p ∈ (d.step r a C L).2) : p ∈ L ∨ d.userKnows r p.1 p.2 = .holds := by
   unfold step at hp
   split at hp
   · exact .inl hp
@@ -326,116 +349,91 @@ theorem step_mem (r : E) (a : A) (C : Finset E) (L : Description A V) {p : A × 
 /-- Every distractor a step removes is ruled out by the pair the step adds. -/
 theorem step_ruledOut (r : E) (a : A) (C : Finset E) (L : Description A V) {c : E}
     (hc : c ∈ C) (hc' : c ∉ (d.step r a C L).1) :
-    ∃ p ∈ (d.step r a C L).2, d.userKnows c p.1 p.2 = some false := by
+    ∃ p ∈ (d.step r a C L).2, d.userKnows c p.1 p.2 = .fails := by
   unfold step at hc' ⊢
   split at hc'
   · exact absurd hc hc'
   · split at hc'
     · exact absurd hc hc'
     · split_ifs at hc' ⊢
-      · refine ⟨_, mem_insert_self _ _, ?_⟩
-        have := mem_sdiff.not.mp hc'
-        simpa [rulesOut, hc] using this
+      · exact ⟨_, mem_insert_self _ _, by simpa [mem_sdiff, rulesOut, hc] using hc'⟩
       · exact absurd hc hc'
 
-omit [DecidableEq E] in
-theorem withType_subset (r : E) (L : Description A V) : L ⊆ d.withType r L := by
-  unfold withType
-  split_ifs
-  · exact subset_rfl
-  · split
-    · exact subset_rfl
-    · exact subset_insert _ _
+/-- Fig. 6's loop over the preferred attributes. -/
+def loop (r : E) : Finset E → List A → Description A V → Option (Description A V)
+  | _, [], _ => none
+  | C, a :: rest, L =>
+    let s := d.step r a C L
+    if s.1.Nonempty then loop r s.1 rest s.2 else some (d.withType r s.2)
 
-omit [DecidableEq E] in
-/-- The return adds at most the basic-level head noun. -/
-theorem withType_mem (r : E) (L : Description A V) {p : A × V} (hp : p ∈ d.withType r L) :
-    p ∈ L ∨ d.basicLevel r p.1 = some p.2 := by
-  unfold withType at hp
-  split_ifs at hp
-  · exact .inl hp
-  · split at hp
-    · exact .inl hp
-    next b hb =>
-      rcases mem_insert.mp hp with rfl | hp
-      · exact .inr hb
-      · exact .inl hp
+/-- Fig. 6's MakeReferringExpression, the Incremental Algorithm over the preferred
+attributes `P`, failing when they run out before the contrast set does. -/
+def makeReferringExpression (r : E) (C : Finset E) (P : List A) :
+    Option (Description A V) :=
+  d.loop r C P ∅
 
-/-- The loop never retracts a pair, rules out every remaining distractor and adds only
-admissible pairs (§3.2.1's indelible generation, §4.3). -/
-theorem go_spec (r : E) : ∀ (P : List A) (C : Finset E) (L L' : Description A V),
-    d.go r C P L = some L' →
-      L ⊆ L' ∧ (∀ c ∈ C, ∃ p ∈ L', d.userKnows c p.1 p.2 = some false) ∧
-        ∀ p ∈ L', p ∈ L ∨ d.Admissible r p
-  | [], _, _, _, h => by simp [go] at h
+/-- The loop returns through `withType` a description that never retracts a pair, rules out
+every remaining distractor and adds only pairs known to hold (§3.2.1's indelible
+generation, §4.3). -/
+theorem loop_spec (r : E) : ∀ (P : List A) (C : Finset E) (L L' : Description A V),
+    d.loop r C P L = some L' → ∃ L₀, L' = d.withType r L₀ ∧ L ⊆ L₀ ∧
+      (∀ c ∈ C, ∃ p ∈ L₀, d.userKnows c p.1 p.2 = .fails) ∧
+        ∀ p ∈ L₀, p ∈ L ∨ d.userKnows r p.1 p.2 = .holds
+  | [], _, _, _, h => nomatch h
   | a :: rest, C, L, L', h => by
-    simp only [go] at h
+    simp only [loop] at h
     split_ifs at h with hC
-    · obtain rfl := Option.some.inj h
-      refine ⟨(d.step_subset r a C L).trans (d.withType_subset r _), λ c hc => ?_,
-        λ p hp => ?_⟩
-      · have hc' : c ∉ (d.step r a C L).1 := by simp [hC]
-        obtain ⟨p, hp, hcp⟩ := d.step_ruledOut r a C L hc hc'
-        exact ⟨p, d.withType_subset r _ hp, hcp⟩
-      · rcases d.withType_mem r _ hp with hp | hb
-        · exact (d.step_mem r a C L hp).imp_right .inl
-        · exact .inr (.inr hb)
-    · obtain ⟨hsub, hrule, hadm⟩ := go_spec r rest _ _ L' h
-      refine ⟨(d.step_subset r a C L).trans hsub, λ c hc => ?_, λ p hp => ?_⟩
+    · obtain ⟨L₀, rfl, hsub, hrule, hadm⟩ := loop_spec r rest _ _ L' h
+      refine ⟨L₀, rfl, (d.step_subset r a C L).trans hsub, λ c hc => ?_, λ p hp => ?_⟩
       · by_cases hc' : c ∈ (d.step r a C L).1
         · exact hrule c hc'
         · obtain ⟨p, hp, hcp⟩ := d.step_ruledOut r a C L hc hc'
           exact ⟨p, hsub hp, hcp⟩
-      · exact (hadm p hp).elim (λ h => (d.step_mem r a C L h).imp_right .inl) .inr
+      · exact (hadm p hp).elim (λ h => d.step_mem r a C L h) .inr
+    · obtain rfl := Option.some.inj h
+      exact ⟨_, rfl, d.step_subset r a C L,
+        λ c hc => d.step_ruledOut r a C L hc λ h => hC ⟨c, h⟩,
+        λ p hp => d.step_mem r a C L hp⟩
 
 /-- Fig. 6's output rules out every member of the contrast set (§4.3). -/
 theorem makeReferringExpression_rulesOut {r : E} {C : Finset E} {P : List A}
     {L : Description A V} (h : d.makeReferringExpression r C P = some L) :
-    ∀ c ∈ C, ∃ p ∈ L, d.userKnows c p.1 p.2 = some false :=
-  (d.go_spec r P C ∅ L h).2.1
+    ∀ c ∈ C, ∃ p ∈ L, d.userKnows c p.1 p.2 = .fails := by
+  obtain ⟨L₀, rfl, -, hrule, -⟩ := d.loop_spec r P C ∅ L h
+  exact λ c hc => (hrule c hc).imp λ p hp => ⟨d.withType_subset r _ hp.1, hp.2⟩
 
 /-- Every pair of Fig. 6's output is known to the user to hold of the referent, except the
 head noun added at the end, which is the basic-level type (§4.3). -/
-theorem makeReferringExpression_admissible {r : E} {C : Finset E} {P : List A}
+theorem makeReferringExpression_mem {r : E} {C : Finset E} {P : List A}
     {L : Description A V} (h : d.makeReferringExpression r C P = some L) :
-    ∀ p ∈ L, d.Admissible r p :=
-  λ p hp => ((d.go_spec r P C ∅ L h).2.2 p hp).resolve_left (by simp)
-
-/-- Under the accuracy user model the output is a distinguishing description (§2.2). -/
-theorem flat_distinguishing {kb : KB E A V} {t : A} {r : E} {C : Finset E} {P : List A}
-    {L : Description A V} (h : (flat kb t).makeReferringExpression r C P = some L) :
-    Distinguishing kb r C L := by
-  refine ⟨λ p hp => ?_, λ c hc => ?_⟩
-  · rcases (flat kb t).makeReferringExpression_admissible h p hp with h' | h'
-    · obtain ⟨w, hw, hwp⟩ := Option.map_eq_some_iff.mp h'
-      exact hw.trans (congrArg some (of_decide_eq_true hwp))
-    · exact h'
-  · obtain ⟨p, hp, hcp⟩ := (flat kb t).makeReferringExpression_rulesOut h c hc
-    obtain ⟨w, hw, hwp⟩ := Option.map_eq_some_iff.mp hcp
-    exact ⟨p, hp, λ hap => of_decide_eq_false hwp (Option.some.inj (hw.symm.trans hap))⟩
-
-/-- The loop returns only through `withType`. -/
-theorem go_eq_withType (r : E) : ∀ (P : List A) (C : Finset E) (L L' : Description A V),
-    d.go r C P L = some L' → ∃ L₀, L' = d.withType r L₀
-  | [], _, _, _, h => by simp [go] at h
-  | a :: rest, C, L, L', h => by
-    simp only [go] at h
-    split_ifs at h with hC
-    · exact ⟨_, (Option.some.inj h).symm⟩
-    · exact go_eq_withType r rest _ _ L' h
+    ∀ p ∈ L, d.userKnows r p.1 p.2 = .holds ∨ d.basicLevel r p.1 = some p.2 := by
+  obtain ⟨L₀, rfl, -, -, hadm⟩ := d.loop_spec r P C ∅ L h
+  exact λ p hp => (d.withType_mem r L₀ hp).elim
+    (λ h => .inl ((hadm p h).resolve_left (by simp))) .inr
 
 /-- Fig. 6's output carries a head noun whenever the referent has a basic-level type
 (§4.3). -/
 theorem makeReferringExpression_type {r : E} {C : Finset E} {P : List A}
     {L : Description A V} (h : d.makeReferringExpression r C P = some L)
     (hb : (d.basicLevel r d.type).isSome) : ∃ v, (d.type, v) ∈ L := by
-  obtain ⟨L₀, rfl⟩ := d.go_eq_withType r P C ∅ L h
+  obtain ⟨L₀, rfl, -, -, -⟩ := d.loop_spec r P C ∅ L h
   unfold withType
   split_ifs with hL
   · obtain ⟨⟨a, v⟩, hp, ha⟩ := hL
     exact ⟨v, ha ▸ hp⟩
   · obtain ⟨b, hb⟩ := Option.isSome_iff_exists.mp hb
     exact ⟨b, by simp [hb]⟩
+
+/-- Under the accuracy user model the output is a distinguishing description (§2.2). -/
+theorem flat_distinguishing {kb : KB E A V} {t : A} {r : E} {C : Finset E} {P : List A}
+    {L : Description A V} (h : (flat kb t).makeReferringExpression r C P = some L) :
+    Distinguishing kb r C L := by
+  refine ⟨λ p hp => ?_, λ c hc => ?_⟩
+  · exact ((flat kb t).makeReferringExpression_mem h p hp).elim
+      (flat_userKnows r p.1 p.2).1.mp id
+  · obtain ⟨p, hp, hcp⟩ := (flat kb t).makeReferringExpression_rulesOut h c hc
+    obtain ⟨w, hw, hwv⟩ := (flat_userKnows c p.1 p.2).2.mp hcp
+    exact ⟨p, hp, λ hap => hwv (Option.some.inj (hw.symm.trans hap))⟩
 
 end
 
@@ -445,7 +443,7 @@ end Incremental
 
 /-! ### The paper's examples -/
 
-/-- The attributes of the paper's examples: the head noun and the perceptual properties. -/
+/-- The head noun and the perceptual properties, the attributes of the paper's examples. -/
 inductive Attr where
   | type
   | property (d : Features.PropertyDomain)
@@ -481,19 +479,19 @@ def kb : KB Animal Attr Value
   | .object3, .property .color => some .black
   | _, _ => none
 
-/-- The basic-level values of §2.2: dog, dog, cat. -/
+/-- The basic-level values of §2.2, dog, dog and cat. -/
 def basicLevel (x : Animal) : Attr → Option Value
   | .type => match x with | .object3 => some .cat | _ => some .dog
   | a => kb x a
 
-/-- The taxonomy of §4.4: the breeds sit below the basic-level types. -/
+/-- The taxonomy of §4.4, the breeds below their basic-level types. -/
 def parent : Value → Option Value
   | .chihuahua => some .dog
   | .siameseCat => some .cat
   | _ => none
 
-/-- The domain of §4.4: the breeds are the only more specific values, and the user knows a
-pair to hold exactly when it is accurate under the taxonomy. -/
+/-- The domain of §4.4, in which the breeds are the only more specific values and the user
+knows a pair to hold exactly when it is accurate under the taxonomy. -/
 def domain : Domain Animal Attr Value where
   type := .type
   depth := 1
@@ -501,7 +499,9 @@ def domain : Domain Animal Attr Value where
   moreSpecific x a v := match kb x a with
     | some w => if parent w = some v then some w else none
     | none => none
-  userKnows x a v := (kb x a).map λ w => decide (w = v ∨ parent w = some v)
+  userKnows x a v := match kb x a with
+    | some w => if w = v ∨ parent w = some v then .holds else .fails
+    | none => .unknown
 
 /-- The contrast set. -/
 def contrast : Finset Animal := {.object2, .object3}
@@ -576,7 +576,8 @@ def contrast : Finset Cup := {.object2, .object3, .object4, .object5, .object6, 
 
 /-- Object1's properties in the paper's order. -/
 def properties : List (Attr × Value) :=
-  [(.property .size, .large), (.property .color, .red), (.property .material, .plastic)]
+  [.property .size, .property .color, .property .material].filterMap λ a =>
+    (kb .object1 a).map ((a, ·))
 
 /-- The greedy heuristic selects plastic first, then large and red, giving *the large red
 plastic cup* once the head noun is added (§3.1.2). -/
