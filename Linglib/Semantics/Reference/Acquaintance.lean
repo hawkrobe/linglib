@@ -14,8 +14,8 @@ is a set of intensions over an evaluation index `Idx` that picks out values
 in `Res`; an entity is *acquainted* (at index `p`) when some concept in the
 cover identifies it at `p`.
 
-Instantiated at `Idx := Assignment E × WitnessSeq E`, `Res := E` this is the
-PLA cover system in `Semantics/Dynamic/PLA/Belief.lean`.
+Instantiated at an assignment–witness pair as `Idx` and `Res := E` this is the
+cover-relative belief system of [dekker-2012].
 Instantiated at `Idx := KContext W E P T`, `Res := T` this is
 [heim-1994-comments]'s time-concept; [abusch-1997]'s own de re rule, through an
 acquaintance relation rather than a cover, is `Acquaintance.deRe`
