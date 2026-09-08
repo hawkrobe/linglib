@@ -3,21 +3,17 @@ import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Data.PHOIBLE.Inventories.English
 
 /-!
-# English Phonological Inventory
+# English phonology
 
-Concrete English segments and language-specific phonological rules,
-defined using the SPE formalism from `Subregular.LocalRewrite`.
+Segments of English in [hayes-2009]'s feature system, each a partial specification so that
+a bundle doubles as the natural class it names, two of the book's English rules as local
+rewrite rules, and the PHOIBLE inventory ([moran-mccloy-2019]) the fragment is checked
+against.
 
-## Segments
+## References
 
-Core inventory for demo alternations: /p t k b d m n ŋ s θ ʃ w r æ ɪ ə/.
-
-## Rules
-
-1. **Preglottalization** (Hayes p.125): `[-cont, -voice] → [+c.g.] / __]word`
-2. **Postnasal /t/ Deletion** (Hayes p.133): `[-cont, +cor, +ant, -voice] → ∅ / [+nasal] __ [+syll]`
-
-[hayes-2009]
+* [hayes-2009]
+* [moran-mccloy-2019]
 -/
 
 open Phonology
@@ -25,9 +21,7 @@ open Subregular.LocalRewrite
 
 namespace English.Phonology
 
--- ============================================================================
--- § 1: Segment Inventory
--- ============================================================================
+/-! ### Segments -/
 
 /-- /p/: voiceless bilabial stop -/
 def p : Segment := Segment.ofSpecs
@@ -59,6 +53,19 @@ def d : Segment := Segment.ofSpecs
    (Feature.sonorant, false), (Feature.continuant, false),
    (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, true)]
 
+/-- /g/: voiced velar stop -/
+def g : Segment := Segment.ofSpecs
+  [(Feature.syllabic, false), (Feature.consonantal, true),
+   (Feature.sonorant, false), (Feature.continuant, false),
+   (Feature.voice, true), (Feature.dorsal, true)]
+
+/-- /dʒ/: voiced postalveolar affricate -/
+def dezh : Segment := Segment.ofSpecs
+  [(Feature.syllabic, false), (Feature.consonantal, true),
+   (Feature.sonorant, false), (Feature.continuant, false), (Feature.delayedRelease, true),
+   (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, false),
+   (Feature.distributed, true), (Feature.strident, true)]
+
 /-- /m/: bilabial nasal -/
 def m : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
@@ -76,6 +83,20 @@ def ŋ : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, true), (Feature.continuant, false), (Feature.nasal, true),
    (Feature.voice, true), (Feature.dorsal, true)]
+
+/-- /f/: voiceless labiodental fricative -/
+def f : Segment := Segment.ofSpecs
+  [(Feature.syllabic, false), (Feature.consonantal, true),
+   (Feature.sonorant, false), (Feature.continuant, true),
+   (Feature.voice, false), (Feature.labial, true), (Feature.labiodental, true),
+   (Feature.strident, true)]
+
+/-- /v/: voiced labiodental fricative -/
+def v : Segment := Segment.ofSpecs
+  [(Feature.syllabic, false), (Feature.consonantal, true),
+   (Feature.sonorant, false), (Feature.continuant, true),
+   (Feature.voice, true), (Feature.labial, true), (Feature.labiodental, true),
+   (Feature.strident, true)]
 
 /-- /s/: voiceless alveolar fricative -/
 def s : Segment := Segment.ofSpecs
@@ -97,6 +118,12 @@ def esh : Segment := Segment.ofSpecs
    (Feature.sonorant, false), (Feature.continuant, true),
    (Feature.voice, false), (Feature.coronal, true), (Feature.anterior, false),
    (Feature.distributed, true), (Feature.strident, true)]
+
+/-- /l/: alveolar lateral -/
+def l : Segment := Segment.ofSpecs
+  [(Feature.syllabic, false), (Feature.consonantal, true),
+   (Feature.sonorant, true), (Feature.approximant, true), (Feature.lateral, true),
+   (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, true)]
 
 /-- /w/: labial-velar glide -/
 def w : Segment := Segment.ofSpecs
@@ -126,30 +153,48 @@ def laxI : Segment := Segment.ofSpecs
    (Feature.high, true), (Feature.low, false), (Feature.front, true),
    (Feature.tense, false)]
 
+/-- /i/: high front tense vowel -/
+def tenseI : Segment := Segment.ofSpecs
+  [(Feature.syllabic, true), (Feature.consonantal, false),
+   (Feature.sonorant, true), (Feature.continuant, true),
+   (Feature.voice, true), (Feature.dorsal, true),
+   (Feature.high, true), (Feature.low, false), (Feature.front, true),
+   (Feature.tense, true)]
+
+/-- /ʌ/: mid back lax unrounded vowel -/
+def wedge : Segment := Segment.ofSpecs
+  [(Feature.syllabic, true), (Feature.consonantal, false),
+   (Feature.sonorant, true), (Feature.continuant, true),
+   (Feature.voice, true), (Feature.dorsal, true),
+   (Feature.high, false), (Feature.low, false), (Feature.back, true), (Feature.front, false),
+   (Feature.round, false), (Feature.tense, false)]
+
+/-- /o/: mid back tense rounded vowel -/
+def o : Segment := Segment.ofSpecs
+  [(Feature.syllabic, true), (Feature.consonantal, false),
+   (Feature.sonorant, true), (Feature.continuant, true),
+   (Feature.voice, true), (Feature.dorsal, true),
+   (Feature.high, false), (Feature.low, false), (Feature.back, true), (Feature.front, false),
+   (Feature.labial, true), (Feature.round, true), (Feature.tense, true)]
+
 /-- /ə/: mid central vowel (schwa) -/
 def schwa : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.consonantal, false),
    (Feature.sonorant, true), (Feature.continuant, true),
    (Feature.voice, true)]
 
--- ============================================================================
--- § 2: Rules
--- ============================================================================
+/-! ### Rules -/
 
-/-- Preglottalization (Hayes p.125):
-    `[-cont, -voice] → [+c.g.] / __]word`
-
-    Voiceless stops become glottalized word-finally. -/
+/-- Preglottalization: a voiceless stop is glottalized word-finally,
+`[−cont, −voice] → [+c.g.] / __ ]word`. -/
 def preglottalization : Rule where
   name := "Preglottalization"
   target := Segment.ofSpecs [(Feature.continuant, false), (Feature.voice, false)]
   effect := .changeFeatures (Segment.ofSpecs [(Feature.constrGlottis, true)])
   rightContext := [.wordBoundary]
 
-/-- Postnasal /t/ Deletion (Hayes p.133):
-    `[-cont, +cor, +ant, -voice] → ∅ / [+nasal] __ [+syll]`
-
-    Voiceless coronal stops delete between a nasal and a vowel. -/
+/-- Postnasal /t/ deletion: a voiceless coronal stop deletes between a nasal and a vowel,
+`[−cont, +cor, +ant, −voice] → ∅ / [+nasal] __ [+syll]`. -/
 def postnasalDeletion : Rule where
   name := "Postnasal /t/ Deletion"
   target := Segment.ofSpecs
@@ -159,49 +204,10 @@ def postnasalDeletion : Rule where
   leftContext := [.seg (Segment.ofSpecs [(Feature.nasal, true)])]
   rightContext := [.seg (Segment.ofSpecs [(Feature.syllabic, true)])]
 
--- ============================================================================
--- § 3: Verification
--- ============================================================================
+/-! ### The PHOIBLE inventory -/
 
-/-- /t/ is a voiceless stop: [-cont, -voice]. -/
-theorem t_is_voiceless_stop :
-    t.HasValue Feature.continuant false = true ∧
-    t.HasValue Feature.voice false = true :=
-  ⟨by decide, by decide⟩
-
-/-- /n/ is a nasal: [+nasal, +son]. -/
-theorem n_is_nasal :
-    n.HasValue Feature.nasal true = true ∧
-    n.HasValue Feature.sonorant true = true :=
-  ⟨by decide, by decide⟩
-
-/-- /æ/ is a vowel: [+syll, +son]. -/
-theorem æ_is_vowel :
-    æ.HasValue Feature.syllabic true = true ∧
-    æ.HasValue Feature.sonorant true = true :=
-  ⟨by decide, by decide⟩
-
-/-- /k/ is a voiceless velar stop: [-cont, -voice, +dor]. -/
-theorem k_is_voiceless_velar_stop :
-    k.HasValue Feature.continuant false = true ∧
-    k.HasValue Feature.voice false = true ∧
-    k.HasValue Feature.dorsal true = true :=
-  ⟨by decide, by decide, by decide⟩
-
--- ============================================================================
--- § 4: PHOIBLE-canonical inventory
--- ============================================================================
-
-/-- Canonical English phoneme inventory: PHOIBLE InvID 160 ("stan1293"
-    Standard English, source SPA). PHOIBLE 2.0 has 5 English doculects;
-    this picks SPA as the canonical Fragment-layer choice. Other
-    inventories accessible via `Data.PHOIBLE.Inventories.English`
-    directly.
-
-    Co-located with the Hayes-2009 SPE-style segments above (which are a
-    different, theory-laden representation): SPE features are inferential
-    primitives in `Phonology/Segmental/Defs.lean`; PHOIBLE
-    inventory is the consensus-data alternative. -/
+/-- The PHOIBLE inventory of Standard English (inventory 160, the SPA doculect); the other
+English doculects are in `Data.PHOIBLE.Inventories.English`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.English.eng
 
