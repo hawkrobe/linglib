@@ -1,484 +1,237 @@
-import Linglib.Logic.Natural.Basic
+import Linglib.Logic.Natural.Soundness
+import Linglib.Semantics.Polarity.Licensing
+import Linglib.Semantics.Exhaustification.Antiexhaustive
+import Linglib.Fragments.English.PolarityItems
+import Linglib.Fragments.Italian.PolarityItems
+import Linglib.Data.Examples.Chierchia2013
 
 /-!
-# Chierchia 2013: disjunction, ignorance, and the distribution of *any*
+# Chierchia (2013): Logic in Grammar
 
-This file formalizes two threads of *Logic in Grammar* ([chierchia-2013]). First, the positional
-asymmetry of disjunction: the same *or* is preferentially exclusive in an upward-entailing
-position and inclusive in a downward-entailing one, because Maximize Strength computes the
-not-both implicature only where it strengthens. `predictReading` derives the preferred reading
-from the polarity a position determines, and the six positions of Ch.1 instantiate it. The
-ignorance side of disjunction — *Harry is in Antwerp or Brussels* conveying that the speaker
-knows neither disjunct, unlike the scalar implicature of *some* — is recorded in the section
-prose.
-
-Second, *any* as an existential whose domain alternatives are obligatorily active: it is
-ungrammatical exactly where no reading survives exhaustification, namely the positive episodic
-context, where exhaustification is contradictory; in a downward-entailing or question context
-exhaustification is vacuous and *any* is a plain existential, and a modal or generic rescues it
-into free choice.
-
-## Main definitions
-
-* `DisjunctionReading`, `DisjunctionPosition`, `positionPolarity`, `predictReading` — the
-  positional asymmetry, derived from polarity
-* `UFCIContext`, `ufciGrammatical`, `ufciReading` — the distribution and readings of *any*
-* `FCIFlavor` — the existential/universal free-choice dimension later studies consume
-
-## Main results
-
-* `predictions_match_examples` — at each of the six positions, the recorded polarity and the
-  preferred reading are the derived ones
-* `ufciGrammatical_iff_reading` — grammaticality and reading are one prediction
-* `anyExamples_match_prediction` — the recorded *any* judgments match it in every sampled context
+This file formalizes the opening chapter of [chierchia-2013], where the preferred reading of
+*or* and the distribution of *any* and *ever* are shown to track one logical property of a
+position. *Or* is exclusive in an upward-entailing position and inclusive in a
+downward-entailing one, because Maximize Strength adds the not-both implicature only where it
+strengthens, and an implicature strengthens under a monotone embedding and weakens under an
+antitone one. *Any* and *ever* are grammatical in the downward-entailing positions and out
+elsewhere, because their subdomain alternatives are obligatorily active and must be
+exhaustified: under an antitone context every subdomain alternative is entailed and
+exhaustification is vacuous, while at the existential itself no witness is entailed and
+exhaustification is a contradiction. *Any* alone extends to the free-choice positions, a
+possibility modal or an imperative, the divide between it and *ever* and between Italian
+*qualsiasi* and *alcuno*. The positions are the paper's easy and hard columns, the hard column
+being the licensing contexts whose signatures fix their polarity, and the readings and
+judgments are rows: the theorems derive each reading from Maximize Strength and each judgment
+from the licensing keystone applied to the Fragment entries.
 
 ## References
 
 * [chierchia-2013]
-* [gazdar-1979]
-* [geurts-2010]
+* [ladusaw-1979]
 -/
 
 namespace Chierchia2013
 
+open NaturalLogic Polarity Exhaustification Data.Examples
 
-/-! The ignorance data — *Harry is in Antwerp or Brussels* implicating that the speaker knows
-neither disjunct ([geurts-2010]), its contrast with the scalar *some*, longer disjunctions
-carrying ignorance about every disjunct, the readings blocked by explicit speaker knowledge, and
-the scope interactions with *every* — are described in the section prose of Ch.1; the derivable
-part, the positional asymmetry, follows. -/
+/-! ### Maximize Strength -/
 
-/-!
-## Positional Asymmetry in Disjunction Interpretation
+section MaximizeStrength
 
-[chierchia-2013] "Logic in Grammar" Ch.1 observes that the same lexical
-material yields different preferred readings based on structural position:
+variable {W : Type*} (p q : Set W)
 
-| Position | Polarity | Preferred Reading |
-|----------|----------|-------------------|
-| Consequent of conditional | UE | Exclusive |
-| Antecedent of conditional | DE | Inclusive |
-| Scope of "every" | UE | Exclusive |
-| Restrictor of "every" | DE | Inclusive |
-| Positive sentence | UE | Exclusive |
-| Negative sentence | DE | Inclusive |
-
-### The Core Pattern
-
-UE contexts: exclusive reading preferred
-- "If everything goes well, we'll hire Mary or Sue"
-- Default: we'll hire exactly one of them
-
-DE contexts: inclusive reading preferred
-- "If we hire Mary or Sue, everything will go well"
-- Default: hiring either or both leads to success
-
-### Explanation via Maximize Strength
-
-The asymmetry follows from the Maximize Strength principle:
-- In UE: adding "not both" strengthens → compute SI
-- In DE: adding "not both" would weaken → don't compute SI
-
-When the exclusive SI is not computed, the inclusive reading emerges.
-
--/
-
-/--
-Type of disjunction interpretation.
--/
+/-- The readings of *or*. -/
 inductive DisjunctionReading where
-  | inclusive   -- p ∨ q (possibly both)
-  | exclusive   -- (p ∨ q) ∧ ¬(p ∧ q) (not both)
+  | inclusive
+  | exclusive
   deriving DecidableEq, Repr
 
-/--
-Structural position of the disjunction.
--/
-inductive DisjunctionPosition where
-  | matrix            -- Main clause
-  | conditional_cons  -- Consequent of conditional (UE)
-  | conditionalAntecedent   -- Antecedent of conditional (DE)
-  | every_scope       -- Scope of "every" (UE)
-  | every_restrictor  -- Restrictor of "every" (DE)
-  | negation_scope    -- Under negation (DE)
+/-- The proposition a reading assigns to *p or q*: the disjunction, or the disjunction with the
+not-both implicature added. -/
+def DisjunctionReading.denotation : DisjunctionReading → Set W
+  | .inclusive => p ∪ q
+  | .exclusive => (p ∪ q) \ (p ∩ q)
+
+def DisjunctionReading.key : DisjunctionReading → String
+  | .inclusive => "inclusive"
+  | .exclusive => "exclusive"
+
+/-- The implicature strengthens. -/
+theorem exclusive_subset_inclusive :
+    DisjunctionReading.exclusive.denotation p q ⊆ DisjunctionReading.inclusive.denotation p q :=
+  Set.sdiff_subset
+
+/-- Maximize Strength: a reading is preferred in a position when the position's embedding of it
+is at least as strong as its embedding of the other reading. -/
+def IsStrongest (C : Set W → Set W) (r : DisjunctionReading) : Prop :=
+  ∀ r' : DisjunctionReading, C (r.denotation p q) ⊆ C (r'.denotation p q)
+
+/-- Under a monotone embedding the implicature still strengthens, so the exclusive reading is
+preferred. -/
+theorem isStrongest_exclusive {C : Set W → Set W} (hC : Monotone C) :
+    IsStrongest p q C .exclusive
+  | .inclusive => hC (exclusive_subset_inclusive p q)
+  | .exclusive => subset_rfl
+
+/-- Under an antitone embedding the implicature weakens, so the inclusive reading is preferred. -/
+theorem isStrongest_inclusive {C : Set W → Set W} (hC : Antitone C) :
+    IsStrongest p q C .inclusive
+  | .inclusive => subset_rfl
+  | .exclusive => hC (exclusive_subset_inclusive p q)
+
+/-- The reading Maximize Strength selects from the polarity of a position; a non-monotone
+position selects neither. -/
+def maximizeStrength : ContextPolarity → Option DisjunctionReading
+  | .upward => some .exclusive
+  | .downward => some .inclusive
+  | .nonMonotonic => none
+
+/-- The selection is sound: for an embedding with a signature of the position's polarity, the
+selected reading is the strongest. -/
+theorem isStrongest_maximizeStrength {φ : Signature} {C : Set W → Set W} (hφ : φ.SoundFor C) :
+    ∀ r ∈ maximizeStrength φ.toContextPolarity, IsStrongest p q C r := by
+  intro r hr
+  cases hpol : φ.toContextPolarity <;> rw [hpol] at hr <;>
+    simp only [maximizeStrength, Option.mem_def, Option.some.injEq, reduceCtorEq] at hr
+  · exact hr ▸ isStrongest_exclusive p q (hφ.monotone hpol)
+  · exact hr ▸ isStrongest_inclusive p q (hφ.antitone hpol)
+
+end MaximizeStrength
+
+/-! ### Exhaustifying obligatory subdomain alternatives -/
+
+section Exhaustification
+
+variable {W E : Type*} (D : List E) (P : E → Set W)
+
+/-- The exhaustification operator, the covert counterpart of *only*: the prejacent, with every
+alternative it does not entail negated. -/
+def exh (C : Set (Set W)) (p : Set W) : Set W := {w | w ∈ p ∧ ∀ q ∈ C, ¬ p ⊆ q → w ∉ q}
+
+theorem exh_subset (C : Set (Set W)) (p : Set W) : exh C p ⊆ p := λ _ h => h.1
+
+/-- Exhaustification cannot exhaustify away entailments: it is vacuous when the prejacent
+entails every alternative. -/
+theorem exh_eq_self {C : Set (Set W)} {p : Set W} (h : ∀ q ∈ C, p ⊆ q) : exh C p = p :=
+  (exh_subset C p).antisymm λ _ hw => ⟨hw, λ q hq hnq => absurd (h q hq) hnq⟩
+
+/-- A subdomain existential entails the existential over the whole domain. -/
+theorem existsIn_subset {D' : List E} (h : ∀ x ∈ D', x ∈ D) : existsIn D' P ⊆ existsIn D P := by
+  rintro w ⟨x, hx, hPx⟩
+  exact ⟨x, h x hx, hPx⟩
+
+/-- Under an antitone context the existential entails each of its subdomain alternatives, so
+*any* in a downward-entailing position is exhaustified vacuously: a plain existential. -/
+theorem exh_antitone_eq {C : Set W → Set W} (hC : Antitone C) :
+    exh (C '' dMinAlts D P) (C (existsIn D P)) = C (existsIn D P) :=
+  exh_eq_self (by rintro _ ⟨_, ⟨D', hD', rfl⟩, rfl⟩; exact hC (existsIn_subset D P hD'))
+
+/-- At the existential itself, where no witness is entailed, exhaustifying the obligatory
+alternatives negates every singleton alternative and is a contradiction: the source of the
+deviance of *any* in a positive episodic sentence. -/
+theorem exh_dMinAlts_eq_empty (h : ∀ a ∈ D, ¬ existsIn D P ⊆ P a) :
+    exh (dMinAlts D P) (existsIn D P) = ∅ := by
+  refine Set.eq_empty_of_forall_notMem λ w ⟨⟨a, ha, hPa⟩, hall⟩ => ?_
+  refine hall (existsIn [a] P) ⟨[a], by simpa using ha, rfl⟩ (λ hsub => h a ha λ v hv => ?_)
+    ⟨a, List.mem_singleton_self a, hPa⟩
+  obtain ⟨x, hx, hPx⟩ := hsub hv
+  obtain rfl := List.mem_singleton.1 hx
+  exact hPx
+
+end Exhaustification
+
+/-! ### The positions -/
+
+/-- The positions of the paper's two columns: the easy column, where *or* is exclusive and *any*
+is out, and the hard column, the downward-entailing licensing contexts of [ladusaw-1979], where
+*or* is inclusive and *any* is in. -/
+inductive Position where
+  /-- A positive sentence. -/
+  | matrix
+  /-- The consequent of a conditional. -/
+  | conditionalConsequent
+  /-- The second argument of *every*. -/
+  | everyScope
+  /-- The scope of a positive quantifier such as *somebody*. -/
+  | positiveQuantifierScope
+  /-- A licensing context: the antecedent of a conditional, the first argument of *every*,
+  negation, *nobody*, *doubt*, a possibility modal, an imperative. -/
+  | licensing (c : LicensingContext)
   deriving DecidableEq, Repr
 
-open NaturalLogic (ContextPolarity)
+/-- The polarity of a position: the easy column is upward entailing, and a licensing context has
+the polarity of its signature. -/
+def Position.polarity : Position → ContextPolarity
+  | .licensing c => c.properties.strawsonSignature.toContextPolarity
+  | _ => .upward
 
-/--
-Determine context polarity from position.
--/
-def positionPolarity : DisjunctionPosition → ContextPolarity
-  | .matrix => .upward
-  | .conditional_cons => .upward
-  | .conditionalAntecedent => .downward
-  | .every_scope => .upward
-  | .every_restrictor => .downward
-  | .negation_scope => .downward
+/-- A position licenses an item when it is a licensing context that licenses it. -/
+def Position.Licenses : Position → Item → Prop
+  | .licensing c, e => c.licenses e
+  | _, _ => False
 
-/--
-Predict preferred reading from polarity.
-UE → exclusive (SI computed), DE → inclusive (SI not computed).
-NM → inclusive (no clear strength ordering, so no exclusive SI).
--/
-def predictReading : ContextPolarity → DisjunctionReading
-  | .upward => .exclusive
-  | .downward => .inclusive
-  | .nonMonotonic => .inclusive
+instance : (pos : Position) → (e : Item) → Decidable (pos.Licenses e)
+  | .licensing c, e => inferInstanceAs (Decidable (c.licenses e))
+  | .matrix, _ | .conditionalConsequent, _ | .everyScope, _ | .positiveQuantifierScope, _ =>
+    inferInstanceAs (Decidable False)
 
-/--
-Example showing exclusive/inclusive asymmetry.
--/
-structure ExclusiveInclusiveExample where
-  /-- The sentence -/
-  sentence : String
-  /-- Position of disjunction -/
-  position : DisjunctionPosition
-  /-- Polarity of that position -/
-  polarity : ContextPolarity
-  /-- Preferred reading -/
-  preferredReading : DisjunctionReading
-  /-- Can the other reading be forced with context? -/
-  canForceOther : Bool
-  /-- Source -/
-  source : String
-  deriving Repr
+/-- Every downward-entailing position licenses *ever*: the hard column of the readings of *or*
+is the column where the pure negative-polarity item is grammatical. -/
+theorem licenses_ever_of_downward :
+    ∀ pos : Position, pos.polarity = .downward → pos.Licenses English.PolarityItems.ever := by
+  intro pos
+  (cases pos <;> try (rename_i c; cases c)) <;> decide
 
--- [chierchia-2013] examples (1a,b)
-def hiring_consequent : ExclusiveInclusiveExample :=
-  { sentence := "If everything goes well, we'll hire Mary or Sue"
-  , position := .conditional_cons
-  , polarity := .upward
-  , preferredReading := .exclusive
-  , canForceOther := true
-  , source := "Chierchia (2013) p.2 (1a)"
-  }
+/-- *Any* parts ways with *ever* in exactly the free-choice contexts, those licensing by the
+generic-indefinite mechanism: a possibility modal, an imperative, a generic. -/
+theorem licenses_any_not_ever_iff (c : LicensingContext) :
+    c.licenses English.PolarityItems.any ∧ ¬ c.licenses English.PolarityItems.ever ↔
+      c.properties.mechanism = .byGenericIndefinite := by
+  cases c <;> decide
 
-def hiring_antecedent : ExclusiveInclusiveExample :=
-  { sentence := "If we hire Mary or Sue, everything will go well"
-  , position := .conditionalAntecedent
-  , polarity := .downward
-  , preferredReading := .inclusive
-  , canForceOther := true
-  , source := "Chierchia (2013) p.2 (1b)"
-  }
+/-! ### The rows -/
 
--- Matrix clause example
-def matrix_exclusive : ExclusiveInclusiveExample :=
-  { sentence := "We'll hire Mary or Sue"
-  , position := .matrix
-  , polarity := .upward
-  , preferredReading := .exclusive
-  , canForceOther := true
-  , source := "Standard observation"
-  }
+private def Position.ofKey : String → Option Position
+  | "matrix" => some .matrix
+  | "conditionalConsequent" => some .conditionalConsequent
+  | "everyScope" => some .everyScope
+  | "positiveQuantifierScope" => some .positiveQuantifierScope
+  | "conditionalAntecedent" => some (.licensing .conditionalAntecedent)
+  | "universalRestrictor" => some (.licensing .universalRestrictor)
+  | "negation" => some (.licensing .negation)
+  | "nobody" => some (.licensing .nobody)
+  | "doubtVerb" => some (.licensing .doubtVerb)
+  | "modalPossibility" => some (.licensing .modalPossibility)
+  | "imperative" => some (.licensing .imperative)
+  | _ => none
 
--- Universal restrictor vs scope
-def every_scope : ExclusiveInclusiveExample :=
-  { sentence := "Everyone likes Mary or Sue"
-  , position := .every_scope
-  , polarity := .upward
-  , preferredReading := .exclusive
-  , canForceOther := true
-  , source := "Chierchia (2013) discussion"
-  }
+private def item : String → Option Item
+  | "any" => some English.PolarityItems.any
+  | "ever" => some English.PolarityItems.ever
+  | "alcuno" => some Italian.PolarityItems.alcuno
+  | "qualsiasi" => some Italian.PolarityItems.qualsiasi
+  | _ => none
 
-def every_restrictor : ExclusiveInclusiveExample :=
-  { sentence := "Everyone who likes Mary or Sue will be happy"
-  , position := .every_restrictor
-  , polarity := .downward
-  , preferredReading := .inclusive
-  , canForceOther := true
-  , source := "Chierchia (2013) discussion"
-  }
+/-- In every unforced row the reading of *or* is the one Maximize Strength selects from the
+polarity of its position. -/
+theorem or_rows :
+    ∀ e ∈ Examples.all, e.feature? "item" = some "or" → e.feature? "forced" = none →
+      ∀ pos ∈ (e.feature? "position").bind Position.ofKey,
+        e.feature? "reading" = (maximizeStrength pos.polarity).map DisjunctionReading.key := by
+  decide
 
--- Negation scope
-def negation_scope : ExclusiveInclusiveExample :=
-  { sentence := "We won't hire Mary or Sue"
-  , position := .negation_scope
-  , polarity := .downward
-  , preferredReading := .inclusive
-  , canForceOther := true
-  , source := "De Morgan reading: ¬M ∧ ¬S"
-  }
+/-- The exclusive reading is available under *nobody*, but only forced by the context. -/
+theorem exclusive_under_nobody_forced :
+    ∃ e ∈ Examples.all, e.feature? "forced" = some "true" ∧
+      e.feature? "position" = some "nobody" ∧ e.feature? "reading" = some "exclusive" := by
+  decide
 
-/--
-All exclusive/inclusive examples.
--/
-def exclusiveInclusiveExamples : List ExclusiveInclusiveExample :=
-  [ hiring_consequent, hiring_antecedent
-  , matrix_exclusive
-  , every_scope, every_restrictor
-  , negation_scope
-  ]
-
-/-- At each of the six positions, the recorded polarity is the one the position determines, and
-the preferred reading is the one Maximize Strength predicts from it. -/
-theorem predictions_match_examples :
-    ∀ ex ∈ exclusiveInclusiveExamples,
-      positionPolarity ex.position = ex.polarity ∧
-        predictReading ex.polarity = ex.preferredReading := by
-  intro ex hex
-  simp only [exclusiveInclusiveExamples, List.mem_cons, List.not_mem_nil, or_false] at hex
-  rcases hex with rfl | rfl | rfl | rfl | rfl | rfl <;> exact ⟨rfl, rfl⟩
-
-/-!
-## Forcing Non-Preferred Readings
-
-While polarity determines the default reading, context can force the
-non-preferred interpretation:
-
-### Forcing Inclusive in UE (harder)
-"If everything goes well, we'll hire Mary or Sue, or both."
-- Explicit "or both" forces inclusive
-
-### Forcing Exclusive in DE (harder)
-"If we hire Mary or Sue but not both, everything will go well."
-- Explicit "but not both" forces exclusive
-
-The observation: forcing requires explicit marking.
-The unmarked reading follows from Maximize Strength.
--/
-
-/--
-Example of forcing a non-preferred reading.
--/
-structure ForcedReadingExample where
-  /-- The base sentence -/
-  baseSentence : String
-  /-- Position (determines default) -/
-  position : DisjunctionPosition
-  /-- Default reading -/
-  defaultReading : DisjunctionReading
-  /-- Forcing phrase -/
-  forcingPhrase : String
-  /-- Resulting reading -/
-  forcedReading : DisjunctionReading
-  /-- Notes -/
-  notes : String
-  deriving Repr
-
-def force_inclusive_ue : ForcedReadingExample :=
-  { baseSentence := "If everything goes well, we'll hire Mary or Sue"
-  , position := .conditional_cons
-  , defaultReading := .exclusive
-  , forcingPhrase := "or both"
-  , forcedReading := .inclusive
-  , notes := "Adding 'or both' explicitly licenses inclusive reading"
-  }
-
-def force_exclusive_de : ForcedReadingExample :=
-  { baseSentence := "If we hire Mary or Sue, everything will go well"
-  , position := .conditionalAntecedent
-  , defaultReading := .inclusive
-  , forcingPhrase := "but not both"
-  , forcedReading := .exclusive
-  , notes := "Adding 'but not both' explicitly restricts to exclusive"
-  }
-
-/--
-All forced reading examples.
--/
-def forcedReadingExamples : List ForcedReadingExample :=
-  [force_inclusive_ue, force_exclusive_de]
-
-
-/-!
-## Universal Free Choice Items
-
-Universal FCIs like English "any" and Italian "qualunque" contrast with
-existential FCIs (irgendein, yek-i, vreun):
-
-| FCI Type | Base Force | Examples | Morphological Hints |
-|----------|------------|----------|---------------------|
-| Existential | ∃ | irgendein, yek-i, vreun | Often contains "one" |
-| Universal | ∀ | any, qualunque, whatever | Often wh-based |
-
-### Chierchia's analysis
-
-Both FCI types have the same underlying existential semantics.
-The universal force of "any" emerges from obligatory exhaustification
-of domain alternatives.
-
-- "any" = ∃ + obligatory domain alternatives (always active)
-- "some" = ∃ + optional domain alternatives (relevance-gated)
-
-### The "any" Distribution
-
-1. NPI use (DE contexts): "I didn't see any students"
-   - In DE, exhaustification is vacuous (domain alts are entailed)
-   - Result: plain existential reading
-
-2. FC use (modal contexts): "You may read any book"
-   - Under modal, domain alts yield free choice
-   - Result: universal-like permission
-
-3. Generic use: "Any owl hunts mice" (subtrigging)
-   - Generic contexts license FC reading
-   - Result: universal generalization
-
-### Why "any" Fails in Positive Episodic Contexts
-
-"*There are any cookies"
-
-Exhaustifying domain alternatives in UE episodic contexts yields
-contradiction:
-- ∃d∈D. P(d) (assertion)
-- ∀d∈D. ¬[P(d) ∧ ∀y≠d.¬P(y)] (domain alt negation)
-
-With two witnesses d₁, d₂: the second clause requires that for any d
-satisfying P, some other y also satisfies P. Combined with the first
-clause, this leads to infinite regress/contradiction for finite domains.
-
-### Contrast with "some"
-
-"Some" has the same alternatives as "any", but they are optional.
-When not activated (low relevance), "some" = plain existential.
-"Any" must activate alternatives, hence the restricted distribution.
--/
-
-/--
-Context type for determining Universal FCI distribution.
--/
-inductive UFCIContext where
-  | positiveEpisodic   -- *There are any cookies (ungrammatical)
-  | negation           -- I didn't see any students (NPI)
-  | conditionalAntecedent    -- If you see any students, ... (NPI)
-  | deonticModal       -- You may read any book (FC)
-  | epistemicModal     -- There might be any solution (FC)
-  | generic            -- Any owl hunts mice (subtrigging)
-  | question           -- Did you see any students? (NPI)
-  deriving DecidableEq, Repr
-
-/--
-Surface reading available to a Universal FCI.
-
-Subset of the broader EFCI reading taxonomy: UFCIs only ever yield
-plain existential (NPI use, no exhaustification effect) or free choice
-(via modal/generic rescue). Uniqueness, modal variation, and epistemic
-ignorance are existential-FCI-specific readings.
--/
-inductive UFCIReading where
-  /-- Plain existential (NPI use in DE contexts) -/
-  | plainExistential
-  /-- Free choice (modal/generic rescue) -/
-  | freeChoice
-  deriving DecidableEq, Repr
-
-/--
-FCI flavor: existential vs universal force.
-
-Note: "Universal" FCIs (English *any*, Italian *qualunque*) have existential
-base meaning but universal surface force due to obligatory exhaustification.
-Existential FCIs (German *irgendein*, Farsi *yek-i*, Romanian *vreun*)
-retain narrow existential force. The flavor is a Chierchia-tradition
-typological dimension consumed by paper-specific studies (e.g.,
-[chierchia-2006]).
--/
-inductive FCIFlavor where
-  /-- Existential FCIs: *irgendein*, *yek-i*, *vreun* -/
-  | existential
-  /-- Universal FCIs: *any*, *qualunque*, *whatever* -/
-  | universal
-  deriving DecidableEq, Repr
-
-/--
-Universal FCI grammaticality prediction.
-
-Ungrammatical only in positive episodic (UE without rescue).
--/
-def ufciGrammatical (ctx : UFCIContext) : Bool :=
-  match ctx with
-  | .positiveEpisodic => false  -- Exhaustification contradicts
-  | .negation => true           -- DE: vacuous exhaustification
-  | .conditionalAntecedent => true    -- DE: vacuous exhaustification
-  | .deonticModal => true       -- Modal rescues
-  | .epistemicModal => true     -- Modal rescues
-  | .generic => true            -- Generic/subtrigging rescues
-  | .question => true           -- Non-monotonic: safe
-
-/--
-Reading obtained by Universal FCI in context.
--/
-def ufciReading (ctx : UFCIContext) : Option UFCIReading :=
-  match ctx with
-  | .positiveEpisodic => none           -- Ungrammatical
-  | .negation => some .plainExistential -- NPI: ¬∃ = ∀¬
-  | .conditionalAntecedent => some .plainExistential
-  | .deonticModal => some .freeChoice   -- FC: ◇∀
-  | .epistemicModal => some .freeChoice
-  | .generic => some .freeChoice        -- Generic universal
-  | .question => some .plainExistential
-
-/-- Grammaticality and reading are one prediction: *any* is out exactly where no reading
-survives exhaustification — the positive episodic context, where exhaustifying the domain
-alternatives is contradictory. Where it survives, it is a plain existential in the
-downward-entailing and question contexts, exhaustification being vacuous there, and free choice
-under the rescuing modal or generic. -/
-theorem ufciGrammatical_iff_reading (ctx : UFCIContext) :
-    ufciGrammatical ctx = (ufciReading ctx).isSome := by cases ctx <;> rfl
-
--- 7.5: Empirical Data
-
-/--
-An "any" distribution example.
--/
-structure AnyExample where
-  sentence : String
-  context : UFCIContext
-  grammatical : Bool
-  reading : Option String
-  notes : String
-  deriving Repr
-
-def any_positive_bad : AnyExample :=
-  { sentence := "*There are any cookies"
-  , context := .positiveEpisodic
-  , grammatical := false
-  , reading := none
-  , notes := "Exhaustification yields G-contradiction" }
-
-def any_negation_ok : AnyExample :=
-  { sentence := "I didn't see any students"
-  , context := .negation
-  , grammatical := true
-  , reading := some "NPI: ¬∃x.student(x) ∧ saw(I,x)"
-  , notes := "DE context: exhaustification vacuous" }
-
-def any_deontic_ok : AnyExample :=
-  { sentence := "You may read any book"
-  , context := .deonticModal
-  , grammatical := true
-  , reading := some "FC: ∀x.book(x) → ◇read(you,x)"
-  , notes := "Modal rescues via widening" }
-
-def any_generic_ok : AnyExample :=
-  { sentence := "Any owl hunts mice"
-  , context := .generic
-  , grammatical := true
-  , reading := some "Generic: GEN x[owl(x)] hunts(x,mice)"
-  , notes := "Subtrigging: generic rescues like modal" }
-
-def any_question_ok : AnyExample :=
-  { sentence := "Did you see any students?"
-  , context := .question
-  , grammatical := true
-  , reading := some "NPI: ?∃x.student(x) ∧ saw(you,x)"
-  , notes := "Questions non-monotonic: safe for any" }
-
-def any_conditional_ok : AnyExample :=
-  { sentence := "If you see any students, tell me"
-  , context := .conditionalAntecedent
-  , grammatical := true
-  , reading := some "NPI: ∃x.student(x) ∧ saw(you,x) → tell(you,me)"
-  , notes := "Antecedent is DE" }
-
-def anyExamples : List AnyExample :=
-  [ any_positive_bad, any_negation_ok, any_deontic_ok
-  , any_generic_ok, any_question_ok, any_conditional_ok ]
-
-/-- The recorded *any* judgments match the prediction in every context sampled. -/
-theorem anyExamples_match_prediction :
-    anyExamples.all (fun ex => ex.grammatical == ufciGrammatical ex.context) = true := by decide
+/-- Every judgment on *any*, *ever*, *alcuno* and *qualsiasi* is the keystone's: acceptable
+exactly in a licensing context that licenses the Fragment entry. -/
+theorem polarity_rows :
+    ∀ e ∈ Examples.all, ∀ i ∈ (e.feature? "item").bind item,
+      ∀ pos ∈ (e.feature? "position").bind Position.ofKey,
+        (e.judgment = .acceptable ↔ pos.Licenses i) := by
+  decide
 
 end Chierchia2013
