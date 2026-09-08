@@ -1,55 +1,68 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Copular
-import Linglib.Core.Algebra.Order.Interval.Set.Instances
-import Mathlib.Order.Monotone.Basic
+import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.NormNum
 
 /-!
-# [degen-tonhauser-2021]: Prior Beliefs Modulate Projection
+# Degen and Tonhauser (2021): Prior beliefs modulate projection
 
-Does a listener's prior belief about a content modulate how strongly that content
-*projects* — i.e., how committed the speaker is taken to be to it when it sits
-under an entailment-canceling operator? The prior literature conflicted:
-[mahler-2020] found that politically charged complements project more when a
-priori more plausible, while [lorson-2018] found no effect of world knowledge on
-the projection of the prestate of *stop*. [degen-tonhauser-2021] resolve the
-conflict in favor of modulation: across 20 clause-embedding predicates and 20
-contents, higher-prior content projects more, at the group and the individual
-level.
+This file formalizes the finding of [degen-tonhauser-2021] that a listener's prior belief in
+the content of a clausal complement modulates how strongly that content projects, the
+listener's inference about the speaker's commitment to it under a question. The hypothesis
+came from the by-item variability of [tonhauser-beaver-degen-2018] and had conflicting support,
+[mahler-2020] finding modulation for politically charged contents and [lorson-2018] none for
+the pre-state of *stop*. Across twenty clause-embedding predicates and twenty contents each
+paired with a fact raising or lowering its prior, projection was higher under the higher-prior
+fact for every predicate, and the participant's own prior predicted projection better than
+the group's or the categorical manipulation. The account the paper sketches is Bayesian, in the
+spirit of [goodman-frank-2016] and [qing-goodman-lassiter-2016]: projection is the posterior
+credence in the content, which by Bayes' rule is strictly increasing in the prior at fixed
+likelihoods, so a more likely content is taken to be more strongly committed to. The
+predicates are the Fragment's clause-embedding verbs and adjectives, all of which take a
+finite clause complement, and the by-predicate means of Experiment 1 are recorded.
 
-A *prior-sensitive* account is one monotone in prior credence (`PriorSensitive`);
-it predicts the modulation by its shape (`sensitive_predicts_modulation`), while
-the prior-*insensitive* null account predicts none (`priorInsensitive_not_sensitive`).
-This is the account family the paper argues for — projection as a posterior
-credence in a Bayesian / RSA listener ([qing-goodman-lassiter-2016],
-[goodman-frank-2016]) — and the prior analogue of the at-issueness predictor of
-[tonhauser-beaver-degen-2018]. The experiment 1 by-predicate means realize the
-modulation for every predicate (`prior_modulates_projection`), and the predicates
-are bridged to their Fragment entries (`all_predicates_take_clause_complement`).
+## Implementation notes
 
-The regression coefficients are recorded as prose, not theorems. Experiment 1
-(within-participant, N = 286): the prior manipulation was successful (β = 0.45,
-SE = 0.01, t = 31.12), and prior probability predicted projection at every level —
-categorical high/low fact (β = 0.14, t = 12.24), group-level continuous prior
-(β = 0.31, t = 12.58), and the participant's own continuous prior (β = 0.28,
-t = 13.85). Model comparison favored the individual-level predictor decisively
-(BIC 2291 < group-level 2586 < categorical 2654). The by-predicate projection
-ranking was highly stable (Spearman r = .991 with prior work), reproducing the
-predicate-level projection variability documented by [tonhauser-beaver-degen-2018].
-Experiment 2 (between-participant) replicated the effect: prior manipulation
-β = 0.54 (t = 15.07; Exp 2a, N = 75; prior ratings r = .977 with Exp 1) and
-projection β = 0.18 categorical / β = 0.34 group-level (t = 12.81 / 13.27; Exp 2b,
-N = 266). The main-clause control projected at floor (mean certainty 0.21).
+The Experiment 1 means come from the cd.csv data file of the paper's repository, averaged by
+predicate and rounded to two decimals, the prior means over the contents each predicate was
+paired with. The regression coefficients are not encoded: the prior manipulation raised
+ratings (β = 0.45), projection rose with the categorical fact (β = 0.14), with the group-level
+prior (β = 0.31) and with the participant's own prior (β = 0.28), the individual-level model
+winning by BIC, and Experiment 2 replicated the effect between participants.
+
+## References
+
+* [degen-tonhauser-2021]
+* [tonhauser-beaver-degen-2018]
+* [mahler-2020]
+* [lorson-2018]
+* [goodman-frank-2016]
+* [qing-goodman-lassiter-2016]
 -/
 
 namespace DegenTonhauser2021
 
-/-! ### The 20 clause-embedding predicates -/
+/-! ### Projection as posterior credence -/
 
-/-- The 20 clause-embedding predicates of [degen-tonhauser-2021], listed
-    alphabetically as in Figure 1C. For the traditional classification see
-    `DegenTonhauser2022.traditionalClass`. -/
+/-- The posterior credence in a content of prior `p` after an utterance the speaker produces
+with likelihood `a` when the content holds and `b` when it does not. -/
+noncomputable def posterior (a b p : ℝ) : ℝ := p * a / (p * a + (1 - p) * b)
+
+/-- Bayes' rule makes projection prior-sensitive: at fixed positive likelihoods the posterior
+credence is strictly increasing in the prior, so a content that is more likely a priori is
+more likely a posteriori. -/
+theorem posterior_lt_posterior {a b p q : ℝ} (ha : 0 < a) (hb : 0 < b) (hp : 0 ≤ p)
+    (hq : q ≤ 1) (hpq : p < q) : posterior a b p < posterior a b q := by
+  unfold posterior
+  have h1 : 0 < p * a + (1 - p) * b := by nlinarith
+  have h2 : 0 < q * a + (1 - q) * b := by nlinarith
+  rw [div_lt_div_iff₀ h1 h2]
+  nlinarith [mul_pos ha hb, mul_pos (mul_pos ha hb) (sub_pos.2 hpq)]
+
+/-! ### The predicates and the means of Experiment 1 -/
+
+/-- The twenty clause-embedding predicates of Figure 1c. -/
 inductive Predicate where
   | acknowledge | admit | announce | beAnnoyed | beRight
   | confess | confirm | demonstrate | discover | establish
@@ -57,154 +70,55 @@ inductive Predicate where
   | reveal | say | see | suggest | think
   deriving DecidableEq, Fintype, Repr
 
-/-! ### Projection as a function of prior credence -/
+/-- A predicate's Experiment 1 means: the prior probability rating of its contents under the
+lower- and the higher-probability fact, and the certainty rating, the projection measure, under
+each. -/
+structure Means where
+  priorLow : ℚ
+  priorHigh : ℚ
+  certaintyLow : ℚ
+  certaintyHigh : ℚ
+  deriving DecidableEq, Repr
 
-/-- A predictor of projection strength from prior credence in the complement. -/
-abbrev PriorAccount := Set.Icc (0 : ℚ) 1 → Set.Icc (0 : ℚ) 1
+/-- The by-predicate means of Experiment 1, the certainty means those of Figure 3 and the prior
+means those of the contents each predicate was paired with; the main-clause control projected
+at a mean certainty of 0.21. -/
+def means : Predicate → Means
+  | .acknowledge => ⟨0.24, 0.67, 0.49, 0.65⟩
+  | .admit => ⟨0.24, 0.68, 0.43, 0.60⟩
+  | .announce => ⟨0.26, 0.72, 0.41, 0.53⟩
+  | .beAnnoyed => ⟨0.23, 0.71, 0.68, 0.80⟩
+  | .beRight => ⟨0.26, 0.69, 0.20, 0.34⟩
+  | .confess => ⟨0.20, 0.69, 0.45, 0.58⟩
+  | .confirm => ⟨0.21, 0.68, 0.28, 0.37⟩
+  | .demonstrate => ⟨0.26, 0.62, 0.33, 0.48⟩
+  | .discover => ⟨0.26, 0.72, 0.55, 0.69⟩
+  | .establish => ⟨0.23, 0.69, 0.27, 0.43⟩
+  | .hear => ⟨0.24, 0.69, 0.57, 0.72⟩
+  | .inform => ⟨0.25, 0.72, 0.57, 0.76⟩
+  | .know => ⟨0.25, 0.68, 0.68, 0.74⟩
+  | .pretend => ⟨0.20, 0.70, 0.21, 0.31⟩
+  | .prove => ⟨0.24, 0.67, 0.25, 0.41⟩
+  | .reveal => ⟨0.25, 0.69, 0.47, 0.62⟩
+  | .say => ⟨0.22, 0.69, 0.22, 0.38⟩
+  | .see => ⟨0.21, 0.67, 0.60, 0.69⟩
+  | .suggest => ⟨0.22, 0.69, 0.24, 0.32⟩
+  | .think => ⟨0.19, 0.66, 0.20, 0.40⟩
 
-/-- The prior-insensitive null account: projection is constant in prior credence. -/
-def priorInsensitive (c : Set.Icc (0 : ℚ) 1) : PriorAccount := fun _ => c
-
-/-- An account is prior-sensitive when projection is strictly monotone in prior
-    credence. -/
-def PriorSensitive (acc : PriorAccount) : Prop := StrictMono acc
-
-/-- The null account predicts identical projection for any two priors. -/
-theorem priorInsensitive_no_modulation (c p q : Set.Icc (0 : ℚ) 1) :
-    priorInsensitive c p = priorInsensitive c q := rfl
-
-/-- The null account is not prior-sensitive. -/
-theorem priorInsensitive_not_sensitive (c : Set.Icc (0 : ℚ) 1) :
-    ¬ PriorSensitive (priorInsensitive c) :=
-  fun h => lt_irrefl c (h zero_lt_one)
-
-/-- A prior-sensitive account predicts stronger projection for higher-prior content. -/
-theorem sensitive_predicts_modulation {acc : PriorAccount} (h : PriorSensitive acc)
-    {p q : Set.Icc (0 : ℚ) 1} (hpq : p < q) : acc p < acc q := h hpq
-
-/-! ### Data: prior modulates projection for every predicate
-
-Experiment 1 by-predicate means from `results/9-prior-projection/data/cd.csv` at
-github.com/judith-tonhauser/projective-probability (n = 286), rounded to two decimals;
-prior means average over the contents each predicate was randomly paired with. -/
-
-/-- Mean certainty rating (projection) under the higher-probability fact
-    (Figure 3; nonprojective main-clause control mean 0.21). -/
-def certaintyHigh : Predicate → ℚ
-  | .acknowledge => 0.65
-  | .admit => 0.60
-  | .announce => 0.53
-  | .beAnnoyed => 0.80
-  | .beRight => 0.34
-  | .confess => 0.58
-  | .confirm => 0.37
-  | .demonstrate => 0.48
-  | .discover => 0.69
-  | .establish => 0.43
-  | .hear => 0.72
-  | .inform => 0.76
-  | .know => 0.74
-  | .pretend => 0.31
-  | .prove => 0.41
-  | .reveal => 0.62
-  | .say => 0.38
-  | .see => 0.69
-  | .suggest => 0.32
-  | .think => 0.40
-
-/-- Mean certainty rating under the lower-probability fact. -/
-def certaintyLow : Predicate → ℚ
-  | .acknowledge => 0.49
-  | .admit => 0.43
-  | .announce => 0.41
-  | .beAnnoyed => 0.68
-  | .beRight => 0.20
-  | .confess => 0.45
-  | .confirm => 0.28
-  | .demonstrate => 0.33
-  | .discover => 0.55
-  | .establish => 0.27
-  | .hear => 0.57
-  | .inform => 0.57
-  | .know => 0.68
-  | .pretend => 0.21
-  | .prove => 0.25
-  | .reveal => 0.47
-  | .say => 0.22
-  | .see => 0.60
-  | .suggest => 0.24
-  | .think => 0.20
-
-/-- Mean prior probability rating of the complement content given the
-    higher-probability fact. -/
-def priorHigh : Predicate → ℚ
-  | .acknowledge => 0.67
-  | .admit => 0.68
-  | .announce => 0.72
-  | .beAnnoyed => 0.71
-  | .beRight => 0.69
-  | .confess => 0.69
-  | .confirm => 0.68
-  | .demonstrate => 0.62
-  | .discover => 0.72
-  | .establish => 0.69
-  | .hear => 0.69
-  | .inform => 0.72
-  | .know => 0.68
-  | .pretend => 0.70
-  | .prove => 0.67
-  | .reveal => 0.69
-  | .say => 0.69
-  | .see => 0.67
-  | .suggest => 0.69
-  | .think => 0.66
-
-/-- Mean prior probability rating given the lower-probability fact. -/
-def priorLow : Predicate → ℚ
-  | .acknowledge => 0.24
-  | .admit => 0.24
-  | .announce => 0.26
-  | .beAnnoyed => 0.23
-  | .beRight => 0.26
-  | .confess => 0.20
-  | .confirm => 0.21
-  | .demonstrate => 0.26
-  | .discover => 0.26
-  | .establish => 0.23
-  | .hear => 0.24
-  | .inform => 0.25
-  | .know => 0.25
-  | .pretend => 0.20
-  | .prove => 0.24
-  | .reveal => 0.25
-  | .say => 0.22
-  | .see => 0.21
-  | .suggest => 0.22
-  | .think => 0.19
-
-/-- Prior credence and certainty are both higher under the higher-probability fact
-    for every predicate (Figure 3) — the pattern a prior-sensitive account predicts
-    and the null account rules out. -/
+/-- For every predicate the manipulation raised the prior and, with it, projection, the pattern
+of Figure 3 that a prior-sensitive account predicts. -/
 theorem prior_modulates_projection (p : Predicate) :
-    priorLow p < priorHigh p ∧ certaintyLow p < certaintyHigh p := by
-  cases p <;> exact ⟨by norm_num [priorLow, priorHigh],
-    by norm_num [certaintyLow, certaintyHigh]⟩
+    (means p).priorLow < (means p).priorHigh ∧
+      (means p).certaintyLow < (means p).certaintyHigh := by
+  cases p <;> exact ⟨by norm_num [means], by norm_num [means]⟩
 
-/-- The observed certainties differ across the manipulation, contra the null
-    account (`priorInsensitive_no_modulation`). -/
-theorem certaintyLow_ne_certaintyHigh (p : Predicate) :
-    certaintyLow p ≠ certaintyHigh p :=
-  (prior_modulates_projection p).2.ne
+/-! ### The Fragment's predicates -/
 
-/-! ### Fragment bridge -/
+section Fragment
 
-section FragmentBridge
+open English.Predicates.Verbal English.Predicates.Copular
 
-open English.Predicates.Verbal
-open English.Predicates.Copular
-
-/-- Map each predicate to its Fragment verb entry (18 of 20; `beAnnoyed` and
-    `beRight` are copular — use `toPredicateCore` for full coverage). -/
+/-- The verb entry of a predicate; the two copular predicates have none. -/
 def toVerbEntry : Predicate → Option VerbEntry
   | .know => some know
   | .think => some think
@@ -227,14 +141,7 @@ def toVerbEntry : Predicate → Option VerbEntry
   | .beAnnoyed => none
   | .beRight => none
 
-/-- The two copular predicates are exactly the ones without a `VerbEntry`. -/
-theorem toVerbEntry_eq_none_iff (p : Predicate) :
-    toVerbEntry p = none ↔ p = .beAnnoyed ∨ p = .beRight := by
-  cases p <;> simp [toVerbEntry]
-
-/-- Map each predicate to its `Verb` — the semantic spine shared by verbal and
-    copular entries. Covers all 20; copular entries go through
-    `ClauseEmbeddingAdjective.toVerb`. -/
+/-- The verb of a predicate, the semantic spine the verbal and copular entries share. -/
 def toPredicateCore : Predicate → Verb
   | .know => know.toVerb
   | .think => think.toVerb
@@ -257,16 +164,15 @@ def toPredicateCore : Predicate → Verb
   | .beAnnoyed => beAnnoyed.toVerb
   | .beRight => beRight.toVerb
 
-/-- Every predicate takes a finite clause complement (as primary or alternate
-    frame), matching the experimental design. -/
+/-- Every predicate takes a finite clause complement, as the polar questions of the stimuli
+require. -/
 theorem all_predicates_take_clause_complement (p : Predicate) :
     (toPredicateCore p).complementType = .finiteClause ∨
-    (toPredicateCore p).altComplementType = some .finiteClause := by
+      (toPredicateCore p).altComplementType = some .finiteClause := by
   cases p <;>
-    simp [toPredicateCore, ClauseEmbeddingAdjective.toVerb,
-          beAnnoyed, beRight] <;>
+    simp [toPredicateCore, ClauseEmbeddingAdjective.toVerb, beAnnoyed, beRight] <;>
     first | left; rfl | right; rfl
 
-end FragmentBridge
+end Fragment
 
 end DegenTonhauser2021
