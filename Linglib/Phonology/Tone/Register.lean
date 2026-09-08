@@ -57,6 +57,16 @@ def realizePitch (level : Int) (ts : List TRN) : List Int :=
     (realizePitch level ts).length = ts.length := by
   simp [realizePitch]
 
+/-- A sequence realizes piecewise: the second part continues from the register the first
+part leaves. -/
+theorem realizePitch_append (level : Int) (ts us : List TRN) :
+    realizePitch level (ts ++ us) =
+      realizePitch level ts ++ realizePitch (level + (ts.map TRN.pitchEffect).sum) us := by
+  induction ts generalizing level with
+  | nil => simp
+  | cons t ts ih => simp only [List.cons_append, realizePitch_cons, ih, List.map_cons,
+      List.sum_cons, Int.add_assoc]
+
 /-- The register shifts from the start: no privileged pitch, only the differences. -/
 def pitchDeltas (ts : List TRN) : List Int := realizePitch 0 ts
 

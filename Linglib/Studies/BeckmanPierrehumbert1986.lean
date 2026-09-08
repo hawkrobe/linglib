@@ -4,174 +4,187 @@ import Linglib.Fragments.Japanese.Prosody
 import Linglib.Data.Examples.BeckmanPierrehumbert1986
 
 /-!
-# Beckman & Pierrehumbert (1986): Intonational Structure in Japanese and English
+# Intonational structure in Japanese and English
 
-Japanese and English share a sparse-tone prosodic hierarchy: pitch accents
-group into accentual phrases (at most one accent each), accentual phrases
-into intermediate phrases, and those into intonation phrases. Bitonal pitch
-accents trigger catathesis — pitch-range compression whose domain is the
-intermediate phrase — in both languages; the languages differ in where
-accents come from (lexical vs postlexical), in inventory size (one shape vs
-six), and in catathesis timing (within vs after the trigger). Catathesis is
-encoded as register downstep on `Tone`'s register tier: each bitonal accent
-contributes a downstep feature, `Tone.realizePitch` yields the descending
-staircase, and the intermediate-phrase boundary resets the register.
+[beckman-pierrehumbert-1986] give Japanese and English one sparse-tone prosodic hierarchy:
+pitch accents group into accentual phrases with at most one accent each, accentual phrases
+into intermediate phrases, and those into intonation phrases, the phrase accent of
+[pierrehumbert-1980] becoming the terminal tone of the intermediate phrase and the boundary
+tone that of the intonation phrase. In both languages a bitonal accent triggers catathesis,
+the compression of the pitch range for everything that follows within the intermediate
+phrase, so chained accents descend a staircase and a phrase boundary resets the register; an
+unaccented phrase's phrasal H and boundary L do not trigger it, which separates catathesis
+from African downdrift. The languages differ in where accents come from, lexical location in
+Japanese against postlexical shape in English, in the inventory of shapes, one against six,
+and in whether the compression takes effect within the accent or after it. Final lowering
+and declination act above the intermediate phrase and are not catathesis.
 
-## Main statements
+## Implementation notes
 
-* `catathesis_terracing`, `split_ips_pitch_independent`: chained bitonal
-  accents produce the staircase (Figs. 11, 13), and an intermediate-phrase
-  boundary resets the register (Fig. 17).
-* `unaccented_no_catathesis`: an unaccented phrase's phrasal H + boundary L
-  does not trigger catathesis — the trigger is the accent's HL, unlike
-  African downdrift (§3.1).
-* `japanese_smaller_inventory`, `japanese_accents_all_bitonal`: the two
-  systems differ in accent inventory and specification, not in
-  architecture (§2.1, §6).
+Catathesis is register downstep on the tonal register tier: each bitonal accent contributes
+a downstep node and `Tone.realizePitch` realizes the sequence as the running sum, so the
+staircase, the boundary reset, and the comparison with an unbroken chain are theorems of the
+register substrate rather than numbers read off figures. The Japanese accentual phrase is
+built from the prosodic fragment's word entries.
 
 ## References
 
-* [beckman-pierrehumbert-1986]: Intonational structure in Japanese and
-  English. *Phonology Yearbook* 3.
-* [pierrehumbert-1980]: The Phonology and Phonetics of English Intonation.
+* [beckman-pierrehumbert-1986]
+* [pierrehumbert-1980]
 -/
 
 namespace BeckmanPierrehumbert1986
 
-open Features.Prosody
-open Tone
+open Features.Prosody Tone
 
-/-! ### The accentual phrase (§2.2) -/
+/-! ### Accentual phrases and catathesis -/
 
-/-- An accentual phrase: the lowest level of prosodic phrasing defined by
-the intonation pattern. In Japanese, delimited by a phrasal H and boundary
-L, containing at most one pitch accent — an unaccented AP has the rising
-L–H shape but no accentual fall (§2.2). In English the unit is less firmly
-established: the domain of a single pitch accent (§2.4). Culminativity is
-structural — a single `accent` field; grouping two accented words into one
-AP deletes the second accent (§2.3, Fig. 6). -/
+/-- An accentual phrase: the lowest level of the hierarchy, carrying at most one pitch accent
+(`null` when unaccented). -/
 structure AccentualPhrase where
-  /-- Pitch accent type (null if unaccented). -/
   accent : PitchAccent
-  /-- Number of words grouped in this phrase. -/
-  nWords : Nat
+  /-- The words grouped into the phrase. -/
+  nWords : ℕ
   deriving Repr, DecidableEq
 
-/-- An AP is accented iff it has a non-null accent. -/
-def AccentualPhrase.isAccented (ap : AccentualPhrase) : Bool :=
-  ap.accent != .null
+/-- The phrase carries an accent. -/
+def AccentualPhrase.IsAccented (ap : AccentualPhrase) : Prop := ap.accent ≠ .null
 
-/-! ### Catathesis as register downstep (§3) -/
+instance (ap : AccentualPhrase) : Decidable ap.IsAccented := inferInstanceAs (Decidable (_ ≠ _))
 
-/-- Register specifications for a sequence of APs: each bitonal accent
-contributes a register downstep; null or monotonal accents contribute
-nothing. The descending staircase of catathesis chains (Figs. 11, 13) is
-register terracing under `Tone.realizePitch`. -/
-def catathesisToRegisterSpecs (aps : List AccentualPhrase) : List TRN :=
-  aps.map (λ ap => if ap.accent.isBitonal then TRN.downstep else TRN.empty)
+/-- The register nodes of a sequence of accentual phrases: a downstep for each bitonal
+accent and nothing otherwise. -/
+def registerSpecs (aps : List AccentualPhrase) : List TRN :=
+  aps.map λ ap => if ap.accent.isBitonal then TRN.downstep else TRN.empty
 
-/-- Two chained bitonal accents produce a two-step staircase (§3, Fig. 11). -/
-theorem catathesis_terracing (n : Int) :
-    realizePitch n [TRN.downstep, TRN.downstep] = [n - 1, n - 1 - 1] := rfl
-
-/-- Catathesis lowers pitch below the starting level. -/
-theorem catathesis_lowers (n : Int) :
-    (realizePitch n [TRN.downstep]).head? = some (n - 1) := rfl
-
-/-- Number of catathesis applications in a sequence of APs. -/
-def catathesisCount (aps : List AccentualPhrase) : Nat :=
+/-- The number of catathesis triggers in a sequence. -/
+def catathesisCount (aps : List AccentualPhrase) : ℕ :=
   (aps.filter (·.accent.isBitonal)).length
 
-/-- No bitonal accents, no catathesis: unaccented sequences show no
-compression. -/
-theorem no_bitonal_no_catathesis (aps : List AccentualPhrase)
-    (h : ∀ ap ∈ aps, ap.accent.isBitonal = false) :
-    catathesisCount aps = 0 := by
-  simp only [catathesisCount]
-  rw [List.filter_eq_nil_iff.mpr (by intro a ha; simp [h a ha])]
-  simp
+variable (b : Int) (aps aps₁ aps₂ : List AccentualPhrase) (ap : AccentualPhrase)
 
-/-- Catathesis is triggered by the accent's HL, not by any HL sequence:
-every unaccented AP carries a phrasal H + boundary L, yet only accented
-APs trigger — the contrast with African downdrift (§3.1). -/
-theorem unaccented_no_catathesis :
-    PitchAccent.null.isBitonal = false := rfl
+@[simp] private theorem pitchEffect_downstep : TRN.downstep.pitchEffect = -1 := rfl
+@[simp] private theorem pitchEffect_empty : TRN.empty.pitchEffect = 0 := rfl
+@[simp] theorem catathesisCount_nil : catathesisCount [] = 0 := rfl
 
-/-! ### The intermediate phrase (§4) -/
+theorem catathesisCount_cons :
+    catathesisCount (ap :: aps) = (if ap.accent.isBitonal then 1 else 0) + catathesisCount aps := by
+  simp only [catathesisCount, List.filter_cons]
+  split <;> ((try simp only [List.length_cons]); omega)
 
-/-- An intermediate phrase: accentual phrases terminated by a phrase
-accent. In Japanese the ip is the catathesis domain, can be a single AP,
-and seldom contains more than three; its boundary is marked by pause or
-glottalization (§4.1). In English, the phrase accent of
-[pierrehumbert-1980] is reanalyzed as the ip-terminal tone, the boundary
-tone as IP-terminal (§4.3). -/
+/-- No bitonal accent, no catathesis. -/
+theorem catathesisCount_eq_zero_iff :
+    catathesisCount aps = 0 ↔ ∀ ap ∈ aps, ap.accent.isBitonal = false := by
+  simp [catathesisCount, List.filter_eq_nil_iff]
+
+/-- Catathesis only compresses: no node of a sequence raises the register. -/
+theorem pitchEffect_registerSpecs_nonpos {t : TRN} (h : t ∈ registerSpecs aps) :
+    t.pitchEffect ≤ 0 := by
+  simp only [registerSpecs, List.mem_map] at h
+  obtain ⟨ap, _, rfl⟩ := h
+  split <;> decide
+
+/-- The net shift of a sequence: one step down per bitonal accent. -/
+theorem sum_pitchEffect_registerSpecs :
+    ((registerSpecs aps).map TRN.pitchEffect).sum = -(catathesisCount aps : Int) := by
+  induction aps with
+  | nil => rfl
+  | cons ap aps ih =>
+    simp only [registerSpecs, List.map_cons, List.sum_cons, catathesisCount_cons] at ih ⊢
+    rw [ih]
+    split <;> (simp only [pitchEffect_downstep, pitchEffect_empty]; omega)
+
+/-- The staircase: each accentual phrase is realized one step below the baseline for every
+bitonal accent up to and including it. -/
+theorem realizePitch_registerSpecs {i : ℕ} (hi : i < aps.length) :
+    (realizePitch b (registerSpecs aps))[i]? = some (b - catathesisCount (aps.take (i + 1))) := by
+  induction aps generalizing b i with
+  | nil => simp at hi
+  | cons ap aps ih =>
+    cases i with
+    | zero =>
+      simp only [registerSpecs, List.map_cons, realizePitch_cons, List.getElem?_cons_zero,
+        List.take_succ_cons, List.take_zero, catathesisCount_cons, catathesisCount_nil,
+        Option.some.injEq]
+      split <;> (simp only [pitchEffect_downstep, pitchEffect_empty]; omega)
+    | succ i =>
+      simp only [registerSpecs, List.map_cons, realizePitch_cons, List.getElem?_cons_succ,
+        List.take_succ_cons, catathesisCount_cons]
+      rw [show realizePitch (b + (if ap.accent.isBitonal then TRN.downstep else TRN.empty).pitchEffect)
+        (List.map (fun ap => if ap.accent.isBitonal then TRN.downstep else TRN.empty) aps) =
+        realizePitch (b + (if ap.accent.isBitonal then TRN.downstep else TRN.empty).pitchEffect)
+        (registerSpecs aps) from rfl, ih _ (by simpa using hi)]
+      split <;> (simp only [pitchEffect_downstep, pitchEffect_empty, Option.some.injEq]; omega)
+
+/-- One chain: a sequence followed by another is the first followed by the second
+continued from the compressed register. -/
+theorem realizePitch_registerSpecs_append :
+    realizePitch b (registerSpecs (aps₁ ++ aps₂)) =
+      realizePitch b (registerSpecs aps₁) ++
+        realizePitch (b - catathesisCount aps₁) (registerSpecs aps₂) := by
+  have h : registerSpecs (aps₁ ++ aps₂) = registerSpecs aps₁ ++ registerSpecs aps₂ :=
+    List.map_append ..
+  rw [h, realizePitch_append, sum_pitchEffect_registerSpecs, Int.sub_eq_add_neg]
+
+/-- An intermediate-phrase boundary resets the register, so every level after it is at
+least what continuing the chain would give. -/
+theorem boundary_raises :
+    List.Forall₂ (· ≤ ·) (realizePitch (b - catathesisCount aps₁) (registerSpecs aps₂))
+      (realizePitch b (registerSpecs aps₂)) :=
+  realizePitch_baseline_mono _ (by omega)
+
+/-! ### Intermediate and intonation phrases -/
+
+/-- An intermediate phrase: accentual phrases closed by a phrase accent, the domain of
+catathesis. -/
 structure IntermediatePhrase where
-  /-- Accentual phrases within this ip. -/
   aps : List AccentualPhrase
-  /-- Phrase accent: terminal tone of the ip. -/
   phraseAccent : PhraseAccent
-  /-- An ip contains at least one AP. -/
   aps_nonempty : aps ≠ [] := by decide
   deriving Repr
 
-/-- An intonation phrase: one or more intermediate phrases terminated by a
-boundary tone (§4.2–4.3). -/
+/-- An intonation phrase: intermediate phrases closed by a boundary tone. -/
 structure IntonationPhrase where
-  /-- Intermediate phrases within this IP. -/
   ips : List IntermediatePhrase
-  /-- Boundary tone: terminal tone of the IP. -/
   boundaryTone : BoundaryTone
-  /-- Non-empty. -/
   ips_nonempty : ips ≠ [] := by decide
   deriving Repr
 
-/-- The terminal contour of an IP: the final ip's phrase accent plus the
-IP boundary tone — the §4.3 decomposition of [pierrehumbert-1980]'s
-terminal sequence. -/
+/-- The terminal contour of an intonation phrase: the last intermediate phrase's phrase
+accent and the boundary tone, [pierrehumbert-1980]'s terminal sequence decomposed. -/
 def IntonationPhrase.terminalContour (ip : IntonationPhrase) : TerminalContour :=
-  let lastIp := ip.ips.getLast ip.ips_nonempty
-  ⟨lastIp.phraseAccent, ip.boundaryTone⟩
+  ⟨(ip.ips.getLast ip.ips_nonempty).phraseAccent, ip.boundaryTone⟩
 
-/-- Register specs within a single ip: one catathesis chain. -/
-def ipRegisterSpecs (ip : IntermediatePhrase) : List TRN :=
-  catathesisToRegisterSpecs ip.aps
+/-- The register nodes of one intermediate phrase: a single chain. -/
+def ipRegisterSpecs (ip : IntermediatePhrase) : List TRN := registerSpecs ip.aps
 
-/-- Register specs across an IP: each ip resets the register — the
-structural form of "catathesis is blocked by ip boundaries" (§4.1, §4.4;
-Fig. 17 vs Figs. 12–13). -/
+/-- The register nodes of an intonation phrase, one chain per intermediate phrase: each
+starts again from the baseline. -/
 def ipRegisterSpecsAcrossIps (ips : List IntermediatePhrase) : List (List TRN) :=
   ips.map ipRegisterSpecs
 
-/-! ### The two intonation systems (§2, §3.3, §6) -/
+/-! ### The two systems -/
 
-/-- Where catathesis takes effect relative to its trigger (§3.2–3.3): in
-Japanese within the accent itself (the trailing L is already compressed),
-in English only after the second tone of the bitonal accent. -/
+/-- Where the compression takes effect relative to its trigger: within the accent itself
+(Japanese, whose trailing L is already compressed) or only after it (English). -/
 inductive CatathesisTiming where
   | withinAccent
   | afterAccent
   deriving Repr, DecidableEq
 
-/-- A language's intonation-system parameters (§6): how accents are
-specified, the contrastive accent shapes, whether unaccented words exist,
-whether the AP boundary L is always present, and catathesis timing. -/
+/-- A language's intonation system: how accents are specified, the contrastive accent
+shapes, whether lexically unaccented words exist, whether the accentual-phrase boundary L is
+always present, and when catathesis takes effect. -/
 structure IntonationSystem where
   accentSpec : AccentSpecification
-  /-- Contrastive pitch-accent shapes (excluding null). -/
   accentShapes : List PitchAccent
-  /-- Lexically unaccented words/phrases exist. -/
   hasUnaccented : Bool
-  /-- The AP boundary L is always present. -/
   apBoundaryLAlwaysPresent : Bool
   catathesisTiming : CatathesisTiming
   deriving Repr
 
-/-- Accent-inventory size, derived from the shape list. -/
-def IntonationSystem.accentInventorySize (sys : IntonationSystem) : Nat :=
-  sys.accentShapes.length
-
-/-- Japanese (§2, §6): lexical accent location, one shape, unaccented words
-common, boundary L always present, catathesis within the accent. -/
+/-- Japanese: lexical accent location, the one shape H*+L, unaccented words, a boundary L in
+every accentual phrase, compression within the accent. -/
 def japanese : IntonationSystem :=
   { accentSpec := .lexical
     accentShapes := [.H_star_plus_L]
@@ -179,9 +192,8 @@ def japanese : IntonationSystem :=
     apBoundaryLAlwaysPresent := true
     catathesisTiming := .withinAccent }
 
-/-- English (§2, §6): postlexical accent shape, six contrastive shapes,
-every content word accentable, no AP boundary tone, catathesis after the
-accent. -/
+/-- English: postlexical accent shape, six shapes, every content word accentable, no
+accentual-phrase boundary tone, compression after the accent. -/
 def english : IntonationSystem :=
   { accentSpec := .postlexical
     accentShapes := [.H_star, .L_star, .H_star_plus_L,
@@ -190,152 +202,35 @@ def english : IntonationSystem :=
     apBoundaryLAlwaysPresent := false
     catathesisTiming := .afterAccent }
 
-/-- Japanese accent location is lexical; English accent shape is
-postlexical (§2.1, §2.5). -/
-theorem accent_specification_differs :
-    japanese.accentSpec = .lexical ∧ english.accentSpec = .postlexical :=
-  ⟨rfl, rfl⟩
-
-/-- Japanese has a smaller accent inventory than English, derived from the
-shape lists (one vs six). -/
-theorem japanese_smaller_inventory :
-    japanese.accentInventorySize < english.accentInventorySize := by decide
-
-/-- All Japanese accents are bitonal, so every accented AP triggers
-catathesis. -/
-theorem japanese_accents_all_bitonal :
-    japanese.accentShapes.all (·.isBitonal) = true := rfl
-
-/-- Not all English accents are bitonal — H* and L* are monotonal, so an
-accent need not trigger catathesis. -/
-theorem english_has_monotonal :
-    english.accentShapes.all (·.isBitonal) = false := rfl
-
-/-- Catathesis timing separates the systems (§3.3). -/
-theorem catathesis_timing_differs :
-    japanese.catathesisTiming = .withinAccent ∧
-      english.catathesisTiming = .afterAccent := ⟨rfl, rfl⟩
-
--- Two supra-phrasal processes operate above the ip (§5): final lowering
--- (pitch-range compression near the end of a declarative; its domain is
--- discourse-controlled, not a fixed phonological unit) and declination
--- (gradual time-dependent lowering, ~10 Hz/sec for the strongest subject,
--- absent for one). Both exist in Japanese and probably in English; neither
--- is catathesis, which is structurally bounded by the ip.
-
-/-! ### Worked configurations (Figs. 5, 11, 13, 17) -/
-
-/-- An accented AP (*uma'i*, *mo'riya-no*). -/
-def accentedAP : AccentualPhrase := ⟨.H_star_plus_L, 1⟩
-
-/-- An unaccented AP (*amai*, *toriya-no mawari-no*). -/
-def unaccentedAP : AccentualPhrase := ⟨.null, 1⟩
-
-/-- Accented + unaccented AP in one ip (Fig. 5): catathesis applies once,
-placing the second AP in a lowered range. -/
-def twoAP_ip : IntermediatePhrase :=
-  { aps := [accentedAP, unaccentedAP], phraseAccent := .L }
-
-theorem twoAP_ip_specs :
-    ipRegisterSpecs twoAP_ip = [TRN.downstep, TRN.empty] := rfl
-
-/-- From baseline 4, the accented AP is downstepped to 3 and the unaccented
-AP stays there. -/
-theorem twoAP_ip_pitch :
-    realizePitch 4 (ipRegisterSpecs twoAP_ip) = [3, 3] := by decide
-
-/-- Two accented APs and an unaccented one in a single ip: the
-two-application chains of Fig. 13. -/
-def threeAP_ip : IntermediatePhrase :=
-  { aps := [accentedAP, accentedAP, unaccentedAP], phraseAccent := .L }
-
-theorem threeAP_ip_specs :
-    ipRegisterSpecs threeAP_ip = [TRN.downstep, TRN.downstep, TRN.empty] := rfl
-
-/-- Pitch realization 4 → 3 → 2 → 2: the descending staircase. -/
-theorem threeAP_ip_pitch :
-    realizePitch 4 (ipRegisterSpecs threeAP_ip) = [3, 2, 2] := by decide
-
-/-- The same APs split across two ips: the second ip starts at full range
-(Fig. 17's blocked catathesis). -/
-def split_ips : List IntermediatePhrase :=
-  [{ aps := [accentedAP], phraseAccent := .L },
-   { aps := [accentedAP, unaccentedAP], phraseAccent := .L }]
-
-theorem split_ips_specs :
-    ipRegisterSpecsAcrossIps split_ips
-      = [[TRN.downstep], [TRN.downstep, TRN.empty]] := rfl
-
-/-- Each ip realizes from its own baseline: [3] then [3, 3] — the register
-does not leak across the boundary. -/
-theorem split_ips_pitch_independent :
-    (split_ips.map (realizePitch 4 ∘ ipRegisterSpecs)) = [[3], [3, 3]] := by
+/-- Every Japanese accent triggers catathesis, since its one shape is bitonal; an English
+accent need not, since H* and L* are monotonal. -/
+theorem triggers_differ :
+    (∀ a ∈ japanese.accentShapes, registerSpecs [⟨a, 1⟩] = [TRN.downstep]) ∧
+      ∃ a ∈ english.accentShapes, registerSpecs [⟨a, 1⟩] = [TRN.empty] := by
   decide
 
-/-- Without the boundary the same APs form one chain, [3, 2, 2]: the second
-accented AP would be a step lower than with the reset. -/
-theorem catathesis_without_boundary :
-    realizePitch 4
-        (catathesisToRegisterSpecs [accentedAP, accentedAP, unaccentedAP])
-      = [3, 2, 2] := by decide
+/-- An accented accentual phrase (*uma'i*, *mo'riya-no*). -/
+def accentedAP : AccentualPhrase := ⟨.H_star_plus_L, 1⟩
 
-/-! ### Monotonicity of catathesis -/
+/-- An unaccented accentual phrase (*amai*, *toriya-no mawari-no*). -/
+def unaccentedAP : AccentualPhrase := ⟨.null, 1⟩
 
-/-- More bitonal accents give pointwise lower-or-equal pitch. -/
-theorem more_catathesis_lower_pitch :
-    List.Forall₂ (· ≤ ·)
-      (realizePitch 4 [TRN.downstep, TRN.downstep, TRN.empty])
-      (realizePitch 4 [TRN.downstep, TRN.empty, TRN.empty]) := by decide
-
-/-- A fresh ip starting from the reset baseline 4 sits pointwise above the
-same specs continued from a compressed baseline 3 — blocking raises pitch
-(`Tone.realizePitch_baseline_mono` carries the general fact). -/
-theorem catathesis_blocking_concrete :
-    List.Forall₂ (· ≤ ·)
-      (realizePitch 3 [TRN.downstep, TRN.empty])
-      (realizePitch 4 [TRN.downstep, TRN.empty]) := by decide
-
-/-- Catathesis specs never raise the register: catathesis is monotonically
-compressive. -/
-theorem catathesis_specs_no_raising (aps : List AccentualPhrase)
-    (s : TRN) (hs : s ∈ catathesisToRegisterSpecs aps) :
-    s = TRN.empty ∨ s = TRN.downstep := by
-  simp only [catathesisToRegisterSpecs, List.mem_map] at hs
-  obtain ⟨ap, _, rfl⟩ := hs
-  rcases Bool.eq_false_or_eq_true (ap.accent.isBitonal) with h | h <;> simp [h]
-
-/-! ### Japanese accentual phrases from the lexicon
-
-An AP over grouped word entries is accented iff some word is lexically
-accented, its shape always H*+L, with grouping deleting all but one accent
-(§2.3, Fig. 6) — built from the `Fragments.Japanese.Prosody` word
-entries. -/
+/-! ### Japanese accentual phrases from the lexicon -/
 
 section JapaneseAP
 open Japanese.Prosody
 
-/-- The accentual phrase over grouped word entries: accented (always H*+L
-in Japanese) iff some word is lexically accented (§2.2–2.3). -/
+/-- The accentual phrase over grouped word entries: accented, always H*+L, iff some word is
+lexically accented, grouping deleting all but one accent. -/
 def AccentualPhrase.ofWords (ws : List ProsodicEntry) : AccentualPhrase :=
   { accent := if ws.any (·.isAccented) then .H_star_plus_L else .null
     nWords := ws.length }
 
-/-- An AP of words triggers catathesis iff some word is accented, since the
-only accent shape H*+L is bitonal (§3.1). -/
+/-- A phrase of words triggers catathesis iff some word is accented. -/
 theorem ofWords_isBitonal (ws : List ProsodicEntry) :
     (AccentualPhrase.ofWords ws).accent.isBitonal = ws.any (·.isAccented) := by
   unfold AccentualPhrase.ofWords
   split <;> simp_all [PitchAccent.isBitonal]
-
-/-- *uma'i mame'* 'delicious beans' forms an accented AP (Figs. 6, 9), so
-it triggers catathesis on what follows (Figs. 12–13's `a` points). -/
-theorem umai_mame_bitonal :
-    (AccentualPhrase.ofWords [umai, mame]).accent.isBitonal = true := rfl
-
-/-- *amai ame* 'sweet candy' forms an unaccented AP, so it triggers no
-catathesis (the *amai ame* materials of Figs. 18–21, `u` points). -/
-theorem amai_ame_not_bitonal :
-    (AccentualPhrase.ofWords [amai, ameCandy]).accent.isBitonal = false := rfl
 
 end JapaneseAP
 
