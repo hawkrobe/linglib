@@ -248,31 +248,29 @@ structure ModalFeature where
     [zeijlstra-2007]: u-features must be c-commanded by a matching
     i-feature to be licensed. The match is by concord class (necessity and
     weak necessity both count as ∀-type). -/
-def ModalFeature.checks (checker checked : ModalFeature) : Bool :=
-  checker.interp == .interpretable &&
-  checked.interp == .uninterpretable &&
-  ConcordType.fromModalForce checker.force == ConcordType.fromModalForce checked.force
+def ModalFeature.Checks (checker checked : ModalFeature) : Prop :=
+  checker.interp = .interpretable ∧ checked.interp = .uninterpretable ∧
+    ConcordType.fromModalForce checker.force = ConcordType.fromModalForce checked.force
 
-/-- Negation flips the relevant modal force for concord purposes.
+instance : DecidableRel ModalFeature.Checks :=
+  λ _ _ => inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-    [ciardelli-guerrini-2026] (UNVERIFIED §4.2): modal concord across negation
-    requires opposite forces — ALLOW[i∃](¬NEED[u∀]) is well-formed because
-    ¬∀ = ∃, but *DEMAND[i∀](¬NEED[u∀]) is ill-formed (same force).
+/-- The feature of a negated constituent: negation flips the force of the
+    feature it scopes over, so a constituent bearing `[u∀]` bears `[u∃]`
+    under negation and vice versa, and concord across negation is checking
+    of the negated feature ([ciardelli-guerrini-2026] §4.2, footnote 7,
+    accommodating [grosz-2010] and [anand-brasoveanu-2010]). -/
+def ModalFeature.negated (f : ModalFeature) : ModalFeature := ⟨f.force.dual, f.interp⟩
 
-    Derived from `ModalForce.dual` — negation over a modal operator yields
-    its dual force (¬□ = ◇, ¬◇ = □). -/
-abbrev ModalForce.negatedConcordForce := ModalForce.dual
-
-/-- Feature checking across negation: an interpretable feature checks a
-    negated uninterpretable feature when their forces are duals.
-
-    ALLOW[i∃](¬NEED[u∀]): ∃ checks negated ∀ (= ∃) ✓
-    *DEMAND[i∀](¬NEED[u∀]): ∀ checks negated ∀ (= ∃) ✗ -/
-def ModalFeature.checksAcrossNegation (checker checked : ModalFeature) : Bool :=
-  checker.interp == .interpretable &&
-  checked.interp == .uninterpretable &&
-  ConcordType.fromModalForce checker.force ==
-    ConcordType.fromModalForce checked.force.dual
+/-- Concord across negation succeeds exactly between the two concord classes:
+    an interpretable feature checks a negated uninterpretable one iff their
+    forces fall in different classes. -/
+theorem ModalFeature.checks_negated_iff {checker checked : ModalFeature}
+    (hi : checker.interp = .interpretable) (hu : checked.interp = .uninterpretable) :
+    checker.Checks checked.negated ↔
+      ConcordType.fromModalForce checker.force ≠ ConcordType.fromModalForce checked.force := by
+  simp only [ModalFeature.Checks, ModalFeature.negated, hi, hu, true_and]
+  cases checker.force <;> cases checked.force <;> decide
 
 -- ============================================================================
 -- §7. Modal Decomposability
