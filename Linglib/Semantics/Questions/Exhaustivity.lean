@@ -2,483 +2,364 @@ import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Resolution
 
 /-!
-# Exhaustivity — the weak / strong / Dayal / Xiang ladder
-[karttunen-1977] [heim-1994] [groenendijk-stokhof-1984] [dayal-1996] [george-2011] [klinedinst-rothschild-2011] [xiang-2022] [fox-2018] [theiler-etal-2018]
+# Answerhood operators on Hamblin sets
 
-The canonical exhaustivity operators on `Question W`. Different
-authors over the past 50 years have proposed sibling operators that
-extract "the answer to Q at the actual world w" with different strength
-profiles. This file states them in one place, in mathlib-style
-`Prop`+`Set` form (no `Bool`/`List` substrate).
+A Hamblin set `H : Set (Set W)` is a set of propositions. The theories that
+take a question to denote such a set locate "the answer at world `w`" by an
+operator on the members of `H` true at `w`:
 
-## The ladder
+- `trueAnswers H w`, the [karttunen-1977] set of true members;
+- `weakAnswer H w`, their intersection, the weakly exhaustive answer of
+  [heim-1994] (Ans₁) and [beck-rullmann-1999];
+- `strongAnswer H w`, the worlds deciding every member as `w` does, the
+  strongly exhaustive answer of [groenendijk-stokhof-1984] and Heim's Ans₂;
+- `IsStrongestTrueAnswer H w p`, [dayal-1996]'s maximally informative true
+  member: the least true member under entailment, `IsLeast`. Its existence is
+  Dayal's existential presupposition `IsExhaustivelyResolvable`; `dayalAns`
+  returns it and `dayalStrongAns` applies Heim's strengthening to it;
+- `exhCell H p` and `exhaustifiedPartition H`, [fox-2018]'s cells;
+- `relExh H w M`, [xiang-2022]'s exhaustivity relative to a modal base.
 
-Given `Q : Question W` and a world `w : W`:
+The presupposition holds exactly when the weak answer is itself a member
+(`isExhaustivelyResolvable_iff`), so Dayal's operator agrees with Heim's and
+Beck and Rullmann's wherever it is defined, and its strong form agrees with
+the Groenendijk–Stokhof answer (`dayalStrongAns_eq_some_iff`). An inquisitive
+question `Q : Question W` enters through its alternatives `alt Q`, an
+antichain, over which the least true member is the only true member
+(`isStrongestTrueAnswer_iff_of_antichain`): the number-sensitive answerhood
+of [dayal-2016] needs Hamblin sets whose members entail one another, which
+`alt` discards.
 
-- **weakAnswer(Q, w)** ([heim-1994], [karttunen-1977]): the
-  intersection of all true alternatives at w. The natural "what σ must
-  entail to count as truly answering Q."
+## References
 
-- **strongAnswer(Q, w)** ([groenendijk-stokhof-1984],
-  [heim-1994]): the set of worlds that agree with w on every
-  alternative. Equivalent to `MentionAll` evaluated at w on partition
-  questions.
-
-- **dayalAns(Q, w)** ([dayal-1996]): when defined, the unique
-  strongest true alternative — the proposition `p ∈ alt Q` such that
-  `w ∈ p` and `p ⊆ q` for every other true alternative `q`. Returns
-  `Option (Set W)`; existence is **Dayal's Exhaustivity Presupposition**
-  (`IsExhaustivelyResolvable`).
-
-- **relExh(Q, w, M)** ([xiang-2022] Def 91): exhaustivity
-  relativized to a modal base `M : Set W`. The strongest true answer
-  computed against the M-restricted alternatives.
-
-- **intermediateExh** ([george-2011], [klinedinst-rothschild-2011]):
-  weak exhaustivity plus a no-false-positives clause. Stub.
-
-- **foxExhaustifiedAnswer(Q, w)** ([fox-2018]): the answer derived
-  by applying the exhaustification operator Exh to alternatives. Stub.
+* [karttunen-1977]
+* [groenendijk-stokhof-1984]
+* [heim-1994]
+* [dayal-1996]
+* [beck-rullmann-1999]
+* [dayal-2016]
+* [fox-2018]
+* [xiang-2022]
 -/
 
-namespace Questions.Exhaustivity
-
-universe u
-variable {W : Type u}
+namespace Questions
 
 open Question
 
-/-! ### Weak exhaustivity (Heim 1994 / Karttunen 1977) -/
+variable {W : Type*} (H : Set (Set W)) (w : W)
 
-/-- **Weak exhaustive answer**: the set of worlds that lie in every true
-    alternative at w (`⋂ {p ∈ alt Q | w ∈ p}`). A state σ "weakly
-    answers" Q at w iff σ ⊆ weakAnswer Q w. -/
-def weakAnswer (Q : Question W) (w : W) : Set W :=
-  {v | ∀ p ∈ alt Q, w ∈ p → v ∈ p}
+/-! ### Karttunen sets and the weak and strong answers -/
 
-/-! ### Strong exhaustivity (Groenendijk-Stokhof 1984 / Heim 1994) -/
+/-- The [karttunen-1977] denotation: the members of `H` true at `w`. -/
+def trueAnswers : Set (Set W) := {p ∈ H | w ∈ p}
 
-/-- **Strong exhaustive answer**: the set of worlds that decide every
-    alternative the same way as w. -/
-def strongAnswer (Q : Question W) (w : W) : Set W :=
-  {v | ∀ p ∈ alt Q, (w ∈ p ↔ v ∈ p)}
+@[simp] theorem mem_trueAnswers {p : Set W} :
+    p ∈ trueAnswers H w ↔ p ∈ H ∧ w ∈ p := Iff.rfl
 
-/-- A state σ is the **strong-exhaustive answer** at w iff σ equals
-    `strongAnswer Q w`. -/
-def IsStronglyExhaustiveAnswer (σ : Set W) (Q : Question W) (w : W) : Prop :=
-  σ = strongAnswer Q w
+theorem trueAnswers_subset : trueAnswers H w ⊆ H := fun _ h => h.1
 
-/-! ### Dayal's strongest-true answer ([dayal-1996]) -/
+/-- The weakly exhaustive answer ([heim-1994]'s Ans₁, [beck-rullmann-1999]'s
+Ans-BR): the intersection of the true members. -/
+def weakAnswer : Set W := ⋂₀ trueAnswers H w
 
-/-- True alternatives at `w`: alternatives of `Q` that contain `w`. -/
-def trueAlternatives (Q : Question W) (w : W) : Set (Set W) :=
-  {p ∈ alt Q | w ∈ p}
+@[simp] theorem mem_weakAnswer {v : W} :
+    v ∈ weakAnswer H w ↔ ∀ p ∈ H, w ∈ p → v ∈ p := by
+  simp [weakAnswer, and_imp]
 
-/-- A proposition `p` is the **strongest true answer** to `Q` at `w`
-    iff `p ∈ alt Q`, `w ∈ p`, and `p ⊆ q` for every other true
-    alternative `q`. ([dayal-1996] Ans(Q) when defined.) -/
-def IsStrongestTrueAnswer (Q : Question W) (w : W) (p : Set W) : Prop :=
-  p ∈ alt Q ∧ w ∈ p ∧ ∀ q ∈ alt Q, w ∈ q → p ⊆ q
+theorem self_mem_weakAnswer : w ∈ weakAnswer H w := by simp
 
-/-- **Dayal's Exhaustivity Presupposition** ([dayal-1996]):
-    a strongest true answer exists at `w`. -/
-def IsExhaustivelyResolvable (Q : Question W) (w : W) : Prop :=
-  ∃ p, IsStrongestTrueAnswer Q w p
+theorem weakAnswer_subset {p : Set W} (hp : p ∈ H) (hw : w ∈ p) :
+    weakAnswer H w ⊆ p :=
+  Set.sInter_subset_of_mem ⟨hp, hw⟩
 
-/-- Dayal's answer (when EP holds): the unique strongest true
-    alternative at `w`. -/
-noncomputable def dayalAns (Q : Question W) (w : W) : Option (Set W) :=
-  open Classical in
-  if h : IsExhaustivelyResolvable Q w then some (Classical.choose h) else none
+/-- The strongly exhaustive answer ([groenendijk-stokhof-1984]; [heim-1994]'s
+Ans₂ form): the worlds that decide every member of `H` as `w` does. -/
+def strongAnswer : Set W := {v | ∀ p ∈ H, (w ∈ p ↔ v ∈ p)}
 
-/-- `dayalAns` returns `some` iff EP holds. -/
-theorem dayalAns_isSome_iff_EP (Q : Question W) (w : W) :
-    (dayalAns Q w).isSome ↔ IsExhaustivelyResolvable Q w := by
-  unfold dayalAns
-  split
-  · case _ h => simp [Option.isSome, h]
-  · case _ h => simp [Option.isSome, h]
+@[simp] theorem mem_strongAnswer {v : W} :
+    v ∈ strongAnswer H w ↔ ∀ p ∈ H, (w ∈ p ↔ v ∈ p) := Iff.rfl
 
-/-! ### Xiang's relativized exhaustivity ([xiang-2022] Def 91) -/
+/-- Heim's form of the strong answer: the worlds with the same Karttunen set. -/
+theorem strongAnswer_eq_preimage :
+    strongAnswer H w = trueAnswers H ⁻¹' {trueAnswers H w} := by
+  ext v
+  simp only [mem_strongAnswer, Set.mem_preimage, Set.mem_singleton_iff, Set.ext_iff,
+    mem_trueAnswers]
+  constructor
+  · exact fun h p => and_congr_right fun hp => (h p hp).symm
+  · exact fun h p hp =>
+      ⟨fun hw => ((h p).2 ⟨hp, hw⟩).2, fun hv => ((h p).1 ⟨hp, hv⟩).2⟩
 
-/-- True alternatives **restricted to a modal base** `M`: alternatives
-    of `Q` that contain `w` AND have non-empty intersection with `M`. -/
-def trueAlternativesIn (Q : Question W) (w : W) (M : Set W) : Set (Set W) :=
-  {p ∈ alt Q | w ∈ p ∧ ∃ v ∈ M, v ∈ p}
+theorem strongAnswer_subset_weakAnswer : strongAnswer H w ⊆ weakAnswer H w :=
+  fun _ hv => (mem_weakAnswer H w).2 fun p hp hwp => (hv p hp).1 hwp
 
-/-- A proposition `p` is the **strongest true answer relative to modal
-    base `M`** at `w`: `p ∈ alt Q`, `w ∈ p`, intersects `M`, and
-    M-entails every other M-true alternative. -/
-def IsStrongestRelTrueAnswer
-    (Q : Question W) (w : W) (M : Set W) (p : Set W) : Prop :=
-  p ∈ alt Q ∧ w ∈ p ∧ (∃ v ∈ M, v ∈ p) ∧
-  ∀ q ∈ alt Q, w ∈ q → (∃ v ∈ M, v ∈ q) → p ∩ M ⊆ q ∩ M
+@[simp] theorem self_mem_strongAnswer : w ∈ strongAnswer H w := fun _ _ => Iff.rfl
 
-/-- **Xiang's relExh**: relativized exhaustivity at `w` against modal
-    base `M` ([xiang-2022] Def 91). -/
-def relExh (Q : Question W) (w : W) (M : Set W) : Prop :=
-  ∃ p, IsStrongestRelTrueAnswer Q w M p
+theorem mem_strongAnswer_comm {w v : W} :
+    v ∈ strongAnswer H w ↔ w ∈ strongAnswer H v :=
+  ⟨fun h p hp => (h p hp).symm, fun h p hp => (h p hp).symm⟩
 
-/-! ### Bridges -/
+theorem mem_strongAnswer_trans {w v u : W} (huv : u ∈ strongAnswer H v)
+    (hvw : v ∈ strongAnswer H w) : u ∈ strongAnswer H w :=
+  fun p hp => (hvw p hp).trans (huv p hp)
 
-/-- A strong-exhaustive answer at `w` mention-all-answers `Q`. -/
-theorem stronglyExhaustive_imp_mentionAll
-    (σ : Set W) (Q : Question W) (w : W)
-    (h : IsStronglyExhaustiveAnswer σ Q w) :
-    MentionAll σ Q := by
+/-- Two strong answers are equal or disjoint: they are the cells of a partition. -/
+theorem strongAnswer_eq_or_disjoint (w v : W) :
+    strongAnswer H w = strongAnswer H v ∨ Disjoint (strongAnswer H w) (strongAnswer H v) := by
+  by_cases h : ∃ u, u ∈ strongAnswer H w ∧ u ∈ strongAnswer H v
+  · obtain ⟨u, huw, huv⟩ := h
+    refine Or.inl (Set.ext fun x => ⟨fun hx => ?_, fun hx => ?_⟩)
+    · exact mem_strongAnswer_trans H
+        (mem_strongAnswer_trans H hx ((mem_strongAnswer_comm H).1 huw)) huv
+    · exact mem_strongAnswer_trans H
+        (mem_strongAnswer_trans H hx ((mem_strongAnswer_comm H).1 huv)) huw
+  · exact Or.inr (Set.disjoint_left.2 fun u huw huv => h ⟨u, huw, huv⟩)
+
+@[simp] theorem iUnion_strongAnswer : ⋃ w, strongAnswer H w = Set.univ :=
+  Set.eq_univ_of_forall fun v => Set.mem_iUnion.2 ⟨v, self_mem_strongAnswer H v⟩
+
+theorem mem_range_strongAnswer_iff {C : Set W} :
+    C ∈ Set.range (strongAnswer H) ↔ ∃ w ∈ C, C = strongAnswer H w :=
+  ⟨fun ⟨w, hw⟩ => ⟨w, hw ▸ self_mem_strongAnswer H w, hw.symm⟩,
+   fun ⟨w, _, hw⟩ => ⟨w, hw.symm⟩⟩
+
+/-- The strongly exhaustive answer to an inquisitive question mention-all answers it. -/
+theorem mentionAll_strongAnswer (Q : Question W) : MentionAll (strongAnswer (alt Q) w) Q := by
   intro p hp
   by_cases hw : w ∈ p
-  · left
-    intro v hv
-    have : v ∈ strongAnswer Q w := h ▸ hv
-    exact (this p hp).mp hw
-  · right
-    intro v hv
-    have : v ∈ strongAnswer Q w := h ▸ hv
-    exact (this p hp).not.mp hw
+  · exact Or.inl fun _ hv => (hv p hp).1 hw
+  · exact Or.inr fun _ hv => (hv p hp).not.1 hw
 
-/-- The Dayal answer is by construction a strongest-true answer when it
-    fires. -/
-theorem dayalAns_spec (Q : Question W) (w : W) (p : Set W)
-    (h : dayalAns Q w = some p) :
-    IsStrongestTrueAnswer Q w p := by
-  unfold dayalAns at h
-  split at h
-  · case _ hep =>
-    have heq : Classical.choose hep = p := by
-      injection h
-    rw [← heq]; exact Classical.choose_spec hep
-  · case _ => simp at h
+/-! ### Dayal's strongest true answer -/
 
-/-! ### Strong ⊆ Weak (the substrate exhaustivity ladder) -/
+/-- [dayal-1996]'s maximally informative true member: `p` is in `H`, true at
+`w`, and entails every member true at `w`, the least element of the Karttunen
+set under `⊆`. -/
+abbrev IsStrongestTrueAnswer (p : Set W) : Prop := IsLeast (trueAnswers H w) p
 
-/-- The strong-exhaustive answer is contained in the weak-exhaustive
-    answer: any state deciding every alternative the same way as `w`
-    automatically lies inside every alternative true at `w`.
-    [heim-1994] §4 / [george-2011] §2.6 substrate fact. -/
-theorem strongAnswer_subset_weakAnswer (Q : Question W) (w : W) :
-    strongAnswer Q w ⊆ weakAnswer Q w := by
-  intro v hv p hp hwp
-  exact (hv p hp).mp hwp
+/-- Dayal's existential presupposition: a strongest true member exists. -/
+def IsExhaustivelyResolvable : Prop := ∃ p, IsStrongestTrueAnswer H w p
 
-/-! ### `strongAnswer` partition properties ([fox-2018] §1.1)
+theorem isStrongestTrueAnswer_iff {p : Set W} :
+    IsStrongestTrueAnswer H w p ↔ p ∈ H ∧ p = weakAnswer H w := by
+  constructor
+  · intro h
+    exact ⟨h.1.1,
+      (Set.subset_sInter fun _ hq => h.2 hq).antisymm (Set.sInter_subset_of_mem h.1)⟩
+  · rintro ⟨hp, rfl⟩
+    exact ⟨⟨hp, self_mem_weakAnswer H w⟩, fun _ hq => Set.sInter_subset_of_mem hq⟩
 
-`strongAnswer Q : W → Set W` partitions `W` into equivalence classes:
-`v ∈ strongAnswer Q w` is the equivalence relation "agrees with `w`
-on every alternative of `Q`". The image `Set.range (strongAnswer Q)`
-is what [fox-2018] eq (3) calls the **Logical Partition** of `Q`. -/
+/-- The presupposition holds exactly when the weak answer is itself a member. -/
+theorem isExhaustivelyResolvable_iff : IsExhaustivelyResolvable H w ↔ weakAnswer H w ∈ H :=
+  ⟨fun ⟨_, h⟩ =>
+    have h' := (isStrongestTrueAnswer_iff H w).1 h
+    h'.2 ▸ h'.1,
+   fun h => ⟨_, (isStrongestTrueAnswer_iff H w).2 ⟨h, rfl⟩⟩⟩
 
-/-- Reflexivity: `w` decides every alternative the same way as itself. -/
-@[simp] theorem strongAnswer_self_mem (Q : Question W) (w : W) :
-    w ∈ strongAnswer Q w := fun _ _ => Iff.rfl
+theorem IsExhaustivelyResolvable.exists_mem {H : Set (Set W)} {w : W}
+    (h : IsExhaustivelyResolvable H w) : ∃ p ∈ H, w ∈ p :=
+  let ⟨p, hp⟩ := h; ⟨p, hp.1.1, hp.1.2⟩
 
-/-- Symmetry of the underlying equivalence: `v ∈ strongAnswer Q w ↔
-    w ∈ strongAnswer Q v`. -/
-theorem mem_strongAnswer_symm (Q : Question W) {w v : W} :
-    v ∈ strongAnswer Q w ↔ w ∈ strongAnswer Q v := by
-  unfold strongAnswer
-  refine ⟨fun h p hp => (h p hp).symm, fun h p hp => (h p hp).symm⟩
+theorem isLeast_singleton (p : Set W) : IsLeast {p} p :=
+  ⟨Set.mem_singleton p, fun _ hq => le_of_eq (Set.mem_singleton_iff.1 hq).symm⟩
 
-/-- Transitivity: `u ∈ strongAnswer Q v` and `v ∈ strongAnswer Q w`
-    implies `u ∈ strongAnswer Q w`. -/
-theorem strongAnswer_trans (Q : Question W) {w v u : W}
-    (huv : u ∈ strongAnswer Q v) (hvw : v ∈ strongAnswer Q w) :
-    u ∈ strongAnswer Q w := by
-  intro p hp
-  exact (hvw p hp).trans (huv p hp)
+/-- Over an antichain the least true member is the only true member. -/
+theorem isStrongestTrueAnswer_iff_of_antichain (hH : IsAntichain (· ⊆ ·) H) {p : Set W} :
+    IsStrongestTrueAnswer H w p ↔ trueAnswers H w = {p} := by
+  constructor
+  · intro h
+    refine Set.eq_singleton_iff_unique_mem.2 ⟨h.1, fun q hq => ?_⟩
+    by_contra hne
+    exact hH h.1.1 hq.1 (Ne.symm hne) (h.2 hq)
+  · intro h
+    rw [IsStrongestTrueAnswer, h]
+    exact isLeast_singleton p
 
-/-- Two strong-answer cells are either equal or disjoint — the
-    equivalence-relation partition property. -/
-theorem strongAnswer_eq_or_disjoint (Q : Question W) (w v : W) :
-    strongAnswer Q w = strongAnswer Q v ∨
-      Disjoint (strongAnswer Q w) (strongAnswer Q v) := by
-  by_cases h : ∃ u, u ∈ strongAnswer Q w ∧ u ∈ strongAnswer Q v
-  · left
-    obtain ⟨u, huw, huv⟩ := h
-    ext x
-    refine ⟨fun hx p hp => ?_, fun hx p hp => ?_⟩
-    · -- x ∈ strongAnswer Q w; want v ∈ p ↔ x ∈ p
-      have hu_w : w ∈ p ↔ u ∈ p := huw p hp
-      have hu_v : v ∈ p ↔ u ∈ p := huv p hp
-      have hx_w : w ∈ p ↔ x ∈ p := hx p hp
-      exact hu_v.trans (hu_w.symm.trans hx_w)
-    · -- x ∈ strongAnswer Q v; want w ∈ p ↔ x ∈ p
-      have hu_w : w ∈ p ↔ u ∈ p := huw p hp
-      have hu_v : v ∈ p ↔ u ∈ p := huv p hp
-      have hx_v : v ∈ p ↔ x ∈ p := hx p hp
-      exact hu_w.trans (hu_v.symm.trans hx_v)
-  · right
-    rw [Set.disjoint_iff_inter_eq_empty]
-    ext u
-    simp only [Set.mem_inter_iff, Set.mem_empty_iff_false, iff_false, not_and]
-    intro hu hu'
-    exact h ⟨u, hu, hu'⟩
+theorem isExhaustivelyResolvable_iff_of_antichain (hH : IsAntichain (· ⊆ ·) H) :
+    IsExhaustivelyResolvable H w ↔ ∃ p, trueAnswers H w = {p} :=
+  exists_congr fun _ => isStrongestTrueAnswer_iff_of_antichain H w hH
 
-/-- The cells of the strong-answer partition cover `W`: every world
-    is in some cell (its own). -/
-@[simp] theorem iUnion_strongAnswer (Q : Question W) :
-    ⋃ w, strongAnswer Q w = Set.univ := by
+/-- Over inquisitive alternatives the strongest true answer is the only true alternative. -/
+theorem isStrongestTrueAnswer_alt_iff (Q : Question W) {p : Set W} :
+    IsStrongestTrueAnswer (alt Q) w p ↔ trueAnswers (alt Q) w = {p} :=
+  isStrongestTrueAnswer_iff_of_antichain _ w (alt_isAntichain Q)
+
+open Classical in
+/-- Dayal's answerhood operator Ans-D: the strongest true member, when the
+presupposition holds. -/
+noncomputable def dayalAns : Option (Set W) :=
+  if weakAnswer H w ∈ H then some (weakAnswer H w) else none
+
+theorem dayalAns_eq_some_iff {p : Set W} :
+    dayalAns H w = some p ↔ IsStrongestTrueAnswer H w p := by
+  rw [isStrongestTrueAnswer_iff, dayalAns]
+  split_ifs with h
+  · constructor
+    · intro e
+      rw [Option.some.injEq] at e
+      exact ⟨e ▸ h, e.symm⟩
+    · rintro ⟨_, e⟩
+      rw [e]
+  · exact ⟨fun e => (by simp at e), fun ⟨hp, e⟩ => (h (e ▸ hp)).elim⟩
+
+theorem dayalAns_isSome_iff : (dayalAns H w).isSome ↔ IsExhaustivelyResolvable H w := by
+  rw [isExhaustivelyResolvable_iff, dayalAns]
+  split_ifs with h <;> simp [h]
+
+theorem dayalAns_eq_none_iff : dayalAns H w = none ↔ ¬ IsExhaustivelyResolvable H w := by
+  rw [isExhaustivelyResolvable_iff, dayalAns]
+  split_ifs with h <;> simp [h]
+
+/-! ### Cells ([fox-2018]) -/
+
+/-- The cell of `p`: the worlds where `p` is the strongest true member. -/
+def exhCell (p : Set W) : Set W := {w | IsStrongestTrueAnswer H w p}
+
+@[simp] theorem mem_exhCell {p : Set W} {w : W} :
+    w ∈ exhCell H p ↔ IsStrongestTrueAnswer H w p := Iff.rfl
+
+theorem exhCell_subset (p : Set W) : exhCell H p ⊆ p := fun _ h => h.1.2
+
+/-- Where `p` is the strongest true member, the true members are those `p` entails. -/
+theorem trueAnswers_eq_of_isStrongestTrueAnswer {p : Set W}
+    (h : IsStrongestTrueAnswer H w p) : trueAnswers H w = {q ∈ H | p ⊆ q} :=
+  Set.ext fun _ => ⟨fun hq => ⟨hq.1, h.2 hq⟩, fun ⟨hq, hpq⟩ => ⟨hq, hpq h.1.2⟩⟩
+
+/-- The cell of the strongest true member at `w` is the strong answer at `w`. -/
+theorem exhCell_eq_strongAnswer {p : Set W} (h : IsStrongestTrueAnswer H w p) :
+    exhCell H p = strongAnswer H w := by
   ext v
-  simp only [Set.mem_iUnion, Set.mem_univ, iff_true]
-  exact ⟨v, strongAnswer_self_mem Q v⟩
+  rw [mem_exhCell, mem_strongAnswer]
+  constructor
+  · exact fun hv q hq =>
+      ⟨fun hwq => h.2 ⟨hq, hwq⟩ hv.1.2, fun hvq => hv.2 ⟨hq, hvq⟩ h.1.2⟩
+  · exact fun hv =>
+      ⟨⟨h.1.1, (hv p h.1.1).1 h.1.2⟩, fun _ hq => h.2 ⟨hq.1, (hv _ hq.1).2 hq.2⟩⟩
 
-/-- The Fox 2018 LogicalPartition characterization: any cell in
-    `Set.range (strongAnswer Q)` is uniquely determined by any of its
-    elements. -/
-theorem mem_range_strongAnswer_iff (Q : Question W) (C : Set W) :
-    C ∈ Set.range (strongAnswer Q) ↔ ∃ w ∈ C, C = strongAnswer Q w := by
-  refine ⟨?_, ?_⟩
-  · rintro ⟨w, rfl⟩
-    exact ⟨w, strongAnswer_self_mem Q w, rfl⟩
-  · rintro ⟨w, _, rfl⟩
-    exact ⟨w, rfl⟩
+/-- The logical partition: the cells of the strong answer. -/
+def exhaustifiedPartition : Set (Set W) := Set.range (strongAnswer H)
 
-/-! ### Fox's exhaustification primitives ([fox-2018])
+@[simp] theorem mem_exhaustifiedPartition {C : Set W} :
+    C ∈ exhaustifiedPartition H ↔ ∃ w, C = strongAnswer H w := by
+  simp [exhaustifiedPartition, eq_comm]
 
-[fox-2018] derives Dayal's exhaustivity presupposition from the
-demand that question denotations partition the Stalnakerian context-set
-via point-wise exhaustification of Hamblin alternatives. Two
-substrate-level primitives:
+theorem exhaustifiedPartition_nonempty {C : Set W} (h : C ∈ exhaustifiedPartition H) :
+    C.Nonempty :=
+  let ⟨w, hw⟩ := h; ⟨w, hw ▸ self_mem_strongAnswer H w⟩
 
-- `exhCell Q p` (eq 11): the set of worlds where `p` is the maximally
-  informative true alternative — i.e., `{w | IsStrongestTrueAnswer Q w p}`.
-- `exhaustifiedPartition Q` (eq 3): the equivalence-class image
-  `Set.range (strongAnswer Q)`, the "Logical Partition" of Q.
-
-The paper-specific apparatus (Cell Identification, Non-Vacuity, QPM)
-lives in `Studies/Fox2018.lean`; here we expose
-only the substrate primitives the paper consumes. -/
-
-/-- [fox-2018] (eq 11): the **Exh-cell** of proposition `p` in
-    question `Q` — the set of worlds where `p` is the maximally
-    informative true Hamblin alternative. Identifies a cell of the
-    logical partition by the alt that "Exh-strengthens to it".
-    Substrate identification: `{w | IsStrongestTrueAnswer Q w p}`. -/
-def exhCell (Q : Question W) (p : Set W) : Set W :=
-  {w | IsStrongestTrueAnswer Q w p}
-
-@[simp] theorem mem_exhCell {Q : Question W} {p : Set W} {w : W} :
-    w ∈ exhCell Q p ↔ IsStrongestTrueAnswer Q w p := Iff.rfl
-
-/-- An Exh-cell membership entails the world is in the alternative. -/
-theorem exhCell_subset (Q : Question W) (p : Set W) :
-    exhCell Q p ⊆ p :=
-  fun _ h => h.2.1
-
-/-- [fox-2018] (eq 3): the **Logical Partition** of `Q` — the image
-    of `strongAnswer`. Substrate-level: equivalence classes of `W` under
-    "agreement on every alternative". A partition by
-    `strongAnswer_eq_or_disjoint` and `iUnion_strongAnswer`. -/
-def exhaustifiedPartition (Q : Question W) : Set (Set W) :=
-  Set.range (strongAnswer Q)
-
-@[simp] theorem mem_exhaustifiedPartition {Q : Question W} {C : Set W} :
-    C ∈ exhaustifiedPartition Q ↔ ∃ w, C = strongAnswer Q w := by
-  unfold exhaustifiedPartition
-  simp only [Set.mem_range, eq_comm]
-
-/-- The exhaustified partition cells are nonempty (each contains its
-    representative world). -/
-theorem exhaustifiedPartition_nonempty
-    (Q : Question W) {C : Set W} (h : C ∈ exhaustifiedPartition Q) :
-    C.Nonempty := by
-  obtain ⟨w, rfl⟩ := h
-  exact ⟨w, strongAnswer_self_mem Q w⟩
-
-/-- Two exhaustified-partition cells are equal or disjoint — direct
-    consequence of `strongAnswer_eq_or_disjoint`. -/
-theorem exhaustifiedPartition_eq_or_disjoint
-    (Q : Question W) {C₁ C₂ : Set W}
-    (h₁ : C₁ ∈ exhaustifiedPartition Q) (h₂ : C₂ ∈ exhaustifiedPartition Q) :
+theorem exhaustifiedPartition_eq_or_disjoint {C₁ C₂ : Set W}
+    (h₁ : C₁ ∈ exhaustifiedPartition H) (h₂ : C₂ ∈ exhaustifiedPartition H) :
     C₁ = C₂ ∨ Disjoint C₁ C₂ := by
   obtain ⟨w₁, rfl⟩ := h₁
   obtain ⟨w₂, rfl⟩ := h₂
-  exact strongAnswer_eq_or_disjoint Q w₁ w₂
+  exact strongAnswer_eq_or_disjoint H w₁ w₂
 
-/-- The exhaustified partition covers `W` — every world is in its own
-    cell. Direct consequence of `iUnion_strongAnswer`. -/
-@[simp] theorem sUnion_exhaustifiedPartition (Q : Question W) :
-    ⋃₀ exhaustifiedPartition Q = Set.univ := by
+@[simp] theorem sUnion_exhaustifiedPartition : ⋃₀ exhaustifiedPartition H = Set.univ := by
   rw [exhaustifiedPartition, Set.sUnion_range]
-  exact iUnion_strongAnswer Q
+  exact iUnion_strongAnswer H
 
-/-! ### Per-constructor characterizations -/
+/-- Dayal's strong operator Ans-D/H, [heim-1994]'s strengthening of Ans-D:
+the worlds with the same strongest true member as `w`. -/
+noncomputable def dayalStrongAns : Option (Set W) := (dayalAns H w).map (exhCell H)
 
-open Question (mem_alt_polar_of_nontrivial alt_polar_of_nontrivial)
+/-- Where defined, Dayal's strong operator is the Groenendijk–Stokhof answer. -/
+theorem dayalStrongAns_eq_some_iff {A : Set W} :
+    dayalStrongAns H w = some A ↔ IsExhaustivelyResolvable H w ∧ A = strongAnswer H w := by
+  simp only [dayalStrongAns, Option.map_eq_some_iff, dayalAns_eq_some_iff]
+  constructor
+  · rintro ⟨p, hp, rfl⟩
+    exact ⟨⟨p, hp⟩, exhCell_eq_strongAnswer H w hp⟩
+  · rintro ⟨⟨p, hp⟩, rfl⟩
+    exact ⟨p, hp, exhCell_eq_strongAnswer H w hp⟩
 
-/-- True alternatives of `polar p` at `w`: just `{p}` if `w ∈ p`, else
-    `{pᶜ}`. (For nontrivial polar.) -/
-theorem trueAlternatives_polar_iff_of_nontrivial (p : Set W)
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) (w : W) (q : Set W) :
-    q ∈ trueAlternatives (polar p) w ↔
-      (w ∈ p ∧ q = p) ∨ (w ∉ p ∧ q = pᶜ) := by
-  unfold trueAlternatives
-  rw [Set.mem_sep_iff]
+/-! ### Relativized exhaustivity ([xiang-2022]) -/
+
+/-- `p` is the strongest true member relative to the modal base `M`: true at
+`w`, compatible with `M`, and entailing every other such member within `M`. -/
+def IsStrongestRelTrueAnswer (M : Set W) (p : Set W) : Prop :=
+  p ∈ H ∧ w ∈ p ∧ (∃ v ∈ M, v ∈ p) ∧
+    ∀ q ∈ H, w ∈ q → (∃ v ∈ M, v ∈ q) → p ∩ M ⊆ q ∩ M
+
+/-- Relativized exhaustivity: a strongest true member relative to `M` exists. -/
+def relExh (M : Set W) : Prop := ∃ p, IsStrongestRelTrueAnswer H w M p
+
+/-! ### Polar and declarative questions -/
+
+section Polar
+
+variable {w} {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
+include hne hnu
+
+theorem trueAnswers_polar_of_pos (hwp : w ∈ p) :
+    trueAnswers (alt (polar p)) w = {p} := by
+  ext q
   constructor
   · rintro ⟨hq, hwq⟩
-    rcases (mem_alt_polar_of_nontrivial hne hnu q).mp hq with rfl | rfl
-    · exact Or.inl ⟨hwq, rfl⟩
-    · exact Or.inr ⟨hwq, rfl⟩
-  · rintro (⟨hwp, hqp⟩ | ⟨hwp, hqpc⟩)
-    · rw [hqp]
-      exact ⟨(mem_alt_polar_of_nontrivial hne hnu p).mpr (Or.inl rfl), hwp⟩
-    · rw [hqpc]
-      exact ⟨(mem_alt_polar_of_nontrivial hne hnu pᶜ).mpr (Or.inr rfl), hwp⟩
-
-/-- The weak (Heim/Karttunen) answer to `polar p` at a `p`-true world
-    is `p` itself. (For nontrivial polar.) -/
-theorem weakAnswer_polar_of_pos {p : Set W}
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) {w : W} (hwp : w ∈ p) :
-    weakAnswer (polar p) w = p := by
-  ext v
-  unfold weakAnswer
-  rw [Set.mem_ofPred_eq]
-  constructor
-  · intro h
-    rw [alt_polar_of_nontrivial hne hnu] at h
-    exact h p (by simp) hwp
-  · intro hv q hq hwq
-    rcases (mem_alt_polar_of_nontrivial hne hnu q).mp hq with rfl | rfl
-    · exact hv
+    rcases (mem_alt_polar_of_nontrivial hne hnu q).1 hq with rfl | rfl
+    · exact Set.mem_singleton _
     · exact (hwq hwp).elim
+  · intro hq
+    obtain rfl := Set.mem_singleton_iff.1 hq
+    exact ⟨(mem_alt_polar_of_nontrivial hne hnu _).2 (Or.inl rfl), hwp⟩
 
-/-- The weak (Heim/Karttunen) answer to `polar p` at a `p`-false world
-    is `pᶜ`. (For nontrivial polar.) -/
-theorem weakAnswer_polar_of_neg {p : Set W}
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) {w : W} (hwp : w ∉ p) :
-    weakAnswer (polar p) w = pᶜ := by
-  ext v
-  unfold weakAnswer
-  rw [Set.mem_ofPred_eq]
+theorem trueAnswers_polar_of_neg (hwp : w ∉ p) :
+    trueAnswers (alt (polar p)) w = {pᶜ} := by
+  ext q
   constructor
-  · intro h
-    rw [alt_polar_of_nontrivial hne hnu] at h
-    exact h pᶜ (by simp) hwp
-  · intro hv q hq hwq
-    rcases (mem_alt_polar_of_nontrivial hne hnu q).mp hq with rfl | rfl
+  · rintro ⟨hq, hwq⟩
+    rcases (mem_alt_polar_of_nontrivial hne hnu q).1 hq with rfl | rfl
     · exact (hwp hwq).elim
-    · exact hv
+    · exact Set.mem_singleton _
+  · intro hq
+    obtain rfl := Set.mem_singleton_iff.1 hq
+    exact ⟨(mem_alt_polar_of_nontrivial hne hnu _).2 (Or.inr rfl), hwp⟩
 
-/-- The strong (G&S) answer to `polar p` at a `p`-true world is
-    `p` itself. (For nontrivial polar.) -/
-theorem strongAnswer_polar_of_pos {p : Set W}
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) {w : W} (hwp : w ∈ p) :
-    strongAnswer (polar p) w = p := by
+theorem weakAnswer_polar_of_pos (hwp : w ∈ p) : weakAnswer (alt (polar p)) w = p := by
+  rw [weakAnswer, trueAnswers_polar_of_pos hne hnu hwp, Set.sInter_singleton]
+
+theorem weakAnswer_polar_of_neg (hwp : w ∉ p) : weakAnswer (alt (polar p)) w = pᶜ := by
+  rw [weakAnswer, trueAnswers_polar_of_neg hne hnu hwp, Set.sInter_singleton]
+
+theorem strongAnswer_polar_of_pos (hwp : w ∈ p) : strongAnswer (alt (polar p)) w = p := by
   ext v
-  unfold strongAnswer
-  rw [Set.mem_ofPred_eq]
-  constructor
-  · intro h
-    have hp_mem : p ∈ alt (polar p) :=
-      (mem_alt_polar_of_nontrivial hne hnu p).mpr (Or.inl rfl)
-    exact (h p hp_mem).mp hwp
-  · intro hvp q hq
-    rcases (mem_alt_polar_of_nontrivial hne hnu q).mp hq with rfl | rfl
-    · exact iff_of_true hwp hvp
-    · simp only [Set.mem_compl_iff]
-      exact iff_of_false (fun h => h hwp) (fun h => h hvp)
+  simp only [mem_strongAnswer, alt_polar_of_nontrivial hne hnu, Set.mem_insert_iff,
+    Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Set.mem_compl_iff]
+  exact ⟨fun h => h.1.1 hwp,
+    fun hv => ⟨iff_of_true hwp hv, iff_of_false (not_not.2 hwp) (not_not.2 hv)⟩⟩
 
-/-- The strong (G&S) answer to `polar p` at a `p`-false world is
-    `pᶜ`. (For nontrivial polar.) -/
-theorem strongAnswer_polar_of_neg {p : Set W}
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) {w : W} (hwp : w ∉ p) :
-    strongAnswer (polar p) w = pᶜ := by
+theorem strongAnswer_polar_of_neg (hwp : w ∉ p) : strongAnswer (alt (polar p)) w = pᶜ := by
   ext v
-  unfold strongAnswer
-  rw [Set.mem_ofPred_eq]
-  constructor
-  · intro h
-    have hpc_mem : pᶜ ∈ alt (polar p) :=
-      (mem_alt_polar_of_nontrivial hne hnu pᶜ).mpr (Or.inr rfl)
-    exact (h pᶜ hpc_mem).mp hwp
-  · intro hvpc q hq
-    rcases (mem_alt_polar_of_nontrivial hne hnu q).mp hq with rfl | rfl
-    · exact iff_of_false hwp hvpc
-    · simp only [Set.mem_compl_iff]
-      exact iff_of_true (fun h => hwp h) (fun h => hvpc h)
+  simp only [mem_strongAnswer, alt_polar_of_nontrivial hne hnu, Set.mem_insert_iff,
+    Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Set.mem_compl_iff]
+  exact ⟨fun h => h.2.1 hwp, fun hv => ⟨iff_of_false hwp hv, iff_of_true hwp hv⟩⟩
 
-/-! ### `ofSet` characterizations -/
+theorem isStrongestTrueAnswer_polar_of_pos (hwp : w ∈ p) :
+    IsStrongestTrueAnswer (alt (polar p)) w p := by
+  rw [IsStrongestTrueAnswer, trueAnswers_polar_of_pos hne hnu hwp]
+  exact isLeast_singleton p
 
-/-- The weak answer to a declarative is the proposition itself.
-    The single alt is `p`; if `w ∈ p` then `weakAnswer = p`. -/
-theorem weakAnswer_ofSet_of_pos {p : Set W}
-    {w : W} (hwp : w ∈ p) :
-    weakAnswer (ofSet p) w = p := by
-  ext v
-  unfold weakAnswer
-  rw [Set.mem_ofPred_eq, Question.alt_ofSet]
-  refine ⟨fun h => h p (Set.mem_singleton p) hwp, fun hvp q hq _ => ?_⟩
-  rw [Set.mem_singleton_iff] at hq
-  exact hq ▸ hvp
+theorem isStrongestTrueAnswer_polar_of_neg (hwp : w ∉ p) :
+    IsStrongestTrueAnswer (alt (polar p)) w pᶜ := by
+  rw [IsStrongestTrueAnswer, trueAnswers_polar_of_neg hne hnu hwp]
+  exact isLeast_singleton pᶜ
 
-/-- The strong answer to a declarative at a `p`-true world is `p`. -/
-theorem strongAnswer_ofSet_of_pos {p : Set W}
-    {w : W} (hwp : w ∈ p) :
-    strongAnswer (ofSet p) w = p := by
-  ext v
-  unfold strongAnswer
-  rw [Set.mem_ofPred_eq, Question.alt_ofSet]
-  refine ⟨fun h => (h p (Set.mem_singleton p)).mp hwp, fun hvp q hq => ?_⟩
-  rw [Set.mem_singleton_iff] at hq
-  exact hq ▸ iff_of_true hwp hvp
-
-/-! ### `dayalAns` characterizations -/
-
-/-- For a non-trivial polar question, the **existential presupposition**
-    is always satisfied: at any world, exactly one of `p`, `pᶜ` is true,
-    and the singleton trivially has a maximum. -/
-theorem isExhaustivelyResolvable_polar_of_nontrivial {p : Set W}
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) (w : W) :
-    IsExhaustivelyResolvable (polar p) w := by
+/-- A non-trivial polar question always satisfies Dayal's presupposition. -/
+theorem isExhaustivelyResolvable_polar_of_nontrivial (w : W) :
+    IsExhaustivelyResolvable (alt (polar p)) w := by
   by_cases hwp : w ∈ p
-  · refine ⟨p, ?_, hwp, ?_⟩
-    · exact (mem_alt_polar_of_nontrivial hne hnu p).mpr (Or.inl rfl)
-    · intro q hq hwq
-      rcases (mem_alt_polar_of_nontrivial hne hnu q).mp hq with rfl | rfl
-      · exact Set.Subset.refl _
-      · exact (hwq hwp).elim
-  · refine ⟨pᶜ, ?_, hwp, ?_⟩
-    · exact (mem_alt_polar_of_nontrivial hne hnu pᶜ).mpr (Or.inr rfl)
-    · intro q hq hwq
-      rcases (mem_alt_polar_of_nontrivial hne hnu q).mp hq with rfl | rfl
-      · exact (hwp hwq).elim
-      · exact Set.Subset.refl _
+  · exact ⟨p, isStrongestTrueAnswer_polar_of_pos hne hnu hwp⟩
+  · exact ⟨pᶜ, isStrongestTrueAnswer_polar_of_neg hne hnu hwp⟩
 
-/-- The strongest true answer to `polar p` at a `p`-true world is `p`
-    itself. -/
-theorem isStrongestTrueAnswer_polar_of_pos {p : Set W}
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) {w : W} (hwp : w ∈ p) :
-    IsStrongestTrueAnswer (polar p) w p := by
-  refine ⟨?_, hwp, ?_⟩
-  · exact (mem_alt_polar_of_nontrivial hne hnu p).mpr (Or.inl rfl)
-  · intro q hq hwq
-    rcases (mem_alt_polar_of_nontrivial hne hnu q).mp hq with rfl | rfl
-    · exact Set.Subset.refl _
-    · exact (hwq hwp).elim
+end Polar
 
-/-- The strongest true answer to `polar p` at a `p`-false world is
-    `pᶜ`. -/
-theorem isStrongestTrueAnswer_polar_of_neg {p : Set W}
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) {w : W} (hwp : w ∉ p) :
-    IsStrongestTrueAnswer (polar p) w pᶜ := by
-  refine ⟨?_, hwp, ?_⟩
-  · exact (mem_alt_polar_of_nontrivial hne hnu pᶜ).mpr (Or.inr rfl)
-  · intro q hq hwq
-    rcases (mem_alt_polar_of_nontrivial hne hnu q).mp hq with rfl | rfl
-    · exact (hwp hwq).elim
-    · exact Set.Subset.refl _
+theorem weakAnswer_ofSet_of_pos {p : Set W} {w : W} (hwp : w ∈ p) :
+    weakAnswer (alt (ofSet p)) w = p := by
+  ext v
+  simp [weakAnswer, trueAnswers, alt_ofSet, hwp]
 
-/-! ### Decidability for polar EP
+theorem strongAnswer_ofSet_of_pos {p : Set W} {w : W} (hwp : w ∈ p) :
+    strongAnswer (alt (ofSet p)) w = p := by
+  ext v
+  simp [strongAnswer, alt_ofSet, hwp]
 
-For nontrivial polar questions, `IsExhaustivelyResolvable` is **always
-true** (`isExhaustivelyResolvable_polar_of_nontrivial`), so the
-`Decidable` instance is `isTrue`. This is the substrate fact that
-underlies [dayal-1996]'s observation that polar EP is
-unproblematic — the EP only becomes contentful for wh-questions. -/
-
-def IsExhaustivelyResolvable.decidable_polar {p : Set W}
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) (w : W) :
-    Decidable (IsExhaustivelyResolvable (polar p) w) :=
-  isTrue (isExhaustivelyResolvable_polar_of_nontrivial hne hnu w)
-
-end Questions.Exhaustivity
+end Questions

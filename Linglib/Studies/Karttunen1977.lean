@@ -15,17 +15,17 @@ and constitute an answer.
 ## Substrate identification
 
 [karttunen-1977]'s denotation is exactly
-`Exhaustivity.trueAlternatives Q w` — the set of `Q`-alternatives
+`Exhaustivity.trueAnswers (alt Q) w` — the set of `Q`-alternatives
 true at `w`. The "complete answer" Karttunen ascribes via the
 meaning postulate (§2.4 fn 11) for `know` is exactly
-`Exhaustivity.weakAnswer Q w` — the conjunction (intersection) of
+`Exhaustivity.weakAnswer (alt Q) w` — the conjunction (intersection) of
 all true alternatives.
 
 The substrate joints (`alt_polar_iff`, `resolves_polar_iff`,
-`trueAlternatives_polar_iff_of_nontrivial`, `weakAnswer_polar_of_pos`,
-`weakAnswer_polar_of_neg`) live in `Question.Hamblin`,
-`Resolution.lean`, and `Exhaustivity.lean`. This file uses them to
-prove Karttunen's stated observations directly.
+`trueAnswers_polar_of_pos`, `trueAnswers_polar_of_neg`,
+`weakAnswer_polar_of_pos`, `weakAnswer_polar_of_neg`) live in
+`Question.Hamblin`, `Resolution.lean`, and `Exhaustivity.lean`. This
+file uses them to prove Karttunen's stated observations directly.
 
 ## Outline
 
@@ -56,7 +56,7 @@ substrate is in place.
 namespace Karttunen1977
 
 open Question
-open Questions.Exhaustivity
+open Questions
 
 variable {W : Type*}
 
@@ -64,79 +64,70 @@ variable {W : Type*}
 
 /-- [karttunen-1977] §2.1: the **Karttunen denotation** of
     question `Q` at world `w` is the set of true alternatives.
-    Definitionally equal to `Exhaustivity.trueAlternatives`. -/
+    Definitionally equal to `Exhaustivity.trueAnswers`. -/
 def karttunenDenotation (Q : Question W) (w : W) : Set (Set W) :=
-  trueAlternatives Q w
+  trueAnswers (alt Q) w
 
-@[simp] theorem karttunenDenotation_eq_trueAlternatives
+@[simp] theorem karttunenDenotation_eq_trueAnswers
     (Q : Question W) (w : W) :
-    karttunenDenotation Q w = trueAlternatives Q w := rfl
+    karttunenDenotation Q w = trueAnswers (alt Q) w := rfl
 
 /-! ### The complete-answer view (§2.4 footnote 11) -/
 
 /-- [karttunen-1977] §2.4 fn 11: the **complete answer** to `Q`
     at `w` — the proposition the agent must believe to count as
-    knowing `Q`. Equal to `weakAnswer Q w`. -/
+    knowing `Q`. Equal to `weakAnswer (alt Q) w`. -/
 def karttunenCompleteAnswer (Q : Question W) (w : W) : Set W :=
-  weakAnswer Q w
+  weakAnswer (alt Q) w
 
 @[simp] theorem karttunenCompleteAnswer_eq_weakAnswer
     (Q : Question W) (w : W) :
-    karttunenCompleteAnswer Q w = weakAnswer Q w := rfl
+    karttunenCompleteAnswer Q w = weakAnswer (alt Q) w := rfl
 
 /-- The complete answer at `w` always contains `w` itself: every true
     alternative contains `w` by definition. -/
 theorem mem_karttunenCompleteAnswer_self (Q : Question W) (w : W) :
-    w ∈ karttunenCompleteAnswer Q w := by
-  intro p _ hwp; exact hwp
+    w ∈ karttunenCompleteAnswer Q w :=
+  self_mem_weakAnswer _ w
 
 /-- The complete answer is the intersection of the Karttunen
     denotation. -/
 theorem karttunenCompleteAnswer_eq_sInter (Q : Question W) (w : W) :
-    karttunenCompleteAnswer Q w = ⋂₀ (karttunenDenotation Q w) := by
-  ext v; constructor
-  · intro h p ⟨hp, hwp⟩; exact h p hp hwp
-  · intro h p hp hwp; exact h p ⟨hp, hwp⟩
+    karttunenCompleteAnswer Q w = ⋂₀ (karttunenDenotation Q w) := rfl
 
 /-! ### §2.3 yes/no observation
 
 `whether Mary cooks` denotes `{[Mary cooks]}` if Mary cooks, else
 `{[Mary doesn't cook]}`. Falls out of the substrate
-`trueAlternatives_polar_iff_of_nontrivial` joint. -/
+`trueAnswers_polar_of_pos`/`trueAnswers_polar_of_neg` joints. -/
 
 /-- [karttunen-1977] §2.3: at a `p`-true world, the polar
     question denotes `{p}`. -/
 theorem karttunen_polar_pos (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     (w : W) (hwp : w ∈ p) :
-    karttunenDenotation (Question.polar p) w = {p} := by
-  ext q
-  rw [karttunenDenotation_eq_trueAlternatives,
-      trueAlternatives_polar_iff_of_nontrivial p hne hnu]
-  simp [hwp]
+    karttunenDenotation (Question.polar p) w = {p} :=
+  trueAnswers_polar_of_pos hne hnu hwp
 
 /-- [karttunen-1977] §2.3: at a `p`-false world, the polar
     question denotes `{pᶜ}`. -/
 theorem karttunen_polar_neg (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     (w : W) (hwp : w ∉ p) :
-    karttunenDenotation (Question.polar p) w = {pᶜ} := by
-  ext q
-  rw [karttunenDenotation_eq_trueAlternatives,
-      trueAlternatives_polar_iff_of_nontrivial p hne hnu]
-  simp [hwp]
+    karttunenDenotation (Question.polar p) w = {pᶜ} :=
+  trueAnswers_polar_of_neg hne hnu hwp
 
 /-- §2.4 corollary: the complete answer to `whether p` at a `p`-true
     world is just `p`. -/
 theorem karttunenCompleteAnswer_polar_pos {p : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) {w : W} (hwp : w ∈ p) :
-    karttunenCompleteAnswer (Question.polar p) w = p := by
-  rw [karttunenCompleteAnswer_eq_weakAnswer, weakAnswer_polar_of_pos hne hnu hwp]
+    karttunenCompleteAnswer (Question.polar p) w = p :=
+  weakAnswer_polar_of_pos hne hnu hwp
 
 /-- §2.4 corollary: the complete answer to `whether p` at a `p`-false
     world is `pᶜ`. -/
 theorem karttunenCompleteAnswer_polar_neg {p : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) {w : W} (hwp : w ∉ p) :
-    karttunenCompleteAnswer (Question.polar p) w = pᶜ := by
-  rw [karttunenCompleteAnswer_eq_weakAnswer, weakAnswer_polar_of_neg hne hnu hwp]
+    karttunenCompleteAnswer (Question.polar p) w = pᶜ :=
+  weakAnswer_polar_of_neg hne hnu hwp
 
 /-! ### §2.4 know-meaning postulate
 
@@ -150,12 +141,9 @@ alternative of `Q` at `w` iff σ ⊆ karttunenCompleteAnswer Q w. -/
 
 theorem subset_karttunenCompleteAnswer_iff (σ : Set W) (Q : Question W) (w : W) :
     σ ⊆ karttunenCompleteAnswer Q w ↔
-      ∀ p ∈ alt Q, w ∈ p → σ ⊆ p := by
-  constructor
-  · intro h p hp hwp v hv
-    exact h hv p hp hwp
-  · intro h v hv p hp hwp
-    exact h p hp hwp hv
+      ∀ p ∈ alt Q, w ∈ p → σ ⊆ p :=
+  ⟨fun h p hp hwp _ hv => (mem_weakAnswer _ w).1 (h hv) p hp hwp,
+   fun h _ hv => (mem_weakAnswer _ w).2 fun p hp hwp => h p hp hwp hv⟩
 
 /-! ### §2.5 fn 13: empty-denotation observation for wh-questions
 

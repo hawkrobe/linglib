@@ -3021,3 +3021,4 @@ import Linglib.Data.Examples.Cumming2026
 import Linglib.Data.Examples.Cysouw2003
 import Linglib.Data.Examples.DalrympleKaplan2000
 import Linglib.Data.Examples.DalrympleHaug2024
+import Linglib.Data.Examples.Dayal2016
