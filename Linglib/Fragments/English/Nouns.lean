@@ -129,8 +129,10 @@ def boy : NounEntry := { formSg := "boy", formPl := "boys" }
 def ball : NounEntry := { formSg := "ball", formPl := "balls" }
 def table : NounEntry := { formSg := "table", formPl := "tables" }
 def squirrel : NounEntry := { formSg := "squirrel", formPl := "squirrels" }
-def man : NounEntry := { formSg := "man", formPl := "men" }
-def woman : NounEntry := { formSg := "woman", formPl := "women" }
+def man : NounEntry := { formSg := "man", formPl := "men", gender := some .masculine }
+def woman : NounEntry := { formSg := "woman", formPl := "women", gender := some .feminine }
+def father : NounEntry := { formSg := "father", formPl := "fathers", gender := some .masculine }
+def mother : NounEntry := { formSg := "mother", formPl := "mothers", gender := some .feminine }
 def kitchen : NounEntry := { formSg := "kitchen", formPl := "kitchens" }
 def story : NounEntry := { formSg := "story", formPl := "stories" }
 def person : NounEntry := { formSg := "person", formPl := "people" }

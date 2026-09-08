@@ -1,446 +1,425 @@
-import Linglib.Semantics.Degree.Boundedness
-import Linglib.Syntax.Category.Degree.Basic
+import Linglib.Data.Examples.Bresnan1973
+import Linglib.Fragments.English.Nouns
+import Linglib.Fragments.English.Predicates.Adjectival
 
 /-!
-# Bresnan 1973: syntax of the comparative clause construction
+# Bresnan (1973): Syntax of the comparative clause construction in English
 
-[bresnan-1973] (Linguistic Inquiry 4) argues that underlying every English
-comparative is a quantifier phrase: a Det position hosting -er, -est, as,
-too, so, that, or nothing over a Q drawn from much, many, little, few,
-enough. Three rules derive the surface forms — -er Encliticizing (20), Much
-Deletion (10), and the suppletions of (7) and (223), so *more* is -er +
-much — and the than-clause, always underlyingly clausal, loses a
-constituent featurally nondistinct from the head under Comparative
-Deletion. The four introductory puzzles (A)–(D) then each turn on one
-structural fact about the head and the deleted constituent.
+Every English comparative is built on a quantifier phrase, a Det of *as*, *too*, *that*, *so*,
+*-er* or *-est* over a Q drawn from *much*, *many*, *little*, *few* and *enough*, so that *more*
+is *-er much* or *-er many* and *taller* derives from *[[much-er] tall]* ([bresnan-1973]). Three
+ordered rules derive the head: *-er* Encliticizing moves the clitic onto Q and leaves the Det
+empty; Much Deletion then removes an unprotected *much* directly before the adjective of its
+AP, so *as much tall* becomes *as tall* while *much-er tall* survives to become *taller*; and
+QP Raising, on the empty Det alone, feeds AP Shift, *a more reliable man* beside *too reliable
+a man* and *\*a too reliable man*. The clause is related to the head by Comparative Formation:
+every *than* and *as* phrase is a full clause from which a constituent nondistinct from the
+head, a QP, an AP or an NP, is deleted, the remainder positioned to the head's right. The four
+puzzles of the introduction turn on the identity of the head and of the deleted constituent:
+whether the clause predicates *a man* of the standard (A), whether the clause has a partitive
+to match a partitive head (B), whether the QP is AP-internal so that the synthetic form can
+arise (C), and whether the identity of a Q with a definite measure phrase is consistent with
+the privative adjective it modifies (D).
 
-## Main definitions
+## Implementation notes
 
-* `Det`, `Q`, `QP`, `suppletion`, `muchDeletionApplies` — the QP structure
-  (6), (108)–(109), and the morphological rules.
-* `DeletionTarget`, `identityHolds` — the nondistinctness condition on
-  Comparative Deletion.
-* `ThanClauseType`, `BresnanThanClauseAnalysis`, `bresnanAnalysisOf` — every
-  than-phrase as a clause under partial or maximal deletion.
-
-## Main results
-
-* `massParadigm_suppletion_consistent`, `countParadigm_suppletion_consistent`
-  — the (4) and (5) paradigms against the suppletion rules.
-* `enough_requires_null_det` — (107): *enough* is a Q subcategorized for a
-  null Det.
-* `puzzleA_from_head`, `puzzleB_from_partitivity`,
-  `puzzleC_from_encliticizing`, `puzzleD_from_measure_constraint` — the
-  acceptability pattern of each introductory puzzle derived from the one
-  structural bit the paper's Section 2 account assigns it.
-* `subdeletion_identity_holds`, `np_qp_identity_fails` — the identity
-  condition at work.
+Each row carries the paper's analysis of its example as features, the Det and Q of the QP
+and its position, or the head's category and site and the constituent the clause supplies;
+acceptability is derived from the rules. The anomaly of (242d) is read off the lexical gender
+of *mother* and *man* in the English fragment, privativeness off the polarity of *short*. QP
+recursion and QP Shift (1.4), *so* and *such* (1.5), *of* Insertion, Enough Permutation and
+the ambiguities of 1.8 beyond the homophony of *more* are not formalized.
 
 ## References
 
-* [bresnan-1973] — the paper.
+* [bresnan-1973]
+* [ross-1967]
 -/
 
 namespace Bresnan1973
 
-open Degree (Head)
-open Degree (ScalePolarity)
+open Data.Examples Features
 
-/-- The two syntactic forms of than-clauses: phrasal "than Bill" vs
-    clausal "than Bill is tall". -/
-inductive ThanClauseType where
-  | phrasal
-  | clausal
-  deriving DecidableEq, Repr
-/-! ### QP Structure (Det + Q) -/
+/-! ### The quantifier phrase (1.1–1.3) -/
 
-/-- The Det position of the QP: hosts degree/comparison morphemes.
-    This is Bresnan's precursor to the modern Deg° head. -/
-inductive Det where
-  | er       -- comparative: -er
-  | est      -- superlative: -est
-  | as_      -- equative: as
-  | too      -- excessive: too
-  | so       -- consecutive/degree: so
-  | that_    -- demonstrative degree: that
-  | any_     -- NPI: any
-  | no_      -- negative: no
-  | null     -- empty Det (enough, more/less after QP Raising)
+/-- The particles of the Det position (108), and the negative-dependent *any* and *no* that
+share it with *-er* (117)–(127). -/
+inductive Particle
+  | as_ | too | that_ | so | any_ | no_
   deriving DecidableEq, Repr
 
-/-- The Q (quantity) head: `much`, `many`, `little`, `few`, `enough`.
-    Bresnan's central claim: these are the deep-structure elements
-    underlying all comparative morphology. -/
-inductive Q where
-  | much     -- mass/degree quantity (selects mass nouns, adjectives, adverbs)
-  | many     -- count quantity (selects count nouns)
-  | little   -- negative mass/degree (antonym of much)
-  | few      -- negative count (antonym of many)
-  | enough   -- sufficiency (subcategorizes for null Det)
+/-- The determiners that encliticize onto Q: *-er* by (20) and the indefinite superlative
+*-est* (223). -/
+inductive Clitic
+  | er | est
   deriving DecidableEq, Repr
 
-/-- The QP: Bresnan's degree phrase structure. -/
+/-- The Det of a QP: a particle, a clitic, or *any* or *no* beside *-er*. -/
+structure Det where
+  particle : Option Particle := none
+  clitic : Option Clitic := none
+  deriving DecidableEq, Repr
+
+/-- A clitic shares the Det only with *any* or *no*: `*as more`, `*too most` (224). -/
+def Det.WellFormed (d : Det) : Prop :=
+  d.clitic.isSome → ∀ p ∈ d.particle, p = .any_ ∨ p = .no_
+
+instance : DecidablePred Det.WellFormed := λ _ => by unfold Det.WellFormed; infer_instance
+
+/-- The Q position (6): *much*, *little* and *enough* select mass nouns, *many* and *few*
+indefinite plurals, *enough* both (1.3). -/
+inductive Q
+  | much | many | little | few | enough
+  deriving DecidableEq, Repr
+
+/-- The Qs that select mass nouns, and with them adjectives and adverbs. -/
+def Q.SelectsMass (q : Q) : Prop := q = .much ∨ q = .little ∨ q = .enough
+
+instance : DecidablePred Q.SelectsMass := λ _ => by unfold Q.SelectsMass; infer_instance
+
+/-- The Qs that select indefinite plurals. -/
+def Q.SelectsCount (q : Q) : Prop := q = .many ∨ q = .few ∨ q = .enough
+
+instance : DecidablePred Q.SelectsCount := λ _ => by unfold Q.SelectsCount; infer_instance
+
+/-- A QP (6), (146c): `(Det) Q`. -/
 structure QP where
   det : Det
   q : Q
   deriving DecidableEq, Repr
 
-/-! ### Bridge: QP → Head -/
+/-- (107)–(109): *enough* is subcategorized for the null Det, `*so enough`, `*enougher`;
+with (224), the closed Det inventory of (4) and (5). -/
+def QP.WellFormed (qp : QP) : Prop := qp.det.WellFormed ∧ (qp.q = .enough → qp.det = {})
 
-/-- Map Bresnan's QP Det to the modern DegP type classification.
-    The Det determines the comparison type; Q determines mass/count. -/
-def Det.toHead : Det → Head
-  | .er    => .comparative
-  | .est   => .superlative
-  | .as_   => .equative
-  | .too   => .excessive
-  | .null  => .sufficiency   -- enough has null Det
-  | .so    => .excessive     -- so patterns with too for degree
-  | .that_ => .excessive     -- that much → degree specification
-  | .any_  => .comparative   -- any + -er in Det
-  | .no_   => .comparative   -- no + -er in Det
+instance : DecidablePred QP.WellFormed := λ _ => by unfold QP.WellFormed; infer_instance
 
-/-- The modern Head inventory is recoverable from Bresnan's Det. -/
-theorem head_comparative_from_er : Det.toHead .er = .comparative := rfl
-theorem head_equative_from_as : Det.toHead .as_ = .equative := rfl
-theorem head_superlative_from_est : Det.toHead .est = .superlative := rfl
-theorem head_excessive_from_too : Det.toHead .too = .excessive := rfl
-
-/-! ### Morphological Derivation -/
-
-/-- Suppletion: the surface form resulting from `-er`/`-est` Encliticizing
-    onto Q. Returns `none` for regular (non-suppletive) combinations.
-
-    Rule (7): -er much → more, -er many → more, -er little → less
-    Rule (223): -est much → most, -est many → most, etc. -/
-def suppletion : QP → Option String
-  | ⟨.er,  .much⟩   => some "more"
-  | ⟨.er,  .many⟩   => some "more"
-  | ⟨.er,  .little⟩ => some "less"
-  | ⟨.er,  .few⟩    => some "fewer"
-  | ⟨.est, .much⟩   => some "most"
-  | ⟨.est, .many⟩   => some "most"
-  | ⟨.est, .little⟩ => some "least"
-  | ⟨.est, .few⟩    => some "fewest"
-  | _                => none
-
-/-- `more` derives from `-er` + `much` (or `-er` + `many`). -/
-theorem more_from_er_much : suppletion ⟨.er, .much⟩ = some "more" := rfl
-theorem more_from_er_many : suppletion ⟨.er, .many⟩ = some "more" := rfl
-theorem less_from_er_little : suppletion ⟨.er, .little⟩ = some "less" := rfl
-
-/-- `most` derives from `-est` + `much`. -/
-theorem most_from_est_much : suppletion ⟨.est, .much⟩ = some "most" := rfl
-
-/-- Q selects mass vs count nouns. `much` selects mass nouns and can also
-    modify adjectives/adverbs (after Much Deletion). `many` selects count
-    nouns only. This predicts `*much people`, `*many bread`. -/
-def Q.selectsMass : Q → Bool
-  | .much   => true
-  | .little => true
-  | .enough => true   -- enough selects both
-  | _       => false
-
-def Q.selectsCount : Q → Bool
-  | .many   => true
-  | .few    => true
-  | .enough => true   -- enough selects both
-  | _       => false
-
-/-- `much` and `little` (but not `many` and `few`) can modify adjectives
-    and adverbs — they are the Qs that undergo Much Deletion.
-
-    This predicts: `as much tall → as tall` (Much Deletion),
-    but `*as many tall` (no deletion rule for `many` before A). -/
-def Q.canModifyAdjective : Q → Bool
-  | .much   => true
-  | .little => true
-  | .enough => true
-  | _       => false
-
-/-- Much Deletion: `much → ∅ / [... ___ A]_AP`.
-    Applies only to Qs that can modify adjectives, and only when an
-    adjective or adverb immediately follows. -/
-def muchDeletionApplies (q : Q) (adjFollows : Bool) : Bool :=
-  q.canModifyAdjective && adjFollows
-
-/-! ### The four puzzles ((242), (256), (273), (296))
-
-Section 2's method: identify the head, then the constituent deleted from
-the clause under nondistinctness. Each puzzle turns on one structural bit,
-and the acceptability pattern follows from it. -/
-
-/-- (242): the head is either the bare AP — the reduced-relative source of
-(a) and (c), (251) — or the predicative NP `[x much tall] a man` of the
-AP-shifted source (243) for (b) and (d); with an NP head the clause
-predicates that NP of the standard, fine for *my father*, anomalous for
-*my mother*. -/
-structure TallerManDatum where
-  sentence : String
-  /-- The head is the predicative NP of (243), not the bare AP. -/
-  headIsPredNP : Bool
-  /-- The standard can be predicated of the head NP: *my father is a man*. -/
-  standardFitsHead : Bool
-  acceptable : Bool
-  deriving Repr
-
-def puzzleA : List TallerManDatum :=
-  [⟨"I've never seen a man taller than my father", false, true, true⟩,
-   ⟨"I've never seen a taller man than my father", true, true, true⟩,
-   ⟨"I've never seen a man taller than my mother", false, false, true⟩,
-   ⟨"??I've never seen a taller man than my mother", true, false, false⟩]
-
-/-- Puzzle (A) derived: a sentence is anomalous exactly when the head is
-the predicative NP and the standard fails to fit it. -/
-theorem puzzleA_from_head :
-    ∀ d ∈ puzzleA, d.acceptable = (!d.headIsPredNP || d.standardFitsHead) := by
-  decide
-
-/-- (256): adverbial *more* modifies the VP and needs only a matching
-adverbial in the clause (257) — available with intransitives too — while
-partitive *more* is embedded in the object NP and needs a matching
-partitive there (260); *sleeps* supplies none. -/
-structure CaviarDatum where
-  sentence : String
-  /-- The head QP is the partitive inside the object NP. -/
-  headIsPartitive : Bool
-  /-- The clause supplies an object NP to host a matching partitive. -/
-  clauseHasObjectNP : Bool
-  acceptable : Bool
-  deriving Repr
-
-def puzzleB : List CaviarDatum :=
-  [⟨"Jack eats caviar more than he eats mush", false, true, true⟩,
-   ⟨"Jack eats more caviar than he eats mush", true, true, true⟩,
-   ⟨"Jack eats caviar more than he sleeps", false, false, true⟩,
-   ⟨"*Jack eats more caviar than he sleeps", true, false, false⟩]
-
-/-- Puzzle (B) derived: a partitive head demands an object NP in the
-clause. -/
-theorem puzzleB_from_partitivity :
-    ∀ d ∈ puzzleB, d.acceptable = (!d.headIsPartitive || d.clauseHasObjectNP) := by
-  decide
-
-/-- (273): the synthetic comparative arises only when the QP is a left
-branch of the AP with the adjective — -er encliticizes (20) and *much*
-deletes (10); comparison across adjectives leaves the QP outside the AP
-(272), so only analytic *more angry* survives. -/
-structure AngryDatum where
-  sentence : String
-  /-- The surface form is the synthetic comparative (*angrier*). -/
-  synthetic : Bool
-  /-- The QP is AP-internal, a left branch with the adjective. -/
-  qpInsideAP : Bool
-  acceptable : Bool
-  deriving Repr
-
-def puzzleC : List AngryDatum :=
-  [⟨"I am more angry today than I was yesterday", false, true, true⟩,
-   ⟨"I am angrier today than I was yesterday", true, true, true⟩,
-   ⟨"I am more angry than sad", false, false, true⟩,
-   ⟨"*I am angrier than sad", true, false, false⟩]
-
-/-- Puzzle (C) derived: the synthetic form needs the AP-internal QP. -/
-theorem puzzleC_from_encliticizing :
-    ∀ d ∈ puzzleC, d.acceptable = (!d.synthetic || d.qpInsideAP) := by decide
-
-/-- (296)–(297): privative adjectives reject definite measures — *five
-feet tall* against *\*five feet short* — so a derivation equating the Q
-that modifies *short* with a definite measure phrase fails nondistinctness,
-while *shorter than five feet* requires no such equation. -/
-structure ShortDatum where
-  sentence : String
-  /-- The derivation equates a Q modifying a privative adjective with a
-  definite measure phrase. -/
-  definiteMeasureOnPrivative : Bool
-  acceptable : Bool
-  deriving Repr
-
-def puzzleD : List ShortDatum :=
-  [⟨"Mary is more than six feet tall", false, true⟩,
-   ⟨"Mary is taller than six feet", false, true⟩,
-   ⟨"*Mary is more than five feet short", true, false⟩,
-   ⟨"Mary is shorter than five feet", false, true⟩]
-
-/-- Puzzle (D) derived: the (297) identity failure is the only source of
-anomaly in the paradigm. -/
-theorem puzzleD_from_measure_constraint :
-    ∀ d ∈ puzzleD, d.acceptable = !d.definiteMeasureOnPrivative := by decide
-
-/-! ### Comparative Deletion (Identity Condition) -/
-
-/-- The syntactic category of the constituent deleted from the than-clause:
-    the deleted element must be featurally nondistinct from the head. -/
-inductive DeletionTarget where
-  | qp   -- QP deleted (measure phrase comparison / subdeletion)
-  | ap   -- AP deleted (simple adjectival comparison)
-  | np   -- NP deleted (predicative NP comparison)
+/-- The suppletive forms of (7) and (223). -/
+inductive Form
+  | more | less | fewer | most | least | fewest
   deriving DecidableEq, Repr
 
-/-- The identity condition: deletion succeeds only when the clause
-    constituent and the head have the same syntactic category.
+/-- (7), (223): a clitic on Q surfaces suppletively, `much + -er = more`,
+`little + -est = least`; *enough* takes no clitic (107). -/
+def suppletion : Clitic → Q → Option Form
+  | .er, .much | .er, .many => some .more
+  | .er, .little => some .less
+  | .er, .few => some .fewer
+  | .est, .much | .est, .many => some .most
+  | .est, .little => some .least
+  | .est, .few => some .fewest
+  | _, .enough => none
 
-    "Nondistinctness" in Bresnan's terms — the deleted constituent must be
-    featurally nondistinct from the head. -/
-def identityHolds (head clause : DeletionTarget) : Bool :=
-  head == clause
+/-- The suppletive surface of a QP, if any. -/
+def QP.suppletion (qp : QP) : Option Form :=
+  qp.det.clitic.bind (Bresnan1973.suppletion · qp.q)
 
-/-- Subdeletion: "The table is longer than the door is wide."
+/-- (232): *more intelligent dogs* has two sources, the partitive *-er many of* over the
+plural, a count Q, and the degree *-er much* on the adjective, a mass Q, which the suppletion
+of (7) does not tell apart. -/
+theorem more_ambiguous :
+    ∃ q q' : Q, q.SelectsCount ∧ ¬ q.SelectsMass ∧ q'.SelectsMass ∧ ¬ q'.SelectsCount ∧
+      suppletion .er q = suppletion .er q' :=
+  ⟨.many, .much, by decide⟩
 
-    Head = AP (-er much long), deleted = AP (x much wide).
-    Both are APs, so identity holds; the dimensions need not match, only
-    the syntactic category. -/
-theorem subdeletion_identity_holds :
-    identityHolds .ap .ap = true := rfl
+/-! ### Much Deletion and the simple comparative (1.1) -/
 
-/-- `*John is more than Bill tall` fails: head = QP (-er much), but
-    the matching constituent in the clause is an NP (Bill = that much).
-    NP ≠ QP, so the identity condition fails. -/
-theorem np_qp_identity_fails :
-    identityHolds .qp .np = false := rfl
-
-/-! ### All Than-Clauses Are Underlyingly Clausal -/
-
-/-- Bresnan's strongest syntactic claim: all comparatives are underlyingly
-    clausal — what appears as a "phrasal" comparative (*taller than Bill*)
-    derives from a full clause by maximal deletion. -/
-inductive BresnanThanClauseAnalysis where
-  /-- Full clause with partial deletion: "than Bill is [x much tall]"
-      → "than Bill is" (deletion of AP) -/
-  | partialDeletion
-  /-- Full clause with maximal deletion: "than Bill is [x much tall]"
-      → "than Bill" (deletion of AP + copula stranding) -/
-  | maximalDeletion
+/-- Where a QP stands: as the left branch of its AP (146a), of its NP, the partitive, or of
+another QP (140a); as a modifier of a VP or S, the adverbial and substantive uses (257),
+(272); or, in a comparative clause, as a term of an identity with a definite measure phrase,
+`six feet = x much` (286a), or with a phrase, `two friends = that many friends` (287c). -/
+inductive Position
+  | adjective | noun | quantifier | phrase | measure | term
   deriving DecidableEq, Repr
 
-/-- Under Bresnan's analysis, the modern `phrasal` type is just
-    `maximalDeletion` of an underlying clause. -/
-def bresnanAnalysisOf : ThanClauseType → BresnanThanClauseAnalysis
-  | .clausal => .partialDeletion
-  | .phrasal => .maximalDeletion
+/-- A term of one of the identities of (286)–(287). -/
+def Position.InIdentity (p : Position) : Prop := p = .measure ∨ p = .term
 
-/-! ### Privative Adjective Measure Phrase Constraint -/
+instance : DecidablePred Position.InIdentity := λ _ => by
+  unfold Position.InIdentity; infer_instance
 
-/-- Whether an adjective admits definite measure phrase modification —
-    *five feet tall* against *\*five feet short*: privative adjectives do
-    not admit modifiers of definite measurement, though they do permit
-    comparison. -/
-def admitsDefiniteMeasure (polarity : ScalePolarity) : Bool :=
-  match polarity with
-  | .positive => true
-  | .negative => false
+/-- (10) Much Deletion, `much → ∅ / [… _ A]_AP`, ordered after *-er* Encliticizing (20): an
+uncliticized *much* directly before the adjective of its AP deletes, and only there (278);
+the clitic intervenes in `[[much-er] tall]`, so `*as much tall` reduces to *as tall* while
+*more tall* survives (21). -/
+def MuchDeletes (qp : QP) (p : Position) : Prop :=
+  qp.q = .much ∧ qp.det.clitic = none ∧ p = .adjective
 
-/-- Positive adjectives admit measure phrases. -/
-theorem positive_admits_measure : admitsDefiniteMeasure .positive = true := rfl
+instance (qp : QP) (p : Position) : Decidable (MuchDeletes qp p) := by
+  unfold MuchDeletes; infer_instance
 
-/-- Negative adjectives reject measure phrases. -/
-theorem negative_rejects_measure : admitsDefiniteMeasure .negative = false := rfl
+/-- (21d): the simple comparative *taller* from the compound `[[much-er] tall]`, so only for
+the QP that is the left branch of its AP (277). -/
+def Synthetic (qp : QP) (p : Position) : Prop :=
+  qp.q = .much ∧ qp.det.clitic = some .er ∧ p = .adjective
 
-/-- An adjective's polarity with its measure-phrase behavior: *short*
-    rejects definite measure QPs, so the identity condition in Comparative
-    Deletion cannot be satisfied there. -/
-structure MeasurePhraseConstraintDatum where
-  adjective : String
-  polarity : ScalePolarity
-  measurePhraseOk : Bool
-  /-- "more than N units Adj" acceptable? -/
-  comparativeMeasureOk : Bool
-  deriving Repr
+instance (qp : QP) (p : Position) : Decidable (Synthetic qp p) := by
+  unfold Synthetic; infer_instance
 
-def measurePhraseConstraintData : List MeasurePhraseConstraintDatum :=
-  [ { adjective := "tall", polarity := .positive
-      measurePhraseOk := true, comparativeMeasureOk := true }
-  , { adjective := "short", polarity := .negative
-      measurePhraseOk := false, comparativeMeasureOk := false }
-  , { adjective := "long", polarity := .positive
-      measurePhraseOk := true, comparativeMeasureOk := true }
-  , { adjective := "wide", polarity := .positive
-      measurePhraseOk := true, comparativeMeasureOk := true } ]
+/-- Encliticizing protects *much*: the compound never loses its Q. -/
+theorem Synthetic.not_muchDeletes {qp : QP} {p : Position} (h : Synthetic qp p) :
+    ¬ MuchDeletes qp p :=
+  λ h' => Option.some_ne_none _ (h.2.1.symm.trans h'.2.1)
 
-/-- Among the dimensional adjectives, measure-phrase acceptability
-    correlates with positive polarity — the classification behind puzzle
-    (D). -/
-theorem measurePhrase_polarity_correlation :
-    ∀ d ∈ measurePhraseConstraintData,
-      d.polarity = .negative → d.measurePhraseOk = false := by
-  intro d hd hpol
-  simp [measurePhraseConstraintData] at hd
-  rcases hd with rfl | rfl | rfl | rfl <;> simp_all
+/-- The surface of a QP before what it modifies: Q overt, *much* deleted, or the synthetic
+comparative. -/
+inductive Surface
+  | analytic | deleted | synthetic
+  deriving DecidableEq, Repr
 
-/-! ### Det Inventory Paradigms -/
+/-- Much Deletion is obligatory where it applies, and the synthetic form needs the
+AP-internal compound. -/
+def Surface.Licit (s : Surface) (qp : QP) (p : Position) : Prop :=
+  (s = .deleted ↔ MuchDeletes qp p) ∧ (s = .synthetic → Synthetic qp p)
 
-/-- Bresnan's paradigms (4) and (5): the Det items form a closed class
-    that combine with both `much` and `little` (mass) / `many` and `few`
-    (count).
+instance (s : Surface) (qp : QP) (p : Position) : Decidable (s.Licit qp p) := by
+  unfold Surface.Licit; infer_instance
 
-    Paradigm (4): as/too/that/so/`-er` + much/little + mass noun
-    Paradigm (5): as/too/that/so/`-er` + many/few + count noun
+/-! ### QP Raising and AP Shift (1.6) -/
 
-    The last row in each paradigm undergoes suppletion:
-    `-er` much → more, `-er` little → less,
-    `-er` many → more, `-er` few → fewer. -/
-structure DetQParadigmEntry where
-  det : Det
-  q : Q
-  surfaceForm : String
-  /-- Does this undergo suppletion? -/
-  isSuppletive : Bool
-  deriving Repr
+/-- (205) QP Raising needs the Det of Q empty: after *-er* Encliticizing, *more*, *less* and
+*enough* raise (207), while a particle, alone or beside *-er*, keeps the QP in place
+(208)–(209). -/
+def QPRaises (qp : QP) : Prop := qp.det.particle = none
 
-def massParadigm : List DetQParadigmEntry :=
-  [ { det := .as_,  q := .much,   surfaceForm := "as much",   isSuppletive := false }
-  , { det := .too,  q := .much,   surfaceForm := "too much",  isSuppletive := false }
-  , { det := .that_, q := .much,  surfaceForm := "that much", isSuppletive := false }
-  , { det := .so,   q := .much,   surfaceForm := "so much",   isSuppletive := false }
-  , { det := .er,   q := .much,   surfaceForm := "more",      isSuppletive := true  }
-  , { det := .as_,  q := .little, surfaceForm := "as little",  isSuppletive := false }
-  , { det := .too,  q := .little, surfaceForm := "too little",  isSuppletive := false }
-  , { det := .er,   q := .little, surfaceForm := "less",       isSuppletive := true  }
-  ]
+instance : DecidablePred QPRaises := λ _ => by unfold QPRaises; infer_instance
 
-/-- Verify: every suppletive entry in the paradigm matches the suppletion function. -/
-theorem massParadigm_suppletion_consistent :
-    ∀ e ∈ massParadigm, e.isSuppletive = true →
-      suppletion ⟨e.det, e.q⟩ = some e.surfaceForm := by
-  intro e he hsup
-  simp [massParadigm] at he
-  rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp_all [suppletion]
+/-- The order of the AP and the indefinite article in a predicative NP (111)–(116). -/
+inductive Order
+  | prearticle | postarticle
+  deriving DecidableEq, Repr
 
-def countParadigm : List DetQParadigmEntry :=
-  [ { det := .as_,  q := .many,  surfaceForm := "as many",   isSuppletive := false }
-  , { det := .too,  q := .many,  surfaceForm := "too many",  isSuppletive := false }
-  , { det := .that_, q := .many, surfaceForm := "that many", isSuppletive := false }
-  , { det := .so,   q := .many,  surfaceForm := "so many",   isSuppletive := false }
-  , { det := .er,   q := .many,  surfaceForm := "more",      isSuppletive := true  }
-  , { det := .as_,  q := .few,   surfaceForm := "as few",    isSuppletive := false }
-  , { det := .too,  q := .few,   surfaceForm := "too few",   isSuppletive := false }
-  , { det := .er,   q := .few,   surfaceForm := "fewer",     isSuppletive := true  }
-  ]
+/-- (206) AP Shift moves the raised AP around the article, *a more reliable man*; an unraised
+QP keeps the AP before the article, *too reliable a man*, `*a too reliable man`
+(217)–(218). -/
+def Order.Licit (o : Order) (qp : QP) : Prop := o = .postarticle → QPRaises qp
 
-/-- Verify: every suppletive entry in the count paradigm matches the suppletion function. -/
-theorem countParadigm_suppletion_consistent :
-    ∀ e ∈ countParadigm, e.isSuppletive = true →
-      suppletion ⟨e.det, e.q⟩ = some e.surfaceForm := by
-  intro e he hsup
-  simp [countParadigm] at he
-  rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp_all [suppletion]
+instance (o : Order) (qp : QP) : Decidable (o.Licit qp) := by unfold Order.Licit; infer_instance
 
-/-! ### QP Well-Formedness -/
+/-! ### Comparative Formation (Section 2) -/
 
-/-- `enough` requires a null Det — `*so enough`, `*too enough`, `*as enough`,
-    `*enougher` are all impossible (Bresnan p. 286).
+/-- The categories over which the identities of (286)–(287) and deletion under
+nondistinctness are stated. -/
+inductive Cat
+  | qp | ap | np
+  deriving DecidableEq, Repr
 
-    This is formalized as a well-formedness predicate on QPs. -/
-def QP.isWellFormed (qp : QP) : Bool :=
-  match qp.q with
-  | .enough => qp.det == .null
-  | _       => true
+/-- Same or similar categories: QP and AP are interchangeable (1.4), `six feet = that tall`
+(286c), while an NP equates with no measure category, `*Bill = that much` (286b). -/
+def Cat.Similar (a b : Cat) : Prop := a = b ∨ (a = .qp ∧ b = .ap) ∨ (a = .ap ∧ b = .qp)
 
-theorem enough_requires_null_det :
-    ∀ d : Det, d ≠ .null →
-      QP.isWellFormed ⟨d, .enough⟩ = false := by
-  intro d hd; cases d <;> first | (exact absurd rfl hd) | rfl
+instance : DecidableRel Cat.Similar := λ _ _ => by unfold Cat.Similar; infer_instance
 
-theorem enough_null_wellformed : QP.isWellFormed ⟨.null, .enough⟩ = true := rfl
+theorem Cat.Similar.symm {a b : Cat} : a.Similar b → b.Similar a
+  | .inl h => .inl h.symm
+  | .inr (.inl ⟨ha, hb⟩) => .inr (.inr ⟨hb, ha⟩)
+  | .inr (.inr ⟨ha, hb⟩) => .inr (.inl ⟨hb, ha⟩)
+
+/-- The head of the construction (Section 1): the constituent the clause must match, the
+position of its governing QP, and the polarity of the adjective that QP modifies, if any. -/
+structure Head where
+  cat : Cat
+  site : Position
+  polarity : Option Degree.ScalePolarity
+  deriving DecidableEq, Repr
+
+/-- (296): privative adjectives such as *short* admit no modifier of definite measurement,
+`*five feet short`. -/
+def Head.Privative (h : Head) : Prop := h.polarity = some .negative
+
+instance : DecidablePred Head.Privative := λ _ => by unfold Head.Privative; infer_instance
+
+/-- What the clause supplies in the head's place: the category of the matching constituent
+and the position of its QP. -/
+structure Supply where
+  cat : Cat
+  site : Position
+  deriving DecidableEq, Repr
+
+/-- Comparative Formation: something in the clause is deleted under nondistinctness from the
+head. The clause must supply a constituent of the same or a similar category; a matched QP
+must be a term of an identity or the adverbial matching an adverbial head, since a left branch
+of an NP or AP cannot be factored out ((301), [ross-1967]); and a Q nondistinct from the
+modifier of a privative adjective cannot be equated with a definite measure phrase (297). -/
+def Formation (h : Head) (c : Supply) : Prop :=
+  c.cat.Similar h.cat ∧
+    (h.cat = .qp → c.site.InIdentity ∨ (c.site = .phrase ∧ h.site = .phrase)) ∧
+    (h.cat = .qp → c.site = .measure → ¬ h.Privative)
+
+instance (h : Head) (c : Supply) : Decidable (Formation h c) := by unfold Formation; infer_instance
+
+/-- (286b), (287b): no NP is equated with a measure category, so an NP standard never serves a
+QP head, `*John is more than Bill tall`. -/
+theorem not_formation_of_np {h : Head} {c : Supply} (hh : h.cat = .qp) (hc : c.cat = .np) :
+    ¬ Formation h c :=
+  λ ⟨hs, _, _⟩ => by simp [Cat.Similar, hh, hc] at hs
+
+/-- (297): a QP head modifying a privative adjective admits no definite measure in the
+clause, `*more than five feet short`. -/
+theorem not_formation_of_privative {h : Head} {c : Supply} (hh : h.cat = .qp)
+    (hp : h.Privative) (hc : c.site = .measure) : ¬ Formation h c :=
+  λ ⟨_, _, hm⟩ => hm hh hc hp
+
+/-- (296b): with the AP as head the identity holds of the AP, and the definiteness of its Q
+is not at issue, *shorter than five feet*. -/
+theorem formation_ap_measure (site : Position) (polarity : Option Degree.ScalePolarity) :
+    Formation ⟨.ap, site, polarity⟩ ⟨.ap, .measure⟩ :=
+  ⟨.inl rfl, λ h => Cat.noConfusion h, λ h => Cat.noConfusion h⟩
+
+/-- Tensed-auxiliary contraction is inhibited directly before a removal site (264)–(266): the
+deleted constituent abuts the copula when the head's QP is AP-internal (274), not when it
+modifies the sentence (272). -/
+def ContractionLicit (h : Head) : Prop := h.site ≠ .adjective
+
+instance : DecidablePred ContractionLicit := λ _ => by unfold ContractionLicit; infer_instance
+
+/-! ### The rows -/
+
+private def particleOf : String → Option Particle
+  | "as" => some .as_
+  | "too" => some .too
+  | "that" => some .that_
+  | "so" => some .so
+  | "any" => some .any_
+  | "no" => some .no_
+  | _ => none
+
+private def cliticOf : String → Option Clitic
+  | "er" => some .er
+  | "est" => some .est
+  | _ => none
+
+private def qOf : String → Option Q
+  | "much" => some .much
+  | "many" => some .many
+  | "little" => some .little
+  | "few" => some .few
+  | "enough" => some .enough
+  | _ => none
+
+private def positionOf : String → Option Position
+  | "adjective" => some .adjective
+  | "noun" => some .noun
+  | "quantifier" => some .quantifier
+  | "phrase" => some .phrase
+  | "measure" => some .measure
+  | "term" => some .term
+  | _ => none
+
+private def catOf : String → Option Cat
+  | "qp" => some .qp
+  | "ap" => some .ap
+  | "np" => some .np
+  | _ => none
+
+open English.Predicates.Adjectival in
+private def adjectiveOf : String → Option Degree.GradableAdjective
+  | "tall" => some tall
+  | "short" => some short
+  | "high" => some high
+  | "long" => some long
+  | _ => none
+
+open English.Nouns in
+private def nounOf : String → Option NounEntry
+  | "man" => some man
+  | "father" => some father
+  | "mother" => some mother
+  | _ => none
+
+/-- The rows of one of the paper's paradigms. -/
+def rows (set : String) : List LinguisticExample :=
+  Examples.all.filter (·.feature? "set" = some set)
+
+/-- A row's QP. -/
+def qpOf (e : LinguisticExample) : Option QP :=
+  ((e.feature? "q").bind qOf).map λ q =>
+    ⟨⟨(e.feature? "particle").bind particleOf, (e.feature? "clitic").bind cliticOf⟩, q⟩
+
+/-- The position of a row's QP. -/
+def positionOfRow (e : LinguisticExample) : Option Position :=
+  (e.feature? "position").bind positionOf
+
+/-- A row's surface form. -/
+def surfaceOf (e : LinguisticExample) : Option Surface :=
+  match e.feature? "surface" with
+  | some "analytic" => some .analytic
+  | some "deleted" => some .deleted
+  | some "synthetic" => some .synthetic
+  | _ => none
+
+/-- A row's order of AP and article. -/
+def orderOf (e : LinguisticExample) : Option Order :=
+  match e.feature? "order" with
+  | some "prearticle" => some .prearticle
+  | some "postarticle" => some .postarticle
+  | _ => none
+
+/-- A row's head. -/
+def headOf (e : LinguisticExample) : Option Head := do
+  let cat ← (e.feature? "head").bind catOf
+  let site ← (e.feature? "head_site").bind positionOf
+  pure ⟨cat, site, ((e.feature? "adjective").bind adjectiveOf).bind (·.polarity)⟩
+
+/-- What a row's clause supplies. -/
+def supplyOf (e : LinguisticExample) : Option Supply := do
+  let cat ← (e.feature? "clause").bind catOf
+  let site ← (e.feature? "clause_site").bind positionOf
+  pure ⟨cat, site⟩
+
+/-- The paper's star. -/
+def Starred (e : LinguisticExample) : Prop := e.judgment = .unacceptable
+
+instance : DecidablePred Starred := λ _ => by unfold Starred; infer_instance
+
+/-- The clause's tensed auxiliary is contracted. -/
+def Contracted (e : LinguisticExample) : Prop := e.feature? "contraction" = some "yes"
+
+instance : DecidablePred Contracted := λ _ => by unfold Contracted; infer_instance
+
+/-- The sentence carries an anomalous implication. -/
+def Anomalous (e : LinguisticExample) : Prop := e.feature? "anomalous" = some "yes"
+
+instance : DecidablePred Anomalous := λ _ => by unfold Anomalous; infer_instance
+
+/-- (4)–(5), (107), (117)–(119), (224): the Det inventory of the QP. -/
+theorem det_rows : ∀ e ∈ rows "det", ¬ Starred e ↔ ∃ qp ∈ qpOf e, qp.WellFormed := by
+  decide +kernel
+
+/-- (1)–(19), (84)–(85), (275)–(279): the surface of a QP before what it modifies is
+acceptable exactly when Much Deletion and simple comparative formation license it; problem
+(C), the analytic and synthetic comparatives across adjectives, falls under the AP-internal
+condition. -/
+theorem surface_rows :
+    ∀ e ∈ rows "surface", ¬ Starred e ↔
+      ∃ qp ∈ qpOf e, ∃ p ∈ positionOfRow e, ∃ s ∈ surfaceOf e, s.Licit qp p := by
+  decide +kernel
+
+/-- (111)–(116), (125)–(127), (217)–(218): the AP shifts around the article exactly when the
+QP raises, on an empty Det. -/
+theorem shift_rows :
+    ∀ e ∈ rows "shift",
+      ¬ Starred e ↔ ∃ qp ∈ qpOf e, ∃ o ∈ orderOf e, o.Licit qp := by
+  decide +kernel
+
+/-- (242)–(300): a comparative is acceptable exactly when Comparative Formation finds a
+nondistinct constituent in the clause and any contraction keeps clear of the removal site:
+problems (B) and (D), the object and predicate heads of (252)–(255), the positioning of
+*than six feet* and *than Bill* (280)–(283), and the left branch of (300). -/
+theorem formation_rows :
+    ∀ e ∈ rows "formation", ¬ Starred e ↔
+      ∃ h ∈ headOf e, ∃ c ∈ supplyOf e,
+        Formation h c ∧ (Contracted e → ContractionLicit h) := by
+  decide +kernel
+
+/-- Problem (A): (242d) implies that my mother is a man because its head is the predicative
+NP `x much tall a man` (243), which the clause predicates of the standard; with the AP head
+of (251), or a standard of the noun's gender, nothing is amiss. -/
+theorem taller_man_rows :
+    ∀ e ∈ rows "formation", Anomalous e ↔
+      ∃ h ∈ headOf e, h.cat = .np ∧
+        ∃ s ∈ (e.feature? "standard").bind nounOf, ∃ n ∈ (e.feature? "noun").bind nounOf,
+          s.gender ≠ n.gender := by
+  decide +kernel
 
 end Bresnan1973
