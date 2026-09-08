@@ -1,0 +1,580 @@
+[
+  {
+    "id": "delprete2013_1",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "(In quel periodo / In quel momento) Gianni leggeva il giornale.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["leggeva", "read.IPFV.PST.3SG"], ["il", "DEF.M.SG"],
+      ["giornale", "newspaper"]
+    ],
+    "translation": "(During that period) Gianni used to read the newspaper. / (At that moment) Gianni was reading the newspaper.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"},
+      {"name": "PROG", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "definite"],
+      ["qAdverb", "none"],
+      ["soe", "none"]
+    ],
+    "comment": "Temporal anchoring to a large or small reference time selects the habitual or the progressive reading.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_2a",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(2a)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "(In quel periodo / In quel momento) Gianni guidava un'auto sportiva.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["guidava", "drive.IPFV.PST.3SG"], ["un'", "INDEF.F.SG"],
+      ["auto", "car"], ["sportiva", "sports.F.SG"]
+    ],
+    "translation": "(During that period) Gianni used to drive a sports car. / (At that moment) Gianni was driving a sports car.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"},
+      {"name": "PROG", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "singularIndefinite"],
+      ["qAdverb", "none"],
+      ["soe", "individual"]
+    ],
+    "comment": "Repeated as (22). On HAB the same sports car is driven throughout; the same-object effect is compatible with common knowledge.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_2b",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(2b)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "(In quel periodo / In quel momento) Gianni leggeva un libro di filosofia.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["leggeva", "read.IPFV.PST.3SG"], ["un", "INDEF.M.SG"],
+      ["libro", "book"], ["di", "of"], ["filosofia", "philosophy"]
+    ],
+    "translation": "#(During that period) Gianni used to read a philosophy book. / (At that moment) Gianni was reading a philosophy book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "unacceptable"},
+      {"name": "PROG", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "singularIndefinite"],
+      ["qAdverb", "none"],
+      ["soe", "individual"]
+    ],
+    "comment": "Repeated as (7) and (28). Odd on HAB: the same-object effect, reading the same book over and over, conflicts with common knowledge.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_3",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(3)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "(In quel periodo) Gianni fumava un sigaro toscano (il Toscanello).",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["fumava", "smoke.IPFV.PST.3SG"], ["un", "INDEF.M.SG"],
+      ["sigaro", "cigar"], ["toscano", "tuscan.M.SG"]
+    ],
+    "translation": "(During that period) Gianni used to smoke a kind of tuscan cigar (the Toscanello).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "kindIndefinite"],
+      ["qAdverb", "none"],
+      ["soe", "kind"]
+    ],
+    "comment": "Repeated as (9a) and (25). The indefinite is coerced to a kind reading; on the individual reading the sentence would be odd on HAB (footnote 5).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_4a",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(4a)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Gianni viaggia in treno.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["viaggia", "travel.PRS.3SG"], ["in", "in"], ["treno", "train"]
+    ],
+    "translation": "Gianni (generally) travels by train.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "none"],
+      ["qAdverb", "none"],
+      ["soe", "none"]
+    ],
+    "comment": "The covert quantifier analysis maps (4a) and (4b) onto isomorphic logical forms (5a) and (5b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_4b",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(4b)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Gianni viaggia sempre in treno.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["viaggia", "travel.PRS.3SG"], ["sempre", "always"], ["in", "in"],
+      ["treno", "train"]
+    ],
+    "translation": "Gianni always travels by train.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "none"],
+      ["qAdverb", "sempre"],
+      ["soe", "none"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_6",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Quando va a trovare i suoi parenti, Gianni viaggia sempre in treno.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Quando", "when"], ["va", "go.PRS.3SG"], ["a", "to"], ["trovare", "find.INF"],
+      ["i", "DEF.M.PL"], ["suoi", "his.M.PL"], ["parenti", "relatives"], ["Gianni", "Gianni"],
+      ["viaggia", "travel.PRS.3SG"], ["sempre", "always"], ["in", "in"], ["treno", "train"]
+    ],
+    "translation": "When he goes to visit his relatives, Gianni always travels by train.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "none"],
+      ["qAdverb", "sempre"],
+      ["soe", "none"]
+    ],
+    "comment": "The when-clause supplies the restriction of the Q-adverb, (6').",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_8",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(8)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "(In quel periodo) Gianni leggeva sempre / spesso un libro di filosofia.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["leggeva", "read.IPFV.PST.3SG"], ["sempre", "always"],
+      ["spesso", "often"], ["un", "INDEF.M.SG"], ["libro", "book"], ["di", "of"],
+      ["filosofia", "philosophy"]
+    ],
+    "translation": "(During that period) Gianni would always / often read a philosophy book.",
+    "context": "A discourse supplying a restriction for the Q-adverb, such as the occasions on which Gianni wanted to meditate (footnote 9).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "singularIndefinite"],
+      ["qAdverb", "sempre"],
+      ["soe", "none"]
+    ],
+    "comment": "Repeated as (29). The indefinite scopes below the Q-adverb, so the book varies with the situation and no same-object effect arises.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_9b",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(9b)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Gianni non fumava nessun sigaro toscano (ma ora ha una passione per il Toscanello).",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["non", "NEG"], ["fumava", "smoke.IPFV.PST.3SG"],
+      ["nessun", "NEG.INDEF.M.SG"], ["sigaro", "cigar"], ["toscano", "tuscan.M.SG"]
+    ],
+    "translation": "Gianni used to smoke no kind of tuscan cigar (but now he has a passion for the Toscanello).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "negativeKindIndefinite"],
+      ["qAdverb", "none"],
+      ["soe", "none"]
+    ],
+    "comment": "The negative indefinite must scope below negation; with obligatory wide scope over GEN its truth conditions, (10b), are too weak, and the intuitive reading is (10'b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_11",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(11)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "(In quel periodo / In quel momento) Gianni leggeva libri di filosofia.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["leggeva", "read.IPFV.PST.3SG"], ["libri", "book.PL"], ["di", "of"],
+      ["filosofia", "philosophy"]
+    ],
+    "translation": "(During that period) Gianni used to read philosophy books. / #(At that moment) Gianni was reading philosophy books.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"},
+      {"name": "PROG", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "barePlural"],
+      ["qAdverb", "none"],
+      ["soe", "kind"]
+    ],
+    "comment": "Repeated as (30). The bare plural names the kind and distributes its instances over the singular sub-events, so only a kind-level effect arises (footnote 33).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_12",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Gianni leggeva un genere di libri di filosofia (libri di filosofia morale).",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["leggeva", "read.IPFV.PST.3SG"], ["un", "INDEF.M.SG"],
+      ["genere", "kind"], ["di", "of"], ["libri", "book.PL"], ["di", "of"],
+      ["filosofia", "philosophy"]
+    ],
+    "translation": "Gianni used to read a kind of philosophy books (books of moral philosophy). / #Gianni was reading a kind of philosophy books.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"},
+      {"name": "PROG", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "kindIndefinite"],
+      ["qAdverb", "none"],
+      ["soe", "kind"]
+    ],
+    "comment": "A kind-level same-object effect over a sub-kind of the kind of philosophy books, which makes sense pragmatically.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_13",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(13)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Gianni fumava sigari toscani.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["fumava", "smoke.IPFV.PST.3SG"], ["sigari", "cigar.PL"],
+      ["toscani", "tuscan.M.PL"]
+    ],
+    "translation": "Gianni used to smoke tuscan cigars.",
+    "context": "Gianni had the habit of smoking tuscan cigars without an inclination for any particular sub-kind (footnote 12).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "barePlural"],
+      ["qAdverb", "none"],
+      ["soe", "kind"]
+    ],
+    "comment": "(9a) asymmetrically entails (13) on the habitual reading: in the footnote 12 scenario (13) is true and (9a) is not.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_14",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(14)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Gianni leggeva un certo genere di libri (i.e. libri di filosofia).",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["leggeva", "read.IPFV.PST.3SG"], ["un", "INDEF.M.SG"],
+      ["certo", "certain.M.SG"], ["genere", "kind"], ["di", "of"], ["libri", "book.PL"]
+    ],
+    "translation": "(During that period) Gianni used to read a certain kind of books (i.e. philosophy books).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "kindIndefinite"],
+      ["qAdverb", "none"],
+      ["soe", "kind"]
+    ],
+    "comment": "The kind-denoting indefinite that expresses the existential generalization of (11) (footnote 13).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_fn11",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "footnote 11 (i)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Gianni mangiava ciliegie.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["mangiava", "eat.IPFV.PST.3SG"], ["ciliegie", "cherry.PL"]
+    ],
+    "translation": "(At that moment) Gianni was eating cherries. / (During that period) Gianni used to eat cherries.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"},
+      {"name": "PROG", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "barePlural"],
+      ["qAdverb", "none"],
+      ["soe", "kind"]
+    ],
+    "comment": "A bare plural imperfective good on PROG: the average temporal size of the singular events decides the availability of the reading.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_17",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(17)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Alle 15 Gianni era a casa, leggeva un libro.",
+    "discourseSegments": [
+      "Alle 15 Gianni era a casa,",
+      "leggeva un libro."
+    ],
+    "glossedTokens": [
+      ["Alle", "at.DEF.F.PL"], ["15", "15"], ["Gianni", "Gianni"], ["era", "be.IPFV.PST.3SG"],
+      ["a", "at"], ["casa", "home"], ["leggeva", "read.IPFV.PST.3SG"], ["un", "INDEF.M.SG"],
+      ["libro", "book"]
+    ],
+    "translation": "At 3pm Gianni was at home, he was reading a book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "PROG", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "singularIndefinite"],
+      ["qAdverb", "none"],
+      ["soe", "none"]
+    ],
+    "comment": "The same reference situation is forward-expanded twice, with a null expansion for the stative clause and a non-null one for the activity clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_19",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(19)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Ogni giorno alle 15 Gianni prendeva il caffé.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ogni", "every"], ["giorno", "day"], ["alle", "at.DEF.F.PL"], ["15", "15"],
+      ["Gianni", "Gianni"], ["prendeva", "take.IPFV.PST.3SG"], ["il", "DEF.M.SG"],
+      ["caffé", "coffee"]
+    ],
+    "translation": "Every day at 3pm Gianni would take coffee.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "definite"],
+      ["qAdverb", "ogni"],
+      ["soe", "none"]
+    ],
+    "comment": "The quantificational adverbial is part of the description of the habit and does not anchor it; the habit still needs a reference time adverbial, (20).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_20",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "(20)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "In quel periodo, ogni giorno alle 15 Gianni prendeva il caffé.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["In", "in"], ["quel", "that.M.SG"], ["periodo", "period"], ["ogni", "every"],
+      ["giorno", "day"], ["alle", "at.DEF.F.PL"], ["15", "15"], ["Gianni", "Gianni"],
+      ["prendeva", "take.IPFV.PST.3SG"], ["il", "DEF.M.SG"], ["caffé", "coffee"]
+    ],
+    "translation": "During that period, every day at 3pm Gianni would take coffee.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "definite"],
+      ["qAdverb", "ogni"],
+      ["soe", "none"]
+    ],
+    "comment": "Only the initial adverbial anchors the habit; the quantificational adverbial contributes a universal quantification within it.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_fn29",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "footnote 29 (i)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "? Alle 15 Gianni guidava auto sportive.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Alle", "at.DEF.F.PL"], ["15", "15"], ["Gianni", "Gianni"],
+      ["guidava", "drive.IPFV.PST.3SG"], ["auto", "car.PL"], ["sportive", "sports.F.PL"]
+    ],
+    "translation": "? At 3pm Gianni was driving sports cars.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {"name": "PROG", "judgment": "questionable"}
+    ],
+    "paperFeatures": [
+      ["object", "barePlural"],
+      ["qAdverb", "none"],
+      ["soe", "kind"]
+    ],
+    "comment": "A small reference situation clashes with the plurality of the verb phrase; the clash motivates instantiating the event quantifier by a singular event for PROG.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_fn31",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "footnote 31 (i)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Quando voleva meditare, Gianni leggeva sempre un libro di filosofia.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Quando", "when"], ["voleva", "want.IPFV.PST.3SG"], ["meditare", "meditate.INF"],
+      ["Gianni", "Gianni"], ["leggeva", "read.IPFV.PST.3SG"], ["sempre", "always"],
+      ["un", "INDEF.M.SG"], ["libro", "book"], ["di", "of"], ["filosofia", "philosophy"]
+    ],
+    "translation": "When he wanted to meditate, Gianni would always read a philosophy book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "singularIndefinite"],
+      ["qAdverb", "sempre"],
+      ["soe", "none"]
+    ],
+    "comment": "The when-clause realizes the restriction of sempre that (29) accommodates; both Imperfetto forms manifest one IMPF feature (assumption C).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_tennis",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "§4"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "(In quel periodo) Gianni giocava a tennis.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["giocava", "play.IPFV.PST.3SG"], ["a", "at"], ["tennis", "tennis"]
+    ],
+    "translation": "(During that period) Gianni used to play tennis.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "HAB", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["object", "none"],
+      ["qAdverb", "none"],
+      ["soe", "none"]
+    ],
+    "comment": "The lexical cumulativity hypothesis at work: there is a plural event of Gianni playing tennis whose temporal trace includes the relevant period.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "delprete2013_frequentative",
+    "source": {"bibkey": "del-prete-2013", "paperLabel": "§4.3"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Gianni ha fumato Toscanelli per vent'anni.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["ha", "have.PRS.3SG"], ["fumato", "smoke.PTCP"],
+      ["Toscanelli", "Toscanello.PL"], ["per", "for"], ["vent'anni", "twenty.years"]
+    ],
+    "translation": "Gianni smoked Toscanelli for twenty years.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["object", "barePlural"],
+      ["qAdverb", "none"],
+      ["soe", "kind"]
+    ],
+    "comment": "The frequentative motivating Distribution to Sub-Events, (21): a series of smoking events lasted twenty years and each had a cigar of the kind Toscanello as its theme.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]

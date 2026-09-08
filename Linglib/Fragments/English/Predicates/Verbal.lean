@@ -328,7 +328,7 @@ def leave : VerbEntry where
   vendlerClass := some .achievement
   levinClass := some .leave
 
-/-- "see" — transitive, can also embed clauses -/
+/-- "see" — transitive; factive with a finite-clause complement -/
 def see : VerbEntry where
   form := "see"
   form3sg := "sees"
@@ -338,6 +338,7 @@ def see : VerbEntry where
   frames := [Frame.np, Frame.finiteClause]
   subjectEntailments := some perception.subjectProfile
   vendlerClass := some .state
+  presupType := some .softTrigger
   attitude := some (.doxastic .veridical)
   levinClass := some .see
 

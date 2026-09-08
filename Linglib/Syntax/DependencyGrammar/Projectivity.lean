@@ -24,7 +24,9 @@ papers' own figures, and live in their study files.
 ## Main definitions
 
 * `Graph.IsProjective` is projectivity: every `Graph.dominated` set is an
-  interval (Definition 3).
+  interval (Definition 3). `Graph.IsArcProjective` is its arc form, every
+  arc spanning only positions its head dominates, and
+  `Graph.isProjective_iff_isArcProjective` identifies the two.
 * `Graph.IsPlanar` is planarity: no two links cross (Definition 4), the
   Link Grammar notion.
 * `Graph.Interleave` and `Graph.IsWellNested` are interleaving and
@@ -50,6 +52,8 @@ of the Definition numbers cited above
 [kuhlmann-2013] — Mildly non-projective dependency grammar
 [melcuk-1988] — Dependency syntax: theory and practice, source of the Link
 Grammar planarity notion
+[de-marneffe-nivre-2019] — Dependency grammar, source of the arc form of
+projectivity
 -/
 
 namespace DependencyGrammar
@@ -89,6 +93,38 @@ theorem Graph.isProjective_iff :
   simp [Graph.IsProjective, Set.ordConnected_def, Set.subset_def]
 
 instance : Decidable g.IsProjective := decidable_of_iff _ g.isProjective_iff.symm
+
+/-- The arc form of projectivity ([de-marneffe-nivre-2019] §2.4, after Lecerf, Hays,
+    Gaifman and Marcus): every position between the endpoints of an arc is dominated by
+    its head. -/
+def Graph.IsArcProjective : Prop :=
+  ∀ ⦃h d⦄, g.Adj h d → ∀ w ∈ Set.uIcc h d, Dominates g h w
+
+/-- Under the arc form, everything between a position and one it dominates is dominated
+    by it. -/
+theorem Graph.IsArcProjective.dominates_of_mem_uIcc {g : Graph n} (hA : g.IsArcProjective)
+    {v x : Fin n} (hx : Dominates g v x) {w : Fin n} (hw : w ∈ Set.uIcc v x) :
+    Dominates g v w := by
+  induction hx with
+  | refl => exact (Set.uIcc_self.subset hw : w ∈ ({v} : Set (Fin n))) ▸ .refl
+  | tail hvc hcx ih =>
+    rcases Set.uIcc_subset_uIcc_union_uIcc hw with h₁ | h₂
+    · exact ih h₁
+    · exact hvc.trans (hA hcx w h₂)
+
+/-- The two formulations of projectivity agree: every yield is an interval iff every arc
+    spans only positions dominated by its head. -/
+theorem Graph.isProjective_iff_isArcProjective : g.IsProjective ↔ g.IsArcProjective := by
+  constructor
+  · intro hP h d hd w hw
+    exact (hP h).uIcc_subset (Graph.mem_dominated.2 .refl) (Graph.mem_dominated.2 (.single hd)) hw
+  · intro hA v
+    refine ⟨λ x hx y hy z hz => ?_⟩
+    rcases Set.uIcc_subset_uIcc_union_uIcc (b := v) (Set.Icc_subset_uIcc hz) with h₁ | h₂
+    · exact hA.dominates_of_mem_uIcc hx (Set.uIcc_comm x v ▸ h₁)
+    · exact hA.dominates_of_mem_uIcc hy h₂
+
+instance : Decidable g.IsArcProjective := decidable_of_iff _ g.isProjective_iff_isArcProjective
 instance : Decidable g.IsPlanar := inferInstanceAs (Decidable (∀ _, _))
 instance (v w : Fin n) : Decidable (g.Interleave v w) :=
   inferInstanceAs (Decidable (∃ _, _))

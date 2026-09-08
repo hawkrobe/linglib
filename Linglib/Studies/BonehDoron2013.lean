@@ -21,16 +21,15 @@ and [pancheva-2003]'s final-subinterval perfect.
 
 ## Main definitions
 
-* `iter`, `hab` — the chapter's (14) and (13)/(15), on `Mereology.AlgClosure`
-  and `Modality.Kratzer.ModalBase`.
+* `hab` — the chapter's (13)/(15), with (14)'s iteration as `Mereology.IsPlural`
+  and the modal base `Modality.Kratzer.ModalBase`.
 * `retro`, `usedToOp`, `perfectOp` — (19b), (18), and the (34a) perfect over
   `IntervalPred`, with (19a) as the substrate's `IMPF`.
 * `HabitualForm`, `admitsViewpoint`, `admitsPerspective` — Table (41).
 
 ## Main results
 
-* `iter_impossible_of_unrepeatable`, `same_object_infelicity`,
-  `gen_admits_fresh_objects` — the (4)–(8) contrast derived: an indefinite
+* `same_object_infelicity`, `gen_admits_fresh_objects` — the (4)–(8) contrast derived: an indefinite
   scoping over Hab forces an unrepeatable event, while Gen's universal lets
   it vary.
 * `hab_without_actual_iteration` — (13)–(17): Hab holds with a single actual
@@ -68,16 +67,8 @@ smoking is unrepeatable per cigarette, so the wide-scope form is
 contradictory while Gen's (5a) is satisfiable with a fresh cigarette per
 event. -/
 
-/-- (14): iteration — a sum of P-events with at least two distinct proper
-P-parts, on the [link-1983] closure. -/
-def iter {E : Type*} [SemilatticeSup E] (P : E → Prop) (e : E) : Prop :=
-  Mereology.AlgClosure P e ∧ ∃ e₁ < e, ∃ e₂ < e, P e₁ ∧ P e₂ ∧ e₁ ≠ e₂
-
-/-- An unrepeatable predicate cannot iterate: no event carries two distinct
-proper parts of a once-only happening. -/
-theorem iter_impossible_of_unrepeatable {E : Type*} [SemilatticeSup E] {P : E → Prop}
-    (h : ∀ e₁ e₂, P e₁ → P e₂ → e₁ = e₂) (e : E) : ¬ iter P e :=
-  fun ⟨_, _, _, _, _, h₁, h₂, hne⟩ => hne (h _ _ h₁ h₂)
+/-! (14): iteration — a sum of P-events with at least two distinct proper
+P-parts on the [link-1983] closure — is `Mereology.IsPlural`. -/
 
 /-- (4b)/(8): with the indefinite scoping over Hab, the same object recurs
 through the iteration; when the predicate is unrepeatable per object — one
@@ -86,8 +77,8 @@ Italian Same-Object Effect is the same configuration. -/
 theorem same_object_infelicity {E C : Type*} [SemilatticeSup E]
     {smoke : E → C → Prop} {cig : C → Prop}
     (hOnce : ∀ c e₁ e₂, smoke e₁ c → smoke e₂ c → e₁ = e₂) :
-    ¬ ∃ c, cig c ∧ ∃ e, iter (smoke · c) e :=
-  fun ⟨c, _, e, hIter⟩ => iter_impossible_of_unrepeatable (hOnce c) e hIter
+    ¬ ∃ c, cig c ∧ ∃ e, Mereology.IsPlural (smoke · c) e :=
+  fun ⟨c, _, e, hIter⟩ => Mereology.not_isPlural_of_subsingleton (hOnce c) e hIter
 
 /-- (4a)/(5a): Gen's universal lets the indefinite scope below, so the same
 unrepeatability premise is satisfiable — a fresh cigarette per event. -/
@@ -104,14 +95,14 @@ unanalyzed, so it is a parameter; the temporal anchoring `τ(s) ⊆ τ(e)` is
 suppressed with the event times. -/
 def hab {W E : Type*} [SemilatticeSup E] (P : E → W → Prop) (mb : ModalBase W)
     (indicatesDisposition : W → Prop) (w : W) : Prop :=
-  indicatesDisposition w ∧ ∀ w' ∈ accessibleWorlds mb w, ∃ e, iter (P · w') e
+  indicatesDisposition w ∧ ∀ w' ∈ accessibleWorlds mb w, ∃ e, Mereology.IsPlural (P · w') e
 
 /-- (16)–(17), (42a–b): Hab is dispositional — it holds on the strength of a
 single actual initiating event, with the iteration living only in the
 accessible worlds. Nothing beyond INIT is actualized. -/
 theorem hab_without_actual_iteration :
     ∃ (P : Finset ℕ → Bool → Prop) (mb : ModalBase Bool),
-      hab P mb (· = false) false ∧ ¬ ∃ e, iter (P · false) e := by
+      hab P mb (· = false) false ∧ ¬ ∃ e, Mereology.IsPlural (P · false) e := by
   refine ⟨fun e w' => match w' with | true => e.Nonempty ∧ e ⊆ {0, 1} | false => e = {0},
     fun _ => [(· = true)], ⟨rfl, ?_⟩, ?_⟩
   · intro w' hw'

@@ -85,6 +85,16 @@ theorem literalListener_uniformOn_apply_singleton [Nonempty T] {U : Type*} [Meas
   simp_rw [uniformOn_univ_apply_singleton, ← Finset.sum_mul]
   exact ENNReal.mul_div_mul_right _ _ hc hc'
 
+omit [DecidableEq T] in
+/-- With real-valued meanings the share is the real ratio of the row. -/
+theorem literalListener_uniformOn_ofReal_apply_singleton [Nonempty T] {U : Type*}
+    [MeasurableSpace U] [Countable U] [MeasurableSingletonClass U] (m : U → T → ℝ) (u : U)
+    (t : T) (hm : ∀ t', 0 ≤ m u t') (hpos : 0 < ∑ t', m u t') :
+    literalListener (uniformOn Set.univ) (fun u t => ENNReal.ofReal (m u t)) u {t} =
+      ENNReal.ofReal (m u t / ∑ t', m u t') := by
+  rw [literalListener_uniformOn_apply_singleton, ← ENNReal.ofReal_sum_of_nonneg fun t' _ => hm t',
+    ← ENNReal.ofReal_div_of_pos hpos]
+
 /-- The speaker at a uniform prior (eq. 7): best response to `uniformListener` at no cost. -/
 noncomputable abbrev uniformSpeaker (α : ℝ) : Kernel T C := speaker α 1 (uniformListener sem)
 

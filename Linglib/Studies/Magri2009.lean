@@ -151,32 +151,6 @@ theorem mem_cWorlds_of_context (w : W) (h : s.context w = true) :
     w ∈ s.cWorlds := by
   simp only [cWorlds, Finset.mem_filter, Finset.mem_univ, true_and, h]
 
-/-- Ignorance-based oddness: alternatives exist that are NOT innocently
-excludable (so ignorance inferences are derived), yet CK settles every
-alternative (all true at every CK world, or all false at every CK
-world). The speaker cannot be genuinely ignorant → contradiction →
-deviant.
-
-This complements `blindOdd`: `blindOdd` detects when *scalar*
-implicatures contradict CK (EXH(φ) ∩ W_ck = ∅), while
-`ignoranceContradictsCK` detects when *ignorance* inferences
-contradict CK (alternatives are relevant but CK-settled).
-
-[denic-2023] §6: deviance of "#Each of those three girls is Mary,
-Susan, or Jane" arises because ignorance inferences about singleton-
-denoting predicates contradict CK. -/
-def ignoranceContradictsCK (u : U) : Bool :=
-  let altSet := altsFromPreds ((s.alternatives u).map s.meaning)
-  let φ := predToFinset (s.meaning u)
-  -- There are alternatives that are NOT IE (so ignorance inferences arise)
-  decide (altSet.card > (innocent.excluded altSet φ).card) &&
-  -- All CK worlds agree on all alternatives (speaker can't be ignorant)
-  (s.alternatives u).all (λ alt =>
-    let altMeaning := s.meaning alt
-    -- Either alt is true at ALL CK worlds or false at ALL CK worlds
-    decide (∀ w ∈ s.cWorlds, altMeaning w = true) ||
-    decide (∀ w ∈ s.cWorlds, altMeaning w = false))
-
 end BlindScenario
 
 -- ═══════════════════════════════════════════════════════════════════════

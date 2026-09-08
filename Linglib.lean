@@ -1655,10 +1655,6 @@ import Linglib.Semantics.Dynamic.FileChange
 import Linglib.Semantics.Dynamic.ICDRT.Basic
 import Linglib.Semantics.Dynamic.ICDRT.Defs
 import Linglib.Semantics.Dynamic.Lookup
-import Linglib.Semantics.Dynamic.PLA.Basic
-import Linglib.Semantics.Dynamic.PLA.Epistemic
-import Linglib.Semantics.Dynamic.PLA.Semantics
-import Linglib.Semantics.Dynamic.PLA.Update
 import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
 import Linglib.Semantics.Dynamic.PPCDRT.Defs
@@ -2128,8 +2124,7 @@ import Linglib.Studies.Dekker2012
 import Linglib.Studies.DelPinal2015
 import Linglib.Studies.DelPinalBassiSauerland2024
 import Linglib.Studies.DelPrete2013
-import Linglib.Studies.Dendikken1995ParticleVerbs
-import Linglib.Studies.Dendikken1995Resultatives
+import Linglib.Studies.Dendikken1995
 import Linglib.Studies.Denic2023
 import Linglib.Studies.DenicEtAl2021
 import Linglib.Studies.Deo2025
@@ -3035,3 +3030,8 @@ import Linglib.Data.Examples.ChemlaSpector2011
 import Linglib.Data.Examples.Chierchia2013
 import Linglib.Data.Examples.Deal2024
 import Linglib.Data.Examples.DechaineWiltschko2002
+import Linglib.Data.Examples.Dekier2021
+import Linglib.Data.Examples.DelPrete2013
+import Linglib.Data.Examples.DeMarneffeNivre2019
+import Linglib.Data.Examples.Dendikken1995
+import Linglib.Data.Examples.Denic2023
