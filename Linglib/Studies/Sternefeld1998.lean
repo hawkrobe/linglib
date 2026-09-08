@@ -25,7 +25,7 @@ literature suggest.
 
 In bivalent semantics this is structurally identical to
 [beck-2001]'s eq 120 (`**(λxλy.[R(x,y) ∧ @(x ≠ y)])(A,A)`). The
-two analyses agree on the bivalent predicate — `Plurality.Reciprocal.WeakReciprocity`
+two analyses agree on the bivalent predicate — `Reciprocal.WeakReciprocity`
 — and diverge only on:
 
 1. **Status of distinctness**: Sternefeld asserts; Beck presupposes
@@ -98,7 +98,7 @@ eq 120 ↔ H&D's group identity all factor through
 namespace Sternefeld1998
 
 open Plurality.Cumulativity
-open Plurality.Reciprocal
+open Reciprocal
 
 variable {α : Type*} [DecidableEq α]
 
@@ -181,7 +181,7 @@ theorem sternefeldStarStar_implies_cumulative
     Sternefeld's closure-form `**`).
 
     In bivalent semantics this is structurally identical to
-    `Plurality.Reciprocal.WeakReciprocity` (and to Beck eq 120). The
+    `Reciprocal.WeakReciprocity` (and to Beck eq 120). The
     two analyses diverge only on the trivalent assertion-vs-
     presupposition status of `x ≠ y` (Sternefeld asserts;
     [beck-2001] eq 120 presupposes via `@`). -/
@@ -198,7 +198,7 @@ instance sternefeldWR.instDecidable
     predicates. The cumulation-with-distinctness shape is the
     *common ground* of both papers; they only diverge at the
     trivalent (presupposition projection) layer. Substrate form
-    `Plurality.Reciprocal.WeakReciprocity`. -/
+    `Reciprocal.WeakReciprocity`. -/
 theorem sternefeldWR_iff_WeakReciprocity
     (A : Finset α) (R : α → α → Prop) :
     sternefeldWR A R ↔ WeakReciprocity R A :=
@@ -218,7 +218,7 @@ theorem sternefeldWR_iff_WeakReciprocity
     "problematic situation" `f(R) = {⟨⟨a,b⟩, c⟩, ⟨c, a⟩, ⟨c, b⟩}`,
     eq 25b cannot apply but eq 26b is still true. For D-based
     relations on Quine-innovation domains, the two coincide and both
-    reduce to `Plurality.Reciprocal.WeakReciprocity`. -/
+    reduce to `Reciprocal.WeakReciprocity`. -/
 def langendoenWR (A : Finset α) (R : α → α → Prop) : Prop :=
   ∀ x ∈ A, ∃ y ∈ A, ∃ z ∈ A,
     x ≠ y ∧ x ≠ z ∧ R x y ∧ R z x
@@ -229,7 +229,7 @@ instance langendoenWR.instDecidable
   unfold langendoenWR; infer_instance
 
 /-- For symmetric, distinctness-bearing R, [langendoen-1978] WR
-    entails `Plurality.Reciprocal.WeakReciprocity`: the existence-
+    entails `Reciprocal.WeakReciprocity`: the existence-
     witnesses on each side are the y and z of the Langendoen formula. -/
 theorem langendoenWR_implies_WeakReciprocity
     (A : Finset α) (R : α → α → Prop)
@@ -252,7 +252,7 @@ theorem langendoenWR_implies_WeakReciprocity
     distributes over A; the inner `*` quantifies universally over
     `{y ∈ A : y ≠ x}`. Assuming R is D-based (applies only to atoms),
     this unfolds to `∀x ∈ A. ∀y ∈ A. y ≠ x → R(x,y)` — exactly
-    `Plurality.Reciprocal.StrongReciprocity`.
+    `Reciprocal.StrongReciprocity`.
 
     Sternefeld's point (paper §3.5–3.6): SR is *expressible* in his
     framework but is not a basic reading; it falls out of more

@@ -16,7 +16,7 @@ inheriting its semantics from its non-reciprocal use. The LF of
 `[[the men]₁ each₂] saw [e₂ other]₃` — a four-part structure
 *group antecedent – distributor – reciprocator – predicate* (their (9)).
 This is the quantificational arm of the comparison drawn in
-`Semantics/Reference/Reciprocals.lean`, and the decomposed counterpart of
+`Semantics/Plurality/Reciprocal/Scope.lean`, and the decomposed counterpart of
 Link's holistic `Algebra.DJR` operator.
 
 Two puzzles drive the paper (both from [higginbotham-1985] and
@@ -64,7 +64,7 @@ because distributors are undefined on atoms and cannot iterate.
 
 namespace HeimLasnikMay1991
 
-open Plurality.Reciprocal
+open Reciprocal
 
 variable {A : Type*} [DecidableEq A]
 
@@ -74,7 +74,7 @@ HLM's model is `⟨D, A, Π⟩`: a domain with mereological structure, atoms
 `A`, and proper-part-of `Π`; `·Π` is the proper-*atomic*-part relation.
 Pluralities are encoded here as `Finset A` (sums of atoms) with `·Π` as
 membership, matching the `(R, X)` signature of
-`Plurality.Reciprocal`. -/
+`Reciprocal`. -/
 
 /-- (16): *other* as a 3-place relation — referent `z` is an atomic part
     of the range `y` distinct from the contrast `x`. In reciprocals both
@@ -110,7 +110,7 @@ def eachOtherLF (np : Finset A) (R : A → A → Prop) : Prop :=
 /-- The compositional each∘other analysis derives Strong Reciprocity:
     HLM's truth conditions "coincide with those of the standard semantic
     analyses". Through the entailment lattice of
-    `Plurality.Reciprocal`, the weaker schemes follow
+    `Reciprocal`, the weaker schemes follow
     (`strong_imp_weak`, …). -/
 theorem eachOtherLF_iff_strongReciprocity (np : Finset A) (R : A → A → Prop) :
     eachOtherLF np R ↔ StrongReciprocity R np := by

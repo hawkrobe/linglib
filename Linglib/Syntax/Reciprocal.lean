@@ -32,7 +32,10 @@ valency effect derives from the coding-frame operation a strategy realizes
 
 Per-language inventories live in `Fragments/{Lang}/Reciprocals.lean`;
 WALS-data grounding lives with the studies that use it (e.g.
-`Studies/Nordlinger2023.lean`), not here.
+`Studies/Nordlinger2023.lean`), not here. The `Reciprocal` namespace is
+shared with the semantics of reciprocity (`Semantics/Plurality/Reciprocal.lean`,
+`Semantics/Plurality/Reciprocal/Scope.lean`); the pronominal exponent is
+`ReciprocalPronoun` (`Syntax/Category/Pronoun/Reciprocal.lean`).
 -/
 
 namespace Reciprocal

@@ -21,7 +21,7 @@ the entailment lattice between the bivalent versions, and a bridge to
 
 ## Main declarations
 
-* `ReciprocalScheme` — the six-cell typology, named.
+* `Scheme` — the six-cell typology, named.
 * `StrongReciprocity` — every distinct pair satisfies `R`.
 * `PartitionedStrongReciprocity` — there is a partition of `X` such
   that SR holds within each cell.
@@ -60,7 +60,7 @@ uses `Finset (Finset α)` for the partition witness.
   among schemes given context.
 -/
 
-namespace Plurality.Reciprocal
+namespace Reciprocal
 
 open _root_.Plurality
 open _root_.Plurality.Cumulativity
@@ -71,7 +71,7 @@ variable {A : Type*}
     [langendoen-1978]; IAO in [kanski-1987]; Partitioned SR in
     [fiengo-lasnik-1973]; the **Alternative** variants (SAR, IAR) in
     [dalrymple-et-al-1998]. -/
-inductive ReciprocalScheme where
+inductive Scheme where
   | strong                  -- Strong Reciprocity (SR)
   | partitionedStrong       -- Partitioned Strong Reciprocity (PartSR)
   | intermediate            -- Intermediate Reciprocity (IR)
@@ -530,4 +530,4 @@ theorem PairwiseConfig.partitionedStrong {R : A → A → Prop} {X : Finset A}
   exact ⟨P, fun Y hY => (hcells Y hY).2, hcover,
     fun Y hY x hx y hy hne => (hiff x y).mpr ⟨Y, hY, hx, hy, hne.symm⟩⟩
 
-end Plurality.Reciprocal
+end Reciprocal

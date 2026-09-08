@@ -1,6 +1,6 @@
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Reciprocal
-import Linglib.Semantics.Reference.Reciprocals
+import Linglib.Syntax.Category.Pronoun.Reciprocal
 import Linglib.Semantics.Reference.PluralityLicensing
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
@@ -37,21 +37,20 @@ construction types, while reflexives require morphosyntactic plurality
    *család* 'family') never trigger plural agreement, yet perfectly
    license *egymás*.
 4. **Bound variable antecedents (§6)**: Embedded pro-dropped singular
-   subject bound by a matrix coordination forces wide-scope
-   (I-)reading. [dalrymple-haug-2024] §2.
+   subject bound by a matrix coordination; the local antecedent of the
+   reciprocal in (10) of [dalrymple-haug-2024].
 -/
 
 
 namespace Hungarian.Reciprocals
 
 open Pronoun
-open Reference.Reciprocals
 open Reference.PluralityLicensing
 
 /-- *egymás* — reciprocal pronoun 'each other'.
     Morphologically invariable: no φ-feature inflection.
     [rakosi-2019] fn. 1. -/
-def egymas : PersonalPronoun :=
+def egymas : ReciprocalPronoun :=
   { form := "egymás", person := some .third, number := none }
 
 /-- *maga* — reflexive pronoun (3SG form, for contrast).
@@ -118,9 +117,8 @@ def collectiveNoun : AntecedentConfig :=
     verbAgr := .Sing }
 
 /-- §6: Bound variable antecedent. Embedded pro-dropped SG subject
-    bound by matrix coordination. Forces wide-scope (I-)reading.
-    Ex: "Péter és Éva azt gondolja, hogy (\*ő) szereti egymás-t."
-    [dalrymple-haug-2024] §2. -/
+    bound by matrix coordination.
+    Ex: "Péter és Éva azt gondolja, hogy (\*ő) szereti egymás-t." -/
 def boundVariable : AntecedentConfig :=
   { name := "Bound singular pro-drop (coordination in matrix)"
     syntacticPl := false
@@ -184,11 +182,6 @@ theorem egymas_invariable : egymas.number = none := rfl
 theorem reflexive_inflects :
     maga.number = some .singular ∧ maguk.number = some .plural := ⟨rfl, rfl⟩
 
-/-- When the local antecedent is a singular bound pronoun, only the
-    wide-scope (I-)reading is available.
-    [dalrymple-haug-2024] §2. -/
-def singularAntecedentForcesWideScope : Bool := true
-
 open Reciprocal in
 /-- The reciprocal verbal suffix ([nordlinger-2023] ex. 19, citing
     [siloni-2008]). -/
@@ -197,8 +190,8 @@ def ozSuffix : Marker :=
 
 open Reciprocal in
 /-- Marker inventory, primary strategy first: *-óz-* plus the reciprocal
-    pronoun *egymás* (form derived from the pronoun entry above). -/
+    pronoun *egymás*. -/
 def markers : List Marker :=
-  [ ozSuffix, { form := egymas.form, strategy := .recipPronoun } ]
+  [ozSuffix, egymas.toMarker]
 
 end Hungarian.Reciprocals

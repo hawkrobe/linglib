@@ -1760,6 +1760,7 @@ import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Semantics.Plurality.Groups
 import Linglib.Semantics.Plurality.Implicature
 import Linglib.Semantics.Plurality.Reciprocal
+import Linglib.Semantics.Plurality.Reciprocal.Scope
 import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Semantics.Polarity.CzechNegation
 import Linglib.Semantics.Polarity.ExpletiveNegation
@@ -1854,7 +1855,6 @@ import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Reference.PersonFeatures
 import Linglib.Semantics.Reference.PluralityLicensing
 import Linglib.Semantics.Reference.PronounDenotation
-import Linglib.Semantics.Reference.Reciprocals
 import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Reference.ShiftedIndexicals
 import Linglib.Semantics.Supervaluation
@@ -2789,6 +2789,7 @@ import Linglib.Syntax.Category.Pronoun.Demonstrative
 import Linglib.Syntax.Category.Pronoun.Indefinite
 import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
 import Linglib.Syntax.Category.Pronoun.Logophoric
+import Linglib.Syntax.Category.Pronoun.Reciprocal
 import Linglib.Syntax.Category.Pronoun.WALS
 import Linglib.Syntax.Category.Verb.Argument
 import Linglib.Syntax.Category.Verb.Basic
@@ -3014,3 +3015,4 @@ import Linglib.Data.Examples.Cresswell1976
 import Linglib.Data.Examples.Cruse1973
 import Linglib.Data.Examples.Cumming2026
 import Linglib.Data.Examples.Cysouw2003
+import Linglib.Data.Examples.DalrympleHaug2024

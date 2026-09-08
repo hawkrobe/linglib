@@ -121,7 +121,7 @@ theorem D_mono {P Q : E → Prop} (h : ∀ x, P x → Q x) {x : E} (hD : D P x) 
     This is the lattice-level reciprocity operator: `DJR VP x` IS the
     strong-reciprocity condition on `VP` over the atomic parts of `x`,
     just as `D P x` is the strong-distributivity condition on `P`. The
-    `Finset`-level analog is `Plurality.Reciprocal.StrongReciprocity`. -/
+    `Finset`-level analog is `Reciprocal.StrongReciprocity`. -/
 def DJR (VP : E → E → Prop) (x : E) : Prop :=
   ∀ y ≤ x, ∀ z ≤ x, Atom y → Atom z → y ≠ z → VP y z
 
