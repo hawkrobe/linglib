@@ -1,226 +1,61 @@
-/-
-# The Interrogative Left Periphery
-
-Question meaning is built at three points in the left periphery:
-
-    [SAP SA_ASK [PerspectiveP PRO Persp_CQ [CP C_±WH [TP...]]]]
-
-1. **CP** (C_±WH): Clause-typing — shifts proposition ⟨s,t⟩ to set of propositions ⟨⟨s,t⟩,t⟩
-2. **PerspectiveP** (Persp_CQ): Centering — introduces PRO (perspectival center)
-   with not-at-issue presupposition ◇¬know(x, Ans(Q)) (possible ignorance)
-3. **SAP** (SA_ASK): Speech act — puts addressee under obligation to assert Ans(Q)
-
-The key prediction: responsive predicates reject quasi-subordination because
-their knowledge entailment contradicts PerspP's ignorance presupposition.
-This is DERIVED, not stipulated.
-
--/
-
-import Linglib.Semantics.Questions.Basic
-import Linglib.Semantics.Questions.Partition.Cells
-import Linglib.Semantics.Attitudes.Doxastic
+import Linglib.Features.QParticleLayer
 import Linglib.Fragments.English.Predicates.Verbal
 
-namespace Minimalist.LeftPeriphery
+/-!
+# The interrogative left periphery
 
+[dayal-2025] builds question meaning at three points of the left periphery,
+`[SAP SA_ASK [PerspP PRO Persp_CQ [CP C_WH [TP …]]]]`: clause-typing at C,
+where a proposition becomes a set of propositions (`WHFeature`); centering at
+PerspP, which introduces a perspectival center who may not know the answer
+(`Questions.PossiblyIgnorant`); and the illocutionary act at SAP. Embedding
+predicates select up to one of the layers (`SelectionClass`, read off a
+lexical entry by `deriveSelectionClass`): rogatives take CP only, PerspP, or
+SAP, responsives take CP and, where their meaning leaves the center's
+ignorance open, PerspP.
 
--- ============================================================================
--- A. Clause-type feature
--- ============================================================================
+## References
 
-/-- The ±WH feature on C, determining declarative vs interrogative clause type.
-    `alphaWH` is underspecified — used for Hindi-Urdu simplex polar questions
-    where clause-typing is not forced at CP ([dayal-2025]: §4.4). -/
+* [dayal-2025]
+* [mccloskey-2006]
+-/
+
+namespace Minimalist
+
+/-- The WH-feature on C: interrogative, declarative, or unspecified with typing
+delayed to a higher layer (Hindi-Urdu polar clauses, [dayal-2025] §4.4). -/
 inductive WHFeature where
-  | plusWH   -- Interrogative: ⟨⟨s,t⟩,t⟩
-  | minusWH  -- Declarative: ⟨s,t⟩
-  | alphaWH  -- Underspecified (typing delayed to PerspP)
-  deriving DecidableEq, Repr
+  | plusWH
+  | minusWH
+  | alphaWH
+  deriving DecidableEq, Repr, Fintype
 
--- ============================================================================
--- B. Predicate selection class
--- ============================================================================
-
-/-- Dayal's classification of embedding predicates by what left-peripheral
-    structure they select. Refines the rogative/responsive split.
-
-    - `uninterrogative`: C_-WH only (believe, think)
-    - `rogativeCP`: C_+WH but not PerspP (investigate, depend on)
-    - `rogativePerspP`: CP + PerspP (wonder, the question is)
-    - `rogativeSAP`: Full structure (ask)
-    - `responsive`: C_±WH (know, remember) -/
+/-- Embedding predicates by the largest left-peripheral structure they select
+([dayal-2025] §1.2): uninterrogatives take no interrogative; rogatives take CP
+only (*depend on*, *investigate*), PerspP (*wonder*, *want to know*) or SAP
+(*ask*); responsives (*know*, *remember*, *forget*) take CP and, where their
+meaning leaves the center's ignorance open, PerspP. -/
 inductive SelectionClass where
   | uninterrogative
   | rogativeCP
   | rogativePerspP
   | rogativeSAP
   | responsive
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
--- ============================================================================
--- C. Knowledge and ignorance: the semantic primitives
--- ============================================================================
+/-- The largest layer a class selects. -/
+def SelectionClass.layer : SelectionClass → Option Features.QParticleLayer
+  | .uninterrogative => none
+  | .rogativeCP => some .cp
+  | .rogativePerspP => some .perspP
+  | .rogativeSAP => some .sap
+  | .responsive => some .perspP
 
-/-- Whether the predicate's at-issue content entails the subject knows Ans(Q).
-    This is the key semantic property that drives PerspP (in)compatibility.
-
-    - Responsive predicates (know, remember) entail knowledge at eval time
-    - Rogative predicates (wonder, ask) do NOT entail knowledge
-    - Under negation, the knowledge entailment is REMOVED -/
-def entailsKnowledge (cls : SelectionClass) : Bool :=
-  match cls with
-  | .responsive => true
-  | _ => false
-
-/-- Whether the knowledge entailment survives in the given syntactic context.
-    Negation and questioning both remove a predicate's knowledge entailment:
-    - "I don't know Q" does NOT entail knowing Ans(Q)
-    - "Does she know Q?" does NOT entail knowing Ans(Q) -/
-def effectiveKnowledge (cls : SelectionClass) (negated questioned : Bool) : Bool :=
-  entailsKnowledge cls && !negated && !questioned
-
-/-- PerspectiveP presupposes possible ignorance: ◇¬know(x, Ans(Q)).
-    This is **inconsistent** with knowing Ans(Q).
-    Consistency holds iff effective knowledge is false.
-
-    Note: Consistency is necessary but not sufficient for quasi-subordination.
-    The full account also requires "potentially active" (de se interest),
-    which is why *forget* doesn't freely quasi-subordinate ([dayal-2025]: §3.3). -/
-def perspPConsistent (cls : SelectionClass) (negated questioned : Bool) : Bool :=
-  !effectiveKnowledge cls negated questioned
-
--- ============================================================================
--- D. Embedding prediction (derived from semantic properties)
--- ============================================================================
-
-/-- Whether a predicate allows quasi-subordination.
-    DERIVED from two independent conditions:
-    1. The predicate must select PerspP (structural requirement)
-    2. OR: PerspP is consistent with the predicate's semantics AND the predicate
-       embeds interrogatives (responsive predicates under negation/question) -/
-def allowsQuasiSub (cls : SelectionClass) (negated questioned : Bool) : Bool :=
-  match cls with
-  | .uninterrogative => false  -- doesn't embed interrogatives
-  | .rogativeCP => false       -- selects CP only, not PerspP
-  | .rogativePerspP => true    -- structurally selects PerspP
-  | .rogativeSAP => true       -- structurally selects PerspP + SAP
-  | .responsive =>             -- DERIVED: depends on semantic consistency
-      perspPConsistent cls negated questioned
-
-/-- The structurally distinct ways an interrogative clause can be embedded. -/
-inductive EmbedType where
-  | subordination      -- "knows whether S left" / "knows who S saw"
-  | quasiSubordination -- "wants to know [did S leave↑]" (embedded inversion)
-  | quotation          -- asked, "Did S leave?" (full quotation)
-  deriving DecidableEq, Repr
-
-/-- Full embedding prediction. -/
-def allowsEmbedding (cls : SelectionClass) (et : EmbedType)
-    (negated questioned : Bool) : Bool :=
-  match cls, et with
-  | .uninterrogative, _ => false
-  | _, .subordination => true
-  | c, .quasiSubordination => allowsQuasiSub c negated questioned
-  | .rogativeSAP, .quotation => true
-  | _, .quotation => false
-
--- ============================================================================
--- E. Core theorems: DERIVED from knowledge/ignorance interaction
--- ============================================================================
-
-/-- Responsive predicates entail knowledge. -/
-theorem responsive_entails_knowledge :
-    entailsKnowledge .responsive = true := rfl
-
-/-- Rogative predicates do NOT entail knowledge. -/
-theorem rogative_no_knowledge :
-    entailsKnowledge .rogativePerspP = false ∧
-    entailsKnowledge .rogativeSAP = false ∧
-    entailsKnowledge .rogativeCP = false := ⟨rfl, rfl, rfl⟩
-
-/-- Knowledge entailment is removed by negation. -/
-theorem negation_removes_knowledge :
-    effectiveKnowledge .responsive true false = false := rfl
-
-/-- Knowledge entailment is removed by questioning. -/
-theorem question_removes_knowledge :
-    effectiveKnowledge .responsive false true = false := rfl
-
-/-- PerspP is inconsistent with effective knowledge.
-    This is the core semantic derivation: know(x, Ans(Q)) ∧ ◇¬know(x, Ans(Q))
-    is a contradiction, so PerspP is blocked. -/
-theorem knowledge_blocks_perspP :
-    perspPConsistent .responsive false false = false := rfl
-
-/-- Without effective knowledge, PerspP is consistent.
-    Rogatives never entail knowledge → always consistent. -/
-theorem no_knowledge_allows_perspP :
-    perspPConsistent .rogativePerspP false false = true ∧
-    perspPConsistent .rogativeSAP false false = true := ⟨rfl, rfl⟩
-
-/-- Responsive predicates reject quasi-subordination in unadorned form.
-    DERIVED: know entails knowledge → contradicts possible ignorance. -/
-theorem responsive_rejects_quasi :
-    allowsQuasiSub .responsive false false = false := rfl
-
-/-- Under negation, responsives allow quasi-subordination.
-    DERIVED: negation removes knowledge entailment → PerspP consistent.
-    "*I remember [was Henry a communist↑]" vs
-    "I don't remember [was Henry a communist↑]". -/
-theorem responsive_shifts_under_negation :
-    allowsQuasiSub .responsive true false = true := rfl
-
-/-- Under questioning, responsives allow quasi-subordination.
-    DERIVED: questioning removes knowledge entailment → PerspP consistent.
-    "Does Sue remember [was Henry a communist↑]" -/
-theorem responsive_shifts_under_question :
-    allowsQuasiSub .responsive false true = true := rfl
-
--- ============================================================================
--- F. Verb string classification
--- ============================================================================
-
-/-- Classify each verb by string to a selection class. -/
-def classifyVerb : String → SelectionClass
-  | "investigate" => .rogativeCP
-  | "depend on"   => .rogativeCP
-  | "wonder"      => .rogativePerspP
-  | "ask"         => .rogativeSAP
-  | "know"        => .responsive
-  | "believe"     => .uninterrogative
-  | _             => .uninterrogative
-
-/-- Classify Hindi-Urdu verbs from the cross-linguistic shiftiness data. -/
-def classifyCrossLingVerb : String → SelectionClass
-  | "ja:n-na: ca:h-na: (want to know)" => .rogativePerspP
-  | "ja:n-na: (know)" => .responsive
-  | _ => .responsive
-
--- ============================================================================
--- G. Compositional grounding
--- ============================================================================
-
-/-! ## H1. Derive SelectionClass from VerbEntry
-
-Instead of classifying verbs by string matching (`classifyVerb "know" =>.responsive`),
-we derive the selection class from the primitive fields already encoded in
-each `VerbEntry`: `factivePresup`, `speechActVerb`, `opaqueContext`, `complementType`,
-`attitude`, `takesQuestionBase`.
--/
-
-open English.Predicates.Verbal
-
-/-- Derive the left-peripheral selection class from a VerbEntry's structural
-    properties. This replaces ad-hoc string-based classification with a
-    principled derivation from the verb's primitive semantic fields.
-
-    The logic:
-    - Factives are responsive (knowledge-entailing)
-    - Non-veridical doxastic attitudes are uninterrogative
-    - Speech-act verbs that take questions are rogativeSAP (speech-act layer)
-    - Opaque-context verbs that take questions are rogativePerspP (perspective layer)
-    - Other question-taking verbs are rogativeCP (CP layer only)
-    - Everything else is uninterrogative -/
+open English.Predicates.Verbal in
+/-- A lexical entry's selection class: question-taking factives are responsive,
+non-veridical doxastic attitudes uninterrogative, question-taking speech-act
+verbs select SAP, opaque question-taking verbs PerspP, other question-taking
+verbs CP. -/
 def deriveSelectionClass (v : VerbEntry) : SelectionClass :=
   if v.complementType != .question && !v.takesQuestionBase then .uninterrogative
   else if v.factivePresup then .responsive
@@ -232,339 +67,4 @@ def deriveSelectionClass (v : VerbEntry) : SelectionClass :=
     else if v.complementType == .question then .rogativeCP
     else .uninterrogative
 
-/-- The structurally derived classification matches the manually-assigned
-    string-based classification for all verbs in the embedding data. -/
-theorem derived_class_matches_manual :
-    deriveSelectionClass English.Predicates.Verbal.know = classifyVerb "know" ∧
-    deriveSelectionClass English.Predicates.Verbal.wonder = classifyVerb "wonder" ∧
-    deriveSelectionClass English.Predicates.Verbal.ask = classifyVerb "ask" ∧
-    deriveSelectionClass English.Predicates.Verbal.investigate = classifyVerb "investigate" ∧
-    deriveSelectionClass English.Predicates.Verbal.believe = classifyVerb "believe" := by
-  decide
-
-/-! ## H2. Compositional PerspP via possible ignorance
-
-PerspP introduces a not-at-issue presupposition: the perspectival center
-*possibly doesn't know* the answer to the question. We formalize this using
-`DiamondAt` (existential modal, ◇) from `Doxastic.lean` and `QUD.ans` from
-`Semantics/Questions/Partition/Cells.lean`.
--/
-
-open Doxastic
-
-/-- Whether x possibly doesn't know Ans(Q) at world w:
-    ◇¬know(x, Ans(Q)) = ∃w' ∈ R(x,w). ¬(Ans(Q,w) holds at w')
-
-    This is PerspP's not-at-issue presupposition ([dayal-2025]: §2.3).
-    Uses `DiamondAt` from Doxastic.lean and `QUD.ans` from
-    Semantics/Questions/Partition/Cells.lean. -/
-def possibleIgnorance {W E : Type*} (R : E → W → W → Prop) (center : E)
-    (Q : QUD W) (w : W) (worlds : List W) : Prop :=
-  DiamondAt R center w worlds (fun w' => QUD.ans Q w w' = false)
-
-/-- PerspP as a presuppositional question denotation.
-    At-issue: the question Q itself.
-    Not-at-issue presupposition: ◇¬know(center, Ans(Q)). -/
-structure PerspPResult (W : Type*) where
-  /-- The at-issue question content (unchanged by PerspP) -/
-  question : Question W
-  /-- Whether the possible-ignorance presupposition is satisfied -/
-  presupSatisfied : Prop
-
-/-- Apply PerspP to a question: checks possible-ignorance presupposition. -/
-def applyPerspP {W E : Type*} (R : E → W → W → Prop) (center : E)
-    (Q : QUD W) (w : W) (worlds : List W)
-    (hamblinQ : Question W) : PerspPResult W :=
-  { question := hamblinQ
-  , presupSatisfied := possibleIgnorance R center Q w worlds }
-
-/-! ## H3. Veridical predicates block PerspP
-
-The key compositional derivation: a veridical doxastic predicate that holds
-at Q entails □(Ans(Q)), which contradicts ◇¬(Ans(Q)). Therefore PerspP's
-possible-ignorance presupposition is inconsistent with responsive predicates
-in bare (non-negated, non-questioned) contexts.
--/
-
-/-- box and dia are duals: □p → ¬◇¬p.
-    If p holds at all accessible worlds, there is no accessible world where ¬p. -/
-theorem box_excludes_dia_neg {W E : Type*}
-    (R : E → W → W → Prop) (agent : E) (w : W) (worlds : List W)
-    (p : W → Prop)
-    (hBox : BoxAt R agent w worlds p) :
-    ¬ DiamondAt R agent w worlds (fun w' => ¬ p w') := by
-  rintro ⟨w', hw', hR, hNotP⟩
-  exact hNotP (hBox w' hw' hR)
-
-/-- A veridical doxastic predicate entails the subject believes Ans(Q).
-    "x knows Q" at w means there exists a true answer p that x box-believes.
-    In particular, x box-believes Ans(Q,w) (the complete answer at w).
-
-    TODO: Full proof requires showing that HoldsAtQuestion with the G&S-derived
-    Hamblin denotation implies BoxAt for Ans(Q,w). The key step is:
-    HoldsAtQuestion finds *some* true p that x box-believes; since the question
-    is a partition, that p determines the same cell as Ans(Q,w). -/
-theorem veridical_question_entails_box_ans {W E : Type*}
-    (V : DoxasticPredicate W E) (_hV : V.veridicality = .veridical)
-    (agent : E) (Q : QUD W) (w : W) (worlds : List W)
-    (hHolds : BoxAt V.access agent w worlds (fun w' => QUD.ans Q w w' = true)) :
-    ¬ DiamondAt V.access agent w worlds (fun w' => QUD.ans Q w w' = false) := by
-  rintro ⟨w', hw', hR, hFalse⟩
-  have hTrue : QUD.ans Q w w' = true := hHolds w' hw' hR
-  rw [hFalse] at hTrue
-  exact Bool.false_ne_true hTrue
-
-/-- Therefore PerspP's possible-ignorance presupposition is inconsistent
-    with a veridical predicate that box-knows Ans(Q).
-
-    This is the compositional explanation for why responsive predicates
-    (know, remember) reject quasi-subordination: their knowledge entailment
-    □(Ans(Q)) contradicts PerspP's ◇¬(Ans(Q)). -/
-theorem veridical_blocks_perspP {W E : Type*}
-    (V : DoxasticPredicate W E) (hV : V.veridicality = .veridical)
-    (agent : E) (Q : QUD W) (w : W) (worlds : List W)
-    (hBox : BoxAt V.access agent w worlds (fun w' => QUD.ans Q w w' = true)) :
-    ¬ possibleIgnorance V.access agent Q w worlds := by
-  simp only [possibleIgnorance]
-  exact veridical_question_entails_box_ans V hV agent Q w worlds hBox
-
-/-! ## H4. Bridge theorems
-
-Connect the compositional semantics (veridicality, box/dia) to the Boolean
-predicates (entailsKnowledge, perspPConsistent). This shows the Boolean
-predicates are correct *because* they track the compositional story.
--/
-
-/-- Factive verbs correspond to veridical doxastic predicates.
-    This is the structural link: factivePresup determines veridicality. -/
-def verbEntryIsVeridical (v : VerbEntry) : Bool :=
-  v.factivePresup
-
-/-- The derived selection class assigns.responsive exactly to verbs whose
-    factivePresup is true and which can embed questions.
-    This connects the structural derivation to the semantic one. -/
-theorem responsive_iff_veridical_question_taker (v : VerbEntry)
-    (hQ : v.complementType == .question || v.takesQuestionBase = true)
-    (hClass : deriveSelectionClass v = .responsive) :
-    verbEntryIsVeridical v = true := by
-  simp only [verbEntryIsVeridical]
-  unfold deriveSelectionClass at hClass
-  by_cases h1 : v.complementType != .question && !v.takesQuestionBase
-  · simp [h1] at hClass
-  · simp [h1] at hClass
-    by_cases h2 : v.factivePresup = true
-    · exact h2
-    · exfalso
-      simp [h2] at hClass
-      revert hClass
-      split <;> simp_all
-      split <;> simp_all
-      split <;> simp_all
-      split <;> simp_all
-
-/-- The Boolean `entailsKnowledge` agrees with the compositional story:
-    responsive predicates entail knowledge (veridicality + box),
-    and non-responsive predicates do not.
-
-    Forward direction: responsive → veridical → box-knows Ans(Q) → PerspP blocked.
-    This is exactly what `veridical_blocks_perspP` proves at the compositional level.
-    The Boolean `perspPConsistent` tracks this faithfully. -/
-theorem boolean_tracks_compositional (cls : SelectionClass) :
-    entailsKnowledge cls = true ↔ cls = .responsive := by
-  constructor
-  · intro h; cases cls <;> simp [entailsKnowledge] at h ⊢ <;> exact h
-  · intro h; rw [h]; rfl
-
--- ============================================================================
--- I. VerbEntry.selectionClass — derived from VerbEntry fields
--- ============================================================================
-
-/-! ## I1. Field-based derivation
-
-This derivation keys off the surface-level lexical fields directly:
-`factivePresup`, `takesQuestionBase`, `complementType`, `speechActVerb`, `opaqueContext`.
-
-Each branch depends on a different field, so changing one field in the fragment
-breaks exactly one per-verb theorem below.
--/
-
-/-- Derive selection class from VerbEntry fields.
-
-    | Class           | Condition                                                |
-    |-----------------|----------------------------------------------------------|
-    | uninterrogative | !takesQuestionBase && complementType !=.question         |
-    | responsive      | factivePresup && takesQuestionBase                        |
-    | rogativeSAP     | complementType ==.question && speechActVerb              |
-    | rogativePerspP  | complementType ==.question && opaqueContext              |
-    | rogativeCP      | complementType ==.question (fallthrough)                 |
--/
-def fieldSelectionClass (v : VerbEntry) : SelectionClass :=
-  if !v.takesQuestionBase && v.complementType != .question then .uninterrogative
-  else if v.factivePresup && v.takesQuestionBase then .responsive
-  else if v.complementType == .question && v.speechActVerb then .rogativeSAP
-  else if v.complementType == .question && v.opaqueContext then .rogativePerspP
-  else if v.complementType == .question then .rogativeCP
-  else .uninterrogative
-
-/-! ## I2. Per-verb verification theorems
-
-Each proved by `decide`. Changing one VerbEntry field breaks exactly
-one theorem — this is the dense dependency web. -/
-
-theorem know_is_responsive :
-    fieldSelectionClass English.Predicates.Verbal.know = .responsive := by decide
-
-theorem believe_is_uninterrogative :
-    fieldSelectionClass English.Predicates.Verbal.believe = .uninterrogative := by decide
-
-theorem wonder_is_rogativePerspP :
-    fieldSelectionClass English.Predicates.Verbal.wonder = .rogativePerspP := by decide
-
-theorem ask_is_rogativeSAP :
-    fieldSelectionClass English.Predicates.Verbal.ask = .rogativeSAP := by decide
-
-theorem investigate_is_rogativeCP :
-    fieldSelectionClass English.Predicates.Verbal.investigate = .rogativeCP := by decide
-
-theorem depend_on_is_rogativeCP :
-    fieldSelectionClass English.Predicates.Verbal.depend_on = .rogativeCP := by decide
-
-theorem remember_rog_is_responsive :
-    fieldSelectionClass English.Predicates.Verbal.remember_rog = .responsive := by decide
-
-theorem forget_rog_is_responsive :
-    fieldSelectionClass English.Predicates.Verbal.forget_rog = .responsive := by decide
-
-theorem discover_is_responsive :
-    fieldSelectionClass English.Predicates.Verbal.discover = .responsive := by decide
-
-/-! ## I3. Cross-layer agreement
-
-The three classification methods — string-based `classifyVerb`, semantic
-`deriveSelectionClass`, and field-based `VerbEntry.selectionClass` — all agree. -/
-
-/-- String-based classification matches field-based derivation. -/
-theorem classifyVerb_agrees_with_selectionClass :
-    classifyVerb "know" = fieldSelectionClass English.Predicates.Verbal.know ∧
-    classifyVerb "wonder" = fieldSelectionClass English.Predicates.Verbal.wonder ∧
-    classifyVerb "ask" = fieldSelectionClass English.Predicates.Verbal.ask ∧
-    classifyVerb "investigate" = fieldSelectionClass English.Predicates.Verbal.investigate ∧
-    classifyVerb "depend on" = fieldSelectionClass English.Predicates.Verbal.depend_on ∧
-    classifyVerb "believe" = fieldSelectionClass English.Predicates.Verbal.believe := by decide
-
-/-- Semantic derivation matches field-based derivation. -/
-theorem deriveSelectionClass_agrees_with_selectionClass :
-    deriveSelectionClass English.Predicates.Verbal.know = fieldSelectionClass English.Predicates.Verbal.know ∧
-    deriveSelectionClass English.Predicates.Verbal.wonder = fieldSelectionClass English.Predicates.Verbal.wonder ∧
-    deriveSelectionClass English.Predicates.Verbal.ask = fieldSelectionClass English.Predicates.Verbal.ask ∧
-    deriveSelectionClass English.Predicates.Verbal.investigate = fieldSelectionClass English.Predicates.Verbal.investigate ∧
-    deriveSelectionClass English.Predicates.Verbal.believe = fieldSelectionClass English.Predicates.Verbal.believe := by decide
-
--- ============================================================================
--- J. Compositional PerspP via EpistemicModel
--- ============================================================================
-
-/-! ## J1. EpistemicModel abstraction
-
-PerspP's presupposition is about possible ignorance: the perspectival center
-might not know the answer. We abstract over the knowledge notion so the
-derivation works with any epistemic semantics (doxastic, veridical, etc.). -/
-
-/-- An abstract epistemic model: tells us whether the agent knows a proposition. -/
-structure EpistemicModel (W : Type*) where
-  knows : (W → Bool) → Bool
-
-/-- PerspP presupposition (compositional version):
-    the agent does NOT know the complete answer to Q at w.
-    Uses `QUD.ans` from Cells.lean. -/
-def perspPPresupComp {W : Type*} (ep : EpistemicModel W)
-    (q : QUD W) (w : W) : Bool :=
-  !(ep.knows (QUD.ans q w))
-
-/-! ## J2. Canonical epistemic models -/
-
-/-- Veridical model: knows p iff p is true at w (T axiom).
-    This is the model for responsive predicates (know, remember) in
-    bare (non-negated, non-questioned) contexts. -/
-def veridicalModel {W : Type*} (w : W) : EpistemicModel W where
-  knows := fun p => p w
-
-/-- Ignorant model: knows nothing.
-    This is the model for rogative predicates (wonder, ask). -/
-def ignorantModel {W : Type*} : EpistemicModel W where
-  knows := fun _ => false
-
-/-! ## J3. Grounding theorems
-
-These prove the Boolean layer (`perspPConsistent`) is faithful to the
-compositional semantics. -/
-
-/-- A veridical knower's PerspP presupposition is false: they know Ans(Q,w),
-    so possible ignorance fails. Uses `QUD.ans_true_at_index` from Cells.lean. -/
-theorem responsive_contradicts_perspP_comp {W : Type*}
-    (q : QUD W) (w : W) :
-    perspPPresupComp (veridicalModel w) q w = false := by
-  simp [perspPPresupComp, veridicalModel, QUD.ans_true_at_index]
-
-/-- An ignorant agent's PerspP presupposition is true: they don't know anything. -/
-theorem rogative_allows_perspP_comp {W : Type*}
-    (q : QUD W) (w : W) :
-    perspPPresupComp ignorantModel q w = true := by
-  simp [perspPPresupComp, ignorantModel]
-
-/-- The Boolean `perspPConsistent.responsive false false = false` is consistent
-    with the compositional derivation: both say responsive blocks PerspP.
-
-    The Boolean layer says: responsive + not negated + not questioned → inconsistent.
-    The compositional layer says: veridical model → ¬(possible ignorance). -/
-theorem perspP_boolean_grounded :
-    (perspPConsistent .responsive false false = false) ∧
-    (∀ (W : Type) (q : QUD W) (w : W),
-      perspPPresupComp (veridicalModel w) q w = false) :=
-  ⟨rfl, fun _ q w => responsive_contradicts_perspP_comp q w⟩
-
-/-! ## J4. Bridge to DoxasticPredicate
-
-A `DoxasticPredicate` from Doxastic.lean induces an `EpistemicModel` at a
-given world, agent, and domain. This connects the modal-logic semantics
-to the abstract epistemic layer used by PerspP. -/
-
-/-- A DoxasticPredicate induces an EpistemicModel at a world. -/
-def doxasticToEpistemicModel {W E : Type*}
-    (V : DoxasticPredicate W E) [∀ a w w', Decidable (V.access a w w')]
-    (agent : E) (w : W) (worlds : List W) : EpistemicModel W where
-  knows := fun p => decide (V.HoldsAt agent (fun w' => p w' = true) w worlds)
-
-/-- A veridical predicate that box-knows Ans(Q) blocks PerspP through
-    the epistemic model bridge.
-
-    TODO: Full proof requires showing HoldsAt for veridical predicates
-    at the answer proposition entails the answer is true at the eval world
-    (which follows from veridical_entails_complement + BoxAt). -/
-theorem veridical_model_blocks_perspP {W E : Type*}
-    (V : DoxasticPredicate W E) [∀ a w w', Decidable (V.access a w w')]
-    (_hV : V.veridicality = .veridical)
-    (agent : E) (Q : QUD W) (w : W) (worlds : List W)
-    (hHolds : V.HoldsAt agent (fun w' => QUD.ans Q w w' = true) w worlds) :
-    perspPPresupComp (doxasticToEpistemicModel V agent w worlds) Q w = false := by
-  simp [perspPPresupComp, doxasticToEpistemicModel, hHolds]
-
--- ============================================================================
--- J. Connection to Dayal's answerhood theory
--- ============================================================================
-
-/-! ### Connection to [dayal-1996]'s answerhood theory
-
-The `Ans(Q)` referenced throughout this module — in PerspP's
-`◇¬know(x, Ans(Q))` and SAP's obligation to assert `Ans(Q)` — corresponds to
-[dayal-1996]'s strongest true answer when the question's Exhaustivity
-Presupposition (EP) is satisfied. See
-`Semantics/Questions/Exhaustivity.lean` for the topical Prop/Set
-operators (`dayalAns`, `IsExhaustivelyResolvable`, `relExh`).
-
-When EP fails (e.g., ability-*can* questions under first-order scope), there
-is no unique strongest answer, and the question licenses mention-some
-readings; in such cases `Ans(Q)` is not well-defined in Dayal's sense,
-though [xiang-2022]'s Relativized Exhaustivity may still hold. -/
-
-end Minimalist.LeftPeriphery
+end Minimalist

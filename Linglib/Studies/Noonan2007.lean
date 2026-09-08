@@ -45,7 +45,7 @@ namespace Noonan2007
 
 open Data.Complementation Data.Complementation.Noonan2007
 open English.Predicates.Verbal
-open Minimalist.LeftPeriphery
+open Minimalist
 open Mood
 
 -- ============================================================================

@@ -135,7 +135,6 @@ open ExpressiveModifier
 open Minimalist.ANDL
   (povUnvaluedFeature povOperatorFeature LicensedMinimalist)
 open SprouseEtAl2012 (FactorialCondition)
-open Minimalist.LeftPeriphery (SelectionClass)
 
 -- ============================================================================
 -- §1. The licensing predicate — derived from mechanism
@@ -286,24 +285,10 @@ theorem partial_movement_pic_applies :
 
 /-- Direct *wh-the-hell* questions select PerspP — they require the
     speaker as perspectival center (the negative attitude bearer in
-    [chou-2012]'s analysis). Bridges Chan & Shen's syntactic POV
-    apparatus to Dayal's semantic PerspP layer. -/
-def theHellSelectionClass : SelectionClass := .rogativePerspP
+    [chou-2012]'s analysis), the class whose content leaves the center's
+    ignorance open (`Questions.not_possiblyIgnorant_inter_of_subset`). -/
+def theHellSelectionClass : Minimalist.SelectionClass := .rogativePerspP
 
-/-- The PerspP-selecting class is precisely the one that does *not*
-    entail knowledge of the answer — matching *the-hell*'s ignorance
-    component ([martin-2020]). Bridge from `LeftPeriphery`. -/
-theorem theHell_no_knowledge :
-    Minimalist.LeftPeriphery.entailsKnowledge
-      theHellSelectionClass = false := rfl
-
-/-- The PerspP-selecting class is consistent with the possible-ignorance
-    presupposition (`◇¬know(speaker, Ans(Q))`) — the semantic side of
-    *the-hell*'s negative attitude ([rawlins-2008],
-    [ippolito-2024]). -/
-theorem theHell_persp_consistent :
-    Minimalist.LeftPeriphery.perspPConsistent
-      theHellSelectionClass false false = true := rfl
 
 -- ============================================================================
 -- §9. Cross-linguistic — Mandarin *daodi* and the typological parameter
