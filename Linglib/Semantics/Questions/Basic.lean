@@ -1,5 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Set.Lattice
+import Mathlib.Order.Antichain
 import Mathlib.Data.SetLike.Basic
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.CompleteBooleanAlgebra
@@ -603,6 +604,11 @@ theorem sUnion_alt_subset_info (P : Question W) :
     refine ⟨hp, ?_⟩
     intro q hq hpq
     exact Set.Subset.antisymm hpq (hmax hq hpq)
+
+/-- The alternatives of `P` form an antichain under `⊆`: no alternative
+    is properly contained in another. -/
+theorem alt_isAntichain (P : Question W) : IsAntichain (· ⊆ ·) (alt P) :=
+  fun _ hp _ hq hne hpq => hne (hp.2 _ hq.1 hpq)
 
 /-- An alt of `P` that is not contained in any *strictly larger* alt of
     `Q` survives in `alt (P ⊔ Q)`. The convenient direction for

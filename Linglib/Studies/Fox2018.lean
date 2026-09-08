@@ -21,8 +21,8 @@ informative true Hamblin alternative.
 
 | [fox-2018]                        | substrate                         |
 |----------------------------------------|-----------------------------------|
-| `Exh(Q,p) = λw. w∈p ∧ ∀q∈Q[w∈q → p⊆q]` (eq 11) | `{w | IsStrongestTrueAnswer Q w p}` |
-| `Max_inf(Q,w)` (eq 9b)                 | the unique `p` with `IsStrongestTrueAnswer Q w p` (when EP holds) |
+| `Exh(Q,p) = λw. w∈p ∧ ∀q∈Q[w∈q → p⊆q]` (eq 11) | `exhCell (alt Q) p` |
+| `Max_inf(Q,w)` (eq 9b)                 | the unique `p` with `IsStrongestTrueAnswer (alt Q) w p` (when EP holds) |
 | `Partition_L(Q)` (eq 3)                | logical partition by `strongAnswer`-equivalence |
 | `Partition_C(Q,A)` (eq 10)             | contextual partition (A-restricted) |
 | Dayal's `Ans_D` presupposition         | `IsExhaustivelyResolvable` (Exhaustivity.lean) |
@@ -34,7 +34,7 @@ informative true Hamblin alternative.
 
 * **§1.1** Question duality (partition vs Hamblin set) — captured by
   the substrate's `Question W = LowerSet (Set W)` (Hamblin shape) and
-  `strongAnswer Q w` (the partition view as equivalence classes).
+  `strongAnswer (alt Q) w` (the partition view as equivalence classes).
 * **§1.2** Dayal's solution — `IsExhaustivelyResolvable` is already
   the substrate's predicate; `Exh` here connects it to Fox's
   partition-by-exhaustification view.
@@ -67,7 +67,7 @@ informative true Hamblin alternative.
 namespace Fox2018
 
 open Question
-open Questions.Exhaustivity
+open Questions
 
 variable {W : Type*}
 
@@ -82,24 +82,24 @@ locally. -/
 /-- [fox-2018] (11): the **Exh-cell** of proposition `p` in
     question `Q`. Substrate primitive `exhCell` re-exported under
     Fox's notation. -/
-abbrev Exh (Q : Question W) (p : Set W) : Set W := exhCell Q p
+abbrev Exh (Q : Question W) (p : Set W) : Set W := exhCell (alt Q) p
 
 /-! ### §1.1 Logical and contextual partitions (eq 3, eq 10) -/
 
 /-- [fox-2018] (3): the **Logical Partition** of `Q`. Substrate
     primitive `exhaustifiedPartition` re-exported under Fox's notation. -/
 abbrev LogicalPartition (Q : Question W) : Set (Set W) :=
-  exhaustifiedPartition Q
+  exhaustifiedPartition (alt Q)
 
 /-- [fox-2018] (10): the **Contextual Partition** of `Q` over
     context-set `A` — the Logical Partition cells intersected with `A`.
     Paper-specific variant; the substrate primitive `exhaustifiedPartition`
     is the unrestricted form. -/
 def ContextualPartition (Q : Question W) (A : Set W) : Set (Set W) :=
-  {C | ∃ w ∈ A, C = strongAnswer Q w ∩ A}
+  {C | ∃ w ∈ A, C = strongAnswer (alt Q) w ∩ A}
 
 theorem mem_ContextualPartition (Q : Question W) (A : Set W) (C : Set W) :
-    C ∈ ContextualPartition Q A ↔ ∃ w ∈ A, C = strongAnswer Q w ∩ A :=
+    C ∈ ContextualPartition Q A ↔ ∃ w ∈ A, C = strongAnswer (alt Q) w ∩ A :=
   Iff.rfl
 
 /-! ### §1.4 Cell Identification, Non-Vacuity, QPM (eq 19, eq 20) -/
@@ -126,7 +126,7 @@ Fox's central claim (eq 11–12): when Dayal's maximality presupposition
 is met (i.e., every world in `A` has a maximally informative true
 answer), the contextual partition is exactly the image of `Exh`.
 The substrate-level form of this connection: `IsExhaustivelyResolvable
-Q w` for every `w ∈ A` implies `CellIdentification Q A`. -/
+(alt Q) w` for every `w ∈ A` implies `CellIdentification Q A`. -/
 
 /-- [fox-2018] eq (11)→(12): if every world in the context-set
     has a maximally informative true answer, every cell of the
@@ -134,46 +134,18 @@ Q w` for every `w ∈ A` implies `CellIdentification Q A`. -/
     counterpart of the Dayal-EP-implies-CI direction. -/
 theorem cellIdentification_of_isExhaustivelyResolvable
     (Q : Question W) (A : Set W)
-    (hEP : ∀ w ∈ A, IsExhaustivelyResolvable Q w) :
+    (hEP : ∀ w ∈ A, IsExhaustivelyResolvable (alt Q) w) :
     CellIdentification Q A := by
-  intro C hC
-  obtain ⟨w, hwA, rfl⟩ := hC
-  obtain ⟨p, hpStrongest⟩ := hEP w hwA
-  refine ⟨p, hpStrongest.1, ?_⟩
-  ext v
-  refine ⟨?_, ?_⟩
-  · rintro ⟨hvSA, hvA⟩
-    refine ⟨?_, hvA⟩
-    -- v ∈ strongAnswer Q w means v decides every alt like w; w ∈ p
-    -- with p the strongest true answer; so v ∈ p and p is also
-    -- v's strongest true answer (since v ~ w on alts).
-    refine ⟨hpStrongest.1, ?_, ?_⟩
-    · -- v ∈ p: w ∈ p, v decides p like w
-      exact (hvSA p hpStrongest.1).mp hpStrongest.2.1
-    · intro q hq hvq
-      -- v ∈ q means w ∈ q (by hvSA); then p ⊆ q from w-side.
-      have hwq : w ∈ q := (hvSA q hq).mpr hvq
-      exact hpStrongest.2.2 q hq hwq
-  · rintro ⟨hvSTA, hvA⟩
-    refine ⟨?_, hvA⟩
-    intro q hq
-    refine ⟨?_, ?_⟩
-    · -- w ∈ q → v ∈ q: both have p as strongest true answer, so they
-      -- agree on every alt.
-      intro hwq
-      -- w ∈ q ⇒ p ⊆ q (from w-side); also v ∈ p (from v-side); so v ∈ q
-      have hpq : p ⊆ q := hpStrongest.2.2 q hq hwq
-      exact hpq hvSTA.2.1
-    · intro hvq
-      have hpq : p ⊆ q := hvSTA.2.2 q hq hvq
-      exact hpq hpStrongest.2.1
+  rintro C ⟨w, hwA, rfl⟩
+  obtain ⟨p, hp⟩ := hEP w hwA
+  exact ⟨p, hp.1.1, congrArg (· ∩ A) (exhCell_eq_strongAnswer _ w hp).symm⟩
 
 /-! ### §2.1 Mention-some challenge
 
 [fox-2018] §2.1 (21): "Mary knows where we can get gas in
 Cambridge" has an MS reading not derivable from `Ans_D` (which
 demands the maximally informative answer). The substrate mirror:
-some questions have `¬ IsExhaustivelyResolvable Q w` at the
+some questions have `¬ IsExhaustivelyResolvable (alt Q) w` at the
 evaluation world even though they are perfectly answerable in the MS
 sense (`Resolves σ Q` succeeds for some non-maximal `p`). -/
 
@@ -188,15 +160,11 @@ theorem resolves_can_succeed_when_EP_fails
     (hwp₁ : w ∈ p₁) (hwp₂ : w ∈ p₂)
     (hp₁p₂ : ¬ p₁ ⊆ p₂)
     (hσp₁ : σ ⊆ p₁) :
-    Resolves σ Q ∧ ¬ IsExhaustivelyResolvable Q w := by
-  refine ⟨⟨p₁, hp₁, hσp₁⟩, ?_⟩
-  rintro ⟨q, hqAlt, hwq, hMin⟩
-  have hq_sub_p₁ : q ⊆ p₁ := hMin p₁ hp₁ hwp₁
-  have hq_sub_p₂ : q ⊆ p₂ := hMin p₂ hp₂ hwp₂
-  have hq_max := hqAlt.2
-  have hqp₁ : q = p₁ := hq_max p₁ (alt_subset_props _ hp₁) hq_sub_p₁
-  have hqp₂ : q = p₂ := hq_max p₂ (alt_subset_props _ hp₂) hq_sub_p₂
-  apply hp₁p₂
-  rw [← hqp₁, hqp₂]
+    Resolves σ Q ∧ ¬ IsExhaustivelyResolvable (alt Q) w := by
+  refine ⟨⟨p₁, hp₁, hσp₁⟩, fun ⟨q, hq⟩ => ?_⟩
+  rw [isStrongestTrueAnswer_alt_iff] at hq
+  have h₁ : p₁ = q := Set.mem_singleton_iff.1 (hq ▸ (⟨hp₁, hwp₁⟩ : p₁ ∈ trueAnswers (alt Q) w))
+  have h₂ : p₂ = q := Set.mem_singleton_iff.1 (hq ▸ (⟨hp₂, hwp₂⟩ : p₂ ∈ trueAnswers (alt Q) w))
+  exact hp₁p₂ (by rw [h₁, h₂])
 
 end Fox2018

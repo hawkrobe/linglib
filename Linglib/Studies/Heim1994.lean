@@ -18,14 +18,14 @@ Karttunen's semantics yields G&S-equivalent predictions.
 
 * **ans₁(α, w)** (eq 15) — "answer-in-the-first-sense":
   the *intersection* `∩⟦α⟧K(w)` of all true Karttunen alternatives at `w`.
-  This is exactly `Exhaustivity.weakAnswer Q w` in the substrate.
+  This is exactly `Exhaustivity.weakAnswer (alt Q) w` in the substrate.
 
 * **ans₂(α, w)** (eq 16) — "answer-in-the-second-sense":
   `λw'. ans₁(α, w') = ans₁(α, w)` — the set of worlds whose Karttunen
   intersection equals `w`'s. This is the strongly-exhaustive answer
   in the G&S sense.
 
-The substrate's `strongAnswer Q w := {v | ∀ p ∈ alt Q, w ∈ p ↔ v ∈ p}`
+The substrate's `strongAnswer (alt Q) w := {v | ∀ p ∈ alt Q, w ∈ p ↔ v ∈ p}`
 is one canonical formulation of the G&S strong answer; Heim's `ans₂`
 is the *reflective* formulation that quotients worlds by their
 ans₁-class. We prove `strongAnswer ⊆ heimAns2` here; the converse
@@ -40,7 +40,7 @@ contexts).
   is captured by `weakAnswer`. The actual lexical `know` predicate
   (which involves doxastic accessibility) lives in
   `Semantics/Attitudes/Doxastic.lean`; we identify the
-  *content* `weakAnswer Q w` here.
+  *content* `weakAnswer (alt Q) w` here.
 * **§2** Exhaustiveness — Karttunen's eq (5) "if q(w) = ∅ then x
   believes that q is empty" becomes the substrate's
   `IsExhaustivelyResolvable` (Dayal 1996 EP), already in
@@ -52,7 +52,7 @@ contexts).
   λw'[q(w') = q(w)]". The substrate analogue is `strongAnswer ⊆
   weakAnswer`: the strong answer entails the weak one (proved below).
 * **§5** Groenendijk & Stokhof — their `whether` denotation
-  `λw'. R(w') ↔ R(w)` is precisely `strongAnswer (polar R) w` in
+  `λw'. R(w') ↔ R(w)` is precisely `strongAnswer (alt (polar R)) w` in
   the substrate.
 * **§6** ans₁/ans₂ bridge — formalised here via
   `heimAns1`/`heimAns2` and `strongAnswer_subset_heimAns2`.
@@ -67,7 +67,7 @@ contexts).
 namespace Heim1994
 
 open Question
-open Questions.Exhaustivity
+open Questions
 
 variable {W : Type*}
 
@@ -77,10 +77,10 @@ variable {W : Type*}
     Karttunen intersection `∩⟦α⟧K(w)`. Identified with the substrate's
     `weakAnswer`. -/
 def heimAns1 (Q : Question W) (w : W) : Set W :=
-  weakAnswer Q w
+  weakAnswer (alt Q) w
 
 @[simp] theorem heimAns1_eq_weakAnswer (Q : Question W) (w : W) :
-    heimAns1 Q w = weakAnswer Q w := rfl
+    heimAns1 Q w = weakAnswer (alt Q) w := rfl
 
 /-- [heim-1994] (16): the **answer-in-the-second-sense** is the
     set of worlds whose ans₁-image equals `w`'s. The reflective
@@ -89,17 +89,17 @@ def heimAns2 (Q : Question W) (w : W) : Set W :=
   {w' | heimAns1 Q w' = heimAns1 Q w}
 
 @[simp] theorem mem_heimAns2 (Q : Question W) (w v : W) :
-    v ∈ heimAns2 Q w ↔ weakAnswer Q v = weakAnswer Q w := Iff.rfl
+    v ∈ heimAns2 Q w ↔ weakAnswer (alt Q) v = weakAnswer (alt Q) w := Iff.rfl
 
 theorem heimAns2_self_mem (Q : Question W) (w : W) :
     w ∈ heimAns2 Q w := rfl
 
 /-! ### §6 bridge: `strongAnswer ⊆ heimAns2`
 
-The substrate's `strongAnswer Q w := {v | ∀ p ∈ alt Q, w ∈ p ↔ v ∈ p}`
+The substrate's `strongAnswer (alt Q) w := {v | ∀ p ∈ alt Q, w ∈ p ↔ v ∈ p}`
 says `v` decides every alternative the same way as `w`. Heim's
-`heimAns2 Q w := {v | weakAnswer Q v = weakAnswer Q w}` says `v` and
-`w` have the same Karttunen intersection.
+`heimAns2 Q w := {v | weakAnswer (alt Q) v = weakAnswer (alt Q) w}` says
+`v` and `w` have the same Karttunen intersection.
 
 Same-decision-on-every-alt implies same true-alt set, hence same
 intersection — direct. -/
@@ -107,17 +107,12 @@ intersection — direct. -/
 /-- Heim's §6 inclusion: if `v` decides every alternative the same
     way as `w`, then `v` and `w` have the same Karttunen intersection. -/
 theorem strongAnswer_subset_heimAns2 (Q : Question W) (w : W) :
-    strongAnswer Q w ⊆ heimAns2 Q w := by
+    strongAnswer (alt Q) w ⊆ heimAns2 Q w := by
   intro v hv
-  show weakAnswer Q v = weakAnswer Q w
+  show weakAnswer (alt Q) v = weakAnswer (alt Q) w
   ext u
-  unfold weakAnswer
-  refine ⟨fun h p hp hwp => ?_, fun h p hp hvp => ?_⟩
-  · -- need v ∈ p; have w ∈ p and v decides p like w
-    have hiff : w ∈ p ↔ v ∈ p := hv p hp
-    exact h p hp (hiff.mp hwp)
-  · have hiff : w ∈ p ↔ v ∈ p := hv p hp
-    exact h p hp (hiff.mpr hvp)
+  simp only [mem_weakAnswer]
+  exact ⟨fun h p hp hwp => h p hp ((hv p hp).1 hwp), fun h p hp hvp => h p hp ((hv p hp).2 hvp)⟩
 
 /-! ### §4 redundancy
 
@@ -132,32 +127,32 @@ directly. -/
 
 The simplified Karttunen meaning of `know(Q)(x)` at world `w` is
 "x believes `∩q(w)`" — substrate-level: "x's doxastic state is
-contained in `weakAnswer Q w`". The doxastic predicate itself lives
+contained in `weakAnswer (alt Q) w`". The doxastic predicate itself lives
 in `Semantics/Attitudes/Doxastic.lean`; here we expose the
 content as `weakAnswer`. -/
 
 /-- [heim-1994] §1 (4): the *simplified* Karttunen content of
-    `know Q w` is `weakAnswer Q w` — what the agent must believe. -/
+    `know Q w` is `weakAnswer (alt Q) w` — what the agent must believe. -/
 def simplifiedKarttunenContent (Q : Question W) (w : W) : Set W :=
-  weakAnswer Q w
+  weakAnswer (alt Q) w
 
 @[simp] theorem simplifiedKarttunenContent_eq_weakAnswer
     (Q : Question W) (w : W) :
-    simplifiedKarttunenContent Q w = weakAnswer Q w := rfl
+    simplifiedKarttunenContent Q w = weakAnswer (alt Q) w := rfl
 
 /-! ### §5: G&S strong answer
 
 [groenendijk-stokhof-1984] `whether` denotes `λw'. R(w') ↔ R(w)`,
-which is `strongAnswer (polar R) w`. The substrate already provides
+which is `strongAnswer (alt (polar R)) w`. The substrate already provides
 this; we re-export under the paper's vocabulary for cross-reference. -/
 
 /-- [heim-1994] §5 / [groenendijk-stokhof-1984]: the G&S
     answer is the substrate's `strongAnswer`. -/
 def gsAnswer (Q : Question W) (w : W) : Set W :=
-  strongAnswer Q w
+  strongAnswer (alt Q) w
 
 @[simp] theorem gsAnswer_eq_strongAnswer (Q : Question W) (w : W) :
-    gsAnswer Q w = strongAnswer Q w := rfl
+    gsAnswer Q w = strongAnswer (alt Q) w := rfl
 
 /-- [heim-1994] §6: G&S answer is contained in Heim's ans₂. -/
 theorem gsAnswer_subset_heimAns2 (Q : Question W) (w : W) :

@@ -2776,7 +2776,8 @@
   doi       = {10.18148/sub/2018.v22.98},
   subfield  = {semantics/questions},
   validated = {true},
-  role      = {cited}
+  role      = {cited},
+  sources   = {Semantics/Questions/Exhaustivity.lean}
 }
 @incollection{fox-2007,
   author    = {Fox, Danny},
@@ -4041,7 +4042,7 @@
   doi       = {10.1515/9783110852820.302},
   validated = {true},
   role      = {foundational},
-  sources   = {Semantics/Plurality/Algebra.lean}
+  sources   = {Semantics/Plurality/Algebra.lean;Studies/Dayal2016.lean}
 }% REF: Zipf, G. K. (1935). The Psycho-Biology of Language. Houghton Mifflin.
 @book{kleene-1952,
   author    = {Kleene, Stephen C.},
@@ -6055,7 +6056,8 @@
   address   = {Oxford},
   subfield  = {semantics/questions},
   role      = {cited},
-  validated = {false}
+  validated = {false},
+  sources   = {Studies/Dayal2016.lean}
 }% REF: Heim, I. (1999). Notes on superlatives. Ms., MIT.
 @unpublished{heim-1999,
   author    = {Heim, Irene},
@@ -6077,7 +6079,7 @@
   pages     = {128--144},
   subfield  = {semantics/compositional},
   role      = {formalized},
-  sources   = {Semantics/Quantification/ChoiceFunction.lean;Studies/Heim1994.lean;Studies/Mirrazi2024.lean}
+  sources   = {Semantics/Quantification/ChoiceFunction.lean;Studies/Heim1994.lean;Studies/Mirrazi2024.lean;Studies/Dayal2016.lean;Semantics/Questions/Exhaustivity.lean}
 }% REF: Kearns, K. (2000). Semantics. New York: St. Martin's.
 @book{kearns-2000,
   author    = {Kearns, Kate},
@@ -12807,7 +12809,7 @@
   subfield  = {semantics/reference},
   role      = {cited},
   validated = {true},
-  sources   = {Studies/Snyder2026.lean;Semantics/Definiteness/Maximality.lean;Semantics/Definiteness/Interpret.lean}
+  sources   = {Studies/Snyder2026.lean;Semantics/Definiteness/Maximality.lean;Semantics/Definiteness/Interpret.lean;Studies/Dayal2016.lean}
 }% REF: Declerck, R. (2006). *The Grammar of the English Tense System*. Mouton.
 @book{declerck-2006,
   author    = {Declerck, Renaat and Reed, Susan and Cappelle, Bert},
@@ -14591,7 +14593,7 @@
   subfield  = {semantics/questions},
   validated = {true},
   role      = {cited},
-  sources   = {Studies/Rouillard2026.lean;Studies/FoxHackl2006.lean;Semantics/Entailment/Extremum.lean}
+  sources   = {Studies/Rouillard2026.lean;Studies/FoxHackl2006.lean;Semantics/Entailment/Extremum.lean;Studies/Dayal2016.lean;Data/Examples/Dayal2016.json;Semantics/Questions/Exhaustivity.lean}
 }
 @book{holmberg-2016,
   author    = {Holmberg, Anders},
@@ -14824,7 +14826,7 @@
   subfield  = {semantics/questions},
   validated = {true},
   role      = {formalized},
-  sources   = {Semantics/Questions/Hamblin.lean}
+  sources   = {Semantics/Questions/Hamblin.lean;Studies/Dayal2016.lean;Data/Examples/Dayal2016.json;Semantics/Questions/Exhaustivity.lean}
 }
 @phdthesis{groenendijk-stokhof-1984,
   author    = {Groenendijk, Jeroen and Stokhof, Martin},
@@ -14835,7 +14837,7 @@
   subfield  = {semantics/questions},
   validated = {true},
   role      = {foundational},
-  sources   = {Studies/GroenendijkStokhof1984.lean}
+  sources   = {Studies/GroenendijkStokhof1984.lean;Studies/Dayal2016.lean;Data/Examples/Dayal2016.json;Semantics/Questions/Exhaustivity.lean}
 }
 @article{xiang-2022,
   author    = {Xiang, Yimei},
@@ -15125,9 +15127,9 @@
   doi       = {10.1093/acprof:oso/9780199281268.001.0001},
   publisher = {Oxford University Press},
   subfield  = {semantics/questions},
-  role      = {cited},
+  role      = {formalized},
   validated = {true},
-  sources   = {Studies/Dayal2016.lean}
+  sources   = {Studies/Dayal2016.lean;Data/Examples/Dayal2016.json;Semantics/Questions/Exhaustivity.lean}
 }% REF: Zu, X. (2018). Discourse participants and the structural representation of context.
 @phdthesis{zu-2018,
   author    = {Zu, Vera},
@@ -15161,7 +15163,7 @@
   subfield  = {semantics/questions},
   validated = {true},
   role      = {cited},
-  sources   = {Semantics/Polarity/Licensing.lean;Syntax/Minimalist/LeftPeriphery.lean;Semantics/Questions/Exhaustivity.lean}
+  sources   = {Semantics/Polarity/Licensing.lean;Syntax/Minimalist/LeftPeriphery.lean;Semantics/Questions/Exhaustivity.lean;Studies/Dayal2016.lean;Data/Examples/Dayal2016.json}
 }
 @article{shannon-1948,
   author    = {Shannon, Claude E.},
@@ -15428,7 +15430,7 @@
   subfield  = {semantics/presupposition},
   role      = {cited},
   validated = {true},
-  sources   = {Semantics/Attitudes/Doxastic.lean;Semantics/Attitudes/EpistemicThreshold.lean;Studies/Hintikka1962.lean;Semantics/Attitudes/ContentIndividual.lean}
+  sources   = {Semantics/Attitudes/Doxastic.lean;Semantics/Attitudes/EpistemicThreshold.lean;Studies/Hintikka1962.lean;Semantics/Attitudes/ContentIndividual.lean;Studies/Dayal2016.lean}
 }
 @article{feferman-1999,
   author    = {Feferman, Solomon},
@@ -42572,4 +42574,53 @@
   subfield  = {logic/belief-revision},
   role      = {cited},
   sources   = {Studies/DarwichePearl1997.lean}
+}
+
+@article{bittner-1998,
+  author    = {Bittner, Maria},
+  year      = {1998},
+  title     = {Cross-Linguistic Semantics for Questions},
+  journal   = {Linguistics and Philosophy},
+  volume    = {21},
+  number    = {1},
+  pages     = {1--82},
+  subfield  = {semantics/questions},
+  role      = {cited},
+  sources   = {Studies/Dayal2016.lean}
+}
+@article{abusch-2010,
+  author    = {Abusch, Dorit},
+  year      = {2010},
+  title     = {Presupposition Triggering from Alternatives},
+  journal   = {Journal of Semantics},
+  volume    = {27},
+  number    = {1},
+  pages     = {37--80},
+  doi       = {10.1093/jos/ffp009},
+  subfield  = {semantics/presupposition},
+  validated = {true},
+  role      = {cited},
+  sources   = {Studies/Dayal2016.lean}
+}
+@inproceedings{karttunen-peters-1976,
+  author    = {Karttunen, Lauri and Peters, Stanley},
+  year      = {1976},
+  title     = {What Indirect Questions Conventionally Implicate},
+  booktitle = {Proceedings of CLS 12},
+  pages     = {351--368},
+  subfield  = {semantics/questions},
+  role      = {cited},
+  sources   = {Studies/Dayal2016.lean;Data/Examples/Dayal2016.json}
+}
+@article{dayal-1994,
+  author    = {Dayal, Veneeta},
+  year      = {1994},
+  title     = {Scope Marking as Indirect Wh-Dependency},
+  journal   = {Natural Language Semantics},
+  volume    = {2},
+  number    = {2},
+  pages     = {137--170},
+  subfield  = {semantics/questions},
+  role      = {cited},
+  sources   = {Studies/Dayal2016.lean}
 }

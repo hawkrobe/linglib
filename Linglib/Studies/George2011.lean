@@ -23,7 +23,7 @@ relationship Groenendijk-Stokhof assumed).
 |-------------------------------------------------|----------------------------------------|
 | **Strong** (eq 125): `λw λα λw'(α(w) = α(w'))`  | `Exhaustivity.strongAnswer`            |
 | **Weak** (eq 130): `λw λα λw' ∀β(α(w)(β) → α(w')(β))` | `Exhaustivity.weakAnswer`        |
-| Strongly-exhaustive answer set (eq 129)         | `Set.range (strongAnswer Q)` (Fox 2018 LogicalPartition) |
+| Strongly-exhaustive answer set (eq 129)         | `Set.range (strongAnswer (alt Q))` (Fox 2018 LogicalPartition) |
 | Weakly-exhaustive answer set (eq 131)           | not directly named; corresponds to the maximal-true-member view of weakAnswer |
 | Mention-some answer (§2.6.1)                    | `Resolves σ Q`                         |
 
@@ -31,12 +31,12 @@ George's `Strong` operator (eq 125) takes a world `w` and an abstract
 `α` (an `⟨s, τ⟩` function) and returns the proposition that holds
 exactly at worlds where the abstract has the same extension as in
 `w`. On the substrate's `Question W` view (which fixes `τ = ⟨e, t⟩`-ish
-content), `Strong(w)(Q) = strongAnswer Q w`.
+content), `Strong(w)(Q) = strongAnswer (alt Q) w`.
 
 George's `Weak` operator (eq 130) takes an abstract `α` and returns
 the proposition that holds at worlds where `α`'s extension in the
 evaluation world is a *subset* of `α`'s extension here. On the
-substrate, this is `weakAnswer Q w` — the conjunction (intersection)
+substrate, this is `weakAnswer (alt Q) w` — the conjunction (intersection)
 of all alternatives true at `w`.
 
 ## Section coverage
@@ -50,7 +50,7 @@ of all alternatives true at `w`.
   `who walks` and `who doesn't walk` produce the same strongly
   exhaustive answer SET (under classical bivalence + domain
   constancy). Substrate-level: the formal equivalence holds *under
-  closed-world assumption*; in the substrate, `strongAnswer Q w` and
+  closed-world assumption*; in the substrate, `strongAnswer (alt Q) w` and
   `strongAnswer (negation Q) w` are equivalent only if every world's
   question denotation has the right complementarity. This file states
   the assumption-relative equivalence.
@@ -78,7 +78,7 @@ of all alternatives true at `w`.
 namespace George2011
 
 open Question
-open Questions.Exhaustivity
+open Questions
 
 variable {W : Type*}
 
@@ -87,13 +87,13 @@ variable {W : Type*}
 /-- [george-2011] (125): the **Strong** answer operator,
     `λw λα λw'(α(w) = α(w'))`. Substrate identification: the set of
     worlds whose extension on every alternative matches `w`. Same as
-    the substrate's `strongAnswer Q w` (see `Heim1994` for the
+    the substrate's `strongAnswer (alt Q) w` (see `Heim1994` for the
     bridge to ans₂). -/
 def Strong (Q : Question W) (w : W) : Set W :=
-  strongAnswer Q w
+  strongAnswer (alt Q) w
 
 @[simp] theorem Strong_eq_strongAnswer (Q : Question W) (w : W) :
-    Strong Q w = strongAnswer Q w := rfl
+    Strong Q w = strongAnswer (alt Q) w := rfl
 
 /-! ### §2.6.3 Weak operator (eq 130) -/
 
@@ -101,12 +101,12 @@ def Strong (Q : Question W) (w : W) : Set W :=
     `λw λα λw' ∀β(α(w)(β) → α(w')(β))`. Substrate identification:
     the set of worlds where the alternative's extension at `w` is a
     subset of its extension here. Same as the substrate's
-    `weakAnswer Q w`. -/
+    `weakAnswer (alt Q) w`. -/
 def Weak (Q : Question W) (w : W) : Set W :=
-  weakAnswer Q w
+  weakAnswer (alt Q) w
 
 @[simp] theorem Weak_eq_weakAnswer (Q : Question W) (w : W) :
-    Weak Q w = weakAnswer Q w := rfl
+    Weak Q w = weakAnswer (alt Q) w := rfl
 
 /-- [george-2011] §2.6.3: any state σ supporting the Strong
     answer at `w` also supports the Weak answer at `w` — i.e., strong
@@ -116,7 +116,7 @@ def Weak (Q : Question W) (w : W) : Set W :=
     serves. -/
 theorem Strong_subset_Weak (Q : Question W) (w : W) :
     Strong Q w ⊆ Weak Q w :=
-  strongAnswer_subset_weakAnswer Q w
+  strongAnswer_subset_weakAnswer (alt Q) w
 
 /-! ### §3.1.1 Negation Generalization (eq 5)
 
@@ -146,7 +146,7 @@ theorem strongAnswer_eq_when_alts_agree
     (Q Q' : Question W) (w : W)
     (hAgree : ∀ v, (∀ p ∈ alt Q, w ∈ p ↔ v ∈ p) ↔
                    (∀ p ∈ alt Q', w ∈ p ↔ v ∈ p)) :
-    strongAnswer Q w = strongAnswer Q' w := by
+    strongAnswer (alt Q) w = strongAnswer (alt Q') w := by
   ext v
   exact hAgree v
 
@@ -171,7 +171,7 @@ and the [george-2011] argument turns on which side of this
 asymmetry is empirically active. -/
 
 /-! [george-2011] §3.1.2 substrate fact: the converse
-    inclusion `weakAnswer Q w ⊆ strongAnswer Q w` does **not** hold
+    inclusion `weakAnswer (alt Q) w ⊆ strongAnswer (alt Q) w` does **not** hold
     in general — strong exhaustivity is strictly stronger than weak.
     Concrete intuition: with `W = {0, 1, 2}` and `Q`'s alts being
     `{0,1}` and `{1,2}` (overlapping non-comparable propositions),
