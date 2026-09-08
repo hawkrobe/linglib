@@ -750,7 +750,7 @@ import Linglib.Features.Subjectivity
 import Linglib.Features.Valence
 import Linglib.Features.WordOrder
 import Linglib.Fragments.ASL.Classifiers
-import Linglib.Fragments.ASL.Height
+import Linglib.Fragments.ASL.Determiners
 import Linglib.Fragments.Abkhaz.Evidentiality
 import Linglib.Fragments.Afar.Gender
 import Linglib.Fragments.Adyghe.Clause
@@ -3021,4 +3021,5 @@ import Linglib.Data.Examples.Cumming2026
 import Linglib.Data.Examples.Cysouw2003
 import Linglib.Data.Examples.DalrympleKaplan2000
 import Linglib.Data.Examples.DalrympleHaug2024
+import Linglib.Data.Examples.DavidsonGagne2022
 import Linglib.Data.Examples.Dayal2016
