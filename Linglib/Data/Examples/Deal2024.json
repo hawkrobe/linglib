@@ -1,0 +1,621 @@
+[
+  {
+    "id": "deal2024_ex16a_1",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(16a)"},
+    "language": "stan1290",
+    "primaryText": "Lucille me la présentera.",
+    "glossedTokens": [],
+    "translation": "Lucille will introduce her to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "1"],
+      ["do", "3"],
+      ["pattern", "strong"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex16a_2",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(16a)"},
+    "language": "stan1290",
+    "primaryText": "Lucille te la présentera.",
+    "glossedTokens": [],
+    "translation": "Lucille will introduce her to you.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "2"],
+      ["do", "3"],
+      ["pattern", "strong"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex16b_1",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(16b)"},
+    "language": "stan1290",
+    "primaryText": "Lucille la leur présentera.",
+    "glossedTokens": [],
+    "translation": "Lucille will introduce her to them.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "3"],
+      ["pattern", "strong"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex16b_2",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(16b)"},
+    "language": "stan1290",
+    "primaryText": "Lucille me leur présentera.",
+    "glossedTokens": [],
+    "translation": "Lucille will introduce me to them.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "1"],
+      ["pattern", "strong"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex16b_3",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(16b)"},
+    "language": "stan1290",
+    "primaryText": "Lucille te leur présentera.",
+    "glossedTokens": [],
+    "translation": "Lucille will introduce you to them.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "2"],
+      ["pattern", "strong"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex16c_1",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(16c)"},
+    "language": "stan1290",
+    "primaryText": "Lucille te me présentera.",
+    "glossedTokens": [],
+    "translation": "Lucille will introduce you to me.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "1"],
+      ["do", "2"],
+      ["pattern", "strong"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex16c_2",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(16c)"},
+    "language": "stan1290",
+    "primaryText": "Lucille me te présentera.",
+    "glossedTokens": [],
+    "translation": "Lucille will introduce me to you.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "2"],
+      ["do", "1"],
+      ["pattern", "strong"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex32a_1",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(32a)"},
+    "language": "bulg1262",
+    "primaryText": "Preporăčaha mu te entusiaziarano.",
+    "glossedTokens": [],
+    "translation": "They recommended you to him enthusiastically.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "2"],
+      ["pattern", "meFirst"]
+    ],
+    "comment": "Reported from Pancheva and Zubizarreta (2018)."
+  },
+  {
+    "id": "deal2024_ex32a_2",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(32a)"},
+    "language": "bulg1262",
+    "primaryText": "Preporăčaha mi te entusiaziarano.",
+    "glossedTokens": [],
+    "translation": "They recommended you to me enthusiastically.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "1"],
+      ["do", "2"],
+      ["pattern", "meFirst"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex32b_1",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(32b)"},
+    "language": "bulg1262",
+    "primaryText": "Preporăčaha mu me entusiaziarano.",
+    "glossedTokens": [],
+    "translation": "They recommended me to him enthusiastically.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "1"],
+      ["pattern", "meFirst"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex32b_2",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(32b)"},
+    "language": "bulg1262",
+    "primaryText": "Preporăčaha ti me entusiaziarano.",
+    "glossedTokens": [],
+    "translation": "They recommended me to you enthusiastically.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "2"],
+      ["do", "1"],
+      ["pattern", "meFirst"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex39a_1",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(39a)"},
+    "language": "ital1282",
+    "primaryText": "Mi ti ha affidato.",
+    "glossedTokens": [],
+    "translation": "He entrusted me to you.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "2"],
+      ["do", "1"],
+      ["pattern", "weak"]
+    ],
+    "comment": "Accepted by the weak-PCC variety of Italian; ambiguous between the two readings, so clitic order is templatic."
+  },
+  {
+    "id": "deal2024_ex39a_2",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(39a)"},
+    "language": "ital1282",
+    "primaryText": "Mi ti ha affidato.",
+    "glossedTokens": [],
+    "translation": "He entrusted you to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "1"],
+      ["do", "2"],
+      ["pattern", "weak"]
+    ],
+    "comment": "The other reading of the same string."
+  },
+  {
+    "id": "deal2024_ex39b",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(39b)"},
+    "language": "ital1282",
+    "primaryText": "Me lo ha affidato.",
+    "glossedTokens": [],
+    "translation": "He entrusted him to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "1"],
+      ["do", "3"],
+      ["pattern", "weak"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex39c",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(39c)"},
+    "language": "ital1282",
+    "primaryText": "Gli mi ha affidato.",
+    "glossedTokens": [],
+    "translation": "He entrusted me to him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "1"],
+      ["pattern", "weak"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex51a_1",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(51a)"},
+    "language": "stan1288",
+    "primaryText": "Me lo recomendaron.",
+    "glossedTokens": [],
+    "translation": "They recommended him to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "1"],
+      ["do", "3"],
+      ["pattern", "strictlyDescending"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex51a_2",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(51a)"},
+    "language": "stan1288",
+    "primaryText": "Te lo recomendaron.",
+    "glossedTokens": [],
+    "translation": "They recommended him to you.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "2"],
+      ["do", "3"],
+      ["pattern", "strictlyDescending"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex51a_3",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(51a)"},
+    "language": "stan1288",
+    "primaryText": "Se lo recomendaron.",
+    "glossedTokens": [],
+    "translation": "They recommended him to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "3"],
+      ["pattern", "strictlyDescending"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex51b_1",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(51b)"},
+    "language": "stan1288",
+    "primaryText": "El te me recomendó.",
+    "glossedTokens": [],
+    "translation": "He recommended you to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "1"],
+      ["do", "2"],
+      ["pattern", "strictlyDescending"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex51b_2",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(51b)"},
+    "language": "stan1288",
+    "primaryText": "El te me recomendó.",
+    "glossedTokens": [],
+    "translation": "He recommended me to you.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["io", "2"],
+      ["do", "1"],
+      ["pattern", "strictlyDescending"]
+    ],
+    "comment": "The string cannot mean this."
+  },
+  {
+    "id": "deal2024_ex51c_1",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(51c)"},
+    "language": "stan1288",
+    "primaryText": "Me le recomendaron.",
+    "glossedTokens": [],
+    "translation": "They recommended me to him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "1"],
+      ["pattern", "strictlyDescending"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex51c_2",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(51c)"},
+    "language": "stan1288",
+    "primaryText": "Te le recomendaron.",
+    "glossedTokens": [],
+    "translation": "They recommended you to him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "2"],
+      ["pattern", "strictlyDescending"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex60a",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(60a)"},
+    "language": "adyg1241",
+    "primaryText": "Se wo Ali-jəm wə-sə-tə.",
+    "glossedTokens": [],
+    "translation": "I give you to Ali.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "2"],
+      ["pattern", "strictlyDescending"],
+      ["preference", "io"]
+    ],
+    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC."
+  },
+  {
+    "id": "deal2024_ex60b",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(60b)"},
+    "language": "adyg1241",
+    "primaryText": "Wo se Ali-jəm sə-wə-tə.",
+    "glossedTokens": [],
+    "translation": "You give me to Ali.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "1"],
+      ["pattern", "strictlyDescending"],
+      ["preference", "io"]
+    ],
+    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC."
+  },
+  {
+    "id": "deal2024_ex60c",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(60c)"},
+    "language": "adyg1241",
+    "primaryText": "Sine-m se wo sə-wə-rə-tə.",
+    "glossedTokens": [],
+    "translation": "Sine gives me to you.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "2"],
+      ["do", "1"],
+      ["pattern", "strictlyDescending"],
+      ["preference", "io"]
+    ],
+    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC."
+  },
+  {
+    "id": "deal2024_ex61a",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(61a)"},
+    "language": "adyg1241",
+    "primaryText": "Se Ali-jə wo wə-sə-tə.",
+    "glossedTokens": [],
+    "translation": "I give Ali to you.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "2"],
+      ["do", "3"],
+      ["pattern", "strictlyDescending"],
+      ["preference", "io"]
+    ],
+    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC."
+  },
+  {
+    "id": "deal2024_ex61b",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(61b)"},
+    "language": "adyg1241",
+    "primaryText": "Wo Ali-jə se sə-wə-tə.",
+    "glossedTokens": [],
+    "translation": "You give Ali to me.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "1"],
+      ["do", "3"],
+      ["pattern", "strictlyDescending"],
+      ["preference", "io"]
+    ],
+    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC."
+  },
+  {
+    "id": "deal2024_ex61c",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(61c)"},
+    "language": "adyg1241",
+    "primaryText": "Hasan-əm wo se wə-sə-rə-tə.",
+    "glossedTokens": [],
+    "translation": "Hasan gives you to me.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "1"],
+      ["do", "2"],
+      ["pattern", "strictlyDescending"],
+      ["preference", "io"]
+    ],
+    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC."
+  },
+  {
+    "id": "deal2024_ex62a_1",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(62a)"},
+    "language": "slov1268",
+    "primaryText": "Mama mi ga bo predstavila.",
+    "glossedTokens": [],
+    "translation": "Mom will introduce him to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "1"],
+      ["do", "3"],
+      ["pattern", "strongOrWeak"]
+    ],
+    "comment": "Slovenian speakers have a strong or a weak PCC; both orders of the object clitics occur, and the person of the second clitic is restricted."
+  },
+  {
+    "id": "deal2024_ex62a_2",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(62a)"},
+    "language": "slov1268",
+    "primaryText": "Mama ti ga bo predstavila.",
+    "glossedTokens": [],
+    "translation": "Mom will introduce him to you.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "2"],
+      ["do", "3"],
+      ["pattern", "strongOrWeak"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex62a_3",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(62a)"},
+    "language": "slov1268",
+    "primaryText": "Mama mu ga bo predstavila.",
+    "glossedTokens": [],
+    "translation": "Mom will introduce him to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "3"],
+      ["pattern", "strongOrWeak"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex62b_1",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(62b)"},
+    "language": "slov1268",
+    "primaryText": "Mama mu me bo predstavila.",
+    "glossedTokens": [],
+    "translation": "Mom will introduce me to him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "1"],
+      ["pattern", "strongOrWeak"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex62b_2",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(62b)"},
+    "language": "slov1268",
+    "primaryText": "Mama mu te bo predstavila.",
+    "glossedTokens": [],
+    "translation": "Mom will introduce you to him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "2"],
+      ["pattern", "strongOrWeak"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex63a_1",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(63a)"},
+    "language": "slov1268",
+    "primaryText": "Mama me mu bo predstavila.",
+    "glossedTokens": [],
+    "translation": "Mom will introduce me to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "1"],
+      ["pattern", "strongOrWeak"],
+      ["preference", "io"]
+    ],
+    "comment": "Direct object clitic first: the indirect object's person is restricted."
+  },
+  {
+    "id": "deal2024_ex63a_2",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(63a)"},
+    "language": "slov1268",
+    "primaryText": "Mama te mu bo predstavila.",
+    "glossedTokens": [],
+    "translation": "Mom will introduce you to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "2"],
+      ["pattern", "strongOrWeak"],
+      ["preference", "io"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex63a_3",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(63a)"},
+    "language": "slov1268",
+    "primaryText": "Mama ga mu bo predstavila.",
+    "glossedTokens": [],
+    "translation": "Mom will introduce him to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["io", "3"],
+      ["do", "3"],
+      ["pattern", "strongOrWeak"],
+      ["preference", "io"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex63b_1",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(63b)"},
+    "language": "slov1268",
+    "primaryText": "Mama ga mi bo predstavila.",
+    "glossedTokens": [],
+    "translation": "Mom will introduce him to me.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "1"],
+      ["do", "3"],
+      ["pattern", "strongOrWeak"],
+      ["preference", "io"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "deal2024_ex63b_2",
+    "source": {"bibkey": "deal-2024", "paperLabel": "(63b)"},
+    "language": "slov1268",
+    "primaryText": "Mama ga ti bo predstavila.",
+    "glossedTokens": [],
+    "translation": "Mom will introduce him to you.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["io", "2"],
+      ["do", "3"],
+      ["pattern", "strongOrWeak"],
+      ["preference", "io"]
+    ],
+    "comment": ""
+  }
+]

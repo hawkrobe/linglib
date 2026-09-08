@@ -17,7 +17,7 @@ preordered by inclusion of their licit regions (`licitFinset`).
 Which mechanism enforces the constraint is left open here: a morphological filter,
 φ-Agree, and perspectival semantics have all been proposed. The rival accounts are
 formalized in their study files and compared cell-by-cell against this typology
-(`Deal2024.strong_matches_pz`,
+(`Deal2024.agrees_with_pConstraint`,
 `PanchevaZubizarreta2018.isLicit_iff_exists_appl_satisfying`).
 
 ## References
@@ -123,7 +123,7 @@ instance (g : Grammar) (do_ : Person) : Decidable (UniquenessSatisfied g do_) :=
     paper's descriptive statement (14d) — the DO must be 2P or 3P — would forbid it (the
     paper never walks the mechanism through ⟨1,1⟩ for the [+proximate] family). The
     permissive reading is deliberate: rival probe-based accounts part ways with the
-    P-Constraint at exactly this cell (`Deal2024.sd_ultra_discrepancy_1_1`). -/
+    P-Constraint at exactly this cell, which [deal-2024]'s table (1) leaves out. -/
 def PrimacyRescues (g : Grammar) (io : Person) : Prop :=
   g.primacy ∧ io.IncludesSpeaker
 
