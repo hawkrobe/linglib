@@ -207,7 +207,9 @@
     "paperFeatures": [
       ["blocker_type", "prefix"],
       ["blocker", "be-"],
-      ["r_predicate", "arm"]
+      ["r_predicate", "arm"],
+      ["outer", "rsp"],
+      ["inner", "pfx"]
     ],
     "comment": "The ge- of the grammatical form is participial, not a prefix in the relevant sense."
   },
@@ -232,7 +234,9 @@
     "paperFeatures": [
       ["blocker_type", "prefix"],
       ["blocker", "er-"],
-      ["r_predicate", "tot"]
+      ["r_predicate", "tot"],
+      ["outer", "rsp"],
+      ["inner", "pfx"]
     ],
     "comment": ""
   },
@@ -257,7 +261,9 @@
     "paperFeatures": [
       ["blocker_type", "prefix"],
       ["blocker", "zer-"],
-      ["r_predicate", "kaputt"]
+      ["r_predicate", "kaputt"],
+      ["outer", "rsp"],
+      ["inner", "pfx"]
     ],
     "comment": "Same grammatical baseline as (115a)."
   },
@@ -281,7 +287,9 @@
     "paperFeatures": [
       ["blocker_type", "particle"],
       ["blocker", "ab-"],
-      ["r_predicate", "trocken"]
+      ["r_predicate", "trocken"],
+      ["outer", "rsp"],
+      ["inner", "prt"]
     ],
     "comment": "The starred form is grammatical only under an adverbial reading of trocken, not the intended resultative one."
   },
@@ -305,8 +313,332 @@
     "paperFeatures": [
       ["blocker_type", "particle"],
       ["blocker", "an-"],
-      ["r_predicate", "nass"]
+      ["r_predicate", "nass"],
+      ["outer", "rsp"],
+      ["inner", "prt"]
     ],
     "comment": "an- is not characterizable as a resultative particle, yet still blocks the RSP."
+  },
+  {
+    "id": "benz2025_ex81a",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(81a)"},
+    "language": "stan1295",
+    "primaryText": "ent-ver-trauen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "intended: stop trusting",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outer", "pfx"],
+      ["inner", "pfx"]
+    ],
+    "comment": "Two inseparable prefixes; cf. ver-trauen 'trust'."
+  },
+  {
+    "id": "benz2025_ex82a",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(82a)"},
+    "language": "stan1295",
+    "primaryText": "rad-ein-fahren",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "intended: ride in on a bike",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outer", "prt"],
+      ["inner", "prt"]
+    ],
+    "comment": "Two separable particles, the outer one nominal; cf. rad-fahren 'ride a bike', ein-fahren 'drive in'."
+  },
+  {
+    "id": "benz2025_ex83a",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(83a)"},
+    "language": "stan1295",
+    "primaryText": "zer-ab-schneiden",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "intended: cut off into strips",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outer", "pfx"],
+      ["inner", "prt"]
+    ],
+    "comment": "A prefix outside a particle; cf. ab-schneiden 'cut off'."
+  },
+  {
+    "id": "benz2025_ex84a",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(84a)"},
+    "language": "stan1295",
+    "primaryText": "aus-er-wählen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "choose",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outer", "prt"],
+      ["inner", "pfx"]
+    ],
+    "comment": "A particle outside a prefix, the one attested order; cf. er-wählen 'pick'."
+  },
+  {
+    "id": "benz2025_ex86b",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(86b)"},
+    "language": "stan1295",
+    "primaryText": "Sie hat sich kaputt müde gearbeitet",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sie", "she"], ["hat", "has"], ["sich", "REFL"], ["kaputt", "broken"], ["müde", "tired"],
+      ["gearbeitet", "worked.PTCP"]
+    ],
+    "translation": "She worked herself to complete exhaustion",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outer", "rsp"],
+      ["inner", "rsp"]
+    ],
+    "comment": "Two resultative secondary predicates.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "benz2025_ex193a",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(193a)"},
+    "language": "stan1295",
+    "primaryText": "das Ver-kaufen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "selling",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["nominalization", "infinitive"],
+      ["element", "pfx"],
+      ["verb", "verkaufen"]
+    ],
+    "comment": "A prefix in a nominalized infinitive."
+  },
+  {
+    "id": "benz2025_ex193b",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(193b)"},
+    "language": "stan1295",
+    "primaryText": "das Ein-führen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "introducing, importing",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["nominalization", "infinitive"],
+      ["element", "prt"],
+      ["verb", "einführen"]
+    ],
+    "comment": "A particle in a nominalized infinitive."
+  },
+  {
+    "id": "benz2025_ex193c",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(193c)"},
+    "language": "stan1295",
+    "primaryText": "das Wach-küssen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "awake kissing",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["nominalization", "infinitive"],
+      ["element", "rsp"],
+      ["verb", "küssen"]
+    ],
+    "comment": "A resultative in a nominalized infinitive."
+  },
+  {
+    "id": "benz2025_ex197a",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(197a)"},
+    "language": "stan1295",
+    "primaryText": "Ein-führ-ung",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "introduction",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["nominalization", "ung"],
+      ["element", "prt"],
+      ["verb", "einführen"]
+    ],
+    "comment": "-ung from a particle verb with complex change-of-state structure."
+  },
+  {
+    "id": "benz2025_ex198c",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(198c)"},
+    "language": "stan1295",
+    "primaryText": "Be-mal-ung",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "painting",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["nominalization", "ung"],
+      ["element", "pfx"],
+      ["verb", "bemalen"]
+    ],
+    "comment": "-ung from the prefixed change-of-state verb."
+  },
+  {
+    "id": "benz2025_ex198c_base",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(198c)"},
+    "language": "stan1295",
+    "primaryText": "Mal-ung",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "intended: painting",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["nominalization", "ung"],
+      ["element", "none"],
+      ["verb", "malen"]
+    ],
+    "comment": "-ung from the simplex activity verb."
+  },
+  {
+    "id": "benz2025_ex204a",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(204a)"},
+    "language": "stan1295",
+    "primaryText": "Platt-hämmer-ung",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "attempted: flat hammering",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["nominalization", "ung"],
+      ["element", "rsp"],
+      ["verb", "hämmern"]
+    ],
+    "comment": "A resultative inside -ung."
+  },
+  {
+    "id": "benz2025_ex204c",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(204c)"},
+    "language": "stan1295",
+    "primaryText": "Wach-küss-ung",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "attempted: awake kissing",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["nominalization", "ung"],
+      ["element", "rsp"],
+      ["verb", "küssen"]
+    ],
+    "comment": "A resultative inside -ung."
+  },
+  {
+    "id": "benz2025_ex212a",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(212a)"},
+    "language": "stan1295",
+    "primaryText": "das Herum-ge-renn-e",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "running around aimlessly",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["nominalization", "geE"],
+      ["element", "prt"],
+      ["verb", "rennen"]
+    ],
+    "comment": "A particle outside Ge-…-e, in the order PRT-Ge-verb-e."
+  },
+  {
+    "id": "benz2025_ex216a",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(216a)"},
+    "language": "stan1295",
+    "primaryText": "das Wach-ge-küss-e",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "kissing awake",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["nominalization", "geE"],
+      ["element", "rsp"],
+      ["verb", "küssen"]
+    ],
+    "comment": "A resultative outside Ge-…-e; the base is not obligatorily transitive."
+  },
+  {
+    "id": "benz2025_ex216b",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(216b)"},
+    "language": "stan1295",
+    "primaryText": "das Platt-ge-hämmer-e",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "hammering flat",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["nominalization", "geE"],
+      ["element", "rsp"],
+      ["verb", "hämmern"]
+    ],
+    "comment": "A resultative outside Ge-…-e."
+  },
+  {
+    "id": "benz2025_ex218c",
+    "source": {"bibkey": "benz-2025", "paperLabel": "(218c)"},
+    "language": "stan1295",
+    "primaryText": "Ge-be-mal-e",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "intended: painting",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["nominalization", "geE"],
+      ["element", "pfx"],
+      ["verb", "bemalen"]
+    ],
+    "comment": "A prefixed verb under Ge-…-e, in either affix order (*Be-ge-mal-e)."
   }
 ]
