@@ -440,10 +440,8 @@ ALL control verbs, while Landau → logophoric for attitude verbs. The
 theories agree on non-attitude verbs (both predicative) and diverge
 precisely on attitude verbs. -/
 
-open Chierchia1984 (ChierchiaControlClass derivedChierchiaClass)
-
 /-- Map Chierchia's control classes to Landau's control tiers. -/
-def chierchiaToLandauTier : ChierchiaControlClass → Tier
+def chierchiaToLandauTier : Chierchia1984.ControlClass → Tier
   | .obligatory     => .predicative
   | .semiObligatory => .predicative
   | .prominence     => .logophoric
@@ -454,9 +452,9 @@ def chierchiaToLandauTier : ChierchiaControlClass → Tier
     Landau's condition (90): the entailment needs a specific overt
     argument to serve as controller, which is what predication
     demands. -/
-theorem cp_iff_predicative (c : ChierchiaControlClass) :
-    c.hasCP = true ↔ chierchiaToLandauTier c = .predicative := by
-  cases c <;> simp [Chierchia1984.ChierchiaControlClass.hasCP, chierchiaToLandauTier]
+theorem cp_iff_predicative (c : Chierchia1984.ControlClass) :
+    c.HasControlPrinciple ↔ chierchiaToLandauTier c = .predicative := by
+  cases c <;> decide
 
 -- ── Per-verb cross-system consistency ──
 
@@ -469,15 +467,15 @@ For verbs without an attitude builder (try, manage, begin, stop,
 force, fail), both systems classify them as predicative control. -/
 
 theorem try_agrees :
-    (derivedChierchiaClass try_.toVerb).map chierchiaToLandauTier
+    (Chierchia1984.ControlClass.ofVerb try_.toVerb).map chierchiaToLandauTier
     = derivedControlTier try_.toVerb := rfl
 
 theorem manage_agrees :
-    (derivedChierchiaClass manage.toVerb).map chierchiaToLandauTier
+    (Chierchia1984.ControlClass.ofVerb manage.toVerb).map chierchiaToLandauTier
     = derivedControlTier manage.toVerb := rfl
 
 theorem force_agrees :
-    (derivedChierchiaClass force.toVerb).map chierchiaToLandauTier
+    (Chierchia1984.ControlClass.ofVerb force.toVerb).map chierchiaToLandauTier
     = derivedControlTier force.toVerb := rfl
 
 /-! ### Attitude verbs: systematic divergence
@@ -492,22 +490,22 @@ Landau groups by attitude status (attitude verbs introduce a
 perspectival coordinate that changes the control mechanism). -/
 
 theorem want_diverges :
-    (derivedChierchiaClass want.toVerb).map chierchiaToLandauTier = some .predicative
+    (Chierchia1984.ControlClass.ofVerb want.toVerb).map chierchiaToLandauTier = some .predicative
     ∧ derivedControlTier want.toVerb = some .logophoric :=
   ⟨rfl, rfl⟩
 
 theorem hope_diverges :
-    (derivedChierchiaClass hope.toVerb).map chierchiaToLandauTier = some .predicative
+    (Chierchia1984.ControlClass.ofVerb hope.toVerb).map chierchiaToLandauTier = some .predicative
     ∧ derivedControlTier hope.toVerb = some .logophoric :=
   ⟨rfl, rfl⟩
 
 theorem promise_diverges :
-    (derivedChierchiaClass promise.toVerb).map chierchiaToLandauTier = some .predicative
+    (Chierchia1984.ControlClass.ofVerb promise.toVerb).map chierchiaToLandauTier = some .predicative
     ∧ derivedControlTier promise.toVerb = some .logophoric :=
   ⟨rfl, rfl⟩
 
 theorem persuade_diverges :
-    (derivedChierchiaClass persuade.toVerb).map chierchiaToLandauTier = some .predicative
+    (Chierchia1984.ControlClass.ofVerb persuade.toVerb).map chierchiaToLandauTier = some .predicative
     ∧ derivedControlTier persuade.toVerb = some .logophoric :=
   ⟨rfl, rfl⟩
 

@@ -1,48 +1,29 @@
 import Linglib.Syntax.Voice.Alternation
-import Linglib.Semantics.Modality.Kratzer.Flavor
+import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Fragments.English.Predicates.Verbal
-import Mathlib.Data.Fin.Basic
 
 /-!
-# Chierchia 1984: infinitives and gerunds as properties
+# Chierchia (1984): Topics in the syntax and semantics of infinitives and gerunds
 
 This file formalizes the control theory of [chierchia-1984]. Infinitival and gerundive
-complements denote properties, not propositions, and control is not movement of PRO but semantic
-entailment: a verb taking a property complement entails that a designated individual argument has
-that property. The controller is fixed by predicate class rather than syntactic configuration,
-which makes control follow from the meaning postulate wherever a property argument occurs.
+complements denote properties, not propositions, and control is not movement of PRO but
+entailment: the Control Principle is a meaning postulate on a verb taking a property
+complement, that it holds of the property and its arguments exactly when a designated argument
+has the property throughout the situations the verb's conversational background selects
+([kratzer-1981]), so the controller is fixed by the predicate's meaning rather than by syntactic
+configuration. Visser's and Bach's generalizations follow: a subject-control verb cannot
+passivize and an object-control verb cannot detransitivize, since either alternation removes
+the argument the postulate needs. The control classes of chapter IV are cut by whether the
+postulate applies and whether the controller must be expressed. The theorems derive the
+controller's having the property from the postulate, the blocking of each valency alternation
+from which argument controls, and check the Fragment's control verbs against both.
 
-Control predicates qualify the entailment modally — *try* entails the property in the situations
-where what is tried succeeds, *force* in the situations compatible with what is imposed — which
-the file states with [kratzer-1981]'s conversational backgrounds in the later two-parameter form
-of [kratzer-1991]. Two generalizations fall out of the entailment approach: a subject-control
-verb cannot passivize (Visser) and an object-control verb cannot detransitivize (Bach), since
-either operation removes the argument the meaning postulate needs.
+## Implementation notes
 
-The three control classes are cut by closure properties: obligatory control (with subject
-control *try* and object control *persuade* in one class), semi-obligatory control, whose
-controller may stay implicit, and prominence control, fixed by discourse rather than by the
-Control Principle.
-
-## Main definitions
-
-* `ControlVerb`, `ModalControl` — the Control Principle as a meaning postulate, and its modally
-  qualified form
-* `ChierchiaControlClass`, `derivedChierchiaClass` — the three classes, read off a Fragment
-  verb's control type
-* `controllerRole`, `cpBlocksAlternation`, `derivedPassivizable` — which argument the postulate
-  needs, and which valency alternations that blocks
-
-## Main results
-
-* `visser`, `bach` — the two generalizations, from the meaning postulate alone
-* `subjectControl_blocks_passivization`, `objectControl_blocks_detransitivization` — the same at
-  the level of alternations
-* `fragment_control_verbs_obligatory` — every Fragment control verb is obligatory control,
-  attitude verbs included, against Landau's logophoric split
-* `passivizability_derived_agrees` — the derived passivizability matches the Fragment's flag
-* `control_complements_property_denoting` — control verbs take property-denoting complements
+* The conversational background is the two-parameter one of [kratzer-1991], a modal base and an
+  ordering source, and the entailment is necessity over it; the possibility that *allow*
+  needs is not instantiated.
 
 ## References
 
@@ -54,388 +35,171 @@ Control Principle.
 namespace Chierchia1984
 
 open Modality.Kratzer
-open Semantics.Composition.TypeShifting (ComplementDenotation)
 
-abbrev World := Fin 4
+variable {E W Args : Type*}
 
-def allWorlds : List World := [0, 1, 2, 3]
+/-! ### The Control Principle (chapter IV) -/
 
--- ════════════════════════════════════════════════════════════════
--- § 1. Complement Denotations: Property vs. Proposition
--- ════════════════════════════════════════════════════════════════
-
-/-! ## The VP = Property hypothesis
-
-The central type-theoretic claim — infinitival and gerundive complements denote properties, not
-propositions — is carried by the substrate: `ComplementType.denotation` derives the split from
-clausality and finiteness, crediting this dissertation. What remains to check here is the verbs
-(see the per-verb layer below). -/
-
--- ════════════════════════════════════════════════════════════════
--- § 2. The Control Principle
--- ════════════════════════════════════════════════════════════════
-
-/-! ## The Control Principle (CP)
-
-The CP is a meaning postulate on verbs that take property arguments:
-if a verb takes a property P and individual arguments, it entails that
-one of those individuals has property P.
-
-We formalize this as a structure bundling the verb's semantics with
-its control entailment. The entailment is **by construction**: the
-`entails` field witnesses that the semantics forces P to hold of the
-controlled argument.
-
-Chierchia's full CP (Ch IV ex. 43) is a biconditional:
-  □ α(x₁)..(P)..(xₙ) ↔ M_a P(xᵢ)
-We formalize the left-to-right direction (the entailment) because this
-is the load-bearing direction for control: it guarantees that the
-controller has the complement property whenever the matrix verb holds. -/
-
-section ControlPrinciple
-variable (E Args : Type)
-
-/-- A control verb with the Control Principle built in.
-
-    The CP states: for any property P and world w where the verb's meaning
-    holds, some designated argument has property P. The `controller` function
-    selects which argument (from the full argument tuple) serves as controller.
-
-    Parameterized over an argument tuple type `Args` — subject control verbs
-    use `Args = E` (just the subject), object control verbs use `Args = E × E`
-    (object, subject). -/
-structure ControlVerb (Args : Type) where
-  /-- The verb's semantics: property → arguments → world → Bool -/
-  sem : (E → Bool) → Args → World → Bool
-  /-- Select the controlled argument from the argument tuple -/
+/-- A verb taking a property complement, with the Control Principle as its meaning postulate:
+the verb holds of a property and its arguments at a world exactly when the argument it controls
+has the property throughout the situations its conversational background selects, what is aimed
+at for *try*, what is imposed for *force*. -/
+structure ControlVerb (E W Args : Type*) where
+  sem : (E → W → Prop) → Args → W → Prop
   controller : Args → E
-  /-- The Control Principle: verb(P)(args)(w) → P(controller(args)) -/
-  entails : ∀ (P : E → Bool) (args : Args) (w : World),
-    sem P args w = true → P (controller args) = true
+  accessible : Args → W → Set W
+  control : ∀ P args w, sem P args w ↔ ∀ w' ∈ accessible args w, P (controller args) w'
 
-/-- Subject control verb: `Args = E`, controller is the identity. -/
-abbrev SubjControlVerb := ControlVerb E E
+/-- A subject-control verb's one argument is its controller. -/
+abbrev SubjectControlVerb (E W : Type*) := ControlVerb E W E
 
-/-- Object control verb: `Args = E × E` (object, subject), controller
-    selects the object (first component). -/
-abbrev ObjControlVerb := ControlVerb E (E × E)
+/-- An object-control verb controls the first of its object and subject. -/
+abbrev ObjectControlVerb (E W : Type*) := ControlVerb E W (E × E)
 
--- ════════════════════════════════════════════════════════════════
--- § 3. Modal Qualification of Control
--- ════════════════════════════════════════════════════════════════
+/-- A control verb from a modal base and an ordering source, [kratzer-1991]'s form of the
+background: the controller has the property throughout the best accessible worlds. -/
+def ControlVerb.ofKratzer (base : ModalBase W) (ordering : OrderingSource W)
+    (controller : Args → E) : ControlVerb E W Args where
+  sem P args w := necessity base ordering (P (controller args)) w
+  controller := controller
+  accessible _ w := bestWorlds base ordering w
+  control _ _ _ := necessity_iff_all _ _ _ _
 
-/-! ## Modal Qualification
+variable (v : ControlVerb E W Args)
 
-[chierchia-1984] Ch IV §2.2: control predicates involve modal
-qualification. The verb's meaning is not simply "x does P" but "in all
-situations compatible with certain conditions, x does P."
+/-- The controller has the property in every situation the background selects. -/
+theorem ControlVerb.controller_has {P : E → W → Prop} {args : Args} {w : W}
+    (h : v.sem P args w) : ∀ w' ∈ v.accessible args w, P (v.controller args) w' :=
+  (v.control P args w).1 h
 
-Chierchia adopts [kratzer-1981]'s theory of conversational
-backgrounds: each control verb selects a conversational background type
-and a modal relation (necessity or possibility).
+/-- Over a reflexive background the controller has the property at the world itself. -/
+theorem ControlVerb.controller_has_self (hrefl : ∀ args w, w ∈ v.accessible args w)
+    {P : E → W → Prop} {args : Args} {w : W} (h : v.sem P args w) : P (v.controller args) w :=
+  v.controller_has h w (hrefl args w)
 
-- **try**: buletic conversational background, necessity.
-  try(P)(j) iff in all situations compatible with j's aims, j does P.
-- **force**: deontic conversational background, necessity.
-  force(P)(x)(y) iff in all situations compatible with what y imposes
-  on x, x does P.
-- **allow**: deontic conversational background, possibility.
-  allow(P)(x)(y) iff there exists a situation compatible with what y
-  imposes on x where x does P.
+/-! ### Visser's and Bach's generalizations (chapter IV) -/
 
-The formalization below uses the later two-parameter framework
-(modal base + ordering source) from [kratzer-1991], which
-refines Kratzer (1981)'s single-parameter approach. The `ModalBase`
-corresponds roughly to the circumstantial facts, and the
-`OrderingSource` to the conversational background type (bouletic,
-deontic, etc.). This is a modernization, not what Chierchia literally
-writes — he uses a single "conversational background" parameter.
+/-- Visser's generalization: a faithful passive of a subject-control verb, one whose truth
+witnesses a truth of the active, can only guarantee that some entity has the property in the
+selected situations; the argument the postulate would name is gone. -/
+theorem visser (v : SubjectControlVerb E W) (pass : (E → W → Prop) → W → Prop)
+    (faithful : ∀ P w, pass P w → ∃ x, v.sem P x w) {P : E → W → Prop} {w : W}
+    (h : pass P w) : ∃ x, ∀ w' ∈ v.accessible x w, P (v.controller x) w' :=
+  let ⟨x, hx⟩ := faithful P w h
+  ⟨x, v.controller_has hx⟩
 
-Note: the property P here is extensional (`E → Bool`), so the modal
-quantification over `bestWorlds` checks that the controller has P
-whenever the accessible worlds are nonempty. A fully intensional
-version would use `E → World → Bool`, allowing P's extension to vary
-across worlds. We use the extensional version for simplicity, matching
-the level of abstraction in the `ControlVerb` structure. -/
+/-- Bach's generalization: the same for a faithful detransitive of an object-control verb. -/
+theorem bach (v : ObjectControlVerb E W) (detrans : (E → W → Prop) → E → W → Prop)
+    (faithful : ∀ P y w, detrans P y w → ∃ args, v.sem P args w) {P : E → W → Prop} {y : E}
+    {w : W} (h : detrans P y w) : ∃ args, ∀ w' ∈ v.accessible args w, P (v.controller args) w' :=
+  let ⟨args, hv⟩ := faithful P y w h
+  ⟨args, v.controller_has hv⟩
 
-/-- A modally qualified control verb: the verb's semantics is defined via
-    Kratzer necessity over a modal base and ordering source.
+/-! ### Control classes (chapter IV, section 1) -/
 
-    The CP follows from the modal semantics + reflexivity (axiom T):
-    if □P(x) and the actual world is among the best worlds, then P(x). -/
-structure ModalControl (Args : Type) where
-  /-- Circumstantial modal base -/
-  base : ModalBase World
-  /-- Ordering source (bouletic for try, deontic for force, ...) -/
-  ordering : OrderingSource World
-  /-- Select the controlled argument -/
-  controller : Args → E
-  /-- Reflexivity: actual world is among best worlds (axiom T) -/
-  reflexive : ∀ (w : World), w ∈ bestWorlds base ordering w
-
-/-- Construct a `ControlVerb` from a `ModalControl`.
-
-    The verb's semantics is: verb(P)(args)(w) = ∀w' ∈ bestWorlds(w). P(controller(args)).
-    The CP follows from reflexivity. -/
-def ModalControl.toControlVerb (m : ModalControl E Args) :
-    ControlVerb E Args where
-  -- Since `P (m.controller args)` does not depend on the bound world, the
-  -- universal quantification ∀ w' ∈ bestWorlds, P (controller args) = true
-  -- collapses to `P (controller args)` (bestWorlds is nonempty by reflexivity).
-  sem P args _w := P (m.controller args)
-  controller := m.controller
-  entails _P _args _w h := h
-
--- ════════════════════════════════════════════════════════════════
--- § 4. Visser's and Bach's Generalizations
--- ════════════════════════════════════════════════════════════════
-
-/-! ## Visser's and Bach's Generalizations
-
-These follow from the CP: if an argument-structure operation removes the
-controller, the entailment cannot be satisfied.
-
-- **Visser** (Ch IV §1.1, ex. 11): Subject control verbs cannot passivize.
-  Passivization demotes the subject (A → oblique/unexpressed), but the CP
-  requires P(subject). No subject → no entailment.
-- **Bach** (attributed by Bresnan 1982; Ch IV §1.1, ex. 13-14): Object
-  control verbs cannot detransitivize. Detransitivization removes the
-  object, but the CP requires P(object).
-
-We state these as: any faithful argument-reduction operation on a
-control verb preserves existential control (∃x. P(x)) but loses
-specific control (the guarantee that a *particular* argument has P). -/
-
-/-- Visser's generalization: if a subject control verb is faithfully
-    passivized (every passive truth witnesses some active truth),
-    then P is satisfied by *some* entity — but the passive form
-    cannot identify *which* entity. The CP guarantees existence. -/
-theorem visser
-    (v : SubjControlVerb E)
-    (pass : (E → Bool) → World → Bool)
-    (faithful : ∀ P w, pass P w = true → ∃ x, v.sem P x w = true) :
-    ∀ P w, pass P w = true → ∃ x, P x = true := by
-  intro P w hpass
-  obtain ⟨x, hv⟩ := faithful P w hpass
-  exact ⟨v.controller x, v.entails P x w hv⟩
-
-/-- Bach's generalization: if an object control verb is faithfully
-    detransitivized (losing the object argument), the CP still
-    guarantees ∃x. P(x), but the detransitivized form cannot
-    identify the specific x. -/
-theorem bach
-    (v : ObjControlVerb E)
-    (detrans : (E → Bool) → E → World → Bool)
-    (faithful : ∀ P y w, detrans P y w = true → ∃ args, v.sem P args w = true) :
-    ∀ P y w, detrans P y w = true → ∃ x, P x = true := by
-  intro P y w hd
-  obtain ⟨args, hv⟩ := faithful P y w hd
-  exact ⟨v.controller args, v.entails P args w hv⟩
-
-end ControlPrinciple
-
--- ════════════════════════════════════════════════════════════════
--- § 5. Three Control Classes
--- ════════════════════════════════════════════════════════════════
-
-/-- [chierchia-1984]'s three control classes (Ch IV §1), distinguished
-    by their closure properties under argument-structure operations.
-
-    - `obligatory`: all six OC properties hold (locality, no arbitrary
-      reading, thematic uniqueness, no split antecedents, obligatory
-      controller presence, Visser/Bach sensitivity). Includes both
-      subject control (try, manage, begin) and object control (persuade,
-      force) verbs. (Ch IV §1.1, ex. 4-6, properties in ex. 17)
-    - `semiObligatory`: all OC properties EXCEPT obligatory controller
-      presence — the controller can be implicit or contextually recovered.
-      (Ch IV §1.2, ex. 18: decide, signal, recommend)
-    - `prominence`: controller determined by discourse prominence, not by
-      the CP. None of the six OC properties hold. (Ch IV §1.3, ex. 25:
-      bother, be dangerous, denounce) -/
-inductive ChierchiaControlClass where
+/-- The three control classes: obligatory control, where the Control Principle fixes a
+controller that must be expressed, *try* and *persuade* alike; semi-obligatory control, where
+the controller may stay implicit, *decide*, *recommend*; and prominence control, where discourse
+rather than the postulate fixes it, *bother*, *be dangerous*. -/
+inductive ControlClass where
   | obligatory
   | semiObligatory
   | prominence
   deriving DecidableEq, Repr
 
-/-! ### The six properties of obligatory control (Ch IV ex. 17)
+/-- The Control Principle governs the first two classes. -/
+def ControlClass.HasControlPrinciple : ControlClass → Prop
+  | .obligatory => True
+  | .semiObligatory => True
+  | .prominence => False
 
-The six classic properties that define the obligatory control class:
+instance : DecidablePred ControlClass.HasControlPrinciple
+  | .obligatory => inferInstanceAs (Decidable True)
+  | .semiObligatory => inferInstanceAs (Decidable True)
+  | .prominence => inferInstanceAs (Decidable False)
 
-  a. **Locality**: the controller must be a matrix argument
-  b. **No arbitrary reading**: the controlled position has a specific referent
-  c. **Thematic uniqueness**: the controller bears a specific θ-role
-  d. **No split antecedents**: the controller is singular
-  e. **Obligatory controller presence**: a controller must exist
-  f. **Visser/Bach sensitivity**: removing the controller is impossible
+/-- The class of a Fragment verb: every verb the Fragment marks for control has a fixed
+controller and is obligatory control, the Fragment recording neither an implicit controller nor
+the prominence verbs. -/
+def ControlClass.ofVerb (v : Verb) : Option ControlClass :=
+  if v.controlType = .none ∧ v.altControlType = .none then none else some .obligatory
 
-All six follow from two facts: (A) the CP requires a specific argument
-to have property P, and (B) obligatory control verbs have a fixed,
-lexically determined controller.
-
-Semi-obligatory control has (a-d) and (f) but not (e).
-Prominence control has none of the six. -/
-
-/-- Whether a control class has the CP (entailment-based control). -/
-def ChierchiaControlClass.hasCP : ChierchiaControlClass → Bool
-  | .obligatory     => true
-  | .semiObligatory => true
-  | .prominence     => false
-
-/-- Prominence control lacks the CP and relaxes all OC properties. -/
-theorem prominence_no_cp : ChierchiaControlClass.prominence.hasCP = false := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § 6. Deriving the Classification from Verb
--- ════════════════════════════════════════════════════════════════
-
-/-! ## Per-Verb Classification
-
-Derive [chierchia-1984]'s control class from Verb fields.
-
-In Chierchia's taxonomy, ALL control verbs with a fixed, lexically
-determined controller are obligatory — regardless of whether they are
-subject or object control, and regardless of whether they are attitude
-verbs. The subject/object distinction and the attitude/non-attitude
-distinction are orthogonal to the obligatory/semi-obligatory/prominence
-trichotomy.
-
-The semi-obligatory class (decide, signal, recommend) requires a
-Verb field for controller optionality, which does not currently
-exist. The prominence class (bother, be dangerous) requires verbs
-not currently in the English Fragment. Therefore, all current Fragment
-control verbs are classified as obligatory. -/
-
-def derivedChierchiaClass (v : Verb) : Option ChierchiaControlClass :=
-  if v.controlType == .none && v.altControlType == .none then none
-  else some .obligatory
-
--- ════════════════════════════════════════════════════════════════
--- § 7. Deriving Passivizability from the CP + Alternation Structure
--- ════════════════════════════════════════════════════════════════
-
-/-! ## Passivizability: Derived from Deeper Principles
-
-Visser's and Bach's generalizations both follow from a single structural
-principle: an alternation is blocked by the CP iff it removes the
-**controller** from core-term status.
-
-The derivation has three steps:
-
-1. **Which argument is the controller?** Subject control verbs have their
-   A (agent-like) argument as controller; object control verbs have their
-   P (patient-like) argument. Raising and non-control verbs have no
-   semantic controller.
-
-2. **What does the alternation do to that argument?** Passivization
-   denucleativizes A and maintains P (`Voice.passivization`).
-   Antipassivization (detransitivization) denucleativizes P and maintains A.
-
-3. **Does removing the controller break the CP?** If the alternation
-   denucleativizes or suppresses the controller, the CP cannot be
-   satisfied → the alternation is blocked.
-
-This replaces the stipulated `predictedPassivizable` case-split with a
-derivation from `Voice.passivization` and `ControlType`. -/
+/-! ### Which alternations the postulate blocks -/
 
 open Voice
 
-/-- Which TR-role serves as the controller, per [chierchia-1984]'s CP.
-
-    Subject control: A is the controller (the subject has property P).
-    Object control: P is the controller (the object has property P).
-    Raising/none: no semantic controller (the CP does not apply). -/
+/-- The argument the postulate needs: the agent-like term of a subject-control verb, the
+patient-like term of an object-control verb, none for raising. -/
 def controllerRole : ControlType → Option TermRole
   | .subjectControl => some .A
-  | .objectControl  => some .P
-  | .raising        => none
-  | .none           => none
+  | .objectControl => some .P
+  | .raising => none
+  | .none => none
 
-/-- The CP blocks an alternation iff the alternation removes the
-    controller from core-term status (denucleativizes or suppresses it).
+/-- The Control Principle blocks a valency alternation that removes the controller from
+core-term status. -/
+def Blocks (ct : ControlType) (va : ValencyAlternation) : Prop :=
+  ∃ role ∈ controllerRole ct, (va.fateOfRole role).removesFromCoreStatus = true
 
-    This is the general structural principle behind both Visser's
-    generalization (passivization blocked for subject control) and
-    Bach's generalization (detransitivization blocked for object control). -/
-def cpBlocksAlternation (ct : ControlType) (va : ValencyAlternation) : Bool :=
-  match controllerRole ct with
-  | some role => (va.fateOfRole role).removesFromCoreStatus
-  | none      => false
+instance (ct : ControlType) (va : ValencyAlternation) : Decidable (Blocks ct va) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- Derived passivizability: a control verb can passivize iff the CP
-    does not block passivization.
+/-- A control type passivizes when the postulate does not block passivization. -/
+def Passivizable (ct : ControlType) : Prop := ¬ Blocks ct passivization
 
-    - Subject control: controller = A, passivization denucleativizes A
-      → CP broken → blocked (Visser's generalization)
-    - Object control: controller = P, passivization maintains P
-      → CP intact → allowed
-    - Raising/none: no CP → no constraint → allowed -/
-def derivedPassivizable (ct : ControlType) : Bool :=
-  !cpBlocksAlternation ct passivization
+instance : DecidablePred Passivizable := λ ct => inferInstanceAs (Decidable (¬ Blocks ct _))
 
--- ── Structural derivation theorems ──
+/-- Visser's generalization at the level of alternations: passivization demotes the agent-like
+term, which subject control needs. -/
+theorem subjectControl_blocks_passivization : Blocks .subjectControl passivization := by decide
 
-/-- Subject control blocks passivization: passivization denucleativizes
-    A, but the controller IS A. Denucleativizing the controller breaks
-    the CP (Visser's generalization). -/
-theorem subjectControl_blocks_passivization :
-    cpBlocksAlternation .subjectControl passivization = true := rfl
+/-- Passivization keeps the patient-like term, so object control survives it. -/
+theorem objectControl_passivizable : Passivizable .objectControl := by decide
 
-/-- Object control allows passivization: passivization maintains P,
-    and the controller IS P. The controller survives → CP intact. -/
-theorem objectControl_allows_passivization :
-    cpBlocksAlternation .objectControl passivization = false := rfl
+/-- Bach's generalization at the level of alternations: antipassivization demotes the
+patient-like term, which object control needs. -/
+theorem objectControl_blocks_antipassivization : Blocks .objectControl antipassivization := by
+  decide
 
-/-- Object control blocks detransitivization: antipassivization
-    denucleativizes P, but the controller IS P (Bach's generalization). -/
-theorem objectControl_blocks_detransitivization :
-    cpBlocksAlternation .objectControl antipassivization = true := rfl
+/-- Antipassivization keeps the agent-like term, so subject control survives it, *promise to
+come* beside *promise Bill to come*. -/
+theorem subjectControl_not_blocks_antipassivization :
+    ¬ Blocks .subjectControl antipassivization := by
+  decide
 
-/-- Subject control allows detransitivization: antipassivization
-    maintains A, and the controller IS A. (e.g., "Mary promised Bill
-    to come" → "Mary promised to come".) -/
-theorem subjectControl_allows_detransitivization :
-    cpBlocksAlternation .subjectControl antipassivization = false := rfl
+/-! ### The Fragment's control verbs -/
 
-section VerbVerification
+section Fragment
+
 open English.Predicates.Verbal
 
--- ── Per-verb Chierchia class verification ──
-
-/-- Every control verb in the Fragment is obligatory control in Chierchia's sense — a fixed,
-lexically determined controller with all six properties. *Want*, *hope* and *promise* included,
-attitude verbs though they are: where Landau separates attitude verbs as logophoric, the Control
-Principle classifies by fixed controller alone, and *persuade* and *force* show the class is
-indifferent to whether that controller is subject or object. -/
-theorem fragment_control_verbs_obligatory :
-    ∀ v ∈ [try_.toVerb, manage.toVerb, begin_.toVerb, stop.toVerb, continue_.toVerb,
-           fail.toVerb, persuade.toVerb, force.toVerb, want.toVerb, hope.toVerb,
-           promise.toVerb],
-      derivedChierchiaClass v = some .obligatory := by
+/-- Every control verb of the Fragment, the attitude verbs *want*, *hope* and *promise* included,
+is a control verb in the dissertation's sense, with a fixed controller whether subject or
+object. -/
+theorem fragment_control_verbs :
+    ∀ v ∈ [try_.toVerb, manage.toVerb, begin_.toVerb, stop.toVerb, continue_.toVerb, fail.toVerb,
+      persuade.toVerb, force.toVerb, want.toVerb, hope.toVerb, promise.toVerb],
+      v.controlType ≠ .none ∨ v.altControlType ≠ .none := by
   intro v hv
-  fin_cases hv <;> rfl
+  fin_cases hv <;> decide
 
--- ── Passivizability: derived agrees with stipulated ──
-
-/-- At each Fragment control verb the passivizability the Control Principle derives agrees with
-the stored flag: subject control blocks passivization and object control does not. -/
-theorem passivizability_derived_agrees :
+/-- At each Fragment control verb the passivizability the postulate derives agrees with the
+stored flag: subject control blocks passivization and object control does not. -/
+theorem passivizable_iff :
     ∀ v ∈ [try_.toVerb, persuade.toVerb, force.toVerb],
-      derivedPassivizable v.controlType = v.passivizable := by
+      Passivizable v.controlType ↔ v.passivizable = true := by
   intro v hv
-  fin_cases hv <;> rfl
+  fin_cases hv <;> decide
 
--- ── Complement semantic layer: control verbs take property-denoting complements ──
-
-/-- Control verbs take property-denoting complements; *believe*, which is no control verb, takes
-a finite clause denoting a proposition. -/
-theorem control_complements_property_denoting :
+/-- Control verbs take property-denoting complements; *believe*, no control verb, takes a finite
+clause denoting a proposition. -/
+theorem control_complements_property :
     (∀ v ∈ [try_.toVerb, want.toVerb], v.complementType.denotation = some .property) ∧
       believe.toVerb.complementType.denotation = some .proposition ∧
-      derivedChierchiaClass believe.toVerb = none := by
-  refine ⟨fun v hv => ?_, rfl, rfl⟩
+      believe.toVerb.controlType = .none := by
+  refine ⟨λ v hv => ?_, rfl, rfl⟩
   fin_cases hv <;> rfl
 
-end VerbVerification
+end Fragment
 
 end Chierchia1984
