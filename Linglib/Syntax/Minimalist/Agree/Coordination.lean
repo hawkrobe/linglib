@@ -146,6 +146,13 @@ theorem resolve_self (fs : Bundle F) (h : percolate fs ≠ []) :
   · exact absurd (by assumption) h
   · rfl
 
+/-- Single-feature conjuncts resolve to their feature exactly when both are interpretable and
+match. -/
+theorem resolve_singleton (x y : F) (i j : Interpretability) :
+    resolve [⟨x, i⟩] [⟨y, j⟩] =
+      if i = .interpretable ∧ j = .interpretable ∧ x = y then some [x] else none := by
+  cases i <;> cases j <;> by_cases h : x = y <;> simp [resolve, percolate, conversion, h]
+
 /-- Every pair of bundles resolves without default insertion. -/
 def MismatchResolutionOn (bundles : List (Bundle F)) : Prop :=
   ∀ a ∈ bundles, ∀ b ∈ bundles, (resolve a b).isSome
