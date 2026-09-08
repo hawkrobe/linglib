@@ -1,4 +1,4 @@
-import Linglib.Semantics.Reference.Reciprocals
+import Linglib.Semantics.Plurality.Reciprocal.Scope
 import Linglib.Semantics.Dynamic.PPCDRT.Defs
 import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
@@ -26,7 +26,7 @@ the PPCDRT substrate (`Semantics/Dynamic/PPCDRT/`):
 | Paper § | Topic                                  | Witness type               |
 |---------|----------------------------------------|----------------------------|
 | §3      | Scope readings (narrow / wide)         | `PluralAssign ℕ Person`      |
-| §3.3    | Crossed readings (4-cell classification) | `RecipReading` triples   |
+| §3.3    | Crossed readings (4-cell classification) | `ScopeReading` triples   |
 | §4.2    | Underspecified RECIP/REFL              | `underspecifiedCond` lattice |
 | §4.4    | Multiple reciprocals                   | Two-reciprocal witness     |
 | §4.5    | Subgroup readings (forks, gravity)     | Weak-vs-strong contrast    |
@@ -65,7 +65,7 @@ docstrings here follow that attribution.
 
 namespace HaugDalrymple2020
 
-open Reference.Reciprocals
+open Reciprocal
 open PPCDRT
 open Trivalent (dist metaAssert)
 open Plurality.Cumulativity
@@ -284,26 +284,26 @@ theorem reciprocity_full :
 /-- The two-parameter classification: locus × antecedent relation.
     Three cells are attested; the (low, bound) cell is empirically
     empty per paper p. 24 — bound antecedents force high locus. -/
-def classifiedReadings : List (RecipLocus × AnaphoricRelation) :=
+def classifiedReadings : List (Locus × AnaphoricRelation) :=
   [(.low, .groupIdentity),    -- narrow scope
    (.high, .binding),          -- wide scope
    (.high, .groupIdentity)]    -- crossed
    -- (.low, .binding) is empirically empty
 
-/-- The three attested cells correspond to the three `RecipReading`s. -/
+/-- The three attested cells correspond to the three `ScopeReading`s. -/
 theorem classified_matches_readings :
-    classifiedReadings = recipReadings.map (λ r => (r.locus, r.antecedentRel)) := by
+    classifiedReadings = ScopeReading.attested.map (λ r => (r.locus, r.antecedentRel)) := by
   rfl
 
-/-- The empty fourth cell: there is no `RecipReading` with low locus
+/-- The empty fourth cell: there is no `ScopeReading` with low locus
     and binding antecedent. Paper p. 24: "the bound reading of the
     reciprocal's antecedent cannot cooccur with a low locus for the
     reciprocal, because it does not make available the plurality that
     the reciprocal needs." -/
 theorem no_low_bound_reading :
-    ¬ ∃ r ∈ recipReadings, r.locus = .low ∧ r.antecedentRel = .binding := by
+    ¬ ∃ r ∈ ScopeReading.attested, r.locus = .low ∧ r.antecedentRel = .binding := by
   rintro ⟨r, hrM, hLow, hBound⟩
-  simp only [recipReadings, narrowScopeReading, wideScopeReading, crossedReading,
+  simp only [ScopeReading.attested, ScopeReading.narrow, ScopeReading.wide, ScopeReading.crossed,
              List.mem_cons, List.not_mem_nil, or_false] at hrM
   rcases hrM with rfl | rfl | rfl <;> simp_all
 
@@ -314,9 +314,9 @@ theorem no_low_bound_reading :
     Jennifer Lawrence interview headline (paper p. 25, ex. 57) and
     related corpus examples. -/
 theorem crossed_reading_high_groupIdentity_groupIdentity :
-    crossedReading.locus = .high ∧
-    crossedReading.antecedentRel = .groupIdentity ∧
-    crossedReading.reciprocalRel = .groupIdentity := ⟨rfl, rfl, rfl⟩
+    ScopeReading.crossed.locus = .high ∧
+    ScopeReading.crossed.antecedentRel = .groupIdentity ∧
+    ScopeReading.crossed.reciprocalRel = .groupIdentity := ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5: §4.2 Underspecified Reflexive/Reciprocal
@@ -584,10 +584,9 @@ theorem R_u_reciprocity_no_diagonal :
 -- ([dalrymple-et-al-1998], paper eq 132–133, [sauerland-2012])
 -- ════════════════════════════════════════════════════════════════
 
-/-! Paper §6.1 (p. 55) argues SMH over-strengthens. The substrate-level
-    refutation lives in `Reciprocals.lean` as `SMH_diverges_from_relational`
-    — the relational analysis with MA leaves both readings available on
-    the default property bundle, while SMH commits to narrow only.
+/-! Paper §6.1 (p. 55) argues SMH over-strengthens. The argument turns on
+    the Strong/Weak Reciprocity gradation under downward-entailing contexts,
+    which the substrate does not expose, so the contrast is not formalised.
 
     Related principles cited by paper §6: the Maximal Interpretation
     Hypothesis of [sabato-winter-2012] and [winter-2001a]

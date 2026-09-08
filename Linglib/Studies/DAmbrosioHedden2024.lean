@@ -1,211 +1,324 @@
+import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Aggregation
-import Linglib.Studies.Sassoon2013
+import Linglib.Studies.Kamp1975
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# [dambrosio-hedden-2024]
+# D'Ambrosio and Hedden, multidimensional adjectives (2024)
 
-D'Ambrosio, J. & Hedden, B. (2024). Multidimensional Adjectives.
-*Australasian Journal of Philosophy* 102(2): 253–277.
-DOI: 10.1080/00048402.2023.2277923
+An adjective is multidimensional when whether it applies to an object, and whether it applies
+to one object more than to another, depend on how the objects stand on several underlying
+dimensions. The paper gives such adjectives a semantics with explicit aggregation: a context
+supplies a profile of dimensional orderings, represented by value functions, a set of
+admissible aggregation rules from profiles to an overall ordering, and a standard object. *x
+is at least as F as y* holds relative to an admissible rule when it ranks x weakly above y, *x
+is F* when it ranks x weakly above the standard, and a sentence is determinately true when it
+is true relative to every admissible rule. The comparative is vague when more than one rule is
+admissible, and its vagueness is independent of the completeness and transitivity of the
+orderings the rules output, which the delineation approach conflates by turning disagreement
+between precisifications into incomparability. Transposed to social choice, Arrow's theorem
+makes an adjective governed by all of Arrow's conditions incoherent; giving up weak-ordering
+outputs admits majority rule or the Pareto rule, and giving up ordinal non-comparability admits
+utilitarian and Cobb–Douglas aggregation, whose free weights make the comparative vague.
+Sassoon's quantificational comparatives are the Pareto rule for conjunctive adjectives, a rule
+violating strong Pareto for disjunctive ones, and a rule violating weak Pareto for
+dimension-counting ones.
 
-## Key Claims
+We state the framework over `Degree.Aggregation`'s rules and conditions, the sorites on Suzy's
+cardiovascular health under utilitarian weightings, and the three verdicts on Sassoon's
+comparatives.
 
-1. Multidimensional adjectives require explicit **aggregation functions**
-   mapping dimensional assessments to overall assessments (§3).
+## Implementation notes
 
-2. Arrow's impossibility theorem (adapted): under constraints ONC + WO +
-   U + P + I + D, no aggregation function exists for ≥3 dimensions and
-   ≥3 objects. Multidimensional adjectives would be **incoherent** (§4.1).
+* The precisifications of the delineation comparative are the admissible rules with the
+  standard fixed, so that comparative is `Kamp1975.kampPreorder`.
+* Weighting the dimensions of *healthy*, as the paper's sorites does, is utilitarian
+  aggregation; the cut-off on Suzy's cardiovascular health is where her weighted sum reaches
+  Bill's.
 
-3. Escape routes determine aggregation type (§4.2–4.3):
-   - Reject WO (transitivity) → Majority Rule (May 1952)
-   - Reject WO (completeness) → Strong Pareto Rule (Weymark 1984)
-   - Reject ONC, accept IUC → Utilitarian / weighted sum (Sen 1970)
-   - Reject ONC, accept RNC → Cobb-Douglas / weighted product (Tsui-Weymark 1997)
+## References
 
-4. Multiple admissible aggregation functions → **comparative vagueness**,
-   a source of vagueness specific to multidimensionality (§4.3).
-
-## Formalization
-
-- §1: Arrow's constraints
-- §2: *athletic* example (majority rule and weighted aggregation)
-- §3: Comparative vagueness from weight multiplicity
-- §4: Connection to [sassoon-2013] (binding types = counting)
+* [J. D'Ambrosio and B. Hedden, *Multidimensional adjectives* (2024)][dambrosio-hedden-2024]
+* [K. J. Arrow, *A difficulty in the concept of social welfare* (1951)][arrow-1950]
+* [H. Kamp, *Two theories about adjectives* (1975)][kamp-1975]
+* [G. W. Sassoon, *A typology of multidimensional adjectives* (2013)][sassoon-2013]
 -/
 
 namespace DAmbrosioHedden2024
 
-open Degree (DimensionBindingType conjunctiveBinding
-  disjunctiveBinding)
-open Degree.Aggregation
-open Degree.Aggregation
+open Degree.Aggregation Finset
 
--- ════════════════════════════════════════════════════
--- § 1. Arrow's Constraints
--- ════════════════════════════════════════════════════
+variable {ι O K : Type*}
 
-/-- Arrow's constraints on dimensional aggregation (§4, adapted from
-    social choice theory). -/
-structure ArrowConstraints where
-  /-- (U) Defined for all logically possible value profiles. -/
-  unrestrictedDomain : Bool
-  /-- (WO) Output is a weak ordering (reflexive, transitive, complete). -/
-  weakOrdering : Bool
-  /-- (P) Unanimous dimensional ranking → same overall ranking. -/
-  weakPareto : Bool
-  /-- (I) Overall ranking of x vs y depends only on their dim values. -/
-  independence : Bool
-  /-- (D) No single dimension dictates the overall ranking. -/
-  nonDictatorship : Bool
-  /-- (ONC) Only ordinal info used (invariant under monotone transforms). -/
-  ordinalNonComparability : Bool
-  deriving Repr, BEq
+/-! ### Contexts and determinacy -/
 
-/-- The full Arrovian constraint set (§4.1). -/
-def fullArrow : ArrowConstraints where
-  unrestrictedDomain := true
-  weakOrdering := true
-  weakPareto := true
-  independence := true
-  nonDictatorship := true
-  ordinalNonComparability := true
+/-- What a context supplies for a multidimensional adjective: the admissible aggregation rules
+and the standard object. Relative to an admissible rule `a` and a profile `v`, *x is at least
+as F as y* is `a v x y`, *x is F-er than y* is `AsymmRel (a v) x y`, *x and y are equally F* is
+`AntisymmRel (a v) x y`, and *x is F* is `a v x c.standard`. -/
+structure Context (ι O K : Type*) where
+  /-- The aggregation rules the context does not rule out. -/
+  adm : Set (Rule ι O K)
+  /-- The object that sets the standard for the positive form. -/
+  standard : O
 
-/-- `fullArrow` enables all six constraints. Arrow's impossibility
-    theorem (adapted, §4.1) says these are jointly unsatisfiable for
-    ≥3 dimensions and ≥3 objects — at least one must be abandoned,
-    and each escape route yields a different aggregation type.
+namespace Context
 
-    This theorem only records the constraint *specification*; the
-    impossibility proof itself would require formalizing aggregation
-    over orderings and is not attempted here. -/
-theorem fullArrow_all_enabled :
-    fullArrow.unrestrictedDomain = true ∧
-    fullArrow.weakOrdering = true ∧
-    fullArrow.weakPareto = true ∧
-    fullArrow.independence = true ∧
-    fullArrow.nonDictatorship = true ∧
-    fullArrow.ordinalNonComparability = true := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+variable (c : Context ι O K) (P : Rule ι O K → Prop)
 
--- ════════════════════════════════════════════════════
--- § 2. *Athletic* Example
--- ════════════════════════════════════════════════════
+/-- Determinately true: true relative to every admissible rule. -/
+def Determinately : Prop := ∀ a ∈ c.adm, P a
 
-/-! The adjective *athletic* has three dimensions: speed (F₁), agility (F₂),
-    and endurance (F₃) (§3). We model two people and show how different
-    aggregation mechanisms yield different verdicts. -/
+/-- Determinately false: false relative to every admissible rule. -/
+def DeterminatelyNot : Prop := ∀ a ∈ c.adm, ¬ P a
 
-inductive Person where | alice | bob
-  deriving Repr, DecidableEq
+/-- Neither determinately true nor determinately false. -/
+def Indeterminate : Prop := ¬ c.Determinately P ∧ ¬ c.DeterminatelyNot P
 
-/-- Speed-heavy weights `[3, 1, 1]` over (speed, agility, endurance). -/
-def speedHeavy : List ℚ := [3, 1, 1]
+/-- No admissible rule: the adjective is incoherent. -/
+def Incoherent : Prop := c.adm = ∅
 
-/-- Endurance-heavy weights `[1, 1, 3]`. -/
-def enduranceHeavy : List ℚ := [1, 1, 3]
+/-- Exactly one admissible rule: the comparative is sharp. -/
+def Sharp : Prop := ∃ a, c.adm = {a}
 
-/-- Dimensional profiles for *athletic*:
-    - Alice: fast, agile, not enduring
-    - Bob: not fast, not agile, enduring -/
-def athleticDims : List (Person → Bool) :=
-  [fun p => p == .alice,    -- speed: Alice fast, Bob slow
-   fun p => p == .alice,    -- agility: Alice agile, Bob not
-   fun p => p == .bob]      -- endurance: Bob enduring, Alice not
+/-- More than one admissible rule: the comparative is vague. -/
+def Vague : Prop := c.adm.Nontrivial
 
-/-- Majority rule: Alice is athletic (2 of 3 dims). -/
-theorem alice_athletic_majority :
-    majorityBinding athleticDims .alice = true := by native_decide
+variable {c P}
 
-/-- Majority rule: Bob is NOT athletic (1 of 3 dims). -/
-theorem bob_not_athletic_majority :
-    majorityBinding athleticDims .bob = false := by native_decide
+/-- The three cases of §4. -/
+theorem incoherent_or_sharp_or_vague : c.Incoherent ∨ c.Sharp ∨ c.Vague :=
+  (Set.subsingleton_or_nontrivial c.adm).elim
+    (λ h => h.eq_empty_or_singleton.imp id Or.inl) (λ h => Or.inr (Or.inr h))
 
-/-- Under speed-heavy weights [3, 1, 1] with θ = 3, Alice IS athletic
-    (score = 3 + 1 + 0 = 4 ≥ 3) but Bob is NOT (score = 0 + 0 + 1 = 1). -/
-theorem alice_athletic_speed_heavy :
-    weightedBinding speedHeavy 3 athleticDims .alice = true := by native_decide
+/-- A sharp comparative settles every question. -/
+theorem Sharp.determinately_or (h : c.Sharp) (P : Rule ι O K → Prop) :
+    c.Determinately P ∨ c.DeterminatelyNot P := by
+  obtain ⟨a, ha⟩ := h
+  simp only [Determinately, DeterminatelyNot, ha, Set.mem_singleton_iff, forall_eq]
+  exact em (P a)
 
-theorem bob_not_athletic_speed_heavy :
-    weightedBinding speedHeavy 3 athleticDims .bob = false := by native_decide
+/-- Two admissible rules that disagree on `P` make `P` indeterminate. -/
+theorem indeterminate_of_disagree {a b : Rule ι O K} (ha : a ∈ c.adm) (hb : b ∈ c.adm)
+    (hPa : P a) (hPb : ¬ P b) : c.Indeterminate P :=
+  ⟨λ h => hPb (h b hb), λ h => h a ha hPa⟩
 
-/-- Under endurance-heavy weights [1, 1, 3] with θ = 3, Alice is NOT
-    athletic (score = 1 + 1 + 0 = 2 < 3) but Bob IS (0 + 0 + 3 = 3 ≥ 3). -/
-theorem alice_not_athletic_endurance_heavy :
-    weightedBinding enduranceHeavy 3 athleticDims .alice = false := by native_decide
+/-- Indeterminacy needs two admissible rules: it is comparative vagueness, whether it shows
+in the comparative or in the positive form. -/
+theorem Indeterminate.vague (h : c.Indeterminate P) : c.Vague := by
+  obtain ⟨h₁, h₂⟩ := h
+  simp only [Determinately, DeterminatelyNot, not_forall, not_not, exists_prop] at h₁ h₂
+  obtain ⟨a, ha, hPa⟩ := h₁
+  obtain ⟨b, hb, hPb⟩ := h₂
+  exact ⟨b, hb, a, ha, λ e => hPa (e ▸ hPb)⟩
 
-theorem bob_athletic_endurance_heavy :
-    weightedBinding enduranceHeavy 3 athleticDims .bob = true := by native_decide
+/-- With complete admissible rules, that one of two objects is at least as F as the other is
+determinate, however indeterminate it is which. -/
+theorem determinately_or_of_complete (h : c.Determinately Complete) (v : Profile ι O K)
+    (x y : O) : c.Determinately λ a => a v x y ∨ a v y x :=
+  λ a ha => (h a ha v).total x y
 
--- ════════════════════════════════════════════════════
--- § 3. Comparative Vagueness
--- ════════════════════════════════════════════════════
+/-! ### The delineation comparative -/
 
-/-! When multiple weight vectors are admissible, the comparative form
-    "x is more athletic than y" is **vague**: different admissible
-    aggregation functions rank the entities differently.
+/-- The delineation comparative of §2 with the admissible rules as precisifications and the
+standard fixed: `x` is at least as F as `y` iff every admissible rule that makes `y` F makes
+`x` F. -/
+abbrev delineation (c : Context ι O K) (v : Profile ι O K) : Preorder O :=
+  Kamp1975.kampPreorder (λ (a : Rule ι O K) x => a v x c.standard) c.adm
 
-    This is D&H's central prediction (§4.3): multidimensionality
-    generates comparative vagueness through admissibility multiplicity. -/
+/-- Admissible rules that disagree on which of two objects meets the standard leave the two
+incomparable under the delineation comparative: what the paper treats as vagueness the
+delineation approach turns into incompleteness. -/
+theorem delineation_incomparable (c : Context ι O K) {v : Profile ι O K} {x y : O}
+    {a b : Rule ι O K} (ha : a ∈ c.adm) (hb : b ∈ c.adm) (hax : a v x c.standard)
+    (hay : ¬ a v y c.standard) (hby : b v y c.standard) (hbx : ¬ b v x c.standard) :
+    ¬ (c.delineation v).le x y ∧ ¬ (c.delineation v).le y x :=
+  ⟨λ h => hbx (h b hb hby), λ h => hay (h a ha hax)⟩
 
-/-- Under speed-heavy weights, Alice outscores Bob. -/
-theorem speed_heavy_alice_wins :
-    weightedScore speedHeavy (boolMeasures athleticDims) .alice >
-    weightedScore speedHeavy (boolMeasures athleticDims) .bob := by native_decide
+end Context
 
-/-- Under endurance-heavy weights, Bob outscores Alice. -/
-theorem endurance_heavy_bob_wins :
-    weightedScore enduranceHeavy (boolMeasures athleticDims) .bob >
-    weightedScore enduranceHeavy (boolMeasures athleticDims) .alice := by native_decide
+/-! ### The sorites on Suzy's health -/
 
-/-- Comparative vagueness: when both weight vectors are admissible,
-    "Alice is more athletic than Bob" is **indeterminate** — one
-    aggregation function says yes, the other says no. -/
-theorem comparative_vagueness :
-    -- Speed-heavy: Alice > Bob
-    weightedScore speedHeavy (boolMeasures athleticDims) .alice >
-    weightedScore speedHeavy (boolMeasures athleticDims) .bob ∧
-    -- Endurance-heavy: Bob > Alice
-    weightedScore enduranceHeavy (boolMeasures athleticDims) .bob >
-    weightedScore enduranceHeavy (boolMeasures athleticDims) .alice :=
-  ⟨speed_heavy_alice_wins, endurance_heavy_bob_wins⟩
+/-- The dimensions of *healthy* in the sorites of §2. -/
+inductive Health
+  | musculoskeletal
+  | cardiovascular
+  deriving DecidableEq, Fintype
 
--- ════════════════════════════════════════════════════
--- § 4. Connection to Sassoon 2013
--- ════════════════════════════════════════════════════
+/-- Bill and a variant of Suzy. -/
+inductive Patient
+  | suzy
+  | bill
+  deriving DecidableEq
 
-/-! [sassoon-2013]'s framework classifies binding as conjunctive
-    (∀), disjunctive (∃), or mixed (dimension counting). D&H show all
-    three are **counting aggregation** — a single escape route from
-    Arrow's theorem. Utilitarian aggregation (weighted sum) is a
-    genuinely different mechanism that Sassoon's typology misses. -/
+/-- The sorites profile: Suzy's musculoskeletal health `mS` sits below Bill's `mB`, and her
+cardiovascular health `t` varies against Bill's `cB`. -/
+def health (mS mB cB t : K) : Profile Health Patient K
+  | .suzy, .musculoskeletal => mS
+  | .suzy, .cardiovascular => t
+  | .bill, .musculoskeletal => mB
+  | .bill, .cardiovascular => cB
 
-/-- All of Sassoon 2013's binding types are counting aggregation. -/
-theorem sassoon_framework_is_counting :
-    ∀ b : DimensionBindingType, toAggregationType b = .counting :=
-  sassoon_all_counting
+private theorem sum_health [AddCommMonoid K] (f : Health → K) :
+    ∑ i, f i = f .musculoskeletal + f .cardiovascular := by
+  rw [show (univ : Finset Health) = {.musculoskeletal, .cardiovascular} from by decide,
+    sum_pair (by decide)]
 
-/-- Utilitarian aggregation is NOT counting — it is a categorically
-    different escape route from Arrow's impossibility. -/
-theorem utilitarian_not_counting :
-    AggregationType.utilitarian ≠ .counting := by decide
+section Sorites
 
-/-- *healthy* under conjunctive binding: must satisfy ALL dimensions.
-    A person healthy on musculoskeletal and cardiovascular but with
-    disease present is NOT healthy. -/
-theorem healthy_conjunctive_rejects_partial :
-    conjunctiveBinding
-      [fun (_ : Unit) => true,   -- musculoskeletal: good
-       fun (_ : Unit) => true,   -- cardiovascular: good
-       fun (_ : Unit) => false]  -- freedom from disease: no
-      () = false := rfl
+variable [Field K] [LinearOrder K] [IsStrictOrderedRing K] {w w' : Health → K} {mS mB cB t t' : K}
 
-/-- But under counting with k = 2, the same person IS healthy
-    (passes on 2 of 3 dimensions). Counting and conjunctive diverge. -/
-theorem counting_accepts_partial :
-    countBinding 2
-      [fun (_ : Unit) => true,
-       fun (_ : Unit) => true,
-       fun (_ : Unit) => false]
-      () = true := by native_decide
+/-- The cut-off: Suzy is at least as healthy as Bill under weights `w` iff her cardiovascular
+health reaches Bill's plus the weighted musculoskeletal deficit. -/
+theorem health_utilitarian_iff (hw : 0 < w .cardiovascular) :
+    utilitarian w (health mS mB cB t) .suzy .bill ↔
+      cB + w .musculoskeletal / w .cardiovascular * (mB - mS) ≤ t := by
+  rw [← mul_le_mul_iff_of_pos_right hw, add_mul, div_mul_eq_mul_div, div_mul_cancel₀ _ hw.ne']
+  simp only [utilitarian, dotProduct, sum_health, health]
+  constructor <;> intro h <;> linarith
+
+/-- The inductive premise of the sorites: better cardiovascular health keeps Suzy at least as
+healthy as Bill. -/
+theorem health_mono (hw : 0 ≤ w .cardiovascular) (h : t ≤ t') :
+    utilitarian w (health mS mB cB t) .suzy .bill →
+      utilitarian w (health mS mB cB t') .suzy .bill := by
+  simp only [utilitarian, dotProduct, sum_health, health]
+  intro h'
+  linarith [mul_le_mul_of_nonneg_left h hw]
+
+/-- The first Suzy, worse than Bill on both dimensions, is not at least as healthy as Bill
+under any positive weighting. -/
+theorem not_health_of_lt (hm : mS < mB) (ht : t < cB) (hw : ∀ i, 0 ≤ w i)
+    (hpos : ∃ i, 0 < w i) : ¬ utilitarian w (health mS mB cB t) .suzy .bill :=
+  (utilitarian_weakPareto w hw hpos (health mS mB cB t) Patient.bill Patient.suzy λ i => by
+    cases i <;> [exact hm; exact ht]).2
+
+/-- In a context admitting two weightings with different cut-offs, every Suzy between the
+cut-offs is a borderline case of *at least as healthy as Bill*. -/
+theorem health_indeterminate (c : Context Health Patient K) (hw : utilitarian w ∈ c.adm)
+    (hw' : utilitarian w' ∈ c.adm) (hc : 0 < w .cardiovascular) (hc' : 0 < w' .cardiovascular)
+    (ht : cB + w .musculoskeletal / w .cardiovascular * (mB - mS) ≤ t)
+    (ht' : t < cB + w' .musculoskeletal / w' .cardiovascular * (mB - mS)) :
+    c.Indeterminate λ a => a (health mS mB cB t) .suzy .bill :=
+  c.indeterminate_of_disagree hw hw' ((health_utilitarian_iff hc).2 ht)
+    λ h => ((health_utilitarian_iff hc').1 h).not_gt ht'
+
+/-- Two admissible weightings with different cut-offs make *at least as healthy as* vague. -/
+theorem vague_of_cutoff_lt (c : Context Health Patient K) (hw : utilitarian w ∈ c.adm)
+    (hw' : utilitarian w' ∈ c.adm) (hc : 0 < w .cardiovascular) (hc' : 0 < w' .cardiovascular)
+    (h : cB + w .musculoskeletal / w .cardiovascular * (mB - mS) <
+      cB + w' .musculoskeletal / w' .cardiovascular * (mB - mS)) : c.Vague :=
+  (health_indeterminate (t := cB + w .musculoskeletal / w .cardiovascular * (mB - mS)) c hw hw'
+    hc hc' le_rfl h).vague
+
+/-! ### Vagueness against structure -/
+
+/-- Two utilitarian weightings with different cut-offs: the comparative is vague, yet
+determinately a weak ordering. -/
+theorem vague_determinately_weakOrderValued (c : Context Health Patient K)
+    (hadm : c.adm = {utilitarian w, utilitarian w'}) (hc : 0 < w .cardiovascular)
+    (hc' : 0 < w' .cardiovascular)
+    (h : cB + w .musculoskeletal / w .cardiovascular * (mB - mS) <
+      cB + w' .musculoskeletal / w' .cardiovascular * (mB - mS)) :
+    c.Vague ∧ c.Determinately WeakOrderValued := by
+  refine ⟨vague_of_cutoff_lt c (by simp [hadm]) (by simp [hadm]) hc hc' h, λ a ha => ?_⟩
+  rw [hadm] at ha
+  rcases ha with rfl | rfl <;> exact utilitarian_weakOrderValued _
+
+omit [IsStrictOrderedRing K] in
+/-- A utilitarian weighting beside the Pareto rule, on a profile where Suzy trades
+musculoskeletal for cardiovascular health: it is indeterminate whether the comparative is
+complete. -/
+theorem indeterminate_complete (c : Context Health Patient K) (hu : utilitarian w ∈ c.adm)
+    (hp : paretoRule ∈ c.adm) (hm : mS < mB) (ht : cB < t) : c.Indeterminate Complete :=
+  c.indeterminate_of_disagree hu hp (utilitarian_weakOrderValued w).2 λ h =>
+    ((h (health mS mB cB t)).total .suzy .bill).elim
+      (paretoRule_incomparable (i := Health.cardiovascular) (j := .musculoskeletal) ht hm).1
+      (paretoRule_incomparable (i := Health.cardiovascular) (j := .musculoskeletal) ht hm).2
+
+end Sorites
+
+/-! ### Arrow's theorem and incoherence -/
+
+/-- Arrow's conditions, transposed to dimensional aggregation. -/
+def Arrovian [Preorder K] (a : Rule ι O K) : Prop :=
+  Invariant ordinal a ∧ WeakOrderValued a ∧ WeakPareto a ∧ Independent a ∧ NonDictatorial a
+
+/-- Arrow's impossibility theorem, adapted: with finitely many dimensions and at least three
+objects, no rule meets all of Arrow's conditions. -/
+theorem arrow [Fintype ι] [Fintype O] (h₃ : 3 ≤ Fintype.card O) (a : Rule ι O ℝ) :
+    ¬ Arrovian a :=
+  Degree.Aggregation.arrow h₃ a
+
+/-- An adjective whose admissible rules are all Arrovian is incoherent. -/
+theorem Context.incoherent_of_arrovian [Fintype ι] [Fintype O] (h₃ : 3 ≤ Fintype.card O)
+    (c : Context ι O ℝ) (h : c.Determinately Arrovian) : c.Incoherent :=
+  Set.eq_empty_iff_forall_notMem.2 λ a ha => arrow h₃ a (h a ha)
+
+/-! ### Escaping Arrow by weakening the outputs -/
+
+/-- Acyclicity as the paper states it: two strict steps yield a weak step. -/
+def Acyclic (r : O → O → Prop) : Prop := ∀ x y z, AsymmRel r x y → AsymmRel r y z → r x z
+
+/-- Majority rule violates even acyclicity: Condorcet's cycle. -/
+theorem not_acyclic_majority_condorcet : ¬ Acyclic (majority condorcet) :=
+  λ h => majority_condorcet.2.2.2 (h 0 1 2 majority_condorcet.1 majority_condorcet.2.1)
+
+/-! ### Sassoon's comparatives -/
+
+section Sassoon
+
+variable [Fintype ι] [LinearOrder K] (θ : ι → K)
+
+/-- The comparative the paper attributes to Sassoon for each binding type: universal
+quantification over the dimensions for conjunctive adjectives (*healthy*), existential for
+disjunctive ones (*sick*), and for mixed ones (*intelligent*) counting the dimensions on which
+the thresholds `θ` are met. -/
+def sassoon : Degree.DimensionBindingType → Rule ι O K
+  | .conjunctive => λ v x y => ∀ i, v y i ≤ v x i
+  | .disjunctive => λ v x y => ∃ i, v y i ≤ v x i
+  | .mixed => λ v x y => #{i | θ i ≤ v y i} ≤ #{i | θ i ≤ v x i}
+
+/-- The universal comparative is the Pareto rule, and inherits its incomparable trade-offs. -/
+theorem sassoon_conjunctive : sassoon θ .conjunctive = (paretoRule : Rule ι O K) := rfl
+
+/-- The existential comparative violates strong Pareto: an object tied with another on one
+dimension and below it on all others counts as at least as F. -/
+theorem not_strongPareto_sassoon_disjunctive [Nontrivial ι] [Nontrivial O] [Nontrivial K] :
+    ¬ StrongPareto (sassoon θ .disjunctive : Rule ι O K) := by
+  intro h
+  obtain ⟨i, j, hij⟩ := exists_pair_ne ι
+  obtain ⟨x, y, hxy⟩ := exists_pair_ne O
+  obtain ⟨k, k', hk⟩ : ∃ k k' : K, k < k' := by
+    obtain ⟨k, k', h⟩ := exists_pair_ne K
+    exact h.lt_or_gt.elim (λ h => ⟨k, k', h⟩) (λ h => ⟨k', k, h⟩)
+  classical
+  let v : Profile ι O K := λ z l => if z = y ∧ l ≠ i then k' else k
+  have hle : v x ≤ v y := λ l => by
+    simp only [v, hxy, false_and, if_false]
+    split_ifs <;> simp [hk.le]
+  have hlt : ∃ l, v x l < v y l := ⟨j, by simp [v, hxy, hij.symm, hk]⟩
+  have hxy' : sassoon θ .disjunctive v x y := ⟨i, by simp [v, hxy]⟩
+  exact ((h v y x hle).2 hlt).2 hxy'
+
+/-- Dimension counting violates weak Pareto: two objects meeting the thresholds on the same
+dimensions are tied, even when one is strictly above the other on every dimension. -/
+theorem not_weakPareto_sassoon_mixed [Nonempty ι] [Nontrivial O] [NoMaxOrder K] :
+    ¬ WeakPareto (sassoon θ .mixed : Rule ι O K) := by
+  intro h
+  obtain ⟨x, y, hxy⟩ := exists_pair_ne O
+  obtain ⟨k, hk⟩ := exists_gt (univ.sup' univ_nonempty θ)
+  obtain ⟨k', hk'⟩ := exists_gt k
+  classical
+  let v : Profile ι O K := λ z _ => if z = x then k' else k
+  have hθ : ∀ z i, θ i ≤ v z i := λ z i => by
+    have := (le_sup' θ (mem_univ i)).trans hk.le
+    simp only [v]
+    split_ifs <;> [exact this.trans hk'.le; exact this]
+  have := h v x y λ i => by simp [v, hxy.symm, hk']
+  simp only [AsymmRel, sassoon, filter_true_of_mem (λ i _ => hθ _ i), le_refl, not_true,
+    and_false] at this
+
+end Sassoon
 
 end DAmbrosioHedden2024

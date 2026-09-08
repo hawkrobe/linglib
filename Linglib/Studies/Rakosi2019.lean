@@ -1,4 +1,3 @@
-import Linglib.Semantics.Reference.Reciprocals
 import Linglib.Semantics.Reference.PluralityLicensing
 import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Fragments.Hungarian.Reciprocals
@@ -42,16 +41,12 @@ a morphosyntactic mechanism.
   reciprocity / binding conditions over plural assignments.
 - `Fragments/Hungarian/Reciprocals.lean` — `AntecedentConfig`,
   `reciprocalLicensed`, `pluralReflexiveLicensed`, verification.
-- `Studies/DalrympleHaug2024.lean` §2 — the
-  bound-variable case (§6 here) is also discussed there as evidence
-  for the relational analysis of reciprocal scope.
 - `Studies/Chomsky1981.lean` — the English reciprocal minimal pairs
   notes that syntactically singular antecedents are possible.
 -/
 
 namespace Rakosi2019
 
-open Reference.Reciprocals
 open Reference.PluralityLicensing
 open PPCDRT
 open Core
@@ -162,11 +157,7 @@ theorem collective_noun_asymmetry :
 
     (17) Péter és Éva az-t gondolja, hogy (\*ő) szereti egymás-t.
     'Péter and Éva think that they love each other.'
-    (pro-dropped 3SG embedded subject, reciprocal OK, wide scope only)
-
-    This case is also discussed in [dalrymple-haug-2024] §2 as
-    evidence for the relational analysis: the singular bound pronoun
-    forces binding (=), yielding the I-reading. -/
+    (pro-dropped 3SG embedded subject, reciprocal OK, wide scope only) -/
 theorem bound_variable_asymmetry :
     reciprocalLicensed boundVariable = true ∧
     pluralReflexiveLicensed boundVariable = false ∧
