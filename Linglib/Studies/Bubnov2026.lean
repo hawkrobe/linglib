@@ -63,9 +63,10 @@ structures: *-nibud'* the bare non-specific layer, *-to* that layer with the spe
 above it, *koe-* all three. Distinct exponents for nested structures are what morphological
 containment consists in, and none is attested in any indefinite paradigm. -/
 theorem russian_spans_properly_nested :
-    (spelloutWinner russianLex nsRank).map SpanRule.spans = some 0 ∧
-      (spelloutWinner russianLex suRank).map SpanRule.spans = some 1 ∧
-      (spelloutWinner russianLex skRank).map SpanRule.spans = some 2 := by decide
+    (spelloutWinner (lexicon Russian.Indefinites.paradigm) 0).map SpanRule.spans = some 0 ∧
+      (spelloutWinner (lexicon Russian.Indefinites.paradigm) 1).map SpanRule.spans = some 1 ∧
+      (spelloutWinner (lexicon Russian.Indefinites.paradigm) 2).map SpanRule.spans = some 2 := by
+  decide
 
 /-! ### The unattested type
 
@@ -115,11 +116,11 @@ entry leaves the narrow one unable to spell out the higher structure. So the los
 entry derives the change from a specific-unknown form to an epistemic one, and never the change
 from a non-specific form to an epistemic one — although both are attested. -/
 theorem entry_loss_extends_downward_only :
-    spellout [nonSpecificRule, specificUnknownRule] nsRank = some "A" ∧
-      spellout [nonSpecificRule, specificUnknownRule] suRank = some "B" ∧
-      spellout [specificUnknownRule] nsRank = some "B" ∧
-      spellout [specificUnknownRule] suRank = some "B" ∧
-      spellout [nonSpecificRule] suRank = none := by decide
+    spellout [nonSpecificRule, specificUnknownRule] 0 = some "A" ∧
+      spellout [nonSpecificRule, specificUnknownRule] 1 = some "B" ∧
+      spellout [specificUnknownRule] 0 = some "B" ∧
+      spellout [specificUnknownRule] 1 = some "B" ∧
+      spellout [nonSpecificRule] 1 = none := by decide
 
 /-! ### The typology on attested paradigms -/
 
