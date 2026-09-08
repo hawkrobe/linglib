@@ -5,7 +5,7 @@ import Mathlib.Data.Fintype.Sigma
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Chow and Erlewine 2022: restrictions on the position of *exh*
+# Chow and Erlewine (2022): Restrictions on the position of exh
 
 This file formalizes [chow-erlewine-2022]'s argument that the covert exhaustification operator
 *exh* of the grammatical theory of scalar implicature ([fox-2007]) is syntactically constrained:
@@ -27,39 +27,13 @@ changes the interpretation. Section 4's ignorance implicatures are derived over 
 disjunctive antecedent places the necessity operator below surface-scope *also* — embedded, contra
 [meyer-2013]'s Matrix K theory.
 
-Simplifications, each at a point where the paper itself stops short: the trigger moved to subject
-position (their (7)) reconstructs semantically, with movement reflected only in the site calculus;
-the embedding verb of their (28) is opaque to interpretation and matters only to the site
-calculus; and the presupposition of parse (35) is taken from the paper's display (they defer its
-derivation to [marty-romoli-2021]'s (85)). The *again* data of their section 2.4 replicate the
-*also* pattern and are not modeled separately.
+## Implementation notes
 
-## Main definitions
-
-* `Parse`, `Parse.interp` — operator spines (*exh*, *not*, *also* over a scalar leaf) and their
-  trivalent interpretation; *also* presupposes its scope of the salient focus alternative
-* `BaseClause`, `BaseClause.lowestNonVacuousSite` — a clause with its overt operators and the
-  trigger's surface depth; the site generalization (9) forces *exh* into
-* `ExhFeature`, `SITrigger.feature` — the paper's (30): `[uexh*]` triggers get the forced site,
-  `[uexh]` sites reach up to just above the embedding verb, unmarked triggers adjoin freely
-* `ignoranceScope`, `presup34`, `presup35` — the ignorance meaning *exh* > □ > *exh* derives over
-  belief states, and the additive presuppositions of the two grammatical parses of their (32)
-
-## Main results
-
-* `exh_over_also_presup`, `exh_over_also_verdicts` — parse (5) presupposes a salient conjunctive
-  antecedent (EXH² projection), so it licenses (3b) and blocks (3a)
-* `or_exh_sites`, `also_exh_verdicts`, `passive_conjunctive` — (9) forces *exh* below *also* in
-  (3) but above it in the passive (7), deriving the felicity reversal
-* `negConj_site`, `indirect_si_contrast`, `exh_vacuous_below_negation` — position 2 of (19):
-  *exh* directly on conjunction is vacuous, so the indirect SI is computed just above negation
-* `sm_below_also_SOME_free`, `embedded_SOME_trapped`, `scalarAdj_high_exh_ok` — the three rows of
-  the feature table (30) at work
-* `ignorance_scope_eq` — *exh* > □ > *exh* over disjunction yields the SI plus speaker ignorance
-  about each disjunct, their (31)
-* `antecedent_pattern`, `parse37_grammaticality`, `embedded_necessity` — the four antecedent types
-  of (33) need exactly the two `[uexh*]`-respecting parses of (37), and the parse the disjunctive
-  antecedent needs has □ below surface-scope *also*
+The trigger moved to subject position, their (7), reconstructs semantically, with movement
+reflected only in the site calculus; the embedding verb of their (28) is opaque to interpretation
+and matters only to the site calculus; and the presupposition of parse (35) is taken from the
+paper's display, since they defer its derivation to [marty-romoli-2021]. The *again* data of their
+section 2.4 replicate the *also* pattern and are not modeled separately.
 
 ## References
 
@@ -73,8 +47,7 @@ derivation to [marty-romoli-2021]'s (85)). The *again* data of their section 2.4
 
 namespace ChowErlewine2022
 
-open Exhaustification (innocent predToFinset altsFromPreds)
-open Exhaustification.Trivalent (exh2)
+open Exhaustification
 
 /-! ### Individuals and worlds
 
@@ -136,7 +109,7 @@ def TeachWorld.taught (w : TeachWorld) : Individual → Taught
 /-- An LF parse: an operator spine over a scalar leaf. The leaf carries the denotation of the
 scalar item and of its Horn-scale mate, both predicated of a focus individual `F`. -/
 inductive Parse (F W : Type) where
-  | lex (den alt : F → W → Bool)
+  | lex (den alt : F → Trivalent.Prop3 W)
   | exh (t : Parse F W)
   | not (t : Parse F W)
   | also (t : Parse F W)
@@ -149,14 +122,13 @@ strong Kleene (a presupposition hole), and *also* presupposes that its scope hol
 focus alternative `sal x` ([chow-erlewine-2022] section 2, following Kripke and Heim). -/
 def Parse.interpWithMate (sal : F → F) :
     Parse F W → F → Trivalent.Prop3 W × Trivalent.Prop3 W
-  | .lex den alt, x =>
-      (λ w => if den x w then .true else .false, λ w => if alt x w then .true else .false)
+  | .lex den alt, x => (den x, alt x)
   | .not t, x =>
       let (p, q) := t.interpWithMate sal x
       (λ w => (p w).neg, λ w => (q w).neg)
   | .exh t, x =>
       let (p, q) := t.interpWithMate sal x
-      (exh2 [q] p, exh2 [p] q)
+      (Trivalent.exh2 [q] p, Trivalent.exh2 [p] q)
   | .also t, x =>
       let pres := t.interpWithMate sal (sal x)
       let (p, q) := t.interpWithMate sal x
@@ -200,8 +172,8 @@ position with `i` operators above it; a site commands the trigger iff `i ≤ tri
 trigger interprets in its base position throughout, so movement (the paper's (7)) shows up only
 in `triggerDepth`. -/
 structure BaseClause (F W : Type) where
-  den : F → W → Bool
-  alt : F → W → Bool
+  den : F → Trivalent.Prop3 W
+  alt : F → Trivalent.Prop3 W
   ops : List ClauseOp
   triggerDepth : ℕ
 
@@ -281,10 +253,10 @@ def SITrigger.feature : SITrigger → ExhFeature
 /-! ### Section 2: the *also* diagnostic with disjunction -/
 
 /-- "teaches Arabic or Basque", of the focus individual. -/
-def orLex : Individual → TeachWorld → Bool := λ x w => (w.taught x).either
+def orLex : Individual → Trivalent.Prop3 TeachWorld := λ x w => .ofBool (w.taught x).either
 
 /-- "teaches Arabic and Basque", of the focus individual. -/
-def andLex : Individual → TeachWorld → Bool := λ x w => (w.taught x).both
+def andLex : Individual → Trivalent.Prop3 TeachWorld := λ x w => .ofBool (w.taught x).both
 
 /-- The base clause of (3): *[Nina]F also teaches Arabic or Basque* — *also* above the in-situ
 trigger. -/
@@ -338,19 +310,13 @@ theorem exh_over_also_verdicts :
         (antecedent Taught.exactlyOne) := by
   decide
 
-/-- The attested positions (8): in (3) generalization (9) forces *exh* below *also*; in the
-passive (7) the only trigger-commanding site is above *also*, so *exh* adjoins to TP — there is
-no blanket ban on TP adjunction. -/
+/-- The attested positions (8): in (3) generalization (9) forces *exh* below *also*, while in the
+passive (7) the only trigger-commanding site is above *also*, so *exh* adjoins to TP, whose parse
+`exh_over_also_verdicts` shows licenses the conjunctive antecedent. Passivization reverses the
+(3b) judgment, and there is no blanket ban on TP adjunction. -/
 theorem or_exh_sites :
     SITrigger.disj.feature.allowedSites Individual.other teachOr = {1}
     ∧ SITrigger.disj.feature.allowedSites Individual.other passiveOr = {0} := by decide
-
-/-- The passive (7), end to end: the only trigger-commanding site is above *also*, and that
-parse licenses the conjunctive antecedent — so passivization reverses the (3b) judgment. -/
-theorem passive_conjunctive :
-    SITrigger.disj.feature.allowedSites Individual.other passiveOr = {0}
-    ∧ (passiveOr.withExhAt 0).FelicitousIn Individual.other .nina (antecedent Taught.both) :=
-  ⟨or_exh_sites.2, exh_over_also_verdicts.1⟩
 
 /-! ### Section 2.3: indirect scalar implicatures under negation -/
 
@@ -454,7 +420,7 @@ def Temp.isFreezing : Temp → Bool
 
 /-- The base clause of (24a): *it's also cold in [Paris]F*. -/
 def coldClause : BaseClause City (City → Temp) :=
-  ⟨λ c w => (w c).atLeastCold, λ c w => (w c).isFreezing, [.alsoOp], 1⟩
+  ⟨λ c w => .ofBool (w c).atLeastCold, λ c w => .ofBool (w c).isFreezing, [.alsoOp], 1⟩
 
 /-- Contexts where it is freezing in New York. -/
 def freezingNY : Finset (City → Temp) := Finset.univ.filter (λ w => w .newYork = .freezing)
@@ -555,7 +521,9 @@ inductive IgnOp where
   | siExh
   deriving DecidableEq, Repr
 
-/-- Parse (37a): *also* > *exh* > □ > *exh*. -/
+/-- Parse (37a): *also* > *exh* > □ > *exh*. The necessity operator sits below *also*, which
+occupies its surface vP-adjoined position, so once this parse is needed the ignorance-deriving □
+is available clause-medially, their (38) against [meyer-2013]'s Matrix K theory. -/
 def parse37a : List IgnOp := [.also, .ignExh, .nec, .siExh]
 
 /-- Parse (37b): *exh* > □ > *also* > *exh*. -/
@@ -577,20 +545,11 @@ instance (p : List IgnOp) : Decidable (ChecksUExhStar p) :=
   inferInstanceAs
     (Decidable (some (siExhSite p) = teachOr.lowestNonVacuousSite Individual.other))
 
-/-- The grammaticality pattern (37): (37a) and (37b) — which differ only in where the freely
-placed higher *exh* and □ sit — check `[uexh*]`, while (37c), whose SI *exh* is above *also*,
-does not. This is the pattern [marty-romoli-2021] and [spector-sudo-2017] would overgenerate
-without the feature. -/
+/-- The grammaticality pattern (37): (37a) and (37b), which differ only in where the freely
+placed higher *exh* and □ sit, check `[uexh*]`, while (37c), whose SI *exh* is above *also*, does
+not. This is the pattern [marty-romoli-2021] and [spector-sudo-2017] would overgenerate without
+the feature. -/
 theorem parse37_grammaticality :
     ChecksUExhStar parse37a ∧ ChecksUExhStar parse37b ∧ ¬ ChecksUExhStar parse37c := by decide
-
-/-- Their (38), against [meyer-2013]'s Matrix K theory: the disjunctive antecedent (33a) is
-licensed only by parse (37a)'s presupposition, and in (37a) the necessity operator sits below
-*also* — which occupies its surface vP-adjoined position — so the ignorance-deriving □ must be
-available clause-medially, not only at the clause root. -/
-theorem embedded_necessity :
-    (presup34 disjCtx ∧ ¬ presup35 disjCtx)
-    ∧ parse37a.idxOf .also < parse37a.idxOf .nec :=
-  ⟨antecedent_pattern.1, by decide⟩
 
 end ChowErlewine2022
