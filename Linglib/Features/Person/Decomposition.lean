@@ -7,14 +7,14 @@ import Linglib.Features.Number.Basic
 /-!
 # Person
 [harley-ritter-2002] [adger-harbour-2008] [ackema-neeleman-2018]
-[harbour-2016] [cysouw-2009] [siewierska-2004]
+[harbour-2016] [cysouw-2003] [siewierska-2004]
 
 Two components of the person API:
 
 **§ 1–4: Person Features** ([harley-ritter-2002]'s dependency organization,
 in the bivalent presentation surveyed by [adger-harbour-2008]; with
 [ackema-neeleman-2018]'s function-valued alternative). The typological
-*category* inventory (§5+) is [cysouw-2009]'s, *derived* from these
+*category* inventory (§5+) is [cysouw-2003]'s, *derived* from these
 features — not their source.
 Decomposition of person into two bivalent features:
 - **[±participant]**: whether the referent includes a speech-act participant
@@ -34,7 +34,7 @@ quadripartition *exclusive*, not ill-formed — see
 This decomposition is shared across theoretical frameworks:
 - Minimalism: [preminger-2014], [bejar-rezac-2009]
 - Distributed Morphology: [munoz-perez-2026] (Fission)
-- Typology: [cysouw-2009], [siewierska-2004]
+- Typology: [cysouw-2003], [siewierska-2004]
 
 The Minimalist-specific extension [±proximate]
 ([pancheva-zubizarreta-2018]) is added in
@@ -44,13 +44,13 @@ The canonical analytical inventory (root `Person`) lives in
 `Features/Person/Basic.lean`; this file is its feature decomposition
 and referential-category layer.
 
-**§ 5–9: Person Categories** ([cysouw-2009]). The 8 referential person
+**§ 5–9: Person Categories** ([cysouw-2003]). The 8 referential person
 categories from Cysouw's paradigmatic framework. Three singular categories
 (individual speech act roles) and five group categories (attested
 combinations of participants).
 
-The full paradigmatic structure machinery (morpheme classes, homophony types,
-language data) lives in `Studies/Cysouw2009.lean`.
+The paradigmatic structure of a person paradigm — the syncretism pattern over
+these eight cells — is the subject of `Studies/Cysouw2003.lean`.
 
 -/
 
@@ -172,7 +172,7 @@ theorem no_fourth_person :
 -- § 6: Person Categories (Cysouw)
 -- ============================================================================
 
-/-- The 8 referential person categories ([cysouw-2009] ch. 3: the three
+/-- The 8 referential person categories ([cysouw-2003] ch. 3: the three
 singular participants plus the five attested of the seven logical groups
 of Table 3.1 — 1+1 (mass speaking) and 2+2 (present-audience-only) are
 dismissed as not grammaticalized, his §3.4). -/
@@ -185,7 +185,7 @@ inductive Category where
   | excl      -- 1+3: exclusive ('we' = speaker + others, excluding addressee)
   | secondGrp -- 2+3: second person group ('you all', addressee + others)
   | thirdGrp  -- 3+3: third person group ('they')
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 namespace Category
 
@@ -221,12 +221,23 @@ def IsInclusive (c : Category) : Prop :=
 instance : DecidablePred IsInclusive :=
   fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
+theorem IsInclusive.isFirstPersonComplex {c : Category} (h : c.IsInclusive) :
+    c.IsFirstPersonComplex :=
+  h.imp_right .inl
+
 /-- Does this category include the speaker? -/
 def IncludesSpeaker (c : Category) : Prop :=
   c = .s1 ∨ c = .minIncl ∨ c = .augIncl ∨ c = .excl
 
 instance : DecidablePred IncludesSpeaker :=
   fun _ => inferInstanceAs (Decidable (_ ∨ _))
+
+theorem IsFirstPersonComplex.includesSpeaker {c : Category} (h : c.IsFirstPersonComplex) :
+    c.IncludesSpeaker :=
+  .inr h
+
+theorem IsInclusive.includesSpeaker {c : Category} (h : c.IsInclusive) : c.IncludesSpeaker :=
+  h.isFirstPersonComplex.includesSpeaker
 
 /-- Does this category include the addressee? -/
 def IncludesAddressee (c : Category) : Prop :=
@@ -279,13 +290,13 @@ theorem ud_conflates_incl_excl :
     Category.toUDPersonNumber .augIncl =
     Category.toUDPersonNumber .excl := rfl
 
-/-- The [cysouw-2009] category a (person, number) coordinate pair
+/-- The [cysouw-2003] category a (person, number) coordinate pair
     realizes, over the canonical inventories. Clusivity rides on the
     person value; the minimal/augmented coordinates give the
     minimal/augmented inclusives directly (Tagalog *kata* =
-    `(firstInclusive, minimal)` ↦ `minIncl`, the junction coordinates of
-    `Studies/Cysouw2009.lean`); the Maori-type dual alignment maps there
-    too; plain `first` non-singulars are a syncretism (`none`). -/
+    `(firstInclusive, minimal)` ↦ `minIncl`); the Maori-type dual
+    alignment maps there too; plain `first` non-singulars are a syncretism
+    (`none`). -/
 def Category.ofPersonNumber : Person → Number → Option Category
   | .first, .singular | .firstInclusive, .singular
   | .firstExclusive, .singular => some .s1

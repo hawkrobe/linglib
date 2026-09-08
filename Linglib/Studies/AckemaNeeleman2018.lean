@@ -32,7 +32,7 @@ mentioning two `PROX` splits the exclusive from the inclusive (`clusive_split`).
 ## References
 
 * [ackema-neeleman-2018]
-* [cysouw-2009]
+* [cysouw-2003]
 * [harbour-2016]
 * [bobaljik-2008]
 -/

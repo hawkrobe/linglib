@@ -2,7 +2,7 @@ import Linglib.Data.UD.Basic
 
 /-!
 # Person — the canonical inventory
-[cysouw-2009] [harbour-2016] [siewierska-2004]
+[cysouw-2003] [harbour-2016] [siewierska-2004]
 
 The root-namespace `Person` type is the canonical, analytical person
 inventory: the values languages' person systems distinguish, with
@@ -31,7 +31,7 @@ inventory, consumed by person-hierarchy and scenario-split accounts.
 -/
 
 /-- Grammatical person — the canonical analytical inventory. Clusivity
-    is a person-value distinction ([cysouw-2009]; [harbour-2016]'s
+    is a person-value distinction ([cysouw-2003]; [harbour-2016]'s
     quadripartition), not an orthogonal feature: `firstInclusive` and
     `firstExclusive` sit alongside the tripartition cell `first`. -/
 inductive Person where
@@ -149,8 +149,8 @@ def hierarchyRank : Person → Nat
 /-! ### Person systems -/
 
 /-- A language's person system: the analytical values its paradigms
-    distinguish ([cysouw-2009]; the paradigm-level marking typology is
-    `Features.Clusivity.System`, his Table 3.2). -/
+    distinguish ([cysouw-2003]; the paradigm-level marking typology is
+    `Person.Clusivity.System`, his Table 3.2). -/
 structure System where
   /-- The person values the system distinguishes. -/
   values : List Person
@@ -190,7 +190,7 @@ theorem quadripartition_clusivity : quadripartition.HasClusivity := by
   decide
 
 /-- **Addressee inclusion implication I** at the value level
-    ([cysouw-2009] (3.23), Fig 3.8): a distinguished exclusive requires a
+    ([cysouw-2003] (3.23), Fig 3.8): a distinguished exclusive requires a
     distinguished inclusive. The converse fails — only-inclusive systems
     (his (Pc), Maká) have an inclusive value whose exclusive is covered
     by the singular morpheme. (Over the common paradigm types; the rare

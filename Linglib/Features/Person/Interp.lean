@@ -2,7 +2,7 @@ import Linglib.Features.Person.Resolve
 
 /-!
 # Person — referent semantics for the values
-[harbour-2016] [dalrymple-kaplan-2000] [cysouw-2009]
+[harbour-2016] [dalrymple-kaplan-2000] [cysouw-2003]
 
 The denotation of a person value as a region of referents: over an
 ontology with speaker `i` and addressee `u`, each value constrains which

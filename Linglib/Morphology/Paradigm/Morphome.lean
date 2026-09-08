@@ -55,6 +55,18 @@ syncretic iff `p` assigns them the same form. Exactly the kernel setoid
 patterns. -/
 abbrev syncretism (p : Cell → F) : Setoid Cell := Setoid.ker p
 
+variable {G : Type*}
+
+/-- Two realization maps have the same syncretism pattern iff they identify
+the same pairs of cells. -/
+theorem syncretism_eq_iff {p : Cell → F} {q : Cell → G} :
+    syncretism p = syncretism q ↔ ∀ a b, p a = p b ↔ q a = q b := by
+  simp only [syncretism, Setoid.ext_iff, Setoid.ker_def]
+
+instance [Fintype Cell] [DecidableEq F] [DecidableEq G] (p : Cell → F) (q : Cell → G) :
+    Decidable (syncretism p = syncretism q) :=
+  decidable_of_iff _ syncretism_eq_iff.symm
+
 /-- The syncretism class of a cell `a`: every cell realized as `a` is. -/
 def syncretismClass (p : Cell → F) (a : Cell) : Set Cell := {x | p x = p a}
 

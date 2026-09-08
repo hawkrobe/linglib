@@ -11,7 +11,7 @@ import Linglib.Data.WALS.Features.F136A
 import Linglib.Data.WALS.Features.F136B
 import Linglib.Data.WALS.Features.F137A
 import Linglib.Data.WALS.Features.F137B
-import Linglib.Features.Clusivity
+import Linglib.Features.Person.Clusivity
 
 /-!
 # Pronoun — typological survey (WALS)
@@ -380,10 +380,10 @@ end Pronoun
 namespace Pronoun
 
 /-- WALS Ch 39 image of a Cysouw first-person-complex type
-    (`Features.Clusivity.System`): WALS Ch 39 (Cysouw's own chapter)
+    (`Person.Clusivity.System`): WALS Ch 39 (Cysouw's own chapter)
     collapses the minimal/augmented split, so the map is many-to-one —
     given a WALS value, the paradigm type is underdetermined. -/
-def InclusiveExclusive.fromClusivity : Features.Clusivity.System → InclusiveExclusive
+def InclusiveExclusive.fromClusivity : Person.Clusivity.System → InclusiveExclusive
   | .noWe                => .noWe
   | .unifiedWe           => .noDistinction
   | .onlyInclusive       => .onlyInclusive

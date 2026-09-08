@@ -14,7 +14,7 @@ import Linglib.Features.Person.Basic
 `HasPerson.Compatible` is the induced agreement relation, slot compatibility
 in the flat information order. Carriers storing UD realization lift through
 `Person.fromUD`; carriers storing a (UD person, clusivity) pair recover the
-quadripartition cell ([cysouw-2009]) in
+quadripartition cell ([cysouw-2003]) in
 `Syntax/Category/Pronoun/Capabilities.lean`.
 -/
 

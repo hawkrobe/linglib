@@ -366,7 +366,7 @@ observable number distinctions. The resulting counts match
 The parameter space — feature activation ({±atomic}, {±minimal},
 {±additive}) and feature recursion (* = reapplication) — generates a
 typology of number systems. Each parametric setting predicts a specific
-inventory of number values matching [corbett-2000], [cysouw-2009].
+inventory of number values matching [corbett-2000], [cysouw-2003].
 
 Key predictions:
 - Trial and unit augmented are the highest exact numbers attainable
