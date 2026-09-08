@@ -51,7 +51,7 @@ negation (45).
 namespace Krifka2015
 
 open Commitment Commitment.Space
-open Questions.Bias (ContextualEvidence)
+open Questions
 open Features (Acceptability)
 
 /-! ### The fixture -/
