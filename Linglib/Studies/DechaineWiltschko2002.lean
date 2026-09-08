@@ -1,193 +1,146 @@
-import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Fragments.English.Pronouns
+import Linglib.Data.Examples.DechaineWiltschko2002
 
 /-!
-# Déchaine & Wiltschko 2002: Decomposing Pronouns
-[dechaine-wiltschko-2002]
+# Déchaine and Wiltschko (2002): Decomposing Pronouns
 
-"The notion 'pronoun' is not a primitive of linguistic theory." Pronouns
-decompose into three categories by internal constituent **size** —
-`proDP ⊃ prophiP ⊃ proNP` — and that size *determines* distribution, semantics,
-and binding-theoretic status ([dechaine-wiltschko-2002] table (24)):
+This file formalizes the categorial typology of proforms of [dechaine-wiltschko-2002]. The
+notion "pronoun" is not a primitive: a proform is a DP, a φP or an NP by the layers it projects,
+and its category fixes its distribution and its binding-theoretic status, table (24). A DP is an
+argument and an R-expression under Condition C, a φP an argument or a predicate and a variable
+under Condition B, and an NP a predicate and undefined for binding theory, its behaviour
+following from its inherent semantics as a constant. Halkomelem independent pronouns are DPs,
+Shuswap ones φPs and Japanese *kare* an NP. In English, *one* is an NP, first and second person
+pronouns are DPs, which is why they precede nouns, *we linguists*, and third person pronouns
+are φPs, *\*they linguists*, the dialect that says *them linguists* having reanalyzed *them* as
+the D-morpheme *th-* over the clitic φP *'em*. The English categories are derived from the
+Fragment's person features, and the determiner and bound-variable data are rows.
 
-| category | internal syntax | distribution | semantics | binding |
-|----------|-----------------|--------------|-----------|---------|
-| pro-DP   | D; morph. complex | argument   | definite  | R-expression (Cond C) |
-| pro-φP   | neither D nor N | arg or pred  | —         | variable (Cond B) |
-| pro-NP   | N               | predicate    | constant  | — (inherent semantics) |
+## References
 
-This categorial axis **cross-cuts** Cardinaletti & Starke's deficiency
-hierarchy (`Pronoun.Strength`, [cardinaletti-starke-1999]): see
-`strength_category_independent`. It is the structural rival to the deficiency
-view that `Pronoun.Strength`'s docstring flags as orthogonal.
-
-## Main declarations
-
-* `Category` — pro-DP / pro-φP / pro-NP, with `hasDLayer`/`hasPhiLayer` recording
-  size.
-* `Category.bindingStatus` — *derived from size*, not stipulated: D&W's claim
-  that the D layer yields a Condition-C R-expression, a φP-top yields a
-  Condition-B variable, and a bare NP is binding-unconstrained.
-* `strength_category_independent` — the C&S `Strength` and D&W `Category` axes
-  are functionally independent (neither determines the other), with English
-  witnesses from [dechaine-wiltschko-2002] §3.2.
-
-## Implementation notes
-
-The φP layer is the locus of the person/number/gender φ-features modelled in
-`UD.Person` etc.; `hasPhiLayer` marks which categories project it. A full
-federation of the φ-internal geometry to `UD.Person` is left to follow-up.
+* [dechaine-wiltschko-2002]
 -/
 
 namespace DechaineWiltschko2002
 
-open Pronoun (Strength)
+open Data.Examples
 
-/-- [dechaine-wiltschko-2002]'s three pronoun categories, by internal
-    constituent size: a full DP (`[DP D [φP φ [NP N]]]`), a φP (`[φP φ [NP N]]`),
-    or a bare NP (`[NP N]`). -/
+/-! ### The categories -/
+
+/-- The layers a proform may project. -/
+inductive Layer where
+  | D
+  | phi
+  | N
+  deriving DecidableEq, Repr
+
+/-- The three categories, by size: a full DP over a φP over an NP, a φP over an NP, or a bare
+NP, (1). -/
 inductive Category where
   | proDP
   | prophiP
   | proNP
   deriving DecidableEq, Repr
 
-/-- Whether the category projects a D layer (definiteness / R-expression locus). -/
-def Category.hasDLayer : Category → Bool
-  | .proDP => true
-  | .prophiP => false
-  | .proNP => false
+/-- The layers of a category, from the top down. -/
+def Category.layers : Category → List Layer
+  | .proDP => [.D, .phi, .N]
+  | .prophiP => [.phi, .N]
+  | .proNP => [.N]
 
-/-- Whether the category projects a φP layer — the locus of the person/number/
-    gender φ-features (cf. `UD.Person`). A bare `proNP` has none. -/
-def Category.hasPhiLayer : Category → Bool
-  | .proDP => true
-  | .prophiP => true
-  | .proNP => false
+/-- The categories nest: each is the next larger one without its top layer. -/
+theorem layers_suffix :
+    Category.proNP.layers <:+ Category.prophiP.layers ∧
+      Category.prophiP.layers <:+ Category.proDP.layers :=
+  ⟨⟨[.phi], rfl⟩, ⟨[.D], rfl⟩⟩
 
-/-- Binding-theoretic status ([dechaine-wiltschko-2002] table (24)). -/
+/-- The top layer of a category. -/
+def Category.top : Category → Layer
+  | .proDP => .D
+  | .prophiP => .phi
+  | .proNP => .N
+
+/-- Binding-theoretic status: an R-expression under Condition C, a variable under Condition B,
+or undefined, the behaviour following from inherent semantics. -/
 inductive BindingStatus where
-  /-- Subject to Condition C (a referring expression). -/
   | rExpression
-  /-- Subject to Condition B (can be a bound variable). -/
-  | boundVariable
-  /-- Undefined for binding theory; behaviour follows from inherent semantics. -/
-  | unconstrained
+  | variable
+  | undefined
   deriving DecidableEq, Repr
 
-/-- External distribution ([dechaine-wiltschko-2002] (24)–(25)). -/
-inductive Distribution where
+/-- Binding status is defined by the top layer, (24): R-expressions are DPs, variables are
+φPs, and NPs, constants, are undefined for binding theory. -/
+def Category.bindingStatus (c : Category) : BindingStatus :=
+  match c.top with
+  | .D => .rExpression
+  | .phi => .variable
+  | .N => .undefined
+
+/-- The positions a nominal fills. -/
+inductive Position where
   | argument
   | predicate
-  | either
   deriving DecidableEq, Repr
 
-/-- Inherent semantics ([dechaine-wiltschko-2002] (24)). -/
-inductive Sem where
-  | definite
-  | const
-  | underspecified
-  deriving DecidableEq, Repr
+/-- Distribution, (25): a DP is an argument, an NP a predicate, and a φP is type flexible. -/
+def Category.CanBe : Category → Position → Prop
+  | .proDP, .argument => True
+  | .proDP, .predicate => False
+  | .proNP, .predicate => True
+  | .proNP, .argument => False
+  | .prophiP, _ => True
 
-/-- D&W's central thesis: binding status is **determined by size**. A D layer
-    makes the proform an R-expression (Condition C); a φP top (φ-features but no
-    D) makes it a bound variable (Condition B); a bare NP is unconstrained by
-    binding theory. Derived from `hasDLayer`/`hasPhiLayer`, not stipulated. -/
-def Category.bindingStatus (c : Category) : BindingStatus :=
-  if c.hasDLayer then .rExpression
-  else if c.hasPhiLayer then .boundVariable
-  else .unconstrained
+/-- (25c) and (25d): not every argument is a DP, and not every nominal predicate an NP. -/
+theorem canBe_argument_iff (c : Category) : c.CanBe .argument ↔ c ≠ .proNP := by
+  cases c <;> simp [Category.CanBe]
 
-/-- Distribution: DPs are arguments, NPs are predicates, φPs are type-flexible
-    ([dechaine-wiltschko-2002] (25): `DP → Argument`, `NP → Predicate`). -/
-def Category.distribution : Category → Distribution
-  | .proDP => .argument
-  | .prophiP => .either
-  | .proNP => .predicate
+theorem canBe_predicate_iff (c : Category) : c.CanBe .predicate ↔ c ≠ .proDP := by
+  cases c <;> simp [Category.CanBe]
 
-/-- Inherent semantics: definite (DP), constant (NP), or unspecified (φP). -/
-def Category.semantics : Category → Sem
-  | .proDP => .definite
-  | .prophiP => .underspecified
-  | .proNP => .const
+/-! ### English (§3) -/
 
-/-! ### The size → binding-status entailment -/
+/-- The category of an English personal pronoun, from its person: first and second person
+pronouns are DPs and third person pronouns φPs, (33). -/
+def english (p : PersonalPronoun) : Category :=
+  if p.person = some .third then .prophiP else .proDP
 
-/-- A proform is an R-expression (Condition C) iff it has a D layer. -/
-theorem rExpression_iff_hasDLayer (c : Category) :
-    c.bindingStatus = .rExpression ↔ c.hasDLayer = true := by
-  cases c <;> decide
+/-- Dialect B, (34) and (37c): the accusative third person plural *them* is reanalyzed as the
+D-morpheme *th-* over the clitic φP *'em*, a DP. -/
+def dialectB (p : PersonalPronoun) : Category :=
+  if p.person = some .third ∧ p.number = some .plural ∧ p.case_ = some .acc then .proDP
+  else english p
 
-/-- A proform is a bound variable (Condition B) iff it has φ-features but no D. -/
-theorem boundVariable_iff_phi_without_D (c : Category) :
-    c.bindingStatus = .boundVariable ↔ (c.hasPhiLayer = true ∧ c.hasDLayer = false) := by
-  cases c <;> decide
+/-! ### The rows -/
 
-/-- The three categories yield three distinct binding statuses — the typology is
-    non-degenerate. -/
-theorem binding_statuses_distinct :
-    Category.proDP.bindingStatus ≠ Category.prophiP.bindingStatus ∧
-    Category.prophiP.bindingStatus ≠ Category.proNP.bindingStatus ∧
-    Category.proDP.bindingStatus ≠ Category.proNP.bindingStatus := by decide
+/-- The category of a row's proform: the English pronouns' from the Fragment, dialect B's
+*them* reanalyzed, and *one* and Japanese *kare* the NPs of sections 3.1 and 2.3. -/
+private def categoryOf (e : LinguisticExample) : Option Category :=
+  match e.feature? "pronoun", e.feature? "dialect" with
+  | some "we", _ => some (english English.Pronouns.we)
+  | some "us", _ => some (english English.Pronouns.us)
+  | some "you", _ => some (english English.Pronouns.you_pl)
+  | some "they", _ => some (english English.Pronouns.they)
+  | some "them", some "B" => some (dialectB English.Pronouns.them)
+  | some "them", _ => some (english English.Pronouns.them)
+  | some "he", _ => some (english English.Pronouns.he)
+  | some "me", _ => some (english English.Pronouns.me)
+  | some "one", _ => some .proNP
+  | some "kare", _ => some .proNP
+  | _, _ => none
 
-/-! ### Case studies ([dechaine-wiltschko-2002] table (24))
+/-- A pronoun precedes a noun exactly when it is a DP, whose D takes an overt NP: *we
+linguists* and *us linguists* against *\*they linguists*, and dialect B's *them linguists*. -/
+theorem determiner_rows :
+    ∀ e ∈ Examples.all, e.feature? "test" = some "precedesNoun" →
+      ∀ c ∈ categoryOf e, (e.judgment = .acceptable ↔ c = .proDP) := by
+  decide
 
-Each language's independent/personal proform instantiates a different category:
-Halkomelem independent pronouns = pro-DP (R-expressions, Condition C); Shuswap
-independent pronouns = pro-φP (bound variables, Condition B); Japanese *kare* =
-pro-NP (a constant, binding-unconstrained). -/
-
-theorem halkomelem_proDP_rExpression :
-    Category.proDP.bindingStatus = .rExpression := rfl
-
-theorem shuswap_prophiP_boundVariable :
-    Category.prophiP.bindingStatus = .boundVariable := rfl
-
-theorem japanese_kare_proNP_unconstrained :
-    Category.proNP.bindingStatus = .unconstrained := rfl
-
-/-! ### Orthogonality to Cardinaletti & Starke deficiency
-
-[dechaine-wiltschko-2002] §3.2 analyses English personal pronouns as
-pro-DP (1st/2nd person — they can be determiners: *we/us linguists*) and pro-φP
-(3rd person — *\*they linguists*), and *one* as pro-NP. Cross-classifying those
-categories with [cardinaletti-starke-1999] deficiency (`Pronoun.Strength`:
-full *we/they* are strong, enclitic *'em* is a clitic) shows the two axes are
-independent — neither determines the other. -/
-
-/-- A pronoun cross-classified on both axes: D&W `Category` × C&S `Strength`. -/
-structure Datum where
-  form : String
-  strength : Strength
-  category : Category
-  deriving Repr
-
-/-- English inventory ([dechaine-wiltschko-2002] §3), each form tagged with
-    its D&W category and its C&S strength. -/
-def englishInventory : List Datum :=
-  [ ⟨"we",   .strong, .proDP⟩    -- 1st person → pro-DP; full → strong
-  , ⟨"you",  .strong, .proDP⟩    -- 2nd person → pro-DP
-  , ⟨"they", .strong, .prophiP⟩  -- 3rd person → pro-φP; full → strong
-  , ⟨"'em",  .clitic, .prophiP⟩  -- 3rd person → pro-φP; enclitic → clitic
-  , ⟨"one",  .strong, .proNP⟩ ]  -- pro-NP
-
-/-- `Strength` does not determine `Category`: *we* and *they* are both strong,
-    yet *we* is pro-DP (1st person) and *they* is pro-φP (3rd person). -/
-theorem category_not_determined_by_strength :
-    ∃ p q : Datum, p.strength = q.strength ∧ p.category ≠ q.category :=
-  ⟨⟨"we", .strong, .proDP⟩, ⟨"they", .strong, .prophiP⟩, rfl, by decide⟩
-
-/-- `Category` does not determine `Strength`: *they* and *'em* are both pro-φP
-    (3rd person), yet *they* is strong and *'em* is a clitic. -/
-theorem strength_not_determined_by_category :
-    ∃ p q : Datum, p.category = q.category ∧ p.strength ≠ q.strength :=
-  ⟨⟨"they", .strong, .prophiP⟩, ⟨"'em", .clitic, .prophiP⟩, rfl, by decide⟩
-
-/-- The Déchaine-Wiltschko categorial axis and the Cardinaletti-Starke deficiency
-    axis are functionally independent — neither is a function of the other. This
-    is the theorem behind `Pronoun.Strength`'s docstring claim of orthogonality. -/
-theorem strength_category_independent :
-    (∃ p q : Datum, p.strength = q.strength ∧ p.category ≠ q.category) ∧
-    (∃ p q : Datum, p.category = q.category ∧ p.strength ≠ q.strength) :=
-  ⟨category_not_determined_by_strength, strength_not_determined_by_category⟩
+/-- A proform is construed as a bound variable exactly when its category makes it a variable:
+*he* under *every candidate*, but not *me* under VP-ellipsis, the sloppy reading of (40), nor
+*one* or *kare* under a quantifier, (30) and (22). -/
+theorem bound_variable_rows :
+    ∀ e ∈ Examples.all, e.feature? "test" = some "boundVariable" →
+      ∀ c ∈ categoryOf e, (e.judgment = .acceptable ↔ c.bindingStatus = .variable) := by
+  decide
 
 end DechaineWiltschko2002

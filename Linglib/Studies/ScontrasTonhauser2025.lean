@@ -444,9 +444,9 @@ theorem model_predicts_effects :
 /-- The prior effect found by S&T 2025 (β = 0.16 > 0) replicates the positive
     prior effect of [degen-tonhauser-2021] (β = 0.14 categorical, β = 0.28
     individual): higher prior probability of the complement content leads to
-    stronger projection. [degen-tonhauser-2021] makes this structural — any
-    prior-sensitive (monotone) account predicts the modulation
-    (`DegenTonhauser2021.sensitive_predicts_modulation`) — and the RSA model's
+    stronger projection. [degen-tonhauser-2021] makes this structural — Bayes'
+    rule makes the posterior credence increasing in the prior
+    (`DegenTonhauser2021.posterior_lt_posterior`) — and the RSA model's
     `prediction_2b` provides the same explanation here. -/
 theorem prior_effect_consistent_with_dt2021 :
     exp1_priorEffect.β > 0 := by norm_num [exp1_priorEffect]
