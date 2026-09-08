@@ -1,413 +1,193 @@
-import Linglib.Syntax.Category.Degree.Basic
-import Linglib.Semantics.Degree.Discrete
+import Mathlib.Order.Bounds.Basic
+import Mathlib.Order.CompleteLattice.Basic
 import Linglib.Semantics.Degree.Adjective
-import Linglib.Semantics.Degree.Basic
-import Linglib.Semantics.Degree.Intensification
-import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Semantics.Degree.Boundedness
-import Linglib.Data.Examples.Beltrama2025
 
 /-!
-# Beltrama (2025): Evaluation, Thresholds, and Practical Commitments
+# Beltrama (2025): Evaluation, thresholds, and practical commitments
 
-Mildly positive adjectives (*decent*, *acceptable*, *adequate*) are a
-hybrid class: context-sensitive and gradable like relative adjectives,
-yet crisp, *barely*-friendly, and gapless like absolute ones (Table 1).
-Their positive form encodes a **necessity standard** — the minimum value
-an object must have for its pursuit to be circumstantially possible
-((64): `s(MPA) = Max({d : ∀w' ∈ Acc(w)[PURSUED(x)(w') → μ_value(x)(w') ≥
-d]})`) — a functional standard in [kagan-alexeyenko-2011]'s sense,
-paralleling *enough* as analyzed by [nadathur-2023]. The middling
-inference ("not great") is a cancelable scalar implicature, and
-[kennedy-2007]'s Interpretive Economy must be generalized to let the
-standard function assign functional standards.
+Mildly positive adjectives, *decent*, *acceptable*, *adequate*, are context-sensitive and
+gradable like *good* yet crisp, *barely*-friendly and without a zone of indifference like
+the absolute adjectives, and they resist *slightly*, the diagnostic of a minimum standard
+([beltrama-2025], against [kennedy-mcnally-2005]'s absolute class). Their positive form
+takes a necessity standard: the greatest degree of value the object has in every
+circumstantially accessible world in which it is pursued, the standard that *enough*
+supplies with an overt purpose ([nadathur-2023]) and a functional standard in
+[kagan-alexeyenko-2011]'s sense, so that [kennedy-2007]'s standard-fixing function must
+range over functional standards beside the endpoints and comparison-class norms of
+Interpretive Economy. The middling inference of *decent* is a scalar implicature against
+*good*, and the missing zone of indifference follows from the standard's existential
+force: an object is acceptable only if some accessible circumstance pursues it, and
+unacceptable only if none does.
 
-## Main statements
+## Implementation notes
 
-* `minsaa_hypothesis_rejected`: the four §4.2 diagnostics (slightly,
-  comparison classes, comparative entailments, denials) separate MPAs
-  from minimum-standard absolute adjectives point for point.
-* `necessityStandard` and `mpaPositiveForm`: the (64)–(65) semantics on
-  finite models; `ie_divergence_on_value_scale`: three standard types
-  coexist on one lower-bounded value scale (contextual *good*,
-  functional MPAs, minEndpoint MinSAAs), against unrevised Interpretive
-  Economy.
-* `mpa_entries_mildly_positive`, `mpa_not_endpoint_licensed`: the
-  Fragment entries carry the class as a standard override on an open
-  `.value` scale, not a scale-structure fact.
+The necessity standard is the greatest lower bound of the object's values over the pursued
+accessible worlds, mathlib's `IsGLB`, which is the paper's maximum of the lower bounds; the
+value scale is any partial order, open above where a theorem needs it. Existential force is
+derived under the assumption that circumstantial alternatives leave the object's value
+fixed. The behaviour with *barely*, emphasis in downward-entailing contexts and *-able*
+derivation are recorded in the example rows only.
 
 ## References
 
-* [beltrama-2025]: Evaluation, thresholds, and practical commitments:
-  The grammar of adjectival mildness. *Natural Language Semantics* 33.
-* [kennedy-2007]: Vagueness and grammar.
-* [nadathur-2023]: Actuality Inferences.
-* [kagan-alexeyenko-2011]: Degree modification in Russian morphology.
-* [wolfsdorf-2019]: On Goodness.
+* [beltrama-2025]
+* [kennedy-2007]
+* [kennedy-mcnally-2005]
+* [nadathur-2023]
+* [kagan-alexeyenko-2011]
 -/
 
 namespace Beltrama2025
 
-open Degree (Boundedness)
-open Degree (PositiveStandard positiveMeaning)
-open Degree (AdjectiveClass)
-
-/-! ### Empirical Profile (Table 1) -/
-
-/-- Properties distinguishing MPAs from *good* (Table 1, p. 179).
-
-Each field is `true` when the property holds for the adjective class. -/
-structure EmpiricalProfile where
-  contextSensitive   : Bool  -- sensitive to comparison class / purpose
-  gradable           : Bool  -- combinable with degree morphology
-  zoneOfIndifference : Bool  -- neither P nor antonym(P) yields contradiction
-  borderlineCases    : Bool  -- can fall in a borderline region
-  combinesBarely     : Bool  -- felicitous with *barely*
-  emphasisInDE       : Bool  -- produces emphasis under negation / *even*
-  ableDerivation     : Bool  -- systematically derived via *-able*
-  deriving Repr, DecidableEq
-
-/-- MPAs: context-sensitive, gradable, no zone of indifference,
-    no borderline cases, combines with *barely*, emphatic in DE contexts,
-    productively derived via *-able*. -/
-def mpaProfile : EmpiricalProfile :=
-  { contextSensitive   := true
-  , gradable           := true   -- but restricted: resists *very*, *extremely*
-  , zoneOfIndifference := false
-  , borderlineCases    := false
-  , combinesBarely     := true
-  , emphasisInDE       := true
-  , ableDerivation     := true }
-
-/-- *good*: context-sensitive, gradable, zone of indifference present,
-    borderline cases present, resists *barely* (unless special context),
-    mostly no emphasis in DE, no *-able* derivation. -/
-def goodProfile : EmpiricalProfile :=
-  { contextSensitive   := true
-  , gradable           := true
-  , zoneOfIndifference := true
-  , borderlineCases    := true
-  , combinesBarely     := false
-  , emphasisInDE       := false
-  , ableDerivation     := false }
-
-/-- MPAs and *good* agree on context-sensitivity and gradability. -/
-theorem mpa_good_share_context_gradability :
-    mpaProfile.contextSensitive = goodProfile.contextSensitive ∧
-    mpaProfile.gradable = goodProfile.gradable := ⟨rfl, rfl⟩
-
-/-- MPAs and *good* diverge on zone of indifference, borderline cases,
-    *barely* compatibility, and emphasis. -/
-theorem mpa_good_diverge :
-    mpaProfile.zoneOfIndifference ≠ goodProfile.zoneOfIndifference ∧
-    mpaProfile.borderlineCases ≠ goodProfile.borderlineCases ∧
-    mpaProfile.combinesBarely ≠ goodProfile.combinesBarely ∧
-    mpaProfile.emphasisInDE ≠ goodProfile.emphasisInDE := by
-  exact ⟨by decide, by decide, by decide, by decide⟩
-
-/-! ### Scale Structure -/
-
-/-- The value scale is lower-bounded at 0 (purpose-thwarting → purpose-serving),
-    open above. Following [wolfsdorf-2019] and [qing-2021]. -/
-def valueScaleBoundedness : Boundedness := .lowerBounded
-
-/-- Interpretive Economy would predict a minEndpoint standard for a
-    lower-bounded scale — but this is wrong for both *good* (which gets
-    a contextual standard) and MPAs (which get a functional standard).
-    This shows IE must be generalized for evaluative predicates. -/
-theorem ie_underpredicts_for_value_scale :
-    valueScaleBoundedness.defaultStandard = .minEndpoint := rfl
-
-/-! ### Standard Types: MPA vs Good vs MinSAA -/
-
-/-- *good* receives a contextual standard despite being on a lower-bounded
-    scale — an exception to Interpretive Economy. The standard is determined
-    by the distribution of objects in the comparison class, as with other
-    relative (Class A) adjectives like *tall*. -/
-def goodStandard : PositiveStandard := .contextual
-
-/-- MPAs receive a functional (necessity) standard — the minimum value
-    required for the object's pursuit to be circumstantially possible. -/
-def mpaStandard : PositiveStandard := .functional
-
-/-- MinSAAs (*wet*, *profitable*) receive a minEndpoint standard — any
-    nonzero degree suffices. -/
-def minsaaStandard : PositiveStandard := .minEndpoint
-
-/-- All three standard types for evaluative predicates on the value scale
-    are distinct. -/
-theorem three_standards_distinct :
-    goodStandard ≠ mpaStandard ∧
-    mpaStandard ≠ minsaaStandard ∧
-    goodStandard ≠ minsaaStandard := by
-  exact ⟨by decide, by decide, by decide⟩
-
-/-- MPAs and *good* both require comparison classes (context-sensitive),
-    unlike MinSAAs. -/
-theorem mpa_good_both_cc_sensitive :
-    mpaStandard.RequiresComparisonClass ∧
-    goodStandard.RequiresComparisonClass ∧
-    ¬ minsaaStandard.RequiresComparisonClass := ⟨trivial, trivial, id⟩
-
-/-! ### MinSAA Rejection ([beltrama-2025] §4) -/
-
-/-- The MinSAA hypothesis: MPAs are minimum-standard absolute adjectives.
-    This is initially plausible — lower-bounded scale, s(MPA) = 0 — but
-    §4.2 shows it makes incorrect predictions. -/
-structure MinSAAHypothesis where
-  /-- *slightly* compatible (MinSAAs: yes; MPAs: no) -/
-  slightlyOk      : Bool
-  /-- Context-sensitive (MinSAAs: no; MPAs: yes) -/
-  contextSensitive : Bool
-  /-- Comparative entails positive form (MinSAAs: yes; MPAs: no) -/
-  compEntailsPos   : Bool
-  /-- Denial cancels all degree (MinSAAs: yes; MPAs: no) -/
-  denialCancels    : Bool
-  deriving Repr, DecidableEq
-
-/-- MinSAA predictions: *slightly* OK, not CC-sensitive, comparative
-    entails positive form, denial cancels all degree. -/
-def minsaaPredictions : MinSAAHypothesis :=
-  { slightlyOk := true, contextSensitive := false
-  , compEntailsPos := true, denialCancels := true }
-
-/-- MPA actual behavior: *slightly* blocked, CC-sensitive, comparative
-    does NOT entail positive form, denial does NOT cancel all degree. -/
-def mpaActual : MinSAAHypothesis :=
-  { slightlyOk := false, contextSensitive := true
-  , compEntailsPos := false, denialCancels := false }
-
-/-- MinSAA predictions diverge from MPA behavior on ALL four diagnostics.
-    This is the core argument of §4.2 for rejecting the MinSAA analysis. -/
-theorem minsaa_hypothesis_rejected :
-    minsaaPredictions ≠ mpaActual := by decide
-
-/-! ### Necessity Standard (Formal Definition) -/
-
-/-- A simplified finite model for the necessity standard.
-
-    The accessibility relation is exclusively **circumstantial**
-    ([beltrama-2025] p. 196): the accessible worlds are those
-    compatible with the norms and circumstances in the current world.
-
-- `W` — possible worlds
-- `μ` — measure function (value of the object in each world)
-- `acc` — circumstantially accessible worlds from the evaluation world
-- `pursued` — whether the object is pursued in a given world
--/
-structure NecStandardModel (W : Type) where
-  μ       : W → Nat          -- μ_value: value of the object
-  acc     : List W            -- Circ(w): circumstantially accessible worlds
-  pursued : W → Bool          -- PURSUED(x): object is pursued
-
-/-- The necessity standard: the maximum degree *d* such that in ALL
-    circumstantially accessible worlds where the object is pursued,
-    its value is at least *d*.
-
-    s(MPA) = Max({d : ∀w' ∈ Circ(w)[PURSUED(x)(w') → μ(x)(w') ≥ d]})
-
-    This returns the minimum value of μ across pursued accessible worlds.
-    If nothing is pursued, the universal is vacuously true for all *d*,
-    so the standard is maximally high (we return `max` of μ over all
-    accessible worlds, defaulting to 0 if `acc` is empty). -/
-def necessityStandard {W : Type} (m : NecStandardModel W) : Nat :=
-  let pursuedWorlds := m.acc.filter m.pursued
-  match pursuedWorlds with
-  | []     => -- Vacuous case: standard is maximally high
-    match m.acc with
-    | []     => 0
-    | w :: ws => ws.foldl (fun a w' => max a (m.μ w')) (m.μ w)
-  | w :: ws => ws.foldl (fun a w' => min a (m.μ w')) (m.μ w)
-
-/-- The positive form: μ_value(x)(w) ≥ s(MPA). -/
-def mpaPositiveForm {W : Type} (m : NecStandardModel W) (actualValue : Nat) : Bool :=
-  actualValue ≥ necessityStandard m
-
-/-! ### Degree Modifier Compatibility -/
-
-/-- Degree modifier compatibility data for MPAs.
-
-[beltrama-2025] §2.2.2, §6.4--6.5:
-- *quite/pretty/somewhat*: OK (moderate degree)
-- *very/extremely/super*: degraded (conflict with middling flavor)
-- *barely*: OK (necessity standard provides crisp boundary)
-- *slightly*: blocked (value scale minimum is 0, but MPA standard ≠ 0) -/
-structure ModifierCompatibility where
-  form          : String
-  quite         : Bool  -- moderate intensifiers
-  veryExtremely : Bool  -- strong intensifiers
-  barely        : Bool  -- proximal modifier
-  slightly      : Bool  -- minimal degree
-  deriving Repr
-
-def decentModifiers : ModifierCompatibility :=
-  { form := "decent", quite := true, veryExtremely := false
-  , barely := true, slightly := false }
-
-def goodModifiers : ModifierCompatibility :=
-  { form := "good", quite := true, veryExtremely := true
-  , barely := false, slightly := false }
-
-/-- MPAs combine with *barely* while *good* doesn't. -/
-theorem mpa_barely_vs_good :
-    decentModifiers.barely = true ∧ goodModifiers.barely = false := ⟨rfl, rfl⟩
-
-/-- Both MPAs and *good* resist *slightly*. -/
-theorem both_resist_slightly :
-    decentModifiers.slightly = false ∧ goodModifiers.slightly = false := ⟨rfl, rfl⟩
-
-/-- MPAs resist strong intensifiers while *good* accepts them. -/
-theorem mpa_resists_strong_intensifiers :
-    decentModifiers.veryExtremely = false ∧
-    goodModifiers.veryExtremely = true := ⟨rfl, rfl⟩
-
-/-! ### Fragment Entry Verification -/
-
-open English.Predicates.Adjectival (decent acceptable adequate good)
-
-/-- All MPA fragment entries use the value dimension. -/
-theorem mpa_entries_value_dimension :
-    decent.dimension = some .value ∧
-    acceptable.dimension = some .value ∧
-    adequate.dimension = some .value := ⟨rfl, rfl, rfl⟩
-
-/-- All MPA fragment entries are the mildly-positive class: an open `.value`
-    scale carrying a functional (necessity) standard via `standardOverride`.
-    Beltrama's necessity standard is the *standard*, not the scale boundedness —
-    so the entries derive an open scale, not a lower-bounded one. -/
-theorem mpa_entries_mildly_positive :
-    decent.adjectiveClass = .mildlyPositive ∧
-    acceptable.adjectiveClass = .mildlyPositive ∧
-    adequate.adjectiveClass = .mildlyPositive := ⟨rfl, rfl, rfl⟩
-
-/-- *good* shares the same (open `.value`) scale structure as MPAs, differing
-    only in standard type (contextual vs functional). -/
-theorem good_same_scale_as_mpas :
-    good.scaleType = decent.scaleType ∧
-    good.dimension = decent.dimension := ⟨rfl, rfl⟩
-
-/-- Despite sharing scale structure, *good* and MPAs receive different
-    standards. IE predicts minEndpoint for both, but *good* overrides to
-    contextual and MPAs override to functional. This division of labor
-    is what makes the system maximally informative. -/
-theorem good_vs_mpa_standard_override :
-    goodStandard ≠ mpaStandard := by decide
-
-/-! ### Middling Inference as Scalar Implicature -/
-
-/-- The middling inference is a scalar implicature, not lexical semantics.
-    Evidence: cancelability, reinforceability, suspension in DE contexts.
-
-    Scale: ⟨decent, good, great, fantastic⟩
-    Using *decent* implicates ¬*good* (speaker would have used *good* if true).
-    This is the standard Horn/Grice reasoning over evaluative scales. -/
-inductive EvaluativeAlternative where
-  | decent | good | great | fantastic
-  deriving DecidableEq, Repr
-
-/-- Evaluative scale ordering: decent < good < great < fantastic. -/
-def EvaluativeAlternative.rank : EvaluativeAlternative → Nat
-  | .decent    => 0
-  | .good      => 1
-  | .great     => 2
-  | .fantastic => 3
-
-/-- The middling inference: using a weaker alternative implicates the
-    negation of all stronger alternatives. -/
-def middlingInference (uttered : EvaluativeAlternative)
-    (alt : EvaluativeAlternative) : Bool :=
-  alt.rank > uttered.rank
-
-/-- Using *decent* generates implicatures against *good*, *great*, *fantastic*. -/
-theorem decent_implicates_not_good :
-    middlingInference .decent .good = true ∧
-    middlingInference .decent .great = true ∧
-    middlingInference .decent .fantastic = true := ⟨rfl, rfl, rfl⟩
-
-/-- Using *good* does NOT generate the middling inference (no stronger
-    alternative is conventionally excluded). -/
-theorem good_no_middling_against_decent :
-    middlingInference .good .decent = false := rfl
-
-/-! ### Non-Vague Behavior: No Zone of Indifference -/
-
-/-- MPAs lack a zone of indifference ([beltrama-2025] §6.3, p. 199--200).
-
-    The necessity standard provides a crisp boundary: an object either
-    meets the minimum value for pursuit (MPA) or falls below it (¬MPA).
-    The *neither MPA nor not-MPA* construction is defective because MPA
-    has existential force (pursuit is possible in some accessible world)
-    while its negation has universal force (no accessible world supports
-    pursuit); combining these yields a contradiction.
-
-    By contrast, *good*/*bad* are lexical contraries with separate
-    distributional thresholds, permitting a gap region where an object
-    fails to "stand out" with respect to either standard. -/
-theorem mpa_no_indifference_zone :
-    mpaProfile.zoneOfIndifference = false ∧
-    goodProfile.zoneOfIndifference = true := ⟨rfl, rfl⟩
-
-/-! ### Adjective Class: MPAs as a Novel Category -/
-
-/-- MPAs don't fit Kennedy's three-way classification. They share
-    context-sensitivity with relative adjectives and crisp judgments
-    with absolute adjectives, forming a genuinely hybrid category. -/
-def decentClass : AdjectiveClass := .mildlyPositive
-
-/-- MPAs are neither relative nor absolute in the Kennedy 2007 sense. -/
-theorem mpa_not_relative :
-    ¬ decentClass.IsRelative := by decide
-
-/-! ### Integration: Evaluative Valence -/
-
-open Features (EvaluativeValence)
-
-/-- MPAs have positive evaluative valence: they denote a favorable
-    (if mild) assessment. This connects to [nouwen-2024]'s
-    evaluative measure semantics. -/
-def mpaValence : EvaluativeValence := .positive
-
-/-- *good* shares positive valence with MPAs. -/
-def goodValence : EvaluativeValence := .positive
-
-/-- Both MPAs and *good* are positively evaluative, distinguishing
-    them from neutral (*usual*) or negative (*terrible*) bases. -/
-theorem mpa_good_same_valence :
-    mpaValence = goodValence := rfl
-
-/-! ### Integration: Head.sufficiency (*enough* parallel) -/
-
-open Degree (Head)
-
-/-- MPAs encode the same necessity component as *enough*
-    ([beltrama-2025] §5.3; [nadathur-2023]): the minimum degree
-    required for the complement/pursuit to be circumstantially possible.
-
-    The parallel: "old enough to drink" ≈ "acceptable (for the purpose)".
-    Both introduce a functional standard via a circumstantial modal base.
-    The key difference: *enough* takes an overt complement clause while
-    MPAs get their purpose from context (action-guidance). -/
-def enoughParallel : Head := .sufficiency
-
-/-! ### Integration: IE Divergence for Evaluative Predicates -/
-
-/-- Interpretive Economy maps lower-bounded → minEndpoint, but on the
-    value scale THREE different standards coexist:
-
-    1. *good*: contextual (distributional, like *tall*)
-    2. MPAs: functional (necessity, like *enough*)
-    3. MinSAAs (*wet*, *profitable*): minEndpoint (as IE predicts)
-
-    This demonstrates that IE must be generalized: the **s** function
-    can assign functional standards when the adjective's lexical semantics
-    introduces practical commitments ([beltrama-2025] §5.4, p. 195). -/
-theorem ie_divergence_on_value_scale :
-    valueScaleBoundedness.defaultStandard = .minEndpoint ∧
-    goodStandard = .contextual ∧
-    mpaStandard = .functional ∧
-    minsaaStandard = .minEndpoint ∧
-    goodStandard ≠ mpaStandard ∧
-    mpaStandard ≠ minsaaStandard := by
-  exact ⟨rfl, rfl, rfl, rfl, by decide, by decide⟩
+variable {W E D : Type*}
+
+section Standard
+
+variable [PartialOrder D] (Acc : W → Set W) (pursued : E → W → Prop) (μ : E → W → D) (x : E)
+  (w : W) (s : D)
+
+/-! ### The necessity standard -/
+
+/-- The values an object takes in the accessible worlds where it is pursued. -/
+def pursuedValues : Set D := μ x '' {w' | w' ∈ Acc w ∧ pursued x w'}
+
+/-- (64): the necessity standard is the greatest degree the object's value reaches in every
+accessible world where it is pursued, the greatest lower bound of `pursuedValues`. -/
+def IsNecessityStandard : Prop := IsGLB (pursuedValues Acc pursued μ x w) s
+
+/-- (65): the positive form at a standard. -/
+def Pos : Prop := s ≤ μ x w
+
+/-- *acceptable*: the object meets a necessity standard. -/
+def Acceptable : Prop := ∃ s, IsNecessityStandard Acc pursued μ x w s ∧ Pos μ x w s
+
+/-- *unacceptable*, the negated form's universal force: no accessible world pursues the
+object. -/
+def Unacceptable : Prop := ∀ w' ∈ Acc w, ¬ pursued x w'
+
+/-- The positive form of a minimum-standard adjective: any degree above the scale minimum. -/
+def PosMin [OrderBot D] : Prop := ⊥ < μ x w
+
+/-- The middling reading: decent, at the standard `s`, and not good, at the standard `t`. -/
+def Middling (t : D) : Prop := Pos μ x w s ∧ ¬ Pos μ x w t
+
+variable {Acc pursued μ x w s}
+
+/-- An object pursued in the world of evaluation meets its own standard. -/
+theorem pos_of_pursued (hs : IsNecessityStandard Acc pursued μ x w s) (hw : w ∈ Acc w)
+    (hp : pursued x w) : Pos μ x w s :=
+  hs.1 ⟨w, ⟨hw, hp⟩, rfl⟩
+
+/-- Existential force: on a scale open above, a standard exists only if the object is pursued
+in some accessible world, since otherwise every degree is a lower bound. -/
+theorem exists_pursued [NoMaxOrder D] (hs : IsNecessityStandard Acc pursued μ x w s) :
+    ∃ w' ∈ Acc w, pursued x w' := by
+  by_contra h
+  have : pursuedValues Acc pursued μ x w = ∅ := by
+    rw [pursuedValues, Set.image_eq_empty, Set.eq_empty_iff_forall_notMem]
+    exact λ w' hw' => h ⟨w', hw'.1, hw'.2⟩
+  rw [IsNecessityStandard, this, isGLB_empty_iff] at hs
+  obtain ⟨t, ht⟩ := exists_gt s
+  exact lt_irrefl s (ht.trans_le (hs t))
+
+/-- Context sensitivity: widening the circumstances, hence the pursued worlds, can only lower
+the standard. -/
+theorem standard_antitone {Acc' : W → Set W} {s' : D}
+    (hs : IsNecessityStandard Acc pursued μ x w s) (hs' : IsNecessityStandard Acc' pursued μ x w s')
+    (h : Acc w ⊆ Acc' w) : s' ≤ s :=
+  hs.2 λ _ hv => by
+    obtain ⟨w', hw', rfl⟩ := hv
+    exact hs'.1 ⟨w', ⟨h hw'.1, hw'.2⟩, rfl⟩
+
+/-! ### Force and the zone of indifference -/
+
+variable (x w) in
+/-- When circumstantial alternatives leave the object's value fixed, *acceptable* says
+exactly that some accessible world pursues it. -/
+theorem acceptable_iff [NoMaxOrder D] (hμ : ∀ w' ∈ Acc w, μ x w' = μ x w) :
+    Acceptable Acc pursued μ x w ↔ ∃ w' ∈ Acc w, pursued x w' := by
+  refine ⟨λ ⟨_, hs, _⟩ => exists_pursued hs, λ ⟨w', hw', hp⟩ => ⟨μ x w, ?_, le_rfl⟩⟩
+  have h : pursuedValues Acc pursued μ x w = {μ x w} :=
+    Set.eq_singleton_iff_unique_mem.2
+      ⟨⟨w', ⟨hw', hp⟩, hμ w' hw'⟩, λ _ ⟨w'', hw'', e⟩ => e ▸ hμ w'' hw''.1⟩
+  rw [IsNecessityStandard, h]
+  exact isGLB_singleton
+
+variable (x w) in
+/-- "Neither acceptable nor unacceptable" is defective: the first conjunct denies that any
+accessible world pursues the object, the second that none does. -/
+theorem neither_defective [NoMaxOrder D] (hμ : ∀ w' ∈ Acc w, μ x w' = μ x w) :
+    ¬ (¬ Acceptable Acc pursued μ x w ∧ ¬ Unacceptable Acc pursued x w) := by
+  rw [acceptable_iff x w hμ]
+  simp [Unacceptable]
+
+/-- *good* and *bad* on [kennedy-2007]'s two standards leave a zone of indifference between
+them, which the necessity standard's single point does not. -/
+theorem good_gap {max : ℕ} (tp : Degree.ThresholdPair max)
+    (h : (tp.neg : Degree.Bounded max) < tp.pos) : ∃ d, Degree.inGapRegion d tp :=
+  ⟨tp.neg, le_rfl, h.le⟩
+
+/-! ### Against the minimum-standard analysis -/
+
+/-- Under a minimum standard the comparative entails the positive form. -/
+theorem comparative_entails_posMin [OrderBot D] {y : E} (h : μ y w < μ x w) : PosMin μ x w :=
+  bot_le.trans_lt h
+
+/-- Under a necessity standard it does not ((51b)): an object can outvalue another and fall
+short of the standard. -/
+theorem comparative_not_entails_pos {y : E} (h : μ y w < μ x w) (hs : μ x w < s) :
+    μ y w < μ x w ∧ ¬ Pos μ x w s :=
+  ⟨h, not_le_of_gt hs⟩
+
+/-- *slightly* diagnoses a standard at the scale minimum; an attained necessity standard lies
+above it whenever every pursued value does. -/
+theorem bot_lt_standard [OrderBot D] (hs : IsLeast (pursuedValues Acc pursued μ x w) s)
+    (h : ∀ v ∈ pursuedValues Acc pursued μ x w, ⊥ < v) : ⊥ < s :=
+  h s hs.1
+
+/-! ### The middling inference -/
+
+/-- With *good*'s standard above the necessity standard, *good* entails *decent*, so
+*decent* implicates *not good*. -/
+theorem pos_of_pos_of_le {t : D} (h : s ≤ t) (ht : Pos μ x w t) : Pos μ x w s := h.trans ht
+
+/-- The implicature is cancelable: meeting the higher standard is consistent with meeting the
+lower one, so *decent, in fact good* is consistent. -/
+theorem middling_cancelable {t : D} (h : s ≤ t) (ht : Pos μ x w t) :
+    Pos μ x w s ∧ Pos μ x w t :=
+  ⟨pos_of_pos_of_le h ht, ht⟩
+
+end Standard
+
+section Linear
+
+variable [LinearOrder D] {μ : E → W → D} {x : E} {w : W} {s : D}
+
+/-- A single crisp point: below the standard the positive form fails outright. -/
+theorem not_pos_iff : ¬ Pos μ x w s ↔ μ x w < s := not_le
+
+end Linear
+
+section Complete
+
+variable [CompleteLattice D] {Acc : W → Set W} {pursued : E → W → Prop} {μ : E → W → D}
+  {x : E} {w : W} {s : D}
+
+/-- The paper's form of (64): on a complete scale the standard is the maximum of the degrees
+below the object's value in every pursued accessible world. -/
+theorem isNecessityStandard_iff :
+    IsNecessityStandard Acc pursued μ x w s ↔
+      s = sSup {d | ∀ w' ∈ Acc w, pursued x w' → d ≤ μ x w'} := by
+  have h : {d | ∀ w' ∈ Acc w, pursued x w' → d ≤ μ x w'} =
+      lowerBounds (pursuedValues Acc pursued μ x w) := by
+    ext d
+    constructor
+    · rintro hd v ⟨w', hw', rfl⟩
+      exact hd w' hw'.1 hw'.2
+    · exact λ hd w' hw' hp => hd ⟨w', ⟨hw', hp⟩, rfl⟩
+  rw [h, sSup_lowerBounds_eq_sInf, IsNecessityStandard]
+  exact ⟨λ hs => hs.sInf_eq.symm, λ hs => hs ▸ isGLB_sInf _⟩
+
+end Complete
 
 end Beltrama2025
