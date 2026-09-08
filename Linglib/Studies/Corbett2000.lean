@@ -13,10 +13,11 @@ import Linglib.Studies.Corbett1998
 import Linglib.Data.Examples.Corbett2000
 
 /-!
-# Corbett's typology of number
+# Corbett (2000): Number
 
-Number has more shape than the singular and plural of English. A language may express a
-noun's meaning outside the number system, the general number of Bayso, with a form of its
+This file formalizes the typology of number of [corbett-2000]. Number has more shape than the
+singular and plural of English. A language may express a noun's meaning outside the number
+system, the general number of Bayso, with a form of its
 own, or of Japanese, where the general form is the singular's; within the system the values
 are chosen in order, the determinate dual and trial dividing the plural before the
 indeterminate paucals and greater plural divide it further, so that the systems from
@@ -76,14 +77,14 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
 
 ## References
 
-* [G. G. Corbett, *Number* (2000)][corbett-2000]
-* [G. G. Corbett, *Gender* (1991)][corbett-1991]
-* [G. G. Corbett, *Morphology and agreement* (1998)][corbett-1998]
-* [G. G. Corbett, *The agreement hierarchy* (1979)][corbett-1979]
-* [B. Comrie, *Polite plurals and predicate agreement* (1975)][comrie-1975]
-* [T. C. Smith-Stark, *The plurality split* (1974)][smith-stark-1974]
-* [J. H. Greenberg, *Some universals of grammar* (1963)][greenberg-1963]
-* [G. G. Corbett, R. J. Hayward, *Gender and number in Bayso* (1987)][corbett-hayward-1987]
+* [corbett-2000]
+* [corbett-1991]
+* [corbett-1998]
+* [corbett-1979]
+* [comrie-1975]
+* [smith-stark-1974]
+* [greenberg-1963]
+* [corbett-hayward-1987]
 -/
 
 namespace Corbett2000
@@ -623,11 +624,6 @@ theorem bayso_pronounConcord_surjective :
 theorem bayso_concord_not_injective :
     ¬ Function.Injective (Function.uncurry Bayso.Gender.concord) := by decide
 
-/-- The default number, where the controller has none, is the singular in language after
-language; Godié and Kiowa use the plural. -/
-def defaultNumber : List (String × Number) :=
-  [("English", .singular), ("Russian", .singular), ("Godié", .plural), ("Kiowa", .plural)]
-
 /-! ### The Agreement Hierarchy (§6.2) -/
 
 /-- British English *committee*: syntactic agreement only in attributive position, either
@@ -881,10 +877,10 @@ theorem hebrew_rows : ∀ row ∈ Examples.all, row.language = "hebr1245" →
       Number.coarsenTo [.singular, .plural] c = t := by
   decide +kernel
 
-/-- The default number of English and Kiowa, (12) and (14) of chapter 6. -/
+/-- The default number, where the controller has none, is the singular in language after
+language, English included, while Godié and Kiowa use the plural: (12) and (14) of chapter 6. -/
 theorem default_rows : ∀ row ∈ Examples.all, ∀ d ∈ row.parse? "default" numberNames,
-    ∀ l ∈ row.parse? "language" [("stan1293", "English"), ("kiow1266", "Kiowa")],
-      (l, d) ∈ defaultNumber := by
+    (row.language = "stan1293" → d = .singular) ∧ (row.language = "kiow1266" → d = .plural) := by
   decide +kernel
 
 /-- Bayso, (1) to (4) of chapter 2 and (4) to (11) of chapter 6: the noun's form in each
