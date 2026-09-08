@@ -1,0 +1,196 @@
+[
+  {
+    "id": "bhatttakahashi2011_ex11a",
+    "source": {"bibkey": "bhatt-takahashi-2011", "paperLabel": "(11a)"},
+    "language": "stan1293",
+    "primaryText": "More people introduced him_i to Mary than to John_i's mother.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "More people introduced him to Mary than to John's mother.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "binding"],
+      ["pron_c_commands_associate", "yes"]
+    ],
+    "comment": "The pronoun c-commands the associate and cannot corefer with an R-expression inside the standard; control: More people introduced John_i to Mary than to his_i mother."
+  },
+  {
+    "id": "bhatttakahashi2011_ex11b",
+    "source": {"bibkey": "bhatt-takahashi-2011", "paperLabel": "(11b)"},
+    "language": "stan1293",
+    "primaryText": "Mary introduced him_i to more people than John_i's mother.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary introduced him to more people than John's mother.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "binding"],
+      ["pron_c_commands_associate", "no"]
+    ],
+    "comment": "The pronoun does not c-command the associate; coreference into the standard is possible."
+  },
+  {
+    "id": "bhatttakahashi2011_ex12a",
+    "source": {"bibkey": "bhatt-takahashi-2011", "paperLabel": "(12a)"},
+    "language": "stan1293",
+    "primaryText": "More people talked to him_i about Sally than about Peter_i's sister.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "More people talked to him about Sally than about Peter's sister.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "binding"],
+      ["pron_c_commands_associate", "yes"]
+    ],
+    "comment": "Control: More people talked to Peter_i about Sally than about his_i sister."
+  },
+  {
+    "id": "bhatttakahashi2011_ex12b",
+    "source": {"bibkey": "bhatt-takahashi-2011", "paperLabel": "(12b)"},
+    "language": "stan1293",
+    "primaryText": "More people talked to Sally about him_i than to Peter_i's sister.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "More people talked to Sally about him than to Peter's sister.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "binding"],
+      ["pron_c_commands_associate", "no"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "bhatttakahashi2011_ex13a",
+    "source": {"bibkey": "bhatt-takahashi-2011", "paperLabel": "(13a)"},
+    "language": "stan1293",
+    "primaryText": "More people expect him_i to overtake Sally than Peter_i's sister.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "More people expect him to overtake Sally than Peter's sister.",
+    "context": "Peter, Peter's sister, and Sally are taking part in a race; people are betting on their prospects.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "binding"],
+      ["pron_c_commands_associate", "yes"]
+    ],
+    "comment": "Control: More people expect Peter_i to overtake Sally than his_i sister."
+  },
+  {
+    "id": "bhatttakahashi2011_ex13b",
+    "source": {"bibkey": "bhatt-takahashi-2011", "paperLabel": "(13b)"},
+    "language": "stan1293",
+    "primaryText": "More people expect Sally to overtake him_i than Peter_i's sister.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "More people expect Sally to overtake him than Peter's sister.",
+    "context": "Peter, Peter's sister, and Sally are taking part in a race; people are betting on their prospects.",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "binding"],
+      ["pron_c_commands_associate", "no"]
+    ],
+    "comment": "Marginal for some speakers (fn. 5), in the coreference-licit direction."
+  },
+  {
+    "id": "bhatttakahashi2011_ex35",
+    "source": {"bibkey": "bhatt-takahashi-2011", "paperLabel": "(35)"},
+    "language": "hind1269",
+    "primaryText": "Atif-ne Ravi-kii behen-kii foto-se us-ko Mohan-kii behen-kii foto zyaadaa baar dikhaa-ii.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Atif-ne", "Atif-ERG"], ["Ravi-kii", "Ravi-GEN"], ["behen-kii", "sister-GEN"],
+      ["foto-se", "picture-than"], ["us-ko", "he-DAT"], ["Mohan-kii", "Mohan-GEN"],
+      ["behen-kii", "sister-GEN"], ["foto", "picture"], ["zyaadaa", "more"], ["baar", "times"],
+      ["dikhaa-ii", "show-PFV.F"]
+    ],
+    "translation": "Atif showed Mohan's sister's picture to him more times than Ravi's sister's picture.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "binding"],
+      ["pron_c_commands_associate", "yes"]
+    ],
+    "comment": "The pronoun follows the standard and precedes the associate, so it c-commands the associate, yet corefers with the R-expression inside the standard: the standard is an external PP.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "bhatttakahashi2011_ex43a",
+    "source": {"bibkey": "bhatt-takahashi-2011", "paperLabel": "(43a)"},
+    "language": "stan1293",
+    "primaryText": "Craige assigned every first year student more papers than every second year student.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Craige assigned every first year student more papers than every second year student.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "scope"],
+      ["qp_base_c_commands_degree_trace", "yes"],
+      ["than_internal_scope", "unavailable"]
+    ],
+    "comment": "The quantifier's base position c-commands the than-phrase-internal degree trace, so it must scope out."
+  },
+  {
+    "id": "bhatttakahashi2011_ex43b",
+    "source": {"bibkey": "bhatt-takahashi-2011", "paperLabel": "(43b)"},
+    "language": "stan1293",
+    "primaryText": "Craige assigned more students every paper by Hellan than every paper by Klein.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Craige assigned more students every paper by Hellan than every paper by Klein.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "scope"],
+      ["qp_base_c_commands_degree_trace", "no"],
+      ["than_internal_scope", "available"]
+    ],
+    "comment": "The base position does not c-command the degree trace, so than-phrase-internal scope is possible."
+  },
+  {
+    "id": "bhatttakahashi2011_ex40",
+    "source": {"bibkey": "bhatt-takahashi-2011", "paperLabel": "(40)"},
+    "language": "hind1269",
+    "primaryText": "har syntax paper har semantics paper-se zyaadaa logõ-ne par.h-aa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["har", "every"], ["syntax", "syntax"], ["paper", "paper"], ["har", "every"],
+      ["semantics", "semantics"], ["paper-se", "paper-than"], ["zyaadaa", "more"],
+      ["logõ-ne", "people-ERG"], ["par.h-aa", "read-PFV"]
+    ],
+    "translation": "More people read every syntax paper than every semantics paper.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "scope"],
+      ["qp_base_c_commands_degree_trace", "no"],
+      ["than_internal_scope", "unavailable"]
+    ],
+    "comment": "Only the external scope reading, every > -er, is available; the than-phrase-internal reading needs the clausal comparative (41).",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
