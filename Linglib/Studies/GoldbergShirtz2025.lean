@@ -485,13 +485,6 @@ minimal contrast: same zero-level position, word filler. -/
 theorem pal_form_phrase_in_word_slot :
     ∃ s ∈ palConstruction.form, s.IsPhraseInWordSlot := by decide
 
--- Cross-framework note: this configuration is exactly the cell
--- lexicalist incorporation accounts ban — see
--- `Benz2025.phraseInWordSlot_incorporation_banned` (hosted there because
--- the ban is that file's apparatus; the two 2025 sources are
--- contemporaneous and neither cites the other). CxG licenses the cell via
--- the lemma-like construal (`pal_load_bearing` below).
-
 /-! ### Attested distribution
 
 PALs prototypically modify nouns but are attested as head Nouns,
