@@ -1,3 +1,4 @@
+import Linglib.Core.Data.Setoid.Basic
 import Linglib.Morphology.Paradigm.Basic
 import Mathlib.Data.Setoid.Partition
 import Mathlib.Data.Set.Subsingleton
@@ -54,6 +55,14 @@ syncretic iff `p` assigns them the same form. Exactly the kernel setoid
 `Setoid.ker p`; its equivalence classes are the paradigm's syncretism
 patterns. -/
 abbrev syncretism (p : Cell → F) : Setoid Cell := Setoid.ker p
+
+variable {G : Type*}
+
+/-- Two realization maps have the same syncretism pattern iff they identify
+the same pairs of cells. -/
+theorem syncretism_eq_iff {p : Cell → F} {q : Cell → G} :
+    syncretism p = syncretism q ↔ ∀ a b, p a = p b ↔ q a = q b := by
+  simp only [syncretism, Setoid.ext_iff, Setoid.ker_def]
 
 /-- The syncretism class of a cell `a`: every cell realized as `a` is. -/
 def syncretismClass (p : Cell → F) (a : Cell) : Set Cell := {x | p x = p a}

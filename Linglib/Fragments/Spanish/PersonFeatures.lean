@@ -2,9 +2,9 @@ import Linglib.Features.Person.Decomposition
 
 /-!
 # Person Feature Decomposition for Spanish Clitics
-[cysouw-2009] [munoz-perez-2026]
+[cysouw-2003] [munoz-perez-2026]
 
-Bridges [cysouw-2009]'s `Category` to the person feature
+Bridges [cysouw-2003]'s `Category` to the person feature
 decomposition used in Muñoz [munoz-perez-2026]: [±PART], [±AUTHOR], [±SING].
 
 Fission (the postsyntactic operation producing stylistic applicatives)

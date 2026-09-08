@@ -701,7 +701,7 @@ import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Capabilities
 import Linglib.Features.Case.Grammaticalization
 import Linglib.Features.Case.Source
-import Linglib.Features.Clusivity
+import Linglib.Features.Person.Clusivity
 import Linglib.Features.ContainmentPair
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Deixis
@@ -2097,7 +2097,7 @@ import Linglib.Studies.Cruse1973
 import Linglib.Studies.Cumming2026
 import Linglib.Studies.Cummins2015
 import Linglib.Studies.CumminsFranke2021
-import Linglib.Studies.Cysouw2009
+import Linglib.Studies.Cysouw2003
 import Linglib.Studies.DAmbrosioHedden2024
 import Linglib.Studies.DaleReiter1995
 import Linglib.Studies.DalrympleHaug2024
@@ -3013,3 +3013,4 @@ import Linglib.Data.Examples.Creissels2024
 import Linglib.Data.Examples.Cresswell1976
 import Linglib.Data.Examples.Cruse1973
 import Linglib.Data.Examples.Cumming2026
+import Linglib.Data.Examples.Cysouw2003

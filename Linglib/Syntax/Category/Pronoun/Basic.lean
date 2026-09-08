@@ -4,7 +4,7 @@ import Linglib.Features.Case.Basic
 import Linglib.Features.Register
 import Linglib.Features.Prominence
 import Linglib.Features.Gender.Basic
-import Linglib.Features.Clusivity
+import Linglib.Features.Person.Clusivity
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Person.Decomposition
 import Linglib.Morphology.Word.Basic
@@ -114,7 +114,7 @@ structure Pronoun where
   /-- Grammatical person — the canonical analytical inventory (root
       `Person`). Clusivity is carried as a person value: Tagalog *tayo* =
       `firstInclusive`, *kami* = `firstExclusive`; English *we* = plain
-      `first` ([cysouw-2009]). -/
+      `first` ([cysouw-2003]). -/
   person : Option Person := none
   /-- Grammatical number — the canonical analytical inventory (root
       `Number`); UD realization via `Number.toUD` (partial: the
@@ -209,9 +209,9 @@ def toWord (p : Pronoun) : Word :=
                   pronType := if p.bindingClass == some .reciprocal then some .Rcp
                               else p.pronType } }
 
-/-! ### Derived person category and well-formedness ([cysouw-2009]) -/
+/-! ### Derived person category and well-formedness ([cysouw-2003]) -/
 
-/-- The [cysouw-2009] `Category` this pronoun's person + number realizes,
+/-- The [cysouw-2003] `Category` this pronoun's person + number realizes,
     when fully specified — the neutral typological view of its
     person-reference, *derived* (not stored). `none` when person/number is
     underspecified, or for a clusivity-unmarked first-person plural (plain
@@ -224,7 +224,7 @@ def category (p : Pronoun) : Option Person.Category :=
 
 /-- Well-formedness of a pronoun's φ-features: clusivity is borne only by a
     first-person non-singular (dual/plural) form — the inclusive/exclusive split
-    of the 1st-person plural/dual ([cysouw-2009]). This is the invariant a
+    of the 1st-person plural/dual ([cysouw-2003]). This is the invariant a
     person-value type tower would have enforced, carried as a *predicate* (the
     mathlib way) so illegal states are catchable without fragmenting the type. -/
 def WellFormed (p : Pronoun) : Prop :=

@@ -1,6 +1,6 @@
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Pronoun.WALS
-import Linglib.Features.Clusivity
+import Linglib.Features.Person.Clusivity
 import Linglib.Features.Person.Decomposition
 
 /-!
@@ -30,7 +30,7 @@ NOMINATIVE / GENITIVE / DATIVE, explicitly rejecting the older
 
 ## Clusivity (system-level)
 
-Tagalog instantiates Cysouw's *minimal-augmented* type ([cysouw-2009]):
+Tagalog instantiates Cysouw's *minimal-augmented* type ([cysouw-2003]):
 the inclusive splits into a minimal 1du.in form (1+2 only, "we two") and
 an augmented *tayo* (1+2+others — speaker + addressee + additional
 referents, of any number; [schachter-otanes-1972] p. 89 glosses it
@@ -57,14 +57,14 @@ collapses to plain inclExcl.
 
 namespace Tagalog
 
-/-- Tagalog clusivity system per [cysouw-2009]: minimal-augmented,
+/-- Tagalog clusivity system per [cysouw-2003]: minimal-augmented,
     with the historical 1-dual-inclusive *kata*
     ([schachter-otanes-1972] p. 88) alongside the augmented-inclusive
     *tayo* and the exclusive *kami*. Modern Manila Tagalog has largely
     lost the dual; this field reflects the textbook paradigm, not
     colloquial usage. Refines the binary WALS Ch 39 value
     `Pronoun.inclusiveExclusive "tgl"` (derived from `Data.WALS`). -/
-def clusivitySystem : Features.Clusivity.System := .minimalAugmented
+def clusivity : Person.Clusivity := .minimalAugmented
 
 -- ============================================================================
 -- Pronoun paradigm (person + number + clusivity, three case series)
@@ -73,7 +73,7 @@ def clusivitySystem : Features.Clusivity.System := .minimalAugmented
 /-! The independent-pronoun paradigm per [schachter-otanes-1972] Chart 7
     (p. 88): each cell is a `PersonalPronoun` carrying person, number, and
     clusivity, in three case series — *ang* (NOM), *ng* (GEN), *sa* (DAT). The
-    [cysouw-2009] `category` is *derived* from those features
+    [cysouw-2003] `category` is *derived* from those features
     (`Pronoun.category`), not stored. The minimal-augmented split is the dual
     inclusive *kata* (1+2) vs the plural inclusive *tayo* (1+2+others), with the
     exclusive *kami* (1+others). The *kitá* form [himmelmann-2005-tagalog]
@@ -121,11 +121,11 @@ def pronouns : List PersonalPronoun :=
    kata, nita, kanita, tayo, natin, atin, kami, namin, amin,
    kayo, ninyo, inyo, sila, nila, kanila]
 
-/-- The *ang* (nominative) series, one form per [cysouw-2009] category in
+/-- The *ang* (nominative) series, one form per [cysouw-2003] category in
     canonical order. -/
 def angSeries : List PersonalPronoun := [ako, ikaw, siya, kata, tayo, kami, kayo, sila]
 
-/-- The *ang* series realizes exactly [cysouw-2009]'s eight person
+/-- The *ang* series realizes exactly [cysouw-2003]'s eight person
     categories — *derived* from each form's person + number + clusivity, not
     stored as a tag. -/
 theorem angSeries_categories_match :
@@ -138,7 +138,7 @@ theorem incl_excl_distinct :
 
 /-- The minimal-augmented property: a dual inclusive *kata* (1+2) alongside the
     plural inclusive *tayo* — what makes Tagalog minimal-augmented rather than
-    plain inclusive/exclusive ([cysouw-2009]). -/
+    plain inclusive/exclusive ([cysouw-2003]). -/
 theorem minimal_augmented :
     kata.number = some .dual ∧ kata.person = some .firstInclusive ∧
     tayo.number = some .plural ∧ tayo.person = some .firstInclusive := ⟨rfl, rfl, rfl, rfl⟩
@@ -146,9 +146,9 @@ theorem minimal_augmented :
 /-- Cross-substrate consistency: the inventory contains a minimal-inclusive
     (dual inclusive) form iff the language commits to the minimal-augmented
     clusivity system. -/
-theorem clusivity_system_consistent :
-    pronouns.any (fun p => decide (p.category = some .minIncl)) =
-      clusivitySystem.hasMinimalAugmented := by decide
+theorem clusivity_consistent :
+    (∃ p ∈ pronouns, p.category = some .minIncl) ↔ clusivity.toPattern.SplitInclusive := by
+  decide
 
 /-- Every Tagalog pronoun is well-formed: clusivity is borne only by the
     first-person dual/plural forms (`Pronoun.WellFormed`). -/
@@ -160,6 +160,6 @@ theorem all_wellFormed : pronouns.all (fun p => decide p.WellFormed) = true := b
     between WALS and the clusivity commitment. -/
 theorem wals_clusivity_consistent :
     Pronoun.inclusiveExclusive "tgl" =
-      some (Pronoun.InclusiveExclusive.fromClusivity clusivitySystem) := by decide
+      some (Pronoun.InclusiveExclusive.fromClusivity clusivity) := by decide
 
 end Tagalog
