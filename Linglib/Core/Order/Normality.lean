@@ -214,29 +214,5 @@ theorem refine_total_connected (φ : W → Prop) :
     · exact Or.inr (refine_le.mpr ⟨trivial, fun h => absurd h hφw⟩)
     · exact Or.inl (refine_le.mpr ⟨trivial, fun h => absurd h hφv⟩)
 
-/-! ### Darwiche-Pearl representation conditions
-
-[darwiche-pearl-1997]: conditions on how a total preorder may change under
-revision by `μ`. `prior`/`post` are the orderings before/after revision. -/
-
-/-- CR1: the ordering among μ-worlds is preserved. -/
-@[reducible] def satisfies_CR1 (prior post : Preorder W) (μ : W → Bool) : Prop :=
-  ∀ w v, μ w = true → μ v = true → (prior.le w v ↔ post.le w v)
-
-/-- CR2: the ordering among ¬μ-worlds is preserved. -/
-@[reducible] def satisfies_CR2 (prior post : Preorder W) (μ : W → Bool) : Prop :=
-  ∀ w v, μ w = false → μ v = false → (prior.le w v ↔ post.le w v)
-
-/-- CR3: a μ-world strictly below a ¬μ-world stays strictly below. The strict
-    order is spelled `le … ∧ ¬ le …` (definitionally `<`) so the relation is
-    decidable on finite world sets. -/
-@[reducible] def satisfies_CR3 (prior post : Preorder W) (μ : W → Bool) : Prop :=
-  ∀ w v, μ w = true → μ v = false →
-    (prior.le w v ∧ ¬ prior.le v w) → (post.le w v ∧ ¬ post.le v w)
-
-/-- CR4: a μ-world ≤ a ¬μ-world stays ≤. -/
-@[reducible] def satisfies_CR4 (prior post : Preorder W) (μ : W → Bool) : Prop :=
-  ∀ w v, μ w = true → μ v = false → prior.le w v → post.le w v
-
 end Normality
 end Core.Order
