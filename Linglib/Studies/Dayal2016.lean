@@ -1,11 +1,9 @@
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Order.Atoms
-import Mathlib.Tactic.DeriveFintype
 import Linglib.Data.Examples.Dayal2016
 import Linglib.Features.Number.Basic
 import Linglib.Logic.Modal.Defs
 import Linglib.Semantics.Questions.Exhaustivity
-import Linglib.Semantics.Questions.Hamblin
 
 /-!
 # Dayal, *Questions* (2016)
