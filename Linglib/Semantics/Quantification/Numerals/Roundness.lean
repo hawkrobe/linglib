@@ -1,19 +1,18 @@
-import Mathlib.Data.Nat.Basic
+import Mathlib.Data.Nat.Log
 
 /-!
 # Graded Numeral Roundness (k-ness Model)
-[krifka-2007] [sigurd-1988] [woodin-etal-2023] [jansen-pollmann-2001] [cummins-2015]
 
 Framework-agnostic infrastructure for graded numeral roundness,
 following [sigurd-1988], [jansen-pollmann-2001], and [woodin-etal-2023].
 
 A number n has **k-ness** if it lies in [jansen-pollmann-2001]'s set
-[k × (1–9 × 10ⁿ)] (their p. 198): n = m × k × 10^b with 1 ≤ m ≤ 9 —
-so 10-ness is the k = 1 family (divisors 10, 100, …), per their own
-example "70 has only 10-ness". Their original allows b ≥ 0; following
-[woodin-etal-2023] (fn. 3) the search starts at b ≥ 1, which drops the
-single digits from 10-ness and 15, 45, … from 5-ness (cf.
-`Studies/JansenPollmann2001.lean` for the original and the divergence).
+k × (1–9 × 10ⁿ): n = m × k × 10^b with 1 ≤ m ≤ 9 — so 10-ness is the
+k = 1 family, per their own example "70 has only 10-ness". The roundness
+score follows [woodin-etal-2023] in requiring b ≥ 1, which drops the
+single digits from 10-ness and 15, 45, … from 5-ness; since k-ness with
+b ≥ 1 is 10k-ness, one predicate serves both (cf.
+`Studies/JansenPollmann2001.lean` for the divergence).
 
 The 6 properties, ordered by strength as frequency predictors in
 [woodin-etal-2023]'s negative binomial regression (strongest first):
@@ -23,40 +22,59 @@ the 2-ness and multiple-of-10 credible intervals overlap.
 
 ## Main definitions
 
-- `HasKness`, `Has2_5ness`: the k-ness properties as decidable predicates
+- `HasKness`: the k-ness properties as one decidable predicate;
+  `hasKness_ten_mul_iff` is the positive-exponent reading
 - `roundnessScore`: count of the six properties that hold (0–6)
 - `RoundnessGrade`, `roundnessGrade`: the score binned into 4 levels
 - `contextualRoundnessScore`, `roundnessInContext`: k-ness relative to a
   non-standard base (dozens, minutes)
+
+## References
+
+* [C. J. M. Jansen, M. M. W. Pollmann, *On round numbers: pragmatic aspects of numerical
+  expressions* (2001)][jansen-pollmann-2001]
+* [B. Sigurd, *Round numbers* (1988)][sigurd-1988]
+* [G. Woodin, B. Winter, J. Littlemore, M. Perlman, J. Grieve, *Large-scale patterns of
+  number use in spoken and written English* (2023)][woodin-etal-2023]
+* [M. Krifka, *Approximate interpretation of number words* (2007)][krifka-2007]
+* [C. Cummins, *Constraints on numerical expressions* (2015)][cummins-2015]
 -/
 
 namespace Numerals.Roundness
 
-/-! ### k-ness primitives -/
+/-! ### k-ness -/
 
-/-- `n` has integer k-ness: `n = m × k × 10^b` for some `b ≥ 1` and
-`1 ≤ m ≤ 9` ([jansen-pollmann-2001]). The witness search is bounded at
-`b ≤ 10`, valid for `n < 10¹¹`. -/
-def HasKness (n k : ℕ) : Prop :=
-  ∃ b < 11, 1 ≤ b ∧ ∃ m < 10, 1 ≤ m ∧ n = m * k * 10 ^ b
+/-- `n` has `k`-ness: `n = m × k × 10^b` for some digit `1 ≤ m ≤ 9` and exponent `b`, that
+is `n ∈ k × {1, …, 9} × 10^ℕ` ([jansen-pollmann-2001]). Their 10-ness is `HasKness 1`
+(70 has only 10-ness), 2½-ness of `n` is 5-ness of `2n`, and restricting the exponent to
+`b ≥ 1` is `k`-ness with `k` scaled by ten. -/
+def HasKness (k n : ℕ) : Prop := ∃ b m, 1 ≤ m ∧ m ≤ 9 ∧ n = m * k * 10 ^ b
 
-instance (n k : ℕ) : Decidable (HasKness n k) :=
-  inferInstanceAs (Decidable (∃ b < 11, 1 ≤ b ∧ ∃ m < 10, 1 ≤ m ∧ n = m * k * 10 ^ b))
+/-- The exponent of a `k`-ness witness is at most `log₁₀ n`, so `k`-ness is decidable. -/
+theorem hasKness_iff_exists_le_log {k n : ℕ} :
+    HasKness k n ↔ ∃ b ≤ Nat.log 10 n, ∃ m < 10, 1 ≤ m ∧ n = m * k * 10 ^ b := by
+  constructor
+  · rintro ⟨b, m, hm, hm9, rfl⟩
+    obtain rfl | hk := Nat.eq_zero_or_pos k
+    · exact ⟨0, Nat.zero_le _, m, by omega, hm, by simp⟩
+    refine ⟨b, Nat.le_log_of_pow_le (by decide) ?_, m, by omega, hm, rfl⟩
+    exact Nat.le_mul_of_pos_left _ (Nat.mul_pos hm hk)
+  · rintro ⟨b, -, m, hm, hm1, rfl⟩
+    exact ⟨b, m, hm1, by omega, rfl⟩
 
-/-- `n` has 2.5-ness: `n = m × 2.5 × 10^b` for `b ≥ 1`, `1 ≤ m ≤ 9` —
-equivalently `2n = m × 5 × 10^b`. Search bounded as in `HasKness`. -/
-def Has2_5ness (n : ℕ) : Prop :=
-  ∃ b < 11, 1 ≤ b ∧ ∃ m < 10, 1 ≤ m ∧ 2 * n = m * 5 * 10 ^ b
+instance (k n : ℕ) : Decidable (HasKness k n) :=
+  decidable_of_iff _ hasKness_iff_exists_le_log.symm
 
-instance (n : ℕ) : Decidable (Has2_5ness n) :=
-  inferInstanceAs (Decidable (∃ b < 11, 1 ≤ b ∧ ∃ m < 10, 1 ≤ m ∧ 2 * n = m * 5 * 10 ^ b))
+/-- `k`-ness forces divisibility by `k`. -/
+theorem HasKness.dvd {k n : ℕ} (h : HasKness k n) : k ∣ n := by
+  obtain ⟨b, m, -, -, rfl⟩ := h
+  exact Nat.dvd_mul_right_of_dvd (Nat.dvd_mul_left k m) _
 
-/-- Any k-ness forces divisibility by 10: the witness exponent is at least 1. -/
-theorem HasKness.ten_dvd {n k : ℕ} (h : HasKness n k) : 10 ∣ n := by
-  obtain ⟨b, -, hb, m, -, -, rfl⟩ := h
-  obtain ⟨b', rfl⟩ := Nat.exists_eq_add_of_le hb
-  exact ⟨m * k * 10 ^ b', by simp [Nat.pow_add, Nat.pow_one, Nat.mul_comm,
-    Nat.mul_assoc, Nat.mul_left_comm]⟩
+/-- `10k`-ness is `k`-ness with a positive exponent. -/
+theorem hasKness_ten_mul_iff {k n : ℕ} :
+    HasKness (10 * k) n ↔ ∃ b m, 1 ≤ m ∧ m ≤ 9 ∧ n = m * k * 10 ^ (b + 1) := by
+  simp only [HasKness, Nat.pow_succ]
+  constructor <;> rintro ⟨b, m, h1, h9, rfl⟩ <;> exact ⟨b, m, h1, h9, by ac_rfl⟩
 
 /-! ### Roundness score
 
@@ -65,11 +83,13 @@ The six graded roundness properties of [sigurd-1988] and
 5-ness, 10-ness — counted equally. The count predicts numeral frequency
 and pragmatic behavior ([woodin-etal-2023]). -/
 
-/-- Count of true roundness properties (0–6). Higher = rounder. -/
+/-- Count of true roundness properties (0–6). Higher = rounder. The k-ness properties
+are taken with a positive exponent, following [woodin-etal-2023], so 2-, 2½-, 5- and
+10-ness are `HasKness 20`, `HasKness 25`, `HasKness 50` and `HasKness 10`. -/
 def roundnessScore (n : ℕ) : ℕ :=
   (if 5 ∣ n then 1 else 0) + (if 10 ∣ n then 1 else 0) +
-  (if HasKness n 2 then 1 else 0) + (if Has2_5ness n then 1 else 0) +
-  (if HasKness n 5 then 1 else 0) + (if HasKness n 1 then 1 else 0)
+  (if HasKness 20 n then 1 else 0) + (if HasKness 25 n then 1 else 0) +
+  (if HasKness 50 n then 1 else 0) + (if HasKness 10 n then 1 else 0)
 
 /-- Maximum possible roundness score. -/
 def maxRoundnessScore : ℕ := 6

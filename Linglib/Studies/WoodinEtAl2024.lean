@@ -87,10 +87,10 @@ this weights each property by its empirical frequency effect.
 def weightedRoundnessScore (n : ℕ) : ℚ :=
   (if 5 ∣ n then β_mult5.β else 0) +
   (if 10 ∣ n then β_mult10.β else 0) +
-  (if HasKness n 2 then β_2ness.β else 0) +
-  (if Has2_5ness n then β_2_5ness.β else 0) +
-  (if HasKness n 5 then β_5ness.β else 0) +
-  (if HasKness n 10 then β_tenness.β else 0)
+  (if HasKness 20 n then β_2ness.β else 0) +
+  (if HasKness 25 n then β_2_5ness.β else 0) +
+  (if HasKness 50 n then β_5ness.β else 0) +
+  (if HasKness 10 n then β_tenness.β else 0)
 
 -- Weighted score verification
 #guard weightedRoundnessScore 7 = 0
@@ -98,21 +98,18 @@ def weightedRoundnessScore (n : ℕ) : ℚ :=
 #guard weightedRoundnessScore 50 > weightedRoundnessScore 110
 
 theorem weighted_100_gt_50 :
-    weightedRoundnessScore 100 > weightedRoundnessScore 50 := by
-  simp +decide [weightedRoundnessScore, β_tenness, β_2_5ness, β_5ness, β_2ness, β_mult10, β_mult5]; norm_num
+    weightedRoundnessScore 100 > weightedRoundnessScore 50 := by decide +kernel
 
 theorem weighted_50_gt_110 :
-    weightedRoundnessScore 50 > weightedRoundnessScore 110 := by
-  simp +decide [weightedRoundnessScore, β_2_5ness, β_5ness, β_mult10, β_mult5]; norm_num
+    weightedRoundnessScore 50 > weightedRoundnessScore 110 := by decide +kernel
 
 theorem weighted_7_eq_zero :
-    weightedRoundnessScore 7 = 0 := by simp +decide [weightedRoundnessScore]
+    weightedRoundnessScore 7 = 0 := by decide +kernel
 
 /-- `weightedRoundnessScore 50 > 0`: 50 has multipleOf5, multipleOf10,
     2.5-ness, 5-ness, and 10-ness (50 = 5 × 10¹), so its weighted score is
     the strictly positive sum of those β coefficients. -/
-theorem weighted_50_pos : weightedRoundnessScore 50 > 0 := by
-  simp +decide [weightedRoundnessScore, β_2_5ness, β_5ness, β_mult10, β_mult5]; norm_num
+theorem weighted_50_pos : weightedRoundnessScore 50 > 0 := by decide +kernel
 
 theorem weighted_50_gt_7 :
     weightedRoundnessScore 50 > weightedRoundnessScore 7 := by
