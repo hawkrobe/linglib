@@ -1,0 +1,448 @@
+[
+  {
+    "id": "dekier2021_english",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "stan1293",
+    "primaryText": "some- / some- / some-",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "English"],
+      ["nonSpecific", "some-"],
+      ["specificUnknown", "some-"],
+      ["specificKnown", "some-"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_polish",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "poli1260",
+    "primaryText": "-ś / -ś / -ś",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Polish"],
+      ["nonSpecific", "-ś"],
+      ["specificUnknown", "-ś"],
+      ["specificKnown", "-ś"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_japanese",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "nucl1643",
+    "primaryText": "-ka / -ka / -ka",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Japanese"],
+      ["nonSpecific", "-ka"],
+      ["specificUnknown", "-ka"],
+      ["specificKnown", "-ka"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_korean",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "kore1280",
+    "primaryText": "-nka / -nka / -nka",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Korean"],
+      ["nonSpecific", "-nka"],
+      ["specificUnknown", "-nka"],
+      ["specificKnown", "-nka"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_lezgian",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "lezg1247",
+    "primaryText": "-jat'ani / -jat'ani / -jat'ani",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Lezgian"],
+      ["nonSpecific", "-jat'ani"],
+      ["specificUnknown", "-jat'ani"],
+      ["specificKnown", "-jat'ani"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_romanian",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "roma1327",
+    "primaryText": "-va / -va / -va",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Romanian"],
+      ["nonSpecific", "-va"],
+      ["specificUnknown", "-va"],
+      ["specificKnown", "-va"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_bulgarian",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "bulg1262",
+    "primaryText": "nja- / nja- / nja-",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Bulgarian"],
+      ["nonSpecific", "nja-"],
+      ["specificUnknown", "nja-"],
+      ["specificKnown", "nja-"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_serbocroatian",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "sout1528",
+    "primaryText": "ne- / ne- / ne-",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Serbo-Croatian"],
+      ["nonSpecific", "ne-"],
+      ["specificUnknown", "ne-"],
+      ["specificKnown", "ne-"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_czech",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "czec1258",
+    "primaryText": "ně- / ně- / ně-",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Czech"],
+      ["nonSpecific", "ně-"],
+      ["specificUnknown", "ně-"],
+      ["specificKnown", "ně-"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_slovak",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "slov1269",
+    "primaryText": "nie- / nie- / nie-",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Slovak"],
+      ["nonSpecific", "nie-"],
+      ["specificUnknown", "nie-"],
+      ["specificKnown", "nie-"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_maltese",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "malt1254",
+    "primaryText": "xi- / xi- / xi-",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Maltese"],
+      ["nonSpecific", "xi-"],
+      ["specificUnknown", "xi-"],
+      ["specificKnown", "xi-"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_hungarian",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "hung1274",
+    "primaryText": "vala- / vala- / vala-",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Hungarian"],
+      ["nonSpecific", "vala-"],
+      ["specificUnknown", "vala-"],
+      ["specificKnown", "vala-"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_hebrew",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "hebr1245",
+    "primaryText": "-šehu / -šehu / -šehu",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Hebrew"],
+      ["nonSpecific", "-šehu"],
+      ["specificUnknown", "-šehu"],
+      ["specificKnown", "-šehu"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_turkish",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "nucl1301",
+    "primaryText": "bir- / bir- / bir-",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Turkish"],
+      ["nonSpecific", "bir-"],
+      ["specificUnknown", "bir-"],
+      ["specificKnown", "bir-"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_latvian",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "latv1249",
+    "primaryText": "kaut- / kaut- / kaut-",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Latvian"],
+      ["nonSpecific", "kaut-"],
+      ["specificUnknown", "kaut-"],
+      ["specificKnown", "kaut-"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_yakut",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "yaku1245",
+    "primaryText": "-eme / -ere / -ere",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Yakut"],
+      ["nonSpecific", "-eme"],
+      ["specificUnknown", "-ere"],
+      ["specificKnown", "-ere"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_georgian",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "nucl1302",
+    "primaryText": "-me / -ɣac / -ɣac",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Georgian"],
+      ["nonSpecific", "-me"],
+      ["specificUnknown", "-ɣac"],
+      ["specificKnown", "-ɣac"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_ossetic",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "osse1243",
+    "primaryText": "is- / -dær / -dær",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Ossetic"],
+      ["nonSpecific", "is-"],
+      ["specificUnknown", "-dær"],
+      ["specificKnown", "-dær"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_latin",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "lati1261",
+    "primaryText": "ali- / ali- / -dam",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Latin"],
+      ["nonSpecific", "ali-"],
+      ["specificUnknown", "ali-"],
+      ["specificKnown", "-dam"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_russian",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "russ1263",
+    "primaryText": "-nibud / -to / koe-",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Russian"],
+      ["nonSpecific", "-nibud"],
+      ["specificUnknown", "-to"],
+      ["specificKnown", "koe-"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_lithuanian",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 7"},
+    "language": "lith1251",
+    "primaryText": "-nors / kaž- / kai-",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Lithuanian"],
+      ["nonSpecific", "-nors"],
+      ["specificUnknown", "kaž-"],
+      ["specificKnown", "kai-"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_kannada",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 6"},
+    "language": "nucl1305",
+    "primaryText": "-aadaruu / -oo / –",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Kannada"],
+      ["nonSpecific", "-aadaruu"],
+      ["specificUnknown", "-oo"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_quechua",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 6"},
+    "language": "quec1387",
+    "primaryText": "-pis/-pas / -chi/-cha / –",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Quechua"],
+      ["nonSpecific", "-pis/-pas"],
+      ["specificUnknown", "-chi/-cha"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_mandarinchinese",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 6"},
+    "language": "mand1415",
+    "primaryText": "wh-pronoun / – / –",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Mandarin Chinese"],
+      ["nonSpecific", "wh-pronoun"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_irish",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 6"},
+    "language": "iris1253",
+    "primaryText": "– / – / –",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Irish"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_swahili",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 6"},
+    "language": "swah1253",
+    "primaryText": "– / – / –",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Swahili"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dekier2021_filipino",
+    "source": {"bibkey": "dekier-2021", "paperLabel": "Table 6"},
+    "language": "taga1270",
+    "primaryText": "– / – / –",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["language", "Filipino"]
+    ],
+    "comment": ""
+  }
+]
