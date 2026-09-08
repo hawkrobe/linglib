@@ -599,20 +599,31 @@ layout, because the preference order is static. -/
 section IA
 open DaleReiter1995
 
-/-- Target: a yellow banana (typical color). -/
-def typicalTarget : KBEntity :=
-  ⟨[(.headNoun, "banana"), (.modifier .color, "yellow")]⟩
+/-- The scene's objects: the target banana and the apple distractor. -/
+inductive Fruit where
+  | banana | apple
+  deriving DecidableEq, Repr
 
-/-- Target: a blue banana (atypical color). -/
-def atypicalTarget : KBEntity :=
-  ⟨[(.headNoun, "banana"), (.modifier .color, "blue")]⟩
+/-- The types and colours of the scene. -/
+inductive FruitValue where
+  | banana | apple | yellow | blue | red
+  deriving DecidableEq, Repr
 
-/-- Distractor: an apple (different category). -/
-def appleDistractor : KBEntity :=
-  ⟨[(.headNoun, "apple"), (.modifier .color, "red")]⟩
+/-- The scene as a knowledge base, with the banana's colour yellow (typical) or blue
+(atypical). -/
+def fruitKB (bananaColour : FruitValue) : KB Fruit Attr FruitValue
+  | .banana, .type => some .banana
+  | .banana, .property .color => some bananaColour
+  | .apple, .type => some .apple
+  | .apple, .property .color => some .red
+  | _, _ => none
+
+/-- The scene as an IA domain whose user knows exactly what the scene shows. -/
+def scene (bananaColour : FruitValue) : Domain Fruit Attr FruitValue :=
+  .flat (fruitKB bananaColour) .type
 
 /-- Preference order: type first, then color. -/
-def prefOrder : List REGAttribute := [.headNoun, .modifier .color]
+def prefOrder : List Attr := [.type, .property .color]
 
 /-- The IA produces the same attributes for both typical and atypical
     targets: {type = banana}. Color is included in neither case
@@ -623,24 +634,24 @@ def prefOrder : List REGAttribute := [.headNoun, .modifier .color]
     "blue banana" would be more helpful to the addressee than "yellow
     banana." cs-RSA captures this through the meaning function. -/
 theorem ia_same_output :
-    incrementalAlgorithm typicalTarget [appleDistractor] prefOrder =
-    incrementalAlgorithm atypicalTarget [appleDistractor] prefOrder := by
-  native_decide
+    (scene .yellow).makeReferringExpression .banana {.apple} prefOrder =
+    (scene .blue).makeReferringExpression .banana {.apple} prefOrder := by
+  decide +kernel
 
 /-- Both IA runs succeed (the single distractor is ruled out by type). -/
 theorem ia_both_succeed :
-    iaSuccess typicalTarget [appleDistractor] prefOrder ∧
-    iaSuccess atypicalTarget [appleDistractor] prefOrder := by
-  constructor <;> native_decide
+    ((scene .yellow).makeReferringExpression .banana {.apple} prefOrder).isSome ∧
+    ((scene .blue).makeReferringExpression .banana {.apple} prefOrder).isSome := by
+  decide +kernel
 
 /-- The IA produces a single attribute (type = banana) and omits color
     entirely. cs-RSA, by contrast, varies the probability of color
     mention with typicality. -/
 theorem ia_vs_csrsa :
-    incrementalAlgorithm typicalTarget [appleDistractor] prefOrder =
-      [(.headNoun, "banana")] ∧
+    (scene .yellow).makeReferringExpression .banana {.apple} prefOrder =
+      some {(.type, .banana)} ∧
     S1_q φ_atypical .withColor .target > S1_q φ_typical .withColor .target :=
-  ⟨by native_decide, atypical_more_color⟩
+  ⟨by decide +kernel, atypical_more_color⟩
 
 end IA
 

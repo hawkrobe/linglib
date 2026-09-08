@@ -1,6 +1,5 @@
 import Linglib.Core.Probability.Scores
 import Linglib.Pragmatics.GriceanMaxims
-import Linglib.Studies.DaleReiter1995
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
@@ -48,8 +47,8 @@ carries its exact validity region:
   following the pragmatic direction against salience (p. 212).
 * `zeroCost_beliefGoal_eq`: at zero cost the belief-oriented score is
   [frank-goodman-2012]'s scoring rule.
-* `cost_is_q2`: the cost dimension is [grice-1975]'s Q2 sub-maxim, in
-  [dale-reiter-1995]'s No-Brevity reading at strength 0.
+* `cost_is_q2`: the cost dimension is [grice-1975]'s Q2 sub-maxim, which
+  [dale-reiter-1995]'s Incremental Algorithm drops.
 
 ## Implementation notes
 
@@ -567,18 +566,17 @@ theorem zeroCost_beliefGoal_eq
 open Pragmatics.GriceanMaxims in
 /-- The cost dimension is [grice-1975]'s Q2 sub-maxim (brevity): without
 cost the equally-informative words tie (Q1 alone cannot break it), any
-noun preference breaks it, and zero cost is [dale-reiter-1995]'s
-No-Brevity interpretation at strength 0, independent of Q1. -/
+noun preference breaks it, and zero cost drops brevity as
+[dale-reiter-1995]'s Incremental Algorithm does, independently of Q1. -/
 theorem cost_is_q2 :
     (sbScore uniformPrior 1 .green_circle .circle =
       sbScore uniformPrior 1 .green_circle .green) ∧
     (∀ k : ℝ, 0 < k → k < 1 →
       s1 uniformPrior k .green_circle .green <
         s1 uniformPrior k .green_circle .circle) ∧
-    DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 ∧
     QuantityViolation.underInformative.submaxim ≠
     QuantityViolation.overInformative.submaxim :=
-  ⟨no_cost_symmetry, fun _ hk hk1 => cost_breaks_symmetry hk hk1, rfl,
+  ⟨no_cost_symmetry, fun _ hk hk1 => cost_breaks_symmetry hk hk1,
    violations_independent⟩
 
 end QingFranke2015

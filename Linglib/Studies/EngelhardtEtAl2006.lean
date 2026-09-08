@@ -1,6 +1,5 @@
 import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Studies.SedivyEtAl1999
-import Linglib.Studies.DaleReiter1995
 
 /-!
 # [engelhardt-etal-2006]
@@ -266,28 +265,26 @@ theorem moderately_gricean :
   refine ⟨?_, by decide, rfl, rfl, rfl⟩; norm_num [exp1_target_1ref]
 
 -- ============================================================================
--- § Bridge: Support for No-Brevity (Dale & Reiter 1995)
+-- § Bridge: Support for the Incremental Algorithm (Dale & Reiter 1995)
 -- ============================================================================
 
-/-- [dale-reiter-1995] argue that Q2 should be interpreted as
-    "No Brevity" — speakers use a fixed preference order and include
-    any discriminating attribute without optimizing for brevity.
+/-- [dale-reiter-1995]'s Incremental Algorithm interprets Q2 without
+    brevity: speakers use a fixed preference order and include any
+    discriminating attribute without optimizing for length.
     This study provides direct empirical support:
 
     1. Speakers over-describe 31% of the time (Q2 violated in production)
     2. Over-descriptions are not penalized in judgment (Q2 tolerated)
     3. Under-descriptions ARE penalized (Q1 enforced)
 
-    This matches the No-Brevity regime: Q1 is enforced, Q2 is not. -/
-theorem supports_noBrevity :
-    -- Production: speakers over-describe (consistent with No-Brevity)
+    Q1 is enforced, Q2 is not, as the Incremental Algorithm has it. -/
+theorem supports_incrementalAlgorithm :
+    -- Production: speakers over-describe
     exp1_target_1ref.modified > 0.2 ∧
     -- Judgment: over-description not penalized (Q2 not enforced)
     ¬exp2_target_1ref.significant ∧
     -- Judgment: under-description penalized (Q1 enforced)
-    exp2_target_2ref.significant ∧
-    -- No Brevity is the weakest Q2 interpretation
-    DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 := by
-  refine ⟨?_, by decide, rfl, rfl⟩; norm_num [exp1_target_1ref]
+    exp2_target_2ref.significant := by
+  refine ⟨?_, by decide, rfl⟩; norm_num [exp1_target_1ref]
 
 end EngelhardtEtAl2006

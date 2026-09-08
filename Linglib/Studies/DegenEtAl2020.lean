@@ -1,6 +1,5 @@
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.GriceanMaxims
-import Linglib.Studies.DaleReiter1995
 
 /-!
 # [degen-etal-2020]: When Redundancy Is Useful
@@ -28,7 +27,6 @@ comparison in `ℝ≥0∞`.
 * `bool_no_overmod_preference` — the Boolean model shows no overmod preference.
 * `nominal_overspec_preferred` / `nom_bool_no_overspec` — the Exp 3 noun analogue.
 * `unified_continuous_semantics` — both phenomena: cs-RSA yes, Boolean no.
-* `cost_zero_is_no_brevity` — the structural bridge.
 
 ## Verified data (prose, per [degen-etal-2020])
 Effect sizes are documented here, not encoded as Lean data. Exp 1 (§3): main
@@ -230,17 +228,6 @@ theorem bool_no_overmod_preference :
     ¬ (boolS1 target .small < boolS1 target .smallBlue) := by
   simp only [boolS1, rsa, ENNReal.rpow_one, mul_one, boolL0_small_target, boolL0_smallBlue_target,
     lt_self_iff_false, not_false_iff]
-
-/-! ### No-Brevity bridge -/
-
-/-- cs-RSA operates in [dale-reiter-1995]'s No-Brevity regime (zero cost, fitted
-    β_c ≈ 0), and Q1/Q2 are independent sub-maxims — so over-description is Q1
-    (informativity under noise), not a Q2 violation. -/
-theorem cost_zero_is_no_brevity :
-    DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 ∧
-    QuantityViolation.underInformative.submaxim ≠
-    QuantityViolation.overInformative.submaxim :=
-  ⟨rfl, violations_independent⟩
 
 /-! ### Nominal scene (Exp 3): overspecification via typicality
 

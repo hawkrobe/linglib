@@ -1,354 +1,650 @@
-import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Features.PropertyDomain
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Data.Fintype.Prod
+import Mathlib.Data.Fintype.Sum
+import Mathlib.Data.List.MinMax
+import Mathlib.Data.Nat.Choose.Basic
+import Mathlib.Order.Interval.Finset.Nat
+import Mathlib.Order.Minimal
 
 /-!
-# [dale-reiter-1995]
-[grice-1975]
+# Dale and Reiter, computational interpretations of the Gricean maxims (1995)
 
-Computational Interpretations of the Gricean Maxims in the Generation
-of Referring Expressions. *Cognitive Science* 19(2), 233–263.
+A referring expression is a distinguishing description: a set of attribute-value pairs that
+all hold of the intended referent and that together rule out every member of the contrast
+set, which makes finding one a set-cover problem and finding a shortest one NP-hard. Dale and
+Reiter compare four computational readings of Grice's brevity submaxim, Full Brevity (a
+shortest description), Dale's Greedy Heuristic, Reiter's Local Brevity rules and their own
+Incremental Algorithm, which walks a fixed preference list of attributes and keeps any value
+that rules out a distractor not yet ruled out. They argue for the last on cost and on two
+psycholinguistic observations: speakers include unnecessary modifiers, which only the greedy
+and incremental algorithms produce, and speakers begin an expression before they have
+finished scanning the distractors, which only the incremental algorithm allows.
 
-## Core Argument
+We define distinguishing descriptions and the four readings with a finite contrast set, prove
+that a shortest description satisfies Reiter's two rules while the greedy and incremental
+algorithms return unnecessary pairs on the paper's own examples, and prove that Fig. 6's
+output rules out every distractor, never retracts a pair and, under §4.5's accuracy user
+model, is a distinguishing description.
 
-Four computational interpretations of Grice's Brevity maxim (Q2) are
-possible for referring expression generation (REG):
+## Implementation notes
 
-1. **Full Brevity**: generate the shortest possible RE. NP-hard
-   (reduction from minimum set cover).
-2. **Greedy Heuristic**: at each step, add the most discriminating
-   attribute. Polynomial but still globally optimizing.
-3. **Local Brevity**: no redundant attributes, but allows reordering.
-4. **No Brevity**: iterate through a fixed preference order, include
-   any attribute that rules out ≥ 1 distractor. May include globally
-   redundant attributes.
+* Reiter's third rule, Lexical Preference, is not modelled.
+* Fig. 6's `FindBestValue` recurses until the taxonomy has no more specific value; the
+  descent is bounded by the domain's `depth`, which must cover the taxonomies' height.
+* Fig. 3 leaves ties between equally discriminating properties open; `greedy` takes the
+  first in the order of `P`.
 
-Psycholinguistic evidence (speakers routinely over-describe) and
-computational complexity (Full Brevity is NP-hard) support
-**No Brevity**. The paper presents the **Incremental Algorithm** (IA),
-which operationalizes Q1 (be informative) with No-Brevity Q2.
+## References
 
-## The Incremental Algorithm (Figure 6)
-
-Given target referent r, contrast set C, and preference-ordered
-attribute list P:
-
-1. For each attribute Aᵢ in P:
-   - Get the target's value V for Aᵢ
-   - If ⟨Aᵢ, V⟩ rules out any distractor in C, include it and remove
-     those distractors from C
-   - If C is empty, stop (success)
-2. Return the collected attribute-value pairs
-
-Key properties: linear in |P|, no backtracking, no optimization.
-The preference order determines which attributes are included — a
-different order can produce a different (possibly longer) description.
-
-## Verified Data
-
-Worked example (§4.4) verified against paper text.
-
-## Connection to RSA
-
-RSA's S1 score decomposes as: α · informativity(u) − cost(u).
-
-- informativity = Q1 (Grice's "be informative enough")
-- cost = Q2 pressure (Grice's "be brief")
-
-The Brevity interpretations correspond to regimes in RSA's
-(α, cost) parameter space:
-
-- Full Brevity ≈ α → ∞, cost > 0 (hard optimization with cost)
-- No Brevity ≈ cost ≈ 0 (informativity only, no brevity pressure)
-
-The IA's `PreferredAttributes` list orders attributes by cognitive
-accessibility.
+* [R. Dale and E. Reiter, *Computational Interpretations of the Gricean Maxims in the
+  Generation of Referring Expressions* (1995)][dale-reiter-1995]
+* [H. P. Grice, *Logic and Conversation* (1975)][grice-1975]
 -/
 
 namespace DaleReiter1995
 
--- ============================================================================
--- § Brevity Interpretations (§3)
--- ============================================================================
+open Finset
 
-open Pragmatics.GriceanMaxims
+section Brevity
 
-/-- The four computational interpretations of Grice's Brevity maxim (Q2),
-    ordered from most to least constrained. All four satisfy Q1
-    (informativeness) when successful; they differ only in how strictly
-    they enforce Q2 (brevity). -/
-inductive BrevityInterpretation where
-  /-- Generate the shortest possible RE. NP-hard by reduction from
-      minimum set cover (Garey & Johnson, 1979). -/
-  | fullBrevity
-  /-- At each step, add the attribute that rules out the most
-      distractors. Polynomial but still globally optimizing. -/
-  | greedyHeuristic
-  /-- No redundant attributes (each must rule out ≥ 1 new distractor),
-      but allows reordering to find a shorter description. -/
-  | localBrevity
-  /-- Fixed preference order. Include any attribute that rules out
-      ≥ 1 distractor. May include attributes that are globally
-      redundant (because order is fixed, not optimized). Called
-      the "Incremental Algorithm Interpretation" in the paper;
-      the recommended interpretation. -/
-  | noBrevity
+variable {E A V : Type*}
+
+/-! ### Distinguishing descriptions (§2.2) -/
+
+/-- The value an entity has for an attribute in the host's knowledge base, if it has one
+(§4.1). -/
+abbrev KB (E A V : Type*) := E → A → Option V
+
+/-- The semantic content of a referring expression, a set of attribute-value pairs (§2.2). -/
+abbrev Description (A V : Type*) := Finset (A × V)
+
+/-- The pair holds of the entity. -/
+def Applies (kb : KB E A V) (x : E) (p : A × V) : Prop := kb x p.1 = some p.2
+
+instance [DecidableEq V] (kb : KB E A V) (x : E) (p : A × V) : Decidable (Applies kb x p) := by
+  unfold Applies; infer_instance
+
+/-- A distinguishing description of `r` against the contrast set `C`, every pair holding of
+`r` and every distractor failing some pair ((3), conditions C1 and C2). -/
+def Distinguishing (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) : Prop :=
+  (∀ p ∈ L, Applies kb r p) ∧ ∀ c ∈ C, ∃ p ∈ L, ¬ Applies kb c p
+
+instance [DecidableEq V] (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) :
+    Decidable (Distinguishing kb r C L) := by
+  unfold Distinguishing; infer_instance
+
+/-- The members of the contrast set a pair rules out (§2.2). -/
+def rulesOut [DecidableEq V] (kb : KB E A V) (C : Finset E) (p : A × V) : Finset E :=
+  C.filter (¬ Applies kb · p)
+
+/-- A description distinguishes when its pairs' `rulesOut` sets cover the contrast set, the
+set-cover problem of §2.2. -/
+theorem distinguishing_iff_biUnion [DecidableEq E] [DecidableEq V] (kb : KB E A V) (r : E)
+    (C : Finset E) (L : Description A V) :
+    Distinguishing kb r C L ↔
+      (∀ p ∈ L, Applies kb r p) ∧ C ⊆ L.biUnion (rulesOut kb C) := by
+  simp only [Distinguishing, rulesOut, subset_iff, mem_biUnion, mem_filter]
+  exact and_congr_right λ _ => forall₂_congr λ c hc =>
+    exists_congr λ p => and_congr_right λ _ => (and_iff_right hc).symm
+
+/-! ### Four interpretations of brevity (§3.1) -/
+
+variable (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V)
+
+/-- A distinguishing description of least cardinality, the Full Brevity reading (§3.1.1). -/
+abbrev IsShortest : Prop := MinimalFor (Distinguishing kb r C) card L
+
+variable {kb r C L}
+
+/-- A distinguishing description with two pairs is shortest once neither the empty
+description nor any single pair distinguishes. -/
+theorem isShortest_of_card_two (hL : Distinguishing kb r C L) (h2 : L.card = 2)
+    (h0 : ¬ Distinguishing kb r C ∅) (h1 : ∀ p, ¬ Distinguishing kb r C {p}) :
+    IsShortest kb r C L :=
+  minimalFor_iff_forall_lt.mpr ⟨hL, λ L' hlt hL' => by
+    have : L'.card = 0 ∨ L'.card = 1 := by omega
+    rcases this with h | h
+    · obtain rfl := card_eq_zero.mp h
+      exact h0 hL'
+    · obtain ⟨p, rfl⟩ := card_eq_one.mp h
+      exact h1 p hL'⟩
+
+variable (kb r C L) [DecidableEq A] [DecidableEq V]
+
+/-- A distinguishing description none of whose pairs can be dropped, Reiter's No Unnecessary
+Components rule (§3.1.3). -/
+def NoUnnecessary : Prop :=
+  Distinguishing kb r C L ∧ ∀ p ∈ L, ¬ Distinguishing kb r C (L.erase p)
+
+/-- A description with no unnecessary pair in which no set of pairs can be replaced by a
+single new pair, Reiter's Local Brevity rule (§3.1.3). -/
+def LocallyBrief : Prop :=
+  NoUnnecessary kb r C L ∧
+    ∀ S ⊆ L, 2 ≤ S.card → ∀ p, ¬ Distinguishing kb r C (insert p (L \ S))
+
+instance : Decidable (NoUnnecessary kb r C L) := by unfold NoUnnecessary; infer_instance
+
+variable {kb r C L}
+
+/-- Reiter's first rule is subset-minimality among distinguishing descriptions. -/
+theorem noUnnecessary_iff_minimal :
+    NoUnnecessary kb r C L ↔ Minimal (Distinguishing kb r C) L := by
+  refine ⟨λ h => ⟨h.1, λ L' hL' hle => ?_⟩, λ h => ⟨h.1, λ p hp hd => ?_⟩⟩
+  · by_contra hne
+    obtain ⟨p, hp, hp'⟩ := not_subset.mp hne
+    refine h.2 p hp ⟨λ q hq => h.1.1 q (mem_of_mem_erase hq), λ c hc => ?_⟩
+    obtain ⟨q, hq, hcq⟩ := hL'.2 c hc
+    exact ⟨q, mem_erase.mpr ⟨λ h => hp' (h ▸ hq), hle hq⟩, hcq⟩
+  · exact notMem_erase p L (h.2 hd (erase_subset p L) hp)
+
+/-- A shortest description has no unnecessary pair, so Full Brevity never includes an
+unnecessary modifier (§3.2.1). -/
+theorem IsShortest.noUnnecessary (h : IsShortest kb r C L) : NoUnnecessary kb r C L :=
+  ⟨h.1, λ _ hp => h.not_prop_of_lt (card_erase_lt_of_mem hp)⟩
+
+/-- A shortest description is locally brief. -/
+theorem IsShortest.locallyBrief (h : IsShortest kb r C L) : LocallyBrief kb r C L :=
+  ⟨h.noUnnecessary, λ S hS hS2 p => h.not_prop_of_lt (by
+    have h₁ := card_insert_le p (L \ S)
+    have h₂ := card_sdiff_of_subset hS
+    have h₃ := card_le_card hS
+    omega)⟩
+
+/-- Descriptions the exhaustive Full Brevity search checks, with `na` available attributes
+and a shortest description of `nl` pairs (§3.1.1). -/
+def fullBrevitySteps (na nl : ℕ) : ℕ := ∑ i ∈ Icc 1 nl, na.choose i
+
+/-- The paper's four counts, six for §2.2's example, 175, over 6,000 and over 2,000,000. -/
+theorem fullBrevitySteps_values :
+    fullBrevitySteps 3 2 = 6 ∧ fullBrevitySteps 10 3 = 175 ∧
+      6000 < fullBrevitySteps 20 4 ∧ 2000000 < fullBrevitySteps 50 5 := by
+  decide +kernel
+
+variable (kb) in
+private def greedyAux :
+    ℕ → Finset E → List (A × V) → Description A V → Option (Description A V)
+  | 0, C, _, L => if C.Nonempty then none else some L
+  | n + 1, C, P, L =>
+    if C.Nonempty then
+      match P.argmin (λ p => (C.filter (Applies kb · p)).card) with
+      | none => none
+      | some p => greedyAux n (C.filter (Applies kb · p)) (P.erase p) (insert p L)
+    else some L
+
+variable (kb C) in
+/-- Fig. 3's Greedy Heuristic, which from the properties `P` true of the referent adds the
+one leaving the fewest distractors, the first in `P` on a tie, until none remain, and fails
+when `P` runs out. -/
+def greedy (P : List (A × V)) : Option (Description A V) := greedyAux kb P.length C P ∅
+
+end Brevity
+
+/-! ### The Incremental Algorithm (§4, Fig. 6) -/
+
+/-- The three values of Fig. 6's UserKnows (§4.1): the user knows the pair holds of the
+entity, knows it does not, or neither. -/
+inductive Knowledge where
+  | holds | fails | unknown
   deriving DecidableEq, Repr
 
-/-- Constraint strength: higher value = more constrained Q2.
-    Full Brevity (3) is strictest, No Brevity (0) is weakest. -/
-def BrevityInterpretation.strength : BrevityInterpretation → Nat
-  | .fullBrevity     => 3
-  | .greedyHeuristic => 2
-  | .localBrevity    => 1
-  | .noBrevity       => 0
+section Incremental
 
--- ============================================================================
--- § Knowledge Base Representation (§4.1)
--- ============================================================================
+variable {E A V : Type*}
 
-/-- An attribute in the REG knowledge base. The paper's "type" attribute
-    (head noun, e.g., "dog") is distinguished from modifier attributes
-    (adjectives like colour, size), which map to `PropertyDomain`. -/
-inductive REGAttribute where
-  /-- Head noun type at the basic level (e.g., "dog", "cat").
-      The paper's `BasicLevelValue` function maps species-level
-      types (chihuahua, siamese-cat) to basic-level types (dog, cat);
-      we use basic-level values directly. -/
-  | headNoun
-  /-- Modifying property (colour, size, material, ...). -/
-  | modifier (d : Features.PropertyDomain)
-  deriving DecidableEq, Repr
+/-- The head-noun attribute, basic-level values, value taxonomies and user model the host
+system supplies (§4.1). -/
+structure Domain (E A V : Type*) where
+  /-- The attribute realized as the head noun (§2.2). -/
+  type : A
+  /-- The depth of the value taxonomies, bounding `findBestValue`'s descent. -/
+  depth : ℕ
+  /-- The basic-level value of an attribute for an entity (BasicLevelValue). -/
+  basicLevel : E → A → Option V
+  /-- The child of a value in the attribute's taxonomy that still subsumes the entity's own
+  value (MoreSpecificValue). -/
+  moreSpecific : E → A → V → Option V
+  /-- What the user knows of the pair holding of the entity (UserKnows). -/
+  userKnows : E → A → V → Knowledge
 
-/-- A knowledge base entity: attribute-value pairs.
-    Values are strings for generality (the paper uses a subsumption
-    taxonomy on values; we simplify to flat strings). -/
-structure KBEntity where
-  attrs : List (REGAttribute × String)
-  deriving Repr
+namespace Domain
 
-/-- Look up an attribute's value for an entity. -/
-def KBEntity.get (e : KBEntity) (a : REGAttribute) : Option String :=
-  e.attrs.find? (fun p => p.1 == a) |>.map (·.2)
+variable (d : Domain E A V)
 
--- ============================================================================
--- § The Incremental Algorithm (§4, Figure 6)
--- ============================================================================
+/-- A domain without value taxonomies whose user knows a pair to hold exactly when it is
+accurate, the user model of §4.5. -/
+def flat [DecidableEq V] (kb : KB E A V) (type : A) : Domain E A V where
+  type := type
+  depth := 0
+  basicLevel := kb
+  moreSpecific _ _ _ := none
+  userKnows x a v := match kb x a with
+    | some w => if w = v then .holds else .fails
+    | none => .unknown
 
-/-- Does an attribute-value pair rule out a distractor?
-    A distractor is ruled out if it either lacks the attribute
-    entirely or has a different value for it. -/
-def rulesOut (attr : REGAttribute) (value : String) (distractor : KBEntity) : Bool :=
-  match distractor.get attr with
-  | none   => true          -- distractor lacks this attribute
-  | some v => v != value    -- different value
+/-- Under the accuracy user model, what the user knows is what the knowledge base records. -/
+theorem flat_userKnows [DecidableEq V] {kb : KB E A V} {t : A} (x : E) (a : A) (v : V) :
+    ((flat kb t).userKnows x a v = .holds ↔ kb x a = some v) ∧
+      ((flat kb t).userKnows x a v = .fails ↔ ∃ w, kb x a = some w ∧ w ≠ v) := by
+  simp only [flat]
+  split
+  · next w hw => by_cases hwv : w = v <;> simp [hw, hwv]
+  · next hw => simp [hw]
 
-/-- The Incremental Algorithm (Figure 6, simplified).
+/-- The remaining distractors the user knows not to bear the pair (Fig. 6, RulesOut). -/
+def rulesOut (C : Finset E) (a : A) (v : V) : Finset E :=
+  C.filter λ x => d.userKnows x a v = .fails
 
-    Iterates through the preference-ordered attribute list. For each
-    attribute, if the target has a value and that value rules out ≥ 1
-    remaining distractor, include it and remove those distractors.
-    Stop when all distractors are eliminated or attributes are exhausted.
+/-- Fig. 6's FindBestValue, the initial value when the user knows it to hold of `r`, refined
+to a more specific value only when that rules out more distractors. -/
+def findBestValue (r : E) (C : Finset E) (a : A) : ℕ → V → Option V
+  | 0, v => if d.userKnows r a v = .holds then some v else none
+  | n + 1, v =>
+    if d.userKnows r a v = .holds then
+      some <| match d.moreSpecific r a v with
+        | none => v
+        | some more =>
+          match findBestValue r C a n more with
+          | none => v
+          | some new =>
+            if (d.rulesOut C a v).card < (d.rulesOut C a new).card then new else v
+    else none
 
-    Simplifications vs. the paper:
-    - No `FindBestValue` (subsumption taxonomy on values)
-    - No `UserKnows` (epistemic accessibility filter)
-    - No `BasicLevelValue` (Rosch basic-level categories —
-      we use basic-level values directly in entity definitions)
-    - No forced head noun inclusion (the paper always includes
-      a type attribute; we include it only when discriminating) -/
-def incrementalAlgorithm
-    (target : KBEntity)
-    (distractors : List KBEntity)
-    (preferred : List REGAttribute) : List (REGAttribute × String) :=
-  go preferred distractors []
-where
-  go : List REGAttribute → List KBEntity → List (REGAttribute × String)
-      → List (REGAttribute × String)
-  | [], _, acc => acc
-  | _, [], acc => acc  -- success: all distractors ruled out
-  | attr :: rest, remaining, acc =>
-    match target.get attr with
-    | none => go rest remaining acc
+/-- `FindBestValue` returns only values the user knows to hold of the referent. -/
+theorem findBestValue_userKnows (r : E) (C : Finset E) (a : A) :
+    ∀ (n : ℕ) (v w : V), d.findBestValue r C a n v = some w → d.userKnows r a w = .holds
+  | 0, v, w, h => by
+    simp only [findBestValue] at h
+    split_ifs at h with hv
+    exact Option.some.inj h ▸ hv
+  | n + 1, v, w, h => by
+    simp only [findBestValue] at h
+    split_ifs at h with hv
+    obtain rfl := Option.some.inj h
+    split
+    · exact hv
+    · split
+      · exact hv
+      next new hnew =>
+        split_ifs
+        · exact findBestValue_userKnows r C a n _ new hnew
+        · exact hv
+
+section
+
+variable [DecidableEq A] [DecidableEq V]
+
+/-- Fig. 6's return, which always includes a head noun, the basic-level type added without a
+`UserKnows` check. -/
+def withType (r : E) (L : Description A V) : Description A V :=
+  if ∃ p ∈ L, p.1 = d.type then L
+  else match d.basicLevel r d.type with
+    | none => L
+    | some b => insert (d.type, b) L
+
+/-- The return never retracts a pair. -/
+theorem withType_subset (r : E) (L : Description A V) : L ⊆ d.withType r L := by
+  unfold withType
+  split_ifs
+  · exact subset_rfl
+  · split
+    · exact subset_rfl
+    · exact subset_insert _ _
+
+/-- The return adds at most the basic-level head noun. -/
+theorem withType_mem (r : E) (L : Description A V) {p : A × V} (hp : p ∈ d.withType r L) :
+    p ∈ L ∨ d.basicLevel r p.1 = some p.2 := by
+  unfold withType at hp
+  split_ifs at hp
+  · exact .inl hp
+  · split at hp
+    · exact .inl hp
+    next b hb =>
+      rcases mem_insert.mp hp with rfl | hp
+      · exact .inr hb
+      · exact .inl hp
+
+variable [DecidableEq E]
+
+/-- One attribute of Fig. 6's loop, whose best value is kept when it rules out a remaining
+distractor, those distractors being removed. -/
+def step (r : E) (a : A) (C : Finset E) (L : Description A V) :
+    Finset E × Description A V :=
+  match d.basicLevel r a with
+  | none => (C, L)
+  | some b =>
+    match d.findBestValue r C a d.depth b with
+    | none => (C, L)
     | some v =>
-      let newRemaining := remaining.filter (fun d => ¬rulesOut attr v d)
-      if newRemaining.length < remaining.length then
-        go rest newRemaining (acc ++ [(attr, v)])
-      else
-        go rest remaining acc
+      if (d.rulesOut C a v).Nonempty then (C \ d.rulesOut C a v, insert (a, v) L) else (C, L)
 
-/-- Did the IA succeed? All distractors are ruled out by the result. -/
-def iaSuccess
-    (target : KBEntity)
-    (distractors : List KBEntity)
-    (preferred : List REGAttribute) : Bool :=
-  distractors.all fun d =>
-    (incrementalAlgorithm target distractors preferred).any fun (attr, v) =>
-      rulesOut attr v d
+/-- A step never retracts a pair (§4.3). -/
+theorem step_subset (r : E) (a : A) (C : Finset E) (L : Description A V) :
+    L ⊆ (d.step r a C L).2 := by
+  unfold step
+  split
+  · exact subset_rfl
+  · split
+    · exact subset_rfl
+    · split_ifs
+      · exact subset_insert _ _
+      · exact subset_rfl
 
--- ============================================================================
--- § Worked Example (§4.4): Kennel Domain
--- ============================================================================
+/-- A step adds only pairs the user knows to hold of the referent. -/
+theorem step_mem (r : E) (a : A) (C : Finset E) (L : Description A V) {p : A × V}
+    (hp : p ∈ (d.step r a C L).2) : p ∈ L ∨ d.userKnows r p.1 p.2 = .holds := by
+  unfold step at hp
+  split at hp
+  · exact .inl hp
+  next b _ =>
+    split at hp
+    · exact .inl hp
+    next v hv =>
+      split_ifs at hp
+      · rcases mem_insert.mp hp with rfl | hp
+        · exact .inr (d.findBestValue_userKnows r C a d.depth b v hv)
+        · exact .inl hp
+      · exact .inl hp
 
-/-! Three objects in a kennel. The paper uses species-level types
-(chihuahua, siamese-cat) internally, but `BasicLevelValue` maps these
-to basic-level types (dog, cat) for the referring expression. We use
-the basic-level values directly. -/
+/-- Every distractor a step removes is ruled out by the pair the step adds. -/
+theorem step_ruledOut (r : E) (a : A) (C : Finset E) (L : Description A V) {c : E}
+    (hc : c ∈ C) (hc' : c ∉ (d.step r a C L).1) :
+    ∃ p ∈ (d.step r a C L).2, d.userKnows c p.1 p.2 = .fails := by
+  unfold step at hc' ⊢
+  split at hc'
+  · exact absurd hc hc'
+  · split at hc'
+    · exact absurd hc hc'
+    · split_ifs at hc' ⊢
+      · exact ⟨_, mem_insert_self _ _, by simpa [mem_sdiff, rulesOut, hc] using hc'⟩
+      · exact absurd hc hc'
 
-/-- Object1: a small black dog (TARGET).
-    Underlying species: chihuahua; BasicLevelValue = "dog". -/
-def obj1 : KBEntity :=
-  ⟨[(.headNoun, "dog"), (.modifier .size, "small"), (.modifier .color, "black")]⟩
+/-- Fig. 6's loop over the preferred attributes. -/
+def loop (r : E) : Finset E → List A → Description A V → Option (Description A V)
+  | _, [], _ => none
+  | C, a :: rest, L =>
+    let s := d.step r a C L
+    if s.1.Nonempty then loop r s.1 rest s.2 else some (d.withType r s.2)
 
-/-- Object2: a large white dog.
-    Underlying species: chihuahua; BasicLevelValue = "dog". -/
-def obj2 : KBEntity :=
-  ⟨[(.headNoun, "dog"), (.modifier .size, "large"), (.modifier .color, "white")]⟩
+/-- Fig. 6's MakeReferringExpression, the Incremental Algorithm over the preferred
+attributes `P`, failing when they run out before the contrast set does. -/
+def makeReferringExpression (r : E) (C : Finset E) (P : List A) :
+    Option (Description A V) :=
+  d.loop r C P ∅
 
-/-- Object3: a small black cat.
-    Underlying species: siamese-cat; BasicLevelValue = "cat". -/
-def obj3 : KBEntity :=
-  ⟨[(.headNoun, "cat"), (.modifier .size, "small"), (.modifier .color, "black")]⟩
+/-- The loop returns through `withType` a description that never retracts a pair, rules out
+every remaining distractor and adds only pairs known to hold (§3.2.1's indelible
+generation, §4.3). -/
+theorem loop_spec (r : E) : ∀ (P : List A) (C : Finset E) (L L' : Description A V),
+    d.loop r C P L = some L' → ∃ L₀, L' = d.withType r L₀ ∧ L ⊆ L₀ ∧
+      (∀ c ∈ C, ∃ p ∈ L₀, d.userKnows c p.1 p.2 = .fails) ∧
+        ∀ p ∈ L₀, p ∈ L ∨ d.userKnows r p.1 p.2 = .holds
+  | [], _, _, _, h => nomatch h
+  | a :: rest, C, L, L', h => by
+    simp only [loop] at h
+    split_ifs at h with hC
+    · obtain ⟨L₀, rfl, hsub, hrule, hadm⟩ := loop_spec r rest _ _ L' h
+      refine ⟨L₀, rfl, (d.step_subset r a C L).trans hsub, λ c hc => ?_, λ p hp => ?_⟩
+      · by_cases hc' : c ∈ (d.step r a C L).1
+        · exact hrule c hc'
+        · obtain ⟨p, hp, hcp⟩ := d.step_ruledOut r a C L hc hc'
+          exact ⟨p, hsub hp, hcp⟩
+      · exact (hadm p hp).elim (λ h => d.step_mem r a C L h) .inr
+    · obtain rfl := Option.some.inj h
+      exact ⟨_, rfl, d.step_subset r a C L,
+        λ c hc => d.step_ruledOut r a C L hc λ h => hC ⟨c, h⟩,
+        λ p hp => d.step_mem r a C L hp⟩
 
-/-- P = {type, colour, size, ...} (§4.4). The paper lists colour
-    before size in the preference order. -/
-def kennelPreferred : List REGAttribute :=
-  [.headNoun, .modifier .color, .modifier .size]
+/-- Fig. 6's output rules out every member of the contrast set (§4.3). -/
+theorem makeReferringExpression_rulesOut {r : E} {C : Finset E} {P : List A}
+    {L : Description A V} (h : d.makeReferringExpression r C P = some L) :
+    ∀ c ∈ C, ∃ p ∈ L, d.userKnows c p.1 p.2 = .fails := by
+  obtain ⟨L₀, rfl, -, hrule, -⟩ := d.loop_spec r P C ∅ L h
+  exact λ c hc => (hrule c hc).imp λ p hp => ⟨d.withType_subset r _ hp.1, hp.2⟩
 
--- ============================================================================
--- § Verification Theorems: Worked Example
--- ============================================================================
+/-- Every pair of Fig. 6's output is known to the user to hold of the referent, except the
+head noun added at the end, which is the basic-level type (§4.3). -/
+theorem makeReferringExpression_mem {r : E} {C : Finset E} {P : List A}
+    {L : Description A V} (h : d.makeReferringExpression r C P = some L) :
+    ∀ p ∈ L, d.userKnows r p.1 p.2 = .holds ∨ d.basicLevel r p.1 = some p.2 := by
+  obtain ⟨L₀, rfl, -, -, hadm⟩ := d.loop_spec r P C ∅ L h
+  exact λ p hp => (d.withType_mem r L₀ hp).elim
+    (λ h => .inl ((hadm p h).resolve_left (by simp))) .inr
 
-/-- §4.4: The IA produces "the black dog" — type=dog rules out Object3
-    (cat ≠ dog); colour=black rules out Object2 (white ≠ black).
-    Size is never reached. -/
-theorem kennel_result :
-    incrementalAlgorithm obj1 [obj2, obj3] kennelPreferred =
-    [(.headNoun, "dog"), (.modifier .color, "black")] := by
-  native_decide
+/-- Fig. 6's output carries a head noun whenever the referent has a basic-level type
+(§4.3). -/
+theorem makeReferringExpression_type {r : E} {C : Finset E} {P : List A}
+    {L : Description A V} (h : d.makeReferringExpression r C P = some L)
+    (hb : (d.basicLevel r d.type).isSome) : ∃ v, (d.type, v) ∈ L := by
+  obtain ⟨L₀, rfl, -, -, -⟩ := d.loop_spec r P C ∅ L h
+  unfold withType
+  split_ifs with hL
+  · obtain ⟨⟨a, v⟩, hp, ha⟩ := hL
+    exact ⟨v, ha ▸ hp⟩
+  · obtain ⟨b, hb⟩ := Option.isSome_iff_exists.mp hb
+    exact ⟨b, by simp [hb]⟩
 
-/-- The IA succeeds: both distractors are ruled out. -/
-theorem kennel_succeeds :
-    iaSuccess obj1 [obj2, obj3] kennelPreferred = true := by
-  native_decide
+/-- Under the accuracy user model the output is a distinguishing description (§2.2). -/
+theorem flat_distinguishing {kb : KB E A V} {t : A} {r : E} {C : Finset E} {P : List A}
+    {L : Description A V} (h : (flat kb t).makeReferringExpression r C P = some L) :
+    Distinguishing kb r C L := by
+  refine ⟨λ p hp => ?_, λ c hc => ?_⟩
+  · exact ((flat kb t).makeReferringExpression_mem h p hp).elim
+      (flat_userKnows r p.1 p.2).1.mp id
+  · obtain ⟨p, hp, hcp⟩ := (flat kb t).makeReferringExpression_rulesOut h c hc
+    obtain ⟨w, hw, hwv⟩ := (flat_userKnows c p.1 p.2).2.mp hcp
+    exact ⟨p, hp, λ hap => hwv (Option.some.inj (hw.symm.trans hap))⟩
 
-/-- §4.4: "if P had been {type, size, colour, ...} instead of
-    {type, colour, size, ...}, MakeReferringExpression would have
-    returned {⟨type, dog⟩, ⟨size, small⟩} instead." The preference
-    order determines which attributes are included. -/
-theorem kennel_order_matters :
-    incrementalAlgorithm obj1 [obj2, obj3]
-      [.headNoun, .modifier .size, .modifier .color] =
-    [(.headNoun, "dog"), (.modifier .size, "small")] := by
-  native_decide
+end
 
-/-- Both preference orders succeed — the IA identifies the referent
-    regardless of attribute ordering (in this example). -/
-theorem kennel_both_orders_succeed :
-    iaSuccess obj1 [obj2, obj3] kennelPreferred = true ∧
-    iaSuccess obj1 [obj2, obj3]
-      [.headNoun, .modifier .size, .modifier .color] = true := by
-  constructor <;> native_decide
+end Domain
 
--- ============================================================================
--- § Non-Minimality Example
--- ============================================================================
+end Incremental
 
-/-! The IA can produce non-minimal descriptions because it processes
-attributes in a fixed order. An attribute included early may become
-globally redundant once a later attribute is also included. -/
+/-! ### The paper's examples -/
 
-/-- Target: a red plastic cup. -/
-def cup1 : KBEntity :=
-  ⟨[(.headNoun, "cup"), (.modifier .color, "red"), (.modifier .material, "plastic")]⟩
+/-- The head noun and the perceptual properties, the attributes of the paper's examples. -/
+inductive Attr where
+  | type
+  | property (d : Features.PropertyDomain)
+  deriving DecidableEq, Repr, Fintype
 
-/-- Distractor 1: a blue glass cup. -/
-def cup2 : KBEntity :=
-  ⟨[(.headNoun, "cup"), (.modifier .color, "blue"), (.modifier .material, "glass")]⟩
+/-- The values of the paper's examples. -/
+inductive Value where
+  | dog | cat | chihuahua | siameseCat | bird | cup
+  | small | medium | large
+  | black | white | red | green | blue
+  | plastic | paper
+  deriving DecidableEq, Repr, Fintype
 
-/-- Distractor 2: a blue plastic cup. -/
-def cup3 : KBEntity :=
-  ⟨[(.headNoun, "cup"), (.modifier .color, "blue"), (.modifier .material, "plastic")]⟩
+/-! #### The two dogs and the cat (§2.2, §4.4) -/
 
-/-- With [type, material, colour], the IA produces {material=plastic,
-    colour=red} — 2 modifier attributes. -/
-theorem cups_material_first :
-    incrementalAlgorithm cup1 [cup2, cup3]
-      [.headNoun, .modifier .material, .modifier .color] =
-    [(.modifier .material, "plastic"), (.modifier .color, "red")] := by
-  native_decide
+/-- The three animals of §2.2 and §4.4. -/
+inductive Animal where
+  | object1 | object2 | object3
+  deriving DecidableEq, Repr
 
-/-- With [type, colour, material], the IA produces {colour=red} alone —
-    1 modifier attribute. Colour=red rules out BOTH distractors at once
-    (both are blue), so material is never needed. -/
-theorem cups_colour_first :
-    incrementalAlgorithm cup1 [cup2, cup3]
-      [.headNoun, .modifier .color, .modifier .material] =
-    [(.modifier .color, "red")] := by
-  native_decide
+namespace Animal
 
-/-- The material-first result includes a globally redundant attribute:
-    colour=red alone suffices, but the IA also includes material=plastic
-    because it was processed first and ruled out cup2. This is the
-    No-Brevity regime — locally useful attributes are kept even when
-    globally unnecessary. -/
-theorem cups_non_minimal :
-    -- material-first: 2 attributes
-    (incrementalAlgorithm cup1 [cup2, cup3]
-      [.headNoun, .modifier .material, .modifier .color]).length = 2 ∧
-    -- colour-first: 1 attribute suffices
-    (incrementalAlgorithm cup1 [cup2, cup3]
-      [.headNoun, .modifier .color, .modifier .material]).length = 1 ∧
-    -- both succeed
-    iaSuccess cup1 [cup2, cup3]
-      [.headNoun, .modifier .material, .modifier .color] = true ∧
-    iaSuccess cup1 [cup2, cup3]
-      [.headNoun, .modifier .color, .modifier .material] = true := by
-  refine ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+/-- The most specific values the system knows (§4.4). -/
+def kb : KB Animal Attr Value
+  | .object1, .type => some .chihuahua
+  | .object1, .property .size => some .small
+  | .object1, .property .color => some .black
+  | .object2, .type => some .chihuahua
+  | .object2, .property .size => some .large
+  | .object2, .property .color => some .white
+  | .object3, .type => some .siameseCat
+  | .object3, .property .size => some .small
+  | .object3, .property .color => some .black
+  | _, _ => none
 
--- ============================================================================
--- § Bridge: Brevity Hierarchy
--- ============================================================================
+/-- The basic-level values of §2.2, dog, dog and cat. -/
+def basicLevel (x : Animal) : Attr → Option Value
+  | .type => match x with | .object3 => some .cat | _ => some .dog
+  | a => kb x a
 
-/-- The hierarchy is strict: FB > GH > LB > NB. -/
-theorem brevity_hierarchy :
-    BrevityInterpretation.fullBrevity.strength >
-    BrevityInterpretation.greedyHeuristic.strength ∧
-    BrevityInterpretation.greedyHeuristic.strength >
-    BrevityInterpretation.localBrevity.strength ∧
-    BrevityInterpretation.localBrevity.strength >
-    BrevityInterpretation.noBrevity.strength := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+/-- The taxonomy of §4.4, the breeds below their basic-level types. -/
+def parent : Value → Option Value
+  | .chihuahua => some .dog
+  | .siameseCat => some .cat
+  | _ => none
 
-/-- No Brevity targets Q2: it weakens the "don't over-inform" sub-maxim,
-    not Q1. The IA still enforces Q1 — each included attribute must rule
-    out at least one distractor. -/
-theorem noBrevity_weakens_q2 :
-    QuantityViolation.overInformative.submaxim = .Q2 := rfl
+/-- The domain of §4.4, in which the breeds are the only more specific values and the user
+knows a pair to hold exactly when it is accurate under the taxonomy. -/
+def domain : Domain Animal Attr Value where
+  type := .type
+  depth := 1
+  basicLevel := basicLevel
+  moreSpecific x a v := match kb x a with
+    | some w => if parent w = some v then some w else none
+    | none => none
+  userKnows x a v := match kb x a with
+    | some w => if w = v ∨ parent w = some v then .holds else .fails
+    | none => .unknown
 
--- ============================================================================
--- § Bridge: RSA Connection
--- ============================================================================
+/-- The contrast set. -/
+def contrast : Finset Animal := {.object2, .object3}
 
-/-- The IA and RSA S1 solve the same problem — producing a referring
-    expression that identifies a target among distractors — but via
-    different mechanisms:
+/-- *The black dog* and *the small dog* are distinguishing descriptions of Object1 (§2.2). -/
+theorem black_dog_distinguishing :
+    Distinguishing basicLevel .object1 contrast {(.type, .dog), (.property .color, .black)} ∧
+    Distinguishing basicLevel .object1 contrast {(.type, .dog), (.property .size, .small)} := by
+  decide +kernel
 
-    - **IA**: greedy, deterministic, fixed attribute order, no cost
-    - **RSA S1**: probabilistic, soft-maximizes informativity − cost
+/-- No single pair distinguishes Object1, so *the black dog* is a shortest description
+(§3.1.1's six steps). -/
+theorem black_dog_isShortest :
+    IsShortest basicLevel .object1 contrast {(.type, .dog), (.property .color, .black)} :=
+  isShortest_of_card_two black_dog_distinguishing.1 (by decide +kernel) (by decide +kernel)
+    (by decide +kernel)
 
-    Both decompose into Q1 (informativity) and Q2 (brevity):
+/-- The breed rules out no more distractors than the basic-level type, so `FindBestValue`
+keeps *dog* (§4.4). -/
+theorem findBestValue_type :
+    domain.findBestValue .object1 contrast .type 1 .dog = some .dog := by decide +kernel
 
-    | Framework   | Q1                          | Q2               |
-    |-------------|-----------------------------| -----------------|
-    | D&R IA      | include if discriminating   | preference order |
-    | RSA S1      | α · log P_L0(w|u)           | −cost(u)         |
+/-- With the preference order type, colour, size the algorithm returns *the black dog*; with
+type, size, colour it returns *the small dog* (§4.4). -/
+theorem makeReferringExpression_animal :
+    domain.makeReferringExpression .object1 contrast
+        [.type, .property .color, .property .size] =
+      some {(.type, .dog), (.property .color, .black)} ∧
+    domain.makeReferringExpression .object1 contrast
+        [.type, .property .size, .property .color] =
+      some {(.type, .dog), (.property .size, .small)} := by
+  decide +kernel
 
-    When RSA cost = 0, S1 has no brevity pressure, corresponding
-    to No Brevity. When cost > 0, S1 penalizes longer utterances,
-    moving toward Full Brevity as α → ∞. -/
-theorem q1_q2_decomposition :
-    -- Q1 and Q2 are independent sub-maxims
-    QuantityViolation.underInformative.submaxim ≠
-    QuantityViolation.overInformative.submaxim := by decide
+end Animal
+
+/-! #### The seven cups (§3.1.2) -/
+
+/-- The seven cups of §3.1.2. -/
+inductive Cup where
+  | object1 | object2 | object3 | object4 | object5 | object6 | object7
+  deriving DecidableEq, Repr
+
+namespace Cup
+
+/-- Size, colour and material of each cup. -/
+def kb : KB Cup Attr Value
+  | .object1, .property .size => some .large
+  | .object1, .property .color => some .red
+  | .object1, .property .material => some .plastic
+  | .object2, .property .size => some .small
+  | .object2, .property .color => some .red
+  | .object2, .property .material => some .plastic
+  | .object3, .property .size => some .small
+  | .object3, .property .color => some .red
+  | .object3, .property .material => some .paper
+  | .object4, .property .size => some .medium
+  | .object4, .property .color => some .red
+  | .object4, .property .material => some .paper
+  | .object5, .property .size => some .large
+  | .object5, .property .color => some .green
+  | .object5, .property .material => some .paper
+  | .object6, .property .size => some .large
+  | .object6, .property .color => some .blue
+  | .object6, .property .material => some .paper
+  | .object7, .property .size => some .large
+  | .object7, .property .color => some .blue
+  | .object7, .property .material => some .plastic
+  | _, _ => none
+
+/-- The contrast set for Object1. -/
+def contrast : Finset Cup := {.object2, .object3, .object4, .object5, .object6, .object7}
+
+/-- Object1's properties in the paper's order. -/
+def properties : List (Attr × Value) :=
+  [.property .size, .property .color, .property .material].filterMap λ a =>
+    (kb .object1 a).map ((a, ·))
+
+/-- The greedy heuristic selects plastic first, then large and red, giving *the large red
+plastic cup* once the head noun is added (§3.1.2). -/
+theorem greedy_cups :
+    greedy kb contrast properties =
+      some {(.property .material, .plastic), (.property .size, .large),
+        (.property .color, .red)} := by
+  decide +kernel
+
+/-- *The large red cup* is the shortest description (§3.1.2). -/
+theorem large_red_isShortest :
+    IsShortest kb .object1 contrast {(.property .size, .large), (.property .color, .red)} :=
+  isShortest_of_card_two (by decide +kernel) (by decide +kernel) (by decide +kernel)
+    (by decide +kernel)
+
+/-- The greedy result distinguishes Object1 but carries an unnecessary pair (§3.1.2,
+§3.2.1). -/
+theorem greedy_not_noUnnecessary :
+    Distinguishing kb .object1 contrast
+        {(.property .material, .plastic), (.property .size, .large),
+          (.property .color, .red)} ∧
+      ¬ NoUnnecessary kb .object1 contrast
+        {(.property .material, .plastic), (.property .size, .large),
+          (.property .color, .red)} := by
+  decide +kernel
+
+end Cup
+
+/-! #### The white bird (§3.2.1) -/
+
+/-- A picture of a white bird, a black cup and a white cup. -/
+inductive Picture where
+  | bird | blackCup | whiteCup
+  deriving DecidableEq, Repr
+
+namespace Picture
+
+/-- Type and colour of each object. -/
+def kb : KB Picture Attr Value
+  | .bird, .type => some .bird
+  | .bird, .property .color => some .white
+  | .blackCup, .type => some .cup
+  | .blackCup, .property .color => some .black
+  | .whiteCup, .type => some .cup
+  | .whiteCup, .property .color => some .white
+  | _, _ => none
+
+/-- The contrast set. -/
+def contrast : Finset Picture := {.blackCup, .whiteCup}
+
+/-- The paper's speaker scans the black cup and says *white*, then scans the white cup and
+adds *bird*, which alone would have done (§3.2.1). The algorithm reproduces that output only
+with colour before type in the preference order; type first yields *the bird*. -/
+theorem makeReferringExpression_picture :
+    (Domain.flat kb .type).makeReferringExpression .bird contrast [.property .color, .type] =
+      some {(.property .color, .white), (.type, .bird)} ∧
+    (Domain.flat kb .type).makeReferringExpression .bird contrast [.type, .property .color] =
+      some {(.type, .bird)} := by
+  decide +kernel
+
+/-- The colour-first output contains an unnecessary modifier, the behaviour of
+Observation 1 that Full Brevity and Local Brevity never produce (§3.2.1). -/
+theorem white_bird_not_noUnnecessary :
+    ¬ NoUnnecessary kb .bird contrast {(.property .color, .white), (.type, .bird)} ∧
+    NoUnnecessary kb .bird contrast {(.type, .bird)} := by
+  decide +kernel
+
+end Picture
 
 end DaleReiter1995
