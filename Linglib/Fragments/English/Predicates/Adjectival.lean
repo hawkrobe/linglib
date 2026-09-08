@@ -45,6 +45,14 @@ def short : AdjectivalPredicateEntry where
   antonymForm := some "tall"
   antonymRelation := some .contrary
 
+/-- "high" — open scale, contrary to "low" -/
+def high : AdjectivalPredicateEntry where
+  form := "high"
+  polarity := some .positive
+  dimension := some .height
+  antonymForm := some "low"
+  antonymRelation := some .contrary
+
 
 /--
 "happy" — open scale, contrary to "unhappy"
@@ -768,7 +776,7 @@ def impossible : AdjectivalPredicateEntry where
 /-- All adjectival predicate entries -/
 def allEntries : List (AdjectivalPredicateEntry) := [
   -- Height / size
-  tall, short, large, small, gigantic, tiny,
+  tall, short, high, large, small, gigantic, tiny,
   -- Happiness / evaluative
   happy, unhappy, sad,
   -- Fullness
