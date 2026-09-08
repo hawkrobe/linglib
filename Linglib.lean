@@ -3032,3 +3032,4 @@ import Linglib.Data.Examples.Chierchia2013
 import Linglib.Data.Examples.Deal2024
 import Linglib.Data.Examples.DechaineWiltschko2002
 import Linglib.Data.Examples.Dekier2021
+import Linglib.Data.Examples.DelPrete2013

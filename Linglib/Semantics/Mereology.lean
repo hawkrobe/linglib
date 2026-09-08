@@ -28,6 +28,8 @@ overlap.
 * `AlgClosure P` — the closure of `P` under binary sum, as an inductive predicate;
   `setOf_algClosure` identifies it with `supClosure`.
 * `Atom`, `Overlap` — atoms and overlap, relative to the null individual `IsBot`.
+* `IsPlural P` — proper pluralities: elements of `*P` with two distinct proper `P`-parts;
+  `isPlural_iff_of_atom` identifies them with the non-atomic elements of `*P`.
 * `ClassicalMereology α` — [hovda-2009]'s axiomatization by type-2 fusion and weak
   supplementation.
 * `IsAtomicDomain α` — a carrier all of whose non-null elements are atoms.
@@ -233,6 +235,54 @@ end Atoms
 theorem not_atom_sup_of_ne [SemilatticeSup α] {x y : α} (hx : Atom x) (hy : Atom y) (hne : x ≠ y) :
     ¬ Atom (x ⊔ y) :=
   fun h => hne ((h.eq le_sup_left hx.not_isBot).trans (h.eq le_sup_right hy.not_isBot).symm)
+
+/-! ### Pluralities -/
+
+section Plural
+
+variable [SemilatticeSup α] {P : α → Prop} {x : α}
+
+/-- A proper plurality of `P`s ([link-1983]): a sum of `P`-elements with two distinct proper
+`P`-parts. -/
+def IsPlural (P : α → Prop) (x : α) : Prop :=
+  AlgClosure P x ∧ ∃ a < x, ∃ b < x, P a ∧ P b ∧ a ≠ b
+
+theorem IsPlural.algClosure (h : IsPlural P x) : AlgClosure P x := h.1
+
+/-- A predicate with at most one member has no plurality. -/
+theorem not_isPlural_of_subsingleton (h : ∀ a b, P a → P b → a = b) (x : α) : ¬ IsPlural P x :=
+  fun ⟨_, _, _, _, _, ha, hb, hne⟩ => hne (h _ _ ha hb)
+
+/-- An atom in the closure of a predicate holding only of atoms is one of its members. -/
+theorem of_algClosure_of_atom (hP : ∀ ⦃a⦄, P a → Atom a) (hx : AlgClosure P x) (h : Atom x) :
+    P x :=
+  let ⟨_, ha, hle⟩ := algClosure_has_base hx
+  h.eq hle (hP ha).not_isBot ▸ ha
+
+/-- For a predicate holding only of atoms, a plurality is a non-atomic element of the closure. -/
+theorem isPlural_iff_of_atom (hP : ∀ ⦃a⦄, P a → Atom a) :
+    IsPlural P x ↔ AlgClosure P x ∧ ¬ Atom x := by
+  constructor
+  · rintro ⟨hx, a, ha, -, -, hPa, -, -⟩
+    exact ⟨hx, fun h => ha.ne (h.eq ha.le (hP hPa).not_isBot)⟩
+  · rintro ⟨hx, hne⟩
+    refine ⟨hx, ?_⟩
+    induction hx with
+    | base h => exact absurd (hP h) hne
+    | @sum y z hy hz ihy ihz =>
+      by_cases hay : Atom y
+      · by_cases haz : Atom z
+        · refine ⟨y, lt_of_le_of_ne le_sup_left fun h => hne (by rw [← h]; exact hay),
+            z, lt_of_le_of_ne le_sup_right fun h => hne (by rw [← h]; exact haz),
+            of_algClosure_of_atom hP hy hay, of_algClosure_of_atom hP hz haz, fun h => hne ?_⟩
+          subst h
+          rwa [sup_idem]
+        · obtain ⟨a, ha, b, hb, hPa, hPb, hab⟩ := ihz haz
+          exact ⟨a, ha.trans_le le_sup_right, b, hb.trans_le le_sup_right, hPa, hPb, hab⟩
+      · obtain ⟨a, ha, b, hb, hPa, hPb, hab⟩ := ihy hay
+        exact ⟨a, ha.trans_le le_sup_left, b, hb.trans_le le_sup_left, hPa, hPb, hab⟩
+
+end Plural
 
 /-! ### Bounded and bottomless carriers -/
 
