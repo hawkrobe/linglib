@@ -6,63 +6,28 @@ import Linglib.Data.Examples.Cumming2026
 /-!
 # Tense and evidence
 
-Ninan observed that a future-tense sentence can be asserted on prior inferential grounds
-while the past-tense sentence about the same event, uttered once the event has passed on the
-same grounds, cannot, although the two are true in the same circumstances. In Cumming's
-version, *Alma will enjoy the meal* is assertible before the meal and *Alma enjoyed the meal*
-is not the next day, yet *Alma will have enjoyed the meal* is, which tells against an
-epistemic account of the asymmetry. Cumming's explanation is linguistic and amends
-Cariani's: the constraint that the speaker's evidence be causally downstream of the event
-described, which Cariani places on every predicate and lets modals obviate, belongs to the
-nonfuture tenses of English as non-truth-conditional meaning, and the future forms lack it.
-The evidential paradigms of Korean and Bulgarian show the same recruitment of tense. Under
-the evidentials *-te*, *-ney* and *-l*, tense fixes the evidential perspective, the relation
-of the event to the acquisition of the evidence; *-te* and *-ney* place the acquisition in the
-past of speech and at speech, and for *-l* it suffices that evidence is acquired by the time
-of speech; and the utterance perspective, the ordinary contribution of tense, is derived:
-present evidence that is prospective is evidence for a future event, downstream evidence
-acquired by the time of speech is evidence for a nonfuture event, and past evidence that is
-prospective leaves the utterance perspective open. The past- and present-directed *will have*
-and *will now* carry the prospective constraint with a past or present utterance perspective.
-No language should have a true future restricted to downstream evidence, since the speaker
-would have to acquire the evidence after speaking. Where Cariani's account offers the
-downstream constraint or its obviation, Korean under *-te* and the English *will* forms show a
-third option, the positive restriction to prospective evidence. Planned or scheduled events
-are exempt from both perspectives, as in the futurate.
+Ninan's puzzle is that a future-tense sentence can be asserted on prior inferential grounds
+while the past-tense sentence about the same event, on the same grounds, cannot, though
+*will have* is assertible again. Cumming's answer, amending Cariani, is that the nonfuture
+tenses carry, as non-truth-conditional meaning, the constraint that the speaker's evidence be
+causally downstream of the event, and the future forms do not. Under the Korean evidentials
+*-te* and *-ney* and the Bulgarian *-l*, tense fixes the evidential perspective, the
+evidential the relation of the acquisition of evidence to speech, and the utterance
+perspective is derived from the two; the English *will have* and *will now* restrict evidence
+to the prospective; no true future can be restricted to downstream evidence; and planned
+events are exempt, as in the futurate.
 
 We derive the utterance-perspective column of the Korean and Bulgarian paradigms as the
-composition of the evidential-perspective column with the cell relating the acquisition of
-the evidence to speech, show that the future cells leave the utterance perspective open,
-prove that a downstream-restricted future is unsatisfiable and that the prospective cells lie
-beyond obviation, and check the paper's felicity judgments against the paradigm cells on the
+composition of the evidential-perspective column with the evidential's cell, prove that a
+downstream-restricted future is unsatisfiable and that the prospective cells lie beyond
+Cariani's obviation, and check the paper's felicity judgments against the cells on the
 frames its scenarios fix.
 
 ## Implementation notes
 
-* Paradigm cells are the fragments' rows, each an evidential-perspective and an
-  utterance-perspective constraint on a frame of speech, acquisition and event times, read
-  temporally as in the paper's tables. Cumming's own constraint is causal, and he declines
-  the temporal reading of Lee's and Koev's accounts; evidence temporally after but causally
-  independent of the event, or before it yet downstream, as the rewatched film of footnote
-  9, is not represented.
-* The cells relating acquisition to speech, the past for *-te*, the present for *-ney*, and
-  the nonfuture for *-l* as for any assertion, are the paper's; the utterance perspective is
-  their composition with the evidential perspective by the substrate's cell composition.
-* The paper calls the constraint non-truth-conditional and a felicity condition; the
-  substrate renders it as a presupposition, and the shared assertion of cells differing in
-  tense holds there by construction rather than being derived.
-* The felicity data enter each scenario's times as small integers on one line; scenarios
-  the paper does not spell out are reconstructed and say so. The futurate exemption is
-  recorded as a flag on the planned or scheduled examples rather than derived, since the
-  paper leaves the criterion for it open.
-* The unmarked pattern of §7, the ranking of evidential sources and the acquaintance
-  inference, is prose.
-
-## TODO
-
-* Causal downstreamness, on which the paper's decisive cases turn, needs a relation between
-  the evidence-acquiring event and the described event with the temporal constraint as a
-  consequence.
+* The constraints are read temporally, as in the paper's tables; Cumming's own constraint is
+  causal, and cases turning on the difference, as the rewatched film of footnote 9, are not
+  represented.
 
 ## References
 

@@ -6,61 +6,25 @@ import Linglib.Data.Examples.Cresswell1976
 /-!
 # The semantics of degree
 
-Cresswell's degrees of comparison are pairs of a point and the ordering of the scale it lies
-on, and the comparative *er than* relates two properties of degrees: it holds when both are
-instantiated and every degree of the first exceeds every degree of the second on their common
-scale. Degrees on distinct scales never stand in the ordering, so a comparative whose terms
-measure on different scales, *taller man than … clever man*, *taller than … beautiful*, or
-*longer* of a meeting and a road, is semantically anomalous without any syntactic feature, and
-since a degree carries its ordering, *six feet*, which names a degree on the upward scale, lies
-outside the domain of *short*, which takes degrees read downward. A disjoined standard is
-compared universally, so *taller than Arabella or Clarissa* means taller than both, and the
-equative *as as* is the weak comparison that *exactly* strengthens to identity.
+Cresswell's degree of comparison is a point paired with the ordering of its scale, and
+*er than* holds of two degree properties when both are instantiated and every degree of the
+first exceeds every degree of the second on their common scale, so a comparative across
+scales is anomalous and a disjoined standard is compared universally. Mass nouns and plurals
+carry degrees of volume and of number through the totality operator, degrees need no units
+since any comparison relation yields a scale by quotienting, and the counterfactual *shorter
+than he is* compares heights across worlds.
 
-Mass nouns and plurals carry degrees of the same kind. The totality operator picks the greatest
-degree among the parts satisfying a predicate, so *more water ebbs than mud flows* compares two
-volumes, and pluralization turns a count noun into a predicate of sets carrying their
-cardinality, so *more men walk than birds fly* compares two numbers and *all men walk* comes
-out synonymous with *every man walks* although *all* applies to the pluralized noun, as it
-does to a mass noun, and *every* to the count noun. Degrees need no units: any comparison
-relation yields a scale by quotienting its field by indistinguishability, and since the things
-compared are things at worlds, the counterfactual *if Bill had been a smoker he would be
-shorter than he is* compares his height at the nearest world where he smokes with his actual
-height.
-
-We take the degrees on a family of scales to be mathlib's disjoint sum of the scales' orders
-and prove from it the same-scale restriction and the anomaly of the paper's starred
-comparatives, the universal reading of disjoined standards, the reduction of the totality
-comparatives to comparisons of volumes and of cardinalities, the synonymy of *all* and *every*
-given that the noun is instantiated, the comparative on constructed degrees, and the reading
-of the counterfactual through a Stalnaker selection function, on which it is false whenever
-Bill is in fact a smoker.
+We take degrees on a family of scales to be mathlib's disjoint sum of the scales' orders and
+prove the same-scale restriction, the universal reading of disjoined standards, the reduction
+of the totality comparatives to volumes and cardinalities, the synonymy of *all* and *every*
+given that there are men, the comparative on constructed degrees, and the counterfactual
+through a Stalnaker selection function.
 
 ## Implementation notes
 
-* A degree property is a set of degrees, and the comparative, the equative and the totality
-  operator are stated on sets over any ordered type; the scale-tagged degrees of (2.1) are the
-  case of a sigma type with mathlib's fiberwise order, where the same-scale requirement of
-  (2.3) is that the order never relates distinct fibers. The downward reading of *short*
-  ((39), (72)) is the order dual of the spatial scale, on which the comparative is the
-  substrate's negative-polarity comparative. The paper places the bare degree *six feet* as
-  the second term of *er than* ((35), (36)); here that term is the singleton of the degree.
-  The uniqueness of a totality's degree uses antisymmetry of the scale, which the paper
-  declines to require of the ordering of a degree (§2).
-* The plural (3.6) is read as in (49): a nonempty set of things satisfying the noun together
-  with its cardinality, a positive integer as the paper has the scale. As printed, (3.6) fixes
-  the set to all of them, on which (54) would require the set of all men to walk; the (49)
-  reading gives (55). Predicates of sets are taken distributive where the paper compares
-  numbers. Since the plural's degrees are positive, *all* carries existential import, and the
-  synonymy of (56) and (57) holds given that there are men.
-* The positive form (2.5), *much* and *deg* (3.3), the syntax of §5, and the differential and
-  factor comparatives through a natural metric (the end of §4, §6) are not formalized.
-
-## TODO
-
-* (50), *Arabella is more beautiful than Tom is clever*, is listed without an asterisk as an
-  instance of *more* with an adjective, although it compares distinct scales like the starred
-  (65); the paper's as-if order-preserving mapping between scales ((66)) is not formalized.
+* The plural is read as in (49), a nonempty set of things satisfying the noun with its
+  cardinality; as printed, (3.6) fixes the set to all of them, on which (54) would require
+  the set of all men to walk.
 
 ## References
 
