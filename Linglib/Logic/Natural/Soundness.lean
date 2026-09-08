@@ -173,6 +173,18 @@ theorem soundFor_anti_iff {f : α → β} :
     | reverse => exact h hR
     | negation | alternation | cover | independent => trivial
 
+/-- A signature of upward polarity is sound only for monotone functions. -/
+theorem Signature.SoundFor.monotone {σ : Signature} {f : α → β} (h : σ.SoundFor f)
+    (hσ : σ.toContextPolarity = .upward) : Monotone f := by
+  intro x y hxy
+  cases σ <;> first | exact h .forward x y hxy | exact absurd hσ (by decide)
+
+/-- A signature of downward polarity is sound only for antitone functions. -/
+theorem Signature.SoundFor.antitone {σ : Signature} {f : α → β} (h : σ.SoundFor f)
+    (hσ : σ.toContextPolarity = .downward) : Antitone f := by
+  intro x y hxy
+  cases σ <;> first | exact h .forward x y hxy | exact absurd hσ (by decide)
+
 /-- The `.additive` row is sound for join-preserving, `⊤`-preserving functions. -/
 theorem soundFor_additive {f : α → β}
     (h : (∀ p q, f (p ⊔ q) = f p ⊔ f q) ∧ f ⊤ = ⊤) :
