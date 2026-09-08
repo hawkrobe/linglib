@@ -75,4 +75,23 @@ def sie_pl : PersonalPronoun :=
 def pronouns : List PersonalPronoun :=
   [ich, du, sie_polite, er, sie_f, es, wir, ihr, sie_pl]
 
+/-! ### Interrogative and free-relative pronouns
+
+The animate *wer* declines for four cases; the inanimate *was* has one form for the
+nominative and the accusative and no dative. -/
+
+/-- *wer* 'who' by case. -/
+def wer : Case → Option String
+  | .nom => some "wer"
+  | .acc => some "wen"
+  | .dat => some "wem"
+  | .gen => some "wessen"
+  | _ => none
+
+/-- *was* 'what' by case: nominative and accusative syncretic, no dative. -/
+def was : Case → Option String
+  | .nom | .acc => some "was"
+  | .gen => some "wessen"
+  | _ => none
+
 end German.Pronouns

@@ -90,7 +90,7 @@ theorem aba_not_feasiblyMonotone : ¬ FeasiblyMonotone aba.toParadigm := by
 /-! ### Table 2: person-pronoun syncretism
 
 [graf-2019] §3.1 runs the same hierarchy shape over person,
-`1 > 2 > 3` (the Zwicky hierarchy, [zwicky-1977]; the repo's
+`1 > 2 > 3` (the Zwicky hierarchy, [zwicky-1977b]; the repo's
 feature-level anchor for it is `Person.hierarchyRank`), against
 [harbour-2015]'s pronoun-inventory survey (Graf's Table 2): attested
 partitions include 1|2|3 (Jarawa, Kiowa), 1|23 (Damin), and crucially

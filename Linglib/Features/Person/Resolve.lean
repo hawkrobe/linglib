@@ -2,7 +2,7 @@ import Linglib.Features.Person.Basic
 
 /-!
 # Person — resolution
-[corbett-2006] [zwicky-1977] [dalrymple-kaplan-2000]
+[corbett-2006] [zwicky-1977b] [dalrymple-kaplan-2000]
 
 Resolution in coordination: the person of a coordinate structure from
 the persons of its conjuncts (*you and I* → first inclusive). The
@@ -17,7 +17,7 @@ includes (`Profile`: speaker yes/no, addressee yes/no/underdetermined —
 the tripartition `first` leaves the addressee slot open), and
 coordination unions referents — so resolution is pointwise disjunction
 on profiles, [dalrymple-kaplan-2000]'s set-union semantics for person
-resolution. The Zwicky hierarchy (1 < 2 < 3, [zwicky-1977]) falls out:
+resolution. The Zwicky hierarchy (1 < 2 < 3, [zwicky-1977b]) falls out:
 in a tripartition system, resolution is minimum of `hierarchyRank`
 (`resolveIn_tripartition_min`).
 
@@ -150,7 +150,7 @@ theorem resolve_quadripartition_incl :
 theorem resolve_tripartition_first :
     System.tripartition.resolve .first .second = .first := by decide
 
-/-- **The Zwicky hierarchy as a corollary** ([zwicky-1977]): in a
+/-- **The Zwicky hierarchy as a corollary** ([zwicky-1977b]): in a
     tripartition system, resolution is minimum of `hierarchyRank` —
     1 < 2 < 3 is not a primitive but the shadow of referent union. -/
 theorem resolveIn_tripartition_min :

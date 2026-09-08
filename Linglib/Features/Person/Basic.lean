@@ -137,7 +137,7 @@ theorem fromUD_toUD (p : Person) : fromUD p.toUD = p.coarsen := by
 theorem ud_conflates_clusivity :
     Person.firstInclusive.toUD = Person.firstExclusive.toUD := rfl
 
-/-- The person hierarchy 1 < 2 < 3 ([zwicky-1977]; resolution in
+/-- The person hierarchy 1 < 2 < 3 ([zwicky-1977b]; resolution in
     coordination, [corbett-2006]). Clusivity-marked firsts share rank 0
     with `first`; `zero` sits outside the hierarchy (sentinel rank 3). -/
 def hierarchyRank : Person → Nat

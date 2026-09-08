@@ -161,7 +161,7 @@ inductive WordhoodClass where
   /-- ms-free, p-free: an independent word by both criteria. -/
   | canonicalWord
   /-- ms-free, p-bound: syntactically independent but phonologically
-      dependent. [zwicky-1977] -/
+      dependent. [zwicky-1977a] -/
   | simpleClitic
   /-- ms-bound, p-free: morphosyntactically part of a word but
       phonologically independent. -/

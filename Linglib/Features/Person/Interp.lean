@@ -22,7 +22,7 @@ The region semantics grounds the rest of the API:
   the certification theorem lives with the calculus in
   `Studies/Harbour2016.lean` (`quad_cells_are_interp_regions`); the
   marker-set rendering is [dalrymple-kaplan-2000]'s Fula encoding
-  (`Studies/DalrympleKaplan2000.lean`, `person_resolve_is_union`).
+  (`Studies/DalrympleKaplan2000.lean`, `resolve_person`).
 -/
 
 namespace Person
