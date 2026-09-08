@@ -419,13 +419,4 @@ theorem flashlight_multiplicative_negligible :
 theorem flashlight_additive_positive :
     weightedScore [1, 1, 1] allFeatures .flashlight > 1/2 := by native_decide
 
-/-- Artifact noun aggregation is utilitarian, not counting — the same
-    point made by [dambrosio-hedden-2024] for multidimensional
-    adjectives. [sassoon-2013]'s binding types (conjunctive,
-    disjunctive, mixed) are all counting aggregation and cannot
-    capture the weighted, continuous-measure structure of artifact
-    noun interpretation. -/
-theorem artifact_aggregation_is_utilitarian :
-    AggregationType.utilitarian ≠ .counting := by decide
-
 end WaldonEtAl2023
