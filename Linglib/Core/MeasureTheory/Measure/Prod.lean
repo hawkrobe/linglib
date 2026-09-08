@@ -6,16 +6,20 @@ Authors: Robert Hawkins
 import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 import Mathlib.MeasureTheory.Measure.Prod
 import Mathlib.MeasureTheory.Measure.Real
+import Mathlib.Probability.ConditionalProbability
 
 /-!
 # Measures on a product at atoms
 
 The marginals `Measure.fst` and `Measure.snd` at a singleton, as sums over the other
 coordinate when it ranges over a finite type, in `ℝ≥0∞` and on reals; the product measure at
-a rectangle on reals; and absolute continuity of a joint with respect to the product of its
-marginals. `[UPSTREAM]` candidate for `Mathlib/MeasureTheory/Measure/Prod.lean`.
+a rectangle on reals; absolute continuity of a joint with respect to the product of its
+marginals; and a product measure, conditioned on an event of the first coordinate, at a set
+given by its fibers over a finite second coordinate. `[UPSTREAM]` candidate for
+`Mathlib/MeasureTheory/Measure/Prod.lean`.
 -/
 
+open ProbabilityTheory
 open scoped ENNReal
 
 namespace MeasureTheory.Measure
@@ -77,5 +81,44 @@ theorem absolutelyContinuous_fst_prod_snd [Countable α] [Countable β] (ρ : Me
     snd_apply (.singleton b)] at h
   exact h.elim (measure_mono_null (Set.singleton_subset_iff.mpr rfl))
     (measure_mono_null (Set.singleton_subset_iff.mpr rfl))
+
+/-! ### Sets given by their fibers over a finite coordinate -/
+
+section Fibers
+
+omit [MeasurableSingletonClass α]
+
+variable [Fintype β] (μ : Measure α) [SFinite μ] (ν : Measure β) [SFinite ν] {f : β → Set α}
+
+/-- The product measure at a set given by its fibers over a finite second coordinate. -/
+theorem prod_apply_fibers (hf : ∀ b, MeasurableSet (f b)) :
+    (μ.prod ν) {p | p.1 ∈ f p.2} = ∑ b, μ (f b) * ν {b} := by
+  have hm : MeasurableSet {p : α × β | p.1 ∈ f p.2} := by
+    rw [show {p : α × β | p.1 ∈ f p.2} = ⋃ b, f b ×ˢ {b} from by ext ⟨a, b⟩; simp]
+    exact .iUnion λ b => (hf b).prod (.singleton b)
+  rw [prod_apply_symm hm, lintegral_fintype]
+  rfl
+
+/-- Conditioning a product on an event of the first coordinate, at a set given by its fibers
+over a finite second coordinate: the fibers' conditional masses, mixed by the second factor. -/
+theorem cond_prod_fst_apply_fibers [IsProbabilityMeasure ν] {s : Set α} (hs : MeasurableSet s)
+    (hf : ∀ b, MeasurableSet (f b)) :
+    (μ.prod ν)[|Prod.fst ⁻¹' s] {p | p.1 ∈ f p.2} = ∑ b, μ[|s] (f b) * ν {b} := by
+  rw [cond_apply (measurable_fst hs), ← Set.prod_univ, prod_prod, measure_univ, mul_one,
+    show s ×ˢ Set.univ ∩ {p : α × β | p.1 ∈ f p.2} = {p | p.1 ∈ s ∩ f p.2} from by
+      ext ⟨a, b⟩; simp,
+    prod_apply_fibers μ ν (λ b => hs.inter (hf b)), Finset.mul_sum]
+  simp only [cond_apply hs, mul_assoc]
+
+/-- `cond_prod_fst_apply_fibers` on reals. -/
+theorem cond_prod_fst_real_fibers [IsProbabilityMeasure ν] {s : Set α} (hs : MeasurableSet s)
+    (hf : ∀ b, MeasurableSet (f b)) :
+    ((μ.prod ν)[|Prod.fst ⁻¹' s]).real {p | p.1 ∈ f p.2} =
+      ∑ b, (μ[|s]).real (f b) * ν.real {b} := by
+  rw [measureReal_def, cond_prod_fst_apply_fibers μ ν hs hf,
+    ENNReal.toReal_sum λ b _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top ν _)]
+  simp only [ENNReal.toReal_mul, measureReal_def]
+
+end Fibers
 
 end MeasureTheory.Measure
