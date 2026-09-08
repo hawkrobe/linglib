@@ -52,7 +52,7 @@ whichever direction it takes along the map.
 
 namespace Bubnov2026
 
-open DeganoAloni2025 DeganoAloni2025.DependenceLogic Dekier2021 Indefinite Morphology.Containment
+open DeganoAloni2025 Dekier2021 Indefinite Morphology.Containment
 open Russian.Indefinites English.Indefinites German.Indefinites Latin.Indefinites
 open Yakut.Indefinites Kannada.Indefinites
 
@@ -67,18 +67,11 @@ theorem russian_spans_properly_nested :
       (spelloutWinner russianLex suRank).map SpanRule.spans = some 1 ∧
       (spelloutWinner russianLex skRank).map SpanRule.spans = some 2 := by decide
 
-/-! ### The unattested type -/
+/-! ### The unattested type
 
-/-- The unattested type would have to require constancy of the value across all epistemic
-alternatives and variation of it within one of them at once. Variation within one alternative
-already gives variation across all of them, so the two requirements cannot be met together, and the
-type can be stated only as a disjunction. -/
-theorem type_vi_contradictory {V E : Type} [DecidableEq V] [DecidableEq E]
-    (t : AssignmentTeam V E) (v null x : V)
-    (hnull : ∀ a₁ a₂ : V → E, a₁ null = a₂ null)
-    (hdep : constancy t null x = true) (hvar : variation t v x = true) : False :=
-  constancy_excludes_variation t null x hdep
-    (variation_monotone t v null x hvar fun a₁ a₂ _ => hnull a₁ a₂)
+The unattested type would have to require constancy of the value across all epistemic
+alternatives and variation of it within one of them at once, which cannot be met
+(`DeganoAloni2025.not_requires_skPlusNS`), so the type can be stated only as a disjunction. -/
 
 /-- The same type is the one the implicational map excludes: its profile skips the
 specific-unknown function lying between the two it covers. The semantic account and the hierarchy
@@ -143,20 +136,20 @@ def witnesses : List (IndefinitePronoun × DAType) :=
 
 /-- Every witness covers exactly the functions its type permits. -/
 theorem paradigms_realize_types :
-    ∀ w ∈ witnesses, w.1.surfaceDAType = some w.2 := by decide
+    ∀ w ∈ witnesses, typeOf w.1 = some w.2 := by decide
 
 /-- Russian *-to* is the epistemic type, but covers only the specific-unknown function: *-nibud'*
 is the non-specific form of the same paradigm and takes that function from it. Coverage is the
 restriction net of paradigmatic competition, which is why the surface classification of *-to* is
 narrower than its type. -/
 theorem to_is_epistemic_under_competition :
-    toEntry.consistentWith .epistemic = true ∧ toEntry.functions ≠ DAType.epistemic.profile := by
+    ConsistentWith toEntry .epistemic ∧ toEntry.functions ≠ DAType.epistemic.profile := by
   refine ⟨by decide, fun h => absurd h (by decide)⟩
 
 /-- German *irgend-* instantiates the change from a non-specific form to an epistemic one, and its
 epistemic restriction is the one the modal-indefinite literature attributes to it. -/
 theorem irgend_is_epistemic :
-    irgendEntry.surfaceDAType = some .epistemic ∧
+    typeOf irgendEntry = some .epistemic ∧
       DAType.nonSpecific.profile ⊆ DAType.epistemic.profile := by decide
 
 end Bubnov2026
