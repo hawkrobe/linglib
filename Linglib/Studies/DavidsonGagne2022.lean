@@ -6,7 +6,7 @@ import Linglib.Semantics.Quantification.DomainRestriction
 import Mathlib.Order.Heyting.Basic
 
 /-!
-# Davidson and Gagne, "more is up" for domain restriction in ASL (2022)
+# Davidson and Gagne (2022): "More is up" for domain restriction in ASL
 
 A plural pronoun, a directional verb or a quantifier of ASL signed higher in signing space than
 the neutral plane refers to, or quantifies over, a wider domain than the contextually given

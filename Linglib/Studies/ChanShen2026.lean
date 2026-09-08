@@ -3,7 +3,7 @@ import Linglib.Fragments.Mandarin.Questions
 import Linglib.Fragments.Singlish.Questions
 
 /-!
-# Conditions on *wh-the-hell* licensing
+# Chan and Shen (2026): Conditions on *wh-the-hell* licensing
 
 A Singlish single wh-question fronts its wh-phrase, moves it to an intermediate Spec-CP, or
 leaves it in situ, and [chan-shen-2026]'s acceptability experiment, a pair of 2×2 designs in
