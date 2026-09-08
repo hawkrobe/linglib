@@ -72,7 +72,7 @@ open Degree (positiveMeaning)
 open Data.Examples
 open Features (NegationType)
 open Pragmatics.Bidirectional (superoptimal superoptimalSet
-  superoptimal_coe_eq_set Blocks)
+  superoptimal_coe_eq_set Blocks profile)
 open Constraints OptimalityTheory
 
 -- ════════════════════════════════════════════════════
@@ -353,11 +353,6 @@ def mPrinciple : Constraint (AntonymForm × Region)
 def economyQ : Constraint (AntonymForm × Region) :=
   λ p => p.1.complexity
 
-/-- Build the violation profile for a ranking of constraints. -/
-def biotProfile (ranking : List (Constraint (AntonymForm × Region)))
-    (p : AntonymForm × Region) : List Nat :=
-  ranking.map fun c => c p
-
 /-- **Main BiOT result**: M-Principle >> Economy derives Krifka's quadruplet
     assignment. Each form gets a unique meaning region:
     - "happy" → clearly positive (stereotypical)
@@ -369,7 +364,7 @@ def biotProfile (ranking : List (Constraint (AntonymForm × Region)))
     substrate; equality with the literal Finset is `decide`-checked
     directly. -/
 theorem krifka_biot_prediction :
-    superoptimal biotPairs (biotProfile [mPrinciple, economyQ]) =
+    superoptimal biotPairs (profile [mPrinciple, economyQ]) =
       krifkaQuadruplet := by
   decide
 
@@ -379,7 +374,7 @@ theorem krifka_biot_prediction :
     the abstract gfp directly (e.g. universal properties of superoptimal
     sets, comparisons across BiOT variants). -/
 theorem krifka_biot_prediction_gfp :
-    superoptimalSet (↑biotPairs) (biotProfile [mPrinciple, economyQ]) =
+    superoptimalSet (↑biotPairs) (profile [mPrinciple, economyQ]) =
       ↑krifkaQuadruplet := by
   rw [← superoptimal_coe_eq_set _ _ (by decide), krifka_biot_prediction]
 
@@ -414,15 +409,15 @@ theorem biot_covers_all_regions :
     Direct kernel-verified `decide`: both Finset iterations stabilize to
     the same fixed point. -/
 theorem economy_ranking_independent :
-    superoptimal biotPairs (biotProfile [economyQ, mPrinciple]) =
-    superoptimal biotPairs (biotProfile [mPrinciple, economyQ]) := by
+    superoptimal biotPairs (profile [economyQ, mPrinciple]) =
+    superoptimal biotPairs (profile [mPrinciple, economyQ]) := by
   decide
 
 /-- The full quadruplet survives under both rankings. -/
 theorem both_rankings_give_quadruplet :
-    superoptimal biotPairs (biotProfile [mPrinciple, economyQ]) =
+    superoptimal biotPairs (profile [mPrinciple, economyQ]) =
       krifkaQuadruplet ∧
-    superoptimal biotPairs (biotProfile [economyQ, mPrinciple]) =
+    superoptimal biotPairs (profile [economyQ, mPrinciple]) =
       krifkaQuadruplet :=
   ⟨krifka_biot_prediction, by decide⟩
 
@@ -431,9 +426,9 @@ theorem both_rankings_give_quadruplet :
     breaking the synonymy that holds under contradictory semantics (§ 2). -/
 theorem biot_breaks_synonymy :
     (.positive, Region.positive) ∈
-      superoptimal biotPairs (biotProfile [mPrinciple, economyQ]) ∧
+      superoptimal biotPairs (profile [mPrinciple, economyQ]) ∧
     (.notNegative, Region.plateauHigh) ∈
-      superoptimal biotPairs (biotProfile [mPrinciple, economyQ]) := by
+      superoptimal biotPairs (profile [mPrinciple, economyQ]) := by
   rw [krifka_biot_prediction]
   refine ⟨?_, ?_⟩ <;> decide
 
