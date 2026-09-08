@@ -20,9 +20,8 @@ language has."
 - `Number.resolveIn` composes the two; `Number.System.resolve` is the
   system-typed entry point.
 
-Consumers: `Studies/Carstens2026.lean` calls `resolveIn` as the number dimension of
-its coordinate φ-resolution; `Studies/Corbett2000.lean` states the book's resolution
-data over its language systems.
+Consumers: `Studies/Corbett2000.lean` states the book's resolution data over its language
+systems.
 -/
 
 namespace Number

@@ -450,8 +450,8 @@ def FeatureBundle.toGramFeatures (fb : FeatureBundle) : List GramFeature :=
 
     `AgreeSOT.lean` uses `Interpretability` directly for tense features.
     `Agree/Coordination.lean`'s `Coordination.Annotated.interp` uses
-    `Interpretability` directly; `AdamsonAnagnostopoulou2025.lean` and
-    `Carstens2026.lean` use it via `open _root_.Minimalist`. -/
+    `Interpretability` directly; `AdamsonAnagnostopoulou2025.lean` uses it via
+    `open _root_.Minimalist`. -/
 inductive Interpretability where
   | interpretable    -- +Interp: contributes to LF, survives
   | uninterpretable  -- –Interp: must be checked and deleted

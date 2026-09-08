@@ -123,6 +123,22 @@ def Gender.pluralClass : Gender → NounClass
   | .genderG => .cl6
   | .genderH => .cl13
 
+/-- The gender whose singular class a class is, none for a plural class. -/
+def Gender.ofSingular : NounClass → Option Gender
+  | .cl1 => some .genderA
+  | .cl3 => some .genderB
+  | .cl5 => some .genderC
+  | .cl7 => some .genderD
+  | .cl9 => some .genderE
+  | .cl11 => some .genderF
+  | .cl14 => some .genderG
+  | .cl12 => some .genderH
+  | _ => none
+
+@[simp] theorem Gender.ofSingular_singularClass (g : Gender) :
+    ofSingular g.singularClass = some g := by
+  cases g <;> rfl
+
 -- ============================================================================
 -- § 4: Semantic Core Assignments ([carstens-2026] §5.2)
 -- ============================================================================

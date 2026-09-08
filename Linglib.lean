@@ -1130,6 +1130,7 @@ import Linglib.Fragments.Shan.Classifiers
 import Linglib.Fragments.Shan.Determiners
 import Linglib.Fragments.Shan.Nouns
 import Linglib.Fragments.Shona.Basic
+import Linglib.Fragments.Shona.Nouns
 import Linglib.Fragments.Singlish.Questions
 import Linglib.Fragments.Sinhala.Verbs
 import Linglib.Fragments.Slavic.Belarusian.Case
@@ -1262,6 +1263,7 @@ import Linglib.Fragments.Welsh.Relativization
 import Linglib.Fragments.Welsh.WordOrder
 import Linglib.Fragments.WestGreenlandic.Evidentiality
 import Linglib.Fragments.Xhosa.Basic
+import Linglib.Fragments.Xhosa.Nouns
 import Linglib.Fragments.Yakut.Case
 import Linglib.Fragments.Yakut.Indefinites
 import Linglib.Fragments.Yanyuwa.Gender
@@ -3027,3 +3029,4 @@ import Linglib.Data.Examples.Dayal2025
 import Linglib.Data.Examples.ChanShen2026
 import Linglib.Data.Examples.BhattTakahashi2011
 import Linglib.Data.Examples.Bresnan1973
+import Linglib.Data.Examples.Carstens2026
