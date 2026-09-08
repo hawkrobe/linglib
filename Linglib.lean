@@ -2769,6 +2769,7 @@ import Linglib.Syntax.Case.Assigner
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Case.Licensing
 import Linglib.Syntax.Case.Order
+import Linglib.Syntax.Category.ANDLModifier
 import Linglib.Syntax.Category.Adjective.Basic
 import Linglib.Syntax.Category.Adjective.ClauseEmbedding
 import Linglib.Syntax.Category.Adposition.Basic
@@ -2781,7 +2782,6 @@ import Linglib.Syntax.Category.Complementizer.Basic
 import Linglib.Syntax.Category.Coordinator
 import Linglib.Syntax.Category.Degree.Basic
 import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Syntax.Category.ExpressiveModifier
 import Linglib.Syntax.Category.Noun.Basic
 import Linglib.Syntax.Category.Numeral.Basic
 import Linglib.Syntax.Category.Numeral.Composition
@@ -3024,3 +3024,4 @@ import Linglib.Data.Examples.DalrympleHaug2024
 import Linglib.Data.Examples.DavidsonGagne2022
 import Linglib.Data.Examples.Dayal2016
 import Linglib.Data.Examples.Dayal2025
+import Linglib.Data.Examples.ChanShen2026
