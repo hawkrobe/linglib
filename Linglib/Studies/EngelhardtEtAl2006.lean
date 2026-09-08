@@ -1,6 +1,5 @@
 import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Studies.SedivyEtAl1999
-import Linglib.Studies.DaleReiter1995
 
 /-!
 # [engelhardt-etal-2006]
@@ -269,9 +268,9 @@ theorem moderately_gricean :
 -- § Bridge: Support for No-Brevity (Dale & Reiter 1995)
 -- ============================================================================
 
-/-- [dale-reiter-1995] argue that Q2 should be interpreted as
-    "No Brevity" — speakers use a fixed preference order and include
-    any discriminating attribute without optimizing for brevity.
+/-- [dale-reiter-1995]'s Incremental Algorithm interprets Q2 without
+    brevity: speakers use a fixed preference order and include any
+    discriminating attribute without optimizing for length.
     This study provides direct empirical support:
 
     1. Speakers over-describe 31% of the time (Q2 violated in production)
@@ -285,9 +284,7 @@ theorem supports_noBrevity :
     -- Judgment: over-description not penalized (Q2 not enforced)
     ¬exp2_target_1ref.significant ∧
     -- Judgment: under-description penalized (Q1 enforced)
-    exp2_target_2ref.significant ∧
-    -- No Brevity is the weakest Q2 interpretation
-    DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 := by
-  refine ⟨?_, by decide, rfl, rfl⟩; norm_num [exp1_target_1ref]
+    exp2_target_2ref.significant := by
+  refine ⟨?_, by decide, rfl⟩; norm_num [exp1_target_1ref]
 
 end EngelhardtEtAl2006
