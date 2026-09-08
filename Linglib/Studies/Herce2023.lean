@@ -51,23 +51,14 @@ section Bridge
 
 variable {Cell S : Type*} [Fintype Cell] [DecidableEq S]
 
-/-- The kernel class of `a` under `f`, as a `Finset`: the cells `f` sends to
-`f a`. Its coercion is `Morphology.syncretismClass`. -/
-def kerClass (f : Cell → S) (a : Cell) : Finset Cell :=
-  Finset.univ.filter (fun c => f c = f a)
-
-theorem coe_kerClass (f : Cell → S) (a : Cell) :
-    ↑(kerClass f a) = syncretismClass f a := by
-  ext c; simp [kerClass, syncretismClass]
-
-/-- A nontrivial ker-class `Finset` that equals no natural class is a
-morphome. -/
+/-- A nontrivial syncretism class, as the `Finset` of cells a form realizes, that equals no
+natural class is a morphome. -/
 theorem isMorphome_of_kerClass (f : Cell → S) (a : Cell) (X : Finset Cell)
-    (Natural : Set Cell → Prop) (hker : kerClass f a = X)
+    (Natural : Set Cell → Prop) (hker : formCells f (f a) = X)
     (hnt : 1 < X.card) (hnat : ¬ Natural ↑X) :
     IsMorphome f Natural ↑X := by
   refine ⟨?_, Finset.nontrivial_coe.mpr (Finset.one_lt_card_iff_nontrivial.mp hnt), hnat⟩
-  have hX : (↑X : Set Cell) = syncretismClass f a := by rw [← hker, coe_kerClass]
+  have hX : (↑X : Set Cell) = syncretismClass f a := by rw [← hker, coe_formCells]
   rw [hX]; exact syncretismClass_mem_classes f a
 
 end Bridge
@@ -128,9 +119,9 @@ def spNaturalClass (s : SpSpec) : Finset SpCell :=
 conjunction. -/
 def SpNatural (X : Set SpCell) : Prop := ∃ s : SpSpec, ↑(spNaturalClass s) = X
 
-theorem venir_kerClass : kerClass venirStem (.ind, .first, .sg) = Lset := by decide
-theorem nacer_kerClass : kerClass nacerStem (.ind, .first, .sg) = Lset := by decide
-theorem caber_kerClass : kerClass caberStem (.ind, .first, .sg) = Lset := by decide
+theorem venir_kerClass : formCells venirStem (venirStem (.ind, .first, .sg)) = Lset := by decide
+theorem nacer_kerClass : formCells nacerStem (nacerStem (.ind, .first, .sg)) = Lset := by decide
+theorem caber_kerClass : formCells caberStem (caberStem (.ind, .first, .sg)) = Lset := by decide
 
 theorem Lset_card : 1 < Lset.card := by decide
 
@@ -194,8 +185,10 @@ def dNaturalClass (s : DSpec) : Finset DCell :=
 
 def DNatural (X : Set DCell) : Prop := ∃ s : DSpec, ↑(dNaturalClass s) = X
 
-theorem darma_kerClass_intr : kerClass (darmaAgr .intr) (.second, .sg) = Dset := by decide
-theorem darma_kerClass_tr : kerClass (darmaAgr .tr) (.second, .sg) = Dset := by decide
+theorem darma_kerClass_intr :
+    formCells (darmaAgr .intr) (darmaAgr .intr (.second, .sg)) = Dset := by decide
+theorem darma_kerClass_tr :
+    formCells (darmaAgr .tr) (darmaAgr .tr (.second, .sg)) = Dset := by decide
 
 theorem Dset_card : 1 < Dset.card := by decide
 

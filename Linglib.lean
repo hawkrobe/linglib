@@ -887,6 +887,7 @@ import Linglib.Fragments.German.Relativization
 import Linglib.Fragments.German.Tense
 import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.VerbParticles
+import Linglib.Fragments.German.Verbs
 import Linglib.Fragments.German.WordOrder
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Fragments.Greek.Case
@@ -1145,6 +1146,7 @@ import Linglib.Fragments.Slavic.Czech.PolarityItems
 import Linglib.Fragments.Slavic.Czech.Reciprocals
 import Linglib.Fragments.Slavic.Macedonian.QuestionParticles
 import Linglib.Fragments.Slavic.Polish.Case
+import Linglib.Fragments.Slavic.Polish.Pronouns
 import Linglib.Fragments.Slavic.Polish.QuestionParticles
 import Linglib.Fragments.Slavic.Polish.Verbs
 import Linglib.Fragments.Slavic.Russian.Adposition
@@ -2612,6 +2614,7 @@ import Linglib.Studies.Sharvit2014
 import Linglib.Studies.Sharvit2025
 import Linglib.Studies.ShenHuang2026
 import Linglib.Studies.Shieber1985
+import Linglib.Studies.Shieber1986
 import Linglib.Studies.Sidner1983
 import Linglib.Studies.SikosEtAl2021
 import Linglib.Studies.Siloni2012
@@ -3014,3 +3017,4 @@ import Linglib.Data.Examples.Cresswell1976
 import Linglib.Data.Examples.Cruse1973
 import Linglib.Data.Examples.Cumming2026
 import Linglib.Data.Examples.Cysouw2003
+import Linglib.Data.Examples.DalrympleKaplan2000

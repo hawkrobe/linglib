@@ -1,148 +1,152 @@
-import Linglib.Core.Order.Flat
-import Linglib.Core.Order.PartialUnify
-import Linglib.Data.UD.Basic
-import Linglib.Features.Basic
-import Linglib.Features.Case.Basic
-import Linglib.Features.Person.Decomposition
+import Linglib.Data.Examples.DalrympleKaplan2000
+import Linglib.Features.Gender.Resolve
 import Linglib.Features.Person.Resolve
+import Linglib.Fragments.Chichewa.Gender
+import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.German.Pronouns
+import Linglib.Fragments.German.Verbs
+import Linglib.Fragments.Slavic.Polish.Pronouns
+import Linglib.Fragments.Xhosa.Basic
+import Linglib.Morphology.Paradigm.Morphome
+import Linglib.Studies.Shieber1986
+import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Card
 import Mathlib.Data.Fintype.Powerset
-import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Fintype.Prod
 import Mathlib.Order.Bounds.Basic
-import Mathlib.Order.BoundedOrder.Basic
 
 /-!
-# Dalrymple & Kaplan 2000: Feature Indeterminacy and Feature Resolution
-[dalrymple-kaplan-2000]
+# Dalrymple and Kaplan, feature indeterminacy and feature resolution (2000)
 
-Set-valued syntactic features, against atomic-value-plus-equality. Two phenomena, one
-representational move (§4, eq. 25: "Sets encode indeterminate feature possibilities"):
+A syncretic form such as German *was* satisfies conflicting case requirements at once, and
+a coordinate noun phrase has a person or gender of its own computed from those of its
+conjuncts. Dalrymple and Kaplan represent both with set-valued features. An indeterminate
+value is the set of atomic values the form can realize and a contextual requirement is
+membership in it, so one value meets two requirements where equality against an atomic
+value, whether disjoined or left unspecified, cannot; the same sets serve on the verb side,
+where a syncretic agreement form imposes an indeterminate requirement that distributes to
+the conjuncts of a coordinate subject. A resolving value is a set of markers, and the
+person or gender of a coordination is the union of its conjuncts' sets, the least set the
+two subset annotations of the coordination rule allow. Person values are subsets of {S, H},
+which predicts the Fula inclusive/exclusive table and the collapsed English one and bounds
+resolution at four persons; gender marker sets do the same for Hindi and Icelandic and, on
+one of the paper's two accounts, for Slovene with the conjunction contributing a marker.
+Resolving features are never indeterminate: they are checked by constraining equality
+against a designated set, and an indeterminate one would have to be a set of sets.
 
-* **Indeterminacy** (distributive features: case, noun class, vform): a syncretic form
-  bears a *set* of atomic values — German *was* `{NOM, ACC}` — and contextual
-  requirements are *membership* assertions (`ACC ∈ (↑ OBJ CASE)`), not equalities. The
-  paper refutes the two obvious alternatives: disjunctive specification DNF-collapses
-  into a homophone listing (§3.1), and underspecification both derives `NOM = ACC` by
-  transitivity of equality and overgenerates dative contexts (§3.2).
-* **Resolution** (nondistributive features: person, gender): a coordinate phrase's
-  person/gender is the **union** of its conjuncts' marker sets (§6, §7) — person values
-  are subsets of `{S, H}` (`{S}` 1exc, `{S,H}` 1inc, `{H}` 2nd, `{}` 3rd), and the
-  union analysis predicts the full Fula paradigm (87–88), the collapsed
-  English/Spanish/Slovak system (91–92), and the gender tables of Hindi (112),
-  Icelandic (120), and Slovene with the conjunction contributing `F` (126–127).
+We prove that an indeterminate value is a syncretism class of a paradigm, read off the
+fragments for *was*, *kogo*, *set*, *kaufen* and the Xhosa and Chichewa subject prefixes;
+that the two rejected alternatives fail as order theory, two atoms having no join in the
+flat order, so that unification of the two verbs' requirements fails, while their join in
+the set order is the union and the underspecified value is the universal set that
+overgenerates; that union on marker sets is the substrate's person resolution because
+profiles union, with the person hierarchy as the inclusion order of marker sets; and that
+the gender generalizations follow from union, same-gender congruence from idempotence and
+the need for a third gender from incomparability, with Slovene's violation located in the
+conjunction's marker. Each construction is then checked against the paper's judgment.
 
-The deliberate sharp line (§8): *resolving* features are never indeterminate —
-Hindi *wah* is masc-or-fem by wide-scope **disjunction** (ambiguity), not by a set
-value, which is why `*wah arrived.MASC and arrived.FEM` fails (128).
+## Implementation notes
 
-This is the flagship counterexample to treating the flat information order
-(the subsumption/unification substrate at the end of this file) as
-linguistically definitional: indeterminate
-agreement is an *annotation-level* phenomenon demanding non-flat (set-valued) slots.
-`toIndet` below certifies the relationship — the flat order embeds into the
-(superset-ordered) indeterminacy lattice as the determinate fragment, with `⊥`
-(no information) mapping to the universal set.
+* The syncretism class is the maximal indeterminate value a form can bear; §4.5 leaves it to
+  the speaker's lexicon whether a form bears it or the disjunction of its singletons, and
+  the file analyses the grammars that accept the paper's examples.
+* The person of a marker set is total: the two markers give exactly the four values of the
+  quadripartition, so resolution is derived from the substrate's profile grounding rather
+  than checked by a table.
+* The collapsed English system is stated as the tripartition's coarsened resolution, the
+  study's bridge to the substrate; the paper frames §6.2 as a choice between two marker
+  assignments.
+* Each language's gender rules are a table over its own gender carrier, the shape of the
+  substrate's `Gender.Strategy.res`, so that Slovene's same-gender clause is the failure of
+  `Gender.Strategy.Congruent`.
 
-Formal highlights replicated as theorems: the German/Polish contrast set
-((17)/(28) vs (32); (40) vs (41)), the §3 refutations, verb-side indeterminacy
-(Xhosa (56), Chicheŵa (59), German *kaufen* (62)), the resolution tables, the
-minimal-model derivation of *José y tu* (96–97), the Sag-et-al intersection
-refutation (§6.5, (100)–(101) vs Fula), and the De Morgan duality (102–103) — which
-is mathlib's `Finset.compl_union`. The person-marker sets also project onto the
-binary person decomposition of `Features/Person.lean`, with the inclusive/exclusive
-collapse made explicit.
+## TODO
+
+* The paper offers two accounts of Slovene and declines to choose; only the one on which the
+  conjunction contributes `F` is formalized, and on the other coordinated neuters are neuter
+  and the neuter plural verb form is what is restricted.
+
+## References
+
+* [M. Dalrymple and R. M. Kaplan, *Feature indeterminacy and feature resolution*
+  (2000)][dalrymple-kaplan-2000]
+* [A. Zaenen and L. Karttunen, *Morphological non-distinctiveness and coordination*
+  (1984)][zaenen-karttunen-1984]
+* [G. K. Pullum and A. M. Zwicky, *Phonological resolution of syntactic feature conflict*
+  (1986)][pullum-zwicky-1986]
+* [A. Groos and H. van Riemsdijk, *Matching effects in free relatives*
+  (1981)][groos-van-riemsdijk-1981]
+* [S. Dyła, *Across-the-board dependencies and case in Polish* (1984)][dyla-1984]
+* [E. Voeltz, *Surface constraints and agreement resolution* (1971)][voeltz-1971]
+* [G. G. Corbett, *Hierarchies, targets and controllers* (1983)][corbett-1983]
+* [G. G. Corbett, *Resolution rules: Agreement in person, number, and gender*
+  (1983)][corbett-1983b]
+* [G. G. Corbett, *Gender* (1991)][corbett-1991]
+* [G. G. Corbett and A. D. Mtenje, *Gender agreement in Chichewa* (1987)][corbett-mtenje-1987]
+* [I. A. Sag, G. Gazdar, T. Wasow and S. Weisler, *Coordination and how to distinguish
+  categories* (1985)][sag-gazdar-wasow-weisler-1985]
+* [A. M. Zwicky, *Hierarchies of person* (1977)][zwicky-1977b]
+* [R. M. Kaplan and J. Bresnan, *Lexical-functional grammar* (1982)][kaplan-bresnan-1982]
+* [S. M. Shieber, *An introduction to unification-based approaches to grammar*
+  (1986)][shieber-1986]
+* [R. Noyer, *Features, positions, and affixes in autonomous morphological structure*
+  (1992)][noyer-1992]
 -/
 
 namespace DalrympleKaplan2000
 
+open Data.Examples Morphology
 
-/-! ### §4: indeterminate values are sets; checking is membership -/
+/-- The paper's judgment on `e` is the prediction `P`. -/
+abbrev AcceptableIff (e : LinguisticExample) (P : Prop) : Prop := e.judgment = .acceptable ↔ P
 
-/-- An indeterminate feature value: the set of atomic values the form can realize
-    (eq. 25). Singleton = determinate. -/
-abbrev IndetVal (α : Type*) := Finset α
+/-- A distributive requirement on a coordinate structure holds of each conjunct ((44), (73)). -/
+abbrev Distributes {α : Type*} (P : α → Prop) (s : Finset α) : Prop := ∀ f ∈ s, P f
 
-/-- Contextual requirement (eq. 27): the required atom is a member of the value set. -/
-abbrev requires {α : Type*} [DecidableEq α] (c : α) (v : IndetVal α) : Prop := c ∈ v
+/-- The union is the smallest set containing both, which is how the minimal model turns the
+    two subset annotations of a coordination rule into union ((93), (94)). -/
+theorem union_isLeast {α : Type*} [DecidableEq α] (x y : Finset α) :
+    IsLeast {z | x ⊆ z ∧ y ⊆ z} (x ∪ y) :=
+  ⟨⟨Finset.subset_union_left, Finset.subset_union_right⟩,
+    λ _ ⟨hx, hy⟩ => Finset.union_subset hx hy⟩
 
-/-- German relative pronouns (26): *wer* nominative, *was* syncretic, *wem* dative. -/
-def wer : IndetVal Case := {Case.nom}
-def was : IndetVal Case := {Case.nom, Case.acc}
-def wem : IndetVal Case := {Case.dat}
+/-- The intersection is the largest set contained in both, which is why an intersection
+    analysis cannot be stated by minimal models (§6.5). -/
+theorem inter_isGreatest {α : Type*} [DecidableEq α] (x y : Finset α) :
+    IsGreatest {z | z ⊆ x ∧ z ⊆ y} (x ∩ y) :=
+  ⟨⟨Finset.inter_subset_left, Finset.inter_subset_right⟩,
+    λ _ ⟨hx, hy⟩ => Finset.subset_inter hx hy⟩
 
-/-- (17)/(28): *Ich habe gegessen was übrig war* — *was* satisfies the matrix verb's
-    accusative requirement and the relative clause's nominative requirement at once. -/
-theorem was_satisfies_both : requires Case.acc was ∧ requires Case.nom was := by
-  constructor <;> decide
+/-! ### Indeterminacy: set values and membership (§§3–4) -/
 
-/-- (32): `*Wem du vertraust muss klug sein` — *wem* `{DAT}` satisfies *vertraut* but
-    not the matrix `NOM ∈` requirement. -/
-theorem wem_fails_matrix : requires Case.dat wem ∧ ¬ requires Case.nom wem := by
-  constructor <;> decide
+/-- Under equality checking no value meets two distinct requirements, whichever disjunct of
+    (18) is chosen ((19)–(21)) and whatever the variable of (23) stands for ((24)). -/
+theorem not_eq_and_eq_of_ne {α : Type*} {x a b : α} (h : a ≠ b) : ¬ (x = a ∧ x = b) :=
+  λ ⟨ha, hb⟩ => h (ha ▸ hb)
 
-/-- Polish (40)/(41): *kogo* `{ACC, GEN}` survives coordination of an ACC-taking and a
-    GEN-taking verb; *co* `{NOM, ACC}` does not. -/
-def kogo : IndetVal Case := {Case.acc, Case.gen}
-def co : IndetVal Case := {Case.nom, Case.acc}
+/-- In the flat order two distinct atoms have no join, so the unification of an underspecified
+    value with the two verbs' requirements fails, the transitivity argument of (24) as order
+    theory. -/
+theorem flat_no_join {α : Type*} [DecidableEq α] {a b : α} (h : a ≠ b) :
+    Flat.unify (↑a : Flat α) ↑b = none :=
+  Flat.unify_distinct_eq_none h
 
-theorem kogo_grammatical : requires Case.acc kogo ∧ requires Case.gen kogo := by
-  constructor <;> decide
+/-- On the UD bundle, the accusative and nominative requirements of the two verbs of (17) are
+    not bounded above in the subsumption order, so Shieber's unification of them fails. -/
+theorem requirements_not_compatible :
+    ¬ UD.MorphFeatures.Compatible { case_ := ↑UD.Case.Acc } { case_ := ↑UD.Case.Nom } := by
+  rw [← UD.MorphFeatures.compatible_iff_bddAbove]; decide
 
-theorem co_ungrammatical : requires Case.acc co ∧ ¬ requires Case.gen co := by
-  constructor <;> decide
+/-- Membership in a set designator is disjunction over its elements, and excludes every other
+    atom ((35)). -/
+theorem mem_pair_iff {α : Type*} [DecidableEq α] (x a b : α) :
+    x ∈ ({a, b} : Finset α) ↔ x = a ∨ x = b := by simp
 
-/-! ### §3: why the rival accounts fail -/
-
-/-- An atomic-value account: one case value checked by equality against every
-    requirement. -/
-def atomicSatisfies (x : Case) (reqs : List Case) : Prop := ∀ r ∈ reqs, x = r
-
-private theorem not_atomicSatisfies_acc_nom (x : Case) :
-    ¬ atomicSatisfies x [Case.acc, Case.nom] := fun h =>
-  absurd ((h Case.acc (by simp)) ▸ (h Case.nom (by simp))) (by decide)
-
-/-- §3.2 (eq. 24): no single atomic value satisfies both verbs of (17) — transitivity
-    of equality would force `NOM = ACC`. -/
-theorem underspecification_fails : ¬ ∃ x : Case, atomicSatisfies x [Case.acc, Case.nom] :=
-  fun ⟨x, h⟩ => not_atomicSatisfies_acc_nom x h
-
-/-- §3.1 (18)–(21): disjunctive specification means *choosing* one disjunct per
-    utterance — and every choice from `{NOM, ACC}` fails one of the two requirements.
-    The set-based account (`was_satisfies_both`) succeeds where every disjunctive
-    resolution fails: that contrast is the paper's argument. -/
-theorem disjunction_collapses :
-    ∀ x ∈ was, ¬ atomicSatisfies x [Case.acc, Case.nom] :=
-  fun x _ => not_atomicSatisfies_acc_nom x
-
-/-! ### §4.4: indeterminate *requirements* (verb-side sets) -/
-
-/-- Xhosa (54)–(56): *zibomvu* requires its subject's noun class to be in `{7/8, 9/10}`
-    (classes as their singular-class numbers), so class-7/8 *izandla* and class-9/10
-    *neendlebe* conjuncts each satisfy it. -/
-theorem xhosa_zibomvu : (7 : ℕ) ∈ ({7, 9} : Finset ℕ) ∧ (9 : ℕ) ∈ ({7, 9} : Finset ℕ) := by
-  constructor <;> decide
-
-/-- German (60)–(63): *kaufen* imposes `(↑ SUBJ PERSON) ∈ {1, 3}`; right-node raising
-    over a 1-person and a 3-person subject satisfies the requirement in each conjunct. -/
-def kaufenReq : IndetVal UD.Person := {UD.Person.first, UD.Person.third}
-
-theorem kaufen_rnr :
-    requires UD.Person.first kaufenReq ∧ requires UD.Person.third kaufenReq ∧
-      ¬ requires UD.Person.second kaufenReq := by
-  refine ⟨by decide, by decide, by decide⟩
-
-/-! ### The refinement certificate: the flat order is the determinate fragment
-
-The flat slot order (this file's subsumption substrate below) embeds into the
-indeterminacy lattice: a determinate commitment `↑x` is the singleton `{x}`, and *no
-information* (`⊥`) is the universal set (any realization possible). Information
-increases as sets *shrink*, so the embedding is order-reversing into `⊆` — i.e. an
-embedding into the superset order. Set-valued slots are a refinement of the flat
-layer, not a rival to it. -/
-
-/-- A flat slot as an indeterminate value: `⊥` = no commitment = anything goes. -/
-def toIndet : Flat Case → IndetVal Case
+/-- A flat slot as a set value, a determinate commitment its singleton and no commitment, the
+    underspecification of (22), the universal set; subsumption becomes reverse inclusion, so
+    the flat order is the determinate fragment of the set order. -/
+def toIndet : Flat Case → Finset Case
   | ⊥ => Finset.univ
   | (x : Case) => {x}
 
@@ -152,774 +156,424 @@ private theorem univ_ne_singleton (y : Case) : (Finset.univ : Finset Case) ≠ {
   rw [Finset.card_univ] at hc
   exact absurd hc (by decide)
 
-theorem toIndet_injective : Function.Injective toIndet := by
-  intro a b h
-  match a, b with
-  | ⊥, ⊥ => rfl
-  | ⊥, (y : Case) => exact absurd h (univ_ne_singleton y)
-  | (x : Case), ⊥ => exact absurd h.symm (univ_ne_singleton x)
-  | (x : Case), (y : Case) =>
-    simp only [toIndet, Finset.singleton_inj] at h
-    exact Flat.coe_inj.mpr h
-
-/-- The embedding certificate: flat subsumption is superset inclusion of realization
-    sets. More committed = smaller set; `⊥` sits below everything because `univ`
-    contains everything. -/
-theorem le_iff_toIndet_superset (a b : Flat Case) :
-    a ≤ b ↔ toIndet b ⊆ toIndet a := by
+theorem le_iff_toIndet_superset (a b : Flat Case) : a ≤ b ↔ toIndet b ⊆ toIndet a := by
   cases a with
   | bot => exact iff_of_true bot_le (Finset.subset_univ _)
   | coe x =>
     cases b with
     | bot =>
-      refine iff_of_false (Flat.not_coe_le_bot x) fun h => ?_
+      refine iff_of_false (Flat.not_coe_le_bot x) λ h => ?_
       exact univ_ne_singleton x (Finset.Subset.antisymm h (Finset.subset_univ _))
     | coe z => simp [toIndet, eq_comm]
 
-/-! ### §§5–6: feature resolution — person as marker sets, resolution as union -/
-
-/-- The person markers (§6): `S` speaker, `H` hearer. §6.3 argues no third marker is
-    attested (Sierra Popoluca's "limited inclusive" is an inclusive dual, per Noyer). -/
-inductive Marker where
-  | S
-  | H
-  deriving DecidableEq, Repr, Fintype
-
-abbrev PersonSet := Finset Marker
-
-/-- Fula's four-way system (87): full use of the marker inventory. -/
-def fula1exc : PersonSet := {Marker.S}
-def fula1inc : PersonSet := {Marker.S, Marker.H}
-def fula2 : PersonSet := {Marker.H}
-def fula3 : PersonSet := (∅ : Finset Marker)
-
-/-- Resolution is union (77, 93): "the person feature of a coordinate structure is
-    resolved to be the UNION of the person features of the conjuncts". -/
-def resolve (p q : PersonSet) : PersonSet := p ∪ q
-
-/-- The Fula resolution table (78)/(88), in full. -/
-theorem fula_table :
-    resolve fula1exc fula2 = fula1inc ∧
-    resolve (resolve fula1exc fula2) fula3 = fula1inc ∧
-    resolve fula1exc fula3 = fula1exc ∧
-    resolve fula2 fula3 = fula2 ∧
-    resolve fula3 fula3 = fula3 := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> decide
-
-/-- English/Spanish/Slovak collapse the inclusive/exclusive distinction (§6.2): all
-    first person is `{S, H}` — preserving only attested syntactic distinctions at the
-    cost of the referential correlation (Aronoff's impersonal *you*, French *on*). -/
-def eng1 : PersonSet := {Marker.S, Marker.H}
-def eng2 : PersonSet := {Marker.H}
-def eng3 : PersonSet := (∅ : Finset Marker)
-
-/-- The collapsed-system resolution table (91)/(92). -/
-theorem english_table :
-    resolve eng1 eng2 = eng1 ∧ resolve eng1 eng3 = eng1 ∧
-    resolve eng2 eng3 = eng2 ∧ resolve eng3 eng3 = eng3 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
-
-/-- *José y tu habláis* (95)–(99): the resolved person of `3 ∪ 2` is `{H}` — the
-    minimal model — so the 2PL verb's constraining equation `=c {H}` succeeds and the
-    1PL verb's `=c {S,H}` fails. -/
-theorem jose_y_tu :
-    resolve eng3 eng2 = eng2 ∧ resolve eng3 eng2 ≠ eng1 := by
-  constructor <;> decide
-
-/-! ### The substrate bridge: `Person.resolve` is marker-set union -/
-
-/-- The marker sets of the canonical quadripartition values — the Fula
-    encoding (87). Plain `first` underdetermines clusivity (their §6.2
-    English collapse picks `{S, H}` by stipulation), and `zero` is
-    outside the system, so both map to `none`. -/
-def markerSetOf : Person → Option PersonSet
-  | .firstExclusive => some fula1exc
-  | .firstInclusive => some fula1inc
-  | .second => some fula2
-  | .third => some fula3
-  | _ => none
-
-/-- The substrate's canonical resolution is the paper's union (77)/(93):
-    on the quadripartition, `Person.resolve` commutes with the marker
-    encoding — the same grounding `Person.resolve_profile` states
-    intrinsically, here in the paper's own vocabulary. -/
-theorem person_resolve_is_union :
-    ∀ p q : Person, ∀ sp sq : PersonSet,
-      markerSetOf p = some sp → markerSetOf q = some sq →
-      markerSetOf (Person.resolve p q) = some (resolve sp sq) := by
+open German.Pronouns in
+/-- The case values of the German relative pronouns are the cells their forms realize, *wer*
+    the nominative, *wem* the dative, *was* the nominative and the accusative ((26), (32)). -/
+theorem german_cases :
+    formCells wer (some "wer") = {Case.nom} ∧ formCells wer (some "wem") = {Case.dat} ∧
+      formCells was (some "was") = {Case.nom, Case.acc} := by
   decide
 
-/-- Two markers bound the system (§6.3): at most four person values are expressible,
-    matching the maximally differentiated (Fula-type) inventory. -/
-theorem two_markers_four_persons : Fintype.card PersonSet = 4 := by
-  rw [Fintype.card_finset]
-  rfl
+open German.Pronouns in
+/-- In the set order the two requirements do have a join, and it is the value of *was*, the
+    minimal model of `ACC ∈ v` and `NOM ∈ v` ((28)–(31), (36)). -/
+theorem was_isLeast :
+    IsLeast {v | ({Case.acc} : Finset Case) ⊆ v ∧ {Case.nom} ⊆ v} (formCells was (some "was")) := by
+  rw [german_cases.2.2,
+    show ({Case.nom, Case.acc} : Finset Case) = {Case.acc} ∪ {Case.nom} by decide]
+  exact union_isLeast _ _
 
-/-! ### §6.5: union vs intersection — Sag et al. refuted, De Morgan vindicated -/
+open German.Pronouns in
+/-- Underspecification overgenerates where the set value does not, *was* admitting no dative or
+    genitive context and the universal set admitting every one (§3.2). -/
+theorem underspecification_overgenerates :
+    Case.dat ∈ toIndet ⊥ ∧ Case.dat ∉ formCells was (some "was") ∧
+      Case.gen ∉ formCells was (some "was") := by
+  decide
 
-/-- Sag et al. 1985's marker sets (100): first = `{}`, second = `{XSP}`,
-    third = `{XSP, THP}`, resolution by *intersection*. Reusing our two markers for
-    their two. -/
-def sag1 : PersonSet := (∅ : Finset Marker)
-def sag2 : PersonSet := {Marker.S}
-def sag3 : PersonSet := {Marker.S, Marker.H}
+open German.Pronouns in
+/-- *was* meets the accusative requirement of *gegessen* and the nominative one of *übrig war*
+    ((28), (30)), and *wem* meets *vertraust* but not *muss* ((32), (33)). -/
+theorem free_relatives :
+    AcceptableIff Examples.ex_17
+        (Case.acc ∈ formCells was (some "was") ∧ Case.nom ∈ formCells was (some "was")) ∧
+      AcceptableIff Examples.ex_32
+        (Case.dat ∈ formCells wer (some "wem") ∧ Case.nom ∈ formCells wer (some "wem")) := by
+  decide
 
-/-- The refutation (§6.5): with first person as `∅`, intersection makes *you and I*
-    and *Bill and I* indistinguishable — "it is in principle impossible to distinguish
-    different kinds of coordination involving a first person pronoun", so Fula's
-    inclusive/exclusive contrast is underivable. Union keeps them apart. -/
-theorem sag_intersection_fails :
-    sag1 ∩ sag2 = sag1 ∩ sag3 ∧ resolve fula1exc fula2 ≠ resolve fula1exc fula3 := by
-  constructor <;> decide
+open Polish.Pronouns in
+/-- Fronted *kogo* meets the accusative of *lubi* and the genitive of *nienawidzi* in both
+    conjuncts ((40), (46)), and *co* does not ((41)). -/
+theorem polish_coordination :
+    AcceptableIff Examples.ex_40
+        (Case.acc ∈ formCells kto (some "kogo") ∧ Case.gen ∈ formCells kto (some "kogo")) ∧
+      AcceptableIff Examples.ex_41
+        (Case.acc ∈ formCells co (some "co") ∧ Case.gen ∈ formCells co (some "co")) := by
+  decide
 
-/-- The De Morgan duality (102)–(103): any union analysis transforms into an
-    equivalent intersection analysis over complement sets (markers reread as
-    *absences*). The paper's observation is mathlib's `Finset.compl_union`. -/
-theorem union_intersection_duality (p q : PersonSet) : (p ∪ q)ᶜ = pᶜ ∩ qᶜ :=
-  Finset.compl_union p q
+open English.Predicates.Verbal in
+/-- The cells *set* realizes are the base, the past and the past participle; the paper's VFORM
+    value lists the two nonfinite ones, the past being a TENSE value ((50)). -/
+theorem set_cells :
+    formCells set_.realize "set" = {VerbEntry.Cell.base, .past, .pastParticiple} := by
+  decide
 
-/-! ### §7: gender resolution by the same mechanism -/
+open English.Predicates.Verbal in
+/-- *will* requires the base form and *have* the past participle of the shared verb; *set*
+    realizes both cells ((49), (50)) and neither form of *clarify* does ((47), (48)). -/
+theorem will_and_have :
+    AcceptableIff Examples.ex_49 (VerbEntry.Cell.base ∈ formCells set_.realize "set" ∧
+        VerbEntry.Cell.pastParticiple ∈ formCells set_.realize "set") ∧
+      AcceptableIff Examples.ex_47 (VerbEntry.Cell.base ∈ formCells clarify.realize "clarify" ∧
+        VerbEntry.Cell.pastParticiple ∈ formCells clarify.realize "clarify") ∧
+      AcceptableIff Examples.ex_48
+        (VerbEntry.Cell.base ∈ formCells clarify.realize "clarified" ∧
+          VerbEntry.Cell.pastParticiple ∈ formCells clarify.realize "clarified") := by
+  decide
 
-/-- Gender markers; per-language assignments below reuse one inventory. -/
-inductive GMark where
-  | M
-  | F
-  | N
+/-- The subject genders an indeterminate Xhosa verb such as *zibomvu* 'are red' agrees with are
+    those whose plural class takes the prefix *zi-*, 7/8 and 9/10 ((54), (56)); the fragment's
+    own account of *zi-* with non-human conjuncts is default agreement, a rival reading. -/
+theorem zibomvu_genders :
+    formCells Xhosa.Gender.plSubjPrefix "zi" = {Xhosa.Gender.genderD, .genderE} := by
+  decide
+
+/-- Distributed to the conjuncts, *zibomvu*'s requirement is met by *izandla* (7/8) and
+    *iindlebe* (9/10) ((54)–(56)), while a determinate class-6 or class-8 requirement is not
+    met by both *igqira* (5/6) and *isanuse* (7/8) ((53)). -/
+theorem xhosa_coordination :
+    AcceptableIff Examples.ex_54
+        (Distributes (· ∈ formCells Xhosa.Gender.plSubjPrefix "zi")
+          {Xhosa.Gender.genderD, .genderE}) ∧
+      AcceptableIff Examples.ex_53a (Distributes (λ g : Xhosa.Gender => g.pluralClass = .cl6)
+          {Xhosa.Gender.genderC, .genderD}) ∧
+      AcceptableIff Examples.ex_53b (Distributes (λ g : Xhosa.Gender => g.pluralClass = .cl8)
+          {Xhosa.Gender.genderC, .genderD}) := by
+  decide
+
+open Chichewa.Gender in
+/-- The Chichewa plural prefix *a-* serves genders 1/2 and 5/6, so *a-kubvunda* and *a-li* agree
+    with *ma-lalanje* and *ma-samba*, with *a-mphaka* and *a-galu*, and with their mixture
+    ((57)–(59)). -/
+theorem chichewa_coordination :
+    AcceptableIff Examples.ex_57
+        (Distributes (· ∈ formCells Value.plSubjPrefix .a) {lalanje.gender, samba.gender}) ∧
+      AcceptableIff Examples.ex_58
+        (Distributes (· ∈ formCells Value.plSubjPrefix .a) {mphaka.gender, galu.gender}) ∧
+      AcceptableIff Examples.ex_59
+        (Distributes (· ∈ formCells Value.plSubjPrefix .a) {mphaka.gender, lalanje.gender}) := by
+  decide
+
+open German.Verbs in
+/-- *kaufen* is the first and the third plural and *kauft* the second plural and the third
+    singular, so the persons *kaufen* agrees with are 1 and 3 ((62)) and *kauft* imposes the
+    correlated requirement of (65). -/
+theorem kaufen_cells :
+    formCells kaufen (some "kaufen") = {(Person.first, Number.plural), (.third, .plural)} ∧
+      formCells kaufen (some "kauft") = {(Person.second, Number.plural), (.third, .singular)} := by
+  decide
+
+open German.Verbs in
+/-- Right-node-raised *kaufen* is satisfied by first-plural *wir* and third-plural *die Müllers*
+    ((61), (63)), and *kauft* by second-plural *ihr* and third-singular *Franz* ((64)), the
+    correlated features distributing as one cell each. -/
+theorem right_node_raising :
+    AcceptableIff Examples.ex_61 (Distributes (· ∈ formCells kaufen (some "kaufen"))
+        {(Person.first, Number.plural), (.third, .plural)}) ∧
+      AcceptableIff Examples.ex_64 (Distributes (· ∈ formCells kaufen (some "kauft"))
+        {(Person.second, Number.plural), (.third, .singular)}) := by
+  decide
+
+/-! ### Person resolution (§6) -/
+
+/-- The person markers, the paper's S and H ((77), §6.1). -/
+inductive Marker where
+  | speaker
+  | hearer
   deriving DecidableEq, Repr, Fintype
 
-abbrev GenderSet := Finset GMark
+/-- A person value as a set of markers. -/
+abbrev PersonSet := Finset Marker
 
-/-- Hindi (111): two genders, masculine `{M}`, feminine `{}` — mixed coordination
-    resolves masculine (112). -/
-theorem hindi_table :
-    (({GMark.M} : GenderSet) ∪ {GMark.M} = {GMark.M}) ∧
-    (({GMark.M} : GenderSet) ∪ ∅ = {GMark.M}) ∧
-    ((∅ : GenderSet) ∪ ∅ = ∅) := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
+/-- The person of a marker set, first exclusive with the speaker alone, first inclusive with
+    both, second with the hearer alone, third with neither ((87)). -/
+def person (s : PersonSet) : Person :=
+  if Marker.speaker ∈ s then (if Marker.hearer ∈ s then .firstInclusive else .firstExclusive)
+  else if Marker.hearer ∈ s then .second else .third
 
-/-- Icelandic (119): masc `{M}`, fem `{F}`, neut `{M, F}` — like genders preserved,
-    any mixture resolves neuter (118/120). -/
-theorem icelandic_mixed_is_neuter :
-    (({GMark.M} : GenderSet) ∪ {GMark.F} = {GMark.M, GMark.F}) ∧
-    (({GMark.M} : GenderSet) ∪ {GMark.M, GMark.F} = {GMark.M, GMark.F}) ∧
-    (({GMark.F} : GenderSet) ∪ {GMark.M, GMark.F} = {GMark.M, GMark.F}) := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
+/-- Two markers give exactly the four persons of the quadripartition, so no language resolves
+    more than four (§6.3). -/
+theorem person_injective : Function.Injective person := by decide
 
-/-- Slovene (122)/(126)–(127): masc `{F, N}`, fem `{F}`, neut `{N}`, and the
-    *conjunction itself* contributes `F ∈ (↑ GENDER)` — deriving the surprising
-    `NEUT & NEUT = MASC` (123)–(124). -/
--- Named (unlike Hindi/Icelandic, stated with bare `∪`) because Slovene resolution is
--- *not* bare union: the conjunction itself contributes `F` (126).
-def slovResolve (p q : GenderSet) : GenderSet := p ∪ q ∪ {GMark.F}
+/-- Two markers give four values. -/
+theorem card_personSet : Fintype.card PersonSet = 4 := by decide
 
-theorem slovene_neut_neut_is_masc :
-    slovResolve {GMark.N} {GMark.N} = ({GMark.F, GMark.N} : GenderSet) ∧
-    slovResolve {GMark.F} {GMark.F} = ({GMark.F} : GenderSet) := by
-  constructor <;> decide
+theorem person_ne_zero (s : PersonSet) : person s ≠ .zero := by
+  unfold person; split_ifs <;> simp
 
-/-! ### Bridge: marker sets project onto the binary person decomposition
+/-- A marker set is a discourse-role profile, the speaker marker speaker inclusion and the hearer
+    marker addressee inclusion. -/
+theorem toProfile_person (s : PersonSet) :
+    (person s).toProfile =
+      some ⟨decide (Marker.speaker ∈ s), some (decide (Marker.hearer ∈ s))⟩ := by
+  unfold person; split_ifs with hS hH hH <;> simp [Person.toProfile, hS, hH]
 
-`Features/Person.lean`'s two-boolean decomposition (`hasAuthor`, `hasParticipant`) is
-the image of the marker-set representation: `S ∈ p` is authorship, membership of
-either marker is participanthood. The map collapses exactly the inclusive/exclusive
-distinction — Fula's `{S}` and `{S, H}` land on the same binary value — which is the
-formal content of §6.2's "fewer pronominal distinctions". -/
+private theorem resolve_ne_zero {a b : Person} (ha : a ≠ .zero) (hb : b ≠ .zero) :
+    Person.resolve a b ≠ .zero := by
+  revert a b; decide
 
-open Person in
-/-- Project a marker set onto the binary decomposition. -/
-def toBinary (p : PersonSet) : Person.Features :=
-  { hasParticipant := Marker.S ∈ p ∨ Marker.H ∈ p
-    hasAuthor := Marker.S ∈ p }
+/-- Resolution is union ((77)): the substrate resolves persons by the disjunction of their role
+    profiles, the referential reading the paper starts from and weakens in §6.2, and the profile
+    of a union of marker sets is that disjunction, so `Person.resolve` commutes with `∪`; the
+    Fula table is the instance ((78), (88)). -/
+theorem resolve_person (p q : PersonSet) :
+    Person.resolve (person p) (person q) = person (p ∪ q) := by
+  refine Person.toProfile_injOn _ _ (resolve_ne_zero (person_ne_zero p) (person_ne_zero q))
+    (person_ne_zero _) ?_
+  rw [Person.resolve_profile _ _ (person_ne_zero p) (person_ne_zero q), toProfile_person,
+    toProfile_person, toProfile_person]
+  by_cases hS : Marker.speaker ∈ p <;> by_cases hS' : Marker.speaker ∈ q <;>
+    by_cases hH : Marker.hearer ∈ p <;> by_cases hH' : Marker.hearer ∈ q <;>
+    simp [Person.Profile.or, hS, hS', hH, hH']
 
-open Person in
-theorem toBinary_values :
-    toBinary fula1exc = firstF ∧ toBinary fula1inc = firstF ∧
-    toBinary fula2 = secondF ∧ toBinary fula3 = thirdF := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    simp [toBinary, fula1exc, fula1inc, fula2, fula3, firstF, secondF, thirdF]
+/-- The Fula examples, *you and Bill* second, *Bill and George* third, *you and I* and *you and
+    Bill and I* first inclusive, *Bill and I* and *Bill and us* first exclusive ((81)–(86)). -/
+theorem fula :
+    AcceptableIff Examples.ex_81 (person ({.hearer} ∪ ∅) = .second) ∧
+      AcceptableIff Examples.ex_82 (person (∅ ∪ ∅) = .third) ∧
+      AcceptableIff Examples.ex_83 (person ({.hearer} ∪ {.speaker}) = .firstInclusive) ∧
+      AcceptableIff Examples.ex_84 (person ({.hearer} ∪ ∅ ∪ {.speaker}) = .firstInclusive) ∧
+      AcceptableIff Examples.ex_85 (person (∅ ∪ {.speaker}) = .firstExclusive) ∧
+      AcceptableIff Examples.ex_86 (person (∅ ∪ {.speaker}) = .firstExclusive) := by
+  decide
 
-/-- The inclusive/exclusive collapse, explicitly: the binary decomposition cannot
-    separate Fula's two first persons. -/
-theorem binary_collapses_clusivity :
-    toBinary fula1exc = toBinary fula1inc ∧ fula1exc ≠ fula1inc := by
-  constructor
-  · simp [toBinary, fula1exc, fula1inc]
-  · decide
+/-- The encoding of languages without the inclusive/exclusive contrast, every first person the
+    inclusive's set, the second the hearer, the third empty ((91)). -/
+def english : Person → PersonSet
+  | .first => {.speaker, .hearer}
+  | .second => {.hearer}
+  | _ => ∅
 
-/-! ### BundleLike with `Finset` slots: the generic substrate accommodates indeterminacy
+/-- Union under this encoding is the tripartition's coarsened resolution ((92)). -/
+theorem english_table :
+    ∀ p q : Person, p ∈ Person.System.tripartition.values →
+      q ∈ Person.System.tripartition.values →
+      english (Person.System.tripartition.resolve p q) = english p ∪ english q := by
+  decide
 
-A multi-feature indeterminacy bundle is just a Pi type with `Finset` slots,
-ordered superset-first (more determinate = smaller set). `BundleLike`'s
-slot type family `S : F → Type*` (parameter `S` carrying its own
-order) covers this case without any new generic machinery: `S t :=
-(Finset (V t))ᵒᵈ`. The `BundleLike.Subsumes` order then reads, per slot,
-`b₁ t ≤ b₂ t` in the order dual — i.e. `(b₂ t).1 ⊆ (b₁ t).1` — which is
-exactly the §4 (eq. 25) information-as-set-of-possibilities convention.
+/-- Under this encoding the person hierarchy 1 < 2 < 3 is the reverse inclusion of marker sets,
+    so union picks the lowest-ranked conjunct, the hierarchy of Zwicky and Corbett (fn. 12)
+    as a corollary of union, as the substrate derives it from referent union. -/
+theorem english_subset_iff_rank :
+    ∀ p q : Person, p ∈ Person.System.tripartition.values →
+      q ∈ Person.System.tripartition.values →
+      (english q ⊆ english p ↔ p.hierarchyRank ≤ q.hierarchyRank) := by
+  decide
 
-This is the structural payoff: a feature-space tweak (Finset slots
-instead of Flat slots), not a re-development of the lattice theory. -/
+/-- *José y yo* and *ja a ty* take first-plural agreement and *José y tú* second-plural, the
+    minimal set above `{}` and `{H}` being `{H}`, so the second-plural verb's constraining
+    equation holds and the first-plural one fails ((71), (76), (95)–(99)). -/
+theorem spanish_slovak :
+    AcceptableIff Examples.ex_71 (english .third ∪ english .first = {.speaker, .hearer}) ∧
+      AcceptableIff Examples.ex_76 (english .first ∪ english .second = {.speaker, .hearer}) ∧
+      AcceptableIff Examples.ex_95 (english .third ∪ english .second = {.hearer}) ∧
+      english .third ∪ english .second ≠ {.speaker, .hearer} := by
+  decide
 
-/-- An indeterminacy bundle: each slot holds a `Finset` of possible
-atomic values, ordered superset-first via `Finset`'s order dual. -/
-abbrev IndetBundle (F : Type*) (V : F → Type*) : Type _ :=
-  (t : F) → (Finset (V t))ᵒᵈ
+/-- Sag, Gazdar, Wasow and Weisler's marker sets, combined by intersection ((100)). -/
+def sag : Person → PersonSet
+  | .first => ∅
+  | .second => {.speaker}
+  | .third => {.speaker, .hearer}
+  | _ => ∅
 
-namespace IndetBundle
+/-- Their assignment is the De Morgan dual of (91), each set the complement of the union
+    analysis's, so it succeeds on English exactly where union does ((101)–(103)). -/
+theorem sag_eq_compl :
+    ∀ p : Person, p ∈ Person.System.tripartition.values → sag p = (english p)ᶜ := by
+  decide
 
-variable {F : Type*} {V : F → Type*}
+/-- Intersection with the empty first-person set cannot tell *you and I* from *Bill and I*, so
+    Fula's inclusive/exclusive contrast is underivable, where union keeps them apart ((101)
+    against (88)). -/
+theorem sag_intersection :
+    sag .first ∩ sag .second = sag .first ∩ sag .third ∧
+      person ({.speaker} ∪ {.hearer}) ≠ person ({.speaker} ∪ ∅) := by
+  decide
 
-instance : BundleLike (IndetBundle F V) F
-    (fun t => (Finset (V t))ᵒᵈ) :=
-  ⟨fun b => b⟩
+/-- Any union analysis has an intersection dual over complements, markers read as absences
+    ((102), (103)). -/
+theorem compl_union (p q : PersonSet) : (p ∪ q)ᶜ = pᶜ ∩ qᶜ :=
+  Finset.compl_union p q
 
-instance : LawfulBundleLike (IndetBundle F V) :=
-  ⟨fun _ _ h => h⟩
+/-! ### Gender resolution (§7) -/
 
-end IndetBundle
+/-- Gender markers; each language assigns its genders subsets of them. -/
+inductive GenderMarker where
+  | masc
+  | fem
+  | neut
+  deriving DecidableEq, Repr, Fintype
 
-/-! Concrete witness: a 1-feature Case-indeterminacy bundle. We
-exhibit two bundles — *was* {NOM, ACC} and *wer* {NOM} — and confirm
-that `wer` subsumes (is more determinate than) `was`, via the
-generic `BundleLike.Subsumes`. -/
+/-- A gender value as a set of markers. -/
+abbrev GenderSet := Finset GenderMarker
 
-/-- A single-feature Case bundle. -/
-abbrev CaseBundle := IndetBundle Unit (fun _ => Case)
+/-- Whenever an injective marker assignment reproduces a language's resolution rules by union,
+    same-gender coordination resolves to that gender, the generalization (105b), because union
+    is idempotent. -/
+theorem congruent_of_union {G : Type*} {mark : G → GenderSet} (hinj : Function.Injective mark)
+    {rules : G → G → Option G} (h : ∀ a b, (rules a b).map mark = some (mark a ∪ mark b)) :
+    Gender.Strategy.Congruent rules := by
+  intro g
+  have hg := h g g
+  rw [Finset.union_self] at hg
+  cases hr : rules g g with
+  | none => simp [hr] at hg
+  | some g' =>
+    simp only [hr, Option.map_some, Option.some.injEq] at hg
+    exact congrArg some (hinj hg)
 
-def wasBundle : CaseBundle := fun _ => OrderDual.toDual was
-def werBundle : CaseBundle := fun _ => OrderDual.toDual wer
+/-- A mixed coordination resolves to one of its conjuncts' genders exactly when their marker
+    sets are nested ((105c)); otherwise their join is a third gender's set. -/
+theorem union_mem_pair_iff {α : Type*} [DecidableEq α] (s t : Finset α) :
+    (s ∪ t = s ∨ s ∪ t = t) ↔ (t ⊆ s ∨ s ⊆ t) := by
+  rw [← Finset.sup_eq_union, sup_eq_left, sup_eq_right]
 
-/-- *wer* {NOM} is more determinate than *was* {NOM, ACC}: their
-subsumption in the generic `BundleLike` order matches set-superset on
-the slot. -/
-theorem wer_subsumes_was : BundleLike.Subsumes wasBundle werBundle := by
-  intro _
-  show wer ⊆ was
+/-- The Hindi genders. -/
+inductive HindiGender where
+  | masculine
+  | feminine
+  deriving DecidableEq, Repr, Fintype
+
+/-- Corbett's Hindi resolution, masculine if any conjunct is and feminine otherwise
+    ((109), (110)). -/
+def hindiRules : HindiGender → HindiGender → Option HindiGender
+  | .feminine, .feminine => some .feminine
+  | _, _ => some .masculine
+
+/-- The marker assignment for Hindi ((111)). -/
+def hindi : HindiGender → GenderSet
+  | .masculine => {.masc}
+  | .feminine => ∅
+
+theorem hindi_injective : Function.Injective hindi := by decide
+
+/-- Union of the assigned sets reproduces the Hindi rules ((112)). -/
+theorem hindi_union : ∀ a b, (hindiRules a b).map hindi = some (hindi a ∪ hindi b) := by
+  decide
+
+theorem hindi_congruent : Gender.Strategy.Congruent hindiRules :=
+  congruent_of_union hindi_injective hindi_union
+
+/-- The feminine set is nested in the masculine, so the mixed coordination is masculine and
+    Hindi needs no third gender ((105c), (110)). -/
+theorem hindi_nested : hindi .feminine ⊆ hindi .masculine := by decide
+
+/-- The Hindi examples, dog and cat masculine, girl and mother feminine ((107), (108),
+    (113)). -/
+theorem hindi_examples :
+    AcceptableIff Examples.ex_107 (hindi .masculine ∪ hindi .feminine = hindi .masculine) ∧
+      AcceptableIff Examples.ex_108 (hindi .feminine ∪ hindi .feminine = hindi .feminine) := by
+  decide
+
+/-- The Icelandic genders. -/
+inductive IcelandicGender where
+  | masculine
+  | feminine
+  | neuter
+  deriving DecidableEq, Repr, Fintype
+
+/-- Corbett's Icelandic resolution, like genders preserved and any mixture neuter
+    ((114), (118)). -/
+def icelandicRules (a b : IcelandicGender) : Option IcelandicGender :=
+  some (if a = b then a else .neuter)
+
+/-- The marker assignment for Icelandic ((119)). -/
+def icelandic : IcelandicGender → GenderSet
+  | .masculine => {.masc}
+  | .feminine => {.fem}
+  | .neuter => {.masc, .fem}
+
+theorem icelandic_injective : Function.Injective icelandic := by decide
+
+/-- Union of the assigned sets reproduces the Icelandic rules ((120)). -/
+theorem icelandic_union :
+    ∀ a b, (icelandicRules a b).map icelandic = some (icelandic a ∪ icelandic b) := by
+  decide
+
+/-- Same-gender coordination resolves to that gender in Icelandic ((105b)). -/
+theorem icelandic_congruent : Gender.Strategy.Congruent icelandicRules :=
+  congruent_of_union icelandic_injective icelandic_union
+
+/-- Masculine and feminine are incomparable, so their join is neither and a third gender must
+    carry it, the neuter's set being that join ((105c), (119)). -/
+theorem icelandic_needs_neuter :
+    ¬ icelandic .masculine ⊆ icelandic .feminine ∧ ¬ icelandic .feminine ⊆ icelandic .masculine ∧
+      icelandic .masculine ∪ icelandic .feminine = icelandic .neuter := by
+  decide
+
+/-- The Icelandic examples, boy and girl, man and baby, ewe and lamb all neuter
+    ((115)–(117)). -/
+theorem icelandic_examples :
+    AcceptableIff Examples.ex_115 (icelandic .masculine ∪ icelandic .feminine = icelandic .neuter) ∧
+      AcceptableIff Examples.ex_116 (icelandic .masculine ∪ icelandic .neuter = icelandic .neuter) ∧
+      AcceptableIff Examples.ex_117
+        (icelandic .feminine ∪ icelandic .neuter = icelandic .neuter) := by
+  decide
+
+/-- The Slovene genders. -/
+inductive SloveneGender where
+  | masculine
+  | feminine
+  | neuter
+  deriving DecidableEq, Repr, Fintype
+
+/-- Corbett's Slovene agreement pattern, feminine if all conjuncts are and masculine otherwise,
+    two neuters included ((121), (124)). -/
+def sloveneRules : SloveneGender → SloveneGender → Option SloveneGender
+  | .feminine, .feminine => some .feminine
+  | _, _ => some .masculine
+
+/-- The marker assignment for Slovene ((122)). -/
+def slovene : SloveneGender → GenderSet
+  | .masculine => {.fem, .neut}
+  | .feminine => {.fem}
+  | .neuter => {.neut}
+
+/-- With the conjunction contributing the feminine marker ((126)), union of the assigned sets
+    reproduces the Slovene pattern ((127)). -/
+theorem slovene_union :
+    ∀ a b, (sloveneRules a b).map slovene = some (slovene a ∪ slovene b ∪ {.fem}) := by
+  decide
+
+/-- The Slovene pattern violates the generalization (105b), two neuters resolving masculine
+    ((123)), and the violation is the conjunction's marker, since without it the neuter's set
+    is idempotent. -/
+theorem slovene_not_congruent :
+    ¬ Gender.Strategy.Congruent sloveneRules ∧
+      slovene .neuter ∪ slovene .neuter ∪ {.fem} ≠ slovene .neuter ∧
+      slovene .neuter ∪ slovene .neuter = slovene .neuter := by
+  unfold Gender.Strategy.Congruent; decide
+
+/-- The tree and the nest take masculine agreement ((123)). -/
+theorem slovene_example :
+    AcceptableIff Examples.ex_123
+      (slovene .neuter ∪ slovene .neuter ∪ {.fem} = slovene .masculine) := by
+  decide
+
+/-! ### Resolving features are not indeterminate (§8) -/
+
+/-- Hindi *wah* is masculine or feminine by a wide-scope disjunction of two determinate
+    specifications ((140)); an indeterminate gender would instead be this set of sets, on
+    which union does not resolve. -/
+def wah : Finset GenderSet := {{.masc}, ∅}
+
+/-- One disjunct serves each single agreement ((141)) and no disjunct serves both constraining
+    equations at once ((128)), the equations checking the whole set ((113)). -/
+theorem wah_examples :
+    AcceptableIff Examples.ex_141a (∃ v ∈ wah, v = {GenderMarker.masc}) ∧
+      AcceptableIff Examples.ex_141b (∃ v ∈ wah, v = ∅) ∧
+      AcceptableIff Examples.ex_128 (∃ v ∈ wah, v = {GenderMarker.masc} ∧ v = ∅) := by
   decide
 
 end DalrympleKaplan2000
-
-
--- ============================================================================
--- Subsumption/unification substrate (demoted from Morphology/Unification.lean;
--- sole consumer was this study — see [dalrymple-kaplan-2000] on indeterminacy)
--- ============================================================================
-
-/-!
-## Subsumption and unification on `UD.MorphFeatures`
-[shieber-1986]
-
-The information ordering of unification-based grammar ([shieber-1986] §3.2), on
-`UD.MorphFeatures` — the depth-1, reentrancy-free fragment of Shieber's feature
-structures. Every feature here is atomic-valued, so paths are single features, the
-reentrancy clause of subsumption is vacuous, and the definition (§3.2.2: `D ⊑ D′` iff
-`D(l) ⊑ D′(l)` for all `l ∈ dom(D)`; "an atomic feature structure neither subsumes nor
-is subsumed by a different atomic feature structure"; "variables subsume all other
-feature structures") reduces to the product of flat orders. Subsumption is registered
-as `≤` (Shieber's `⊑`); the all-`none` bundle — Shieber's variable `[ ]` — is `⊥`.
-
-Unification (§3.2.3) is "the most general feature structure `D` such that `D′ ⊑ D` and
-`D′′ ⊑ D`", failing on conflict: `MorphFeatures.unify` returns `some` exactly on
-`Compatible` (= bounded above) inputs, and its result is the least upper bound
-(`unify_isLUB`). The example laws of §3.2.3 are theorems: unification is idempotent
-(`unify_self`), commutative (`unify_comm`), and variables are identity elements
-(`bot_unify`).
-
-## Main declarations
-
-* `instance : PartialOrder UD.MorphFeatures` — subsumption ("only a partial order",
-  §3.2.3), with decidable `≤`.
-* `instance : OrderBot UD.MorphFeatures` — the empty bundle is bottom.
-* `instance : SemilatticeInf UD.MorphFeatures` — the meet is Shieber's
-  *generalization* (anti-unification): total, unlike the join.
-* `UD.MorphFeatures.Compatible` — boundedness above (`BddAbove {f, g}`), decidable
-  via the `Bool` check (`compatible_iff_bddAbove`).
-* `unify_isLUB`, `unify_eq_some_iff_isLUB`, `unify_comm`, `unify_assoc`,
-  `unify_self`, `bot_unify`/`unify_bot`, `unify_mono` — the §3.2.3 laws plus
-  associativity and guarded monotonicity.
-
-## Theory-neutrality boundary
-
-Three strata with different statuses: the *record* is annotation consensus
-(`Data/UD/Basic.lean`); the *order* `≤` is shared substrate every framework consumes
-its own way (DM's matching clause, underspecification, syncretism down-sets); the
-*operations* `⊔`/`⊓` are commitments of the unification tradition — [shieber-1986]
-§3.1 states unification-as-sole-combinator as a design constraint, and rival
-frameworks combine differently (DM matches and competes; Minimalist Agree values
-asymmetrically). This file is *not* that tradition's headquarters: unification-based
-grammar (PATR, HPSG, LFG — reentrant feature structures, phrasal combination) is a
-syntax family whose substrate belongs in `Syntax/` when consuming studies demand it.
-What lives here is only the tradition's morphological-bundle fragment — the algebra
-of one token's Feats column — which it shares with rivals: at the level of claims
-about morphological feature combination this file is a sibling of
-`DistributedMorphology/` and
-`Nanosyntax/`, not a foundation beneath them.
-
-## Implementation notes
-
-Morphology owns the bundle algebra: `MorphFeatures` is the token's morphology (UD's
-Feats column), and unification at the ms-word level is the morphology/syntax interface
-operation. The *matching clause* of DM's Subset Principle (an exponent is insertable
-iff `exponent.features ≤ morpheme.features`) *could* consume `≤` directly, but the
-existing `Morphology/DistributedMorphology/VocabularyInsertion.lean` matches by
-`List`-subset on `[BEq F]`
-rather than `MorphFeatures.≤`; bridging is left for a future PR. The competition
-clause — most-specified-wins — is separate `argmax` machinery already implemented in
-that same file. (Nanosyntax's Superset Principle is *not* a consumer: it matches by
-containment of syntactic trees, see `Nanosyntax/TreeSpellout.lean`'s `NanoTree.contains`,
-not by an order on flat bundles.) Lives apart from `Data/UD/Basic.lean` so the
-(heavily imported) standard mirror stays mathlib-free — this file is the one that
-pays for `Mathlib.Order` — and it is the canonical home for order instances on
-`UD.MorphFeatures`.
-
-The non-distributivity of the subsumption lattice is a documented
-obstruction (`Flat.unify_distinct_eq_none`): any ≥3-value slot
-(here, `Case`) makes the per-slot lattice the diamond Mₙ, modular but
-*not* distributive ([carpenter-1992] p. 15, eq. (4), notes this
-explicitly: "our partial orders are *not* required to be distributive
-(and in fact, are not even required to be modular)"). This matters for
-generalization-then-unification reorderings in paradigm-induction
-learners.
--/
-
-/-! ### The flat order on one feature slot
-
-The slot-level subsumption relation ([shieber-1986] §3.2.2: `⊥` below
-everything, distinct atoms incomparable) is the order of `Flat`
-(`Linglib/Core/Order/Flat.lean`), whose
-`PartialOrder`/`OrderBot`/`SemilatticeInf`/`PartialUnify` instances
-supply the per-slot steps of the bundle-level proofs below.
--/
-
-namespace UD
-
-/-- The 14-case feature-type index for `MorphFeatures` — the signature
-of UD's Feats column treated as a fixed finite type family. -/
-inductive MorphFeatureType where
-  | number | gender | case_ | definite | degree | pronType
-  | reflex
-  | person | verbForm | tense | aspect | mood | voice | polarity
-  deriving DecidableEq, Repr, Fintype
-
-namespace MorphFeatureType
-
-/-- Per-slot value space. The reflex slot is privative (`Unit`); all
-other slots take their concrete UD enum. -/
-def Val : MorphFeatureType → Type
-  | .number   => Number
-  | .gender   => Gender
-  | .case_    => Case
-  | .definite => Definite
-  | .degree   => Degree
-  | .pronType => PronType
-  | .reflex   => Unit
-  | .person   => Person
-  | .verbForm => VerbForm
-  | .tense    => Tense
-  | .aspect   => Aspect
-  | .mood     => Mood
-  | .voice    => Voice
-  | .polarity => Polarity
-
-instance : ∀ t, DecidableEq (Val t)
-  | .number   => inferInstanceAs (DecidableEq Number)
-  | .gender   => inferInstanceAs (DecidableEq Gender)
-  | .case_    => inferInstanceAs (DecidableEq Case)
-  | .definite => inferInstanceAs (DecidableEq Definite)
-  | .degree   => inferInstanceAs (DecidableEq Degree)
-  | .pronType => inferInstanceAs (DecidableEq PronType)
-  | .reflex   => inferInstanceAs (DecidableEq Unit)
-  | .person   => inferInstanceAs (DecidableEq Person)
-  | .verbForm => inferInstanceAs (DecidableEq VerbForm)
-  | .tense    => inferInstanceAs (DecidableEq Tense)
-  | .aspect   => inferInstanceAs (DecidableEq Aspect)
-  | .mood     => inferInstanceAs (DecidableEq Mood)
-  | .voice    => inferInstanceAs (DecidableEq Voice)
-  | .polarity => inferInstanceAs (DecidableEq Polarity)
-
-end MorphFeatureType
-
-end UD
-
-namespace UD.MorphFeatures
-
-/-! ### Subsumption is a partial order with bottom -/
-
-/-- Subsumption ([shieber-1986] §3.2.2): `f` carries a subset of `g`'s information —
-field-wise flat order on the option slots, implication on the `reflex` flag. -/
-def Subsumes (f g : MorphFeatures) : Prop :=
-  f.number ≤ g.number ∧ f.gender ≤ g.gender ∧ f.case_ ≤ g.case_ ∧
-  f.definite ≤ g.definite ∧ f.degree ≤ g.degree ∧
-  f.pronType ≤ g.pronType ∧ (f.reflex = true → g.reflex = true) ∧
-  f.person ≤ g.person ∧ f.verbForm ≤ g.verbForm ∧ f.tense ≤ g.tense ∧
-  f.aspect ≤ g.aspect ∧ f.mood ≤ g.mood ∧ f.voice ≤ g.voice ∧
-  f.polarity ≤ g.polarity
-
-/-! ### `MorphFeatures` as a feature bundle, and the derived order
-
-`MorphFeatures` realizes `BundleLike` over the 14-case signature
-`MorphFeatureType` ([carpenter-1992]'s abstract feature structure): each
-slot projects to a `Flat` value, with the `reflex` flag normalized
-`false ↦ none`, `true ↦ some ()` (the privative `Unit` case). The
-valuation is injective, so `MorphFeatures` is `LawfulBundleLike`, and the
-subsumption order *is* the per-slot `Flat` order pulled back along `val`
-(`subsumes_iff_val_le`) — the `PartialOrder`/`OrderBot` laws derive from
-the bundle embedding rather than being proved field by field. -/
-
-/-- The valuation: project each slot as a `Flat` value, normalizing
-`reflex : Bool` to a privative `Flat Unit`. -/
-def val (f : MorphFeatures) :
-    (t : MorphFeatureType) → Flat (MorphFeatureType.Val t)
-  | .number   => f.number
-  | .gender   => f.gender
-  | .case_    => f.case_
-  | .definite => f.definite
-  | .degree   => f.degree
-  | .pronType => f.pronType
-  | .reflex   => if f.reflex then (↑() : Flat Unit) else ⊥
-  | .person   => f.person
-  | .verbForm => f.verbForm
-  | .tense    => f.tense
-  | .aspect   => f.aspect
-  | .mood     => f.mood
-  | .voice    => f.voice
-  | .polarity => f.polarity
-
-instance : BundleLike MorphFeatures MorphFeatureType
-    (fun t => Flat (MorphFeatureType.Val t)) where
-  val := MorphFeatures.val
-
-private theorem reflex_eq_of_val_reflex_eq {b1 b2 : Bool}
-    (h : (if b1 then (↑() : Flat Unit) else ⊥) = if b2 then ↑() else ⊥) :
-    b1 = b2 := by
-  cases b1 <;> cases b2 <;> simp_all
-
-/-- The valuation is injective: a `MorphFeatures` bundle is determined by
-its per-slot assignments (with `reflex` reconstructed from `Option Unit`). -/
-theorem val_injective : Function.Injective MorphFeatures.val := by
-  intro f g h
-  cases f; cases g
-  simp only [mk.injEq]
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · exact congrFun h .number
-  · exact congrFun h .gender
-  · exact congrFun h .case_
-  · exact congrFun h .definite
-  · exact congrFun h .degree
-  · exact congrFun h .pronType
-  · exact reflex_eq_of_val_reflex_eq (congrFun h .reflex)
-  · exact congrFun h .person
-  · exact congrFun h .verbForm
-  · exact congrFun h .tense
-  · exact congrFun h .aspect
-  · exact congrFun h .mood
-  · exact congrFun h .voice
-  · exact congrFun h .polarity
-
-instance : LawfulBundleLike MorphFeatures :=
-  ⟨val_injective⟩
-
-private theorem reflex_val_le_iff {b1 b2 : Bool} :
-    (if b1 then (↑() : Flat Unit) else ⊥) ≤ (if b2 then ↑() else ⊥)
-      ↔ (b1 = true → b2 = true) := by
-  cases b1 <;> cases b2 <;> simp
-
-/-- Subsumption is exactly the bundle order: the field-wise 14-conjunct form
-coincides with the per-slot `Flat` order on the valuation `val`. -/
-theorem subsumes_iff_val_le (f g : MorphFeatures) : Subsumes f g ↔ val f ≤ val g := by
-  rw [Pi.le_def]
-  constructor
-  · rintro ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14⟩ t
-    cases t
-    · exact h1
-    · exact h2
-    · exact h3
-    · exact h4
-    · exact h5
-    · exact h6
-    · exact reflex_val_le_iff.mpr h7
-    · exact h8
-    · exact h9
-    · exact h10
-    · exact h11
-    · exact h12
-    · exact h13
-    · exact h14
-  · intro h
-    exact ⟨h .number, h .gender, h .case_, h .definite, h .degree, h .pronType,
-           reflex_val_le_iff.mp (h .reflex), h .person, h .verbForm, h .tense,
-           h .aspect, h .mood, h .voice, h .polarity⟩
-
-instance : PartialOrder MorphFeatures where
-  le := Subsumes
-  le_refl f := (subsumes_iff_val_le f f).mpr le_rfl
-  le_trans f g h hfg hgh :=
-    (subsumes_iff_val_le f h).mpr
-      (((subsumes_iff_val_le f g).mp hfg).trans ((subsumes_iff_val_le g h).mp hgh))
-  le_antisymm f g hfg hgf :=
-    val_injective (le_antisymm ((subsumes_iff_val_le f g).mp hfg)
-      ((subsumes_iff_val_le g f).mp hgf))
-
-instance (f g : MorphFeatures) : Decidable (Subsumes f g) := by
-  unfold Subsumes; infer_instance
-
-/-- Subsumption is decidable (each slot is). -/
-instance (f g : MorphFeatures) : Decidable (f ≤ g) :=
-  inferInstanceAs (Decidable (Subsumes f g))
-
-/-- The empty bundle — Shieber's variable `[ ]` — is bottom: "variables subsume all
-other feature structures … they contain no information at all" (§3.2.2). -/
-instance : OrderBot MorphFeatures where
-  bot := {}
-  bot_le f := (subsumes_iff_val_le {} f).mpr (by
-    intro t; cases t <;> exact bot_le)
-
-/-! ### Compatibility is boundedness above; unification is the least upper bound -/
-
-/-- `Prop`-native compatibility: the pair is bounded above in the subsumption
-order — mathlib's `BddAbove`, so the bounds API applies directly. Characterized by
-the executable `compatible` check via `compatible_iff_bddAbove`, which also makes
-it decidable. -/
-def Compatible (f g : MorphFeatures) : Prop := BddAbove ({f, g} : Set MorphFeatures)
-
-/-- The left input subsumes the merge. -/
-theorem le_merge_left (f g : MorphFeatures) : f ≤ f.merge g := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-    first
-      | exact Flat.le_or_left _ _
-      | exact fun hr => by simp [merge, hr]
-
-private theorem le_or_of_clause {α : Type _} [BEq α] [LawfulBEq α] {a b : Flat α}
-    (hcl : (a.isNone || b.isNone || a == b) = true) : b ≤ a.or b := by
-  cases a with
-  | bot => exact le_rfl
-  | coe v =>
-    cases b with
-    | bot => exact bot_le
-    | coe x =>
-      obtain rfl : v = x :=
-        Flat.coe_inj.mp (eq_of_beq (show ((v : Flat α) == ↑x) = true from hcl))
-      exact le_rfl
-
-/-- The right input subsumes the merge — *given compatibility* (the doubly committed
-slots agree, so the left bias is harmless). -/
-theorem le_merge_right {f g : MorphFeatures} (h : f.compatible g = true) :
-    g ≤ f.merge g := by
-  simp only [compatible, Bool.and_eq_true] at h
-  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨h1, h2⟩, h3⟩, h4⟩, h5⟩, h6⟩, h7⟩, h8⟩, h9⟩, h10⟩, h11⟩, h12⟩, h13⟩ := h
-  exact ⟨le_or_of_clause h1, le_or_of_clause h2,
-         le_or_of_clause h3, le_or_of_clause h4,
-         le_or_of_clause h5, le_or_of_clause h6,
-         fun hr => by simp [merge, hr],
-         le_or_of_clause h7, le_or_of_clause h8,
-         le_or_of_clause h9, le_or_of_clause h10,
-         le_or_of_clause h11, le_or_of_clause h12,
-         le_or_of_clause h13⟩
-
-/-- The merge is below every common upper bound — minimality ("the *most general*
-feature structure", §3.2.3). -/
-theorem merge_le {f g u : MorphFeatures} (hf : f ≤ u) (hg : g ≤ u) :
-    f.merge g ≤ u := by
-  obtain ⟨a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14⟩ := hf
-  obtain ⟨b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14⟩ := hg
-  refine ⟨Flat.or_le a1 b1, Flat.or_le a2 b2, Flat.or_le a3 b3,
-          Flat.or_le a4 b4, Flat.or_le a5 b5, Flat.or_le a6 b6, ?_,
-          Flat.or_le a8 b8, Flat.or_le a9 b9, Flat.or_le a10 b10,
-          Flat.or_le a11 b11, Flat.or_le a12 b12, Flat.or_le a13 b13,
-          Flat.or_le a14 b14⟩
-  intro hr
-  rcases Bool.or_eq_true_iff.mp (by simpa [merge] using hr) with h | h
-  · exact a7 h
-  · exact b7 h
-
-private theorem clause_of_le {α : Type _} [BEq α] [LawfulBEq α] {a b u : Flat α}
-    (ha : a ≤ u) (hb : b ≤ u) : (a.isNone || b.isNone || a == b) = true := by
-  cases a with
-  | bot => rfl
-  | coe x =>
-    cases b with
-    | bot => rfl
-    | coe y =>
-      obtain rfl : u = ↑x := Flat.coe_le_iff.mp ha
-      obtain rfl : y = x := Flat.coe_le_coe.mp hb
-      exact beq_self_eq_true _
-
-/-- Bounded above implies the executable check passes. -/
-theorem compatible_of_le {f g u : MorphFeatures} (hf : f ≤ u) (hg : g ≤ u) :
-    f.compatible g = true := by
-  obtain ⟨a1, a2, a3, a4, a5, a6, _, a8, a9, a10, a11, a12, a13, a14⟩ := hf
-  obtain ⟨b1, b2, b3, b4, b5, b6, _, b8, b9, b10, b11, b12, b13, b14⟩ := hg
-  simp only [compatible, Bool.and_eq_true]
-  exact ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨clause_of_le a1 b1, clause_of_le a2 b2⟩,
-    clause_of_le a3 b3⟩, clause_of_le a4 b4⟩, clause_of_le a5 b5⟩,
-    clause_of_le a6 b6⟩, clause_of_le a8 b8⟩, clause_of_le a9 b9⟩,
-    clause_of_le a10 b10⟩, clause_of_le a11 b11⟩, clause_of_le a12 b12⟩,
-    clause_of_le a13 b13⟩, clause_of_le a14 b14⟩
-
-/-- The `Bool` check is exactly boundedness above in the subsumption order: the
-order-theoretic identity of "compatible". -/
-theorem compatible_iff_bddAbove (f g : MorphFeatures) :
-    f.compatible g = true ↔ Compatible f g := by
-  constructor
-  · intro h
-    refine ⟨f.merge g, fun x hx => ?_⟩
-    rcases hx with rfl | hx
-    · exact le_merge_left _ g
-    · rw [Set.mem_singleton_iff.mp hx]
-      exact le_merge_right h
-  · rintro ⟨u, hu⟩
-    exact compatible_of_le (hu (Set.mem_insert _ _)) (hu (Set.mem_insert_of_mem _ rfl))
-
-instance (f g : MorphFeatures) : Decidable (Compatible f g) :=
-  decidable_of_iff _ (compatible_iff_bddAbove f g)
-
-/-- Unification succeeds exactly on compatible inputs (§3.2.3: otherwise it "fails"). -/
-theorem unify_eq_some_iff (f g : MorphFeatures) :
-    (f.unify g).isSome = true ↔ Compatible f g := by
-  rw [← compatible_iff_bddAbove]
-  unfold unify
-  by_cases hc : f.compatible g = true <;> simp [hc]
-
-/-- **Unification is the least upper bound** ([shieber-1986] §3.2.3: "the most general
-feature structure `D` such that `D′ ⊑ D` and `D′′ ⊑ D`"). -/
-theorem unify_isLUB {f g u : MorphFeatures} (h : f.unify g = some u) :
-    IsLUB {f, g} u := by
-  unfold unify at h
-  by_cases hc : f.compatible g = true
-  · simp only [hc, if_true, Option.some.injEq] at h
-    subst h
-    constructor
-    · intro x hx
-      rcases Set.mem_insert_iff.mp hx with rfl | hx
-      · exact le_merge_left _ g
-      · rw [Set.mem_singleton_iff.mp hx]
-        exact le_merge_right hc
-    · intro v hv
-      exact merge_le (hv (Set.mem_insert _ _)) (hv (Set.mem_insert_of_mem _ rfl))
-  · simp [hc] at h
-
-/-! ### Generalization: the meet
-
-Shieber's *generalization* (anti-unification): the most specific bundle subsumed by
-both inputs. Unlike unification it is total — the meet always exists — so
-`MorphFeatures` is a genuine `SemilatticeInf` with `⊥`. -/
-
-instance : Min MorphFeatures where
-  min f g :=
-    { number   := f.number ⊓ g.number
-      gender   := f.gender ⊓ g.gender
-      case_    := f.case_ ⊓ g.case_
-      definite := f.definite ⊓ g.definite
-      degree   := f.degree ⊓ g.degree
-      pronType := f.pronType ⊓ g.pronType
-      reflex   := f.reflex && g.reflex
-      person   := f.person ⊓ g.person
-      verbForm := f.verbForm ⊓ g.verbForm
-      tense    := f.tense ⊓ g.tense
-      aspect   := f.aspect ⊓ g.aspect
-      mood     := f.mood ⊓ g.mood
-      voice    := f.voice ⊓ g.voice
-      polarity := f.polarity ⊓ g.polarity }
-
-private theorem band_true_left {x y : Bool} (h : (x && y) = true) : x = true := by
-  cases x <;> simp_all
-
-private theorem band_true_right {x y : Bool} (h : (x && y) = true) : y = true := by
-  cases y <;> simp_all
-
-private theorem band_true_intro {x y : Bool} (hx : x = true) (hy : y = true) :
-    (x && y) = true := by simp [hx, hy]
-
-instance : SemilatticeInf MorphFeatures :=
-  { (inferInstance : PartialOrder MorphFeatures),
-    (inferInstance : Min MorphFeatures) with
-    inf := min
-    inf_le_left := fun f g => show Subsumes (min f g) f from
-      ⟨inf_le_left, inf_le_left, inf_le_left, inf_le_left, inf_le_left, inf_le_left,
-       fun hr => band_true_left hr,
-       inf_le_left, inf_le_left, inf_le_left, inf_le_left, inf_le_left, inf_le_left,
-       inf_le_left⟩
-    inf_le_right := fun f g => show Subsumes (min f g) g from
-      ⟨inf_le_right, inf_le_right, inf_le_right, inf_le_right, inf_le_right, inf_le_right,
-       fun hr => band_true_right hr,
-       inf_le_right, inf_le_right, inf_le_right, inf_le_right, inf_le_right, inf_le_right,
-       inf_le_right⟩
-    le_inf := fun c f g hcf hcg => by
-      obtain ⟨a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14⟩ := hcf
-      obtain ⟨b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14⟩ := hcg
-      exact ⟨le_inf a1 b1, le_inf a2 b2, le_inf a3 b3,
-             le_inf a4 b4, le_inf a5 b5, le_inf a6 b6,
-             fun hr => band_true_intro (a7 hr) (b7 hr),
-             le_inf a8 b8, le_inf a9 b9, le_inf a10 b10,
-             le_inf a11 b11, le_inf a12 b12, le_inf a13 b13,
-             le_inf a14 b14⟩ }
-
-/-! ### Unification computes least upper bounds — further laws -/
-
-/-- `MorphFeatures` carries the pairwise-LUB structure of [carpenter-1992]'s
-bounded complete partial order: `unify` is the partial join, with
-`unify_isLUB` and `compatible_iff_bddAbove` supplying the two class
-axioms. The unification laws — commutativity, associativity (with
-failure propagating), `⊥`-identity, idempotence, monotonicity — are
-inherited as one-line corollaries of the generic theorems in
-`Core/Order/PartialUnify.lean`. -/
-instance : PartialUnify MorphFeatures where
-  unify := MorphFeatures.unify
-  isLUB_of_unify_eq_some := unify_isLUB
-  isSome_unify_of_bddAbove {a b} h :=
-    (unify_eq_some_iff a b).mpr h
-
-/-- The instance-projected `unify` is the same function as
-`MorphFeatures.unify`. -/
-@[simp] theorem unify_eq_partialUnify (f g : MorphFeatures) :
-    PartialUnify.unify f g = f.unify g := rfl
-
-/-- Unification succeeds with value `u` exactly when `u` is the least upper bound. -/
-theorem unify_eq_some_iff_isLUB {f g u : MorphFeatures} :
-    f.unify g = some u ↔ IsLUB {f, g} u := by
-  rw [← unify_eq_partialUnify]
-  exact PartialUnify.unify_eq_some_iff_isLUB
-
-/-- Unification is commutative — a consequence of *total* compatibility: doubly
-committed slots agree, so the per-field left bias washes out. -/
-theorem unify_comm (f g : MorphFeatures) : f.unify g = g.unify f := by
-  rw [← unify_eq_partialUnify, ← unify_eq_partialUnify]
-  exact PartialUnify.unify_comm f g
-
-/-- Unification is idempotent (§3.2.3's example law). -/
-@[simp] theorem unify_self (f : MorphFeatures) : f.unify f = some f := by
-  rw [← unify_eq_partialUnify]; exact PartialUnify.unify_self f
-
-/-- Variables are unification identity elements (§3.2.3's example law):
-unifying with the empty bundle returns the other input. -/
-@[simp] theorem bot_unify (f : MorphFeatures) :
-    (⊥ : MorphFeatures).unify f = some f := by
-  rw [← unify_eq_partialUnify]; exact PartialUnify.bot_unify f
-
-/-- Unification is associative, with failure propagating ([shieber-1986] §3.2.3's
-order-independence): both associations compute the lub of all three bundles. -/
-theorem unify_assoc (f g h : MorphFeatures) :
-    (f.unify g).bind (·.unify h) = (g.unify h).bind (f.unify ·) := by
-  have := PartialUnify.unify_assoc f g h
-  simp only [unify_eq_partialUnify] at this
-  exact this
-
-/-- The empty bundle is a right identity for unification. -/
-@[simp] theorem unify_bot (f : MorphFeatures) :
-    f.unify (⊥ : MorphFeatures) = some f := by
-  rw [← unify_eq_partialUnify]; exact PartialUnify.unify_bot f
-
-/-- Unification fails exactly on incompatible inputs. -/
-theorem unify_eq_none_iff (f g : MorphFeatures) :
-    f.unify g = none ↔ ¬ Compatible f g := by
-  rw [← unify_eq_partialUnify]
-  exact PartialUnify.unify_eq_none_iff (a := f) (b := g)
-
-/-- Unification is monotone where defined: shrinking both inputs preserves success and
-shrinks the output. (Unguarded `merge`-monotonicity is false — the guard is needed.) -/
-theorem unify_mono {f₁ f₂ g₁ g₂ u₂ : MorphFeatures} (hf : f₁ ≤ f₂) (hg : g₁ ≤ g₂)
-    (h2 : f₂.unify g₂ = some u₂) : ∃ u₁, f₁.unify g₁ = some u₁ ∧ u₁ ≤ u₂ := by
-  rw [← unify_eq_partialUnify] at h2
-  obtain ⟨u₁, hu₁, hle⟩ := PartialUnify.unify_mono hf hg h2
-  exact ⟨u₁, unify_eq_partialUnify _ _ ▸ hu₁, hle⟩
-
-end UD.MorphFeatures

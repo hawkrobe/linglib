@@ -43,6 +43,7 @@ jargon, and "metasyncretism" does not appear in the book.
 * `Morphology.syncretism` — the syncretism setoid of a realization map
   (`Setoid.ker`)
 * `Morphology.syncretismClass` — the class (fiber) of a given cell
+* `Morphology.formCells` — the cells a form realizes, the `Finset` face of the class
 * `Morphology.IsMorphome` — a nontrivial syncretism class failing `Natural`
 -/
 
@@ -70,6 +71,19 @@ def syncretismClass (p : Cell → F) (a : Cell) : Set Cell := {x | p x = p a}
 theorem syncretismClass_mem_classes (p : Cell → F) (a : Cell) :
     syncretismClass p a ∈ (syncretism p).classes :=
   Setoid.mem_classes (syncretism p) a
+
+/-- The cells `p` realizes as the form `f`: the syncretism class of any cell realized as `f`,
+as a `Finset`. -/
+def formCells [Fintype Cell] [DecidableEq F] (p : Cell → F) (f : F) : Finset Cell :=
+  Finset.univ.filter (p · = f)
+
+@[simp] theorem mem_formCells [Fintype Cell] [DecidableEq F] {p : Cell → F} {f : F} {c : Cell} :
+    c ∈ formCells p f ↔ p c = f := by
+  simp [formCells]
+
+theorem coe_formCells [Fintype Cell] [DecidableEq F] (p : Cell → F) (a : Cell) :
+    (formCells p (p a) : Set Cell) = syncretismClass p a := by
+  ext c; simp [syncretismClass]
 
 /-- A **morphome** ([herce-2023]): a syncretism class of `p` that groups
 more than one cell (`Set.Nontrivial`) yet is not a `Natural` class — a
