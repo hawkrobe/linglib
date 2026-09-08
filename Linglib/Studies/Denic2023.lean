@@ -1,785 +1,376 @@
-import Mathlib.Tactic.DeriveFintype
+import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Core.Probability.UniformOn
+import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Data.Set.Card
+import Mathlib.Logic.Equiv.Fintype
+import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.NormNum
-import Linglib.Semantics.Exhaustification.Finite
-import Linglib.Semantics.Alternatives.Symmetric
-import Linglib.Studies.Magri2009
 
 /-!
-# Probabilities and Logic in Implicature Computation
-[denic-2023]
+# Denić (2023): Probabilities and logic in implicature computation
 
-Denić, M. (2023). Probabilities and logic in implicature computation:
-Two puzzles with embedded disjunction. *Semantics and Pragmatics* 16,
-Article 4: 1–48.
+This file formalizes the two puzzles with embedded disjunction of [denic-2023] and their
+resolution. *All 20 of Mary's friends are French or Spanish* preferably triggers the
+distributive inferences that at least one is French and at least one is Spanish, while *Both of
+Mary's friends are French or Spanish* preferably triggers ignorance about them, (6) and (7), and
+fewer disjuncts likewise favour the distributive reading, (8) and (9). Under the exhaustification
+of [fox-2007], the distributive reading arises when only the disjunction activates its
+alternatives, ALT-or, all of which are innocently excludable, and the ignorance reading when the
+quantifier does too, ALT-all-or, none of whose alternatives is, (26); since the alternatives
+stand in the same entailment relations for any domain size, §3.2, no theory on which
+implicatures are a function of entailment can distinguish the two sentences, and the pruning
+constraints of [fox-katzir-2011] do not either, §3.3. The proposal, (30), is that an alternative
+is pruned the more likely it is given the utterance: with each individual one of the m
+properties at random, the probability that some of n individuals is A given that all are one of
+the m is `1 − ((m − 1)/m)^n`, increasing in n and decreasing in m, and larger than that of the
+universal alternative once n > 1, the assumptions of §4; a threshold on it prunes the existential
+alternatives of (6) and (8) but not of (7) and (9). The deviance puzzle, §5, is that *#Each of
+those three girls is Mary, Susan, or Jane* is degraded where *is called* is not: the identity
+predicate is singleton-denoting, so given common knowledge the three names are borne by the three
+girls one each, every existential alternative is settled, and the ignorance inferences the
+sentence triggers contradict common knowledge, (40), the blindness of [magri-2009] extended from
+scalar to ignorance inferences. Informativeness must then be computed blindly too, §7.3: given
+common knowledge the existential alternatives of the deviant sentence are certain and would be
+pruned, whereas blind to it their probability lies below every threshold that resolves the
+inference puzzle.
 
-## Two Puzzles
+## Implementation notes
 
-**Inference puzzle** (§2): Quantified sentences with embedded disjunction
-trigger inferences sensitive to (i) the cardinality of the restrictor
-and (ii) the number of disjuncts:
+Worlds assign each of the n individuals exactly one of the m properties, the uniform prior of
+§4's assumptions; the prejacent *all are one of them* is then every world, and the conjunctive
+alternatives of the chapter's footnote 8, which it sets aside, are unsatisfiable. The
+exhaustification results are the substrate's innocent exclusion over sets of worlds, stated for
+every n ≥ 2 and m ≥ 2, the distributive reading itself for two disjuncts. Probabilities are the
+uniform measure `uniformOn` on reals. The mapping from conditional probability to pruning, which
+the chapter leaves open between a linear and a threshold form, is taken as a threshold. Ignorance
+inferences are the pragmatic ones of §3.1, about every alternative the exhaustified utterance
+leaves open, so the grammatical parse of §7.1 is not modelled. The modified-numeral cases of
+[buccola-haida-2019], (43), and the symmetry, modal and downward-entailing challenges of §8 are
+recorded in the data only.
 
-- ALL-20-OR ("All 20 of Mary's friends are French or Spanish") preferably
-  triggers *distributive* inferences (at least one is French, at least
-  one is Spanish)
-- ALL-2-OR ("Both of Mary's friends are French or Spanish") preferably
-  triggers *ignorance* inferences (speaker is ignorant about whether at
-  least one is French/Spanish)
+## References
 
-This contrast is surprising: the two sentences stand in identical
-entailment relations to their alternatives, so any entailment-based
-theory ([fox-2007] exhaustification, neo-Gricean) predicts the
-same implicatures for both.
-
-**Deviance puzzle** (§5–6): Certain sentences with embedded disjunction
-under universal quantifiers are deviant:
-
-- "#Each of these three girls is Mary, Susan, or Jane" (DEVIANT-BE)
-- "Each of those three girls is called Mary, Susan, or Jane" (fine)
-
-The key property: the identity copula + proper name is *singleton-
-denoting* (given CK, only one individual can be Mary), while "is called"
-is not. Deviance arises because ignorance inferences of singleton-
-denoting predicates contradict common knowledge — extending
-[magri-2009]'s blindness hypothesis.
-
-## Proposal
-
-Two components:
-
-1. **Informativeness-based pruning** (§4, proposal (30)): Alternative
-   pruning is sensitive to probabilistic informativeness — the probability
-   of pruning alternative A from ALT(S) increases with P(A|S). This is
-   in addition to contextual relevance ([fox-katzir-2011]).
-
-2. **Blind informativeness** (§7.3): The informativeness computation that
-   feeds pruning is blind to (most of) common knowledge — only logical
-   structure (domain size, number of disjuncts) matters.
-
-## Key connections
-
-- [fox-2007]: innocent exclusion (IE) algorithm — `innocent.exh`,
-  `innocent.excluded`, `IsMCSet` from `Finite.lean`
-- [magri-2009]: blindness hypothesis + mismatch hypothesis —
-  `BlindScenario`, `blindOdd` from `Magri2009.lean`
-- [fox-katzir-2011]: contextual constraint on alternatives
-- [franke-2011]: IBR = exhMW result (inherits the puzzle)
-- [chierchia-2004]: embedded scalar items and disjunction
+* [denic-2023]
+* [fox-2007]
+* [fox-katzir-2011]
+* [magri-2009]
+* [buccola-haida-2019]
 -/
 
 namespace Denic2023
 
-open Exhaustification (innocent predToFinset altsFromPreds)
-open Alternatives.Symmetric (isSymmetric)
-open Magri2009 (BlindScenario)
-
-
--- ═══════════════════════════════════════════════════════════════════════
--- §1  Inference Types
--- ═══════════════════════════════════════════════════════════════════════
-
-/-- The two inference types that embedded disjunction can trigger.
-
-[denic-2023] §2: the central empirical observation is that the
-*same* sentence structure preferably triggers different inference types
-depending on domain size and disjunct count. -/
-inductive InferenceType where
-  /-- Distributive: "at least one is A, at least one is B."
-      Derived when existential alternatives are pruned from ALT. -/
-  | distributive
-  /-- Ignorance: "the speaker is ignorant about whether at least one
-      is A (B)." Derived when existential alternatives remain in ALT. -/
-  | ignorance
-  deriving DecidableEq, Repr
-
-/-- An empirical datum from [denic-2023] §2. -/
-structure InferenceDatum where
-  /-- Human-readable label. -/
-  label : String
-  /-- Cardinality of the restrictor of the universal quantifier. -/
-  restrictorSize : Nat
-  /-- Number of disjuncts. -/
-  disjunctCount : Nat
-  /-- The preferably triggered inference type. -/
-  preferred : InferenceType
-  deriving Repr
-
-/-- ALL-20-OR: "All 20 of Mary's friends are French or Spanish."
-[denic-2023] ex. (6): preferably triggers distributive inferences. -/
-def all20or : InferenceDatum :=
-  { label := "ALL-20-OR", restrictorSize := 20, disjunctCount := 2,
-    preferred := .distributive }
-
-/-- ALL-2-OR: "Both of Mary's friends are French or Spanish."
-[denic-2023] ex. (7): preferably triggers ignorance inferences. -/
-def all2or : InferenceDatum :=
-  { label := "ALL-2-OR", restrictorSize := 2, disjunctCount := 2,
-    preferred := .ignorance }
-
-/-- SIMPLE-DISJ: "All four of Mary's friends are French or Spanish."
-[denic-2023] ex. (8): distributive more natural than COMPLEX-DISJ. -/
-def simpleDisj : InferenceDatum :=
-  { label := "SIMPLE-DISJ", restrictorSize := 4, disjunctCount := 2,
-    preferred := .distributive }
-
-/-- COMPLEX-DISJ: "All four of Mary's friends are French, Spanish,
-German, or Dutch."
-[denic-2023] ex. (9): ignorance more natural than SIMPLE-DISJ. -/
-def complexDisj : InferenceDatum :=
-  { label := "COMPLEX-DISJ", restrictorSize := 4, disjunctCount := 4,
-    preferred := .ignorance }
-
-/-- The four key data points from [denic-2023] §2. -/
-def inferencePuzzleData : List InferenceDatum :=
-  [all20or, all2or, simpleDisj, complexDisj]
-
-/-- Threshold generalization ([denic-2023] (10)): when the ratio
-of restrictor cardinality to disjunct count exceeds a threshold T ≥ 1,
-distributive inferences are preferably derived. -/
-def thresholdPrediction (T : Nat) (d : InferenceDatum) : InferenceType :=
-  if d.restrictorSize / d.disjunctCount ≥ T then .distributive else .ignorance
-
-/-- Gradient generalization ([denic-2023] (11)): the larger the
-ratio of restrictor to disjuncts, the greater the preference for
-distributive over ignorance. -/
-def ratio (d : InferenceDatum) : Nat := d.restrictorSize / d.disjunctCount
-
-/-- The ratio ordering matches the inference pattern:
-ALL-20-OR (ratio 10) > SIMPLE-DISJ (ratio 2) > ALL-2-OR = COMPLEX-DISJ (ratio 1).
-Higher ratio → distributive; lower ratio → ignorance. -/
-theorem ratio_ordering :
-    ratio all20or > ratio simpleDisj ∧
-    ratio simpleDisj > ratio all2or ∧
-    ratio all2or = ratio complexDisj := by decide
-
-/-- The threshold generalization with T = 2 correctly classifies all
-four data points. -/
-theorem threshold_2_correct :
-    inferencePuzzleData.all (λ d =>
-      thresholdPrediction 2 d == d.preferred) = true := by decide
-
-
--- ═══════════════════════════════════════════════════════════════════════
--- §2  Entailment Cannot Distinguish: The Negative Result
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! ### Why entailment-based theories fail
-
-[denic-2023] §3.2–3.4: ALL-20-OR and ALL-2-OR activate the same
-structural alternatives (up to domain-size relabeling). Since entailment
-relations between a sentence and its alternatives are invariant under
-domain size, any approach where implicatures are a function of entailment
-relations ([fox-2007] exhaustification, neo-Gricean) predicts
-identical inferences.
-
-The unembedded baseline (disjunction without universal quantifier) is
-handled in `InnocentExclusion.lean`: `disj_exh_eq_exor` shows
-Exh(Alt)(p∨q) = p ⊻ q. The puzzle arises specifically when disjunction
-is *embedded* under a universal quantifier. -/
-
-section EntailmentNegativeResult
-
-/-- Worlds for ALL-n-OR with 2 disjuncts (French, Spanish).
-
-For the entailment structure, only the *proportions* matter, not
-individual assignments. We model the 4 possible group compositions. -/
-inductive GroupWorld where
-  /-- All are French (and possibly Spanish). -/
-  | allFrench
-  /-- All are Spanish (and possibly French). -/
-  | allSpanish
-  /-- Mixed: some French, some Spanish, satisfying both ∃ constraints. -/
-  | mixed
-  /-- All are French AND Spanish (bilingual). -/
-  | allBoth
-  deriving DecidableEq, Repr, Fintype
-
-/-- "All n are French or Spanish" — the target sentence.
-True at every world (every composition satisfies the disjunctive predicate). -/
-private def allForS : GroupWorld → Bool := λ _ => true
-
-/-- ALT-or alternative: "All n are French." -/
-private def allFrenchAlt : GroupWorld → Bool
-  | .allFrench | .allBoth => true | _ => false
-
-/-- ALT-or alternative: "All n are Spanish." -/
-private def allSpanishAlt : GroupWorld → Bool
-  | .allSpanish | .allBoth => true | _ => false
-
-/-- ALT-or: alternatives when only the disjunction activates its scale.
-[denic-2023] (24)/(25): {All n are French, All n are Spanish}. -/
-private def altOr : List (GroupWorld → Bool) := [allFrenchAlt, allSpanishAlt]
-
-/-- With ALT-or, both alternatives are IE: each can be negated consistently
-with the prejacent. Negating both yields distributive inferences:
-"some are French, some are Spanish." -/
-theorem altOr_both_ie :
-    innocent.excluded (altsFromPreds altOr) (predToFinset allForS)
-      = altsFromPreds altOr := by decide
-
-/-- The exhaustified meaning with ALT-or: "All are F∨S, NOT all French,
-NOT all Spanish" — true only at `mixed`, the distributive reading
-where some are French AND some are Spanish.
-
-This connects to `Spector2016.disj_exh_eq_exor` (unembedded disjunction
-yields exclusive or); embedding under ∀ + domain structure gives the
-distributive reading. -/
-theorem altOr_exh_distributive :
-    innocent.exh (altsFromPreds altOr) (predToFinset allForS)
-      = ({GroupWorld.mixed} : Finset GroupWorld) := by decide
-
-/-- Existential alternatives for ALT-all-or.
-"Some are French" and "Some are Spanish." -/
-private def someFrenchAlt : GroupWorld → Bool
-  | .allFrench | .mixed | .allBoth => true | _ => false
-
-private def someSpanishAlt : GroupWorld → Bool
-  | .allSpanish | .mixed | .allBoth => true | _ => false
-
-/-- ALT-all-or: alternatives when both quantifier and disjunction activate.
-[denic-2023] (22)/(23): {All French, All Spanish, Some French, Some Spanish}. -/
-private def altAllOr : List (GroupWorld → Bool) :=
-  [allFrenchAlt, allSpanishAlt, someFrenchAlt, someSpanishAlt]
-
-/-- With ALT-all-or, NO alternative is IE: three different maximal
-consistent exclusions exist, and no alternative appears in all three.
-Result: no distributive inferences; ignorance inferences are derived.
-
-Note: this is a distinct mechanism from `symmetric_not_ie` in
-`Symmetric.lean`. The alternatives here are NOT symmetric in the
-[fox-katzir-2011] partition sense (see `altAllOr_not_symmetric`
-below) — the IE emptiness arises from the MCE structure, not from
-alternative pairs partitioning the prejacent. -/
-theorem altAllOr_no_ie :
-    innocent.excluded (altsFromPreds altAllOr) (predToFinset allForS) = ∅ := by
-  decide
-
-/-- IE collapse for ALT-all-or: with three incompatible maximal
-consistent exclusions ([denic-2023] (26a–c)), no alternative
-survives in every MC-set. Consequently `exhIE` returns the prejacent
-unchanged — exhaustification is vacuous.
-
-The MCEs in Denić's notation are
-- {allS, someS}: negate → all French
-- {allF, someF}: negate → all Spanish
-- {allF, allS}: negate → mixed
-
-No proposition appears in all three → IE = {prejacent} → exhIE = prejacent. -/
-theorem altAllOr_exh_vacuous :
-    innocent.exh (altsFromPreds altAllOr) (predToFinset allForS)
-      = predToFinset allForS := by decide
-
-/-- The existential alternatives ("some are French" / "some are Spanish")
-are NOT symmetric in the [fox-katzir-2011] sense: they overlap at
-`mixed` and `allBoth` worlds (both alternatives true), so they do not
-partition the prejacent's denotation.
-
-This matters because it means the IE emptiness (above) cannot be
-derived from `Symmetric.symmetric_not_ie` — it requires the full MCE
-computation showing three incompatible exclusion sets. -/
-theorem altAllOr_not_symmetric :
-    isSymmetric [GroupWorld.allFrench, .allSpanish, .mixed, .allBoth]
-        allForS someFrenchAlt someSpanishAlt = false ∧
-    isSymmetric [GroupWorld.allFrench, .allSpanish, .mixed, .allBoth]
-        allForS allFrenchAlt allSpanishAlt = false := by
-  exact ⟨by decide, by decide⟩
-
-/-- **The core negative result**: the IE computation is identical for any
-domain size when the same abstract alternative structure is used.
-
-The 4-world model above is domain-size-invariant: it captures the
-entailment structure of both ALL-20-OR and ALL-2-OR. The alternatives
-stand in the same entailment relations regardless of whether n = 2
-or n = 20. Therefore, the IE set — and hence the predicted implicatures
-— are identical.
-
-This is [denic-2023]'s argument in §3.2 (final paragraph):
-"ALL-20-OR and ALL-2-OR activate comparable sets of alternatives, [so]
-they stand in the same entailment relations to them, and will thus
-necessarily be predicted to have the same implicatures."
-
-Since [franke-2011]'s IBR converges to exhMW for scalar games
-(`ibr_equals_exhMW` in `Studies/Franke2011/ScalarGames.lean`), IBR inherits the same
-inability to distinguish ALL-20-OR from ALL-2-OR. -/
-theorem entailment_invariant_across_domain_size :
-    -- ALT-or → distributive for ALL-20-OR (correct) AND ALL-2-OR (wrong)
-    innocent.excluded (altsFromPreds altOr) (predToFinset allForS)
-      = altsFromPreds altOr ∧
-    -- ALT-all-or → ignorance for ALL-20-OR (wrong) AND ALL-2-OR (correct)
-    innocent.excluded (altsFromPreds altAllOr) (predToFinset allForS) = ∅ := by
-  exact ⟨by decide, by decide⟩
-
-end EntailmentNegativeResult
-
-
--- ═══════════════════════════════════════════════════════════════════════
--- §3  Probabilistic Pruning: The Positive Proposal
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! ### Informativeness-based alternative pruning
-
-[denic-2023] proposal (30): the probability of pruning alternative A
-from ALT(S) increases with P(A|S) — the conditional probability that A
-is true given S. Informativeness is inversely related: the more likely
-A is given S (the less informative A is relative to S), the more
-likely A is to be pruned.
-
-The key insight: P(Some of n are A | All n are A or B) increases with n,
-because having more individuals makes it more likely that at least one
-satisfies A. So existential alternatives are more likely pruned for
-larger domains, yielding ALT-or (→ distributive) for ALL-20-OR and
-ALT-all-or (→ ignorance) for ALL-2-OR.
-
-We make this precise using the uniform conditional probability model:
-P(∃x. A(x) | ∀x. disjunction of m predicates) = 1 − ((m−1)/m)^n. -/
-
-section ProbabilisticPruning
-
-/-- Conditional probability P(∃x∈D. A(x) | ∀x∈D. A(x)∨B₁(x)∨...∨Bₘ₋₁(x))
-under uniform independent assignment to m equally likely predicates.
-
-With m predicates and n individuals independently assigned, each
-individual is assigned to A with probability 1/m, so:
-- P(no individual is A) = ((m−1)/m)^n
-- P(∃x. A(x)) = 1 − ((m−1)/m)^n
-
-[denic-2023] §4: the critical observation is that this probability
-increases with n (more individuals → more likely someone is A) and
-decreases with m (more disjuncts → less likely any given one holds). -/
-def uniformCondProb (n m : Nat) : ℚ :=
-  1 - ((↑m - 1 : Int) / (↑m : Int) : ℚ) ^ n
-
-/-- Conditional probability values for the four data points.
-
-- ALL-20-OR (n=20, m=2): 1 − (1/2)²⁰ = 1048575/1048576
-- SIMPLE-DISJ (n=4, m=2): 1 − (1/2)⁴ = 15/16
-- ALL-2-OR (n=2, m=2): 1 − (1/2)² = 3/4
-- COMPLEX-DISJ (n=4, m=4): 1 − (3/4)⁴ = 175/256
-
-Higher condProb → more pruning → more likely distributive.
-Lower condProb → less pruning → more likely ignorance. -/
-theorem condProb_values :
-    uniformCondProb 20 2 = (1048575 : Int) / 1048576 ∧
-    uniformCondProb 4 2 = (15 : Int) / 16 ∧
-    uniformCondProb 2 2 = (3 : Int) / 4 ∧
-    uniformCondProb 4 4 = (175 : Int) / 256 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> (simp only [uniformCondProb]; norm_num)
-
-/-- The conditional probability ordering matches the inference pattern:
-ALL-20-OR > SIMPLE-DISJ > ALL-2-OR > COMPLEX-DISJ.
-
-Distributive sentences have higher condProb (existential alternatives
-are less informative, more likely pruned); ignorance sentences have
-lower condProb (existential alternatives are more informative, less
-likely pruned).
-
-Any pruning threshold between 175/256 ≈ 0.68 and 3/4 = 0.75 correctly
-classifies all four data points. -/
-theorem condProb_ordering :
-    uniformCondProb 20 2 > uniformCondProb 4 2 ∧
-    uniformCondProb 4 2 > uniformCondProb 2 2 ∧
-    uniformCondProb 2 2 > uniformCondProb 4 4 := by
-  refine ⟨?_, ?_, ?_⟩ <;> (simp only [uniformCondProb]; norm_num)
-
-/-- The proposal correctly predicts the ALL-20-OR vs ALL-2-OR contrast.
-
-Under the uniform model, existential alternatives are more likely pruned
-for ALL-20-OR (condProb ≈ 1) than ALL-2-OR (condProb = 3/4):
-
-- ALL-20-OR: existentials likely pruned → ALT-or → distributive ✓
-- ALL-2-OR: existentials likely retained → ALT-all-or → ignorance ✓ -/
-theorem domain_size_distinguishes :
-    all20or.restrictorSize > all2or.restrictorSize ∧
-    all20or.preferred = .distributive ∧
-    all2or.preferred = .ignorance := by decide
-
-/-- The proposal correctly predicts the SIMPLE-DISJ vs COMPLEX-DISJ contrast.
-
-Under the uniform model, existential alternatives are more likely pruned
-for SIMPLE-DISJ (condProb = 15/16) than COMPLEX-DISJ (condProb = 175/256):
-
-- SIMPLE-DISJ: existentials likely pruned → ALT-or → distributive ✓
-- COMPLEX-DISJ: existentials likely retained → ALT-all-or → ignorance ✓ -/
-theorem disjunct_count_distinguishes :
-    complexDisj.disjunctCount > simpleDisj.disjunctCount ∧
-    simpleDisj.restrictorSize = complexDisj.restrictorSize ∧
-    simpleDisj.preferred = .distributive ∧
-    complexDisj.preferred = .ignorance := by decide
-
-end ProbabilisticPruning
-
-
--- ═══════════════════════════════════════════════════════════════════════
--- §4  Deviance Puzzle: Singleton-Denoting Predicates
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! ### Singleton-denoting predicates and deviance
-
-[denic-2023] §5: a predicate (in context) is *singleton-denoting*
-if, given common knowledge, it can only be true of a unique individual.
-
-- "is Mary" is singleton-denoting: CK says only one person IS Mary
-- "is called Mary" is NOT singleton-denoting: multiple people can be
-  called Mary
-
-Deviance arises when ignorance inferences of singleton-denoting
-predicates contradict CK. This extends [magri-2009]'s blind
-oddness mechanism. -/
-
-section DeviancePuzzle
-
-/-- Whether a predicate is singleton-denoting in context.
-
-[denic-2023] §5: a (complex) predicate is singleton-denoting if,
-given common knowledge, it can only be true of a unique (singular or
-plural) individual. Examples:
-- "is Mary" + domain of individuals → singleton-denoting
-- "wrote Anna Karenina" + domain of authors → singleton-denoting
-- "is called Mary" + domain of individuals → NOT singleton-denoting
-- "read Anna Karenina" + domain of students → NOT singleton-denoting -/
-def singletonDenoting {α : Type} (predDomain : List α) (predicate : α → Bool)
-    (context : α → Bool) : Bool :=
-  let witnesses := (predDomain.filter context).filter predicate
-  witnesses.length ≤ 1
-
--- ── Singleton-denotation verification ──────────────────────────────
-
-/-- Individual-level domain for verifying singleton-denotation.
-Three girls in the DEVIANT-BE scenario. -/
-private inductive Girl where | g1 | g2 | g3 deriving DecidableEq, Fintype
-private def girls : List Girl := [.g1, .g2, .g3]
-private def allGirls : Girl → Bool := λ _ => true
-
-/-- "is Mary" — singleton-denoting: only g1 is Mary (by CK). -/
-private def isMary : Girl → Bool | .g1 => true | _ => false
-/-- "is Susan" — singleton-denoting: only g2 is Susan. -/
-private def isSusan : Girl → Bool | .g2 => true | _ => false
-
-/-- "is called Mary" — NOT singleton-denoting: multiple girls can share
-the name "Mary." -/
-private def isCalledMary : Girl → Bool | .g1 | .g2 => true | _ => false
-
-/-- Identity predicates ("is Mary") are singleton-denoting. -/
-theorem isMary_singleton :
-    singletonDenoting girls isMary allGirls = true := by decide
-
-theorem isSusan_singleton :
-    singletonDenoting girls isSusan allGirls = true := by decide
-
-/-- "Is called" predicates are NOT singleton-denoting. -/
-theorem isCalledMary_not_singleton :
-    singletonDenoting girls isCalledMary allGirls = false := by decide
-
--- ── Deviance data ──────────────────────────────────────────────────
-
-/-- A deviance datum from [denic-2023] §5. -/
-structure DevianceDatum where
-  label : String
-  isDeviant : Bool
-  isSingletonDenoting : Bool
-  deriving Repr
-
-/-- DEVIANT-BE: "#Each of those three girls is Mary, Susan, or Jane."
-[denic-2023] ex. (31). -/
-def deviantBe : DevianceDatum :=
-  { label := "DEVIANT-BE", isDeviant := true, isSingletonDenoting := true }
-
-/-- NON-DEVIANT-CALLED: "Each of those three girls is called Mary, Susan, or Jane."
-[denic-2023] ex. (32). -/
-def nonDeviantCalled : DevianceDatum :=
-  { label := "NON-DEVIANT-CALLED", isDeviant := false, isSingletonDenoting := false }
-
-/-- DEVIANT-WRITE: "#Each of those three writers wrote Anna Karenina,
-Germinal, or Harry Potter."
-[denic-2023] ex. (33). -/
-def deviantWrite : DevianceDatum :=
-  { label := "DEVIANT-WRITE", isDeviant := true, isSingletonDenoting := true }
-
-/-- NON-DEVIANT-READ: "Each of those three students read Anna Karenina,
-Germinal, or Harry Potter."
-[denic-2023] ex. (34). -/
-def nonDeviantRead : DevianceDatum :=
-  { label := "NON-DEVIANT-READ", isDeviant := false, isSingletonDenoting := false }
-
-/-- The four deviance data points from [denic-2023] §5. -/
-def deviancePuzzleData : List DevianceDatum :=
-  [deviantBe, nonDeviantCalled, deviantWrite, nonDeviantRead]
-
-/-- Deviance tracks singleton-denotation exactly. -/
-theorem deviance_iff_singleton :
-    deviancePuzzleData.all (λ d => d.isDeviant == d.isSingletonDenoting)
-    = true := by decide
-
-
--- ═══════════════════════════════════════════════════════════════════════
--- §4.1  DEVIANT-BE via BlindOdd
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! ### Concrete model: DEVIANT-BE
-
-"#Each of those three girls is Mary, Susan, or Jane."
-
-We model this as a `BlindScenario` and show that `blindOdd` correctly
-predicts deviance. The key: since "is Mary/Susan/Jane" is singleton-
-denoting, the ignorance inferences ("the speaker is ignorant about
-whether at least one girl is Mary") contradict CK (the speaker must
-know which girl is which).
-
-This is exactly [magri-2009]'s mechanism (BH + MH) applied to a
-new empirical domain, as [denic-2023] proposes in §6. -/
-
-/-- Worlds for DEVIANT-BE.
-
-Three girls, each is exactly one of Mary, Susan, Jane. By CK (singleton-
-denoting), each name maps to exactly one girl. The only question is
-which permutation. We model 3 representative worlds. -/
-inductive DeviantBEWorld where
-  /-- Girl 1 = Mary, Girl 2 = Susan, Girl 3 = Jane. -/
-  | msj
-  /-- Girl 1 = Mary, Girl 2 = Jane, Girl 3 = Susan. -/
-  | mjs
-  /-- Girl 1 = Susan, Girl 2 = Mary, Girl 3 = Jane. -/
-  | smj
-  deriving DecidableEq, Repr, Fintype
-
-/-- Utterances: the target sentence and its individual-disjunct
-alternatives. -/
-inductive DeviantBEUtt where
-  /-- "Each is Mary, Susan, or Jane" (the target). -/
-  | eachOrDisj
-  /-- "At least one is Mary" (existential alternative). -/
-  | someIsMary
-  /-- "At least one is Susan." -/
-  | someIsSusan
-  /-- "At least one is Jane." -/
-  | someIsJane
-  deriving DecidableEq, Repr
-
-open DeviantBEWorld DeviantBEUtt in
-/-- Blind scenario for DEVIANT-BE.
-
-The target sentence is trivially true at all CK worlds (each girl IS
-one of Mary/Susan/Jane by construction). The existential alternatives
-are also all true at every CK world (in every permutation, at least one
-girl is Mary, at least one is Susan, etc.). This means the alternatives
-are not excludable — but the ignorance inferences (the speaker doesn't
-know whether one of them is Mary) contradict CK. -/
-def deviantBEScenario : BlindScenario DeviantBEWorld DeviantBEUtt where
-  meaning
-    | eachOrDisj, _ => true   -- trivially true: each IS one of them
-    | someIsMary, _ => true   -- in all permutations, someone is Mary
-    | someIsSusan, _ => true  -- in all permutations, someone is Susan
-    | someIsJane, _ => true   -- in all permutations, someone is Jane
-  alternatives
-    | eachOrDisj => [someIsMary, someIsSusan, someIsJane]
-    | someIsMary => [eachOrDisj]
-    | someIsSusan => [eachOrDisj]
-    | someIsJane => [eachOrDisj]
-  context := λ _ => true  -- all permutation worlds are CK-compatible
-
-/-- No alternative is IE for DEVIANT-BE: all alternatives are entailed
-by the prejacent (trivially true everywhere), so none can be excluded. -/
-theorem deviantBE_no_ie :
-    innocent.excluded
-      (altsFromPreds
-        ((deviantBEScenario.alternatives .eachOrDisj).map deviantBEScenario.meaning))
-      (predToFinset (deviantBEScenario.meaning .eachOrDisj))
-      = ∅ := by decide
-
-/-- DEVIANT-BE is NOT blindOdd in this direct model, because IE is empty
-(no implicature is generated at all). The deviance comes not from
-*scalar* implicatures contradicting CK, but from *ignorance* inferences
-contradicting CK — a subtlety that requires grammatical ignorance
-inferences (K_speaker in the grammar, or Gricean quantity reasoning).
-
-[denic-2023] §6–7: deviance is due to ignorance inferences (derived
-via the maxim of quantity or grammatically via K_speaker) contradicting
-CK. Since all alternatives are true at all CK worlds, claiming ignorance
-about any of them contradicts CK. -/
-theorem deviantBE_not_blindOdd_directly :
-    deviantBEScenario.blindOdd .eachOrDisj = false := by decide
-
-/-- DEVIANT-BE triggers ignorance inferences that contradict CK.
-
-Non-IE alternatives exist (the speaker should be ignorant about them),
-but CK settles all of them (every existential alternative is true at
-every CK world). The speaker CANNOT be ignorant → contradiction → deviant.
-
-This is [denic-2023]'s proposal (40): "Sentences DEVIANT-BE and
-DEVIANT-WRITE are deviant because they trigger ignorance inferences
-which contradict common knowledge." -/
-theorem deviantBE_ignorance_contradicts_ck :
-    deviantBEScenario.ignoranceContradictsCK .eachOrDisj = true := by decide
-
-
--- ═══════════════════════════════════════════════════════════════════════
--- §4.2  NON-DEVIANT-CALLED: No CK Contradiction
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! ### NON-DEVIANT-CALLED: "Each is called Mary, Susan, or Jane"
-
-"is called Mary" is NOT singleton-denoting: multiple individuals can be
-called Mary. So ignorance about "at least one is called Mary" is
-consistent with CK — the speaker genuinely might not know. -/
-
-/-- Worlds for NON-DEVIANT-CALLED.
-
-Since "is called" is not singleton-denoting, there are CK-compatible
-worlds where NOT everyone called Mary exists in the group. -/
-inductive CalledWorld where
-  /-- All three are called different names (one Mary, one Susan, one Jane). -/
-  | allDifferent
-  /-- All three are called Mary. -/
-  | allMary
-  /-- Some called Mary, some called Susan, none called Jane. -/
-  | noJane
-  deriving DecidableEq, Repr, Fintype
-
-open CalledWorld DeviantBEUtt in
-/-- Blind scenario for NON-DEVIANT-CALLED.
-
-Unlike DEVIANT-BE, the existential alternatives are NOT all true at
-every CK world — it is genuinely possible that none is called Jane
-(multiple people can share the name Mary or Susan). -/
-def nonDeviantCalledScenario : BlindScenario CalledWorld DeviantBEUtt where
-  meaning
-    | eachOrDisj, _ => true
-    | someIsMary, allDifferent => true  | someIsMary, allMary => true
-    | someIsMary, noJane => true
-    | someIsSusan, allDifferent => true | someIsSusan, allMary => false
-    | someIsSusan, noJane => true
-    | someIsJane, allDifferent => true  | someIsJane, allMary => false
-    | someIsJane, noJane => false
-  alternatives
-    | eachOrDisj => [someIsMary, someIsSusan, someIsJane]
-    | someIsMary => [eachOrDisj]
-    | someIsSusan => [eachOrDisj]
-    | someIsJane => [eachOrDisj]
-  context := λ _ => true
-
-/-- NON-DEVIANT-CALLED: ignorance does NOT contradict CK.
-
-The speaker CAN be genuinely ignorant about "at least one is called Jane"
-because there exist CK worlds where it's true (allDifferent) and where
-it's false (allMary, noJane). -/
-theorem nonDeviantCalled_ignorance_ok :
-    nonDeviantCalledScenario.ignoranceContradictsCK .eachOrDisj = false := by
-  decide
-
-/-- The deviance contrast: singleton-denoting predicates trigger CK-
-contradicting ignorance inferences; non-singleton-denoting ones don't.
-
-[denic-2023] §5–6: the property distinguishing DEVIANT-BE from
-NON-DEVIANT-CALLED is exactly whether the predicate is singleton-
-denoting. -/
-theorem deviance_contrast :
-    deviantBEScenario.ignoranceContradictsCK .eachOrDisj = true ∧
-    nonDeviantCalledScenario.ignoranceContradictsCK .eachOrDisj = false :=
-  ⟨by decide, by decide⟩
-
-end DeviancePuzzle
-
-
--- ═══════════════════════════════════════════════════════════════════════
--- §5  Blind Informativeness: Why CK Must Be Screened Off
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! ### Blindness extends to informativeness computation
-
-[denic-2023] §7.3: the informativeness computation feeding
-pruning must itself be blind to common knowledge. The argument:
-
-1. [magri-2009]: EXH is blind to CK (BH) — formalized via
-   `BlindScenario.strengthened`, which uses logical entailment, not
-   CK-relativized entailment.
-
-2. [denic-2023]: informativeness evaluation for pruning is ALSO
-   blind to CK. If it weren't, then for DEVIANT-BE, CK would tell us
-   P(at least one is Mary | Each is Mary, Susan, or Jane) = 1 — ALL
-   existential alternatives would have condProb = 1 given CK, so all
-   would be pruned → no ignorance inference → no deviance. But
-   DEVIANT-BE IS deviant, so the pruning mechanism cannot use CK.
-
-Together: the entire implicature computation pipeline — from alternative
-generation through informativeness evaluation to exhaustification —
-operates without consulting predicate-specific common knowledge.
-Only structural features (domain size, disjunct count, quantifier type)
-enter the computation. -/
-
-section BlindnessArgument
-
-/-- If CK were used to evaluate informativeness for DEVIANT-BE, every
-existential alternative would have condProb = 1 (all true at all CK
-worlds). Under monotone pruning, all alternatives with maximal condProb
-would be pruned, leaving no active alternatives for exhaustification.
-
-We verify the premise: all existential alternatives ARE true at all
-CK worlds in the DEVIANT-BE scenario. -/
-theorem deviantBE_all_alts_ck_settled :
-    ∀ alt ∈ deviantBEScenario.alternatives .eachOrDisj,
-      ∀ w ∈ deviantBEScenario.cWorlds,
-        deviantBEScenario.meaning alt w = true := by
-  decide
-
-/-- The counterfactual: if we pruned all existential alternatives (as
-CK-informed informativeness would recommend), exhaustification would be
-vacuous — no alternatives to negate. This produces no ignorance
-inferences and incorrectly predicts non-deviance.
-
-But DEVIANT-BE IS deviant (`deviantBE_ignorance_contradicts_ck`), so
-CK must be screened off from the informativeness computation. -/
-theorem ck_pruning_would_be_vacuous :
-    innocent.exh (altsFromPreds [])
-        (predToFinset (deviantBEScenario.meaning .eachOrDisj))
-      = predToFinset (deviantBEScenario.meaning .eachOrDisj) := by
-  decide
-
-end BlindnessArgument
-
-
--- ═══════════════════════════════════════════════════════════════════════
--- §6  Connecting the Two Puzzles
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! ### The two puzzles constrain each other
-
-[denic-2023] §7: the deviance puzzle constrains the solution to
-the inference puzzle. The deviance data requires blindness of
-informativeness to CK (§5). Combined with the inference puzzle's
-requirement that informativeness guides pruning (§3), we get:
-
-**Pruning is guided by informativeness computed blindly to CK.**
-
-This is stronger than either puzzle requires alone:
-- Inference puzzle alone: informativeness guides pruning (could use CK)
-- Deviance puzzle alone: implicatures are blind to CK (could not
-  involve pruning)
-- Together: informativeness-guided pruning that is blind to CK -/
-
-/-- The combined prediction: both puzzles are resolved by a single
-mechanism (informativeness-based pruning blind to CK). The two puzzle
-types are not independent — their solutions constrain each other.
-
-- Inference puzzle ← informativeness-based pruning (§3):
-  condProb ordering (`condProb_ordering`) separates cases that
-  entailment cannot (`entailment_invariant_across_domain_size`)
-- Deviance puzzle ← blindness of informativeness to CK (§5):
-  CK-informed pruning would vacuously remove all alternatives
-  (`ck_pruning_would_be_vacuous`), preventing the ignorance
-  inferences that cause deviance (`deviantBE_ignorance_contradicts_ck`)
-- Combined ← blind informativeness-based pruning -/
-theorem puzzles_connected :
-    -- Inference puzzle: entailment gives same IE for both...
-    innocent.excluded (altsFromPreds altAllOr) (predToFinset allForS) = ∅ ∧
-    innocent.excluded (altsFromPreds altOr) (predToFinset allForS)
-      = altsFromPreds altOr ∧
-    -- ...but condProb distinguishes them
-    uniformCondProb 20 2 > uniformCondProb 2 2 ∧
-    -- Deviance puzzle: ignorance contradicts CK for singleton-denoting...
-    deviantBEScenario.ignoranceContradictsCK .eachOrDisj = true ∧
-    -- ...but not for non-singleton-denoting predicates
-    nonDeviantCalledScenario.ignoranceContradictsCK .eachOrDisj = false := by
-  refine ⟨by decide, by decide, ?_, by decide, by decide⟩
-  simp only [uniformCondProb]; norm_num
-
+open Exhaustification MeasureTheory ProbabilityTheory
+
+/-- The worlds for *all of n are A₁ or … or Aₘ*: each individual has exactly one of the `m`
+properties. -/
+abbrev World (n m : ℕ) := Fin n → Fin m
+
+variable {n m : ℕ}
+
+/-- *All n are Aᵢ*, the universal alternative. -/
+def allAre (i : Fin m) : Set (World n m) := {w | ∀ x, w x = i}
+
+/-- *Some of the n are Aᵢ*, the existential alternative. -/
+def someAre (i : Fin m) : Set (World n m) := {w | ∃ x, w x = i}
+
+/-- ALT-or, (24) and (25): only the disjunction activates its alternatives. -/
+def altOr (n m : ℕ) : Set (Set (World n m)) := Set.range allAre
+
+/-- ALT-all-or, (22) and (23): the quantifier activates its alternatives too. -/
+def altAllOr (n m : ℕ) : Set (Set (World n m)) := Set.range allAre ∪ Set.range someAre
+
+theorem altAllOr_finite : (altAllOr n m).Finite := (Set.finite_range _).union (Set.finite_range _)
+
+/-- The exhaustified utterance leaves an alternative open, entailing neither it nor its
+negation, so that the maxim of quantity, (19), yields ignorance about it, §3.1. -/
+def LeavesOpen (ALT : Set (Set (World n m))) (a : Set (World n m)) : Prop :=
+  (exhIE ALT Set.univ ∩ a).Nonempty ∧ (exhIE ALT Set.univ ∩ aᶜ).Nonempty
+
+/-! ### Entailment cannot tell the sentences apart, §3.2 -/
+
+/-- With ALT-or every alternative is innocently excludable, for any domain of at least two: a
+world with two individuals of different properties falsifies them all. -/
+theorem isInnocentlyExcludable_altOr (hn : 2 ≤ n) (hm : 2 ≤ m) (i : Fin m) :
+    IsInnocentlyExcludable (altOr n m) Set.univ (allAre i) :=
+  IsInnocentlyExcludable.of_full_exclusion_consistent ⟨i, rfl⟩
+    ⟨λ x => if x.val = 0 then ⟨0, by omega⟩ else ⟨1, by omega⟩, trivial, by
+      rintro _ ⟨j, rfl⟩ h
+      have h0 := h ⟨0, by omega⟩
+      have h1 := h ⟨1, by omega⟩
+      rw [← h0] at h1
+      simp at h1⟩
+
+/-- Exhaustifying with ALT-or over two disjuncts gives the distributive reading, (6a): some are
+French and some are Spanish. -/
+theorem exhIE_altOr (hn : 2 ≤ n) : exhIE (altOr n 2) Set.univ = someAre 0 ∩ someAre 1 := by
+  have h2 : ∀ j : Fin 2, j ≠ 1 → j = 0 := by decide
+  have h2' : ∀ j : Fin 2, j ≠ 0 → j = 1 := by decide
+  ext w
+  constructor
+  · intro h
+    have h0 := h _ (isInnocentlyExcludable_altOr hn le_rfl 0).2
+    have h1 := h _ (isInnocentlyExcludable_altOr hn le_rfl 1).2
+    obtain ⟨x, hx⟩ := not_forall.1 (h0 : ¬ ∀ x, w x = 0)
+    obtain ⟨y, hy⟩ := not_forall.1 (h1 : ¬ ∀ x, w x = 1)
+    exact ⟨⟨y, h2 _ hy⟩, ⟨x, h2' _ hx⟩⟩
+  · rintro ⟨⟨x, hx⟩, ⟨y, hy⟩⟩ ψ hψ
+    rcases eq_or_exists_of_mem_IE _ _ (Set.finite_range _) ψ hψ ⟨w, trivial⟩ with
+      rfl | ⟨_, ⟨i, rfl⟩, rfl⟩
+    · trivial
+    · intro hall
+      exact absurd (((hall x).symm.trans hx).symm.trans ((hall y).symm.trans hy)) (by decide)
+
+/-- With ALT-or the existential alternatives are entailed, so no ignorance arises about
+them, (6b). -/
+theorem exhIE_altOr_subset_someAre (hn : 2 ≤ n) (i : Fin 2) :
+    exhIE (altOr n 2) Set.univ ⊆ someAre i := by
+  rw [exhIE_altOr hn]
+  fin_cases i
+  · exact Set.inter_subset_left
+  · exact Set.inter_subset_right
+
+/-- With ALT-all-or, the world where everyone is `i` is minimal: any world verifying fewer
+alternatives would have to falsify *all are i* and *some are i* while verifying no other
+alternative, and there is no such world. -/
+theorem const_mem_exhMW (hn : 1 ≤ n) (i : Fin m) :
+    (λ _ => i : World n m) ∈ exhMW (altAllOr n m) Set.univ := by
+  refine ⟨trivial, ?_⟩
+  rintro ⟨v, -, hle, hnle⟩
+  apply hnle
+  rintro a (⟨j, rfl⟩ | ⟨j, rfl⟩) hu
+  · obtain rfl : j = i := (hu ⟨0, by omega⟩).symm
+    intro x
+    by_contra hx
+    obtain ⟨y, hy⟩ := hle _ (Or.inr ⟨v x, rfl⟩) ⟨x, rfl⟩
+    exact hx hy.symm
+  · obtain rfl : j = i := by obtain ⟨x, hx⟩ := hu; exact hx.symm
+    refine ⟨⟨0, by omega⟩, ?_⟩
+    by_contra hx
+    obtain ⟨y, hy⟩ := hle _ (Or.inr ⟨v ⟨0, by omega⟩, rfl⟩) ⟨_, rfl⟩
+    exact hx hy.symm
+
+/-- With ALT-all-or, the world where one individual is `i` and the rest are `k` is minimal. -/
+theorem split_mem_exhMW (hn : 2 ≤ n) {i k : Fin m} (hik : i ≠ k) :
+    (λ x => if x.val = 0 then i else k : World n m) ∈ exhMW (altAllOr n m) Set.univ := by
+  refine ⟨trivial, ?_⟩
+  rintro ⟨v, -, hle, hnle⟩
+  apply hnle
+  have hv : ∀ x, v x = i ∨ v x = k := by
+    intro x
+    by_contra hx
+    push Not at hx
+    obtain ⟨y, hy⟩ := hle _ (Or.inr ⟨v x, rfl⟩) ⟨x, rfl⟩
+    dsimp only at hy
+    split_ifs at hy <;> simp_all
+  rintro a (⟨j, rfl⟩ | ⟨j, rfl⟩) hu
+  · exfalso
+    have h0 := hu ⟨0, by omega⟩
+    have h1 := hu ⟨1, by omega⟩
+    simp at h0 h1
+    exact hik (h0.trans h1.symm)
+  · obtain ⟨x, hx⟩ := hu
+    dsimp only at hx
+    have hj : j = i ∨ j = k := by split_ifs at hx <;> simp_all
+    by_contra hv'
+    rcases hj with rfl | rfl
+    · have hall : ∀ x, v x = k := λ x => (hv x).resolve_left λ h => hv' ⟨x, h⟩
+      have h0 := hle _ (Or.inl ⟨k, rfl⟩) hall ⟨0, by omega⟩
+      simp at h0
+      exact hik h0
+    · have hall : ∀ x, v x = i := λ x => (hv x).resolve_right λ h => hv' ⟨x, h⟩
+      have h1 := hle _ (Or.inl ⟨i, rfl⟩) hall ⟨1, by omega⟩
+      simp at h1
+      exact hik h1.symm
+
+/-- (26): with ALT-all-or no alternative is innocently excludable, for any domain of at least
+two, each universal alternative holding at a minimal constant world and each existential one
+at a minimal two-property world. -/
+theorem not_isInnocentlyExcludable_altAllOr (hn : 2 ≤ n) (hm : 2 ≤ m) :
+    ∀ a ∈ altAllOr n m, ¬ IsInnocentlyExcludable (altAllOr n m) Set.univ a := by
+  rintro a (⟨i, rfl⟩ | ⟨i, rfl⟩) h
+  · exact (isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (Or.inl ⟨i, rfl⟩)).1 h
+      (const_mem_exhMW (by omega) i) (λ _ => rfl)
+  · have : Nontrivial (Fin m) := Fin.nontrivial_iff_two_le.2 hm
+    obtain ⟨k, hk⟩ := exists_ne i
+    exact (isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (Or.inr ⟨i, rfl⟩)).1 h
+      (split_mem_exhMW hn hk.symm) ⟨⟨0, by omega⟩, by simp⟩
+
+/-- With ALT-all-or exhaustification is vacuous. -/
+theorem exhIE_altAllOr (hn : 2 ≤ n) (hm : 2 ≤ m) : exhIE (altAllOr n m) Set.univ = Set.univ := by
+  ext w
+  refine ⟨λ _ => trivial, λ _ ψ hψ => ?_⟩
+  rcases eq_or_exists_of_mem_IE _ _ altAllOr_finite ψ hψ ⟨w, trivial⟩ with rfl | ⟨a, ha, rfl⟩
+  · trivial
+  · exact absurd ⟨ha, hψ⟩ (not_isInnocentlyExcludable_altAllOr hn hm a ha)
+
+/-- With ALT-all-or every alternative is left open, (7b): ignorance about all of them. -/
+theorem leavesOpen_altAllOr (hn : 2 ≤ n) (hm : 2 ≤ m) :
+    ∀ a ∈ altAllOr n m, LeavesOpen (altAllOr n m) a := by
+  have : Nontrivial (Fin m) := Fin.nontrivial_iff_two_le.2 hm
+  simp only [LeavesOpen, exhIE_altAllOr hn hm]
+  rintro a (⟨i, rfl⟩ | ⟨i, rfl⟩)
+  · obtain ⟨k, hk⟩ := exists_ne i
+    exact ⟨⟨λ _ => i, trivial, λ _ => rfl⟩,
+      ⟨λ x => if x.val = 0 then i else k, trivial, λ h => hk (by simpa using h ⟨1, by omega⟩)⟩⟩
+  · obtain ⟨k, hk⟩ := exists_ne i
+    exact ⟨⟨λ _ => i, trivial, ⟨0, by omega⟩, rfl⟩, ⟨λ _ => k, trivial, λ ⟨_, h⟩ => hk h⟩⟩
+
+/-! ### Probabilistic informativeness, §4 -/
+
+theorem ncard_someAre_compl (i : Fin m) : (someAre (n := n) i)ᶜ.ncard = (m - 1) ^ n := by
+  have : (someAre (n := n) i)ᶜ = {f | ∀ x, f x ≠ i} := by
+    ext f; simp [someAre]
+  rw [this, ← Nat.card_coe_set_eq, Nat.card_eq_fintype_card]
+  show Fintype.card {f : World n m // ∀ x, f x ≠ i} = _
+  rw [Fintype.card_congr (Equiv.subtypePiEquivPi (p := λ _ j => j ≠ i)), Fintype.card_pi,
+    Finset.prod_const, Finset.card_univ, Fintype.card_fin, Fintype.card_subtype_compl,
+    Fintype.card_fin, Fintype.card_subtype_eq]
+
+theorem ncard_someAre (i : Fin m) : (someAre (n := n) i).ncard = m ^ n - (m - 1) ^ n := by
+  have h := Set.ncard_add_ncard_compl (someAre (n := n) i)
+  rw [ncard_someAre_compl, Nat.card_eq_fintype_card, Fintype.card_fun, Fintype.card_fin,
+    Fintype.card_fin] at h
+  omega
+
+theorem ncard_allAre (i : Fin m) : (allAre (n := n) i).ncard = 1 := by
+  rw [show allAre (n := n) i = {λ _ => i} from Set.ext λ w =>
+    ⟨λ h => funext h, λ h x => congrFun h x⟩, Set.ncard_singleton]
+
+/-- The probability that some of the n individuals is `Aᵢ` given that all are one of the `m`,
+under the uniform prior of §4: `1 − ((m − 1)/m)^n`. -/
+theorem uniformOn_real_someAre (hm : 1 ≤ m) (i : Fin m) :
+    (uniformOn (Set.univ : Set (World n m))).real (someAre i) = 1 - ((m - 1 : ℝ) / m) ^ n := by
+  rw [uniformOn_real_apply, Set.univ_inter, ncard_someAre, Set.ncard_univ,
+    Nat.card_eq_fintype_card, Fintype.card_fun, Fintype.card_fin, Fintype.card_fin]
+  have hle : (m - 1) ^ n ≤ m ^ n := Nat.pow_le_pow_left (Nat.sub_le m 1) n
+  have hm' : (m : ℝ) ≠ 0 := by positivity
+  rw [Nat.cast_sub hle, Nat.cast_pow, Nat.cast_pow, Nat.cast_sub hm, Nat.cast_one, sub_div,
+    div_self (pow_ne_zero n hm'), div_pow]
+
+/-- The probability that all n individuals are `Aᵢ`: `(1/m)^n`. -/
+theorem uniformOn_real_allAre (i : Fin m) :
+    (uniformOn (Set.univ : Set (World n m))).real (allAre i) = (1 / m : ℝ) ^ n := by
+  rw [uniformOn_real_apply, Set.univ_inter, ncard_allAre, Set.ncard_univ, Nat.card_eq_fintype_card,
+    Fintype.card_fun, Fintype.card_fin, Fintype.card_fin, one_div_pow]
+  push_cast
+  rfl
+
+/-- §4's assumption (i): the more individuals, the likelier that some of them is `Aᵢ`. -/
+theorem uniformOn_real_someAre_lt (hm : 2 ≤ m) {n' : ℕ} (h : n < n') (i : Fin m) :
+    (uniformOn (Set.univ : Set (World n m))).real (someAre i) <
+      (uniformOn (Set.univ : Set (World n' m))).real (someAre i) := by
+  rw [uniformOn_real_someAre (by omega), uniformOn_real_someAre (by omega)]
+  have hm' : (2 : ℝ) ≤ m := by exact_mod_cast hm
+  refine sub_lt_sub_left (pow_lt_pow_right_of_lt_one₀ ?_ ?_ h) 1
+  · apply div_pos <;> linarith
+  · rw [div_lt_one (by linarith)]; linarith
+
+/-- §4's assumption (ii): with more than one individual, that some of them is `Aᵢ` is likelier
+than that all are. -/
+theorem uniformOn_real_allAre_lt_someAre (hn : 2 ≤ n) (hm : 2 ≤ m) (i : Fin m) :
+    (uniformOn (Set.univ : Set (World n m))).real (allAre i) <
+      (uniformOn (Set.univ : Set (World n m))).real (someAre i) := by
+  rw [uniformOn_real_someAre (by omega), uniformOn_real_allAre]
+  have hm' : (2 : ℝ) ≤ m := by exact_mod_cast hm
+  have ha : (1 / m : ℝ) ^ n < 1 / m :=
+    pow_lt_self_of_lt_one₀ (by positivity) (by rw [div_lt_one (by linarith)]; linarith) hn
+  have hb : ((m - 1 : ℝ) / m) ^ n < (m - 1) / m :=
+    pow_lt_self_of_lt_one₀ (div_pos (by linarith) (by linarith))
+      (by rw [div_lt_one (by linarith)]; linarith) hn
+  have : (1 / m : ℝ) + (m - 1) / m = 1 := by field_simp; ring
+  linarith
+
+/-- §4's assumption (iii): the more disjuncts, the less likely that some individual is `A₁`. -/
+theorem uniformOn_real_someAre_anti (hn : 1 ≤ n) (hm : 2 ≤ m) {m' : ℕ} (h : m < m')
+    (i : Fin m) (i' : Fin m') :
+    (uniformOn (Set.univ : Set (World n m'))).real (someAre i') <
+      (uniformOn (Set.univ : Set (World n m))).real (someAre i) := by
+  rw [uniformOn_real_someAre (by omega), uniformOn_real_someAre (by omega)]
+  have hm₁ : (2 : ℝ) ≤ m := by exact_mod_cast hm
+  have hm₂ : (m : ℝ) < m' := by exact_mod_cast h
+  refine sub_lt_sub_left (pow_lt_pow_left₀ ?_ (div_nonneg (by linarith) (by linarith))
+    (by omega)) 1
+  rw [div_lt_div_iff₀ (by linarith) (by linarith)]
+  nlinarith
+
+/-- (30), in threshold form: an alternative is pruned when its probability given the utterance
+reaches the threshold. -/
+def Pruned (θ p : ℝ) : Prop := θ ≤ p
+
+/-- One threshold resolves the inference puzzle: the existential alternatives of all-20-or, (6),
+and simple-disj, (8), are pruned, leaving ALT-or and the distributive reading, and those of
+all-2-or, (7), and complex-disj, (9), are kept, leaving ALT-all-or and ignorance. -/
+theorem threshold_separates :
+    ∃ θ : ℝ, Pruned θ ((uniformOn (Set.univ : Set (World 20 2))).real (someAre 0)) ∧
+      Pruned θ ((uniformOn (Set.univ : Set (World 4 2))).real (someAre 0)) ∧
+      ¬ Pruned θ ((uniformOn (Set.univ : Set (World 2 2))).real (someAre 0)) ∧
+      ¬ Pruned θ ((uniformOn (Set.univ : Set (World 4 4))).real (someAre 0)) := by
+  refine ⟨4 / 5, ?_, ?_, ?_, ?_⟩ <;>
+    (rw [Pruned, uniformOn_real_someAre (by norm_num)]; norm_num)
+
+/-! ### The deviance puzzle, §5 to §7 -/
+
+/-- The common-knowledge worlds for *each of the n girls is one of the n names* under the
+identity copula: the names are borne by different girls. -/
+def distinct (n : ℕ) : Set (World n n) := {w | Function.Injective w}
+
+/-- A predicate of individuals is singleton-denoting given common knowledge `CK`, §5: at every
+common-knowledge world it holds of at most one individual. -/
+def SingletonDenoting (CK : Set (World n m)) (P : World n m → Fin n → Prop) : Prop :=
+  ∀ w ∈ CK, ∀ x y, P w x → P w y → x = y
+
+/-- *Is Mary* is singleton-denoting given that the names are borne by different girls, (37a). -/
+theorem singletonDenoting_distinct (i : Fin n) :
+    SingletonDenoting (distinct n) (λ w x => w x = i) :=
+  λ _ hw _ _ hx hy => hw (hx.trans hy.symm)
+
+/-- *Is called Mary* is not, (37b): two girls may bear the name. -/
+theorem not_singletonDenoting_univ (hn : 2 ≤ n) (i : Fin m) :
+    ¬ SingletonDenoting (Set.univ : Set (World n m)) (λ w x => w x = i) :=
+  λ h => absurd (h (λ _ => i) trivial ⟨0, by omega⟩ ⟨1, by omega⟩ rfl rfl) (by simp)
+
+/-- Given common knowledge and the utterance, every name is borne by some girl: an injection of
+the n girls into the n names is a surjection. -/
+theorem distinct_subset_someAre (i : Fin n) : distinct n ⊆ someAre i :=
+  λ _ hw => Finite.injective_iff_surjective.1 hw i
+
+/-- Common knowledge settles an alternative when it holds or fails at every world compatible
+with it. -/
+def Settled (CK a : Set (World n m)) : Prop := CK ⊆ a ∨ CK ⊆ aᶜ
+
+/-- (40): deviant-be, (31), is deviant because exhaustification with ALT-all-or leaves every
+existential alternative open, so ignorance about it is inferred, while common knowledge settles
+it. -/
+theorem deviant_be (hn : 2 ≤ n) (i : Fin n) :
+    LeavesOpen (altAllOr n n) (someAre i) ∧ Settled (distinct n) (someAre i) :=
+  ⟨leavesOpen_altAllOr hn hn _ (Or.inr ⟨i, rfl⟩), Or.inl (distinct_subset_someAre i)⟩
+
+/-- non-deviant-called, (32): the same ignorance is inferred, but common knowledge settles
+nothing, since the girls may all be called Mary or none may be. -/
+theorem non_deviant_called (hn : 2 ≤ n) (hm : 2 ≤ m) (i : Fin m) :
+    LeavesOpen (altAllOr n m) (someAre i) ∧ ¬ Settled (Set.univ : Set (World n m)) (someAre i) := by
+  refine ⟨leavesOpen_altAllOr hn hm _ (Or.inr ⟨i, rfl⟩), ?_⟩
+  have : Nontrivial (Fin m) := Fin.nontrivial_iff_two_le.2 hm
+  obtain ⟨k, hk⟩ := exists_ne i
+  rintro (h | h)
+  · exact hk (h (Set.mem_univ (λ _ => k))).choose_spec
+  · exact h (Set.mem_univ (λ _ => i)) ⟨⟨0, by omega⟩, rfl⟩
+
+/-- Relative to common knowledge the existential alternatives of deviant-be are certain. -/
+theorem uniformOn_distinct_real_someAre (i : Fin n) :
+    (uniformOn (distinct n)).real (someAre i) = 1 := by
+  rw [uniformOn_real_apply, Set.inter_eq_left.2 (distinct_subset_someAre i), div_self]
+  exact Nat.cast_ne_zero.2 ((Set.ncard_pos (Set.toFinite _)).2 ⟨id, Function.injective_id⟩).ne'
+
+/-- §7.3: informativeness must be computed blindly to common knowledge. Relative to it the
+existential alternatives of deviant-be are certain and any threshold prunes them, which would
+leave no ignorance inference and predict no deviance; blind to it their probability is
+`1 − (2/3)^3`, below every threshold that keeps the alternatives of all-2-or, so they survive. -/
+theorem blind_informativeness (θ : ℝ) (h : 3 / 4 < θ) (h1 : θ ≤ 1) :
+    ¬ Pruned θ ((uniformOn (Set.univ : Set (World 3 3))).real (someAre 0)) ∧
+      Pruned θ ((uniformOn (distinct 3)).real (someAre 0)) := by
+  rw [Pruned, Pruned, uniformOn_real_someAre (by norm_num), uniformOn_distinct_real_someAre]
+  norm_num
+  exact ⟨by linarith, h1⟩
 
 end Denic2023
