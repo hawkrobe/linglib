@@ -150,7 +150,7 @@ def hierarchyRank : Person → Nat
 
 /-- A language's person system: the analytical values its paradigms
     distinguish ([cysouw-2003]; the paradigm-level marking typology is
-    `Person.Clusivity.System`, his Table 3.2). -/
+    `Person.Clusivity`, his Table 3.2). -/
 structure System where
   /-- The person values the system distinguishes. -/
   values : List Person

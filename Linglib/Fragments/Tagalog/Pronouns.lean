@@ -64,7 +64,7 @@ namespace Tagalog
     lost the dual; this field reflects the textbook paradigm, not
     colloquial usage. Refines the binary WALS Ch 39 value
     `Pronoun.inclusiveExclusive "tgl"` (derived from `Data.WALS`). -/
-def clusivitySystem : Person.Clusivity.System := .minimalAugmented
+def clusivity : Person.Clusivity := .minimalAugmented
 
 -- ============================================================================
 -- Pronoun paradigm (person + number + clusivity, three case series)
@@ -146,8 +146,8 @@ theorem minimal_augmented :
 /-- Cross-substrate consistency: the inventory contains a minimal-inclusive
     (dual inclusive) form iff the language commits to the minimal-augmented
     clusivity system. -/
-theorem clusivity_system_consistent :
-    (∃ p ∈ pronouns, p.category = some .minIncl) ↔ clusivitySystem.SplitInclusive := by
+theorem clusivity_consistent :
+    (∃ p ∈ pronouns, p.category = some .minIncl) ↔ clusivity.toPattern.SplitInclusive := by
   decide
 
 /-- Every Tagalog pronoun is well-formed: clusivity is borne only by the
@@ -160,6 +160,6 @@ theorem all_wellFormed : pronouns.all (fun p => decide p.WellFormed) = true := b
     between WALS and the clusivity commitment. -/
 theorem wals_clusivity_consistent :
     Pronoun.inclusiveExclusive "tgl" =
-      some (Pronoun.InclusiveExclusive.fromClusivity clusivitySystem) := by decide
+      some (Pronoun.InclusiveExclusive.fromClusivity clusivity) := by decide
 
 end Tagalog
