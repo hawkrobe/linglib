@@ -1,3 +1,5 @@
+import Mathlib.Tactic.DeriveFintype
+
 /-!
 # PropertyDomain — Perceptual/Cognitive Channels for Adjective Dimensions
 
@@ -29,6 +31,6 @@ inductive PropertyDomain where
   | evaluative
   | psychological
   | state
-  deriving Repr, DecidableEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited, Fintype
 
 end Features
