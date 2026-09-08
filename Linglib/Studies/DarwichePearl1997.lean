@@ -1,301 +1,319 @@
-import Linglib.Logic.RankingFunction
+import Linglib.Logic.BeliefRevision.Iterated
+import Mathlib.Data.Fintype.Prod
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Darwiche & Pearl (1997): On the Logic of Iterated Belief Revision
+# Darwiche and Pearl, on the logic of iterated belief revision (1997)
 
-[darwiche-pearl-1997]
+The AGM postulates constrain a single revision of a belief set and leave the agent's
+conditional beliefs, its disposition to revise, almost unconstrained, so an AGM-compatible
+operator may drop a conditional belief because the observation that would have triggered it
+arrived (an animal seen to fly is no longer believed to fly should it be a bird) or acquire
+one (a lady believed smart and rich is no longer believed rich once evidence against her
+smartness is overturned). The paper moves revision to epistemic states, weakens the postulate
+of syntax-irrelevance accordingly, since two states with the same beliefs may revise
+differently (two jurors who both believe A guilty but rank B and C differently), and adds four
+postulates: revising by a weaker proposition before a stronger one is redundant (C1), by a
+contradicted one is overridden (C2), evidence implied by later evidence is retained (C3), and
+evidence not contradicted by later evidence stays uncontradicted (C4). Each is equivalent to a
+condition on the faithful total preorders that represent the operator, Spohn's
+conditionalisation satisfies them all, and Boutilier's stronger postulate, minimising every
+change of conditional belief, forgets a colour observation once the animal's species is
+corrected. Four partial operators in the appendix show that the AGM postulates entail none of
+C1–C4, and an operator that moves the disbelieved worlds of rank two or more down rather than
+up satisfies C1 but neither C3 nor C4.
 
-AGM belief revision constrains how a *single* revision should update
-an agent's beliefs, but says nothing about how the agent's *disposition
-to revise* should change. [darwiche-pearl-1997] show that AGM-
-compatible revision operators can behave pathologically under iteration,
-and propose four additional postulates C1–C4 that rule out these
-pathologies.
+The framework and its theorems are in `Logic/BeliefRevision/Iterated.lean`; here the paper's
+examples and appendix tables are checked against them.
 
-## Representation Theorem (Theorem 13)
+## Implementation notes
 
-C1–C4 are equivalent to conditions CR1–CR4 on the faithful assignment
-(total pre-order) that represents an epistemic state:
+* The worlds of an appendix table are the valuations of its two propositions, so a
+  proposition is a set of pairs of Booleans, `first` and `second` naming the two.
+* A table gives only the preorders before and after one revision; its compatibility with the
+  postulates is that the revised belief worlds are the least evidence-worlds of the prior.
 
-- **CR1**: The ordering among μ-worlds is preserved.
-- **CR2**: The ordering among ¬μ-worlds is preserved.
-- **CR3**: If a μ-world was strictly below a ¬μ-world, it stays so.
-- **CR4**: If a μ-world was ≤ a ¬μ-world, it stays so.
+## References
 
-## Counterexamples (Tables A.1–A.4)
-
-For each CR_i, there exists an AGM-compatible revision operator that
-violates CR_i while satisfying the other three. This shows the four
-conditions are logically independent — none is derivable from the rest.
-
-## Bridge to Ranking Functions
-
-`ranking_satisfies_C1..C4` proves that Spohn's
-A,α-conditionalization satisfies all four postulates. The counterexamples
-here use *non-ranking* revision operators — arbitrary total pre-order
-transformations that respect AGM success but violate the D&P constraints.
-
-## Linguistic Connection
-
-Ranking functions → `PlausibilityOrder` → normality ordering (`Preorder`)
-→ Kratzer's
-ordering sources for modals/conditionals. The D&P postulates constrain
-how modal bases evolve under discourse update — without them, an
-agent's conditional beliefs can shift arbitrarily between utterances.
-Dynamic semantics (DRT/DPL context update) is iterated revision:
-each sentence revises the common ground, and C1–C4 ensure that
-the ordering of live possibilities evolves rationally.
+* [A. Darwiche and J. Pearl, *On the logic of iterated belief revision*
+  (1997)][darwiche-pearl-1997]
+* [C. Boutilier, *Iterated revision and minimal change of conditional beliefs*
+  (1996)][boutilier-1996]
+* [M. Goldszmidt and J. Pearl, *Qualitative probabilities for default reasoning, belief
+  revision, and causal modeling* (1996)][goldszmidt-pearl-1996]
 -/
 
 namespace DarwichePearl1997
 
-open Core.Order.Normality
+open BeliefRevision Core.Order
 
--- ══════════════════════════════════════════════════════════════════════
--- § 1. World Type
--- ══════════════════════════════════════════════════════════════════════
+/-! ### Epistemic states against belief sets -/
 
-/-- Four-element world type for counterexamples. -/
-inductive W4 where | w1 | w2 | w3 | w4
-  deriving DecidableEq, Repr
+/-- The suspects of the murder trial of Example 3, after [goldszmidt-pearl-1996]. -/
+inductive Suspect
+  | a
+  | b
+  | c
+  deriving DecidableEq, Fintype
 
-instance : Fintype W4 :=
-  ⟨⟨[W4.w1, W4.w2, W4.w3, W4.w4], by decide⟩,
-   fun w => by cases w <;> decide⟩
+/-- The first juror: A guilty, B a remote possibility, C innocent. -/
+def juror₁ : Suspect → ℕ
+  | .a => 0
+  | .b => 1
+  | .c => 2
 
-open W4
+/-- The second juror: A guilty, C a remote possibility, B innocent. -/
+def juror₂ : Suspect → ℕ
+  | .a => 0
+  | .c => 1
+  | .b => 2
 
--- ══════════════════════════════════════════════════════════════════════
--- § 2. Ranking → Normality Ordering (Preorder) Bridge
--- ══════════════════════════════════════════════════════════════════════
+/-- The jurors share a belief set. -/
+theorem jurors_bel :
+    (spohnRevision Suspect).bel juror₁ = (spohnRevision Suspect).bel juror₂ := by
+  ext w
+  cases w <;> simp [spohnRevision, juror₁, juror₂]
 
-/-- Convert a ranking function to its induced normality ordering.
-    `le w v ↔ κ(w) ≤ κ(v)`. Defined directly (not via `toPlausibilityOrder`)
-    so that `le` reduces for `native_decide`. -/
-@[reducible] def rankToOrder (κ : RankingFunction W4) : Preorder W4 :=
-  Preorder.ofLE (fun w v => κ.rank w ≤ κ.rank v)
-    (fun _ => Nat.le_refl _)
-    (fun _ _ _ h1 h2 => Nat.le_trans h1 h2)
+/-- Told that A is innocent, they part: the first blames B, the second does not, so revision
+cannot be a function of the belief set. -/
+theorem jurors_revise :
+    Suspect.b ∈
+        (spohnRevision Suspect).bel ((spohnRevision Suspect).revise juror₁ {w | w ≠ .a}) ∧
+      Suspect.b ∉
+        (spohnRevision Suspect).bel ((spohnRevision Suspect).revise juror₂ {w | w ≠ .a}) := by
+  rw [spohnRevision_faithful.bel_revise, spohnRevision_faithful.bel_revise]
+  decide
 
-/-- `rankToOrder` agrees with the canonical path through `PlausibilityOrder`. -/
-theorem rankToOrder_eq_canonical (κ : RankingFunction W4) :
-    rankToOrder κ = κ.toPlausibilityOrder.toPreorder :=
-  le_antisymm (fun _ _ h => h) (fun _ _ h => h)
+/-! ### The appendix tables -/
 
-/-- AGM success: all rank-0 worlds in the posterior satisfy μ. -/
-@[reducible] def agmSuccess (post : RankingFunction W4)
-    (μ : W4 → Bool) : Prop :=
-  ∀ w, post.rank w = 0 → μ w = true
+/-- A world of a two-proposition language: the truth values of its propositions. -/
+abbrev World := Bool × Bool
 
--- ══════════════════════════════════════════════════════════════════════
--- § 3. Table A.1 — CR1 Violation
--- ══════════════════════════════════════════════════════════════════════
+/-- The first proposition. -/
+abbrev first : Set World := {w | w.1 = true}
 
-/-! Prior: w1=0, w2=1, w3=2, w4=3. Revise by μ = {w2,w3,w4}.
-    Posterior: w1=1, w2=0, w3=2, w4=1.
-    Within μ, the ordering of w3 vs w4 flips (2<3 → 2>1). -/
+/-- The second proposition. -/
+abbrev second : Set World := {w | w.2 = true}
 
-def prior_A1 : RankingFunction W4 where
-  rank := fun | .w1 => 0 | .w2 => 1 | .w3 => 2 | .w4 => 3
-  normalized := ⟨.w1, rfl⟩
+/-- Table 1, before revising by `¬(adder_ok ∧ multiplier_ok)`. -/
+def table₁ : World → ℕ
+  | (true, true) => 0
+  | (true, false) => 1
+  | (false, true) => 2
+  | (false, false) => 3
 
-def post_A1 : RankingFunction W4 where
-  rank := fun | .w1 => 1 | .w2 => 0 | .w3 => 2 | .w4 => 1
-  normalized := ⟨.w2, rfl⟩
+/-- Table 1, after. -/
+def table₁' : World → ℕ
+  | (true, true) => 1
+  | (true, false) => 0
+  | (false, true) => 2
+  | (false, false) => 1
 
-def mu_A1 : W4 → Bool | .w1 => false | _ => true
+/-- Example 6, with `adder_ok` first and `multiplier_ok` second: the revision is compatible
+with the postulates, its belief worlds being the least `μ`-worlds of the prior; revising by
+`¬adder_ok` yields `¬adder_ok ∧ multiplier_ok` from the prior but `¬adder_ok ∧ ¬multiplier_ok`
+after `μ`, against (C1); and the two orderings disagree on `μ`, against (CR1). -/
+theorem example₆ :
+    (∀ w, w ∈ (TotalPreorder.lift table₁').least Set.univ ↔
+      w ∈ (TotalPreorder.lift table₁).least {w | ¬ (w ∈ first ∧ w ∈ second)}) ∧
+    (∀ w, w ∈ (TotalPreorder.lift table₁).least {w | w ∉ first} ↔ w = (false, true)) ∧
+    (∀ w, w ∈ (TotalPreorder.lift table₁').least {w | w ∉ first} ↔ w = (false, false)) ∧
+    ¬ AgreesOn (TotalPreorder.lift table₁) (TotalPreorder.lift table₁')
+      {w | ¬ (w ∈ first ∧ w ∈ second)} := by
+  decide
 
-theorem A1_agm : agmSuccess post_A1 mu_A1 := by native_decide
-theorem A1_violates_CR1 :
-    ¬satisfies_CR1 (rankToOrder prior_A1) (rankToOrder post_A1) mu_A1 := by
-  native_decide
-theorem A1_satisfies_CR2 :
-    satisfies_CR2 (rankToOrder prior_A1) (rankToOrder post_A1) mu_A1 := by
-  native_decide
-theorem A1_satisfies_CR3 :
-    satisfies_CR3 (rankToOrder prior_A1) (rankToOrder post_A1) mu_A1 := by
-  native_decide
-theorem A1_satisfies_CR4 :
-    satisfies_CR4 (rankToOrder prior_A1) (rankToOrder post_A1) mu_A1 := by
-  native_decide
+/-- Table 2, before revising by `¬smart`. -/
+def table₂ : World → ℕ
+  | (true, true) => 0
+  | (true, false) => 1
+  | (false, true) => 1
+  | (false, false) => 2
 
--- ══════════════════════════════════════════════════════════════════════
--- § 4. Table A.2 — CR2 Violation
--- ══════════════════════════════════════════════════════════════════════
+/-- Table 2, after. -/
+def table₂' : World → ℕ
+  | (true, true) => 2
+  | (true, false) => 1
+  | (false, true) => 0
+  | (false, false) => 1
 
-/-! Prior: w1=0, w2=1, w3=1, w4=2. Revise by μ = {w3,w4}.
-    Posterior: w1=2, w2=1, w3=0, w4=1.
-    Within ¬μ = {w1,w2}, the ordering flips (0<1 → 2>1). -/
+/-- Example 7, with `smart` first and `rich` second: revising by `smart` yields
+`smart ∧ rich` from the prior but `smart ∧ ¬rich` after `¬smart`, against (C2); the orderings
+disagree on the `smart`-worlds, against (CR2). -/
+theorem example₇ :
+    (∀ w, w ∈ (TotalPreorder.lift table₂').least Set.univ ↔
+      w ∈ (TotalPreorder.lift table₂).least {w | w ∉ first}) ∧
+    (∀ w, w ∈ (TotalPreorder.lift table₂).least first ↔ w = (true, true)) ∧
+    (∀ w, w ∈ (TotalPreorder.lift table₂').least first ↔ w = (true, false)) ∧
+    ¬ AgreesOn (TotalPreorder.lift table₂) (TotalPreorder.lift table₂') first := by
+  decide
 
-def prior_A2 : RankingFunction W4 where
-  rank := fun | .w1 => 0 | .w2 => 1 | .w3 => 1 | .w4 => 2
-  normalized := ⟨.w1, rfl⟩
+/-- Table 3, before revising by `flies`. -/
+def table₃ : World → ℕ
+  | (true, true) => 2
+  | (true, false) => 3
+  | (false, true) => 1
+  | (false, false) => 0
 
-def post_A2 : RankingFunction W4 where
-  rank := fun | .w1 => 2 | .w2 => 1 | .w3 => 0 | .w4 => 1
-  normalized := ⟨.w3, rfl⟩
+/-- Table 3, after. -/
+def table₃' : World → ℕ
+  | (true, true) => 1
+  | (true, false) => 1
+  | (false, true) => 0
+  | (false, false) => 1
 
-def mu_A2 : W4 → Bool | .w3 => true | .w4 => true | _ => false
+/-- Example 8, with `bird` first and `flies` second: revising by `bird` yields
+`bird ∧ flies` from the prior, which entails `flies`, but only `bird` after `flies`, against
+(C3); a `flies`-world strictly below a `¬flies`-world no longer is, against (CR3). -/
+theorem example₈ :
+    (∀ w, w ∈ (TotalPreorder.lift table₃').least Set.univ ↔
+      w ∈ (TotalPreorder.lift table₃).least second) ∧
+    (∀ w, w ∈ (TotalPreorder.lift table₃).least first ↔ w = (true, true)) ∧
+    (∀ w, w ∈ (TotalPreorder.lift table₃').least first ↔ w ∈ first) ∧
+    ¬ PreservesLt (TotalPreorder.lift table₃) (TotalPreorder.lift table₃') second := by
+  decide
 
-theorem A2_agm : agmSuccess post_A2 mu_A2 := by native_decide
-theorem A2_satisfies_CR1 :
-    satisfies_CR1 (rankToOrder prior_A2) (rankToOrder post_A2) mu_A2 := by
-  native_decide
-theorem A2_violates_CR2 :
-    ¬satisfies_CR2 (rankToOrder prior_A2) (rankToOrder post_A2) mu_A2 := by
-  native_decide
-theorem A2_satisfies_CR3 :
-    satisfies_CR3 (rankToOrder prior_A2) (rankToOrder post_A2) mu_A2 := by
-  native_decide
-theorem A2_satisfies_CR4 :
-    satisfies_CR4 (rankToOrder prior_A2) (rankToOrder post_A2) mu_A2 := by
-  native_decide
+/-- Table 4, before revising by `nice_day`. -/
+def table₄ : World → ℕ
+  | (true, true) => 1
+  | (true, false) => 1
+  | (false, true) => 0
+  | (false, false) => 0
 
--- ══════════════════════════════════════════════════════════════════════
--- § 5. Table A.3 — CR3 Violation
--- ══════════════════════════════════════════════════════════════════════
+/-- Table 4, after. -/
+def table₄' : World → ℕ
+  | (true, true) => 2
+  | (true, false) => 1
+  | (false, true) => 0
+  | (false, false) => 1
 
-/-! Prior: w1=0, w2=1, w3=2, w4=3. Revise by μ = {w1,w2}.
-    Posterior: w1=0, w2=2, w3=2, w4=3.
-    w2 ∈ μ, w3 ∈ ¬μ: prior 1 < 2 (strict), posterior 2 ≤ 2 (not strict). -/
+/-- Example 9, with `shining_sun` first and `nice_day` second: revising by `shining_sun`
+yields `shining_sun` from the prior, leaving `nice_day` open, but `shining_sun ∧ ¬nice_day`
+after `nice_day`, against (C4); a `nice_day`-world weakly below a `¬nice_day`-world no longer
+is, against (CR4). -/
+theorem example₉ :
+    (∀ w, w ∈ (TotalPreorder.lift table₄').least Set.univ ↔
+      w ∈ (TotalPreorder.lift table₄).least second) ∧
+    (∀ w, w ∈ (TotalPreorder.lift table₄).least first ↔ w ∈ first) ∧
+    (∀ w, w ∈ (TotalPreorder.lift table₄').least first ↔ w = (true, false)) ∧
+    ¬ PreservesLe (TotalPreorder.lift table₄) (TotalPreorder.lift table₄') second := by
+  decide
 
-def prior_A3 : RankingFunction W4 where
-  rank := fun | .w1 => 0 | .w2 => 1 | .w3 => 2 | .w4 => 3
-  normalized := ⟨.w1, rfl⟩
+/-! ### Boutilier's postulate forgets -/
 
-def post_A3 : RankingFunction W4 where
-  rank := fun | .w1 => 0 | .w2 => 2 | .w3 => 2 | .w4 => 3
-  normalized := ⟨.w1, rfl⟩
+/-- Example 10: under (CB), once a bird is seen to be red and then found not to be a bird,
+all that is believed is that it is not a bird, provided revising the original state by
+`¬bird` left the colour open. -/
+theorem cb_forgets {S W : Type*} {r : Revision S W} (h : r.IsAGM) (hCB : r.CB) {Ψ : S}
+    {bird red : Set W} (hΨ : r.bel Ψ = bird) (hne : (bird ∩ red).Nonempty)
+    (hΨ' : r.bel (r.revise Ψ birdᶜ) = birdᶜ) :
+    r.bel (r.revise (r.revise Ψ red) birdᶜ) = birdᶜ := by
+  rw [hCB Ψ red birdᶜ (by
+    rw [h.expansion Ψ red (by rwa [hΨ]), hΨ, compl_compl]
+    exact Set.inter_subset_left), hΨ']
 
-def mu_A3 : W4 → Bool | .w1 => true | .w2 => true | _ => false
+/-! ### An operator satisfying (C1) but neither (C3) nor (C4) -/
 
-theorem A3_agm : agmSuccess post_A3 mu_A3 := by native_decide
-theorem A3_satisfies_CR1 :
-    satisfies_CR1 (rankToOrder prior_A3) (rankToOrder post_A3) mu_A3 := by
-  native_decide
-theorem A3_satisfies_CR2 :
-    satisfies_CR2 (rankToOrder prior_A3) (rankToOrder post_A3) mu_A3 := by
-  native_decide
-theorem A3_violates_CR3 :
-    ¬satisfies_CR3 (rankToOrder prior_A3) (rankToOrder post_A3) mu_A3 := by
-  native_decide
-theorem A3_satisfies_CR4 :
-    satisfies_CR4 (rankToOrder prior_A3) (rankToOrder post_A3) mu_A3 := by
-  native_decide
+open Classical in
+/-- The operator of Theorem 6: Spohn's, except that a disbelieved world of rank two or more
+moves down a degree instead of up. -/
+noncomputable def diamond {W : Type*} (κ : W → ℕ) (μ : Set W) : W → ℕ := λ w =>
+  if w ∈ μ then κ w - rank κ μ else if κ w < 2 then κ w + 1 else κ w - 1
 
--- ══════════════════════════════════════════════════════════════════════
--- § 6. Table A.4 — CR4 Violation
--- ══════════════════════════════════════════════════════════════════════
+/-- `diamond` as a revision operator on rankings. -/
+noncomputable def diamondRevision (W : Type*) : Revision (W → ℕ) W where
+  bel κ := {w | κ w = 0}
+  revise := diamond
 
-/-! Prior: w1=0, w2=1, w3=1, w4=2. Revise by μ = {w1,w2}.
-    Posterior: w1=0, w2=2, w3=1, w4=3.
-    w2 ∈ μ, w3 ∈ ¬μ: prior 1 ≤ 1, but posterior 2 > 1. -/
+theorem diamond_of_mem {W : Type*} {κ : W → ℕ} {μ : Set W} {w : W} (hw : w ∈ μ) :
+    diamond κ μ w = κ w - rank κ μ := by
+  simp [diamond, hw]
 
-def prior_A4 : RankingFunction W4 where
-  rank := fun | .w1 => 0 | .w2 => 1 | .w3 => 1 | .w4 => 2
-  normalized := ⟨.w1, rfl⟩
+theorem diamond_of_notMem {W : Type*} {κ : W → ℕ} {μ : Set W} {w : W} (hw : w ∉ μ) :
+    diamond κ μ w = if κ w < 2 then κ w + 1 else κ w - 1 := by
+  simp [diamond, hw]
 
-def post_A4 : RankingFunction W4 where
-  rank := fun | .w1 => 0 | .w2 => 2 | .w3 => 1 | .w4 => 3
-  normalized := ⟨.w1, rfl⟩
+/-- Theorem 6: the rankings' orderings represent `diamond`, so it satisfies the
+postulates. -/
+theorem diamondRevision_faithful (W : Type*) :
+    (diamondRevision W).Faithful (λ κ => TotalPreorder.lift κ) :=
+  faithful_lift (λ _ _ _ hw => diamond_of_mem hw)
+    (λ _ _ _ hw => by rw [diamond_of_notMem hw]; split_ifs <;> omega)
 
-def mu_A4 : W4 → Bool | .w1 => true | .w2 => true | _ => false
+theorem diamondRevision_isAGM (W : Type*) [Finite W] : (diamondRevision W).IsAGM :=
+  (diamondRevision_faithful W).isAGM
 
-theorem A4_agm : agmSuccess post_A4 mu_A4 := by native_decide
-theorem A4_satisfies_CR1 :
-    satisfies_CR1 (rankToOrder prior_A4) (rankToOrder post_A4) mu_A4 := by
-  native_decide
-theorem A4_satisfies_CR2 :
-    satisfies_CR2 (rankToOrder prior_A4) (rankToOrder post_A4) mu_A4 := by
-  native_decide
-theorem A4_satisfies_CR3 :
-    satisfies_CR3 (rankToOrder prior_A4) (rankToOrder post_A4) mu_A4 := by
-  native_decide
-theorem A4_violates_CR4 :
-    ¬satisfies_CR4 (rankToOrder prior_A4) (rankToOrder post_A4) mu_A4 := by
-  native_decide
+/-- Theorem 6: `diamond` satisfies (C1). -/
+theorem diamondRevision_c1 (W : Type*) : (diamondRevision W).C1 :=
+  (diamondRevision_faithful W).c1_iff.2 λ κ μ => agreesOn_lift κ μ λ _ _ _ hw => diamond_of_mem hw
 
--- ══════════════════════════════════════════════════════════════════════
--- § 7. Independence of CR1–CR4
--- ══════════════════════════════════════════════════════════════════════
+/-- The prior of Table 5. -/
+def table₅ : Fin 4 → ℕ
+  | 0 => 0
+  | 1 => 3
+  | 2 => 4
+  | 3 => 0
 
-/-- The four conditions are logically independent: for each CR_i,
-    there exists an AGM-compatible revision that violates CR_i alone.
+/-- Table 5 after `diamond` by `μ`. -/
+def table₅' : Fin 4 → ℕ
+  | 0 => 0
+  | 1 => 3
+  | 2 => 3
+  | 3 => 1
 
-    This is the content of [darwiche-pearl-1997], Appendix A. -/
-theorem CR_independence :
-    -- CR1 independent: violated alone
-    (∃ p q : Preorder W4, ∃ μ,
-      ¬satisfies_CR1 p q μ ∧
-      satisfies_CR2 p q μ ∧
-      satisfies_CR3 p q μ ∧
-      satisfies_CR4 p q μ) ∧
-    -- CR2 independent: violated alone
-    (∃ p q : Preorder W4, ∃ μ,
-      satisfies_CR1 p q μ ∧
-      ¬satisfies_CR2 p q μ ∧
-      satisfies_CR3 p q μ ∧
-      satisfies_CR4 p q μ) ∧
-    -- CR3 independent: violated alone
-    (∃ p q : Preorder W4, ∃ μ,
-      satisfies_CR1 p q μ ∧
-      satisfies_CR2 p q μ ∧
-      ¬satisfies_CR3 p q μ ∧
-      satisfies_CR4 p q μ) ∧
-    -- CR4 independent: violated alone
-    (∃ p q : Preorder W4, ∃ μ,
-      satisfies_CR1 p q μ ∧
-      satisfies_CR2 p q μ ∧
-      satisfies_CR3 p q μ ∧
-      ¬satisfies_CR4 p q μ) :=
-  ⟨⟨rankToOrder prior_A1, rankToOrder post_A1, mu_A1,
-    A1_violates_CR1, A1_satisfies_CR2, A1_satisfies_CR3, A1_satisfies_CR4⟩,
-   ⟨rankToOrder prior_A2, rankToOrder post_A2, mu_A2,
-    A2_satisfies_CR1, A2_violates_CR2, A2_satisfies_CR3, A2_satisfies_CR4⟩,
-   ⟨rankToOrder prior_A3, rankToOrder post_A3, mu_A3,
-    A3_satisfies_CR1, A3_satisfies_CR2, A3_violates_CR3, A3_satisfies_CR4⟩,
-   ⟨rankToOrder prior_A4, rankToOrder post_A4, mu_A4,
-    A4_satisfies_CR1, A4_satisfies_CR2, A4_satisfies_CR3, A4_violates_CR4⟩⟩
+/-- The evidence `μ` of Tables 5 and 6. -/
+abbrev μ₅ : Set (Fin 4) := {w | w = 0 ∨ w = 1}
 
--- ══════════════════════════════════════════════════════════════════════
--- § 8. Bridge: Ranking Conditioning Satisfies All C_i
--- ══════════════════════════════════════════════════════════════════════
+/-- The evidence `α` of Tables 5 and 6. -/
+abbrev α₅ : Set (Fin 4) := {w | w = 1 ∨ w = 2}
 
-/-! [darwiche-pearl-1997], Theorem 17: Spohn's ranking conditioning
-    satisfies C1–C4 (equivalently CR1–CR4). The proofs are in
-    `RankingFunction`:
+theorem diamond_table₅ : diamond table₅ μ₅ = table₅' := by
+  have h : rank table₅ μ₅ = 0 := rank_eq_of _ _ ⟨0, by decide, rfl⟩ (by decide)
+  funext w
+  match w with
+  | 0 | 1 | 2 | 3 => simp only [diamond, h]; simp [μ₅, table₅, table₅']
 
-    - `ranking_satisfies_C1` — C1 holds for `conditionα` with any α, β
-    - `ranking_satisfies_C2` — C2 holds for `conditionα` with any α, β
-    - `ranking_satisfies_C3` — C3 holds for canonical `revise`
-    - `ranking_satisfies_C4` — C4 holds for canonical `revise`
+/-- Theorem 6, Table 5: `diamond` violates (C3). -/
+theorem not_diamondRevision_c3 : ¬ (diamondRevision (Fin 4)).C3 := by
+  intro h
+  have := h table₅ μ₅ α₅ (by
+    rw [(diamondRevision_faithful _).bel_revise, Set.subset_def]
+    decide)
+  rw [(diamondRevision_faithful _).bel_revise] at this
+  change (TotalPreorder.lift (diamond table₅ μ₅)).least α₅ ⊆ μ₅ at this
+  rw [diamond_table₅] at this
+  exact absurd (this (show (2 : Fin 4) ∈ (TotalPreorder.lift table₅').least α₅ by decide))
+    (by decide)
 
-    Together with the counterexamples above, this shows that ranking
-    conditioning is the *tightest* well-behaved revision operator:
-    it satisfies all four independence conditions that AGM alone
-    leaves unconstrained.
+/-- The prior of Table 6. -/
+def table₆ : Fin 4 → ℕ
+  | 0 => 0
+  | 1 => 3
+  | 2 => 3
+  | 3 => 0
 
-    The chain to linguistics:
-    ```
-    RankingFunction.revise
-      → satisfies C1–C4 (this file's counterexamples show AGM alone doesn't)
-      → PlausibilityOrder (via toPlausibilityOrder)
-      → normality ordering / Preorder (via toPreorder)
-      → Kratzer ordering sources (via fromProps)
-      → modal/conditional semantics
-    ```
--/
+/-- Table 6 after `diamond` by `μ`. -/
+def table₆' : Fin 4 → ℕ
+  | 0 => 0
+  | 1 => 3
+  | 2 => 2
+  | 3 => 1
 
-example : ∀ (κ : RankingFunction W4), κ.satisfies_C1 :=
-  fun κ => RankingFunction.ranking_satisfies_C1 κ
+theorem diamond_table₆ : diamond table₆ μ₅ = table₆' := by
+  have h : rank table₆ μ₅ = 0 := rank_eq_of _ _ ⟨0, by decide, rfl⟩ (by decide)
+  funext w
+  match w with
+  | 0 | 1 | 2 | 3 => simp only [diamond, h]; simp [μ₅, table₆, table₆']
 
-example : ∀ (κ : RankingFunction W4), κ.satisfies_C2 :=
-  fun κ => RankingFunction.ranking_satisfies_C2 κ
-
-example : ∀ (κ : RankingFunction W4), κ.satisfies_C3 :=
-  fun κ => RankingFunction.ranking_satisfies_C3 κ
-
-example : ∀ (κ : RankingFunction W4), κ.satisfies_C4 :=
-  fun κ => RankingFunction.ranking_satisfies_C4 κ
+/-- Theorem 6, Table 6: `diamond` violates (C4). -/
+theorem not_diamondRevision_c4 : ¬ (diamondRevision (Fin 4)).C4 := by
+  intro h
+  refine h table₆ μ₅ α₅ ?_ ?_
+  · rw [(diamondRevision_faithful _).bel_revise, Set.not_subset]
+    exact ⟨1, by decide, λ h => h (by decide)⟩
+  · rw [(diamondRevision_faithful _).bel_revise]
+    change (TotalPreorder.lift (diamond table₆ μ₅)).least α₅ ⊆ μ₅ᶜ
+    rw [diamond_table₆, Set.subset_def]
+    simp only [Set.mem_compl_iff]
+    decide
 
 end DarwichePearl1997

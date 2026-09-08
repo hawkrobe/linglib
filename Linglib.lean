@@ -153,6 +153,7 @@ import Linglib.Logic.Aristotelian.Probabilistic
 import Linglib.Logic.Aristotelian.Square
 import Linglib.Logic.Assignment
 import Linglib.Logic.BeliefRevision
+import Linglib.Logic.BeliefRevision.Iterated
 import Linglib.Logic.Bilateral.Classical
 import Linglib.Logic.Bilateral.Defs
 import Linglib.Core.Order.Bilattice.Basic

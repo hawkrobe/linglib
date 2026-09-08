@@ -1,4 +1,5 @@
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Order.Antisymmetrization
 import Mathlib.Order.Defs.Unbundled
 
@@ -19,6 +20,8 @@ must be first-class data.
   from a Boolean table, for finite models).
 * `IsMaximal`, `AcceptedAt` — top-ranked points, and truth of a predicate
   throughout them (Stalnaker-style acceptance on a plausibility frame).
+* `IsLeast`, `least`, `lift` — the least elements of a set, and the pullback
+  of a linear order along a map.
 
 ## Implementation notes
 
@@ -142,6 +145,75 @@ def AcceptedAt (A : α → Prop) : Prop := ∀ x, ord.IsMaximal x → A x
 instance [Fintype α] [DecidableRel ord.le] (A : α → Prop) [DecidablePred A] :
     Decidable (ord.AcceptedAt A) := by
   unfold AcceptedAt; infer_instance
+
+/-- Every nonempty finset has a least element under a total preorder. -/
+theorem exists_min_le (S : Finset α) (hS : S.Nonempty) :
+    ∃ m ∈ S, ∀ s ∈ S, ord.le m s := by
+  induction S using Finset.cons_induction with
+  | empty => exact absurd hS (by simp)
+  | cons x S' hx ih =>
+    by_cases hS' : S'.Nonempty
+    · obtain ⟨m, hm, hle⟩ := ih hS'
+      rcases ord.le_total m x with h | h
+      · exact ⟨m, Finset.mem_cons.mpr (Or.inr hm), fun s hs => by
+          rcases Finset.mem_cons.mp hs with rfl | hs'
+          · exact h
+          · exact hle s hs'⟩
+      · exact ⟨x, Finset.mem_cons_self x S', fun s hs => by
+          rcases Finset.mem_cons.mp hs with rfl | hs'
+          · exact ord.le_refl _
+          · exact ord.le_trans x m s h (hle s hs')⟩
+    · rw [Finset.not_nonempty_iff_eq_empty] at hS'
+      exact ⟨x, Finset.mem_cons_self x S', fun s hs => by
+        simp [hS'] at hs; exact hs ▸ ord.le_refl _⟩
+
+/-- A least element of `d`: in `d` and ranked no higher than every element of `d`. Under a
+total preorder these are exactly the minimal elements of `d`. -/
+def IsLeast (d : Set α) (x : α) : Prop := x ∈ d ∧ ∀ y ∈ d, ord.le x y
+
+/-- The least elements of `d`. -/
+def least (d : Set α) : Set α := {x | ord.IsLeast d x}
+
+theorem mem_least {d : Set α} {x : α} : x ∈ ord.least d ↔ x ∈ d ∧ ∀ y ∈ d, ord.le x y :=
+  Iff.rfl
+
+theorem least_subset (d : Set α) : ord.least d ⊆ d := fun _ h => h.1
+
+theorem mem_least_pair {x y : α} : x ∈ ord.least {x, y} ↔ ord.le x y := by
+  simp only [mem_least, Set.mem_insert_iff, Set.mem_singleton_iff, true_or, true_and,
+    forall_eq_or_imp, forall_eq]
+  exact ⟨fun h => h.2, fun h => ⟨ord.le_refl x, h⟩⟩
+
+instance [Fintype α] [DecidableRel ord.le] (d : Set α) [DecidablePred (· ∈ d)] (x : α) :
+    Decidable (ord.IsLeast d x) := by
+  unfold IsLeast; infer_instance
+
+instance [Fintype α] [DecidableRel ord.le] (d : Set α) [DecidablePred (· ∈ d)] (x : α) :
+    Decidable (x ∈ ord.least d) :=
+  inferInstanceAs (Decidable (ord.IsLeast d x))
+
+/-- On a finite carrier every nonempty set has a least element. -/
+theorem exists_isLeast [Finite α] {d : Set α} (hd : d.Nonempty) : ∃ x, ord.IsLeast d x := by
+  have hd' : d.Finite := Set.finite_univ.subset (Set.subset_univ d)
+  obtain ⟨m, hm, h⟩ := ord.exists_min_le hd'.toFinset (by simpa using hd)
+  exact ⟨m, hd'.mem_toFinset.1 hm, fun y hy => h y (hd'.mem_toFinset.2 hy)⟩
+
+/-- The total preorder pulled back along a map into a linear order: `a ≤ b` iff `f a ≤ f b`. -/
+def lift {β : Type*} [LinearOrder β] (f : α → β) : TotalPreorder α where
+  le a b := f a ≤ f b
+  isPreorder := { refl := fun _ => le_rfl, trans := fun _ _ _ h h' => h.trans h' }
+  total := ⟨fun _ _ => _root_.le_total _ _⟩
+
+@[simp] theorem lift_le {β : Type*} [LinearOrder β] (f : α → β) (a b : α) :
+    (lift f).le a b ↔ f a ≤ f b :=
+  Iff.rfl
+
+theorem lift_lt {β : Type*} [LinearOrder β] (f : α → β) (a b : α) :
+    (lift f).lt a b ↔ f a < f b :=
+  lt_iff_le_not_ge.symm
+
+instance {β : Type*} [LinearOrder β] (f : α → β) : DecidableRel (lift f).le :=
+  fun a b => inferInstanceAs (Decidable (f a ≤ f b))
 
 end TotalPreorder
 
