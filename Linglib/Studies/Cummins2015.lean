@@ -1,277 +1,460 @@
 import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Semantics.Quantification.Numerals.Precision
+import Linglib.Semantics.Quantification.Numerals.Roundness
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Data.Fintype.Perm
 import Mathlib.Data.Nat.Dist
 
 /-!
-# [cummins-2015]: OT constraints on numerically quantified expressions
-[cummins-2015] [jansen-pollmann-2001] [prince-smolensky-1993]
+# Constraints on numerical expressions
 
-[cummins-2015] models the choice of numerically quantified expressions as
-classical Optimality Theory: six violable constraints — informativeness
-(INFO), quantifier simplicity (QSIMP), numeral salience (NSAL), granularity
-(GRAN), numeral priming (NPRI), and quantifier priming (QPRI) — evaluate
-candidate expressions against a context, and each speaker's total ranking
-deterministically selects a winner, so apparent probabilistic variation is
-cross-speaker (and cross-context) ranking variation.
+Cummins models the choice of a numerically quantified expression as classical Optimality
+Theory. Six violable constraints, informativeness, granularity, quantifier simplicity,
+numeral salience, numeral priming and quantifier priming, evaluate the candidate expressions
+against the speaker's knowledge and the preceding context, and a speaker's total ranking
+selects one, so that apparent variation is variation across rankings and contexts. Round
+numerals are salient by Jansen and Pollmann's k-ness, a candidate incurring a subset of a
+rival's violations is preferred under every ranking, and a hearer who presumes the utterance
+optimal infers that an alternative bounding it in this way was not available to the speaker:
+*more than n* implicates *not more than m* for any greater *m* at least as salient and at the
+same granularity level, unless *n* was primed.
 
-The constraint set runs through the project OT engine: the book's worked
-three-constraint tableaux (INFO, NSAL, NPRI over rival `more than n` bounds,
-with and without a primed numeral) are decide-checked `Tableau.optimal`
-computations, and the book's harmonic-bounding argument — a candidate incurring
-a subset of a rival's violations is preferred under any constraint ranking —
-is proved for arbitrary constraint systems and instantiated in the toy system.
+We derive the constraints' violations from the numeral and the context, reproduce the book's
+toy and correction tableaux from them and its approximation tableaux from their printed
+marks, and prove the bounding implicature and the exact condition for its attenuation under
+priming for arbitrary numerals.
 
-NSAL follows the book: one violation per missing [jansen-pollmann-2001] k-ness
-type (10-, 5-, 2-, 2.5-ness; max 4). `kTypeCount` uses the substrate predicates,
-whose witness search starts at base exponent 1 rather than
-[jansen-pollmann-2001]'s 0 (`Studies/JansenPollmann2001.lean` records the
-divergence); the book leaves the exact roundness inventory open. The
-substrate's six-property `roundnessScore` decomposes as `kTypeCount` plus the
-two raw divisibility indicators (`roundnessScore_eq_kTypeCount_add`) — the
-properties the book sets aside as non-diagnostic of salience.
+## Implementation notes
+
+* Numeral salience uses the book's k-ness with a zero exponent admitted, under which 20 and
+  100 are entirely round. The book prints 50 as satisfying salience, though by its
+  definition 50 lacks 2-ness, which changes no comparison in its tableaux.
+* Quantifier simplicity follows the book's simplifying assumption that a comparative incurs
+  no violation and a superlative one; *exactly* and *about* incur one, as its tableaux print.
+* Informativeness reads a comparative or superlative against its own bound, the book's bound
+  under discussion, and the other forms at their numeral. The informativeness marks of the
+  approximation tableaux, which the book says do not follow from its definition, are entered
+  as printed, a parenthesized star counting as one, with entire roundness as the criterion
+  for the ambiguity mark that fits them.
+* The book assigns no numeric granularity levels to cardinals; `granularityLevel` counts
+  trailing zeros, and an unset level is met by every numeral, as the book allows.
+
+## References
+
+* [C. Cummins, *Constraints on numerical expressions* (2015)][cummins-2015]
+* [A. Prince, P. Smolensky, *Optimality Theory: constraint interaction in generative
+  grammar* (1993)][prince-smolensky-1993]
+* [C. J. M. Jansen, M. M. W. Pollmann, *On round numbers: pragmatic aspects of numerical
+  expressions* (2001)][jansen-pollmann-2001]
+* [M. Krifka, *Approximate interpretations of number words: a case for strategic
+  communication* (2009)][krifka-2009b]
+* [C. Cummins, U. Sauerland, S. Solt, *Granularity and scalar implicature in numerical
+  expressions* (2012)][cummins-sauerland-solt-2012]
 -/
 
 namespace Cummins2015
 
 open Constraints OptimalityTheory Numerals.Roundness
-open Numerals.Precision (inferPrecisionMode
-  inferPrecisionMode_eq_approximate_of_ten_dvd)
 
-/-! ### NSAL: numeral salience as missing k-ness types -/
+/-! ### Numeral salience (§2.4.4) -/
 
-/-- Count of [jansen-pollmann-2001] k-ness types (10-, 5-, 2-, 2.5-ness) that
-`n` exhibits (0–4). [cummins-2015] takes an entirely round number to be one
-exhibiting all four. -/
-def kTypeCount (n : ℕ) : ℕ :=
-  (if HasKness n 1 then 1 else 0) + (if HasKness n 5 then 1 else 0) +
-  (if HasKness n 2 then 1 else 0) + (if Has2_5ness n then 1 else 0)
+/-- The roundness of a numeral: the kinds of k-ness, 10-, 5-, 2- and 2½-ness, it exhibits,
+the zero exponent admitted (definition (13)). -/
+def roundness (n : ℕ) : ℕ :=
+  (if HasKness 1 n then 1 else 0) + (if HasKness 5 n then 1 else 0) +
+  (if HasKness 2 n then 1 else 0) + (if HasKness 5 (2 * n) then 1 else 0)
 
-theorem kTypeCount_le_four (n : ℕ) : kTypeCount n ≤ 4 := by
-  unfold kTypeCount; split_ifs <;> omega
+theorem roundness_le_four (n : ℕ) : roundness n ≤ 4 := by
+  unfold roundness; split_ifs <;> omega
 
-/-- NSAL violations ([cummins-2015]'s numeral salience constraint): one per
-missing k-ness type. Entirely round numbers (100, 1000) incur none; numbers
-with no k-ness incur the maximum of four. -/
-def nsalViolations (n : ℕ) : ℕ := 4 - kTypeCount n
+/-- An entirely round numeral exhibits every kind of k-ness. -/
+def EntirelyRound (n : ℕ) : Prop := roundness n = 4
 
-/-- NSAL violations complement the k-type count. -/
-theorem nsalViolations_add_kTypeCount (n : ℕ) :
-    nsalViolations n + kTypeCount n = 4 := by
-  have := kTypeCount_le_four n
-  unfold nsalViolations; omega
+instance : DecidablePred EntirelyRound := λ _ => inferInstanceAs (Decidable (_ = _))
 
-/-- Salience comparisons invert k-type comparisons: strictly more k-ness types
-is strictly fewer NSAL violations. -/
-theorem nsalViolations_lt_iff {n₁ n₂ : ℕ} :
-    nsalViolations n₁ < nsalViolations n₂ ↔ kTypeCount n₂ < kTypeCount n₁ := by
-  have h₁ := kTypeCount_le_four n₁
-  have h₂ := kTypeCount_le_four n₂
-  unfold nsalViolations
-  omega
+/-! ### Candidates, contexts and the six constraints (§2.4) -/
 
-/-- The substrate's six-property roundness score is the k-type count plus the
-two raw divisibility indicators [cummins-2015] sets aside as non-diagnostic. -/
-theorem roundnessScore_eq_kTypeCount_add (n : ℕ) :
-    roundnessScore n =
-      kTypeCount n + ((if 5 ∣ n then 1 else 0) + (if 10 ∣ n then 1 else 0)) := by
-  unfold roundnessScore kTypeCount
-  split_ifs <;> omega
-
-example : nsalViolations 100 = 0 := by decide
-example : nsalViolations 1000 = 0 := by decide
-example : nsalViolations 50 = 1 := by decide   -- lacks 2-ness only
-example : nsalViolations 90 = 3 := by decide   -- 10-ness only
-example : nsalViolations 102 = 4 := by decide  -- no k-ness at all
-
-/-! ### Candidates, contexts, and the six constraints -/
-
-/-- Quantifier form of a candidate numerical expression. -/
-inductive QuantifierForm where
-  | bare | exactly | about | moreThan | atLeast
+/-- The quantifier of a candidate expression. -/
+inductive Form where
+  | bare
+  | exactly
+  | about
+  | moreThan
+  | atLeast
+  | fewerThan
+  | atMost
   deriving DecidableEq
 
-/-- Degrees of complexity for QSIMP: bare numerals are simplest; each overt
-modifier adds a degree; superlative bounds cost more than comparative ones,
-the experimentally supported asymmetry [cummins-2015] adopts to separate the
-two single-bound families. -/
-def QuantifierForm.complexity : QuantifierForm → ℕ
-  | .bare => 0
-  | .exactly | .about | .moreThan => 1
-  | .atLeast => 2
+/-- Degrees of complexity: the bare numeral and the comparatives are simplest, the other
+modifiers and the superlatives one degree more complex (§2.4.3, §4.9). -/
+def Form.complexity : Form → ℕ
+  | .bare | .moreThan | .fewerThan => 0
+  | .exactly | .about | .atLeast | .atMost => 1
 
-/-- A candidate numerical expression: a quantifier form applied to a numeral. -/
+/-- A candidate expression: a quantifier applied to a numeral. -/
 structure Candidate where
-  form : QuantifierForm
+  /-- The quantifier. -/
+  form : Form
+  /-- The numeral. -/
   numeral : ℕ
   deriving DecidableEq
 
-/-- Utterance context: the speaker's knowledge (a lower bound on the value
-under discussion, the shape of the book's worked examples), the contextually
-set granularity level, and the primed numeral and quantifier, if any. -/
+/-- The context of utterance: the bounds of the value under discussion the speaker knows,
+the granularity level the context sets, if any, and the primed numeral and quantifier. -/
 structure Context where
-  lowerBound : ℕ
-  granularity : ℕ
+  /-- The lower bound the speaker knows. -/
+  lo : Option ℕ := none
+  /-- The upper bound the speaker knows. -/
+  hi : Option ℕ := none
+  /-- The granularity level the context sets. -/
+  granularity : Option ℕ := none
+  /-- The numeral activated in the prior context. -/
   primedNumeral : Option ℕ := none
-  primedForm : Option QuantifierForm := none
+  /-- The quantifier activated in the prior context. -/
+  primedForm : Option Form := none
 
-/-- INFO ([cummins-2015]'s informativeness constraint): one violation per value
-the expression admits that the speaker's knowledge `value ≥ ctx.lowerBound`
-already excludes. Bounds admit the known-false values below the speaker's own
-bound; point forms admit only their numeral. -/
-def infoViolations (ctx : Context) : Constraint Candidate := fun c =>
-  match c.form with
-  | .moreThan => ctx.lowerBound - (c.numeral + 1)
-  | .atLeast => ctx.lowerBound - c.numeral
-  | _ => 0
+/-- Informativeness: one violation for each value the expression admits that the speaker's
+knowledge excludes (constraint 1). A comparative or superlative puts its own bound under
+discussion; the other forms are read at their numeral. -/
+def info (ctx : Context) : Constraint Candidate := λ c =>
+  match c.form, ctx.lo, ctx.hi with
+  | .moreThan, some lo, _ => lo - (c.numeral + 1)
+  | .atLeast, some lo, _ => lo - c.numeral
+  | .fewerThan, _, some hi => c.numeral - (hi + 1)
+  | .atMost, _, some hi => c.numeral - hi
+  | .moreThan, none, _ | .atLeast, none, _ | .fewerThan, _, none | .atMost, _, none => 0
+  | _, lo, hi => if (∀ l ∈ lo, l ≤ c.numeral) ∧ ∀ h ∈ hi, c.numeral ≤ h then 0 else 1
 
-/-- QSIMP: one violation per degree of quantifier complexity. -/
-def qsimpViolations : Constraint Candidate := fun c => c.form.complexity
+/-- *more than n*. -/
+def moreThan (n : ℕ) : Candidate := ⟨.moreThan, n⟩
 
-/-- NSAL over candidates: `nsalViolations` pulled back along the numeral. -/
-def nsal : Constraint Candidate := Constraint.comap Candidate.numeral nsalViolations
+/-- The bare numeral. -/
+def bare (n : ℕ) : Candidate := ⟨.bare, n⟩
 
-/-- Decimal granularity level of a numeral: the finest base-10 scale on which
-it sits (trailing zeros, capped at the thousands level). The book's granularity
-is scale-relative; on the base-10 scales of the bare-number domain the level is
-the trailing-zero count. -/
+/-- *exactly n*. -/
+def exactly (n : ℕ) : Candidate := ⟨.exactly, n⟩
+
+/-- *about n*. -/
+def about (n : ℕ) : Candidate := ⟨.about, n⟩
+
+/-- Quantifier simplicity: one violation per degree of complexity (constraint 3). -/
+def qsimp : Constraint Candidate := λ c => c.form.complexity
+
+/-- Numeral salience: one violation for each kind of k-ness the numeral lacks
+(constraint 4). -/
+def nsal : Constraint Candidate := λ c => 4 - roundness c.numeral
+
+example : nsal (bare 20) = 0 := by decide
+example : nsal (bare 40) = 1 := by decide
+example : nsal (bare 30) = 2 := by decide
+example : nsal (bare 12) = 3 := by decide
+example : nsal (bare 17) = 4 := by decide
+
+/-- The decimal granularity level of a numeral: its trailing zeros, up to thousands. -/
 def granularityLevel (n : ℕ) : ℕ :=
-  if n = 0 then 0
-  else if 1000 ∣ n then 3 else if 100 ∣ n then 2 else if 10 ∣ n then 1 else 0
+  if n = 0 then 0 else if 1000 ∣ n then 3 else if 100 ∣ n then 2 else if 10 ∣ n then 1 else 0
 
-/-- GRAN ([cummins-2015]'s granularity constraint): one violation per level of
-mismatch between the contextually set granularity and the level used. -/
-def granViolations (ctx : Context) : Constraint Candidate := fun c =>
-  Nat.dist ctx.granularity (granularityLevel c.numeral)
+/-- Granularity: one violation per level of mismatch with the level the context sets, an
+unset level being met by every numeral (constraint 2). -/
+def gran (ctx : Context) : Constraint Candidate := λ c =>
+  ctx.granularity.elim 0 (Nat.dist (granularityLevel c.numeral))
 
-/-- NPRI ([cummins-2015]'s numeral priming constraint): a violation iff a
-numeral is primed in the preceding context and a different one is used.
-Unprimed contexts violate nothing. -/
-def npriViolations (ctx : Context) : Constraint Candidate := fun c =>
+/-- Numeral priming: a violation if a numeral is primed and another is used (constraint 5). -/
+def npri (ctx : Context) : Constraint Candidate := λ c =>
   match ctx.primedNumeral with
-  | none => 0
   | some p => if c.numeral = p then 0 else 1
-
-/-- QPRI ([cummins-2015]'s quantifier priming constraint): a violation iff a
-quantifier is primed in the preceding context and a different one is used. -/
-def qpriViolations (ctx : Context) : Constraint Candidate := fun c =>
-  match ctx.primedForm with
   | none => 0
+
+/-- Quantifier priming: a violation if a quantifier is primed and another is used
+(constraint 6). -/
+def qpri (ctx : Context) : Constraint Candidate := λ c =>
+  match ctx.primedForm with
   | some f => if c.form = f then 0 else 1
+  | none => 0
 
-/-- The six-constraint system, indexed in the book's enumeration order:
-0 = INFO, 1 = QSIMP, 2 = NSAL, 3 = GRAN, 4 = NPRI, 5 = QPRI. -/
+/-- The six constraints in the book's order: informativeness, granularity, quantifier
+simplicity, numeral salience, numeral priming, quantifier priming. -/
 def con (ctx : Context) : CON Candidate 6 :=
-  ![infoViolations ctx, qsimpViolations, nsal,
-    granViolations ctx, npriViolations ctx, qpriViolations ctx]
+  ![info ctx, gran ctx, qsimp, nsal, npri ctx, qpri ctx]
 
-/-- The book's count of possible idiolects: six constraints admit 720 total
-rankings. -/
-theorem card_rankings : Fintype.card (Ranking 6) = 720 := by
-  rw [Fintype.card_perm, Fintype.card_fin]; rfl
+/-! ### Constraint interaction in the toy system (§3.1, Tables 3.1–3.3) -/
 
-/-! ### The worked tableaux
+/-- The toy system: informativeness, numeral salience and numeral priming. -/
+def toy (ctx : Context) : CON Candidate 3 := ![info ctx, nsal, npri ctx]
 
-The book's toy system: INFO, NSAL, and NPRI adjudicate between rival `more
-than n` bounds for a speaker who knows `value ≥ 103` (representative
-numerals; the shape follows the book's example, where the informative bound's
-numeral incurs the maximum four NSAL violations). `more than 102` is maximally
-informative but non-salient; `more than 100` is salient but under-informative.
-Unprimed, INFO-top speakers pick the former and NSAL-top speakers the latter;
-priming 102 leaves only NSAL-top speakers on the round bound. Each ranking
-selects a singleton — the book's deterministic-output point — and the factorial
-typology has exactly the two idiolect types. -/
+/-- The speaker knows the value to be at least 22. -/
+def atLeast22 : Context := { lo := some 22 }
 
-/-- The `more than n` candidate. -/
-def mt (n : ℕ) : Candidate := ⟨.moreThan, n⟩
+/-- The same, with 21 contextually salient. -/
+def atLeast22Primed : Context := { atLeast22 with primedNumeral := some 21 }
 
-/-- Unprimed context: the speaker knows `value ≥ 103`; hundreds granularity. -/
-def unprimed : Context := { lowerBound := 103, granularity := 2 }
+/-- Unprimed (Table 3.1), a speaker ranking informativeness above salience prefers *more than
+21* and one ranking salience above informativeness *more than 20*; priming, violated by
+neither, never adjudicates (Table 3.3). -/
+theorem atLeast22_optimal (r : Ranking 3) :
+    (Tableau.ofPerm (toy atLeast22) r [moreThan 21, moreThan 20]).optimal =
+      if r.Dominates 0 1 then {moreThan 21} else {moreThan 20} := by
+  revert r; decide
 
-/-- The same context with `102` primed in the preceding turn. -/
-def primed : Context := { unprimed with primedNumeral := some 102 }
+/-- With 21 salient (Table 3.2), only a speaker ranking salience above both informativeness
+and priming keeps *more than 20* (Table 3.3). -/
+theorem atLeast22Primed_optimal (r : Ranking 3) :
+    (Tableau.ofPerm (toy atLeast22Primed) r [moreThan 21, moreThan 20]).optimal =
+      if r.Dominates 1 0 ∧ r.Dominates 1 2 then {moreThan 20} else {moreThan 21} := by
+  revert r; decide
 
-theorem unprimed_optimal_of_info_top :
-    (Tableau.ofRanking [mt 100, mt 102]
-      [infoViolations unprimed, nsal, npriViolations unprimed]).optimal
-      = {mt 102} := by decide
+/-- Priming over salience over informativeness, the last ranking of Table 3.3. -/
+def primingFirst : Ranking 3 := Equiv.swap 0 2
 
-theorem unprimed_optimal_of_nsal_top :
-    (Tableau.ofRanking [mt 100, mt 102]
-      [nsal, infoViolations unprimed, npriViolations unprimed]).optimal
-      = {mt 100} := by decide
+/-- A speaker ranking priming over salience over informativeness prefers *more than 20*
+unprimed and *more than 21* primed: variation within a speaker across contexts. -/
+theorem primingFirst_optimal :
+    (Tableau.ofPerm (toy atLeast22) primingFirst [moreThan 21, moreThan 20]).optimal =
+        {moreThan 20} ∧
+      (Tableau.ofPerm (toy atLeast22Primed) primingFirst [moreThan 21, moreThan 20]).optimal =
+        {moreThan 21} := by
+  decide
 
-theorem primed_optimal_of_nsal_top :
-    (Tableau.ofRanking [mt 100, mt 102]
-      [nsal, npriViolations primed, infoViolations primed]).optimal
-      = {mt 100} := by decide
+/-! ### Approximation (§3.3.1, Tables 3.4–3.8) -/
 
-theorem primed_optimal_of_npri_over_nsal :
-    (Tableau.ofRanking [mt 100, mt 102]
-      [npriViolations primed, nsal, infoViolations primed]).optimal
-      = {mt 102} := by decide
+/-- The value the speaker means to convey, exact or approximate. -/
+inductive Situation where
+  /-- Exactly `n`. -/
+  | exact (n : ℕ)
+  /-- Approximately `n`. -/
+  | about (n : ℕ)
 
-/-- Both candidates surface across the six rankings — the book's point that a
-deterministic OT system yields apparent variability via ranking variation. -/
-theorem toy_factorialTypologySize :
-    factorialTypologySize [mt 100, mt 102]
-      [infoViolations unprimed, nsal, npriViolations unprimed] = 2 := by decide
+/-- Informativeness as the approximation tableaux read it: an expression whose quantifier or
+numeral misfits the value violates it once, and a bare entirely round numeral, ambiguous
+between precise and approximate readings, once more. The book prints the ambiguity mark for
+*100* and not for *50*; entire roundness is the criterion that fits. -/
+def Situation.info : Situation → Constraint Candidate
+  | .exact n => λ c => (if c.form = .about ∨ c.numeral ≠ n then 1 else 0) +
+      (if c.form = .bare ∧ EntirelyRound c.numeral then 1 else 0)
+  | .about n => λ c => (if c.form = .exactly ∨ c.numeral ≠ n then 1 else 0) +
+      (if c.form = .bare ∧ EntirelyRound c.numeral then 1 else 0)
 
-/-! ### Harmonic bounding -/
+/-- The approximation system: informativeness, numeral salience, quantifier simplicity. -/
+def approx (s : Situation) : CON Candidate 3 := ![s.info, nsal, qsimp]
 
-/-- Pointwise violation dominance survives every ranking ([cummins-2015]'s
-harmonic-bounding argument, one half): reordering coordinates preserves
-pointwise `≤`, and pointwise `≤` entails lexicographic `≤`. -/
-theorem profile_le_of_pointwise_le {C : Type*} {n : ℕ} (con : CON C n)
-    (r : Ranking n) {c d : C} (h : ∀ i, con i c ≤ con i d) :
-    buildViolationProfile (fun p => con (r p)) c
-      ≤ buildViolationProfile (fun p => con (r p)) d :=
-  Pi.toLex_monotone fun p => h (r p)
+/-- For an exact value the rounder numeral harmonically bounds a less round one: *50*
+bounds *51* (Table 3.4). -/
+theorem bare_notMem_optimal_of_roundness_lt {n m : ℕ} (hmn : roundness m < roundness n)
+    (r : Ranking 3) {cands : List Candidate} (hc : bare n ∈ cands) (h : cands ≠ []) :
+    bare m ∉ (Tableau.ofPerm (approx (.exact n)) r cands h).optimal := by
+  have hne : m ≠ n := ne_of_apply_ne roundness hmn.ne
+  refine Tableau.ofPerm_notMem_optimal_of_lt hc (Pi.lt_def.2 ⟨λ i => ?_, 1, ?_⟩)
+  · match i with
+    | 0 =>
+      show (Situation.exact n).info (bare n) ≤ (Situation.exact n).info (bare m)
+      simp only [Situation.info, bare, reduceCtorEq, false_or, true_and, hne, ne_eq,
+        not_true_eq_false, not_false_eq_true, if_true, if_false]
+      split_ifs <;> omega
+    | 1 => show 4 - roundness n ≤ 4 - roundness m; omega
+    | 2 => exact le_rfl
+  · show 4 - roundness n < 4 - roundness m
+    have := roundness_le_four n; omega
 
-/-- A strictly harmonically bounded candidate — one incurring at least a
-rival's violations everywhere and strictly more somewhere — is optimal under
-no ranking whenever its bounder competes ([cummins-2015]: "preferred under any
-constraint ranking"). -/
-theorem not_mem_optimal_of_strictBounded {C : Type*} [DecidableEq C] {n : ℕ}
-    {con : CON C n} {r : Ranking n} {cands : List C} {hne : cands ≠ []}
-    {c d : C} (hc : c ∈ cands) (hle : ∀ i, con i c ≤ con i d)
-    (hlt : ∃ i, con i c < con i d) :
-    d ∉ (Tableau.ofPerm con r cands hne).optimal := by
-  intro hd
-  have hne' : (fun p => con (r p) c) ≠ (fun p => con (r p) d) := by
-    obtain ⟨j, hj⟩ := hlt
-    intro heq
-    have := congrFun heq (r.symm j)
-    rw [Equiv.apply_symm_apply] at this
-    exact absurd this hj.ne
-  exact absurd (Tableau.le_of_mem_optimal hd (List.mem_toFinset.mpr hc))
-    (not_le.mpr (Pi.toLex_strictMono
-      (lt_of_le_of_ne (fun p => hle (r p)) hne')))
+/-- For the exact value 51, informativeness above salience prefers *51* and salience above
+informativeness *50* (Table 3.5). -/
+theorem exact51_optimal (r : Ranking 3) :
+    (Tableau.ofPerm (approx (.exact 51)) r [bare 50, bare 51]).optimal =
+      if r.Dominates 0 1 then {bare 51} else {bare 50} := by
+  revert r; decide
 
-/-- Instance in the full six-constraint system: `more than 100` harmonically
-bounds `more than 90` in the unprimed context (weakly better on all six
-constraints, strictly on INFO, NSAL, and GRAN), so `more than 90` wins under
-none of the 720 rankings. -/
-theorem moreThan90_never_optimal (r : Ranking 6) :
-    mt 90 ∉ (Tableau.ofPerm (con unprimed) r [mt 90, mt 100, mt 102]).optimal :=
-  not_mem_optimal_of_strictBounded (c := mt 100) (by decide) (by decide)
-    (by decide)
+/-- For the exact value 100, *100* bounds *about 100*, both bound *about 99*, and the choice
+is between *exactly 100*, for informativeness above simplicity, and *100* (Table 3.6). -/
+theorem exact100_optimal (r : Ranking 3) :
+    (Tableau.ofPerm (approx (.exact 100)) r [bare 100, exactly 100, about 100, about 99]).optimal
+      = if r.Dominates 0 2 then {exactly 100} else {bare 100} := by
+  revert r; decide
 
-/-! ### Round numerals and approximate construal -/
+/-- For the approximate value 100, informativeness above simplicity prefers *about 100* and
+simplicity above informativeness *100* (Table 3.7). -/
+theorem about100_optimal (r : Ranking 3) :
+    (Tableau.ofPerm (approx (.about 100)) r [bare 100, about 100]).optimal =
+      if r.Dominates 0 2 then {about 100} else {bare 100} := by
+  revert r; decide
 
-/-- Fully salient numerals admit the approximate construal: zero NSAL
-violations force 10-ness, hence divisibility by 10, which the precision
-substrate maps to `.approximate` — the association between round numbers and
-approximate readings that [cummins-2015] inherits from the imprecision
-literature. -/
-theorem inferPrecisionMode_eq_approximate_of_nsalViolations_eq_zero {n : ℕ}
-    (h : nsalViolations n = 0) : inferPrecisionMode n = .approximate := by
-  have h10 : HasKness n 1 := by
-    by_contra hk
-    unfold nsalViolations kTypeCount at h
-    rw [if_neg hk] at h
-    split_ifs at h
-  exact inferPrecisionMode_eq_approximate_of_ten_dvd h10.ten_dvd
+/-- For the exact value 99, *99* bounds *exactly 99*, and the winner is *99* when
+informativeness dominates salience, *100* when simplicity dominates informativeness, and
+*about 100* otherwise (Table 3.8). -/
+theorem exact99_optimal (r : Ranking 3) :
+    (Tableau.ofPerm (approx (.exact 99)) r [bare 99, exactly 99, bare 100, about 100]).optimal
+      = if r.Dominates 0 1 then {bare 99}
+        else if r.Dominates 2 0 then {bare 100} else {about 100} := by
+  revert r; decide
+
+/-! ### Corrections (§3.3.2, Tables 3.9–3.10) -/
+
+/-- The four maximally informative corrections to a description of boxes holding `n` or
+`n + 1` items ((38)–(41)). -/
+inductive Correction where
+  /-- *more than n − 1*. -/
+  | moreThan
+  /-- *at least n*. -/
+  | atLeast
+  /-- *at most n + 1*. -/
+  | atMost
+  /-- *fewer than n + 2*. -/
+  | fewerThan
+  deriving DecidableEq
+
+/-- The correction as a candidate: *more than n − 1*, *at least n*, *at most n + 1*, *fewer
+than n + 2*. -/
+def Correction.candidate (n : ℕ) : Correction → Candidate
+  | .moreThan => ⟨.moreThan, n - 1⟩
+  | .atLeast => ⟨.atLeast, n⟩
+  | .atMost => ⟨.atMost, n + 1⟩
+  | .fewerThan => ⟨.fewerThan, n + 2⟩
+
+/-- The candidate list of the tableaux. -/
+def Correction.all : List Correction := [.moreThan, .atLeast, .atMost, .fewerThan]
+
+/-- The speaker knows each box holds `n` or `n + 1` items, and the description corrected
+primed its quantifier and numeral. -/
+def correctionContext (n : ℕ) (form : Form) (numeral : ℕ) : Context :=
+  { lo := some n, hi := some (n + 1), primedNumeral := some numeral, primedForm := some form }
+
+/-- The correction system: quantifier priming, numeral priming, quantifier simplicity,
+informativeness. -/
+def corr (ctx : Context) : CON Candidate 4 := ![qpri ctx, npri ctx, qsimp, info ctx]
+
+/-- The correction system on the four corrections. -/
+def corrOn (ctx : Context) (n : ℕ) : CON Correction 4 := (corr ctx).comap (Correction.candidate n)
+
+/-- The printed marks of Table 3.9, after *more than n*: quantifier and numeral priming
+against the corrections that change them, simplicity against the superlatives. -/
+def table3_9 : CON Correction 4 :=
+  ![Constraint.binary (· ≠ .moreThan), Constraint.binary (· ≠ .atLeast),
+    Constraint.binary (λ c => c = .atLeast ∨ c = .atMost), 0]
+
+/-- The printed marks of Table 3.10, after *at least n − 1*. -/
+def table3_10 : CON Correction 4 :=
+  ![Constraint.binary (· ≠ .atLeast), Constraint.binary (· ≠ .moreThan),
+    Constraint.binary (λ c => c = .atLeast ∨ c = .atMost), 0]
+
+-- `Matrix.cons_val_two`/`three` are named because the `Matrix.cons_val` simproc panics on an
+-- over-applied vector at a literal index of two or more.
+/-- The corrections' violations after *more than n* are those of Table 3.9. -/
+theorem corrOn_moreThan {n : ℕ} (hn : 1 ≤ n) :
+    corrOn (correctionContext n .moreThan n) n = table3_9 := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_le' hn
+  funext i c
+  match i with
+  | 0 | 1 | 2 | 3 => cases c <;>
+    simp [corrOn, corr, table3_9, Matrix.cons_val_two, Matrix.cons_val_three, correctionContext,
+      Correction.candidate, qpri, npri, qsimp, info, Form.complexity, Nat.add_assoc]
+
+/-- The corrections' violations after *at least n − 1* are those of Table 3.10. -/
+theorem corrOn_atLeast {n : ℕ} (hn : 1 ≤ n) :
+    corrOn (correctionContext n .atLeast (n - 1)) n = table3_10 := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_le' hn
+  funext i c
+  match i with
+  | 0 | 1 | 2 | 3 => cases c <;>
+    simp [corrOn, corr, table3_10, Matrix.cons_val_two, Matrix.cons_val_three, correctionContext,
+      Correction.candidate, qpri, npri, qsimp, info, Form.complexity, Nat.add_assoc]
+
+/-- After *more than n*, *more than n − 1* bounds *at most n + 1* and *fewer than n + 2*, and
+wins when quantifier priming or simplicity dominates numeral priming, *at least n* winning
+when numeral priming dominates both. -/
+theorem moreThan_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking 4) :
+    (Tableau.ofPerm (corrOn (correctionContext n .moreThan n) n) r Correction.all).optimal =
+      if r.Dominates 0 1 ∨ r.Dominates 2 1 then {.moreThan} else {.atLeast} := by
+  rw [corrOn_moreThan hn]; revert r; decide +kernel
+
+/-- After *at least n − 1*, *more than n − 1* wins when numeral priming or simplicity
+dominates quantifier priming, *at least n* when quantifier priming dominates both. -/
+theorem atLeast_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking 4) :
+    (Tableau.ofPerm (corrOn (correctionContext n .atLeast (n - 1)) n) r
+      Correction.all).optimal =
+      if r.Dominates 1 0 ∨ r.Dominates 2 0 then {.moreThan} else {.atLeast} := by
+  rw [corrOn_atLeast hn]; revert r; decide +kernel
+
+/-! ### The hearer, and the implicature of *more than n* (§3.4, §5.3, §5.4) -/
+
+/-- *About 100* is never optimal for a speaker who knows the value to be exactly 100, so its
+use signals imprecision. -/
+theorem about100_notMem_optimal_of_exact (r : Ranking 3) :
+    about 100 ∉ (Tableau.ofPerm (approx (.exact 100)) r [bare 100, about 100]).optimal := by
+  revert r; decide
+
+/-- *More than m* bounds *more than n* for `n < m` below the speaker's bound when `m` is at
+least as salient, at the same granularity level if the context sets one, and `n` is not
+primed, so *more than n* implicates that *more than m* was not assertable, the
+granularity-scale implicature of [cummins-sauerland-solt-2012]. -/
+theorem moreThan_notMem_optimal {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
+    (hnm : n < m) (hm : m < L) (hsal : roundness n ≤ roundness m)
+    (hgran : ctx.granularity = none ∨ granularityLevel m = granularityLevel n)
+    (hp : ctx.primedNumeral ≠ some n) (r : Ranking 6) {cands : List Candidate}
+    (hc : moreThan m ∈ cands) (h : cands ≠ []) :
+    moreThan n ∉ (Tableau.ofPerm (con ctx) r cands h).optimal := by
+  refine Tableau.ofPerm_notMem_optimal_of_lt hc (Pi.lt_def.2 ⟨λ i => ?_, 0, ?_⟩)
+  · match i with
+    | 0 =>
+      show info ctx (moreThan m) ≤ info ctx (moreThan n)
+      simp only [info, moreThan, hlo]; omega
+    | 1 =>
+      show gran ctx (moreThan m) ≤ gran ctx (moreThan n)
+      rcases hgran with hg | hg
+      · simp only [gran, hg, Option.elim_none, le_refl]
+      · simp only [gran, moreThan, hg, le_refl]
+    | 2 => exact le_rfl
+    | 3 => show 4 - roundness m ≤ 4 - roundness n; omega
+    | 4 =>
+      show npri ctx (moreThan m) ≤ npri ctx (moreThan n)
+      unfold npri
+      rcases hq : ctx.primedNumeral with _ | p
+      · exact le_rfl
+      · have hnp : n ≠ p := λ e => hp (e ▸ hq)
+        simp only [moreThan, hnp, if_false]
+        split_ifs <;> omega
+    | 5 => exact le_rfl
+  · show info ctx (moreThan m) < info ctx (moreThan n)
+    simp only [info, moreThan, hlo]; omega
+
+/-- With `n` primed, *more than n* is the sole winner against *more than m* iff numeral
+priming dominates informativeness and, when `m` is the rounder, numeral salience. The book's
+condition, priming above informativeness (§5.4), suffices only for equally salient pairs;
+on its own *more than 70* ~ *more than 80*, 80 is the rounder. -/
+theorem moreThan_optimal_iff_of_primed {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
+    (hnm : n < m) (hm : m < L) (hsal : roundness n ≤ roundness m)
+    (hgran : ctx.granularity = none ∨ granularityLevel m = granularityLevel n)
+    (hp : ctx.primedNumeral = some n) (r : Ranking 6) :
+    (Tableau.ofPerm (con ctx) r [moreThan n, moreThan m]).optimal = {moreThan n} ↔
+      r.Dominates 4 0 ∧ (roundness n < roundness m → r.Dominates 4 3) := by
+  have h0 : con ctx 0 (moreThan m) < con ctx 0 (moreThan n) := by
+    show info ctx (moreThan m) < info ctx (moreThan n); simp only [info, moreThan, hlo]; omega
+  have h1 : con ctx 1 (moreThan n) = con ctx 1 (moreThan m) := by
+    show gran ctx (moreThan n) = gran ctx (moreThan m)
+    rcases hgran with hg | hg
+    · simp only [gran, hg, Option.elim_none]
+    · simp only [gran, moreThan, hg]
+  have h3 : con ctx 3 (moreThan m) < con ctx 3 (moreThan n) ↔ roundness n < roundness m := by
+    show 4 - roundness m < 4 - roundness n ↔ _; have := roundness_le_four m; omega
+  have h4 : con ctx 4 (moreThan n) < con ctx 4 (moreThan m) := by
+    show npri ctx (moreThan n) < npri ctx (moreThan m)
+    simp only [npri, moreThan, hp, if_neg hnm.ne']; exact Nat.zero_lt_one
+  have hne : moreThan n ≠ moreThan m := by simp [moreThan, hnm.ne]
+  refine (Tableau.optimal_eq_singleton_iff_pair (by simp) hne).trans ?_
+  rw [Tableau.ofPerm_profile_lt_iff_exists_dominates]
+  constructor
+  · rintro ⟨i, hi, hd⟩
+    obtain rfl : i = 4 := by
+      match i with
+      | 4 => rfl
+      | 0 => exact absurd hi h0.asymm
+      | 1 => exact absurd hi h1.not_lt
+      | 3 => exact absurd hi (not_lt.2 (Nat.sub_le_sub_left hsal 4))
+      | 2 | 5 => exact absurd hi (lt_irrefl _)
+    exact ⟨hd 0 h0, λ hs => hd 3 (h3.2 hs)⟩
+  · rintro ⟨hd0, hd3⟩
+    refine ⟨4, h4, λ j hj => ?_⟩
+    match j with
+    | 0 => exact hd0
+    | 1 => exact absurd hj h1.symm.not_lt
+    | 3 => exact hd3 (h3.1 hj)
+    | 4 => exact absurd hj h4.asymm
+    | 2 | 5 => exact absurd hj (lt_irrefl _)
 
 end Cummins2015

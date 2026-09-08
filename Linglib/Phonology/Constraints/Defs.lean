@@ -23,7 +23,8 @@ candidate. A bare `C → ℕ` over an opaque candidate type has no family, by de
 * `Constraint C` — a violation-counting function `C → ℕ`.
 * `Constraint.binary` — the indicator constraint of a decidable predicate.
 * `Constraint.comap` — pull a constraint back along a candidate map.
-* `CON C n` — a grammar's constraint set: an indexed family of `n` constraints.
+* `CON C n` — a grammar's constraint set: an indexed family of `n` constraints;
+  `CON.comap` pulls one back along a candidate map.
 * `Constraint.joint` / `CON.joint` — joint evaluation on output tuples by
   constraint summation ([prince-2015], [magri-storme-2021]).
 * `weightedViolations` / `harmonyScore` — the Harmonic-Grammar weighted sum
@@ -108,6 +109,12 @@ ranks the coordinates (a `Ranking n`), a **Harmonic Grammar** weights them (a
 `Fin n → ℝ` vector). Both feed the framework-neutral `Core.Optimization.ConstraintSystem`
 through different decoders (lexicographic argmin vs. softmax). -/
 abbrev CON (C : Type*) (n : ℕ) := Fin n → Constraint C
+
+/-- Pull a constraint set back along a candidate map, constraint by constraint. -/
+def CON.comap {n : ℕ} (f : C → D) (con : CON D n) : CON C n := λ i => (con i).comap f
+
+@[simp] theorem CON.comap_apply {n : ℕ} (f : C → D) (con : CON D n) (i : Fin n) (c : C) :
+    con.comap f i c = con i (f c) := rfl
 
 /-- Joint evaluation of a constraint set, constraint by constraint. -/
 def CON.joint {n : ℕ} (inputs : ι → I) (con : CON (I × O) n) : CON (ι → O) n :=
