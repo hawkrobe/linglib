@@ -1,312 +1,156 @@
-import Linglib.Fragments.Singlish.Questions
+import Linglib.Data.Examples.ChanShen2026
 import Linglib.Fragments.Mandarin.Questions
-import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Category.ExpressiveModifier
-import Linglib.Syntax.Minimalist.LeftPeriphery
-import Linglib.Studies.SprouseEtAl2012
-import Linglib.Studies.Ross1967
+import Linglib.Fragments.Singlish.Questions
 
 /-!
-# Chan and Shen 2026: conditions on *wh-the-hell* licensing
+# Conditions on *wh-the-hell* licensing
 
-This file formalizes the account of *wh-the-hell* licensing in [chan-shen-2026]. Colloquial
-Singapore English forms single wh-questions three ways — full movement, partial movement, and
-in-situ — and an acceptability experiment with 32 speakers finds that *the-hell* survives the
-first two but not the third: the in-situ comparison shows a superadditive interaction (DD = 1.15)
-while the partial-movement one shows only additive costs (DD = −0.02, no interaction, p = 0.882).
-The ban extends to subject wh-in-situ, where no higher wh-phrase could intervene.
+A Singlish single wh-question fronts its wh-phrase, moves it to an intermediate Spec-CP, or
+leaves it in situ, and [chan-shen-2026]'s acceptability experiment, a pair of 2×2 designs in
+the manner of [sprouse-et-al-2012], finds that *the-hell* survives the first two and not the
+third: the in-situ comparison shows the superadditive interaction of a penalty, the
+partial-movement one only additive costs. This follows from two independent pieces.
+*The-hell* carries an unvalued point-of-view feature checked against the operator in matrix
+C, which ascribes its negative attitude (surprise, ignorance, doubt of every answer:
+[pesetsky-1987], [martin-2020], [rawlins-2008], [ippolito-2024]) to the speaker
+([chou-2012]); and as a modifier adjoined to the wh-head it moves only with the wh-phrase
+([merchant-2002]). Full and partial movement put the wh-phrase in matrix Spec-CP, the latter
+by a covert second step, while an in-situ wh-phrase is bound unselectively and never leaves
+([sato-ngui-2017], with the island facts of [cole-hermon-1998]'s Malay). Mandarin *daodi*
+moves on its own and so tolerates an in-situ host.
 
-The account has two parts. *The-hell* bears an unvalued point-of-view feature that must be checked
-against a valued operator in matrix C ([chou-2012], after [huang-ochi-2004]), which is what
-ascribes its negative attitude to the speaker; and it is a modifier adjoined to the wh-head, so it
-cannot move on its own and rides to Spec-CP on the wh-phrase ([merchant-2002]). Licensing is then
-reachability of matrix Spec-CP, which full and partial movement give and unselective binding does
-not. The typological parameter is the modifier's movement profile: Mandarin *daodi* is
-independent, so it is licensed even where its host stays in situ.
-
-The paper's Table 5 compares this account with the intervention account of
-[den-dikken-giannakidou-2002], which predicts in-situ acceptable in a single wh-question where no
-intervener stands in the modifier's immediate scope ([linebarger-1987]), and with the AttP account
-of [vu-lohiniva-2020], which cannot generate the partial-movement word order. Neither rival is
-formalized here.
-
-## Main definitions
-
-* `Minimalist.ANDL.povUnvaluedFeature`, `povOperatorFeature`, `LicensedMinimalist` — the
-  point-of-view probe and goal, and Minimalist licensing
-* `TheHellLicensed` — licensing of parasitic *the-hell* under a wh-strategy
-* `whLong`, `whHellSitu`, … — the experiment's six conditions plus the subject-in-situ one
-
-## Main results
-
-* `theHellLicensed_iff_reachesSpecCP` — for a parasitic modifier, licensing is host reachability
-* `fullMovement_licenses_theHell`, `partialMovement_licenses_theHell`, `inSitu_blocks_theHell` —
-  the three verdicts
-* `whHellSitu_unlicensed`, `whHellSituSubject_unlicensed`, `whHellPartial_licensed` — the same
-  verdicts at the experiment's conditions
-* `insitu_binding_no_pic`, `partial_movement_pic_applies` — why in-situ is island-insensitive and
-  partial movement is not
-* `daodi_licensed_insitu`, `theHell_daodi_movement_contrast` — the typological parameter
+The intervention account of [den-dikken-giannakidou-2002] licenses *the-hell* in the
+immediate scope of the question operator ([linebarger-1987]) and so admits Singlish in-situ
+questions, where nothing intervenes; the attitude-phrase account of [vu-lohiniva-2020], after
+[huang-ochi-2004], base-generates *the-hell* in the matrix clause and so cannot generate the
+partial-movement order. The paper's Table 5 is the three accounts against the data.
 
 ## References
 
 * [chan-shen-2026]
-* [pesetsky-1987]
 * [chou-2012]
-* [huang-ochi-2004]
 * [merchant-2002]
-* [den-dikken-giannakidou-2002]
-* [vu-lohiniva-2020]
-* [linebarger-1987]
+* [sato-2013]
 * [sato-ngui-2017]
-* [rawlins-2008]
+* [cole-hermon-1998]
+* [pesetsky-1987]
 * [martin-2020]
+* [rawlins-2008]
 * [ippolito-2024]
-* [dayal-2025]
-* [hoeksema-napoli-2008]
-* [jackendoff-audring-2020]
-* [shen-huang-2026]
+* [den-dikken-giannakidou-2002]
+* [linebarger-1987]
+* [vu-lohiniva-2020]
+* [huang-ochi-2004]
+* [sprouse-et-al-2012]
 -/
-
-namespace Minimalist.ANDL
-
-/-! ## Minimalist POV-feature analysis
-
-The Minimalist (POV-feature) analysis of aggressively non-D-linked
-(ANDL) wh-modifiers, due to [chou-2012] (building on
-[huang-ochi-2004], [merchant-2002]). The theory-neutral
-lexical entry lives in `Core/Lexical/ExpressiveModifier.lean`; this
-section adds the framework-specific syntactic apparatus: an unvalued
-POV feature [*ud*] on the modifier, a valued [+d] POV operator
-merged in matrix C, and Spec-head Agree as the licensing relation.
-
-1. ANDL modifier (e.g., *the-hell*) carries an **unvalued** POV feature
-   [*ud*]: a probe needing valuation.
-2. Matrix C carries a **valued** POV operator [+d]: a goal.
-3. Feature checking happens in Spec-head configuration in matrix CP.
-4. Therefore the modifier must reach matrix Spec-CP. For parasitic
-   modifiers (English/Singlish *the-hell*), this requires the wh-host
-   to reach matrix Spec-CP. For independent modifiers (Mandarin *daodi*),
-   the modifier moves on its own. -/
-
-open ExpressiveModifier (ExpressiveWhModifier Licensed)
-
-/-- The unvalued POV feature [*ud*] borne by ANDL modifiers
-    ([chou-2012]). A probe seeking a [+d] goal in a Spec-head
-    relation. -/
-def povUnvaluedFeature : GramFeature := .unvalued (.pov true)
-
-/-- The valued POV feature [+d] on the matrix-C POV operator. The goal
-    that values [*ud*]. -/
-def povOperatorFeature : GramFeature := .valued (.pov true)
-
-/-- The probe-goal pair matches under `featuresMatch`: same feature
-    type, opposite valuation status — the prerequisite for Agree. -/
-theorem pov_probe_goal_match :
-    featuresMatch povUnvaluedFeature povOperatorFeature = true := rfl
-
-/-- Minimalist licensing: an ANDL modifier is licensed iff a configuration
-    obtains in which `povUnvaluedFeature` checks against `povOperatorFeature`
-    in matrix Spec-CP. Operationally:
-
-    - For a **parasitic** modifier, the wh-host must reach matrix Spec-CP
-      (so that the adjoined modifier reaches Spec-CP with it).
-    - For an **independent** modifier, the modifier moves to matrix Spec-CP
-      on its own — host reachability is irrelevant.
-
-    This is the Minimalist instantiation of the theory-neutral
-    `ExpressiveModifier.Licensed`. The Minimalist version
-    doesn't add a separate condition — it identifies "modifier reaches
-    Spec-CP" as the structural realization of "scope position reached". -/
-abbrev LicensedMinimalist (m : ExpressiveWhModifier)
-    (whHostReachesMatrixSpecCP : Prop) : Prop :=
-  Licensed m whHostReachesMatrixSpecCP
-
-end Minimalist.ANDL
 
 namespace ChanShen2026
 
-open Singlish.Questions (WhStrategy fullMovement partialMovement
-  whInSitu theHell)
-open Mandarin.Questions (daodi)
-open Syntax.Question (WhInterpMechanism)
-open ExpressiveModifier
-  (ExpressiveWhModifier ANDLMovementType Licensed)
-open Minimalist.ANDL
-  (povUnvaluedFeature povOperatorFeature LicensedMinimalist)
-open SprouseEtAl2012 (FactorialCondition)
+open Data.Examples WhModifier Syntax.Question Singlish.Questions
 
--- ============================================================================
--- §1. The licensing predicate — derived from mechanism
--- ============================================================================
+/-- The wh-phrase hosting the modifier: how it is interpreted, and how many wh-phrases stand
+between the question operator and it. -/
+structure Host where
+  mechanism : WhInterpMechanism
+  interveners : ℕ := 0
+  deriving DecidableEq
 
-/-- *The-hell* is licensed under strategy `s` iff the Minimalist
-    `LicensedMinimalist` predicate holds with the wh-host's matrix
-    Spec-CP reachability as the input. For parasitic *the-hell*, this
-    reduces to "wh-host reaches matrix Spec-CP" — the licensing
-    condition IS the reachability condition. -/
-def TheHellLicensed (s : WhStrategy) : Prop :=
-  LicensedMinimalist theHell s.ReachesMatrixSpecCP
+/-! ### Negative attitude ascription (§3.2–3.3) -/
 
-instance (s : WhStrategy) : Decidable (TheHellLicensed s) := by
-  unfold TheHellLicensed; infer_instance
+/-- The modifier's point-of-view feature is checked in matrix Spec-CP, so it is licensed iff it
+gets there: with its host, or on its own. -/
+def Licensed (m : WhModifier) (h : Host) : Prop :=
+  WhModifier.Licensed m h.mechanism.ReachesSpecCP
 
-/-- For parasitic *the-hell*, licensing reduces to host reachability. -/
-theorem theHellLicensed_iff_reachesSpecCP (s : WhStrategy) :
-    TheHellLicensed s ↔ s.ReachesMatrixSpecCP := by
-  unfold TheHellLicensed LicensedMinimalist
-  exact ExpressiveModifier.parasitic_licensed_iff_host_reaches
-    (m := theHell) rfl _
+instance (m : WhModifier) (h : Host) : Decidable (Licensed m h) :=
+  inferInstanceAs (Decidable (WhModifier.Licensed _ _))
 
--- ============================================================================
--- §2. Per-strategy predictions (paper §3.3)
--- ============================================================================
+variable (h : Host)
 
-/-- Full wh-movement licenses *the-hell*. -/
-theorem fullMovement_licenses_theHell : TheHellLicensed fullMovement :=
-  (theHellLicensed_iff_reachesSpecCP _).mpr True.intro
+/-- *The-hell* is licensed iff its host reaches matrix Spec-CP ((20), (21), (24)). -/
+theorem licensed_theHell_iff : Licensed theHell h ↔ h.mechanism.ReachesSpecCP :=
+  licensed_iff_of_parasitic _ rfl
 
-/-- Partial wh-movement licenses *the-hell*. -/
-theorem partialMovement_licenses_theHell : TheHellLicensed partialMovement :=
-  (theHellLicensed_iff_reachesSpecCP _).mpr True.intro
+/-- *Daodi* is licensed whatever its host does ((19)). -/
+theorem licensed_daodi : Licensed Mandarin.Questions.daodi h :=
+  licensed_of_independent _ rfl
 
-/-- Wh-in-situ blocks *the-hell*. -/
-theorem inSitu_blocks_theHell : ¬ TheHellLicensed whInSitu := by
-  rw [theHellLicensed_iff_reachesSpecCP]
-  exact id
+/-- Across the three strategies, *the-hell* is out exactly in situ ((3a–c)). -/
+theorem licensed_theHell_strategies :
+    ∀ m ∈ strategies, Licensed theHell ⟨m, 0⟩ ↔ m ≠ .unselectiveBinding := by
+  decide
 
--- ============================================================================
--- §3. Empirical data — six conditions across two 2×2 factorials
--- ============================================================================
+/-! ### Rival accounts (§3.4) -/
 
-/-- A *wh-the-hell* condition is a `FactorialCondition` with two factors:
-    WhType (does the sentence contain *the hell*?) and the wh-strategy. -/
-abbrev Condition := FactorialCondition Bool WhStrategy
+/-- [den-dikken-giannakidou-2002]: *wh-the-hell* is a polarity item licensed in the immediate
+scope of the question operator ([linebarger-1987]), which a wh-phrase between them blocks. -/
+def Intervention.Licensed : Prop := h.interveners = 0
 
-/-- In-situ comparison conditions (paper §2.1, ex 4): -/
-def whLong : Condition :=
-  { label := "Wh-Long", level1 := false, level2 := fullMovement
-  , sentence := "What you think Natalie is baking at 3am ah?" }
+instance : Decidable (Intervention.Licensed h) := inferInstanceAs (Decidable (_ = _))
 
-def whHellLong : Condition :=
-  { label := "WhHell-Long", level1 := true, level2 := fullMovement
-  , sentence := "What the hell you think Natalie is baking at 3am ah?" }
+/-- [vu-lohiniva-2020]: *the-hell* is base-generated in the specifier of a matrix attitude
+phrase, whose [+wh] feature the nearest wh-phrase checks by moving there before the pair moves
+to Spec-CP; a *wh-the-hell* string therefore surfaces only under overt movement to the matrix
+clause. -/
+def AttP.Licensed : Prop := h.mechanism = .overtMovement
 
-def whSitu : Condition :=
-  { label := "Wh-Situ", level1 := false, level2 := whInSitu
-  , sentence := "You think Natalie is baking what at 3am ah?" }
+instance : Decidable (AttP.Licensed h) := inferInstanceAs (Decidable (_ = _))
 
-def whHellSitu : Condition :=
-  { label := "WhHell-Situ", level1 := true, level2 := whInSitu
-  , sentence := "You think Natalie is baking what the hell at 3am ah?" }
+/-- In English a wh-phrase stays in situ only in a multiple question, under the fronted one, so
+in situ and intervened coincide and ascription agrees with intervention ((1), (25)–(26)); the
+two part only where a single question leaves its wh-phrase in situ. -/
+theorem licensed_theHell_iff_intervention (hE : h.mechanism.ReachesSpecCP ↔ h.interveners = 0) :
+    Licensed theHell h ↔ Intervention.Licensed h :=
+  (licensed_theHell_iff h).trans hE
 
-/-- Partial movement comparison conditions (paper §2.1, ex 6): -/
-def whPartial : Condition :=
-  { label := "Wh-Partial", level1 := false, level2 := partialMovement
-  , sentence := "You think what Natalie is baking at 3am ah?" }
+/-! ### The data -/
 
-def whHellPartial : Condition :=
-  { label := "WhHell-Partial", level1 := true, level2 := partialMovement
-  , sentence := "You think what the hell Natalie is baking at 3am ah?" }
+/-- A row's strategy. -/
+def mechanismOf (e : LinguisticExample) : Option WhInterpMechanism :=
+  match e.feature? "strategy" with
+  | some "full" => some .overtMovement
+  | some "partial" => some .partialMovement
+  | some "inSitu" => some .unselectiveBinding
+  | _ => none
 
-/-- Subject wh-in-situ comparison (paper §3.3, ex 22). Subject in-situ
-    *wh-the-hell* is also unacceptable, despite no intervener (single
-    wh-question, Q in immediate scope) — a separate prediction failure
-    for the intervention account. -/
-def whHellSituSubject : Condition :=
-  { label := "WhHell-Situ-Subject", level1 := true, level2 := whInSitu
-  , sentence := "You that time heard that who the hell went hospital for surgery ah?" }
+/-- A row's host. -/
+def hostOf (e : LinguisticExample) : Option Host :=
+  (mechanismOf e).map λ m => ⟨m, (e.nat? "interveners").getD 0⟩
 
--- ============================================================================
--- §5. Theory ↔ data bridge — the licensed conditions are exactly the
--- ones the experiment found acceptable
--- ============================================================================
+/-- A row's modifier. -/
+def modifierOf (e : LinguisticExample) : Option WhModifier :=
+  match e.feature? "modifier" with
+  | some "theHell" => some theHell
+  | some "daodi" => some Mandarin.Questions.daodi
+  | _ => none
 
-/-- For each *wh-the-hell* condition, the strategy's licensing prediction
-    matches the experimental outcome. These theorems break if a
-    condition's strategy changes or if the licensing predicate is
-    redefined — they tie experimental data to theory. -/
-theorem whHellLong_licensed : TheHellLicensed whHellLong.level2 :=
-  fullMovement_licenses_theHell
+/-- Extraction from a complex NP fails exactly under an island-sensitive mechanism: the covert
+step of partial movement crosses the island, unselective binding does not ((11), (15), Malay
+(17)). -/
+theorem island_rows :
+    ∀ e ∈ Examples.all, e.feature? "island" = some "complexNP" →
+      ∀ m ∈ mechanismOf e, (m.IslandSensitive ↔ e.judgment ≠ .acceptable) := by
+  decide
 
-theorem whHellPartial_licensed : TheHellLicensed whHellPartial.level2 :=
-  partialMovement_licenses_theHell
+/-- Ascription predicts every modifier row: English (1), (25)–(26), the experiment's (4) and
+(6), the subject question (22), and Mandarin (19). -/
+theorem ascription_rows :
+    ∀ e ∈ Examples.all, ∀ m ∈ modifierOf e, ∀ h ∈ hostOf e,
+      (Licensed m h ↔ e.judgment = .acceptable) := by
+  decide
 
-theorem whHellSitu_unlicensed : ¬ TheHellLicensed whHellSitu.level2 :=
-  inSitu_blocks_theHell
+/-- Intervention is right except on the in-situ single questions ((4d), (22b)): nothing
+intervenes, yet *the-hell* is out. -/
+theorem intervention_rows :
+    ∀ e ∈ Examples.all, e.feature? "modifier" = some "theHell" → ∀ h ∈ hostOf e,
+      ((Intervention.Licensed h ↔ e.judgment = .acceptable) ↔
+        (h.mechanism.ReachesSpecCP ∨ h.interveners ≠ 0)) := by
+  decide
 
-theorem whHellSituSubject_unlicensed : ¬ TheHellLicensed whHellSituSubject.level2 :=
-  inSitu_blocks_theHell
-
--- ============================================================================
--- §7. Cross-study bridge — island sensitivity (Shen & Huang 2026)
--- ============================================================================
-
-/-- Singlish wh-in-situ uses binding (not movement), just like Mandarin
-    wh-in-situ in [shen-huang-2026]. Therefore only the Specificity
-    Condition applies — the PIC is inapplicable. This is why Singlish
-    wh-in-situ is island-insensitive ([sato-ngui-2017]: 11b).
-
-    Connection: `constraintsForDependencyType .binding = [.semantic]`
-    (no syntactic / PIC constraint). -/
-theorem insitu_binding_no_pic :
-    ShenHuang2026.constraintsForDependencyType
-      WhInterpMechanism.unselectiveBinding.toDependencyType =
-    [IslandSource.semantic] := rfl
-
-/-- Conversely, partial movement (the second covert step) IS island-
-    sensitive — paper §3.1 ex 15 shows partial movement out of a
-    complex NP is unacceptable. Bridges to Shen & Huang's classification
-    via `partialMovement → .movement → [.syntactic, .semantic]`. -/
-theorem partial_movement_pic_applies :
-    ShenHuang2026.constraintsForDependencyType
-      WhInterpMechanism.partialMovement.toDependencyType =
-    ShenHuang2026.constraintsForDependencyType
-      WhInterpMechanism.overtMovement.toDependencyType := rfl
-
--- ============================================================================
--- §8. Bridge to PerspP / Dayal 2025 (`LeftPeriphery.lean`)
--- ============================================================================
-
-/-! The syntactic POV feature on *the-hell* is the feature-checking reflex
-    of the semantic PerspectiveP layer ([dayal-2025]). Both encode
-    the requirement that a perspectival center (the speaker, in direct
-    questions) must be identified.
-
-    - **Syntactic** (this file): [*ud*] on *the-hell* checked by POV-op
-      in matrix C; reaches Spec-CP iff host reaches Spec-CP.
-    - **Semantic** (`LeftPeriphery.lean`): PerspP introduces PRO with
-      `◇¬know(speaker, Ans(Q))` — the possible-ignorance presupposition.
-
-    *The-hell*'s negative attitude (speaker finds every possible answer
-    improbable, [rawlins-2008]; ignorance reading,
-    [martin-2020]; conventional implicature, [ippolito-2024])
-    strengthens PerspP's possible-ignorance presupposition. -/
-
-/-- Direct *wh-the-hell* questions select PerspP — they require the
-    speaker as perspectival center (the negative attitude bearer in
-    [chou-2012]'s analysis), the class whose content leaves the center's
-    ignorance open (`Questions.not_possiblyIgnorant_inter_of_subset`). -/
-def theHellSelectionClass : Minimalist.SelectionClass := .rogativePerspP
-
-
--- ============================================================================
--- §9. Cross-linguistic — Mandarin *daodi* and the typological parameter
--- ============================================================================
-
-/-- The *the-hell* / *daodi* minimal pair: same POV feature analysis
-    (`povUnvaluedFeature` in both); single parametric difference is
-    `ANDLMovementType.parasitic` vs `.independent`. -/
-theorem theHell_daodi_movement_contrast :
-    theHell.movementType = .parasitic ∧
-    daodi.movementType = .independent := ⟨rfl, rfl⟩
-
-/-- *Daodi* is licensed even with wh-in-situ — it moves independently
-    to matrix Spec-CP. Theory-neutral consequence of the typological
-    parameter, derived via `independent_matrix_always_licensed`. -/
-theorem daodi_licensed_insitu (P : Prop) :
-    Licensed daodi P :=
-  ExpressiveModifier.independent_matrix_always_licensed
-    rfl rfl P
+/-- The attitude phrase is right except under partial movement ((6d)). -/
+theorem attP_rows :
+    ∀ e ∈ Examples.all, e.feature? "modifier" = some "theHell" → ∀ h ∈ hostOf e,
+      ((AttP.Licensed h ↔ e.judgment = .acceptable) ↔ h.mechanism ≠ .partialMovement) := by
+  decide
 
 end ChanShen2026
