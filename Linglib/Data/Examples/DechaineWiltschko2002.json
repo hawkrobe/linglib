@@ -1,0 +1,204 @@
+[
+  {
+    "id": "dechainewiltschko2002_ex32a_1",
+    "source": {"bibkey": "dechaine-wiltschko-2002", "paperLabel": "(32a)"},
+    "language": "stan1293",
+    "primaryText": "we linguists",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["test", "precedesNoun"],
+      ["pronoun", "we"],
+      ["dialect", "A"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dechainewiltschko2002_ex32a_2",
+    "source": {"bibkey": "dechaine-wiltschko-2002", "paperLabel": "(32a)"},
+    "language": "stan1293",
+    "primaryText": "us linguists",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["test", "precedesNoun"],
+      ["pronoun", "us"],
+      ["dialect", "A"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dechainewiltschko2002_ex32b",
+    "source": {"bibkey": "dechaine-wiltschko-2002", "paperLabel": "(32b)"},
+    "language": "stan1293",
+    "primaryText": "you linguists",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["test", "precedesNoun"],
+      ["pronoun", "you"],
+      ["dialect", "A"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dechainewiltschko2002_ex32c_1",
+    "source": {"bibkey": "dechaine-wiltschko-2002", "paperLabel": "(32c)"},
+    "language": "stan1293",
+    "primaryText": "they linguists",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["test", "precedesNoun"],
+      ["pronoun", "they"],
+      ["dialect", "A"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "dechainewiltschko2002_ex32c_2",
+    "source": {"bibkey": "dechaine-wiltschko-2002", "paperLabel": "(32c)"},
+    "language": "stan1293",
+    "primaryText": "them linguists",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["test", "precedesNoun"],
+      ["pronoun", "them"],
+      ["dialect", "A"]
+    ],
+    "comment": "Standard American English, dialect A."
+  },
+  {
+    "id": "dechainewiltschko2002_ex34c_1",
+    "source": {"bibkey": "dechaine-wiltschko-2002", "paperLabel": "(34c)"},
+    "language": "stan1293",
+    "primaryText": "they linguists",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["test", "precedesNoun"],
+      ["pronoun", "they"],
+      ["dialect", "B"]
+    ],
+    "comment": "Dialect B, which has no reduced *'ey*."
+  },
+  {
+    "id": "dechainewiltschko2002_ex34c_2",
+    "source": {"bibkey": "dechaine-wiltschko-2002", "paperLabel": "(34c)"},
+    "language": "stan1293",
+    "primaryText": "them linguists",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["test", "precedesNoun"],
+      ["pronoun", "them"],
+      ["dialect", "B"]
+    ],
+    "comment": "Dialect B, where *them* is the D-morpheme *th-* over the clitic *'em*, (37c)."
+  },
+  {
+    "id": "dechainewiltschko2002_ex38",
+    "source": {"bibkey": "dechaine-wiltschko-2002", "paperLabel": "(38)"},
+    "language": "stan1293",
+    "primaryText": "Every candidate thinks that he will win.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["test", "boundVariable"],
+      ["pronoun", "he"]
+    ],
+    "comment": "Bound-variable construal: for every candidate x, x thinks that x will win."
+  },
+  {
+    "id": "dechainewiltschko2002_ex40",
+    "source": {"bibkey": "dechaine-wiltschko-2002", "paperLabel": "(40)"},
+    "language": "stan1293",
+    "primaryText": "I know that John saw me, and Mary does too.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [
+      {"name": "strict", "judgment": "acceptable"},
+      {"name": "sloppy", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["test", "boundVariable"],
+      ["pronoun", "me"]
+    ],
+    "comment": "The sloppy reading, on which Mary knows that John saw her, is unavailable: *me* is not construed as a bound variable."
+  },
+  {
+    "id": "dechainewiltschko2002_ex30a",
+    "source": {"bibkey": "dechaine-wiltschko-2002", "paperLabel": "(30a)"},
+    "language": "stan1293",
+    "primaryText": "Everybody thinks one is a genius.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["test", "boundVariable"],
+      ["pronoun", "one"]
+    ],
+    "comment": "Intended: for every x, x thinks that x is a genius."
+  },
+  {
+    "id": "dechainewiltschko2002_ex30b",
+    "source": {"bibkey": "dechaine-wiltschko-2002", "paperLabel": "(30b)"},
+    "language": "stan1293",
+    "primaryText": "Everybody loves one's mother.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["test", "boundVariable"],
+      ["pronoun", "one"]
+    ],
+    "comment": "Intended: for every x, x loves x's mother."
+  },
+  {
+    "id": "dechainewiltschko2002_ex22a",
+    "source": {"bibkey": "dechaine-wiltschko-2002", "paperLabel": "(22a)"},
+    "language": "nucl1643",
+    "primaryText": "Daremo-ga kare-no hahaoya-o aisite-iru.",
+    "glossedTokens": [],
+    "translation": "Everyone loves his mother.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["test", "boundVariable"],
+      ["pronoun", "kare"]
+    ],
+    "comment": "Intended: for every x, x loves x's mother; reported from Noguchi (1997)."
+  }
+]
