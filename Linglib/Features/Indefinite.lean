@@ -57,7 +57,7 @@ inductive HaspelmathFunction where
   | directNeg
   /-- Function 9: Free choice. -/
   | freeChoice
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- All nine functions, listed in map order. -/
 def HaspelmathFunction.all : List HaspelmathFunction :=
@@ -197,7 +197,7 @@ inductive OntologicalCategory where
   | determiner
   /-- Reason / cause: 'for some reason' (interrogative *why?*) — non-universal. -/
   | reason
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The seven core ontological categories realized "practically everywhere"
     ([haspelmath-1997] §3.1.3); excludes the non-universal `determiner`
@@ -224,7 +224,7 @@ inductive MorphologicalBasis where
   | special
   /-- An existential predication construction. -/
   | existentialConstruction
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 end Indefinite
 
@@ -235,8 +235,9 @@ end Indefinite
     contiguous region of the implicational map it covers — over any word-class representation.
 
     Word-class-neutral by design (`Indefinite` ≠ pronoun): the sole current carrier is
-    `Indefinite.IndefinitePronoun` (`Syntax/Category/Pronoun/Indefinite.lean`), but an indefinite determiner
-    (over `Definiteness`'s `Determiner`) or pro-adverb supplies its own `instance : Indefinite That`
+    `Indefinite.IndefinitePronoun` (`Syntax/Category/Pronoun/Indefinite.lean`), but an indefinite
+    determiner (over `Definiteness`'s `Determiner`) or pro-adverb supplies its own
+    `instance : Indefinite That`
     and is then read by the same generic `[Indefinite α]` code. This is the indefinite analogue of
     mathlib's `MonoidHomClass`-over-`MonoidHom`/`RingHom`. -/
 class Indefinite (α : Type*) where
