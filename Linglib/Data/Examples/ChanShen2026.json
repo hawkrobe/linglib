@@ -1,0 +1,301 @@
+[
+  {
+    "id": "chanshen2026_ex1a",
+    "source": {"bibkey": "chan-shen-2026", "paperLabel": "(1a)"},
+    "language": "stan1293",
+    "primaryText": "Who loves what the hell?",
+    "glossedTokens": [],
+    "translation": "Who loves what the hell?",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["modifier", "theHell"],
+      ["strategy", "inSitu"],
+      ["interveners", "1"]
+    ],
+    "comment": "English multiple question with the-hell on the in-situ wh-phrase; the fronted who stands between the question operator and the modifier."
+  },
+  {
+    "id": "chanshen2026_ex1b",
+    "source": {"bibkey": "chan-shen-2026", "paperLabel": "(1b)"},
+    "language": "stan1293",
+    "primaryText": "Who the hell loves what?",
+    "glossedTokens": [],
+    "translation": "Who the hell loves what?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["modifier", "theHell"],
+      ["strategy", "full"],
+      ["interveners", "0"]
+    ],
+    "comment": "The-hell on the fronted wh-phrase of an English multiple question."
+  },
+  {
+    "id": "chanshen2026_ex4a",
+    "source": {"bibkey": "chan-shen-2026", "paperLabel": "(4a)"},
+    "language": "sing1272",
+    "primaryText": "What you think Natalie is baking at 3am ah?",
+    "glossedTokens": [],
+    "translation": "What do you think Natalie is baking at 3am?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["condition", "Wh-Long"],
+      ["strategy", "full"]
+    ],
+    "comment": "The full-movement baseline of both comparisons; also (2a) and (6a)."
+  },
+  {
+    "id": "chanshen2026_ex4b",
+    "source": {"bibkey": "chan-shen-2026", "paperLabel": "(4b)"},
+    "language": "sing1272",
+    "primaryText": "What the hell you think Natalie is baking at 3am ah?",
+    "glossedTokens": [],
+    "translation": "What the hell do you think Natalie is baking at 3am?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["condition", "WhHell-Long"],
+      ["modifier", "theHell"],
+      ["strategy", "full"]
+    ],
+    "comment": "Attested in Singlish before the experiment; also (3a) and (6b)."
+  },
+  {
+    "id": "chanshen2026_ex4c",
+    "source": {"bibkey": "chan-shen-2026", "paperLabel": "(4c)"},
+    "language": "sing1272",
+    "primaryText": "You think Natalie is baking what at 3am ah?",
+    "glossedTokens": [],
+    "translation": "What do you think Natalie is baking at 3am?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["condition", "Wh-Situ"],
+      ["strategy", "inSitu"]
+    ],
+    "comment": "Also (2c)."
+  },
+  {
+    "id": "chanshen2026_ex4d",
+    "source": {"bibkey": "chan-shen-2026", "paperLabel": "(4d)"},
+    "language": "sing1272",
+    "primaryText": "You think Natalie is baking what the hell at 3am ah?",
+    "glossedTokens": [],
+    "translation": "What the hell do you think Natalie is baking at 3am?",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["condition", "WhHell-Situ"],
+      ["modifier", "theHell"],
+      ["strategy", "inSitu"]
+    ],
+    "comment": "The in-situ comparison shows a superadditive interaction of WhType and Strategy; also (3c)."
+  },
+  {
+    "id": "chanshen2026_ex6c",
+    "source": {"bibkey": "chan-shen-2026", "paperLabel": "(6c)"},
+    "language": "sing1272",
+    "primaryText": "You think what Natalie is baking at 3am ah?",
+    "glossedTokens": [],
+    "translation": "What do you think Natalie is baking at 3am?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["condition", "Wh-Partial"],
+      ["strategy", "partial"]
+    ],
+    "comment": "Rated around the middle of the scale but above the ungrammatical fillers; also (2b)."
+  },
+  {
+    "id": "chanshen2026_ex6d",
+    "source": {"bibkey": "chan-shen-2026", "paperLabel": "(6d)"},
+    "language": "sing1272",
+    "primaryText": "You think what the hell Natalie is baking at 3am ah?",
+    "glossedTokens": [],
+    "translation": "What the hell do you think Natalie is baking at 3am?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["condition", "WhHell-Partial"],
+      ["modifier", "theHell"],
+      ["strategy", "partial"]
+    ],
+    "comment": "The costs of the-hell and of partial movement are additive: no interaction of WhType and Strategy; also (3b)."
+  },
+  {
+    "id": "chanshen2026_ex11a",
+    "source": {"bibkey": "sato-ngui-2017", "paperLabel": "(11a)"},
+    "reportedIn": {"bibkey": "chan-shen-2026", "paperLabel": "(11a)"},
+    "language": "sing1272",
+    "primaryText": "What John like the man that think Mary eat?",
+    "glossedTokens": [],
+    "translation": "What is the thing x such that John likes the man that thinks Mary eats x?",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["strategy", "full"],
+      ["island", "complexNP"]
+    ],
+    "comment": "Overt movement out of a complex NP; adapted from Sato and Ngui."
+  },
+  {
+    "id": "chanshen2026_ex11b",
+    "source": {"bibkey": "sato-ngui-2017", "paperLabel": "(11b)"},
+    "reportedIn": {"bibkey": "chan-shen-2026", "paperLabel": "(11b)"},
+    "language": "sing1272",
+    "primaryText": "John like the man that think Mary eat what?",
+    "glossedTokens": [],
+    "translation": "What is the thing x such that John likes the man that thinks Mary eats x?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["strategy", "inSitu"],
+      ["island", "complexNP"]
+    ],
+    "comment": "An in-situ wh-phrase inside a complex NP, bound from outside it."
+  },
+  {
+    "id": "chanshen2026_ex15",
+    "source": {"bibkey": "sato-ngui-2017", "paperLabel": "(15)"},
+    "reportedIn": {"bibkey": "chan-shen-2026", "paperLabel": "(15)"},
+    "language": "sing1272",
+    "primaryText": "John like the man that think what Mary eat?",
+    "glossedTokens": [],
+    "translation": "What is the thing x such that John likes the man that thinks Mary eats x?",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["strategy", "partial"],
+      ["island", "complexNP"]
+    ],
+    "comment": "Partial movement to the embedded Spec-CP inside a complex NP: the covert second step crosses the island."
+  },
+  {
+    "id": "chanshen2026_ex17a",
+    "source": {"bibkey": "cole-hermon-1998", "paperLabel": "(17a)"},
+    "reportedIn": {"bibkey": "chan-shen-2026", "paperLabel": "(17a)"},
+    "language": "stan1306",
+    "primaryText": "Kamu sayang perempuan yang Ali fikir yang telah makan apa?",
+    "glossedTokens": [
+      ["Kamu", "you"], ["sayang", "love"], ["perempuan", "woman"], ["yang", "that"],
+      ["Ali", "Ali"], ["fikir", "think"], ["yang", "that"], ["telah", "already"], ["makan", "eat"],
+      ["apa", "what"]
+    ],
+    "translation": "You love the woman who Ali thinks ate what?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["strategy", "inSitu"],
+      ["island", "complexNP"]
+    ],
+    "comment": "Malay, a substrate of Singlish: an in-situ wh-phrase inside a complex NP.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "chanshen2026_ex17b",
+    "source": {"bibkey": "cole-hermon-1998", "paperLabel": "(17b)"},
+    "reportedIn": {"bibkey": "chan-shen-2026", "paperLabel": "(17b)"},
+    "language": "stan1306",
+    "primaryText": "Kamu sayang perempuan yang Ali fikir apa yang telah makan?",
+    "glossedTokens": [
+      ["Kamu", "you"], ["sayang", "love"], ["perempuan", "woman"], ["yang", "that"],
+      ["Ali", "Ali"], ["fikir", "think"], ["apa", "what"], ["yang", "that"], ["telah", "already"],
+      ["makan", "eat"]
+    ],
+    "translation": "You love the woman who Ali thinks ate what?",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["strategy", "partial"],
+      ["island", "complexNP"]
+    ],
+    "comment": "Partial movement inside the complex NP, a step that itself crosses no island boundary.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "chanshen2026_ex19",
+    "source": {"bibkey": "chou-2012", "paperLabel": "(19)"},
+    "reportedIn": {"bibkey": "chan-shen-2026", "paperLabel": "(19)"},
+    "language": "mand1415",
+    "primaryText": "Ni renwei Lisi daodi xihuan shenme?",
+    "glossedTokens": [
+      ["Ni", "you"], ["renwei", "think"], ["Lisi", "Lisi"], ["daodi", "THE-HELL"],
+      ["xihuan", "like"], ["shenme", "what"]
+    ],
+    "translation": "What the hell do you think Lisi likes?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["modifier", "daodi"],
+      ["strategy", "inSitu"]
+    ],
+    "comment": "Daodi and the in-situ wh-phrase it modifies are discontinuous.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "chanshen2026_ex22a",
+    "source": {"bibkey": "chan-shen-2026", "paperLabel": "(22a)"},
+    "language": "sing1272",
+    "primaryText": "You that time heard that who went hospital for surgery ah?",
+    "glossedTokens": [],
+    "translation": "Who is the person x such that you heard that x went to the hospital for surgery?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["strategy", "inSitu"],
+      ["role", "subject"]
+    ],
+    "comment": "A subject wh-phrase in situ, following the overt complementizer; judgments from seven speakers."
+  },
+  {
+    "id": "chanshen2026_ex22b",
+    "source": {"bibkey": "chan-shen-2026", "paperLabel": "(22b)"},
+    "language": "sing1272",
+    "primaryText": "You that time heard that who the hell went hospital for surgery ah?",
+    "glossedTokens": [],
+    "translation": "Who the hell is the person x such that you heard that x went to the hospital for surgery?",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["modifier", "theHell"],
+      ["strategy", "inSitu"],
+      ["role", "subject"]
+    ],
+    "comment": "No wh-phrase could intervene between the question operator and a subject; judgments from seven speakers."
+  },
+  {
+    "id": "chanshen2026_ex25a",
+    "source": {"bibkey": "chan-shen-2026", "paperLabel": "(25a)"},
+    "language": "stan1293",
+    "primaryText": "Who the hell is in love with who?",
+    "glossedTokens": [],
+    "translation": "Who the hell is in love with who?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["modifier", "theHell"],
+      ["strategy", "full"],
+      ["interveners", "0"]
+    ],
+    "comment": "The-hell on the fronted wh-phrase, in the immediate scope of the question operator."
+  },
+  {
+    "id": "chanshen2026_ex26a",
+    "source": {"bibkey": "den-dikken-giannakidou-2002", "paperLabel": "(71a)"},
+    "reportedIn": {"bibkey": "chan-shen-2026", "paperLabel": "(26a)"},
+    "language": "stan1293",
+    "primaryText": "Who is in love with who the hell?",
+    "glossedTokens": [],
+    "translation": "Who is in love with who the hell?",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["modifier", "theHell"],
+      ["strategy", "inSitu"],
+      ["interveners", "1"]
+    ],
+    "comment": "The fronted who intervenes between the question operator and the-hell."
+  }
+]
