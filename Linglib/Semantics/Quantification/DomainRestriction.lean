@@ -230,8 +230,7 @@ instance : OrderBot SpatialScale where
     Parameterized by a scale type `S` with a preorder and top element,
     enabling reuse for non-spatial heuristics. `SpatialScale` is the
     canonical instantiation; the same nesting structure is instantiated by
-    ASL signing height (`HeightDDRP`, [davidson-gagne-2022]) and comparison
-    class inference ([tessler-goodman-2022]). -/
+    comparison class inference ([tessler-goodman-2022]). -/
 structure DDRP (S E : Type*) [Preorder S] [OrderTop S] where
   /-- Each scale level induces a candidate restrictor on the domain. -/
   region : S → Set E
