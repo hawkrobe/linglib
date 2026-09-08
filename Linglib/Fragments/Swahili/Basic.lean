@@ -1,88 +1,70 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Features.Gender.Basic
-import Linglib.Fragments.Bantu.Params
 import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
-# Swahili: Basic Types
+# Swahili noun classes
 
-Shared types for the Swahili fragment, primarily the noun class system.
-Swahili has 18 noun classes (1–10, 14–18), following the standard Bantu
-numbering. Classes 1/2 are singular/plural animate (human), classes 3–10
-are inanimate with various semantic associations, and classes 15–18 are
-infinitive and locative classes.
+This file defines the Swahili noun-class system: the fifteen classes with their subject
+markers, the five genders that pair a singular class with its plural ([carstens-1991],
+[scott-2021]), and the parameters of the class system as a classifier device. Class conditions
+subject and object agreement, possessive and demonstrative agreement and, in relativization,
+the form of the resumptive pronoun.
 
-Noun class is the fundamental organizing principle of Swahili morphosyntax:
-it conditions subject/object agreement on the verb, possessive agreement,
-demonstrative agreement, and — crucially for relativization —
-the form of resumptive pronouns ([scott-2021]).
+## References
 
-## Noun Class and Gender
-
-Following [carstens-1991] and [kramer-2015], noun class in Bantu
-expresses the combination of number and gender. Classes come in singular/plural
-pairs that define a "gender" (e.g., gender A = cl1/cl2 = human sg/pl).
+* [carstens-1991]
+* [scott-2021]
 -/
 
 namespace Swahili
 
-open Bantu
+/-! ### Classes -/
 
--- ============================================================================
--- § 1: Noun Classes
--- ============================================================================
-
-/-- Swahili noun classes. Standard Bantu numbering (1–10, 14–18).
-    Classes 11–13 are absent in Swahili. -/
+/-- The noun classes in the Bantu numbering; classes 11–13 are absent. -/
 inductive NounClass where
-  | cl1    -- m-/mw- (human singular): mtoto 'child'
-  | cl2    -- wa- (human plural): watoto 'children'
-  | cl3    -- m-/mw- (tree/plant singular): mti 'tree'
-  | cl4    -- mi- (tree/plant plural): miti 'trees'
-  | cl5    -- ji-/∅ (augmentative singular): jicho 'eye'
-  | cl6    -- ma- (augmentative plural): macho 'eyes'
-  | cl7    -- ki- (diminutive singular): kiti 'chair'
-  | cl8    -- vi- (diminutive plural): viti 'chairs'
-  | cl9    -- n-/∅ (singular, large default class): nyumba 'house'
-  | cl10   -- n-/∅ (plural, large default class): nyumba 'houses'
-  | cl14   -- u- (abstract): uzuri 'beauty'
-  | cl15   -- ku- (infinitive): kusoma 'to read'
-  | cl16   -- pa- (definite location): mahali 'place'
-  | cl17   -- ku- (indefinite/general location): —
-  | cl18   -- mu-/m- (interior location): —
+  /-- *m-*, *mw-*: mtoto 'child'. -/
+  | cl1
+  /-- *wa-*: watoto 'children'. -/
+  | cl2
+  /-- *m-*, *mw-*: mti 'tree'. -/
+  | cl3
+  /-- *mi-*: miti 'trees'. -/
+  | cl4
+  /-- *ji-*, often unprefixed: jicho 'eye'. -/
+  | cl5
+  /-- *ma-*: macho 'eyes'. -/
+  | cl6
+  /-- *ki-*: kiti 'chair'. -/
+  | cl7
+  /-- *vi-*: viti 'chairs'. -/
+  | cl8
+  /-- *n-*, often unprefixed: nyumba 'house'. -/
+  | cl9
+  /-- *n-*, often unprefixed: nyumba 'houses'. -/
+  | cl10
+  /-- *u-*, the abstract class: uzuri 'beauty'. -/
+  | cl14
+  /-- *ku-*, the infinitive class: kusoma 'to read'. -/
+  | cl15
+  /-- *pa-*, definite location: mahali 'place'. -/
+  | cl16
+  /-- *ku-*, indefinite location. -/
+  | cl17
+  /-- *mu-*, *m-*, interior location. -/
+  | cl18
   deriving DecidableEq, Repr, Fintype
 
-/-- Whether a noun class is animate (classes 1 and 2). Animate classes
-    trigger person-matching resumptive pronouns in relativization. -/
-def NounClass.isAnimate : NounClass → Bool
-  | .cl1 | .cl2 => true
-  | _ => false
-
-/-- Whether a noun class is a locative class (16, 17, 18). -/
-def NounClass.isLocative : NounClass → Bool
-  | .cl16 | .cl17 | .cl18 => true
-  | _ => false
-
-/-- Whether a noun class is singular. -/
-def NounClass.isSingular : NounClass → Bool
-  | .cl1 | .cl3 | .cl5 | .cl7 | .cl9 | .cl14 | .cl15 | .cl16 | .cl17 | .cl18 => true
-  | _ => false
-
--- ============================================================================
--- § 2: Subject Agreement Prefixes
--- ============================================================================
-
-/-- Subject prefix for each class on the verb. -/
+/-- The subject marker of a class on the verb. -/
 def NounClass.subjPrefix : NounClass → String
-  | .cl1  => "a"
-  | .cl2  => "wa"
-  | .cl3  => "u"
-  | .cl4  => "i"
-  | .cl5  => "li"
-  | .cl6  => "ya"
-  | .cl7  => "ki"
-  | .cl8  => "vi"
-  | .cl9  => "i"
+  | .cl1 => "a"
+  | .cl2 => "wa"
+  | .cl3 => "u"
+  | .cl4 => "i"
+  | .cl5 => "li"
+  | .cl6 => "ya"
+  | .cl7 => "ki"
+  | .cl8 => "vi"
+  | .cl9 => "i"
   | .cl10 => "zi"
   | .cl14 => "u"
   | .cl15 => "ku"
@@ -90,22 +72,22 @@ def NounClass.subjPrefix : NounClass → String
   | .cl17 => "ku"
   | .cl18 => "mu"
 
--- ============================================================================
--- § 3: Gender (Singular/Plural Pairings)
--- ============================================================================
+/-! ### Genders -/
 
-/-- Bantu genders: singular/plural noun class pairings.
-    [carstens-1991]: different number/gender combinations constitute
-    different noun classes. [scott-2021] Table 3. -/
+/-- The five genders, each pairing a singular class with its plural. -/
 inductive Gender where
-  | genderA   -- cl1/cl2 (human)
-  | genderB   -- cl3/cl4
-  | genderC   -- cl5/cl6
-  | genderD   -- cl7/cl8
-  | genderE   -- cl9/cl10
+  /-- Classes 1/2. -/
+  | genderA
+  /-- Classes 3/4. -/
+  | genderB
+  /-- Classes 5/6. -/
+  | genderC
+  /-- Classes 7/8. -/
+  | genderD
+  /-- Classes 9/10. -/
+  | genderE
   deriving DecidableEq, Repr, Fintype
 
-/-- Singular class for a gender. -/
 def Gender.singularClass : Gender → NounClass
   | .genderA => .cl1
   | .genderB => .cl3
@@ -113,42 +95,12 @@ def Gender.singularClass : Gender → NounClass
   | .genderD => .cl7
   | .genderE => .cl9
 
-/-- Plural class for a gender. -/
 def Gender.pluralClass : Gender → NounClass
   | .genderA => .cl2
   | .genderB => .cl4
   | .genderC => .cl6
   | .genderD => .cl8
   | .genderE => .cl10
-
--- ============================================================================
--- § 4: Bridge to Shared Bantu Types
--- ============================================================================
-
-/-- Semantic core status for each Swahili gender.
-
-    Swahili's General Animate Concords (GAC) — class 1/2 agreement for all
-    animate nouns regardless of class — suggests [animate] may be grammaticalized
-    as a feature ([carstens-2026] §8, (109)–(110)). The core assignments
-    below follow the pattern established for Xhosa and Shona, with gender E
-    (9/10) bearing [animal] given the predominance of animal terms in this
-    class. Genders B–D lack salient entity-class associations. -/
-def Gender.status : Gender → GenderStatus
-  | .genderA => .interpretable .human
-  | .genderE => .interpretable .animal
-  | _ => .uninterpretable
-
--- ============================================================================
--- § 5: Bridge to Gender
--- ============================================================================
-
-/-- Map Swahili gender classes to the shared surface-level gender type.
-    Gender A (cl1/cl2, human) → animate; all others → inanimate.
-    This is the coarsest descriptive mapping — Bantu class distinctions
-    within the inanimate domain are not captured at the Gender level. -/
-def Gender.toGender : Gender → _root_.Gender
-  | .genderA => .animate
-  | _ => .inanimate
 
 /-! ### Noun-class parameters -/
 
