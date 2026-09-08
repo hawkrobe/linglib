@@ -1,0 +1,523 @@
+[
+  {
+    "id": "chierchia2013_ex1a",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(1a)"},
+    "language": "stan1293",
+    "primaryText": "If everything will go well, we'll hire either Mary or Sue",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Background: what will be the future departmental hires?",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "or"],
+      ["position", "conditionalConsequent"],
+      ["reading", "exclusive"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex1b",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(1b)"},
+    "language": "stan1293",
+    "primaryText": "If we hire either Mary or Sue, everything will go well",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Background: what will be the future departmental hires?",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "or"],
+      ["position", "conditionalAntecedent"],
+      ["reading", "inclusive"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex5a",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(5a)"},
+    "language": "stan1293",
+    "primaryText": "Everyone here either likes Mary or likes Sue and will write to the dean",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "or"],
+      ["position", "everyScope"],
+      ["reading", "exclusive"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex5b",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(5b)"},
+    "language": "stan1293",
+    "primaryText": "Everyone here who either likes Mary or likes Sue will write to the dean",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "or"],
+      ["position", "universalRestrictor"],
+      ["reading", "inclusive"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex12a",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(12a)"},
+    "language": "stan1293",
+    "primaryText": "Somebody in the department intends to hire either Mary or Sue",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "or"],
+      ["position", "positiveQuantifierScope"],
+      ["reading", "exclusive"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex12b",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(12b)"},
+    "language": "stan1293",
+    "primaryText": "Nobody in the department intends to hire either Mary or Sue",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "or"],
+      ["position", "nobody"],
+      ["reading", "inclusive"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex12c",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(12c)"},
+    "language": "stan1293",
+    "primaryText": "John intends to hire Mary or Sue",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "or"],
+      ["position", "matrix"],
+      ["reading", "exclusive"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex12d",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(12d)"},
+    "language": "stan1293",
+    "primaryText": "Molly does not intend to hire Mary or Sue",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "or"],
+      ["position", "negation"],
+      ["reading", "inclusive"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex13",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(13)"},
+    "language": "stan1293",
+    "primaryText": "Nobody wants to hire Mary or Sue, anymore",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "We are aware that Sue and Mary can only be hired together. We discussed it at length. And at this point, ... we all agreed to hire them both.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "or"],
+      ["position", "nobody"],
+      ["reading", "exclusive"],
+      ["forced", "true"]
+    ],
+    "comment": "The exclusive construal is set up by the context and then embedded under the negative quantifier."
+  },
+  {
+    "id": "chierchia2013_ex19a",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(19a)"},
+    "language": "stan1293",
+    "primaryText": "We won't hire Mary or Sue",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "or"],
+      ["position", "negation"],
+      ["reading", "inclusive"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex15ia",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(15i a)"},
+    "language": "stan1293",
+    "primaryText": "If you are hungry, there are any cookies in the oven",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["item", "any"],
+      ["position", "conditionalConsequent"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex15ib",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(15i b)"},
+    "language": "stan1293",
+    "primaryText": "If there are any cookies in the oven, you won't go hungry",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "any"],
+      ["position", "conditionalAntecedent"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex15iia",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(15ii a)"},
+    "language": "stan1293",
+    "primaryText": "Everyone still has any cookies in the oven",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["item", "any"],
+      ["position", "everyScope"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex15iib",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(15ii b)"},
+    "language": "stan1293",
+    "primaryText": "Everyone who still has any cookies in the oven should turn the oven off",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "any"],
+      ["position", "universalRestrictor"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex15iiia",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(15iii a)"},
+    "language": "stan1293",
+    "primaryText": "Somebody brought any cookies",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["item", "any"],
+      ["position", "positiveQuantifierScope"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex15iiib",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(15iii b)"},
+    "language": "stan1293",
+    "primaryText": "Nobody brought any cookies",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "any"],
+      ["position", "nobody"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex16ia",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(16i a)"},
+    "language": "stan1293",
+    "primaryText": "If you visit Sienna, you should ever try homemade ricciarellis",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["item", "ever"],
+      ["position", "conditionalConsequent"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex16ib",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(16i b)"},
+    "language": "stan1293",
+    "primaryText": "If you ever try homemade ricciarellis, you will become addicted",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "ever"],
+      ["position", "conditionalAntecedent"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex16iia",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(16ii a)"},
+    "language": "stan1293",
+    "primaryText": "Everyone ever ate homemade ricciarellis",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["item", "ever"],
+      ["position", "everyScope"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex16iib",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(16ii b)"},
+    "language": "stan1293",
+    "primaryText": "Everyone who ever ate homemade ricciarellis became addicted",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "ever"],
+      ["position", "universalRestrictor"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex16iiia",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(16iii a)"},
+    "language": "stan1293",
+    "primaryText": "Somebody ever tried homemade ricciarellis",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["item", "ever"],
+      ["position", "positiveQuantifierScope"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex16iiib",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(16iii b)"},
+    "language": "stan1293",
+    "primaryText": "Nobody ever tried homemade ricciarellis",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "ever"],
+      ["position", "nobody"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex21a",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(21a)"},
+    "language": "stan1293",
+    "primaryText": "There are any cookies left",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["item", "any"],
+      ["position", "matrix"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex21b",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(21b)"},
+    "language": "stan1293",
+    "primaryText": "There ever were cookies in this house",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["item", "ever"],
+      ["position", "matrix"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex21c",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(21c)"},
+    "language": "stan1293",
+    "primaryText": "I doubt that there are any cookies left",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "any"],
+      ["position", "doubtVerb"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex21d",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(21d)"},
+    "language": "stan1293",
+    "primaryText": "I doubt that there ever were cookies in this house",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "ever"],
+      ["position", "doubtVerb"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex70ai",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(70a i)"},
+    "language": "stan1293",
+    "primaryText": "You may read any of these books",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "any"],
+      ["position", "modalPossibility"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex70aii",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(70a ii)"},
+    "language": "stan1293",
+    "primaryText": "You may ever read these books",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["item", "ever"],
+      ["position", "modalPossibility"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex70ci",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(70c i)"},
+    "language": "stan1293",
+    "primaryText": "Take any apple",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "any"],
+      ["position", "imperative"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex70cii",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(70c ii)"},
+    "language": "stan1293",
+    "primaryText": "Ever read these books",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["item", "ever"],
+      ["position", "imperative"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex70di",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(70d i)"},
+    "language": "ital1282",
+    "primaryText": "Dubito che Leo abbia letto alcun libro di testo di linguistica",
+    "glossedTokens": [],
+    "translation": "I doubt that Leo has read any linguistics textbook",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "alcuno"],
+      ["position", "doubtVerb"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex70dii",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(70d ii)"},
+    "language": "ital1282",
+    "primaryText": "Puoi leggere alcun libro di linguistica",
+    "glossedTokens": [],
+    "translation": "You may read any linguistics textbook",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["item", "alcuno"],
+      ["position", "modalPossibility"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex70ei",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(70e i)"},
+    "language": "ital1282",
+    "primaryText": "Leo non ha letto qualsiasi libro di testo di linguistica",
+    "glossedTokens": [],
+    "translation": "Leo hasn't read any linguistic textbook",
+    "context": "",
+    "judgment": "marginal",
+    "paperFeatures": [
+      ["item", "qualsiasi"],
+      ["position", "negation"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "chierchia2013_ex70eii",
+    "source": {"bibkey": "chierchia-2013", "paperLabel": "(70e ii)"},
+    "language": "ital1282",
+    "primaryText": "Puoi leggere qualsiasi libro di testo di linguistica",
+    "glossedTokens": [],
+    "translation": "You may read any linguistic textbook",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["item", "qualsiasi"],
+      ["position", "modalPossibility"]
+    ],
+    "comment": ""
+  }
+]
