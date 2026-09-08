@@ -222,11 +222,9 @@ only much-insertion in synthetic adjectival forms such as happier. On phrasal "t
 the 2004 text takes no stand: §1.1.1 notes that the phrasal (12) can be assimilated to
 the clausal (11) via comparative ellipsis, leaving the clausal-source question open.
 
-`Studies/BhattTakahashi2011.lean` casts B&P 2004 as proponents of a direct (non-clausal)
-analysis of English phrasal comparatives (`englishAnalysisPerBhattPancheva2004`,
-`bt2011_agrees_with_bresnan_against_bp2004`). That attribution is not supported by the
-2004 text; whether it is [bhatt-takahashi-2011]'s own framing awaits that paper. The
-extensional agreement for proper-name standards is `npGQ_principal_eq_sComp_thanClause`
-above. -/
+[bhatt-takahashi-2011] cite the 2004 paper only for the Late Merge of the *than*-phrase and
+credit the reduction verdict for English to [lechner-2004], so no disagreement between the
+two papers is on record. The extensional agreement for proper-name standards is
+`npGQ_principal_eq_sComp_thanClause` above. -/
 
 end BhattPancheva2004
