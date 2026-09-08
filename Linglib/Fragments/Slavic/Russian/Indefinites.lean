@@ -23,7 +23,7 @@ specific-unknown function (not also non-specific) is due to paradigmatic
 competition with *-nibud'*. The D&A theoretical profile of type iv
 permits both SU and NS, but *-to*'s actual distribution is SU only —
 captured by `IndefinitePronoun.consistentWith` in
-`Semantics/Quantification/DeganoAloni2025.lean`.
+`Studies/DeganoAloni2025.lean`.
 -/
 
 namespace Russian.Indefinites
