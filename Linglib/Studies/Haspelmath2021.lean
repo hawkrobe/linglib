@@ -408,9 +408,10 @@ theorem universal5_frequency_class_monotone :
     weak subjects are marked (Fore pattern). Renamed from
     `universal6_split_A_flagging` for the same reason as U4. -/
 theorem universal6_dehoopmalchukov_predicts :
-    superoptimal allPairs (profileFor [distinguishSubj, economy])
-    = winnerDistinguishSubj :=
-  dsm_distinguish
+    superoptimal asymmetrical
+        (Pragmatics.Bidirectional.profile [distinguish Position.subject.confusable, economy]) =
+      {(some (), .weak), (none, .strong)} :=
+  distinguish_marks_confusable .subject
 
 -- ============================================================================
 -- § 7: Universals 7–8 — Ditransitive Splits (R and T flagging)
@@ -669,17 +670,22 @@ theorem ditransitive_parallels_monotransitive :
 -- ============================================================================
 
 /-! The correlation between DOM and accusative alignment, and between DSM
-    and ergative alignment, is independently derived in [de-hoop-malchukov-2008] via the PaIP (Primary Actant Immunity Principle). [haspelmath-2021]
-    discusses this as background but does NOT number it as one of his 14
-    universals — included here for cross-reference only. -/
+    and ergative alignment, is independently derived in
+    [de-hoop-malchukov-2008] via the PaIP (Primary Actant Immunity
+    Principle). [haspelmath-2021] discusses this as background but does NOT
+    number it as one of his 14 universals — included here for cross-reference
+    only. -/
 
 /-- Differential marking patterns ([de-hoop-malchukov-2008], not a
-    numbered Haspelmath universal). -/
+    numbered Haspelmath universal): PaIP is satisfied by marking the object
+    under nominative-accusative and the subject under ergative-absolutive
+    alignment. -/
 theorem alignment_correlation_deHoopMalchukov :
-    markingPattern [identify, economy] = ⟨.overt, .zero⟩ ∧
-    markingPattern [distinguishSubj, economy] = ⟨.zero, .overt⟩ ∧
-    markingPattern [distinguishObj, economy] = ⟨.overt, .zero⟩ :=
-  alignment_correlation
+    paip (C := Unit) (M := DeHoopMalchukov2008.Strength) .nominativeAccusative
+        (.object, some (), .strong) = 0 ∧
+      paip (C := Unit) (M := DeHoopMalchukov2008.Strength) .ergativeAbsolutive
+        (.subject, some (), .weak) = 0 := by
+  decide
 
 -- ============================================================================
 -- § 16: Universal 68 — Form-Frequency Reduction

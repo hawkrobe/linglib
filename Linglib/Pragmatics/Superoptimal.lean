@@ -37,6 +37,10 @@ open Core.Optimization.Evaluation
 
 variable {F M : Type*}
 
+/-- The violation profile of a ranking: a pair's violations listed from the dominant
+constraint down, compared lexicographically by `LexLT`. -/
+def profile (ranking : List (F × M → ℕ)) (p : F × M) : List ℕ := ranking.map (· p)
+
 -- ============================================================================
 -- § 1. The blocking relation
 -- ============================================================================
