@@ -1,393 +1,305 @@
-import Linglib.Pragmatics.RSA.Operators
-import Linglib.Pragmatics.GriceanMaxims
+import Linglib.Pragmatics.RSA.Uniform
+import Mathlib.Algebra.Order.Field.Basic
 
 /-!
-# [degen-etal-2020]: When Redundancy Is Useful
-[frank-goodman-2012] [dale-reiter-1995] [engelhardt-etal-2006]
-[grice-1975] [kursat-degen-2021] [westerbeek-koolen-maes-2015]
+# Degen, Hawkins, Graf, Kreiss and Goodman (2020): When Redundancy Is Useful
 
-Standard RSA with a Boolean semantics predicts no preference for overmodified
-referring expressions — if "small" already identifies the target, adding "blue"
-is literally uninformative. Yet speakers routinely overmodify, more with color
-than with size. [degen-etal-2020] resolve this by relaxing the semantics to a
-**continuous** meaning `φ(u, o) ∈ [0,1]` (per-word noise channels multiplied over
-the utterance): redundant modifiers then carry real information, and the color/size
-*asymmetry* follows from color channels being less noisy than size channels.
+This file formalizes the continuous-semantics rational speech act model of [degen-etal-2020].
+A referring expression's meaning is a value in the unit interval rather than a truth value:
+each mentioned adjective is a noise channel, a size or colour predicate holding of an object
+to degree x_size or x_colour when it matches and to degree 1 − x when it does not, and a
+two-adjective expression multiplies its channels, (5) and (6). The literal listener of (1)
+normalizes the meaning over the objects at a uniform prior, and the speaker of (3) and (4),
+here with unit informativeness weight and no cost as in [frank-goodman-2012], chooses an
+expression in proportion to the listener's probability of the intended object. A redundant
+modifier then adds information: for the small blue pin among a big blue and a big red one,
+the speaker prefers the redundant *small blue* to the sufficient *small* exactly when the
+colour channel exceeds one half, and for the big red pin prefers *big red* to *red* exactly
+when the size channel does; with Boolean channels, both values one, there is no preference
+either way. The same mechanism with a typicality meaning gives the choice of taxonomic level
+of Experiment 3: the subordinate term is preferred to the basic-level term exactly when it is
+the more informative of the two about the target, typicality replacing the noise channel.
 
-The model is the mathlib-`PMF` RSA pipeline (`RSA.L0OfMeaning` / `RSA.S1Belief`,
-[frank-goodman-2012]): the literal listener `L0(·|u) : PMF World` normalises `φ`,
-and the speaker `S1(·|w) : PMF U` is `S1(u|w) ∝ L0(w|u)^α · cost(u)`. With α = 1
-and zero cost (`fun _ => 1`), each prediction is one application of
-`S1Belief_apply_lt_iff_score_lt` — the partition cancels, leaving an `L0`
-comparison in `ℝ≥0∞`.
+## TODO
 
-## Main results
-* `csrsa_overmod_preferred` — S1 prefers overmodified "small blue" over "small".
-* `csrsa_sufficient_beats_redundant` — "small" (sufficient) beats "blue" (redundant).
-* `bool_no_overmod_preference` — the Boolean model shows no overmod preference.
-* `nominal_overspec_preferred` / `nom_bool_no_overspec` — the Exp 3 noun analogue.
-* `unified_continuous_semantics` — both phenomena: cs-RSA yes, Boolean no.
+* Tables 2 and 3 do not follow from Equation (1) at the stated values x_size = .8 and
+  x_colour = .99: Equation (1) gives the literal listener 0.67 for *small* and 0.80 for *small
+  blue* at the small blue pin, where the table has .48 and .50, and gives the redundant *big
+  red* a larger value than *red* at the big red pin, where the table has .52 against .57; the
+  table's values match a listener proportional to the exponential of the meaning. The theorems
+  follow the equations, on which the colour–size asymmetry is the regime x_size ≤ 1/2 < x_colour
+  rather than the stated values.
+* The regression coefficients and the fitted noise parameters of the three experiments are not
+  encoded.
 
-## Verified data (prose, per [degen-etal-2020])
-Effect sizes are documented here, not encoded as Lean data. Exp 1 (§3): main
-effect of sufficient property β = 3.54, SE = .22; scene-variation × property
-interaction β = 2.26, SE = .74; BDA-fitted noise (Figure 10) MAP x_color = .88,
-HDI [.85, .92]; x_size = .79, HDI [.76, .80]; near-zero costs β_c ≈ .02/.03,
-confirming color > size discrimination and the No-Brevity regime. Exp 2 (§4.3):
-typicality β = −4.17, informativeness β = −5.56, color-competitor β = 0.71 (all
-p < .0001); [westerbeek-koolen-maes-2015] found the same typicality direction
-(β = −2.36). Exp 3 (§5.2): sub-necessary β = 2.11, basic-vs-super β = .60,
-typicality β = 4.82, length β = −.95, frequency β = .08 (NS); the BDA fits a
-substantial length cost (β_L = 2.69), so — unlike modifiers — nominal choice is
-not in the No-Brevity regime.
+## References
+
+* [degen-etal-2020]
+* [frank-goodman-2012]
 -/
 
 namespace DegenEtAl2020
 
-open RSA
-open Pragmatics.GriceanMaxims
+open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal
 
-/-! ### Modifier scene (Exp 1) -/
+/-! ### The scene of Figure 1a -/
 
-/-- Three pins varying in size and colour; the target is the small blue pin. -/
-inductive World | bigBlue | bigRed | smallBlue
+/-- The three pins of the size-sufficient context: the target small blue pin, a big blue and
+a big red one. -/
+inductive World where
+  | bigBlue
+  | bigRed
+  | smallBlue
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- The seven referring expressions (each + implicit "pin"): four single
-    adjectives and three size+colour pairs. -/
-inductive Utterance | big | small | blue | red | bigBlue | bigRed | smallBlue
+instance : MeasurableSpace World := ⊤
+instance : DiscreteMeasurableSpace World := ⟨λ _ => trivial⟩
+
+/-- Whether a pin is big. -/
+def World.big : World → Bool
+  | .bigBlue | .bigRed => true
+  | .smallBlue => false
+
+/-- Whether a pin is blue. -/
+def World.blue : World → Bool
+  | .bigBlue | .smallBlue => true
+  | .bigRed => false
+
+/-- The seven referring expressions: a size, a colour, or both, each followed by *pin*. -/
+inductive Utterance where
+  | big
+  | small
+  | blue
+  | red
+  | bigBlue
+  | bigRed
+  | smallBlue
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- The target object. -/
-abbrev target : World := .smallBlue
+instance : MeasurableSpace Utterance := ⊤
+instance : DiscreteMeasurableSpace Utterance := ⟨λ _ => trivial⟩
 
-/-- Illustrative channel values (match/mismatch per feature): colour highly
-    reliable, size less so. [degen-etal-2020] estimate continuous semantic
-    values from data rather than stipulating them; these conventional values
-    reproduce the qualitative colour/size asymmetry and are shared by the
-    downstream cs-RSA studies. -/
-def colorMatch : ℚ := 99/100
-/-- See `colorMatch`. -/
-def colorMismatch : ℚ := 1/100
-/-- See `colorMatch`. -/
+/-- The size an expression mentions, `true` for big. -/
+def Utterance.size : Utterance → Option Bool
+  | .big | .bigBlue | .bigRed => some true
+  | .small | .smallBlue => some false
+  | .blue | .red => none
+
+/-- The colour an expression mentions, `true` for blue. -/
+def Utterance.color : Utterance → Option Bool
+  | .blue | .bigBlue | .smallBlue => some true
+  | .red | .bigRed => some false
+  | .big | .small => none
+
+/-- The demonstration value x_size = .8 of Tables 2 and 3, footnote 14. -/
 def sizeMatch : ℚ := 8/10
-/-- See `colorMatch`. -/
+
+/-- The mismatch degree 1 − x_size. -/
 def sizeMismatch : ℚ := 2/10
 
-/-- Size-match channel (real). -/ private noncomputable def sM : ℝ := sizeMatch
-/-- Size-mismatch channel (real). -/ private noncomputable def sm : ℝ := sizeMismatch
-/-- Colour-match channel (real). -/ private noncomputable def cM : ℝ := colorMatch
-/-- Colour-mismatch channel (real). -/ private noncomputable def cm : ℝ := colorMismatch
+/-- The demonstration value x_colour = .99. -/
+def colorMatch : ℚ := 99/100
 
-private theorem noiseR : sM = 8/10 ∧ sm = 2/10 ∧ cM = 99/100 ∧ cm = 1/100 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    simp [sM, sm, cM, cm, sizeMatch, sizeMismatch, colorMatch, colorMismatch]
+/-- The mismatch degree 1 − x_colour. -/
+def colorMismatch : ℚ := 1/100
 
-private theorem sumW (f : World → ℝ≥0∞) :
-    ∑' w, f w = f .bigBlue + f .bigRed + f .smallBlue := by
-  rw [tsum_fintype, show (Finset.univ : Finset World) = {.bigBlue, .bigRed, .smallBlue} from rfl,
+/-! ### Continuous semantics -/
+
+/-- A noise channel: a mentioned feature holds of an object to degree `x` when it matches and
+`1 − x` when it does not, and an unmentioned feature contributes nothing. -/
+def channel (x : ℝ) : Option Bool → Bool → ℝ
+  | none, _ => 1
+  | some b, a => if b = a then x else 1 - x
+
+/-- The continuous meaning, (5) and (6): the product of the size and colour channels. -/
+def meaning (xs xc : ℝ) (u : Utterance) (w : World) : ℝ :=
+  channel xs u.size w.big * channel xc u.color w.blue
+
+section Model
+
+variable {xs xc : ℝ}
+
+theorem channel_nonneg {x : ℝ} (h0 : 0 ≤ x) (h1 : x ≤ 1) (o : Option Bool) (a : Bool) :
+    0 ≤ channel x o a := by
+  cases o with
+  | none => exact zero_le_one
+  | some b => simp only [channel]; split_ifs <;> linarith
+
+theorem meaning_nonneg (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hc0 : 0 ≤ xc) (hc1 : xc ≤ 1)
+    (u : Utterance) (w : World) : 0 ≤ meaning xs xc u w :=
+  mul_nonneg (channel_nonneg hs0 hs1 _ _) (channel_nonneg hc0 hc1 _ _)
+
+/-- The literal listener, (1): the meaning normalized over the pins at a uniform prior. -/
+noncomputable def L0 (xs xc : ℝ) : Kernel Utterance World :=
+  literalListener (uniformOn Set.univ) λ u w => ENNReal.ofReal (meaning xs xc u w)
+
+/-- The speaker, (3) and (4), with unit informativeness weight and no cost. -/
+noncomputable def S1 (xs xc : ℝ) : Kernel World Utterance := speaker 1 1 (L0 xs xc)
+
+private theorem sum_world (f : World → ℝ) : ∑ w, f w = f .bigBlue + f .bigRed + f .smallBlue := by
+  rw [show (Finset.univ : Finset World) = {.bigBlue, .bigRed, .smallBlue} from rfl,
     Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton, add_assoc]
 
-/-- Continuous meaning `φ(u, o) ∈ ℝ≥0∞`: a single adjective is its noise
-    channel, a pair the product of its two channels. -/
-noncomputable def φ : Utterance → World → ℝ≥0∞
-  | .big, .bigBlue => .ofReal sM | .big, .bigRed => .ofReal sM | .big, .smallBlue => .ofReal sm
-  | .small, .bigBlue => .ofReal sm | .small, .bigRed => .ofReal sm | .small, .smallBlue => .ofReal sM
-  | .blue, .bigBlue => .ofReal cM | .blue, .bigRed => .ofReal cm | .blue, .smallBlue => .ofReal cM
-  | .red, .bigBlue => .ofReal cm | .red, .bigRed => .ofReal cM | .red, .smallBlue => .ofReal cm
-  | .bigBlue, .bigBlue => .ofReal (sM*cM) | .bigBlue, .bigRed => .ofReal (sM*cm) | .bigBlue, .smallBlue => .ofReal (sm*cM)
-  | .bigRed, .bigBlue => .ofReal (sM*cm) | .bigRed, .bigRed => .ofReal (sM*cM) | .bigRed, .smallBlue => .ofReal (sm*cm)
-  | .smallBlue, .bigBlue => .ofReal (sm*cM) | .smallBlue, .bigRed => .ofReal (sm*cm) | .smallBlue, .smallBlue => .ofReal (sM*cM)
+/-- The listener's value of an expression at a pin is the share of its row. -/
+theorem L0_apply (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hc0 : 0 ≤ xc) (hc1 : xc ≤ 1) (u : Utterance)
+    (w : World) (hpos : 0 < ∑ w', meaning xs xc u w') :
+    L0 xs xc u {w} = ENNReal.ofReal (meaning xs xc u w / ∑ w', meaning xs xc u w') :=
+  literalListener_uniformOn_ofReal_apply_singleton _ u w
+    (λ w' => meaning_nonneg hs0 hs1 hc0 hc1 u w') hpos
 
-private theorem φ_pos (u : Utterance) (w : World) : 0 < φ u w := by
-  obtain ⟨h1, h2, h3, h4⟩ := noiseR
-  cases u <;> cases w <;> exact ENNReal.ofReal_pos.mpr (by rw [h1, h2, h3, h4] at *; norm_num)
+/-- The speaker prefers `u'` to `u` for a pin exactly when the listener finds the pin likelier
+under `u'`; the normalization cancels. -/
+theorem S1_real_lt_iff (w : World) (u u' : Utterance) (h : L0 xs xc u' {w} ≠ 0) :
+    (S1 xs xc w).real {u} < (S1 xs xc w).real {u'} ↔ L0 xs xc u {w} < L0 xs xc u' {w} := by
+  rw [S1]
+  refine (speaker_real_singleton_lt_iff (cost := 1) (L := L0 xs xc) (w := w) zero_le_one
+    (λ _ => ENNReal.one_ne_top) (λ u => literalListener_apply_le_one _ _ u _) ⟨u', ?_⟩).trans ?_
+  · simpa only [ENNReal.rpow_one, Pi.one_apply, mul_one] using h
+  · simp only [ENNReal.rpow_one, Pi.one_apply, mul_one]
 
-private theorem φ_ne_top (u : Utterance) (w : World) : φ u w ≠ ⊤ := by
-  cases u <;> cases w <;> exact ENNReal.ofReal_ne_top
+end Model
 
-private theorem sumφ_ne_zero (u : Utterance) : ∑' w, φ u w ≠ 0 := by
-  rw [tsum_fintype]; intro h
-  exact (φ_pos u .smallBlue).ne' (Finset.sum_eq_zero_iff.mp h .smallBlue (Finset.mem_univ _))
+/-! ### Overmodification -/
 
-private theorem sumφ_ne_top (u : Utterance) : ∑' w, φ u w ≠ ⊤ := by
-  rw [tsum_fintype]; exact ENNReal.sum_ne_top.mpr fun w _ => φ_ne_top u w
+section Overmodification
 
-/-- Literal listener `L0(·|u) : PMF World`, normalising the continuous meaning. -/
-noncomputable def L0 (u : Utterance) : PMF World :=
-  L0OfMeaning φ u (sumφ_ne_zero u) (sumφ_ne_top u)
+variable {xs xc : ℝ}
 
-private theorem L0_pos (u : Utterance) (w : World) : 0 < L0 u w := by
-  rw [L0, L0OfMeaning_apply]
-  exact ENNReal.mul_pos (φ_pos u w).ne' (ENNReal.inv_ne_zero.mpr (sumφ_ne_top u))
+private theorem row_small : ∑ w, meaning xs xc .small w = 2 - xs := by
+  rw [sum_world]; simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]
+  ring
 
-/-- L0(target | "small") = 2/3 — size is sufficient but noisy (not 1). -/
-theorem L0_small_target : L0 .small target = ENNReal.ofReal (2/3) := by
-  rw [L0, L0OfMeaning_apply, sumW]
-  simp only [φ, noiseR.1, noiseR.2.1]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num), ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← div_eq_mul_inv, ← ENNReal.ofReal_div_of_pos (by norm_num)]
-  congr 1; norm_num
+private theorem row_smallBlue : ∑ w, meaning xs xc .smallBlue w = (1 - xs) + xs * xc := by
+  rw [sum_world]; simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]
+  ring
 
-/-- L0(target | "small blue") = 99/124 — the redundant colour sharpens the channel product. -/
-theorem L0_smallBlue_target : L0 .smallBlue target = ENNReal.ofReal (99/124) := by
-  rw [L0, L0OfMeaning_apply, sumW]
-  simp only [φ, noiseR.1, noiseR.2.1, noiseR.2.2.1, noiseR.2.2.2]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num), ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← div_eq_mul_inv, ← ENNReal.ofReal_div_of_pos (by norm_num)]
-  congr 1; norm_num
+private theorem row_red : ∑ w, meaning xs xc .red w = 2 - xc := by
+  rw [sum_world]; simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]
+  ring
 
-/-- L0(target | "blue") = 99/199 — colour is redundant (two objects are blue). -/
-theorem L0_blue_target : L0 .blue target = ENNReal.ofReal (99/199) := by
-  rw [L0, L0OfMeaning_apply, sumW]
-  simp only [φ, noiseR.2.2.1, noiseR.2.2.2]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num), ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← div_eq_mul_inv, ← ENNReal.ofReal_div_of_pos (by norm_num)]
-  congr 1; norm_num
+private theorem row_bigRed : ∑ w, meaning xs xc .bigRed w = xs + (1 - xs) * (1 - xc) := by
+  rw [sum_world]; simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]
+  ring
 
-private theorem s1_ne_zero (w : World) : ∑' u, (L0 u w : ℝ≥0∞) ^ (1:ℝ) * 1 ≠ 0 := by
-  simp only [ENNReal.rpow_one, mul_one]
-  rw [tsum_fintype]; intro h
-  exact (L0_pos .small w).ne' (Finset.sum_eq_zero_iff.mp h .small (Finset.mem_univ _))
+/-- Colour overmodification: for the small blue pin the redundant *small blue* is preferred
+to the sufficient *small* exactly when the colour channel exceeds one half, whatever the size
+channel short of Boolean. -/
+theorem color_overmodification_iff (hs0 : 0 < xs) (hs1 : xs < 1) (hc0 : 0 < xc) (hc1 : xc ≤ 1) :
+    (S1 xs xc .smallBlue).real {.small} < (S1 xs xc .smallBlue).real {.smallBlue} ↔ 1/2 < xc := by
+  have hsum : 0 < (1 - xs) + xs * xc := by nlinarith
+  have hsum' : 0 < 2 - xs := by linarith
+  have h1 := L0_apply hs0.le hs1.le hc0.le hc1 .small World.smallBlue
+    (by rw [row_small]; exact hsum')
+  have h2 := L0_apply hs0.le hs1.le hc0.le hc1 .smallBlue World.smallBlue
+    (by rw [row_smallBlue]; exact hsum)
+  rw [S1_real_lt_iff _ _ _ (by rw [h2]; exact (ENNReal.ofReal_pos.mpr (div_pos (by
+      simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]; positivity)
+      (by rw [row_smallBlue]; exact hsum))).ne'), h1, h2, row_small, row_smallBlue,
+    ENNReal.ofReal_lt_ofReal_iff (div_pos (by
+      simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]; positivity)
+      hsum)]
+  simp only [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]
+  simp only [↓reduceIte, mul_one]
+  rw [div_lt_div_iff₀ hsum' hsum]
+  have hk : 0 < xs * (1 - xs) := mul_pos hs0 (by linarith)
+  constructor <;> intro h <;> nlinarith [hk]
 
-private theorem s1_ne_top (w : World) : ∑' u, (L0 u w : ℝ≥0∞) ^ (1:ℝ) * 1 ≠ ⊤ := by
-  simp only [ENNReal.rpow_one, mul_one]
-  rw [tsum_fintype]; exact ENNReal.sum_ne_top.mpr fun u _ => PMF.apply_ne_top _ _
+/-- Size overmodification: for the big red pin the redundant *big red* is preferred to the
+sufficient *red* exactly when the size channel exceeds one half, whatever the colour channel
+short of Boolean. The asymmetry of the paper is thus the regime of a size channel at most one
+half and a colour channel above it. -/
+theorem size_overmodification_iff (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hc0 : 0 < xc) (hc1 : xc < 1) :
+    (S1 xs xc .bigRed).real {.red} < (S1 xs xc .bigRed).real {.bigRed} ↔ 1/2 < xs := by
+  have hsum : 0 < xs + (1 - xs) * (1 - xc) := by nlinarith
+  have hsum' : 0 < 2 - xc := by linarith
+  have h1 := L0_apply hs0.le hs1 hc0.le hc1.le .red World.bigRed (by rw [row_red]; exact hsum')
+  have h2 := L0_apply hs0.le hs1 hc0.le hc1.le .bigRed World.bigRed (by rw [row_bigRed]; exact hsum)
+  rw [S1_real_lt_iff _ _ _ (by rw [h2]; exact (ENNReal.ofReal_pos.mpr (div_pos (by
+      simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]; positivity)
+      (by rw [row_bigRed]; exact hsum))).ne'), h1, h2, row_red, row_bigRed,
+    ENNReal.ofReal_lt_ofReal_iff (div_pos (by
+      simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]; positivity)
+      hsum)]
+  simp only [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]
+  simp only [↓reduceIte, one_mul]
+  rw [div_lt_div_iff₀ hsum' hsum]
+  have hk : 0 < xc * (1 - xc) := mul_pos hc0 (by linarith)
+  constructor <;> intro h <;> nlinarith [hk]
 
-/-- Pragmatic speaker `S1(·|w) ∝ L0(w|u)` (α = 1, zero cost), a `PMF Utterance`. -/
-noncomputable def S1 (w : World) : PMF Utterance :=
-  S1Belief L0 (fun _ => 1) 1 w (s1_ne_zero w) (s1_ne_top w)
+/-- With Boolean channels the redundant modifier adds nothing: *small* and *small blue* both
+identify the small blue pin with certainty and are produced alike. -/
+theorem boolean_no_preference :
+    (S1 1 1 .smallBlue).real {.small} = (S1 1 1 .smallBlue).real {.smallBlue} := by
+  have h1 := L0_apply (xs := 1) (xc := 1) zero_le_one le_rfl zero_le_one le_rfl .small
+    World.smallBlue (by rw [row_small]; norm_num)
+  have h2 := L0_apply (xs := 1) (xc := 1) zero_le_one le_rfl zero_le_one le_rfl .smallBlue
+    World.smallBlue (by rw [row_smallBlue]; norm_num)
+  rw [row_small] at h1
+  rw [row_smallBlue] at h2
+  simp only [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue,
+    ↓reduceIte] at h1 h2
+  norm_num at h1 h2
+  simp only [S1, measureReal_def, speaker_apply_singleton, h1, h2, Pi.one_apply]
 
-/-- **Main result**: S1 strictly prefers the overmodified "small blue" over the
-    sufficient "small" — overmodification is rational under noisy perception. -/
-theorem csrsa_overmod_preferred : S1 target .small < S1 target .smallBlue := by
-  simp only [S1, rsa, ENNReal.rpow_one, mul_one, L0_small_target, L0_smallBlue_target]
-  rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num
+end Overmodification
 
-/-- The sufficient "small" beats the redundant "blue" (the size principle). -/
-theorem csrsa_sufficient_beats_redundant : S1 target .blue < S1 target .small := by
-  simp only [S1, rsa, ENNReal.rpow_one, mul_one, L0_blue_target, L0_small_target]
-  rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num
+/-! ### Taxonomic level, Experiment 3 -/
 
-/-! ### Boolean baseline -/
-
-/-- Boolean (zero-noise) meaning: a feature matches or it does not. -/
-def φbool : Utterance → World → Prop
-  | .big, .bigBlue => True | .big, .bigRed => True | .big, .smallBlue => False
-  | .small, .bigBlue => False | .small, .bigRed => False | .small, .smallBlue => True
-  | .blue, .bigBlue => True | .blue, .bigRed => False | .blue, .smallBlue => True
-  | .red, .bigBlue => False | .red, .bigRed => True | .red, .smallBlue => False
-  | .bigBlue, .bigBlue => True | .bigBlue, .bigRed => False | .bigBlue, .smallBlue => False
-  | .bigRed, .bigBlue => False | .bigRed, .bigRed => True | .bigRed, .smallBlue => False
-  | .smallBlue, .bigBlue => False | .smallBlue, .bigRed => False | .smallBlue, .smallBlue => True
-
-instance (u : Utterance) : DecidablePred (φbool u) := fun w => by
-  cases u <;> cases w <;> first | exact isTrue trivial | exact isFalse id
-
-private theorem extBool_nonempty (u : Utterance) : (extensionOf φbool u).Nonempty := by
-  cases u <;> decide
-
-/-- Boolean literal listener: uniform on the extension. -/
-noncomputable def boolL0 (u : Utterance) : PMF World := L0OfPred φbool u (extBool_nonempty u)
-
-private theorem boolL0_ne_zero {u : Utterance} {w : World} (h : φbool u w) :
-    boolL0 u w ≠ 0 :=
-  (PMF.mem_support_iff _ _).mp ((mem_support_L0OfPred_iff _ w).mpr h)
-
-theorem boolL0_small_target : boolL0 .small target = 1 := by
-  rw [boolL0, L0OfPred_apply_of_mem (extBool_nonempty .small)
-      (show φbool .small target from trivial),
-    show (extensionOf φbool .small).card = 1 from by decide]; simp
-
-theorem boolL0_smallBlue_target : boolL0 .smallBlue target = 1 := by
-  rw [boolL0, L0OfPred_apply_of_mem (extBool_nonempty .smallBlue)
-      (show φbool .smallBlue target from trivial),
-    show (extensionOf φbool .smallBlue).card = 1 from by decide]; simp
-
-private theorem boolS1_ne_zero (w : World) : ∑' u, (boolL0 u w : ℝ≥0∞) ^ (1:ℝ) * 1 ≠ 0 := by
-  simp only [ENNReal.rpow_one, mul_one]
-  rw [tsum_fintype]; intro h
-  have hz := Finset.sum_eq_zero_iff.mp h
-  cases w
-  · exact boolL0_ne_zero (u := .bigBlue) (by decide) (hz .bigBlue (Finset.mem_univ _))
-  · exact boolL0_ne_zero (u := .bigRed) (by decide) (hz .bigRed (Finset.mem_univ _))
-  · exact boolL0_ne_zero (u := .smallBlue) (by decide) (hz .smallBlue (Finset.mem_univ _))
-
-private theorem boolS1_ne_top (w : World) : ∑' u, (boolL0 u w : ℝ≥0∞) ^ (1:ℝ) * 1 ≠ ⊤ := by
-  simp only [ENNReal.rpow_one, mul_one]
-  rw [tsum_fintype]; exact ENNReal.sum_ne_top.mpr fun u _ => PMF.apply_ne_top _ _
-
-/-- Boolean pragmatic speaker. -/
-noncomputable def boolS1 (w : World) : PMF Utterance :=
-  S1Belief boolL0 (fun _ => 1) 1 w (boolS1_ne_zero w) (boolS1_ne_top w)
-
-/-- The Boolean model shows **no** overmodification preference: "small" already
-    identifies the target perfectly, so adding "blue" adds nothing. -/
-theorem bool_no_overmod_preference :
-    ¬ (boolS1 target .small < boolS1 target .smallBlue) := by
-  simp only [boolS1, rsa, ENNReal.rpow_one, mul_one, boolL0_small_target, boolL0_smallBlue_target,
-    lt_self_iff_false, not_false_iff]
-
-/-! ### Nominal scene (Exp 3): overspecification via typicality
-
-The same mechanism with a *typicality* meaning for nouns: a graded `φ_typ ∈ [0,1]`
-plays the role noise plays for adjectives. Values are illustrative (the paper uses
-elicited typicality norms): the dalmatian is a very typical dalmatian, a typical
-dog, a moderate animal. -/
-
-/-- Target dalmatian among a cat and a bird; "dog" is basic-sufficient. -/
-inductive NomWorld | dalmatian | cat | bird
+/-- The target dalmatian among a cat and a bird, where the basic-level *dog* suffices. -/
+inductive NomWorld where
+  | dalmatian
+  | cat
+  | bird
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Noun utterances at three taxonomic levels. -/
-inductive NomUtterance | sub | basic | super
+instance : MeasurableSpace NomWorld := ⊤
+instance : DiscreteMeasurableSpace NomWorld := ⟨λ _ => trivial⟩
+
+/-- The nouns at the three taxonomic levels: *dalmatian*, *dog*, *animal*. -/
+inductive NomUtterance where
+  | sub
+  | basic
+  | super
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-private theorem sumNomW (f : NomWorld → ℝ≥0∞) :
-    ∑' w, f w = f .dalmatian + f .cat + f .bird := by
-  rw [tsum_fintype, show (Finset.univ : Finset NomWorld) = {.dalmatian, .cat, .bird} from rfl,
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton, add_assoc]
+instance : MeasurableSpace NomUtterance := ⊤
+instance : DiscreteMeasurableSpace NomUtterance := ⟨λ _ => trivial⟩
 
-/-- Typicality meaning `φ_typ(u, o) ∈ ℝ≥0∞`. -/
-noncomputable def φtyp : NomUtterance → NomWorld → ℝ≥0∞
-  | .sub, .dalmatian => .ofReal (19/20) | .sub, .cat => .ofReal (1/100) | .sub, .bird => .ofReal (1/100)
-  | .basic, .dalmatian => .ofReal (4/5) | .basic, .cat => .ofReal (1/20) | .basic, .bird => .ofReal (1/20)
-  | .super, .dalmatian => .ofReal (7/10) | .super, .cat => .ofReal (7/10) | .super, .bird => .ofReal (7/10)
+section Nominal
 
-private theorem φtyp_pos (u : NomUtterance) (w : NomWorld) : 0 < φtyp u w := by
-  cases u <;> cases w <;> exact ENNReal.ofReal_pos.mpr (by norm_num)
+variable (typ : NomUtterance → NomWorld → ℝ)
 
-private theorem φtyp_ne_top (u : NomUtterance) (w : NomWorld) : φtyp u w ≠ ⊤ := by
-  cases u <;> cases w <;> exact ENNReal.ofReal_ne_top
+/-- The literal listener with the typicality of each object for each noun as its meaning. -/
+noncomputable def nomL0 : Kernel NomUtterance NomWorld :=
+  literalListener (uniformOn Set.univ) λ u w => ENNReal.ofReal (typ u w)
 
-private theorem sumφtyp_ne_zero (u : NomUtterance) : ∑' w, φtyp u w ≠ 0 := by
-  rw [tsum_fintype]; intro h
-  exact (φtyp_pos u .dalmatian).ne' (Finset.sum_eq_zero_iff.mp h .dalmatian (Finset.mem_univ _))
+/-- The nominal speaker with unit informativeness weight and no cost. -/
+noncomputable def nomS1 : Kernel NomWorld NomUtterance := speaker 1 1 (nomL0 typ)
 
-private theorem sumφtyp_ne_top (u : NomUtterance) : ∑' w, φtyp u w ≠ ⊤ := by
-  rw [tsum_fintype]; exact ENNReal.sum_ne_top.mpr fun w _ => φtyp_ne_top u w
+/-- The subordinate term is preferred to the basic-level one for the target exactly when it is
+the more informative about it: its typicality for the target, relative to its typicality over
+the scene, exceeds the basic term's. -/
+theorem subordinate_preferred_iff (hnn : ∀ u w, 0 ≤ typ u w) (hsub : 0 < typ .sub .dalmatian)
+    (hbasic : 0 < typ .basic .dalmatian) :
+    (nomS1 typ .dalmatian).real {.basic} < (nomS1 typ .dalmatian).real {.sub} ↔
+      typ .basic .dalmatian * ∑ w, typ .sub w < typ .sub .dalmatian * ∑ w, typ .basic w := by
+  have hsum : ∀ u, 0 < typ u .dalmatian → 0 < ∑ w, typ u w := λ u h =>
+    h.trans_le (Finset.single_le_sum (λ w _ => hnn u w) (Finset.mem_univ _))
+  have h1 := literalListener_uniformOn_ofReal_apply_singleton typ .basic NomWorld.dalmatian
+    (hnn .basic) (hsum _ hbasic)
+  have h2 := literalListener_uniformOn_ofReal_apply_singleton typ .sub NomWorld.dalmatian
+    (hnn .sub) (hsum _ hsub)
+  rw [nomS1]
+  refine (speaker_real_singleton_lt_iff (cost := 1) (L := nomL0 typ) (w := NomWorld.dalmatian)
+    zero_le_one (λ _ => ENNReal.one_ne_top) (λ u => literalListener_apply_le_one _ _ u _)
+    ⟨.sub, ?_⟩).trans ?_
+  · rw [ENNReal.rpow_one, Pi.one_apply, mul_one, nomL0, h2]
+    exact (ENNReal.ofReal_pos.mpr (div_pos hsub (hsum _ hsub))).ne'
+  · simp only [ENNReal.rpow_one, Pi.one_apply, mul_one, nomL0]
+    rw [h1, h2, ENNReal.ofReal_lt_ofReal_iff (div_pos hsub (hsum _ hsub)),
+      div_lt_div_iff₀ (hsum _ hbasic) (hsum _ hsub)]
 
-/-- Nominal literal listener. -/
-noncomputable def nomL0 (u : NomUtterance) : PMF NomWorld :=
-  L0OfMeaning φtyp u (sumφtyp_ne_zero u) (sumφtyp_ne_top u)
-
-private theorem nomL0_pos (u : NomUtterance) (w : NomWorld) : 0 < nomL0 u w := by
-  rw [nomL0, L0OfMeaning_apply]
-  exact ENNReal.mul_pos (φtyp_pos u w).ne' (ENNReal.inv_ne_zero.mpr (sumφtyp_ne_top u))
-
-/-- L0(dalmatian | "dalmatian") = 95/97 — near-perfect via typicality. -/
-theorem nomL0_sub : nomL0 .sub .dalmatian = ENNReal.ofReal (95/97) := by
-  rw [nomL0, L0OfMeaning_apply, sumNomW]
-  simp only [φtyp]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num), ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← div_eq_mul_inv, ← ENNReal.ofReal_div_of_pos (by norm_num)]
-  congr 1; norm_num
-
-/-- L0(dalmatian | "dog") = 8/9 — the basic term discriminates well. -/
-theorem nomL0_basic : nomL0 .basic .dalmatian = ENNReal.ofReal (8/9) := by
-  rw [nomL0, L0OfMeaning_apply, sumNomW]
-  simp only [φtyp]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num), ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← div_eq_mul_inv, ← ENNReal.ofReal_div_of_pos (by norm_num)]
-  congr 1; norm_num
-
-/-- L0(dalmatian | "animal") = 1/3 — no discrimination. -/
-theorem nomL0_super : nomL0 .super .dalmatian = ENNReal.ofReal (1/3) := by
-  rw [nomL0, L0OfMeaning_apply, sumNomW]
-  simp only [φtyp]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num), ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← div_eq_mul_inv, ← ENNReal.ofReal_div_of_pos (by norm_num)]
-  congr 1; norm_num
-
-private theorem nomS1_ne_zero (w : NomWorld) : ∑' u, (nomL0 u w : ℝ≥0∞) ^ (1:ℝ) * 1 ≠ 0 := by
-  simp only [ENNReal.rpow_one, mul_one]
-  rw [tsum_fintype]; intro h
-  exact (nomL0_pos .basic w).ne' (Finset.sum_eq_zero_iff.mp h .basic (Finset.mem_univ _))
-
-private theorem nomS1_ne_top (w : NomWorld) : ∑' u, (nomL0 u w : ℝ≥0∞) ^ (1:ℝ) * 1 ≠ ⊤ := by
-  simp only [ENNReal.rpow_one, mul_one]
-  rw [tsum_fintype]; exact ENNReal.sum_ne_top.mpr fun u _ => PMF.apply_ne_top _ _
-
-/-- Nominal pragmatic speaker. -/
-noncomputable def nomS1 (w : NomWorld) : PMF NomUtterance :=
-  S1Belief nomL0 (fun _ => 1) 1 w (nomS1_ne_zero w) (nomS1_ne_top w)
-
-/-- Nominal **overspecification**: S1 prefers the subordinate "dalmatian" over the
-    sufficient basic "dog" — the noun analogue of `csrsa_overmod_preferred`. -/
-theorem nominal_overspec_preferred : nomS1 .dalmatian .basic < nomS1 .dalmatian .sub := by
-  simp only [nomS1, rsa, ENNReal.rpow_one, mul_one, nomL0_basic, nomL0_sub]
-  rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num
-
-/-- The basic "dog" beats the superordinate "animal". -/
-theorem nominal_basic_beats_super : nomS1 .dalmatian .super < nomS1 .dalmatian .basic := by
-  simp only [nomS1, rsa, ENNReal.rpow_one, mul_one, nomL0_super, nomL0_basic]
-  rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num
-
-/-- Boolean (crisp) typicality. -/
-def φtypBool : NomUtterance → NomWorld → Prop
-  | .sub, .dalmatian => True | .sub, .cat => False | .sub, .bird => False
-  | .basic, .dalmatian => True | .basic, .cat => False | .basic, .bird => False
-  | .super, .dalmatian => True | .super, .cat => True | .super, .bird => True
-
-instance (u : NomUtterance) : DecidablePred (φtypBool u) := fun w => by
-  cases u <;> cases w <;> first | exact isTrue trivial | exact isFalse id
-
-private theorem extNomBool_nonempty (u : NomUtterance) : (extensionOf φtypBool u).Nonempty := by
-  cases u <;> decide
-
-/-- Boolean nominal literal listener. -/
-noncomputable def nomBoolL0 (u : NomUtterance) : PMF NomWorld :=
-  L0OfPred φtypBool u (extNomBool_nonempty u)
-
-private theorem nomBoolL0_ne_zero {u : NomUtterance} {w : NomWorld} (h : φtypBool u w) :
-    nomBoolL0 u w ≠ 0 :=
-  (PMF.mem_support_iff _ _).mp ((mem_support_L0OfPred_iff _ w).mpr h)
-
-theorem nomBoolL0_sub : nomBoolL0 .sub .dalmatian = 1 := by
-  rw [nomBoolL0, L0OfPred_apply_of_mem (extNomBool_nonempty .sub)
-      (show φtypBool .sub .dalmatian from trivial),
-    show (extensionOf φtypBool .sub).card = 1 from by decide]; simp
-
-theorem nomBoolL0_basic : nomBoolL0 .basic .dalmatian = 1 := by
-  rw [nomBoolL0, L0OfPred_apply_of_mem (extNomBool_nonempty .basic)
-      (show φtypBool .basic .dalmatian from trivial),
-    show (extensionOf φtypBool .basic).card = 1 from by decide]; simp
-
-private theorem nomBoolS1_ne_zero (w : NomWorld) : ∑' u, (nomBoolL0 u w : ℝ≥0∞) ^ (1:ℝ) * 1 ≠ 0 := by
-  simp only [ENNReal.rpow_one, mul_one]
-  rw [tsum_fintype]; intro h
-  have hz := Finset.sum_eq_zero_iff.mp h
-  cases w
-  · exact nomBoolL0_ne_zero (u := .sub) (by decide) (hz .sub (Finset.mem_univ _))
-  · exact nomBoolL0_ne_zero (u := .super) (by decide) (hz .super (Finset.mem_univ _))
-  · exact nomBoolL0_ne_zero (u := .super) (by decide) (hz .super (Finset.mem_univ _))
-
-private theorem nomBoolS1_ne_top (w : NomWorld) : ∑' u, (nomBoolL0 u w : ℝ≥0∞) ^ (1:ℝ) * 1 ≠ ⊤ := by
-  simp only [ENNReal.rpow_one, mul_one]
-  rw [tsum_fintype]; exact ENNReal.sum_ne_top.mpr fun u _ => PMF.apply_ne_top _ _
-
-/-- Boolean nominal speaker. -/
-noncomputable def nomBoolS1 (w : NomWorld) : PMF NomUtterance :=
-  S1Belief nomBoolL0 (fun _ => 1) 1 w (nomBoolS1_ne_zero w) (nomBoolS1_ne_top w)
-
-/-- The Boolean model shows **no** overspecification preference. -/
-theorem nom_bool_no_overspec :
-    ¬ (nomBoolS1 .dalmatian .basic < nomBoolS1 .dalmatian .sub) := by
-  simp only [nomBoolS1, rsa, ENNReal.rpow_one, mul_one, nomBoolL0_basic, nomBoolL0_sub,
-    lt_self_iff_false, not_false_iff]
-
-/-! ### The unified mechanism -/
-
-/-- **Capstone**: continuous semantics makes both overmodification (Exp 1) and
-    overspecification (Exp 3) rational, while the Boolean model predicts neither —
-    one mechanism, two phenomena, only the meaning function changes. -/
-theorem unified_continuous_semantics :
-    S1 target .small < S1 target .smallBlue ∧
-    ¬ (boolS1 target .small < boolS1 target .smallBlue) ∧
-    nomS1 .dalmatian .basic < nomS1 .dalmatian .sub ∧
-    ¬ (nomBoolS1 .dalmatian .basic < nomBoolS1 .dalmatian .sub) :=
-  ⟨csrsa_overmod_preferred, bool_no_overmod_preference,
-   nominal_overspec_preferred, nom_bool_no_overspec⟩
+end Nominal
 
 end DegenEtAl2020
