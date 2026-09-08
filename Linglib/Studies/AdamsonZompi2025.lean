@@ -129,7 +129,7 @@ theorem lei_accusative : ∀ g ∈ grammars,
 
 /-- The interaction–satisfaction grammars, read over agreement person, license accusative LEI. -/
 theorem deal_licenses_lei : ∀ g ∈ [Deal2024.weak, Deal2024.strong],
-    Morphosyntactic (Deal2024.isLicit g · · = true) lui lei_formal := by
+    Morphosyntactic (Deal2024.Licit g) lui lei_formal := by
   decide
 
 /-- Feature gluttony, read over agreement person, licenses accusative LEI: a third person dative

@@ -34,7 +34,7 @@ its probe, and so global case splits range over the hierarchy effects of agreeme
 
 ## Main results
 
-* `dependentCase_iff_isLicit`: with two goals, dependent case on the second is [deal-2024]'s
+* `dependentCase_iff_licit`: with two goals, dependent case on the second is [deal-2024]'s
   licit Agree with both, so the PCC typology transfers to case splits.
 * `halt_of_spkr_object`, `narrow_of_part_object`, `flag_of_third_object`, `flag_of_low_object`:
   the derivations (15), (17) and (19), (22), and (24) behind Table 4.
@@ -81,17 +81,17 @@ open Deal2024
 /-- The goal flag a probe of grammar `g` deposits on the last of `goals` when it walks them in
     order: `none` if it never Agrees with that goal, otherwise the goals it Agreed with before,
     whose φ-features it carries and transfers there with its own ((31)). -/
-def flag (g : DealGrammar) (goals : List Person) : Option (List Person) :=
+def flag (g : Deal2024.Grammar) (goals : List Person) : Option (List Person) :=
   let agreed := (runProbe g goals).agreed
   let last := goals.length - 1
   if last ∈ agreed then some ((agreed.filter (· < last)).filterMap λ i => goals[i]?) else none
 
 /-- Dependent case ((31), (34), (43)): the last goal's flag carries the φ-features of an earlier
     goal, the structure a dependent-case vocabulary item realizes. -/
-def DependentCase (g : DealGrammar) (goals : List Person) : Prop :=
+def DependentCase (g : Deal2024.Grammar) (goals : List Person) : Prop :=
   ∃ p l, flag g goals = some (p :: l)
 
-instance (g : DealGrammar) (goals : List Person) : Decidable (DependentCase g goals) :=
+instance (g : Deal2024.Grammar) (goals : List Person) : Decidable (DependentCase g goals) :=
   match h : flag g goals with
   | some (p :: l) => isTrue ⟨p, l, h⟩
   | some [] => isFalse λ ⟨_, _, h'⟩ => by simp [h] at h'
@@ -100,10 +100,10 @@ instance (g : DealGrammar) (goals : List Person) : Decidable (DependentCase g go
 /-- With two goals, dependent case on the second is [deal-2024]'s licit Agree with both, the
     probe meeting the first goal in the direct-object slot and the second in the indirect-object
     slot. -/
-theorem dependentCase_iff_isLicit (g : DealGrammar) (g₁ g₂ : Person) :
-    DependentCase g [g₁, g₂] ↔ isLicit g g₂ g₁ = true := by
-  obtain ⟨sat, dyn⟩ := g
-  rcases sat with _ | (_ | _ | _ | _) <;> cases dyn <;> cases g₁ <;> cases g₂ <;> decide
+theorem dependentCase_iff_licit (g : Deal2024.Grammar) (g₁ g₂ : Person) :
+    DependentCase g [g₁, g₂] ↔ Licit g g₂ g₁ := by
+  revert g g₁ g₂
+  decide
 
 /-! ### Shawi: the v probe and the position of the object -/
 
@@ -150,7 +150,7 @@ instance (subj obj : Person) (pos : ObjectPosition) : Decidable (Ergative subj o
 
 /-- (15): a first-person object bears [SPKR] and satisfies the probe, which halts; the subject is
     never reached, whatever its person. -/
-theorem halt_of_spkr_object (subj obj : Person) (h : dpBears obj .spkr = true) :
+theorem halt_of_spkr_object (subj obj : Person) (h : bears obj .spkr = true) :
     (runProbe strictlyDescending [obj, subj]).satisfied = true ∧
       flag strictlyDescending [obj, subj] = none := by
   revert h; cases obj <;> cases subj <;> decide
@@ -158,15 +158,15 @@ theorem halt_of_spkr_object (subj obj : Person) (h : dpBears obj .spkr = true) :
 /-- (17) and (19): a second-person object lacks [SPKR] but bears [PART], so the probe is not
     satisfied but narrows to [INT:PART]; it then reaches the subject exactly when the subject
     bears [PART]. -/
-theorem narrow_of_part_object (subj obj : Person) (h₁ : dpBears obj .spkr = false)
-    (h₂ : dpBears obj .part = true) :
-    (runProbe strictlyDescending [obj, subj]).int = .part ∧
-      (flag strictlyDescending [obj, subj] = some [obj] ↔ dpBears subj .part = true) := by
+theorem narrow_of_part_object (subj obj : Person) (h₁ : bears obj .spkr = false)
+    (h₂ : bears obj .part = true) :
+    (runProbe strictlyDescending [obj, subj]).int = {.phi, .part} ∧
+      (flag strictlyDescending [obj, subj] = some [obj] ↔ bears subj .part = true) := by
   revert h₁ h₂; cases obj <;> cases subj <;> decide
 
 /-- (22): a third-person object neither satisfies nor narrows the probe, so the subject is
     reached whatever its person. -/
-theorem flag_of_third_object (subj obj : Person) (h : dpBears obj .part = false) :
+theorem flag_of_third_object (subj obj : Person) (h : bears obj .part = false) :
     flag strictlyDescending [obj, subj] = some [obj] := by
   revert h; cases obj <;> cases subj <;> decide
 
@@ -233,7 +233,7 @@ def oagrOnS (subj obj : Person) (n : Number) (pos : ObjectPosition) : Option Str
 theorem oagrOnS_isSome {subj obj : Person} {n : Number} {pos : ObjectPosition}
     (hne : Minimalist.decomposePerson subj ≠ Minimalist.decomposePerson obj)
     (h : (oagrOnS subj obj n pos).isSome) :
-    Ergative subj obj pos ∧ dpBears subj .spkr = true ∧ obj = .second := by
+    Ergative subj obj pos ∧ bears subj .spkr = true ∧ obj = .second := by
   revert hne h; cases subj <;> cases obj <;> cases n <;> cases pos <;> decide
 
 /-- (12): a first-person exclusive augmented subject with a second-person augmented object bears
@@ -262,10 +262,10 @@ theorem rule1_overgenerates :
     second-goal configuration while 2→3 is not, since a third-person first goal neither
     satisfies nor narrows the probe. Rule (37) of [barany-sheehan-2024]'s kind, whose hierarchy
     is stipulated, has no such limit. -/
-theorem no_1_3_2_hierarchy (g : DealGrammar) (h : DependentCase g [.second, .third]) :
+theorem no_1_3_2_hierarchy (g : Deal2024.Grammar) (h : DependentCase g [.second, .third]) :
     DependentCase g [.third, .second] := by
-  obtain ⟨sat, dyn⟩ := g
-  revert h; rcases sat with _ | (_ | _ | _ | _) <;> cases dyn <;> decide
+  revert g
+  decide
 
 /-! ### The typology of global case splits (§5) -/
 
@@ -293,7 +293,7 @@ theorem dependentCase_noPCC (l : Locus) (subj obj : Person) :
     the object is third (Shiwilu, [valenzuela-2011]) and on the object when the subject is third
     (Yurok). -/
 theorem dependentCase_strong_iff (g₁ g₂ : Person) :
-    DependentCase strong [g₁, g₂] ↔ dpBears g₁ .part = false := by
+    DependentCase strong [g₁, g₂] ↔ bears g₁ .part = false := by
   cases g₁ <;> cases g₂ <;> decide
 
 /-- Shiwilu (45a), (46b): no ergative at 1→2, ergative at 3→3. -/
@@ -304,14 +304,14 @@ example : ¬ DependentCase strong (Locus.v.goals .first .second) ∧
     on the object except in local→third (Kolyma Yukaghir, [maslova-2003]). -/
 theorem dependentCase_weak_iff (g₁ g₂ : Person) :
     DependentCase weak [g₁, g₂] ↔
-      (dpBears g₁ .part = true → dpBears g₂ .part = true) := by
+      (bears g₁ .part = true → bears g₂ .part = true) := by
   cases g₁ <;> cases g₂ <;> decide
 
 /-- Table 7, strictly descending: dependent case iff the first goal lacks [SPKR] and the second
     bears [PART] whenever the first does. -/
 theorem dependentCase_sd_iff (g₁ g₂ : Person) :
     DependentCase strictlyDescending [g₁, g₂] ↔
-      dpBears g₁ .spkr = false ∧ (dpBears g₁ .part = true → dpBears g₂ .part = true) := by
+      bears g₁ .spkr = false ∧ (bears g₁ .part = true → bears g₂ .part = true) := by
   cases g₁ <;> cases g₂ <;> decide
 
 /-- Off the diagonal the strictly descending split is the hierarchy 1>2>3: dependent case iff the
@@ -320,14 +320,14 @@ theorem dependentCase_sd_iff (g₁ g₂ : Person) :
 theorem dependentCase_sd_off_diagonal_iff (g₁ g₂ : Person)
     (h : Minimalist.decomposePerson g₁ ≠ Minimalist.decomposePerson g₂) :
     DependentCase strictlyDescending [g₁, g₂] ↔ g₂.prominence > g₁.prominence :=
-  (dependentCase_iff_isLicit _ _ _).trans (sd_off_diagonal_iff_outranks g₂ g₁ h.symm)
+  (dependentCase_iff_licit _ _ _).trans (sd_off_diagonal_iff_outranks g₂ g₁ h.symm)
 
 /-- Kolyma Yukaghir accusative ((52)): *-ul* realizes [φ, PART] in the object's flag and *-gele*
     its φ root, so the form records whether the subject T Agreed with first was a local
     person. -/
 def kolymaYukaghirAccusative (subj obj : Person) : Option String :=
   (flag weak (Locus.T.goals subj obj)).bind λ
-    | [s] => some (if dpBears s .part then "-ul" else "-gele")
+    | [s] => some (if bears s .part then "-ul" else "-gele")
     | _ => none
 
 /-- (49): *-gele* at 3→1, *-ul* at 1→2, and no accusative at 1→3. -/
