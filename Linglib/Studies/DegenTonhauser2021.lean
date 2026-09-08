@@ -118,29 +118,6 @@ section Fragment
 
 open English.Predicates.Verbal English.Predicates.Copular
 
-/-- The verb entry of a predicate; the two copular predicates have none. -/
-def toVerbEntry : Predicate → Option VerbEntry
-  | .know => some know
-  | .think => some think
-  | .discover => some discover
-  | .see => some see
-  | .say => some say
-  | .hear => some hear
-  | .reveal => some reveal
-  | .acknowledge => some acknowledge
-  | .admit => some admit
-  | .announce => some announce
-  | .confess => some confess
-  | .inform => some inform
-  | .suggest => some suggest
-  | .pretend => some pretend
-  | .confirm => some confirm
-  | .demonstrate => some demonstrate
-  | .establish => some establish
-  | .prove => some prove
-  | .beAnnoyed => none
-  | .beRight => none
-
 /-- The verb of a predicate, the semantic spine the verbal and copular entries share. -/
 def toPredicateCore : Predicate → Verb
   | .know => know.toVerb
