@@ -18,8 +18,14 @@ operator on the members of `H` true at `w`:
   member: the least true member under entailment, `IsLeast`. Its existence is
   Dayal's existential presupposition `IsExhaustivelyResolvable`; `dayalAns`
   returns it and `dayalStrongAns` applies Heim's strengthening to it;
+- `IsExhaustivelyResolvableOn H s`, the presupposition on an information
+  state: a least member the state supports, Dayal's at the singleton `{w}`;
+- `box H R`, the question under necessity, whose presupposition at a world is
+  the prejacent's on that world's modal base (`isExhaustivelyResolvable_box_iff`);
 - `exhCell H p` and `exhaustifiedPartition H`, [fox-2018]'s cells;
-- `relExh H w M`, [xiang-2022]'s exhaustivity relative to a modal base.
+- `relExh H w M`, [xiang-2022]'s exhaustivity relative to a modal base;
+- `ofFinset F`, a finite family of finite propositions, on which the
+  presuppositions are decidable.
 
 The presupposition holds exactly when the weak answer is itself a member
 (`isExhaustivelyResolvable_iff`), so Dayal's operator agrees with Heim's and
@@ -211,6 +217,59 @@ theorem dayalAns_eq_none_iff : dayalAns H w = none ↔ ¬ IsExhaustivelyResolvab
   rw [isExhaustivelyResolvable_iff, dayalAns]
   split_ifs with h <;> simp [h]
 
+/-! ### Resolvability on an information state -/
+
+/-- The members of `H` an information state `s` supports. -/
+def supported (s : Set W) : Set (Set W) := {p ∈ H | s ⊆ p}
+
+@[simp] theorem mem_supported {s p : Set W} : p ∈ supported H s ↔ p ∈ H ∧ s ⊆ p := Iff.rfl
+
+@[simp] theorem supported_singleton : supported H {w} = trueAnswers H w := by
+  ext p
+  simp [supported, trueAnswers]
+
+/-- Dayal's presupposition on an information state: a least supported member. On the
+singleton state `{w}` it is the presupposition at `w`. -/
+def IsExhaustivelyResolvableOn (s : Set W) : Prop := ∃ p, IsLeast (supported H s) p
+
+theorem isExhaustivelyResolvableOn_singleton :
+    IsExhaustivelyResolvableOn H {w} ↔ IsExhaustivelyResolvable H w := by
+  rw [IsExhaustivelyResolvableOn, supported_singleton]
+  rfl
+
+/-! ### Questions under necessity -/
+
+/-- The question `□Q` over the accessibility `R`: every member necessitated, holding at `x`
+when it holds at every world accessible from `x`. -/
+def box {W' : Type*} (R : W' → W → Prop) : Set (Set W') :=
+  (fun p => {x | ∀ v, R x v → v ∈ p}) '' H
+
+theorem mem_box {W' : Type*} {R : W' → W → Prop} {q : Set W'} :
+    q ∈ box H R ↔ ∃ p ∈ H, {x | ∀ v, R x v → v ∈ p} = q := Iff.rfl
+
+/-- Necessity lifts the presupposition: `□Q` is resolvable at `x` iff `Q` is resolvable on the
+worlds accessible from `x`, provided every world is the sole world accessible from some `x`. -/
+theorem isExhaustivelyResolvable_box_iff {W' : Type*} {R : W' → W → Prop}
+    (hR : ∀ v, ∃ x, ∀ u, R x u ↔ u = v) {x : W'} {s : Set W} (hs : ∀ v, R x v ↔ v ∈ s) :
+    IsExhaustivelyResolvable (box H R) x ↔ IsExhaustivelyResolvableOn H s := by
+  have mem : ∀ p, x ∈ {y | ∀ v, R y v → v ∈ p} ↔ s ⊆ p := fun p =>
+    ⟨fun h v hv => h v ((hs v).2 hv), fun h v hv => h ((hs v).1 hv)⟩
+  have mono : ∀ p q : Set W, p ⊆ q →
+      {y | ∀ v, R y v → v ∈ p} ⊆ {y | ∀ v, R y v → v ∈ q} :=
+    fun _ _ hpq _ h v hv => hpq (h v hv)
+  have refl : ∀ p q : Set W,
+      {y | ∀ v, R y v → v ∈ p} ⊆ {y | ∀ v, R y v → v ∈ q} → p ⊆ q := by
+    intro p q h v hv
+    obtain ⟨y, hy⟩ := hR v
+    exact h (fun u hu => ((hy u).1 hu) ▸ hv) v ((hy v).2 rfl)
+  constructor
+  · rintro ⟨q, ⟨⟨p, hp, rfl⟩, hx⟩, hmin⟩
+    refine ⟨p, ⟨hp, (mem p).1 hx⟩, fun r ⟨hr, hsr⟩ => refl p r (hmin ⟨⟨r, hr, rfl⟩, (mem r).2 hsr⟩)⟩
+  · rintro ⟨p, ⟨hp, hsp⟩, hmin⟩
+    refine ⟨_, ⟨⟨p, hp, rfl⟩, (mem p).2 hsp⟩, ?_⟩
+    rintro q ⟨⟨r, hr, rfl⟩, hx⟩
+    exact mono p r (hmin ⟨hr, (mem r).1 hx⟩)
+
 /-! ### Cells ([fox-2018]) -/
 
 /-- The cell of `p`: the worlds where `p` is the strongest true member. -/
@@ -314,6 +373,24 @@ theorem isExhaustivelyResolvable_ofFinset_iff (F : Finset (Finset W)) (w : W) :
 instance [DecidableEq W] (F : Finset (Finset W)) (w : W) :
     Decidable (IsExhaustivelyResolvable (ofFinset F) w) :=
   decidable_of_iff _ (isExhaustivelyResolvable_ofFinset_iff F w).symm
+
+theorem isExhaustivelyResolvableOn_ofFinset_iff (F : Finset (Finset W)) (s : Finset W) :
+    IsExhaustivelyResolvableOn (ofFinset F) ↑s ↔
+      ∃ p ∈ F, s ⊆ p ∧ ∀ q ∈ F, s ⊆ q → p ⊆ q := by
+  constructor
+  · rintro ⟨p, ⟨hp, hs⟩, hmin⟩
+    obtain ⟨p', hp', rfl⟩ := mem_ofFinset.1 hp
+    exact ⟨p', hp', Finset.coe_subset.1 hs, fun q hq hsq =>
+      Finset.coe_subset.1 (hmin ⟨mem_ofFinset.2 ⟨q, hq, rfl⟩, Finset.coe_subset.2 hsq⟩)⟩
+  · rintro ⟨p, hp, hs, hmin⟩
+    refine ⟨↑p, ⟨mem_ofFinset.2 ⟨p, hp, rfl⟩, Finset.coe_subset.2 hs⟩, ?_⟩
+    rintro q ⟨hq, hsq⟩
+    obtain ⟨q', hq', rfl⟩ := mem_ofFinset.1 hq
+    exact Finset.coe_subset.2 (hmin q' hq' (Finset.coe_subset.1 hsq))
+
+instance [DecidableEq W] (F : Finset (Finset W)) (s : Finset W) :
+    Decidable (IsExhaustivelyResolvableOn (ofFinset F) ↑s) :=
+  decidable_of_iff _ (isExhaustivelyResolvableOn_ofFinset_iff F s).symm
 
 end Finite
 

@@ -164,58 +164,29 @@ theorem farsi :
 
 /-! ### Questions with *must* (30)–(36) and collective predicates (56)–(57) -/
 
-/-- A deontic world: the nonempty set of permitted buy-worlds. -/
+/-- A deontic world: the nonempty set of buy-worlds it permits. -/
 abbrev Base := {A : Finset World // A.Nonempty}
 
-instance : Fintype Base := Subtype.fintype fun A : Finset World => A.Nonempty
+/-- *Must*'s accessibility: the buy-worlds a deontic world permits. -/
+def permits (A : Base) (v : World) : Prop := v ∈ A.1
 
-/-- *Must* over a proposition about buy-worlds: it holds in every permitted world. -/
-def box (p : Finset World) : Finset Base := univ.filter fun A => ∀ v ∈ A.1, v ∈ p
-
-theorem mem_box {p : Finset World} {A : Base} : A ∈ box p ↔ A.1 ⊆ p := by
-  simp [box, Finset.subset_iff]
-
-theorem box_subset_iff {p q : Finset World} : box p ⊆ box q ↔ p ⊆ q := by
-  refine ⟨fun h v hv => ?_, fun h A hA => mem_box.2 ((mem_box.1 hA).trans h)⟩
-  have := h (mem_box.2 (Finset.singleton_subset_iff.2 hv) :
-    (⟨{v}, Finset.singleton_nonempty v⟩ : Base) ∈ box p)
-  exact Finset.singleton_subset_iff.1 (mem_box.1 this)
-
-/-- Resolvability of the modalized question at the permitted worlds `A`, stated on the
-buy-world Hamblin set. -/
-def ResolvableAt (H : Finset (Finset World)) (A : Finset World) : Prop :=
-  ∃ p ∈ H, A ⊆ p ∧ ∀ q ∈ H, A ⊆ q → p ⊆ q
-
-instance (H : Finset (Finset World)) (A : Finset World) : Decidable (ResolvableAt H A) :=
-  inferInstanceAs (Decidable (∃ p ∈ H, _ ∧ ∀ q ∈ H, _ → _))
-
-/-- The question with *must* is resolvable at a deontic world iff its buy-world Hamblin set
-is resolvable at the permitted worlds. -/
-theorem isExhaustivelyResolvable_image_box (H : Finset (Finset World)) (A : Base) :
-    IsExhaustivelyResolvable (ofFinset (H.image box)) A ↔ ResolvableAt H A.1 := by
-  rw [isExhaustivelyResolvable_ofFinset_iff]
-  constructor
-  · rintro ⟨_, hP, hA, hmax⟩
-    obtain ⟨p, hp, rfl⟩ := Finset.mem_image.1 hP
-    refine ⟨p, hp, mem_box.1 hA, fun q hq hAq => ?_⟩
-    exact box_subset_iff.1 (hmax _ (Finset.mem_image_of_mem _ hq) (mem_box.2 hAq))
-  · rintro ⟨p, hp, hA, hmax⟩
-    refine ⟨box p, Finset.mem_image_of_mem _ hp, mem_box.2 hA, fun Q hQ hAQ => ?_⟩
-    obtain ⟨q, hq, rfl⟩ := Finset.mem_image.1 hQ
-    exact box_subset_iff.2 (hmax q hq (mem_box.1 hAQ))
+/-- Every buy-world is the sole world some deontic world permits. -/
+theorem permits_singleton (v : World) : ∃ A : Base, ∀ u, permits A u ↔ u = v :=
+  ⟨⟨{v}, Finset.singleton_nonempty v⟩, fun _ => Finset.mem_singleton⟩
 
 /-- (59): Forood must buy one of two things, and either is permitted. -/
 def freeChoice : Base := ⟨{{0}, {1}}, by decide⟩
 
-/-- (35)–(36) vs. (32)–(33): with the interrogative binding into the scope of *must* (34),
-only □(b₁ ∨ b₂) is true in the free-choice scenario, so the presupposition holds iff the
-interrogative ranges over disjunctions — which *-ro* removes, (62)–(63). -/
+/-- (35)–(36) vs. (32)–(33): with the interrogative binding into the scope of *must* (34), the
+question is resolvable in the free-choice scenario iff the interrogative ranges over
+disjunctions — which *-ro* removes, (62)–(63). -/
 theorem modal_gq :
-    (IsExhaustivelyResolvable (ofFinset ((hamblin bought neutral).image box)) freeChoice ∧
-        IsExhaustivelyResolvable (ofFinset ((hamblin bought atoms).image box)) freeChoice) ∧
-      (¬ IsExhaustivelyResolvable (ofFinset ((hamblinRo bought neutral).image box)) freeChoice ∧
-        ¬ IsExhaustivelyResolvable (ofFinset ((hamblinRo bought atoms).image box)) freeChoice) := by
-  simp only [isExhaustivelyResolvable_image_box]; decide
+    ∀ D ∈ [neutral, atoms],
+      IsExhaustivelyResolvable (box (ofFinset (hamblin bought D)) permits) freeChoice ∧
+        ¬ IsExhaustivelyResolvable (box (ofFinset (hamblinRo bought D)) permits) freeChoice := by
+  simp only [isExhaustivelyResolvable_box_iff _ permits_singleton (x := freeChoice)
+    (s := (↑freeChoice.1 : Set World)) fun _ => Iff.rfl]
+  decide
 
 /-- *Mixed together*: a collective predicate, true of a plurality that was bought. -/
 def mixed (e : Entity) (w : World) : Prop := 2 ≤ e.card ∧ e ⊆ w
@@ -269,11 +240,12 @@ theorem rows_agree :
 example : (Examples.all.filter fun row => (predicted row).isSome).length = 16 := by decide +kernel
 
 /-- (60)–(63): the embedded questions are felicitous in (59) iff their interrogative ranges
-over disjunctions (`isExhaustivelyResolvable_image_box` relates this to the modalized
-question). -/
+over disjunctions (`isExhaustivelyResolvable_box_iff` relates this to the question with
+*must*). -/
 theorem scenario_rows :
     ∀ row ∈ Examples.all, row.feature? "scenario" = some "freeChoice59" →
-      (hamblinOf row).map (fun H => decide (ResolvableAt H freeChoice.1)) =
+      (hamblinOf row).map
+          (fun H => decide (IsExhaustivelyResolvableOn (ofFinset H) ↑freeChoice.1)) =
         some (row.feature? "verdict" == some "true") := by decide +kernel
 
 end AlonsoOvalleMoghiseh2025b
