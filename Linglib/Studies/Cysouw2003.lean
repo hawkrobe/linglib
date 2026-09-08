@@ -54,7 +54,7 @@ explicitness hierarchy.
 
 namespace Cysouw2003
 
-open Person Person.Clusivity Morphology
+open Person Morphology
 
 variable (s : Setoid Category)
 
@@ -96,12 +96,12 @@ def Specialized (c : Category) : Prop := ∀ x : Category, x.IsSingular → ¬ s
 
 /-- Fig. 3.1's reading of two speaker cells as alike: both specialized and syncretic, or
 neither specialized. -/
-def WeRel (a b : Cell) : Prop :=
+def WeRel (a b : Clusivity.Cell) : Prop :=
   (Specialized s a ∧ Specialized s b ∧ s a b) ∨ (¬ Specialized s a ∧ ¬ Specialized s b)
 
 /-- Fig. 3.1's pattern of a structure, its speaker cells grouped by `WeRel`; the dash class is
 the speaker's. -/
-def wePattern : Setoid Cell where
+@[instance_reducible] def wePattern : Clusivity.Pattern where
   r := WeRel s
   iseqv :=
     { refl := λ a => by
@@ -119,7 +119,7 @@ def wePattern : Setoid Cell where
         · exact .inr ⟨ha, hc⟩ }
 
 /-- The structure is of the common type `t`. -/
-abbrev HasSystem (t : Clusivity.System) : Prop := wePattern s = t.pattern
+abbrev HasClusivity (t : Clusivity) : Prop := wePattern s = t.toPattern
 
 /-! ### The Horizontal Homophony Hierarchy (§4.7, §10.1.4) -/
 
@@ -132,9 +132,9 @@ def RespectsHorizontalHierarchy : Prop :=
       b.person.prominence ≤ a.person.prominence → HorizontalHomophonyAt s b
 
 variable {s} in
-theorem HasSystem.unique {t t' : Clusivity.System} (h : HasSystem s t) (h' : HasSystem s t') :
+theorem HasClusivity.unique {t t' : Clusivity} (h : HasClusivity s t) (h' : HasClusivity s t') :
     t = t' :=
-  Clusivity.System.pattern_injective (h.symm.trans h')
+  Clusivity.toPattern_injective (h.symm.trans h')
 
 variable [DecidableRel (⇑s)]
 
@@ -247,7 +247,7 @@ def labels : RarePattern → Category → ℕ
   | _, _ => 0
 
 /-- The rare pattern as a setoid on the four cells. -/
-abbrev pattern (q : RarePattern) : Setoid Cell := Setoid.ker (q.labels ∘ Subtype.val)
+abbrev pattern (q : RarePattern) : Clusivity.Pattern := Setoid.ker (q.labels ∘ Subtype.val)
 
 /-- The rare patterns are distinct from each other. -/
 theorem pattern_injective : Function.Injective pattern := by
@@ -255,7 +255,7 @@ theorem pattern_injective : Function.Injective pattern := by
 
 /-- The rare patterns are distinct from the common types, so ten of the fifteen patterns are
 attested (Figs. 3.1–3.2). -/
-theorem pattern_ne (q : RarePattern) (t : Clusivity.System) : q.pattern ≠ t.pattern := by
+theorem pattern_ne (q : RarePattern) (t : Clusivity) : q.pattern ≠ t.toPattern := by
   revert q t; decide +kernel
 
 end RarePattern
@@ -311,12 +311,12 @@ theorem pattern_injective : Function.Injective pattern := by
 /-- Their first person complexes (Fig. 4.4): the Maricopa type has no 'we', the Sierra
 Popoluca type only an inclusive, the Maranao type a minimal/augmented one, the other types
 with an inclusive/exclusive opposition are inclusive/exclusive and the rest unified. -/
-theorem hasSystem_pattern :
-    HasSystem maricopa.pattern .noWe ∧ HasSystem sierraPopoluca.pattern .onlyInclusive ∧
-    HasSystem maranao.pattern .minimalAugmented ∧
-    (∀ k ∈ [mandara, tupiGuarani, kwakiutl], HasSystem k.pattern .inclusiveExclusive) ∧
+theorem hasClusivity_pattern :
+    HasClusivity maricopa.pattern .noWe ∧ HasClusivity sierraPopoluca.pattern .onlyInclusive ∧
+    HasClusivity maranao.pattern .minimalAugmented ∧
+    (∀ k ∈ [mandara, tupiGuarani, kwakiutl], HasClusivity k.pattern .inclusiveExclusive) ∧
     ∀ k ∈ [latin, sinhalese, berik, slave, nezPerce, kombai, omie],
-      HasSystem k.pattern .unifiedWe := by
+      HasClusivity k.pattern .unifiedWe := by
   decide +kernel
 
 /-- Every named structure respects the horizontal hierarchy. -/
@@ -400,7 +400,7 @@ namespace Row
 abbrev syncretism (r : Row) : Setoid Category := Morphology.syncretism r.forms
 
 /-- The row's pattern of the first person complex. -/
-abbrev wePattern (r : Row) : Setoid Cell := Cysouw2003.wePattern r.syncretism
+abbrev wePattern (r : Row) : Clusivity.Pattern := Cysouw2003.wePattern r.syncretism
 
 /-- A feature that may be absent but, when present, must parse. -/
 private def optional? {α : Type*} (e : Data.Examples.LinguisticExample) (key : String)
@@ -448,19 +448,20 @@ theorem rows_rare : ∀ r ∈ rows, ∀ q, r.rare = some q → r.wePattern = q.p
 
 /-- Every chapter-4 paradigm has one of the five common types, §4.2 having set the rare
 patterns aside. -/
-theorem rows_hasSystem : ∀ r ∈ rows, r.chapter = 4 → ∃ t, HasSystem r.syncretism t := by
+theorem rows_hasClusivity :
+    ∀ r ∈ rows, r.chapter = 4 → ∃ t, HasClusivity r.syncretism t := by
   decide +kernel
 
 /-- Addressee inclusion implication I (3.23) over the printed paradigms, Binandere the one
 exception. -/
 theorem rows_specializedInclusive_of_specializedExclusive :
     ∀ r ∈ rows, r.rare ≠ some .pj →
-      SpecializedExclusive r.wePattern → SpecializedInclusive r.wePattern := by
+      r.wePattern.SpecializedExclusive → r.wePattern.SpecializedInclusive := by
   decide +kernel
 
 theorem binandere :
-    ∃ r ∈ rows, r.rare = some .pj ∧ SpecializedExclusive r.wePattern ∧
-      ¬ SpecializedInclusive r.wePattern := by
+    ∃ r ∈ rows, r.rare = some .pj ∧ r.wePattern.SpecializedExclusive ∧
+      ¬ r.wePattern.SpecializedInclusive := by
   decide +kernel
 
 /-- Addressee inclusion implication II (3.24) over the printed paradigms. Its exceptions are
@@ -468,17 +469,17 @@ the rare patterns that mark the two inclusives apart: (Pf) and (Pg), which the b
 and (Ph), whose paradigm (3.20) the book's list overlooks. -/
 theorem rows_specializedExclusive_of_splitInclusive :
     ∀ r ∈ rows, (r.rare = none ∨ r.rare = some .pi ∨ r.rare = some .pj) →
-      SplitInclusive r.wePattern → SpecializedExclusive r.wePattern := by
+      r.wePattern.SplitInclusive → r.wePattern.SpecializedExclusive := by
   decide +kernel
 
 theorem rows_splitInclusive_not_specializedExclusive :
     ∀ r ∈ rows, (r.rare = some .pf ∨ r.rare = some .pg ∨ r.rare = some .ph) →
-      SplitInclusive r.wePattern ∧ ¬ SpecializedExclusive r.wePattern := by
+      r.wePattern.SplitInclusive ∧ ¬ r.wePattern.SpecializedExclusive := by
   decide +kernel
 
 /-- The strong universal 'we' (3.7) fails: the English inflection (4.68) has no 'we'. -/
 theorem english_inflection_noWe :
-    ∃ r ∈ rows, r.id = "cysouw2003_4.68" ∧ HasSystem r.syncretism .noWe := by
+    ∃ r ∈ rows, r.id = "cysouw2003_4.68" ∧ HasClusivity r.syncretism .noWe := by
   decide +kernel
 
 /-- The Homophony Implication (2.14), (10.4) over the printed paradigms: singular homophony
@@ -529,7 +530,8 @@ theorem rows_rare_of_verticalHomophony_inclusiveExclusive :
 /-- Fig. 10.4's exemplars occupy the five rungs: the Waskia present (4.66), the Una undergoer
 suffixes (4.64), then the Latin, Mandara and Maranao types. -/
 theorem explicitness_fig10_4 :
-    ∃ waskia ∈ rows, ∃ una ∈ rows, waskia.id = "cysouw2003_4.66" ∧ una.id = "cysouw2003_4.64" ∧
+    ∃ waskia ∈ rows, ∃ una ∈ rows,
+      waskia.id = "cysouw2003_4.66" ∧ una.id = "cysouw2003_4.64" ∧
       explicitness waskia.syncretism = some .singularHomophony ∧
       explicitness una.syncretism = some .verticalHomophony ∧
       explicitness Kind.latin.pattern = some (.we .unified) ∧

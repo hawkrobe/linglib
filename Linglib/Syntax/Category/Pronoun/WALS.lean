@@ -380,10 +380,10 @@ end Pronoun
 namespace Pronoun
 
 /-- WALS Ch 39 image of a Cysouw first-person-complex type
-    (`Person.Clusivity.System`): WALS Ch 39 (Cysouw's own chapter)
+    (`Person.Clusivity`): WALS Ch 39 (Cysouw's own chapter)
     collapses the minimal/augmented split, so the map is many-to-one —
     given a WALS value, the paradigm type is underdetermined. -/
-def InclusiveExclusive.fromClusivity : Person.Clusivity.System → InclusiveExclusive
+def InclusiveExclusive.fromClusivity : Person.Clusivity → InclusiveExclusive
   | .noWe                => .noWe
   | .unifiedWe           => .noDistinction
   | .onlyInclusive       => .onlyInclusive

@@ -52,7 +52,7 @@ underdetermines Tagalog's actual paradigm: *kata* (1+2 minimal-inclusive,
 the "we two" form per S&O Chart 7 p. 88), *tayo* (1+2 augmented-inclusive
 covering any 1+2+others grouping per S&O p. 89 — not specifically 1+2+3),
 and *kami* (1+3 exclusive) instantiate Cysouw's *minimal-augmented* type
-(see `Tagalog.clusivitySystem` in
+(see `Tagalog.clusivity` in
 `Fragments/Tagalog/Pronouns.lean`). The full Table 12.2 paradigm from
 [himmelmann-2005-tagalog] is also documented there.
 -/
