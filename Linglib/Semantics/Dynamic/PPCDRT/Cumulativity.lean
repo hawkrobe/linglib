@@ -16,7 +16,7 @@ collapses to `Cumulative (· = ·)` on the Finsets of values.
 The `Plurality/Cumulativity.lean` substrate is `Prop`-valued over
 `Finset × Finset`, while PPCDRT is `Prop`-valued over `PluralAssign`. The
 bridge theorem, under finiteness assumptions on the value-sets, establishes
-the structural identity that the original `Reference/Reciprocals.lean`
+the structural identity that `Plurality/Reciprocal/Scope.lean`
 docstring asserted as prose.
 -/
 

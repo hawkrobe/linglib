@@ -1,4 +1,5 @@
 import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Reciprocal
 
 /-!
 # Japanese pronouns and the addressee-honorific marker
@@ -66,9 +67,8 @@ def pronouns : List PersonalPronoun :=
   [watashi, boku, ore, watashitachi, kimi, anata, kare, kanojo, karera]
 
 /-- 互い *otagai* — the reciprocal pronoun, distinct from the reflexive *jibun*. -/
-def otagai : Pronoun :=
-  { form := "otagai", script := some "互い", number := some .plural,
-    bindingClass := some .reciprocal }
+def otagai : ReciprocalPronoun :=
+  { form := "otagai", script := some "互い", number := some .plural }
 
 /-- *-mas-* — the addressee-honorific marker on the verb. -/
 def mas : AllocutiveEntry := { form := "-mas-", register := .formal, gloss := "MAS" }

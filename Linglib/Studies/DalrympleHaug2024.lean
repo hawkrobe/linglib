@@ -1,523 +1,415 @@
-import Linglib.Semantics.Reference.Reciprocals
-import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
-import Linglib.Semantics.Plurality.Distributivity
+import Linglib.Data.Examples.DalrympleHaug2024
+import Linglib.Semantics.Plurality.Reciprocal.Scope
+import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.Hungarian.Reciprocals
 import Linglib.Fragments.Wan.Reciprocals
+import Linglib.Studies.Landau2015
 
 /-!
-# Dalrymple & Haug (2024): Constraints on Reciprocal Scope
-[dalrymple-haug-2024]
+# Dalrymple and Haug, constraints on reciprocal scope (2024)
 
-*Linguistic Inquiry*, Early Access. DOI: 10.1162/ling_a_00546.
+A reciprocal in a complement clause has a narrow-scope we-reading and a wide-scope I-reading,
+and Dalrymple and Haug survey constructions in which properties of its local antecedent, the
+embedded pronoun rather than the matrix subject, fix the scope. On the quantificational
+analysis of Heim, Lasnik and May the reciprocal contains a distributive quantifier that raises
+to the scope position and binds the local antecedent in situ; on the relational analysis of
+Haug and Dalrymple it is a pronoun anaphoric on the local antecedent, so that under wide scope
+the local antecedent is bound by the matrix subject and interpreted with the reciprocal in the
+matrix clause. Bound and nonbound antecedents, collective conjuncts and control constructions
+come out alike on both analyses; an explicit distributor on the antecedent and a logophoric
+antecedent separate them, and only the relational analysis fits the data.
 
-Properties of the **local antecedent** of the reciprocal (the embedded-clause
-pronoun coreferent with the matrix subject) determine reciprocal scope.
-This paper systematically surveys five construction types and shows that
-the relational analysis of reciprocals makes correct predictions in all
-cases, while the quantificational analysis fails for distributive operators
-(§5) and logophoric antecedents (§6).
+We state each analysis by its two commitments, where it interprets the local antecedent under
+each reading and whether the reciprocal distributes, derive the readings each admits for each
+construction, and check them against the paper's judgments.
 
-## Construction Types Surveyed
+## Implementation notes
 
-| §  | Construction                  | Narrow | Wide | Both agree? |
-|----|-------------------------------|--------|------|-------------|
-| 2  | Bound antecedent (Hungarian)  | ✗      | ✓    | ✓           |
-| 2  | Nonbound antecedent (Japanese)| ✓      | ✗    | ✓           |
-| 3  | Collective conjunct           | ✓      | ✗    | ✓           |
-| 4  | Partial control               | ✓      | ?    | ✓           |
-| 4  | Exhaustive control, collective| ✓      | ✗    | ✓           |
-| 4  | Exhaustive control, non-coll. | ✗      | ✓    | ✓           |
-| 5  | Distributive operator         | ✓      | ✓    | ✗ (quant. ✗)|
-| 6  | Logophoric antecedent (Wan)   | ✓      | ✗    | ✗ (quant. ✗)|
+* A construction is represented by its local antecedent alone: the denotation its form or
+  predicate forces, whether it is a logophor, the locus of an explicit distributor, and the
+  number of the matrix argument. Partial control forces no denotation, since PRO may properly
+  include the controller or coincide with it.
+* A simple sentence has only the in-situ reading, so (18b)–(20) are the narrow reading with the
+  distributor at the low locus.
 
-## Connections
+## TODO
 
-- `Semantics/Reference/Reciprocals.lean` — the three anaphoric
-  relations (=, ∪, R) and prediction functions
-- `Semantics/Lexical/Plural/Distributivity.lean` — distributive
-  operators (§5 shows *each* does NOT block wide scope, contra
-  [heim-lasnik-may-1991])
-- `Fragments/Hungarian/Reciprocals.lean` — Hungarian *egymás* with
-  singular null pronoun antecedent (§2, [rakosi-2019])
-- `Fragments/Wan/Reciprocals.lean` — Wan logophoric reciprocal data (§6)
-- `Discourse/Logophoricity.lean` — Sells (1987) logophoric roles
-- `Studies/Landau2015.lean` — control tier distinction
-  (exhaustive vs. partial) relevant to §4
+* (17) is analysed, with the paper, as exhaustive control, but `Landau2015.derivedControlTier`
+  puts *intend* (and *decide* of (14)) on the partial-control tier; a semantics for partial
+  control would decide the case.
+* (25) is headed wide scope but read by the paper as a crossed reading; a crossed value in
+  `Scope` would make it a row and reach the substrate's `ScopeReading.crossed`.
+
+## References
+
+* [M. Dalrymple and D. T. T. Haug, *Constraints on reciprocal scope* (2024)][dalrymple-haug-2024]
+* [D. T. T. Haug and M. Dalrymple, *Reciprocity: Anaphora, scope, and quantification*
+  (2020)][haug-dalrymple-2020]
+* [I. Heim, H. Lasnik and R. May, *Reciprocity and plurality* (1991)][heim-lasnik-may-1991]
+* [J. Higginbotham, *Reciprocal interpretation* (1980)][higginbotham-1980]
+* [T. Nishigauchi, *Syntax of reciprocals in Japanese* (1992)][nishigauchi-1992]
+* [G. Rákosi, *Reciprocal anaphors in singular constructions in Hungarian*
+  (2019)][rakosi-2019]
+* [W. Tay, K. New, M. Dalrymple and D. Haug, *Reciprocal scope in Mandarin*
+  (2021)][tay-new-dalrymple-haug-2021]
+* [I. Landau, *Elements of control* (2000)][landau-2000]
+* [I. Landau, *A two-tiered theory of control* (2015)][landau-2015]
+* [K. Safir, *One true anaphor* (2014)][safir-2014]
+* [L. Champollion, *Overt distributivity in algebraic event semantics*
+  (2016)][champollion-2016]
 -/
 
 namespace DalrympleHaug2024
 
-open Reference.Reciprocals
-open PPCDRT
-open Core
+open Reciprocal Data.Examples
 
--- ════════════════════════════════════════════════════════════════
--- § 1: Scope Judgment Data
--- ════════════════════════════════════════════════════════════════
+/-! ### Analyses and local antecedents -/
 
-/-- A reciprocal scope judgment: which readings are available for a
-    particular construction type. -/
-structure ScopeJudgment where
-  /-- Description of the construction -/
-  construction : String
-  /-- Example sentence -/
-  example_ : String
-  /-- Available scope readings -/
-  available : List RecipScope
-  /-- Which section of the paper -/
-  section_ : Nat
+/-- What the local antecedent denotes under a reading ((5), (8)). -/
+inductive Grain where
+  /-- An individual, as a bound variable (`=`). -/
+  | individual
+  /-- The plurality, under group identity (`∪`) with the matrix subject. -/
+  | plurality
+  deriving DecidableEq, Repr
+
+/-- The denotation of the local antecedent under a scope reading, read off the antecedent
+    relation of its cell, bound under wide scope and group-identical under narrow scope on both
+    analyses ((4), (6)–(8)). -/
+def antecedentGrain (r : Scope) : Grain :=
+  match r.reading.antecedentRel with
+  | .binding => .individual
+  | .groupIdentity | .reciprocity => .plurality
+
+@[simp] theorem antecedentGrain_narrow : antecedentGrain .narrow = .plurality := rfl
+
+@[simp] theorem antecedentGrain_wide : antecedentGrain .wide = .individual := rfl
+
+/-- The denotation a pronoun's number forces: a singular pronoun denotes an individual and so
+    must be bound, a plural pronoun may be bound or group-identical ((10b)). -/
+def Grain.ofNumber? : Number → Option Grain
+  | .singular => some .individual
+  | _ => none
+
+/-- The local antecedent of a reciprocal in a complement clause, by the properties the paper
+    surveys. -/
+structure Antecedent where
+  /-- The denotation its form or its predicate forces, if any. -/
+  grain : Option Grain := none
+  /-- A logophor, interpreted inside the report (§6). -/
+  logophoric : Bool := false
+  /-- The locus of an explicit distributor on it, if any (§5). -/
+  distributor : Option Locus := none
+  /-- Whether the matrix argument it is anaphoric to is a plurality. -/
+  matrixPlural : Bool := true
   deriving Repr
 
--- ════════════════════════════════════════════════════════════════
--- § 2: Bound and Nonbound Pronoun Antecedents
--- ════════════════════════════════════════════════════════════════
-
-/-- Hungarian: singular null pronoun antecedent forces bound reading (=),
-    yielding only wide scope.
-
-    (10) Péter és Éva az-t gondolja, hogy szereti egymás-t.
-    'Péter and Éva think that [they] love each other.'
-    → Wide scope only (I-reading) -/
-def hungarianBound : ScopeJudgment :=
-  { construction := "Bound singular null pronoun antecedent (Hungarian)"
-    example_ := "Péter és Éva azt gondolja, hogy szereti egymást."
-    available := [.wide]
-    section_ := 2 }
-
-/-- Japanese: *zibun-tati* (plural reflexive) resists bound reading,
-    favoring group identity (∪). As antecedent of reciprocal, only narrow
-    scope available.
-
-    (11) John to Mary ga [zibun-tati ga otagai o mi-ta to] omow-ta.
-    'John and Mary thought that selves saw each other.'
-    → Narrow scope only (we-reading) -/
-def japaneseNonbound : ScopeJudgment :=
-  { construction := "Nonbound plural reflexive antecedent (Japanese)"
-    example_ := "John to Mary ga [zibun-tati ga otagai o mi-ta to] omow-ta."
-    available := [.narrow]
-    section_ := 2 }
-
--- ════════════════════════════════════════════════════════════════
--- § 3: Collectivity
--- ════════════════════════════════════════════════════════════════
-
-/-- When the reciprocal VP is coordinated with a collective predicate,
-    only narrow scope is available. Wide scope gives the local antecedent
-    an individual denotation, which cannot satisfy the collectivity
-    requirement.
-
-    (12) The girls hoped that they would [meet at the tennis court] and
-         [defeat each other].
-    → Narrow scope only -/
-def collectiveConjunct : ScopeJudgment :=
-  { construction := "VP coordination with collective predicate"
-    example_ := "The girls hoped that they would meet at the tennis court and defeat each other."
-    available := [.narrow]
-    section_ := 3 }
-
--- ════════════════════════════════════════════════════════════════
--- § 4: Control and Reciprocal Scope
--- ════════════════════════════════════════════════════════════════
-
-/-- The canonical wide-scope-only case in control constructions
-    ([higginbotham-1980]).
-
-    (13) They wanted to visit each other.
-    → Wide scope only (I-reading)
-
-    This has been "generally accepted" since [higginbotham-1980]. Note
-    that *want* is actually partial control per [landau-2015], so
-    the scope fixing here may be due to pragmatic factors rather than
-    syntactic constraints on control type. -/
-def wantControl : ScopeJudgment :=
-  { construction := "Control with 'want' ([higginbotham-1980])"
-    example_ := "They wanted to visit each other."
-    available := [.wide]
-    section_ := 4 }
-
-/-- Exhaustive control with a collectively interpreted controller
-    rules out wide scope (collective interpretation requires plurality).
-
-    (14) They decided to keep each other's comments confidential.
-    → Narrow scope available (collective "decided")
-
-    [heim-lasnik-may-1991] claim this has two readings (collective
-    narrow, distributive wide), but the distinction is hard to verify
-    for many verbs. -/
-def exhaustiveControlCollective : ScopeJudgment :=
-  { construction := "Exhaustive control, collective controller"
-    example_ := "They decided to keep each other's comments confidential."
-    available := [.narrow]
-    section_ := 4 }
-
-/-- Partial control verbs (*want*, *hope*) with a singular controller
-    allow narrow scope because PRO can denote a superset of the
-    controller.
-
-    (15a) I asked a girl who I liked if she wanted to get to know
-          each other better.
-    (15b) I vow to keep reminding you McDonald's is unhealthy ...
-          because I want to live long, happy lives by each other's side.
-    → Narrow scope available
-
-    These are attested corpus examples. Substituting exhaustive control
-    verbs (*try*, *manage*) makes the sentences worse (16a-b), confirming
-    the role of partial control. The matrix argument is singular, so a
-    collective interpretation is impossible — narrow scope arises purely
-    from the partial-control PRO denoting a superset. -/
-def partialControl : ScopeJudgment :=
-  { construction := "Partial control (PRO superset of controller)"
-    example_ := "She wanted to get to know each other better."
-    available := [.narrow]
-    section_ := 4 }
-
-/-- Exhaustive control with non-collective interpretation: wide scope only.
-
-    (17) Unbeknownst to each other, Tracy and Chris intended to help
-         each other.
-    → Wide scope only
-
-    "Unbeknownst to each other" forces a distributive reading of the
-    matrix subject (each individual is unaware), so the controller is
-    not interpreted collectively. -/
-def exhaustiveControlNonCollective : ScopeJudgment :=
-  { construction := "Exhaustive control, non-collective"
-    example_ := "Unbeknownst to each other, Tracy and Chris intended to help each other."
-    available := [.wide]
-    section_ := 4 }
-
--- ════════════════════════════════════════════════════════════════
--- § 5: Distributive Operators
--- ════════════════════════════════════════════════════════════════
-
-/-- [heim-lasnik-may-1991] claim that (18a) is unambiguous (narrow
-    only) and that (18b) is ungrammatical:
-
-    (18a) They each think they are taller than each other.
-    (18b) *They each examined each other.
-
-    Their reasoning: on the quantificational analysis, distributive *each*
-    cannot apply to the already-distributed NP *each* inside *each other*.
-    This is "a commonplace in the literature on distributivity"
-    ([champollion-2016]).
-
-    However, corpus examples with *each of them* / *each* and a reciprocal
-    antecedent are plentiful (19-20, 23-26), and both readings are
-    available (24-25 for narrow, 25-26 for wide). -/
-def hlmDistributiveClaim : ScopeJudgment :=
-  { construction := "HLM: *each...each other* ungrammatical (REFUTED)"
-    example_ := "*They each examined each other."
-    available := []  -- HLM predicts ungrammatical / narrow only
-    section_ := 5 }
-
-/-- Contra [heim-lasnik-may-1991], a distributive operator (*each*)
-    in the matrix clause does NOT block wide scope. Corpus data shows
-    both readings are available.
-
-    (24) They each liked each other. [narrow: mutual knowledge]
-    (25) They each liked each other before. [wide: I-reading]
-    (27b) They each think they liked each other. [narrow]
-    (27c) They each think they liked each other. [wide]
-
-    The quantificational analysis incorrectly predicts that applying a
-    distributor to an already-distributed NP should be impossible. The
-    relational analysis correctly allows both: *each other* is a pronoun,
-    not a quantified NP, so there is no double-distribution problem.
-    Distributive *each* can access the group denoted by the antecedent
-    even if we distribute on that antecedent
-    ([haug-dalrymple-2020] §2.3). -/
-def distributiveOperator : ScopeJudgment :=
-  { construction := "Distributive 'each' in matrix clause"
-    example_ := "They each think they liked each other."
-    available := [.narrow, .wide]
-    section_ := 5 }
-
-/-- The *each...different* diagnostic (exx. 21-23) shows that *each* in
-    *they each [V] each other* is not vacuous: it licenses internal
-    readings of *different* that bare *each other* cannot.
-
-    (21a) The men told each girl a different story.
-          → Internal reading available (different story per girl)
-    (21b) The men told each other a different story.
-          → External reading only (not: different per pair member)
-    (22)  The men each told each other a different story.
-          → Internal reading emerges with *each* present
-
-    This proves that higher *each* has genuine semantic content (it
-    distributes on the antecedent), contra the HLM prediction that it
-    should be impossible. -/
-def eachDifferentDiagnostic : ScopeJudgment :=
-  { construction := "each...each other licenses internal 'different'"
-    example_ := "The men each told each other a different story."
-    available := [.narrow, .wide]
-    section_ := 5 }
-
--- ════════════════════════════════════════════════════════════════
--- § 6: Logophoricity
--- ════════════════════════════════════════════════════════════════
-
-/-- In Wan (Mande), when the antecedent of the reciprocal is a logophor,
-    only narrow scope is available.
-
-    (28) wì mù tēŋ gé mɔ̄ á ē ɔ̄ŋ lɔ̄ lé
-    'All the animals say they-LOG will eat each other.'
-    → Narrow scope only (logophor + reciprocal)
-
-    The wide scope reading IS available with an ordinary (non-logophoric)
-    pronoun (32), confirming that logophoricity is the constraining factor.
-
-    The relational analysis predicts this: on the wide scope reading, the
-    embedded subject must be interpreted in the matrix clause for
-    accessibility, but a logophor is confined to the report context.
-    The quantificational analysis predicts both readings should be
-    available since the quantifier scopes independently of logophoricity. -/
-def logophoricAntecedent : ScopeJudgment :=
-  { construction := "Logophoric antecedent (Wan)"
-    example_ := "wì mù tēŋ gé mɔ̄ á ē ɔ̄ŋ lɔ̄ lé"
-    available := [.narrow]
-    section_ := 6 }
-
-/-- With an ordinary (non-logophoric) pronoun, the wide scope reading
-    IS available in Wan.
-
-    (32) wì mù tēŋ tú gé à ɔ̄ŋ lɔ̄ lé
-    'They all say they-3PL are going to eat each other.'
-    → Both readings available -/
-def nonLogophoricAntecedent : ScopeJudgment :=
-  { construction := "Non-logophoric antecedent (Wan)"
-    example_ := "wì mù tēŋ tú gé à ɔ̄ŋ lɔ̄ lé"
-    available := [.narrow, .wide]
-    section_ := 6 }
-
-/-- All scope judgments from the paper. -/
-def allJudgments : List ScopeJudgment :=
-  [ hungarianBound
-  , japaneseNonbound
-  , collectiveConjunct
-  , wantControl
-  , partialControl
-  , exhaustiveControlCollective
-  , exhaustiveControlNonCollective
-  , hlmDistributiveClaim
-  , distributiveOperator
-  , eachDifferentDiagnostic
-  , logophoricAntecedent
-  , nonLogophoricAntecedent ]
-
--- ════════════════════════════════════════════════════════════════
--- § 7: Verification — Relational Analysis Predictions
--- ════════════════════════════════════════════════════════════════
-
-/-- Antecedent properties for each construction. -/
-
-def hungarianProps : AntecedentProperties :=
-  { isBound := true, hasCollectiveConjunct := false
-    forcesGroupIdentity := false
-    isExhaustiveControl := false, controllerIsCollective := false
-    isLogophoric := false, hasDistributiveOperator := false }
-
-/-- Japanese *zibun-tati* resists bound readings ([nishigauchi-1992]),
-    forcing group identity (∪) and thus narrow scope only. -/
-def japaneseProps : AntecedentProperties :=
-  { isBound := false, hasCollectiveConjunct := false
-    forcesGroupIdentity := true
-    isExhaustiveControl := false, controllerIsCollective := false
-    isLogophoric := false, hasDistributiveOperator := false }
-
-def collectiveProps : AntecedentProperties :=
-  { isBound := false, hasCollectiveConjunct := true
-    forcesGroupIdentity := false
-    isExhaustiveControl := false, controllerIsCollective := false
-    isLogophoric := false, hasDistributiveOperator := false }
-
-def ecCollectiveProps : AntecedentProperties :=
-  { isBound := false, hasCollectiveConjunct := false
-    forcesGroupIdentity := false
-    isExhaustiveControl := true, controllerIsCollective := true
-    isLogophoric := false, hasDistributiveOperator := false }
-
-def ecNonCollectiveProps : AntecedentProperties :=
-  { isBound := false, hasCollectiveConjunct := false
-    forcesGroupIdentity := false
-    isExhaustiveControl := true, controllerIsCollective := false
-    isLogophoric := false, hasDistributiveOperator := false }
-
-def distributiveProps : AntecedentProperties :=
-  { isBound := false, hasCollectiveConjunct := false
-    forcesGroupIdentity := false
-    isExhaustiveControl := false, controllerIsCollective := false
-    isLogophoric := false, hasDistributiveOperator := true }
-
-def logophoricProps : AntecedentProperties :=
-  { isBound := false, hasCollectiveConjunct := false
-    forcesGroupIdentity := false
-    isExhaustiveControl := false, controllerIsCollective := false
-    isLogophoric := true, hasDistributiveOperator := false }
-
-/-- Hungarian bound antecedent: relational predicts wide only. -/
-theorem relational_hungarian :
-    relationalPrediction hungarianProps = [.wide] := rfl
-
-/-- Japanese *zibun-tati* forces group identity (∪), yielding narrow
-    scope only. Both analyses agree on this. -/
-theorem relational_japanese :
-    relationalPrediction japaneseProps = [.narrow] := rfl
-
-/-- Collective conjunct: relational predicts narrow only. -/
-theorem relational_collective :
-    relationalPrediction collectiveProps = [.narrow] := rfl
-
-/-- Exhaustive control, collective: relational predicts narrow only. -/
-theorem relational_ec_collective :
-    relationalPrediction ecCollectiveProps = [.narrow] := rfl
-
-/-- Exhaustive control, non-collective: relational predicts wide only. -/
-theorem relational_ec_noncollective :
-    relationalPrediction ecNonCollectiveProps = [.wide] := rfl
-
-/-- Distributive operator: relational predicts both readings.
-    The distributor is orthogonal because *each other* is a pronoun. -/
-theorem relational_distributive :
-    relationalPrediction distributiveProps = [.narrow, .wide] := rfl
-
-/-- Logophoric antecedent: relational predicts narrow only. -/
-theorem relational_logophoric :
-    relationalPrediction logophoricProps = [.narrow] := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § 8: Quantificational Analysis — Where It Agrees
--- ════════════════════════════════════════════════════════════════
-
-/-- Both analyses agree on Japanese *zibun-tati*: narrow only. -/
-theorem quant_agrees_japanese :
-    quantificationalPrediction japaneseProps = [.narrow] := rfl
-
-/-- The quantificational analysis makes the SAME prediction as the
-    relational analysis for bound antecedents. -/
-theorem quant_agrees_hungarian :
-    quantificationalPrediction hungarianProps = [.wide] := rfl
-
-/-- The quantificational analysis makes the SAME prediction for
-    collective conjuncts. -/
-theorem quant_agrees_collective :
-    quantificationalPrediction collectiveProps = [.narrow] := rfl
-
-/-- The quantificational analysis agrees on exhaustive control. -/
-theorem quant_agrees_ec_noncollective :
-    quantificationalPrediction ecNonCollectiveProps = [.wide] := rfl
-
-theorem quant_agrees_ec_collective :
-    quantificationalPrediction ecCollectiveProps = [.narrow] := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § 9: Quantificational Analysis — Where It Fails
--- ════════════════════════════════════════════════════════════════
-
-/-- DIVERGENCE 1 (§5): The quantificational analysis incorrectly
-    predicts that distributive *each* blocks wide scope for reciprocals.
-    It predicts narrow scope only, but empirically both readings
-    are attested (exx. 19-20, 24-26).
-
-    The relational analysis correctly predicts both readings are
-    available, because *each other* is a pronoun, not a quantified NP. -/
-theorem quant_fails_distributive :
-    quantificationalPrediction distributiveProps = [.narrow] ∧
-    relationalPrediction distributiveProps = [.narrow, .wide] ∧
-    distributiveOperator.available = [.narrow, .wide] := ⟨rfl, rfl, rfl⟩
-
-/-- DIVERGENCE 2 (§6): The quantificational analysis fails to restrict
-    scope for logophoric antecedents. It predicts both readings should
-    be available, but empirically only narrow is attested.
-
-    On the quantificational analysis, the quantifier part of *each other*
-    scopes independently of whether the embedded subject is logophoric.
-    The relational analysis correctly predicts narrow only, because the
-    logophor is confined to the report context and the reciprocal's
-    R-relation cannot "drag" its antecedent out. -/
-theorem quant_fails_logophoric :
-    quantificationalPrediction logophoricProps = [.narrow, .wide] ∧
-    relationalPrediction logophoricProps = [.narrow] ∧
-    logophoricAntecedent.available = [.narrow] := ⟨rfl, rfl, rfl⟩
-
-/-- The relational analysis matches the empirical data in ALL cases
-    where the two analyses diverge. The quantificational analysis
-    is empirically inadequate for distributive operators and logophoric
-    antecedents. -/
-theorem relational_superior :
-    -- §5: relational correctly predicts both readings with distributors
-    relationalPrediction distributiveProps = distributiveOperator.available ∧
-    -- §5: quantificational incorrectly restricts
-    quantificationalPrediction distributiveProps ≠ distributiveOperator.available ∧
-    -- §6: relational correctly restricts logophoric to narrow
-    relationalPrediction logophoricProps = logophoricAntecedent.available ∧
-    -- §6: quantificational incorrectly overgenerates
-    quantificationalPrediction logophoricProps ≠ logophoricAntecedent.available := by
-  refine ⟨rfl, ?_, rfl, ?_⟩ <;> decide
-
--- ════════════════════════════════════════════════════════════════
--- § 10: Cross-References to Fragment Data
--- ════════════════════════════════════════════════════════════════
-
-/-- Hungarian *egymás* is formally distinct from the reflexive *maga*,
-    per the fragment data. This distinction matters: reflexives and
-    reciprocals have different scope possibilities. -/
-theorem hungarian_recip_not_reflexive :
-    Hungarian.Reciprocals.egymas.form ≠
-    Hungarian.Reciprocals.maga.form := by decide
-
-/-- Hungarian allows singular antecedents for the reciprocal
-    ([rakosi-2019]), which forces wide scope (the singular null
-    pronoun must be bound). All four singular construction types
-    license the reciprocal. -/
-theorem hungarian_singular_forces_wide :
-    Hungarian.Reciprocals.singularConstructions.map
-      Hungarian.Reciprocals.reciprocalLicensed = [true, true, true, true] ∧
-    Hungarian.Reciprocals.singularAntecedentForcesWideScope = true := ⟨rfl, rfl⟩
-
-/-- Wan logophoric pronoun *mɔ̄* is formally distinct from the ordinary
-    3pl pronoun *tú*. The scope constraint is specific to logophoric
-    antecedents — wide scope IS available with the ordinary pronoun. -/
-theorem wan_log_distinct :
-    Wan.Reciprocals.logPl.form ≠
-    Wan.Reciprocals.ordinaryPl.form := by decide
-
-/-- Wan reflexive *ē* is distinct from the logophoric pronoun *mɔ̄*.
-    The reciprocal construction uses REFL + RECIP morphology (*ē ɔ̄ŋ*),
-    while the logophoric pronoun (*mɔ̄*) is the subject of the embedded
-    clause. -/
-theorem wan_refl_distinct_from_log :
-    Wan.Reciprocals.refl.form ≠
-    Wan.Reciprocals.logPl.form := by decide
-
-/-- The Wan logophoric pronoun satisfies at least the pivot role in
-    [sells-1987]'s hierarchy, connecting this fragment to the
-    logophoricity theory in `Features/Logophoricity.lean`. -/
-theorem wan_log_is_at_least_pivot :
-    Features.Logophoricity.LogophoricRole.pivot ≤
-    Wan.Reciprocals.logophoricRole := by decide
-
--- ════════════════════════════════════════════════════════════════
--- § 11: Connection to Formal Semantics ([haug-dalrymple-2020])
--- ════════════════════════════════════════════════════════════════
-
-/-- The bound antecedent case (Hungarian) uses the `bindingCond` relation,
-    which implies `groupIdentityCond`. Since binding forces equal values
-    pointwise, the value-sets are equal, so wide scope is the natural
-    reading. Connects the scope predictions to the formal semantics of
-    [haug-dalrymple-2020] §§2.2--3, now over the PPCDRT substrate
-    (`Semantics/Dynamic/PPCDRT/Anaphora.lean`). -/
-theorem bound_implies_wide_via_formal_semantics {E : Type}
-    (uAnaph uAnt : Nat) (S : PluralAssign ℕ E) (Δ : Set Nat)
-    (h : bindingCond uAnaph uAnt S Δ) : groupIdentityCond uAnaph uAnt S Δ :=
-  binding_implies_groupIdentity uAnaph uAnt S Δ h
-
-/-- The logophoric restriction (Wan) is modeled at the enum level:
-    `isLogophoric = true` restricts to narrow scope, whose antecedent
-    relation is group identity (∪). The logophor's discourse referent is
-    confined to the report context, preventing the binding relation that
-    would yield wide scope. -/
-theorem logophoric_forces_groupIdentity_relation :
-    relationalPrediction logophoricProps = [.narrow] ∧
-    narrowScopeReading.antecedentRel = .groupIdentity := ⟨rfl, rfl⟩
+/-- A pronoun of number `n` as local antecedent. -/
+def Antecedent.ofNumber (n : Option Number) : Antecedent := { grain := n.bind Grain.ofNumber? }
+
+/-- An analysis of reciprocal scope, by what it commits the local antecedent to under each
+    reading. -/
+structure Analysis where
+  /-- Where the local antecedent is interpreted under each reading. -/
+  antecedentLocus : Scope → Locus
+  /-- Whether the reciprocal contributes a distributive quantifier at the reading's locus. -/
+  distributes : Bool
+
+/-- On the quantificational analysis the quantifier part of the reciprocal raises to the
+    reading's locus and binds the local antecedent in situ ((2), (4)). -/
+def quantificational : Analysis := { antecedentLocus := λ _ => .low, distributes := true }
+
+/-- On the relational analysis the reciprocal is a pronoun anaphoric on the local antecedent,
+    which is therefore interpreted where the reciprocal is ((3), (6)–(9)). -/
+def relational : Analysis := { antecedentLocus := λ r => r.reading.locus, distributes := false }
+
+/-- Reading `r` is available for the local antecedent `a` on analysis `A`: `r` gives the local
+    antecedent the denotation its form forces, a logophor stays inside the report, a
+    distributing reciprocal scopes below any explicit distributor, and a wide-scope reciprocal
+    takes the matrix argument as its plural antecedent. -/
+def Available (A : Analysis) (a : Antecedent) (r : Scope) : Prop :=
+  (∀ g ∈ a.grain, antecedentGrain r = g) ∧ (a.logophoric → A.antecedentLocus r = .low) ∧
+    (A.distributes → ∀ d ∈ a.distributor, r.reading.locus < d) ∧ (r = .wide → a.matrixPlural)
+
+instance (A : Analysis) (a : Antecedent) (r : Scope) : Decidable (Available A a r) := by
+  unfold Available; infer_instance
+
+/-- The label of a reading in `Data/Examples/DalrympleHaug2024.json`. -/
+def label : Scope → String
+  | .narrow => "narrow"
+  | .wide => "wide"
+
+/-- The paper records reading `r` of example `e` as available. -/
+def Attested (e : LinguisticExample) (r : Scope) : Prop :=
+  e.readings.lookup (label r) = some .acceptable
+
+instance (e : LinguisticExample) (r : Scope) : Decidable (Attested e r) := by
+  unfold Attested; infer_instance
+
+/-- Every reading the paper records for `e` is available on `A` with local antecedent `a`. -/
+def Covers (A : Analysis) (a : Antecedent) (e : LinguisticExample) : Prop :=
+  ∀ r, Attested e r → Available A a r
+
+instance (A : Analysis) (a : Antecedent) (e : LinguisticExample) : Decidable (Covers A a e) := by
+  unfold Covers; infer_instance
+
+/-- A reading is available on `A` with local antecedent `a` exactly when the paper records it
+    for `e`. -/
+def Fits (A : Analysis) (a : Antecedent) (e : LinguisticExample) : Prop :=
+  ∀ r, Available A a r ↔ Attested e r
+
+instance (A : Analysis) (a : Antecedent) (e : LinguisticExample) : Decidable (Fits A a e) := by
+  unfold Fits; infer_instance
+
+/-- A simple sentence has only the in-situ reading, and is acceptable on `A` exactly when that
+    reading is available. -/
+def FitsSimple (A : Analysis) (a : Antecedent) (e : LinguisticExample) : Prop :=
+  Available A a .narrow ↔ e.judgment = .acceptable
+
+instance (A : Analysis) (a : Antecedent) (e : LinguisticExample) :
+    Decidable (FitsSimple A a e) := by
+  unfold FitsSimple; infer_instance
+
+/-! ### Where the analyses agree -/
+
+/-- Without an explicit distributor or a logophoric antecedent the readings do not depend on
+    the analysis: the constraints of §§2–4 are equally predicted by both. -/
+theorem available_iff_of_none {A B : Analysis} {a : Antecedent} (hd : a.distributor = none)
+    (hl : a.logophoric = false) (r : Scope) : Available A a r ↔ Available B a r := by
+  simp [Available, hd, hl]
+
+theorem fits_iff_of_none {A B : Analysis} {a : Antecedent} (hd : a.distributor = none)
+    (hl : a.logophoric = false) (e : LinguisticExample) : Fits A a e ↔ Fits B a e :=
+  forall_congr' λ r => iff_congr (available_iff_of_none hd hl r) Iff.rfl
+
+theorem covers_iff_of_none {A B : Analysis} {a : Antecedent} (hd : a.distributor = none)
+    (hl : a.logophoric = false) (e : LinguisticExample) : Covers A a e ↔ Covers B a e :=
+  forall_congr' λ r => imp_congr Iff.rfl (available_iff_of_none hd hl r)
+
+/-- Wide scope binds the local antecedent, so a form that must denote the plurality has narrow
+    scope only ((11), (12)). -/
+theorem narrow_of_plurality {A : Analysis} {a : Antecedent} (h : a.grain = some .plurality)
+    {r : Scope} (hr : Available A a r) : r = .narrow := by
+  cases r <;> simp_all [Available]
+
+/-- Narrow scope makes the local antecedent the plurality, so a form that must denote an
+    individual has wide scope only ((10)). -/
+theorem wide_of_individual {A : Analysis} {a : Antecedent} (h : a.grain = some .individual)
+    {r : Scope} (hr : Available A a r) : r = .wide := by
+  cases r <;> simp_all [Available]
+
+/-! ### Bound and nonbound antecedents (§2) -/
+
+/-- The Hungarian complement subject, a null pronoun whose number is the singular agreement on
+    its verb, Rákosi's bound-variable construction ((10)). -/
+def hungarian : Antecedent := .ofNumber (numberOf Hungarian.Reciprocals.boundVariable)
+
+/-- A singular null pronoun must be bound, so (10) has wide scope only on every analysis. -/
+theorem hungarian_fits (A : Analysis) : Fits A hungarian Examples.ex_10 :=
+  (fits_iff_of_none (B := relational) rfl rfl _).mpr (by decide)
+
+/-- The plural reflexive *zibun-tati*, which resists a bound reading and takes group identity
+    (Nishigauchi), so denotes the plurality ((11)). -/
+def japanese : Antecedent := { grain := some .plurality }
+
+/-- A plural reflexive that cannot be bound leaves narrow scope only on every analysis. -/
+theorem japanese_fits (A : Analysis) : Fits A japanese Examples.ex_11 :=
+  (fits_iff_of_none (B := relational) rfl rfl _).mpr (by decide)
+
+/-! ### Collectivity (§3) -/
+
+/-- The subject of a coordinated collective predicate, *meet at the tennis court*, which needs
+    the plurality (Tay, New, Dalrymple and Haug) ((12)). -/
+def collectiveConjunct : Antecedent := { grain := some .plurality }
+
+/-- A bound local antecedent offers no plurality to the collective conjunct, so (12) has narrow
+    scope only on every analysis. -/
+theorem collectiveConjunct_fits (A : Analysis) : Fits A collectiveConjunct Examples.ex_12 :=
+  (fits_iff_of_none (B := relational) rfl rfl _).mpr (by decide)
+
+/-! ### Control (§4) -/
+
+/-- PRO as local antecedent: a collectively read matrix predicate makes PRO the group, under
+    exhaustive control with a distributive reading PRO is the individual controller, and under
+    partial control PRO is semantically plural and may properly include the controller, so no
+    denotation is forced. -/
+def pro (exhaustive collective matrixPlural : Bool) : Antecedent :=
+  { grain := if collective then some .plurality else if exhaustive then some .individual else none
+    matrixPlural }
+
+open English.Predicates.Verbal Landau2015 in
+/-- Landau's tiers on the paper's control verbs: *want* of (13) and (15) selects an attitude
+    complement and admits partial control, *try* and *manage* of (16) force exhaustive control,
+    and *intend* of (17) and *decide* of (14) fall with *want*, although the paper's argument
+    from (17) assumes exhaustive control. -/
+theorem control_tiers :
+    derivedControlTier want.toVerb = some .logophoric ∧
+      derivedControlTier try_.toVerb = some .predicative ∧
+      derivedControlTier manage.toVerb = some .predicative ∧
+      derivedControlTier intend.toVerb = some .logophoric ∧
+      derivedControlTier decide_.toVerb = some .logophoric :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/-- PRO of a partial-control verb with a plural matrix subject ((13)). -/
+def partialPlural : Antecedent := pro false false true
+
+/-- A partial-control verb makes a narrow reading available on every analysis, the paper's §4
+    generalization applied to *want* ((13)). -/
+theorem partial_narrow (A : Analysis) : Available A partialPlural .narrow := by
+  simp [Available, partialPlural, pro]
+
+/-- The wide-only judgment recorded for (13) since Higginbotham is therefore not what any
+    analysis predicts for a partial-control verb. -/
+theorem not_fits_received_judgment (A : Analysis) : ¬ Fits A partialPlural Examples.ex_13 :=
+  λ h => absurd ((h .narrow).mp (partial_narrow A)) (by decide)
+
+/-- A collectively read matrix predicate leaves narrow scope only, whatever the control type,
+    the first of the two readings Heim, Lasnik and May attribute to (14). -/
+theorem collective_narrow (A : Analysis) (exhaustive : Bool) (r : Scope) :
+    Available A (pro exhaustive true true) r ↔ r = .narrow := by
+  cases r <;> simp [Available, pro]
+
+/-- PRO of an exhaustive-control verb whose plural matrix subject is read distributively, the
+    second reading of (14) and the paper's reading of (17), whose adjunct forces the
+    distributive reading. -/
+def exhaustiveDistributive : Antecedent := pro true false true
+
+/-- Under exhaustive control a distributively read matrix subject leaves wide scope only. -/
+theorem exhaustiveDistributive_wide (A : Analysis) (r : Scope) :
+    Available A exhaustiveDistributive r ↔ r = .wide := by
+  cases r <;> simp [Available, exhaustiveDistributive, pro]
+
+/-- The paper's construal of (17) as exhaustive control fits on every analysis. -/
+theorem intend_fits (A : Analysis) : Fits A exhaustiveDistributive Examples.ex_17 :=
+  (fits_iff_of_none (B := relational) rfl rfl _).mpr (by decide)
+
+/-- PRO of a partial-control verb with a singular matrix subject, a plurality including the
+    subject that the reciprocal takes as antecedent in situ ((15)). -/
+def partialSingular : Antecedent := pro false false false
+
+/-- Every analysis fits (15): narrow scope, and no wide scope for want of a plural matrix
+    antecedent. -/
+theorem partialSingular_fits (A : Analysis) :
+    Fits A partialSingular Examples.ex_15a ∧ Fits A partialSingular Examples.ex_15b :=
+  ⟨(fits_iff_of_none (B := relational) rfl rfl _).mpr (by decide),
+    (fits_iff_of_none (B := relational) rfl rfl _).mpr (by decide)⟩
+
+/-- PRO of an exhaustive-control verb with a singular matrix subject, the subject itself
+    ((16)). -/
+def exhaustiveSingular : Antecedent := pro true false false
+
+/-- An individual PRO cannot antecede a narrow reciprocal and a singular matrix subject cannot
+    antecede a wide one, so (16) has no reading on any analysis. -/
+theorem not_available_exhaustiveSingular (A : Analysis) (r : Scope) :
+    ¬ Available A exhaustiveSingular r := by
+  cases r <;> simp [Available, exhaustiveSingular, pro]
+
+/-- Every analysis fits the ungrammaticality of (16). -/
+theorem exhaustiveSingular_fits (A : Analysis) :
+    Fits A exhaustiveSingular Examples.ex_16a ∧ Fits A exhaustiveSingular Examples.ex_16b := by
+  constructor <;> intro r <;>
+    simp [Attested, Examples.ex_16a, Examples.ex_16b, not_available_exhaustiveSingular]
+
+/-! ### Distributive operators (§5) -/
+
+/-- The plural pronoun *they* as local antecedent ((1)). -/
+def plural : Antecedent := .ofNumber English.Pronouns.they.number
+
+/-- (1) is ambiguous on every analysis. -/
+theorem plural_fits (A : Analysis) : Fits A plural Examples.ex_1 :=
+  (fits_iff_of_none (B := relational) rfl rfl _).mpr (by decide)
+
+/-- The plural pronoun with an explicit distributor at locus `d`, *they each*, *each of them*,
+    *neither of them* ((18)–(20), (24)–(26)). -/
+def distributed (d : Locus) : Antecedent := { plural with distributor := some d }
+
+/-- A distributing reciprocal cannot scope at or above an explicit distributor, so a matrix
+    distributor leaves narrow scope only, the judgment of Heim, Lasnik and May on (18a) derived
+    from their analysis. -/
+theorem narrow_of_distributes_high {A : Analysis} (hA : A.distributes) {a : Antecedent}
+    (hd : a.distributor = some .high) {r : Scope} (h : Available A a r) : r = .narrow := by
+  cases r <;> simp_all [Available]
+
+/-- A distributor in the clause of a distributing reciprocal leaves no reading, the
+    ungrammaticality of (18b), and of (24)–(25), on the quantificational analysis. -/
+theorem not_available_of_distributes_low {A : Analysis} (hA : A.distributes) {a : Antecedent}
+    (hd : a.distributor = some .low) (r : Scope) : ¬ Available A a r := by
+  cases r <;> simp_all [Available]
+
+/-- A pronominal reciprocal is blind to explicit distributors, since it accesses the group
+    denoted by the antecedent even when the antecedent is distributed on, so its readings are
+    those of the undistributed antecedent ((27)). -/
+theorem available_iff_of_not_distributes {A : Analysis} (hA : A.distributes = false)
+    (a : Antecedent) (r : Scope) :
+    Available A a r ↔ Available A { a with distributor := none } r := by
+  simp [Available, hA]
+
+/-- The quantificational analysis reproduces the judgments of Heim, Lasnik and May on (18). -/
+theorem hlm_judgments :
+    Fits quantificational (distributed .high) Examples.ex_18a ∧
+      FitsSimple quantificational (distributed .low) Examples.ex_18b := by
+  decide
+
+/-- Simple sentences with a distributor on the reciprocal's antecedent are attested, admitted
+    by the relational analysis and excluded by the quantificational one ((19)–(20)). -/
+theorem simple_distributors :
+    (FitsSimple relational (distributed .low) Examples.ex_19a ∧
+        FitsSimple relational (distributed .low) Examples.ex_19b ∧
+        FitsSimple relational (distributed .low) Examples.ex_20a ∧
+        FitsSimple relational (distributed .low) Examples.ex_20b) ∧
+      ¬ FitsSimple quantificational (distributed .low) Examples.ex_19a ∧
+        ¬ FitsSimple quantificational (distributed .low) Examples.ex_19b ∧
+        ¬ FitsSimple quantificational (distributed .low) Examples.ex_20a ∧
+        ¬ FitsSimple quantificational (distributed .low) Examples.ex_20b := by
+  decide
+
+/-- Narrow scope is attested with the distributor in the complement clause and wide scope with
+    a matrix distributor, which the relational analysis covers and the quantificational
+    analysis does not ((24), (26)). -/
+theorem corpus_distributors :
+    (Covers relational (distributed .low) Examples.ex_24a ∧
+        Covers relational (distributed .low) Examples.ex_24b ∧
+        Covers relational (distributed .high) Examples.ex_26a ∧
+        Covers relational (distributed .high) Examples.ex_26b) ∧
+      ¬ Covers quantificational (distributed .low) Examples.ex_24a ∧
+        ¬ Covers quantificational (distributed .low) Examples.ex_24b ∧
+        ¬ Covers quantificational (distributed .high) Examples.ex_26a ∧
+        ¬ Covers quantificational (distributed .high) Examples.ex_26b := by
+  decide
+
+/-! ### Logophoricity (§6) -/
+
+/-- The Wan plural logophor *mɔ̄* as local antecedent, which can itself be bound, as (31)
+    shows, but cannot leave the report with the reciprocal ((28)). -/
+def logophor : Antecedent :=
+  { Antecedent.ofNumber Wan.Reciprocals.logPl.number with logophoric := true }
+
+/-- The ordinary plural pronoun *à̰* as local antecedent ((32)). -/
+def ordinary : Antecedent := .ofNumber Wan.Reciprocals.ordinaryPl.number
+
+/-- On an analysis that interprets the local antecedent where the reciprocal is, a logophoric
+    antecedent leaves narrow scope only, since under wide scope the reciprocal would drag it
+    out of the report ((29)). -/
+theorem narrow_of_logophoric {A : Analysis} (hA : ∀ r, A.antecedentLocus r = r.reading.locus)
+    {a : Antecedent} (ha : a.logophoric) {r : Scope} (h : Available A a r) :
+    r = .narrow := by
+  cases r <;> simp_all [Available]
+
+/-- An analysis that binds the local antecedent in situ is blind to a logophoric antecedent,
+    since logophoricity constrains only where the antecedent is interpreted, so its readings
+    for a logophor are those for the ordinary pronoun ((30)). -/
+theorem available_iff_of_in_situ {A : Analysis} (hA : ∀ r, A.antecedentLocus r = .low)
+    (a : Antecedent) (r : Scope) :
+    Available A a r ↔ Available A { a with logophoric := false } r := by
+  simp [Available, hA]
+
+/-- Only the relational analysis fits (28). -/
+theorem logophor_fits :
+    Fits relational logophor Examples.ex_28 ∧ ¬ Fits quantificational logophor Examples.ex_28 := by
+  decide
+
+/-- With the ordinary pronoun the wide reading of (32) is available on every analysis. -/
+theorem ordinary_covers (A : Analysis) : Covers A ordinary Examples.ex_32 :=
+  (covers_iff_of_none (B := relational) rfl rfl _).mpr (by decide)
 
 end DalrympleHaug2024
