@@ -6,7 +6,7 @@ import Linglib.Logic.Modal.Defs
 import Linglib.Semantics.Questions.Exhaustivity
 
 /-!
-# Dayal, *Questions* (2016)
+# Dayal (2016): Questions
 
 The book's baseline theory, chapter 2, blends the three classic theories of
 questions into the account the later chapters build on.

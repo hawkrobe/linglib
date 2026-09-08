@@ -7,7 +7,7 @@ import Linglib.Semantics.Questions.Exhaustivity
 import Linglib.Syntax.Minimalist.LeftPeriphery
 
 /-!
-# Dayal, the interrogative left periphery (2025)
+# Dayal (2025): The interrogative left periphery
 
 Question meaning is built at three points of the left periphery. At C a
 proposition becomes a set of propositions; at PerspP a perspectival center is

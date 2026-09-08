@@ -4,7 +4,7 @@ import Linglib.Data.Examples.AlbrightHayes2003
 import Linglib.Fragments.English.Phonology
 
 /-!
-# Rules vs. analogy in English past tenses
+# Albright and Hayes (2003): Rules vs. analogy in English past tenses
 
 [albright-hayes-2003] learn the English past tense as a set of stochastic rules. Every
 stem–past pair is a word-specific rule, and minimal generalization over two rules with the same
