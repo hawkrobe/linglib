@@ -2,6 +2,7 @@ import Linglib.Syntax.ConstructionGrammar.Idiom
 import Linglib.Syntax.ConstructionGrammar.Licensing
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Pragmatics.Expressives.Basic
+import Linglib.Semantics.Questions.Exhaustivity
 import Linglib.Syntax.Minimalist.LeftPeriphery
 
 /-!
@@ -227,22 +228,19 @@ theorem wxdy_incongruity_survives_negation {W : Type*}
 
 /-! ### The two readings (§2.1) -/
 
-open Minimalist.LeftPeriphery
+open Questions
 
-/-- The speaker's epistemic state on the incredulity reading: the answer
-is known (ex. 4's diner sees the fly), modeled as a veridical epistemic
-model at the evaluation world. -/
-def wxdyIncredulitySpeakerModel {W : Type*} (w : W) : EpistemicModel W :=
-  veridicalModel w
-
-/-- PerspP status separates the two readings of ex. 4: with a veridical
-speaker model (incredulity) the PerspP ignorance presupposition fails and
-the utterance is not a genuine question; with an ignorant speaker model
-(the literal reading) it is satisfied. -/
-theorem perspP_disambiguates_wxdy {W : Type*}
-    (q : QUD W) (w : W) :
-    perspPPresupComp (wxdyIncredulitySpeakerModel w) q w = false ∧
-    perspPPresupComp ignorantModel q w = true :=
-  ⟨responsive_contradicts_perspP_comp q w, rogative_allows_perspP_comp q w⟩
+/-- PerspP status separates the two readings of ex. 4: a speaker whose only doxastic
+alternative is the evaluation world (the diner sees the fly) cannot be possibly ignorant
+of the answer, so the utterance is not a genuine question; a speaker with every world
+open is, whenever the answer is not trivial. -/
+theorem perspP_disambiguates_wxdy {W : Type*} (H : Set (Set W)) (w : W)
+    (hH : Questions.weakAnswer H w ≠ Set.univ) :
+    ¬ PossiblyIgnorant H {w} (fun (_ : Unit) w v => v = w) () ∧
+      PossiblyIgnorant H {w} (fun (_ : Unit) _ _ => True) () :=
+  ⟨fun ⟨_, hv, hk⟩ => by
+      obtain rfl := Set.mem_singleton_iff.1 hv
+      exact hk knowsAnswer_of_eq,
+   ⟨w, Set.mem_singleton w, fun h => hH (knowsAnswer_top_iff.1 h)⟩⟩
 
 end KayFillmore1999

@@ -1,0 +1,1290 @@
+[
+  {
+    "id": "dayal2025_ex3b",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(3b)"},
+    "language": "hind1269",
+    "primaryText": "ravi ja:nta: hai (ki) anu ja:egi: ya: nahĩ:.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ravi", "Ravi"], ["ja:nta:", "know"], ["hai", "be.PRS"], ["ki", "SUB"], ["anu", "Anu"],
+      ["ja:egi:", "will.go"], ["ya:", "or"], ["nahĩ:", "not"]
+    ],
+    "translation": "Ravi knows whether Anu will go or not.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"],
+      ["particle", "ya: nahĩ:"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "The subordinated polar question requires the overt alternative; without it the clause is ungrammatical (71).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex5a",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(5a)"},
+    "language": "nucl1643",
+    "primaryText": "Mary-wa hon-o kai-masi-ta (ka)?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mary-wa", "Mary-TOP"], ["hon-o", "book-ACC"], ["kai-masi-ta", "buy-POL-PST"], ["ka", "Q"]
+    ],
+    "translation": "Did Mary buy a book?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"],
+      ["particle", "ka"],
+      ["embedding", "matrix"]
+    ],
+    "comment": "The Q-particle can be dropped only in matrix clauses.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex5b",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(5b)"},
+    "language": "nucl1643",
+    "primaryText": "Tanaka-kun-wa [Mary-ga hon-o kat-ta ka] sit-tei-mas-u.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tanaka-kun-wa", "Tanaka-HON-TOP"], ["Mary-ga", "Mary-NOM"], ["hon-o", "book-ACC"],
+      ["kat-ta", "buy-PST"], ["ka", "Q"], ["sit-tei-mas-u", "know-PROG-POL-PRS"]
+    ],
+    "translation": "Tanaka knows whether Mary bought a book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"],
+      ["particle", "ka"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "The Q-particle is obligatory in subordinated interrogatives: it clause-types the CP (15).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex8a",
+    "source": {"bibkey": "mccloskey-2006", "paperLabel": "(8a)"},
+    "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(8a)"},
+    "language": "stan1293",
+    "primaryText": "I wondered [was he illiterate↑].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I wondered [was he illiterate↑].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"],
+      ["verb", "wonder"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "Embedded inversion with matrix intonation under a rogative predicate.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex8b",
+    "source": {"bibkey": "mccloskey-2006", "paperLabel": "(8b)"},
+    "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(8b)"},
+    "language": "stan1293",
+    "primaryText": "I asked him [from what source could the reprisals come↑].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I asked him [from what source could the reprisals come↑].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"],
+      ["verb", "ask"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "Embedded inversion under a rogative predicate.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex9a",
+    "source": {"bibkey": "mccloskey-2006", "paperLabel": "(9a)"},
+    "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(9a)"},
+    "language": "stan1293",
+    "primaryText": "I knew [was he illiterate↑].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I knew [was he illiterate↑].",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"],
+      ["verb", "know"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "A responsive predicate rejects embedded inversion: its assertion of knowledge contradicts the center's possible ignorance (26d).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex11a",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(11a)"},
+    "language": "stan1293",
+    "primaryText": "The question is [whether Mary will leave].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The question is [whether Mary will leave].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "*The question is* takes subordinated and quasi-subordinated interrogatives but not declarative questions: a PerspP-selecting rogative.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex11b",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(11b)"},
+    "language": "stan1293",
+    "primaryText": "The question is, [will Mary leave↑].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The question is, [will Mary leave↑].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "Quasi-subordination under *the question is*.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex11c",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(11c)"},
+    "language": "stan1293",
+    "primaryText": "[Whether Mary will leave] depends on Sue.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "[Whether Mary will leave] depends on Sue.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"],
+      ["verb", "depend on"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "*Depend on*, *be up to*, *investigate*, *look into* take interrogatives with subordinate profile only.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex11d",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(11d)"},
+    "language": "stan1293",
+    "primaryText": "[Will Mary leave↑] depends on Sue.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "[Will Mary leave↑] depends on Sue.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"],
+      ["verb", "depend on"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "A CP-selecting rogative rejects embedded inversion; it also shows no shiftiness (fn. 21).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex13a",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(13a)"},
+    "language": "stan1293",
+    "primaryText": "The question is, [is it raining↑].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The question is, [is it raining↑].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "The question is, [it's raining↑].", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"],
+      ["embedding", "quasi"],
+      ["syntax", "interrogative"]
+    ],
+    "comment": "Declarative questions do not quasi-subordinate even under predicates that allow embedded inversion (Gunlogson 2004, McCloskey 2006); (67) derives this from the absence of SAP.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex14a",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(14a)"},
+    "language": "stan1293",
+    "primaryText": "She asked, \"Is it raining↑\"",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She asked, \"Is it raining↑\"",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"],
+      ["verb", "ask"],
+      ["embedding", "quotation"]
+    ],
+    "comment": "A quoted interrogative question under *ask*, which selects interrogative quotations.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex14b",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(14b)"},
+    "language": "stan1293",
+    "primaryText": "She asked, \"It's raining↓\"",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She asked, \"It's raining↓\"",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "She said, \"It's raining↓\"", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"],
+      ["verb", "ask"],
+      ["complement", "declarativeAssertion"]
+    ],
+    "comment": "A quoted declarative assertion is not an interrogative quotation, so *ask* rejects it while *say* takes it.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex14c",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(14c)"},
+    "language": "stan1293",
+    "primaryText": "She asked, \"It's raining↑\"",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She asked, \"It's raining↑\"",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"],
+      ["verb", "ask"],
+      ["embedding", "quotation"],
+      ["syntax", "declarative"]
+    ],
+    "comment": "A quoted declarative question satisfies *ask*'s rogative requirement: declarative questions are genuine questions and embed only as quotations.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex15b",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(15b)"},
+    "language": "nucl1643",
+    "primaryText": "Tanaka-kun-wa [Mary-ga nani-o kat-ta ka] sit-tei-mas-u.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tanaka-kun-wa", "Tanaka-HON-TOP"], ["Mary-ga", "Mary-NOM"], ["nani-o", "what-ACC"],
+      ["kat-ta", "buy-PST"], ["ka", "Q"], ["sit-tei-mas-u", "know-PROG-POL-PRS"]
+    ],
+    "translation": "Tanaka knows what Mary bought.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.3"],
+      ["particle", "ka"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "*ka* is obligatory here; with *koto* in place of *ka* the complement is declarative (15a).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex16b",
+    "source": {"bibkey": "bhatt-dayal-2020", "paperLabel": "(16b)"},
+    "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(16b)"},
+    "language": "hind1269",
+    "primaryText": "ravi ja:nta: hai ki kya: anu ja:egi:.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ravi", "Ravi"], ["ja:nta:", "know"], ["hai", "be.PRS"], ["ki", "SUB"], ["kya:", "PQP"],
+      ["anu", "Anu"], ["ja:egi:", "will.go"]
+    ],
+    "translation": "Intended: Ravi knows whether Anu will go.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "ravi ja:nta: hai ki anu ja:egi:.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.3"],
+      ["particle", "kya:"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "*kya:* is not a clause-typing particle: it is excluded from the subordinated complement of a responsive predicate, where a clause-typer would be needed most.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex17a",
+    "source": {"bibkey": "bhatt-dayal-2020", "paperLabel": "(17a)"},
+    "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(17a)"},
+    "language": "hind1269",
+    "primaryText": "Ti:char-ne anu-se pu:cha: ki kya: vo ca:i piyegi:.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ti:char-ne", "teacher-ERG"], ["anu-se", "Anu-INS"], ["pu:cha:", "asked"], ["ki", "SUB"],
+      ["kya:", "PQP"], ["vo", "she"], ["ca:i", "tea"], ["piyegi:", "will.drink"]
+    ],
+    "translation": "The teacher asked Anu if she will drink tea.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.3"],
+      ["particle", "kya:"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "*kya:* tracks English embedded inversion: acceptable under *ask*.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex17b",
+    "source": {"bibkey": "bhatt-dayal-2020", "paperLabel": "(17b)"},
+    "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(17b)"},
+    "language": "hind1269",
+    "primaryText": "sava:l yeh hai ki kya: nayi: vyavastha: ka:gar sa:bit hogi:.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["sava:l", "question"], ["yeh", "this"], ["hai", "is"], ["ki", "SUB"], ["kya:", "PQP"],
+      ["nayi:", "new"], ["vyavastha:", "arrangement"], ["ka:gar", "effective"],
+      ["sa:bit", "prove"], ["hogi:", "will.be"]
+    ],
+    "translation": "The question is whether the new arrangement will prove effective.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.3"],
+      ["particle", "kya:"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "Acceptable under *the question is*.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex17c",
+    "source": {"bibkey": "bhatt-dayal-2020", "paperLabel": "(17c)"},
+    "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(17c)"},
+    "language": "hind1269",
+    "primaryText": "kya: vo ja:egi: ya: nahĩ: uske mu:D par nirbhar karta: hai.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kya:", "PQP"], ["vo", "she"], ["ja:egi:", "will.go"], ["ya:", "or"], ["nahĩ:", "not"],
+      ["uske", "her"], ["mu:D", "mood"], ["par", "on"], ["nirbhar", "depend"], ["karta:", "does"],
+      ["hai", "be.PRS"]
+    ],
+    "translation": "Intended: Whether she will go or not depends on her mood.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.3"],
+      ["particle", "kya:"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "Excluded under *depend on*, as English embedded inversion is (11d).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex18a",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(18a)"},
+    "language": "stan1293",
+    "primaryText": "Quick, where did you hide the matza?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Quick, where did you hide the matza?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.3"],
+      ["particle", "quick"],
+      ["embedding", "matrix"]
+    ],
+    "comment": "A meta question particle: signals that the addressee should answer without delay, a modifier of the speech act (29).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex19a",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(19a)"},
+    "language": "stan1293",
+    "primaryText": "Mary asked Sue quick where she hid the matza.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary asked Sue quick where she hid the matza.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.3"],
+      ["particle", "quick"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "*Quick* is ungrammatical in embedded position; *quickly* there can only modify the manner of asking.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex18b",
+    "source": {"bibkey": "sauerland-yatsushiro-2017", "paperLabel": "(18b)"},
+    "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(18b)"},
+    "language": "nucl1643",
+    "primaryText": "Namae-wa nan da-kke (ka)?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Namae-wa", "name-TOP"], ["nan", "what"], ["da-kke", "COP-KKE"], ["ka", "Q"]
+    ],
+    "translation": "What is your name, again?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.3"],
+      ["particle", "kke"],
+      ["embedding", "matrix"]
+    ],
+    "comment": "*kke* carries a remind-me presupposition and modifies the act of asking.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex19c",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(19c)"},
+    "language": "nucl1643",
+    "primaryText": "Boku-wa [(kimi-no) namae-ga nan-da-kke (ka)] siri-tai.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Boku-wa", "I-TOP"], ["kimi-no", "you-GEN"], ["namae-ga", "name-NOM"],
+      ["nan-da-kke", "what-COP-KKE"], ["ka", "Q"], ["siri-tai", "know-want"]
+    ],
+    "translation": "Intended: I want to know your name, please remind me.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.3"],
+      ["particle", "kke"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "A meta question particle cannot embed, since SAP does not embed except as a quotation.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex24a_wonder",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(24a)"},
+    "language": "stan1293",
+    "primaryText": "Mary wonders [whether Sue will leave].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary wonders [whether Sue will leave].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.1.1"],
+      ["verb", "wonder"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "Clause-typing at C explains embeddability: predicates select C_+WH or C_-WH or are underspecified.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex24a_know",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(24a)"},
+    "language": "stan1293",
+    "primaryText": "Mary knows [whether Sue will leave].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary knows [whether Sue will leave].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.1.1"],
+      ["verb", "know"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "A responsive predicate takes the subordinated interrogative.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex24a_believe",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(24a)"},
+    "language": "stan1293",
+    "primaryText": "Mary believes [whether Sue will leave].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary believes [whether Sue will leave].",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.1.1"],
+      ["verb", "believe"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "An uninterrogative predicate takes no set-of-propositions complement (30).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex38b",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(38b)"},
+    "language": "stan1293",
+    "primaryText": "Everybody knows [did I succeed in buying chocolate for Winifred↑].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Everybody knows [did I succeed in buying chocolate for Winifred↑].",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Everybody wants to know [did I succeed in buying chocolate for Winifred↑].", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.2"],
+      ["verb", "know"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "The rogative *want to know* takes the quasi-subordinated question (38a), the responsive *know* does not.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex39a",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(39a)"},
+    "language": "hind1269",
+    "primaryText": "anu ja:nna: ca:hti: hai [ki (kya:) tum cai piyoge↑].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["anu", "Anu"], ["ja:nna:", "to.know"], ["ca:hti:", "wants"], ["hai", "be.PRS"],
+      ["ki", "SUB"], ["kya:", "PQP"], ["tum", "you"], ["cai", "tea"], ["piyoge", "will.drink"]
+    ],
+    "translation": "Anu wants to know whether you'll drink tea.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.2"],
+      ["embedding", "quasi"],
+      ["verbClass", "rogativePerspP"]
+    ],
+    "comment": "The Hindi-Urdu counterpart of (38a): a rogative predicate takes the quasi-subordinated question with *kya:*.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex39b",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(39b)"},
+    "language": "hind1269",
+    "primaryText": "anu ja:nti: hai [ki (kya:) tum cai piyoge(↑)].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["anu", "Anu"], ["ja:nti:", "knows"], ["hai", "be.PRS"], ["ki", "SUB"], ["kya:", "PQP"],
+      ["tum", "you"], ["cai", "tea"], ["piyoge", "will.drink"]
+    ],
+    "translation": "Intended: Anu knows whether you'll drink tea.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.2"],
+      ["embedding", "quasi"],
+      ["verbClass", "responsive"]
+    ],
+    "comment": "The Hindi-Urdu counterpart of (38b): a bare responsive rejects the quasi-subordinated question.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex40a",
+    "source": {"bibkey": "mccloskey-2006", "paperLabel": "(40a)"},
+    "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(40a)"},
+    "language": "stan1293",
+    "primaryText": "I remember [was Henry a communist↑].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I remember [was Henry a communist↑].",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.2"],
+      ["verb", "remember"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "*Remember* aligns with *know* on knowledge at the evaluation time and rejects embedded inversion (42a).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex40b",
+    "source": {"bibkey": "mccloskey-2006", "paperLabel": "(40b)"},
+    "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(40b)"},
+    "language": "stan1293",
+    "primaryText": "I don't remember [was Henry a communist↑].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I don't remember [was Henry a communist↑].",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.2"],
+      ["verb", "remember"],
+      ["embedding", "quasi"],
+      ["negated", "true"]
+    ],
+    "comment": "McCloskey's shiftiness: negation of the responsive predicate removes the contradiction with the center's possible ignorance (42b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex40c",
+    "source": {"bibkey": "mccloskey-2006", "paperLabel": "(40c)"},
+    "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(40c)"},
+    "language": "stan1293",
+    "primaryText": "Do you remember↑ [was Henry a communist↑]",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Do you remember↑ [was Henry a communist↑]",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.2"],
+      ["verb", "remember"],
+      ["embedding", "quasi"],
+      ["questioned", "true"]
+    ],
+    "comment": "Questioning the responsive predicate leaves both options open, one of them compatible with possible ignorance (42c).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex41a",
+    "source": {"bibkey": "bhatt-dayal-2020", "paperLabel": "(41a)"},
+    "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(41a)"},
+    "language": "hind1269",
+    "primaryText": "koi: nahĩ: ja:nta: [ki kya: TiTo sTa:lin-se mile the↑].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["koi:", "someone"], ["nahĩ:", "not"], ["ja:nta:", "knows"], ["ki", "SUB"], ["kya:", "PQP"],
+      ["TiTo", "Tito"], ["sTa:lin-se", "Stalin-with"], ["mile", "met"], ["the", "be.PST"]
+    ],
+    "translation": "Nobody knows, did Tito meet with Stalin?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.2"],
+      ["embedding", "quasi"],
+      ["verbClass", "responsive"],
+      ["negated", "true"]
+    ],
+    "comment": "Shiftiness in Hindi-Urdu: a negated responsive takes *kya:* (corpus COSH, intonation added by Bhatt and Dayal 2020).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex41b",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(41b)"},
+    "language": "hind1269",
+    "primaryText": "kisi:-ko bhi: ma:lum hai↑ [ki (kya:) TiTo sTa:lin-se mile the↑]",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kisi:-ko", "someone-ACC"], ["bhi:", "at.all"], ["ma:lum", "know"], ["hai", "be.PRS"],
+      ["ki", "SUB"], ["kya:", "PQP"], ["TiTo", "Tito"], ["sTa:lin-se", "Stalin-with"],
+      ["mile", "met"], ["the", "be.PST"]
+    ],
+    "translation": "Does anyone know, did Tito meet with Stalin?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.2"],
+      ["embedding", "quasi"],
+      ["verbClass", "responsive"],
+      ["questioned", "true"]
+    ],
+    "comment": "Shiftiness in Hindi-Urdu: a questioned responsive takes *kya:*.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex43a",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(43a)"},
+    "language": "stan1293",
+    "primaryText": "I have forgotten, [did Ann get A's in her 1st year courses↑].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have forgotten, [did Ann get A's in her 1st year courses↑].",
+    "context": "Speaker A is writing evaluation letters and asks a colleague (44a).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.2"],
+      ["verb", "forget"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "A naturally occurring case: *forget* entails ignorance of the answer at the evaluation time, consistent with Persp_CQ, unlike *remember* (43b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex45a",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(45a)"},
+    "language": "stan1293",
+    "primaryText": "Mary knows [did Sue leave early↑].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary knows [did Sue leave early↑].",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Mary wants to know [did Sue leave early↑].", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.3"],
+      ["verb", "know"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "The minimal pair with *want to know*, explained by the center's ignorance of and interest in the answer.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex45b_forget",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(45b)"},
+    "language": "stan1293",
+    "primaryText": "I forget [did Sue leave early↑].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I forget [did Sue leave early↑].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.3"],
+      ["verb", "forget"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "The minimal pair *forget* vs. *remember* with a first-person subject.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex45b_remember",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(45b)"},
+    "language": "stan1293",
+    "primaryText": "I remember [did Sue leave early↑].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I remember [did Sue leave early↑].",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.3"],
+      ["verb", "remember"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "The minimal pair *forget* vs. *remember* with a first-person subject.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex46a",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(46a)"},
+    "language": "stan1293",
+    "primaryText": "Does Sue remember↑ [was Henry a communist↑]",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Does Sue remember↑ [was Henry a communist↑]",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.3"],
+      ["verb", "remember"],
+      ["embedding", "quasi"],
+      ["questioned", "true"]
+    ],
+    "comment": "A positive answer to the matrix question can resolve the embedded question the speaker is interested in.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex46b",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(46b)"},
+    "language": "stan1293",
+    "primaryText": "Have you forgotten↑ [was Henry a communist↑]",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Have you forgotten↑ [was Henry a communist↑]",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.3"],
+      ["verb", "forget"],
+      ["embedding", "quasi"],
+      ["questioned", "true"],
+      ["invested", "speaker"]
+    ],
+    "comment": "Unacceptable although the possible-ignorance requirement is satisfiable: a positive answer to the matrix question cannot resolve the embedded question, and it is the speaker, not the addressee, who is invested in it (§3.3.2).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex49a_you",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(49a)"},
+    "language": "stan1293",
+    "primaryText": "You have forgotten [was Henry a communist↑].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You have forgotten [was Henry a communist↑].",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "I have forgotten [was Henry a communist↑].", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.3"],
+      ["verb", "forget"],
+      ["embedding", "quasi"],
+      ["invested", "speaker"]
+    ],
+    "comment": "If the addressee has forgotten the answer they cannot help resolve the question the speaker is invested in.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex62a",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(62a)"},
+    "language": "stan1293",
+    "primaryText": "Do you drink wine?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Do you drink wine?",
+    "context": "Neutral: deciding whether to order a bottle to share. Biased: the speaker thought the addressee a teetotaler and sees them looking at the wine list.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "neutral", "judgment": "acceptable"},
+      {"name": "biased", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "4.3"],
+      ["syntax", "interrogative"],
+      ["embedding", "matrix"]
+    ],
+    "comment": "Interrogative syntax is felicitous in either context.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex62b",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(62b)"},
+    "language": "stan1293",
+    "primaryText": "You drink wine?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You drink wine?",
+    "context": "Neutral: deciding whether to order a bottle to share. Biased: the speaker thought the addressee a teetotaler and sees them looking at the wine list.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "neutral", "judgment": "unacceptable"},
+      {"name": "biased", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "4.3"],
+      ["syntax", "declarative"],
+      ["embedding", "matrix"]
+    ],
+    "comment": "A rising declarative is only a biased question in English: C is typed -WH, so Persp must be CP, which only the combined act ASSERT•ASK licenses (64)–(65).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex63a",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(63a)"},
+    "language": "hind1269",
+    "primaryText": "a:p shara:b pi:te haĩ?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a:p", "you"], ["shara:b", "wine"], ["pi:te", "drink"], ["haĩ", "be.PRS"]
+    ],
+    "translation": "Do you drink wine? / You drink wine?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "neutral", "judgment": "acceptable"},
+      {"name": "biased", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "4.3"],
+      ["syntax", "declarative"],
+      ["embedding", "matrix"]
+    ],
+    "comment": "Hindi-Urdu makes no syntactic distinction between declaratives and polar questions: C may stay untyped, so a rising declarative can be a neutral question (66).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex63b",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(63b)"},
+    "language": "ital1282",
+    "primaryText": "Bevi il vino?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bevi", "drink"], ["il", "the"], ["vino", "wine"]
+    ],
+    "translation": "Do you drink wine? / You drink wine?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "neutral", "judgment": "acceptable"},
+      {"name": "biased", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "4.3"],
+      ["syntax", "declarative"],
+      ["embedding", "matrix"]
+    ],
+    "comment": "Italian patterns with Hindi-Urdu: clause-typing can be delayed.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex69a_en",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(69a)"},
+    "language": "stan1293",
+    "primaryText": "Do you drink wine (or not)?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Do you drink wine (or not)?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.4"],
+      ["simplex", "true"],
+      ["embedding", "matrix"]
+    ],
+    "comment": "A simplex polar question as a matrix clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex69b_en",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(69b)"},
+    "language": "stan1293",
+    "primaryText": "The question is, [do you drink wine (or not)]?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The question is, [do you drink wine (or not)]?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.4"],
+      ["simplex", "true"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "A simplex polar question quasi-subordinated.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex69c_en",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(69c)"},
+    "language": "stan1293",
+    "primaryText": "[Whether she will drink wine (or not)] depends on whether she has to work tomorrow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "[Whether she will drink wine (or not)] depends on whether she has to work tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.4"],
+      ["simplex", "true"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "*Whether* types the subordinated simplex polar clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex69a_it",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(69a)"},
+    "language": "ital1282",
+    "primaryText": "Bevi il vino (o no)?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bevi", "drink"], ["il", "the"], ["vino", "wine"], ["o", "or"], ["no", "not"]
+    ],
+    "translation": "Do you drink wine (or not)?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.4"],
+      ["simplex", "true"],
+      ["embedding", "matrix"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex69b_it",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(69b)"},
+    "language": "ital1282",
+    "primaryText": "La domanda è [se berrai il vino (o no)]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["La", "the"], ["domanda", "question"], ["è", "is"], ["se", "whether"],
+      ["berrai", "will.drink.2SG"], ["il", "the"], ["vino", "wine"], ["o", "or"], ["no", "not"]
+    ],
+    "translation": "The question is, [do you drink wine (or not)]?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.4"],
+      ["simplex", "true"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex69c_it",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(69c)"},
+    "language": "ital1282",
+    "primaryText": "[Se berrà il vino (o no)] dipenderà dal fatto che lavorerà domani.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Se", "whether"], ["berrà", "will.drink.3SG"], ["il", "the"], ["vino", "wine"], ["o", "or"],
+      ["no", "not"], ["dipenderà", "will.depend"], ["dal", "on.the"], ["fatto", "fact"],
+      ["che", "that"], ["lavorerà", "will.work.3SG"], ["domani", "tomorrow"]
+    ],
+    "translation": "[Whether she will drink wine (or not)] depends on whether she has to work tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.4"],
+      ["simplex", "true"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "*se* types the subordinated simplex polar clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex70a",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(70a)"},
+    "language": "hind1269",
+    "primaryText": "(kya:) anu ja:egi: (ya: nahĩ:)↑",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kya:", "PQP"], ["anu", "Anu"], ["ja:egi:", "will.go"], ["ya:", "or"], ["nahĩ:", "not"]
+    ],
+    "translation": "Will Anu go (or not)?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.4"],
+      ["simplex", "true"],
+      ["embedding", "matrix"]
+    ],
+    "comment": "A simplex polar question is typed by Persp_CQ with its rising boundary tone (72b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex70b",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(70b)"},
+    "language": "hind1269",
+    "primaryText": "ravi ja:nna: ca:hta: hai [ki (kya:) anu ja:egi: (ya: nahĩ:)↑]",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ravi", "Ravi"], ["ja:nna:", "to.know"], ["ca:hta:", "wants"], ["hai", "be.PRS"],
+      ["ki", "SUB"], ["kya:", "PQP"], ["anu", "Anu"], ["ja:egi:", "will.go"], ["ya:", "or"],
+      ["nahĩ:", "not"]
+    ],
+    "translation": "Ravi wants to know, will Anu go (or not)?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.4"],
+      ["simplex", "true"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "Quasi-subordination, marked by a slight pause and rising intonation, types the simplex clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex71",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(71)"},
+    "language": "hind1269",
+    "primaryText": "ravi ja:nta: hai [ki anu ja:egi:]",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ravi", "Ravi"], ["ja:nta:", "know"], ["hai", "be.PRS"], ["ki", "SUB"], ["anu", "Anu"],
+      ["ja:egi:", "will.go"]
+    ],
+    "translation": "Intended: Ravi knows whether Anu will go.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "ravi ja:nta: hai [ki anu ja:egi: ya: nahĩ:]", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.4"],
+      ["simplex", "true"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "Without a polar complementizer nothing types the subordinated simplex clause; the alternative must be overt, whatever the embedding verb.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "dayal2025_ex84a",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(84a)"},
+    "language": "stan1293",
+    "primaryText": "Mueller was investigating [whether Russia interfered in the 2016 election].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mueller was investigating [whether Russia interfered in the 2016 election].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "6.1"],
+      ["verb", "investigate"],
+      ["embedding", "subordination"]
+    ],
+    "comment": "*Investigate* and *want to know* both take the subordinated interrogative.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "dayal2025_ex84b",
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(84b)"},
+    "language": "stan1293",
+    "primaryText": "Mueller was investigating [did Russia interfere in the 2016 election↑].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mueller was investigating [did Russia interfere in the 2016 election↑].",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Mueller wanted to know [did Russia interfere in the 2016 election↑].", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "6.1"],
+      ["verb", "investigate"],
+      ["embedding", "quasi"]
+    ],
+    "comment": "C-selection: *want to know* selects CP and PerspP, *investigate* only CP.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]

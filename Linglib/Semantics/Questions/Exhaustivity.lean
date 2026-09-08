@@ -22,6 +22,9 @@ operator on the members of `H` true at `w`:
   state: a least member the state supports, Dayal's at the singleton `{w}`;
 - `box H R`, the question under necessity, whose presupposition at a world is
   the prejacent's on that world's modal base (`isExhaustivelyResolvable_box_iff`);
+- `KnowsAnswer H w R x`, an agent's knowledge of the answer through their
+  doxastic alternatives, and `PossiblyIgnorant H c R x`, [dayal-2025]'s
+  requirement on the perspectival center of a question;
 - `exhCell H p` and `exhaustifiedPartition H`, [fox-2018]'s cells;
 - `relExh H w M`, [xiang-2022]'s exhaustivity relative to a modal base;
 - `ofFinset F`, a finite family of finite propositions, on which the
@@ -45,6 +48,7 @@ of [dayal-2016] needs Hamblin sets whose members entail one another, which
 * [dayal-1996]
 * [beck-rullmann-1999]
 * [dayal-2016]
+* [dayal-2025]
 * [fox-2018]
 * [xiang-2022]
 -/
@@ -190,6 +194,51 @@ theorem isExhaustivelyResolvable_iff_of_antichain (hH : IsAntichain (· ⊆ ·) 
 theorem isStrongestTrueAnswer_alt_iff (Q : Question W) {p : Set W} :
     IsStrongestTrueAnswer (alt Q) w p ↔ trueAnswers (alt Q) w = {p} :=
   isStrongestTrueAnswer_iff_of_antichain _ w (alt_isAntichain Q)
+
+/-! ### Knowing the answer -/
+
+section Knowing
+
+variable {E : Type*} {c A : Set W} {R : E → W → W → Prop} {x : E}
+
+/-- `x` knows the answer to `H` at `w`: the weak answer holds throughout `x`'s
+doxastic alternatives, [karttunen-1977]'s meaning postulate for *know*. -/
+def KnowsAnswer (R : E → W → W → Prop) (x : E) : Prop := ∀ v, R x w v → v ∈ weakAnswer H w
+
+/-- [dayal-2025]'s requirement on a perspectival center: in the context `c` the
+center may not know the answer. -/
+def PossiblyIgnorant (c : Set W) (R : E → W → W → Prop) (x : E) : Prop :=
+  ∃ w ∈ c, ¬ KnowsAnswer H w R x
+
+variable {H} {w}
+
+/-- Asserting content that entails the center's knowledge of the answer leaves no
+world where the requirement holds. -/
+theorem not_possiblyIgnorant_inter_of_subset (hA : A ⊆ {w | KnowsAnswer H w R x}) :
+    ¬ PossiblyIgnorant H (c ∩ A) R x :=
+  fun ⟨_, ⟨_, hw⟩, hk⟩ => hk (hA hw)
+
+/-- Asserting that the center does not know the answer leaves the requirement to the
+context. -/
+theorem possiblyIgnorant_inter_compl_iff :
+    PossiblyIgnorant H (c ∩ {w | KnowsAnswer H w R x}ᶜ) R x ↔ PossiblyIgnorant H c R x :=
+  ⟨fun ⟨w, ⟨hc, _⟩, hk⟩ => ⟨w, hc, hk⟩, fun ⟨w, hc, hk⟩ => ⟨w, ⟨hc, hk⟩, hk⟩⟩
+
+/-- Asking whether some content holds leaves the requirement to the context. -/
+theorem possiblyIgnorant_inter_union_compl_iff :
+    PossiblyIgnorant H (c ∩ (A ∪ Aᶜ)) R x ↔ PossiblyIgnorant H c R x := by
+  rw [Set.union_compl_self, Set.inter_univ]
+
+/-- A center whose only doxastic alternative is the actual world knows every answer. -/
+theorem knowsAnswer_of_eq : KnowsAnswer H w (fun _ w v => v = w) x :=
+  fun _ hv => by subst hv; exact self_mem_weakAnswer H _
+
+/-- A center with every world open knows only trivial answers. -/
+theorem knowsAnswer_top_iff :
+    KnowsAnswer H w (fun _ _ _ => True) x ↔ weakAnswer H w = Set.univ :=
+  ⟨fun h => Set.eq_univ_of_forall fun v => h v trivial, fun h v _ => h ▸ Set.mem_univ v⟩
+
+end Knowing
 
 open Classical in
 /-- Dayal's answerhood operator Ans-D: the strongest true member, when the
