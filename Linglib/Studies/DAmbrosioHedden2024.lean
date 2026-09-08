@@ -36,17 +36,10 @@ comparatives.
   aggregation; the cut-off on Suzy's cardiovascular health is where her weighted sum reaches
   Bill's.
 
-## TODO
-
-* `arrow` states the adapted impossibility theorem for real-valued profiles and leaves its
-  proof open; the pivotal-dimension argument of [geanakoplos-2005] carries over.
-
 ## References
 
 * [J. D'Ambrosio and B. Hedden, *Multidimensional adjectives* (2024)][dambrosio-hedden-2024]
 * [K. J. Arrow, *A difficulty in the concept of social welfare* (1951)][arrow-1950]
-* [J. Geanakoplos, *Three brief proofs of Arrow's impossibility theorem*
-  (2005)][geanakoplos-2005]
 * [H. Kamp, *Two theories about adjectives* (1975)][kamp-1975]
 * [G. W. Sassoon, *A typology of multidimensional adjectives* (2013)][sassoon-2013]
 -/
@@ -254,8 +247,8 @@ def Arrovian [Preorder K] (a : Rule ι O K) : Prop :=
 /-- Arrow's impossibility theorem, adapted: with finitely many dimensions and at least three
 objects, no rule meets all of Arrow's conditions. -/
 theorem arrow [Fintype ι] [Fintype O] (h₃ : 3 ≤ Fintype.card O) (a : Rule ι O ℝ) :
-    ¬ Arrovian a := by
-  sorry
+    ¬ Arrovian a :=
+  Degree.Aggregation.arrow h₃ a
 
 /-- An adjective whose admissible rules are all Arrovian is incoherent. -/
 theorem Context.incoherent_of_arrovian [Fintype ι] [Fintype O] (h₃ : 3 ≤ Fintype.card O)
