@@ -1,232 +1,260 @@
-import Linglib.Syntax.DependencyGrammar.Dominance
-import Linglib.Syntax.DependencyGrammar.Basic
+import Linglib.Syntax.DependencyGrammar.Projectivity
+import Linglib.Syntax.DependencyGrammar.Length
+import Mathlib.Data.Fin.VecNotation
 
 /-!
-# de Marneffe & Nivre 2019: UD enhanced dependencies for English LD and coordination
-[de-marneffe-nivre-2019]
+# de Marneffe and Nivre (2019): Dependency grammar
 
-Worked English examples illustrating Universal Dependencies' basic vs
-enhanced representations (cf. §4.2 and Figure 9 of
-[de-marneffe-nivre-2019]). Enhanced graphs are built by adding the
-extra arcs with `Graph.enhance`; per UD v2, coordinators attach via
-`cc` to the conjunct they introduce.
-
-## Examples
-
-### Long-distance dependencies
-
-* `exWhatDidJohnSee`, `exWhoSawMary`, `exWhoDidJohnSee` — wh-question
-  fixtures (object extraction, subject question, object with `who`).
-* `exTheBookThatJohnRead` / `_enhanced` — object relative clause and its
-  enhanced graph.
-* `exJohnThinksThatMarySleeps`, `exJohnThinksMarySleeps`,
-  `exJohnWondersIfMarySleeps`, `exJohnWondersWhatMarySaw` — complement
-  clauses with and without overt complementizer, with and without
-  embedded extraction.
-
-### Coordination
-
-* `exJohnAndMarySleep`, `exJohnSleepsAndMarySleeps` — NP and S coordination
-  (no shared-dependent propagation needed).
-* `exJohnSeesAndHearsMary` / `_enhanced` — VP coordination; the enhanced
-  graph adds `obj` from `hears` to `Mary`.
-* `exHappyAndSmartBoy` — adjective coordination.
-* `exRNR` / `_enhanced` — Right Node Raising; the enhanced graph adds
-  `obj` to the second-conjunct verb.
+This file formalizes the formal claims of the review of dependency grammar in
+[de-marneffe-nivre-2019] on the library's dependency graphs, whose projectivity is that of
+[kuhlmann-nivre-2006]. A dependency tree is a spanning tree over the words of a sentence, §2.4,
+and its projectivity has two formulations the review takes as equivalent, that every word
+between the endpoints of an arc is dominated by the arc's head and that the yield of every
+subtree is a contiguous substring; Figure 3 is nonprojective on both counts. Dependency trees
+are insensitive to word order, §3.1, so the two orders of (1) are one graph relabelled along a
+rotation of the positions. Dependency length, §3.2, explains the preference for (2a) over (2b)
+and its absence between (3a) and (3b), the minimization of [behaghel-1932] and
+[temperley-2007], and the object relative (4a) of [gibson-1998] holds its filler at a longer
+distance than the subject relative (4b). Universal Dependencies, §4, puts content words above
+function words, Figure 4b against the function-word-headed Figure 4a, the function words
+attaching to the content word with which they form a nucleus in the sense of [tesniere-1959],
+so that the content-word skeleton of a sentence is shared across languages, Figure 7; its basic
+representation is a tree and its enhanced representation a general graph, in which the subject
+of Figure 9 has three heads and lies on a cycle, §4.4.
 
 ## Implementation notes
 
-Fixtures use `Word.mk'` (featureless) except the wh-words; the worked
-theorems are structural (`Graph.IsTree`, arc labels, `decide`).
+The review's figures carry traditional grammatical-function labels, its footnote 2; the fixtures
+use their Universal Dependencies counterparts, and the function-word-headed arcs of Figure 4a,
+for which UD has no relation, carry `dep`. Punctuation is dropped from (1) so that its two orders
+are exactly a rotation. The coreference relation of Figure 9's enhanced graph is not in the
+library's relation inventory and is omitted; the multiple heads and the cycle do not depend on
+it. The word strings and bubble trees of Figure 2, the nuclei of Figure 5 and the three label
+inventories of Figure 6 are not representable on a single-labelled graph over words and are not
+formalized.
+
+## References
+
+* [de-marneffe-nivre-2019]
+* [kuhlmann-nivre-2006]
+* [behaghel-1932]
+* [temperley-2007]
+* [gibson-1998]
+* [tesniere-1959]
 -/
 
 namespace DeMarneffeNivre2019
 
-open DependencyGrammar
-open Morphology (Word)
+open DependencyGrammar Morphology
 
-/-! ### Wh-question fixtures -/
+/-! ### Dependency trees and projectivity, §2.4 -/
 
-/-- "What did John see?" — object wh-question (basic tree).
-Words: what(0) did(1) John(2) see(3). The wh-word attaches as `obj` of
-the main verb. -/
-def exWhatDidJohnSee : Graph 4 :=
-  .ofArcs [{ form :="what", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "did" .AUX,
-              Word.mk' "John" .PROPN, Word.mk' "see" .VERB]
-    1 [(1, 2, .nsubj), (1, 3, .aux), (1, 0, .obj)]
+/-- Figure 1: *small dogs chase cats happily*. -/
+def fig1 : Tree 5 :=
+  .mk' (.ofArcs [Word.mk' "small" .ADJ, Word.mk' "dogs" .NOUN, Word.mk' "chase" .VERB,
+      Word.mk' "cats" .NOUN, Word.mk' "happily" .ADV]
+    2 [(1, 0, .amod), (2, 1, .nsubj), (2, 3, .obj), (2, 4, .advmod)])
 
-/-- "Who saw Mary?" — subject wh-question (no gap needed). -/
-def exWhoSawMary : Graph 3 :=
-  .ofArcs [{ form :="who", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "saw" .VERB,
-              Word.mk' "Mary" .PROPN]
-    1 [(1, 0, .nsubj), (1, 2, .obj)]
+/-- Figure 3: *bigger dogs than mine*. -/
+def fig3 : Tree 4 :=
+  .mk' (.ofArcs [Word.mk' "bigger" .ADJ, Word.mk' "dogs" .NOUN, Word.mk' "than" .SCONJ,
+      Word.mk' "mine" .PRON]
+    1 [(1, 0, .amod), (0, 3, .advmod), (3, 2, .mark)])
 
-/-- "Who did John see?" — object wh-question with `who`. -/
-def exWhoDidJohnSee : Graph 4 :=
-  .ofArcs [{ form :="who", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "did" .AUX,
-              Word.mk' "John" .PROPN, Word.mk' "see" .VERB]
-    1 [(1, 2, .nsubj), (1, 3, .aux), (1, 0, .obj)]
+/-- Figure 3 is nonprojective: *dogs* lies between the head *bigger* and its dependent *mine*
+without being dominated by *bigger*. -/
+theorem fig3_not_isArcProjective : ¬ fig3.IsArcProjective :=
+  λ h => (by decide : ¬ Dominates fig3.toGraph 0 1)
+    (h (by decide : fig3.Adj 0 3) 1 (Set.mem_uIcc.2 (Or.inl ⟨by decide, by decide⟩)))
 
-/-! ### Relative-clause fixtures -/
+/-- Equivalently, the yield of *bigger* is *bigger than mine*, not a contiguous substring. -/
+theorem fig3_projection : fig3.projection 0 = [0, 2, 3] ∧ ¬ fig3.IsProjective :=
+  ⟨by decide, fig3.isProjective_iff_isArcProjective.not.2 fig3_not_isArcProjective⟩
 
-/-- "the book that John read" — object relative clause (basic tree). In UD
-the relative clause attaches via `acl` from head noun to RC verb; the gap
-(`book` as `obj` of `read`) is implicit. -/
-def exTheBookThatJohnRead : Graph 5 :=
-  .ofArcs [Word.mk' "the" .DET, Word.mk' "book" .NOUN,
-              Word.mk' "that" .SCONJ, Word.mk' "John" .PROPN,
-              Word.mk' "read" .VERB]
-    1 [(1, 0, .det), (1, 4, .acl), (4, 2, .mark), (4, 3, .nsubj)]
+/-! ### Insensitivity to word order, §3.1 -/
 
-/-- Enhanced graph for "the book that John read": `book` is added as `obj`
-of `read`. -/
-def exTheBookThatJohnRead_enhanced : Graph 5 :=
-  exTheBookThatJohnRead.enhance [(4, 1, .obj)]
+/-- (1a) *While it was snowing, I went for a run*. -/
+def ex1a : Tree 9 :=
+  .mk' (.ofArcs [Word.mk' "while" .SCONJ, Word.mk' "it" .PRON, Word.mk' "was" .AUX,
+      Word.mk' "snowing" .VERB, Word.mk' "I" .PRON, Word.mk' "went" .VERB, Word.mk' "for" .ADP,
+      Word.mk' "a" .DET, Word.mk' "run" .NOUN]
+    5 [(5, 3, .advcl), (3, 0, .mark), (3, 1, .nsubj), (3, 2, .aux), (5, 4, .nsubj),
+      (5, 8, .obl), (8, 6, .case_), (8, 7, .det)])
 
-/-! ### Complement-clause fixtures -/
+/-- (1b) *I went for a run, while it was snowing*. -/
+def ex1b : Tree 9 :=
+  .mk' (.ofArcs [Word.mk' "I" .PRON, Word.mk' "went" .VERB, Word.mk' "for" .ADP,
+      Word.mk' "a" .DET, Word.mk' "run" .NOUN, Word.mk' "while" .SCONJ, Word.mk' "it" .PRON,
+      Word.mk' "was" .AUX, Word.mk' "snowing" .VERB]
+    1 [(1, 8, .advcl), (8, 5, .mark), (8, 6, .nsubj), (8, 7, .aux), (1, 0, .nsubj),
+      (1, 4, .obl), (4, 2, .case_), (4, 3, .det)])
 
-/-- "John thinks that Mary sleeps" — that-complement (no gap). -/
-def exJohnThinksThatMarySleeps : Graph 5 :=
-  .ofArcs [Word.mk' "John" .PROPN, Word.mk' "thinks" .VERB,
-              Word.mk' "that" .SCONJ, Word.mk' "Mary" .PROPN,
-              Word.mk' "sleeps" .VERB]
-    1 [(1, 0, .nsubj), (1, 4, .ccomp), (4, 2, .mark), (4, 3, .nsubj)]
+/-- §3.1: the two orders of (1) have identical dependency representations: (1b) is (1a)
+relabelled along the rotation of the positions by five. -/
+theorem ex1b_eq_relabel : ex1b.toGraph = ex1a.toGraph.relabel (Equiv.addRight 5) := by
+  rw [Graph.ext_iff]; decide
 
-/-- "John thinks Mary sleeps" — bare complement (that-omission, no gap). -/
-def exJohnThinksMarySleeps : Graph 4 :=
-  .ofArcs [Word.mk' "John" .PROPN, Word.mk' "thinks" .VERB,
-              Word.mk' "Mary" .PROPN, Word.mk' "sleeps" .VERB]
-    1 [(1, 0, .nsubj), (1, 3, .ccomp), (3, 2, .nsubj)]
+/-! ### Dependency length, §3.2 -/
 
-/-- "John wonders if Mary sleeps" — if-complement (no gap). -/
-def exJohnWondersIfMarySleeps : Graph 5 :=
-  .ofArcs [Word.mk' "John" .PROPN, Word.mk' "wonders" .VERB,
-              Word.mk' "if" .SCONJ, Word.mk' "Mary" .PROPN,
-              Word.mk' "sleeps" .VERB]
-    1 [(1, 0, .nsubj), (1, 4, .ccomp), (4, 2, .mark), (4, 3, .nsubj)]
+/-- (2a) *She threw out the bin with old trash*. -/
+def ex2a : Tree 8 :=
+  .mk' (.ofArcs [Word.mk' "She" .PRON, Word.mk' "threw" .VERB, Word.mk' "out" .ADP,
+      Word.mk' "the" .DET, Word.mk' "bin" .NOUN, Word.mk' "with" .ADP, Word.mk' "old" .ADJ,
+      Word.mk' "trash" .NOUN]
+    1 [(1, 0, .nsubj), (1, 2, .compound), (1, 4, .obj), (4, 3, .det), (4, 7, .nmod),
+      (7, 5, .case_), (7, 6, .amod)])
 
-/-- "John wonders what Mary saw" — embedded wh-question.
-Words: John(0) wonders(1) what(2) Mary(3) saw(4). -/
-def exJohnWondersWhatMarySaw : Graph 5 :=
-  .ofArcs [Word.mk' "John" .PROPN, Word.mk' "wonders" .VERB,
-              { form :="what", cat := .PRON, features := { pronType := some .Int }},
-              Word.mk' "Mary" .PROPN, Word.mk' "saw" .VERB]
-    1 [(1, 0, .nsubj), (1, 4, .ccomp), (4, 3, .nsubj), (4, 2, .obj)]
+/-- (2b) *She threw the bin with old trash out*. -/
+def ex2b : Tree 8 :=
+  .mk' (.ofArcs [Word.mk' "She" .PRON, Word.mk' "threw" .VERB, Word.mk' "the" .DET,
+      Word.mk' "bin" .NOUN, Word.mk' "with" .ADP, Word.mk' "old" .ADJ, Word.mk' "trash" .NOUN,
+      Word.mk' "out" .ADP]
+    1 [(1, 0, .nsubj), (1, 7, .compound), (1, 3, .obj), (3, 2, .det), (3, 6, .nmod),
+      (6, 4, .case_), (6, 5, .amod)])
 
-/-! ### Coordination fixtures -/
+/-- (3a) *She threw out the bin*. -/
+def ex3a : Tree 5 :=
+  .mk' (.ofArcs [Word.mk' "She" .PRON, Word.mk' "threw" .VERB, Word.mk' "out" .ADP,
+      Word.mk' "the" .DET, Word.mk' "bin" .NOUN]
+    1 [(1, 0, .nsubj), (1, 2, .compound), (1, 4, .obj), (4, 3, .det)])
 
-/-- "John and Mary sleep" — NP coordination. -/
-def exJohnAndMarySleep : Graph 4 :=
-  .ofArcs [Word.mk' "John" .PROPN, Word.mk' "and" .CCONJ,
-              Word.mk' "Mary" .PROPN, Word.mk' "sleep" .VERB]
-    3 [(3, 0, .nsubj), (0, 2, .conj), (2, 1, .cc)]
+/-- (3b) *She threw the bin out*. -/
+def ex3b : Tree 5 :=
+  .mk' (.ofArcs [Word.mk' "She" .PRON, Word.mk' "threw" .VERB, Word.mk' "the" .DET,
+      Word.mk' "bin" .NOUN, Word.mk' "out" .ADP]
+    1 [(1, 0, .nsubj), (1, 4, .compound), (1, 3, .obj), (3, 2, .det)])
 
-/-- "John sleeps and Mary sleeps" — S coordination. -/
-def exJohnSleepsAndMarySleeps : Graph 5 :=
-  .ofArcs [Word.mk' "John" .PROPN, Word.mk' "sleeps" .VERB,
-              Word.mk' "and" .CCONJ, Word.mk' "Mary" .PROPN,
-              Word.mk' "sleeps" .VERB]
-    1 [(1, 0, .nsubj), (1, 4, .conj), (4, 3, .nsubj), (4, 2, .cc)]
+/-- §3.2: postposing the particle lengthens the dependencies of *threw* by four words with the
+long object of (2) and by one with the short object of (3), the dependency length
+minimization of [temperley-2007] behind the preference for (2a) and its absence in (3). -/
+theorem particle_shift_length :
+    ex2b.totalLength - ex2a.totalLength = 4 ∧ ex3b.totalLength - ex3a.totalLength = 1 := by
+  decide
 
-/-- "John sees and hears Mary" — VP coordination (basic tree). `Mary`
-attaches as `obj` of `sees` only; `hears` is `conj` of `sees`. -/
-def exJohnSeesAndHearsMary : Graph 5 :=
-  .ofArcs [Word.mk' "John" .PROPN, Word.mk' "sees" .VERB,
-              Word.mk' "and" .CCONJ, Word.mk' "hears" .VERB,
-              Word.mk' "Mary" .PROPN]
-    1 [(1, 0, .nsubj), (1, 3, .conj), (3, 2, .cc), (1, 4, .obj)]
+/-- (4a) *The reporter who the senator attacked admitted the error*. -/
+def ex4a : Tree 9 :=
+  .mk' (.ofArcs [Word.mk' "The" .DET, Word.mk' "reporter" .NOUN, Word.mk' "who" .PRON,
+      Word.mk' "the" .DET, Word.mk' "senator" .NOUN, Word.mk' "attacked" .VERB,
+      Word.mk' "admitted" .VERB, Word.mk' "the" .DET, Word.mk' "error" .NOUN]
+    6 [(6, 1, .nsubj), (1, 0, .det), (1, 5, .acl), (5, 2, .obj), (5, 4, .nsubj), (4, 3, .det),
+      (6, 8, .obj), (8, 7, .det)])
 
-/-- Enhanced graph for "John sees and hears Mary": `Mary` is `obj` of
-*both* `sees` and `hears` (shared-dep propagation). -/
-def exJohnSeesAndHearsMary_enhanced : Graph 5 :=
-  exJohnSeesAndHearsMary.enhance [(3, 4, .obj)]
+/-- (4b) *The reporter who attacked the senator admitted the error*. -/
+def ex4b : Tree 9 :=
+  .mk' (.ofArcs [Word.mk' "The" .DET, Word.mk' "reporter" .NOUN, Word.mk' "who" .PRON,
+      Word.mk' "attacked" .VERB, Word.mk' "the" .DET, Word.mk' "senator" .NOUN,
+      Word.mk' "admitted" .VERB, Word.mk' "the" .DET, Word.mk' "error" .NOUN]
+    6 [(6, 1, .nsubj), (1, 0, .det), (1, 3, .acl), (3, 2, .nsubj), (3, 5, .obj), (5, 4, .det),
+      (6, 8, .obj), (8, 7, .det)])
 
-/-- "the happy and smart boy" — adjective coordination. -/
-def exHappyAndSmartBoy : Graph 5 :=
-  .ofArcs [Word.mk' "the" .DET, Word.mk' "happy" .ADJ,
-           Word.mk' "and" .CCONJ, Word.mk' "smart" .ADJ, Word.mk' "boy" .NOUN]
-    4 [(4, 0, .det), (4, 1, .amod), (1, 3, .conj), (3, 2, .cc)]
+/-- (4): *who* depends on *attacked* in both relatives, three positions away in the object
+relative (4a) and adjacent in the subject relative (4b), the locality of [gibson-1998] behind
+the object-relative penalty. -/
+theorem relative_filler_distance :
+    Nat.dist (ex4a.headOf 2) 2 = 3 ∧ Nat.dist (ex4b.headOf 2) 2 = 1 := by decide
 
-/-- "John likes and Mary hates pizza" — Right Node Raising (basic tree).
-`pizza` attaches to `likes` only. -/
-def exRNR : Graph 6 :=
-  .ofArcs [Word.mk' "John" .PROPN, Word.mk' "likes" .VERB,
-           Word.mk' "and" .CCONJ, Word.mk' "Mary" .PROPN,
-           Word.mk' "hates" .VERB, Word.mk' "pizza" .NOUN]
-    1 [(1, 0, .nsubj), (1, 4, .conj), (4, 3, .nsubj), (4, 2, .cc), (1, 5, .obj)]
+/-! ### Universal Dependencies, §4 -/
 
-/-- Enhanced graph for RNR: `pizza` is `obj` of both verbs. -/
-def exRNR_enhanced : Graph 6 := exRNR.enhance [(4, 5, .obj)]
+/-- Function words in the sense of §2.5 and §4: adpositions, auxiliaries, conjunctions,
+determiners and particles. -/
+def IsFunctionWord : UD.UPOS → Prop
+  | .ADP | .AUX | .CCONJ | .DET | .PART | .SCONJ => True
+  | _ => False
 
-/-- All basic fixtures are well-formed trees. -/
-example : exWhatDidJohnSee.IsTree ∧ exWhoSawMary.IsTree ∧
-    exWhoDidJohnSee.IsTree ∧ exTheBookThatJohnRead.IsTree ∧
-    exJohnThinksThatMarySleeps.IsTree ∧ exJohnThinksMarySleeps.IsTree ∧
-    exJohnWondersIfMarySleeps.IsTree ∧ exJohnWondersWhatMarySaw.IsTree ∧
-    exJohnAndMarySleep.IsTree ∧ exJohnSleepsAndMarySleeps.IsTree ∧
-    exJohnSeesAndHearsMary.IsTree ∧ exHappyAndSmartBoy.IsTree ∧
-    exRNR.IsTree := by decide
+instance : DecidablePred IsFunctionWord := λ c => by
+  cases c <;> unfold IsFunctionWord <;> infer_instance
 
-/-- Conjuncts share their category — the parallelism constraint on
-    coordination ([de-marneffe-nivre-2019] §4.2), study-locally. -/
-def ConjunctsCatMatch {n : ℕ} (g : Graph n) : Prop :=
-  ∀ v w, g.label v w = some .conj → (g.words v).cat = (g.words w).cat
+/-- §4.5: content words are higher in the tree than function words: a function word heads
+nothing but the further parts of a fixed expression. -/
+def ContentWordsHigher {n : ℕ} (g : Graph n) : Prop :=
+  ∀ v w r, g.label v w = some r → IsFunctionWord (g.words v).cat → r = .fixed
 
-instance {n : ℕ} (g : Graph n) : Decidable (ConjunctsCatMatch g) :=
+instance {n : ℕ} (g : Graph n) : Decidable (ContentWordsHigher g) :=
   inferInstanceAs (Decidable (∀ _, _))
 
-/-! ### Worked theorems — long-distance dependencies -/
+/-- The words of Figure 4, *Sue believes that Kim will rely on her*. -/
+abbrev fig4Words : List Word :=
+  [Word.mk' "Sue" .PROPN, Word.mk' "believes" .VERB, Word.mk' "that" .SCONJ,
+    Word.mk' "Kim" .PROPN, Word.mk' "will" .AUX, Word.mk' "rely" .VERB, Word.mk' "on" .ADP,
+    Word.mk' "her" .PRON]
 
-/-- Object wh-questions have a `[wh]` filler at position 0. -/
-theorem whatDidJohnSee_has_wh :
-    (exWhatDidJohnSee.words 0).features.isWh = true := rfl
+/-- Figure 4a: function words as heads. -/
+def fig4a : Tree 8 :=
+  .mk' (.ofArcs fig4Words 1 [(1, 0, .nsubj), (1, 2, .ccomp), (2, 4, .dep), (4, 3, .nsubj),
+    (4, 5, .dep), (5, 6, .obl), (6, 7, .dep)])
 
-/-- The enhanced graph for "the book that John read" has the obj-gap arc;
-    the basic tree lacks it. -/
-theorem relclause_enhancement :
-    exTheBookThatJohnRead_enhanced.label 4 1 = some .obj ∧
-    exTheBookThatJohnRead.label 4 1 = none := by decide
+/-- Figure 4b: content words as heads, as in Universal Dependencies. -/
+def fig4b : Tree 8 :=
+  .mk' (.ofArcs fig4Words 1 [(1, 0, .nsubj), (1, 5, .ccomp), (5, 2, .mark), (5, 3, .nsubj),
+    (5, 4, .aux), (5, 7, .obl), (7, 6, .case_)])
 
-/-- `book` gains an unrepresented argument — the gap made explicit. -/
-theorem relclause_gap_recovered :
-    HasUnrepresentedArg exTheBookThatJohnRead exTheBookThatJohnRead_enhanced 1 := by
+/-- Figure 4: the content-word-headed tree satisfies §4.5's principle and the
+function-word-headed tree does not, *that*, *will* and *on* heading *will*, *rely* and *her*. -/
+theorem fig4_contentWordsHigher :
+    ContentWordsHigher fig4b.toGraph ∧ ¬ ContentWordsHigher fig4a.toGraph := by decide
+
+/-- Figure 7, English: *the dog will chase the cat out of the room*. -/
+def fig7en : Tree 10 :=
+  .mk' (.ofArcs [Word.mk' "the" .DET, Word.mk' "dog" .NOUN, Word.mk' "will" .AUX,
+      Word.mk' "chase" .VERB, Word.mk' "the" .DET, Word.mk' "cat" .NOUN, Word.mk' "out" .ADP,
+      Word.mk' "of" .ADP, Word.mk' "the" .DET, Word.mk' "room" .NOUN]
+    3 [(3, 1, .nsubj), (1, 0, .det), (3, 2, .aux), (3, 5, .obj), (5, 4, .det), (3, 9, .obl),
+      (9, 6, .case_), (6, 7, .fixed), (9, 8, .det)])
+
+/-- Figure 7, Finnish: *koira jahtaa kissan huoneesta*, the relations marked by case. -/
+def fig7fi : Tree 4 :=
+  .mk' (.ofArcs [Word.mk' "koira" .NOUN, Word.mk' "jahtaa" .VERB, Word.mk' "kissan" .NOUN,
+      Word.mk' "huoneesta" .NOUN]
+    1 [(1, 0, .nsubj), (1, 2, .obj), (1, 3, .obl)])
+
+/-- `g₁` is the content-word skeleton of `g₂` along `t`: `t` maps the positions of `g₁` onto
+the content words of `g₂` and preserves every relation among them, the solid arcs of
+Figure 7. -/
+def IsContentSkeleton {m n : ℕ} (t : Fin m → Fin n) (g₁ : Graph m) (g₂ : Graph n) : Prop :=
+  (∀ v w, g₂.label (t v) (t w) = g₁.label v w) ∧ (∀ v, (g₂.words (t v)).cat.isOpenClass) ∧
+    ∀ u, (g₂.words u).cat.isOpenClass → ∃ v, t v = u
+
+/-- Figure 7: Finnish, which marks the relations by case, is the content-word skeleton of the
+English sentence, which marks them by function words and word order, and the English function
+words attach below their content words: the core structure is parallel, §4. -/
+theorem fig7_parallel :
+    IsContentSkeleton ![1, 3, 5, 9] fig7fi.toGraph fig7en.toGraph ∧
+      ContentWordsHigher fig7en.toGraph := by
+  unfold IsContentSkeleton; decide
+
+/-- The words of Figure 9, *Students who forgot to come failed the oral and written exam.* -/
+abbrev fig9Words : List Word :=
+  [Word.mk' "Students" .NOUN, Word.mk' "who" .PRON, Word.mk' "forgot" .VERB,
+    Word.mk' "to" .PART, Word.mk' "come" .VERB, Word.mk' "failed" .VERB, Word.mk' "the" .DET,
+    Word.mk' "oral" .ADJ, Word.mk' "and" .CCONJ, Word.mk' "written" .ADJ,
+    Word.mk' "exam" .NOUN, Word.mk' "." .PUNCT]
+
+/-- Figure 9, the basic representation: a spanning tree. -/
+def fig9 : Tree 12 :=
+  .mk' (.ofArcs fig9Words 5 [(5, 0, .nsubj), (0, 2, .acl), (2, 1, .nsubj), (2, 4, .xcomp),
+    (4, 3, .mark), (5, 10, .obj), (10, 6, .det), (10, 7, .amod), (7, 9, .conj), (9, 8, .cc),
+    (5, 11, .punct)])
+
+/-- Figure 9, the enhanced representation: the relative pronoun's subject relation gives way
+to one from *forgot* to *students*, the controlled subject of *come* is made explicit, and the
+modifier relation is propagated to *written*. -/
+def fig9Enhanced : Graph 12 :=
+  .ofArcs fig9Words 5 [(5, 0, .nsubj), (0, 2, .acl), (2, 0, .nsubj), (4, 0, .nsubj),
+    (2, 4, .xcomp), (4, 3, .mark), (5, 10, .obj), (10, 6, .det), (10, 7, .amod),
+    (10, 9, .amod), (7, 9, .conj), (9, 8, .cc), (5, 11, .punct)]
+
+/-- §4.4: the enhanced representation is a general graph: *students* has three heads and lies
+on a cycle, heading *forgot* through the relative clause and headed by it as its subject. -/
+theorem fig9Enhanced_not_isTree :
+    ¬ fig9Enhanced.IsTree ∧ (fig9Enhanced.parents 0).card = 3 ∧
+      Relation.TransGen fig9Enhanced.Adj 0 0 := by
   decide
 
-/-- The enhanced relclause graph violates tree-hood (`book` now has two
-    heads), per [de-marneffe-nivre-2019] §4.4; the basic tree is a tree. -/
-theorem relclause_enhanced_not_tree :
-    ¬ exTheBookThatJohnRead_enhanced.IsTree ∧ exTheBookThatJohnRead.IsTree := by
+/-- The enhanced graph gives *students* and *written* relations the basic tree leaves
+implicit. -/
+theorem fig9_unrepresented :
+    HasUnrepresentedArg fig9.toGraph fig9Enhanced 0 ∧
+      HasUnrepresentedArg fig9.toGraph fig9Enhanced 9 := by
   decide
-
-/-! ### Worked theorems — coordination -/
-
-theorem johnAndMary_cat_match : ConjunctsCatMatch exJohnAndMarySleep := by decide
-
-theorem johnSleepsAndMarySleeps_cat_match :
-    ConjunctsCatMatch exJohnSleepsAndMarySleeps := by decide
-
-theorem happyAndSmart_cat_match : ConjunctsCatMatch exHappyAndSmartBoy := by decide
-
-/-- Shared-dependent propagation adds the missing `obj` arc from `hears`
-    to `Mary`; the basic tree lacks it. -/
-theorem coord_enhancement :
-    exJohnSeesAndHearsMary_enhanced.label 3 4 = some .obj ∧
-    exJohnSeesAndHearsMary.label 3 4 = none := by decide
-
-/-- `Mary` gains an unrepresented argument in the enhanced graph. -/
-theorem coord_gap_recovered :
-    HasUnrepresentedArg exJohnSeesAndHearsMary exJohnSeesAndHearsMary_enhanced 4 := by
-  decide
-
-/-- The enhanced coordination graph violates tree-hood; the basic tree is
-    a tree. -/
-theorem coord_enhanced_not_tree :
-    ¬ exJohnSeesAndHearsMary_enhanced.IsTree ∧ exJohnSeesAndHearsMary.IsTree := by
-  decide
-
-/-- RNR enhancement propagates `obj` to the second-conjunct verb, and the
-    result is no longer a tree. -/
-theorem rnr_enhancement :
-    exRNR_enhanced.label 4 5 = some .obj ∧ ¬ exRNR_enhanced.IsTree := by decide
 
 end DeMarneffeNivre2019

@@ -1,0 +1,526 @@
+[
+  {
+    "id": "demarneffenivre2019_fig1",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 1"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "small dogs chase cats happily",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "dependencyTree"],
+      ["projective", "yes"]
+    ],
+    "comment": "The introductory dependency tree: dogs is the subject and cats the object of chase, small an attributive modifier of dogs and happily an adverbial modifier of chase.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_fig2",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 2"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "dogs chase cats and cars",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "coordination"],
+      ["projective", "yes"]
+    ],
+    "comment": "Coordination in four frameworks: Word Grammar brackets cats and cars into a word string licensing a double-object dependency, the bubble tree takes the coordination as a bubble, Functional Generative Description makes the coordinator the head, and Meaning-Text Theory makes the first conjunct the head.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_fig3",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 3"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "bigger dogs than mine",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "projectivity"],
+      ["projective", "no"]
+    ],
+    "comment": "Nonprojective: dogs appears between the head bigger and its dependent mine without being dominated by bigger; the yield of bigger, bigger than mine, is not a contiguous substring.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_fig4",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 4"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue believes that Kim will rely on her",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "headChoice"],
+      ["projective", "yes"]
+    ],
+    "comment": "Three trees for one sentence: (a) function words as heads, (b) content words as heads, (c) dependencies between nuclei in the sense of Tesnière.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_1a",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "(1a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "While it was snowing, I went for a run.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "wordOrder"],
+      ["adverbialClause", "initial"]
+    ],
+    "comment": "Identical dependency representation to (1b), which differs only in the place of the adverbial clause; the phrase-structure trees differ.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_1b",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "(1b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I went for a run, while it was snowing.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "wordOrder"],
+      ["adverbialClause", "final"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_2a",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "(2a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She threw out the bin with old trash.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "dependencyLength"],
+      ["particle", "adjacent"],
+      ["preferred", "yes"]
+    ],
+    "comment": "Preferred to (2b): both out and bin are dependents of threw and both are close to it.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_2b",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "(2b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She threw the bin with old trash out.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "dependencyLength"],
+      ["particle", "postposed"],
+      ["preferred", "no"]
+    ],
+    "comment": "Dispreferred: the dependency between threw and out is much longer because of the length of the noun phrase headed by bin.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_3a",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She threw out the bin.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "dependencyLength"],
+      ["particle", "adjacent"],
+      ["preferred", "neither"]
+    ],
+    "comment": "No strong preference between (3a) and (3b): the noun phrase is short.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_3b",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "(3b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She threw the bin out.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "dependencyLength"],
+      ["particle", "postposed"],
+      ["preferred", "neither"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_4a",
+    "source": {"bibkey": "gibson-1998", "paperLabel": "p. 2"},
+    "reportedIn": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "(4a)"},
+    "language": "stan1293",
+    "primaryText": "The reporter who the senator attacked admitted the error.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "dependencyLength"],
+      ["relativeClause", "object"]
+    ],
+    "comment": "Harder to process than (4b): who, a dependent of attacked, is further from its head.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_4b",
+    "source": {"bibkey": "gibson-1998", "paperLabel": "p. 2"},
+    "reportedIn": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "(4b)"},
+    "language": "stan1293",
+    "primaryText": "The reporter who attacked the senator admitted the error.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "dependencyLength"],
+      ["relativeClause", "subject"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_5",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Peter is her older brother, Oliver her youngest.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "ellipsis"]
+    ],
+    "comment": "Ellipsis is hard to analyze without empty nodes, which trees whose nodes are fixed by the input do not favor.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_fig5_en",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 5"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "the houses are new",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "nonverbalPredication"],
+      ["copula", "overt"],
+      ["definiteness", "determiner"]
+    ],
+    "comment": "Copula strategy with definiteness marked by a function word: two nuclei.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_fig5_sv",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 5"},
+    "reportedIn": null,
+    "language": "swed1254",
+    "primaryText": "husen är nya",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["husen", "house.PL.DEF"], ["är", "be.PRS"], ["nya", "new.PL"]
+    ],
+    "translation": "the houses are new",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "nonverbalPredication"],
+      ["copula", "overt"],
+      ["definiteness", "inflection"]
+    ],
+    "comment": "Copula strategy with definiteness marked morphologically: one nucleus.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_fig5_wsk",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 5"},
+    "reportedIn": null,
+    "language": "wask1241",
+    "primaryText": "kawam mu ititi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kawam", "houses"], ["mu", "the"], ["ititi", "new"]
+    ],
+    "translation": "the houses are new",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "nonverbalPredication"],
+      ["copula", "zero"],
+      ["definiteness", "determiner"]
+    ],
+    "comment": "Zero strategy with definiteness marked by a function word: one nucleus.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_fig5_ru",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 5"},
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Дома новые",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Дома", "houses"], ["новые", "new"]
+    ],
+    "translation": "the houses are new",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "nonverbalPredication"],
+      ["copula", "zero"],
+      ["definiteness", "unmarked"]
+    ],
+    "comment": "Zero strategy with no marking of definiteness: no nucleus.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_fig6_sv",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 6"},
+    "reportedIn": null,
+    "language": "swed1254",
+    "primaryText": "en katt jagar råttor och möss",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["en", "a"], ["katt", "cat"], ["jagar", "chases"], ["råttor", "rats"], ["och", "and"],
+      ["möss", "mice"]
+    ],
+    "translation": "a cat chases rats and mice",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "annotationSchemes"],
+      ["scheme", "SwedishTreebank"]
+    ],
+    "comment": "Labels DT, SS, OO, CJ, CJ; the syntactic structures of the three parallel sentences are identical but at most 40% of relations are shared across a pair of schemes and none across all three.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_fig6_da",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 6"},
+    "reportedIn": null,
+    "language": "dani1285",
+    "primaryText": "en kat jager rotter og mus",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["en", "a"], ["kat", "cat"], ["jager", "chases"], ["rotter", "rats"], ["og", "and"],
+      ["mus", "mice"]
+    ],
+    "translation": "a cat chases rats and mice",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "annotationSchemes"],
+      ["scheme", "DanishDependencyTreebank"]
+    ],
+    "comment": "Labels nobj, subj, dobj, coord, conj.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_fig6_en",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 6"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "a cat chases rats and mice",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "annotationSchemes"],
+      ["scheme", "StanfordTypedDependencies"]
+    ],
+    "comment": "Labels det, nsubj, dobj, cc, conj.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_fig7_en",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 7"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "the dog will chase the cat out of the room",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "parallelism"],
+      ["marking", "functionWords"]
+    ],
+    "comment": "Universal Dependencies annotation; grammatical relations and categories encoded by determiners, auxiliaries, prepositions and word order.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_fig7_fi",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 7"},
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "koira jahtaa kissan huoneesta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["koira", "dog.NOM"], ["jahtaa", "chase.PRS.3SG"], ["kissan", "cat.ACC"],
+      ["huoneesta", "room.ELA"]
+    ],
+    "translation": "the dog will chase the cat out of the room",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "parallelism"],
+      ["marking", "case"]
+    ],
+    "comment": "The same core dependency structure as the English sentence, with the relations encoded by case markers and no explicit definiteness or future tense.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_fig8",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 8"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mr. Smith did n't come to day.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "nonsyntacticRelations"]
+    ],
+    "comment": "The relations flat, for the title-name combination, and goeswith, for the accidentally split word, are not syntactic dependency relations.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "demarneffenivre2019_fig9",
+    "source": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "Figure 9"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Students who forgot to come failed the oral and written exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "enhancedDependencies"]
+    ],
+    "comment": "Basic tree and enhanced graph: the enhanced graph adds a coreference link from students to who, subject relations from forgot and come to students, and the modifier relation from exam to written.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
