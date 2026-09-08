@@ -386,7 +386,7 @@ theorem signOf_excl_ne_incl : signOf .excl ≠ signOf .minIncl := by decide
 /-! ### Application: the Tamil clusivity contrast through the Pronoun API
 
 A lexical pronoun entry feeds Harbour's signs by composing `Pronoun.category` — the
-[cysouw-2009] category a `person`/`number`/`clusivity` triple realizes — with `signOf`. Tamil's
+[cysouw-2003] category a `person`/`number`/`clusivity` triple realizes — with `signOf`. Tamil's
 clusivity-marked 1pl forms *naam* (inclusive) and *naangaL* (exclusive) land on distinct signs,
 where the neutral `Category.toFeatures` collapses both 1pl categories to `⟨true, true⟩`: the
 distinction [harbour-2016]'s decomposition exists to draw, here discharged on real Fragment
@@ -394,7 +394,7 @@ entries rather than a stipulated example. -/
 
 open Tamil.Pronouns (naam naangaL)
 
-/-- The Harbour sign a pronoun realizes: its [cysouw-2009] `Category` (via the Pronoun API's
+/-- The Harbour sign a pronoun realizes: its [cysouw-2003] `Category` (via the Pronoun API's
 `Pronoun.category`) decomposed by `signOf`. `none` when the φ-features underdetermine a
 category. The bridge from a lexical pronoun entry to [harbour-2016]'s `±author/±participant`
 operations. -/

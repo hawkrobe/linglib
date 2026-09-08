@@ -4,7 +4,7 @@ import Linglib.Data.UD.Basic
 
 /-!
 # Grammatical number — the canonical value space
-[corbett-2000] [harbour-2014] [greenberg-1963] [cysouw-2009]
+[corbett-2000] [harbour-2014] [greenberg-1963] [cysouw-2003]
 
 `Number` is the canonical grammatical-number type: [corbett-2000]'s analytical
 inventory of number values, the vocabulary in which systems, agreement,
@@ -37,7 +37,7 @@ Values are classified along two orthogonal dimensions ([corbett-2000]):
 * `Number.System` — a language's number-value inventory ([corbett-2000] §2.3),
   with the implicational universals as decidable predicates and their
   conjunction `System.WellFormed`.
-* `Number.Stage` — [cysouw-2009]'s N1–N4 number-opposition stages, a
+* `Number.Stage` — [cysouw-2003]'s N1–N4 number-opposition stages, a
   `LinearOrder`.
 
 ## Implementation notes
@@ -266,9 +266,9 @@ instance instPartialOrder : PartialOrder Number where
   le_trans a b c := by cases a <;> cases b <;> cases c <;> decide
   le_antisymm a b := by cases a <;> cases b <;> decide
 
-/-! ### Number opposition stages ([cysouw-2009], Fig 10.8) -/
+/-! ### Number opposition stages ([cysouw-2003], Fig 10.8) -/
 
-/-- Number opposition stages ([cysouw-2009], Fig 10.8): a coarsening of the
+/-- Number opposition stages ([cysouw-2003], Fig 10.8): a coarsening of the
     number values into a four-step hierarchy of typological richness, from no
     number marking (N1) to full number marking with restricted groups (N3/N4).
     Linearly ordered by richness. -/
@@ -277,7 +277,8 @@ inductive Stage where
   | N1
   /-- Singular vs group (basic number opposition). -/
   | N2
-  /-- Restricted group (dual/trial) distinguished from unrestricted. -/
+  /-- Restricted group (dual, and the inclusive trial of unit-augmented paradigms)
+      distinguished from unrestricted. -/
   | N3
   /-- Small group (paucal) additionally distinguished. -/
   | N4
@@ -418,7 +419,7 @@ def WellFormed (ns : System) : Prop :=
 instance (ns : System) : Decidable ns.WellFormed := by
   unfold WellFormed; infer_instance
 
-/-- The [cysouw-2009] stage a system realizes, by value count:
+/-- The [cysouw-2003] stage a system realizes, by value count:
     0–1 values → N1 (undifferentiated), 2 → N2 (basic opposition),
     3 → N3 (restricted group), 4+ → N4 (paucal additionally). -/
 def toStage (ns : System) : Stage :=
