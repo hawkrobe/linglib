@@ -1,262 +1,216 @@
 import Linglib.Semantics.Modification.Classification
 import Linglib.Semantics.Modification.Coercion
-import Linglib.Studies.Kamp1975
 import Linglib.Studies.Partee2010
-import Linglib.Data.Examples.Schema
-import Linglib.Data.Examples.DelPinal2015
 
 /-!
-# Del Pinal (2015): Dual Content Semantics
-[delpinal-2015]
+# Del Pinal (2015): Dual Content Semantics, privative adjectives, and dynamic compositionality
 
-Dual-content reanalysis of privative adjectives: nouns have
-E-structure + qualia C-structure ([pustejovsky-1995]);
-privatives operate on C-structure. Sibling to `Partee2010.lean`
-(same data, opposite mechanism: Partee re-types fake as subsective
-plus noun-coercion, DC keeps fake's Kamp-privative typing and pairs
-it with C-structure).
-
-## Main definitions
-
-* `Qualia`, `NounMeaning`, `DCAdjMeaning`: dual-content lexical-entry types.
-* `DelPinalReanalysis`: stand-alone operator-typed reanalysis structure.
-* `fakeDC`, `counterfeitDC`, `artificialDC`: the privative trio (paper
-  eqs. 16, 11, 12); `fakeDelPinal`, `counterfeitDelPinal`: constructive
-  witnesses. `artificialDC` is *not* a `DelPinalReanalysis` (it admits
-  no look-like-N inference) — see `artificialDC_not_DelPinalReanalysis`.
-* `toDCAdjMeaning`: lift a classical modifier meaning to a
-  `DCAdjMeaning` by inheriting noun qualia.
-* `DelPinalReanalysis.no_LicensedCoercion`: cross-framework divergence
-  with [partee-2010] (any DC reanalysis projects to a Kamp-privative
-  classical modifier meaning, hence admits no NVP-licensed coercion).
-* `Kamp1975_fakeAdj_lift_not_DelPinalReanalysis`: Kamp's classical typing
-  of `fake` is genuinely impoverished — the lift to `DCAdjMeaning` fails
-  to satisfy the look-like-N constraint that DC's `fake` enforces.
+This file formalizes the dual-content semantics of [delpinal-2015] for privative adjectives.
+A common noun's meaning is a tuple of its extension-determining E-structure and a
+C-structure of four qualia after [pustejovsky-1995], (7) and (8), and a privative adjective
+is a lexicalized semantic restructuring operator whose components each take the noun's full
+meaning, so that the functional application of [heim-kratzer-1998] becomes the pointwise rule
+FA_DC of §3. The entry for *fake*, (16), says that a fake N is not an N, does not have N's
+origin and was made to look like an N, keeps N's constitutive and formal qualia, negates its
+telic and records the making as its agentive; *counterfeit*, (11), is made to look and to
+function like an N, *artificial*, (12), only to function like one, and *typical*, (13), is an
+N with every quale of its C-structure. The C-structure does work that the E-structure alone
+cannot: a typical fake gun looks like a gun and cannot shoot, (18), where a fake gun, (10),
+may be badly made or fire; a fake need not function and an artificial heart need not look
+like a heart; and with an intersective modifier as a restructuring operator, (20), *fake*
+applied to *plastic* before *gun* yields a real gun made of fake plastic, while applied to
+*plastic gun* it denies the compound. Against the shifting-heads account of [partee-2010],
+§5, the E-structure of *fake* is privative in the sense of [kamp-1975], so the non-vacuity
+principle can license no coercion of the head, and none is needed: the literal
+interpretation already has a positive and a negative extension.
 
 ## Implementation notes
 
-Paper qualia values involve event quantifiers (`λx.GEN e[SHOOTING(e) ∧
-INSTRUMENT(e,x)]`, `∃e[MAKING(e) ∧ GOAL(e, Q_F(N)(x))]`); these are
-flattened to characteristic predicates of type `Property W E`. The
-AGENTIVE clause of `fakeDC` is approximated as `N.qualia.formal` (the
-GOAL projects the formal quale), which loses the *existential
-commitment* about an event of making — a found object can look like a
-gun without being made-to-look-like one. This proxy is adequate at the
-predicate-level fidelity of the current substrate; faithful encoding
-would require an event substrate. Counterfeit's AGENTIVE goal is
-`Q_F ∧ Q_T`; artificial's is `Q_T` alone.
+The paper's making events, `∃e[making(e) ∧ goal(e, P(x))]`, are a primitive `made P` on
+properties, so no event substrate is assumed and nothing about it, such as monotonicity in
+the goal, is. A quale a term has no value for is the trivial property, footnote 10, which is
+why the intersective operator conjoins every quale where (20) leaves *plastic*'s empty telic
+to the noun. The paper gives full entries only for *fake* and *plastic*; *counterfeit*,
+*artificial* and *typical* are stated on E-structure alone, as in (11) to (13).
 
-The dual FA_DC compositional rule (paper §3: E-side standard FA, C-side
-pointwise FA via qualia functions) is elided — operators here are flat
-`NounMeaning → NounMeaning` functions rather than structured pairs of
-E-functions and C-functions. The trade-off is exposed by
-`artificialDC_not_DelPinalReanalysis`: not every privative-like operator
-satisfies `extension_implies_formal`.
+## TODO
+
+Section 3 also attributes to the bracketing [fake [plastic gun]] a reading on which a fake
+plastic gun is a real gun made of plastic. Under (16) applied to (21) that reading is not
+derivable, since the E-structure denies the compound *plastic gun*; the reading the text
+derives from [[fake plastic] gun] is (`fake_intersective_extension_le`).
 
 ## References
 
-* [pustejovsky-1995] (qualia roles).
-* [partee-2010] (sibling reanalysis).
+* [delpinal-2015]
+* [pustejovsky-1995]
+* [heim-kratzer-1998]
+* [partee-2010]
+* [kamp-1975]
 -/
 
 namespace DelPinal2015
 
 open Modification Modifier
 
-/-- Property-valued rendering of the four [pustejovsky-1995] qualia
-    roles (`Pustejovsky1995.QualeRole`); the Type-valued original is
-    `Pustejovsky1995.Qualia` in `Studies/Pustejovsky1995.lean`. -/
-structure Qualia (W E : Type*) where
-  constitutive : Property W E
-  formal       : Property W E
-  telic        : Property W E
-  agentive     : Property W E
-
-/-- DC lexical entry: extension plus qualia profile. -/
-structure NounMeaning (W E : Type*) where
-  extension : Property W E
-  qualia    : Qualia W E
-
-/-- Adjective as a DC operator on noun meanings. -/
-abbrev DCAdjMeaning (W E : Type*) := NounMeaning W E → NounMeaning W E
-
 variable {W E : Type*}
 
-/-- DC reanalysis: a `DCAdjMeaning` operator with privative E-structure
-    and formal-quale entailment (the "looks like N" inference). -/
-structure DelPinalReanalysis (W E : Type*) where
-  operator : DCAdjMeaning W E
-  extension_privative : ∀ (N : NounMeaning W E) (w : W) (x : E),
-    (operator N).extension w x → ¬ N.extension w x
-  extension_implies_formal : ∀ (N : NounMeaning W E) (w : W) (x : E),
-    (operator N).extension w x → N.qualia.formal w x
+/-! ### Dual content and FA_DC -/
 
-/-! ### The privative trio: fake, counterfeit, artificial -/
+/-- A dual-content meaning, the tuple `⟨E, Q_C, Q_F, Q_T, Q_A⟩` of §3: the E-structure and
+the constitutive, formal, telic and agentive qualia; a quale the term has no value for is
+the trivial property. -/
+structure DualContent (W E : Type*) where
+  extension : Property W E
+  constitutive : Property W E
+  formal : Property W E
+  telic : Property W E
+  agentive : Property W E
 
-/-- DC `fake` operator (paper eq. 16). -/
-def fakeDC : DCAdjMeaning W E := fun N =>
-  { extension := fun w x =>
-      ¬ N.extension w x ∧
-      ¬ N.qualia.agentive w x ∧
-      N.qualia.formal w x
-    qualia :=
-      { constitutive := N.qualia.constitutive
-        formal       := N.qualia.formal
-        telic        := fun w x => ¬ N.qualia.telic w x
-        agentive     := N.qualia.formal } }
+/-- A semantic restructuring operator, the entry of a modifier: each component takes the
+full meaning of the modified noun. -/
+structure Restructuring (W E : Type*) where
+  extension : DualContent W E → Property W E
+  constitutive : DualContent W E → Property W E
+  formal : DualContent W E → Property W E
+  telic : DualContent W E → Property W E
+  agentive : DualContent W E → Property W E
 
-/-- DC `counterfeit` operator (paper eq. 11). The AGENTIVE goal is to
-    look AND function like N (made-to-look-and-function). TELIC
-    preserved (not negated). -/
-def counterfeitDC : DCAdjMeaning W E := fun N =>
-  { extension := fun w x =>
-      ¬ N.extension w x ∧
-      ¬ N.qualia.agentive w x ∧
-      N.qualia.formal w x ∧
-      N.qualia.telic w x
-    qualia :=
-      { constitutive := N.qualia.constitutive
-        formal       := N.qualia.formal
-        telic        := N.qualia.telic
-        agentive     := fun w x => N.qualia.formal w x ∧ N.qualia.telic w x } }
+/-- FA_DC, §3: the modifier's E-structure applied to the noun's meaning, and each quale of the
+modifier applied to the noun's meaning. -/
+def Restructuring.apply (A : Restructuring W E) (N : DualContent W E) : DualContent W E :=
+  ⟨A.extension N, A.constitutive N, A.formal N, A.telic N, A.agentive N⟩
 
-/-- DC `artificial` operator (paper eq. 12). The AGENTIVE goal is to
-    function like N (no look-like commitment). FORMAL is preserved in
-    qualia but is *not* asserted in extension. -/
-def artificialDC : DCAdjMeaning W E := fun N =>
-  { extension := fun w x =>
-      ¬ N.extension w x ∧
-      ¬ N.qualia.agentive w x ∧
-      N.qualia.telic w x
-    qualia :=
-      { constitutive := N.qualia.constitutive
-        formal       := N.qualia.formal
-        telic        := N.qualia.telic
-        agentive     := N.qualia.telic } }
+/-- The classical modifier meaning an operator projects: the E-structure of its output over a
+lexicon assigning each property a dual content. -/
+def Restructuring.toModifier (A : Restructuring W E) (lex : Property W E → DualContent W E) :
+    Modifier (Property W E) :=
+  λ P => (A.apply (lex P)).extension
 
-/-- `fakeDC` is a `DelPinalReanalysis`. -/
-def fakeDelPinal : DelPinalReanalysis W E where
-  operator := fakeDC
-  extension_privative _ _ _ h := h.1
-  extension_implies_formal _ _ _ h := h.2.2
+/-- The intersective operator a noun's dual content type-shifts to, (20): each component
+conjoined with the noun's. -/
+def DualContent.intersective (P : DualContent W E) : Restructuring W E where
+  extension N := λ w x => P.extension w x ∧ N.extension w x
+  constitutive N := λ w x => P.constitutive w x ∧ N.constitutive w x
+  formal N := λ w x => P.formal w x ∧ N.formal w x
+  telic N := λ w x => P.telic w x ∧ N.telic w x
+  agentive N := λ w x => P.agentive w x ∧ N.agentive w x
 
-/-- `counterfeitDC` is a `DelPinalReanalysis`. -/
-def counterfeitDelPinal : DelPinalReanalysis W E where
-  operator := counterfeitDC
-  extension_privative _ _ _ h := h.1
-  extension_implies_formal _ _ _ h := h.2.2.1
+/-! ### The entries -/
 
-/-- `artificialDC` is *not* a `DelPinalReanalysis`: artificial N does
-    not entail the look-like inference (paper §3: artificial heart
-    need not look like a heart). Counterexample noun shows that the
-    extension can be inhabited while the input formal quale is empty. -/
-theorem artificialDC_not_DelPinalReanalysis :
-    ¬ ∃ (r : DelPinalReanalysis Unit Unit), r.operator = artificialDC := by
-  rintro ⟨r, hr⟩
-  let N : NounMeaning Unit Unit :=
-    { extension := fun _ _ => False
-      qualia :=
-        { constitutive := fun _ _ => True
-          formal       := fun _ _ => False
-          telic        := fun _ _ => True
-          agentive     := fun _ _ => False } }
-  have hext : (r.operator N).extension () () := by
-    rw [hr]; exact ⟨id, id, trivial⟩
-  exact r.extension_implies_formal N () () hext
+section Entries
 
-/-! ### Cross-framework divergence with [partee-2010] -/
+/-! `made P` is made with the goal that `P` hold, the paper's `∃e[making(e) ∧ goal(e, P(x))]`. -/
 
-/-- Classical modifier-meaning projection of a DC operator under a
-    per-noun qualia assignment `Q`. -/
-def DelPinalReanalysis.toModifier (r : DelPinalReanalysis W E)
-    (Q : Property W E → Qualia W E) : Modifier (Property W E) :=
-  fun N w x => (r.operator ⟨N, Q N⟩).extension w x
+variable (made : Property W E → Property W E)
 
-theorem DelPinalReanalysis.toModifier_isPrivative
-    (r : DelPinalReanalysis W E) (Q : Property W E → Qualia W E) :
-    isPrivative (r.toModifier Q) :=
-  isPrivative_iff.mpr fun N w x h => r.extension_privative ⟨N, Q N⟩ w x h
+/-- *fake*, (16): a fake N is not an N, does not have N's origin, and was made to look like an
+N; it keeps N's constitutive and formal qualia, negates the telic, and has the making as its
+agentive. -/
+def fake : Restructuring W E where
+  extension N := λ w x => ¬ N.extension w x ∧ ¬ N.agentive w x ∧ made N.formal w x
+  constitutive N := N.constitutive
+  formal N := N.formal
+  telic N := λ w x => ¬ N.telic w x
+  agentive N := made N.formal
 
-/-- The classical projection of any DC reanalysis admits no
-    `LicensedCoercion`. The two frameworks make incompatible type-level
-    commitments about privatives. The comparison is extensional-only:
-    `toModifier` reads off E-structure, discarding the C-structure
-    where DC relocates the look-like-N content that Partee's coercion
-    carries in the widened extension. -/
-theorem DelPinalReanalysis.no_LicensedCoercion
-    (r : DelPinalReanalysis W E) (Q : Property W E → Qualia W E)
-    (N : Property W E) (w : W) :
-    IsEmpty (LicensedCoercion N (r.toModifier Q) w) :=
-  Partee2010.isPrivative_no_LicensedCoercion
-    (r.toModifier_isPrivative Q) N w
+/-- The E-structure of *counterfeit*, (11): made to look and to function like an N. -/
+def counterfeitE (N : DualContent W E) : Property W E :=
+  λ w x => ¬ N.extension w x ∧ ¬ N.agentive w x ∧ made (λ w x => N.formal w x ∧ N.telic w x) w x
 
-/-! ### Classical lift; impoverishment of Kamp-typed `fake` -/
+/-- The E-structure of *artificial*, (12): made to function like an N, with no commitment to
+looking like one. -/
+def artificialE (N : DualContent W E) : Property W E :=
+  λ w x => ¬ N.extension w x ∧ ¬ N.agentive w x ∧ made N.telic w x
 
-/-- Lift a classical modifier meaning to a `DCAdjMeaning` by computing
-    the extension via the classical adj and inheriting the input noun's
-    qualia (the C-structure passes through unchanged). -/
-def toDCAdjMeaning (adj : Modifier (Property W E)) : DCAdjMeaning W E :=
-  fun N => { extension := adj N.extension, qualia := N.qualia }
+end Entries
 
-/-- `Kamp1975.fakeAdj` lifted to a `DCAdjMeaning` is *not* a
-    `DelPinalReanalysis`: the classical typing preserves the Kamp-
-    privative E-structure but cannot in general guarantee the
-    look-like-N inference (the input noun's formal quale need not
-    hold at the fake-witness entity). Formal counterpart to Del
-    Pinal's argument that the classical analysis is incomplete. -/
-theorem Kamp1975_fakeAdj_lift_not_DelPinalReanalysis :
-    ¬ ∃ (r : DelPinalReanalysis Kamp1975.W2 Kamp1975.E3),
-      r.operator = toDCAdjMeaning Kamp1975.fakeAdj := by
-  rintro ⟨r, hr⟩
-  let N : NounMeaning Kamp1975.W2 Kamp1975.E3 :=
-    { extension := fun _ _ => False
-      qualia :=
-        { constitutive := fun _ _ => True
-          formal       := fun _ _ => False
-          telic        := fun _ _ => True
-          agentive     := fun _ _ => False } }
-  have hext : (r.operator N).extension Kamp1975.W2.w₁ Kamp1975.E3.b := by
-    rw [hr]; exact ⟨trivial, id⟩
-  exact r.extension_implies_formal N Kamp1975.W2.w₁ Kamp1975.E3.b hext
+/-- The E-structure of *typical*, (13): an N with every quale of its C-structure. -/
+def typicalE (N : DualContent W E) : Property W E :=
+  λ w x => N.extension w x ∧ N.constitutive w x ∧ N.formal w x ∧ N.telic w x ∧ N.agentive w x
 
-/-! ### `RevisedClass` classification: DC side -/
+/-- *typical* is subsective. -/
+theorem typicalE_le (N : DualContent W E) (w : W) (x : E) (h : typicalE N w x) :
+    N.extension w x :=
+  h.1
 
-/-- Under Del Pinal's framework, `Kamp1975.fakeAdj` keeps its
-    Kamp-privative typing and falls in `RevisedClass.nonSubsective`.
-    Contrast with `Partee2010.fakeReanalysis.is_subsective`: Partee
-    reclassifies the *reanalyzed* meaning into `RevisedClass.subsective`.
-    The two frameworks attribute different `RevisedClass` values to
-    the lexical item 'fake' because they posit different formal
-    objects for it. -/
-theorem Kamp1975_fakeAdj_RevisedClass_nonSubsective :
-    RevisedClass.nonSubsective.satisfies Kamp1975.fakeAdj :=
-  not_isSubsective_of_isPrivative Kamp1975.fake_privative
-    ⟨fun _ _ => False, Kamp1975.W2.w₁, Kamp1975.E3.b, trivial, id⟩
+/-! ### What C-structure adds -/
 
-/-! ### Output-qualia witness theorems
+section Contrasts
 
-Per paper eqs. 11, 12, 16/17, the three operators produce distinct
-qualia outputs. The `Iff.rfl` theorems below verify the structural
-discrimination, justifying the 4-field `Qualia` shape. -/
+variable (made : Property W E → Property W E)
 
-theorem fakeDC_telic_negates (N : NounMeaning W E) (w : W) (x : E) :
-    (fakeDC N).qualia.telic w x ↔ ¬ N.qualia.telic w x := Iff.rfl
+/-- (18): a typical fake N looks like an N and cannot serve N's function, read off the
+C-structure that (16) gives *fake N*. -/
+theorem typical_fake_formal_not_telic (N : DualContent W E) (w : W) (x : E)
+    (h : typicalE ((fake made).apply N) w x) : N.formal w x ∧ ¬ N.telic w x :=
+  ⟨h.2.2.1, h.2.2.2.1⟩
 
-theorem counterfeitDC_telic_preserved (N : NounMeaning W E) (w : W) (x : E) :
-    (counterfeitDC N).qualia.telic w x ↔ N.qualia.telic w x := Iff.rfl
+/-- A fake N alone, (10), settles neither: a badly made fake need not look like an N, and a
+malfunctioning one may still serve its function. -/
+theorem fake_not_formal_not_telic :
+    ∃ (W E : Type) (made : Property W E → Property W E) (N : DualContent W E) (w : W) (x : E),
+      ((fake made).apply N).extension w x ∧ ¬ N.formal w x ∧ N.telic w x :=
+  ⟨Unit, Bool, λ _ _ _ => True,
+    ⟨λ _ x => x = true, λ _ _ => True, λ _ x => x = true, λ _ _ => True, λ _ _ => False⟩,
+    (), false, by simp [Restructuring.apply, fake], by simp, trivial⟩
 
-theorem artificialDC_telic_preserved (N : NounMeaning W E) (w : W) (x : E) :
-    (artificialDC N).qualia.telic w x ↔ N.qualia.telic w x := Iff.rfl
+/-- A fake need not be made to function like an N, which a counterfeit is, (11). -/
+theorem fake_not_made_telic :
+    ∃ (W E : Type) (made : Property W E → Property W E) (N : DualContent W E) (w : W) (x : E),
+      ((fake made).apply N).extension w x ∧ ¬ made (λ w x => N.formal w x ∧ N.telic w x) w x :=
+  ⟨Unit, Bool, id,
+    ⟨λ _ x => x = true, λ _ _ => True, λ _ _ => True, λ _ _ => False, λ _ _ => False⟩,
+    (), false, by simp [Restructuring.apply, fake], by simp⟩
 
-theorem fakeDC_agentive_is_formal (N : NounMeaning W E) (w : W) (x : E) :
-    (fakeDC N).qualia.agentive w x ↔ N.qualia.formal w x := Iff.rfl
+/-- An artificial heart need not be made to look like a heart, (12), where fakes and
+counterfeits are. -/
+theorem artificial_not_made_formal :
+    ∃ (W E : Type) (made : Property W E → Property W E) (N : DualContent W E) (w : W) (x : E),
+      artificialE made N w x ∧ ¬ made N.formal w x :=
+  ⟨Unit, Bool, id,
+    ⟨λ _ x => x = true, λ _ _ => True, λ _ x => x = true, λ _ _ => True, λ _ _ => False⟩,
+    (), false, by simp [artificialE], by simp⟩
 
-theorem counterfeitDC_agentive_is_formal_and_telic
-    (N : NounMeaning W E) (w : W) (x : E) :
-    (counterfeitDC N).qualia.agentive w x ↔
-    (N.qualia.formal w x ∧ N.qualia.telic w x) := Iff.rfl
+/-! ### Bracketing, §3 -/
 
-theorem artificialDC_agentive_is_telic (N : NounMeaning W E) (w : W) (x : E) :
-    (artificialDC N).qualia.agentive w x ↔ N.qualia.telic w x := Iff.rfl
+/-- [[fake plastic] gun]: a real gun, made of fake plastic. -/
+theorem fake_intersective_extension_le (P N : DualContent W E) (w : W) (x : E)
+    (h : (((fake made).apply P).intersective.apply N).extension w x) :
+    N.extension w x ∧ ¬ P.extension w x :=
+  ⟨h.2, h.1.1⟩
+
+/-- [fake [plastic gun]]: not a plastic gun. -/
+theorem fake_apply_intersective_not (P N : DualContent W E) (w : W) (x : E)
+    (h : ((fake made).apply (P.intersective.apply N)).extension w x) :
+    ¬ (P.extension w x ∧ N.extension w x) :=
+  h.1
+
+/-! ### Against shifting heads, §5 -/
+
+/-- On E-structure *fake* is privative in the sense of [kamp-1975], over any lexicon whose
+E-structures are the properties themselves. -/
+theorem fake_toModifier_isPrivative (lex : Property W E → DualContent W E)
+    (hlex : ∀ P, (lex P).extension = P) : isPrivative ((fake made).toModifier lex) :=
+  isPrivative_iff.2 λ P _ _ h => (hlex P ▸ h.1 :)
+
+/-- So the non-vacuity principle licenses no coercion of the head, [partee-2010]'s
+obstruction. -/
+theorem fake_no_licensedCoercion (lex : Property W E → DualContent W E)
+    (hlex : ∀ P, (lex P).extension = P) (P : Property W E) (w : W) :
+    IsEmpty (LicensedCoercion P ((fake made).toModifier lex) w) :=
+  Partee2010.isPrivative_no_LicensedCoercion (fake_toModifier_isPrivative made lex hlex) P w
+
+end Contrasts
+
+/-- And none is needed: the literal interpretation of *fake N* has a positive and a negative
+extension, so its default interpretation involves no violation of non-vacuity. -/
+theorem fake_isNonVacuous :
+    ∃ (W E : Type) (made : Property W E → Property W E) (N : DualContent W E) (w : W),
+      isNonVacuous ((fake made).apply N).extension w (λ _ => True) :=
+  ⟨Unit, Bool, λ _ _ _ => True,
+    ⟨λ _ x => x = true, λ _ _ => True, λ _ _ => True, λ _ _ => True, λ _ _ => False⟩, (),
+    ⟨false, trivial, by simp [Restructuring.apply, fake]⟩,
+    ⟨true, trivial, by simp [Restructuring.apply, fake]⟩⟩
 
 end DelPinal2015
