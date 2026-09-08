@@ -2781,7 +2781,6 @@ import Linglib.Syntax.Category.Complementizer.Basic
 import Linglib.Syntax.Category.Coordinator
 import Linglib.Syntax.Category.Degree.Basic
 import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Syntax.Category.ExpressiveModifier
 import Linglib.Syntax.Category.Noun.Basic
 import Linglib.Syntax.Category.Numeral.Basic
 import Linglib.Syntax.Category.Numeral.Composition
@@ -2985,6 +2984,7 @@ import Linglib.Data.Examples.AlonsoOvalleRoyer2024
 import Linglib.Semantics.Modality.Anchor
 import Linglib.Semantics.Modality.IndefiniteDenotation
 import Linglib.Syntax.Category.Determiner.ModalIndefinite
+import Linglib.Syntax.Category.WhModifier
 import Linglib.Data.Examples.Alsop2024
 import Linglib.Data.Examples.AnandHacquard2013
 import Linglib.Data.Examples.AnandHardtMcCloskey2021
@@ -3024,3 +3024,4 @@ import Linglib.Data.Examples.DalrympleHaug2024
 import Linglib.Data.Examples.DavidsonGagne2022
 import Linglib.Data.Examples.Dayal2016
 import Linglib.Data.Examples.Dayal2025
+import Linglib.Data.Examples.ChanShen2026
