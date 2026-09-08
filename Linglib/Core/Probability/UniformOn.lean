@@ -45,4 +45,14 @@ theorem uniformOn_univ_real_coe_finset (s : Finset W) :
   rw [measureReal_def, uniformOn_univ, Measure.count_apply_finset, ENNReal.toReal_div,
     ENNReal.toReal_natCast, ENNReal.toReal_natCast]
 
+omit [Fintype W] in
+/-- The uniform measure on a set at a set, on reals: the proportion of the atoms of `s` lying
+in `e`, with `0 / 0 = 0` when `s` is empty. -/
+theorem uniformOn_real_apply [Finite W] (s e : Set W) :
+    (uniformOn s).real e = (s ∩ e).ncard / s.ncard := by
+  rw [measureReal_def, uniformOn, cond_apply (Set.toFinite s).measurableSet,
+    Measure.count_apply_finite _ (Set.toFinite _), Measure.count_apply_finite _ (Set.toFinite _),
+    ← Set.ncard_eq_toFinset_card, ← Set.ncard_eq_toFinset_card, ENNReal.toReal_mul,
+    ENNReal.toReal_inv, ENNReal.toReal_natCast, ENNReal.toReal_natCast, inv_mul_eq_div]
+
 end MeasureTheory
