@@ -1,485 +1,285 @@
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Mereology
 
 /-!
-# [del-prete-2013] — Imperfectivity and Habituality in Italian
+# Del Prete (2013): Imperfectivity and habituality in Italian
 
-Fabio Del Prete, ch. 8 of *Genericity* (Mari, Beyssade, Del Prete eds.),
-OUP, Oxford Studies in Theoretical Linguistics 43.
+This file formalizes the plurality-based analysis of the Italian Imperfetto in [del-prete-2013].
+A bare imperfective is habitual or progressive according to whether its reference situation is
+large or small, and on the habitual reading a singular indefinite object is understood as the
+same object across the repeated events, the same-object effect of (2). The imperfective feature
+spreads an event property over the forward expansion of the reference situation in a branching
+model of situations, (16): every branch of the expanded situation lies within the temporal trace
+of some event with the property. Verbs refer to plural events, [kratzer-2008]'s lexical
+cumulativity hypothesis, and thematic roles are sum homomorphisms from events into the lattice
+of individuals of [link-1983] and [krifka-1998], so a plural event whose theme is a singular
+individual has that individual as the theme of each of its singular sub-events, the sameness
+principle SSP. The same-object effect is thereby an entailment of the truth conditions (24), and
+over a large reference situation the covering event must be plural, §5. A bare plural names the
+kind, [carlson-1977] and [chierchia-1998], and a predication of a kind distributes its instances
+over the singular sub-events, (21), so bare plurals show a kind-level effect only, (30); the
+Q-adverb *sempre* forms a restricted universal over situations below the imperfective, (29), and
+the indefinite in its scope varies with the situation. The oddness of (2b) against (2a) is then
+[magri-2009]'s principle (O), §7: habitually reading one philosophy book conflicts with common
+knowledge, habitually driving one sports car does not. Against the covert quantifier GEN of
+[krifka-etal-1995], §2, the obligatory wide scope of indefinites that the effect would demand
+gives the negated kind indefinite of (9b) the truth conditions (10b), strictly weaker than the
+intuitive (10'b).
 
-## Core Claim
+## Implementation notes
 
-The Italian Imperfetto (imperfective past) admits both habitual (HAB) and
-progressive (PROG) readings. The chapter's key empirical contribution is
-the **Same-Object Effect** (SOE): bare imperfectives with a singular
-indefinite in object position show an implication that the same object is
-involved across habitual events — e.g., "Gianni guidava un'auto sportiva"
-implies the same sports car each time. When this same-object reading is
-implausible (e.g., reading the same philosophy book repeatedly), HAB is
-blocked while PROG survives.
+Tense and the reference time adverbial, (15) and (18), fix the reference situation, which
+matters to the analysis only through its size, so the theorems are stated at the level of the
+aspectual phrase, (24e). The branches of a situation are its sub-situations lying within a
+single history, given by a predicate `linear`, and the forward expansion, taken from [deo-2009]
+and which the chapter does not take to be a function, is a parameter `fexp` chosen per
+utterance. Verbs are event predicates with the agent conjunct folded in, the lexical
+cumulativity hypothesis is `Mereology.AlgClosure` of the singular events, and a plural event is
+`Mereology.IsPlural`, the iteration of the same volume's [boneh-doron-2013]. The kind of a noun
+is a parameter, the sum of its individuals, and a "kind coerced" indefinite ranges over a given
+set of sub-kinds, parts of the kind. Example numbers are those of the HAL preprint hal-00920848.
 
-## Chapter Sections Covered
+## TODO
 
-- **§8.1**: Introduction — HAB/PROG readings, temporal anchoring (exx. 1–3)
-- **§8.2**: GEN analysis and its inadequacy for SOEs (exx. 4–10)
-- **§8.3**: Bare plural objects and 'kind-coerced' singular indefinites (exx. 11–14)
-- **§8.4**: Semantic framework — PBT, LCH, IMPF (exx. 15–27) [concepts only]
-- **§8.5**: SOE for bare imperfectives (exx. 22–27) [concepts only]
-- **§8.6**: SOE, Q-adverbs, and bare plurals (exx. 28–30) [data]
-- **§8.7**: Oddness explained via common knowledge (principle (O))
-- **§8.8**: Conclusion
+Footnote 28 argues that the sports car of (22) cannot vary across the branches of the expanded
+situation, since the reference situation itself lies within the trace of each covering event.
+The truth conditions (24g) choose a covering event per branch, and no axiom of the model
+identifies the parts of two such events at the reference situation, so the sameness proved in
+`hab_soe` is per covering event.
 
-## Argument Structure
+## References
 
-Del Prete argues the standard covert-quantifier GEN analysis (§8.2) cannot
-account for the asymmetric distribution of SOEs across bare imperfectives
-and their adverbially-quantified/bare-plural counterparts, unless one makes
-stipulative assumptions about scope interactions between indefinites and GEN.
-
-The proposed alternative (§8.4) is a **non-quantificational**, plurality-based
-analysis: HAB readings arise from event plurality under the Lexical
-Cumulativity Hypothesis (LCH; Kratzer 2008) combined with IMPF's
-forward-expansion of the reference time in a Partial Branching Time (PBT)
-model. The SOE is then derived as an entailment of the Sameness of Singular
-Participant principle (SSP), and the oddness of (2b) on HAB follows from
-the SOE conflicting with common knowledge (§8.7).
-
-## Connection to Existing Infrastructure
-
-1. **`Perfectivity`** (`Tense/Aspect/Core.lean`): imperfective/perfective
-   distinction. The `IMPF` operator formalizes the same TT⊂TSit relation
-   that Del Prete uses as the starting point for his f-exp analysis.
-
-2. **`Fragments/Italian/Tense.lean`**: `imperfetto` TAMEEntry — the tense
-   form that this chapter is about.
-
-3. **[boneh-doron-2013]** (`BonehDoron2013.lean`): Boneh & Doron's HAB/GEN
-   distinction in ch. 6 of the same volume. Del Prete's analysis is
-   explicitly built on their modal analysis of HAB (§8.4, eq. 41).
-   Their English same-object data (exx. 6b, 7b) parallels Del Prete's
-   Italian SOEs — formalized as `sameObjectParallel` in BonehDoron2013.
+* [del-prete-2013]
+* [kratzer-2008]
+* [link-1983]
+* [krifka-1998]
+* [carlson-1977]
+* [chierchia-1998]
+* [magri-2009]
+* [krifka-etal-1995]
+* [boneh-doron-2013]
+* [deo-2009]
 -/
 
 namespace DelPrete2013
 
-open Aspect (Perfectivity)
-
--- ═══ Reading Types ═══
-
-/-- The two readings available for the Italian Imperfetto.
-
-    [del-prete-2013] §8.1: Imperfetto sentences "can have both
-    habitual (HAB) and progressive (PROG) readings, in correlation
-    with whether temporal anchoring is to a large or to a small
-    reference time." -/
-inductive ImperfettoReading where
-  /-- Habitual: "Gianni used to read the newspaper." Temporal
-      anchoring to a large reference time. -/
-  | hab
-  /-- Progressive: "Gianni was reading the newspaper." Temporal
-      anchoring to a small reference time. -/
-  | prog
-  deriving DecidableEq, Repr
-
--- ═══ Object Type ═══
-
-/-- The type of the object NP, which determines SOE behavior.
-
-    [del-prete-2013] §8.1, §8.3, §8.5: The crucial variable is
-    whether the object is a singular indefinite (triggers SOE), a bare
-    plural (no SOE, analyzed as kind-denoting), or a definite (no SOE). -/
-inductive ObjectType where
-  /-- Definite: "il giornale" (the newspaper) -/
-  | definite
-  /-- Singular indefinite: "un'auto sportiva" (a sports car) -/
-  | singularIndefinite
-  /-- Bare plural: "libri di filosofia" (philosophy books) -/
-  | barePlural
-  /-- No object (intransitive or PP complement) -/
-  | none
-  deriving DecidableEq, Repr
-
--- ═══ Same-Object Effect (SOE) ═══
-
-/-- Whether a sentence displays a Same-Object Effect on its HAB reading.
-
-    [del-prete-2013] §8.1, §8.5: Singular indefinites in object
-    position under Imperfetto trigger SOEs — the object must be
-    the same across habitual events. When this is implausible, the
-    HAB reading is blocked. -/
-inductive SOEStatus where
-  /-- SOE present and plausible (same object across events is natural). -/
-  | plausible
-  /-- SOE present but implausible (same object across events is odd). -/
-  | implausible
-  /-- Kind-level SOE: same *kind* of object, not same individual. -/
-  | kindLevel
-  /-- No SOE (bare plural, definite, or no object). -/
-  | absent
-  deriving DecidableEq, Repr
-
-/-- An Italian imperfective datum from [del-prete-2013]. -/
-structure ItalianDatum where
-  italian : String
-  gloss : String
-  aspect : Perfectivity
-  objectType : ObjectType
-  habOK : Bool     -- HAB reading available?
-  progOK : Bool    -- PROG reading available?
-  soe : SOEStatus  -- Same-Object Effect status
-  exNumber : String -- example number in the chapter
-  deriving Repr
-
--- ═══ Data from the Chapter ═══
-
-/-- Ex. (1): "Gianni leggeva il giornale" — definite object, no SOE issue.
-    Both HAB and PROG are fine. -/
-def gianniLeggeva : ItalianDatum :=
-  { italian := "Gianni leggeva il giornale"
-  , gloss := "Gianni read(Imp, 3sg) the newspaper"
-  , aspect := .imperfective
-  , objectType := .definite
-  , habOK := true
-  , progOK := true
-  , soe := .absent
-  , exNumber := "(1)"
-  }
-
-/-- Ex. (2a): "Gianni guidava un'auto sportiva" — singular indefinite,
-    SOE plausible (one can habitually drive the same sports car).
-    Both HAB and PROG are fine. -/
-def gianniGuidava : ItalianDatum :=
-  { italian := "Gianni guidava un'auto sportiva"
-  , gloss := "Gianni drive(Imp, 3sg) a car sports"
-  , aspect := .imperfective
-  , objectType := .singularIndefinite
-  , habOK := true
-  , progOK := true
-  , soe := .plausible
-  , exNumber := "(2a)"
-  }
-
-/-- Ex. (2b): "Gianni leggeva un libro di filosofia" — singular indefinite,
-    SOE implausible (reading the same philosophy book repeatedly is odd).
-    HAB is blocked (#); only PROG survives. -/
-def gianniLeggevaFilosofia : ItalianDatum :=
-  { italian := "Gianni leggeva un libro di filosofia"
-  , gloss := "Gianni read(Imp, 3sg) a book of philosophy"
-  , aspect := .imperfective
-  , objectType := .singularIndefinite
-  , habOK := false
-  , progOK := true
-  , soe := .implausible
-  , exNumber := "(2b)"
-  }
-
-/-- Ex. (3): "Gianni fumava un sigaro toscano (il Toscanello)" —
-    singular indefinite, but SOE is at the *kind* level (a kind of
-    Tuscan cigar, not an individual cigar). HAB is fine because
-    the kind-level SOE is plausible.
-
-    This is a key data point: SOEs can be satisfied at the kind level
-    when the indefinite is coerced to a kind-reading. -/
-def gianniFumavaSigaro : ItalianDatum :=
-  { italian := "Gianni fumava un sigaro toscano (il Toscanello)"
-  , gloss := "Gianni smoke(Imp, 3sg) a cigar Tuscan (the Toscanello)"
-  , aspect := .imperfective
-  , objectType := .singularIndefinite
-  , habOK := true
-  , progOK := true
-  , soe := .kindLevel
-  , exNumber := "(3)"
-  }
-
-/-- Ex. (4a): "Gianni viaggia in treno" — bare habitual (present tense,
-    no object). Both HAB and PROG available (here we record the generic
-    habitual reading). No SOE issue (intransitive). -/
-def gianniViaggia : ItalianDatum :=
-  { italian := "Gianni viaggia in treno"
-  , gloss := "Gianni travel(Pres, 3sg) by train"
-  , aspect := .imperfective
-  , objectType := .none
-  , habOK := true
-  , progOK := true
-  , soe := .absent
-  , exNumber := "(4a)"
-  }
-
-/-- Ex. (11): "Gianni leggeva libri di filosofia" — bare plural object,
-    no SOE. HAB is fine; PROG is marginal (#).
-    Key contrast with (2b): bare plural rescues HAB. -/
-def gianniLeggevaLibri : ItalianDatum :=
-  { italian := "Gianni leggeva libri di filosofia"
-  , gloss := "Gianni read(Imp, 3sg) books of philosophy"
-  , aspect := .imperfective
-  , objectType := .barePlural
-  , habOK := true
-  , progOK := false
-  , soe := .absent
-  , exNumber := "(11)"
-  }
-
-/-- Ex. (8)/(29): "Gianni leggeva sempre un libro di filosofia" —
-    same predicate as (2b) but with Q-adverb *sempre* 'always'.
-    HAB is now fine (✓). The Q-adverb provides a tripartite
-    quantificational structure at LF (§8.6), so the singular
-    indefinite scopes below the Q-adverb and no SOE arises.
-
-    This is the key contrast with (2b): adding *sempre* rescues HAB
-    for the same sentence frame. -/
-def gianniLeggeva_sempre : ItalianDatum :=
-  { italian := "Gianni leggeva sempre un libro di filosofia"
-  , gloss := "Gianni read(Imp, 3sg) always a book of philosophy"
-  , aspect := .imperfective
-  , objectType := .singularIndefinite
-  , habOK := true
-  , progOK := true
-  , soe := .absent  -- Q-adverb absorbs the SOE
-  , exNumber := "(8)/(29)"
-  }
-
-def italianData : List ItalianDatum :=
-  [ gianniLeggeva, gianniGuidava, gianniLeggevaFilosofia
-  , gianniFumavaSigaro, gianniViaggia
-  , gianniLeggevaLibri, gianniLeggeva_sempre ]
-
--- ═══ Key Predictions ═══
-
-/-- All examples are imperfective (the chapter studies the Imperfetto). -/
-theorem all_imperfective :
-    italianData.all (λ d => d.aspect == .imperfective) := by
-  native_decide
-
-/-- The SOE contrast: when SOE is implausible, HAB is blocked.
-    (2a) with plausible SOE → HAB ✓; (2b) with implausible SOE → HAB ✗. -/
-theorem soe_blocks_hab :
-    gianniGuidava.soe == .plausible ∧ gianniGuidava.habOK = true ∧
-    gianniLeggevaFilosofia.soe == .implausible ∧ gianniLeggevaFilosofia.habOK = false := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
-
-/-- The bare plural rescue: (2b) sing. indef. blocks HAB, but
-    (11) bare plural with same predicate allows HAB. -/
-theorem bare_plural_rescues_hab :
-    gianniLeggevaFilosofia.habOK = false ∧
-    gianniLeggevaLibri.habOK = true := by
-  exact ⟨rfl, rfl⟩
-
-/-- The Q-adverb rescue (§8.6): "sempre" rescues HAB for the same
-    sentence frame where bare Imperfetto blocks it.
-    (2b) without Q-adverb: HAB ✗; (29) with *sempre*: HAB ✓. -/
-theorem qadverb_rescues_hab :
-    gianniLeggevaFilosofia.habOK = false ∧
-    gianniLeggeva_sempre.habOK = true := by
-  exact ⟨rfl, rfl⟩
-
-/-- The HAB/PROG complementarity for the SOE contrast:
-    sing. indef. with implausible SOE: HAB ✗, PROG ✓
-    bare plural: HAB ✓, PROG ✗ -/
-theorem hab_prog_complementarity :
-    gianniLeggevaFilosofia.habOK = false ∧ gianniLeggevaFilosofia.progOK = true ∧
-    gianniLeggevaLibri.habOK = true ∧ gianniLeggevaLibri.progOK = false := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Definite object: both readings available, no SOE. -/
-theorem definite_object_both_readings :
-    gianniLeggeva.habOK = true ∧ gianniLeggeva.progOK = true ∧
-    gianniLeggeva.soe == .absent ∧ gianniLeggeva.objectType == .definite := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Kind-level SOE: singular indefinite with kind coercion permits HAB
-    because the SOE is satisfied at the kind level. -/
-theorem kind_level_soe_permits_hab :
-    gianniFumavaSigaro.soe == .kindLevel ∧
-    gianniFumavaSigaro.habOK = true ∧
-    gianniFumavaSigaro.objectType == .singularIndefinite := by
-  exact ⟨rfl, rfl, rfl⟩
-
-/-- In bare imperfectives (without Q-adverbs), singular indefinites
-    trigger SOEs while other object types do not.
-    The Q-adverb case (8)/(29) is excluded: a singular indefinite under
-    *sempre* scopes below the Q-adverb, so no SOE arises. -/
-theorem bare_indef_triggers_soe :
-    -- Singular indefinites in bare imperfectives trigger SOEs
-    gianniGuidava.objectType == .singularIndefinite ∧
-    gianniGuidava.soe != .absent ∧
-    gianniLeggevaFilosofia.objectType == .singularIndefinite ∧
-    gianniLeggevaFilosofia.soe != .absent ∧
-    gianniFumavaSigaro.objectType == .singularIndefinite ∧
-    gianniFumavaSigaro.soe != .absent ∧
-    -- Non-singular-indefinite objects in bare imperfectives: no SOE
-    gianniLeggeva.objectType == .definite ∧
-    gianniLeggeva.soe == .absent ∧
-    gianniLeggevaLibri.objectType == .barePlural ∧
-    gianniLeggevaLibri.soe == .absent := by
-  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-
--- ═══ §8.2: Critique of the GEN Analysis ═══
-
-/-- The two problematic scope assumptions that the GEN analysis must
-    make to explain the SOE data.
-
-    [del-prete-2013] §8.2, discussion around exx. (7)–(8): the GEN
-    approach requires:
-    (α1) Singular indefinites obligatorily scope above GEN
-    (α2) Singular indefinites *can* scope below overt Q-adverbs
-
-    The problem is that GEN is supposed to be a phonologically silent
-    version of *sempre* 'always', and should have the same syntactic
-    properties — making (α1) and (α2) contradictory. -/
-structure GENScopeAssumption where
-  label : String
-  assumption : String
-  problematic : Bool
-  deriving Repr
-
-def alpha1 : GENScopeAssumption :=
-  { label := "α1"
-  , assumption := "Singular indefinites obligatorily scope above GEN"
-  , problematic := true }
-
-def alpha2 : GENScopeAssumption :=
-  { label := "α2"
-  , assumption := "Singular indefinites can scope below overt Q-adverbs"
-  , problematic := true }
-
-/-- Both assumptions are needed but create a contradictory picture:
-    GEN is supposed to be a covert *sempre* but doesn't behave like
-    one with respect to scope of indefinites. -/
-theorem gen_scope_assumptions_contradictory :
-    alpha1.problematic = true ∧ alpha2.problematic = true := ⟨rfl, rfl⟩
-
-
--- ═══ §8.4: Key Theoretical Concepts (Not Yet Formalized) ═══
-
-/-- Key theoretical concepts from Del Prete's non-quantificational
-    analysis (§8.4).
-
-    These are enumerated here for reference; full formalization would
-    require substantial new infrastructure (PBT models, event structures
-    with plural events, etc.). -/
-inductive TheoreticalConcept where
-  /-- **Partial Branching Time (PBT)**: A model based on Kratzerian
-      situations where every situation has a unique past but many
-      possible futures. Histories are maximal chains of situations. -/
-  | partialBranchingTime
-  /-- **Forward expansion (f-exp)**: The operation that expands a
-      situation s forward in time, producing branches that represent
-      expected continuations of s. Central to the lexical entry of IMPF. -/
-  | forwardExpansion
-  /-- **THR (Throughout)**: A topological operator that 'spreads out'
-      a temporal property P over a situation s and its branches.
-      IMPF is defined as: ⟦IMPF⟧ = λs.λP. THR(P, f-exp(s)). -/
-  | throughoutOperator
-  /-- **Lexical Cumulativity Hypothesis (LCH)**: Verbs can inherently
-      refer to plural events (Kratzer 2008). This enables the
-      non-quantificational analysis: plurality of events comes from
-      the verb itself, not from a quantifier over situations. -/
-  | lexicalCumulativity
-  /-- **Sameness of Singular Participant (SSP)**: If a plural event e
-      has a singular individual x as theme, then every atomic subevent
-      of e has x as theme. This derives the SOE as an entailment. -/
-  | samenessOfSingularParticipant
-  /-- **Distribution to Subevents**: For kind-denoting themes, singular
-      instances of the kind are distributed over atomic subevents of the
-      plural event. This explains why bare plurals lack SOEs. -/
-  | distributionToSubevents
-  deriving DecidableEq, Repr
-
-
--- ═══ §8.7: Oddness Explained ═══
-
-/-- Principle (O) from §8.7: "If a sentence S has implications that
-    conflict with common knowledge, then S is perceived as odd."
-
-    This pragmatic principle explains the asymmetric HAB availability:
-
-    - (2a) "Gianni drove a sports car" — SOE (same car) is compatible
-      with common knowledge (people do habitually drive one car).
-      → HAB ✓
-
-    - (2b) "Gianni read a philosophy book" — SOE (same book) conflicts
-      with common knowledge (people don't repeatedly read the same
-      philosophy book). → HAB perceived as odd (#).
-
-    The SOE itself is a semantic entailment of the analysis (via SSP);
-    the oddness arises from a pragmatic conflict with common knowledge.
-    This two-step explanation (semantic SOE + pragmatic filter) is the
-    chapter's main result. -/
-structure OddnessPrinciple where
-  sentence : String
-  soeImplication : String
-  conflictsWithCK : Bool  -- conflicts with common knowledge?
-  perceivedAsOdd : Bool
-  deriving Repr
-
-def guidava_oddness : OddnessPrinciple :=
-  { sentence := "Gianni guidava un'auto sportiva"
-  , soeImplication := "Gianni habitually drove the same sports car"
-  , conflictsWithCK := false
-  , perceivedAsOdd := false }
-
-def leggeva_filosofia_oddness : OddnessPrinciple :=
-  { sentence := "Gianni leggeva un libro di filosofia"
-  , soeImplication := "Gianni habitually read the same philosophy book"
-  , conflictsWithCK := true
-  , perceivedAsOdd := true }
-
-/-- The oddness follows from common-knowledge conflict:
-    no CK conflict → not odd; CK conflict → odd. -/
-theorem oddness_from_ck_conflict :
-    guidava_oddness.conflictsWithCK = false ∧
-    guidava_oddness.perceivedAsOdd = false ∧
-    leggeva_filosofia_oddness.conflictsWithCK = true ∧
-    leggeva_filosofia_oddness.perceivedAsOdd = true := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- The two-step explanation: SOE is semantic (entailed by analysis),
-    oddness is pragmatic (CK conflict). Matches `soe_blocks_hab`. -/
-theorem twostep_soe_oddness :
-    -- Semantic: (2b) has an implausible SOE
-    gianniLeggevaFilosofia.soe == .implausible ∧
-    -- Pragmatic: the SOE conflicts with common knowledge
-    leggeva_filosofia_oddness.conflictsWithCK = true ∧
-    -- Result: HAB is blocked
-    gianniLeggevaFilosofia.habOK = false := ⟨rfl, rfl, rfl⟩
-
-
--- ═══ Bridge to Aspect ═══
-
-/-- Whether a given viewpoint aspect permits habitual readings.
-
-    Background observation: imperfective permits HAB; perfective does not.
-    [del-prete-2013] takes this as given — the chapter's contribution
-    is analyzing HOW the Imperfetto gives rise to HAB readings via IMPF's
-    forward expansion and event plurality. -/
-def permitsHabitualReading : Perfectivity → Bool
-  | .imperfective => true
-  | .perfective => false
-
-/-- Imperfective permits habituals; perfective does not. -/
-theorem imperfective_permits_habitual :
-    permitsHabitualReading .imperfective = true ∧
-    permitsHabitualReading .perfective = false :=
-  ⟨rfl, rfl⟩
-
-/-- All examples use imperfective aspect and the aspect permits HAB. -/
-theorem aspect_permits_hab_for_all :
-    italianData.all (λ d => permitsHabitualReading d.aspect) = true := by
-  native_decide
-
-
--- ═══ Cross-Study Connections ═══
-
-/-- The SOE phenomenon is cross-linguistic: English shows the same
-    pattern. [boneh-doron-2013] exx. (6b), (7b) in the same
-    volume give the English counterparts:
-
-    - "A flower grew out of the tree trunk" (plausible SOE → ✓)
-    - "#Max killed a rabbit (repeatedly)" (implausible SOE → ✗)
-
-    This parallel is formalized in `BonehDoron2013.sameObjectParallel`. -/
-theorem soe_is_crosslinguistic :
-    -- Italian: (2a) plausible → HAB ✓, (2b) implausible → HAB ✗
-    gianniGuidava.habOK = true ∧ gianniLeggevaFilosofia.habOK = false := ⟨rfl, rfl⟩
+open Mereology
 
+variable {S E I : Type*}
+
+/-- `x` is an atomic part of `y`, the chapter's `x AT y`. -/
+def AtomicPart {α : Type*} [PartialOrder α] (x y : α) : Prop := Atom x ∧ x ≤ y
+
+/-! ### Throughout and the imperfective, §4.1 -/
+
+section Aspect
+
+variable [SemilatticeSup S] [SemilatticeSup E] (linear : S → Prop) (τ : SupHom E S)
+
+/-- A branch of a situation: a sub-situation lying within a single history. -/
+def Branch (b s : S) : Prop := linear b ∧ b ≤ s
+
+/-- (16a) `THR`: `P` holds throughout `s` when every branch of `s` lies within the trace of a
+`P`-event. -/
+def THR (P : E → Prop) (s : S) : Prop := ∀ b, Branch linear b s → ∃ e, P e ∧ b ≤ τ e
+
+/-- (16b) `IMPF`: `P` holds throughout the forward expansion of the reference situation. -/
+def IMPF (fexp : S → S) (P : E → Prop) (s : S) : Prop := THR linear τ P (fexp s)
+
+/-- A situation is large for `V₀`-events when no singular `V₀`-event's trace covers a branch
+of it, the size that forces a plural covering event, §5. -/
+def Large (V₀ : E → Prop) (s : S) : Prop := ∀ b, Branch linear b s → ∀ e, V₀ e → ¬ b ≤ τ e
+
+variable {linear τ}
+
+/-- HAB, §5: over a large situation, a covering event of a cumulative verb is plural. -/
+theorem isPlural_of_large {V₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, V₀ e → Atom e) {s : S}
+    (hL : Large linear τ V₀ s) {b : S} (hb : Branch linear b s) {e : E}
+    (he : AlgClosure V₀ e) (hbe : b ≤ τ e) : IsPlural V₀ e :=
+  (isPlural_iff_of_atom hV₀).2 ⟨he, λ ha => hL b hb e (of_algClosure_of_atom hV₀ he ha) hbe⟩
+
+/-- PROG, §5: over a small reference situation, a single singular event whose trace covers the
+expanded situation verifies the same denotation. -/
+theorem impf_of_le {V₀ : E → Prop} {fexp : S → S} {s : S} {e : E} (he : V₀ e)
+    (hs : fexp s ≤ τ e) : IMPF linear τ fexp (AlgClosure V₀) s :=
+  λ _ hb => ⟨e, .base he, hb.2.trans hs⟩
+
+end Aspect
+
+/-! ### Singular indefinites, bare plurals and Q-adverbs, §4.3 -/
+
+section Objects
+
+variable [SemilatticeSup E] [SemilatticeSup I] (Th : SupHom E I)
+
+/-- (24d): a verb with a singular indefinite object, `λe. ∃x [N(x) ∧ V(e) ∧ Th(e) = x]`. -/
+def indefinite (N : I → Prop) (V : E → Prop) (e : E) : Prop := ∃ x, N x ∧ V e ∧ Th e = x
+
+/-- (21) Distribution to Sub-Events: a predication of a plural event and a kind distributes
+instances of the kind over the singular sub-events. -/
+def distributes (P : E → I → Prop) (e : E) (k : I) : Prop :=
+  ∀ e', AtomicPart e' e → ∃ x, AtomicPart x k ∧ P e' x
+
+/-- (30''a): a verb with a bare plural object names the kind `k` of the noun, and the
+predication distributes by (21). -/
+def barePlural (V : E → Prop) (k : I) (e : E) : Prop :=
+  distributes (λ e x => V e ∧ Th e = x) e k
+
+/-- (27a,b): a "kind coerced" singular indefinite quantifies over the sub-kinds `K` of the
+noun's kind, and the predication of the sub-kind distributes by (21). -/
+def kindIndefinite (K : I → Prop) (V : E → Prop) (e : E) : Prop :=
+  ∃ X, K X ∧ barePlural Th V X e
+
+/-- (29''b) `[sempre C]`: for every situation with the contextual property `C`, an event with
+the property `P` in the contextual temporal relation `R` to it is part of the event described. -/
+def sempre (C : S → Prop) (R : E → S → Prop) (P : E → Prop) (e₀ : E) : Prop :=
+  ∀ s₁, C s₁ → ∃ e₁, P e₁ ∧ R e₁ s₁ ∧ e₁ ≤ e₀
+
+variable {Th}
+
+section SSP
+
+variable (hTh : ∀ e, Atom e → ¬ IsBot (Th e))
+include hTh
+
+/-- (SSP) Sameness of the Singular Participant: a role mapping an event to a singular
+individual maps each of its singular sub-events to it, since roles are sum homomorphisms and
+so monotone. -/
+theorem ssp {x : I} (hx : Atom x) {e e' : E} (h : Th e = x) (he' : AtomicPart e' e) :
+    Th e' = x :=
+  hx.eq (h ▸ OrderHomClass.monotone Th he'.2) (hTh e' he'.1)
+
+/-- The same-object effect, §5: an event of (24d) has one `N`-individual as the theme of each
+of its singular sub-events. -/
+theorem soe {N : I → Prop} (hN : ∀ ⦃x⦄, N x → Atom x) {V : E → Prop} {e : E}
+    (h : indefinite Th N V e) : ∃ x, N x ∧ ∀ e', AtomicPart e' e → Th e' = x :=
+  let ⟨x, hx, _, h'⟩ := h; ⟨x, hx, λ _ he' => ssp hTh (hN hx) h' he'⟩
+
+end SSP
+
+/-- (9a) entails (13), §3: a kind coerced indefinite over sub-kinds of the kind entails the
+bare plural. -/
+theorem barePlural_of_kindIndefinite {K : I → Prop} {k : I} (hK : ∀ ⦃X⦄, K X → X ≤ k)
+    {V : E → Prop} {e : E} (h : kindIndefinite Th K V e) : barePlural Th V k e :=
+  let ⟨_, hX, hd⟩ := h
+  λ e' he' => let ⟨x, ⟨hx, hxX⟩, hP⟩ := hd e' he'; ⟨x, ⟨hx, hxX.trans (hK hX)⟩, hP⟩
+
+/-- (13) does not entail (9a), footnote 12: Gianni smokes a Toscanello and a Mori, and no
+sub-kind of tuscan cigar is the kind he smokes. -/
+theorem not_kindIndefinite_of_barePlural :
+    ∃ (E I : Type) (_ : SemilatticeSup E) (_ : SemilatticeSup I) (Th : SupHom E I)
+      (K : I → Prop) (k : I) (V : E → Prop) (e : E),
+      (∀ ⦃X⦄, K X → X ≤ k) ∧ barePlural Th V k e ∧ ¬ kindIndefinite Th K V e :=
+  ⟨Finset (Fin 2), Finset (Fin 2), inferInstance, inferInstance, SupHom.id _,
+    λ X => X = {0} ∨ X = {1}, {0, 1}, λ _ => True, {0, 1}, by decide,
+    by unfold barePlural distributes AtomicPart; decide,
+    by unfold kindIndefinite barePlural distributes AtomicPart; decide⟩
+
+/-- Footnote 32: with no `C`-situation, `sempre` requires no event at all. -/
+theorem sempre_of_forall_not {C : S → Prop} (hC : ∀ s, ¬ C s) (R : E → S → Prop)
+    (P : E → Prop) (e₀ : E) : sempre C R P e₀ :=
+  λ s hs => absurd hs (hC s)
+
+/-- (29) has no same-object effect, §6: with the indefinite in the scope of `sempre`, the books
+read on two occasions differ. -/
+theorem sempre_indefinite_no_soe :
+    ∃ (S E I : Type) (_ : SemilatticeSup E) (_ : SemilatticeSup I) (Th : SupHom E I)
+      (C : S → Prop) (R : E → S → Prop) (N : I → Prop) (V : E → Prop) (e₀ : E),
+      sempre C R (indefinite Th N V) e₀ ∧ ¬ ∃ x, ∀ e', AtomicPart e' e₀ → Th e' = x :=
+  ⟨Fin 2, Finset (Fin 2), Finset (Fin 2), inferInstance, inferInstance, SupHom.id _,
+    λ _ => True, λ e s => e = {s}, λ x => x = {0} ∨ x = {1}, λ _ => True, {0, 1},
+    by unfold sempre indefinite; decide, by unfold AtomicPart; decide⟩
+
+/-- (30) has no same-object effect, §6: the bare plural distributes, and two singular readings
+have different books as themes. -/
+theorem barePlural_no_soe :
+    ∃ (E I : Type) (_ : SemilatticeSup E) (_ : SemilatticeSup I) (Th : SupHom E I)
+      (V : E → Prop) (k : I) (e : E),
+      barePlural Th V k e ∧ ¬ ∃ x, ∀ e', AtomicPart e' e → Th e' = x :=
+  ⟨Finset (Fin 2), Finset (Fin 2), inferInstance, inferInstance, SupHom.id _, λ _ => True,
+    {0, 1}, {0, 1}, by unfold barePlural distributes AtomicPart; decide,
+    by unfold AtomicPart; decide⟩
+
+end Objects
+
+/-! ### The same-object effect and its oddness, §5 and §7 -/
+
+section SameObject
+
+variable [SemilatticeSup S] [SemilatticeSup E] [SemilatticeSup I] {linear : S → Prop}
+  {τ : SupHom E S} {Th : SupHom E I} (hTh : ∀ e, Atom e → ¬ IsBot (Th e))
+include hTh
+
+/-- (P1), §5: on the habitual reading, every branch of the large expanded situation is covered
+by a plural `V₀`-event, and one `N`-individual is the theme of each of its singular sub-events. -/
+theorem hab_soe {V₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, V₀ e → Atom e) {N : I → Prop}
+    (hN : ∀ ⦃x⦄, N x → Atom x) {fexp : S → S} {s : S} (hL : Large linear τ V₀ (fexp s))
+    (h : IMPF linear τ fexp (indefinite Th N (AlgClosure V₀)) s) {b : S}
+    (hb : Branch linear b (fexp s)) :
+    ∃ e, IsPlural V₀ e ∧ b ≤ τ e ∧ ∃ x, N x ∧ ∀ e', AtomicPart e' e → Th e' = x :=
+  let ⟨e, ⟨x, hx, hcl, h'⟩, hbe⟩ := h b hb
+  ⟨e, isPlural_of_large hV₀ hL hb hcl hbe, hbe, x, hx, λ _ he' => ssp hTh (hN hx) h' he'⟩
+
+/-- (2b) is odd on HAB by principle (O), §7: it is common knowledge that a habit of reading
+philosophy books involves different books, and the habitual truth conditions entail a plural
+reading event of one book throughout. -/
+theorem not_impf_indefinite {read₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, read₀ e → Atom e)
+    {book : I → Prop} (hN : ∀ ⦃x⦄, book x → Atom x)
+    (hCK : ∀ e, IsPlural read₀ e → ∀ x, book x → ∃ e', AtomicPart e' e ∧ Th e' ≠ x)
+    {fexp : S → S} {s : S} (hL : Large linear τ read₀ (fexp s)) {b : S}
+    (hb : Branch linear b (fexp s)) :
+    ¬ IMPF linear τ fexp (indefinite Th book (AlgClosure read₀)) s := by
+  intro h
+  obtain ⟨e, hpl, -, x, hx, hsame⟩ := hab_soe hTh hV₀ hN hL h hb
+  obtain ⟨e', he', hne⟩ := hCK e hpl x hx
+  exact hne (hsame e' he')
+
+end SameObject
+
+/-- (2a) is good on HAB, §7: a plural event of driving one sports car covers the large expanded
+situation, and no common knowledge excludes it. -/
+theorem impf_indefinite_witness :
+    ∃ (S E I : Type) (_ : SemilatticeSup S) (_ : SemilatticeSup E) (_ : SemilatticeSup I)
+      (linear : S → Prop) (τ : SupHom E S) (Th : SupHom E I) (drive₀ : E → Prop)
+      (car : I → Prop) (fexp : S → S) (s : S),
+      (∀ ⦃e⦄, drive₀ e → Atom e) ∧ (∀ ⦃x⦄, car x → Atom x) ∧ (∀ e, Atom e → ¬ IsBot (Th e)) ∧
+        Large linear τ drive₀ (fexp s) ∧ (∃ b, Branch linear b (fexp s)) ∧
+        IMPF linear τ fexp (indefinite Th car (AlgClosure drive₀)) s :=
+  ⟨Finset (Fin 2), Finset (Fin 2), Finset (Fin 1), inferInstance, inferInstance, inferInstance,
+    (· = {0, 1}), SupHom.id _, SupHom.const _ {0}, λ e => e = {0} ∨ e = {1}, (· = {0}),
+    λ _ => {0, 1}, {0}, by decide, by decide, by decide, by unfold Large Branch; decide,
+    ⟨{0, 1}, rfl, le_rfl⟩, by
+      rintro b ⟨rfl, -⟩
+      exact ⟨{0} ⊔ {1}, ⟨{0}, rfl, .sum (.base (Or.inl rfl)) (.base (Or.inr rfl)), rfl⟩,
+        by decide⟩⟩
+
+/-! ### Against the covert quantifier, §2 -/
+
+section Gen
+
+variable (K : I → Prop) (φ : S → Prop) (P : I → S → Prop)
+
+/-- (10b): the negated kind indefinite of (9b) scoping over GEN, as assumption (α)1 demands:
+there is no sub-kind of tuscan cigar that Gianni smokes in every situation. -/
+def genWide : Prop := ¬ ∃ X, K X ∧ ∀ s, φ s → P X s
+
+/-- (10'b): the negation below GEN: in no situation does Gianni smoke a sub-kind of tuscan
+cigar. -/
+def genNarrow : Prop := ∀ s, φ s → ¬ ∃ X, K X ∧ P X s
+
+variable {K φ P}
+
+/-- (10'b) is logically stronger than (10b). -/
+theorem genWide_of_genNarrow (hφ : ∃ s, φ s) (h : genNarrow K φ P) : genWide K φ P :=
+  λ ⟨X, hX, hall⟩ => let ⟨s, hs⟩ := hφ; h s hs ⟨X, hX, hall s hs⟩
+
+/-- (10b) is too weak: where Gianni smokes a tuscan cigar of one sub-kind or another in every
+situation, (10b) holds while (9b) is false, as (10'b) is. -/
+theorem not_genNarrow_of_genWide :
+    ∃ (S I : Type) (K : I → Prop) (φ : S → Prop) (P : I → S → Prop),
+      (∃ s, φ s) ∧ genWide K φ P ∧ ¬ genNarrow K φ P :=
+  ⟨Bool, Bool, λ _ => True, λ _ => True, (· = ·), ⟨true, trivial⟩,
+    by unfold genWide; decide, by unfold genNarrow; decide⟩
+
+end Gen
 
 end DelPrete2013
