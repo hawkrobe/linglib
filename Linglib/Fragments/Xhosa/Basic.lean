@@ -49,7 +49,7 @@ inductive NounClass where
   | cl9     -- in- (singular): inja 'dog'
   | cl10    -- iin- (plural): iinja 'dogs'
   | cl15    -- uku- (infinitive/gerund): ukucula 'to sing'
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 def NounClass.classNumber : NounClass → Nat
   | .cl1 => 1 | .cl2 => 2 | .cl3 => 3 | .cl4 => 4 | .cl5 => 5
@@ -91,7 +91,7 @@ inductive Gender where
   | genderC   -- cl5/cl6
   | genderD   -- cl7/cl8 (inanimate)
   | genderE   -- cl9/cl10 (animal)
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 def Gender.singularClass : Gender → NounClass
   | .genderA => .cl1
@@ -110,6 +110,9 @@ def Gender.pluralClass : Gender → NounClass
 -- ============================================================================
 -- § 4: Semantic Core Assignments ([carstens-2026] (71))
 -- ============================================================================
+
+/-- The subject prefix of a gender's plural class. -/
+def Gender.plSubjPrefix (g : Gender) : String := g.pluralClass.subjPrefix
 
 /-- Semantic core status for each Xhosa gender.
 

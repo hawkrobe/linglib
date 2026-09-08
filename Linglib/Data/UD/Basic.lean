@@ -26,7 +26,7 @@ ms-word token over the vocabulary.
 The bare `UD` namespace (no `Data.` prefix) is intentional — UD is its own
 external project. Feature slots are `Flat`-valued (`Core/Order/Flat.lean`);
 subsumption-order theory over `MorphFeatures` lives in
-`Studies/DalrympleKaplan2000.lean`.
+`Studies/Shieber1986.lean`.
 -/
 
 namespace UD
@@ -324,7 +324,7 @@ def MorphFeatures.isWh (f : MorphFeatures) : Bool :=
     ([shieber-1986] §3.2.3)? Total over *all* `Flat`-valued fields: a conflict in any
     committed feature makes unification fail. (`reflex` needs no clause — a `Bool` slot
     with `false` = absent is always joinable by `||`.) The order-theoretic
-    characterization is proved in `Studies/DalrympleKaplan2000.lean`. -/
+    characterization is proved in `Studies/Shieber1986.lean`. -/
 def MorphFeatures.compatible (f1 f2 : MorphFeatures) : Bool :=
   (f1.number.isNone   || f2.number.isNone   || f1.number == f2.number) &&
   (f1.gender.isNone   || f2.gender.isNone   || f1.gender == f2.gender) &&
@@ -423,7 +423,7 @@ def MorphFeatures.merge (f1 f2 : MorphFeatures) : MorphFeatures where
   polarity := f1.polarity.or f2.polarity
 
 /-- Unify two feature bundles ([shieber-1986] §3.2.3): the least upper bound in the
-    subsumption order when the bundles are compatible (`Studies/DalrympleKaplan2000.lean`
+    subsumption order when the bundles are compatible (`Studies/Shieber1986.lean`
     proves the lub laws), failure (`none`) on conflicting information. -/
 def MorphFeatures.unify (f1 f2 : MorphFeatures) : Option MorphFeatures :=
   if f1.compatible f2 then some (f1.merge f2) else none

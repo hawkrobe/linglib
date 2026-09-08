@@ -19657,7 +19657,7 @@
   subfield  = {syntax},
   role      = {formalized},
   validated = {true},
-  sources   = {Morphology/Unification.lean;Features/Basic.lean}
+  sources   = {Studies/Shieber1986.lean;Features/Basic.lean}
 }% REF: Shieber (1985) "Evidence against the Context-Freeness of Natural Language"
 @book{winskel-1993,
   author    = {Winskel, Glynn},
@@ -19684,7 +19684,7 @@
   subfield  = {syntax},
   role      = {cited},
   validated = {true},
-  sources   = {Core/Order/PartialUnify.lean;Morphology/Unification.lean}
+  sources   = {Core/Order/PartialUnify.lean;Studies/Shieber1986.lean}
 }
 @article{dalrymple-kaplan-2000,
   author    = {Dalrymple, Mary and Kaplan, Ronald M.},
@@ -19699,7 +19699,89 @@
   subfield  = {syntax},
   role      = {formalized},
   validated = {true},
+  sources   = {Studies/DalrympleKaplan2000.lean;Features/Person/Resolve.lean;Features/Person/Interp.lean;Fragments/German/Verbs.lean;Fragments/Slavic/Polish/Pronouns.lean;Data/Examples/DalrympleKaplan2000.json}
+}% REF: Zaenen, A. & Karttunen, L. (1984). Morphological non-distinctiveness and coordination. *ESCOL '84*, 309–320.
+@inproceedings{zaenen-karttunen-1984,
+  author    = {Zaenen, Annie and Karttunen, Lauri},
+  year      = {1984},
+  title     = {Morphological Non-Distinctiveness and Coordination},
+  booktitle = {Proceedings of the First Eastern States Conference on Linguistics},
+  pages     = {309--320},
+  subfield  = {syntax},
+  role      = {cited},
   sources   = {Studies/DalrympleKaplan2000.lean}
+}% REF: Sag, I. A., Gazdar, G., Wasow, T. & Weisler, S. (1985). Coordination and how to distinguish categories. *NLLT* 3, 117–171.
+@article{sag-gazdar-wasow-weisler-1985,
+  author    = {Sag, Ivan A. and Gazdar, Gerald and Wasow, Thomas and Weisler, Steven},
+  year      = {1985},
+  title     = {Coordination and How to Distinguish Categories},
+  journal   = {Natural Language \& Linguistic Theory},
+  volume    = {3},
+  number    = {2},
+  pages     = {117--171},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Studies/DalrympleKaplan2000.lean}
+}% REF: Voeltz, E. (1971). Surface constraints and agreement resolution: Some evidence from Xhosa. *Studies in African Linguistics* 2, 37–60.
+@article{voeltz-1971,
+  author    = {Voeltz, Erhard},
+  year      = {1971},
+  title     = {Surface Constraints and Agreement Resolution: Some Evidence from {Xhosa}},
+  journal   = {Studies in African Linguistics},
+  volume    = {2},
+  pages     = {37--60},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Studies/DalrympleKaplan2000.lean}
+}% REF: Dyła, S. (1984). Across-the-board dependencies and case in Polish. *Linguistic Inquiry* 15, 701–705.
+@article{dyla-1984,
+  author    = {Dy{\l}a, Stefan},
+  year      = {1984},
+  title     = {Across-the-Board Dependencies and Case in {Polish}},
+  journal   = {Linguistic Inquiry},
+  volume    = {15},
+  number    = {4},
+  pages     = {701--705},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Studies/DalrympleKaplan2000.lean}
+}% REF: Groos, A. & van Riemsdijk, H. (1981). Matching effects in free relatives: A parameter of core grammar. In *Theory of Markedness in Generative Grammar*, 171–216.
+@incollection{groos-van-riemsdijk-1981,
+  author    = {Groos, Anneke and van Riemsdijk, Henk},
+  year      = {1981},
+  title     = {Matching Effects in Free Relatives: A Parameter of Core Grammar},
+  booktitle = {Theory of Markedness in Generative Grammar: Proceedings of the 1979 GLOW Conference},
+  editor    = {Belletti, Adriana and Brandi, Luciana and Rizzi, Luigi},
+  pages     = {171--216},
+  publisher = {Scuola Normale Superiore},
+  address   = {Pisa},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Studies/DalrympleKaplan2000.lean}
+}% REF: Corbett, G. G. (1983b). Resolution rules: Agreement in person, number, and gender. In *Order, Concord and Constituency*, 175–206.
+@incollection{corbett-1983b,
+  author    = {Corbett, Greville G.},
+  year      = {1983},
+  title     = {Resolution Rules: Agreement in Person, Number, and Gender},
+  booktitle = {Order, Concord and Constituency},
+  editor    = {Gazdar, Gerald and Klein, Ewan and Pullum, Geoffrey K.},
+  pages     = {175--206},
+  publisher = {Foris},
+  address   = {Dordrecht},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Studies/DalrympleKaplan2000.lean}
+}% REF: Eisenberg, P. (1973). A note on 'identity of constituents'. *Linguistic Inquiry* 4, 417–420.
+@article{eisenberg-1973,
+  author    = {Eisenberg, Peter},
+  year      = {1973},
+  title     = {A Note on `Identity of Constituents'},
+  journal   = {Linguistic Inquiry},
+  volume    = {4},
+  pages     = {417--420},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Data/Examples/DalrympleKaplan2000.json}
 }% REF: Shieber (1985) "Evidence against the Context-Freeness of Natural Language"
 @article{shieber-1985,
   author    = {Shieber, Stuart M.},
@@ -29709,7 +29791,7 @@
   validated = {true},
   sources   = {}
 }
-@unpublished{zwicky-1977,
+@unpublished{zwicky-1977a,
   author    = {Zwicky, Arnold M.},
   year      = {1977},
   title     = {On Clitics},
@@ -29717,7 +29799,18 @@
   subfield  = {morphology},
   role      = {cited},
   validated = {false},
-  sources   = {Features/Person/Basic.lean;Features/Person/Resolve.lean}
+  sources   = {Studies/KalinBjorkmanEtAl2026.lean}
+}% REF: Zwicky, A. M. (1977). Hierarchies of person. *CLS* 13, 714–733.
+@inproceedings{zwicky-1977b,
+  author    = {Zwicky, Arnold M.},
+  year      = {1977},
+  title     = {Hierarchies of Person},
+  booktitle = {Papers from the Thirteenth Regional Meeting of the Chicago Linguistic Society},
+  pages     = {714--733},
+  publisher = {Chicago Linguistic Society},
+  subfield  = {morphology},
+  role      = {cited},
+  sources   = {Features/Person/Basic.lean;Features/Person/Resolve.lean;Studies/Graf2019.lean;Studies/DalrympleKaplan2000.lean}
 }
 @article{bubnov-2026,
   author    = {Bubnov, Gleb},
@@ -30259,7 +30352,7 @@
   subfield  = {syntax},
   role      = {cited},
   validated = {true},
-  sources   = {}
+  sources   = {Studies/DalrympleKaplan2000.lean;Data/Examples/DalrympleKaplan2000.json}
 }
 
 @article{sag-etal-1985,
@@ -42259,7 +42352,7 @@
   address   = {London},
   subfield  = {syntax/agreement},
   role      = {cited},
-  sources   = {Studies/Corbett1991.lean}
+  sources   = {Studies/Corbett1991.lean;Studies/DalrympleKaplan2000.lean;Data/Examples/DalrympleKaplan2000.json}
 }
 @incollection{heine-1982,
   author    = {Heine, Bernd},

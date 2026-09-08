@@ -1,3 +1,4 @@
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Clause.Complementation
@@ -106,6 +107,23 @@ def VerbEntry.mkRegular (core : Verb) : VerbEntry :=
     formPastPart := regularPast core.form
     formPresPart := regularPresPart core.form
     isRegular := true }
+
+/-- The inflectional cells of an entry. -/
+inductive VerbEntry.Cell where
+  | base
+  | thirdSg
+  | past
+  | pastParticiple
+  | presentParticiple
+  deriving DecidableEq, Repr, Fintype
+
+/-- The form an entry realizes in each cell. -/
+def VerbEntry.realize (e : VerbEntry) : VerbEntry.Cell → String
+  | .base => e.form
+  | .thirdSg => e.form3sg
+  | .past => e.formPast
+  | .pastParticiple => e.formPastPart
+  | .presentParticiple => e.formPresPart
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Simple
@@ -263,6 +281,26 @@ def meet : VerbEntry where
   formPresPart := "meeting"
   frames := [Frame.np]
   vendlerClass := some .achievement
+
+/-- "set" — irregular; the base, past and past participle forms coincide. -/
+def set_ : VerbEntry where
+  form := "set"
+  form3sg := "sets"
+  formPast := "set"
+  formPastPart := "set"
+  formPresPart := "setting"
+  frames := [Frame.np]
+  vendlerClass := some .achievement
+
+/-- "clarify" — regular transitive. -/
+def clarify : VerbEntry where
+  form := "clarify"
+  form3sg := "clarifies"
+  formPast := "clarified"
+  formPastPart := "clarified"
+  formPresPart := "clarifying"
+  frames := [Frame.np]
+  isRegular := true
 
 /-- "sell" — change of possession, alternates DOC/PP.
     Implicit DO is definite; implicit goal is indefinite. -/
