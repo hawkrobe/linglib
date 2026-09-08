@@ -1,39 +1,30 @@
 import Linglib.Semantics.Dynamic.DPL
 import Linglib.Logic.Bilateral.Defs
+import Linglib.Studies.GroenendijkStokhof1991
 
 /-!
-# Charlow 2025: staged updates and lifted interpretations for double-negation elimination
+# Charlow (2025): Staged updates
 
-This file formalizes the framework of [charlow-2025-staged-updates]. A dynamic substrate whose
-negation does not validate double-negation elimination — [groenendijk-stokhof-1991]'s, say — can
-be lifted into a richer one that does, and the lift needs only three operations, an embedding, a
-retraction and an involutive negation, subject to three laws. Under those laws the lifted
-interpretation validates DNE and is conservative over the substrate, and any two lawful lifts of
-one substrate factor through a canonical `δ ⊕ δ` — which is the paper's Fact 4, the sense in which
-the competing repairs of [krahmer-muskens-1995], [gotham-2019-ac22] and the staged updates
-themselves are presentations of one thing rather than rival choices.
+This file formalizes the lifted interpretations of [charlow-2025-staged-updates]. A dynamic
+substrate whose negation is externally static, [groenendijk-stokhof-1991]'s DPL, is lifted into
+a richer type by an embedding, a retraction and a negation obeying three laws, and the lifted
+interpretation they determine validates double-negation elimination and is conservative over
+the substrate (Facts 1 and 2). Every lawful lift of one substrate factors through a canonical
+form, a substrate value with a parity bit (Fact 4), which the canonical lift, an update tagged
+with one bit, realizes exactly (Fact 3). Over DPL the file gives four lifts:
+[krahmer-muskens-1995]'s pairs of an update and its negation, [gotham-2019-ac22]'s
+decomposition into a static closure and a dynamic tautology, whose involution law holds only on
+the image of the lifted interpretation, the paper's staged updates, a static proposition beside
+a dynamic tautology, and the canonical lift.
 
-The framework is more general than bilaterality: the Krahmer–Muskens lift is bilateral and takes
-its laws from `Bilateral.IsBilateral`, while the other three constructions are not, so
-`IsLawfulDNELift` consumes bilaterality where it applies rather than extending it.
+## Implementation notes
 
-The weak-meaning prediction of [spector-2025] that separates bounded meanings from staged updates
-is not formalized, nor is the paper's §6 exceptional-scope framework.
-
-## Main definitions
-
-* `DynamicSubstrate` — a carrier with conjunction and negation, the paper's δ
-* `DynForm` — the object language ℒ
-* `DNELift`, `IsLawfulDNELift` — the three operations and the three laws
-* `primInterp`, `liftInterp` — the paper's [·] and ⟨·⟩
-
-## Main results
-
-* `liftInterp_dneg` — a lawful lift validates double-negation elimination (Fact 1)
-* `liftInterp_eq_up_primInterp_of_negFree`, `down_liftInterp_eq_primInterp_of_dnegFree` — and is
-  conservative over the substrate (Fact 2)
-* `lawful_lifts_factor_through_canonical`, `lawful_lifts_canonicalize_eq_implies` — every lawful
-  lift factors through the canonical one, so lawful lifts of a substrate agree (Fact 4)
+* The data of a lift and its laws are separate classes, after `Monad` and `LawfulMonad`, so the
+  decomposed lift carries the data while its involution law is refuted on the whole carrier and
+  proved on the image.
+* Fact 4 is stated as factorization through the canonical form rather than as the paper's
+  bijection between images; the corollary that lawful lifts lower alike follows from it.
+* Fact 3 takes the paper's right identity for conjunction as a hypothesis.
 
 ## References
 
@@ -41,576 +32,485 @@ is not formalized, nor is the paper's §6 exceptional-scope framework.
 * [groenendijk-stokhof-1991]
 * [krahmer-muskens-1995]
 * [gotham-2019-ac22]
-* [mandelkern-2022]
-* [hofmann-2025]
-* [spector-2025]
-* [charlow-2014]
 -/
 
 namespace Charlow2025
 
-universe u v w
+/-! ### Substrates, lifts and interpretations (Definitions 3 and 4) -/
 
--- ════════════════════════════════════════════════════════════════
--- § 1. The dynamic substrate (algebraic interface)
--- ════════════════════════════════════════════════════════════════
-
-/-- A **dynamic substrate** is a carrier with binary conjunction and unary
-negation. The paper's δ. Concrete instances: DPL `DPL.Rel E`, CDRT `DProp`,
-ICDRT contexts, etc. The interpretation function [·] : ℒ → δ is supplied
-per-call as `interpAtom` and `interpExi` rather than as a typeclass field
-(no shared `Language` type exists across linglib's dynamic theories yet). -/
-class DynamicSubstrate (δ : Type u) where
-  /-- Substrate conjunction (paper's ∧_δ). -/
+/-- A dynamic substrate, the paper's δ: a carrier with conjunction and negation. -/
+class Substrate (δ : Type*) where
   conj : δ → δ → δ
-  /-- Substrate negation (paper's ¬_δ). Should fail DNE on its own;
-  the lift framework adds DNE without requiring it of the substrate. -/
   neg : δ → δ
 
--- ════════════════════════════════════════════════════════════════
--- § 2. The language ℒ
--- ════════════════════════════════════════════════════════════════
-
-/-- The paper's ℒ ::= Atom | ∃x | φ ∧ ψ | ¬φ. The existential `∃x` is a
-primitive zero-place atom: `∃x.φ` is sugar for `∃x ∧ φ` (paper §1, footnote
-on dynamic interpretation of `∃x`). -/
-inductive DynForm (Atom : Type v) where
-  | atom : Atom → DynForm Atom
-  | exi  : Nat → DynForm Atom
-  | conj : DynForm Atom → DynForm Atom → DynForm Atom
-  | neg  : DynForm Atom → DynForm Atom
+/-- The language: atoms, bare existentials, conjunction and negation; `∃x φ` abbreviates
+`∃x ∧ φ`. -/
+inductive Formula (Atom : Type*) where
+  | atom : Atom → Formula Atom
+  | exi : ℕ → Formula Atom
+  | conj : Formula Atom → Formula Atom → Formula Atom
+  | neg : Formula Atom → Formula Atom
   deriving Repr
 
--- ════════════════════════════════════════════════════════════════
--- § 3. The lift framework (paper's Definitions 3, 4)
--- ════════════════════════════════════════════════════════════════
-
-/-- **DNELift data** (paper's Definition 3 signatures): a richer type Δ
-equipped with `up : δ → Δ`, `down : Δ → δ`, and `invneg : Δ → Δ`. The
-laws live in `IsLawfulDNELift`; this class only carries the data so that
-the same `δ × δ`-shaped Δ can support multiple competing instances
-(Krahmer-Muskens vs. Gotham) without typeclass diamond. -/
-class DNELift (δ : Type u) (Δ : Type w) [DynamicSubstrate δ] where
+/-- The signatures of a lift of a substrate into `Δ`: `up` into the lifted type, `down` out of
+it, and the lifted negation. -/
+class Lift (δ : outParam Type*) (Δ : Type*) [Substrate δ] where
   up : δ → Δ
   down : Δ → δ
-  invneg : Δ → Δ
+  neg : Δ → Δ
 
-/-- **Lawful DNE lift** (paper's Definition 3 laws): the three equational
-constraints that make a lift "lawful" in the paper's sense.
+/-- The laws of a lift: Emb, `down ∘ up = id`; Inv, the lifted negation is an involution; and
+Neg, conjugating the lifted negation by the lift recovers the substrate negation. -/
+class LawfulLift (δ : outParam Type*) (Δ : Type*) [Substrate δ] [self : Lift δ Δ] : Prop where
+  down_up : ∀ m : δ, self.down (self.up m) = m
+  neg_neg : ∀ M : Δ, self.neg (self.neg M) = M
+  down_neg_up : ∀ m : δ, self.down (self.neg (self.up m)) = Substrate.neg m
 
-Following mathlib's `Mul`/`IsLeftCancelMul` convention, the data class
-`DNELift` is split from the Prop class `IsLawfulDNELift`. This avoids the
-0.230.649 anti-pattern that deleted a prior bundled-typeclass attempt for
-bilateral logic; consumers can construct candidate `DNELift` instances
-without committing to lawfulness.
+section Interpretation
 
-Field names use the descriptive `down_X_up`-style mathlib idiom rather than
-the paper's terse `Emb`/`Inv`/`Neg` to avoid name collisions and parser
-ambiguity. -/
-class IsLawfulDNELift (δ : Type u) (Δ : Type w)
-    [DynamicSubstrate δ] [self : DNELift δ Δ] : Prop where
-  /-- **Emb** (paper): `down ∘ up = id`. The substrate embeds faithfully. -/
-  down_up : ∀ (m : δ), self.down (self.up m) = m
-  /-- **Inv** (paper): `invneg ∘ invneg = id`. The lifted negation is involutive. -/
-  invneg_invneg : ∀ (M : Δ), self.invneg (self.invneg M) = M
-  /-- **Neg** (paper): `down ∘ invneg ∘ up = neg`. Conjugation by lift recovers
-  the substrate negation. -/
-  down_invneg_up : ∀ (m : δ),
-    self.down (self.invneg (self.up m)) = DynamicSubstrate.neg m
+variable {Atom δ Δ : Type*} [Substrate δ]
 
--- ════════════════════════════════════════════════════════════════
--- § 4. Primitive and lifted interpretations (paper's Definition 4)
--- ════════════════════════════════════════════════════════════════
+/-- The substrate interpretation `[·]`, from the primitive meanings of atoms and existentials. -/
+def interp (ia : Atom → δ) (ie : ℕ → δ) : Formula Atom → δ
+  | .atom a => ia a
+  | .exi n => ie n
+  | .conj φ ψ => Substrate.conj (interp ia ie φ) (interp ia ie ψ)
+  | .neg φ => Substrate.neg (interp ia ie φ)
 
-/-- The substrate's primitive interpretation `[·] : ℒ → δ`. Recursive on
-the form structure, using only substrate operations. -/
-def primInterp {Atom : Type v} {δ : Type u} [DynamicSubstrate δ]
-    (interpAtom : Atom → δ) (interpExi : Nat → δ) :
-    DynForm Atom → δ
-  | .atom a    => interpAtom a
-  | .exi n     => interpExi n
-  | .conj φ ψ  => DynamicSubstrate.conj
-                    (primInterp interpAtom interpExi φ)
-                    (primInterp interpAtom interpExi ψ)
-  | .neg  φ    => DynamicSubstrate.neg (primInterp interpAtom interpExi φ)
+variable [self : Lift δ Δ]
 
-/-- The lifted interpretation `⟨·⟩ : ℒ → Δ` (paper Definition 4). The only
-type-correct recursion given the lift signatures; conjunction sequences via
-`up ∘ ∧_δ ∘ (down ⟨φ⟩, down ⟨ψ⟩)`, negation via `∼` directly. -/
-def liftInterp {Atom : Type v} {δ : Type u} {Δ : Type w}
-    [DynamicSubstrate δ] [self : DNELift δ Δ]
-    (interpAtom : Atom → δ) (interpExi : Nat → δ) :
-    DynForm Atom → Δ
-  | .atom a    => self.up (interpAtom a)
-  | .exi n     => self.up (interpExi n)
-  | .conj φ ψ  =>
-      self.up (DynamicSubstrate.conj
-        (self.down (liftInterp interpAtom interpExi φ))
-        (self.down (liftInterp interpAtom interpExi ψ)))
-  | .neg φ     => self.invneg (liftInterp interpAtom interpExi φ)
+/-- The lifted interpretation `⟨·⟩`: primitives lift, conjuncts lower, sequence and lift again,
+and negation is the lifted negation. -/
+def liftInterp (ia : Atom → δ) (ie : ℕ → δ) : Formula Atom → Δ
+  | .atom a => self.up (ia a)
+  | .exi n => self.up (ie n)
+  | .conj φ ψ =>
+    self.up (Substrate.conj (self.down (liftInterp ia ie φ)) (self.down (liftInterp ia ie ψ)))
+  | .neg φ => self.neg (liftInterp ia ie φ)
 
--- ════════════════════════════════════════════════════════════════
--- § 5. Fact 1 — Lifted interpretations validate DNE
--- ════════════════════════════════════════════════════════════════
+variable [LawfulLift δ Δ] (ia : Atom → δ) (ie : ℕ → δ)
 
-/-- **Fact 1** (paper, p. 864): the lifted interpretation validates double
-negation elimination. `⟨¬¬φ⟩ = ⟨φ⟩` for any φ, by the involutive law on ∼. -/
-theorem liftInterp_dneg
-    {Atom : Type v} {δ : Type u} {Δ : Type w}
-    [DynamicSubstrate δ] [DNELift δ Δ] [IsLawfulDNELift δ Δ]
-    (ia : Atom → δ) (ie : Nat → δ) (φ : DynForm Atom) :
-    (liftInterp (Δ := Δ) ia ie (.neg (.neg φ))) = liftInterp ia ie φ :=
-  IsLawfulDNELift.invneg_invneg (liftInterp ia ie φ)
+/-! ### Facts 1 and 2 -/
 
--- ════════════════════════════════════════════════════════════════
--- § 6. Fact 2 — Conservativity over the substrate
--- ════════════════════════════════════════════════════════════════
+/-- Fact 1: a lawful lifted interpretation validates double-negation elimination. -/
+theorem liftInterp_neg_neg (φ : Formula Atom) :
+    liftInterp (Δ := Δ) ia ie (.neg (.neg φ)) = liftInterp ia ie φ :=
+  LawfulLift.neg_neg (liftInterp ia ie φ)
 
-/-- A formula is **negation-free** if it contains no `¬`. -/
-inductive NegFree {Atom : Type v} : DynForm Atom → Prop where
+/-- A formula without negation. -/
+inductive NegFree : Formula Atom → Prop where
   | atom (a : Atom) : NegFree (.atom a)
-  | exi (n : Nat) : NegFree (.exi n)
-  | conj {φ ψ : DynForm Atom} : NegFree φ → NegFree ψ → NegFree (.conj φ ψ)
+  | exi (n : ℕ) : NegFree (.exi n)
+  | conj {φ ψ : Formula Atom} : NegFree φ → NegFree ψ → NegFree (.conj φ ψ)
 
-/-- A formula is **double-negation-free** if no subformula has the shape
-`¬¬ψ`. The constructors enumerate the allowed `¬`-prefixed shapes (atom,
-exi, conj of neg-frees), excluding `.neg (.neg ψ)`. -/
-inductive DNegFree {Atom : Type v} : DynForm Atom → Prop where
-  | atom (a : Atom) : DNegFree (.atom a)
-  | exi (n : Nat) : DNegFree (.exi n)
-  | conj {φ ψ : DynForm Atom} : DNegFree φ → DNegFree ψ → DNegFree (.conj φ ψ)
-  | neg_atom (a : Atom) : DNegFree (.neg (.atom a))
-  | neg_exi (n : Nat) : DNegFree (.neg (.exi n))
-  | neg_conj {φ ψ : DynForm Atom} :
-      DNegFree φ → DNegFree ψ → DNegFree (.neg (.conj φ ψ))
+/-- A formula without a doubly negated subformula. -/
+inductive DoubleNegFree : Formula Atom → Prop where
+  | atom (a : Atom) : DoubleNegFree (.atom a)
+  | exi (n : ℕ) : DoubleNegFree (.exi n)
+  | conj {φ ψ : Formula Atom} : DoubleNegFree φ → DoubleNegFree ψ → DoubleNegFree (.conj φ ψ)
+  | neg_atom (a : Atom) : DoubleNegFree (.neg (.atom a))
+  | neg_exi (n : ℕ) : DoubleNegFree (.neg (.exi n))
+  | neg_conj {φ ψ : Formula Atom} :
+    DoubleNegFree φ → DoubleNegFree ψ → DoubleNegFree (.neg (.conj φ ψ))
 
-/-- **Fact 2.i** (paper, p. 864): for ¬-free φ, the lifted interpretation is
-literally the up-lift of the substrate interpretation. -/
-theorem liftInterp_eq_up_primInterp_of_negFree
-    {Atom : Type v} {δ : Type u} {Δ : Type w}
-    [DynamicSubstrate δ] [DNELift δ Δ] [IsLawfulDNELift δ Δ]
-    (ia : Atom → δ) (ie : Nat → δ) {φ : DynForm Atom} (h : NegFree φ) :
-    (liftInterp ia ie φ : Δ) = DNELift.up (primInterp ia ie φ) := by
+/-- Fact 2.i: a negation-free formula's lifted meaning is the lift of its substrate meaning. -/
+theorem liftInterp_eq_up_interp_of_negFree {φ : Formula Atom} (h : NegFree φ) :
+    liftInterp (Δ := Δ) ia ie φ = self.up (interp ia ie φ) := by
   induction h with
   | atom _ => rfl
   | exi _ => rfl
-  | @conj φ' ψ' _ _ ih_φ ih_ψ =>
-    show DNELift.up (DynamicSubstrate.conj
-        (DNELift.down (liftInterp (Δ := Δ) ia ie φ'))
-        (DNELift.down (liftInterp (Δ := Δ) ia ie ψ'))) = _
-    rw [ih_φ, ih_ψ, IsLawfulDNELift.down_up, IsLawfulDNELift.down_up]
+  | conj _ _ ihφ ihψ =>
+    show self.up (Substrate.conj (self.down (liftInterp ia ie _))
+      (self.down (liftInterp ia ie _))) = _
+    rw [ihφ, ihψ, LawfulLift.down_up, LawfulLift.down_up]
     rfl
 
-/-- **Fact 2.ii** (paper, p. 864): for ¬¬-free φ, lowering the lifted
-interpretation recovers the substrate interpretation exactly. -/
-theorem down_liftInterp_eq_primInterp_of_dnegFree
-    {Atom : Type v} {δ : Type u} {Δ : Type w}
-    [DynamicSubstrate δ] [DNELift δ Δ] [IsLawfulDNELift δ Δ]
-    (ia : Atom → δ) (ie : Nat → δ) {φ : DynForm Atom} (h : DNegFree φ) :
-    DNELift.down (liftInterp (Δ := Δ) ia ie φ) = primInterp ia ie φ := by
+/-- Fact 2.ii: a double-negation-free formula's lifted meaning lowers to its substrate
+meaning. -/
+theorem down_liftInterp_eq_interp_of_doubleNegFree {φ : Formula Atom} (h : DoubleNegFree φ) :
+    self.down (liftInterp ia ie φ) = interp ia ie φ := by
   induction h with
-  | atom _ => exact IsLawfulDNELift.down_up _
-  | exi _ => exact IsLawfulDNELift.down_up _
-  | @conj φ' ψ' _ _ ih_φ ih_ψ =>
-    show DNELift.down
-        (DNELift.up (DynamicSubstrate.conj
-          (DNELift.down (liftInterp (Δ := Δ) ia ie φ'))
-          (DNELift.down (liftInterp (Δ := Δ) ia ie ψ')))) = _
-    rw [IsLawfulDNELift.down_up, ih_φ, ih_ψ]
+  | atom _ => exact LawfulLift.down_up _
+  | exi _ => exact LawfulLift.down_up _
+  | conj _ _ ihφ ihψ =>
+    show self.down (self.up (Substrate.conj (self.down (liftInterp ia ie _))
+      (self.down (liftInterp ia ie _)))) = _
+    rw [LawfulLift.down_up, ihφ, ihψ]
     rfl
-  | neg_atom _ => exact IsLawfulDNELift.down_invneg_up _
-  | neg_exi _ => exact IsLawfulDNELift.down_invneg_up _
-  | @neg_conj φ' ψ' _ _ ih_φ ih_ψ =>
-    -- Full `@`-form for inner DNELift.down calls pins the substrate δ
-    -- explicitly; without it, Lean cannot determine δ for the
-    -- deeply-nested DNELift.up call (the error from a less explicit
-    -- form is "DNELift ?m Δ" — first arg metavariable).
-    show @DNELift.down δ Δ _ _ (@DNELift.invneg δ Δ _ _
-        (@DNELift.up δ Δ _ _ (DynamicSubstrate.conj
-          (@DNELift.down δ Δ _ _ (liftInterp (Δ := Δ) ia ie φ'))
-          (@DNELift.down δ Δ _ _ (liftInterp (Δ := Δ) ia ie ψ'))))) = _
-    rw [IsLawfulDNELift.down_invneg_up, ih_φ, ih_ψ]
+  | neg_atom _ => exact LawfulLift.down_neg_up _
+  | neg_exi _ => exact LawfulLift.down_neg_up _
+  | neg_conj _ _ ihφ ihψ =>
+    show self.down (self.neg (self.up (Substrate.conj (self.down (liftInterp ia ie _))
+      (self.down (liftInterp ia ie _))))) = _
+    rw [LawfulLift.down_neg_up, ihφ, ihψ]
     rfl
 
--- ════════════════════════════════════════════════════════════════
--- § 7. Fact 4 — Lifts factor through canonical form
--- ════════════════════════════════════════════════════════════════
+end Interpretation
 
-/-! ### Canonical form of a lifted formula
+/-! ### The canonical form and Fact 4 -/
 
-Each lawful-lift value `⟨φ⟩_Δ` decomposes into (substrate value, parity bit)
-where the parity tracks the residual negation count after DNE collapse.
-Following mathlib's structural-typing idiom for binary-tagged values, we
-encode the parity as `Sum δ δ`: `Sum.inl m` is "positive m" (even
-negations), `Sum.inr m` is "negative m" (odd). `Sum.swap` is the canonical
-involution implementing parity flip — directly mirroring `IsLawfulDNELift.invneg_invneg`. -/
+section Canonical
 
-/-- **Canonical form** of a formula's lifted interpretation. Depends only
-on the substrate `δ` and interpretations `ia`/`ie`, not on the lift `Δ`. -/
-def canonicalize {Atom : Type v} {δ : Type u} [DynamicSubstrate δ]
-    (ia : Atom → δ) (ie : Nat → δ) : DynForm Atom → δ ⊕ δ
-  | .atom a => Sum.inl (ia a)
-  | .exi n  => Sum.inl (ie n)
+variable {Atom δ : Type*} [Substrate δ] (ia : Atom → δ) (ie : ℕ → δ)
+
+/-- The canonical form of a formula's lifted meaning: a substrate value with a parity bit,
+`Sum.inl` for an even and `Sum.inr` for an odd number of residual negations; it depends on the
+substrate alone. -/
+def canonicalize : Formula Atom → δ ⊕ δ
+  | .atom a => .inl (ia a)
+  | .exi n => .inl (ie n)
   | .conj φ ψ =>
-      Sum.inl (DynamicSubstrate.conj
-        ((canonicalize ia ie φ).elim id DynamicSubstrate.neg)
-        ((canonicalize ia ie ψ).elim id DynamicSubstrate.neg))
-  | .neg φ  => Sum.swap (canonicalize ia ie φ)
+    .inl (Substrate.conj ((canonicalize φ).elim id Substrate.neg)
+      ((canonicalize ψ).elim id Substrate.neg))
+  | .neg φ => (canonicalize φ).swap
 
-/-- **Encoding** the canonical form into any lawful lift `Δ`: positive `m`
-is `up m`; negative `m` is `invneg (up m)`. `Δ` is explicit because the
-input `δ ⊕ δ` doesn't constrain it for inference. The `self` named binding
-on the `DNELift δ Δ` instance makes Lean use the in-scope instance for
-the body's `up`/`invneg` calls (rather than searching afresh). -/
-def encodeCanonical (Δ : Type w) {δ : Type u} [DynamicSubstrate δ]
-    [self : DNELift δ Δ] : δ ⊕ δ → Δ
-  | Sum.inl m => self.up m
-  | Sum.inr m => self.invneg (self.up m)
+/-- A negation-free formula's canonical form is its substrate meaning, positive. -/
+theorem canonicalize_of_negFree {φ : Formula Atom} (h : NegFree φ) :
+    canonicalize ia ie φ = .inl (interp ia ie φ) := by
+  induction h with
+  | atom _ => rfl
+  | exi _ => rfl
+  | conj _ _ ihφ ihψ => simp only [canonicalize, ihφ, ihψ, Sum.elim_inl, id]; rfl
 
-/-- **Down-projection of an encoded canonical form**: `s.elim id neg`.
-Direct from Emb (`down ∘ up = id`) and Neg (`down ∘ invneg ∘ up = neg`). -/
-theorem down_encodeCanonical {δ : Type u} (Δ : Type w)
-    [DynamicSubstrate δ] [DNELift δ Δ] [IsLawfulDNELift δ Δ] (s : δ ⊕ δ) :
-    DNELift.down (encodeCanonical Δ s) = s.elim id DynamicSubstrate.neg := by
+/-- Every canonical form carries the substrate meaning of some formula. -/
+theorem canonicalize_eq (φ : Formula Atom) :
+    ∃ ψ, canonicalize ia ie φ = .inl (interp ia ie ψ) ∨
+      canonicalize ia ie φ = .inr (interp ia ie ψ) := by
+  induction φ with
+  | atom a => exact ⟨.atom a, .inl rfl⟩
+  | exi n => exact ⟨.exi n, .inl rfl⟩
+  | conj φ ψ ihφ ihψ =>
+    have elim : ∀ {χ : Formula Atom}, (∃ χ', canonicalize ia ie χ = .inl (interp ia ie χ') ∨
+        canonicalize ia ie χ = .inr (interp ia ie χ')) →
+        ∃ χ', (canonicalize ia ie χ).elim id Substrate.neg = interp ia ie χ' := by
+      rintro χ ⟨χ', h | h⟩ <;> rw [h]
+      · exact ⟨χ', rfl⟩
+      · exact ⟨.neg χ', rfl⟩
+    obtain ⟨φ', hφ⟩ := elim ihφ
+    obtain ⟨ψ', hψ⟩ := elim ihψ
+    exact ⟨.conj φ' ψ', .inl (by simp only [canonicalize, hφ, hψ]; rfl)⟩
+  | neg φ ih =>
+    obtain ⟨φ', h | h⟩ := ih
+    · exact ⟨φ', .inr (by simp [canonicalize, h])⟩
+    · exact ⟨φ', .inl (by simp [canonicalize, h])⟩
+
+variable (Δ : Type*) [self : Lift δ Δ]
+
+/-- Encoding a canonical form into a lift: a positive value lifts, a negative one lifts and is
+negated. -/
+def encodeCanonical : δ ⊕ δ → Δ
+  | .inl m => self.up m
+  | .inr m => self.neg (self.up m)
+
+variable [LawfulLift δ Δ]
+
+/-- An encoded canonical form lowers to its value, negated when odd. -/
+theorem down_encodeCanonical (s : δ ⊕ δ) :
+    self.down (encodeCanonical Δ s) = s.elim id Substrate.neg := by
   cases s with
-  | inl m => exact IsLawfulDNELift.down_up m
-  | inr m => exact IsLawfulDNELift.down_invneg_up m
+  | inl m => exact LawfulLift.down_up m
+  | inr m => exact LawfulLift.down_neg_up m
 
-/-- **Inv law for the canonical encoding**: `encodeCanonical ∘ Sum.swap =
-invneg ∘ encodeCanonical`. The structural counterpart of
-`IsLawfulDNELift.invneg_invneg`. -/
-theorem encodeCanonical_swap {δ : Type u} (Δ : Type w)
-    [DynamicSubstrate δ] [self : DNELift δ Δ] [IsLawfulDNELift δ Δ] (s : δ ⊕ δ) :
-    encodeCanonical Δ (Sum.swap s) = self.invneg (encodeCanonical Δ s) := by
+/-- Flipping the parity encodes as the lifted negation. -/
+theorem encodeCanonical_swap (s : δ ⊕ δ) :
+    encodeCanonical Δ s.swap = self.neg (encodeCanonical Δ s) := by
   cases s with
   | inl m => rfl
   | inr m =>
-    show self.up m = self.invneg (self.invneg (self.up m))
-    rw [IsLawfulDNELift.invneg_invneg]
+    show self.up m = self.neg (self.neg (self.up m))
+    rw [LawfulLift.neg_neg]
 
-/-- **Fact 4** (paper, p. 869) — **factor-through-canonical form**.
-
-For any lawful lift `Δ`, the lifted interpretation `⟨·⟩ : ℒ → Δ` factors
-through a canonical form `δ ⊕ δ` that depends only on the substrate, not
-on the lift:
-`⟨φ⟩_Δ = encodeCanonical (canonicalize φ)`.
-
-This is the substantive content of Charlow's Fact 4. The bijection
-`f : Im(⟨·⟩)₁ → Im(⟨·⟩)₂` Charlow constructs in Appendix A is the natural
-transformation between encodings of the same canonical form in different
-`Δ`s: `f ∘ encodeCanonical_1 = encodeCanonical_2`.
-
-The corollary `canonicalize φ = canonicalize ψ → ⟨φ⟩_Δ = ⟨ψ⟩_Δ` (one
-direction of the literal "kernel congruence iff" Charlow states) follows
-immediately — see `lawful_lifts_canonicalize_eq_implies` below.
-
-The other direction of the iff (`⟨φ⟩₁ = ⟨ψ⟩₁ → ⟨φ⟩₂ = ⟨ψ⟩₂`) requires
-substrate **non-degeneracy** (no `m : δ` with `m = neg m`, since with such
-`m` the KMLift collapses formulas the CanonicalLift distinguishes — paper
-Appendix A's well-definedness check implicitly assumes this). For "real"
-substrates like DPL the iff holds; the abstract iff is genuinely
-substrate-dependent. The factor-through formulation is what's provable
-unconditionally. -/
-theorem lawful_lifts_factor_through_canonical
-    {Atom : Type v} {δ : Type u} (Δ : Type w)
-    [DynamicSubstrate δ] [self : DNELift δ Δ] [IsLawfulDNELift δ Δ]
-    (ia : Atom → δ) (ie : Nat → δ) (φ : DynForm Atom) :
-    (liftInterp ia ie φ : Δ) = encodeCanonical Δ (canonicalize ia ie φ) := by
+/-- Fact 4 as factorization: every lawful lifted interpretation is the encoding of the
+canonical form, which depends on the substrate alone. -/
+theorem liftInterp_eq_encodeCanonical (φ : Formula Atom) :
+    liftInterp (Δ := Δ) ia ie φ = encodeCanonical Δ (canonicalize ia ie φ) := by
   induction φ with
   | atom a => rfl
   | exi n => rfl
   | conj φ ψ ihφ ihψ =>
-    show self.up (DynamicSubstrate.conj
-            (self.down (liftInterp ia ie φ : Δ))
-            (self.down (liftInterp ia ie ψ : Δ))) = _
+    show self.up (Substrate.conj (self.down (liftInterp ia ie φ))
+      (self.down (liftInterp ia ie ψ))) = _
     rw [ihφ, ihψ, down_encodeCanonical, down_encodeCanonical]
     rfl
-  | neg φ ihφ =>
-    show self.invneg (liftInterp ia ie φ : Δ) = _
-    rw [ihφ]
+  | neg φ ih =>
+    show self.neg (liftInterp ia ie φ) = _
+    rw [ih]
     exact (encodeCanonical_swap Δ _).symm
 
-/-- **Kernel congruence via canonical form** (paper Fact 4, the
-unconditionally-provable direction). If two formulas have the same
-canonical form, every lawful lift identifies them. -/
-theorem lawful_lifts_canonicalize_eq_implies
-    {Atom : Type v} {δ : Type u} {Δ₁ Δ₂ : Type w}
-    [DynamicSubstrate δ]
-    [DNELift δ Δ₁] [IsLawfulDNELift δ Δ₁]
-    [DNELift δ Δ₂] [IsLawfulDNELift δ Δ₂]
-    (ia : Atom → δ) (ie : Nat → δ) (φ ψ : DynForm Atom)
+/-- Formulas with one canonical form are identified by every lawful lift. -/
+theorem liftInterp_eq_of_canonicalize_eq {φ ψ : Formula Atom}
     (h : canonicalize ia ie φ = canonicalize ia ie ψ) :
-    ((liftInterp ia ie φ : Δ₁) = liftInterp ia ie ψ) ∧
-    ((liftInterp ia ie φ : Δ₂) = liftInterp ia ie ψ) := by
-  refine ⟨?_, ?_⟩
-  · rw [lawful_lifts_factor_through_canonical Δ₁,
-        lawful_lifts_factor_through_canonical Δ₁, h]
-  · rw [lawful_lifts_factor_through_canonical Δ₂,
-        lawful_lifts_factor_through_canonical Δ₂, h]
+    liftInterp (Δ := Δ) ia ie φ = liftInterp ia ie ψ := by
+  rw [liftInterp_eq_encodeCanonical, liftInterp_eq_encodeCanonical, h]
 
--- ════════════════════════════════════════════════════════════════
--- § 8. Auxiliary substrate operations needed by Instances 2-3
--- ════════════════════════════════════════════════════════════════
+/-- The corollary of Fact 4: two lawful lifts of one substrate lower every formula alike. -/
+theorem down_liftInterp_eq_down_liftInterp (Δ' : Type*) [Lift δ Δ'] [LawfulLift δ Δ']
+    (φ : Formula Atom) :
+    Lift.down (liftInterp (Δ := Δ) ia ie φ) = Lift.down (liftInterp (Δ := Δ') ia ie φ) := by
+  rw [liftInterp_eq_encodeCanonical, liftInterp_eq_encodeCanonical, down_encodeCanonical,
+    down_encodeCanonical]
 
-/-- **Program disjunction** (paper's `m ∪ n`, Definition 6 / §3): the
-externally-dynamic union of two updates. Needed by Gotham (Instance 2) and
-Staged updates (Instance 3); not needed by KM (Instance 1) or Canonical
-(Instance 4). Separate typeclass to avoid burdening the basic substrate
-with operations its non-DNE-extending consumers do not need. -/
-class DynamicProgramDisj (δ : Type u) [DynamicSubstrate δ] where
-  /-- Program disjunction `m ∪ n`. For DPL: `λ g h => m g h ∨ n g h`. -/
+end Canonical
+
+/-! ### Program disjunction and truth (Definitions 2, 5 and 6) -/
+
+/-- A substrate with the union of two updates, the externally dynamic program disjunction. -/
+class ProgramDisj (δ : Type*) [Substrate δ] where
   pdisj : δ → δ → δ
 
-/-- **Truth as a static proposition** (paper's `True_δ(m)`, Definition 2 /
-Definition 5): the set of indices where `m` succeeds. Indexed by the
-substrate's index type `i`. Needed by Staged updates (Instance 3). -/
-class DynamicTruth (δ : Type u) (i : outParam (Type v))
-    [DynamicSubstrate δ] where
-  /-- `True_δ(m) := { i | i[m] ≠ ∅ }`. For DPL: `λ g, ∃ h, m g h`. -/
-  truth : δ → (i → Prop)
-  /-- `m|_p`: restrict m to inputs in p. For DPL: `λ g h, p g ∧ m g h`. -/
+/-- A substrate whose meanings have propositional content over indices `i`, the indices where
+they succeed, and can be restricted to a proposition. -/
+class Truth (δ : Type*) (i : outParam Type*) [Substrate δ] where
+  truth : δ → i → Prop
   restrict : δ → (i → Prop) → δ
 
--- ════════════════════════════════════════════════════════════════
--- § 9. Substrate instance: the canonical DPL substrate
--- ════════════════════════════════════════════════════════════════
+/-! ### DPL as a substrate -/
 
-open DPL
+section DPL
 
-/-- The DPL relational meaning type (`DPL.Rel E := (Nat → E) → (Nat → E) → Prop`)
-is a `DynamicSubstrate` via its native conjunction and negation. -/
-instance instDynamicSubstrateDPL.Rel (E : Type u) : DynamicSubstrate (DPL.Rel E) where
+variable {E : Type*}
+
+instance : Substrate (DPL.Rel E) where
   conj := DPL.Rel.conj
   neg := DPL.Rel.neg
 
-/-- Program disjunction on `DPL.Rel`: pointwise OR. Note this differs from
-DPL's `DPL.Rel.disj` (which is externally-static, clearing the assignment);
-program disjunction preserves output bindings. -/
-def dplProgramDisj {E : Type u} (φ ψ : DPL.Rel E) : DPL.Rel E :=
-  fun g h => φ g h ∨ ψ g h
+/-- Program disjunction on DPL relations, the union of the outputs. -/
+def programDisj (φ ψ : DPL.Rel E) : DPL.Rel E := λ g h => φ g h ∨ ψ g h
 
-instance instDynamicProgramDisjDPL.Rel (E : Type u) :
-    DynamicProgramDisj (DPL.Rel E) where
-  pdisj := dplProgramDisj
+instance : ProgramDisj (DPL.Rel E) where
+  pdisj := programDisj
 
-instance instDynamicTruthDPL.Rel (E : Type u) :
-    DynamicTruth (DPL.Rel E) (Nat → E) where
-  truth m := fun g => ∃ h, m g h
-  restrict m p := fun g h => p g ∧ m g h
+instance : Truth (DPL.Rel E) (ℕ → E) where
+  truth := DPL.Rel.trueAt
+  restrict m p := λ g h => p g ∧ m g h
 
--- ════════════════════════════════════════════════════════════════
--- § 10. Instance 1 — Krahmer-Muskens (paper p. 866)
--- ════════════════════════════════════════════════════════════════
+private theorem rel_ext {φ ψ : DPL.Rel E} (h : ∀ g k, φ g k ↔ ψ g k) : φ = ψ :=
+  funext λ g => funext λ k => propext (h g k)
 
-/-! ### Instance 1: 2D DPL (Krahmer-Muskens 1995)
+end DPL
 
-`Δ ::= δ × δ` (pairs of updates). The lift `m^↑ := (m, ¬_δ m)` pairs every
-update with its substrate negation. `down` projects the first component;
-`invneg` swaps. Charlow notes (p. 865, footnote 5) that this is his own
-reconstruction of [krahmer-muskens-1995] as a lifted interpretation —
-the original K&M presentation interprets DRSs, not first-order formulas,
-and is distinguished syntactically from static conditions.
+/-! ### Instance 1: two-dimensional DPL -/
 
-This instance derives `IsLawfulDNELift` directly from the algebraic shape
-of `Prod`: `down (up m) = m` is `Prod.fst_mk`; `invneg (invneg M) = M` is
-`Prod.swap_swap`; `down (invneg (up m)) = neg m` is by computation. The
-swap-axiom witness is also packaged as a `Bilateral.IsBilateral`
-proof (see `kmIsBilateral` below), making the connection to existing
-linglib bilateral substrate explicit. -/
-
-/-- **Instance 1's carrier**: pairs of updates over the same substrate.
-Implemented as a `structure` (not a `def := δ × δ` alias) so that typeclass
-search treats it as a distinct type from `GothamLift δ` (which has the same
-underlying shape). -/
-structure KMLift (δ : Type u) where
-  /-- Positive update component (the substrate update itself). -/
+/-- [krahmer-muskens-1995]'s pairs of an update and its anti-extension, recast as a lift: `up`
+pairs an update with its substrate negation, `down` forgets the anti-extension and the lifted
+negation swaps. -/
+structure TwoDimensional (δ : Type*) where
   positive : δ
-  /-- Negative update component (the substrate's negation of the positive). -/
   negative : δ
 
-namespace KMLift
+namespace TwoDimensional
 
-variable {δ : Type u} [DynamicSubstrate δ]
+variable {δ : Type*} [Substrate δ]
 
-instance instDNELift : DNELift δ (KMLift δ) where
-  up m := ⟨m, DynamicSubstrate.neg m⟩
+instance : Lift δ (TwoDimensional δ) where
+  up m := ⟨m, Substrate.neg m⟩
   down M := M.positive
-  invneg M := ⟨M.negative, M.positive⟩
+  neg M := ⟨M.negative, M.positive⟩
 
-instance instIsLawfulDNELift : IsLawfulDNELift δ (KMLift δ) where
+instance : LawfulLift δ (TwoDimensional δ) where
   down_up _ := rfl
-  invneg_invneg _ := rfl
-  down_invneg_up _ := rfl
+  neg_neg _ := rfl
+  down_neg_up _ := rfl
 
-omit [DynamicSubstrate δ] in
-/-- **Connection to `Bilateral.IsBilateral`**: the KM lift's
-projections witness the paraconsistent-bilateral pattern, with `positive`
-as the positive interpretation, `negative` as the negative interpretation,
-and a swap-style negate. Demonstrates linglib interconnection density.
+omit [Substrate δ] in
+/-- The lift is bilateral: its negation exchanges the positive and negative components. -/
+theorem isBilateral :
+    Bilateral.IsBilateral (Form := TwoDimensional δ) positive negative
+      λ M => ⟨M.negative, M.positive⟩ :=
+  ⟨λ _ => rfl, λ _ => rfl⟩
 
-The leading `omit [DynamicSubstrate δ]` clears the namespace-scoped variable
-that this lemma doesn't use (bilaterality of projection-and-swap is a
-Prod-shape fact, not a substrate fact). -/
-lemma kmIsBilateral :
-    Bilateral.IsBilateral
-      (Form := KMLift δ) (Result := δ)
-      KMLift.positive KMLift.negative
-      (fun M => ⟨M.negative, M.positive⟩) :=
-  ⟨fun _ => rfl, fun _ => rfl⟩
+end TwoDimensional
 
-end KMLift
+/-! ### Instance 2: decomposed updates -/
 
--- ════════════════════════════════════════════════════════════════
--- § 11. Instance 2 — Gotham decomposed updates (paper p. 867)
--- ════════════════════════════════════════════════════════════════
-
-/-! ### Instance 2: Decomposed updates (Gotham 2019)
-
-`Δ ::= δ × δ`, but with a different lift: `m^↑ := (¬¬m, m ∪ ¬_δ m)`.
-The first component is the doubly-negated (truth-conditional) half; the
-second is a "dynamic tautology" `m ∪ ¬m` that introduces drefs in either
-horn. `down` is conjunction; `invneg` negates the truth-conditional half.
-
-The full `IsLawfulDNELift` instance is **not declared** here — Gotham's
-Emb law `(¬¬m) ∧_δ (m ∪ ¬m) = m` is provable for the DPL substrate by
-unfolding `conj`, `neg`, `pdisj` definitions (paper p. 867 sketches the
-argument), but does not hold for arbitrary `DynamicSubstrate + DynamicProgramDisj`.
-A future PR formalising Gotham 2019 as its own study should add the
-DPL-specific instance + the substrate axioms required for generality.
-
-The `lift` data is provided so that `liftInterp (Δ := GothamLift δ)` can be
-typed; `IsLawfulDNELift` synthesis fails (correctly) so dependent theorems
-do not silently accept un-proved laws. -/
-
-/-- **Instance 2's carrier**: pairs of (truth-conditional, dynamic-tautology)
-halves. Distinct structure from `KMLift` despite the same shape — different
-field names + different lift operations. -/
-structure GothamLift (δ : Type u) where
-  /-- Doubly-negated, truth-conditional half (¬¬m). -/
-  truthCond : δ
-  /-- Dynamic-tautology half (m ∪ ¬m), introduces drefs in either horn. -/
+/-- [gotham-2019-ac22]'s decomposition, recast as a lift: `up` pairs an update's static closure,
+its double negation, with the dynamic tautology `m ∪ ¬m`, `down` conjoins the two and the lifted
+negation negates the at-issue coordinate. -/
+structure Decomposed (δ : Type*) where
+  atIssue : δ
   tautology : δ
 
-namespace GothamLift
+namespace Decomposed
 
-variable {δ : Type u} [DynamicSubstrate δ] [DynamicProgramDisj δ]
+variable {δ : Type*} [Substrate δ] [ProgramDisj δ]
 
-instance instDNELift : DNELift δ (GothamLift δ) where
-  up m :=
-    ⟨DynamicSubstrate.neg (DynamicSubstrate.neg m),
-     DynamicProgramDisj.pdisj m (DynamicSubstrate.neg m)⟩
-  down M := DynamicSubstrate.conj M.truthCond M.tautology
-  invneg M := ⟨DynamicSubstrate.neg M.truthCond, M.tautology⟩
+instance : Lift δ (Decomposed δ) where
+  up m := ⟨Substrate.neg (Substrate.neg m), ProgramDisj.pdisj m (Substrate.neg m)⟩
+  down M := Substrate.conj M.atIssue M.tautology
+  neg M := ⟨Substrate.neg M.atIssue, M.tautology⟩
 
-end GothamLift
+variable {E : Type*}
 
--- ════════════════════════════════════════════════════════════════
--- § 12. Instance 3 — Staged updates (paper p. 868, Charlow's headline)
--- ════════════════════════════════════════════════════════════════
+/-- Emb over DPL: conjoining the static closure with the dynamic tautology reconstitutes the
+update. -/
+theorem down_up (m : DPL.Rel E) : Lift.down (Lift.up (Δ := Decomposed (DPL.Rel E)) m) = m :=
+  rel_ext λ g h => by
+    constructor
+    · rintro ⟨k, ⟨rfl, hnn⟩, hm | ⟨rfl, hno⟩⟩
+      · exact hm
+      · exact absurd ⟨g, rfl, hno⟩ hnn
+    · exact λ hm => ⟨g, ⟨rfl, λ ⟨_, _, hno⟩ => hno ⟨h, hm⟩⟩, .inl hm⟩
 
-/-! ### Instance 3: Staged updates (Charlow 2025)
+/-- Neg over DPL. -/
+theorem down_neg_up (m : DPL.Rel E) :
+    Lift.down (Lift.neg (Lift.up (Δ := Decomposed (DPL.Rel E)) m)) = DPL.Rel.neg m :=
+  rel_ext λ g h => by
+    constructor
+    · rintro ⟨k, ⟨rfl, h3⟩, hm | hneg⟩
+      · exact absurd ⟨g, rfl, λ ⟨_, _, hno⟩ => hno ⟨h, hm⟩⟩ h3
+      · exact hneg
+    · rintro ⟨rfl, hno⟩
+      exact ⟨g, ⟨rfl, λ ⟨_, _, hnn⟩ => hnn ⟨g, rfl, hno⟩⟩, .inr ⟨rfl, hno⟩⟩
 
-`Δ ::= (i → Prop) × δ` (pairs of static propositional content and updates).
-The lift `m^↑ := (True_δ(m), m ∪ ¬_δ m)` decomposes a δ-meaning into its
-truth-conditional content plus a dynamic tautology. `down` reconstitutes by
-restriction; `invneg` flips the static-proposition half.
+/-- The hiccup with Inv: on the whole carrier the lifted negation is not an involution, since a
+bare existential is no test and its double negation is not itself. -/
+theorem not_neg_neg [Nontrivial E] : ∃ M : Decomposed (DPL.Rel E), Lift.neg (Lift.neg M) ≠ M := by
+  obtain ⟨x, φ, h⟩ := GroenendijkStokhof1991.dne_fails_anaphora (E := E)
+  exact ⟨⟨DPL.Rel.exists_ x φ, DPL.Rel.exists_ x φ⟩, λ e => h (congrArg atIssue e)⟩
 
-Like Gotham, the full `IsLawfulDNELift` instance is **not declared** here —
-the laws hold over the DPL substrate (paper p. 868) but require unfolding
-`truth`, `restrict`, and `pdisj` definitions. Future PR for Mandelkern2022
-or Charlow's own §6 will add the DPL-specific lawfulness proof. -/
+/-- On the image of the lifted interpretation the at-issue coordinate is a negation, hence
+static. -/
+theorem exists_atIssue_eq_neg {Atom : Type*} (ia : Atom → DPL.Rel E) (ie : ℕ → DPL.Rel E)
+    (φ : Formula Atom) :
+    ∃ X, (liftInterp (Δ := Decomposed (DPL.Rel E)) ia ie φ).atIssue = DPL.Rel.neg X := by
+  induction φ with
+  | atom a => exact ⟨_, rfl⟩
+  | exi n => exact ⟨_, rfl⟩
+  | conj φ ψ _ _ => exact ⟨_, rfl⟩
+  | neg φ _ => exact ⟨_, rfl⟩
 
-/-- **Instance 3's carrier**: pairs of static propositions and updates. -/
-structure StagedLift (δ : Type u) (i : Type v) where
-  /-- Static propositional content (`True_δ(m)` shape). -/
+/-- Inv on the image: the lifted negation is an involution on every lifted meaning, a static
+at-issue coordinate being restored by its double negation. -/
+theorem neg_neg_liftInterp {Atom : Type*} (ia : Atom → DPL.Rel E) (ie : ℕ → DPL.Rel E)
+    (φ : Formula Atom) :
+    Lift.neg (Lift.neg (liftInterp (Δ := Decomposed (DPL.Rel E)) ia ie φ)) =
+      liftInterp ia ie φ := by
+  obtain ⟨X, hX⟩ := exists_atIssue_eq_neg ia ie φ
+  generalize liftInterp (Δ := Decomposed (DPL.Rel E)) ia ie φ = M at hX ⊢
+  cases M with
+  | mk t n =>
+    simp only at hX
+    subst hX
+    show Decomposed.mk (DPL.Rel.neg (DPL.Rel.neg (DPL.Rel.neg X))) n = _
+    rw [(GroenendijkStokhof1991.neg_neg_eq_self_iff_isTest _).2 λ _ _ h => h.1]
+
+end Decomposed
+
+/-! ### Instance 3: staged updates -/
+
+/-- A staged update: the static proposition of an update beside the dynamic tautology `m ∪ ¬m`;
+`down` restricts the tautology to the proposition and the lifted negation complements the
+proposition. -/
+structure Staged (δ i : Type*) where
   staticContent : i → Prop
-  /-- Update component carrying the dynamic tautology. -/
   update : δ
 
-namespace StagedLift
+namespace Staged
 
-variable {δ : Type u} {i : Type v}
-  [DynamicSubstrate δ] [DynamicProgramDisj δ] [DynamicTruth δ i]
+variable {δ i : Type*} [Substrate δ] [ProgramDisj δ] [Truth δ i]
 
-instance instDNELift : DNELift δ (StagedLift δ i) where
-  up m :=
-    ⟨DynamicTruth.truth m,
-     DynamicProgramDisj.pdisj m (DynamicSubstrate.neg m)⟩
-  down M := DynamicTruth.restrict M.update M.staticContent
-  invneg M := ⟨fun x => ¬ M.staticContent x, M.update⟩
+instance : Lift δ (Staged δ i) where
+  up m := ⟨Truth.truth m, ProgramDisj.pdisj m (Substrate.neg m)⟩
+  down M := Truth.restrict M.update M.staticContent
+  neg M := ⟨λ x => ¬ M.staticContent x, M.update⟩
 
-end StagedLift
+variable {E : Type*}
 
--- ════════════════════════════════════════════════════════════════
--- § 13. Instance 4 — Canonical (paper p. 868, Fact 3)
--- ════════════════════════════════════════════════════════════════
+/-- Over DPL the staged lift obeys all three laws. -/
+instance : LawfulLift (DPL.Rel E) (Staged (DPL.Rel E) (ℕ → E)) where
+  down_up m := rel_ext λ g h => by
+    constructor
+    · rintro ⟨⟨j, hj⟩, hm | ⟨rfl, hno⟩⟩
+      · exact hm
+      · exact absurd ⟨j, hj⟩ hno
+    · exact λ hm => And.intro ⟨h, hm⟩ (Or.inl hm)
+  neg_neg M := by
+    cases M with
+    | mk p m =>
+      show Staged.mk (λ x => ¬ ¬ p x) m = _
+      simp only [not_not]
+  down_neg_up m := rel_ext λ g h => by
+    constructor
+    · rintro ⟨hno, hm | hneg⟩
+      · exact absurd ⟨h, hm⟩ hno
+      · exact hneg
+    · rintro ⟨rfl, hno⟩
+      exact And.intro hno (Or.inr ⟨rfl, hno⟩)
 
-/-! ### Instance 4: Canonical Δ = Bool × δ (Fact 3, p. 868)
+end Staged
 
-The minimal/canonical lift: tag each substrate value with a Boolean
-indicating whether to apply ¬_δ on lowering. Generic over any
-`DynamicSubstrate` — no program disjunction or truth needed.
+/-! ### Instance 4: the canonical lift and Fact 3 -/
 
-`m^↑ := (true, m)`; `(b, m)^↓ := if b then m else ¬_δ m`; `∼(b, m) := (¬b, m)`.
-All three laws hold by case analysis on the Bool. Lawful in full generality;
-unique among the four instances in being so. -/
-
-/-- **Instance 4's carrier**: pairs of booleans and updates. -/
-structure CanonicalLift (δ : Type u) where
-  /-- Polarity flag: `true` means "apply m as-is", `false` means "negate m". -/
+/-- The canonical lift: an update tagged with a bit that says whether to negate it on lowering;
+the lifted negation toggles the bit. -/
+structure Canonical (δ : Type*) where
   flag : Bool
-  /-- The underlying substrate update. -/
   update : δ
 
-namespace CanonicalLift
+namespace Canonical
 
-variable {δ : Type u} [DynamicSubstrate δ]
+variable {δ : Type*} [Substrate δ]
 
-instance instDNELift : DNELift δ (CanonicalLift δ) where
+instance : Lift δ (Canonical δ) where
   up m := ⟨true, m⟩
-  down M := if M.flag then M.update else DynamicSubstrate.neg M.update
-  invneg M := ⟨!M.flag, M.update⟩
+  down M := if M.flag then M.update else Substrate.neg M.update
+  neg M := ⟨!M.flag, M.update⟩
 
-instance instIsLawfulDNELift : IsLawfulDNELift δ (CanonicalLift δ) where
+instance : LawfulLift δ (Canonical δ) where
   down_up _ := rfl
-  invneg_invneg M := by
-    show CanonicalLift.mk (!(!M.flag)) M.update = M
+  neg_neg M := by
     cases M with
     | mk b _ => cases b <;> rfl
-  down_invneg_up _ := rfl
+  down_neg_up _ := rfl
 
-end CanonicalLift
+variable {Atom : Type*} (ia : Atom → δ) (ie : ℕ → δ)
 
--- ════════════════════════════════════════════════════════════════
--- § 14. Sanity tests over a concrete DPL substrate
--- ════════════════════════════════════════════════════════════════
+/-- Fact 3, one inclusion: every lifted meaning is a tagged substrate meaning. -/
+theorem liftInterp_eq (φ : Formula Atom) :
+    ∃ (b : Bool) (ψ : Formula Atom),
+      liftInterp (Δ := Canonical δ) ia ie φ = ⟨b, interp ia ie ψ⟩ := by
+  obtain ⟨ψ, h | h⟩ := canonicalize_eq ia ie φ
+  · exact ⟨true, ψ, by rw [liftInterp_eq_encodeCanonical, h]; rfl⟩
+  · exact ⟨false, ψ, by rw [liftInterp_eq_encodeCanonical, h]; rfl⟩
 
-section Tests
+/-- The paper's `φ̃`: every negation conjoined with a right identity `one`, so that no double
+negation remains. -/
+def guard (one : Formula Atom) : Formula Atom → Formula Atom
+  | .atom a => .atom a
+  | .exi n => .exi n
+  | .conj φ ψ => .conj (guard one φ) (guard one ψ)
+  | .neg φ => .conj (.neg (guard one φ)) one
 
-/-- The KM lift over `DPL.Rel Bool` satisfies all three laws — confirmed via
-typeclass synthesis. -/
-example : IsLawfulDNELift (DPL.Rel Bool) (KMLift (DPL.Rel Bool)) :=
-  KMLift.instIsLawfulDNELift
+variable {one : Formula Atom} (hone : NegFree one)
+  (hid : ∀ m, Substrate.conj m (interp ia ie one) = m)
 
-/-- The Canonical lift over `DPL.Rel Bool` satisfies all three laws. -/
-example : IsLawfulDNELift (DPL.Rel Bool) (CanonicalLift (DPL.Rel Bool)) :=
-  CanonicalLift.instIsLawfulDNELift
+include hone hid in
+/-- A guarded formula's canonical form is the formula's substrate meaning, positive. -/
+theorem canonicalize_guard (φ : Formula Atom) :
+    canonicalize ia ie (guard one φ) = .inl (interp ia ie φ) := by
+  induction φ with
+  | atom a => rfl
+  | exi n => rfl
+  | conj φ ψ ihφ ihψ => simp only [guard, canonicalize, ihφ, ihψ, Sum.elim_inl, id]; rfl
+  | neg φ ih =>
+    simp only [guard, canonicalize, ih, canonicalize_of_negFree ia ie hone, Sum.swap_inl,
+      Sum.elim_inr, Sum.elim_inl, id, hid]
+    rfl
 
-/-- DNE holds in the KM lifted interpretation: `⟨¬¬φ⟩ = ⟨φ⟩`. Demonstrates
-Fact 1 over a concrete substrate (KMLift over DPL.Rel Bool). -/
-example (ia : Unit → DPL.Rel Bool) (ie : Nat → DPL.Rel Bool)
-        (φ : DynForm Unit) :
-    (liftInterp (Δ := KMLift (DPL.Rel Bool)) ia ie (.neg (.neg φ))) =
-    liftInterp ia ie φ :=
-  liftInterp_dneg ia ie φ
+include hone hid in
+/-- Fact 3, the other inclusion: with a right identity for conjunction, every tagged substrate
+meaning is a lifted meaning, of the guarded formula or its negation. -/
+theorem exists_liftInterp_eq (b : Bool) (ψ : Formula Atom) :
+    ∃ φ, liftInterp (Δ := Canonical δ) ia ie φ = ⟨b, interp ia ie ψ⟩ := by
+  cases b
+  · refine ⟨.neg (guard one ψ), ?_⟩
+    rw [liftInterp_eq_encodeCanonical]
+    show encodeCanonical _ (canonicalize ia ie (guard one ψ)).swap = _
+    rw [canonicalize_guard ia ie hone hid]
+    rfl
+  · exact ⟨guard one ψ, by
+      rw [liftInterp_eq_encodeCanonical, canonicalize_guard ia ie hone hid]; rfl⟩
 
-/-- DNE holds in the Canonical lifted interpretation: `⟨¬¬φ⟩ = ⟨φ⟩`. -/
-example (ia : Unit → DPL.Rel Bool) (ie : Nat → DPL.Rel Bool)
-        (φ : DynForm Unit) :
-    (liftInterp (Δ := CanonicalLift (DPL.Rel Bool)) ia ie (.neg (.neg φ))) =
-    liftInterp ia ie φ :=
-  liftInterp_dneg ia ie φ
-
-end Tests
+end Canonical
 
 end Charlow2025
