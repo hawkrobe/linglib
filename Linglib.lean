@@ -3030,3 +3030,4 @@ import Linglib.Data.Examples.ChanShen2026
 import Linglib.Data.Examples.BhattTakahashi2011
 import Linglib.Data.Examples.Bresnan1973
 import Linglib.Data.Examples.Carstens2026
+import Linglib.Data.Examples.ChemlaSpector2011
