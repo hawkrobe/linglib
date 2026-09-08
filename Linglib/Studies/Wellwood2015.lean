@@ -437,11 +437,11 @@ theorem run_shift_via_telicize :
 
 /-- [bresnan-1973]'s QP `-er` + `much`, underlying `more` in all domains;
     adjectives differ only by Much Deletion (Wellwood's (74)). -/
-def crossCategorialQP : Bresnan1973.QP := ⟨.er, .much⟩
+def crossCategorialQP : Bresnan1973.QP := ⟨{ clitic := some .er }, .much⟩
 
 /-- The surface form "more" derives from Bresnan's suppletion. -/
 theorem crossCategorial_more_from_suppletion :
-    Bresnan1973.suppletion crossCategorialQP = some "more" := rfl
+    crossCategorialQP.suppletion = some .more := rfl
 
 /-! ### `very` distribution (§6.3) -/
 
@@ -451,8 +451,8 @@ theorem crossCategorial_more_from_suppletion :
 theorem very_tracks_much_deletion :
     ∀ e ∈ Examples.all, e.feature? "dataset" = some "very" →
       (e.feature? "requiresOvertMuch" = some "true" ↔
-        Bresnan1973.muchDeletionApplies .much
-          (adjFollows := e.feature? "category" == some "gradableAdj") = false) := by
+        ¬ Bresnan1973.MuchDeletes ⟨{}, .much⟩
+          (if e.feature? "category" = some "gradableAdj" then .adjective else .noun)) := by
   decide
 
 example : Examples.very_ga.feature? "dataset" = some "very" := rfl
