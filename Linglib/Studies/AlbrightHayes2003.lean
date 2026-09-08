@@ -1,271 +1,277 @@
-import Mathlib.Data.Real.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.DeriveFintype
+import Mathlib.Algebra.Order.Field.Rat
+import Mathlib.Tactic.Positivity
 import Linglib.Data.Examples.AlbrightHayes2003
+import Linglib.Fragments.English.Phonology
 
 /-!
-# Albright & Hayes 2003: rules vs. analogy in English past tenses
+# Rules vs. analogy in English past tenses
 
-Morphological knowledge is a set of stochastic rules learned by minimal generalization over
-the lexicon, each scored by its reliability (hits over scope, discounted for small scope). The
-most reliable rules are *islands of reliability*, and the lexicon has them for regular as well
-as irregular changes; the wug ratings of Experiment 2 track them for both — against the dual
-mechanism model, whose single default rule leaves novel regulars context-free — while a purely
-analogical model, free to use variegated similarity, misses the islands and misassigns the
-regular allomorphs.
+[albright-hayes-2003] learn the English past tense as a set of stochastic rules. Every
+stem–past pair is a word-specific rule, and minimal generalization over two rules with the same
+change keeps the segments they share outward from the change site, reduces the first pair that
+differ to the class of their shared features, and frees whatever lies beyond
+([albright-hayes-2002] gives the full procedure). Each rule is scored by its reliability in the
+lexicon, hits over scope, discounted for small scope by a lower confidence limit
+([mikheev-1997]); the most reliable rules, the islands of reliability, exist for the regular
+change as well as for irregular ones ([albright-2002] for Italian), and a candidate past takes
+the score of its best rule. Two wug experiments ([berko-1958]) on 58 stems that the model chose
+to cross islands for the regular and for an irregular past find island effects of the same size
+for both, which the single default rule of the dual mechanism model ([pinker-prince-1988],
+[prasada-pinker-1993]) cannot produce; the irregular effects replicate [bybee-moder-1983]. A
+generalized context model ([nosofsky-1990], with [broe-1993]'s segment similarity) run on the
+same lexicon misses the regular islands, follows single similar verbs, and misplaces the regular
+allomorphs, because its similarity is variegated where a rule's is structured: the allomorph
+depends on the final segment alone.
 
-This file defines `StochasticRule` with its reliability order, the rules the paper reports
-(`island_more_reliable`, `gleed_ranking`), the Table 3 cells (`IORCategory`), and reads
-Appendix A — every rated past of the 58 wug stems — into cell means: `regulars_ior` and
-`irregulars_ior` are the island effects for both past types, `regulars_not_cell_invariant` the
-failure of the single-default-rule prediction, `tradeoff` the competition effect of Fig. 3–4,
-`analogical_misses_islands` Table 4, and `burnt_underestimated` the rule-based model's one
-systematic error. The wug-paradigm vocabulary is declared first.
+## Implementation notes
+
+Minimal generalization is `mg` on the substrate's rewrite contexts, in which a leading word
+boundary is the anchored word-specific rule and its absence the free variable. The paper's own
+steps (6) and footnote 4, the island (8), and the regular allomorphy of (7b) are computed on
+the English fragment's segments, whose meet is the featural term. Reliability is `Stats`; the
+statistics reported in Tables 1 and 4 and the ratings and production probabilities of Appendix
+A are rows. Vowel changes, which generalize on both sides of the change, the confidence-limit
+discount, and the analogical model itself are not modelled.
 
 ## References
 
 * [albright-hayes-2003]
 * [albright-hayes-2002]
+* [albright-2002]
 * [berko-1958]
 * [pinker-prince-1988]
+* [prasada-pinker-1993]
 * [bybee-moder-1983]
 * [mikheev-1997]
+* [nosofsky-1990]
+* [broe-1993]
 -/
-
-/-! ### Wug-paradigm vocabulary ([berko-1958])
-
-Shared typed vocabulary for wug studies, homed in the modern reference
-paper for gradient wug responses. [berko-1958]
-introduced the test as a probe for productive morpho-phonological
-knowledge: presented with the nonce *wug*, children produce *wugs*
-/wʌgz/ rather than refusing or randomising. A single parametric lens
-class `HasFactor` (with lens laws) plus a `Rate` observable lets
-studies state the qualitative discriminator between grammar-locus
-accounts of productivity (novel forms show a factor gradient:
-indexed-constraint [pater-2010], scaled-weight [coetzee-pater-2008])
-and listing-locus accounts (novel forms are factor-invariant:
-UseListed [zuraw-2000]). -/
-
-namespace Morphology.WugTest
-
--- ============================================================================
--- §1. Attestation factor
--- ============================================================================
-
-/-- Whether a stimulus is an *attested* lexical item or a *novel*
-    (nonce, wug-like) form. The basic categorical contrast that
-    [berko-1958] introduced and that every wug paradigm crosses. -/
-inductive Attestation where
-  | attested
-  | novel
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
--- ============================================================================
--- §2. Lens class — the parametric factor schema
--- ============================================================================
-
-/-! Studies' `Cell` types vary in what additional factors they cross
-(item, paradigm slot, frequency stratum, IOR membership, …). The
-shared minimum is that every wug cell carries some collection of
-factors and a way to swap each one without touching others. The lens
-laws (`get_set`, `set_get`, `set_set`) make `setFactor` a proper lens;
-the paradigm-level predicates rely on them to express "swapping the
-factor changes the rate" as a statement that quantifies over the rest
-of the cell uniformly.
-
-`HasFactor` takes the codomain `F` as a parameter so that one schema
-covers `Attestation` (categorical), `ℝ` (frequency), `Bool` (binary
-IOR membership), and any other factor a future study introduces.
-Each `Cell` declares one `HasFactor` instance per factor it exposes;
-typeclass synthesis routes by the requested `F`. -/
-
-/-- A lens on `Cell` exposing a factor of type `F`. -/
-class HasFactor (Cell : Type) (F : Type) where
-  factorOf : Cell → F
-  setFactor : F → Cell → Cell
-  factorOf_setFactor :
-      ∀ f c, factorOf (setFactor f c) = f
-  setFactor_factorOf :
-      ∀ c, setFactor (factorOf c) c = c
-  setFactor_setFactor :
-      ∀ f₁ f₂ c, setFactor f₁ (setFactor f₂ c) = setFactor f₁ c
-
-/-- `Cell` has an attestation factor that can be swapped without
-    touching other factors. The [berko-1958] dimension. -/
-abbrev HasAttestation (Cell : Type) := HasFactor Cell Attestation
-
-/-- `Cell` exposes a real-valued frequency factor (e.g. log token
-    frequency of the source lexeme; log corpus frequency of an
-    analogous attested compound). Frequency is `ℝ`-valued because
-    lexical-frequency theories ([coetzee-pater-2008],
-    [coetzee-kawahara-2013]) operate on log frequencies as a
-    continuous regressor. -/
-abbrev HasFrequency (Cell : Type) := HasFactor Cell ℝ
-
--- ============================================================================
--- §3. Observable
--- ============================================================================
-
-/-- Per-cell numeric outcome — the wug paradigm's primary observable.
-    Polymorphic over the codomain `R` so that empirical tables (`ℚ`
-    proportions) and theory predictions (`ℝ` log-odds, MaxEnt
-    probabilities) can both ride along the same predicate machinery. -/
-abbrev Rate (Cell : Type) (R : Type) := Cell → R
-
--- ============================================================================
--- §4. Paradigm-level qualitative predicates
--- ============================================================================
-
-/-! These predicates state empirical patterns at the paradigm level.
-They are written in terms of `setFactor` (the lens), so any `Cell`
-type with the relevant `HasFactor` instances can claim them without
-re-deriving the universal quantification per study. The predicates
-are *abstract*; they express a shape ("novel forms show a factor
-gradient") that empirical studies and theoretical models may or may
-not satisfy. -/
-
-variable {Cell : Type} {F : Type} {R : Type}
-
-/-- A rate observable shows the *novel-form factor gradient* if,
-    holding all other factors constant and fixing `attestation =
-    novel`, varying the `F`-typed factor strictly varies the rate.
-    This is the prediction of indexed-constraint
-    ([pater-2010]), scaled-weight
-    ([coetzee-pater-2008]), and representation-strength
-    ([moore-cantwell-2021], [smolensky-goldrick-2016])
-    theories: novel forms inherit a frequency-conditioned grammar
-    pressure from analogous lexical items and therefore show a
-    factor gradient even though they are themselves unlisted. -/
-def NovelShowsFactorGradient
-    [HasAttestation Cell] [HasFactor Cell F] [LT F] [LT R]
-    (rate : Rate Cell R) : Prop :=
-  ∀ (c : Cell) (f₁ f₂ : F), f₁ < f₂ →
-    rate (HasFactor.setFactor f₁ (HasFactor.setFactor Attestation.novel c)) <
-    rate (HasFactor.setFactor f₂ (HasFactor.setFactor Attestation.novel c))
-
-/-- A rate observable is *factor-invariant on novel forms* if, holding
-    all other factors constant and fixing `attestation = novel`,
-    varying the `F`-typed factor leaves the rate unchanged. This is
-    the prediction of UseListed ([zuraw-2000]): novel forms have
-    no lexical entry, so no entry-keyed factor lookup can affect their
-    grammar pressure. The two hypotheses thus make opposite predictions
-    on the same paradigm cell. -/
-def NovelInvariantInFactor
-    [HasAttestation Cell] [HasFactor Cell F]
-    (rate : Rate Cell R) : Prop :=
-  ∀ (c : Cell) (f₁ f₂ : F),
-    rate (HasFactor.setFactor f₁ (HasFactor.setFactor Attestation.novel c)) =
-    rate (HasFactor.setFactor f₂ (HasFactor.setFactor Attestation.novel c))
-
-/-- Frequency-specific spelling of `NovelShowsFactorGradient` at
-    `F := ℝ`. Kept as an `abbrev` for readability at use sites where
-    "frequency gradient" is the linguist-facing terminology. -/
-abbrev NovelShowsFreqGradient
-    [HasAttestation Cell] [HasFrequency Cell] [LT R]
-    (rate : Rate Cell R) : Prop :=
-  NovelShowsFactorGradient (F := ℝ) rate
-
-/-- Frequency-specific spelling of `NovelInvariantInFactor` at
-    `F := ℝ`. -/
-abbrev NovelInvariantInFrequency
-    [HasAttestation Cell] [HasFrequency Cell]
-    (rate : Rate Cell R) : Prop :=
-  NovelInvariantInFactor (F := ℝ) rate
-
--- ============================================================================
--- §5. Discriminator theorem
--- ============================================================================
-
-/-- The two predictions are *structurally* incompatible: any rate
-    observable that satisfies both `NovelShowsFactorGradient` and
-    `NovelInvariantInFactor` at the same factor type `F` must have a
-    vacuous factor space (no two `F`-distinct values). On any cell
-    whose typeclasses permit `f₁ < f₂` for some `F`-typed factors,
-    the predicates are mutually exclusive — exactly the discriminator
-    a wug paradigm is supposed to provide.
-
-    For binary factors (`F := Bool`), the precondition `f₁ < f₂` is
-    discharged automatically by `Bool.false_lt_true`; for real-valued
-    factors (`F := ℝ`) any concrete pair like `(0 : ℝ) < 1` works.
-
-    This is the structural source of the empirical claim that wug
-    paradigms can adjudicate between grammar-locus and listing-locus
-    accounts of productivity: the bridge theorem is a single
-    application of this lemma to a study's cell type. -/
-theorem novelGradient_inconsistent_with_invariance
-    [HasAttestation Cell] [HasFactor Cell F] [LT F] [Preorder R]
-    (rate : Rate Cell R)
-    (h_grad : NovelShowsFactorGradient (F := F) rate)
-    (h_inv  : NovelInvariantInFactor (F := F) rate)
-    (c : Cell) (f₁ f₂ : F) (h_lt : f₁ < f₂) : False := by
-  exact absurd (h_inv c f₁ f₂) (ne_of_lt (h_grad c f₁ f₂ h_lt))
-
-end Morphology.WugTest
 
 namespace AlbrightHayes2003
 
-open Data.Examples Examples
+open Data.Examples Phonology Subregular.LocalRewrite English.Phonology
 
-/-! ### Stochastic rules -/
+deriving instance DecidableEq for ContextElem
 
-/-- A past-tense structural change: the three regular suffixes, a vowel change, or no change. -/
-inductive PastChange where
-  | suffixD
-  | suffixT
-  | suffixSchwaD
-  | vowelChange
-  | noChange
-  deriving DecidableEq, Repr, Inhabited
+/-! ### Minimal generalization -/
 
-def PastChange.isRegular : PastChange → Bool
-  | .suffixD | .suffixT | .suffixSchwaD => true
-  | .vowelChange | .noChange => false
+/-- The structural description of a past-tense rule: the stem-final material before the change
+site, read left to right, a leading word boundary anchoring it to a whole stem and its absence
+standing for the free variable. -/
+abbrev Context := List ContextElem
 
-/-- A stochastic rule: a change with the number of lexicon forms meeting its structural
-description (`scope`) and the number on which the change holds (`hits`). -/
-structure StochasticRule where
-  change : PastChange
+/-- The word-specific rule of a stem ((3)). -/
+def wordSpecific (stem : List Segment) : Context := .wordBoundary :: stem.map .seg
+
+/-- The stem meets the description. -/
+def Matches (c : Context) (stem : List Segment) : Prop := matchLeftContext c stem = true
+
+instance (c : Context) (stem : List Segment) : Decidable (Matches c stem) :=
+  inferInstanceAs (Decidable (_ = true))
+
+/-- Generalization from the change site outward ((5)): shared segments are kept, the first pair
+that differ become the class of their shared features, and everything beyond them is freed. -/
+def mgRev : List ContextElem → List ContextElem → List ContextElem
+  | .seg a :: as, .seg b :: bs => if a = b then .seg a :: mgRev as bs else [.seg (a ⊓ b)]
+  | .wordBoundary :: _, .wordBoundary :: _ => [.wordBoundary]
+  | _, _ => []
+
+/-- The minimal generalization of two descriptions. -/
+def mg (c₁ c₂ : Context) : Context := (mgRev c₁.reverse c₂.reverse).reverse
+
+/-- The rule learned from a list of stems: each stem's word-specific rule generalized in
+turn. -/
+def learned : List (List Segment) → Context
+  | [] => []
+  | s :: ss => ss.foldl (λ c w => mg c (wordSpecific w)) (wordSpecific s)
+
+variable {c c₁ c₂ : Context} {stem : List Segment}
+
+private theorem matchRightContext_map_seg (l : List Segment) :
+    matchRightContext (l.map .seg ++ [.wordBoundary]) l = true := by
+  induction l with
+  | nil => rfl
+  | cons a l ih => simp [matchRightContext, ih]
+
+/-- A stem meets its own word-specific rule. -/
+theorem matches_wordSpecific : Matches (wordSpecific stem) stem := by
+  simp only [Matches, wordSpecific, matchLeftContext, List.reverse_cons, ← List.map_reverse]
+  exact matchRightContext_map_seg _
+
+/-- A description one segment long is met by exactly the segments it subsumes. -/
+theorem matches_single_iff (k x : Segment) : Matches [.seg k] [x] ↔ k ≤ x := by
+  simp [Matches, matchLeftContext, matchRightContext]
+
+private theorem mgRev_comm (r₁ r₂ : List ContextElem) : mgRev r₁ r₂ = mgRev r₂ r₁ := by
+  induction r₁ generalizing r₂ with
+  | nil => cases r₂ with
+    | nil => rfl
+    | cons b bs => cases b <;> rfl
+  | cons a as ih => cases r₂ with
+    | nil => cases a <;> rfl
+    | cons b bs =>
+      cases a <;> cases b <;> simp only [mgRev]
+      split
+      · subst_vars; simp [ih]
+      · rename_i h; rw [if_neg (Ne.symm h), inf_comm]
+
+/-- Minimal generalization is symmetric. -/
+theorem mg_comm : mg c₁ c₂ = mg c₂ c₁ := by simp [mg, mgRev_comm]
+
+private theorem matchRightContext_mgRev {r₁ r₂ : List ContextElem} {l : List Segment}
+    (h : matchRightContext r₁ l = true) : matchRightContext (mgRev r₁ r₂) l = true := by
+  induction r₁ generalizing r₂ l with
+  | nil => cases r₂ with
+    | nil => rfl
+    | cons b bs => cases b <;> rfl
+  | cons a as ih => cases r₂ with
+    | nil => cases a <;> rfl
+    | cons b bs => cases a with
+      | seg a => cases b with
+        | seg b =>
+          cases l with
+          | nil => simp [matchRightContext] at h
+          | cons s ss =>
+            simp only [matchRightContext, Bool.and_eq_true, decide_eq_true_eq] at h
+            simp only [mgRev]
+            split
+            · simp [matchRightContext, h.1, ih h.2]
+            · simp [matchRightContext, inf_le_left.trans h.1]
+        | wordBoundary => rfl
+      | wordBoundary => cases b with
+        | seg _ => rfl
+        | wordBoundary =>
+          cases l with
+          | nil => rfl
+          | cons s ss => simp [matchRightContext] at h
+
+/-- The generalized rule covers everything either rule covered: generalization only widens. -/
+theorem matches_mg_left (h : Matches c₁ stem) : Matches (mg c₁ c₂) stem := by
+  simp only [Matches, matchLeftContext, mg, List.reverse_reverse] at h ⊢
+  exact matchRightContext_mgRev h
+
+theorem matches_mg_right (h : Matches c₂ stem) : Matches (mg c₁ c₂) stem :=
+  mg_comm ▸ matches_mg_left h
+
+/-- A description one segment long reads the final segment alone: the structured similarity a
+rule is confined to. -/
+theorem matches_rtake_one (h : c.length ≤ 1) : Matches c stem ↔ Matches c (stem.rtake 1) := by
+  simp only [Matches, matchLeftContext_rtake_of_le c h]
+
+/-! ### Reliability -/
+
+/-- The stems of a lexicon meeting a description: the rule's scope. -/
+def scopeOf {C : Type*} (c : Context) (lex : List (List Segment × C)) : List (List Segment × C) :=
+  lex.filter (matchLeftContext c ·.1)
+
+/-- A rule's performance in a lexicon: the forms meeting its description and, among them,
+those whose past shows its change. -/
+structure Stats where
   scope : ℕ
   hits : ℕ
-  hits_le_scope : hits ≤ scope
-  deriving Repr
+  deriving DecidableEq
 
-/-- `r` is less reliable than `s`: its raw confidence, hits over scope, is smaller — the
-counts cross-multiplied. The lower-confidence-limit discount the paper applies to raw
-confidence ([mikheev-1997], fitted at 0.55) is not formalized. -/
-def StochasticRule.LessReliable (r s : StochasticRule) : Prop := r.hits * s.scope < s.hits * r.scope
+/-- The statistics of a change in a described context over a lexicon. -/
+def Stats.ofLexicon {C : Type*} [DecidableEq C] (ch : C) (c : Context)
+    (lex : List (List Segment × C)) : Stats :=
+  ⟨(scopeOf c lex).length, ((scopeOf c lex).filter (·.2 = ch)).length⟩
 
-instance (r s : StochasticRule) : Decidable (r.LessReliable s) := by
-  unfold StochasticRule.LessReliable; infer_instance
+section
+variable {C : Type*} [DecidableEq C] (ch : C) (lex : List (List Segment × C))
 
-/-- The general suffixation rule (7a) over the 4253-pair learning set. -/
-def generalRule : StochasticRule := ⟨.suffixD, 4253, 4034, by decide⟩
+theorem hits_le_scope : (Stats.ofLexicon ch c lex).hits ≤ (Stats.ofLexicon ch c lex).scope :=
+  List.length_filter_le _ _
 
-/-- (8): *-t* after a voiceless fricative — every one of the 352 such verbs is regular. -/
-def voicelessFricativeRule : StochasticRule := ⟨.suffixT, 352, 352, le_rfl⟩
+/-- Generalization never loses a form. -/
+theorem scope_mono : (Stats.ofLexicon ch c₁ lex).scope ≤ (Stats.ofLexicon ch (mg c₁ c₂) lex).scope :=
+  (List.monotone_filter_right lex λ _ h => matches_mg_left h).length_le
+end
 
-/-- Table 1: the rules deriving *gleeded*, *gled*, *glode*, and *gleed*. -/
-def gleeded : StochasticRule := ⟨.suffixSchwaD, 1234, 1146, by decide⟩
-def gled : StochasticRule := ⟨.vowelChange, 7, 6, by decide⟩
-def glode : StochasticRule := ⟨.vowelChange, 184, 6, by decide⟩
-def gleedUnchanged : StochasticRule := ⟨.noChange, 1234, 29, by decide⟩
+/-- Raw confidence: hits over scope. -/
+def Stats.rawConfidence (s : Stats) : ℚ := s.hits / s.scope
 
-/-- An island of reliability outscores the general rule. -/
-theorem island_more_reliable : generalRule.LessReliable voicelessFricativeRule := by decide
+/-- `r` is less reliable than `s`, the ratios cross-multiplied. -/
+def LessReliable (r s : Stats) : Prop := r.hits * s.scope < s.hits * r.scope
 
-/-- Table 1's ranking of *gleed*'s pasts by raw confidence. -/
-theorem gleed_ranking :
-    gleedUnchanged.LessReliable glode ∧ glode.LessReliable gled ∧ gled.LessReliable gleeded := by
+instance (r s : Stats) : Decidable (LessReliable r s) := inferInstanceAs (Decidable (_ < _))
+
+theorem lessReliable_iff {r s : Stats} (hr : 0 < r.scope) (hs : 0 < s.scope) :
+    LessReliable r s ↔ r.rawConfidence < s.rawConfidence := by
+  simp only [LessReliable, Stats.rawConfidence]
+  rw [div_lt_div_iff₀ (by positivity) (by positivity)]
+  exact_mod_cast Iff.rfl
+
+/-- The general suffixation rule (7a) over the learning set. -/
+def general : Stats := ⟨4253, 4034⟩
+
+/-- An island of reliability: a rule the change works better in than the general rule ((8)). -/
+def IsIsland (s : Stats) : Prop := LessReliable general s
+
+instance (s : Stats) : Decidable (IsIsland s) := inferInstanceAs (Decidable (LessReliable _ _))
+
+/-! ### The paper's steps on the English fragment -/
+
+def vote : List Segment := [v, o, t]
+def need : List Segment := [n, tenseI, d]
+def rub : List Segment := [r, wedge, b]
+def sag : List Segment := [s, æ, g]
+def plan : List Segment := [p, l, æ, n]
+def love : List Segment := [l, wedge, v]
+def flow : List Segment := [f, l, o]
+def jump : List Segment := [dezh, wedge, m, p]
+def miss : List Segment := [m, laxI, s]
+def wish : List Segment := [w, laxI, esh]
+def laugh : List Segment := [l, æ, f]
+
+/-- The fragment's consonants. -/
+def consonants : List Segment := [p, t, k, b, d, g, m, n, ŋ, f, v, θ, s, esh, dezh, l, r, w]
+
+/-- (6): *vote* and *need* differ first in their final segments, so the learned `-əd` rule keeps
+what [t] and [d] share, a class no other consonant meets. -/
+theorem learned_vote_need : ∀ x ∈ consonants, Matches (learned [vote, need]) [x] ↔ x = t ∨ x = d := by
   decide
 
-/-! ### The Core design (Table 3) and Appendix A -/
+/-- Footnote 4: whatever [b], [g] and [n] share, [d] has, so the `-d` rule learned from *rub*,
+*sag* and *plan* reaches *need*, and only the phonology keeps *needd* out. -/
+theorem learned_rub_sag_plan : Matches (learned [rub, sag, plan]) need := by decide
 
-/-- A Core stem's cell: whether it occupies an island of reliability for the regular past and
-for some irregular past. -/
+/-- (7b): once the data include a voiced continuant and a vowel-final stem, the `-d` rule keeps
+[+voice] alone and is met by every voiced consonant. -/
+theorem learned_voiced : ∀ x ∈ consonants,
+    Matches (learned [rub, sag, plan, love, flow]) [x] ↔ x.HasValue .voice true := by
+  decide
+
+/-- (7b): the `-t` rule learned from *jump*, *miss* and *laugh* is met by every voiceless
+consonant. -/
+theorem learned_voiceless : ∀ x ∈ consonants,
+    Matches (learned [jump, miss, laugh]) [x] ↔ x.HasValue .voice false := by
+  decide
+
+/-- The island (8): `-t` after a voiceless fricative. -/
+def voicelessFricative : Context :=
+  [.seg (Segment.ofSpecs [(.sonorant, false), (.continuant, true), (.voice, false)])]
+
+/-- (8) is met by the four voiceless fricatives and nothing else. -/
+theorem voicelessFricative_iff : ∀ x ∈ consonants,
+    Matches voicelessFricative [x] ↔ x ∈ [f, θ, s, esh] := by
+  decide
+
+/-- The rule learned from *miss*, *wish* and *laugh* lies inside the island (8): further
+fricative-final forms widen it to the island. -/
+theorem learned_le_voicelessFricative (x : Segment)
+    (h : Matches (learned [miss, wish, laugh]) [x]) : Matches voicelessFricative [x] := by
+  have e : learned [miss, wish, laugh] = [.seg (s ⊓ esh ⊓ f)] := by decide
+  rw [e, matches_single_iff] at h
+  exact (matches_single_iff _ _).2 (le_trans (by decide) h)
+
+/-! ### Appendix A -/
+
+/-- Table 3's cells: whether the stem occupies an island for the regular past and for some
+irregular past. -/
 structure IORCategory where
   iorForRegular : Bool
   iorForIrregular : Bool
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 def IORCategory.ofString : String → Option IORCategory
   | "both" => some ⟨true, true⟩
@@ -274,20 +280,35 @@ def IORCategory.ofString : String → Option IORCategory
   | "neither" => some ⟨false, false⟩
   | _ => none
 
-/-- A printed decimal read as an integer of its digits: ratings in hundredths, production
+/-- A printed decimal read as the integer of its digits: ratings in hundredths, production
 probabilities in thousandths. -/
 def digits (s : String) : ℕ :=
-  s.toList.foldl (fun n c => if c.isDigit then 10 * n + (c.toNat - '0'.toNat) else n) 0
-
-/-- The Appendix A rows of one past type, in the cells satisfying `p` (Table A2's Peripheral
-stems have no cell). -/
-def rows (regular : Bool) (p : IORCategory → Bool) : List LinguisticExample :=
-  Examples.all.filter fun r =>
-    r.feature? "pastType" = some (if regular then "regular" else "irregular") ∧
-      ((r.feature? "cell").bind IORCategory.ofString).any p
+  s.toList.foldl (λ n c => if c.isDigit then 10 * n + (c.toNat - '0'.toNat) else n) 0
 
 /-- A row's numeric feature. -/
 def value (key : String) (r : LinguisticExample) : ℕ := digits ((r.feature? key).getD "0")
+
+/-- A row's reported rule statistics (Tables 1 and 4). -/
+def statsOf (r : LinguisticExample) : Option Stats :=
+  (r.nat? "ruleScope").bind λ s => (r.nat? "ruleHits").map (⟨s, ·⟩)
+
+/-- Table 4: the twelve regular islands all outscore the general rule. -/
+theorem table4_islands :
+    ∀ r ∈ Examples.all, (r.feature? "island").isSome → ∀ s ∈ statsOf r, IsIsland s := by
+  decide +kernel
+
+/-- Table 1: *gleed*'s pasts by raw confidence, *gleed* below *gled* below *gleeded*. -/
+theorem gleed_ranking :
+    ∀ s₁ ∈ statsOf Examples.a1_25_gleed, ∀ s₂ ∈ statsOf Examples.a1_25_gled,
+      ∀ s₃ ∈ statsOf Examples.a1_25_gleeded, LessReliable s₁ s₂ ∧ LessReliable s₂ s₃ := by
+  decide
+
+/-- The Appendix A rows of one past type in the cells satisfying `p` (the Peripheral stems of
+Table A2 have no cell). -/
+def rows (regular : Bool) (p : IORCategory → Bool) : List LinguisticExample :=
+  Examples.all.filter λ r =>
+    r.feature? "pastType" = some (if regular then "regular" else "irregular") ∧
+      ((r.feature? "cell").bind IORCategory.ofString).any p
 
 /-- The sum of a numeric feature over rows. -/
 def total (key : String) (rs : List LinguisticExample) : ℕ := (rs.map (value key)).sum
@@ -296,11 +317,11 @@ def total (key : String) (rs : List LinguisticExample) : ℕ := (rs.map (value k
 def MeanGT (key : String) (A B : List LinguisticExample) : Prop :=
   total key A * B.length > total key B * A.length
 
-instance (key : String) (A B : List LinguisticExample) : Decidable (MeanGT key A B) := by
-  unfold MeanGT; infer_instance
+instance (key : String) (A B : List LinguisticExample) : Decidable (MeanGT key A B) :=
+  inferInstanceAs (Decidable (_ > _))
 
-/-- Islands of reliability for regulars: novel regular pasts are rated higher, and volunteered
-more often, when the stem occupies an island for the regular change. -/
+/-- Islands of reliability for regulars (Fig. 2): novel regular pasts are rated higher, and
+volunteered more often, when the stem occupies an island for the regular change. -/
 theorem regulars_ior :
     MeanGT "adjustedRating" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) ∧
       MeanGT "production" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) := by
@@ -312,8 +333,8 @@ theorem irregulars_ior :
       MeanGT "production" (rows false (·.iorForIrregular)) (rows false (!·.iorForIrregular)) := by
   decide
 
-/-- The single-default-rule prediction — novel regular ratings do not vary with the stem's
-cell — fails on the Core data: the regulars-only and irregulars-only cells differ. -/
+/-- The single-default-rule prediction, that novel regular ratings do not vary with the stem's
+cell, fails on the Core data: the regulars-only and irregulars-only cells differ. -/
 theorem regulars_not_cell_invariant :
     total "adjustedRating" (rows true (· = ⟨true, false⟩)) *
         (rows true (· = ⟨false, true⟩)).length ≠
@@ -321,9 +342,8 @@ theorem regulars_not_cell_invariant :
         (rows true (· = ⟨true, false⟩)).length := by
   decide
 
-/-- Competition (Figs. 3–4): a past is rated higher when its rival is not in an island —
-regulars in the regulars-only cell beat those in the both cell, and in the neither cell beat
-those in the irregulars-only cell; irregulars symmetrically. -/
+/-- Trade-off (Figs. 3–4): a past is rated higher when its rival is not in an island, for
+regulars and irregulars alike. -/
 theorem tradeoff :
     MeanGT "adjustedRating" (rows true (· = ⟨true, false⟩)) (rows true (· = ⟨true, true⟩)) ∧
       MeanGT "adjustedRating" (rows true (· = ⟨false, false⟩)) (rows true (· = ⟨false, true⟩)) ∧
@@ -340,17 +360,13 @@ theorem ruleBased_islands :
 /-- Table 4: on the twelve regular pasts in the best islands the analogical model, unable to
 locate structured similarity, scores below both the participants and the rule-based model. -/
 theorem analogical_misses_islands :
-    ∀ r ∈ Examples.all,
-      r.primaryText ∈ ["blafed", "driced", "naced", "teshed", "wissed", "flidged", "bredged",
-        "daped", "shilked", "tarked", "spacked", "bligged"] →
+    ∀ r ∈ Examples.all, (r.feature? "island").isSome →
       value "analogical" r < value "adjustedRating" r ∧
         value "analogical" r < value "ruleBased" r := by
   decide +kernel
 
-/-- The pseudo-*burnt* irregulars of (15), Table A2. -/
-def burnt : List LinguisticExample :=
-  Examples.all.filter fun r =>
-    r.primaryText ∈ ["grelt", "murnt", "scoilt", "shurnt", "skelt", "snelt", "squilt"]
+/-- The pseudo-*burnt* irregulars of (15). -/
+def burnt : List LinguisticExample := Examples.all.filter (·.feature? "set" = some "burnt")
 
 /-- The rule-based model's one systematic error: it underrates the *burnt*-class forms, which
 the analogical model overrates. -/
@@ -361,8 +377,8 @@ theorem burnt_underestimated :
 
 /-- Participants preferred regular pasts overall. -/
 theorem regulars_preferred :
-    MeanGT "rating" (Examples.all.filter fun r => r.feature? "pastType" = some "regular")
-      (Examples.all.filter fun r => r.feature? "pastType" = some "irregular") := by
+    MeanGT "rating" (Examples.all.filter λ r => r.feature? "pastType" = some "regular")
+      (Examples.all.filter λ r => r.feature? "pastType" = some "irregular") := by
   decide
 
 end AlbrightHayes2003

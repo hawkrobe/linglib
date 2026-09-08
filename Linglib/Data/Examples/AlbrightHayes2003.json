@@ -157,7 +157,10 @@
       ["rating", "6.26"],
       ["adjustedRating", "6.52"],
       ["ruleBased", "6.22"],
-      ["analogical", "5.51"]
+      ["analogical", "5.51"],
+      ["island", "voiceless fricative"],
+      ["ruleHits", "352"],
+      ["ruleScope", "352"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -221,7 +224,10 @@
       ["rating", "6.21"],
       ["adjustedRating", "6.41"],
       ["ruleBased", "6.16"],
-      ["analogical", "5.46"]
+      ["analogical", "5.46"],
+      ["island", "postalveolar strident"],
+      ["ruleHits", "110"],
+      ["ruleScope", "110"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -743,7 +749,10 @@
       ["rating", "6.32"],
       ["adjustedRating", "6.67"],
       ["ruleBased", "6.22"],
-      ["analogical", "5.15"]
+      ["analogical", "5.15"],
+      ["island", "voiceless fricative"],
+      ["ruleHits", "352"],
+      ["ruleScope", "352"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -808,7 +817,10 @@
       ["adjustedRating", "6.60"],
       ["ruleBased", "6.16"],
       ["analogical", "5.85"],
-      ["stemIpa", "brɛdʒ"]
+      ["stemIpa", "brɛdʒ"],
+      ["island", "postalveolar strident"],
+      ["ruleHits", "110"],
+      ["ruleScope", "110"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -938,7 +950,10 @@
       ["rating", "6.25"],
       ["adjustedRating", "6.14"],
       ["ruleBased", "6.14"],
-      ["analogical", "5.56"]
+      ["analogical", "5.56"],
+      ["island", "nonhigh vowel + p"],
+      ["ruleHits", "83"],
+      ["ruleScope", "83"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1070,7 +1085,10 @@
       ["adjustedRating", "6.50"],
       ["ruleBased", "6.22"],
       ["analogical", "5.57"],
-      ["stemIpa", "nes"]
+      ["stemIpa", "nes"],
+      ["island", "voiceless fricative"],
+      ["ruleHits", "352"],
+      ["ruleScope", "352"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1136,7 +1154,10 @@
       ["rating", "6.22"],
       ["adjustedRating", "6.13"],
       ["ruleBased", "6.01"],
-      ["analogical", "5.79"]
+      ["analogical", "5.79"],
+      ["island", "low unrounded vowel + k"],
+      ["ruleHits", "37"],
+      ["ruleScope", "37"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1264,7 +1285,10 @@
       ["rating", "6.22"],
       ["adjustedRating", "6.23"],
       ["ruleBased", "6.22"],
-      ["analogical", "5.59"]
+      ["analogical", "5.59"],
+      ["island", "voiceless fricative"],
+      ["ruleHits", "352"],
+      ["ruleScope", "352"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1328,7 +1352,10 @@
       ["rating", "6.57"],
       ["adjustedRating", "6.28"],
       ["ruleBased", "6.22"],
-      ["analogical", "5.68"]
+      ["analogical", "5.68"],
+      ["island", "voiceless fricative"],
+      ["ruleHits", "352"],
+      ["ruleScope", "352"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1393,7 +1420,10 @@
       ["rating", "5.67"],
       ["adjustedRating", "5.95"],
       ["ruleBased", "5.66"],
-      ["analogical", "5.44"]
+      ["analogical", "5.44"],
+      ["island", "g"],
+      ["ruleHits", "41"],
+      ["ruleScope", "42"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1687,7 +1717,9 @@
       ["adjustedRating", "3.98"],
       ["ruleBased", "4.36"],
       ["analogical", "5.15"],
-      ["stemIpa", "glid"]
+      ["stemIpa", "glid"],
+      ["ruleHits", "1146"],
+      ["ruleScope", "1234"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1721,7 +1753,9 @@
       ["ruleBased", "5.07"],
       ["analogical", "4.53"],
       ["stemIpa", "glid"],
-      ["ipa", "glɛd"]
+      ["ipa", "glɛd"],
+      ["ruleHits", "6"],
+      ["ruleScope", "7"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1754,7 +1788,9 @@
       ["adjustedRating", "4.21"],
       ["ruleBased", "3.94"],
       ["analogical", "3.99"],
-      ["stemIpa", "glid"]
+      ["stemIpa", "glid"],
+      ["ruleHits", "29"],
+      ["ruleScope", "1234"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -2699,7 +2735,10 @@
       ["rating", "5.79"],
       ["adjustedRating", "5.82"],
       ["ruleBased", "5.97"],
-      ["analogical", "5.17"]
+      ["analogical", "5.17"],
+      ["island", "coronal consonant + k"],
+      ["ruleHits", "31"],
+      ["ruleScope", "31"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -2764,7 +2803,10 @@
       ["rating", "6.33"],
       ["adjustedRating", "6.24"],
       ["ruleBased", "5.97"],
-      ["analogical", "5.66"]
+      ["analogical", "5.66"],
+      ["island", "coronal consonant + k"],
+      ["ruleHits", "31"],
+      ["ruleScope", "31"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -3088,7 +3130,8 @@
       ["ruleBased", "4.06"],
       ["analogical", "5.39"],
       ["stemIpa", "grɛl"],
-      ["ipa", "grɛlt"]
+      ["ipa", "grɛlt"],
+      ["set", "burnt"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -3155,7 +3198,8 @@
       ["ruleBased", "4.60"],
       ["analogical", "5.23"],
       ["stemIpa", "mərn"],
-      ["ipa", "mərnt"]
+      ["ipa", "mərnt"],
+      ["set", "burnt"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -3222,7 +3266,8 @@
       ["ruleBased", "4.01"],
       ["analogical", "4.91"],
       ["stemIpa", "skɔɪl"],
-      ["ipa", "skɔɪlt"]
+      ["ipa", "skɔɪlt"],
+      ["set", "burnt"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -3289,7 +3334,8 @@
       ["ruleBased", "3.95"],
       ["analogical", "5.11"],
       ["stemIpa", "ʃərn"],
-      ["ipa", "ʃərnt"]
+      ["ipa", "ʃərnt"],
+      ["set", "burnt"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -3356,7 +3402,8 @@
       ["ruleBased", "4.06"],
       ["analogical", "5.23"],
       ["stemIpa", "skɛl"],
-      ["ipa", "skɛlt"]
+      ["ipa", "skɛlt"],
+      ["set", "burnt"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -3423,7 +3470,8 @@
       ["ruleBased", "4.06"],
       ["analogical", "5.25"],
       ["stemIpa", "snɛl"],
-      ["ipa", "snɛlt"]
+      ["ipa", "snɛlt"],
+      ["set", "burnt"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -3524,7 +3572,8 @@
       ["ruleBased", "4.06"],
       ["analogical", "5.20"],
       ["stemIpa", "skwɪl"],
-      ["ipa", "skwɪlt"]
+      ["ipa", "skwɪlt"],
+      ["set", "burnt"]
     ],
     "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
     "lgrConformance": "MORPHEME_ALIGNED"
