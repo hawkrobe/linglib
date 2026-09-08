@@ -1,7 +1,6 @@
 import Linglib.Studies.Hoeksema1983
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Studies.Heim2001
-import Linglib.Studies.Bresnan1973
 import Linglib.Syntax.Minimalist.Movement.DegreeMovement
 import Mathlib.Order.Interval.Set.LinearOrder
 import Linglib.Semantics.Polarity.Item
@@ -70,7 +69,6 @@ types.
 namespace BhattPancheva2004
 
 open Hoeksema1983
-open Bresnan1973 (BresnanThanClauseAnalysis bresnanAnalysisOf)
 open Heim2001 (IntensionalVerbDatum intensionalVerbData)
 open Minimalist (lateMergerBleeds wlmBleedsCondC ChainPosition admissible_above_binder_bleeds)
 open Minimalist.DegreeMovement

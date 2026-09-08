@@ -1,7 +1,7 @@
 import Linglib.Semantics.Truthmaker.Basic
 
 /-!
-# Bondarenko & Elliott (2026): monotonicity via mereology in attitude reports
+# Bondarenko and Elliott (2026): Monotonicity via mereology in the semantics of attitude reports
 
 [sharvit-2024]'s puzzle: a weak NPI is licensed in the relative clause of *Katya doesn't
 believe the rumor that Anton has ever spread* but not in the complement clause of *Katya
@@ -33,12 +33,13 @@ a philosopher* a conjunctive part — is `not_isContentPart_disjunction`.
 ## References
 
 * [bondarenko-elliott-2026]
-* [cheng-1973], [sharvit-2024]
+* [cheng-1973]
+* [sharvit-2024]
 -/
 
 namespace BondarenkoElliott2026
 
-open Mereology (DIV)
+open Mereology
 
 variable {V E W : Type*}
 
@@ -100,8 +101,9 @@ theorem believes_of_ssubset (hMSI : MSI CONT) (hDIV : BelievingDIV believe HOLDE
 
 /-- Negated belief is downward-entailing in its content. -/
 theorem not_believes_of_ssubset (hMSI : MSI CONT) (hDIV : BelievingDIV believe HOLDER)
-    (hlt : p ⊂ p') (h : ¬ Believes believe HOLDER CONT M p') : ¬ Believes believe HOLDER CONT M p :=
-  fun hb => h (believes_of_ssubset hMSI hDIV hlt hb)
+    (hlt : p ⊂ p') (h : ¬ Believes believe HOLDER CONT M p') :
+    ¬ Believes believe HOLDER CONT M p :=
+  λ hb => h (believes_of_ssubset hMSI hDIV hlt hb)
 
 end Closure
 
@@ -113,9 +115,9 @@ variable [Preorder V] [Preorder E]
 
 /-- Equality semantics for *M believes the rumor that p* at world `w`: a believing of `M`
 located at `w` whose theme is a rumor with content `p`. -/
-def BelievesTheRumorThat (believe : V → Prop) (HOLDER : V → Option E) (located : V → W → Prop)
-    (THEME : V → Option E) (rumor : E → Prop) (CONT_e : E → Option (Set W)) (M : E) (p : Set W)
-    (w : W) : Prop :=
+def BelievesTheRumorThat (believe : V → Prop) (HOLDER : V → Option E)
+    (located : V → W → Prop) (THEME : V → Option E) (rumor : E → Prop)
+    (CONT_e : E → Option (Set W)) (M : E) (p : Set W) (w : W) : Prop :=
   ∃ e r, located e w ∧ believe e ∧ HOLDER e = some M ∧ THEME e = some r ∧ rumor r ∧
     CONT_e r = some p
 
@@ -146,7 +148,7 @@ theorem not_believesTheRumorThat_of_ssubset (hMSI : MSI CONT_v) (hMSO : MSO THEM
     (hRumor : DIV rumor) (hLoc : LocatedDIV located) (hlt : p ⊂ p')
     (h : ¬ BelievesTheRumorThat believe HOLDER located THEME rumor CONT_e M p' w) :
     ¬ BelievesTheRumorThat believe HOLDER located THEME rumor CONT_e M p w :=
-  fun hb => h (believesTheRumorThat_of_ssubset hMSI hMSO hTECM hDIV hRumor hLoc hlt hb)
+  λ hb => h (believesTheRumorThat_of_ssubset hMSI hMSO hTECM hDIV hRumor hLoc hlt hb)
 
 end Sharvit
 
@@ -167,19 +169,20 @@ constraints in which Katya believes the weaker rumor (content `Set.univ`) but no
 stronger one (content `{true}`). Functionality of the content map, not the mereological
 constraints, is what blocks the inference. -/
 theorem negated_not_sue :
-    ∃ (V E W : Type) (_ : Preorder V) (_ : Preorder E) (believe : V → Prop) (HOLDER : V → Option E)
-      (CONT_v : V → Option (Set W)) (CONT_e : E → Option (Set W)) (THEME : V → Option E)
+    ∃ (V E W : Type) (_ : Preorder V) (_ : Preorder E) (believe : V → Prop)
+      (HOLDER : V → Option E) (CONT_v : V → Option (Set W)) (CONT_e : E → Option (Set W))
+      (THEME : V → Option E)
       (rumor : E → Prop) (located : V → W → Prop) (M : E) (p p' : Set W) (w : W),
       MSI CONT_v ∧ MSO THEME ∧ TECM believe CONT_v CONT_e THEME ∧
         BelievingDIV believe HOLDER ∧ DIV rumor ∧ LocatedDIV located ∧ p ⊂ p' ∧
         BelievesTheRumorThat believe HOLDER located THEME rumor CONT_e M p' w ∧
         ¬ BelievesTheRumorThat believe HOLDER located THEME rumor CONT_e M p w := by
-  refine ⟨Unit, NotSUE, Bool, inferInstance, inferInstance, fun _ => True, fun _ => some .katya,
-    fun _ => some Set.univ, fun | .katya => none | .strong => some {true} | .weak => some Set.univ,
-    fun _ => some .weak, fun s => s = .strong ∨ s = .weak, fun _ _ => True, .katya, {true},
-    Set.univ, true, ?_, ?_, ?_, ⟨fun _ _ _ _ => trivial, fun _ _ _ h _ => h⟩, ?_,
-    fun _ _ _ _ _ => trivial,
-    ⟨Set.subset_univ _, fun h => Bool.false_ne_true (h (Set.mem_univ false))⟩,
+  refine ⟨Unit, NotSUE, Bool, inferInstance, inferInstance, λ _ => True, λ _ => some .katya,
+    λ _ => some Set.univ, λ | .katya => none | .strong => some {true} | .weak => some Set.univ,
+    λ _ => some .weak, λ s => s = .strong ∨ s = .weak, λ _ _ => True, .katya, {true},
+    Set.univ, true, ?_, ?_, ?_, ⟨λ _ _ _ _ => trivial, λ _ _ _ h _ => h⟩, ?_,
+    λ _ _ _ _ _ => trivial,
+    ⟨Set.subset_univ _, λ h => Bool.false_ne_true (h (Set.mem_univ false))⟩,
     ⟨(), .weak, trivial, trivial, rfl, rfl, Or.inr rfl, rfl⟩, ?_⟩
   · rintro _ p₀ q hcont hlt
     obtain rfl : Set.univ = p₀ := Option.some.inj hcont
@@ -230,8 +233,8 @@ theorem not_believes_inter :
       (CONT : V → Option (Set W)) (M : E) (p q : Set W),
       Believes believe HOLDER CONT M p ∧ Believes believe HOLDER CONT M q ∧
         ¬ Believes believe HOLDER CONT M (p ∩ q) := by
-  refine ⟨Bool, Unit, Bool, inferInstance, fun _ => True, fun _ => some (),
-    fun e => some (if e then {true} else {false}), (), {true}, {false},
+  refine ⟨Bool, Unit, Bool, inferInstance, λ _ => True, λ _ => some (),
+    λ e => some (if e then {true} else {false}), (), {true}, {false},
     ⟨true, trivial, rfl, rfl⟩, ⟨false, trivial, rfl, rfl⟩, ?_⟩
   rintro ⟨e, _, _, hcont⟩
   cases e <;> simp only [Option.some.injEq, Bool.false_eq_true, ↓reduceIte] at hcont
@@ -240,17 +243,17 @@ theorem not_believes_inter :
 
 /-! ### Conjunctive parthood -/
 
-open Truthmaker (IsContentPart)
+open Truthmaker
 
 /-- A singleton `{q}` is a content part of `p` only if `q` lies below every `p`-element. -/
 theorem not_isContentPart_singleton {α : Type*} [Preorder α] {q q' : α} {p : α → Prop}
     (hq' : p q') (h : ¬ q ≤ q') : ¬ IsContentPart (· = q) p :=
-  fun ⟨hd, _⟩ =>
+  λ ⟨hd, _⟩ =>
     let ⟨_, (ht : _ = q), hle⟩ := mem_upperClosure.1 (hd hq'); h (ht ▸ hle)
 
 /-- Disjunction introduction fails for conjunctive parthood: with `p₃` *Jessica married an
-American linguist*, `p₁` *a linguist*, `p₂` *a philosopher*, the alternative set `{p₁, p₂}` is
-not a conjunctive part of `{p₃}`, since `p₃` does not entail `p₂`. -/
+American linguist*, `p₁` *a linguist*, `p₂` *a philosopher*, the alternative set `{p₁, p₂}`
+is not a conjunctive part of `{p₃}`, since `p₃` does not entail `p₂`. -/
 theorem not_isContentPart_disjunction (p₁ p₂ p₃ : Set W) (h : ¬ p₃ ⊆ p₂) :
     ¬ IsContentPart (· = p₃) ({p₁, p₂} : Set (Set W)) :=
   not_isContentPart_singleton (p := ({p₁, p₂} : Set (Set W))) (Set.mem_insert_of_mem _ rfl) h
