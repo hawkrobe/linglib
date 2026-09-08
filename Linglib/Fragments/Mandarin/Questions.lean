@@ -1,4 +1,4 @@
-import Linglib.Syntax.Category.ANDLModifier
+import Linglib.Syntax.Category.WhModifier
 
 /-!
 # Mandarin questions
@@ -16,10 +16,10 @@ and Singlish *the-hell*.
 
 namespace Mandarin.Questions
 
-open ANDLModifier
+open WhModifier
 
 /-- 到底 *daodi* 'on earth': moves to its scope position on its own. -/
-def daodi : ANDLModifier :=
+def daodi : WhModifier :=
   { form := "daodi", gloss := "on earth", mobility := .independent }
 
 end Mandarin.Questions

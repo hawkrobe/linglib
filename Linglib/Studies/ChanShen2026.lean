@@ -46,7 +46,7 @@ partial-movement order. The paper's Table 5 is the three accounts against the da
 
 namespace ChanShen2026
 
-open Data.Examples ANDLModifier Syntax.Question Singlish.Questions
+open Data.Examples WhModifier Syntax.Question Singlish.Questions
 
 /-- The wh-phrase hosting the modifier: how it is interpreted, and how many wh-phrases stand
 between the question operator and it. -/
@@ -59,11 +59,11 @@ structure Host where
 
 /-- The modifier's point-of-view feature is checked in matrix Spec-CP, so it is licensed iff it
 gets there: with its host, or on its own. -/
-def Licensed (m : ANDLModifier) (h : Host) : Prop :=
-  ANDLModifier.Licensed m h.mechanism.ReachesSpecCP
+def Licensed (m : WhModifier) (h : Host) : Prop :=
+  WhModifier.Licensed m h.mechanism.ReachesSpecCP
 
-instance (m : ANDLModifier) (h : Host) : Decidable (Licensed m h) :=
-  inferInstanceAs (Decidable (ANDLModifier.Licensed _ _))
+instance (m : WhModifier) (h : Host) : Decidable (Licensed m h) :=
+  inferInstanceAs (Decidable (WhModifier.Licensed _ _))
 
 variable (h : Host)
 
@@ -118,7 +118,7 @@ def hostOf (e : LinguisticExample) : Option Host :=
   (mechanismOf e).map λ m => ⟨m, (e.nat? "interveners").getD 0⟩
 
 /-- A row's modifier. -/
-def modifierOf (e : LinguisticExample) : Option ANDLModifier :=
+def modifierOf (e : LinguisticExample) : Option WhModifier :=
   match e.feature? "modifier" with
   | some "theHell" => some theHell
   | some "daodi" => some Mandarin.Questions.daodi

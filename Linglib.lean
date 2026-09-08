@@ -2769,7 +2769,6 @@ import Linglib.Syntax.Case.Assigner
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Case.Licensing
 import Linglib.Syntax.Case.Order
-import Linglib.Syntax.Category.ANDLModifier
 import Linglib.Syntax.Category.Adjective.Basic
 import Linglib.Syntax.Category.Adjective.ClauseEmbedding
 import Linglib.Syntax.Category.Adposition.Basic
@@ -2985,6 +2984,7 @@ import Linglib.Data.Examples.AlonsoOvalleRoyer2024
 import Linglib.Semantics.Modality.Anchor
 import Linglib.Semantics.Modality.IndefiniteDenotation
 import Linglib.Syntax.Category.Determiner.ModalIndefinite
+import Linglib.Syntax.Category.WhModifier
 import Linglib.Data.Examples.Alsop2024
 import Linglib.Data.Examples.AnandHacquard2013
 import Linglib.Data.Examples.AnandHardtMcCloskey2021

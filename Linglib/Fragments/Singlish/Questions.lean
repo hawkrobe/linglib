@@ -1,5 +1,5 @@
 import Mathlib.Data.Finset.Insert
-import Linglib.Syntax.Category.ANDLModifier
+import Linglib.Syntax.Category.WhModifier
 import Linglib.Syntax.Category.Particle.Basic
 import Linglib.Syntax.Question
 
@@ -25,7 +25,7 @@ island-sensitive; an in-situ wh-phrase is bound unselectively and never moves
 
 namespace Singlish.Questions
 
-open Syntax.Question ANDLModifier
+open Syntax.Question WhModifier
 
 /-- The three question-formation strategies: full movement, partial movement, in situ. -/
 def strategies : Finset WhInterpMechanism :=
@@ -40,7 +40,7 @@ def ah : Particle where
     | _, _ => none
 
 /-- *the hell*: adjoined to the wh-head, so it reaches Spec-CP only on the wh-phrase. -/
-def theHell : ANDLModifier :=
+def theHell : WhModifier :=
   { form := "the hell", gloss := "the-hell", mobility := .parasitic }
 
 end Singlish.Questions
