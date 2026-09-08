@@ -1,390 +1,275 @@
 import Linglib.Pragmatics.DecisionTheoretic.Basic
-import Mathlib.MeasureTheory.Measure.Prod
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Linglib.Core.MeasureTheory.Measure.Prod
+import Mathlib.Probability.Distributions.Bernoulli
 
 /-!
-# [cummins-franke-2021]: Rational Interpretation of Numerical Quantity
-[cummins-franke-2021] [merin-1999-relevance]
+# Rational interpretation of numerical quantity
 
-[cummins-franke-2021] applies [merin-1999-relevance]'s log-likelihood-ratio measure of
-argumentative strength to numerical quantity expressions: the strength of utterance u toward
-goal G is log (P(u∣G) / P(u∣¬G)) (eq. 17), and a pragmatic variant replaces truth with
-felicitous assertability (eq. 25). The §5 worked example: a conference succeeds iff more than
-120 people register, registrations are uniform on [0, 200], and the speaker chooses between
-*more than 100* and *more than 110*.
+Cummins and Franke measure the argumentative strength of a numerical utterance toward a
+speaker's goal by Merin's relevance, the log Bayes factor, once on the utterance's truth
+conditions and once on its felicitous assertability, and show that the two can disagree. In
+their conference example the goal is that more than 120 people register, registrations are
+uniform on [0, 200], and the speaker chooses between *more than 100* and *more than 110*:
+semantically the stronger utterance is the stronger argument, but a hearer who reads
+*more than 110* as implicating *not more than 120* finds that reading incompatible with the
+goal, so under assertability the utterance is only weak evidence and the order reverses.
 
-## Main results
+We derive the semantic ordering from the general fact that shedding worlds where the goal
+fails only strengthens an argument, compute the four strengths the paper prints, show that
+both utterances remain positive evidence at the paper's enrichment rate, and prove the
+reversal with that rate left free: the order reverses exactly when the hearer enriches more
+than eight times in eleven. The skeptical-hearer rule of the paper's last theoretical section
+and its corpus study are not formalized.
 
-- `bayesFactor_lt_of_goal_entails`: §5.1's alignment of semantic and argumentative strength,
-  in general form — between utterances entailed by the goal, the semantically stronger one is
-  the argumentatively stronger one, since its extra content can only shed ¬G-worlds.
-- `cond_prod_byInterpretation`: §5.2's computation pattern in general form — over the
-  enriched/literal interpretation mixture, an interpretation-dependent event's conditional
-  probability is the mixture of its branches' conditional probabilities.
-- `strength_reversal`: the paper's central demonstration — semantically *more than 110* is
-  the stronger argument for success (`semantic_ordering`, Bayes factors 6 < 12), but under
-  assertability with a 90%-enriching listener the ordering *reverses* (21/8 vs 6/5).
+## Implementation notes
 
-The §5.1–5.2 Bayes-factor values are computed against a counting prior over 20 bands of
-width 10 (every threshold in the example — 100, 110, 120, 150 — is a band boundary, so the
-paper's continuous uniform distribution on [0, 200] is represented exactly, and conditioning
-normalizes away the total mass). Concrete masses evaluate by `count_apply_fintype` and
-comparisons transfer to ℝ, following the countable-space register of
-`Mathlib.Probability.Decision.Risk.Countable`. The measure `strength` is `Real.log` (nats)
-of `DTS.bayesFactor`; the paper leaves the log base unspecified (its printed values are base
-10) and uses it only ordinally.
+* Registrations are binned into twenty bands of width ten under a counting prior; every
+  threshold in the example is a band boundary, so the continuous uniform prior is
+  represented exactly.
+* For *more than 110* the paper prints log 11, which is the Bayes factor of *more than 100*
+  toward the goal *more than 110*; toward the stated goal the factor is 12. The ordering is
+  unaffected.
+* Strengths are natural logarithms; the paper prints base-ten decimals and uses strengths
+  only ordinally.
 
-Deviation: for *more than 110* the paper prints log 11, computed from "the probability that
-*more than 100* is true given that *more than 110* is false equals 1/11" — the Bayes factor
-of *more than 100* toward the goal *more than 110* (`bayesFactor_moreThan100_toward110`).
-Toward the example's stated goal (*more than 120*) the factor is 12
-(`bayesFactor_moreThan110`); the semantic ordering is the same either way.
+## References
 
-Not formalized: the §5.4 rational-hearer conditions (eqs. 27–28), which compare an
-utterance's strength against the alternatives assertable in ¬G-worlds and are stated but not
-computed with in the paper; and the §6 corpus study of research-ranking reports.
+* [C. Cummins and M. Franke, *Rational Interpretation of Numerical Quantity in Argumentative
+  Contexts* (2021)][cummins-franke-2021]
+* [A. Merin, *Information, Relevance, and Social Decisionmaking: Some Principles and Results
+  of Decision-Theoretic Semantics* (1999)][merin-1999-relevance]
 -/
 
 namespace CumminsFranke2021
 
-open DTS MeasureTheory ProbabilityTheory
+open DTS MeasureTheory ProbabilityTheory unitInterval
 open scoped ENNReal
 
-variable {W : Type*} [MeasurableSpace W]
+/-! ### The conference -/
 
-/-! ### Semantic strength and goal entailment (§5.1) -/
-
-/-- §5.1's alignment of semantic and argumentative strength: between two utterances entailed
-by the goal, the semantically stronger (smaller) one is the argumentatively stronger one —
-both are certain given the goal, and the weaker utterance's extra extension can only add
-¬G-mass to the denominator of the Bayes factor. -/
-theorem bayesFactor_lt_of_goal_entails (ctx : DTS.Context W) [IsFiniteMeasure ctx.prior]
-    {u₁ u₂ : Set W} (h₂m : MeasurableSet u₂)
-    (hsub : u₂ ⊆ u₁) (hent : ctx.topic ⊆ u₂) (hG : ctx.prior ctx.topic ≠ 0)
-    (hgap : ctx.prior ((ctx.topicᶜ ∩ u₁) \ u₂) ≠ 0)
-    (hpos : ctx.prior (ctx.topicᶜ ∩ u₂) ≠ 0) :
-    bayesFactor ctx u₁ < bayesFactor ctx u₂ := by
-  have hHm := ctx.topicMeasurable
-  have hNH : ctx.prior ctx.topicᶜ ≠ 0 := fun h =>
-    hpos (measure_mono_null Set.inter_subset_left h)
-  have hd : ctx.prior (ctx.topicᶜ ∩ u₂) < ctx.prior (ctx.topicᶜ ∩ u₁) := by
-    have hsplit := measure_inter_add_sdiff (μ := ctx.prior) (ctx.topicᶜ ∩ u₁) h₂m
-    rw [show ctx.topicᶜ ∩ u₁ ∩ u₂ = ctx.topicᶜ ∩ u₂ from
-      Set.ext fun w => ⟨fun h => ⟨h.1.1, h.2⟩, fun h => ⟨⟨h.1, hsub h.2⟩, h.2⟩⟩] at hsplit
-    rw [← hsplit]
-    exact ENNReal.lt_add_right (measure_ne_top _ _) hgap
-  rw [bayesFactor_def, bayesFactor_def,
-    cond_eq_one_of_subset _ hHm (hent.trans hsub) hG,
-    cond_eq_one_of_subset _ hHm hent hG,
-    cond_apply hHm.compl, cond_apply hHm.compl, one_div, one_div,
-    ENNReal.inv_lt_inv]
-  exact ENNReal.mul_lt_mul_right (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _))
-    (ENNReal.inv_ne_top.mpr hNH) hd
-
-/-! ### The §5 example -/
-
-/-- Registration totals in bands of width 10: band k covers (10k, 10(k+1)]. Every threshold
-in the §5 example (100, 110, 120, 150) is a band boundary, so the paper's continuous uniform
-distribution on [0, 200] is represented exactly by a counting prior over the 20 bands. -/
+/-- Registration totals in bands of width ten: band `k` covers `(10k, 10(k+1)]`. -/
 abbrev Band := Fin 20
 
-/-- The extension of *more than n*, for thresholds n that are multiples of 10: every total in
-band k exceeds n iff n ≤ 10k. -/
+/-- The extension of *more than n* for a threshold `n` that is a multiple of ten. -/
 def moreThan (n : ℕ) : Set Band := {k | n ≤ 10 * (k : ℕ)}
 
-instance (n : ℕ) : DecidablePred (· ∈ moreThan n) := fun k =>
+instance (n : ℕ) : DecidablePred (· ∈ moreThan n) := λ k =>
   inferInstanceAs (Decidable (n ≤ 10 * (k : ℕ)))
 
-/-- §5.1: the goal is S = *more than 120* (conference success), with the counting prior
-(conditioning normalizes, so counting and uniform priors induce the same strengths). -/
-noncomputable abbrev successContext : DTS.Context Band :=
-  ⟨moreThan 120, .of_discrete, .count⟩
+theorem moreThan_subset {m n : ℕ} (h : m ≤ n) : moreThan n ⊆ moreThan m := λ _ hk => h.trans hk
 
-private lemma count_ne {e : Set Band} [DecidablePred (· ∈ e)]
-    (h : (Finset.univ.filter (· ∈ e)).card ≠ 0) :
-    (Measure.count : Measure Band) e ≠ 0 := by
-  rw [count_apply_fintype]
-  exact Nat.cast_ne_zero.mpr h
+/-- The conference succeeds iff more than 120 people register, under the counting prior. -/
+noncomputable abbrev success : Context Band := ⟨moreThan 120, .of_discrete, .count⟩
 
-private lemma cond_count_ne {s e : Set Band} [DecidablePred (· ∈ s)] [DecidablePred (· ∈ e)]
-    (h : (Finset.univ.filter (· ∈ s ∩ e)).card ≠ 0) :
-    (Measure.count : Measure Band)[|s] e ≠ 0 := by
-  rw [cond_apply MeasurableSet.of_discrete]
-  exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) (count_ne h)
+private theorem ncard_eq (s : Set Band) [DecidablePred (· ∈ s)] (n : ℕ)
+    (h : s.toFinset.card = n := by decide) : s.ncard = n :=
+  (Set.ncard_eq_toFinset_card' s).trans h
 
-/-- §5.1: the Bayes factor of *more than 100* toward success is 1 / (1/6) = 6 (the paper's
-log 6 ≈ 0.78). -/
-theorem bayesFactor_moreThan100 : bayesFactor successContext (moreThan 100) = 6 := by
-  rw [bayesFactor_def]
-  refine (ENNReal.toReal_eq_toReal_iff'
-    ((ENNReal.div_lt_top (cond_apply_ne_top _ MeasurableSet.of_discrete _)
-      (cond_count_ne (by decide))).ne) (by finiteness)).mp ?_
-  rw [ENNReal.toReal_div, cond_real_apply _ MeasurableSet.of_discrete,
-    cond_real_apply _ MeasurableSet.of_discrete]
-  simp only [count_apply_fintype, ENNReal.toReal_natCast, Set.mem_inter_iff,
-    Set.mem_compl_iff]
-  norm_num [show (Finset.univ.filter fun x : Band =>
-      x ∈ moreThan 120 ∧ x ∈ moreThan 100).card = 8 from by decide,
-    show (Finset.univ.filter (· ∈ moreThan 120)).card = 8 from by decide,
-    show (Finset.univ.filter fun x : Band =>
-      x ∉ moreThan 120 ∧ x ∈ moreThan 100).card = 2 from by decide,
-    show (Finset.univ.filter fun x : Band => x ∉ moreThan 120).card = 12 from by decide]
+/-- Success is at least as probable given *more than 110* as given *more than 100*, since
+the bands that *more than 110* sheds are all failures. -/
+theorem uniformOn_moreThan100_le_moreThan110 :
+    uniformOn (moreThan 100) (moreThan 120) ≤ uniformOn (moreThan 110) (moreThan 120) :=
+  cond_le_cond_of_subset _ .of_discrete .of_discrete (moreThan_subset (show 100 ≤ 110 by norm_num))
+    (Set.inter_subset_left.trans (moreThan_subset (show 110 ≤ 120 by norm_num)))
 
-/-- The Bayes factor of *more than 110* toward success is 1 / (1/12) = 12. The paper instead
-prints log 11 (see `bayesFactor_moreThan100_toward110`); the ordering against
-`bayesFactor_moreThan100` is the same. -/
-theorem bayesFactor_moreThan110 : bayesFactor successContext (moreThan 110) = 12 := by
-  rw [bayesFactor_def]
-  refine (ENNReal.toReal_eq_toReal_iff'
-    ((ENNReal.div_lt_top (cond_apply_ne_top _ MeasurableSet.of_discrete _)
-      (cond_count_ne (by decide))).ne) (by finiteness)).mp ?_
-  rw [ENNReal.toReal_div, cond_real_apply _ MeasurableSet.of_discrete,
-    cond_real_apply _ MeasurableSet.of_discrete]
-  simp only [count_apply_fintype, ENNReal.toReal_natCast, Set.mem_inter_iff,
-    Set.mem_compl_iff]
-  norm_num [show (Finset.univ.filter fun x : Band =>
-      x ∈ moreThan 120 ∧ x ∈ moreThan 110).card = 8 from by decide,
-    show (Finset.univ.filter (· ∈ moreThan 120)).card = 8 from by decide,
-    show (Finset.univ.filter fun x : Band =>
-      x ∉ moreThan 120 ∧ x ∈ moreThan 110).card = 1 from by decide,
-    show (Finset.univ.filter fun x : Band => x ∉ moreThan 120).card = 12 from by decide]
+/-- Hence *more than 110* is semantically the stronger argument for success. -/
+theorem bayesFactor_moreThan100_lt_moreThan110 :
+    bayesFactor success (moreThan 100) < bayesFactor success (moreThan 110) :=
+  bayesFactor_lt_of_subset success .of_discrete (moreThan_subset (show 100 ≤ 110 by norm_num))
+    (Set.inter_subset_left.trans (moreThan_subset (show 110 ≤ 120 by norm_num)))
+    (Measure.count_ne_zero_iff.mpr ⟨12, by decide⟩)
+    (Measure.count_ne_zero_iff.mpr ⟨10, by decide⟩)
 
-/-- The quantity behind the paper's printed log 11: the Bayes factor of *more than 100*
-toward the goal *more than 110* ("the probability that *more than 100* is true given that
-*more than 110* is false equals 1/11"). -/
-theorem bayesFactor_moreThan100_toward110 :
-    bayesFactor ⟨moreThan 110, .of_discrete, .count⟩ (moreThan 100) = 11 := by
-  rw [bayesFactor_def]
-  refine (ENNReal.toReal_eq_toReal_iff'
-    ((ENNReal.div_lt_top (cond_apply_ne_top _ MeasurableSet.of_discrete _)
-      (cond_count_ne (by decide))).ne) (by finiteness)).mp ?_
-  rw [ENNReal.toReal_div, cond_real_apply _ MeasurableSet.of_discrete,
-    cond_real_apply _ MeasurableSet.of_discrete]
-  simp only [count_apply_fintype, ENNReal.toReal_natCast, Set.mem_inter_iff,
-    Set.mem_compl_iff]
-  norm_num [show (Finset.univ.filter fun x : Band =>
-      x ∈ moreThan 110 ∧ x ∈ moreThan 100).card = 9 from by decide,
-    show (Finset.univ.filter (· ∈ moreThan 110)).card = 9 from by decide,
-    show (Finset.univ.filter fun x : Band =>
-      x ∉ moreThan 110 ∧ x ∈ moreThan 100).card = 1 from by decide,
-    show (Finset.univ.filter fun x : Band => x ∉ moreThan 110).card = 11 from by decide]
+/-- The paper's log 6 for *more than 100*. -/
+theorem relevance_moreThan100 : relevance success (moreThan 100) = Real.log 6 := by
+  rw [relevance_count, ncard_eq (moreThan 120 ∩ moreThan 100) 8, ncard_eq (moreThan 120) 8,
+    ncard_eq ((moreThan 120)ᶜ ∩ moreThan 100) 2, ncard_eq (moreThan 120)ᶜ 12]
+  norm_num
 
-/-- §5.1 as an instance of `bayesFactor_lt_of_goal_entails`: both utterances are entailed by
-the goal and *more than 110* is semantically stronger, so it is the stronger argument. -/
-theorem semantic_ordering :
-    bayesFactor successContext (moreThan 100) < bayesFactor successContext (moreThan 110) :=
-  bayesFactor_lt_of_goal_entails successContext .of_discrete
-    (fun k hk => le_trans (show (100 : ℕ) ≤ 110 by norm_num) hk)
-    (fun k hk => le_trans (show (110 : ℕ) ≤ 120 by norm_num) hk)
-    (count_ne (by decide)) (count_ne (by decide)) (count_ne (by decide))
+/-- *more than 110* toward the stated goal, where the paper prints log 11. -/
+theorem relevance_moreThan110 : relevance success (moreThan 110) = Real.log 12 := by
+  rw [relevance_count, ncard_eq (moreThan 120 ∩ moreThan 110) 8, ncard_eq (moreThan 120) 8,
+    ncard_eq ((moreThan 120)ᶜ ∩ moreThan 110) 1, ncard_eq (moreThan 120)ᶜ 12]
+  norm_num
 
-/-! ### The assertability mixture (§5.2)
+/-- The quantity behind the paper's log 11: *more than 100* toward the goal *more than 110*. -/
+theorem relevance_moreThan100_toward110 :
+    relevance ⟨moreThan 110, .of_discrete, .count⟩ (moreThan 100) = Real.log 11 := by
+  rw [relevance_count, ncard_eq (moreThan 110 ∩ moreThan 100) 9, ncard_eq (moreThan 110) 9,
+    ncard_eq ((moreThan 110)ᶜ ∩ moreThan 100) 1, ncard_eq (moreThan 110)ᶜ 11]
+  norm_num
 
-Assertability is stochastic: with probability 9/10 the listener enriches the utterance with
-its scalar implicature (*more than 100* ⇝ *not more than 150*, *more than 110* ⇝ *not more
-than 120*), so u is felicitously assertable only if the implicature is also true; with
-probability 1/10 the utterance is interpreted literally. The mixture lives on the product of
-worlds and interpretations, where interpretation-dependent events are unions of rectangles
-and conditional probabilities decompose branchwise. -/
+/-! ### Assertability
 
-/-- How the listener resolves an utterance (§5.2): enriched with its scalar implicature, or
-literal. -/
+Assertability is stochastic: the hearer enriches the utterance with its scalar implicature
+(*more than 100* to *not more than 150*, *more than 110* to *not more than 120*) with
+probability `ρ` and reads it literally otherwise, so the utterance is felicitously assertable
+iff it is true on the reading drawn. The joint of registrations and readings is the product
+of the counting prior with the hearer's coin. -/
+
+/-- How the hearer resolves the utterance. -/
 inductive Interpretation where
   | enriched | literal
   deriving DecidableEq
 
 instance : Fintype Interpretation where
   elems := {.enriched, .literal}
-  complete := fun x => by cases x <;> simp
+  complete := λ x => by cases x <;> simp
 
 instance : MeasurableSpace Interpretation := ⊤
-instance : DiscreteMeasurableSpace Interpretation := ⟨fun _ => trivial⟩
 
-/-- An interpretation-dependent event: `enr` under enrichment, `lit` under literal
-interpretation. -/
-def byInterpretation (enr lit : Set W) : Set (W × Interpretation) :=
-  enr ×ˢ {Interpretation.enriched} ∪ lit ×ˢ {Interpretation.literal}
+private theorem Interpretation.sum_univ {M : Type*} [AddCommMonoid M] (g : Interpretation → M) :
+    ∑ i, g i = g .enriched + g .literal :=
+  Finset.sum_pair (by decide)
 
-/-- Mass of an interpretation-dependent event under a product prior: the branches weigh
-their events by the interpretation probabilities. -/
-theorem prod_byInterpretation (μ : Measure W) (ν : Measure Interpretation) [SFinite ν]
-    {enr lit : Set W} (hlit : MeasurableSet lit) :
-    (μ.prod ν) (byInterpretation enr lit) =
-      μ enr * ν {Interpretation.enriched} + μ lit * ν {Interpretation.literal} := by
-  rw [byInterpretation, measure_union
-      (Set.disjoint_prod.mpr (Or.inr (by simp)))
-      (hlit.prod MeasurableSet.of_discrete),
-    Measure.prod_prod, Measure.prod_prod]
+/-- The hearer enriches with probability `ρ` and reads literally otherwise. -/
+noncomputable abbrev hearer (ρ : I) : Measure Interpretation := Ber(.enriched, .literal, ρ)
 
-/-- §5.2's computation pattern: conditional on a lifted event, an interpretation-dependent
-event's probability is the mixture of its branches' conditional probabilities. -/
-theorem cond_prod_byInterpretation (μ : Measure W) (ν : Measure Interpretation)
-    [IsProbabilityMeasure ν] {s enr lit : Set W} (hs : MeasurableSet s)
-    (hlit : MeasurableSet lit) :
-    (μ.prod ν)[|s ×ˢ (Set.univ : Set Interpretation)] (byInterpretation enr lit) =
-      ν {Interpretation.enriched} * μ[|s] enr + ν {Interpretation.literal} * μ[|s] lit := by
-  rw [cond_apply (hs.prod MeasurableSet.univ),
-    show s ×ˢ (Set.univ : Set Interpretation) ∩ byInterpretation enr lit =
-      byInterpretation (s ∩ enr) (s ∩ lit) from by
-      ext p
-      simp only [byInterpretation, Set.mem_inter_iff, Set.mem_union, Set.mem_prod,
-        Set.mem_univ, Set.mem_singleton_iff, and_true]
-      tauto,
-    prod_byInterpretation μ ν (hs.inter hlit), Measure.prod_prod, measure_univ, mul_one,
-    cond_apply hs, cond_apply hs]
+/-- The readings of *more than n* whose enrichment is *not more than cap*. -/
+def reading (n cap : ℕ) : Interpretation → Set Band
+  | .enriched => moreThan n \ moreThan cap
+  | .literal => moreThan n
+
+/-- The assertability model: registrations paired with the hearer's reading, under the
+counting prior and the hearer's coin, with the goal lifted along the registration. -/
+noncomputable abbrev assertability (ρ : I) : Context (Band × Interpretation) :=
+  ⟨Prod.fst ⁻¹' moreThan 120, measurable_fst .of_discrete, Measure.count.prod (hearer ρ)⟩
+
+/-- *more than n* is felicitously assertable iff it is true on the reading drawn. -/
+def assertable (n cap : ℕ) : Set (Band × Interpretation) := {p | p.1 ∈ reading n cap p.2}
+
+/-- Given the registration band, the probability that *more than n* is assertable is the
+paper's mixture of its readings' proportions. -/
+theorem real_cond_assertable (ρ : I) (S : Set Band) (n cap : ℕ) :
+    ((Measure.count.prod (hearer ρ))[|Prod.fst ⁻¹' S]).real (assertable n cap) =
+      (uniformOn S).real (moreThan n \ moreThan cap) * ρ +
+        (uniformOn S).real (moreThan n) * (1 - ρ) := by
+  rw [assertable, Measure.cond_prod_fst_real_fibers _ _ .of_discrete (λ _ => .of_discrete),
+    Interpretation.sum_univ]
+  simp [reading, uniformOn]
+
+/-- The paper's probability that *more than 100* is assertable given success. -/
+theorem real_assertable_moreThan100_of_success (ρ : I) :
+    ((assertability ρ).prior[|(assertability ρ).topic]).real (assertable 100 150) =
+      3 / 8 * ρ + (1 - ρ) := by
+  rw [real_cond_assertable, uniformOn_real_apply, uniformOn_real_apply,
+    ncard_eq (moreThan 120 ∩ (moreThan 100 \ moreThan 150)) 3, ncard_eq (moreThan 120) 8,
+    ncard_eq (moreThan 120 ∩ moreThan 100) 8]
   ring
 
-/-- The §5.2 interpretation mixture: enriched with probability 9/10, literal otherwise. -/
-noncomputable def interpretationMeasure : Measure Interpretation :=
-  (9/10 : ℝ≥0∞) • Measure.dirac .enriched + (1/10 : ℝ≥0∞) • Measure.dirac .literal
+/-- The paper's probability that *more than 100* is assertable given failure. -/
+theorem real_assertable_moreThan100_of_failure (ρ : I) :
+    ((assertability ρ).prior[|(assertability ρ).topicᶜ]).real (assertable 100 150) = 1 / 6 := by
+  rw [← Set.preimage_compl, real_cond_assertable, uniformOn_real_apply, uniformOn_real_apply,
+    ncard_eq ((moreThan 120)ᶜ ∩ (moreThan 100 \ moreThan 150)) 2, ncard_eq (moreThan 120)ᶜ 12,
+    ncard_eq ((moreThan 120)ᶜ ∩ moreThan 100) 2]
+  ring
 
-instance : IsProbabilityMeasure interpretationMeasure := by
-  constructor
-  rw [interpretationMeasure]
-  simp only [Measure.coe_add, Measure.coe_smul, Pi.add_apply, Pi.smul_apply,
-    measure_univ, smul_eq_mul, mul_one]
-  rw [ENNReal.div_add_div_same, show (9 + 1 : ℝ≥0∞) = 10 by norm_num]
-  exact ENNReal.div_self (by norm_num) (by finiteness)
+/-- The paper's probability that *more than 110* is assertable given success: only the
+literal reading survives, since the enrichment contradicts success. -/
+theorem real_assertable_moreThan110_of_success (ρ : I) :
+    ((assertability ρ).prior[|(assertability ρ).topic]).real (assertable 110 120) = 1 - ρ := by
+  rw [real_cond_assertable, uniformOn_real_apply, uniformOn_real_apply,
+    ncard_eq (moreThan 120 ∩ (moreThan 110 \ moreThan 120)) 0, ncard_eq (moreThan 120) 8,
+    ncard_eq (moreThan 120 ∩ moreThan 110) 8]
+  ring
 
-private lemma interp_enriched : interpretationMeasure {Interpretation.enriched} = 9/10 := by
-  simp [interpretationMeasure, Measure.dirac_apply' _ MeasurableSet.of_discrete]
+/-- The paper's probability that *more than 110* is assertable given failure. -/
+theorem real_assertable_moreThan110_of_failure (ρ : I) :
+    ((assertability ρ).prior[|(assertability ρ).topicᶜ]).real (assertable 110 120) = 1 / 12 := by
+  rw [← Set.preimage_compl, real_cond_assertable, uniformOn_real_apply, uniformOn_real_apply,
+    ncard_eq ((moreThan 120)ᶜ ∩ (moreThan 110 \ moreThan 120)) 1, ncard_eq (moreThan 120)ᶜ 12,
+    ncard_eq ((moreThan 120)ᶜ ∩ moreThan 110) 1]
+  ring
 
-private lemma interp_literal : interpretationMeasure {Interpretation.literal} = 1/10 := by
-  simp [interpretationMeasure, Measure.dirac_apply' _ MeasurableSet.of_discrete]
+/-- Under assertability, *more than 100* loses only the share of successful worlds its
+enrichment excludes. -/
+theorem toReal_bayesFactor_assertable_moreThan100 (ρ : I) :
+    (bayesFactor (assertability ρ) (assertable 100 150)).toReal = 6 * (1 - 5 / 8 * ρ) := by
+  rw [bayesFactor_def, ENNReal.toReal_div, ← measureReal_def, ← measureReal_def,
+    real_assertable_moreThan100_of_success, real_assertable_moreThan100_of_failure]
+  ring
 
-/-! ### Assertability in the example (§5.2) -/
+/-- Under assertability, the strength of *more than 110* is scaled by the literal share. -/
+theorem toReal_bayesFactor_assertable_moreThan110 (ρ : I) :
+    (bayesFactor (assertability ρ) (assertable 110 120)).toReal = 12 * (1 - ρ) := by
+  rw [bayesFactor_def, ENNReal.toReal_div, ← measureReal_def, ← measureReal_def,
+    real_assertable_moreThan110_of_success, real_assertable_moreThan110_of_failure]
+  ring
 
-/-- §5.2: the assertability context — bands crossed with the listener's interpretation,
-goal lifted along the band. -/
-noncomputable def assertabilityContext : DTS.Context (Band × Interpretation) :=
-  ⟨moreThan 120 ×ˢ Set.univ, MeasurableSet.of_discrete.prod .univ,
-    Measure.count.prod interpretationMeasure⟩
+theorem relevance_assertable_moreThan100 (ρ : I) :
+    relevance (assertability ρ) (assertable 100 150) = Real.log (6 * (1 - 5 / 8 * ρ)) :=
+  congrArg Real.log (toReal_bayesFactor_assertable_moreThan100 ρ)
 
-/-- Felicitous assertability of *more than n* whose enrichment is *not more than cap*: under
-enrichment both the content and the implicature must hold; under literal interpretation only
-the content. -/
-def assertable (n cap : ℕ) : Set (Band × Interpretation) :=
-  byInterpretation (moreThan n \ moreThan cap) (moreThan n)
+theorem relevance_assertable_moreThan110 (ρ : I) :
+    relevance (assertability ρ) (assertable 110 120) = Real.log (12 * (1 - ρ)) :=
+  congrArg Real.log (toReal_bayesFactor_assertable_moreThan110 ρ)
 
-/-- The assertability Bayes factor in the §5.2 example, decomposed by
-`cond_prod_byInterpretation` into the paper's own "(9/10 × ⋯ + 1/10 × ⋯)" form. -/
-private lemma assertable_bayesFactor_eval (n cap : ℕ) :
-    bayesFactor assertabilityContext (assertable n cap) =
-      (9/10 * (Measure.count : Measure Band)[|moreThan 120] (moreThan n \ moreThan cap) +
-        1/10 * (Measure.count : Measure Band)[|moreThan 120] (moreThan n)) /
-      (9/10 * (Measure.count : Measure Band)[|(moreThan 120)ᶜ] (moreThan n \ moreThan cap) +
-        1/10 * (Measure.count : Measure Band)[|(moreThan 120)ᶜ] (moreThan n)) := by
-  have hcompl : (moreThan 120 ×ˢ (Set.univ : Set Interpretation))ᶜ =
-      (moreThan 120)ᶜ ×ˢ (Set.univ : Set Interpretation) := by
-    ext p; simp [Set.mem_prod]
-  rw [bayesFactor_def, assertabilityContext, assertable]
-  simp only
-  rw [hcompl, cond_prod_byInterpretation _ _ MeasurableSet.of_discrete .of_discrete,
-    cond_prod_byInterpretation _ _ MeasurableSet.of_discrete .of_discrete,
-    interp_enriched, interp_literal]
+private theorem assertable_moreThan100_ne_zero (ρ : I) :
+    (assertability ρ).prior[|(assertability ρ).topicᶜ] (assertable 100 150) ≠ 0 :=
+  (measureReal_ne_zero_iff (measure_ne_top _ _)).mp
+    (by rw [real_assertable_moreThan100_of_failure]; norm_num)
 
-private lemma ennreal_910_ne_top : (9/10 : ℝ≥0∞) ≠ ⊤ :=
-  ((ENNReal.div_lt_top (by finiteness) (by norm_num) : (9 : ℝ≥0∞) / 10 < ⊤)).ne
+private theorem assertable_moreThan110_ne_zero (ρ : I) :
+    (assertability ρ).prior[|(assertability ρ).topicᶜ] (assertable 110 120) ≠ 0 :=
+  (measureReal_ne_zero_iff (measure_ne_top _ _)).mp
+    (by rw [real_assertable_moreThan110_of_failure]; norm_num)
 
-private lemma ennreal_110_ne_top : (1/10 : ℝ≥0∞) ≠ ⊤ :=
-  ((ENNReal.div_lt_top (by finiteness) (by norm_num) : (1 : ℝ≥0∞) / 10 < ⊤)).ne
+/-- Under assertability *more than 100* remains positive evidence for success at every
+enrichment rate. -/
+theorem posRelevant_assertable_moreThan100 (ρ : I) :
+    posRelevant (assertability ρ) (assertable 100 150) :=
+  (posRelevant_iff_one_lt_toReal (bayesFactor_ne_top (assertable_moreThan100_ne_zero ρ))).mpr
+    (by rw [toReal_bayesFactor_assertable_moreThan100]; nlinarith [le_one ρ])
 
-/-- §5.2's value for *more than 100* (enriched to *not more than 150*):
-P(A(u)∣S) = (9/10)·(3/8) + (1/10)·1 = 35/80 against P(A(u)∣¬S) = 1/6, giving Bayes factor
-21/8 (the paper's log (21/8) = 0.419). -/
-theorem assertable_bayesFactor_moreThan100 :
-    bayesFactor assertabilityContext (assertable 100 150) = 21/8 := by
-  have hfin : ∀ (s e : Set Band) (hs : MeasurableSet s),
-      (Measure.count : Measure Band)[|s] e ≠ ⊤ :=
-    fun s e hs => cond_apply_ne_top _ hs e
-  rw [assertable_bayesFactor_eval]
-  refine (ENNReal.toReal_eq_toReal_iff'
-    ((ENNReal.div_lt_top
-      (ENNReal.add_ne_top.mpr ⟨ENNReal.mul_ne_top ennreal_910_ne_top (hfin _ _ .of_discrete),
-        ENNReal.mul_ne_top ennreal_110_ne_top (hfin _ _ .of_discrete)⟩)
-      (fun h => absurd (add_eq_zero.mp h).2
-        (mul_ne_zero (by norm_num) (cond_count_ne (by decide))))).ne)
-    (by finiteness)).mp ?_
-  rw [ENNReal.toReal_div,
-    ENNReal.toReal_add (ENNReal.mul_ne_top ennreal_910_ne_top (hfin _ _ .of_discrete))
-      (ENNReal.mul_ne_top ennreal_110_ne_top (hfin _ _ .of_discrete)),
-    ENNReal.toReal_add (ENNReal.mul_ne_top ennreal_910_ne_top (hfin _ _ .of_discrete))
-      (ENNReal.mul_ne_top ennreal_110_ne_top (hfin _ _ .of_discrete)),
-    ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.toReal_mul,
-    cond_real_apply _ MeasurableSet.of_discrete, cond_real_apply _ MeasurableSet.of_discrete,
-    cond_real_apply _ MeasurableSet.of_discrete, cond_real_apply _ MeasurableSet.of_discrete]
-  simp only [count_apply_fintype, ENNReal.toReal_natCast, Set.mem_inter_iff, Set.mem_sdiff,
-    Set.mem_compl_iff]
-  norm_num [ENNReal.toReal_div,
-    show (Finset.univ.filter fun x : Band =>
-      x ∈ moreThan 120 ∧ x ∈ moreThan 100 ∧ x ∉ moreThan 150).card = 3 from by decide,
-    show (Finset.univ.filter fun x : Band =>
-      x ∈ moreThan 120 ∧ x ∈ moreThan 100).card = 8 from by decide,
-    show (Finset.univ.filter (· ∈ moreThan 120)).card = 8 from by decide,
-    show (Finset.univ.filter fun x : Band =>
-      x ∉ moreThan 120 ∧ x ∈ moreThan 100 ∧ x ∉ moreThan 150).card = 2 from by decide,
-    show (Finset.univ.filter fun x : Band =>
-      x ∉ moreThan 120 ∧ x ∈ moreThan 100).card = 2 from by decide,
-    show (Finset.univ.filter fun x : Band => x ∉ moreThan 120).card = 12 from by decide]
-
-/-- §5.2's value for *more than 110* (enriched to *not more than 120*): the enriched reading
-is incompatible with success, so P(A(u)∣S) = (9/10)·0 + (1/10)·1 = 1/10 against
-P(A(u)∣¬S) = 1/12, giving Bayes factor 6/5 (the paper's log (6/5) = 0.079). -/
-theorem assertable_bayesFactor_moreThan110 :
-    bayesFactor assertabilityContext (assertable 110 120) = 6/5 := by
-  have hfin : ∀ (s e : Set Band) (hs : MeasurableSet s),
-      (Measure.count : Measure Band)[|s] e ≠ ⊤ :=
-    fun s e hs => cond_apply_ne_top _ hs e
-  rw [assertable_bayesFactor_eval]
-  refine (ENNReal.toReal_eq_toReal_iff'
-    ((ENNReal.div_lt_top
-      (ENNReal.add_ne_top.mpr ⟨ENNReal.mul_ne_top ennreal_910_ne_top (hfin _ _ .of_discrete),
-        ENNReal.mul_ne_top ennreal_110_ne_top (hfin _ _ .of_discrete)⟩)
-      (fun h => absurd (add_eq_zero.mp h).2
-        (mul_ne_zero (by norm_num) (cond_count_ne (by decide))))).ne)
-    (by finiteness)).mp ?_
-  rw [ENNReal.toReal_div,
-    ENNReal.toReal_add (ENNReal.mul_ne_top ennreal_910_ne_top (hfin _ _ .of_discrete))
-      (ENNReal.mul_ne_top ennreal_110_ne_top (hfin _ _ .of_discrete)),
-    ENNReal.toReal_add (ENNReal.mul_ne_top ennreal_910_ne_top (hfin _ _ .of_discrete))
-      (ENNReal.mul_ne_top ennreal_110_ne_top (hfin _ _ .of_discrete)),
-    ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.toReal_mul,
-    cond_real_apply _ MeasurableSet.of_discrete, cond_real_apply _ MeasurableSet.of_discrete,
-    cond_real_apply _ MeasurableSet.of_discrete, cond_real_apply _ MeasurableSet.of_discrete]
-  simp only [count_apply_fintype, ENNReal.toReal_natCast, Set.mem_inter_iff, Set.mem_sdiff,
-    Set.mem_compl_iff]
-  norm_num [ENNReal.toReal_div,
-    show (Finset.univ.filter fun x : Band =>
-      x ∈ moreThan 120 ∧ x ∈ moreThan 110 ∧ x ∉ moreThan 120).card = 0 from by decide,
-    show (Finset.univ.filter fun x : Band =>
-      x ∈ moreThan 120 ∧ x ∈ moreThan 110).card = 8 from by decide,
-    show (Finset.univ.filter (· ∈ moreThan 120)).card = 8 from by decide,
-    show (Finset.univ.filter fun x : Band =>
-      x ∉ moreThan 120 ∧ x ∈ moreThan 110 ∧ x ∉ moreThan 120).card = 1 from by decide,
-    show (Finset.univ.filter fun x : Band =>
-      x ∉ moreThan 120 ∧ x ∈ moreThan 110).card = 1 from by decide,
-    show (Finset.univ.filter fun x : Band => x ∉ moreThan 120).card = 12 from by decide]
+/-- Under assertability *more than 110* remains positive evidence for success iff the hearer
+enriches less than eleven times in twelve. -/
+theorem posRelevant_assertable_moreThan110_iff (ρ : I) :
+    posRelevant (assertability ρ) (assertable 110 120) ↔ (ρ : ℝ) < 11 / 12 := by
+  rw [posRelevant_iff_one_lt_toReal (bayesFactor_ne_top (assertable_moreThan110_ne_zero ρ)),
+    toReal_bayesFactor_assertable_moreThan110]
+  constructor <;> intro <;> linarith
 
 /-! ### The reversal -/
 
-/-- Argumentative strength (eq. 17; eq. 25 on the assertability space): the log of the Bayes
-factor, positive iff the utterance supports the goal. -/
-noncomputable def strength (ctx : DTS.Context W) (u : Set W) : ℝ :=
-  Real.log (bayesFactor ctx u).toReal
+/-- The order of the two arguments reverses under assertability iff the hearer enriches more
+than eight times in eleven. The paper fixes the rate at nine in ten and does not state the
+threshold. -/
+theorem bayesFactor_assertable_lt_iff (ρ : I) :
+    bayesFactor (assertability ρ) (assertable 110 120) <
+        bayesFactor (assertability ρ) (assertable 100 150) ↔ 8 / 11 < (ρ : ℝ) := by
+  rw [← ENNReal.toReal_lt_toReal (bayesFactor_ne_top (assertable_moreThan110_ne_zero ρ))
+    (bayesFactor_ne_top (assertable_moreThan100_ne_zero ρ)),
+    toReal_bayesFactor_assertable_moreThan110, toReal_bayesFactor_assertable_moreThan100]
+  constructor <;> intro <;> linarith
 
-/-- The paper's central §5.2 demonstration: semantically *more than 110* is the stronger
-argument for success, but under assertability the ordering reverses — precision that looks
-argumentatively optimal is penalized once the listener's enrichment is priced in. -/
-theorem strength_reversal :
-    strength successContext (moreThan 100) < strength successContext (moreThan 110) ∧
-    strength assertabilityContext (assertable 110 120) <
-      strength assertabilityContext (assertable 100 150) := by
-  unfold strength
-  rw [bayesFactor_moreThan100, bayesFactor_moreThan110, assertable_bayesFactor_moreThan110,
-    assertable_bayesFactor_moreThan100]
-  constructor
-  · exact Real.log_lt_log (by norm_num) (by norm_num)
-  · exact Real.log_lt_log (by norm_num [ENNReal.toReal_div])
-      (by norm_num [ENNReal.toReal_div])
+/-- The paper's illustrative enrichment rate of nine in ten. -/
+noncomputable abbrev nineTenths : I := ⟨9 / 10, by norm_num, by norm_num⟩
+
+/-- The paper's demonstration: semantically *more than 110* is the stronger argument for
+success, but under assertability at nine in ten the order reverses. -/
+theorem relevance_reversal :
+    relevance success (moreThan 100) < relevance success (moreThan 110) ∧
+      relevance (assertability nineTenths) (assertable 110 120) <
+        relevance (assertability nineTenths) (assertable 100 150) :=
+  ⟨relevance_lt_relevance (bayesFactor_count_ne_zero ⟨12, by decide⟩)
+      (bayesFactor_count_ne_top ⟨11, by decide⟩) bayesFactor_moreThan100_lt_moreThan110,
+    relevance_lt_relevance
+      (bayesFactor_ne_zero ((measureReal_ne_zero_iff (measure_ne_top _ _)).mp
+        (by rw [real_assertable_moreThan110_of_success]; norm_num [nineTenths])))
+      (bayesFactor_ne_top (assertable_moreThan100_ne_zero _))
+      ((bayesFactor_assertable_lt_iff _).mpr (by norm_num [nineTenths]))⟩
+
+/-- The paper's log (21/8) for *more than 100* under assertability. -/
+theorem relevance_assertable_moreThan100_nineTenths :
+    relevance (assertability nineTenths) (assertable 100 150) = Real.log (21 / 8) := by
+  rw [relevance_assertable_moreThan100]
+  norm_num [nineTenths]
+
+/-- The paper's log (6/5) for *more than 110* under assertability. -/
+theorem relevance_assertable_moreThan110_nineTenths :
+    relevance (assertability nineTenths) (assertable 110 120) = Real.log (6 / 5) := by
+  rw [relevance_assertable_moreThan110]
+  norm_num [nineTenths]
 
 end CumminsFranke2021

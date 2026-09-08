@@ -1,5 +1,6 @@
 import Linglib.Core.Probability.ConditionalProbability
 import Linglib.Core.Probability.LikelihoodRatio
+import Linglib.Core.Probability.UniformOn
 import Linglib.Semantics.Questions.Hamblin
 import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Measure.Real
@@ -30,6 +31,7 @@ issue vocabulary and the facts that genuinely concern the joint prior.
 - `Context` — a dichotomic issue (`topic : Set W`, with its measurability
   witness) plus a prior measure; `Context.Nondegenerate` marks a live issue
 - `bayesFactor` — the likelihood ratio of the induced testing problem
+- `relevance` — its logarithm, Merin's relevance of E to H
 - `posRelevant` / `negRelevant` / `irrelevant` — ordinal relevance predicates
 - `hContrary` — A and B have opposite relevance signs
 - `CondIndepIssue` — Merin's Conditional Independence Presumption, as
@@ -38,8 +40,8 @@ issue vocabulary and the facts that genuinely concern the joint prior.
 ## Main Results
 
 - **Corollary 3** (`sign_reversal`): BF_H(E) · BF_{¬H}(E) = 1
-- **Fact 2** (`log_bayesFactor`): relevance is the differential of
-  conditional informativeness
+- **Fact 2** (`relevance_eq_neg_log_sub_neg_log`): relevance is the
+  differential of conditional informativeness
 - **Fact 5** (`CondIndepIssue.bayesFactor_inter`): under issue-conditional
   independence, BF(A∧B) = BF(A) · BF(B); **Theorem 6a** splits into
   `CondIndepIssue.max_bayesFactor_lt_inter`, `.bayesFactor_union_lt_max`,
@@ -48,6 +50,10 @@ issue vocabulary and the facts that genuinely concern the joint prior.
   relevant propositions can be negatively relevant
 - `avgRisk_hypothesisKernel`: the average risk of an estimator against the
   induced problem, in its finite two-point form
+- `bayesFactor_lt_of_subset`: shedding ¬H-worlds from an utterance strengthens
+  it as an argument for H
+- `relevance_count`: over a counting prior, relevance is the log ratio of
+  proportions
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -205,9 +211,37 @@ theorem bayesFactor_def (ctx : Context W) (e : Set W) :
 theorem bayesFactor_eq_hypothesisKernel_div (ctx : Context W) (e : Set W) :
     bayesFactor ctx e = ctx.hypothesisKernel true e / ctx.hypothesisKernel false e := rfl
 
+/-- Merin's relevance of E to H, the log Bayes factor, real-valued through
+`ENNReal.toReal`: the boundary cases `0` and `∞` both land at `Real.log 0 = 0`,
+so sign and order facts are read off `bayesFactor` itself
+(`posRelevant_iff_one_lt_toReal`, `relevance_lt_relevance`). -/
+noncomputable def relevance (ctx : Context W) (e : Set W) : ℝ :=
+  Real.log (bayesFactor ctx e).toReal
+
+theorem bayesFactor_ne_zero {ctx : Context W} {e : Set W} (h : ctx.prior[|ctx.topic] e ≠ 0) :
+    bayesFactor ctx e ≠ 0 := by
+  rw [bayesFactor_def]
+  exact ENNReal.div_ne_zero.mpr ⟨h, measure_ne_top _ _⟩
+
+theorem bayesFactor_ne_top {ctx : Context W} {e : Set W} (h : ctx.prior[|ctx.topicᶜ] e ≠ 0) :
+    bayesFactor ctx e ≠ ⊤ := by
+  rw [bayesFactor_def]
+  exact (ENNReal.div_lt_top (measure_ne_top _ _) h).ne
+
+/-- Relevance is strictly monotone in the Bayes factor away from the boundary cases. -/
+theorem relevance_lt_relevance {ctx : Context W} {e₁ e₂ : Set W} (h₁ : bayesFactor ctx e₁ ≠ 0)
+    (h₂ : bayesFactor ctx e₂ ≠ ⊤) (h : bayesFactor ctx e₁ < bayesFactor ctx e₂) :
+    relevance ctx e₁ < relevance ctx e₂ :=
+  Real.log_lt_log (ENNReal.toReal_pos h₁ (ne_top_of_lt h))
+    ((ENNReal.toReal_lt_toReal (ne_top_of_lt h) h₂).mpr h)
+
 /-- E is positively relevant to H: BF > 1 (E confirms H). -/
 def posRelevant (ctx : Context W) (e : Set W) : Prop :=
   1 < bayesFactor ctx e
+
+theorem posRelevant_iff_one_lt_toReal {ctx : Context W} {e : Set W}
+    (ht : bayesFactor ctx e ≠ ⊤) : posRelevant ctx e ↔ 1 < (bayesFactor ctx e).toReal := by
+  rw [posRelevant, ← ENNReal.toReal_lt_toReal ENNReal.one_ne_top ht, ENNReal.toReal_one]
 
 /-- E is negatively relevant to H: BF < 1 (E disconfirms H). -/
 def negRelevant (ctx : Context W) (e : Set W) : Prop :=
@@ -229,6 +263,78 @@ theorem bayesFactor_swapIssue (ctx : Context W) (e : Set W) :
     bayesFactor (swapIssue ctx) e =
       ctx.prior[|ctx.topicᶜ] e / ctx.prior[|ctx.topic] e := by
   simp [bayesFactor, likelihoodRatio, swapIssue, compl_compl]
+
+/-! ### Monotonicity
+
+Shedding ¬H-worlds from an utterance can only strengthen it as an argument for
+H: the H-side conditional is unchanged and the ¬H-side conditional can only
+fall. -/
+
+/-- If `u₂ ⊆ u₁` and every H-world of `u₁` lies in `u₂`, then `u₂` is at least
+as relevant to H as `u₁`. -/
+theorem bayesFactor_le_of_subset (ctx : Context W) {u₁ u₂ : Set W}
+    (hsub : u₂ ⊆ u₁) (hent : ctx.topic ∩ u₁ ⊆ u₂) :
+    bayesFactor ctx u₁ ≤ bayesFactor ctx u₂ := by
+  have h : ctx.topic ∩ u₁ = ctx.topic ∩ u₂ :=
+    Set.Subset.antisymm (λ w hw => ⟨hw.1, hent hw⟩) (Set.inter_subset_inter_right _ hsub)
+  rw [bayesFactor_def, bayesFactor_def, cond_apply ctx.topicMeasurable,
+    cond_apply ctx.topicMeasurable, h]
+  exact ENNReal.div_le_div_left (measure_mono hsub) _
+
+/-- Strictly so once the shed worlds carry mass and `u₂` is possible under H. -/
+theorem bayesFactor_lt_of_subset (ctx : Context W) [IsFiniteMeasure ctx.prior]
+    {u₁ u₂ : Set W} (hu₂ : MeasurableSet u₂) (hsub : u₂ ⊆ u₁) (hent : ctx.topic ∩ u₁ ⊆ u₂)
+    (hpos : ctx.prior (ctx.topic ∩ u₂) ≠ 0) (hgap : ctx.prior (u₁ \ u₂) ≠ 0) :
+    bayesFactor ctx u₁ < bayesFactor ctx u₂ := by
+  have h : ctx.topic ∩ u₁ = ctx.topic ∩ u₂ :=
+    Set.Subset.antisymm (λ w hw => ⟨hw.1, hent hw⟩) (Set.inter_subset_inter_right _ hsub)
+  have hgap' : u₁ \ u₂ ⊆ ctx.topicᶜ := λ w hw h => hw.2 (hent ⟨h, hw.1⟩)
+  have hd : ctx.prior[|ctx.topicᶜ] u₂ < ctx.prior[|ctx.topicᶜ] u₁ := by
+    rw [cond_apply ctx.topicMeasurable.compl, cond_apply ctx.topicMeasurable.compl,
+      ← measure_inter_add_sdiff (ctx.topicᶜ ∩ u₁) hu₂, Set.inter_sdiff_assoc,
+      Set.inter_eq_right.mpr hgap', Set.inter_assoc, Set.inter_eq_right.mpr hsub]
+    exact ENNReal.mul_lt_mul_right (ENNReal.inv_ne_zero.mpr (measure_ne_top ctx.prior _))
+      (ENNReal.inv_ne_top.mpr λ h0 => hgap (measure_mono_null hgap' h0))
+      (ENNReal.lt_add_right (measure_ne_top ctx.prior _) hgap)
+  rw [bayesFactor_def, bayesFactor_def, cond_apply ctx.topicMeasurable,
+    cond_apply ctx.topicMeasurable, h]
+  exact ENNReal.div_lt_div_left
+    (mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top ctx.prior _)) hpos)
+    (ENNReal.mul_ne_top (ENNReal.inv_ne_top.mpr λ h => hpos
+      (measure_mono_null Set.inter_subset_left h)) (measure_ne_top ctx.prior _)) hd
+
+/-! ### Counting priors
+
+Over a finite type with the counting prior, the Bayes factor is a ratio of
+proportions and relevance its logarithm. The real-valued forms need no side
+conditions: the junk values agree (`0 / 0 = 0` in `ℝ`, `Real.log 0 = 0`). -/
+
+section Count
+
+variable [Fintype W] [MeasurableSingletonClass W] (topic e : Set W)
+
+theorem toReal_bayesFactor_count :
+    (bayesFactor ⟨topic, .of_discrete, .count⟩ e).toReal =
+      ((topic ∩ e).ncard / topic.ncard) / ((topicᶜ ∩ e).ncard / topicᶜ.ncard) := by
+  rw [bayesFactor_def, ENNReal.toReal_div, ← measureReal_def, ← measureReal_def]
+  exact congrArg₂ (· / ·) (uniformOn_real_apply topic e) (uniformOn_real_apply topicᶜ e)
+
+theorem relevance_count :
+    relevance ⟨topic, .of_discrete, .count⟩ e =
+      Real.log (((topic ∩ e).ncard / topic.ncard) / ((topicᶜ ∩ e).ncard / topicᶜ.ncard)) :=
+  congrArg Real.log (toReal_bayesFactor_count topic e)
+
+variable {topic e}
+
+theorem bayesFactor_count_ne_zero (h : (topic ∩ e).Nonempty) :
+    bayesFactor ⟨topic, .of_discrete, .count⟩ e ≠ 0 :=
+  bayesFactor_ne_zero ((uniformOn_eq_zero_iff (Set.toFinite _)).not.mpr h.ne_empty)
+
+theorem bayesFactor_count_ne_top (h : (topicᶜ ∩ e).Nonempty) :
+    bayesFactor ⟨topic, .of_discrete, .count⟩ e ≠ ⊤ :=
+  bayesFactor_ne_top ((uniformOn_eq_zero_iff (Set.toFinite _)).not.mpr h.ne_empty)
+
+end Count
 
 /-! ### Cross-product characterizations
 
@@ -382,15 +488,13 @@ theorem sign_reversal (ctx : Context W) [IsFiniteMeasure ctx.prior]
 /-- **Fact 2**: relevance is the differential of conditional
 informativeness — log BF_H(E) = inf(E, ¬H) − inf(E, H), where
 inf(E, X) = −log P(E∣X) is the conditional surprisal of E. -/
-theorem log_bayesFactor (ctx : Context W) [IsFiniteMeasure ctx.prior]
-    (e : Set W)
+theorem relevance_eq_neg_log_sub_neg_log (ctx : Context W) (e : Set W)
     (hEH : ctx.prior[|ctx.topic] e ≠ 0)
     (hENotH : ctx.prior[|ctx.topicᶜ] e ≠ 0) :
-    Real.log (bayesFactor ctx e).toReal =
+    relevance ctx e =
       (-Real.log (ctx.prior[|ctx.topicᶜ] e).toReal) -
       (-Real.log (ctx.prior[|ctx.topic] e).toReal) :=
-  log_likelihoodRatio hEH (cond_apply_ne_top _ ctx.topicMeasurable e)
-    hENotH (cond_apply_ne_top _ ctx.topicMeasurable.compl e)
+  log_likelihoodRatio hEH (measure_ne_top _ _) hENotH (measure_ne_top _ _)
 
 /-! ### Consequences of issue-conditional independence -/
 

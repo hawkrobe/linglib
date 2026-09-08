@@ -89,6 +89,15 @@ theorem cond_eq_one_of_subset [IsFiniteMeasure μ] {e : Set Ω}
   rw [cond_apply hs, Set.inter_eq_left.mpr hsub,
     ENNReal.inv_mul_cancel hne (measure_ne_top μ s)]
 
+/-- Conditioning on a subset that sheds only worlds outside `s` can only raise the conditional
+probability of `s`. -/
+theorem cond_le_cond_of_subset {u₁ u₂ e : Set Ω} (hu₁ : MeasurableSet u₁)
+    (hu₂ : MeasurableSet u₂) (hsub : u₂ ⊆ u₁) (hent : e ∩ u₁ ⊆ u₂) : μ[|u₁] e ≤ μ[|u₂] e := by
+  have h : e ∩ u₁ = e ∩ u₂ :=
+    Set.Subset.antisymm (λ w hw => ⟨hw.1, hent hw⟩) (Set.inter_subset_inter_right _ hsub)
+  rw [cond_apply hu₁, cond_apply hu₂, Set.inter_comm u₁, Set.inter_comm u₂, h]
+  exact mul_le_mul_left (ENNReal.inv_le_inv.mpr (measure_mono hsub)) _
+
 /-- The conditional as a ratio of real-valued masses. -/
 theorem cond_real_apply (hs : MeasurableSet s) (e : Set Ω) :
     (μ[|s] e).toReal = (μ (s ∩ e)).toReal / (μ s).toReal := by
