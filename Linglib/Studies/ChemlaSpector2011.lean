@@ -1,232 +1,122 @@
+import Linglib.Data.Examples.ChemlaSpector2011
 import Linglib.Pragmatics.Implicature.SomeAll
-import Linglib.Studies.GeurtsPouscoulous2009
 import Linglib.Pragmatics.Implicature.Diagnostics
-
+import Linglib.Studies.GeurtsPouscoulous2009
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Fintype.Pi
+
 /-!
-# Chemla and Spector 2011: experimental evidence for embedded scalar implicatures
+# Chemla and Spector (2011): Experimental evidence for embedded scalar implicatures
 
 This file formalizes the argument of [chemla-spector-2011] that scalar inferences computed in
-embedded position are detectable, against [geurts-pouscoulous-2009]. The disagreement turns on
-method: a binary truth-value judgment makes a participant pick one reading, while a graded
-judgment on a continuous scale lets a picture that satisfies more of a sentence's available
-readings be rated higher, which is the paper's §3.2 conjecture and this file's `RatingsMonotone`.
+embedded position are detectable, against [geurts-pouscoulous-2009]. A graded truth-value
+judgment lets a picture that satisfies more of a sentence's available readings be rated higher,
+the paper's conjecture in §3.2, and the readings a theory makes available are what its
+mechanism can derive: a restricted globalist computes the inference at the speech-act level
+only, a localist anywhere, and an unrestricted globalist wherever the result entails the
+literal reading. Under a universal quantifier the local reading entails the literal one, so
+Experiment 1 separates the restricted globalist from the other two; under *exactly one* it is
+logically independent of it, so Experiment 2 separates the localist from both globalists, the
+condition where only the local reading is true being rated far above the one where none is.
+The ratings of Figures 5, 6, 12 and 13 are rows, and the theorems derive the monotonicity of
+Experiment 1, the separations, the downward-entailing controls the paper shares with Geurts
+and Pouscoulous, and the paradigm priming of §5.5.4 from them.
 
-Three positions are at issue. A restricted globalist computes the inference only at the
-speech-act level, and so cannot make *every student solved some but not all the problems* a
-reading of *every student solved some of the problems*; a localist computes it in embedded
-position and can; an unrestricted globalist derives the embedded-looking reading globally, but
-only where it entails the literal reading. Experiment 1 embeds under a universal quantifier, where
-that entailment holds, and separates the restricted globalist from the other two. Experiment 2
-embeds under *exactly one*, where the local reading is logically independent of the literal one,
-and separates the localist from both globalists: the condition where only the local reading is
-true is rated far above the condition where none is, which an unrestricted globalist predicts to
-be the same.
+## Implementation notes
 
-Rates are integer percentages or per-mille, as reported; the statistics stay in the paper.
-
-## Main definitions
-
-* `Theory`, `Theory.admits`, `GloballyDerivable` — the three positions, with the unrestricted
-  globalist's reach a semantic condition: a reading is derivable iff it entails the literal one
-* `RatingsMonotone` — the §3.2 conjecture, over (rating, reading-count) pairs
-* `Exp1Condition`, `Exp2Condition`, with `witness`, `truthSet` and `availableAt` — the
-  conditions, the readings their witness pictures make true, and what each theory leaves
-  available there
-
-## Main results
-
-* `Exp1Some.local_globallyDerivable`, `Exp2Some.local_not_globallyDerivable` — under the
-  universal the local reading entails the literal one; under *exactly one* it is independent
-* `exp1_some_monotone_in_readings`, `exp1_or_monotone_in_readings` — ratings rise with the number
-  of readings true, which subsumes the headline STRONG > WEAK contrast
-* `T1_strong_eq_weak_under_availableReadings`, `T2_strong_strict_superset_weak`,
-  `T2_T3_agree_in_exp1` — the restricted globalist predicts no Experiment 1 contrast, the other
-  two predict the same one, so the first experiment separates only T1
-* `T3_at_local_collapses_to_false`, `T2_at_local_strict_superset_false`, `T2_T3_disagree_at_local`,
-  `local_gt_literal_some`, `local_gt_false_both_items` — the Experiment 2 separation
-* `cs_gp_agree_on_de_local_far_below_baseline` — the two papers agree on downward-entailing
-  contexts even where they disagree elsewhere
-* `localReadingExistsExp1_isReinforceable` — the local reading passes the reinforceability
-  diagnostic
+* The unrestricted globalist's reach is the semantic condition that a reading entail the
+  literal one, so its environment-dependence is derived rather than tabulated.
+* Section and figure numbers follow the preprint of December 2010 on the Semantics Archive.
 
 ## References
 
 * [chemla-spector-2011]
 * [geurts-pouscoulous-2009]
-* [landman-1998]
-* [chierchia-2004]
-* [recanati-2003]
-* [fox-2007]
-* [chierchia-fox-spector-2008]
-* [spector-2006]
-* [vanrooij-schulz-2004]
-* [sauerland-2004]
+* [sadock-1978]
 -/
 
 namespace ChemlaSpector2011
 
--- ============================================================================
--- Shared types
--- ============================================================================
+open Data.Examples
 
-/-- The three readings the two experiments cross. Their entailment lattices differ between the
-experiments, which is what the design exploits. -/
+/-! ### Readings and theories (§1) -/
+
+/-- The three readings the two experiments cross; their entailments differ between the
+experiments, which the design exploits. -/
 inductive ReadingLabel where
   | literal
   | global
   | local_
   deriving DecidableEq, Repr, Fintype
 
-/-- The three theory families the paper distinguishes (§1, page 3).
-Exp 1 separates T1 from {T2, T3}; Exp 2 separates T2 from {T1, T3}. -/
+/-- The three families of theory: T1 computes the implicature at the speech-act level only, T2
+in embedded position, T3 globally but with alternatives that need not be stronger than the
+sentence. -/
 inductive Theory where
-  | T1_restrictedGlobalist
-  | T2_localist
-  | T3_unrestrictedGlobalist
+  | restrictedGlobalist
+  | localist
+  | unrestrictedGlobalist
   deriving DecidableEq, Repr
-
-/-! ### Theory mechanisms
-
-What separates the theories is what their mechanisms can derive (§1, page 3 and footnote 1). The
-restricted globalist computes the implicature only at the speech-act level, so it admits the
-matrix readings. The localist computes it anywhere and admits everything. The unrestricted
-globalist strengthens the matrix meaning, so a reading is within its reach exactly when it
-entails the literal one — a semantic condition on the readings, not a switch set per environment.
-The environment-dependence of its predictions falls out: under a universal the local reading
-entails the literal one, under *exactly one* it does not. -/
 
 section Mechanisms
 
 variable {P : Type*} [Fintype P] (readings : ReadingLabel → P → Prop)
   [∀ ℓ p, Decidable (readings ℓ p)]
 
-/-- A globalist derivation reaches a reading exactly when that reading entails the literal one:
-strengthening the matrix meaning can never yield something the literal reading does not follow
+/-- A globalist derivation reaches a reading exactly when it entails the literal one, since
+strengthening the matrix meaning never yields something the literal reading does not follow
 from. -/
-def GloballyDerivable (ℓ : ReadingLabel) : Prop :=
-  ∀ p, readings ℓ p → readings .literal p
+def GloballyDerivable (ℓ : ReadingLabel) : Prop := ∀ p, readings ℓ p → readings .literal p
 
 instance (ℓ : ReadingLabel) : Decidable (GloballyDerivable readings ℓ) :=
   inferInstanceAs (Decidable (∀ _, _))
 
 /-- The readings each theory's mechanism admits. -/
 def Theory.admits : Theory → ReadingLabel → Prop
-  | .T1_restrictedGlobalist, ℓ => ℓ = .literal ∨ ℓ = .global
-  | .T2_localist, _ => True
-  | .T3_unrestrictedGlobalist, ℓ => GloballyDerivable readings ℓ
+  | .restrictedGlobalist, ℓ => ℓ = .literal ∨ ℓ = .global
+  | .localist, _ => True
+  | .unrestrictedGlobalist, ℓ => GloballyDerivable readings ℓ
 
 instance : (t : Theory) → (ℓ : ReadingLabel) → Decidable (t.admits readings ℓ)
-  | .T1_restrictedGlobalist, _ => inferInstanceAs (Decidable (_ ∨ _))
-  | .T2_localist, _ => inferInstanceAs (Decidable True)
-  | .T3_unrestrictedGlobalist, _ => inferInstanceAs (Decidable (GloballyDerivable _ _))
+  | .restrictedGlobalist, _ => inferInstanceAs (Decidable (_ ∨ _))
+  | .localist, _ => inferInstanceAs (Decidable True)
+  | .unrestrictedGlobalist, _ => inferInstanceAs (Decidable (GloballyDerivable _ _))
 
-/-- The readings a theory leaves available at a picture: true there, and within the mechanism's
-reach. Per the §3.2 conjecture, this set is what the rating reflects. -/
+/-- The readings a theory leaves available at a picture: true there and within its reach; by the
+conjecture of §3.2 the rating reflects this set. -/
 def availableAt (t : Theory) (p : P) : Finset ReadingLabel :=
-  Finset.univ.filter fun ℓ => readings ℓ p ∧ t.admits readings ℓ
+  Finset.univ.filter λ ℓ => readings ℓ p ∧ t.admits readings ℓ
 
 end Mechanisms
 
-/-- The §3.2 page-10 conjecture: if at picture `p₂` strictly more of the
-sentence's available readings are true than at `p₁`, then the rating
-at `p₂` is higher than at `p₁`.
+/-- The conjecture of §3.2: where strictly more of a sentence's available readings are true, the
+rating is higher, over pairs of a rating and a reading count. -/
+abbrev RatingsMonotone (data : List (ℕ × ℕ)) : Prop :=
+  data.Pairwise λ d₁ d₂ => d₁.2 < d₂.2 → d₁.1 < d₂.1
 
-Stated over a list of `(rating, reading-count)` pairs ordered by reading-count, with ratings as
-`Nat` percentages so the property is decidable. -/
-abbrev RatingsMonotone (data : List (Nat × Nat)) : Prop :=
-  data.Pairwise fun d₁ d₂ => d₁.2 < d₂.2 → d₁.1 < d₂.1
+/-! ### Pictures (§3, Appendix 2) -/
 
-
--- ============================================================================
--- §3 General features of the experimental design
--- ============================================================================
-
-/-! ## §3 Experimental design
-
-Pictures are letter-grids. Each letter is independently in one of three
-states with respect to its circles: connected to none (a *falsifier*),
-connected to some-but-not-all (a *strong verifier*), or connected to
-all (a *weak verifier*) — paper §Appendix 2 / Figure 14, page 35.
-
-The terminology *weak/strong verifier* is per the predicate "x is
-connected with some of its circles" under literal vs strong "some":
-- a letter with ALL circles connected makes the literal predicate true
-  but the strong "some-but-not-all" predicate false → *weak* verifier
-- a letter with SOME-BUT-NOT-ALL connected makes both predicates true
-  → *strong* verifier
-
-This mapping aligns with `SomeAllWorld`:
-- `.none` = falsifier
-- `.someNotAll` = strong verifier
-- `.all` = weak verifier -/
-
-/-- A 6-letter picture (Exp 1). Each letter is independently in one of
-the three `SomeAllWorld` states with respect to its own set of
-circles. -/
+/-- A six-letter picture: each letter is a falsifier, connected to no circle, a strong verifier,
+connected to some but not all, or a weak verifier, connected to all (Figure 14). -/
 abbrev Picture6 := Fin 6 → SomeAllWorld
 
-/-- A 3-letter picture (Exp 2). -/
+/-- A three-letter picture. -/
 abbrev Picture3 := Fin 3 → SomeAllWorld
 
--- ============================================================================
--- §4 Experiment 1 — scalar items in universal sentences
--- ============================================================================
+/-! ### Experiment 1: scalar items under a universal (§4) -/
 
-section ExperimentOne
-
-/-! ## §4 Experiment 1
-
-Method (paper §4.1, page 12): 16 native French speakers, ages 19–29 (10
-women), no formal-linguistics exposure. Continuous-scale rating task
-(cursor 0–100%); responses coded as percent of red-line fill.
-
-Target sentences:
-- (8) *Chaque lettre est reliée à certains de ses cercles* — "Each
-  letter is connected with some of its circles"
-- (9) *Chaque lettre est reliée à son cercle rouge ou à son cercle
-  bleu* — "Each letter is connected with its red circle or with its
-  blue circle"
-
-Three readings of (8) (paper (10), page 14):
-- (10a) **Literal**: Each letter is connected with at least one of its
-  circles
-- (10b) **Global**: Literal AND ¬(each letter is connected with all its
-  circles) — the matrix-level scalar implicature
-- (10c) **Local**: Each letter is connected with some-but-not-all of
-  its circles — the embedded scalar implicature
-
-Total order: local ⊊ global ⊊ literal (page 5). Crucial for Exp 1's
-discriminating logic.
-
-Four target conditions (paper §4.2.1 page 14, Table 1 page 36):
-- **FALSE**: 6 falsifiers (no reading true)
-- **LITERAL**: 6 weak verifiers (only literal true)
-- **WEAK**: 4 weak + 2 strong, or 2 weak + 4 strong (literal AND global true,
-  local false)
-- **STRONG**: 6 strong verifiers (all three readings true) -/
-
-/-! ### Reading extensions for Exp 1 sentence (8)
-
-Defined as `Prop` predicates over `Picture6`; `Decidable` instances
-derive automatically since `Fin 6` is `Fintype` and `SomeAllWorld` is
-`DecidableEq`. -/
 namespace Exp1Some
 
-/-- Literal (10a): every letter has ≥1 circle connected, i.e. no
-falsifiers. Uses `abbrev` so the body unfolds for `decide` and instance
-synthesis without explicit unfolds. -/
+/-- (10a): each letter is connected with at least one of its circles. -/
 abbrev literal (p : Picture6) : Prop := ∀ i, p i ≠ .none
 
-/-- Global (10b): literal AND there exists a letter that's not a weak
-verifier (i.e., not connected with all its circles). -/
+/-- (10b): the literal reading, and not every letter is connected with all its circles. -/
 abbrev global (p : Picture6) : Prop := literal p ∧ ∃ i, p i ≠ .all
 
-/-- Local (10c): every letter is a strong verifier. -/
+/-- (10c): every letter is connected with some but not all of its circles. -/
 abbrev local_ (p : Picture6) : Prop := ∀ i, p i = .someNotAll
 
-/-- The labelled family of the three readings. -/
+/-- The three readings of (8). -/
 def reading : ReadingLabel → Picture6 → Prop
   | .literal => literal
   | .global => global
@@ -237,224 +127,59 @@ instance : (ℓ : ReadingLabel) → (p : Picture6) → Decidable (reading ℓ p)
   | .global, p => inferInstanceAs (Decidable (global p))
   | .local_, p => inferInstanceAs (Decidable (local_ p))
 
-/-- Under the universal the local reading entails the literal one — with the global reading
-between them, the chain that keeps the unrestricted globalist abreast of the localist throughout
-Experiment 1. -/
+/-- Under the universal the local reading entails the literal one, which keeps the unrestricted
+globalist abreast of the localist throughout Experiment 1. -/
 theorem local_globallyDerivable : GloballyDerivable reading .local_ :=
-  fun p h i => by rw [h i]; simp
+  λ p h i => by rw [h i]; simp
 
 end Exp1Some
 
-/-- The four target conditions for Exp 1 (paper §4.2.1 page 14). -/
+/-- The target conditions of Experiment 1 (§4.2.1): no reading true, only the literal one, the
+literal and global ones, all three. -/
 inductive Exp1Condition where
-  | false_      -- FALSE: no reading true
-  | literal     -- LITERAL: only literal reading true
-  | weak        -- WEAK: literal + global true, local false
-  | strong      -- STRONG: all three readings true
+  | false_
+  | literal
+  | weak
+  | strong
   deriving DecidableEq, Repr
 
-/-- Sample picture witnessing each Exp 1 condition. -/
+/-- A picture of each condition (Figure 4): six falsifiers, six weak verifiers, four weak and
+two strong, six strong. -/
 def Exp1Condition.witness : Exp1Condition → Picture6
-  | .false_   => fun _ => .none           -- 6 falsifiers
-  | .literal  => fun _ => .all             -- 6 weak verifiers
-  | .weak     => fun i => if i.val < 4 then .all else .someNotAll
-                                            -- 4 weak + 2 strong
-  | .strong   => fun _ => .someNotAll     -- 6 strong verifiers
+  | .false_ => λ _ => .none
+  | .literal => λ _ => .all
+  | .weak => λ i => if i.val < 4 then .all else .someNotAll
+  | .strong => λ _ => .someNotAll
 
-/-- The readings true at a condition, read off its witness picture. The four conditions realize
-the chain of Experiment 1: ∅, then {literal}, {literal, global}, and all three. -/
+/-- The readings true at a condition, read off its witness. -/
 def Exp1Condition.truthSet (c : Exp1Condition) : Finset ReadingLabel :=
   Finset.univ.filter (Exp1Some.reading · c.witness)
 
-/-! Experiment 1 main results (paper Figure 5, page 18, n = 16). Rates
-are mean cursor positions in integer percent points, matching the
-discipline of `GeurtsPouscoulous2009.lean` (which uses `Nat`
-percentages for raw rates and `ℚ` for derived means). Per-condition
-functions are defined by direct `match` so `decide` reduces in the
-kernel. -/
+/-- The row key of a condition. -/
+def Exp1Condition.key : Exp1Condition → String
+  | .false_ => "false"
+  | .literal => "literal"
+  | .weak => "weak"
+  | .strong => "strong"
 
-/-- Mean rating of the 'some'-item universal sentence (8) per condition,
-in percent points (paper Figure 5 page 18). -/
-def exp1SomeRate : Exp1Condition → Nat
-  | .false_  => 12
-  | .literal => 44
-  | .weak    => 68
-  | .strong  => 99
+/-! ### Experiment 2: scalar items under *exactly one* (§5) -/
 
-/-- Mean rating of the 'or'-item universal sentence (9) per condition,
-in percent points (paper Figure 5 page 18). -/
-def exp1OrRate : Exp1Condition → Nat
-  | .false_  => 11
-  | .literal => 35
-  | .weak    => 54
-  | .strong  => 86
-
-/-- Ratings rise with the number of readings true at the condition's witness picture — the
-monotonicity conjecture of §3.2 on the Exp 1 *some* data, with the reading counts taken from
-`Exp1Condition.truthSet` rather than written in. Since the counts are strictly ordered, this
-subsumes the headline STRONG > WEAK contrast, a gap of 31 points for *some* and 32 for *or*. -/
-theorem exp1_some_monotone_in_readings :
-    RatingsMonotone
-      [ (exp1SomeRate .false_,  (Exp1Condition.truthSet .false_).card)
-      , (exp1SomeRate .literal, (Exp1Condition.truthSet .literal).card)
-      , (exp1SomeRate .weak,    (Exp1Condition.truthSet .weak).card)
-      , (exp1SomeRate .strong,  (Exp1Condition.truthSet .strong).card) ] := by decide
-
-theorem exp1_or_monotone_in_readings :
-    RatingsMonotone
-      [ (exp1OrRate .false_,  (Exp1Condition.truthSet .false_).card)
-      , (exp1OrRate .literal, (Exp1Condition.truthSet .literal).card)
-      , (exp1OrRate .weak,    (Exp1Condition.truthSet .weak).card)
-      , (exp1OrRate .strong,  (Exp1Condition.truthSet .strong).card) ] := by decide
-
-/-- The restricted globalist leaves the same readings available at STRONG as at WEAK — local is
-true at STRONG, but a matrix-only mechanism does not admit it — so it predicts equal ratings; the
-observed 31- and 32-point gaps are the evidence against it. -/
-theorem T1_strong_eq_weak_under_availableReadings :
-    availableAt Exp1Some.reading .T1_restrictedGlobalist (Exp1Condition.witness .strong) =
-      availableAt Exp1Some.reading .T1_restrictedGlobalist (Exp1Condition.witness .weak) := by
-  decide
-
-/-- The localist leaves strictly more available at STRONG than at WEAK, so with the §3.2
-conjecture it predicts the gap. So does the unrestricted globalist here: under the universal the
-local reading entails the literal one (`Exp1Some.local_globallyDerivable`), putting it within a
-globalist derivation's reach — which is why Experiment 1 cannot separate them. -/
-theorem T2_strong_strict_superset_weak :
-    availableAt Exp1Some.reading .T2_localist (Exp1Condition.witness .weak) ⊂
-      availableAt Exp1Some.reading .T2_localist (Exp1Condition.witness .strong) := by
-  decide
-
-/-- The two theories the first experiment cannot separate agree on every condition there. -/
-theorem T2_T3_agree_in_exp1 (c : Exp1Condition) :
-    availableAt Exp1Some.reading .T2_localist c.witness =
-      availableAt Exp1Some.reading .T3_unrestrictedGlobalist c.witness := by
-  cases c <;> decide +kernel
-
-end ExperimentOne
-
-
--- ============================================================================
--- §4.2.2 / §5.3.2 DE controls — replication of GP09
--- ============================================================================
-
-section DEControls
-
-/-! ## DE controls
-
-Paper §4.2.2 page 14 + §5.3.2 page 26: DE control sentences (12)/(13)
-"Aucune lettre n'est reliée à certains de ses cercles" — "No letter is
-connected with some of its circles" — were tested in three conditions:
-- **FALSE**: no reading true
-- **?LOCAL**: only the (marginal) local reading true
-- **BOTH**: literal+local both true
-
-Findings (Figure 6 page 19 / Figure 13 page 29):
-- ?LOCAL ratings are LOW (much lower than BOTH), replicating
-  [geurts-pouscoulous-2009]'s Exp 4 finding that local readings of
-  *some* in DE contexts are not detected
-- ?LOCAL is somewhat higher in Exp 2's DE controls than in Exp 1's
-  (51%/22% vs 25%/14%) — paper §5.5.4 page 30 attributes this to
-  paradigm-priming from the non-monotonic main task -/
-
-/-- DE control conditions tested in Exp 1 (paper §4.2.2, page 14). -/
-inductive DEControlCondition where
-  | de_false_   -- FALSE: no reading true
-  | de_qLocal   -- ?LOCAL: the marginal local reading true
-  | de_both     -- BOTH: literal+local both true
-  deriving DecidableEq, Repr
-
-/-- DE control 'some' rates (paper Figure 6, page 19), per-mille. -/
-def deControlsExp1Some : DEControlCondition → Nat
-  | .de_false_  => 65   -- 6.5%
-  | .de_qLocal  => 250  -- 25%
-  | .de_both    => 920  -- 92%
-
-/-- DE control 'or' rates (paper Figure 6, page 19), per-mille. -/
-def deControlsExp1Or : DEControlCondition → Nat
-  | .de_false_  => 90
-  | .de_qLocal  => 140
-  | .de_both    => 930
-
-/-- Replicates [geurts-pouscoulous-2009]'s Exp 4 finding: in DE
-contexts the ?LOCAL rate is far below the BOTH rate, supporting the
-no-local-SI-in-DE generalization. -/
-theorem de_qLocal_below_both :
-    deControlsExp1Some .de_qLocal < deControlsExp1Some .de_both ∧
-    deControlsExp1Or   .de_qLocal < deControlsExp1Or   .de_both := by decide
-
-end DEControls
-
-
--- ============================================================================
--- §5 Experiment 2 — scalar items in non-monotonic environments
--- ============================================================================
-
-section ExperimentTwo
-
-/-! ## §5 Experiment 2 — the killer finding
-
-Method (paper §5.2, page 26): 16 native French speakers, ages 18–35 (9
-women), no prior formal-linguistics exposure. Same continuous-scale
-task as Exp 1, with 3-letter grids replacing 6-letter grids.
-
-Target sentences:
-- (21) *Il y a exactement une lettre reliée à certains de ses cercles*
-  — "There is exactly one letter connected with some of its circles"
-- (22) *Il y a exactement une lettre reliée à son cercle rouge ou à
-  son cercle bleu* — "There is exactly one letter connected with its
-  red circle or with its blue circle"
-
-Crucial: *exactly one* creates a **non-monotonic** environment where
-the local reading is **logically independent** of the literal reading
-(paper page 25):
-
-- (19a) **Literal**: one letter is connected with some-or-all of its
-  circles, the others with no circle
-- (19b) **Global**: one letter is connected with some-but-not-all of
-  its circles, the others with no circle
-- (19c) **Local**: one letter is connected with some-but-not-all of
-  its circles, the others may be connected with either none or all of
-  their circles
-
-Lattice (page 25): global ⊊ literal AND global ⊊ local; literal ⊥
-local (logically independent). T1 cannot predict local; T3 (globalist
-with multi-alternative negation) cannot predict local because the
-local reading does not entail the literal reading. **Only T2
-(localist) predicts local in non-monotonic environments.**
-
-Four target conditions (paper §5.3.1 page 26):
-- **FALSE**: no reading true
-- **LITERAL**: only literal true
-- **LOCAL**: only local true (literal AND global both false — this is
-  the diagnostic condition)
-- **ALL**: all three readings true -/
-
-/-! ### Reading extensions for Exp 2 sentence (21)
-
-Note the entailment lattice differs from Exp 1: literal and local are
-logically independent here. The "exactly one" predicates use
-`∃ i, P i ∧ ∀ j ≠ i, ¬ P j` spelled out explicitly so that
-`Fintype.decidableForallFintype` and `Fintype.decidableExistsFintype`
-derive `Decidable` automatically. -/
 namespace Exp2Some
 
-/-- Literal (19a): exactly one letter has ≥1 circle, others have none. -/
-abbrev literal (p : Picture3) : Prop :=
-  ∃ i, p i ≠ .none ∧ ∀ j, j ≠ i → p j = .none
+/-- (19a): exactly one letter is connected with some or all of its circles, the others with
+none. -/
+abbrev literal (p : Picture3) : Prop := ∃ i, p i ≠ .none ∧ ∀ j, j ≠ i → p j = .none
 
-/-- Global (19b): exactly one letter is a strong verifier, no letter is
-a weak verifier (the speech-act SI on the *exactly one* sentence). -/
+/-- (19b): exactly one letter is connected with some but not all of its circles, the others with
+none. -/
 abbrev global (p : Picture3) : Prop :=
   (∃ i, p i = .someNotAll ∧ ∀ j, j ≠ i → p j = .none) ∧ ∀ i, p i ≠ .all
 
-/-- Local (19c): exactly one letter is a strong verifier; the others
-may be either falsifiers or weak verifiers. *Logically independent of
-literal*: a configuration with one strong verifier and two weak
-verifiers makes local true but literal false. -/
-abbrev local_ (p : Picture3) : Prop :=
-  ∃ i, p i = .someNotAll ∧ ∀ j, j ≠ i → p j ≠ .someNotAll
+/-- (19c): exactly one letter is connected with some but not all of its circles, the others with
+none or all. -/
+abbrev local_ (p : Picture3) : Prop := ∃ i, p i = .someNotAll ∧ ∀ j, j ≠ i → p j ≠ .someNotAll
 
-/-- The labelled family of the three readings. -/
+/-- The three readings of (21). -/
 def reading : ReadingLabel → Picture3 → Prop
   | .literal => literal
   | .global => global
@@ -465,211 +190,201 @@ instance : (ℓ : ReadingLabel) → (p : Picture3) → Decidable (reading ℓ p)
   | .global, p => inferInstanceAs (Decidable (global p))
   | .local_, p => inferInstanceAs (Decidable (local_ p))
 
-/-- Under *exactly one* the local reading no longer entails the literal one: one strong verifier
-among weak verifiers makes it true while falsifying the literal reading. This is the logical
-independence the second experiment exploits, and it puts the local reading beyond a globalist
-derivation's reach. -/
+/-- Under *exactly one* the local reading no longer entails the literal one: a strong verifier
+among weak verifiers makes it true and the literal reading false, which puts it beyond a
+globalist derivation's reach (§5.1). -/
 theorem local_not_globallyDerivable : ¬ GloballyDerivable reading .local_ := by
   decide +kernel
 
 end Exp2Some
 
-/-- The four target conditions for Exp 2 (paper §5.3.1). -/
+/-- The target conditions of Experiment 2 (§5.3.1): no reading true, only the literal one, only
+the local one, all three. -/
 inductive Exp2Condition where
-  | false_      -- no reading true
-  | literal     -- only literal true
-  | local_      -- only local true (the diagnostic condition for T2 vs T3)
-  | all         -- all three readings true
+  | false_
+  | literal
+  | local_
+  | all
   deriving DecidableEq, Repr
 
-/-- Sample picture witnessing each Exp 2 condition. -/
+/-- A picture of each condition (Figure 11). -/
 def Exp2Condition.witness : Exp2Condition → Picture3
-  | .false_  => fun _ => .none
-  | .literal => fun i => if i.val = 0 then .all else .none
-                            -- one weak verifier (= "all"), others none
-  | .local_  => fun i =>
-      if i.val = 0 then .someNotAll else .all
-                            -- one strong verifier, others weak verifiers
-                            -- → literal=F (others not none), local=T
-  | .all     => fun i => if i.val = 0 then .someNotAll else .none
-                            -- one strong, others none → literal=T, local=T,
-                            -- global=T (because the one strong-verifier
-                            -- letter satisfies the global pattern)
+  | .false_ => λ _ => .none
+  | .literal => λ i => if i.val = 0 then .all else .none
+  | .local_ => λ i => if i.val = 0 then .someNotAll else .all
+  | .all => λ i => if i.val = 0 then .someNotAll else .none
 
-/-- The readings true at a condition, read off its witness picture. The four sets realize the
-asymmetry of Experiment 2: at LOCAL the set is {local}, the literal reading being false there —
-the pattern no chain of readings could produce. -/
+/-- The readings true at a condition, read off its witness. -/
 def Exp2Condition.truthSet (c : Exp2Condition) : Finset ReadingLabel :=
   Finset.univ.filter (Exp2Some.reading · c.witness)
 
-/-! Experiment 2 main results (paper Figure 12, page 28, n = 16),
-per-mille `Nat`. -/
+/-- The row key of a condition. -/
+def Exp2Condition.key : Exp2Condition → String
+  | .false_ => "false"
+  | .literal => "literal"
+  | .local_ => "local"
+  | .all => "all"
 
-/-- Mean rating of the 'some'-item *exactly one* sentence (21) per
-condition, per-mille (paper Figure 12 page 28). -/
-def exp2SomeRate : Exp2Condition → Nat
-  | .false_  => 67   -- 6.7%
-  | .literal => 370  -- 37%
-  | .local_  => 730  -- 73%
-  | .all     => 980  -- 98%
+/-- The downward-entailing controls (12) and (13) at the end of each experiment (§4.2.2): no
+reading true, only the marginal local reading, both readings. -/
+inductive DEControlCondition where
+  | false_
+  | qLocal
+  | both
+  deriving DecidableEq, Repr
 
-/-- Mean rating of the 'or'-item *exactly one* sentence (22) per
-condition, per-mille (paper Figure 12 page 28). -/
-def exp2OrRate : Exp2Condition → Nat
-  | .false_  => 91
-  | .literal => 370
-  | .local_  => 580
-  | .all     => 900
+/-- The row key of a condition. -/
+def DEControlCondition.key : DEControlCondition → String
+  | .false_ => "false"
+  | .qLocal => "qlocal"
+  | .both => "both"
 
-/-- **The killer finding** (paper page 28): for the 'some' item under
-*exactly one*, the LOCAL condition is rated *higher* than the LITERAL
-condition (73% vs 37%). Globalist theories (T1, T3) cannot explain
-this: in a non-monotonic environment the local reading is logically
-independent of the literal reading, and globalist mechanisms cannot
-derive readings that don't entail the literal. The fact that
-participants rate LOCAL > LITERAL — *despite the literal reading being
-false at LOCAL pictures* — is direct positive evidence for the existence
-of an embedded local reading. -/
-theorem local_gt_literal_some : exp2SomeRate .local_ > exp2SomeRate .literal := by decide
+/-! ### The rows -/
 
-/-- Existence of the local reading in non-monotonic environments: for
-both 'some' and 'or', LOCAL is rated far above FALSE (paper Figure
-12). For 'or' the LITERAL > LOCAL contrast does not hold (37% vs 58%),
-but LOCAL > FALSE holds. -/
-theorem local_gt_false_both_items :
-    exp2SomeRate .local_ > exp2SomeRate .false_ ∧
-    exp2OrRate .local_ > exp2OrRate .false_ := by decide
+/-- The two experiments. -/
+inductive Experiment where
+  | one
+  | two
+  deriving DecidableEq, Repr
 
-/-- The unrestricted globalist collapses at the diagnostic condition: the one reading true at
-LOCAL is beyond a globalist derivation's reach (`Exp2Some.local_not_globallyDerivable`), so its
-available set there is empty, exactly as at FALSE — with the §3.2 conjecture, it predicts
-LOCAL = FALSE, against the observed 73% versus 6.7%. -/
-theorem T3_at_local_collapses_to_false :
-    availableAt Exp2Some.reading .T3_unrestrictedGlobalist (Exp2Condition.witness .local_) =
-      availableAt Exp2Some.reading .T3_unrestrictedGlobalist (Exp2Condition.witness .false_) := by
-  decide +kernel
+def Experiment.key : Experiment → String
+  | .one => "1"
+  | .two => "2"
 
-/-- The localist keeps the two apart: it admits the local reading, so LOCAL makes strictly more
-available than FALSE, and it predicts the observed gap. -/
-theorem T2_at_local_strict_superset_false :
-    availableAt Exp2Some.reading .T2_localist (Exp2Condition.witness .false_) ⊂
-      availableAt Exp2Some.reading .T2_localist (Exp2Condition.witness .local_) := by
+/-- The two scalar items, *certains* and *ou*. -/
+inductive Item where
+  | some
+  | or
+  deriving DecidableEq, Repr
+
+def Item.key : Item → String
+  | .some => "some"
+  | .or => "or"
+
+/-- The mean rating, in per-mille, of an item in a condition of an experiment. -/
+def rating (e : Experiment) (i : Item) (env cond : String) : Option ℕ :=
+  (Examples.all.find? λ r =>
+    r.feature? "experiment" == some e.key && r.feature? "item" == some i.key &&
+      r.feature? "environment" == some env && r.feature? "condition" == some cond).bind
+    (·.nat? "rating")
+
+/-- The rating of a target condition of Experiment 1. -/
+def rating₁ (i : Item) (c : Exp1Condition) : Option ℕ := rating .one i "universal" c.key
+
+/-- The rating of a target condition of Experiment 2. -/
+def rating₂ (i : Item) (c : Exp2Condition) : Option ℕ := rating .two i "exactlyOne" c.key
+
+/-- The rating of a downward-entailing control. -/
+def ratingDE (e : Experiment) (i : Item) (c : DEControlCondition) : Option ℕ :=
+  rating e i "de" c.key
+
+/-! ### Experiment 1 -/
+
+/-- Figure 5: for both items the ratings rise with the readings true at the condition's witness,
+the conjecture of §3.2 on Experiment 1, which subsumes the contrast between STRONG and WEAK
+that only the truth of the local reading separates. -/
+theorem exp1_monotone (i : Item) :
+    ∃ r₀ ∈ rating₁ i .false_, ∃ r₁ ∈ rating₁ i .literal, ∃ r₂ ∈ rating₁ i .weak,
+      ∃ r₃ ∈ rating₁ i .strong,
+        RatingsMonotone [(r₀, (Exp1Condition.truthSet .false_).card),
+          (r₁, (Exp1Condition.truthSet .literal).card), (r₂, (Exp1Condition.truthSet .weak).card),
+          (r₃, (Exp1Condition.truthSet .strong).card)] := by
+  cases i <;> decide +kernel
+
+/-- The restricted globalist leaves the same readings available at STRONG as at WEAK, the local
+reading being true at STRONG but beyond a matrix-only mechanism, so it predicts equal ratings. -/
+theorem restrictedGlobalist_strong_eq_weak :
+    availableAt Exp1Some.reading .restrictedGlobalist (Exp1Condition.witness .strong) =
+      availableAt Exp1Some.reading .restrictedGlobalist (Exp1Condition.witness .weak) := by
   decide
 
-/-- Where Experiment 1 could not separate the two theories, Experiment 2 does. -/
-theorem T2_T3_disagree_at_local :
-    availableAt Exp2Some.reading .T3_unrestrictedGlobalist (Exp2Condition.witness .local_) ≠
-      availableAt Exp2Some.reading .T2_localist (Exp2Condition.witness .local_) := by
-  decide +kernel
+/-- The localist leaves strictly more available at STRONG than at WEAK and so predicts the
+gap. -/
+theorem localist_weak_ssubset_strong :
+    availableAt Exp1Some.reading .localist (Exp1Condition.witness .weak) ⊂
+      availableAt Exp1Some.reading .localist (Exp1Condition.witness .strong) := by
+  decide
 
-end ExperimentTwo
+/-- The unrestricted globalist agrees with the localist on every condition of Experiment 1,
+the local reading being within its reach there, which is why the experiment cannot separate
+them. -/
+theorem localist_eq_unrestrictedGlobalist_exp1 (c : Exp1Condition) :
+    availableAt Exp1Some.reading .localist c.witness =
+      availableAt Exp1Some.reading .unrestrictedGlobalist c.witness := by
+  cases c <;> decide +kernel
 
-
--- ============================================================================
--- §5.5.4 DE controls in Exp 2 (paradigm-priming finding)
--- ============================================================================
-
-/-- DE control 'some' rates from Exp 2 (paper Figure 13, page 29),
-per-mille. Higher ?LOCAL rates than in Exp 1 (51% vs 25%) — paper
-§5.5.4 attributes to paradigm-priming from the non-monotonic main task
-making local readings more accessible. -/
-def deControlsExp2Some : DEControlCondition → Nat
-  | .de_false_  => 33
-  | .de_qLocal  => 510
-  | .de_both    => 970
-
-/-- DE control 'or' rates from Exp 2 (paper Figure 13, page 29),
-per-mille. -/
-def deControlsExp2Or : DEControlCondition → Nat
-  | .de_false_  => 45
-  | .de_qLocal  => 220
-  | .de_both    => 950
-
-
--- ============================================================================
--- Cross-paper bridges
--- ============================================================================
-
-section Bridges
-
-/-! ## Bridges to GP09 and the Gricean diagnostics
-
-Three connections to existing linglib content:
-
-1. **GP09 paradigm comparison**: CS11 replicates GP09's no-local-SI-in-DE
-   finding (in DE controls), but contests GP09's no-local-SI-anywhere
-   conclusion via the universal-embedding STRONG > WEAK and the
-   non-monotonic LOCAL > LITERAL findings. The disagreement is paradigm
-   relative — GP09's binary inference task vs CS11's graded TVJ. We do
-   not state "GP09 wrong / CS11 right"; we state the empirical
-   complementarity and the methodological argument.
-2. **Diagnostics**: the qualitative "embedded local reading exists"
-   conclusion is submitted to the Gricean diagnostics over `Picture6`
-   (Innocent Exclusion / localist EXH family —
-   the [fox-2007] / [chierchia-fox-spector-2008] / T2 cluster).
-3. **GP09 *exactly two* connection**: GP09's Exp 3 *exactly two*
-   condition is the binary-task analog of CS11's Exp 2 *exactly one*.
-   GP09 found ~50% inference rate (chance); CS11 finds 73% LOCAL
-   rating. The paradigm shift recovers the localist signal. -/
-
-open GeurtsPouscoulous2009
-
-/-- A real cross-experiment claim: both papers find DE local-SI rates
-*well below* their respective high baselines.
-- CS11 Exp 1: `de_qLocal` (25% 'some') is far below `de_both` (92%)
-- GP09 Exp 4: alleged-SI ambiguity (~6%) is far below genuine-ambiguity
-  baseline (70% mean across 5 controls)
-
-Both gaps exceed 50 percentage points; both papers' DE results
-qualitatively agree even though their absolute rates differ
-(paradigm-relative differences). -/
-theorem cs_gp_agree_on_de_local_far_below_baseline :
-    deControlsExp1Some .de_qLocal < deControlsExp1Some .de_both ∧
-    deControlsExp1Or .de_qLocal < deControlsExp1Or .de_both ∧
-    GeurtsPouscoulous2009.exp4NonDeConventionalistConsistent *
-        (GeurtsPouscoulous2009.genuineAmbiguityRates.length * 100) <
-      GeurtsPouscoulous2009.genuineAmbiguityRates.sum *
-        GeurtsPouscoulous2009.exp4NonDeTotalResponses := by decide
-
-/-- The local-reading SI is *reinforceable*: there's a picture (WEAK
-condition) where the literal reading holds but the local reading
-(`Exp1Some.local_`, the [fox-2007]-style localist EXH reading that T2
-represents) fails. The `IsReinforceable` diagnostic (Sadock 1978) thus
-applies to the (literal, local) pair. -/
-theorem localReadingExistsExp1_isReinforceable :
-    Implicature.IsReinforceable Exp1Some.literal Exp1Some.local_ := by
+/-- The local reading is reinforceable over the literal one: at WEAK the literal reading holds
+and the local one fails ([sadock-1978]'s diagnostic). -/
+theorem local_isReinforceable : Implicature.IsReinforceable Exp1Some.literal Exp1Some.local_ := by
   refine ⟨Exp1Condition.witness .weak, ?_, ?_⟩
   · decide
   · show ¬ Exp1Some.local_ (Exp1Condition.witness .weak)
     decide
 
-end Bridges
+/-! ### Experiment 2 -/
 
+/-- Figure 12: for *certains* the condition where only the local reading is true is rated above
+the one where only the literal reading is, though the literal reading is false there. -/
+theorem exp2_local_gt_literal_some :
+    ∃ l ∈ rating₂ .some .local_, ∃ t ∈ rating₂ .some .literal, t < l := by
+  decide +kernel
 
--- ============================================================================
--- §6 Conclusions
--- ============================================================================
+/-- Figure 12: for both items the local condition is rated far above the false one. -/
+theorem exp2_false_lt_local (i : Item) :
+    ∃ f ∈ rating₂ i .false_, ∃ l ∈ rating₂ i .local_, f < l := by
+  cases i <;> decide +kernel
 
-/-! ## §6 Conclusions
+/-- The unrestricted globalist collapses at the diagnostic condition: the one reading true at
+LOCAL is beyond its reach, so it leaves nothing available there, as at FALSE, and predicts equal
+ratings. -/
+theorem unrestrictedGlobalist_local_eq_false :
+    availableAt Exp2Some.reading .unrestrictedGlobalist (Exp2Condition.witness .local_) =
+      availableAt Exp2Some.reading .unrestrictedGlobalist (Exp2Condition.witness .false_) := by
+  decide +kernel
 
-The paper's verdict (page 31): "scalar items in non-monotonic
-environments give rise to robust local readings, even more robust than
-the literal reading. Importantly, no globalist theory of scalar
-implicatures can predict the local reading to be possible in such
-cases, where the local reading is logically independent of the literal
-meaning. This result thus seems to vindicate the localist approach."
+/-- The localist keeps the two apart and predicts the observed gap. -/
+theorem localist_false_ssubset_local :
+    availableAt Exp2Some.reading .localist (Exp2Condition.witness .false_) ⊂
+      availableAt Exp2Some.reading .localist (Exp2Condition.witness .local_) := by
+  decide
 
-Methodological conclusion: graded judgments reveal ambiguities that
-binary judgments mask; CS11 detected what GP09 missed. The
-[geurts-pouscoulous-2009] null result is paradigm-relative, not a
-fact about the language faculty.
+/-- Where Experiment 1 could not separate the two theories, Experiment 2 does. -/
+theorem localist_ne_unrestrictedGlobalist_local :
+    availableAt Exp2Some.reading .unrestrictedGlobalist (Exp2Condition.witness .local_) ≠
+      availableAt Exp2Some.reading .localist (Exp2Condition.witness .local_) := by
+  decide +kernel
 
-Open questions noted by the paper itself (page 32):
-- Which design feature(s) made local readings detectable — graded
-  judgments? Better pictures? Inclusion of LOCAL-true conditions?
-- Does the paradigm generalize to other ambiguities (scope, etc.)?
-- Does this provide *decisive* evidence for grammaticalism, or could a
-  localist *pragmatic* account (à la Recanati's free enrichment) do
-  the work? -/
+/-! ### The downward-entailing controls (§4.4.4, §5.5.4) -/
+
+/-- Figures 6 and 13: in both experiments and for both items the condition where only the
+marginal local reading is true is rated far below the one where both readings are, the finding
+of [geurts-pouscoulous-2009]'s fourth experiment. -/
+theorem de_qLocal_lt_both (e : Experiment) (i : Item) :
+    ∃ q ∈ ratingDE e i .qLocal, ∃ b ∈ ratingDE e i .both, q < b := by
+  cases e <;> cases i <;> decide +kernel
+
+/-- §5.5.4: the same controls are rated higher after the non-monotonic items of Experiment 2
+than after Experiment 1, which the paper attributes to exposure to salient local readings. -/
+theorem de_qLocal_priming (i : Item) :
+    ∃ a ∈ ratingDE .one i .qLocal, ∃ b ∈ ratingDE .two i .qLocal, a < b := by
+  cases i <;> decide +kernel
+
+/-- §5.5.4: even primed, the local reading under negation stays below the local reading under
+*exactly one*. -/
+theorem de_qLocal_lt_local (i : Item) :
+    ∃ q ∈ ratingDE .two i .qLocal, ∃ l ∈ rating₂ i .local_, q < l := by
+  cases i <;> decide +kernel
+
+/-- The two papers agree on downward-entailing contexts even where they disagree elsewhere: the
+marginal local reading is rated far below the baseline here, and in
+[geurts-pouscoulous-2009]'s fourth experiment the responses consistent with a local
+implicature fall far below its genuine-ambiguity baseline. -/
+theorem de_agrees_with_geurts_pouscoulous :
+    (∀ i : Item, ∃ q ∈ ratingDE .one i .qLocal, ∃ b ∈ ratingDE .one i .both, q < b) ∧
+      GeurtsPouscoulous2009.exp4NonDeConventionalistConsistent *
+          (GeurtsPouscoulous2009.genuineAmbiguityRates.length * 100) <
+        GeurtsPouscoulous2009.genuineAmbiguityRates.sum *
+          GeurtsPouscoulous2009.exp4NonDeTotalResponses :=
+  ⟨de_qLocal_lt_both .one, by decide⟩
 
 end ChemlaSpector2011

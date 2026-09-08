@@ -1,106 +1,95 @@
-import Linglib.Features.Gender.Basic
 import Linglib.Fragments.Bantu.Params
 import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
-# Shona: Basic Types
+# Shona noun classes
 
-[carstens-2026]
+This file defines the Shona noun-class system: the fourteen classes with their subject markers,
+the eight genders that pair a singular class with its plural, two of them sharing a plural
+class, the semantic core each gender bears ([carstens-2026]), and the parameters of the class
+system as a classifier device.
 
-The Shona noun class system with eight singular/plural pairings and
-semantic core associations following [carstens-2026] §3.5, §5.2.
+## References
 
-Shona has fourteen active noun classes (1–14), organized into eight genders.
-Unlike Xhosa's three-way semantic split ([human]/[inanimate]/[animal]),
-Shona has a binary split: [human] (classes 1/2) vs everything else. The
-[animal] association with classes 9/10 has bleached in Shona, leaving only
-two interpretable genders.
-
-## Agreement with conjoined singulars
-
-The only consistent agreement patterns with conjoined singulars are:
-- Class 2 *va-* for [human] conjuncts
-- Class 8 *zvi-* for [non-human] conjuncts
-
-Six of eight genders are uninterpretable, so default agreement dominates.
-Gender-matching plural agreement is the exception, not the rule
-([carstens-2026] §3.5, §5.2).
+* [carstens-2026]
 -/
 
 namespace Shona
 
 open Bantu
 
--- ============================================================================
--- § 1: Noun Classes
--- ============================================================================
+/-! ### Classes -/
 
-/-- Shona noun classes. Standard Bantu numbering (1–14).
-    Classes 15–18 are absent or non-productive. Class 11 plurals
-    are syncretic with class 10; class 14 plurals use class 6. -/
+/-- The noun classes in the Bantu numbering; classes 15–18 are absent or unproductive. -/
 inductive NounClass where
-  | cl1     -- mu- (human singular): murume 'man'
-  | cl2     -- va- (human plural): varume 'men'
-  | cl3     -- mu- (singular): muti 'tree'
-  | cl4     -- mi- (plural): miti 'trees'
-  | cl5     -- zai/ri- (singular): zai 'egg'
-  | cl6     -- ma- (plural): mazai 'eggs'
-  | cl7     -- chi- (singular): chingwa 'bread'
-  | cl8     -- zvi- (plural): zvingwa 'loaves'
-  | cl9     -- n- (singular): imbwa 'dog'
-  | cl10    -- n-/dz- (plural): imbwa 'dogs'
-  | cl11    -- ru- (singular): rukova 'stream'
-  | cl12    -- ka- (diminutive singular): kasikana 'small girl'
-  | cl13    -- tu- (diminutive plural): tusikana 'small girls'
-  | cl14    -- hu-/u- (singular): huchi 'honey'
+  /-- *mu-*: murume 'man'. -/
+  | cl1
+  /-- *va-*: varume 'men'. -/
+  | cl2
+  /-- *mu-*: muti 'tree'. -/
+  | cl3
+  /-- *mi-*: miti 'trees'. -/
+  | cl4
+  /-- *ri-*, often unprefixed: zai 'egg'. -/
+  | cl5
+  /-- *ma-*: mazai 'eggs'. -/
+  | cl6
+  /-- *chi-*: chingwa 'bread'. -/
+  | cl7
+  /-- *zvi-*: zvingwa 'loaves'. -/
+  | cl8
+  /-- *n-*: imbwa 'dog'. -/
+  | cl9
+  /-- *n-*, *dzi-*: imbwa 'dogs'. -/
+  | cl10
+  /-- *ru-*: rukova 'stream'. -/
+  | cl11
+  /-- *ka-*, the diminutive singular: kasikana 'small girl'. -/
+  | cl12
+  /-- *tu-*, the diminutive plural: tusikana 'small girls'. -/
+  | cl13
+  /-- *hu-*, *u-*: huchi 'honey'. -/
+  | cl14
   deriving DecidableEq, Repr
 
-def NounClass.classNumber : NounClass → Nat
-  | .cl1 => 1 | .cl2 => 2 | .cl3 => 3 | .cl4 => 4 | .cl5 => 5
-  | .cl6 => 6 | .cl7 => 7 | .cl8 => 8 | .cl9 => 9 | .cl10 => 10
-  | .cl11 => 11 | .cl12 => 12 | .cl13 => 13 | .cl14 => 14
-
-def NounClass.isSingular : NounClass → Bool
-  | .cl1 | .cl3 | .cl5 | .cl7 | .cl9 | .cl11 | .cl12 | .cl14 => true
-  | _ => false
-
--- ============================================================================
--- § 2: Subject Agreement Prefixes
--- ============================================================================
-
-/-- Subject marker prefix for each class on the verb.
-    From examples in [carstens-2026] §3.5. -/
+/-- The subject marker of a class on the verb. -/
 def NounClass.subjPrefix : NounClass → String
-  | .cl1  => "a"
-  | .cl2  => "va"
-  | .cl3  => "u"
-  | .cl4  => "i"
-  | .cl5  => "ri"
-  | .cl6  => "a"
-  | .cl7  => "chi"
-  | .cl8  => "zvi"
-  | .cl9  => "i"
+  | .cl1 => "a"
+  | .cl2 => "va"
+  | .cl3 => "u"
+  | .cl4 => "i"
+  | .cl5 => "ri"
+  | .cl6 => "a"
+  | .cl7 => "chi"
+  | .cl8 => "zvi"
+  | .cl9 => "i"
   | .cl10 => "dzi"
   | .cl11 => "ru"
   | .cl12 => "ka"
   | .cl13 => "tu"
   | .cl14 => "hu"
 
--- ============================================================================
--- § 3: Gender (Singular/Plural Pairings)
--- ============================================================================
+/-! ### Genders -/
 
-/-- Shona genders: eight singular/plural noun class pairings.
-    From [carstens-2026] (16). -/
+/-- The eight genders, each pairing a singular class with its plural; the plurals of classes 11
+and 14 are those of classes 9 and 5. -/
 inductive Gender where
-  | genderA   -- cl1/cl2 (human)
-  | genderB   -- cl3/cl4 (trees/plants)
-  | genderC   -- cl5/cl6
-  | genderD   -- cl7/cl8 (inanimate/non-human default)
-  | genderE   -- cl9/cl10 (animals, diverse)
-  | genderF   -- cl11/cl10 (streams, extended objects)
-  | genderG   -- cl14/cl6
-  | genderH   -- cl12/cl13 (diminutive)
+  /-- Classes 1/2. -/
+  | genderA
+  /-- Classes 3/4. -/
+  | genderB
+  /-- Classes 5/6. -/
+  | genderC
+  /-- Classes 7/8. -/
+  | genderD
+  /-- Classes 9/10. -/
+  | genderE
+  /-- Classes 11/10. -/
+  | genderF
+  /-- Classes 14/6. -/
+  | genderG
+  /-- Classes 12/13, the diminutives. -/
+  | genderH
   deriving DecidableEq, Repr
 
 def Gender.singularClass : Gender → NounClass
@@ -139,33 +128,12 @@ def Gender.ofSingular : NounClass → Option Gender
     ofSingular g.singularClass = some g := by
   cases g <;> rfl
 
--- ============================================================================
--- § 4: Semantic Core Assignments ([carstens-2026] §5.2)
--- ============================================================================
-
-/-- Semantic core status for each Shona gender.
-
-    [carstens-2026] §5.2: Shona has a binary [±human] split.
-    Only classes 1/2 have the [human] core. Classes 7/8 serve as the
-    non-human default — the core for "all and only non-humans." The
-    [animal] association with 9/10 has bleached; the remaining six
-    genders are purely formal (uninterpretable). -/
+/-- The semantic core of each gender: A bears [human] and D [non-human], the core and default of
+everything else; the other six bear none. -/
 def Gender.status : Gender → GenderStatus
   | .genderA => .interpretable .human
   | .genderD => .interpretable .nonhuman
   | _ => .uninterpretable
-
--- ============================================================================
--- § 5: Bridge to Gender
--- ============================================================================
-
-/-- Map Shona gender classes to the shared surface-level gender type.
-    Gender A (cl1/cl2, human) → animate; all others → inanimate.
-    Shona's binary [±human] split maps naturally to the animate/inanimate
-    distinction. -/
-def Gender.toGender : Gender → _root_.Gender
-  | .genderA => .animate
-  | _ => .inanimate
 
 /-! ### Noun-class parameters -/
 
