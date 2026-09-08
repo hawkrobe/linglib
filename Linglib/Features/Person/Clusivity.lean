@@ -1,3 +1,4 @@
+import Linglib.Core.Data.Setoid.Basic
 import Linglib.Features.Person.Decomposition
 
 /-!
@@ -7,9 +8,9 @@ A person paradigm marks the three 'we' categories 1+2, 1+2+3 and 1+3 either by a
 of their own or by one that also marks a singular category, and groups them in some way.
 [cysouw-2003]'s Fig. 3.1 writes such a pattern with a letter per specialized morpheme class
 and a dash where a singular morpheme is reused; of the fifteen possible patterns five are
-common (his Table 3.2) and form `System`. Each type's `pattern` is that notation as a
-labelling of the four speaker-including categories, the singular speaker standing for any
-singular morpheme, and the four questions of his Fig. 3.10 are read off the labelling. The
+common (his Table 3.2) and form `System`. Each type's `pattern` is that notation as a setoid
+on `Cell`, the four speaker-including categories, the singular speaker standing for any
+singular morpheme, and the four questions of his Fig. 3.10 are read off the setoid. The
 First Person Hierarchy (3.26) is the linear order on the types, along which each question's
 answer is monotone.
 
@@ -26,72 +27,58 @@ of any first-person non-singular, not `System.noWe`.
 
 namespace Person.Clusivity
 
-section Pattern
+/-- Fig. 3.1's four cells, the categories that include the speaker; the singular speaker
+stands for every singular morpheme. -/
+abbrev Cell := {c : Category // c.IncludesSpeaker}
 
-variable {α β : Type*} (f : Category → α)
+namespace Cell
 
-/-- Some 'we' category has a morpheme of its own (Fig. 3.10's first question). -/
-def SpecializedWe : Prop := ∃ c : Category, c.IsFirstPersonComplex ∧ f c ≠ f .s1
+/-- The singular speaker. -/
+def s1 : Cell := ⟨.s1, by decide⟩
 
-/-- Both inclusive categories have a morpheme of their own, shared neither with a singular
-nor with the exclusive (Fig. 3.10's second question, read as his Fig. 3.8 reads it for the
-common types). -/
+/-- The minimal inclusive 1+2. -/
+def minIncl : Cell := ⟨.minIncl, by decide⟩
+
+/-- The augmented inclusive 1+2+3. -/
+def augIncl : Cell := ⟨.augIncl, by decide⟩
+
+/-- The exclusive 1+3. -/
+def excl : Cell := ⟨.excl, by decide⟩
+
+end Cell
+
+section Questions
+
+variable (r : Setoid Cell)
+
+/-- Some 'we' cell is not marked like the speaker (Fig. 3.10's first question). -/
+def SpecializedWe : Prop := ∃ c : Cell, c.1.IsFirstPersonComplex ∧ ¬ r c Cell.s1
+
+/-- Both inclusive cells are marked neither like the speaker nor like the exclusive
+(Fig. 3.10's second question, read as his Fig. 3.8 reads it for the common types). -/
 def SpecializedInclusive : Prop :=
-  ∀ c : Category, c.IsInclusive → f c ≠ f .s1 ∧ f c ≠ f .excl
+  ∀ c : Cell, c.1.IsInclusive → ¬ r c Cell.s1 ∧ ¬ r c Cell.excl
 
-/-- The exclusive has a morpheme of its own (Fig. 3.10's third question). -/
+/-- The exclusive is marked neither like the speaker nor like an inclusive cell (Fig. 3.10's
+third question). -/
 def SpecializedExclusive : Prop :=
-  f .excl ≠ f .s1 ∧ ∀ c : Category, c.IsInclusive → f .excl ≠ f c
+  ¬ r Cell.excl Cell.s1 ∧ ∀ c : Cell, c.1.IsInclusive → ¬ r Cell.excl c
 
-/-- Minimal and augmented inclusive each have a morpheme of their own, marked apart
-(Fig. 3.10's fourth question). -/
-def SplitInclusive : Prop := f .minIncl ≠ f .augIncl ∧ f .minIncl ≠ f .s1 ∧ f .augIncl ≠ f .s1
+/-- Minimal and augmented inclusive are marked apart and neither like the speaker (Fig. 3.10's
+fourth question). -/
+def SplitInclusive : Prop :=
+  ¬ r Cell.minIncl Cell.augIncl ∧ ¬ r Cell.minIncl Cell.s1 ∧ ¬ r Cell.augIncl Cell.s1
 
-/-- Two labellings group the speaker-including categories, Fig. 3.1's four cells, alike. -/
-def SamePattern (g : Category → β) : Prop :=
-  ∀ a b : Category, a.IncludesSpeaker → b.IncludesSpeaker → (f a = f b ↔ g a = g b)
+variable [DecidableRel (⇑r)]
 
-section Decidable
-
-variable [DecidableEq α] [DecidableEq β]
-
-instance : Decidable (SpecializedWe f) := by unfold SpecializedWe; infer_instance
-instance : Decidable (SpecializedInclusive f) := by
+instance : Decidable (SpecializedWe r) := by unfold SpecializedWe; infer_instance
+instance : Decidable (SpecializedInclusive r) := by
   unfold SpecializedInclusive; infer_instance
-instance : Decidable (SpecializedExclusive f) := by
+instance : Decidable (SpecializedExclusive r) := by
   unfold SpecializedExclusive; infer_instance
-instance : Decidable (SplitInclusive f) := by unfold SplitInclusive; infer_instance
-instance (g : Category → β) : Decidable (SamePattern f g) := by
-  unfold SamePattern; infer_instance
+instance : Decidable (SplitInclusive r) := by unfold SplitInclusive; infer_instance
 
-end Decidable
-
-variable {f} {g : Category → β}
-
-theorem SamePattern.specializedWe_iff (h : SamePattern f g) :
-    SpecializedWe f ↔ SpecializedWe g :=
-  exists_congr λ c => and_congr_right λ hc =>
-    not_congr (h c _ hc.includesSpeaker (by decide))
-
-theorem SamePattern.specializedInclusive_iff (h : SamePattern f g) :
-    SpecializedInclusive f ↔ SpecializedInclusive g :=
-  forall_congr' λ c => imp_congr_right λ hc =>
-    and_congr (not_congr (h c _ hc.includesSpeaker (by decide)))
-      (not_congr (h c _ hc.includesSpeaker (by decide)))
-
-theorem SamePattern.specializedExclusive_iff (h : SamePattern f g) :
-    SpecializedExclusive f ↔ SpecializedExclusive g :=
-  and_congr (not_congr (h _ _ (by decide) (by decide)))
-    (forall_congr' λ c => imp_congr_right λ hc =>
-      not_congr (h _ c (by decide) hc.includesSpeaker))
-
-theorem SamePattern.splitInclusive_iff (h : SamePattern f g) :
-    SplitInclusive f ↔ SplitInclusive g :=
-  and_congr (not_congr (h _ _ (by decide) (by decide)))
-    (and_congr (not_congr (h _ _ (by decide) (by decide)))
-      (not_congr (h _ _ (by decide) (by decide))))
-
-end Pattern
+end Questions
 
 /-- The five common marking types of the first person complex ([cysouw-2003] Table 3.2, the
 common five of the fifteen patterns of his Fig. 3.1). -/
@@ -113,7 +100,7 @@ namespace System
 
 /-- Fig. 3.2's letters as morpheme classes, `0` being the class of the singular speaker,
 Fig. 3.1's dash, in which every category outside the first person complex is placed. -/
-def pattern : System → Category → ℕ
+def labels : System → Category → ℕ
   | .unifiedWe, .minIncl | .unifiedWe, .augIncl | .unifiedWe, .excl => 1
   | .onlyInclusive, .minIncl | .onlyInclusive, .augIncl => 1
   | .inclusiveExclusive, .minIncl | .inclusiveExclusive, .augIncl => 1
@@ -122,6 +109,9 @@ def pattern : System → Category → ℕ
   | .minimalAugmented, .augIncl => 2
   | .minimalAugmented, .excl => 3
   | _, _ => 0
+
+/-- The type's pattern, Fig. 3.2's column as a setoid on the four cells. -/
+abbrev pattern (t : System) : Setoid Cell := Setoid.ker (t.labels ∘ Subtype.val)
 
 /-- Some specialized 'we' morpheme exists. -/
 abbrev SpecializedWe (t : System) : Prop := Clusivity.SpecializedWe t.pattern
@@ -136,24 +126,25 @@ abbrev SpecializedExclusive (t : System) : Prop := Clusivity.SpecializedExclusiv
 abbrev SplitInclusive (t : System) : Prop := Clusivity.SplitInclusive t.pattern
 
 /-- The five patterns are distinct. -/
-theorem eq_of_samePattern {s t : System} (h : SamePattern s.pattern t.pattern) : s = t := by
-  revert s t h; decide
+theorem pattern_injective : Function.Injective pattern := by
+  show ∀ s t : System, _ → _; decide +kernel
 
 /-- A specialized exclusive requires a specialized inclusive ((3.23), Fig. 3.8). -/
 theorem specializedInclusive_of_specializedExclusive {t : System}
     (h : t.SpecializedExclusive) : t.SpecializedInclusive := by
-  revert t h; decide
+  revert t h; show ∀ t : System, _; decide +kernel
 
 /-- The converse of (3.23) fails at only-inclusive. -/
-theorem onlyInclusive_specializedInclusive : onlyInclusive.SpecializedInclusive := by decide
+theorem onlyInclusive_specializedInclusive : onlyInclusive.SpecializedInclusive := by
+  decide +kernel
 
 theorem onlyInclusive_not_specializedExclusive : ¬ onlyInclusive.SpecializedExclusive := by
-  decide
+  decide +kernel
 
 /-- A split inclusive requires a specialized exclusive ((3.24), Fig. 3.9). -/
 theorem specializedExclusive_of_splitInclusive {t : System} (h : t.SplitInclusive) :
     t.SpecializedExclusive := by
-  revert t h; decide
+  revert t h; show ∀ t : System, _; decide +kernel
 
 /-- Position on the First Person Hierarchy (3.26), the number of Fig. 3.10's questions
 answered positively: no-we, unified-we, only-inclusive, inclusive/exclusive,
@@ -172,19 +163,19 @@ instance : LinearOrder System := LinearOrder.lift' hierarchyRank (by decide)
 extends its predecessor's by one positive answer. -/
 theorem specializedWe_of_le {s t : System} (h : s ≤ t) (hs : s.SpecializedWe) :
     t.SpecializedWe := by
-  revert s t h hs; decide
+  revert s t h hs; show ∀ s t : System, _; decide +kernel
 
 theorem specializedInclusive_of_le {s t : System} (h : s ≤ t) (hs : s.SpecializedInclusive) :
     t.SpecializedInclusive := by
-  revert s t h hs; decide
+  revert s t h hs; show ∀ s t : System, _; decide +kernel
 
 theorem specializedExclusive_of_le {s t : System} (h : s ≤ t) (hs : s.SpecializedExclusive) :
     t.SpecializedExclusive := by
-  revert s t h hs; decide
+  revert s t h hs; show ∀ s t : System, _; decide +kernel
 
 theorem splitInclusive_of_le {s t : System} (h : s ≤ t) (hs : s.SplitInclusive) :
     t.SplitInclusive := by
-  revert s t h hs; decide
+  revert s t h hs; show ∀ s t : System, _; decide +kernel
 
 end System
 
