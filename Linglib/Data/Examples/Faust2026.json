@@ -1,0 +1,1485 @@
+[
+  {
+    "id": "faust2026_3a_pst3msg",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(3a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "kalat",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "PST.3MSG of 'receive'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "klt"
+      ],
+      [
+        "cell",
+        "pst3msg"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_3a_actionNoun",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(3a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "klita",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "action noun of 'receive'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "klt"
+      ],
+      [
+        "cell",
+        "actionNoun"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_3a_passPrtc",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(3a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "kalut",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "PASS.PRTC.3MSG of 'receive'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "klt"
+      ],
+      [
+        "cell",
+        "passPrtc"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_3b_pst3msg",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(3b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "kalal",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "PST.3MSG of 'include'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "kl"
+      ],
+      [
+        "cell",
+        "pst3msg"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_3b_actionNoun",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(3b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "klila",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "action noun of 'include'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "kl"
+      ],
+      [
+        "cell",
+        "actionNoun"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_3b_passPrtc",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(3b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "kalul",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "PASS.PRTC.3MSG of 'include'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "kl"
+      ],
+      [
+        "cell",
+        "passPrtc"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_3c_pst3msg",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(3c)"
+    },
+    "language": "hebr1245",
+    "primaryText": "kala",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "PST.3MSG of 'roast'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "klj"
+      ],
+      [
+        "cell",
+        "pst3msg"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_3c_actionNoun",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(3c)"
+    },
+    "language": "hebr1245",
+    "primaryText": "klija",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "action noun of 'roast'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "klj"
+      ],
+      [
+        "cell",
+        "actionNoun"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_3c_passPrtc",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(3c)"
+    },
+    "language": "hebr1245",
+    "primaryText": "kaluj",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "PASS.PRTC.3MSG of 'roast'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "klj"
+      ],
+      [
+        "cell",
+        "passPrtc"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5a_pfv",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5a)"
+    },
+    "language": "amha1245",
+    "primaryText": "säbbär-ä",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "PFV-3MSG of 'break'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sbr"
+      ],
+      [
+        "cell",
+        "pfv"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5a_ipfv",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5a)"
+    },
+    "language": "amha1245",
+    "primaryText": "jisäbr-all",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "IPFV-AUX.3MSG of 'break'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sbr"
+      ],
+      [
+        "cell",
+        "ipfv"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5a_juss",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5a)"
+    },
+    "language": "amha1245",
+    "primaryText": "jisbär",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "JUSS.3MSG of 'break'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sbr"
+      ],
+      [
+        "cell",
+        "juss"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5a_grnd",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5a)"
+    },
+    "language": "amha1245",
+    "primaryText": "säbr-o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "GRND-3MSG of 'break'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sbr"
+      ],
+      [
+        "cell",
+        "grnd"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5a_inf",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5a)"
+    },
+    "language": "amha1245",
+    "primaryText": "mäsbär",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "INF of 'break'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sbr"
+      ],
+      [
+        "cell",
+        "inf"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5b_pfv",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5b)"
+    },
+    "language": "amha1245",
+    "primaryText": "wäddäd-ä",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "PFV-3MSG of 'like'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "wd"
+      ],
+      [
+        "cell",
+        "pfv"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5b_ipfv",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5b)"
+    },
+    "language": "amha1245",
+    "primaryText": "jiwädd-all",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "IPFV-AUX.3MSG of 'like'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "wd"
+      ],
+      [
+        "cell",
+        "ipfv"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5b_juss",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5b)"
+    },
+    "language": "amha1245",
+    "primaryText": "jiwdäd",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "JUSS.3MSG of 'like'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "wd"
+      ],
+      [
+        "cell",
+        "juss"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5b_grnd",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5b)"
+    },
+    "language": "amha1245",
+    "primaryText": "wädd-o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "GRND-3MSG of 'like'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "wd"
+      ],
+      [
+        "cell",
+        "grnd"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5b_inf",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5b)"
+    },
+    "language": "amha1245",
+    "primaryText": "mäwdäd",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "INF of 'like'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "wd"
+      ],
+      [
+        "cell",
+        "inf"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5c_pfv",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5c)"
+    },
+    "language": "amha1245",
+    "primaryText": "fäʤʤ-ä",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "PFV-3MSG of 'scorch'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "fdj"
+      ],
+      [
+        "cell",
+        "pfv"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5c_ipfv",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5c)"
+    },
+    "language": "amha1245",
+    "primaryText": "jifäʤ-all",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "IPFV-AUX.3MSG of 'scorch'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "fdj"
+      ],
+      [
+        "cell",
+        "ipfv"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5c_juss",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5c)"
+    },
+    "language": "amha1245",
+    "primaryText": "jifiʤ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "JUSS.3MSG of 'scorch'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "fdj"
+      ],
+      [
+        "cell",
+        "juss"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5c_grnd",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5c)"
+    },
+    "language": "amha1245",
+    "primaryText": "fäʤt-o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "GRND-3MSG of 'scorch'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "fdj"
+      ],
+      [
+        "cell",
+        "grnd"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_5c_inf",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(5c)"
+    },
+    "language": "amha1245",
+    "primaryText": "mäfʤät",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "INF of 'scorch'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "fdj"
+      ],
+      [
+        "cell",
+        "inf"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12c_pfv",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12c)"
+    },
+    "language": "amha1245",
+    "primaryText": "sämm-a",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "PFV-3MSG of 'hear'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sma"
+      ],
+      [
+        "cell",
+        "pfv"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12c_ipfv",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12c)"
+    },
+    "language": "amha1245",
+    "primaryText": "jisäm-all",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "IPFV-AUX.3MSG of 'hear'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sma"
+      ],
+      [
+        "cell",
+        "ipfv"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12c_juss",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12c)"
+    },
+    "language": "amha1245",
+    "primaryText": "jisma",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "JUSS.3MSG of 'hear'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sma"
+      ],
+      [
+        "cell",
+        "juss"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12c_grnd",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12c)"
+    },
+    "language": "amha1245",
+    "primaryText": "sämt-o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "GRND-3MSG of 'hear'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sma"
+      ],
+      [
+        "cell",
+        "grnd"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12c_inf",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12c)"
+    },
+    "language": "amha1245",
+    "primaryText": "mäsmat",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "INF of 'hear'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sma"
+      ],
+      [
+        "cell",
+        "inf"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12d_pfv",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12d)"
+    },
+    "language": "amha1245",
+    "primaryText": "sam-ä",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "PFV-3MSG of 'kiss'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sam"
+      ],
+      [
+        "cell",
+        "pfv"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12d_ipfv",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12d)"
+    },
+    "language": "amha1245",
+    "primaryText": "jisim-all",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "IPFV-AUX.3MSG of 'kiss'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sam"
+      ],
+      [
+        "cell",
+        "ipfv"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12d_juss",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12d)"
+    },
+    "language": "amha1245",
+    "primaryText": "jisam",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "JUSS.3MSG of 'kiss'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sam"
+      ],
+      [
+        "cell",
+        "juss"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12d_grnd",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12d)"
+    },
+    "language": "amha1245",
+    "primaryText": "sam-o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "GRND-3MSG of 'kiss'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sam"
+      ],
+      [
+        "cell",
+        "grnd"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12d_inf",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12d)"
+    },
+    "language": "amha1245",
+    "primaryText": "mäsam",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "INF of 'kiss'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "sam"
+      ],
+      [
+        "cell",
+        "inf"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12e_pfv",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12e)"
+    },
+    "language": "amha1245",
+    "primaryText": "hed-ä",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "PFV-3MSG of 'go'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "hid"
+      ],
+      [
+        "cell",
+        "pfv"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12e_ipfv",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12e)"
+    },
+    "language": "amha1245",
+    "primaryText": "jihed-all",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "IPFV-AUX.3MSG of 'go'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "hid"
+      ],
+      [
+        "cell",
+        "ipfv"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12e_juss",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12e)"
+    },
+    "language": "amha1245",
+    "primaryText": "jihid",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "JUSS.3MSG of 'go'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "hid"
+      ],
+      [
+        "cell",
+        "juss"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12e_grnd",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12e)"
+    },
+    "language": "amha1245",
+    "primaryText": "hed-o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "GRND-3MSG of 'go'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "hid"
+      ],
+      [
+        "cell",
+        "grnd"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_12e_inf",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(12e)"
+    },
+    "language": "amha1245",
+    "primaryText": "mähed",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "INF of 'go'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "root",
+        "hid"
+      ],
+      [
+        "cell",
+        "inf"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9a_tavshil",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "tavʃil",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "cooked dish",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "masculine"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9a_tadrix",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "tadriχ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "briefing",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "masculine"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9a_tadpis",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "tadpis",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "printout",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "masculine"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9a_taxbiv",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "taχbiv",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "hobby",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "masculine"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9a_tazkir",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "tazkir",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "memo",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "masculine"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9a_tazkik",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "tazkik",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "distillate",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "masculine"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9a_tazrim",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "tazrim",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "flow",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "masculine"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9a_taxkir",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "taχkir",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "investigation",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "masculine"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9a_taskit",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "taskit",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "radio drama",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "masculine"
+      ],
+      [
+        "root",
+        "skt"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9b_tavnit",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "tavnit",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "mold",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "feminine"
+      ]
+    ],
+    "comment": "Related to [banuj] 'built' (QaTuL); the root's b spirantizes."
+  },
+  {
+    "id": "faust2026_9b_taglit",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "taglit",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "discovery",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "feminine"
+      ],
+      [
+        "root",
+        "glj"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9b_tadmit",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "tadmit",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(public) image",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "feminine"
+      ],
+      [
+        "root",
+        "dmj"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9b_tarmit",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "tarmit",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "hoax",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "feminine"
+      ],
+      [
+        "root",
+        "rmj"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9b_taxlit",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "taxlit",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "essence",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "feminine"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9b_tamtsit",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "tamtsit",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "concentrate (concrete)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "feminine"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9b_taanit",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "taanit",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "fast",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "feminine"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9b_tafnit",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "tafnit",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "turn of events",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "feminine"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "faust2026_9b_tatspit",
+    "source": {
+      "bibkey": "faust-2026",
+      "paperLabel": "(9b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "tatspit",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "viewpoint",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "gender",
+        "feminine"
+      ]
+    ],
+    "comment": ""
+  }
+]

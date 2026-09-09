@@ -24,8 +24,6 @@ head inventory is `Gender.KramerN`.
   canonical inventory `n_iFem` … `n_uMasc`
 * `Categorizer.Head.realizeGender` — Vocabulary Insertion into a
   `Gender.System`; `IsSet1` … `IsAnimacyBased` — the attested patterns
-* `Categorizer.Head.LicensesIntrusion` — gender-conditioned templatic
-  t-intrusion
 
 ## Main statements
 
@@ -246,18 +244,6 @@ inductive LicensingType where
   | semantic   -- Encyclopedia / List 3
   | arbitrary  -- PF / List 2
   deriving DecidableEq, Repr
-
-/-- The head licenses templatic [t]-intrusion: it is a nominal
-categorizer bearing a gender feature, whose exponent the bound root
-hosts ([faust-2026] (11), [lowenstamm-2014]) — canonically Set 1
-feminine, the Hebrew /t/ of taQTiL nouns and the Amharic /t/ of gerunds
-and infinitives. Verbal stems are blocked because gender is realized on
-the higher Agr head ([kramer-2020]). -/
-def Categorizer.Head.LicensesIntrusion (ch : Categorizer.Head) : Prop :=
-  ch.categorizer = .n ∧ ch.phi.gender.isSome
-
-instance : DecidablePred Categorizer.Head.LicensesIntrusion :=
-  fun _ => inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Arbitrary gender is exactly the failure of natural gender: the two
 interpretability classes partition the features. -/
