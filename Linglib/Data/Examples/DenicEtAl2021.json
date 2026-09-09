@@ -1,0 +1,696 @@
+[
+  {
+    "id": "denicetal2021_1",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "This animal is a siamese cat. → This animal is a cat.",
+    "discourseSegments": [
+      "This animal is a siamese cat.",
+      "This animal is a cat."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "positive"],
+      ["kind", "UE"],
+      ["direction", "subsetToSuperset"],
+      ["valid", "yes"]
+    ],
+    "comment": "An upward-entailing environment supports the subset-to-superset inference.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_2",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "This animal isn't a cat. → This animal isn't a siamese cat.",
+    "discourseSegments": [
+      "This animal isn't a cat.",
+      "This animal isn't a siamese cat."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "negative"],
+      ["kind", "DE"],
+      ["direction", "supersetToSubset"],
+      ["valid", "yes"]
+    ],
+    "comment": "A downward-entailing environment supports the superset-to-subset inference.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_3",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(3)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "This animal isn't a cat at all.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "negative"],
+      ["kind", "DE"],
+      ["pi", "npi"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_4",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(4)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "*This animal is a cat at all.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "positive"],
+      ["kind", "UE"],
+      ["pi", "npi"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_5",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I drank some coffee.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "positive"],
+      ["kind", "UE"],
+      ["pi", "ppi"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_6",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I didn't drink some coffee.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "some narrow scope under negation", "judgment": "unacceptable"},
+      {"name": "some wide scope over negation", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["environment", "negative"],
+      ["kind", "DE"],
+      ["pi", "ppi"]
+    ],
+    "comment": "The positive polarity item has no reading equivalent to I didn't drink any coffee.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_7",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(7)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Exactly 12 aliens saw birds. / Exactly 12 aliens saw doves.",
+    "discourseSegments": [
+      "Exactly 12 aliens saw birds.",
+      "Exactly 12 aliens saw doves."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "exactly12"],
+      ["kind", "NM"],
+      ["valid", "no"]
+    ],
+    "comment": "Neither sentence entails the other: a non-monotone environment.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_8",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(8)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Exactly 12 aliens saw some birds. / Exactly 12 aliens saw any birds.",
+    "discourseSegments": [
+      "Exactly 12 aliens saw some birds.",
+      "Exactly 12 aliens saw any birds."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "exactly12"],
+      ["kind", "NM"],
+      ["pi", "both"]
+    ],
+    "comment": "Both polarity items are acceptable to some extent in non-monotone environments, with individual variation for the negative one.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_9",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(9)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Exactly 12 aliens saw some doves.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "some doves are such that exactly 12 aliens saw them", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["environment", "exactly12"],
+      ["kind", "NM"],
+      ["pi", "ppi"]
+    ],
+    "comment": "The positive polarity item can take exceptional wide scope, under which it sits in an upward-entailing environment.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_11",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(11)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Each alien received a high score in all human IQ tests. → Aliens are very intelligent.",
+    "discourseSegments": [
+      "Each alien received a high score in all human IQ tests.",
+      "Aliens are very intelligent."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "training"],
+      ["expected", "follows"]
+    ],
+    "comment": "Training item rated 93% in Experiment 1.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_12",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Few aliens visited Paris. → All aliens visited the Eiffel Tower.",
+    "discourseSegments": [
+      "Few aliens visited Paris.",
+      "All aliens visited the Eiffel Tower."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "training"],
+      ["expected", "doesNotFollow"]
+    ],
+    "comment": "Training item rated 9% in Experiment 1.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_13",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(13)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Pink aliens have scary teeth. → Pink aliens are the most terrifying.",
+    "discourseSegments": [
+      "Pink aliens have scary teeth.",
+      "Pink aliens are the most terrifying."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "training"],
+      ["expected", "intermediate"]
+    ],
+    "comment": "Training item rated 68% in Experiment 1.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_14",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(14)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The purple alien saw (some) birds. → The purple alien saw doves.",
+    "discourseSegments": [
+      "The purple alien saw (some) birds.",
+      "The purple alien saw doves."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "positive"],
+      ["kind", "UE"],
+      ["direction", "supersetToSubset"],
+      ["pi", "ppi"],
+      ["valid", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_15",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(15)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every alien saw (some) birds. → Every alien saw doves.",
+    "discourseSegments": [
+      "Every alien saw (some) birds.",
+      "Every alien saw doves."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "every"],
+      ["kind", "UE"],
+      ["direction", "supersetToSubset"],
+      ["pi", "ppi"],
+      ["valid", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_16",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(16)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Many aliens saw (some) birds. → Many aliens saw doves.",
+    "discourseSegments": [
+      "Many aliens saw (some) birds.",
+      "Many aliens saw doves."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "many"],
+      ["kind", "UE"],
+      ["direction", "supersetToSubset"],
+      ["pi", "ppi"],
+      ["valid", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_17",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(17)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The purple alien didn't see (any) birds. → The purple alien didn't see doves.",
+    "discourseSegments": [
+      "The purple alien didn't see (any) birds.",
+      "The purple alien didn't see doves."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "negative"],
+      ["kind", "DE"],
+      ["direction", "supersetToSubset"],
+      ["pi", "npi"],
+      ["valid", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_18",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(18)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No alien saw (any) birds. → No alien saw doves.",
+    "discourseSegments": [
+      "No alien saw (any) birds.",
+      "No alien saw doves."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "no"],
+      ["kind", "DE"],
+      ["direction", "supersetToSubset"],
+      ["pi", "npi"],
+      ["valid", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_19",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(19)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Few aliens saw (any) birds. → Few aliens saw doves.",
+    "discourseSegments": [
+      "Few aliens saw (any) birds.",
+      "Few aliens saw doves."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "few"],
+      ["kind", "DE"],
+      ["direction", "supersetToSubset"],
+      ["pi", "npi"],
+      ["valid", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_20",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(20)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Exactly 12 aliens saw (some/any) birds. → Exactly 12 aliens saw doves.",
+    "discourseSegments": [
+      "Exactly 12 aliens saw (some/any) birds.",
+      "Exactly 12 aliens saw doves."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "exactly12"],
+      ["kind", "NM"],
+      ["direction", "supersetToSubset"],
+      ["pi", "both"],
+      ["valid", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_21",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(21)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Only 12 aliens saw (some/any) birds. → Only 12 aliens saw doves.",
+    "discourseSegments": [
+      "Only 12 aliens saw (some/any) birds.",
+      "Only 12 aliens saw doves."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "only12"],
+      ["kind", "NM"],
+      ["direction", "supersetToSubset"],
+      ["pi", "both"],
+      ["valid", "no"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_22",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(22)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every alien who did not see some doves is hairy. / Every alien who did not see any doves is hairy.",
+    "discourseSegments": [
+      "Every alien who did not see some doves is hairy.",
+      "Every alien who did not see any doves is hairy."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "everyNot"],
+      ["kind", "DN"],
+      ["pi", "both"]
+    ],
+    "comment": "Both items are licit in a doubly negative environment; the positive one can take narrow scope under both operators, and the negative one sits in a globally upward-entailing environment, licensed by the local one.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_23",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(23)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every alien who did not see (some/any) doves is hairy. → Every alien who did not see birds is hairy.",
+    "discourseSegments": [
+      "Every alien who did not see (some/any) doves is hairy.",
+      "Every alien who did not see birds is hairy."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "everyNot"],
+      ["kind", "DN"],
+      ["direction", "subsetToSuperset"],
+      ["pi", "both"],
+      ["valid", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_24",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(24)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No alien spent a year without seeing (some/any) doves. → No alien spent a year without seeing birds.",
+    "discourseSegments": [
+      "No alien spent a year without seeing (some/any) doves.",
+      "No alien spent a year without seeing birds."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "noWithout"],
+      ["kind", "DN"],
+      ["direction", "subsetToSuperset"],
+      ["pi", "both"],
+      ["valid", "yes"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_25",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(25)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Exactly 12 aliens saw some doves. → Exactly 12 aliens saw some birds.",
+    "discourseSegments": [
+      "Exactly 12 aliens saw some doves.",
+      "Exactly 12 aliens saw some birds."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "exactly12"],
+      ["kind", "NM"],
+      ["direction", "subsetToSuperset"],
+      ["pi", "ppi"],
+      ["valid", "no"]
+    ],
+    "comment": "Experiment 2's item with the positive polarity item in both premise and conclusion; the null result suggests the item does not take wide scope in non-monotone environments, §9.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_26",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(26)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every alien who did not see some doves is hairy. → Every alien who did not see birds is hairy.",
+    "discourseSegments": [
+      "Every alien who did not see some doves is hairy.",
+      "Every alien who did not see birds is hairy."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "some doves are such that every alien who didn't see them is hairy", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["environment", "everyNot"],
+      ["kind", "DN"],
+      ["direction", "subsetToSuperset"],
+      ["pi", "ppi"],
+      ["valid", "yes"]
+    ],
+    "comment": "Under the wide-scope reading (27) the inference still follows, a confound for the positive polarity item's effect in doubly negative environments.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_28",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(28)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No aliens saw birds. → No aliens saw doves.",
+    "discourseSegments": [
+      "No aliens saw birds.",
+      "No aliens saw doves."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "no"],
+      ["kind", "DE"],
+      ["direction", "supersetToSubset"],
+      ["pi", "noPI"],
+      ["valid", "yes"]
+    ],
+    "comment": "The working example of §10.2, with (29) its version with any and (31) the conclusion.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "denicetal2021_29",
+    "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(29)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No aliens saw any birds. → No aliens saw doves.",
+    "discourseSegments": [
+      "No aliens saw any birds.",
+      "No aliens saw doves."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["environment", "no"],
+      ["kind", "DE"],
+      ["direction", "supersetToSubset"],
+      ["pi", "npi"],
+      ["valid", "yes"]
+    ],
+    "comment": "Under domain widening, (30), the premise with any is stronger, so downward inferences from it follow a fortiori.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
