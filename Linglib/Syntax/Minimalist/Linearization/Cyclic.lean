@@ -85,6 +85,12 @@ theorem spelloutOrder_perm (h : ps.Perm qs) : spelloutOrder ps = spelloutOrder q
   exact propext ⟨spelloutOrder_mono fun p hp => h.mem_iff.mp hp,
     spelloutOrder_mono fun p hp => h.mem_iff.mpr hp⟩
 
+/-- Two Spell-outs ordering a pair both ways make an ordering contradiction: the derivation does
+not linearize, whatever else it contains. -/
+theorem not_consistent_of_pair {p q : List α} (hp : p ∈ phases) (hq : q ∈ phases)
+    (h₁ : [a, b] <+ p) (h₂ : [b, a] <+ q) : ¬ Consistent phases :=
+  fun h => h a (.tail (.single ⟨p, hp, h₁⟩) ⟨q, hq, h₂⟩)
+
 variable [DecidableEq α]
 
 /-- On a single duplicate-free snapshot, the induced order is index order. -/
@@ -112,11 +118,6 @@ theorem consistent_of_forall_sublist {q : List α} (h : ∀ p ∈ phases, p <+ q
     (Relation.TransGen.mono (fun _ _ ⟨p, hp, hs⟩ => ⟨q, List.mem_singleton_self q, hs.trans (h p hp)⟩)
       a a hab)
 
-/-- Two Spell-outs ordering a pair both ways make an ordering contradiction: the derivation does
-not linearize, whatever else it contains. -/
-theorem not_consistent_of_pair {p q : List α} (hp : p ∈ phases) (hq : q ∈ phases)
-    (h₁ : [a, b] <+ p) (h₂ : [b, a] <+ q) : ¬ Consistent phases :=
-  fun h => h a (.tail (.single ⟨p, hp, h₁⟩) ⟨q, hq, h₂⟩)
 
 /-! ### Decidability
 

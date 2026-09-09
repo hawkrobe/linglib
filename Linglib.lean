@@ -3063,3 +3063,4 @@ import Linglib.Data.Examples.Fortuny2024
 import Linglib.Data.Examples.Fox2007
 import Linglib.Data.Examples.Fox2018
 import Linglib.Data.Examples.FoxKatzir2011
+import Linglib.Data.Examples.FoxPesetsky2005
