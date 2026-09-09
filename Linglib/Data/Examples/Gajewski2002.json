@@ -1,0 +1,305 @@
+[
+  {
+    "id": "gajewski2002_ex4c",
+    "source": {
+      "bibkey": "barwise-cooper-1981",
+      "paperLabel": "(4c)"
+    },
+    "language": "stan1293",
+    "primaryText": "There was everyone in the room.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "there"
+      ],
+      [
+        "determiner",
+        "every"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "A strong quantifier in a there-sentence, the Definiteness Restriction of Milsark and Barwise and Cooper; its logical skeleton receives 1 under every assignment.",
+    "reportedIn": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(4c)"
+    }
+  },
+  {
+    "id": "gajewski2002_ex30a",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(30a)"
+    },
+    "language": "stan1293",
+    "primaryText": "There is every new student.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "there"
+      ],
+      [
+        "determiner",
+        "every"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "The logical skeleton [there [are [every n1]]] is an L-tautology: every element of the domain of properties is a subset of the domain of individuals."
+  },
+  {
+    "id": "gajewski2002_ex5a",
+    "source": {
+      "bibkey": "barwise-cooper-1981",
+      "paperLabel": "(5a)"
+    },
+    "language": "stan1293",
+    "primaryText": "There is a wolf at the door.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "there"
+      ],
+      [
+        "determiner",
+        "some"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": "A weak quantifier in a there-sentence.",
+    "reportedIn": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(5a)"
+    }
+  },
+  {
+    "id": "gajewski2002_ex5c",
+    "source": {
+      "bibkey": "barwise-cooper-1981",
+      "paperLabel": "(5c)"
+    },
+    "language": "stan1293",
+    "primaryText": "There was someone in the room.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "there"
+      ],
+      [
+        "determiner",
+        "some"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": "The skeleton [there [are [some n1]]] is false when the variable is assigned the empty set and true otherwise, so it is not L-analytic.",
+    "reportedIn": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(5c)"
+    }
+  },
+  {
+    "id": "gajewski2002_ex11a_every",
+    "source": {
+      "bibkey": "von-fintel-1993",
+      "paperLabel": "(11a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every student but Bill passed the exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "exceptive"
+      ],
+      [
+        "determiner",
+        "every"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": "A but-exceptive on a positive universal; its skeleton is contingent.",
+    "reportedIn": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(11a)"
+    }
+  },
+  {
+    "id": "gajewski2002_ex11a_no",
+    "source": {
+      "bibkey": "von-fintel-1993",
+      "paperLabel": "(11a)"
+    },
+    "language": "stan1293",
+    "primaryText": "No student but Bill passed the exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "exceptive"
+      ],
+      [
+        "determiner",
+        "no"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": "A but-exceptive on a negative universal; its skeleton is contingent.",
+    "reportedIn": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(11a)"
+    }
+  },
+  {
+    "id": "gajewski2002_ex11b",
+    "source": {
+      "bibkey": "von-fintel-1993",
+      "paperLabel": "(11b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some students but Bill passed the exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "exceptive"
+      ],
+      [
+        "determiner",
+        "some"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "A but-exceptive on a left-upward-monotone determiner: the least-exception schema is a contradiction under every assignment with a nonempty exception set.",
+    "reportedIn": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(11b)"
+    }
+  },
+  {
+    "id": "gajewski2002_ex34a",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(34a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every woman is a woman.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "everyIs"
+      ],
+      [
+        "determiner",
+        "every"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": "A garden-variety tautology whose skeleton replaces the two occurrences of woman by distinct variables, so it is not L-analytic."
+  },
+  {
+    "id": "gajewski2002_ex34b",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(34b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is smoking and John is not smoking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "andNot"
+      ],
+      [
+        "determiner",
+        "none"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": "A garden-variety contradiction whose skeleton has two distinct propositional variables, so it is not L-analytic."
+  }
+]
