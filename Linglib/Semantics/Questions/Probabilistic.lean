@@ -43,7 +43,7 @@ that introduced them) since their only consumer is the IKW 2025
 discourse-*only* study file.
 -/
 
-namespace Questions
+namespace Question
 
 open Question PMF
 
@@ -293,7 +293,7 @@ a Current Question — an RQ need not be a CQ, only relevant to one. -/
     `R` shifts the probability of some alternative of `Q`.
     [thomas-2026] Def 61. The relation is also lifted to
     declarative-as-singleton-issue contexts via `IsRelevantOf`. -/
-def IsRelevantTo (R Q : Question W) (μ : PMF W) : Prop :=
+def IsRelevantToUnder (R Q : Question W) (μ : PMF W) : Prop :=
   ∃ A ∈ alt R, ∃ A' ∈ alt Q, μ.condProbSet A A' ≠ μ.probOfSet A'
 
 /-- A *proposition* `R` is relevant to a question `Q` if conditioning
@@ -346,4 +346,4 @@ theorem IsResolutionEvidencedBy.isRelevantPropOf
   push Not at hcon
   exact absurd (hindep hcon) (ne_of_gt hRes.raises_prob)
 
-end Questions
+end Question

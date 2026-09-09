@@ -31,7 +31,7 @@ and verified against the delimiting principles.
 
 namespace GartnerGyuris2017
 
-open Questions
+open Question
 
 -- ============================================================================
 -- §1: Core Types

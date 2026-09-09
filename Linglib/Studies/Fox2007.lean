@@ -427,7 +427,7 @@ end Existential
 
 section Hamblin
 
-open Questions
+open Question
 
 variable {ι : Type*} {a : ι → Set W}
 variable (hsolo : ∀ i, ∃ u, u ∈ a i ∧ ∀ j, j ≠ i → u ∉ a j)
@@ -435,10 +435,10 @@ include hsolo
 
 /-- A group of two or more is innocently excludable given the existential answer. -/
 theorem isInnocentlyExcludable_conj {S : Finset ι} {i j : ι} (hi : i ∈ S) (hj : j ∈ S)
-    (hij : i ≠ j) : IsInnocentlyExcludable (conjClosure a) (⋃ i, a i) (conj a S) := by
-  refine .of_extension_consistent (conj_mem_conjClosure ⟨i, hi⟩) λ E hE => ?_
+    (hij : i ≠ j) : IsInnocentlyExcludable (conjClosure a) (⋃ i, a i) (conjFamily a S) := by
+  refine .of_extension_consistent (conjFamily_mem_conjClosure ⟨i, hi⟩) λ E hE => ?_
   obtain ⟨v, hv⟩ := hE.1.2.2
-  by_cases hvS : v ∈ conj a S
+  by_cases hvS : v ∈ conjFamily a S
   · obtain ⟨u, hui, hu⟩ := hsolo i
     refine ⟨u, ?_⟩
     rintro ψ (hψ | hψ)
@@ -446,13 +446,13 @@ theorem isInnocentlyExcludable_conj {S : Finset ι} {i j : ι} (hi : i ∈ S) (h
       · exact mem_iUnion.2 ⟨i, hui⟩
       · intro huT
         have hTi : ∀ k ∈ T, k = i := λ k hk =>
-          by_contra λ hki => hu k hki (mem_conj.1 huT k hk)
-        refine hv _ hψ (mem_conj.2 λ k hk => ?_)
+          by_contra λ hki => hu k hki (mem_conjFamily.1 huT k hk)
+        refine hv _ hψ (mem_conjFamily.2 λ k hk => ?_)
         rw [hTi k hk]
-        exact mem_conj.1 hvS i hi
+        exact mem_conjFamily.1 hvS i hi
     · rw [mem_singleton_iff] at hψ
       subst hψ
-      exact λ huS => hu j hij.symm (mem_conj.1 huS j hj)
+      exact λ huS => hu j hij.symm (mem_conjFamily.1 huS j hj)
   · refine ⟨v, ?_⟩
     rintro ψ (hψ | hψ)
     · exact hv ψ hψ
@@ -464,7 +464,7 @@ theorem not_isInnocentlyExcludable_atom (i : ι) :
     ¬ IsInnocentlyExcludable (conjClosure a) (⋃ i, a i) (a i) := by
   obtain ⟨u, hui, hu⟩ := hsolo i
   have hmem : ∀ k, a k ∈ conjClosure a := λ k =>
-    conj_singleton (a := a) k ▸ conj_mem_conjClosure ⟨k, Finset.mem_singleton_self k⟩
+    conjFamily_singleton (a := a) k ▸ conjFamily_mem_conjClosure ⟨k, Finset.mem_singleton_self k⟩
   rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (hmem i)]
   refine λ h => h ⟨mem_iUnion.2 ⟨i, hui⟩, ?_⟩ hui
   rintro ⟨v, hv, hvu, hnuv⟩
@@ -473,8 +473,8 @@ theorem not_isInnocentlyExcludable_atom (i : ι) :
   subst k
   refine hnuv λ c hc huc => ?_
   obtain ⟨T, -, rfl⟩ := hc
-  refine mem_conj.2 λ m hm => ?_
-  have hmi : m = i := by_contra λ hmi => hu m hmi (mem_conj.1 huc m hm)
+  refine mem_conjFamily.2 λ m hm => ?_
+  have hmi : m = i := by_contra λ hmi => hu m hmi (mem_conjFamily.1 huc m hm)
   rw [hmi]
   exact hkv
 
@@ -487,7 +487,7 @@ theorem exhIE_conjClosure [Fintype ι] [DecidableEq ι] :
   constructor
   · rintro ⟨⟨i, hi⟩, h⟩
     refine ⟨i, hi, λ j hj => by_contra λ hji =>
-      h (conj a {i, j}) ?_ (mem_conj.2 λ m hm => ?_)⟩
+      h (conjFamily a {i, j}) ?_ (mem_conjFamily.2 λ m hm => ?_)⟩
     · exact isInnocentlyExcludable_conj hsolo (S := {i, j}) (Finset.mem_insert_self i _)
         (Finset.mem_insert_of_mem (Finset.mem_singleton_self j)) λ h' => hji h'.symm
     · rcases Finset.mem_insert.1 hm with h1 | h1
@@ -501,11 +501,11 @@ theorem exhIE_conjClosure [Fintype ι] [DecidableEq ι] :
     by_cases hSi : ∀ j ∈ S, j = i
     · obtain ⟨j, hj⟩ := hS
       have : S = {i} := Finset.eq_singleton_iff_unique_mem.2 ⟨hSi j hj ▸ hj, hSi⟩
-      rw [this, conj_singleton] at hc
+      rw [this, conjFamily_singleton] at hc
       exact not_isInnocentlyExcludable_atom hsolo i hc
     · obtain ⟨j, hj⟩ := not_forall.1 hSi
       obtain ⟨hjS, hji⟩ := Classical.not_imp.1 hj
-      exact hji (huniq j (mem_conj.1 huc j hjS))
+      exact hji (huniq j (mem_conjFamily.1 huc j hjS))
 
 end Hamblin
 

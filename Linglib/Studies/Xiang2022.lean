@@ -67,7 +67,7 @@ defer that lift and work with the propositional projection here.
 namespace Xiang2022
 
 open Question
-open Questions
+open Question
 
 variable {W : Type*}
 

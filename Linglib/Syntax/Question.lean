@@ -40,7 +40,7 @@ WordOrder).
   it at `C` with PerspP-shift. `QuestionProfile` is silent on this — see
   `Studies/Dayal2025.lean`,
   `Studies/Holmberg2016.lean`, and
-  `Syntax/Minimalist/Questions.lean` for competing analyses.
+  `Syntax/Minimalist/Question.lean` for competing analyses.
 
 ## WALS aggregates
 

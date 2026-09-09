@@ -56,7 +56,7 @@ substrate is in place.
 namespace Karttunen1977
 
 open Question
-open Questions
+open Question
 
 variable {W : Type*}
 

@@ -55,7 +55,7 @@ a preceding negative turn.
 
 namespace GarassinoJacob2018
 
-open Question Questions Discourse Data.Examples
+open Question Discourse Data.Examples
 
 variable {W F : Type*}
 
