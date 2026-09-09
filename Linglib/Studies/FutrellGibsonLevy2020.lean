@@ -9,53 +9,42 @@ import Linglib.Processing.Memory.LossyContext
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
 /-!
-# Futrell, Gibson & Levy (2020): lossy-context surprisal
+# Futrell, Gibson and Levy (2020): Lossy-Context Surprisal
 
-[futrell-gibson-levy-2020] (Cognitive Science 44, e12814) unifies expectation-
-based and memory-based theories of processing difficulty: the difficulty of a
-word is its expected surprisal given a *lossy memory representation* of the
-context (Claims 1–4, eq. (3)). `Processing.Memory.Channel` formalizes the
-architecture (`MemoryProcess`, `expectedSurprisal` = eq. (3)) and
-`Processing.Memory.LossyContext` its lossless regime (§3.5.1); this file
-proves the paper's §5 result — **information locality** — in the
-single-dependency configuration, where the paper's first-order eq. (11)
-(Supplementary Material C) holds exactly: under erasure noise, expected
-surprisal is `h(w) − (1 − e)·pmi(w; y)`, the excess difficulty over plain
-surprisal is exactly `e · pmi` (eq. (12)), and the sign of the distance
-effect is the sign of the pmi — locality for positively associated words,
-anti-locality for negatively associated ones. Structural forgetting (§4) is
-parameter-space simulation (Figs. 3–4: forgetting iff the verb-final
-relative-clause rate `f` is low, as for English `f ≈ 0.2` but not German
-`f = 1`) and stays in prose.
+This file formalizes [futrell-gibson-levy-2020]'s unification of expectation-based and
+memory-based theories of processing difficulty. The difficulty of a word is its expected surprisal
+given a lossy memory representation of its context (the paper's Claims 1 to 4 and equation (3));
+`Processing.Memory.Channel` carries the architecture, a memory process with an encoder and a
+predictor, and `Processing.Memory.LossyContext` its lossless regime, in which surprisal theory is a
+special case (section 3.5.1). Here the paper's section 5 result, information locality, is proved
+in the single-dependency configuration, where its first-order approximation (equation (11),
+Supplementary Material C) holds exactly. Conditional surprisal is unconditional surprisal less
+pointwise mutual information (equation (10), `surprisal_eq_sub_pmi`), so under erasure noise
+(`erasure`), which keeps the context word with probability `1 - e`, expected surprisal is the
+unconditional surprisal less the surviving fraction of the pointwise mutual information
+(`expectedSurprisal_erasure`), the excess over plain surprisal is the erased fraction (equation
+(12)), and with progressive noise, a more distant word erased more often, difficulty grows with
+distance when the words are positively associated and shrinks when they are negatively associated
+(`locality`, `antilocality`; section 5.3.3). No erasure recovers surprisal and certain erasure
+recovers the prior (sections 3.5.1 and 3.4.2). Averaged over contexts, the difficulty of the
+Bayes-optimal comprehender of section 3.3 under lossy memory exceeds its difficulty under the true
+context by exactly the predictive information memory loses (section 3.4.1, Supplementary
+Material A; `bayesDifficulty_memJoint_sub_eq`), and the data processing inequality of section 3.2
+makes the loss nonnegative.
 
-## Main definitions
+## Implementation notes
 
-* `pmi` — pointwise mutual information of the next word with a one-word
-  context (§5.1.2), relative to the model's own empty-context prior.
-* `erasure` — the erasure-noise memory process (§5.1.3): the context's head
-  word survives with probability `1 − e`; an erased word reads as the empty
-  context.
+* Pointwise mutual information is taken relative to the language model's own empty-context
+  prediction, and the erasure process reads an erased word as the empty context.
+* Structural forgetting (section 4) is a parameter-space simulation over toy grammars, with
+  forgetting at low verb-final relative-clause rates as for English and none at the German rate;
+  it stays in prose.
+* The memory substrate is stated with mathlib's `PMF`; its move to the kernel face waits for the
+  last of its consumers.
 
-## Main results
+## References
 
-* `surprisal_eq_sub_pmi` — eq. (10): conditional surprisal is unconditional
-  surprisal minus pmi.
-* `expectedSurprisal_erasure` — eq. (11), exact single-dependency form:
-  `D_lc = h(w) − (1 − e) · pmi`.
-* `expectedSurprisal_erasure_sub_surprisal` — eq. (12): the excess difficulty
-  over plain surprisal is `e · pmi`.
-* `locality`, `antilocality` — §5.1.4: under progressive noise (more distant
-  ⇒ larger `e`), difficulty is monotone in the erasure rate, increasing when
-  `0 ≤ pmi` and decreasing when `pmi ≤ 0`.
-* `erasure_zero`, `erasure_one` — the brackets: no erasure recovers plain
-  surprisal (§3.5.1); certain erasure recovers the prior (§3.4.2).
-* `mutualInfo_memJoint_le` — §3.2: the data processing inequality as the
-  constraint on all admissible noise distributions.
-* `bayesDifficulty_memJoint_sub_eq`, `bayesDifficulty_le_memJoint` — the
-  average form (§3.4.1, Supp. A, at the §3.3 Bayes-optimal comprehender):
-  expected difficulty under lossy memory exceeds expected difficulty under
-  veridical context by exactly the predictive information lost to memory,
-  `I(W;C) − I(W;M) ≥ 0`.
+* [futrell-gibson-levy-2020]
 -/
 
 namespace FutrellGibsonLevy2020
@@ -145,7 +134,7 @@ theorem expectedSurprisal_erasure_sub_surprisal (he : e ≤ 1)
   rw [expectedSurprisal_erasure L he h0 hy, surprisal_eq_sub_pmi L h0 hy]
   ring
 
-/-- **Information locality** (§5.1.4): under progressive noise — a more
+/-- Information locality (§5.1.4): under progressive noise — a more
     distant context word has a larger erasure rate — difficulty increases
     with distance whenever the words are positively associated. -/
 theorem locality (h : e ≤ e') (he' : e' ≤ 1) (hpmi : 0 ≤ pmi L y w)
@@ -157,9 +146,9 @@ theorem locality (h : e ≤ e') (he' : e' ≤ 1) (hpmi : 0 ≤ pmi L y w)
   have : (e : ℝ) ≤ e' := by exact_mod_cast h
   nlinarith
 
-/-- **Anti-locality** (§5.1.4, cf. the Konieczny effects of §2): when the
-    words are negatively associated, losing the context word *lowers*
-    difficulty, so difficulty decreases with distance. -/
+/-- Anti-locality (sections 5.1.4 and 5.3.3): when the words are negatively
+    associated, losing the context word *lowers* difficulty, so difficulty
+    decreases with distance. -/
 theorem antilocality (h : e ≤ e') (he' : e' ≤ 1) (hpmi : pmi L y w ≤ 0)
     (h0 : L.nextProb [] w ≠ 0) (hy : L.nextProb [y] w ≠ 0) :
     (erasure L e' he').expectedSurprisal [y] w
@@ -257,7 +246,7 @@ private theorem condEntropy_fst_snd (G : Measure (α × β)) [IsProbabilityMeasu
     show (fun p : α × β => (p.1, p.2)) = id from rfl, Measure.map_id] at h
   linarith
 
-/-- **The average form of information locality**: the expected excess
+/-- The average form of information locality: the expected excess
     difficulty of lossy-memory comprehension over veridical-context
     comprehension is exactly the predictive information lost to memory. -/
 theorem bayesDifficulty_memJoint_sub_eq :
