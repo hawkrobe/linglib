@@ -241,8 +241,7 @@ theorem bell_three_eq_five :
 /-- The five `assignCase` functions realize only **three** of the five
     partitions: `nominativeAccusative`, `extendedErgative`, and `invertedErgative`
     all induce the accusative partition `{S,A}|{P}` — they differ only in Case
-    *labels*, not alignment (the kernel generalizing the one instance noticed in
-    `Dixon1994.extendedErgative_groups_S_with_A_like_accusative`). -/
+    *labels*, not alignment. -/
 theorem assignCase_partitions :
     coreSig nominativeAccusative.assignCase = (true, false, false) ∧
     coreSig extendedErgative.assignCase    = (true, false, false) ∧
