@@ -1,5 +1,5 @@
 import Linglib.Studies.Gibson2025
-import Linglib.Studies.FutrellEtAl2020
+import Linglib.Data.UD.DependencyLength.FutrellEtAl2020
 
 /-!
 # Levshina et al. 2023: Gradient Word Order
@@ -274,16 +274,16 @@ theorem harmony_is_gradient_not_binary :
     harmonicProportion1000 voSubordinator ≠ harmonicProportion1000 voRelativeClause := by
   constructor <;> decide
 
--- Bridge 3: Head-final proportion ↔ SO proportion (FutrellEtAl2020.lean)
+-- Bridge 3: Head-final proportion ↔ SO proportion (Data/UD/DependencyLength/FutrellEtAl2020)
 
 /-- Languages with a high head-final proportion (> 700‰) in
-    [futrell-gibson-2020]'s Table 2 have high soProportion (> 700) in
+    [futrell-levy-gibson-2020]'s Table 2 have high soProportion (> 700) in
     Levshina: head-final ≈ SOV ≈ high SO proportion. -/
 theorem head_final_correlates_with_so :
     let shared := allProfiles.filter (λ p =>
-      FutrellEtAl2020.table2.any (·.isoCode == p.isoCode))
+      Data.UD.DependencyLength.FutrellEtAl2020.rows.any (·.isoCode == p.isoCode))
     let highHF := shared.filter (λ p =>
-      match FutrellEtAl2020.table2.find? (·.isoCode == p.isoCode) with
+      match Data.UD.DependencyLength.FutrellEtAl2020.rows.find? (·.isoCode == p.isoCode) with
       | some f => f.propHeadFinal1000 > 700
       | none => false)
     highHF.all (·.soProportion1000 > 700) = true := by decide
