@@ -1,400 +1,336 @@
-/-
-Copyright (c) 2026 Robert Hawkins. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Robert Hawkins
--/
-import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
-import Linglib.Syntax.ConstructionGrammar.Idiom
-import Linglib.Syntax.ConstructionGrammar.Inheritance
-import Linglib.Data.Examples.FillmoreKayOConnor1988
-import Linglib.Features.Polarity
-import Linglib.Semantics.Polarity.Item
+import Mathlib.Order.UpperLower.Principal
+import Mathlib.Order.UpperLower.CompleteLattice
+import Mathlib.Order.Max
+import Mathlib.Data.Fintype.Prod
 import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Fintype.Sum
+import Linglib.Syntax.ConstructionGrammar.Idiom
+import Linglib.Features.Polarity
+import Linglib.Data.Examples.FillmoreKayOConnor1988
 
 /-!
-# [fillmore-kay-oconnor-1988]: *Let Alone*
+# Fillmore, Kay & O'Connor (1988): Regularity and idiomaticity in grammatical constructions
 
-"Regularity and Idiomaticity in Grammatical Constructions: The Case of
-*Let Alone*" (Language 64(3):501–538), the founding Construction Grammar
-paper: *let alone* is a formal idiom — a productive syntactic pattern
-F ⟨X A Y let alone B⟩ whose semantics requires a presupposed scalar model
-(Appendix, definitions A1–A5) and whose pragmatics resolves a conflict
-between Gricean Quantity (the informative full clause) and Relevance (the
-contextually given reduced clause). The idiom typology of §1 lives in
-`ConstructionGrammar.Idiom`; §2.1's conclusion that *let alone* is a
-formal idiom is derived from the construction's typed form
-(`let_alone_formal_idiom`).
+This file formalizes the semantics of the *let alone* construction in
+[fillmore-kay-oconnor-1988]. A *let alone* sentence F ⟨X A Y let alone B⟩ (20) asserts the two
+propositions F′(X A Y) and F′(X B Y) (24) and presupposes a scalar model in which they are
+distinct points, the full clause the stronger (§2.3). The Appendix defines the model in five
+steps: an argument space, the product of at least two linearly ordered dimensions (A1), with its
+product order as "lower than" (A2, `lower_iff`); a propositional function `P` such that, for
+distinct points, `P b` entails `P a` exactly when `a` is lower than `b` (A3, `IsScalarModel`);
+the same for the negated propositions (A4, `IsScalarModel.not_le_not_iff`); and informativeness
+as one-way entailment (A5), the strict order on propositions, which A3 turns into the order on
+points (`IsScalarModel.lt_iff`, `IsScalarModel.not_lt_not_iff`). The states of affairs of Tables
+1–4, where truth propagates from the one-corner and falsity from the zero-corner, are the lower
+sets of the argument space, and every lower-set state space is a scalar model
+(`isScalarModel_mem`). The semantic conditions of §2.3.2 — one model, one polarity, the full
+clause stronger (`Felicitous`) — thus reduce to an order on the foci: under negation A is lower
+than B, under positive polarity higher (`felicitous_negative_iff`, `felicitous_positive_iff`).
+Hence a fragment naming the lowest point of its scale is anomalous, (107) against (106)
+(`not_felicitous_of_isBot`), and exchanging the foci of one dimension between points that
+differ on two leaves them incomparable, (122) against (121) (`swap_incomparable`). The ranks of
+(21), (106)–(107) and (130)–(132), the linguists and languages of Tables 1–4 and (109)–(112),
+and the four dimensions of (121)–(122) instantiate the theory; the paper's judgments are the
+rows of `Data/Examples/FillmoreKayOConnor1988.json`, and `rankRows_predicted` and
+`focusRows_predicted` check them against `Felicitous` and the order in which the conjunction
+presents the stronger clause (p. 533).
 
-The paper's scalar models are n-dimensional with n > 1 (definition A1;
-fn. 16: "a scalar model must contain at least two dimensions"). The
-military-rank model below is a deliberate one-dimensional simplification
-of the paper's colonel/general example, not a paper-licit scalar model;
-the linguists × languages model is the paper's own 2D example.
+The construction itself is a formal idiom in the sense of §1, the typology of which is
+`ConstructionGrammar.Idiom` (`letAloneConstruction_isFormalIdiom`). Its syntax (§2.2) — a
+coordination that neither topicalizes nor clefts as a unit (31)–(34), admits no VP ellipsis
+because the INFL-complex belongs to the trigger F (39)–(41), and is licensed in the affective
+environments of [klima-1964] (62)–(70) yet attested under positive polarity when the fragment
+denies the context proposition (71)–(73) — and its pragmatics (§2.4), the fragment answering
+Relevance and the full clause Quantity, are the rows' comments and the docstrings below. Scales
+are pragmatic, in the tradition of [fauconnier-1975] rather than the semantic scales of
+[horn-1972] and [gazdar-1979], and a scalar model needs a second dimension to bear its degrees
+(fn. 16, after [cresswell-1976]).
 
-## Main declarations
+## Implementation notes
 
-- `FillmoreKayOConnor1988.IsScalarModel`: definition A3, over points in
-  their product order and propositions ordered by entailment; `NegEntails`
-  is definition A4
-- `FillmoreKayOConnor1988.letAloneConstruction`, `LetAloneConditions`,
-  `ex21Conditions`: the construction, its felicity conditions (p. 528),
-  and their instantiation for ex. 21
-- `FillmoreKayOConnor1988.let_alone_irreducible`: *let alone* is not fully
-  compositional
-- `FillmoreKayOConnor1988.MadeRank`, `CanRead`: the worked scalar
-  models
-- `Data.Examples.FillmoreKayOConnor1988`: the paper's judgment data
-  (generated module; `Examples.all`)
+* `IsScalarModel` is stated over any partial order; the product order of (A1)–(A2) enters
+  through `lower_iff`, and the stipulation of at least two dimensions (fn. 16) is not part of the
+  predicate. The one-dimensional rank chain is therefore treated as the slice of the persons ×
+  ranks model that fn. 16 envisages, and a slice of a scalar model is a scalar model
+  (`IsScalarModel.slice`).
+* A state of affairs is a `LowerSet` of the argument space and the propositional function is
+  membership: "he made colonel" holds in a career exactly when colonel is among the ranks
+  reached. The paper's Tables 2 and 4 draw four such states; `table2c` is the one that
+  separates *Brilliant can read English* from *Brilliant can read Greek*.
+* `force` renders F′ as negation or identity. The paper leaves open why only the negative part
+  of *barely* reaches the fragment (§2.3.3, (118)–(119)); the *barely* rows are judgment data
+  without a model, as are the constituency and licensing rows of §2.2.
+* The ranks are the three the paper names; *a commissioned officer* in (106)–(107) is "made the
+  lowest commissioned rank", since in a lower-set state holding some rank is holding the lowest.
+* The (104)/(105) contrast rests on the two-dimension stipulation and on a lottery model the
+  paper describes but does not build; (104) is a row without a model.
+
+## References
+
+* [fillmore-kay-oconnor-1988]
+* [klima-1964]
+* [fauconnier-1975]
+* [horn-1972]
+* [gazdar-1979]
+* [cresswell-1976]
 -/
 
 namespace FillmoreKayOConnor1988
 
-open ConstructionGrammar
-open Features (Polarity)
+open ConstructionGrammar Features Data.Examples
 
-/-! ### Scalar models (§2.3.2, Appendix)
+/-! ### Scalar models (Appendix) -/
 
-The argument space Dˣ is a product of scales carrying its product order:
-definition A2's "dᵢ is lower than dⱼ" (p. 536) — no coordinate higher, at
-least one strictly lower — is `di < dj` in that order. Propositions are
-ordered by entailment — `P dj ≤ P di`, pointwise over states — so
-definition A5's "stronger" (p. 537) is strict entailment `P dj < P di`.
-Definition A3 (p. 536) then classifies propositional functions:
-⟨S, T, Dˣ, P⟩ is a scalar model iff, for distinct dᵢ, dⱼ, P(dⱼ) entails
-P(dᵢ) just in case dᵢ is lower than dⱼ. -/
+section ScalarModel
 
-variable {Point S : Type*}
+variable {D S : Type*} [PartialOrder D] {P : D → S → Prop} {a b : D}
 
-instance {P Q : S → Prop} [Fintype S] [DecidablePred P] [DecidablePred Q] :
-    Decidable (P ≤ Q) :=
-  inferInstanceAs (Decidable (∀ s, P s → Q s))
+/-- (A2): in a product of linear orders, `a` is lower than `b` iff no coordinate of `a` is higher
+than that of `b` and at least one is lower — the strict product order. -/
+theorem lower_iff {ι : Type*} {δ : ι → Type*} [∀ i, LinearOrder (δ i)] (a b : ∀ i, δ i) :
+    a < b ↔ (∀ i, a i ≤ b i) ∧ ∃ i, a i < b i := by
+  rw [Pi.lt_def, Pi.le_def]
 
-instance {P Q : S → Prop} [Fintype S] [DecidablePred P] [DecidablePred Q] :
-    Decidable (P < Q) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+/-- (A3): `⟨S, T, Dˣ, P⟩` is a scalar model iff, for distinct points `a` and `b`, `P b` entails
+`P a` just in case `a` is lower than `b`. Propositions are ordered by entailment, the pointwise
+order on `S → Prop`. -/
+def IsScalarModel (P : D → S → Prop) : Prop := ∀ ⦃a b : D⦄, a ≠ b → (P b ≤ P a ↔ a < b)
 
-/-- Definition A3 (p. 536): for distinct points, entailment of the
-propositions reflects the reversed point order. The biconditional is
-demanding: a state space too sparse to separate the points produces
-artifact entailments between incomparable points and fails it (see
-`ll_sparse_fails_A3`). -/
-def IsScalarModel [Preorder Point] (P : Point → S → Prop) : Prop :=
-  ∀ di dj : Point, di ≠ dj → (P dj ≤ P di ↔ di < dj)
+/-- (A4): `¬ P a` entails `¬ P b` just in case `a` is lower than `b`. -/
+theorem IsScalarModel.not_le_not_iff (h : IsScalarModel P) (hab : a ≠ b) :
+    (¬ P a ·) ≤ (¬ P b ·) ↔ a < b := by
+  rw [← h hab, Pi.le_def, Pi.le_def]
+  exact forall_congr' λ _ => not_imp_not
 
-instance [Preorder Point] [DecidableEq Point] [DecidableLT Point]
-    [Fintype Point] [Fintype S] (P : Point → S → Prop)
-    [∀ d, DecidablePred (P d)] : Decidable (IsScalarModel P) :=
-  inferInstanceAs
-    (Decidable (∀ di dj : Point, di ≠ dj → (P dj ≤ P di ↔ di < dj)))
+/-- (A5): `P b` is more informative than `P a` — entails it and not conversely — just in case `a`
+is lower than `b`. -/
+theorem IsScalarModel.lt_iff (h : IsScalarModel P) : P b < P a ↔ a < b := by
+  rcases eq_or_ne a b with rfl | hab
+  · simp
+  · rw [lt_iff_le_not_ge, h hab, h hab.symm]
+    exact and_iff_left_of_imp lt_asymm
 
-/-- Definition A4 (p. 536): ¬P(dᵢ) entails ¬P(dⱼ) — the direction at work
-in the canonical negative *let alone* sentences: "he didn't make colonel;
-a fortiori, he didn't make general" (p. 523). -/
-def NegEntails (P : Point → S → Prop) (di dj : Point) : Prop :=
-  ∀ s, ¬ P di s → ¬ P dj s
+/-- (A5) for the negated propositions: `¬ P a` is more informative than `¬ P b` just in case `a`
+is lower than `b`. -/
+theorem IsScalarModel.not_lt_not_iff (h : IsScalarModel P) :
+    (¬ P a ·) < (¬ P b ·) ↔ a < b := by
+  rcases eq_or_ne a b with rfl | hab
+  · simp
+  · rw [lt_iff_le_not_ge, h.not_le_not_iff hab, h.not_le_not_iff hab.symm]
+    exact and_iff_left_of_imp lt_asymm
 
-instance [Fintype S] (P : Point → S → Prop) [∀ d, DecidablePred (P d)]
-    (di dj : Point) : Decidable (NegEntails P di dj) :=
-  inferInstanceAs (Decidable (∀ s, _ → _))
+/-- Fixing a coordinate of a scalar model leaves a scalar model: the bearers of a degree (fn. 16)
+may be held fixed. -/
+theorem IsScalarModel.slice {E : Type*} [PartialOrder E] {P : D × E → S → Prop}
+    (h : IsScalarModel P) (d : D) : IsScalarModel λ e => P (d, e) := λ _ _ hne =>
+  (h λ h' => hne (Prod.mk.inj h').2).trans Prod.mk_lt_mk_iff_right
 
-/-! ### The *let alone* construction (§2.1–2.4) -/
+/-- The states of affairs conforming to a scalar model are the lower sets of its argument space —
+truth propagating from the one-corner, falsity from the zero-corner (Tables 1–4) — and with
+membership as the propositional function every lower-set state space is a scalar model. -/
+theorem isScalarModel_mem : IsScalarModel λ (d : D) (s : LowerSet D) => d ∈ s := λ _ b hab =>
+  ⟨λ hle => lt_of_le_of_ne
+      (LowerSet.mem_Iic_iff.1 (hle (LowerSet.Iic b) (LowerSet.mem_Iic_iff.2 le_rfl))) hab,
+    λ hlt s hb => s.lower hlt.le hb⟩
 
-/-- The *let alone* construction: form F ⟨X A Y let alone B⟩ (ex. 20a,
-p. 512), where F is a negative polarity operator, X and Y are shared
-non-focused material, and the paired foci A and B are points in a
-presupposed scalar model. The typed form is the paired-foci core,
-eliding the shared X/Y material. -/
+/-! ### The semantic conditions on *let alone* sentences (§2.3.2) -/
+
+/-- F′ of (24), the semantic operator derived from the trigger F: negation under negative polarity,
+identity under positive. -/
+def force : Polarity → (S → Prop) → S → Prop
+  | .negative, p => (¬ p ·)
+  | .positive, p => p
+
+/-- The conditions of §2.3.2 on a *let alone* sentence with foci `a` and `b`: F′(X A Y) and
+F′(X B Y) are propositions of one scalar model and one polarity, and the full clause F′(X A Y) is
+the more informative (A5). -/
+def Felicitous (P : D → S → Prop) (pol : Polarity) (a b : D) : Prop :=
+  force pol (P a) < force pol (P b)
+
+/-- Under negation the full clause is the stronger exactly when A is the lower point: *he didn't
+make colonel, let alone general*. -/
+theorem felicitous_negative_iff (h : IsScalarModel P) : Felicitous P .negative a b ↔ a < b :=
+  h.not_lt_not_iff
+
+/-- Under positive polarity the full clause is the stronger exactly when A is the higher point:
+*you've got enough material for a whole semester, let alone a week* (71). -/
+theorem felicitous_positive_iff (h : IsScalarModel P) : Felicitous P .positive a b ↔ b < a :=
+  h.lt_iff
+
+/-- (107): a fragment naming the lowest point of the scale is anomalous — nothing is lower than it,
+so the a-fortiori inference from the full clause has no lower point to start from. -/
+theorem not_felicitous_of_isBot (h : IsScalarModel P) (hb : IsBot b) :
+    ¬ Felicitous P .negative a b :=
+  λ hf => not_lt_of_ge (hb a) ((felicitous_negative_iff h).1 hf)
+
+/-- (122): exchanging the foci of one dimension between two points that differ on two dimensions
+leaves the points incomparable, so neither clause is the stronger. -/
+theorem swap_incomparable {ι : Type*} [DecidableEq ι] {δ : ι → Type*} [∀ i, Preorder (δ i)]
+    {a b : ∀ i, δ i} {j k : ι} (hjk : j ≠ k) (hj : a j < b j) (hk : a k < b k) :
+    ¬ Function.update a j (b j) < Function.update b j (a j) ∧
+      ¬ Function.update b j (a j) < Function.update a j (b j) :=
+  ⟨λ h => hj.not_ge (by simpa using h.le j), λ h => hk.not_ge (by simpa [hjk.symm] using h.le k)⟩
+
+end ScalarModel
+
+/-! ### The construction (§2.1) -/
+
+/-- The *let alone* construction F ⟨X A Y let alone B⟩ (20a): the paired foci A and B flank
+*let alone*; the shared material X and Y and the trigger F are elided from the typed form. -/
 def letAloneConstruction : Construction Unit :=
   { name := "let alone"
-  , form :=
-      [ { filler := .open_ .NOUN }
-      , { filler := .fixed "let" }
-      , { filler := .fixed "alone" }
-      , { filler := .open_ .NOUN } ]
-  , meaning := ()
-  , pragmaticPoint := true }
+    form := [{ filler := .open_ .NOUN }, { filler := .fixed "let" }, { filler := .fixed "alone" },
+      { filler := .open_ .NOUN }]
+    meaning := ()
+    pragmaticPoint := true }
 
-/-- *Let alone* is not fully compositional: a formal idiom with paired
-focus, scalar entailment, and NPI licensing requirements that cannot be
-derived from the universal combination schemata (see
-`isFullyCompositional`). -/
-theorem let_alone_irreducible :
-    isFullyCompositional letAloneConstruction = false := rfl
+/-- §2.1: *let alone* sentences "must therefore be given treatment as the kind of formal idiom or
+special construction we have been discussing" — the form is lexically open. -/
+theorem letAloneConstruction_isFormalIdiom : letAloneConstruction.IsFormalIdiom := by decide
 
-/-- *Let alone* "must ... be given treatment as the kind of formal idiom
-or special construction we have been discussing" (§2.1): the paired focus
-slots A and B are open. -/
-theorem let_alone_formal_idiom : letAloneConstruction.IsFormalIdiom := rfl
+/-- The incredulity type *Him be a doctor?* (14h), §1.1.4's formal idiom that exists "in the
+service of specific pragmatic or rhetorical purposes": a non-nominative subject with a bare-stem
+predicate. -/
+def incredulityResponse : Construction Unit :=
+  { name := "Incredulity Response"
+    form := [{ filler := .open_ .PRON, gf := some .subj },
+      { filler := .phrasal, level := some .phrase, gf := some .pred }]
+    meaning := ()
+    pragmaticPoint := true }
 
-/-- Felicity conditions on *let alone* sentences (p. 528): (1) the two
-clauses express propositions from the same scalar model; (2) the
-propositions are of the same polarity; (3) the proposition expressed by
-the initial, full clause is the stronger one.
+/-! ### The conjunction family (p. 533) -/
 
-The propositions include the polarity operator F, so condition (3) runs
-through definition A4 in the negative case: in "he didn't make colonel,
-let alone general" (ex. 21), ¬P(colonel) is stronger than ¬P(general)
-because colonel is the *lower* point. The paper itself flags the potential
-confusion between point-strength and clause-strength here (p. 532). -/
-structure LetAloneConditions (Point S : Type*) where
-  /-- The presupposed scalar model's propositional function -/
-  P : Point → S → Prop
-  /-- Argument point for the A focus (in the initial, full clause) -/
-  focusA : Point
-  /-- Argument point for the B focus (in the reduced clause) -/
-  focusB : Point
-  /-- Condition (2): shared polarity of the two clauses -/
-  polarity : Polarity
-  /-- Condition (3): the full clause expresses the stronger proposition —
-      via A4 under negation, via A5's strict entailment directly under
-      positive polarity (the attested positive cases, exx. 71–72,
-      p. 519) -/
-  fullClauseStronger :
-    match polarity with
-    | .negative => NegEntails P focusA focusB ∧ ¬ NegEntails P focusB focusA
-    | .positive => P focusA < P focusB
-
-/-- The *let alone* family (p. 533): conjunctions presupposing a scalar
-model relating their conjuncts. "*Let alone*, together with *much less*
-and *not to mention*, presents the stronger statement first"; *in fact*
-and *if not* present it second. -/
-inductive LetAloneFamily where
-  /-- "He didn't make colonel, let alone general." -/
+/-- The fragment-taking conjunctions that presuppose a scale relating their conjuncts: *let alone*,
+*much less* and *not to mention* present the stronger clause first, *in fact* and *if not* present
+it second (130)–(132). -/
+inductive Conjunction where
   | letAlone
   | muchLess
   | notToMention
-  /-- "She didn't eat a BITE, never mind a WHOLE MEAL" (ex. 49). -/
-  | neverMind
-  /-- "I believe he made colonel, if not general" (ex. 132). -/
-  | ifNot
-  /-- Presents the stronger point second (ex. 131). -/
   | inFact
+  | ifNot
   deriving DecidableEq, Repr
 
-/-- Clause ordering within the family (p. 533). The paper's explicit
-stronger-first list is *let alone*, *much less*, *not to mention*; the
-value for *never mind* is an inference from ex. 49, not stated there. -/
-def presentsStrongerFirst : LetAloneFamily → Bool
-  | .letAlone     => true
-  | .muchLess     => true
-  | .notToMention => true
-  | .neverMind    => true
-  | .ifNot        => false
-  | .inFact       => false
+/-- Whether the conjunction presents the stronger clause first. -/
+def Conjunction.StrongerFirst : Conjunction → Prop
+  | .letAlone | .muchLess | .notToMention => True
+  | .inFact | .ifNot => False
 
-/-- Environments licensing *let alone* (exx. 62–70, p. 518). The paper
-names five types — "simple negation, *too* complementation, comparison of
-inequality, *only* as determiner of the subject, and various minimal
-attainment qualifiers, these and more" — over nine examples; the last
-three cases are formalizer labels for the remaining illustrated
-environments. -/
-inductive LetAloneNPITrigger where
-  /-- Ex. 62: "He didn't reach Denver, let alone Chicago." -/
-  | simpleNegation
-  /-- Ex. 63: "I'm too tired to get up, let alone go running with you." -/
-  | tooComplementation
-  /-- Ex. 64. -/
-  | comparisonOfInequality
-  /-- Ex. 65: "Only a linguist would BUY that book, let alone READ it." -/
-  | onlyDeterminer
-  /-- Ex. 66: "I barely got up in time for lunch, let alone breakfast." -/
-  | minimalAttainment
-  /-- Ex. 68. -/
-  | conditionalSurprise
-  /-- Ex. 69: "failed to reach the sixth GRADE … get a B.A.". -/
-  | failureVerb
-  /-- Ex. 70: "Anyone who'd been to HIGH SCHOOL, let alone GRADUATE
-  students in MATH, should be able to solve that problem." -/
-  | anyoneWhod
+instance : DecidablePred Conjunction.StrongerFirst := λ c => by
+  unfold Conjunction.StrongerFirst; split <;> infer_instance
+
+/-! ### The paper's judgments -/
+
+section Rows
+
+variable {D : Type} {S : Type*} [PartialOrder D]
+
+/-- A sentence of the family with its conjunction, the polarity of its trigger, the points of its
+two foci and the paper's judgment. -/
+structure Row (D : Type) where
+  conj : Conjunction
+  pol : Polarity
+  a : D
+  b : D
+  judgment : Judgment
   deriving DecidableEq, Repr
 
-open Polarity in
-/-- Map the *let alone* licensing environments to the licensing contexts
-catalogued in `Polarity`. -/
-def npiTriggerToContext : LetAloneNPITrigger → LicensingContext
-  | .simpleNegation         => .negation
-  | .tooComplementation     => .tooTo
-  | .comparisonOfInequality => .clausalComparative
-  | .onlyDeterminer         => .onlyFocus
-  | .minimalAttainment      => .negation              -- "barely" ≈ negation
-  | .conditionalSurprise    => .conditionalAntecedent
-  | .failureVerb            => .negation              -- "fail" ≈ implicit negation
-  | .anyoneWhod             => .universalRestrictor
+/-- The point of the clause the conjunction presents as the stronger. -/
+def Row.stronger (r : Row D) : D := if r.conj.StrongerFirst then r.a else r.b
 
-/-- The garden-variety coordination construction *let alone* is measured
-against (§2.2.1): two like-category conjuncts joined by a coordinating
-conjunction. Present as the parent node of the inheritance link below. -/
-def coordinationConstruction : Construction Unit :=
-  { name := "Coordinating conjunction"
-  , form :=
-      [ { filler := .phrasal }
-      , { filler := .open_ .CCONJ }
-      , { filler := .phrasal } ]
-  , meaning := () }
+/-- The point of the clause the conjunction presents as the weaker. -/
+def Row.weaker (r : Row D) : D := if r.conj.StrongerFirst then r.b else r.a
 
-/-- *Let alone* against the coordination diagnostics of §2.2.1 (p. 514–517).
-Shared with coordinating conjunctions: joins like categories, right node
-raising, gapping. Overridden: no VP ellipsis (exx. 39–41), no IT-clefting
-of the full constituent (exx. 33–34), fragment second conjunct, scalar
-requirement, NPI status. The inheritance-link framing is retrospective —
-the 1988 paper predates Goldberg's link typology. -/
-def letAloneInheritance : InheritanceLink :=
-  { parent := "Coordinating conjunction"
-  , child := "let alone"
-  , mode := .normal
-  , sharedProperties :=
-      [ "joins like categories"
-      , "permits right node raising"
-      , "permits gapping" ]
-  , overriddenProperties :=
-      [ "does not permit VP ellipsis"
-      , "does not permit IT-clefting of full constituent"
-      , "second conjunct is a sentence fragment, not full clause"
-      , "requires scalar relationship between conjuncts"
-      , "is a negative polarity item" ] }
+/-- The conditions of §2.3.2 on the row, the conjunction fixing which clause must be the
+stronger. -/
+def Row.Predicted (P : D → S → Prop) (r : Row D) : Prop := Felicitous P r.pol r.stronger r.weaker
 
-/-- The §2.2.1 comparison as a two-node network. -/
-def letAloneNetwork : Constructicon Unit :=
-  { constructions := [coordinationConstruction, letAloneConstruction]
-  , links := [letAloneInheritance] }
+/-- The order the conditions impose on the foci: the stronger clause's point is the lower under
+negation and the higher under positive polarity. -/
+def Row.FociOrdered (r : Row D) : Prop :=
+  match r.pol with
+  | .negative => r.stronger < r.weaker
+  | .positive => r.weaker < r.stronger
 
-/-- The link resolves: no dangling parent. -/
-theorem letAloneNetwork_wellFormed : letAloneNetwork.WellFormed := by decide
+instance [DecidableLT D] (r : Row D) : Decidable r.FociOrdered := by
+  unfold Row.FociOrdered; split <;> infer_instance
 
-/-! ### Other constructions of §1 -/
+theorem Row.predicted_iff {P : D → S → Prop} (h : IsScalarModel P) :
+    ∀ r : Row D, r.Predicted P ↔ r.FociOrdered
+  | ⟨_, .negative, _, _, _⟩ => felicitous_negative_iff h
+  | ⟨_, .positive, _, _, _⟩ => felicitous_positive_iff h
 
-/-- The X-er the Y-er comparative correlative (exx. 1–2, introduced in
-§1.1.3 as the flagship formal idiom). The construction's "the" is "not, so
-far as we can tell, found generally elsewhere in the language" (p. 507;
-fn. 4 notes relatives like "all the more reason" and the Old English
-instrumental demonstrative source). -/
-def comparativeCorrelative : Construction Unit :=
-  { name := "the X-er the Y-er"
-  , form :=
-      [ { filler := .fixed "the" }
-      , { filler := .open_ .ADJ }
-      , { filler := .phrasal, level := some .phrase }
-      , { filler := .fixed "the" }
-      , { filler := .open_ .ADJ }
-      , { filler := .phrasal, level := some .phrase } ]
-  , meaning := () }
+def conjunctionTable : List (String × Conjunction) :=
+  [("letAlone", .letAlone), ("muchLess", .muchLess), ("notToMention", .notToMention),
+    ("inFact", .inFact), ("ifNot", .ifNot)]
 
-/-- The Incredulity Response construction ("Him be a doctor?", ex. 14h in
-the §2 opening list, pp. 510–511; the type is introduced in §1.1.4): a
-non-nominative subject with a bare-stem predicate, "used to challenge or
-question a proposition just posed by an interlocutor" (p. 511). -/
-def incredulityResponse : Construction Unit :=
-  { name := "Incredulity Response"
-  , form :=
-      [ { filler := .open_ .PRON, gf := some .subj }
-      , { filler := .phrasal, level := some .phrase
-        , gf := some .pred } ]
-  , meaning := ()
-  , pragmaticPoint := true }
+def polarityTable : List (String × Polarity) := [("negative", .negative), ("positive", .positive)]
 
-/-! ### A one-dimensional rank model (ex. 21)
+/-- A row from an example, given a reading of its foci as points. -/
+def Row.ofExample (foci? : LinguisticExample → Option (D × D)) (ex : LinguisticExample) :
+    Option (Row D) := do
+  let conj ← ex.parse? "conjunction" conjunctionTable
+  let pol ← ex.parse? "polarity" polarityTable
+  let (a, b) ← foci? ex
+  pure ⟨conj, pol, a, b, ex.judgment⟩
 
-Ex. 21 (p. 513): "I doubt he made COLONEL in World War II, let alone
-GENERAL." The paper names only second lieutenant ("the lowest commissioned
-rank"), colonel, and general; the intermediate ranks are world-knowledge
-interpolation. States are the down-sets of the rank chain, so the model
-separates every pair of ranks and satisfies full A3 — at the cost of being
-one-dimensional, which definition A1 (n > 1) disallows for genuine scalar
-models; see the module docstring. -/
+end Rows
 
-/-- Commissioned military ranks (ex. 21's scale; intermediate members
-interpolated). -/
+/-! ### Military rank: (21), (106)–(107), (130)–(132) -/
+
+/-- The commissioned ranks the paper names, second lieutenant "the lowest commissioned rank"
+(§2.3.2). -/
 inductive Rank where
-  | secondLieutenant | lieutenant | captain | major
-  | colonel | general
+  | secondLieutenant
+  | colonel
+  | general
   deriving DecidableEq, Repr, Fintype
 
-/-- Position of a rank on the scale. -/
-def Rank.idx : Rank → Nat
+def Rank.idx : Rank → ℕ
   | .secondLieutenant => 0
-  | .lieutenant => 1
-  | .captain => 2
-  | .major => 3
-  | .colonel => 4
-  | .general => 5
+  | .colonel => 1
+  | .general => 2
 
 instance : LinearOrder Rank := .lift' Rank.idx (by decide)
 
-/-- Career outcomes: the down-sets of the rank chain — either no
-commission, or every rank up to some ceiling. -/
-inductive AchievementState where
-  | achievedNone
-  | achievedUpTo (ceiling : Rank)
-  deriving DecidableEq, Repr, Fintype
+/-- *He made rank `r`* in a career: the ranks reached form a lower set of the chain. -/
+abbrev MadeRank : Rank → LowerSet Rank → Prop := (· ∈ ·)
 
-/-- "He made rank r": the career reached at least r. -/
-def MadeRank (r : Rank) : AchievementState → Prop
-  | .achievedNone => False
-  | .achievedUpTo c => r ≤ c
+theorem isBot_secondLieutenant : IsBot Rank.secondLieutenant := λ _ => Nat.zero_le _
 
-instance (r : Rank) : DecidablePred (MadeRank r) := fun s =>
-  match s with
-  | .achievedNone => inferInstanceAs (Decidable False)
-  | .achievedUpTo c => inferInstanceAs (Decidable (r ≤ c))
+/-- (107) *He wasn't even a commissioned officer, let alone a second lieutenant*: the fragment
+names the lowest point. -/
+theorem anomaly_107 : ¬ Felicitous MadeRank .negative .secondLieutenant .secondLieutenant :=
+  not_felicitous_of_isBot isScalarModel_mem isBot_secondLieutenant
 
-/-- The rank model satisfies full definition A3: for distinct ranks,
-entailment holds exactly when the entailed point is lower. The down-set
-state space is what makes the biconditional (not just its forward half)
-go through. -/
-theorem rank_model_satisfiesA3 : IsScalarModel MadeRank := by decide
+def rankTable : List (String × Rank) :=
+  [("secondLieutenant", .secondLieutenant), ("colonel", .colonel), ("general", .general)]
 
-/-- "He made general" entails "he made colonel" (A3, forward). -/
-theorem general_entails_colonel :
-    MadeRank .general ≤ MadeRank .colonel := by decide
+def rankFoci? (ex : LinguisticExample) : Option (Rank × Rank) := do
+  let a ← ex.parse? "a" rankTable
+  let b ← ex.parse? "b" rankTable
+  pure (a, b)
 
-/-- "He made colonel" does not entail "he made general" (A3, converse
-direction for the higher point). -/
-theorem colonel_does_not_entail_general :
-    ¬ MadeRank .colonel ≤ MadeRank .general := by decide
+def rankRows : List (Row Rank) := Examples.all.filterMap (Row.ofExample rankFoci?)
 
-/-- Making general is the stronger *positive* proposition (A5's strict
-entailment). NB the paper's warning (p. 532): in ex. 21 the clauses are
-negated, so the stronger *clause* is "didn't make colonel" — see
-`ex21Conditions`. -/
-theorem general_stronger_than_colonel :
-    MadeRank .general < MadeRank .colonel := by decide
+/-- (21), (106)–(107), (130)–(132): the acceptable sentences are exactly those meeting the
+conditions of §2.3.2 with the conjunction's ordering of the stronger clause. -/
+theorem rankRows_predicted : ∀ r ∈ rankRows, (r.judgment = .acceptable ↔ r.Predicted MadeRank) := by
+  simp only [Row.predicted_iff isScalarModel_mem]
+  decide
 
-/-- The felicity conditions of p. 528, instantiated for ex. 21
-"I doubt he made COLONEL, let alone GENERAL": negative polarity, A focus
-*colonel*, B focus *general*; the full clause ¬P(colonel) is stronger by
-definition A4 because colonel is the lower point. -/
-def ex21Conditions : LetAloneConditions Rank AchievementState :=
-  { P := MadeRank
-  , focusA := .colonel
-  , focusB := .general
-  , polarity := .negative
-  , fullClauseStronger := by
-      show NegEntails MadeRank .colonel .general ∧
-        ¬ NegEntails MadeRank .general .colonel
-      decide }
+/-! ### Linguists and languages: Tables 1–4, (109)–(112) -/
 
-/-- Second lieutenant is the lowest point: no rank is lower. This is the
-paper's explanation (p. 526) of ex. 107's anomaly — with B the lowest
-point, the a-fortiori inference has nothing to conclude. -/
-theorem secondLieutenant_is_lowest :
-    ∀ r : Rank, ¬ r < .secondLieutenant := by decide
-
-/-! ### The linguists × languages model (§2.3.2, Tables 1–2)
-
-The paper's own 2D example (pp. 526–527; Appendix Tables 3–4, p. 535):
-four professors ordered by erudition, four languages ordered by
-accessibility, and the propositional function "X can read L". -/
-
-/-- Linguists ordered by erudition, most erudite lowest (definition A2's
-worked example, p. 537): "Apotheosis reads English" is the easiest
-proposition to satisfy. -/
+/-- The professors of Indo-European linguistics in order of erudition: "Apotheosis knows every
+language that Brilliant knows, Brilliant knows every language that Competent knows, and Competent
+knows every language that Dimm knows". -/
 inductive Linguist where
-  | apotheosis | brilliant | competent | dimm
+  | apotheosis
+  | brilliant
+  | competent
+  | dimm
   deriving DecidableEq, Repr, Fintype
 
-/-- Position on the erudition scale. -/
-def Linguist.idx : Linguist → Nat
+def Linguist.idx : Linguist → ℕ
   | .apotheosis => 0
   | .brilliant => 1
   | .competent => 2
@@ -402,13 +338,16 @@ def Linguist.idx : Linguist → Nat
 
 instance : LinearOrder Linguist := .lift' Linguist.idx (by decide)
 
-/-- Languages ordered by accessibility, most accessible lowest. -/
+/-- The languages in order of accessibility: "anyone who knows Hittite knows Greek, anyone who
+knows Greek knows French, and anyone who knows French knows English". -/
 inductive Lang where
-  | english | french | greek | hittite
+  | english
+  | french
+  | greek
+  | hittite
   deriving DecidableEq, Repr, Fintype
 
-/-- Position on the accessibility scale. -/
-def Lang.idx : Lang → Nat
+def Lang.idx : Lang → ℕ
   | .english => 0
   | .french => 1
   | .greek => 2
@@ -416,107 +355,102 @@ def Lang.idx : Lang → Nat
 
 instance : LinearOrder Lang := .lift' Lang.idx (by decide)
 
-/-- States of who-reads-what. Every state assigns each professor an
-initial segment of the accessibility scale (`threshold`). -/
-inductive LLState where
-  /-- Table 2a (p. 527): nobody reads anything. -/
-  | allFalse
-  /-- Table 2b: only Apotheosis reads English. -/
-  | topLeft
-  /-- Table 2c: Apotheosis reads English and French, Brilliant English. -/
-  | twoTrue
-  /-- Table 2d: everybody reads everything. -/
-  | allTrue
-  /-- A constructed staircase state (not in the paper), included to
-  refute converse entailments. -/
-  | diagonal
+instance : DecidableLT (Linguist × Lang) := λ _ _ => inferInstanceAs (Decidable (_ ∧ ¬ _))
+
+/-- *Professor `p.1` can read language `p.2`* in a state of affairs. -/
+abbrev CanRead : Linguist × Lang → LowerSet (Linguist × Lang) → Prop := (· ∈ ·)
+
+/-- Table 2c: Apotheosis reads English and French, Brilliant English. -/
+def table2c : LowerSet (Linguist × Lang) :=
+  .Iic (.apotheosis, .french) ⊔ .Iic (.brilliant, .english)
+
+/-- The Appendix's illustration: *Brilliant can read English* holds in Table 2c and *Brilliant can
+read Greek* does not, so the first does not entail the second, while the second entails the first
+because (Brilliant, English) is the lower point. -/
+theorem brilliant_english_greek :
+    CanRead (.brilliant, .english) table2c ∧ ¬ CanRead (.brilliant, .greek) table2c ∧
+      CanRead (.brilliant, .greek) < CanRead (.brilliant, .english) :=
+  ⟨LowerSet.mem_sup_iff.2 (.inr (LowerSet.mem_Iic_iff.2 le_rfl)),
+    λ h => by
+      rcases LowerSet.mem_sup_iff.1 h with h | h <;>
+        exact absurd (LowerSet.mem_Iic_iff.1 h) (by decide),
+    isScalarModel_mem.lt_iff.2 (by decide)⟩
+
+/-- The corners of Table 1: *Dimm can read Hittite* entails that every linguist reads every
+language, and *Apotheosis can't read English* that none reads any. -/
+theorem corners (p : Linguist × Lang) :
+    CanRead (.dimm, .hittite) ≤ CanRead p ∧
+      (¬ CanRead (.apotheosis, .english) ·) ≤ (¬ CanRead p ·) :=
+  have h₁ : p ≤ (.dimm, .hittite) := by revert p; decide
+  have h₀ : (.apotheosis, .english) ≤ p := by revert p; decide
+  ⟨λ s h => s.lower h₁ h, λ s h hp => h (s.lower h₀ hp)⟩
+
+/-- (109)–(112): each (a) sentence is more informative than its (b) sentence — *Brilliant can read
+Hittite* than *Brilliant can read French*, *Brilliant can't read French* than *Brilliant can't read
+Hittite*, *Competent can read Hittite* than *Brilliant can read French*, and *Brilliant can't read
+French* than *Competent can't read French*. -/
+theorem informativeness_109_112 :
+    CanRead (.brilliant, .hittite) < CanRead (.brilliant, .french) ∧
+      (¬ CanRead (.brilliant, .french) ·) < (¬ CanRead (.brilliant, .hittite) ·) ∧
+      CanRead (.competent, .hittite) < CanRead (.brilliant, .french) ∧
+      (¬ CanRead (.brilliant, .french) ·) < (¬ CanRead (.competent, .french) ·) :=
+  ⟨isScalarModel_mem.lt_iff.2 (by decide), isScalarModel_mem.not_lt_not_iff.2 (by decide),
+    isScalarModel_mem.lt_iff.2 (by decide), isScalarModel_mem.not_lt_not_iff.2 (by decide)⟩
+
+/-! ### Complex scales: (121)–(122) -/
+
+/-- The four dimensions of (121), each with the two values its paired foci name, the lower value
+the one that makes the hiring the likelier: poor < rich, wash < wax, car < truck, $2 < $1. -/
+inductive Dim where
+  | wealth
+  | task
+  | vehicle
+  | fee
   deriving DecidableEq, Repr, Fintype
 
-/-- How many languages, in accessibility order, each professor reads in
-a state. -/
-def LLState.threshold : LLState → Linguist → Nat
-  | .allFalse, _ => 0
-  | .topLeft, .apotheosis => 1
-  | .topLeft, _ => 0
-  | .twoTrue, .apotheosis => 2
-  | .twoTrue, .brilliant => 1
-  | .twoTrue, _ => 0
-  | .allTrue, _ => 4
-  | .diagonal, .apotheosis => 4
-  | .diagonal, .brilliant => 3
-  | .diagonal, .competent => 2
-  | .diagonal, .dimm => 1
+/-- A point of the four-dimensional argument space. -/
+abbrev Point := Dim → Fin 2
 
-/-- "Professor X can read language L" in a state: L falls within X's
-initial segment of the accessibility scale. -/
-def CanRead (p : Linguist × Lang) (s : LLState) : Prop :=
-  p.2.idx < s.threshold p.1
+instance : DecidableLE Point := λ x y => inferInstanceAs (Decidable (∀ d, x d ≤ y d))
 
-instance (p : Linguist × Lang) : DecidablePred (CanRead p) := fun _ =>
-  inferInstanceAs (Decidable (_ < _))
+instance : DecidableLT Point := λ _ _ => inferInstanceAs (Decidable (_ ∧ ¬ _))
 
-instance : DecidableLE (Linguist × Lang) := fun _ _ =>
-  inferInstanceAs (Decidable (_ ∧ _))
+/-- *You could get a `wealth` man to `task` your `vehicle` for `fee`* in a state of affairs. -/
+abbrev CanGet : Point → LowerSet Point → Prop := (· ∈ ·)
 
-instance : DecidableLT (Linguist × Lang) := fun _ _ =>
-  inferInstanceAs (Decidable (_ ∧ _))
+def Point.mk (w t v f : Fin 2) : Point
+  | .wealth => w
+  | .task => t
+  | .vehicle => v
+  | .fee => f
 
-/-- The 2D model satisfies the forward half of A3 over the five states:
-lower points' propositions are entailed. -/
-theorem ll_model_satisfiesA3Forward :
-    ∀ di dj : Linguist × Lang, di < dj → CanRead dj ≤ CanRead di := by
+def wealthTable : List (String × (Fin 2 × Fin 2)) := [("poor rich", (0, 1)), ("rich poor", (1, 0))]
+
+def taskTable : List (String × (Fin 2 × Fin 2)) := [("wash wax", (0, 1)), ("wax wash", (1, 0))]
+
+def vehicleTable : List (String × (Fin 2 × Fin 2)) := [("car truck", (0, 1)), ("truck car", (1, 0))]
+
+def feeTable : List (String × (Fin 2 × Fin 2)) := [("$2 $1", (0, 1)), ("$1 $2", (1, 0))]
+
+/-- The foci of a row, one pair per dimension in the order A B. -/
+def focusFoci? (ex : LinguisticExample) : Option (Point × Point) := do
+  let w ← ex.parse? "wealth" wealthTable
+  let t ← ex.parse? "task" taskTable
+  let v ← ex.parse? "vehicle" vehicleTable
+  let f ← ex.parse? "fee" feeTable
+  pure (.mk w.1 t.1 v.1 f.1, .mk w.2 t.2 v.2 f.2)
+
+def focusRows : List (Row Point) := Examples.all.filterMap (Row.ofExample focusFoci?)
+
+/-- (121)–(122): the sentence with the likelier hiring in the full clause is acceptable and each
+exchange of one dimension's foci is not. -/
+theorem focusRows_predicted : ∀ r ∈ focusRows, (r.judgment = .acceptable ↔ r.Predicted CanGet) := by
+  simp only [Row.predicted_iff isScalarModel_mem]
   decide
 
-/-- The five-state space is too sparse for full A3: incomparable points
-end up with artifact entailments (e.g. "Brilliant reads Hittite" entails
-"Competent reads French" over these states, though the points are
-incomparable), violating A3's only-if direction. A genuine model of the
-paper's Table 2 universe would need the full space of nested states. -/
-theorem ll_sparse_fails_A3 : ¬ IsScalarModel CanRead := by decide
-
-/-- "Brilliant can read Hittite" entails "Brilliant can read English":
-Hittite is less accessible, so reading it is the stronger claim. -/
-theorem brilliant_hittite_entails_english :
-    CanRead (.brilliant, .hittite) ≤ CanRead (.brilliant, .english) := by
+/-- Every example that names a conjunction is read into one of the two models. -/
+theorem featured_rows_parse : ∀ ex ∈ Examples.all, (ex.feature? "conjunction").isSome →
+    (Row.ofExample rankFoci? ex).isSome ∨ (Row.ofExample focusFoci? ex).isSome := by
   decide
-
-/-- The paper's worked example (p. 537): (Brilliant, English) is lower
-than (Brilliant, Greek). -/
-theorem brilliant_english_lower_than_brilliant_greek :
-    ((.brilliant, .english) : Linguist × Lang) < (.brilliant, .greek) := by
-  decide
-
-/-- (Competent, French) and (Brilliant, Hittite) are incomparable
-(definition A2): Competent > Brilliant on erudition but French < Hittite
-on accessibility. -/
-theorem competent_french_incomparable_brilliant_hittite :
-    ¬ ((.competent, .french) : Linguist × Lang) < (.brilliant, .hittite) ∧
-    ¬ ((.brilliant, .hittite) : Linguist × Lang) < (.competent, .french) := by
-  decide
-
-/-! ### Judgment data
-
-The paper's judgment data — basic *let alone* (exx. 15–16), NPI licensing
-and the *barely*/*almost*/*only* contrast (exx. 62–66, 113–115),
-constituency probes (topicalization, VP ellipsis, wh-extraction,
-IT-clefting; exx. 31–34, 39–41), scalar anomalies (exx. 104, 106–107,
-121–122), and the attested positive-polarity cases (exx. 71–72) — live in
-the generated module `Data.Examples.FillmoreKayOConnor1988`
-(`Examples.all`, `Examples.ex113`, ...), sourced from
-`Linglib/Data/Examples/FillmoreKayOConnor1988.json`. -/
-
-/-- The positive-polarity examples (exx. 71–72) are judged acceptable —
-the attested cases `LetAloneConditions.polarity := .positive` covers,
-challenging a purely syntactic NPI account. -/
-theorem positive_polarity_attested :
-    (Examples.ex71.judgment, Examples.ex72.judgment)
-      = (.acceptable, .acceptable) := by decide
-
-/-- The *barely*/*almost*/*only* minimal triple (exx. 113–115): *barely*
-licenses *let alone*; *almost* and non-subject *only* do not. -/
-theorem barely_almost_only_contrast :
-    Examples.ex115.judgment = .acceptable ∧
-    Examples.ex113.judgment = .ungrammatical ∧
-    Examples.ex114.judgment = .ungrammatical := by decide
 
 end FillmoreKayOConnor1988

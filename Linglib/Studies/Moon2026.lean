@@ -1,5 +1,5 @@
 import Linglib.Features.Number.Interp
-import Linglib.Studies.Filip2012
+import Linglib.Semantics.Aspect.Cumulativity
 import Mathlib.Topology.Connected.Basic
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
@@ -25,7 +25,7 @@ and [borer-2005]'s individuation operator excludes it (`div_excludes_mixed_drink
 half a drink with its ratios preserved is still a drink, so the denotation is not quantized
 either (`mixedDrink_not_qua`). Mixed drinks thus occupy the ¬CUM ∧ ¬QUA middle ground of
 [filip-2012] (`mixedDrink_middle_ground`), and the gap propagates to drinking VPs through
-`Filip2012.middle_ground_stable` (`mixedDrink_VP_propagation_gap`). Multipliers such as
+`middle_ground_stable` (`mixedDrink_VP_propagation_gap`). Multipliers such as
 *double* rescale the measured part's ratio constant rather than the whole (`doubleRecipe`,
 [wagiel-2021]'s subatomic quantification), and *dry* rescales another ingredient's
 (`modifyRatio`).
@@ -187,8 +187,34 @@ theorem mixedDrink_middle_ground {a b : α} (ha : mixedDrinkDen recipe μ phase 
     ¬ CUM (mixedDrinkDen recipe μ phase) ∧ ¬ QUA (mixedDrinkDen recipe μ phase) :=
   connectivity_middle_ground (fun _ => selfConnected_of_mixedDrinkDen) ha hb hDisc hx hy hlt
 
+omit [TopologicalSpace α] in
+/-- Neither cumulativity nor quantization of the object propagates to the VP, so neither
+`cum_propagation` nor `qua_propagation` fires; the gap itself propagates. Two objects whose
+sum is not an object witness the failure of cumulativity on the VP: the sum event's object
+would have to be their sum. -/
+private theorem not_cum_vp {β : Type*} [SemilatticeSup β] {θ : α → β → Prop} {OBJ : α → Prop}
+    (hCumTheta : ArgumentStructure.CumTheta θ) (hUP : ArgumentStructure.UP θ) {x y : α}
+    {e₁ e₂ : β} (hx : OBJ x) (hy : OBJ y) (hθ₁ : θ x e₁) (hθ₂ : θ y e₂) (hSum : ¬ OBJ (x ⊔ y)) :
+    ¬ CUM (VP θ OBJ) := by
+  intro hCum
+  obtain ⟨z, hz_obj, hz_θ⟩ := hCum ⟨x, hx, hθ₁⟩ ⟨y, hy, hθ₂⟩
+  exact hSum (hUP z (x ⊔ y) (e₁ ⊔ e₂) hz_θ (hCumTheta x y e₁ e₂ hθ₁ hθ₂) ▸ hz_obj)
+
+omit [TopologicalSpace α] in
+/-- With a strictly incremental verb, an object neither cumulative nor quantized yields a VP
+neither cumulative nor quantized: the sum witnesses refute cumulativity and a proper object
+part, mapped to a proper subevent, refutes quantization. -/
+theorem middle_ground_stable {β : Type*} [SemilatticeSup β] {θ : α → β → Prop} [IsSincVerb θ]
+    {OBJ : α → Prop} {a b : α} {e_a e_b : β} (ha : OBJ a) (hb : OBJ b) (hθ_a : θ a e_a)
+    (hθ_b : θ b e_b) (hSum : ¬ OBJ (a ⊔ b)) {x y : α} {e_x : β} (hx : OBJ x) (hy : OBJ y)
+    (hlt : y < x) (hθ_x : θ x e_x) : ¬ CUM (VP θ OBJ) ∧ ¬ QUA (VP θ OBJ) := by
+  refine ⟨not_cum_vp ArgumentStructure.IsCumThetaVerb.cumTheta IsSincVerb.up ha hb hθ_a hθ_b
+    hSum, λ hQua => ?_⟩
+  obtain ⟨e_y, he_y_lt, hθ_y⟩ := (IsSincVerb.sinc (θ := θ)).mse x e_x y hθ_x hlt
+  exact hQua ⟨y, hy, hθ_y⟩ ⟨x, hx, hθ_x⟩ he_y_lt.ne he_y_lt.le
+
 /-- The middle ground propagates to VPs: a strictly incremental drinking verb with a
-mixed-drink object is neither cumulative nor quantized (`Filip2012.middle_ground_stable`). -/
+mixed-drink object is neither cumulative nor quantized (`middle_ground_stable`). -/
 theorem mixedDrink_VP_propagation_gap {β : Type*} [SemilatticeSup β] (drinkTheme : α → β → Prop)
     [IsSincVerb drinkTheme] {a b : α} {e_a e_b : β} (ha : mixedDrinkDen recipe μ phase a)
     (hb : mixedDrinkDen recipe μ phase b) (hθ_a : drinkTheme a e_a) (hθ_b : drinkTheme b e_b)
@@ -197,7 +223,7 @@ theorem mixedDrink_VP_propagation_gap {β : Type*} [SemilatticeSup β] (drinkThe
     (hθ_x : drinkTheme x e_x) :
     ¬ CUM (VP drinkTheme (mixedDrinkDen recipe μ phase)) ∧
       ¬ QUA (VP drinkTheme (mixedDrinkDen recipe μ phase)) :=
-  Filip2012.middle_ground_stable ha hb hθ_a hθ_b hSum hx hy hlt hθ_x
+  middle_ground_stable ha hb hθ_a hθ_b hSum hx hy hlt hθ_x
 
 /-! ### Modifying the ratios -/
 

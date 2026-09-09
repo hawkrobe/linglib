@@ -1031,7 +1031,6 @@ import Linglib.Fragments.Latvian.IndeterminatePronouns
 import Linglib.Fragments.Magahi.Pronouns
 import Linglib.Fragments.Maithili.Pronouns
 import Linglib.Fragments.Malagasy.Relativization
-import Linglib.Fragments.Malayic.VoiceSystem
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Mandarin.Adposition
 import Linglib.Fragments.Mandarin.AspectComparison
@@ -1726,7 +1725,6 @@ import Linglib.Semantics.Modality.BranchingTime
 import Linglib.Semantics.Modality.Directive
 import Linglib.Logic.Modal.Epistemic
 import Linglib.Logic.Modal.Extensional
-import Linglib.Semantics.Modality.EpistemicProbability
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Modality.Exclusion
 import Linglib.Semantics.Modality.HistoricalAlternatives
@@ -2155,14 +2153,14 @@ import Linglib.Studies.ErkHerbelot2024
 import Linglib.Studies.Erlewine2016
 import Linglib.Studies.ErlewineSommerlot2025
 import Linglib.Studies.EvcenBaleBarner2026
-import Linglib.Studies.Everdell2024
+import Linglib.Studies.Everdell2023
 import Linglib.Studies.FaginHalpern1994
 import Linglib.Studies.Faller2019
 import Linglib.Studies.FarkasBruce2010
 import Linglib.Studies.FarkasRoelofsen2017
 import Linglib.Studies.Faust2026
 import Linglib.Studies.FaustLampitelli2026
-import Linglib.Studies.FedzechkinaEtAl2017
+import Linglib.Studies.FedzechkinaChuJaeger2018
 import Linglib.Studies.Ferreira2023
 import Linglib.Studies.Filip2012
 import Linglib.Studies.FillmoreKayOConnor1988
@@ -3048,3 +3046,14 @@ import Linglib.Data.Examples.Elbourne2026
 import Linglib.Data.Examples.ElkinsTorrenceBrown2026
 import Linglib.Data.Examples.Elliott2025
 import Linglib.Data.Examples.EngelhardtEtAl2006
+import Linglib.Data.Examples.Enguehard2024
+import Linglib.Data.Examples.Erlewine2016
+import Linglib.Data.Examples.ErlewineSommerlot2025
+import Linglib.Data.Examples.EvcenBaleBarner2026
+import Linglib.Data.Examples.Everdell2023
+import Linglib.Data.Examples.FarkasBruce2010
+import Linglib.Data.Examples.FarkasRoelofsen2017
+import Linglib.Data.Examples.Faust2026
+import Linglib.Data.Examples.FaustLampitelli2026
+import Linglib.Data.Examples.Ferreira2023
+import Linglib.Data.Examples.Filip2012

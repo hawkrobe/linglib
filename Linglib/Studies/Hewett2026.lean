@@ -59,8 +59,7 @@ open Wood2015 (Construction)
 
 /-- Semitic verbal templates (binyanim) attested in the paper's l-selection data.
     Realized as nonconcatenative vocalic patterns on consonantal roots (for the
-    phonological CV-skeleton view see the template infrastructure in
-    `Studies/Faust2026.lean`);
+    phonological CV-skeleton view see `Morphology/Morphotactics/CVTemplate.lean`);
     syntactically they realize functional heads above the root. -/
 inductive SemiticTemplate where
   | XaYaZ     -- Form I: basic active (Arabic faʕal)

@@ -3,7 +3,6 @@ import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.Probe.Profile
-import Linglib.Studies.ErlewineSommerlot2025
 import Linglib.Studies.CoonMateoPedroPreminger2014
 
 /-!
@@ -348,17 +347,20 @@ Both papers commit Voice to be phasal via `phaseOverride := some true`,
 on disjoint empirical domains. The convergence is now machine-checked
 rather than docstring-asserted. -/
 
+/-- The Malayic passive Voice of [erlewine-sommerlot-2025], which heads a phase in every
+    clause type (their VoiceP is always a phase, in *di-* passives and bare passives alike),
+    as a `Voice.Head`: passive flavour with the phase override set. -/
+def malayicPassiveVoice : Minimalist.Voice.Head :=
+  { flavor := .passive, hasD := true, phaseOverride := some true }
+
 /-- Voice phasehood is attested in two unrelated families via the same
     `phaseOverride := some true` carrier: Pietraszko 2026 (Ndebele,
     Bantu) and Erlewine & Sommerlot 2025 (Malayic, Austronesian). -/
 theorem voice_phase_attested_in_two_families :
     Sample.voiceWithEPP.IsPhasal ∧
     Sample.voiceWithoutEPP.IsPhasal ∧
-    (ErlewineSommerlot2025.clauseToVoiceHead
-       .diPassive).IsPhasal ∧
-    (ErlewineSommerlot2025.clauseToVoiceHead
-       .barePassive).IsPhasal := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
+    malayicPassiveVoice.IsPhasal := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-! ## §7. Four-cell phase-override typology
 
@@ -405,12 +407,9 @@ theorem typology_cell_agent_focus :
     forces phasal against the passive flavor default (which Collins-style
     treats as non-phasal). -/
 theorem typology_cell_erlewine_sommerlot :
-    (ErlewineSommerlot2025.clauseToVoiceHead
-       .diPassive).flavor = Flavor.passive ∧
-    (ErlewineSommerlot2025.clauseToVoiceHead
-       .diPassive).phaseOverride = some true ∧
-    (ErlewineSommerlot2025.clauseToVoiceHead
-       .diPassive).IsPhasal := by decide
+    malayicPassiveVoice.flavor = Flavor.passive ∧
+    malayicPassiveVoice.phaseOverride = some true ∧
+    malayicPassiveVoice.IsPhasal := by decide
 
 -- The four cells stand alone as named theorems above; each can be
 -- broken individually by a substrate edit, signaling exactly which
