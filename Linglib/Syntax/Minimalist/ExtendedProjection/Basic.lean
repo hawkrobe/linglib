@@ -545,24 +545,9 @@ def ComplementSize.isPhaseSized (cs : ComplementSize) : Bool :=
 
 /-- A complement is transparent to a cross-clausal dependency stopped at the
     CP phase boundary iff it is smaller than a full CP — its highest head is
-    below C in the fseq. This is the generic phase-sized boundary (≥ CP opaque);
-    for the Say-keyed sequence-of-tense boundary see `transparentToSOTAgree`. -/
+    below C in the fseq. This is the generic phase-sized boundary (≥ CP opaque). -/
 def ComplementSize.transparentToTenseAgree (cs : ComplementSize) : Bool :=
   cs.fLevel < fValue .C
-
-/-- A complement is transparent to sequence-of-tense Agree (the optional LF
-    deletion of an embedded `PAST` under an agreeing matrix `PAST`) iff its
-    highest head is below the `Say` layer in the functional sequence.
-
-    [egressy-2026], generalizing [keine-2019]'s selective opacity (the Williams
-    Cycle in Agree) to the SOT Rule of [ogihara-1996] / [ogihara-sharvit-2012]:
-    SOT-Agree is blocked by a clause-internal `Say` head (Say > T) but crosses
-    a bare TP. Hence non-speech-reporting complements (TP, fValue 2) are
-    transparent; speech-reporting complements (SayP, fValue 5) are opaque. The
-    boundary is `Say`, **not** `C` — Hungarian has no CP and `hogy` is an edge
-    marker, not a complementizer ([kiss-2023]). -/
-def ComplementSize.transparentToSOTAgree (cs : ComplementSize) : Bool :=
-  cs.fLevel < fValue .Say
 
 /-- The speech-reporting (SayP) complement size: highest head is `Say`. -/
 def ComplementSize.sayP : ComplementSize := ⟨.Say⟩
