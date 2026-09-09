@@ -1,355 +1,194 @@
 import Linglib.Semantics.Composition.Writer
-import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Semantics.Presupposition.ProjectiveContent
 
 /-!
-# Giorgolo & Asudeh 2012: Monads for Conventional Implicatures
-[giorgolo-asudeh-2012]
+# Giorgolo and Asudeh (2012): ⟨M, η, ⋆⟩ Monads for Conventional Implicatures
 
-## Core Claim
+This file formalizes [giorgolo-asudeh-2012]'s treatment of conventional implicature as the side
+effect of a Writer monad, [shan-2001]'s program applied to [potts-2005]'s paired values: every
+expression denotes a computation that yields its at-issue value and logs the side-issue propositions
+its parts contribute, and the flow of information between the dimensions is fixed by the monad
+itself, since bind hands the continuation only the value and can only extend the log
+(`Writer.val_bind_congr`, `Writer.log_prefix_bind`, `Writer.tell_persists`), so no lexical item can
+read or revise the side-issue dimension, as Potts's restriction demands and as the impossible
+modifier *negex* of [barker-bernardi-shan-2010] would. Presupposition triggers log their conditions
+in a second Writer layer of a monad transformer (`M`, `write`, `check`), whose projections compose
+as the two Glue implications prescribe (`atIssue_seq`, `ciLog_seq`, `presupLog_seq`). The derivation
+of "John, who likes cats, likes dogs also" puts the at-issue proposition, the conventional
+implicature and the presupposition of *also* in their three places (`Ex20.atIssue_sentence`,
+`Ex20.ciLog_sentence`, `Ex20.presupLog_sentence`); the presupposition is entailed by the side-issue
+log (`Ex20.presupposition_of_ci`), an interaction available only once the computation has ended,
+which is the paper's reply to [anderbois-brasoveanu-henderson-2010]'s case against
+multidimensionality, while the relative clause never reaches the at-issue value
+(`Ex20.atIssue_sentence_congr`).
 
-Conventional implicatures are modeled as Writer monad side-effects.
-CI-contributing expressions (appositives, expressives) *log* propositions
-to a side-issue dimension via `write`, while presupposition triggers
-log conditions via `check`. The monadic type structure enforces
-[potts-2005]'s flow restriction by construction: `bind`'s function
-argument receives only the at-issue value, never the CI log.
+## Implementation notes
 
-## Two-Stage Architecture
+* The monad is mathlib's `WriterT` over list logs, whose linguistic surface (`val`, `log`, `tell`
+  and their lemmas) is `Semantics/Composition/Writer.lean`; the two channels are the transformer
+  `WriterT (List CI) (Writer (List Presup))`, with `check` lifted from the presupposition monad
+  as the paper's footnote prescribes.
+* Glue's two implications are the two modes of composition: `⊸` elimination is the monad's `<*>`,
+  Shan's monadic application, and `⊸*` elimination plain application to monadic arguments; the
+  introduction rules, which reason hypothetically, are not needed for the derivation.
+* The extension of *like* is a parameter: the presupposition of *also* follows from the logged
+  implicature alone, given that cats are not dogs.
 
-1. **Compositional phase**: at-issue and CI dimensions are separated;
-   Potts's flow restrictions hold (at-issue → CI is one-way).
-2. **Post-compositional phase**: anaphora resolution and presupposition
-   checking can freely access both dimensions.
+## References
 
-## Two Channels via Monad Transformer (Appendix A)
-
-The analysis requires *two* Writer monads combined via a monad transformer:
-- **Inner Writer** (CI): accumulates conventional implicature propositions
-- **Outer Writer** (Presupposition): accumulates presuppositional conditions
-
-`write` and `check` have the same definition `λt.⟨⊥, {t}⟩` (eq. 21)
-but operate in different monad layers (fn. 4).
-
-## Worked Example (§5): "John, who likes cats, likes dogs also."
-
-- At-issue: like(john, dogs)
-- CI: {like(john, cats)} — from the NRRC via `write`
-- Presupposition: {∃z. like(john, z) ∧ z ≠ dogs} — from "also" via `check`
-
-The presupposition is satisfied by the CI content: john likes cats,
-and cats ≠ dogs. This satisfaction happens post-compositionally,
-after both Writer logs are exposed.
-
-## Relation to [shan-2001]
-
-[shan-2001] showed monads capture deep structure in NL semantics
-(focus, scope, questions, binding). [giorgolo-asudeh-2012] apply
-the *Writer* monad specifically to CIs, arguing it is preferable to
-the continuation-based approach: each monad isolates one kind of
-side-effect, and monad transformers compose them modularly.
+* [giorgolo-asudeh-2012]
+* [shan-2001]
+* [potts-2005]
+* [anderbois-brasoveanu-henderson-2010]
+* [barker-bernardi-shan-2010]
 -/
 
 namespace GiorgoloAsudeh2012
 
-
--- ════════════════════════════════════════════════════
--- § Model
--- ════════════════════════════════════════════════════
-
-inductive E where | john | cats | dogs
-  deriving DecidableEq, Repr
-
-def like (x y : E) : Bool :=
-  match x, y with
-  | .john, .cats | .john, .dogs => true
-  | _, _ => false
-
--- ════════════════════════════════════════════════════
--- § Semantic Propositions (log entries)
--- ════════════════════════════════════════════════════
-
-/-- CI propositions: unevaluated semantic objects logged by `write`. -/
-inductive CIProp where
-  | likes : E → E → CIProp
-  deriving DecidableEq, Repr
-
-/-- Presuppositional conditions: unevaluated conditions logged by `check`. -/
-inductive PresupProp where
-  /-- ∃z. like(subj, z) ∧ z ≠ obj — the presupposition of "also" -/
-  | existsOtherLiked : E → E → PresupProp
-  deriving DecidableEq, Repr
-
-def CIProp.eval : CIProp → Bool
-  | .likes x y => like x y
-
-/-- Evaluate a presuppositional condition over the finite entity domain. -/
-def PresupProp.eval : PresupProp → Bool
-  | .existsOtherLiked subj obj =>
-    [E.john, E.cats, E.dogs].any λ z => like subj z && !(z == obj)
-
--- ════════════════════════════════════════════════════
--- § Two-Channel Architecture (Monad Transformer, Appendix A)
--- ════════════════════════════════════════════════════
-
-/-- Two-channel meaning: flattened `Writer (List Presup) (Writer (List CI) A)`.
-
-    The outer Writer carries presuppositions; the inner carries
-    conventional implicatures. Figure 1's result type is:
-    `⟨⟨at-issue, {CI-props}⟩, {presup-conditions}⟩` -/
-structure TwoChannel (CI Presup : Type*) (A : Type*) where
-  val : A
-  ciLog : List CI
-  presupLog : List Presup
-
-namespace TwoChannel
-
-variable {CI Presup A B : Type*}
-
-def pure (a : A) : TwoChannel CI Presup A := ⟨a, [], []⟩
-
-def bind (m : TwoChannel CI Presup A) (f : A → TwoChannel CI Presup B)
-    : TwoChannel CI Presup B :=
-  let r := f m.val
-  ⟨r.val, m.ciLog ++ r.ciLog, m.presupLog ++ r.presupLog⟩
-
-/-- `write(t) = ⟨⊥, {t}⟩` (eq. 21): log a proposition to the CI channel. -/
-def write (p : CI) : TwoChannel CI Presup Unit := ⟨(), [p], []⟩
-
-/-- `check(t) = lift(⟨⊥, {t}⟩)` (eq. 21, fn. 4): log a condition to the
-    presupposition channel. Same definition as `write`, different layer. -/
-def check (p : Presup) : TwoChannel CI Presup Unit := ⟨(), [], [p]⟩
-
-@[simp] theorem pure_val (a : A) :
-    (TwoChannel.pure (CI := CI) (Presup := Presup) a).val = a := rfl
-@[simp] theorem pure_ciLog (a : A) :
-    (TwoChannel.pure (CI := CI) (Presup := Presup) a).ciLog = [] := rfl
-@[simp] theorem pure_presupLog (a : A) :
-    (TwoChannel.pure (CI := CI) (Presup := Presup) a).presupLog = [] := rfl
-@[simp] theorem bind_val (m : TwoChannel CI Presup A) (f : A → TwoChannel CI Presup B) :
-    (m.bind f).val = (f m.val).val := rfl
-@[simp] theorem bind_ciLog (m : TwoChannel CI Presup A) (f : A → TwoChannel CI Presup B) :
-    (m.bind f).ciLog = m.ciLog ++ (f m.val).ciLog := rfl
-@[simp] theorem bind_presupLog (m : TwoChannel CI Presup A)
-    (f : A → TwoChannel CI Presup B) :
-    (m.bind f).presupLog = m.presupLog ++ (f m.val).presupLog := rfl
-
-end TwoChannel
-
--- ════════════════════════════════════════════════════
--- § Isomorphism: TwoChannel ≅ Writer (List Presup) (Writer (List CI) A)
--- ════════════════════════════════════════════════════
-
-section NestedIso
--- A single universe: mathlib's `Writer ω α` requires `ω` and `α` in the
--- same universe, and the nesting chains all three parameters together.
 universe u
-variable {CI Presup A : Type u}
 
-def ofNestedWriter (m : Writer (List Presup) (Writer (List CI) A)) : TwoChannel CI Presup A :=
-  ⟨m.val.val, m.val.log, m.log⟩
+variable {CI Presup A B : Type u}
 
-def toNestedWriter (m : TwoChannel CI Presup A) : Writer (List Presup) (Writer (List CI) A) :=
-  Writer.mk (Writer.mk m.val m.ciLog) m.presupLog
+/-! ### The two channels -/
 
-theorem nested_roundtrip (m : TwoChannel CI Presup A) :
-    ofNestedWriter (toNestedWriter m) = m := by
-  cases m; rfl
+/-- The two-channel monad: conventional implicatures are logged by the transformer and
+presuppositional conditions by the monad it transforms, so that a computation's result is the
+paper's ⟨⟨value, implicatures⟩, presuppositions⟩. -/
+abbrev M (CI Presup : Type u) := WriterT (List CI) (Writer (List Presup))
 
-theorem nested_roundtrip_inv (m : Writer (List Presup) (Writer (List CI) A)) :
-    toNestedWriter (ofNestedWriter m) = m := rfl
+/-- The at-issue value of a computation. -/
+def atIssue (m : M CI Presup A) : A := m.run.val.1
 
-end NestedIso
+/-- The conventional implicatures a computation logs. -/
+def ciLog (m : M CI Presup A) : List CI := m.run.val.2
 
--- ════════════════════════════════════════════════════
--- § Lexical Entries (Table 1)
--- ════════════════════════════════════════════════════
+/-- The presuppositional conditions a computation logs. -/
+def presupLog (m : M CI Presup A) : List Presup := m.run.log
 
-/-! All lexical items not introducing CIs or presuppositions are
-    η-lifted: `⟦word⟧ = η(standard-meaning)` (Table 1). -/
+/-- `write(t) = ⟨⊥, {t}⟩`: log a conventional implicature. -/
+def write (p : CI) : M CI Presup PUnit := MonadWriter.tell [p]
 
-open TwoChannel (write check)
+/-- `check(t)`, lifted from the presupposition monad: log a condition to be checked once the
+computation has ended. -/
+def check (p : Presup) : M CI Presup PUnit := monadLift (Writer.tell p)
 
-/-- `comma` (Table 1): `λj λl. j ⋆ λx. l ⋆ λf. write(f x) ⋆ λ_. η(x)`
+@[simp] theorem atIssue_pure (a : A) : atIssue (pure a : M CI Presup A) = a := rfl
 
-    The prosodic comma introduces NRRC content as CI via `write`.
-    Both arguments are monadic (⊸* in Glue), matching Table 1's type
-    `j ⊸* (j ⊸ l) ⊸* j`. -/
-def commaOp (subj : TwoChannel CIProp PresupProp E)
-    (nrrcPred : TwoChannel CIProp PresupProp (E → CIProp))
-    : TwoChannel CIProp PresupProp E :=
-  subj.bind λ x =>
-    nrrcPred.bind λ f =>
-      (write (f x)).bind λ _ =>
-        TwoChannel.pure x
+@[simp] theorem ciLog_pure (a : A) : ciLog (pure a : M CI Presup A) = [] := rfl
 
-/-- `also` (Table 1):
-    `λv.λo.λs. s ⋆ λx. v ⋆ λf. o ⋆ λy. check(∃z. f z x ∧ z ≠ y) ⋆ λ_. η(f y x)`
+@[simp] theorem presupLog_pure (a : A) : presupLog (pure a : M CI Presup A) = [] := rfl
 
-    Takes verb, object, subject (all monadic per ⊸*). Checks the
-    presupposition that the subject verb-s something other than the
-    object, then returns the at-issue content `f y x`. -/
-def alsoEntry (verb : TwoChannel CIProp PresupProp (E → E → Bool))
-    (obj : TwoChannel CIProp PresupProp E)
-    (subj : TwoChannel CIProp PresupProp E)
-    : TwoChannel CIProp PresupProp Bool :=
-  subj.bind λ x =>
-    verb.bind λ f =>
-      obj.bind λ y =>
-        (check (.existsOtherLiked x y)).bind λ _ =>
-          TwoChannel.pure (f y x)
+@[simp] theorem atIssue_bind (m : M CI Presup A) (f : A → M CI Presup B) :
+    atIssue (m >>= f) = atIssue (f (atIssue m)) := rfl
 
--- ════════════════════════════════════════════════════
--- § Derivation: "John, who likes cats, likes dogs also" (§5)
--- ════════════════════════════════════════════════════
+@[simp] theorem ciLog_bind (m : M CI Presup A) (f : A → M CI Presup B) :
+    ciLog (m >>= f) = ciLog m ++ ciLog (f (atIssue m)) := rfl
 
-/-- "John, who likes cats" — comma writes like(john, cats) to CI. -/
-def john_who_likes_cats : TwoChannel CIProp PresupProp E :=
-  commaOp (TwoChannel.pure .john)
-          (TwoChannel.pure (λ subj => CIProp.likes subj .cats))
+@[simp] theorem presupLog_bind (m : M CI Presup A) (f : A → M CI Presup B) :
+    presupLog (m >>= f) = presupLog m ++ presupLog (f (atIssue m)) := rfl
 
-/-- Full sentence (example 20):
-    `also(likes)(dogs)(john_who_likes_cats)` -/
-def sentence : TwoChannel CIProp PresupProp Bool :=
-  alsoEntry (TwoChannel.pure (λ y x => like x y))
-            (TwoChannel.pure .dogs)
-            john_who_likes_cats
+@[simp] theorem ciLog_write (p : CI) : ciLog (write p : M CI Presup PUnit) = [p] := rfl
 
--- ════════════════════════════════════════════════════
--- § Verification: Result matches Figure 1
--- ════════════════════════════════════════════════════
+@[simp] theorem presupLog_write (p : CI) : presupLog (write p : M CI Presup PUnit) = [] := rfl
 
-/-! Figure 1's result:
-    `⟨⟨like(j, dogs), {like(j, cats)}⟩, {∃z.like(j,z) ∧ z ≠ dogs}⟩` -/
+@[simp] theorem ciLog_check (p : Presup) : ciLog (check p : M CI Presup PUnit) = [] := rfl
 
-/-- At-issue: like(john, dogs) = true. -/
-theorem sentence_atIssue : sentence.val = true := rfl
+@[simp] theorem presupLog_check (p : Presup) : presupLog (check p : M CI Presup PUnit) = [p] :=
+  rfl
 
-/-- CI log: {like(john, cats)} from the NRRC via `write`. -/
-theorem sentence_ci : sentence.ciLog = [.likes .john .cats] := rfl
+/-- The at-issue value of a composition depends on the input's value alone: the continuation
+never sees either log. -/
+theorem atIssue_bind_congr {m m' : M CI Presup A} (f : A → M CI Presup B)
+    (h : atIssue m = atIssue m') : atIssue (m >>= f) = atIssue (m' >>= f) := by
+  simp only [atIssue_bind, h]
 
-/-- Presupposition log: {∃z.like(john,z) ∧ z ≠ dogs} from `also` via `check`. -/
-theorem sentence_presup :
-    sentence.presupLog = [.existsOtherLiked .john .dogs] := rfl
+/-- The side-issue log is only extended: no item can revise an implicature already logged. -/
+theorem ciLog_prefix_bind (m : M CI Presup A) (f : A → M CI Presup B) :
+    ciLog m <+: ciLog (m >>= f) :=
+  ⟨ciLog (f (atIssue m)), rfl⟩
 
--- ════════════════════════════════════════════════════
--- § Post-Compositional Phase
--- ════════════════════════════════════════════════════
+/-! ### Shan's application
 
-/-! Post-compositionally, both logs are exposed. CI content and
-    presuppositional conditions are evaluated against the model. -/
+Glue's `⊸` elimination composes at-issue items by `A(f)(x) = f ⋆ λg. x ⋆ λy. η(g y)`, the monad's
+`<*>`: the value is the application and both logs are threaded. -/
 
-/-- All CI content is true in the model. -/
-theorem ci_true_in_model : sentence.ciLog.all CIProp.eval = true := rfl
+@[simp] theorem atIssue_seq (f : M CI Presup (A → B)) (x : M CI Presup A) :
+    atIssue (f <*> x) = atIssue f (atIssue x) := rfl
 
-/-- All presuppositions are satisfied in the model. -/
-theorem presup_satisfied : sentence.presupLog.all PresupProp.eval = true := rfl
+@[simp] theorem ciLog_seq (f : M CI Presup (A → B)) (x : M CI Presup A) :
+    ciLog (f <*> x) = ciLog f ++ ciLog x := rfl
 
-/-- The CI log provides the witness for presupposition satisfaction.
+@[simp] theorem presupLog_seq (f : M CI Presup (A → B)) (x : M CI Presup A) :
+    presupLog (f <*> x) = presupLog f ++ presupLog x := rfl
 
-    The NRRC logs like(john, cats). Since like(john, cats) = true and
-    cats ≠ dogs, the presupposition ∃z. like(john, z) ∧ z ≠ dogs is
-    witnessed. This is the paper's central empirical point: the
-    presupposition of "also" is satisfied by CI content from the NRRC,
-    but this satisfaction is only computable post-compositionally
-    (the log produced by `write` cannot be examined before the monadic
-    computation terminates). -/
-theorem ci_witnesses_presup :
-    sentence.ciLog.any (λ ci =>
-      match ci with
-      | .likes subj obj => like subj obj && !(obj == .dogs)) = true := rfl
+/-! ### "John, who likes cats, likes dogs also" (20) -/
 
--- ════════════════════════════════════════════════════
--- § Potts's Flow Restriction (by construction)
--- ════════════════════════════════════════════════════
+namespace Ex20
 
-/-! ### Why the Writer monad enforces dimensional separation
+/-- John, the cats and the dogs. -/
+inductive E
+  | john
+  | cats
+  | dogs
+  deriving DecidableEq, Repr
 
-The function in `bind` has type `A → TwoChannel CI Presup B`, not
-`TwoChannel CI Presup A → TwoChannel CI Presup B`. It receives the
-*value* stripped of both logs. This means:
+variable (like : E → E → Prop)
 
-- **At-issue → CI** (allowed): The comma operator receives `john`
-  (the value) and uses it to construct CI content `like(john, cats)`.
+/-- `comma` (Table 1): `λj λl. j ⋆ λx. l ⋆ λf. write(f x) ⋆ λ_. η(x)`, the prosodic element
+introducing the non-restrictive relative clause, which logs the clause's content about its
+anchor and returns the anchor. -/
+def comma (j : M Prop Prop E) (l : M Prop Prop (E → Prop)) : M Prop Prop E :=
+  j >>= λ x => l >>= λ f => write (f x) >>= λ _ => pure x
 
-- **CI → at-issue** (blocked): When `also` applies the verb,
-  the function receives only `x = john`, `f = likes`, `y = dogs`.
-  It cannot see that the CI log contains `like(john, cats)`.
+/-- `also` (Table 1): `λv λo λs. s ⋆ λx. v ⋆ λf. o ⋆ λy. check(∃z. f z x ∧ z ≠ y) ⋆ λ_. η(f y x)`,
+which logs the presupposition that the subject bears the relation to something other than the
+object and returns the at-issue proposition. -/
+def also (v : M Prop Prop (E → E → Prop)) (o s : M Prop Prop E) : M Prop Prop Prop :=
+  s >>= λ x => v >>= λ f => o >>= λ y => check (∃ z, f z x ∧ z ≠ y) >>= λ _ => pure (f y x)
 
-- **Presup → at-issue** (blocked): Similarly, presuppositional
-  conditions logged by `check` are invisible to subsequent at-issue
-  computation.
+/-- The at-issue items of Table 1, η-lifted. -/
+def john : M Prop Prop E := pure .john
 
-This structural separation IS Potts's restriction, enforced by the
-type system rather than stipulated as a constraint on derivations. -/
+def who : M Prop Prop ((E → Prop) → E → Prop) := pure id
 
-/-- Changing the NRRC content does not affect the at-issue result:
-    the main clause function sees only the value, never the CI log. -/
-def sentence_alt_nrrc : TwoChannel CIProp PresupProp Bool :=
-  alsoEntry (TwoChannel.pure (λ y x => like x y))
-            (TwoChannel.pure .dogs)
-            (commaOp (TwoChannel.pure .john)
-                     (TwoChannel.pure (λ subj => CIProp.likes subj .dogs)))
+def likes : M Prop Prop (E → E → Prop) := pure λ y x => like x y
 
-theorem flow_restriction : sentence.val = sentence_alt_nrrc.val := rfl
+def cats : M Prop Prop E := pure .cats
 
--- ════════════════════════════════════════════════════
--- § Integration: Projective Content Taxonomy
--- ════════════════════════════════════════════════════
+def dogs : M Prop Prop E := pure .dogs
 
-/-! CI-contributing expressions modeled by the Writer monad —
-    expressives, appositives, NRRCs — are exactly Class B in
-    [tonhauser-beaver-roberts-simons-2013]'s taxonomy:
-    SCF=no (CI content can be informative), OLE=no (attributed
-    to speaker, not attitude holder). The Writer's log threading
-    captures this: content projects past all operators without
-    requiring prior establishment in context. -/
+/-- "who likes cats", by `⊸` elimination. -/
+def whoLikesCats : M Prop Prop (E → Prop) := who <*> (likes like <*> cats)
 
-open Presupposition.ProjectiveContent
+/-- The sentence, by `⊸*` elimination. -/
+def sentence : M Prop Prop Prop := also (likes like) dogs (comma john (whoLikesCats like))
 
-theorem nrrc_is_classB : ProjectiveTrigger.nrrc.toClass = .classB := rfl
-theorem appositive_is_classB : ProjectiveTrigger.appositive.toClass = .classB := rfl
-theorem expressive_is_classB : ProjectiveTrigger.expressive.toClass = .classB := rfl
+/-- Figure 1, the at-issue proposition: John likes dogs. -/
+theorem atIssue_sentence : atIssue (sentence like) = like .john .dogs := rfl
 
-/-- Class B = SCF=no, OLE=no: the behavior the Writer monad models. -/
-theorem classB_properties :
-    ProjectiveClass.classB.scf = .noRequires ∧
-    ProjectiveClass.classB.ole = .notObligatory := ⟨rfl, rfl⟩
+/-- Figure 1, the side-issue log: John likes cats. -/
+theorem ciLog_sentence : ciLog (sentence like) = [like .john .cats] := rfl
 
--- ════════════════════════════════════════════════════
--- § Bridge: TwoChannel → TwoDimProp
--- ════════════════════════════════════════════════════
+/-- Figure 1, the presupposition of *also*: John likes something other than the dogs. -/
+theorem presupLog_sentence :
+    presupLog (sentence like) = [∃ z, like .john z ∧ z ≠ .dogs] := rfl
 
-/-! For intensional models where values and log entries are world-indexed
-    propositions, the CI channel maps directly to [potts-2005]'s
-    `TwoDimProp`. The presupposition channel is orthogonal. -/
+/-- Once both logs are exposed, the presupposition is entailed by the conventional implicature:
+John likes cats, and cats are not dogs. -/
+theorem presupposition_of_ci (h : ∀ q ∈ ciLog (sentence like), q) :
+    ∀ p ∈ presupLog (sentence like), p := by
+  rw [presupLog_sentence]
+  rw [ciLog_sentence] at h
+  intro p hp
+  rw [List.mem_singleton] at hp
+  subst hp
+  exact ⟨.cats, h _ (List.mem_singleton_self _), by decide⟩
 
-open Pragmatics.Expressives (TwoDimProp)
+/-- The relative clause never reaches the at-issue dimension: whatever it says, the sentence's
+at-issue value is that John likes dogs. -/
+theorem atIssue_sentence_congr (l l' : M Prop Prop (E → Prop)) :
+    atIssue (also (likes like) dogs (comma john l)) =
+      atIssue (also (likes like) dogs (comma john l')) := rfl
 
-section Bridge
-variable {W : Type*}
-
-/-- Project the CI channel to a TwoDimProp.
-    The at-issue value becomes `atIssue`; the conjoined CI log becomes `ci`.
-    Presuppositional content is discarded (it lives in a separate dimension). -/
-def twoChannelToTwoDim (m : TwoChannel (W → Prop) (W → Prop) (W → Prop))
-    : TwoDimProp W :=
-  { atIssue := m.val
-  , ci := λ w => ∀ p ∈ m.ciLog, p w }
-
-theorem bridge_preserves_atIssue (m : TwoChannel (W → Prop) (W → Prop) (W → Prop)) :
-    (twoChannelToTwoDim m).atIssue = m.val := rfl
-
-end Bridge
-
-/-! ### Structural correspondence to PostSupp
-
-`PostSupp S A` ([charlow-2021]) is structurally identical to a single
-Writer monad: a value paired with accumulated side-effect content, composed
-via `pure`/`bind` with log sequencing via `Update.seq`. The Writer monad for CIs
-and Charlow's `PostSupp` for modified numerals are the same pattern applied
-to different side-effects (CI propositions vs cardinality tests), confirming
-[shan-2001]'s insight that monads capture recurring compositional
-structure in natural language. -/
+end Ex20
 
 end GiorgoloAsudeh2012
