@@ -1,0 +1,568 @@
+[
+  {
+    "id": "foxspector2018_ex14a",
+    "source": {
+      "bibkey": "hurford-1974",
+      "paperLabel": "Hurford's Constraint"
+    },
+    "language": "stan1293",
+    "primaryText": "John was born in France or Paris.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hurford",
+        "yes"
+      ],
+      [
+        "rescuable",
+        "no"
+      ],
+      [
+        "order",
+        "canonical"
+      ],
+      [
+        "distant",
+        "no"
+      ],
+      [
+        "de",
+        "0"
+      ]
+    ],
+    "comment": "The second disjunct entails the first and no scalar alternative lets exhaustification break the entailment.",
+    "reportedIn": {
+      "bibkey": "fox-spector-2018",
+      "paperLabel": "(14a)"
+    }
+  },
+  {
+    "id": "foxspector2018_ex14b",
+    "source": {
+      "bibkey": "fox-spector-2018",
+      "paperLabel": "(14b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have a dog or a German Shepherd.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hurford",
+        "yes"
+      ],
+      [
+        "rescuable",
+        "no"
+      ],
+      [
+        "order",
+        "canonical"
+      ],
+      [
+        "distant",
+        "no"
+      ],
+      [
+        "de",
+        "0"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "foxspector2018_ex16a",
+    "source": {
+      "bibkey": "hurford-1974",
+      "paperLabel": "(16a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John talked to Mary or Sue or both.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hurford",
+        "yes"
+      ],
+      [
+        "rescuable",
+        "yes"
+      ],
+      [
+        "order",
+        "canonical"
+      ],
+      [
+        "distant",
+        "no"
+      ],
+      [
+        "de",
+        "0"
+      ]
+    ],
+    "comment": "Exhaustifying the first disjunct excludes 'both', so the second no longer entails it.",
+    "reportedIn": {
+      "bibkey": "fox-spector-2018",
+      "paperLabel": "(16a)"
+    }
+  },
+  {
+    "id": "foxspector2018_ex16b",
+    "source": {
+      "bibkey": "fox-spector-2018",
+      "paperLabel": "(16b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John did some or all of the homework.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hurford",
+        "yes"
+      ],
+      [
+        "rescuable",
+        "yes"
+      ],
+      [
+        "order",
+        "canonical"
+      ],
+      [
+        "distant",
+        "no"
+      ],
+      [
+        "de",
+        "0"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "foxspector2018_ex16c",
+    "source": {
+      "bibkey": "gazdar-1979",
+      "paperLabel": "(16c)"
+    },
+    "language": "stan1293",
+    "primaryText": "John read three books or more.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hurford",
+        "yes"
+      ],
+      [
+        "rescuable",
+        "yes"
+      ],
+      [
+        "order",
+        "canonical"
+      ],
+      [
+        "distant",
+        "no"
+      ],
+      [
+        "de",
+        "0"
+      ]
+    ],
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "fox-spector-2018",
+      "paperLabel": "(16c)"
+    }
+  },
+  {
+    "id": "foxspector2018_ex18a",
+    "source": {
+      "bibkey": "fox-spector-2018",
+      "paperLabel": "(18a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John has three or six children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hurford",
+        "yes"
+      ],
+      [
+        "rescuable",
+        "yes"
+      ],
+      [
+        "order",
+        "canonical"
+      ],
+      [
+        "distant",
+        "yes"
+      ],
+      [
+        "de",
+        "0"
+      ]
+    ],
+    "comment": "Exhaustification of the first disjunct has a detectable effect: four or five children falsify it."
+  },
+  {
+    "id": "foxspector2018_ex18b",
+    "source": {
+      "bibkey": "fox-spector-2018",
+      "paperLabel": "(18b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The water is warm or absolutely boiling.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hurford",
+        "yes"
+      ],
+      [
+        "rescuable",
+        "yes"
+      ],
+      [
+        "order",
+        "canonical"
+      ],
+      [
+        "distant",
+        "yes"
+      ],
+      [
+        "de",
+        "0"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "foxspector2018_ex12b",
+    "source": {
+      "bibkey": "singh-2008",
+      "paperLabel": "Singh's Asymmetry"
+    },
+    "language": "stan1293",
+    "primaryText": "John talked to both Mary and Sue, or to Mary or Sue.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hurford",
+        "yes"
+      ],
+      [
+        "rescuable",
+        "yes"
+      ],
+      [
+        "order",
+        "reverse"
+      ],
+      [
+        "distant",
+        "no"
+      ],
+      [
+        "de",
+        "0"
+      ]
+    ],
+    "comment": "Exhaustifying the final disjunct is incrementally vacuous.",
+    "reportedIn": {
+      "bibkey": "fox-spector-2018",
+      "paperLabel": "(12b)"
+    }
+  },
+  {
+    "id": "foxspector2018_ex46",
+    "source": {
+      "bibkey": "fox-spector-2018",
+      "paperLabel": "(46)"
+    },
+    "language": "stan1293",
+    "primaryText": "The water is absolutely boiling or somewhat warm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hurford",
+        "yes"
+      ],
+      [
+        "rescuable",
+        "yes"
+      ],
+      [
+        "order",
+        "reverse"
+      ],
+      [
+        "distant",
+        "yes"
+      ],
+      [
+        "de",
+        "0"
+      ]
+    ],
+    "comment": "A reverse Hurford disjunction of distant entailing disjuncts: exhaustification is not vacuous."
+  },
+  {
+    "id": "foxspector2018_ex10a",
+    "source": {
+      "bibkey": "gajewski-sharvit-2012",
+      "paperLabel": "Hurford under negation"
+    },
+    "language": "stan1293",
+    "primaryText": "John didn't talk to Mary or Sue, or both.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hurford",
+        "yes"
+      ],
+      [
+        "rescuable",
+        "yes"
+      ],
+      [
+        "order",
+        "canonical"
+      ],
+      [
+        "distant",
+        "no"
+      ],
+      [
+        "de",
+        "1"
+      ]
+    ],
+    "comment": "Under one downward-entailing operator exhaustification is incrementally weakening.",
+    "reportedIn": {
+      "bibkey": "fox-spector-2018",
+      "paperLabel": "(10a)"
+    }
+  },
+  {
+    "id": "foxspector2018_ex65a",
+    "source": {
+      "bibkey": "fox-spector-2018",
+      "paperLabel": "(65a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John didn't hand in the first or second assignment or both.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hurford",
+        "yes"
+      ],
+      [
+        "rescuable",
+        "yes"
+      ],
+      [
+        "order",
+        "canonical"
+      ],
+      [
+        "distant",
+        "no"
+      ],
+      [
+        "de",
+        "1"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "foxspector2018_ex65b",
+    "source": {
+      "bibkey": "fox-spector-2018",
+      "paperLabel": "(65b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Everyone who didn't hand in the first or second assignment or both failed the class.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hurford",
+        "yes"
+      ],
+      [
+        "rescuable",
+        "yes"
+      ],
+      [
+        "order",
+        "canonical"
+      ],
+      [
+        "distant",
+        "no"
+      ],
+      [
+        "de",
+        "2"
+      ]
+    ],
+    "comment": "Two downward-entailing operators make the context upward-entailing again."
+  },
+  {
+    "id": "foxspector2018_ex66a",
+    "source": {
+      "bibkey": "fox-spector-2018",
+      "paperLabel": "(66a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I would go to the movies without John or Bill or both.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hurford",
+        "yes"
+      ],
+      [
+        "rescuable",
+        "yes"
+      ],
+      [
+        "order",
+        "canonical"
+      ],
+      [
+        "distant",
+        "no"
+      ],
+      [
+        "de",
+        "1"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "foxspector2018_ex66b",
+    "source": {
+      "bibkey": "fox-spector-2018",
+      "paperLabel": "(66b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I wouldn't go to the movies without John or Bill or both.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hurford",
+        "yes"
+      ],
+      [
+        "rescuable",
+        "yes"
+      ],
+      [
+        "order",
+        "canonical"
+      ],
+      [
+        "distant",
+        "no"
+      ],
+      [
+        "de",
+        "2"
+      ]
+    ],
+    "comment": ""
+  }
+]

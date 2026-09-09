@@ -353,6 +353,41 @@ theorem exhIE_eq_of_iff (hfin : ALT.Finite) {P : Set World → Prop}
   · rintro ⟨hw, h'⟩
     exact ⟨hw, λ q hq => h' q hq.1 ((h q hq.1).1 hq)⟩
 
+/-- Exhaustification entails its prejacent. -/
+theorem exhIE_subset : exhIE ALT φ ⊆ φ := λ _ h => h φ (self_mem_IE ALT φ)
+
+/-- Without alternatives, exhaustification is vacuous. -/
+theorem exhIE_empty : exhIE ∅ φ = φ :=
+  Set.Subset.antisymm (exhIE_subset ∅ φ) λ _ hu =>
+    (mem_exhIE_iff ∅ φ (Set.finite_empty)).2 ⟨hu, λ _ h => h.1.elim⟩
+
+/-- Exhaustification is antitone in the innocently excludable alternatives: more of them, a
+stronger result. -/
+theorem exhIE_subset_exhIE {ALT' : Set (Set World)} (hfin : ALT.Finite) (hfin' : ALT'.Finite)
+    (h : ∀ q, IsInnocentlyExcludable ALT' φ q → IsInnocentlyExcludable ALT φ q) :
+    exhIE ALT φ ⊆ exhIE ALT' φ := λ _ hu =>
+  (mem_exhIE_iff ALT' φ hfin').2
+    ⟨((mem_exhIE_iff ALT φ hfin).1 hu).1, λ q hq => ((mem_exhIE_iff ALT φ hfin).1 hu).2 q (h q hq)⟩
+
+/-- Against one alternative that some prejacent world falsifies, exhaustification denies exactly
+it. -/
+theorem exhIE_pair_sdiff {d : Set World} (hne : (φ \ d).Nonempty) : exhIE {φ, d} φ = φ \ d := by
+  obtain ⟨w, hw⟩ := hne
+  have hIE : IsInnocentlyExcludable {φ, d} φ d :=
+    .of_forall_subset_or_notMem (by simp) hw.1 hw.2 λ b hb => by
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hb
+      obtain h1 | h1 := hb <;> subst b
+      · exact Or.inl subset_rfl
+      · exact Or.inr hw.2
+  ext u
+  rw [mem_exhIE_iff _ _ (Set.toFinite _), Set.mem_sdiff]
+  refine ⟨λ ⟨hu, h⟩ => ⟨hu, h d hIE⟩, λ ⟨hu, hud⟩ => ⟨hu, λ q hq => ?_⟩⟩
+  have hq1 := hq.1
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq1
+  obtain h1 | h1 := hq1 <;> subst q
+  · exact (not_isInnocentlyExcludable_of_phi_subset (Set.toFinite _) ⟨u, hu⟩ subset_rfl hq).elim
+  · exact hud
+
 
 /-- A world is minimal iff it verifies some maximal compatible set. -/
 theorem mem_exhMW_iff_exists_isMCSet (u : World) :
