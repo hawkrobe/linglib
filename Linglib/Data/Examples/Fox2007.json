@@ -1,0 +1,970 @@
+[
+  {
+    "id": "fox2007_ex16",
+    "source": {
+      "bibkey": "kamp-1973",
+      "paperLabel": "free choice permission"
+    },
+    "language": "stan1293",
+    "primaryText": "You're allowed to eat the cake or the ice-cream.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "possibility"
+      ],
+      [
+        "number",
+        "none"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "yes"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": "Free choice permission (17), Kamp's inference.",
+    "reportedIn": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(16)"
+    }
+  },
+  {
+    "id": "fox2007_ex21",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(21)"
+    },
+    "language": "stan1293",
+    "primaryText": "No one is allowed to eat the cake or the ice-cream.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "negatedPossibility"
+      ],
+      [
+        "number",
+        "none"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "no"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": "The negation of the standard meaning, not of free choice: no trace of FC under a downward-entailing operator."
+  },
+  {
+    "id": "fox2007_ex25",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(25)"
+    },
+    "language": "stan1293",
+    "primaryText": "You are not required to both clear the table and do the dishes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "negatedNecessity"
+      ],
+      [
+        "number",
+        "none"
+      ],
+      [
+        "connective",
+        "and"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "yes"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": "Inference (26): not required to clear the table and not required to do the dishes."
+  },
+  {
+    "id": "fox2007_ex28a",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(28a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The book might be on the desk or in the drawer.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "possibility"
+      ],
+      [
+        "number",
+        "none"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "yes"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2007_ex28b",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(28b)"
+    },
+    "language": "stan1293",
+    "primaryText": "He can climb Mt. Everest or ski the Matterhorn.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "possibility"
+      ],
+      [
+        "number",
+        "none"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "yes"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2007_ex29a",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(29a)"
+    },
+    "language": "stan1293",
+    "primaryText": "There is beer in the fridge or the ice-bucket.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "existential"
+      ],
+      [
+        "number",
+        "mass"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "yes"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2007_ex29b",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(29b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Most people walk to the park, but some people take the highway or the scenic route.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "existential"
+      ],
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "yes"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2007_ex29c",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(29c)"
+    },
+    "language": "stan1293",
+    "primaryText": "This course is very difficult. In the past, some students waited 3 semesters to complete it or never finished it at all.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "existential"
+      ],
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "yes"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2007_ex30a",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(30a)"
+    },
+    "language": "stan1293",
+    "primaryText": "There is a bottle of beer in the fridge or the ice-bucket.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "existential"
+      ],
+      [
+        "number",
+        "singular"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "no"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2007_ex30c",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(30c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Someone took the highway or the scenic route.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "existential"
+      ],
+      [
+        "number",
+        "singular"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "no"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2007_ex30d",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(30d)"
+    },
+    "language": "stan1293",
+    "primaryText": "This course is very difficult. In the past, some student waited 3 semesters to complete it or never finished it at all.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "existential"
+      ],
+      [
+        "number",
+        "singular"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "no"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2007_ex32",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(32)"
+    },
+    "language": "stan1293",
+    "primaryText": "We didn't give every student of ours both a stipend and a tuition waiver.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "negatedUniversal"
+      ],
+      [
+        "number",
+        "none"
+      ],
+      [
+        "connective",
+        "and"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "yes"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2007_ex34a",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(34a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I didn't talk to both John and Bill.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "negation"
+      ],
+      [
+        "number",
+        "none"
+      ],
+      [
+        "connective",
+        "and"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "no"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": "Conjunction does not outscope negation without an intervening universal."
+  },
+  {
+    "id": "fox2007_ex34b",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(34b)"
+    },
+    "language": "stan1293",
+    "primaryText": "We didn't give both a stipend and a tuition waiver to every student.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "negation"
+      ],
+      [
+        "number",
+        "none"
+      ],
+      [
+        "connective",
+        "and"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "no"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": "Surface scope of the conjunction above the universal."
+  },
+  {
+    "id": "fox2007_ex91a",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(91a)"
+    },
+    "language": "stan1293",
+    "primaryText": "We may either eat the cake or the ice-cream.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "possibility"
+      ],
+      [
+        "number",
+        "none"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "yes"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2007_ex91b",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(91b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Either we may eat the cake or the ice-cream.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "possibility"
+      ],
+      [
+        "number",
+        "none"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "wide"
+      ],
+      [
+        "fc",
+        "no"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": "Either marks wide scope of the disjunction."
+  },
+  {
+    "id": "fox2007_ex92",
+    "source": {
+      "bibkey": "zimmermann-2000",
+      "paperLabel": "free choice disjunction"
+    },
+    "language": "stan1293",
+    "primaryText": "You may eat the cake or you may eat the ice-cream.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "possibility"
+      ],
+      [
+        "number",
+        "none"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "wide"
+      ],
+      [
+        "fc",
+        "yes"
+      ],
+      [
+        "status",
+        "open"
+      ]
+    ],
+    "comment": "Zimmermann's observation; the paper leaves it unresolved.",
+    "reportedIn": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(92)"
+    }
+  },
+  {
+    "id": "fox2007_ex93a",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(93a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some students waited 3 semesters to complete this course or never finished it at all.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "existential"
+      ],
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "yes"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2007_ex93b",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(93b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some students either waited 3 semesters to complete this course or never finished it at all.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "existential"
+      ],
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "narrow"
+      ],
+      [
+        "fc",
+        "yes"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2007_ex93c",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(93c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Either some students waited 3 semesters to complete this course or some students never finished it at all.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "existential"
+      ],
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "scope",
+        "wide"
+      ],
+      [
+        "fc",
+        "no"
+      ],
+      [
+        "status",
+        "accounted"
+      ]
+    ],
+    "comment": ""
+  }
+]

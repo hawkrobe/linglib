@@ -63,36 +63,6 @@ compatible set. -/
 def IsInnocentlyExcludable (a : Set World) : Prop :=
   a ∈ ALT ∧ (aᶜ) ∈ IE ALT φ
 
-/-- Every alternative is innocently excludable when some prejacent world falsifies them all:
-the prejacent with every negation is then the unique maximal compatible set. -/
-theorem IsInnocentlyExcludable.of_full_exclusion_consistent
-    {ALT : Set (Set World)} {φ : Set World}
-    {a : Set World} (ha : a ∈ ALT)
-    (h_consist : ∃ w, φ w ∧ ∀ b ∈ ALT, ¬ b w) :
-    IsInnocentlyExcludable ALT φ a := by
-  refine ⟨ha, ?_⟩
-  intro E hE_mc
-  -- S_max = {ψ | ψ = φ ∨ ∃ b ∈ ALT, ψ = bᶜ}
-  let S_max : Set (Set World) := fun ψ => ψ = φ ∨ ∃ b ∈ ALT, ψ = bᶜ
-  -- Step 1: E ⊆ S_max (from compatibility: every element is φ or b'ᶜ)
-  have h_sub : E ⊆ S_max := by
-    intro ψ hψ
-    rcases hE_mc.1.2.1 ψ hψ with h | ⟨b', hb'_mem, hb'_eq⟩
-    · exact Or.inl h
-    · exact Or.inr ⟨b', hb'_mem, hb'_eq⟩
-  -- Step 2: S_max is compatible (φ ∈ S_max, every element is φ or bᶜ, consistent)
-  have h_compat : IsCompatible ALT φ S_max := by
-    refine ⟨Or.inl rfl, fun ψ hψ => hψ, ?_⟩
-    obtain ⟨w, hw_phi, hw_not⟩ := h_consist
-    exact ⟨w, fun ψ hψ => by
-      rcases hψ with h | ⟨b', hb', heq⟩
-      · rw [h]; exact hw_phi
-      · rw [heq]; exact hw_not b' hb'⟩
-  -- Step 3: By maximality of E, S_max ⊆ E
-  have h_sup : S_max ⊆ E := hE_mc.2 _ h_compat h_sub
-  -- Step 4: aᶜ ∈ S_max, so aᶜ ∈ E
-  exact h_sup (Or.inr ⟨a, ha, rfl⟩)
-
 /-- A maximal compatible set omitting `aᶜ` refutes innocent excludability. -/
 theorem IsMCSet.not_isInnocentlyExcludable_of_compl_notMem
     {ALT : Set (Set World)} {φ : Set World}
@@ -122,6 +92,29 @@ theorem IsInnocentlyExcludable.of_extension_consistent
   have h_not_sup : ¬(E ∪ {aᶜ} ⊆ E) :=
     fun hle => h_not_in (hle (Set.mem_union_right E rfl))
   exact h_not_sup (hE.2 _ hext_compat hsub)
+
+/-- An alternative failing at a prejacent world that falsifies every alternative the prejacent
+does not entail is innocently excludable: that world verifies every maximal compatible set. -/
+theorem IsInnocentlyExcludable.of_forall_subset_or_notMem
+    {ALT : Set (Set World)} {φ a : Set World} {w : World} (ha : a ∈ ALT) (hw : φ w)
+    (hwa : w ∉ a) (h : ∀ b ∈ ALT, φ ⊆ b ∨ w ∉ b) : IsInnocentlyExcludable ALT φ a := by
+  refine .of_extension_consistent ha λ E hE => ⟨w, ?_⟩
+  intro ψ hψ
+  rcases hψ with hψ | hψ
+  · rcases hE.1.2.1 ψ hψ with rfl | ⟨b, hb, rfl⟩
+    · exact hw
+    · refine (h b hb).resolve_left λ hφb => ?_
+      obtain ⟨v, hv⟩ := hE.1.2.2
+      exact hv _ hψ (hφb (hv φ hE.1.1))
+  · rw [Set.mem_singleton_iff] at hψ
+    exact hψ ▸ hwa
+
+/-- Every alternative is innocently excludable when some prejacent world falsifies them all. -/
+theorem IsInnocentlyExcludable.of_full_exclusion_consistent
+    {ALT : Set (Set World)} {φ a : Set World} (ha : a ∈ ALT)
+    (h_consist : ∃ w, φ w ∧ ∀ b ∈ ALT, ¬ b w) : IsInnocentlyExcludable ALT φ a :=
+  let ⟨_, hw, hall⟩ := h_consist
+  .of_forall_subset_or_notMem ha hw (hall a ha) λ b hb => Or.inr (hall b hb)
 
 /-! ### The exhaustifier -/
 
@@ -336,6 +329,16 @@ theorem eq_or_exists_of_mem_IE (hfin : Set.Finite ALT) (ψ : Set World) (hψ : �
   have hψ_in_E := hψ E hE_mc
   -- By compatibility, elements of E are φ or aᶜ
   exact hE_mc.1.2.1 ψ hψ_in_E
+
+/-- Over finitely many alternatives, the exhaustifier asserts the prejacent and denies exactly
+the innocently excludable alternatives. -/
+theorem mem_exhIE_iff (hfin : ALT.Finite) {u : World} :
+    u ∈ exhIE ALT φ ↔ u ∈ φ ∧ ∀ a, IsInnocentlyExcludable ALT φ a → u ∉ a := by
+  refine ⟨λ h => ⟨h φ (self_mem_IE ALT φ), λ a ha => h aᶜ ha.2⟩, ?_⟩
+  rintro ⟨hu, h⟩ ψ hψ
+  rcases eq_or_exists_of_mem_IE ALT φ hfin ψ hψ ⟨u, hu⟩ with rfl | ⟨a, ha, rfl⟩
+  · exact hu
+  · exact h a ⟨ha, hψ⟩
 
 
 /-- A world is minimal iff it verifies some maximal compatible set. -/
