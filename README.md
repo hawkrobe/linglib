@@ -1,4 +1,6 @@
-# Linglib
+<p align="center">
+  <img src="assets/logo.svg" alt="linglib" width="560">
+</p>
 
 [![CI](https://github.com/hawkrobe/linglib/actions/workflows/ci.yml/badge.svg)](https://github.com/hawkrobe/linglib/actions/workflows/ci.yml)
 [![Lean 4](https://img.shields.io/badge/Lean-v4.33.1-blue)](https://leanprover.github.io/)
@@ -32,7 +34,7 @@ Linglib pins a specific toolchain (currently **Lean v4.33.1 / mathlib v4.33.1**)
 
 ```lean
 require linglib from git
-  "https://github.com/hawkrobe/linglib" @ "v4.32.2"
+  "https://github.com/hawkrobe/linglib" @ "v4.33.1"
 ```
 
 (Use `@ "main"` to track the latest development instead of the pinned release.)
