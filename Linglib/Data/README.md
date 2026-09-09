@@ -35,6 +35,16 @@ See [`Examples/README.md`](Examples/README.md). Per-paper JSON; generator
 inserts into Studies files via marker blocks. JSON (not CSV) because the
 schema has nested fields.
 
+### UD dependency length by language
+
+Per-paper corpus statistics over Universal Dependencies treebanks: the
+proportion of head-final dependencies and the mean dependency length per word
+at fixed sentence lengths, as a paper prints them (values as scaled integers).
+
+- **Schema**: `Linglib/Data/UD/DependencyLength/Schema.lean`
+- **Generator**: `scripts/gen_ud_deplength.py` (`--check` verifies sync)
+- **Input/Output**: `Linglib/Data/UD/DependencyLength/{Paper}.json` → `{Paper}.lean`
+
 ### PHOIBLE 2.0
 
 - **Source**: [PHOIBLE Online](https://phoible.org/) (Moran & McCloy 2019)

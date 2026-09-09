@@ -32,7 +32,7 @@ random-reordering baselines that test the claim.
 
 [behaghel-1932] — Deutsche Syntax IV, source of the "Oberstes Gesetz"
 threshold
-[futrell-gibson-2020] — Dependency locality as an explanatory principle
+[futrell-levy-gibson-2020] — Dependency locality as an explanatory principle
 for word order, source of the minimisation claim and the
 random-reordering baselines
 -/
@@ -99,7 +99,7 @@ theorem _root_.Fin.dist_rev_rev (v w : Fin n) :
 
 /-- The mirror image of a graph has the same total dependency length —
     the head-final preference is the exact mirror of the head-initial one
-    ([futrell-gibson-2020], examples (7)–(8)). -/
+    ([futrell-levy-gibson-2020], examples (7)–(8)). -/
 theorem Graph.totalLength_mirror (g : Graph n) :
     g.mirror.totalLength = g.totalLength :=
   g.totalLength_relabel _ (λ v w => Fin.dist_rev_rev v w)

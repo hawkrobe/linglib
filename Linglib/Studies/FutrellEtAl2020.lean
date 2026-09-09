@@ -8,22 +8,34 @@ import Linglib.Syntax.DependencyGrammar.Projectivity
 import Linglib.Syntax.DependencyGrammar.Length
 
 /-!
-# Dependency Locality as an Explanatory Principle for Word Order
-[futrell-gibson-2020]
+# Futrell, Levy and Gibson (2020): Dependency Locality as an Explanatory Principle for Word Order
 
-This file formalizes the worked examples of [futrell-gibson-2020]
-("Dependency locality as an explanatory principle for word order",
-*Language* 96(2):371–412) — the §2.3–2.4 dependency trees, with every
-total dependency length checked against the printed figure — and
-transcribes its Table 2 (per-language head-final proportion and mean
-dependency length over UD 2.1 corpora). The Monte Carlo corpus studies
-of §4–5 are not formalized.
+This file formalizes the worked examples of [futrell-levy-gibson-2020]'s case for dependency
+length minimization as a source of word-order universals: the dependency trees of its sections
+2.3 and 2.4, with every total dependency length checked against the printed figure.
+Displacement makes trees nonprojective, but only mildly, at gap degree one, in extraposition and
+*wh*-movement ((3) and (4)). Short-before-long order minimizes dependency length after a
+head-initial head, and its mirror image, long-before-short, before a head-final one ((7) and
+(8)); a chain of single dependents is shortest with consistent head direction (9), while a head
+with several short dependents does better splitting them across itself (10), the exceptions to
+harmony that [gildea-temperley-2010] derived. Heavy NP shift is the flagship case (11): keeping
+the object before the particle costs one unit for a light object and five for a heavy one. The
+random-order baseline of the corpus studies is illustrated by (13), the attested order against a
+reordering of the same tree. The corpus results of sections 4 and 5, the Monte Carlo comparisons
+with random baselines, are not formalized; the per-language head-final proportions and mean
+dependency lengths of Table 2 are the rows of `Data.UD.DependencyLength.FutrellEtAl2020`.
 
-English words come from the Fragment lexicon, and the trees follow the
-paper's drawing convention in which a preposition heads its noun, so arc
-lengths match the printed diagrams. Mirror-image and reordering claims
-are stated through `Graph.relabel`/`Graph.mirror`, so they hold by the
-general invariance theorem rather than by inspection of hand-typed twins.
+## Implementation notes
+
+* English words come from the Fragment lexicon, and the trees follow the paper's drawing
+  convention, on which a preposition heads its noun, so arc lengths match the printed diagrams.
+* Mirror-image and reordering claims go through `Graph.mirror` and `Graph.relabel`, so they
+  hold by the general invariance theorems rather than by inspection of hand-typed twins.
+
+## References
+
+* [futrell-levy-gibson-2020]
+* [gildea-temperley-2010]
 -/
 
 namespace FutrellEtAl2020
@@ -208,90 +220,5 @@ example : reorderingB.totalLength = 9 := by decide
     assertion but a definition. -/
 theorem attested_below_reordering :
     attestedOrder.totalLength < reorderingB.totalLength := by decide
-
-/-! ### Table 2: head-finality and dependency length
-
-For each of the 46 languages measured over UD 2.1 corpora, the proportion
-of head-final dependencies and the mean dependency length per word at
-sentence lengths 10, 15, and 20. The paper reads the table together with
-its scatterplots: more head-final languages have longer dependencies, and
-the languages with especially long dependencies are predominantly
-head-final ones such as Japanese, Korean, and Turkish.
-
-Values are scaled integers — permille for the head-final proportion, ×100
-for dependency lengths (mirroring the table's two decimal places) — so
-that downstream list computations kernel-`decide`. UD language codes are
-linglib annotation for cross-study joins (`Studies/LevshinaEtAl2023`);
-they are not printed in the table, but match the language keys of the
-paper's analysis pipeline, the CLIQS codebase its footnote cites
-(<https://github.com/langprocgroup/cliqs/>, `typology3.csv`). -/
-
-/-- One row of Table 2: head-final proportion and mean per-word dependency
-lengths for one UD 2.1 language. -/
-structure DepLengthRow where
-  /-- Language name as printed in the table (e.g. "Norwegian (B)"). -/
-  language : String
-  /-- UD language code (linglib annotation, not part of the table). -/
-  isoCode : String
-  /-- Proportion of head-final dependencies, permille (881 = 0.881). -/
-  propHeadFinal1000 : Nat
-  /-- Mean dependency length per word at sentence length 10, ×100. -/
-  depLengthAt10_100 : Nat
-  /-- Mean dependency length per word at sentence length 15, ×100. -/
-  depLengthAt15_100 : Nat
-  /-- Mean dependency length per word at sentence length 20, ×100. -/
-  depLengthAt20_100 : Nat
-  deriving Repr, DecidableEq
-
-/-- Table 2, in the paper's row order (descending head-final proportion). -/
-def table2 : List DepLengthRow := [
-  ⟨"Korean", "ko", 881, 201, 249, 284⟩,
-  ⟨"Japanese", "ja", 809, 170, 198, 226⟩,
-  ⟨"Turkish", "tr", 778, 199, 236, 261⟩,
-  ⟨"Hindi", "hi", 763, 188, 226, 257⟩,
-  ⟨"Urdu", "ur", 745, 186, 227, 249⟩,
-  ⟨"Hungarian", "hu", 726, 178, 213, 240⟩,
-  ⟨"Mandarin", "zh", 661, 203, 251, 298⟩,
-  ⟨"Basque", "eu", 587, 177, 210, 229⟩,
-  ⟨"Ancient Greek", "grc", 566, 234, 274, 308⟩,
-  ⟨"Latin", "la", 547, 227, 272, 299⟩,
-  ⟨"Northern Sami", "sme", 542, 185, 220, 262⟩,
-  ⟨"Dutch", "nl", 533, 207, 248, 274⟩,
-  ⟨"Afrikaans", "af", 524, 216, 248, 278⟩,
-  ⟨"Finnish", "fi", 521, 167, 192, 216⟩,
-  ⟨"Latvian", "lv", 513, 171, 193, 216⟩,
-  ⟨"Estonian", "et", 508, 184, 213, 232⟩,
-  ⟨"German", "de", 500, 204, 245, 281⟩,
-  ⟨"Modern Greek", "el", 472, 159, 186, 202⟩,
-  ⟨"English", "en", 460, 167, 193, 210⟩,
-  ⟨"Danish", "da", 420, 172, 201, 213⟩,
-  ⟨"Swedish", "sv", 420, 166, 193, 213⟩,
-  ⟨"Slovenian", "sl", 419, 173, 195, 219⟩,
-  ⟨"Slovak", "sk", 412, 165, 185, 210⟩,
-  ⟨"Norwegian (B)", "nb", 401, 163, 190, 208⟩,
-  ⟨"Persian", "fa", 401, 226, 265, 288⟩,
-  ⟨"Norwegian (N)", "nn", 390, 163, 192, 206⟩,
-  ⟨"Czech", "cs", 389, 169, 194, 213⟩,
-  ⟨"Italian", "it", 384, 150, 180, 188⟩,
-  ⟨"Croatian", "hr", 380, 168, 189, 206⟩,
-  ⟨"French", "fr", 374, 151, 175, 189⟩,
-  ⟨"Portuguese", "pt", 373, 155, 181, 200⟩,
-  ⟨"Bulgarian", "bg", 372, 156, 181, 197⟩,
-  ⟨"Gothic", "got", 372, 197, 234, 275⟩,
-  ⟨"Catalan", "ca", 371, 155, 178, 194⟩,
-  ⟨"Ukrainian", "uk", 368, 161, 189, 206⟩,
-  ⟨"Galician", "gl", 365, 150, 220, 210⟩,
-  ⟨"Russian", "ru", 358, 156, 181, 207⟩,
-  ⟨"Serbian", "sr", 349, 160, 182, 200⟩,
-  ⟨"Church Slavonic", "cu", 341, 200, 241, 272⟩,
-  ⟨"Vietnamese", "vi", 339, 165, 195, 212⟩,
-  ⟨"Spanish", "es", 332, 145, 171, 186⟩,
-  ⟨"Polish", "pl", 325, 156, 180, 205⟩,
-  ⟨"Hebrew", "he", 314, 154, 181, 195⟩,
-  ⟨"Romanian", "ro", 301, 160, 179, 195⟩,
-  ⟨"Indonesian", "id", 244, 148, 175, 194⟩,
-  ⟨"Arabic", "ar", 103, 140, 168, 193⟩ ]
-
-example : table2.length = 46 := rfl
 
 end FutrellEtAl2020
