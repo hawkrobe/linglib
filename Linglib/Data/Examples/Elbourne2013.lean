@@ -1,0 +1,396 @@
+import Linglib.Data.Examples.Schema
+
+/-!
+# `Elbourne2013` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/Elbourne2013.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace Elbourne2013.Examples`.
+-/
+
+namespace Elbourne2013.Examples
+
+open Data.Examples
+
+def ch3_5 : LinguisticExample :=
+  { id := "elbourne2013_ch3_5"
+    source := ⟨"elbourne-2013", "ch. 3, (5)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The cat grins."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("referential situation pronoun", .acceptable), ("bound situation pronoun", .acceptable)]
+    paperFeatures := [("chapter", "3"), ("structure", "[[[the cat] s1] grins] or [ς1 [[[the cat] s1] grins]]")]
+    comment := "Two analyses: a referential situation pronoun discharges the uniqueness condition at its referent, a bound one carries it to the topic situation by λ-Conversion II."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch5_2 : LinguisticExample :=
+  { id := "elbourne2013_ch5_2"
+    source := ⟨"donnellan-1966", "pp. 285–286"⟩
+    reportedIn := some ⟨"elbourne-2013", "ch. 5, (2)"⟩
+    language := "stan1293"
+    primaryText := "The murderer is insane."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "Attributive: Smith is found foully murdered and no one knows by whom. Referential: Jones is on trial for the murder and behaving oddly in court."
+    judgment := .acceptable
+    alternatives := []
+    readings := [("referential", .acceptable), ("attributive", .acceptable)]
+    paperFeatures := [("chapter", "5"), ("referential", "free situation pronoun"), ("attributive", "bound situation pronoun")]
+    comment := "The referential use has a situation pronoun referring to the courtroom; the attributive use has it bound, so the description is evaluated at the topic situation."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch5_13 : LinguisticExample :=
+  { id := "elbourne2013_ch5_13"
+    source := ⟨"donnellan-1966", "p. 287"⟩
+    reportedIn := some ⟨"elbourne-2013", "ch. 5, (13)"⟩
+    language := "stan1293"
+    primaryText := "Who is the man drinking a martini?"
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "The man gestured at is drinking water from a martini glass."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("chapter", "5"), ("misdescription", "yes")]
+    comment := "Misdescription: a question about a particular person is asked, and the Fregean account locates what went wrong in a false presupposition of existence."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch5_16 : LinguisticExample :=
+  { id := "elbourne2013_ch5_16"
+    source := ⟨"russell-1905", "pp. 487–488"⟩
+    reportedIn := some ⟨"elbourne-2013", "ch. 5, (16)"⟩
+    language := "stan1293"
+    primaryText := "Scott is the author of Waverley."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := [("Scott is Scott.", .acceptable)]
+    readings := []
+    paperFeatures := [("chapter", "5"), ("use", "predicative")]
+    comment := "Predicative use is attributive use: the bound description gives a proposition false at situations where someone else authored Waverley, unlike the identity statement."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch6_3 : LinguisticExample :=
+  { id := "elbourne2013_ch6_3"
+    source := ⟨"elbourne-2013", "ch. 6, (3)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Every man who owns a donkey beats the donkey."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("strong", .acceptable)]
+    paperFeatures := [("chapter", "6"), ("anaphora", "donkey-anaphoric definite description")]
+    comment := "The description's situation pronoun is bound by σ to the minimal situations of the restrictor, each of which contains exactly one donkey."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch6_15 : LinguisticExample :=
+  { id := "elbourne2013_ch6_15"
+    source := ⟨"elbourne-2013", "ch. 6, (15)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "If a man beats a donkey, the donkey always kicks him."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := [("If a man beats a donkey, the donkey kicks him.", .acceptable)]
+    readings := []
+    paperFeatures := [("chapter", "6"), ("anaphora", "donkey-anaphoric definite description under a quantificational adverb")]
+    comment := "The quantificational adverb quantifies over minimal situations in which a man beats a donkey; both descriptions are bound to those situations."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch6_21 : LinguisticExample :=
+  { id := "elbourne2013_ch6_21"
+    source := ⟨"elbourne-2013", "ch. 6, (21)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "John fed no cat of Mary's before the cat was bathed."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("covarying", .acceptable)]
+    paperFeatures := [("chapter", "6"), ("anaphora", "c-commanded bound definite description")]
+    comment := "The covarying description in the scope of the quantifier is bound by the same mechanism as a donkey description."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch7_7 : LinguisticExample :=
+  { id := "elbourne2013_ch7_7"
+    source := ⟨"elbourne-2013", "ch. 7, (7)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Mary believes that the man who lives upstairs is a spy."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("de dicto", .acceptable), ("de re", .acceptable)]
+    paperFeatures := [("chapter", "7"), ("de dicto", "situation pronoun bound below believes"), ("de re", "situation pronoun referring to the actual world")]
+    comment := "De dicto: every doxastic alternative contains exactly one man upstairs. De re: the man upstairs in the actual world need not live upstairs in Mary's alternatives."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch7_16 : LinguisticExample :=
+  { id := "elbourne2013_ch7_16"
+    source := ⟨"kripke-1977", "p. 9"⟩
+    reportedIn := some ⟨"elbourne-2013", "ch. 7, (16)"⟩
+    language := "stan1293"
+    primaryText := "The number of the planets is necessarily odd."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "The speaker does not know how many planets there are, but astronomical theory dictates that the number is odd."
+    judgment := .acceptable
+    alternatives := []
+    readings := [("attributive de re", .acceptable)]
+    paperFeatures := [("chapter", "7"), ("structure", "[ς2 [[[the [number [of [[the planets] s2]]]] s2] [is [necessarily odd]]]]")]
+    comment := "Attributive yet de re: the description is bound by a binder above the modal, so the number is fixed in the topic situation and oddness is claimed in every accessible world."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch8_3 : LinguisticExample :=
+  { id := "elbourne2013_ch8_3"
+    source := ⟨"elbourne-2013", "ch. 8, (3)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Hans wants the ghost in his attic to be quiet tonight."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := [("Hans wants there to be exactly one ghost in his attic and for it to be quiet tonight.", .unacceptable)]
+    readings := []
+    paperFeatures := [("chapter", "8"), ("presupposition", "Hans believes there is exactly one ghost in his attic")]
+    comment := "The Russellian paraphrase attributes to Hans the desire to have a ghost; the Fregean analysis presupposes that Hans believes there is exactly one."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch8_5 : LinguisticExample :=
+  { id := "elbourne2013_ch8_5"
+    source := ⟨"elbourne-2013", "ch. 8, (5)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "If the ghost in his attic is quiet tonight, Hans will hold a party."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("chapter", "8"), ("presupposition", "there is exactly one ghost in Hans's attic")]
+    comment := "The antecedent of a conditional is a hole: the existence presupposition projects to the whole sentence."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch8_22 : LinguisticExample :=
+  { id := "elbourne2013_ch8_22"
+    source := ⟨"elbourne-2013", "ch. 8, (22)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "I do not know whether there are any ghosts in Hans's attic. But if the ghost in his attic is quiet tonight, he will hold a party."
+    discourseSegments := ["I do not know whether there are any ghosts in Hans's attic.", "But if the ghost in his attic is quiet tonight, he will hold a party."]
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .unacceptable
+    alternatives := [("I do not know whether there are any ghosts in Hans's attic. But if there is exactly one ghost in his attic and it is quiet tonight, he will hold a party.", .acceptable)]
+    readings := []
+    paperFeatures := [("chapter", "8"), ("contrast", "definite description against its Russellian paraphrase")]
+    comment := "The speaker sounds self-contradictory with the description but not with the Russellian paraphrase, so the paraphrase cannot be accurate."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch8_33 : LinguisticExample :=
+  { id := "elbourne2013_ch8_33"
+    source := ⟨"elbourne-2013", "ch. 8, (31), (33)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "I am unsure whether there is a ghost in my attic. I would like the ghost in my attic to be quiet tonight."
+    discourseSegments := ["I am unsure whether there is a ghost in my attic.", "I would like the ghost in my attic to be quiet tonight."]
+    glossedTokens := []
+    translation := ""
+    context := "Hans sincerely says both."
+    judgment := .unacceptable
+    alternatives := [("I am unsure whether there is a ghost in my attic. I would like there to be an entity such that it is a ghost in my attic and nothing else is a ghost in my attic and it is quiet tonight.", .acceptable)]
+    readings := []
+    paperFeatures := [("chapter", "8"), ("contrast", "definite description against its Russellian paraphrase under an attitude verb")]
+    comment := "Hans's attitudes are inconsistent with the description and consistent with the Russellian paraphrase: the description presupposes that he believes there is exactly one ghost."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch8_36 : LinguisticExample :=
+  { id := "elbourne2013_ch8_36"
+    source := ⟨"elbourne-2013", "ch. 8, (36)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Ponce de León is wondering whether the fountain of youth is in Florida."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "The speaker does not believe in the existence of a fountain of youth."
+    judgment := .acceptable
+    alternatives := []
+    readings := [("no speaker commitment to a fountain of youth", .acceptable)]
+    paperFeatures := [("chapter", "8"), ("presupposition", "Ponce de León believes there is exactly one fountain of youth")]
+    comment := "The description under the attitude verb commits the subject, not the speaker, to the existence of a fountain of youth."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch9_4 : LinguisticExample :=
+  { id := "elbourne2013_ch9_4"
+    source := ⟨"strawson-1950", "p. 332"⟩
+    reportedIn := some ⟨"elbourne-2013", "ch. 9, (4)"⟩
+    language := "stan1293"
+    primaryText := "The table is covered with books."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "Said in a room containing exactly one table, in a world containing many."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("chapter", "9"), ("incompleteness", "situation pronoun referring to the room")]
+    comment := "An incomplete description: the uniqueness condition is relativized to the restrictor situation contributed by the situation pronoun."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch9_17a : LinguisticExample :=
+  { id := "elbourne2013_ch9_17a"
+    source := ⟨"elbourne-2013", "ch. 9, (17a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "In this village, if a farmer owns a donkey, he beats the donkey and the priest beats the donkey too."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "The final verb phrase is downstressed."
+    judgment := .acceptable
+    alternatives := []
+    readings := [("strict", .acceptable), ("sloppy", .unacceptable)]
+    paperFeatures := [("chapter", "9"), ("description", "the donkey")]
+    comment := "No sloppy reading: the priest is not said to beat his own donkey. A situation pronoun in the final description cannot covary with the priest."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch9_17b : LinguisticExample :=
+  { id := "elbourne2013_ch9_17b"
+    source := ⟨"elbourne-2013", "ch. 9, (17b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "In this village, if a farmer owns a donkey, he beats the donkey he owns and the priest beats the donkey he owns too."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "The final verb phrase is downstressed."
+    judgment := .acceptable
+    alternatives := []
+    readings := [("strict", .acceptable), ("sloppy", .acceptable)]
+    paperFeatures := [("chapter", "9"), ("description", "the donkey he owns")]
+    comment := "With an overt bound pronoun in the description the sloppy reading is available, as relation-variable theories predict for (17a) too, wrongly."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch10_10a : LinguisticExample :=
+  { id := "elbourne2013_ch10_10a"
+    source := ⟨"elbourne-2013", "ch. 10, (10a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Every man who owns a donkey beats it."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("strong", .acceptable)]
+    paperFeatures := [("chapter", "10"), ("structure", "[σ3 [Q [beats [[it donkey] s3]]]]")]
+    comment := "The donkey pronoun is the definite article with a deleted NP; its LF and meaning are those of the description in ch. 6, (3)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch10_21 : LinguisticExample :=
+  { id := "elbourne2013_ch10_21"
+    source := ⟨"elbourne-2013", "ch. 10, (21)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "I saw the Junior Dean. He was worried about the Bollinger dinner."
+    discourseSegments := ["I saw the Junior Dean.", "He was worried about the Bollinger dinner."]
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("chapter", "10"), ("structure", "[[he [Junior Dean]] s1]")]
+    comment := "A referential pronoun with a deleted NP recovered from its linguistic antecedent."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch10_34 : LinguisticExample :=
+  { id := "elbourne2013_ch10_34"
+    source := ⟨"elbourne-2013", "ch. 10, (34)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "He is usually an Italian."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "Said while pointing at Benedict XVI."
+    judgment := .acceptable
+    alternatives := [("Benedict XVI is usually an Italian.", .unacceptable)]
+    readings := [("descriptive indexical", .acceptable)]
+    paperFeatures := [("chapter", "10"), ("structure", "[[he Pope] s3]")]
+    comment := "A descriptive indexical: the pronoun is the article with the NP Pope, and usually quantifies over papal reigns."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ch10_47 : LinguisticExample :=
+  { id := "elbourne2013_ch10_47"
+    source := ⟨"elbourne-2013", "ch. 10, (47)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "He Who Must Not Be Named"
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := [("It which rolls fastest gathers no moss.", .ungrammatical), ("he of the fiery sword", .acceptable), ("he of Mary", .ungrammatical)]
+    readings := []
+    paperFeatures := [("chapter", "10"), ("structure", "[[he [person [who ...]]] si]")]
+    comment := "A Voldemort phrase: the pronoun combines with a restrictive relative clause on a silent NP person, so pronouns form definite descriptions in the open."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [ch3_5, ch5_2, ch5_13, ch5_16, ch6_3, ch6_15, ch6_21, ch7_7, ch7_16, ch8_3, ch8_5, ch8_22, ch8_33, ch8_36, ch9_4, ch9_17a, ch9_17b, ch10_10a, ch10_21, ch10_34, ch10_47]
+
+end Elbourne2013.Examples
