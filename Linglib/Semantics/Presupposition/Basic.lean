@@ -135,8 +135,7 @@ scoped infixl:60 " \\/' " => orFilter
 /-- Strawson entailment ([von-fintel-1999]): `p` entails `q` at every
     world where both presuppositions hold. The conclusion `q`'s
     presupposition is a *premise* added to the entailment, not something
-    the entailment delivers. The same notion on bilateral-update
-    denotations is `ElliottSudo2025.strawsonEntails`. -/
+    the entailment delivers. -/
 def strawsonEntails (p q : PartialProp W) : Prop :=
   ∀ w, p.presup w → q.presup w → p.assertion w → q.assertion w
 
