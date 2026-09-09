@@ -1,55 +1,82 @@
-import Linglib.Morphology.DistributedMorphology.ComplexHead
 import Linglib.Data.Examples.Embick2015
+import Linglib.Fragments.Korean.Phonology
+import Linglib.Morphology.DistributedMorphology.ComplexHead
 
-/-! # Embick 2015: Vocabulary Insertion from the inside out
+/-!
+# Embick (2015): The Morpheme: A Theoretical Introduction
 
-[embick-2015]'s exposition of Distributed Morphology runs Vocabulary Insertion
-over a complex head from the inside out, each morpheme's Q variable replaced
-by the most specific applicable exponent, the conditioning context being the
-concatenated neighbors once null exponents are pruned. This file runs that
-procedure on the book's own material: the Latin verb fragment for *laudāre*
-(present, imperfect, perfect, pluperfect) whose Agr exponents look inward at
-Asp[perf] and T[+past], the Hungarian plural whose exponent looks outward at
-a possessive, and the Korean nominative whose exponent looks inward at the
-phonology of the stem, the three directions of conditioning the book
-predicts, inward phonological conditioning through the stem's exponent and
-outward conditioning through features only.
+This file formalizes [embick-2015]'s procedure of Vocabulary Insertion in a complex head: insertion
+proceeds from the inside out (§4.5, the condition (C3) of §7.3), substitutes an exponent for the
+Q variable of each functional morpheme (§4.2), leaves the morpheme's synsem features in place
+(§4.2.2), and lets a contextual item see the concatenated neighbours of its morpheme, null
+exponents pruned (§7.3.2). The procedure is the substrate's `ComplexHead.insertAll`, and this file
+runs it on the book's own material. The fragment of the Latin conjugation (§4.6) derives the four
+tenses of *laudāre* in (40) from the Vocabulary Items (36), (37) and (42): the perfect-specific
+agreement endings are inserted only where the deleted T[−past] leaves Agr concatenated with
+Asp[perf], the overt tense of the pluperfect intervening (§7.3.2.1), and the first singular *-m*
+of the imperfect and pluperfect reads T[+past]. Under rewriting, where insertion deletes the
+features an item spells out, both conditionings are lost, and Agr would have to refer to the
+exponents *-rā* and *-bā*, and to each allomorph of Asp[perf], one by one; that is the book's
+argument for non-deletion (§4.6.3). The Hungarian plural of (7) and (8) looks outward at the
+possessive, and the Korean nominative of (10) and (11) looks inward at whether its host ends in a
+consonant or a vowel. The predictions of (C3) in (43) are that outward conditioning sees synsem
+features only, the possessive being bare when the plural is realized, while inward conditioning
+may see the phonological features of a realized exponent.
 
-## Main results
+## Implementation notes
 
-* `latin_rows`: the twenty-four forms of the fragment derive with Pruning of
-  the null T[−past].
-* `rewriting_loses_m`: if insertion deleted T's features, the first-singular
-  -m could not be conditioned by T[+past]; non-deletion is what the fragment
-  needs.
-* `hungarian_rows`, `korean_rows`: outward synsem and inward phonological
-  conditioning.
-* `outward_features_only`: at the Hungarian plural, the possessive ahead of it
-  is still bare.
+* The book's rule (38) deletes T[−past] outright; here T[−past] receives a null exponent and is
+  pruned from the concatenation statements, the alternative the book itself offers for
+  transparent zero morphemes in §7.3.2, so that the four tenses share the one spine
+  ROOT-v-(Asp)-T-Agr of (35).
+* The theme vowel is the exponent of v, as in (36a), spelled out in the context of the root's
+  conjugation feature [+I].
+* (42) prints the number feature of the *-m* item as [−sg] where (39) has [−pl], and omits the
+  third singular *-t* of (33a); both are restored.
+* The Korean hosts are transcribed into the segments of `Fragments.Korean.Phonology`, so that the
+  consonant-final or vowel-final shape an item refers to is read off the [consonantal] value of
+  the final segment rather than listed per host.
+* The examples are `Data.Examples.Embick2015`.
 
 ## References
 
-[embick-2015], [halle-1997].
+* [embick-2015]
+* [halle-marantz-1993]
+* [bobaljik-2000]
+* [carstairs-1987]
 -/
 
 namespace Embick2015
 
-open DistributedMorphology
-open Data.Examples (LinguisticExample)
+open DistributedMorphology Data.Examples Embick2015.Examples
 open scoped DistributedMorphology.VocabularyItem
+
+/-! ### The Latin fragment -/
 
 namespace Latin
 
-inductive Feature where
-  | laud | conjI | v | asp | perf | tense | past | agr
-  | first (b : Bool) | second (b : Bool) | pl (b : Bool)
+/-- The root of *laudāre* with its conjugation feature [+I], and the features of v, Asp[perf],
+T[±past] and Agr[±1, ±2, ±pl]. -/
+inductive Feature
+  | laud
+  | conjI
+  | v
+  | asp
+  | perf
+  | tense
+  | past
+  | agr
+  | first (b : Bool)
+  | second (b : Bool)
+  | pl (b : Bool)
   deriving DecidableEq, Repr
 
 open Feature
 
-/-- The theme vowel as the exponent of v in conjugation I, Asp[perf] -vi, T[+past]
--rā after the perfect and -bā otherwise, T[−past] null, and the Agr exponents:
-the perfect set after Asp[perf], -m after T[+past], the defaults elsewhere. -/
+/-- The Vocabulary Items (36), (37) and (42): the theme vowel of v in conjugation I, Asp[perf]
+*-vi*, T[+past] *-rā* after Asp[perf] and *-bā* otherwise, the null T[−past] of (38), and the
+agreement endings, the perfect-specific set after Asp[perf], *-m* after T[+past], the defaults
+elsewhere. -/
 def vocab : List (VocabularyItem Feature String) :=
   [⟨⟨[v], [[conjI]], []⟩, "ā"⟩, [asp, perf] ⟷ "vi",
    ⟨⟨[tense, past], [[asp, perf]], []⟩, "rā"⟩, [tense, past] ⟷ "bā", [tense] ⟷ "",
@@ -65,133 +92,175 @@ def vocab : List (VocabularyItem Feature String) :=
    [agr, first false, second false, pl true] ⟷ "nt",
    [agr, first false, second false, pl false] ⟷ "t"]
 
-inductive Tense where
-  | present | imperfect | perfect | pluperfect
+/-- The four tenses of (40). -/
+inductive Tense
+  | present
+  | imperfect
+  | perfect
+  | pluperfect
   deriving DecidableEq, Repr
 
-/-- The Asp and T morphemes of each tense. -/
+/-- The Asp and T morphemes of a tense: Asp[perf] in the perfects only (§4.6.1). -/
 def Tense.heads : Tense → List (Morpheme Feature String)
   | .present => [⟨[tense], none, .after⟩]
   | .imperfect => [⟨[tense, past], none, .after⟩]
   | .perfect => [⟨[asp, perf], none, .after⟩, ⟨[tense], none, .after⟩]
   | .pluperfect => [⟨[asp, perf], none, .after⟩, ⟨[tense, past], none, .after⟩]
 
-/-- √LAUD-v-(Asp)-T-Agr. -/
+/-- ROOT-v-(Asp)-T-Agr, (35). -/
 def word (t : Tense) (p₁ p₂ pl : Bool) : ComplexHead Feature String :=
   ⟨⟨[laud, conjI], some "laud", .after⟩,
    ⟨[v], none, .after⟩ :: t.heads ++
      [⟨[agr, first p₁, second p₂, Feature.pl pl], none, .after⟩]⟩
 
-/-- Surface morphs after inside-out insertion with the given discharge. -/
+/-- The surface morphs after inside-out insertion with the given discharge, the pruned T[−past]
+dropped. -/
 def morphs (dis : ComplexHead.Discharge) (w : ComplexHead Feature String) : List String :=
   (w.insertAll (· = "") vocab .concatenation (λ _ => []) dis).exponents.filter (· ≠ "")
 
-def parseTense : String → Option Tense
-  | "present" => some .present
-  | "imperfect" => some .imperfect
-  | "perfect" => some .perfect
-  | "pluperfect" => some .pluperfect
-  | _ => none
+/-- The tenses as named in the rows. -/
+def tenseTable : List (String × Tense) :=
+  [("present", .present), ("imperfect", .imperfect), ("perfect", .perfect),
+    ("pluperfect", .pluperfect)]
 
-def parsePerson : String → Option (Bool × Bool)
-  | "1" => some (true, false)
-  | "2" => some (false, true)
-  | "3" => some (false, false)
-  | _ => none
+/-- The persons as named in the rows, as [±1, ±2]. -/
+def personTable : List (String × (Bool × Bool)) :=
+  [("1", (true, false)), ("2", (false, true)), ("3", (false, false))]
 
-/-- A row of the fragment as its word and its morphs. -/
+/-- The numbers as named in the rows, as [±pl]. -/
+def numberTable : List (String × Bool) := [("sg", false), ("pl", true)]
+
+/-- A row of (40) as its complex head and its morphs. -/
 def ofRow (ex : LinguisticExample) : Option (ComplexHead Feature String × List String) := do
-  let t ← parseTense (← ex.feature? "tense")
-  let (p₁, p₂) ← parsePerson (← ex.feature? "person")
-  let pl := (← ex.feature? "number") = "pl"
+  let t ← ex.parse? "tense" tenseTable
+  let (p₁, p₂) ← ex.parse? "person" personTable
+  let pl ← ex.parse? "number" numberTable
   pure (word t p₁ p₂ pl, ["m1", "m2", "m3", "m4", "m5"].filterMap ex.feature?)
 
+theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "lati1261" → (ofRow ex).isSome := by
+  decide
+
+/-- The twenty-four forms of (40). -/
 def rows : List (ComplexHead Feature String × List String) :=
-  Examples.all.filterMap ofRow
+  (Examples.all.filter (·.language = "lati1261")).filterMap ofRow
 
-/-- The twenty-four forms of the fragment, with T[−past] pruned. -/
-theorem latin_rows : ∀ r ∈ rows, morphs .nondeletion r.1 = r.2 := by decide
+/-- (40): the four tenses derive with T[−past] pruned, so that Agr is concatenated with Asp[perf]
+in the perfect but with the overt T[+past] in the pluperfect (§7.3.2.1). -/
+theorem rows_morphs : ∀ r ∈ rows, morphs .nondeletion r.1 = r.2 := by decide
 
-theorem card_rows : rows.length = 24 := by decide
-
-/-- Rewriting T[+past]'s features away at its own insertion leaves Agr the
-default -ō: the -m of the imperfect needs non-deletion. -/
-theorem rewriting_loses_m :
+/-- §4.6.3: were the features an item spells out deleted at its insertion, Agr could see neither
+T[+past] nor Asp[perf], and the first singular of the imperfect and of the perfect would fall to
+the default *-ō*. -/
+theorem rewriting_loses_conditioning :
     morphs .rewriting (word .imperfect true false false) = ["laud", "ā", "bā", "ō"] ∧
-      morphs .nondeletion (word .imperfect true false false) = ["laud", "ā", "bā", "m"] := by
+      morphs .rewriting (word .perfect true false false) = ["laud", "ā", "vi", "ō"] := by
   decide
 
 end Latin
 
+/-! ### Outward conditioning: the Hungarian plural -/
+
 namespace Hungarian
 
-inductive Feature where
-  | root (s : String) | pl | poss
+/-- The plural and possessive features. -/
+inductive Feature
+  | pl
+  | poss
   deriving DecidableEq, Repr
 
 open Feature
 
-/-- The plural is -ai- before a possessive and -k otherwise. -/
+/-- (8), with the concatenation of (28): the plural is *-((j)a)i-* before a possessive and
+*-(V)k* otherwise; the first singular possessive is *-m*. -/
 def vocab : List (VocabularyItem Feature String) :=
   [⟨⟨[pl], [], [[poss]]⟩, "ai"⟩, [pl] ⟷ "k", [poss] ⟷ "m"]
 
+/-- Noun-[+pl], or Noun-[+pl]-[+poss] when possessed. -/
 def word (r : String) (possessed : Bool) : ComplexHead Feature String :=
-  ⟨⟨[root r], some r, .after⟩,
+  ⟨⟨[], some r, .after⟩,
    ⟨[pl], none, .after⟩ :: if possessed then [⟨[poss], none, .after⟩] else []⟩
 
+/-- The exponent of the plural after inside-out insertion. -/
 def plural (w : ComplexHead Feature String) : Option String :=
   (w.insertAll (· = "") vocab .concatenation (λ _ => []) .nondeletion).heads[0]? >>= (·.exp)
 
+/-- Possession as named in the rows. -/
+def possTable : List (String × Bool) := [("yes", true), ("no", false)]
+
+/-- A row of (7) as its complex head and the exponent of its plural. -/
 def ofRow (ex : LinguisticExample) : Option (ComplexHead Feature String × String) := do
-  let possessed := (← ex.feature? "poss") = "yes"
-  pure (word (← ex.feature? "root") possessed, ← ex.feature? "plExponent")
+  pure (word (← ex.feature? "root") (← ex.parse? "poss" possTable), ← ex.feature? "plExponent")
 
+theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "hung1274" → (ofRow ex).isSome := by
+  decide
+
+/-- The plural and possessed plural of the three nouns of (7). -/
 def rows : List (ComplexHead Feature String × String) :=
-  Examples.all.filterMap ofRow
+  (Examples.all.filter (·.language = "hung1274")).filterMap ofRow
 
-/-- Outward conditioning by the possessive's features. -/
-theorem hungarian_rows : ∀ r ∈ rows, plural r.1 = some r.2 := by decide
+/-- (7): outward conditioning by the possessive's feature. -/
+theorem rows_plural : ∀ r ∈ rows, plural r.1 = some r.2 := by decide
 
-/-- When the plural is reached the possessive ahead of it is still bare: what it
-sees outward is features, never an exponent. -/
+/-- (43a, b): when the plural is reached, what it sees outward is the features of the possessive
+and nothing of an exponent, the possessive being still bare. -/
 theorem outward_features_only :
-    ((word "ruha" true).contextAt (· = "") .concatenation (λ _ => []) 0).rightCtx = [[poss]] := by
+    ∀ r ∈ rows, (r.1.contextAt (· = "") .concatenation (λ _ => []) 0).rightCtx =
+      (r.1.heads.drop 1).map (·.feats) := by
   decide
 
 end Hungarian
 
+/-! ### Inward phonological conditioning: the Korean nominative -/
+
 namespace Korean
 
-inductive Feature where
-  | root (s : String) | nom | cFinal | vFinal
+/-- The nominative, and the shape of its host. -/
+inductive Feature
+  | nom
+  | cFinal
+  | vFinal
   deriving DecidableEq, Repr
 
 open Feature
 
-/-- The nominative is -i after a consonant and -ka after a vowel. -/
+/-- (11): *-i* after a consonant, *-ka* after a vowel. -/
 def vocab : List (VocabularyItem Feature String) :=
   [⟨⟨[nom], [[cFinal]], []⟩, "i"⟩, ⟨⟨[nom], [[vFinal]], []⟩, "ka"⟩]
 
-/-- The phonological shape of a stem, read off its exponent. -/
-def shape : String → List Feature
-  | "pap" => [cFinal]
-  | "ai" => [vFinal]
-  | _ => []
+/-- The hosts of (10), transcribed into the segments of the fragment. -/
+def segments : List (String × List Phonology.Segment) :=
+  [("pap", [Korean.Phonology.p, Korean.Phonology.a, Korean.Phonology.p]),
+    ("ai", [Korean.Phonology.a, Korean.Phonology.i])]
 
+/-- The phonological feature a realized exponent presents to insertion: whether its final segment
+is a consonant. -/
+def shape (e : String) : List Feature :=
+  match (segments.lookup e).bind List.getLast? with
+  | some s => if s.IsConsonant then [cFinal] else [vFinal]
+  | none => []
+
+/-- Noun-[nom]. -/
 def word (r : String) : ComplexHead Feature String :=
-  ⟨⟨[root r], some r, .after⟩, [⟨[nom], none, .after⟩]⟩
+  ⟨⟨[], some r, .after⟩, [⟨[nom], none, .after⟩]⟩
 
+/-- The exponent of the nominative after inside-out insertion. -/
 def nominative (w : ComplexHead Feature String) : Option String :=
   (w.insertAll (· = "") vocab .concatenation shape .nondeletion).heads[0]? >>= (·.exp)
 
+/-- A row of (10) as its complex head and the exponent of its nominative. -/
 def ofRow (ex : LinguisticExample) : Option (ComplexHead Feature String × String) := do
   pure (word (← ex.feature? "root"), ← ex.feature? "nomExponent")
 
-def rows : List (ComplexHead Feature String × String) :=
-  Examples.all.filterMap ofRow
+theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "kore1280" → (ofRow ex).isSome := by
+  decide
 
-/-- Inward conditioning by the stem's phonology, visible through its exponent. -/
-theorem korean_rows : ∀ r ∈ rows, nominative r.1 = some r.2 := by decide
+/-- The two hosts of (10). -/
+def rows : List (ComplexHead Feature String × String) :=
+  (Examples.all.filter (·.language = "kore1280")).filterMap ofRow
+
+/-- (10), (43d): inward conditioning by the host's phonology, visible through its realized
+exponent. -/
+theorem rows_nominative : ∀ r ∈ rows, nominative r.1 = some r.2 := by decide
 
 end Korean
 

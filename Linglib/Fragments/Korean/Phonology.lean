@@ -9,7 +9,7 @@ from `Subregular.LocalRewrite`.
 
 ## Segments
 
-Core inventory for the nasalization demo: /p t k m n a u l/.
+Core inventory for the nasalization demo: /p t k m n a i u l/.
 Korean stops are specified as [-del.rel.] (non-affricate), which is the
 target feature for the nasalization rule.
 
@@ -67,6 +67,14 @@ def a : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.consonantal, false),
    (Feature.sonorant, true), (Feature.continuant, true),
    (Feature.voice, true)]
+
+/-- /i/: high front unrounded vowel -/
+def i : Segment := Segment.ofSpecs
+  [(Feature.syllabic, true), (Feature.consonantal, false),
+   (Feature.sonorant, true), (Feature.continuant, true),
+   (Feature.voice, true), (Feature.dorsal, true),
+   (Feature.high, true), (Feature.low, false), (Feature.back, false),
+   (Feature.round, false)]
 
 /-- /u/: high back rounded vowel -/
 def u : Segment := Segment.ofSpecs
