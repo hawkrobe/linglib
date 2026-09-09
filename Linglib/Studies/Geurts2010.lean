@@ -1,33 +1,31 @@
 import Linglib.Studies.GeurtsPouscoulous2009
 
 /-!
-# Geurts 2010 — *Quantity Implicatures* [geurts-2010]
+# Geurts (2010): Quantity Implicatures
 
-The textbook successor to [geurts-pouscoulous-2009]. Geurts 2010
-(Cambridge UP) consolidates the Standard-Recipe / competence-based
-neo-Gricean account whose §8 sketch in GP 2009 this file extends. The
-core empirical pattern anchoring the textbook's Ch. 2–3 — scalar
-implicatures blocked in downward-entailing contexts but available in
-upward-entailing ones — is the explanandum of GP 2009's four-experiment
-program; the [potts-etal-2016] LU model derives the correct pattern
-(see `Studies/PottsEtAl2016`).
+This file records the pattern [geurts-2010]'s textbook takes over from
+[geurts-pouscoulous-2009]: scalar inferences embedded under a quantifier are available in an
+upward-entailing scope and blocked in a downward-entailing one. The pattern is the conventionalist
+prediction the earlier paper tests, stated there as `PredictsLocalSIWeak` and `PredictsLocalSI`
+over the scope monotonicity of the embedding quantifier; the textbook's own account of
+implicature is not formalized here.
 
-## Connection to GP 2009
+## References
 
-`gp2009_data_anchors_pattern` shows the GP 2009 ∅-condition data
-(93%/94% endorsement of the *some*→*not all* inference) is the
-quantitative grounding for the textbook's UE-pattern claim.
+* [geurts-2010]
+* [geurts-pouscoulous-2009]
 -/
 
 namespace Geurts2010
 
-open GeurtsPouscoulous2009
+open Quantification GeurtsPouscoulous2009
 
-/-- The GP 2009 ∅-condition (unembedded *some*) endorsement rates
-anchor the textbook's UE-pattern claim quantitatively: 93% (Exp 1a,
-n=30) and 94% (Exp 1b, n=31) endorse the *some*→*not all* inference. -/
-theorem gp2009_data_anchors_pattern :
-    lookupRate exp1aResults .simple = 93 ∧
-    lookupRate exp1bResults .simple = 94 := by decide
+variable {α : Type*}
+
+/-- The upward-entailing scope of *all* admits a local inference and the downward-entailing scope
+of *not all* excludes one on either version of the prediction. -/
+theorem ue_de_pattern :
+    PredictsLocalSIWeak (every_sem : GQ α) ∧ ¬ PredictsLocalSI (outerNeg (every_sem : GQ α)) :=
+  ⟨every_scope_up, not_not.mpr (outerNeg_up_to_down _ every_scope_up)⟩
 
 end Geurts2010

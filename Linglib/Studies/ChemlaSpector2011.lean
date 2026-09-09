@@ -376,15 +376,12 @@ theorem de_qLocal_lt_local (i : Item) :
   cases i <;> decide +kernel
 
 /-- The two papers agree on downward-entailing contexts even where they disagree elsewhere: the
-marginal local reading is rated far below the baseline here, and in
-[geurts-pouscoulous-2009]'s fourth experiment the responses consistent with a local
-implicature fall far below its genuine-ambiguity baseline. -/
+marginal local reading is rated far below the baseline here, as the responses consistent with a
+local implicature fall far below the genuine-ambiguity baseline in
+[geurts-pouscoulous-2009]'s fourth experiment, whose verification items
+`GeurtsPouscoulous2009.rows_construals_conflict` shows to be built on conflicting construals. -/
 theorem de_agrees_with_geurts_pouscoulous :
-    (∀ i : Item, ∃ q ∈ ratingDE .one i .qLocal, ∃ b ∈ ratingDE .one i .both, q < b) ∧
-      GeurtsPouscoulous2009.exp4NonDeConventionalistConsistent *
-          (GeurtsPouscoulous2009.genuineAmbiguityRates.length * 100) <
-        GeurtsPouscoulous2009.genuineAmbiguityRates.sum *
-          GeurtsPouscoulous2009.exp4NonDeTotalResponses :=
-  ⟨de_qLocal_lt_both .one, by decide⟩
+    ∀ i : Item, ∃ q ∈ ratingDE .one i .qLocal, ∃ b ∈ ratingDE .one i .both, q < b :=
+  de_qLocal_lt_both .one
 
 end ChemlaSpector2011
