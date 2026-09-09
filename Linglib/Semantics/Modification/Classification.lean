@@ -47,6 +47,11 @@ open Modifier
 
 variable {W E : Type*} {adj : Modifier (Property W E)}
 
+/-- Pointwise form of `Modifier.intersective` at the intensional carrier. -/
+@[simp] theorem intersective_apply (Q N : Property W E) (w : W) (x : E) :
+    intersective Q N w x ↔ Q w x ∧ N w x :=
+  Iff.rfl
+
 /-- Pointwise form of `Modifier.isIntersective` at the intensional
     carrier: the extension at each world is the intersection of the
     noun's extension with some fixed property Q ([kamp-1975]
