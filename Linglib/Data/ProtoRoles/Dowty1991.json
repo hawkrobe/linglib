@@ -451,5 +451,89 @@
   "argDesc": "the location (the truck)",
   "changeOfState": true,
   "locator": "p. 594: 'the truck also changes from an unloaded to a loaded state'; (64 I) p. 595"
+ },
+ {
+  "name": "kissSubject",
+  "verb": "kiss",
+  "arg": "subject",
+  "argDesc": "the kisser",
+  "volition": true,
+  "locator": "sec. 9.1 p. 585: 'If volition is entailed at all, it is entailed for the subject argument'; (43) 'Kim kissed Sandy'"
+ },
+ {
+  "name": "kissObject",
+  "verb": "kiss",
+  "arg": "object",
+  "argDesc": "the one kissed",
+  "volition": false,
+  "locator": "sec. 9.1 p. 585: 'there is no verb that entails volition for object but not subject'; (41b) '#The drunk and the lamppost embraced'"
+ },
+ {
+  "name": "collideSubject",
+  "verb": "collide with",
+  "arg": "subject",
+  "argDesc": "the moving body (the truck)",
+  "movement": true,
+  "locator": "(45a) p. 585: '45a entails only that the truck was in motion in the event of collision'"
+ },
+ {
+  "name": "collideObject",
+  "verb": "collide with",
+  "arg": "oblique",
+  "argDesc": "the body collided with (the lamppost)",
+  "movement": false,
+  "locator": "(45a) p. 585, against (45b), which 'entails that both the truck and the lamppost were in motion'"
+ },
+ {
+  "name": "surpriseSubject",
+  "verb": "surprise",
+  "arg": "subject",
+  "argDesc": "the stimulus",
+  "causation": true,
+  "sentience": false,
+  "locator": "(38) p. 579, stimulus-subject column 'y surprises x': 'the Stimulus causes some emotional reaction or cognitive judgment in the Experiencer', 'though the Stimulus is not' sentient/perceiving"
+ },
+ {
+  "name": "breakInstrument",
+  "verb": "break",
+  "arg": "oblique",
+  "argDesc": "the instrument (the stick in 63a)",
+  "changeOfState": false,
+  "incrementalTheme": false,
+  "locator": "(63a) p. 594; (64 II) p. 595: 'entails change of state (and Incremental Themehood) in only one argument'"
+ },
+ {
+  "name": "putTheme",
+  "verb": "put",
+  "arg": "object",
+  "argDesc": "the lamp",
+  "changeOfState": true,
+  "causallyAffected": true,
+  "locator": "sec. 8.2 p. 578: 'The lamp undergoes a change of position and is causally affected'"
+ },
+ {
+  "name": "putGoal",
+  "verb": "put",
+  "arg": "oblique",
+  "argDesc": "the table",
+  "stationary": true,
+  "locator": "sec. 8.2 p. 578: 'the box and table remain stationary and relatively unaffected'"
+ },
+ {
+  "name": "removeTheme",
+  "verb": "remove",
+  "arg": "object",
+  "argDesc": "the lamp",
+  "changeOfState": true,
+  "causallyAffected": true,
+  "locator": "sec. 8.2 p. 578: 'The lamp undergoes a change of position and is causally affected'"
+ },
+ {
+  "name": "removeSource",
+  "verb": "remove",
+  "arg": "oblique",
+  "argDesc": "the box",
+  "stationary": true,
+  "locator": "sec. 8.2 p. 578: 'the box and table remain stationary and relatively unaffected'"
  }
 ]

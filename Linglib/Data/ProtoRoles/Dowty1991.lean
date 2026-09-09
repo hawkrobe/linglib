@@ -6,7 +6,7 @@ import Linglib.Data.ProtoRoles.Schema
 
 Auto-generated from `Linglib/Data/ProtoRoles/Dowty1991.json` by
 `scripts/gen_protoroles.py`. **Do not edit by hand** — edit the JSON and
-re-run the generator. The 48 per-argument entailment attributions
+re-run the generator. The 58 per-argument entailment attributions
 the paper states explicitly, with locators; fields the paper is silent or
 hedged about are `none`.
 -/
@@ -372,9 +372,73 @@ def loadLocation : ProtoRoleDatum :=
     changeOfState := some true,
     locator := "p. 594: 'the truck also changes from an unloaded to a loaded state'; (64 I) p. 595" }
 
+def kissSubject : ProtoRoleDatum :=
+  { verb := "kiss", arg := .subject,
+    argDesc := "the kisser",
+    volition := some true,
+    locator := "sec. 9.1 p. 585: 'If volition is entailed at all, it is entailed for the subject argument'; (43) 'Kim kissed Sandy'" }
+
+def kissObject : ProtoRoleDatum :=
+  { verb := "kiss", arg := .object,
+    argDesc := "the one kissed",
+    volition := some false,
+    locator := "sec. 9.1 p. 585: 'there is no verb that entails volition for object but not subject'; (41b) '#The drunk and the lamppost embraced'" }
+
+def collideSubject : ProtoRoleDatum :=
+  { verb := "collide with", arg := .subject,
+    argDesc := "the moving body (the truck)",
+    movement := some true,
+    locator := "(45a) p. 585: '45a entails only that the truck was in motion in the event of collision'" }
+
+def collideObject : ProtoRoleDatum :=
+  { verb := "collide with", arg := .oblique,
+    argDesc := "the body collided with (the lamppost)",
+    movement := some false,
+    locator := "(45a) p. 585, against (45b), which 'entails that both the truck and the lamppost were in motion'" }
+
+def surpriseSubject : ProtoRoleDatum :=
+  { verb := "surprise", arg := .subject,
+    argDesc := "the stimulus",
+    sentience := some false,
+    causation := some true,
+    locator := "(38) p. 579, stimulus-subject column 'y surprises x': 'the Stimulus causes some emotional reaction or cognitive judgment in the Experiencer', 'though the Stimulus is not' sentient/perceiving" }
+
+def breakInstrument : ProtoRoleDatum :=
+  { verb := "break", arg := .oblique,
+    argDesc := "the instrument (the stick in 63a)",
+    changeOfState := some false,
+    incrementalTheme := some false,
+    locator := "(63a) p. 594; (64 II) p. 595: 'entails change of state (and Incremental Themehood) in only one argument'" }
+
+def putTheme : ProtoRoleDatum :=
+  { verb := "put", arg := .object,
+    argDesc := "the lamp",
+    changeOfState := some true,
+    causallyAffected := some true,
+    locator := "sec. 8.2 p. 578: 'The lamp undergoes a change of position and is causally affected'" }
+
+def putGoal : ProtoRoleDatum :=
+  { verb := "put", arg := .oblique,
+    argDesc := "the table",
+    stationary := some true,
+    locator := "sec. 8.2 p. 578: 'the box and table remain stationary and relatively unaffected'" }
+
+def removeTheme : ProtoRoleDatum :=
+  { verb := "remove", arg := .object,
+    argDesc := "the lamp",
+    changeOfState := some true,
+    causallyAffected := some true,
+    locator := "sec. 8.2 p. 578: 'The lamp undergoes a change of position and is causally affected'" }
+
+def removeSource : ProtoRoleDatum :=
+  { verb := "remove", arg := .oblique,
+    argDesc := "the box",
+    stationary := some true,
+    locator := "sec. 8.2 p. 578: 'the box and table remain stationary and relatively unaffected'" }
+
 end Rows
 
-/-- All 48 explicit per-argument attributions. -/
+/-- All 58 explicit per-argument attributions. -/
 def allRows : List ProtoRoleDatum :=
   [Rows.buildSubject,
    Rows.buildObject,
@@ -423,6 +487,16 @@ def allRows : List ProtoRoleDatum :=
    Rows.hitInstrument,
    Rows.breakObject,
    Rows.loadTheme,
-   Rows.loadLocation]
+   Rows.loadLocation,
+   Rows.kissSubject,
+   Rows.kissObject,
+   Rows.collideSubject,
+   Rows.collideObject,
+   Rows.surpriseSubject,
+   Rows.breakInstrument,
+   Rows.putTheme,
+   Rows.putGoal,
+   Rows.removeTheme,
+   Rows.removeSource]
 
 end Dowty1991
