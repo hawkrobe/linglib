@@ -1,0 +1,1839 @@
+[
+  {
+    "id": "fortuny2024_ex3a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(3a)"
+    },
+    "language": "stan1293",
+    "primaryText": "How was Emma [how and sleepy]?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "Adj wh"
+      ],
+      [
+        "right",
+        "Adj"
+      ],
+      [
+        "moved",
+        "left"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex3b",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(3b)"
+    },
+    "language": "stan1293",
+    "primaryText": "How was Emma [tired and how]?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "Adj"
+      ],
+      [
+        "right",
+        "Adj wh"
+      ],
+      [
+        "moved",
+        "right"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex3c",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(3c)"
+    },
+    "language": "stan1293",
+    "primaryText": "How was Emma [how or sleepy]?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "Adj wh"
+      ],
+      [
+        "right",
+        "Adj"
+      ],
+      [
+        "moved",
+        "left"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "or"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex3d",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(3d)"
+    },
+    "language": "stan1293",
+    "primaryText": "How was Emma [tired or how]?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "Adj"
+      ],
+      [
+        "right",
+        "Adj wh"
+      ],
+      [
+        "moved",
+        "right"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "or"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex3e",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(3e)"
+    },
+    "language": "stan1293",
+    "primaryText": "How was Emma [how but tired]?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "Adj wh"
+      ],
+      [
+        "right",
+        "Adj"
+      ],
+      [
+        "moved",
+        "left"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "but"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex3f",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(3f)"
+    },
+    "language": "stan1293",
+    "primaryText": "How was Emma [excited but how]?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "Adj"
+      ],
+      [
+        "right",
+        "Adj wh"
+      ],
+      [
+        "moved",
+        "right"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "but"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex7",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(7)"
+    },
+    "language": "stan1293",
+    "primaryText": "Which book does Mark like and/or/but Sue hate?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "C"
+      ],
+      [
+        "right",
+        "C"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": "Across-the-board extraction from inside both coordinands; the Element Constraint is set aside."
+  },
+  {
+    "id": "fortuny2024_ex25a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(25a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did John kiss and/or a girl?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D wh"
+      ],
+      [
+        "right",
+        "D"
+      ],
+      [
+        "moved",
+        "left"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex26a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(26a)"
+    },
+    "language": "cata1290",
+    "primaryText": "LES PASTANAGUES, sembra i/o les mongetes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "THE CARROTS, he/she grows and/or the beans.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D focus"
+      ],
+      [
+        "right",
+        "D"
+      ],
+      [
+        "moved",
+        "left"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex26c",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(26c)"
+    },
+    "language": "cata1290",
+    "primaryText": "Les pastanagues, les sembra i/o les mongetes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The carrots, he/she grows them and/or the beans.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D topic"
+      ],
+      [
+        "right",
+        "D"
+      ],
+      [
+        "moved",
+        "left"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex27a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(27a)"
+    },
+    "language": "stan1293",
+    "primaryText": "How was Peter but tired?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "Adj wh"
+      ],
+      [
+        "right",
+        "Adj"
+      ],
+      [
+        "moved",
+        "left"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "but"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex28a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(28a)"
+    },
+    "language": "cata1290",
+    "primaryText": "EXCITAT estava però cansat.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "EXCITED, he was but tired.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "Adj focus"
+      ],
+      [
+        "right",
+        "Adj"
+      ],
+      [
+        "moved",
+        "left"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "but"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex29a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(29a)"
+    },
+    "language": "cata1290",
+    "primaryText": "Excitat, ho estava però cansat.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Excited, he was but tired.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "Adj topic"
+      ],
+      [
+        "right",
+        "Adj"
+      ],
+      [
+        "moved",
+        "left"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "but"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex30",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(30)"
+    },
+    "language": "stan1293",
+    "primaryText": "The belief in resurrection and the desire to preserve one's life are sometimes at odds.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D"
+      ],
+      [
+        "right",
+        "D"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": "Identity is not required of elements inside the coordinands."
+  },
+  {
+    "id": "fortuny2024_ex31a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(31a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The photo of which applicant did you compare and his CV?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D wh"
+      ],
+      [
+        "right",
+        "D"
+      ],
+      [
+        "moved",
+        "left"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": "The wh-feature percolates to the pied-piped coordinand (32)."
+  },
+  {
+    "id": "fortuny2024_ex34a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(34a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Which king did you buy that painting and a portrait of?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D"
+      ],
+      [
+        "right",
+        "D wh"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": "With mandatory percolation the second coordinand is a [+wh] phrase (36)."
+  },
+  {
+    "id": "fortuny2024_ex41a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(41a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who bought what and beer?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D wh"
+      ],
+      [
+        "right",
+        "D"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": "No coordinand moves; the coordination itself is ill-formed."
+  },
+  {
+    "id": "fortuny2024_ex42a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(42a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who bought beer and what?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D"
+      ],
+      [
+        "right",
+        "D wh"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex46a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(46a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Which girl and Samuel do you think are lost?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D wh"
+      ],
+      [
+        "right",
+        "D"
+      ],
+      [
+        "moved",
+        "whole"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex46b",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(46b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Samuel and which girl do you think are lost?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D"
+      ],
+      [
+        "right",
+        "D wh"
+      ],
+      [
+        "moved",
+        "whole"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex47",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(47)"
+    },
+    "language": "cata1290",
+    "primaryText": "Les pastanagues, LES MONGETES, les sembra i.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The carrots, THE BEANS, he/she grows.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D topic"
+      ],
+      [
+        "right",
+        "D focus"
+      ],
+      [
+        "moved",
+        "both"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex51b",
+    "source": {
+      "bibkey": "zhang-2010",
+      "paperLabel": "p. 66"
+    },
+    "language": "russ1263",
+    "primaryText": "Kokogo mal'čika kakuju devočku ty l'ubiš' i?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Which boy and which girl do you love?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D wh"
+      ],
+      [
+        "right",
+        "D wh"
+      ],
+      [
+        "moved",
+        "both"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(51b)"
+    }
+  },
+  {
+    "id": "fortuny2024_ex52",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(52)"
+    },
+    "language": "russ1263",
+    "primaryText": "Kokogo mal'čika i kakuju devočku ty l'ubiš'?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Which boy and which girl do you love?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D wh"
+      ],
+      [
+        "right",
+        "D wh"
+      ],
+      [
+        "moved",
+        "whole"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex59a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(59a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Peter often and/or Mary goes out for dinner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D uC"
+      ],
+      [
+        "right",
+        "D uC"
+      ],
+      [
+        "moved",
+        "left"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex59b",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(59b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Peter seemed to and/or Mary enjoy the movie.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D uC"
+      ],
+      [
+        "right",
+        "D uC"
+      ],
+      [
+        "moved",
+        "left"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex61a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(61a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mia and/or Mary often go out for dinner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D uC"
+      ],
+      [
+        "right",
+        "D uC"
+      ],
+      [
+        "moved",
+        "whole"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": "The coordination raises as a whole and nominative percolates to each coordinand."
+  },
+  {
+    "id": "fortuny2024_ex63a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(63a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Which nurse and which hostess did they date, respectively?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D wh"
+      ],
+      [
+        "right",
+        "D wh"
+      ],
+      [
+        "moved",
+        "both"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": "Sideward movement of the coordinands into a higher CoordP, stranding the coordinator."
+  },
+  {
+    "id": "fortuny2024_ex63b",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(63b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Greek and economy, they teach, respectively.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D topic"
+      ],
+      [
+        "right",
+        "D topic"
+      ],
+      [
+        "moved",
+        "both"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex64a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(64a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Which nurse and which hostess did they date, respectively?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D wh"
+      ],
+      [
+        "right",
+        "D wh"
+      ],
+      [
+        "moved",
+        "whole"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": "The base-generated CoordP fronts as a whole."
+  },
+  {
+    "id": "fortuny2024_ex64b",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(64b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Greek and economy, they teach, respectively.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D topic"
+      ],
+      [
+        "right",
+        "D topic"
+      ],
+      [
+        "moved",
+        "whole"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex67",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(67)"
+    },
+    "language": "stan1293",
+    "primaryText": "Which students did you say Peter likes and Mary hates?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "C"
+      ],
+      [
+        "right",
+        "C"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex68a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(68a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Which students did Peter meet [e and e]?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D wh"
+      ],
+      [
+        "right",
+        "D wh"
+      ],
+      [
+        "moved",
+        "whole"
+      ],
+      [
+        "same",
+        "yes"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex68b",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(68b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The Pre-Raphaelites, we found [e and e].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D topic"
+      ],
+      [
+        "right",
+        "D topic"
+      ],
+      [
+        "moved",
+        "whole"
+      ],
+      [
+        "same",
+        "yes"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex69",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(69)"
+    },
+    "language": "stan1293",
+    "primaryText": "Which students and which students did Peter meet?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D wh"
+      ],
+      [
+        "right",
+        "D wh"
+      ],
+      [
+        "moved",
+        "whole"
+      ],
+      [
+        "same",
+        "yes"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex70a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(70a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I met the student and the student.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D"
+      ],
+      [
+        "right",
+        "D"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "yes"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex70b",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(70b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I'm looking for my bag and for my bag.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "P"
+      ],
+      [
+        "right",
+        "P"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "yes"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex70c",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(70c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Peter lives in a small city and in a small city.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "P"
+      ],
+      [
+        "right",
+        "P"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "yes"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex72a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(72a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I met the student or the student.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D"
+      ],
+      [
+        "right",
+        "D"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "yes"
+      ],
+      [
+        "coordinator",
+        "or"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex72b",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(72b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I'm looking for my bag or for my bag.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "P"
+      ],
+      [
+        "right",
+        "P"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "yes"
+      ],
+      [
+        "coordinator",
+        "or"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex72c",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(72c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Peter lives in a small city or in a small city.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "P"
+      ],
+      [
+        "right",
+        "P"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "yes"
+      ],
+      [
+        "coordinator",
+        "or"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex73a_same",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(73a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I didn't meet the student but the student.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D"
+      ],
+      [
+        "right",
+        "D"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "yes"
+      ],
+      [
+        "coordinator",
+        "but"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex73a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(73a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I didn't meet the student but the professor.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D"
+      ],
+      [
+        "right",
+        "D"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "but"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex74_same",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(74)"
+    },
+    "language": "stan1293",
+    "primaryText": "He was excited but excited.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "Adj"
+      ],
+      [
+        "right",
+        "Adj"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "yes"
+      ],
+      [
+        "coordinator",
+        "but"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex74",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(74)"
+    },
+    "language": "stan1293",
+    "primaryText": "He was excited but tired.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "Adj"
+      ],
+      [
+        "right",
+        "Adj"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "but"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex75a",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(75a)"
+    },
+    "language": "stan1293",
+    "primaryText": "A dog and/or another dog met.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D"
+      ],
+      [
+        "right",
+        "D"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": "Two different constituents, not two occurrences of one."
+  },
+  {
+    "id": "fortuny2024_ex75b",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(75b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I like reading novels and/but only novels.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D"
+      ],
+      [
+        "right",
+        "D"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fortuny2024_ex76",
+    "source": {
+      "bibkey": "fortuny-2024",
+      "paperLabel": "(76)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mark Twain and Samuel Clemens are the same person.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "left",
+        "D"
+      ],
+      [
+        "right",
+        "D"
+      ],
+      [
+        "moved",
+        "none"
+      ],
+      [
+        "same",
+        "no"
+      ],
+      [
+        "coordinator",
+        "and"
+      ]
+    ],
+    "comment": "Different constituents with the same extension."
+  }
+]
