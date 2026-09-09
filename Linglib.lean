@@ -2154,7 +2154,7 @@ import Linglib.Studies.ErkHerbelot2024
 import Linglib.Studies.Erlewine2016
 import Linglib.Studies.ErlewineSommerlot2025
 import Linglib.Studies.EvcenBaleBarner2026
-import Linglib.Studies.Everdell2024
+import Linglib.Studies.Everdell2023
 import Linglib.Studies.FaginHalpern1994
 import Linglib.Studies.Faller2019
 import Linglib.Studies.FarkasBruce2010
@@ -3051,3 +3051,4 @@ import Linglib.Data.Examples.Enguehard2024
 import Linglib.Data.Examples.Erlewine2016
 import Linglib.Data.Examples.ErlewineSommerlot2025
 import Linglib.Data.Examples.EvcenBaleBarner2026
+import Linglib.Data.Examples.Everdell2023
