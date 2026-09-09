@@ -3047,3 +3047,4 @@ import Linglib.Data.Examples.Elbourne2013
 import Linglib.Data.Examples.Elbourne2026
 import Linglib.Data.Examples.ElkinsTorrenceBrown2026
 import Linglib.Data.Examples.Elliott2025
+import Linglib.Data.Examples.EngelhardtEtAl2006
