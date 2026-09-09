@@ -1815,7 +1815,6 @@ import Linglib.Semantics.Quantification.Numerals.Basic
 import Linglib.Semantics.Quantification.Numerals.Precision
 import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Semantics.Quantification.ONEModifiers
-import Linglib.Semantics.Quantification.PolarizedIndividuals
 import Linglib.Semantics.Quantification.Polyadic
 import Linglib.Semantics.Quantification.Properties
 import Linglib.Semantics.Quantification.Quantifier
@@ -3047,3 +3046,4 @@ import Linglib.Data.Examples.Egressy2026
 import Linglib.Data.Examples.Elbourne2013
 import Linglib.Data.Examples.Elbourne2026
 import Linglib.Data.Examples.ElkinsTorrenceBrown2026
+import Linglib.Data.Examples.Elliott2025

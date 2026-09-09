@@ -1,0 +1,217 @@
+[
+  {
+    "id": "elliott2025_6",
+    "source": {"bibkey": "elliott-2025", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Three boys gathered.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.1"]
+    ],
+    "comment": "A numeral expression composes with a collective predicate, as the predicative theory of numerals predicts.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliott2025_7",
+    "source": {"bibkey": "elliott-2025", "paperLabel": "(7)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Three boys are singing or dancing.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Boys b1 and b2 are only singing, b3 is only dancing, and no other boys are singing or dancing.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "distributive scope over the disjunction", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "2.1"]
+    ],
+    "comment": "True in the context: the covert distributivity operator quantifies over the atomic parts.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliott2025_10",
+    "source": {"bibkey": "elliott-2025", "paperLabel": "(10)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Less than three boys sneezed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Three boys sneezed.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "true in the context", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "2.2.1"]
+    ],
+    "comment": "The classical predicative entry wrongly predicts truth, since a two-boy part of the sneezers sneezed: van Benthem's problem.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliott2025_12",
+    "source": {"bibkey": "elliott-2025", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Less than three boys sneezed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "No boys sneezed.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "true in the context", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "2.2.2"]
+    ],
+    "comment": "Intuitively true, but the classical predicative entry requires a sneezing plurality of boys: the existential entailment problem.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliott2025_47",
+    "source": {"bibkey": "elliott-2025", "paperLabel": "(47)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If two relatives of mine die, I'll inherit a house.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "∃ > if..then > Dist", "judgment": "acceptable"},
+      {"name": "∃ > Dist > if..then", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "5"]
+    ],
+    "comment": "The existential component of the numeral takes exceptional scope out of the antecedent; the distributive component stays inside.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliott2025_48a",
+    "source": {"bibkey": "elliott-2025", "paperLabel": "(48a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If all relatives of mine die, I'll inherit a house.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "∀ > if..then", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "5"]
+    ],
+    "comment": "No exceptional scope: all relatives of mine denotes a singleton, so existential raising over it is scopeless and universal force stays inside the antecedent.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliott2025_48b",
+    "source": {"bibkey": "elliott-2025", "paperLabel": "(48b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If no relatives of mine die, I'll inherit a house.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "no > if..then", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "5"]
+    ],
+    "comment": "No exceptional scope: no relatives of mine denotes the wholly negative group.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliott2025_50",
+    "source": {"bibkey": "elliott-2025", "paperLabel": "(50)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If James bets on exactly two numbers, he'll win this round (I just don't know which two).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "James plays a two-ball roulette variant, betting on any two numbers and winning if both balls land on them; the croupier has rigged the wheel so the balls land on two predetermined numbers.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "∃ > if..then (exceptional existential scope)", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "5"]
+    ],
+    "comment": "Contrary to the received view on modified numerals, the exceptional existential scope reading the theory predicts is available; the judgment was checked with about ten speakers.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliott2025_51a",
+    "source": {"bibkey": "elliott-2025", "paperLabel": "(51a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Some boy gathered.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "6.1"]
+    ],
+    "comment": "A collective predicate needs a semantically plural DP, which the singular predicative theory does not yet distinguish.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliott2025_51b",
+    "source": {"bibkey": "elliott-2025", "paperLabel": "(51b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Some boys gathered.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "6.1"]
+    ],
+    "comment": "The plural DP composes with the collective predicate.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
