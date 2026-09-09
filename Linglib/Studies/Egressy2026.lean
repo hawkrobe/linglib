@@ -1,506 +1,371 @@
-import Linglib.Syntax.Minimalist.Probe.Profile
-import Linglib.Semantics.Tense.Embedding
+import Linglib.Data.Examples.Egressy2026
 import Linglib.Fragments.Hungarian.Predicates
+import Linglib.Semantics.Tense.Embedding
+import Linglib.Syntax.Minimalist.Probe.Profile
 
 /-!
-# [egressy-2026]: Size-Sensitive Sequence of Tense in Hungarian
-[egressy-2026]
+# Egressy (2026): Size-Sensitive Sequence of Tense in Hungarian
 
-János Egressy shows that the availability of the *simultaneous* reading of a
-past-under-past configuration in Hungarian depends on a **clause-internal**
-property of the embedded clause, not on the matrix verb or on the
-complementizer *hogy* (which is an edge marker, not a C head — Hungarian has no
-CP, [kiss-2023]):
+This file formalizes [egressy-2026]'s account of a split among Hungarian past-under-past
+clauses: a non-speech-reporting clause (perception, dreaming, thought, belief, a reason adjunct)
+has the simultaneous reading, like an English complement, while a speech-reporting clause, one
+encoding the content of a verbal or other sign, is backshifted only, like a Japanese one. The
+split is clause-internal, since one verb embeds either type. Non-speech-reporting clauses are
+bare TPs and speech-reporting clauses SayPs with Say > Foc > T, Hungarian having no CP; the
+Sequence of Tense Rule of [ogihara-1996] deletes an embedded PAST under Agree with a matrix
+PAST, and that Agree obeys the Williams Cycle of [williams-2003]: a dependency headed at T cannot
+search a projection above T in the functional sequence. It therefore crosses a TP and is blocked
+by a SayP, just as focus movement to Spec,FocP escapes a TP but not a SayP and raising to Spec,TP
+crosses a TP but not a CP. The Williams Cycle in Agree is derived from size-dependent adjunction:
+an embedded clause adjoins to the matrix projection of its own size, so only a clause no larger
+than TP lies inside a projection of the matrix PAST. The same derivation gives the
+multiple-embedding data, where only structurally adjacent clauses interact, and locates the
+size-insensitive Sequence of Tense of English in its CP complements sitting inside the VP.
 
-* **Non-speech-reporting clauses** (perception, dreaming, belief — clauses that
-  do *not* encode the content of a verbal/representational sign) pattern like
-  English: a past-under-past clause has a simultaneous reading (and, pragmatics
-  permitting, a back-shifted one).
-* **Speech-reporting clauses** (the content of *say*/*shout*/*growl*) pattern
-  like Japanese: only the back-shifted reading.
+## Implementation notes
 
-The analysis: speech-reporting clauses carry an extra `Say` layer (Say > Foc >
-T) above the bare TP of non-speech-reporting clauses ([major-2021],
-[krifka-2023]). The simultaneous reading comes from the optional LF deletion of
-the embedded `PAST` under an agreeing matrix `PAST` — the Sequence of Tense
-Rule of [ogihara-1996] / [ogihara-sharvit-2012]. Crucially this SOT-Agree obeys
-the **Williams Cycle** ([williams-2003]), i.e. [keine-2019]'s *selective
-opacity* generalized from movement to Agree: an Agree dependency from `T`
-cannot cross a larger `Say` projection. So it crosses a TP (simultaneous
-available) but is blocked by a SayP (back-shift only). Williams-Cycle
-sensitivity favors the SOT-Agree analysis over a *res*-movement (de re) account
-of simultaneity ([abusch-1988], [abusch-1997]), which would be unboundedly free
-(see `de_re_overgenerates`).
+* Clause size is `Minimalist.ComplementSize` on the shared functional sequence `fValue`, where
+  `Cat.Say` sits at Say > Foc > T. The Williams Cycle (26) and its version for Agree (35) are one
+  relation, `WilliamsCycle x y`, between the head of a dependency and the crossed projection.
+* Readings are `Tense.EmbeddedTenseReading`. The two clause types realize the two values of
+  [ogihara-sharvit-2012]'s language-wide `Tense.SOTParameter` clause-internally, so `readings`
+  is `Tense.availableReadings` at the clause-internal parameter, and a chain of embeddings is
+  read pairwise by `profile`.
+* The examples are `Data.Examples.Egressy2026`. A row's clause type is its `clauseType`
+  feature, its matrix verb the `Hungarian.Predicates` entry named by its `matrixVerb` feature,
+  and direct perception, which the paper says removes the backshifted reading pragmatically, its
+  `directPerception` feature.
+* Footnote 9 allows the complement of *mond* to be an XP with Say > Foc > X > T, which movement
+  to Spec,FocP escapes but Agree from T does not; the shared sequence has no such head, so those
+  complements are SayPs here.
 
-## Formalization strategy
+## References
 
-The opacity is **derived, not stipulated**: the `Say` head sits at `fValue 5`
-in the shared functional sequence (`Syntax.Minimalist`), and the SOT
-transparency of a complement is exactly `ComplementSize.transparentToSOTAgree`
-(`fLevel < fValue .Say`). This reuses the very machinery that derives the ban
-on hyperraising and Hindi long-distance Agree ([keine-2020]); see
-`sot_is_selective_opacity`. There is no language-wide "SOT stage" parameter —
-the two Hungarian clause types reproduce the two values of the binary
-`SOTParameter` clause-internally (`nonSpeech_eq_relative`, `speech_eq_absolute`).
+* [egressy-2026]
+* [egressy-2025]
+* [williams-2003]
+* [keine-2019]
+* [keine-2020]
+* [ogihara-1996]
+* [ogihara-sharvit-2012]
+* [sharvit-2020]
+* [kiss-2023]
+* [abusch-1988]
+* [heim-1994-comments]
 -/
 
 namespace Egressy2026
 
-open Tense (EmbeddedTenseReading SOTParameter availableReadings)
-open Tense (present future)
-open Minimalist
-open Hungarian.Predicates
+open Minimalist Tense Data.Examples Hungarian.Predicates Egressy2026.Examples
 
+/-! ### The two clause types and their size (§2, §3.1) -/
 
-/-! ### The licensing interface
-
-Past-under-past embeddings have a simultaneous and a backward-shifted reading
-(and, with an intervening future, a forward-shifted one). Rival accounts —
-relational/feature ([kauf-zeijlstra-2018]), deletion ([ogihara-2019]),
-res-movement de re, clause-size ([egressy-2026]) — disagree only about *when
-each reading is licensed*, not about what a reading is: a reading is which
-comparison atom (`Ordering`) the embedded reference time bears to its
-anchor. `Tense.embeddedFrame` puts the anchor at the matrix event time, so the
-three readings are exactly the frame predicates (`isPast_iff_atom` and kin).
-
-A licensing theory is one `LocalLicense` — off an immediately containing
-clause and the clause it contains, which atoms are licensed; `profile` folds a
-license **pairwise** along the c-command chain, so an intervening tense
-re-anchors. -/
-
-/-- The ≤ cell of [kauf-zeijlstra-2018]'s PAST: at-or-before, i.e. `Tense.futureᶜ`. -/
-def nonfuture : Finset Ordering := Tense.futureᶜ
-
-/-- A node in an embedding chain: a clause's morphological tense as a relative
-    comparison cell (past = `nonfuture`, the ≤ of [kauf-zeijlstra-2018]) and
-    its framework-neutral size grade (a Minimalist clause provides it as
-    `ClauseSpine.fLevel`). -/
-structure Node where
-  /-- The clause's tense as a relative comparison cell to its anchor. -/
-  tense : Finset Ordering
-  /-- The clause's framework-neutral size grade. -/
-  size  : ℕ
-
-/-- A licensing theory: given a containing clause and the clause it
-    immediately contains, which comparison atoms hold between the contained
-    reference time and its anchor. -/
-abbrev LocalLicense := Node → Node → Finset Ordering
-
-/-- Compose a license pairwise along the c-command chain (matrix first): the
-    licensed reading-set at each embedding level. Adjacency-local — not a fold
-    or product — so an intervening tense re-anchors and blocking propagates
-    ([ogihara-1996]'s past-under-*will*-under-past). -/
-def profile (L : LocalLicense) : Node → List Node → List (Finset Ordering)
-  | _, []        => []
-  | a, c :: rest => L a c :: profile L c rest
-
-/-- The simultaneous reading is licensed iff the `eq` atom is. -/
-def Simultaneous   (s : Finset Ordering) : Prop := Ordering.eq ∈ s
-/-- The backward-shifted reading is licensed iff the `lt` atom is. -/
-def Backshifted    (s : Finset Ordering) : Prop := Ordering.lt ∈ s
-/-- The forward-shifted reading is licensed iff the `gt` atom is. -/
-def ForwardShifted (s : Finset Ordering) : Prop := Ordering.gt ∈ s
-
-instance (s : Finset Ordering) : Decidable (Simultaneous s) :=
-  inferInstanceAs (Decidable (Ordering.eq ∈ s))
-instance (s : Finset Ordering) : Decidable (Backshifted s) :=
-  inferInstanceAs (Decidable (Ordering.lt ∈ s))
-instance (s : Finset Ordering) : Decidable (ForwardShifted s) :=
-  inferInstanceAs (Decidable (Ordering.gt ∈ s))
-
-section Realization
-
-/-! For an embedded frame whose perspective time is the matrix event time
-(`Tense.embeddedFrame`), the licensed atom is its `R`-vs-`P` comparison, and
-the three named readings are exactly `ReichenbachFrame.isPast/isPresent/isFuture`. -/
-
-variable {T : Type*} [LinearOrder T]
-
-theorem isPast_iff_atom (f : Tense.ReichenbachFrame T) :
-    f.isPast ↔ compare f.referenceTime f.perspectiveTime = Ordering.lt := by
-  simp [Tense.ReichenbachFrame.isPast, Tense.past]
-
-theorem isPresent_iff_atom (f : Tense.ReichenbachFrame T) :
-    f.isPresent ↔ compare f.referenceTime f.perspectiveTime = Ordering.eq := by
-  simp [Tense.ReichenbachFrame.isPresent]
-
-theorem isFuture_iff_atom (f : Tense.ReichenbachFrame T) :
-    f.isFuture ↔ compare f.referenceTime f.perspectiveTime = Ordering.gt := by
-  simp [Tense.ReichenbachFrame.isFuture, Tense.future]
-
-end Realization
-
-/-- Generic *size gate*: an opaque clause (size not below `boundary`) loses
-    the simultaneous (`eq`) atom; a transparent one keeps the full relative
-    tense. This is the size half of a clause-size SOT account; it is **not**
-    by itself the [egressy-2026] license, which also requires an agreeing past
-    (`LocalLicense.gate`, `egressyLicense`). On uniformly past-under-past data
-    the two coincide; they diverge once an intervening future appears. -/
-def sizeGatedLicense (boundary : ℕ) : LocalLicense :=
-  fun _ c => if c.size < boundary then c.tense else c.tense.erase .eq
-
-/-- Refine a license by an extra gate: keep its reading set, but drop the
-    simultaneous atom `.eq` wherever the gate fails. A theory composes its
-    licensing conditions as successive gates — the SOT rule is a size gate
-    refined by an agreeing-past gate, i.e. `(sizeGatedLicense b).gate agreeingPast`. -/
-def LocalLicense.gate (L : LocalLicense) (g : Node → Node → Bool) : LocalLicense :=
-  fun a c => if g a c then L a c else (L a c).erase Ordering.eq
-
-/-! ### Pragmatic narrowing (layer 2: a constraint on the grammatical reading set)
-
-Grammar (a `LocalLicense`) emits the *grammatically available* reading set; a
-pragmatic inference then *narrows* it — direct perception (one cannot perceive
-a past event), a cessation implicature, etc. A narrowing is **intersection
-with a context-conditioned constraint** (a further point-algebra relation), so
-it can only *remove* readings, never license a new one — the grammar/pragmatics
-boundary, free from `Finset.inter_subset_left` rather than a stipulated law.
-The context `C` is whatever the inference consults. -/
-
-/-- A pragmatic narrowing: the point-algebra constraint it imposes, as a
-    function of the context the inference consults. -/
-abbrev Narrowing (C : Type*) := C → Finset Ordering
-
-/-- Narrow a grammatically-licensed reading set: intersect with the constraint. -/
-def Narrowing.apply {C : Type*} (n : Narrowing C) (ctx : C) (s : Finset Ordering) :
-    Finset Ordering := s ∩ n ctx
-
-/-- Pragmatics filters, never licenses: narrowing only removes readings. -/
-theorem Narrowing.apply_subset {C : Type*} (n : Narrowing C) (ctx : C)
-    (s : Finset Ordering) : n.apply ctx s ⊆ s :=
-  Finset.inter_subset_left
-
-
-/-! ### The two clause types and their size -/
-
-/-- The clause-internal distinction [egressy-2026] draws: whether an embedded
-    clause encodes the content of a verbal/representational sign. This is a
-    property of the *clause*, independent of the matrix verb (`hall` 'hear' and
-    `gondol` 'think' embed either type) and of *hogy*. -/
-inductive ClauseType where
-  /-- Perception, dreaming, belief: no `Say` layer, a bare TP. -/
+/-- Whether an embedded clause encodes the content of a verbal or other sign (§2.2): a property
+of the clause, not of the matrix predicate, which may embed either type. -/
+inductive ClauseType
   | nonSpeechReporting
-  /-- The content of a verbal/representational sign: an extra `Say` layer (SayP). -/
   | speechReporting
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-/-- The structural size of each clause type in the shared functional sequence:
-    non-speech-reporting = TP, speech-reporting = SayP (Say > Foc > T). -/
-def ClauseType.complementSize : ClauseType → ComplementSize
+/-- (21)–(22): a non-speech-reporting clause is a bare TP, a speech-reporting clause a SayP. -/
+def ClauseType.size : ClauseType → ComplementSize
   | .nonSpeechReporting => .tP
-  | .speechReporting    => .sayP
+  | .speechReporting => .sayP
 
-/-- Speech-reporting clauses are strictly larger than non-speech-reporting
-    ones (SayP dominates TP). -/
-theorem speech_larger_than_nonspeech :
-    ClauseType.nonSpeechReporting.complementSize.fLevel <
-    ClauseType.speechReporting.complementSize.fLevel := by decide
+/-- Speech-reporting clauses are the larger ones (§3.1). -/
+theorem size_nonSpeech_lt_speech :
+    ClauseType.nonSpeechReporting.size.fLevel < ClauseType.speechReporting.size.fLevel := by
+  decide
 
+/-! ### The Williams Cycle (26) and the Williams Cycle in Agree (35) -/
 
-/-! ### SOT-Agree opacity is selective opacity (the Williams Cycle) -/
+/-- A dependency headed at `x`, movement to Spec,XP or Agree from X or XP, may cross or search
+a projection of `y` unless Y is above X in the functional sequence. -/
+def WilliamsCycle (x y : Cat) : Prop := fValue y ≤ fValue x
 
-/-- The Sequence-of-Tense probe: a `T`-probe whose horizon is the `Say` layer.
-    Deletion-under-Agree of an embedded `PAST` searches down from a matrix `T`
-    and is terminated by a `Say` head ([egressy-2026], generalizing
-    [keine-2019]). -/
-def sotProbe : Probe.Profile := ⟨.T, some .Say⟩
+instance (x y : Cat) : Decidable (WilliamsCycle x y) := inferInstanceAs (Decidable (_ ≤ _))
 
-/-- Projected heads of a non-speech-reporting clause (a bare TP): no `Say`. -/
-def nonSpeechSpine : List Cat := [.V, .v, .T]
+/-- A projection of the dependency's own category is crossed. -/
+theorem WilliamsCycle.refl (x : Cat) : WilliamsCycle x x := le_rfl
 
-/-- Projected heads of a speech-reporting clause (a SayP): contains `Say`. -/
-def speechSpine : List Cat := [.V, .v, .T, .Say]
+/-- Upward entailment: whatever a projection blocks, every higher projection blocks. -/
+theorem WilliamsCycle.of_le {x y y' : Cat} (h : fValue y' ≤ fValue y) (hxy : WilliamsCycle x y) :
+    WilliamsCycle x y' :=
+  h.trans hxy
 
-/-- The SOT probe crosses a TP: a non-speech-reporting clause is transparent. -/
-theorem sot_crosses_TP : sotProbe.transparentToLabel nonSpeechSpine = true := by decide
+/-- (24)–(25), [egressy-2025]: focus and wh-movement to Spec,FocP escape a TP. -/
+theorem focus_crosses_TP : WilliamsCycle .Foc .T := by decide
 
-/-- The SOT probe is blocked by a SayP: a speech-reporting clause is opaque. -/
-theorem sot_blocked_by_SayP : sotProbe.transparentToLabel speechSpine = false := by decide
+/-- (24)–(25): movement to Spec,FocP cannot leave a SayP, whose Say is above Foc. -/
+theorem focus_blocked_by_SayP : ¬ WilliamsCycle .Foc .Say := by decide
 
-/-- **The unification.** SOT-Agree opacity is the *same* selective-opacity
-    mechanism that the syntax layer uses for movement and Agree: the
-    fValue-keyed `ComplementSize.transparentToSOTAgree` agrees with the
-    horizon-keyed `Probe.transparentToLabel` of `sotProbe` on both clause
-    types. (Compare `Minimalist.Probe` `a_movement_typology` for hyperraising.) -/
-theorem sot_is_selective_opacity :
-    ClauseType.nonSpeechReporting.complementSize.transparentToSOTAgree =
-      sotProbe.transparentToLabel nonSpeechSpine ∧
-    ClauseType.speechReporting.complementSize.transparentToSOTAgree =
-      sotProbe.transparentToLabel speechSpine := by decide
+/-- (27): raising to Spec,TP crosses a TP. -/
+theorem raising_crosses_TP : WilliamsCycle .T .T := WilliamsCycle.refl _
 
-/-- **Upward entailment** ([keine-2020]): the SayP boundary is monotone — any
-    complement at or above the `Say` layer is opaque to SOT-Agree. (Speas–Tenny
-    `SA`, `Force`, and `C` all sit at or above `Say`.) -/
-theorem sot_opaque_above_say (cs : ComplementSize)
-    (h : fValue .Say ≤ cs.fLevel) :
-    cs.transparentToSOTAgree = false := by
-  simp only [ComplementSize.transparentToSOTAgree, ComplementSize.fLevel,
-    decide_eq_false_iff_not, Nat.not_lt] at h ⊢
-  omega
+/-- (28), the ban on hyperraising: raising to Spec,TP cannot cross a CP. -/
+theorem raising_blocked_by_CP : ¬ WilliamsCycle .T .C := by decide
 
+/-- The complement size crossed in a raising row. -/
+def crossed? (e : LinguisticExample) : Option ComplementSize :=
+  e.parse? "crossed" [("tP", .tP), ("cP", .cP)]
 
-/-! ### The Egressy license and the predictions
+/-- The raising rows are judged exactly as the Williams Cycle predicts. -/
+theorem raising_rows : ∀ e ∈ [ex_27, ex_28], ∀ cs ∈ crossed? e,
+    e.judgment = .acceptable ↔ WilliamsCycle .T cs.highestHead := by
+  decide
 
-The Sequence-of-Tense rule is a `LocalLicense`: the `Say`-boundary size gate,
-refined by an agreeing-past gate (SOT deletion needs an agreeing `PAST`). The
-predictions are the interface's `Simultaneous`/`Backshifted` over licensed
-atom sets, not a bespoke reading function. -/
+/-- (23): evaluative adverbs such as *sajnos* sit in the Say layer above foci, so a clause hosts
+one iff it is at least a SayP. -/
+def HostsEvaluativeAdverb (cs : ComplementSize) : Prop := fValue .Say ≤ cs.fLevel
 
-/-- The `Say` boundary: the `Say` layer's grade on the clause-size scale. -/
-def sayBoundary : ℕ := ComplementSize.sayP.fLevel
+instance (cs : ComplementSize) : Decidable (HostsEvaluativeAdverb cs) :=
+  inferInstanceAs (Decidable (_ ≤ _))
 
-/-- A clause node: a tense cell (`nonfuture` = past, `after` = future — the
-    ungated reading set of [kauf-zeijlstra-2018]) and the neutral size of its
-    `ClauseType`. -/
-def clauseNode (tense : Finset Ordering) (ct : ClauseType) : Node :=
-  ⟨tense, ct.complementSize.fLevel⟩
-
-/-- A past matrix clause (the container; only its tense matters to licensing). -/
-def pastMatrix : Node := ⟨nonfuture, 0⟩
-
-/-- The agreeing-past gate: SOT deletion needs both the container and the
-    contained clause to be morphologically past ([ogihara-1996]). -/
-def agreeingPast : Node → Node → Bool :=
-  fun a c => (a.tense == nonfuture) && (c.tense == nonfuture)
-
-/-- [egressy-2026]'s license: the `Say`-boundary size gate refined by the
-    agreeing-past gate. The size gate blocks simultaneity in speech-reporting
-    (SayP) clauses; the agreeing-past refinement additionally blocks it under an
-    intervening future (see `ex18`). -/
-def egressyLicense : LocalLicense := (sizeGatedLicense sayBoundary).gate agreeingPast
-
-/-- Bridge from licensed atoms to the legacy `EmbeddedTenseReading` (atoms are
-    canonical; this adapter feeds the binary `SOTParameter` comparison). -/
-def toReadings (s : Finset Ordering) : List EmbeddedTenseReading :=
-  (if Backshifted s then [EmbeddedTenseReading.shifted] else []) ++
-  (if Simultaneous s then [EmbeddedTenseReading.simultaneous] else [])
-
-/-- Non-speech-reporting (TP) clauses license both readings. -/
-theorem nonSpeech_both :
-    Simultaneous (egressyLicense pastMatrix (clauseNode nonfuture .nonSpeechReporting)) ∧
-    Backshifted  (egressyLicense pastMatrix (clauseNode nonfuture .nonSpeechReporting)) := by decide
-
-/-- Speech-reporting (SayP) clauses license only the back-shifted reading. -/
-theorem speech_backshift_only :
-    ¬ Simultaneous (egressyLicense pastMatrix (clauseNode nonfuture .speechReporting)) ∧
-    Backshifted    (egressyLicense pastMatrix (clauseNode nonfuture .speechReporting)) := by decide
-
-/-- The core asymmetry: simultaneity is blocked exactly in speech-reporting clauses. -/
-theorem simultaneous_iff_nonSpeech (ct : ClauseType) :
-    Simultaneous (egressyLicense pastMatrix (clauseNode nonfuture ct)) ↔ ct = .nonSpeechReporting := by
+/-- The complements of *mond*, *hall* and *gondol* in (23) host *sajnos*; the TP complement of
+*álmodik* cannot. -/
+theorem hostsEvaluativeAdverb_iff (ct : ClauseType) :
+    HostsEvaluativeAdverb ct.size ↔ ct = .speechReporting := by
   cases ct <;> decide
 
+/-! ### The Sequence of Tense Rule (31) and size-dependent adjunction (41) -/
 
-/-! ### Unification with the binary SOT parameter
+/-- Where an embedded clause attaches (§4): by (41) to the matrix projection of its own size, as
+in Hungarian, or inside the matrix VP as the sister of V, as in English, where (41) does not
+hold. -/
+inductive Attachment
+  | sizeDependent
+  | vpInternal
+  deriving DecidableEq
 
-Hungarian is *not* at a language-wide "SOT stage": its two clause types realize
-the two values of the binary `SOTParameter` ([ogihara-sharvit-2012])
-clause-internally — a non-speech-reporting clause behaves like an English
-(`.relative`) complement, a speech-reporting one like a Japanese (`.absolute`) one. -/
+/-- The functional-sequence level of the matrix projection an embedded clause attaches to. -/
+def Attachment.level : Attachment → ComplementSize → ℕ
+  | .sizeDependent, cs => cs.fLevel
+  | .vpInternal, _ => fValue .V
 
-/-- A non-speech-reporting clause reproduces the English (`.relative`) parameter. -/
-theorem nonSpeech_eq_relative :
-    toReadings (egressyLicense pastMatrix (clauseNode nonfuture .nonSpeechReporting))
-      = availableReadings .relative := by decide
+/-- The Sequence of Tense Rule (31) can delete an embedded PAST iff the embedded T is contained
+in a projection of the matrix PAST T, that is, iff the clause attaches no higher than TP. -/
+def SOTRule.Applicable (a : Attachment) (cs : ComplementSize) : Prop := a.level cs ≤ fValue .T
 
-/-- A speech-reporting clause reproduces the Japanese (`.absolute`) parameter. -/
-theorem speech_eq_absolute :
-    toReadings (egressyLicense pastMatrix (clauseNode nonfuture .speechReporting))
-      = availableReadings .absolute := by decide
+instance (a : Attachment) (cs : ComplementSize) : Decidable (SOTRule.Applicable a cs) :=
+  inferInstanceAs (Decidable (_ ≤ _))
 
+/-- §3.3 and §4: under size-dependent adjunction the Sequence of Tense Rule obeys the Williams
+Cycle in Agree, reaching the embedded PAST exactly where the cycle lets T search the clause. -/
+theorem applicable_sizeDependent_iff (cs : ComplementSize) :
+    SOTRule.Applicable .sizeDependent cs ↔ WilliamsCycle .T cs.highestHead :=
+  Iff.rfl
 
-/-! ### Empirical data ([egressy-2026], §2)
-
-The verbs are grounded in `Hungarian.Predicates`; clause types are assigned by
-the embedding predicate (perception/cognition → non-speech-reporting;
-communication → speech-reporting). All examples are past-under-past with the
-embedded copula *volt* 'was'. -/
-
-/-- A past-under-past judgment: matrix verb, the embedded clause type, and
-    whether the simultaneous reading is observed. -/
-structure SOTDatum where
-  /-- Matrix verb (Hungarian surface form) -/
-  matrixVerb : String
-  /-- English gloss of the matrix verb -/
-  matrixGloss : String
-  /-- The embedded clause type -/
-  clauseType : ClauseType
-  /-- Example sentence -/
-  example_ : String
-  /-- Is the simultaneous reading observed? -/
-  simultaneousObserved : Bool
-  deriving Repr
-
-/-- ex. (4): direct perception with *lát* 'see' — simultaneous (only). -/
-def ex4_lat : SOTDatum where
-  matrixVerb := "látta"; matrixGloss := "saw"; clauseType := .nonSpeechReporting
-  example_ := "Peti saját szemével látta, hogy Mari szomorú volt."
-  simultaneousObserved := true
-
-/-- ex. (5): direct perception with *hall* 'hear' — simultaneous (only). -/
-def ex5_hall : SOTDatum where
-  matrixVerb := "hallotta"; matrixGloss := "heard"; clauseType := .nonSpeechReporting
-  example_ := "Peti saját fülével hallotta, hogy Mari sírt."
-  simultaneousObserved := true
-
-/-- ex. (6): dreaming with *álmodik* — simultaneous (only). -/
-def ex6_almodik : SOTDatum where
-  matrixVerb := "álmodta"; matrixGloss := "dreamed"; clauseType := .nonSpeechReporting
-  example_ := "Peti azt álmodta, hogy Mari szomorú volt."
-  simultaneousObserved := true
-
-/-- ex. (7): belief with *gondol* 'think' — simultaneous and back-shifted. -/
-def ex7_gondol : SOTDatum where
-  matrixVerb := "gondolta"; matrixGloss := "thought"; clauseType := .nonSpeechReporting
-  example_ := "Peti azt gondolta, hogy Mari szomorú volt."
-  simultaneousObserved := true
-
-/-- ex. (8): subject clause with *aggaszt* 'worry' — simultaneous and back-shifted. -/
-def ex8_aggaszt : SOTDatum where
-  matrixVerb := "aggasztotta"; matrixGloss := "worried"; clauseType := .nonSpeechReporting
-  example_ := "Az aggasztotta Petit, hogy Mari szomorú volt."
-  simultaneousObserved := true
-
-/-- ex. (11a): saying with *mond* 'say' — back-shifted only. -/
-def ex11_mond : SOTDatum where
-  matrixVerb := "mondta"; matrixGloss := "said"; clauseType := .speechReporting
-  example_ := "Peti azt mondta, hogy (sajnos) Mari szomorú volt."
-  simultaneousObserved := false
-
-/-- ex. (11b): shouting with *rikolt* 'shout' — back-shifted only. -/
-def ex11_rikolt : SOTDatum where
-  matrixVerb := "rikoltotta"; matrixGloss := "shouted"; clauseType := .speechReporting
-  example_ := "Peti azt rikoltotta, hogy (sajnos) Mari szomorú volt."
-  simultaneousObserved := false
-
-/-- ex. (11c): growling with *morog* 'growl' — back-shifted only. -/
-def ex11_morog : SOTDatum where
-  matrixVerb := "morogta"; matrixGloss := "growled"; clauseType := .speechReporting
-  example_ := "Peti azt morogta, hogy (sajnos) Mari szomorú volt."
-  simultaneousObserved := false
-
-/-- All single-embedding judgments. -/
-def allData : List SOTDatum :=
-  [ex4_lat, ex5_hall, ex6_almodik, ex7_gondol, ex8_aggaszt,
-   ex11_mond, ex11_rikolt, ex11_morog]
-
-/-- The grammatical prediction via the Egressy license: is the simultaneous
-    reading available for this datum's clause type (under a past matrix)? -/
-def predictsSimultaneous (d : SOTDatum) : Bool :=
-  decide (Simultaneous (egressyLicense pastMatrix (clauseNode nonfuture d.clauseType)))
-
-/-- Every datum's observed simultaneous availability matches the prediction. -/
-theorem all_data_match :
-    allData.all (fun d => d.simultaneousObserved == predictsSimultaneous d) = true := by decide
-
-/-! Fragment grounding: matrix verbs are the past forms of the lexical entries. -/
-
-theorem ex4_verb_from_fragment : ex4_lat.matrixVerb = lat.formPastDef := rfl
-theorem ex5_verb_from_fragment : ex5_hall.matrixVerb = hall.formPastDef := rfl
-theorem ex7_verb_from_fragment : ex7_gondol.matrixVerb = gondol.formPastDef := rfl
-theorem ex11_verb_from_fragment : ex11_mond.matrixVerb = mond.formPastDef := rfl
-
-
-/-! ### Pragmatic narrowing: direct perception is simultaneous-only
-
-For the direct-perception examples (4)–(6) the back-shifted reading is excluded
-for *pragmatic* reasons — one cannot directly perceive a past event — even
-though it is grammatically available (`nonSpeech_both`). This is a layer-2
-`Narrowing`: direct perception intersects the grammatical
-reading set with the `present` (=) constraint, leaving simultaneous-only
-(`direct_perception_narrows`). -/
-
-/-- The direct-perception data (perception and dreaming). -/
-def directPerceptionData : List SOTDatum := [ex4_lat, ex5_hall, ex6_almodik]
-
-/-- Direct-perception clauses are observed with the simultaneous reading, while
-    grammatically they are non-speech-reporting (both readings available); the
-    absence of the back-shifted reading is pragmatic. -/
-theorem direct_perception_simultaneous :
-    directPerceptionData.all (fun d =>
-      d.simultaneousObserved &&
-        (toReadings (egressyLicense pastMatrix (clauseNode nonfuture d.clauseType))
-          == [EmbeddedTenseReading.shifted, EmbeddedTenseReading.simultaneous])) = true := by
+/-- §4: with the embedded clause inside the VP the rule ignores size. English CP complements
+are deleted under Agree although the Williams Cycle would keep T out of a CP, which is why
+English Sequence of Tense is size-insensitive. -/
+theorem applicable_vpInternal_cP :
+    SOTRule.Applicable .vpInternal .cP ∧ ¬ WilliamsCycle .T .C := by
   decide
 
-/-- Direct perception as a layer-2 `Narrowing`: it imposes the `present` (=)
-    constraint — only a simultaneous reading is perceivable. -/
-def directPerception : Narrowing Unit := fun _ => present
+/-! ### Readings: the language-wide parameter realized clause-internally (§1, §2.4) -/
 
-/-- The prose fact as a theorem: direct perception narrows the grammatically
-    both-readings non-speech license down to simultaneous-only. -/
-theorem direct_perception_narrows :
-    directPerception.apply ()
-        (egressyLicense pastMatrix (clauseNode nonfuture .nonSpeechReporting)) = present := by
+/-- The value of [ogihara-sharvit-2012]'s Sequence of Tense parameter for one embedded clause:
+`relative` (English) where the rule can apply, `absolute` (Japanese) where it cannot. -/
+def sotParameter (a : Attachment) (cs : ComplementSize) : SOTParameter :=
+  if SOTRule.Applicable a cs then .relative else .absolute
+
+/-- The readings of a past clause under a past matrix: backshift is the default, the
+simultaneous reading arises only through the rule. -/
+def readings (a : Attachment) (cs : ComplementSize) : List EmbeddedTenseReading :=
+  availableReadings (sotParameter a cs)
+
+/-- A non-speech-reporting clause is an English complement. -/
+theorem sotParameter_nonSpeech :
+    sotParameter .sizeDependent ClauseType.nonSpeechReporting.size = .relative := by
   decide
 
+/-- A speech-reporting clause is a Japanese complement. -/
+theorem sotParameter_speech :
+    sotParameter .sizeDependent ClauseType.speechReporting.size = .absolute := by
+  decide
 
-/-! ### Multiple embedding and locality ([egressy-2026], §2.3)
+/-- The core asymmetry (§2.4): the simultaneous reading is available exactly in
+non-speech-reporting clauses. -/
+theorem simultaneous_iff (ct : ClauseType) :
+    EmbeddedTenseReading.simultaneous ∈ readings .sizeDependent ct.size ↔
+      ct = .nonSpeechReporting := by
+  cases ct <;> decide
 
-Simultaneity is computed **locally** between structurally adjacent clauses
-([ogihara-1996]): `profile` folds `egressyLicense` pairwise down the chain
-(matrix first). The simultaneity at each level is `Simultaneous` of
-the licensed atoms. -/
+/-- The grammar always leaves the backshifted reading; only pragmatics removes it. -/
+theorem shifted_mem (a : Attachment) (cs : ComplementSize) :
+    EmbeddedTenseReading.shifted ∈ readings a cs := by
+  unfold readings sotParameter
+  split <;> simp [availableReadings]
 
-/-- The per-level simultaneity profile of an embedded chain under a past matrix. -/
-def simProfile (chain : List Node) : List Bool :=
-  (profile egressyLicense pastMatrix chain).map (fun s => decide (Simultaneous s))
+/-- (19): an English past-under-past complement has the simultaneous reading. -/
+theorem english_simultaneous :
+    EmbeddedTenseReading.simultaneous ∈ readings .vpInternal .cP := by
+  decide
 
-/-- ex. (16): shout > see > be. The intermediate (content of the shout) is
-    speech-reporting → back-shifted; the deepest (Mari's perception) is
-    non-speech-reporting → simultaneous. Only adjacent clauses interact. -/
-def ex16 : List Node :=
-  [clauseNode nonfuture .speechReporting, clauseNode nonfuture .nonSpeechReporting]
-theorem ex16_profile : simProfile ex16 = [false, true] := by decide
+/-! ### Direct perception (§2.1) -/
 
-/-- ex. (17): hear > shout > be. Intermediate (perception of the shouting) →
-    simultaneous; deepest (content of the shout) → back-shifted. Opposite of (16). -/
-def ex17 : List Node :=
-  [clauseNode nonfuture .nonSpeechReporting, clauseNode nonfuture .speechReporting]
-theorem ex17_profile : simProfile ex17 = [true, false] := by decide
+/-- One can only perceive directly what happens now: the readings the paper reports are the
+grammatical ones, narrowed to the simultaneous reading under direct perception. -/
+def observed (direct : Prop) [Decidable direct] (rs : List EmbeddedTenseReading) :
+    List EmbeddedTenseReading :=
+  if direct then rs.filter (· = .simultaneous) else rs
 
-/-- ex. (10): dream > see > be, all non-speech-reporting → simultaneous throughout. -/
-def ex10 : List Node :=
-  [clauseNode nonfuture .nonSpeechReporting, clauseNode nonfuture .nonSpeechReporting]
-theorem ex10_profile : simProfile ex10 = [true, true] := by decide
+/-- Pragmatics only removes readings. -/
+theorem observed_subset (direct : Prop) [Decidable direct] (rs : List EmbeddedTenseReading) :
+    observed direct rs ⊆ rs := by
+  unfold observed
+  split
+  · exact List.filter_subset_self _
+  · exact List.Subset.refl _
 
-/-- ex. (15): shout > growl > be, all speech-reporting → back-shifted throughout. -/
-def ex15 : List Node :=
-  [clauseNode nonfuture .speechReporting, clauseNode nonfuture .speechReporting]
-theorem ex15_profile : simProfile ex15 = [false, false] := by decide
+/-! ### The data (§2) -/
 
-/-- Past-under-*will*-under-past (English; [ogihara-1996], discussed by
-    [egressy-2026]): *said* > *will claim* > *was*. The intervening future *will*
-    (`future`) is not an agreeing past, so the deepest `was` has no simultaneous
-    reading — the `agreeingPast` gate blocks it, independently of size (English
-    is size-insensitive here). -/
-def ex18 : List Node :=
-  [clauseNode future .speechReporting, clauseNode nonfuture .speechReporting]
-theorem ex18_no_simultaneous : simProfile ex18 = [false, false] := by decide
+/-- The clause types as recorded in the rows. -/
+def clauseTypeTable : List (String × ClauseType) :=
+  [("nonSpeechReporting", .nonSpeechReporting), ("speechReporting", .speechReporting)]
 
+/-- The clause type of a single-embedding row. -/
+def clauseType? (e : LinguisticExample) : Option ClauseType :=
+  e.parse? "clauseType" clauseTypeTable
 
-/-! ### Williams-Cycle support over an *unbounded* de re alternative ([egressy-2026], §3.3)
+/-- Whether a row's feature `key` records direct perception. -/
+def DirectPerceptionAt (e : LinguisticExample) (key : String) : Prop :=
+  e.feature? key = some "yes"
 
-An *unbounded* res-movement (de re) derivation would move the embedded `PAST` to
-an A-position inside the matrix VP, unstopped by the `Say` layer — hence
-*size-blind*. Egressy argues the Williams Cycle rules this out: a size-blind
-mechanism would license simultaneity for speech-reporting clauses, contrary to
-fact. The foil below ([abusch-1988], [abusch-1997]) is exactly that size-blind
-account; the *restricted* de re of [ogihara-sharvit-2012] (and the Polish
-account of Mucha, Renans & Romoli) is a different, constrained mechanism this
-argument does not, on its own, refute. -/
+instance (e : LinguisticExample) (key : String) : Decidable (DirectPerceptionAt e key) :=
+  inferInstanceAs (Decidable (_ = _))
 
-/-- The unbounded (size-blind) de re foil: it licenses every reading. Local to
-    this study — it is Egressy's reductio against unbounded res-movement, not a
-    neutral SOT mechanism. -/
-def deReUnrestricted : LocalLicense := fun _ _ => ⊤
+/-- The readings as named in the rows. -/
+def readingTable : List (String × EmbeddedTenseReading) :=
+  [("simultaneous", .simultaneous), ("backshifted", .shifted)]
 
-/-- The *unbounded* de re foil overgenerates: size-blind, it licenses
-    simultaneity for a speech-reporting clause, which `egressyLicense` correctly
-    blocks. This refutes unbounded res-movement, not the restricted de re of
-    [ogihara-sharvit-2012]. -/
-theorem de_re_overgenerates :
-    Simultaneous (deReUnrestricted pastMatrix (clauseNode nonfuture .speechReporting)) ∧
-    ¬ Simultaneous (egressyLicense pastMatrix (clauseNode nonfuture .speechReporting)) := by decide
+/-- A row's reported readings at embedding level `lvl` agree with a predicted reading set when
+each named reading is judged acceptable exactly if predicted. -/
+def Agrees (e : LinguisticExample) (lvl : String) (rs : List EmbeddedTenseReading) : Prop :=
+  ∀ r ∈ e.readings, ∀ x ∈ readingTable, r.1 = lvl ++ x.1 → (r.2 = .acceptable ↔ x.2 ∈ rs)
 
+instance (e : LinguisticExample) (lvl : String) (rs : List EmbeddedTenseReading) :
+    Decidable (Agrees e lvl rs) :=
+  inferInstanceAs (Decidable (∀ r ∈ e.readings, ∀ x ∈ readingTable, _ → _))
+
+/-- The predicted readings of a single-embedding Hungarian row: the grammar at its clause
+type, narrowed by direct perception. -/
+def predicted (e : LinguisticExample) (ct : ClauseType) : List EmbeddedTenseReading :=
+  observed (DirectPerceptionAt e "directPerception") (readings .sizeDependent ct.size)
+
+/-- The single-embedding rows of §2.1–2.2: object, subject and adjunct clauses of both types. -/
+def singleRows : List LinguisticExample :=
+  [ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_11a, ex_11b, ex_11c, ex_12, ex_13, ex_14]
+
+/-- Every single-embedding row is predicted: the simultaneous reading exactly in
+non-speech-reporting clauses, and backshift wherever direct perception does not exclude it. -/
+theorem singleRows_predicted :
+    ∀ e ∈ singleRows, ∀ ct : ClauseType, clauseType? e = some ct →
+      Agrees e "" (predicted e ct) := by
+  decide
+
+/-- The fragment entry named by a row's `matrixVerb` feature. -/
+def matrixVerb? (e : LinguisticExample) : Option HungarianVerbEntry :=
+  e.parse? "matrixVerb" [("lát", lat), ("hall", hall), ("álmodik", almodik), ("gondol", gondol),
+    ("aggaszt", aggaszt), ("mond", mond), ("rikolt", rikolt), ("morog", morog)]
+
+/-- §2.2: the clause type is a property of the clause, not of the matrix verb. *hall* 'hear'
+embeds a non-speech-reporting clause in (5) and the speech-reporting content of a report in
+(13), and *morog* 'growl' a non-speech-reporting reason adjunct in (9) and the speech-reporting
+content of the growl in (11): no assignment of clause types to verbs fits the rows. -/
+theorem clauseType_not_of_verb :
+    ¬ ∃ f : HungarianVerbEntry → ClauseType, ∀ e ∈ [ex_5, ex_13, ex_9, ex_11c],
+      ∀ v ct, matrixVerb? e = some v → clauseType? e = some ct → f v = ct := by
+  rintro ⟨f, hf⟩
+  have h5 := hf ex_5 (by simp) hall .nonSpeechReporting rfl rfl
+  have h13 := hf ex_13 (by simp) hall .speechReporting rfl rfl
+  exact absurd (h5.symm.trans h13) (by decide)
+
+/-! ### Multiple embedding (§2.3, §4) -/
+
+/-- An embedded clause: its morphological tense and its size. -/
+structure Clause where
+  /-- The clause's tense as a comparison cell, `Tense.past` or `Tense.future`. -/
+  tense : Finset Ordering
+  /-- The clause's size. -/
+  size : ComplementSize
+
+/-- The readings of an embedded clause against the clause immediately containing it. A past
+clause under a past clause is read by the rule; a past clause under any other tense is
+backshifted only, since the rule needs an agreeing PAST above; a non-past clause has no
+past-under-past reading. -/
+def linkReadings (a : Attachment) (matrix : Finset Ordering) (c : Clause) :
+    List EmbeddedTenseReading :=
+  if c.tense = past then (if matrix = past then readings a c.size else [.shifted]) else []
+
+/-- The readings at each level of a chain of embedded clauses under a matrix tense, matrix first.
+Each clause is read against the clause immediately containing it: by (41) every clause attaches
+at its own size, so a SayP is never inside a TP of any higher clause while a TP is inside the TP
+of the clause containing it, and only structurally adjacent clauses interact (§2.3, §4). -/
+def profile (a : Attachment) : Finset Ordering → List Clause → List (List EmbeddedTenseReading)
+  | _, [] => []
+  | m, c :: rest => linkReadings a m c :: profile a c.tense rest
+
+/-- The chain of a two-level Hungarian row, from its two clause-type features. -/
+def chain (ct₁ ct₂ : ClauseType) : List Clause := [⟨past, ct₁.size⟩, ⟨past, ct₂.size⟩]
+
+/-- (16): shout > see > be. The speech-reporting intermediate clause is backshifted; the
+non-speech-reporting deepest clause is simultaneous with it. -/
+theorem ex16_profile :
+    profile .sizeDependent past (chain .speechReporting .nonSpeechReporting) =
+      [[.shifted], [.shifted, .simultaneous]] := by
+  decide
+
+/-- (17): hear > shout > be, the mirror image of (16): only adjacent clauses interact, and a
+speech-reporting clause is backshifted whatever contains it. -/
+theorem ex17_profile :
+    profile .sizeDependent past (chain .nonSpeechReporting .speechReporting) =
+      [[.shifted, .simultaneous], [.shifted]] := by
+  decide
+
+/-- The two-level rows (10), (15), (16) and (17) are predicted level by level, direct perception
+narrowing the level of the perceiving clause. -/
+theorem doubleRows_predicted : ∀ e ∈ [ex_10, ex_15, ex_16, ex_17], ∀ ct₁ ct₂ : ClauseType,
+    e.parse? "intermediateClauseType" clauseTypeTable = some ct₁ →
+    e.parse? "deepestClauseType" clauseTypeTable = some ct₂ →
+      Agrees e "intermediate " (observed (DirectPerceptionAt e "intermediateDirectPerception")
+          ((profile .sizeDependent past (chain ct₁ ct₂)).getD 0 [])) ∧
+        Agrees e "deepest " (observed (DirectPerceptionAt e "deepestDirectPerception")
+          ((profile .sizeDependent past (chain ct₁ ct₂)).getD 1 [])) := by
+  decide
+
+/-- (18), [ogihara-1996]: English past under *will* under past. The deepest past has no
+simultaneous reading, the tense immediately above it being a future rather than an agreeing
+past, although English complements attach inside the VP and are otherwise deleted freely. -/
+theorem ex18_profile :
+    profile .vpInternal past [⟨future, .cP⟩, ⟨past, .cP⟩] = [[], [.shifted]] := by
+  decide
+
+theorem ex18_predicted : Agrees ex_18 "deepest " [.shifted] := by decide
+
+/-! ### Rival mechanisms (§3.3, §4) -/
+
+/-- De re res-movement of the embedded PAST ([abusch-1988], [heim-1994-comments]) targets an
+A-position inside the matrix VP. A res-movement obeying the Williams Cycle could not leave even
+a TP, since T is above V, so it could not derive the simultaneous reading of non-speech-reporting
+clauses; deriving them requires a movement free of the locality every other Hungarian
+dependency obeys, whereas Agree from T (`raising_crosses_TP`) derives them within it. -/
+theorem resMovement_blocked_by_TP : ¬ WilliamsCycle .V .T := by decide
+
+/-- Sequence of Tense as a probe of [keine-2020]: a probe on T whose horizon is Say. -/
+def sotProbe : Probe.Profile := ⟨.T, some .Say⟩
+
+/-- The horizon account agrees with the Williams Cycle on the two Hungarian clause types. -/
+theorem sotProbe_clauseTypes :
+    sotProbe.transparentToLabel [.V, .v, .T] = true ∧
+      sotProbe.transparentToLabel [.V, .v, .T, .Foc, .Say] = false := by
+  decide
+
+/-- §4: the horizon account is the less restrictive of the two. A clause whose highest head lies
+strictly between T and Say, such as a FocP, is transparent to the probe yet beyond the reach of
+T under the Williams Cycle, the pattern footnote 9 needs for the complements of *mond*. -/
+theorem horizon_admits_FocP :
+    sotProbe.transparentToLabel [.V, .v, .T, .Foc] = true ∧ ¬ WilliamsCycle .T .Foc := by
+  decide
 
 end Egressy2026
