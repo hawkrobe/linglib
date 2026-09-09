@@ -31,7 +31,8 @@ inquisitive theorizing.
 
 This `Basic` file carries the structural core: the type definition with
 its `SetLike` instance, the `info`/`alt`/`isInformative`/`isInquisitive`
-predicates, the `ofSet` constructor, the algebraic
+predicates, the `ofSet` constructor, the projection operators
+(`bang`, `query`), the algebraic
 operations (`conj`, `inqDisj`, `top`, `bot`) packaged into the
 `CompleteDistribLattice` instance, the basic `info`-on-lattice-operations
 API, the `alt`-as-maximal characterization, the existence of alternatives
@@ -73,7 +74,6 @@ constraint (`contains_empty`) is essential to inquisitive semantics
 and is lost in `LowerSet`. We use `SetLike` instead, which gives the
 membership/coercion API without forcing `LowerSet`'s `⊥`.
 -/
-
 
 universe u
 
@@ -166,6 +166,10 @@ theorem mem_info_iff_singleton_mem (P : Question W) (w : W) :
   · intro h
     exact ⟨{w}, h, rfl⟩
 
+/-- A resolving state lies within the informative content. -/
+theorem subset_info_of_mem {P : Question W} {q : Set W} (h : q ∈ P) : q ⊆ P.info :=
+  Set.subset_sUnion_of_mem h
+
 /-! ### Constructors -/
 
 /-- Smart constructor from a lower (downward-closed) family of
@@ -250,6 +254,58 @@ def inqDisj (P Q : Question W) : Question W where
     rcases hp with hp | hp
     · exact Or.inl (P.downward_closed p hp q hq)
     · exact Or.inr (Q.downward_closed p hp q hq)
+
+/-! ### Projection operators
+
+The non-inquisitive projection `!P` keeps the informative content of `P` and trivializes its
+issue; the non-informative projection `?P` keeps the issue and trivializes the informative content
+by admitting the states within its complement ([ciardelli-groenendijk-roelofsen-2018]). -/
+
+/-- `!P`: the states within the informative content of `P`. -/
+def bang (P : Question W) : Question W := ofSet P.info
+
+/-- `?P`: `P` together with the states within the complement of its informative content. -/
+def query (P : Question W) : Question W := inqDisj P (ofSet P.infoᶜ)
+
+@[simp] theorem mem_bang {P : Question W} {q : Set W} : q ∈ P.bang ↔ q ⊆ P.info := Iff.rfl
+
+@[simp] theorem info_bang (P : Question W) : P.bang.info = P.info := info_ofSet _
+
+theorem not_isInquisitive_bang (P : Question W) : ¬ P.bang.isInquisitive :=
+  not_isInquisitive_ofSet _
+
+/-- A non-inquisitive content is its own non-inquisitive projection. -/
+theorem bang_eq_self_of_not_isInquisitive {P : Question W} (h : ¬ P.isInquisitive) :
+    P.bang = P :=
+  ext fun q => ⟨fun hq => P.downward_closed _ (not_not.1 h) q hq, subset_info_of_mem⟩
+
+@[simp] theorem bang_ofSet (p : Set W) : (ofSet p).bang = ofSet p :=
+  bang_eq_self_of_not_isInquisitive (not_isInquisitive_ofSet p)
+
+@[simp] theorem mem_query {P : Question W} {q : Set W} :
+    q ∈ P.query ↔ q ∈ P ∨ q ⊆ P.infoᶜ := Iff.rfl
+
+@[simp] theorem info_query (P : Question W) : P.query.info = Set.univ := by
+  refine Set.eq_univ_of_forall fun w => ?_
+  by_cases hw : w ∈ P.info
+  · exact ⟨{w}, Or.inl ((mem_info_iff_singleton_mem P w).1 hw), rfl⟩
+  · exact ⟨{w}, Or.inr (Set.singleton_subset_iff.2 hw), rfl⟩
+
+/-- A non-informative content is its own non-informative projection. -/
+theorem query_eq_self_of_info_eq_univ {P : Question W} (h : P.info = Set.univ) : P.query = P :=
+  ext fun q => ⟨fun hq => hq.elim id fun hq =>
+    P.downward_closed _ P.contains_empty q (by simpa [h] using hq), Or.inl⟩
+
+@[simp] theorem query_query (P : Question W) : P.query.query = P.query :=
+  query_eq_self_of_info_eq_univ (info_query P)
+
+/-- `?P` raises a genuine issue unless `P` is a tautology or a contradiction. -/
+theorem isInquisitive_query {P : Question W} (h₁ : P.info ≠ Set.univ) (h₂ : P.info ≠ ∅) :
+    P.query.isInquisitive := by
+  rw [isInquisitive, info_query]
+  rintro (h | h)
+  · exact h₁ (Set.univ_subset_iff.1 (subset_info_of_mem h))
+  · exact h₂ (Set.eq_empty_of_forall_notMem fun w hw => h (Set.mem_univ w) hw)
 
 /-- The **top** inquisitive content: every set of worlds resolves the
     issue. The trivial inquiry that demands nothing. -/
