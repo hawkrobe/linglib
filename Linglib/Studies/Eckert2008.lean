@@ -1,650 +1,385 @@
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Linglib.Pragmatics.SocialMeaning.EckertMontague
-import Mathlib.Data.Fintype.Basic
+import Mathlib.Algebra.Order.Ring.Rat
+import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Fintype.Sigma
+import Mathlib.Data.Fintype.Sum
+import Mathlib.Order.Monotone.Basic
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# [eckert-2008] — Variation and the Indexical Field
+# Eckert (2008): Variation and the Indexical Field
 
-## Overview
+This file formalizes the indexical field of [eckert-2008]. Against the view of a variable as
+reflecting a fixed social category, the paper builds on [silverstein-2003]'s indexical order:
+a variable that indexes membership in a population, a first-order index or indicator, has the
+social evaluation of that population reconstrued into elements of character, a second-order
+index or marker, and every nth-order value is available for an n + 1st reconstrual, so that
+the continual reconstrual of a variable creates an indexical field, a constellation of
+ideologically linked meanings any of which a situated use may activate, `Field` and
+`Reconstrual`, with [labov-1963]'s Martha's Vineyard (ay) as the example, `vineyard`. The
+(ING) field of Figure 3, built on [campbell-kibler-2007]'s matched-guise results, holds
+favourable and unfavourable meanings for both variants, so the variants' meanings do not work
+in lockstep, `ing_not_antipodal`, and a hearer interprets a variant against presupposed
+indexicality: the variant expected from the impression of the speaker passes and the other
+is heard as pretentious, condescending or insincere, `interpret`. The /t/ release field of
+Figure 4 distinguishes momentary stances from permanent qualities, the former accreting into
+the latter and so elaborating the field, `accretion`, and is anchored by social types, the
+nerd girl, the Yeshiva boy and the gay diva of the studies it reviews and the British and the
+school teacher of the ideology of hyperarticulation, `region`, the diva style combining the
+two ends of the articulation continuum, `divaStyle`. The Belten High variables of Figure 1
+divide into the older changes led by girls and the newer urban changes led by burnouts, so
+that the burnout girls alone lead every variable, `burnoutGirls_lead` and
+`leads_all_iff`, the embedding of the urban–suburban opposition within a suburban school.
 
-[eckert-2008] argues that the meanings of variables are not precise
-or fixed but rather constitute a field of potential meanings — an
-*indexical field*, a constellation of ideologically related meanings, any
-one of which can be activated in the situated use of the variable. The
-field is fluid, and each new activation has the potential to change the
-field by building on ideological connections.
+## Implementation notes
 
-## Key theoretical contributions
+A field is a set of potential meanings per variant, the paper's constellation, and the
+substrate's numerical `IndexicalField` is recovered by the indicator association,
+`toIndexicalField`; the association strengths the substrate allows are not in the paper.
+Only the meanings the text attributes are recorded, since Figures 3 and 4 are not in the
+text layer. The leadership of Figure 1 is derived from the two generalizations the text
+states rather than transcribed cell by cell. The Beijing variables of Figure 2, Podesva's
+measurements of one speaker's release rates and burst strengths, and the (DH) discussion are
+not represented.
 
-1. **The indexical field**: a variable's social meaning is not a fixed
-   correspondence to a social category but a structured space of
-   ideologically linked persona traits. Context selects which region of
-   the field is activated.
-2. **Stances vs. qualities**: variables directly index interactional
-   *stances* (momentary positions). Habitual stances accrete into
-   attributed *qualities* (stable character traits) through *stance
-   accretion* ([eckert-2008] citing Rauniomaa 2003).
-3. **Social types as field anchors**: social types (School Teacher, Nerd
-   Girl, Gay Diva) anchor regions of the indexical field, providing
-   culturally available clusters of traits.
+## References
 
-## Formalization
-
-The central formal contribution is showing that Eckert's stance
-accretion is the *same composition operation* as [ochs-1992]'s
-indirect indexicality, both instantiated as `SocialMeaning.IndexicalField.composeIndex`:
-
-- **Ochs**: SFP → Stance → GenderPole (form indexes stance indexes gender)
-- **Eckert**: /t/ variant → Stance → Quality (form indexes stance,
-  habitual stance accretes into quality)
-
-Both are matrix products through an intermediate domain. The study file
-exercises this parallel with concrete data from Figures 3 and 4.
-
-## Concrete data
-
-- **Figure 1** (Belten High): ordinal leadership data for 7 NCS
-  variables × 4 social groups. The key finding: burnout girls lead ALL
-  variables, demonstrating that gender effects are mediated through
-  social orientation — a generalization of [ochs-1992]'s mediation
-  thesis.
-- **Figure 3** ((ING)): sign-valued indexical field for the velar/apical
-  variants, based on [campbell-kibler-2007]'s experimental data.
-- **Figure 4** (/t/ release): stance accretion chain decomposed via
-  `composeIndex`, with social type anchoring in quality space.
-
-## Connections
-
-* `SocialMeaning.IndexicalField.composeIndex`: the shared composition operation
-* `SocialMeaning.IndexicalField.IndexicalField`: Eckert's concept, formalized
-  as infrastructure in `Core`
-* `Ochs1992`: predecessor —
-  `composeIndex` was introduced to formalize Ochs's indirect
-  indexicality; Eckert generalizes it to stance accretion
-* `SocialMeaning.EckertMontague`: the Eckert-Montague
-  lift operationalizes the mapping from indexical field to compatible
-  personae, connecting to [burnett-2019]'s social meaning games
+* [eckert-2008]
+* [silverstein-2003]
+* [campbell-kibler-2007]
+* [podesva-2007]
+* [labov-1963]
+* [eckert-2000]
 -/
 
 namespace Eckert2008
 
 open SocialMeaning.IndexicalField
-open SocialMeaning.EckertMontague
-open SocialMeaning.SCM
 
--- ============================================================================
--- §1. Trait ontology — stances vs. qualities
--- ============================================================================
+/-! ### Fields and reconstrual -/
 
-/-- Whether a trait is a momentary interactional stance or a stable
-    attributed quality. [eckert-2008] emphasizes the fluidity
-    of this distinction: "anger and cynicism become part of one's
-    identity ... through stance accretion." -/
-inductive TraitKind where
-  /-- Momentary interactional positioning (gray in Figure 4). -/
-  | stance
-  /-- Stable attributed character trait (black in Figure 4). -/
-  | quality
+/-- An indexical field: the constellation of potential meanings of each variant. -/
+abbrev Field (V T : Type) := V → Finset T
+
+/-- The substrate's numerical field with the indicator association: a variant indexes exactly
+the meanings of its field. -/
+def toIndexicalField {V T : Type} [DecidableEq T] (f : Field V T) (order : IndexicalOrder) :
+    IndexicalField V T where
+  association v t := if t ∈ f v then 1 else 0
+  order := order
+
+theorem toIndexicalField_indexes {V T : Type} [DecidableEq T] (f : Field V T)
+    (order : IndexicalOrder) (v : V) (t : T) :
+    (toIndexicalField f order).indexes v t ↔ t ∈ f v := by
+  show (if t ∈ f v then (1 : ℚ) else 0) > 0 ↔ t ∈ f v
+  split_ifs with h <;> simp [h]
+
+/-- A variable's history of construal: the field at each order, each order's field extending
+the last, since an nth-order value is always available for an n + 1st reconstrual. -/
+structure Reconstrual (V T : Type) where
+  /-- The field at order `n`. -/
+  field : ℕ → Field V T
+  grows : ∀ n v, field n v ⊆ field (n + 1) v
+
+/-- The field only grows across orders. -/
+theorem Reconstrual.mono {V T : Type} (r : Reconstrual V T) (v : V) :
+    Monotone (λ n => r.field n v) :=
+  monotone_nat_of_le_succ λ n => r.grows n v
+
+/-- The two variants of (ay) on Martha's Vineyard. -/
+inductive AyVariant
+  | centralized
+  | open_
+  deriving DecidableEq, Repr, Fintype
+
+/-- The meanings of centralized (ay): membership among Vineyarders, and the claim about what a
+Vineyarder is that the fishermen made with it, local authenticity and opposition to the
+mainland. -/
+inductive VineyardMeaning
+  | vineyarder
+  | localAuthenticity
+  | oppositionToMainland
+  deriving DecidableEq, Repr, Fintype
+
+/-- [labov-1963] reconstrued: the first-order index of Vineyarders acquires the fishermen's
+ideological claim as a second-order value. -/
+def vineyard : Reconstrual AyVariant VineyardMeaning where
+  field
+    | 0, .centralized => {.vineyarder}
+    | _ + 1, .centralized => {.vineyarder, .localAuthenticity, .oppositionToMainland}
+    | _, .open_ => ∅
+  grows n v := by cases n <;> cases v <;> first | decide | exact Finset.Subset.refl _
+
+/-- The indicator becomes a marker: at the second order the substrate's field indexes local
+authenticity, which the first-order field did not. -/
+theorem vineyard_marker :
+    (toIndexicalField (vineyard.field 1) .second).indexes .centralized .localAuthenticity ∧
+      ¬ (toIndexicalField (vineyard.field 0) .first).indexes .centralized .localAuthenticity := by
+  simp only [toIndexicalField_indexes]
+  decide
+
+/-! ### The (ING) field, Figure 3 -/
+
+/-- The velar and apical variants of (ING). -/
+inductive INGVariant
+  | velar
+  | apical
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- The potential meanings of (ING) the text attributes: the velar variant as educated,
+intelligent, articulate and effortful, or pretentious; the apical variant as lacking effort,
+lazy, uncaring, rebellious, impolite, inarticulate, casual and relaxed, or unpretentious and
+easygoing. -/
+inductive INGMeaning
+  | educated
+  | intelligent
+  | articulate
+  | effortful
+  | pretentious
+  | lackingEffort
+  | lazy
+  | uncaring
+  | rebellious
+  | impolite
+  | inarticulate
+  | casual
+  | relaxed
+  | unpretentious
+  | easygoing
+  deriving DecidableEq, Repr, Fintype
+
+/-- A hearer's evaluation of a meaning. -/
+inductive Evaluation
+  | favourable
+  | unfavourable
+  deriving DecidableEq, Repr, Fintype
+
+/-- The evaluation the text attaches to a meaning, `none` for the casual and relaxed readings
+it leaves neutral. -/
+def INGMeaning.evaluation : INGMeaning → Option Evaluation
+  | .educated | .intelligent | .articulate | .effortful | .unpretentious | .easygoing =>
+    some .favourable
+  | .pretentious | .lackingEffort | .lazy | .uncaring | .rebellious | .impolite
+  | .inarticulate => some .unfavourable
+  | .casual | .relaxed => none
+
+/-- The (ING) field. -/
+def ingField : Field INGVariant INGMeaning
+  | .velar => {.educated, .intelligent, .articulate, .effortful, .pretentious}
+  | .apical => {.lackingEffort, .lazy, .uncaring, .rebellious, .impolite, .inarticulate, .casual,
+      .relaxed, .unpretentious, .easygoing}
+
+/-- The region of a variant's field a hearer's perspective activates. -/
+def activate (e : Evaluation) (v : INGVariant) : Finset INGMeaning :=
+  (ingField v).filter (·.evaluation = some e)
+
+/-- Each variant has favourable and unfavourable meanings: the pairs do not work in lockstep,
+the apical variant heard as inarticulate or as easygoing, the velar as articulate or as
+pretentious. -/
+theorem activate_nonempty : ∀ e v, (activate e v).Nonempty := by decide
+
+/-- On the substrate's field, the two variants are not antipodal. -/
+theorem ing_not_antipodal : ¬ (toIndexicalField ingField .second).Antipodal .velar .apical := by
+  unfold IndexicalField.Antipodal
+  decide
+
+/-- A hearer's impression of the speaker from general style and content. -/
+inductive Impression
+  | educatedNorthern
+  | uneducatedSouthern
   deriving DecidableEq, Repr
 
--- ============================================================================
--- §2. The (ING) variable — Figure 3
--- ============================================================================
+/-- Presupposed indexicality: the variant a hearer expects from an impression. -/
+def expected : Impression → INGVariant
+  | .educatedNorthern => .velar
+  | .uneducatedSouthern => .apical
 
-/-- The two variants of the (ING) variable — the alternation between
-    velar [ɪŋ] (*-ing*) and apical [ɪn] (*-in'*) variants of the English
-    progressive/gerund suffix, arguably the most-studied variable in
-    sociolinguistics ([labov-2006], [campbell-kibler-2007],
-    [eckert-2008], [burnett-2019]). Velar is the standard/prestige
-    variant; apical is the vernacular variant. -/
-inductive INGVariant where
-  | velar   -- *-ing* [ɪŋ]
-  | apical  -- *-in'* [ɪn]
-  deriving DecidableEq, Repr, Inhabited
+/-- The social move a hearer attributes to a variant. -/
+inductive Move
+  | expected
+  | pretentious
+  | condescending
+  | insincere
+  deriving DecidableEq, Repr
 
-instance : Fintype INGVariant where
-  elems := {.velar, .apical}
-  complete := by intro x; cases x <;> simp
+/-- The expected variant passes; the wrong one is heard as pretentious, condescending or
+insincere. -/
+def interpret (i : Impression) (v : INGVariant) : Finset Move :=
+  if v = expected i then {.expected} else {.pretentious, .condescending, .insincere}
 
-/-- Bipolar social dimensions of (ING) meaning, from
-    [campbell-kibler-2007]'s matched guise experiments.
-    Each dimension has a positive pole (indexed by velar) and a
-    negative pole (indexed by apical). -/
-inductive INGDimension where
-  | education       -- educated (+) / uneducated (-)
-  | formality       -- formal (+) / relaxed (-)
-  | effort          -- effortful (+) / easygoing (-)
-  | articulateness  -- articulate/pretentious (+) / inarticulate/unpretentious (-)
-  deriving DecidableEq, Repr, Inhabited
+theorem interpret_expected (i : Impression) : interpret i (expected i) = {.expected} := by
+  simp [interpret]
 
-instance : Fintype INGDimension where
-  elems := {.education, .formality, .effort, .articulateness}
-  complete := by intro x; cases x <;> simp
+theorem interpret_velar_of_uneducated :
+    interpret .uneducatedSouthern .velar = {.pretentious, .condescending, .insincere} := by
+  decide
 
-/-- The (ING) indexical field (Figure 3, based on
-    [campbell-kibler-2007]).
+/-! ### The /t/ release field, Figure 4 -/
 
-    Sign-valued: +1 means the variant indexes toward the positive pole
-    of the dimension, −1 indexes toward the negative pole. The velar
-    variant indexes the positive pole (educated, formal, effortful,
-    articulate) on all dimensions; the apical variant indexes the
-    negative pole (uneducated, relaxed, easygoing, inarticulate).
-
-    [eckert-2008] notes that context modulates interpretation:
-    the velar variant can be heard as *articulate* or *pretentious*
-    depending on presupposed indexicality. This context-dependent
-    activation is operationalized computationally in
-    [burnett-2019]'s RSA model via context-specific priors. -/
-def ingField : IndexicalField INGVariant INGDimension where
-  association
-    | .velar, _ => 1
-    | .apical, _ => -1
-  order := .second
-
-/-- Perfect anti-correlation: the two (ING) variants are mirror images
-    on every dimension. Whatever the velar variant indexes toward, the
-    apical variant indexes away from, and vice versa. -/
-theorem ing_anticorrelation :
-    ∀ d : INGDimension,
-    ingField.association .velar d = -(ingField.association .apical d) := by
-  intro d; cases d <;> native_decide
-
-/-- The velar variant indexes the positive pole on all dimensions. -/
-theorem ing_velar_all_positive :
-    ∀ d : INGDimension, ingField.indexes .velar d := by
-  intro d; simp only [IndexicalField.indexes, ingField]; cases d <;> native_decide
-
-/-- The two variants contrast on every dimension — (ING) is a
-    maximally contrastive binary variable. -/
-theorem ing_contrasts_all :
-    ∀ d : INGDimension, ingField.contrasts .velar .apical d := by
-  intro d; simp only [IndexicalField.contrasts, ingField]
-  cases d <;> native_decide
-
--- ============================================================================
--- §3. /t/ release — stance accretion via composeIndex (Figure 4)
--- ============================================================================
-
-/-- /t/ release variants. Released /t/ (hyperarticulated stop release)
-    is the socially meaningful variant; unreleased is unmarked. -/
-inductive TReleaseVariant where
-  | released
-  | unreleased
-  deriving DecidableEq, Repr, Inhabited
-
-instance : Fintype TReleaseVariant where
-  elems := {.released, .unreleased}
-  complete := by intro x; cases x <;> simp
-
-/-- Stances directly indexed by released /t/ (gray labels in Figure 4).
-    These are momentary interactional positions: emphasis, anger,
-    exasperation, annoyance — a gradient of emotional intensity. -/
-inductive TReleaseStance where
+/-- The stances /t/ release indexes: emphasis, and the exasperation and anger that stop release
+commonly expresses. -/
+inductive TStance
   | emphatic
-  | angry
   | exasperated
-  | annoyed
-  deriving DecidableEq, Repr, Inhabited
+  | angry
+  deriving DecidableEq, Repr, Fintype
 
-instance : Fintype TReleaseStance where
-  elems := {.emphatic, .angry, .exasperated, .annoyed}
-  complete := by intro x; cases x <;> simp
-
-def TReleaseStance.all : List TReleaseStance :=
-  [.emphatic, .angry, .exasperated, .annoyed]
-
-/-- Qualities indirectly indexed through stance accretion (black labels
-    in Figure 4). These are stable attributed character traits that
-    emerge from habitual use of the stances above. -/
-inductive TReleaseQuality where
+/-- The permanent qualities in the field, and the quality of habitually taking a stance. -/
+inductive TQuality
+  | clear
   | educated
   | articulate
-  | formal
+  | cultured
+  | refined
   | elegant
   | polite
-  | effortful
-  | prissy
-  | clear
   | careful
-  deriving DecidableEq, Repr, Inhabited
+  | prissy
+  | habitual (s : TStance)
+  deriving DecidableEq, Repr, Fintype
 
-instance : Fintype TReleaseQuality where
-  elems := {.educated, .articulate, .formal, .elegant, .polite,
-            .effortful, .prissy, .clear, .careful}
-  complete := by intro x; cases x <;> simp
+/-- A meaning of /t/ release: a stance or a quality. -/
+inductive TMeaning
+  | stance (s : TStance)
+  | quality (q : TQuality)
+  deriving DecidableEq, Repr, Fintype
 
-/-- Level 1: released /t/ directly indexes stances.
+/-- Stance accretion: a person habitually taking a stance is positioned as having the
+corresponding quality, the mechanism by which the field is elaborated. -/
+def accretion (f : Finset TMeaning) : Finset TMeaning :=
+  f ∪ (Finset.univ.filter (λ s => TMeaning.stance s ∈ f)).image (λ s => .quality (.habitual s))
 
-    The emphatic stance is the strongest direct association; the others
-    form a gradient of decreasing emotional intensity. Unreleased /t/
-    is unmarked (zero association with all stances). -/
-def variantStanceAssoc : TReleaseVariant → TReleaseStance → ℚ
-  | .released, .emphatic     => 1
-  | .released, .angry        => 3/4
-  | .released, .exasperated  => 1/2
-  | .released, .annoyed      => 1/4
-  | .unreleased, _           => 0
+theorem subset_accretion (f : Finset TMeaning) : f ⊆ accretion f := Finset.subset_union_left
 
-/-- Level 2: habitual stances accrete into perceived qualities.
+/-- The stances of a field accrete into qualities. -/
+theorem quality_habitual_mem_accretion {f : Finset TMeaning} {s : TStance}
+    (h : TMeaning.stance s ∈ f) : TMeaning.quality (.habitual s) ∈ accretion f :=
+  Finset.mem_union_right _ (Finset.mem_image_of_mem _ (Finset.mem_filter.2 ⟨Finset.mem_univ s, h⟩))
 
-    Numerical values are modeling choices reflecting qualitative
-    descriptions in [eckert-2008], not values from the paper.
-    The emphatic stance is the broadest mediator, contributing to
-    articulateness, clarity, education, effort, and weakly to
-    formality traits. The exasperated stance mediates prissiness
-    (the Gay Diva pathway in [podesva-2007]). Angry mediates
-    perceived effort. Annoyed is too transient to accrete. -/
-def stanceQualityAssoc : TReleaseStance → TReleaseQuality → ℚ
-  | .emphatic,    .articulate => 3/4
-  | .emphatic,    .clear      => 3/4
-  | .emphatic,    .educated   => 1/2
-  | .emphatic,    .effortful  => 1/2
-  | .emphatic,    .formal     => 1/4
-  | .emphatic,    .elegant    => 1/4
-  | .emphatic,    .careful    => 1/4
-  | .emphatic,    .polite     => 1/4
-  | .angry,       .effortful  => 1/2
-  | .exasperated, .prissy     => 3/4
-  | .exasperated, .effortful  => 1/2
-  | .exasperated, .careful    => 1/4
-  | _,            _           => 0
+/-- The meanings of /t/ release the text attributes before accretion: the stances and the
+qualities of clear speech, the school-teachery standard, the British stereotype, and the
+refinement, elegance, care and politeness they open up, and the prissiness of the diva. -/
+def tReleaseBase : Finset TMeaning :=
+  {.stance .emphatic, .stance .exasperated, .stance .angry, .quality .clear, .quality .educated,
+    .quality .articulate, .quality .cultured, .quality .refined, .quality .elegant,
+    .quality .polite, .quality .careful, .quality .prissy}
 
-/-- The composed variant → quality association via stance accretion.
-    This IS the [ochs-1992] parallel: the same `composeIndex`
-    operation that mediates form → stance → gender in Japanese SFPs
-    here mediates form → stance → quality for /t/ release.
+/-- The field of /t/ release as a history of accretion. -/
+def tRelease : Reconstrual Unit TMeaning where
+  field n _ := accretion^[n] tReleaseBase
+  grows n _ := by
+    rw [Function.iterate_succ_apply']
+    exact subset_accretion _
 
-    composedQuality(v, q) = Σ_s variantStance(v, s) × stanceQuality(s, q) -/
-def composedQuality (v : TReleaseVariant) (q : TReleaseQuality) : ℚ :=
-  composeIndex variantStanceAssoc stanceQualityAssoc TReleaseStance.all v q
+/-- The social types that anchor regions of the field: the nerd girl and the Yeshiva boy
+building on clear speech, the diva on prissiness and exasperation, the British on refinement,
+and the school teacher on clear, careful, standard speech. -/
+inductive SocialType
+  | nerdGirl
+  | yeshivaBoy
+  | gayDiva
+  | british
+  | schoolTeacher
+  deriving DecidableEq, Repr, Fintype
 
--- ============================================================================
--- §4. Stance accretion theorems
--- ============================================================================
+/-- The region of the field each social type anchors. -/
+def region : SocialType → Finset TMeaning
+  | .schoolTeacher => {.quality .clear, .quality .careful, .quality .educated}
+  | .nerdGirl => {.quality .clear, .quality .educated}
+  | .yeshivaBoy => {.quality .clear, .stance .emphatic}
+  | .british => {.quality .cultured, .quality .refined, .quality .articulate}
+  | .gayDiva => {.quality .prissy, .stance .exasperated}
 
-/-- All qualities have positive composed association with released /t/.
-    Parallel to [ochs-1992]'s `all_nonexclusive`: indirect
-    indexicality through non-negative mediators preserves positivity. -/
-theorem all_qualities_positive :
-    ∀ q : TReleaseQuality, composedQuality .released q > 0 := by
-  intro q; cases q <;> native_decide
+/-- Every social type anchors a region of the field. -/
+theorem region_subset : ∀ st, region st ⊆ tRelease.field 0 () := by decide
 
-/-- Unreleased /t/ has zero association with all qualities — the
-    unmarked variant carries no social meaning through this pathway. -/
-theorem unreleased_zero :
-    ∀ q : TReleaseQuality, composedQuality .unreleased q = 0 := by
-  intro q; cases q <;> native_decide
+/-- The nerd girls' /t/ release builds on the school-teachery standard of clear speech from
+which they distance themselves. -/
+theorem nerdGirl_region_subset : region .nerdGirl ⊆ region .schoolTeacher := by decide
 
-/-- Quality ranking by composed association strength:
-    effortful (9/8) > articulate = clear (3/4) > educated (1/2)
-    > prissy = careful (3/8) > formal = elegant = polite (1/4).
+/-- The continuum of /t/ articulation, from the deletion stigmatized in African American
+English through the flap of American English and the release of British English to the
+exaggerated release of the diva's parody, hypo- to hyperarticulation. -/
+inductive Articulation
+  | deletion
+  | flap
+  | released
+  | exaggeratedRelease
+  deriving DecidableEq, Repr, Fintype
 
-    Effortful is strongest because it is mediated through three stances
-    (emphatic, angry, exasperated). Articulateness and clarity tie as
-    the primary emphatic accretions. The formality cluster (formal,
-    elegant, polite) is weakest — a secondary association. -/
-theorem quality_ranking :
-    composedQuality .released .effortful > composedQuality .released .articulate ∧
-    composedQuality .released .articulate = composedQuality .released .clear ∧
-    composedQuality .released .articulate > composedQuality .released .educated ∧
-    composedQuality .released .educated > composedQuality .released .prissy ∧
-    composedQuality .released .prissy = composedQuality .released .careful ∧
-    composedQuality .released .prissy > composedQuality .released .formal ∧
-    composedQuality .released .formal = composedQuality .released .elegant ∧
-    composedQuality .released .formal = composedQuality .released .polite := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+def Articulation.rank : Articulation → ℕ
+  | .deletion => 0
+  | .flap => 1
+  | .released => 2
+  | .exaggeratedRelease => 3
 
-/-- The composed form–quality association factors through the stance
-    domain. Parallel to `Ochs1992.mediation_ze_masc`: the mediation
-    thesis made computationally explicit. -/
-theorem mediation_released_articulate :
-    composedQuality .released .articulate =
-      variantStanceAssoc .released .emphatic     * stanceQualityAssoc .emphatic     .articulate
-    + variantStanceAssoc .released .angry        * stanceQualityAssoc .angry        .articulate
-    + variantStanceAssoc .released .exasperated  * stanceQualityAssoc .exasperated  .articulate
-    + variantStanceAssoc .released .annoyed      * stanceQualityAssoc .annoyed      .articulate := by
-  native_decide
+instance : LinearOrder Articulation :=
+  LinearOrder.lift' Articulation.rank λ a b h => by
+    cases a <;> cases b <;> simp_all [Articulation.rank]
 
--- ============================================================================
--- §5. Social types — Figure 4
--- ============================================================================
+/-- The diva style combines deletion with exaggerated bursts. -/
+def divaStyle : Finset Articulation := {.deletion, .exaggeratedRelease}
 
-/-- Social types that anchor regions of the /t/ release indexical field
-    (boxes in Figure 4). Each type is a culturally available persona
-    cluster — a bundle of qualities that provides an interpretive
-    anchor for hearers. -/
-inductive SocialType where
-  | british        -- refined formality
-  | schoolTeacher  -- careful precision
-  | nerdGirl       -- intellectual emphasis
-  | gayDiva        -- expressive prissiness
-  deriving DecidableEq, Repr, Inhabited
+/-- The diva style spans the whole continuum: every articulation lies between two of its
+members. -/
+theorem divaStyle_spans : ∀ b, ∃ a ∈ divaStyle, ∃ a' ∈ divaStyle, a ≤ b ∧ b ≤ a' := by decide
 
-instance : Fintype SocialType where
-  elems := {.british, .schoolTeacher, .nerdGirl, .gayDiva}
-  complete := by intro x; cases x <;> simp
+/-! ### Belten High, Figure 1 -/
 
-/-- Which qualities each social type activates in the /t/ release
-    field (spatial regions in Figure 4).
+inductive Gender
+  | girl
+  | boy
+  deriving DecidableEq, Repr, Fintype
 
-    These are *proto-personae* in the sense of [burnett-2019]'s
-    social meaning games: quality bundles that the Eckert-Montague
-    lift maps to compatible persona sets. Mappings are based on
-    spatial proximity in Figure 4 and textual descriptions. -/
-def socialTypeQualities : SocialType → TReleaseQuality → Bool
-  -- British: the refined formality cluster (upper region of Figure 4)
-  | .british, .educated | .british, .articulate
-  | .british, .formal   | .british, .elegant       => true
-  -- School Teacher: careful precision cluster (left region)
-  -- includes polite (left column in Figure 4, near School Teacher)
-  | .schoolTeacher, .educated   | .schoolTeacher, .articulate
-  | .schoolTeacher, .formal     | .schoolTeacher, .polite
-  | .schoolTeacher, .clear      | .schoolTeacher, .careful
-  | .schoolTeacher, .effortful                                 => true
-  -- Nerd Girl: intellectual emphasis (upper right)
-  -- nerd girls "distanced themselves from teachers" (p.467) — no
-  -- effortful/careful (school-teachery traits). "Builds primarily on
-  -- the social significance of clear speech" (p.468).
-  | .nerdGirl, .educated    | .nerdGirl, .articulate
-  | .nerdGirl, .clear                                  => true
-  -- Gay Diva: expressive prissiness (lower right of Figure 4)
-  -- "prissiness of the teacher's pet" + exasperation (p.469).
-  -- FORMAL/ELEGANT/POLITE are on the left side of Figure 4, far
-  -- from the Gay Diva region.
-  | .gayDiva, .articulate | .gayDiva, .effortful
-  | .gayDiva, .prissy     | .gayDiva, .careful         => true
-  | _, _                                               => false
+/-- The school-oriented jocks and the urban-oriented burnouts. -/
+inductive Orientation
+  | jock
+  | burnout
+  deriving DecidableEq, Repr, Fintype
 
-/-- All social types include `articulate` — the most central quality
-    in the /t/ release field. This reflects the ideological core of
-    hyperarticulation as a semiotic resource. -/
-theorem all_types_include_articulate :
-    ∀ st : SocialType, socialTypeQualities st .articulate = true := by
-  intro st; cases st <;> rfl
+/-- A social category of Figure 1: gender crossed with orientation. -/
+structure Group where
+  gender : Gender
+  orientation : Orientation
+  deriving DecidableEq, Repr, Fintype
 
-/-- British and Nerd Girl share `educated` but differ on formality —
-    the field branches from education into refinement (British) vs.
-    intellectual emphasis (Nerd Girl). -/
-theorem educated_branching :
-    socialTypeQualities .british .educated = true ∧
-    socialTypeQualities .nerdGirl .educated = true ∧
-    socialTypeQualities .british .elegant = true ∧
-    socialTypeQualities .nerdGirl .elegant = false := ⟨rfl, rfl, rfl, rfl⟩
+/-- The strata of the seven variables: the older components of the Northern Cities Shift,
+stabilized across the suburbs, the newer changes more advanced near the urban centre, and
+negative concord. -/
+inductive Stratum
+  | older
+  | newer
+  | negativeConcord
+  deriving DecidableEq, Repr, Fintype
 
-/-- Nerd Girl's qualities are a subset of School Teacher's. This
-    reflects the text: nerd girls' /t/ release "builds primarily
-    on the social significance of clear speech, which in turn is
-    associated with a school-teachery standard" (p.468). -/
-theorem nerdGirl_subset_schoolTeacher :
-    ∀ q : TReleaseQuality,
-    socialTypeQualities .nerdGirl q = true →
-    socialTypeQualities .schoolTeacher q = true := by
-  intro q hq; cases q <;> first | rfl | exact absurd hq (by decide)
+/-- The leaders of Figure 1: the older changes are used predominantly by girls, the newer
+urban changes and negative concord by burnouts. -/
+def Leads (g : Group) : Stratum → Prop
+  | .older => g.gender = .girl
+  | .newer => g.orientation = .burnout
+  | .negativeConcord => g.orientation = .burnout
 
-/-- Prissy is unique to Gay Diva among the four social types. -/
-theorem prissy_unique_to_gayDiva :
-    socialTypeQualities .gayDiva .prissy = true ∧
-    socialTypeQualities .british .prissy = false ∧
-    socialTypeQualities .schoolTeacher .prissy = false ∧
-    socialTypeQualities .nerdGirl .prissy = false := ⟨rfl, rfl, rfl, rfl⟩
+instance (g : Group) : DecidablePred (Leads g)
+  | .older => inferInstanceAs (Decidable (g.gender = .girl))
+  | .newer => inferInstanceAs (Decidable (g.orientation = .burnout))
+  | .negativeConcord => inferInstanceAs (Decidable (g.orientation = .burnout))
 
-/-- Every quality is activated by at least one social type — the
-    four types collectively cover the full quality space. -/
-theorem types_cover_all_qualities :
-    ∀ q : TReleaseQuality,
-    ∃ st : SocialType, socialTypeQualities st q = true := by
-  intro q; cases q
-  · exact ⟨.british, rfl⟩         -- educated
-  · exact ⟨.british, rfl⟩         -- articulate
-  · exact ⟨.british, rfl⟩         -- formal
-  · exact ⟨.british, rfl⟩         -- elegant
-  · exact ⟨.schoolTeacher, rfl⟩   -- polite
-  · exact ⟨.schoolTeacher, rfl⟩   -- effortful
-  · exact ⟨.gayDiva, rfl⟩         -- prissy
-  · exact ⟨.schoolTeacher, rfl⟩   -- clear
-  · exact ⟨.schoolTeacher, rfl⟩   -- careful
+/-- The burnout girls lead every variable. -/
+theorem burnoutGirls_lead : ∀ s, Leads ⟨.girl, .burnout⟩ s := by
+  intro s; cases s <;> rfl
 
--- ============================================================================
--- §6. Belten High adolescents — Figure 1
--- ============================================================================
+/-- They are the only group that does: the two leaderships cross gender with orientation,
+the urban–suburban opposition embedded within the school. -/
+theorem leads_all_iff (g : Group) : (∀ s, Leads g s) ↔ g = ⟨.girl, .burnout⟩ := by
+  constructor
+  · intro h
+    have h1 : g.gender = .girl := h .older
+    have h2 : g.orientation = .burnout := h .newer
+    cases g; cases h1; cases h2; rfl
+  · rintro rfl s; cases s <;> rfl
 
-/-- Social categories at Belten High School, Detroit
-    ([eckert-2008] Figure 1, based on Eckert 1989, 2000).
-
-    School-oriented *jocks* and urban-oriented *burnouts* define a
-    local opposition that cross-cuts gender, creating four social
-    groups with distinct patterns of variation. -/
-inductive BeltenGroup where
-  | jockBoys
-  | jockGirls
-  | burnoutBoys
-  | burnoutGirls
-  deriving DecidableEq, Repr, Inhabited
-
-instance : Fintype BeltenGroup where
-  elems := {.jockBoys, .jockGirls, .burnoutBoys, .burnoutGirls}
-  complete := by intro x; cases x <;> simp
-
-/-- Variables involved in the Northern Cities Shift at Belten High.
-
-    The NCS splits into chronological layers: *older* changes (vowel
-    fronting, stabilized across the suburban area, led by girls) and
-    *newer* changes (vowel backing, more advanced in the urban center,
-    led by burnouts). Negative concord is a syntactic variable. -/
-inductive NCSVariable where
-  -- older NCS changes (fronting), led by girls
-  | ae_raising        -- æ > eə
-  | a_fronting        -- a > æ
-  | open_o_lowering   -- ɔ > a
-  -- newer NCS changes (backing), led by burnouts
-  | wedge_backing     -- ʌ > ɔ
-  | ay_backing        -- ay > oy
-  | epsilon_backing   -- ε > ʌ
-  -- syntactic
-  | negation          -- negative concord
-  deriving DecidableEq, Repr, Inhabited
-
-instance : Fintype NCSVariable where
-  elems := {.ae_raising, .a_fronting, .open_o_lowering,
-            .wedge_backing, .ay_backing, .epsilon_backing,
-            .negation}
-  complete := by intro x; cases x <;> simp
-
-/-- Leadership ranking from Figure 1.
-    2 = leader (black in figure), 1 = runner-up (gray), 0 = neither.
-
-    Older NCS changes are led by girls (burnout girls lead, jock girls
-    runner-up). Newer NCS changes are led by burnouts (burnout girls
-    lead, burnout boys runner-up). Negation: burnout girls lead despite
-    the overall male tendency for negative concord.
-
-    The key finding: burnout girls are leaders (= 2) across ALL
-    variables — they embed the urban–suburban opposition linguistically,
-    demonstrating that the gender effect is mediated through social
-    orientation, not a direct gender → language mapping. This is
-    [ochs-1992]'s mediation thesis generalized to the ethnographic
-    domain. -/
-def beltenLeadership : BeltenGroup → NCSVariable → ℚ
-  -- older, fronting: girls lead (burnout girls > jock girls)
-  | .burnoutGirls, .ae_raising       => 2
-  | .jockGirls,    .ae_raising       => 1
-  | .burnoutGirls, .a_fronting       => 2
-  | .jockGirls,    .a_fronting       => 1
-  | .burnoutGirls, .open_o_lowering  => 2
-  | .jockGirls,    .open_o_lowering  => 1
-  -- newer, backing: burnouts lead (burnout girls > burnout boys)
-  | .burnoutGirls, .wedge_backing    => 2
-  | .burnoutBoys,  .wedge_backing    => 1
-  | .burnoutGirls, .ay_backing       => 2
-  | .burnoutBoys,  .ay_backing       => 1
-  | .burnoutGirls, .epsilon_backing  => 2
-  | .burnoutBoys,  .epsilon_backing  => 1
-  -- negation: burnout girls lead
-  | .burnoutGirls, .negation         => 2
-  | .burnoutBoys,  .negation         => 1
-  | _,             _                 => 0
-
-/-- **Universal leadership**: burnout girls lead every NCS variable.
-
-    This is the central empirical finding of the Belten High study.
-    The burned-out burnout girls led all other burnouts, male and
-    female, in all NCS urban variables AND negative concord — despite
-    the general population pattern of male-led negation. -/
-theorem burnoutGirls_lead_all :
-    ∀ v : NCSVariable, beltenLeadership .burnoutGirls v = 2 := by
-  intro v; cases v <;> native_decide
-
-/-- No other group leads all variables — burnout girls' universal
-    leadership is unique. -/
-theorem jockBoys_not_universal :
-    ∃ v : NCSVariable, beltenLeadership .jockBoys v < 2 := ⟨.ae_raising, by native_decide⟩
-
-theorem jockGirls_not_universal :
-    ∃ v : NCSVariable, beltenLeadership .jockGirls v < 2 := ⟨.wedge_backing, by native_decide⟩
-
-theorem burnoutBoys_not_universal :
-    ∃ v : NCSVariable, beltenLeadership .burnoutBoys v < 2 := ⟨.ae_raising, by native_decide⟩
-
-/-- **Gender × orientation interaction**: older variables split by
-    gender (jock girls are runners-up), newer variables split by
-    social orientation (burnout boys are runners-up). -/
-theorem older_runner_up_is_jockGirls :
-    beltenLeadership .jockGirls .ae_raising = 1 ∧
-    beltenLeadership .jockGirls .a_fronting = 1 ∧
-    beltenLeadership .jockGirls .open_o_lowering = 1 := ⟨rfl, rfl, rfl⟩
-
-theorem newer_runner_up_is_burnoutBoys :
-    beltenLeadership .burnoutBoys .wedge_backing = 1 ∧
-    beltenLeadership .burnoutBoys .ay_backing = 1 ∧
-    beltenLeadership .burnoutBoys .epsilon_backing = 1 := ⟨rfl, rfl, rfl⟩
-
-/-- Jock boys never lead or run up — they are the most linguistically
-    conservative group, furthest from both the gender-led and
-    orientation-led change fronts. -/
-theorem jockBoys_never_lead :
-    ∀ v : NCSVariable, beltenLeadership .jockBoys v = 0 := by
-  intro v; cases v <;> native_decide
-
--- ============================================================================
--- §7. The Ochs–Eckert bridge
--- ============================================================================
-
-/-- The /t/ release composed association as an `IndexicalField`.
-
-    Parallel to `Ochs1992.composedField`: both lift composed
-    association values to the `IndexicalField` type, connecting
-    the study-specific composition back to the core infrastructure. -/
-def composedField : IndexicalField TReleaseVariant TReleaseQuality where
-  association := composedQuality
-  order := .second
-
-/-- The composed field indexes released /t/ toward articulateness. -/
-theorem composedField_released_indexes_articulate :
-    composedField.indexes .released .articulate := by
-  simp only [IndexicalField.indexes, composedField]
-  native_decide
-
-/-- Released and unreleased /t/ contrast on every quality —
-    the composed field is maximally contrastive. -/
-theorem composedField_contrasts_all :
-    ∀ q : TReleaseQuality, composedField.contrasts .released .unreleased q := by
-  intro q; simp only [IndexicalField.contrasts, composedField]
-  cases q <;> native_decide
-
--- ============================================================================
--- §8. ING → SCM bridge — connecting to the Eckert-Montague lift
--- ============================================================================
-
-/-! The (ING) indexical field (§2) lives over `INGDimension` — a
-domain-specific 4-axis space derived from [campbell-kibler-2007].
-To connect it to the Eckert-Montague lift (`EckertMontague.emFieldMI`),
-we project it to `SocialDimension` (the 3-axis SCM framework from
-[fiske-cuddy-glick-2007]).
-
-**Dimension mapping rationale:**
-- `education → competence`: education is a core competence indicator
-- `formality → antiSolidarity`: formal register indexes social distance
-  (pedantic, uptight — the antiSolidarity pole in SCM/BSB2022)
-- `effort → competence`: effortful speech signals diligence/precision
-- `articulateness → competence`: articulateness is a competence signal
-
-This maps 3 of 4 ING dimensions to competence and 1 to antiSolidarity,
-with warmth = 0. [burnett-2019] makes a different choice: mapping
-formality to warmth (aloof ≈ cold) rather than antiSolidarity. Both are
-defensible — the present mapping follows BSB2022's PCA loadings where
-"pedantic/uptight" loaded on an independent factor from warmth.
-
-The sign structure is preserved: velar indexes the positive pole of
-all 4 dimensions, so it indexes competent + antiSolidary in SCM. -/
-
-/-- The (ING) indexical field projected to SCM dimensions.
-
-    All three of education, effort, and articulateness collapse to
-    competence (same sign for both variants), while formality projects
-    to antiSolidarity. Warmth is zero — (ING) carries no warmth signal
-    in this analysis. -/
-def ingFieldSCM : IndexicalField INGVariant SocialDimension where
-  association
-    | .velar,  .competence      => 1
-    | .velar,  .antiSolidarity  => 1
-    | .velar,  .warmth          => 0
-    | .apical, .competence      => -1
-    | .apical, .antiSolidarity  => -1
-    | .apical, .warmth          => 0
-  order := .second
-
-/-- The SCM projection preserves the sign structure of the
-    domain-specific field: velar is positive on all mapped dimensions,
-    apical is negative. -/
-theorem ingFieldSCM_signs_match_ingField :
-    (∀ d : SocialDimension, ingFieldSCM.association .velar d ≥ 0) ∧
-    (∀ d : SocialDimension, ingFieldSCM.association .apical d ≤ 0) := by
-  constructor <;> intro d <;> cases d <;> decide
-
-/-- The (ING) field grounded in the SCM property space via
-    `fromIndexicalField`. -/
-def ingGroundedField : GroundedField INGVariant scmSpace :=
-  fromIndexicalField ingFieldSCM
-
-/-- The velar variant indexes {competent, antiSolidary} in SCM:
-    educated, formal, effortful, articulate → competent + socially
-    distant. -/
-theorem velar_scm_properties :
-    ingGroundedField.indexedProperties .velar = {.competent, .antiSolidary} := by
-  native_decide
-
-/-- The apical variant indexes {incompetent, solidary} in SCM:
-    uneducated, relaxed, easygoing, inarticulate → incompetent +
-    solidary/approachable. -/
-theorem apical_scm_properties :
-    ingGroundedField.indexedProperties .apical = {.incompetent, .solidary} := by
-  native_decide
-
-/-- The Eckert-Montague lift applied to the ING grounded field.
-    Returns the set of SCM personae compatible with each variant
-    via intersection semantics (a persona is compatible iff it shares
-    at least one property with the variant's Eckert field). -/
-def ingEM (v : INGVariant) : Finset (Finset scmSpace.Property) :=
-  emFieldMI ingGroundedField v
-
-/-- The velar variant is compatible with 6 of 8 SCM personae.
-    Excluded: {incompetent, warm, solidary} and {incompetent, cold,
-    solidary} — the two personae that have neither competent nor
-    antiSolidary. -/
-theorem velar_em_count :
-    (ingEM .velar).card = 6 := by native_decide
-
-/-- The apical variant is compatible with 6 of 8 SCM personae.
-    Excluded: {competent, warm, antiSolidary} and {competent, cold,
-    antiSolidary} — the two personae that have neither incompetent
-    nor solidary. -/
-theorem apical_em_count :
-    (ingEM .apical).card = 6 := by native_decide
-
-/-- The two variants exclude different personae, confirming that
-    the EM lift distinguishes them despite both being compatible
-    with most of the persona space. -/
-theorem velar_apical_em_differ :
-    ingEM .velar ≠ ingEM .apical := by native_decide
+/-- The jock boys lead nothing. -/
+theorem jockBoys_lead_none : ∀ s, ¬ Leads ⟨.boy, .jock⟩ s := by
+  intro s; cases s <;> decide
 
 end Eckert2008
