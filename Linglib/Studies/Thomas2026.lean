@@ -10,7 +10,7 @@ Formalisation of [thomas-2026], which unifies the canonical additive use of
 *too* with a previously unstudied "argument-building" use by stating felicity
 in terms of Bayesian inquisitive answerhood. The substrate primitives
 (`Answers`, `IsResolutionEvidencedBy`, `evidencesResolutionMore`,
-`IsRelevantTo`) live in `Semantics/Questions/Probabilistic.lean`; this file
+`IsRelevantToUnder`) live in `Semantics/Questions/Probabilistic.lean`; this file
 encodes the felicity conditions of [thomas-2026] Def 64 and their abstract
 consequences.
 
@@ -44,7 +44,7 @@ consequences.
 
 The relevant question RQ need not be a Current Question; [thomas-2026] §5.4.3
 requires only that it be relevant to some discourse question, which
-`IsTooLicensedByDQ` captures via `IsRelevantTo`. The two prejacent conditions
+`IsTooLicensedByDQ` captures via `IsRelevantToUnder`. The two prejacent conditions
 rule out the [beaver-clark-2008] ecstatic case (the prejacent already entails
 the answer) and the "some-instrument vs cello" case (a weaker prejacent would
 do); see the per-field docstrings of `IsTooFelicitous`.
@@ -52,7 +52,7 @@ do); see the per-field docstrings of `IsTooFelicitous`.
 
 namespace Thomas2026
 
-open Question Questions
+open Question
 
 variable {W : Type*} {μ : PMF W}
   {prejacent antecedent : Set W} {rq : Question W}
@@ -120,7 +120,7 @@ theorem IsTooFelicitous.exists_strict_improvement
     need not be a Current Question — §5.4.3 requires only relevance to a DQ. -/
 def IsTooLicensedByDQ (prejacent antecedent : Set W)
     (rq dq : Question W) (μ : PMF W) : Prop :=
-  IsTooFelicitous prejacent antecedent rq μ ∧ IsRelevantTo rq dq μ
+  IsTooFelicitous prejacent antecedent rq μ ∧ IsRelevantToUnder rq dq μ
 
 /-! ### Predicted infelicity -/
 
@@ -161,7 +161,7 @@ caller to exhibit. -/
 
 namespace Thomas2026.Witness
 
-open Question Questions
+open Question
 open scoped ENNReal
 
 abbrev W := Fin 3

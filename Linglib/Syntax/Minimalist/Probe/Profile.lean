@@ -175,7 +175,7 @@ of `Probe.Profile` rather than as a parallel new structure: any Probe with
 `isĀProbe = true` IS an Ā-dependency primitive in Deal's sense.
 
 This avoids cascade: existing consumers of `Probe.Profile` (wh-licensing in
-`Questions.lean`, the keine probes here, language-specific configurations)
+`Question.lean`, the keine probes here, language-specific configurations)
 remain unchanged, and `AbarDep` is a thin wrapper providing only the predicate
 `isĀProbe = true` as a proof-relevant invariant. -/
 

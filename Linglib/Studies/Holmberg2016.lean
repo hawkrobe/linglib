@@ -161,7 +161,7 @@ theorem pol_feature_matches :
 theorem pol_ne_neg :
     FeatureVal.sameType (.pol true) (.neg true) = false := rfl
 
-/-! ### Question syntax: ForceP/FinP/PolP (relocated from Minimalist/Questions.lean)
+/-! ### Question syntax: ForceP/FinP/PolP (relocated from Minimalist/Question.lean)
 
 Syntactic projections involved in question formation.
 
