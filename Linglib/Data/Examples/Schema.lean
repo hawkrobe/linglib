@@ -187,13 +187,25 @@ def parse? {α : Type*} (e : LinguisticExample) (key : String) (table : List (St
     Option α :=
   (e.feature? key).bind (List.lookup · table)
 
-/-- Value of a `paperFeatures` key as a decimal numeral, read by a structural fold so that
-`decide` can evaluate it. -/
-def nat? (e : LinguisticExample) (key : String) : Option Nat :=
-  (e.feature? key).bind λ s =>
-    if s.toList ≠ [] ∧ s.toList.all Char.isDigit then
-      some (s.toList.foldl (λ n c => 10 * n + (c.toNat - '0'.toNat)) 0)
+/-- A nonempty string of decimal digits as a numeral, by a structural fold so that `decide` can
+evaluate it. -/
+private def digits? : List Char → Option Nat
+  | [] => none
+  | cs =>
+    if cs.all Char.isDigit then some (cs.foldl (λ n c => 10 * n + (c.toNat - '0'.toNat)) 0)
     else none
+
+/-- Value of a `paperFeatures` key as a decimal numeral. -/
+def nat? (e : LinguisticExample) (key : String) : Option Nat :=
+  (e.feature? key).bind λ s => digits? s.toList
+
+/-- Value of a `paperFeatures` key as a signed decimal integer: an optional leading `-` and
+digits. -/
+def int? (e : LinguisticExample) (key : String) : Option Int :=
+  (e.feature? key).bind λ s =>
+    match s.toList with
+    | '-' :: cs => (digits? cs).map (λ n => -(n : Int))
+    | cs => (digits? cs).map (λ n => (n : Int))
 
 end LinguisticExample
 
