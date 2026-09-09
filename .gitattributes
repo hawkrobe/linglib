@@ -1,0 +1,2 @@
+# Every PR inserts its own import line here; the union driver keeps both sides instead of conflicting.
+Linglib.lean merge=union
