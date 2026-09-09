@@ -680,6 +680,7 @@ import Linglib.Discourse.Coherence
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Commitment.Declarative
 import Linglib.Discourse.Commitment.Frame
+import Linglib.Discourse.Commitment.Preferential
 import Linglib.Discourse.Commitment.Space
 import Linglib.Discourse.Commitment.Table
 import Linglib.Discourse.CommonGround
@@ -3036,3 +3037,4 @@ import Linglib.Data.Examples.DeMarneffeNivre2019
 import Linglib.Data.Examples.Dendikken1995
 import Linglib.Data.Examples.Denic2023
 import Linglib.Data.Examples.DenicEtAl2021
+import Linglib.Data.Examples.Deo2025

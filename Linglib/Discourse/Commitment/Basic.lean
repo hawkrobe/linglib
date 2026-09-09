@@ -109,6 +109,8 @@ def refuse (a : A) (p : Set W) (force : Force := .doxastic) (source : Source := 
 @[simp] theorem commit_content (a : A) (p : Set W) (f s) : (commit a p f s).content = p := rfl
 @[simp] theorem refuse_content (a : A) (p : Set W) (f s) : (refuse a p f s).content = p := rfl
 @[simp] theorem commit_committer (a : A) (p : Set W) (f s) : (commit a p f s).committer = a := rfl
+@[simp] theorem commit_force (a : A) (p : Set W) (f s) : (commit a p f s).force = f := rfl
+@[simp] theorem commit_source (a : A) (p : Set W) (f s) : (commit a p f s).source = s := rfl
 
 /-- The contents of the undertaken commitments in `K`. -/
 def contents : Set (Set W) :=
