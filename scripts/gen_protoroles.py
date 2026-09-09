@@ -97,18 +97,10 @@ def process(paper: str, check: bool) -> bool:
         if cur != content:
             sys.stderr.write(f"[check] DRIFT: {out.relative_to(ROOT)} out of sync with JSON\n")
             return False
-        for mod in (f"Linglib.Data.ProtoRoles.{paper}",
-                    "Linglib.Data.ProtoRoles.Schema"):
-            if f"import {mod}" not in (ROOT / "Linglib.lean").read_text(encoding="utf-8"):
-                sys.stderr.write(f"[check] DRIFT: {mod} missing from Linglib.lean\n")
-                return False
         sys.stdout.write(f"[check] {out.relative_to(ROOT)} in sync ({len(rows)} rows)\n")
         return True
     out.write_text(content, encoding="utf-8")
     sys.stdout.write(f"[gen] {out.relative_to(ROOT)} ← {json_path.relative_to(ROOT)} ({len(rows)} rows)\n")
-    ensure_import(ROOT / "Linglib.lean", "Linglib.Data.ProtoRoles.Schema")
-    if ensure_import(ROOT / "Linglib.lean", f"Linglib.Data.ProtoRoles.{paper}"):
-        sys.stdout.write(f"[gen] added Linglib.Data.ProtoRoles.{paper} import to Linglib.lean\n")
     return True
 
 
