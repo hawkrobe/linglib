@@ -31,7 +31,7 @@ extending it to the temporal domain via stratified reference.
   literature grounding.
 * `IsPartition` — a cover whose parts are pairwise disjoint. The
   `Set`-valued, possibly-infinite analogue of mathlib's `Finpartition`;
-  distinct from the `Setoid`-based `Questions.Partition.IsPartition`.
+  distinct from the `Setoid`-based `Question.Partition.IsPartition`.
 * `IsFinCover` — finite-cover specialisation via `Finset.sup'`, bridged
   to the general notion by `isFinCover_iff_isCover`.
 * `algClosure_of_finCover` / `exists_finCover_of_algClosure` /
@@ -82,7 +82,7 @@ def IsCover {α : Type*} [Preorder α] (parts : Set α) (whole : α) : Prop :=
     arbitrary (possibly overlapping) covers to handle readings like
     [gillon-1987]'s *the men wrote musicals*. The `Set`-valued,
     possibly-infinite analogue of mathlib's `Finpartition`; not the
-    `Setoid`-based `Questions.Partition.IsPartition`. Disjointness is
+    `Setoid`-based `Question.Partition.IsPartition`. Disjointness is
     meet-bottom, so the carrier needs `Lattice` + `OrderBot`. -/
 def IsPartition {α : Type*} [Lattice α] [OrderBot α]
     (parts : Set α) (whole : α) : Prop :=

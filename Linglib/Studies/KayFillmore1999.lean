@@ -228,14 +228,14 @@ theorem wxdy_incongruity_survives_negation {W : Type*}
 
 /-! ### The two readings (§2.1) -/
 
-open Questions
+open Question
 
 /-- PerspP status separates the two readings of ex. 4: a speaker whose only doxastic
 alternative is the evaluation world (the diner sees the fly) cannot be possibly ignorant
 of the answer, so the utterance is not a genuine question; a speaker with every world
 open is, whenever the answer is not trivial. -/
 theorem perspP_disambiguates_wxdy {W : Type*} (H : Set (Set W)) (w : W)
-    (hH : Questions.weakAnswer H w ≠ Set.univ) :
+    (hH : Question.weakAnswer H w ≠ Set.univ) :
     ¬ PossiblyIgnorant H {w} (fun (_ : Unit) w v => v = w) () ∧
       PossiblyIgnorant H {w} (fun (_ : Unit) _ _ => True) () :=
   ⟨fun ⟨_, hv, hk⟩ => by

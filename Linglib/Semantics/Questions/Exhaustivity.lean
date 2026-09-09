@@ -53,7 +53,7 @@ of [dayal-2016] needs Hamblin sets whose members entail one another, which
 * [xiang-2022]
 -/
 
-namespace Questions
+namespace Question
 
 open Question
 
@@ -547,4 +547,4 @@ theorem strongAnswer_ofSet_of_pos {p : Set W} {w : W} (hwp : w ∈ p) :
   ext v
   simp [strongAnswer, alt_ofSet, hwp]
 
-end Questions
+end Question

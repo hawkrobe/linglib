@@ -423,7 +423,7 @@ theorem verum_falsum_opposite_epistemic :
     The [+positive]/[+negative] values map directly. [neutral] maps to
     neutral. The "minus" values have no direct Romero counterpart — they
     encode incompatibility constraints rather than positive evidence. -/
-def evidentialToContextualEvidence : BiasValue → Option Questions.ContextualEvidence
+def evidentialToContextualEvidence : BiasValue → Option Question.ContextualEvidence
   | .plusPos  => some .forP
   | .plusNeg  => some .againstP
   | .neutral  => some .neutral
@@ -435,7 +435,7 @@ def evidentialToContextualEvidence : BiasValue → Option Questions.ContextualEv
     [+positive] maps to forP (speaker expected p). [+negative] maps to
     againstP. [neutral] maps to neutral. The "minus" values are not
     directly representable in Romero's three-valued system. -/
-def epistemicToOriginalBias : BiasValue → Option Questions.OriginalBias
+def epistemicToOriginalBias : BiasValue → Option Question.OriginalBias
   | .plusPos  => some .forP
   | .plusNeg  => some .againstP
   | .neutral  => some .neutral
@@ -492,14 +492,14 @@ theorem val_creates_questions :
     particle's bias requirement is the analysis, so it lives here):
     felicitous only in contexts with contextual evidence for the
     proposition, matching the evidential bias of PDQs and NRQs. -/
-def valContextualEvidence : Option Questions.ContextualEvidence :=
+def valContextualEvidence : Option Question.ContextualEvidence :=
   some .forP
 
 /-- S&R's classification, epistemic dimension: *väl* signals epistemic
     *uncertainty* — the speaker suspects p but is not certain,
     corresponding to the [-positive] epistemic bias of PDQs — so it
     imposes no original-bias requirement (contrast `dochWohlOriginalBias`). -/
-def valOriginalBias : Option Questions.OriginalBias := none
+def valOriginalBias : Option Question.OriginalBias := none
 
 -- ════════════════════════════════════════════════════════════════
 -- § 10. German *doch wohl* marks RQs via REJECTQ
@@ -511,11 +511,11 @@ def valOriginalBias : Option Questions.OriginalBias := none
     and epistemic presuppositions in the REJECTQ definition (eq. 40).
     Shares its evidential value with `valContextualEvidence`; the
     epistemic dimension is where German is stricter than Swedish. -/
-def dochWohlContextualEvidence : Option Questions.ContextualEvidence :=
+def dochWohlContextualEvidence : Option Question.ContextualEvidence :=
   some .forP
 
 /-- See `dochWohlContextualEvidence`: prior speaker bias against p. -/
-def dochWohlOriginalBias : Option Questions.OriginalBias :=
+def dochWohlOriginalBias : Option Question.OriginalBias :=
   some .againstP
 
 /-- *doch wohl* is not usable in assertions — it marks questions.

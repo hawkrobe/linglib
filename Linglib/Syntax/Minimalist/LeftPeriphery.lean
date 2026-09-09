@@ -8,7 +8,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 `[SAP SA_ASK [PerspP PRO Persp_CQ [CP C_WH [TP …]]]]`: clause-typing at C,
 where a proposition becomes a set of propositions (`WHFeature`); centering at
 PerspP, which introduces a perspectival center who may not know the answer
-(`Questions.PossiblyIgnorant`); and the illocutionary act at SAP. Embedding
+(`Question.PossiblyIgnorant`); and the illocutionary act at SAP. Embedding
 predicates select up to one of the layers (`SelectionClass`, read off a
 lexical entry by `deriveSelectionClass`): rogatives take CP only, PerspP, or
 SAP, responsives take CP and, where their meaning leaves the center's
