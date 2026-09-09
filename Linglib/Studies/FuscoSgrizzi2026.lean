@@ -1,296 +1,216 @@
-import Linglib.Semantics.Modality.Kratzer.Flavor
-import Linglib.Semantics.Events.Basic
+import Linglib.Semantics.Modality.EventRelativity
+import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Fragments.Italian.Predicates
-import Linglib.Studies.Grano2024
+import Linglib.Data.Examples.FuscoSgrizzi2026
 
 /-!
-# Inertial modality for Italian non-finite belief/action readings
-[fusco-sgrizzi-2026] [dowty-1979] [kratzer-2012]
+# Fusco and Sgrizzi (2026): Belief or Action? Semantic Ambiguity in the Italian Non-finite Domain
 
-[fusco-sgrizzi-2026] analyse the belief/action ambiguity of Italian
-non-finite complements (*convincere a* + INF, *promettere di* + INF) via
-inertial modality in the [dowty-1979] sense, recast as a Kratzer
-circumstantial-base + inertial-ordering pair.
-
-## Main declarations
-
-* `InertialParams`: bundles a circumstantial modal base with an inertial
-  ordering source.
-* `inertialNecessity`, `inertialPossibility`: `□`/`◇` over the
-  best-inertial-continuation worlds.
-* `inertial_duality`: modal duality, delegated to `Kratzer.duality`.
-* `empty_inertia_is_simple`: with an empty ordering source, inertial
-  necessity collapses to circumstantial `simpleNecessity`.
-* `CausativeAttitude`: the single denotation of *convincere*-type
-  verbs (their ex. 24), with `beliefReading`/`intentionReading` the
-  two complement-size construals and the reading diagnostics.
+This file formalizes [fusco-sgrizzi-2026]'s account of the belief and intention readings of
+Italian *convincere* 'convince' with its two infinitival complements: *Marco ha convinto Gianni di
+avere un figlio* reports a belief, *Marco ha convinto Gianni a avere un figlio* an intention.
+Where [grano-2024] ties the alternation to mood and finiteness, the paper ties it to the size of
+the complement. The *di*-infinitive is a CP: it hosts modal auxiliaries, allows subject as well
+as object control, and can be assessed for truth. The *a*-infinitive stops below tense and above
+vP: it hosts negation, passive and low aspectual verbs and forms a temporal domain of its own, but
+blocks clitic climbing and subject control and cannot be assessed for truth. The readings follow
+from the size through one lexical entry: *convincere* causes a rational-attitude state with the
+property its complement supplies (`Frame.convincere`, the paper's (24)). A *di*-complement closes
+the eventuality argument of the bare infinitive into a proposition, which *di* quantifies over
+the state's content worlds; an *a*-complement keeps it open, and *a*, anchored to the state,
+quantifies over the state's inertia worlds and binds the event to the state by the causal
+relation (`aP`). Both heads are Kratzer necessity over backgrounds the state projects, the
+event-relative modality of [hacquard-2010]: *di* over a content background, *a* over a
+circumstantial base ordered by inertia ([dowty-1979], [kratzer-2013]). This is the causal
+self-referentiality of intention ([searle-1983]): in every inertia world the intended event is
+caused by the attitude state, hence later than it, the future orientation of *a*-infinitives
+([wurmbrand-2014]; `intention_future`). Complement size is the extended projection's
+`ComplementSize`, ordered by functional level; the reading is read off the CP threshold, and the
+diagnostics of sections 3 and 3.1 are predicted by the heads the complement reaches
+(`rows_predicted`).
 
 ## Implementation notes
 
-[dowty-1979]: w' is an inertia world of w iff w' matches w up to the
-reference time and the course of events in w continues without interruption.
-In Kratzer's framework this is a circumstantial modal base paired with an
-ordering source whose propositions describe normal continuation.
+* The *a*-infinitive is recorded with negation as its highest head, the highest the paper places
+  inside it. The functional sequence does not separate negation from tense and modal heads, so
+  the absence of modal auxiliaries ((9) and (10)) and the ban on past-oriented complements ((5))
+  stay in the prose and in `intention_future`.
+* The two heads are stated over abstract eventualities and worlds, with the content background,
+  the circumstantial base and the inertial ordering as anchoring functions of the state.
+* The examples are `Data.Examples.FuscoSgrizzi2026`; the lexical entries are those of
+  `Fragments/Italian/Predicates.lean`.
+
+## References
+
+* [fusco-sgrizzi-2026]
+* [grano-2024]
+* [searle-1983]
+* [wurmbrand-2014]
+* [dowty-1979]
+* [kratzer-2013]
+* [hacquard-2010]
+* [rizzi-1997]
 -/
 
 namespace FuscoSgrizzi2026
 
-open Modality Modality.Kratzer
-open Minimalist (ComplementSize fValue)
-open Italian.Predicates (InfComplementizer convincere credere)
+open Modality Modality.Kratzer Minimalist Italian.Predicates Data.Examples
 
-/-! ## Readings from complement size
+section Semantics
 
-The paper's structural hypothesis: a single *rational attitude*
-semantics whose belief or intention construal is fixed by complement
-size. A phase-sized (CP) complement is existentially closed into a
-proposition and evaluated against doxastic content; a smaller
-complement leaves the event variable open and is evaluated against
-inertial continuation. -/
+variable {I V W : Type*}
 
-/-- The two construals of a rational attitude verb: propositional
-    belief, evaluated against doxastic content, or sub-propositional
-    intention, evaluated against inertial continuation. -/
-inductive Reading where
+/-- Existential closure of the eventuality argument of a bare infinitive, the paper's (23b): the
+head a *di*-infinitive contains and an *a*-infinitive lacks. -/
+def closure (P : V → W → Prop) : W → Prop := λ w => ∃ e, P e w
+
+/-- The head *a* (25): anchored to the attitude state, it is necessity over the state's inertia
+worlds, the best worlds of a circumstantial base under an inertial ordering ([dowty-1979],
+[kratzer-2013]), with the eventuality of its complement bound to the state by the causal
+relation. -/
+def aP (circumstances : AnchoringFn V W) (inertia : OrderingFn V W)
+    (causeStar : V → V → W → Prop) (P : V → W → Prop) (s : V) (w : W) : Prop :=
+  necessity (circumstances s) (inertia s) (λ w' => ∃ e, causeStar s e w' ∧ P e w') w
+
+/-- The head *di* (26): necessity over the state's content worlds of a proposition. -/
+def diP (content : AnchoringFn V W) (Q : W → Prop) (s : V) (w : W) : Prop :=
+  simpleNecessity (content s) Q w
+
+/-- The relations the denotation (24) draws on: convincing events, the thematic relations,
+causation between eventualities, and the class of rational attitudes. -/
+structure Frame (I V W : Type*) where
+  convince : V → W → Prop
+  agent : V → I → W → Prop
+  patient : V → I → W → Prop
+  cause : V → V → Prop
+  rationalAttitude : V → Prop
+  experiencer : I → V → Prop
+
+/-- ⟦convincere⟧ (24): an event of `y` convincing `x` causes a rational-attitude state of `x`
+with the property `P` the complement supplies. -/
+def Frame.convincere (F : Frame I V W) (P : V → Prop) (x y : I) (e : V) (w : W) : Prop :=
+  ∃ s, F.convince e w ∧ F.agent e y w ∧ F.patient e x w ∧ F.cause e s ∧ F.rationalAttitude s ∧
+    F.experiencer x s ∧ P s
+
+variable (F : Frame I V W) (content circumstances : AnchoringFn V W) (inertia : OrderingFn V W)
+  (causeStar : V → V → W → Prop) (P : V → W → Prop) (x y : I) (e : V) (w : W)
+
+/-- The belief report: *convincere* with the *di*-complement, the closed proposition held at the
+state's content worlds. -/
+def beliefReport : Prop := F.convincere (λ s => diP content (closure P) s w) x y e w
+
+/-- The intention report: *convincere* with the *a*-complement. -/
+def intentionReport : Prop := F.convincere (λ s => aP circumstances inertia causeStar P s w) x y e w
+
+/-- Causal self-referentiality: an intention report puts the attitude state in a causal chain to
+the intended event throughout the state's inertia worlds. -/
+theorem intention_causal (h : intentionReport F circumstances inertia causeStar P x y e w) :
+    ∃ s, F.cause e s ∧
+      ∀ w', kratzerBestR (circumstances s) (inertia s) w w' → ∃ e', causeStar s e' w' ∧ P e' w' :=
+  let ⟨s, _, _, _, hc, _, _, ha⟩ := h
+  ⟨s, hc, ha⟩
+
+/-- Future orientation: when causes precede their effects, the intended event of an intention
+report lies after the attitude state in every inertia world, which excludes a past-oriented
+complement, as in (5b). -/
+theorem intention_future {T : Type*} [Preorder T] (τ : V → T)
+    (hτ : ∀ s e' w', causeStar s e' w' → τ s < τ e')
+    (h : intentionReport F circumstances inertia causeStar P x y e w) :
+    ∃ s, F.cause e s ∧
+      ∀ w', kratzerBestR (circumstances s) (inertia s) w w' → ∃ e', τ s < τ e' ∧ P e' w' :=
+  let ⟨s, hc, ha⟩ := intention_causal F circumstances inertia causeStar P x y e w h
+  ⟨s, hc, λ w' hw' => let ⟨e', hce, hP⟩ := ha w' hw'; ⟨e', hτ s e' w' hce, hP⟩⟩
+
+end Semantics
+
+/-! ### Readings from complement size -/
+
+/-- The two construals of a rational attitude. -/
+inductive Reading
   | belief
   | intention
   deriving DecidableEq, Repr
 
-/-- The construal determined by complement size: a phase-sized (CP)
-    complement is read as belief, a smaller one as intention. -/
+/-- The reading a complement size yields: a phase-sized complement carries the closure head and
+is read as belief, a smaller one as intention. -/
 def readingFromSize (cs : ComplementSize) : Reading :=
-  if cs.isPhaseSized then .belief else .intention
+  if ComplementSize.cP ≤ cs then .belief else .intention
 
-/-- Complement size determines the construal, with the CP phase
-    boundary as the threshold. -/
-theorem readingFromSize_eq_belief_iff (cs : ComplementSize) :
-    readingFromSize cs = .belief ↔ fValue .C ≤ cs.fLevel := by
-  unfold readingFromSize
-  cases h : cs.isPhaseSized <;>
-    simp_all [ComplementSize.isPhaseSized]
-
-/-! ## The Italian *di*/*a* alternation
-
-The paper's core data: *di*-infinitives are CP-sized (their ex. 22
-places *a*-infinitives at aP, mapped here to the nearest available
-`ComplementSize` below the CP threshold), so the *di*/*a* choice
-deterministically fixes the reading of *convincere*-type verbs. The
-lexical entries live in `Fragments/Italian/Predicates.lean`. -/
-
-/-- The complement size selected by each Italian infinitival
-    complementizer. -/
+/-- The complement each infinitival complementizer selects: *di* a CP (21), *a* a projection
+below tense with negation as its highest head (22). -/
 def InfComplementizer.complementSize : InfComplementizer → ComplementSize
   | .di => .cP
-  | .a_ => .vP
+  | .a_ => ⟨.Neg⟩
 
-/-- The reading derived from each complementizer. -/
-def InfComplementizer.reading : InfComplementizer → Reading :=
-  readingFromSize ∘ InfComplementizer.complementSize
+/-- The reading each complementizer yields. -/
+def InfComplementizer.reading (c : InfComplementizer) : Reading :=
+  readingFromSize (InfComplementizer.complementSize c)
 
-/-- *di*-infinitives yield belief readings. -/
-theorem di_yields_belief : InfComplementizer.reading .di = .belief := by decide
-
-/-- *a*-infinitives yield intention readings. -/
-theorem a_yields_intention : InfComplementizer.reading .a_ = .intention := by decide
-
-/-- *convincere* supports both readings, one per complementizer. -/
-theorem convincere_dual_reading :
+/-- *convincere* has both readings, one per complementizer. -/
+theorem convincere_readings :
     convincere.infComplements.map InfComplementizer.reading = [.belief, .intention] := by
   decide
 
-/-- *credere* supports only the belief reading. -/
-theorem credere_belief_only :
-    credere.infComplements.map InfComplementizer.reading = [.belief] := by
+/-- *credere* 'believe' has the belief reading only. -/
+theorem credere_readings : credere.infComplements.map InfComplementizer.reading = [.belief] := by
   decide
 
-/-- The *di*/*a* alternation in *convincere* is structurally grounded:
-    the two complementizers select different complement sizes, which
-    deterministically map to different readings. -/
-theorem convincere_alternation_is_structural :
-    InfComplementizer.complementSize .di ≠ InfComplementizer.complementSize .a_ ∧
-    InfComplementizer.reading .di ≠ InfComplementizer.reading .a_ := by
+/-! ### The diagnostics of sections 3 and 3.1 -/
+
+/-- A property of an infinitival complement the paper tests. -/
+inductive Diagnostic
+  | belief
+  | intention
+  | truthAssessable
+  | subjectControl
+  | passive
+  | aspectual
+  | negation
+  | independentTime
+  | cliticClimbing
+  deriving DecidableEq, Repr
+
+/-- What complement size predicts for a diagnostic: the readings by the phase threshold; truth
+assessment by propositionality; subject control by the finiteness head that hosts the logophoric
+centre ([rizzi-1997]); passive, low aspectual verbs and negation by the Voice, v and negation
+heads; a temporal domain of its own by structure above vP; clitic climbing by a complement no
+larger than vP. -/
+def Diagnostic.Predicted : Diagnostic → ComplementSize → Prop
+  | .belief, cs => readingFromSize cs = .belief
+  | .intention, cs => readingFromSize cs = .intention
+  | .truthAssessable, cs => .cP ≤ cs
+  | .subjectControl, cs => .finP ≤ cs
+  | .passive, cs => ⟨.Voice⟩ ≤ cs
+  | .aspectual, cs => .vP ≤ cs
+  | .negation, cs => ⟨.Neg⟩ ≤ cs
+  | .independentTime, cs => .vP < cs
+  | .cliticClimbing, cs => cs ≤ .vP
+
+instance (d : Diagnostic) (cs : ComplementSize) : Decidable (d.Predicted cs) := by
+  cases d <;> unfold Diagnostic.Predicted <;> infer_instance
+
+/-- A sentence of the paper: the size of its infinitival complement, the diagnostic it tests, and
+whether it is grammatical. -/
+structure Row where
+  size : ComplementSize
+  diagnostic : Diagnostic
+  grammatical : Bool
+  deriving DecidableEq
+
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let s ← ex.parse? "size" [("cP", InfComplementizer.complementSize .di),
+    ("aP", InfComplementizer.complementSize .a_), ("vP", ComplementSize.vP)]
+  let d ← ex.parse? "diagnostic" [("belief", Diagnostic.belief), ("intention", .intention),
+    ("truthAssessable", .truthAssessable), ("subjectControl", .subjectControl),
+    ("passive", .passive), ("aspectual", .aspectual), ("negation", .negation),
+    ("independentTime", .independentTime), ("cliticClimbing", .cliticClimbing)]
+  let g ← ex.parse? "grammatical" [("yes", true), ("no", false)]
+  pure ⟨s, d, g⟩
+
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- The paper's sentences are grammatical exactly where complement size predicts. -/
+theorem rows_predicted : ∀ r ∈ rows, (r.grammatical = true ↔ r.diagnostic.Predicted r.size) := by
   decide
-
-variable {W : Type*}
-
-/-- Inertial modal parameters: circumstantial base + inertial ordering. -/
-structure InertialParams (W : Type*) where
-  /-- Circumstantial modal base: facts holding at the evaluation world. -/
-  circumstances : ModalBase W
-  /-- Inertial ordering: propositions describing normal continuation. -/
-  inertia : OrderingSource W
-
-/-- Extract Kratzer parameters from inertial parameters. -/
-def InertialParams.toKratzer (p : InertialParams W) : KratzerParams W where
-  base := p.circumstances
-  ordering := p.inertia
-
-/-- Inertial necessity: `p` holds in all best (most inertial) circumstantially
-    accessible worlds. For intention readings: in all worlds where the
-    experiencer's current course of action continues uninterrupted, the
-    intended event obtains. -/
-def inertialNecessity (p : InertialParams W) (prop : W → Prop) (w : W) : Prop :=
-  necessity p.circumstances p.inertia prop w
-
-/-- Inertial possibility: `p` holds in some best circumstantially accessible
-    world. -/
-def inertialPossibility (p : InertialParams W) (prop : W → Prop) (w : W) : Prop :=
-  possibility p.circumstances p.inertia prop w
-
-/-- Inertial modality satisfies modal duality: `□p ↔ ¬◇¬p`. -/
-theorem inertial_duality (p : InertialParams W) (prop : W → Prop) (w : W) :
-    inertialNecessity p prop w ↔ ¬ inertialPossibility p (fun w' => ¬ prop w') w :=
-  Kratzer.duality p.circumstances p.inertia prop w
-
-/-- With empty inertial ordering, inertial modality reduces to simple
-    circumstantial necessity (no preference among accessible worlds). -/
-theorem empty_inertia_is_simple (circ : ModalBase W) (prop : W → Prop) (w : W) :
-    inertialNecessity ⟨circ, emptyBackground⟩ prop w ↔
-    simpleNecessity circ prop w := by
-  simp only [inertialNecessity, necessity, simpleNecessity,
-             ModalLogic.box]
-  constructor
-  · intro h j hj
-    exact h j ((kratzerBestR_empty circ w j).mpr hj)
-  · intro h j hj
-    exact h j ((kratzerBestR_empty circ w j).mp hj)
-
-/-- Inertial modality maps to the circumstantial flavor tag. Both inertial
-    and teleological modality concern what happens given the facts — they
-    differ only in ordering source, not modal base. -/
-def InertialParams.flavorTag : ModalFlavor := .circumstantial
-
-/-! ## The single denotation of *convincere* (ex. 24)
-
-⟦convincere⟧ = λP.λx.λy.λe. ∃e'. Convince(e) ∧ Agent(e,y) ∧ Patient(e,x)
-∧ CAUSE(e,e') ∧ RATIONAL-ATTITUDE(e') ∧ Experiencer(x,e') ∧ P(e').
-The parameter P is supplied by the complement: a *di*-infinitive (CP)
-is existentially closed, yielding the belief reading; an
-*a*-infinitive (aP) leaves the event variable open, yielding the
-intention reading. The belief/intention split is compositional — one
-verb, two complement sizes. -/
-
-/-- A causative attitude verb: the agent causes the experiencer to
-    enter a rational attitude state whose content is the complement
-    predicate. -/
-structure CausativeAttitude (E T : Type*) [LinearOrder T] where
-  /-- The verb's descriptive predicate (Convince). -/
-  verbPred : Event T → Prop
-  /-- The agent of the matrix event. -/
-  agent : E
-  /-- The patient of the matrix event and experiencer of the attitude. -/
-  experiencer : E
-  /-- Agent thematic role. -/
-  isAgent : Event T → E → Prop
-  /-- Patient thematic role. -/
-  isPatient : Event T → E → Prop
-  /-- Experiencer thematic role, on the attitude event. -/
-  isExperiencer : Event T → E → Prop
-  /-- The matrix event causally brings about the attitude state. -/
-  cause : Event T → Event T → Prop
-
-variable {E T : Type*} [LinearOrder T]
-
-/-- The verb applied to a complement predicate `P`: some matrix event
-    causes a stative rational-attitude event satisfying `P`. -/
-def CausativeAttitude.denote (v : CausativeAttitude E T)
-    (P : Event T → Prop) : Prop :=
-  ∃ e e' : Event T,
-    v.verbPred e ∧ v.isAgent e v.agent ∧ v.isPatient e v.experiencer ∧
-    v.cause e e' ∧ e'.sort = .state ∧
-    v.isExperiencer e' v.experiencer ∧ P e'
-
-/-- Belief reading: the CP complement is existentially closed into a
-    proposition, evaluated against doxastic content. -/
-def CausativeAttitude.beliefReading (v : CausativeAttitude E T)
-    (embeddedVP : Event T → Prop) : Prop :=
-  v.denote (fun _ => ∃ e : Event T, embeddedVP e)
-
-/-- Intention reading: the sub-CP complement is applied directly as an
-    event predicate, evaluated against inertial continuation. -/
-def CausativeAttitude.intentionReading (v : CausativeAttitude E T)
-    (embeddedVP : Event T → Prop) : Prop :=
-  v.denote embeddedVP
-
-/-- The paper's central claim (ex. 24): both readings are the one
-    `denote` applied to different complement predicates — the
-    belief/intention split is compositional, not lexical. -/
-theorem CausativeAttitude.readings_from_single_denote
-    (v : CausativeAttitude E T) (VP : Event T → Prop) :
-    v.beliefReading VP = v.denote (fun _ => ∃ e, VP e) ∧
-    v.intentionReading VP = v.denote VP :=
-  ⟨rfl, rfl⟩
-
-/-! ## Reading diagnostics
-
-The paper's empirical differentiators of the two construals: belief
-readings are truth-assessable and host modal auxiliaries; intention
-readings are obligatorily future-oriented and object-control. -/
-
-/-- "It's true/false" can felicitously evaluate a belief but not an
-    intention. -/
-def truthAssessable : Reading → Bool
-  | .belief => true
-  | .intention => false
-
-/-- CP complements host modal auxiliary heads; sub-CP complements
-    lack the structural space. -/
-def allowsModalAux : Reading → Bool
-  | .belief => true
-  | .intention => false
-
-/-- The intended event is projected into inertia worlds, so intention
-    readings are obligatorily future-oriented. -/
-def forcedFutureOrientation : Reading → Bool
-  | .belief => false
-  | .intention => true
-
-/-- The experiencer must be the agent of the intended event, so
-    intention readings are obligatorily object-control. -/
-def objectControlOnly : Reading → Bool
-  | .belief => false
-  | .intention => true
-
-/-! ## Connection to Grano 2024: size → reading → mood
-
-[grano-2024]'s hybrid-predicate analysis (his §6.2) and this paper's
-complement-size analysis make the same prediction: the complement's
-structural size determines whether the reading is intentional
-(requiring eventuality abstraction, hence subjunctive) or
-propositional (existentially closed, hence indicative-compatible).
-`readingFromSize` composed with `readingToDeparture` and
-`Grano2024.DepartureKind.moodPrediction` gives the end-to-end chain
-complement size → reading → departure kind → mood prediction. -/
-
-open Grano2024 (DepartureKind)
-
-/-- Map a reading to a [grano-2024] departure kind: intention readings
-    require eventuality abstraction; belief readings are the default
-    clausal semantics, no departure. -/
-def readingToDeparture : Reading → Option DepartureKind
-  | .intention => some .eventualityAbstraction
-  | .belief    => none
-
-/-- Intention readings predict robust subjunctive selection. -/
-theorem intention_predicts_subjunctive :
-    (readingToDeparture .intention).map DepartureKind.moodPrediction =
-      some .subjunctiveSelecting := rfl
-
-/-- Belief readings predict no departure (default indicative). -/
-theorem belief_predicts_no_departure :
-    readingToDeparture .belief = none := rfl
-
-/-- End-to-end: sub-CP complement → intention → eventuality
-    abstraction → robust subjunctive selection. -/
-theorem subcp_to_subjunctive :
-    readingFromSize .vP = .intention ∧
-    readingToDeparture (readingFromSize .vP) = some .eventualityAbstraction ∧
-    (readingToDeparture (readingFromSize .vP)).map DepartureKind.moodPrediction =
-      some .subjunctiveSelecting := ⟨rfl, rfl, rfl⟩
-
-/-- End-to-end: CP complement → belief → no departure. -/
-theorem cp_to_indicative :
-    readingFromSize .cP = .belief ∧
-    readingToDeparture (readingFromSize .cP) = none := ⟨rfl, rfl⟩
 
 end FuscoSgrizzi2026
