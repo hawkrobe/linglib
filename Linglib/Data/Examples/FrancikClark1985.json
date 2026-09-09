@@ -1,0 +1,1358 @@
+[
+  {
+    "id": "francikclark1985_read_newspaper",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "introduction"
+    },
+    "language": "stan1293",
+    "primaryText": "Did you happen to read in the newspaper this morning what time the governor's lecture is today?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Anne wants to know the time of a lecture announced in that morning's newspaper and thinks Bernard would tell her if only he had seen the announcement.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "perception"
+      ],
+      [
+        "obstacle",
+        "perception"
+      ],
+      [
+        "appropriate",
+        "yes"
+      ]
+    ],
+    "comment": "Conditional on the obstacle Anne sees: if he read the announcement, he tells her the time."
+  },
+  {
+    "id": "francikclark1985_want_to_tell",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "introduction"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you want to tell me what time the governor's lecture is today?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Anne wants to know the time of a lecture announced in that morning's newspaper and thinks Bernard would tell her if only he had seen the announcement.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "willingness"
+      ],
+      [
+        "obstacle",
+        "perception"
+      ],
+      [
+        "appropriate",
+        "no"
+      ]
+    ],
+    "comment": "Presupposes, contrary to her assumptions, that he knows the time but may be unwilling to tell it."
+  },
+  {
+    "id": "francikclark1985_willing_middle_name",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "introduction"
+    },
+    "language": "stan1293",
+    "primaryText": "Would you be willing to tell me your middle name?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Anne asks Bernard for his middle name, which he knows but may not care to give.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "willingness"
+      ],
+      [
+        "obstacle",
+        "willingness"
+      ],
+      [
+        "appropriate",
+        "yes"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "francikclark1985_know_middle_name",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "introduction"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you happen to know your middle name?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Anne asks Bernard for his middle name, which he knows but may not care to give.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "knowledge"
+      ],
+      [
+        "obstacle",
+        "willingness"
+      ],
+      [
+        "appropriate",
+        "no"
+      ]
+    ],
+    "comment": "The paper: \"hardly\"."
+  },
+  {
+    "id": "francikclark1985_can_unsure",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "introduction"
+    },
+    "language": "stan1293",
+    "primaryText": "Can you tell me when the governor's lecture is?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Anne is unsure whether the obstacle is Bernard's finding out the time, remembering it, or being allowed to tell it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "general"
+      ],
+      [
+        "obstacle",
+        "ability"
+      ],
+      [
+        "appropriate",
+        "yes"
+      ]
+    ],
+    "comment": "Her best description of the obstacle is that he may not be able to tell her."
+  },
+  {
+    "id": "francikclark1985_gradient1",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "introduction"
+    },
+    "language": "stan1293",
+    "primaryText": "Can you tell me when the governor's lecture is?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Anne has narrowed the obstacle down to Bernard's perhaps not having read the morning's newspaper.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "general"
+      ],
+      [
+        "obstacle",
+        "perception"
+      ],
+      [
+        "appropriate",
+        "yes"
+      ],
+      [
+        "gradient",
+        "yes"
+      ]
+    ],
+    "comment": "The gradient of specificity: each direct meaning is presupposed by the one below it."
+  },
+  {
+    "id": "francikclark1985_gradient2",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "introduction"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you know when the governor's lecture is?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Anne has narrowed the obstacle down to Bernard's perhaps not having read the morning's newspaper.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "knowledge"
+      ],
+      [
+        "obstacle",
+        "perception"
+      ],
+      [
+        "appropriate",
+        "yes"
+      ],
+      [
+        "gradient",
+        "yes"
+      ]
+    ],
+    "comment": "The gradient of specificity: each direct meaning is presupposed by the one below it."
+  },
+  {
+    "id": "francikclark1985_gradient3",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "introduction"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you happen to know when the governor's lecture is?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Anne has narrowed the obstacle down to Bernard's perhaps not having read the morning's newspaper.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "knowledge"
+      ],
+      [
+        "obstacle",
+        "perception"
+      ],
+      [
+        "appropriate",
+        "yes"
+      ],
+      [
+        "gradient",
+        "yes"
+      ]
+    ],
+    "comment": "The gradient of specificity: each direct meaning is presupposed by the one below it."
+  },
+  {
+    "id": "francikclark1985_gradient4",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "introduction"
+    },
+    "language": "stan1293",
+    "primaryText": "Did you happen to see an announcement of when the governor's lecture is?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Anne has narrowed the obstacle down to Bernard's perhaps not having read the morning's newspaper.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "perception"
+      ],
+      [
+        "obstacle",
+        "perception"
+      ],
+      [
+        "appropriate",
+        "yes"
+      ],
+      [
+        "gradient",
+        "yes"
+      ]
+    ],
+    "comment": "The gradient of specificity: each direct meaning is presupposed by the one below it."
+  },
+  {
+    "id": "francikclark1985_gradient5",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "introduction"
+    },
+    "language": "stan1293",
+    "primaryText": "Did you happen to read in the newspaper this morning when the governor's lecture is?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Anne has narrowed the obstacle down to Bernard's perhaps not having read the morning's newspaper.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "perception"
+      ],
+      [
+        "obstacle",
+        "perception"
+      ],
+      [
+        "appropriate",
+        "yes"
+      ],
+      [
+        "gradient",
+        "yes"
+      ]
+    ],
+    "comment": "The gradient of specificity: each direct meaning is presupposed by the one below it."
+  },
+  {
+    "id": "francikclark1985_remember_concert",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "abstract"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you remember what time the concert begins tonight?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The speaker thinks the addressee might not remember the time of the concert.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "memory"
+      ],
+      [
+        "obstacle",
+        "memory"
+      ],
+      [
+        "appropriate",
+        "yes"
+      ]
+    ],
+    "comment": "Means \"do you remember what time the concert begins, and if you do, please tell me\"."
+  },
+  {
+    "id": "francikclark1985_know_concert",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Experiment 1"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you know when the next orchestra concert is?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At breakfast you are talking with your roommate and want to find out the time of the next orchestra concert; the roommate may not know about it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "knowledge"
+      ],
+      [
+        "obstacle",
+        "knowledge"
+      ],
+      [
+        "appropriate",
+        "yes"
+      ]
+    ],
+    "comment": "The high-obstacle version of the scenario; the low-obstacle version adds that the roommate plays the violin in the orchestra."
+  },
+  {
+    "id": "francikclark1985_have_asked",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Experiment 1"
+    },
+    "language": "stan1293",
+    "primaryText": "Have I already asked you?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You are making conversation with your sister's boyfriend and decide to ask about his schoolwork, but you have forgotten whether that has already come up.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "speakerIgnorance"
+      ],
+      [
+        "obstacle",
+        "speakerIgnorance"
+      ],
+      [
+        "appropriate",
+        "yes"
+      ]
+    ],
+    "comment": "The form the memory scenarios were written to elicit, with \"Did you tell me?\"."
+  },
+  {
+    "id": "francikclark1985_could_give",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Experiment 1"
+    },
+    "language": "stan1293",
+    "primaryText": "Could you give me?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The addressee has the information but may not be allowed to divulge it, as doing so would violate a set policy (scenarios 11 and 12).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "general"
+      ],
+      [
+        "obstacle",
+        "permission"
+      ],
+      [
+        "appropriate",
+        "yes"
+      ]
+    ],
+    "comment": "Used by 47% of speakers at the high obstacle and 67% at the low; speakers avoided naming the obstacle itself, that the information might be forbidden to them."
+  },
+  {
+    "id": "francikclark1985_see_concert",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "General Discussion"
+    },
+    "language": "stan1293",
+    "primaryText": "Did you happen to see what time the concert begins?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Anne asks Bernard the time of the concert; he may not have seen it announced.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "perception"
+      ],
+      [
+        "obstacle",
+        "perception"
+      ],
+      [
+        "appropriate",
+        "yes"
+      ]
+    ],
+    "comment": "Helps Bernard search his memory and gives him a face-saving way out."
+  },
+  {
+    "id": "francikclark1985_want_concert",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "General Discussion"
+    },
+    "language": "stan1293",
+    "primaryText": "Don't you want to tell me what time the concert begins?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Anne asks Bernard the time of the concert; he may not have seen it announced.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "willingness"
+      ],
+      [
+        "obstacle",
+        "perception"
+      ],
+      [
+        "appropriate",
+        "no"
+      ]
+    ],
+    "comment": "Creates a scene in which Bernard would tell her the time if only he wanted to, offering no face-saving way out."
+  },
+  {
+    "id": "francikclark1985_time1",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "What time is it?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "direct"
+      ],
+      [
+        "directness",
+        "10"
+      ],
+      [
+        "producedHigh",
+        "0"
+      ],
+      [
+        "producedLow",
+        "2"
+      ]
+    ],
+    "comment": "Directness score in tenths (1.0 is most direct), from the rankings of Experiment 2; counts are the speakers out of fifteen at each obstacle level who produced the form in Experiment 1."
+  },
+  {
+    "id": "francikclark1985_time2",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you know what time it is?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "knowledge"
+      ],
+      [
+        "directness",
+        "30"
+      ],
+      [
+        "producedHigh",
+        "4"
+      ],
+      [
+        "producedLow",
+        "2"
+      ]
+    ],
+    "comment": "Directness score in tenths (1.0 is most direct), from the rankings of Experiment 2; counts are the speakers out of fifteen at each obstacle level who produced the form in Experiment 1."
+  },
+  {
+    "id": "francikclark1985_time3",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "Could you tell me what time it is?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "general"
+      ],
+      [
+        "directness",
+        "34"
+      ],
+      [
+        "producedHigh",
+        "0"
+      ],
+      [
+        "producedLow",
+        "5"
+      ]
+    ],
+    "comment": "Directness score in tenths (1.0 is most direct), from the rankings of Experiment 2; counts are the speakers out of fifteen at each obstacle level who produced the form in Experiment 1."
+  },
+  {
+    "id": "francikclark1985_time4",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you have the time?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "perception"
+      ],
+      [
+        "directness",
+        "42"
+      ],
+      [
+        "producedHigh",
+        "1"
+      ],
+      [
+        "producedLow",
+        "6"
+      ]
+    ],
+    "comment": "Directness score in tenths (1.0 is most direct), from the rankings of Experiment 2; counts are the speakers out of fifteen at each obstacle level who produced the form in Experiment 1."
+  },
+  {
+    "id": "francikclark1985_time5",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you happen to know what time it is?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "knowledge"
+      ],
+      [
+        "directness",
+        "45"
+      ],
+      [
+        "producedHigh",
+        "4"
+      ],
+      [
+        "producedLow",
+        "0"
+      ]
+    ],
+    "comment": "Directness score in tenths (1.0 is most direct), from the rankings of Experiment 2; counts are the speakers out of fifteen at each obstacle level who produced the form in Experiment 1."
+  },
+  {
+    "id": "francikclark1985_time6",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you have any idea what time it is?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "knowledge"
+      ],
+      [
+        "directness",
+        "60"
+      ],
+      [
+        "producedHigh",
+        "2"
+      ],
+      [
+        "producedLow",
+        "0"
+      ]
+    ],
+    "comment": "Directness score in tenths (1.0 is most direct), from the rankings of Experiment 2; counts are the speakers out of fifteen at each obstacle level who produced the form in Experiment 1."
+  },
+  {
+    "id": "francikclark1985_time7",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "You wouldn't happen to know the time, would you?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "knowledge"
+      ],
+      [
+        "directness",
+        "67"
+      ],
+      [
+        "producedHigh",
+        "2"
+      ],
+      [
+        "producedLow",
+        "0"
+      ]
+    ],
+    "comment": "Directness score in tenths (1.0 is most direct), from the rankings of Experiment 2; counts are the speakers out of fifteen at each obstacle level who produced the form in Experiment 1."
+  },
+  {
+    "id": "francikclark1985_time8",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you happen to have a watch, or know what time it is, or anything?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "knowledge"
+      ],
+      [
+        "directness",
+        "73"
+      ],
+      [
+        "producedHigh",
+        "1"
+      ],
+      [
+        "producedLow",
+        "0"
+      ]
+    ],
+    "comment": "Directness score in tenths (1.0 is most direct), from the rankings of Experiment 2; counts are the speakers out of fifteen at each obstacle level who produced the form in Experiment 1."
+  },
+  {
+    "id": "francikclark1985_time9",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you know if there's a clock anywhere around here?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "perception"
+      ],
+      [
+        "directness",
+        "88"
+      ],
+      [
+        "producedHigh",
+        "1"
+      ],
+      [
+        "producedLow",
+        "0"
+      ]
+    ],
+    "comment": "Directness score in tenths (1.0 is most direct), from the rankings of Experiment 2; counts are the speakers out of fifteen at each obstacle level who produced the form in Experiment 1."
+  },
+  {
+    "id": "francikclark1985_rating_ability_1",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you know X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "An ability scenario of Experiment 1, such as asking the roommate the time of the next orchestra concert: the addressee may not know the information, remember it, be able to find it out, or be allowed to give it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "knowledge"
+      ],
+      [
+        "obstacle",
+        "knowledge"
+      ],
+      [
+        "ratingHigh",
+        "552"
+      ],
+      [
+        "ratingLow",
+        "485"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  },
+  {
+    "id": "francikclark1985_rating_willingness_1",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you know X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A willingness scenario of Experiment 1, such as asking a friend whether his parents were divorced: the addressee has the information but may be reluctant to give it.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "knowledge"
+      ],
+      [
+        "obstacle",
+        "willingness"
+      ],
+      [
+        "ratingHigh",
+        "246"
+      ],
+      [
+        "ratingLow",
+        "279"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  },
+  {
+    "id": "francikclark1985_rating_memory_1",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you know X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A speaker-memory scenario of Experiment 1, such as asking your sister's boyfriend about his schoolwork: you may already have asked.",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "knowledge"
+      ],
+      [
+        "obstacle",
+        "speakerIgnorance"
+      ],
+      [
+        "ratingHigh",
+        "350"
+      ],
+      [
+        "ratingLow",
+        "361"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  },
+  {
+    "id": "francikclark1985_rating_ability_2",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Can you tell me X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "An ability scenario of Experiment 1, such as asking the roommate the time of the next orchestra concert: the addressee may not know the information, remember it, be able to find it out, or be allowed to give it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "general"
+      ],
+      [
+        "obstacle",
+        "knowledge"
+      ],
+      [
+        "ratingHigh",
+        "526"
+      ],
+      [
+        "ratingLow",
+        "533"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  },
+  {
+    "id": "francikclark1985_rating_willingness_2",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Can you tell me X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A willingness scenario of Experiment 1, such as asking a friend whether his parents were divorced: the addressee has the information but may be reluctant to give it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "general"
+      ],
+      [
+        "obstacle",
+        "willingness"
+      ],
+      [
+        "ratingHigh",
+        "419"
+      ],
+      [
+        "ratingLow",
+        "503"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  },
+  {
+    "id": "francikclark1985_rating_memory_2",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Can you tell me X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A speaker-memory scenario of Experiment 1, such as asking your sister's boyfriend about his schoolwork: you may already have asked.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "general"
+      ],
+      [
+        "obstacle",
+        "speakerIgnorance"
+      ],
+      [
+        "ratingHigh",
+        "458"
+      ],
+      [
+        "ratingLow",
+        "475"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  },
+  {
+    "id": "francikclark1985_rating_ability_3",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Could you tell me X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "An ability scenario of Experiment 1, such as asking the roommate the time of the next orchestra concert: the addressee may not know the information, remember it, be able to find it out, or be allowed to give it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "general"
+      ],
+      [
+        "obstacle",
+        "knowledge"
+      ],
+      [
+        "ratingHigh",
+        "512"
+      ],
+      [
+        "ratingLow",
+        "549"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  },
+  {
+    "id": "francikclark1985_rating_willingness_3",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Could you tell me X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A willingness scenario of Experiment 1, such as asking a friend whether his parents were divorced: the addressee has the information but may be reluctant to give it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "general"
+      ],
+      [
+        "obstacle",
+        "willingness"
+      ],
+      [
+        "ratingHigh",
+        "456"
+      ],
+      [
+        "ratingLow",
+        "514"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  },
+  {
+    "id": "francikclark1985_rating_memory_3",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Could you tell me X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A speaker-memory scenario of Experiment 1, such as asking your sister's boyfriend about his schoolwork: you may already have asked.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "general"
+      ],
+      [
+        "obstacle",
+        "speakerIgnorance"
+      ],
+      [
+        "ratingHigh",
+        "472"
+      ],
+      [
+        "ratingLow",
+        "481"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  },
+  {
+    "id": "francikclark1985_rating_ability_4",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Would you mind telling me X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "An ability scenario of Experiment 1, such as asking the roommate the time of the next orchestra concert: the addressee may not know the information, remember it, be able to find it out, or be allowed to give it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "willingness"
+      ],
+      [
+        "obstacle",
+        "knowledge"
+      ],
+      [
+        "ratingHigh",
+        "429"
+      ],
+      [
+        "ratingLow",
+        "507"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  },
+  {
+    "id": "francikclark1985_rating_willingness_4",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Would you mind telling me X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A willingness scenario of Experiment 1, such as asking a friend whether his parents were divorced: the addressee has the information but may be reluctant to give it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "willingness"
+      ],
+      [
+        "obstacle",
+        "willingness"
+      ],
+      [
+        "ratingHigh",
+        "550"
+      ],
+      [
+        "ratingLow",
+        "572"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  },
+  {
+    "id": "francikclark1985_rating_memory_4",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Would you mind telling me X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A speaker-memory scenario of Experiment 1, such as asking your sister's boyfriend about his schoolwork: you may already have asked.",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "willingness"
+      ],
+      [
+        "obstacle",
+        "speakerIgnorance"
+      ],
+      [
+        "ratingHigh",
+        "330"
+      ],
+      [
+        "ratingLow",
+        "356"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  },
+  {
+    "id": "francikclark1985_rating_ability_5",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Have you already told me X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "An ability scenario of Experiment 1, such as asking the roommate the time of the next orchestra concert: the addressee may not know the information, remember it, be able to find it out, or be allowed to give it.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "speakerIgnorance"
+      ],
+      [
+        "obstacle",
+        "knowledge"
+      ],
+      [
+        "ratingHigh",
+        "178"
+      ],
+      [
+        "ratingLow",
+        "197"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  },
+  {
+    "id": "francikclark1985_rating_willingness_5",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Have you already told me X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A willingness scenario of Experiment 1, such as asking a friend whether his parents were divorced: the addressee has the information but may be reluctant to give it.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "speakerIgnorance"
+      ],
+      [
+        "obstacle",
+        "willingness"
+      ],
+      [
+        "ratingHigh",
+        "215"
+      ],
+      [
+        "ratingLow",
+        "235"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  },
+  {
+    "id": "francikclark1985_rating_memory_5",
+    "source": {
+      "bibkey": "francik-clark-1985",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Have you already told me X?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A speaker-memory scenario of Experiment 1, such as asking your sister's boyfriend about his schoolwork: you may already have asked.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "query",
+        "speakerIgnorance"
+      ],
+      [
+        "obstacle",
+        "speakerIgnorance"
+      ],
+      [
+        "ratingHigh",
+        "525"
+      ],
+      [
+        "ratingLow",
+        "306"
+      ]
+    ],
+    "comment": "Mean appropriateness rating on a seven-point scale, in hundredths, at the high and low obstacle levels; the judgment summarizes the high-obstacle rating (4 and above acceptable, 3 and above marginal). X is the continuation written for each scenario."
+  }
+]
