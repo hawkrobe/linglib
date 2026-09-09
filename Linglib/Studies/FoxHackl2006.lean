@@ -3,40 +3,33 @@ import Linglib.Semantics.Alternatives.Extremum
 import Linglib.Logic.Modal.Defs
 
 /-!
-# Fox and Hackl 2006: the universal density of measurement
+# Fox and Hackl (2006): The Universal Density of Measurement
 
-This file formalizes the paper's Universal Density of Measurement — measurement scales in natural
-language semantics are always dense — and the single mechanism it drives through scalar
-implicatures, *only*, degree questions and definite descriptions. Each of the four maximizes a
-property of degrees with MAXinf, the most informative true degree (`Alternatives.IsMaxInf`), and
-the Constraint on Interval Maximization says this fails on a property that necessarily describes
-an open interval (`IsNecessarilyOpen`). On a strictly antitone family the most informative degree
-is the greatest true one (`Alternatives.hasMaxInf_iff_isGreatest`), so density removes it exactly
-when the true set is open at its informative end; a universal modal can close the interval and an
-existential modal cannot. A bare numeral's *at least d* is closed at the count
-(`Alternatives.hasMaxInf_ge_over`), exhaustification is MAXinf
-(`Alternatives.exhChain_iff_isMaxInf`), and the paper's example sentences are the rows of
-`Examples.all`.
+This file formalizes [fox-hackl-2006]'s Universal Density of Measurement, the claim that the
+measurement scales of natural language semantics are dense, and the single mechanism it drives
+through scalar implicatures, *only*, degree questions and definite descriptions. Each maximizes
+a property of degrees with MAXinf, the most informative true degree (`Alternatives.IsMaxInf`),
+and the Constraint on Interval Maximization, `not_hasMaxInf_of_isNecessarilyOpen`, says this
+fails on a property that necessarily describes an open interval. *More than d* and *not … d*
+are such properties, so they carry no implicature, reject *only*, and make negative islands; a
+universal modal closes the interval (`hasMaxInf_box`) and an existential modal does not
+(`not_isGreatest_diamond`); at cardinality granularity *more than n* exhaustifies to
+*exactly n + 1* (`moreThan_exact_nat`).
 
-## Main results
+## Implementation notes
 
-* `not_hasMaxInf_of_isNecessarilyOpen`, `not_hasMaxInf_of_isNecessarilyOpenBelow`: the
-  Constraint on Interval Maximization for upward and downward monotone properties.
-* `moreThan_not_hasMaxInf`, `negation_not_hasMaxInf`: *more than d* has no most informative
-  degree (no implicature, no *only*), and neither does *not … d* (negative islands).
-* `hasMaxInf_box`, `not_isGreatest_diamond` and their duals: a universal modal closes the
-  interval, an existential modal does not.
-* `moreThan_exact_nat`: at cardinality granularity *more than n* exhaustifies to
-  *exactly n + 1*.
+On a strictly antitone family the most informative degree is the greatest true one
+(`Alternatives.hasMaxInf_iff_isGreatest`), so density removes it exactly when the true set is
+open at its informative end; the downward-monotone cases are the order duals. The paper's
+example sentences are the rows of `Examples.all`.
 
 ## References
 
-* [D. Fox and M. Hackl, *The universal density of measurement* (2006)][fox-hackl-2006]
-* [H. Rullmann, *Maximality in the semantics of wh-constructions* (1995)][rullmann-1995]
-* [S. Beck and H. Rullmann, *A flexible approach to exhaustivity in questions*
-  (1999)][beck-rullmann-1999]
-* [V. Dayal, *Locality in WH quantification* (1996)][dayal-1996]
-* [M. Hackl, *Comparative quantifiers* (2000)][hackl-2000]
+* [fox-hackl-2006]
+* [rullmann-1995]
+* [beck-rullmann-1999]
+* [dayal-1996]
+* [hackl-2000]
 -/
 
 namespace FoxHackl2006
