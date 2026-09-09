@@ -16,14 +16,15 @@ on a struct.
 
 ## Inventory provenance
 
-- 27 core entries from [downing-1996] (UNVERIFIED: claimed to be
-  Table 1.1 by the prior fragment file; cited tables/page numbers not
-  cross-checked against the monograph).
-- 6 extended entries from [downing-1996] (UNVERIFIED: claimed to be
-  Table 1.2; same caveat).
-- 3 additional entries (`rin`, `kumi`, `daasu`) from [sudo-2016]
-  worked examples (eq. 4 for `-rin`, eq. 9a for `-kumi`, eq. 9b for
-  `-daasu` — verified against the PDF).
+- The 27 core entries are [downing-1996]'s Table 1.1, the forms every one of
+  its fifteen questionnaire respondents used.
+- The 6 extended entries (`sao`, `wa`, `furi`, `zen`, `kyaku`, `rin`) are drawn
+  from the 47 forms of [downing-1996]'s Table 1.2, the forms a majority of its
+  respondents used; `rin` is also [sudo-2016]'s worked example (eq. 4).
+- `kumi` and `daasu` are [sudo-2016]'s worked examples of non-atomic
+  classifiers (eqs. 9a, 9b) and `hai` the textbook counter of cupfuls; all
+  three lie outside [downing-1996]'s definition, which excludes groupings,
+  standard measures and containers (Chapter 1).
 
 ## Out of scope
 
@@ -53,38 +54,39 @@ inductive Classifier where
   -- core — function
   | dai | kenBuilding | kenIncident | ki | ku | kyoku | mon | mune
   | seki | soku | soo | ten | toori | tsuu | kabu | shoku | teki
-  -- Downing 1996 extended inventory
-  | sao | wa | furi | zen | kyaku | hai
-  -- Sudo 2016 worked examples (eqs. 4, 9a, 9b)
-  | rin | kumi | daasu
+  -- Downing 1996 extended inventory, Table 1.2
+  | sao | wa | furi | zen | kyaku | rin
+  -- outside Downing's definition: the textbook `hai`, Sudo 2016's `kumi`, `daasu`
+  | hai | kumi | daasu
   deriving DecidableEq, Repr, BEq
 
 namespace Classifier
 
-/-- The 27 core classifiers from [downing-1996] (UNVERIFIED: Table 1.1). -/
+/-- The 27 core classifiers of [downing-1996], Table 1.1. -/
 def core : List Classifier :=
   [.tsu, .nin, .mei, .hiki, .tou,
    .hon, .mai, .ko, .satsu, .tsubu,
    .dai, .kenBuilding, .kenIncident, .ki, .ku, .kyoku, .mon, .mune,
    .seki, .soku, .soo, .ten, .toori, .tsuu, .kabu, .shoku, .teki]
 
-/-- The 6 extended classifiers from [downing-1996] (UNVERIFIED: Table 1.2). -/
+/-- The classifiers carried from [downing-1996]'s extended inventory, Table 1.2. -/
 def extended : List Classifier :=
-  [.sao, .wa, .furi, .zen, .kyaku, .hai]
+  [.sao, .wa, .furi, .zen, .kyaku, .rin]
 
-/-- The 3 additional classifiers from [sudo-2016]'s worked examples
-    (eqs. 4, 9a, 9b): `-rin` (flowers), `-kumi` (pair), `-daasu` (dozen). -/
-def sudoAdditions : List Classifier :=
-  [.rin, .kumi, .daasu]
+/-- The counters outside [downing-1996]'s definition: the textbook `-hai`
+    (cupful), and [sudo-2016]'s non-atomic `-kumi` (pair) and `-daasu`
+    (dozen), eqs. 9a and 9b. -/
+def additions : List Classifier :=
+  [.hai, .kumi, .daasu]
 
-/-- The full inventory: Downing core ++ Downing extended ++ Sudo additions.
+/-- The full inventory: Downing core ++ Downing extended ++ additions.
     Source-of-truth for consumer iteration (lookup, aggregations) and the
     `Fintype` instance. -/
-def all : List Classifier := core ++ extended ++ sudoAdditions
+def all : List Classifier := core ++ extended ++ additions
 
 theorem all_nodup : all.Nodup := by decide
 
-theorem mem_all (c : Classifier) : c ∈ all := by cases c <;> simp [all, core, extended, sudoAdditions]
+theorem mem_all (c : Classifier) : c ∈ all := by cases c <;> simp [all, core, extended, additions]
 
 end Classifier
 
@@ -173,9 +175,9 @@ def encodes : Classifier → List Classifier.Parameter
   | .kyoku => [.function]
   | .mon => [.function]
   | .mune => [.function]
-  | .seki => [.function]
+  | .seki => [.function, .size]
   | .soku => [.function, .arrangement]
-  | .soo => [.function]
+  | .soo => [.function, .size]
   | .ten => [.function]
   | .toori => [.function]
   | .tsuu => [.function]
@@ -251,8 +253,7 @@ def allEncodedParams : List Classifier.Parameter :=
 
 /-! ## §6: Structural theorems -/
 
-/-- The inventory has 36 classifiers (27 Downing core + 6 Downing extended +
-    3 Sudo examples). -/
+/-- The inventory has 36 classifiers (27 core + 6 extended + 3 additions). -/
 theorem inventory_size : all.length = 36 := by decide
 
 /-- The default classifier exists and is `tsu`. -/
