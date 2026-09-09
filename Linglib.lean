@@ -295,6 +295,7 @@ import Linglib.Core.Probability.Constructions
 import Linglib.Core.Probability.Decision.Basic
 import Linglib.Core.Probability.Decision.Blackwell
 import Linglib.Core.Probability.Decision.Duality
+import Linglib.Core.Probability.Decision.ExperimentDesign
 import Linglib.Core.Probability.DirichletMultinomial
 import Linglib.Core.Probability.Distributions.Bernoulli
 import Linglib.Core.Probability.Finite
@@ -2133,7 +2134,7 @@ import Linglib.Studies.DeoThomas2025
 import Linglib.Studies.DinisJacinto2026
 import Linglib.Studies.Dixon1994
 import Linglib.Studies.Dolatian2020
-import Linglib.Studies.DongEtAl2026PMF
+import Linglib.Studies.DongEtAl2026
 import Linglib.Studies.Downing1996
 import Linglib.Studies.Dowty1991
 import Linglib.Studies.Dunn2025
