@@ -77,8 +77,8 @@ Things this formalization is silent on, by design:
    gradient-OCP instance in
    `Studies/FrischPierrehumbertBroe2004.lean`,
    which formalises [frisch-pierrehumbert-broe-2004]'s
-   natural-classes similarity metric (eq. 7) and proves no
-   similarity-threshold TSL_2 grammar can match three Table IV bins.
+   natural-classes similarity metric (eq. 7) and proves that no
+   two-valued categorical predictor fits its worked root types.
    Closely related: the autosegmental/feature-geometry tradition
    ([sagey-1986]) treats the harmonizing feature itself as a
    tier-resident object; that representational layer is upstream of
