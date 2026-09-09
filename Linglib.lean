@@ -2160,7 +2160,7 @@ import Linglib.Studies.FarkasBruce2010
 import Linglib.Studies.FarkasRoelofsen2017
 import Linglib.Studies.Faust2026
 import Linglib.Studies.FaustLampitelli2026
-import Linglib.Studies.FedzechkinaEtAl2017
+import Linglib.Studies.FedzechkinaChuJaeger2018
 import Linglib.Studies.Ferreira2023
 import Linglib.Studies.Filip2012
 import Linglib.Studies.FillmoreKayOConnor1988
