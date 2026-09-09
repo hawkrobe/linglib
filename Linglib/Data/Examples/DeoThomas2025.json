@@ -1,338 +1,1271 @@
 [
   {
-    "id": "deothomas2025_complement_exclusion_vacation",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.1 — complement exclusion"},
+    "id": "deothomas2025_1a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(1a)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "She just went to Spain and Portugal",
+    "primaryText": "Mary invited just John and Mike.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "She just went to Spain and Portugal",
-    "context": "Where did Mary go for her vacation this year?",
+    "translation": "",
+    "context": "A: Who did Mary invite to the party?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "She only went to Spain and Portugal", "judgment": "acceptable"}
+      {"form": "Mary invited only John and Mike.", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
       ["flavor", "complementExclusion"],
-      ["only_ok", "true"],
-      ["context_type", "answerable"]
+      ["only", "yes"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean complementExclusion_vacation. Inference: Mary did not go to any country other than Spain and Portugal. The alternatives field carries the #only substitution test (here felicitous)."
+    "comment": "The complement exclusion reading, the label of Coppock and Beaver 2014.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_rank_order_intern",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.1 — rank order"},
+    "id": "deothomas2025_1b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(1b)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "She is just an intern",
+    "primaryText": "No, John is just a sophomore.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "She is just an intern",
-    "context": "What is Mary's job at the hospital?",
+    "translation": "",
+    "context": "A: Is John graduating this Spring?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "She is only an intern", "judgment": "acceptable"}
+      {"form": "No, John is only a sophomore.", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
       ["flavor", "rankOrder"],
-      ["only_ok", "true"],
-      ["context_type", "answerable"]
+      ["only", "yes"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean rankOrder_intern. Inference: Mary is nothing more senior than an intern."
+    "comment": "The rank-order reading: nothing more than the prejacent on a contextual scale that orders propositions by rank.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_emphatic_amazing",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.2 — emphatic"},
+    "id": "deothomas2025_2d",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(2d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Just the thought of you sends shivers down my spine.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Only the thought of you sends shivers down my spine.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "minimalSufficiency"],
+      ["only", "no"]
+    ],
+    "comment": "The minimal-sufficiency use, the term of Grosz 2012: something unexpectedly low on the scale is sufficient cause for another eventuality.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_3a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She just went to Spain and Portugal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: Where did Mary go for her vacation this year?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "She only went to Spain and Portugal.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "complementExclusion"],
+      ["only", "yes"],
+      ["case", "37a"]
+    ],
+    "comment": "Mary did not go to any country other than Spain and Portugal, and was expected to go to more; the mention-all construal is the widest and answerable, §4.1, and the exhaustive interpretation is a mandatory implicature.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_3b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(3b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She is just an intern.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: What is Mary's job at the hospital?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "She is only an intern.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "rankOrder"],
+      ["only", "yes"],
+      ["case", "37a"]
+    ],
+    "comment": "Mary is nothing more senior than an intern, and her seniority was expected to be higher; the speaker may widen the domain of relevant jobs to a finer partition, (40), §4.2.1.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_4a",
+    "source": {"bibkey": "beaver-clark-2008", "paperLabel": "p. 252"},
+    "reportedIn": {"bibkey": "deo-thomas-2025", "paperLabel": "(4a)"},
+    "language": "stan1293",
+    "primaryText": "I really expected a suite but just got a single room with 2 beds.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I really expected a suite but only got a single room with 2 beds.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "exclusive"],
+      ["only", "yes"]
+    ],
+    "comment": "Web-attested expectation-lowering with an explicit stronger expectation in the context.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_4b",
+    "source": {"bibkey": "beaver-clark-2008", "paperLabel": "p. 252"},
+    "reportedIn": {"bibkey": "deo-thomas-2025", "paperLabel": "(4b)"},
+    "language": "stan1293",
+    "primaryText": "London police expected a turnout of 100000 but just 15000 showed up. What happened?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "London police expected a turnout of 100000 but only 15000 showed up. What happened?", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "exclusive"],
+      ["only", "yes"]
+    ],
+    "comment": "Web-attested expectation-lowering with an explicit stronger expectation in the context.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_5a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(5a)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "The food was just amazing!",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The food was just amazing!",
-    "context": "How good was the food?",
+    "translation": "",
+    "context": "A: How good was the food?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "#The food was only amazing!", "judgment": "unacceptable"}
+      {"form": "The food was only amazing!", "judgment": "unacceptable"}
     ],
     "readings": [],
     "paperFeatures": [
       ["flavor", "emphatic"],
-      ["only_ok", "false"],
-      ["context_type", "answerable"]
+      ["only", "no"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean emphatic_amazing. Inference: the degree of goodness exceeds contextual expectations."
+    "comment": "Paraphrase: the food was absolutely amazing; an extreme adjective in the sense of Morzycki 2012.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_emphatic_enormous",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.2 — emphatic"},
+    "id": "deothomas2025_5b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(5b)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "The Empire State Building is just gigantic!",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The Empire State Building is just gigantic!",
-    "context": "How big is the Empire State Building?",
+    "translation": "",
+    "context": "A: How big is the Empire State Building?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "#The Empire State Building is only gigantic!", "judgment": "unacceptable"}
+      {"form": "The Empire State Building is just huge!", "judgment": "acceptable"},
+      {"form": "The Empire State Building is just enormous!", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
-      ["flavor", "emphatic"],
-      ["only_ok", "false"],
-      ["context_type", "answerable"]
+      ["flavor", "emphatic"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean emphatic_enormous. Inference: the size exceeds what the speaker expected to be relevant."
+    "comment": "Paraphrase: the Empire State Building is absolutely gigantic.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_precisifying_eq_full",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.3 — precisifying (equality)"},
+    "id": "deothomas2025_6a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(6a)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "The tank is just full",
+    "primaryText": "The funeral was full of life and passion and emotional—and just every emotion you can imagine.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The tank is just full",
-    "context": "How full is the tank?",
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "emphatic"]
+    ],
+    "comment": "Corpus of Contemporary American English; emphatic just with a quantifier, whose domain is taken to be as wide as possible, §4.8.1.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_6b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(6b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "My husband had a pink bathroom with burgundy trim in his apartment in New York. Pink bathrooms are just the BEST!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "emphatic"]
+    ],
+    "comment": "Corpus of Contemporary American English; emphatic just with a superlative, whose comparison class is taken to be as wide as possible, §4.8.1.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_7a",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "corpus example"},
+    "reportedIn": {"bibkey": "deo-thomas-2025", "paperLabel": "(7a)"},
+    "language": "stan1293",
+    "primaryText": "More and more evidence shows that relatively simple changes in lifestyle can have a big impact on your blood pressure—in many cases, just as big as popping a pill.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingEquality"]
+    ],
+    "comment": "Corpus of Contemporary American English; just in an equative construction conveys that the prejacent is true at the highest permissible level of precision.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_7b",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "corpus example"},
+    "reportedIn": {"bibkey": "deo-thomas-2025", "paperLabel": "(7b)"},
+    "language": "stan1293",
+    "primaryText": "The blossoms are smaller and have longer, more trumpet-shaped blooms than the flat, flared faces of hybrid bulbs, but the stalks are apt to be just as tall.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Many gardeners are finding the new selections of miniature amaryllis more to their liking. Don't be misled by the word \"miniature.\"",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingEquality"]
+    ],
+    "comment": "Corpus of Contemporary American English.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_8a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(8a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The \"shell full\" gallonage, which is stenciled on the ends of the car, is the amount when the horizontal cylinder of the tank is just full, easily observed from the manway during filling.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingEquality"]
+    ],
+    "comment": "Web example; just with a maximum-standard adjective is equivalent to exactly full.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_8b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(8b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The tea was just right, hot and sweetened with a teaspoon tip of honey.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingEquality"]
+    ],
+    "comment": "Corpus of Contemporary American English; the precisifier exactly could be used instead.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_9a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(9a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Fafen, the daughter just older than Siri, had done the family duty and become a monk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "#The tank is only full", "judgment": "unacceptable"}
+      {"form": "Fafen, the daughter only older than Siri, had done the family duty and become a monk.", "judgment": "unacceptable"}
     ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingProximity"],
+      ["only", "no"],
+      ["case", "37a"]
+    ],
+    "comment": "Corpus of Contemporary American English, also (2b); Fafen is older than Siri by an amount relevant only at a high level of precision, the approximative use of Thomas and Deo 2020.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_9b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(9b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The camera was a plastic but weighty box just bigger than a card deck.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingProximity"]
+    ],
+    "comment": "Corpus of Contemporary American English.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_9c",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(9c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At 11, Samantha is just over 5 feet tall and has wavy black hair.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingProximity"]
+    ],
+    "comment": "Corpus of Contemporary American English.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_10a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(10a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The city was just visible in the distance.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingProximity"]
+    ],
+    "comment": "Corpus of Contemporary American English; with a minimum-standard adjective, paraphrasable by barely.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_10b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(10b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The path is just wide enough for one person.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingProximity"]
+    ],
+    "comment": "Corpus of Contemporary American English; with enough, paraphrasable by barely.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_11a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(11a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We're at a very interesting juncture just now.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingEquality"],
-      ["only_ok", "false"],
-      ["context_type", "answerable"]
+      ["domain", "temporal"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean precisifying_eq_full. Inference: the tank is full at the highest level of precision (= exactly full)."
+    "comment": "Corpus of Contemporary American English; with a temporal indexical, paraphrasable by exactly.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_precisifying_prox_older",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.3 — precisifying (proximity)"},
+    "id": "deothomas2025_11b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(11b)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Fafen is just older than Siri",
+    "primaryText": "Just then there was a knock at the door.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Fafen is just older than Siri",
-    "context": "How much older than Siri is Fafen?",
+    "translation": "",
+    "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "#Fafen is only older than Siri", "judgment": "unacceptable"}
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingEquality"],
+      ["domain", "temporal"]
     ],
+    "comment": "Corpus of Contemporary American English.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_11c",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(11c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "My sister just got here.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingProximity"],
-      ["only_ok", "false"],
-      ["context_type", "answerable"]
+      ["domain", "temporal"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean precisifying_prox_older. Inference: Fafen is older by the smallest relevant amount (= barely/slightly)."
+    "comment": "Corpus of Contemporary American English; the time elapsed since the arrival is relevant only at a high level of precision, §4.7.2.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_precisifying_temporal",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.3 — precisifying (temporal proximity)"},
+    "id": "deothomas2025_12a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(12a)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "My sister just got here",
+    "primaryText": "He could see the woman crouched above the sand just at the waterline.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "My sister just got here",
-    "context": "When did your sister get here?",
+    "translation": "",
+    "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "#My sister only got here", "judgment": "unacceptable"}
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingEquality"],
+      ["domain", "spatial"]
     ],
+    "comment": "Corpus of Contemporary American English; paraphrasable by exactly.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_12b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(12b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Just past the farmhouse front door is a small catering kitchen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingProximity"],
-      ["only_ok", "false"],
-      ["context_type", "answerable"]
+      ["domain", "spatial"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean precisifying_temporal. Inference: the arrival was at the finest temporal granularity (= just now)."
+    "comment": "Corpus of Contemporary American English; paraphrasable by slightly.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_minsuff_cat",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.4 — minimal sufficiency"},
+    "id": "deothomas2025_13a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(13a)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Just one cat will make Patrick happy",
+    "primaryText": "Just one cat will make Patrick happy.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Just one cat will make Patrick happy",
-    "context": "What is sufficient for Patrick to be happy?",
+    "translation": "",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "#Only one cat will make Patrick happy", "judgment": "unacceptable"}
+      {"form": "Only one cat will make Patrick happy.", "judgment": "unacceptable"}
     ],
     "readings": [],
     "paperFeatures": [
       ["flavor", "minimalSufficiency"],
-      ["only_ok", "false"],
-      ["context_type", "answerable"]
+      ["only", "no"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean minSuff_cat. Inference: one cat is causally sufficient; nothing less is needed."
+    "comment": "Patrick having one cat is sufficient for him to be happy; having more is not ruled out as sufficient, the non-exclusivity inference.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_minsuff_gpa",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.4 — minimal sufficiency"},
+    "id": "deothomas2025_13b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(13b)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Just a 3.5 GPA is sufficient for Jason to stay in the program",
+    "primaryText": "Just a 3.5 GPA is sufficient for Jason to stay in the program.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Just a 3.5 GPA is sufficient for Jason to stay in the program",
-    "context": "What GPA is sufficient to stay in the program?",
+    "translation": "",
+    "context": "What GPA is sufficient for Jason to stay in the program?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "#Only a 3.5 GPA is sufficient for Jason to stay in the program", "judgment": "unacceptable"}
+      {"form": "Only a 3.5 GPA is sufficient for Jason to stay in the program.", "judgment": "unacceptable"}
     ],
     "readings": [],
     "paperFeatures": [
       ["flavor", "minimalSufficiency"],
-      ["only_ok", "false"],
-      ["context_type", "answerable"]
+      ["only", "no"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean minSuff_gpa. Inference: 3.5 is the minimum sufficient GPA; nothing less works."
+    "comment": "Also (42): the widest construal distinguishes worlds by the minimal GPA sufficient for staying, §4.3; the enriched reading entails that no higher GPA is necessary and any higher GPA is also sufficient.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_unexplanatory_lamp",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.5 — unexplanatory"},
+    "id": "deothomas2025_14",
+    "source": {"bibkey": "wiegand-2018", "paperLabel": "p. 419"},
+    "reportedIn": {"bibkey": "deo-thomas-2025", "paperLabel": "(14)"},
     "language": "stan1293",
     "primaryText": "I was sitting there and the lamp just broke!",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I was sitting there and the lamp just broke!",
-    "context": "Why is the lamp broken?",
+    "translation": "",
+    "context": "A: Why is the lamp broken?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "#I was sitting there and the lamp only broke!", "judgment": "unacceptable"}
+      {"form": "I was sitting there and the lamp only broke!", "judgment": "unacceptable"}
     ],
     "readings": [],
     "paperFeatures": [
       ["flavor", "unexplanatory"],
-      ["only_ok", "false"],
-      ["context_type", "qualityFail"]
+      ["only", "no"],
+      ["case", "37b"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean unexplanatory_lamp. Inference: the speaker can identify no explanation for the lamp's breaking."
+    "comment": "Also (45): the speaker can identify no explanation; the current question is the trivial construal, the disjunction of all possible causes, and every wider construal fails Quality, §4.4.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_unexplanatory_mangoes",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.5 — unexplanatory"},
+    "id": "deothomas2025_15a",
+    "source": {"bibkey": "warstadt-2020", "paperLabel": "§2"},
+    "reportedIn": {"bibkey": "deo-thomas-2025", "paperLabel": "(15a)"},
     "language": "stan1293",
-    "primaryText": "I just had extra mangoes",
+    "primaryText": "The lights just turn off and on.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I just had extra mangoes",
-    "context": "Why did you make mango-mousse cake?",
+    "translation": "",
+    "context": "The speaker is explaining why they think their house may be haunted. Current question: Why is the house haunted?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "unexplanatory"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_15b",
+    "source": {"bibkey": "warstadt-2020", "paperLabel": "§2"},
+    "reportedIn": {"bibkey": "deo-thomas-2025", "paperLabel": "(15b)"},
+    "language": "stan1293",
+    "primaryText": "The lights just turn off and on. The wire is frayed.",
+    "discourseSegments": [
+      "The lights just turn off and on.",
+      "The wire is frayed."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The speaker is explaining why they think their house may be haunted. Current question: Why is the house haunted?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "unexplanatory"]
+    ],
+    "comment": "A follow-up explanation of the prejacent is odd after unexplanatory just.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_16a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(16a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I just had extra mangoes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: Why did you make mango-mousse cake?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "#I only had extra mangoes", "judgment": "unacceptable"}
+      {"form": "I only had extra mangoes.", "judgment": "unacceptable"}
     ],
     "readings": [],
     "paperFeatures": [
-      ["flavor", "unexplanatory"],
-      ["only_ok", "false"],
-      ["context_type", "qualityFail"]
+      ["flavor", "weakExplanation"],
+      ["only", "no"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean unexplanatory_mangoes. Inference: there is no stronger explanation than having extra mangoes."
+    "comment": "There is no stronger explanation for making the cake; a variant of the rank-order reading over explanations ranked by explanatory power, fn. 32.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_unelaboratory_dog",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.6 — unelaboratory"},
+    "id": "deothomas2025_16b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(16b)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Fido is just a dog",
+    "primaryText": "She just lied about her age.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Fido is just a dog",
-    "context": "What kind of dog is Fido?",
+    "translation": "",
+    "context": "A: How did Mary get into the bar?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "#Fido is only a dog", "judgment": "unacceptable"}
+      {"form": "She only lied about her age.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "weakExplanation"],
+      ["only", "no"]
+    ],
+    "comment": "There is no stronger, or more ethical, explanation for Mary's entry.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_17a",
+    "source": {"bibkey": "warstadt-2020", "paperLabel": "p. 376"},
+    "reportedIn": {"bibkey": "deo-thomas-2025", "paperLabel": "(17a)"},
+    "language": "stan1293",
+    "primaryText": "A proton is just a hydrogen atom without an electron.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: What is a proton?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "A proton is only a hydrogen atom without an electron.", "judgment": "unacceptable"}
     ],
     "readings": [],
     "paperFeatures": [
       ["flavor", "unelaboratory"],
-      ["only_ok", "false"],
-      ["context_type", "relevanceFail"]
+      ["only", "no"],
+      ["case", "37c"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean unelaboratory_dog. Inference: no further elaboration is needed or relevant."
+    "comment": "The speaker thinks no more elaboration is needed to define a proton; every wider construal fails Relevance, §4.5.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_unelaboratory_proton",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.6 — unelaboratory"},
+    "id": "deothomas2025_17b",
+    "source": {"bibkey": "warstadt-2020", "paperLabel": "p. 376"},
+    "reportedIn": {"bibkey": "deo-thomas-2025", "paperLabel": "(17b)"},
     "language": "stan1293",
-    "primaryText": "A proton is just a hydrogen atom without an electron",
+    "primaryText": "I am just mad.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "A proton is just a hydrogen atom without an electron",
-    "context": "What is a proton?",
+    "translation": "",
+    "context": "A: Why are you mad?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "#A proton is only a hydrogen atom without an electron", "judgment": "unacceptable"}
+      {"form": "I am only mad.", "judgment": "unacceptable"}
     ],
     "readings": [],
     "paperFeatures": [
       ["flavor", "unelaboratory"],
-      ["only_ok", "false"],
-      ["context_type", "relevanceFail"]
+      ["only", "no"],
+      ["case", "37c"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean unelaboratory_proton. Inference: no more elaboration is needed to define a proton."
+    "comment": "The speaker is not mad at anyone in particular; a non-answer that the paper treats together with the unexplanatory use, fn. 6.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_unelaboratory_mad",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.6 — unelaboratory"},
+    "id": "deothomas2025_17c",
+    "source": {"bibkey": "warstadt-2020", "paperLabel": "p. 376"},
+    "reportedIn": {"bibkey": "deo-thomas-2025", "paperLabel": "(17c)"},
     "language": "stan1293",
-    "primaryText": "I am just mad",
+    "primaryText": "Fido is just a dog.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I am just mad",
-    "context": "Why are you mad?",
+    "translation": "",
+    "context": "A: What kind of dog is Fido?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "#I am only mad", "judgment": "unacceptable"}
+      {"form": "Fido is only a dog.", "judgment": "unacceptable"}
     ],
     "readings": [],
     "paperFeatures": [
       ["flavor", "unelaboratory"],
-      ["only_ok", "false"],
-      ["context_type", "relevanceFail"]
+      ["only", "no"],
+      ["case", "37c"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean unelaboratory_mad. Inference: the speaker is not mad at anyone in particular."
+    "comment": "Also (46): Fido is an ordinary dog and the speaker sees no need for further information; the current question is a coarser partition than expected, §4.5.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_counterexp_texting",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.7 — counterexpectational"},
+    "id": "deothomas2025_18a",
+    "source": {"bibkey": "wiegand-2018", "paperLabel": "p. 423"},
+    "reportedIn": {"bibkey": "deo-thomas-2025", "paperLabel": "(18a)"},
     "language": "stan1293",
-    "primaryText": "He started seeing an ex-girlfriend and just stopped texting me",
+    "primaryText": "He started seeing an ex-girlfriend and just stopped texting me.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "He started seeing an ex-girlfriend and just stopped texting me",
-    "context": "What happened to your relationship?",
+    "translation": "",
+    "context": "A: What happened to your relationship?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "#He started seeing an ex-girlfriend and only stopped texting me", "judgment": "unacceptable"}
+      {"form": "He started seeing an ex-girlfriend and only stopped texting me.", "judgment": "unacceptable"}
     ],
     "readings": [],
     "paperFeatures": [
       ["flavor", "counterexpectational"],
-      ["only_ok", "false"],
-      ["context_type", "answerable"]
+      ["only", "no"],
+      ["case", "37a"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean counterexp_texting. Inference: the subject referent failed to adhere to norms."
+    "comment": "Also (48): the subject referent failed to adhere to norms for relationship closure; the widest construal of an open-ended what-happened question, §4.6.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "deothomas2025_counterexp_wafer",
-    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.7 — counterexpectational"},
+    "id": "deothomas2025_18b",
+    "source": {"bibkey": "wiegand-2018", "paperLabel": "p. 423"},
+    "reportedIn": {"bibkey": "deo-thomas-2025", "paperLabel": "(18b)"},
     "language": "stan1293",
     "primaryText": "The priest gave Charlotte her communion wafer and she just ate it!",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The priest gave Charlotte her communion wafer and she just ate it!",
-    "context": "What happened at the church?",
+    "translation": "",
+    "context": "A: What happened at the church?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "#The priest gave Charlotte her communion wafer and she only ate it!", "judgment": "unacceptable"}
+      {"form": "The priest gave Charlotte her communion wafer and she only ate it!", "judgment": "unacceptable"}
     ],
     "readings": [],
     "paperFeatures": [
       ["flavor", "counterexpectational"],
-      ["only_ok", "false"],
-      ["context_type", "answerable"]
+      ["only", "no"],
+      ["case", "37a"]
     ],
-    "comment": "Migrated from Phenomena/Focus/Exclusives.lean counterexp_wafer. Inference: Charlotte behaved in a way inconsistent with Catholic norms."
+    "comment": "Charlotte behaved in a way inconsistent with Catholic norms.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_41",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(41)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "He just got a B.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: How did John do on the exam?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "He only got a B.", "judgment": "acceptable"},
+      {"form": "He just got an A+.", "judgment": "questionable"},
+      {"form": "He only got an A+.", "judgment": "questionable"},
+      {"form": "He just sailed through.", "judgment": "acceptable"},
+      {"form": "He only sailed through.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "rankOrder"]
+    ],
+    "comment": "Downtoning mirativity with a B or an A+; uptoning mirativity, with just but not only, when the prejacent has an evaluative component, §4.2.1.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_47",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(47)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Alphonso just grabbed whatever tool was handy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Alphonso simply grabbed whatever tool was handy.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "unelaboratory"],
+      ["case", "37c"]
+    ],
+    "comment": "The indifference-marking use discussed in Rawlins 2015: the speaker sees no need for a more fine-grained description of the referent, though a wider construal has a true answer known to the speaker.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_51",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(51)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Yes, Fafen is just older than Siri.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: Is Fafen older than Siri?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingProximity"]
+    ],
+    "comment": "An over-answer to every construal of the polar question, so the hearer accommodates the how-much question of (52), fn. 35.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_52",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(52)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Fafen is [just]F older than Siri.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: How much older than Siri is Fafen?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingProximity"],
+      ["focus", "just"],
+      ["case", "37a"]
+    ],
+    "comment": "Precisifying uses require focus on just, placed there as a last resort; the current question is the construal at the finest permissible granularity, (54), and the upper bound is a mandatory implicature.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_53a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(53a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It was [just]F cheaper than this one.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A and B see a nice purse on sale. A knows that B recently bought a cheap purse on Amazon. A asks: How much cheaper was the purse you got?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingProximity"],
+      ["focus", "just"]
+    ],
+    "comment": "Prosodic prominence on just yields the precisifying reading.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_53b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(53b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It was just [cheaper]F than this one.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A and B see a nice purse on sale. A knows that B recently bought a cheap purse on Amazon. A asks: How much cheaper was the purse you got?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "unelaboratory"],
+      ["focus", "cheaper"]
+    ],
+    "comment": "None of your business how much cheaper: by the Focus Principle the only construal whose alternatives are focus alternatives of the prejacent has the single alternative that the purse was cheaper, fn. 36.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_55",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(55)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The tank is just full.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Q: How full is the tank?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingEquality"],
+      ["case", "37a"]
+    ],
+    "comment": "With a maximum-standard adjective the optimal construal is the one at the finest granularity, so the tank is full at the highest level of precision.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_56",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(56)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "My sister just got here.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: When did your sister get here?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingProximity"],
+      ["domain", "temporal"],
+      ["case", "37a"]
+    ],
+    "comment": "The time elapsed since the arrival is at least, and by mandatory implicature no more than, the grain width of the finest temporal granularity, §4.7.2.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_58a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(58a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Roughly speaking, this soup is amazing.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Roughly speaking, this essay is perfect.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "roughlySpeaking"],
+      ["adjective", "extreme"]
+    ],
+    "comment": "Extreme predicates cannot be used imprecisely, so their interpretation is not relativized to a granularity level and emphatic just is not precisification, §4.8.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_58b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(58b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Roughly speaking, this tank is full.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Roughly speaking, this theater is empty.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "roughlySpeaking"],
+      ["adjective", "maximumStandard"]
+    ],
+    "comment": "Canonical maximum-standard adjectives can be used imprecisely.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_59",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(59)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "This soup is just amazing!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Q: How tasty is that soup?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "emphatic"]
+    ],
+    "comment": "The construals differ in where the zone of indifference begins, Figure 2; just conveys that the speaker uses the highest conceivable maximum of relevant degrees, §4.8.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_60a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(60a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The door is just [closed]F!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "The door is completely closed!", "judgment": "acceptable"},
+      {"form": "The door is absolutely closed!", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "emphatic"],
+      ["adjective", "maximumStandard"]
+    ],
+    "comment": "No emphatic reading: the point of total closure has an objective location, so the construals cannot differ by threshold, §4.8.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_60b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(60b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The tank is just [full]F!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "The tank is completely full!", "judgment": "acceptable"},
+      {"form": "The tank is absolutely full!", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "emphatic"],
+      ["adjective", "maximumStandard"]
+    ],
+    "comment": "No emphatic reading, the fill line providing an objective point of fullness; with focus on just instead, the precisifying reading of (55) is available.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_61",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(61)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The funeral was full of just every emotion you can imagine.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: Which emotions was the funeral full of?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "emphatic"]
+    ],
+    "comment": "Adapted from (6a): the domain of every is as wide as possible, so the widest construal distinguishes the presence or absence of every possible emotion, §4.8.1.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_62",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(62)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Pink bathrooms are just [the BEST]F!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: How do pink bathrooms compare to other-color bathrooms?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "emphatic"]
+    ],
+    "comment": "The comparison class of the superlative includes every possible color, so the widest construal ranks pink against all of them, §4.8.1.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_63a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(63a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: Mary went to just Spain and Portugal (for vacation this year). B: No, that's not true! She also went to Italy.",
+    "discourseSegments": [
+      "Mary went to just Spain and Portugal (for vacation this year).",
+      "No, that's not true! She also went to Italy."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "complementExclusion"],
+      ["response", "denial"]
+    ],
+    "comment": "The exhaustive interpretation of the prejacent, a mandatory implicature, can be targeted by a denial move, §4.9.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_63b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(63b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary didn't go to just Spain and Portugal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "complementExclusion"],
+      ["response", "negation"]
+    ],
+    "comment": "Mary went to countries besides Spain and Portugal: clausal negation cancels the exhaustive interpretation.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_64a",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(64a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: This soup is just amazing! B: That's not true! It is pretty mediocre.",
+    "discourseSegments": [
+      "This soup is just amazing!",
+      "That's not true! It is pretty mediocre."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "emphatic"],
+      ["response", "denial"]
+    ],
+    "comment": "The emphatic use generates no upper-bounding inference and rests on a subjective maximum, so denial with that's not true is infelicitous while faultless disagreement, (65), is fine.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_64b",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(64b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: Just a cat will make Patrick happy. B: No, that's not true! (Even) a goldfish will make him happy.",
+    "discourseSegments": [
+      "Just a cat will make Patrick happy.",
+      "No, that's not true! (Even) a goldfish will make him happy."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "C: Yes! Even a goldfish will make him happy.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "minimalSufficiency"],
+      ["response", "denial"]
+    ],
+    "comment": "The denial can target neither the prejacent nor cooperatively the lower bound of the widest relevant construal; C accepts the construal and suggests an even wider one, §4.9.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "deothomas2025_65",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(65)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: This essay is just perfect! B: Not really... did you notice the flaws in the reasoning?",
+    "discourseSegments": [
+      "This essay is just perfect!",
+      "Not really... did you notice the flaws in the reasoning?"
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "B': No, it isn't! I found it too verbose.", "judgment": "acceptable"},
+      {"form": "B'': I don't think so. I hate how pretentious it sounds.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "emphatic"],
+      ["response", "faultlessDisagreement"]
+    ],
+    "comment": "Faultless disagreement with the subjective maximum behind an emphatic use is acceptable.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   }
 ]
