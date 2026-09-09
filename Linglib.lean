@@ -3065,3 +3065,4 @@ import Linglib.Data.Examples.Fox2018
 import Linglib.Data.Examples.FoxKatzir2011
 import Linglib.Data.Examples.FoxPesetsky2005
 import Linglib.Data.Examples.FoxSpector2018
+import Linglib.Data.Examples.Francescotti1995
