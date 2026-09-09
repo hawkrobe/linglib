@@ -6,9 +6,9 @@ import Mathlib.LinearAlgebra.Matrix.Notation
 import Mathlib.LinearAlgebra.Matrix.ToLin
 
 /-!
-# Gahl and Baayen 2024: homophone duration without a stored lexicon
+# Gahl and Baayen (2024): Time and Thyme Again
 
-The paper reanalyses the Switchboard durations of the 409 English homophones of [gahl-2008]
+This file formalizes [gahl-baayen-2024]'s reanalysis of the Switchboard durations of the 409 English homophones of [gahl-2008]
 (*time* ~ *thyme*) from a discriminative lexicon (`DiscriminativeLexicon.Linear`, [baayen-2019]):
 linear maps between triphone and embedding vectors, with no stored words and so no word to bear
 a frequency. Frequency is treated as composite. *Practice* is frequency-informed learning of the
@@ -33,27 +33,12 @@ of (A6) and both columns of Table 1 come out exactly, the frequency-informed col
 `UW = U`, an orthogonal projector, whose diagonal therefore lies in `[0, 1]` and dominates its
 rows as the paper observes.
 
-## Main results
-
-* `endstate_isELTrainedOn`, `frequencyInformed_isTrainedOn`: the paper's mappings are trained
-  in the substrate's sense, by the closed forms of the normal equations.
-* `supportMatrix_endstate`, `semanticSupport_endstate`, `semanticSupportFIL_eq`: (A6) and
-  Table 1 exactly; practice reverses the order of *time* and *thyme*
-  (`semanticSupport_endstate_time_lt_thyme`, `semanticSupportFIL_thyme_lt_time`).
-* `time_sub_thyme_notMem_ker`: the homophones leave the neutralization locus.
-* `U_mul_W`, `isSymm_W`, `isIdempotentElem_W`, `le_diag_W`, `diag_W_mem_Icc`: the toy `W`
-  and its diagonal; `strictAntiOn_cind`: the transform (9) reverses its order.
-
 ## References
 
-* [S. Gahl and R. H. Baayen, *Time and thyme again: Connecting English spoken word duration to
-  models of the mental lexicon* (2024)][gahl-baayen-2024]
-* [S. Gahl, *Time and thyme are not homophones: The effect of lemma frequency on word durations
-  in spontaneous speech* (2008)][gahl-2008]
-* [R. H. Baayen, Y.-Y. Chuang, E. Shafaei-Bajestan and J. P. Blevins, *The discriminative
-  lexicon* (2019)][baayen-2019]
-* [M. Heitmeier, Y.-Y. Chuang, S. D. Axen and R. H. Baayen, *Frequency effects in linear
-  discriminative learning* (2024)][heitmeier-chuang-axen-baayen-2024]
+* [gahl-baayen-2024]
+* [gahl-2008]
+* [baayen-2019]
+* [heitmeier-chuang-axen-baayen-2024]
 -/
 
 namespace GahlBaayen2024
