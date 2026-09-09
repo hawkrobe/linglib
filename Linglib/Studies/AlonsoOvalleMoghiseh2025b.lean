@@ -17,7 +17,7 @@ interrogatives keeps atoms only (42) (`neutral`, `atoms`); and *-ro* restricts t
 selection function to singletons (52), the `IsSingleton` functions of
 [alonso-ovalle-menendez-benito-2010], which collapses ⊓ and ⊔ to individual answers
 (`hamblinRo`, `hamblinRo_neutral`). Dayal's answerhood operator (8) presupposes a maximally
-strong true answer (`Questions.IsExhaustivelyResolvable` on the finite Hamblin set); a plural
+strong true answer (`Question.IsExhaustivelyResolvable` on the finite Hamblin set); a plural
 answer is available iff the presupposition holds in a world where two atoms were bought
 (`farsi`, (40)/(45)/(53)/(55)).
 
@@ -44,7 +44,7 @@ removes (`modal_gq`, (58)–(63)); collective predicates need pluralities in the
 
 namespace AlonsoOvalleMoghiseh2025b
 
-open Quantification Questions Data.Examples Finset
+open Quantification Question Data.Examples Finset
 
 /-! ### Entities, worlds, and answers -/
 

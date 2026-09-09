@@ -177,7 +177,7 @@ end Stankova2026
 
 namespace Czech.Negation
 
-open Questions
+open Question
 open Stankova2026 (CzechPQForm)
 open StankovaSimik2025 (VerbPosition)
 
@@ -210,7 +210,7 @@ end Czech.Negation
 namespace Stankova2026
 
 open Czech.Negation
-open Questions
+open Question
 open StankovaSimik2025 (VerbPosition)
 
 /-- [romero-2024] PQ form of each [simik-2024] grid cell: InterNPQ is

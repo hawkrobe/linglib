@@ -106,7 +106,7 @@ answer whose existence the definedness condition requires.
 
 namespace IppolitoKissWilliams2025
 
-open Question Questions
+open Question
 open Question (isRelevantTo_polar_iff)
 open IppolitoKissWilliams2022
 

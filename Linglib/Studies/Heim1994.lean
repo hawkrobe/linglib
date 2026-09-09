@@ -67,7 +67,7 @@ contexts).
 namespace Heim1994
 
 open Question
-open Questions
+open Question
 
 variable {W : Type*}
 

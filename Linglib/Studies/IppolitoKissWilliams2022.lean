@@ -45,7 +45,7 @@ agreement. Both relations are symmetric in their `S`/`S'` arguments.
 
 namespace IppolitoKissWilliams2022
 
-open Question Questions
+open Question
 
 variable {W : Type*}
 
