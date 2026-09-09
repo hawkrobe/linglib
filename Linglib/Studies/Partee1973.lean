@@ -29,7 +29,7 @@ referential mechanism operates over different domains.
 
 Later engagements with the analogy live in their own studies:
 `Ogihara1989` (operator–referential reconciliation), `Kratzer1998` (zero
-tense, SOT deletion), `Elbourne2013` (situation-variable coarsening).
+tense, SOT deletion), `Elbourne2013` (situation pronouns, free or bound).
 -/
 
 open Tense
