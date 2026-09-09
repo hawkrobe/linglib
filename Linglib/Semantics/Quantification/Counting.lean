@@ -894,6 +894,41 @@ theorem not_existential_most_sem : ¬ Existential (most_sem : GQ (Fin 3)) := by
   simp only [count, countOn] at key
   revert key; decide
 
+/-- `most` is not persistent: enlarging the restrictor can lose a majority. Witness over
+    `Fin 3`: `R = {0} ⊆ R' = {0, 2}` with `S = {0}` gives `|R∩S| = 1 > |R∖S| = 0` but
+    `|R'∩S| = 1 > |R'∖S| = 1` fails. -/
+theorem not_restrictorUpwardMono_most_sem : ¬ RestrictorUpwardMono (most_sem : GQ (Fin 3)) := by
+  intro h
+  have key := h (fun x => x = 0) (fun x => x ≠ 1) (fun x => x = 0)
+    (fun _ hx h1 => absurd (hx.symm.trans h1) (by decide))
+  simp only [most_sem, and_self, and_not_self_iff] at key
+  rw [count_eq_decidable (fun x : Fin 3 => x = 0), count_eq_decidable (fun _ : Fin 3 => False),
+    count_eq_decidable (fun x : Fin 3 => x ≠ 1 ∧ x = 0),
+    count_eq_decidable (fun x : Fin 3 => x ≠ 1 ∧ ¬ x = 0)] at key
+  simp only [count, countOn] at key
+  revert key; decide
+
+/-- `most` over a singleton restrictor is the singleton's scope value. -/
+theorem most_sem_singleton_iff (j : α) (S : α → Prop) : most_sem (fun x => j = x) S ↔ S j := by
+  have h1 : count (fun x => j = x) = 1 := by
+    unfold count countOn
+    exact Finset.card_eq_one.mpr ⟨j, by ext x; simp only [Finset.mem_filter, Finset.mem_univ,
+      true_and, Finset.mem_singleton, eq_comm]⟩
+  have h0 : count (fun _ : α => False) = 0 := countOn_eq_zero_iff.mpr fun _ _ h => h
+  simp only [most_sem]
+  rw [count_eq_decidable (fun x => j = x ∧ S x), count_eq_decidable (fun x => j = x ∧ ¬ S x)]
+  by_cases h : S j
+  · rw [count_congr_iff (P := fun x => j = x ∧ S x) (Q := fun x => j = x)
+        fun x => ⟨And.left, fun hx => ⟨hx, hx ▸ h⟩⟩,
+      count_congr_iff (P := fun x => j = x ∧ ¬ S x) (Q := fun _ => False)
+        fun x => ⟨fun ⟨hx, hn⟩ => hn (hx ▸ h), False.elim⟩, h1, h0]
+    exact iff_of_true (by decide) h
+  · rw [count_congr_iff (P := fun x => j = x ∧ S x) (Q := fun _ => False)
+        fun x => ⟨fun ⟨hx, hs⟩ => h (hx ▸ hs), False.elim⟩,
+      count_congr_iff (P := fun x => j = x ∧ ¬ S x) (Q := fun x => j = x)
+        fun x => ⟨And.left, fun hx => ⟨hx, fun hs => h (hx ▸ hs)⟩⟩, h1, h0]
+    exact iff_of_false (by decide) h
+
 /-- `few` is proportional, not intersective: it fails `Existential`, despite B&C's
     "weak" label. Witness over `Fin 3`: `R = ⊤`, `S = {0}` gives `|R∩S| = 1 <
     |R∖S| = 2`, so `few R S` is true while `few (R∩S) ⊤` is false
