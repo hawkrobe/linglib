@@ -3039,3 +3039,4 @@ import Linglib.Data.Examples.Denic2023
 import Linglib.Data.Examples.DenicEtAl2021
 import Linglib.Data.Examples.Deo2025
 import Linglib.Data.Examples.Dixon1994
+import Linglib.Data.Examples.Dolatian2020
