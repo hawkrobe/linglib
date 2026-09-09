@@ -1,77 +1,126 @@
+import Linglib.Syntax.Minimalist.Ellipsis
+import Linglib.Data.Examples.Funakoshi2016
+
 /-!
-# [funakoshi-2016] — Verb-Stranding VP Ellipsis in Japanese
-[funakoshi-2016]
+# Funakoshi (2016): Verb-Stranding Verb Phrase Ellipsis in Japanese
 
-Funakoshi, Kenshi (2016). Verb-stranding verb phrase ellipsis in Japanese.
-*Journal of East Asian Linguistics* 25.2, pp. 113–142.
+This file formalizes [funakoshi-2016]'s argument that Japanese has verb-stranding verb phrase
+ellipsis. Adjuncts in Japanese were held never to be null; the paper shows that a manner,
+instrumental or temporal adjunct is understood as null when the clause-mate object is null too or
+the clause is intransitive, and never when an object stays overt, unless that object is
+contrastively focused (its generalizations (12) and (59)). *Pro* and argument ellipsis reach
+arguments only, so a null adjunct needs ellipsis of the verb phrase with the verb raised out of
+it: [E] on Voice in the clausal spine of `Minimalist.Ellipsis` ([merchant-2001]), the verb
+stranded above it. Everything in the site goes, so the object goes with the adjunct or escapes by
+scrambling, and an object scrambled out of the site is a pseudogapping remnant, which must be
+contrastively focused. Reason adverbial clauses scope above negation and so sit above the site;
+they cannot be null even beside a null object. `NullAdjunct` states the derivation of the reading
+and `nullAdjunct_iff` reads the generalizations off the spine: the adjunct attaches inside the
+verb phrase and the object is not an unfocused overt remnant. The rival that keeps argument
+ellipsis as the only strategy, the oblique movement of the adjunct onto a null argument,
+undergenerates in intransitive clauses and overgenerates with null subjects and with reason
+clauses (`rows_not_oblique`), and argument ellipsis alone derives no null adjunct at all. The
+rows are the paper's ellipsis clauses under the null adjunct reading (`rows_predicted`).
 
-## Key Generalization
+## Implementation notes
 
-(3) An adjunct can be elided only if no other VP-internal elements are present.
+* The paper's (40), where *okurete* 'late' resists the null reading in an intransitive clause,
+  is left out: the paper attributes it to the adverb's degradation under negation in non-elliptical
+  sentences as well.
+* An overt object is recorded as contrastively focused or not; givenness is not recorded, so the
+  functional account of §2.1, which the paper refutes with the new objects of (26) and (27), stays
+  in the prose.
+* The examples are `Data.Examples.Funakoshi2016`.
 
-This means that if an overt VP-adjunct remains in the second conjunct,
-another adjunct *cannot* be the elided element — only an argument can be.
-This provides an **argumenthood diagnostic**: if a constituent can be elided
-in the presence of an overt adjunct, it must be an argument.
+## References
 
-## Application ([ozaki-2026])
-
-Ozaki uses Funakoshi's generalization to show that the source phrase of
-Japanese Alternation Verbs (*hanareru* 'leave', *deru* 'exit') is always
-an argument, regardless of whether it is marked ACC *-o* or ABL *kara*.
-The source elides even with an overt manner adverb (*suguni* 'quickly'),
-which would be impossible if it were an adjunct.
+* [funakoshi-2016]
+* [merchant-2001]
 -/
 
 namespace Funakoshi2016
 
-/-- Funakoshi's generalization: adjuncts can be elided under VP ellipsis
-    only if no other VP-internal elements are present. -/
-structure EllipsisDatum where
-  /-- The elided constituent -/
-  elidedConstituent : String
-  /-- Whether it is an argument or adjunct -/
-  isArgument : Bool
-  /-- Whether another VP-internal element is overt in the ellipsis site -/
-  otherVPInternalOvert : Bool
-  /-- Is the ellipsis reading available? -/
-  available : Bool
-  /-- Example sentence -/
-  sentence : String
+open Minimalist.Ellipsis Data.Examples
+
+/-- Where the adjunct attaches: inside the verb phrase, as manner, instrumental and temporal
+adjuncts do, or above negation, as reason adverbial clauses do. -/
+inductive Attachment
+  | vp
+  | reason
+  deriving DecidableEq, Fintype, Repr
+
+/-- The spine position of the adjunct: adjoined to VP, or at the height of tense, above the
+negation a reason clause outscopes. -/
+def Attachment.spinePos : Attachment → SpinePos
+  | .vp => .VP_adj
+  | .reason => .T
+
+/-- The clause-mate object of the ellipsis clause: absent in an intransitive clause, null, overt
+without contrastive focus, or overt and contrastively focused. -/
+inductive ObjectStatus
+  | absent
+  | null
+  | overt
+  | focused
+  deriving DecidableEq, Fintype, Repr
+
+/-- An ellipsis clause under the null adjunct reading. -/
+structure Config where
+  adjunct : Attachment
+  object : ObjectStatus
+  subjectNull : Bool
   deriving DecidableEq, Repr
 
-/-- Adjunct elision is blocked when another VP-internal element is overt. -/
-def adjunct_blocked : EllipsisDatum where
-  elidedConstituent := "teineini (carefully)"
-  isArgument := false
-  otherVPInternalOvert := true
-  available := false
-  sentence := "* ... Hanako-wa subayaku ⟨teineini⟩ hatarakanakatta"
+/-- Verb-stranding verb phrase ellipsis: [E] on Voice deletes the verb phrase with its adjuncts,
+and the verb, raised to tense, is stranded. -/
+def vvpe : EllipsisType := ⟨.Voice, "verb-stranding VP-ellipsis"⟩
 
-/-- Argument elision succeeds even when another VP-internal element is overt. -/
-def argument_ok : EllipsisDatum where
-  elidedConstituent := "zibun-no kuruma-o (one's own car)"
-  isArgument := true
-  otherVPInternalOvert := true
-  available := true
-  sentence := "Taro-wa teineini zibun-no kuruma-o aratta ga, Hanako-wa teineini ⟨zibun-no kuruma-o⟩ arawanakatta"
+/-- The null adjunct reading by verb-stranding ellipsis: the adjunct sits in the site, and the
+object, if any, is elided with it or extracted as a contrastively focused remnant. -/
+def NullAdjunct (c : Config) : Prop :=
+  isInDeletionDomain c.adjunct.spinePos vvpe ∧ c.object ≠ .overt
 
-/-- Funakoshi's generalization holds: adjunct elision is blocked when another
-    VP-internal element is overt, but argument elision is not. -/
-theorem generalization_holds :
-    adjunct_blocked.available = false ∧
-    argument_ok.available = true := ⟨rfl, rfl⟩
+instance : DecidablePred NullAdjunct := λ _ => inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The generalization as a decidable predicate: if the elided constituent
-    is an adjunct AND another VP-internal element is overt, elision is blocked. -/
-def funakoshiPredicts (d : EllipsisDatum) : Bool :=
-  if !d.isArgument && d.otherVPInternalOvert then !d.available
-  else true
+/-- Generalizations (12) and (59) with the prediction of §2.2: an adjunct is null only inside the
+verb phrase and only with the object null, absent, or a contrastively focused remnant. -/
+theorem nullAdjunct_iff (c : Config) : NullAdjunct c ↔ c.adjunct = .vp ∧ c.object ≠ .overt := by
+  obtain ⟨a, o, s⟩ := c
+  cases a <;> cases o <;> cases s <;> decide
 
-theorem adjunct_blocked_predicted :
-    funakoshiPredicts adjunct_blocked = true := rfl
+/-- Takahashi's oblique movement: the adjunct adjoins to a null argument, and argument ellipsis
+takes both. -/
+def ObliqueMovement (c : Config) : Prop := c.object = .null ∨ c.subjectNull = true
 
-theorem argument_ok_predicted :
-    funakoshiPredicts argument_ok = true := rfl
+instance : DecidablePred ObliqueMovement := λ _ => inferInstanceAs (Decidable (_ ∨ _))
+
+/-! ### The paper's ellipsis clauses -/
+
+/-- An ellipsis clause of the paper and whether its null adjunct reading is available. -/
+structure Row where
+  config : Config
+  available : Bool
+  deriving DecidableEq
+
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let a ← ex.parse? "adjunct" [("vp", Attachment.vp), ("reason", .reason)]
+  let o ← ex.parse? "object"
+    [("absent", ObjectStatus.absent), ("null", .null), ("overt", .overt), ("focused", .focused)]
+  let s ← ex.parse? "subjectNull" [("yes", true), ("no", false)]
+  let v ← ex.parse? "available" [("yes", true), ("no", false)]
+  pure ⟨⟨a, o, s⟩, v⟩
+
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- The null adjunct reading is available exactly where verb-stranding ellipsis derives it. -/
+theorem rows_predicted : ∀ r ∈ rows, (r.available = true ↔ NullAdjunct r.config) := by decide
+
+/-- Adjuncts can be null, which argument ellipsis alone never derives. -/
+theorem rows_exists_available : ∃ r ∈ rows, r.available = true := by decide
+
+/-- Oblique movement undergenerates the intransitive (39) and overgenerates the null-subject
+clauses (43) and (44) and the reason clause (32). -/
+theorem rows_not_oblique : ¬ ∀ r ∈ rows, (r.available = true ↔ ObliqueMovement r.config) := by
+  decide
 
 end Funakoshi2016

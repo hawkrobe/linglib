@@ -1,0 +1,1639 @@
+[
+  {
+    "id": "funakoshi2016_ex15b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(15b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "John-mo Δ araw-anak-atta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "John-mo",
+        "John-also"
+      ],
+      [
+        "araw-anak-atta",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "John didn't wash the car carefully either.",
+    "context": "Antecedent: Bill-wa teineini kuruma-o araw-anak-atta 'Bill didn't wash the car carefully'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "null"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "yes"
+      ]
+    ],
+    "comment": "The null adjunct reading is preferred; -mo 'also' imposes parallelism."
+  },
+  {
+    "id": "funakoshi2016_ex16",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(16)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Bill-wa teineini kuruma-o arat-ta kedo, John-wa Δ araw-anak-atta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Bill-wa",
+        "Bill-TOP"
+      ],
+      [
+        "teineini",
+        "carefully"
+      ],
+      [
+        "kuruma-o",
+        "car-ACC"
+      ],
+      [
+        "arat-ta",
+        "wash-PAST"
+      ],
+      [
+        "kedo,",
+        "but"
+      ],
+      [
+        "John-wa",
+        "John-TOP"
+      ],
+      [
+        "araw-anak-atta",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "Bill washed the car carefully, but John didn't wash the car carefully.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "null"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "yes"
+      ]
+    ],
+    "comment": "The connective kedo 'but' sets a contrastive context favoring the null adjunct reading."
+  },
+  {
+    "id": "funakoshi2016_ex17b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(17b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Hanako-wa Δ araw-anak-atta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Hanako-wa",
+        "Hanako-TOP"
+      ],
+      [
+        "araw-anak-atta",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "Hanako did not wash the car carefully.",
+    "context": "Taroo and Hanako washed their parents' cars to get allowance. Taroo was thorough in his work while Hanako was not. Antecedent: Taroo-wa teineini kuruma-o arat-ta 'Taroo washed the car carefully'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "null"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "yes"
+      ]
+    ],
+    "comment": "Follow-up: Hanako-ga arat-ta ato-no kuruma-wa kitanak-atta 'The car that Hanako washed was dirty'. The follow-up sentence forces the null adjunct reading, and the sequence is coherent."
+  },
+  {
+    "id": "funakoshi2016_ex18b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(18b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Hanako-wa Δ kak-ana-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Hanako-wa",
+        "Hanako-TOP"
+      ],
+      [
+        "kak-ana-i.",
+        "write-NEG-PRES"
+      ]
+    ],
+    "translation": "Hanako does not write papers with Word.",
+    "context": "Taroo and Hanako are graduate students who often write papers. Taroo likes Microsoft Office while Hanako does not. Antecedent: Taroo-wa Word-de ronbun-o kak-u 'Taroo writes papers with Word'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "null"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "yes"
+      ]
+    ],
+    "comment": "Follow-up: Itumo LaTeX-de kak-u 'She always writes with LaTeX'. The follow-up sentence forces the null adjunct reading, and the sequence is coherent."
+  },
+  {
+    "id": "funakoshi2016_ex19b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(19b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Motiron Hanako-wa Δ kaw-ana-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Motiron",
+        "of.course"
+      ],
+      [
+        "Hanako-wa",
+        "Hanako-TOP"
+      ],
+      [
+        "kaw-ana-i.",
+        "buy-NEG-PRES"
+      ]
+    ],
+    "translation": "Of course, Hanako does not buy comic books with her research fund.",
+    "context": "Taroo and Hanako are faculty of a linguistics department and like comic books. Antecedent: Odoroitakotoni Taroo-wa kenkyuuhi-de manga-o ka-u 'Surprisingly, Taroo buys comic books with his research fund'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "null"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "yes"
+      ]
+    ],
+    "comment": "Follow-up: Manga-wa zibun-no okane-de ka-u 'She buys comic books with her own money'. The follow-up sentence forces the null adjunct reading, and the sequence is coherent."
+  },
+  {
+    "id": "funakoshi2016_ex20b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(20b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Hanako-wa Δ kuruma-o araw-anak-atta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Hanako-wa",
+        "Hanako-TOP"
+      ],
+      [
+        "kuruma-o",
+        "car-ACC"
+      ],
+      [
+        "araw-anak-atta",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "Hanako did not wash the car (carefully).",
+    "context": "Taroo and Hanako washed their parents' cars to get allowance. Taroo was thorough in his work while Hanako was not. Antecedent: Taroo-wa teineini kuruma-o arat-ta 'Taroo washed the car carefully'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "Follow-up: Hanako-ga arat-ta ato-no kuruma-wa kitanak-atta. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex21b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(21b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Hanako-wa Δ ronbun-o kak-ana-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Hanako-wa",
+        "Hanako-TOP"
+      ],
+      [
+        "ronbun-o",
+        "paper-ACC"
+      ],
+      [
+        "kak-ana-i.",
+        "write-NEG-PRES"
+      ]
+    ],
+    "translation": "Hanako does not write papers (with Word).",
+    "context": "Taroo and Hanako are graduate students who often write papers. Taroo likes Microsoft Office while Hanako does not. Antecedent: Taroo-wa Word-de ronbun-o kak-u 'Taroo writes papers with Word'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "Follow-up: Itumo LaTeX-de kak-u. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex22b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(22b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Motiron Hanako-wa Δ manga-o kaw-ana-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Motiron",
+        "of.course"
+      ],
+      [
+        "Hanako-wa",
+        "Hanako-TOP"
+      ],
+      [
+        "manga-o",
+        "comic.book-ACC"
+      ],
+      [
+        "kaw-ana-i.",
+        "buy-NEG-PRES"
+      ]
+    ],
+    "translation": "Of course, Hanako does not buy comic books (with her research fund).",
+    "context": "Taroo and Hanako are faculty of a linguistics department and like comic books. Antecedent: Odoroitakotoni Taroo-wa kenkyuuhi-de manga-o ka-u 'Surprisingly, Taroo buys comic books with his research fund'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "Follow-up: Manga-wa zibun-no okane-de ka-u. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex23b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(23b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Hanako-mo Δ kuruma-o araw-anak-atta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Hanako-mo",
+        "Hanako-also"
+      ],
+      [
+        "kuruma-o",
+        "car-ACC"
+      ],
+      [
+        "araw-anak-atta",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "Hanako did not wash the car (carefully) either.",
+    "context": "Taroo and Hanako both did careless work. Antecedent: Taroo-wa teineini kuruma-o araw-anak-atta 'Taroo did not wash the car carefully'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "Follow-up: Karera-ga arat-ta ato-no kuruma-wa kitanak-atta 'The cars that they washed were dirty'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex24b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(24b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Hanako-mo Δ ronbun-o kak-ana-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Hanako-mo",
+        "Hanako-also"
+      ],
+      [
+        "ronbun-o",
+        "paper-ACC"
+      ],
+      [
+        "kak-ana-i.",
+        "write-NEG-PRES"
+      ]
+    ],
+    "translation": "Hanako does not write papers (with Word) either.",
+    "context": "Taroo and Hanako do not like Microsoft Office. Antecedent: Taroo-wa Word-de ronbun-o kak-ana-i 'Taroo does not write papers with Word'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "Follow-up: Karera-wa itumo LaTeX-de kak-u 'They always write with LaTeX'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex25b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(25b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Motiron Hanako-mo Δ manga-o kaw-ana-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Motiron",
+        "of.course"
+      ],
+      [
+        "Hanako-mo",
+        "Hanako-also"
+      ],
+      [
+        "manga-o",
+        "comic.book-ACC"
+      ],
+      [
+        "kaw-ana-i.",
+        "buy-NEG-PRES"
+      ]
+    ],
+    "translation": "Of course, Hanako does not buy comic books (with her research fund) either.",
+    "context": "Antecedent: Taroo-wa kenkyuuhi-de manga-o kaw-ana-i 'Taroo does not buy comic books with his research fund'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "Follow-up: Manga-wa zibun-no okane-de ka-u. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex26b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(26b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Demo Hanako-wa Δ madogarasu-o huk-anak-atta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Demo",
+        "but"
+      ],
+      [
+        "Hanako-wa",
+        "Hanako-TOP"
+      ],
+      [
+        "madogarasu-o",
+        "window-ACC"
+      ],
+      [
+        "huk-anak-atta.",
+        "wipe-NEG-PAST"
+      ]
+    ],
+    "translation": "But Hanako did not wipe the windows (carefully).",
+    "context": "Taroo and Hanako washed a car together: Taroo the body, then Hanako the windows. Taroo was thorough, Hanako not. Antecedent: Taroo-wa teineini syatai-o arat-ta 'Taroo washed the body of the car carefully'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "The object differs from the antecedent's, so the adjunct is the only old information; against the functional account. Follow-up: Hanako-ga hui-ta ato-no madogarasu-wa kitanak-atta. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex27b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(27b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Demo sensei-wa Δ komento-o irete-kure-nanak-atta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Demo",
+        "but"
+      ],
+      [
+        "sensei-wa",
+        "teacher-TOP"
+      ],
+      [
+        "komento-o",
+        "comment-ACC"
+      ],
+      [
+        "irete-kure-nanak-atta.",
+        "put-BEN-NEG-PAST"
+      ]
+    ],
+    "translation": "But his teacher did not write his comments on the paper (with Word).",
+    "context": "Taroo gave his paper to his advisor expecting comments with the Comments feature of Word, but the advisor does not like Microsoft Office. Antecedent: Taroo-wa Word-de ronbun-o kai-ta 'Taroo wrote the paper with Word'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "Object and predicate differ from the antecedent's. Follow-up: Kare-no komento-wa tegaki dat-ta 'His comments were handwritten'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex32b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(32b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Ippou pro [Hanako-wa Δ yame-ta to] omottei-na-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ippou",
+        "on.the.other.hand"
+      ],
+      [
+        "pro",
+        "pro"
+      ],
+      [
+        "[Hanako-wa",
+        "Hanako-TOP"
+      ],
+      [
+        "yame-ta",
+        "quit-PAST"
+      ],
+      [
+        "to]",
+        "C"
+      ],
+      [
+        "omottei-na-i.",
+        "think-NEG-PRES"
+      ]
+    ],
+    "translation": "On the other hand, I don't think that Hanako quit (because she was a fool).",
+    "context": "Antecedent: Boku-wa [Taroo-wa [pro baka-da kara] kaisya-o yame-ta to] omottei-ru 'I think that Taroo quit the company because he was a fool'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "reason"
+      ],
+      [
+        "object",
+        "null"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "The embedded object kaisya-o is null too; the reason clause, above NegP, is outside the ellipsis site. Follow-up: Kanozyo-wa kazoku-no tameni yame-tanda to omo-u 'I think she quit for her family'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex39b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(39b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Basu-wa Δ ko-nak-atta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Basu-wa",
+        "bus-TOP"
+      ],
+      [
+        "ko-nak-atta.",
+        "come-NEG-PAST"
+      ]
+    ],
+    "translation": "The bus didn't come on time.",
+    "context": "Antecedent: Densya-wa zikandoorini ki-ta 'The train came on time'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "absent"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "yes"
+      ]
+    ],
+    "comment": "Follow-up: 10-punokurede ki-ta 'It was ten minutes late'. The follow-up sentence forces the null adjunct reading, and the sequence is coherent. No null argument could host the adjunct under oblique movement."
+  },
+  {
+    "id": "funakoshi2016_ex41b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(41b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Hanako-wa Δ shukudai-o das-anak-atta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Hanako-wa",
+        "Hanako-TOP"
+      ],
+      [
+        "shukudai-o",
+        "homework-ACC"
+      ],
+      [
+        "das-anak-atta.",
+        "submit-NEG-PAST"
+      ]
+    ],
+    "translation": "Hanako did not submit the homework (on time / late).",
+    "context": "Antecedent: Taroo-wa {zikandoorini / okurete} shukudai-o dasi-ta 'Taroo submitted the homework on time / late'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "Neither temporal adjunct can be null by itself in a transitive clause. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex43b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(43b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Demo Δ madogarasu-o huk-anak-atta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Demo",
+        "but"
+      ],
+      [
+        "madogarasu-o",
+        "window-ACC"
+      ],
+      [
+        "huk-anak-atta.",
+        "wipe-NEG-PAST"
+      ]
+    ],
+    "translation": "But he did not wipe the windows (carefully).",
+    "context": "Taroo washed his car, meaning to wipe the windows after the body, but felt tired. Antecedent: Taroo-wa teineini shatai-o arat-ta 'Taroo washed the body of the car carefully'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "yes"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "Follow-up: Kare-ga hui-ta ato-no madogarasu-wa kitanak-atta. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex44b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(44b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Demo Δ gakusei-no ronbun-o naos-ana-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Demo",
+        "but"
+      ],
+      [
+        "gakusei-no",
+        "student-GEN"
+      ],
+      [
+        "ronbun-o",
+        "paper-ACC"
+      ],
+      [
+        "naos-ana-i.",
+        "revise-NEG-PRES"
+      ]
+    ],
+    "translation": "He does not revise his students' papers (with Word).",
+    "context": "Taroo writes his own papers and looks at his students' papers every day. Antecedent: Taroo-wa Word-de zibun-no ronbun-o kak-u 'Taroo writes his own papers with Word'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "yes"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "Follow-up: Gakusei-no ronbun-wa tegaki-de naos-u 'He revises the students' papers by hand'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex51b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(51b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Kuruma-o Hanako-wa Δ araw-anak-atta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Kuruma-o",
+        "car-ACC"
+      ],
+      [
+        "Hanako-wa",
+        "Hanako-TOP"
+      ],
+      [
+        "araw-anak-atta",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "Hanako did not wash the car (carefully).",
+    "context": "Antecedent: Kuruma-o Taroo-wa teineini arat-ta 'The car, Taroo washed carefully'. Taroo and Hanako washed their parents' cars to get allowance. Taroo was thorough in his work while Hanako was not. Antecedent: Taroo-wa teineini kuruma-o arat-ta 'Taroo washed the car carefully'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "The object is scrambled across the subject, so the scrambling is not string-vacuous. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex52b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(52b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Kuruma-o Hanako-mo Δ araw-anak-atta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Kuruma-o",
+        "car-ACC"
+      ],
+      [
+        "Hanako-mo",
+        "Hanako-also"
+      ],
+      [
+        "araw-anak-atta",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "Hanako did not wash the car (carefully) either.",
+    "context": "Both did careless work. Antecedent: Kuruma-o Taroo-wa teineini araw-anak-atta.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "Follow-up: Karera-ga arat-ta ato-no kuruma-wa kitanak-atta. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex53b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(53b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Demo madogarasu-o Hanako-wa Δ huk-anak-atta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Demo",
+        "but"
+      ],
+      [
+        "madogarasu-o",
+        "window-ACC"
+      ],
+      [
+        "Hanako-wa",
+        "Hanako-TOP"
+      ],
+      [
+        "huk-anak-atta.",
+        "wipe-NEG-PAST"
+      ]
+    ],
+    "translation": "But the windows, Hanako did not wipe (carefully).",
+    "context": "Antecedent: Syatai-o Taroo-wa teineini arat-ta 'The body of the car, Taroo washed carefully'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+  },
+  {
+    "id": "funakoshi2016_ex55b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(55b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Iya, boku-wa Δ ATTI-no kuruma-o araw-anak-attanda.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Iya,",
+        "no"
+      ],
+      [
+        "boku-wa",
+        "I-TOP"
+      ],
+      [
+        "ATTI-no",
+        "that-GEN"
+      ],
+      [
+        "kuruma-o",
+        "car-ACC"
+      ],
+      [
+        "araw-anak-attanda.",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "No, I didn't wash THAT car carefully.",
+    "context": "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "focused"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "yes"
+      ]
+    ],
+    "comment": "Capitals mark stress; the overt object contrasts with the antecedent's. Coherent with a follow-up 'I washed that car in a sloppy manner'."
+  },
+  {
+    "id": "funakoshi2016_ex55b2",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(55b')"
+    },
+    "language": "nucl1643",
+    "primaryText": "Iya, ATTI-no kuruma-o boku-wa Δ araw-anak-attanda.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Iya,",
+        "no"
+      ],
+      [
+        "ATTI-no",
+        "that-GEN"
+      ],
+      [
+        "kuruma-o",
+        "car-ACC"
+      ],
+      [
+        "boku-wa",
+        "I-TOP"
+      ],
+      [
+        "araw-anak-attanda.",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "No, THAT car, I didn't wash carefully.",
+    "context": "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "focused"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "yes"
+      ]
+    ],
+    "comment": "The focused object scrambled across the subject."
+  },
+  {
+    "id": "funakoshi2016_ex56b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(56b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Iya, boku-wa kono kuruma-WA araw-anak-attayo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Iya,",
+        "no"
+      ],
+      [
+        "boku-wa",
+        "I-TOP"
+      ],
+      [
+        "kono",
+        "this"
+      ],
+      [
+        "kuruma-WA",
+        "car-CONT"
+      ],
+      [
+        "araw-anak-attayo.",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "No, I didn't wash this car carefully.",
+    "context": "Same scenario. Taroo: Kimi-wa teineini kono kuruma-o arat-ta no? 'Did you wash this car carefully?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "focused"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "yes"
+      ]
+    ],
+    "comment": "The overt object carries the contrastive marker -wa."
+  },
+  {
+    "id": "funakoshi2016_ex56b2",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(56b')"
+    },
+    "language": "nucl1643",
+    "primaryText": "Iya, kono kuruma-WA boku-wa araw-anak-attayo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Iya,",
+        "no"
+      ],
+      [
+        "kono",
+        "this"
+      ],
+      [
+        "kuruma-WA",
+        "car-CONT"
+      ],
+      [
+        "boku-wa",
+        "I-TOP"
+      ],
+      [
+        "araw-anak-attayo.",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "No, this car, I didn't wash carefully.",
+    "context": "Same scenario. Taroo: Kimi-wa teineini kono kuruma-o arat-ta no?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "focused"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "yes"
+      ]
+    ],
+    "comment": "The contrastively marked object scrambled across the subject."
+  },
+  {
+    "id": "funakoshi2016_ex57b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(57b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Un, boku-wa Δ kotti-no kuruma-o araw-anak-attayo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Un,",
+        "yes"
+      ],
+      [
+        "boku-wa",
+        "I-TOP"
+      ],
+      [
+        "kotti-no",
+        "this-GEN"
+      ],
+      [
+        "kuruma-o",
+        "car-ACC"
+      ],
+      [
+        "araw-anak-attayo.",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "Yes, I didn't wash this car (carefully).",
+    "context": "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "The overt object repeats the antecedent's without contrastive focus: the near-minimal pair of (55b)."
+  },
+  {
+    "id": "funakoshi2016_ex57b2",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(57b')"
+    },
+    "language": "nucl1643",
+    "primaryText": "Un, kotti-no kuruma-o boku-wa Δ araw-anak-attayo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Un,",
+        "yes"
+      ],
+      [
+        "kotti-no",
+        "this-GEN"
+      ],
+      [
+        "kuruma-o",
+        "car-ACC"
+      ],
+      [
+        "boku-wa",
+        "I-TOP"
+      ],
+      [
+        "araw-anak-attayo.",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "Yes, this car, I didn't wash (carefully).",
+    "context": "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "The unfocused object scrambled across the subject."
+  },
+  {
+    "id": "funakoshi2016_ex58b",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(58b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Iya, boku-wa kono kuruma-o araw-anak-attayo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Iya,",
+        "no"
+      ],
+      [
+        "boku-wa",
+        "I-TOP"
+      ],
+      [
+        "kono",
+        "this"
+      ],
+      [
+        "kuruma-o",
+        "car-ACC"
+      ],
+      [
+        "araw-anak-attayo.",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "No, I didn't wash this car (carefully).",
+    "context": "Same scenario. Taroo: Kimi-wa teineini kono kuruma-o arat-ta no?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": "Accusative -o in place of contrastive -wa: the near-minimal pair of (56b)."
+  },
+  {
+    "id": "funakoshi2016_ex58b2",
+    "source": {
+      "bibkey": "funakoshi-2016",
+      "paperLabel": "(58b')"
+    },
+    "language": "nucl1643",
+    "primaryText": "Iya, kono kuruma-o boku-wa araw-anak-attayo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Iya,",
+        "no"
+      ],
+      [
+        "kono",
+        "this"
+      ],
+      [
+        "kuruma-o",
+        "car-ACC"
+      ],
+      [
+        "boku-wa",
+        "I-TOP"
+      ],
+      [
+        "araw-anak-attayo.",
+        "wash-NEG-PAST"
+      ]
+    ],
+    "translation": "No, this car, I didn't wash (carefully).",
+    "context": "Same scenario. Taroo: Kimi-wa teineini kono kuruma-o arat-ta no?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "null adjunct",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "vp"
+      ],
+      [
+        "object",
+        "overt"
+      ],
+      [
+        "subjectNull",
+        "no"
+      ],
+      [
+        "available",
+        "no"
+      ]
+    ],
+    "comment": ""
+  }
+]
