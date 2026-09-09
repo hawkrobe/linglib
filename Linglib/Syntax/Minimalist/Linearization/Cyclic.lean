@@ -104,6 +104,20 @@ theorem spelloutOrder_singleton_idxOf {p : List α} (hnd : p.Nodup)
 theorem consistent_singleton {p : List α} (hnd : p.Nodup) : Consistent [p] :=
   fun _ h => Nat.lt_irrefl _ (spelloutOrder_singleton_idxOf hnd h)
 
+/-- Order Preservation at work: a derivation every one of whose Spell-outs is a sub-order of one
+duplicate-free Spell-out linearizes. -/
+theorem consistent_of_forall_sublist {q : List α} (h : ∀ p ∈ phases, p <+ q) (hnd : q.Nodup) :
+    Consistent phases := fun a hab =>
+  consistent_singleton hnd a
+    (Relation.TransGen.mono (fun _ _ ⟨p, hp, hs⟩ => ⟨q, List.mem_singleton_self q, hs.trans (h p hp)⟩)
+      a a hab)
+
+/-- Two Spell-outs ordering a pair both ways make an ordering contradiction: the derivation does
+not linearize, whatever else it contains. -/
+theorem not_consistent_of_pair {p q : List α} (hp : p ∈ phases) (hq : q ∈ phases)
+    (h₁ : [a, b] <+ p) (h₂ : [b, a] <+ q) : ¬ Consistent phases :=
+  fun h => h a (.tail (.single ⟨p, hp, h₁⟩) ⟨q, hq, h₂⟩)
+
 /-! ### Decidability
 
 `Consistent` decides on concrete phase data: the candidate order's generator only

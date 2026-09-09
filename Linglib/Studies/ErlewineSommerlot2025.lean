@@ -366,12 +366,6 @@ theorem rows_grammatical :
 
 /-! ### The ordering paradoxes -/
 
-/-- A derivation with two contradictory Spell-out statements does not linearize. -/
-theorem not_consistent_of_pair {d : Derivation} {a b : Term}
-    (h₁ : List.Sublist [a, b] d.voicePSpellout) (h₂ : List.Sublist [b, a] d.cpSpellout) :
-    ¬ Consistent [d.voicePSpellout, d.cpSpellout] :=
-  λ h => h a (.tail (.single ⟨_, List.mem_cons_self, h₁⟩) ⟨_, by simp, h₂⟩)
-
 /-- (57): with Voice overt and the agent left in Spec,vP at VoiceP Spell-out, the agent's later
 movement to Spec,TP orders it before Voice at CP, against VoiceP; the derivation cannot
 linearize, whatever else it contains. -/
@@ -383,7 +377,7 @@ theorem overt_voice_paradox (d : Derivation) (hv : d.voiceExp.isSome = true)
     unfold Derivation.moved
     rcases d.extracted with _ | ⟨_⟩ | _ <;> rcases d.subject with _ | _ <;> simp
   have hagent : Term.dp .agent ∈ d.moved := by simp [Derivation.moved, hs]
-  refine not_consistent_of_pair (a := .voice) (b := .dp .agent) ?_ ?_
+  refine not_consistent_of_pair (a := .voice) (b := .dp .agent) List.mem_cons_self (by simp) ?_ ?_
   · unfold Derivation.voicePSpellout
     rw [if_pos hv, if_pos hi]
     exact (((List.sublist_append_right _ [Term.voice]).append_right [Term.dp .agent]).trans
@@ -401,7 +395,7 @@ theorem bare_passive_agent_paradox (d : Derivation) (ha : d.agentProjected = tru
   have hi : d.agentInSitu = true := by simp [Derivation.agentInSitu, ha, hsp]
   have hm : d.moved = [.dp .agent, .dp .theme] := by
     unfold Derivation.moved; rw [he, hs]; decide
-  refine not_consistent_of_pair (a := .dp .theme) (b := .dp .agent) ?_ ?_
+  refine not_consistent_of_pair (a := .dp .theme) (b := .dp .agent) List.mem_cons_self (by simp) ?_ ?_
   · unfold Derivation.voicePSpellout
     rw [if_pos hi, if_pos hsp, hsp]
     exact ((((List.sublist_append_right _ [Term.dp .theme]).trans
